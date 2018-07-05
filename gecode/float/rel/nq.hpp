@@ -50,7 +50,7 @@ namespace Gecode { namespace Float { namespace Rel {
     if (x0.assigned() && x1.assigned()) {
       if (overlap(x0.val(),x1.val()))
         return ES_FAILED;
-    } else if (same(x0,x1)) {
+    } else if (x0 == x1) {
       return ES_FAILED;
     } else {
       (void) new (home) Nq<View0,View1>(home,x0,x1);

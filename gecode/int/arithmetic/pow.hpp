@@ -162,7 +162,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
       return Rel::EqBnd<IntView,IntView>::post(home,x0,x1);
     }
 
-    if (same(x0,x1)) {
+    if (x0 == x1) {
       assert(ops.exp() != 0);
       GECODE_ME_CHECK(x0.lq(home,1));
       GECODE_ME_CHECK(x0.gq(home,ops.even() ? 0 : -1));
@@ -399,7 +399,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
       return Rel::EqDom<IntView,IntView>::post(home,x0,x1);
     }
 
-    if (same(x0,x1)) {
+    if (x0 == x1) {
       assert(ops.exp() != 0);
       GECODE_ME_CHECK(x0.lq(home,1));
       GECODE_ME_CHECK(x0.gq(home,ops.even() ? 0 : -1));

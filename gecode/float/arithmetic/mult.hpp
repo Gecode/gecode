@@ -312,11 +312,11 @@ namespace Gecode { namespace Float { namespace Arithmetic {
   template<class View>
   ExecStatus
   Mult<View>::post(Home home, View x0, View x1, View x2) {
-    if (same(x0,x1))
+    if (x0 == x1)
       return Sqr<View>::post(home,x0,x2);
-    if (same(x0,x2))
+    if (x0 == x2)
       return MultZeroOne<View>::post(home,x0,x1);
-    if (same(x1,x2))
+    if (x1 == x2)
       return MultZeroOne<View>::post(home,x1,x0);
     if (pos(x0)) {
       if (pos(x1) || pos(x2)) goto post_ppp;

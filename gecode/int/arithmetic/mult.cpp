@@ -142,13 +142,13 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   ExecStatus
   MultBnd::post(Home home, IntView x0, IntView x1, IntView x2) {
-    if (same(x0,x1)) {
+    if (x0 == x1) {
       SqrOps ops;
       return PowBnd<SqrOps>::post(home,x0,x2,ops);
     }
-    if (same(x0,x2))
+    if (x0 == x2)
       return MultZeroOne<IntView,PC_INT_BND>::post(home,x0,x1);
-    if (same(x1,x2))
+    if (x1 == x2)
       return MultZeroOne<IntView,PC_INT_BND>::post(home,x1,x0);
     if (pos(x0)) {
       if (pos(x1) || pos(x2)) goto post_ppp;
@@ -309,13 +309,13 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   ExecStatus
   MultDom::post(Home home, IntView x0, IntView x1, IntView x2) {
-    if (same(x0,x1)) {
+    if (x0 == x1) {
       SqrOps ops;
       return PowDom<SqrOps>::post(home,x0,x2,ops);
     }
-    if (same(x0,x2))
+    if (x0 == x2)
       return MultZeroOne<IntView,PC_INT_DOM>::post(home,x0,x1);
-    if (same(x1,x2))
+    if (x1 == x2)
       return MultZeroOne<IntView,PC_INT_DOM>::post(home,x1,x0);
     if (pos(x0)) {
       if (pos(x1) || pos(x2)) goto post_ppp;

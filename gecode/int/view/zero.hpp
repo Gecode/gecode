@@ -295,8 +295,12 @@ namespace Gecode { namespace Int {
    *
    */
   forceinline bool
-  same(const ZeroIntView&, const ZeroIntView&) {
+  operator ==(const ZeroIntView&, const ZeroIntView&) {
     return true;
+  }
+  forceinline bool
+  operator !=(const ZeroIntView&, const ZeroIntView&) {
+    return false;
   }
 
 }}

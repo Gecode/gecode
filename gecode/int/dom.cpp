@@ -176,7 +176,7 @@ namespace Gecode {
     using namespace Int;
     GECODE_POST;
     IntView xv(x), dv(d);
-    if (!same(xv,dv)) {
+    if (xv != dv) {
       ViewRanges<IntView> r(dv);
       GECODE_ME_FAIL(xv.inter_r(home,r,false));
     }
@@ -200,7 +200,7 @@ namespace Gecode {
     for (int i=x.size(); i--; ) {
       GECODE_POST;
       IntView xv(x[i]), dv(d[i]);
-      if (!same(xv,dv)) {
+      if (xv != dv) {
         ViewRanges<IntView> r(dv);
         GECODE_ME_FAIL(xv.inter_r(home,r,false));
       }

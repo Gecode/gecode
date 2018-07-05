@@ -127,7 +127,7 @@ namespace Gecode {
     using namespace Float;
     GECODE_POST;
     FloatView xv(x), dv(d);
-    if (!same(xv,dv)) {
+    if (xv != dv) {
       GECODE_ME_FAIL(xv.lq(home,dv.max()));
       GECODE_ME_FAIL(xv.gq(home,dv.min()));
     }
@@ -141,7 +141,7 @@ namespace Gecode {
     for (int i=x.size(); i--; ) {
       GECODE_POST;
       FloatView xv(x[i]), dv(d[i]);
-      if (!same(xv,dv)) {
+      if (xv != dv) {
         GECODE_ME_FAIL(xv.lq(home,dv.max()));
         GECODE_ME_FAIL(xv.gq(home,dv.min()));
       }

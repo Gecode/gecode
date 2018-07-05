@@ -631,7 +631,7 @@ namespace Gecode {
     using namespace Set;
     GECODE_POST;
     SetView xv(x), dv(d);
-    if (!same(xv,dv)) {
+    if (xv != dv) {
       GECODE_ME_FAIL(xv.cardMax(home,dv.cardMax()));
       GECODE_ME_FAIL(xv.cardMin(home,dv.cardMin()));
       GlbRanges<SetView> lb(dv);
@@ -649,7 +649,7 @@ namespace Gecode {
     for (int i=x.size(); i--; ) {
       GECODE_POST;
       SetView xv(x[i]), dv(d[i]);
-      if (!same(xv,dv)) {
+      if (xv != dv) {
         GECODE_ME_FAIL(xv.cardMax(home,dv.cardMax()));
         GECODE_ME_FAIL(xv.cardMin(home,dv.cardMin()));
         GlbRanges<SetView> lb(dv);

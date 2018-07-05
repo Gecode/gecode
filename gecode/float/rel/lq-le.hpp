@@ -52,7 +52,7 @@ namespace Gecode { namespace Float { namespace Rel {
   Lq<View>::post(Home home, View x0, View x1) {
     GECODE_ME_CHECK(x0.lq(home,x1.max()));
     GECODE_ME_CHECK(x1.gq(home,x0.min()));
-    if (!same(x0,x1) && (x0.max() > x1.min()))
+    if ((x0 != x1) && (x0.max() > x1.min()))
       (void) new (home) Lq<View>(home,x0,x1);
     return ES_OK;
   }
@@ -94,7 +94,7 @@ namespace Gecode { namespace Float { namespace Rel {
     if (x0.assigned() && x1.assigned()) {
       if (x0.max() >= x1.min())
         return ES_FAILED;
-    } else if (same(x0,x1))
+    } else if (x0 == x1)
       return ES_FAILED;
     if (x0.max() >= x1.min())
       (void) new (home) Le<View>(home,x0,x1);
@@ -149,7 +149,7 @@ namespace Gecode { namespace Float { namespace Rel {
         return ES_OK;
       return Le<View>::post(home,x1,x0);
     }
-    if (!same(x0,x1)) {
+    if (x0 != x1) {
       switch (rtest_lq(x0,x1)) {
       case RT_TRUE:
         if (rm != RM_IMP)

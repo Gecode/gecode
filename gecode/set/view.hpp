@@ -173,7 +173,8 @@ namespace Gecode { namespace Set {
 
   // Forward declarations for friends
   class ConstSetView;
-  bool same(const ConstSetView&, const ConstSetView&);
+  bool operator ==(const ConstSetView&, const ConstSetView&);
+  bool operator !=(const ConstSetView&, const ConstSetView&);
   bool before(const ConstSetView&, const ConstSetView&);
 
   /**
@@ -186,8 +187,10 @@ namespace Gecode { namespace Set {
   class ConstSetView : public ConstView<SetView> {
     friend class LubRanges<ConstSetView>;
     friend class GlbRanges<ConstSetView>;
-    friend bool Gecode::Set::same(const Gecode::Set::ConstSetView&,
-                                  const Gecode::Set::ConstSetView&);
+    friend bool Gecode::Set::operator ==(const Gecode::Set::ConstSetView&,
+                                         const Gecode::Set::ConstSetView&);
+    friend bool Gecode::Set::operator !=(const Gecode::Set::ConstSetView&,
+                                         const Gecode::Set::ConstSetView&);
     friend bool Gecode::Set::before(const Gecode::Set::ConstSetView&,
                                     const Gecode::Set::ConstSetView&);
   private:
@@ -314,7 +317,9 @@ namespace Gecode { namespace Set {
    */
   //@{
   /// Test whether views \a x and \a y are the same
-  bool same(const ConstSetView& x, const ConstSetView& y);
+  bool operator ==(const ConstSetView& x, const ConstSetView& y);
+  /// Test whether views \a x and \a y are not the same
+  bool operator !=(const ConstSetView& x, const ConstSetView& y);
   /// Test whether view \a x comes before \a y (arbitrary order)
   bool before(const ConstSetView& x, const ConstSetView& y);
   //@}
@@ -442,7 +447,9 @@ namespace Gecode { namespace Set {
    */
   //@{
   /// Test whether views \a x and \a y are the same
-  bool same(const EmptyView& x, const EmptyView& y);
+  bool operator ==(const EmptyView& x, const EmptyView& y);
+  /// Test whether views \a x and \a y are the same
+  bool operator !=(const EmptyView& x, const EmptyView& y);
   //@}
 
 
@@ -569,7 +576,9 @@ namespace Gecode { namespace Set {
    */
   //@{
   /// Test whether views \a x and \a y are the same
-  bool same(const UniverseView& x, const UniverseView& y);
+  bool operator ==(const UniverseView& x, const UniverseView& y);
+  /// Test whether views \a x and \a y are the not same
+  bool operator !=(const UniverseView& x, const UniverseView& y);
   //@}
 
 
@@ -582,8 +591,7 @@ namespace Gecode { namespace Set {
    * \ingroup TaskActorSetView
    */
 
-  class SingletonView :
-    public DerivedView<Gecode::Int::IntView> {
+  class SingletonView : public DerivedView<Gecode::Int::IntView> {
   protected:
     using DerivedView<Gecode::Int::IntView>::x;
 
@@ -738,6 +746,15 @@ namespace Gecode { namespace Set {
   std::basic_ostream<Char,Traits>&
   operator <<(std::basic_ostream<Char,Traits>& os, const SingletonView& x);
 
+  /** \name View comparison
+   *  \relates Gecode::Set::SingletonView
+   */
+  //@{
+  /// Test whether views \a x and \a y are the same
+  bool operator ==(const SingletonView& x, const SingletonView& y);
+  /// Test whether views \a x and \a y are the not same
+  bool operator !=(const SingletonView& x, const SingletonView& y);
+  //@}
 
   /**
    * \brief Complement set view
@@ -749,8 +766,7 @@ namespace Gecode { namespace Set {
    */
 
   template<class View>
-  class ComplementView
-    : public DerivedView<View> {
+  class ComplementView : public DerivedView<View> {
   protected:
     using DerivedView<View>::x;
 
@@ -900,6 +916,19 @@ namespace Gecode { namespace Set {
   operator <<(std::basic_ostream<Char,Traits>& os,
               const ComplementView<View>& x);
 
+  /** \name View comparison
+   *  \relates Gecode::Set::ComplementView
+   */
+  //@{
+  /// Test whether views \a x and \a y are the same
+  template<class View>
+  bool operator ==(const ComplementView<View>& x,
+                   const ComplementView<View>& y);
+  /// Test whether views \a x and \a y are the not same
+  template<class View>
+  bool operator !=(const ComplementView<View>& x,
+                   const ComplementView<View>& y);
+  //@}
 
   template<class View> class LubDiffRanges;
   template<class View> class GlbDiffRanges;
@@ -916,8 +945,7 @@ namespace Gecode { namespace Set {
    */
 
   template<class View>
-  class CachedView
-    : public DerivedView<View> {
+  class CachedView : public DerivedView<View> {
     friend class LubDiffRanges<View>;
     friend class GlbDiffRanges<View>;
   protected:
@@ -1088,6 +1116,18 @@ namespace Gecode { namespace Set {
   std::basic_ostream<Char,Traits>&
   operator <<(std::basic_ostream<Char,Traits>& os,
               const CachedView<View>& x);
+
+  /** \name View comparison
+   *  \relates Gecode::Set::CachedView
+   */
+  //@{
+  /// Test whether views \a x and \a y are the same
+  template<class View>
+  bool operator ==(const CachedView<View>& x, const CachedView<View>& y);
+  /// Test whether views \a x and \a y are the not same
+  template<class View>
+  bool operator !=(const CachedView<View>& x, const CachedView<View>& y);
+  //@}
 
   /**
    * \brief %Range iterator for difference of greatest lower bound and cache

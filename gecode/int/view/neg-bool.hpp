@@ -151,6 +151,23 @@ namespace Gecode { namespace Int {
     return BoolView::zero(d);
   }
 
+  /*
+   * View comparison
+   *
+   */
+  forceinline bool
+  operator ==(const NegBoolView& x, const NegBoolView& y) {
+    return x.base() == y.base();
+  }
+  forceinline bool
+  operator !=(const NegBoolView& x, const NegBoolView& y) {
+    return !(x == y);
+  }
+  forceinline bool
+  before(const NegBoolView& x, const NegBoolView& y) {
+    return before(x.base(),y.base());
+  }
+
 
   /**
    * \brief %Range iterator for negated Boolean variable views

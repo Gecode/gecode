@@ -215,7 +215,10 @@ namespace Gecode {
   //@{
   /// Test whether views \a x and \a y are the same
   template<class VarA, class VarB>
-  bool same(const VarImpView<VarA>& x, const VarImpView<VarB>& y);
+  bool operator ==(const VarImpView<VarA>& x, const VarImpView<VarB>& y);
+  /// Test whether views \a x and \a y are not the same
+  template<class VarA, class VarB>
+  bool operator !=(const VarImpView<VarA>& x, const VarImpView<VarB>& y);
   /// Test whether view \a x comes before \a y (arbitrary order)
   template<class ViewA, class ViewB>
   bool before(const ViewA& x, const ViewB& y);
@@ -673,45 +676,102 @@ namespace Gecode {
   /// Test whether two views are the same
   template<class ViewA, class ViewB>
   forceinline bool
-  same(const ConstView<ViewA>&, const ConstView<ViewB>&) {
+  operator ==(const ConstView<ViewA>&, const ConstView<ViewB>&) {
     return false;
   }
   /// Test whether two views are the same
   template<class Var, class View>
   forceinline bool
-  same(const VarImpView<Var>&, const ConstView<View>&) {
+  operator ==(const ConstView<View>&, const VarImpView<Var>&) {
     return false;
   }
   /// Test whether two views are the same
   template<class ViewA, class ViewB>
   forceinline bool
-  same(const ConstView<ViewA>&, const DerivedView<ViewB>&) {
+  operator ==(const ConstView<ViewA>&, const DerivedView<ViewB>&) {
     return false;
   }
   /// Test whether two views are the same
   template<class Var, class View>
   forceinline bool
-  same(const VarImpView<Var>&, const DerivedView<View>&) {
+  operator ==(const VarImpView<Var>&, const ConstView<View>&) {
+    return false;
+  }
+  /// Test whether two views are the same
+  template<class Var, class View>
+  forceinline bool
+  operator ==(const VarImpView<Var>&, const DerivedView<View>&) {
     return false;
   }
   /// Test whether two views are the same
   template<class View, class Var>
   forceinline bool
-  same(const DerivedView<View>&, const VarImpView<Var>&) {
+  operator ==(const DerivedView<View>&, const VarImpView<Var>&) {
     return false;
   }
   /// Test whether two views are the same
-  template<class Var>
+  template<class ViewX, class ViewY>
   forceinline bool
-  same(const VarImpView<Var>& x, const VarImpView<Var>& y) {
-    return x.varimp() == y.varimp();
+  operator ==(const DerivedView<ViewX>&, const DerivedView<ViewY>&) {
+    return false;
   }
   /// Test whether two views are the same
+  template<class VarX, class VarY>
+  forceinline bool
+  operator ==(const VarImpView<VarX>& x, const VarImpView<VarY>& y) {
+    return x.varimp() == y.varimp();
+  }
+
+  /// Test whether two views are not the same
   template<class ViewA, class ViewB>
   forceinline bool
-  same(const DerivedView<ViewA>& x, const DerivedView<ViewB>& y) {
-    return same(x.base(),y.base());
+  operator !=(const ConstView<ViewA>&, const ConstView<ViewB>&) {
+    return true;
   }
+  /// Test whether two views are not the same
+  template<class Var, class View>
+  forceinline bool
+  operator !=(const ConstView<View>&, const VarImpView<Var>&) {
+    return true;
+  }
+  /// Test whether two views are not the same
+  template<class ViewA, class ViewB>
+  forceinline bool
+  operator !=(const ConstView<ViewA>&, const DerivedView<ViewB>&) {
+    return true;
+  }
+  /// Test whether two views are not the same
+  template<class Var, class View>
+  forceinline bool
+  operator !=(const VarImpView<Var>&, const ConstView<View>&) {
+    return true;
+  }
+  /// Test whether two views are not the same
+  template<class Var, class View>
+  forceinline bool
+  operator !=(const VarImpView<Var>&, const DerivedView<View>&) {
+    return true;
+  }
+  /// Test whether two views are not the same
+  template<class View, class Var>
+  forceinline bool
+  operator !=(const DerivedView<View>&, const VarImpView<Var>&) {
+    return true;
+  }
+  /// Test whether two views are not the same
+  template<class ViewX, class ViewY>
+  forceinline bool
+  operator !=(const DerivedView<ViewX>&, const DerivedView<ViewY>&) {
+    return true;
+  }
+  /// Test whether two views are not the same
+  template<class VarX, class VarY>
+  forceinline bool
+  operator !=(const VarImpView<VarX>& x, const VarImpView<VarY>& y) {
+    return x.varimp() != y.varimp();
+  }
+
+
 
 
   /*

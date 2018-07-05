@@ -75,7 +75,9 @@ namespace Gecode { namespace Int { namespace BinPacking {
   };
 
   /// Whether two items are the same
-  bool same(const Item& i, const Item& j);
+  bool operator ==(const Item& i, const Item& j);
+  /// Whether two items are not the same
+  bool operator !=(const Item& i, const Item& j);
   /// Test whether one item is before another
   bool before(const Item& i, const Item& j);
 

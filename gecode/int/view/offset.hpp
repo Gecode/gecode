@@ -304,13 +304,17 @@ namespace Gecode { namespace Int {
    *
    */
   forceinline bool
-  same(const OffsetView& x, const OffsetView& y) {
-    return same(x.base(),y.base()) && (x.offset() == y.offset());
+  operator ==(const OffsetView& x, const OffsetView& y) {
+    return (x.base() == y.base()) && (x.offset() == y.offset());
+  }
+  forceinline bool
+  operator !=(const OffsetView& x, const OffsetView& y) {
+    return !(x == y);
   }
   forceinline bool
   before(const OffsetView& x, const OffsetView& y) {
     return before(x.base(),y.base())
-      || (same(x.base(),y.base()) && (x.offset() < y.offset()));
+      || ((x.base() == y.base()) && (x.offset() < y.offset()));
   }
 
 }}

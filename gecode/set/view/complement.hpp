@@ -547,6 +547,19 @@ namespace Gecode { namespace Set {
     return os << s.str();
   }
 
+
+  template<class View>
+  forceinline bool
+  operator ==(const ComplementView<View>& x, const ComplementView<View>& y) {
+    return x.base() == y.base();
+  }
+
+  template<class View>
+  forceinline bool
+  operator !=(const ComplementView<View>& x, const ComplementView<View>& y) {
+    return x.base() != y.base();
+  }
+
 }}
 
 // STATISTICS: set-var

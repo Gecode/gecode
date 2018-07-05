@@ -344,7 +344,7 @@ namespace Gecode { namespace Int { namespace Rel {
         case RT_FALSE:
           return ES_OK;
         case RT_MAYBE:
-          if (same(x[i],y[i])) {
+          if (x[i] == y[i]) {
             // Eliminate equal pair
             n--; x[i]=x[n]; y[i]=y[n];
           }

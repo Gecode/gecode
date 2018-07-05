@@ -51,7 +51,7 @@ namespace Gecode { namespace Int { namespace Rel {
       GECODE_ME_CHECK(x1.nq(home,x0.val()));
     } else if (x1.assigned()) {
       GECODE_ME_CHECK(x0.nq(home,x1.val()));
-    } else if (same(x0,x1)) {
+    } else if (x0 == x1) {
       return ES_FAILED;
     } else {
       (void) new (home) Nq<V0,V1>(home,x0,x1);

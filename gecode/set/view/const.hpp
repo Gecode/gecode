@@ -681,14 +681,18 @@ namespace Gecode { namespace Set {
    *
    */
   forceinline bool
-  same(const ConstSetView& x, const ConstSetView& y) {
+  operator ==(const ConstSetView& x, const ConstSetView& y) {
     if ((x.size != y.size) || (x.domSize != y.domSize))
       return false;
     for (int i=x.size; i--; )
-      if (x.ranges[2*i]   != y.ranges[2*i] ||
-          x.ranges[2*i+1] != y.ranges[2*i+1])
+      if ((x.ranges[2*i]   != y.ranges[2*i]) ||
+          (x.ranges[2*i+1] != y.ranges[2*i+1]))
         return false;
     return true;
+  }
+  forceinline bool
+  operator !=(const ConstSetView& x, const ConstSetView& y) {
+    return !(x == y);
   }
   forceinline bool
   before(const ConstSetView& x, const ConstSetView& y) {
@@ -705,12 +709,21 @@ namespace Gecode { namespace Set {
 
 
   forceinline bool
-  same(const EmptyView&, const EmptyView&) {
+  operator ==(const EmptyView&, const EmptyView&) {
     return true;
   }
   forceinline bool
-  same(const UniverseView&, const UniverseView&) {
+  operator !=(const EmptyView&, const EmptyView&) {
+    return false;
+  }
+
+  forceinline bool
+  operator ==(const UniverseView&, const UniverseView&) {
     return true;
+  }
+  forceinline bool
+  operator !=(const UniverseView&, const UniverseView&) {
+    return false;
   }
 
 }}

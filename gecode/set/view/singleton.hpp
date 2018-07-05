@@ -291,6 +291,17 @@ namespace Gecode { namespace Set {
   forceinline bool
   SingletonView::lubAny(const Delta& d) const { return x.any(d); }
 
+  forceinline bool
+  operator ==(const SingletonView& x, const SingletonView& y) {
+    return x.base() == y.base();
+  }
+
+  forceinline bool
+  operator !=(const SingletonView& x, const SingletonView& y) {
+    return x.base() != y.base();
+  }
+
+
   /*
    * Iterators
    *

@@ -309,14 +309,19 @@ namespace Gecode { namespace Int {
    */
   template<class Val, class UnsVal>
   forceinline bool
-  same(const ScaleView<Val,UnsVal>& x, const ScaleView<Val,UnsVal>& y) {
-    return same(x.base(),y.base()) && (x.scale() == y.scale());
+  operator ==(const ScaleView<Val,UnsVal>& x, const ScaleView<Val,UnsVal>& y) {
+    return (x.base() == y.base()) && (x.scale() == y.scale());
+  }
+  template<class Val, class UnsVal>
+  forceinline bool
+  operator !=(const ScaleView<Val,UnsVal>& x, const ScaleView<Val,UnsVal>& y) {
+    return !(x == y);
   }
   template<class Val, class UnsVal>
   forceinline bool
   before(const ScaleView<Val,UnsVal>& x, const ScaleView<Val,UnsVal>& y) {
     return before(x.base(),y.base())
-      || (same(x.base(),y.base()) && (x.scale() < y.scale()));
+      || ((x.base() == y.base()) && (x.scale() < y.scale()));
   }
 
 }}

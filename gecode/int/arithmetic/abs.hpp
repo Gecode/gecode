@@ -102,7 +102,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         int mp[2] = {-x1.val(),x1.val()};
         Iter::Values::Array i(mp,2);
         GECODE_ME_CHECK(x0.inter_v(home,i,false));
-      } else if (!same(x0,x1)) {
+      } else if (x0 != x1) {
         GECODE_ME_CHECK(x1.lq(home,std::max(-x0.min(),x0.max())));
         (void) new (home) AbsBnd<View>(home,x0,x1);
       }
@@ -157,7 +157,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         int mp[2] = {-x1.val(),x1.val()};
         Iter::Values::Array i(mp,2);
         GECODE_ME_CHECK(x0.inter_v(home,i,false));
-      } else if (!same(x0,x1)) {
+      } else if (x0 != x1) {
         GECODE_ME_CHECK(x1.lq(home,std::max(-x0.min(),x0.max())));
         (void) new (home) AbsDom<View>(home,x0,x1);
       }
