@@ -69,7 +69,7 @@ namespace Gecode { namespace Int { namespace Linear {
   public:
     forceinline bool
     operator ()(const Term<View>& a, const Term<View>& b) {
-      return before(a.x,b.x);
+      return a.x < b.x;
     }
   };
 

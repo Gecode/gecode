@@ -357,6 +357,12 @@ namespace Gecode { namespace Float {
     //@{
     void update(Space& home, OffsetView& y);
     //@}
+
+    /// \name Ordering
+    //@{
+    /// Whether this view comes before view \a y (arbitray order)
+    bool operator <(const OffsetView& y) const;
+    //@}
   };
 
   /**
@@ -479,6 +485,12 @@ namespace Gecode { namespace Float {
     /// \name Cloning
     //@{
     void update(Space& home, ScaleView& y);
+    //@}
+
+    /// \name Ordering
+    //@{
+    /// Whether this view comes before view \a y (arbitray order)
+    bool operator <(const ScaleView& y) const;
     //@}
   };
 

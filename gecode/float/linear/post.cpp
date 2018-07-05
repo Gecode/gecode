@@ -76,7 +76,7 @@ namespace Gecode { namespace Float { namespace Linear {
   public:
     forceinline bool
     operator ()(const Term& a, const Term& b) {
-      return before(a.x,b.x);
+      return a.x < b.x;
     }
   };
 

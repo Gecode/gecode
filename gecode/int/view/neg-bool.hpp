@@ -163,10 +163,6 @@ namespace Gecode { namespace Int {
   operator !=(const NegBoolView& x, const NegBoolView& y) {
     return !(x == y);
   }
-  forceinline bool
-  before(const NegBoolView& x, const NegBoolView& y) {
-    return before(x.base(),y.base());
-  }
 
 
   /**

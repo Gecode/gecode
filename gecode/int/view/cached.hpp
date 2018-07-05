@@ -297,11 +297,11 @@ namespace Gecode { namespace Int {
     }
   }
 
+
   /*
    * Cache operations
    *
    */
-
   template<class View>
   void
   CachedView<View>::initCache(Space& home, const IntSet& s) {
@@ -405,12 +405,6 @@ namespace Gecode { namespace Int {
   forceinline bool
   operator !=(const CachedView<View>& x, const CachedView<View>& y) {
     return !(x == y);
-  }
-  template<class View>
-  forceinline bool
-  before(const CachedView<View>& x, const CachedView<View>& y) {
-    return before(x.base(),y.base())
-      || (same(x.base(),y.base()) && (x.offset() < y.offset()));
   }
 
 }}

@@ -676,6 +676,29 @@ namespace Gecode { namespace Set {
     //@}
   };
 
+  forceinline bool
+  ConstSetView::operator <(const ConstSetView& y) const {
+    if (size < y.size)
+      return true;
+    if (size > y.size)
+      return false;
+    if (domSize < y.domSize)
+      return true;
+    if (domSize > y.domSize)
+      return false;
+    for (int i=size; i--; ) {
+      if (ranges[2*i] < y.ranges[2*i])
+        return true;
+      if (ranges[2*i] > y.ranges[2*i])
+        return false;
+      if (ranges[2*i+1] < y.ranges[2*i+1])
+        return true;
+      if (ranges[2*i+1] > y.ranges[2*i+1])
+        return false;
+    }
+    return false;
+  }
+
   /*
    * Testing
    *
@@ -693,18 +716,6 @@ namespace Gecode { namespace Set {
   forceinline bool
   operator !=(const ConstSetView& x, const ConstSetView& y) {
     return !(x == y);
-  }
-  forceinline bool
-  before(const ConstSetView& x, const ConstSetView& y) {
-    if (x.size < y.size)
-      return true;
-    if (x.domSize < y.domSize)
-      return true;
-    for (int i=x.size; i--; )
-      if (x.ranges[2*i]   < y.ranges[2*i] ||
-          x.ranges[2*i+1] < y.ranges[2*i+1])
-        return true;
-    return false;
   }
 
 
