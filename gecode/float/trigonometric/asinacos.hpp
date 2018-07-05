@@ -46,7 +46,7 @@ namespace Gecode { namespace Float { namespace Trigonometric {
   template<class A, class B>
   ExecStatus
   ASin<A,B>::post(Home home, A x0, B x1) {
-    if (same(x0,x1)) {
+    if (x0 == x1) {
       GECODE_ME_CHECK(x0.eq(home,0.0));
     } else {
       GECODE_ME_CHECK(x0.gq(home,-1.0));
@@ -93,7 +93,7 @@ namespace Gecode { namespace Float { namespace Trigonometric {
   template<class A, class B>
   ExecStatus
   ACos<A,B>::post(Home home, A x0, B x1) {
-    if (same(x0,x1)) {
+    if (x0 == x1) {
       GECODE_ME_CHECK(x0.gq(home,0.7390851332151));
       GECODE_ME_CHECK(x0.lq(home,0.7390851332152));
       bool mod;

@@ -143,7 +143,7 @@ void aSinProject(Rounding& r, const V& aSinIv, FloatNum& iv_min, FloatNum& iv_ma
   template<class A, class B>
   ExecStatus
   Sin<A,B>::post(Home home, A x0, B x1) {
-    if (same(x0,x1)) {
+    if (x0 == x1) {
       GECODE_ME_CHECK(x0.eq(home,0.0));
     } else {
       GECODE_ME_CHECK(x1.gq(home,-1.0));
@@ -208,7 +208,7 @@ void aSinProject(Rounding& r, const V& aSinIv, FloatNum& iv_min, FloatNum& iv_ma
   template<class A, class B>
   ExecStatus
   Cos<A,B>::post(Home home, A x0, B x1) {
-    if (same(x0,x1)) {
+    if (x0 == x1) {
       GECODE_ME_CHECK(x0.gq(home,0.7390851332151));
       GECODE_ME_CHECK(x0.lq(home,0.7390851332152));
       bool mod;

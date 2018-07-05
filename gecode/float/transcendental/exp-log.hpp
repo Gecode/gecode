@@ -46,7 +46,7 @@ namespace Gecode { namespace Float { namespace Transcendental {
   template<class A, class B>
   ExecStatus
   Exp<A,B>::post(Home home, A x0, B x1) {
-    if (same(x0,x1)) {
+    if (x0 == x1) {
       return ES_FAILED;
     } else {
       GECODE_ME_CHECK(x1.gq(home,0.0));
@@ -97,7 +97,7 @@ namespace Gecode { namespace Float { namespace Transcendental {
   ExecStatus
   Pow<A,B>::post(Home home, FloatNum base, A x0, B x1) {
     if (base <= 0) return ES_FAILED;
-    if (same(x0,x1)) {
+    if (x0 == x1) {
       GECODE_ME_CHECK(x0.eq(home,0.0));
     } else {
       GECODE_ME_CHECK(x1.gq(home,0.0));
