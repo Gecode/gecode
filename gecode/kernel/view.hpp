@@ -736,6 +736,12 @@ namespace Gecode {
     return false;
   }
   /// Test whether two views are the same
+  template<class ViewX, class ViewY>
+  forceinline bool
+  operator ==(const DerivedView<ViewX>&, const ConstView<ViewY>&) {
+    return false;
+  }
+  /// Test whether two views are the same
   template<class View, class Var>
   forceinline bool
   operator ==(const DerivedView<View>&, const VarImpView<Var>&) {
@@ -782,6 +788,12 @@ namespace Gecode {
   template<class Var, class View>
   forceinline bool
   operator !=(const VarImpView<Var>&, const DerivedView<View>&) {
+    return true;
+  }
+  /// Test whether two views are the same
+  template<class ViewX, class ViewY>
+  forceinline bool
+  operator !=(const DerivedView<ViewX>&, const ConstView<ViewY>&) {
     return true;
   }
   /// Test whether two views are not the same
