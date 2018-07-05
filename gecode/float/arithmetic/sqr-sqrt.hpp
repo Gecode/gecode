@@ -49,7 +49,7 @@ namespace Gecode { namespace Float { namespace Arithmetic {
   template<class VA, class VB>
   forceinline ExecStatus
   SqrPlus<VA,VB>::post(Home home, VA x0, VB x1) {
-    if (same(x0,x1)) {
+    if (x0 == x1) {
       if (x0.assigned())
         return ((x0.val() == 0) || (x0.val() == 1))? ES_OK : ES_FAILED;
     } else {
@@ -75,7 +75,7 @@ namespace Gecode { namespace Float { namespace Arithmetic {
   template<class VA, class VB>
   ExecStatus
   SqrPlus<VA,VB>::propagate(Space& home, const ModEventDelta&) {
-    if (same(x0,x1)) {
+    if (x0 == x1) {
       if (x0.max() < 1) GECODE_ME_CHECK(x0.eq(home,0));
       else if (x0.min() > 0) GECODE_ME_CHECK(x0.eq(home,1));
       if (x0.assigned())
@@ -104,7 +104,7 @@ namespace Gecode { namespace Float { namespace Arithmetic {
   forceinline ExecStatus
   Sqr<View>::post(Home home, View x0, View x1) {
     GECODE_ME_CHECK(x1.gq(home,0));
-    if (same(x0,x1)) {
+    if (x0 == x1) {
       if (x0.assigned())
         return ((x0.val() == 0) || (x0.val() == 1))? ES_OK : ES_FAILED;
       GECODE_ME_CHECK(x1.lq(home,1));
@@ -169,7 +169,7 @@ namespace Gecode { namespace Float { namespace Arithmetic {
   ExecStatus
   Sqrt<A,B>::post(Home home, A x0, B x1) {
     GECODE_ME_CHECK(x0.gq(home,0));
-    if (same(x0,x1)) {
+    if (x0 == x1) {
       if (x0.assigned())
         return ((x0.val() == 0) || (x0.val() == 1))? ES_OK : ES_FAILED;
       GECODE_ME_CHECK(x0.lq(home,1));
@@ -195,7 +195,7 @@ namespace Gecode { namespace Float { namespace Arithmetic {
   template<class A, class B>
   ExecStatus
   Sqrt<A,B>::propagate(Space& home, const ModEventDelta&) {
-    if (same(x0,x1)) {
+    if (x0 == x1) {
       if (x0.max() < 1) GECODE_ME_CHECK(x0.eq(home,0));
       else if (x0.min() > 0) GECODE_ME_CHECK(x0.eq(home,1));
       if (x0.assigned())

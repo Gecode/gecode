@@ -61,7 +61,7 @@ namespace Gecode { namespace Set { namespace Rel {
   template<>
   forceinline bool
   same(SetView x, SetView y) {
-    return ::Gecode::same(x,y);
+    return x == y;
   }
   
   forceinline bool

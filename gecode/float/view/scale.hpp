@@ -181,6 +181,19 @@ namespace Gecode { namespace Float {
     a=y.a;
   }
 
+  /*
+   * View comparison
+   *
+   */
+  forceinline bool
+  operator ==(const ScaleView& x, const ScaleView& y) {
+    return (x.base() == y.base()) && (x.scale() == y.scale());
+  }
+  forceinline bool
+  operator !=(const ScaleView& x, const ScaleView& y) {
+    return !(x == y);
+  }
+
 }}
 
 // STATISTICS: float-var

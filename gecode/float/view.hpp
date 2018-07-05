@@ -244,6 +244,16 @@ namespace Gecode { namespace Float {
   std::basic_ostream<Char,Traits>&
   operator <<(std::basic_ostream<Char,Traits>& os, const MinusView& x);
 
+  /** \name View comparison
+   *  \relates Gecode::Float::MinusView
+   */
+  //@{
+  /// Test whether views \a x and \a y are the same
+  bool operator ==(const MinusView& x, const MinusView& y);
+  /// Test whether views \a x and \a y are not the same
+  bool operator !=(const MinusView& x, const MinusView& y);
+  //@}
+
 
   /**
    * \brief OffsetView float view
@@ -356,6 +366,16 @@ namespace Gecode { namespace Float {
   template<class Char, class Traits>
   std::basic_ostream<Char,Traits>&
   operator <<(std::basic_ostream<Char,Traits>& os, const OffsetView& x);
+
+  /** \name View comparison
+   *  \relates Gecode::Float::OffsetView
+   */
+  //@{
+  /// Test whether views \a x and \a y are the same
+  bool operator ==(const OffsetView& x, const OffsetView& y);
+  /// Test whether views \a x and \a y are not the same
+  bool operator !=(const OffsetView& x, const OffsetView& y);
+  //@}
 
   /**
    * \brief Scale float view
@@ -470,7 +490,17 @@ namespace Gecode { namespace Float {
   std::basic_ostream<Char,Traits>&
   operator <<(std::basic_ostream<Char,Traits>& os, const ScaleView& x);
 
-} }
+  /** \name View comparison
+   *  \relates Gecode::Float::ScaleView
+   */
+  //@{
+  /// Test whether views \a x and \a y are the same
+  bool operator ==(const ScaleView& x, const ScaleView& y);
+  /// Test whether views \a x and \a y are not the same
+  bool operator !=(const ScaleView& x, const ScaleView& y);
+  //@}
+
+}}
 
 #include <gecode/float/var/float.hpp>
 #include <gecode/float/view/float.hpp>

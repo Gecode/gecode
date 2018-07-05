@@ -1417,7 +1417,7 @@ namespace Gecode {
       y[i] = x[i];
     sort(y,n);
     for (int i = n-1; i--; )
-      if (!y[i].assigned() && __same(y[i+1],y[i])) {
+      if (!y[i].assigned() && (y[i+1] == y[i])) {
         r.free<View>(y,n);
         return true;
       }
@@ -1431,7 +1431,7 @@ namespace Gecode {
     if (y.assigned())
       return false;
     for (int i = n; i--; )
-      if (__same(x[i],y))
+      if (x[i] == y)
         return true;
     return false;
   }
@@ -1444,7 +1444,7 @@ namespace Gecode {
     sort(x,n);
     int j = 0;
     for (int i = 1; i<n; i++)
-      if (!__same(x[j],x[i]))
+      if (x[j] != x[i])
         x[++j] = x[i];
     n = j+1;
   }

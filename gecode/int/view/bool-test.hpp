@@ -39,19 +39,19 @@ namespace Gecode { namespace Int {
    */
   forceinline BoolTest
   bool_test(const BoolView& b0, const BoolView& b1) {
-    return same(b0,b1) ? BT_SAME : BT_NONE;
+    return (b0 == b1) ? BT_SAME : BT_NONE;
   }
   forceinline BoolTest
   bool_test(const BoolView& b0, const NegBoolView& b1) {
-    return same(b0,b1.base()) ? BT_COMP : BT_NONE;
+    return (b0 == b1.base()) ? BT_COMP : BT_NONE;
   }
   forceinline BoolTest
   bool_test(const NegBoolView& b0, const BoolView& b1) {
-    return same(b0.base(),b1) ? BT_COMP : BT_NONE;
+    return (b0.base() == b1) ? BT_COMP : BT_NONE;
   }
   forceinline BoolTest
   bool_test(const NegBoolView& b0, const NegBoolView& b1) {
-    return same(b0,b1) ? BT_SAME : BT_NONE;
+    return (b0 == b1) ? BT_SAME : BT_NONE;
   }
 
 }}

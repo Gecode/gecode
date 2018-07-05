@@ -55,13 +55,13 @@ namespace Gecode { namespace Int { namespace Rel {
   template<>
   forceinline bool
   Lq<IntView,IntView>::same(IntView x0, IntView x1) {
-    return Gecode::same(x0,x1);
+    return x0 == x1;
   }
 
   template<>
   forceinline bool
   Lq<BoolView,BoolView>::same(BoolView x0, BoolView x1) {
-    return Gecode::same(x0,x1);
+    return x0 == x1;
   }
 
   template<class V0, class V1>
@@ -115,19 +115,19 @@ namespace Gecode { namespace Int { namespace Rel {
   template<>
   forceinline bool
   Le<IntView,IntView>::same(IntView x0, IntView x1) {
-    return Gecode::same(x0,x1);
+    return x0 == x1;
   }
 
   template<>
   forceinline bool
   Le<MinusView,MinusView>::same(MinusView x0, MinusView x1) {
-    return Gecode::same(x0,x1);
+    return x0 == x1;
   }
 
   template<>
   forceinline bool
   Le<BoolView,BoolView>::same(BoolView x0, BoolView x1) {
-    return Gecode::same(x0,x1);
+    return x0 == x1;
   }
 
   template<class V0, class V1>
@@ -262,7 +262,7 @@ namespace Gecode { namespace Int { namespace Rel {
       int n = x.size();
       for (int i=0; i<n; i++)
         for (int j=n-1; j>i; j--)
-          if (same(x[i],x[j])) {
+          if (x[i] != x[j]) {
             if (i+1 != j) {
               // Create equality propagator for elements i+1 ... j
               ViewArray<View> y(home,j-i);
@@ -472,7 +472,7 @@ namespace Gecode { namespace Int { namespace Rel {
         return ES_OK;
       return Le<View,View>::post(home,x1,x0);
     }
-    if (!same(x0,x1)) {
+    if (x0 != x1) {
       switch (rtest_lq(x0,x1)) {
       case RT_TRUE:
         if (rm != RM_IMP)

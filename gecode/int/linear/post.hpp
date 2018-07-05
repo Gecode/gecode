@@ -132,7 +132,7 @@ namespace Gecode { namespace Int { namespace Linear {
         Limits::check(t[i].a,"Int::linear");
         long long int a = t[i].a;
         View x = t[i].x;
-        while ((++i < n) && same(t[i].x,x)) {
+        while ((++i < n) && (t[i].x == x)) {
           a += t[i].a;
           Limits::check(a,"Int::linear");
         }

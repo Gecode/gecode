@@ -80,11 +80,11 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   MaxBnd<View>::post(Home home, View x0, View x1, View x2) {
     GECODE_ME_CHECK(x2.gq(home,std::max(x0.min(),x1.min())));
     GECODE_ME_CHECK(x2.lq(home,std::max(x0.max(),x1.max())));
-    if (same(x0,x1))
+    if (x0 == x1)
       return Rel::EqBnd<View,View>::post(home,x0,x2);
-    if (same(x0,x2))
+    if (x0 == x2)
       return Rel::Lq<View,View>::post(home,x1,x2);
-    if (same(x1,x2))
+    if (x1 == x2)
       return Rel::Lq<View,View>::post(home,x0,x2);
     (void) new (home) MaxBnd<View>(home,x0,x1,x2);
     return ES_OK;
@@ -242,11 +242,11 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   MaxDom<View>::post(Home home, View x0, View x1, View x2) {
     GECODE_ME_CHECK(x2.gq(home,std::max(x0.min(),x1.min())));
     GECODE_ME_CHECK(x2.lq(home,std::max(x0.max(),x1.max())));
-    if (same(x0,x1))
+    if (x0 == x1)
       return Rel::EqDom<View,View>::post(home,x0,x2);
-    if (same(x0,x2))
+    if (x0 == x2)
       return Rel::Lq<View,View>::post(home,x1,x2);
-    if (same(x1,x2))
+    if (x1 == x2)
       return Rel::Lq<View,View>::post(home,x0,x2);
     (void) new (home) MaxDom<View>(home,x0,x1,x2);
     return ES_OK;

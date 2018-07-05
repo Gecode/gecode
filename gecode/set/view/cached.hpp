@@ -377,6 +377,18 @@ namespace Gecode { namespace Set {
   }
 
   template<class View>
+  forceinline bool
+  operator ==(const CachedView<View>& x, const CachedView<View>& y) {
+    return x.base() == y.base();
+  }
+
+  template<class View>
+  forceinline bool
+  operator !=(const CachedView<View>& x, const CachedView<View>& y) {
+    return x.base() != y.base();
+  }
+
+  template<class View>
   forceinline
   GlbDiffRanges<View>::GlbDiffRanges(const CachedView<View>& x)
     : gr(x.base()), cr(x.glbCache) {

@@ -50,7 +50,7 @@ namespace Gecode { namespace Int { namespace Rel {
       GECODE_ME_CHECK(x1.eq(home,x0.val()));
     } else if (x1.assigned()) {
       GECODE_ME_CHECK(x0.eq(home,x1.val()));
-    } else if (!same(x0,x1)) {
+    } else if (x0 != x1) {
       (void) new (home) EqVal<View0,View1>(home,x0,x1);
     }
     return ES_OK;
@@ -110,7 +110,7 @@ namespace Gecode { namespace Int { namespace Rel {
       GECODE_ME_CHECK(x1.eq(home,x0.val()));
     } else if (x1.assigned()) {
       GECODE_ME_CHECK(x0.eq(home,x1.val()));
-    } else if (!same(x0,x1)) {
+    } else if (x0 != x1) {
       GECODE_ME_CHECK(x0.lq(home,x1.max()));
       GECODE_ME_CHECK(x1.lq(home,x0.max()));
       GECODE_ME_CHECK(x0.gq(home,x1.min()));
@@ -178,7 +178,7 @@ namespace Gecode { namespace Int { namespace Rel {
       GECODE_ME_CHECK(x1.eq(home,x0.val()));
     } else if (x1.assigned()) {
       GECODE_ME_CHECK(x0.eq(home,x1.val()));
-    } else if (!same(x0,x1)) {
+    } else if (x0 != x1) {
       GECODE_ME_CHECK(x0.lq(home,x1.max()));
       GECODE_ME_CHECK(x1.lq(home,x0.max()));
       GECODE_ME_CHECK(x0.gq(home,x1.min()));
@@ -502,7 +502,7 @@ namespace Gecode { namespace Int { namespace Rel {
         return ES_OK;
       return Nq<View,View>::post(home,x0,x1);
     }
-    if (!same(x0,x1)) {
+    if (x0 != x1) {
       (void) new (home) ReEqDom(home,x0,x1,b);
     } else if (rm != RM_IMP) {
       GECODE_ME_CHECK(b.one(home));
@@ -576,7 +576,7 @@ namespace Gecode { namespace Int { namespace Rel {
         return ES_OK;
       return Nq<View,View>::post(home,x0,x1);
     }
-    if (!same(x0,x1)) {
+    if (x0 != x1) {
       (void) new (home) ReEqBnd(home,x0,x1,b);
     } else if (rm != RM_IMP) {
       GECODE_ME_CHECK(b.one(home));

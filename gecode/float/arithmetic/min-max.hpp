@@ -79,7 +79,7 @@ namespace Gecode { namespace Float { namespace Arithmetic {
     GECODE_ME_CHECK(x2.eq(home,min(x0.domain(),x1.domain())));
     GECODE_ME_CHECK(x0.gq(home,x2.min()));
     GECODE_ME_CHECK(x1.gq(home,x2.min()));
-    if (same(x0,x1)) {
+    if (x0 == x1) {
       GECODE_ME_CHECK(x0.lq(home,x2.max()));
     } else {
       if (!overlap(x1.val(),x2.val())) GECODE_ME_CHECK(x0.lq(home,x2.max()));
@@ -131,7 +131,7 @@ namespace Gecode { namespace Float { namespace Arithmetic {
     GECODE_ME_CHECK(x2.eq(home,max(x0.domain(),x1.domain())));
     GECODE_ME_CHECK(x0.lq(home,x2.max()));
     GECODE_ME_CHECK(x1.lq(home,x2.max()));
-    if (same(x0,x1)) {
+    if (x0 == x1) {
       GECODE_ME_CHECK(x0.gq(home,x2.min()));
     } else {
       if (!overlap(x1.val(),x2.val())) GECODE_ME_CHECK(x0.gq(home,x2.min()));

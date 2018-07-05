@@ -398,8 +398,13 @@ namespace Gecode { namespace Int {
    */
   template<class View>
   forceinline bool
-  same(const CachedView<View>& x, const CachedView<View>& y) {
-    return same(x.base(),y.base()) && (x.offset() == y.offset());
+  operator ==(const CachedView<View>& x, const CachedView<View>& y) {
+    return (x.base() == y.base()) && (x.offset() == y.offset());
+  }
+  template<class View>
+  forceinline bool
+  operator !=(const CachedView<View>& x, const CachedView<View>& y) {
+    return !(x == y);
   }
   template<class View>
   forceinline bool
