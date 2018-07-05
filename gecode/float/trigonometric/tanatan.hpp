@@ -95,7 +95,7 @@ namespace Gecode { namespace Float { namespace Trigonometric {
     int n_min = static_cast<int>(r.div_up(x0.min() + pi_half_upper(), pi_upper()));
     int n_max = static_cast<int>(r.div_up(x0.max() + pi_half_upper(), pi_upper()));
 
-    if (same(x0,x1)) {
+    if (x0 == x1) {
       #define I0__PI_2I    FloatVal(0,pi_half_upper())
       if (I0__PI_2I.in(x0.max()))  GECODE_ME_CHECK(x0.lq(home,0));
       if (I0__PI_2I.in(-x0.min())) GECODE_ME_CHECK(x0.gq(home,0));
@@ -149,7 +149,7 @@ namespace Gecode { namespace Float { namespace Trigonometric {
   template<class A, class B>
   ExecStatus
   Tan<A,B>::post(Home home, A x0, B x1) {
-    if (same(x0,x1)) {
+    if (x0 == x1) {
       #define I0__PI_2I    FloatVal(0,pi_half_upper())
       if (I0__PI_2I.in(x0.max()))  GECODE_ME_CHECK(x0.lq(home,0));
       if (I0__PI_2I.in(-x0.min())) GECODE_ME_CHECK(x0.gq(home,0));
@@ -191,7 +191,7 @@ namespace Gecode { namespace Float { namespace Trigonometric {
   template<class A, class B>
   ExecStatus
   ATan<A,B>::post(Home home, A x0, B x1) {
-    if (same(x0,x1)) {
+    if (x0 == x1) {
       GECODE_ME_CHECK(x0.eq(home,0.0));
     } else {
       GECODE_ME_CHECK(x1.eq(home,atan(x0.domain())));
