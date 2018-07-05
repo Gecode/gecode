@@ -430,8 +430,6 @@ namespace Gecode { namespace Int {
   bool operator ==(const MinusView& x, const MinusView& y);
   /// Test whether views \a x and \a y are not the same
   bool operator !=(const MinusView& x, const MinusView& y);
-  /// Test whether view \a x comes before \a y (arbitrary order)
-  bool before(const MinusView& x, const MinusView& y);
   //@}
 
   /**
@@ -587,6 +585,12 @@ namespace Gecode { namespace Int {
     /// Update this view to be a clone of view \a y
     void update(Space& home, OffsetView& y);
     //@}
+
+    /// \name Ordering
+    //@{
+    /// Whether this view comes before view \a y (arbitray order)
+    bool operator <(const OffsetView& y) const;
+    //@}
   };
 
   /**
@@ -605,8 +609,6 @@ namespace Gecode { namespace Int {
   bool operator ==(const OffsetView& x, const OffsetView& y);
   /// Test whether views \a x and \a y are not the same
   bool operator !=(const OffsetView& x, const OffsetView& y);
-  /// Test whether view \a x comes before \a y (arbitrary order)
-  bool before(const OffsetView& x, const OffsetView& y);
   //@}
 
   /**
@@ -787,6 +789,12 @@ namespace Gecode { namespace Int {
     /// Update this view to be a clone of view \a y
     void update(Space& home, ScaleView<Val,UnsVal>& y);
     //@}
+
+    /// \name Ordering
+    //@{
+    /// Whether this view comes before view \a y (arbitray order)
+    bool operator <(const ScaleView<Val,UnsVal>& y) const;
+    //@}
   };
 
   /**
@@ -829,9 +837,6 @@ namespace Gecode { namespace Int {
   template<class Val, class UnsVal>
   bool operator !=(const ScaleView<Val,UnsVal>& x,
                    const ScaleView<Val,UnsVal>& y);
-  /// Test whether view \a x comes before \a y (arbitrary order)
-  template<class Val, class UnsVal>
-  bool before(const ScaleView<Val,UnsVal>& x, const ScaleView<Val,UnsVal>& y);
   //@}
 
 
@@ -971,6 +976,12 @@ namespace Gecode { namespace Int {
     /// Update this view to be a clone of view \a y
     void update(Space& home, ConstIntView& y);
     //@}
+
+    /// \name Ordering
+    //@{
+    /// Whether this view comes before view \a y (arbitray order)
+    bool operator <(const ConstIntView& y) const;
+    //@}
   };
 
   /**
@@ -990,8 +1001,6 @@ namespace Gecode { namespace Int {
   bool operator ==(const ConstIntView& x, const ConstIntView& y);
   /// Test whether views \a x and \a y are not the same
   bool operator !=(const ConstIntView& x, const ConstIntView& y);
-  /// Test whether view \a x is before \a y (arbitrary order)
-  bool before(const ConstIntView& x, const ConstIntView& y);
   //@}
 
 
@@ -1139,8 +1148,6 @@ namespace Gecode { namespace Int {
   bool operator ==(const ZeroIntView& x, const ZeroIntView& y);
   /// Test whether views \a x and \a y are the same
   bool operator !=(const ZeroIntView& x, const ZeroIntView& y);
-  /// Test whether view \a x is before \a y (arbitrary order)
-  bool before(const ZeroIntView& x, const ZeroIntView& y);
   //@}
 
   template<class View> class ViewDiffRanges;
@@ -1315,7 +1322,7 @@ namespace Gecode { namespace Int {
   };
 
   /**
-   * \brief Print integer offset view
+   * \brief Print integer cached view
    * \relates Gecode::Int::CachedView
    */
   template<class Char, class Traits, class View>
@@ -1332,9 +1339,6 @@ namespace Gecode { namespace Int {
   /// Test whether views \a x and \a y are not the same
   template<class View>
   bool operator !=(const CachedView<View>& x, const CachedView<View>& y);
-  /// Test whether view \a x comes before \a y (arbitrary order)
-  template<class View>
-  bool before(const CachedView<View>& x, const CachedView<View>& y);
   //@}
 
   /**
@@ -1654,8 +1658,6 @@ namespace Gecode { namespace Int {
   bool operator ==(const NegBoolView& x, const NegBoolView& y);
   /// Test whether views \a x and \a y are not the same
   bool operator !=(const NegBoolView& x, const NegBoolView& y);
-  /// Test whether view \a x comes before \a y (arbitrary order)
-  bool before(const NegBoolView& x, const NegBoolView& y);
   //@}
 
   /**

@@ -231,6 +231,19 @@ namespace Gecode { namespace Int {
   }
 
 
+  /*
+   * Ordering
+   *
+   */
+  template<class Val, class UnsVal>
+  forceinline bool
+  ScaleView<Val,UnsVal>::operator <(const ScaleView<Val,UnsVal>& y) const {
+    return ((base() < y.base())
+            || ((base() == y.base()) && (scale() < y.scale())));
+  }
+
+
+
 
   /**
    * \brief %Range iterator for integer-precision scale integer views
@@ -316,12 +329,6 @@ namespace Gecode { namespace Int {
   forceinline bool
   operator !=(const ScaleView<Val,UnsVal>& x, const ScaleView<Val,UnsVal>& y) {
     return !(x == y);
-  }
-  template<class Val, class UnsVal>
-  forceinline bool
-  before(const ScaleView<Val,UnsVal>& x, const ScaleView<Val,UnsVal>& y) {
-    return before(x.base(),y.base())
-      || ((x.base() == y.base()) && (x.scale() < y.scale()));
   }
 
 }}

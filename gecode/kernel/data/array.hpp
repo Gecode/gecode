@@ -238,14 +238,6 @@ namespace Gecode {
     int  n;
     /// Views
     View* x;
-    /// Sort order for views
-    template<class X>
-    class ViewLess {
-    public:
-      bool operator ()(const X&, const X&);
-    };
-    /// Sort \a n views \a x according to \a ViewLess
-    static void sort(View* x, int n);
   public:
     /// \name Associated types
     //@{
@@ -765,11 +757,6 @@ namespace Gecode {
   protected:
     using ArgArrayBase<Var>::a;
     using ArgArrayBase<Var>::n;
-    /// Sort order for variables
-    class VarLess {
-    public:
-      bool operator ()(const Var&, const Var&);
-    };
   public:
     using ArgArrayBase<Var>::size;
     /// \name Constructors and initialization
@@ -1377,51 +1364,20 @@ namespace Gecode {
   }
 
   template<class View>
-  forceinline bool
-  __before(const View& x, const View& y) {
-    return before(x,y);
-  }
-
-  template<class View> template<class X>
-  forceinline bool
-  ViewArray<View>::ViewLess<X>::operator ()(const X& a, const X& b) {
-    return __before(a,b);
-  }
-
-  template<class View>
-  void
-  ViewArray<View>::sort(View* y, int m) {
-    ViewLess<View> vl;
-    Support::quicksort<View,ViewLess<View>>(y,m,vl);
-  }
-
-  template<class X, class Y>
-  forceinline bool
-  __same(const X& x, const Y& y) {
-    return same(x,y);
-  }
-  template<class X, class Y>
-  forceinline bool
-  __shared(const X& x, const Y& y) {
-    return shared(x,y);
-  }
-
-  template<class View>
   bool
   ViewArray<View>::same(void) const {
     if (n < 2)
       return false;
     Region r;
     View* y = r.alloc<View>(n);
+    int j=0;
     for (int i = n; i--; )
-      y[i] = x[i];
-    sort(y,n);
+      if (!x[i].assigned())
+        y[j++] = x[i];
+    Support::quicksort<View>(y,j);
     for (int i = n-1; i--; )
-      if (!y[i].assigned() && (y[i+1] == y[i])) {
-        r.free<View>(y,n);
+      if (y[i+1] == y[i])
         return true;
-      }
-    r.free<View>(y,n);
     return false;
   }
 
@@ -1441,7 +1397,7 @@ namespace Gecode {
   ViewArray<View>::unique(void) {
     if (n < 2)
       return;
-    sort(x,n);
+    Support::quicksort<View>(x,n);
     int j = 0;
     for (int i = 1; i<n; i++)
       if (x[j] != x[i])
@@ -1920,12 +1876,6 @@ namespace Gecode {
     xa[0] = x;
     return xa.template concat
       <typename ArrayTraits<VarArgArray<Var>>::ArgsType>(y);
-  }
-
-  template<class Var>
-  forceinline bool
-  VarArgArray<Var>::VarLess::operator ()(const Var& a, const Var& b) {
-    return a.varimp() < b.varimp();
   }
 
   template<class Var>

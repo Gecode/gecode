@@ -237,6 +237,16 @@ namespace Gecode { namespace Int {
   }
 
 
+  /*
+   * Ordering
+   *
+   */
+  forceinline bool
+  ConstIntView::operator <(const ConstIntView& y) const {
+    return min() < y.min();
+  }
+
+
   /**
    * \brief %Range iterator for constant integer views
    * \ingroup TaskActorIntView
@@ -316,10 +326,6 @@ namespace Gecode { namespace Int {
   forceinline bool
   operator !=(const ConstIntView& x, const ConstIntView& y) {
     return !(x == y);
-  }
-  forceinline bool
-  before(const ConstIntView& x, const ConstIntView& y) {
-    return false;
   }
 
 }}

@@ -182,6 +182,17 @@ namespace Gecode { namespace Float {
   }
 
   /*
+   * Ordering
+   *
+   */
+  forceinline bool
+  ScaleView::operator <(const ScaleView& y) const {
+    return ((base() < y.base())
+            || ((base() == y.base()) && (scale() < y.scale())));
+  }
+
+
+  /*
    * View comparison
    *
    */

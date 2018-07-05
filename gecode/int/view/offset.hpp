@@ -265,6 +265,17 @@ namespace Gecode { namespace Int {
   }
 
 
+  /*
+   * Ordering
+   *
+   */
+  forceinline bool
+  OffsetView::operator <(const OffsetView& y) const {
+    return ((base() < y.base())
+            || ((base() == y.base()) && (offset() < y.offset())));
+  }
+
+
   /**
    * \brief %Range iterator for offset integer views
    * \ingroup TaskActorIntView
@@ -310,11 +321,6 @@ namespace Gecode { namespace Int {
   forceinline bool
   operator !=(const OffsetView& x, const OffsetView& y) {
     return !(x == y);
-  }
-  forceinline bool
-  before(const OffsetView& x, const OffsetView& y) {
-    return before(x.base(),y.base())
-      || ((x.base() == y.base()) && (x.offset() < y.offset()));
   }
 
 }}

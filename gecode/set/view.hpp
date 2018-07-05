@@ -175,7 +175,6 @@ namespace Gecode { namespace Set {
   class ConstSetView;
   bool operator ==(const ConstSetView&, const ConstSetView&);
   bool operator !=(const ConstSetView&, const ConstSetView&);
-  bool before(const ConstSetView&, const ConstSetView&);
 
   /**
    * \brief Constant view
@@ -191,8 +190,6 @@ namespace Gecode { namespace Set {
                                          const Gecode::Set::ConstSetView&);
     friend bool Gecode::Set::operator !=(const Gecode::Set::ConstSetView&,
                                          const Gecode::Set::ConstSetView&);
-    friend bool Gecode::Set::before(const Gecode::Set::ConstSetView&,
-                                    const Gecode::Set::ConstSetView&);
   private:
     int *ranges;
     int size;
@@ -302,6 +299,11 @@ namespace Gecode { namespace Set {
     bool lubAny(const Delta& d) const;
     //@}
 
+    /// \name Ordering
+    //@{
+    /// Whether this view comes before view \a y (arbitray order)
+    bool operator <(const ConstSetView& y) const;
+    //@}
   };
 
   /**
@@ -320,8 +322,6 @@ namespace Gecode { namespace Set {
   bool operator ==(const ConstSetView& x, const ConstSetView& y);
   /// Test whether views \a x and \a y are not the same
   bool operator !=(const ConstSetView& x, const ConstSetView& y);
-  /// Test whether view \a x comes before \a y (arbitrary order)
-  bool before(const ConstSetView& x, const ConstSetView& y);
   //@}
 
 

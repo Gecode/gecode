@@ -177,6 +177,17 @@ namespace Gecode { namespace Float {
   }
 
   /*
+   * Ordering
+   *
+   */
+  forceinline bool
+  OffsetView::operator <(const OffsetView& y) const {
+    return ((base() < y.base())
+            || ((base() == y.base()) && (offset() < y.offset())));
+  }
+
+
+  /*
    * View comparison
    *
    */

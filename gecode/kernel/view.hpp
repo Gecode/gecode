@@ -115,6 +115,12 @@ namespace Gecode {
     /// Update this view to be a clone of view \a y
     void update(Space& home, ConstView& y);
     //@}
+
+    /// \name Ordering
+    //@{
+    /// Whether this view comes before view \a y (arbitray order)
+    bool operator <(const ConstView& y) const;
+    //@}
   };
 
 
@@ -207,6 +213,12 @@ namespace Gecode {
     /// Update this view to be a clone of view \a y
     void update(Space& home, VarImpView<Var>& y);
     //@}
+
+    /// \name Ordering
+    //@{
+    /// Whether this view comes before view \a y (arbitray order)
+    bool operator <(const VarImpView& y) const;
+    //@}
   };
 
   /** \name View comparison
@@ -219,9 +231,6 @@ namespace Gecode {
   /// Test whether views \a x and \a y are not the same
   template<class VarA, class VarB>
   bool operator !=(const VarImpView<VarA>& x, const VarImpView<VarB>& y);
-  /// Test whether view \a x comes before \a y (arbitrary order)
-  template<class ViewA, class ViewB>
-  bool before(const ViewA& x, const ViewB& y);
   //@}
 
 
@@ -312,6 +321,12 @@ namespace Gecode {
     //@{
     /// Update this view to be a clone of view \a y
     void update(Space& home, DerivedView<View>& y);
+    //@}
+
+    /// \name Ordering
+    //@{
+    /// Whether this view comes before view \a y (arbitray order)
+    bool operator <(const DerivedView<View>& y) const;
     //@}
   };
 
@@ -457,6 +472,12 @@ namespace Gecode {
   forceinline void
   ConstView<View>::update(Space&, ConstView<View>&) {
   }
+  template<class View>
+  forceinline bool
+  ConstView<View>::operator <(const ConstView<View>& y) const {
+    return true;
+  }
+
 
   /*
    * Variable view: contains a pointer to a variable implementation
@@ -558,6 +579,12 @@ namespace Gecode {
   VarImpView<Var>::update(Space& home, VarImpView<Var>& y) {
     x = y.x->copy(home);
   }
+  template<class Var>
+  forceinline bool
+  VarImpView<Var>::operator <(const VarImpView<Var>& y) const {
+    return this->varimp() < y.varimp();
+  }
+
 
   /*
    * Derived view: contain the base view from which they are derived
@@ -666,6 +693,11 @@ namespace Gecode {
   DerivedView<View>::update(Space& home, DerivedView<View>& y) {
     x.update(home,y.x);
   }
+  template<class View>
+  forceinline bool
+  DerivedView<View>::operator <(const DerivedView<View>& y) const {
+    return base() < y.base();
+  }
 
 
   /*
@@ -769,19 +801,6 @@ namespace Gecode {
   forceinline bool
   operator !=(const VarImpView<VarX>& x, const VarImpView<VarY>& y) {
     return x.varimp() != y.varimp();
-  }
-
-
-
-
-  /*
-   * Tests whether one view is before the other
-   *
-   */
-  template<class ViewA, class ViewB>
-  forceinline bool
-  before(const ViewA& x, const ViewB& y) {
-    return x.varimp() < y.varimp();
   }
 
 
