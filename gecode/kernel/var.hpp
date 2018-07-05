@@ -80,9 +80,13 @@ namespace Gecode {
     /// \name Variable comparison
     //@{
     /// Test whether variable is the same as \a y
-    bool same(const VarImpVar<VarImp>& y) const;
+    bool operator ==(const VarImpVar<VarImp>& y) const;
+    /// Test whether variable is noy the same as \a y
+    bool operator !=(const VarImpVar<VarImp>& y) const;
     /// Test whether variable comes before \a y (arbitrary order)
-    bool before(const VarImpVar<VarImp>& y) const;
+    bool operator <(const VarImpVar<VarImp>& y) const;
+    /// Test whether variable comes after \a y (arbitrary order)
+    bool operator >(const VarImpVar<VarImp>& y) const;
     //@}
   };
 
@@ -126,13 +130,23 @@ namespace Gecode {
   }
   template<class VarImp>
   forceinline bool
-  VarImpVar<VarImp>::same(const VarImpVar<VarImp>& y) const {
+  VarImpVar<VarImp>::operator ==(const VarImpVar<VarImp>& y) const {
     return varimp() == y.varimp();
   }
   template<class VarImp>
   forceinline bool
-  VarImpVar<VarImp>::before(const VarImpVar<VarImp>& y) const {
+  VarImpVar<VarImp>::operator !=(const VarImpVar<VarImp>& y) const {
+    return varimp() != y.varimp();
+  }
+  template<class VarImp>
+  forceinline bool
+  VarImpVar<VarImp>::operator <(const VarImpVar<VarImp>& y) const {
     return varimp() < y.varimp();
+  }
+  template<class VarImp>
+  forceinline bool
+  VarImpVar<VarImp>::operator >(const VarImpVar<VarImp>& y) const {
+    return varimp() > y.varimp();
   }
 
 }
