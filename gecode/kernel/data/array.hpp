@@ -1374,8 +1374,10 @@ namespace Gecode {
     for (int i = n; i--; )
       if (!x[i].assigned())
         y[j++] = x[i];
+    if (j < 2)
+      return false;
     Support::quicksort<View>(y,j);
-    for (int i = n-1; i--; )
+    for (int i = j-1; i--; )
       if (y[i+1] == y[i])
         return true;
     return false;
