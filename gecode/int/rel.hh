@@ -494,8 +494,6 @@ namespace Gecode { namespace Int { namespace Rel {
   protected:
     using MixBinaryPropagator<V0,PC_INT_BND,V1,PC_INT_BND>::x0;
     using MixBinaryPropagator<V0,PC_INT_BND,V1,PC_INT_BND>::x1;
-    /// Whether views refer to same variable
-    static bool same(V0 x0, V1 x1);
     /// Constructor for cloning \a p
     Lq(Space& home, Lq& p);
     /// Constructor for posting
@@ -520,8 +518,6 @@ namespace Gecode { namespace Int { namespace Rel {
   protected:
     using MixBinaryPropagator<V0,PC_INT_BND,V1,PC_INT_BND>::x0;
     using MixBinaryPropagator<V0,PC_INT_BND,V1,PC_INT_BND>::x1;
-    /// Whether views refer to same variable
-    static bool same(V0 x0, V1 x1);
     /// Constructor for cloning \a p
     Le(Space& home, Le& p);
     /// Constructor for posting

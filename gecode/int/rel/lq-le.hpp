@@ -46,30 +46,11 @@ namespace Gecode { namespace Int { namespace Rel {
     : MixBinaryPropagator<V0,PC_INT_BND,V1,PC_INT_BND>(home,x0,x1) {}
 
   template<class V0, class V1>
-  forceinline bool
-  Lq<V0,V1>::same(V0 x0, V1 x1) {
-    (void) x0; (void) x1;
-    return false;
-  }
-
-  template<>
-  forceinline bool
-  Lq<IntView,IntView>::same(IntView x0, IntView x1) {
-    return x0 == x1;
-  }
-
-  template<>
-  forceinline bool
-  Lq<BoolView,BoolView>::same(BoolView x0, BoolView x1) {
-    return x0 == x1;
-  }
-
-  template<class V0, class V1>
   ExecStatus
   Lq<V0,V1>::post(Home home, V0 x0, V1 x1) {
     GECODE_ME_CHECK(x0.lq(home,x1.max()));
     GECODE_ME_CHECK(x1.gq(home,x0.min()));
-    if (!same(x0,x1) && (x0.max() > x1.min()))
+    if ((x0 != x1) && (x0.max() > x1.min()))
       (void) new (home) Lq<V0,V1>(home,x0,x1);
     return ES_OK;
   }
@@ -106,34 +87,9 @@ namespace Gecode { namespace Int { namespace Rel {
     : MixBinaryPropagator<V0,PC_INT_BND,V1,PC_INT_BND>(home,x0,x1) {}
 
   template<class V0, class V1>
-  forceinline bool
-  Le<V0,V1>::same(V0 x0, V1 x1) {
-    (void) x0; (void) x1;
-    return false;
-  }
-
-  template<>
-  forceinline bool
-  Le<IntView,IntView>::same(IntView x0, IntView x1) {
-    return x0 == x1;
-  }
-
-  template<>
-  forceinline bool
-  Le<MinusView,MinusView>::same(MinusView x0, MinusView x1) {
-    return x0 == x1;
-  }
-
-  template<>
-  forceinline bool
-  Le<BoolView,BoolView>::same(BoolView x0, BoolView x1) {
-    return x0 == x1;
-  }
-
-  template<class V0, class V1>
   ExecStatus
   Le<V0,V1>::post(Home home, V0 x0, V1 x1) {
-    if (same(x0,x1))
+    if (x0 == x1)
       return ES_FAILED;
     GECODE_ME_CHECK(x0.le(home,x1.max()));
     GECODE_ME_CHECK(x1.gr(home,x0.min()));
@@ -262,7 +218,7 @@ namespace Gecode { namespace Int { namespace Rel {
       int n = x.size();
       for (int i=0; i<n; i++)
         for (int j=n-1; j>i; j--)
-          if (x[i] != x[j]) {
+          if (x[i] == x[j]) {
             if (i+1 != j) {
               // Create equality propagator for elements i+1 ... j
               ViewArray<View> y(home,j-i);
