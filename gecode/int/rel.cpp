@@ -467,8 +467,6 @@ namespace Gecode {
           y[i] = x[x.size()-1-i];
         GECODE_ES_FAIL((Rel::NaryLqLe<IntView,1>::post(home,y)));
       }
-      for (int i=x.size()-1; i--; )
-        GECODE_ES_FAIL((Rel::Le<IntView,IntView>::post(home,x[i+1],x[i])));
       break;
     case IRT_GQ:
       {
