@@ -221,18 +221,6 @@ namespace Gecode {
     //@}
   };
 
-  /** \name View comparison
-   *  \relates VarImpView
-   */
-  //@{
-  /// Test whether views \a x and \a y are the same
-  template<class VarA, class VarB>
-  bool operator ==(const VarImpView<VarA>& x, const VarImpView<VarB>& y);
-  /// Test whether views \a x and \a y are not the same
-  template<class VarA, class VarB>
-  bool operator !=(const VarImpView<VarA>& x, const VarImpView<VarB>& y);
-  //@}
-
 
   /**
    * \brief Base-class for derived views
@@ -747,7 +735,7 @@ namespace Gecode {
   operator ==(const DerivedView<View>&, const VarImpView<Var>&) {
     return false;
   }
-  /// Test whether two views are the same
+  /// Test whether two views are not the same
   template<class ViewX, class ViewY>
   forceinline bool
   operator ==(const DerivedView<ViewX>&, const DerivedView<ViewY>&) {
