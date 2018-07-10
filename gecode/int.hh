@@ -228,16 +228,6 @@ namespace Gecode {
     /// Initialize with range iterator \a i
     template<class I>
     explicit IntSet(const I& i);
-    /// Initialize with integers from vector \a r
-    template<>
-    IntSet(const std::vector<int>& r);
-    /** \brief Initialize with ranges from vector \a r
-     *
-     * The minimum is the first element and the maximum is the
-     * second element.
-     */
-    template<>
-    IntSet(const std::vector<std::pair<int,int>>& r);
     /// Initialize with integers from list \a r
     GECODE_INT_EXPORT 
     IntSet(std::initializer_list<int> r);

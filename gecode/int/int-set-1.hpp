@@ -105,6 +105,7 @@ namespace Gecode {
       init(r,n);
   }
 
+  /// Initialize with integers from vector \a r
   template<>
   inline
   IntSet::IntSet(const std::vector<int>& r) {
@@ -118,6 +119,11 @@ namespace Gecode {
     }
   }
 
+  /** \brief Initialize with ranges from vector \a r
+   *
+   * The minimum is the first element and the maximum is the
+   * second element.
+   */
   template<>
   inline
   IntSet::IntSet(const std::vector<std::pair<int,int>>& r) {
