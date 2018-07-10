@@ -307,21 +307,21 @@ namespace Gecode {
   inline
   PBS<T,E>::PBS(T* s, SEB seb0, SEB seb1,
                 const Search::Options& o) {
-    SEBs sebs(2, seb0, seb1);
+    SEBs sebs({seb0, seb1});
     build(s,sebs,o);
   }
   template<class T, template<class> class E>
   inline
   PBS<T,E>::PBS(T* s, SEB seb0, SEB seb1, SEB seb2,
                 const Search::Options& o) {
-    SEBs sebs(3, seb0, seb1, seb2);
+    SEBs sebs({seb0, seb1, seb2});
     build(s,sebs,o);
   }
   template<class T, template<class> class E>
   inline
   PBS<T,E>::PBS(T* s, SEB seb0, SEB seb1, SEB seb2, SEB seb3,
                 const Search::Options& o) {
-    SEBs sebs(4, seb0, seb1, seb2, seb3);
+    SEBs sebs({seb0, seb1, seb2, seb3});
     build(s,sebs,o);
   }
 
