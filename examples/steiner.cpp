@@ -97,8 +97,8 @@ public:
            * Using matching constraints
            */
 
-          channelSorted(*this, IntVarArgs()<<x1<<x2<<x3, x);
-          channelSorted(*this, IntVarArgs()<<y1<<y2<<y3, y);
+          channelSorted(*this, {x1,x2,x3}, x);
+          channelSorted(*this, {y1,y2,y3}, y);
         } else if (opt.model() == MODEL_SEQ) {
           SetVar sx1 = expr(*this, singleton(x1));
           SetVar sx2 = expr(*this, singleton(x2));
@@ -106,8 +106,8 @@ public:
           SetVar sy1 = expr(*this, singleton(y1));
           SetVar sy2 = expr(*this, singleton(y2));
           SetVar sy3 = expr(*this, singleton(y3));
-          sequence(*this,SetVarArgs()<<sx1<<sx2<<sx3,x);
-          sequence(*this,SetVarArgs()<<sy1<<sy2<<sy3,y);
+          sequence(*this,{sx1,sx2,sx3},x);
+          sequence(*this,{sy1,sy2,sy3},y);
         }
 
         /* Breaking symmetries */
@@ -119,8 +119,10 @@ public:
         rel(*this, y2 < y3);
         rel(*this, y1 < y3);
 
-        linear(*this, IntArgs(6,(n+1)*(n+1),n+1,1,-(n+1)*(n+1),-(n+1),-1),
-               IntVarArgs()<<x1<<x2<<x3<<y1<<y2<<y3, IRT_LE, 0);
+        linear(*this,
+               {(n+1)*(n+1), n+1, 1,  -(n+1)*(n+1), -(n+1), -1},
+               {x1,          x2,  x3, y1,           y2,     y3},
+               IRT_LE, 0);
       }
     }
 

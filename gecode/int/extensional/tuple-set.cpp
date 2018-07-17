@@ -469,22 +469,6 @@ namespace Gecode {
       a[i]=t[i];
   }
 
-  TupleSet&
-  TupleSet::add(int n, ...) {
-    if (!*this)
-      throw Int::UninitializedTupleSet("TupleSet::add()");
-    if (raw().finalized())
-      throw Int::AlreadyFinalized("TupleSet::add()");
-    Tuple t = raw().add();
-    va_list args;
-    va_start(args, n);
-    t[0]=n;
-    for (int i=1; i<raw().arity; i++)
-      t[i] = va_arg(args,int);
-    va_end(args);
-    return *this;
-  }
-
 }
 
 // STATISTICS: int-prop

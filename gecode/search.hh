@@ -42,6 +42,8 @@
 #ifndef __GECODE_SEARCH_HH__
 #define __GECODE_SEARCH_HH__
 
+#include <initializer_list>
+
 #include <gecode/kernel.hh>
 
 /*
@@ -997,7 +999,7 @@ namespace Gecode {
 namespace Gecode {
 
   /// Passing search engine builder arguments
-  class SEBs : public PrimArgArray<SEB> {
+  class SEBs : public ArgArray<SEB> {
   public:
     /// \name Constructors and initialization
     //@{
@@ -1007,14 +1009,13 @@ namespace Gecode {
     explicit SEBs(int n);
     /// Allocate array and copy elements from \a x
     SEBs(const std::vector<SEB>& x);
+    /// Allocate array with and initialize with \a x
+    SEBs(std::initializer_list<SEB> x);
     /// Allocate array and copy elements from \a first to \a last
     template<class InputIterator>
     SEBs(InputIterator first, InputIterator last);
     /// Initialize from primitive argument array \a a (copy elements)
-    SEBs(const PrimArgArray<SEB>& a);
-    /// Allocate array with \a n elements and initialize with \a b0, ...
-    GECODE_SEARCH_EXPORT
-    SEBs(int n, SEB b0, ...);
+    SEBs(const ArgArray<SEB>& a);
     //@}
   };
 

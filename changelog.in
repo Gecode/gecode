@@ -63,6 +63,90 @@
 #
 
 [RELEASE]
+Version: 6.1.0
+Date: 2018-??-??
+[DESCRIPTION]
+More C++-11
+
+[ENTRY]
+Module: kernel
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+The SharedArray class now has an equality operator. This fixes
+a problem in the FlatZinc interpreter, which is keeping a hash
+set of arrays that relies on the equality test.
+
+[ENTRY]
+Module: int
+What:   change
+Rank:   major
+[DESCRIPTION]
+The add function of TupleSet now supports standard initializer
+lists but do not any longer support variable argument lists (as
+the combination is really confusing).
+
+[ENTRY]
+Module: int
+What:   change
+Rank:   major
+[DESCRIPTION]
+IntArgs now support standard initializer lists but do not any
+longer support variable argument lists (as the combination is
+really confusing). Now one can write IntArgs c({1,2,3}) for
+example.
+
+[ENTRY]
+Module: int
+What:   new
+Rank:   minor
+[DESCRIPTION]
+DFAs now support standard initializer lists.
+
+[ENTRY]
+Module: int
+What:   new
+Rank:   minor
+[DESCRIPTION]
+IntSets now support standard initializer lists, for both
+individual elements (for example, IntSet s({1,2,3})) as well as
+ranges (for example, IntSet s({{1,2},{6,9}})).
+
+[ENTRY]
+Module: int
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Integer and Boolean variable argument arrays now support standard
+initializer lists.
+
+[ENTRY]
+Module: set
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Set variable argument arrays now support standard initializer
+lists.
+
+[ENTRY]
+Module: float
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Float variable argument arrays now support standard initializer
+lists.
+
+[ENTRY]
+Module: search
+What:   change
+Rank:   major
+[DESCRIPTION]
+SEBs now support standard initializer lists but do not any
+longer support variable argument lists (as the combination is
+really confusing).
+
+
+[RELEASE]
 Version: 6.0.1
 Date: 2018-05-21
 [DESCRIPTION]

@@ -4,7 +4,7 @@
  *     Christian Schulte <schulte@gecode.org>
  *
  *  Copyright:
- *     Christian Schulte, 2015
+ *     Christian Schulte, 2018
  *
  *  This file is part of Gecode, the generic constraint
  *  development environment:
@@ -31,20 +31,37 @@
  *
  */
 
-#include <gecode/search.hh>
+#include <gecode/kernel.hh>
 
-namespace Gecode {
+namespace Gecode { namespace Kernel {
 
-  SEBs::SEBs(int n, SEB b0, ...)
-    : PrimArgArray<SEB>(n) {
-    va_list args;
-    va_start(args, b0);
-    a[0] = b0;
-    for (int i = 1; i < n; i++)
-      a[i] = va_arg(args,SEB);
-    va_end(args);
+  bool
+  duplicates(void** p, int n) {
+    assert(n > 1);
+    Support::quicksort<void*>(p,n);
+    for (int i=1; i<n; i++)
+      if (p[i-1] == p[i])
+        return true;
+    return false;
   }
 
-}
+  bool
+  duplicates(void** p, int n, void** q, int m) {
+    assert((n > 0) && (m > 0));
+    Support::quicksort<void*>(p,n);
+    Support::quicksort<void*>(q,m);
+    int i=0, j=0;
+    do {
+      if (p[i] == q[j])
+        return true;
+      else if (p[i] < q[j])
+        i++;
+      else
+        j++;
+    } while ((i < n) && (j < m));
+    return false;
+  }
 
-// STATISTICS: search-other
+}}
+
+// STATISTICS: kernel-other

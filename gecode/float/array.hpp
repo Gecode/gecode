@@ -68,6 +68,36 @@ namespace Gecode {
   FloatValArgs::FloatValArgs(const ArgArray<FloatVal>& a)
     : ArgArray<FloatVal>(a) {}
 
+
+  forceinline
+  FloatVarArgs::FloatVarArgs(void) {}
+
+  forceinline
+  FloatVarArgs::FloatVarArgs(int n)
+    : VarArgArray<FloatVar>(n) {}
+
+  forceinline
+  FloatVarArgs::FloatVarArgs(const FloatVarArgs& a)
+    : VarArgArray<FloatVar>(a) {}
+
+  forceinline
+  FloatVarArgs::FloatVarArgs(const VarArray<FloatVar>& a)
+    : VarArgArray<FloatVar>(a) {}
+
+  forceinline
+  FloatVarArgs::FloatVarArgs(const std::vector<FloatVar>& a)
+    : VarArgArray<FloatVar>(a) {}
+
+  forceinline
+  FloatVarArgs::FloatVarArgs(std::initializer_list<FloatVar> a)
+    : VarArgArray<FloatVar>(a) {}
+
+  template<class InputIterator>
+  forceinline
+  FloatVarArgs::FloatVarArgs(InputIterator first, InputIterator last)
+    : VarArgArray<FloatVar>(first,last) {}
+
+
   forceinline
   FloatVarArray::FloatVarArray(void) {}
 

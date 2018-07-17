@@ -121,7 +121,7 @@ namespace Gecode { namespace Int { namespace Unshare {
     // Replace all shared variables with new and equal variables
     for (int i=0; i<n;) {
       int j=i++;
-      while ((i<n) && y[j]->same(*y[i]))
+      while ((i<n) && (y[j]->varimp() == y[i]->varimp()))
         i++;
       if (!y[j]->assigned())
         link(home,&y[j],i-j,ipl);

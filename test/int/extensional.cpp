@@ -409,11 +409,11 @@ namespace Test { namespace Int {
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          using namespace Gecode;
          TupleSet t(4);
-         IntArgs t1(4,  2, 1, 2, 4);
-         IntArgs t2(4,  2, 2, 1, 4);
-         IntArgs t3(4,  4, 3, 4, 1);
-         IntArgs t4(4,  1, 3, 2, 3);
-         IntArgs t5(4,  3, 3, 3, 2);
+         IntArgs t1({2, 1, 2, 4});
+         IntArgs t2({2, 2, 1, 4});
+         IntArgs t3({4, 3, 4, 1});
+         IntArgs t4({1, 3, 2, 3});
+         IntArgs t5({3, 3, 3, 2});
          t.add(t1).add(t1).add(t2).add(t2)
           .add(t3).add(t3).add(t4).add(t4)
           .add(t5).add(t5).add(t5).add(t5)
@@ -624,11 +624,11 @@ namespace Test { namespace Int {
          using namespace Gecode;
          {
            TupleSet ts(4);
-           ts.add(2, 1, 2, 4).add(2, 2, 1, 4)
-             .add(4, 3, 4, 1).add(1, 3, 2, 3)
-             .add(3, 3, 3, 2).add(5, 1, 4, 4)
-             .add(2, 5, 1, 5).add(4, 3, 5, 1)
-             .add(1, 5, 2, 5).add(5, 3, 3, 2)
+           ts.add({2, 1, 2, 4}).add({2, 2, 1, 4})
+             .add({4, 3, 4, 1}).add({1, 3, 2, 3})
+             .add({3, 3, 3, 2}).add({5, 1, 4, 4})
+             .add({2, 5, 1, 5}).add({4, 3, 5, 1})
+             .add({1, 5, 2, 5}).add({5, 3, 3, 2})
              .finalize();
            (void) new TupleSetTest("A",IntSet(0,6),ts,true);
          }
@@ -640,42 +640,42 @@ namespace Test { namespace Int {
          {
            TupleSet ts(4);
            for (int n=1024*16; n--; )
-             ts.add(1,2,3,4);
+             ts.add({1,2,3,4});
            ts.finalize();
            (void) new TupleSetTest("Assigned",IntSet(1,4),ts,true);
          }
          {
            TupleSet ts(1);
-           ts.add(1).add(2).add(3).finalize();
+           ts.add({1}).add({2}).add({3}).finalize();
            (void) new TupleSetTest("Single",IntSet(-4,4),ts,true);
          }
          {
            int m = Gecode::Int::Limits::min;
            TupleSet ts(3);
-           ts.add(m+0,m+1,m+2).add(m+4,m+1,m+3)
-             .add(m+2,m+3,m+0).add(m+2,m+3,m+0)
-             .add(m+1,m+2,m+5).add(m+2,m+3,m+0)
-             .add(m+3,m+6,m+5).finalize();
+           ts.add({m+0,m+1,m+2}).add({m+4,m+1,m+3})
+             .add({m+2,m+3,m+0}).add({m+2,m+3,m+0})
+             .add({m+1,m+2,m+5}).add({m+2,m+3,m+0})
+             .add({m+3,m+6,m+5}).finalize();
            (void) new TupleSetTest("Min",IntSet(m,m+7),ts,true);
          }
          {
            int M = Gecode::Int::Limits::max;
            TupleSet ts(3);
-           ts.add(M-0,M-1,M-2).add(M-4,M-1,M-3)
-             .add(M-2,M-3,M-0).add(M-2,M-3,M-0)
-             .add(M-1,M-2,M-5).add(M-2,M-3,M-0)
-             .add(M-3,M-6,M-5).finalize();
+           ts.add({M-0,M-1,M-2}).add({M-4,M-1,M-3})
+             .add({M-2,M-3,M-0}).add({M-2,M-3,M-0})
+             .add({M-1,M-2,M-5}).add({M-2,M-3,M-0})
+             .add({M-3,M-6,M-5}).finalize();
            (void) new TupleSetTest("Max",IntSet(M-7,M),ts,true);
          }
          {
            int m = Gecode::Int::Limits::min;
            int M = Gecode::Int::Limits::max;
            TupleSet ts(3);
-           ts.add(M-0,m+1,M-2).add(m+4,M-1,M-3)
-             .add(m+2,M-3,m+0).add(M-2,M-3,M-0)
+           ts.add({M-0,m+1,M-2}).add({m+4,M-1,M-3})
+             .add({m+2,M-3,m+0}).add({M-2,M-3,M-0})
              .finalize();
            (void) new TupleSetTest("MinMax",
-                                   IntSet(IntArgs(6, m,m+1,m+4,M-3,M-2,M)),
+                                   IntSet(IntArgs({m,m+1,m+4,M-3,M-2,M})),
                                    ts,true);
          }
          {
@@ -710,7 +710,7 @@ namespace Test { namespace Int {
              t.add(tuple);
              ++ass;
            }
-           t.add(2,2,4,3,4);
+           t.add({2,2,4,3,4});
            t.finalize();
            (void) new TupleSetTest("FewLast",IntSet(1,4),t,false);
          }
@@ -718,10 +718,10 @@ namespace Test { namespace Int {
            TupleSet t(4);
            CpltAssignment ass(4, IntSet(1, 6));
            while (ass()) {
-             t.add(ass[0],0,ass[1],ass[2]);
+             t.add({ass[0],0,ass[1],ass[2]});
              ++ass;
            }
-           t.add(2,-1,3,4);
+           t.add({2,-1,3,4});
            t.finalize();
            (void) new TupleSetTest("FewMiddle",IntSet(-1,6),t,false);
          }
@@ -737,8 +737,8 @@ namespace Test { namespace Int {
              }
              ++ass;
            }
-           t.add(1,1,1,1,1,1,1,1,1,1);
-           t.add(1,2,3,4,4,2,1,2,3,3);
+           t.add({1,1,1,1,1,1,1,1,1,1});
+           t.add({1,2,3,4,4,2,1,2,3,3});
            t.finalize();
            (void) new RandomTupleSetTest("FewHuge",IntSet(1,4),t);
          }

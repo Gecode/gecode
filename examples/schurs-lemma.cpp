@@ -90,17 +90,10 @@ public:
     : Script(opt), box(*this,opt.n,1,opt.c) {
     int n = opt.n;
 
-    IntVarArgs triple(3);
-
     // Iterate over balls and find triples
-    for (int i=1; i<=n; i++) {
-      triple[0] = box[i-1];
-      for (int j=1; i+j<=n; j++) {
-        triple[1] = box[j-1];
-        triple[2] = box[i+j-1];
-        rel(*this, triple, IRT_NQ);
-      }
-    }
+    for (int i=1; i<=n; i++)
+      for (int j=1; i+j<=n; j++)
+        rel(*this, {box[i-1],box[j-1],box[i+j-1]}, IRT_NQ);
 
     // Break value symmetries
     precede(*this, box, IntArgs::create(opt.c, 1));

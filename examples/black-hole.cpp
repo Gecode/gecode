@@ -166,7 +166,7 @@ public:
       DFA table(expression);
 
       for (int i = 51; i--; )
-        extensional(*this, IntVarArgs() << x[i] << x[i+1], table);
+        extensional(*this, IntVarArgs({x[i],x[i+1]}), table);
 
     } else { // opt.propagation() == PROPAGATION_TUPLE_SET)
       // Build table for allowed tuples
@@ -175,11 +175,11 @@ public:
         for (int s1 = 4; s1--; )
           for (int s2 = 4; s2--; )
             for (int i = -1; i <= 1; i+=2)
-              ts.add(r+13*s1, (r+i+52+13*s2)%52);
+              ts.add({r+13*s1, (r+i+52+13*s2)%52});
       ts.finalize();
 
       for (int i = 51; i--; )
-        extensional(*this, IntVarArgs() << x[i] << x[i+1], ts);
+        extensional(*this, IntVarArgs({x[i],x[i+1]}), ts);
     }
 
     // A card must be played before the one under it.

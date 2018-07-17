@@ -276,7 +276,7 @@ namespace Test { namespace Int {
         // Number of items
         int n_items = clique[clique.size()-1] + 1;
         // Capacity
-        IntArgs c(2, 3,3);
+        IntArgs c({3,3});
         // Item sizes
         IntArgs s(2*n_items);
         for (int i=2*n_items; i--; )
@@ -317,16 +317,16 @@ namespace Test { namespace Int {
         using namespace Gecode;
 
         {
-          IntArgs s0(4, 0,0,0,0);
-          IntArgs s1(3, 2,1,1);
-          IntArgs s2(4, 1,2,3,4);
-          IntArgs s3(4, 4,3,2,1);
-          IntArgs s4(4, 1,2,4,8);
-          IntArgs s5(4, 1,1,1,1);
-          IntArgs s6(4, 1,1,2,2);
-          IntArgs s7(4, 1,3,3,4);
-          IntArgs s8(6, 1,3,3,0,4,0);
-          IntArgs s9(6, 1,2,4,8,16,32);
+          IntArgs s0({0,0,0,0});
+          IntArgs s1({2,1,1});
+          IntArgs s2({1,2,3,4});
+          IntArgs s3({4,3,2,1});
+          IntArgs s4({1,2,4,8});
+          IntArgs s5({1,1,1,1});
+          IntArgs s6({1,1,2,2});
+          IntArgs s7({1,3,3,4});
+          IntArgs s8({1,3,3,0,4,0});
+          IntArgs s9({1,2,4,8,16,32});
 
           for (int m=1; m<4; m++) {
             (void) new BPT(m, s0);
@@ -344,19 +344,19 @@ namespace Test { namespace Int {
         }
 
         {
-          IntArgs s1(2*4, 1,2, 2,1, 1,2, 2,1);
-          IntArgs c1(2, 3,3);
+          IntArgs s1({1,2, 2,1, 1,2, 2,1});
+          IntArgs c1({3,3});
           (void) new MBPT(2, 4, s1, c1);
           (void) new MBPT(2, 6, s1, c1);
-          IntArgs s2(2*3, 1,1, 1,1, 1,1);
-          IntArgs c21(2, 1,1);
-          IntArgs c22(2, 2,2);
+          IntArgs s2({1,1, 1,1, 1,1});
+          IntArgs c21({1,1});
+          IntArgs c22({2,2});
           (void) new MBPT(2, 6, s2, c21);
           (void) new MBPT(2, 6, s2, c22);
-          IntArgs s3(3*4, 1,2,3, 3,2,1, 2,1,3, 1,3,2);
-          IntArgs c31(3, 3,3,3);
-          IntArgs c32(3, 4,4,4);
-          IntArgs c33(3, 6,6,6);
+          IntArgs s3({1,2,3, 3,2,1, 2,1,3, 1,3,2});
+          IntArgs c31({3,3,3});
+          IntArgs c32({4,4,4});
+          IntArgs c33({6,6,6});
           (void) new MBPT(3, 4, s3, c31);
           (void) new MBPT(3, 4, s3, c32);
           (void) new MBPT(3, 4, s3, c33);
@@ -366,18 +366,18 @@ namespace Test { namespace Int {
         }
 
         {
-          IntArgs c1(4, 0,2,4,6);
-          IntArgs c2(8, 1,2,3,4,5,6,7,8);
-          IntArgs c3(8, 1,3,7,10,15,22,27,97);
-          IntArgs c41(8, 1,2,3,4,5,6,7,14);
-          IntArgs c42(8, 1,2,3,4,5,6,7,15);
-          IntArgs c43(8, 1,2,3,4,5,6,7,16);
-          IntArgs c44(8, 1,2,3,4,5,6,7,30);
-          IntArgs c45(8, 1,2,3,4,5,6,7,31);
-          IntArgs c46(8, 1,2,3,4,5,6,7,32);
-          IntArgs c47(8, 1,2,3,4,5,6,7,62);
-          IntArgs c48(8, 1,2,3,4,5,6,7,63);
-          IntArgs c49(8, 1,2,3,4,5,6,7,64);
+          IntArgs c1({0,2,4,6});
+          IntArgs c2({1,2,3,4,5,6,7,8});
+          IntArgs c3({1,3,7,10,15,22,27,97});
+          IntArgs c41({1,2,3,4,5,6,7,14});
+          IntArgs c42({1,2,3,4,5,6,7,15});
+          IntArgs c43({1,2,3,4,5,6,7,16});
+          IntArgs c44({1,2,3,4,5,6,7,30});
+          IntArgs c45({1,2,3,4,5,6,7,31});
+          IntArgs c46({1,2,3,4,5,6,7,32});
+          IntArgs c47({1,2,3,4,5,6,7,62});
+          IntArgs c48({1,2,3,4,5,6,7,63});
+          IntArgs c49({1,2,3,4,5,6,7,64});
 
           (void) new CliqueMBPT(c1);
           (void) new CliqueMBPT(c2);

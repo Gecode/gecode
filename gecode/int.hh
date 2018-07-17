@@ -46,11 +46,12 @@
 
 #include <climits>
 #include <cfloat>
+
 #include <iostream>
-
 #include <vector>
-
 #include <functional>
+#include <utility>
+#include <initializer_list>
 
 #include <gecode/kernel.hh>
 #include <gecode/search.hh>
@@ -188,6 +189,8 @@ namespace Gecode {
       GECODE_INT_EXPORT static IntSetObject* allocate(int m);
       /// Check whether \a n is included in the set
       GECODE_INT_EXPORT bool in(int n) const;
+      /// Perform equality test on ranges
+      GECODE_INT_EXPORT bool equal(const IntSetObject& so) const; 
       /// Delete object
       GECODE_INT_EXPORT virtual ~IntSetObject(void);
     };
@@ -225,6 +228,16 @@ namespace Gecode {
     /// Initialize with range iterator \a i
     template<class I>
     explicit IntSet(const I& i);
+    /// Initialize with integers from list \a r
+    GECODE_INT_EXPORT 
+    IntSet(std::initializer_list<int> r);
+    /** \brief Initialize with ranges from vector \a r
+     *
+     * The minimum is the first element and the maximum is the
+     * second element.
+     */
+    GECODE_INT_EXPORT
+    IntSet(std::initializer_list<std::pair<int,int>> r);
     //@}
 
     /// \name Range access
@@ -251,6 +264,14 @@ namespace Gecode {
     int min(void) const;
     /// Return maximum of entire set
     int max(void) const;
+    //@}
+
+    /// \name Equality tests
+    //@{
+    /// Return whether \a s is equal
+    bool operator ==(const IntSet& s) const;
+    /// Return whether \a s is not equal
+    bool operator !=(const IntSet& s) const;
     //@}
 
     /// \name Predefined value
@@ -601,7 +622,7 @@ namespace Gecode {
 namespace Gecode {
 
   /// Passing integer arguments
-  class IntArgs : public PrimArgArray<int> {
+  class IntArgs : public ArgArray<int> {
   public:
     /// \name Constructors and initialization
     //@{
@@ -613,16 +634,15 @@ namespace Gecode {
     IntArgs(const SharedArray<int>& x);
     /// Allocate array and copy elements from \a x
     IntArgs(const std::vector<int>& x);
+    /// Allocate array and copy elements from \a x
+    IntArgs(std::initializer_list<int> x);
     /// Allocate array and copy elements from \a first to \a last
     template<class InputIterator>
     IntArgs(InputIterator first, InputIterator last);
-    /// Allocate array with \a n elements and initialize with \a e0, ...
-    GECODE_INT_EXPORT
-    IntArgs(int n, int e0, ...);
     /// Allocate array with \a n elements and initialize with elements from array \a e
     IntArgs(int n, const int* e);
     /// Initialize from primitive argument array \a a (copy elements)
-    IntArgs(const PrimArgArray<int>& a);
+    IntArgs(const ArgArray<int>& a);
 
     /// Allocate array with \a n elements such that for all \f$0\leq i<n: x_i=\text{start}+i\cdot\text{inc}\f$
     static IntArgs create(int n, int start, int inc=1);
@@ -635,19 +655,20 @@ namespace Gecode {
     /// \name Constructors and initialization
     //@{
     /// Allocate empty array
-    IntVarArgs(void) {}
+    IntVarArgs(void);
     /// Allocate array with \a n elements
-    explicit IntVarArgs(int n) : VarArgArray<IntVar>(n) {}
+    explicit IntVarArgs(int n);
     /// Initialize from variable argument array \a a (copy elements)
-    IntVarArgs(const IntVarArgs& a) : VarArgArray<IntVar>(a) {}
+    IntVarArgs(const IntVarArgs& a);
     /// Initialize from variable array \a a (copy elements)
-    IntVarArgs(const VarArray<IntVar>& a) : VarArgArray<IntVar>(a) {}
-    /// Initialize from vector \a a
-    IntVarArgs(const std::vector<IntVar>& a) : VarArgArray<IntVar>(a) {}
+    IntVarArgs(const VarArray<IntVar>& a);
+    /// Initialize from \a a
+    IntVarArgs(const std::vector<IntVar>& a);
+    /// Initialize from \a a
+    IntVarArgs(std::initializer_list<IntVar> a);
     /// Initialize from InputIterator \a first and \a last
     template<class InputIterator>
-    IntVarArgs(InputIterator first, InputIterator last)
-    : VarArgArray<IntVar>(first,last) {}
+    IntVarArgs(InputIterator first, InputIterator last);
     /**
      * \brief Initialize array with \a n new variables
      *
@@ -676,6 +697,7 @@ namespace Gecode {
     IntVarArgs(Space& home, int n, const IntSet& s);
     //@}
   };
+
   /** \brief Passing Boolean variables
    *
    * We could have used a simple typedef instead, but doxygen cannot
@@ -689,20 +711,20 @@ namespace Gecode {
     /// \name Constructors and initialization
     //@{
     /// Allocate empty array
-    BoolVarArgs(void) {}
+    BoolVarArgs(void);
     /// Allocate array with \a n elements
-    explicit BoolVarArgs(int n) : VarArgArray<BoolVar>(n) {}
+    explicit BoolVarArgs(int n);
     /// Initialize from variable argument array \a a (copy elements)
-    BoolVarArgs(const BoolVarArgs& a) : VarArgArray<BoolVar>(a) {}
+    BoolVarArgs(const BoolVarArgs& a);
     /// Initialize from variable array \a a (copy elements)
-    BoolVarArgs(const VarArray<BoolVar>& a)
-     : VarArgArray<BoolVar>(a) {}
-    /// Initialize from vector \a a
-    BoolVarArgs(const std::vector<BoolVar>& a) : VarArgArray<BoolVar>(a) {}
+    BoolVarArgs(const VarArray<BoolVar>& a);
+    /// Initialize from \a a
+    BoolVarArgs(const std::vector<BoolVar>& a);
+    /// Initialize from \a a
+    BoolVarArgs(std::initializer_list<BoolVar> a);
     /// Initialize from InputIterator \a first and \a last
     template<class InputIterator>
-    BoolVarArgs(InputIterator first, InputIterator last)
-    : VarArgArray<BoolVar>(first,last) {}
+    BoolVarArgs(InputIterator first, InputIterator last);
     /**
      * \brief Initialize array with \a n new variables
      *
@@ -986,11 +1008,11 @@ namespace Gecode {
    *
    * \ingroup TaskModelInt
    */
-  typedef PrimArgArray<TaskType> TaskTypeArgs;
+  typedef ArgArray<TaskType> TaskTypeArgs;
 
   /// Traits of %TaskTypeArgs
   template<>
-  class ArrayTraits<PrimArgArray<TaskType> > {
+  class ArrayTraits<ArgArray<TaskType> > {
   public:
     typedef TaskTypeArgs StorageType;
     typedef TaskType     ValueType;
@@ -2079,6 +2101,19 @@ namespace Gecode {
       /// Return current symbol
       int val(void) const;
     };
+    /**
+     * \brief Initialize DFA
+     *
+     * - Start state is given by \a s.
+     * - %Transitions are described by \a t, where the last element
+     *   must have -1 as value for \c i_state.
+     * - Final states are given by \a f, where the last final element
+     *   must be -1.
+     * - Minimizes the DFA, if \a minimize is true.
+     * - Note that the transitions must be deterministic.
+     */
+    GECODE_INT_EXPORT
+    void init(int s, Transition t[], int f[], bool minimize=true);
   public:
     friend class Transitions;
     /// Initialize for DFA accepting the empty word
@@ -2096,6 +2131,18 @@ namespace Gecode {
      */
     GECODE_INT_EXPORT
     DFA(int s, Transition t[], int f[], bool minimize=true);
+    /**
+     * \brief Initialize DFA
+     *
+     * - Start state is given by \a s.
+     * - %Transitions are described by \a t.
+     * - Final states are given by \a f.
+     * - Minimizes the DFA, if \a minimize is true.
+     * - Note that the transitions must be deterministic.
+     */
+    GECODE_INT_EXPORT
+    DFA(int s, std::initializer_list<Transition> t,
+        std::initializer_list<int> f, bool minimize=true);
     /// Initialize by DFA \a d (DFA is shared)
     DFA(const DFA& d);
     /// Test whether DFA is equal to \a d
@@ -2274,9 +2321,6 @@ namespace Gecode {
     //@{
     /// Add tuple \a t to tuple set
     TupleSet& add(const IntArgs& t);
-    /// Add tuple with elements \a n, ... to tuple set
-    GECODE_INT_EXPORT
-    TupleSet& add(int n, ...);
     /// Is tuple set finalized
     bool finalized(void) const;
     /// Finalize tuple set

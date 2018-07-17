@@ -37,11 +37,23 @@
  *
  */
 
-#include <cstdarg>
 #include <iostream>
 #include <iterator>
 #include <vector>
 #include <sstream>
+#include <initializer_list>
+
+namespace Gecode { namespace Kernel {
+
+  /// Check whether \a p has duplicates among its \a n elements (changes \a p)
+  GECODE_KERNEL_EXPORT
+  bool duplicates(void** p, int n);
+
+  /// Check whether \a p has common elements with \a q
+  GECODE_KERNEL_EXPORT
+  bool duplicates(void** p, int n, void** q, int m);
+
+}}
 
 namespace Gecode {
 
@@ -140,7 +152,7 @@ namespace Gecode {
      * If \a n is -1, then all possible elements starting from \a start
      * with increment \a inc are returned.
      */
-    typename ArrayTraits<VarArgArray<Var> >::ArgsType
+    typename ArrayTraits<VarArgArray<Var>>::ArgsType
     slice(int start, int inc=1, int n=-1);
     //@}
 
@@ -181,35 +193,35 @@ namespace Gecode {
    * \relates VarArray
    */
   template<class T>
-  typename ArrayTraits<VarArray<T> >::ArgsType
+  typename ArrayTraits<VarArray<T>>::ArgsType
   operator +(const VarArray<T>& x, const VarArgArray<T>& y);
 
   /** Concatenate \a x and \a y and return result
    * \relates VarArray
    */
   template<class T>
-  typename ArrayTraits<VarArray<T> >::ArgsType
+  typename ArrayTraits<VarArray<T>>::ArgsType
   operator +(const VarArray<T>& x, const VarArray<T>& y);
 
   /** Concatenate \a x and \a y and return result
    * \relates VarArray
    */
   template<class T>
-  typename ArrayTraits<VarArray<T> >::ArgsType
+  typename ArrayTraits<VarArray<T>>::ArgsType
   operator +(const VarArgArray<T>& x, const VarArray<T>& y);
 
   /** Concatenate \a x and \a y and return result
    * \relates VarArray
    */
   template<class T>
-  typename ArrayTraits<VarArray<T> >::ArgsType
+  typename ArrayTraits<VarArray<T>>::ArgsType
   operator +(const VarArray<T>& x, const T& y);
 
   /** Concatenate \a x and \a y and return result
    * \relates VarArray
    */
   template<class T>
-  typename ArrayTraits<VarArray<T> >::ArgsType
+  typename ArrayTraits<VarArray<T>>::ArgsType
   operator +(const T& x, const VarArray<T>& y);
 
   /**
@@ -219,7 +231,6 @@ namespace Gecode {
    * views with which propagators and branchers compute.
    * \ingroup TaskActor
    */
-
   template<class View>
   class ViewArray {
   private:
@@ -289,7 +300,7 @@ namespace Gecode {
         for (int i=n; i--; )
           x[i]=a[i];
       } else {
-        x = NULL;
+        x = nullptr;
       }
     }
     /**
@@ -307,7 +318,7 @@ namespace Gecode {
         for (int i=n; i--; )
           x[i]=a[i];
       } else {
-        x = NULL;
+        x = nullptr;
       }
     }
     //@}
@@ -461,35 +472,45 @@ namespace Gecode {
     /// Remove all duplicate views from array (changes element order)
     void unique(void);
     //@}
-
-    /// \name View sharing
-    //@{
-    /**
-     * \brief Test whether array contains shared views
-     *
-     * Note that assigned views are ignored.
-     */
-    bool shared(void) const;
-    /**
-     * \brief Test whether array contains a view being shared with \a y
-     *
-     * Note that assigned views are ignored.
-     */
-    template<class ViewY>
-    bool shared(const ViewY& y) const;
-    /**
-     * \brief Test whether array together with array \a y contains shared views
-     *
-     * Note that assigned views are ignored.
-     */
-    template<class ViewY>
-    bool shared(const ViewArray<ViewY>& y) const;
-    //@}
-
   private:
     static void* operator new(size_t) throw();
     static void  operator delete(void*,size_t);
   };
+
+
+  /**
+   * \brief Test whether array \a x together with array \a y contains shared views
+   *
+   * Note that assigned views are ignored.
+   * \relates ViewArray
+   */
+  template<class ViewX, class ViewY>
+  bool shared(ViewArray<ViewX> x, ViewArray<ViewY> y);
+  /**
+   * \brief Test whether array \a x contains a view shared with \a y
+   *
+   * Note that assigned views are ignored.
+   * \relates ViewArray
+   */
+  template<class ViewX, class ViewY>
+  bool shared(ViewArray<ViewX> x, ViewY y);
+  /**
+   * \brief Test whether array \a y contains a view shared with \a x
+   *
+   * Note that assigned views are ignored.
+   * \relates ViewArray
+   */
+  template<class ViewX, class ViewY>
+  bool shared(ViewX x, ViewArray<ViewY> y);
+  /**
+   * \brief Test whether array \a x contains shared views
+   *
+   * Note that assigned views are ignored.
+   * \relates ViewArray
+   */
+  template<class View>
+  bool shared(ViewArray<View> x);
+
 
   /**
    * \brief Base-class for argument arrays
@@ -500,9 +521,7 @@ namespace Gecode {
    * creating an argument array object. Otherwise the memory is allocated
    * from the heap.
    *
-   * This base-class is not to be used directly, use PrimArgArray for
-   * argument arrays of primitive types, VarArgArray for argument
-   * arrays storing variables, and ArgArray for any other type.
+   * \ingroup TaskVar
    */
   template<class T>
   class ArgArrayBase {
@@ -575,6 +594,8 @@ namespace Gecode {
     const ArgArrayBase<T>& operator =(const ArgArrayBase<T>& a);
     /// Initialize from vector \a a
     ArgArrayBase(const std::vector<T>& a);
+    /// Initialize from initializer list \a a
+    ArgArrayBase(std::initializer_list<T> a);
     /// Initialize from InputIterator \a begin and \a end
     template<class InputIterator>
     ArgArrayBase(InputIterator first, InputIterator last);
@@ -621,92 +642,6 @@ namespace Gecode {
     //@}
   };
 
-  template<class> class PrimArgArray;
-
-  /** Concatenate \a x and \a y and return result
-   * \relates PrimArgArray
-   */
-  template<class T>
-  typename ArrayTraits<PrimArgArray<T> >::ArgsType
-  operator +(const PrimArgArray<T>& x, const PrimArgArray<T>& y);
-
-  /** Concatenate \a x and \a y and return result
-   * \relates PrimArgArray
-   */
-  template<class T>
-  typename ArrayTraits<PrimArgArray<T> >::ArgsType
-  operator +(const PrimArgArray<T>& x, const T& y);
-
-  /** Concatenate \a x and \a y and return result
-   * \relates PrimArgArray
-   */
-  template<class T>
-  typename ArrayTraits<PrimArgArray<T> >::ArgsType
-  operator +(const T& x, const PrimArgArray<T>& y);
-
-  /**
-   * \brief Argument array for primtive types
-   *
-   * Argument arrays are used as convenient mechanism of passing arguments
-   * when calling functions as they combine both the size and the elements
-   * of an array. For a small number of elements, memory is allocated by
-   * creating an argument array object. Otherwise the memory is allocated
-   * from the heap.
-   *
-   * \ingroup TaskVar
-   */
-  template<class T>
-  class PrimArgArray : public ArgArrayBase<T> {
-  protected:
-    using ArgArrayBase<T>::a;
-  public:
-    using ArgArrayBase<T>::size;
-    /// \name Constructors and initialization
-    //@{
-    /// Allocate empty array
-    PrimArgArray(void);
-    /// Allocate array with \a n elements
-    explicit PrimArgArray(int n);
-    /// Allocate array with \a n elements and initialize with \a e0, ...
-    PrimArgArray(int n, T e0, ...);
-    /// Allocate array with \a n elements and initialize with elements from array \a e
-    PrimArgArray(int n, const T* e);
-    /// Initialize from primitive argument array \a a (copy elements)
-    PrimArgArray(const PrimArgArray<T>& a);
-    /// Initialize from vector \a a
-    PrimArgArray(const std::vector<T>& a);
-    /// Initialize from InputIterator \a first and \a last
-    template<class InputIterator>
-    PrimArgArray(InputIterator first, InputIterator last);
-    //@}
-    /// \name Array elements
-    //@{
-    /** Return slice \f$y\f$ of length at most \a n such that forall \f$0\leq i<n\f$, \f$y_i=x_{\text{start}+i\cdot\text{inc}}\f$
-     *
-     * If \a n is -1, then all possible elements starting from \a start
-     * with increment \a inc are returned.
-     */
-    typename ArrayTraits<PrimArgArray<T> >::ArgsType
-    slice(int start, int inc=1, int n=-1);
-    //@}
-    /// \name Appending elements
-    //@{
-    /// Insert a new element \a x at the end of the array (increase size by 1)
-    typename ArrayTraits<PrimArgArray<T> >::ArgsType&
-    operator <<(const T& x);
-    /// Append \a x to the end of the array
-    typename ArrayTraits<PrimArgArray<T> >::ArgsType&
-    operator <<(const PrimArgArray<T>& x);
-    //@}
-
-    friend typename ArrayTraits<PrimArgArray<T> >::ArgsType
-    operator + <>(const PrimArgArray<T>& x, const PrimArgArray<T>& y);
-    friend typename ArrayTraits<PrimArgArray<T> >::ArgsType
-    operator + <>(const PrimArgArray<T>& x, const T& y);
-    friend
-    typename ArrayTraits<PrimArgArray<T> >::ArgsType
-    operator + <>(const T& x, const PrimArgArray<T>& y);
-  };
 
   template<class> class ArgArray;
 
@@ -714,21 +649,21 @@ namespace Gecode {
    * \relates ArgArray
    */
   template<class T>
-  typename ArrayTraits<ArgArray<T> >::ArgsType
+  typename ArrayTraits<ArgArray<T>>::ArgsType
   operator +(const ArgArray<T>& x, const ArgArray<T>& y);
 
   /** Concatenate \a x and \a y and return result
    * \relates ArgArray
    */
   template<class T>
-  typename ArrayTraits<ArgArray<T> >::ArgsType
+  typename ArrayTraits<ArgArray<T>>::ArgsType
   operator +(const ArgArray<T>& x, const T& y);
 
   /** Concatenate \a x and \a y and return result
    * \relates ArgArray
    */
   template<class T>
-  typename ArrayTraits<ArgArray<T> >::ArgsType
+  typename ArrayTraits<ArgArray<T>>::ArgsType
   operator +(const T& x, const ArgArray<T>& y);
 
   /**
@@ -760,6 +695,8 @@ namespace Gecode {
     ArgArray(const ArgArray<T>& a);
     /// Initialize from vector \a a
     ArgArray(const std::vector<T>& a);
+    /// Initialize from initializer list \a a
+    ArgArray(std::initializer_list<T> a);
     /// Initialize from InputIterator \a first and \a last
     template<class InputIterator>
     ArgArray(InputIterator first, InputIterator last);
@@ -767,25 +704,25 @@ namespace Gecode {
     /// \name Array elements
     //@{
     /// Return slice \f$y\f$ of length \a n such that forall \f$0\leq i<n\f$, \f$y_i=x_{\text{start}+i\cdot\text{inc}}\f$
-    typename ArrayTraits<ArgArray<T> >::ArgsType
+    typename ArrayTraits<ArgArray<T>>::ArgsType
     slice(int start, int inc=1, int n=-1);
     //@}
     /// \name Appending elements
     //@{
     /// Insert a new element \a x at the end of the array (increase size by 1)
-    typename ArrayTraits<ArgArray<T> >::ArgsType&
+    typename ArrayTraits<ArgArray<T>>::ArgsType&
     operator <<(const T& x);
     /// Append \a x to the end of the array
-    typename ArrayTraits<ArgArray<T> >::ArgsType&
+    typename ArrayTraits<ArgArray<T>>::ArgsType&
     operator <<(const ArgArray<T>& x);
     //@}
 
-    friend typename ArrayTraits<ArgArray<T> >::ArgsType
+    friend typename ArrayTraits<ArgArray<T>>::ArgsType
     operator + <>(const ArgArray<T>& x, const ArgArray<T>& y);
-    friend typename ArrayTraits<ArgArray<T> >::ArgsType
+    friend typename ArrayTraits<ArgArray<T>>::ArgsType
     operator + <>(const ArgArray<T>& x, const T& y);
     friend
-    typename ArrayTraits<ArgArray<T> >::ArgsType
+    typename ArrayTraits<ArgArray<T>>::ArgsType
     operator + <>(const T& x, const ArgArray<T>& y);
   };
 
@@ -795,21 +732,21 @@ namespace Gecode {
    * \relates ArgArray
    */
   template<class Var>
-  typename ArrayTraits<VarArgArray<Var> >::ArgsType
+  typename ArrayTraits<VarArgArray<Var>>::ArgsType
   operator +(const VarArgArray<Var>& x, const VarArgArray<Var>& y);
 
   /** Concatenate \a x and \a y and return result
    * \relates ArgArray
    */
   template<class Var>
-  typename ArrayTraits<VarArgArray<Var> >::ArgsType
+  typename ArrayTraits<VarArgArray<Var>>::ArgsType
   operator +(const VarArgArray<Var>& x, const Var& y);
 
   /** Concatenate \a x and \a y and return result
    * \relates ArgArray
    */
   template<class Var>
-  typename ArrayTraits<VarArgArray<Var> >::ArgsType
+  typename ArrayTraits<VarArgArray<Var>>::ArgsType
   operator +(const Var& x, const VarArgArray<Var>& y);
 
   /**
@@ -847,6 +784,8 @@ namespace Gecode {
     VarArgArray(const VarArray<Var>& a);
     /// Initialize from vector \a a
     VarArgArray(const std::vector<Var>& a);
+    /// Initialize from initializer list \a a
+    VarArgArray(std::initializer_list<Var> a);
     /// Initialize from InputIterator \a first and \a last
     template<class InputIterator>
     VarArgArray(InputIterator first, InputIterator last);
@@ -854,52 +793,65 @@ namespace Gecode {
     /// \name Array elements
     //@{
     /// Return slice \f$y\f$ of length \a n such that forall \f$0\leq i<n\f$, \f$y_i=x_{\text{start}+i\cdot\text{inc}}\f$
-    typename ArrayTraits<VarArgArray<Var> >::ArgsType
+    typename ArrayTraits<VarArgArray<Var>>::ArgsType
     slice(int start, int inc=1, int n=-1);
     //@}
     /// \name Appending elements
     //@{
     /// Insert a new element \a x at the end of the array (increase size by 1)
-    typename ArrayTraits<VarArgArray<Var> >::ArgsType&
+    typename ArrayTraits<VarArgArray<Var>>::ArgsType&
     operator <<(const Var& x);
     /// Append \a x to the end of the array
-    typename ArrayTraits<VarArgArray<Var> >::ArgsType&
+    typename ArrayTraits<VarArgArray<Var>>::ArgsType&
     operator <<(const VarArgArray<Var>& x);
     //@}
 
     /// Test if all variables are assigned
     bool assigned(void) const;
 
-    friend typename ArrayTraits<VarArgArray<Var> >::ArgsType
+    friend typename ArrayTraits<VarArgArray<Var>>::ArgsType
     operator + <>(const VarArgArray<Var>& x, const VarArgArray<Var>& y);
-    friend typename ArrayTraits<VarArgArray<Var> >::ArgsType
+    friend typename ArrayTraits<VarArgArray<Var>>::ArgsType
     operator + <>(const VarArgArray<Var>& x, const Var& y);
     friend
-    typename ArrayTraits<VarArgArray<Var> >::ArgsType
+    typename ArrayTraits<VarArgArray<Var>>::ArgsType
     operator + <>(const Var& x, const VarArgArray<Var>& y);
-
-    /// \name Variable equality
-    //@{
-    /**
-     * \brief Test whether array contains same variable multiply
-     *
-     * Note that assigned variables are ignored.
-     */
-    bool same(void) const;
-    /**
-     * \brief Test whether array contains variable \a y
-     *
-     * Note that assigned variables are ignored.
-     */
-    bool same(const Var& y) const;
-    /**
-     * \brief Test whether all elements from array and \a y contains same variable multiply
-     *
-     * Note that assigned variables are ignored.
-     */
-    bool same(const VarArgArray<Var>& y) const;
-    //@}
   };
+
+
+  /**
+   * \brief Test whether array \a x together with array \a y contains at least one variable being the same
+   *
+   * Note that assigned variables are ignored.
+   * \relates VarArgArray
+   */
+  template<class Var>
+  bool same(VarArgArray<Var> x, VarArgArray<Var> y);
+  /**
+   * \brief Test whether array \a x contains variable \a y
+   *
+   * Note that assigned variables are ignored.
+   * \relates VarArgArray
+   */
+  template<class Var>
+  bool same(VarArgArray<Var> x, Var y);
+  /**
+   * \brief Test whether array \a y contains variable \a x
+   *
+   * Note that assigned variables are ignored.
+   * \relates VarArgArray
+   */
+  template<class Var>
+  bool same(Var x, VarArgArray<Var> y);
+  /**
+   * \brief Test whether array \a x contains a variable multiply
+   *
+   * Note that assigned variables are ignored.
+   * \relates VarArgArray
+   */
+  template<class Var>
+  bool same(VarArgArray<Var> x);
+
 
   /**
    * \brief Print array elements enclosed in curly brackets
@@ -941,14 +893,14 @@ namespace Gecode {
 
   template<class Var>
   forceinline
-  VarArray<Var>::VarArray(void) : n(0), x(NULL) {}
+  VarArray<Var>::VarArray(void) : n(0), x(nullptr) {}
 
   template<class Var>
   forceinline
   VarArray<Var>::VarArray(Space& home, int n0)
     : n(n0) {
     // Allocate from space
-    x = (n>0) ? home.alloc<Var>(n) : NULL;
+    x = (n>0) ? home.alloc<Var>(n) : nullptr;
   }
 
   template<class Var>
@@ -985,7 +937,7 @@ namespace Gecode {
   }
 
   template<class Var>
-  typename ArrayTraits<VarArgArray<Var> >::ArgsType
+  typename ArrayTraits<VarArgArray<Var>>::ArgsType
   VarArray<Var>::slice(int start, int inc, int maxN) {
     assert(n==0 || start < n);
     if (n==0 || maxN<0)
@@ -997,7 +949,7 @@ namespace Gecode {
       s = (n-start)/inc + ((n-start) % inc == 0 ? 0 : 1);
     else
       s = (start+1)/-inc + ((start+1) % -inc == 0 ? 0 : 1);
-    typename ArrayTraits<VarArgArray<Var> >::ArgsType r(std::min(maxN,s));
+    typename ArrayTraits<VarArgArray<Var>>::ArgsType r(std::min(maxN,s));
     for (int i=0; i<r.size(); i++, start+=inc)
       r[i] = x[start];
     return r;
@@ -1060,7 +1012,7 @@ namespace Gecode {
       for (int i = n; i--;)
         x[i].update(home, a.x[i]);
     } else {
-      x = NULL;
+      x = nullptr;
     }
   }
 
@@ -1076,7 +1028,7 @@ namespace Gecode {
   template<class Var>
   forceinline void*
   VarArray<Var>::operator new(size_t) throw() {
-    return NULL;
+    return nullptr;
   }
 
   template<class Var>
@@ -1085,9 +1037,9 @@ namespace Gecode {
   }
 
   template<class Var>
-  typename ArrayTraits<VarArray<Var> >::ArgsType
+  typename ArrayTraits<VarArray<Var>>::ArgsType
   operator +(const VarArray<Var>& x, const VarArray<Var>& y) {
-    typename ArrayTraits<VarArray<Var> >::ArgsType r(x.size()+y.size());
+    typename ArrayTraits<VarArray<Var>>::ArgsType r(x.size()+y.size());
     for (int i=x.size(); i--;)
       r[i] = x[i];
     for (int i=y.size(); i--;)
@@ -1096,9 +1048,9 @@ namespace Gecode {
   }
 
   template<class Var>
-  typename ArrayTraits<VarArray<Var> >::ArgsType
+  typename ArrayTraits<VarArray<Var>>::ArgsType
   operator +(const VarArray<Var>& x, const VarArgArray<Var>& y) {
-    typename ArrayTraits<VarArray<Var> >::ArgsType r(x.size()+y.size());
+    typename ArrayTraits<VarArray<Var>>::ArgsType r(x.size()+y.size());
     for (int i=x.size(); i--;)
       r[i] = x[i];
     for (int i=y.size(); i--;)
@@ -1107,9 +1059,9 @@ namespace Gecode {
   }
 
   template<class Var>
-  typename ArrayTraits<VarArray<Var> >::ArgsType
+  typename ArrayTraits<VarArray<Var>>::ArgsType
   operator +(const VarArgArray<Var>& x, const VarArray<Var>& y) {
-    typename ArrayTraits<VarArray<Var> >::ArgsType r(x.size()+y.size());
+    typename ArrayTraits<VarArray<Var>>::ArgsType r(x.size()+y.size());
     for (int i=x.size(); i--;)
       r[i] = x[i];
     for (int i=y.size(); i--;)
@@ -1118,9 +1070,9 @@ namespace Gecode {
   }
 
   template<class Var>
-  typename ArrayTraits<VarArray<Var> >::ArgsType
+  typename ArrayTraits<VarArray<Var>>::ArgsType
   operator +(const VarArray<Var>& x, const Var& y) {
-    typename ArrayTraits<VarArray<Var> >::ArgsType r(x.size()+1);
+    typename ArrayTraits<VarArray<Var>>::ArgsType r(x.size()+1);
     for (int i=x.size(); i--;)
       r[i] = x[i];
     r[x.size()] = y;
@@ -1128,9 +1080,9 @@ namespace Gecode {
   }
 
   template<class Var>
-  typename ArrayTraits<VarArray<Var> >::ArgsType
+  typename ArrayTraits<VarArray<Var>>::ArgsType
   operator +(const Var& x, const VarArray<Var>& y) {
-    typename ArrayTraits<VarArray<Var> >::ArgsType r(y.size()+1);
+    typename ArrayTraits<VarArray<Var>>::ArgsType r(y.size()+1);
     r[0] = x;
     for (int i=y.size(); i--;)
       r[1+i] = y[i];
@@ -1144,19 +1096,19 @@ namespace Gecode {
 
   template<class View>
   forceinline
-  ViewArray<View>::ViewArray(void) : n(0), x(NULL) {}
+  ViewArray<View>::ViewArray(void) : n(0), x(nullptr) {}
 
   template<class View>
   forceinline
   ViewArray<View>::ViewArray(Space& home, int n0)
     : n(n0) {
-    x = (n>0) ? home.alloc<View>(n) : NULL;
+    x = (n>0) ? home.alloc<View>(n) : nullptr;
   }
   template<class View>
   forceinline
   ViewArray<View>::ViewArray(Region& r, int n0)
     : n(n0) {
-    x = (n>0) ? r.alloc<View>(n) : NULL;
+    x = (n>0) ? r.alloc<View>(n) : nullptr;
   }
 
   template<class View>
@@ -1167,7 +1119,7 @@ namespace Gecode {
       for (int i = n; i--; )
         x[i] = a[i];
     } else {
-      x = NULL;
+      x = nullptr;
     }
   }
   template<class View>
@@ -1178,7 +1130,7 @@ namespace Gecode {
       for (int i = n; i--; )
         x[i] = a[i];
     } else {
-      x = NULL;
+      x = nullptr;
     }
   }
 
@@ -1375,7 +1327,7 @@ namespace Gecode {
       for (int i = n; i--; )
         x[i].update(home, y.x[i]);
     } else {
-      x = NULL;
+      x = nullptr;
     }
   }
 
@@ -1440,7 +1392,7 @@ namespace Gecode {
   void
   ViewArray<View>::sort(View* y, int m) {
     ViewLess<View> vl;
-    Support::quicksort<View,ViewLess<View> >(y,m,vl);
+    Support::quicksort<View,ViewLess<View>>(y,m,vl);
   }
 
   template<class X, class Y>
@@ -1498,79 +1450,75 @@ namespace Gecode {
   }
 
   template<class View>
-  bool
-  ViewArray<View>::shared(void) const {
-    if (n < 2)
-      return false;
-    Region r;
-    View* y = r.alloc<View>(n);
-    for (int i = n; i--; )
-      y[i] = x[i];
-    sort(y,n);
-    for (int i = n-1; i--; )
-      if (!y[i].assigned() && __shared(y[i+1],y[i])) {
-        r.free<View>(y,n);
-        return true;
-      }
-    r.free<View>(y,n);
-    return false;
-  }
-
-  template<class View> template<class ViewY>
-  bool
-  ViewArray<View>::shared(const ViewY& y) const {
-    if (y.assigned())
-      return false;
-    for (int i = n; i--; )
-      if (!x[i].assigned() && __shared(x[i],y))
-        return true;
-    return false;
-  }
-
-  template<class View> template<class ViewY>
-  bool
-  ViewArray<View>::shared(const ViewArray<ViewY>& y) const {
-    if ((size() < 1) || (y.size() < 1))
-      return false;
-    Region r;
-    View* xs = r.alloc<View>(size());
-    for (int i=size(); i--; )
-      xs[i] = x[i];
-    ViewLess<View> xvl;
-    Support::quicksort<View,ViewLess<View> >(xs,size(),xvl);
-    ViewY* ys = r.alloc<ViewY>(y.size());
-    for (int j=y.size(); j--; )
-      ys[j] = y[j];
-    ViewLess<ViewY> yvl;
-    Support::quicksort<ViewY,ViewLess<ViewY> >(ys,y.size(),yvl);
-    {
-      int i=0, j=0;
-      while ((i < size()) && (j < y.size()))
-        if (!x[i].assigned() && __shared(x[i],y[j])) {
-          r.free<View>(xs,size());
-          r.free<ViewY>(ys,y.size());
-          return true;
-        } else if (before(x[i],y[j])) {
-          i++;
-        } else {
-          j++;
-        }
-    }
-    r.free<View>(xs,size());
-    r.free<ViewY>(ys,y.size());
-    return false;
-  }
-
-  template<class View>
   forceinline void*
   ViewArray<View>::operator new(size_t) throw() {
-    return NULL;
+    return nullptr;
   }
 
   template<class View>
   forceinline void
   ViewArray<View>::operator delete(void*,size_t) {
   }
+
+
+  /*
+   * Sharing for view arrays
+   *
+   */
+  template<class ViewX, class ViewY>
+  bool
+  shared(ViewArray<ViewX> x, ViewArray<ViewY> y) {
+    if ((x.size() == 0) || (y.size() == 0))
+      return false;
+    Region r;
+    void** px = r.alloc<void*>(x.size());
+    int j=0;
+    for (int i=x.size(); i--; )
+      if (!x[i].assigned() && x[i].varimp())
+        px[j++] = x[i].varimp();
+    if (j == 0)
+      return false;
+    void** py = r.alloc<void*>(y.size());
+    int k=0;
+    for (int i=y.size(); i--; )
+      if (!y[i].assigned() && y[i].varimp())
+        py[k++] = y[i].varimp();
+    if (k == 0)
+      return false;
+    return Kernel::duplicates(px,j,py,k);
+  }
+
+  template<class ViewX, class ViewY>
+  bool
+  shared(ViewArray<ViewX> x, ViewY y) {
+    if (y.assigned() || !y.varimp())
+      return false;
+    for (int i = x.size(); i--; )
+      if (!x[i].assigned() && x[i].varimp() && (x[i].varimp() == y.varimp()))
+        return true;
+    return false;
+  }
+
+  template<class ViewX, class ViewY>
+  forceinline bool
+  shared(ViewX x, ViewArray<ViewY> y) {
+    return shared(y,x);
+  }
+
+  template<class View>
+  bool
+  shared(ViewArray<View> x) {
+    if (x.size() < 2)
+      return false;
+    Region r;
+    void** px = r.alloc<void*>(x.size());
+    int j=0;
+    for (int i=x.size(); i--; )
+      if (!x[i].assigned() && x[i].varimp())
+        px[j++] = x[i].varimp();
+    return (j > 2) && Kernel::duplicates(px,j);
+  }
+
 
 
   /*
@@ -1625,6 +1573,16 @@ namespace Gecode {
     : n(static_cast<int>(aa.size())),
       capacity(n < onstack_size ? onstack_size : n), a(allocate(n)) {
     heap.copy<T>(a,&aa[0],n);
+  }
+
+  template<class T>
+  inline
+  ArgArrayBase<T>::ArgArrayBase(std::initializer_list<T> aa)
+    : n(static_cast<int>(aa.size())),
+      capacity(n < onstack_size ? onstack_size : n), a(allocate(n)) {
+    int i=0;
+    for (const T& x : aa)
+      a[i++]=x;
   }
 
   template<class T>
@@ -1749,7 +1707,7 @@ namespace Gecode {
   ArgArrayBase<T>::ArgArrayBase(InputIterator first, InputIterator last)
   : n(0), capacity(onstack_size), a(allocate(0)) {
     while (first != last) {
-      (void) append<ArgArrayBase<T> >(*first);
+      (void) append<ArgArrayBase<T>>(*first);
       ++first;
     }
   }
@@ -1785,101 +1743,9 @@ namespace Gecode {
     return r;
   }
 
-  /*
-   * Argument arrays for primitive types
-   *
-   */
-
-  template<class T>
-  forceinline
-  PrimArgArray<T>::PrimArgArray(void) {}
-
-  template<class T>
-  forceinline
-  PrimArgArray<T>::PrimArgArray(int n) : ArgArrayBase<T>(n) {}
-
-  template<class T>
-  PrimArgArray<T>::PrimArgArray(int n, T a0, ...)
-    : ArgArrayBase<T>(n) {
-    va_list args;
-    va_start(args, a0);
-    a[0] = a0;
-    for (int i = 1; i < n; i++)
-      a[i] = va_arg(args,T);
-    va_end(args);
-  }
-
-  template<class T>
-  PrimArgArray<T>::PrimArgArray(int n, const T* a0)
-    : ArgArrayBase<T>(n) {
-    for (int i=n; i--; )
-      a[i] = a0[i];
-  }
-
-  template<class T>
-  forceinline
-  PrimArgArray<T>::PrimArgArray(const PrimArgArray<T>& aa)
-    : ArgArrayBase<T>(aa) {}
-
-  template<class T>
-  forceinline
-  PrimArgArray<T>::PrimArgArray(const std::vector<T>& aa)
-    : ArgArrayBase<T>(aa) {}
-
-  template<class T>
-  template<class InputIterator>
-  forceinline
-  PrimArgArray<T>::PrimArgArray(InputIterator first, InputIterator last)
-    : ArgArrayBase<T>(first,last) {}
-
-  template<class T>
-  forceinline typename ArrayTraits<PrimArgArray<T> >::ArgsType
-  PrimArgArray<T>::slice(int start, int inc, int maxN) {
-    return ArgArrayBase<T>::template slice
-      <typename ArrayTraits<PrimArgArray<T> >::ArgsType>
-        (start,inc,maxN);
-  }
-
-  template<class T>
-  forceinline typename ArrayTraits<PrimArgArray<T> >::ArgsType&
-  PrimArgArray<T>::operator <<(const T& x) {
-    return
-      ArgArrayBase<T>::template append
-        <typename ArrayTraits<PrimArgArray<T> >::ArgsType>(x);
-  }
-
-  template<class T>
-  forceinline typename ArrayTraits<PrimArgArray<T> >::ArgsType&
-  PrimArgArray<T>::operator <<(const PrimArgArray<T>& x) {
-    return
-      ArgArrayBase<T>::template append
-        <typename ArrayTraits<PrimArgArray<T> >::ArgsType>(x);
-  }
-
-  template<class T>
-  typename ArrayTraits<PrimArgArray<T> >::ArgsType
-  operator +(const PrimArgArray<T>& x, const PrimArgArray<T>& y) {
-    return x.template concat
-      <typename ArrayTraits<PrimArgArray<T> >::ArgsType>(y);
-  }
-
-  template<class T>
-  typename ArrayTraits<PrimArgArray<T> >::ArgsType
-  operator +(const PrimArgArray<T>& x, const T& y) {
-    return x.template concat
-      <typename ArrayTraits<PrimArgArray<T> >::ArgsType>(y);
-  }
-
-  template<class T>
-  typename ArrayTraits<PrimArgArray<T> >::ArgsType
-  operator +(const T& x, const PrimArgArray<T>& y) {
-    return PrimArgArray<T>(1,x).template concat
-      <typename ArrayTraits<PrimArgArray<T> >::ArgsType>(y);
-  }
-
 
   /*
-   * Argument arrays for non-primitive types
+   * Argument arrays
    *
    */
 
@@ -1889,7 +1755,8 @@ namespace Gecode {
 
   template<class T>
   forceinline
-  ArgArray<T>::ArgArray(int n) : ArgArrayBase<T>(n) {}
+  ArgArray<T>::ArgArray(int n)
+    : ArgArrayBase<T>(n) {}
 
   template<class T>
   ArgArray<T>::ArgArray(int n, const T* a0)
@@ -1909,56 +1776,61 @@ namespace Gecode {
     : ArgArrayBase<T>(aa) {}
 
   template<class T>
+  forceinline
+  ArgArray<T>::ArgArray(std::initializer_list<T> aa)
+    : ArgArrayBase<T>(aa) {}
+
+  template<class T>
   template<class InputIterator>
   forceinline
   ArgArray<T>::ArgArray(InputIterator first, InputIterator last)
     : ArgArrayBase<T>(first,last) {}
 
   template<class T>
-  forceinline typename ArrayTraits<ArgArray<T> >::ArgsType
+  forceinline typename ArrayTraits<ArgArray<T>>::ArgsType
   ArgArray<T>::slice(int start, int inc, int maxN) {
     return ArgArrayBase<T>::template slice
-      <typename ArrayTraits<ArgArray<T> >::ArgsType>
+      <typename ArrayTraits<ArgArray<T>>::ArgsType>
       (start,inc,maxN);
   }
 
   template<class T>
-  forceinline typename ArrayTraits<ArgArray<T> >::ArgsType&
+  forceinline typename ArrayTraits<ArgArray<T>>::ArgsType&
   ArgArray<T>::operator <<(const T& x) {
     return
       ArgArrayBase<T>::template append
-        <typename ArrayTraits<ArgArray<T> >::ArgsType>(x);
+        <typename ArrayTraits<ArgArray<T>>::ArgsType>(x);
   }
 
   template<class T>
-  forceinline typename ArrayTraits<ArgArray<T> >::ArgsType&
+  forceinline typename ArrayTraits<ArgArray<T>>::ArgsType&
   ArgArray<T>::operator <<(const ArgArray<T>& x) {
     return
       ArgArrayBase<T>::template append
-        <typename ArrayTraits<ArgArray<T> >::ArgsType>(x);
+        <typename ArrayTraits<ArgArray<T>>::ArgsType>(x);
   }
 
   template<class T>
-  typename ArrayTraits<ArgArray<T> >::ArgsType
+  typename ArrayTraits<ArgArray<T>>::ArgsType
   operator +(const ArgArray<T>& x, const ArgArray<T>& y) {
     return x.template concat
-      <typename ArrayTraits<ArgArray<T> >::ArgsType>(y);
+      <typename ArrayTraits<ArgArray<T>>::ArgsType>(y);
   }
 
   template<class T>
-  typename ArrayTraits<ArgArray<T> >::ArgsType
+  typename ArrayTraits<ArgArray<T>>::ArgsType
   operator +(const ArgArray<T>& x, const T& y) {
     return x.template concat
-      <typename ArrayTraits<ArgArray<T> >::ArgsType>(y);
+      <typename ArrayTraits<ArgArray<T>>::ArgsType>(y);
   }
 
   template<class T>
-  typename ArrayTraits<ArgArray<T> >::ArgsType
+  typename ArrayTraits<ArgArray<T>>::ArgsType
   operator +(const T& x, const ArgArray<T>& y) {
     ArgArray<T> xa(1);
     xa[0] = x;
     return xa.template concat
-      <typename ArrayTraits<ArgArray<T> >::ArgsType>(y);
+      <typename ArrayTraits<ArgArray<T>>::ArgsType>(y);
   }
 
   /*
@@ -1985,6 +1857,11 @@ namespace Gecode {
     : ArgArrayBase<Var>(aa) {}
 
   template<class Var>
+  forceinline
+  VarArgArray<Var>::VarArgArray(std::initializer_list<Var> aa)
+    : ArgArrayBase<Var>(aa) {}
+
+  template<class Var>
   template<class InputIterator>
   forceinline
   VarArgArray<Var>::VarArgArray(InputIterator first, InputIterator last)
@@ -1999,50 +1876,50 @@ namespace Gecode {
   }
 
   template<class Var>
-  forceinline typename ArrayTraits<VarArgArray<Var> >::ArgsType
+  forceinline typename ArrayTraits<VarArgArray<Var>>::ArgsType
   VarArgArray<Var>::slice(int start, int inc, int maxN) {
     return ArgArrayBase<Var>::template slice
-      <typename ArrayTraits<VarArgArray<Var> >::ArgsType>
+      <typename ArrayTraits<VarArgArray<Var>>::ArgsType>
         (start,inc,maxN);
   }
 
   template<class Var>
-  forceinline typename ArrayTraits<VarArgArray<Var> >::ArgsType&
+  forceinline typename ArrayTraits<VarArgArray<Var>>::ArgsType&
   VarArgArray<Var>::operator <<(const Var& x) {
     return
       ArgArrayBase<Var>::template append
-        <typename ArrayTraits<VarArgArray<Var> >::ArgsType>(x);
+        <typename ArrayTraits<VarArgArray<Var>>::ArgsType>(x);
   }
 
   template<class Var>
-  forceinline typename ArrayTraits<VarArgArray<Var> >::ArgsType&
+  forceinline typename ArrayTraits<VarArgArray<Var>>::ArgsType&
   VarArgArray<Var>::operator <<(const VarArgArray<Var>& x) {
     return
       ArgArrayBase<Var>::template append
-        <typename ArrayTraits<VarArgArray<Var> >::ArgsType>(x);
+        <typename ArrayTraits<VarArgArray<Var>>::ArgsType>(x);
   }
 
   template<class Var>
-  typename ArrayTraits<VarArgArray<Var> >::ArgsType
+  typename ArrayTraits<VarArgArray<Var>>::ArgsType
   operator +(const VarArgArray<Var>& x, const VarArgArray<Var>& y) {
     return x.template concat
-      <typename ArrayTraits<VarArgArray<Var> >::ArgsType>(y);
+      <typename ArrayTraits<VarArgArray<Var>>::ArgsType>(y);
   }
 
   template<class Var>
-  typename ArrayTraits<VarArgArray<Var> >::ArgsType
+  typename ArrayTraits<VarArgArray<Var>>::ArgsType
   operator +(const VarArgArray<Var>& x, const Var& y) {
     return x.template concat
-      <typename ArrayTraits<VarArgArray<Var> >::ArgsType>(y);
+      <typename ArrayTraits<VarArgArray<Var>>::ArgsType>(y);
   }
 
   template<class Var>
-  typename ArrayTraits<VarArgArray<Var> >::ArgsType
+  typename ArrayTraits<VarArgArray<Var>>::ArgsType
   operator +(const Var& x, const VarArgArray<Var>& y) {
     VarArgArray<Var> xa(1);
     xa[0] = x;
     return xa.template concat
-      <typename ArrayTraits<VarArgArray<Var> >::ArgsType>(y);
+      <typename ArrayTraits<VarArgArray<Var>>::ArgsType>(y);
   }
 
   template<class Var>
@@ -2060,62 +1937,64 @@ namespace Gecode {
     return true;
   }
 
+
+  /*
+   * Checking for multiple occurences of the same variable
+   *
+   */
   template<class Var>
   bool
-  VarArgArray<Var>::same(void) const {
-    if (n < 2)
+  same(VarArgArray<Var> x, VarArgArray<Var> y) {
+    if ((x.size() == 0) || (y.size() == 0))
       return false;
     Region r;
-    Var* y = r.alloc<Var>(n);
-    for (int i = n; i--; )
-      y[i] = a[i];
-    VarLess vl;
-    Support::quicksort<Var,VarLess>(y,n,vl);
-    for (int i = n-1; i--; )
-      if (!y[i].assigned() && (y[i+1].varimp() == y[i].varimp())) {
-        r.free<Var>(y,n);
-        return true;
-      }
-    r.free<Var>(y,n);
-    return false;
+    void** px = r.alloc<void*>(x.size());
+    int j=0;
+    for (int i = x.size(); i--; )
+      if (!x[i].assigned())
+        px[j++] = x[i].varimp();
+    if (j == 0)
+      return false;
+    void** py = r.alloc<void*>(y.size());
+    int k=0;
+    for (int i = y.size(); i--; )
+      if (!y[i].assigned())
+        py[k++] = y[i].varimp();
+    if (k == 0)
+      return false;
+    return Kernel::duplicates(px,j,py,k);
   }
 
   template<class Var>
   bool
-  VarArgArray<Var>::same(const VarArgArray<Var>& y) const {
-    int m = n + y.n;
-    if (m < 2)
-      return false;
-    Region r;
-    Var* z = r.alloc<Var>(m);
-    for (int i = n; i--; )
-      z[i] = a[i];
-    for (int i = y.n; i--; )
-      z[i+n] = y.a[i];
-    VarLess vl;
-    Support::quicksort<Var,VarLess>(z,m,vl);
-    for (int i = m-1; i--; )
-      if (!z[i].assigned() && (z[i+1].varimp() == z[i].varimp())) {
-        r.free<Var>(z,m);
-        return true;
-      }
-    r.free<Var>(z,m);
-    return false;
-  }
-
-  template<class Var>
-  bool
-  VarArgArray<Var>::same(const Var& y) const {
+  same(VarArgArray<Var> x, Var y) {
     if (y.assigned())
       return false;
-    for (int i = n; i--; )
-      if (a[i].varimp() == y.varimp())
+    for (int i = x.size(); i--; )
+      if (x[i].varimp() == y.varimp())
         return true;
     return false;
   }
 
+  template<class Var>
+  forceinline bool
+  same(Var x, VarArgArray<Var> y) {
+    return same(y,x);
+  }
 
-
+  template<class Var>
+  bool
+  same(VarArgArray<Var> x) {
+    if (x.size() < 2)
+      return false;
+    Region r;
+    void** px = r.alloc<void*>(x.size());
+    int j=0;
+    for (int i = x.size(); i--; )
+      if (!x[i].assigned())
+        px[j++] = x[i].varimp();
+    return (j > 1) && Kernel::duplicates(px,j);
+  }
 
 
 
@@ -2133,7 +2012,7 @@ namespace Gecode {
       for (int i=n; i--;)
         x[i] = a[i];
     } else {
-      x = NULL;
+      x = nullptr;
     }
   }
 

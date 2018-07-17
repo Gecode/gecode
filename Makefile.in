@@ -194,7 +194,8 @@ KERNELSRC0 = \
 	data/rnd \
 	branch/action branch/afc branch/chb branch/function \
 	memory/manager memory/region \
-	trace/recorder trace/filter trace/tracer trace/general
+	trace/recorder trace/filter trace/tracer trace/general \
+	data/array
 
 KERNELHDR0 = \
 	archive core exception macros modevent gpi \
@@ -254,7 +255,7 @@ SEARCHSRC0 = \
 	stop options cutoff engine \
 	dfs bab lds \
 	seq/rbs seq/dead seq/pbs par/pbs \
-	rbs pbs sebs nogoods exception tracer \
+	rbs pbs nogoods exception tracer \
 	cpprofiler/tracer
 SEARCHHDR0 = \
 	statistics.hpp stop.hpp options.hpp cutoff.hpp \
@@ -864,7 +865,7 @@ INTEXAMPLEHDR0 =						\
 INTEXAMPLESRC0 =						\
 	alpha bacp bibd donald efpa eq20 golomb-ruler		\
 	graph-color grocery ind-set magic-sequence magic-square	\
-	money ortho-latin partition photo queens sudoku kakuro  \
+	money ortho-latin partition photo queens sudoku sudoku-advanced kakuro  \
 	nonogram pentominoes crowded-chess black-hole		\
 	minesweeper domino steel-mill sports-league		\
 	all-interval langford-number warehouses	radiotherapy    \
@@ -1166,6 +1167,7 @@ FLATZINCTESTSRC0 = \
   test/flatzinc/queen_cp2.cpp \
   test/flatzinc/queen_ip.cpp \
   test/flatzinc/radiation.cpp \
+  test/flatzinc/shared_array_element.cpp \
   test/flatzinc/simple_sat.cpp \
   test/flatzinc/singHoist2.cpp \
   test/flatzinc/sudoku.cpp \
@@ -1286,7 +1288,7 @@ makecompletedmessage:
 	@echo make install
 	@echo
 
-# ugly hack by Grégoire Dooms to call a target on a contribs after evaluating all the variables in this Makefile.
+# ugly hack by Grï¿½goire Dooms to call a target on a contribs after evaluating all the variables in this Makefile.
 # used as make contribs:cpgraph:doc or make contribs:cpgraph:Makefile.in
 .PHONY: contribs\:%
 contribs\:%:

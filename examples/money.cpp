@@ -94,7 +94,16 @@ public:
     default: GECODE_NEVER;
     }
 
-    branch(*this, le, INT_VAR_SIZE_MIN(), INT_VAL_MIN());
+    branch(*this, le, INT_VAR_SIZE_MIN(), INT_VAL_MIN(), nullptr,
+           [](const Space&, const Brancher&, unsigned int a,
+              IntVar, int i, const int& n,
+              std::ostream& o) {
+             static char name[8] = {'s','e','n','d',
+                                    'm','o','r','y'};
+             o << name[i]
+               << ((a == 0) ? " = " : " != ")
+               << n;
+           });
   }
   /// Print solution
   virtual void
