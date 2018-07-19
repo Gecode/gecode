@@ -33,7 +33,6 @@
 
 #ifdef GECODE_HAS_CBS
 
-#include <vector>
 #include <limits>
 #include <algorithm>
 
@@ -75,14 +74,18 @@ class ValToUpdate {
 private:
   const size_t width;
   const int minVal;
-  std::vector<double> mincUpdate;
-  std::vector<double> liangUpdate;
+  Region r;
+  double* mincUpdate;
+  double* liangUpdate;
 public:
   template<class View>
   ValToUpdate(const ViewArray<View>& x, int minDomVal, int maxDomVal)
-    : width(maxDomVal - minDomVal + 1), minVal(minDomVal),
-      mincUpdate(width, 1.0),
-      liangUpdate(width, 1.0) {
+    : width(maxDomVal - minDomVal + 1),
+      minVal(minDomVal) {
+    mincUpdate = r.alloc<double>(width);
+    std::fill(mincUpdate, mincUpdate + width, 1);
+    liangUpdate = r.alloc<double>(width);
+    std::fill(liangUpdate, liangUpdate + width, 1);
 
     for (int i=0; i<x.size(); i++) {
       if (x[i].assigned()) continue;
@@ -120,7 +123,7 @@ void cbsdistinct(Space&, unsigned int prop_id, const ViewArray<View>& x,
   UB ub{1,1};
   for (int i=0; i<x.size(); i++) {
     unsigned int s = x[i].size();
-    if (s >= MAX_MINC_FACTORS || s >= WIDTH_LIANG_BAI_FACTORS)
+    if ((s >= MAX_MINC_FACTORS) || (s >= WIDTH_LIANG_BAI_FACTORS))
       throw Gecode::Exception("Int::Distinct::cbsdistinct",
                               "Variable cardinality too big for using counting-based"
                               "search with distinct constraints");
@@ -143,7 +146,8 @@ void cbsdistinct(Space&, unsigned int prop_id, const ViewArray<View>& x,
 
   // Preallocated memory for holding solution counts for all values of a
   // variable during computation
-  std::vector<double> solCounts(maxVal - minVal + 1);
+  Region r;
+  double* solCounts = r.alloc<double>(maxVal - minVal + 1);
 
   for (int i=0; i<x.size(); i++) {
     if (x[i].assigned()) continue;
