@@ -237,6 +237,7 @@ namespace Gecode { namespace FlatZinc {
       Gecode::Driver::UnsignedIntOption _node;      ///< Cutoff for number of nodes
       Gecode::Driver::UnsignedIntOption _fail;      ///< Cutoff for number of failures
       Gecode::Driver::UnsignedIntOption _time;      ///< Cutoff for time
+      Gecode::Driver::UnsignedIntOption _time_limit;  ///< Cutoff for time (for compatibility with flatzinc command line)
       Gecode::Driver::IntOption         _seed;      ///< Random seed
       Gecode::Driver::StringOption      _restart;   ///< Restart method option
       Gecode::Driver::DoubleOption      _r_base;    ///< Restart base
@@ -277,6 +278,7 @@ namespace Gecode { namespace FlatZinc {
       _node("node","node cutoff (0 = none, solution mode)"),
       _fail("fail","failure cutoff (0 = none, solution mode)"),
       _time("time","time (in ms) cutoff (0 = none, solution mode)"),
+      _time_limit("t","time (in ms) cutoff (0 = none, solution mode)"),
       _seed("r","random seed",0),
       _restart("restart","restart sequence type",RM_NONE),
       _r_base("restart-base","base for geometric restart sequence",1.5),
@@ -313,7 +315,7 @@ namespace Gecode { namespace FlatZinc {
       add(_allSolutions);
       add(_free);
       add(_decay);
-      add(_node); add(_fail); add(_time); add(_interrupt);
+      add(_node); add(_fail); add(_time); add(_time_limit); add(_interrupt);
       add(_seed);
       add(_step);
       add(_restart); add(_r_base); add(_r_scale);
@@ -331,6 +333,9 @@ namespace Gecode { namespace FlatZinc {
       Gecode::BaseOptions::parse(argc,argv);
       if (_allSolutions.value() && _solutions.value()==-1) {
         _solutions.value(0);
+      }
+      if (_time_limit.value()) {
+        _time.value(_time_limit.value());
       }
       if (_stat.value())
         _mode.value(Gecode::SM_STAT);
