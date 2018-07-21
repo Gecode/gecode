@@ -99,7 +99,7 @@ public:
   /// Perform copying during cloning
   virtual Space*
   copy(void) {
-    return new SudokuInt(*this);
+    return new Sudoku(*this);
   }
 
   /// Print solution
