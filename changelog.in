@@ -78,6 +78,88 @@ time limit command line option for FlatZinc solvers.
 
 [ENTRY]
 Module: kernel
+What:   change
+Rank:   major
+[DESCRIPTION]
+The function shared() for testing whether a view occurs in an
+array or whether two arrays contain at least on shared view is no
+a simple function and not a member function (which means, use
+shared(x,y) instead of x.shared(y)).
+
+[ENTRY]
+Module: kernel
+What:   change
+Rank:   major
+[DESCRIPTION]
+Variables now are compared by the standard C++ operators "==",
+"!=", and "<" (this replaces the same and before
+functions). Comparisons between different variables types are not
+any longer supported.
+
+[ENTRY]
+Module: int
+What:   change
+Rank:   major
+[DESCRIPTION]
+Variables now are compared by the standard C++ operators "==",
+"!=", and "<" (this replaces the same and before
+functions). Comparisons between different variables types are not
+any longer supported.
+
+[ENTRY]
+Module: set
+What:   change
+Rank:   major
+[DESCRIPTION]
+Variables now are compared by the standard C++ operators "==",
+"!=", and "<" (this replaces the same and before
+functions). Comparisons between different variables types are not
+any longer supported.
+
+[ENTRY]
+Module: float
+What:   change
+Rank:   major
+[DESCRIPTION]
+Variables now are compared by the standard C++ operators "==",
+"!=", and "<" (this replaces the same and before
+functions). Comparisons between different variables types are not
+any longer supported.
+
+[ENTRY]
+Module: kernel
+What:   change
+Rank:   major
+[DESCRIPTION]
+Views now are compared by the standard C++ operators "==", "!=",
+and "<" (this replaces the same and before functions).
+
+[ENTRY]
+Module: int
+What:   change
+Rank:   major
+[DESCRIPTION]
+Views now are compared by the standard C++ operators "==", "!=",
+and "<" (this replaces the same and before functions).
+
+[ENTRY]
+Module: set
+What:   change
+Rank:   major
+[DESCRIPTION]
+Views now are compared by the standard C++ operators "==", "!=",
+and "<" (this replaces the same and before functions).
+
+[ENTRY]
+Module: float
+What:   change
+Rank:   major
+[DESCRIPTION]
+Views now are compared by the standard C++ operators "==", "!=",
+and "<" (this replaces the same and before functions).
+
+[ENTRY]
+Module: kernel
 What:   bug
 Rank:   minor
 [DESCRIPTION]
