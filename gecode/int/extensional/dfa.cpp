@@ -152,6 +152,8 @@ namespace Gecode {
   DFA::init(int start, Transition t_spec[], int f_spec[], bool minimize) {
     using namespace Int;
     using namespace Extensional;
+    Region region;
+
     // Compute number of states and transitions
     int n_states = start;
     int n_trans  = 0;
@@ -165,12 +167,12 @@ namespace Gecode {
     n_states++;
 
     // Temporary structure for transitions
-    Transition* trans = heap.alloc<Transition>(n_trans);
+    Transition* trans = region.alloc<Transition>(n_trans);
     for (int i = n_trans; i--; )
       trans[i] = t_spec[i];
     // Temporary structures for finals
-    int* final = heap.alloc<int>(n_states+1);
-    bool* is_final = heap.alloc<bool>(n_states+1);
+    int* final = region.alloc<int>(n_states+1);
+    bool* is_final = region.alloc<bool>(n_states+1);
     int n_finals = 0;
     for (int i = n_states+1; i--; )
       is_final[i] = false;
@@ -182,7 +184,7 @@ namespace Gecode {
     if (minimize) {
       // Sort transitions by symbol and i_state
       TransBySymbolI_State::sort(trans, n_trans);
-      Transition** idx = heap.alloc<Transition*>(n_trans+1);
+      Transition** idx = region.alloc<Transition*>(n_trans+1);
       //  idx[i]...idx[i+1]-1 gives where transitions for symbol i start
       int n_symbols = 0;
       {
@@ -197,9 +199,9 @@ namespace Gecode {
         assert(j == n_trans);
       }
       // Map states to groups
-      int* s2g = heap.alloc<int>(n_states+1);
-      StateGroup* part = heap.alloc<StateGroup>(n_states+1);
-      GroupStates* g2s = heap.alloc<GroupStates>(n_states+1);
+      int* s2g = region.alloc<int>(n_states+1);
+      StateGroup* part = region.alloc<StateGroup>(n_states+1);
+      GroupStates* g2s = region.alloc<GroupStates>(n_states+1);
       // Initialize: final states is group one, all other group zero
       for (int i = n_states+1; i--; ) {
         part[i].state = i;
@@ -287,7 +289,7 @@ namespace Gecode {
               break;
             }
         // Compute representatives
-        int* s2r = heap.alloc<int>(n_states+1);
+        int* s2r = region.alloc<int>(n_states+1);
         for (int i = n_states+1; i--; )
           s2r[i] = -1;
         for (int g = n_groups; g--; )
@@ -303,21 +305,16 @@ namespace Gecode {
           }
         n_trans  = j;
         n_states = n_groups;
-        heap.free<int>(s2r,n_states+1);
       }
-      heap.free<GroupStates>(g2s,n_states+1);
-      heap.free<StateGroup>(part,n_states+1);
-      heap.free<int>(s2g,n_states+1);
-      heap.free<Transition*>(idx,n_trans+1);
     }
 
     // Do a reachability analysis for all states starting from start state
-    Gecode::Support::StaticStack<int,Heap> visit(heap,n_states);
-    int* state = heap.alloc<int>(n_states);
+    Gecode::Support::StaticStack<int,Region> visit(region,n_states);
+    int* state = region.alloc<int>(n_states);
     for (int i=n_states; i--; )
       state[i] = SI_NONE;
 
-    Transition** idx = heap.alloc<Transition*>(n_states+1);
+    Transition** idx = region.alloc<Transition*>(n_states+1);
     {
       // Sort all transitions according to i_state and create index structure
       //  idx[i]...idx[i+1]-1 gives where transitions for state i start
@@ -374,12 +371,9 @@ namespace Gecode {
           }
       }
     }
-    heap.free<Transition*>(idx,n_states+1);
-    heap.free<int>(final,n_states+1);
-    heap.free<bool>(is_final,n_states+1);
 
     // Now all reachable states are known (also the final ones)
-    int* re = heap.alloc<int>(n_states);
+    int* re = region.alloc<int>(n_states);
     for (int i = n_states; i--; )
       re[i] = -1;
 
@@ -440,7 +434,7 @@ namespace Gecode {
     {
       // Compute maximal degree
       unsigned int max_degree = 0;
-      unsigned int* deg = heap.alloc<unsigned int>(m_states);
+      unsigned int* deg = region.alloc<unsigned int>(m_states);
 
       // Compute in-degree per state
       for (int i = m_states; i--; )
@@ -457,8 +451,6 @@ namespace Gecode {
         deg[d->trans[i].i_state]++;
       for (int i = m_states; i--; )
         max_degree = std::max(max_degree,deg[i]);
-
-      heap.free<unsigned int>(deg,m_states);
 
       // Compute transitions per symbol
       {
@@ -477,9 +469,6 @@ namespace Gecode {
 
     d->fill();
     object(d);
-    heap.free<int>(re,n_states);
-    heap.free<int>(state,n_states);
-    heap.free<Transition>(trans,n_trans);
   }
 
   DFA::DFA(int start, Transition t_spec[], int f_spec[], bool minimize) {

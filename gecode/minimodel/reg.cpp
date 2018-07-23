@@ -41,7 +41,7 @@ namespace Gecode {
     /**
      * \brief Allocator for position sets
      */
-    typedef Support::BlockAllocator<PosSet,Heap> PosSetAllocator;
+    typedef Support::BlockAllocator<PosSet,Region> PosSetAllocator;
 
     class NodeInfo;
     class PosInfo;
@@ -113,7 +113,8 @@ namespace Gecode {
 
   void
   REG::Exp::dispose(void) {
-    Support::DynamicStack<Exp*,Heap> todo(heap);
+    Region region;
+    Support::DynamicStack<Exp*,Region> todo(region);
     todo.push(this);
     while (!todo.empty()) {
       Exp* e = todo.pop();
@@ -256,7 +257,8 @@ namespace Gecode {
     int n = x.size();
     if (n < 1)
       throw MiniModel::TooFewArguments("REG");
-    Exp** a = heap.alloc<Exp*>(n);
+    Region region;
+    Exp** a = region.alloc<Exp*>(n);
     // Initialize with symbols
     for (int i=n; i--; ) {
       a[i] = new Exp();
@@ -292,7 +294,6 @@ namespace Gecode {
       }
     }
     e = a[0];
-    heap.free<Exp*>(a,n);
   }
 
   REG
@@ -447,7 +448,7 @@ namespace Gecode {
     /**
      * \brief Sets of positions
      */
-    class PosSet : public Support::BlockClient<PosSet,Heap> {
+    class PosSet : public Support::BlockClient<PosSet,Region> {
       // Maintain sets of positions in inverse order
       // This makes the check whether the last position is included
       // more efficient.
@@ -566,8 +567,10 @@ namespace Gecode {
     using MiniModel::NodeInfo;
     using MiniModel::ExpInfo;
 
-    Support::DynamicStack<ExpInfo,Heap> todo(heap);
-    Support::DynamicStack<NodeInfo,Heap> done(heap);
+    Region region;
+
+    Support::DynamicStack<ExpInfo,Region> todo(region);
+    Support::DynamicStack<NodeInfo,Region> done(region);
 
     // Start with first expression to be processed
     todo.push(ExpInfo(this));
@@ -837,19 +840,20 @@ namespace Gecode {
 
     using MiniModel::SymbolsInc;
 
-    PosSetAllocator    psm(heap);
+    Region region;
+    PosSetAllocator    psm(region);
     StatePoolAllocator spm(heap);
     REG r = *this + REG(Int::Limits::max+1);
     int n_pos = REG::Exp::n_pos(r.e);
 
-    PosInfo* pi = heap.alloc<PosInfo>(n_pos);
+    PosInfo* pi = region.alloc<PosInfo>(n_pos);
     for (int i=n_pos; i--; )
       pi[i].followpos = NULL;
 
     PosSet* firstpos = r.e->followpos(psm,&pi[0]);
 
     // Compute symbols
-    int* symbols = heap.alloc<int>(n_pos);
+    int* symbols = region.alloc<int>(n_pos);
     for (int i=n_pos; i--; )
       symbols[i] = pi[i].symbol;
 
@@ -882,8 +886,6 @@ namespace Gecode {
         fb.add(n->state);
     fb.finish();
 
-    heap.free<PosInfo>(pi,n_pos);
-    heap.free<int>(symbols,n_pos);
     return DFA(0,tb.transitions(),fb.finals(),true);
   }
 
