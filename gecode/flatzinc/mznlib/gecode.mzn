@@ -59,13 +59,6 @@ annotation relax_and_reconstruct(array[int] of var int: x, int: percentage);
 % an initial solution y.
 annotation relax_and_reconstruct(array[int] of var int: x, int: percentage, array[int] of int: y);
 
-% Controlling the restart strategy
-annotation restart_luby(int: scale);
-annotation restart_geometric(float: base, int: scale);
-annotation restart_linear(int: scale);
-annotation restart_constant(int: scale);
-annotation restart_none;
-
 % i in z <-> forall (j in x) (i in y[j])
 predicate gecode_array_set_element_intersect(var set of int: x,
     array[int] of var set of int: y, var set of int: z);

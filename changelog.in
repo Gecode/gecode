@@ -69,6 +69,14 @@ Date: 2018-??-??
 More C++-11
 
 [ENTRY]
+Module: flatzinc
+What:   change
+Rank:   minor
+[DESCRIPTION]
+Add -t command line option to fzn-gecode, to support new unified
+time limit command line option for FlatZinc solvers.
+
+[ENTRY]
 Module: kernel
 What:   change
 Rank:   major
