@@ -1899,24 +1899,25 @@ namespace Gecode { namespace FlatZinc {
       Driver::CombinedStop::installCtrlHandler(false);
     if (opt.mode() == SM_STAT) {
       Gecode::Search::Statistics stat = se.statistics();
+      double totalTime = (t_total.stop() / 1000.0);
+      double solveTime = (t_solve.stop() / 1000.0);
+      double initTime = totalTime - solveTime;
       out << std::endl
-           << "%%  runtime:       ";
-      Driver::stop(t_total,out);
-      out << std::endl
-           << "%%  solvetime:     ";
-      Driver::stop(t_solve,out);
-      out << std::endl
-           << "%%  solutions:     "
-           << std::abs(noOfSolutions - findSol) << std::endl
-           << "%%  variables:     "
-           << (intVarCount + boolVarCount + setVarCount) << std::endl
-           << "%%  propagators:   " << n_p << std::endl
-           << "%%  propagations:  " << sstat.propagate+stat.propagate << std::endl
-           << "%%  nodes:         " << stat.node << std::endl
-           << "%%  failures:      " << stat.fail << std::endl
-           << "%%  restarts:      " << stat.restart << std::endl
-           << "%%  peak depth:    " << stat.depth << std::endl
-           << std::endl;
+          << "%%mzn-stat initTime=" << initTime
+          << std::endl;      
+      out << "%%mzn-stat solveTime=" << solveTime
+          << std::endl;
+      out << "%%mzn-stat solutions="
+          << std::abs(noOfSolutions - findSol) << std::endl
+          << "%%mzn-stat variables="
+          << (intVarCount + boolVarCount + setVarCount) << std::endl
+          << "%%mzn-stat propagators=" << n_p << std::endl
+          << "%%mzn-stat propagations=" << sstat.propagate+stat.propagate << std::endl
+          << "%%mzn-stat nodes=" << stat.node << std::endl
+          << "%%mzn-stat failures=" << stat.fail << std::endl
+          << "%%mzn-stat restarts=" << stat.restart << std::endl
+          << "%%mzn-stat peakDepth=" << stat.depth << std::endl
+          << std::endl;
     }
     delete o.stop;
     delete o.tracer;
