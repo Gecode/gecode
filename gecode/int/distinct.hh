@@ -70,6 +70,13 @@ namespace Gecode { namespace Int { namespace Distinct {
     /// Constructor for cloning \a p
     Val(Space& home, Val<View>& p);
   public:
+#ifdef GECODE_HAS_CBS
+    /// Solution distribution computation for branching
+    virtual void solndistrib(Space& home, Propagator::SendMarginal send) const;
+    /// Sum of variables cardinalities
+    virtual void domainsizesum(Propagator::InDecision in,
+                               unsigned int& size, unsigned int& size_b) const;
+#endif
     /// Copy propagator during cloning
     virtual Actor*     copy(Space& home);
     /// Perform propagation
@@ -77,6 +84,26 @@ namespace Gecode { namespace Int { namespace Distinct {
     /// Post propagator for view array \a x
     static ExecStatus post(Home home, ViewArray<View>& x);
   };
+
+#ifdef GECODE_HAS_CBS
+  /**
+    * \brief Solution distribution computation for the AllDifferent constraint
+    *
+    * The algorithm is taken from:
+    *        Gagnon, Samuel & Pesant, Gilles. (2018).
+    *        Accelerating Counting-Based Search.
+    *        In book: Integration of Constraint Programming,
+    *                 Artificial Intelligence, and Operations Research, pp.245-253
+    *        Available at http://www.polymtl.ca/labo-quosseca/en/publications
+    */
+  template<class View>
+  void cbsdistinct(Space& home, unsigned int prop_id, const ViewArray<View>& x,
+                   Propagator::SendMarginal send);
+
+  template<class View>
+  void cbssize(const ViewArray<View>& x, Propagator::InDecision in,
+               unsigned int& size, unsigned int& size_b);
+#endif
 
   /**
    * \brief Eliminate singletons by naive value propagation
@@ -137,6 +164,13 @@ namespace Gecode { namespace Int { namespace Distinct {
     /// Constructor for cloning \a p
     Bnd(Space& home, Bnd<View>& p);
   public:
+#ifdef GECODE_HAS_CBS
+    /// Solution distribution computation for branching
+    virtual void solndistrib(Space& home, Propagator::SendMarginal send) const;
+    /// Sum of variables cardinalities
+    virtual void domainsizesum(Propagator::InDecision in,
+                               unsigned int& size, unsigned int& size_b) const;
+#endif
     /// Post propagator for view array \a x
     static ExecStatus post(Home home, ViewArray<View>& x);
     /// Perform propagation
@@ -256,6 +290,13 @@ namespace Gecode { namespace Int { namespace Distinct {
     /// Constructor for posting
     Dom(Home home, ViewArray<View>& x);
   public:
+#ifdef GECODE_HAS_CBS
+    /// Solution distribution computation for branching
+    virtual void solndistrib(Space& home, Propagator::SendMarginal send) const;
+    /// Sum of variables cardinalities
+    virtual void domainsizesum(Propagator::InDecision in,
+                               unsigned int& size, unsigned int& size_b) const;
+#endif
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /**
@@ -331,6 +372,7 @@ namespace Gecode { namespace Int { namespace Distinct {
 
 }}}
 
+#include <gecode/int/distinct/cbs.hpp>
 #include <gecode/int/distinct/val.hpp>
 #include <gecode/int/distinct/bnd.hpp>
 #include <gecode/int/distinct/ter-dom.hpp>
