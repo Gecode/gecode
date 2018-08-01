@@ -76,18 +76,6 @@ namespace Gecode {
     /// Update this variable to be a clone of variable \a y
     void update(Space& home, VarImpVar<VarImp>& y);
     //@}
-
-    /// \name Variable comparison
-    //@{
-    /// Test whether variable is the same as \a y
-    bool operator ==(const VarImpVar<VarImp>& y) const;
-    /// Test whether variable is noy the same as \a y
-    bool operator !=(const VarImpVar<VarImp>& y) const;
-    /// Test whether variable comes before \a y (arbitrary order)
-    bool operator <(const VarImpVar<VarImp>& y) const;
-    /// Test whether variable comes after \a y (arbitrary order)
-    bool operator >(const VarImpVar<VarImp>& y) const;
-    //@}
   };
 
 
@@ -127,26 +115,6 @@ namespace Gecode {
   forceinline void
   VarImpVar<VarImp>::update(Space& home, VarImpVar<VarImp>& y) {
     x = y.x->copy(home);
-  }
-  template<class VarImp>
-  forceinline bool
-  VarImpVar<VarImp>::operator ==(const VarImpVar<VarImp>& y) const {
-    return varimp() == y.varimp();
-  }
-  template<class VarImp>
-  forceinline bool
-  VarImpVar<VarImp>::operator !=(const VarImpVar<VarImp>& y) const {
-    return varimp() != y.varimp();
-  }
-  template<class VarImp>
-  forceinline bool
-  VarImpVar<VarImp>::operator <(const VarImpVar<VarImp>& y) const {
-    return varimp() < y.varimp();
-  }
-  template<class VarImp>
-  forceinline bool
-  VarImpVar<VarImp>::operator >(const VarImpVar<VarImp>& y) const {
-    return varimp() > y.varimp();
   }
 
 }

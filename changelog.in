@@ -88,43 +88,39 @@ shared(x,y) instead of x.shared(y)).
 
 [ENTRY]
 Module: kernel
-What:   change
+What:   removed
 Rank:   major
 [DESCRIPTION]
-Variables now are compared by the standard C++ operators "==",
-"!=", and "<" (this replaces the same and before
-functions). Comparisons between different variables types are not
-any longer supported.
+Variables cannot any longer be compared by same() and
+before(). If you want to compare two variables x and y whether
+they are identical, use x.varimp() == y.varimp().
 
 [ENTRY]
 Module: int
-What:   change
+What:   removed
 Rank:   major
 [DESCRIPTION]
-Variables now are compared by the standard C++ operators "==",
-"!=", and "<" (this replaces the same and before
-functions). Comparisons between different variables types are not
-any longer supported.
+Variables cannot any longer be compared by same() and
+before(). If you want to compare two variables x and y whether
+they are identical, use x.varimp() == y.varimp().
 
 [ENTRY]
 Module: set
-What:   change
+What:   removed
 Rank:   major
 [DESCRIPTION]
-Variables now are compared by the standard C++ operators "==",
-"!=", and "<" (this replaces the same and before
-functions). Comparisons between different variables types are not
-any longer supported.
+Variables cannot any longer be compared by same() and
+before(). If you want to compare two variables x and y whether
+they are identical, use x.varimp() == y.varimp().
 
 [ENTRY]
 Module: float
-What:   change
+What:   removed
 Rank:   major
 [DESCRIPTION]
-Variables now are compared by the standard C++ operators "==",
-"!=", and "<" (this replaces the same and before
-functions). Comparisons between different variables types are not
-any longer supported.
+Variables cannot any longer be compared by same() and
+before(). If you want to compare two variables x and y whether
+they are identical, use x.varimp() == y.varimp().
 
 [ENTRY]
 Module: kernel
