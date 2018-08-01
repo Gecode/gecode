@@ -47,7 +47,7 @@ namespace Gecode { namespace Int { namespace Unshare {
   public:
     forceinline bool
     operator ()(const Var* a, const Var* b) {
-      return *a < *b;
+      return a->varimp() < b->varimp();
     }
   };
   
@@ -121,7 +121,7 @@ namespace Gecode { namespace Int { namespace Unshare {
     // Replace all shared variables with new and equal variables
     for (int i=0; i<n;) {
       int j=i++;
-      while ((i<n) && (*y[j] == *y[i]))
+      while ((i<n) && (y[j]->varimp() == y[i]->varimp()))
         i++;
       if (!y[j]->assigned())
         link(home,&y[j],i-j,ipl);
