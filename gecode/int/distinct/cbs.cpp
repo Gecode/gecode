@@ -31,6 +31,8 @@
  *
  */
 
+#include <gecode/support/config.hpp>
+
 #ifdef GECODE_HAS_CBS
 
 #include <gecode/int/distinct.hh>
