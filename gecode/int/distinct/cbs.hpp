@@ -74,21 +74,17 @@ namespace Gecode { namespace Int { namespace Distinct {
    */
   class ValToUpdate {
   private:
-    /// ???
-    const unsigned int width;
-    /// ???
+    /// Minimum value of the union of all variable domains in the propagator
     const int minVal;
-    /// ???
-    // I would pass the region as argument...
-    Region r;
-    /// ???
+    /// Minc and Brégman estimation update for each value
     double* mincUpdate;
-    /// ???
+    /// Liang and Bai estimation update for each value
     double* liangUpdate;
   public:
     template<class View>
-    ValToUpdate(const ViewArray<View>& x, int minDomVal, int maxDomVal);
-    /** 
+    ValToUpdate(const ViewArray<View>& x,
+                int minDomVal, int maxDomVal, Region& r);
+    /**
      * Gives the update we have to apply to the Minc and Brégman
      * estimation of the permanent if we fix a variable of cardinalty
      * \a varSize to the value \a val.
@@ -97,7 +93,7 @@ namespace Gecode { namespace Int { namespace Distinct {
     /**
      * Gives the update we have to apply to the Liang and Bai
      * estimation of the
-     * permanent if we fix a variable of cardinalty \a varSize 
+     * permanent if we fix a variable of cardinalty \a varSize
      * to the value "val".
      */
     double getLiangUpdate(int val, unsigned int idx, unsigned int varSize) const;
@@ -106,14 +102,14 @@ namespace Gecode { namespace Int { namespace Distinct {
   template<class View>
   forceinline
   ValToUpdate::ValToUpdate(const ViewArray<View>& x,
-                           int minDomVal, int maxDomVal)
-    : width(maxDomVal - minDomVal + 1),
-      minVal(minDomVal) {
+                           int minDomVal, int maxDomVal, Region& r)
+    : minVal(minDomVal) {
+    unsigned int width = maxDomVal - minDomVal + 1;
     mincUpdate = r.alloc<double>(width);
     std::fill(mincUpdate, mincUpdate + width, 1);
     liangUpdate = r.alloc<double>(width);
     std::fill(liangUpdate, liangUpdate + width, 1);
-    
+
     for (int i=0; i<x.size(); i++) {
       if (x[i].assigned()) continue;
       size_t s = x[i].size();
@@ -136,20 +132,17 @@ namespace Gecode { namespace Int { namespace Distinct {
     return liangUpdate[val-minVal] / getLiangBaiFactor(idx, varSize-1);
   }
 
-  /// ???
-  struct UB {
-    /// ???
-    double minc;
-    /// ???
-    double liangBai;
-  };
-
 
   template<class View>
   void cbsdistinct(Space&, unsigned int prop_id, const ViewArray<View>& x,
                    Propagator::SendMarginal send) {
     // Computation of Minc and Brégman and Liang and Bai upper bounds for
     // the permanent of the whole constraint
+    struct UB {
+      double minc;
+      double liangBai;
+    };
+
     UB ub{1,1};
     for (int i=0; i<x.size(); i++) {
       unsigned int s = x[i].size();
@@ -172,11 +165,11 @@ namespace Gecode { namespace Int { namespace Distinct {
 
     // For each possible value, we compute the update we have to apply to the
     // permanent of the whole constraint to get the new solution count
-    ValToUpdate valToUpdate(x, minVal, maxVal);
+    Region r;
+    ValToUpdate valToUpdate(x, minVal, maxVal, r);
 
     // Preallocated memory for holding solution counts for all values of a
     // variable during computation
-    Region r;
     double* solCounts = r.alloc<double>(maxVal - minVal + 1);
 
     for (int i=0; i<x.size(); i++) {
