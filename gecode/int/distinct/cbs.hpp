@@ -48,7 +48,8 @@ namespace Gecode { namespace Int { namespace Distinct {
   const int MAX_MINC_FACTORS = 400;
   extern const double mincFactors[MAX_MINC_FACTORS];
 
-  static double getMincFactor(int domSize) {
+  forceinline double
+  getMincFactor(int domSize) {
     return mincFactors[domSize - 1];
   }
 
@@ -62,7 +63,8 @@ namespace Gecode { namespace Int { namespace Distinct {
   const int WIDTH_LIANG_BAI_FACTORS = 400;
   extern const double liangBaiFactors[WIDTH_LIANG_BAI_FACTORS * WIDTH_LIANG_BAI_FACTORS];
 
-  static double getLiangBaiFactor(int index, int domSize) {
+  forceinline double
+  getLiangBaiFactor(int index, int domSize) {
     return liangBaiFactors[index*WIDTH_LIANG_BAI_FACTORS + domSize - 1];
   }
 
@@ -72,45 +74,73 @@ namespace Gecode { namespace Int { namespace Distinct {
    */
   class ValToUpdate {
   private:
+    /// ???
     const unsigned int width;
+    /// ???
     const int minVal;
+    /// ???
+    // I would pass the region as argument...
     Region r;
+    /// ???
     double* mincUpdate;
+    /// ???
     double* liangUpdate;
   public:
     template<class View>
-    ValToUpdate(const ViewArray<View>& x, int minDomVal, int maxDomVal)
-      : width(maxDomVal - minDomVal + 1),
-        minVal(minDomVal) {
-      mincUpdate = r.alloc<double>(width);
-      std::fill(mincUpdate, mincUpdate + width, 1);
-      liangUpdate = r.alloc<double>(width);
-      std::fill(liangUpdate, liangUpdate + width, 1);
-
-      for (int i=0; i<x.size(); i++) {
-        if (x[i].assigned()) continue;
-        size_t s = x[i].size();
-        for (ViewValues<View> val(x[i]); val(); ++val) {
-          int idx = val.val() - minVal;
-          mincUpdate[idx] *= getMincFactor(s-1) / getMincFactor(s);
-          liangUpdate[idx] *= getLiangBaiFactor(i, s-1) / getLiangBaiFactor(i, s);
-        }
-      }
-    }
-    // Gives the update we have to apply to the Minc and Brégman estimation of the
-    // permanent if we fix a variable of cardinalty "varSize" to the value "val".
-    double getMincUpdate(int val, unsigned int varSize) const {
-      return mincUpdate[val-minVal] / getMincFactor(varSize-1);
-    }
-    // Gives the update we have to apply to the Liang and Bai estimation of the
-    // permanent if we fix a variable of cardinalty "varSize" to the value "val".
-    double getLiangUpdate(int val, unsigned int idx, unsigned int varSize) const {
-      return liangUpdate[val-minVal] / getLiangBaiFactor(idx, varSize-1);
-    }
+    ValToUpdate(const ViewArray<View>& x, int minDomVal, int maxDomVal);
+    /** 
+     * Gives the update we have to apply to the Minc and Brégman
+     * estimation of the permanent if we fix a variable of cardinalty
+     * \a varSize to the value \a val.
+     */
+    double getMincUpdate(int val, unsigned int varSize) const;
+    /**
+     * Gives the update we have to apply to the Liang and Bai
+     * estimation of the
+     * permanent if we fix a variable of cardinalty \a varSize 
+     * to the value "val".
+     */
+    double getLiangUpdate(int val, unsigned int idx, unsigned int varSize) const;
   };
 
+  template<class View>
+  forceinline
+  ValToUpdate::ValToUpdate(const ViewArray<View>& x,
+                           int minDomVal, int maxDomVal)
+    : width(maxDomVal - minDomVal + 1),
+      minVal(minDomVal) {
+    mincUpdate = r.alloc<double>(width);
+    std::fill(mincUpdate, mincUpdate + width, 1);
+    liangUpdate = r.alloc<double>(width);
+    std::fill(liangUpdate, liangUpdate + width, 1);
+    
+    for (int i=0; i<x.size(); i++) {
+      if (x[i].assigned()) continue;
+      size_t s = x[i].size();
+      for (ViewValues<View> val(x[i]); val(); ++val) {
+        int idx = val.val() - minVal;
+        mincUpdate[idx] *= getMincFactor(s-1) / getMincFactor(s);
+        liangUpdate[idx] *= getLiangBaiFactor(i, s-1) / getLiangBaiFactor(i, s);
+      }
+    }
+  }
+
+  forceinline double
+  ValToUpdate::getMincUpdate(int val, unsigned int varSize) const {
+    return mincUpdate[val-minVal] / getMincFactor(varSize-1);
+  }
+
+  forceinline double
+  ValToUpdate::getLiangUpdate(int val, unsigned int idx,
+                              unsigned int varSize) const {
+    return liangUpdate[val-minVal] / getLiangBaiFactor(idx, varSize-1);
+  }
+
+  /// ???
   struct UB {
+    /// ???
     double minc;
+    /// ???
     double liangBai;
   };
 
