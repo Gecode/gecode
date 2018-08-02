@@ -72,7 +72,7 @@ static double getLiangBaiFactor(int index, int domSize) {
   */
 class ValToUpdate {
 private:
-  const size_t width;
+  const unsigned int width;
   const int minVal;
   Region r;
   double* mincUpdate;
