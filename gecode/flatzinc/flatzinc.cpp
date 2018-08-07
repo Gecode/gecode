@@ -1862,63 +1862,65 @@ namespace Gecode { namespace FlatZinc {
     o.cutoff  = new Search::CutoffAppend(new Search::CutoffConstant(0), 1, Driver::createCutoff(opt));
     if (opt.interrupt())
       Driver::CombinedStop::installCtrlHandler(true);
-    Meta<FlatZincSpace,Engine> se(this,o);
-    int noOfSolutions = opt.solutions();
-    if (noOfSolutions == -1) {
-      noOfSolutions = (_method == SAT) ? 1 : 0;
-    }
-    bool printAll = _method == SAT || opt.allSolutions() || noOfSolutions != 0;
-    int findSol = noOfSolutions;
-    FlatZincSpace* sol = NULL;
-    while (FlatZincSpace* next_sol = se.next()) {
-      delete sol;
-      sol = next_sol;
-      if (printAll) {
+    {
+      Meta<FlatZincSpace,Engine> se(this,o);
+      int noOfSolutions = opt.solutions();
+      if (noOfSolutions == -1) {
+        noOfSolutions = (_method == SAT) ? 1 : 0;
+      }
+      bool printAll = _method == SAT || opt.allSolutions() || noOfSolutions != 0;
+      int findSol = noOfSolutions;
+      FlatZincSpace* sol = NULL;
+      while (FlatZincSpace* next_sol = se.next()) {
+        delete sol;
+        sol = next_sol;
+        if (printAll) {
+          sol->print(out, p);
+          out << "----------" << std::endl;
+        }
+        if (--findSol==0)
+          goto stopped;
+      }
+      if (sol && !printAll) {
         sol->print(out, p);
         out << "----------" << std::endl;
       }
-      if (--findSol==0)
-        goto stopped;
-    }
-    if (sol && !printAll) {
-      sol->print(out, p);
-      out << "----------" << std::endl;
-    }
-    if (!se.stopped()) {
-      if (sol) {
-        out << "==========" << std::endl;
-      } else {
-        out << "=====UNSATISFIABLE=====" << std::endl;
+      if (!se.stopped()) {
+        if (sol) {
+          out << "==========" << std::endl;
+        } else {
+          out << "=====UNSATISFIABLE=====" << std::endl;
+        }
+      } else if (!sol) {
+          out << "=====UNKNOWN=====" << std::endl;
       }
-    } else if (!sol) {
-        out << "=====UNKNOWN=====" << std::endl;
-    }
-    delete sol;
-    stopped:
-    if (opt.interrupt())
-      Driver::CombinedStop::installCtrlHandler(false);
-    if (opt.mode() == SM_STAT) {
-      Gecode::Search::Statistics stat = se.statistics();
-      double totalTime = (t_total.stop() / 1000.0);
-      double solveTime = (t_solve.stop() / 1000.0);
-      double initTime = totalTime - solveTime;
-      out << std::endl
-          << "%%%mzn-stat initTime=" << initTime
-          << std::endl;      
-      out << "%%%mzn-stat solveTime=" << solveTime
-          << std::endl;
-      out << "%%%mzn-stat solutions="
-          << std::abs(noOfSolutions - findSol) << std::endl
-          << "%%%mzn-stat variables="
-          << (intVarCount + boolVarCount + setVarCount) << std::endl
-          << "%%%mzn-stat propagators=" << n_p << std::endl
-          << "%%%mzn-stat propagations=" << sstat.propagate+stat.propagate << std::endl
-          << "%%%mzn-stat nodes=" << stat.node << std::endl
-          << "%%%mzn-stat failures=" << stat.fail << std::endl
-          << "%%%mzn-stat restarts=" << stat.restart << std::endl
-          << "%%%mzn-stat peakDepth=" << stat.depth << std::endl
-          << "%%%mzn-stat-end" << std::endl
-          << std::endl;
+      delete sol;
+      stopped:
+      if (opt.interrupt())
+        Driver::CombinedStop::installCtrlHandler(false);
+      if (opt.mode() == SM_STAT) {
+        Gecode::Search::Statistics stat = se.statistics();
+        double totalTime = (t_total.stop() / 1000.0);
+        double solveTime = (t_solve.stop() / 1000.0);
+        double initTime = totalTime - solveTime;
+        out << std::endl
+            << "%%%mzn-stat initTime=" << initTime
+            << std::endl;      
+        out << "%%%mzn-stat solveTime=" << solveTime
+            << std::endl;
+        out << "%%%mzn-stat solutions="
+            << std::abs(noOfSolutions - findSol) << std::endl
+            << "%%%mzn-stat variables="
+            << (intVarCount + boolVarCount + setVarCount) << std::endl
+            << "%%%mzn-stat propagators=" << n_p << std::endl
+            << "%%%mzn-stat propagations=" << sstat.propagate+stat.propagate << std::endl
+            << "%%%mzn-stat nodes=" << stat.node << std::endl
+            << "%%%mzn-stat failures=" << stat.fail << std::endl
+            << "%%%mzn-stat restarts=" << stat.restart << std::endl
+            << "%%%mzn-stat peakDepth=" << stat.depth << std::endl
+            << "%%%mzn-stat-end" << std::endl
+            << std::endl;
+      }
     }
     delete o.stop;
     delete o.tracer;
