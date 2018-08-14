@@ -214,6 +214,13 @@ else ()
   set(GECODE_THREADS_PTHREADS 1)
 endif ()
 
+option(ENABLE_GIST "Enable gist" OFF)
+if (ENABLE_GIST)
+  set(GECODE_USE_QT TRUE)
+else()
+  set(GECODE_USE_QT FALSE)
+endif()
+
 # Don't use Qt if GECODE_USE_QT is set to FALSE.
 if (NOT DEFINED GECODE_USE_QT OR GECODE_USE_QT)
   find_package(Qt5 QUIET COMPONENTS Core Gui Widgets PrintSupport)
@@ -387,6 +394,11 @@ foreach (lib support kernel search int set float
   endif ()
 endforeach ()
 
+option(ENABLE_CPPROFILER "Enable cpprofiler tracer mode" ON)
+if(ENABLE_CPPROFILER)
+  add_definitions(-DGECODE_HAS_CPPROFILER)
+endif()
+
 find_package(Threads)
 target_link_libraries(gecodesupport ${CMAKE_THREAD_LIBS_INIT})
 target_link_libraries(gecodekernel gecodesupport)
@@ -418,7 +430,7 @@ add_executable(gecode-test ${TESTSRC} ${TESTHDR})
 target_link_libraries(gecode-test gecodeflatzinc gecodeminimodel)
 
 add_executable(fzn-gecode ${FLATZINCEXESRC})
-target_link_libraries(fzn-gecode gecodeflatzinc gecodegist gecodeminimodel gecodedriver)
+target_link_libraries(fzn-gecode gecodeflatzinc gecodeminimodel gecodedriver)
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
