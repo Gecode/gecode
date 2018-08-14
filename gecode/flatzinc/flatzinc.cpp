@@ -1748,9 +1748,9 @@ namespace Gecode { namespace FlatZinc {
     getInfo(const Space& space) const {
       std::stringstream ss;
       if (const FlatZincSpace* fz_space = dynamic_cast<const FlatZincSpace*>(&space)) {
-        ss << "{domains = \"";
+        ss << "{\n\t\"domains\": \"";
         ss << fz_space->getDomains(p);
-        ss << "\"}";
+        ss << "\"\n}";
       }
       return ss.str();
     }
