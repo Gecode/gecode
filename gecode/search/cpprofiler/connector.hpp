@@ -237,13 +237,13 @@ namespace Gecode { namespace CPProfiler {
       if (n == -1) {
         break;
       }
-      total += n;
-      bytesleft -= n;
+      total += static_cast<int>(n);
+      bytesleft -= static_cast<int>(n);
     }
 
-    *len = total;  // return number actually sent here
+    *len = static_cast<int>(total);  // return number actually sent here
     
-    return n == -1 ? -1 : 0;  // return -1 on failure, 0 on success
+    return (n == -1) ? -1 : 0;  // return -1 on failure, 0 on success
   }
 
   inline void
@@ -290,7 +290,7 @@ namespace Gecode { namespace CPProfiler {
     
     // loop through all the results and connect to the first we can
     for (p = servinfo; p != NULL; p = p->ai_next) {
-      if ((sockfd = socket(p->ai_family, p->ai_socktype, p->ai_protocol)) == -1) {
+      if ((sockfd = static_cast<int>(socket(p->ai_family, p->ai_socktype, p->ai_protocol))) == -1) {
         // errno is set here, but we don't examine it.
         continue;
       }
