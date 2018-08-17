@@ -55,13 +55,13 @@ namespace Gecode { namespace Int { namespace Extensional {
   forceinline
   BitSet<IndexType>::BitSet(Space& home,
                             const BitSet<OldIndexType>& bs)
-    : _limit(bs._limit),
+    : _limit(static_cast<IndexType>(bs._limit)),
       index(home.alloc<IndexType>(_limit)),
       bits(home.alloc<BitSetData>(_limit)) {
     assert(_limit > 0U);
     for (IndexType i = _limit; i--; ) {
       bits[i] = bs.bits[i];
-      index[i] = bs.index[i];
+      index[i] = static_cast<IndexType>(bs.index[i]);
     }
   }
   
