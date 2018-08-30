@@ -2716,7 +2716,7 @@ namespace Gecode {
     PropagatorGroup g;
   public:
     /// Initialize
-    Propagators(Space& home, PropagatorGroup g);
+    Propagators(const Space& home, PropagatorGroup g);
     /// Test whether there are propagators left
     bool operator ()(void) const;
     /// Move iterator to next propagator
@@ -2734,7 +2734,7 @@ namespace Gecode {
     BrancherGroup g;
   public:
     /// Initialize
-    Branchers(Space& home, BrancherGroup g);
+    Branchers(const Space& home, BrancherGroup g);
     /// Test whether there are branchers left
     bool operator ()(void) const;
     /// Move iterator to next brancher
@@ -4976,8 +4976,8 @@ namespace Gecode {
    *
    */
   forceinline
-  Propagators::Propagators(Space& home, PropagatorGroup g0)
-    : ps(home), g(g0) {
+  Propagators::Propagators(const Space& home, PropagatorGroup g0)
+    : ps(const_cast<Space&>(home)), g(g0) {
     while (ps() && !g.in(ps.propagator().group()))
       ++ps;
   }
@@ -4997,8 +4997,8 @@ namespace Gecode {
   }
 
   forceinline
-  Branchers::Branchers(Space& home, BrancherGroup g0)
-    : bs(home), g(g0) {
+  Branchers::Branchers(const Space& home, BrancherGroup g0)
+    : bs(const_cast<Space&>(home)), g(g0) {
     while (bs() && !g.in(bs.brancher().group()))
       ++bs;
   }
