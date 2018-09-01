@@ -3,8 +3,12 @@
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
  *
+ *  Contributing authors:
+ *     Samuel Gagnon <samuel.gagnon92@gmail.com>
+
  *  Copyright:
  *     Christian Schulte, 2012
+ *     Samuel Gagnon, 2018
  *
  *  This file is part of Gecode, the generic constraint
  *  development environment:
@@ -679,7 +683,6 @@ namespace Gecode { namespace Int { namespace Branch {
   /**
    * \brief %Brancher using counting-based search
    *
-   *
    */
   template<class View>
   class CBSBrancher : public Brancher {
@@ -701,7 +704,7 @@ namespace Gecode { namespace Int { namespace Branch {
         /// The map we want to share
         std::unordered_map<unsigned int, unsigned int> _varIdToPos;
       public:
-        /// Default constructur
+        /// Default constructor
         VarIdToPosO() = default;
         /// Copy constructor
         VarIdToPosO(const VarIdToPosO& o) = default;
