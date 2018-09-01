@@ -3,8 +3,12 @@
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
  *
+ *  Contributing authors:
+ *     Samuel Gagnon <samuel.gagnon92@gmail.com>
+ *
  *  Copyright:
  *     Christian Schulte, 2015
+ *     Samuel Gagnon, 2018
  *
  *  This file is part of Gecode, the generic constraint
  *  development environment:
@@ -283,6 +287,8 @@ main(int argc, char* argv[]) {
 #ifdef GECODE_HAS_CBS
   opt.branching(QCP::BRANCH_CBS_MAX_SD, "maxSD");
 #endif
+
+  opt.ipl(IPL_DOM);
 
   opt.propagation(QCP::PROP_DISTINCT);
   opt.propagation(QCP::PROP_BINARY, "binary",
