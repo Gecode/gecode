@@ -8,6 +8,7 @@
  *     Stefano Gualandi <stefano.gualandi@gmail.com>
  *     Mikael Lagerkvist <lagerkvist@gecode.org>
  *     David Rijsman <David.Rijsman@quintiq.com>
+ *     Samuel Gagnon <samuel.gagnon92@gmail.com>
  *
  *  Copyright:
  *     Stefano Gualandi, 2013
@@ -15,6 +16,7 @@
  *     David Rijsman, 2009
  *     Christian Schulte, 2002
  *     Guido Tack, 2004
+ *     Samuel Gagnon, 2018
  *
  *  This file is part of Gecode, the generic constraint
  *  development environment:

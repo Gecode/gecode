@@ -108,8 +108,7 @@ namespace Gecode { namespace Int { namespace Branch {
 
   template<class View>
   bool CBSBrancher<View>::status(const Space& home) const {
-    auto& h = const_cast<Space&>(home);
-    for (Propagators p(h, PropagatorGroup::all); p(); ++p) {
+    for (Propagators p(home, PropagatorGroup::all); p(); ++p) {
       // Sum of domains of all variable in propagator
       unsigned int domsum;
       // Same, but for variables that are also in this brancher.
@@ -117,8 +116,7 @@ namespace Gecode { namespace Int { namespace Branch {
 
       // If the propagator doesn't support counting-based search, domsum and
       // domsum_b are going to be equal to 0.
-      const Propagator& prop = p.propagator();
-      prop.domainsizesum([this](unsigned int var_id)
+      p.propagator().domainsizesum([this](unsigned int var_id)
                          { return inbrancher(var_id); },
                          domsum, domsum_b);
 
