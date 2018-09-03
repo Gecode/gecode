@@ -348,6 +348,7 @@ INTHDR0 = \
 	branch/traits.hpp branch/var.hpp branch/val.hpp branch/assign.hpp \
 	branch/view-values.hpp branch/merit.hpp \
 	branch/val-sel.hpp branch/val-commit.hpp branch/ngl.hpp \
+  branch/cbs.hpp \
 	count.hh count/rel.hpp \
 	count/int-base.hpp count/int-eq.hpp \
 	count/int-gq.hpp count/int-lq.hpp \
