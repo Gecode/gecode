@@ -378,6 +378,7 @@ namespace Gecode {
             rel(home,iv,srt,s,b);
           }
         }
+        break;
       case SetExpr::NT_INTER:
         {
           SetVarArgs bs(p+n);
