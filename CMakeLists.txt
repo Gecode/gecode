@@ -279,11 +279,18 @@ include(CheckCSourceCompiles)
 check_c_source_compiles("
   inline __attribute__ ((__always_inline__)) void foo(void) {}
   int main() {}" HAVE_ALWAYS_INLINE)
+check_c_source_compiles("
+  __forceinline void foo(void) {}
+  int main() {}" HAVE_FORCE_INLINE)
 set(forceinline inline)
 if (HAVE_ALWAYS_INLINE)
   set(forceinline "inline __attribute__ ((__always_inline__))")
 endif ()
+if (HAVE_FORCE_INLINE)
+  set(forceinline "__forceinline")
+endif ()
 
+# Check for bit index
 check_c_source_compiles("
   int main() { return __builtin_ffsl(0); }" HAVE_BUILTIN_FFSL)
 if (HAVE_BUILTIN_FFSL)
