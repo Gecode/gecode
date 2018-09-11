@@ -441,7 +441,7 @@ namespace Gecode { namespace Support {
   forceinline
   RawBitSetBase::RawBitSetBase(A& a, unsigned int sz, bool setbits)
     : data(a.template alloc<BitSetData>(BitSetData::data(sz+1))) {
-    for (unsigned int i = BitSetData::data(sz+1); i--; )
+    for (unsigned int i=0U; i<BitSetData::data(sz+1); i++)
       data[i].init(setbits);
     // Set a bit at position sz as sentinel (for efficient next)
     set(sz);
@@ -451,7 +451,7 @@ namespace Gecode { namespace Support {
   forceinline
   RawBitSetBase::RawBitSetBase(A& a, unsigned int sz, const RawBitSetBase& bs)
     : data(a.template alloc<BitSetData>(BitSetData::data(sz+1))) {
-    for (unsigned int i = BitSetData::data(sz+1); i--; )
+    for (unsigned int i=0U; i<BitSetData::data(sz+1); i++)
       data[i] = bs.data[i];
     // Set a bit at position sz as sentinel (for efficient next)
     set(sz);
@@ -469,7 +469,7 @@ namespace Gecode { namespace Support {
   RawBitSetBase::init(A& a, unsigned int sz, bool setbits) {
     assert(data == NULL);
     data=a.template alloc<BitSetData>(BitSetData::data(sz+1));
-    for (unsigned int i=BitSetData::data(sz+1); i--; )
+    for (unsigned int i=0U; i<BitSetData::data(sz+1); i++)
       data[i].init(setbits);
     // Set a bit at position sz as sentinel (for efficient next)
     set(sz);
@@ -477,13 +477,13 @@ namespace Gecode { namespace Support {
 
   forceinline void
   RawBitSetBase::copy(unsigned int sz, const RawBitSetBase& bs) {
-    for (unsigned int i=BitSetData::data(sz+1); i--; )
+    for (unsigned int i=0U; i<BitSetData::data(sz+1); i++)
       data[i] = bs.data[i];
   }
 
   forceinline void
   RawBitSetBase::clearall(unsigned int sz, bool setbits) {
-    for (unsigned int i=BitSetData::data(sz+1); i--; )
+    for (unsigned int i=0U; i<BitSetData::data(sz+1); i++)
       data[i].init(setbits);
   }
 
