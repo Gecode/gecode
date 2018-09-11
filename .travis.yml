@@ -32,3 +32,4 @@ script:
   - ./configure --prefix=/usr --enable-gist
   - make
   - make test
+  - LD_LIBRARY_PATH=. ./test/test
