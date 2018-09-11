@@ -1,8 +1,14 @@
 sudo: false
+
 language: cpp
+
 compiler:
   - gcc
   - clang
+
+notifications:
+  email: false
+
 addons:
   apt:
     sources:
@@ -11,10 +17,12 @@ addons:
     packages:
     - g++-6
     - clang-3.8
+
 install:
-- "[ $CXX = g++ ] && export CXX=g++-6 || true"
-- "[ $CXX = clang++ ] && export CXX=clang++-3.8 || true"
+  - "[ $CXX = g++ ] && export CXX=g++-6 || true"
+  - "[ $CXX = clang++ ] && export CXX=clang++-3.8 || true"
+
 script:
+  - ./configure --prefix=/usr
   - make
   - make test
-
