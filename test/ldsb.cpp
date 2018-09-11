@@ -38,6 +38,7 @@
 #ifdef GECODE_HAS_SET_VARS
 #include <gecode/set.hh>
 #include <gecode/set/branch.hh>
+#include <stdarg.h>
 #endif
 
 #include <gecode/minimodel.hh>
