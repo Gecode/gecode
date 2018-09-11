@@ -31,5 +31,7 @@ install:
 script:
   - ./configure --prefix=/usr --enable-gist
   - make
+  # Build the test case suite, but do not execute the 50k test cases.
   - make test
-  - LD_LIBRARY_PATH=. ./test/test
+  # Run a small subset of test cases, as defined by make check.
+  - LD_LIBRARY_PATH=. make check
