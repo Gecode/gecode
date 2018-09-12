@@ -44,7 +44,7 @@ namespace Gecode { namespace Int { namespace Extensional {
       index(home.alloc<IndexType>(n)),
       bits(home.alloc<BitSetData>(n)) {
     // Set all bits in all words (including the last)
-    for (IndexType i=_limit; i--; ) {
+    for (IndexType i=0; i<_limit; i++) {
       bits[i].init(true);
       index[i] = i;
     }
@@ -59,7 +59,7 @@ namespace Gecode { namespace Int { namespace Extensional {
       index(home.alloc<IndexType>(_limit)),
       bits(home.alloc<BitSetData>(_limit)) {
     assert(_limit > 0U);
-    for (IndexType i = _limit; i--; ) {
+    for (IndexType i=0; i<_limit; i++) {
       bits[i] = bs.bits[i];
       index[i] = static_cast<IndexType>(bs.index[i]);
     }
@@ -95,9 +95,9 @@ namespace Gecode { namespace Int { namespace Extensional {
       bits[i] = w;
       if (w.none()) {
         assert(bits[i].none());
-        bits[i] = bits[_limit-1];
-        index[i] = index[_limit-1];
         _limit--;
+        bits[i] = bits[_limit];
+        index[i] = index[_limit];
       }
     }
   }
@@ -106,7 +106,7 @@ namespace Gecode { namespace Int { namespace Extensional {
   forceinline void
   BitSet<IndexType>::clear_mask(BitSetData* mask) const {
     assert(_limit > 0U);
-    for (IndexType i = _limit; i--; ) {
+    for (IndexType i=0; i<_limit; i++) {
       mask[i].init(false);
       assert(mask[i].none());
     }
@@ -116,7 +116,7 @@ namespace Gecode { namespace Int { namespace Extensional {
   forceinline void
   BitSet<IndexType>::add_to_mask(const BitSetData* b, BitSetData* mask) const {
     assert(_limit > 0U);
-    for (IndexType i = _limit; i--; )
+    for (IndexType i=0; i<_limit; i++)
       mask[i] = BitSetData::o(mask[i],b[index[i]]);
   }
 
@@ -175,7 +175,7 @@ namespace Gecode { namespace Int { namespace Extensional {
   template<class IndexType>
   forceinline bool
   BitSet<IndexType>::intersects(const BitSetData* b) const {
-    for (IndexType i = _limit; i--; )
+    for (IndexType i=0; i<_limit; i++)
       if (!BitSetData::a(bits[i],b[index[i]]).none())
         return true;
     return false;
@@ -211,9 +211,8 @@ namespace Gecode { namespace Int { namespace Extensional {
   BitSet<IndexType>::width(void) const {
     assert(!empty());
     IndexType width = index[0];
-    for (IndexType i = _limit; i--; ) {
+    for (IndexType i=1; i<_limit; i++)
       width = std::max(width,index[i]);
-    }
     assert(static_cast<unsigned int>(width+1U) >= words());
     return static_cast<unsigned int>(width+1U);
   }

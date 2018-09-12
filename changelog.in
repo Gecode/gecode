@@ -69,6 +69,24 @@ Date: 2018-??-??
 More C++-11
 
 [ENTRY]
+Module: int
+What:   new
+Rank:   major
+Author:	Samuel Gagnon
+[DESCRIPTION]
+Added experimental support for counting-based search. It can be
+enabled by running configure with --enable-cbs. See
+examples/qcp.cpp for an example.
+
+[ENTRY]
+Module: int
+What:   performance
+Rank:   minor
+[DESCRIPTION]
+Improved performance of tuple-set extensional constraints by
+maybe 15-20% through reordering loops.
+
+[ENTRY]
 Module: flatzinc
 What:   change
 Rank:   minor

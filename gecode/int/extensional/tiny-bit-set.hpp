@@ -46,10 +46,10 @@ namespace Gecode { namespace Int { namespace Extensional {
    TinyBitSet<sz>::TinyBitSet(Space&, unsigned int n) {
      assert(n <= sz);
      /// Set the active bits
-     for (unsigned int i=0U; i < n; i++)
+     for (unsigned int i=0U; i<n; i++)
        bits[i].init(true);
      /// Clear unused suffix bits
-     for (unsigned int i=n; i < sz; i++)
+     for (unsigned int i=n; i<sz; i++)
        bits[i].init(false);
    }
 
@@ -59,7 +59,7 @@ namespace Gecode { namespace Int { namespace Extensional {
    TinyBitSet<sz>::TinyBitSet(Space&, const TinyBitSet<largersz>& sbs) {
      GECODE_ASSUME(sz <= largersz);
      assert(!sbs.empty());
-     for (unsigned int i = sz; i--; )
+     for (unsigned int i=0U; i<sz; i++)
        bits[i] = sbs.bits[i];
      assert(!empty());
    }
@@ -70,18 +70,17 @@ namespace Gecode { namespace Int { namespace Extensional {
    TinyBitSet<sz>::TinyBitSet(Space&, const BitSet<IndexType>& sbs) {
      assert(sz == sbs.width());
      assert(!sbs.empty());
-     for (unsigned int i = sz; i--; )
+     for (unsigned int i=0U; i<sz; i++)
        bits[i].init(false);
-     for (unsigned int i = sbs.words(); i--; ) {
+     for (unsigned int i=0U; i<sbs.words(); i++)
        bits[sbs.index[i]] = sbs.bits[i];
-     }
      assert(!empty());
    }
 
    template<unsigned int sz>
    forceinline void
    TinyBitSet<sz>::clear_mask(BitSetData* mask) {
-     for (unsigned int i=sz; i--; ) {
+     for (unsigned int i=0U; i<sz; i++) {
        mask[i].init(false);
        assert(mask[i].none());
      }
@@ -90,7 +89,7 @@ namespace Gecode { namespace Int { namespace Extensional {
    template<unsigned int sz>
    forceinline void
    TinyBitSet<sz>::add_to_mask(const BitSetData* b, BitSetData* mask) const {
-     for (unsigned int i=sz; i--; )
+     for (unsigned int i=0U; i<sz; i++)
        mask[i] = BitSetData::o(mask[i],b[i]);
    }
 
@@ -98,28 +97,29 @@ namespace Gecode { namespace Int { namespace Extensional {
    template<bool sparse>
    forceinline void
    TinyBitSet<sz>::intersect_with_mask(const BitSetData* mask) {
-     for (unsigned int i=sz; i--; )
+     for (unsigned int i=0U; i<sz; i++)
        bits[i] = BitSetData::a(bits[i], mask[i]);
    }
 
    template<unsigned int sz>
    forceinline void
-   TinyBitSet<sz>::intersect_with_masks(const BitSetData* a, const BitSetData* b) {
-     for (unsigned int i=sz; i--; )
+   TinyBitSet<sz>::intersect_with_masks(const BitSetData* a,
+                                        const BitSetData* b) {
+     for (unsigned int i=0U; i<sz; i++)
        bits[i] = BitSetData::a(bits[i], BitSetData::o(a[i],b[i]));
    }
 
    template<unsigned int sz>
    forceinline void
    TinyBitSet<sz>::nand_with_mask(const BitSetData* b) {
-     for (unsigned int i=sz; i--; )
+     for (unsigned int i=0U; i<sz; i++)
        bits[i] = BitSetData::a(bits[i],~(b[i]));
    }
 
    template<unsigned int sz>
    forceinline bool
    TinyBitSet<sz>::intersects(const BitSetData* b) {
-     for (unsigned int i=sz; i--; )
+     for (unsigned int i=0U; i<sz; i++)
        if (!BitSetData::a(bits[i],b[i]).none())
          return true;
      return false;
@@ -128,7 +128,7 @@ namespace Gecode { namespace Int { namespace Extensional {
    template<unsigned int sz>
    forceinline bool
    TinyBitSet<sz>::empty(void) const { // Linear complexity...
-     for (unsigned int i=sz; i--; )
+     for (unsigned int i=0U; i<sz; i++)
        if (!bits[i].none())
          return false;
      return true;
