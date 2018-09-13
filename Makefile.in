@@ -1283,8 +1283,8 @@ check: test
 			   -test Search::RBS::BAB \
 			   -test Search::RBS::DFS \
 			   -test Set::Dom::Dom::Gr \
-			   -test Set::RelOp::ConstSSI \
-			   -test Set::Sequence \
+			   -test Set::RelOp::ConstSSI::Union \
+			   -test Set::Sequence::SeqU1 \
 			   -test Set::Wait
 
 ifeq "@top_srcdir@" "."
