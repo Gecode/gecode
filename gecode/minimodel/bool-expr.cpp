@@ -250,7 +250,6 @@ namespace Gecode {
         } a;
       } u;
       /// Create negation normalform
-      GECODE_MINIMODEL_EXPORT
       static NNF* nnf(Region& r, Node* n, bool neg);
       /// Post propagators for nested conjunctive and disjunctive expression
       GECODE_MINIMODEL_EXPORT
