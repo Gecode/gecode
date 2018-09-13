@@ -1,0 +1,37 @@
+sudo: false
+
+language: cpp
+
+compiler:
+  - gcc
+  - clang
+
+notifications:
+  email: false
+
+addons:
+  apt:
+    sources:
+    - ubuntu-toolchain-r-test
+    - llvm-toolchain-precise-3.8
+    - ubuntu-sdk-team
+    packages:
+    - g++-6
+    - clang-3.8
+    # For Gist.
+    - qt5-qmake
+    - qtbase5-dev
+    - qtdeclarative5-dev
+    - qt5-default
+
+install:
+  - "[ $CXX = g++ ] && export CXX=g++-6 || true"
+  - "[ $CXX = clang++ ] && export CXX=clang++-3.8 || true"
+
+script:
+  - ./configure --prefix=/usr --enable-gist
+  - make
+  # Build the test case suite, but do not execute the 50k test cases.
+  - make test
+  # Run a small subset of test cases, as defined by make check.
+  - LD_LIBRARY_PATH=. make check
