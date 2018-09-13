@@ -13608,7 +13608,7 @@ std::basic_ostream<Char,Traits>&
 Dictionary::print(std::basic_ostream<Char,Traits>& os) const {
   os << "Total number of words: " << n_all_words << std::endl
      << "Maximal length: " << max_len << std::endl;
-  for (int i=1; i<=max_len; i++)
+  for (unsigned int i=1U; i<=max_len; i++)
     os << "\t#words of length " << i << ": " << n_words[i] << std::endl;
   return os;
 }
