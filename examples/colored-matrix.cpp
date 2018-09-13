@@ -614,8 +614,8 @@ namespace {
 
   TupleSet same_or_0_tuple_set(unsigned int colors) {
     TupleSet result(3);
-    for (int i = 1; i <= colors; ++i) {
-      for (int j = 1; j <= colors; ++j) {
+    for (int i = 1; i <= static_cast<int>(colors); ++i) {
+      for (int j = 1; j <= static_cast<int>(colors); ++j) {
         if (i == j) {
           result.add({i, j, i});
         } else {
