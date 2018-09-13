@@ -1268,11 +1268,24 @@ test: mkcompiledirs
 # A basic integrity test
 check: test
 	$(TESTEXE) -iter 2 -test Branch::Int::Dense::3 \
-			   -test Int::Linear::Int::Int::Eq::Bnd::12::4 \
+			   -test FlatZinc::magic_square \
+			   -test Int::Arithmetic::Abs \
+			   -test Int::Arithmetic::ArgMax \
+			   -test Int::Arithmetic::Max::Nary \
+			   -test Int::Cumulative::Man::Fix::0::4 \
 			   -test Int::Distinct::Random \
-			   -test Int::Arithmetic::Mult::XYZ::Bnd::C \
-			   -test Int::Arithmetic::Mult::XYZ::Dom::A \
-			   -test Search::BAB::Sol::BalGr::Binary::Binary::Binary::1::1
+			   -test Int::Linear::Bool::Int::Lq \
+			   -test Int::MiniModel::LinExpr::Bool::352  \
+			   -test NoGoods::Queens \
+			   -test Search::BAB::Sol::BalGr::Binary \
+			   -test Search::DFS::Sol::Binary::Nary::Binary \
+			   -test Search::PBS::SEB::DFS+LDS \
+			   -test Search::RBS::BAB \
+			   -test Search::RBS::DFS \
+			   -test Set::Dom::Dom::Gr \
+			   -test Set::RelOp::ConstSSI \
+			   -test Set::Sequence \
+			   -test Set::Wait
 
 ifeq "@top_srcdir@" "."
 mkcompiledirs:
