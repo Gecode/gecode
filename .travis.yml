@@ -7,7 +7,12 @@ compiler:
   - clang
 
 notifications:
-  email: false
+  email:
+    recipients:
+      - cschulte@kth.se
+      - guido.tack@monash.edu
+    on_success: never
+    on_failure: always
 
 addons:
   apt:
