@@ -79,6 +79,14 @@ enabled by running configure with --enable-cbs. See
 examples/qcp.cpp for an example.
 
 [ENTRY]
+Module: minimodel
+What:   bug
+Rank:   major
+Thanks:	Robin Eklind
+[DESCRIPTION]
+Fixed fall through bug for set expressions.
+
+[ENTRY]
 Module: int
 What:   performance
 Rank:   minor
