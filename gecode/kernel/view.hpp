@@ -462,7 +462,7 @@ namespace Gecode {
   }
   template<class View>
   forceinline bool
-  ConstView<View>::operator <(const ConstView<View>& y) const {
+  ConstView<View>::operator <(const ConstView<View>&) const {
     return true;
   }
 
