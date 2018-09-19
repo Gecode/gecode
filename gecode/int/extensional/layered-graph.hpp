@@ -273,9 +273,9 @@ namespace Gecode { namespace Int { namespace Extensional {
 
     // Allocate temporary memory for all possible states
     State* states = r.alloc<State>(max_states*(n+1));
-    for (int i=static_cast<int>(max_states)*(n+1); i--; )
+    for (int i=0; i<static_cast<int>(max_states)*(n+1); i++)
       states[i].init();
-    for (int i=n+1; i--; )
+    for (int i=0; i<n+1; i++)
       layers[i].states = states + i*max_states;
 
     // Allocate temporary memory for edges
@@ -355,7 +355,7 @@ namespace Gecode { namespace Int { namespace Extensional {
       // Initialize map for in-states (special for last layer)
       // Degree for single final state
       unsigned int d = 0;
-      for (StateIdx j=max_states; j--; )
+      for (StateIdx j=0; j<max_states; j++)
         d += static_cast<unsigned int>(layers[n].states[j].i_deg);
       // Check whether all final states can be joined to a single state
       if (d >
@@ -439,7 +439,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     // Check whether state information has already been created
     if (layers[0].states == NULL) {
       State* states = home.alloc<State>(n_states);
-      for (unsigned int i=n_states; i--; )
+      for (unsigned int i=0; i<n_states; i++)
         states[i].init();
       layers[n].states = states;
       states += layers[n].n_states;
@@ -689,7 +689,7 @@ namespace Gecode { namespace Int { namespace Extensional {
       return ES_FAILED;
     }
     assert(x.size() > 0);
-    for (int i=x.size(); i--; ) {
+    for (int i=0; i<x.size(); i++) {
       DFA::Symbols s(dfa);
       typename VarTraits<Var>::View xi(x[i]);
       GECODE_ME_CHECK(xi.inter_v(home,s,false));
@@ -713,12 +713,12 @@ namespace Gecode { namespace Int { namespace Extensional {
     // Allocate memory for edges
     Edge* edges = home.alloc<Edge>(n_edges);
     // Copy layers
-    for (int i=n; i--; ) {
+    for (int i=0; i<n; i++) {
       layers[i].x.update(home,p.layers[i].x);
       assert(layers[i].x.size() == p.layers[i].size);
       layers[i].size = p.layers[i].size;
       layers[i].support = home.alloc<Support>(layers[i].size);
-      for (ValSize j=layers[i].size; j--; ) {
+      for (ValSize j=0; j<layers[i].size; j++) {
         layers[i].support[j].val = p.layers[i].support[j].val;
         layers[i].support[j].n_edges = p.layers[i].support[j].n_edges;
         assert(layers[i].support[j].n_edges > 0);

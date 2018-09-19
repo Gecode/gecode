@@ -199,7 +199,7 @@ namespace Gecode { namespace Int { namespace Rel {
   NaryLqLe<View,o>::NaryLqLe(Home home, ViewArray<View>& x)
     : NaryPropagator<View,PC_INT_NONE>(home,x),
       c(home), pos(NULL), run(false), n_subsumed(0) {
-    for (int i=x.size(); i--; )
+    for (int i=0; i<x.size(); i++)
       x[i].subscribe(home, *new (home) Index(home,*this,c,i));
   }
 

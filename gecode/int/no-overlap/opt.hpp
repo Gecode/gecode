@@ -37,7 +37,7 @@ namespace Gecode { namespace Int { namespace NoOverlap {
   forceinline
   OptProp<Box>::OptProp(Home home, Box* b, int n, int m0)
     : Base<Box>(home,b,n), m(m0) {
-    for (int i=m; i--; )
+    for (int i=0; i<m; i++)
       b[n+i].subscribe(home, *this);
   }
 
@@ -55,7 +55,7 @@ namespace Gecode { namespace Int { namespace NoOverlap {
   template<class Box>
   forceinline size_t
   OptProp<Box>::dispose(Space& home) {
-    for (int i=m; i--; )
+    for (int i=0; i<m; i++)
       b[n+i].cancel(home, *this);
     (void) Base<Box>::dispose(home);
     return sizeof(*this);
@@ -94,14 +94,14 @@ namespace Gecode { namespace Int { namespace NoOverlap {
 
     // Number of disjoint boxes
     int* db = r.alloc<int>(n);
-    for (int i=n; i--; )
+    for (int i=0; i<n; i++)
       db[i] = n-1;
 
     // Number of boxes to be eliminated
     int e = 0;
-    for (int i=n; i--; ) {
+    for (int i=0; i<n; i++) {
       assert(b[i].mandatory());
-      for (int j=i; j--; )
+      for (int j=0; j<i; j++)
         if (b[i].nooverlap(b[j])) {
           assert(db[i] > 0); assert(db[j] > 0);
           if (--db[i] == 0) e++;

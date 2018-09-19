@@ -321,9 +321,9 @@ namespace Gecode { namespace Int { namespace Element {
     }
     assert(iv.size() > 1);
     // Compute new result
-    int min = iv[iv.size()-1].view.min();
-    int max = iv[iv.size()-1].view.max();
-    for (int i=iv.size()-1; i--; ) {
+    int min = iv[0].view.min();
+    int max = iv[0].view.max();
+    for (int i=1; i<iv.size(); i++) {
       min = std::min(iv[i].view.min(),min);
       max = std::max(iv[i].view.max(),max);
     }
@@ -411,9 +411,9 @@ namespace Gecode { namespace Int { namespace Element {
         return es;
       }
       // Compute new result
-      int min = iv[iv.size()-1].view.min();
-      int max = iv[iv.size()-1].view.max();
-      for (int i=iv.size()-1; i--; ) {
+      int min = iv[0].view.min();
+      int max = iv[0].view.max();
+      for (int i=1; i<iv.size(); i++) {
         min = std::min(iv[i].view.min(),min);
         max = std::max(iv[i].view.max(),max);
       }
@@ -434,14 +434,14 @@ namespace Gecode { namespace Int { namespace Element {
     assert(iv.size() > 1);
 
     if (x1.assigned()) {
-      for (int i = iv.size(); i--; )
+      for (int i=0; i<iv.size(); i++)
         if (iv[i].view.in(x1.val()))
           return shared(x0,x1) ? ES_NOFIX : ES_FIX;
       return ES_FAILED;
     } else {
       Region r;
       ViewRanges<VA>* i_view = r.alloc<ViewRanges<VA> >(iv.size());
-      for (int i = iv.size(); i--; )
+      for (int i=0; i<iv.size(); i++)
         i_view[i].init(iv[i].view);
       Iter::Ranges::NaryUnion i_val(r, i_view, iv.size());
       ModEvent me = x1.inter_r(home,i_val);

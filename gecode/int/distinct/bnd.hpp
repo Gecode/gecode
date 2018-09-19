@@ -43,8 +43,8 @@ namespace Gecode { namespace Int { namespace Distinct {
     // They can not be shared as singleton propagation removes
     // determined variables still required for bounds propagation.
     y.subscribe(home,*this,PC_INT_BND);
-    int min = x[x.size()-1].min(), max = x[x.size()-1].max();
-    for (int i=x.size()-1; i--; ) {
+    int min = x[0].min(), max = x[0].max();
+    for (int i=1; i<x.size(); i++) {
       min = std::min(min,x[i].min());
       max = std::max(max,x[i].max());
     }
@@ -320,7 +320,7 @@ namespace Gecode { namespace Int { namespace Distinct {
       return ES_FAILED;
 
     if (d > 2*static_cast<unsigned int>(n)) {
-      for (int i = n; i--; )
+      for (int i=0; i<n; i++)
         minsorted[i]=maxsorted[i]=i;
 
       MinIncIdx<View> min_inc(x);
@@ -331,10 +331,10 @@ namespace Gecode { namespace Int { namespace Distinct {
 
       int* minbucket = r.alloc<int>(d);
       int* maxbucket = r.alloc<int>(d);
-      for (unsigned int i=d; i--; )
+      for (unsigned int i=0; i<d; i++)
         minbucket[i]=maxbucket[i]=0;
 
-      for (int i=n; i--; ) {
+      for (int i=0; i<n; i++) {
         minbucket[x[i].min() - min_x]++;
         maxbucket[x[i].max() - min_x]++;
       }
@@ -368,8 +368,8 @@ namespace Gecode { namespace Int { namespace Distinct {
   template<class View>
   ExecStatus
   prop_bnd(Space& home, ViewArray<View>& x) {
-    int min = x[x.size()-1].min(), max = x[x.size()-1].max();
-    for (int i=x.size()-1; i--; ) {
+    int min = x[0].min(), max = x[0].max();
+    for (int i=1; i<x.size(); i++) {
       min = std::min(min,x[i].min());
       max = std::max(max,x[i].max());
     }
@@ -412,9 +412,9 @@ namespace Gecode { namespace Int { namespace Distinct {
         int* minbucket = r.alloc<int>(d);
         View* minsorted = r.alloc<View>(n);
 
-        for (unsigned int i=d; i--; )
+        for (unsigned int i=0; i<d; i++)
           minbucket[i]=0;
-        for (int i=n; i--; )
+        for (int i=0; i<n; i++)
           minbucket[x[i].min() - min_x]++;
 
         int c_min = 0;
@@ -424,9 +424,9 @@ namespace Gecode { namespace Int { namespace Distinct {
         }
         assert(c_min == n);
 
-        for (int i=n; i--;)
+        for (int i=0; i<n; i++)
           minsorted[minbucket[x[i].min() - min_x]++] = x[i];
-        for (int i=n; i--;)
+        for (int i=0; i<n; i++)
           x[i] = minsorted[i];
       }
 

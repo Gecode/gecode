@@ -168,21 +168,21 @@ namespace Gecode { namespace Int { namespace Count {
   template<class VX>
   forceinline ExecStatus
   post_true(Home home, ViewArray<VX>& x, ConstIntView y) {
-    for (int i = x.size(); i--; )
+    for (int i=0; i<x.size(); i++)
       GECODE_ME_CHECK(x[i].eq(home,y.val()));
     return ES_OK;
   }
   template<class VX>
   forceinline ExecStatus
   post_true(Home home, ViewArray<VX>& x, ZeroIntView) {
-    for (int i = x.size(); i--; )
+    for (int i=0; i<x.size(); i++)
       GECODE_ME_CHECK(x[i].eq(home,0));
     return ES_OK;
   }
   template<class VX>
   forceinline ExecStatus
   post_true(Home home, ViewArray<VX>& x, const IntSet& y) {
-    for (int i = x.size(); i--; ) {
+    for (int i=0; i<x.size(); i++) {
       IntSetRanges ry(y);
       GECODE_ME_CHECK(x[i].inter_r(home,ry,false));
     }
@@ -211,21 +211,21 @@ namespace Gecode { namespace Int { namespace Count {
   template<class VX>
   forceinline ExecStatus
   post_false(Home home, ViewArray<VX>& x, ConstIntView y) {
-    for (int i = x.size(); i--; )
+    for (int i=0; i<x.size(); i++)
       GECODE_ME_CHECK(x[i].nq(home,y.val()));
     return ES_OK;
   }
   template<class VX>
   forceinline ExecStatus
   post_false(Home home, ViewArray<VX>& x, ZeroIntView) {
-    for (int i = x.size(); i--; )
+    for (int i=0; i<x.size(); i++)
       GECODE_ME_CHECK(x[i].nq(home,0));
     return ES_OK;
   }
   template<class VX>
   forceinline ExecStatus
   post_false(Home home, ViewArray<VX>& x, const IntSet& y) {
-    for (int i = x.size(); i--; ) {
+    for (int i=0; i<x.size(); i++) {
       IntSetRanges ry(y);
       GECODE_ME_CHECK(x[i].minus_r(home,ry,false));
     }
@@ -237,7 +237,7 @@ namespace Gecode { namespace Int { namespace Count {
   post_true(Home home, ViewArray<VX>& x, VX y) {
     ViewArray<VX> z(home,x.size()+1);
     z[x.size()] = y;
-    for (int i = x.size(); i--; )
+    for (int i=0; i<x.size(); i++)
       z[i] = x[i];
     return Rel::NaryEqDom<VX>::post(home,z);
   }
@@ -249,7 +249,7 @@ namespace Gecode { namespace Int { namespace Count {
   template<class VX>
   forceinline ExecStatus
   post_false(Home home, ViewArray<VX>& x, VX y) {
-    for (int i = x.size(); i--; )
+    for (int i=0; i<x.size(); i++)
       GECODE_ES_CHECK((Rel::Nq<VX,VX>::post(home,x[i],y)));
     return ES_OK;
   }
@@ -288,7 +288,7 @@ namespace Gecode { namespace Int { namespace Count {
       return ES_OK;
     Region r;
     ViewRanges<VX>* rx = r.alloc<ViewRanges<VX> >(x.size());
-    for (int i=x.size(); i--; )
+    for (int i=0; i<x.size(); i++)
       rx[i] = ViewRanges<VX>(x[i]);
     Iter::Ranges::NaryUnion u(r, rx, x.size());
     GECODE_ME_CHECK(y.inter_r(home, u, false));

@@ -39,7 +39,7 @@ namespace Gecode { namespace Int { namespace NValues {
                          int status0, ViewArray<BoolView>& x, VY y0)
     : Propagator(home), status(status0), c(home), y(y0) {
     y.subscribe(home,*this,PC_INT_BND);
-    for (int i=x.size(); i--; ) {
+    for (int i=0; i<x.size(); i++) {
       assert(!x[i].assigned());
       (void) new (home) ViewAdvisor<BoolView>(home, *this, c, x[i]);
     }

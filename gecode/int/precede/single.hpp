@@ -85,7 +85,7 @@ namespace Gecode { namespace Int { namespace Precede {
                        int s0, int t0, int b, int g)
     : NaryPropagator<View, PC_INT_NONE>(home,x0),
       c(home), s(s0), t(t0), alpha(0), beta(b), gamma(g) {
-    for (int i=x.size(); i--; )
+    for (int i=0; i<x.size(); i++)
       if (!x[i].assigned())
         x[i].subscribe(home,*new (home) Index(home,*this,c,i));
     View::schedule(home, *this, ME_INT_BND);

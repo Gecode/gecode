@@ -85,21 +85,21 @@ namespace Gecode { namespace Int {
   template<class Task>
   forceinline void
   TaskArray<Task>::subscribe(Space& home, Propagator& p, PropCond pc) {
-    for (int i=n; i--; )
+    for (int i=0; i<n; i++)
       t[i].subscribe(home,p,pc);
   }
 
   template<class Task>
   forceinline void
   TaskArray<Task>::cancel(Space& home, Propagator& p, PropCond pc) {
-    for (int i=n; i--; )
+    for (int i=0; i<n; i++)
       t[i].cancel(home,p,pc);
   }
 
   template<class Task>
   forceinline void
   TaskArray<Task>::reschedule(Space& home, Propagator& p, PropCond pc) {
-    for (int i=n; i--; )
+    for (int i=0; i<n; i++)
       t[i].reschedule(home,p,pc);
   }
 
@@ -107,7 +107,7 @@ namespace Gecode { namespace Int {
   forceinline void
   TaskArray<Task>::update(Space& home, TaskArray& a) {
     n=a.n; t=home.alloc<Task>(n);
-    for (int i=n; i--; )
+    for (int i=0; i<n; i++)
       t[i].update(home,a.t[i]);
   }
 

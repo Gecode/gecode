@@ -39,8 +39,8 @@ namespace Gecode { namespace Int { namespace Unary {
     TaskViewArray<typename TaskTraits<Task>::TaskViewFwd> f(t);
     sort<typename TaskTraits<Task>::TaskViewFwd,STO_EST,true>(f);
 
-    for (int i=f.size()-1; i--; )
-      if (f[i].lct() > f[i+1].est())
+    for (int i=1; i<f.size(); i++)
+      if (f[i-1].lct() > f[i].est())
         return ES_OK;
 
     return home.ES_SUBSUMED(p);

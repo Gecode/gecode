@@ -346,25 +346,25 @@ namespace Gecode { namespace Int { namespace Element {
         int n_buckets = static_cast<int>(x1.width());
         int* pos = r.alloc<int>(n_buckets);
         int* buckets = pos - x1.min();
-        for (int i=n_buckets; i--; )
+        for (int i=0; i<n_buckets; i++)
           pos[i]=0;
-        for (Idx i=size; i--; )
+        for (Idx i=0; i<size; i++)
           buckets[by_idx[i].val]++;
         int p=0;
         for (int i=0; i<n_buckets; i++) {
           int n=pos[i]; pos[i]=p; p+=n;
         }
         assert(p == size);
-        for (Idx i=size; i--; )
+        for (Idx i=0; i<size; i++)
           by_val[buckets[by_idx[i].val]++] = i+1;
       } else {
-        for (Idx i = size; i--; )
+        for (Idx i=0; i<size; i++)
           by_val[i] = i+1;
         ByVal less(iv);
         Support::quicksort<Idx>(by_val,size,less);
       }
       // Create val links
-      for (Idx i = size-1; i--; ) {
+      for (Idx i=0; i<size-1; i++) {
         by_idx[i].idx_next = i+2;
         iv[by_val[i]].val_next = by_val[i+1];
       }

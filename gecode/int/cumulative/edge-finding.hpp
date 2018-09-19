@@ -74,7 +74,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
     // Detection
 
     int* prec = r.alloc<int>(t.size());
-    for (int i=t.size(); i--; )
+    for (int i=0; i<t.size(); i++)
       prec[i] = t[i].ect();
 
     OmegaLambdaTree<TaskView> ol(r,c,t);
@@ -97,14 +97,14 @@ namespace Gecode { namespace Int { namespace Cumulative {
     // the capacity array
 
     int* cap = r.alloc<int>(t.size());
-    for (int i=t.size(); i--;)
+    for (int i=0; i<t.size(); i++)
       cap[i] = i;
     SortMap<TaskView,StoCap,true> o(t);
     Support::quicksort(cap, t.size(), o);
 
     int* capacities = r.alloc<int>(t.size());
     int* capInv = r.alloc<int>(t.size());
-    for (int i=t.size(); i--;) {
+    for (int i=0; i<t.size(); i++) {
       capacities[cap[i]] = t[i].c();
       capInv[cap[i]] = i;
     }
@@ -120,14 +120,14 @@ namespace Gecode { namespace Int { namespace Cumulative {
     // Compute update values for each capacity and LCut
 
     int* update = r.alloc<int>(t.size()*n_c);
-    for (int i=t.size()*n_c; i--;)
+    for (int i=0; i<t.size()*n_c; i++)
       update[i] = -Limits::infinity;
 
     ExtOmegaTree<TaskView> eo(r,c,ol);
     for (int i=0; i<n_c; i++) {
       eo.init(capacities[i]);
       int u = -Limits::infinity;
-      for (int j=t.size(); j--;) {
+      for (int j=0; j<t.size(); j++) {
         long long int lctj =
           static_cast<long long int>(c-capacities[i])*t[j].lct();
         long long int eml = plus(eo.env(j), -lctj);
@@ -148,7 +148,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
     // and the task array, both sorted by lct
 
     int* precMap = r.alloc<int>(t.size());
-    for (int i=t.size(); i--;)
+    for (int i=0; i<t.size(); i++)
       precMap[i] = i;
     PrecOrder po(prec);
     Support::quicksort(precMap, t.size(), po);

@@ -129,7 +129,7 @@ namespace Gecode { namespace Int { namespace Member {
       if (rm != RM_IMP) {
         ValSet::Ranges vsr(vs);
         GECODE_ME_CHECK(y.minus_r(home,vsr,false));
-        for (int i=x.size(); i--; )
+        for (int i=0; i<x.size(); i++)
           GECODE_ES_CHECK((Rel::Nq<View,View>::post(Home(home),x[i],y)));
       }
       return home.ES_SUBSUMED(*this);
@@ -161,9 +161,9 @@ namespace Gecode { namespace Int { namespace Member {
       Region r;
 
       ValSet::Ranges vsr(vs);
-      ViewRanges<View> xsr(x[x.size()-1]);
+      ViewRanges<View> xsr(x[0]);
       Iter::Ranges::NaryUnion  u(r,vsr,xsr);
-      for (int i=x.size()-1; i--; ) {
+      for (int i=1; i<x.size(); i++) {
         ViewRanges<View> xir(x[i]);
         u |= xir;
       }

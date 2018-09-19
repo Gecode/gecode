@@ -75,7 +75,7 @@ namespace Gecode { namespace Int {
   ManTaskViewIter<OptTaskView,sto,inc>
   ::ManTaskViewIter(Region& r, const TaskViewArray<OptTaskView>& t) {
     map = r.alloc<int>(t.size()); i=0;
-    for (int j=t.size(); j--; )
+    for (int j=0; j<t.size(); j++)
       if (t[j].mandatory())
         map[i++]=j;
     sort<OptTaskView,sto,!inc>(map,i,t);

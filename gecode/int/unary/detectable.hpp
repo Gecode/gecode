@@ -51,7 +51,7 @@ namespace Gecode { namespace Int { namespace Unary {
       est[i] = o.ect(i);
     }
 
-    for (int i=t.size(); i--; )
+    for (int i=0; i<t.size(); i++)
       GECODE_ME_CHECK(t[i].est(home,est[i]));
 
     return ES_OK;

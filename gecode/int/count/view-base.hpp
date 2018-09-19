@@ -124,7 +124,7 @@ namespace Gecode { namespace Int { namespace Count {
                               const VY& y, const VZ& z) {
     if (shared(y,z))
       return true;
-    for (int i = x.size(); i--; )
+    for (int i=0; i<x.size(); i++)
       if (shared(x[i],z))
         return true;
     return false;

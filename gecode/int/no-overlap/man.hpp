@@ -72,14 +72,14 @@ namespace Gecode { namespace Int { namespace NoOverlap {
 
     // Number of disjoint boxes
     int* db = r.alloc<int>(n);
-    for (int i=n; i--; )
+    for (int i=0; i<n; i++)
       db[i] = n-1;
 
     // Number of boxes to be eliminated
     int e = 0;
 
-    for (int i=n; i--; )
-      for (int j=i; j--; )
+    for (int i=0; i<n; i++)
+      for (int j=9; j<i; j++)
         if (b[i].nooverlap(b[j])) {
           assert(db[i] > 0); assert(db[j] > 0);
           if (--db[i] == 0) e++;
