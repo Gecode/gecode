@@ -95,7 +95,7 @@ namespace Gecode {
       throw TooFewArguments("Int::min");
     GECODE_POST;
     ViewArray<MinusView> m(home,x.size());
-    for (int i=x.size(); i--; )
+    for (int i=0; i<x.size(); i++)
       m[i] = MinusView(x[i]);
     MinusView my(y);
     if (vbd(ipl) == IPL_DOM) {
@@ -121,7 +121,7 @@ namespace Gecode {
     GECODE_ME_FAIL(yv.le(home,x.size()));
     // Construct index view array
     IdxViewArray<IntView> ix(home,x.size());
-    for (int i=x.size(); i--; ) {
+    for (int i=0; i<x.size(); i++) {
       ix[i].idx=i; ix[i].view=x[i];
     }
     if (tiebreak)
@@ -148,7 +148,7 @@ namespace Gecode {
     GECODE_ME_FAIL(yv.le(home,x.size()));
     // Construct index view array
     IdxViewArray<IntView> ix(home,x.size());
-    for (int i=x.size(); i--; ) {
+    for (int i=0; i<x.size(); i++) {
       ix[i].idx=i; ix[i].view=x[i];
     }
     if (tiebreak)
@@ -174,7 +174,7 @@ namespace Gecode {
     GECODE_ME_FAIL(yv.le(home,x.size()));
     // Construct index view array
     IdxViewArray<MinusView> ix(home,x.size());
-    for (int i=x.size(); i--; ) {
+    for (int i=0; i<x.size(); i++) {
       ix[i].idx=i; ix[i].view=MinusView(x[i]);
     }
     if (tiebreak)
@@ -201,7 +201,7 @@ namespace Gecode {
     GECODE_ME_FAIL(yv.le(home,x.size()));
     // Construct index view array
     IdxViewArray<MinusView> ix(home,x.size());
-    for (int i=x.size(); i--; ) {
+    for (int i=0; i<x.size(); i++) {
       ix[i].idx=i; ix[i].view=MinusView(x[i]);
     }
     if (tiebreak)

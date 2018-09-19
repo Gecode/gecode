@@ -41,7 +41,7 @@ namespace Gecode {
     Int::Limits::check(max,"IntVarArray::IntVarArray");
     if (min > max)
       throw Int::VariableEmptyDomain("IntVarArray::IntVarArray");
-    for (int i = size(); i--; )
+    for (int i=0; i<size(); i++)
       x[i]._init(home,min,max);
   }
 
@@ -51,7 +51,7 @@ namespace Gecode {
     Int::Limits::check(s.max(),"IntVarArray::IntVarArray");
     if (s.size() == 0)
       throw Int::VariableEmptyDomain("IntVarArray::IntVarArray");
-    for (int i = size(); i--; )
+    for (int i=0; i<size(); i++)
       x[i]._init(home,s);
   }
 
@@ -61,7 +61,7 @@ namespace Gecode {
       throw Int::NotZeroOne("BoolVarArray::BoolVarArray");
     if (min > max)
       throw Int::VariableEmptyDomain("BoolVarArray::BoolVarArray");
-    for (int i = size(); i--; )
+    for (int i=0; i<size(); i++)
       x[i]._init(home,min,max);
   }
 
@@ -71,7 +71,7 @@ namespace Gecode {
     Int::Limits::check(max,"IntVarArgs::IntVarArgs");
     if (min > max)
       throw Int::VariableEmptyDomain("IntVarArgs::IntVarArgs");
-    for (int i = size(); i--; )
+    for (int i=0; i<size(); i++)
       a[i]._init(home,min,max);
   }
 
@@ -81,7 +81,7 @@ namespace Gecode {
     Int::Limits::check(s.max(),"IntVarArgs::IntVarArgs");
     if (s.size() == 0)
       throw Int::VariableEmptyDomain("IntVarArgs::IntVarArgs");
-    for (int i = size(); i--; )
+    for (int i=0; i<size(); i++)
       a[i]._init(home,s);
   }
 
@@ -91,7 +91,7 @@ namespace Gecode {
       throw Int::NotZeroOne("BoolVarArgs::BoolVarArgs");
     if (min > max)
       throw Int::VariableEmptyDomain("BoolVarArgs::BoolVarArgs");
-    for (int i = size(); i--; )
+    for (int i=0; i<size(); i++)
       a[i]._init(home,min,max);
   }
 

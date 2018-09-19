@@ -48,7 +48,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
         (s.size() != t.size()))
       throw ArgumentSizeMismatch("Int::cumulative");
     long long int w = 0;
-    for (int i=p.size(); i--; ) {
+    for (int i=0; i<p.size(); i++) {
       Limits::nonnegative(p[i],"Int::cumulative");
       Limits::nonnegative(u[i],"Int::cumulative");
       Limits::check(static_cast<long long int>(s[i].max()) + p[i],
@@ -60,7 +60,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
     GECODE_POST;
 
     int minU = INT_MAX; int minU2 = INT_MAX; int maxU = INT_MIN;
-    for (int i=u.size(); i--;) {
+    for (int i=0; i<u.size(); i++) {
       if (u[i] < minU) {
         minU2 = minU;
         minU = u[i];
@@ -76,12 +76,12 @@ namespace Gecode { namespace Int { namespace Cumulative {
       unary(home,t,s,p,ipl);
     } else {
       bool fixp = true;
-      for (int i=t.size(); i--;)
+      for (int i=0; i<t.size(); i++)
         if (t[i] != TT_FIXP) {
           fixp = false; break;
         }
       int nonOptionals = 0;
-      for (int i=u.size(); i--;)
+      for (int i=0; i<u.size(); i++)
         if (u[i]>0) nonOptionals++;
       if (fixp) {
         TaskArray<ManFixPTask> tasks(home,nonOptionals);
@@ -93,7 +93,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
       } else {
         TaskArray<ManFixPSETask> tasks(home,nonOptionals);
         int cur = 0;
-        for (int i=s.size(); i--;)
+        for (int i=0; i<s.size(); i++)
           if (u[i] > 0)
             tasks[cur++].init(t[i],s[i],p[i],u[i]);
         GECODE_ES_FAIL(manpost(home,c,tasks,ipl));
@@ -112,7 +112,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
         (s.size() != t.size()) || (s.size() != m.size()))
       throw Int::ArgumentSizeMismatch("Int::cumulative");
     long long int w = 0;
-    for (int i=p.size(); i--; ) {
+    for (int i=0; i<p.size(); i++) {
       Limits::nonnegative(p[i],"Int::cumulative");
       Limits::nonnegative(u[i],"Int::cumulative");
       Limits::check(static_cast<long long int>(s[i].max()) + p[i],
@@ -124,7 +124,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
     GECODE_POST;
 
     bool allMandatory = true;
-    for (int i=m.size(); i--;) {
+    for (int i=0; i<m.size(); i++) {
       if (!m[i].one()) {
         allMandatory = false;
         break;
@@ -134,12 +134,12 @@ namespace Gecode { namespace Int { namespace Cumulative {
       cumulative(home,c,t,s,p,u,ipl);
     } else {
       bool fixp = true;
-      for (int i=t.size(); i--;)
+      for (int i=0; i<t.size(); i++)
         if (t[i] != TT_FIXP) {
           fixp = false; break;
         }
       int nonOptionals = 0;
-      for (int i=u.size(); i--;)
+      for (int i=0; i<u.size(); i++)
         if (u[i]>0) nonOptionals++;
       if (fixp) {
         TaskArray<OptFixPTask> tasks(home,nonOptionals);
@@ -151,7 +151,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
       } else {
         TaskArray<OptFixPSETask> tasks(home,nonOptionals);
         int cur = 0;
-        for (int i=s.size(); i--;)
+        for (int i=0; i<s.size(); i++)
           if (u[i]>0)
             tasks[cur++].init(t[i],s[i],p[i],u[i],m[i]);
         GECODE_ES_FAIL(optpost(home,c,tasks,ipl));
@@ -168,7 +168,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
     if ((s.size() != p.size()) || (s.size() != u.size()))
       throw Int::ArgumentSizeMismatch("Int::cumulative");
     long long int w = 0;
-    for (int i=p.size(); i--; ) {
+    for (int i=0; i<p.size(); i++) {
       Limits::nonnegative(p[i],"Int::cumulative");
       Limits::nonnegative(u[i],"Int::cumulative");
       Limits::check(static_cast<long long int>(s[i].max()) + p[i],
@@ -180,7 +180,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
     GECODE_POST;
 
     int minU = INT_MAX; int minU2 = INT_MAX; int maxU = INT_MIN;
-    for (int i=u.size(); i--;) {
+    for (int i=0; i<u.size(); i++) {
       if (u[i] < minU) {
         minU2 = minU;
         minU = u[i];
@@ -196,7 +196,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
       unary(home,s,p,ipl);
     } else {
       int nonOptionals = 0;
-      for (int i=u.size(); i--;)
+      for (int i=0; i<u.size(); i++)
         if (u[i]>0) nonOptionals++;
       TaskArray<ManFixPTask> t(home,nonOptionals);
       int cur = 0;
@@ -217,7 +217,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
         (s.size() != m.size()))
       throw Int::ArgumentSizeMismatch("Int::cumulative");
     long long int w = 0;
-    for (int i=p.size(); i--; ) {
+    for (int i=0; i<p.size(); i++) {
       Limits::nonnegative(p[i],"Int::cumulative");
       Limits::nonnegative(u[i],"Int::cumulative");
       Limits::check(static_cast<long long int>(s[i].max()) + p[i],
@@ -229,7 +229,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
     GECODE_POST;
 
     bool allMandatory = true;
-    for (int i=m.size(); i--;) {
+    for (int i=0; i<m.size(); i++) {
       if (!m[i].one()) {
         allMandatory = false;
         break;
@@ -239,7 +239,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
       cumulative(home,c,s,p,u,ipl);
     } else {
       int nonOptionals = 0;
-      for (int i=u.size(); i--;)
+      for (int i=0; i<u.size(); i++)
         if (u[i]>0) nonOptionals++;
       TaskArray<OptFixPTask> t(home,nonOptionals);
       int cur = 0;
@@ -257,14 +257,13 @@ namespace Gecode { namespace Int { namespace Cumulative {
              const IntArgs& u, IntPropLevel ipl) {
     using namespace Gecode::Int;
     using namespace Gecode::Int::Cumulative;
+
     if ((s.size() != p.size()) || (s.size() != e.size()) ||
         (s.size() != u.size()))
       throw Int::ArgumentSizeMismatch("Int::cumulative");
+
     long long int w = 0;
-    for (int i=p.size(); i--; ) {
-      rel(home, p[i], IRT_GQ, 0);
-    }
-    for (int i=p.size(); i--; ) {
+    for (int i=0; i<p.size(); i++) {
       Limits::nonnegative(u[i],"Int::cumulative");
       Limits::check(static_cast<long long int>(s[i].max()) + p[i].max(),
                     "Int::cumulative");
@@ -272,10 +271,15 @@ namespace Gecode { namespace Int { namespace Cumulative {
       w += s[i].width();
     }
     mul_check(c.max(),w,s.size());
+
     GECODE_POST;
+    for (int i=0; i<p.size(); i++) {
+      IntView pi(p[i]);
+      GECODE_ME_FAIL(pi.gq(home,0));
+    }
 
     bool fixP = true;
-    for (int i=p.size(); i--;) {
+    for (int i=0; i<p.size(); i++) {
       if (!p[i].assigned()) {
         fixP = false;
         break;
@@ -283,12 +287,12 @@ namespace Gecode { namespace Int { namespace Cumulative {
     }
     if (fixP) {
       IntArgs pp(p.size());
-      for (int i=p.size(); i--;)
+      for (int i=0; i<p.size(); i++)
         pp[i] = p[i].val();
       cumulative(home,c,s,pp,u,ipl);
     } else {
       int nonOptionals = 0;
-      for (int i=u.size(); i--;)
+      for (int i=0; i<u.size(); i++)
         if (u[i]>0) nonOptionals++;
       TaskArray<ManFlexTask> t(home,nonOptionals);
       int cur = 0;
@@ -306,12 +310,11 @@ namespace Gecode { namespace Int { namespace Cumulative {
              IntPropLevel ipl) {
     using namespace Gecode::Int;
     using namespace Gecode::Int::Cumulative;
+
     if ((s.size() != p.size()) || (s.size() != u.size()) ||
         (s.size() != e.size()) || (s.size() != m.size()))
       throw Int::ArgumentSizeMismatch("Int::cumulative");
-    for (int i=p.size(); i--; ) {
-      rel(home, p[i], IRT_GQ, 0);
-    }
+
     long long int w = 0;
     for (int i=p.size(); i--; ) {
       Limits::nonnegative(u[i],"Int::cumulative");
@@ -321,10 +324,15 @@ namespace Gecode { namespace Int { namespace Cumulative {
       w += s[i].width();
     }
     mul_check(c.max(),w,s.size());
+
     GECODE_POST;
+    for (int i=0; i<p.size(); i++) {
+      IntView pi(p[i]);
+      GECODE_ME_FAIL(pi.gq(home,0));
+    }
 
     bool allMandatory = true;
-    for (int i=m.size(); i--;) {
+    for (int i=0; i<m.size(); i++) {
       if (!m[i].one()) {
         allMandatory = false;
         break;
@@ -334,11 +342,11 @@ namespace Gecode { namespace Int { namespace Cumulative {
       cumulative(home,c,s,p,e,u,ipl);
     } else {
       int nonOptionals = 0;
-      for (int i=u.size(); i--;)
+      for (int i=0; i<u.size(); i++)
         if (u[i]>0) nonOptionals++;
       TaskArray<OptFlexTask> t(home,nonOptionals);
       int cur = 0;
-      for (int i=s.size(); i--; )
+      for (int i=0; i<s.size(); i++)
         if (u[i]>0)
           t[cur++].init(s[i],p[i],e[i],u[i],m[i]);
       GECODE_ES_FAIL(optpost(home,c,t,ipl));

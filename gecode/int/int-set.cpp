@@ -66,7 +66,7 @@ namespace Gecode {
   bool
   IntSet::IntSetObject::equal(const IntSetObject& iso) const {
     assert((size == iso.size) || (n == iso.n));
-    for (int i=n; i--; )
+    for (int i=0; i<n; i++)
       if ((r[i].min != iso.r[i].min) || (r[i].max != iso.r[i].max))
         return false;
     return true;
@@ -114,7 +114,7 @@ namespace Gecode {
       }
       IntSetObject* o = IntSetObject::allocate(n);
       unsigned int s = 0;
-      for (int i=n; i--; ) {
+      for (int i=0; i<n; i++) {
         s += static_cast<unsigned int>(r[i].max-r[i].min+1);
         o->r[i]=r[i];
       }
@@ -128,7 +128,7 @@ namespace Gecode {
     assert(n > 0);
     Region reg;
     Range* dr = reg.alloc<Range>(n);
-    for (int i=n; i--; ) {
+    for (int i=0; i<n; i++) {
       dr[i].min=r[i]; dr[i].max=r[i];
     }
     normalize(&dr[0],n);
@@ -140,7 +140,7 @@ namespace Gecode {
     Region reg;
     Range* dr = reg.alloc<Range>(n);
     int j = 0;
-    for (int i=n; i--; )
+    for (int i=0; i<n; i++)
       if (r[i][0] <= r[i][1]) {
         dr[j].min=r[i][0]; dr[j].max=r[i][1]; j++;
       }

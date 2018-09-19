@@ -73,7 +73,7 @@ namespace Gecode {
       typedef std::pair<S,int> P;
       Region re;
       P* a = re.alloc<P>(c.size());
-      for (int i=c.size(); i--;)
+      for (int i=0; i<c.size(); i++)
         a[i] = P(c[i],v[i]);
       LessP<S> l;
       Support::quicksort(a,c.size(),l);
@@ -114,7 +114,7 @@ namespace Gecode {
     ViewArray<IntView> xv(home, x);
     ViewArray<GCC::CardView> cv(home, c.size());
     // set the cardinality
-    for (int i = v.size(); i--; )
+    for (int i=0; i<v.size(); i++)
       cv[i].init(c[i],v[i]);
     switch (vbd(ipl)) {
     case IPL_BND:
@@ -135,7 +135,7 @@ namespace Gecode {
   void count(Home home, const IntVarArgs& x, const IntVarArgs& c,
              IntPropLevel ipl) {
     IntArgs values(c.size());
-    for (int i = c.size(); i--; )
+    for (int i=0; i<c.size(); i++)
       values[i] = i;
     count(home, x, c, values, ipl);
   }
@@ -151,7 +151,7 @@ namespace Gecode {
       throw ArgumentSizeMismatch("Int::count");
     if (same(x))
       throw ArgumentSame("Int::count");
-    for (int i=c.size(); i--; ) {
+    for (int i=0; i<c.size(); i++) {
       Limits::check(v[i],"Int::count");
       Limits::check(c[i].min(),"Int::count");
       Limits::check(c[i].max(),"Int::count");
@@ -163,11 +163,11 @@ namespace Gecode {
 
     ViewArray<IntView> xv(home, x);
 
-    for (int i = v.size(); i--; ) {
+    for (int i=0; i<v.size(); i++) {
       if (c[i].ranges() > 1) {
         // Found hole, so create temporary variables
         ViewArray<GCC::CardView> cv(home, v.size());
-        for (int j = v.size(); j--; )
+        for (int j=0; j<v.size(); j++)
           cv[j].init(home,c[j],v[j]);
         switch (vbd(ipl)) {
         case IPL_BND:
@@ -189,7 +189,7 @@ namespace Gecode {
     // No holes: create CardConsts
     ViewArray<GCC::CardConst> cv(home, c.size());
 
-    for (int i = c.size(); i--; )
+    for (int i=0; i<c.size(); i++)
       cv[i].init(home,c[i].min(),c[i].max(),v[i]);
 
     switch (vbd(ipl)) {
@@ -211,7 +211,7 @@ namespace Gecode {
   void count(Home home, const IntVarArgs& x, const IntSetArgs& c,
              IntPropLevel ipl) {
     IntArgs values(c.size());
-    for (int i = c.size(); i--; )
+    for (int i=0; i<c.size(); i++)
       values[i] = i;
     count(home, x, c, values, ipl);
   }
@@ -220,7 +220,7 @@ namespace Gecode {
              const IntSet& c, const IntArgs& v,
              IntPropLevel ipl) {
     IntSetArgs cards(v.size());
-    for (int i = v.size(); i--; )
+    for (int i=0; i<v.size(); i++)
       cards[i] = c;
     count(home, x, cards, v, ipl);
   }

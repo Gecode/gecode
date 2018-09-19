@@ -62,32 +62,32 @@ namespace Gecode {
     GECODE_POST;
     switch (irt) {
     case IRT_EQ:
-      for (int i=x.size(); i--; ) {
+      for (int i=0; i<x.size(); i++) {
         IntView xi(x[i]); GECODE_ME_FAIL(xi.eq(home,n));
       }
       break;
     case IRT_NQ:
-      for (int i=x.size(); i--; ) {
+      for (int i=0; i<x.size(); i++) {
         IntView xi(x[i]); GECODE_ME_FAIL(xi.nq(home,n));
       }
       break;
     case IRT_LQ:
-      for (int i=x.size(); i--; ) {
+      for (int i=0; i<x.size(); i++) {
         IntView xi(x[i]); GECODE_ME_FAIL(xi.lq(home,n));
       }
       break;
     case IRT_LE:
-      for (int i=x.size(); i--; ) {
+      for (int i=0; i<x.size(); i++) {
         IntView xi(x[i]); GECODE_ME_FAIL(xi.le(home,n));
       }
       break;
     case IRT_GQ:
-      for (int i=x.size(); i--; ) {
+      for (int i=0; i<x.size(); i++) {
         IntView xi(x[i]); GECODE_ME_FAIL(xi.gq(home,n));
       }
       break;
     case IRT_GR:
-      for (int i=x.size(); i--; ) {
+      for (int i=0; i<x.size(); i++) {
         IntView xi(x[i]); GECODE_ME_FAIL(xi.gr(home,n));
       }
       break;
@@ -133,7 +133,7 @@ namespace Gecode {
       {
         ViewArray<IntView> xv(home,x.size()+1);
         xv[x.size()]=y;
-        for (int i=x.size(); i--; )
+        for (int i=0; i<x.size(); i++)
           xv[i]=x[i];
         if ((vbd(ipl) == IPL_DOM) || (vbd(ipl) == IPL_DEF)) {
           GECODE_ES_FAIL(Rel::NaryEqDom<IntView>::post(home,xv));
@@ -143,27 +143,27 @@ namespace Gecode {
       }
       break;
     case IRT_NQ:
-      for (int i=x.size(); i--; ) {
+      for (int i=0; i<x.size(); i++) {
         GECODE_ES_FAIL((Rel::Nq<IntView,IntView>::post(home,x[i],y)));
       }
       break;
     case IRT_GQ:
-      for (int i=x.size(); i--; ) {
+      for (int i=0; i<x.size(); i++) {
         GECODE_ES_FAIL((Rel::Lq<IntView,IntView>::post(home,y,x[i])));
       }
       break;
     case IRT_LQ:
-      for (int i=x.size(); i--; ) {
+      for (int i=0; i<x.size(); i++) {
         GECODE_ES_FAIL((Rel::Lq<IntView,IntView>::post(home,x[i],y)));
       }
       break;
     case IRT_GR:
-      for (int i=x.size(); i--; ) {
+      for (int i=0; i<x.size(); i++) {
         GECODE_ES_FAIL((Rel::Le<IntView,IntView>::post(home,y,x[i])));
       }
       break;
     case IRT_LE:
-      for (int i=x.size(); i--; ) {
+      for (int i=0; i<x.size(); i++) {
         GECODE_ES_FAIL((Rel::Le<IntView,IntView>::post(home,x[i],y)));
       }
       break;
@@ -463,7 +463,7 @@ namespace Gecode {
     case IRT_GR:
       {
         ViewArray<IntView> y(home,x.size());
-        for (int i=x.size(); i--; )
+        for (int i=0; i<x.size(); i++)
           y[i] = x[x.size()-1-i];
         GECODE_ES_FAIL((Rel::NaryLqLe<IntView,1>::post(home,y)));
       }
@@ -471,7 +471,7 @@ namespace Gecode {
     case IRT_GQ:
       {
         ViewArray<IntView> y(home,x.size());
-        for (int i=x.size(); i--; )
+        for (int i=0; i<x.size(); i++)
           y[i] = x[x.size()-1-i];
         GECODE_ES_FAIL((Rel::NaryLqLe<IntView,0>::post(home,y)));
       }
@@ -520,12 +520,12 @@ namespace Gecode {
       if (x.size() != y.size()) {
         home.fail();
       } else if ((vbd(ipl) == IPL_DOM) || (vbd(ipl) == IPL_DEF))
-        for (int i=x.size(); i--; ) {
+        for (int i=0; i<x.size(); i++) {
           GECODE_ES_FAIL((Rel::EqDom<IntView,IntView>
                           ::post(home,x[i],y[i])));
         }
       else
-        for (int i=x.size(); i--; ) {
+        for (int i=0; i<x.size(); i++) {
           GECODE_ES_FAIL((Rel::EqBnd<IntView,IntView>
                           ::post(home,x[i],y[i])));
         }
@@ -548,7 +548,7 @@ namespace Gecode {
     ViewArray<Int::ConstIntView>
     viewarray(Space& home, const IntArgs& x) {
       ViewArray<Int::ConstIntView> xv(home, x.size());
-      for (int i = x.size(); i--; ) {
+      for (int i=0; i<x.size(); i++) {
         Int::Limits::check(x[i],"Int::rel");
         xv[i] = Int::ConstIntView(x[i]);
       }
@@ -600,7 +600,7 @@ namespace Gecode {
       if (x.size() != y.size()) {
         home.fail();
       } else {
-        for (int i=x.size(); i--; )
+        for (int i=0; i<x.size(); i++)
           GECODE_ME_FAIL(IntView(x[i]).eq(home,y[i]));
       }
       break;

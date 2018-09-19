@@ -91,7 +91,7 @@ namespace Gecode {
     IntArgs cx(offset+n);
     for (int i=0; i<offset; i++)
       cx[i] = 0;
-    for (int i=n; i--; ) {
+    for (int i=0; i<n; i++) {
       for (int j=0; j<n; j++)
         cx[offset+j] = c[i*n+j];
       element(home, cx, x[i], y[i]);
@@ -131,7 +131,7 @@ namespace Gecode {
       throw Int::ArgumentSame("Int::path");
     GECODE_POST;
     ViewArray<Int::IntView> xv(home,n+1);
-    for (int i=n; i--; )
+    for (int i=0; i<n; i++)
       xv[i] = Int::IntView(x[i]);
     xv[n] = s;
 
@@ -149,9 +149,9 @@ namespace Gecode {
     } else {
       IntVarArgs ox(n+offset);
       IntVar y(home, -1,-1);
-      for (int i=offset; i--; )
+      for (int i=0; i<offset; i++)
         ox[i] = y;
-      for (int i=n; i--; )
+      for (int i=0; i<n; i++)
         ox[offset + i] = x[i];
       element(home, ox, e, offset+n);
       typedef Int::Offset OV;
@@ -190,7 +190,7 @@ namespace Gecode {
     for (int i=0; i<offset; i++)
       cx[i] = 0;
     cx[offset+n] = 0;
-    for (int i=n; i--; ) {
+    for (int i=0; i<n; i++) {
       for (int j=0; j<n; j++)
         cx[offset+j] = c[i*n+j];
       element(home, cx, x[i], y[i]);

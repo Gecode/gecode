@@ -48,14 +48,14 @@ namespace Gecode {
       throw Int::ArgumentSame("Int::unary");
     if (s.size() != p.size())
       throw Int::ArgumentSizeMismatch("Int::unary");
-    for (int i=p.size(); i--; ) {
+    for (int i=0; i<p.size(); i++) {
       Int::Limits::nonnegative(p[i],"Int::unary");
       Int::Limits::check(static_cast<long long int>(s[i].max()) + p[i],
                          "Int::unary");
     }
     GECODE_POST;
     bool allOne = true;
-    for (int i=p.size(); i--;) {
+    for (int i=0; i<p.size(); i++) {
       if (p[i] != 1) {
         allOne = false;
         break;
@@ -75,7 +75,7 @@ namespace Gecode {
       }
     } else {
       TaskArray<ManFixPTask> t(home,s.size());
-      for (int i=s.size(); i--; )
+      for (int i=0; i<s.size(); i++)
         t[i].init(s[i],p[i]);
       GECODE_ES_FAIL(manpost(home,t,ipl));
     }
@@ -88,7 +88,7 @@ namespace Gecode {
     using namespace Gecode::Int::Unary;
     if ((flex.size() != fix.size()) || (flex.size() != t.size()))
       throw Int::ArgumentSizeMismatch("Int::unary");
-    for (int i=fix.size(); i--; ) {
+    for (int i=0; i<fix.size(); i++) {
       if (t[i] == TT_FIXP)
         Int::Limits::nonnegative(fix[i],"Int::unary");
       else
@@ -98,7 +98,7 @@ namespace Gecode {
     }
     GECODE_POST;
     bool fixp = true;
-    for (int i=t.size(); i--;)
+    for (int i=0; i<t.size(); i++)
       if (t[i] != TT_FIXP) {
         fixp = false; break;
       }
@@ -106,7 +106,7 @@ namespace Gecode {
       unary(home, flex, fix, ipl);
     } else {
       TaskArray<ManFixPSETask> tasks(home,flex.size());
-      for (int i=flex.size(); i--;)
+      for (int i=0; i<flex.size(); i++)
         tasks[i].init(t[i],flex[i],fix[i]);
       GECODE_ES_FAIL(manpost(home,tasks,ipl));
     }
@@ -121,13 +121,13 @@ namespace Gecode {
       throw Int::ArgumentSame("Int::unary");
     if ((s.size() != p.size()) || (s.size() != m.size()))
       throw Int::ArgumentSizeMismatch("Int::unary");
-    for (int i=p.size(); i--; ) {
+    for (int i=0; i<p.size(); i++) {
       Int::Limits::nonnegative(p[i],"Int::unary");
       Int::Limits::check(static_cast<long long int>(s[i].max()) + p[i],
                          "Int::unary");
     }
     bool allMandatory = true;
-    for (int i=m.size(); i--;) {
+    for (int i=0; i<m.size(); i++) {
       if (!m[i].one()) {
         allMandatory = false;
         break;
@@ -138,7 +138,7 @@ namespace Gecode {
     } else {
       GECODE_POST;
       TaskArray<OptFixPTask> t(home,s.size());
-      for (int i=s.size(); i--; )
+      for (int i=0; i<s.size(); i++)
         t[i].init(s[i],p[i],m[i]);
       GECODE_ES_FAIL(optpost(home,t,ipl));
     }
@@ -154,7 +154,7 @@ namespace Gecode {
         (flex.size() != m.size()))
       throw Int::ArgumentSizeMismatch("Int::unary");
     bool fixp = true;
-    for (int i=fix.size(); i--; ) {
+    for (int i=0; i<fix.size(); i++) {
       if (t[i] == TT_FIXP) {
         Int::Limits::nonnegative(fix[i],"Int::unary");
       } else {
@@ -166,7 +166,7 @@ namespace Gecode {
     }
     GECODE_POST;
     bool allMandatory = true;
-    for (int i=m.size(); i--;) {
+    for (int i=0; i<m.size(); i++) {
       if (!m[i].one()) {
         allMandatory = false;
         break;
@@ -177,12 +177,12 @@ namespace Gecode {
     } else {
       if (fixp) {
         TaskArray<OptFixPTask> tasks(home,flex.size());
-        for (int i=flex.size(); i--; )
+        for (int i=0; i<flex.size(); i++)
           tasks[i].init(flex[i],fix[i],m[i]);
         GECODE_ES_FAIL(optpost(home,tasks,ipl));
       } else {
         TaskArray<OptFixPSETask> tasks(home,flex.size());
-        for (int i=flex.size(); i--;)
+        for (int i=0; i<flex.size(); i++)
           tasks[i].init(t[i],flex[i],fix[i],m[i]);
         GECODE_ES_FAIL(optpost(home,tasks,ipl));
       }
@@ -197,11 +197,12 @@ namespace Gecode {
     if ((s.size() != p.size()) || (s.size() != e.size()))
       throw Int::ArgumentSizeMismatch("Int::unary");
     GECODE_POST;
-    for (int i=p.size(); i--; ) {
-      rel(home, p[i], IRT_GQ, 0);
+    for (int i=0; i<p.size(); i++) {
+      IntView pi(p[i]);
+      GECODE_ME_FAIL(pi.gq(home,0));
     }
     bool fixP = true;
-    for (int i=p.size(); i--;) {
+    for (int i=0; i<p.size(); i++) {
       if (!p[i].assigned()) {
         fixP = false;
         break;
@@ -209,12 +210,12 @@ namespace Gecode {
     }
     if (fixP) {
       IntArgs pp(p.size());
-      for (int i=p.size(); i--;)
+      for (int i=0; i<p.size(); i++)
         pp[i] = p[i].val();
       unary(home,s,pp,ipl);
     } else {
       TaskArray<ManFlexTask> t(home,s.size());
-      for (int i=s.size(); i--; )
+      for (int i=0; i<s.size(); i++)
         t[i].init(s[i],p[i],e[i]);
       GECODE_ES_FAIL(manpost(home,t,ipl));
     }
@@ -229,11 +230,12 @@ namespace Gecode {
         (s.size() != e.size()))
       throw Int::ArgumentSizeMismatch("Int::unary");
     GECODE_POST;
-    for (int i=p.size(); i--; ) {
-      rel(home, p[i], IRT_GQ, 0);
+    for (int i=0; i<p.size(); i++) {
+      IntView pi(p[i]);
+      GECODE_ME_FAIL(pi.gq(home,0));
     }
     bool allMandatory = true;
-    for (int i=m.size(); i--;) {
+    for (int i=0; i<m.size(); i++) {
       if (!m[i].one()) {
         allMandatory = false;
         break;
@@ -243,7 +245,7 @@ namespace Gecode {
       unary(home,s,p,e,ipl);
     } else {
       TaskArray<OptFlexTask> t(home,s.size());
-      for (int i=s.size(); i--; )
+      for (int i=0; i<s.size(); i++)
         t[i].init(s[i],p[i],e[i],m[i]);
       GECODE_ES_FAIL(optpost(home,t,ipl));
     }

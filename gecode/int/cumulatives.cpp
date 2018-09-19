@@ -46,7 +46,7 @@ namespace Gecode {
     ViewArray<ConstIntView>
     make_view_array(Space& home, const IntArgs& in) {
       ViewArray<Int::ConstIntView> res(home, in.size());
-      for (int i = in.size(); i--; ) {
+      for (int i=0; i<in.size(); i++) {
         Int::Limits::check(in[i],"Int::cumulatives");
         res[i] = Int::ConstIntView(in[i]);
       }
@@ -93,7 +93,7 @@ namespace Gecode {
         ve    = make_view_array(home, e);
 
       SharedArray<int> c_s(c.size());
-      for (int i=c.size(); i--;)
+      for (int i=0; i<c.size(); i++)
         c_s[i] = c[i];
 
       // There is only the value-consistent propagator for this constraint

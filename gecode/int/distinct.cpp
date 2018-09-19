@@ -71,7 +71,7 @@ namespace Gecode {
       throw ArgumentSizeMismatch("Int::distinct");
     GECODE_POST;
     ViewArray<OffsetView> cx(home,x.size());
-    for (int i = c.size(); i--; ) {
+    for (int i=0; i<c.size(); i++) {
       long long int cx_min = (static_cast<long long int>(c[i]) +
                               static_cast<long long int>(x[i].min()));
       long long int cx_max = (static_cast<long long int>(c[i]) +
@@ -107,7 +107,7 @@ namespace Gecode {
     int min = Limits::max;
     int max = Limits::min;
     int m = 0;
-    for (int i=n; i--; )
+    for (int i=0; i<n; i++)
       if (!b[i].zero()) {
         min = std::min(min,x[i].min());
         max = std::max(max,x[i].max());
@@ -127,7 +127,7 @@ namespace Gecode {
 
     ViewArray<IntView> y(home,m);
     int j = 0;
-    for (int i=n; i--; )
+    for (int i=0; i<n; i++)
       if (b[i].one()) {
         y[j] = x[i]; j++;
       } else if (b[i].none()) {
@@ -162,7 +162,7 @@ namespace Gecode {
     int min = Limits::max;
     int max = Limits::min;
     int m = 0;
-    for (int i=n; i--; )
+    for (int i=0; i<n; i++)
       if (!(x[i].assigned() && (x[i].val() == c))) {
         min = std::min(min,x[i].min());
         max = std::max(max,x[i].max());
@@ -182,7 +182,7 @@ namespace Gecode {
 
     ViewArray<IntView> y(home,m);
     int j = 0;
-    for (int i=n; i--; )
+    for (int i=0; i<n; i++)
       if (!x[i].in(c)) {
         y[j] = x[i]; j++;
       } else if (!(x[i].assigned() && (x[i].val() == c))) {
