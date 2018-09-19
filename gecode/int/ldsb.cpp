@@ -42,7 +42,7 @@ namespace Gecode { namespace Int { namespace LDSB {
   findVar(int *indices, unsigned int n_values, unsigned int seq_size, int index) {
     unsigned int seq = 0;
     unsigned int pos = 0;
-    for (unsigned int i = 0 ; i < n_values ; i++) {
+    for (unsigned int i=0U ; i<n_values ; i++) {
       if (indices[i] == index)
         return std::pair<int,int>(seq,pos);
       pos++;

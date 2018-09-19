@@ -184,7 +184,7 @@ namespace Gecode {
     GECODE_POST;
 
     ViewArray<OffsetView> xy(home,x.size());
-    for (int i=x.size(); i--; )
+    for (int i=0; i<x.size(); i++)
       xy[i] = OffsetView(x[i],-y[i]);
 
     ZeroIntView zero;
@@ -370,7 +370,7 @@ namespace Gecode {
     GECODE_POST;
 
     ViewArray<OffsetView> xy(home,x.size());
-    for (int i=x.size(); i--; )
+    for (int i=0; i<x.size(); i++)
       xy[i] = OffsetView(x[i],-y[i]);
 
     ZeroIntView u;

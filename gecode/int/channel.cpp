@@ -61,7 +61,7 @@ namespace Gecode {
         DomInfo<IntView,NoOffset<IntView> >* di =
           static_cast<Space&>(home).
             alloc<DomInfo<IntView,NoOffset<IntView> > >(2*(n+xoff));
-        for (int i=n; i--; ) {
+        for (int i=0; i<n; i++) {
           di[xoff+i    ].init(x[i],n+xoff);
           di[2*xoff+i+n].init(y[i],n+xoff);
         }
@@ -82,7 +82,7 @@ namespace Gecode {
       } else {
         ValInfo<IntView>* vi =
           static_cast<Space&>(home).alloc<ValInfo<IntView> >(2*(n+xoff));
-        for (int i=n; i--; ) {
+        for (int i=0; i<n; i++) {
           vi[xoff+i    ].init(x[i],n+xoff);
           vi[2*xoff+i+n].init(y[i],n+xoff);
         }
@@ -105,7 +105,7 @@ namespace Gecode {
       if (vbd(ipl) == IPL_DOM) {
         DomInfo<IntView,Offset>* di =
           static_cast<Space&>(home).alloc<DomInfo<IntView,Offset> >(2*n);
-        for (int i=n; i--; ) {
+        for (int i=0; i<n; i++) {
           di[i  ].init(x[i],n);
           di[i+n].init(y[i],n);
         }
@@ -121,7 +121,7 @@ namespace Gecode {
       } else {
         ValInfo<IntView>* vi =
           static_cast<Space&>(home).alloc<ValInfo<IntView> >(2*n);
-        for (int i=n; i--; ) {
+        for (int i=0; i<n; i++) {
           vi[i  ].init(x[i],n);
           vi[i+n].init(y[i],n);
         }

@@ -47,16 +47,16 @@ namespace Gecode {
       throw ArgumentSame("Int::binpacking");
     if (b.size() != s.size())
       throw ArgumentSizeMismatch("Int::binpacking");
-    for (int i=s.size(); i--; )
+    for (int i=0; i<s.size(); i++)
       Limits::nonnegative(s[i],"Int::binpacking");
     GECODE_POST;
 
     ViewArray<OffsetView> lv(home,l.size());
-    for (int i=l.size(); i--; )
+    for (int i=0; i<l.size(); i++)
       lv[i] = OffsetView(l[i],0);
 
     ViewArray<BinPacking::Item> bs(home,b.size());
-    for (int i=bs.size(); i--; )
+    for (int i=0; i<bs.size(); i++)
       bs[i] = BinPacking::Item(b[i],s[i]);
 
     GECODE_ES_FAIL(Int::BinPacking::Pack::post(home,lv,bs));
@@ -80,9 +80,9 @@ namespace Gecode {
     // Check input sizes
     if ((n*d != s.size()) || (m*d != l.size()) || (d != c.size()))
       throw ArgumentSizeMismatch("Int::binpacking");
-    for (int i=s.size(); i--; )
+    for (int i=0; i<s.size(); i++)
       Limits::nonnegative(s[i],"Int::binpacking");
-    for (int i=c.size(); i--; )
+    for (int i=0; i<c.size(); i++)
       Limits::nonnegative(c[i],"Int::binpacking");
 
     if (home.failed())
@@ -91,8 +91,8 @@ namespace Gecode {
     PostInfo pi(home);
 
     // Capacity constraint for each dimension
-    for (int k=d; k--; )
-      for (int j=m; j--; ) {
+    for (int k=0; k<d; k++)
+      for (int j=0; j<m; j++) {
         IntView li(l[j*d+k]);
         if (me_failed(li.lq(home,c[k]))) {
           home.fail();
@@ -101,13 +101,13 @@ namespace Gecode {
       }
 
     // Post a binpacking constraint for each dimension
-    for (int k=d; k--; ) {
+    for (int k=0; k<d; k++) {
       ViewArray<OffsetView> lv(home,m);
-      for (int j=m; j--; )
+      for (int j=0; j<m; j++)
         lv[j] = OffsetView(l[j*d+k],0);
 
       ViewArray<BinPacking::Item> bv(home,n);
-      for (int i=n; i--; )
+      for (int i=0; i<n; i++)
         bv[i] = BinPacking::Item(b[i],s[i*d+k]);
 
       if (Int::BinPacking::Pack::post(home,lv,bv) == ES_FAILED) {
@@ -135,7 +135,7 @@ namespace Gecode {
               ++jj;
             } else {
               ds++;
-              for (int k=d; k--; )
+              for (int k=0; k<d; k++)
                 if (s[i*d+k] + s[j*d+k] > c[k]) {
                   nl++;
                   break;

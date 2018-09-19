@@ -39,7 +39,7 @@ namespace Gecode {
 
     bool
     optional(const BoolVarArgs& m) {
-      for (int i=m.size(); i--; )
+      for (int i=0; i<m.size(); i++)
         if (m[i].none())
           return true;
       return false;
@@ -57,7 +57,7 @@ namespace Gecode {
     if ((x.size() != w.size()) || (x.size() != y.size()) ||
         (x.size() != h.size()))
       throw ArgumentSizeMismatch("Int::nooverlap");
-    for (int i=x.size(); i--; ) {
+    for (int i=0; i<x.size(); i++) {
       Limits::nonnegative(w[i],"Int::nooverlap");
       Limits::nonnegative(h[i],"Int::nooverlap");
       Limits::check(static_cast<long long int>(x[i].max()) + w[i],
@@ -69,7 +69,7 @@ namespace Gecode {
 
     ManBox<FixDim,2>* b
       = static_cast<Space&>(home).alloc<ManBox<FixDim,2> >(x.size());
-    for (int i=x.size(); i--; ) {
+    for (int i=0; i<x.size(); i++) {
       b[i][0] = FixDim(x[i],w[i]);
       b[i][1] = FixDim(y[i],h[i]);
     }
@@ -89,7 +89,7 @@ namespace Gecode {
     if ((x.size() != w.size()) || (x.size() != y.size()) ||
         (x.size() != h.size()) || (x.size() != m.size()))
       throw ArgumentSizeMismatch("Int::nooverlap");
-    for (int i=x.size(); i--; ) {
+    for (int i=0; i<x.size(); i++) {
       Limits::nonnegative(w[i],"Int::nooverlap");
       Limits::nonnegative(h[i],"Int::nooverlap");
       Limits::check(static_cast<long long int>(x[i].max()) + w[i],
@@ -102,7 +102,7 @@ namespace Gecode {
     if (optional(m)) {
       OptBox<FixDim,2>* b
         = static_cast<Space&>(home).alloc<OptBox<FixDim,2> >(x.size());
-      for (int i=x.size(); i--; ) {
+      for (int i=0; i<x.size(); i++) {
         b[i][0] = FixDim(x[i],w[i]);
         b[i][1] = FixDim(y[i],h[i]);
         b[i].optional(m[i]);
@@ -136,14 +136,14 @@ namespace Gecode {
       throw ArgumentSizeMismatch("Int::nooverlap");
     GECODE_POST;
 
-    for (int i=x0.size(); i--; ) {
+    for (int i=0; i<x0.size(); i++) {
       GECODE_ME_FAIL(IntView(w[i]).gq(home,0));
       GECODE_ME_FAIL(IntView(h[i]).gq(home,0));
     }
 
     if (w.assigned() && h.assigned()) {
       IntArgs wc(x0.size()), hc(x0.size());
-      for (int i=x0.size(); i--; ) {
+      for (int i=0; i<x0.size(); i++) {
         wc[i] = w[i].val();
         hc[i] = h[i].val();
       }
@@ -151,7 +151,7 @@ namespace Gecode {
     } else {
       ManBox<FlexDim,2>* b
         = static_cast<Space&>(home).alloc<ManBox<FlexDim,2> >(x0.size());
-      for (int i=x0.size(); i--; ) {
+      for (int i=0; i<x0.size(); i++) {
         b[i][0] = FlexDim(x0[i],w[i],x1[i]);
         b[i][1] = FlexDim(y0[i],h[i],y1[i]);
       }
@@ -174,14 +174,14 @@ namespace Gecode {
       throw ArgumentSizeMismatch("Int::nooverlap");
     GECODE_POST;
 
-    for (int i=x0.size(); i--; ) {
+    for (int i=0; i<x0.size(); i++) {
       GECODE_ME_FAIL(IntView(w[i]).gq(home,0));
       GECODE_ME_FAIL(IntView(h[i]).gq(home,0));
     }
 
     if (w.assigned() && h.assigned()) {
       IntArgs wc(x0.size()), hc(x0.size());
-      for (int i=x0.size(); i--; ) {
+      for (int i=0; i<x0.size(); i++) {
         wc[i] = w[i].val();
         hc[i] = h[i].val();
       }
@@ -189,7 +189,7 @@ namespace Gecode {
     } else if (optional(m)) {
       OptBox<FlexDim,2>* b
         = static_cast<Space&>(home).alloc<OptBox<FlexDim,2> >(x0.size());
-      for (int i=x0.size(); i--; ) {
+      for (int i=0; i<x0.size(); i++) {
         b[i][0] = FlexDim(x0[i],w[i],x1[i]);
         b[i][1] = FlexDim(y0[i],h[i],y1[i]);
         b[i].optional(m[i]);

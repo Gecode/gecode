@@ -47,7 +47,7 @@ namespace Gecode {
   forceinline
   IntArgs::IntArgs(const SharedArray<int>& x)
     : ArgArray<int>(x.size()) {
-    for (int i=x.size(); i--;)
+    for (int i=0; i<x.size(); i++)
       a[i] = x[i];
   }
 

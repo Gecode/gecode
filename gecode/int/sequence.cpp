@@ -78,7 +78,7 @@ namespace Gecode {
 
     // All variables must take a value in s
     if (l == q) {
-      for (int i=x.size(); i--; ) {
+      for (int i=0; i<x.size(); i++) {
         IntView xv(x[i]);
         IntSetRanges ris(s);
         GECODE_ME_FAIL(xv.inter_r(home,ris,false));
@@ -88,7 +88,7 @@ namespace Gecode {
 
     // No variable can take a value in s
     if (0 == u) {
-      for (int i=x.size(); i--; ) {
+      for (int i=0; i<x.size(); i++) {
         IntView xv(x[i]);
         IntSetRanges ris(s);
         GECODE_ME_FAIL(xv.minus_r(home,ris,false));
@@ -152,12 +152,12 @@ namespace Gecode {
     // All variables must take a value in s
     if (l == q) {
       if (s.min() == 0) {
-        for (int i=x.size(); i--; ) {
+        for (int i=0; i<x.size(); i++) {
           BoolView xv(x[i]); GECODE_ME_FAIL(xv.zero(home));
         }
       } else {
         assert(s.min() == 1);
-        for (int i=x.size(); i--; ) {
+        for (int i=0; i<x.size(); i++) {
           BoolView xv(x[i]); GECODE_ME_FAIL(xv.one(home));
         }
       }
@@ -167,12 +167,12 @@ namespace Gecode {
     // No variable can take a value in s
     if (0 == u) {
       if (s.min() == 0) {
-        for (int i=x.size(); i--; ) {
+        for (int i=0; i<x.size(); i++) {
           BoolView xv(x[i]); GECODE_ME_FAIL(xv.one(home));
         }
       } else {
         assert(s.min() == 1);
-        for (int i=x.size(); i--; ) {
+        for (int i=0; i<x.size(); i++) {
           BoolView xv(x[i]); GECODE_ME_FAIL(xv.zero(home));
         }
       }

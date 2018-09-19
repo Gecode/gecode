@@ -64,7 +64,7 @@ namespace Gecode {
       }
       if (n > 0) {
         IntSet::IntSetObject* o = IntSet::IntSetObject::allocate(n);
-        for (int j=n; j--; )
+        for (int j=0; j<n; j++)
           o->r[j]=d[j];
         o->size = size;
         s.object(o);
@@ -113,7 +113,7 @@ namespace Gecode {
     if (n > 0) {
       Region reg;
       Range* dr = reg.alloc<Range>(n);
-      for (int i=n; i--; )
+      for (int i=0; i<n; i++)
         dr[i].min=dr[i].max=r[i];
       normalize(&dr[0],n);
     }
@@ -132,7 +132,7 @@ namespace Gecode {
       Region reg;
       Range* dr = reg.alloc<Range>(n);
       int j=0;
-      for (int i=n; i--; ) 
+      for (int i=0; i<n; i++) 
         if (r[i].first <= r[i].second) {
           dr[j].min=r[i].first; dr[j].max=r[i].second; j++;
         }

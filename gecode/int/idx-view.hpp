@@ -79,7 +79,7 @@ namespace Gecode { namespace Int {
     n = xa.size();
     if (n>0) {
       xs = IdxView<View>::allocate(home, n);
-      for (int i = n; i--; ) {
+      for (int i=0; i<n; i++) {
         xs[i].idx = i; xs[i].view = xa[i];
       }
     }
@@ -124,21 +124,21 @@ namespace Gecode { namespace Int {
   forceinline void
   IdxViewArray<View>::subscribe(Space& home, Propagator& p, PropCond pc,
                                 bool process) {
-    for (int i = n; i--; )
+    for (int i=0; i<n; i++)
       xs[i].view.subscribe(home,p,pc,process);
   }
 
   template<class View>
   forceinline void
   IdxViewArray<View>::cancel(Space& home, Propagator& p, PropCond pc) {
-    for (int i = n; i--; )
+    for (int i=0; i<n; i++)
       xs[i].view.cancel(home,p,pc);
   }
 
   template<class View>
   forceinline void
   IdxViewArray<View>::reschedule(Space& home, Propagator& p, PropCond pc) {
-    for (int i = n; i--; )
+    for (int i=0; i<n; i++)
       xs[i].view.reschedule(home,p,pc);
   }
 
@@ -148,7 +148,7 @@ namespace Gecode { namespace Int {
     n = a.size();
     if (n>0) {
       xs = IdxView<View>::allocate(home,n);
-      for (int i=n; i--; ) {
+      for (int i=0; i<n; i++) {
         xs[i].idx = a[i].idx;
         xs[i].view.update(home,a[i].view);
       }

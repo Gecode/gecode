@@ -373,7 +373,7 @@ namespace Gecode {
     GECODE_POST;
     switch (irt) {
     case IRT_EQ:
-      for (int i=x.size(); i--; ) {
+      for (int i=0; i<x.size(); i++) {
         GECODE_ES_FAIL((Bool::Eq<BoolView,BoolView>
                              ::post(home,x[i],y)));
       }
@@ -381,29 +381,29 @@ namespace Gecode {
     case IRT_NQ:
       {
         NegBoolView n(y);
-        for (int i=x.size(); i--; ) {
+        for (int i=0; i<x.size(); i++) {
           GECODE_ES_FAIL((Bool::Eq<BoolView,NegBoolView>
                                ::post(home,x[i],n)));
         }
       }
       break;
     case IRT_GQ:
-      for (int i=x.size(); i--; ) {
+      for (int i=0; i<x.size(); i++) {
         GECODE_ES_FAIL(Bool::Lq<BoolView>::post(home,y,x[i]));
       }
       break;
     case IRT_LQ:
-      for (int i=x.size(); i--; ) {
+      for (int i=0; i<x.size(); i++) {
         GECODE_ES_FAIL(Bool::Lq<BoolView>::post(home,x[i],y));
       }
       break;
     case IRT_GR:
-      for (int i=x.size(); i--; ) {
+      for (int i=0; i<x.size(); i++) {
         GECODE_ES_FAIL(Bool::Le<BoolView>::post(home,y,x[i]));
       }
       break;
     case IRT_LE:
-      for (int i=x.size(); i--; ) {
+      for (int i=0; i<x.size(); i++) {
         GECODE_ES_FAIL(Bool::Le<BoolView>::post(home,x[i],y));
       }
       break;
@@ -421,13 +421,13 @@ namespace Gecode {
       switch (irt) {
       case IRT_LQ:
       case IRT_EQ:
-        for (int i=x.size(); i--; ) {
+        for (int i=0; i<x.size(); i++) {
           BoolView xi(x[i]); GECODE_ME_FAIL(xi.zero(home));
         }
         break;
       case IRT_NQ:
       case IRT_GR:
-        for (int i=x.size(); i--; ) {
+        for (int i=0; i<x.size(); i++) {
           BoolView xi(x[i]); GECODE_ME_FAIL(xi.one(home));
         }
         break;
@@ -442,13 +442,13 @@ namespace Gecode {
       switch (irt) {
       case IRT_GQ:
       case IRT_EQ:
-        for (int i=x.size(); i--; ) {
+        for (int i=0; i<x.size(); i++) {
           BoolView xi(x[i]); GECODE_ME_FAIL(xi.one(home));
         }
         break;
       case IRT_NQ:
       case IRT_LE:
-        for (int i=x.size(); i--; ) {
+        for (int i=0; i<x.size(); i++) {
           BoolView xi(x[i]); GECODE_ME_FAIL(xi.zero(home));
         }
         break;
@@ -507,12 +507,12 @@ namespace Gecode {
     case IRT_GQ:
       {
         ViewArray<BoolView> y(home,x.size());
-        for (int i=x.size(); i--; )
+        for (int i=0; i<x.size(); i++)
           y[i] = x[x.size()-1-i];
         GECODE_ES_FAIL(Bool::NaryLq<BoolView>::post(home,y));
       }
-      for (int i=x.size()-1; i--; )
-        GECODE_ES_FAIL(Bool::Lq<BoolView>::post(home,x[i+1],x[i]));
+      for (int i=1; i<x.size(); i++)
+        GECODE_ES_FAIL(Bool::Lq<BoolView>::post(home,x[i-1],x[i]));
       break;
     default:
       throw UnknownRelation("Int::rel");
@@ -555,7 +555,7 @@ namespace Gecode {
       }
       break;
     case IRT_EQ:
-      for (int i=x.size(); i--; ) {
+      for (int i=0; i<x.size(); i++) {
         GECODE_ES_FAIL((Bool::Eq<BoolView,BoolView>
                         ::post(home,x[i],y[i])));
       }
@@ -578,7 +578,7 @@ namespace Gecode {
     ViewArray<Int::ConstIntView>
     viewarray(Space& home, const IntArgs& x) {
       ViewArray<Int::ConstIntView> xv(home, x.size());
-      for (int i = x.size(); i--; ) {
+      for (int i=0; i<x.size(); i++) {
         if ((x[i] != 0) && (x[i] != 1))
           throw Int::NotZeroOne("Int::rel");
         xv[i] = Int::ConstIntView(x[i]);
@@ -631,7 +631,7 @@ namespace Gecode {
       if (x.size() != y.size()) {
         home.fail();
       } else {
-        for (int i=x.size(); i--; )
+        for (int i=0; i<x.size(); i++)
           GECODE_ME_FAIL(BoolView(x[i]).eq(home,y[i]));
       }
       break;
@@ -781,7 +781,7 @@ namespace Gecode {
     case BOT_AND:
       {
         ViewArray<NegBoolView> b(home,m);
-        for (int i=m; i--; ) {
+        for (int i=0; i<m; i++) {
           NegBoolView nb(x[i]); b[i]=nb;
         }
         NegBoolView ny(y);
@@ -813,7 +813,7 @@ namespace Gecode {
     case BOT_EQV:
       {
         ViewArray<BoolView> xy(home, x.size() + 1);
-        for (int i=x.size(); i--; )
+        for (int i=0; i<x.size(); i++)
           xy[i] = x[i];
         xy[x.size()] = y;
         GECODE_ES_FAIL(Bool::NaryEqv::post(home,xy,0));
@@ -822,7 +822,7 @@ namespace Gecode {
     case BOT_XOR:
       {
         ViewArray<BoolView> xy(home, x.size() + 1);
-        for (int i=x.size(); i--; )
+        for (int i=0; i<x.size(); i++)
           xy[i] = x[i];
         xy[x.size()] = y;
         GECODE_ES_FAIL(Bool::NaryEqv::post(home,xy,1));
@@ -846,20 +846,20 @@ namespace Gecode {
     case BOT_AND:
       if (n == 0) {
         ViewArray<NegBoolView> b(home,m);
-        for (int i=m; i--; ) {
+        for (int i=0; i<m; i++) {
           NegBoolView nb(x[i]); b[i]=nb;
         }
         b.unique();
         GECODE_ES_FAIL(Bool::NaryOrTrue<NegBoolView>::post(home,b));
       } else {
-        for (int i=m; i--; ) {
+        for (int i=0; i<m; i++) {
           BoolView b(x[i]); GECODE_ME_FAIL(b.one(home));
         }
       }
       break;
     case BOT_OR:
       if (n == 0) {
-        for (int i=m; i--; ) {
+        for (int i=0; i<m; i++) {
           BoolView b(x[i]); GECODE_ME_FAIL(b.zero(home));
         }
       } else {
@@ -913,7 +913,7 @@ namespace Gecode {
     case BOT_AND:
       if (n == 0) {
         ViewArray<NegBoolView> xv(home,x.size());
-        for (int i=x.size(); i--; ) {
+        for (int i=0; i<x.size(); i++) {
           NegBoolView nxi(x[i]); xv[i]=nxi;
         }
         ViewArray<BoolView> yv(home,y);
@@ -921,26 +921,26 @@ namespace Gecode {
         GECODE_ES_FAIL((Bool::ClauseTrue<NegBoolView,BoolView>
                         ::post(home,xv,yv)));
       } else {
-        for (int i=x.size(); i--; ) {
+        for (int i=0; i<x.size(); i++) {
           BoolView b(x[i]); GECODE_ME_FAIL(b.one(home));
         }
-        for (int i=y.size(); i--; ) {
+        for (int i=0; i<y.size(); i++) {
           BoolView b(y[i]); GECODE_ME_FAIL(b.zero(home));
         }
       }
       break;
     case BOT_OR:
       if (n == 0) {
-        for (int i=x.size(); i--; ) {
+        for (int i=0; i<x.size(); i++) {
           BoolView b(x[i]); GECODE_ME_FAIL(b.zero(home));
         }
-        for (int i=y.size(); i--; ) {
+        for (int i=0; i<y.size(); i++) {
           BoolView b(y[i]); GECODE_ME_FAIL(b.one(home));
         }
       } else {
         ViewArray<BoolView> xv(home,x);
         ViewArray<NegBoolView> yv(home,y.size());
-        for (int i=y.size(); i--; ) {
+        for (int i=0; i<y.size(); i++) {
           NegBoolView nyi(y[i]); yv[i]=nyi;
         }
         xv.unique(); yv.unique();
@@ -962,7 +962,7 @@ namespace Gecode {
     case BOT_AND:
       {
         ViewArray<NegBoolView> xv(home,x.size());
-        for (int i=x.size(); i--; ) {
+        for (int i=0; i<x.size(); i++) {
           NegBoolView n(x[i]); xv[i]=n;
         }
         ViewArray<BoolView> yv(home,y);
@@ -976,7 +976,7 @@ namespace Gecode {
       {
         ViewArray<BoolView> xv(home,x);
         ViewArray<NegBoolView> yv(home,y.size());
-        for (int i=y.size(); i--; ) {
+        for (int i=0; i<y.size(); i++) {
           NegBoolView n(y[i]); yv[i]=n;
         }
         xv.unique(); yv.unique();

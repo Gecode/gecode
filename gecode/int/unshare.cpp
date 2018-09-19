@@ -112,7 +112,7 @@ namespace Gecode { namespace Int { namespace Unshare {
     
     Region r;
     Var** y = r.alloc<Var*>(n);
-    for (int i=n; i--; )
+    for (int i=0; i<n; i++)
       y[i]=&x[i];
 
     VarPtrLess<Var> vpl;
