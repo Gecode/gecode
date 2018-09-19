@@ -271,7 +271,7 @@ namespace Gecode { namespace Int { namespace Cumulatives {
   Val<ViewM,ViewP,ViewU,View>::propagate(Space& home, const ModEventDelta&) {
     // Check for subsumption
     bool subsumed = true;
-    for (int t = s.size(); t--; )
+    for (int t=0; t<s.size(); t++)
       if (!(p[t].assigned() && e[t].assigned()   &&
             m[t].assigned()  && s[t].assigned() &&
             u[t].assigned())) {

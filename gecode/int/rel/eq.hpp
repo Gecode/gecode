@@ -274,11 +274,11 @@ namespace Gecode { namespace Int { namespace Rel {
     } else if (x.size() > 2) {
       int l = x[0].min();
       int u = x[0].max();
-      for (int i=x.size(); i-- > 1; ) {
+      for (int i=1; i<x.size(); i++) {
         l = std::max(l,x[i].min());
         u = std::min(u,x[i].max());
       }
-      for (int i=x.size(); i--; ) {
+      for (int i=0; i<x.size(); i++) {
         GECODE_ME_CHECK(x[i].gq(home,l));
         GECODE_ME_CHECK(x[i].lq(home,u));
       }
@@ -316,11 +316,11 @@ namespace Gecode { namespace Int { namespace Rel {
     ModEvent me = View::me(med);
     if (me == ME_INT_VAL) {
       // One of the variables is assigned
-      for (int i = 0; ; i++)
+      for (int i=0; ; i++)
         if (x[i].assigned()) {
           int n = x[i].val();
           x.move_lst(i);
-          for (int j = x.size(); j--; )
+          for (int j=0; j<x.size(); j++)
             GECODE_ME_CHECK(x[j].eq(home,n));
           return home.ES_SUBSUMED(*this);
         }
@@ -332,7 +332,7 @@ namespace Gecode { namespace Int { namespace Rel {
         // One of the mins has changed
         int mn = x[0].min();
       restart_min:
-        for (int i = x.size(); i--; ) {
+        for (int i=0; i<x.size(); i++) {
           GECODE_ME_CHECK(x[i].gq(home,mn));
           if (mn < x[i].min()) {
             mn = x[i].min();
@@ -344,7 +344,7 @@ namespace Gecode { namespace Int { namespace Rel {
         // One of the maxs has changed
         int mx = x[0].max();
       restart_max:
-        for (int i = x.size(); i--; ) {
+        for (int i=0; i<x.size(); i++) {
           GECODE_ME_CHECK(x[i].lq(home,mx));
           if (mx > x[i].max()) {
             mx = x[i].max();
@@ -361,7 +361,7 @@ namespace Gecode { namespace Int { namespace Rel {
 
     Region re;
     ViewRanges<View>* i_x = re.alloc<ViewRanges<View> >(n);
-    for (int i = n; i--; ) {
+    for (int i=0; i<n; i++) {
       ViewRanges<View> i_xi(x[i]);
       i_x[i] = i_xi;
     }
@@ -372,12 +372,12 @@ namespace Gecode { namespace Int { namespace Rel {
     ++r;
     if (!r()) {
       r.reset();
-      for (int i = n; i--; ) {
+      for (int i=0; i<n; i++) {
         GECODE_ME_CHECK(x[i].gq(home,r.min()));
         GECODE_ME_CHECK(x[i].lq(home,r.max()));
       }
     } else {
-      for (int i = n; i--; ) {
+      for (int i=0; i<n; i++) {
         r.reset();
         GECODE_ME_CHECK(x[i].narrow_r(home,r,false));
       }
@@ -406,11 +406,11 @@ namespace Gecode { namespace Int { namespace Rel {
     } else if (x.size() > 2) {
       int l = x[0].min();
       int u = x[0].max();
-      for (int i=x.size(); i-- > 1; ) {
+      for (int i=1; i<x.size(); i++) {
         l = std::max(l,x[i].min());
         u = std::min(u,x[i].max());
       }
-      for (int i=x.size(); i--; ) {
+      for (int i=0; i<x.size(); i++) {
         GECODE_ME_CHECK(x[i].gq(home,l));
         GECODE_ME_CHECK(x[i].lq(home,u));
       }
@@ -449,7 +449,7 @@ namespace Gecode { namespace Int { namespace Rel {
         if (x[i].assigned()) {
           int n = x[i].val();
           x.move_lst(i);
-          for (int j = x.size(); j--; )
+          for (int j=0; j<x.size(); j++)
             GECODE_ME_CHECK(x[j].eq(home,n));
           return home.ES_SUBSUMED(*this);
         }
@@ -458,7 +458,7 @@ namespace Gecode { namespace Int { namespace Rel {
 
     int mn = x[0].min();
   restart_min:
-    for (int i = x.size(); i--; ) {
+    for (int i=0; i<x.size(); i++) {
       GECODE_ME_CHECK(x[i].gq(home,mn));
       if (mn < x[i].min()) {
         mn = x[i].min();
@@ -467,7 +467,7 @@ namespace Gecode { namespace Int { namespace Rel {
     }
     int mx = x[0].max();
   restart_max:
-    for (int i = x.size(); i--; ) {
+    for (int i=0; i<x.size(); i++) {
       GECODE_ME_CHECK(x[i].lq(home,mx));
       if (mx > x[i].max()) {
         mx = x[i].max();

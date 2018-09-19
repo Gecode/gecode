@@ -49,7 +49,7 @@ namespace Gecode { namespace Int { namespace Unary {
   ExecStatus
   OptProp<OptTask,PL>::post(Home home, TaskArray<OptTask>& t) {
     int m=0, o=0;
-    for (int i=t.size(); i--; ) {
+    for (int i=0; i<t.size(); i++) {
       if (t[i].mandatory())
         m++;
       else if (t[i].optional())
@@ -57,7 +57,7 @@ namespace Gecode { namespace Int { namespace Unary {
     }
     if (m == t.size()) {
       TaskArray<typename TaskTraits<OptTask>::ManTask> mt(home,m);
-      for (int i=m; i--; )
+      for (int i=0; i<m; i++)
         mt[i].init(t[i]);
       return ManProp<typename TaskTraits<OptTask>::ManTask,PL>::post(home,mt);
     }

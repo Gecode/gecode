@@ -73,7 +73,7 @@ namespace Gecode { namespace Int { namespace NValues {
     }
 
     // Initialize real view nodes
-    for (int i=x.size(); i--; ) {
+    for (int i=0; i<x.size(); i++) {
       view[i] = new (home) ViewNode<IntView>(x[i]);
       ViewValGraph::Graph<IntView>::init(home,view[i]);
     }
@@ -81,7 +81,7 @@ namespace Gecode { namespace Int { namespace NValues {
     // Match the real view nodes, if possible
     Region r;
     ViewNodeStack m(r,n_view);
-    for (int i = x.size(); i--; )
+    for (int i=0; i<x.size(); i++)
       if (match(m,view[i]))
         n_matched++;
   }
@@ -95,7 +95,7 @@ namespace Gecode { namespace Int { namespace NValues {
     bool rematch = false;
 
     // Synchronize nodes
-    for (int i = n_view; i--; ) {
+    for (int i=0; i<n_view; i++) {
       ViewNode<IntView>* x = view[i];
       // Skip faked view nodes, they correspond to values in the value set
       if (!x->fake()) {
@@ -142,7 +142,7 @@ namespace Gecode { namespace Int { namespace NValues {
 
     if (rematch) {
       ViewNodeStack m(r,n_view);
-      for (int i = n_view; i--; )
+      for (int i=0; i<n_view; i++)
         if (!view[i]->matched() && match(m,view[i]))
           n_matched++;
     }
@@ -214,7 +214,7 @@ namespace Gecode { namespace Int { namespace NValues {
 
       // Insert all free view nodes
       count++;
-      for (int i = n_view; i--; )
+      for (int i=0; i<n_view; i++)
         if (!view[i]->matched()) {
           view[i]->min = count;
           visit.push(view[i]);

@@ -49,7 +49,7 @@ namespace Gecode { namespace Int { namespace Linear {
                              int n_s, int c0)
     : Propagator(home), co(home), x(x0), n_as(n_s), n_hs(n_s), c(c0) {
     Advisor* a = new (home) Advisor(home,*this,co);
-    for (int i=n_as; i--; )
+    for (int i=0; i<n_as; i++)
       x[i].subscribe(home,*a);
   }
 
@@ -99,7 +99,7 @@ namespace Gecode { namespace Int { namespace Linear {
   forceinline size_t
   LinBoolInt<VX>::dispose(Space& home) {
     Advisors<Advisor> as(co);
-    for (int i=n_hs; i--; )
+    for (int i=0; i<n_hs; i++)
       x[i].cancel(home,as.advisor());
     co.dispose(home);
     (void) Propagator::dispose(home);
@@ -186,7 +186,7 @@ namespace Gecode { namespace Int { namespace Linear {
       // Signal that propagator is running
       n_as = 0;
       // All views must be one to satisfy inequality
-      for (int i=n_hs; i--; )
+      for (int i=0; i<n_hs; i++)
         if (x[i].none())
           GECODE_ME_CHECK(x[i].one_none(home));
     }
@@ -216,7 +216,7 @@ namespace Gecode { namespace Int { namespace Linear {
       return Bool::NaryOrTrue<VX>::post(home,x);
     // All views must be one to satisfy inequality
     if (c == n_x) {
-      for (int i=n_x; i--; )
+      for (int i=0; i<n_x; i++)
         GECODE_ME_CHECK(x[i].one_none(home));
       return ES_OK;
     }
@@ -304,12 +304,12 @@ namespace Gecode { namespace Int { namespace Linear {
     n_as = 0;
     if (c == 0) {
       // All views must be zero to satisfy equality
-      for (int i=n_hs; i--; )
+      for (int i=0; i<n_hs; i++)
         if (x[i].none())
           GECODE_ME_CHECK(x[i].zero_none(home));
     } else {
       // All views must be one to satisfy equality
-      for (int i=n_hs; i--; )
+      for (int i=0; i<n_hs; i++)
         if (x[i].none())
           GECODE_ME_CHECK(x[i].one_none(home));
     }
@@ -333,13 +333,13 @@ namespace Gecode { namespace Int { namespace Linear {
       return ES_FAILED;
     // All views must be zero to satisfy equality
     if (c == 0) {
-      for (int i=n_x; i--; )
+      for (int i=0; i<n_x; i++)
         GECODE_ME_CHECK(x[i].zero_none(home));
       return ES_OK;
     }
     // All views must be one to satisfy equality
     if (c == n_x) {
-      for (int i=n_x; i--; )
+      for (int i=0; i<n_x; i++)
         GECODE_ME_CHECK(x[i].one_none(home));
       return ES_OK;
     }
@@ -624,7 +624,7 @@ namespace Gecode { namespace Int { namespace Linear {
       } else {
         if (rm != RM_IMP) {
           ViewArray<typename BoolNegTraits<VX>::NegView> nx(home,x.size());
-          for (int i=x.size(); i--; )
+          for (int i=0; i<x.size(); i++)
             nx[i]=BoolNegTraits<VX>::neg(x[i]);
           GECODE_REWRITE(*this,GqBoolInt<typename BoolNegTraits<VX>::NegView>
                          ::post(home(*this),nx,x.size()-c+1));
@@ -662,7 +662,7 @@ namespace Gecode { namespace Int { namespace Linear {
     } else if ((c == n_x) && (rm == RM_EQV)) {
       // Equivalent to Boolean conjunction, transform to Boolean disjunction
       ViewArray<typename BoolNegTraits<VX>::NegView> nx(home,n_x);
-      for (int i=n_x; i--; )
+      for (int i=0; i<n_x; i++)
         nx[i]=BoolNegTraits<VX>::neg(x[i]);
       return Bool::NaryOr
         <typename BoolNegTraits<VX>::NegView,
@@ -768,7 +768,7 @@ namespace Gecode { namespace Int { namespace Linear {
     } else if ((c == n_x) && (rm == RM_EQV)) {
       // Equivalent to Boolean conjunction, transform to Boolean disjunction
       ViewArray<typename BoolNegTraits<VX>::NegView> nx(home,n_x);
-      for (int i=n_x; i--; )
+      for (int i=0; i<n_x; i++)
         nx[i]=BoolNegTraits<VX>::neg(x[i]);
       return Bool::NaryOr
         <typename BoolNegTraits<VX>::NegView,

@@ -47,9 +47,9 @@ namespace Gecode { namespace Int { namespace Distinct {
     view = home.alloc<ViewNode<View>*>(n_view);
 
     // Find value information for construction of view value graph
-    int min = x[n_view-1].min();
-    int max = x[n_view-1].max();
-    for (int i=n_view-1; i--; ) {
+    int min = x[0].min();
+    int max = x[0].max();
+    for (int i=1; i<n_view; i++) {
       min = std::min(min,x[i].min());
       max = std::max(max,x[i].max());
     }
@@ -61,7 +61,7 @@ namespace Gecode { namespace Int { namespace Distinct {
       return ES_FAILED;
 
     // Initialize view nodes
-    for (int i=n_view; i--; )
+    for (int i=0; i<n_view; i++)
       view[i] = new (home) ViewNode<View>(x[i]);
 
     Region r;
@@ -70,10 +70,10 @@ namespace Gecode { namespace Int { namespace Distinct {
       // Values are dense: use a mapping
       ValNode<View>** val2node = r.alloc<ValNode<View>* >(width);
 
-      for (unsigned int i=width; i--; )
+      for (unsigned int i=0U; i<width; i++)
         val2node[i]=NULL;
 
-      for (int i=n_view; i--; ) {
+      for (int i=0; i<n_view; i++) {
         Edge<View>** edge_p = view[i]->val_edges_ref();
         for (ViewValues<View> xi(x[i]); xi(); ++xi) {
           if (val2node[xi.val()-min] == NULL)
@@ -93,7 +93,7 @@ namespace Gecode { namespace Int { namespace Distinct {
 
     } else {
       // Values are sparse
-      for (int i=n_view; i--; )
+      for (int i=0; i<n_view; i++)
         ViewValGraph::Graph<View>::init(home,view[i]);
     }
 
@@ -101,7 +101,7 @@ namespace Gecode { namespace Int { namespace Distinct {
       return ES_FAILED;
 
     typename ViewValGraph::Graph<View>::ViewNodeStack m(r,n_view);
-    for (int i = n_view; i--; )
+    for (int i=0; i<n_view; i++)
       if (!match(m,view[i]))
         return ES_FAILED;
     return ES_OK;

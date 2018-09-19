@@ -50,7 +50,7 @@ namespace Gecode { namespace Int { namespace Distinct {
     int c_n = 0;
 
     // Collect all assigned variables on stack
-    for (int i = n; i--; )
+    for (int i=n; i--; )
       if (x[i].assigned()) {
         c_v[c_n++]=x[i].val(); x[i]=x[--n];
       }
@@ -67,11 +67,11 @@ namespace Gecode { namespace Int { namespace Distinct {
         while (c_n > 0) {
           int v = c_v[--c_n];
           // Check whether value is on stack only once
-          for (int i = c_n; i--; )
+          for (int i=0; i<c_n; i++)
             if (c_v[i] == v)
               goto failed;
           // Tell and do not collect new values
-          for (int i = n; i--; ) {
+          for (int i=0; i<n; i++) {
             ModEvent me = x[i].nq(home,v);
             if (me_failed(me))
               goto failed;
@@ -110,11 +110,11 @@ namespace Gecode { namespace Int { namespace Distinct {
         while (c_n > 0) {
           int v = c_v[--c_n];
           // Check whether value is not on current stack
-          for (int i = c_n; i--; )
+          for (int i=0; i<c_n; i++)
             if (c_v[i] == v)
               goto failed;
           // Check whether value is not on next stack
-          for (int i = n_n; i--; )
+          for (int i=0; i<n_n; i++)
             if (n_v[i] == v)
               goto failed;
           // Tell and collect new values

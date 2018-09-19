@@ -89,10 +89,10 @@ namespace Gecode { namespace Int { namespace Sorted {
 
     if (match_fixed) {
       // sorting is determined, sigma and tau coincide
-      for (int i=n; i--; )
+      for (int i=0; i<n; i++)
         tau[z[i].val()] = i;
     } else {
-      for (int i = n; i--; )
+      for (int i=0; i<n; i++)
         tau[i] = i;
     }
 
@@ -126,7 +126,7 @@ namespace Gecode { namespace Int { namespace Sorted {
         }
       }
 
-      for (int i = n; i--; ) {
+      for (int i=0; i<n; i++) {
         // minimum reachable y-variable
         int minr = allbnd[i].min;
         assert(minr != -1);
@@ -221,7 +221,7 @@ namespace Gecode { namespace Int { namespace Sorted {
       if (!glover(x,y,tau,phi,sequence,vertices))
         return ES_FAILED;
     } else {
-      for (int i = x.size(); i--; ) {
+      for (int i=0; i<x.size(); i++) {
         phi[i]      = z[i].val();
         phiprime[i] = phi[i];
       }

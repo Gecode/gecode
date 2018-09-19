@@ -56,7 +56,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
   OmegaTree<TaskView>::OmegaTree(Region& r, int c0,
                                  const TaskViewArray<TaskView>& t)
     : TaskTree<TaskView,OmegaNode>(r,t), c(c0) {
-    for (int i=tasks.size(); i--; ) {
+    for (int i=0; i<tasks.size(); i++) {
       leaf(i).e = 0; leaf(i).env = -Limits::llinfinity;
     }
     init();
@@ -103,7 +103,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
   template<class TaskView> void
   ExtOmegaTree<TaskView>::init(int ci0) {
     ci = ci0;
-    for (int i=tasks.size(); i--; ) {
+    for (int i=0; i<tasks.size(); i++) {
       leaf(i).e = 0;
       leaf(i).env = leaf(i).cenv = -Limits::llinfinity;
     }
@@ -205,7 +205,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
                                              const TaskViewArray<TaskView>& t)
     : TaskTree<TaskView,OmegaLambdaNode>(r,t), c(c0) {
     // Enter all tasks into tree (omega = all tasks, lambda = empty)
-    for (int i=tasks.size(); i--; ) {
+    for (int i=0; i<tasks.size(); i++) {
       leaf(i).e = tasks[i].e();
       leaf(i).le = 0;
       leaf(i).env = static_cast<long long int>(c)*tasks[i].est()+tasks[i].e();

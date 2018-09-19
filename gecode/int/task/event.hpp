@@ -88,7 +88,7 @@ namespace Gecode { namespace Int {
     bool required=false;
 
     int n=0;
-    for (int i=t.size(); i--; )
+    for (int i=0; i<t.size(); i++)
       if (t[i].assigned()) {
         // Only add required part
         if (t[i].pmin() > 0) {
@@ -130,7 +130,7 @@ namespace Gecode { namespace Int {
 
     // Only add assigned and mandatory tasks
     int n=0;
-    for (int i=t.size(); i--; )
+    for (int i=0; i<t.size(); i++)
       if (t[i].assigned() && t[i].mandatory()) {
         if (t[i].pmin() > 0) {
           e[n++].init(Event::ERT,t[i].lst(),i);

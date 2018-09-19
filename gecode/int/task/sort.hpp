@@ -160,7 +160,7 @@ namespace Gecode { namespace Int {
   template<class TaskView, SortTaskOrder sto, bool inc>
   forceinline void
   sort(int* map, const TaskViewArray<TaskView>& t) {
-    for (int i=t.size(); i--; )
+    for (int i=0; i<t.size(); i++)
       map[i]=i;
     switch (sto) {
     case STO_EST:

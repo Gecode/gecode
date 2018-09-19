@@ -46,7 +46,7 @@ namespace Gecode { namespace Int { namespace Unary {
     TaskViewIter<ManTaskView,STO_LST,true> q(r,t);
     int* lct = r.alloc<int>(t.size());
 
-    for (int i=t.size(); i--; )
+    for (int i=0; i<t.size(); i++)
       lct[i] = t[i].lct();
 
     for (int i=0; i<t.size(); i++) {
@@ -61,7 +61,7 @@ namespace Gecode { namespace Int { namespace Unary {
         lct[i] = std::min(lct[i],t[j].lst());
     }
 
-    for (int i=t.size(); i--; )
+    for (int i=0; i<t.size(); i++)
       GECODE_ME_CHECK(t[i].lct(home,lct[i]));
 
     return ES_OK;
@@ -87,7 +87,7 @@ namespace Gecode { namespace Int { namespace Unary {
     ManTaskViewIter<OptTaskView,STO_LST,true> q(r,t);
     int* lct = r.alloc<int>(t.size());
 
-    for (int i=t.size(); i--; )
+    for (int i=0; i<t.size(); i++)
       lct[i] = t[i].lct();
 
     for (int i=0; i<t.size(); i++) {

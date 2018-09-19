@@ -54,7 +54,7 @@ namespace Gecode { namespace Int { namespace Unary {
   forceinline
   OmegaTree<TaskView>::OmegaTree(Region& r, const TaskViewArray<TaskView>& t)
     : TaskTree<TaskView,OmegaNode>(r,t) {
-    for (int i=tasks.size(); i--; ) {
+    for (int i=0; i<tasks.size(); i++) {
       leaf(i).p = 0; leaf(i).ect = -Limits::infinity;
     }
     init();
@@ -139,7 +139,7 @@ namespace Gecode { namespace Int { namespace Unary {
     : TaskTree<TaskView,OmegaLambdaNode>(r,t) {
     if (inc) {
       // Enter all tasks into tree (omega = all tasks, lambda = empty)
-      for (int i=tasks.size(); i--; ) {
+      for (int i=0; i<tasks.size(); i++) {
         leaf(i).p = leaf(i).lp = tasks[i].pmin();
         leaf(i).ect = leaf(i).lect = tasks[i].est()+tasks[i].pmin();
         leaf(i).resEct = OmegaLambdaNode::undef;
@@ -148,7 +148,7 @@ namespace Gecode { namespace Int { namespace Unary {
       update();
     } else {
       // Enter no tasks into tree (omega = empty, lambda = empty)
-      for (int i=tasks.size(); i--; ) {
+      for (int i=0; i<tasks.size(); i++) {
         leaf(i).p = leaf(i).lp = 0;
         leaf(i).ect = leaf(i).lect = -Limits::infinity;
         leaf(i).resEct = OmegaLambdaNode::undef;

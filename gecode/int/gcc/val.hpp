@@ -100,7 +100,7 @@ namespace Gecode { namespace Int { namespace GCC {
     // initialization
     int sum_min = 0;
     int removed = 0;
-    for (int i = k.size(); i--; ) {
+    for (int i=0; i<k.size(); i++) {
       removed += k[i].counter();
       sum_min += k[i].min();
       count[i] = 0;
@@ -108,13 +108,13 @@ namespace Gecode { namespace Int { namespace GCC {
 
     // less than or equal than the total number of free variables
     // to satisfy the required occurences
-    for (int i = k.size(); i--; )
+    for (int i=0; i<k.size(); i++)
       GECODE_ME_CHECK(k[i].lq(home, x.size()+removed-(sum_min - k[i].min())));
 
     // number of unassigned views
     int non = x.size();
 
-    for (int i = x.size(); i--; )
+    for (int i=0; i<x.size(); i++)
       if (x[i].assigned()) {
         int idx;
         if (!lookupValue(k,x[i].val(),idx)) {
@@ -126,7 +126,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
     // check for subsumption
     if (non == 0) {
-      for (int i = k.size(); i--; )
+      for (int i=0; i<k.size(); i++)
         GECODE_ME_CHECK((k[i].eq(home, count[i] + k[i].counter())));
       return home.ES_SUBSUMED(p);
     }

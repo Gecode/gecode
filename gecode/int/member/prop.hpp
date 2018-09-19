@@ -150,9 +150,9 @@ namespace Gecode { namespace Int { namespace Member {
 
     assert(x.size() > 0);
     ValSet::Ranges vsr(vs);
-    ViewRanges<View> xsr(x[x.size()-1]);
+    ViewRanges<View> xsr(x[0]);
     Iter::Ranges::NaryUnion  u(r,vsr,xsr);
-    for (int i=x.size()-1; i--; ) {
+    for (int i=1; i<x.size(); i++) {
       ViewRanges<View> xir(x[i]);
       u |= xir;
     }

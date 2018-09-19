@@ -81,14 +81,14 @@ namespace Gecode { namespace Int { namespace Cumulative {
     }
     if (c.assigned() && (c.val() == 1)) {
       TaskArray<typename TaskTraits<OptTask>::UnaryTask> mt(home,t.size());
-      for (int i=t.size(); i--; )
+      for (int i=0; i<t.size(); i++)
         mt[i]=t[i];
       return Unary::OptProp<typename TaskTraits<OptTask>::UnaryTask,PL>
         ::post(home,mt);
     }
     if (m == t.size()) {
       TaskArray<typename TaskTraits<OptTask>::ManTask> mt(home,m);
-      for (int i=m; i--; )
+      for (int i=0; i<m; i++)
         mt[i].init(t[i]);
       return ManProp<typename TaskTraits<OptTask>::ManTask,Cap,PL>
         ::post(home,c,mt);
@@ -147,12 +147,12 @@ namespace Gecode { namespace Int { namespace Cumulative {
 
     if (Cap::varderived() && c.assigned() && c.val()==1) {
       // Check that tasks do not overload resource
-      for (int i=t.size(); i--; )
+      for (int i=0; i<t.size(); i++)
         if (t[i].c() > 1)
           GECODE_ME_CHECK(t[i].excluded(home));
       // Rewrite to unary resource constraint
       TaskArray<typename TaskTraits<OptTask>::UnaryTask> ut(home,t.size());
-      for (int i=t.size(); i--;)
+      for (int i=0; i<t.size(); i++)
         ut[i]=t[i];
       GECODE_REWRITE(*this,
                      (Unary::OptProp<typename TaskTraits<OptTask>::UnaryTask,PL>

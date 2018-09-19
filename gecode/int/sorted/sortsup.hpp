@@ -200,9 +200,8 @@ namespace Gecode { namespace Int { namespace Sorted {
       x = sequence[x].parent;
     }
     // x is now the root of the tree
-    for (int i = vsize; i--; ) {
+    for (int i=0; i<vsize; i++)
       sequence[vertices[i]].parent = x;
-    }
     // return the set, x belongs to
     return sequence[x].name;
   }
@@ -389,7 +388,7 @@ namespace Gecode { namespace Int { namespace Sorted {
     bool y_complete = true;
     bool z_complete = true;
 
-    for (int i = y.size(); i--; ) {
+    for (int i=0; i<y.size(); i++) {
       x_complete &= x[i].assigned();
       y_complete &= y[i].assigned();
       if (Perm) {
@@ -398,7 +397,7 @@ namespace Gecode { namespace Int { namespace Sorted {
     }
 
     if (x_complete) {
-      for (int i = x.size(); i--; ) {
+      for (int i=0; i<x.size(); i++) {
         ModEvent me = y[i].eq(home, x[i].val());
         if (me_failed(me)) {
           return false;
@@ -413,11 +412,11 @@ namespace Gecode { namespace Int { namespace Sorted {
 
     if (y_complete) {
       bool y_equality = true;
-      for (int i = y.size() - 1; i--; ) {
-        y_equality &= (y[i].val() == y[i + 1].val());
+      for (int i=1; i<y.size(); i++) {
+        y_equality &= (y[i-1].val() == y[i].val());
       }
       if (y_equality) {
-        for (int i = x.size(); i--; ) {
+        for (int i=0; i<x.size(); i++) {
           ModEvent me = x[i].eq(home, y[i].val());
           if (me_failed(me)) {
             return false;
@@ -435,7 +434,7 @@ namespace Gecode { namespace Int { namespace Sorted {
     if (Perm) {
       if (z_complete) {
         if (x_complete) {
-          for (int i = x.size(); i--; ) {
+          for (int i=0; i<x.size(); i++) {
             ModEvent me = y[z[i].val()].eq(home, x[i].val());
             if (me_failed(me)) {
               return false;
@@ -445,7 +444,7 @@ namespace Gecode { namespace Int { namespace Sorted {
           return subsumed;
         }
         if (y_complete) {
-          for (int i = x.size(); i--; ) {
+          for (int i=0; i<x.size(); i++) {
             ModEvent me = x[i].eq(home, y[z[i].val()].val());
             if (me_failed(me)) {
               return false;
@@ -457,7 +456,7 @@ namespace Gecode { namespace Int { namespace Sorted {
 
         // validate the permutation
         int sum = 0;
-        for (int i = x.size(); i--; ) {
+        for (int i=0; i<x.size(); i++) {
           int pi = z[i].val();
           if (x[i].max() < y[pi].min() ||
               x[i].min() > y[pi].max()) {
@@ -490,7 +489,7 @@ namespace Gecode { namespace Int { namespace Sorted {
   channel(Space& home, ViewArray<View>& x, ViewArray<View>& y,
           ViewArray<View>& z, bool& nofix) {
     int n = x.size();
-    for (int i = n; i--; ) {
+    for (int i=0; i<n; i++) {
       if (z[i].assigned()) {
         int v = z[i].val();
         if (x[i].assigned()) {

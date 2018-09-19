@@ -130,7 +130,7 @@ namespace Gecode { namespace Int { namespace ViewValGraph {
   Graph<View>::purge(void) {
     if (count > (UINT_MAX >> 1)) {
       count = 1;
-      for (int i=n_view; i--; )
+      for (int i=0; i<n_view; i++)
         view[i]->min = 0;
       for (ValNode<View>* v = val; v != NULL; v = v->next_val())
         v->min = 0;
@@ -149,7 +149,7 @@ namespace Gecode { namespace Int { namespace ViewValGraph {
     unsigned int cnt0 = count;
     unsigned int cnt1 = count;
 
-    for (int i = n_view; i--; )
+    for (int i=0; i<n_view; i++)
       /*
        * The following test is subtle: for scc, the test should be:
        *   view[i]->min < count

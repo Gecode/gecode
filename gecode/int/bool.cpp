@@ -511,8 +511,6 @@ namespace Gecode {
           y[i] = x[x.size()-1-i];
         GECODE_ES_FAIL(Bool::NaryLq<BoolView>::post(home,y));
       }
-      for (int i=1; i<x.size(); i++)
-        GECODE_ES_FAIL(Bool::Lq<BoolView>::post(home,x[i-1],x[i]));
       break;
     default:
       throw UnknownRelation("Int::rel");

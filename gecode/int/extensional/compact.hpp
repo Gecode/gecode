@@ -373,7 +373,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     Region r;
     BitSetData* mask = r.alloc<BitSetData>(table.size());
     // Invalidate tuples
-    for (int i = x.size(); i--; ) {
+    for (int i=0; i<x.size(); i++) {
       table.clear_mask(mask);
       for (ValidSupports vs(ts,i,x[i]); vs(); ++vs)
         table.add_to_mask(vs.supports(),mask);
@@ -382,7 +382,7 @@ namespace Gecode { namespace Int { namespace Extensional {
         return;
     }
     // Post advisors
-    for (int i = x.size(); i--; ) {
+    for (int i=0; i<x.size(); i++) {
       if (!x[i].assigned())
         (void) new (home) CTAdvisor(home,*this,c,ts,x[i],i);
       else
@@ -495,16 +495,10 @@ namespace Gecode { namespace Int { namespace Extensional {
   forceinline ExecStatus
   CompactTable<View,Table>::post(Home home, ViewArray<View>& x,
                                  const TupleSet& ts) {
-    // All variables pruned to correct domain
-    for (int i=x.size(); i--; ) {
-      TupleSet::Ranges r(ts,i);
-      GECODE_ME_CHECK(x[i].inter_r(home, r, false));
-    }
-    if ((x.size() > 1) && (ts.tuples() > 1)) {
-      CompactTable<View,Table>* ct = new (home) CompactTable(home,x,ts);
-      if (ct->table.empty())
-        return ES_FAILED;
-    }
+    assert((x.size() > 1) && (ts.tuples() > 1));
+    CompactTable<View,Table>* ct = new (home) CompactTable(home,x,ts);
+    if (ct->table.empty())
+      return ES_FAILED;
     return ES_OK;
   }
 
@@ -579,12 +573,17 @@ namespace Gecode { namespace Int { namespace Extensional {
   template<class View>
   inline ExecStatus
   postcompact(Home home, ViewArray<View>& x, const TupleSet& ts) {
-    assert(ts.words() > 0U);
+    assert(ts.tuples() > 1);
+
     // All variables pruned to correct domain
-    for (int i=x.size(); i--; ) {
+    for (int i=0; i<x.size(); i++) {
       TupleSet::Ranges r(ts,i);
       GECODE_ME_CHECK(x[i].inter_r(home, r, false));
     }
+
+    if ((x.size() <= 1) || (ts.tuples() <= 1))
+      return ES_OK;
+
     // Choose the right bit set implementation
     switch (ts.words()) {
     case 0U:

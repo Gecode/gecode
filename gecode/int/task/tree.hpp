@@ -147,7 +147,7 @@ namespace Gecode { namespace Int {
     int* map = r.alloc<int>(tasks.size());
     sort<TaskView,STO_EST,true>(map, tasks);
     // Compute inverse of sorting map
-    for (int i=tasks.size(); i--; )
+    for (int i=0; i<tasks.size(); i++)
       _leaf[map[i]] = i;
     r.free<int>(map,tasks.size());
     // Compute index of first leaf in tree: the next larger power of two
@@ -156,7 +156,7 @@ namespace Gecode { namespace Int {
       fst <<= 1;
     fst--;
     // Remap task indices to leaf indices
-    for (int i=tasks.size(); i--; )
+    for (int i=0; i<tasks.size(); i++)
       if (_leaf[i] + fst >= n_nodes())
         _leaf[i] += fst - tasks.size();
       else
@@ -170,7 +170,7 @@ namespace Gecode { namespace Int {
     : tasks(t.tasks),
       node(r.alloc<Node>(n_nodes())),
       _leaf(r.alloc<int>(tasks.size())) {
-    for (int i=tasks.size(); i--; )
+    for (int i=0; i<tasks.size(); i++)
       _leaf[i] = t._leaf[i];
   }
 
