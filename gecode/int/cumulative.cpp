@@ -316,7 +316,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
       throw Int::ArgumentSizeMismatch("Int::cumulative");
 
     long long int w = 0;
-    for (int i=p.size(); i--; ) {
+    for (int i=0; i<p.size(); i++) {
       Limits::nonnegative(u[i],"Int::cumulative");
       Limits::check(static_cast<long long int>(s[i].max()) + p[i].max(),
                     "Int::cumulative");

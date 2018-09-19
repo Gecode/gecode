@@ -98,7 +98,7 @@ namespace Gecode {
     Limits::check(is.min(),"Int::dom");
     Limits::check(is.max(),"Int::dom");
     GECODE_POST;
-    for (int i = x.size(); i--; ) {
+    for (int i=0; i<x.size(); i++) {
       IntSetRanges ris(is);
       IntView xv(x[i]);
       GECODE_ME_FAIL(xv.inter_r(home,ris,false));
