@@ -122,7 +122,7 @@ namespace Gecode { namespace Int { namespace BinPacking {
       // Possible sizes for bins
       int* s = region.alloc<int>(m);
 
-      for (int j=m; j--; )
+      for (int j=0; j<m; j++)
         s[j] = 0;
 
       // Compute sizes for bins
@@ -141,7 +141,7 @@ namespace Gecode { namespace Int { namespace BinPacking {
           }
         n=k; bs.size(n);
       } else {
-        for (int i=n; i--; ) {
+        for (int i=0; i<n; i++) {
           assert(!bs[i].assigned());
           for (ViewValues<IntView> j(bs[i].bin()); j(); ++j)
             s[j.val()] += bs[i].size();
@@ -150,7 +150,7 @@ namespace Gecode { namespace Int { namespace BinPacking {
 
       // Propagate bin loads and compute lower and upper bound
       int min = t, max = t;
-      for (int j=m; j--; ) {
+      for (int j=0; j<m; j++) {
         GECODE_ME_CHECK(l[j].gq(home,0));
         GECODE_ME_CHECK(l[j].lq(home,s[j]));
         min -= l[j].max(); max -= l[j].min();
@@ -159,7 +159,7 @@ namespace Gecode { namespace Int { namespace BinPacking {
       // Propagate that load must be equal to total size
       for (bool mod = true; mod; ) {
         mod = false; ModEvent me;
-        for (int j=m; j--; ) {
+        for (int j=0; j<m; j++) {
           int lj_min = l[j].min();
           me = l[j].gq(home, min + l[j].max());
           if (me_failed(me))
@@ -220,7 +220,7 @@ namespace Gecode { namespace Int { namespace BinPacking {
       // Size of items
       SizeSetMinusOne* s = region.alloc<SizeSetMinusOne>(m);
 
-      for (int j=m; j--; )
+      for (int j=0; j<m; j++)
         s[j] = SizeSetMinusOne(region,n);
 
       // Set up size information
@@ -230,7 +230,7 @@ namespace Gecode { namespace Int { namespace BinPacking {
           s[j.val()].add(bs[i].size());
       }
 
-      for (int j=m; j--; ) {
+      for (int j=0; j<m; j++) {
         // Can items still be packed into bin?
         if (nosum(static_cast<SizeSet&>(s[j]), l[j].min(), l[j].max()))
           return ES_FAILED;
@@ -281,24 +281,24 @@ namespace Gecode { namespace Int { namespace BinPacking {
       // Find capacity estimate (we start from bs[0] as it might be
       // not packable, actually (will be detected later anyway)!
       int c = bs[0].size();
-      for (int j=m; j--; )
+      for (int j=0; j<m; j++)
         c = std::max(c,l[j].max());
 
       // Count how many items have a certain size (bucket sort)
       int* n_s = region.alloc<int>(c+1);
 
-      for (int i=c+1; i--; )
+      for (int i=0; i<c+1; i++)
         n_s[i] = 0;
 
       // Count unpacked items
-      for (int i=n; i--; )
+      for (int i=0; i<n; i++)
         n_s[bs[i].size()]++;
 
       // Number of items and remaining bin load
       int nm = n;
 
       // Only count positive remaining bin loads
-      for (int j=m; j--; )
+      for (int j=0; j<m; j++)
         if (l[j].max() < 0) {
           return ES_FAILED;
         } else if (c > l[j].max()) {
@@ -363,7 +363,7 @@ namespace Gecode { namespace Int { namespace BinPacking {
     // Total size of items
     int s = 0;
     // Constrain bins
-    for (int i=bs.size(); i--; ) {
+    for (int i=0; i<bs.size(); i++) {
       s += bs[i].size();
       GECODE_ME_CHECK(bs[i].bin().gq(home,0));
       GECODE_ME_CHECK(bs[i].bin().le(home,l.size()));
@@ -377,7 +377,7 @@ namespace Gecode { namespace Int { namespace BinPacking {
     }
     if (bs.size() == 0) {
       // No items to be packed
-      for (int i=l.size(); i--; )
+      for (int i=0; i<l.size(); i++)
         GECODE_ME_CHECK(l[i].eq(home,0));
       return ES_OK;
     } else if (l.size() == 0) {
@@ -385,7 +385,7 @@ namespace Gecode { namespace Int { namespace BinPacking {
       return ES_FAILED;
     } else {
       // Constrain load
-      for (int j=l.size(); j--; ) {
+      for (int j=0; j<l.size(); j++) {
         GECODE_ME_CHECK(l[j].gq(home,0));
         GECODE_ME_CHECK(l[j].lq(home,s));
       }

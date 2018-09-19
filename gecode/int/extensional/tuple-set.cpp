@@ -73,7 +73,7 @@ namespace Gecode { namespace Int { namespace Extensional {
 
   forceinline bool
   TupleCompare::operator ()(const Tuple& a, const Tuple& b) {
-    for (int i = 0; i < arity; i++)
+    for (int i=0; i<arity; i++)
       if (a[i] < b[i])
         return true;
       else if (a[i] > b[i])
@@ -117,14 +117,14 @@ namespace Gecode {
     // Set up tuple pointers
     Tuple* tuple = r.alloc<Tuple>(n_tuples);
     {
-      for (int t=n_tuples; t--; )
+      for (int t=0; t<n_tuples; t++)
         tuple[t] = td + t*arity;
       TupleCompare tc(arity);
       Support::quicksort(tuple, n_tuples, tc);
       // Remove duplicates
       int j=1;
       for (int t=1; t<n_tuples; t++) {
-        for (int a=arity; a--; )
+        for (int a=0; a<arity; a++)
           if (tuple[t-1][a] != tuple[t][a])
             goto notsame;
         goto same;
@@ -139,8 +139,8 @@ namespace Gecode {
       cmb_hash(key, arity);
       // Copy into now possibly smaller area
       int* new_td = heap.alloc<int>(n_tuples*arity);
-      for (int t=n_tuples; t--; ) {
-        for (int a=arity; a--; ) {
+      for (int t=0; t<n_tuples; t++) {
+        for (int a=0; a<arity; a++) {
           new_td[t*arity+a] = tuple[t][a];
           cmb_hash(key,tuple[t][a]);
         }
@@ -162,7 +162,7 @@ namespace Gecode {
       unsigned int n_vals = 0U;
       // How many ranges
       unsigned int n_ranges = 0U;
-      for (int a=arity; a--; ) {
+      for (int a=0; a<arity; a++) {
         // Sort tuple according to position
         PosCompare pc(a);
         Support::quicksort(tuple, n_tuples, pc);
@@ -191,9 +191,9 @@ namespace Gecode {
       Range* cr = range = heap.alloc<Range>(n_ranges);
       // Allocate and initialize memory for supports
       BitSetData* cs = support = heap.alloc<BitSetData>(n_words * n_vals);
-      for (unsigned int i=n_vals * n_words; i--; )
+      for (unsigned int i=0; i<n_vals * n_words; i++)
         cs[i].init();
-      for (int a=arity; a--; ) {
+      for (int a=0; a<arity; a++) {
         // Set range pointer
         vd[a].r = cr;
         // Sort tuple according to position
@@ -312,12 +312,12 @@ namespace Gecode {
     Layer* layers = r.alloc<Layer>(a+1);
     State* states = r.alloc<State>(max_states*(a+1));
 
-    for (int i=max_states*(a+1); i--; ) {
+    for (int i=0; i<max_states*(a+1); i++) {
       states[i].i_deg = 0U; states[i].o_deg = 0U;
       states[i].n_tuples = 0U;
       states[i].tuples = nullptr;
     }
-    for (int i=a+1; i--; ) {
+    for (int i=0; i<a+1; i++) {
       layers[i].states = states + i*max_states;
       layers[i].n_supports = 0U;
     }
@@ -372,7 +372,7 @@ namespace Gecode {
     }
 
     // Mark final states as being reachable
-    for (int s = dfa.final_fst(); s < dfa.final_lst(); s++) {
+    for (int s=dfa.final_fst(); s<dfa.final_lst(); s++) {
       if (layers[a].states[s].i_deg != 0U)
         layers[a].states[s].o_deg = 1U;
     }
@@ -449,8 +449,8 @@ namespace Gecode {
     assert(arity() == t.arity());
     assert(min() == t.min());
     assert(max() == t.max());
-    for (int i=tuples(); i--; )
-      for (int j=arity(); j--; )
+    for (int i=0; i<tuples(); i++)
+      for (int j=0; j<arity(); j++)
         if ((*this)[i][j] != t[i][j])
           return false;
     return true;
@@ -465,7 +465,7 @@ namespace Gecode {
     if (t.size() != raw().arity)
       throw Int::ArgumentSizeMismatch("TupleSet::add()");
     Tuple a = raw().add();
-    for (int i=t.size(); i--; )
+    for (int i=0; i<t.size(); i++)
       a[i]=t[i];
   }
 
