@@ -158,7 +158,7 @@ namespace Gecode { namespace Search { namespace Par {
       n_slaves(n), n_active(n),
       slave_stop(false), tostop(false), n_busy(0) {
     // Initialize slaves
-    for (unsigned int i=n_slaves; i--; ) {
+    for (unsigned int i=0U; i<n_slaves; i++) {
       slaves[i] = new Slave<Collect>(this,engines[i],stops[i]);
       static_cast<PortfolioStop*>(stops[i])->share(&tostop);
     }
@@ -221,7 +221,7 @@ namespace Gecode { namespace Search { namespace Par {
       if (n_active > 0) {
         // Run all active slaves
         n_busy = n_active;
-        for (unsigned int i=n_active; i--; )
+        for (unsigned int i=0U; i<n_active; i++)
           Support::Thread::run(slaves[i]);
         m.release();
         // Wait for all slaves to become idle
@@ -242,7 +242,7 @@ namespace Gecode { namespace Search { namespace Par {
       Slave<Collect>* r;
       s = solutions.get(r);
       if (Collect::best)
-        for (unsigned int i=n_active; i--; )
+        for (unsigned int i=0U; i<n_active; i++)
           if (slaves[i] != r)
             slaves[i]->constrain(*s);
     }
@@ -262,7 +262,7 @@ namespace Gecode { namespace Search { namespace Par {
   PBS<Collect>::statistics(void) const {
     assert(n_busy == 0);
     Statistics s(stat);
-    for (unsigned int i=n_slaves; i--; )
+    for (unsigned int i=0U; i<n_slaves; i++)
       s += slaves[i]->statistics();
     return s;
   }
@@ -275,7 +275,7 @@ namespace Gecode { namespace Search { namespace Par {
       throw NoBest("PBS::constrain");
     if (solutions.constrain(b)) {
       // The solution is better
-      for (unsigned int i=n_active; i--; )
+      for (unsigned int i=0U; i<n_active; i++)
         slaves[i]->constrain(b);
     }
   }

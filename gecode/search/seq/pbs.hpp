@@ -83,7 +83,7 @@ namespace Gecode { namespace Search { namespace Seq {
     ssi.done = false;
     ssi.l = opt.slice;
 
-    for (unsigned int i=n; i--; ) {
+    for (unsigned int i=0U; i<n; i++) {
       slaves[i].init(e[i],static_cast<PortfolioStop*>(s[i]));
       static_cast<PortfolioStop*>(s[i])->share(&ssi);
     }
@@ -98,7 +98,7 @@ namespace Gecode { namespace Search { namespace Seq {
       if (Space* s = slaves[cur].next()) {
         // Constrain other slaves
         if (best) {
-          for (unsigned int i=0; i<cur; i++)
+          for (unsigned int i=0U; i<cur; i++)
             slaves[i].constrain(*s);
           for (unsigned int i=cur+1; i<n_slaves; i++)
             slaves[i].constrain(*s);
@@ -142,7 +142,7 @@ namespace Gecode { namespace Search { namespace Seq {
   Statistics
   PBS<best>::statistics(void) const {
     Statistics s(stat);
-    for (unsigned int i=n_slaves; i--; )
+    for (unsigned int i=0U; i<n_slaves; i++)
       s += slaves[i].statistics();
     return s;
   }
@@ -152,13 +152,13 @@ namespace Gecode { namespace Search { namespace Seq {
   PBS<best>::constrain(const Space& b) {
     if (!best)
       throw NoBest("PBS::constrain");
-    for (unsigned int i=0; i<n_slaves; i++)
+    for (unsigned int i=0U; i<n_slaves; i++)
       slaves[i].constrain(b);
   }
 
   template<bool best>
   PBS<best>::~PBS(void) {
-    for (unsigned int i=n_slaves; i--; )
+    for (unsigned int i=0U; i<n_slaves; i++)
       slaves[i].~Slave();
     // Note that n_slaves might be different now!
     heap.rfree(slaves);

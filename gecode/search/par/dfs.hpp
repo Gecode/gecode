@@ -72,7 +72,7 @@ namespace Gecode { namespace Search { namespace Par {
     // Block all workers
     block();
     // Create and start threads
-    for (unsigned int i=0; i<workers(); i++)
+    for (unsigned int i=0U; i<workers(); i++)
       Support::Thread::run(_worker[i]);
   }
 
@@ -121,7 +121,7 @@ namespace Gecode { namespace Search { namespace Par {
   forceinline void
   DFS<Tracer>::Worker::find(void) {
     // Try to find new work (even if there is none)
-    for (unsigned int i=0; i<engine().workers(); i++) {
+    for (unsigned int i=0U; i<engine().workers(); i++) {
       unsigned long int r_d = 0ul;
       typename Engine<Tracer>::Worker* wi = engine().worker(i);
       if (Space* s = wi->steal(r_d,wi->tracer,tracer)) {
@@ -148,7 +148,7 @@ namespace Gecode { namespace Search { namespace Par {
   Statistics
   DFS<Tracer>::statistics(void) const {
     Statistics s;
-    for (unsigned int i=0; i<workers(); i++)
+    for (unsigned int i=0U; i<workers(); i++)
       s += worker(i)->statistics();
     return s;
   }
