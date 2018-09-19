@@ -115,7 +115,7 @@ namespace Gecode {
     assert(hi != nullptr);
     if (Support::marked(hi)) {
       HeapInfo* h = static_cast<HeapInfo*>(Support::unmark(hi));
-      for (unsigned int i=h->n; i--; )
+      for (unsigned int i=0U; i<h->n; i++)
         heap.rfree(h->blocks[i]);
       heap.rfree(h);
     } else {

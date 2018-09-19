@@ -2793,7 +2793,7 @@ namespace Gecode {
   forceinline T*
   Space::alloc(long unsigned int n) {
     T* p = static_cast<T*>(ralloc(sizeof(T)*n));
-    for (long unsigned int i=n; i--; )
+    for (long unsigned int i=0; i<n; i++)
       (void) new (p+i) T();
     return p;
   }
@@ -2818,7 +2818,7 @@ namespace Gecode {
   template<class T>
   forceinline void
   Space::free(T* b, long unsigned int n) {
-    for (long unsigned int i=n; i--; )
+    for (long unsigned int i=0; i<n; i++)
       b[i].~T();
     rfree(b,n*sizeof(T));
   }
@@ -2845,7 +2845,7 @@ namespace Gecode {
   Space::realloc(T* b, long unsigned int n, long unsigned int m) {
     if (n < m) {
       T* p = static_cast<T*>(ralloc(sizeof(T)*m));
-      for (long unsigned int i=n; i--; )
+      for (long unsigned int i=0; i<n; i++)
         (void) new (p+i) T(b[i]);
       for (long unsigned int i=n; i<m; i++)
         (void) new (p+i) T();

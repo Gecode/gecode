@@ -270,7 +270,7 @@ namespace Gecode {
   TraceFilter::TFO::operator ()(const ViewTraceInfo& vti) const {
     if (n == 0)
       return true;
-    for (int i=n; i--; )
+    for (int i=0; i<n; i++)
       if (f[i].what & (1 << vti.what())) {
         // Group is of the right type
         switch (vti.what()) {
@@ -304,7 +304,7 @@ namespace Gecode {
   TraceFilter::TFO::operator ()(PropagatorGroup pg) const {
     if (n == 0)
       return true;
-    for (int i=n; i--; )
+    for (int i=0; i<n; i++)
       if ((f[i].what & (1 << ViewTraceInfo::PROPAGATOR)) &&
           (f[i].g.in(pg) != f[i].neg))
         return true;
@@ -320,7 +320,7 @@ namespace Gecode {
   TraceFilter::TFO::operator ()(BrancherGroup bg) const {
     if (n == 0)
       return true;
-    for (int i=n; i--; )
+    for (int i=0; i<n; i++)
       if ((f[i].what & (1 << ViewTraceInfo::BRANCHER)) &&
           (f[i].g.in(bg) != f[i].neg))
         return true;

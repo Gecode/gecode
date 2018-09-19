@@ -244,7 +244,7 @@ namespace Gecode {
                                 CHB& chb0)
     : NaryPropagator<View,PC_GEN_NONE>(home,x), chb(chb0), c(home) {
     home.notice(*this,AP_DISPOSE);
-    for (int i=x.size(); i--; )
+    for (int i=0; i<x.size(); i++)
       if (!x[i].assigned())
         x[i].subscribe(home,*new (home) Idx(home,*this,c,i), true);
   }
@@ -269,13 +269,13 @@ namespace Gecode {
     : n(x.size()), nf(0U), alpha(Kernel::Config::chb_alpha_init),
       chb(heap.alloc<Info>(x.size())) {
     if (bm) {
-      for (int i=n; i--; ) {
+      for (int i=0; i<n; i++) {
         typename View::VarType xi(x[i].varimp());
         chb[i].lf = 0U;
         chb[i].qs = bm(home,xi,i);
       }
     } else {
-      for (int i=n; i--; ) {
+      for (int i=0; i<n; i++) {
         chb[i].lf = 0U;
         chb[i].qs = Kernel::Config::chb_qscore_init;
       }
