@@ -69,7 +69,7 @@ namespace Gecode { namespace Int { namespace Linear {
     if (n > 0) {
       _fst = home.alloc<ScaleBool>(n);
       _lst = _fst+n;
-      for (int i=0; i<n; i++) {
+      for (int i=n; i--; ) {
         _fst[i].a = sba._fst[i].a;
         _fst[i].x.update(home,sba._fst[i].x);
       }

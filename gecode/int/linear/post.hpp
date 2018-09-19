@@ -41,7 +41,7 @@ namespace Gecode { namespace Int { namespace Linear {
   estimate(Term<View>* t, int n, int c, int& l, int &u) {
     long long int min = c;
     long long int max = c;
-    for (int i=0; i<n; i++) {
+    for (int i=n; i--; ) {
       long long int a = t[i].a;
       if (a > 0) {
         min += a*t[i].x.min();
@@ -167,7 +167,7 @@ namespace Gecode { namespace Int { namespace Linear {
      * Make all coefficients positive
      *
      */
-    for (int i=0; i<n_n; i++)
+    for (int i=n_n; i--; )
       t_n[i].a = -t_n[i].a;
 
     /*
@@ -179,7 +179,7 @@ namespace Gecode { namespace Int { namespace Linear {
       for (int i=1; (g > 1) && (i < n); i++)
         g = gcd(t[i].a,g);
       if (g > 1)
-        for (int i=0; i<n; i++)
+        for (int i=n; i--; )
           t[i].a /= g;
     } else {
       g = 1;
@@ -189,7 +189,7 @@ namespace Gecode { namespace Int { namespace Linear {
      * Test for unit coefficients only
      *
      */
-    for (int i=0; i<n; i++)
+    for (int i=n; i--; )
       if (t[i].a != 1)
         return false;
     return true;

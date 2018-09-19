@@ -105,13 +105,13 @@ namespace Gecode { namespace Int { namespace Linear {
       return ES_OK;
     if (y.min()+c == n) {
       assert(y.assigned());
-      for (int i=0; i<n; i++)
+      for (int i = n; i--; )
         GECODE_ME_CHECK(x[i].one_none(home));
       return ES_OK;
     }
     if (y.max()+c == 0) {
       assert(y.assigned());
-      for (int i= 0; i<n; i++)
+      for (int i = n; i--; )
         GECODE_ME_CHECK(x[i].zero_none(home));
       return ES_OK;
     }
@@ -147,13 +147,13 @@ namespace Gecode { namespace Int { namespace Linear {
       return home.ES_SUBSUMED(*this);
     if (y.min()+c == n) {
       assert(y.assigned());
-      for (int i=0; i<n; i++)
+      for (int i = n; i--; )
         GECODE_ME_CHECK(x[i].one_none(home));
       return home.ES_SUBSUMED(*this);
     }
     if (y.max()+c == 0) {
       assert(y.assigned());
-      for (int i=0; i<n; i++)
+      for (int i = n; i--; )
         GECODE_ME_CHECK(x[i].zero_none(home));
       return home.ES_SUBSUMED(*this);
     }
@@ -273,7 +273,7 @@ namespace Gecode { namespace Int { namespace Linear {
     if (-c >= y.max())
       return ES_OK;
     if (y.min()+c == n) {
-      for (int i=0; i<n; i++)
+      for (int i = n; i--; )
         GECODE_ME_CHECK(x[i].one_none(home));
       return ES_OK;
     }
@@ -308,7 +308,7 @@ namespace Gecode { namespace Int { namespace Linear {
     if (-c >= y.max())
       return home.ES_SUBSUMED(*this);
     if (y.min()+c == n) {
-      for (int i=0; i<n; i++)
+      for (int i = n; i--; )
         GECODE_ME_CHECK(x[i].one_none(home));
       return home.ES_SUBSUMED(*this);
     }

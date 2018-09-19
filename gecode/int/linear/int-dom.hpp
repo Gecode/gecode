@@ -410,11 +410,11 @@ namespace Gecode { namespace Int { namespace Linear {
     {
       Val l = 0;
       Val u = 0;
-      for (int j=0; j<m; j++) {
+      for (int j=m; j--; ) {
         yp[j].init(r,-y[j].scale(),y[j].base(),l,u);
         l += y[j].max(); u += y[j].min();
       }
-      for (int i=0; i<n; i++) {
+      for (int i=n; i--; ) {
         xp[i].init(r,x[i].scale(),x[i].base(),l,u);
         l -= x[i].min(); u -= x[i].max();
       }
@@ -441,8 +441,8 @@ namespace Gecode { namespace Int { namespace Linear {
       // Check whether current assignment is solution
       if (d == 0) {
         // Record support
-        for (int is=0; is<n; is++) xp[is].support();
-        for (int js=0; js<m; js++) yp[js].support();
+        for (int is=n; is--; ) xp[is].support();
+        for (int js=m; js--; ) yp[js].support();
       }
     prev_j:
       // Try iterating to next assignment: negative views
@@ -460,12 +460,12 @@ namespace Gecode { namespace Int { namespace Linear {
 
     // Tell back new variable domains
     bool assigned = true;
-    for (int i=0; i<n; i++) {
+    for (int i=n; i--; ) {
       GECODE_ME_CHECK(xp[i].tell(home));
       if (!x[i].assigned())
         assigned = false;
     }
-    for (int j=0; j<m; j++) {
+    for (int j=m; j--; ) {
       GECODE_ME_CHECK(yp[j].tell(home));
       if (!y[j].assigned())
         assigned = false;
