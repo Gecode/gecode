@@ -168,13 +168,13 @@ namespace Gecode {
 
     // Temporary structure for transitions
     Transition* trans = region.alloc<Transition>(n_trans);
-    for (int i = n_trans; i--; )
+    for (int i=0; i<n_trans; i++)
       trans[i] = t_spec[i];
     // Temporary structures for finals
     int* final = region.alloc<int>(n_states+1);
     bool* is_final = region.alloc<bool>(n_states+1);
     int n_finals = 0;
-    for (int i = n_states+1; i--; )
+    for (int i=0; i<n_states+1; i++)
       is_final[i] = false;
     for (int* f = &f_spec[0]; *f != -1; f++) {
       is_final[*f]      = true;
@@ -203,7 +203,7 @@ namespace Gecode {
       StateGroup* part = region.alloc<StateGroup>(n_states+1);
       GroupStates* g2s = region.alloc<GroupStates>(n_states+1);
       // Initialize: final states is group one, all other group zero
-      for (int i = n_states+1; i--; ) {
+      for (int i=0; i<n_states+1; i++) {
         part[i].state = i;
         part[i].group = is_final[i] ? 1 : 0;
         s2g[i]        = part[i].group;
@@ -290,9 +290,9 @@ namespace Gecode {
             }
         // Compute representatives
         int* s2r = region.alloc<int>(n_states+1);
-        for (int i = n_states+1; i--; )
+        for (int i=0; i<n_states+1; i++)
           s2r[i] = -1;
-        for (int g = n_groups; g--; )
+        for (int g=0; g<n_groups; g++)
           s2r[g2s[g].fst->state] = g;
         // Clean transitions
         int j = 0;
@@ -311,7 +311,7 @@ namespace Gecode {
     // Do a reachability analysis for all states starting from start state
     Gecode::Support::StaticStack<int,Region> visit(region,n_states);
     int* state = region.alloc<int>(n_states);
-    for (int i=n_states; i--; )
+    for (int i=0; i<n_states; i++)
       state[i] = SI_NONE;
 
     Transition** idx = region.alloc<Transition*>(n_states+1);
@@ -358,7 +358,7 @@ namespace Gecode {
         assert(j == n_trans);
       }
 
-      for (int i = n_finals; i--; ) {
+      for (int i=0; i<n_finals; i++) {
         state[final[i]] |= (SI_TO_FINAL | SI_FINAL);
         visit.push(final[i]);
       }
@@ -374,7 +374,7 @@ namespace Gecode {
 
     // Now all reachable states are known (also the final ones)
     int* re = region.alloc<int>(n_states);
-    for (int i = n_states; i--; )
+    for (int i=0; i<n_states; i++)
       re[i] = -1;
 
     // Renumber states
@@ -383,7 +383,7 @@ namespace Gecode {
     re[start] = m_states++;
 
     // Renumber final states
-    for (int i = n_states; i--; )
+    for (int i=n_states; i--; )
       if ((state[i] == (SI_FINAL | SI_FROM_START | SI_TO_FINAL)) && (re[i] < 0))
         re[i] = m_states++;
     // If start state is final, final states start from zero, otherwise from one
@@ -392,13 +392,13 @@ namespace Gecode {
     // final_fst...final_lst-1 are the final states
 
     // Renumber remaining states
-    for (int i = n_states; i--; )
+    for (int i=n_states; i--; )
       if ((state[i] == (SI_FROM_START | SI_TO_FINAL)) && (re[i] < 0))
         re[i] = m_states++;
 
     // Count number of remaining transitions
     int m_trans = 0;
-    for (int i = n_trans; i--; )
+    for (int i=n_trans; i--; )
       if ((re[trans[i].i_state] >= 0) && (re[trans[i].o_state] >= 0))
         m_trans++;
 
@@ -437,19 +437,19 @@ namespace Gecode {
       unsigned int* deg = region.alloc<unsigned int>(m_states);
 
       // Compute in-degree per state
-      for (int i = m_states; i--; )
+      for (int i=0; i<m_states; i++)
         deg[i] = 0;
-      for (int i = m_trans; i--; )
+      for (int i=0; i<m_trans; i++)
         deg[d->trans[i].o_state]++;
-      for (int i = m_states; i--; )
+      for (int i=0; i<m_states; i++)
         max_degree = std::max(max_degree,deg[i]);
 
       // Compute out-degree per state
-      for (int i = m_states; i--; )
+      for (int i=0; i<m_states; i++)
         deg[i] = 0;
-      for (int i = m_trans; i--; )
+      for (int i=0; i<m_trans; i++)
         deg[d->trans[i].i_state]++;
-      for (int i = m_states; i--; )
+      for (int i=0; i<m_states; i++)
         max_degree = std::max(max_degree,deg[i]);
 
       // Compute transitions per symbol
