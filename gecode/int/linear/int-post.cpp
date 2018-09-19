@@ -82,7 +82,7 @@ namespace Gecode { namespace Int { namespace Linear {
     long long int sl = 0;
     long long int su = 0;
 
-    for (int i=0; i<n_p; i++) {
+    for (int i = n_p; i--; ) {
       long long int axmin =
         t_p[i].a * static_cast<long long int>(t_p[i].x.min());
       if (Limits::overflow_add(sl,axmin))
@@ -94,7 +94,7 @@ namespace Gecode { namespace Int { namespace Linear {
         throw OutOfLimits("Int::linear");
       su = su + axmax;
     }
-    for (int i=0; i<n_n; i++) {
+    for (int i = n_n; i--; ) {
       long long int axmax =
         t_n[i].a * static_cast<long long int>(t_n[i].x.max());
       if (Limits::overflow_sub(sl,axmax))
@@ -118,7 +118,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
     is_ip = is_ip && (sl >= Limits::min) && (su <= Limits::max);
 
-    for (int i=0; i<n_p; i++) {
+    for (int i = n_p; i--; ) {
       long long int axmin =
         t_p[i].a * static_cast<long long int>(t_p[i].x.min());
       if (Limits::overflow_sub(sl,axmin))
@@ -132,7 +132,7 @@ namespace Gecode { namespace Int { namespace Linear {
       if (su - axmax > Limits::max)
         is_ip = false;
     }
-    for (int i=0; i<n_n; i++) {
+    for (int i = n_n; i--; ) {
       long long int axmin =
         t_n[i].a * static_cast<long long int>(t_n[i].x.min());
       if (Limits::overflow_add(sl,axmin))
@@ -335,10 +335,10 @@ namespace Gecode { namespace Int { namespace Linear {
         }
       } else {
         ViewArray<IntView> x(home,n_p);
-        for (int i=0; i<n_p; i++)
+        for (int i = n_p; i--; )
           x[i] = t_p[i].x;
         ViewArray<IntView> y(home,n_n);
-        for (int i=0; i<n_n; i++)
+        for (int i = n_n; i--; )
           y[i] = t_n[i].x;
         post_nary<int,IntView>(home,x,y,irt,c);
       }
@@ -375,10 +375,10 @@ namespace Gecode { namespace Int { namespace Linear {
         // Arbitrary coefficients with integer precision
         c = static_cast<int>(d);
         ViewArray<IntScaleView> x(home,n_p);
-        for (int i=0; i<n_p; i++)
+        for (int i = n_p; i--; )
           x[i] = IntScaleView(t_p[i].a,t_p[i].x);
         ViewArray<IntScaleView> y(home,n_n);
-        for (int i=0; i<n_n; i++)
+        for (int i = n_n; i--; )
           y[i] = IntScaleView(t_n[i].a,t_n[i].x);
         if ((vbd(ipl) == IPL_DOM) && (irt == IRT_EQ)) {
           GECODE_ES_FAIL((DomEq<int,IntScaleView>::post(home,x,y,c)));
@@ -389,10 +389,10 @@ namespace Gecode { namespace Int { namespace Linear {
     } else {
       // Arbitrary coefficients with long long precision
       ViewArray<LLongScaleView> x(home,n_p);
-      for (int i=0; i<n_p; i++)
+      for (int i = n_p; i--; )
         x[i] = LLongScaleView(t_p[i].a,t_p[i].x);
       ViewArray<LLongScaleView> y(home,n_n);
-      for (int i=0; i<n_n; i++)
+      for (int i = n_n; i--; )
         y[i] = LLongScaleView(t_n[i].a,t_n[i].x);
       if ((vbd(ipl) == IPL_DOM) && (irt == IRT_EQ)) {
         GECODE_ES_FAIL((DomEq<long long int,LLongScaleView>
@@ -826,10 +826,10 @@ namespace Gecode { namespace Int { namespace Linear {
         }
       } else {
         ViewArray<IntView> x(home,n_p);
-        for (int i=0; i<n_p; i++)
+        for (int i = n_p; i--; )
           x[i] = t_p[i].x;
         ViewArray<IntView> y(home,n_n);
-        for (int i=0; i<n_n; i++)
+        for (int i = n_n; i--; )
           y[i] = t_n[i].x;
         post_nary<int,IntView>(home,x,y,irt,c,r);
       }
@@ -837,19 +837,19 @@ namespace Gecode { namespace Int { namespace Linear {
       // Arbitrary coefficients with integer precision
       c = static_cast<int>(d);
       ViewArray<IntScaleView> x(home,n_p);
-      for (int i=0; i<n_p; i++)
+      for (int i = n_p; i--; )
         x[i] = IntScaleView(t_p[i].a,t_p[i].x);
       ViewArray<IntScaleView> y(home,n_n);
-      for (int i=0; i<n_n; i++)
+      for (int i = n_n; i--; )
         y[i] = IntScaleView(t_n[i].a,t_n[i].x);
       post_nary<int,IntScaleView>(home,x,y,irt,c,r);
     } else {
       // Arbitrary coefficients with long long precision
       ViewArray<LLongScaleView> x(home,n_p);
-      for (int i=0; i<n_p; i++)
+      for (int i = n_p; i--; )
         x[i] = LLongScaleView(t_p[i].a,t_p[i].x);
       ViewArray<LLongScaleView> y(home,n_n);
-      for (int i=0; i<n_n; i++)
+      for (int i = n_n; i--; )
         y[i] = LLongScaleView(t_n[i].a,t_n[i].x);
       post_nary<long long int,LLongScaleView>(home,x,y,irt,d,r);
     }
