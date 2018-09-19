@@ -430,7 +430,7 @@ public:
   forceinline T*
   Heap::alloc(long unsigned int n) {
     T* p = static_cast<T*>(ralloc(sizeof(T)*n));
-    for (long unsigned int i=n; i--; )
+    for (long unsigned int i=0U; i<n; i++)
       (void) new (p+i) T();
     return p;
   }
@@ -455,7 +455,7 @@ public:
   template<class T>
   forceinline void
   Heap::free(T* b, long unsigned int n) {
-    for (long unsigned int i=n; i--; )
+    for (long unsigned int i=0U; i<n; i++)
       b[i].~T();
     rfree(b);
   }
@@ -483,7 +483,7 @@ public:
     if (n == m)
       return b;
     T* p = static_cast<T*>(ralloc(sizeof(T)*m));
-    for (long unsigned int i=std::min(n,m); i--; )
+    for (long unsigned int i=0U; i<std::min(n,m); i++)
       (void) new (p+i) T(b[i]);
     for (long unsigned int i=n; i<m; i++)
       (void) new (p+i) T();
@@ -581,7 +581,7 @@ public:
   template<class T>
   forceinline T*
   Heap::copy(T* d, const T* s, long unsigned int n) {
-    for (long unsigned int i=n; i--; )
+    for (long unsigned int i=0U; i<n; i++)
       d[i]=s[i];
     return d;
   }
