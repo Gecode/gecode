@@ -107,7 +107,7 @@ namespace Gecode { namespace Search {
     WrapTraceRecorder::engine(opt.tracer,
                               SearchTracer::EngineType::PBS, n_slaves);
 
-    for (unsigned int i=0; i<n_slaves; i++) {
+    for (unsigned int i=0U; i<n_slaves; i++) {
       opt.stop = stops[i] = Seq::pbsstop(stop);
       Space* slave = (i == n_slaves-1) ?
         master : master->clone();
@@ -166,7 +166,7 @@ namespace Gecode { namespace Search {
     Engine** slaves = r.alloc<Engine*>(n_slaves);
     Stop** stops = r.alloc<Stop*>(n_slaves);
 
-    for (unsigned int i=0; i<n_slaves; i++) {
+    for (unsigned int i=0U; i<n_slaves; i++) {
       opt.stop = stops[i] = Par::pbsstop(stop);
       Space* slave = (i == n_slaves-1) ?
         master : master->clone();
@@ -264,7 +264,7 @@ namespace Gecode {
     bool best;
     {
       int b = 0;
-      for (int i=sebs.size(); i--; )
+      for (int i=0; i<sebs.size(); i++)
         b += sebs[i]->best() ? 1 : 0;
       if ((b > 0) && (b < sebs.size()))
         throw Search::MixedBest("PBS::PBS");

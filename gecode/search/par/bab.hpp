@@ -88,12 +88,12 @@ namespace Gecode { namespace Search { namespace Par {
     // The first worker gets the entire search tree
     _worker[0] = new Worker(s,*this);
     // All other workers start with no work
-    for (unsigned int i=1; i<workers(); i++)
+    for (unsigned int i=1U; i<workers(); i++)
       _worker[i] = new Worker(NULL,*this);
     // Block all workers
     block();
     // Create and start threads
-    for (unsigned int i=0; i<workers(); i++)
+    for (unsigned int i=0U; i<workers(); i++)
       Support::Thread::run(_worker[i]);
   }
 
@@ -130,7 +130,7 @@ namespace Gecode { namespace Search { namespace Par {
       best = s->clone();
     }
     // Announce better solutions
-    for (unsigned int i=0; i<workers(); i++)
+    for (unsigned int i=0U; i<workers(); i++)
       worker(i)->better(best);
     bool bs = signal();
     solutions.push(s);
@@ -147,7 +147,7 @@ namespace Gecode { namespace Search { namespace Par {
   forceinline void
   BAB<Tracer>::Worker::find(void) {
     // Try to find new work (even if there is none)
-    for (unsigned int i=0; i<engine().workers(); i++) {
+    for (unsigned int i=0U; i<engine().workers(); i++) {
       unsigned long int r_d = 0ul;
       typename Engine<Tracer>::Worker* wi = engine().worker(i);
       if (Space* s = wi->steal(r_d,wi->tracer,tracer)) {
@@ -177,7 +177,7 @@ namespace Gecode { namespace Search { namespace Par {
   Statistics
   BAB<Tracer>::statistics(void) const {
     Statistics s;
-    for (unsigned int i=0; i<workers(); i++)
+    for (unsigned int i=0U; i<workers(); i++)
       s += worker(i)->statistics();
     return s;
   }
@@ -196,7 +196,7 @@ namespace Gecode { namespace Search { namespace Par {
     }
     best = b.clone();
     // Announce better solutions
-    for (unsigned int i=0; i<workers(); i++)
+    for (unsigned int i=0U; i<workers(); i++)
       worker(i)->better(best);
     m_search.release();
   }
@@ -368,7 +368,7 @@ namespace Gecode { namespace Search { namespace Par {
     delete best;
     best = NULL;
     n_busy = workers();
-    for (unsigned int i=1; i<workers(); i++)
+    for (unsigned int i=1U; i<workers(); i++)
       worker(i)->reset(NULL,0);
     worker(0)->reset(s,opt().nogoods_limit);
     // Block workers again to ensure invariant
