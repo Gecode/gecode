@@ -234,7 +234,7 @@ namespace Gecode {
                                    Action& a0)
     : NaryPropagator<View,PC_GEN_NONE>(home,x), a(a0), c(home) {
     home.notice(*this,AP_DISPOSE);
-    for (int i=x.size(); i--; )
+    for (int i=0; i<x.size(); i++)
       if (!x[i].assigned())
         x[i].subscribe(home,*new (home) Idx(home,*this,c,i), true);
   }
@@ -259,12 +259,12 @@ namespace Gecode {
                            BranchTraits<typename View::VarType>::Merit bm)
     : n(x.size()), invd(1.0 / d), a(heap.alloc<double>(x.size())) {
     if (bm)
-      for (int i=n; i--; ) {
+      for (int i=0; i<n; i++) {
         typename View::VarType xi(x[i].varimp());
         a[i] = bm(home,xi,i);
       }
     else
-      for (int i=n; i--; )
+      for (int i=0; i<n; i++)
         a[i] = 1.0;
   }
   forceinline void
@@ -276,7 +276,7 @@ namespace Gecode {
     assert((i >= 0) && (i < n));
     a[i] = invd * (a[i] + 1.0);
     if (a[i] > Kernel::Config::rescale_limit)
-      for (int j=n; j--; )
+      for (int j=0; j<n; j++)
         a[j] *= Kernel::Config::rescale;
   }
 

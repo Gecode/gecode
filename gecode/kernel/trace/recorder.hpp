@@ -265,14 +265,14 @@ namespace Gecode {
       tf(tf0), te(te0), t(t0) {
     home.notice(*this, AP_VIEW_TRACE);
     home.notice(*this, AP_DISPOSE);
-    for (int i=n.size(); i--; ) {
+    for (int i=0; i<n.size(); i++) {
       o[i] = TraceView(home,n[i]);
       if (!n[i].assigned())
         n[i].subscribe(home,*new (home) Idx(home,*this,c,i));
     }
     View::schedule(home,*this,ME_GEN_ASSIGNED);
-    s.i = TraceView::slack(n[n.size()-1]);
-    for (int i=n.size()-1; i--; )
+    s.i = TraceView::slack(n[0]);
+    for (int i=1; i<n.size(); i++)
       s.i += TraceView::slack(n[i]);
     s.p = s.i;
     if ((te & TE_INIT) != 0)
@@ -354,8 +354,8 @@ namespace Gecode {
   template<class View>
   ExecStatus
   ViewTraceRecorder<View>::propagate(Space& home, const ModEventDelta&) {
-    s.c = TraceView::slack(n[n.size()-1]);
-    for (int i=n.size()-1; i--; )
+    s.c = TraceView::slack(n[0]);
+    for (int i=1; i<n.size(); i++)
       s.c += TraceView::slack(n[i]);
     if (home.failed() && ((te & TE_FAIL) != 0) && !disabled()) {
       t._fail(home,*this);

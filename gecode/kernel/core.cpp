@@ -200,7 +200,7 @@ namespace Gecode {
     }
 #ifdef GECODE_HAS_VAR_DISPOSE
     // Delete variables that were registered for disposal
-    for (int i=AllVarConf::idx_d; i--;)
+    for (int i=0; i<AllVarConf::idx_d; i++)
       if (_vars_d[i] != NULL)
         vd[i]->dispose(*this, _vars_d[i]);
 #endif

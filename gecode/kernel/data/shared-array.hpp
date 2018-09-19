@@ -290,7 +290,7 @@ namespace Gecode {
   forceinline
   SharedArray<T>::SharedArray(const ArgArrayBase<T>& a)
     : SharedHandle(new SAO(a.size())) {
-    for (int i=a.size(); i--; )
+    for (int i=0; i<a.size(); i++)
       operator [](i)=a[i];
   }
 

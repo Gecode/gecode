@@ -289,7 +289,7 @@ namespace Gecode {
       // This may not be in the hpp file (to satisfy the MS compiler)
       if (n>0) {
         x = home.alloc<View>(n);
-        for (int i=n; i--; )
+        for (int i=0; i<n; i++)
           x[i]=a[i];
       } else {
         x = nullptr;
@@ -307,7 +307,7 @@ namespace Gecode {
       // This may not be in the hpp file (to satisfy the MS compiler)
       if (n>0) {
         x = r.alloc<View>(n);
-        for (int i=n; i--; )
+        for (int i=0; i<n; i++)
           x[i]=a[i];
       } else {
         x = nullptr;
@@ -996,7 +996,7 @@ namespace Gecode {
     n = a.n;
     if (n > 0) {
       x = home.alloc<Var>(n);
-      for (int i = n; i--;)
+      for (int i=0; i<n; i++)
         x[i].update(home, a.x[i]);
     } else {
       x = nullptr;
@@ -1006,7 +1006,7 @@ namespace Gecode {
   template<class Var>
   forceinline bool
   VarArray<Var>::assigned(void) const {
-    for (int i = n; i--;)
+    for (int i=0; i<n; i++)
       if (!x[i].assigned())
         return false;
     return true;
@@ -1027,9 +1027,9 @@ namespace Gecode {
   typename ArrayTraits<VarArray<Var>>::ArgsType
   operator +(const VarArray<Var>& x, const VarArray<Var>& y) {
     typename ArrayTraits<VarArray<Var>>::ArgsType r(x.size()+y.size());
-    for (int i=x.size(); i--;)
+    for (int i=0; i<x.size(); i++)
       r[i] = x[i];
-    for (int i=y.size(); i--;)
+    for (int i=0; i<y.size(); i++)
       r[x.size()+i] = y[i];
     return r;
   }
@@ -1038,9 +1038,9 @@ namespace Gecode {
   typename ArrayTraits<VarArray<Var>>::ArgsType
   operator +(const VarArray<Var>& x, const VarArgArray<Var>& y) {
     typename ArrayTraits<VarArray<Var>>::ArgsType r(x.size()+y.size());
-    for (int i=x.size(); i--;)
+    for (int i=0; i<x.size(); i++)
       r[i] = x[i];
-    for (int i=y.size(); i--;)
+    for (int i=0; i<y.size(); i++)
       r[x.size()+i] = y[i];
     return r;
   }
@@ -1049,9 +1049,9 @@ namespace Gecode {
   typename ArrayTraits<VarArray<Var>>::ArgsType
   operator +(const VarArgArray<Var>& x, const VarArray<Var>& y) {
     typename ArrayTraits<VarArray<Var>>::ArgsType r(x.size()+y.size());
-    for (int i=x.size(); i--;)
+    for (int i=0; i<x.size(); i++)
       r[i] = x[i];
-    for (int i=y.size(); i--;)
+    for (int i=0; i<y.size(); i++)
       r[x.size()+i] = y[i];
     return r;
   }
@@ -1060,7 +1060,7 @@ namespace Gecode {
   typename ArrayTraits<VarArray<Var>>::ArgsType
   operator +(const VarArray<Var>& x, const Var& y) {
     typename ArrayTraits<VarArray<Var>>::ArgsType r(x.size()+1);
-    for (int i=x.size(); i--;)
+    for (int i=0; i<x.size(); i++)
       r[i] = x[i];
     r[x.size()] = y;
     return r;
@@ -1071,7 +1071,7 @@ namespace Gecode {
   operator +(const Var& x, const VarArray<Var>& y) {
     typename ArrayTraits<VarArray<Var>>::ArgsType r(y.size()+1);
     r[0] = x;
-    for (int i=y.size(); i--;)
+    for (int i=0; i<y.size(); i++)
       r[1+i] = y[i];
     return r;
   }
@@ -1103,7 +1103,7 @@ namespace Gecode {
     : n(a.size()) {
     if (n>0) {
       x = home.alloc<View>(n);
-      for (int i = n; i--; )
+      for (int i=0; i<n; i++)
         x[i] = a[i];
     } else {
       x = nullptr;
@@ -1114,7 +1114,7 @@ namespace Gecode {
     : n(a.size()) {
     if (n>0) {
       x = r.alloc<View>(n);
-      for (int i = n; i--; )
+      for (int i=0; i<n; i++)
         x[i] = a[i];
     } else {
       x = nullptr;
@@ -1254,7 +1254,7 @@ namespace Gecode {
   ViewArray<View>::drop_fst(int i, Space& home, Propagator& p, PropCond pc) {
     // Drop elements from 0..i-1
     assert(i>=0);
-    for (int j=i; j--; )
+    for (int j=0; j<i; j++)
       x[j].cancel(home,p,pc);
     x += i; n -= i;
   }
@@ -1290,7 +1290,7 @@ namespace Gecode {
   ViewArray<View>::drop_fst(int i, Space& home, Advisor& a) {
     // Drop elements from 0..i-1
     assert(i>=0);
-    for (int j=i; j--; )
+    for (int j=0; j<i; j++)
       x[j].cancel(home,a);
     x += i; n -= i;
   }
@@ -1311,7 +1311,7 @@ namespace Gecode {
     n = y.n;
     if (n > 0) {
       x = home.alloc<View>(n);
-      for (int i = n; i--; )
+      for (int i=0; i<n; i++)
         x[i].update(home, y.x[i]);
     } else {
       x = nullptr;
@@ -1322,42 +1322,42 @@ namespace Gecode {
   void
   ViewArray<View>::subscribe(Space& home, Propagator& p, PropCond pc,
                              bool schedule) {
-    for (int i = n; i--; )
+    for (int i=0; i<n; i++)
       x[i].subscribe(home,p,pc,schedule);
   }
 
   template<class View>
   void
   ViewArray<View>::cancel(Space& home, Propagator& p, PropCond pc) {
-    for (int i = n; i--; )
+    for (int i=0; i<n; i++)
       x[i].cancel(home,p,pc);
   }
 
   template<class View>
   void
   ViewArray<View>::subscribe(Space& home, Advisor& a) {
-    for (int i = n; i--; )
+    for (int i=0; i<n; i++)
       x[i].subscribe(home,a);
   }
 
   template<class View>
   void
   ViewArray<View>::cancel(Space& home, Advisor& a) {
-    for (int i = n; i--; )
+    for (int i=0; i<n; i++)
       x[i].cancel(home,a);
   }
 
   template<class View>
   void
   ViewArray<View>::reschedule(Space& home, Propagator& p, PropCond pc) {
-    for (int i = n; i--; )
+    for (int i=0; i<n; i++)
       x[i].reschedule(home,p,pc);
   }
 
   template<class View>
   forceinline bool
   ViewArray<View>::assigned(void) const {
-    for (int i = n; i--;)
+    for (int i=0; i<n; i++)
       if (!x[i].assigned())
         return false;
     return true;
@@ -1371,14 +1371,14 @@ namespace Gecode {
     Region r;
     View* y = r.alloc<View>(n);
     int j=0;
-    for (int i = n; i--; )
+    for (int i=0; i<n; i++)
       if (!x[i].assigned())
         y[j++] = x[i];
     if (j < 2)
       return false;
     Support::quicksort<View>(y,j);
-    for (int i = j-1; i--; )
-      if (y[i+1] == y[i])
+    for (int i=1; i<j; i++)
+      if (y[i-1] == y[i])
         return true;
     return false;
   }
@@ -1388,7 +1388,7 @@ namespace Gecode {
   ViewArray<View>::same(const View& y) const {
     if (y.assigned())
       return false;
-    for (int i = n; i--; )
+    for (int i=0; i<n; i++)
       if (x[i] == y)
         return true;
     return false;
@@ -1401,7 +1401,7 @@ namespace Gecode {
       return;
     Support::quicksort<View>(x,n);
     int j = 0;
-    for (int i = 1; i<n; i++)
+    for (int i=1; i<n; i++)
       if (x[j] != x[i])
         x[++j] = x[i];
     n = j+1;
@@ -1431,14 +1431,14 @@ namespace Gecode {
     Region r;
     void** px = r.alloc<void*>(x.size());
     int j=0;
-    for (int i=x.size(); i--; )
+    for (int i=0; i<x.size(); i++)
       if (!x[i].assigned() && x[i].varimp())
         px[j++] = x[i].varimp();
     if (j == 0)
       return false;
     void** py = r.alloc<void*>(y.size());
     int k=0;
-    for (int i=y.size(); i--; )
+    for (int i=0; i<y.size(); i++)
       if (!y[i].assigned() && y[i].varimp())
         py[k++] = y[i].varimp();
     if (k == 0)
@@ -1451,7 +1451,7 @@ namespace Gecode {
   shared(ViewArray<ViewX> x, ViewY y) {
     if (y.assigned() || !y.varimp())
       return false;
-    for (int i = x.size(); i--; )
+    for (int i=0; i<x.size(); i++)
       if (!x[i].assigned() && x[i].varimp() && (x[i].varimp() == y.varimp()))
         return true;
     return false;
@@ -1471,7 +1471,7 @@ namespace Gecode {
     Region r;
     void** px = r.alloc<void*>(x.size());
     int j=0;
-    for (int i=x.size(); i--; )
+    for (int i=0; i<x.size(); i++)
       if (!x[i].assigned() && x[i].varimp())
         px[j++] = x[i].varimp();
     return (j > 2) && Kernel::duplicates(px,j);
@@ -1684,9 +1684,9 @@ namespace Gecode {
   inline A
   ArgArrayBase<T>::concat(const ArgArrayBase<T>& x) const {
     A r(n+x.n);
-    for (int i=n; i--;)
+    for (int i=0; i<n; i++)
       new (&r[i]) T(a[i]);
-    for (int i=x.n; i--;)
+    for (int i=0; i<x.n; i++)
       new (&r[n+i]) T(x.a[i]);
     return r;
   }
@@ -1695,7 +1695,7 @@ namespace Gecode {
   inline A
   ArgArrayBase<T>::concat(const T& x) const {
     A r(n+1);
-    for (int i=n; i--;)
+    for (int i=0; i<n; i++)
       new (&r[i]) T(a[i]);
     new (&r[n]) T(x);
     return r;
@@ -1719,7 +1719,7 @@ namespace Gecode {
   template<class T>
   ArgArray<T>::ArgArray(int n, const T* a0)
     : ArgArrayBase<T>(n) {
-    for (int i=n; i--; )
+    for (int i=0; i<n; i++)
       a[i] = a0[i];
   }
 
@@ -1829,7 +1829,7 @@ namespace Gecode {
   inline
   VarArgArray<Var>::VarArgArray(const VarArray<Var>& x)
     : ArgArrayBase<Var>(x.size()) {
-    for (int i=x.size(); i--; )
+    for (int i=0; i<x.size(); i++)
       a[i]=x[i];
   }
 
@@ -1883,7 +1883,7 @@ namespace Gecode {
   template<class Var>
   forceinline bool
   VarArgArray<Var>::assigned(void) const {
-    for (int i = n; i--;)
+    for (int i=0; i<n; i++)
       if (!a[i].assigned())
         return false;
     return true;
@@ -1902,14 +1902,14 @@ namespace Gecode {
     Region r;
     void** px = r.alloc<void*>(x.size());
     int j=0;
-    for (int i = x.size(); i--; )
+    for (int i=0; i<x.size(); i++)
       if (!x[i].assigned())
         px[j++] = x[i].varimp();
     if (j == 0)
       return false;
     void** py = r.alloc<void*>(y.size());
     int k=0;
-    for (int i = y.size(); i--; )
+    for (int i=0; i<y.size(); i++)
       if (!y[i].assigned())
         py[k++] = y[i].varimp();
     if (k == 0)
@@ -1922,7 +1922,7 @@ namespace Gecode {
   same(VarArgArray<Var> x, Var y) {
     if (y.assigned())
       return false;
-    for (int i = x.size(); i--; )
+    for (int i=0; i<x.size(); i++)
       if (x[i].varimp() == y.varimp())
         return true;
     return false;
@@ -1942,7 +1942,7 @@ namespace Gecode {
     Region r;
     void** px = r.alloc<void*>(x.size());
     int j=0;
-    for (int i = x.size(); i--; )
+    for (int i=0; i<x.size(); i++)
       if (!x[i].assigned())
         px[j++] = x[i].varimp();
     return (j > 1) && Kernel::duplicates(px,j);
@@ -1961,7 +1961,7 @@ namespace Gecode {
     : n(a.size()) {
     if (n>0) {
       x = home.alloc<Var>(n);
-      for (int i=n; i--;)
+      for (int i=0; i<n; i++)
         x[i] = a[i];
     } else {
       x = nullptr;
