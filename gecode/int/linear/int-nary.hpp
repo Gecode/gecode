@@ -140,7 +140,7 @@ namespace Gecode { namespace Int { namespace Linear {
   bounds_p(ModEventDelta med, ViewArray<View>& x, Val& c, Val& sl, Val& su) {
     int n = x.size();
     if (IntView::me(med) == ME_INT_VAL) {
-      for (int i = n; i--; ) {
+      for (int i=n; i--; ) {
         Val m = x[i].min();
         if (x[i].assigned()) {
           c -= m; x[i] = x[--n];
@@ -150,7 +150,7 @@ namespace Gecode { namespace Int { namespace Linear {
       }
       x.size(n);
     } else {
-      for (int i = n; i--; ) {
+      for (int i=0; i<n; i++) {
         sl -= x[i].min(); su -= x[i].max();
       }
     }
@@ -161,7 +161,7 @@ namespace Gecode { namespace Int { namespace Linear {
   bounds_n(ModEventDelta med, ViewArray<View>& y, Val& c, Val& sl, Val& su) {
     int n = y.size();
     if (IntView::me(med) == ME_INT_VAL) {
-      for (int i = n; i--; ) {
+      for (int i=n; i--; ) {
         Val m = y[i].max();
         if (y[i].assigned()) {
           c += m; y[i] = y[--n];
@@ -171,7 +171,7 @@ namespace Gecode { namespace Int { namespace Linear {
       }
       y.size(n);
     } else {
-      for (int i = n; i--; ) {
+      for (int i=0; i<n; i++) {
         sl += y[i].max(); su += y[i].min();
       }
     }
@@ -213,7 +213,7 @@ namespace Gecode { namespace Int { namespace Linear {
       if (mod & mod_sl) {
         mod -= mod_sl;
         // Propagate upper bound for positive variables
-        for (int i = x.size(); i--; ) {
+        for (int i=0; i<x.size(); i++) {
           const Val xi_max = x[i].max();
           ModEvent me = x[i].lq(home,sl + x[i].min());
           if (me_failed(me))
@@ -224,7 +224,7 @@ namespace Gecode { namespace Int { namespace Linear {
           }
         }
         // Propagate lower bound for negative variables
-        for (int i = y.size(); i--; ) {
+        for (int i=0; i<y.size(); i++) {
           const Val yi_min = y[i].min();
           ModEvent me = y[i].gq(home,y[i].max() - sl);
           if (me_failed(me))
@@ -238,7 +238,7 @@ namespace Gecode { namespace Int { namespace Linear {
       if (mod & mod_su) {
         mod -= mod_su;
         // Propagate lower bound for positive variables
-        for (int i = x.size(); i--; ) {
+        for (int i=0; i<x.size(); i++) {
           const Val xi_min = x[i].min();
           ModEvent me = x[i].gq(home,su + x[i].max());
           if (me_failed(me))
@@ -249,7 +249,7 @@ namespace Gecode { namespace Int { namespace Linear {
           }
         }
         // Propagate upper bound for negative variables
-        for (int i = y.size(); i--; ) {
+        for (int i=0; i<y.size(); i++) {
           const Val yi_max = y[i].max();
           ModEvent me = y[i].lq(home,y[i].min() - su);
           if (me_failed(me))
@@ -594,11 +594,11 @@ namespace Gecode { namespace Int { namespace Linear {
   template<class Val, class P, class N>
   ExecStatus
   Nq<Val,P,N>::propagate(Space& home, const ModEventDelta&) {
-    for (int i = x.size(); i--; )
+    for (int i=x.size(); i--; )
       if (x[i].assigned()) {
         c -= x[i].val();  x.move_lst(i);
       }
-    for (int i = y.size(); i--; )
+    for (int i=y.size(); i--; )
       if (y[i].assigned()) {
         c += y[i].val();  y.move_lst(i);
       }
@@ -747,7 +747,7 @@ namespace Gecode { namespace Int { namespace Linear {
     Val sl = 0;
 
     if (IntView::me(med) == ME_INT_VAL) {
-      for (int i = x.size(); i--; ) {
+      for (int i=x.size(); i--; ) {
         Val m = x[i].min();
         if (x[i].assigned()) {
           c  -= m;  x.move_lst(i);
@@ -755,7 +755,7 @@ namespace Gecode { namespace Int { namespace Linear {
           sl -= m;
         }
       }
-      for (int i = y.size(); i--; ) {
+      for (int i=y.size(); i--; ) {
         Val m = y[i].max();
         if (y[i].assigned()) {
           c  += m;  y.move_lst(i);
@@ -776,9 +776,9 @@ namespace Gecode { namespace Int { namespace Linear {
           home.ES_SUBSUMED(*this) : ES_FAILED;
       }
     } else {
-      for (int i = x.size(); i--; )
+      for (int i=0; i<x.size(); i++)
         sl -= x[i].min();
-      for (int i = y.size(); i--; )
+      for (int i=0; i<y.size(); i++)
         sl += y[i].max();
     }
 
@@ -786,7 +786,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
     ExecStatus es = ES_FIX;
     bool assigned = true;
-    for (int i = x.size(); i--; ) {
+    for (int i=0; i<x.size(); i++) {
       assert(!x[i].assigned());
       Val slx = sl + x[i].min();
       ModEvent me = x[i].lq(home,slx);
@@ -798,7 +798,7 @@ namespace Gecode { namespace Int { namespace Linear {
         es = ES_NOFIX;
     }
 
-    for (int i = y.size(); i--; ) {
+    for (int i=0; i<y.size(); i++) {
       assert(!y[i].assigned());
       Val sly = y[i].max() - sl;
       ModEvent me = y[i].gq(home,sly);

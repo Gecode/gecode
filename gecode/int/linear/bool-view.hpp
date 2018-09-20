@@ -92,7 +92,7 @@ namespace Gecode { namespace Int { namespace Linear {
     if (y.assigned())
       return EqBoolInt<XV>::post(home,x,y.val()+c);
     int n = x.size();
-    for (int i = n; i--; )
+    for (int i=n; i--; )
       if (x[i].one()) {
         x[i]=x[--n]; c--;
       } else if (x[i].zero()) {
@@ -105,13 +105,13 @@ namespace Gecode { namespace Int { namespace Linear {
       return ES_OK;
     if (y.min()+c == n) {
       assert(y.assigned());
-      for (int i = n; i--; )
+      for (int i=0; i<n; i++)
         GECODE_ME_CHECK(x[i].one_none(home));
       return ES_OK;
     }
     if (y.max()+c == 0) {
       assert(y.assigned());
-      for (int i = n; i--; )
+      for (int i=0; i<n; i++)
         GECODE_ME_CHECK(x[i].zero_none(home));
       return ES_OK;
     }
@@ -134,7 +134,7 @@ namespace Gecode { namespace Int { namespace Linear {
   ExecStatus
   EqBoolView<XV,YV>::propagate(Space& home, const ModEventDelta&) {
     int n = x.size();
-    for (int i = n; i--; )
+    for (int i=n; i--; )
       if (x[i].one()) {
         x[i]=x[--n]; c--;
       } else if (x[i].zero()) {
@@ -147,13 +147,13 @@ namespace Gecode { namespace Int { namespace Linear {
       return home.ES_SUBSUMED(*this);
     if (y.min()+c == n) {
       assert(y.assigned());
-      for (int i = n; i--; )
+      for (int i=0; i<n; i++)
         GECODE_ME_CHECK(x[i].one_none(home));
       return home.ES_SUBSUMED(*this);
     }
     if (y.max()+c == 0) {
       assert(y.assigned());
-      for (int i = n; i--; )
+      for (int i=0; i<n; i++)
         GECODE_ME_CHECK(x[i].zero_none(home));
       return home.ES_SUBSUMED(*this);
     }
