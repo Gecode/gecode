@@ -376,7 +376,7 @@ public:
     channel(*this, xs, ys);
 
     IntArgs values(nn);
-    for (int i=nn; i--;)
+    for (int i=0; i<nn; i++)
       values[i] = i+1;
     count(*this, x, IntSet(nn,nn), values, IPL_DOM);
   }

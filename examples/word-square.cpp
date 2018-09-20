@@ -91,7 +91,7 @@ public:
     for (int i=0; i<w_l; i++) {
       // Map each word to i-th letter in that word
       IntSharedArray w2l(n_w);
-      for (int n=n_w; n--; )
+      for (int n=0; n<n_w; n++)
         w2l[n]=dict.word(w_l,n)[i];
       for (int j=0; j<w_l; j++)
         element(*this, w2l, words[j], ml(i,j));
