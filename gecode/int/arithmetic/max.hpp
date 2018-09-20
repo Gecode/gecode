@@ -138,9 +138,9 @@ namespace Gecode { namespace Int { namespace Arithmetic {
       return Rel::EqBnd<View,View>::post(home,x[0],y);
     if (x.size() == 2)
       return MaxBnd<View>::post(home,x[0],x[1],y);
-    int l = Int::Limits::min;
-    int u = Int::Limits::min;
-    for (int i=x.size(); i--; ) {
+    int l = x[0].min();
+    int u = x[0].max();
+    for (int i=1; i<x.size(); i++) {
       l = std::max(l,x[i].min());
       u = std::max(u,x[i].max());
     }
@@ -148,7 +148,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     GECODE_ME_CHECK(y.lq(home,u));
     if (x.same(y)) {
       // Check whether y occurs in x
-      for (int i=x.size(); i--; )
+      for (int i=0; i<x.size(); i++)
         GECODE_ES_CHECK((Rel::Lq<View,View>::post(home,x[i],y)));
     } else {
       (void) new (home) NaryMaxBnd<View>(home,x,y);
@@ -184,9 +184,9 @@ namespace Gecode { namespace Int { namespace Arithmetic {
                     ViewArray<View>& x, View y, PropCond pc) {
   rerun:
     assert(x.size() > 0);
-    int maxmax = x[x.size()-1].max();
-    int maxmin = x[x.size()-1].min();
-    for (int i = x.size()-1; i--; ) {
+    int maxmax = x[0].max();
+    int maxmin = x[0].min();
+    for (int i=1; i<x.size(); i++) {
       maxmax = std::max(x[i].max(),maxmax);
       maxmin = std::max(x[i].min(),maxmin);
     }
@@ -195,7 +195,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     maxmin = y.min();
     maxmax = y.max();
     int status = MPS_ASSIGNED;
-    for (int i = x.size(); i--; ) {
+    for (int i=x.size(); i--; ) {
       ModEvent me = x[i].lq(home,maxmax);
       if (me == ME_INT_FAILED)
         return ES_FAILED;
@@ -322,9 +322,9 @@ namespace Gecode { namespace Int { namespace Arithmetic {
       return Rel::EqDom<View,View>::post(home,x[0],y);
     if (x.size() == 2)
       return MaxDom<View>::post(home,x[0],x[1],y);
-    int l = Int::Limits::min;
-    int u = Int::Limits::min;
-    for (int i=x.size(); i--; ) {
+    int l = x[0].min();
+    int u = x[0].max();
+    for (int i=0; i<x.size(); i++) {
       l = std::max(l,x[i].min());
       u = std::max(u,x[i].max());
     }
@@ -332,7 +332,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     GECODE_ME_CHECK(y.lq(home,u));
     if (x.same(y)) {
       // Check whether y occurs in x
-      for (int i=x.size(); i--; )
+      for (int i=0; i<x.size(); i++)
         GECODE_ES_CHECK((Rel::Lq<View,View>::post(home,x[i],y)));
     } else {
       (void) new (home) NaryMaxDom<View>(home,x,y);
@@ -376,7 +376,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     }
     Region r;
     ViewRanges<View>* i_x = r.alloc<ViewRanges<View> >(x.size());
-    for (int i = x.size(); i--; ) {
+    for (int i=0; i<x.size(); i++) {
       ViewRanges<View> i_xi(x[i]); i_x[i]=i_xi;
     }
     Iter::Ranges::NaryUnion u(r, i_x, x.size());

@@ -160,7 +160,7 @@ namespace Gecode { namespace Int { namespace Bool {
         }
       // All x-views have been assigned!
       ViewArray<VY> z(home,y.size()+1);
-      for (int i=y.size(); i--; )
+      for (int i=0; i<y.size(); i++)
         z[i]=y[i];
       z[y.size()] = x1;
       GECODE_REWRITE(p,(NaryOrTrue<VY>::post(home(p),z)));
@@ -248,9 +248,9 @@ namespace Gecode { namespace Int { namespace Bool {
     if (z.one())
       return ClauseTrue<VX,VY>::post(home,x,y);
     if (z.zero()) {
-      for (int i=x.size(); i--; )
+      for (int i=0; i<x.size(); i++)
         GECODE_ME_CHECK(x[i].zero(home));
-      for (int i=y.size(); i--; )
+      for (int i=0; i<y.size(); i++)
         GECODE_ME_CHECK(y[i].zero(home));
       return ES_OK;
     }
@@ -328,12 +328,12 @@ namespace Gecode { namespace Int { namespace Bool {
     z.reschedule(home,*this,PC_BOOL_VAL);
     if (n_zero == x.size() + y.size())
       VX::schedule(home,*this,ME_BOOL_VAL);
-    for (int i=x.size(); i--; )
+    for (int i=0; i<x.size(); i++)
       if (x[i].one()) {
         VX::schedule(home,*this,ME_BOOL_VAL);
         return;
       }
-    for (int i=y.size(); i--; )
+    for (int i=0; i<y.size(); i++)
       if (y[i].one()) {
         VX::schedule(home,*this,ME_BOOL_VAL);
         return;
@@ -346,9 +346,9 @@ namespace Gecode { namespace Int { namespace Bool {
     if (z.one())
       GECODE_REWRITE(*this,(ClauseTrue<VX,VY>::post(home(*this),x,y)));
     if (z.zero()) {
-      for (int i = x.size(); i--; )
+      for (int i=0; i<x.size(); i++)
         GECODE_ME_CHECK(x[i].zero(home));
-      for (int i = y.size(); i--; )
+      for (int i=0; i<y.size(); i++)
         GECODE_ME_CHECK(y[i].zero(home));
       c.dispose(home);
     } else if (n_zero == x.size() + y.size()) {

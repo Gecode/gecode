@@ -771,7 +771,7 @@ namespace Gecode { namespace Int { namespace Bool {
     if (y.one())
       return NaryOrTrue<VX>::post(home,x);
     if (y.zero()) {
-      for (int i=x.size(); i--; )
+      for (int i=0; i<x.size(); i++)
         GECODE_ME_CHECK(x[i].zero(home));
       return ES_OK;
     }
@@ -816,7 +816,7 @@ namespace Gecode { namespace Int { namespace Bool {
     y.reschedule(home,*this,PC_BOOL_VAL);
     if (n_zero == x.size())
       VX::schedule(home,*this,ME_BOOL_VAL);
-    for (int i=x.size(); i--; )
+    for (int i=0; i<x.size(); i++)
       if (x[i].one()) {
         VX::schedule(home,*this,ME_BOOL_VAL);
         break;
@@ -841,7 +841,7 @@ namespace Gecode { namespace Int { namespace Bool {
       GECODE_REWRITE(*this,NaryOrTrue<VX>::post(home(*this),x));
     if (y.zero()) {
       // Note that this might trigger the advisor of this propagator!
-      for (int i = x.size(); i--; )
+      for (int i=0; i<x.size(); i++)
         GECODE_ME_CHECK(x[i].zero(home));
     } else if (n_zero == x.size()) {
       // All views are zero

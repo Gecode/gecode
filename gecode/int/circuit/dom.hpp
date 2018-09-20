@@ -65,7 +65,7 @@ namespace Gecode { namespace Int { namespace Circuit {
   template<class View, class Offset>
   void
   Dom<View,Offset>::reschedule(Space& home) {
-    for (int i=y.size(); i--; )
+    for (int i=0; i<y.size(); i++)
       if (y[i].assigned()) {
         View::schedule(home, *this, ME_INT_VAL);
         return;
@@ -119,7 +119,7 @@ namespace Gecode { namespace Int { namespace Circuit {
       GECODE_ME_CHECK(o(x[0]).eq(home,1));
       GECODE_ME_CHECK(o(x[1]).eq(home,0));
     } else {
-      for (int i=n; i--; ) {
+      for (int i=0; i<n; i++) {
         GECODE_ME_CHECK(o(x[i]).gq(home,0));
         GECODE_ME_CHECK(o(x[i]).le(home,n));
         GECODE_ME_CHECK(o(x[i]).nq(home,i));

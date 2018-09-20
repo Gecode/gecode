@@ -127,7 +127,7 @@ namespace Gecode { namespace Int { namespace Channel {
   ExecStatus
   prop_dom(Space& home, int n, DomInfo<View,Offset>* x, Offset& ox,
            DomInfo<View,Offset>* y, Offset& oy, ProcessStack& ya) {
-    for (int i = n; i--; )
+    for (int i=0; i<n; i++)
       // Only views with not yet propagated missing values
       if (x[i].dodom()) {
         // Iterate the values in the complement of x[i]
@@ -203,7 +203,7 @@ namespace Gecode { namespace Int { namespace Channel {
 
     if (View::me(med) == ME_INT_VAL) {
       // Scan x and y for assigned but not yet propagated views
-      for (int i = n; i--; ) {
+      for (int i=0; i<n; i++) {
         if (x[i].doval()) xa.push(i);
         if (y[i].doval()) ya.push(i);
       }
@@ -247,7 +247,7 @@ namespace Gecode { namespace Int { namespace Channel {
       GECODE_ES_CHECK(dc.sync());
     } else {
       ViewArray<View> xv(r,n);
-      for (int i=n; i--; )
+      for (int i=0; i<n; i++)
         xv[i] = x[i].view;
       GECODE_ES_CHECK(dc.init(home,xv));
     }
@@ -258,7 +258,7 @@ namespace Gecode { namespace Int { namespace Channel {
       // (that is, not recorded in xa). This must be checked and propagated
       // to the y views, however the distinctness on x is already
       // propagated.
-      for (int i=n; i--; )
+      for (int i=0; i<n; i++)
         if (x[i].doval()) {
           int j = ox(x[i].view).val();
           // Assign the y variable to i (or test if already assigned!)
@@ -291,7 +291,7 @@ namespace Gecode { namespace Int { namespace Channel {
     };
 
     if (shared) {
-      for (int i=2*n; i--; )
+      for (int i=0; i<2*n; i++)
         if (!xy[i].view.assigned())
           return ES_NOFIX;
       return home.ES_SUBSUMED(*this);
@@ -310,7 +310,7 @@ namespace Gecode { namespace Int { namespace Channel {
       GECODE_ME_CHECK(oy(xy[1].view).eq(home,0));
       return ES_OK;
     }
-    for (int i=n; i--; ) {
+    for (int i=0; i<n; i++) {
       GECODE_ME_CHECK(ox(xy[i  ].view).gq(home,0));
       GECODE_ME_CHECK(ox(xy[i  ].view).le(home,n));
       GECODE_ME_CHECK(oy(xy[i+n].view).gq(home,0));

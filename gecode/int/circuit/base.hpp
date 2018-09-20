@@ -89,7 +89,7 @@ namespace Gecode { namespace Int { namespace Circuit {
     typedef typename Offset::ViewType OView;
     NodeInfo<OView>* si = r.alloc<NodeInfo<OView> >(n);
     unsigned int n_edges = 0;
-    for (int i=n; i--; ) {
+    for (int i=0; i<n; i++) {
       n_edges += x[i].size();
       si[i].pre=-1;
     }
@@ -243,14 +243,14 @@ namespace Gecode { namespace Int { namespace Circuit {
     // The path starting at assigned x[i] ends at x[end[j]] which is
     // not assigned.
     int* end = r.alloc<int>(n);
-    for (int i=n; i--; )
+    for (int i=0; i<n; i++)
       end[i]=-1;
 
     // A stack that records all indices i such that end[i] != -1
     Support::StaticStack<int,Region> tell(r,n);
 
     typedef typename Offset::ViewType OView;
-    for (int i=y.size(); i--; ) {
+    for (int i=0; i<y.size(); i++) {
       assert(!y[i].assigned());
       // Non-assigned views serve as starting points for assigned paths
       Int::ViewValues<OView> v(o(y[i]));

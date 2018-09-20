@@ -66,7 +66,7 @@ namespace Gecode { namespace Int { namespace Channel {
       for (int i=j+1; i<n; i++)
         GECODE_ME_CHECK(x[i].zero(home));
     } else {
-      for (int i=n; i--; )
+      for (int i=0; i<n; i++)
         if (x[i].one()) {
           for (int j=0; j<i; j++)
             GECODE_ME_CHECK(x[j].zero(home));

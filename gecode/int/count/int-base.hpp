@@ -40,7 +40,7 @@ namespace Gecode { namespace Int { namespace Count {
     : Propagator(home), x(x0), n_s(n_s0), y(y0), c(c0) {
     if (isintset(y))
       home.notice(*this,AP_DISPOSE);
-    for (int i=n_s; i--; )
+    for (int i=0; i<n_s; i++)
       x[i].subscribe(home,*this,PC_INT_DOM);
     subscribe(home,*this,y);
   }
@@ -50,7 +50,7 @@ namespace Gecode { namespace Int { namespace Count {
   IntBase<VX,VY>::dispose(Space& home) {
     if (isintset(y))
       home.ignore(*this,AP_DISPOSE);
-    for (int i=n_s; i--; )
+    for (int i=0; i<n_s; i++)
       x[i].cancel(home,*this,PC_INT_DOM);
     cancel(home,*this,y);
     (void) Propagator::dispose(home);
@@ -74,7 +74,7 @@ namespace Gecode { namespace Int { namespace Count {
   template<class VX, class VY>
   void
   IntBase<VX,VY>::reschedule(Space& home) {
-    for (int i=n_s; i--; )
+    for (int i=0; i<n_s; i++)
       x[i].reschedule(home,*this,PC_INT_DOM);
     Gecode::Int::Count::reschedule(home,*this,y);
   }
