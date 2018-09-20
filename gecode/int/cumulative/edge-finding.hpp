@@ -104,7 +104,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
 
     int* capacities = r.alloc<int>(t.size());
     int* capInv = r.alloc<int>(t.size());
-    for (int i=0; i<t.size(); i++) {
+    for (int i=t.size(); i--;) {
       capacities[cap[i]] = t[i].c();
       capInv[cap[i]] = i;
     }
@@ -127,7 +127,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
     for (int i=0; i<n_c; i++) {
       eo.init(capacities[i]);
       int u = -Limits::infinity;
-      for (int j=0; j<t.size(); j++) {
+      for (int j=t.size(); j--;) {
         long long int lctj =
           static_cast<long long int>(c-capacities[i])*t[j].lct();
         long long int eml = plus(eo.env(j), -lctj);

@@ -257,11 +257,9 @@ namespace Gecode { namespace Int { namespace Cumulative {
              const IntArgs& u, IntPropLevel ipl) {
     using namespace Gecode::Int;
     using namespace Gecode::Int::Cumulative;
-
     if ((s.size() != p.size()) || (s.size() != e.size()) ||
         (s.size() != u.size()))
       throw Int::ArgumentSizeMismatch("Int::cumulative");
-
     long long int w = 0;
     for (int i=0; i<p.size(); i++) {
       Limits::nonnegative(u[i],"Int::cumulative");
@@ -273,10 +271,8 @@ namespace Gecode { namespace Int { namespace Cumulative {
     mul_check(c.max(),w,s.size());
 
     GECODE_POST;
-    for (int i=0; i<p.size(); i++) {
-      IntView pi(p[i]);
-      GECODE_ME_FAIL(pi.gq(home,0));
-    }
+    for (int i=0; i<p.size(); i++)
+      GECODE_ME_FAIL(IntView(p[i]).gq(home,0));
 
     bool fixP = true;
     for (int i=0; i<p.size(); i++) {
@@ -310,7 +306,6 @@ namespace Gecode { namespace Int { namespace Cumulative {
              IntPropLevel ipl) {
     using namespace Gecode::Int;
     using namespace Gecode::Int::Cumulative;
-
     if ((s.size() != p.size()) || (s.size() != u.size()) ||
         (s.size() != e.size()) || (s.size() != m.size()))
       throw Int::ArgumentSizeMismatch("Int::cumulative");
@@ -326,10 +321,8 @@ namespace Gecode { namespace Int { namespace Cumulative {
     mul_check(c.max(),w,s.size());
 
     GECODE_POST;
-    for (int i=0; i<p.size(); i++) {
-      IntView pi(p[i]);
-      GECODE_ME_FAIL(pi.gq(home,0));
-    }
+    for (int i=0; i<p.size(); i++)
+      GECODE_ME_FAIL(IntView(p[i]).gq(home,0));
 
     bool allMandatory = true;
     for (int i=0; i<m.size(); i++) {
