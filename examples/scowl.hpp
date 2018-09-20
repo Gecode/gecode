@@ -13473,7 +13473,7 @@ FileSizeOptions::file(void) const {
 inline
 Dictionary::Dictionary(void)
   : max_len(0), n_all_words(0), chunk(NULL) {
-  for (unsigned int i=max_len; i--; ) {
+  for (unsigned int i=0U; i<max_len; i++) {
     n_words[i]=0; s_words[i]=NULL;
   }
 }
@@ -13488,7 +13488,7 @@ Dictionary::init(const char* fn) {
     n_all_words = 0;
 
     size_t sz = 0;
-    for (int l=max_len+1; l--; ) {
+    for (int l=0; l<=max_len; l++) {
       n_words[l]=::n_words[l];
       n_all_words += n_words[l];
       sz += n_words[l] * (l+1); // Leave room for terminating zero
@@ -13497,7 +13497,7 @@ Dictionary::init(const char* fn) {
 
     // Copy words
     char* c = chunk;
-    for (int l=max_len+1; l--; ) {
+    for (int l=0; l<=max_len; l++) {
       s_words[l] = c;
       for (int i=0; i<n_words[l]; i++) {
         for (int j=0; j<l; j++)
@@ -13526,7 +13526,7 @@ Dictionary::init(const char* fn) {
         getline(f,s);
         if (s.size() >= limit_len)
           goto skip1;
-        for (int i=s.size(); i--; )
+        for (int i=0; i<s.size(); i++)
           if (!isalpha(s[i]) || !islower(s[i]))
             goto skip1;
         // Found a legal word
@@ -13563,11 +13563,11 @@ Dictionary::init(const char* fn) {
         getline(f,s);
         if (s.size() >= limit_len)
           goto skip2;
-        for (int i=s.size(); i--; )
+        for (int i=0; i<s.size(); i++)
           if (!isalpha(s[i]) || !islower(s[i]))
             goto skip2;
         // Found a legal word, copy it
-        for (unsigned int i=0; i<s.size(); i++)
+        for (unsigned int i=0U; i<s.size(); i++)
           *s_words[s.size()]++ = s[i];
         *s_words[s.size()]++ = 0;
       skip2: ;
@@ -13579,7 +13579,7 @@ Dictionary::init(const char* fn) {
     {
       // Re-Initialize start information in chunk
       char* c = chunk;
-      for (unsigned int l=0; l<=max_len; l++) {
+      for (unsigned int l=0U; l<=max_len; l++) {
         s_words[l] = c; c += (l+1)*n_words[l];
       }
     }
@@ -13608,7 +13608,7 @@ std::basic_ostream<Char,Traits>&
 Dictionary::print(std::basic_ostream<Char,Traits>& os) const {
   os << "Total number of words: " << n_all_words << std::endl
      << "Maximal length: " << max_len << std::endl;
-  for (unsigned int i=1U; i<=max_len; i++)
+  for (int i=1; i<=max_len; i++)
     os << "\t#words of length " << i << ": " << n_words[i] << std::endl;
   return os;
 }

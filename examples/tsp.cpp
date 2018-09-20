@@ -200,7 +200,7 @@ namespace {
   inline int
   Problem::max(void) const {
     int m=0;
-    for (int i=_n*_n; i--; )
+    for (int i=0; i<_n*_n; i++)
       m = std::max(m,_d[i]);
     return m*_n;
   }
@@ -245,8 +245,8 @@ public:
     IntArgs c(n*n, p.d());
 
     // Disallow disconnected nodes
-    for (int i=n; i--; )
-      for (int j=n; j--; )
+    for (int i=0; i<n; i++)
+      for (int j=0; j<n; j++)
         if (p.d(i,j) == 0)
           rel(*this, succ[i], IRT_NQ, j);
 

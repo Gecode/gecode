@@ -286,18 +286,17 @@ private:
   IntVarArray board;
 
   /// Compute number of tiles
-  int compute_number_of_tiles(const TileSpec* ts, int nspecs) {
+  int compute_number_of_tiles(const TileSpec* ts, int nspecs) const {
     int res = 0;
-    for (int i = nspecs; i--; ) {
+    for (int i=0; i<nspecs; i++)
       res += ts[i].amount;
-    }
     return res;
   }
 
   /// Returns the regular expression for placing a specific tile \a
   /// tile in a specific rotation.
   REG tile_reg(int twidth, int theight, const char* tile,
-               REG mark, REG other, REG eol) {
+               REG mark, REG other, REG eol) const {
     REG oe = other | eol;
     REG res = *oe;
     REG color[] = {other, mark};

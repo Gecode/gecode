@@ -205,7 +205,7 @@ public:
     int w = *s++;
 
     // Restrict position according to square size
-    for (int i=n; i--; ) {
+    for (int i=0; i<n; i++) {
       rel(*this, x[i], IRT_LQ, w-s[i]);
       rel(*this, y[i], IRT_LQ, w-s[i]);
     }
@@ -239,14 +239,14 @@ public:
     case PROP_CUMULATIVES:
       {
         IntArgs m(n), dh(n);
-        for (int i = n; i--; ) {
+        for (int i=0; i<n; i++) {
           m[i]=0; dh[i]=s[i];
         }
         IntArgs limit({w});
         {
           // x-direction
           IntVarArgs e(n);
-          for (int i=n; i--;)
+          for (int i=0; i<n; i++)
             e[i]=expr(*this, x[i]+dh[i]);
           cumulatives(*this, m, x, dh, e, dh, limit, true);
           cumulatives(*this, m, x, dh, e, dh, limit, false);
@@ -254,7 +254,7 @@ public:
         {
           // y-direction
           IntVarArgs e(n);
-          for (int i=n; i--;)
+          for (int i=0; i<n; i++)
             e[i]=expr(*this, y[i]+dh[i]);
           cumulatives(*this, m, y, dh, e, dh, limit, true);
           cumulatives(*this, m, y, dh, e, dh, limit, false);
