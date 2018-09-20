@@ -134,7 +134,7 @@ namespace Gecode { namespace Int { namespace Bool {
     while (i < x.size())
       if (x[i].zero()) {
         // All x[j] left of i must be zero as well
-        for (int j=i; j--; )
+        for (int j=0; j<i; j++)
           GECODE_ME_CHECK(x[j].zero_none(home));
         x.drop_fst(i+1); i=0;
       } else if (x[i].one()) {
@@ -190,7 +190,7 @@ namespace Gecode { namespace Int { namespace Bool {
       if (x[i].one())
         return ES_FAILED;
       // As the x[j] might be shared, only zero() but not zero_none()
-      for (int j=i; j--; )
+      for (int j=0; j<i; j++)
         GECODE_ME_CHECK(x[j].zero(home));
       n_zero -= i + 1;
       assert(n_zero >= 0);

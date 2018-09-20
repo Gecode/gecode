@@ -152,7 +152,7 @@ namespace Gecode { namespace Int { namespace BinPacking {
     : Propagator(home), l(l0), bs(bs0), t(0) {
     l.subscribe(home,*this,PC_INT_BND);
     bs.subscribe(home,*this,PC_INT_DOM);
-    for (int i=bs.size(); i--; )
+    for (int i=0; i<bs.size(); i++)
       t += bs[i].size();
   }
 

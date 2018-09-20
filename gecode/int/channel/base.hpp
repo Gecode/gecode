@@ -38,7 +38,7 @@ namespace Gecode { namespace Int { namespace Channel {
   Base<Info,Offset,pc>::Base(Home home, int n0, Info* xy0,
                              Offset& ox0, Offset& oy0)
     : Propagator(home), n(n0), n_na(2*n), ox(ox0), oy(oy0), xy(xy0) {
-    for (int i=2*n; i--; )
+    for (int i=0; i<2*n; i++)
       xy[i].view.subscribe(home,*this,pc);
   }
 
@@ -49,7 +49,7 @@ namespace Gecode { namespace Int { namespace Channel {
       xy(home.alloc<Info>(2*n)) {
     ox.update(p.ox);
     oy.update(p.oy);
-    for (int i=2*n; i--; )
+    for (int i=0; i<2*n; i++)
       xy[i].update(home,p.xy[i]);
   }
 
@@ -62,14 +62,14 @@ namespace Gecode { namespace Int { namespace Channel {
   template<class Info, class Offset, PropCond pc>
   void
   Base<Info,Offset,pc>::reschedule(Space& home) {
-    for (int i=2*n; i--; )
+    for (int i=0; i<2*n; i++)
       xy[i].view.reschedule(home,*this,pc);
   }
 
   template<class Info, class Offset, PropCond pc>
   forceinline size_t
   Base<Info,Offset,pc>::dispose(Space& home) {
-    for (int i=2*n; i--; )
+    for (int i=0; i<2*n; i++)
       xy[i].view.cancel(home,*this,pc);
     (void) Propagator::dispose(home);
     return sizeof(*this);

@@ -142,7 +142,7 @@ namespace Gecode { namespace Int { namespace BinPacking {
       bins(static_cast<unsigned int>(m)),
       node(reg.alloc<Node>(nodes())),
       cur(reg,nodes()), max(reg,nodes()) {
-    for (int i=nodes(); i--; ) {
+    for (int i=0; i<nodes(); i++) {
       node[i].n.init(reg,nodes());
       node[i].d=node[i].w=0;
     }
@@ -261,7 +261,7 @@ namespace Gecode { namespace Int { namespace BinPacking {
       Support::StaticStack<int,Region> n(reg,2*nodes());
       // Make a copy of the degree information to be used as weights
       // and record all nodes of degree 1 and 2.
-      for (int i=nodes(); i--; ) {
+      for (int i=0; i<nodes(); i++) {
         if ((node[i].d == 1) || (node[i].d == 2))
           n.push(i);
       }
@@ -311,7 +311,7 @@ namespace Gecode { namespace Int { namespace BinPacking {
     {
       NodeSet p(reg,nodes()), x(reg,nodes());
       bool empty = true;
-      for (int i=nodes(); i--; )
+      for (int i=0; i<nodes(); i++)
         if (node[i].d > 0) {
           p.incl(i); empty = false;
         } else {

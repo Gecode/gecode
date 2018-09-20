@@ -138,12 +138,12 @@ namespace Gecode { namespace Int { namespace Bool {
     for (int i=n; i--; )
       if (x[i].assigned()) {
         if (x[i].one()) {
-          for (int j=i; j--; )
+          for (int j=0; j<i; j++)
             GECODE_ME_CHECK(x[j].one(home));
           for (int j=i+1; j<n; j++)
             GECODE_ME_CHECK(x[j].one_none(home));
         } else {
-          for (int j=i; j--; )
+          for (int j=0; j<i; j++)
             GECODE_ME_CHECK(x[j].zero(home));
           for (int j=i+1; j<n; j++)
             GECODE_ME_CHECK(x[j].zero_none(home));

@@ -123,7 +123,7 @@ namespace Gecode { namespace Int { namespace Channel {
           ya.push(j);
       }
       // Prune the value j from all x variables
-      for (int k=i; k--; ) {
+      for (int k=0; k<i; k++) {
         ModEvent me = ox(x[k].view).nq(home,j);
         if (me_failed(me)) {
           return ES_FAILED;
@@ -205,7 +205,7 @@ namespace Gecode { namespace Int { namespace Channel {
     ValInfo<View>* y = xy+n;
 
     // Scan x and y for assigned but not yet propagated views
-    for (int i = n; i--; ) {
+    for (int i=0; i<n; i++) {
       if (x[i].doval()) xa.push(i);
       if (y[i].doval()) ya.push(i);
     }
@@ -235,7 +235,7 @@ namespace Gecode { namespace Int { namespace Channel {
       GECODE_ME_CHECK(oy(xy[1].view).eq(home,0));
       return ES_OK;
     }
-    for (int i=n; i--; ) {
+    for (int i=0; i<n; i++) {
       GECODE_ME_CHECK(ox(xy[i  ].view).gq(home,0));
       GECODE_ME_CHECK(ox(xy[i  ].view).le(home,n));
       GECODE_ME_CHECK(oy(xy[i+n].view).gq(home,0));
