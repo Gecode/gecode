@@ -44,9 +44,9 @@ namespace Gecode { namespace Int { namespace Extensional {
    * Advisor
    *
    */
-  template<class View>
+  template<class View, bool pos>
   forceinline void
-  Compact<View>::CTAdvisor::adjust(void) {
+  Compact<View,pos>::CTAdvisor::adjust(void) {
     {
       int n = view().min();
       assert((_fst->min <= n) && (n <= _lst->max));
@@ -63,35 +63,35 @@ namespace Gecode { namespace Int { namespace Extensional {
     }
   }
 
-  template<class View>
+  template<class View, bool pos>
   forceinline
-  Compact<View>::CTAdvisor::CTAdvisor
+  Compact<View,pos>::CTAdvisor::CTAdvisor
   (Space& home, Propagator& p, 
    Council<CTAdvisor>& c, const TupleSet& ts, View x0, int i)
     : ViewAdvisor<View>(home,p,c,x0), _fst(ts.fst(i)), _lst(ts.lst(i)) {
     adjust();
   }
 
-  template<class View>
+  template<class View, bool pos>
   forceinline
-  Compact<View>::CTAdvisor::CTAdvisor(Space& home, CTAdvisor& a)
+  Compact<View,pos>::CTAdvisor::CTAdvisor(Space& home, CTAdvisor& a)
     : ViewAdvisor<View>(home,a), _fst(a._fst), _lst(a._lst) {}
 
-  template<class View>
-  forceinline const typename Compact<View>::Range*
-  Compact<View>::CTAdvisor::fst(void) const {
+  template<class View, bool pos>
+  forceinline const typename Compact<View,pos>::Range*
+  Compact<View,pos>::CTAdvisor::fst(void) const {
     return _fst;
   }
 
-  template<class View>
-  forceinline const typename Compact<View>::Range*
-  Compact<View>::CTAdvisor::lst(void) const {
+  template<class View, bool pos>
+  forceinline const typename Compact<View,pos>::Range*
+  Compact<View,pos>::CTAdvisor::lst(void) const {
     return _lst;
   }
 
-  template<class View>
+  template<class View, bool pos>
   forceinline void
-  Compact<View>::CTAdvisor::dispose(Space& home, Council<CTAdvisor>& c) {
+  Compact<View,pos>::CTAdvisor::dispose(Space& home, Council<CTAdvisor>& c) {
     (void) ViewAdvisor<View>::dispose(home,c);
   }
 
@@ -100,41 +100,41 @@ namespace Gecode { namespace Int { namespace Extensional {
    * Status
    *
    */
-  template<class View>
+  template<class View, bool pos>
   forceinline
-  Compact<View>::Status::Status(StatusType t)
+  Compact<View,pos>::Status::Status(StatusType t)
     : s(t) {}
-  template<class View>
+  template<class View, bool pos>
   forceinline
-  Compact<View>::Status::Status(const Status& s)
+  Compact<View,pos>::Status::Status(const Status& s)
     : s(s.s) {}
-  template<class View>
-  forceinline typename Compact<View>::StatusType
-  Compact<View>::Status::type(void) const {
+  template<class View, bool pos>
+  forceinline typename Compact<View,pos>::StatusType
+  Compact<View,pos>::Status::type(void) const {
     return static_cast<StatusType>(s & 3);
   }
-  template<class View>
+  template<class View, bool pos>
   forceinline bool
-  Compact<View>::Status::single(CTAdvisor& a) const {
+  Compact<View,pos>::Status::single(CTAdvisor& a) const {
     if (type() != SINGLE)
       return false;
     assert(type() == 0);
     return reinterpret_cast<CTAdvisor*>(s) == &a;
   }
-  template<class View>
+  template<class View, bool pos>
   forceinline void
-  Compact<View>::Status::touched(CTAdvisor& a) {
+  Compact<View,pos>::Status::touched(CTAdvisor& a) {
     if (!single(a))
       s = MULTIPLE;
   }
-  template<class View>
+  template<class View, bool pos>
   forceinline void
-  Compact<View>::Status::none(void) {
+  Compact<View,pos>::Status::none(void) {
     s = NONE;
   }
-  template<class View>
+  template<class View, bool pos>
   forceinline void
-  Compact<View>::Status::propagating(void) {
+  Compact<View,pos>::Status::propagating(void) {
     s = PROPAGATING;
   }
   
@@ -144,67 +144,101 @@ namespace Gecode { namespace Int { namespace Extensional {
    * The propagator base class
    *
    */
-  template<class View>
-  const typename Compact<View>::Range*
-  Compact<View>::range(CTAdvisor& a, int n) {
+  template<class View, bool pos>
+  const typename Compact<View,pos>::Range*
+  Compact<View,pos>::range(CTAdvisor& a, int n) {
     assert((n > a.fst()->max) && (n < a.lst()->min));
     const Range* f=a.fst()+1;
     const Range* l=a.lst()-1;
     assert(f<=l);
-    while (f < l) {
-      const Range* m = f + ((l-f) >> 1);
-      if (n < m->min) {
-        l=m-1;
-      } else if (n > m->max) {
-        f=m+1;
-      } else {
-        f=m; break;
+    if (pos) {
+      while (f < l) {
+        const Range* m = f + ((l-f) >> 1);
+        if (n < m->min) {
+          l=m-1;
+        } else if (n > m->max) {
+          f=m+1;
+        } else {
+          f=m; break;
+        }
       }
+      assert((f->min <= n) && (n <= f->max));
+      return f;
+    } else {
+      while (f < l) {
+        const Range* m = f + ((l-f) >> 1);
+        if (n < m->min) {
+          l=m-1;
+        } else if (n > m->max) {
+          f=m+1;
+        } else {
+          f=m; break;
+        }
+      }
+      if ((f->min <= n) && (n <= f->max))
+        return f;
+      else
+        return nullptr;
     }
-    assert((f->min <= n) && (n <= f->max));
-    return f;
   }
 
-  template<class View>
+  template<class View, bool pos>
   forceinline const BitSetData*
-  Compact<View>::supports(CTAdvisor& a, int n) {
+  Compact<View,pos>::supports(CTAdvisor& a, int n) {
     const Range* fnd;
     const Range* fst=a.fst();
     const Range* lst=a.lst();
-    if (n <= fst->max) {
-      fnd=fst; goto found;
-    } else if (n >= lst->min) {
-      fnd=lst; goto found;
+    if (pos) {
+      if (n <= fst->max) {
+        fnd=fst; goto foundp;
+      } else if (n >= lst->min) {
+        fnd=lst; goto foundp;
+      } else {
+        fnd=range(a,n);
+      }
+    foundp:
+      assert((fnd->min <= n) && (n <= fnd->max));
+      return fnd->supports(n_words,n);
     } else {
-      fnd=range(a,n);
+      if ((n < fst->min) || (n > lst->max))
+        return nullptr;
+      if (n <= fst->max) {
+        fnd=fst; goto foundn;
+      } else if (n >= lst->min) {
+        fnd=lst; goto foundn;
+      } else {
+        fnd=range(a,n);
+        if (!fnd)
+          return nullptr;
+      }
+    foundn:
+      assert((fnd->min <= n) && (n <= fnd->max));
+      return fnd->supports(n_words,n);
     }
-  found:
-    assert((fnd->min <= n) && (n <= fnd->max));
-    return fnd->supports(n_words,n);
   }
 
-  template<class View>
+  template<class View, bool pos>
   forceinline
-  Compact<View>::ValidSupports::ValidSupports(const Compact<View>& p,
-                                              CTAdvisor& a)
+  Compact<View,pos>::ValidSupports::ValidSupports(const Compact<View,pos>& p,
+                                                  CTAdvisor& a)
     : n_words(p.n_words), max(a.view().max()),
       xr(a.view()), sr(a.fst()), n(xr.min()) {
     while (n > sr->max)
       sr++;
     s=sr->supports(n_words,n);
   }
-  template<class View>
+  template<class View, bool pos>
   forceinline
-  Compact<View>::ValidSupports::ValidSupports(const TupleSet& ts,
+  Compact<View,pos>::ValidSupports::ValidSupports(const TupleSet& ts,
                                               int i, View x)
     : n_words(ts.words()), max(x.max()), xr(x), sr(ts.fst(i)), n(xr.min()) {
     while (n > sr->max)
       sr++;
     s=sr->supports(n_words,n);
   }
-  template<class View>
+  template<class View, bool pos>
   forceinline void
-  Compact<View>::ValidSupports::operator ++(void) {
+  Compact<View,pos>::ValidSupports::operator ++(void) {
     n++;
     if (n <= xr.max()) {
       assert(n <= sr->max);
@@ -221,20 +255,20 @@ namespace Gecode { namespace Int { namespace Extensional {
       assert(sr->min <= xr.min());
     }
   }
-  template<class View>
+  template<class View, bool pos>
   forceinline bool
-  Compact<View>::ValidSupports::operator ()(void) const {
+  Compact<View,pos>::ValidSupports::operator ()(void) const {
     return n <= max;
   }
-  template<class View>
+  template<class View, bool pos>
   forceinline const BitSetData*
-  Compact<View>::ValidSupports::supports(void) const {
+  Compact<View,pos>::ValidSupports::supports(void) const {
     assert(s == sr->supports(n_words,n));
     return s;
   }
-  template<class View>
+  template<class View, bool pos>
   forceinline int
-  Compact<View>::ValidSupports::val(void) const {
+  Compact<View,pos>::ValidSupports::val(void) const {
     return n;
   }
 
@@ -242,10 +276,10 @@ namespace Gecode { namespace Int { namespace Extensional {
    * Lost supports iterator
    *
    */
-  template<class View>
+  template<class View, bool pos>
   forceinline
-  Compact<View>::LostSupports::LostSupports
-  (const Compact<View>& p, CTAdvisor& a, int l0, int h0)
+  Compact<View,pos>::LostSupports::LostSupports
+  (const Compact<View,pos>& p, CTAdvisor& a, int l0, int h0)
     : n_words(p.n_words), r(a.fst()), l(l0), h(h0) {
     // Move to first value for which there is support
     while (l > r->max)
@@ -253,47 +287,49 @@ namespace Gecode { namespace Int { namespace Extensional {
     l=std::max(l,r->min);
     s=r->supports(n_words,l);
   }      
-  template<class View>
+  template<class View, bool pos>
   forceinline void
-  Compact<View>::LostSupports::operator ++(void) {
+  Compact<View,pos>::LostSupports::operator ++(void) {
     l++; s += n_words;
     while ((l <= h) && (l > r->max)) {
       r++; l=r->min; s=r->s;
     }
   }
-  template<class View>
+  template<class View, bool pos>
   forceinline bool
-  Compact<View>::LostSupports::operator ()(void) const {
+  Compact<View,pos>::LostSupports::operator ()(void) const {
     return l<=h;
   }
-  template<class View>
+  template<class View, bool pos>
   forceinline const TupleSet::BitSetData*
-  Compact<View>::LostSupports::supports(void) const {
+  Compact<View,pos>::LostSupports::supports(void) const {
     assert((l >= r->min) && (l <= r->max));
     assert(s == r->supports(n_words,l));
     return s;
   }
 
-  template<class View>
+
+
+  template<class View, bool pos>
   forceinline
-  Compact<View>::Compact(Space& home, Compact& p)
+  Compact<View,pos>::Compact(Space& home, Compact& p)
     : Propagator(home,p), unassigned(p.unassigned), n_words(p.n_words),
       status(NONE), ts(p.ts) {
     c.update(home,p.c);
   }
   
-  template<class View>
+  template<class View, bool pos>
   forceinline
-  Compact<View>::Compact(Home home, ViewArray<View>& x,
+  Compact<View,pos>::Compact(Home home, ViewArray<View>& x,
                          const TupleSet& ts0)
     : Propagator(home), unassigned(x.size()), n_words(ts0.words()),
       status(MULTIPLE), ts(ts0), c(home) {
     home.notice(*this, AP_DISPOSE);
   }
       
-  template<class View>
+  template<class View, bool pos>
   forceinline size_t
-  Compact<View>::dispose(Space& home) {
+  Compact<View,pos>::dispose(Space& home) {
     home.ignore(*this,AP_DISPOSE);
     c.dispose(home);
     ts.~TupleSet();
@@ -310,7 +346,7 @@ namespace Gecode { namespace Int { namespace Extensional {
   template<class TableProp>
   forceinline
   CompactTable<View,Table,pos>::CompactTable(Space& home, TableProp& p)
-    : Compact<View>(home,p), table(home,p.table) {
+    : Compact<View,pos>(home,p), table(home,p.table) {
     assert(!table.empty());
   }
 
@@ -369,7 +405,7 @@ namespace Gecode { namespace Int { namespace Extensional {
   forceinline
   CompactTable<View,Table,pos>::CompactTable(Home home, ViewArray<View>& x,
                                              const TupleSet& ts)
-    : Compact<View>(home,x,ts), table(home,ts.words()) {
+    : Compact<View,pos>(home,x,ts), table(home,ts.words()) {
     Region r;
     BitSetData* mask = r.alloc<BitSetData>(table.size());
     // Invalidate tuples
@@ -398,7 +434,7 @@ namespace Gecode { namespace Int { namespace Extensional {
   template<class View, class Table, bool pos>
   forceinline size_t
   CompactTable<View,Table,pos>::dispose(Space& home) {
-    (void) Compact<View>::dispose(home);
+    (void) Compact<View,pos>::dispose(home);
     return sizeof(*this);
   }
 
@@ -438,18 +474,34 @@ namespace Gecode { namespace Int { namespace Extensional {
       View x = a.view();
 
       // No point filtering variable if it was the only modified variable
-      if (touched.single(a) || x.assigned())
-        continue;
+      if (pos) {
+        if (touched.single(a) || x.assigned())
+          continue;
+      }
       
       if (x.size() == 2) { // Consider min and max values only
-        if (!table.intersects(supports(a,x.min())))
-          GECODE_ME_CHECK(x.eq(home,x.max()));
-        else if (!table.intersects(supports(a,x.max())))
-          GECODE_ME_CHECK(x.eq(home,x.min()));
-        if (x.assigned())
-          unassigned--;
-        else
-          a.adjust();
+        if (pos) {
+          if (!table.intersects(supports(a,x.min())))
+            GECODE_ME_CHECK(x.eq(home,x.max()));
+          else if (!table.intersects(supports(a,x.max())))
+            GECODE_ME_CHECK(x.eq(home,x.min()));
+          if (x.assigned())
+            unassigned--;
+          else
+            a.adjust();
+        } else {
+          /*
+          if (const BitSetData* s=supports(a,x.min())) {
+            if (table.ones(intersects())
+            GECODE_ME_CHECK(x.eq(home,x.max()));
+          else if (!table.intersects(supports(a,x.max())))
+            GECODE_ME_CHECK(x.eq(home,x.min()));
+          if (x.assigned())
+            unassigned--;
+          else
+            a.adjust();
+          */
+        }
       } else { // x.size() > 2
         // How many values to remove
         int* nq = r.alloc<int>(x.size());
@@ -499,9 +551,10 @@ namespace Gecode { namespace Int { namespace Extensional {
                                      const TupleSet& ts) {
     assert((x.size() > 1) && (ts.tuples() > 1));
     auto ct = new (home) CompactTable(home,x,ts);
-    if (ct->table.empty())
-      return ES_FAILED;
-    return ES_OK;
+    if (pos)
+      return ct->table.empty() ? ES_FAILED : ES_OK;
+    else
+      return ct->table.empty() ? ES_OK : ES_FAILED;
   }
 
   template<class View, class Table, bool pos>
@@ -512,7 +565,8 @@ namespace Gecode { namespace Int { namespace Extensional {
 
     // Do not fail a disabled propagator
     if (table.empty())
-      return Compact<View>::disabled() ? home.ES_NOFIX_DISPOSE(c,a) : ES_FAILED;
+      return Compact<View,pos>::disabled() ?
+        home.ES_NOFIX_DISPOSE(c,a) : ES_FAILED;
     
     View x = a.view();
 
@@ -541,7 +595,8 @@ namespace Gecode { namespace Int { namespace Extensional {
       for (LostSupports ls(*this,a,x.min(d),x.max(d)); ls(); ++ls) {
         table.nand_with_mask(ls.supports());
         if (table.empty())
-          return Compact<View>::disabled() ? home.ES_NOFIX_DISPOSE(c,a) : ES_FAILED;
+          return Compact<View,pos>::disabled() ?
+            home.ES_NOFIX_DISPOSE(c,a) : ES_FAILED;
       }
       a.adjust();
     } else {
@@ -563,7 +618,8 @@ namespace Gecode { namespace Int { namespace Extensional {
 
     // Do not fail a disabled propagator
     if (table.empty())
-      return Compact<View>::disabled() ? home.ES_NOFIX_DISPOSE(c,a) : ES_FAILED;
+      return Compact<View,pos>::disabled() ?
+        home.ES_NOFIX_DISPOSE(c,a) : ES_FAILED;
     
     // Schedule propagator
     return ES_NOFIX;
@@ -578,14 +634,17 @@ namespace Gecode { namespace Int { namespace Extensional {
   postcompact(Home home, ViewArray<View>& x, const TupleSet& ts) {
     assert(ts.tuples() > 1);
 
-    // All variables pruned to correct domain
-    for (int i=0; i<x.size(); i++) {
-      TupleSet::Ranges r(ts,i);
-      GECODE_ME_CHECK(x[i].inter_r(home, r, false));
+    if (pos) {
+      // All variables pruned to correct domain
+      for (int i=0; i<x.size(); i++) {
+        TupleSet::Ranges r(ts,i);
+        GECODE_ME_CHECK(x[i].inter_r(home, r, false));
+      }
+
+      if ((x.size() <= 1) || (ts.tuples() <= 1))
+        return ES_OK;
     }
 
-    if ((x.size() <= 1) || (ts.tuples() <= 1))
-      return ES_OK;
 
     // Choose the right bit set implementation
     switch (ts.words()) {

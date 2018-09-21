@@ -351,7 +351,7 @@ namespace Gecode { namespace Int { namespace Extensional {
   typedef TupleSet::Tuple Tuple;
 
   /// Base class for compact table propagator
-  template<class View>
+  template<class View, bool pos>
   class Compact : public Propagator {
   protected:
     /// Range type for supports
@@ -433,7 +433,7 @@ namespace Gecode { namespace Int { namespace Extensional {
       const BitSetData* s;
     public:
       /// Initialize from initialized propagator
-      ValidSupports(const Compact<View>& p, CTAdvisor& a);
+      ValidSupports(const Compact<View,pos>& p, CTAdvisor& a);
       /// Initialize during initialization
       ValidSupports(const TupleSet& ts, int i, View x);
       /// Move to next supports
@@ -460,7 +460,7 @@ namespace Gecode { namespace Int { namespace Extensional {
       const BitSetData* s;
     public:
       /// Initialize iterator for values between \a l and \a h
-      LostSupports(const Compact<View>& p, CTAdvisor& a,
+      LostSupports(const Compact<View,pos>& p, CTAdvisor& a,
                    int l, int h);
       /// Move iterator to next value
       void operator ++(void);
@@ -508,20 +508,20 @@ namespace Gecode { namespace Int { namespace Extensional {
    * \ingroup FuncIntProp
    */
   template<class View, class Table, bool pos>
-  class CompactTable : public Compact<View> {    
+  class CompactTable : public Compact<View,pos> {
   public:
-    typedef typename Compact<View>::ValidSupports ValidSupports;
-    typedef typename Compact<View>::Range Range;
-    typedef typename Compact<View>::CTAdvisor CTAdvisor;
-    typedef typename Compact<View>::StatusType StatusType;
-    typedef typename Compact<View>::Status Status;
-    typedef typename Compact<View>::LostSupports LostSupports;
+    typedef typename Compact<View,pos>::ValidSupports ValidSupports;
+    typedef typename Compact<View,pos>::Range Range;
+    typedef typename Compact<View,pos>::CTAdvisor CTAdvisor;
+    typedef typename Compact<View,pos>::StatusType StatusType;
+    typedef typename Compact<View,pos>::Status Status;
+    typedef typename Compact<View,pos>::LostSupports LostSupports;
 
-    using Compact<View>::supports;
-    using Compact<View>::unassigned;
-    using Compact<View>::status;
-    using Compact<View>::c;
-    using Compact<View>::ts;
+    using Compact<View,pos>::supports;
+    using Compact<View,pos>::unassigned;
+    using Compact<View,pos>::status;
+    using Compact<View,pos>::c;
+    using Compact<View,pos>::ts;
 
     /// Current table
     Table table;
