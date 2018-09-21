@@ -499,7 +499,7 @@ namespace Gecode { namespace Int { namespace Extensional {
    * Requires \code #include <gecode/int/extensional.hh> \endcode
    * \ingroup FuncIntProp
    */
-  template<class View, class Table>
+  template<class View, class Table, bool pos>
   class CompactTable : public Compact<View> {    
   public:
     typedef typename Compact<View>::ValidSupports ValidSupports;
@@ -540,7 +540,7 @@ namespace Gecode { namespace Int { namespace Extensional {
   };
 
   /// Post function for compact table propagator
-  template<class View>
+  template<class View, bool pos>
   ExecStatus postcompact(Home home, ViewArray<View>& x, const TupleSet& ts);
 
 }}}

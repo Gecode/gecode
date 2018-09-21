@@ -2439,6 +2439,7 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   extensional(Home home, const IntVarArgs& x, const TupleSet& t,
+              bool pos=true,
               IntPropLevel ipl=IPL_DEF);
 
   /** \brief Post propagator for \f$x\in t\f$.

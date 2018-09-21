@@ -306,30 +306,30 @@ namespace Gecode { namespace Int { namespace Extensional {
    * The propagator proper
    *
    */
-  template<class View, class Table>
+  template<class View, class Table, bool pos>
   template<class TableProp>
   forceinline
-  CompactTable<View,Table>::CompactTable(Space& home, TableProp& p)
+  CompactTable<View,Table,pos>::CompactTable(Space& home, TableProp& p)
     : Compact<View>(home,p), table(home,p.table) {
     assert(!table.empty());
   }
 
-  template<class View, class Table>
+  template<class View, class Table, bool pos>
   Actor*
-  CompactTable<View,Table>::copy(Space& home) {
+  CompactTable<View,Table,pos>::copy(Space& home) {
     assert((table.words() > 0U) && (table.width() >= table.words()));
     if (table.words() <= 4U) {
       switch (table.width()) {
       case 0U:
         GECODE_NEVER; break;
       case 1U:
-        return new (home) CompactTable<View,TinyBitSet<1U>>(home,*this);
+        return new (home) CompactTable<View,TinyBitSet<1U>,pos>(home,*this);
       case 2U:
-        return new (home) CompactTable<View,TinyBitSet<2U>>(home,*this);
+        return new (home) CompactTable<View,TinyBitSet<2U>,pos>(home,*this);
       case 3U:
-        return new (home) CompactTable<View,TinyBitSet<3U>>(home,*this);
+        return new (home) CompactTable<View,TinyBitSet<3U>,pos>(home,*this);
       case 4U:
-        return new (home) CompactTable<View,TinyBitSet<4U>>(home,*this);
+        return new (home) CompactTable<View,TinyBitSet<4U>,pos>(home,*this);
       default:
         break;
       }
@@ -353,22 +353,22 @@ namespace Gecode { namespace Int { namespace Extensional {
       case Gecode::Support::IT_SHRT:
         goto copy_short;
       case Gecode::Support::IT_INT:
-        return new (home) CompactTable<View,BitSet<unsigned int>>(home,*this);
+        return new (home) CompactTable<View,BitSet<unsigned int>,pos>(home,*this);
       default: GECODE_NEVER;
       }
       GECODE_NEVER;
       return nullptr;
     }
   copy_char:
-    return new (home) CompactTable<View,BitSet<unsigned char>>(home,*this);
+    return new (home) CompactTable<View,BitSet<unsigned char>,pos>(home,*this);
   copy_short:
-    return new (home) CompactTable<View,BitSet<unsigned short int>>(home,*this);
+    return new (home) CompactTable<View,BitSet<unsigned short int>,pos>(home,*this);
   }
 
-  template<class View,class Table>
+  template<class View, class Table, bool pos>
   forceinline
-  CompactTable<View,Table>::CompactTable(Home home, ViewArray<View>& x,
-                                         const TupleSet& ts)
+  CompactTable<View,Table,pos>::CompactTable(Home home, ViewArray<View>& x,
+                                             const TupleSet& ts)
     : Compact<View>(home,x,ts), table(home,ts.words()) {
     Region r;
     BitSetData* mask = r.alloc<BitSetData>(table.size());
@@ -395,30 +395,32 @@ namespace Gecode { namespace Int { namespace Extensional {
       View::schedule(home,*this,ME_INT_BND);
   }
       
-  template<class View, class Table>
+  template<class View, class Table, bool pos>
   forceinline size_t
-  CompactTable<View,Table>::dispose(Space& home) {
+  CompactTable<View,Table,pos>::dispose(Space& home) {
     (void) Compact<View>::dispose(home);
     return sizeof(*this);
   }
 
-  template<class View, class Table>
+  template<class View, class Table, bool pos>
   PropCost
-  CompactTable<View,Table>::cost(const Space&, const ModEventDelta&) const {
+  CompactTable<View,Table,pos>::cost(const Space&, 
+                                     const ModEventDelta&) const {
     return PropCost::quadratic(PropCost::HI,unassigned);
   }
 
-  template<class View, class Table>
+  template<class View, class Table, bool pos>
   void
-  CompactTable<View,Table>::reschedule(Space& home) {
+  CompactTable<View,Table,pos>::reschedule(Space& home) {
     // Modified variable, subsumption, or failure
-    if ((status.type() != StatusType::NONE) || (unassigned == 0) || table.empty())
+    if ((status.type() != StatusType::NONE) || 
+        (unassigned == 0) || table.empty())
       View::schedule(home,*this,ME_INT_DOM);
   }
 
-  template<class View, class Table>
+  template<class View, class Table, bool pos>
   ExecStatus
-  CompactTable<View,Table>::propagate(Space& home, const ModEventDelta&) {
+  CompactTable<View,Table,pos>::propagate(Space& home, const ModEventDelta&) {
     if (table.empty())
       return ES_FAILED;
     if (unassigned == 0)
@@ -491,20 +493,21 @@ namespace Gecode { namespace Int { namespace Extensional {
     return (unassigned <= 1) ? home.ES_SUBSUMED(*this) : ES_FIX;
   }
 
-  template<class View, class Table>
+  template<class View, class Table, bool pos>
   forceinline ExecStatus
-  CompactTable<View,Table>::post(Home home, ViewArray<View>& x,
-                                 const TupleSet& ts) {
+  CompactTable<View,Table,pos>::post(Home home, ViewArray<View>& x,
+                                     const TupleSet& ts) {
     assert((x.size() > 1) && (ts.tuples() > 1));
-    CompactTable<View,Table>* ct = new (home) CompactTable(home,x,ts);
+    auto ct = new (home) CompactTable(home,x,ts);
     if (ct->table.empty())
       return ES_FAILED;
     return ES_OK;
   }
 
-  template<class View, class Table>
+  template<class View, class Table, bool pos>
   ExecStatus
-  CompactTable<View,Table>::advise(Space& home, Advisor& a0, const Delta& d) {
+  CompactTable<View,Table,pos>::advise(Space& home,
+                                       Advisor& a0, const Delta& d) {
     CTAdvisor& a = static_cast<CTAdvisor&>(a0);
 
     // Do not fail a disabled propagator
@@ -570,7 +573,7 @@ namespace Gecode { namespace Int { namespace Extensional {
   /*
    * Post function
    */
-  template<class View>
+  template<class View, bool pos>
   inline ExecStatus
   postcompact(Home home, ViewArray<View>& x, const TupleSet& ts) {
     assert(ts.tuples() > 1);
@@ -589,21 +592,24 @@ namespace Gecode { namespace Int { namespace Extensional {
     case 0U:
       GECODE_NEVER; return ES_OK;
     case 1U:
-      return CompactTable<View,TinyBitSet<1U>>::post(home,x,ts);
+      return CompactTable<View,TinyBitSet<1U>,pos>::post(home,x,ts);
     case 2U:
-      return CompactTable<View,TinyBitSet<2U>>::post(home,x,ts);
+      return CompactTable<View,TinyBitSet<2U>,pos>::post(home,x,ts);
     case 3U:
-      return CompactTable<View,TinyBitSet<3U>>::post(home,x,ts);
+      return CompactTable<View,TinyBitSet<3U>,pos>::post(home,x,ts);
     case 4U:
-      return CompactTable<View,TinyBitSet<4U>>::post(home,x,ts);
+      return CompactTable<View,TinyBitSet<4U>,pos>::post(home,x,ts);
     default:
       switch (Gecode::Support::u_type(ts.words())) {
       case Gecode::Support::IT_CHAR:
-        return CompactTable<View,BitSet<unsigned char>>::post(home,x,ts);
+        return CompactTable<View,BitSet<unsigned char>,pos>
+          ::post(home,x,ts);
       case Gecode::Support::IT_SHRT:
-        return CompactTable<View,BitSet<unsigned short int>>::post(home,x,ts);
+        return CompactTable<View,BitSet<unsigned short int>,pos>
+          ::post(home,x,ts);
       case Gecode::Support::IT_INT:
-        return CompactTable<View,BitSet<unsigned int>>::post(home,x,ts);
+        return CompactTable<View,BitSet<unsigned int>,pos>
+          ::post(home,x,ts);
       default: GECODE_NEVER;
       }
     }
