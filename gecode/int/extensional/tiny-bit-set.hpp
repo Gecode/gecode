@@ -125,6 +125,24 @@ namespace Gecode { namespace Int { namespace Extensional {
      return false;
    }
 
+  template<unsigned int sz>
+  forceinline unsigned int
+  TinyBitSet<sz>::ones(const BitSetData* b) const {
+    unsigned int o = 0U;
+    for (unsigned int i=0U; i<sz; i++)
+      o += BitSetData::a(bits[i],b[i]).ones();
+    return o;
+  }
+    
+  template<unsigned int sz>
+  forceinline unsigned int
+  TinyBitSet<sz>::ones(void) const {
+    unsigned int o = 0U;
+    for (unsigned int i=0U; i<sz; i++)
+      o += bits[i].ones();
+    return o;
+  }
+    
    template<unsigned int sz>
    forceinline bool
    TinyBitSet<sz>::empty(void) const { // Linear complexity...

@@ -278,6 +278,10 @@ namespace Gecode { namespace Int { namespace Extensional {
     bool intersects(const BitSetData* b) const;
     /// Perform "nand" with \a b
     void nand_with_mask(const BitSetData* b);
+    /// Return the number of ones
+    unsigned int ones(void) const;
+    /// Return the number of ones after intersection with \a b
+    unsigned int ones(const BitSetData* b) const;
     /// Return the number of required bit set words
     unsigned int words(void) const;
     /// Return the number of required bit set words
@@ -327,6 +331,10 @@ namespace Gecode { namespace Int { namespace Extensional {
     void nand_with_mask(const BitSetData* b);
     /// Perform "nand" with and the "or" of \a a and \a b
     void nand_with_masks(const BitSetData* a, const BitSetData* b);
+    /// Return the number of ones
+    unsigned int ones(void) const;
+    /// Return the number of ones after intersection with \a b
+    unsigned int ones(const BitSetData* b) const;
     /// Return the number of required bit set words
     unsigned int words(void) const;
     /// Return the total number of words

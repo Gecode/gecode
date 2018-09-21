@@ -38,6 +38,41 @@
 namespace Gecode { namespace Int { namespace Extensional {
 
   template<class IndexType>
+  forceinline unsigned int
+  BitSet<IndexType>::limit(void) const {
+    return static_cast<unsigned int>(_limit);
+  }
+  
+  template<class IndexType>
+  forceinline bool
+  BitSet<IndexType>::empty(void) const {
+    return _limit == 0U;
+  }
+  
+  template<class IndexType>
+  forceinline unsigned int
+  BitSet<IndexType>::words(void) const {
+    return static_cast<unsigned int>(_limit);
+  }
+
+  template<class IndexType>
+  forceinline unsigned int
+  BitSet<IndexType>::size(void) const {
+    return words();
+  }
+      
+  template<class IndexType>
+  forceinline unsigned int
+  BitSet<IndexType>::width(void) const {
+    assert(!empty());
+    IndexType width = index[0];
+    for (IndexType i=1; i<_limit; i++)
+      width = std::max(width,index[i]);
+    assert(static_cast<unsigned int>(width+1U) >= words());
+    return static_cast<unsigned int>(width+1U);
+  }
+
+  template<class IndexType>
   forceinline
   BitSet<IndexType>::BitSet(Space& home, unsigned int n)
     : _limit(static_cast<IndexType>(n)), 
@@ -180,43 +215,25 @@ namespace Gecode { namespace Int { namespace Extensional {
         return true;
     return false;
   }
-  
-  
+    
   template<class IndexType>
   forceinline unsigned int
-  BitSet<IndexType>::limit(void) const {
-    return static_cast<unsigned int>(_limit);
+  BitSet<IndexType>::ones(const BitSetData* b) const {
+    unsigned int o = 0U;
+    for (IndexType i=0; i<_limit; i++)
+      o += BitSetData::a(bits[i],b[index[i]]).ones();
+    return o;
   }
-  
-  template<class IndexType>
-  forceinline bool
-  BitSet<IndexType>::empty(void) const {
-    return _limit == 0U;
-  }
-  
+    
   template<class IndexType>
   forceinline unsigned int
-  BitSet<IndexType>::words(void) const {
-    return static_cast<unsigned int>(_limit);
+  BitSet<IndexType>::ones(void) const {
+    unsigned int o = 0U;
+    for (IndexType i=0; i<_limit; i++)
+      o += bits[i].ones();
+    return o;
   }
-
-  template<class IndexType>
-  forceinline unsigned int
-  BitSet<IndexType>::size(void) const {
-    return words();
-  }
-      
-  template<class IndexType>
-  forceinline unsigned int
-  BitSet<IndexType>::width(void) const {
-    assert(!empty());
-    IndexType width = index[0];
-    for (IndexType i=1; i<_limit; i++)
-      width = std::max(width,index[i]);
-    assert(static_cast<unsigned int>(width+1U) >= words());
-    return static_cast<unsigned int>(width+1U);
-  }
-
+    
 }}}
 
 // STATISTICS: int-prop
