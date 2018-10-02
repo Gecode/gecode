@@ -643,6 +643,15 @@ namespace Gecode { namespace Int { namespace Extensional {
 
       if ((x.size() <= 1) || (ts.tuples() <= 1))
         return ES_OK;
+    } else {
+      if (ts.tuples() == 0)
+        return ES_OK;
+      for (int i=0; i<x.size(); i++) {
+        TupleSet::Ranges rs(ts,i);
+        ViewRanges<View> rx(x[i]);
+        if (Iter::Ranges::disjoint(rs,rx))
+          return ES_OK;
+      }
     }
 
 
