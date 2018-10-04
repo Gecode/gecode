@@ -241,8 +241,7 @@ namespace Gecode { namespace Int { namespace Extensional {
         n = max+1; return;
       }
       assert(n <= xr.max());
-      if (n < xr.min())
-        n = xr.min();
+      n = std::max(n,xr.min());
       
       while ((sr <= lst) && (n > sr->max))
         sr++;
@@ -250,8 +249,8 @@ namespace Gecode { namespace Int { namespace Extensional {
         n = max+1; return;
       }
       assert(n <= sr->max);
-      if (n < sr->min)
-        n = sr->min;
+      n = std::max(n,sr->min);
+
       if ((xr.min() >= n) && (n <= xr.max()))
         return;
     }
@@ -340,17 +339,36 @@ namespace Gecode { namespace Int { namespace Extensional {
   (const Compact<View,pos>& p, CTAdvisor& a, int l0, int h0)
     : n_words(p.n_words), r(a.fst()), l(l0), h(h0) {
     // Move to first value for which there is support
-    while (l > r->max)
-      r++;
-    l=std::max(l,r->min);
-    s=r->supports(n_words,l);
+    if (pos) {
+      while (l > r->max)
+        r++;
+      l = std::max(l,r->min);
+      s = r->supports(n_words,l);
+    } else {
+      while ((r <= lst) && (l > r->max))
+        r++;
+      if (r > lst) {
+        l=h+1;
+      } else {
+        l = std::max(l,r->min);
+        s = r->supports(n_words,l);
+      }
+    }
   }      
   template<class View, bool pos>
   forceinline void
   Compact<View,pos>::LostSupports::operator ++(void) {
     l++; s += n_words;
-    while ((l <= h) && (l > r->max)) {
-      r++; l=r->min; s=r->s;
+    if (pos) {
+      while ((l <= h) && (l > r->max)) {
+        r++; l=r->min; s=r->s;
+      }
+    } else {
+      while ((l <= h) && (r <= lst) && (l > r->max)) {
+        r++; l=r->min; s=r->s;
+      }
+      if (r > lst)
+        l=h+1;
     }
   }
   template<class View, bool pos>

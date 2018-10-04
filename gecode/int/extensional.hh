@@ -456,6 +456,8 @@ namespace Gecode { namespace Int { namespace Extensional {
       const unsigned int n_words;
       /// Range information
       const Range* r;
+      /// Last range
+      const Range* lst;
       /// Low value
       int l;
       /// High value
