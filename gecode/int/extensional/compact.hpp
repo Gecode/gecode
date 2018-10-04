@@ -231,6 +231,15 @@ namespace Gecode { namespace Int { namespace Extensional {
   }
 
   template<class View, bool pos>
+  forceinline unsigned long long int
+  Compact<View,pos>::size(void) const {
+    unsigned long long int s = 1U;
+    for (Advisors<CTAdvisor> as(c); as(); ++as)
+      s *= static_cast<unsigned long long int>(as.advisor().view().size());
+    return s;
+  }
+
+  template<class View, bool pos>
   forceinline void
   Compact<View,pos>::ValidSupports::find(void) {
     assert(n <= max);

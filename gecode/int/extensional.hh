@@ -495,6 +495,8 @@ namespace Gecode { namespace Int { namespace Extensional {
     const Range* range(CTAdvisor& a, int n);
     /// Return supports for value \a n
     const BitSetData* supports(CTAdvisor& a, int n);
+    /// Return size of Cartesian product of view domains
+    unsigned long long int size(void) const;
   public:
     /// Delete propagator and return its size
     size_t dispose(Space& home);
