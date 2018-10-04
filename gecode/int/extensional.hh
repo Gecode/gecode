@@ -427,10 +427,14 @@ namespace Gecode { namespace Int { namespace Extensional {
       ViewRanges<View> xr;
       /// Support iterator
       const Range* sr;
+      /// The last range
+      const Range* lst;
       /// The value
       int n;
       /// The value's support
       const BitSetData* s;
+      /// Find a new value (only for negative case)
+      void find(void);
     public:
       /// Initialize from initialized propagator
       ValidSupports(const Compact<View,pos>& p, CTAdvisor& a);

@@ -47,19 +47,32 @@ namespace Gecode { namespace Int { namespace Extensional {
   template<class View, bool pos>
   forceinline void
   Compact<View,pos>::CTAdvisor::adjust(void) {
-    {
-      int n = view().min();
-      assert((_fst->min <= n) && (n <= _lst->max));
-      while (n > _fst->max)
-        _fst++;
-      assert((_fst->min <= n) && (n <= _lst->max));
-    }
-    {
-      int n = view().max();
-      assert((_fst->min <= n) && (n <= _lst->max));
-      while (n < _lst->min)
-        _lst--;
-      assert((_fst->min <= n) && (n <= _lst->max));
+    if (pos) {
+      {
+        int n = view().min();
+        assert((_fst->min <= n) && (n <= _lst->max));
+        while (n > _fst->max)
+          _fst++;
+        assert((_fst->min <= n) && (n <= _lst->max));
+      }
+      {
+        int n = view().max();
+        assert((_fst->min <= n) && (n <= _lst->max));
+        while (n < _lst->min)
+          _lst--;
+        assert((_fst->min <= n) && (n <= _lst->max));
+      }
+    } else {
+      {
+        int n = view().min();
+        while ((_fst <= _lst) && (n > _fst->max))
+          _fst++;
+      }
+      {
+        int n = view().max();
+        while ((_fst <= _lst) && (n < _lst->min))
+          _lst--;
+      }
     }
   }
 
@@ -218,41 +231,86 @@ namespace Gecode { namespace Int { namespace Extensional {
   }
 
   template<class View, bool pos>
+  forceinline void
+  Compact<View,pos>::ValidSupports::find(void) {
+    assert(n <= max);
+    while (true) {
+      while (xr() && (n > xr.max()))
+        ++xr;
+      if (!xr()) {
+        n = max+1; return;
+      }
+      assert(n <= xr.max());
+      if (n < xr.min())
+        n = xr.min();
+      
+      while ((sr <= lst) && (n > sr->max))
+        sr++;
+      if (sr > lst) {
+        n = max+1; return;
+      }
+      assert(n <= sr->max);
+      if (n < sr->min)
+        n = sr->min;
+      if ((xr.min() >= n) && (n <= xr.max()))
+        return;
+    }
+    GECODE_NEVER;
+  }
+
+  template<class View, bool pos>
   forceinline
   Compact<View,pos>::ValidSupports::ValidSupports(const Compact<View,pos>& p,
                                                   CTAdvisor& a)
     : n_words(p.n_words), max(a.view().max()),
-      xr(a.view()), sr(a.fst()), n(xr.min()) {
-    while (n > sr->max)
-      sr++;
-    s=sr->supports(n_words,n);
+      xr(a.view()), sr(a.fst()), lst(a.lst()), n(xr.min()) {
+    if (pos) {
+      while (n > sr->max)
+        sr++;
+      s = sr->supports(n_words,n);
+    } else {
+      find();
+    }
   }
   template<class View, bool pos>
   forceinline
   Compact<View,pos>::ValidSupports::ValidSupports(const TupleSet& ts,
-                                              int i, View x)
-    : n_words(ts.words()), max(x.max()), xr(x), sr(ts.fst(i)), n(xr.min()) {
-    while (n > sr->max)
-      sr++;
-    s=sr->supports(n_words,n);
+                                                  int i, View x)
+    : n_words(ts.words()), max(x.max()),
+      xr(x), sr(ts.fst(i)), lst(ts.lst(i)), n(xr.min()) {
+    if (pos) {
+      while (n > sr->max)
+        sr++;
+      s = sr->supports(n_words,n);
+    } else {
+      find();
+    }
   }
   template<class View, bool pos>
   forceinline void
   Compact<View,pos>::ValidSupports::operator ++(void) {
     n++;
-    if (n <= xr.max()) {
-      assert(n <= sr->max);
-      s += n_words;
-    } else if (n <= max) {
-      while (n > xr.max())
-        ++xr;
-      n = xr.min();
-      while (n > sr->max)
-        sr++;
-      s = sr->supports(n_words,n);
-      assert((xr.min() <= n) && (n <= xr.max()));
-      assert((sr->min <= n) && (n <= sr->max));
-      assert(sr->min <= xr.min());
+    if (pos) {
+      if (n <= xr.max()) {
+        assert(n <= sr->max);
+        s += n_words;
+      } else if (n <= max) {
+        while (n > xr.max())
+          ++xr;
+        n = xr.min();
+        while (n > sr->max)
+          sr++;
+        s = sr->supports(n_words,n);
+        assert((xr.min() <= n) && (n <= xr.max()));
+        assert((sr->min <= n) && (n <= sr->max));
+        assert(sr->min <= xr.min());
+      }
+    } else {
+      if ((n <= sr->max) && (n <= xr.max())) {
+        s += n_words;
+      } else if (n <= max) {
+        find();
+      }
     }
   }
   template<class View, bool pos>
@@ -457,10 +515,15 @@ namespace Gecode { namespace Int { namespace Extensional {
   template<class View, class Table, bool pos>
   ExecStatus
   CompactTable<View,Table,pos>::propagate(Space& home, const ModEventDelta&) {
-    if (table.empty())
-      return ES_FAILED;
-    if (unassigned == 0)
-      return home.ES_SUBSUMED(*this);
+    if (pos) {
+      if (table.empty())
+        return ES_FAILED;
+      if (unassigned == 0)
+        return home.ES_SUBSUMED(*this);
+    } else {
+      if (table.empty() || (unassigned == 0))
+        return home.ES_SUBSUMED(*this);
+    }
 
     Status touched(status);
     // Mark as performing propagation
@@ -479,7 +542,7 @@ namespace Gecode { namespace Int { namespace Extensional {
           continue;
       }
       
-      if (x.size() == 2) { // Consider min and max values only
+      if (pos && (x.size() == 2)) { // Consider min and max values only
         if (pos) {
           if (!table.intersects(supports(a,x.min())))
             GECODE_ME_CHECK(x.eq(home,x.max()));
