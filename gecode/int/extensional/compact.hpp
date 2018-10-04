@@ -632,7 +632,6 @@ namespace Gecode { namespace Int { namespace Extensional {
   template<class View, bool pos>
   inline ExecStatus
   postcompact(Home home, ViewArray<View>& x, const TupleSet& ts) {
-    assert(ts.tuples() > 1);
 
     if (pos) {
       // All variables pruned to correct domain
@@ -646,6 +645,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     } else {
       if (ts.tuples() == 0)
         return ES_OK;
+      // Check whether a variable does not overlap
       for (int i=0; i<x.size(); i++) {
         TupleSet::Ranges rs(ts,i);
         ViewRanges<View> rx(x[i]);
@@ -653,7 +653,6 @@ namespace Gecode { namespace Int { namespace Extensional {
           return ES_OK;
       }
     }
-
 
     // Choose the right bit set implementation
     switch (ts.words()) {
