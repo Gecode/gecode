@@ -242,6 +242,7 @@ namespace Gecode { namespace Int { namespace Extensional {
   template<class View, bool pos>
   forceinline void
   Compact<View,pos>::ValidSupports::find(void) {
+    assert(!pos);
     assert(n <= max);
     while (true) {
       while (xr() && (n > xr.max()))
@@ -406,8 +407,9 @@ namespace Gecode { namespace Int { namespace Extensional {
   template<class View, bool pos>
   forceinline
   Compact<View,pos>::Compact(Home home, ViewArray<View>& x,
-                         const TupleSet& ts0)
-    : Propagator(home), unassigned(x.size()), n_words(ts0.words()),
+                             const TupleSet& ts0)
+    : Propagator(home), unassigned(x.size()), subsumed(false),
+      n_words(ts0.words()),
       status(MULTIPLE), ts(ts0), c(home) {
     home.notice(*this, AP_DISPOSE);
   }
@@ -547,30 +549,23 @@ namespace Gecode { namespace Int { namespace Extensional {
         return ES_FAILED;
       if (unassigned == 0)
         return home.ES_SUBSUMED(*this);
-    } else {
-      if (table.empty() || (unassigned == 0))
-        return home.ES_SUBSUMED(*this);
-    }
 
-    Status touched(status);
-    // Mark as performing propagation
-    status.propagating();
+      Status touched(status);
+      // Mark as performing propagation
+      status.propagating();
 
-    Region r;
-    // Scan all values of all unassigned variables to see if they
-    // are still supported.
-    for (Advisors<CTAdvisor> as(c); as(); ++as) {
-      CTAdvisor& a = as.advisor();
-      View x = a.view();
+      Region r;
+      // Scan all values of all unassigned variables to see if they
+      // are still supported.
+      for (Advisors<CTAdvisor> as(c); as(); ++as) {
+        CTAdvisor& a = as.advisor();
+        View x = a.view();
 
-      // No point filtering variable if it was the only modified variable
-      if (pos) {
+        // No point filtering variable if it was the only modified variable
         if (touched.single(a) || x.assigned())
           continue;
-      }
       
-      if (pos && (x.size() == 2)) { // Consider min and max values only
-        if (pos) {
+        if (x.size() == 2) { // Consider min and max values only
           if (!table.intersects(supports(a,x.min())))
             GECODE_ME_CHECK(x.eq(home,x.max()));
           else if (!table.intersects(supports(a,x.max())))
@@ -579,20 +574,69 @@ namespace Gecode { namespace Int { namespace Extensional {
             unassigned--;
           else
             a.adjust();
-        } else {
-          /*
-          if (const BitSetData* s=supports(a,x.min())) {
-            if (table.ones(intersects())
-            GECODE_ME_CHECK(x.eq(home,x.max()));
-          else if (!table.intersects(supports(a,x.max())))
-            GECODE_ME_CHECK(x.eq(home,x.min()));
-          if (x.assigned())
-            unassigned--;
-          else
+        } else { // x.size() > 2
+          // How many values to remove
+          int* nq = r.alloc<int>(x.size());
+          unsigned int n_nq = 0U;
+          // The initialization is here just to avoid warnings...
+          int last_support = 0;
+          for (ValidSupports vs(*this,a); vs(); ++vs)
+            if (!table.intersects(vs.supports()))
+              nq[n_nq++] = vs.val();
+            else
+              last_support = vs.val();
+          // Remove collected values
+          if (n_nq > 0U) {
+            if (n_nq == 1U) {
+              ModEvent me = x.nq(home,nq[0]);
+              if (me_failed(me)) return ES_FAILED;
+              assert(me != ME_INT_VAL);
+            } else if (n_nq == x.size() - 1U) {
+              GECODE_ME_CHECK(x.eq(home,last_support));
+              unassigned--;
+              goto noadjustp;
+            } else {
+              Iter::Values::Array rnq(nq,n_nq);
+              GECODE_ASSUME(n_nq >= 2U);
+              ModEvent me = x.minus_v(home,rnq,false);
+              if (me_failed(me)) return ES_FAILED;
+              assert(me != ME_INT_VAL);
+            }
             a.adjust();
-          */
+          noadjustp: ;
+          }
+          r.free();
         }
-      } else { // x.size() > 2
+      }
+
+      // Mark as no touched variable
+      status.none();
+      // Should not be in a failed state
+      assert(!table.empty());
+      // Subsume if there is at most one non-assigned variable
+      return (unassigned <= 1) ? home.ES_SUBSUMED(*this) : ES_FIX;
+
+    } else {
+
+      if (table.empty() || (unassigned == 0))
+        return home.ES_SUBSUMED(*this);
+      
+      Status touched(status);
+      // Mark as performing propagation
+      status.propagating();
+      
+      Region r;
+      // Scan all values of all unassigned variables to see if they
+      // are still supported.
+      for (Advisors<CTAdvisor> as(c); as(); ++as) {
+        CTAdvisor& a = as.advisor();
+        View x = a.view();
+        
+        // No point filtering variable if it was the only modified variable
+        //        if (touched.single(a) || x.assigned())
+        //          continue;
+
+        // x.size() > 2
         // How many values to remove
         int* nq = r.alloc<int>(x.size());
         unsigned int n_nq = 0U;
@@ -612,7 +656,7 @@ namespace Gecode { namespace Int { namespace Extensional {
           } else if (n_nq == x.size() - 1U) {
             GECODE_ME_CHECK(x.eq(home,last_support));
             unassigned--;
-            goto noadjust;
+            goto noadjustn;
           } else {
             Iter::Values::Array rnq(nq,n_nq);
             GECODE_ASSUME(n_nq >= 2U);
@@ -621,18 +665,18 @@ namespace Gecode { namespace Int { namespace Extensional {
             assert(me != ME_INT_VAL);
           }
           a.adjust();
-        noadjust: ;
+        noadjustn: ;
         }
         r.free();
       }
-    }
 
-    // Mark as no touched variable
-    status.none();
-    // Should not be in a failed state
-    assert(!table.empty());
-    // Subsume if there is at most one non-assigned variable
-    return (unassigned <= 1) ? home.ES_SUBSUMED(*this) : ES_FIX;
+      // Mark as no touched variable
+      status.none();
+      // Should not be in a failed state
+      assert(!table.empty());
+      // Subsume if there is at most one non-assigned variable
+      return (unassigned <= 1) ? home.ES_SUBSUMED(*this) : ES_FIX;
+    }
   }
 
   template<class View, class Table, bool pos>
@@ -653,66 +697,136 @@ namespace Gecode { namespace Int { namespace Extensional {
                                        Advisor& a0, const Delta& d) {
     CTAdvisor& a = static_cast<CTAdvisor&>(a0);
 
-    // Do not fail a disabled propagator
-    if (table.empty())
-      return Compact<View,pos>::disabled() ?
-        home.ES_NOFIX_DISPOSE(c,a) : ES_FAILED;
-    
-    View x = a.view();
-
-    /* 
-     * Do not schedule if propagator is performing propagation,
-     * and dispose if assigned.
-     */ 
-    if (status.type() == StatusType::PROPAGATING)
-      return x.assigned() ? home.ES_FIX_DISPOSE(c,a) : ES_FIX;
-
-    // Update status
-    status.touched(a);
-
-    if (x.assigned()) {
-      // Variable is assigned -- intersect with its value
-      table.template intersect_with_mask<true>(supports(a,x.val()));
-      unassigned--;
-      return home.ES_NOFIX_DISPOSE(c,a);
-    }
-
-    if (!x.any(d) && (x.min(d) == x.max(d))) {
-      table.nand_with_mask(supports(a,x.min(d)));
-      a.adjust();
-    } else if (!x.any(d) && (x.width(d) <= x.size())) {
-      // Incremental update, using the removed values
-      for (LostSupports ls(*this,a,x.min(d),x.max(d)); ls(); ++ls) {
-        table.nand_with_mask(ls.supports());
-        if (table.empty())
-          return Compact<View,pos>::disabled() ?
-            home.ES_NOFIX_DISPOSE(c,a) : ES_FAILED;
+    if (pos) {
+      // Do not fail a disabled propagator
+      if (table.empty())
+        return Compact<View,pos>::disabled() ?
+          home.ES_NOFIX_DISPOSE(c,a) : ES_FAILED;
+      
+      View x = a.view();
+      
+      /* 
+       * Do not schedule if propagator is performing propagation,
+       * and dispose if assigned.
+       */ 
+      if (status.type() == StatusType::PROPAGATING)
+        return x.assigned() ? home.ES_FIX_DISPOSE(c,a) : ES_FIX;
+      
+      // Update status
+      status.touched(a);
+      
+      if (x.assigned()) {
+        // Variable is assigned -- intersect with its value
+        table.template intersect_with_mask<true>(supports(a,x.val()));
+        unassigned--;
+        return home.ES_NOFIX_DISPOSE(c,a);
       }
-      a.adjust();
-    } else {
-      a.adjust();
-      // Reset-based update, using the values that are left
-      if (x.size() == 2) {
-        table.intersect_with_masks(supports(a,x.min()),
-                                   supports(a,x.max()));
+      
+      if (!x.any(d) && (x.min(d) == x.max(d))) {
+        table.nand_with_mask(supports(a,x.min(d)));
+        a.adjust();
+      } else if (!x.any(d) && (x.width(d) <= x.size())) {
+        // Incremental update, using the removed values
+        for (LostSupports ls(*this,a,x.min(d),x.max(d)); ls(); ++ls) {
+          table.nand_with_mask(ls.supports());
+          if (table.empty())
+            return Compact<View,pos>::disabled() ?
+              home.ES_NOFIX_DISPOSE(c,a) : ES_FAILED;
+        }
+        a.adjust();
       } else {
-        Region r;
-        BitSetData* mask = r.alloc<BitSetData>(table.size());
-        // Collect all tuples to be kept in a temporary mask
-        table.clear_mask(mask);
-        for (ValidSupports vs(*this,a); vs(); ++vs)
-          table.add_to_mask(vs.supports(),mask);
-        table.template intersect_with_mask<false>(mask);
+        a.adjust();
+        // Reset-based update, using the values that are left
+        if (x.size() == 2) {
+          table.intersect_with_masks(supports(a,x.min()),
+                                     supports(a,x.max()));
+        } else {
+          Region r;
+          BitSetData* mask = r.alloc<BitSetData>(table.size());
+          // Collect all tuples to be kept in a temporary mask
+          table.clear_mask(mask);
+          for (ValidSupports vs(*this,a); vs(); ++vs)
+            table.add_to_mask(vs.supports(),mask);
+          table.template intersect_with_mask<false>(mask);
+        }
       }
-    }
 
-    // Do not fail a disabled propagator
-    if (table.empty())
-      return Compact<View,pos>::disabled() ?
-        home.ES_NOFIX_DISPOSE(c,a) : ES_FAILED;
-    
-    // Schedule propagator
-    return ES_NOFIX;
+      // Do not fail a disabled propagator
+      if (table.empty())
+        return Compact<View,pos>::disabled() ?
+          home.ES_NOFIX_DISPOSE(c,a) : ES_FAILED;
+      
+      // Schedule propagator
+      return ES_NOFIX;
+    } else {
+      // We are subsumed
+      if (table.empty()) {
+        subsumed = true;
+        return home.ES_NOFIX_DISPOSE(c,a);
+      }
+      
+      View x = a.view();
+      
+      /* 
+       * Do not schedule if propagator is performing propagation,
+       * and dispose if assigned.
+       */ 
+      if (status.type() == StatusType::PROPAGATING)
+        return x.assigned() ? home.ES_FIX_DISPOSE(c,a) : ES_FIX;
+      
+      // Update status
+      status.touched(a);
+      
+      if (x.assigned()) {
+        unassigned--;
+        // Variable is assigned -- intersect with its value
+        const BitSetData* s = supports(a,x.val());
+        if (!s) {
+          subsumed = true;
+        } else {
+          table.template intersect_with_mask<true>(s);
+        }
+        return home.ES_NOFIX_DISPOSE(c,a);
+      }
+      
+      if (!x.any(d) && (x.min(d) == x.max(d))) {
+        const BitSetData* s = supports(a,x.min(d));
+        if (s)
+          table.nand_with_mask(s);
+        a.adjust();
+      } else if (!x.any(d) && (x.width(d) <= x.size())) {
+        // Incremental update, using the removed values
+        for (LostSupports ls(*this,a,x.min(d),x.max(d)); ls(); ++ls) {
+          table.nand_with_mask(ls.supports());
+          if (table.empty())
+            return home.ES_NOFIX_DISPOSE(c,a);
+        }
+        a.adjust();
+      } else {
+        a.adjust();
+        // Reset-based update, using the values that are left
+        if (x.size() == 2) {
+          table.intersect_with_masks(supports(a,x.min()),
+                                     supports(a,x.max()));
+        } else {
+          Region r;
+          BitSetData* mask = r.alloc<BitSetData>(table.size());
+          // Collect all tuples to be kept in a temporary mask
+          table.clear_mask(mask);
+          for (ValidSupports vs(*this,a); vs(); ++vs)
+            table.add_to_mask(vs.supports(),mask);
+          table.template intersect_with_mask<false>(mask);
+        }
+      }
+
+      // Do not fail a disabled propagator
+      if (table.empty())
+        return Compact<View,pos>::disabled() ?
+          home.ES_NOFIX_DISPOSE(c,a) : ES_FAILED;
+      
+      // Schedule propagator
+      return ES_NOFIX;
+    }
   }
 
 

@@ -479,6 +479,7 @@ namespace Gecode { namespace Int { namespace Extensional {
   protected:
     /// Number of unassigned views
     int unassigned;
+    bool subsumed;
     /// Number of words in supports
     const unsigned int n_words;
     /// Propagator status
