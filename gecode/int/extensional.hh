@@ -220,6 +220,7 @@ namespace Gecode { namespace Int { namespace Extensional {
 
 #include <gecode/int/extensional/layered-graph.hpp>
 
+#include <bitset>
 
 namespace Gecode { namespace Int { namespace Extensional {
 
@@ -263,6 +264,8 @@ namespace Gecode { namespace Int { namespace Extensional {
     unsigned int limit(void) const;
     /// Check whether the set is empty
     bool empty(void) const;
+    /// Make the set empty
+    void flush(void);
     /// Return the highest active index
     unsigned int width(void) const;
     /// Clear the first \a limit words in \a mask
@@ -286,6 +289,8 @@ namespace Gecode { namespace Int { namespace Extensional {
     unsigned int words(void) const;
     /// Return the number of required bit set words
     unsigned int size(void) const;
+
+    void print(void) const;
   };
 
 }}}
@@ -314,6 +319,8 @@ namespace Gecode { namespace Int { namespace Extensional {
     int limit(void) const;
     /// Check whether the set is empty
     bool empty(void) const;
+    /// Make the set empty
+    void flush(void);
     /// Return the highest active index
     unsigned int width(void) const;
     /// Clear the first \a limit words in \a mask
@@ -339,6 +346,8 @@ namespace Gecode { namespace Int { namespace Extensional {
     unsigned int words(void) const;
     /// Return the total number of words
     unsigned int size(void) const;
+
+    void print(void) const;
   };
       
 }}}
@@ -479,7 +488,6 @@ namespace Gecode { namespace Int { namespace Extensional {
   protected:
     /// Number of unassigned views
     int unassigned;
-    bool subsumed;
     /// Number of words in supports
     const unsigned int n_words;
     /// Propagator status

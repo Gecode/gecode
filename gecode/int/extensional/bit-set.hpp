@@ -99,7 +99,14 @@ namespace Gecode { namespace Int { namespace Extensional {
       index[i] = static_cast<IndexType>(bs.index[i]);
     }
   }
-  
+
+  template<class IndexType>
+  forceinline void
+  BitSet<IndexType>::flush(void) {
+    _limit = 0U;
+    assert(empty());
+  }
+    
   template<class IndexType>
   forceinline
   BitSet<IndexType>::BitSet(Space&, const TinyBitSet<1U>&) {
@@ -232,6 +239,18 @@ namespace Gecode { namespace Int { namespace Extensional {
     for (IndexType i=0; i<_limit; i++)
       o += bits[i].ones();
     return o;
+  }
+    
+  template<class IndexType>
+  forceinline void
+  BitSet<IndexType>::print(void) const {
+    std::cout << "[";
+    for (IndexType i=0; i<_limit; i++) {
+      bits[i].print();
+      std::cout << " ";
+    }
+    std::cout << "]";
+    std::cout << std::endl;
   }
     
 }}}

@@ -57,6 +57,9 @@
 
 #endif
 
+#include <bitset>
+#include <iostream>
+
 namespace Gecode { namespace Support {
 
   class RawBitSetBase;
@@ -124,6 +127,10 @@ namespace Gecode { namespace Support {
     bool operator !=(BitSetData a) const;
     /// Invert all bits in \a b
     BitSetData operator ~(void) const;
+    void print(void) const {
+      std::bitset<sizeof(Base)*8> bs(bits);
+      std::cout << bs;
+    }
   };
 
   /// Status of a bitset

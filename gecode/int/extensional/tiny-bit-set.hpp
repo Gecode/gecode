@@ -116,14 +116,22 @@ namespace Gecode { namespace Int { namespace Extensional {
        bits[i] = BitSetData::a(bits[i],~(b[i]));
    }
 
-   template<unsigned int sz>
-   forceinline bool
-   TinyBitSet<sz>::intersects(const BitSetData* b) {
-     for (unsigned int i=0U; i<sz; i++)
-       if (!BitSetData::a(bits[i],b[i]).none())
-         return true;
-     return false;
-   }
+  template<unsigned int sz>
+  forceinline void
+  TinyBitSet<sz>::flush(void) {
+    for (unsigned int i=0U; i<sz; i++)
+      bits[i].init(false);
+    assert(empty());
+  }
+  
+  template<unsigned int sz>
+  forceinline bool
+  TinyBitSet<sz>::intersects(const BitSetData* b) {
+    for (unsigned int i=0U; i<sz; i++)
+      if (!BitSetData::a(bits[i],b[i]).none())
+        return true;
+    return false;
+  }
 
   template<unsigned int sz>
   forceinline unsigned int
@@ -175,6 +183,19 @@ namespace Gecode { namespace Int { namespace Extensional {
    TinyBitSet<sz>::size(void) const {
      return sz;
    }
+
+  template<unsigned int sz>
+  forceinline void
+  TinyBitSet<sz>::print(void) const {
+    std::cout << "[";
+    for (unsigned int i=0; i<sz; i++) {
+      bits[i].print();
+      std::cout << " ";
+    }
+    std::cout << "]";
+    std::cout << std::endl;
+  }
+    
 
 }}}
 
