@@ -69,6 +69,14 @@ Date: 2018-??-??
 More C++-11
 
 [ENTRY]
+Module: int
+What:   bug
+Rank:   major
+[DESCRIPTION]
+Fixed scheduling for Boolean variables (funnily, only occured
+with a newly added propagator).
+
+[ENTRY]
 Module: kernel
 What:   bug
 Rank:   minor
