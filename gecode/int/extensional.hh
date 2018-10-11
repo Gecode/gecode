@@ -566,6 +566,12 @@ namespace Gecode { namespace Int { namespace Extensional {
     size_t dispose(Space& home);
     /// Give advice to propagator
     virtual ExecStatus advise(Space& home, Advisor& a, const Delta& d);
+
+
+
+
+
+    void dump(void);
   };
 
   /// Post function for compact table propagator

@@ -82,16 +82,7 @@ namespace Gecode { namespace Int { namespace Extensional {
   (Space& home, Propagator& p, 
    Council<CTAdvisor>& c, const TupleSet& ts, View x0, int i)
     : ViewAdvisor<View>(home,p,c,x0), _fst(ts.fst(i)), _lst(ts.lst(i)) {
-    /*    std::cout << "CTAdvisor(" << i << "," << x << ")" << std::endl;    
-    for (const Range* r = _fst; r <= _lst; r++)
-      std::cout << "\t" << r->min << "..." << r->max << std::endl;
-    std::cout << "adjust()" << std::endl;
-    */
     adjust();
-    /*
-    for (const Range* r = _fst; r <= _lst; r++)
-      std::cout << "\t" << r->min << "..." << r->max << std::endl;
-    */
   }
 
   template<class View, bool pos>
@@ -253,28 +244,14 @@ namespace Gecode { namespace Int { namespace Extensional {
   template<class View, bool pos>
   forceinline void
   Compact<View,pos>::ValidSupports::find(void) {
-    //    std::cout << "ValidSupports:find()" << std::endl;
     assert(!pos);
     assert(n <= max);
     while (true) {
-      /*
-      std::cout << "find..." << std::endl;
-      if (xr()) {
-        std::cout << "\t(1) xr(), min=" << xr.min() << ", max="
-                  << xr.max() << std::endl;
-      }
-      */
       while (xr() && (n > xr.max()))
         ++xr;
       if (!xr()) {
         n = max+1; return;
       }
-      /*
-      if (xr()) {
-        std::cout << "\t(2) xr(), min=" << xr.min() << ", max="
-                  << xr.max() << ", n=" << n << std::endl;
-      }
-      */
       assert(n <= xr.max());
       n = std::max(n,xr.min());
       
@@ -319,19 +296,12 @@ namespace Gecode { namespace Int { namespace Extensional {
         sr++;
       s = sr->supports(n_words,n);
     } else {
-      //      std::cout << "ValidSupports(" << i << "," << x << ")" << std::endl;
       find();
-      /*
-      std::cout << "\t" << "n=" << n << ", max=" << max << std::endl;
-      for (const Range* r = ts.fst(i); r <= ts.lst(i); r++)
-        std::cout << "\t\t" << r->min << "..." << r->max << std::endl;
-      */
     }
   }
   template<class View, bool pos>
   forceinline void
   Compact<View,pos>::ValidSupports::operator ++(void) {
-    //    std::cout << "ValidSupports:++()" << std::endl;
     n++;
     if (pos) {
       if (n <= xr.max()) {
@@ -547,10 +517,11 @@ namespace Gecode { namespace Int { namespace Extensional {
     }
     // Schedule propagator
   schedule:
-    if (unassigned < x.size())
+    //    std::cout << "SCHEDULE" << std::endl;
+    //    if (unassigned < x.size())
       View::schedule(home,*this,ME_INT_VAL);
-    else
-      View::schedule(home,*this,ME_INT_BND);
+      //    else
+      //      View::schedule(home,*this,ME_INT_BND);
   }
       
   template<class View, class Table, bool pos>
@@ -690,8 +661,16 @@ namespace Gecode { namespace Int { namespace Extensional {
         assert(n == unassigned);
       }
 #endif
-      //      std::cout << "propagate()" << std::endl;
-      //      table.print();
+      /*
+      std::cout << "propagate..." << std::endl
+                << "\ttable: ";
+      table.print();
+      std::cout << std::endl
+                << "\tones: " << table.ones() << std::endl
+                << "\tunassigned: " << unassigned << std::endl
+                << "\tsize: "  << size() << std::endl;
+      */
+
       if (table.empty())
         return home.ES_SUBSUMED(*this);
 
@@ -768,6 +747,18 @@ namespace Gecode { namespace Int { namespace Extensional {
       */
       return ES_NOFIX;
     }
+  }
+
+  template<class View, class Table, bool pos>
+  void
+  CompactTable<View,Table,pos>::dump(void) {
+      std::cout << "dump..." << std::endl
+                << "\ttable: ";
+      table.print();
+      std::cout << std::endl
+                << "\tones: " << table.ones() << std::endl
+                << "\tunassigned: " << unassigned << std::endl
+                << "\tsize: "  << size() << std::endl;
   }
 
   template<class View, class Table, bool pos>
