@@ -3244,6 +3244,14 @@ namespace Gecode {
   Space::operator ()(Propagator& p) {
     return Home(*this,&p);
   }
+  forceinline Home
+  Space::operator ()(PropagatorGroup pg) {
+    return Home(*this,NULL,pg,BrancherGroup::def);
+  }
+  forceinline Home
+  Space::operator ()(BrancherGroup bg) {
+    return Home(*this,NULL,PropagatorGroup::def,bg);
+  }
   forceinline Propagator*
   Home::propagator(void) const {
     return p;

@@ -70,6 +70,22 @@ More C++-11
 
 [ENTRY]
 Module: int
+What:   bug
+Rank:   major
+[DESCRIPTION]
+Fixed scheduling for Boolean variables (funnily, only occured
+with a newly added propagator).
+
+[ENTRY]
+Module: kernel
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Added missing definitions for declarations of creating Home
+objects from spaces with propagator and brancher groups.
+
+[ENTRY]
+Module: int
 What:   new
 Rank:   major
 Author:	Samuel Gagnon
