@@ -402,9 +402,8 @@ namespace Gecode { namespace Int {
   }
 
   forceinline void
-  BoolVarImp::schedule(Space& home, Propagator& p, ModEvent me) {
-    if (me == ME_GEN_ASSIGNED)
-      BoolVarImpBase::schedule(home,p,me);
+  BoolVarImp::schedule(Space& home, Propagator& p, ModEvent) {
+    BoolVarImpBase::schedule(home,p,ME_BOOL_VAL);
   }
 
   forceinline ModEventDelta
