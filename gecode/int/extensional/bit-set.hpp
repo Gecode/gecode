@@ -241,18 +241,6 @@ namespace Gecode { namespace Int { namespace Extensional {
     return o;
   }
     
-  template<class IndexType>
-  forceinline void
-  BitSet<IndexType>::print(void) const {
-    std::cout << "[";
-    for (IndexType i=0; i<_limit; i++) {
-      bits[i].print();
-      std::cout << " ";
-    }
-    std::cout << "]";
-    std::cout << std::endl;
-  }
-    
 }}}
 
 // STATISTICS: int-prop

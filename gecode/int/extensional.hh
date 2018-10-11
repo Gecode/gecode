@@ -220,8 +220,6 @@ namespace Gecode { namespace Int { namespace Extensional {
 
 #include <gecode/int/extensional/layered-graph.hpp>
 
-#include <bitset>
-
 namespace Gecode { namespace Int { namespace Extensional {
 
   /// Import type
@@ -289,8 +287,6 @@ namespace Gecode { namespace Int { namespace Extensional {
     unsigned int words(void) const;
     /// Return the number of required bit set words
     unsigned int size(void) const;
-
-    void print(void) const;
   };
 
 }}}
@@ -346,8 +342,6 @@ namespace Gecode { namespace Int { namespace Extensional {
     unsigned int words(void) const;
     /// Return the total number of words
     unsigned int size(void) const;
-
-    void print(void) const;
   };
       
 }}}
@@ -519,7 +513,9 @@ namespace Gecode { namespace Int { namespace Extensional {
    *   J. Demeulenaere et. al., Compact-Table: Efficiently
    *   filtering table constraints with reversible sparse
    *   bit-sets, CP 2016.
-   *   Pages 207-223, LNCS, Springer, 2016.
+   * and (negative tables) on:
+   *   H. Verhaeghe et al., Extending Compact-Table to
+   *   Negative and Short Tables. AAAI 2017.
    *
    * Requires \code #include <gecode/int/extensional.hh> \endcode
    * \ingroup FuncIntProp
@@ -566,12 +562,6 @@ namespace Gecode { namespace Int { namespace Extensional {
     size_t dispose(Space& home);
     /// Give advice to propagator
     virtual ExecStatus advise(Space& home, Advisor& a, const Delta& d);
-
-
-
-
-
-    void dump(void);
   };
 
   /// Post function for compact table propagator

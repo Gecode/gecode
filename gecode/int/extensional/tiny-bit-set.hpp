@@ -184,19 +184,6 @@ namespace Gecode { namespace Int { namespace Extensional {
      return sz;
    }
 
-  template<unsigned int sz>
-  forceinline void
-  TinyBitSet<sz>::print(void) const {
-    std::cout << "[";
-    for (unsigned int i=0; i<sz; i++) {
-      bits[i].print();
-      std::cout << " ";
-    }
-    std::cout << "]";
-    std::cout << std::endl;
-  }
-    
-
 }}}
 
 // STATISTICS: int-prop

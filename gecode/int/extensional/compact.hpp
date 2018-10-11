@@ -437,7 +437,7 @@ namespace Gecode { namespace Int { namespace Extensional {
   forceinline
   CompactTable<View,Table,pos>::CompactTable(Space& home, TableProp& p)
     : Compact<View,pos>(home,p), table(home,p.table) {
-    assert(!table.empty());
+    assert(!empty());
   }
 
   template<class View, class Table, bool pos>
@@ -505,7 +505,7 @@ namespace Gecode { namespace Int { namespace Extensional {
         table.add_to_mask(vs.supports(),mask);
       table.template intersect_with_mask<false>(mask);
       // If negative, the propagator must be scheduled for subsumption
-      if (table.empty())
+      if (empty())
         goto schedule;
     }
     // Post advisors
@@ -517,11 +517,10 @@ namespace Gecode { namespace Int { namespace Extensional {
     }
     // Schedule propagator
   schedule:
-    //    std::cout << "SCHEDULE" << std::endl;
-    //    if (unassigned < x.size())
+    if (unassigned < x.size())
       View::schedule(home,*this,ME_INT_VAL);
-      //    else
-      //      View::schedule(home,*this,ME_INT_BND);
+    else
+      View::schedule(home,*this,ME_INT_BND);
   }
       
   template<class View, class Table, bool pos>
@@ -569,7 +568,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     if (pos) {
       // Modified variable, subsumption, or failure
       if ((status.type() != StatusType::NONE) || 
-          (unassigned == 0) || table.empty())
+          (unassigned == 0) || empty())
         View::schedule(home,*this,ME_INT_DOM);
     } else {
       View::schedule(home,*this,ME_INT_DOM);
@@ -580,7 +579,7 @@ namespace Gecode { namespace Int { namespace Extensional {
   ExecStatus
   CompactTable<View,Table,pos>::propagate(Space& home, const ModEventDelta&) {
     if (pos) {
-      if (table.empty())
+      if (empty())
         return ES_FAILED;
       if (unassigned == 0)
         return home.ES_SUBSUMED(*this);
@@ -647,11 +646,12 @@ namespace Gecode { namespace Int { namespace Extensional {
       // Mark as no touched variable
       status.none();
       // Should not be in a failed state
-      assert(!table.empty());
+      assert(!empty());
       // Subsume if there is at most one non-assigned variable
       return (unassigned <= 1) ? home.ES_SUBSUMED(*this) : ES_FIX;
 
     } else {
+
 #ifndef NDEBUG
       if (!empty()) {
         // Check whether number of unassigned views and advisors match
@@ -661,36 +661,17 @@ namespace Gecode { namespace Int { namespace Extensional {
         assert(n == unassigned);
       }
 #endif
-      /*
-      std::cout << "propagate..." << std::endl
-                << "\ttable: ";
-      table.print();
-      std::cout << std::endl
-                << "\tones: " << table.ones() << std::endl
-                << "\tunassigned: " << unassigned << std::endl
-                << "\tsize: "  << size() << std::endl;
-      */
 
-      if (table.empty())
+      if (empty())
         return home.ES_SUBSUMED(*this);
 
       Region r;
       // Size of the Cartesian product
       unsigned long long int xs = size();
-      //      std::cout << "\t(2)xs=" << xs << std::endl;
+
       // Scan all values of all unassigned variables to see if they
       // are still supported.
       for (Advisors<CTAdvisor> as(c); as(); ++as) {
-        if (xs != size()) {
-      std::cout << "BANG..." << std::endl
-                << "\ttable: ";
-      table.print();
-      std::cout << std::endl
-                << "\tones: " << table.ones() << std::endl
-                << "\tunassigned: " << unassigned << std::endl
-                << "\tsize: "  << size() << std::endl
-                << "\txs: "  << xs << std::endl;
-        }
         assert(xs == size());
         CTAdvisor& a = as.advisor();
         View x = a.view();
@@ -703,10 +684,8 @@ namespace Gecode { namespace Int { namespace Extensional {
         xs /= x.size();
 
         ValidSupports vs(*this,a);
-        if (!vs()) {
-          // No valid supports left, subsumed
-          return home.ES_SUBSUMED(*this);
-        }
+        if (!vs())
+          return home.ES_SUBSUMED(*this); // No valid supports left, subsumed
 
         for (; vs(); ++vs)
           if (table.ones(vs.supports()) == xs)
@@ -721,7 +700,7 @@ namespace Gecode { namespace Int { namespace Extensional {
             GECODE_ASSUME(n_nq >= 2U);
             GECODE_ME_CHECK(x.minus_v(home,rnq,false));
           }
-          if (table.empty())
+          if (empty())
             return home.ES_SUBSUMED(*this);
           a.adjust();
         }
@@ -731,34 +710,12 @@ namespace Gecode { namespace Int { namespace Extensional {
         r.free();
       }
 
-      // FIXME
-      if (full())
+      if (table.ones() == xs)
         return ES_FAILED;
-      if (table.empty() || (unassigned <= 1))
+      if (empty() || (unassigned <= 1))
         return home.ES_SUBSUMED(*this);
-      /*
-      std::cout << "Leaving..." << std::endl
-                << "\ttable: ";
-      table.print();
-      std::cout << std::endl
-                << "\tones: " << table.ones() << std::endl
-                << "\tunassigned: " << unassigned << std::endl
-                << "\tsize: "  << size() << std::endl;
-      */
-      return ES_NOFIX;
+      return ES_FIX;
     }
-  }
-
-  template<class View, class Table, bool pos>
-  void
-  CompactTable<View,Table,pos>::dump(void) {
-      std::cout << "dump..." << std::endl
-                << "\ttable: ";
-      table.print();
-      std::cout << std::endl
-                << "\tones: " << table.ones() << std::endl
-                << "\tunassigned: " << unassigned << std::endl
-                << "\tsize: "  << size() << std::endl;
   }
 
   template<class View, class Table, bool pos>
@@ -769,7 +726,7 @@ namespace Gecode { namespace Int { namespace Extensional {
 
     if (pos) {
       // Do not fail a disabled propagator
-      if (table.empty())
+      if (empty())
         return Compact<View,pos>::disabled() ?
           home.ES_NOFIX_DISPOSE(c,a) : ES_FAILED;
       
@@ -799,7 +756,7 @@ namespace Gecode { namespace Int { namespace Extensional {
         // Incremental update, using the removed values
         for (LostSupports ls(*this,a,x.min(d),x.max(d)); ls(); ++ls) {
           table.nand_with_mask(ls.supports());
-          if (table.empty())
+          if (empty())
             return Compact<View,pos>::disabled() ?
               home.ES_NOFIX_DISPOSE(c,a) : ES_FAILED;
         }
@@ -822,59 +779,39 @@ namespace Gecode { namespace Int { namespace Extensional {
       }
 
       // Do not fail a disabled propagator
-      if (table.empty())
+      if (empty())
         return Compact<View,pos>::disabled() ?
           home.ES_NOFIX_DISPOSE(c,a) : ES_FAILED;
       
       // Schedule propagator
       return ES_NOFIX;
     } else {
-      /*
-      std::cout << "advise(" << a.view() << ")" << std::endl
-                << "\ttable: ";
-      table.print();
-      std::cout << std::endl
-                << "\tones: " << table.ones() << std::endl
-                << "\tunassigned: " << unassigned << std::endl
-                << "\tsize: "  << size() << std::endl;
-      */
+
       // We are subsumed
-      if (table.empty())
+      if (empty())
         return home.ES_NOFIX_DISPOSE(c,a);
       
       View x = a.view();
       
       if (x.assigned()) {
-        //        std::cout << "\t(2) x.assigned()=" << x.val() << std::endl;
         unassigned--;
         // Variable is assigned -- intersect with its value
-        const BitSetData* s = supports(a,x.val());
-        if (!s) {
-          table.flush();
-          //          std::cout << "\t(3) subsumed..." << std::endl;
-        } else {
+        if (const BitSetData* s = supports(a,x.val()))
           table.template intersect_with_mask<true>(s);
-        }
-        //        std::cout << "\t(4) leave table..." << std::endl;
-        //        table.print();
+        else
+          table.flush(); // Mark as subsumed
         return home.ES_NOFIX_DISPOSE(c,a);
       }
       
-      /*
-      if (!x.any(d) && (x.min(d) == x.max(d))) {
-        const BitSetData* s = supports(a,x.min(d));
-        if (s)
-          table.nand_with_mask(s);
-        a.adjust();
-      } else {
-      */
+      a.adjust();
+
       {
-        a.adjust();
         ValidSupports vs(*this,a);
         if (!vs()) {
-          table.flush();
+          table.flush(); // Mark as subsumed
           return home.ES_NOFIX_DISPOSE(c,a);
         }
+
         Region r;
         BitSetData* mask = r.alloc<BitSetData>(table.size());
         // Collect all tuples to be kept in a temporary mask
@@ -884,7 +821,7 @@ namespace Gecode { namespace Int { namespace Extensional {
         table.template intersect_with_mask<false>(mask);
       }
 
-      if (table.empty())
+      if (empty())
         return home.ES_NOFIX_DISPOSE(c,a);
       
       // Schedule propagator
@@ -901,6 +838,7 @@ namespace Gecode { namespace Int { namespace Extensional {
   postcompact(Home home, ViewArray<View>& x, const TupleSet& ts) {
 
     if (pos) {
+
       // All variables pruned to correct domain
       for (int i=0; i<x.size(); i++) {
         TupleSet::Ranges r(ts,i);
@@ -909,16 +847,20 @@ namespace Gecode { namespace Int { namespace Extensional {
 
       if ((x.size() <= 1) || (ts.tuples() <= 1))
         return ES_OK;
+
     } else {
+
       if (ts.tuples() == 0)
         return ES_OK;
-      // Check whether a variable does not overlap
+
+      // Check whether a variable does not overlap with supported values
       for (int i=0; i<x.size(); i++) {
         TupleSet::Ranges rs(ts,i);
         ViewRanges<View> rx(x[i]);
         if (Iter::Ranges::disjoint(rs,rx))
           return ES_OK;
       }
+
     }
 
     // Choose the right bit set implementation
