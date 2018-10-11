@@ -55,11 +55,22 @@ protected:
 public:
   /// Actual model
   Alpha(const Options& opt)
-    : Script(opt), x(*this,3,0,3) {
+    : Script(opt), x(*this,4,0,6) {
     TupleSet t(3);
     t.add({0,0,0}).add({1,1,1})
       .add({0,1,2}).add({2,1,0}).finalize();
-    extensional(*this, x, t, false);
+             TupleSet ts(4);
+             ts.add({2, 1, 2, 4}).add({2, 2, 1, 4})
+               .add({4, 3, 4, 1}).add({1, 3, 2, 3})
+               .add({3, 3, 3, 2}).add({5, 1, 4, 4})
+               .add({2, 5, 1, 5}).add({4, 3, 5, 1})
+               .add({1, 5, 2, 5}).add({5, 3, 3, 2})
+               .finalize();
+    extensional(*this, x, ts);
+    rel(*this, x[0] == 1);
+    rel(*this, x[1] == 3);
+    rel(*this, x[2] == 2);
+    rel(*this, x[3] == 3);
 
     branch(*this, x, INT_VAR_NONE(), INT_VAL_MIN());
   }

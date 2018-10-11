@@ -92,7 +92,7 @@ namespace Gecode {
   }
 
   void
-  extensional(Home home, const BoolVarArgs& x, const TupleSet& t,
+  extensional(Home home, const BoolVarArgs& x, const TupleSet& t, bool pos,
               IntPropLevel) {
     using namespace Int;
     if (!t.finalized())
@@ -103,16 +103,25 @@ namespace Gecode {
       throw NotZeroOne("Int::extensional");
     GECODE_POST;
 
-    if (t.tuples()==0) {
-      if (x.size()!=0) {
-        home.fail();
+    if (pos) {
+      if (t.tuples() == 0) {
+        if (x.size() != 0)
+          home.fail();
+        return;
       }
-      return;
+      
+      // Construct view array
+      ViewArray<BoolView> xv(home,x);
+      GECODE_ES_FAIL((Extensional::postcompact<BoolView,true>(home,xv,t)));
+    } else {
+      if (t.tuples() == 0)
+        return;
+      
+      // Construct view array
+      ViewArray<BoolView> xv(home,x);
+      GECODE_ES_FAIL((Extensional::postcompact<BoolView,false>(home,xv,t)));
+      
     }
-
-    // Construct view array
-    ViewArray<BoolView> xv(home,x);
-    GECODE_ES_FAIL((Extensional::postcompact<BoolView,true>(home,xv,t)));
   }
 
 }

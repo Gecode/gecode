@@ -542,6 +542,10 @@ namespace Gecode { namespace Int { namespace Extensional {
 
     /// Current table
     Table table;
+    /// Check whether the table is empty
+    bool empty(void) const;
+    /// Check whether the table is full (complete)
+    bool full(void) const;
     /// Constructor for cloning \a p
     template<class TableProp>
     CompactTable(Space& home, TableProp& p);

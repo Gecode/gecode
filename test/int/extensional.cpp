@@ -579,8 +579,7 @@ namespace Test { namespace Int {
          BoolVarArgs y(x.size());
          for (int i = x.size(); i--; )
            y[i] = channel(home, x[i]);
-         //         extensional(home, y, t, pos, ipl);
-         extensional(home, y, t, ipl);
+         extensional(home, y, t, pos, ipl);
        }
      };
 
