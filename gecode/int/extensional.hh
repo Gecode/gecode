@@ -386,36 +386,6 @@ namespace Gecode { namespace Int { namespace Extensional {
       /// Dispose advisor
       void dispose(Space& home, Council<CTAdvisor>& c);
     };
-    /// \name Status management
-    //@{ 
-    /// Type of status
-    enum StatusType {
-      SINGLE      = 0, ///< A single view has been touched
-      MULTIPLE    = 1, ///< Multiple view have been touched
-      NONE        = 2, ///< No view has been touched
-      PROPAGATING = 3  ///< The propagator is currently running
-    };
-    /// Status management
-    class Status {
-    protected:
-      /// A tagged pointer for storing the status
-      ptrdiff_t s;
-    public:
-      /// Initialize with type \a t (either NONE or SEVERAL)
-      Status(StatusType t);
-      /// Copy constructor
-      Status(const Status& s);
-      /// Return status type
-      StatusType type(void) const;
-      /// Check whether status is single and equal to \a a
-      bool single(CTAdvisor& a) const;
-      /// Set status to SINGLE or MULTIPLE depending on \a a
-      void touched(CTAdvisor& a);
-      /// Set status to NONE
-      void none(void);
-      /// Set status to PROPAGATING
-      void propagating(void);
-    };
     //@}
     /// \name Support iterators
     //@{
@@ -484,8 +454,6 @@ namespace Gecode { namespace Int { namespace Extensional {
     int unassigned;
     /// Number of words in supports
     const unsigned int n_words;
-    /// Propagator status
-    Status status;
     /// The tuple set
     TupleSet ts;
     /// The advisor council
@@ -526,16 +494,45 @@ namespace Gecode { namespace Int { namespace Extensional {
     typedef typename Compact<View,pos>::ValidSupports ValidSupports;
     typedef typename Compact<View,pos>::Range Range;
     typedef typename Compact<View,pos>::CTAdvisor CTAdvisor;
-    typedef typename Compact<View,pos>::StatusType StatusType;
-    typedef typename Compact<View,pos>::Status Status;
     typedef typename Compact<View,pos>::LostSupports LostSupports;
 
     using Compact<View,pos>::supports;
     using Compact<View,pos>::unassigned;
-    using Compact<View,pos>::status;
     using Compact<View,pos>::c;
     using Compact<View,pos>::ts;
 
+    /// \name Status management
+    //@{ 
+    /// Type of status
+    enum StatusType {
+      SINGLE      = 0, ///< A single view has been touched
+      MULTIPLE    = 1, ///< Multiple view have been touched
+      NONE        = 2, ///< No view has been touched
+      PROPAGATING = 3  ///< The propagator is currently running
+    };
+    /// Status management
+    class Status {
+    protected:
+      /// A tagged pointer for storing the status
+      ptrdiff_t s;
+    public:
+      /// Initialize with type \a t (either NONE or SEVERAL)
+      Status(StatusType t);
+      /// Copy constructor
+      Status(const Status& s);
+      /// Return status type
+      StatusType type(void) const;
+      /// Check whether status is single and equal to \a a
+      bool single(CTAdvisor& a) const;
+      /// Set status to SINGLE or MULTIPLE depending on \a a
+      void touched(CTAdvisor& a);
+      /// Set status to NONE
+      void none(void);
+      /// Set status to PROPAGATING
+      void propagating(void);
+    };
+    /// Propagator status
+    Status status;
     /// Current table
     Table table;
     /// Check whether the table is empty

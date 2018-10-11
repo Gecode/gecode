@@ -2,8 +2,6 @@
 /*
  *  Main authors:
  *     Linnea Ingmar <linnea.ingmar@hotmail.com>
- *
- *  Contributing authors:
  *     Christian Schulte <schulte@gecode.org>
  *
  *  Copyright:
@@ -107,50 +105,6 @@ namespace Gecode { namespace Int { namespace Extensional {
   Compact<View,pos>::CTAdvisor::dispose(Space& home, Council<CTAdvisor>& c) {
     (void) ViewAdvisor<View>::dispose(home,c);
   }
-
-
-  /*
-   * Status
-   *
-   */
-  template<class View, bool pos>
-  forceinline
-  Compact<View,pos>::Status::Status(StatusType t)
-    : s(t) {}
-  template<class View, bool pos>
-  forceinline
-  Compact<View,pos>::Status::Status(const Status& s)
-    : s(s.s) {}
-  template<class View, bool pos>
-  forceinline typename Compact<View,pos>::StatusType
-  Compact<View,pos>::Status::type(void) const {
-    return static_cast<StatusType>(s & 3);
-  }
-  template<class View, bool pos>
-  forceinline bool
-  Compact<View,pos>::Status::single(CTAdvisor& a) const {
-    if (type() != SINGLE)
-      return false;
-    assert(type() == 0);
-    return reinterpret_cast<CTAdvisor*>(s) == &a;
-  }
-  template<class View, bool pos>
-  forceinline void
-  Compact<View,pos>::Status::touched(CTAdvisor& a) {
-    if (!single(a))
-      s = MULTIPLE;
-  }
-  template<class View, bool pos>
-  forceinline void
-  Compact<View,pos>::Status::none(void) {
-    s = NONE;
-  }
-  template<class View, bool pos>
-  forceinline void
-  Compact<View,pos>::Status::propagating(void) {
-    s = PROPAGATING;
-  }
-  
 
 
   /*
@@ -352,37 +306,19 @@ namespace Gecode { namespace Int { namespace Extensional {
   Compact<View,pos>::LostSupports::LostSupports
   (const Compact<View,pos>& p, CTAdvisor& a, int l0, int h0)
     : n_words(p.n_words), r(a.fst()), l(l0), h(h0) {
+    assert(pos);
     // Move to first value for which there is support
-    if (pos) {
-      while (l > r->max)
-        r++;
-      l = std::max(l,r->min);
-      s = r->supports(n_words,l);
-    } else {
-      while ((r <= lst) && (l > r->max))
-        r++;
-      if (r > lst) {
-        l=h+1;
-      } else {
-        l = std::max(l,r->min);
-        s = r->supports(n_words,l);
-      }
-    }
+    while (l > r->max)
+      r++;
+    l = std::max(l,r->min);
+    s = r->supports(n_words,l);
   }      
   template<class View, bool pos>
   forceinline void
   Compact<View,pos>::LostSupports::operator ++(void) {
     l++; s += n_words;
-    if (pos) {
-      while ((l <= h) && (l > r->max)) {
-        r++; l=r->min; s=r->s;
-      }
-    } else {
-      while ((l <= h) && (r <= lst) && (l > r->max)) {
-        r++; l=r->min; s=r->s;
-      }
-      if (r > lst)
-        l=h+1;
+    while ((l <= h) && (l > r->max)) {
+      r++; l=r->min; s=r->s;
     }
   }
   template<class View, bool pos>
@@ -404,7 +340,7 @@ namespace Gecode { namespace Int { namespace Extensional {
   forceinline
   Compact<View,pos>::Compact(Space& home, Compact& p)
     : Propagator(home,p), unassigned(p.unassigned),
-      n_words(p.n_words), status(NONE), ts(p.ts) {
+      n_words(p.n_words), ts(p.ts) {
     c.update(home,p.c);
   }
   
@@ -413,7 +349,7 @@ namespace Gecode { namespace Int { namespace Extensional {
   Compact<View,pos>::Compact(Home home, ViewArray<View>& x,
                              const TupleSet& ts0)
     : Propagator(home), unassigned(x.size()),
-      n_words(ts0.words()), status(MULTIPLE), ts(ts0), c(home) {
+      n_words(ts0.words()), ts(ts0), c(home) {
     home.notice(*this, AP_DISPOSE);
   }
       
@@ -429,6 +365,48 @@ namespace Gecode { namespace Int { namespace Extensional {
 
 
   /*
+   * Status
+   *
+   */
+  template<class View, class Table, bool pos>
+  forceinline
+  CompactTable<View,Table,pos>::Status::Status(StatusType t)
+    : s(t) {}
+  template<class View, class Table, bool pos>
+  forceinline
+  CompactTable<View,Table,pos>::Status::Status(const Status& s)
+    : s(s.s) {}
+  template<class View, class Table, bool pos>
+  forceinline typename CompactTable<View,Table,pos>::StatusType
+  CompactTable<View,Table,pos>::Status::type(void) const {
+    return static_cast<StatusType>(s & 3);
+  }
+  template<class View, class Table, bool pos>
+  forceinline bool
+  CompactTable<View,Table,pos>::Status::single(CTAdvisor& a) const {
+    if (type() != SINGLE)
+      return false;
+    assert(type() == 0);
+    return reinterpret_cast<CTAdvisor*>(s) == &a;
+  }
+  template<class View, class Table, bool pos>
+  forceinline void
+  CompactTable<View,Table,pos>::Status::touched(CTAdvisor& a) {
+    if (!single(a))
+      s = MULTIPLE;
+  }
+  template<class View, class Table, bool pos>
+  forceinline void
+  CompactTable<View,Table,pos>::Status::none(void) {
+    s = NONE;
+  }
+  template<class View, class Table, bool pos>
+  forceinline void
+  CompactTable<View,Table,pos>::Status::propagating(void) {
+    s = PROPAGATING;
+  }
+  
+  /*
    * The propagator proper
    *
    */
@@ -436,7 +414,7 @@ namespace Gecode { namespace Int { namespace Extensional {
   template<class TableProp>
   forceinline
   CompactTable<View,Table,pos>::CompactTable(Space& home, TableProp& p)
-    : Compact<View,pos>(home,p), table(home,p.table) {
+    : Compact<View,pos>(home,p), status(NONE), table(home,p.table) {
     assert(!empty());
   }
 
@@ -495,7 +473,7 @@ namespace Gecode { namespace Int { namespace Extensional {
   forceinline
   CompactTable<View,Table,pos>::CompactTable(Home home, ViewArray<View>& x,
                                              const TupleSet& ts)
-    : Compact<View,pos>(home,x,ts), table(home,ts.words()) {
+    : Compact<View,pos>(home,x,ts), status(MULTIPLE), table(home,ts.words()) {
     Region r;
     BitSetData* mask = r.alloc<BitSetData>(table.size());
     // Invalidate tuples
@@ -524,6 +502,18 @@ namespace Gecode { namespace Int { namespace Extensional {
   }
       
   template<class View, class Table, bool pos>
+  forceinline bool
+  CompactTable<View,Table,pos>::empty(void) const {
+    return table.empty();
+  }
+
+  template<class View, class Table, bool pos>
+  forceinline bool
+  CompactTable<View,Table,pos>::full(void) const {
+    return table.ones() == size();
+  }
+
+  template<class View, class Table, bool pos>
   forceinline ExecStatus
   CompactTable<View,Table,pos>::post(Home home, ViewArray<View>& x,
                                      const TupleSet& ts) {
@@ -534,18 +524,6 @@ namespace Gecode { namespace Int { namespace Extensional {
     } else {
       return ct->full() ? ES_FAILED : ES_OK;
     }
-  }
-
-  template<class View, class Table, bool pos>
-  forceinline bool
-  CompactTable<View,Table,pos>::empty(void) const {
-    return table.empty();
-  }
-
-  template<class View, class Table, bool pos>
-  forceinline bool
-  CompactTable<View,Table,pos>::full(void) const {
-    return table.ones() == size();
   }
 
   template<class View, class Table, bool pos>
@@ -681,7 +659,7 @@ namespace Gecode { namespace Int { namespace Extensional {
         unsigned int n_nq = 0U;
 
         // Adjust for the current variable domain
-        xs /= x.size();
+        xs /= static_cast<unsigned long long int>(x.size());
 
         ValidSupports vs(*this,a);
         if (!vs())
@@ -706,7 +684,7 @@ namespace Gecode { namespace Int { namespace Extensional {
         }
         
         // Re-adjust size
-        xs *= x.size();
+        xs *= static_cast<unsigned long long int>(x.size());
         r.free();
       }
 
