@@ -466,6 +466,9 @@ namespace Gecode { namespace Int { namespace Extensional {
     Compact(Space& home, Compact& p);
     /// Constructor for posting
     Compact(Home home, ViewArray<View>& x, const TupleSet& ts);
+    /// Setup the actual table
+    template<class Table>
+    void setup(Space& home, Table& table, ViewArray<View>& x);
     /// Find range for \a n
     const Range* range(CTAdvisor& a, int n);
     /// Return supports for value \a n

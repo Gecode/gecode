@@ -368,11 +368,41 @@ namespace Gecode { namespace Int { namespace Extensional {
       n_words(ts0.words()), ts(ts0), c(home) {
     home.notice(*this, AP_DISPOSE);
   }
-      
+
+  template<class View, bool pos>
+  template<class Table>
+  forceinline void
+  Compact<View,pos>::setup(Space& home, Table& table, ViewArray<View>& x) {
+    Region r;
+    BitSetData* mask = r.alloc<BitSetData>(table.size());
+    // Invalidate tuples
+    for (int i=0; i<x.size(); i++) {
+      table.clear_mask(mask);
+      for (ValidSupports vs(ts,i,x[i]); vs(); ++vs)
+        table.add_to_mask(vs.supports(),mask);
+      table.template intersect_with_mask<false>(mask);
+      // The propagator must be scheduled for subsumption
+      if (table.empty())
+        goto schedule;
+    }
+    // Post advisors
+    for (int i=0; i<x.size(); i++) {
+      if (!x[i].assigned())
+        (void) new (home) CTAdvisor(home,*this,c,ts,x[i],i);
+      else
+        unassigned--;
+    }
+    // Schedule propagator
+  schedule:
+    if (unassigned < x.size())
+      View::schedule(home,*this,ME_INT_VAL);
+    else
+      View::schedule(home,*this,ME_INT_BND);
+  }
+
   template<class View, bool pos>
   PropCost
-  Compact<View,pos>::cost(const Space&, 
-                          const ModEventDelta&) const {
+  Compact<View,pos>::cost(const Space&, const ModEventDelta&) const {
     return PropCost::quadratic(PropCost::HI,unassigned);
   }
 
@@ -493,29 +523,7 @@ namespace Gecode { namespace Int { namespace Extensional {
   PosCompact<View,Table>::PosCompact(Home home, ViewArray<View>& x,
                                      const TupleSet& ts)
     : Compact<View,true>(home,x,ts), status(MULTIPLE), table(home,ts.words()) {
-    Region r;
-    BitSetData* mask = r.alloc<BitSetData>(table.size());
-    // Invalidate tuples
-    for (int i=0; i<x.size(); i++) {
-      table.clear_mask(mask);
-      for (ValidSupports vs(ts,i,x[i]); vs(); ++vs)
-        table.add_to_mask(vs.supports(),mask);
-      table.template intersect_with_mask<false>(mask);
-      if (empty())
-        return;
-    }
-    // Post advisors
-    for (int i=0; i<x.size(); i++) {
-      if (!x[i].assigned())
-        (void) new (home) CTAdvisor(home,*this,c,ts,x[i],i);
-      else
-        unassigned--;
-    }
-    // Schedule propagator
-    if (unassigned < x.size())
-      View::schedule(home,*this,ME_INT_VAL);
-    else
-      View::schedule(home,*this,ME_INT_BND);
+    setup(home,table,x);
   }
       
   template<class View, class Table>
@@ -626,8 +634,7 @@ namespace Gecode { namespace Int { namespace Extensional {
 
   template<class View, class Table>
   ExecStatus
-  PosCompact<View,Table>::advise(Space& home,
-                                       Advisor& a0, const Delta& d) {
+  PosCompact<View,Table>::advise(Space& home, Advisor& a0, const Delta& d) {
     CTAdvisor& a = static_cast<CTAdvisor&>(a0);
 
     // Do not fail a disabled propagator
@@ -803,31 +810,7 @@ namespace Gecode { namespace Int { namespace Extensional {
   NegCompact<View,Table>::NegCompact(Home home, ViewArray<View>& x,
                                      const TupleSet& ts)
     : Compact<View,false>(home,x,ts), table(home,ts.words()) {
-    Region r;
-    BitSetData* mask = r.alloc<BitSetData>(table.size());
-    // Invalidate tuples
-    for (int i=0; i<x.size(); i++) {
-      table.clear_mask(mask);
-      for (ValidSupports vs(ts,i,x[i]); vs(); ++vs)
-        table.add_to_mask(vs.supports(),mask);
-      table.template intersect_with_mask<false>(mask);
-      // The propagator must be scheduled for subsumption
-      if (empty())
-        goto schedule;
-    }
-    // Post advisors
-    for (int i=0; i<x.size(); i++) {
-      if (!x[i].assigned())
-        (void) new (home) CTAdvisor(home,*this,c,ts,x[i],i);
-      else
-        unassigned--;
-    }
-    // Schedule propagator
-  schedule:
-    if (unassigned < x.size())
-      View::schedule(home,*this,ME_INT_VAL);
-    else
-      View::schedule(home,*this,ME_INT_BND);
+    setup(home,table,x);
   }
       
   template<class View, class Table>
@@ -950,8 +933,7 @@ namespace Gecode { namespace Int { namespace Extensional {
 
   template<class View, class Table>
   ExecStatus
-  NegCompact<View,Table>::advise(Space& home,
-                                 Advisor& a0, const Delta& d) {
+  NegCompact<View,Table>::advise(Space& home, Advisor& a0, const Delta&) {
     CTAdvisor& a = static_cast<CTAdvisor&>(a0);
 
     // We are subsumed
@@ -1115,31 +1097,7 @@ namespace Gecode { namespace Int { namespace Extensional {
                                                const TupleSet& ts, CtrlView b0)
     : Compact<View,false>(home,x,ts), table(home,ts.words()), b(b0), y(x) {
     b.subscribe(home,*this,PC_BOOL_VAL);
-    Region r;
-    BitSetData* mask = r.alloc<BitSetData>(table.size());
-    // Invalidate tuples
-    for (int i=0; i<x.size(); i++) {
-      table.clear_mask(mask);
-      for (ValidSupports vs(ts,i,x[i]); vs(); ++vs)
-        table.add_to_mask(vs.supports(),mask);
-      table.template intersect_with_mask<false>(mask);
-      // The propagator must be scheduled for subsumption
-      if (empty())
-        goto schedule;
-    }
-    // Post advisors
-    for (int i=0; i<x.size(); i++) {
-      if (!x[i].assigned())
-        (void) new (home) CTAdvisor(home,*this,c,ts,x[i],i);
-      else
-        unassigned--;
-    }
-    // Schedule propagator
-  schedule:
-    if (unassigned < x.size())
-      View::schedule(home,*this,ME_INT_VAL);
-    else
-      View::schedule(home,*this,ME_INT_BND);
+    setup(home,table,x);
   }
       
   template<class View, class Table, class CtrlView, ReifyMode rm>
@@ -1221,7 +1179,7 @@ namespace Gecode { namespace Int { namespace Extensional {
   template<class View, class Table, class CtrlView, ReifyMode rm>
   ExecStatus
   ReCompact<View,Table,CtrlView,rm>::advise(Space& home,
-                                            Advisor& a0, const Delta& d) {
+                                            Advisor& a0, const Delta&) {
     CTAdvisor& a = static_cast<CTAdvisor&>(a0);
 
     // We are subsumed
@@ -1270,7 +1228,7 @@ namespace Gecode { namespace Int { namespace Extensional {
    * Post function
    */
   template<class View, class CtrlView, ReifyMode rm>
-  inline ExecStatus
+  forceinline ExecStatus
   postrecompact(Home home, ViewArray<View>& x, const TupleSet& ts,
                 CtrlView b) {
     // Check whether a variable does not overlap with supported values
