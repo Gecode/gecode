@@ -239,9 +239,9 @@ namespace Gecode { namespace Int { namespace Extensional {
     /// Limit
     IndexType _limit;
     /// Indices
-    IndexType* index;
+    IndexType* _index;
     /// Words
-    BitSetData* bits;
+    BitSetData* _bits;
     /// Replace the \a i th word with \a w, decrease \a limit if \a w is zero
     void replace_and_decrease(IndexType i, BitSetData w);
   public:
@@ -280,9 +280,11 @@ namespace Gecode { namespace Int { namespace Extensional {
     /// Perform "nand" with \a b
     void nand_with_mask(const BitSetData* b);
     /// Return the number of ones
-    unsigned int ones(void) const;
+    unsigned long long int ones(void) const;
     /// Return the number of ones after intersection with \a b
-    unsigned int ones(const BitSetData* b) const;
+    unsigned long long int ones(const BitSetData* b) const;
+    /// Return an upper bound on the number of bits
+    unsigned long long int bits(void) const;
     /// Return the number of required bit set words
     unsigned int words(void) const;
     /// Return the number of required bit set words
@@ -301,7 +303,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     template<unsigned int> friend class TinyBitSet;
   protected:
     /// Words
-    BitSetData bits[_size];
+    BitSetData _bits[_size];
   public:
     /// Initialize sparse bit set for a number of words \a n
     TinyBitSet(Space& home, unsigned int n);
@@ -335,9 +337,11 @@ namespace Gecode { namespace Int { namespace Extensional {
     /// Perform "nand" with and the "or" of \a a and \a b
     void nand_with_masks(const BitSetData* a, const BitSetData* b);
     /// Return the number of ones
-    unsigned int ones(void) const;
+    unsigned long long int ones(void) const;
     /// Return the number of ones after intersection with \a b
-    unsigned int ones(const BitSetData* b) const;
+    unsigned long long int ones(const BitSetData* b) const;
+    /// Return an upper bound on the number of bits
+    unsigned long long int bits(void) const;
     /// Return the number of required bit set words
     unsigned int words(void) const;
     /// Return the total number of words
@@ -468,6 +472,12 @@ namespace Gecode { namespace Int { namespace Extensional {
     const BitSetData* supports(CTAdvisor& a, int n);
     /// Return size of Cartesian product of view domains
     unsigned long long int size(void) const;
+    /** \brief Compute Cartesian product
+     *
+     * Here the product of \a s and \a m is the size of the Cartesian
+     * product and \a m is the size of the largest view domain.
+     */
+    void size(unsigned long long int& s, unsigned long long int& m);
   public:
     /// Cost function
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;

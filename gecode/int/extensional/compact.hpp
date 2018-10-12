@@ -197,6 +197,22 @@ namespace Gecode { namespace Int { namespace Extensional {
 
   template<class View, bool pos>
   forceinline void
+  Compact<View,pos>::size(unsigned long long int& s,
+                          unsigned long long int& m) {
+    s=1U; m=1U;
+    for (Advisors<CTAdvisor> as(c); as(); ++as) {
+      unsigned long long int n = as.advisor().view().size();
+      if (n > m) {
+        s *= m; m = n;
+      } else {
+        s *= n;
+      }
+    }
+    assert(s * m == size());
+  }
+
+  template<class View, bool pos>
+  forceinline void
   Compact<View,pos>::ValidSupports::find(void) {
     assert(!pos);
     assert(n <= max);
@@ -863,49 +879,63 @@ namespace Gecode { namespace Int { namespace Extensional {
     if (empty())
       return home.ES_SUBSUMED(*this);
 
-    Region r;
-    // Size of the Cartesian product
-    unsigned long long int xs = size();
+    // Estimate whether any pruning will be possible
+    unsigned long long int xs, xms;
+    size(xs,xms);
     
-    // Scan all values of all unassigned variables to see if they
-    // are still supported.
-    for (Advisors<CTAdvisor> as(c); as(); ++as) {
-      assert(xs == size());
-      CTAdvisor& a = as.advisor();
-      View x = a.view();
-      
-      // How many values to remove
-      int* nq = r.alloc<int>(x.size());
-      unsigned int n_nq = 0U;
-      
-      // Adjust for the current variable domain
-      xs /= static_cast<unsigned long long int>(x.size());
-      
-      ValidSupports vs(*this,a);
-      if (!vs())
-        return home.ES_SUBSUMED(*this); // No valid supports left, subsumed
-      
-      for (; vs(); ++vs)
-        if (table.ones(vs.supports()) == xs)
-          nq[n_nq++] = vs.val();
-
-      // Remove collected values
-      if (n_nq > 0U) {
-        if (n_nq == 1U) {
-          GECODE_ME_CHECK(x.nq(home,nq[0]));
-        } else {
-          Iter::Values::Array rnq(nq,n_nq);
-          GECODE_ASSUME(n_nq >= 2U);
-          GECODE_ME_CHECK(x.minus_v(home,rnq,false));
-        }
-        if (empty())
-          return home.ES_SUBSUMED(*this);
-        a.adjust();
+    if ((xs > table.bits()) || (xs > table.ones())) {
+      // No pruning possible as for the variable with the largest domain
+      // xms, the table is too small
+      for (Advisors<CTAdvisor> as(c); as(); ++as) {
+        ValidSupports vs(*this,as.advisor());
+        if (!vs())
+          return home.ES_SUBSUMED(*this); // No valid supports left, subsumed
       }
+
+    } else {
+      // Adjust to size of the Cartesian product
+      xs *= xms;
       
-      // Re-adjust size
-      xs *= static_cast<unsigned long long int>(x.size());
-      r.free();
+      Region r;
+
+      for (Advisors<CTAdvisor> as(c); as(); ++as) {
+        assert(xs == size());
+        CTAdvisor& a = as.advisor();
+        View x = a.view();
+        
+        // How many values to remove
+        int* nq = r.alloc<int>(x.size());
+        unsigned int n_nq = 0U;
+        
+        // Adjust for the current variable domain
+        xs /= static_cast<unsigned long long int>(x.size());
+        
+        ValidSupports vs(*this,a);
+        if (!vs())
+          return home.ES_SUBSUMED(*this); // No valid supports left, subsumed
+        
+        for (; vs(); ++vs)
+          if ((xs <= table.bits()) && (xs == table.ones(vs.supports())))
+            nq[n_nq++] = vs.val();
+        
+        // Remove collected values
+        if (n_nq > 0U) {
+          if (n_nq == 1U) {
+            GECODE_ME_CHECK(x.nq(home,nq[0]));
+          } else {
+            Iter::Values::Array rnq(nq,n_nq);
+            GECODE_ASSUME(n_nq >= 2U);
+            GECODE_ME_CHECK(x.minus_v(home,rnq,false));
+          }
+          if (empty())
+            return home.ES_SUBSUMED(*this);
+          a.adjust();
+        }
+        
+        // Re-adjust size
+        xs *= static_cast<unsigned long long int>(x.size());
+        r.free();
+      }
     }
 
     if (table.ones() == xs)
