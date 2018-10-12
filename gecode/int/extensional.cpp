@@ -79,14 +79,14 @@ namespace Gecode {
       
       // Construct view array
       ViewArray<IntView> xv(home,x);
-      GECODE_ES_FAIL((Extensional::postcompact<IntView,true>(home,xv,t)));
+      GECODE_ES_FAIL((Extensional::postposcompact<IntView>(home,xv,t)));
     } else {
       if (t.tuples() == 0)
         return;
       
       // Construct view array
       ViewArray<IntView> xv(home,x);
-      GECODE_ES_FAIL((Extensional::postcompact<IntView,false>(home,xv,t)));
+      GECODE_ES_FAIL((Extensional::postnegcompact<IntView>(home,xv,t)));
       
     }
   }
@@ -112,14 +112,14 @@ namespace Gecode {
       
       // Construct view array
       ViewArray<BoolView> xv(home,x);
-      GECODE_ES_FAIL((Extensional::postcompact<BoolView,true>(home,xv,t)));
+      GECODE_ES_FAIL((Extensional::postposcompact<BoolView>(home,xv,t)));
     } else {
       if (t.tuples() == 0)
         return;
       
       // Construct view array
       ViewArray<BoolView> xv(home,x);
-      GECODE_ES_FAIL((Extensional::postcompact<BoolView,false>(home,xv,t)));
+      GECODE_ES_FAIL((Extensional::postnegcompact<BoolView>(home,xv,t)));
       
     }
   }

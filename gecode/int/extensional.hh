@@ -469,37 +469,36 @@ namespace Gecode { namespace Int { namespace Extensional {
     /// Return size of Cartesian product of view domains
     unsigned long long int size(void) const;
   public:
+    /// Cost function
+    virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Delete propagator and return its size
     size_t dispose(Space& home);
   };
 
   /**
-   * \brief Domain consistent extensional propagator
+   * \brief Domain consistent positive extensional propagator
    *
    * This propagator implements the compact-table propagation
    * algorithm based on:
    *   J. Demeulenaere et. al., Compact-Table: Efficiently
    *   filtering table constraints with reversible sparse
    *   bit-sets, CP 2016.
-   * and (negative tables) on:
-   *   H. Verhaeghe et al., Extending Compact-Table to
-   *   Negative and Short Tables. AAAI 2017.
    *
    * Requires \code #include <gecode/int/extensional.hh> \endcode
    * \ingroup FuncIntProp
    */
-  template<class View, class Table, bool pos>
-  class CompactTable : public Compact<View,pos> {
+  template<class View, class Table>
+  class PosCompact : public Compact<View,true> {
   public:
-    typedef typename Compact<View,pos>::ValidSupports ValidSupports;
-    typedef typename Compact<View,pos>::Range Range;
-    typedef typename Compact<View,pos>::CTAdvisor CTAdvisor;
-    typedef typename Compact<View,pos>::LostSupports LostSupports;
+    typedef typename Compact<View,true>::ValidSupports ValidSupports;
+    typedef typename Compact<View,true>::Range Range;
+    typedef typename Compact<View,true>::CTAdvisor CTAdvisor;
+    typedef typename Compact<View,true>::LostSupports LostSupports;
 
-    using Compact<View,pos>::supports;
-    using Compact<View,pos>::unassigned;
-    using Compact<View,pos>::c;
-    using Compact<View,pos>::ts;
+    using Compact<View,true>::supports;
+    using Compact<View,true>::unassigned;
+    using Compact<View,true>::c;
+    using Compact<View,true>::ts;
 
     /// \name Status management
     //@{ 
@@ -537,16 +536,70 @@ namespace Gecode { namespace Int { namespace Extensional {
     Table table;
     /// Check whether the table is empty
     bool empty(void) const;
+    /// Constructor for cloning \a p
+    template<class TableProp>
+    PosCompact(Space& home, TableProp& p);
+    /// Constructor for posting
+    PosCompact(Home home, ViewArray<View>& x, const TupleSet& ts);
+  public:
+    /// Schedule function
+    virtual void reschedule(Space& home);
+    /// Perform propagation
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+    /// Copy propagator during cloning
+    virtual Actor* copy(Space& home);
+    /// Post propagator for views \a x and table \a t
+    static ExecStatus post(Home home, ViewArray<View>& x, const TupleSet& ts);
+    /// Delete propagator and return its size
+    size_t dispose(Space& home);
+    /// Give advice to propagator
+    virtual ExecStatus advise(Space& home, Advisor& a, const Delta& d);
+  };
+
+  /// Post function for positive compact table propagator
+  template<class View>
+  ExecStatus postposcompact(Home home, ViewArray<View>& x, const TupleSet& ts);
+
+  /**
+   * \brief Domain consistent negative extensional propagator
+   *
+   * This propagator implements the compact-table propagation
+   * algorithm based on:
+   *   J. Demeulenaere et. al., Compact-Table: Efficiently
+   *   filtering table constraints with reversible sparse
+   *   bit-sets, CP 2016.
+   * and (negative tables) on:
+   *   H. Verhaeghe et al., Extending Compact-Table to
+   *   Negative and Short Tables. AAAI 2017.
+   *
+   * Requires \code #include <gecode/int/extensional.hh> \endcode
+   * \ingroup FuncIntProp
+   */
+  template<class View, class Table>
+  class NegCompact : public Compact<View,false> {
+  public:
+    typedef typename Compact<View,false>::ValidSupports ValidSupports;
+    typedef typename Compact<View,false>::Range Range;
+    typedef typename Compact<View,false>::CTAdvisor CTAdvisor;
+    typedef typename Compact<View,false>::LostSupports LostSupports;
+
+    using Compact<View,false>::supports;
+    using Compact<View,false>::unassigned;
+    using Compact<View,false>::c;
+    using Compact<View,false>::ts;
+
+    /// Current table
+    Table table;
+    /// Check whether the table is empty
+    bool empty(void) const;
     /// Check whether the table is full (complete)
     bool full(void) const;
     /// Constructor for cloning \a p
     template<class TableProp>
-    CompactTable(Space& home, TableProp& p);
+    NegCompact(Space& home, TableProp& p);
     /// Constructor for posting
-    CompactTable(Home home, ViewArray<View>& x, const TupleSet& ts);
+    NegCompact(Home home, ViewArray<View>& x, const TupleSet& ts);
   public:
-    /// Cost function
-    virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Schedule function
     virtual void reschedule(Space& home);
     /// Perform propagation
@@ -562,8 +615,8 @@ namespace Gecode { namespace Int { namespace Extensional {
   };
 
   /// Post function for compact table propagator
-  template<class View, bool pos>
-  ExecStatus postcompact(Home home, ViewArray<View>& x, const TupleSet& ts);
+  template<class View>
+  ExecStatus postnegcompact(Home home, ViewArray<View>& x, const TupleSet& ts);
 
 }}}
 

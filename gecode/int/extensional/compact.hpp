@@ -354,6 +354,13 @@ namespace Gecode { namespace Int { namespace Extensional {
   }
       
   template<class View, bool pos>
+  PropCost
+  Compact<View,pos>::cost(const Space&, 
+                          const ModEventDelta&) const {
+    return PropCost::quadratic(PropCost::HI,unassigned);
+  }
+
+  template<class View, bool pos>
   forceinline size_t
   Compact<View,pos>::dispose(Space& home) {
     home.ignore(*this,AP_DISPOSE);
@@ -365,44 +372,44 @@ namespace Gecode { namespace Int { namespace Extensional {
 
 
   /*
-   * Status
+   * Status for the positive propagator
    *
    */
-  template<class View, class Table, bool pos>
+  template<class View, class Table>
   forceinline
-  CompactTable<View,Table,pos>::Status::Status(StatusType t)
+  PosCompact<View,Table>::Status::Status(StatusType t)
     : s(t) {}
-  template<class View, class Table, bool pos>
+  template<class View, class Table>
   forceinline
-  CompactTable<View,Table,pos>::Status::Status(const Status& s)
+  PosCompact<View,Table>::Status::Status(const Status& s)
     : s(s.s) {}
-  template<class View, class Table, bool pos>
-  forceinline typename CompactTable<View,Table,pos>::StatusType
-  CompactTable<View,Table,pos>::Status::type(void) const {
+  template<class View, class Table>
+  forceinline typename PosCompact<View,Table>::StatusType
+  PosCompact<View,Table>::Status::type(void) const {
     return static_cast<StatusType>(s & 3);
   }
-  template<class View, class Table, bool pos>
+  template<class View, class Table>
   forceinline bool
-  CompactTable<View,Table,pos>::Status::single(CTAdvisor& a) const {
+  PosCompact<View,Table>::Status::single(CTAdvisor& a) const {
     if (type() != SINGLE)
       return false;
     assert(type() == 0);
     return reinterpret_cast<CTAdvisor*>(s) == &a;
   }
-  template<class View, class Table, bool pos>
+  template<class View, class Table>
   forceinline void
-  CompactTable<View,Table,pos>::Status::touched(CTAdvisor& a) {
+  PosCompact<View,Table>::Status::touched(CTAdvisor& a) {
     if (!single(a))
       s = MULTIPLE;
   }
-  template<class View, class Table, bool pos>
+  template<class View, class Table>
   forceinline void
-  CompactTable<View,Table,pos>::Status::none(void) {
+  PosCompact<View,Table>::Status::none(void) {
     s = NONE;
   }
-  template<class View, class Table, bool pos>
+  template<class View, class Table>
   forceinline void
-  CompactTable<View,Table,pos>::Status::propagating(void) {
+  PosCompact<View,Table>::Status::propagating(void) {
     s = PROPAGATING;
   }
   
@@ -410,30 +417,30 @@ namespace Gecode { namespace Int { namespace Extensional {
    * The propagator proper
    *
    */
-  template<class View, class Table, bool pos>
+  template<class View, class Table>
   template<class TableProp>
   forceinline
-  CompactTable<View,Table,pos>::CompactTable(Space& home, TableProp& p)
-    : Compact<View,pos>(home,p), status(NONE), table(home,p.table) {
+  PosCompact<View,Table>::PosCompact(Space& home, TableProp& p)
+    : Compact<View,true>(home,p), status(NONE), table(home,p.table) {
     assert(!empty());
   }
 
-  template<class View, class Table, bool pos>
+  template<class View, class Table>
   Actor*
-  CompactTable<View,Table,pos>::copy(Space& home) {
+  PosCompact<View,Table>::copy(Space& home) {
     assert((table.words() > 0U) && (table.width() >= table.words()));
     if (table.words() <= 4U) {
       switch (table.width()) {
       case 0U:
         GECODE_NEVER; break;
       case 1U:
-        return new (home) CompactTable<View,TinyBitSet<1U>,pos>(home,*this);
+        return new (home) PosCompact<View,TinyBitSet<1U>>(home,*this);
       case 2U:
-        return new (home) CompactTable<View,TinyBitSet<2U>,pos>(home,*this);
+        return new (home) PosCompact<View,TinyBitSet<2U>>(home,*this);
       case 3U:
-        return new (home) CompactTable<View,TinyBitSet<3U>,pos>(home,*this);
+        return new (home) PosCompact<View,TinyBitSet<3U>>(home,*this);
       case 4U:
-        return new (home) CompactTable<View,TinyBitSet<4U>,pos>(home,*this);
+        return new (home) PosCompact<View,TinyBitSet<4U>>(home,*this);
       default:
         break;
       }
@@ -442,38 +449,34 @@ namespace Gecode { namespace Int { namespace Extensional {
       goto copy_char;
     } else if (std::is_same<Table,BitSet<unsigned short int>>::value) {
       switch (Gecode::Support::u_type(table.width())) {
-      case Gecode::Support::IT_CHAR:
-        goto copy_char;
-      case Gecode::Support::IT_SHRT:
-        goto copy_short;
-      case Gecode::Support::IT_INT:
-      default:
-        GECODE_NEVER;
+      case Gecode::Support::IT_CHAR: goto copy_char;
+      case Gecode::Support::IT_SHRT: goto copy_short;
+      case Gecode::Support::IT_INT:  GECODE_NEVER;
+      default:                       GECODE_NEVER;
       }
     } else {
       switch (Gecode::Support::u_type(table.width())) {
-      case Gecode::Support::IT_CHAR:
-        goto copy_char;
-      case Gecode::Support::IT_SHRT:
-        goto copy_short;
-      case Gecode::Support::IT_INT:
-        return new (home) CompactTable<View,BitSet<unsigned int>,pos>(home,*this);
+      case Gecode::Support::IT_CHAR: goto copy_char;
+      case Gecode::Support::IT_SHRT: goto copy_short;
+      case Gecode::Support::IT_INT:  goto copy_int;
       default: GECODE_NEVER;
       }
       GECODE_NEVER;
       return nullptr;
     }
   copy_char:
-    return new (home) CompactTable<View,BitSet<unsigned char>,pos>(home,*this);
+    return new (home) PosCompact<View,BitSet<unsigned char>>(home,*this);
   copy_short:
-    return new (home) CompactTable<View,BitSet<unsigned short int>,pos>(home,*this);
+    return new (home) PosCompact<View,BitSet<unsigned short int>>(home,*this);
+  copy_int:
+    return new (home) PosCompact<View,BitSet<unsigned int>>(home,*this);
   }
 
-  template<class View, class Table, bool pos>
+  template<class View, class Table>
   forceinline
-  CompactTable<View,Table,pos>::CompactTable(Home home, ViewArray<View>& x,
-                                             const TupleSet& ts)
-    : Compact<View,pos>(home,x,ts), status(MULTIPLE), table(home,ts.words()) {
+  PosCompact<View,Table>::PosCompact(Home home, ViewArray<View>& x,
+                                     const TupleSet& ts)
+    : Compact<View,true>(home,x,ts), status(MULTIPLE), table(home,ts.words()) {
     Region r;
     BitSetData* mask = r.alloc<BitSetData>(table.size());
     // Invalidate tuples
@@ -482,7 +485,317 @@ namespace Gecode { namespace Int { namespace Extensional {
       for (ValidSupports vs(ts,i,x[i]); vs(); ++vs)
         table.add_to_mask(vs.supports(),mask);
       table.template intersect_with_mask<false>(mask);
-      // If negative, the propagator must be scheduled for subsumption
+      if (empty())
+        return;
+    }
+    // Post advisors
+    for (int i=0; i<x.size(); i++) {
+      if (!x[i].assigned())
+        (void) new (home) CTAdvisor(home,*this,c,ts,x[i],i);
+      else
+        unassigned--;
+    }
+    // Schedule propagator
+    if (unassigned < x.size())
+      View::schedule(home,*this,ME_INT_VAL);
+    else
+      View::schedule(home,*this,ME_INT_BND);
+  }
+      
+  template<class View, class Table>
+  forceinline bool
+  PosCompact<View,Table>::empty(void) const {
+    return table.empty();
+  }
+
+  template<class View, class Table>
+  forceinline ExecStatus
+  PosCompact<View,Table>::post(Home home, ViewArray<View>& x,
+                                     const TupleSet& ts) {
+    auto ct = new (home) PosCompact(home,x,ts);
+    assert((x.size() > 1) && (ts.tuples() > 1));
+    return ct->empty() ? ES_FAILED : ES_OK;
+  }
+
+  template<class View, class Table>
+  forceinline size_t
+  PosCompact<View,Table>::dispose(Space& home) {
+    (void) Compact<View,true>::dispose(home);
+    return sizeof(*this);
+  }
+
+  template<class View, class Table>
+  void
+  PosCompact<View,Table>::reschedule(Space& home) {
+    // Modified variable, subsumption, or failure
+    if ((status.type() != StatusType::NONE) || 
+        (unassigned == 0) || empty())
+      View::schedule(home,*this,ME_INT_DOM);
+  }
+
+  template<class View, class Table>
+  ExecStatus
+  PosCompact<View,Table>::propagate(Space& home, const ModEventDelta&) {
+    if (empty())
+      return ES_FAILED;
+    if (unassigned == 0)
+      return home.ES_SUBSUMED(*this);
+
+    Status touched(status);
+    // Mark as performing propagation
+    status.propagating();
+    
+    Region r;
+    // Scan all values of all unassigned variables to see if they
+    // are still supported.
+    for (Advisors<CTAdvisor> as(c); as(); ++as) {
+      CTAdvisor& a = as.advisor();
+      View x = a.view();
+
+      // No point filtering variable if it was the only modified variable
+      if (touched.single(a) || x.assigned())
+        continue;
+      
+      if (x.size() == 2) { // Consider min and max values only
+        if (!table.intersects(supports(a,x.min())))
+          GECODE_ME_CHECK(x.eq(home,x.max()));
+        else if (!table.intersects(supports(a,x.max())))
+          GECODE_ME_CHECK(x.eq(home,x.min()));
+        if (x.assigned())
+          unassigned--;
+        else
+          a.adjust();
+      } else { // x.size() > 2
+        // How many values to remove
+        int* nq = r.alloc<int>(x.size());
+        unsigned int n_nq = 0U;
+        // The initialization is here just to avoid warnings...
+        int last_support = 0;
+        for (ValidSupports vs(*this,a); vs(); ++vs)
+          if (!table.intersects(vs.supports()))
+            nq[n_nq++] = vs.val();
+          else
+            last_support = vs.val();
+        // Remove collected values
+        if (n_nq > 0U) {
+          if (n_nq == 1U) {
+            ModEvent me = x.nq(home,nq[0]);
+            if (me_failed(me)) return ES_FAILED;
+            assert(me != ME_INT_VAL);
+          } else if (n_nq == x.size() - 1U) {
+            GECODE_ME_CHECK(x.eq(home,last_support));
+            unassigned--;
+            goto noadjust;
+          } else {
+            Iter::Values::Array rnq(nq,n_nq);
+            GECODE_ASSUME(n_nq >= 2U);
+            ModEvent me = x.minus_v(home,rnq,false);
+            if (me_failed(me)) return ES_FAILED;
+            assert(me != ME_INT_VAL);
+          }
+          a.adjust();
+        noadjust: ;
+        }
+        r.free();
+      }
+    }
+
+    // Mark as no touched variable
+    status.none();
+    // Should not be in a failed state
+    assert(!empty());
+    // Subsume if there is at most one non-assigned variable
+    return (unassigned <= 1) ? home.ES_SUBSUMED(*this) : ES_FIX;
+  }
+
+  template<class View, class Table>
+  ExecStatus
+  PosCompact<View,Table>::advise(Space& home,
+                                       Advisor& a0, const Delta& d) {
+    CTAdvisor& a = static_cast<CTAdvisor&>(a0);
+
+    // Do not fail a disabled propagator
+    if (empty())
+      return Compact<View,true>::disabled() ?
+        home.ES_NOFIX_DISPOSE(c,a) : ES_FAILED;
+      
+    View x = a.view();
+      
+    /* 
+     * Do not schedule if propagator is performing propagation,
+     * and dispose if assigned.
+     */ 
+    if (status.type() == StatusType::PROPAGATING)
+      return x.assigned() ? home.ES_FIX_DISPOSE(c,a) : ES_FIX;
+      
+    // Update status
+    status.touched(a);
+      
+    if (x.assigned()) {
+      // Variable is assigned -- intersect with its value
+      table.template intersect_with_mask<true>(supports(a,x.val()));
+      unassigned--;
+      return home.ES_NOFIX_DISPOSE(c,a);
+    }
+      
+    if (!x.any(d) && (x.min(d) == x.max(d))) {
+      table.nand_with_mask(supports(a,x.min(d)));
+      a.adjust();
+    } else if (!x.any(d) && (x.width(d) <= x.size())) {
+      // Incremental update, using the removed values
+      for (LostSupports ls(*this,a,x.min(d),x.max(d)); ls(); ++ls) {
+        table.nand_with_mask(ls.supports());
+        if (empty())
+          return Compact<View,true>::disabled() ?
+            home.ES_NOFIX_DISPOSE(c,a) : ES_FAILED;
+      }
+      a.adjust();
+    } else {
+      a.adjust();
+      // Reset-based update, using the values that are left
+      if (x.size() == 2) {
+        table.intersect_with_masks(supports(a,x.min()),
+                                   supports(a,x.max()));
+      } else {
+        Region r;
+        BitSetData* mask = r.alloc<BitSetData>(table.size());
+        // Collect all tuples to be kept in a temporary mask
+        table.clear_mask(mask);
+        for (ValidSupports vs(*this,a); vs(); ++vs)
+          table.add_to_mask(vs.supports(),mask);
+        table.template intersect_with_mask<false>(mask);
+      }
+    }
+
+    // Do not fail a disabled propagator
+    if (empty())
+      return Compact<View,true>::disabled() ?
+        home.ES_NOFIX_DISPOSE(c,a) : ES_FAILED;
+      
+    // Schedule propagator
+    return ES_NOFIX;
+  }
+
+
+  /*
+   * Post function
+   */
+  template<class View>
+  inline ExecStatus
+  postposcompact(Home home, ViewArray<View>& x, const TupleSet& ts) {
+    // All variables pruned to correct domain
+    for (int i=0; i<x.size(); i++) {
+      TupleSet::Ranges r(ts,i);
+      GECODE_ME_CHECK(x[i].inter_r(home, r, false));
+    }
+
+    if ((x.size() <= 1) || (ts.tuples() <= 1))
+      return ES_OK;
+
+    // Choose the right bit set implementation
+    switch (ts.words()) {
+    case 0U:
+      GECODE_NEVER; return ES_OK;
+    case 1U:
+      return PosCompact<View,TinyBitSet<1U>>::post(home,x,ts);
+    case 2U:
+      return PosCompact<View,TinyBitSet<2U>>::post(home,x,ts);
+    case 3U:
+      return PosCompact<View,TinyBitSet<3U>>::post(home,x,ts);
+    case 4U:
+      return PosCompact<View,TinyBitSet<4U>>::post(home,x,ts);
+    default:
+      switch (Gecode::Support::u_type(ts.words())) {
+      case Gecode::Support::IT_CHAR:
+        return PosCompact<View,BitSet<unsigned char>>
+          ::post(home,x,ts);
+      case Gecode::Support::IT_SHRT:
+        return PosCompact<View,BitSet<unsigned short int>>
+          ::post(home,x,ts);
+      case Gecode::Support::IT_INT:
+        return PosCompact<View,BitSet<unsigned int>>
+          ::post(home,x,ts);
+      default: GECODE_NEVER;
+      }
+    }
+    GECODE_NEVER;
+    return ES_OK;
+  }
+
+  
+  /*
+   * The negative propagator
+   *
+   */
+  template<class View, class Table>
+  template<class TableProp>
+  forceinline
+  NegCompact<View,Table>::NegCompact(Space& home, TableProp& p)
+    : Compact<View,false>(home,p), table(home,p.table) {
+    assert(!empty());
+  }
+
+  template<class View, class Table>
+  Actor*
+  NegCompact<View,Table>::copy(Space& home) {
+    assert((table.words() > 0U) && (table.width() >= table.words()));
+    if (table.words() <= 4U) {
+      switch (table.width()) {
+      case 0U:
+        GECODE_NEVER; break;
+      case 1U:
+        return new (home) NegCompact<View,TinyBitSet<1U>>(home,*this);
+      case 2U:
+        return new (home) NegCompact<View,TinyBitSet<2U>>(home,*this);
+      case 3U:
+        return new (home) NegCompact<View,TinyBitSet<3U>>(home,*this);
+      case 4U:
+        return new (home) NegCompact<View,TinyBitSet<4U>>(home,*this);
+      default:
+        break;
+      }
+    }
+    if (std::is_same<Table,BitSet<unsigned char>>::value) {
+      goto copy_char;
+    } else if (std::is_same<Table,BitSet<unsigned short int>>::value) {
+      switch (Gecode::Support::u_type(table.width())) {
+      case Gecode::Support::IT_CHAR: goto copy_char;
+      case Gecode::Support::IT_SHRT: goto copy_short;
+      case Gecode::Support::IT_INT:  GECODE_NEVER;
+      default:                       GECODE_NEVER;
+      }
+    } else {
+      switch (Gecode::Support::u_type(table.width())) {
+      case Gecode::Support::IT_CHAR: goto copy_char;
+      case Gecode::Support::IT_SHRT: goto copy_short;
+      case Gecode::Support::IT_INT:  goto copy_int;
+      default: GECODE_NEVER;
+      }
+      GECODE_NEVER;
+      return nullptr;
+    }
+  copy_char:
+    return new (home) NegCompact<View,BitSet<unsigned char>>(home,*this);
+  copy_short:
+    return new (home) NegCompact<View,BitSet<unsigned short int>>(home,*this);
+  copy_int:
+    return new (home) NegCompact<View,BitSet<unsigned int>>(home,*this);
+  }
+
+  template<class View, class Table>
+  forceinline
+  NegCompact<View,Table>::NegCompact(Home home, ViewArray<View>& x,
+                                     const TupleSet& ts)
+    : Compact<View,false>(home,x,ts), table(home,ts.words()) {
+    Region r;
+    BitSetData* mask = r.alloc<BitSetData>(table.size());
+    // Invalidate tuples
+    for (int i=0; i<x.size(); i++) {
+      table.clear_mask(mask);
+      for (ValidSupports vs(ts,i,x[i]); vs(); ++vs)
+        table.add_to_mask(vs.supports(),mask);
+      table.template intersect_with_mask<false>(mask);
+      // The propagator must be scheduled for subsumption
       if (empty())
         goto schedule;
     }
@@ -501,344 +814,170 @@ namespace Gecode { namespace Int { namespace Extensional {
       View::schedule(home,*this,ME_INT_BND);
   }
       
-  template<class View, class Table, bool pos>
+  template<class View, class Table>
   forceinline bool
-  CompactTable<View,Table,pos>::empty(void) const {
+  NegCompact<View,Table>::empty(void) const {
     return table.empty();
   }
 
-  template<class View, class Table, bool pos>
+  template<class View, class Table>
   forceinline bool
-  CompactTable<View,Table,pos>::full(void) const {
+  NegCompact<View,Table>::full(void) const {
     return table.ones() == size();
   }
 
-  template<class View, class Table, bool pos>
+  template<class View, class Table>
   forceinline ExecStatus
-  CompactTable<View,Table,pos>::post(Home home, ViewArray<View>& x,
-                                     const TupleSet& ts) {
-    auto ct = new (home) CompactTable(home,x,ts);
-    if (pos) {
-      assert((x.size() > 1) && (ts.tuples() > 1));
-      return ct->empty() ? ES_FAILED : ES_OK;
-    } else {
-      return ct->full() ? ES_FAILED : ES_OK;
-    }
+  NegCompact<View,Table>::post(Home home, ViewArray<View>& x,
+                               const TupleSet& ts) {
+    auto ct = new (home) NegCompact(home,x,ts);
+    return ct->full() ? ES_FAILED : ES_OK;
   }
 
-  template<class View, class Table, bool pos>
+  template<class View, class Table>
   forceinline size_t
-  CompactTable<View,Table,pos>::dispose(Space& home) {
-    (void) Compact<View,pos>::dispose(home);
+  NegCompact<View,Table>::dispose(Space& home) {
+    (void) Compact<View,false>::dispose(home);
     return sizeof(*this);
   }
 
-  template<class View, class Table, bool pos>
-  PropCost
-  CompactTable<View,Table,pos>::cost(const Space&, 
-                                     const ModEventDelta&) const {
-    return PropCost::quadratic(PropCost::HI,unassigned);
-  }
-
-  template<class View, class Table, bool pos>
+  template<class View, class Table>
   void
-  CompactTable<View,Table,pos>::reschedule(Space& home) {
-    if (pos) {
-      // Modified variable, subsumption, or failure
-      if ((status.type() != StatusType::NONE) || 
-          (unassigned == 0) || empty())
-        View::schedule(home,*this,ME_INT_DOM);
-    } else {
-      View::schedule(home,*this,ME_INT_DOM);
-    }
+  NegCompact<View,Table>::reschedule(Space& home) {
+    View::schedule(home,*this,ME_INT_DOM);
   }
 
-  template<class View, class Table, bool pos>
+  template<class View, class Table>
   ExecStatus
-  CompactTable<View,Table,pos>::propagate(Space& home, const ModEventDelta&) {
-    if (pos) {
-      if (empty())
-        return ES_FAILED;
-      if (unassigned == 0)
-        return home.ES_SUBSUMED(*this);
-
-      Status touched(status);
-      // Mark as performing propagation
-      status.propagating();
-
-      Region r;
-      // Scan all values of all unassigned variables to see if they
-      // are still supported.
-      for (Advisors<CTAdvisor> as(c); as(); ++as) {
-        CTAdvisor& a = as.advisor();
-        View x = a.view();
-
-        // No point filtering variable if it was the only modified variable
-        if (touched.single(a) || x.assigned())
-          continue;
-      
-        if (x.size() == 2) { // Consider min and max values only
-          if (!table.intersects(supports(a,x.min())))
-            GECODE_ME_CHECK(x.eq(home,x.max()));
-          else if (!table.intersects(supports(a,x.max())))
-            GECODE_ME_CHECK(x.eq(home,x.min()));
-          if (x.assigned())
-            unassigned--;
-          else
-            a.adjust();
-        } else { // x.size() > 2
-          // How many values to remove
-          int* nq = r.alloc<int>(x.size());
-          unsigned int n_nq = 0U;
-          // The initialization is here just to avoid warnings...
-          int last_support = 0;
-          for (ValidSupports vs(*this,a); vs(); ++vs)
-            if (!table.intersects(vs.supports()))
-              nq[n_nq++] = vs.val();
-            else
-              last_support = vs.val();
-          // Remove collected values
-          if (n_nq > 0U) {
-            if (n_nq == 1U) {
-              ModEvent me = x.nq(home,nq[0]);
-              if (me_failed(me)) return ES_FAILED;
-              assert(me != ME_INT_VAL);
-            } else if (n_nq == x.size() - 1U) {
-              GECODE_ME_CHECK(x.eq(home,last_support));
-              unassigned--;
-              goto noadjustp;
-            } else {
-              Iter::Values::Array rnq(nq,n_nq);
-              GECODE_ASSUME(n_nq >= 2U);
-              ModEvent me = x.minus_v(home,rnq,false);
-              if (me_failed(me)) return ES_FAILED;
-              assert(me != ME_INT_VAL);
-            }
-            a.adjust();
-          noadjustp: ;
-          }
-          r.free();
-        }
-      }
-
-      // Mark as no touched variable
-      status.none();
-      // Should not be in a failed state
-      assert(!empty());
-      // Subsume if there is at most one non-assigned variable
-      return (unassigned <= 1) ? home.ES_SUBSUMED(*this) : ES_FIX;
-
-    } else {
-
+  NegCompact<View,Table>::propagate(Space& home, const ModEventDelta&) {
 #ifndef NDEBUG
-      if (!empty()) {
-        // Check whether number of unassigned views and advisors match
-        unsigned int n = 0;
-        for (Advisors<CTAdvisor> as(c); as(); ++as)
-          n++;
-        assert(n == unassigned);
-      }
+    if (!empty()) {
+      // Check whether number of unassigned views and advisors match
+      unsigned int n = 0;
+      for (Advisors<CTAdvisor> as(c); as(); ++as)
+        n++;
+      assert(n == unassigned);
+    }
 #endif
 
-      if (empty())
-        return home.ES_SUBSUMED(*this);
+    if (empty())
+      return home.ES_SUBSUMED(*this);
 
-      Region r;
-      // Size of the Cartesian product
-      unsigned long long int xs = size();
+    Region r;
+    // Size of the Cartesian product
+    unsigned long long int xs = size();
+    
+    // Scan all values of all unassigned variables to see if they
+    // are still supported.
+    for (Advisors<CTAdvisor> as(c); as(); ++as) {
+      assert(xs == size());
+      CTAdvisor& a = as.advisor();
+      View x = a.view();
+      
+      // How many values to remove
+      int* nq = r.alloc<int>(x.size());
+      unsigned int n_nq = 0U;
+      
+      // Adjust for the current variable domain
+      xs /= static_cast<unsigned long long int>(x.size());
+      
+      ValidSupports vs(*this,a);
+      if (!vs())
+        return home.ES_SUBSUMED(*this); // No valid supports left, subsumed
+      
+      for (; vs(); ++vs)
+        if (table.ones(vs.supports()) == xs)
+          nq[n_nq++] = vs.val();
 
-      // Scan all values of all unassigned variables to see if they
-      // are still supported.
-      for (Advisors<CTAdvisor> as(c); as(); ++as) {
-        assert(xs == size());
-        CTAdvisor& a = as.advisor();
-        View x = a.view();
-
-        // How many values to remove
-        int* nq = r.alloc<int>(x.size());
-        unsigned int n_nq = 0U;
-
-        // Adjust for the current variable domain
-        xs /= static_cast<unsigned long long int>(x.size());
-
-        ValidSupports vs(*this,a);
-        if (!vs())
-          return home.ES_SUBSUMED(*this); // No valid supports left, subsumed
-
-        for (; vs(); ++vs)
-          if (table.ones(vs.supports()) == xs)
-            nq[n_nq++] = vs.val();
-
-        // Remove collected values
-        if (n_nq > 0U) {
-          if (n_nq == 1U) {
-            GECODE_ME_CHECK(x.nq(home,nq[0]));
-          } else {
-            Iter::Values::Array rnq(nq,n_nq);
-            GECODE_ASSUME(n_nq >= 2U);
-            GECODE_ME_CHECK(x.minus_v(home,rnq,false));
-          }
-          if (empty())
-            return home.ES_SUBSUMED(*this);
-          a.adjust();
+      // Remove collected values
+      if (n_nq > 0U) {
+        if (n_nq == 1U) {
+          GECODE_ME_CHECK(x.nq(home,nq[0]));
+        } else {
+          Iter::Values::Array rnq(nq,n_nq);
+          GECODE_ASSUME(n_nq >= 2U);
+          GECODE_ME_CHECK(x.minus_v(home,rnq,false));
         }
-        
-        // Re-adjust size
-        xs *= static_cast<unsigned long long int>(x.size());
-        r.free();
+        if (empty())
+          return home.ES_SUBSUMED(*this);
+        a.adjust();
       }
-
-      if (table.ones() == xs)
-        return ES_FAILED;
-      if (empty() || (unassigned <= 1))
-        return home.ES_SUBSUMED(*this);
-      return ES_FIX;
+      
+      // Re-adjust size
+      xs *= static_cast<unsigned long long int>(x.size());
+      r.free();
     }
+
+    if (table.ones() == xs)
+      return ES_FAILED;
+    if (empty() || (unassigned <= 1))
+      return home.ES_SUBSUMED(*this);
+    return ES_FIX;
   }
 
-  template<class View, class Table, bool pos>
+  template<class View, class Table>
   ExecStatus
-  CompactTable<View,Table,pos>::advise(Space& home,
-                                       Advisor& a0, const Delta& d) {
+  NegCompact<View,Table>::advise(Space& home,
+                                 Advisor& a0, const Delta& d) {
     CTAdvisor& a = static_cast<CTAdvisor&>(a0);
 
-    if (pos) {
-      // Do not fail a disabled propagator
-      if (empty())
-        return Compact<View,pos>::disabled() ?
-          home.ES_NOFIX_DISPOSE(c,a) : ES_FAILED;
+    // We are subsumed
+    if (empty())
+      return home.ES_NOFIX_DISPOSE(c,a);
       
-      View x = a.view();
+    View x = a.view();
       
-      /* 
-       * Do not schedule if propagator is performing propagation,
-       * and dispose if assigned.
-       */ 
-      if (status.type() == StatusType::PROPAGATING)
-        return x.assigned() ? home.ES_FIX_DISPOSE(c,a) : ES_FIX;
-      
-      // Update status
-      status.touched(a);
-      
-      if (x.assigned()) {
-        // Variable is assigned -- intersect with its value
-        table.template intersect_with_mask<true>(supports(a,x.val()));
-        unassigned--;
-        return home.ES_NOFIX_DISPOSE(c,a);
-      }
-      
-      if (!x.any(d) && (x.min(d) == x.max(d))) {
-        table.nand_with_mask(supports(a,x.min(d)));
-        a.adjust();
-      } else if (!x.any(d) && (x.width(d) <= x.size())) {
-        // Incremental update, using the removed values
-        for (LostSupports ls(*this,a,x.min(d),x.max(d)); ls(); ++ls) {
-          table.nand_with_mask(ls.supports());
-          if (empty())
-            return Compact<View,pos>::disabled() ?
-              home.ES_NOFIX_DISPOSE(c,a) : ES_FAILED;
-        }
-        a.adjust();
-      } else {
-        a.adjust();
-        // Reset-based update, using the values that are left
-        if (x.size() == 2) {
-          table.intersect_with_masks(supports(a,x.min()),
-                                     supports(a,x.max()));
-        } else {
-          Region r;
-          BitSetData* mask = r.alloc<BitSetData>(table.size());
-          // Collect all tuples to be kept in a temporary mask
-          table.clear_mask(mask);
-          for (ValidSupports vs(*this,a); vs(); ++vs)
-            table.add_to_mask(vs.supports(),mask);
-          table.template intersect_with_mask<false>(mask);
-        }
-      }
-
-      // Do not fail a disabled propagator
-      if (empty())
-        return Compact<View,pos>::disabled() ?
-          home.ES_NOFIX_DISPOSE(c,a) : ES_FAILED;
-      
-      // Schedule propagator
-      return ES_NOFIX;
-    } else {
-
-      // We are subsumed
-      if (empty())
-        return home.ES_NOFIX_DISPOSE(c,a);
-      
-      View x = a.view();
-      
-      if (x.assigned()) {
-        unassigned--;
-        // Variable is assigned -- intersect with its value
-        if (const BitSetData* s = supports(a,x.val()))
-          table.template intersect_with_mask<true>(s);
-        else
-          table.flush(); // Mark as subsumed
-        return home.ES_NOFIX_DISPOSE(c,a);
-      }
-      
-      a.adjust();
-
-      {
-        ValidSupports vs(*this,a);
-        if (!vs()) {
-          table.flush(); // Mark as subsumed
-          return home.ES_NOFIX_DISPOSE(c,a);
-        }
-
-        Region r;
-        BitSetData* mask = r.alloc<BitSetData>(table.size());
-        // Collect all tuples to be kept in a temporary mask
-        table.clear_mask(mask);
-        for (; vs(); ++vs)
-          table.add_to_mask(vs.supports(),mask);
-        table.template intersect_with_mask<false>(mask);
-      }
-
-      if (empty())
-        return home.ES_NOFIX_DISPOSE(c,a);
-      
-      // Schedule propagator
-      return ES_NOFIX;
+    if (x.assigned()) {
+      unassigned--;
+      // Variable is assigned -- intersect with its value
+      if (const BitSetData* s = supports(a,x.val()))
+        table.template intersect_with_mask<true>(s);
+      else
+        table.flush(); // Mark as subsumed
+      return home.ES_NOFIX_DISPOSE(c,a);
     }
+      
+    a.adjust();
+    
+    {
+      ValidSupports vs(*this,a);
+      if (!vs()) {
+        table.flush(); // Mark as subsumed
+        return home.ES_NOFIX_DISPOSE(c,a);
+      }
+
+      Region r;
+      BitSetData* mask = r.alloc<BitSetData>(table.size());
+      // Collect all tuples to be kept in a temporary mask
+      table.clear_mask(mask);
+      for (; vs(); ++vs)
+        table.add_to_mask(vs.supports(),mask);
+      table.template intersect_with_mask<false>(mask);
+    }
+    
+    if (empty())
+      return home.ES_NOFIX_DISPOSE(c,a);
+    
+    // Schedule propagator
+    return ES_NOFIX;
   }
 
 
   /*
    * Post function
    */
-  template<class View, bool pos>
+  template<class View>
   inline ExecStatus
-  postcompact(Home home, ViewArray<View>& x, const TupleSet& ts) {
+  postnegcompact(Home home, ViewArray<View>& x, const TupleSet& ts) {
+    if (ts.tuples() == 0)
+      return ES_OK;
 
-    if (pos) {
-
-      // All variables pruned to correct domain
-      for (int i=0; i<x.size(); i++) {
-        TupleSet::Ranges r(ts,i);
-        GECODE_ME_CHECK(x[i].inter_r(home, r, false));
-      }
-
-      if ((x.size() <= 1) || (ts.tuples() <= 1))
+    // Check whether a variable does not overlap with supported values
+    for (int i=0; i<x.size(); i++) {
+      TupleSet::Ranges rs(ts,i);
+      ViewRanges<View> rx(x[i]);
+      if (Iter::Ranges::disjoint(rs,rx))
         return ES_OK;
-
-    } else {
-
-      if (ts.tuples() == 0)
-        return ES_OK;
-
-      // Check whether a variable does not overlap with supported values
-      for (int i=0; i<x.size(); i++) {
-        TupleSet::Ranges rs(ts,i);
-        ViewRanges<View> rx(x[i]);
-        if (Iter::Ranges::disjoint(rs,rx))
-          return ES_OK;
-      }
-
     }
 
     // Choose the right bit set implementation
@@ -846,23 +985,23 @@ namespace Gecode { namespace Int { namespace Extensional {
     case 0U:
       GECODE_NEVER; return ES_OK;
     case 1U:
-      return CompactTable<View,TinyBitSet<1U>,pos>::post(home,x,ts);
+      return NegCompact<View,TinyBitSet<1U>>::post(home,x,ts);
     case 2U:
-      return CompactTable<View,TinyBitSet<2U>,pos>::post(home,x,ts);
+      return NegCompact<View,TinyBitSet<2U>>::post(home,x,ts);
     case 3U:
-      return CompactTable<View,TinyBitSet<3U>,pos>::post(home,x,ts);
+      return NegCompact<View,TinyBitSet<3U>>::post(home,x,ts);
     case 4U:
-      return CompactTable<View,TinyBitSet<4U>,pos>::post(home,x,ts);
+      return NegCompact<View,TinyBitSet<4U>>::post(home,x,ts);
     default:
       switch (Gecode::Support::u_type(ts.words())) {
       case Gecode::Support::IT_CHAR:
-        return CompactTable<View,BitSet<unsigned char>,pos>
+        return NegCompact<View,BitSet<unsigned char>>
           ::post(home,x,ts);
       case Gecode::Support::IT_SHRT:
-        return CompactTable<View,BitSet<unsigned short int>,pos>
+        return NegCompact<View,BitSet<unsigned short int>>
           ::post(home,x,ts);
       case Gecode::Support::IT_INT:
-        return CompactTable<View,BitSet<unsigned int>,pos>
+        return NegCompact<View,BitSet<unsigned int>>
           ::post(home,x,ts);
       default: GECODE_NEVER;
       }
