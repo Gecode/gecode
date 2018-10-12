@@ -52,10 +52,11 @@ protected:
   static const int n = 26;
   /// Array for letters
   IntVarArray x;
+  BoolVar b;
 public:
   /// Actual model
   Alpha(const Options& opt)
-    : Script(opt), x(*this,4,0,6) {
+    : Script(opt), x(*this,4,0,6), b(*this,0,1) {
     TupleSet t(3);
     t.add({0,0,0}).add({1,1,1})
       .add({0,1,2}).add({2,1,0}).finalize();
@@ -66,11 +67,13 @@ public:
                .add({2, 5, 1, 5}).add({4, 3, 5, 1})
                .add({1, 5, 2, 5}).add({5, 3, 3, 2})
                .finalize();
-    extensional(*this, x, ts);
-    rel(*this, x[0] == 1);
-    rel(*this, x[1] == 3);
-    rel(*this, x[2] == 2);
-    rel(*this, x[3] == 3);
+    rel(*this, x[0] == 0);
+    rel(*this, x[1] == 0);
+    rel(*this, x[2] == 0);
+    rel(*this, x[3] == 0);
+
+             extensional(*this, x, ts,b);
+    //    rel(*this, b == 0);
 
     branch(*this, x, INT_VAR_NONE(), INT_VAL_MIN());
   }
@@ -78,6 +81,7 @@ public:
   /// Constructor for cloning \a s
   Alpha(Alpha& s) : Script(s) {
     x.update(*this, s.x);
+    b.update(*this, s.b);
   }
   /// Copy during cloning
   virtual Space*
@@ -87,7 +91,8 @@ public:
   /// Print solution
   virtual void
   print(std::ostream& os) const {
-    os << "\t" << x;
+    os << "\tx=" << x;
+    os << ", b=" << b;
     os << std::endl;
   }
 };

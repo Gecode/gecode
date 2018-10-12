@@ -527,7 +527,7 @@ namespace Gecode { namespace Int { namespace Extensional {
   template<class View, class Table>
   forceinline ExecStatus
   PosCompact<View,Table>::post(Home home, ViewArray<View>& x,
-                                     const TupleSet& ts) {
+                               const TupleSet& ts) {
     auto ct = new (home) PosCompact(home,x,ts);
     assert((x.size() > 1) && (ts.tuples() > 1));
     return ct->empty() ? ES_FAILED : ES_OK;
@@ -901,40 +901,43 @@ namespace Gecode { namespace Int { namespace Extensional {
       for (Advisors<CTAdvisor> as(c); as(); ++as) {
         assert(xs == size());
         CTAdvisor& a = as.advisor();
+
+        ValidSupports vs(*this,a);
+        if (!vs())
+          return home.ES_SUBSUMED(*this); // No valid supports left, subsumed
+
         View x = a.view();
-        
-        // How many values to remove
-        int* nq = r.alloc<int>(x.size());
-        unsigned int n_nq = 0U;
         
         // Adjust for the current variable domain
         xs /= static_cast<unsigned long long int>(x.size());
         
-        ValidSupports vs(*this,a);
-        if (!vs())
-          return home.ES_SUBSUMED(*this); // No valid supports left, subsumed
+        if ((xs <= table.bits()) && (xs <= table.ones())) {
+          // How many values to remove
+          int* nq = r.alloc<int>(x.size());
+          unsigned int n_nq = 0U;
         
-        for (; vs(); ++vs)
-          if ((xs <= table.bits()) && (xs == table.ones(vs.supports())))
-            nq[n_nq++] = vs.val();
+          for (; vs(); ++vs)
+            if (xs == table.ones(vs.supports()))
+              nq[n_nq++] = vs.val();
         
-        // Remove collected values
-        if (n_nq > 0U) {
-          if (n_nq == 1U) {
-            GECODE_ME_CHECK(x.nq(home,nq[0]));
-          } else {
-            Iter::Values::Array rnq(nq,n_nq);
-            GECODE_ASSUME(n_nq >= 2U);
-            GECODE_ME_CHECK(x.minus_v(home,rnq,false));
+          // Remove collected values
+          if (n_nq > 0U) {
+            if (n_nq == 1U) {
+              GECODE_ME_CHECK(x.nq(home,nq[0]));
+            } else {
+              Iter::Values::Array rnq(nq,n_nq);
+              GECODE_ASSUME(n_nq >= 2U);
+              GECODE_ME_CHECK(x.minus_v(home,rnq,false));
+            }
+            if (empty())
+              return home.ES_SUBSUMED(*this);
+            a.adjust();
           }
-          if (empty())
-            return home.ES_SUBSUMED(*this);
-          a.adjust();
+          r.free();
         }
         
         // Re-adjust size
         xs *= static_cast<unsigned long long int>(x.size());
-        r.free();
       }
     }
 
@@ -999,11 +1002,8 @@ namespace Gecode { namespace Int { namespace Extensional {
   template<class View>
   inline ExecStatus
   postnegcompact(Home home, ViewArray<View>& x, const TupleSet& ts) {
-    if (ts.tuples() == 0)
-      return ES_OK;
-
     // Check whether a variable does not overlap with supported values
-    for (int i=0; i<x.size(); i++) {
+   for (int i=0; i<x.size(); i++) {
       TupleSet::Ranges rs(ts,i);
       ViewRanges<View> rx(x[i]);
       if (Iter::Ranges::disjoint(rs,rx))
@@ -1051,6 +1051,7 @@ namespace Gecode { namespace Int { namespace Extensional {
   ReCompact<View,Table,CtrlView,rm>::ReCompact(Space& home, TableProp& p)
     : Compact<View,false>(home,p), table(home,p.table) {
     b.update(home,p.b);
+    y.update(home,p.y);
     assert(!empty());
   }
 
@@ -1112,7 +1113,7 @@ namespace Gecode { namespace Int { namespace Extensional {
   forceinline
   ReCompact<View,Table,CtrlView,rm>::ReCompact(Home home, ViewArray<View>& x,
                                                const TupleSet& ts, CtrlView b0)
-    : Compact<View,false>(home,x,ts), table(home,ts.words()), b(b0) {
+    : Compact<View,false>(home,x,ts), table(home,ts.words()), b(b0), y(x) {
     b.subscribe(home,*this,PC_BOOL_VAL);
     Region r;
     BitSetData* mask = r.alloc<BitSetData>(table.size());
@@ -1157,8 +1158,18 @@ namespace Gecode { namespace Int { namespace Extensional {
   forceinline ExecStatus
   ReCompact<View,Table,CtrlView,rm>::post(Home home, ViewArray<View>& x,
                                           const TupleSet& ts, CtrlView b) {
-    auto ct = new (home) ReCompact(home,x,ts,b);
-    return ct->full() ? ES_FAILED : ES_OK;
+    if (b.one()) {
+      if (rm == RM_PMI)
+        return ES_OK;
+      return postposcompact(home,x,ts);
+    }
+    if (b.zero()) {
+      if (rm == RM_IMP)
+        return ES_OK;
+      return postnegcompact(home,x,ts);
+    }
+    (void) new (home) ReCompact(home,x,ts,b);
+    return ES_OK;
   }
 
   template<class View, class Table, class CtrlView, ReifyMode rm>
@@ -1179,82 +1190,31 @@ namespace Gecode { namespace Int { namespace Extensional {
   ExecStatus
   ReCompact<View,Table,CtrlView,rm>::propagate(Space& home,
                                                const ModEventDelta&) {
-#ifndef NDEBUG
-    if (!empty()) {
-      // Check whether number of unassigned views and advisors match
-      unsigned int n = 0;
-      for (Advisors<CTAdvisor> as(c); as(); ++as)
-        n++;
-      assert(n == unassigned);
+    if (b.one()) {
+      if (rm == RM_PMI)
+        return home.ES_SUBSUMED(*this);
+      TupleSet keep(ts);
+      GECODE_REWRITE(*this,postposcompact(home(*this),y,keep));
     }
-#endif
-
-    if (empty())
-      return home.ES_SUBSUMED(*this);
-
-    // Estimate whether any pruning will be possible
-    unsigned long long int xs, xms;
-    size(xs,xms);
-    
-    if ((xs > table.bits()) || (xs > table.ones())) {
-      // No pruning possible as for the variable with the largest domain
-      // xms, the table is too small
-      for (Advisors<CTAdvisor> as(c); as(); ++as) {
-        ValidSupports vs(*this,as.advisor());
-        if (!vs())
-          return home.ES_SUBSUMED(*this); // No valid supports left, subsumed
-      }
-
-    } else {
-      // Adjust to size of the Cartesian product
-      xs *= xms;
-      
-      Region r;
-
-      for (Advisors<CTAdvisor> as(c); as(); ++as) {
-        assert(xs == size());
-        CTAdvisor& a = as.advisor();
-        View x = a.view();
-        
-        // How many values to remove
-        int* nq = r.alloc<int>(x.size());
-        unsigned int n_nq = 0U;
-        
-        // Adjust for the current variable domain
-        xs /= static_cast<unsigned long long int>(x.size());
-        
-        ValidSupports vs(*this,a);
-        if (!vs())
-          return home.ES_SUBSUMED(*this); // No valid supports left, subsumed
-        
-        for (; vs(); ++vs)
-          if ((xs <= table.bits()) && (xs == table.ones(vs.supports())))
-            nq[n_nq++] = vs.val();
-        
-        // Remove collected values
-        if (n_nq > 0U) {
-          if (n_nq == 1U) {
-            GECODE_ME_CHECK(x.nq(home,nq[0]));
-          } else {
-            Iter::Values::Array rnq(nq,n_nq);
-            GECODE_ASSUME(n_nq >= 2U);
-            GECODE_ME_CHECK(x.minus_v(home,rnq,false));
-          }
-          if (empty())
-            return home.ES_SUBSUMED(*this);
-          a.adjust();
-        }
-        
-        // Re-adjust size
-        xs *= static_cast<unsigned long long int>(x.size());
-        r.free();
-      }
+    if (b.zero()) {
+      if (rm == RM_IMP)
+        return home.ES_SUBSUMED(*this);
+      TupleSet keep(ts);
+      GECODE_REWRITE(*this,postnegcompact(home(*this),y,keep));
     }
 
-    if (table.ones() == xs)
-      return ES_FAILED;
-    if (empty() || (unassigned <= 1))
+    if (empty()) {
+      if (rm != RM_PMI)
+        GECODE_ME_CHECK(b.zero_none(home));
       return home.ES_SUBSUMED(*this);
+    }
+    unsigned long long int s = size();
+    if ((s <= table.bits()) && (s == table.ones())) {
+      if (rm != RM_IMP)
+        GECODE_ME_CHECK(b.one_none(home));
+      return home.ES_SUBSUMED(*this);
+    }      
+
     return ES_FIX;
   }
 
@@ -1265,7 +1225,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     CTAdvisor& a = static_cast<CTAdvisor&>(a0);
 
     // We are subsumed
-    if (empty())
+    if (empty() || b.assigned())
       return home.ES_NOFIX_DISPOSE(c,a);
       
     View x = a.view();
@@ -1276,7 +1236,7 @@ namespace Gecode { namespace Int { namespace Extensional {
       if (const BitSetData* s = supports(a,x.val()))
         table.template intersect_with_mask<true>(s);
       else
-        table.flush(); // Mark as subsumed
+        table.flush(); // Mark as failed
       return home.ES_NOFIX_DISPOSE(c,a);
     }
       
@@ -1285,7 +1245,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     {
       ValidSupports vs(*this,a);
       if (!vs()) {
-        table.flush(); // Mark as subsumed
+        table.flush(); // Mark as failed
         return home.ES_NOFIX_DISPOSE(c,a);
       }
 
@@ -1313,17 +1273,16 @@ namespace Gecode { namespace Int { namespace Extensional {
   inline ExecStatus
   postrecompact(Home home, ViewArray<View>& x, const TupleSet& ts,
                 CtrlView b) {
-    if (ts.tuples() == 0)
-      return ES_OK;
-
     // Check whether a variable does not overlap with supported values
     for (int i=0; i<x.size(); i++) {
       TupleSet::Ranges rs(ts,i);
       ViewRanges<View> rx(x[i]);
-      if (Iter::Ranges::disjoint(rs,rx))
+      if (Iter::Ranges::disjoint(rs,rx)) {
+        if (rm != RM_PMI)
+          GECODE_ME_CHECK(b.zero(home));
         return ES_OK;
+      }
     }
-
     // Choose the right bit set implementation
     switch (ts.words()) {
     case 0U:

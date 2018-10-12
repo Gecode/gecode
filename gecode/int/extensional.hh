@@ -645,6 +645,8 @@ namespace Gecode { namespace Int { namespace Extensional {
     Table table;
     /// Boolean control view
     CtrlView b;
+    /// The views (for rewriting)
+    ViewArray<View> y;
     /// Check whether the table is empty
     bool empty(void) const;
     /// Check whether the table is full (complete)
@@ -672,7 +674,8 @@ namespace Gecode { namespace Int { namespace Extensional {
 
   /// Post function for compact table propagator
   template<class View, class CtrlView, ReifyMode rm>
-  ExecStatus postrecompact(Home home, ViewArray<View>& x, const TupleSet& ts);
+  ExecStatus postrecompact(Home home, ViewArray<View>& x, const TupleSet& ts,
+                           CtrlView b);
 
 }}}
 

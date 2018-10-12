@@ -2,10 +2,8 @@
 /*
  *  Main authors:
  *     Mikael Lagerkvist <lagerkvist@gecode.org>
- *     Christian Schulte <schulte@gecode.org>
- *
- *  Contributing authors:
  *     Linnea Ingmar <linnea.ingmar@hotmail.com>
+ *     Christian Schulte <schulte@gecode.org>
  *
  *  Copyright:
  *     Linnea Ingmar, 2017
@@ -492,7 +490,7 @@ namespace Test { namespace Int {
        /// Create and register test
        RandomTupleSetTest(const std::string& s, bool p,
                           Gecode::IntSet d0, Gecode::TupleSet ts0)
-         : TupleSetTest(s,p,d0,ts0,true) {
+         : TupleSetTest(s,p,d0,ts0,false) {
          testsearch = false;
        }
        /// Create and register initial assignment
