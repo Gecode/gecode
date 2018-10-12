@@ -591,7 +591,6 @@ namespace Gecode { namespace Int { namespace Extensional {
     typedef typename Compact<View,false>::ValidSupports ValidSupports;
     typedef typename Compact<View,false>::Range Range;
     typedef typename Compact<View,false>::CTAdvisor CTAdvisor;
-    typedef typename Compact<View,false>::LostSupports LostSupports;
 
     using Compact<View,false>::supports;
     using Compact<View,false>::unassigned;
@@ -627,6 +626,53 @@ namespace Gecode { namespace Int { namespace Extensional {
   /// Post function for compact table propagator
   template<class View>
   ExecStatus postnegcompact(Home home, ViewArray<View>& x, const TupleSet& ts);
+
+
+  /// Domain consistent reified extensional propagator
+  template<class View, class Table, class CtrlView, ReifyMode rm>
+  class ReCompact : public Compact<View,false> {
+  public:
+    typedef typename Compact<View,false>::ValidSupports ValidSupports;
+    typedef typename Compact<View,false>::Range Range;
+    typedef typename Compact<View,false>::CTAdvisor CTAdvisor;
+
+    using Compact<View,false>::supports;
+    using Compact<View,false>::unassigned;
+    using Compact<View,false>::c;
+    using Compact<View,false>::ts;
+
+    /// Current table
+    Table table;
+    /// Boolean control view
+    CtrlView b;
+    /// Check whether the table is empty
+    bool empty(void) const;
+    /// Check whether the table is full (complete)
+    bool full(void) const;
+    /// Constructor for cloning \a p
+    template<class TableProp>
+    ReCompact(Space& home, TableProp& p);
+    /// Constructor for posting
+    ReCompact(Home home, ViewArray<View>& x, const TupleSet& ts, CtrlView b);
+  public:
+    /// Schedule function
+    virtual void reschedule(Space& home);
+    /// Perform propagation
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+    /// Copy propagator during cloning
+    virtual Actor* copy(Space& home);
+    /// Post propagator for views \a x and table \a t
+    static ExecStatus post(Home home, ViewArray<View>& x, const TupleSet& ts,
+                           CtrlView b);
+    /// Delete propagator and return its size
+    size_t dispose(Space& home);
+    /// Give advice to propagator
+    virtual ExecStatus advise(Space& home, Advisor& a, const Delta& d);
+  };
+
+  /// Post function for compact table propagator
+  template<class View, class CtrlView, ReifyMode rm>
+  ExecStatus postrecompact(Home home, ViewArray<View>& x, const TupleSet& ts);
 
 }}}
 

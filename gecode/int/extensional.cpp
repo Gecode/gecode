@@ -92,6 +92,79 @@ namespace Gecode {
   }
 
   void
+  extensional(Home home, const IntVarArgs& x, const TupleSet& t,
+              bool pos, Reify r,
+              IntPropLevel) {
+    using namespace Int;
+    if (!t.finalized())
+      throw NotYetFinalized("Int::extensional");
+    if (t.arity() != x.size())
+      throw ArgumentSizeMismatch("Int::extensional");
+    GECODE_POST;
+
+    if (pos) {
+      // Enforce invariant that there is at least one tuple...
+      if (t.tuples() == 0) {
+        if (x.size() != 0) {
+          if (r.mode() != RM_PMI)
+            GECODE_ME_FAIL(BoolView(r.var()).zero(home));
+        } else {
+          if (r.mode() != RM_IMP)
+            GECODE_ME_FAIL(BoolView(r.var()).one(home));
+        }
+        return;
+      }
+      
+      ViewArray<IntView> xv(home,x);
+      switch (r.mode()) {
+      case RM_EQV:
+        GECODE_ES_FAIL((Extensional::postrecompact<IntView,BoolView,RM_EQV>
+                        (home,xv,t,r.var())));
+        break;
+      case RM_IMP:
+        GECODE_ES_FAIL((Extensional::postrecompact<IntView,BoolView,RM_IMP>
+                        (home,xv,t,r.var())));
+        break;
+      case RM_PMI:
+        GECODE_ES_FAIL((Extensional::postrecompact<IntView,BoolView,RM_PMI>
+                        (home,xv,t,r.var())));
+        break;
+      default: throw UnknownReifyMode("Int::extensional");
+      }
+    } else {
+      // Enforce invariant that there is at least one tuple...
+      if (t.tuples() == 0) {
+        if (x.size() == 0) {
+          if (r.mode() != RM_PMI)
+            GECODE_ME_FAIL(BoolView(r.var()).zero(home));
+        } else {
+          if (r.mode() != RM_IMP)
+            GECODE_ME_FAIL(BoolView(r.var()).one(home));
+        }
+        return;
+      }
+      
+      ViewArray<IntView> xv(home,x);
+      NegBoolView n(r.var());
+      switch (r.mode()) {
+      case RM_EQV:
+        GECODE_ES_FAIL((Extensional::postrecompact<IntView,NegBoolView,RM_EQV>
+                        (home,xv,t,n)));
+        break;
+      case RM_IMP:
+        GECODE_ES_FAIL((Extensional::postrecompact<IntView,NegBoolView,RM_PMI>
+                        (home,xv,t,n)));
+        break;
+      case RM_PMI:
+        GECODE_ES_FAIL((Extensional::postrecompact<IntView,NegBoolView,RM_IMP>
+                        (home,xv,t,n)));
+        break;
+      default: throw UnknownReifyMode("Int::extensional");
+      }
+    }
+  }
+
+  void
   extensional(Home home, const BoolVarArgs& x, const TupleSet& t, bool pos,
               IntPropLevel) {
     using namespace Int;
@@ -121,6 +194,81 @@ namespace Gecode {
       ViewArray<BoolView> xv(home,x);
       GECODE_ES_FAIL((Extensional::postnegcompact<BoolView>(home,xv,t)));
       
+    }
+  }
+
+  void
+  extensional(Home home, const BoolVarArgs& x, const TupleSet& t,
+              bool pos, Reify r,
+              IntPropLevel) {
+    using namespace Int;
+    if (!t.finalized())
+      throw NotYetFinalized("Int::extensional");
+    if (t.arity() != x.size())
+      throw ArgumentSizeMismatch("Int::extensional");
+    if ((t.min() < 0) || (t.max() > 1))
+      throw NotZeroOne("Int::extensional");
+    GECODE_POST;
+
+    if (pos) {
+      // Enforce invariant that there is at least one tuple...
+      if (t.tuples() == 0) {
+        if (x.size() != 0) {
+          if (r.mode() != RM_PMI)
+            GECODE_ME_FAIL(BoolView(r.var()).zero(home));
+        } else {
+          if (r.mode() != RM_IMP)
+            GECODE_ME_FAIL(BoolView(r.var()).one(home));
+        }
+        return;
+      }
+      
+      ViewArray<BoolView> xv(home,x);
+      switch (r.mode()) {
+      case RM_EQV:
+        GECODE_ES_FAIL((Extensional::postrecompact<BoolView,BoolView,RM_EQV>
+                        (home,xv,t,r.var())));
+        break;
+      case RM_IMP:
+        GECODE_ES_FAIL((Extensional::postrecompact<BoolView,BoolView,RM_IMP>
+                        (home,xv,t,r.var())));
+        break;
+      case RM_PMI:
+        GECODE_ES_FAIL((Extensional::postrecompact<BoolView,BoolView,RM_PMI>
+                        (home,xv,t,r.var())));
+        break;
+      default: throw UnknownReifyMode("Int::extensional");
+      }
+    } else {
+      // Enforce invariant that there is at least one tuple...
+      if (t.tuples() == 0) {
+        if (x.size() == 0) {
+          if (r.mode() != RM_PMI)
+            GECODE_ME_FAIL(BoolView(r.var()).zero(home));
+        } else {
+          if (r.mode() != RM_IMP)
+            GECODE_ME_FAIL(BoolView(r.var()).one(home));
+        }
+        return;
+      }
+      
+      ViewArray<BoolView> xv(home,x);
+      NegBoolView n(r.var());
+      switch (r.mode()) {
+      case RM_EQV:
+        GECODE_ES_FAIL((Extensional::postrecompact<BoolView,NegBoolView,RM_EQV>
+                        (home,xv,t,n)));
+        break;
+      case RM_IMP:
+        GECODE_ES_FAIL((Extensional::postrecompact<BoolView,NegBoolView,RM_PMI>
+                        (home,xv,t,n)));
+        break;
+      case RM_PMI:
+        GECODE_ES_FAIL((Extensional::postrecompact<BoolView,NegBoolView,RM_IMP>
+                        (home,xv,t,n)));
+        break;
+      default: throw UnknownReifyMode("Int::extensional");
+      }
     }
   }
 

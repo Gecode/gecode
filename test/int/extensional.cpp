@@ -392,25 +392,16 @@ namespace Test { namespace Int {
      /// %Test with tuple set
      class TupleSetBase : public Test {
      protected:
+       /// Simple test tupleset
+       Gecode::TupleSet t;
        /// Whether the table is positive or negative
        bool pos;
      public:
        /// Create and register test
        TupleSetBase(bool p)
          : Test("Extensional::TupleSet::" + str(p) + "::Base",
-                4,1,5,false,Gecode::IPL_DOM), pos(p) {}
-       /// %Test whether \a x is solution
-       virtual bool solution(const Assignment& x) const {
-         return pos == ((x[0] == 1 && x[1] == 3 && x[2] == 2 && x[3] == 3) ||
-                        (x[0] == 2 && x[1] == 1 && x[2] == 2 && x[3] == 4) ||
-                        (x[0] == 2 && x[1] == 2 && x[2] == 1 && x[3] == 4) ||
-                        (x[0] == 3 && x[1] == 3 && x[2] == 3 && x[3] == 2) ||
-                        (x[0] == 4 && x[1] == 3 && x[2] == 4 && x[3] == 1));
-       }
-       /// Post constraint on \a x
-       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
+                4,1,5,true,Gecode::IPL_DOM), t(4), pos(p) {
          using namespace Gecode;
-         TupleSet t(4);
          IntArgs t1({2, 1, 2, 4});
          IntArgs t2({2, 2, 1, 4});
          IntArgs t3({4, 3, 4, 1});
@@ -425,10 +416,26 @@ namespace Test { namespace Int {
           .add(t5).add(t5).add(t5).add(t5)
           .add(t5).add(t5).add(t5).add(t5)
           .finalize();
-
+       }
+       /// %Test whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         return pos == ((x[0] == 1 && x[1] == 3 && x[2] == 2 && x[3] == 3) ||
+                        (x[0] == 2 && x[1] == 1 && x[2] == 2 && x[3] == 4) ||
+                        (x[0] == 2 && x[1] == 2 && x[2] == 1 && x[3] == 4) ||
+                        (x[0] == 3 && x[1] == 3 && x[2] == 3 && x[3] == 2) ||
+                        (x[0] == 4 && x[1] == 3 && x[2] == 4 && x[3] == 1));
+       }
+       /// Post constraint on \a x
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
+         using namespace Gecode;
          TupleSet ts = TupleSet(t.arity(),tupleset2dfa(t));
          assert(t == ts);
          extensional(home, x, t, pos, ipl);
+       }
+       /// Post reified constraint on \a x for \a r
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x,
+                         Gecode::Reify r) {
+         extensional(home, x, t, pos, r, ipl);
        }
      };
 
@@ -446,7 +453,7 @@ namespace Test { namespace Int {
        TupleSetTest(const std::string& s, bool p,
                     Gecode::IntSet d0, Gecode::TupleSet ts0, bool td)
          : Test("Extensional::TupleSet::" + str(p) + "::" + s,
-                ts0.arity(),d0,false,Gecode::IPL_DOM),
+                ts0.arity(),d0,true,Gecode::IPL_DOM),
            pos(p), ts(ts0), toDFA(td) {
        }
        /// %Test whether \a x is solution
@@ -472,6 +479,12 @@ namespace Test { namespace Int {
          }
          extensional(home, x, ts, pos, ipl);
        }
+       /// Post reified constraint on \a x for \a r
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x,
+                         Gecode::Reify r) {
+         using namespace Gecode;
+         extensional(home, x, ts, pos, r, ipl);
+       }
      };
 
      class RandomTupleSetTest : public TupleSetTest {
@@ -479,7 +492,7 @@ namespace Test { namespace Int {
        /// Create and register test
        RandomTupleSetTest(const std::string& s, bool p,
                           Gecode::IntSet d0, Gecode::TupleSet ts0)
-         : TupleSetTest(s,p,d0,ts0,false) {
+         : TupleSetTest(s,p,d0,ts0,true) {
          testsearch = false;
        }
        /// Create and register initial assignment
@@ -500,7 +513,7 @@ namespace Test { namespace Int {
        /// Create and register test
        TupleSetLarge(double prob, bool p)
          : Test("Extensional::TupleSet::" + str(p) + "::Large",
-                5,1,5,false,Gecode::IPL_DOM), pos(p), t(5) {
+                5,1,5,true,Gecode::IPL_DOM), pos(p), t(5) {
          using namespace Gecode;
 
          CpltAssignment ass(5, IntSet(1, 5));
@@ -532,6 +545,12 @@ namespace Test { namespace Int {
          using namespace Gecode;
          extensional(home, x, t, pos, ipl);
        }
+       /// Post reified constraint on \a x for \a r
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x,
+                         Gecode::Reify r) {
+         using namespace Gecode;
+         extensional(home, x, t, pos, r, ipl);
+       }
      };
      
      /// %Test with bool tuple set
@@ -545,7 +564,7 @@ namespace Test { namespace Int {
        /// Create and register test
        TupleSetBool(double prob, bool p)
          : Test("Extensional::TupleSet::" + str(p) + "::Bool",
-                5,0,1,false), pos(p), t(5) {
+                5,0,1,true), pos(p), t(5) {
          using namespace Gecode;
 
          CpltAssignment ass(5, IntSet(0, 1));
@@ -580,6 +599,15 @@ namespace Test { namespace Int {
          for (int i = x.size(); i--; )
            y[i] = channel(home, x[i]);
          extensional(home, y, t, pos, ipl);
+       }
+       /// Post reified constraint on \a x for \a r
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x,
+                         Gecode::Reify r) {
+         using namespace Gecode;
+         BoolVarArgs y(x.size());
+         for (int i = x.size(); i--; )
+           y[i] = channel(home, x[i]);
+         extensional(home, y, t, pos, r, ipl);
        }
      };
 

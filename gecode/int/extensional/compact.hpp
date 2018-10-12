@@ -1040,7 +1040,320 @@ namespace Gecode { namespace Int { namespace Extensional {
     return ES_OK;
   }
 
-}}}
 
+  /*
+   * The reified propagator
+   *
+   */
+  template<class View, class Table, class CtrlView, ReifyMode rm>
+  template<class TableProp>
+  forceinline
+  ReCompact<View,Table,CtrlView,rm>::ReCompact(Space& home, TableProp& p)
+    : Compact<View,false>(home,p), table(home,p.table) {
+    b.update(home,p.b);
+    assert(!empty());
+  }
+
+  template<class View, class Table, class CtrlView, ReifyMode rm>
+  Actor*
+  ReCompact<View,Table,CtrlView,rm>::copy(Space& home) {
+    assert((table.words() > 0U) && (table.width() >= table.words()));
+    if (table.words() <= 4U) {
+      switch (table.width()) {
+      case 0U:
+        GECODE_NEVER; break;
+      case 1U:
+        return new (home) ReCompact<View,TinyBitSet<1U>,CtrlView,rm>
+          (home,*this);
+      case 2U:
+        return new (home) ReCompact<View,TinyBitSet<2U>,CtrlView,rm>
+          (home,*this);
+      case 3U:
+        return new (home) ReCompact<View,TinyBitSet<3U>,CtrlView,rm>
+          (home,*this);
+      case 4U:
+        return new (home) ReCompact<View,TinyBitSet<4U>,CtrlView,rm>
+          (home,*this);
+      default:
+        break;
+      }
+    }
+    if (std::is_same<Table,BitSet<unsigned char>>::value) {
+      goto copy_char;
+    } else if (std::is_same<Table,BitSet<unsigned short int>>::value) {
+      switch (Gecode::Support::u_type(table.width())) {
+      case Gecode::Support::IT_CHAR: goto copy_char;
+      case Gecode::Support::IT_SHRT: goto copy_short;
+      case Gecode::Support::IT_INT:  GECODE_NEVER;
+      default:                       GECODE_NEVER;
+      }
+    } else {
+      switch (Gecode::Support::u_type(table.width())) {
+      case Gecode::Support::IT_CHAR: goto copy_char;
+      case Gecode::Support::IT_SHRT: goto copy_short;
+      case Gecode::Support::IT_INT:  goto copy_int;
+      default: GECODE_NEVER;
+      }
+      GECODE_NEVER;
+      return nullptr;
+    }
+  copy_char:
+    return new (home) ReCompact<View,BitSet<unsigned char>,CtrlView,rm>
+      (home,*this);
+  copy_short:
+    return new (home) ReCompact<View,BitSet<unsigned short int>,CtrlView,rm>
+      (home,*this);
+  copy_int:
+    return new (home) ReCompact<View,BitSet<unsigned int>,CtrlView,rm>
+      (home,*this);
+  }
+
+  template<class View, class Table, class CtrlView, ReifyMode rm>
+  forceinline
+  ReCompact<View,Table,CtrlView,rm>::ReCompact(Home home, ViewArray<View>& x,
+                                               const TupleSet& ts, CtrlView b0)
+    : Compact<View,false>(home,x,ts), table(home,ts.words()), b(b0) {
+    b.subscribe(home,*this,PC_BOOL_VAL);
+    Region r;
+    BitSetData* mask = r.alloc<BitSetData>(table.size());
+    // Invalidate tuples
+    for (int i=0; i<x.size(); i++) {
+      table.clear_mask(mask);
+      for (ValidSupports vs(ts,i,x[i]); vs(); ++vs)
+        table.add_to_mask(vs.supports(),mask);
+      table.template intersect_with_mask<false>(mask);
+      // The propagator must be scheduled for subsumption
+      if (empty())
+        goto schedule;
+    }
+    // Post advisors
+    for (int i=0; i<x.size(); i++) {
+      if (!x[i].assigned())
+        (void) new (home) CTAdvisor(home,*this,c,ts,x[i],i);
+      else
+        unassigned--;
+    }
+    // Schedule propagator
+  schedule:
+    if (unassigned < x.size())
+      View::schedule(home,*this,ME_INT_VAL);
+    else
+      View::schedule(home,*this,ME_INT_BND);
+  }
+      
+  template<class View, class Table, class CtrlView, ReifyMode rm>
+  forceinline bool
+  ReCompact<View,Table,CtrlView,rm>::empty(void) const {
+    return table.empty();
+  }
+
+  template<class View, class Table, class CtrlView, ReifyMode rm>
+  forceinline bool
+  ReCompact<View,Table,CtrlView,rm>::full(void) const {
+    return table.ones() == size();
+  }
+
+  template<class View, class Table, class CtrlView, ReifyMode rm>
+  forceinline ExecStatus
+  ReCompact<View,Table,CtrlView,rm>::post(Home home, ViewArray<View>& x,
+                                          const TupleSet& ts, CtrlView b) {
+    auto ct = new (home) ReCompact(home,x,ts,b);
+    return ct->full() ? ES_FAILED : ES_OK;
+  }
+
+  template<class View, class Table, class CtrlView, ReifyMode rm>
+  forceinline size_t
+  ReCompact<View,Table,CtrlView,rm>::dispose(Space& home) {
+    b.cancel(home,*this,PC_BOOL_VAL);
+    (void) Compact<View,false>::dispose(home);
+    return sizeof(*this);
+  }
+
+  template<class View, class Table, class CtrlView, ReifyMode rm>
+  void
+  ReCompact<View,Table,CtrlView,rm>::reschedule(Space& home) {
+    View::schedule(home,*this,ME_INT_DOM);
+  }
+
+  template<class View, class Table, class CtrlView, ReifyMode rm>
+  ExecStatus
+  ReCompact<View,Table,CtrlView,rm>::propagate(Space& home,
+                                               const ModEventDelta&) {
+#ifndef NDEBUG
+    if (!empty()) {
+      // Check whether number of unassigned views and advisors match
+      unsigned int n = 0;
+      for (Advisors<CTAdvisor> as(c); as(); ++as)
+        n++;
+      assert(n == unassigned);
+    }
+#endif
+
+    if (empty())
+      return home.ES_SUBSUMED(*this);
+
+    // Estimate whether any pruning will be possible
+    unsigned long long int xs, xms;
+    size(xs,xms);
+    
+    if ((xs > table.bits()) || (xs > table.ones())) {
+      // No pruning possible as for the variable with the largest domain
+      // xms, the table is too small
+      for (Advisors<CTAdvisor> as(c); as(); ++as) {
+        ValidSupports vs(*this,as.advisor());
+        if (!vs())
+          return home.ES_SUBSUMED(*this); // No valid supports left, subsumed
+      }
+
+    } else {
+      // Adjust to size of the Cartesian product
+      xs *= xms;
+      
+      Region r;
+
+      for (Advisors<CTAdvisor> as(c); as(); ++as) {
+        assert(xs == size());
+        CTAdvisor& a = as.advisor();
+        View x = a.view();
+        
+        // How many values to remove
+        int* nq = r.alloc<int>(x.size());
+        unsigned int n_nq = 0U;
+        
+        // Adjust for the current variable domain
+        xs /= static_cast<unsigned long long int>(x.size());
+        
+        ValidSupports vs(*this,a);
+        if (!vs())
+          return home.ES_SUBSUMED(*this); // No valid supports left, subsumed
+        
+        for (; vs(); ++vs)
+          if ((xs <= table.bits()) && (xs == table.ones(vs.supports())))
+            nq[n_nq++] = vs.val();
+        
+        // Remove collected values
+        if (n_nq > 0U) {
+          if (n_nq == 1U) {
+            GECODE_ME_CHECK(x.nq(home,nq[0]));
+          } else {
+            Iter::Values::Array rnq(nq,n_nq);
+            GECODE_ASSUME(n_nq >= 2U);
+            GECODE_ME_CHECK(x.minus_v(home,rnq,false));
+          }
+          if (empty())
+            return home.ES_SUBSUMED(*this);
+          a.adjust();
+        }
+        
+        // Re-adjust size
+        xs *= static_cast<unsigned long long int>(x.size());
+        r.free();
+      }
+    }
+
+    if (table.ones() == xs)
+      return ES_FAILED;
+    if (empty() || (unassigned <= 1))
+      return home.ES_SUBSUMED(*this);
+    return ES_FIX;
+  }
+
+  template<class View, class Table, class CtrlView, ReifyMode rm>
+  ExecStatus
+  ReCompact<View,Table,CtrlView,rm>::advise(Space& home,
+                                            Advisor& a0, const Delta& d) {
+    CTAdvisor& a = static_cast<CTAdvisor&>(a0);
+
+    // We are subsumed
+    if (empty())
+      return home.ES_NOFIX_DISPOSE(c,a);
+      
+    View x = a.view();
+      
+    if (x.assigned()) {
+      unassigned--;
+      // Variable is assigned -- intersect with its value
+      if (const BitSetData* s = supports(a,x.val()))
+        table.template intersect_with_mask<true>(s);
+      else
+        table.flush(); // Mark as subsumed
+      return home.ES_NOFIX_DISPOSE(c,a);
+    }
+      
+    a.adjust();
+    
+    {
+      ValidSupports vs(*this,a);
+      if (!vs()) {
+        table.flush(); // Mark as subsumed
+        return home.ES_NOFIX_DISPOSE(c,a);
+      }
+
+      Region r;
+      BitSetData* mask = r.alloc<BitSetData>(table.size());
+      // Collect all tuples to be kept in a temporary mask
+      table.clear_mask(mask);
+      for (; vs(); ++vs)
+        table.add_to_mask(vs.supports(),mask);
+      table.template intersect_with_mask<false>(mask);
+    }
+    
+    if (empty())
+      return home.ES_NOFIX_DISPOSE(c,a);
+    
+    // Schedule propagator
+    return ES_NOFIX;
+  }
+
+
+  /*
+   * Post function
+   */
+  template<class View, class CtrlView, ReifyMode rm>
+  inline ExecStatus
+  postrecompact(Home home, ViewArray<View>& x, const TupleSet& ts,
+                CtrlView b) {
+    if (ts.tuples() == 0)
+      return ES_OK;
+
+    // Check whether a variable does not overlap with supported values
+    for (int i=0; i<x.size(); i++) {
+      TupleSet::Ranges rs(ts,i);
+      ViewRanges<View> rx(x[i]);
+      if (Iter::Ranges::disjoint(rs,rx))
+        return ES_OK;
+    }
+
+    // Choose the right bit set implementation
+    switch (ts.words()) {
+    case 0U:
+      GECODE_NEVER; return ES_OK;
+    case 1U:
+      return ReCompact<View,TinyBitSet<1U>,CtrlView,rm>::post(home,x,ts,b);
+    case 2U:
+      return ReCompact<View,TinyBitSet<2U>,CtrlView,rm>::post(home,x,ts,b);
+    case 3U:
+      return ReCompact<View,TinyBitSet<3U>,CtrlView,rm>::post(home,x,ts,b);
+    case 4U:
+      return ReCompact<View,TinyBitSet<4U>,CtrlView,rm>::post(home,x,ts,b);
+    default:
+      switch (Gecode::Support::u_type(ts.words())) {
+      case Gecode::Support::IT_CHAR:
+        return ReCompact<View,BitSet<unsigned char>,CtrlView,rm>
+          ::post(home,x,ts,b);
+      case Gecode::Support::IT_SHRT:
+        return ReCompact<View,BitSet<unsigned short int>,CtrlView,rm>
+          ::post(home,x,ts,b);
+      case Gecode::Support::IT_INT:
+        return ReCompact<View,BitSet<unsigned int>,CtrlView,rm>
+          ::post(home,x,ts,b);
+      default: GECODE_NEVER;
+      }
+    }
+    GECODE_NEVER;
+    return ES_OK;
+  }
+
+}}}
 
 // STATISTICS: int-prop

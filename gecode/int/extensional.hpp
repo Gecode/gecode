@@ -40,9 +40,21 @@ namespace Gecode {
   }
 
   forceinline void
+  extensional(Home home, const IntVarArgs& x, const TupleSet& t, Reify r,
+              IntPropLevel ipl) {
+    extensional(home, x, t, true, r, ipl);
+  }
+
+  forceinline void
   extensional(Home home, const BoolVarArgs& x, const TupleSet& t,
               IntPropLevel ipl) {
     extensional(home, x, t, true, ipl);
+  }
+
+  forceinline void
+  extensional(Home home, const BoolVarArgs& x, const TupleSet& t, Reify r,
+              IntPropLevel ipl) {
+    extensional(home, x, t, true, r, ipl);
   }
 
 }
