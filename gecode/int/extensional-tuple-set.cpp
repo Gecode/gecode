@@ -8,7 +8,7 @@
  *  Copyright:
  *     Linnea Ingmar, 2017
  *     Mikael Lagerkvist, 2007
- *     Christian Schulte, 2004
+ *     Christian Schulte, 2017
  *
  *  This file is part of Gecode, the generic constraint
  *  development environment:
@@ -40,28 +40,7 @@
 namespace Gecode {
 
   void
-  extensional(Home home, const IntVarArgs& x, DFA dfa,
-              IntPropLevel) {
-    using namespace Int;
-    if (same(x))
-      throw ArgumentSame("Int::extensional");
-    GECODE_POST;
-    GECODE_ES_FAIL(Extensional::post_lgp(home,x,dfa));
-  }
-
-  void
-  extensional(Home home, const BoolVarArgs& x, DFA dfa,
-              IntPropLevel) {
-    using namespace Int;
-    if (same(x))
-      throw ArgumentSame("Int::extensional");
-    GECODE_POST;
-    GECODE_ES_FAIL(Extensional::post_lgp(home,x,dfa));
-  }
-
-  void
-  extensional(Home home, const IntVarArgs& x, const TupleSet& t,
-              bool pos,
+  extensional(Home home, const IntVarArgs& x, const TupleSet& t, bool pos,
               IntPropLevel) {
     using namespace Int;
     if (!t.finalized())
@@ -92,8 +71,8 @@ namespace Gecode {
   }
 
   void
-  extensional(Home home, const IntVarArgs& x, const TupleSet& t,
-              bool pos, Reify r,
+  extensional(Home home, const IntVarArgs& x, const TupleSet& t, bool pos,
+              Reify r,
               IntPropLevel) {
     using namespace Int;
     if (!t.finalized())
@@ -198,8 +177,8 @@ namespace Gecode {
   }
 
   void
-  extensional(Home home, const BoolVarArgs& x, const TupleSet& t,
-              bool pos, Reify r,
+  extensional(Home home, const BoolVarArgs& x, const TupleSet& t, bool pos,
+              Reify r,
               IntPropLevel) {
     using namespace Int;
     if (!t.finalized())
