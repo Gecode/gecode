@@ -706,6 +706,9 @@ namespace Gecode { namespace Int { namespace Extensional {
   template<class View>
   inline ExecStatus
   postposcompact(Home home, ViewArray<View>& x, const TupleSet& ts) {
+    if (ts.tuples() == 0)
+      return (x.size() == 0) ? ES_OK : ES_FAILED;
+    
     // All variables pruned to correct domain
     for (int i=0; i<x.size(); i++) {
       TupleSet::Ranges r(ts,i);
@@ -984,8 +987,11 @@ namespace Gecode { namespace Int { namespace Extensional {
   template<class View>
   inline ExecStatus
   postnegcompact(Home home, ViewArray<View>& x, const TupleSet& ts) {
+    if (ts.tuples() == 0)
+      return ES_OK;
+
     // Check whether a variable does not overlap with supported values
-   for (int i=0; i<x.size(); i++) {
+    for (int i=0; i<x.size(); i++) {
       TupleSet::Ranges rs(ts,i);
       ViewRanges<View> rx(x[i]);
       if (Iter::Ranges::disjoint(rs,rx))
@@ -1231,6 +1237,17 @@ namespace Gecode { namespace Int { namespace Extensional {
   forceinline ExecStatus
   postrecompact(Home home, ViewArray<View>& x, const TupleSet& ts,
                 CtrlView b) {
+    // Enforce invariant that there is at least one tuple...
+    if (ts.tuples() == 0) {
+      if (x.size() != 0) {
+        if (rm != RM_PMI)
+          GECODE_ME_CHECK(b.zero(home));
+      } else {
+        if (rm != RM_IMP)
+          GECODE_ME_CHECK(b.one(home));
+      }
+      return ES_OK;
+    }
     // Check whether a variable does not overlap with supported values
     for (int i=0; i<x.size(); i++) {
       TupleSet::Ranges rs(ts,i);

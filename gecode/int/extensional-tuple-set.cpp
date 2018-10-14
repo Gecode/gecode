@@ -49,25 +49,11 @@ namespace Gecode {
       throw ArgumentSizeMismatch("Int::extensional");
     GECODE_POST;
 
-    if (pos) {
-      if (t.tuples() == 0) {
-        if (x.size() != 0)
-          home.fail();
-        return;
-      }
-      
-      // Construct view array
-      ViewArray<IntView> xv(home,x);
+    ViewArray<IntView> xv(home,x);
+    if (pos)
       GECODE_ES_FAIL((Extensional::postposcompact<IntView>(home,xv,t)));
-    } else {
-      if (t.tuples() == 0)
-        return;
-      
-      // Construct view array
-      ViewArray<IntView> xv(home,x);
+    else
       GECODE_ES_FAIL((Extensional::postnegcompact<IntView>(home,xv,t)));
-      
-    }
   }
 
   void
@@ -81,20 +67,8 @@ namespace Gecode {
       throw ArgumentSizeMismatch("Int::extensional");
     GECODE_POST;
 
+    ViewArray<IntView> xv(home,x);
     if (pos) {
-      // Enforce invariant that there is at least one tuple...
-      if (t.tuples() == 0) {
-        if (x.size() != 0) {
-          if (r.mode() != RM_PMI)
-            GECODE_ME_FAIL(BoolView(r.var()).zero(home));
-        } else {
-          if (r.mode() != RM_IMP)
-            GECODE_ME_FAIL(BoolView(r.var()).one(home));
-        }
-        return;
-      }
-      
-      ViewArray<IntView> xv(home,x);
       switch (r.mode()) {
       case RM_EQV:
         GECODE_ES_FAIL((Extensional::postrecompact<IntView,BoolView,RM_EQV>
@@ -111,19 +85,6 @@ namespace Gecode {
       default: throw UnknownReifyMode("Int::extensional");
       }
     } else {
-      // Enforce invariant that there is at least one tuple...
-      if (t.tuples() == 0) {
-        if (x.size() == 0) {
-          if (r.mode() != RM_PMI)
-            GECODE_ME_FAIL(BoolView(r.var()).zero(home));
-        } else {
-          if (r.mode() != RM_IMP)
-            GECODE_ME_FAIL(BoolView(r.var()).one(home));
-        }
-        return;
-      }
-      
-      ViewArray<IntView> xv(home,x);
       NegBoolView n(r.var());
       switch (r.mode()) {
       case RM_EQV:
@@ -155,25 +116,11 @@ namespace Gecode {
       throw NotZeroOne("Int::extensional");
     GECODE_POST;
 
-    if (pos) {
-      if (t.tuples() == 0) {
-        if (x.size() != 0)
-          home.fail();
-        return;
-      }
-      
-      // Construct view array
-      ViewArray<BoolView> xv(home,x);
+    ViewArray<BoolView> xv(home,x);
+    if (pos)
       GECODE_ES_FAIL((Extensional::postposcompact<BoolView>(home,xv,t)));
-    } else {
-      if (t.tuples() == 0)
-        return;
-      
-      // Construct view array
-      ViewArray<BoolView> xv(home,x);
+    else
       GECODE_ES_FAIL((Extensional::postnegcompact<BoolView>(home,xv,t)));
-      
-    }
   }
 
   void
@@ -189,20 +136,8 @@ namespace Gecode {
       throw NotZeroOne("Int::extensional");
     GECODE_POST;
 
+    ViewArray<BoolView> xv(home,x);
     if (pos) {
-      // Enforce invariant that there is at least one tuple...
-      if (t.tuples() == 0) {
-        if (x.size() != 0) {
-          if (r.mode() != RM_PMI)
-            GECODE_ME_FAIL(BoolView(r.var()).zero(home));
-        } else {
-          if (r.mode() != RM_IMP)
-            GECODE_ME_FAIL(BoolView(r.var()).one(home));
-        }
-        return;
-      }
-      
-      ViewArray<BoolView> xv(home,x);
       switch (r.mode()) {
       case RM_EQV:
         GECODE_ES_FAIL((Extensional::postrecompact<BoolView,BoolView,RM_EQV>
@@ -219,19 +154,6 @@ namespace Gecode {
       default: throw UnknownReifyMode("Int::extensional");
       }
     } else {
-      // Enforce invariant that there is at least one tuple...
-      if (t.tuples() == 0) {
-        if (x.size() == 0) {
-          if (r.mode() != RM_PMI)
-            GECODE_ME_FAIL(BoolView(r.var()).zero(home));
-        } else {
-          if (r.mode() != RM_IMP)
-            GECODE_ME_FAIL(BoolView(r.var()).one(home));
-        }
-        return;
-      }
-      
-      ViewArray<BoolView> xv(home,x);
       NegBoolView n(r.var());
       switch (r.mode()) {
       case RM_EQV:
