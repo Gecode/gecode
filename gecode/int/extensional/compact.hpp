@@ -829,6 +829,11 @@ namespace Gecode { namespace Int { namespace Extensional {
       for (Advisors<CTAdvisor> as(c); as(); ++as)
         n++;
       assert(n == unassigned);
+      // Check that all views have at least one value with support
+      for (Advisors<CTAdvisor> as(c); as(); ++as) {
+        ValidSupports vs(*this,as.advisor());
+        assert(vs());
+      }
     }
 #endif
 
@@ -849,10 +854,10 @@ namespace Gecode { namespace Int { namespace Extensional {
         x_size *= n;
       }
       if (x_size > table.bits())
-        goto no_pruning;
+        return ES_FIX;
     }
     if (x_size > table.ones())
-      goto no_pruning;
+      return ES_FIX;
 
     {
       // Adjust to size of the Cartesian product
@@ -861,12 +866,8 @@ namespace Gecode { namespace Int { namespace Extensional {
       Region r;
 
       for (Advisors<CTAdvisor> as(c); as(); ++as) {
+        assert(!table.empty());
         CTAdvisor& a = as.advisor();
-
-        ValidSupports vs(*this,a);
-        if (!vs())
-          return home.ES_SUBSUMED(*this); // No valid supports left, subsumed
-
         View x = a.view();
         
         // Adjust for the current variable domain
@@ -877,7 +878,7 @@ namespace Gecode { namespace Int { namespace Extensional {
           int* nq = r.alloc<int>(x.size());
           unsigned int n_nq = 0U;
         
-          for (; vs(); ++vs)
+          for (ValidSupports vs(*this,a); vs(); ++vs)
             if (x_size == table.ones(vs.supports()))
               nq[n_nq++] = vs.val();
         
@@ -896,7 +897,6 @@ namespace Gecode { namespace Int { namespace Extensional {
           }
           r.free();
         }
-        
         // Re-adjust size
         x_size *= static_cast<unsigned long long int>(x.size());
       }
@@ -906,16 +906,6 @@ namespace Gecode { namespace Int { namespace Extensional {
       return ES_FAILED;
     if (table.empty() || (unassigned <= 1))
       return home.ES_SUBSUMED(*this);
-    return ES_FIX;
-
-  no_pruning:
-    // No pruning possible as for the variable with the largest domain
-    // x_max, the table is too small
-    for (Advisors<CTAdvisor> as(c); as(); ++as) {
-      ValidSupports vs(*this,as.advisor());
-      if (!vs())
-        return home.ES_SUBSUMED(*this); // No valid supports left, subsumed
-    }
     return ES_FIX;
   }
 
@@ -953,8 +943,10 @@ namespace Gecode { namespace Int { namespace Extensional {
       BitSetData* mask = r.alloc<BitSetData>(table.size());
       // Collect all tuples to be kept in a temporary mask
       table.clear_mask(mask);
-      for (; vs(); ++vs)
+      do {
         table.add_to_mask(vs.supports(),mask);
+        ++vs;
+      } while (vs());
       table.template intersect_with_mask<false>(mask);
     }
     
@@ -1189,8 +1181,10 @@ namespace Gecode { namespace Int { namespace Extensional {
       BitSetData* mask = r.alloc<BitSetData>(table.size());
       // Collect all tuples to be kept in a temporary mask
       table.clear_mask(mask);
-      for (; vs(); ++vs)
+      do {
         table.add_to_mask(vs.supports(),mask);
+        ++vs;
+      } while (vs());
       table.template intersect_with_mask<false>(mask);
     }
     
