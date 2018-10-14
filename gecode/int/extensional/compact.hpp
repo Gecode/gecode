@@ -187,31 +187,6 @@ namespace Gecode { namespace Int { namespace Extensional {
   }
 
   template<class View, bool pos>
-  forceinline unsigned long long int
-  Compact<View,pos>::size(void) const {
-    unsigned long long int s = 1U;
-    for (Advisors<CTAdvisor> as(c); as(); ++as)
-      s *= static_cast<unsigned long long int>(as.advisor().view().size());
-    return s;
-  }
-
-  template<class View, bool pos>
-  forceinline void
-  Compact<View,pos>::size(unsigned long long int& s,
-                          unsigned long long int& m) {
-    s=1U; m=1U;
-    for (Advisors<CTAdvisor> as(c); as(); ++as) {
-      unsigned long long int n = as.advisor().view().size();
-      if (n > m) {
-        s *= m; m = n;
-      } else {
-        s *= n;
-      }
-    }
-    assert(s * m == size());
-  }
-
-  template<class View, bool pos>
   forceinline void
   Compact<View,pos>::ValidSupports::find(void) {
     assert(!pos);
@@ -401,6 +376,19 @@ namespace Gecode { namespace Int { namespace Extensional {
   }
 
   template<class View, bool pos>
+  template<class Table>
+  forceinline bool
+  Compact<View,pos>::full(const Table& table) const {
+    unsigned long long int s = 1U;
+    for (Advisors<CTAdvisor> as(c); as(); ++as) {
+      s *= static_cast<unsigned long long int>(as.advisor().view().size());
+      if (s > table.bits())
+        return false;
+    }
+    return s == table.ones();
+  }
+
+  template<class View, bool pos>
   PropCost
   Compact<View,pos>::cost(const Space&, const ModEventDelta&) const {
     return PropCost::quadratic(PropCost::HI,unassigned);
@@ -468,7 +456,7 @@ namespace Gecode { namespace Int { namespace Extensional {
   forceinline
   PosCompact<View,Table>::PosCompact(Space& home, TableProp& p)
     : Compact<View,true>(home,p), status(NONE), table(home,p.table) {
-    assert(!empty());
+    assert(!table.empty());
   }
 
   template<class View, class Table>
@@ -527,18 +515,12 @@ namespace Gecode { namespace Int { namespace Extensional {
   }
       
   template<class View, class Table>
-  forceinline bool
-  PosCompact<View,Table>::empty(void) const {
-    return table.empty();
-  }
-
-  template<class View, class Table>
   forceinline ExecStatus
   PosCompact<View,Table>::post(Home home, ViewArray<View>& x,
                                const TupleSet& ts) {
     auto ct = new (home) PosCompact(home,x,ts);
     assert((x.size() > 1) && (ts.tuples() > 1));
-    return ct->empty() ? ES_FAILED : ES_OK;
+    return ct->table.empty() ? ES_FAILED : ES_OK;
   }
 
   template<class View, class Table>
@@ -553,14 +535,14 @@ namespace Gecode { namespace Int { namespace Extensional {
   PosCompact<View,Table>::reschedule(Space& home) {
     // Modified variable, subsumption, or failure
     if ((status.type() != StatusType::NONE) || 
-        (unassigned == 0) || empty())
+        (unassigned == 0) || table.empty())
       View::schedule(home,*this,ME_INT_DOM);
   }
 
   template<class View, class Table>
   ExecStatus
   PosCompact<View,Table>::propagate(Space& home, const ModEventDelta&) {
-    if (empty())
+    if (table.empty())
       return ES_FAILED;
     if (unassigned == 0)
       return home.ES_SUBSUMED(*this);
@@ -627,7 +609,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     // Mark as no touched variable
     status.none();
     // Should not be in a failed state
-    assert(!empty());
+    assert(!table.empty());
     // Subsume if there is at most one non-assigned variable
     return (unassigned <= 1) ? home.ES_SUBSUMED(*this) : ES_FIX;
   }
@@ -638,7 +620,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     CTAdvisor& a = static_cast<CTAdvisor&>(a0);
 
     // Do not fail a disabled propagator
-    if (empty())
+    if (table.empty())
       return Compact<View,true>::disabled() ?
         home.ES_NOFIX_DISPOSE(c,a) : ES_FAILED;
       
@@ -668,7 +650,7 @@ namespace Gecode { namespace Int { namespace Extensional {
       // Incremental update, using the removed values
       for (LostSupports ls(*this,a,x.min(d),x.max(d)); ls(); ++ls) {
         table.nand_with_mask(ls.supports());
-        if (empty())
+        if (table.empty())
           return Compact<View,true>::disabled() ?
             home.ES_NOFIX_DISPOSE(c,a) : ES_FAILED;
       }
@@ -691,7 +673,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     }
 
     // Do not fail a disabled propagator
-    if (empty())
+    if (table.empty())
       return Compact<View,true>::disabled() ?
         home.ES_NOFIX_DISPOSE(c,a) : ES_FAILED;
       
@@ -758,7 +740,7 @@ namespace Gecode { namespace Int { namespace Extensional {
   forceinline
   NegCompact<View,Table>::NegCompact(Space& home, TableProp& p)
     : Compact<View,false>(home,p), table(home,p.table) {
-    assert(!empty());
+    assert(!table.empty());
   }
 
   template<class View, class Table>
@@ -817,23 +799,11 @@ namespace Gecode { namespace Int { namespace Extensional {
   }
       
   template<class View, class Table>
-  forceinline bool
-  NegCompact<View,Table>::empty(void) const {
-    return table.empty();
-  }
-
-  template<class View, class Table>
-  forceinline bool
-  NegCompact<View,Table>::full(void) const {
-    return table.ones() == size();
-  }
-
-  template<class View, class Table>
   forceinline ExecStatus
   NegCompact<View,Table>::post(Home home, ViewArray<View>& x,
                                const TupleSet& ts) {
     auto ct = new (home) NegCompact(home,x,ts);
-    return ct->full() ? ES_FAILED : ES_OK;
+    return ct->full(ct->table) ? ES_FAILED : ES_OK;
   }
 
   template<class View, class Table>
@@ -853,7 +823,7 @@ namespace Gecode { namespace Int { namespace Extensional {
   ExecStatus
   NegCompact<View,Table>::propagate(Space& home, const ModEventDelta&) {
 #ifndef NDEBUG
-    if (!empty()) {
+    if (!table.empty()) {
       // Check whether number of unassigned views and advisors match
       unsigned int n = 0;
       for (Advisors<CTAdvisor> as(c); as(); ++as)
@@ -862,30 +832,35 @@ namespace Gecode { namespace Int { namespace Extensional {
     }
 #endif
 
-    if (empty())
+    if (table.empty())
       return home.ES_SUBSUMED(*this);
 
     // Estimate whether any pruning will be possible
-    unsigned long long int xs, xms;
-    size(xs,xms);
-    
-    if ((xs > table.bits()) || (xs > table.ones())) {
-      // No pruning possible as for the variable with the largest domain
-      // xms, the table is too small
-      for (Advisors<CTAdvisor> as(c); as(); ++as) {
-        ValidSupports vs(*this,as.advisor());
-        if (!vs())
-          return home.ES_SUBSUMED(*this); // No valid supports left, subsumed
+    unsigned long long int x_size = 1U;
+    unsigned long long int x_max = 1U;
+    /* The size of the Cartesian product will be x_size times x_max,
+     * where x_max is the size of the largest variable domain.
+     */
+    for (Advisors<CTAdvisor> as(c); as(); ++as) {
+      unsigned long long int n = as.advisor().view().size();
+      if (n > x_max) {
+        x_size *= x_max; x_max = n;
+      } else {
+        x_size *= n;
       }
+      if (x_size > table.bits())
+        goto no_pruning;
+    }
+    if (x_size > table.ones())
+      goto no_pruning;
 
-    } else {
+    {
       // Adjust to size of the Cartesian product
-      xs *= xms;
+      x_size *= x_max;
       
       Region r;
 
       for (Advisors<CTAdvisor> as(c); as(); ++as) {
-        assert(xs == size());
         CTAdvisor& a = as.advisor();
 
         ValidSupports vs(*this,a);
@@ -895,15 +870,15 @@ namespace Gecode { namespace Int { namespace Extensional {
         View x = a.view();
         
         // Adjust for the current variable domain
-        xs /= static_cast<unsigned long long int>(x.size());
+        x_size /= static_cast<unsigned long long int>(x.size());
         
-        if ((xs <= table.bits()) && (xs <= table.ones())) {
+        if ((x_size <= table.bits()) && (x_size <= table.ones())) {
           // How many values to remove
           int* nq = r.alloc<int>(x.size());
           unsigned int n_nq = 0U;
         
           for (; vs(); ++vs)
-            if (xs == table.ones(vs.supports()))
+            if (x_size == table.ones(vs.supports()))
               nq[n_nq++] = vs.val();
         
           // Remove collected values
@@ -915,7 +890,7 @@ namespace Gecode { namespace Int { namespace Extensional {
               GECODE_ASSUME(n_nq >= 2U);
               GECODE_ME_CHECK(x.minus_v(home,rnq,false));
             }
-            if (empty())
+            if (table.empty())
               return home.ES_SUBSUMED(*this);
             a.adjust();
           }
@@ -923,14 +898,24 @@ namespace Gecode { namespace Int { namespace Extensional {
         }
         
         // Re-adjust size
-        xs *= static_cast<unsigned long long int>(x.size());
+        x_size *= static_cast<unsigned long long int>(x.size());
       }
     }
 
-    if (table.ones() == xs)
+    if (table.ones() == x_size)
       return ES_FAILED;
-    if (empty() || (unassigned <= 1))
+    if (table.empty() || (unassigned <= 1))
       return home.ES_SUBSUMED(*this);
+    return ES_FIX;
+
+  no_pruning:
+    // No pruning possible as for the variable with the largest domain
+    // x_max, the table is too small
+    for (Advisors<CTAdvisor> as(c); as(); ++as) {
+      ValidSupports vs(*this,as.advisor());
+      if (!vs())
+        return home.ES_SUBSUMED(*this); // No valid supports left, subsumed
+    }
     return ES_FIX;
   }
 
@@ -940,7 +925,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     CTAdvisor& a = static_cast<CTAdvisor&>(a0);
 
     // We are subsumed
-    if (empty())
+    if (table.empty())
       return home.ES_NOFIX_DISPOSE(c,a);
       
     View x = a.view();
@@ -973,7 +958,7 @@ namespace Gecode { namespace Int { namespace Extensional {
       table.template intersect_with_mask<false>(mask);
     }
     
-    if (empty())
+    if (table.empty())
       return home.ES_NOFIX_DISPOSE(c,a);
     
     // Schedule propagator
@@ -1040,7 +1025,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     : Compact<View,false>(home,p), table(home,p.table) {
     b.update(home,p.b);
     y.update(home,p.y);
-    assert(!empty());
+    assert(!table.empty());
   }
 
   template<class View, class Table, class CtrlView, ReifyMode rm>
@@ -1107,18 +1092,6 @@ namespace Gecode { namespace Int { namespace Extensional {
   }
       
   template<class View, class Table, class CtrlView, ReifyMode rm>
-  forceinline bool
-  ReCompact<View,Table,CtrlView,rm>::empty(void) const {
-    return table.empty();
-  }
-
-  template<class View, class Table, class CtrlView, ReifyMode rm>
-  forceinline bool
-  ReCompact<View,Table,CtrlView,rm>::full(void) const {
-    return table.ones() == size();
-  }
-
-  template<class View, class Table, class CtrlView, ReifyMode rm>
   forceinline ExecStatus
   ReCompact<View,Table,CtrlView,rm>::post(Home home, ViewArray<View>& x,
                                           const TupleSet& ts, CtrlView b) {
@@ -1167,13 +1140,12 @@ namespace Gecode { namespace Int { namespace Extensional {
       GECODE_REWRITE(*this,postnegcompact(home(*this),y,keep));
     }
 
-    if (empty()) {
+    if (table.empty()) {
       if (rm != RM_PMI)
         GECODE_ME_CHECK(b.zero_none(home));
       return home.ES_SUBSUMED(*this);
     }
-    unsigned long long int s = size();
-    if ((s <= table.bits()) && (s == table.ones())) {
+    if (full(table)) {
       if (rm != RM_IMP)
         GECODE_ME_CHECK(b.one_none(home));
       return home.ES_SUBSUMED(*this);
@@ -1189,7 +1161,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     CTAdvisor& a = static_cast<CTAdvisor&>(a0);
 
     // We are subsumed
-    if (empty() || b.assigned())
+    if (table.empty() || b.assigned())
       return home.ES_NOFIX_DISPOSE(c,a);
       
     View x = a.view();
@@ -1222,7 +1194,7 @@ namespace Gecode { namespace Int { namespace Extensional {
       table.template intersect_with_mask<false>(mask);
     }
     
-    if (empty())
+    if (table.empty())
       return home.ES_NOFIX_DISPOSE(c,a);
     
     // Schedule propagator

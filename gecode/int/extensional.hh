@@ -469,18 +469,13 @@ namespace Gecode { namespace Int { namespace Extensional {
     /// Setup the actual table
     template<class Table>
     void setup(Space& home, Table& table, ViewArray<View>& x);
+    /// Check whether the table covers the whole Cartedion product
+    template<class Table>
+    bool full(const Table& table) const;
     /// Find range for \a n
     const Range* range(CTAdvisor& a, int n);
     /// Return supports for value \a n
     const BitSetData* supports(CTAdvisor& a, int n);
-    /// Return size of Cartesian product of view domains
-    unsigned long long int size(void) const;
-    /** \brief Compute Cartesian product
-     *
-     * Here the product of \a s and \a m is the size of the Cartesian
-     * product and \a m is the size of the largest view domain.
-     */
-    void size(unsigned long long int& s, unsigned long long int& m);
   public:
     /// Cost function
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
@@ -602,10 +597,6 @@ namespace Gecode { namespace Int { namespace Extensional {
 
     /// Current table
     Table table;
-    /// Check whether the table is empty
-    bool empty(void) const;
-    /// Check whether the table is full (complete)
-    bool full(void) const;
     /// Constructor for cloning \a p
     template<class TableProp>
     NegCompact(Space& home, TableProp& p);
@@ -650,10 +641,6 @@ namespace Gecode { namespace Int { namespace Extensional {
     CtrlView b;
     /// The views (for rewriting)
     ViewArray<View> y;
-    /// Check whether the table is empty
-    bool empty(void) const;
-    /// Check whether the table is full (complete)
-    bool full(void) const;
     /// Constructor for cloning \a p
     template<class TableProp>
     ReCompact(Space& home, TableProp& p);
