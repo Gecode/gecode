@@ -109,7 +109,7 @@ namespace Gecode {
   pow(Home home, FloatVar x0, int n, FloatVar x1) {
     using namespace Float;
     if (n < 0)
-      throw OutOfLimits("nroot");
+      throw OutOfLimits("pow");
     GECODE_POST;
     GECODE_ES_FAIL((Arithmetic::Pow<FloatView,FloatView>::post(home,x0,x1,n)));
   }
