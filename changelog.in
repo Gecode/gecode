@@ -69,6 +69,15 @@ Date: 2018-??-??
 More C++-11
 
 [ENTRY]
+Module: minimodel
+What:   bug
+Rank:   minor
+Thanks: Matthias Balzer
+[DESCRIPTION]
+Take exponent into account for float expressions with pow
+and nroot.
+
+[ENTRY]
 Module: kernel
 What:   change
 Rank:   minor

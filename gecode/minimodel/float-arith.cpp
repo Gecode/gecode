@@ -199,7 +199,8 @@ namespace Gecode { namespace MiniModel {
         {
           assert(n == 1);
           FloatVar x = a[0].post(home);
-          if (x.assigned() && ((x.val() == 0.0) || (x.val() == 1.0)))
+          if (x.assigned() && ((x.val() == 0.0) || (x.val() == 1.0)) &&
+              (aInt >= 0))
             y = result(home,ret,x);
           else {
             y = result(home,ret);
@@ -211,7 +212,8 @@ namespace Gecode { namespace MiniModel {
         {
           assert(n == 1);
           FloatVar x = a[0].post(home);
-          if (x.assigned() && ((x.val() == 0.0) || (x.val() == 1.0)))
+          if (x.assigned() && ((x.val() == 0.0) || (x.val() == 1.0)) &&
+              (aInt >= 0))
             y = result(home,ret,x);
           else {
             y = result(home,ret);
