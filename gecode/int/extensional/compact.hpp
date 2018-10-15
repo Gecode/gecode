@@ -336,7 +336,7 @@ namespace Gecode { namespace Int { namespace Extensional {
 
   template<class View, bool pos>
   template<class Table>
-  forceinline void
+  void
   Compact<View,pos>::setup(Space& home, Table& table, ViewArray<View>& x) {
     Region r;
     BitSetData* mask = r.alloc<BitSetData>(table.size());
@@ -676,7 +676,7 @@ namespace Gecode { namespace Int { namespace Extensional {
    * Post function
    */
   template<class View>
-  inline ExecStatus
+  ExecStatus
   postposcompact(Home home, ViewArray<View>& x, const TupleSet& ts) {
     if (ts.tuples() == 0)
       return (x.size() == 0) ? ES_OK : ES_FAILED;
@@ -952,7 +952,7 @@ namespace Gecode { namespace Int { namespace Extensional {
    * Post function
    */
   template<class View>
-  inline ExecStatus
+  ExecStatus
   postnegcompact(Home home, ViewArray<View>& x, const TupleSet& ts) {
     if (ts.tuples() == 0)
       return ES_OK;
@@ -1190,7 +1190,7 @@ namespace Gecode { namespace Int { namespace Extensional {
    * Post function
    */
   template<class View, class CtrlView, ReifyMode rm>
-  forceinline ExecStatus
+  ExecStatus
   postrecompact(Home home, ViewArray<View>& x, const TupleSet& ts,
                 CtrlView b) {
     // Enforce invariant that there is at least one tuple...
