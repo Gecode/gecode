@@ -37,11 +37,11 @@ namespace Gecode { namespace Int { namespace Unary {
   forceinline ExecStatus
   manpost(Home home, TaskArray<ManTask>& t, IntPropLevel ipl) {
     switch (ba(ipl)) {
-    case IPL_BASIC: default:
+    case IPL_BASIC:
       return ManProp<ManTask,PLB>::post(home,t);
     case IPL_ADVANCED:
       return ManProp<ManTask,PLA>::post(home,t);
-    case IPL_BASIC_ADVANCED:
+    case IPL_BASIC_ADVANCED: default:
       return ManProp<ManTask,PLBA>::post(home,t);
     }
     GECODE_NEVER;
@@ -52,11 +52,11 @@ namespace Gecode { namespace Int { namespace Unary {
   forceinline ExecStatus
   optpost(Home home, TaskArray<OptTask>& t, IntPropLevel ipl) {
     switch (ba(ipl)) {
-    case IPL_BASIC: default:
+    case IPL_BASIC:
       return OptProp<OptTask,PLB>::post(home,t);
     case IPL_ADVANCED:
       return OptProp<OptTask,PLA>::post(home,t);
-    case IPL_BASIC_ADVANCED:
+    case IPL_BASIC_ADVANCED: default:
       return OptProp<OptTask,PLBA>::post(home,t);
     }
     GECODE_NEVER;
