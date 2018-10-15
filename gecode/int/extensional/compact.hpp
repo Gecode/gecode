@@ -115,35 +115,27 @@ namespace Gecode { namespace Int { namespace Extensional {
   const typename Compact<View,pos>::Range*
   Compact<View,pos>::range(CTAdvisor& a, int n) {
     assert((n > a.fst()->max) && (n < a.lst()->min));
-    if (pos) {
-      const Range* f=a.fst()+1;
-      const Range* l=a.lst()-1;
-      assert(f<=l);
-      while (f < l) {
-        const Range* m = f + ((l-f) >> 1);
-        if (n < m->min) {
-          l=m-1;
-        } else if (n > m->max) {
-          f=m+1;
-        } else {
-          f=m; break;
-        }
+
+    const Range* f=a.fst()+1;
+    const Range* l=a.lst()-1;
+
+    assert(!pos || (f<=l));
+
+    while (f < l) {
+      const Range* m = f + ((l-f) >> 1);
+      if (n < m->min) {
+        l=m-1;
+      } else if (n > m->max) {
+        f=m+1;
+      } else {
+        f=m; break;
       }
+    }
+
+    if (pos) {
       assert((f->min <= n) && (n <= f->max));
       return f;
     } else {
-      const Range* f=a.fst()+1;
-      const Range* l=a.lst()-1;
-      while (f < l) {
-        const Range* m = f + ((l-f) >> 1);
-        if (n < m->min) {
-          l=m-1;
-        } else if (n > m->max) {
-          f=m+1;
-        } else {
-          f=m; break;
-        }
-      }
       if ((f <= l) && (f->min <= n) && (n <= f->max))
         return f;
       else
@@ -159,31 +151,27 @@ namespace Gecode { namespace Int { namespace Extensional {
     const Range* lst=a.lst();
     if (pos) {
       if (n <= fst->max) {
-        fnd=fst; goto foundp;
+        fnd=fst;
       } else if (n >= lst->min) {
-        fnd=lst; goto foundp;
+        fnd=lst;
       } else {
         fnd=range(a,n);
       }
-    foundp:
-      assert((fnd->min <= n) && (n <= fnd->max));
-      return fnd->supports(n_words,n);
     } else {
       if ((n < fst->min) || (n > lst->max))
         return nullptr;
       if (n <= fst->max) {
-        fnd=fst; goto foundn;
+        fnd=fst;
       } else if (n >= lst->min) {
-        fnd=lst; goto foundn;
+        fnd=lst;
       } else {
         fnd=range(a,n);
         if (!fnd)
           return nullptr;
       }
-    foundn:
-      assert((fnd->min <= n) && (n <= fnd->max));
-      return fnd->supports(n_words,n);
     }
+    assert((fnd->min <= n) && (n <= fnd->max));
+    return fnd->supports(n_words,n);
   }
 
   template<class View, bool pos>
@@ -920,6 +908,8 @@ namespace Gecode { namespace Int { namespace Extensional {
       
     View x = a.view();
       
+    a.adjust();
+
     if (x.assigned()) {
       unassigned--;
       // Variable is assigned -- intersect with its value
@@ -930,8 +920,6 @@ namespace Gecode { namespace Int { namespace Extensional {
       return home.ES_NOFIX_DISPOSE(c,a);
     }
       
-    a.adjust();
-    
     {
       ValidSupports vs(*this,a);
       if (!vs()) {
@@ -1158,6 +1146,8 @@ namespace Gecode { namespace Int { namespace Extensional {
       
     View x = a.view();
       
+    a.adjust();
+    
     if (x.assigned()) {
       unassigned--;
       // Variable is assigned -- intersect with its value
@@ -1168,8 +1158,6 @@ namespace Gecode { namespace Int { namespace Extensional {
       return home.ES_NOFIX_DISPOSE(c,a);
     }
       
-    a.adjust();
-    
     {
       ValidSupports vs(*this,a);
       if (!vs()) {
