@@ -503,6 +503,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     typedef typename Compact<View,true>::CTAdvisor CTAdvisor;
     typedef typename Compact<View,true>::LostSupports LostSupports;
 
+    using Compact<View,true>::setup;
     using Compact<View,true>::supports;
     using Compact<View,true>::unassigned;
     using Compact<View,true>::c;
@@ -590,6 +591,8 @@ namespace Gecode { namespace Int { namespace Extensional {
     typedef typename Compact<View,false>::Range Range;
     typedef typename Compact<View,false>::CTAdvisor CTAdvisor;
 
+    using Compact<View,false>::setup;
+    using Compact<View,false>::full;
     using Compact<View,false>::supports;
     using Compact<View,false>::unassigned;
     using Compact<View,false>::c;
@@ -630,6 +633,8 @@ namespace Gecode { namespace Int { namespace Extensional {
     typedef typename Compact<View,false>::Range Range;
     typedef typename Compact<View,false>::CTAdvisor CTAdvisor;
 
+    using Compact<View,false>::setup;
+    using Compact<View,false>::full;
     using Compact<View,false>::supports;
     using Compact<View,false>::unassigned;
     using Compact<View,false>::c;
