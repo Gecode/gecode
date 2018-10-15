@@ -215,6 +215,7 @@ namespace Gecode { namespace Int { namespace Extensional {
         sr++;
       s = sr->supports(n_words,n);
     } else {
+      s = nullptr; // To avoid warnings
       find();
     }
   }
@@ -229,6 +230,7 @@ namespace Gecode { namespace Int { namespace Extensional {
         sr++;
       s = sr->supports(n_words,n);
     } else {
+      s = nullptr; // To avoid warnings
       find();
     }
   }
