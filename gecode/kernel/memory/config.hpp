@@ -133,18 +133,16 @@ namespace Gecode { namespace Kernel {
      */
     const size_t region_area_size = 32 * 1024;
 
-    /// Align size \a s to the required alignment
-    void align(size_t& s);
+    /// Align size \a s to the required alignment \a a
+    void align(size_t& s, size_t a = GECODE_MEMORY_ALIGNMENT);
 
     /*
      * Alignment
      *
      */
     forceinline void
-    align(size_t& s) {
-      s += ((GECODE_MEMORY_ALIGNMENT -
-             (s & (GECODE_MEMORY_ALIGNMENT - 1))) &
-            (GECODE_MEMORY_ALIGNMENT - 1));
+    align(size_t& s, size_t a) {
+      s += ((a - (s & (a - 1))) & (a - 1));
     }
 
   }
