@@ -313,6 +313,8 @@ namespace Test {
       static std::string str(Gecode::IntRelType irl);
       /// Map Boolean operation to string
       static std::string str(Gecode::BoolOpType bot);
+      /// Map bool to string
+      static std::string str(bool b);
       /// Map integer to string
       static std::string str(int i);
       /// Map integer array to string

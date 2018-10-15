@@ -253,6 +253,17 @@ namespace Test { namespace Int {
 
   inline
   std::string
+  Test::str(bool b) {
+    std::stringstream s;
+    if (b)
+      s << "+";
+    else 
+      s << "-";
+    return s.str();
+  }
+
+  inline
+  std::string
   Test::str(int i) {
     std::stringstream s;
     s << i;

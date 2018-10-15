@@ -70,6 +70,21 @@ More C++-11
 
 [ENTRY]
 Module: int
+What:   new
+Rank:   major
+[DESCRIPTION]
+Added support for reified extensional table constraints.
+
+[ENTRY]
+Module: int
+What:   new
+Rank:   major
+[DESCRIPTION]
+Added support for negative table for extensional table
+constraints.
+
+[ENTRY]
+Module: int
 What:   bug
 Rank:   major
 [DESCRIPTION]

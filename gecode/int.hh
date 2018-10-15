@@ -2437,8 +2437,55 @@ namespace Gecode {
    *
    * \ingroup TaskModelIntExt
    */
-  GECODE_INT_EXPORT void
+  void
   extensional(Home home, const IntVarArgs& x, const TupleSet& t,
+              IntPropLevel ipl=IPL_DEF);
+
+  /** \brief Post propagator for \f$x\in t\f$ or \f$x\not\in t\f$.
+   *
+   * \li If \a pos is true, it posts a propagator for \f$x\in t\f$
+   *     and otherwise for \f$x\not\in t\f$.
+   * \li Supports domain consistency (\a ipl = IPL_DOM, default) only.
+   * \li Throws an exception of type Int::ArgumentSizeMismatch, if
+   *     \a x and \a t are of different size.
+   * \li Throws an exception of type Int::NotYetFinalized, if the tuple
+   *     set \a t has not been finalized.
+   *
+   * \ingroup TaskModelIntExt
+   */
+  GECODE_INT_EXPORT void
+  extensional(Home home, const IntVarArgs& x, const TupleSet& t, bool pos,
+              IntPropLevel ipl=IPL_DEF);
+
+  /** \brief Post propagator for \f$(x\in t)\equiv r\f$.
+   *
+   * \li Supports domain consistency (\a ipl = IPL_DOM, default) only.
+   * \li Throws an exception of type Int::ArgumentSizeMismatch, if
+   *     \a x and \a t are of different size.
+   * \li Throws an exception of type Int::NotYetFinalized, if the tuple
+   *     set \a t has not been finalized.
+   *
+   * \ingroup TaskModelIntExt
+   */
+  void
+  extensional(Home home, const IntVarArgs& x, const TupleSet& t, Reify r,
+              IntPropLevel ipl=IPL_DEF);
+
+  /** \brief Post propagator for \f$(x\in t)\equiv r\f$ or \f$(x\not\in t)\equiv r\f$.
+   *
+   * \li If \a pos is true, it posts a propagator for \f$(x\in t)\equiv r\f$
+   *     and otherwise for \f$(x\not\in t)\equiv r\f$.
+   * \li Supports domain consistency (\a ipl = IPL_DOM, default) only.
+   * \li Throws an exception of type Int::ArgumentSizeMismatch, if
+   *     \a x and \a t are of different size.
+   * \li Throws an exception of type Int::NotYetFinalized, if the tuple
+   *     set \a t has not been finalized.
+   *
+   * \ingroup TaskModelIntExt
+   */
+  GECODE_INT_EXPORT void
+  extensional(Home home, const IntVarArgs& x, const TupleSet& t, bool pos,
+              Reify r,
               IntPropLevel ipl=IPL_DEF);
 
   /** \brief Post propagator for \f$x\in t\f$.
@@ -2451,10 +2498,60 @@ namespace Gecode {
    *
    * \ingroup TaskModelIntExt
    */
-  GECODE_INT_EXPORT void
+  void
   extensional(Home home, const BoolVarArgs& x, const TupleSet& t,
               IntPropLevel ipl=IPL_DEF);
+
+  /** \brief Post propagator for \f$x\in t\f$ or \f$x\not\in t\f$.
+   *
+   * \li If \a pos is true, it posts a propagator for \f$x\in t\f$
+   *     and otherwise for \f$x\not\in t\f$.
+   * \li Supports domain consistency (\a ipl = IPL_DOM, default) only.
+   * \li Throws an exception of type Int::ArgumentSizeMismatch, if
+   *     \a x and \a t are of different size.
+   * \li Throws an exception of type Int::NotYetFinalized, if the tuple
+   *     set \a t has not been finalized.
+   *
+   * \ingroup TaskModelIntExt
+   */
+  GECODE_INT_EXPORT void
+  extensional(Home home, const BoolVarArgs& x, const TupleSet& t, bool pos,
+              IntPropLevel ipl=IPL_DEF);
+
+  /** \brief Post propagator for \f$(x\in t)\equiv r\f$.
+   *
+   * \li Supports domain consistency (\a ipl = IPL_DOM, default) only.
+   * \li Throws an exception of type Int::ArgumentSizeMismatch, if
+   *     \a x and \a t are of different size.
+   * \li Throws an exception of type Int::NotYetFinalized, if the tuple
+   *     set \a t has not been finalized.
+   *
+   * \ingroup TaskModelIntExt
+   */
+  void
+  extensional(Home home, const BoolVarArgs& x, const TupleSet& t, Reify r,
+              IntPropLevel ipl=IPL_DEF);
+
+  /** \brief Post propagator for \f$(x\in t)\equiv r\f$ or \f$(x\not\in t)\equiv r\f$.
+   *
+   * \li If \a pos is true, it posts a propagator for \f$(x\in t)\equiv r\f$
+   *     and otherwise for \f$(x\not\in t)\equiv r\f$.
+   * \li Supports domain consistency (\a ipl = IPL_DOM, default) only.
+   * \li Throws an exception of type Int::ArgumentSizeMismatch, if
+   *     \a x and \a t are of different size.
+   * \li Throws an exception of type Int::NotYetFinalized, if the tuple
+   *     set \a t has not been finalized.
+   *
+   * \ingroup TaskModelIntExt
+   */
+  GECODE_INT_EXPORT void
+  extensional(Home home, const BoolVarArgs& x, const TupleSet& t, bool pos,
+              Reify r,
+              IntPropLevel ipl=IPL_DEF);
+
 }
+
+#include <gecode/int/extensional.hpp>
 
 namespace Gecode {
 

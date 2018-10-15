@@ -220,7 +220,6 @@ namespace Gecode { namespace Int { namespace Extensional {
 
 #include <gecode/int/extensional/layered-graph.hpp>
 
-
 namespace Gecode { namespace Int { namespace Extensional {
 
   /// Import type
@@ -240,9 +239,9 @@ namespace Gecode { namespace Int { namespace Extensional {
     /// Limit
     IndexType _limit;
     /// Indices
-    IndexType* index;
+    IndexType* _index;
     /// Words
-    BitSetData* bits;
+    BitSetData* _bits;
     /// Replace the \a i th word with \a w, decrease \a limit if \a w is zero
     void replace_and_decrease(IndexType i, BitSetData w);
   public:
@@ -263,6 +262,8 @@ namespace Gecode { namespace Int { namespace Extensional {
     unsigned int limit(void) const;
     /// Check whether the set is empty
     bool empty(void) const;
+    /// Make the set empty
+    void flush(void);
     /// Return the highest active index
     unsigned int width(void) const;
     /// Clear the first \a limit words in \a mask
@@ -278,6 +279,12 @@ namespace Gecode { namespace Int { namespace Extensional {
     bool intersects(const BitSetData* b) const;
     /// Perform "nand" with \a b
     void nand_with_mask(const BitSetData* b);
+    /// Return the number of ones
+    unsigned long long int ones(void) const;
+    /// Return the number of ones after intersection with \a b
+    unsigned long long int ones(const BitSetData* b) const;
+    /// Return an upper bound on the number of bits
+    unsigned long long int bits(void) const;
     /// Return the number of required bit set words
     unsigned int words(void) const;
     /// Return the number of required bit set words
@@ -296,7 +303,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     template<unsigned int> friend class TinyBitSet;
   protected:
     /// Words
-    BitSetData bits[_size];
+    BitSetData _bits[_size];
   public:
     /// Initialize sparse bit set for a number of words \a n
     TinyBitSet(Space& home, unsigned int n);
@@ -310,6 +317,8 @@ namespace Gecode { namespace Int { namespace Extensional {
     int limit(void) const;
     /// Check whether the set is empty
     bool empty(void) const;
+    /// Make the set empty
+    void flush(void);
     /// Return the highest active index
     unsigned int width(void) const;
     /// Clear the first \a limit words in \a mask
@@ -327,6 +336,12 @@ namespace Gecode { namespace Int { namespace Extensional {
     void nand_with_mask(const BitSetData* b);
     /// Perform "nand" with and the "or" of \a a and \a b
     void nand_with_masks(const BitSetData* a, const BitSetData* b);
+    /// Return the number of ones
+    unsigned long long int ones(void) const;
+    /// Return the number of ones after intersection with \a b
+    unsigned long long int ones(const BitSetData* b) const;
+    /// Return an upper bound on the number of bits
+    unsigned long long int bits(void) const;
     /// Return the number of required bit set words
     unsigned int words(void) const;
     /// Return the total number of words
@@ -343,7 +358,7 @@ namespace Gecode { namespace Int { namespace Extensional {
   typedef TupleSet::Tuple Tuple;
 
   /// Base class for compact table propagator
-  template<class View>
+  template<class View, bool pos>
   class Compact : public Propagator {
   protected:
     /// Range type for supports
@@ -375,6 +390,125 @@ namespace Gecode { namespace Int { namespace Extensional {
       /// Dispose advisor
       void dispose(Space& home, Council<CTAdvisor>& c);
     };
+    //@}
+    /// \name Support iterators
+    //@{
+    /// Iterator over valid supports
+    class ValidSupports {
+    protected:
+      /// Number of words
+      const unsigned int n_words;
+      /// Maximal value
+      int max;
+      /// Range iterator
+      ViewRanges<View> xr;
+      /// Support iterator
+      const Range* sr;
+      /// The last range
+      const Range* lst;
+      /// The value
+      int n;
+      /// The value's support
+      const BitSetData* s;
+      /// Find a new value (only for negative case)
+      void find(void);
+    public:
+      /// Initialize from initialized propagator
+      ValidSupports(const Compact<View,pos>& p, CTAdvisor& a);
+      /// Initialize during initialization
+      ValidSupports(const TupleSet& ts, int i, View x);
+      /// Move to next supports
+      void operator ++(void);
+      /// Whether there are still supports left
+      bool operator ()(void) const;
+      /// Return supports
+      const BitSetData* supports(void) const;
+      /// Return supported value
+      int val(void) const;
+    };
+    /// Iterator over lost supports
+    class LostSupports {
+    protected:
+      /// Number of words
+      const unsigned int n_words;
+      /// Range information
+      const Range* r;
+      /// Last range
+      const Range* lst;
+      /// Low value
+      int l;
+      /// High value
+      int h;
+      /// The lost value's support
+      const BitSetData* s;
+    public:
+      /// Initialize iterator for values between \a l and \a h
+      LostSupports(const Compact<View,pos>& p, CTAdvisor& a,
+                   int l, int h);
+      /// Move iterator to next value
+      void operator ++(void);
+      /// Whether iterator is done
+      bool operator ()(void) const;
+      /// Provide access to corresponding supports
+      const BitSetData* supports(void) const;
+    };
+    //@}
+  protected:
+    /// Number of unassigned views
+    int unassigned;
+    /// Number of words in supports
+    const unsigned int n_words;
+    /// The tuple set
+    TupleSet ts;
+    /// The advisor council
+    Council<CTAdvisor> c;
+    /// Constructor for cloning \a p
+    Compact(Space& home, Compact& p);
+    /// Constructor for posting
+    Compact(Home home, ViewArray<View>& x, const TupleSet& ts);
+    /// Setup the actual table
+    template<class Table>
+    void setup(Space& home, Table& table, ViewArray<View>& x);
+    /// Check whether the table covers the whole Cartedion product
+    template<class Table>
+    bool full(const Table& table) const;
+    /// Find range for \a n
+    const Range* range(CTAdvisor& a, int n);
+    /// Return supports for value \a n
+    const BitSetData* supports(CTAdvisor& a, int n);
+  public:
+    /// Cost function
+    virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    /// Delete propagator and return its size
+    size_t dispose(Space& home);
+  };
+
+  /**
+   * \brief Domain consistent positive extensional propagator
+   *
+   * This propagator implements the compact-table propagation
+   * algorithm based on:
+   *   J. Demeulenaere et. al., Compact-Table: Efficiently
+   *   filtering table constraints with reversible sparse
+   *   bit-sets, CP 2016.
+   *
+   * Requires \code #include <gecode/int/extensional.hh> \endcode
+   * \ingroup FuncIntProp
+   */
+  template<class View, class Table>
+  class PosCompact : public Compact<View,true> {
+  public:
+    typedef typename Compact<View,true>::ValidSupports ValidSupports;
+    typedef typename Compact<View,true>::Range Range;
+    typedef typename Compact<View,true>::CTAdvisor CTAdvisor;
+    typedef typename Compact<View,true>::LostSupports LostSupports;
+
+    using Compact<View,true>::setup;
+    using Compact<View,true>::supports;
+    using Compact<View,true>::unassigned;
+    using Compact<View,true>::c;
+    using Compact<View,true>::ts;
+
     /// \name Status management
     //@{ 
     /// Type of status
@@ -405,126 +539,73 @@ namespace Gecode { namespace Int { namespace Extensional {
       /// Set status to PROPAGATING
       void propagating(void);
     };
-    //@}
-    /// \name Support iterators
-    //@{
-    /// Iterator over valid supports
-    class ValidSupports {
-    protected:
-      /// Number of words
-      const unsigned int n_words;
-      /// Maximal value
-      int max;
-      /// Range iterator
-      ViewRanges<View> xr;
-      /// Support iterator
-      const Range* sr;
-      /// The value
-      int n;
-      /// The value's support
-      const BitSetData* s;
-    public:
-      /// Initialize from initialized propagator
-      ValidSupports(const Compact<View>& p, CTAdvisor& a);
-      /// Initialize during initialization
-      ValidSupports(const TupleSet& ts, int i, View x);
-      /// Move to next supports
-      void operator ++(void);
-      /// Whether there are still supports left
-      bool operator ()(void) const;
-      /// Return supports
-      const BitSetData* supports(void) const;
-      /// Return supported value
-      int val(void) const;
-    };
-    /// Iterator over lost supports
-    class LostSupports {
-    protected:
-      /// Number of words
-      const unsigned int n_words;
-      /// Range information
-      const Range* r;
-      /// Low value
-      int l;
-      /// High value
-      int h;
-      /// The lost value's support
-      const BitSetData* s;
-    public:
-      /// Initialize iterator for values between \a l and \a h
-      LostSupports(const Compact<View>& p, CTAdvisor& a,
-                   int l, int h);
-      /// Move iterator to next value
-      void operator ++(void);
-      /// Whether iterator is done
-      bool operator ()(void) const;
-      /// Provide access to corresponding supports
-      const BitSetData* supports(void) const;
-    };
-    //@}
-  protected:
-    /// Number of unassigned views
-    int unassigned;
-    /// Number of words in supports
-    const unsigned int n_words;
     /// Propagator status
     Status status;
-    /// The tuple set
-    TupleSet ts;
-    /// The advisor council
-    Council<CTAdvisor> c;
+    /// Current table
+    Table table;
+    /// Check whether the table is empty
+    bool empty(void) const;
     /// Constructor for cloning \a p
-    Compact(Space& home, Compact& p);
+    template<class TableProp>
+    PosCompact(Space& home, TableProp& p);
     /// Constructor for posting
-    Compact(Home home, ViewArray<View>& x, const TupleSet& ts);
-    /// Find range for \a n
-    const Range* range(CTAdvisor& a, int n);
-    /// Return supports for value \a n
-    const BitSetData* supports(CTAdvisor& a, int n);
+    PosCompact(Home home, ViewArray<View>& x, const TupleSet& ts);
   public:
+    /// Schedule function
+    virtual void reschedule(Space& home);
+    /// Perform propagation
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+    /// Copy propagator during cloning
+    virtual Actor* copy(Space& home);
+    /// Post propagator for views \a x and table \a t
+    static ExecStatus post(Home home, ViewArray<View>& x, const TupleSet& ts);
     /// Delete propagator and return its size
     size_t dispose(Space& home);
+    /// Give advice to propagator
+    virtual ExecStatus advise(Space& home, Advisor& a, const Delta& d);
   };
 
+  /// Post function for positive compact table propagator
+  template<class View>
+  ExecStatus postposcompact(Home home, ViewArray<View>& x, const TupleSet& ts);
+
   /**
-   * \brief Domain consistent extensional propagator
+   * \brief Domain consistent negative extensional propagator
    *
    * This propagator implements the compact-table propagation
    * algorithm based on:
    *   J. Demeulenaere et. al., Compact-Table: Efficiently
    *   filtering table constraints with reversible sparse
    *   bit-sets, CP 2016.
-   *   Pages 207-223, LNCS, Springer, 2016.
+   * and (negative tables) on:
+   *   H. Verhaeghe et al., Extending Compact-Table to
+   *   Negative and Short Tables. AAAI 2017.
    *
    * Requires \code #include <gecode/int/extensional.hh> \endcode
    * \ingroup FuncIntProp
    */
   template<class View, class Table>
-  class CompactTable : public Compact<View> {    
+  class NegCompact : public Compact<View,false> {
   public:
-    typedef typename Compact<View>::ValidSupports ValidSupports;
-    typedef typename Compact<View>::Range Range;
-    typedef typename Compact<View>::CTAdvisor CTAdvisor;
-    typedef typename Compact<View>::StatusType StatusType;
-    typedef typename Compact<View>::Status Status;
-    typedef typename Compact<View>::LostSupports LostSupports;
+    typedef typename Compact<View,false>::ValidSupports ValidSupports;
+    typedef typename Compact<View,false>::Range Range;
+    typedef typename Compact<View,false>::CTAdvisor CTAdvisor;
 
-    using Compact<View>::supports;
-    using Compact<View>::unassigned;
-    using Compact<View>::status;
-    using Compact<View>::c;
-    using Compact<View>::ts;
+    using Compact<View,false>::setup;
+    using Compact<View,false>::full;
+    using Compact<View,false>::supports;
+    using Compact<View,false>::unassigned;
+    using Compact<View,false>::c;
+    using Compact<View,false>::ts;
 
     /// Current table
     Table table;
     /// Constructor for cloning \a p
     template<class TableProp>
-    CompactTable(Space& home, TableProp& p);
+    NegCompact(Space& home, TableProp& p);
     /// Constructor for posting
-    CompactTable(Home home, ViewArray<View>& x, const TupleSet& ts);
+    NegCompact(Home home, ViewArray<View>& x, const TupleSet& ts);
   public:
-    /// Cost function
-    virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Schedule function
     virtual void reschedule(Space& home);
     /// Perform propagation
@@ -541,7 +622,55 @@ namespace Gecode { namespace Int { namespace Extensional {
 
   /// Post function for compact table propagator
   template<class View>
-  ExecStatus postcompact(Home home, ViewArray<View>& x, const TupleSet& ts);
+  ExecStatus postnegcompact(Home home, ViewArray<View>& x, const TupleSet& ts);
+
+
+  /// Domain consistent reified extensional propagator
+  template<class View, class Table, class CtrlView, ReifyMode rm>
+  class ReCompact : public Compact<View,false> {
+  public:
+    typedef typename Compact<View,false>::ValidSupports ValidSupports;
+    typedef typename Compact<View,false>::Range Range;
+    typedef typename Compact<View,false>::CTAdvisor CTAdvisor;
+
+    using Compact<View,false>::setup;
+    using Compact<View,false>::full;
+    using Compact<View,false>::supports;
+    using Compact<View,false>::unassigned;
+    using Compact<View,false>::c;
+    using Compact<View,false>::ts;
+
+    /// Current table
+    Table table;
+    /// Boolean control view
+    CtrlView b;
+    /// The views (for rewriting)
+    ViewArray<View> y;
+    /// Constructor for cloning \a p
+    template<class TableProp>
+    ReCompact(Space& home, TableProp& p);
+    /// Constructor for posting
+    ReCompact(Home home, ViewArray<View>& x, const TupleSet& ts, CtrlView b);
+  public:
+    /// Schedule function
+    virtual void reschedule(Space& home);
+    /// Perform propagation
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+    /// Copy propagator during cloning
+    virtual Actor* copy(Space& home);
+    /// Post propagator for views \a x and table \a t
+    static ExecStatus post(Home home, ViewArray<View>& x, const TupleSet& ts,
+                           CtrlView b);
+    /// Delete propagator and return its size
+    size_t dispose(Space& home);
+    /// Give advice to propagator
+    virtual ExecStatus advise(Space& home, Advisor& a, const Delta& d);
+  };
+
+  /// Post function for compact table propagator
+  template<class View, class CtrlView, ReifyMode rm>
+  ExecStatus postrecompact(Home home, ViewArray<View>& x, const TupleSet& ts,
+                           CtrlView b);
 
 }}}
 
