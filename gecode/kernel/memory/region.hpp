@@ -31,6 +31,8 @@
  *
  */
 
+#include <cstddef>
+
 namespace Gecode {
 
   /**
@@ -58,7 +60,8 @@ namespace Gecode {
       /// Amount of free memory
       size_t free;
       /// The actual memory area (allocated from top to bottom)
-      double area[Kernel::MemoryConfig::region_area_size / sizeof(double)];
+      alignas(std::max_align_t)
+        double area[Kernel::MemoryConfig::region_area_size / sizeof(double)];
       /// A pointer to another chunk
       Chunk* next;
       /// Return memory if available
@@ -328,7 +331,7 @@ namespace Gecode {
    */
   forceinline bool
   Region::Chunk::alloc(size_t s, void*& p) {
-    Kernel::MemoryConfig::align(s);
+    Kernel::MemoryConfig::align(s,alignof(std::max_align_t));
     if (s > free)
       return false;
     free -= s;
