@@ -69,6 +69,16 @@ Date: 2018-??-??
 More C++-11
 
 [ENTRY]
+Module: int
+What:   change
+Rank:   minor
+Thanks: Sara Frimodig
+[DESCRIPTION]
+The default propagation for unary has been to weak (possibly
+hurting Gecode in the MiniZinc competitions in 2017 and 2018),
+now the default is back to maximal propagation again
+
+[ENTRY]
 Module: minimodel
 What:   bug
 Rank:   minor

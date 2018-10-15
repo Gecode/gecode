@@ -3232,8 +3232,8 @@ namespace Gecode {
    *  - If \a IPL_ADVANCED is set, the propagator performs overload checking,
    *    detectable precendence propagation, not-first-not-last propagation,
    *    and edge finding.
-   *  - If both flags are combined, all the above listed propagation is
-   *    performed.
+   *  - If both flags are combined (default), all the above listed propagation
+   *    is performed.
    *
    * Posting the constraint might throw the following exceptions:
    *  - Throws an exception of type Int::ArgumentSizeMismatch, if \a s
@@ -3264,8 +3264,8 @@ namespace Gecode {
    *  - If \a IPL_ADVANCED is set, the propagator performs overload checking,
    *    detectable precendence propagation, not-first-not-last propagation,
    *    and edge finding.
-   *  - If both flags are combined, all the above listed propagation is
-   *    performed.
+   *  - If both flags are combined (default), all the above listed propagation
+   *    is performed.
    *
    * Posting the constraint might throw the following exceptions:
    *  - Throws an exception of type Int::ArgumentSizeMismatch, if \a s,
@@ -3306,8 +3306,8 @@ namespace Gecode {
    *  - If \a IPL_ADVANCED is set, the propagator performs overload checking,
    *    detectable precendence propagation, not-first-not-last propagation,
    *    and edge finding.
-   *  - If both flags are combined, all the above listed propagation is
-   *    performed.
+   *  - If both flags are combined (default), all the above listed propagation
+   *    is performed.
    *
    * Posting the constraint might throw the following exceptions:
    *  - Throws an exception of type Int::ArgumentSizeMismatch, if \a s
@@ -3348,8 +3348,8 @@ namespace Gecode {
    *  - If \a IPL_ADVANCED is set, the propagator performs overload checking,
    *    detectable precendence propagation, not-first-not-last propagation,
    *    and edge finding.
-   *  - If both flags are combined, all the above listed propagation is
-   *    performed.
+   *  - If both flags are combined (default), all the above listed propagation
+   *    is performed.
    *
    * Posting the constraint might throw the following exceptions:
    *  - Throws an exception of type Int::ArgumentSizeMismatch, if \a s,
@@ -3381,8 +3381,8 @@ namespace Gecode {
    *  - If \a IPL_ADVANCED is set, the propagator performs overload checking,
    *    detectable precendence propagation, not-first-not-last propagation,
    *    and edge finding.
-   *  - If both flags are combined, all the above listed propagation is
-   *    performed.
+   *  - If both flags are combined (default), all the above listed propagation
+   *    is performed.
    *
    * The processing times are constrained to be non-negative.
    *
@@ -3411,7 +3411,7 @@ namespace Gecode {
    *    detectable precendence propagation, not-first-not-last propagation,
    *    and edge finding.
    *  - If both flags are combined, all the above listed propagation is
-   *    performed.
+   *    performed (default).
    *
    * The propagator does not enforce \f$s_i+p_i=e_i\f$, this constraint
    * has to be posted in addition to ensure consistency of the task bounds.
@@ -3787,7 +3787,7 @@ namespace Gecode {
    *  - Int::ArgumentSame, if \a x contains the same unassigned variable
    *    multiply.
    *  - Int::TooFewArguments, if \a x has no elements.
-   *  - Int::ArgumentSizeMismacth, if \a x and \a y do not have the same
+   *  - Int::ArgumentSizeMismatch, if \a x and \a y do not have the same
    *    size or if \f$|x|\times|x|\neq|c|\f$.
    */
   GECODE_INT_EXPORT void
@@ -3813,7 +3813,7 @@ namespace Gecode {
    *  - Int::ArgumentSame, if \a x contains the same unassigned variable
    *    multiply.
    *  - Int::TooFewArguments, if \a x has no elements.
-   *  - Int::ArgumentSizeMismacth, if \a x and \a y do not have the same
+   *  - Int::ArgumentSizeMismatch, if \a x and \a y do not have the same
    *    size or if \f$|x|\times|x|\neq|c|\f$.
    *  - Int::OutOfLimits, if \a offset is negative.
    */
@@ -3838,7 +3838,7 @@ namespace Gecode {
    *  - Int::ArgumentSame, if \a x contains the same unassigned variable
    *    multiply.
    *  - Int::TooFewArguments, if \a x has no elements.
-   *  - Int::ArgumentSizeMismacth, if \f$|x|\times|x|\neq|c|\f$.
+   *  - Int::ArgumentSizeMismatch, if \f$|x|\times|x|\neq|c|\f$.
    */
   GECODE_INT_EXPORT void
   circuit(Home home,
@@ -3862,7 +3862,7 @@ namespace Gecode {
    *  - Int::ArgumentSame, if \a x contains the same unassigned variable
    *    multiply.
    *  - Int::TooFewArguments, if \a x has no elements.
-   *  - Int::ArgumentSizeMismacth, if \f$|x|\times|x|\neq|c|\f$.
+   *  - Int::ArgumentSizeMismatch, if \f$|x|\times|x|\neq|c|\f$.
    *  - Int::OutOfLimits, if \a offset is negative.
    */
   GECODE_INT_EXPORT void
