@@ -1,13 +1,9 @@
 /* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
- *     Linnea Ingmar <linnea.ingmar@hotmail.com>
- *     Mikael Lagerkvist <lagerkvist@gecode.org>
  *     Christian Schulte <schulte@gecode.org>
  *
  *  Copyright:
- *     Linnea Ingmar, 2017
- *     Mikael Lagerkvist, 2007
  *     Christian Schulte, 2004
  *
  *  This file is part of Gecode, the generic constraint
@@ -57,52 +53,6 @@ namespace Gecode {
       throw ArgumentSame("Int::extensional");
     GECODE_POST;
     GECODE_ES_FAIL(Extensional::post_lgp(home,x,dfa));
-  }
-
-  void
-  extensional(Home home, const IntVarArgs& x, const TupleSet& t,
-              IntPropLevel) {
-    using namespace Int;
-    if (!t.finalized())
-      throw NotYetFinalized("Int::extensional");
-    if (t.arity() != x.size())
-      throw ArgumentSizeMismatch("Int::extensional");
-    GECODE_POST;
-
-    if (t.tuples()==0) {
-      if (x.size()!=0) {
-        home.fail();
-      }
-      return;
-    }
-
-    // Construct view array
-    ViewArray<IntView> xv(home,x);
-    GECODE_ES_FAIL(Extensional::postcompact<IntView>(home,xv,t));
-  }
-
-  void
-  extensional(Home home, const BoolVarArgs& x, const TupleSet& t,
-              IntPropLevel) {
-    using namespace Int;
-    if (!t.finalized())
-      throw NotYetFinalized("Int::extensional");
-    if (t.arity() != x.size())
-      throw ArgumentSizeMismatch("Int::extensional");
-    if ((t.min() < 0) || (t.max() > 1))
-      throw NotZeroOne("Int::extensional");
-    GECODE_POST;
-
-    if (t.tuples()==0) {
-      if (x.size()!=0) {
-        home.fail();
-      }
-      return;
-    }
-
-    // Construct view array
-    ViewArray<BoolView> xv(home,x);
-    GECODE_ES_FAIL(Extensional::postcompact<BoolView>(home,xv,t));
   }
 
 }

@@ -312,7 +312,8 @@ SEARCHBUILDDIRS = search search/seq search/par search/cpprofiler
 INTSRC0 = \
 	int-set.cpp var-imp/int.cpp var-imp/bool.cpp var/int.cpp \
 	var/bool.cpp array.cpp bool.cpp bool/eqv.cpp \
-	extensional/dfa.cpp extensional/tuple-set.cpp extensional.cpp \
+	extensional/dfa.cpp extensional/tuple-set.cpp \
+	extensional-regular.cpp extensional-tuple-set.cpp \
 	dom.cpp rel.cpp precede.cpp element.cpp count.cpp \
 	arithmetic.cpp exec.cpp \
 	exec/when.cpp element/pair.cpp \
@@ -374,6 +375,7 @@ INTHDR0 = \
 	extensional/dfa.hpp extensional/layered-graph.hpp \
 	extensional/tuple-set.hpp extensional/compact.hpp \
 	extensional/tiny-bit-set.hpp extensional/bit-set.hpp \
+	extensional.hpp \
 	rel/eq.hpp rel/lex.hpp rel/lq-le.hpp rel/nq.hpp \
 	sorted/matching.hpp sorted/narrowing.hpp \
 	sorted/order.hpp sorted/propagate.hpp sorted/sortsup.hpp \

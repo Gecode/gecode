@@ -47,10 +47,10 @@ namespace Gecode { namespace Int { namespace Extensional {
      assert(n <= sz);
      /// Set the active bits
      for (unsigned int i=0U; i<n; i++)
-       bits[i].init(true);
+       _bits[i].init(true);
      /// Clear unused suffix bits
      for (unsigned int i=n; i<sz; i++)
-       bits[i].init(false);
+       _bits[i].init(false);
    }
 
    template<unsigned int sz>
@@ -60,7 +60,7 @@ namespace Gecode { namespace Int { namespace Extensional {
      GECODE_ASSUME(sz <= largersz);
      assert(!sbs.empty());
      for (unsigned int i=0U; i<sz; i++)
-       bits[i] = sbs.bits[i];
+       _bits[i] = sbs._bits[i];
      assert(!empty());
    }
       
@@ -71,9 +71,9 @@ namespace Gecode { namespace Int { namespace Extensional {
      assert(sz == sbs.width());
      assert(!sbs.empty());
      for (unsigned int i=0U; i<sz; i++)
-       bits[i].init(false);
+       _bits[i].init(false);
      for (unsigned int i=0U; i<sbs.words(); i++)
-       bits[sbs.index[i]] = sbs.bits[i];
+       _bits[sbs._index[i]] = sbs._bits[i];
      assert(!empty());
    }
 
@@ -98,7 +98,7 @@ namespace Gecode { namespace Int { namespace Extensional {
    forceinline void
    TinyBitSet<sz>::intersect_with_mask(const BitSetData* mask) {
      for (unsigned int i=0U; i<sz; i++)
-       bits[i] = BitSetData::a(bits[i], mask[i]);
+       _bits[i] = BitSetData::a(_bits[i], mask[i]);
    }
 
    template<unsigned int sz>
@@ -106,30 +106,64 @@ namespace Gecode { namespace Int { namespace Extensional {
    TinyBitSet<sz>::intersect_with_masks(const BitSetData* a,
                                         const BitSetData* b) {
      for (unsigned int i=0U; i<sz; i++)
-       bits[i] = BitSetData::a(bits[i], BitSetData::o(a[i],b[i]));
+       _bits[i] = BitSetData::a(_bits[i], BitSetData::o(a[i],b[i]));
    }
 
    template<unsigned int sz>
    forceinline void
    TinyBitSet<sz>::nand_with_mask(const BitSetData* b) {
      for (unsigned int i=0U; i<sz; i++)
-       bits[i] = BitSetData::a(bits[i],~(b[i]));
+       _bits[i] = BitSetData::a(_bits[i],~(b[i]));
    }
 
-   template<unsigned int sz>
-   forceinline bool
-   TinyBitSet<sz>::intersects(const BitSetData* b) {
-     for (unsigned int i=0U; i<sz; i++)
-       if (!BitSetData::a(bits[i],b[i]).none())
-         return true;
-     return false;
-   }
+  template<unsigned int sz>
+  forceinline void
+  TinyBitSet<sz>::flush(void) {
+    for (unsigned int i=0U; i<sz; i++)
+      _bits[i].init(false);
+    assert(empty());
+  }
+  
+  template<unsigned int sz>
+  forceinline bool
+  TinyBitSet<sz>::intersects(const BitSetData* b) {
+    for (unsigned int i=0U; i<sz; i++)
+      if (!BitSetData::a(_bits[i],b[i]).none())
+        return true;
+    return false;
+  }
 
+  template<unsigned int sz>
+  forceinline unsigned long long int
+  TinyBitSet<sz>::ones(const BitSetData* b) const {
+    unsigned long long int o = 0U;
+    for (unsigned int i=0U; i<sz; i++)
+      o += static_cast<unsigned long long int>
+        (BitSetData::a(_bits[i],b[i]).ones());
+    return o;
+  }
+    
+  template<unsigned int sz>
+  forceinline unsigned long long int
+  TinyBitSet<sz>::ones(void) const {
+    unsigned long long int o = 0U;
+    for (unsigned int i=0U; i<sz; i++)
+      o += static_cast<unsigned long long int>(_bits[i].ones());
+    return o;
+  }
+    
+  template<unsigned int sz>
+  forceinline unsigned long long int
+  TinyBitSet<sz>::bits(void) const {
+    return (static_cast<unsigned long long int>(sz) *
+            static_cast<unsigned long long int>(BitSetData::bpb));
+  }
+    
    template<unsigned int sz>
    forceinline bool
    TinyBitSet<sz>::empty(void) const { // Linear complexity...
      for (unsigned int i=0U; i<sz; i++)
-       if (!bits[i].none())
+       if (!_bits[i].none())
          return false;
      return true;
    }
@@ -140,7 +174,7 @@ namespace Gecode { namespace Int { namespace Extensional {
      assert(!empty());
      /// Find the index of the last non-zero word
      for (unsigned int i=sz; i--; )
-       if (!bits[i].none())
+       if (!_bits[i].none())
          return i+1U;
      GECODE_NEVER;
      return 0U;
