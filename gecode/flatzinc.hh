@@ -635,8 +635,8 @@ namespace Gecode { namespace FlatZinc {
     BoolVar arg2BoolVar(AST::Node* n);
     /// Convert \a n to IntVar
     IntVar arg2IntVar(AST::Node* n);
-    /// Convert \a n to TupleSet
-    TupleSet arg2tupleset(AST::Node* n, int noOfVars);
+    /// Convert \a a to TupleSet
+    TupleSet arg2tupleset(const IntArgs& a, int noOfVars);
     /// Check if \a b is array of Booleans (or has a single integer)
     bool isBoolArray(AST::Node* b, int& singleInt);
 #ifdef GECODE_HAS_SET_VARS
