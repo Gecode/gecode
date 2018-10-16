@@ -64,9 +64,14 @@
 
 [RELEASE]
 Version: 6.1.0
-Date: 2018-??-??
+Date: 2018-10-17
 [DESCRIPTION]
-More C++-11
+This release adds reified extensional constraints; support for
+negative tables; experimental support for counting-based search
+(thanks to Samuel Ganon); and support for standard C++
+initializer lists. In addition, the release has lots of bug fixes
+and performance improvements. It is highly recommended to switch
+as soon as possible.
 
 [ENTRY]
 Module: int
