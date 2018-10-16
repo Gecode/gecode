@@ -21,14 +21,14 @@ including how to download, compile, install, and use it.
 
 In particular,
 Gecode comes with
-[extensive tutorial and reference documentation](https://gecode.github.io/documentation.html].
+[extensive tutorial and reference documentation](https://gecode.github.io/documentation.html).
 
 ## Download Gecode
 
 Gecode packages (source, Apple MacOS, Microsoft Windows) can be downloaded from
 [GitHub](https://github.com/Gecode/gecode/releases)
 or
-[Gecode's webpages](https:://gecode.github.io/download.html).
+[Gecode's webpages](https://gecode.github.io/download.html).
 
 ## Gecode License
 
