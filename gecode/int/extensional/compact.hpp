@@ -315,13 +315,25 @@ namespace Gecode { namespace Int { namespace Extensional {
     return s;
   }
 
-
+  template<class View, bool pos>
+  forceinline bool
+  Compact<View,pos>::all(void) const {
+    Advisors<CTAdvisor> as(c);
+    return !as();
+  }
+  template<class View, bool pos>
+  forceinline bool
+  Compact<View,pos>::atmostone(void) const {
+    Advisors<CTAdvisor> as(c);
+    if (!as()) return true;
+    ++as;
+    return !as();
+  }
 
   template<class View, bool pos>
   forceinline
   Compact<View,pos>::Compact(Space& home, Compact& p)
-    : Propagator(home,p), unassigned(p.unassigned),
-      n_words(p.n_words), ts(p.ts) {
+    : Propagator(home,p), n_words(p.n_words), ts(p.ts) {
     c.update(home,p.c);
   }
   
@@ -329,8 +341,7 @@ namespace Gecode { namespace Int { namespace Extensional {
   forceinline
   Compact<View,pos>::Compact(Home home, ViewArray<View>& x,
                              const TupleSet& ts0)
-    : Propagator(home), unassigned(x.size()),
-      n_words(ts0.words()), ts(ts0), c(home) {
+    : Propagator(home), n_words(ts0.words()), ts(ts0), c(home) {
     home.notice(*this, AP_DISPOSE);
   }
 
@@ -350,16 +361,16 @@ namespace Gecode { namespace Int { namespace Extensional {
       if (table.empty())
         goto schedule;
     }
+    bool assigned = false;
     // Post advisors
-    for (int i=0; i<x.size(); i++) {
+    for (int i=0; i<x.size(); i++)
       if (!x[i].assigned())
         (void) new (home) CTAdvisor(home,*this,c,ts,x[i],i);
       else
-        unassigned--;
-    }
+        assigned = true;
     // Schedule propagator
   schedule:
-    if (unassigned < x.size())
+    if (assigned)
       View::schedule(home,*this,ME_INT_VAL);
     else
       View::schedule(home,*this,ME_INT_BND);
@@ -381,7 +392,12 @@ namespace Gecode { namespace Int { namespace Extensional {
   template<class View, bool pos>
   PropCost
   Compact<View,pos>::cost(const Space&, const ModEventDelta&) const {
-    return PropCost::quadratic(PropCost::HI,unassigned);
+    // Computing this is crucial in case there are many propagators!
+    int n = 0;
+    // The value of 3 is cheating from the Gecode kernel...
+    for (Advisors<CTAdvisor> as(c); as() && (n <= 3); ++as)
+      n++;
+    return PropCost::quadratic(PropCost::HI,n);
   }
 
   template<class View, bool pos>
@@ -525,7 +541,7 @@ namespace Gecode { namespace Int { namespace Extensional {
   PosCompact<View,Table>::reschedule(Space& home) {
     // Modified variable, subsumption, or failure
     if ((status.type() != StatusType::NONE) || 
-        (unassigned == 0) || table.empty())
+        all() || table.empty())
       View::schedule(home,*this,ME_INT_DOM);
   }
 
@@ -534,7 +550,7 @@ namespace Gecode { namespace Int { namespace Extensional {
   PosCompact<View,Table>::propagate(Space& home, const ModEventDelta&) {
     if (table.empty())
       return ES_FAILED;
-    if (unassigned == 0)
+    if (all())
       return home.ES_SUBSUMED(*this);
 
     Status touched(status);
@@ -557,9 +573,7 @@ namespace Gecode { namespace Int { namespace Extensional {
           GECODE_ME_CHECK(x.eq(home,x.max()));
         else if (!table.intersects(supports(a,x.max())))
           GECODE_ME_CHECK(x.eq(home,x.min()));
-        if (x.assigned())
-          unassigned--;
-        else
+        if (!x.assigned())
           a.adjust();
       } else { // x.size() > 2
         // How many values to remove
@@ -575,19 +589,14 @@ namespace Gecode { namespace Int { namespace Extensional {
         // Remove collected values
         if (n_nq > 0U) {
           if (n_nq == 1U) {
-            ModEvent me = x.nq(home,nq[0]);
-            if (me_failed(me)) return ES_FAILED;
-            assert(me != ME_INT_VAL);
+            GECODE_ME_CHECK(x.nq(home,nq[0]));
           } else if (n_nq == x.size() - 1U) {
             GECODE_ME_CHECK(x.eq(home,last_support));
-            unassigned--;
             goto noadjust;
           } else {
             Iter::Values::Array rnq(nq,n_nq);
             GECODE_ASSUME(n_nq >= 2U);
-            ModEvent me = x.minus_v(home,rnq,false);
-            if (me_failed(me)) return ES_FAILED;
-            assert(me != ME_INT_VAL);
+            GECODE_ME_CHECK(x.minus_v(home,rnq,false));
           }
           a.adjust();
         noadjust: ;
@@ -601,7 +610,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     // Should not be in a failed state
     assert(!table.empty());
     // Subsume if there is at most one non-assigned variable
-    return (unassigned <= 1) ? home.ES_SUBSUMED(*this) : ES_FIX;
+    return atmostone() ? home.ES_SUBSUMED(*this) : ES_FIX;
   }
 
   template<class View, class Table>
@@ -629,7 +638,6 @@ namespace Gecode { namespace Int { namespace Extensional {
     if (x.assigned()) {
       // Variable is assigned -- intersect with its value
       table.template intersect_with_mask<true>(supports(a,x.val()));
-      unassigned--;
       return home.ES_NOFIX_DISPOSE(c,a);
     }
       
@@ -814,11 +822,6 @@ namespace Gecode { namespace Int { namespace Extensional {
   NegCompact<View,Table>::propagate(Space& home, const ModEventDelta&) {
 #ifndef NDEBUG
     if (!table.empty()) {
-      // Check whether number of unassigned views and advisors match
-      unsigned int n = 0;
-      for (Advisors<CTAdvisor> as(c); as(); ++as)
-        n++;
-      assert(n == unassigned);
       // Check that all views have at least one value with support
       for (Advisors<CTAdvisor> as(c); as(); ++as) {
         ValidSupports vs(*this,as.advisor());
@@ -894,7 +897,7 @@ namespace Gecode { namespace Int { namespace Extensional {
 
     if (table.ones() == x_size)
       return ES_FAILED;
-    if (table.empty() || (unassigned <= 1))
+    if (table.empty() || atmostone())
       return home.ES_SUBSUMED(*this);
     return ES_FIX;
   }
@@ -913,7 +916,6 @@ namespace Gecode { namespace Int { namespace Extensional {
     a.adjust();
 
     if (x.assigned()) {
-      unassigned--;
       // Variable is assigned -- intersect with its value
       if (const BitSetData* s = supports(a,x.val()))
         table.template intersect_with_mask<true>(s);
@@ -1151,7 +1153,6 @@ namespace Gecode { namespace Int { namespace Extensional {
     a.adjust();
     
     if (x.assigned()) {
-      unassigned--;
       // Variable is assigned -- intersect with its value
       if (const BitSetData* s = supports(a,x.val()))
         table.template intersect_with_mask<true>(s);
