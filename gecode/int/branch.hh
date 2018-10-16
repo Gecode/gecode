@@ -704,16 +704,16 @@ namespace Gecode { namespace Int { namespace Branch {
         /// The map we want to share
         std::unordered_map<unsigned int, unsigned int> _varIdToPos;
       public:
-        /// Default constructor
-        VarIdToPosO() = default;
+        /// Default constructur
+        VarIdToPosO(void) = default;
         /// Copy constructor
         VarIdToPosO(const VarIdToPosO& o) = default;
       };
     public:
       /// Default constructor
-      VarIdToPos() = default;
+      VarIdToPos(void) = default;
       /// Allocation of the shared handle
-      void init();
+      void init(void);
       /// Tests if a variable id is in the map
       bool isIn(unsigned int var_id) const;
       /// Returns the position of the variable id in \a x
