@@ -74,9 +74,9 @@ What:   change
 Rank:   minor
 Thanks: Sara Frimodig
 [DESCRIPTION]
-The default propagation for unary has been to weak (possibly
-hurting Gecode in the MiniZinc competitions in 2017 and 2018),
-now the default is back to maximal propagation again
+The default propagation for unary has been too weak (possibly
+hurting Gecode in the MiniZinc competitions of 2017 and 2018),
+now the default is back to maximal propagation.
 
 [ENTRY]
 Module: minimodel
