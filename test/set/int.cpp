@@ -257,8 +257,8 @@ namespace Test { namespace Set {
             Gecode::Set::RangesCompl<IntSetRanges> drc(dr);
             return Iter::Ranges::equal(xr,drc);
           }
+        default: GECODE_NEVER;
         }
-        GECODE_NEVER;
         return false;
       }
       /// Post constraint on \a x

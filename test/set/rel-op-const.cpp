@@ -78,8 +78,8 @@ namespace Test { namespace Set {
             Gecode::Set::RangesCompl<J> jc(j);
             return Iter::Ranges::equal(i,jc);
           }
+        default: GECODE_NEVER;
         }
-        GECODE_NEVER;
         return false;
       }
 

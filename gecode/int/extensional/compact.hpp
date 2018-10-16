@@ -349,6 +349,8 @@ namespace Gecode { namespace Int { namespace Extensional {
   template<class Table>
   void
   Compact<View,pos>::setup(Space& home, Table& table, ViewArray<View>& x) {
+    // For scheduling the propagator
+    ModEvent me = ME_INT_BND;
     Region r;
     BitSetData* mask = r.alloc<BitSetData>(table.size());
     // Invalidate tuples
@@ -361,19 +363,15 @@ namespace Gecode { namespace Int { namespace Extensional {
       if (table.empty())
         goto schedule;
     }
-    bool assigned = false;
     // Post advisors
     for (int i=0; i<x.size(); i++)
       if (!x[i].assigned())
         (void) new (home) CTAdvisor(home,*this,c,ts,x[i],i);
       else
-        assigned = true;
+        me = ME_INT_VAL;
     // Schedule propagator
   schedule:
-    if (assigned)
-      View::schedule(home,*this,ME_INT_VAL);
-    else
-      View::schedule(home,*this,ME_INT_BND);
+    View::schedule(home,*this,me);
   }
 
   template<class View, bool pos>
