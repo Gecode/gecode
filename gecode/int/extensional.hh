@@ -453,9 +453,14 @@ namespace Gecode { namespace Int { namespace Extensional {
       const BitSetData* supports(void) const;
     };
     //@}
+    /// \name Testing the number of unassigned variables
+    //@{
+    /// Whether all variables are assigned
+    bool all(void) const;
+    /// Whether at most one variable is unassigned
+    bool atmostone(void) const;
+    //@}
   protected:
-    /// Number of unassigned views
-    int unassigned;
     /// Number of words in supports
     const unsigned int n_words;
     /// The tuple set
@@ -505,7 +510,8 @@ namespace Gecode { namespace Int { namespace Extensional {
 
     using Compact<View,true>::setup;
     using Compact<View,true>::supports;
-    using Compact<View,true>::unassigned;
+    using Compact<View,true>::all;
+    using Compact<View,true>::atmostone;
     using Compact<View,true>::c;
     using Compact<View,true>::ts;
 
@@ -594,7 +600,6 @@ namespace Gecode { namespace Int { namespace Extensional {
     using Compact<View,false>::setup;
     using Compact<View,false>::full;
     using Compact<View,false>::supports;
-    using Compact<View,false>::unassigned;
     using Compact<View,false>::c;
     using Compact<View,false>::ts;
 
@@ -636,7 +641,6 @@ namespace Gecode { namespace Int { namespace Extensional {
     using Compact<View,false>::setup;
     using Compact<View,false>::full;
     using Compact<View,false>::supports;
-    using Compact<View,false>::unassigned;
     using Compact<View,false>::c;
     using Compact<View,false>::ts;
 
