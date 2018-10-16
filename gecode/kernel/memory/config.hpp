@@ -122,7 +122,7 @@ namespace Gecode { namespace Kernel {
      * value is used.
      */
 #ifndef GECODE_MEMORY_ALIGNMENT
-#define GECODE_MEMORY_ALIGNMENT 8
+#define GECODE_MEMORY_ALIGNMENT 8U
 #endif
     /**
      * \brief Size of region area

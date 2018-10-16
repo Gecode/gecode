@@ -62,7 +62,7 @@ namespace Gecode {
       size_t free;
       /// The actual memory area (allocated from top to bottom)
       alignas(std::max(alignof(std::max_align_t),
-                       static_cast<size_t>(GECODE_MEMORY_ALIGNMENT)))
+                       GECODE_MEMORY_ALIGNMENT))
         double area[Kernel::MemoryConfig::region_area_size / sizeof(double)];
       /// A pointer to another chunk
       Chunk* next;
@@ -335,7 +335,7 @@ namespace Gecode {
   Region::Chunk::alloc(size_t s, void*& p) {
     Kernel::MemoryConfig::align
       (s,std::max(alignof(std::max_align_t),
-                  static_cast<size_t>(GECODE_MEMORY_ALIGNMENT)));
+                  GECODE_MEMORY_ALIGNMENT));
     if (s > free)
       return false;
     free -= s;
