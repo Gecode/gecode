@@ -68,10 +68,10 @@ Date: 2018-10-17
 [DESCRIPTION]
 This release adds reified extensional constraints; support for
 negative tables; experimental support for counting-based search
-(thanks to Samuel Ganon); and support for standard C++
+(thanks to Samuel Gagnon); and support for standard C++
 initializer lists. In addition, the release has lots of bug fixes
 and performance improvements. It is highly recommended to switch
-as soon as possible.
+as soon as possible!
 
 [ENTRY]
 Module: int
@@ -99,8 +99,9 @@ Rank:   minor
 Thanks: Rui Machado, Jens Krüger
 [DESCRIPTION]
 The alignment of memory allocated from a Region is now as
-prescribed by std::max_align_t. Please also check MPG for a tip
-on memory alignment of memory handeled by Gecode.
+prescribed by the maximum of std::max_align_t and
+GECODE_MEMORY_ALIGNMENT (which can be re-defined). Please also check
+MPG for a tip on alignment of memory handeled by Gecode.
 
 [ENTRY]
 Module: flatzinc
