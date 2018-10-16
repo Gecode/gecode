@@ -98,6 +98,13 @@ prescribed by std::max_align_t. Please also check MPG for a tip
 on memory alignment of memory handeled by Gecode.
 
 [ENTRY]
+Module: flatzinc
+What:   new
+Rank:   major
+[DESCRIPTION]
+Added native support for reified extensional table constraints.
+
+[ENTRY]
 Module: int
 What:   new
 Rank:   major

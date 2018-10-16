@@ -1136,26 +1136,49 @@ namespace Gecode { namespace FlatZinc {
     void
     p_table_int(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
       IntVarArgs x = s.arg2intvarargs(ce[0]);
-      TupleSet ts = s.arg2tupleset(ce[1],x.size());
+      IntArgs tuples = s.arg2intargs(ce[1]);
+      TupleSet ts = s.arg2tupleset(tuples,x.size());
       extensional(s,x,ts,s.ann2ipl(ann));
+    }
+
+    void
+    p_table_int_reif(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
+      IntVarArgs x = s.arg2intvarargs(ce[0]);
+      IntArgs tuples = s.arg2intargs(ce[1]);
+      TupleSet ts = s.arg2tupleset(tuples,x.size());
+      extensional(s,x,ts,Reify(s.arg2BoolVar(ce[2]),RM_EQV),s.ann2ipl(ann));
+    }
+
+    void
+    p_table_int_imp(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
+      IntVarArgs x = s.arg2intvarargs(ce[0]);
+      IntArgs tuples = s.arg2intargs(ce[1]);
+      TupleSet ts = s.arg2tupleset(tuples,x.size());
+      extensional(s,x,ts,Reify(s.arg2BoolVar(ce[2]),RM_IMP),s.ann2ipl(ann));
     }
     
     void
     p_table_bool(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
       BoolVarArgs x = s.arg2boolvarargs(ce[0]);
       IntArgs tuples = s.arg2boolargs(ce[1]);
-      int noOfVars   = x.size();
-      int noOfTuples = tuples.size() == 0 ? 0 : (tuples.size()/noOfVars);
-      TupleSet ts(noOfVars);
-      for (int i=0; i<noOfTuples; i++) {
-        IntArgs t(noOfVars);
-        for (int j=0; j<x.size(); j++) {
-          t[j] = tuples[i*noOfVars+j];
-        }
-        ts.add(t);
-      }
-      ts.finalize();
+      TupleSet ts = s.arg2tupleset(tuples,x.size());
       extensional(s,x,ts,s.ann2ipl(ann));
+    }
+
+    void
+    p_table_bool_reif(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
+      BoolVarArgs x = s.arg2boolvarargs(ce[0]);
+      IntArgs tuples = s.arg2boolargs(ce[1]);
+      TupleSet ts = s.arg2tupleset(tuples,x.size());
+      extensional(s,x,ts,Reify(s.arg2BoolVar(ce[2]),RM_EQV),s.ann2ipl(ann));
+    }
+
+    void
+    p_table_bool_imp(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
+      BoolVarArgs x = s.arg2boolvarargs(ce[0]);
+      IntArgs tuples = s.arg2boolargs(ce[1]);
+      TupleSet ts = s.arg2tupleset(tuples,x.size());
+      extensional(s,x,ts,Reify(s.arg2BoolVar(ce[2]),RM_IMP),s.ann2ipl(ann));
     }
 
     void p_cumulative_opt(FlatZincSpace& s, const ConExpr& ce,
@@ -1550,7 +1573,11 @@ namespace Gecode { namespace FlatZinc {
         registry().add("decreasing_int", &p_decreasing_int);
         registry().add("decreasing_bool", &p_decreasing_bool);
         registry().add("gecode_table_int", &p_table_int);
+        registry().add("gecode_table_int_reif", &p_table_int_reif);
+        registry().add("gecode_table_int_imp", &p_table_int_imp);
         registry().add("gecode_table_bool", &p_table_bool);
+        registry().add("gecode_table_bool_reif", &p_table_bool_reif);
+        registry().add("gecode_table_bool_imp", &p_table_bool_imp);
         registry().add("cumulatives", &p_cumulatives);
         registry().add("gecode_among_seq_int", &p_among_seq_int);
         registry().add("gecode_among_seq_bool", &p_among_seq_bool);

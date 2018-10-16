@@ -2130,16 +2130,15 @@ namespace Gecode { namespace FlatZinc {
     return ia;
   }
   TupleSet
-  FlatZincSpace::arg2tupleset(AST::Node* arg, int noOfVars) {
-    AST::Array* a = arg->getArray();
-    int noOfTuples = a->a.size() == 0 ? 0 : (a->a.size()/noOfVars);
+  FlatZincSpace::arg2tupleset(const IntArgs& a, int noOfVars) {
+    int noOfTuples = a.size() == 0 ? 0 : (a.size()/noOfVars);
 
     // Build TupleSet
     TupleSet ts(noOfVars);
     for (int i=0; i<noOfTuples; i++) {
       IntArgs t(noOfVars);
       for (int j=0; j<noOfVars; j++) {
-        t[j] = a->a[i*noOfVars+j]->getInt();
+        t[j] = a[i*noOfVars+j];
       }
       ts.add(t);
     }
