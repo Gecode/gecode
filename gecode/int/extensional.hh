@@ -600,6 +600,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     using Compact<View,false>::setup;
     using Compact<View,false>::full;
     using Compact<View,false>::supports;
+    using Compact<View,false>::atmostone;
     using Compact<View,false>::c;
     using Compact<View,false>::ts;
 

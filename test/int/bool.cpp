@@ -45,7 +45,7 @@ namespace Test { namespace Int {
        switch (op) {
        case Gecode::BOT_AND: return x0 & x1;
        case Gecode::BOT_OR:  return x0 | x1;
-       case Gecode::BOT_IMP: return !x0 | x1;
+       case Gecode::BOT_IMP: return (!x0) | x1;
        case Gecode::BOT_EQV: return x0 == x1;
        case Gecode::BOT_XOR: return x0 != x1;
        default: GECODE_NEVER;

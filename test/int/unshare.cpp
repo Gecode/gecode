@@ -101,6 +101,7 @@ namespace Test { namespace Int {
          : Test("Unshare::Failed",1,-1,1) {}
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
+         (void) x;
          return false;
        }
        /// Post constraint on \a x

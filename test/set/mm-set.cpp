@@ -138,14 +138,14 @@ namespace Test { namespace Int {
         if (failed)
           return false;
         switch (srt) {
-          case Gecode::SRT_EQ: return ret == c;
-          case Gecode::SRT_NQ: return ret != c;
-          case Gecode::SRT_SUB: return ret <= c;
-          case Gecode::SRT_SUP: return ret >= c;
-          case Gecode::SRT_DISJ: return ret+c != 2;
-          case Gecode::SRT_CMPL: return ret != c;
+        case Gecode::SRT_EQ: return ret == c;
+        case Gecode::SRT_NQ: return ret != c;
+        case Gecode::SRT_SUB: return ret <= c;
+        case Gecode::SRT_SUP: return ret >= c;
+        case Gecode::SRT_DISJ: return ret+c != 2;
+        case Gecode::SRT_CMPL: return ret != c;
+        default: GECODE_NEVER;
         }
-        GECODE_NEVER;
         return false;
       }
       /// Post constraint on \a x
@@ -160,12 +160,13 @@ namespace Test { namespace Int {
         Gecode::SetExpr res = (c==0) ? IntSet::empty : singleton(1);
         Gecode::SetExpr e = eval(bis,reg);
         switch (srt) {
-          case Gecode::SRT_EQ: Gecode::rel(home, e == res); break;
-          case Gecode::SRT_NQ: Gecode::rel(home, e != res); break;
-          case Gecode::SRT_SUB: Gecode::rel(home, e <= res); break;
-          case Gecode::SRT_SUP: Gecode::rel(home, e >= res); break;
-          case Gecode::SRT_DISJ: Gecode::rel(home, e || res); break;
-          case Gecode::SRT_CMPL: Gecode::rel(home, e == -res); break;
+        case Gecode::SRT_EQ: Gecode::rel(home, e == res); break;
+        case Gecode::SRT_NQ: Gecode::rel(home, e != res); break;
+        case Gecode::SRT_SUB: Gecode::rel(home, e <= res); break;
+        case Gecode::SRT_SUP: Gecode::rel(home, e >= res); break;
+        case Gecode::SRT_DISJ: Gecode::rel(home, e || res); break;
+        case Gecode::SRT_CMPL: Gecode::rel(home, e == -res); break;
+        default: GECODE_NEVER;
         }
       }
       /// Post reified constraint on \a x
@@ -182,17 +183,18 @@ namespace Test { namespace Int {
         Gecode::SetExpr e = eval(bis,reg);
         Gecode::SetRel irel;
         switch (srt) {
-          case Gecode::SRT_EQ: irel = (e == res); break;
-          case Gecode::SRT_NQ: irel = (e != res); break;
-          case Gecode::SRT_SUB: irel = (e <= res); break;
-          case Gecode::SRT_SUP: irel = (e >= res); break;
-          case Gecode::SRT_DISJ: irel = (e || res); break;
-          case Gecode::SRT_CMPL: irel = (e == -res); break;
+        case Gecode::SRT_EQ: irel = (e == res); break;
+        case Gecode::SRT_NQ: irel = (e != res); break;
+        case Gecode::SRT_SUB: irel = (e <= res); break;
+        case Gecode::SRT_SUP: irel = (e >= res); break;
+        case Gecode::SRT_DISJ: irel = (e || res); break;
+        case Gecode::SRT_CMPL: irel = (e == -res); break;
+        default: GECODE_NEVER;
         }
         switch (r.mode()) {
-          case Gecode::RM_EQV: Gecode::rel(home, r.var()==irel); break;
-          case Gecode::RM_IMP: Gecode::rel(home, r.var() >> irel); break;
-          case Gecode::RM_PMI: Gecode::rel(home, r.var() << irel); break;
+        case Gecode::RM_EQV: Gecode::rel(home, r.var()==irel); break;
+        case Gecode::RM_IMP: Gecode::rel(home, r.var() >> irel); break;
+        case Gecode::RM_PMI: Gecode::rel(home, r.var() << irel); break;
         }
       }
     };
@@ -233,12 +235,13 @@ namespace Test { namespace Int {
           return false;
 
         switch (srt) {
-          case Gecode::SRT_EQ: return ret0 == ret1;
-          case Gecode::SRT_NQ: return ret0 != ret1;
-          case Gecode::SRT_SUB: return ret0 <= ret1;
-          case Gecode::SRT_SUP: return ret0 >= ret1;
-          case Gecode::SRT_DISJ: return ret0+ret1 != 2;
-          case Gecode::SRT_CMPL: return ret0 != ret1;
+        case Gecode::SRT_EQ: return ret0 == ret1;
+        case Gecode::SRT_NQ: return ret0 != ret1;
+        case Gecode::SRT_SUB: return ret0 <= ret1;
+        case Gecode::SRT_SUP: return ret0 >= ret1;
+        case Gecode::SRT_DISJ: return ret0+ret1 != 2;
+        case Gecode::SRT_CMPL: return ret0 != ret1;
+        default: GECODE_NEVER;
         }
         GECODE_NEVER;
         return false;
@@ -264,12 +267,13 @@ namespace Test { namespace Int {
         Gecode::SetExpr e1 = eval(bis1,reg1);
 
         switch (srt) {
-          case Gecode::SRT_EQ: Gecode::rel(home, e0 == e1); break;
-          case Gecode::SRT_NQ: Gecode::rel(home, e0 != e1); break;
-          case Gecode::SRT_SUB: Gecode::rel(home, e0 <= e1); break;
-          case Gecode::SRT_SUP: Gecode::rel(home, e0 >= e1); break;
-          case Gecode::SRT_DISJ: Gecode::rel(home, e0 || e1); break;
-          case Gecode::SRT_CMPL: Gecode::rel(home, e0 == -e1); break;
+        case Gecode::SRT_EQ: Gecode::rel(home, e0 == e1); break;
+        case Gecode::SRT_NQ: Gecode::rel(home, e0 != e1); break;
+        case Gecode::SRT_SUB: Gecode::rel(home, e0 <= e1); break;
+        case Gecode::SRT_SUP: Gecode::rel(home, e0 >= e1); break;
+        case Gecode::SRT_DISJ: Gecode::rel(home, e0 || e1); break;
+        case Gecode::SRT_CMPL: Gecode::rel(home, e0 == -e1); break;
+        default: GECODE_NEVER;
         }
       }
       /// Post reified constraint on \a x
@@ -295,17 +299,18 @@ namespace Test { namespace Int {
 
         Gecode::SetRel srel;
         switch (srt) {
-          case Gecode::SRT_EQ: srel = (e0 == e1); break;
-          case Gecode::SRT_NQ: srel = (e0 != e1); break;
-          case Gecode::SRT_SUB: srel = (e0 <= e1); break;
-          case Gecode::SRT_SUP: srel = (e0 >= e1); break;
-          case Gecode::SRT_DISJ: srel = (e0 || e1); break;
-          case Gecode::SRT_CMPL: srel = (e0 == -e1); break;
+        case Gecode::SRT_EQ: srel = (e0 == e1); break;
+        case Gecode::SRT_NQ: srel = (e0 != e1); break;
+        case Gecode::SRT_SUB: srel = (e0 <= e1); break;
+        case Gecode::SRT_SUP: srel = (e0 >= e1); break;
+        case Gecode::SRT_DISJ: srel = (e0 || e1); break;
+        case Gecode::SRT_CMPL: srel = (e0 == -e1); break;
+        default: GECODE_NEVER;
         }
         switch (r.mode()) {
-          case Gecode::RM_EQV: Gecode::rel(home, r.var()==srel); break;
-          case Gecode::RM_IMP: Gecode::rel(home, r.var() >> srel); break;
-          case Gecode::RM_PMI: Gecode::rel(home, r.var() << srel); break;
+        case Gecode::RM_EQV: Gecode::rel(home, r.var()==srel); break;
+        case Gecode::RM_IMP: Gecode::rel(home, r.var() >> srel); break;
+        case Gecode::RM_PMI: Gecode::rel(home, r.var() << srel); break;
         }
       }
     };
