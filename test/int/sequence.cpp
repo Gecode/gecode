@@ -131,12 +131,9 @@ namespace Test { namespace Int {
          IntArgs ie({0,2});
          IntSet e(ie);
          
-         // FIXME LATER
-         if (false) {
-           (void) new SequenceBoolTest("A",a,3,2,2,6);
-           (void) new SequenceBoolTest("B",b,3,2,2,6);
-           (void) new SequenceBoolTest("C",b,6,2,2,6);
-         }
+         (void) new SequenceBoolTest("A",a,3,2,2,6);
+         (void) new SequenceBoolTest("B",b,3,2,2,6);
+         (void) new SequenceBoolTest("C",b,6,2,2,6);
          (void) new SequenceBoolTest("D",b,6,0,0,6);
          (void) new SequenceBoolTest("E",b,6,6,6,6);
 
