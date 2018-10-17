@@ -45,13 +45,14 @@ namespace Gecode { namespace Int { namespace Sequence {
       vvsamax(home,x,s0,q0), vvsamin(home,x,s0,q0), ac(home),
       tofail(false) {
     home.notice(*this,AP_DISPOSE);
+    bool assigned = false;
     for (int i=x.size(); i--; ) {
-      if (undecided(x[i],s)) {
+      if (undecided(x[i],s))
         x[i].subscribe(home,*new (home) SupportAdvisor<View>(home,*this,ac,i));
-      } else {
-        x[i].schedule(home,*this,x[i].assigned() ? ME_INT_VAL : ME_INT_BND);
-      }
+      if (x[i].assigned())
+        assigned = true;
     }
+    View::schedule(home,*this,assigned ? ME_INT_VAL : ME_INT_BND);
   }
 
   template<class View, class Val>
