@@ -1,12 +1,12 @@
 ---
-name: Bug Report
-about: Create a bug report to help us improve Gecode
+name: Bug report
+about: Create a report to help us improve
 
 ---
 
-**Describe the Bug**
+**Describe the bug**
 
-Please provide a clear and concise description of what the bug is.
+A clear and concise description of what the bug is.
 
 **To Reproduce**
 
