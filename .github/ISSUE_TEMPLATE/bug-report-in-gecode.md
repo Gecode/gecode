@@ -1,5 +1,5 @@
 ---
-name: Bug report
+name: Bug Report in Gecode
 about: Create a report to help us improve
 
 ---
