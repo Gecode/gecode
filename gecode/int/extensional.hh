@@ -470,7 +470,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     /// Constructor for cloning \a p
     Compact(Space& home, Compact& p);
     /// Constructor for posting
-    Compact(Home home, ViewArray<View>& x, const TupleSet& ts);
+    Compact(Home home, const TupleSet& ts);
     /// Setup the actual table
     template<class Table>
     void setup(Space& home, Table& table, ViewArray<View>& x);

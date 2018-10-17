@@ -1434,7 +1434,7 @@ AC_DEFUN([AC_GECODE_CPPROFILER],
   [
   AC_ARG_ENABLE([cpprofiler],
     AC_HELP_STRING([--enable-cpprofiler],
-      [build with support for CPProfiler @<:@default=no@:>@]))
+      [build with support for CPProfiler @<:@default=yes@:>@]))
   AC_MSG_CHECKING(whether to build with support for CPProfiler)
   if test "${enable_cpprofiler:-no}" = "yes"; then
     AC_MSG_RESULT(yes)

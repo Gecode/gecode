@@ -339,8 +339,7 @@ namespace Gecode { namespace Int { namespace Extensional {
   
   template<class View, bool pos>
   forceinline
-  Compact<View,pos>::Compact(Home home, ViewArray<View>& x,
-                             const TupleSet& ts0)
+  Compact<View,pos>::Compact(Home home, const TupleSet& ts0)
     : Propagator(home), n_words(ts0.words()), ts(ts0), c(home) {
     home.notice(*this, AP_DISPOSE);
   }
@@ -514,7 +513,7 @@ namespace Gecode { namespace Int { namespace Extensional {
   forceinline
   PosCompact<View,Table>::PosCompact(Home home, ViewArray<View>& x,
                                      const TupleSet& ts)
-    : Compact<View,true>(home,x,ts), status(MULTIPLE), table(home,ts.words()) {
+    : Compact<View,true>(home,ts), status(MULTIPLE), table(home,ts.words()) {
     setup(home,table,x);
   }
       
@@ -790,7 +789,7 @@ namespace Gecode { namespace Int { namespace Extensional {
   forceinline
   NegCompact<View,Table>::NegCompact(Home home, ViewArray<View>& x,
                                      const TupleSet& ts)
-    : Compact<View,false>(home,x,ts), table(home,ts.words()) {
+    : Compact<View,false>(home,ts), table(home,ts.words()) {
     setup(home,table,x);
   }
       
@@ -1068,7 +1067,7 @@ namespace Gecode { namespace Int { namespace Extensional {
   forceinline
   ReCompact<View,Table,CtrlView,rm>::ReCompact(Home home, ViewArray<View>& x,
                                                const TupleSet& ts, CtrlView b0)
-    : Compact<View,false>(home,x,ts), table(home,ts.words()), b(b0), y(x) {
+    : Compact<View,false>(home,ts), table(home,ts.words()), b(b0), y(x) {
     b.subscribe(home,*this,PC_BOOL_VAL);
     setup(home,table,x);
   }

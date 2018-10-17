@@ -1486,7 +1486,7 @@ Optional Features:
   --enable-gist           build Gecode Interactive Search Tool [default=yes]
   --enable-cbs            build with support for counting-based search
                           [default=no]
-  --enable-cpprofiler     build with support for CPProfiler [default=no]
+  --enable-cpprofiler     build with support for CPProfiler [default=yes]
   --enable-driver         build script commandline driver library
                           [default=yes]
   --enable-flatzinc       build FlatZinc interpreter [default=yes]

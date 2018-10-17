@@ -906,3 +906,6 @@ namespace Gecode { namespace Int { namespace Distinct {
 }}}
 
 #endif
+
+// STATISTICS: int-prop
+

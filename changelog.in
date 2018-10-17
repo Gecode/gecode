@@ -74,13 +74,20 @@ and performance improvements. It is highly recommended to switch
 as soon as possible!
 
 [ENTRY]
+Module: search
+What:   change
+Rank:   minor
+[DESCRIPTION]
+Support for the CPProfiler is now enabled by default.
+
+[ENTRY]
 Module: int
 What:   change
 Rank:   minor
 Thanks: Sara Frimodig
 [DESCRIPTION]
-The default propagation for unary has been too weak (possibly
-hurting Gecode in the MiniZinc competitions of 2017 and 2018),
+The default propagation for unary has been too weak (likely to
+hurt Gecode in the MiniZinc competitions of 2017 and 2018),
 now the default is back to maximal propagation.
 
 [ENTRY]
