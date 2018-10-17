@@ -30,6 +30,10 @@ Gecode packages (source, Apple MacOS, Microsoft Windows) can be downloaded from
 or
 [Gecode's webpages](https://gecode.github.io/download.html).
 
+## Contributing to Gecode
+
+We happily accept smaller contributions and fixes, please provide them as pull requests against the develop branch.
+
 ## Gecode License
 
 Gecode is licensed under the
