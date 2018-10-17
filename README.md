@@ -32,7 +32,7 @@ or
 
 ## Contributing to Gecode
 
-We happily accept smaller contributions and fixes, please provide them as pull requests against the develop branch.
+We happily accept smaller contributions and fixes, please provide them as pull requests against the develop branch. For larger contributions, please get in touch.
 
 ## Gecode License
 
