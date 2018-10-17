@@ -152,6 +152,7 @@ namespace Test { namespace Set {
                 return false;
             }
             break;
+          default: GECODE_NEVER;
           }
         }
         return true;
@@ -245,6 +246,7 @@ namespace Test { namespace Set {
                 return false;
             }
             break;
+          default: GECODE_NEVER;
           }
         }
         return true;
@@ -340,6 +342,7 @@ namespace Test { namespace Set {
                 return false;
               break;
             }
+          default: GECODE_NEVER;
           }
         }
         return true;
@@ -433,6 +436,7 @@ namespace Test { namespace Set {
                 return false;
             }
             break;
+          default: GECODE_NEVER;
           }
         }
         return true;

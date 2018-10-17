@@ -131,6 +131,7 @@ namespace Test { namespace Set {
             return sol(u,xr2);
           }
           break;
+        default: GECODE_NEVER;
         }
         GECODE_NEVER;
         return false;

@@ -135,6 +135,7 @@ namespace Test { namespace Set {
             }
           }
           break;
+        default: GECODE_NEVER;
         }
         GECODE_NEVER;
         return false;
@@ -173,6 +174,7 @@ namespace Test { namespace Set {
             Gecode::Set::RangesCompl<J> jc(j);
             return Iter::Ranges::equal(i,jc);
           }
+        default: GECODE_NEVER;
         }
         GECODE_NEVER;
         return false;
@@ -223,6 +225,7 @@ namespace Test { namespace Set {
             return sol(u,isr);
           }
           break;
+        default: GECODE_NEVER;
         }
         GECODE_NEVER;
         return false;
@@ -260,6 +263,7 @@ namespace Test { namespace Set {
             Gecode::Set::RangesCompl<J> jc(j);
             return Iter::Ranges::equal(i,jc);
           }
+        default: GECODE_NEVER;
         }
         GECODE_NEVER;
         return false;
@@ -318,6 +322,7 @@ namespace Test { namespace Set {
             }
           }
           break;
+        default: GECODE_NEVER;
         }
         GECODE_NEVER;
         return false;
