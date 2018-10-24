@@ -49,7 +49,7 @@
 #   [ENTRY]
 #   Module: 
 #     kernel|search|int|set|cpltset|example|minimodel|iter|support|
-#     scheduling|driver|test|gist|flatzinc|other
+#     driver|test|gist|flatzinc|other
 #   What:   bug|documentation|performance|new|removed|change
 #   Rank:   minor|major
 #   Bug:    <optional, for number from bugzilla>
@@ -61,6 +61,13 @@
 #    ... If a more section is included, then it will be displayed as an
 #    optional section in the html page.
 #
+
+[RELEASE]
+Version: 6.1.1
+Date: ?-?-?
+[DESCRIPTION]
+New stuff!
+
 
 [RELEASE]
 Version: 6.1.0
