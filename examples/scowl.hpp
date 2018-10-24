@@ -13526,17 +13526,19 @@ Dictionary::init(const char* fn) {
         getline(f,s);
         if (s.size() >= static_cast<size_t>(limit_len))
           goto skip1;
-        int n = static_cast<int>(s.size());
-        for (int i=0; i<n; i++)
-          if (!isalpha(s[static_cast<unsigned int>(i)]) || 
-              !islower(s[static_cast<unsigned int>(i)]))
-            goto skip1;
-        // Found a legal word
-        n_all_words++;
-        n_words[n]++;
-        sz += n+1;
-        if (max_len < n)
-          max_len = n;
+        {
+          int n = static_cast<int>(s.size());
+          for (int i=0; i<n; i++)
+            if (!isalpha(s[static_cast<unsigned int>(i)]) || 
+                !islower(s[static_cast<unsigned int>(i)]))
+              goto skip1;
+          // Found a legal word
+          n_all_words++;
+          n_words[n]++;
+          sz += n+1;
+          if (max_len < n)
+            max_len = n;
+        }
       skip1: ;
       }
 
@@ -13565,15 +13567,17 @@ Dictionary::init(const char* fn) {
         getline(f,s);
         if (s.size() >= static_cast<size_t>(limit_len))
           goto skip2;
-        int n = static_cast<int>(s.size());
-        for (int i=0; i<n; i++)
-          if (!isalpha(s[static_cast<unsigned int>(i)]) || 
-              !islower(s[static_cast<unsigned int>(i)]))
-            goto skip2;
-        // Found a legal word, copy it
-        for (int i=0; i<n; i++)
-          *s_words[n]++ = s[static_cast<unsigned int>(i)];
-        *s_words[n]++ = 0;
+        {
+          int n = static_cast<int>(s.size());
+          for (int i=0; i<n; i++)
+            if (!isalpha(s[static_cast<unsigned int>(i)]) || 
+                !islower(s[static_cast<unsigned int>(i)]))
+              goto skip2;
+          // Found a legal word, copy it
+          for (int i=0; i<n; i++)
+            *s_words[n]++ = s[static_cast<unsigned int>(i)];
+          *s_words[n]++ = 0;
+        }
       skip2: ;
       }
 
