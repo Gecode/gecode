@@ -170,7 +170,7 @@ namespace Test { namespace Int {
   TestSpace::rndvar(void) {
     assert(!assigned());
     // Select variable to be pruned
-    int i = Base::rand(x.size());
+    int i = static_cast<int>(Base::rand(static_cast<unsigned int>(x.size())));
     while (x[i].assigned()) {
       i = (i+1) % x.size();
     }
@@ -186,16 +186,18 @@ namespace Test { namespace Int {
     switch (Base::rand(3)) {
     case 0:
       if (a[i] < x[i].max()) {
-        v=a[i]+1+Base::rand(static_cast
-                            <unsigned int>(x[i].max()-a[i]));
+        v=a[i]+1+
+          static_cast<int>(Base::rand(static_cast
+                                      <unsigned int>(x[i].max()-a[i])));
         assert((v > a[i]) && (v <= x[i].max()));
         irt = IRT_LE;
       }
       break;
     case 1:
       if (a[i] > x[i].min()) {
-        v=x[i].min()+Base::rand(static_cast
-                                <unsigned int>(a[i]-x[i].min()));
+        v=x[i].min()+
+          static_cast<int>(Base::rand(static_cast
+                                      <unsigned int>(a[i]-x[i].min())));
         assert((v < a[i]) && (v >= x[i].min()));
         irt = IRT_GR;
       }
@@ -203,10 +205,11 @@ namespace Test { namespace Int {
     default:
       {
         Gecode::Int::ViewRanges<Gecode::Int::IntView> it(x[i]);
-        unsigned int skip = Base::rand(x[i].size()-1);
+        unsigned int skip = 
+          Base::rand(static_cast<unsigned int>(x[i].size()-1));
         while (true) {
           if (it.width() > skip) {
-            v = it.min() + skip;
+            v = it.min() + static_cast<int>(skip);
             if (v == a[i]) {
               if (it.width() == 1) {
                 ++it; v = it.min();
@@ -255,7 +258,8 @@ namespace Test { namespace Int {
   void
   TestSpace::assign(const Assignment& a, bool skip) {
     using namespace Gecode;
-    int i = skip ? static_cast<int>(Base::rand(a.size())) : -1;
+    int i = skip ? 
+      static_cast<int>(Base::rand(static_cast<unsigned int>(a.size()))) : -1;
     for (int j=a.size(); j--; )
       if (i != j) {
         rel(j, IRT_EQ, a[j]);
@@ -278,25 +282,28 @@ namespace Test { namespace Int {
     // Prune values
     if (bounds_only) {
       if (Base::rand(2) && !x[i].assigned()) {
-        int v=x[i].min()+1+Base::rand(static_cast
-                                      <unsigned int>(x[i].max()-x[i].min()));
+        int v=x[i].min()+1+
+          static_cast<int>(Base::rand(static_cast
+                                      <unsigned int>(x[i].max()-x[i].min())));
         assert((v > x[i].min()) && (v <= x[i].max()));
         rel(i, Gecode::IRT_LE, v);
       }
       if (Base::rand(2) && !x[i].assigned()) {
-        int v=x[i].min()+Base::rand(static_cast
-                                    <unsigned int>(x[i].max()-x[i].min()));
+        int v=x[i].min()+
+          static_cast<int>(Base::rand(static_cast
+                                      <unsigned int>(x[i].max()-x[i].min())));
         assert((v < x[i].max()) && (v >= x[i].min()));
         rel(i, Gecode::IRT_GR, v);
       }
     } else {
-      for (int vals = Base::rand(x[i].size()-1)+1; vals--; ) {
+      for (int vals = 
+             static_cast<int>(Base::rand(static_cast<unsigned int>(x[i].size()-1))+1); vals--; ) {
         int v;
         Gecode::Int::ViewRanges<Gecode::Int::IntView> it(x[i]);
         unsigned int skip = Base::rand(x[i].size()-1);
         while (true) {
           if (it.width() > skip) {
-            v = it.min() + skip; break;
+            v = it.min() + static_cast<int>(skip); break;
           }
           skip -= it.width(); ++it;
         }
@@ -333,8 +340,8 @@ namespace Test { namespace Int {
           olog << ind(4) << "Copy failed after posting" << std::endl;
         delete c; return false;
       }
-      for (int i=x.size(); i--; )
-        if (x[i].size() != c->x[i].size()) {
+      for (int j=x.size(); j--; )
+        if (x[j].size() != c->x[j].size()) {
           if (opt.log)
             olog << ind(4) << "Different domain size" << std::endl;
           delete c; return false;
@@ -395,8 +402,8 @@ namespace Test { namespace Int {
         olog << ind(3) << "Failure on disabled copy" << std::endl;
       return false;
     }
-    for (int i=x.size(); i--; ) {
-      if (x[i].size() != c.x[i].size()) {
+    for (int j=x.size(); j--; ) {
+      if (x[j].size() != c.x[j].size()) {
         if (opt.log)
           olog << ind(4) << "Different domain size" << std::endl;
         return false;

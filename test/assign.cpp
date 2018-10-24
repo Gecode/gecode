@@ -193,6 +193,7 @@ namespace Test { namespace Assign {
       case 2: ia = INT_ASSIGN_MAX(); break;
       case 3: ia = INT_ASSIGN_RND(r); break;
       case 4: ia = INT_ASSIGN(&int_val); break;
+      default: GECODE_NEVER;
       }
 
       assign(*clone, clone->x, ia);
@@ -239,6 +240,7 @@ namespace Test { namespace Assign {
       case 1: ia = BOOL_ASSIGN_MAX(); break;
       case 2: ia = BOOL_ASSIGN_RND(r); break;
       case 3: ia = BOOL_ASSIGN(&bool_val); break;
+      default: GECODE_NEVER;
       }
 
       assign(*clone, clone->x, ia);
@@ -302,7 +304,7 @@ namespace Test { namespace Assign {
     post(*root, root->x);
     (void) root->status();
 
-    for (int val = n_int_assign; val--; ) {
+    for (int val = n_set_assign; val--; ) {
       SetTestSpace* clone = static_cast<SetTestSpace*>(root->clone());
       Gecode::Search::Options o;
       o.a_d = Base::rand(10);
@@ -321,6 +323,7 @@ namespace Test { namespace Assign {
       case 6: sa = SET_ASSIGN_RND_INC(r); break;
       case 7: sa = SET_ASSIGN_RND_EXC(r); break;
       case 8: sa = SET_ASSIGN(&set_val); break;
+      default: GECODE_NEVER;
       }
 
       assign(*clone, clone->x, sa);
@@ -396,6 +399,7 @@ namespace Test { namespace Assign {
       case 1: fa = FLOAT_ASSIGN_MAX(); break;
       case 2: fa = FLOAT_ASSIGN_RND(r); break;
       case 3: fa = FLOAT_ASSIGN(&float_val); break;
+      default: GECODE_NEVER;
       }
 
       assign(*clone, clone->x, fa);

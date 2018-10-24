@@ -151,7 +151,7 @@ namespace Gecode {
     }
     
     // Only now compute how many tuples are needed!
-    n_words = BitSetData::data(n_tuples);
+    n_words = BitSetData::data(static_cast<unsigned int>(n_tuples));
 
     // Compute range information
     {
@@ -280,27 +280,27 @@ namespace Gecode {
   TupleSet::TupleSet(int a, const Gecode::DFA& dfa) {
     /// Edges in layered graph
     struct Edge {
-      unsigned int i_state; ///< Number of in-state
-      unsigned int o_state; ///< Number of out-state
+      int i_state; ///< Number of in-state
+      int o_state; ///< Number of out-state
     };
     /// State in layered graph
     struct State {
-      unsigned int i_deg; ///< In-degree (number of incoming arcs)
-      unsigned int o_deg; ///< Out-degree (number of outgoing arcs)
-      unsigned int n_tuples; ///< Number of tuples
+      int i_deg; ///< In-degree (number of incoming arcs)
+      int o_deg; ///< Out-degree (number of outgoing arcs)
+      int n_tuples; ///< Number of tuples
       int* tuples; ///< The tuples
     };
     /// Support for a value
     struct Support {
       int val; ///< Supported value
-      unsigned int n_edges; ///< Number of supporting edges
+      int n_edges; ///< Number of supporting edges
       Edge* edges; ///< Supporting edges
     };
     /// Layer in layered graph
     struct Layer {
       State* states; ///< States
       Support* supports; ///< Supported values
-      unsigned int n_supports; ///< Number of supported values
+      int n_supports; ///< Number of supported values
     };
     // Initialize
     object(new Data(a));
@@ -313,19 +313,19 @@ namespace Gecode {
     State* states = r.alloc<State>(max_states*(a+1));
 
     for (int i=0; i<max_states*(a+1); i++) {
-      states[i].i_deg = 0U; states[i].o_deg = 0U;
-      states[i].n_tuples = 0U;
+      states[i].i_deg = 0; states[i].o_deg = 0;
+      states[i].n_tuples = 0;
       states[i].tuples = nullptr;
     }
     for (int i=0; i<a+1; i++) {
       layers[i].states = states + i*max_states;
-      layers[i].n_supports = 0U;
+      layers[i].n_supports = 0;
     }
 
     // Mark initial state as being reachable
-    layers[0].states[0].i_deg = 1U;
-    layers[0].states[0].n_tuples = 1U;
-    layers[0].states[0].tuples = r.alloc<int>(1U);
+    layers[0].states[0].i_deg = 1;
+    layers[0].states[0].n_tuples = 1;
+    layers[0].states[0].tuples = r.alloc<int>(1);
     assert(layers[0].states[0].tuples != nullptr);
   
     // Allocate temporary memory for edges and supports
@@ -334,9 +334,9 @@ namespace Gecode {
   
     // Forward pass: accumulate
     for (int i=0; i<a; i++) {
-      unsigned int n_supports=0;
+      int n_supports=0;
       for (DFA::Symbols s(dfa); s(); ++s) {
-        unsigned int n_edges=0;
+        int n_edges=0;
         for (DFA::Transitions t(dfa,s.val()); t(); ++t) {
           if (layers[i].states[t.i_state()].i_deg != 0) {
             // Create edge
@@ -353,7 +353,7 @@ namespace Gecode {
           assert(n_edges <= dfa.max_degree());
         }
         // Found a support for the value
-        if (n_edges > 0U) {
+        if (n_edges > 0) {
           Support& support = supports[n_supports++];
           support.val = s.val();
           support.n_edges = n_edges;
@@ -361,7 +361,7 @@ namespace Gecode {
         }
       }
       // Create supports
-      if (n_supports > 0U) {
+      if (n_supports > 0) {
         layers[i].supports =
           Heap::copy(r.alloc<Support>(n_supports),supports,n_supports);
         layers[i].n_supports = n_supports;
@@ -379,23 +379,23 @@ namespace Gecode {
 
     // Backward pass: validate
     for (int i=a; i--; ) {
-      for (unsigned int j = layers[i].n_supports; j--; ) {
+      for (int j = layers[i].n_supports; j--; ) {
         Support& s = layers[i].supports[j];
-        for (unsigned int k = s.n_edges; k--; ) {
-          unsigned int i_state = s.edges[k].i_state;
-          unsigned int o_state = s.edges[k].o_state;
+        for (int k = s.n_edges; k--; ) {
+          int i_state = s.edges[k].i_state;
+          int o_state = s.edges[k].o_state;
           // State is unreachable
-          if (layers[i+1].states[o_state].o_deg == 0U) {
+          if (layers[i+1].states[o_state].o_deg == 0) {
             // Adjust degree
             --layers[i+1].states[o_state].i_deg;
             --layers[i].states[i_state].o_deg;
             // Remove edge
-            assert(s.n_edges > 0U);
+            assert(s.n_edges > 0);
             s.edges[k] = s.edges[--s.n_edges];
           }
         }
         // Lost support
-        if (s.n_edges == 0U)
+        if (s.n_edges == 0)
           layers[i].supports[j] = layers[i].supports[--layers[i].n_supports];
       }
       if (layers[i].n_supports == 0U) {
@@ -406,20 +406,20 @@ namespace Gecode {
 
     // Generate tuples
     for (int i=0; i<a; i++) {
-      for (unsigned int j = layers[i].n_supports; j--; ) {
+      for (int j = layers[i].n_supports; j--; ) {
         Support& s = layers[i].supports[j];
-        for (unsigned int k = s.n_edges; k--; ) {
-          unsigned int i_state = s.edges[k].i_state;
-          unsigned int o_state = s.edges[k].o_state;
+        for (int k = s.n_edges; k--; ) {
+          int i_state = s.edges[k].i_state;
+          int o_state = s.edges[k].o_state;
           // Allocate memory for tuples if not done
           if (layers[i+1].states[o_state].tuples == nullptr) {
-            unsigned int n_tuples = layers[i+1].states[o_state].n_tuples;
+            int n_tuples = layers[i+1].states[o_state].n_tuples;
             layers[i+1].states[o_state].tuples = r.alloc<int>((i+1)*n_tuples);
             layers[i+1].states[o_state].n_tuples = 0;
           }
-          unsigned int n = layers[i+1].states[o_state].n_tuples;
+          int n = layers[i+1].states[o_state].n_tuples;
           // Write tuples
-          for (unsigned int t=0; t < layers[i].states[i_state].n_tuples; t++) {
+          for (int t=0; t < layers[i].states[i_state].n_tuples; t++) {
             // Copy the first i number of digits from the previous layer
             Heap::copy(&layers[i+1].states[o_state].tuples[n*(i+1)+t*(i+1)],
                        &layers[i].states[i_state].tuples[t*i], i);
@@ -434,7 +434,7 @@ namespace Gecode {
 
     // Add tuples to tuple set
     for (int s = dfa.final_fst(); s < dfa.final_lst(); s++) {
-      for (unsigned int i=0; i<layers[a].states[s].n_tuples; i++) {
+      for (int i=0; i<layers[a].states[s].n_tuples; i++) {
         int* tuple = &layers[a].states[s].tuples[i*a];
         add(IntArgs(a,tuple));
       }

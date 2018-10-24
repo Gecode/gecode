@@ -173,8 +173,8 @@ namespace Test { namespace Float {
              Gecode::FloatNum st, AssignmentType at,
              bool r)
     : Base("Float::"+s), arity(a), dom(d), step(st), assigmentType(at),
-      reified(r), rms((1 << Gecode::RM_EQV) ||
-                      (1 << Gecode::RM_IMP) ||
+      reified(r), rms((1 << Gecode::RM_EQV) |
+                      (1 << Gecode::RM_IMP) |
                       (1 << Gecode::RM_PMI)),
       testsearch(true), testfix(true), testsubsumed(true) {}
 
@@ -184,8 +184,8 @@ namespace Test { namespace Float {
              bool r)
       : Base("Float::"+s), arity(a), dom(min,max), step(st),
         assigmentType(at), reified(r),
-        rms((1 << Gecode::RM_EQV) ||
-            (1 << Gecode::RM_IMP) ||
+        rms((1 << Gecode::RM_EQV) |
+            (1 << Gecode::RM_IMP) |
             (1 << Gecode::RM_PMI)),
         testsearch(true), testfix(true), testsubsumed(true) {}
 

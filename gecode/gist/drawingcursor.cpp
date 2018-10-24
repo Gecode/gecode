@@ -55,7 +55,6 @@ namespace Gecode { namespace Gist {
 
   const double nodeWidth = 20.0;
   const double halfNodeWidth = nodeWidth / 2.0;
-  const double quarterNodeWidth = halfNodeWidth / 2.0;
   const double failedWidth = 14.0;
   const double halfFailedWidth = failedWidth / 2.0;
   const double quarterFailedWidthF = failedWidth / 4.0;

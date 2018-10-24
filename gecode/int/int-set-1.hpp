@@ -114,7 +114,7 @@ namespace Gecode {
       Region reg;
       Range* dr = reg.alloc<Range>(n);
       for (int i=0; i<n; i++)
-        dr[i].min=dr[i].max=r[i];
+        dr[i].min=dr[i].max=r[static_cast<unsigned int>(i)];
       normalize(&dr[0],n);
     }
   }
@@ -133,8 +133,11 @@ namespace Gecode {
       Range* dr = reg.alloc<Range>(n);
       int j=0;
       for (int i=0; i<n; i++) 
-        if (r[i].first <= r[i].second) {
-          dr[j].min=r[i].first; dr[j].max=r[i].second; j++;
+        if (r[static_cast<unsigned int>(i)].first <= 
+            r[static_cast<unsigned int>(i)].second) {
+          dr[j].min=r[static_cast<unsigned int>(i)].first;
+          dr[j].max=r[static_cast<unsigned int>(i)].second;
+          j++;
         }
       normalize(&dr[0],j);
     }

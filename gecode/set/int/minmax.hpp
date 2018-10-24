@@ -225,10 +225,12 @@ namespace Gecode { namespace Set { namespace Int {
       Region r;
       int* _ur = r.alloc<int>(num_ranges*2);
       // now, we fill the array:
-      int i = 0;
-      for (LubRanges<View> ur(x0); ur(); ++ur, ++i) {
-        _ur[2*i  ] = ur.min();
-        _ur[2*i+1] = ur.max();
+      {
+        int i = 0;
+        for (LubRanges<View> ur(x0); ur(); ++ur, ++i) {
+          _ur[2*i  ] = ur.min();
+          _ur[2*i+1] = ur.max();
+        }
       }
       // now we search from the top the range that contains the
       // nth largest value.

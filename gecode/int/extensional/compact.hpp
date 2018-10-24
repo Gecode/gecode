@@ -575,7 +575,7 @@ namespace Gecode { namespace Int { namespace Extensional {
       } else { // x.size() > 2
         // How many values to remove
         int* nq = r.alloc<int>(x.size());
-        unsigned int n_nq = 0U;
+        unsigned int n_nq = 0;
         // The initialization is here just to avoid warnings...
         int last_support = 0;
         for (ValidSupports vs(*this,a); vs(); ++vs)
