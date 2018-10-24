@@ -49,9 +49,9 @@ public:
 class Dictionary {
 protected:
   /// Maximal word length support
-  static const unsigned int limit_len = 64;
+  static const int limit_len = 64;
   /// Actual maximal length in dictionary
-  unsigned int max_len;
+  int max_len;
   /// Total number of words
   int n_all_words;
   /// Number of words of some length
@@ -13473,7 +13473,7 @@ FileSizeOptions::file(void) const {
 inline
 Dictionary::Dictionary(void)
   : max_len(0), n_all_words(0), chunk(NULL) {
-  for (unsigned int i=0U; i<max_len; i++) {
+  for (int i=0; i<max_len; i++) {
     n_words[i]=0; s_words[i]=NULL;
   }
 }
@@ -13524,17 +13524,19 @@ Dictionary::init(const char* fn) {
                                 "Unable to open file");
       while (!f.eof()) {
         getline(f,s);
-        if (s.size() >= limit_len)
+        if (s.size() >= static_cast<size_t>(limit_len))
           goto skip1;
-        for (int i=0; i<s.size(); i++)
-          if (!isalpha(s[i]) || !islower(s[i]))
+        int n = static_cast<int>(s.size());
+        for (int i=0; i<n; i++)
+          if (!isalpha(s[static_cast<unsigned int>(i)]) || 
+              !islower(s[static_cast<unsigned int>(i)]))
             goto skip1;
         // Found a legal word
         n_all_words++;
-        n_words[s.size()]++;
-        sz += s.size()+1;
-        if (max_len < s.size())
-          max_len = s.size();
+        n_words[n]++;
+        sz += n+1;
+        if (max_len < n)
+          max_len = n;
       skip1: ;
       }
 
@@ -13546,7 +13548,7 @@ Dictionary::init(const char* fn) {
     {
       // Initialize start information in chunk
       char* c = chunk;
-      for (unsigned int l=0; l<=max_len; l++) {
+      for (int l=0; l<=max_len; l++) {
         s_words[l] = c; c += (l+1)*n_words[l];
       }
     }
@@ -13561,15 +13563,17 @@ Dictionary::init(const char* fn) {
                                 "Unable to open file");
       while (!f.eof()) {
         getline(f,s);
-        if (s.size() >= limit_len)
+        if (s.size() >= static_cast<size_t>(limit_len))
           goto skip2;
-        for (int i=0; i<s.size(); i++)
-          if (!isalpha(s[i]) || !islower(s[i]))
+        int n = static_cast<int>(s.size());
+        for (int i=0; i<n; i++)
+          if (!isalpha(s[static_cast<unsigned int>(i)]) || 
+              !islower(s[static_cast<unsigned int>(i)]))
             goto skip2;
         // Found a legal word, copy it
-        for (unsigned int i=0U; i<s.size(); i++)
-          *s_words[s.size()]++ = s[i];
-        *s_words[s.size()]++ = 0;
+        for (int i=0; i<n; i++)
+          *s_words[n]++ = s[static_cast<unsigned int>(i)];
+        *s_words[n]++ = 0;
       skip2: ;
       }
 
@@ -13579,7 +13583,7 @@ Dictionary::init(const char* fn) {
     {
       // Re-Initialize start information in chunk
       char* c = chunk;
-      for (unsigned int l=0U; l<=max_len; l++) {
+      for (int l=0; l<=max_len; l++) {
         s_words[l] = c; c += (l+1)*n_words[l];
       }
     }
@@ -13597,7 +13601,7 @@ Dictionary::words(void) const {
 }
 inline int
 Dictionary::words(int l) const {
-  return (static_cast<unsigned int>(l) > max_len) ? 0 : n_words[l];
+  return (l > max_len) ? 0 : n_words[l];
 }
 inline const char*
 Dictionary::word(int l, int i) const {

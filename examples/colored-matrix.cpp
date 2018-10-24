@@ -72,21 +72,21 @@ public:
   }
 
   /// Return height
-  unsigned int height(void) const {
-    if (_size.value() == 0)
-      return _height.value();
+  int height(void) const {
+    if (_size.value() == 0U)
+      return static_cast<int>(_height.value());
     else
-      return _size.value();
+      return static_cast<int>(_size.value());
   }
   /// Return width
-  unsigned int width(void)  const {
-    if (_size.value() == 0)
-      return _width.value();
+  int width(void)  const {
+    if (_size.value() == 0U)
+      return static_cast<int>(_width.value());
     else
-      return _size.value();
+      return static_cast<int>(_size.value());
   }
   /// Return number of colors
-  unsigned int colors(void) const { return _colors.value(); }
+  int colors(void) const { return static_cast<int>(_colors.value()); }
   /// Return how to implement not all equals
   int not_all_equal(void) const { return _not_all_equal.value(); }
   /// Return how to implement same or 0
@@ -115,7 +115,7 @@ namespace {
    * \neq y \land z = 0)\f$ for variables \f$\langle x, y,
    * zq\rangle\f$.
    */
-  DFA same_or_0_dfa(unsigned int colors);
+  DFA same_or_0_dfa(int colors);
 
   /** Return tuple set for the same_or_0 constraint.
    *
@@ -123,23 +123,23 @@ namespace {
    * \neq y \land z = 0)\f$ for variables \f$\langle x, y,
    * zq\rangle\f$.
    */
-  TupleSet same_or_0_tuple_set(unsigned int colors);
+  TupleSet same_or_0_tuple_set(int colors);
 
   /** Return DFA for the distinct_except_0 constraint.
    */
-  DFA distinct_except_0_dfa(unsigned int colors);
+  DFA distinct_except_0_dfa(int colors);
 
   /** Return DFA for the no monochrome rectangle constraint.
    */
-  DFA no_monochrome_rectangle_dfa(unsigned int colors);
+  DFA no_monochrome_rectangle_dfa(int colors);
 
   /** Return counts for using a global cardninality constraint for the distinct exept 0 constraint.
    */
-  IntSetArgs distinct_except_0_counts(unsigned int colors, unsigned int size);
+  IntSetArgs distinct_except_0_counts(int colors, int size);
 
   /** Return DFA for the not all equals constraint.
    */
-  DFA not_all_equal_dfa(unsigned int colors);
+  DFA not_all_equal_dfa(int colors);
 
   //@}
 }
@@ -167,9 +167,9 @@ protected:
    */
   //@{
   const ColoredMatrixOptions& opt; ///< Options for model
-  const unsigned int height;  ///< Height of matrix
-  const unsigned int width;   ///< Width of matrix
-  const unsigned int colors;  ///< Number of colors to use
+  const int height;  ///< Height of matrix
+  const int width;   ///< Width of matrix
+  const int colors;  ///< Number of colors to use
   //@}
 
   /** \name Problem variables
@@ -285,11 +285,11 @@ protected:
    * rows/columns v1 and v2 to have no monochrome rectangle.
    */
   void no_monochrome_rectangle(IntVarArgs v1, IntVarArgs v2) {
-    const unsigned int length = v1.size();
+    const int length = v1.size();
     switch (opt.no_monochrome_rectangle()) {
     case NO_MONOCHROME_DECOMPOSITION: {
       IntVarArgs z(length);
-      for (unsigned int i = 0; i < length; ++i) {
+      for (int i = 0; i < length; ++i) {
         z[i] = same_or_0(v1[i], v2[i]);
       }
       distinct_except_0(z);
@@ -369,10 +369,10 @@ public:
 
     // For each pair of columns and rows, the intersections may not be equal.
     if (opt.model() & MODEL_CORNERS) {
-      for (unsigned int c1 = 0; c1 < width; ++c1) {
-        for (unsigned int c2 = c1+1; c2 < width; ++c2) {
-          for (unsigned int r1 = 0; r1 < height; ++r1) {
-            for (unsigned int r2 = r1+1; r2 < height; ++r2) {
+      for (int c1 = 0; c1 < width; ++c1) {
+        for (int c2 = c1+1; c2 < width; ++c2) {
+          for (int r1 = 0; r1 < height; ++r1) {
+            for (int r2 = r1+1; r2 < height; ++r2) {
               not_all_equal(IntVarArgs() << m(c1,r1) << m(c1,r2) << m(c2,r1) << m(c2,r2));
             }
           }
@@ -384,15 +384,15 @@ public:
     // For the new values, no non-zero value may appear more than
     // once.
     if (opt.model() & MODEL_ROWS) {
-      for (unsigned int r1 = 0; r1 < height; ++r1) {
-        for (unsigned int r2 = r1+1; r2 < height; ++r2) {
+      for (int r1 = 0; r1 < height; ++r1) {
+        for (int r2 = r1+1; r2 < height; ++r2) {
           no_monochrome_rectangle(m.row(r1), m.row(r2));
         }
       }
     }
     if (opt.model() & MODEL_COLUMNS) {
-      for (unsigned int c1 = 0; c1 < width; ++c1) {
-        for (unsigned int c2 = c1+1; c2 < width; ++c2) {
+      for (int c1 = 0; c1 < width; ++c1) {
+        for (int c2 = c1+1; c2 < width; ++c2) {
           no_monochrome_rectangle(m.col(c1), m.col(c2));
         }
       }
@@ -402,10 +402,10 @@ public:
     {
       // Lexical order for all columns and rows (all are interchangable)
       if (opt.symmetry() & SYMMETRY_MATRIX) {
-        for (unsigned int r = 0; r < height-1; ++r) {
+        for (int r = 0; r < height-1; ++r) {
           rel(*this, m.row(r), IRT_LE, m.row(r+1));
         }
-        for (unsigned int c = 0; c < width-1; ++c) {
+        for (int c = 0; c < width-1; ++c) {
           rel(*this, m.col(c), IRT_LE, m.col(c+1));
         }
       }
@@ -428,9 +428,9 @@ public:
   virtual void
   print(std::ostream& os) const {
     Matrix<IntVarArray> m(x, width, height);
-    for (unsigned int r = 0; r < height; ++r) {
+    for (int r = 0; r < height; ++r) {
       os << "\t";
-      for (unsigned int c = 0; c < width; ++c) {
+      for (int c = 0; c < width; ++c) {
         os << m(c, r) << " ";
       }
       os << std::endl;
@@ -545,7 +545,7 @@ main(int argc, char* argv[]) {
 
 
 namespace {
-  DFA same_or_0_dfa(unsigned int colors)
+  DFA same_or_0_dfa(int colors)
   {
     /* DFA over variable sequences (x,y,z) where z equals x/y if x and
      * y are equal, and z equals 0 otherwise.
@@ -565,19 +565,20 @@ namespace {
     const int final_state = 2*colors+2;
 
     int n_transitions = colors*colors + 2*colors + 2;
-    DFA::Transition* trans = new DFA::Transition[n_transitions];
+    DFA::Transition* trans = 
+      new DFA::Transition[static_cast<size_t>(n_transitions)];
     int current_transition = 0;
 
     // From start state
-    for (unsigned int color = 1; color <= colors; ++color) {
+    for (int color = 1; color <= colors; ++color) {
       trans[current_transition++] =
         DFA::Transition(start_state, color, color);
     }
 
     // From first level states (indices [1..color])
     // To second-level if same color, otherwise to not_equal_state
-    for (unsigned int state = 1; state <= colors; ++state) {
-      for (unsigned int color = 1; color <= colors; ++color) {
+    for (int state = 1; state <= colors; ++state) {
+      for (int color = 1; color <= colors; ++color) {
         if (color == state) {
           trans[current_transition++] =
             DFA::Transition(state, color, colors+state);
@@ -590,7 +591,7 @@ namespace {
 
     // From second level states (indices [colors+1..colors+colors])
     // To final state with the same color
-    for (unsigned int color = 1; color <= colors; ++color) {
+    for (int color = 1; color <= colors; ++color) {
       trans[current_transition++] =
         DFA::Transition(colors+color, color, final_state);
     }
@@ -612,7 +613,7 @@ namespace {
     return result;
   }
 
-  TupleSet same_or_0_tuple_set(unsigned int colors) {
+  TupleSet same_or_0_tuple_set(int colors) {
     TupleSet result(3);
     for (int i = 1; i <= colors; ++i) {
       for (int j = 1; j <= colors; ++j) {
@@ -627,7 +628,7 @@ namespace {
     return result;
   }
 
-  DFA distinct_except_0_dfa(unsigned int colors)
+  DFA distinct_except_0_dfa(int colors)
   {
     /* DFA for a sequence that may use each color only once (and all
      * others are zero).
@@ -641,14 +642,15 @@ namespace {
     const int nstates = 1 << colors;
     const int start_state = nstates-1;
 
-    DFA::Transition* trans = new DFA::Transition[nstates*colors + 1];
+    DFA::Transition* trans =
+      new DFA::Transition[static_cast<size_t>(nstates*colors + 1)];
     int current_transition = 0;
 
     for (int state = nstates; state--; ) {
       trans[current_transition++] = DFA::Transition(state, 0, state);
 
-      for (unsigned int color = 1; color <= colors; ++color) {
-        const unsigned int color_bit = (1 << (color-1));
+      for (int color = 1; color <= colors; ++color) {
+        const int color_bit = (1 << (color-1));
         if (state & color_bit) {
           trans[current_transition++] =
             DFA::Transition(state, color, state & ~color_bit);
@@ -671,7 +673,7 @@ namespace {
     return result;
   }
 
-  DFA no_monochrome_rectangle_dfa(unsigned int colors)
+  DFA no_monochrome_rectangle_dfa(int colors)
   {
     /* DFA for a sequence of pairs, where each monochromatic pair may
      * only appear once.
@@ -695,14 +697,14 @@ namespace {
     int current_transition = 0;
 
     for (int state = base_states; state--; ) {
-      for (unsigned int color = 1; color <= colors; ++color) {
-        const unsigned int color_bit = (1 << (color-1));
+      for (int color = 1; color <= colors; ++color) {
+        const int color_bit = (1 << (color-1));
         const int color_remembered_state = state + color*base_states;
 
         trans[current_transition++] =
           DFA::Transition(state, color, color_remembered_state);
 
-        for (unsigned int next_color = 1; next_color <= colors; ++next_color) {
+        for (int next_color = 1; next_color <= colors; ++next_color) {
           if (next_color == color) {
             // Two equal adjacent, only transition if color still allowed
             if (state & color_bit) {
@@ -733,13 +735,13 @@ namespace {
     return result;
   }
 
-  IntSetArgs distinct_except_0_counts(unsigned int colors, unsigned int size)
+  IntSetArgs distinct_except_0_counts(int colors, int size)
   {
     IntSetArgs result(colors+1);
 
     result[0] = IntSet(0, size);
 
-    for (unsigned int i = 1; i <= colors; ++i) {
+    for (int i = 1; i <= colors; ++i) {
       result[i] = IntSet(0, 1);
     }
 
@@ -747,7 +749,7 @@ namespace {
   }
 
 
-  DFA not_all_equal_dfa(unsigned int colors)
+  DFA not_all_equal_dfa(int colors)
   {
     /* DFA for not all equal.
      *
@@ -765,13 +767,13 @@ namespace {
     int current_transition = 0;
 
     // Each color to its own state
-    for (unsigned int color = 1; color <= colors; ++color) {
+    for (int color = 1; color <= colors; ++color) {
       trans[current_transition++] = DFA::Transition(start_state, color, color);
     }
 
     // Each colors state loops on itself, and goes to final on all others
-    for (unsigned int state = 1; state <= colors; ++state) {
-      for (unsigned int color = 1; color <= colors; ++color) {
+    for (int state = 1; state <= colors; ++state) {
+      for (int color = 1; color <= colors; ++color) {
         if (state == color) {
           trans[current_transition++] = DFA::Transition(state, color, state);
         } else {
@@ -781,7 +783,7 @@ namespace {
     }
 
     // Loop on all colors in final state
-    for (unsigned int color = 1; color <= colors; ++color) {
+    for (int color = 1; color <= colors; ++color) {
       trans[current_transition++] = DFA::Transition(final_state, color, final_state);
     }
 

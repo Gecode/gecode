@@ -86,7 +86,7 @@ namespace Test { namespace Int {
 
   inline
   RandomAssignment::RandomAssignment(int n, const Gecode::IntSet& d, int a0)
-    : Assignment(n,d), vals(new int[n]), a(a0) {
+    : Assignment(n,d), vals(new int[static_cast<size_t>(n)]), a(a0) {
     for (int i=n; i--; )
       vals[i] = randval();
   }
@@ -121,7 +121,8 @@ namespace Test { namespace Int {
   RandomMixAssignment::RandomMixAssignment(int n0, const Gecode::IntSet& d0,
                                            int n1, const Gecode::IntSet& d1,
                                            int a0)
-    : Assignment(n0+n1,d0),vals(new int[n0+n1]),a(a0),_n1(n1),_d1(d1) {
+    : Assignment(n0+n1,d0),vals(new int[static_cast<size_t>(n0+n1)]),
+      a(a0),_n1(n1),_d1(d1) {
     for (int i=n0; i--; )
       vals[i] = randval(d);
     for (int i=n1; i--; )

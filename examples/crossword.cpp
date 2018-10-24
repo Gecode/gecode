@@ -165,12 +165,14 @@ public:
         } else {
           // Setup tuple-set
           TupleSet ts(w_l+1);
-          IntArgs w(w_l+1);
-          for (int i=0; i<n_w; i++) {
-            for (int d=0; d<w_l; d++)
-              w[d] = dict.word(w_l,i)[d];
-            w[w_l]=i;
-            ts.add(w);
+          {
+            IntArgs w(w_l+1);
+            for (int i=0; i<n_w; i++) {
+              for (int d=0; d<w_l; d++)
+                w[d] = dict.word(w_l,i)[d];
+              w[w_l]=i;
+              ts.add(w);
+            }
           }
           ts.finalize();
 

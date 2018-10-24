@@ -55,16 +55,20 @@ namespace Gecode { namespace Iter { namespace Ranges {
     /// Array for ranges
     Range* r;
     /// Current range
-    int c;
+    unsigned int c;
     /// Number of ranges in array
-    int n;
+    unsigned int n;
   public:
     /// \name Constructors and initialization
     //@{
     /// Default constructor
     Array(void);
     /// Initialize with \a n ranges from \a r
+    Array(Range* r, unsigned int n);
+    /// Initialize with \a n ranges from \a r
     Array(Range* r, int n);
+    /// Initialize with \a n ranges from \a r
+    void init(Range* r, unsigned int n);
     /// Initialize with \a n ranges from \a r
     void init(Range* r, int n);
     //@}
@@ -95,12 +99,21 @@ namespace Gecode { namespace Iter { namespace Ranges {
   Array::Array(void) {}
 
   forceinline
+  Array::Array(Range* r0, unsigned int n0)
+    : r(r0), c(0U), n(n0) {}
+
+  forceinline
   Array::Array(Range* r0, int n0)
-    : r(r0), c(0), n(n0) {}
+    : r(r0), c(0U), n(static_cast<unsigned int>(n0)) {}
+
+  forceinline void
+  Array::init(Range* r0, unsigned int n0) {
+    r=r0; c=0U; n=n0;
+  }
 
   forceinline void
   Array::init(Range* r0, int n0) {
-    r=r0; c=0; n=n0;
+    r=r0; c=0U; n=static_cast<unsigned int>(n0);
   }
 
   forceinline void
@@ -114,7 +127,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
 
   forceinline void
   Array::reset(void) {
-    c=0;
+    c=0U;
   }
 
   forceinline int

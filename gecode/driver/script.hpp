@@ -96,7 +96,7 @@ namespace Gecode { namespace Driver {
     }
 #ifdef GECODE_THREADS_WINDOWS
     /// Handler for catching Ctrl-C
-    static BOOL interrupt(DWORD t) {
+    static BOOL interrupt(DWORD t) throw() {
       if (t == CTRL_C_EVENT) {
         sigint = true;
         installCtrlHandler(false,true);
@@ -525,20 +525,20 @@ namespace Gecode { namespace Driver {
             for (unsigned int k = o.iterations(); !stopped && k--; ) {
               unsigned int i = o.solutions();
               Script* s1 = new Script(o);
-              Search::Options so;
-              so.clone   = false;
-              so.threads = o.threads();
-              so.assets  = o.assets();
-              so.slice   = o.slice();
-              so.c_d     = o.c_d();
-              so.a_d     = o.a_d();
-              so.d_l     = o.d_l();
-              so.stop    = CombinedStop::create(o.node(),o.fail(), o.time(),
-                                                false);
-              so.cutoff  = createCutoff(o);
-              so.nogoods_limit = o.nogoods() ? o.nogoods_limit() : 0U;
+              Search::Options sok;
+              sok.clone   = false;
+              sok.threads = o.threads();
+              sok.assets  = o.assets();
+              sok.slice   = o.slice();
+              sok.c_d     = o.c_d();
+              sok.a_d     = o.a_d();
+              sok.d_l     = o.d_l();
+              sok.stop    = CombinedStop::create(o.node(),o.fail(), o.time(),
+                                                 false);
+              sok.cutoff  = createCutoff(o);
+              sok.nogoods_limit = o.nogoods() ? o.nogoods_limit() : 0U;
               {
-                Meta<Script,Engine> e(s1,so);
+                Meta<Script,Engine> e(s1,sok);
                 do {
                   Script* ex = e.next();
                   if (ex == NULL)
@@ -548,7 +548,7 @@ namespace Gecode { namespace Driver {
                 if (e.stopped())
                   stopped = true;
               }
-              delete so.stop;
+              delete sok.stop;
             }
             ts[ns] = t.stop() / o.iterations();
           }
