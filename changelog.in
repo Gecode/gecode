@@ -76,6 +76,14 @@ Author:	Samuel Gagnon
 [DESCRIPTION]
 Added example for magic squares with pre-filled instances.
 
+[ENTRY]
+Module: kernel
+What:   bug
+Rank:   minor
+Author:	Conrad Drescher
+[DESCRIPTION]
+Fixed potential deadlock when memory has been exhausted.
+
 [RELEASE]
 Version: 6.1.0
 Date: 2018-10-17
