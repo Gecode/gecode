@@ -68,6 +68,13 @@ Date: ?-?-?
 [DESCRIPTION]
 New stuff!
 
+[ENTRY]
+Module: example
+What:   new
+Rank:   minor
+Author:	Samuel Gagnon
+[DESCRIPTION]
+Added example for magic squares with pre-filled instances.
 
 [RELEASE]
 Version: 6.1.0
