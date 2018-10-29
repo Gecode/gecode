@@ -869,7 +869,7 @@ INTEXAMPLEHDR0 =						\
 	scowl
 INTEXAMPLESRC0 =						\
 	alpha bacp bibd donald efpa eq20 golomb-ruler		\
-	graph-color grocery ind-set magic-sequence magic-square	\
+	graph-color grocery ind-set magic-sequence magic-square	magic-square-partial\
 	money ortho-latin partition photo queens sudoku sudoku-advanced kakuro  \
 	nonogram pentominoes crowded-chess black-hole		\
 	minesweeper domino steel-mill sports-league		\

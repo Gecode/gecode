@@ -72,6 +72,7 @@ examples/knights
 examples/langford-number
 examples/magic-sequence
 examples/magic-square
+examples/magic-square-partial
 examples/minesweeper
 examples/money
 examples/multi-bin-packing
