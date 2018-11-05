@@ -869,7 +869,7 @@ INTEXAMPLEHDR0 =						\
 	scowl
 INTEXAMPLESRC0 =						\
 	alpha bacp bibd donald efpa eq20 golomb-ruler		\
-	graph-color grocery ind-set magic-sequence magic-square	magic-square-partial\
+	graph-color grocery ind-set magic-sequence magic-square	\
 	money ortho-latin partition photo queens sudoku sudoku-advanced kakuro  \
 	nonogram pentominoes crowded-chess black-hole		\
 	minesweeper domino steel-mill sports-league		\
@@ -1279,11 +1279,7 @@ check: test
 			   -test Int::Linear::Bool::Int::Lq \
 			   -test Int::MiniModel::LinExpr::Bool::352  \
 			   -test NoGoods::Queens \
-			   -test Search::BAB::Sol::BalGr::Binary \
-			   -test Search::DFS::Sol::Binary::Nary::Binary \
-			   -test Search::PBS::SEB::DFS+LDS \
-			   -test Search::RBS::BAB \
-			   -test Search::RBS::DFS \
+			   -test Search::DFS::Sol::Binary::Nary::Binary::1::1::1 \
 			   -test Set::Dom::Dom::Gr \
 			   -test Set::RelOp::ConstSSI::Union \
 			   -test Set::Sequence::SeqU1 \
