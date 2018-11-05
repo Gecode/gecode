@@ -68,6 +68,21 @@ Date: ?-?-?
 [DESCRIPTION]
 New stuff!
 
+[ENTRY]
+Module: example
+What:   new
+Rank:   minor
+Author:	Samuel Gagnon
+[DESCRIPTION]
+Added example for magic squares with pre-filled instances.
+
+[ENTRY]
+Module: kernel
+What:   bug
+Rank:   minor
+Author:	Conrad Drescher
+[DESCRIPTION]
+Fixed potential deadlock when memory has been exhausted.
 
 [RELEASE]
 Version: 6.1.0

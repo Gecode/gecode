@@ -206,7 +206,12 @@ namespace Gecode { namespace Kernel {
     HeapChunk* hc;
     if (heap.hc == NULL) {
       assert(heap.n_hc == 0);
-      hc = static_cast<HeapChunk*>(Gecode::heap.ralloc(s));
+      try {
+        hc = static_cast<HeapChunk*>(Gecode::heap.ralloc(s));
+      } catch (Exception& e) {
+        m().release();
+        throw e;
+      }
       hc->size = s;
     } else {
       heap.n_hc--;
