@@ -16,8 +16,12 @@
 
 #define GECODE_BOOST_NUMERIC_INTERVAL_NO_HARDWARE
 
+#if (defined(__STDC_VERSION__) && __STDC_VERSION__ >= 199901L) || (defined(__cplusplus) && __cplusplus >= 201103L)
+#  define GECODE_BOOST_C99_ENABLED
+#endif
+
 // define appropriate specialization of rounding_control for built-in types
-#if defined(__x86_64__) && (defined(__USE_ISOC99) || defined(__APPLE__))
+#if defined(__x86_64__) && (defined(GECODE_BOOST_C99_ENABLED) || defined(__APPLE__))
 #  include <gecode/third-party/boost/numeric/interval/detail/c99_rounding_control.hpp>
 #elif defined(__i386__) || defined(_M_IX86) || defined(__BORLANDC__) || defined(_M_X64)
 #  include <gecode/third-party/boost/numeric/interval/detail/x86_rounding_control.hpp>
@@ -33,7 +37,7 @@
 #  include <gecode/third-party/boost/numeric/interval/detail/ia64_rounding_control.hpp>
 #endif
 
-#if defined(GECODE_BOOST_NUMERIC_INTERVAL_NO_HARDWARE) && (defined(__USE_ISOC99) || defined(__MSL__))
+#if defined(GECODE_BOOST_NUMERIC_INTERVAL_NO_HARDWARE) && (defined(GECODE_BOOST_C99_ENABLED) || defined(__MSL__))
 #  include <gecode/third-party/boost/numeric/interval/detail/c99_rounding_control.hpp>
 #endif
 
@@ -41,6 +45,8 @@
 #  undef GECODE_BOOST_NUMERIC_INTERVAL_NO_HARDWARE
 #  error Boost.Numeric.Interval: Please specify rounding control mechanism.
 #endif
+
+#undef GECODE_BOOST_C99_ENABLED
 
 namespace gecode_boost {
 namespace numeric {

@@ -69,6 +69,17 @@ Date: ?-?-?
 New stuff!
 
 [ENTRY]
+Module: other
+What:   change
+Rank:   minor
+Thanks: Jip J. Dekker
+[DESCRIPTION]
+Removed the use of glibc macros in the architecture selection
+process of the boost interval library. This allows for the
+compilation on unix machines based on a different implementation
+of the C library.
+
+[ENTRY]
 Module: example
 What:   new
 Rank:   minor
