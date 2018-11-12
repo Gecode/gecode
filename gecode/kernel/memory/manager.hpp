@@ -196,7 +196,8 @@ namespace Gecode { namespace Kernel {
 
   forceinline HeapChunk*
   SharedMemory::alloc(size_t s, size_t l) {
-    m().acquire();
+    // To protect from exceptions from heap.ralloc()
+    Support::Lock guard(m());
     while ((heap.hc != NULL) && (heap.hc->size < l)) {
       heap.n_hc--;
       HeapChunk* hc = heap.hc;
@@ -206,31 +207,24 @@ namespace Gecode { namespace Kernel {
     HeapChunk* hc;
     if (heap.hc == NULL) {
       assert(heap.n_hc == 0);
-      try {
-        hc = static_cast<HeapChunk*>(Gecode::heap.ralloc(s));
-      } catch (Exception& e) {
-        m().release();
-        throw e;
-      }
+      hc = static_cast<HeapChunk*>(Gecode::heap.ralloc(s));
       hc->size = s;
     } else {
       heap.n_hc--;
       hc = heap.hc;
       heap.hc = static_cast<HeapChunk*>(hc->next);
     }
-    m().release();
     return hc;
   }
   forceinline void
   SharedMemory::free(HeapChunk* hc) {
-    m().acquire();
+    Support::Lock guard(m());
     if (heap.n_hc == MemoryConfig::n_hc_cache) {
       Gecode::heap.rfree(hc);
     } else {
       heap.n_hc++;
       hc->next = heap.hc; heap.hc = hc;
     }
-    m().release();
   }
 
 

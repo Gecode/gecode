@@ -91,7 +91,7 @@ Added example for magic squares with pre-filled instances.
 Module: kernel
 What:   bug
 Rank:   minor
-Author:	Conrad Drescher
+Author:	Conrad Drescher, Patrick Zimmer
 [DESCRIPTION]
 Fixed potential deadlock when memory has been exhausted.
 
