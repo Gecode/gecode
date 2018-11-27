@@ -1949,6 +1949,9 @@ namespace Gecode {
     GECODE_KERNEL_EXPORT
     void ap_ignore_dispose(Actor* a, bool d);
 
+    /// Generate general trace information for failure
+    GECODE_KERNEL_EXPORT
+    void _fail(void);
   public:
     /**
      * \brief Default constructor
@@ -3955,12 +3958,15 @@ namespace Gecode {
 
   forceinline void
   Space::fail(void) {
+    if (pc.p.bid_sc & sc_trace)
+      _fail(); // Do the actual failing there
+    else
+      pc.p.active = &pc.p.queue[PropCost::AC_MAX+1]+1;
     /*
      * Now active points beyond the last queue. This is essential as
      * enqueuing a propagator in a failed space keeps the space
      * failed.
      */
-    pc.p.active = &pc.p.queue[PropCost::AC_MAX+1]+1;
   }
   forceinline void
   Home::fail(void) {

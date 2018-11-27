@@ -163,6 +163,13 @@ namespace Gecode {
      *
      */
     void _commit(const Space& home, const CommitTraceInfo& cti);
+    /**
+     * \brief Failed function synchronization
+     *
+     * Just calls the actual failed function protected by a mutex.
+     *
+     */
+    void _failed(const Space& home);
   public:
     /// Constructor
     Tracer(void);
@@ -182,6 +189,13 @@ namespace Gecode {
      */
     virtual void commit(const Space& home,
                         const CommitTraceInfo& cti) = 0;
+    /**
+     * \brief Failed function
+     *
+     * The failed function is called when a space explicitly (rather
+     * than through propagation) has been failed.
+     */
+    virtual void failed(const Space& home) = 0;
     /// Destructor
     virtual ~Tracer(void);
   };
@@ -214,6 +228,13 @@ namespace Gecode {
      */
     virtual void commit(const Space& home,
                         const CommitTraceInfo& cti);
+    /**
+     * \brief Failed function
+     *
+     * The failed function is called when a space explicitly (rather
+     * than through propagation) has been failed.
+     */
+    virtual void failed(const Space& home);
     /// Default tracer (printing to std::cerr)
     static StdTracer def;
   };
@@ -297,6 +318,12 @@ namespace Gecode {
                   const CommitTraceInfo& cti) {
     m.acquire();
     commit(home,cti);
+    m.release();
+  }
+  forceinline void
+  Tracer::_failed(const Space& home) {
+    m.acquire();
+    failed(home);
     m.release();
   }
 

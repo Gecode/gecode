@@ -371,6 +371,7 @@ namespace Gecode {
           else if (!strncmp("done",a,e))      { cur |= TE_DONE ; }
           else if (!strncmp("propagate",a,e)) { cur |= TE_PROPAGATE; }
           else if (!strncmp("commit",a,e))    { cur |= TE_COMMIT; }
+          else if (!strncmp("failed",a,e))    { cur |= TE_FAILED; }
           else if (!strncmp("none",a,e) ||
                    !strncmp("false",a,e) ||
                    !strncmp("0",a,e))         { cur = 0; }
@@ -381,14 +382,16 @@ namespace Gecode {
                                                        TE_FAIL |
                                                        TE_DONE |
                                                        TE_PROPAGATE |
-                                                       TE_COMMIT); }
+                                                       TE_COMMIT |
+                                                       TE_FAILED); }
           else if (!strncmp("variable",a,e))  { cur = (TE_INIT |
                                                        TE_PRUNE |
                                                        TE_FIX |
                                                        TE_FAIL |
                                                        TE_DONE); }
           else if (!strncmp("general",a,e))   { cur = (TE_PROPAGATE |
-                                                       TE_COMMIT); }
+                                                       TE_COMMIT |
+                                                       TE_FAILED); }
           else {
             std::cerr << "Wrong argument \"" << a
                       << "\" for option \"" << iopt << "\""
@@ -409,16 +412,16 @@ namespace Gecode {
     TraceOption::help(void) {
       using namespace std;
       cerr << '\t' << iopt
-           << " (init,prune,fix,fail,done,propagate,commit,none,all,variable,general)"
+           << " (init,prune,fix,fail,done,propagate,commit,failed,none,all,variable,general)"
            << " default: ";
       if (cur == 0) {
         cerr << "none";
       } else if (cur == (TE_INIT | TE_PRUNE | TE_FIX | TE_FAIL | TE_DONE |
-                         TE_PROPAGATE | TE_COMMIT)) {
+                         TE_PROPAGATE | TE_COMMIT | TE_FAILED)) {
         cerr << "all";
       } else if (cur == (TE_INIT | TE_PRUNE | TE_FIX | TE_FAIL | TE_DONE)) {
         cerr << "variable";
-      } else if (cur == (TE_PROPAGATE | TE_COMMIT)) {
+      } else if (cur == (TE_PROPAGATE | TE_COMMIT | TE_FAILED)) {
         cerr << "general";
       } else {
         int f = cur;
@@ -454,6 +457,11 @@ namespace Gecode {
         }
         if ((f & TE_COMMIT) != 0) {
           cerr << "commit";
+          f -= TE_COMMIT;
+          if (f != 0) cerr << ',';
+        }
+        if ((f & TE_FAILED) != 0) {
+          cerr << "failed";
         }
       }
       cerr << endl << "\t\t" << exp << endl;
