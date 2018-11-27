@@ -56,7 +56,7 @@ namespace Gecode {
   }
 
   void
-  StdTracer::failed(const Space& home) {
+  StdTracer::failed(const Space&) {
     os << "trace::failed()" << std::endl;
   }
 
