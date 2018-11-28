@@ -70,6 +70,7 @@ namespace Gecode { namespace Int { namespace Branch {
               typename decltype(logProp)::hasher(),
               typename decltype(logProp)::key_equal(),
               typename decltype(logProp)::allocator_type(home)) {
+    home.notice(*this, AP_DISPOSE);
     varIdToPos.init();
     for (int i=0; i<x.size(); i++)
       varIdToPos.insert(x[i].id(), i);
@@ -90,6 +91,7 @@ namespace Gecode { namespace Int { namespace Branch {
   forceinline size_t
   CBSBrancher<View>::dispose(Space& home) {
     home.ignore(*this, AP_DISPOSE);
+    varIdToPos.~VarIdToPos();
     (void) Brancher::dispose(home);
     return sizeof(*this);
   }
