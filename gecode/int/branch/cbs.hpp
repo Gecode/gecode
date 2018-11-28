@@ -89,7 +89,6 @@ namespace Gecode { namespace Int { namespace Branch {
   template<class View>
   forceinline size_t
   CBSBrancher<View>::dispose(Space& home) {
-    home.ignore(*this, AP_DISPOSE);
     (void) Brancher::dispose(home);
     return sizeof(*this);
   }
