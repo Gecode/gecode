@@ -706,8 +706,8 @@ namespace Gecode { namespace Int { namespace Branch {
       public:
         /// Default constructur
         VarIdToPosO(void) = default;
-        /// Copy constructor
-        VarIdToPosO(const VarIdToPosO& o) = default;
+        /// Delete implementation
+        virtual ~VarIdToPosO(void) = default;
       };
     public:
       /// Default constructor
