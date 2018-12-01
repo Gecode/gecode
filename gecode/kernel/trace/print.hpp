@@ -121,6 +121,34 @@ namespace Gecode {
     return os << s.str();
   }
 
+  /**
+   * \brief Print post trace information
+   * \relates PostTraceInfo
+   */
+  template<class Char, class Traits>
+  std::basic_ostream<Char,Traits>&
+  operator <<(std::basic_ostream<Char,Traits>& os,
+              const PostTraceInfo& pti) {
+    std::basic_ostringstream<Char,Traits> s;
+    s.copyfmt(os); s.width(0);
+    s << "post(";
+    if (pti.group().in())
+      s  << "g:" << pti.group().id() << ",";
+    s << "s:";
+    switch (pti.status()) {
+    case PostTraceInfo::POSTED:
+      s << "posted"; break;
+    case PostTraceInfo::FAILED:
+      s << "failed"; break;
+    case PostTraceInfo::SUBSUMED:
+      s << "subsumed"; break;
+    default:
+      GECODE_NEVER;
+    }
+    s << ')';
+    return os << s.str();
+  }
+
 }
 
 // STATISTICS: kernel-trace

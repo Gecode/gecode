@@ -148,6 +148,7 @@ namespace Gecode {
    */
   class Tracer : public TracerBase {
     friend class Space;
+    friend class PostInfo;
   private:
     /**
      * \brief Propagate function synchronization
@@ -164,12 +165,12 @@ namespace Gecode {
      */
     void _commit(const Space& home, const CommitTraceInfo& cti);
     /**
-     * \brief Failed function synchronization
+     * \brief Post function synchronization
      *
-     * Just calls the actual failed function protected by a mutex.
+     * Just calls the actual post function protected by a mutex.
      *
      */
-    void _failed(const Space& home);
+    void _post(const Space& home, const PostTraceInfo& pti);
   public:
     /// Constructor
     Tracer(void);
@@ -190,12 +191,13 @@ namespace Gecode {
     virtual void commit(const Space& home,
                         const CommitTraceInfo& cti) = 0;
     /**
-     * \brief Failed function
+     * \brief Post function
      *
-     * The failed function is called when a space explicitly (rather
-     * than through propagation) has been failed.
+     * The post function is called when an attempt to post a propagator
+     * has been executed.
      */
-    virtual void failed(const Space& home) = 0;
+    virtual void post(const Space& home,
+                      const PostTraceInfo& pti) = 0;
     /// Destructor
     virtual ~Tracer(void);
   };
@@ -229,12 +231,13 @@ namespace Gecode {
     virtual void commit(const Space& home,
                         const CommitTraceInfo& cti);
     /**
-     * \brief Failed function
+     * \brief Post function
      *
-     * The failed function is called when a space explicitly (rather
-     * than through propagation) has been failed.
+     * The post function is called when an attempt to post a propagator
+     * has been executed.
      */
-    virtual void failed(const Space& home);
+    virtual void post(const Space& home,
+                      const PostTraceInfo& pti);
     /// Default tracer (printing to std::cerr)
     static StdTracer def;
   };
@@ -321,9 +324,10 @@ namespace Gecode {
     m.release();
   }
   forceinline void
-  Tracer::_failed(const Space& home) {
+  Tracer::_post(const Space& home,
+                const PostTraceInfo& pti) {
     m.acquire();
-    failed(home);
+    post(home,pti);
     m.release();
   }
 

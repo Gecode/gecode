@@ -49,7 +49,7 @@ namespace Gecode {
     /// \name Events for tracers
     TE_PROPAGATE = 1 << 5, ///< Trace propagator executions
     TE_COMMIT    = 1 << 6, ///< Trace commit operations by branchers
-    TE_FAILED    = 1 << 7  ///< Trace spaces marked explicitly as failed
+    TE_POST      = 1 << 7  ///< Trace propagator posting
   };
 
   /**
@@ -407,7 +407,7 @@ namespace Gecode {
 
   forceinline ExecStatus
   TraceRecorder::post(Home home, TraceFilter tf, int te, Tracer& t) {
-    if (te & (TE_PROPAGATE | TE_COMMIT | TE_FAILED))
+    if (te & (TE_PROPAGATE | TE_COMMIT | TE_POST))
       (void) new (home) TraceRecorder(home,tf,te,t);
     return ES_OK;
   }
