@@ -946,6 +946,7 @@ namespace Gecode {
    * \brief Class to set group information when a post function is executed
    */
   class PostInfo final {
+    friend class Space;
   protected:
     /// The home space
     Space& h;
@@ -957,7 +958,6 @@ namespace Gecode {
     /// Set information
     PostInfo(Home home);
     /// Reset information
-    GECODE_KERNEL_EXPORT
     ~PostInfo(void);
   };
 
@@ -1966,6 +1966,9 @@ namespace Gecode {
     /// Find trace recorder if exists
     GECODE_KERNEL_EXPORT
     TraceRecorder* findtracerecorder(void);
+    /// Trace posting event
+    GECODE_KERNEL_EXPORT
+    void post(const PostInfo& pi);
 
     /**
      * \brief Notice that an actor must be disposed
@@ -3349,6 +3352,14 @@ namespace Gecode {
     assert(!home.failed());
     h.pc.p.vti.post(pg);
   }
+
+  forceinline
+  PostInfo::~PostInfo(void) {
+    if (h.pc.p.bid_sc & Space::sc_trace)
+      h.post(*this);
+    h.pc.p.vti.other();
+  }
+
 
   /*
    * Propagate trace information

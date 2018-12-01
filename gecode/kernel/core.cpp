@@ -228,22 +228,21 @@ namespace Gecode {
     return nullptr;
   }
 
-  PostInfo::~PostInfo(void) {
-    if (h.pc.p.bid_sc & Space::sc_trace) {
-      TraceRecorder* tr = h.findtracerecorder();
-      if ((tr != NULL) && (tr->events() & TE_POST)) {
-        PostTraceInfo::Status s;
-        if (h.failed())
-          s = PostTraceInfo::FAILED;
-        else if (h.ssd.data().gpi.pid() == pid)
-          s = PostTraceInfo::SUBSUMED;
-        else
-          s = PostTraceInfo::POSTED;
-        PostTraceInfo pti(pg,s);
-        tr->tracer()._post(h,pti);
-      }
+  void
+  Space::post(const PostInfo& pi) {
+    assert(pc.p.bid_sc & sc_trace);
+    TraceRecorder* tr = findtracerecorder();
+    if ((tr != NULL) && (tr->events() & TE_POST)) {
+      PostTraceInfo::Status s;
+      if (failed())
+        s = PostTraceInfo::FAILED;
+      else if (ssd.data().gpi.pid() == pi.pid)
+        s = PostTraceInfo::SUBSUMED;
+      else
+        s = PostTraceInfo::POSTED;
+      PostTraceInfo pti(pi.pg,s);
+      tr->tracer()._post(*this,pti);
     }
-    h.pc.p.vti.other();
   }
 
   SpaceStatus
