@@ -69,6 +69,13 @@ Date: ?-?-?
 New stuff!
 
 [ENTRY]
+Module: kernel
+What:   new
+Rank:   major
+[DESCRIPTION]
+General tracers now support post events, see MPG for details.
+
+[ENTRY]
 Module: other
 What:   change
 Rank:   minor

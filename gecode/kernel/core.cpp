@@ -228,6 +228,25 @@ namespace Gecode {
     return nullptr;
   }
 
+  void
+  Space::post(const PostInfo& pi) {
+    assert(pc.p.bid_sc & sc_trace);
+    TraceRecorder* tr = findtracerecorder();
+    if ((tr != NULL) && (tr->events() & TE_POST)) {
+      GECODE_ASSUME(ssd.data().gpi.pid() >= pi.pid);
+      unsigned int n = ssd.data().gpi.pid() - pi.pid;
+      PostTraceInfo::Status s;
+      if (failed())
+        s = PostTraceInfo::FAILED;
+      else if (n == 0)
+        s = PostTraceInfo::SUBSUMED;
+      else
+        s = PostTraceInfo::POSTED;
+      PostTraceInfo pti(pi.pg,s,n);
+      tr->tracer()._post(*this,pti);
+    }
+  }
+
   SpaceStatus
   Space::status(StatusStatistics& stat) {
     // Check whether space is failed

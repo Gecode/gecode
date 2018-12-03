@@ -72,7 +72,7 @@ namespace Gecode { namespace Kernel {
     /// The inverse decay factor
     double invd;
     /// Next free propagator id
-    unsigned int pid;
+    unsigned int npid;
     /// Whether to unshare
     bool us;
     /// The first block
@@ -92,6 +92,8 @@ namespace Gecode { namespace Kernel {
     Info* allocate(unsigned int p, unsigned int gid);
     /// Allocate new actor info
     Info* allocate(unsigned int gid);
+    /// Return next free propagator id
+    unsigned int pid(void) const;
     /// Provide access to unshare info and set to true
     bool unshare(void);
     /// Delete
@@ -118,7 +120,7 @@ namespace Gecode { namespace Kernel {
 
   forceinline
   GPI::GPI(void)
-    : b(&fst), invd(1.0), pid(0U), us(false) {}
+    : b(&fst), invd(1.0), npid(0U), us(false) {}
 
   forceinline void
   GPI::fail(Info& c) {
@@ -137,6 +139,15 @@ namespace Gecode { namespace Kernel {
     d = 1.0 / invd;
     const_cast<GPI&>(*this).m.release();
     return d;
+  }
+
+  forceinline unsigned int
+  GPI::pid(void) const {
+    unsigned int p;
+    const_cast<GPI&>(*this).m.acquire();
+    p = npid;
+    const_cast<GPI&>(*this).m.release();
+    return p;
   }
 
   forceinline bool
@@ -178,7 +189,7 @@ namespace Gecode { namespace Kernel {
       n->next = b; b = n;
     }
     c = &b->info[--b->free];
-    c->init(pid++,gid);
+    c->init(npid++,gid);
     m.release();
     return c;
   }

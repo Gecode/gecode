@@ -55,6 +55,12 @@ namespace Gecode {
     os << std::endl;
   }
 
+  void
+  StdTracer::post(const Space&,
+                  const PostTraceInfo& pti) {
+    os << "trace::" << pti << std::endl;
+  }
+
   StdTracer StdTracer::def;
 
 }

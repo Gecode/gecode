@@ -147,6 +147,7 @@ namespace Gecode {
   class ViewTraceInfo;
   class PropagateTraceInfo;
   class CommitTraceInfo;
+  class PostTraceInfo;
   class TraceRecorder;
   class TraceFilter;
   class Tracer;
@@ -676,6 +677,7 @@ namespace Gecode {
     friend class ViewTraceInfo;
     friend class PropagateTraceInfo;
     friend class CommitTraceInfo;
+    friend class PostTraceInfo;
   protected:
     /// Fake id for group of all actors
     static const unsigned int GROUPID_ALL = 0U;
@@ -726,6 +728,7 @@ namespace Gecode {
     friend class Propagator;
     friend class ViewTraceInfo;
     friend class PropagateTraceInfo;
+    friend class PostTraceInfo;
   protected:
     /// Initialize with group id \a gid
     PropagatorGroup(unsigned int gid);
@@ -943,9 +946,14 @@ namespace Gecode {
    * \brief Class to set group information when a post function is executed
    */
   class PostInfo {
+    friend class Space;
   protected:
     /// The home space
     Space& h;
+    /// The propagator group
+    PropagatorGroup pg;
+    /// Next free propagator id
+    unsigned int pid;
   public:
     /// Set information
     PostInfo(Home home);
@@ -1016,6 +1024,37 @@ namespace Gecode {
     unsigned int alternative(void) const;
   };
  
+  /**
+   * \brief Post trace information
+   */
+  class PostTraceInfo {
+    friend class Space;
+    friend class PostInfo;
+  public:
+    /// Post status
+    enum Status {
+      POSTED,  ///< Propagator was posted
+      FAILED,  ///< Posting failed
+      SUBSUMED ///< Propagator not posted as already subsumed
+    };
+  protected:
+    /// Propagator group
+    PropagatorGroup g;
+    /// Status
+    Status s;
+    /// Number of posted propagators
+    unsigned int n;
+    /// Initialize
+    PostTraceInfo(PropagatorGroup g, Status s, unsigned int n);
+  public:
+    /// Return post status
+    Status status(void) const;
+    /// Return propagator group
+    PropagatorGroup group(void) const;
+    /// Return number of posted propagators
+    unsigned int propagators(void) const;
+  };
+
  /**
    * \brief Base-class for propagators
    * \ingroup TaskActor
@@ -1931,6 +1970,9 @@ namespace Gecode {
     /// Find trace recorder if exists
     GECODE_KERNEL_EXPORT
     TraceRecorder* findtracerecorder(void);
+    /// Trace posting event
+    GECODE_KERNEL_EXPORT
+    void post(const PostInfo& pi);
 
     /**
      * \brief Notice that an actor must be disposed
@@ -1948,7 +1990,6 @@ namespace Gecode {
      */
     GECODE_KERNEL_EXPORT
     void ap_ignore_dispose(Actor* a, bool d);
-
   public:
     /**
      * \brief Default constructor
@@ -3310,13 +3351,19 @@ namespace Gecode {
    * Post information
    */
   forceinline
-  PostInfo::PostInfo(Home home) : h(home) {
-    h.pc.p.vti.post(home.propagatorgroup());
+  PostInfo::PostInfo(Home home)
+    : h(home), pg(home.propagatorgroup()), pid(h.ssd.data().gpi.pid()) {
+    assert(!home.failed());
+    h.pc.p.vti.post(pg);
   }
+
   forceinline
   PostInfo::~PostInfo(void) {
+    if (h.pc.p.bid_sc & Space::sc_trace)
+      h.post(*this);
     h.pc.p.vti.other();
   }
+
 
   /*
    * Propagate trace information
@@ -3371,6 +3418,27 @@ namespace Gecode {
   forceinline unsigned int
   CommitTraceInfo::alternative(void) const {
     return a;
+  }
+
+
+  /*
+   * Post trace information
+   *
+   */
+  forceinline
+  PostTraceInfo::PostTraceInfo(PropagatorGroup g0, Status s0, unsigned int n0)
+    : g(g0), s(s0), n(n0) {}
+  forceinline PropagatorGroup
+  PostTraceInfo::group(void) const {
+    return g;
+  }
+  forceinline PostTraceInfo::Status
+  PostTraceInfo::status(void) const {
+    return s;
+  }
+  forceinline unsigned int
+  PostTraceInfo::propagators(void) const {
+    return n;
   }
 
 
@@ -3955,12 +4023,12 @@ namespace Gecode {
 
   forceinline void
   Space::fail(void) {
+    pc.p.active = &pc.p.queue[PropCost::AC_MAX+1]+1;
     /*
      * Now active points beyond the last queue. This is essential as
      * enqueuing a propagator in a failed space keeps the space
      * failed.
      */
-    pc.p.active = &pc.p.queue[PropCost::AC_MAX+1]+1;
   }
   forceinline void
   Home::fail(void) {
