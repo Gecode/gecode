@@ -137,7 +137,7 @@ namespace Gecode {
     s << "s:";
     switch (pti.status()) {
     case PostTraceInfo::POSTED:
-      s << "posted"; break;
+      s << "posted(" << pti.propagators() << ")"; break;
     case PostTraceInfo::FAILED:
       s << "failed"; break;
     case PostTraceInfo::SUBSUMED:

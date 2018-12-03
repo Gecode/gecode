@@ -945,7 +945,7 @@ namespace Gecode {
   /**
    * \brief Class to set group information when a post function is executed
    */
-  class PostInfo final {
+  class PostInfo {
     friend class Space;
   protected:
     /// The home space
@@ -1042,13 +1042,17 @@ namespace Gecode {
     PropagatorGroup g;
     /// Status
     Status s;
+    /// Number of posted propagators
+    unsigned int n;
     /// Initialize
-    PostTraceInfo(PropagatorGroup g, Status s);
+    PostTraceInfo(PropagatorGroup g, Status s, unsigned int n);
   public:
     /// Return post status
     Status status(void) const;
     /// Return propagator group
     PropagatorGroup group(void) const;
+    /// Return number of posted propagators
+    unsigned int propagators(void) const;
   };
 
  /**
@@ -3422,8 +3426,8 @@ namespace Gecode {
    *
    */
   forceinline
-  PostTraceInfo::PostTraceInfo(PropagatorGroup g0, Status s0)
-    : g(g0), s(s0) {}
+  PostTraceInfo::PostTraceInfo(PropagatorGroup g0, Status s0, unsigned int n0)
+    : g(g0), s(s0), n(n0) {}
   forceinline PropagatorGroup
   PostTraceInfo::group(void) const {
     return g;
@@ -3431,6 +3435,10 @@ namespace Gecode {
   forceinline PostTraceInfo::Status
   PostTraceInfo::status(void) const {
     return s;
+  }
+  forceinline unsigned int
+  PostTraceInfo::propagators(void) const {
+    return n;
   }
 
 
