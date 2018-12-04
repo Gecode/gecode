@@ -1589,6 +1589,15 @@ namespace Gecode {
    * \ingroup TaskModelMiniModel
    */
   //@{
+  /// \brief Return expression for \f$x\cdot y\f$
+  GECODE_MINIMODEL_EXPORT LinIntExpr
+  operator *(const LinIntExpr& x, const LinIntExpr& y);
+  /// \brief Return expression for \f$x\ \mathrm{div}\ y\f$
+  GECODE_MINIMODEL_EXPORT LinIntExpr
+  operator /(const LinIntExpr& x, const LinIntExpr& y);
+  /// \brief Return expression for \f$x\ \mathrm{mod}\ y\f$
+  GECODE_MINIMODEL_EXPORT LinIntExpr
+  operator %(const LinIntExpr& x, const LinIntExpr& y);
   /// \brief Return expression for \f$|e|\f$
   GECODE_MINIMODEL_EXPORT LinIntExpr
   abs(const LinIntExpr& e);
@@ -1604,26 +1613,6 @@ namespace Gecode {
   /// \brief Return expression for \f$\max(x)\f$
   GECODE_MINIMODEL_EXPORT LinIntExpr
   max(const IntVarArgs& x);
-#ifdef GECODE_HAS_FLOAT_VARS
-  /// \brief Return expression as product of float variables
-  GECODE_MINIMODEL_EXPORT LinFloatExpr
-  operator *(const FloatVar&, const FloatVar&);
-  /// \brief Return expression as product of float variable and linear float expression
-  GECODE_MINIMODEL_EXPORT LinFloatExpr
-  operator *(const FloatVar&, const LinFloatExpr&);
-  /// \brief Return expression as product of linear float expression and float variable
-  GECODE_MINIMODEL_EXPORT LinFloatExpr
-  operator *(const LinFloatExpr&, const FloatVar&);
-#endif
-  /// \brief Return expression for \f$x\cdot y\f$
-  GECODE_MINIMODEL_EXPORT LinIntExpr
-  operator *(const LinIntExpr& x, const LinIntExpr& y);
-  /// \brief Return expression for \f$x\ \mathrm{div}\ y\f$
-  GECODE_MINIMODEL_EXPORT LinIntExpr
-  operator /(const LinIntExpr& x, const LinIntExpr& y);
-  /// \brief Return expression for \f$x\ \mathrm{mod}\ y\f$
-  GECODE_MINIMODEL_EXPORT LinIntExpr
-  operator %(const LinIntExpr& x, const LinIntExpr& y);
   /// \brief Return expression for \f$x^2\f$
   GECODE_MINIMODEL_EXPORT LinIntExpr
   sqr(const LinIntExpr& x);
@@ -1651,6 +1640,15 @@ namespace Gecode {
   //@}
 
 #ifdef GECODE_HAS_FLOAT_VARS
+  /// \brief Return expression as product of float variables
+  GECODE_MINIMODEL_EXPORT LinFloatExpr
+  operator *(const FloatVar&, const FloatVar&);
+  /// \brief Return expression as product of float variable and linear float expression
+  GECODE_MINIMODEL_EXPORT LinFloatExpr
+  operator *(const FloatVar&, const LinFloatExpr&);
+  /// \brief Return expression as product of linear float expression and float variable
+  GECODE_MINIMODEL_EXPORT LinFloatExpr
+  operator *(const LinFloatExpr&, const FloatVar&);
   /// \brief Return expression for \f$|e|\f$
   GECODE_MINIMODEL_EXPORT LinFloatExpr
   abs(const LinFloatExpr& e);
@@ -1729,6 +1727,10 @@ namespace Gecode {
 #endif
 #endif
 
+}
+
+namespace Gecode {
+
   /**
    * \defgroup TaskModelMiniModelChannel Channel functions
    *
@@ -1736,48 +1738,26 @@ namespace Gecode {
    */
   //@{
   /// Return Boolean variable equal to \f$x\f$
-  inline BoolVar
-  channel(Home home, IntVar x,
-          IntPropLevel ipl=IPL_DEF) {
-    (void) ipl;
-    BoolVar b(home,0,1); channel(home,b,x);
-    return b;
-  }
+  BoolVar
+  channel(Home home, IntVar x, IntPropLevel ipl=IPL_DEF);
   /// Return integer variable equal to \f$b\f$
-  inline IntVar
-  channel(Home home, BoolVar b,
-          IntPropLevel ipl=IPL_DEF) {
-    (void) ipl;
-    IntVar x(home,0,1); channel(home,b,x);
-    return x;
-  }
+  IntVar
+  channel(Home home, BoolVar b, IntPropLevel ipl=IPL_DEF);
 #ifdef GECODE_HAS_FLOAT_VARS
   /// Return integer variable equal to \f$f\f$
-  inline IntVar
-  channel(Home home, FloatVar f) {
-    int min = static_cast<int>(std::max(static_cast<double>(Int::Limits::min),
-                                        std::ceil(f.min())));
-    int max = static_cast<int>(std::min(static_cast<double>(Int::Limits::max),
-                                        std::floor(f.max())));
-    IntVar x(home,min,max);
-    channel(home,f,x);
-    return x;
-  }
+  IntVar
+  channel(Home home, FloatVar f);
 #endif
 #ifdef GECODE_HAS_SET_VARS
   /// Return set variable equal to \f$\{x_0,\dots,x_{n-1}\}\f$
-  inline SetVar
-  channel(Home home, const IntVarArgs& x, IntPropLevel ipl=IPL_DEF) {
-    (void) ipl;
-    SetVar s(home,IntSet::empty,Set::Limits::min,Set::Limits::max);
-    rel(home,SOT_UNION,x,s);
-    nvalues(home,x,IRT_EQ,expr(home,cardinality(s)));
-    return s;
-  }
+  SetVar
+  channel(Home home, const IntVarArgs& x, IntPropLevel ipl=IPL_DEF);
 #endif
   //@}
 
 }
+
+#include <gecode/minimodel/channel.hpp>
 
 namespace Gecode {
 
@@ -1795,20 +1775,16 @@ namespace Gecode {
    *
    * Supports domain consistent propagation only.
    */
-  inline void
+  void
   atmost(Home home, const IntVarArgs& x, int n, int m,
-         IntPropLevel ipl=IPL_DEF) {
-    count(home,x,n,IRT_LQ,m,ipl);
-  }
+         IntPropLevel ipl=IPL_DEF);
   /** \brief Post constraint \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}\leq m\f$
    *
    * Supports domain consistent propagation only.
    */
-  inline void
+  void
   atmost(Home home, const IntVarArgs& x, IntVar y, int m,
-         IntPropLevel ipl=IPL_DEF) {
-    count(home,x,y,IRT_LQ,m,ipl);
-  }
+         IntPropLevel ipl=IPL_DEF);
   /** \brief Post constraint \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y_i\}\leq m\f$
    *
    * Supports domain consistent propagation only.
@@ -1816,29 +1792,23 @@ namespace Gecode {
    * Throws an exception of type Int::ArgumentSizeMismatch, if
    *  \a x and \a y are of different size.
    */
-  inline void
+  void
   atmost(Home home, const IntVarArgs& x, const IntArgs& y, int m,
-         IntPropLevel ipl=IPL_DEF) {
-    count(home,x,y,IRT_LQ,m,ipl);
-  }
+         IntPropLevel ipl=IPL_DEF);
   /** \brief Post constraint \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=n\}\leq z\f$
    *
    * Supports domain consistent propagation only.
    */
-  inline void
+  void
   atmost(Home home, const IntVarArgs& x, int n, IntVar z,
-         IntPropLevel ipl=IPL_DEF) {
-    count(home,x,n,IRT_LQ,z,ipl);
-  }
+         IntPropLevel ipl=IPL_DEF);
   /** \brief Post constraint \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}\leq z\f$
    *
    * Supports domain consistent propagation only.
    */
-  inline void
+  void
   atmost(Home home, const IntVarArgs& x, IntVar y, IntVar z,
-         IntPropLevel ipl=IPL_DEF) {
-    count(home,x,y,IRT_LQ,z,ipl);
-  }
+         IntPropLevel ipl=IPL_DEF);
   /** \brief Post constraint \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y_i\}\leq z\f$
    *
    * Supports domain consistent propagation only.
@@ -1846,30 +1816,24 @@ namespace Gecode {
    * Throws an exception of type Int::ArgumentSizeMismatch, if
    *  \a x and \a y are of different size.
    */
-  inline void
+  void
   atmost(Home home, const IntVarArgs& x, const IntArgs& y, IntVar z,
-         IntPropLevel ipl=IPL_DEF) {
-    count(home,x,y,IRT_LQ,z,ipl);
-  }
+         IntPropLevel ipl=IPL_DEF);
 
   /** \brief Post constraint \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=n\}\geq m\f$
    *
    * Supports domain consistent propagation only.
    */
-  inline void
+  void
   atleast(Home home, const IntVarArgs& x, int n, int m,
-          IntPropLevel ipl=IPL_DEF) {
-    count(home,x,n,IRT_GQ,m,ipl);
-  }
+          IntPropLevel ipl=IPL_DEF);
   /** \brief Post constraint \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}\geq m\f$
    *
    * Supports domain consistent propagation only.
    */
-  inline void
+  void
   atleast(Home home, const IntVarArgs& x, IntVar y, int m,
-          IntPropLevel ipl=IPL_DEF) {
-    count(home,x,y,IRT_GQ,m,ipl);
-  }
+          IntPropLevel ipl=IPL_DEF);
   /** \brief Post constraint \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y_i\}\geq m\f$
    *
    * Supports domain consistent propagation only.
@@ -1877,29 +1841,23 @@ namespace Gecode {
    * Throws an exception of type Int::ArgumentSizeMismatch, if
    *  \a x and \a y are of different size.
    */
-  inline void
+  void
   atleast(Home home, const IntVarArgs& x, const IntArgs& y, int m,
-          IntPropLevel ipl=IPL_DEF) {
-    count(home,x,y,IRT_GQ,m,ipl);
-  }
+          IntPropLevel ipl=IPL_DEF);
   /** \brief Post constraint \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=n\}\geq z\f$
    *
    * Supports domain consistent propagation only.
    */
-  inline void
+  void
   atleast(Home home, const IntVarArgs& x, int n, IntVar z,
-          IntPropLevel ipl=IPL_DEF) {
-    count(home,x,n,IRT_GQ,z,ipl);
-  }
+          IntPropLevel ipl=IPL_DEF);
   /** \brief Post constraint \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}\geq z\f$
    *
    * Supports domain consistent propagation only.
    */
-  inline void
+  void
   atleast(Home home, const IntVarArgs& x, IntVar y, IntVar z,
-          IntPropLevel ipl=IPL_DEF) {
-    count(home,x,y,IRT_GQ,z,ipl);
-  }
+          IntPropLevel ipl=IPL_DEF);
   /** \brief Post constraint \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y_i\}\geq z\f$
    *
    * Supports domain consistent propagation only.
@@ -1907,30 +1865,24 @@ namespace Gecode {
    * Throws an exception of type Int::ArgumentSizeMismatch, if
    *  \a x and \a y are of different size.
    */
-  inline void
+  void
   atleast(Home home, const IntVarArgs& x, const IntArgs& y, IntVar z,
-          IntPropLevel ipl=IPL_DEF) {
-    count(home,x,y,IRT_GQ,z,ipl);
-  }
+          IntPropLevel ipl=IPL_DEF);
 
   /** \brief Post constraint \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=n\}=m\f$
    *
    * Supports domain consistent propagation only.
    */
-  inline void
+  void
   exactly(Home home, const IntVarArgs& x, int n, int m,
-          IntPropLevel ipl=IPL_DEF) {
-    count(home,x,n,IRT_EQ,m,ipl);
-  }
+          IntPropLevel ipl=IPL_DEF);
   /** \brief Post constraint \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}=m\f$
    *
    * Supports domain consistent propagation only.
    */
-  inline void
+  void
   exactly(Home home, const IntVarArgs& x, IntVar y, int m,
-          IntPropLevel ipl=IPL_DEF) {
-    count(home,x,y,IRT_EQ,m,ipl);
-  }
+          IntPropLevel ipl=IPL_DEF);
   /** \brief Post constraint \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y_i\}=m\f$
    *
    * Supports domain consistent propagation only.
@@ -1938,29 +1890,23 @@ namespace Gecode {
    * Throws an exception of type Int::ArgumentSizeMismatch, if
    *  \a x and \a y are of different size.
    */
-  inline void
+  void
   exactly(Home home, const IntVarArgs& x, const IntArgs& y, int m,
-          IntPropLevel ipl=IPL_DEF) {
-    count(home,x,y,IRT_EQ,m,ipl);
-  }
+          IntPropLevel ipl=IPL_DEF);
   /** \brief Post constraint \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=n\}=z\f$
    *
    * Supports domain consistent propagation only.
    */
-  inline void
+  void
   exactly(Home home, const IntVarArgs& x, int n, IntVar z,
-          IntPropLevel ipl=IPL_DEF) {
-    count(home,x,n,IRT_EQ,z,ipl);
-  }
+          IntPropLevel ipl=IPL_DEF);
   /** \brief Post constraint \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}=z\f$
    *
    * Supports domain consistent propagation only.
    */
-  inline void
+  void
   exactly(Home home, const IntVarArgs& x, IntVar y, IntVar z,
-          IntPropLevel ipl=IPL_DEF) {
-    count(home,x,y,IRT_EQ,z,ipl);
-  }
+          IntPropLevel ipl=IPL_DEF);
   /** \brief Post constraint \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y_i\}=z\f$
    *
    * Supports domain consistent propagation only.
@@ -1968,34 +1914,26 @@ namespace Gecode {
    * Throws an exception of type Int::ArgumentSizeMismatch, if
    *  \a x and \a y are of different size.
    */
-  inline void
+  void
   exactly(Home home, const IntVarArgs& x, const IntArgs& y, IntVar z,
-          IntPropLevel ipl=IPL_DEF) {
-    count(home,x,y,IRT_EQ,z,ipl);
-  }
+          IntPropLevel ipl=IPL_DEF);
+
   /** \brief Post lexical order between \a x and \a y.
    */
-  inline void
+  void
   lex(Home home, const IntVarArgs& x, IntRelType r, const IntVarArgs& y,
-      IntPropLevel ipl=IPL_DEF) {
-    rel(home,x,r,y,ipl);
-  }
+      IntPropLevel ipl=IPL_DEF);
   /** \brief Post lexical order between \a x and \a y.
    */
-  inline void
+  void
   lex(Home home, const BoolVarArgs& x, IntRelType r, const BoolVarArgs& y,
-      IntPropLevel ipl=IPL_DEF) {
-    rel(home,x,r,y,ipl);
-  }
+      IntPropLevel ipl=IPL_DEF);
+
   /** \brief Post constraint \f$\{x_0,\dots,x_{n-1}\}=y\f$
    */
-  inline void
+  void
   values(Home home, const IntVarArgs& x, IntSet y,
-         IntPropLevel ipl=IPL_DEF) {
-    dom(home,x,y,ipl);
-    nvalues(home,x,IRT_EQ,static_cast<int>(y.size()),ipl);
-  }
-
+         IntPropLevel ipl=IPL_DEF);
   //@}
 
 #ifdef GECODE_HAS_SET_VARS
@@ -2014,34 +1952,28 @@ namespace Gecode {
    * In addition to constraining \a y to the union of the \a x, this
    * also posts an nvalue constraint for additional cardinality propagation.
    */
-  inline void
-  channel(Home home, const IntVarArgs& x, SetVar y) {
-    rel(home,SOT_UNION,x,y);
-    nvalues(home,x,IRT_EQ,expr(home,cardinality(y)));
-  }
+  void
+  channel(Home home, const IntVarArgs& x, SetVar y);
 
   /** \brief Post constraint \f$\bigcup_{i\in y}\{x_i\}=z\f$
    */
-  inline void
-  range(Home home, const IntVarArgs& x, SetVar y, SetVar z) {
-    element(home,SOT_UNION,x,y,z);
-  }
+  void
+  range(Home home, const IntVarArgs& x, SetVar y, SetVar z);
 
   /** \brief Post constraint \f$\bigcup_{i\in z}\{j\ |\ x_j=i\}=z\f$
    *
    * Note that this creates one temporary set variable for each element
    * in the upper bound of \a z, so make sure that the bound is tight.
    */
-  inline void
-  roots(Home home, const IntVarArgs& x, SetVar y, SetVar z) {
-    SetVarArgs xiv(home,z.lubMax()+1,IntSet::empty,0,x.size()-1);
-    channel(home,x,xiv);
-    element(home,SOT_UNION,xiv,z,y);
-  }
-
+  void
+  roots(Home home, const IntVarArgs& x, SetVar y, SetVar z);
   //@}
+
 #endif
+
 }
+
+#include <gecode/minimodel/aliases.hpp>
 
 namespace Gecode {
 

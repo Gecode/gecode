@@ -645,7 +645,7 @@ MMSRC0 = \
 MMHDR0 = \
 	int-rel.hpp float-rel.hpp exception.hpp matrix.hpp \
 	bool-expr.hpp set-expr.hpp set-rel.hpp \
-	optimize.hpp reg.hpp ldsb.hpp
+	optimize.hpp reg.hpp ldsb.hpp channel.hpp aliases.hpp
 
 MMSRC 		= $(MMSRC0:%=gecode/minimodel/%)
 MMHDR 		= gecode/minimodel.hh $(MMHDR0:%=gecode/minimodel/%)
