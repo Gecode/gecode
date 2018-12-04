@@ -194,7 +194,7 @@ namespace Gecode {
 
     /// Default propagation levels for all constraints
     GECODE_MINIMODEL_EXPORT
-    static IntPropLevels def;
+    static const IntPropLevels def;
   };
 
 }

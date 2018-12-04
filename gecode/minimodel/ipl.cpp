@@ -35,7 +35,7 @@
 
 namespace Gecode {
 
-  IntPropLevels IntPropLevels::def;
+  const IntPropLevels IntPropLevels::def;
 
 }
 
