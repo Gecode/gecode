@@ -133,6 +133,7 @@ namespace Gecode {
       pc.p.queue[i].init();
     pc.p.bid_sc = (reserved_bid+1) << sc_bits;
     pc.p.n_sub  = 0;
+    pc.p.vti.other();
   }
 
   void
@@ -385,7 +386,7 @@ namespace Gecode {
         // Support disabled propagators and tracing
         // Find a non-disabled tracer recorder (possibly null)
         TraceRecorder* tr = findtracerecorder();
-
+        ViewTraceInfo vti;
 #define GECODE_STATUS_TRACE(q,s) \
   if ((tr != NULL) && (tr->events() & TE_PROPAGATE) && \
       (tr->filter()(p->group()))) {                    \
@@ -399,6 +400,7 @@ namespace Gecode {
         stat.propagate++;
         if (p->disabled())
           goto t_put_into_idle;
+        vti = pc.p.vti;
         pc.p.vti.propagator(*p);
         // Keep old modification event delta
         med_o = p->u.med;
@@ -461,7 +463,7 @@ namespace Gecode {
           GECODE_NEVER;
         }
       t_stable:
-        pc.p.vti.other();
+        pc.p.vti = vti;
 #undef GECODE_STATUS_TRACE
       }
     }
@@ -586,9 +588,10 @@ namespace Gecode {
           CommitTraceInfo cti(*b,c,a);
           tr->tracer()._commit(*this,cti);
         }
+        ViewTraceInfo vti = pc.p.vti;
         pc.p.vti.brancher(*b);
         ExecStatus es = b->commit(*this,c,a);
-        pc.p.vti.other();
+        pc.p.vti = vti;
         if (es == ES_FAILED)
           fail();
       } else {
@@ -616,9 +619,10 @@ namespace Gecode {
           CommitTraceInfo cti(*b,c,a);
           tr->tracer()._commit(*this,cti);
         }
+        ViewTraceInfo vti = pc.p.vti;
         pc.p.vti.brancher(*b);
         ExecStatus es = b->commit(*this,c,a);
-        pc.p.vti.other();
+        pc.p.vti = vti;
         if (es == ES_FAILED)
           fail();
       } else {

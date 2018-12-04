@@ -954,6 +954,8 @@ namespace Gecode {
     PropagatorGroup pg;
     /// Next free propagator id
     unsigned int pid;
+    /// Whether it is used nested
+    bool nested;
   public:
     /// Set information
     PostInfo(Home home);
@@ -3352,16 +3354,20 @@ namespace Gecode {
    */
   forceinline
   PostInfo::PostInfo(Home home)
-    : h(home), pg(home.propagatorgroup()), pid(h.ssd.data().gpi.pid()) {
+    : h(home), pg(home.propagatorgroup()),
+      pid(h.ssd.data().gpi.pid()),
+      nested(h.pc.p.vti.what() != ViewTraceInfo::OTHER) {
     assert(!home.failed());
     h.pc.p.vti.post(pg);
   }
 
   forceinline
   PostInfo::~PostInfo(void) {
-    if (h.pc.p.bid_sc & Space::sc_trace)
-      h.post(*this);
-    h.pc.p.vti.other();
+    if (!nested) {
+      if (h.pc.p.bid_sc & Space::sc_trace)
+        h.post(*this);
+      h.pc.p.vti.other();
+    }
   }
 
 
