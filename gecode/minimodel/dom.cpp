@@ -75,7 +75,8 @@ namespace Gecode {
     protected:
       /// Post reified domain constraint using the stored arguments
       template<std::size_t... I>
-      void apply(Home, BoolVar, IntPropLevel, cxx14::index_sequence<I...>);
+      void apply(Home, BoolVar, const IntPropLevels&,
+                 cxx14::index_sequence<I...>);
 
     private:
       /// Storage for the arguments
@@ -92,7 +93,8 @@ namespace Gecode {
     protected:
       /// Post reified domain constraint using stored arguments
       template<std::size_t... I>
-      void apply(Home, BoolVar, IntPropLevel, cxx14::index_sequence<I...>);
+      void apply(Home, BoolVar, const IntPropLevels&,
+                 cxx14::index_sequence<I...>);
 
     private:
       /// Storage for the arguments
@@ -110,7 +112,7 @@ namespace Gecode {
     template<typename... Args>
     template<std::size_t... I>
     void
-    DomArgs<Args...>::apply(Home home, BoolVar b, IntPropLevel,
+    DomArgs<Args...>::apply(Home home, BoolVar b, const IntPropLevels&,
                             cxx14::index_sequence<I...>) {
       dom(home, std::get<I>(_args)..., b);
     }
@@ -122,9 +124,10 @@ namespace Gecode {
     template<typename... Args>
     template<std::size_t... I>
     void
-    DomArgs<IntVar, Args...>::apply(Home home, BoolVar b, IntPropLevel ipl,
+    DomArgs<IntVar, Args...>::apply(Home home, BoolVar b,
+                                    const IntPropLevels&,
                                     cxx14::index_sequence<I...>) {
-      dom(home, std::get<I>(_args)..., b, ipl);
+      dom(home, std::get<I>(_args)..., b);
     }
 
 
@@ -136,16 +139,18 @@ namespace Gecode {
       using DomArgs<Args...>::DomArgs;
 
       /// Constrain \a b to be equivalent to the expression (negated if \a neg)
-      virtual void post(Home, BoolVar b, bool neg, IntPropLevel) override;
+      virtual void post(Home, BoolVar b, bool neg,
+                        const IntPropLevels&) override;
       /// Destructor
       virtual ~DomExpr() = default;
     };
 
     template<typename... Args>
     void
-    DomExpr<Args...>::post(Home home, BoolVar b, bool neg, IntPropLevel ipl)
+    DomExpr<Args...>::post(Home home, BoolVar b, bool neg,
+                           const IntPropLevels& ipls)
     {
-      DomArgs<Args...>::apply(home, neg ? (!b).expr (home, ipl) : b, ipl,
+      DomArgs<Args...>::apply(home, neg ? (!b).expr (home, ipls) : b, ipls,
                               cxx14::index_sequence_for<Args...>{});
     }
   }

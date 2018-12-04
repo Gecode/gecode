@@ -75,69 +75,70 @@ namespace Gecode { namespace MiniModel {
       heap.free<LinIntExpr>(a,n);
     }
     /// Post expression
-    virtual IntVar post(Home home, IntVar* ret, IntPropLevel ipl) const {
+    virtual IntVar post(Home home, IntVar* ret,
+                        const IntPropLevels& ipls) const {
       IntVar y;
       switch (t) {
       case ANLE_ABS:
         {
-          IntVar x = a[0].post(home, ipl);
+          IntVar x = a[0].post(home, ipls);
           if (x.min() >= 0)
             y = result(home,ret,x);
           else {
             y = result(home,ret);
-            abs(home, x, y, ipl);
+            abs(home, x, y, ipls.abs());
           }
         }
         break;
       case ANLE_MIN:
         if (n==1) {
-          y = result(home,ret, a[0].post(home, ipl));
+          y = result(home,ret, a[0].post(home, ipls));
         } else if (n==2) {
-          IntVar x0 = a[0].post(home, ipl);
-          IntVar x1 = a[1].post(home, ipl);
+          IntVar x0 = a[0].post(home, ipls);
+          IntVar x1 = a[1].post(home, ipls);
           if (x0.max() <= x1.min())
             y = result(home,ret,x0);
           else if (x1.max() <= x0.min())
             y = result(home,ret,x1);
           else {
             y = result(home,ret);
-            min(home, x0, x1, y, ipl);
+            min(home, x0, x1, y, ipls.min2());
           }
         } else {
           IntVarArgs x(n);
           for (int i=n; i--;)
-            x[i] = a[i].post(home, ipl);
+            x[i] = a[i].post(home, ipls);
           y = result(home,ret);
-          min(home, x, y, ipl);
+          min(home, x, y, ipls.min());
         }
         break;
       case ANLE_MAX:
         if (n==1) {
-          y = result(home,ret,a[0].post(home, ipl));
+          y = result(home,ret,a[0].post(home, ipls));
         } else if (n==2) {
-          IntVar x0 = a[0].post(home, ipl);
-          IntVar x1 = a[1].post(home, ipl);
+          IntVar x0 = a[0].post(home, ipls);
+          IntVar x1 = a[1].post(home, ipls);
           if (x0.max() <= x1.min())
             y = result(home,ret,x1);
           else if (x1.max() <= x0.min())
             y = result(home,ret,x0);
           else {
             y = result(home,ret);
-            max(home, x0, x1, y, ipl);
+            max(home, x0, x1, y, ipls.max2());
           }
         } else {
           IntVarArgs x(n);
           for (int i=n; i--;)
-            x[i] = a[i].post(home, ipl);
+            x[i] = a[i].post(home, ipls);
           y = result(home,ret);
-          max(home, x, y, ipl);
+          max(home, x, y, ipls.max());
         }
         break;
       case ANLE_MULT:
         {
           assert(n == 2);
-          IntVar x0 = a[0].post(home, ipl);
-          IntVar x1 = a[1].post(home, ipl);
+          IntVar x0 = a[0].post(home, ipls);
+          IntVar x1 = a[1].post(home, ipls);
           if (x0.assigned() && (x0.val() == 0))
             y = result(home,ret,x0);
           else if (x0.assigned() && (x0.val() == 1))
@@ -148,15 +149,15 @@ namespace Gecode { namespace MiniModel {
             y = result(home,ret,x0);
           else {
             y = result(home,ret);
-            mult(home, x0, x1, y, ipl);
+            mult(home, x0, x1, y, ipls.mult());
           }
         }
         break;
       case ANLE_DIV:
         {
           assert(n == 2);
-          IntVar x0 = a[0].post(home, ipl);
-          IntVar x1 = a[1].post(home, ipl);
+          IntVar x0 = a[0].post(home, ipls);
+          IntVar x1 = a[1].post(home, ipls);
           rel(home, x1, IRT_NQ, 0);
           if (x1.assigned() && (x1.val() == 1))
             y = result(home,ret,x0);
@@ -164,79 +165,79 @@ namespace Gecode { namespace MiniModel {
             y = result(home,ret,x0);
           else {
             y = result(home,ret);
-            div(home, x0, x1, y, ipl);
+            div(home, x0, x1, y, ipls.div());
           }
         }
         break;
       case ANLE_MOD:
         {
           assert(n == 2);
-          IntVar x0 = a[0].post(home, ipl);
-          IntVar x1 = a[1].post(home, ipl);
+          IntVar x0 = a[0].post(home, ipls);
+          IntVar x1 = a[1].post(home, ipls);
           y = result(home,ret);
-          mod(home, x0, x1, y, ipl);
+          mod(home, x0, x1, y, ipls.mod());
         }
         break;
       case ANLE_SQR:
         {
           assert(n == 1);
-          IntVar x = a[0].post(home, ipl);
+          IntVar x = a[0].post(home, ipls);
           if (x.assigned() && ((x.val() == 0) || (x.val() == 1)))
             y = result(home,ret,x);
           else {
             y = result(home,ret);
-            sqr(home, x, y, ipl);
+            sqr(home, x, y, ipls.sqr());
           }
         }
         break;
       case ANLE_SQRT:
         {
           assert(n == 1);
-          IntVar x = a[0].post(home, ipl);
+          IntVar x = a[0].post(home, ipls);
           if (x.assigned() && ((x.val() == 0) || (x.val() == 1)))
             y = result(home,ret,x);
           else {
             y = result(home,ret);
-            sqrt(home, x, y, ipl);
+            sqrt(home, x, y, ipls.sqrt());
           }
         }
         break;
       case ANLE_POW:
         {
           assert(n == 1);
-          IntVar x = a[0].post(home, ipl);
+          IntVar x = a[0].post(home, ipls);
           if (x.assigned() && (aInt > 0) &&
               ((x.val() == 0) || (x.val() == 1)))
             y = result(home,ret,x);
           else {
             y = result(home,ret);
-            pow(home, x, aInt, y, ipl);
+            pow(home, x, aInt, y, ipls.pow());
           }
         }
         break;
       case ANLE_NROOT:
         {
           assert(n == 1);
-          IntVar x = a[0].post(home, ipl);
+          IntVar x = a[0].post(home, ipls);
           if (x.assigned() && (aInt > 0) &&
               ((x.val() == 0) || (x.val() == 1)))
             y = result(home,ret,x);
           else {
             y = result(home,ret);
-            nroot(home, x, aInt, y, ipl);
+            nroot(home, x, aInt, y, ipls.nroot());
           }
         }
         break;
       case ANLE_ELMNT:
         {
-          IntVar z = a[n-1].post(home, ipl);
+          IntVar z = a[n-1].post(home, ipls);
           if (z.assigned() && z.val() >= 0 && z.val() < n-1) {
-            y = result(home,ret,a[z.val()].post(home, ipl));
+            y = result(home,ret,a[z.val()].post(home, ipls));
           } else {
             IntVarArgs x(n-1);
             bool assigned = true;
             for (int i=n-1; i--;) {
-              x[i] = a[i].post(home, ipl);
+              x[i] = a[i].post(home, ipls);
               if (!x[i].assigned())
                 assigned = false;
             }
@@ -245,9 +246,9 @@ namespace Gecode { namespace MiniModel {
               IntArgs xa(n-1);
               for (int i=n-1; i--;)
                 xa[i] = x[i].val();
-              element(home, xa, z, y, ipl);
+              element(home, xa, z, y, ipls.element());
             } else {
-              element(home, x, z, y, ipl);
+              element(home, x, z, y, ipls.element());
             }
           }
         }
@@ -255,11 +256,11 @@ namespace Gecode { namespace MiniModel {
       case ANLE_ITE:
         {
           assert(n == 2);
-          BoolVar c = b.expr(home, ipl);
-          IntVar x0 = a[0].post(home, ipl);
-          IntVar x1 = a[1].post(home, ipl);
+          BoolVar c = b.expr(home, ipls);
+          IntVar x0 = a[0].post(home, ipls);
+          IntVar x1 = a[1].post(home, ipls);
           y = result(home,ret);
-          ite(home, c, x0, x1, y, ipl);
+          ite(home, c, x0, x1, y, ipls.ite());
         }
         break;
       default:
@@ -268,20 +269,20 @@ namespace Gecode { namespace MiniModel {
       return y;
     }
     virtual void post(Home home, IntRelType irt, int c,
-                      IntPropLevel ipl) const {
-      if ( (t == ANLE_MIN && (irt == IRT_GQ || irt == IRT_GR)) ||
-           (t == ANLE_MAX && (irt == IRT_LQ || irt == IRT_LE)) ) {
+                      const IntPropLevels& ipls) const {
+      if ((t == ANLE_MIN && (irt == IRT_GQ || irt == IRT_GR)) ||
+          (t == ANLE_MAX && (irt == IRT_LQ || irt == IRT_LE)) ) {
         IntVarArgs x(n);
         for (int i=n; i--;)
-          x[i] = a[i].post(home, ipl);
+          x[i] = a[i].post(home, ipls);
         rel(home, x, irt, c);
       } else {
-        rel(home, post(home,NULL,ipl), irt, c);
+        rel(home, post(home,NULL,ipls), irt, c);
       }
     }
-    virtual void post(Home home, IntRelType irt, int c,
-                      BoolVar b, IntPropLevel ipl) const {
-      rel(home, post(home,NULL,ipl), irt, c, b);
+    virtual void post(Home home, IntRelType irt, int c, BoolVar b,
+                      const IntPropLevels& ipls) const {
+      rel(home, post(home,NULL,ipls), irt, c, b);
     }
   };
   /// Check if \a e is of type \a t

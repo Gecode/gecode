@@ -97,6 +97,112 @@ namespace Gecode {
 
 namespace Gecode {
 
+  /// Class for specifying integer propagation levels used by minimodel
+  class IntPropLevels {
+  protected:
+    IntPropLevel _linear2; ///< For binary linear
+    IntPropLevel _linear;  ///< For n-ary linear
+    IntPropLevel _abs;     ///< For absolute value
+    IntPropLevel _max2;    ///< For binary maximum
+    IntPropLevel _max;     ///< For n-ary maximum
+    IntPropLevel _min2;    ///< For binary minimum
+    IntPropLevel _min;     ///< For minimum
+    IntPropLevel _mult;    ///< For multiplication
+    IntPropLevel _div;     ///< For division
+    IntPropLevel _mod;     ///< For modulo
+    IntPropLevel _sqr;     ///< For square
+    IntPropLevel _sqrt;    ///< For square root
+    IntPropLevel _pow;     ///< For power
+    IntPropLevel _nroot;   ///< For root
+    IntPropLevel _element; ///< For element
+    IntPropLevel _ite;     ///< For if-then-else
+  public:
+    /// Initialize with default propagation level
+    IntPropLevels(IntPropLevel ipl=IPL_DEF);
+
+    /// Return integer propagation level for binary linear constraints
+    IntPropLevel linear2(void) const;
+    /// Set integer propagation level for binary linear constraints
+    IntPropLevels& linear2(IntPropLevel ipl);
+    /// Return integer propagation level for non-binary linear constraints
+    IntPropLevel linear(void) const;
+    /// Set integer propagation level for non-binary linear constraints
+    IntPropLevels& linear(IntPropLevel ipl);
+
+    /// Return integer propagation level for absolute value constraints
+    IntPropLevel abs(void) const;
+    /// Set integer propagation level for absolute value constraints
+    IntPropLevels& abs(IntPropLevel ipl);
+
+    /// Return integer propagation level for binary maximum constraints
+    IntPropLevel max2(void) const;
+    /// Set integer propagation level for binary maximum constraints
+    IntPropLevels& max2(IntPropLevel ipl);
+    /// Return integer propagation level for non-binary maximum constraints
+    IntPropLevel max(void) const;
+    /// Set integer propagation level for non-binary maximum constraints
+    IntPropLevels& max(IntPropLevel ipl);
+    /// Return integer propagation level for binary minimum constraints
+    IntPropLevel min2(void) const;
+    /// Set integer propagation level for binary minimum constraints
+    IntPropLevels& min2(IntPropLevel ipl);
+    /// Return integer propagation level for non-binary minimum constraints
+    IntPropLevel min(void) const;
+    /// Set integer propagation level for non-binary minimum constraints
+    IntPropLevels& min(IntPropLevel ipl);
+
+    /// Return integer propagation level for multiplication constraints
+    IntPropLevel mult(void) const;
+    /// Set integer propagation level for multiplication constraints
+    IntPropLevels& mult(IntPropLevel ipl);
+    /// Return integer propagation level for division constraints
+    IntPropLevel div(void) const;
+    /// Set integer propagation level for division constraints
+    IntPropLevels& div(IntPropLevel ipl);
+    /// Return integer propagation level for modulo constraints
+    IntPropLevel mod(void) const;
+    /// Set integer propagation level for modulo constraints
+    IntPropLevels& mod(IntPropLevel ipl);
+
+    /// Return integer propagation level for square constraints
+    IntPropLevel sqr(void) const;
+    /// Set integer propagation level for square constraints
+    IntPropLevels& sqr(IntPropLevel ipl);
+    /// Return integer propagation level for square root constraints
+    IntPropLevel sqrt(void) const;
+    /// Set integer propagation level for square root constraints
+    IntPropLevels& sqrt(IntPropLevel ipl);
+
+    /// Return integer propagation level for power constraints
+    IntPropLevel pow(void) const;
+    /// Set integer propagation level for power constraints
+    IntPropLevels& pow(IntPropLevel ipl);
+    /// Return integer propagation level for root constraints
+    IntPropLevel nroot(void) const;
+    /// Set integer propagation level for root constraints
+    IntPropLevels& nroot(IntPropLevel ipl);
+
+    /// Return integer propagation level for element constraints
+    IntPropLevel element(void) const;
+    /// Set integer propagation level for element constraints
+    IntPropLevels& element(IntPropLevel ipl);
+
+    /// Return integer propagation level for if-then-else constraints
+    IntPropLevel ite(void) const;
+    /// Set integer propagation level for if-then-else constraints
+    IntPropLevels& ite(IntPropLevel ipl);
+
+    /// Default propagation levels for all constraints
+    GECODE_MINIMODEL_EXPORT
+    static IntPropLevels def;
+  };
+
+}
+
+#include <gecode/minimodel/ipl.hpp>
+
+namespace Gecode {
+
   class LinIntRel;
 #ifdef GECODE_HAS_SET_VARS
   class SetExpr;
@@ -109,13 +215,14 @@ namespace Gecode {
   class NonLinIntExpr {
   public:
     /// Return variable constrained to be equal to the expression
-    virtual IntVar post(Home home, IntVar* ret, IntPropLevel ipl) const = 0;
+    virtual IntVar post(Home home, IntVar* ret,
+                        const IntPropLevels& ipls) const = 0;
     /// Post expression to be in relation \a irt with \a c
     virtual void post(Home home, IntRelType irt, int c,
-                      IntPropLevel ipl) const = 0;
+                      const IntPropLevels& ipls) const = 0;
     /// Post reified expression to be in relation \a irt with \a c
     virtual void post(Home home, IntRelType irt, int c,
-                      BoolVar b, IntPropLevel ipl) const = 0;
+                      BoolVar b, const IntPropLevels& ipls) const = 0;
     /// Destructor
     virtual ~NonLinIntExpr(void) {}
     /// Return fresh variable if \a x is NULL, \a x otherwise
@@ -208,14 +315,14 @@ namespace Gecode {
     const LinIntExpr& operator =(const LinIntExpr& e);
     /// Post propagator
     GECODE_MINIMODEL_EXPORT
-    void post(Home home, IntRelType irt, IntPropLevel ipl) const;
+    void post(Home home, IntRelType irt, const IntPropLevels& ipls) const;
     /// Post reified propagator
     GECODE_MINIMODEL_EXPORT
     void post(Home home, IntRelType irt, const BoolVar& b,
-              IntPropLevel ipl) const;
+              const IntPropLevels& ipls) const;
     /// Post propagator and return variable for value
     GECODE_MINIMODEL_EXPORT
-    IntVar post(Home home, IntPropLevel ipl) const;
+    IntVar post(Home home, const IntPropLevels& ipls) const;
     /// Return non-linear expression inside, or NULL if not non-linear
     GECODE_MINIMODEL_EXPORT
     NonLinIntExpr* nle(void) const;
@@ -246,9 +353,9 @@ namespace Gecode {
     /// Create linear relation for integer \a l and expression \a r
     LinIntRel(int l, IntRelType irt, const LinIntExpr& r);
     /// Post propagator for relation (if \a t is false for negated relation)
-    void post(Home home, bool t,  IntPropLevel ipl) const;
+    void post(Home home, bool t, const IntPropLevels& ipls) const;
     /// Post reified propagator for relation (if \a t is false for negated relation)
-    void post(Home home, const BoolVar& b, bool t, IntPropLevel ipl) const;
+    void post(Home home, const BoolVar& b, bool t, const IntPropLevels& ipls) const;
   };
 
   /**
@@ -1246,7 +1353,7 @@ namespace Gecode {
        *  \a ipl.
        */
       virtual void post(Home home, BoolVar b, bool neg,
-                        IntPropLevel ipl) = 0;
+                        const IntPropLevels& ipls) = 0;
       /// Destructor
       virtual GECODE_MINIMODEL_EXPORT ~Misc(void);
     };
@@ -1292,10 +1399,10 @@ namespace Gecode {
     explicit BoolExpr(Misc* m);
     /// Post propagators for expression
     GECODE_MINIMODEL_EXPORT
-    BoolVar expr(Home home, IntPropLevel ipl) const;
+    BoolVar expr(Home home, const IntPropLevels& ipls) const;
     /// Post propagators for relation
     GECODE_MINIMODEL_EXPORT
-    void rel(Home home, IntPropLevel ipl) const;
+    void rel(Home home, const IntPropLevels& ipls) const;
     /// Assignment operator
     GECODE_MINIMODEL_EXPORT
     const BoolExpr& operator =(const BoolExpr& e);
@@ -1477,7 +1584,8 @@ namespace Gecode {
   //@{
   /// Post linear expression and return its value
   GECODE_MINIMODEL_EXPORT IntVar
-  expr(Home home, const LinIntExpr& e, IntPropLevel ipl=IPL_DEF);
+  expr(Home home, const LinIntExpr& e,
+       const IntPropLevels& ipls=IntPropLevels::def);
 #ifdef GECODE_HAS_FLOAT_VARS
   /// Post float expression and return its value
   GECODE_MINIMODEL_EXPORT FloatVar
@@ -1490,10 +1598,12 @@ namespace Gecode {
 #endif
   /// Post Boolean expression and return its value
   GECODE_MINIMODEL_EXPORT BoolVar
-  expr(Home home, const BoolExpr& e, IntPropLevel ipl=IPL_DEF);
+  expr(Home home, const BoolExpr& e,
+       const IntPropLevels& ipls=IntPropLevels::def);
   /// Post Boolean relation
   GECODE_MINIMODEL_EXPORT void
-  rel(Home home, const BoolExpr& e, IntPropLevel ipl=IPL_DEF);
+  rel(Home home, const BoolExpr& e,
+      const IntPropLevels& ipls=IntPropLevels::def);
   //@}
 
 }
@@ -2178,7 +2288,7 @@ namespace Gecode {
    * \relates Gecode::Matrix
    */
   void element(Home home, const Matrix<BoolVarArgs>& m, IntVar x, IntVar y,
-               BoolVar z, IntPropLevel ipl=IPL_DEF);
+               BoolVar z, IntPropLevel ipln=IPL_DEF);
 #ifdef GECODE_HAS_SET_VARS
   /** \brief Element constraint for matrix
    *

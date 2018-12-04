@@ -210,7 +210,7 @@ namespace Gecode {
         break;
       case SetExpr::NT_LEXP:
         {
-          IntVar iv = u.a.x->e.post(home,IPL_DEF);
+          IntVar iv = u.a.x->e.post(home,IntPropLevels::def);
           if (neg) {
             SetVar ic(home,IntSet::empty,
                       IntSet(Set::Limits::min,Set::Limits::max));
@@ -368,7 +368,7 @@ namespace Gecode {
         break;
       case SetExpr::NT_LEXP:
         {
-          IntVar iv = u.a.x->e.post(home,IPL_DEF);
+          IntVar iv = u.a.x->e.post(home,IntPropLevels::def);
           if (neg) {
             SetVar ic(home,IntSet::empty,
                       IntSet(Set::Limits::min,Set::Limits::max));
@@ -736,7 +736,8 @@ namespace Gecode {
       SetNonLinIntExpr(const SetExpr& e0, SetNonLinIntExprType t0)
         : t(t0), e(e0) {}
       /// Post expression
-      virtual IntVar post(Home home, IntVar* ret, IntPropLevel) const {
+      virtual IntVar post(Home home, IntVar* ret,
+                          const IntPropLevels&) const {
         IntVar m = result(home,ret);
         switch (t) {
         case SNLE_CARD:
@@ -755,7 +756,7 @@ namespace Gecode {
         return m;
       }
       virtual void post(Home home, IntRelType irt, int c,
-                        IntPropLevel ipl) const {
+                        const IntPropLevels& ipls) const {
         if (t==SNLE_CARD && irt!=IRT_NQ) {
           switch (irt) {
           case IRT_LQ:
@@ -793,11 +794,12 @@ namespace Gecode {
           c = (irt==IRT_LQ ? c : c-1);
           dom(home, e.post(home), SRT_SUB, Set::Limits::min, c);
         } else {
-          rel(home, post(home,NULL,ipl), irt, c);
+          rel(home, post(home,NULL,ipls), irt, c);
         }
       }
       virtual void post(Home home, IntRelType irt, int c,
-                        BoolVar b, IntPropLevel ipl) const {
+                        BoolVar b,
+                        const IntPropLevels& ipls) const {
         if (t==SNLE_MIN && (irt==IRT_GR || irt==IRT_GQ)) {
           c = (irt==IRT_GQ ? c : c+1);
           dom(home, e.post(home), SRT_SUB, c, Set::Limits::max, b);
@@ -805,7 +807,7 @@ namespace Gecode {
           c = (irt==IRT_LQ ? c : c-1);
           dom(home, e.post(home), SRT_SUB, Set::Limits::min, c, b);
         } else {
-          rel(home, post(home,NULL,ipl), irt, c, b);
+          rel(home, post(home,NULL,ipls), irt, c, b);
         }
       }
     };

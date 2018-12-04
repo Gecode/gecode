@@ -256,13 +256,13 @@ namespace Gecode {
       void post(Home home, NodeType t,
                 BoolVarArgs& bp, BoolVarArgs& bn,
                 int& ip, int& in,
-                IntPropLevel ipl) const;
+                const IntPropLevels& ipls) const;
       /// Post propagators for expression
       GECODE_MINIMODEL_EXPORT
-      BoolVar expr(Home home, IntPropLevel ipl) const;
+      BoolVar expr(Home home, const IntPropLevels& ipls) const;
       /// Post propagators for relation
       GECODE_MINIMODEL_EXPORT
-      void rel(Home home, IntPropLevel ipl) const;
+      void rel(Home home, const IntPropLevels& ipls) const;
       /// Allocate memory from region
       static void* operator new(size_t s, Region& r);
       /// No-op (for exceptions)
@@ -287,7 +287,7 @@ namespace Gecode {
     }
 
     BoolVar
-    NNF::expr(Home home, IntPropLevel ipl) const {
+    NNF::expr(Home home, const IntPropLevels& ipls) const {
       if ((t == BoolExpr::NT_VAR) && !u.a.neg)
         return u.a.x->x;
       BoolVar b(home,0,1);
@@ -297,7 +297,7 @@ namespace Gecode {
         Gecode::rel(home, u.a.x->x, IRT_NQ, b);
         break;
       case BoolExpr::NT_RLIN:
-        u.a.x->rl.post(home, b, !u.a.neg, ipl);
+        u.a.x->rl.post(home, b, !u.a.neg, ipls);
         break;
 #ifdef GECODE_HAS_FLOAT_VARS
       case BoolExpr::NT_RLINFLOAT:
@@ -310,13 +310,13 @@ namespace Gecode {
         break;
 #endif
       case BoolExpr::NT_MISC:
-        u.a.x->m->post(home, b, u.a.neg, ipl);
+        u.a.x->m->post(home, b, u.a.neg, ipls);
         break;
       case BoolExpr::NT_AND:
         {
           BoolVarArgs bp(p), bn(n);
           int ip=0, in=0;
-          post(home, BoolExpr::NT_AND, bp, bn, ip, in, ipl);
+          post(home, BoolExpr::NT_AND, bp, bn, ip, in, ipls);
           clause(home, BOT_AND, bp, bn, b);
         }
         break;
@@ -324,7 +324,7 @@ namespace Gecode {
         {
           BoolVarArgs bp(p), bn(n);
           int ip=0, in=0;
-          post(home, BoolExpr::NT_OR, bp, bn, ip, in, ipl);
+          post(home, BoolExpr::NT_OR, bp, bn, ip, in, ipls);
           clause(home, BOT_OR, bp, bn, b);
         }
         break;
@@ -336,16 +336,16 @@ namespace Gecode {
             l = u.b.l->u.a.x->x;
             if (u.b.l->u.a.neg) n = !n;
           } else {
-            l = u.b.l->expr(home,ipl);
+            l = u.b.l->expr(home,ipls);
           }
           BoolVar r;
           if (u.b.r->t == BoolExpr::NT_VAR) {
             r = u.b.r->u.a.x->x;
             if (u.b.r->u.a.neg) n = !n;
           } else {
-            r = u.b.r->expr(home,ipl);
+            r = u.b.r->expr(home,ipls);
           }
-          Gecode::rel(home, l, n ? BOT_XOR : BOT_EQV, r, b, ipl);
+          Gecode::rel(home, l, n ? BOT_XOR : BOT_EQV, r, b);
         }
         break;
       default:
@@ -358,7 +358,7 @@ namespace Gecode {
     NNF::post(Home home, NodeType t,
               BoolVarArgs& bp, BoolVarArgs& bn,
               int& ip, int& in,
-              IntPropLevel ipl) const {
+              const IntPropLevels& ipls) const {
       if (this->t != t) {
         switch (this->t) {
         case BoolExpr::NT_VAR:
@@ -371,7 +371,7 @@ namespace Gecode {
         case BoolExpr::NT_RLIN:
           {
             BoolVar b(home,0,1);
-            u.a.x->rl.post(home, b, !u.a.neg, ipl);
+            u.a.x->rl.post(home, b, !u.a.neg, ipls);
             bp[ip++]=b;
           }
           break;
@@ -396,28 +396,28 @@ namespace Gecode {
         case BoolExpr::NT_MISC:
           {
             BoolVar b(home,0,1);
-            u.a.x->m->post(home, b, u.a.neg, ipl);
+            u.a.x->m->post(home, b, u.a.neg, ipls);
             bp[ip++]=b;
           }
           break;
         default:
-          bp[ip++] = expr(home, ipl);
+          bp[ip++] = expr(home, ipls);
           break;
         }
       } else {
-        u.b.l->post(home, t, bp, bn, ip, in, ipl);
-        u.b.r->post(home, t, bp, bn, ip, in, ipl);
+        u.b.l->post(home, t, bp, bn, ip, in, ipls);
+        u.b.r->post(home, t, bp, bn, ip, in, ipls);
       }
     }
 
     void
-    NNF::rel(Home home, IntPropLevel ipl) const {
+    NNF::rel(Home home, const IntPropLevels& ipls) const {
       switch (t) {
       case BoolExpr::NT_VAR:
         Gecode::rel(home, u.a.x->x, IRT_EQ, u.a.neg ? 0 : 1);
         break;
       case BoolExpr::NT_RLIN:
-        u.a.x->rl.post(home, !u.a.neg, ipl);
+        u.a.x->rl.post(home, !u.a.neg, ipls);
         break;
 #ifdef GECODE_HAS_FLOAT_VARS
       case BoolExpr::NT_RLINFLOAT:
@@ -432,18 +432,18 @@ namespace Gecode {
       case BoolExpr::NT_MISC:
         {
           BoolVar b(home,!u.a.neg,!u.a.neg);
-          u.a.x->m->post(home, b, false, ipl);
+          u.a.x->m->post(home, b, false, ipls);
         }
         break;
       case BoolExpr::NT_AND:
-        u.b.l->rel(home, ipl);
-        u.b.r->rel(home, ipl);
+        u.b.l->rel(home, ipls);
+        u.b.r->rel(home, ipls);
         break;
       case BoolExpr::NT_OR:
         {
           BoolVarArgs bp(p), bn(n);
           int ip=0, in=0;
-          post(home, BoolExpr::NT_OR, bp, bn, ip, in, ipl);
+          post(home, BoolExpr::NT_OR, bp, bn, ip, in, ipls);
           clause(home, BOT_OR, bp, bn, 1);
         }
         break;
@@ -451,17 +451,17 @@ namespace Gecode {
         if (u.b.l->t==BoolExpr::NT_VAR &&
             u.b.r->t==BoolExpr::NT_RLIN) {
           u.b.r->u.a.x->rl.post(home, u.b.l->u.a.x->x,
-                                u.b.l->u.a.neg==u.b.r->u.a.neg, ipl);
+                                u.b.l->u.a.neg==u.b.r->u.a.neg, ipls);
         } else if (u.b.r->t==BoolExpr::NT_VAR &&
                    u.b.l->t==BoolExpr::NT_RLIN) {
           u.b.l->u.a.x->rl.post(home, u.b.r->u.a.x->x,
-                                u.b.l->u.a.neg==u.b.r->u.a.neg, ipl);
+                                u.b.l->u.a.neg==u.b.r->u.a.neg, ipls);
         } else if (u.b.l->t==BoolExpr::NT_RLIN) {
-          u.b.l->u.a.x->rl.post(home, u.b.r->expr(home,ipl),
-                                !u.b.l->u.a.neg,ipl);
+          u.b.l->u.a.x->rl.post(home, u.b.r->expr(home,ipls),
+                                !u.b.l->u.a.neg,ipls);
         } else if (u.b.r->t==BoolExpr::NT_RLIN) {
-          u.b.r->u.a.x->rl.post(home, u.b.l->expr(home,ipl),
-                                !u.b.r->u.a.neg,ipl);
+          u.b.r->u.a.x->rl.post(home, u.b.l->expr(home,ipls),
+                                !u.b.r->u.a.neg,ipls);
 #ifdef GECODE_HAS_FLOAT_VARS
         } else if (u.b.l->t==BoolExpr::NT_VAR &&
                    u.b.r->t==BoolExpr::NT_RLINFLOAT) {
@@ -472,10 +472,10 @@ namespace Gecode {
           u.b.l->u.a.x->rfl.post(home, u.b.r->u.a.x->x,
                                  u.b.l->u.a.neg==u.b.r->u.a.neg);
         } else if (u.b.l->t==BoolExpr::NT_RLINFLOAT) {
-          u.b.l->u.a.x->rfl.post(home, u.b.r->expr(home,ipl),
+          u.b.l->u.a.x->rfl.post(home, u.b.r->expr(home,ipls),
                                  !u.b.l->u.a.neg);
         } else if (u.b.r->t==BoolExpr::NT_RLINFLOAT) {
-          u.b.r->u.a.x->rfl.post(home, u.b.l->expr(home,ipl),
+          u.b.r->u.a.x->rfl.post(home, u.b.l->expr(home,ipls),
                                  !u.b.r->u.a.neg);
 #endif
 #ifdef GECODE_HAS_SET_VARS
@@ -488,14 +488,14 @@ namespace Gecode {
           u.b.l->u.a.x->rs.post(home, u.b.r->u.a.x->x,
                                 u.b.l->u.a.neg==u.b.r->u.a.neg);
         } else if (u.b.l->t==BoolExpr::NT_RSET) {
-          u.b.l->u.a.x->rs.post(home, u.b.r->expr(home,ipl),
+          u.b.l->u.a.x->rs.post(home, u.b.r->expr(home,ipls),
                                 !u.b.l->u.a.neg);
         } else if (u.b.r->t==BoolExpr::NT_RSET) {
-          u.b.r->u.a.x->rs.post(home, u.b.l->expr(home,ipl),
+          u.b.r->u.a.x->rs.post(home, u.b.l->expr(home,ipls),
                                 !u.b.r->u.a.neg);
 #endif
         } else {
-          Gecode::rel(home, expr(home, ipl), IRT_EQ, 1);
+          Gecode::rel(home, expr(home, ipls), IRT_EQ, 1);
         }
         break;
       default:
@@ -571,15 +571,15 @@ namespace Gecode {
   }
 
   BoolVar
-  BoolExpr::expr(Home home, IntPropLevel ipl) const {
+  BoolExpr::expr(Home home, const IntPropLevels& ipls) const {
     Region r;
-    return NNF::nnf(r,n,false)->expr(home,ipl);
+    return NNF::nnf(r,n,false)->expr(home,ipls);
   }
 
   void
-  BoolExpr::rel(Home home, IntPropLevel ipl) const {
+  BoolExpr::rel(Home home, const IntPropLevels& ipls) const {
     Region r;
-    return NNF::nnf(r,n,false)->rel(home,ipl);
+    return NNF::nnf(r,n,false)->rel(home,ipls);
   }
 
 
@@ -624,17 +624,17 @@ namespace Gecode {
    *
    */
   BoolVar
-  expr(Home home, const BoolExpr& e, IntPropLevel ipl) {
+  expr(Home home, const BoolExpr& e, const IntPropLevels& ipls) {
     if (!home.failed())
-      return e.expr(home,ipl);
+      return e.expr(home,ipls);
     BoolVar x(home,0,1);
     return x;
   }
 
   void
-  rel(Home home, const BoolExpr& e, IntPropLevel ipl) {
+  rel(Home home, const BoolExpr& e, const IntPropLevels& ipls) {
     if (home.failed()) return;
-    e.rel(home,ipl);
+    e.rel(home,ipls);
   }
 
   /*
@@ -657,7 +657,8 @@ namespace Gecode {
     /// Destructor
     virtual ~BElementExpr(void);
     /// Constrain \a b to be equivalent to the expression (negated if \a neg)
-    virtual void post(Home home, BoolVar b, bool neg, IntPropLevel ipl);
+    virtual void post(Home home, BoolVar b, bool neg,
+                      const IntPropLevels& ipls);
   };
 
   BElementExpr::BElementExpr(const BoolVarArgs& b, const LinIntExpr& idx)
@@ -671,17 +672,18 @@ namespace Gecode {
   }
 
   void
-  BElementExpr::post(Home home, BoolVar b, bool neg, IntPropLevel ipl) {
-    IntVar z = idx.post(home, ipl);
+  BElementExpr::post(Home home, BoolVar b, bool neg,
+                     const IntPropLevels& ipls) {
+    IntVar z = idx.post(home, ipls);
     if (z.assigned() && (z.val() >= 0) && (z.val() < n)) {
       BoolExpr be = neg ? (a[z.val()] == !b) : (a[z.val()] == b);
-      be.rel(home,ipl);
+      be.rel(home,ipls);
     } else {
       BoolVarArgs x(n);
       for (int i=n; i--;)
-        x[i] = a[i].expr(home,ipl);
-      BoolVar res = neg ? (!b).expr(home,ipl) : b;
-      element(home, x, z, res, ipl);
+        x[i] = a[i].expr(home,ipls);
+      BoolVar res = neg ? (!b).expr(home,ipls) : b;
+      element(home, x, z, res, ipls.element());
     }
   }
 
