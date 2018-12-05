@@ -980,7 +980,8 @@ namespace Gecode {
     /// Options: basic versus advanced propagation
     IPL_BASIC = 4,    ///< Use basic propagation algorithm
     IPL_ADVANCED = 8, ///< Use advanced propagation algorithm
-    IPL_BASIC_ADVANCED = IPL_BASIC | IPL_ADVANCED ///< Use both
+    IPL_BASIC_ADVANCED = IPL_BASIC | IPL_ADVANCED, ///< Use both
+    _IPL_BITS = 4 ///< Number of bits required (internal)
   };
 
   /// Extract value, bounds, or domain propagation from propagation level

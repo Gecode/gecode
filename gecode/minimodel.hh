@@ -100,22 +100,22 @@ namespace Gecode {
   /// Class for specifying integer propagation levels used by minimodel
   class IntPropLevels {
   protected:
-    IntPropLevel _linear2; ///< For binary linear
-    IntPropLevel _linear;  ///< For n-ary linear
-    IntPropLevel _abs;     ///< For absolute value
-    IntPropLevel _max2;    ///< For binary maximum
-    IntPropLevel _max;     ///< For n-ary maximum
-    IntPropLevel _min2;    ///< For binary minimum
-    IntPropLevel _min;     ///< For minimum
-    IntPropLevel _mult;    ///< For multiplication
-    IntPropLevel _div;     ///< For division
-    IntPropLevel _mod;     ///< For modulo
-    IntPropLevel _sqr;     ///< For square
-    IntPropLevel _sqrt;    ///< For square root
-    IntPropLevel _pow;     ///< For power
-    IntPropLevel _nroot;   ///< For root
-    IntPropLevel _element; ///< For element
-    IntPropLevel _ite;     ///< For if-then-else
+    IntPropLevel _linear2 : _IPL_BITS; ///< For binary linear
+    IntPropLevel _linear  : _IPL_BITS; ///< For n-ary linear
+    IntPropLevel _abs     : _IPL_BITS; ///< For absolute value
+    IntPropLevel _max2    : _IPL_BITS; ///< For binary maximum
+    IntPropLevel _max     : _IPL_BITS; ///< For n-ary maximum
+    IntPropLevel _min2    : _IPL_BITS; ///< For binary minimum
+    IntPropLevel _min     : _IPL_BITS; ///< For minimum
+    IntPropLevel _mult    : _IPL_BITS; ///< For multiplication
+    IntPropLevel _div     : _IPL_BITS; ///< For division
+    IntPropLevel _mod     : _IPL_BITS; ///< For modulo
+    IntPropLevel _sqr     : _IPL_BITS; ///< For square
+    IntPropLevel _sqrt    : _IPL_BITS; ///< For square root
+    IntPropLevel _pow     : _IPL_BITS; ///< For power
+    IntPropLevel _nroot   : _IPL_BITS; ///< For root
+    IntPropLevel _element : _IPL_BITS; ///< For element
+    IntPropLevel _ite     : _IPL_BITS; ///< For if-then-else
   public:
     /// Initialize with default propagation level
     IntPropLevels(IntPropLevel ipl=IPL_DEF);
