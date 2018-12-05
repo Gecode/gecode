@@ -842,7 +842,6 @@ namespace Gecode {
     return x;
   }
 
-
 }
 
 #endif

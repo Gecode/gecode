@@ -619,12 +619,15 @@ namespace Gecode {
     return BoolExpr(BoolExpr(r,BoolExpr::NT_NOT),
                     BoolExpr::NT_OR,l);
   }
+
+
   /*
    * Posting Boolean expressions and relations
    *
    */
   BoolVar
   expr(Home home, const BoolExpr& e, const IntPropLevels& ipls) {
+    PostInfo pi(home);
     if (!home.failed())
       return e.expr(home,ipls);
     BoolVar x(home,0,1);
@@ -633,7 +636,7 @@ namespace Gecode {
 
   void
   rel(Home home, const BoolExpr& e, const IntPropLevels& ipls) {
-    if (home.failed()) return;
+    GECODE_POST;
     e.rel(home,ipls);
   }
 
