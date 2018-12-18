@@ -69,6 +69,14 @@ Date: ?-?-?
 New stuff!
 
 [ENTRY]
+Module: other
+What:   new
+Rank:   minor
+Thanks:	Jip J. Dekker
+[DESCRIPTION]
+Added installation target to the CMake configuration.
+
+[ENTRY]
 Module: kernel
 What:   new
 Rank:   major

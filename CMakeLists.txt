@@ -398,6 +398,7 @@ foreach (lib support kernel search int set float
     add_library(gecode${lib} ${sources} ${${libupper}HDR})
     target_include_directories(gecode${lib}
       PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
+    list(APPEND GECODE_INSTALL_TARGETS gecode${lib})
   endif ()
 endforeach ()
 
@@ -433,11 +434,31 @@ if (FLOATSRC)
   target_link_libraries(gecodeminimodel gecodefloat)
 endif ()
 
-add_executable(gecode-test ${TESTSRC} ${TESTHDR})
+add_executable(gecode-test EXCLUDE_FROM_ALL ${TESTSRC} ${TESTHDR})
 target_link_libraries(gecode-test gecodeflatzinc gecodeminimodel)
 
 add_executable(fzn-gecode ${FLATZINCEXESRC})
 target_link_libraries(fzn-gecode gecodeflatzinc gecodeminimodel gecodedriver)
+list(APPEND GECODE_INSTALL_TARGETS fzn-gecode)
+
+set(prefix ${CMAKE_INSTALL_PREFIX})
+set(datarootdir \${prefix}/share)
+set(datadir \${datarootdir})
+if(WIN32)
+  configure_file(
+    ${PROJECT_SOURCE_DIR}/tools/flatzinc/mzn-gecode.bat.in
+    ${PROJECT_BINARY_DIR}/tools/flatzinc/mzn-gecode.bat
+    @ONLY
+  )
+  set(MZN_SCRIPT ${PROJECT_BINARY_DIR}tools/flatzinc/mzn-gecode.bat)
+else()
+  configure_file(
+    ${PROJECT_SOURCE_DIR}/tools/flatzinc/mzn-gecode.in
+    ${PROJECT_BINARY_DIR}/tools/flatzinc/mzn-gecode
+    @ONLY
+  )
+  set(MZN_SCRIPT ${PROJECT_BINARY_DIR}/tools/flatzinc/mzn-gecode)
+endif()
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
@@ -454,3 +475,38 @@ add_test(test gecode-test
   -test Int::Arithmetic::Mult::XYZ::Bnd::C
   -test Int::Arithmetic::Mult::XYZ::Dom::A
   -test Search::BAB::Sol::BalGr::Binary::Binary::Binary::1::1)
+
+## Installation Target
+# Install libraries and executables
+install(
+  TARGETS ${GECODE_INSTALL_TARGETS}
+  RUNTIME DESTINATION bin
+  LIBRARY DESTINATION lib
+  ARCHIVE DESTINATION lib
+)
+install(
+  FILES ${MZN_SCRIPT}
+  DESTINATION bin
+)
+# Install include directory
+install(
+  DIRECTORY gecode
+  DESTINATION include
+  FILES_MATCHING
+    PATTERN "**.hh"
+    PATTERN "**.hpp"
+    PATTERN "LICENSE_1_0.txt"
+    PATTERN "mznlib" EXCLUDE
+    PATTERN "exampleplugin" EXCLUDE
+    PATTERN "standalone-example" EXCLUDE
+    PATTERN "abi*" EXCLUDE
+)
+install(
+  FILES ${PROJECT_BINARY_DIR}/gecode/support/config.hpp
+  DESTINATION include/gecode/support/
+)
+# Install MiniZinc library
+install(
+  DIRECTORY gecode/flatzinc/mznlib
+  DESTINATION share/gecode
+)
