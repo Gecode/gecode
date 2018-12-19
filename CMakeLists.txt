@@ -450,7 +450,7 @@ if(WIN32)
     ${PROJECT_BINARY_DIR}/tools/flatzinc/mzn-gecode.bat
     @ONLY
   )
-  set(MZN_SCRIPT ${PROJECT_BINARY_DIR}tools/flatzinc/mzn-gecode.bat)
+  set(MZN_SCRIPT ${PROJECT_BINARY_DIR}/tools/flatzinc/mzn-gecode.bat)
 else()
   configure_file(
     ${PROJECT_SOURCE_DIR}/tools/flatzinc/mzn-gecode.in
