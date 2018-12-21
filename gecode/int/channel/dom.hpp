@@ -194,6 +194,8 @@ namespace Gecode { namespace Int { namespace Channel {
   template<class View, class Offset, bool shared>
   ExecStatus
   Dom<View,Offset,shared>::propagate(Space& home, const ModEventDelta& med) {
+    // MSVC in non-permissive mode needs this, no idea why... 
+    const int n = this->n;
     Region r;
     ProcessStack xa(r,n);
     ProcessStack ya(r,n);

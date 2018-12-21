@@ -77,6 +77,15 @@ Thanks:	Jip J. Dekker
 Added installation target to the CMake configuration.
 
 [ENTRY]
+Module: other
+What:   change
+Rank:   minor
+[DESCRIPTION]
+Fix compilation problems with the Microsoft Visual Studio IDE
+which uses -permissive- as default, rather than -permissive as
+cl.exe does.
+
+[ENTRY]
 Module: kernel
 What:   new
 Rank:   major

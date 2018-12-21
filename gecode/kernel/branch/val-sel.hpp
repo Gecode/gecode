@@ -112,7 +112,8 @@ namespace Gecode {
   // User-defined value selection
   template<class View>
   forceinline
-  ValSelFunction<View>::ValSelFunction(Space& home, const ValBranch<Var>& vb)
+  ValSelFunction<View>::ValSelFunction
+    (Space& home, const ValBranch<ValSelFunction<View>::Var>& vb)
     : ValSel<View,Val>(home,vb), v(vb.val()) {
     if (!v())
       throw InvalidFunction("ValSelFunction::ValSelFunction");

@@ -40,8 +40,8 @@ namespace Gecode { namespace Set { namespace LDSB {
                     ViewSel<View>* vs[n],
                     ValSelCommitBase<View,Val>* vsc,
                     SymmetryImp<View>** syms, int nsyms,
-                    BranchFilter<Var> bf,
-                    VarValPrint<Var,Val> vvp)
+                    BranchFilter<LDSBSetBrancher<View,n,Val,a,Filter,Print>::Var> bf,
+                    VarValPrint<LDSBSetBrancher<View,n,Val,a,Filter,Print>::Var,Val> vvp)
     : LDSBBrancher<View,n,Val,a,Filter,Print>
   (home, x, vs, vsc, syms, nsyms, bf, vvp),
       _prevPos(-1),
@@ -258,8 +258,8 @@ namespace Gecode { namespace Set { namespace LDSB {
   post(Home home, ViewArray<View>& x,
        ViewSel<View>* vs[n], ValSelCommitBase<View,Val>* vsc,
        SymmetryImp<View>** syms, int nsyms,
-       BranchFilter<Var> bf,
-       VarValPrint<Var,Val> vvp) {
+       BranchFilter<LDSBSetBrancher<View,n,Val,a,Filter,Print>::Var> bf,
+       VarValPrint<LDSBSetBrancher<View,n,Val,a,Filter,Print>::Var,Val> vvp) {
     (void) new (home) LDSBSetBrancher<View,n,Val,a,Filter,Print>
       (home,x,vs,vsc,syms,nsyms,bf,vvp);
   }

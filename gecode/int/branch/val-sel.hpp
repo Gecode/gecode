@@ -35,7 +35,8 @@ namespace Gecode { namespace Int { namespace Branch {
 
   template<class View>
   forceinline
-  ValSelMin<View>::ValSelMin(Space& home, const ValBranch<Var>& vb)
+  ValSelMin<View>::ValSelMin
+  (Space& home, const ValBranch<ValSelMin<View>::Var>& vb)
     : ValSel<View,int>(home,vb) {}
   template<class View>
   forceinline
@@ -49,7 +50,8 @@ namespace Gecode { namespace Int { namespace Branch {
 
   template<class View>
   forceinline
-  ValSelMax<View>::ValSelMax(Space& home, const ValBranch<Var>& vb)
+  ValSelMax<View>::ValSelMax
+  (Space& home, const ValBranch<ValSelMax<View>::Var>& vb)
     : ValSel<View,int>(home,vb) {}
   template<class View>
   forceinline
@@ -63,7 +65,8 @@ namespace Gecode { namespace Int { namespace Branch {
 
   template<class View>
   forceinline
-  ValSelMed<View>::ValSelMed(Space& home, const ValBranch<Var>& vb)
+  ValSelMed<View>::ValSelMed
+  (Space& home, const ValBranch<ValSelMed<View>::Var>& vb)
     : ValSel<View,int>(home,vb) {}
   template<class View>
   forceinline
@@ -77,7 +80,8 @@ namespace Gecode { namespace Int { namespace Branch {
 
   template<class View>
   forceinline
-  ValSelAvg<View>::ValSelAvg(Space& home, const ValBranch<Var>& vb)
+  ValSelAvg<View>::ValSelAvg
+  (Space& home, const ValBranch<ValSelAvg<View>::Var>& vb)
     : ValSel<View,int>(home,vb) {}
   template<class View>
   forceinline
@@ -91,7 +95,8 @@ namespace Gecode { namespace Int { namespace Branch {
 
   template<class View>
   forceinline
-  ValSelRnd<View>::ValSelRnd(Space& home, const ValBranch<Var>& vb)
+  ValSelRnd<View>::ValSelRnd
+  (Space& home, const ValBranch<ValSelRnd<View>::Var>& vb)
     : ValSel<View,int>(home,vb), r(vb.rnd()) {}
   template<class View>
   forceinline
@@ -122,7 +127,8 @@ namespace Gecode { namespace Int { namespace Branch {
   }
 
   forceinline
-  ValSelRangeMin::ValSelRangeMin(Space& home, const ValBranch<IntVar>& vb)
+  ValSelRangeMin::ValSelRangeMin
+  (Space& home, const ValBranch<IntVar>& vb)
     : ValSel<IntView,int>(home,vb) {}
   forceinline
   ValSelRangeMin::ValSelRangeMin(Space& home, ValSelRangeMin& vs)

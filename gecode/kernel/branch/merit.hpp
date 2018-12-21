@@ -189,7 +189,8 @@ namespace Gecode {
   // User-defined function merit
   template<class View>
   forceinline
-  MeritFunction<View>::MeritFunction(Space& home, const VarBranch<Var>& vb)
+  MeritFunction<View>::MeritFunction
+    (Space& home, const VarBranch<MeritFunction<View>::Var>& vb)
     : MeritBase<View,double>(home,vb), f(vb.merit()) {
     if (!f())
       throw InvalidFunction("MeritFunction::MeritFunction");
@@ -221,7 +222,8 @@ namespace Gecode {
   // Degree merit
   template<class View>
   forceinline
-  MeritDegree<View>::MeritDegree(Space& home, const VarBranch<Var>& vb)
+  MeritDegree<View>::MeritDegree
+    (Space& home, const VarBranch<MeritDegree<View>::Var>& vb)
     : MeritBase<View,unsigned int>(home,vb) {}
   template<class View>
   forceinline
@@ -236,7 +238,8 @@ namespace Gecode {
   // AFC merit
   template<class View>
   forceinline
-  MeritAFC<View>::MeritAFC(Space& home, const VarBranch<Var>& vb)
+  MeritAFC<View>::MeritAFC
+    (Space& home, const VarBranch<MeritAFC<View>::Var>& vb)
     : MeritBase<View,double>(home,vb), afc(vb.afc()) {}
   template<class View>
   forceinline
@@ -264,7 +267,8 @@ namespace Gecode {
   // Action merit
   template<class View>
   forceinline
-  MeritAction<View>::MeritAction(Space& home, const VarBranch<Var>& vb)
+  MeritAction<View>::MeritAction
+    (Space& home, const VarBranch<MeritAction<View>::Var>& vb)
     : MeritBase<View,double>(home,vb), action(vb.action()) {}
   template<class View>
   forceinline
@@ -289,7 +293,8 @@ namespace Gecode {
   // CHB merit
   template<class View>
   forceinline
-  MeritCHB<View>::MeritCHB(Space& home, const VarBranch<Var>& vb)
+  MeritCHB<View>::MeritCHB
+    (Space& home, const VarBranch<MeritCHB<View>::Var>& vb)
     : MeritBase<View,double>(home,vb), chb(vb.chb()) {}
   template<class View>
   forceinline
