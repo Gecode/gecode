@@ -386,7 +386,7 @@ namespace Gecode {
         // Support disabled propagators and tracing
         // Find a non-disabled tracer recorder (possibly null)
         TraceRecorder* tr = findtracerecorder();
-        ViewTraceInfo vti;
+        ViewTraceInfo vti; vti.other();
 #define GECODE_STATUS_TRACE(q,s) \
   if ((tr != NULL) && (tr->events() & TE_PROPAGATE) && \
       (tr->filter()(p->group()))) {                    \
