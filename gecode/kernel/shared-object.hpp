@@ -80,7 +80,7 @@ namespace Gecode {
     /// Destructor that maintains reference count
     ~SharedHandle(void);
     /// Whether handle points to an object
-    operator bool(void) const;
+    explicit operator bool(void) const;
   protected:
     /// Access to the shared object
     SharedHandle::Object* object(void) const;
