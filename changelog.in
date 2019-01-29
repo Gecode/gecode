@@ -69,6 +69,15 @@ Date: ?-?-?
 New stuff!
 
 [ENTRY]
+Module: int
+What:   removed
+Rank:   minor
+[DESCRIPTION]
+The bool test operator has been removed from IntSet (it created
+problems and is actually useless for IntSet as they are always
+initialized).
+
+[ENTRY]
 Module: other
 What:   new
 Rank:   minor

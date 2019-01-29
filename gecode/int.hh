@@ -208,6 +208,8 @@ namespace Gecode {
     /// Initialize with \a n ranges from array \a r
     GECODE_INT_EXPORT void init(const int r[][2], int n);
   public:
+    /// Remove initialization test
+    operator bool(void) const = delete;
     /// \name Constructors and initialization
     //@{
     /// Initialize as empty set
