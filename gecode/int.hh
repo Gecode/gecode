@@ -208,8 +208,6 @@ namespace Gecode {
     /// Initialize with \a n ranges from array \a r
     GECODE_INT_EXPORT void init(const int r[][2], int n);
   public:
-    /// Remove initialization test
-    operator bool(void) const = delete;
     /// \name Constructors and initialization
     //@{
     /// Initialize as empty set
@@ -218,15 +216,15 @@ namespace Gecode {
      *
      * Note that the set is empty if \a n is larger than \a m
      */
-    IntSet(int n, int m);
+    explicit IntSet(int n, int m);
     /// Initialize with \a n integers from array \a r
-    IntSet(const int r[],   int n);
+    explicit IntSet(const int r[],   int n);
     /** \brief Initialize with \a n ranges from array \a r
      *
      * For position \a i in the array \a r, the minimum is \a r[\a i][0]
      * and the maximum is \a r[\a i][1].
      */
-    IntSet(const int r[][2], int n);
+    explicit IntSet(const int r[][2], int n);
     /// Initialize with range iterator \a i
     template<class I>
     explicit IntSet(I& i);
@@ -235,14 +233,14 @@ namespace Gecode {
     explicit IntSet(const I& i);
     /// Initialize with integers from list \a r
     GECODE_INT_EXPORT 
-    IntSet(std::initializer_list<int> r);
+    explicit IntSet(std::initializer_list<int> r);
     /** \brief Initialize with ranges from vector \a r
      *
      * The minimum is the first element and the maximum is the
      * second element.
      */
     GECODE_INT_EXPORT
-    IntSet(std::initializer_list<std::pair<int,int>> r);
+    explicit IntSet(std::initializer_list<std::pair<int,int>> r);
     //@}
 
     /// \name Range access

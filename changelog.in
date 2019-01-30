@@ -70,13 +70,12 @@ New stuff!
 
 [ENTRY]
 Module: int
-What:   removed
+What:   changed
 Rank:   minor
 Thanks: Jens Krueger
 [DESCRIPTION]
-The bool test operator has been removed from IntSet (it created
-problems and is actually useless for IntSet as they are always
-initialized).
+All constructors and the bool test operator of IntSet have been
+made explicit to avoid unintended behavior.
 
 [ENTRY]
 Module: other
