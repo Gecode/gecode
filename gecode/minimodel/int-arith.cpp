@@ -277,18 +277,18 @@ namespace Gecode { namespace MiniModel {
           x[i] = a[i].post(home, ipls);
         rel(home, x, irt, c);
       } else {
-        rel(home, post(home,NULL,ipls), irt, c);
+        rel(home, post(home,nullptr,ipls), irt, c);
       }
     }
     virtual void post(Home home, IntRelType irt, int c, BoolVar b,
                       const IntPropLevels& ipls) const {
-      rel(home, post(home,NULL,ipls), irt, c, b);
+      rel(home, post(home,nullptr,ipls), irt, c, b);
     }
   };
   /// Check if \a e is of type \a t
   bool hasType(const LinIntExpr& e, ArithNonLinIntExpr::ArithNonLinIntExprType t) {
     return e.nle() &&
-      dynamic_cast<ArithNonLinIntExpr*>(e.nle()) != NULL &&
+      dynamic_cast<ArithNonLinIntExpr*>(e.nle()) != nullptr &&
       dynamic_cast<ArithNonLinIntExpr*>(e.nle())->t == t;
   }
 

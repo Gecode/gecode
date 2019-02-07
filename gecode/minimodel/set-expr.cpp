@@ -94,9 +94,9 @@ namespace Gecode {
   bool
   SetExpr::Node::decrement(void) {
     if (--use == 0) {
-      if ((l != NULL) && l->decrement())
+      if ((l != nullptr) && l->decrement())
         delete l;
-      if ((r != NULL) && r->decrement())
+      if ((r != nullptr) && r->decrement())
         delete r;
       return true;
     }
@@ -569,31 +569,31 @@ namespace Gecode {
         GECODE_NEVER;
       }
       GECODE_NEVER;
-      return NULL;
+      return nullptr;
     }
   }
 
   SetExpr::SetExpr(const SetVar& x) : n(new Node) {
     n->same = 1;
     n->t    = NT_VAR;
-    n->l    = NULL;
-    n->r    = NULL;
+    n->l    = nullptr;
+    n->r    = nullptr;
     n->x    = x;
   }
 
   SetExpr::SetExpr(const IntSet& s) : n(new Node) {
     n->same = 1;
     n->t    = NT_CONST;
-    n->l    = NULL;
-    n->r    = NULL;
+    n->l    = nullptr;
+    n->r    = nullptr;
     n->s    = s;
   }
 
   SetExpr::SetExpr(const LinIntExpr& e) : n(new Node) {
     n->same = 1;
     n->t    = NT_LEXP;
-    n->l    = NULL;
-    n->r    = NULL;
+    n->l    = nullptr;
+    n->r    = nullptr;
     n->e    = e;
   }
 
@@ -621,14 +621,14 @@ namespace Gecode {
       n->t    = NT_CMPL;
       n->l    = l.n;
       n->l->use++;
-      n->r    = NULL;
+      n->r    = nullptr;
     }
   }
 
   const SetExpr&
   SetExpr::operator =(const SetExpr& e) {
     if (this != &e) {
-      if (n != NULL && n->decrement())
+      if (n != nullptr && n->decrement())
         delete n;
       n = e.n;
       n->use++;
@@ -637,7 +637,7 @@ namespace Gecode {
   }
 
   SetExpr::~SetExpr(void) {
-    if (n != NULL && n->decrement())
+    if (n != nullptr && n->decrement())
       delete n;
   }
 
@@ -794,7 +794,7 @@ namespace Gecode {
           c = (irt==IRT_LQ ? c : c-1);
           dom(home, e.post(home), SRT_SUB, Set::Limits::min, c);
         } else {
-          rel(home, post(home,NULL,ipls), irt, c);
+          rel(home, post(home,nullptr,ipls), irt, c);
         }
       }
       virtual void post(Home home, IntRelType irt, int c,
@@ -807,7 +807,7 @@ namespace Gecode {
           c = (irt==IRT_LQ ? c : c-1);
           dom(home, e.post(home), SRT_SUB, Set::Limits::min, c, b);
         } else {
-          rel(home, post(home,NULL,ipls), irt, c, b);
+          rel(home, post(home,nullptr,ipls), irt, c, b);
         }
       }
     };

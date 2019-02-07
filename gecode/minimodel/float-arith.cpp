@@ -304,18 +304,18 @@ namespace Gecode { namespace MiniModel {
           x[i] = a[i].post(home);
         rel(home, x, frt, c);
       } else {
-        rel(home, post(home,NULL), frt, c);
+        rel(home, post(home,nullptr), frt, c);
       }
     }
     virtual void post(Home home, FloatRelType frt, FloatVal c,
                       BoolVar b) const {
-      rel(home, post(home,NULL), frt, c, b);
+      rel(home, post(home,nullptr), frt, c, b);
     }
   };
   /// Check if \a e is of type \a t
   bool hasType(const LinFloatExpr& e, ArithNonLinFloatExpr::ArithNonLinFloatExprType t) {
     return e.nlfe() &&
-      dynamic_cast<ArithNonLinFloatExpr*>(e.nlfe()) != NULL &&
+      dynamic_cast<ArithNonLinFloatExpr*>(e.nlfe()) != nullptr &&
       dynamic_cast<ArithNonLinFloatExpr*>(e.nlfe())->t == t;
   }
 

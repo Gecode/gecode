@@ -121,10 +121,10 @@ namespace Gecode {
       switch (e->type) {
       case ET_OR:
       case ET_CONC:
-        if ((e->data.kids[1] != NULL) && (--e->data.kids[1]->use_cnt == 0))
+        if ((e->data.kids[1] != nullptr) && (--e->data.kids[1]->use_cnt == 0))
           todo.push(e->data.kids[1]);
       case ET_STAR:
-        if ((e->data.kids[0] != NULL) && (--e->data.kids[0]->use_cnt == 0))
+        if ((e->data.kids[0] != nullptr) && (--e->data.kids[0]->use_cnt == 0))
           todo.push(e->data.kids[0]);
       default: ;
       }
@@ -134,19 +134,19 @@ namespace Gecode {
 
   forceinline void
   REG::Exp::inc(Exp* e) {
-    if (e != NULL)
+    if (e != nullptr)
       e->use_cnt++;
   }
   forceinline void
   REG::Exp::dec(Exp* e) {
-    if ((e != NULL) && (--e->use_cnt == 0))
+    if ((e != nullptr) && (--e->use_cnt == 0))
       e->dispose();
   }
 
 
   forceinline int
   REG::Exp::n_pos(Exp* e) {
-    return (e != NULL) ? e->_n_pos : 0;
+    return (e != nullptr) ? e->_n_pos : 0;
   }
 
   void
@@ -157,11 +157,11 @@ namespace Gecode {
       return;
     case ET_STAR:
       {
-        bool par = ((data.kids[0] != NULL) &&
+        bool par = ((data.kids[0] != nullptr) &&
                     ((data.kids[0]->type == ET_CONC) ||
                      (data.kids[0]->type == ET_OR)));
         os << (par ? "*(" : "*");
-        if (data.kids[0]==NULL) {
+        if (data.kids[0]==nullptr) {
           os << "[]";
         } else {
           data.kids[0]->toString(os);
@@ -171,19 +171,19 @@ namespace Gecode {
       }
     case ET_CONC:
       {
-        bool par0 = ((data.kids[0] != NULL) &&
+        bool par0 = ((data.kids[0] != nullptr) &&
                      (data.kids[0]->type == ET_OR));
         os << (par0 ? "(" : "");
-        if (data.kids[0]==NULL) {
+        if (data.kids[0]==nullptr) {
           os << "[]";
         } else {
           data.kids[0]->toString(os);
         }
         os << (par0 ? ")+" : "+");
-        bool par1 = ((data.kids[1] != NULL) &&
+        bool par1 = ((data.kids[1] != nullptr) &&
                      (data.kids[1]->type == ET_OR));
         os << (par1 ? "(" : "");
-        if (data.kids[1]==NULL) {
+        if (data.kids[1]==nullptr) {
           os << "[]";
         } else {
           data.kids[1]->toString(os);
@@ -192,13 +192,13 @@ namespace Gecode {
         return;
       }
     case ET_OR:
-      if (data.kids[0]==NULL) {
+      if (data.kids[0]==nullptr) {
         os << "[]";
       } else {
         data.kids[0]->toString(os);
       }
       os << "|";
-      if (data.kids[1]==NULL) {
+      if (data.kids[1]==nullptr) {
         os << "[]";
       } else {
         data.kids[1]->toString(os);
@@ -226,7 +226,7 @@ namespace Gecode {
   forceinline
   REG::REG(Exp* f) : e(f) {}
 
-  REG::REG(void) : e(NULL) {}
+  REG::REG(void) : e(nullptr) {}
 
   REG::REG(const REG& r) : e(r.e) {
     REG::Exp::inc(e);
@@ -326,8 +326,8 @@ namespace Gecode {
 
   REG
   REG::operator +(const REG& r2) {
-    if (e == NULL)    return r2;
-    if (r2.e == NULL) return *this;
+    if (e == nullptr)    return r2;
+    if (r2.e == nullptr) return *this;
     Exp* f = new Exp();
     f->use_cnt      = 1;
     f->_n_pos       = REG::Exp::n_pos(e) + REG::Exp::n_pos(r2.e);
@@ -340,9 +340,9 @@ namespace Gecode {
 
   REG&
   REG::operator +=(const REG& r2) {
-    if (r2.e == NULL)
+    if (r2.e == nullptr)
       return *this;
-    if (e == NULL) {
+    if (e == nullptr) {
       e=r2.e; REG::Exp::inc(e);
     } else {
       Exp* f = new Exp();
@@ -358,7 +358,7 @@ namespace Gecode {
 
   REG
   REG::operator *(void) {
-    if ((e == NULL) || (e->type == REG::Exp::ET_STAR))
+    if ((e == nullptr) || (e->type == REG::Exp::ET_STAR))
       return *this;
     Exp* f = new Exp();
     f->use_cnt      = 1;
@@ -423,7 +423,7 @@ namespace Gecode {
 
   std::string
   REG::toString(void) const {
-    if (e==NULL) {
+    if (e==nullptr) {
       return "[]";
     }
     return e->toString();
@@ -467,12 +467,12 @@ namespace Gecode {
     forceinline
     PosSet::PosSet(void) {}
     forceinline
-    PosSet::PosSet(int p) : pos(p), next(NULL) {}
+    PosSet::PosSet(int p) : pos(p), next(nullptr) {}
 
 
     forceinline bool
     PosSet::in(int p) const {
-      for (const PosSet* ps = this; ps != NULL; ps = ps->next)
+      for (const PosSet* ps = this; ps != nullptr; ps = ps->next)
         if (ps->pos == p) {
           return true;
         } else if (ps->pos < p) {
@@ -483,7 +483,7 @@ namespace Gecode {
 
     forceinline PosSetCmp
     PosSet::cmp(PosSet* ps1, PosSet* ps2) {
-      while ((ps1 != NULL) && (ps2 != NULL)) {
+      while ((ps1 != nullptr) && (ps2 != nullptr)) {
         if (ps1 == ps2)
           return PSC_EQ;
         if (ps1->pos < ps2->pos)
@@ -494,14 +494,14 @@ namespace Gecode {
       }
       if (ps1 == ps2)
         return PSC_EQ;
-      return ps1 == NULL ? PSC_LE : PSC_GR;
+      return ps1 == nullptr ? PSC_LE : PSC_GR;
     }
 
     PosSet*
     PosSet::cup(PosSetAllocator& psm, PosSet* ps1, PosSet* ps2) {
       PosSet*  ps;
       PosSet** p = &ps;
-      while ((ps1 != NULL) && (ps2 != NULL)) {
+      while ((ps1 != nullptr) && (ps2 != nullptr)) {
         if (ps1 == ps2) {
           *p = ps1; return ps;
         }
@@ -516,7 +516,7 @@ namespace Gecode {
           n->pos = ps2->pos; ps2 = ps2->next;
         }
       }
-      *p = (ps1 != NULL) ? ps1 : ps2;
+      *p = (ps1 != nullptr) ? ps1 : ps2;
       return ps;
     }
 
@@ -527,7 +527,7 @@ namespace Gecode {
       bool    nullable;
       PosSet* firstpos;
       PosSet* lastpos;
-      NodeInfo(bool n=false, PosSet* fp=NULL, PosSet* lp=NULL);
+      NodeInfo(bool n=false, PosSet* fp=nullptr, PosSet* lp=nullptr);
     };
 
     /// Expression information
@@ -535,7 +535,7 @@ namespace Gecode {
     public:
       REG::Exp* exp;
       bool open;
-      ExpInfo(REG::Exp* e=NULL);
+      ExpInfo(REG::Exp* e=nullptr);
     };
 
     /**
@@ -576,9 +576,9 @@ namespace Gecode {
     todo.push(ExpInfo(this));
 
     do {
-      if (todo.top().exp == NULL) {
+      if (todo.top().exp == nullptr) {
         todo.pop();
-        done.push(NodeInfo(true,NULL,NULL));
+        done.push(NodeInfo(true,nullptr,nullptr));
       } else {
         switch (todo.top().exp->type) {
         case ET_SYMBOL:
@@ -596,7 +596,7 @@ namespace Gecode {
           } else {
             todo.pop();
             NodeInfo ni = done.pop();
-            for (PosSet* ps = ni.lastpos; ps != NULL; ps = ps->next)
+            for (PosSet* ps = ni.lastpos; ps != nullptr; ps = ps->next)
               pi[ps->pos].followpos =
                 PosSet::cup(psm,pi[ps->pos].followpos,ni.firstpos);
             done.push(NodeInfo(true,ni.firstpos,ni.lastpos));
@@ -613,7 +613,7 @@ namespace Gecode {
             todo.pop();
             NodeInfo ni1 = done.pop();
             NodeInfo ni0 = done.pop();
-            for (PosSet* ps = ni0.lastpos; ps != NULL; ps = ps->next)
+            for (PosSet* ps = ni0.lastpos; ps != nullptr; ps = ps->next)
               pi[ps->pos].followpos =
                 PosSet::cup(psm,pi[ps->pos].followpos,ni1.firstpos);
             done.push(NodeInfo(ni0.nullable & ni1.nullable,
@@ -689,13 +689,13 @@ namespace Gecode {
     forceinline
     StatePool::StatePool(PosSet* ps) {
       next     = &root;
-      all      = NULL;
+      all      = nullptr;
       n_states = 1;
       root.pos   = ps;
       root.state = 0;
-      root.next  = NULL;
-      root.left  = NULL;
-      root.right = NULL;
+      root.next  = nullptr;
+      root.left  = nullptr;
+      root.right = nullptr;
     }
 
     forceinline StateNode*
@@ -709,13 +709,13 @@ namespace Gecode {
 
     forceinline bool
     StatePool::empty(void) const {
-      return next == NULL;
+      return next == nullptr;
     }
 
     forceinline int
     StatePool::state(StatePoolAllocator& spm, PosSet* ps) {
       int d = 0;
-      StateNode** p = NULL;
+      StateNode** p = nullptr;
       StateNode*  n = &root;
       do {
         switch (PosSet::cmp(ps,n->pos)) {
@@ -725,13 +725,13 @@ namespace Gecode {
         default: GECODE_NEVER;
         }
         d++;
-      } while (n != NULL);
+      } while (n != nullptr);
       n = new (spm) StateNode; *p = n;
       n->pos   = ps;
       n->state = n_states++;
       n->next  = next;
-      n->left  = NULL;
-      n->right = NULL;
+      n->left  = nullptr;
+      n->right = nullptr;
       next = n;
       return n->state;
     }
@@ -848,7 +848,7 @@ namespace Gecode {
 
     PosInfo* pi = region.alloc<PosInfo>(n_pos);
     for (int i=n_pos; i--; )
-      pi[i].followpos = NULL;
+      pi[i].followpos = nullptr;
 
     PosSet* firstpos = r.e->followpos(psm,&pi[0]);
 
@@ -869,11 +869,11 @@ namespace Gecode {
     while (!sp.empty()) {
       StateNode* sn = sp.pop();
       for (int i = n_symbols; i--; ) {
-        PosSet* u = NULL;
-        for (PosSet* ps = sn->pos; ps != NULL; ps = ps->next)
+        PosSet* u = nullptr;
+        for (PosSet* ps = sn->pos; ps != nullptr; ps = ps->next)
           if (pi[ps->pos].symbol == symbols[i])
             u = PosSet::cup(psm,u,pi[ps->pos].followpos);
-        if (u != NULL)
+        if (u != nullptr)
           tb.add(sn->state,symbols[i],sp.state(spm,u));
       }
     }
@@ -881,7 +881,7 @@ namespace Gecode {
 
     // Compute final states
     FinalBag fb;
-    for (StateNode* n = sp.all; n != NULL; n = n->next)
+    for (StateNode* n = sp.all; n != nullptr; n = n->next)
       if (n->pos->in(n_pos-1))
         fb.add(n->state);
     fb.finish();

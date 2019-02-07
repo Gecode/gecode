@@ -115,9 +115,9 @@ namespace Gecode {
   bool
   LinFloatExpr::Node::decrement(void) {
     if (--use == 0) {
-      if ((l != NULL) && l->decrement())
+      if ((l != nullptr) && l->decrement())
         delete l;
-      if ((r != NULL) && r->decrement())
+      if ((r != nullptr) && r->decrement())
         delete r;
       return true;
     }
@@ -136,7 +136,7 @@ namespace Gecode {
 
   NonLinFloatExpr*
   LinFloatExpr::nlfe(void) const {
-    return n->t == NT_NONLIN ? n->sum.ne : NULL;
+    return n->t == NT_NONLIN ? n->sum.ne : nullptr;
   }
 
   FloatVal
@@ -152,9 +152,9 @@ namespace Gecode {
   LinFloatExpr::post(Home home, FloatRelType frt) const {
     if (home.failed()) return;
     Region r;
-    if (n->t==NT_ADD && n->l == NULL && n->r->t==NT_NONLIN) {
+    if (n->t==NT_ADD && n->l == nullptr && n->r->t==NT_NONLIN) {
       n->r->sum.ne->post(home,frt,-n->c);
-    } else if (n->t==NT_SUB && n->r->t==NT_NONLIN && n->l==NULL) {
+    } else if (n->t==NT_SUB && n->r->t==NT_NONLIN && n->l==nullptr) {
       switch (frt) {
       case FRT_LQ: frt=FRT_GQ; break;
       case FRT_LE: frt=FRT_GR; break;
@@ -165,12 +165,12 @@ namespace Gecode {
       n->r->sum.ne->post(home,frt,n->c);
     } else if (frt==FRT_EQ &&
                n->t==NT_SUB && n->r->t==NT_NONLIN &&
-               n->l != NULL && n->l->t==NT_VAR
+               n->l != nullptr && n->l->t==NT_VAR
                && n->l->a==1) {
       (void) n->r->sum.ne->post(home,&n->l->x_float);
     } else if (frt==FRT_EQ &&
                n->t==NT_SUB && n->r->t==NT_VAR &&
-               n->l != NULL && n->l->t==NT_NONLIN
+               n->l != nullptr && n->l->t==NT_NONLIN
                && n->r->a==1) {
       (void) n->l->sum.ne->post(home,&n->r->x_float);
     } else {
@@ -185,9 +185,9 @@ namespace Gecode {
   LinFloatExpr::post(Home home, FloatRelType frt, const BoolVar& b) const {
     if (home.failed()) return;
     Region r;
-    if (n->t==NT_ADD && n->l==NULL && n->r->t==NT_NONLIN) {
+    if (n->t==NT_ADD && n->l==nullptr && n->r->t==NT_NONLIN) {
       n->r->sum.ne->post(home,frt,-n->c,b);
-    } else if (n->t==NT_SUB && n->l==NULL && n->r->t==NT_NONLIN) {
+    } else if (n->t==NT_SUB && n->l==nullptr && n->r->t==NT_NONLIN) {
       switch (frt) {
       case FRT_LQ: frt=FRT_GQ; break;
       case FRT_LE: frt=FRT_GR; break;
@@ -227,7 +227,7 @@ namespace Gecode {
     n(new Node) {
     n->n_float = 0;
     n->t = NT_VAR;
-    n->l = n->r = NULL;
+    n->l = n->r = nullptr;
     n->a = 0;
   }
 
@@ -235,7 +235,7 @@ namespace Gecode {
     n(new Node) {
     n->n_float = 0;
     n->t = NT_CONST;
-    n->l = n->r = NULL;
+    n->l = n->r = nullptr;
     n->a = 0;
     Float::Limits::check(c,"MiniModel::LinFloatExpr");
     n->c = c;
@@ -245,7 +245,7 @@ namespace Gecode {
     n(new Node) {
     n->n_float = 1;
     n->t = NT_VAR;
-    n->l = n->r = NULL;
+    n->l = n->r = nullptr;
     n->a = 1.0;
     n->x_float = x;
   }
@@ -254,7 +254,7 @@ namespace Gecode {
     n(new Node) {
     n->n_float = 1;
     n->t = NT_VAR;
-    n->l = n->r = NULL;
+    n->l = n->r = nullptr;
     n->a = a;
     n->x_float = x;
   }
@@ -263,7 +263,7 @@ namespace Gecode {
     n(new Node) {
     n->n_float = x.size();
     n->t = NT_SUM;
-    n->l = n->r = NULL;
+    n->l = n->r = nullptr;
     if (x.size() > 0) {
       n->sum.tf = heap.alloc<Float::Linear::Term>(x.size());
       for (int i=x.size(); i--; ) {
@@ -279,7 +279,7 @@ namespace Gecode {
       throw Float::ArgumentSizeMismatch("MiniModel::LinFloatExpr");
     n->n_float = x.size();
     n->t = NT_SUM;
-    n->l = n->r = NULL;
+    n->l = n->r = nullptr;
     if (x.size() > 0) {
       n->sum.tf = heap.alloc<Float::Linear::Term>(x.size());
       for (int i=x.size(); i--; ) {
@@ -301,7 +301,7 @@ namespace Gecode {
     n(new Node) {
     n->n_float = e.n->n_float;
     n->t = t;
-    n->l = NULL;
+    n->l = nullptr;
     n->r = e.n; n->r->use++;
     n->c = c;
   }
@@ -311,7 +311,7 @@ namespace Gecode {
     n->n_float = e.n->n_float;
     n->t = NT_MUL;
     n->l = e.n; n->l->use++;
-    n->r = NULL;
+    n->r = nullptr;
     n->a = a;
   }
 
@@ -319,7 +319,7 @@ namespace Gecode {
     n(new Node) {
     n->n_float = 1;
     n->t = NT_NONLIN;
-    n->l = n->r = NULL;
+    n->l = n->r = nullptr;
     n->a = 0;
     n->sum.ne = e;
   }
@@ -354,7 +354,7 @@ namespace Gecode {
       tf->a=m*a; tf->x=x_float; tf++;
       break;
     case NT_NONLIN:
-      tf->a=m; tf->x=sum.ne->post(home, NULL); tf++;
+      tf->a=m; tf->x=sum.ne->post(home, nullptr); tf++;
       break;
     case NT_SUM:
       for (int i=n_float; i--; ) {
@@ -364,7 +364,7 @@ namespace Gecode {
       tf += n_float;
       break;
     case NT_ADD:
-      if (l == NULL) {
+      if (l == nullptr) {
         Float::Limits::check(m*c,"MiniModel::LinFloatExpr");
         d += m*c;
       } else {
@@ -373,7 +373,7 @@ namespace Gecode {
       r->fill(home,tf,m,d);
       break;
     case NT_SUB:
-      if (l == NULL) {
+      if (l == nullptr) {
         Float::Limits::check(m*c,"MiniModel::LinFloatExpr");
         d += m*c;
       } else {

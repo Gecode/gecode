@@ -224,24 +224,22 @@ namespace Gecode {
     virtual void post(Home home, IntRelType irt, int c,
                       BoolVar b, const IntPropLevels& ipls) const = 0;
     /// Destructor
-    virtual ~NonLinIntExpr(void) {}
-    /// Return fresh variable if \a x is NULL, \a x otherwise
-    static IntVar result(Home home, IntVar* x) {
-      if (x==NULL)
-        return IntVar(home,Int::Limits::min,Int::Limits::max);
-      return *x;
-    }
-    /// Constrain \a x to be equal to \a y if \a x is not NULL
-    static IntVar result(Home home, IntVar* x, IntVar y) {
-      if (x!=NULL)
-        rel(home,*x,IRT_EQ,y);
-      return y;
-    }
+    virtual ~NonLinIntExpr(void);
+    /// Return fresh variable if \a x is null, \a x otherwise
+    static IntVar result(Home home, IntVar* x);
+    /// Constrain \a x to be equal to \a y if \a x is not null
+    static IntVar result(Home home, IntVar* x, IntVar y);
     /// Memory management
-    void* operator new(size_t size) { return heap.ralloc(size); }
+    void* operator new(size_t s);
     /// Memory management
-    void operator delete(void* p, size_t) { heap.rfree(p); }
+    void operator delete(void* p, size_t s);
   };
+
+}
+
+#include <gecode/minimodel/int-expr.hpp>
+
+namespace Gecode {
 
   /// Linear expressions over integer variables
   class LinIntExpr {
@@ -323,7 +321,7 @@ namespace Gecode {
     /// Post propagator and return variable for value
     GECODE_MINIMODEL_EXPORT
     IntVar post(Home home, const IntPropLevels& ipls) const;
-    /// Return non-linear expression inside, or NULL if not non-linear
+    /// Return non-linear expression inside, or null if not non-linear
     GECODE_MINIMODEL_EXPORT
     NonLinIntExpr* nle(void) const;
     /// Destructor
@@ -791,6 +789,7 @@ namespace Gecode {
   //@}
 
 #ifdef GECODE_HAS_FLOAT_VARS
+
   /// Base class for non-linear float expressions
   class NonLinFloatExpr {
   public:
@@ -802,24 +801,22 @@ namespace Gecode {
     virtual void post(Home home, FloatRelType frt, FloatVal c,
                       BoolVar b) const = 0;
     /// Destructor
-    virtual ~NonLinFloatExpr(void) {}
-    /// Return fresh variable if \a x is NULL, \a x otherwise
-    static FloatVar result(Home home, FloatVar* x) {
-      if (x == NULL)
-        return FloatVar(home,Float::Limits::min,Float::Limits::max);
-      return *x;
-    }
-    /// Constrain \a x to be equal to \a y if \a x is not NULL
-    static FloatVar result(Home home, FloatVar* x, FloatVar y) {
-      if (x!=NULL)
-        rel(home,*x,FRT_EQ,y);
-      return y;
-    }
+    virtual ~NonLinFloatExpr(void);
+    /// Return fresh variable if \a x is null, \a x otherwise
+    static FloatVar result(Home home, FloatVar* x);
+    /// Constrain \a x to be equal to \a y if \a x is not null
+    static FloatVar result(Home home, FloatVar* x, FloatVar y);
     /// Memory management
-    void* operator new(size_t size) { return heap.ralloc(size); }
+    void* operator new(size_t s);
     /// Memory management
-    void operator delete(void* p, size_t) { heap.rfree(p); }
+    void operator delete(void* p, size_t s);
   };
+
+}
+
+#include <gecode/minimodel/float-expr.hpp>
+
+namespace Gecode {
 
   /// %Float expressions
   class LinFloatExpr {
@@ -885,7 +882,7 @@ namespace Gecode {
     /// Post propagator and return variable for value
     GECODE_MINIMODEL_EXPORT
     FloatVar post(Home home) const;
-    /// Return non-linear expression inside, or NULL if not non-linear
+    /// Return non-linear expression inside, or null if not non-linear
     GECODE_MINIMODEL_EXPORT
     NonLinFloatExpr* nlfe(void) const;
     /// Destructor

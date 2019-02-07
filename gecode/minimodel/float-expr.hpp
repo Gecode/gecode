@@ -1,10 +1,10 @@
 /* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
- *     Guido Tack <tack@gecode.org>
+ *     Christian Schulte <schulte@gecode.org>
  *
  *  Copyright:
- *     Guido Tack, 2010
+ *     Christian Schulte, 2019
  *
  *  This file is part of Gecode, the generic constraint
  *  development environment:
@@ -31,20 +31,33 @@
  *
  */
 
-#ifdef GECODE_HAS_SET_VARS
-
 namespace Gecode {
 
-  /*
-   * Operations for expressions
-   *
-   */
-
   forceinline
-  SetExpr::SetExpr(void) : n(nullptr) {}
+  NonLinFloatExpr::~NonLinFloatExpr(void) {}
+
+  forceinline FloatVar
+  NonLinFloatExpr::result(Home home, FloatVar* x) {
+    if (x == nullptr)
+      return FloatVar(home,Float::Limits::min,Float::Limits::max);
+    return *x;
+  }
+  forceinline FloatVar
+  NonLinFloatExpr::result(Home home, FloatVar* x, FloatVar y) {
+    if (x != nullptr)
+      rel(home,*x,FRT_EQ,y);
+    return y;
+  }
+
+  forceinline void*
+  NonLinFloatExpr::operator new(size_t s) {
+    return heap.ralloc(s);
+  }
+  forceinline void
+  NonLinFloatExpr::operator delete(void* p, size_t) {
+    heap.rfree(p);
+  }
 
 }
-
-#endif
 
 // STATISTICS: minimodel-any

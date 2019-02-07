@@ -84,7 +84,7 @@ namespace Gecode {
    *
    */
   BoolExpr::Node::Node(void)
-    : use(1), l(NULL), r(NULL), m(NULL) {}
+    : use(1), l(nullptr), r(nullptr), m(nullptr) {}
 
   BoolExpr::Node::~Node(void) {
     delete m;
@@ -102,9 +102,9 @@ namespace Gecode {
   bool
   BoolExpr::Node::decrement(void) {
     if (--use == 0) {
-      if ((l != NULL) && l->decrement())
+      if ((l != nullptr) && l->decrement())
         delete l;
-      if ((r != NULL) && r->decrement())
+      if ((r != nullptr) && r->decrement())
         delete r;
       return true;
     }
@@ -120,8 +120,8 @@ namespace Gecode {
   BoolExpr::BoolExpr(const BoolVar& x) : n(new Node) {
     n->same = 1;
     n->t    = NT_VAR;
-    n->l    = NULL;
-    n->r    = NULL;
+    n->l    = nullptr;
+    n->r    = nullptr;
     n->x    = x;
   }
 
@@ -149,7 +149,7 @@ namespace Gecode {
       n->t    = NT_NOT;
       n->l    = l.n;
       n->l->use++;
-      n->r    = NULL;
+      n->r    = nullptr;
     }
   }
 
@@ -157,8 +157,8 @@ namespace Gecode {
     : n(new Node) {
     n->same = 1;
     n->t    = NT_RLIN;
-    n->l    = NULL;
-    n->r    = NULL;
+    n->l    = nullptr;
+    n->r    = nullptr;
     n->rl   = rl;
   }
 
@@ -167,8 +167,8 @@ namespace Gecode {
     : n(new Node) {
     n->same  = 1;
     n->t     = NT_RLINFLOAT;
-    n->l     = NULL;
-    n->r     = NULL;
+    n->l     = nullptr;
+    n->r     = nullptr;
     n->rfl   = rfl;
   }
 #endif
@@ -178,8 +178,8 @@ namespace Gecode {
     : n(new Node) {
     n->same = 1;
     n->t    = NT_RSET;
-    n->l    = NULL;
-    n->r    = NULL;
+    n->l    = nullptr;
+    n->r    = nullptr;
     n->rs   = rs;
   }
 
@@ -187,8 +187,8 @@ namespace Gecode {
     : n(new Node) {
     n->same = 1;
     n->t    = NT_RSET;
-    n->l    = NULL;
-    n->r    = NULL;
+    n->l    = nullptr;
+    n->r    = nullptr;
     n->rs   = rs;
   }
 #endif
@@ -197,8 +197,8 @@ namespace Gecode {
     : n(new Node) {
     n->same = 1;
     n->t    = NT_MISC;
-    n->l    = NULL;
-    n->r    = NULL;
+    n->l    = nullptr;
+    n->r    = nullptr;
     n->m    = m;
   }
 
@@ -566,7 +566,7 @@ namespace Gecode {
         GECODE_NEVER;
       }
       GECODE_NEVER;
-      return NULL;
+      return nullptr;
     }
   }
 

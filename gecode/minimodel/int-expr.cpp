@@ -123,9 +123,9 @@ namespace Gecode {
   bool
   LinIntExpr::Node::decrement(void) {
     if (--use == 0) {
-      if ((l != NULL) && l->decrement())
+      if ((l != nullptr) && l->decrement())
         delete l;
-      if ((r != NULL) && r->decrement())
+      if ((r != nullptr) && r->decrement())
         delete r;
       return true;
     }
@@ -159,9 +159,9 @@ namespace Gecode {
     Region r;
     if (n->n_bool == 0) {
       // Only integer variables
-      if (n->t==NT_ADD && n->l == NULL && n->r->t==NT_NONLIN) {
+      if (n->t==NT_ADD && n->l == nullptr && n->r->t==NT_NONLIN) {
         n->r->sum.ne->post(home,irt,-n->c,ipls);
-      } else if (n->t==NT_SUB && n->r->t==NT_NONLIN && n->l==NULL) {
+      } else if (n->t==NT_SUB && n->r->t==NT_NONLIN && n->l==nullptr) {
         switch (irt) {
         case IRT_LQ: irt=IRT_GQ; break;
         case IRT_LE: irt=IRT_GR; break;
@@ -172,18 +172,18 @@ namespace Gecode {
         n->r->sum.ne->post(home,irt,n->c,ipls);
       } else if (irt==IRT_EQ &&
                  n->t==NT_SUB && n->r->t==NT_NONLIN &&
-                 n->l != NULL && n->l->t==NT_VAR_INT
+                 n->l != nullptr && n->l->t==NT_VAR_INT
                  && n->l->a==1) {
         (void) n->r->sum.ne->post(home,&n->l->x_int,ipls);
       } else if (irt==IRT_EQ &&
                  n->t==NT_SUB && n->r->t==NT_VAR_INT &&
-                 n->l != NULL && n->l->t==NT_NONLIN
+                 n->l != nullptr && n->l->t==NT_NONLIN
                  && n->r->a==1) {
         (void) n->l->sum.ne->post(home,&n->r->x_int,ipls);
       } else {
         Int::Linear::Term<Int::IntView>* its =
           r.alloc<Int::Linear::Term<Int::IntView> >(n->n_int);
-        int c = n->fill(home,ipls,its,NULL);
+        int c = n->fill(home,ipls,its,nullptr);
         Int::Linear::post(home, its, n->n_int, irt, -c,
                           (n->n_int > 2) ? ipls.linear() : ipls.linear2());
       }
@@ -191,7 +191,7 @@ namespace Gecode {
       // Only Boolean variables
       Int::Linear::Term<Int::BoolView>* bts =
         r.alloc<Int::Linear::Term<Int::BoolView> >(n->n_bool);
-      int c = n->fill(home,ipls,NULL,bts);
+      int c = n->fill(home,ipls,nullptr,bts);
       Int::Linear::post(home, bts, n->n_bool, irt, -c,
                         (n->n_bool > 2) ? ipls.linear() : ipls.linear2());
     } else if (n->n_bool == 1) {
@@ -232,9 +232,9 @@ namespace Gecode {
     Region r;
     if (n->n_bool == 0) {
       // Only integer variables
-      if (n->t==NT_ADD && n->l==NULL && n->r->t==NT_NONLIN) {
+      if (n->t==NT_ADD && n->l==nullptr && n->r->t==NT_NONLIN) {
         n->r->sum.ne->post(home,irt,-n->c,b,ipls);
-      } else if (n->t==NT_SUB && n->l==NULL && n->r->t==NT_NONLIN) {
+      } else if (n->t==NT_SUB && n->l==nullptr && n->r->t==NT_NONLIN) {
         switch (irt) {
         case IRT_LQ: irt=IRT_GQ; break;
         case IRT_LE: irt=IRT_GR; break;
@@ -246,7 +246,7 @@ namespace Gecode {
       } else {
         Int::Linear::Term<Int::IntView>* its =
           r.alloc<Int::Linear::Term<Int::IntView> >(n->n_int);
-        int c = n->fill(home,ipls,its,NULL);
+        int c = n->fill(home,ipls,its,nullptr);
         Int::Linear::post(home, its, n->n_int, irt, -c, b,
                           (n->n_int > 2) ? ipls.linear() : ipls.linear2());
       }
@@ -254,7 +254,7 @@ namespace Gecode {
       // Only Boolean variables
       Int::Linear::Term<Int::BoolView>* bts =
         r.alloc<Int::Linear::Term<Int::BoolView> >(n->n_bool);
-      int c = n->fill(home,ipls,NULL,bts);
+      int c = n->fill(home,ipls,nullptr,bts);
       Int::Linear::post(home, bts, n->n_bool, irt, -c, b,
                         (n->n_bool > 2) ? ipls.linear() : ipls.linear2());
     } else if (n->n_bool == 1) {
@@ -296,7 +296,7 @@ namespace Gecode {
       // Only integer variables
       Int::Linear::Term<Int::IntView>* its =
         r.alloc<Int::Linear::Term<Int::IntView> >(n->n_int+1);
-      int c = n->fill(home,ipls,its,NULL);
+      int c = n->fill(home,ipls,its,nullptr);
       if ((n->n_int == 1) && (c == 0) && (its[0].a == 1))
         return its[0].x;
       int min, max;
@@ -310,7 +310,7 @@ namespace Gecode {
       // Only Boolean variables
       Int::Linear::Term<Int::BoolView>* bts =
         r.alloc<Int::Linear::Term<Int::BoolView> >(n->n_bool);
-      int c = n->fill(home,ipls,NULL,bts);
+      int c = n->fill(home,ipls,nullptr,bts);
       int min, max;
       Int::Linear::estimate(&bts[0],n->n_bool,c,min,max);
       IntVar x(home, min, max);
@@ -357,14 +357,14 @@ namespace Gecode {
 
   NonLinIntExpr*
   LinIntExpr::nle(void) const {
-    return n->t == NT_NONLIN ? n->sum.ne : NULL;
+    return n->t == NT_NONLIN ? n->sum.ne : nullptr;
   }
 
   LinIntExpr::LinIntExpr(void) :
     n(new Node) {
     n->n_int = n->n_bool = 0;
     n->t = NT_VAR_INT;
-    n->l = n->r = NULL;
+    n->l = n->r = nullptr;
     n->a = 0;
   }
 
@@ -372,7 +372,7 @@ namespace Gecode {
     n(new Node) {
     n->n_int = n->n_bool = 0;
     n->t = NT_CONST;
-    n->l = n->r = NULL;
+    n->l = n->r = nullptr;
     n->a = 0;
     Int::Limits::check(c,"MiniModel::LinIntExpr");
     n->c = c;
@@ -383,7 +383,7 @@ namespace Gecode {
     n->n_int = 1;
     n->n_bool = 0;
     n->t = NT_VAR_INT;
-    n->l = n->r = NULL;
+    n->l = n->r = nullptr;
     n->a = a;
     n->x_int = x;
   }
@@ -393,7 +393,7 @@ namespace Gecode {
     n->n_int = 0;
     n->n_bool = 1;
     n->t = NT_VAR_BOOL;
-    n->l = n->r = NULL;
+    n->l = n->r = nullptr;
     n->a = a;
     n->x_bool = x;
   }
@@ -403,7 +403,7 @@ namespace Gecode {
     n->n_int = x.size();
     n->n_bool = 0;
     n->t = NT_SUM_INT;
-    n->l = n->r = NULL;
+    n->l = n->r = nullptr;
     if (x.size() > 0) {
       n->sum.ti = heap.alloc<Int::Linear::Term<Int::IntView> >(x.size());
       for (int i=x.size(); i--; ) {
@@ -420,7 +420,7 @@ namespace Gecode {
     n->n_int = x.size();
     n->n_bool = 0;
     n->t = NT_SUM_INT;
-    n->l = n->r = NULL;
+    n->l = n->r = nullptr;
     if (x.size() > 0) {
       n->sum.ti = heap.alloc<Int::Linear::Term<Int::IntView> >(x.size());
       for (int i=x.size(); i--; ) {
@@ -435,7 +435,7 @@ namespace Gecode {
     n->n_int = 0;
     n->n_bool = x.size();
     n->t = NT_SUM_BOOL;
-    n->l = n->r = NULL;
+    n->l = n->r = nullptr;
     if (x.size() > 0) {
       n->sum.tb = heap.alloc<Int::Linear::Term<Int::BoolView> >(x.size());
       for (int i=x.size(); i--; ) {
@@ -452,7 +452,7 @@ namespace Gecode {
     n->n_int = 0;
     n->n_bool = x.size();
     n->t = NT_SUM_BOOL;
-    n->l = n->r = NULL;
+    n->l = n->r = nullptr;
     if (x.size() > 0) {
       n->sum.tb = heap.alloc<Int::Linear::Term<Int::BoolView> >(x.size());
       for (int i=x.size(); i--; ) {
@@ -476,7 +476,7 @@ namespace Gecode {
     n->n_int = e.n->n_int;
     n->n_bool = e.n->n_bool;
     n->t = t;
-    n->l = NULL;
+    n->l = nullptr;
     n->r = e.n; n->r->use++;
     n->c = c;
   }
@@ -487,7 +487,7 @@ namespace Gecode {
     n->n_bool = e.n->n_bool;
     n->t = NT_MUL;
     n->l = e.n; n->l->use++;
-    n->r = NULL;
+    n->r = nullptr;
     n->a = a;
   }
 
@@ -496,7 +496,7 @@ namespace Gecode {
     n->n_int = 1;
     n->n_bool = 0;
     n->t = NT_NONLIN;
-    n->l = n->r = NULL;
+    n->l = n->r = nullptr;
     n->a = 0;
     n->sum.ne = e;
   }
@@ -532,7 +532,7 @@ namespace Gecode {
       ti->a=static_cast<int>(m*a); ti->x=x_int; ti++;
       break;
     case NT_NONLIN:
-      ti->a=static_cast<int>(m); ti->x=sum.ne->post(home, NULL, ipls); ti++;
+      ti->a=static_cast<int>(m); ti->x=sum.ne->post(home, nullptr, ipls); ti++;
       break;
     case NT_VAR_BOOL:
       Int::Limits::check(m*a,"MiniModel::LinIntExpr");
@@ -553,7 +553,7 @@ namespace Gecode {
       tb += n_bool;
       break;
     case NT_ADD:
-      if (l == NULL) {
+      if (l == nullptr) {
         Int::Limits::check(m*c,"MiniModel::LinIntExpr");
         d += m*c;
       } else {
@@ -562,7 +562,7 @@ namespace Gecode {
       r->fill(home,ipls,ti,tb,m,d);
       break;
     case NT_SUB:
-      if (l == NULL) {
+      if (l == nullptr) {
         Int::Limits::check(m*c,"MiniModel::LinIntExpr");
         d += m*c;
       } else {

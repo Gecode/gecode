@@ -643,8 +643,9 @@ MMSRC0 = \
 	float-expr.cpp float-rel.cpp float-arith.cpp \
 	reg.cpp optimize.cpp exception.cpp ipl.cpp
 MMHDR0 = \
-	int-rel.hpp float-rel.hpp exception.hpp matrix.hpp \
+	int-expr.hpp int-rel.hpp float-expr.hpp float-rel.hpp \
 	bool-expr.hpp set-expr.hpp set-rel.hpp \
+	exception.hpp matrix.hpp \
 	optimize.hpp reg.hpp ldsb.hpp channel.hpp aliases.hpp \
 	ipl.hpp
 
