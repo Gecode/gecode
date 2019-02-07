@@ -69,6 +69,14 @@ Date: ?-?-?
 New stuff!
 
 [ENTRY]
+Module: minimodel
+What:   bug
+Rank:   minor
+Thanks: Conrad Drescher
+[DESCRIPTION]
+exp(0.0) now correctly evaluates to 1.0 (and not 0.0).
+
+[ENTRY]
 Module: int
 What:   changed
 Rank:   minor

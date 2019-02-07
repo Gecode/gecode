@@ -226,9 +226,10 @@ namespace Gecode { namespace MiniModel {
         {
           assert(n == 1);
           FloatVar x = a[0].post(home);
-          if (x.assigned() && (x.val() == 0.0))
-            y = result(home,ret,x);
-          else {
+          if (x.assigned() && (x.val() == 0.0)) {
+            FloatVar one(home,1.0,1.0);
+            y = result(home,ret,one);
+          } else {
             y = result(home,ret);
             exp(home, x, y);
           }
