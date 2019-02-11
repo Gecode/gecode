@@ -256,9 +256,8 @@ namespace Gecode {
   forceinline void
   ViewTracer<View>::_init(const Space& home,
                           const ViewTraceRecorder<View>& t) {
-    m.acquire();
+    Support::Lock l(m);
     init(home,t);
-    m.release();
   }
   template<class View>
   forceinline void
@@ -266,33 +265,29 @@ namespace Gecode {
                            const ViewTraceRecorder<View>& t,
                            const ViewTraceInfo& vti,
                            int i, typename TraceTraits<View>::TraceDelta& d) {
-    m.acquire();
+    Support::Lock l(m);
     prune(home,t,vti,i,d);
-    m.release();
   }
   template<class View>
   forceinline void
   ViewTracer<View>::_fail(const Space& home,
                           const ViewTraceRecorder<View>& t) {
-    m.acquire();
+    Support::Lock l(m);
     fail(home,t);
-    m.release();
   }
   template<class View>
   forceinline void
   ViewTracer<View>::_fix(const Space& home,
                          const ViewTraceRecorder<View>& t) {
-    m.acquire();
+    Support::Lock l(m);
     fix(home,t);
-    m.release();
   }
   template<class View>
   forceinline void
   ViewTracer<View>::_done(const Space& home,
                           const ViewTraceRecorder<View>& t) {
-    m.acquire();
+    Support::Lock l(m);
     done(home,t);
-    m.release();
   }
 
   template<class View>
@@ -312,23 +307,20 @@ namespace Gecode {
   forceinline void
   Tracer::_propagate(const Space& home,
                      const PropagateTraceInfo& pti) {
-    m.acquire();
+    Support::Lock l(m);
     propagate(home,pti);
-    m.release();
   }
   forceinline void
   Tracer::_commit(const Space& home,
                   const CommitTraceInfo& cti) {
-    m.acquire();
+    Support::Lock l(m);
     commit(home,cti);
-    m.release();
   }
   forceinline void
   Tracer::_post(const Space& home,
                 const PostTraceInfo& pti) {
-    m.acquire();
+    Support::Lock l(m);
     post(home,pti);
-    m.release();
   }
 
   forceinline

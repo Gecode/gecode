@@ -69,6 +69,22 @@ Date: ?-?-?
 New stuff!
 
 [ENTRY]
+Module: kernel
+What:   bug
+Rank:   minor
+Thanks: Conrad Drescher
+[DESCRIPTION]
+Use locks to guard mutexes in case tracers throw exceptions.
+
+[ENTRY]
+Module: search
+What:   bug
+Rank:   minor
+Thanks: Conrad Drescher
+[DESCRIPTION]
+Use locks to guard mutexes in case tracers throw exceptions.
+
+[ENTRY]
 Module: minimodel
 What:   bug
 Rank:   minor

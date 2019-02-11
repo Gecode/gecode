@@ -200,23 +200,20 @@ namespace Gecode {
    */
   forceinline void
   SearchTracer::_round(unsigned int eid) {
-    m.acquire();
+    Support::Lock l(m);
     round(eid);
-    m.release();
   }
 
   forceinline void
   SearchTracer::_skip(const EdgeInfo& ei) {
-    m.acquire();
+    Support::Lock l(m);
     skip(ei);
-    m.release();
   }
 
   forceinline void
   SearchTracer::_node(const EdgeInfo& ei, const NodeInfo& ni) {
-    m.acquire();
+    Support::Lock l(m);
     node(ei,ni);
-    m.release();
   }
 
   forceinline
@@ -255,11 +252,9 @@ namespace Gecode {
 
   forceinline void
   SearchTracer::worker(void) {
-    m.acquire();
-    if (--n_active == 0U) {
+    Support::Lock l(m);
+    if (--n_active == 0U)
       done();
-    }
-    m.release();
   }
 
   forceinline unsigned int

@@ -42,38 +42,37 @@ namespace Gecode {
   Region::Chunk*
   Region::Pool::chunk(void) {
     Chunk* n;
-    m.acquire();
-    if (c != nullptr) {
-      assert(n_c > 0U);
-      n = c; c = c->next; n_c--;
-    } else {
-      n = new Region::Chunk;
+    {
+      Support::Lock l(m);
+      if (c != nullptr) {
+        assert(n_c > 0U);
+        n = c; c = c->next; n_c--;
+      } else {
+        n = new Region::Chunk;
+      }
+      n->reset();
     }
-    n->reset();
-    m.release();
     return n;
   }
   void
   Region::Pool::chunk(Chunk* u) {
-    m.acquire();
+    Support::Lock l(m);
     if (n_c == Kernel::MemoryConfig::n_hc_cache) {
       delete u;
     } else {
       u->next = c; c = u;
       n_c++;
     }
-    m.release();
   }
   Region::Pool::~Pool(void) {
-    m.acquire();
-    // If that were the case there is a memory leak!
+    Support::Lock l(m);
+    // If that were the case there would be a memory leak!
     assert(c != nullptr);
     do {
       Chunk* n=c->next;
       delete c;
       c=n;
     } while (c != nullptr);
-    m.release();
   }
 
   Region::Pool& Region::pool(void) {

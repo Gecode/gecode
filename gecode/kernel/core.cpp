@@ -914,9 +914,10 @@ namespace Gecode {
 
 
   Group::Group(void) {
-    m.acquire();
-    gid = next++;
-    m.release();
+    {
+      Support::Lock l(m);
+      gid = next++;
+    }
     if (gid == GROUPID_MAX)
       throw TooManyGroups("Group::Group");
   }
