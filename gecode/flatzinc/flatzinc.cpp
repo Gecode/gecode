@@ -1904,20 +1904,20 @@ namespace Gecode { namespace FlatZinc {
         double solveTime = (t_solve.stop() / 1000.0);
         double initTime = totalTime - solveTime;
         out << std::endl
-            << "%%%mzn-stat initTime=" << initTime
+            << "%%%mzn-stat: initTime=" << initTime
             << std::endl;      
-        out << "%%%mzn-stat solveTime=" << solveTime
+        out << "%%%mzn-stat: solveTime=" << solveTime
             << std::endl;
-        out << "%%%mzn-stat solutions="
+        out << "%%%mzn-stat: solutions="
             << std::abs(noOfSolutions - findSol) << std::endl
-            << "%%%mzn-stat variables="
+            << "%%%mzn-stat: variables="
             << (intVarCount + boolVarCount + setVarCount) << std::endl
-            << "%%%mzn-stat propagators=" << n_p << std::endl
-            << "%%%mzn-stat propagations=" << sstat.propagate+stat.propagate << std::endl
-            << "%%%mzn-stat nodes=" << stat.node << std::endl
-            << "%%%mzn-stat failures=" << stat.fail << std::endl
-            << "%%%mzn-stat restarts=" << stat.restart << std::endl
-            << "%%%mzn-stat peakDepth=" << stat.depth << std::endl
+            << "%%%mzn-stat: propagators=" << n_p << std::endl
+            << "%%%mzn-stat: propagations=" << sstat.propagate+stat.propagate << std::endl
+            << "%%%mzn-stat: nodes=" << stat.node << std::endl
+            << "%%%mzn-stat: failures=" << stat.fail << std::endl
+            << "%%%mzn-stat: restarts=" << stat.restart << std::endl
+            << "%%%mzn-stat: peakDepth=" << stat.depth << std::endl
             << "%%%mzn-stat-end" << std::endl
             << std::endl;
       }

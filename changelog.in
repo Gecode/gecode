@@ -70,6 +70,13 @@ This release fixes a number of minor issues and adds post events
 to general tracers.
 
 [ENTRY]
+Module: flatzinc
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Add colon to statistics output to conform with FlatZinc specification.
+
+[ENTRY]
 Module: kernel
 What:   bug
 Rank:   minor
