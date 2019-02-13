@@ -64,9 +64,10 @@
 
 [RELEASE]
 Version: 6.1.1
-Date: ?-?-?
+Date: 2019-02-14
 [DESCRIPTION]
-New stuff!
+This release fixes a number of minor issues and adds post events
+to general tracers.
 
 [ENTRY]
 Module: kernel
