@@ -74,6 +74,14 @@ Module: flatzinc
 What:   bug
 Rank:   minor
 [DESCRIPTION]
+Change table and regular predicates to take 1d arrays as arguments.
+Otherwise the generated FlatZinc does not typecheck.
+
+[ENTRY]
+Module: flatzinc
+What:   bug
+Rank:   minor
+[DESCRIPTION]
 Add colon to statistics output to conform with FlatZinc specification.
 
 [ENTRY]

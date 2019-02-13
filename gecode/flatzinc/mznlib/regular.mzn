@@ -31,7 +31,7 @@
 %
 
 predicate gecode_regular(array[int] of var int: x, int: Q, int: S,
-                         array[int,int] of int: d, int: q0, set of int: F);
+                         array[int] of int: d, int: q0, set of int: F);
 
 predicate regular(array[int] of var int: x, int: Q, int: S,
                   array[int,int] of int: d, int: q0, set of int: F) =
@@ -55,5 +55,5 @@ predicate regular(array[int] of var int: x, int: Q, int: S,
     assert(F subset 1..Q,
         "regular: final states in 'F' contain states outside 1..Q",
 
-    gecode_regular(x,Q,S,d,q0,F)
+    gecode_regular(x,Q,S,array1d(d),q0,F)
     ))))));
