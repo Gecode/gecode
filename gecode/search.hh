@@ -1243,15 +1243,6 @@ namespace Gecode {
     PBS(T* s, const Search::Options& o=Search::Options::def);
     /// Initialize with engine builders \a sebs
     PBS(T* s, SEBs& sebs, const Search::Options& o=Search::Options::def);
-    /// Initialize with engine builders \a seb0 and \a seb1
-    PBS(T* s, SEB seb0, SEB seb1,
-        const Search::Options& o=Search::Options::def);
-    /// Initialize with engine builders \a seb0, \a seb1, and \a seb2
-    PBS(T* s, SEB seb0, SEB seb1, SEB seb2,
-        const Search::Options& o=Search::Options::def);
-    /// Initialize with engine builders \a seb0, \a seb1, \a seb2, and \a seb3
-    PBS(T* s, SEB seb0, SEB seb1, SEB seb2, SEB seb3,
-        const Search::Options& o=Search::Options::def);
     /// Whether engine does best solution search
     static const bool best = E<T>::best;
   };

@@ -69,6 +69,14 @@ Date: 2019-??-??
 Let's see.
 
 [ENTRY]
+Module: search
+What:   removed
+Rank:   minor
+[DESCRIPTION]
+The special constructors for PBS with up to four SEB's have been
+removed. Use the SEBs class instead.
+
+[ENTRY]
 Module: int
 What:   new
 Rank:   major
