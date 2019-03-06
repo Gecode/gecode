@@ -1606,13 +1606,25 @@ namespace Gecode {
   GECODE_SET_EXPORT void
   branch(Home home, SetVar x, SetValBranch vals,
          SetVarValPrint vvp=nullptr);
+
   /**
-   * \brief Assign all \a x with value selection \a vals
+   * \brief Assign all \a x with variable selection \a vars and value selection \a vals
    *
    * \ingroup TaskModelSetBranch
    */
   GECODE_SET_EXPORT void
-  assign(Home home, const SetVarArgs& x, SetAssign vals,
+  assign(Home home, const SetVarArgs& x,
+         SetVarBranch vars, SetAssign vals,
+         SetBranchFilter bf=nullptr,
+         SetVarValPrint vvp=nullptr);
+  /**
+   * \brief Assign all \a x with tie-breaking variable selection \a vars and value selection \a vals
+   *
+   * \ingroup TaskModelSetBranch
+   */
+  GECODE_SET_EXPORT void
+  assign(Home home, const SetVarArgs& x,
+         TieBreak<SetVarBranch> vars, SetAssign vals,
          SetBranchFilter bf=nullptr,
          SetVarValPrint vvp=nullptr);
   /**
@@ -1625,6 +1637,34 @@ namespace Gecode {
          SetVarValPrint vvp=nullptr);
 
 }
+
+namespace Gecode {
+
+  /**
+   * \brief Branch over \a x with value selection \a vals
+   *
+   * \ingroup TaskModelSetBranch
+   */
+  void
+  branch(Home home, const SetVarArgs& x,
+         SetValBranch vals,
+         SetBranchFilter bf=nullptr,
+         SetVarValPrint vvp=nullptr);
+
+  /**
+   * \brief Assign all \a x with value selection \a vals
+   *
+   * \ingroup TaskModelSetBranch
+   */
+  GECODE_SET_EXPORT void
+  assign(Home home, const SetVarArgs& x,
+         SetAssign vals,
+         SetBranchFilter bf=nullptr,
+         SetVarValPrint vvp=nullptr);
+
+}
+
+#include <gecode/set/branch.hpp>
 
 // LDSB-related declarations.
 namespace Gecode {

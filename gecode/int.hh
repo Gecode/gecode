@@ -4999,6 +4999,7 @@ namespace Gecode {
 #include <gecode/int/branch/assign.hpp>
 
 namespace Gecode {
+
   /**
    * \brief Branch over \a x with variable selection \a vars and value selection \a vals
    *
@@ -5057,12 +5058,23 @@ namespace Gecode {
          BoolVarValPrint vvp=nullptr);
 
   /**
-   * \brief Assign all \a x with value selection \a vals
+   * \brief Assign all \a x with variable selection \a vars with value selection \a vals
    *
    * \ingroup TaskModelIntBranch
    */
   GECODE_INT_EXPORT void
-  assign(Home home, const IntVarArgs& x, IntAssign vals,
+  assign(Home home, const IntVarArgs& x,
+         IntVarBranch vars, IntAssign vals,
+         IntBranchFilter bf=nullptr,
+         IntVarValPrint vvp=nullptr);
+  /**
+   * \brief Assign all \a x with tie-breaking variable selection \a vars and value selection \a vals
+   *
+   * \ingroup TaskModelIntBranch
+   */
+  GECODE_INT_EXPORT void
+  assign(Home home, const IntVarArgs& x,
+         TieBreak<IntVarBranch> vars, IntAssign vals,
          IntBranchFilter bf=nullptr,
          IntVarValPrint vvp=nullptr);
   /**
@@ -5074,14 +5086,25 @@ namespace Gecode {
   assign(Home home, IntVar x, IntAssign vals,
          IntVarValPrint vvp=nullptr);
   /**
-   * \brief Assign all \a x with value selection \a vals
+   * \brief Assign all \a x with variable selection \a vars with value selection \a vals
    *
    * \ingroup TaskModelIntBranch
    */
   GECODE_INT_EXPORT void
-  assign(Home home, const BoolVarArgs& x, BoolAssign vals,
+  assign(Home home, const BoolVarArgs& x,
+         BoolVarBranch vars, BoolAssign vals,
          BoolBranchFilter bf=nullptr,
          BoolVarValPrint vvp=nullptr);
+  /**
+   * \brief Assign all \a x with tie-breaking variable selection \a vars and value selection \a vals
+   *
+   * \ingroup TaskModelIntBranch
+   */
+  GECODE_INT_EXPORT void
+  assign(Home home, const BoolVarArgs& x,
+         TieBreak<BoolVarBranch> vars, BoolAssign vals,
+         IntBranchFilter bf=nullptr,
+         IntVarValPrint vvp=nullptr);
   /**
    * \brief Assign \a x with value selection \a vals
    *
@@ -5092,6 +5115,50 @@ namespace Gecode {
          BoolVarValPrint vvp=nullptr);
 
 }
+
+namespace Gecode {
+
+  /**
+   * \brief Branch over \a x with value selection \a vals
+   *
+   * \ingroup TaskModelIntBranch
+   */
+  void
+  branch(Home home, const IntVarArgs& x, IntValBranch vals,
+         IntBranchFilter bf=nullptr,
+         IntVarValPrint vvp=nullptr);
+  /**
+   * \brief Branch over \a x with value selection \a vals
+   *
+   * \ingroup TaskModelIntBranch
+   */
+  void
+  branch(Home home, const BoolVarArgs& x, BoolValBranch vals,
+         BoolBranchFilter bf=nullptr,
+         BoolVarValPrint vvp=nullptr);
+
+  /**
+   * \brief Assign all \a x with value selection \a vals
+   *
+   * \ingroup TaskModelIntBranch
+   */
+  void
+  assign(Home home, const IntVarArgs& x, IntAssign vals,
+         IntBranchFilter bf=nullptr,
+         IntVarValPrint vvp=nullptr);
+  /**
+   * \brief Assign all \a x with value selection \a vals
+   *
+   * \ingroup TaskModelIntBranch
+   */
+  void
+  assign(Home home, const BoolVarArgs& x, BoolAssign vals,
+         BoolBranchFilter bf=nullptr,
+         BoolVarValPrint vvp=nullptr);
+
+}
+
+#include <gecode/int/branch.hpp>
 
 namespace Gecode {
 

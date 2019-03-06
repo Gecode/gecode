@@ -349,7 +349,7 @@ INTHDR0 = \
 	branch/traits.hpp branch/var.hpp branch/val.hpp branch/assign.hpp \
 	branch/view-values.hpp branch/merit.hpp \
 	branch/val-sel.hpp branch/val-commit.hpp branch/ngl.hpp \
-  branch/cbs.hpp \
+	branch/cbs.hpp branch.hpp \
 	count.hh count/rel.hpp \
 	count/int-base.hpp count/int-eq.hpp \
 	count/int-gq.hpp count/int-lq.hpp \
@@ -495,7 +495,7 @@ FLOATHDR0 = \
 	rel.hh rel/eq.hpp rel/lq-le.hpp rel/nq.hpp \
 	bool.hh bool/ite.hpp \
 	branch.hh branch/afc.hpp branch/action.hpp branch/chb.hpp \
-	branch/traits.hpp \
+	branch/traits.hpp branch.hpp \
 	branch/var.hpp branch/val.hpp branch/assign.hpp \
 	branch/val-commit.hpp branch/val-sel.hpp branch/merit.hpp \
 	num.hpp val.hpp rounding.hpp nextafter.hpp \
@@ -589,7 +589,7 @@ SETHDR0 =								     \
 	precede.hh precede/single.hpp \
 	rel-op.hh					     \
 	branch.hh branch/afc.hpp branch/action.hpp branch/chb.hpp \
-	branch/traits.hpp \
+	branch/traits.hpp branch.hpp \
 	branch/var.hpp branch/val.hpp branch/assign.hpp \
 	branch/merit.hpp branch/val-commit.hpp branch/val-sel.hpp \
 	branch/ngl.hpp \

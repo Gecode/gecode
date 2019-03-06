@@ -68,6 +68,54 @@ Date: 2019-??-??
 [DESCRIPTION]
 Let's see.
 
+[ENTRY]
+Module: int
+What:   new
+Rank:   major
+[DESCRIPTION]
+Variables to be assigned during search can now be selected with
+all available selection criteria available for branching.
+
+[ENTRY]
+Module: int
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Omitting the variable selection criterion is equivalent to
+INT_VAR_NONE().
+
+[ENTRY]
+Module: set
+What:   new
+Rank:   major
+[DESCRIPTION]
+Variables to be assigned during search can now be selected with
+all available selection criteria available for branching.
+
+[ENTRY]
+Module: set
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Omitting the variable selection criterion is equivalent to
+SET_VAR_NONE().
+
+[ENTRY]
+Module: float
+What:   new
+Rank:   major
+[DESCRIPTION]
+Variables to be assigned during search can now be selected with
+all available selection criteria available for branching.
+
+[ENTRY]
+Module: float
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Omitting the variable selection criterion is equivalent to
+FLOAT_VAR_NONE().
+
 
 [RELEASE]
 Version: 6.1.1

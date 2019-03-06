@@ -1949,12 +1949,23 @@ namespace Gecode {
          FloatVarValPrint vvp=nullptr);
 
   /**
-   * \brief Assign all \a x with value selection \a vals
+   * \brief Assign all \a x with variable selection \a vars and value selection \a vals
    *
    * \ingroup TaskModelFloatBranch
    */
   GECODE_FLOAT_EXPORT void
-  assign(Home home, const FloatVarArgs& x, FloatAssign vals,
+  assign(Home home, const FloatVarArgs& x,
+         FloatVarBranch vars, FloatAssign vals,
+         FloatBranchFilter bf=nullptr,
+         FloatVarValPrint vvp=nullptr);
+  /**
+   * \brief Assign all \a x with tie-breaking variable selection \a vars and value selection \a vals
+   *
+   * \ingroup TaskModelFloatBranch
+   */
+  GECODE_FLOAT_EXPORT void
+  assign(Home home, const FloatVarArgs& x,
+         TieBreak<FloatVarBranch> vars, FloatAssign vals,
          FloatBranchFilter bf=nullptr,
          FloatVarValPrint vvp=nullptr);
   /**
@@ -1965,9 +1976,34 @@ namespace Gecode {
   GECODE_FLOAT_EXPORT void
   assign(Home home, FloatVar x, FloatAssign vals,
          FloatVarValPrint vvp=nullptr);
-  //@}
 
 }
+
+namespace Gecode {
+
+  /**
+   * \brief Branch over \a x with value selection \a vals
+   *
+   * \ingroup TaskModelFloatBranch
+   */
+  void
+  branch(Home home, const FloatVarArgs& x, FloatValBranch vals,
+         FloatBranchFilter bf=nullptr,
+         FloatVarValPrint vvp=nullptr);
+
+  /**
+   * \brief Assign all \a x with value selection \a vals
+   *
+   * \ingroup TaskModelFloatBranch
+   */
+  void
+  assign(Home home, const FloatVarArgs& x, FloatAssign vals,
+         FloatBranchFilter bf=nullptr,
+         FloatVarValPrint vvp=nullptr);
+
+}
+
+#include <gecode/float/branch.hpp>
 
 namespace Gecode {
 
