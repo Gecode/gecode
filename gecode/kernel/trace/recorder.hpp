@@ -46,7 +46,7 @@ namespace Gecode {
     TE_FAIL  = 1 << 3, ///< Trace fail events
     TE_DONE  = 1 << 4, ///< Trace done events
     //@}
-    /// \name Events for tracers
+    /// \name Events for general tracers
     TE_PROPAGATE = 1 << 5, ///< Trace propagator executions
     TE_COMMIT    = 1 << 6, ///< Trace commit operations by branchers
     TE_POST      = 1 << 7  ///< Trace propagator posting

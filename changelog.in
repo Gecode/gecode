@@ -69,6 +69,14 @@ Date: 2019-??-??
 Let's see.
 
 [ENTRY]
+Module: kernel
+What:   change
+Rank:   minor
+Thanks:	Conrad Drescher
+[DESCRIPTION]
+Added TE_POST for default arguments for general tracers.
+
+[ENTRY]
 Module: search
 What:   removed
 Rank:   minor

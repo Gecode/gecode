@@ -269,7 +269,7 @@ namespace Gecode {
    */
   GECODE_KERNEL_EXPORT void
   trace(Home home, TraceFilter tf,
-        int te = (TE_PROPAGATE | TE_COMMIT),
+        int te = (TE_PROPAGATE | TE_COMMIT | TE_POST),
         Tracer& t = StdTracer::def);
   /**
    * \brief Create tracer
@@ -277,7 +277,7 @@ namespace Gecode {
    */
   void
   trace(Home home,
-        int te = (TE_PROPAGATE | TE_COMMIT),
+        int te = (TE_PROPAGATE | TE_COMMIT | TE_POST),
         Tracer& t = StdTracer::def);
 
 }
