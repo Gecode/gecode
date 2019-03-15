@@ -3100,6 +3100,20 @@ namespace Gecode {
    */
   //@{
 
+  /** \brief Post propagators for ordering two tasks
+   *
+   * Order two tasks with start times \f$s_0\f$ and \f$s_1\f$ with
+   * processing times \f$p_0\f$ and \f$p_1\f$ according to Boolean variable
+   * \a b (if \a b is zero \f$s_0\f$ starts before \f$s_1\f$).
+   *
+   * Throws an exception of Int::OutOfLimits, if the durations or
+   * the sum of durations and start times are too large.
+   *
+   */
+  GECODE_INT_EXPORT void
+  order(Home home, IntVar s0, int p0, IntVar s1, int p1, BoolVar b,
+        IntPropLevel ipl=IPL_DEF);
+
   /**
    * \brief Post propagators for the cumulatives constraint
    *

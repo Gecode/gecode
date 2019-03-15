@@ -69,6 +69,14 @@ Date: 2019-??-??
 Let's see.
 
 [ENTRY]
+Module: int
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Added order propagator ordering two tasks according to a Boolean
+variable.
+
+[ENTRY]
 Module: kernel
 What:   change
 Rank:   minor
