@@ -881,7 +881,7 @@ INTEXAMPLESRC0 =						\
 	word-square crossword open-shop car-sequencing sat      \
 	bin-packing knights tsp perfect-square schurs-lemma     \
 	dominating-queens colored-matrix multi-bin-packing	\
-	qcp
+	qcp job-shop
 
 
 INTEXAMPLEHDR  = $(INTEXAMPLEHDR0:%=examples/%.hpp)
