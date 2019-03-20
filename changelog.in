@@ -69,6 +69,14 @@ Date: 2019-??-??
 Let's see.
 
 [ENTRY]
+Module: float
+What:   bug
+Rank:   minor
+Thanks:	Kurt Van Den Branden
+[DESCRIPTION]
+Restore floating point rounding mode under Windows.
+
+[ENTRY]
 Module: kernel
 What:   change
 Rank:   minor
