@@ -69,6 +69,15 @@ Date: 2019-??-??
 Let's see.
 
 [ENTRY]
+Module: kernel
+What:   change
+Rank:   major
+Thanks:	Conrad Drescher
+[DESCRIPTION]
+The logic for recording events for general tracers was seriously
+broken as events after a call to status() have been ignored.
+
+[ENTRY]
 Module: float
 What:   bug
 Rank:   minor
