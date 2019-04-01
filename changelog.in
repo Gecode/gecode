@@ -69,6 +69,13 @@ Date: 2019-??-??
 Let's see.
 
 [ENTRY]
+Module: int
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Add BoolVar versions of argmax and argmin.
+
+[ENTRY]
 Module: kernel
 What:   change
 Rank:   major

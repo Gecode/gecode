@@ -55,6 +55,12 @@ namespace Gecode { namespace Int {
   public:
     typedef BoolVarArgs argtype;
   };
+  /// VarArg type for Boolean views
+  template<>
+  class ViewToVarArg<NegBoolView> {
+  public:
+    typedef BoolVarArgs argtype;
+  };
 
   template<class View>
   forceinline IdxView<View>*
