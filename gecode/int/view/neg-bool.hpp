@@ -97,18 +97,70 @@ namespace Gecode { namespace Int {
     return x.zero(home);
   }
 
+  /* Domain update by value
+   *
+   */
 
+  forceinline ModEvent
+  NegBoolView::lq(Space& home, int n) {
+    return n==0 ? x.one(home) : (n < 0 ? ME_BOOL_FAILED : ME_BOOL_NONE);
+  }
+  forceinline ModEvent
+  NegBoolView::lq(Space& home, long long int n) {
+    return n==0 ? x.one(home) : (n < 0 ? ME_BOOL_FAILED : ME_BOOL_NONE);
+  }
+  forceinline ModEvent
+  NegBoolView::le(Space& home, int n) {
+    return n==1 ? x.one(home) : (n < 1 ? ME_BOOL_FAILED : ME_BOOL_NONE);
+  }
+  forceinline ModEvent
+  NegBoolView::le(Space& home, long long int n) {
+    return n==1 ? x.one(home) : (n < 1 ? ME_BOOL_FAILED : ME_BOOL_NONE);
+  }
+  forceinline ModEvent
+  NegBoolView::gq(Space& home, int n) {
+    return n==1 ? x.zero(home) : (n <= 0 ? ME_BOOL_NONE : ME_BOOL_FAILED);
+  }
+  forceinline ModEvent
+  NegBoolView::gq(Space& home, long long int n) {
+    return n==1 ? x.zero(home) : (n <= 0 ? ME_BOOL_NONE : ME_BOOL_FAILED);
+  }
+  forceinline ModEvent
+  NegBoolView::gr(Space& home, int n) {
+    return n==0 ? x.zero(home) : (n >= 1 ? ME_BOOL_FAILED : ME_BOOL_NONE);
+  }
+  forceinline ModEvent
+  NegBoolView::gr(Space& home, long long int n) {
+    return n==0 ? x.zero(home) : (n >= 1 ? ME_BOOL_FAILED : ME_BOOL_NONE);
+  }
+  forceinline ModEvent
+  NegBoolView::nq(Space& home, int n) {
+    return n==0 ? x.zero(home) : (n==1 ? x.one(home) : ME_BOOL_NONE);
+  }
+  forceinline ModEvent
+  NegBoolView::nq(Space& home, long long int n) {
+    return n==0 ? x.zero(home) : (n==1 ? x.one(home) : ME_BOOL_NONE);
+  }
+  forceinline ModEvent
+  NegBoolView::eq(Space& home, int n) {
+    return n==0 ? x.one(home) : (n==1 ? x.zero(home) : ME_BOOL_FAILED);
+  }
+  forceinline ModEvent
+  NegBoolView::eq(Space& home, long long int n) {
+    return n==0 ? x.one(home) : (n==1 ? x.zero(home) : ME_BOOL_FAILED);
+  }
+  
   /*
    * Value access
    *
    */
   forceinline int
   NegBoolView::min(void) const {
-    return x.max();
+    return 1-x.max();
   }
   forceinline int
   NegBoolView::max(void) const {
-    return x.min();
+    return 1-x.min();
   }
   forceinline int
   NegBoolView::val(void) const {

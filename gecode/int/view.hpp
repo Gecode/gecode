@@ -1619,6 +1619,39 @@ namespace Gecode { namespace Int {
     ModEvent zero_none(Space& home);
     //@}
 
+    /// \name Domain update by value
+    //@{
+    /// Restrict domain values to be less or equal than \a n
+    ModEvent lq(Space& home, int n);
+    /// Restrict domain values to be less or equal than \a n
+    ModEvent lq(Space& home, long long int n);
+
+    /// Restrict domain values to be less than \a n
+    ModEvent le(Space& home, int n);
+    /// Restrict domain values to be less than \a n
+    ModEvent le(Space& home, long long int n);
+
+    /// Restrict domain values to be greater or equal than \a n
+    ModEvent gq(Space& home, int n);
+    /// Restrict domain values to be greater or equal than \a n
+    ModEvent gq(Space& home, long long int n);
+
+    /// Restrict domain values to be greater than \a n
+    ModEvent gr(Space& home, int n);
+    /// Restrict domain values to be greater than \a n
+    ModEvent gr(Space& home, long long int n);
+
+    /// Restrict domain values to be different from \a n
+    ModEvent nq(Space& home, int n);
+    /// Restrict domain values to be different from \a n
+    ModEvent nq(Space& home, long long int n);
+
+    /// Restrict domain values to be equal to \a n
+    ModEvent eq(Space& home, int n);
+    /// Restrict domain values to be equal to \a n
+    ModEvent eq(Space& home, long long int n);
+    //@}
+    
     /// \name Value access
     //@{
     /// Return minimum of domain
