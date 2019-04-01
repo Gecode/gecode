@@ -69,6 +69,21 @@ Date: 2019-??-??
 Let's see.
 
 [ENTRY]
+Module: flatzinc
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Support minimum_arg_bool and maximum_arg_bool constraints.
+
+[ENTRY]
+Module: flatzinc
+What:   change
+Rank:   minor
+[DESCRIPTION]
+Use native offset calculation instead of additional constraints
+for argmin/argmax constraints.
+
+[ENTRY]
 Module: int
 What:   new
 Rank:   minor
