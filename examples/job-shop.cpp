@@ -203,7 +203,7 @@ public:
       _fail_probe("fail-probe","failure limit per probe",
                   JobShopConfig::fail_probe),
       _time_probe("time-probe","time-out for probing (in milliseconds)",
-                   JobShopConfig::time_adjust),                   
+                   JobShopConfig::time_probe),                   
       _time_adjust("time-adjust","time-out for adjusting (in milliseconds)",
                    JobShopConfig::time_adjust),                   
       _time_solve("time-solve","time-out for solving (in milliseconds)",
@@ -433,7 +433,7 @@ protected:
             (start[fst[i]].size() + start[fst[i]].size()));
   }
   /// Trampoline function for Action-based cost
-  static double actionmerit(const Space& home, BoolVar x, int i) {
+  static double actionmerit(const Space& home, BoolVar, int i) {
     return static_cast<const JobShopSolve&>(home).action(i);
   }
   /// CHB information
@@ -444,7 +444,7 @@ protected:
             (start[fst[i]].size() + start[fst[i]].size()));
   }
   /// Trampoline function for CHB-based cost
-  static double chbmerit(const Space& home, BoolVar x, int i) {
+  static double chbmerit(const Space& home, BoolVar, int i) {
     return static_cast<const JobShopSolve&>(home).chb(i);
   }
   /// Random number generator for probing and relaxation
