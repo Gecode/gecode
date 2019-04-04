@@ -69,6 +69,20 @@ Date: 2019-??-??
 Let's see.
 
 [ENTRY]
+Module: example
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Added job-shop scheduling example.
+
+[ENTRY]
+Module: int
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Added order constraint for two unary scheduling tasks.
+
+[ENTRY]
 Module: flatzinc
 What:   new
 Rank:   minor
