@@ -286,15 +286,12 @@ public:
     // Endtimes for each job
     IntVarArgs end(*this, n, 0, spec.upper());
 
-    // Precedence constraints
+    // Precedence constraints and makespan
     for (int i=0; i<n; i++) {
       for (int j=1; j<m; j++)
         rel(*this, start[i*m+j-1] + spec.duration(i,j) <= start[i*m+j]);
-      rel(*this, start[i*m+m-1] + spec.duration(i,m-1) == end[i]);
+      rel(*this, start[i*m+m-1] + spec.duration(i,m-1) <= makespan);
     }
-
-    // Makespan
-    max(*this, end, makespan);
   }
   /// Do not overload machines
   void nooverload(void) {
@@ -396,6 +393,7 @@ public:
         Gecode::branch(*this, start, INT_VAR_RND(r), INT_VAL_SPLIT_MIN());
       break;
     }
+    assign(*this, makespan, INT_ASSIGN_MIN());
   }
   /// Constructor for cloning \a s
   JobShopProbe(JobShopProbe& s)
@@ -489,8 +487,8 @@ public:
     for (int j=0; j<m; j++) {
       for (int i1=0; i1<n; i1++)
         for (int i2=i1+1; i2<n; i2++) {
-          if (false && dur[j*n+i1] > dur[j*n+i2]) {
-                       order(*this,
+          if (dur[j*n+i1] > dur[j*n+i2]) {
+            order(*this,
                   start[jobs[j*n+i1]], dur[j*n+i1],
                   start[jobs[j*n+i2]], dur[j*n+i2],
                   sorder[l]);
@@ -561,6 +559,7 @@ public:
       break;
     }
     assign(*this, start, INT_VAR_MIN_MIN(), INT_ASSIGN_MIN());
+    assign(*this, makespan, INT_ASSIGN_MIN());
   }
   /// Constructor for cloning \a s
   JobShopSolve(JobShopSolve& s)
@@ -572,18 +571,6 @@ public:
   copy(void) {
     return new JobShopSolve(*this);
   }
-  /// Master function to not restart when a solution is found
-  virtual bool
-  master(const MetaInfo& mi) {
-    if (mi.type() == MetaInfo::RESTART) {
-      if (mi.last() != nullptr)
-        constrain(*mi.last());
-      mi.nogoods().post(*this);
-      return false;
-    }
-    return Space::master(mi);
-  }
-
 };
 
 /// Stop object combining time and failuresa
@@ -631,6 +618,12 @@ void
 solve(const JobShopOptions& opt) {
   Rnd rnd(opt.seed());
 
+  /*
+   * Invariant:
+   *  - There is a solution with makespan u,
+   *  - There is no solution with makespan l
+   */
+
   int l, u;
 
   {
@@ -644,7 +637,7 @@ solve(const JobShopOptions& opt) {
       return;
     }
 
-    l = master->cost().min();
+    l = master->cost().min()-1;
     u = master->cost().max();
 
     FailTimeStop fts(opt.fail_probe(),opt.time_probe());
@@ -703,14 +696,13 @@ solve(const JobShopOptions& opt) {
       CommonOptions so(opt);
       so.stop = Search::Stop::time(opt.time_adjust());
       bool stopped = false;
-      int m = l;
       while (l < u-1) {
         std::cout << "\t\tBounds: [" << l << "," << u << "]"
                   << std::endl;
         JobShopSolve* jss = static_cast<JobShopSolve*>(master->clone());
-        int o = (m + u) / 2;
+        int m = (l + u) / 2;
         rel(*jss, jss->cost() >= l);
-        rel(*jss, jss->cost() <= o);
+        rel(*jss, jss->cost() <= m);
         so.cutoff = Search::Cutoff::geometric(JobShopConfig::restart_scale,
                                               JobShopConfig::restart_base);
         RBS<JobShopSolve,DFS> rbs(jss,so);
@@ -726,7 +718,7 @@ solve(const JobShopOptions& opt) {
           stopped = true;
           break;
         } else {
-          m = l = o;
+          l = m+1;
         }
       }
 
