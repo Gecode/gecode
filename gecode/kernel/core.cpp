@@ -384,9 +384,7 @@ namespace Gecode {
       d_stable: ;
       } else {
         // Support disabled propagators and tracing
-        // Find a non-disabled tracer recorder (possibly null)
-        TraceRecorder* tr = findtracerecorder();
-        ViewTraceInfo vti; vti.other();
+
 #define GECODE_STATUS_TRACE(q,s) \
   if ((tr != NULL) && (tr->events() & TE_PROPAGATE) && \
       (tr->filter()(p->group()))) {                    \
@@ -395,12 +393,16 @@ namespace Gecode {
     tr->tracer()._propagate(*this,pti);                \
   }
 
+        // Find a non-disabled tracer recorder (possibly null)
+        TraceRecorder* tr = findtracerecorder();
+        // Remember post information
+        ViewTraceInfo vti(pc.p.vti);
         goto t_unstable;
+
       t_execute:
         stat.propagate++;
         if (p->disabled())
           goto t_put_into_idle;
-        vti = pc.p.vti;
         pc.p.vti.propagator(*p);
         // Keep old modification event delta
         med_o = p->u.med;
@@ -463,8 +465,11 @@ namespace Gecode {
           GECODE_NEVER;
         }
       t_stable:
+        // Restore post information
         pc.p.vti = vti;
+
 #undef GECODE_STATUS_TRACE
+
       }
     }
 

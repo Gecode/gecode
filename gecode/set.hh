@@ -1656,7 +1656,7 @@ namespace Gecode {
    *
    * \ingroup TaskModelSetBranch
    */
-  GECODE_SET_EXPORT void
+  void
   assign(Home home, const SetVarArgs& x,
          SetAssign vals,
          SetBranchFilter bf=nullptr,

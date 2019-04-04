@@ -1022,12 +1022,26 @@ namespace Gecode { namespace FlatZinc {
 
     void p_minimum_arg(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
       IntVarArgs iv = s.arg2intvarargs(ce[0]);
-      argmin(s, iv, s.arg2IntVar(ce[1]), true, s.ann2ipl(ann));
+      int offset = ce[1]->getInt();
+      argmin(s, iv, offset, s.arg2IntVar(ce[2]), true, s.ann2ipl(ann));
     }
 
     void p_maximum_arg(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
       IntVarArgs iv = s.arg2intvarargs(ce[0]);
-      argmax(s, iv, s.arg2IntVar(ce[1]), true, s.ann2ipl(ann));
+      int offset = ce[1]->getInt();
+      argmax(s, iv, offset, s.arg2IntVar(ce[2]), true, s.ann2ipl(ann));
+    }
+
+    void p_minimum_arg_bool(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
+      BoolVarArgs bv = s.arg2boolvarargs(ce[0]);
+      int offset = ce[1]->getInt();
+      argmin(s, bv, offset, s.arg2IntVar(ce[2]), true, s.ann2ipl(ann));
+    }
+
+    void p_maximum_arg_bool(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
+      BoolVarArgs bv = s.arg2boolvarargs(ce[0]);
+      int offset = ce[1]->getInt();      
+      argmax(s, bv, offset, s.arg2IntVar(ce[2]), true, s.ann2ipl(ann));
     }
 
     void p_regular(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
@@ -1562,8 +1576,10 @@ namespace Gecode { namespace FlatZinc {
           &p_global_cardinality_low_up_closed);
         registry().add("array_int_minimum", &p_minimum);
         registry().add("array_int_maximum", &p_maximum);
-        registry().add("gecode_minimum_arg_int", &p_minimum_arg);
-        registry().add("gecode_maximum_arg_int", &p_maximum_arg);
+        registry().add("gecode_minimum_arg_int_offset", &p_minimum_arg);
+        registry().add("gecode_maximum_arg_int_offset", &p_maximum_arg);
+        registry().add("gecode_minimum_arg_bool_offset", &p_minimum_arg_bool);
+        registry().add("gecode_maximum_arg_bool_offset", &p_maximum_arg_bool);
         registry().add("array_int_maximum", &p_maximum);
         registry().add("gecode_regular", &p_regular);
         registry().add("sort", &p_sort);

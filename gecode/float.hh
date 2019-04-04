@@ -135,8 +135,8 @@ namespace Gecode { namespace Float {
    *
    */
   /// Rounding Base class (safe version)
-  typedef gecode_boost::numeric::interval_lib::rounded_arith_std<FloatNum>
-    RoundingBase;
+  typedef gecode_boost::numeric::interval_lib::save_state< gecode_boost::numeric::interval_lib::rounded_arith_std<FloatNum> >
+	RoundingBase;
 
 #else
 
@@ -1990,7 +1990,6 @@ namespace Gecode {
   branch(Home home, const FloatVarArgs& x, FloatValBranch vals,
          FloatBranchFilter bf=nullptr,
          FloatVarValPrint vvp=nullptr);
-
   /**
    * \brief Assign all \a x with value selection \a vals
    *

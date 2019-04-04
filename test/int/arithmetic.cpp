@@ -894,7 +894,173 @@ namespace Test { namespace Int {
        }
      };
 
+     /// %Test for Boolean argument maximum constraint
+     class ArgMaxBool : public Test {
+     protected:
+       /// Offset to be used
+       int offset;
+       /// Whether to use tie-breaking
+       bool tiebreak;
+     public:
+       /// Create and register test
+       ArgMaxBool(int n, int o, bool tb)
+         : Test("Arithmetic::ArgMaxBool::"+str(o)+"::"+str(tb)+"::"+str(n),
+                n+1,0,n+1,
+                false,tb ? Gecode::IPL_DEF : Gecode::IPL_DOM),
+           offset(o), tiebreak(tb) {}
+       /// %Test whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         int n=x.size()-1;
+         if ((x[n] < offset) || (x[n] >= n + offset))
+           return false;
+         int m=x[0]; int p=0;
+         if (x[0] > 1)
+           return false;
+         for (int i=1; i<n; i++) {
+           if (x[i] > 1)
+             return false;
+           if (x[i] > m) {
+             p=i; m=x[i];
+           }
+         }
+         return tiebreak ? (p + offset == x[n]) : (m == x[x[n]-offset]);
+       }
+       /// Post constraint on \a x
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
+         int n=x.size()-1;
+         Gecode::BoolVarArgs m(n);
+         for (int i=0; i<n; i++)
+           m[i]=channel(home,x[i]);
+         Gecode::argmax(home, m, offset, x[n], tiebreak);
+       }
+     };
 
+     /// %Test for argument maximum constraint with shared variables
+     class ArgMaxBoolShared : public Test {
+     protected:
+       /// Whether to use tie-breaking
+       bool tiebreak;
+     public:
+       /// Create and register test
+       ArgMaxBoolShared(int n, bool tb)
+         : Test("Arithmetic::ArgMaxBool::Shared::"+str(tb)+"::"+str(n),n+1,0,n+1,
+                false),
+           tiebreak(tb)  {
+         testfix=false;
+       }
+       /// %Test whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         int n=x.size()-1;
+         if ((x[n] < 0) || (x[n] >= 2*n))
+           return false;
+         Gecode::IntArgs y(2*n);
+         for (int i=0; i<n; i++)
+           y[2*i+0]=y[2*i+1]=x[i];
+         int m=y[0]; int p=0;
+         if (y[0] > 1)
+           return false;
+         for (int i=1; i<2*n; i++) {
+           if (y[i] > 1)
+             return false;
+           if (y[i] > m) {
+             p=i; m=y[i];
+           }
+         }
+         return tiebreak ? (p == x[n]) : (m == y[x[n]]);
+       }
+       /// Post constraint on \a x
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
+         int n=x.size()-1;
+         Gecode::BoolVarArgs m(2*n);
+         for (int i=0; i<n; i++)
+           m[2*i+0]=m[2*i+1]=channel(home,x[i]);
+         Gecode::argmax(home, m, x[n], tiebreak);
+       }
+     };
+
+     /// %Test for argument minimum constraint
+     class ArgMinBool : public Test {
+     protected:
+       /// Which offset to use
+       int offset;
+       /// Whether to use tie-breaking
+       bool tiebreak;
+     public:
+       /// Create and register test
+       ArgMinBool(int n, int o, bool tb)
+         : Test("Arithmetic::ArgMinBool::"+str(o)+"::"+str(tb)+"::"+str(n),
+                n+1,0,n+1,
+                false,tb ? Gecode::IPL_DEF : Gecode::IPL_DOM),
+           offset(o), tiebreak(tb)  {}
+       /// %Test whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         int n=x.size()-1;
+         if ((x[n] < offset) || (x[n] >= n + offset))
+           return false;
+         int m=x[0]; int p=0;
+         if (x[0] < 0 || x[0] > 1)
+           return false;
+         for (int i=1; i<n; i++) {
+           if (x[i] < 0 || x[i] > 1)
+             return false;
+           if (x[i] < m) {
+             p=i; m=x[i];
+           }
+         }
+         return tiebreak ? (p+offset == x[n]) : (m == x[x[n]-offset]);
+       }
+       /// Post constraint on \a x
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
+         int n=x.size()-1;
+         Gecode::BoolVarArgs m(n);
+         for (int i=0; i<n; i++)
+           m[i]=channel(home,x[i]);
+         Gecode::argmin(home, m, offset, x[n], tiebreak);
+       }
+     };
+
+     /// %Test for argument minimum constraint with shared variables
+     class ArgMinBoolShared : public Test {
+     protected:
+       /// Whether to use tie-breaking
+       bool tiebreak;
+     public:
+       /// Create and register test
+       ArgMinBoolShared(int n, bool tb)
+         : Test("Arithmetic::ArgMinBool::Shared::"+str(tb)+"::"+str(n),n+1,0,n+1,
+                false),
+           tiebreak(tb) {
+         testfix=false;
+       }
+       /// %Test whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         int n=x.size()-1;
+         if ((x[n] < 0) || (x[n] >= 2*n))
+           return false;
+         Gecode::IntArgs y(2*n);
+         for (int i=0; i<n; i++)
+           y[2*i+0]=y[2*i+1]=x[i];
+         int m=y[0]; int p=0;
+         if (y[0] > 1)
+           return false;
+         for (int i=1; i<2*n; i++) {
+           if (y[i] > 1)
+             return false;
+           if (y[i] < m) {
+             p=i; m=y[i];
+           }
+         }
+         return tiebreak ? (p == x[n]) : (m == y[x[n]]);
+       }
+       /// Post constraint on \a x
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
+         int n=x.size()-1;
+         Gecode::BoolVarArgs m(2*n);
+         for (int i=0; i<n; i++)
+           m[2*i+0]=m[2*i+1]=channel(home,x[i]);
+         Gecode::argmin(home, m, x[n], tiebreak);
+       }
+     };
 
      /// Help class to create and register tests
      class Create {
@@ -1069,6 +1235,19 @@ namespace Test { namespace Int {
            (void) new ArgMin(i,0,false);
            (void) new ArgMin(i,1,false);
            (void) new ArgMinShared(i,false);
+
+           (void) new ArgMaxBool(i,0,true);
+           (void) new ArgMaxBool(i,1,true);
+           (void) new ArgMaxBoolShared(i,true);
+           (void) new ArgMinBool(i,0,true);
+           (void) new ArgMinBool(i,1,true);
+           (void) new ArgMinBoolShared(i,true);
+           (void) new ArgMaxBool(i,0,false);
+           (void) new ArgMaxBool(i,1,false);
+           (void) new ArgMaxBoolShared(i,false);
+           (void) new ArgMinBool(i,0,false);
+           (void) new ArgMinBool(i,1,false);
+           (void) new ArgMinBoolShared(i,false);
          }
        }
      };
