@@ -45,6 +45,24 @@
 
 namespace Gecode { namespace Kernel {
 
+  /// Occurence information for a view
+  template<class View>
+  class ViewOcc {
+  public:
+    /// The view
+    View x;
+    /// The original index in the array
+    int i;
+    /// Sorting order
+    bool operator <(const ViewOcc& y) const;
+  };
+
+  template<class View>
+  forceinline bool
+  ViewOcc<View>::operator <(const ViewOcc& y) const {
+    return x < y.x;
+  }
+
   /// Check whether \a p has duplicates among its \a n elements (changes \a p)
   GECODE_KERNEL_EXPORT
   bool duplicates(void** p, int n);
@@ -1399,12 +1417,32 @@ namespace Gecode {
   ViewArray<View>::unique(void) {
     if (n < 2)
       return;
-    Support::quicksort<View>(x,n);
-    int j = 0;
-    for (int i=1; i<n; i++)
-      if (x[j] != x[i])
-        x[++j] = x[i];
-    n = j+1;
+    Region r;
+    Kernel::ViewOcc<View>* o = r.alloc<Kernel::ViewOcc<View>>(n);
+    for (int i=0; i<n; i++) {
+      o[i].x = x[i]; o[i].i = i;
+    }
+    Support::quicksort<Kernel::ViewOcc<View>>(o,n);
+    // Assign bucket numbers
+    int* bkt = r.alloc<int>(n);
+    int b = 0;
+    bkt[o[0].i] = b;
+    for (int i=1; i<n; i++) {
+      if (o[i-1].x != o[i].x)
+        b++;
+      bkt[o[i].i] = b;
+    }
+    // Eliminate duplicate elements
+    Support::BitSet<Region> seen(r,static_cast<unsigned int>(b+1));
+    int j=0;
+    for (int i=0; i<n; i++)
+      if (!seen.get(bkt[i])) {
+        x[j++]=x[i]; seen.set(bkt[i]);
+      } else {
+        x[j]=x[i];
+      }
+    assert(j == b+1);
+    n = j;
   }
 
   template<class View>

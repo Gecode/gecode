@@ -69,6 +69,19 @@ Date: 2019-??-??
 Let's see.
 
 [ENTRY]
+Module: kernel
+What:   bug
+Rank:   major
+[DESCRIPTION]
+For the combination of some constraints (min, max, nvalues, and
+some constraints over Boolean variables) with shared variable
+selection branching (that is, AFC, Action, and CHB) the behavior
+of Gecode was indeterminstic. The indeterminism was based on
+using memory addresses for determining the order of variables in
+some propagators which in turn affected which propagator might
+record failure first and hence influenced the branching decisions.
+
+[ENTRY]
 Module: example
 What:   new
 Rank:   minor
