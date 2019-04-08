@@ -82,6 +82,18 @@ some propagators which in turn affected which propagator might
 record failure first and hence influenced the branching decisions.
 
 [ENTRY]
+Module: int
+What:   bug
+Rank:   major
+[DESCRIPTION]
+For the combination of binpacking and linear constraints with
+shared variable selection branching (that is, AFC, Action, and
+CHB) the behavior of Gecode was indeterminstic. The indeterminism
+was based on using memory addresses for determining the order of
+variables which in turn affected which propagator might record
+failure first and hence influenced the branching decisions.
+
+[ENTRY]
 Module: example
 What:   new
 Rank:   minor

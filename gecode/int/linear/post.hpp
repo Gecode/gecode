@@ -65,11 +65,22 @@ namespace Gecode { namespace Int { namespace Linear {
 
   /// Sort linear terms by view
   template<class View>
-  class TermLess {
+  class TermByView {
   public:
     forceinline bool
     operator ()(const Term<View>& a, const Term<View>& b) {
       return a.x < b.x;
+    }
+  };
+
+  /// Sort linear terms by coefficient size and original position
+  template<class View>
+  class TermBySizePos {
+  public:
+    forceinline bool
+    operator ()(const Term<View>& a, const Term<View>& b) {
+      assert((a.a > 0) && (b.a > 0));
+      return (a.a > b.a) || ((a.a == b.a) && (a.p < b.p));
     }
   };
 
@@ -116,14 +127,18 @@ namespace Gecode { namespace Int { namespace Linear {
             Term<View>* &t_p, int &n_p,
             Term<View>* &t_n, int &n_n,
             int& g) {
+    // Number terms by position
+    for (int i=0; i<n; i++)
+      t[i].p = i;
+
     /*
      * Join coefficients for aliased variables:
      *
      */
     {
       // Group same variables
-      TermLess<View> tl;
-      Support::quicksort<Term<View>,TermLess<View> >(t,n,tl);
+      TermByView<View> tl;
+      Support::quicksort<Term<View>,TermByView<View>>(t,n,tl);
 
       // Join adjacent variables
       int i = 0;
@@ -131,13 +146,15 @@ namespace Gecode { namespace Int { namespace Linear {
       while (i < n) {
         Limits::check(t[i].a,"Int::linear");
         long long int a = t[i].a;
+        int p = t[i].p;
         View x = t[i].x;
         while ((++i < n) && (t[i].x == x)) {
           a += t[i].a;
+          p = std::min(p,t[i].p);
           Limits::check(a,"Int::linear");
         }
         if (a != 0) {
-          t[j].a = static_cast<int>(a); t[j].x = x; j++;
+          t[j].a = static_cast<int>(a); t[j].x = x; t[j].p = p; j++;
         }
       }
       n = j;
@@ -170,6 +187,15 @@ namespace Gecode { namespace Int { namespace Linear {
     for (int i=0; i<n_n; i++)
       t_n[i].a = -t_n[i].a;
 
+    /*
+     * Sort terms into canonical order (to avoid indeterminstic order)
+     */
+    {
+      TermBySizePos<View> tl;
+      Support::quicksort<Term<View>,TermBySizePos<View>>(t_p,n_p,tl);
+      Support::quicksort<Term<View>,TermBySizePos<View>>(t_n,n_n,tl);
+    }
+    
     /*
      * Compute greatest common divisor
      *

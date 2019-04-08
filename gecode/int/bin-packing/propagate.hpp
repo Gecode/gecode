@@ -80,8 +80,7 @@ namespace Gecode { namespace Int { namespace BinPacking {
   /// For sorting according to size
   forceinline bool
   operator <(const Item& i, const Item& j) {
-    return ((i.size() > j.size()) ||
-            ((i.size() == j.size()) && (i.bin() < j.bin())));
+    return i.size() > j.size();
   }
 
 

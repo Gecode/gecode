@@ -1339,6 +1339,8 @@ namespace Gecode { namespace Int { namespace Linear {
     int a;
     /// View
     View x;
+    /// Original position in array (for sorting into canonical order)
+    int p;
   };
 
   /** \brief Estimate lower and upper bounds
