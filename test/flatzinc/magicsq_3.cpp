@@ -103,7 +103,7 @@ constraint int_lin_eq([1, 1, 1], [a[3], a[6], a[9]], 15);\n\
 constraint int_lin_eq([1, 1, 1], [a[4], a[5], a[6]], 15);\n\
 constraint int_lin_eq([1, 1, 1], [a[7], a[8], a[9]], 15);\n\
 solve satisfy;\n\
-", "a = array2d(1..3, 1..3, [8, 1, 6, 3, 5, 7, 4, 9, 2]);\n\
+", "a = array2d(1..3, 1..3, [4, 3, 8, 9, 5, 1, 2, 7, 6]);\n\
 ----------\n\
 ");
       }
