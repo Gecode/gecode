@@ -64,9 +64,12 @@
 
 [RELEASE]
 Version: 6.2.0
-Date: 2019-??-??
+Date: 2019-04-12
 [DESCRIPTION]
-Let's see.
+The release enables half-reification in FlatZinc, fixes
+indeterminstic behavior for shared branching criteria, and fixes
+several aspects for general tracers. It is recommended to upgrade
+as soon as possible.
 
 [ENTRY]
 Module: flatzinc
