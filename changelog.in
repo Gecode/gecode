@@ -69,6 +69,20 @@ Date: 2019-??-??
 Let's see.
 
 [ENTRY]
+Module: flatzinc
+What:   change
+Rank:   minor
+Thanks:	Jip J. Dekker
+[DESCRIPTION]
+Enable support for half-reified constraints in the Gecode MiniZinc
+library. Half-reified constraints are used when a MiniZinc 
+expression has to be reified and is detected to be in a positive
+context. If no Half-reified constraint has been made available by
+solver, the full reification will be used. Half-reifed constraints
+in the MiniZinc solver library are declared in the same way as
+reified constraints, but are appended by "_imp" instead of "_reif".
+
+[ENTRY]
 Module: kernel
 What:   bug
 Rank:   major
