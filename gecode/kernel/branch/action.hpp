@@ -146,7 +146,7 @@ namespace Gecode {
       unsigned int _info;
     public:
       /// Constructor for creation
-      Idx(Space& home, Propagator& p, Council<Idx>& c, int i);
+      Idx(Space& home, Propagator& r, Council<Idx>& c, int i);
       /// Constructor for cloning \a a
       Idx(Space& home, Idx& a);
       /// Mark index as propagated
@@ -205,9 +205,9 @@ namespace Gecode {
    */
   template<class View, bool p, bool f>
   forceinline
-  Action::Recorder<View,p,f>::Idx::Idx(Space& home, Propagator& p,
-                                   Council<Idx>& c, int i)
-    : Advisor(home,p,c), _info(static_cast<unsigned int>(i) << 2U) {}
+  Action::Recorder<View,p,f>::Idx::Idx(Space& home, Propagator& r,
+                                       Council<Idx>& c, int i)
+    : Advisor(home,r,c), _info(static_cast<unsigned int>(i) << 2U) {}
   template<class View, bool p, bool f>
   forceinline
   Action::Recorder<View,p,f>::Idx::Idx(Space& home, Idx& a)
@@ -252,7 +252,7 @@ namespace Gecode {
   template<class View, bool p, bool f>
   forceinline
   Action::Recorder<View,p,f>::Recorder(Home home, ViewArray<View>& x,
-                                   Action& a0)
+                                       Action& a0)
     : NaryPropagator<View,PC_GEN_NONE>(home,x), a(a0), c(home) {
     home.notice(*this,AP_DISPOSE);
     for (int i=0; i<x.size(); i++)
