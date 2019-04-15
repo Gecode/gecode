@@ -36,30 +36,30 @@
 namespace Gecode {
 
   IntAction::IntAction(Home home, const IntVarArgs& x, double d,
-                       IntBranchMerit bm) {
+                       bool p, bool f, IntBranchMerit bm) {
     ViewArray<Int::IntView> y(home,x);
-    Action::init(home,y,d,bm);
+    Action::init(home,y,d,p,f,bm);
   }
 
   void
   IntAction::init(Home home, const IntVarArgs& x, double d,
-                  IntBranchMerit bm) {
+                  bool p, bool f, IntBranchMerit bm) {
     ViewArray<Int::IntView> y(home,x);
-    Action::init(home,y,d,bm);
+    Action::init(home,y,d,p,f,bm);
   }
 
 
   BoolAction::BoolAction(Home home, const BoolVarArgs& x, double d,
-                         BoolBranchMerit bm) {
+                         bool p, bool f, BoolBranchMerit bm) {
     ViewArray<Int::BoolView> y(home,x);
-    Action::init(home,y,d,bm);
+    Action::init(home,y,d,p,f,bm);
   }
 
   void
   BoolAction::init(Home home, const BoolVarArgs& x, double d,
-                   BoolBranchMerit bm) {
+                   bool p, bool f, BoolBranchMerit bm) {
     ViewArray<Int::BoolView> y(home,x);
-    Action::init(home,y,d,bm);
+    Action::init(home,y,d,p,f,bm);
   }
 
 }

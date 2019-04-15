@@ -1569,6 +1569,8 @@ namespace Gecode {
     /**
      * \brief Initialize for float variables \a x with decay factor \a d
      *
+     * Counts propagation if \a p is true and failure if \a f is true.
+     *
      * If the branch merit function \a bm is different from nullptr, the
      * action for each variable is initialized with the merit returned
      * by \a bm.
@@ -1576,9 +1578,12 @@ namespace Gecode {
      */
     GECODE_FLOAT_EXPORT
     FloatAction(Home home, const FloatVarArgs& x, double d=1.0,
-                  FloatBranchMerit bm=nullptr);
+                bool p=true, bool f=true,
+                FloatBranchMerit bm=nullptr);
     /**
      * \brief Initialize for float variables \a x with decay factor \a d
+     *
+     * Counts propagation if \a p is true and failure if \a f is true.
      *
      * If the branch merit function \a bm is different from nullptr, the
      * action for each variable is initialized with the merit returned
@@ -1590,6 +1595,7 @@ namespace Gecode {
      */
     GECODE_FLOAT_EXPORT void
     init(Home home, const FloatVarArgs& x, double d=1.0,
+         bool p=true, bool f=true,
          FloatBranchMerit bm=nullptr);
   };
 

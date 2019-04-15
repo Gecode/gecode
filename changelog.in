@@ -68,6 +68,14 @@ Date: 2019-??-??
 [DESCRIPTION]
 Let's see.
 
+[ENTRY]
+Module: kernel
+What:   new
+Rank:   minor
+[DESCRIPTION]
+For action-based branching heuristics, one can now define whether
+failure, propagation, or both should be considered.
+
 
 [RELEASE]
 Version: 6.2.0

@@ -41,7 +41,7 @@ namespace Gecode {
    */
   class Action : public SharedHandle {
   protected:
-    template<class View>
+    template<class View, bool p, bool f>
     class Recorder;
     /// Object for storing action values
     class GECODE_VTABLE_EXPORT Storage : public SharedHandle::Object {
@@ -91,13 +91,21 @@ namespace Gecode {
     /// Assignment operator
     GECODE_KERNEL_EXPORT
     Action& operator =(const Action& a);
-    /// Initialize for views \a x and decay factor \a d and action as defined by \a bm
+    /**
+     * \brief Initialize for views \a x and decay factor \a d and action as defined by \a bm
+     *
+     * Count propagation if \a p is true, count failure if \a f is true.
+     */
     template<class View>
-    Action(Home home, ViewArray<View>& x, double d,
+    Action(Home home, ViewArray<View>& x, double d, bool p, bool f,
            typename BranchTraits<typename View::VarType>::Merit bm);
-    /// Initialize for views \a x and decay factor \a d and action as defined by \a bm
+    /**
+     * \brief Initialize for views \a x and decay factor \a d and action as defined by \a bm
+     *
+     * Count propagation if \a p is true, count failure if \a f is true.
+     */
     template<class View>
-    void init(Home home, ViewArray<View>& x, double d,
+    void init(Home home, ViewArray<View>& x, double d, bool p, bool f,
               typename BranchTraits<typename View::VarType>::Merit bm);
     /// Default (empty) action information
     GECODE_KERNEL_EXPORT static const Action def;
@@ -127,26 +135,30 @@ namespace Gecode {
   };
 
   /// Propagator for recording action information
-  template<class View>
+  template<class View, bool p, bool f>
   class Action::Recorder : public NaryPropagator<View,PC_GEN_NONE> {
   protected:
     using NaryPropagator<View,PC_GEN_NONE>::x;
     /// Advisor with index and change information
     class Idx : public Advisor {
     protected:
-      /// Index and mark information
-      int _info;
+      /// Index and mark/failed information
+      unsigned int _info;
     public:
       /// Constructor for creation
       Idx(Space& home, Propagator& p, Council<Idx>& c, int i);
       /// Constructor for cloning \a a
       Idx(Space& home, Idx& a);
-      /// Mark advisor as modified
-      void mark(void);
-      /// Mark advisor as unmodified
-      void unmark(void);
-      /// Whether advisor's view has been marked
-      bool marked(void) const;
+      /// Mark index as propagated
+      void propagate(void);
+      /// Mark index as failed
+      void fail(void);
+      /// Whether index has been propagated
+      bool propagated(void) const;
+      /// Whether index has been failed
+      bool failed(void) const;
+      /// Clear any information
+      void clear(void);
       /// Get index of view
       int idx(void) const;
     };
@@ -154,8 +166,8 @@ namespace Gecode {
     Action a;
     /// The advisor council
     Council<Idx> c;
-    /// Constructor for cloning \a p
-    Recorder(Space& home, Recorder<View>& p);
+    /// Constructor for cloning \a r
+    Recorder(Space& home, Recorder<View,p,f>& r);
   public:
     /// Constructor for creation
     Recorder(Home home, ViewArray<View>& x, Action& a);
@@ -191,36 +203,45 @@ namespace Gecode {
    * Advisor for action recorder
    *
    */
-  template<class View>
+  template<class View, bool p, bool f>
   forceinline
-  Action::Recorder<View>::Idx::Idx(Space& home, Propagator& p,
+  Action::Recorder<View,p,f>::Idx::Idx(Space& home, Propagator& p,
                                    Council<Idx>& c, int i)
-    : Advisor(home,p,c), _info(i << 1) {}
-  template<class View>
+    : Advisor(home,p,c), _info(static_cast<unsigned int>(i) << 2U) {}
+  template<class View, bool p, bool f>
   forceinline
-  Action::Recorder<View>::Idx::Idx(Space& home, Idx& a)
+  Action::Recorder<View,p,f>::Idx::Idx(Space& home, Idx& a)
     : Advisor(home,a), _info(a._info) {
   }
-  template<class View>
+  template<class View, bool p, bool f>
   forceinline void
-  Action::Recorder<View>::Idx::mark(void) {
-    _info |= 1;
+  Action::Recorder<View,p,f>::Idx::propagate(void) {
+    _info |= 1U;
   }
-  template<class View>
+  template<class View, bool p, bool f>
+  forceinline void
+  Action::Recorder<View,p,f>::Idx::fail(void) {
+    _info |= 2U;
+  }
+  template<class View, bool p, bool f>
   forceinline bool
-  Action::Recorder<View>::Idx::marked(void) const {
-    return (_info & 1) != 0;
+  Action::Recorder<View,p,f>::Idx::propagated(void) const {
+    return (_info & 1U) != 0;
   }
-  template<class View>
+  template<class View, bool p, bool f>
+  forceinline bool
+  Action::Recorder<View,p,f>::Idx::failed(void) const {
+    return (_info & 2U) != 0;
+  }
+  template<class View, bool p, bool f>
   forceinline void
-  Action::Recorder<View>::Idx::unmark(void) {
-    assert(marked());
-    _info -= 1;
+  Action::Recorder<View,p,f>::Idx::clear(void) {
+    _info &= ~3U;
   }
-  template<class View>
+  template<class View, bool p, bool f>
   forceinline int
-  Action::Recorder<View>::Idx::idx(void) const {
-    return _info >> 1;
+  Action::Recorder<View,p,f>::Idx::idx(void) const {
+    return static_cast<int>(_info >> 2);
   }
 
 
@@ -228,9 +249,9 @@ namespace Gecode {
    * Posting of action recorder propagator
    *
    */
-  template<class View>
+  template<class View, bool p, bool f>
   forceinline
-  Action::Recorder<View>::Recorder(Home home, ViewArray<View>& x,
+  Action::Recorder<View,p,f>::Recorder(Home home, ViewArray<View>& x,
                                    Action& a0)
     : NaryPropagator<View,PC_GEN_NONE>(home,x), a(a0), c(home) {
     home.notice(*this,AP_DISPOSE);
@@ -239,10 +260,10 @@ namespace Gecode {
         x[i].subscribe(home,*new (home) Idx(home,*this,c,i), true);
   }
 
-  template<class View>
+  template<class View, bool p, bool f>
   forceinline ExecStatus
-  Action::Recorder<View>::post(Home home, ViewArray<View>& x, Action& a) {
-    (void) new (home) Recorder<View>(home,x,a);
+  Action::Recorder<View,p,f>::post(Home home, ViewArray<View>& x, Action& a) {
+    (void) new (home) Recorder<View,p,f>(home,x,a);
     return ES_OK;
   }
 
@@ -325,18 +346,34 @@ namespace Gecode {
   template<class View>
   forceinline
   Action::Action(Home home, ViewArray<View>& x, double d,
+                 bool p, bool f,
                  typename BranchTraits<typename View::VarType>::Merit bm) {
     assert(!*this);
+    if (!p && !f)
+      return;
     object(*new Storage(home,x,d,bm));
-    (void) Recorder<View>::post(home,x,*this);
+    if (p && f)
+      (void) Recorder<View,true,true>::post(home,x,*this);
+    else if (p && !f)
+      (void) Recorder<View,true,false>::post(home,x,*this);
+    else if (!p && f)
+      (void) Recorder<View,false,true>::post(home,x,*this);
   }
   template<class View>
   forceinline void
   Action::init(Home home, ViewArray<View>& x, double d,
+               bool p, bool f,
                typename BranchTraits<typename View::VarType>::Merit bm) {
     assert(!*this);
+    if (!p && !f)
+      return;
     object(*new Storage(home,x,d,bm));
-    (void) Recorder<View>::post(home,x,*this);
+    if (p && f)
+      (void) Recorder<View,true,true>::post(home,x,*this);
+    else if (p && !f)
+      (void) Recorder<View,true,false>::post(home,x,*this);
+    else if (!p && f)
+      (void) Recorder<View,false,true>::post(home,x,*this);
   }
 
   template<class Char, class Traits>
@@ -360,22 +397,22 @@ namespace Gecode {
    * Propagation for action recorder
    *
    */
-  template<class View>
+  template<class View, bool p, bool f>
   forceinline
-  Action::Recorder<View>::Recorder(Space& home, Recorder<View>& p)
-    : NaryPropagator<View,PC_GEN_NONE>(home,p), a(p.a) {
-    c.update(home, p.c);
+  Action::Recorder<View,p,f>::Recorder(Space& home, Recorder<View,p,f>& r)
+    : NaryPropagator<View,PC_GEN_NONE>(home,r), a(r.a) {
+    c.update(home, r.c);
   }
 
-  template<class View>
+  template<class View, bool p, bool f>
   Propagator*
-  Action::Recorder<View>::copy(Space& home) {
-    return new (home) Recorder<View>(home, *this);
+  Action::Recorder<View,p,f>::copy(Space& home) {
+    return new (home) Recorder<View,p,f>(home, *this);
   }
 
-  template<class View>
+  template<class View, bool p, bool f>
   inline size_t
-  Action::Recorder<View>::dispose(Space& home) {
+  Action::Recorder<View,p,f>::dispose(Space& home) {
     // Delete access to action information
     home.ignore(*this,AP_DISPOSE);
     a.~Action();
@@ -387,40 +424,53 @@ namespace Gecode {
     return sizeof(*this);
   }
 
-  template<class View>
+  template<class View, bool p, bool f>
   PropCost
-  Action::Recorder<View>::cost(const Space&, const ModEventDelta&) const {
+  Action::Recorder<View,p,f>::cost(const Space&, const ModEventDelta&) const {
     return PropCost::record();
   }
 
-  template<class View>
+  template<class View, bool p, bool f>
   void
-  Action::Recorder<View>::reschedule(Space& home) {
+  Action::Recorder<View,p,f>::reschedule(Space& home) {
     View::schedule(home,*this,ME_GEN_ASSIGNED);
   }
 
-  template<class View>
+  template<class View, bool p, bool f>
   ExecStatus
-  Action::Recorder<View>::advise(Space&, Advisor& a, const Delta&) {
-    static_cast<Idx&>(a).mark();
-    return ES_NOFIX;
+  Action::Recorder<View,p,f>::advise(Space& home, Advisor& _a, const Delta&) {
+    Idx& a = static_cast<Idx&>(_a);
+    if (p) {
+      a.propagate();
+      return ES_NOFIX;
+    } else {
+      return x[a.idx()].assigned() ? home.ES_FIX_DISPOSE(c,a) : ES_FIX;
+    }
   }
 
-  template<class View>
+  template<class View, bool p, bool f>
   void
-  Action::Recorder<View>::advise(Space&, Advisor& a) {
-    static_cast<Idx&>(a).mark();
+  Action::Recorder<View,p,f>::advise(Space&, Advisor& _a) {
+    Idx& a = static_cast<Idx&>(_a);
+    if (f)
+      a.fail();
   }
 
-  template<class View>
+  template<class View, bool p, bool f>
   ExecStatus
-  Action::Recorder<View>::propagate(Space& home, const ModEventDelta&) {
+  Action::Recorder<View,p,f>::propagate(Space& home, const ModEventDelta&) {
     // Lock action information
     a.acquire();
     for (Advisors<Idx> as(c); as(); ++as) {
       int i = as.advisor().idx();
-      if (as.advisor().marked()) {
-        as.advisor().unmark();
+      if (p && as.advisor().propagated()) {
+        as.advisor().clear();
+        a.update(i);
+        if (x[i].assigned())
+          as.advisor().dispose(home,c);
+      }
+      if (f && as.advisor().failed()) {
+        as.advisor().clear();
         a.update(i);
         if (x[i].assigned())
           as.advisor().dispose(home,c);

@@ -1197,6 +1197,8 @@ namespace Gecode {
     /**
      * \brief Initialize for set variables \a x with decay factor \a d
      *
+     * Counts propagation if \a p is true and failure if \a f is true.
+     *
      * If the branch merit function \a bm is different from nullptr, the
      * action for each variable is initialized with the merit returned
      * by \a bm.
@@ -1204,9 +1206,12 @@ namespace Gecode {
      */
     GECODE_SET_EXPORT
     SetAction(Home home, const SetVarArgs& x, double d=1.0,
-                SetBranchMerit bm=nullptr);
+              bool p=true, bool f=true,
+              SetBranchMerit bm=nullptr);
     /**
      * \brief Initialize for set variables \a x with decay factor \a d
+     *
+     * Counts propagation if \a p is true and failure if \a f is true.
      *
      * If the branch merit function \a bm is different from nullptr, the
      * action for each variable is initialized with the merit returned
@@ -1218,6 +1223,7 @@ namespace Gecode {
      */
     GECODE_SET_EXPORT void
     init(Home home, const SetVarArgs& x, double d=1.0,
+         bool p=true, bool f=true,
          SetBranchMerit bm=nullptr);
   };
 

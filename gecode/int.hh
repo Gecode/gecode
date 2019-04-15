@@ -4376,15 +4376,20 @@ namespace Gecode {
     /**
      * \brief Initialize for integer variables \a x with decay factor \a d
      *
+     * Counts propagation if \a p is true and failure if \a f is true.
+     *
      * If the branch merit function \a bm is different from nullptr, the
      * action for each variable is initialized with the merit returned
      * by \a bm.
      */
     GECODE_INT_EXPORT
     IntAction(Home home, const IntVarArgs& x, double d=1.0,
+              bool p=true, bool f=true,
               IntBranchMerit bm=nullptr);
     /**
      * \brief Initialize for integer variables \a x with decay factor \a d
+     *
+     * Counts propagation if \a p is true and failure if \a f is true.
      *
      * If the branch merit function \a bm is different from nullptr, the
      * action for each variable is initialized with the merit returned
@@ -4396,6 +4401,7 @@ namespace Gecode {
      */
     GECODE_INT_EXPORT void
     init(Home home, const IntVarArgs& x, double d=1.0,
+         bool p=true, bool f=true,
          IntBranchMerit bm=nullptr);
   };
 
@@ -4421,15 +4427,20 @@ namespace Gecode {
     /**
      * \brief Initialize for Boolean variables \a x with decay factor \a d
      *
+     * Counts propagation if \a p is true and failure if \a f is true.
+     *
      * If the branch merit function \a bm is different from nullptr, the
      * action for each variable is initialized with the merit returned
      * by \a bm.
      */
     GECODE_INT_EXPORT
     BoolAction(Home home, const BoolVarArgs& x, double d=1.0,
+               bool p=true, bool f=true,
                BoolBranchMerit bm=nullptr);
     /**
      * \brief Initialize for Boolean variables \a x with decay factor \a d
+     *
+     * Counts propagation if \a p is true and failure if \a f is true.
      *
      * If the branch merit function \a bm is different from nullptr, the
      * action for each variable is initialized with the merit returned
@@ -4441,6 +4452,7 @@ namespace Gecode {
      */
     GECODE_INT_EXPORT void
     init(Home home, const BoolVarArgs& x, double d=1.0,
+         bool p=true, bool f=true,
          BoolBranchMerit bm=nullptr);
   };
 

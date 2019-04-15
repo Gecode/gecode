@@ -36,16 +36,16 @@
 namespace Gecode {
 
   FloatAction::FloatAction(Home home, const FloatVarArgs& x, double d,
-                           FloatBranchMerit bm) {
+                           bool p, bool f, FloatBranchMerit bm) {
     ViewArray<Float::FloatView> y(home,x);
-    Action::init(home,y,d,bm);
+    Action::init(home,y,d,p,f,bm);
   }
 
   void
   FloatAction::init(Home home, const FloatVarArgs& x, double d,
-                    FloatBranchMerit bm) {
+                    bool p, bool f, FloatBranchMerit bm) {
     ViewArray<Float::FloatView> y(home,x);
-    Action::init(home,y,d,bm);
+    Action::init(home,y,d,p,f,bm);
   }
 
 }

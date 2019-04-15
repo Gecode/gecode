@@ -36,16 +36,16 @@
 namespace Gecode {
 
   SetAction::SetAction(Home home, const SetVarArgs& x, double d,
-                       SetBranchMerit bm) {
+                       bool p, bool f, SetBranchMerit bm) {
     ViewArray<Set::SetView> y(home,x);
-    Action::init(home,y,d,bm);
+    Action::init(home,y,d,p,f,bm);
   }
 
   void
   SetAction::init(Home home, const SetVarArgs& x, double d,
-                  SetBranchMerit bm) {
+                  bool p, bool f, SetBranchMerit bm) {
     ViewArray<Set::SetView> y(home,x);
-    Action::init(home,y,d,bm);
+    Action::init(home,y,d,p,f,bm);
   }
 
 }
