@@ -870,7 +870,7 @@ endif
 
 
 INTEXAMPLEHDR0 =						\
-	scowl
+	scowl job-shop-instances
 INTEXAMPLESRC0 =						\
 	alpha bacp bibd donald efpa eq20 golomb-ruler		\
 	graph-color grocery ind-set magic-sequence magic-square	\
