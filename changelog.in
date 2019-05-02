@@ -69,6 +69,14 @@ Date: 2019-??-??
 Let's see.
 
 [ENTRY]
+Module: search
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+The linear cutoff generator started at zero rather than at the
+scale factor.
+
+[ENTRY]
 Module: kernel
 What:   new
 Rank:   minor

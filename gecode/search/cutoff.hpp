@@ -50,7 +50,7 @@ namespace Gecode { namespace Search {
 
   forceinline
   CutoffLinear::CutoffLinear(unsigned long int s)
-    : scale(s), n(0) {}
+    : scale(s), n(s) {}
 
 
   forceinline
