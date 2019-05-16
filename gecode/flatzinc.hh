@@ -234,10 +234,10 @@ namespace Gecode { namespace FlatZinc {
       Gecode::Driver::DoubleOption      _decay;       ///< Decay option
       Gecode::Driver::UnsignedIntOption _c_d;       ///< Copy recomputation distance
       Gecode::Driver::UnsignedIntOption _a_d;       ///< Adaptive recomputation distance
-      Gecode::Driver::UnsignedIntOption _node;      ///< Cutoff for number of nodes
-      Gecode::Driver::UnsignedIntOption _fail;      ///< Cutoff for number of failures
-      Gecode::Driver::UnsignedIntOption _time;      ///< Cutoff for time
-      Gecode::Driver::UnsignedIntOption _time_limit;  ///< Cutoff for time (for compatibility with flatzinc command line)
+      Gecode::Driver::UnsignedLongLongIntOption _node;      ///< Cutoff for number of nodes
+      Gecode::Driver::UnsignedLongLongIntOption _fail;      ///< Cutoff for number of failures
+      Gecode::Driver::DoubleOption _time;      ///< Cutoff for time
+      Gecode::Driver::DoubleOption _time_limit;  ///< Cutoff for time (for compatibility with flatzinc command line)
       Gecode::Driver::IntOption         _seed;      ///< Random seed
       Gecode::Driver::StringOption      _restart;   ///< Restart method option
       Gecode::Driver::DoubleOption      _r_base;    ///< Restart base
@@ -354,9 +354,9 @@ namespace Gecode { namespace FlatZinc {
     bool free(void) const { return _free.value(); }
     unsigned int c_d(void) const { return _c_d.value(); }
     unsigned int a_d(void) const { return _a_d.value(); }
-    unsigned int node(void) const { return _node.value(); }
-    unsigned int fail(void) const { return _fail.value(); }
-    unsigned int time(void) const { return _time.value(); }
+    unsigned long long int node(void) const { return _node.value(); }
+    unsigned long long int fail(void) const { return _fail.value(); }
+    unsigned double time(void) const { return _time.value(); }
     int seed(void) const { return _seed.value(); }
     double step(void) const { return _step.value(); }
     const char* output(void) const { return _output.value(); }

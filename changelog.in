@@ -69,6 +69,14 @@ Date: 2019-??-??
 Let's see.
 
 [ENTRY]
+Module: flatzinc
+What:   change
+Rank:   minor
+[DESCRIPTION]
+The number of nodes and failures is now of type unsigned long
+long int. Time is now consistently of type double.
+
+[ENTRY]
 Module: driver
 What:   change
 Rank:   minor
