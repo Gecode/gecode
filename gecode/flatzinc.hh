@@ -356,7 +356,7 @@ namespace Gecode { namespace FlatZinc {
     unsigned int a_d(void) const { return _a_d.value(); }
     unsigned long long int node(void) const { return _node.value(); }
     unsigned long long int fail(void) const { return _fail.value(); }
-    unsigned double time(void) const { return _time.value(); }
+    double time(void) const { return _time.value(); }
     int seed(void) const { return _seed.value(); }
     double step(void) const { return _step.value(); }
     const char* output(void) const { return _output.value(); }
