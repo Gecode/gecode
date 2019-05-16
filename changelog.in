@@ -69,6 +69,30 @@ Date: 2019-??-??
 Let's see.
 
 [ENTRY]
+Module: driver
+What:   change
+Rank:   minor
+[DESCRIPTION]
+The number of propagations, nodes, and failures is now of type
+unsigned long long int. Time is now consistently of type double.
+
+[ENTRY]
+Module: search
+What:   change
+Rank:   minor
+[DESCRIPTION]
+The number of nodes and failures in statistics is now of type
+unsigned long long int. Time is now consistently of type double.
+
+[ENTRY]
+Module: kernel
+What:   change
+Rank:   minor
+[DESCRIPTION]
+The number of propagations in statistics is now of type unsigned
+long long int.
+
+[ENTRY]
 Module: search
 What:   bug
 Rank:   minor

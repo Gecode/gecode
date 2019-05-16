@@ -97,6 +97,23 @@ namespace Gecode {
     }
 
     /*
+     * Unsigned long long integer option
+     *
+     */
+    inline
+    UnsignedLongLongIntOption::UnsignedLongLongIntOption
+      (const char* o, const char* e, unsigned long long int v)
+      : BaseOption(o,e), cur(v) {}
+    inline void
+    UnsignedLongLongIntOption::value(unsigned long long int v) {
+      cur = v;
+    }
+    inline unsigned long long int
+    UnsignedLongLongIntOption::value(void) const {
+      return cur;
+    }
+
+    /*
      * Double option
      *
      */
@@ -325,28 +342,28 @@ namespace Gecode {
   }
 
   inline void
-  Options::node(unsigned int n) {
+  Options::node(unsigned long long int n) {
     _node.value(n);
   }
-  inline unsigned int
+  inline unsigned long long int
   Options::node(void) const {
     return _node.value();
   }
 
   inline void
-  Options::fail(unsigned int n) {
+  Options::fail(unsigned long long int n) {
     _fail.value(n);
   }
-  inline unsigned int
+  inline unsigned long long int
   Options::fail(void) const {
     return _fail.value();
   }
 
   inline void
-  Options::time(unsigned int t) {
+  Options::time(double t) {
     _time.value(t);
   }
-  inline unsigned int
+  inline double
   Options::time(void) const {
     return _time.value();
   }

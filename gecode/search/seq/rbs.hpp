@@ -36,10 +36,10 @@ namespace Gecode { namespace Search { namespace Seq {
 
   forceinline
   RestartStop::RestartStop(Stop* s)
-    : l(0), m_stop(s), e_stopped(false) {}
+    : l(0U), m_stop(s), e_stopped(false) {}
 
   forceinline void
-  RestartStop::limit(const Search::Statistics& s, unsigned long int l0) {
+  RestartStop::limit(const Search::Statistics& s, unsigned long long int l0) {
     l = l0;
     m_stat += s;
     e_stopped = false;

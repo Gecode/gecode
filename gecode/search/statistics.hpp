@@ -38,13 +38,13 @@ namespace Gecode { namespace Search {
   forceinline void
   Statistics::reset(void) {
     StatusStatistics::reset();
-    fail=0; node=0; depth=0; restart=0; nogood=0;
+    fail=0ULL; node=0ULL; depth=0UL; restart=0UL; nogood=0UL;
   }
 
   forceinline
   Statistics::Statistics(void)
-    : fail(0), node(0), depth(0),
-      restart(0), nogood(0) {}
+    : fail(0ULL), node(0ULL), 
+      depth(0UL), restart(0UL), nogood(0UL) {}
 
   forceinline Statistics&
   Statistics::operator +=(const Statistics& s) {

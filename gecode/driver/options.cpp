@@ -229,6 +229,23 @@ namespace Gecode {
 
 
     int
+    UnsignedLongLongIntOption::parse(int argc, char* argv[]) {
+      if (char* a = argument(argc,argv)) {
+        cur = static_cast<unsigned int>(atoll(a));
+        return 2;
+      }
+      return 0;
+    }
+
+    void
+    UnsignedLongLongIntOption::help(void) {
+      std::cerr << '\t' << iopt << " (unsigned long long int) default: "
+                << cur << std::endl
+                << "\t\t" << exp << std::endl;
+    }
+
+
+    int
     DoubleOption::parse(int argc, char* argv[]) {
       if (char* a = argument(argc,argv)) {
         cur = atof(a);

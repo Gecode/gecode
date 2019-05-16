@@ -147,9 +147,9 @@ namespace Gecode { namespace Search {
   class Statistics : public StatusStatistics {
   public:
     /// Number of failed nodes in search tree
-    unsigned long int fail;
+    unsigned long long int fail;
     /// Number of nodes expanded
-    unsigned long int node;
+    unsigned long long int node;
     /// Maximum depth of search stack
     unsigned long int depth;
     /// Number of restarts
@@ -476,9 +476,9 @@ namespace Gecode { namespace Search {
     /// Default constructor
     Cutoff(void);
     /// Return the current cutoff value
-    virtual unsigned long int operator ()(void) const = 0;
+    virtual unsigned long long int operator ()(void) const = 0;
     /// Increment and return the next cutoff value
-    virtual unsigned long int operator ++(void) = 0;
+    virtual unsigned long long int operator ++(void) = 0;
     /// Destructor
     virtual ~Cutoff(void);
     //@}
@@ -486,35 +486,35 @@ namespace Gecode { namespace Search {
     //@{
     /// Create generator for constant sequence with constant \a s
     static Cutoff*
-    constant(unsigned long int scale=Config::slice);
+    constant(unsigned long long int scale=Config::slice);
     /// Create generator for linear sequence scaled by \a scale
     static Cutoff*
-    linear(unsigned long int scale=Config::slice);
+    linear(unsigned long long int scale=Config::slice);
     /** Create generator for geometric sequence scaled by
      *  \a scale using base \a base
      */
     static Cutoff*
-    geometric(unsigned long int scale=Config::slice, double base=Config::base);
+    geometric(unsigned long long int scale=Config::slice, double base=Config::base);
     /// Create generator for luby sequence with scale-factor \a scale
     static Cutoff*
-    luby(unsigned long int scale=Config::slice);
+    luby(unsigned long long int scale=Config::slice);
     /** Create generator for random sequence with seed \a seed that
      *  generates values between \a min and \a max with \a n steps
      *  between the extreme values (use 0 for \a n to get step size 1).
      */
     static Cutoff*
     rnd(unsigned int seed,
-        unsigned long int min, unsigned long int max,
-        unsigned long int n);
+        unsigned long long int min, unsigned long long int max,
+        unsigned long long int n);
     /// Append cutoff values from \a c2 after \a n values from \a c1
     static Cutoff*
-    append(Cutoff* c1, unsigned long int n, Cutoff* c2);
+    append(Cutoff* c1, unsigned long long int n, Cutoff* c2);
     /// Merge cutoff values from \a c1 with values from \a c2
     static Cutoff*
     merge(Cutoff* c1, Cutoff* c2);
     /// Create generator that repeats \a n times each cutoff value from \a c
     static Cutoff*
-    repeat(Cutoff* c, unsigned long int n);
+    repeat(Cutoff* c, unsigned long long int n);
     //@}
   };
 
@@ -525,14 +525,14 @@ namespace Gecode { namespace Search {
   class GECODE_SEARCH_EXPORT CutoffConstant : public Cutoff {
   protected:
     /// Constant
-    unsigned long int c;
+    unsigned long long int c;
   public:
     /// Constructor
-    CutoffConstant(unsigned long int c);
+    CutoffConstant(unsigned long long int c);
     /// Return the current cutoff value
-    virtual unsigned long int operator ()(void) const;
+    virtual unsigned long long int operator ()(void) const;
     /// Increment and return the next cutoff value
-    virtual unsigned long int operator ++(void);
+    virtual unsigned long long int operator ++(void);
   };
 
   /**
@@ -542,16 +542,16 @@ namespace Gecode { namespace Search {
   class GECODE_SEARCH_EXPORT CutoffLinear : public Cutoff {
   protected:
     /// Scale factor
-    unsigned long int scale;
+    unsigned long long int scale;
     /// Next number in sequence
-    unsigned long int n;
+    unsigned long long int n;
   public:
     /// Constructor
-    CutoffLinear(unsigned long int scale);
+    CutoffLinear(unsigned long long int scale);
     /// Return the current cutoff value
-    virtual unsigned long int operator ()(void) const;
+    virtual unsigned long long int operator ()(void) const;
     /// Increment and return the next cutoff value
-    virtual unsigned long int operator ++(void);
+    virtual unsigned long long int operator ++(void);
   };
 
   /**
@@ -561,24 +561,24 @@ namespace Gecode { namespace Search {
   class GECODE_SEARCH_EXPORT CutoffLuby : public Cutoff {
   protected:
     /// Iteration number
-    unsigned long int i;
+    unsigned long long int i;
     /// Scale factor
-    unsigned long int scale;
+    unsigned long long int scale;
     /// Number of pre-computed luby values
-    static const unsigned long int n_start = 63U;
+    static const unsigned long long int n_start = 63U;
     /// Precomputed luby-values
     static unsigned long int start[n_start];
     /// Compute binary logarithm of \a i
-    static unsigned long int log(unsigned long int i);
+    static unsigned long long int log(unsigned long long int i);
     /// Compute Luby number for step \a i
-    static unsigned long int luby(unsigned long int i);
+    static unsigned long long int luby(unsigned long long int i);
   public:
     /// Constructor
-    CutoffLuby(unsigned long int scale);
+    CutoffLuby(unsigned long long int scale);
     /// Return the current cutoff value
-    virtual unsigned long int operator ()(void) const;
+    virtual unsigned long long int operator ()(void) const;
     /// Increment and return the next cutoff value
-    virtual unsigned long int operator ++(void);
+    virtual unsigned long long int operator ++(void);
   };
 
   /**
@@ -595,11 +595,11 @@ namespace Gecode { namespace Search {
     double base;
   public:
     /// Constructor
-    CutoffGeometric(unsigned long int scale, double base);
+    CutoffGeometric(unsigned long long int scale, double base);
     /// Return the current cutoff value
-    virtual unsigned long int operator ()(void) const;
+    virtual unsigned long long int operator ()(void) const;
     /// Increment and return the next cutoff value
-    virtual unsigned long int operator ++(void);
+    virtual unsigned long long int operator ++(void);
   };
 
   /**
@@ -611,22 +611,22 @@ namespace Gecode { namespace Search {
     /// Random number generator
     Support::RandomGenerator rnd;
     /// Minimum cutoff value
-    unsigned long int min;
+    unsigned long long int min;
     /// Random values
-    unsigned long int n;
+    unsigned long long int n;
     /// Step size
-    unsigned long int step;
+    unsigned long long int step;
     /// Current value
-    unsigned long int cur;
+    unsigned long long int cur;
   public:
     /// Constructor
     CutoffRandom(unsigned int seed,
-                 unsigned long int min, unsigned long int max,
-                 unsigned long int n);
+                 unsigned long long int min, unsigned long long int max,
+                 unsigned long long int n);
     /// Return the current cutoff value
-    virtual unsigned long int operator ()(void) const;
+    virtual unsigned long long int operator ()(void) const;
     /// Increment and return the next cutoff value
-    virtual unsigned long int operator ++(void);
+    virtual unsigned long long int operator ++(void);
   };
 
   /**
@@ -640,14 +640,14 @@ namespace Gecode { namespace Search {
     /// Second cutoff generators
     Cutoff* c2;
     /// How many number to take from the first
-    unsigned long int n;
+    unsigned long long int n;
   public:
     /// Constructor
-    CutoffAppend(Cutoff* c1, unsigned long int n, Cutoff* c2);
+    CutoffAppend(Cutoff* c1, unsigned long long int n, Cutoff* c2);
     /// Return the current cutoff value
-    virtual unsigned long int operator ()(void) const;
+    virtual unsigned long long int operator ()(void) const;
     /// Increment and return the next cutoff value
-    virtual unsigned long int operator ++(void);
+    virtual unsigned long long int operator ++(void);
     /// Destructor
     virtual ~CutoffAppend(void);
   };
@@ -666,9 +666,9 @@ namespace Gecode { namespace Search {
     /// Constructor
     CutoffMerge(Cutoff* c1, Cutoff* c2);
     /// Return the current cutoff value
-    virtual unsigned long int operator ()(void) const;
+    virtual unsigned long long int operator ()(void) const;
     /// Increment and return the next cutoff value
-    virtual unsigned long int operator ++(void);
+    virtual unsigned long long int operator ++(void);
     /// Destructor
     virtual ~CutoffMerge(void);
   };
@@ -684,16 +684,16 @@ namespace Gecode { namespace Search {
     // Current cutoff
     unsigned int cutoff;
     // Iteration
-    unsigned long int i;
+    unsigned long long int i;
     // Number of repetitions
-    unsigned long int n;
+    unsigned long long int n;
   public:
     /// Constructor
-    CutoffRepeat(Cutoff* c, unsigned long int n);
+    CutoffRepeat(Cutoff* c, unsigned long long int n);
     /// Return the current cutoff value
-    virtual unsigned long int operator ()(void) const;
+    virtual unsigned long long int operator ()(void) const;
     /// Increment and return the next cutoff value
-    virtual unsigned long int operator ++(void);
+    virtual unsigned long long int operator ++(void);
     /// Destructor
     virtual ~CutoffRepeat(void);
   };
@@ -810,11 +810,11 @@ namespace Gecode { namespace Search {
     /// \name Predefined stop objects
     //@{
     /// Stop if node limit \a l has been exceeded
-    static Stop* node(unsigned long int l);
+    static Stop* node(unsigned long long int l);
     /// Stop if failure limit \a l has been exceeded
-    static Stop* fail(unsigned long int l);
+    static Stop* fail(unsigned long long int l);
     /// Stop if time limit \a l (in milliseconds) has been exceeded
-    static Stop* time(unsigned long int l);
+    static Stop* time(double l);
     //@}
   };
 
@@ -829,14 +829,14 @@ namespace Gecode { namespace Search {
   class GECODE_SEARCH_EXPORT NodeStop : public Stop {
   protected:
     /// Node limit
-    unsigned long int l;
+    unsigned long long int l;
   public:
     /// Stop if node limit \a l is exceeded
-    NodeStop(unsigned long int l);
+    NodeStop(unsigned long long int l);
     /// Return current limit
-    unsigned long int limit(void) const;
+    unsigned long long int limit(void) const;
     /// Set current limit to \a l nodes
-    void limit(unsigned long int l);
+    void limit(unsigned long long int l);
     /// Return true if node limit is exceeded
     virtual bool stop(const Statistics& s, const Options& o);
   };
@@ -852,14 +852,14 @@ namespace Gecode { namespace Search {
   class GECODE_SEARCH_EXPORT FailStop : public Stop {
   protected:
     /// Failure limit
-    unsigned long int l;
+    unsigned long long int l;
   public:
     /// Stop if failure limit \a l is exceeded
-    FailStop(unsigned long int l);
+    FailStop(unsigned long long int l);
     /// Return current limit
-    unsigned long int limit(void) const;
+    unsigned long long int limit(void) const;
     /// Set current limit to \a l failures
-    void limit(unsigned long int l);
+    void limit(unsigned long long int l);
     /// Return true if failure limit is exceeded
     virtual bool stop(const Statistics& s, const Options& o);
   };
@@ -873,14 +873,14 @@ namespace Gecode { namespace Search {
     /// Time when execution should stop
     Support::Timer t;
     /// Current limit in milliseconds
-    unsigned long int l;
+    double l;
   public:
     /// Stop if search exceeds \a l milliseconds (from creation of this object)
-    TimeStop(unsigned long int l);
+    TimeStop(double l);
     /// Return current limit in milliseconds
-    unsigned long int limit(void) const;
+    double limit(void) const;
     /// Set current limit to \a l milliseconds
-    void limit(unsigned long int l);
+    void limit(double l);
     /// Reset time to zero
     void reset(void);
     /// Return true if time limit is exceeded

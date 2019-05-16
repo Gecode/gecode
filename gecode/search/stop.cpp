@@ -40,15 +40,15 @@ namespace Gecode { namespace Search {
     *
     */
   Stop*
-  Stop::node(unsigned long int l) {
+  Stop::node(unsigned long long int l) {
     return new NodeStop(l);
   }
   Stop*
-  Stop::fail(unsigned long int l) {
+  Stop::fail(unsigned long long int l) {
     return new FailStop(l);
   }
   Stop*
-  Stop::time(unsigned long int l) {
+  Stop::time(double l) {
     return new TimeStop(l);
   }
 

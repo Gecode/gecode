@@ -63,7 +63,7 @@ namespace Gecode {
       /// Number of chb values
       int n;
       /// Number of failures
-      unsigned long int nf;
+      unsigned long long int nf;
       /// Alpha value
       double alpha;
       /// CHB information

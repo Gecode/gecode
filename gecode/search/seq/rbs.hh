@@ -46,7 +46,7 @@ namespace Gecode { namespace Search { namespace Seq {
     friend class ::Gecode::Search::Seq::RBS;
   private:
     /// The failure limit for the engine
-    unsigned long int l;
+    unsigned long long int l;
     /// The stop object for the meta engine
     Stop* m_stop;
     /// Whether the engine was stopped
@@ -59,7 +59,7 @@ namespace Gecode { namespace Search { namespace Seq {
     /// Return true if meta engine must be stopped
     virtual bool stop(const Statistics& s, const Options& o);
     /// Set current limit for the engine to \a l fails
-    void limit(const Statistics& s, unsigned long int l);
+    void limit(const Statistics& s, unsigned long long int l);
     /// Update statistics
     void update(const Search::Statistics& s);
     /// Return whether the engine has been stopped

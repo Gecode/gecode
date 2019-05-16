@@ -243,6 +243,27 @@ namespace Gecode {
     };
 
     /**
+     * \brief Unsigned long long integer option
+     *
+     */
+    class GECODE_DRIVER_EXPORT UnsignedLongLongIntOption : public BaseOption {
+    protected:
+      unsigned long long int cur; ///< Current value
+    public:
+      /// Initialize for option \a o and explanation \a e and default value \a v
+      UnsignedLongLongIntOption(const char* o, const char* e,
+                                unsigned long long int v=0);
+      /// Set default value to \a v
+      void value(unsigned long long int v);
+      /// Return current option value
+      unsigned long long int value(void) const;
+      /// Parse option at first position and return number of parsed arguments
+      virtual int parse(int argc, char* argv[]);
+      /// Print help text
+      virtual void help(void);
+    };
+
+    /**
      * \brief Double option
      *
      */
@@ -380,14 +401,17 @@ namespace Gecode {
     /// \name Search options
     //@{
     Driver::StringOption      _search;        ///< Search options
-    Driver::UnsignedIntOption _solutions;     ///< How many solutions
+    Driver::UnsignedLongLongIntOption
+                              _solutions;     ///< How many solutions
     Driver::DoubleOption      _threads;       ///< How many threads to use
     Driver::UnsignedIntOption _c_d;           ///< Copy recomputation distance
     Driver::UnsignedIntOption _a_d;           ///< Adaptive recomputation distance
     Driver::UnsignedIntOption _d_l;           ///< Discrepancy limit for LDS
-    Driver::UnsignedIntOption _node;          ///< Cutoff for number of nodes
-    Driver::UnsignedIntOption _fail;          ///< Cutoff for number of failures
-    Driver::UnsignedIntOption _time;          ///< Cutoff for time
+    Driver::UnsignedLongLongIntOption
+                              _node;          ///< Cutoff for number of nodes
+    Driver::UnsignedLongLongIntOption
+                              _fail;          ///< Cutoff for number of failures
+    Driver::DoubleOption      _time;          ///< Cutoff for time
     Driver::UnsignedIntOption _assets;        ///< Number of assets in a portfolio
     Driver::UnsignedIntOption _slice;         ///< Size of a portfolio slice
     Driver::StringOption      _restart;       ///< Restart method option
@@ -507,19 +531,19 @@ namespace Gecode {
     unsigned int d_l(void) const;
 
     /// Set default node cutoff
-    void node(unsigned int n);
+    void node(unsigned long long int n);
     /// Return node cutoff
-    unsigned int node(void) const;
+    unsigned long long int node(void) const;
 
     /// Set default failure cutoff
-    void fail(unsigned int n);
+    void fail(unsigned long long int n);
     /// Return failure cutoff
-    unsigned int fail(void) const;
+    unsigned long long int fail(void) const;
 
     /// Set default time cutoff
-    void time(unsigned int t);
+    void time(double t);
     /// Return time cutoff
-    unsigned int time(void) const;
+    double time(void) const;
 
     /// Set default number of assets in a portfolio
     void assets(unsigned int n);

@@ -55,10 +55,12 @@ namespace Gecode { namespace Driver {
     GECODE_DRIVER_EXPORT
     static bool sigint;   ///< Whether search was interrupted using Ctrl-C
     /// Initialize stop object
-    CombinedStop(unsigned int node, unsigned int fail, unsigned int time)
-      : ns((node > 0) ? new Search::NodeStop(node) : NULL),
-        fs((fail > 0) ? new Search::FailStop(fail) : NULL),
-        ts((time > 0) ? new Search::TimeStop(time) : NULL) {
+    CombinedStop(unsigned long long int node, 
+                 unsigned long long int fail,
+                 double time)
+      : ns((node > 0ULL) ? new Search::NodeStop(node) : NULL),
+        fs((fail > 0ULL) ? new Search::FailStop(fail) : NULL),
+        ts((time > 0.0)  ? new Search::TimeStop(time) : NULL) {
       sigint = false;
     }
   public:
@@ -87,9 +89,11 @@ namespace Gecode { namespace Driver {
     }
     /// Create appropriate stop-object
     static Search::Stop*
-    create(unsigned int node, unsigned int fail, unsigned int time,
+    create(unsigned long long int node,
+           unsigned long long int fail,
+           double time,
            bool intr) {
-      if ( (!intr) && (node == 0) && (fail == 0) && (time == 0))
+      if (!intr && (node == 0ULL) && (fail == 0ULL) && (time == 0.0))
         return NULL;
       else
         return new CombinedStop(node,fail,time);

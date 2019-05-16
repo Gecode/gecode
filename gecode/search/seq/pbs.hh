@@ -44,7 +44,7 @@ namespace Gecode { namespace Search { namespace Seq {
     /// Whether search stopped because the slice is done
     bool done;
     /// The current failure limit, incremented for each slice
-    unsigned long int l;
+    unsigned long long int l;
   };
 
   /// Stop object used for controling slaves in a portfolio

@@ -49,15 +49,15 @@ namespace Gecode { namespace Search {
    */
 
   forceinline
-  NodeStop::NodeStop(unsigned long int l0) : l(l0) {}
+  NodeStop::NodeStop(unsigned long long int l0) : l(l0) {}
 
-  forceinline unsigned long int
+  forceinline unsigned long long int
   NodeStop::limit(void) const {
     return l;
   }
 
   forceinline void
-  NodeStop::limit(unsigned long int l0) {
+  NodeStop::limit(unsigned long long int l0) {
     l=l0;
   }
 
@@ -68,15 +68,15 @@ namespace Gecode { namespace Search {
    */
 
   forceinline
-  FailStop::FailStop(unsigned long int l0) : l(l0) {}
+  FailStop::FailStop(unsigned long long int l0) : l(l0) {}
 
-  forceinline unsigned long int
+  forceinline unsigned long long int
   FailStop::limit(void) const {
     return l;
   }
 
   forceinline void
-  FailStop::limit(unsigned long int l0) {
+  FailStop::limit(unsigned long long int l0) {
     l=l0;
   }
 
@@ -87,18 +87,18 @@ namespace Gecode { namespace Search {
    */
 
   forceinline
-  TimeStop::TimeStop(unsigned long int l0)
+  TimeStop::TimeStop(double l0)
     : l(l0) {
     t.start();
   }
 
-  forceinline unsigned long int
+  forceinline double
   TimeStop::limit(void) const {
     return l;
   }
 
   forceinline void
-  TimeStop::limit(unsigned long int l0) {
+  TimeStop::limit(double l0) {
     l=l0;
   }
 

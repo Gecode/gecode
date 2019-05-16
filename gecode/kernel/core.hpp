@@ -1627,9 +1627,9 @@ namespace Gecode {
     /// Number of restarts
     const unsigned long int r;
     /// Number of solutions since last restart
-    const unsigned long int s;
+    const unsigned long long int s;
     /// Number of failures since last restart
-    const unsigned long int f;
+    const unsigned long long int f;
     /// Last solution found
     const Space* l;
     /// No-goods from restart
@@ -1645,8 +1645,8 @@ namespace Gecode {
     //@{
     /// Constructor for restart-based engine
     MetaInfo(unsigned long int r,
-             unsigned long int s,
-             unsigned long int f,
+             unsigned long long int s,
+             unsigned long long int f,
              const Space* l,
              NoGoods& ng);
     /// Constructor for portfolio-based engine
@@ -1659,9 +1659,9 @@ namespace Gecode {
     /// Return number of restarts
     unsigned long int restart(void) const;
     /// Return number of solutions since last restart
-    unsigned long int solution(void) const;
+    unsigned long long int solution(void) const;
     /// Return number of failures since last restart
-    unsigned long int fail(void) const;
+    unsigned long long int fail(void) const;
     /// Return last solution found (possibly NULL)
     const Space* last(void) const;
     /// Return no-goods recorded from restart
@@ -1691,7 +1691,7 @@ namespace Gecode {
   class StatusStatistics {
   public:
     /// Number of propagator executions
-    unsigned long int propagate;
+    unsigned long long int propagate;
     /// Initialize
     StatusStatistics(void);
     /// Reset information
@@ -3068,8 +3068,8 @@ namespace Gecode {
    */
   forceinline
   MetaInfo::MetaInfo(unsigned long int r0,
-                     unsigned long int s0,
-                     unsigned long int f0,
+                     unsigned long long int s0,
+                     unsigned long long int f0,
                      const Space* l0,
                      NoGoods& ng0)
     : t(RESTART), r(r0), s(s0), f(f0), l(l0), ng(ng0), a(0) {}
@@ -3087,12 +3087,12 @@ namespace Gecode {
     assert(type() == RESTART);
     return r;
   }
-  forceinline unsigned long int
+  forceinline unsigned long long int
   MetaInfo::solution(void) const {
     assert(type() == RESTART);
     return s;
   }
-  forceinline unsigned long int
+  forceinline unsigned long long int
   MetaInfo::fail(void) const {
     assert(type() == RESTART);
     return f;
