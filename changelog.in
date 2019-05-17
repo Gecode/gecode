@@ -72,6 +72,15 @@ Let's see.
 Module: flatzinc
 What:   change
 Rank:   minor
+Thanks:	Jip J. Dekker
+[DESCRIPTION]
+Update the error produced by the FlatZinc parser when an integer
+literal is outside gecodes integer limits.
+
+[ENTRY]
+Module: flatzinc
+What:   change
+Rank:   minor
 [DESCRIPTION]
 The number of nodes and failures is now of type unsigned long
 long int. Time is now consistently of type double.
