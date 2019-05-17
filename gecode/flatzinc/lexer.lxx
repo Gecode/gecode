@@ -83,17 +83,29 @@ int yy_input_proc(char* buf, int size, yyscan_t yyscanner);
 -?[0-9]+          { if (parseInt(yytext,yylval->iValue))
                       return FZ_INT_LIT;
                     else
-                      yyerror("invalid integer literal");
+                      yyerror(("The literal '" + std::string(yytext)
+                      + "' of the type int is out of range ("
+                      + std::to_string(Gecode::Int::Limits::min)
+                      + ".." + std::to_string(Gecode::Int::Limits::max)
+                      + ")").c_str());
                   }
 -?0x[0-9A-Fa-f]+  {  if (parseInt(yytext,yylval->iValue))
                       return FZ_INT_LIT;
                     else
-                      yyerror("invalid integer literal");
+                      yyerror(("The literal '" + std::string(yytext)
+                      + "' of the type int is out of range ("
+                      + std::to_string(Gecode::Int::Limits::min)
+                      + ".." + std::to_string(Gecode::Int::Limits::max)
+                      + ")").c_str());
                   }
 -?0o[0-7]+        { if (parseInt(yytext,yylval->iValue))
                       return FZ_INT_LIT;
                     else
-                      yyerror("invalid integer literal");
+                      yyerror(("The literal '" + std::string(yytext)
+                      + "' of the type int is out of range ("
+                      + std::to_string(Gecode::Int::Limits::min)
+                      + ".." + std::to_string(Gecode::Int::Limits::max)
+                      + ")").c_str());
                   }
 -?[0-9]+\.[0-9]+  { yylval->dValue = strtod(yytext,NULL);
                     return FZ_FLOAT_LIT; }
