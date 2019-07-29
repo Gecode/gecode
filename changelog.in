@@ -69,6 +69,15 @@ Date: 2019-??-??
 Let's see.
 
 [ENTRY]
+Module: set
+What:   bug
+Rank:   minor
+Thanks:	Mats Carlsson
+[DESCRIPTION]
+Fix bool-set channel propagator to work correctly when posted
+with a fixed set variable.
+
+[ENTRY]
 Module: flatzinc
 What:   change
 Rank:   minor

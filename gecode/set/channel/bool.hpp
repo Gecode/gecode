@@ -98,9 +98,9 @@ namespace Gecode { namespace Set { namespace Channel {
       View::schedule(home, *this, y.assigned() ? ME_SET_VAL : ME_SET_BB);
       if (y.assigned()) {
         if (y.glbSize()==static_cast<unsigned int>(y.glbMax()-y.glbMin()+1)) {
-          new (&delta) SetDelta(y.glbMin(),y.glbMax(),1,0);
+          new (&delta) SetDelta(y.glbMin(),y.glbMax(),2,0);
         } else {
-          new (&delta) SetDelta(2,0,1,0);
+          new (&delta) SetDelta(2,0,2,0);
         }
       }
       (void) new (home) IndexAdvisor(home,*this,co,-1);
