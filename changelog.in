@@ -69,6 +69,14 @@ Date: 2019-??-??
 Let's see.
 
 [ENTRY]
+Module: example
+What:   bug
+Rank:   minor
+Thanks:	Florian Fontan
+[DESCRIPTION]
+Do not use size-based symmetry breaking together with CDBF.
+
+[ENTRY]
 Module: kernel
 What:   change
 Rank:   minor

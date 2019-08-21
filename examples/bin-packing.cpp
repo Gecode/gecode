@@ -7,7 +7,7 @@
  *     Christian Schulte, 2010
  *
  *  Bugfixes provided by:
- *     Florian ???
+ *     Florian Fontan <dev@florian-fontan.fr>
  *
  *  This file is part of Gecode, the generic constraint
  *  development environment:
