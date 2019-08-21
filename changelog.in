@@ -69,6 +69,30 @@ Date: 2019-??-??
 Let's see.
 
 [ENTRY]
+Module: kernel
+What:   change
+Rank:   minor
+Thanks:	John W. Spirent
+[DESCRIPTION]
+Some small changes to compile with MSVC 2015 again.
+
+[ENTRY]
+Module: int
+What:   change
+Rank:   minor
+Thanks:	John W. Spirent
+[DESCRIPTION]
+Some small changes to compile with MSVC 2015 again.
+
+[ENTRY]
+Module: set
+What:   change
+Rank:   minor
+Thanks:	John W. Spirent
+[DESCRIPTION]
+Some small changes to compile with MSVC 2015 again.
+
+[ENTRY]
 Module: set
 What:   bug
 Rank:   minor
@@ -84,7 +108,7 @@ Rank:   minor
 Thanks:	Jip J. Dekker
 [DESCRIPTION]
 Update the error produced by the FlatZinc parser when an integer
-literal is outside gecodes integer limits.
+literal is outside Gecode's integer limits.
 
 [ENTRY]
 Module: flatzinc

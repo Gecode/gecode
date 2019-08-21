@@ -95,8 +95,8 @@ namespace Gecode { namespace Int { namespace LDSB {
                  ViewSel<View>* vs[n],
                  ValSelCommitBase<View,Val>* vsc,
                  SymmetryImp<View>** syms, int nsyms,
-                 BranchFilter<LDSBBrancher<View,n,Val,a,Filter,Print>::Var> bf,
-                 VarValPrint<LDSBBrancher<View,n,Val,a,Filter,Print>::Var,Val> vvp)
+                 BranchFilter<typename LDSBBrancher<View,n,Val,a,Filter,Print>::Var> bf,
+                 VarValPrint<typename LDSBBrancher<View,n,Val,a,Filter,Print>::Var,Val> vvp)
     : ViewValBrancher<View,n,Val,a,Filter,Print>(home, x, vs, vsc, bf, vvp),
       _syms(syms),
       _nsyms(nsyms),
@@ -112,8 +112,8 @@ namespace Gecode { namespace Int { namespace LDSB {
   post(Home home, ViewArray<View>& x,
        ViewSel<View>* vs[n], ValSelCommitBase<View,Val>* vsc,
        SymmetryImp<View>** syms, int nsyms,
-       BranchFilter<LDSBBrancher<View,n,Val,a,Filter,Print>::Var> bf,
-       VarValPrint<LDSBBrancher<View,n,Val,a,Filter,Print>::Var,Val> vvp) {
+       BranchFilter<typename LDSBBrancher<View,n,Val,a,Filter,Print>::Var> bf,
+       VarValPrint<typename LDSBBrancher<View,n,Val,a,Filter,Print>::Var,Val> vvp) {
     (void) new (home) LDSBBrancher<View,n,Val,a,Filter,Print>
       (home,x,vs,vsc,syms,nsyms,bf,vvp);
   }
