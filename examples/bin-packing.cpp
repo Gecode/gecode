@@ -6,6 +6,9 @@
  *  Copyright:
  *     Christian Schulte, 2010
  *
+ *  Bugfixes provided by:
+ *     Florian ???
+ *
  *  This file is part of Gecode, the generic constraint
  *  development environment:
  *     http://www.gecode.org
@@ -460,10 +463,11 @@ public:
       break;
     }
 
-    // Break symmetries
-    for (int i=1; i<n; i++)
-      if (spec.size(i-1) == spec.size(i))
-        rel(*this, bin[i-1] <= bin[i]);
+    // Break symmetries, only if not using CBDF
+    if (opt.branching() != BRANCH_CDBF)
+      for (int i=1; i<n; i++)
+        if (spec.size(i-1) == spec.size(i))
+          rel(*this, bin[i-1] <= bin[i]);
 
     // Pack items that require a bin for sure! (wlog)
     {
