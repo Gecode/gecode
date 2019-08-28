@@ -859,6 +859,7 @@ namespace Gecode { namespace Int { namespace Extensional {
                Support::s_type(dfa.symbol_max()));
     switch (t_val) {
     case Gecode::Support::IT_CHAR:
+      // fall through
     case Gecode::Support::IT_SHRT:
       switch (t_state_idx) {
       case Gecode::Support::IT_CHAR:
@@ -914,7 +915,7 @@ namespace Gecode { namespace Int { namespace Extensional {
         break;
       default: GECODE_NEVER;
       }
-
+      break;
     case Gecode::Support::IT_INT:
       switch (t_state_idx) {
       case Gecode::Support::IT_CHAR:

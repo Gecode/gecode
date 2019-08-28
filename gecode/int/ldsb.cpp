@@ -281,7 +281,8 @@ namespace Gecode {
       if (vals.commit())
         throw LDSBBadValueSelection("Int::LDSB::branch");
       // If vals.commit() is valid, it means it will commit with
-      // binary branching, which is OK for LDSB, so we fall through.
+      // binary branching, which is OK for LDSB, so we
+      // fall through
     default:
       // Construct mapping from each variable in the array to its index
       // in the array.
@@ -361,7 +362,8 @@ namespace Gecode {
           if (vals.commit())
             throw LDSBBadValueSelection("Int::LDSB::branch");
           // If vals.commit() is valid, it means it will commit with
-          // binary branching, which is OK for LDSB, so we fall through.
+          // binary branching, which is OK for LDSB, so we
+          // fall through
         default:
           postldsbbrancher<IntView,2,int,2>
             (home,xv,vs,Branch::valselcommit(home,vals),
@@ -385,7 +387,8 @@ namespace Gecode {
           if (vals.commit())
             throw LDSBBadValueSelection("Int::LDSB::branch");
           // If vals.commit() is valid, it means it will commit with
-          // binary branching, which is OK for LDSB, so we fall through.
+          // binary branching, which is OK for LDSB, so we
+          // fall through
         default:
           postldsbbrancher<IntView,3,int,2>
             (home,xv,vs,Branch::valselcommit(home,vals),
@@ -409,7 +412,8 @@ namespace Gecode {
           if (vals.commit())
             throw LDSBBadValueSelection("Int::LDSB::branch");
           // If vals.commit() is valid, it means it will commit with
-          // binary branching, which is OK for LDSB, so we fall through.
+          // binary branching, which is OK for LDSB, so we
+          // fall through
         default:
           postldsbbrancher<IntView,4,int,2>
             (home,xv,vs,Branch::valselcommit(home,vals),
@@ -457,7 +461,8 @@ namespace Gecode {
       if (vals.commit())
         throw LDSBBadValueSelection("Int::LDSB::branch");
       // If vals.commit() is valid, it means it will commit with
-      // binary branching, which is OK for LDSB, so we fall through.
+      // binary branching, which is OK for LDSB, so we
+      // fall through
     default:
       postldsbbrancher<BoolView,1,int,2>
         (home,xv,vs,Branch::valselcommit(home,vals),array,n,bf,vvp);
@@ -513,7 +518,8 @@ namespace Gecode {
         if (vals.commit())
           throw LDSBBadValueSelection("Int::LDSB::branch");
         // If vals.commit() is valid, it means it will commit with
-        // binary branching, which is OK for LDSB, so we fall through.
+        // binary branching, which is OK for LDSB, so we
+        // fall through
       default:
         ;
         // Do nothing and continue.
