@@ -18,11 +18,11 @@ addons:
   apt:
     sources:
     - ubuntu-toolchain-r-test
-    - llvm-toolchain-precise-3.8
+    - llvm-toolchain-8
     - ubuntu-sdk-team
     packages:
     - g++-6
-    - clang-3.8
+    - clang-8
     # For Gist.
     - qt5-qmake
     - qtbase5-dev
