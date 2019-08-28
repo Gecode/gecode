@@ -49,8 +49,8 @@ namespace Gecode { namespace Set { namespace RelOp {
         EmptyView emptyset;
         GECODE_ES_FAIL((SuperOfInter<View0,View1,EmptyView>
                              ::post(home, x0, x1, emptyset)));
-        // fall through to SOT_UNION
       }
+      // fall through
     case SOT_UNION:
       {
         GECODE_ES_FAIL(
@@ -85,8 +85,8 @@ namespace Gecode { namespace Set { namespace RelOp {
         EmptyView emptyset;
         GECODE_ES_FAIL((SuperOfInter<View0,View1,EmptyView>
                              ::post(home, x0, x1, emptyset)));
-        // fall through to SOT_UNION
       }
+      // fall through
     case SOT_UNION:
       {
         SetVar tmp(home);
@@ -126,8 +126,8 @@ namespace Gecode { namespace Set { namespace RelOp {
         EmptyView emptyset;
         GECODE_ES_FAIL((SuperOfInter<View0,View1,EmptyView>
                              ::post(home, x0, x1, emptyset)));
-        // fall through to SOT_UNION
       }
+      // fall through
     case SOT_UNION:
       {
         GECODE_ES_FAIL(

@@ -123,6 +123,7 @@ namespace Gecode {
       case ET_CONC:
         if ((e->data.kids[1] != nullptr) && (--e->data.kids[1]->use_cnt == 0))
           todo.push(e->data.kids[1]);
+        // fall through
       case ET_STAR:
         if ((e->data.kids[0] != nullptr) && (--e->data.kids[0]->use_cnt == 0))
           todo.push(e->data.kids[0]);

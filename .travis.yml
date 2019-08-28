@@ -1,3 +1,5 @@
+dist: bionic
+
 sudo: false
 
 language: cpp
@@ -16,13 +18,7 @@ notifications:
 
 addons:
   apt:
-    sources:
-    - ubuntu-toolchain-r-test
-    - llvm-toolchain-precise-3.8
-    - ubuntu-sdk-team
     packages:
-    - g++-6
-    - clang-3.8
     # For Gist.
     - qt5-qmake
     - qtbase5-dev
@@ -30,8 +26,8 @@ addons:
     - qt5-default
 
 install:
-  - "[ $CXX = g++ ] && export CXX=g++-6 || true"
-  - "[ $CXX = clang++ ] && export CXX=clang++-3.8 || true"
+  - "[ $CXX = g++ ] && export CXX=g++ || true"
+  - "[ $CXX = clang++ ] && export CXX=clang++ || true"
 
 script:
   - ./configure --prefix=/usr --enable-gist
