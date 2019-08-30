@@ -11,6 +11,11 @@ changelog.hh
 license.hh
 header.html
 autom4te.cache
+CMakeCache.txt
+CTestTestfile.cmake
+cmake_install.cmake
+CMakeFiles
+bin
 gecode/support/config.hpp
 tools/flatzinc/mzn-gecode.bat
 tools/flatzinc/fzn-gecode
