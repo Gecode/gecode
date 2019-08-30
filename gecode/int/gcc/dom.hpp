@@ -67,7 +67,7 @@ namespace Gecode { namespace Int { namespace GCC {
   Dom<Card>::Dom(Home home, ViewArray<IntView>& x0,
                  ViewArray<Card>& k0, bool cf)
     : Propagator(home), x(x0),  y(home, x0),
-      k(k0), vvg(NULL), card_fixed(cf){
+      k(k0), vvg(nullptr), card_fixed(cf){
     // y is used for bounds propagation since prop_bnd needs all variables
     // values within the domain bounds
     x.subscribe(home, *this, PC_INT_DOM);
@@ -77,7 +77,7 @@ namespace Gecode { namespace Int { namespace GCC {
   template<class Card>
   forceinline
   Dom<Card>::Dom(Space& home, Dom<Card>& p)
-    : Propagator(home, p), vvg(NULL), card_fixed(p.card_fixed) {
+    : Propagator(home, p), vvg(nullptr), card_fixed(p.card_fixed) {
     x.update(home, p.x);
     y.update(home, p.y);
     k.update(home, p.k);
@@ -175,7 +175,7 @@ namespace Gecode { namespace Int { namespace GCC {
       return home.ES_SUBSUMED(*this);
     }
 
-    if (vvg == NULL) {
+    if (vvg == nullptr) {
       int smin = 0;
       int smax = 0;
       for (int i=k.size(); i--; )

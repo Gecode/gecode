@@ -290,7 +290,7 @@ namespace Gecode { namespace CPProfiler {
     }
     
     // loop through all the results and connect to the first we can
-    for (p = servinfo; p != NULL; p = p->ai_next) {
+    for (p = servinfo; p != nullptr; p = p->ai_next) {
       if ((sockfd = static_cast<int>(socket(p->ai_family, p->ai_socktype, p->ai_protocol))) == -1) {
         // errno is set here, but we don't examine it.
         continue;
@@ -310,7 +310,7 @@ namespace Gecode { namespace CPProfiler {
     }
     
     // Connection failed; give up.
-    if (p == NULL) {
+    if (p == nullptr) {
       goto giveup;
     }
       

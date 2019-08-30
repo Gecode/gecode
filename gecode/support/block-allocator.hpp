@@ -97,7 +97,7 @@ namespace Gecode { namespace Support {
   forceinline
   BlockAllocator<T,A,blocksize>::BlockAllocator(A& a0) : a(a0) {
     b = static_cast<Block*>(a.ralloc(sizeof(Block)));
-    b->next = NULL;
+    b->next = nullptr;
     n       = &b->b[blocksize];
     _size = sizeof(Block);
   }
@@ -105,7 +105,7 @@ namespace Gecode { namespace Support {
   template<class T, class A, int blocksize>
   forceinline
   BlockAllocator<T,A,blocksize>::~BlockAllocator(void) {
-    while (b != NULL) {
+    while (b != nullptr) {
       Block* f = b; b = b->next;
       a.rfree(f,sizeof(Block));
     }

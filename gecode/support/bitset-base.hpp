@@ -435,7 +435,7 @@ namespace Gecode { namespace Support {
 
   forceinline
   RawBitSetBase::RawBitSetBase(void)
-    : data(NULL) {}
+    : data(nullptr) {}
 
   template<class A>
   forceinline
@@ -460,14 +460,14 @@ namespace Gecode { namespace Support {
   template<class A>
   forceinline void
   RawBitSetBase::allocate(A& a, unsigned int sz) {
-    assert(data == NULL);
+    assert(data == nullptr);
     data=a.template alloc<BitSetData>(BitSetData::data(sz+1));
   }
 
   template<class A>
   forceinline void
   RawBitSetBase::init(A& a, unsigned int sz, bool setbits) {
-    assert(data == NULL);
+    assert(data == nullptr);
     data=a.template alloc<BitSetData>(BitSetData::data(sz+1));
     for (unsigned int i=0U; i<BitSetData::data(sz+1); i++)
       data[i].init(setbits);

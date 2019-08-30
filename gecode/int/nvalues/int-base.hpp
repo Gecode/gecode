@@ -168,7 +168,7 @@ namespace Gecode { namespace Int { namespace NValues {
 #ifndef NDEBUG
       // Initialize all to null pointers so that things crash ;-)
       for (int i=x.size(); i--; )
-        ovl_i[i] = NULL;
+        ovl_i[i] = nullptr;
 #endif
       // For each i there can be at most n_dis-1 entries in ovl_i[i]
       int* m = r.alloc<int>(n_dis*(n_dis-1));

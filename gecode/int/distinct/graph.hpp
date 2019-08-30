@@ -71,21 +71,21 @@ namespace Gecode { namespace Int { namespace Distinct {
       ValNode<View>** val2node = r.alloc<ValNode<View>* >(width);
 
       for (unsigned int i=0U; i<width; i++)
-        val2node[i]=NULL;
+        val2node[i]=nullptr;
 
       for (int i=0; i<n_view; i++) {
         Edge<View>** edge_p = view[i]->val_edges_ref();
         for (ViewValues<View> xi(x[i]); xi(); ++xi) {
-          if (val2node[xi.val()-min] == NULL)
+          if (val2node[xi.val()-min] == nullptr)
             val2node[xi.val()-min] = new (home) ValNode<View>(xi.val());
           *edge_p = new (home) Edge<View>(val2node[xi.val()-min],view[i]);
           edge_p = (*edge_p)->next_edge_ref();
         }
-        *edge_p = NULL;
+        *edge_p = nullptr;
       }
 
       for (unsigned int i=width; i--; )
-        if (val2node[i] != NULL) {
+        if (val2node[i] != nullptr) {
           val2node[i]->next_val(val);
           val = val2node[i];
           n_val++;
@@ -117,10 +117,10 @@ namespace Gecode { namespace Int { namespace Distinct {
     // Synchronize nodes
     for (int i = n_view; i--; ) {
       ViewNode<View>* x = view[i];
-      GECODE_ASSUME(x != NULL);
+      GECODE_ASSUME(x != nullptr);
       if (x->view().assigned()) {
-        x->edge_fst()->val(x)->matching(NULL);
-        for (Edge<View>* e = x->val_edges(); e != NULL; e = e->next_edge())
+        x->edge_fst()->val(x)->matching(nullptr);
+        for (Edge<View>* e = x->val_edges(); e != nullptr; e = e->next_edge())
           e->unlink();
         view[i] = view[--n_view];
       } else if (x->changed()) {
@@ -128,7 +128,7 @@ namespace Gecode { namespace Int { namespace Distinct {
         Edge<View>*  m = x->edge_fst();      // Matching edge
         Edge<View>** p = x->val_edges_ref();
         Edge<View>*  e = *p;
-        GECODE_ASSUME(e != NULL);
+        GECODE_ASSUME(e != nullptr);
         do {
           while (e->val(x)->val() < rx.min()) {
             // Skip edge
@@ -145,20 +145,20 @@ namespace Gecode { namespace Int { namespace Distinct {
           }
           ++rx;
         } while (rx());
-        *p = NULL;
-        while (e != NULL) {
+        *p = nullptr;
+        while (e != nullptr) {
           e->unlink(); e->mark();
           e = e->next_edge();
         }
         if (m->marked()) {
           // Matching has been deleted!
-          m->val(x)->matching(NULL);
+          m->val(x)->matching(nullptr);
           re.push(x);
         }
         x->update();
       } else {
         // Just free edges
-        for (Edge<View>* e = x->val_edges(); e != NULL; e = e->next_edge())
+        for (Edge<View>* e = x->val_edges(); e != nullptr; e = e->next_edge())
           e->free();
       }
     }
@@ -189,7 +189,7 @@ namespace Gecode { namespace Int { namespace Distinct {
       count++;
       {
         ValNode<View>** v = &val;
-        while (*v != NULL)
+        while (*v != nullptr)
           if (!(*v)->matching()) {
             if ((*v)->empty()) {
               *v = (*v)->next_val();
@@ -245,8 +245,8 @@ namespace Gecode { namespace Int { namespace Distinct {
       ViewNode<View>* x = view[i];
       if (!x->edge_fst()->used(x)) {
         GECODE_ME_CHECK(x->view().eq(home,x->edge_fst()->val(x)->val()));
-        x->edge_fst()->val(x)->matching(NULL);
-        for (Edge<View>* e = x->val_edges(); e != NULL; e = e->next_edge())
+        x->edge_fst()->val(x)->matching(nullptr);
+        for (Edge<View>* e = x->val_edges(); e != nullptr; e = e->next_edge())
           e->unlink();
         view[i] = view[--n_view];
         assigned = true;

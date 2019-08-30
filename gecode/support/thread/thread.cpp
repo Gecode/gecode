@@ -44,7 +44,7 @@ namespace Gecode { namespace Support {
     return m;
   }
 
-  Thread::Run* Thread::idle = NULL;
+  Thread::Run* Thread::idle = nullptr;
 
   void
   Thread::Run::exec(void) {
@@ -53,10 +53,10 @@ namespace Gecode { namespace Support {
       {
         Runnable* e;
         m.acquire();
-        GECODE_ASSUME(r != NULL);
-        e=r; r=NULL;
+        GECODE_ASSUME(r != nullptr);
+        e=r; r=nullptr;
         m.release();
-        assert(e != NULL);
+        assert(e != nullptr);
         e->run();
         if (e->todelete()) {
           Terminator* t = e->terminator();

@@ -81,7 +81,7 @@ namespace Gecode {
   template<class T, template<class> class E>
   inline
   RBS<T,E>::RBS(T* s, const Search::Options& m_opt) {
-    if (m_opt.cutoff == NULL)
+    if (m_opt.cutoff == nullptr)
       throw Search::UninitializedCutoff("RBS::RBS");
     Search::Options e_opt(m_opt.expand());
     Search::Statistics stat;
@@ -97,7 +97,7 @@ namespace Gecode {
     } else {
       Space* master = m_opt.clone ? s->clone() : s;
       Space* slave  = master->clone();
-      MetaInfo mi(0,0,0,NULL,NoGoods::eng);
+      MetaInfo mi(0,0,0,nullptr,NoGoods::eng);
       slave->slave(mi);
       e = Search::Seq::rbsengine(master,e_opt.stop,
                                  Search::build<T,E>(slave,e_opt),
@@ -116,7 +116,7 @@ namespace Gecode {
   template<class T, template<class> class E>
   SEB
   rbs(const Search::Options& o) {
-    if (o.cutoff == NULL)
+    if (o.cutoff == nullptr)
       throw Search::UninitializedCutoff("rbs");
     return new Search::RbsBuilder<T,E>(o);
   }

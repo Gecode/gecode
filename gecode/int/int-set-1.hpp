@@ -150,19 +150,19 @@ namespace Gecode {
 
   forceinline int
   IntSet::min(int i) const {
-    assert(object() != NULL);
+    assert(object() != nullptr);
     return static_cast<IntSetObject*>(object())->r[i].min;
   }
 
   forceinline int
   IntSet::max(int i) const {
-    assert(object() != NULL);
+    assert(object() != nullptr);
     return static_cast<IntSetObject*>(object())->r[i].max;
   }
 
   forceinline unsigned int
   IntSet::width(int i) const {
-    assert(object() != NULL);
+    assert(object() != nullptr);
     IntSetObject* o = static_cast<IntSetObject*>(object());
     return static_cast<unsigned int>(o->r[i].max-o->r[i].min)+1;
   }
@@ -170,13 +170,13 @@ namespace Gecode {
   forceinline int
   IntSet::ranges(void) const {
     IntSetObject* o = static_cast<IntSetObject*>(object());
-    return (o == NULL) ? 0 : o->n;
+    return (o == nullptr) ? 0 : o->n;
   }
 
   forceinline bool
   IntSet::in(int n) const {
     IntSetObject* o = static_cast<IntSetObject*>(object());
-    if ((o == NULL) || (n < o->r[0].min) || (n > o->r[o->n-1].max))
+    if ((o == nullptr) || (n < o->r[0].min) || (n > o->r[o->n-1].max))
       return false;
     else
       return o->in(n);
@@ -185,25 +185,25 @@ namespace Gecode {
   forceinline int
   IntSet::min(void) const {
     IntSetObject* o = static_cast<IntSetObject*>(object());
-    return (o == NULL) ? Int::Limits::max : o->r[0].min;
+    return (o == nullptr) ? Int::Limits::max : o->r[0].min;
   }
 
   forceinline int
   IntSet::max(void) const {
     IntSetObject* o = static_cast<IntSetObject*>(object());
-    return (o == NULL) ? Int::Limits::min : o->r[o->n-1].max;
+    return (o == nullptr) ? Int::Limits::min : o->r[o->n-1].max;
   }
 
   forceinline unsigned int
   IntSet::size(void) const {
     IntSetObject* o = static_cast<IntSetObject*>(object());
-    return (o == NULL) ? 0U : o->size;
+    return (o == nullptr) ? 0U : o->size;
   }
 
   forceinline unsigned int
   IntSet::width(void) const {
     IntSetObject* o = static_cast<IntSetObject*>(object());
-    return (o == NULL) ? 0U : static_cast<unsigned int>(max()-min()+1);
+    return (o == nullptr) ? 0U : static_cast<unsigned int>(max()-min()+1);
   }
 
   forceinline bool
@@ -239,7 +239,7 @@ namespace Gecode {
     if (n > 0) {
       i = &static_cast<IntSet::IntSetObject*>(s.object())->r[0]; e = i+n;
     } else {
-      i = e = NULL;
+      i = e = nullptr;
     }
   }
   forceinline

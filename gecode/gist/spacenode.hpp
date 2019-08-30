@@ -87,8 +87,8 @@ namespace Gecode { namespace Gist {
 
   forceinline
   SpaceNode::SpaceNode(int p)
-  : Node(p), copy(NULL), nstatus(0) {
-    choice = NULL;
+  : Node(p), copy(nullptr), nstatus(0) {
+    choice = nullptr;
     setStatus(UNDETERMINED);
     setHasSolvedChildren(false);
     setHasFailedChildren(false);
@@ -101,7 +101,7 @@ namespace Gecode { namespace Gist {
     Space* ret;
     if (Support::marked(copy)) {
       ret = static_cast<Space*>(Support::unmark(copy));
-      copy = NULL;
+      copy = nullptr;
     } else {
       ret = copy->clone();
     }
@@ -110,7 +110,7 @@ namespace Gecode { namespace Gist {
 
   forceinline const Space*
   SpaceNode::getWorkingSpace(void) const {
-    assert(copy != NULL);
+    assert(copy != nullptr);
     if (Support::marked(copy))
       return static_cast<Space*>(Support::unmark(copy));
     return copy;
@@ -124,14 +124,14 @@ namespace Gecode { namespace Gist {
         delete static_cast<Space*>(Support::unmark(copy));
       else
         delete copy;
-      copy = NULL;
+      copy = nullptr;
     }
   }
 
 
   forceinline bool
   SpaceNode::isCurrentBest(BestNode* curBest) {
-    return curBest != NULL && curBest->s == this;
+    return curBest != nullptr && curBest->s == this;
   }
 
   forceinline bool
@@ -157,18 +157,18 @@ namespace Gecode { namespace Gist {
 
   forceinline bool
   SpaceNode::hasCopy(void) {
-    return copy != NULL;
+    return copy != nullptr;
   }
 
   forceinline bool
   SpaceNode::hasWorkingSpace(void) {
-    return copy != NULL && Support::marked(copy);
+    return copy != nullptr && Support::marked(copy);
   }
 
   forceinline int
   SpaceNode::getAlternative(const NodeAllocator& na) const {
     SpaceNode* p = getParent(na);
-    if (p == NULL)
+    if (p == nullptr)
       return -1;
     for (int i=static_cast<int>(p->getNumberOfChildren()); i--;)
       if (p->getChild(na,i) == this)

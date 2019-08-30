@@ -40,7 +40,7 @@ namespace Gecode { namespace Int {
   template<class Task>
   forceinline
   TaskArray<Task>::TaskArray(void)
-    : n(0), t(NULL) {}
+    : n(0), t(nullptr) {}
   template<class Task>
   forceinline
   TaskArray<Task>::TaskArray(Space& home, int n0)

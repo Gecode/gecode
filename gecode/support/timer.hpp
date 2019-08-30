@@ -65,7 +65,7 @@ namespace Gecode { namespace Support {
   inline void
   Timer::start(void) {
 #if   defined(GECODE_USE_GETTIMEOFDAY)
-    if (gettimeofday(&t0, NULL))
+    if (gettimeofday(&t0, nullptr))
       throw OperatingSystemError("Timer::start[gettimeofday]");
 #elif defined(GECODE_USE_CLOCK)
     t0 = clock();
@@ -76,7 +76,7 @@ namespace Gecode { namespace Support {
   Timer::stop(void) {
 #if   defined(GECODE_USE_GETTIMEOFDAY)
     timeval t1, t;
-    if (gettimeofday(&t1, NULL))
+    if (gettimeofday(&t1, nullptr))
       throw OperatingSystemError("Timer::stop[gettimeofday]");
 
     // t = t1 - t2

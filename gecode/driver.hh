@@ -153,7 +153,7 @@ namespace Gecode {
       const char* cur; ///< Current value
     public:
       /// Initialize for option \a o and explanation \a e and default value \a v
-      StringValueOption(const char* o, const char* e, const char* v=NULL);
+      StringValueOption(const char* o, const char* e, const char* v=nullptr);
       /// Set default value to \a v
       void value(const char* v);
       /// Return current option value
@@ -192,7 +192,7 @@ namespace Gecode {
       /// Return current option value
       int value(void) const;
       /// Add option value for value \a v, string \a o, and help text \a h
-      void add(int v, const char* o, const char* h = NULL);
+      void add(int v, const char* o, const char* h = nullptr);
       /// Parse option at first position and return number of parsed arguments
       virtual int parse(int argc, char* argv[]);
       /// Print help text
@@ -450,21 +450,21 @@ namespace Gecode {
     /// Set default model value
     void model(int v);
     /// Add model option value for value \a v, string \a o, and help \a h
-    void model(int v, const char* o, const char* h = NULL);
+    void model(int v, const char* o, const char* h = nullptr);
     /// Return model value
     int model(void) const;
 
     /// Set default symmetry value
     void symmetry(int v);
     /// Add symmetry option value for value \a v, string \a o, and help \a h
-    void symmetry(int v, const char* o, const char* h = NULL);
+    void symmetry(int v, const char* o, const char* h = nullptr);
     /// Return symmetry value
     int symmetry(void) const;
 
     /// Set default propagation value
     void propagation(int v);
     /// Add propagation option value for value \a v, string \a o, and help \a h
-    void propagation(int v, const char* o, const char* h = NULL);
+    void propagation(int v, const char* o, const char* h = nullptr);
     /// Return propagation value
     int propagation(void) const;
 
@@ -476,7 +476,7 @@ namespace Gecode {
     /// Set default branching value
     void branching(int v);
     /// Add branching option value for value \a v, string \a o, and help \a h
-    void branching(int v, const char* o, const char* h = NULL);
+    void branching(int v, const char* o, const char* h = nullptr);
     /// Return branching value
     int branching(void) const;
 
@@ -501,7 +501,7 @@ namespace Gecode {
     /// Set default search value
     void search(int v);
     /// Add search option value for value \a v, string \a o, and help \a h
-    void search(int v, const char* o, const char* h = NULL);
+    void search(int v, const char* o, const char* h = nullptr);
     /// Return search value
     int search(void) const;
 
@@ -676,13 +676,13 @@ namespace Gecode {
       /// Add comparator
       void compare(Gist::Comparator* i);
 
-      /// Return click inspector number \a i, or NULL if it does not exist
+      /// Return click inspector number \a i, or nullptr if it does not exist
       Gist::Inspector* click(unsigned int i) const;
-      /// Return solution inspector number \a i, or NULL if it does not exist
+      /// Return solution inspector number \a i, or nullptr if it does not exist
       Gist::Inspector* solution(unsigned int i) const;
-      /// Return move inspector number \a i, or NULL if it does not exist
+      /// Return move inspector number \a i, or nullptr if it does not exist
       Gist::Inspector* move(unsigned int i) const;
-      /// Return comparator number \a i, or NULL if it does not exist
+      /// Return comparator number \a i, or nullptr if it does not exist
       Gist::Comparator* compare(unsigned int i) const;
     } inspect;
 #endif
@@ -768,11 +768,11 @@ namespace Gecode { namespace Driver {
      * SIGINT to the process (i.e., pressing Ctrl-C on the command
      * line).
      *
-     * In case \a s is different from NULL, the search engine uses
+     * In case \a s is different from nullptr, the search engine uses
      * \a s as root of the search tree.
      */
     template<class Script, template<class> class Engine, class Options>
-    static void run(const Options& opt, Script* s=NULL);
+    static void run(const Options& opt, Script* s=nullptr);
   private:
     template<class Script, template<class> class Engine, class Options,
              template<class, template<class> class> class Meta>

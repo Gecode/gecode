@@ -66,10 +66,10 @@ namespace Gecode { namespace Search { namespace Par {
 
   forceinline
   CollectBest::CollectBest(void)
-    : b(NULL), reporter(NULL) {}
+    : b(nullptr), reporter(nullptr) {}
   forceinline bool
   CollectBest::add(Space* s, Slave<CollectBest>* r) {
-    if (b != NULL) {
+    if (b != nullptr) {
       b->constrain(*s);
       if (b->status() == SS_FAILED) {
         delete b;
@@ -84,7 +84,7 @@ namespace Gecode { namespace Search { namespace Par {
   }
   forceinline bool
   CollectBest::constrain(const Space& s) {
-    if (b != NULL) {
+    if (b != nullptr) {
       b->constrain(s);
       if (b->status() == SS_FAILED) {
         delete b;
@@ -93,18 +93,18 @@ namespace Gecode { namespace Search { namespace Par {
       }
     }
     b = s.clone();
-    reporter = NULL;
+    reporter = nullptr;
     return true;
   }
   forceinline bool
   CollectBest::empty(void) const {
-    return reporter == NULL;
+    return reporter == nullptr;
   }
   forceinline Space*
   CollectBest::get(Slave<CollectBest>*& r) {
     assert(!empty());
     r = reporter;
-    reporter = NULL;
+    reporter = nullptr;
     return b->clone();
   }
   forceinline
@@ -115,7 +115,7 @@ namespace Gecode { namespace Search { namespace Par {
 
   forceinline
   PortfolioStop::PortfolioStop(Stop* so0)
-    : so(so0), tostop(NULL) {}
+    : so(so0), tostop(nullptr) {}
 
   forceinline void
   PortfolioStop::share(volatile bool* ts) {
@@ -171,7 +171,7 @@ namespace Gecode { namespace Search { namespace Par {
     // If b is false the report should be repeated (solution was worse)
     bool b = true;
     m.acquire();
-    if (s != NULL) {
+    if (s != nullptr) {
       b = solutions.add(s,slave);
       if (b)
         tostop = true;
@@ -237,7 +237,7 @@ namespace Gecode { namespace Search { namespace Par {
 
     // Process solutions
     if (solutions.empty()) {
-      s = NULL;
+      s = nullptr;
     } else {
       Slave<Collect>* r;
       s = solutions.get(r);

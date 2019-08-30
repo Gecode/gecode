@@ -47,7 +47,7 @@ namespace Gecode {
 
   forceinline void
   Rnd::_seed(unsigned int s) {
-    if (object() == NULL) {
+    if (object() == nullptr) {
       object(new IMP(s));
     } else {
       static_cast<IMP*>(object())->seed(s);
@@ -73,7 +73,7 @@ namespace Gecode {
   }
   void
   Rnd::time(void) {
-    _seed(static_cast<unsigned int>(::time(NULL)));
+    _seed(static_cast<unsigned int>(::time(nullptr)));
   }
   void
   Rnd::hw(void) {

@@ -397,7 +397,7 @@ namespace Gecode {
   template<class View>
   forceinline typename View::VarImpType*
   ConstView<View>::varimp(void) const {
-    return NULL;
+    return nullptr;
   }
 #ifdef GECODE_HAS_CBS
   template<class View>
@@ -474,7 +474,7 @@ namespace Gecode {
   template<class Var>
   forceinline
   VarImpView<Var>::VarImpView(void)
-    : x(NULL) {}
+    : x(nullptr) {}
   template<class Var>
   forceinline
   VarImpView<Var>::VarImpView(VarImpType* y)

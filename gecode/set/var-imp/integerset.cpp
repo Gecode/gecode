@@ -39,7 +39,7 @@ namespace Gecode { namespace Set {
 
   BndSet::BndSet(Space& home, const IntSet& is)  {
     if (is.ranges()==0) {
-      fst(NULL); lst(NULL); _size = 0;
+      fst(nullptr); lst(nullptr); _size = 0;
     } else {
       int n = is.ranges();
       RangeList* r = home.alloc<RangeList>(n);
@@ -50,7 +50,7 @@ namespace Gecode { namespace Set {
         r[i].min(is.min(i)); r[i].max(is.max(i));
         r[i].next(&r[i+1]);
       }
-      r[n-1].next(NULL);
+      r[n-1].next(nullptr);
       _size = s;
     }
     assert(isConsistent());
@@ -59,19 +59,19 @@ namespace Gecode { namespace Set {
   bool
   GLBndSet::include_full(Space& home, int mi, int ma, SetDelta& d) {
     assert(ma >= mi);
-    assert(fst() != NULL);
+    assert(fst() != nullptr);
 
-    RangeList* p = NULL;
+    RangeList* p = nullptr;
     RangeList* c = fst();
 
-    while (c != NULL) {
+    while (c != nullptr) {
       if (c->max() >= mi-1) {
         if (c->min() > ma+1) {  //in a hole before c
           _size+=(ma-mi+1);
           d._glbMin = mi;
           d._glbMax = ma;
           RangeList* q = new (home) RangeList(mi,ma,c);
-          if (p==NULL)
+          if (p==nullptr)
             //the new range is the first
             fst(q);
           else
@@ -99,7 +99,7 @@ namespace Gecode { namespace Set {
         int prevMax = c->max();
         int growth = 0;
         // invariant: q->min()<=ma+1
-        while (q->next() != NULL && q->next()->min() <= ma+1) {
+        while (q->next() != nullptr && q->next()->min() <= ma+1) {
           q = q->next();
           growth += q->min()-prevMax-1;
           prevMax = q->max();
@@ -115,9 +115,9 @@ namespace Gecode { namespace Set {
         c->max(std::max(ma,q->max()));
         if (c!=q) {
           RangeList* oldCNext = c->next();
-          assert(oldCNext!=NULL); //q would have stayed c if c was last.
+          assert(oldCNext!=nullptr); //q would have stayed c if c was last.
           c->next(q->next());
-          if (q->next()==NULL) {
+          if (q->next()==nullptr) {
             assert(q==lst());
             lst(c);
           }
@@ -130,7 +130,7 @@ namespace Gecode { namespace Set {
     }
     //the new range is disjoint from the old domain and we add it as last:
     assert(mi>max()+1);
-    RangeList* q = new (home) RangeList(mi, ma, NULL);
+    RangeList* q = new (home) RangeList(mi, ma, nullptr);
     lst()->next(q);
     lst(q);
     _size+= q->width();
@@ -141,21 +141,21 @@ namespace Gecode { namespace Set {
 
   bool
   LUBndSet::intersect_full(Space& home, int mi, int ma) {
-    RangeList* p = NULL;
+    RangeList* p = nullptr;
     RangeList* c = fst();
 
-    assert(c != NULL); // Never intersect with an empty set
+    assert(c != nullptr); // Never intersect with an empty set
 
     // Skip ranges that are before mi
-    while (c != NULL && c->max() < mi) {
+    while (c != nullptr && c->max() < mi) {
       _size -= c->width();
       RangeList *nc = c->next();
       p=c; c=nc;
     }
-    if (c == NULL) {
+    if (c == nullptr) {
       // Delete entire domain
       fst()->dispose(home, lst());
-      fst(NULL); lst(NULL);
+      fst(nullptr); lst(nullptr);
       return true;
     }
 
@@ -163,7 +163,7 @@ namespace Gecode { namespace Set {
     if (c != fst()) {
       fst()->dispose(home, p);
       fst(c);
-      p = NULL;
+      p = nullptr;
       changed = true;
     }
     // We have found the first range that intersects with [mi,ma]
@@ -173,12 +173,12 @@ namespace Gecode { namespace Set {
       changed = true;
     }
 
-    while (c != NULL && c->max() <= ma) {
+    while (c != nullptr && c->max() <= ma) {
       RangeList *nc = c->next();
       p=c; c=nc;
     }
 
-    if (c == NULL)
+    if (c == nullptr)
       return changed;
 
     RangeList* newlst = p;
@@ -187,19 +187,19 @@ namespace Gecode { namespace Set {
       c->max(ma);
       newlst = c;
       RangeList* nc = c->next();
-      c->next(NULL);
+      c->next(nullptr);
       p=c; c=nc;
-    } else if (p != NULL) {
-      p->next(NULL);
+    } else if (p != nullptr) {
+      p->next(nullptr);
     }
-    if (c != NULL) {
-      for (RangeList* cc = c ; cc != NULL; cc = cc->next())
+    if (c != nullptr) {
+      for (RangeList* cc = c ; cc != nullptr; cc = cc->next())
         _size -= cc->width();
       c->dispose(home, lst());
     }
     lst(newlst);
-    if (newlst==NULL)
-      fst(NULL);
+    if (newlst==nullptr)
+      fst(nullptr);
     return true;
   }
 
@@ -210,10 +210,10 @@ namespace Gecode { namespace Set {
            (mi > min() || ma < max()));
     bool result=false;
 
-    RangeList* p = NULL;
+    RangeList* p = nullptr;
     RangeList* c = fst();
     d._lubMin = Limits::max+1;
-    while (c != NULL) {
+    while (c != nullptr) {
       if (c->max() >= mi) {
         if (c->min() > ma) { return result; } //in a hole
 
@@ -249,7 +249,7 @@ namespace Gecode { namespace Set {
           d._lubMin = c->min();
           _size-=c->width();
           RangeList *cend = c;
-          while ((cend->next()!=NULL) && (cend->next()->max()<=ma)) {
+          while ((cend->next()!=nullptr) && (cend->next()->max()<=ma)) {
             cend = cend->next();
             _size-=cend->width();
           }
@@ -266,7 +266,7 @@ namespace Gecode { namespace Set {
           c->dispose(home,cend);
           p=cend;
           c=nc;
-          if (c != NULL && c->min() <= ma ) {
+          if (c != nullptr && c->min() <= ma ) {
             //start of range clipped, end remains
             _size-=(ma-c->min()+1);
             c->min(ma+1);
@@ -288,19 +288,19 @@ namespace Gecode { namespace Set {
   bool
   BndSet::isConsistent(void) const {
 #ifndef NDEBUG
-    if (fst()==NULL) {
-      if (lst()!=NULL || size()!=0) {
+    if (fst()==nullptr) {
+      if (lst()!=nullptr || size()!=0) {
         std::cerr<<"Strange empty set.\n";
         return false;
       } else return true;
     }
 
-    if (fst()!=NULL && lst()==NULL) {
+    if (fst()!=nullptr && lst()==nullptr) {
       std::cerr<<"First is not null, last is.\n";
       return false;
     }
 
-    RangeList *p=NULL;
+    RangeList *p=nullptr;
     RangeList *c=fst();
 
     int min = c->min();
@@ -322,7 +322,7 @@ namespace Gecode { namespace Set {
         std::cerr << "2";
         return false;
       }
-      if (c->next()==NULL && c!=lst()) {
+      if (c->next()==nullptr && c!=lst()) {
         std::cerr << "3";
         return false;
       }

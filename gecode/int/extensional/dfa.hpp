@@ -80,7 +80,7 @@ namespace Gecode {
 
   forceinline
   DFA::DFAI::DFAI(int nt)
-    : trans(nt == 0 ? NULL : heap.alloc<Transition>(nt)) {}
+    : trans(nt == 0 ? nullptr : heap.alloc<Transition>(nt)) {}
 
   forceinline
   DFA::DFAI::~DFAI(void) {
@@ -104,7 +104,7 @@ namespace Gecode {
     table = heap.alloc<HashEntry>(1<<n_log);
     // Initialize table
     for (int i=(1<<n_log); i--; )
-      table[i].fst = table[i].lst = NULL;
+      table[i].fst = table[i].lst = nullptr;
     int mask = (1 << n_log) - 1;
     // Enter transitions to table
     for (int i = 0; i<n_trans; ) {
@@ -119,7 +119,7 @@ namespace Gecode {
       Transition* lst = &trans[i];
       // Enter with linear collision resolution
       int p = s & mask;
-      while (table[p].fst != NULL)
+      while (table[p].fst != nullptr)
         p = (p+1) & mask;
       table[p].symbol = s;
       table[p].fst    = fst;
@@ -138,57 +138,57 @@ namespace Gecode {
   forceinline int
   DFA::n_states(void) const {
     const DFAI* d = static_cast<DFAI*>(object());
-    return (d == NULL) ? 1 : d->n_states;
+    return (d == nullptr) ? 1 : d->n_states;
   }
 
   forceinline unsigned int
   DFA::n_symbols(void) const {
     const DFAI* d = static_cast<DFAI*>(object());
-    return (d == NULL) ? 0 : d->n_symbols;
+    return (d == nullptr) ? 0 : d->n_symbols;
   }
 
   forceinline int
   DFA::n_transitions(void) const {
     const DFAI* d = static_cast<DFAI*>(object());
-    return (d == NULL) ? 0 : d->n_trans;
+    return (d == nullptr) ? 0 : d->n_trans;
   }
 
   forceinline unsigned int
   DFA::max_degree(void) const {
     const DFAI* d = static_cast<DFAI*>(object());
-    return (d == NULL) ? 0 : d->max_degree;
+    return (d == nullptr) ? 0 : d->max_degree;
   }
 
   forceinline int
   DFA::final_fst(void) const {
     const DFAI* d = static_cast<DFAI*>(object());
-    return (d == NULL) ? 0 : d->final_fst;
+    return (d == nullptr) ? 0 : d->final_fst;
   }
 
   forceinline int
   DFA::final_lst(void) const {
     const DFAI* d = static_cast<DFAI*>(object());
-    return (d == NULL) ? 0 : d->final_lst;
+    return (d == nullptr) ? 0 : d->final_lst;
   }
 
   forceinline int
   DFA::symbol_min(void) const {
     const DFAI* d = static_cast<DFAI*>(object());
-    return ((d != NULL) && (d->n_trans > 0)) ?
+    return ((d != nullptr) && (d->n_trans > 0)) ?
       d->trans[0].symbol : Int::Limits::min;
   }
 
   forceinline int
   DFA::symbol_max(void) const {
     const DFAI* d = static_cast<DFAI*>(object());
-    return ((d != NULL) && (d->n_trans > 0)) ?
+    return ((d != nullptr) && (d->n_trans > 0)) ?
       d->trans[d->n_trans-1].symbol : Int::Limits::max;
   }
 
   forceinline std::size_t
   DFA::hash(void) const {
     const DFAI* d = static_cast<DFAI*>(object());
-    return (d != NULL) ? d->key : 0;
+    return (d != nullptr) ? d->key : 0;
   }
 
 
@@ -212,26 +212,26 @@ namespace Gecode {
   forceinline
   DFA::Transitions::Transitions(const DFA& d) {
     const DFAI* o = static_cast<DFAI*>(d.object());
-    if (o != NULL) {
+    if (o != nullptr) {
       c_trans = &o->trans[0];
       e_trans = c_trans+o->n_trans;
     } else {
-      c_trans = e_trans = NULL;
+      c_trans = e_trans = nullptr;
     }
   }
 
   forceinline
   DFA::Transitions::Transitions(const DFA& d, int n) {
     const DFAI* o = static_cast<DFAI*>(d.object());
-    if (o != NULL) {
+    if (o != nullptr) {
       int mask = (1<<o->n_log)-1;
       int p = n & mask;
-      while ((o->table[p].fst != NULL) && (o->table[p].symbol != n))
+      while ((o->table[p].fst != nullptr) && (o->table[p].symbol != n))
         p = (p+1) & mask;
       c_trans = o->table[p].fst;
       e_trans = o->table[p].lst;
     } else {
-      c_trans = e_trans = NULL;
+      c_trans = e_trans = nullptr;
     }
   }
 
@@ -268,11 +268,11 @@ namespace Gecode {
   forceinline
   DFA::Symbols::Symbols(const DFA& d) {
     const DFAI* o = static_cast<DFAI*>(d.object());
-    if (o != NULL) {
+    if (o != nullptr) {
       c_trans = &o->trans[0];
       e_trans = c_trans+o->n_trans;
     } else {
-      c_trans = e_trans = NULL;
+      c_trans = e_trans = nullptr;
     }
   }
 

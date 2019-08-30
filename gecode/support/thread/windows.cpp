@@ -50,8 +50,8 @@ namespace Gecode { namespace Support {
     m.release();
     // The Windows specific handle to a thread
     HANDLE w_h;
-    w_h = CreateThread(NULL, 0, bootstrap, this, 0, NULL);
-    if (w_h == NULL)
+    w_h = CreateThread(nullptr, 0, bootstrap, this, 0, nullptr);
+    if (w_h == nullptr)
       throw OperatingSystemError("Thread::run[Windows::CreateThread]");
     if (CloseHandle(w_h) == 0)
       throw OperatingSystemError("Thread::run[Windows::CloseHandle]");

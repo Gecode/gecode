@@ -273,7 +273,7 @@ namespace Gecode { namespace Support {
     /// Return whether to be deleted upon termination
     bool todelete(void) const;
     /// Return terminator object
-    virtual Terminator* terminator(void) const { return NULL; }
+    virtual Terminator* terminator(void) const { return nullptr; }
     /// The function that is executed when the thread starts
     virtual void run(void) = 0;
     /// Destructor

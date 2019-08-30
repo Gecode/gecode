@@ -156,7 +156,7 @@ namespace Gecode { namespace Int { namespace Element {
   template<class V0, class V1, class Idx, class Val>
   forceinline
   Int<V0,V1,Idx,Val>::Int(Home home, IntSharedArray& c0, V0 y0, V1 y1)
-    : Propagator(home), x0(y0), s0(0), x1(y1), s1(0), c(c0), iv(NULL) {
+    : Propagator(home), x0(y0), s0(0), x1(y1), s1(0), c(c0), iv(nullptr) {
     home.notice(*this,AP_DISPOSE);
     x0.subscribe(home,*this,PC_INT_DOM);
     x1.subscribe(home,*this,PC_INT_DOM);
@@ -189,7 +189,7 @@ namespace Gecode { namespace Int { namespace Element {
   template<class V0, class V1, class Idx, class Val>
   forceinline
   Int<V0,V1,Idx,Val>::Int(Space& home, Int& p)
-    : Propagator(home,p), s0(0), s1(0), c(p.c), iv(NULL) {
+    : Propagator(home,p), s0(0), s1(0), c(p.c), iv(nullptr) {
     x0.update(home,p.x0);
     x1.update(home,p.x1);
   }
@@ -285,14 +285,14 @@ namespace Gecode { namespace Int { namespace Element {
       return home.ES_SUBSUMED(*this);
     }
 
-    if (x1.assigned() && (iv == NULL)) {
+    if (x1.assigned() && (iv == nullptr)) {
       GECODE_ES_CHECK(assigned_val(home,c,x0,x1));
       return home.ES_SUBSUMED(*this);
     }
 
     if ((static_cast<ValSize>(x1.size()) == s1) &&
         (static_cast<IdxSize>(x0.size()) != s0)) {
-      assert(iv != NULL);
+      assert(iv != nullptr);
       assert(!shared(x0,x1));
 
       prune_idx();
@@ -308,7 +308,7 @@ namespace Gecode { namespace Int { namespace Element {
 
     if ((static_cast<IdxSize>(x0.size()) == s0) &&
         (static_cast<ValSize>(x1.size()) != s1)) {
-      assert(iv != NULL);
+      assert(iv != nullptr);
       assert(!shared(x0,x1));
 
       prune_val();
@@ -323,7 +323,7 @@ namespace Gecode { namespace Int { namespace Element {
     }
 
     bool assigned = x0.assigned() && x1.assigned();
-    if (iv == NULL) {
+    if (iv == nullptr) {
       // Initialize data structure
       iv = home.alloc<IdxVal>(x0.size() + 1);
 

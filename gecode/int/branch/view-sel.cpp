@@ -44,7 +44,7 @@ namespace Gecode { namespace Int { namespace Branch {
       return new (home) ViewSelRnd<IntView>(home,ivb);
     default: break;
     }
-    if (ivb.tbl() != NULL) {
+    if (ivb.tbl() != nullptr) {
       switch (ivb.select()) {
       case IntVarBranch::SEL_MERIT_MIN:
         return new (home) ViewSelMinTbl<MeritFunction<IntView>>(home,ivb);
@@ -168,7 +168,7 @@ namespace Gecode { namespace Int { namespace Branch {
       }
     }
     GECODE_NEVER;
-    return NULL;
+    return nullptr;
   }
 
   ViewSel<BoolView>*
@@ -180,7 +180,7 @@ namespace Gecode { namespace Int { namespace Branch {
       return new (home) ViewSelRnd<BoolView>(home,bvb);
     default: break;
     }
-    if (bvb.tbl() != NULL) {
+    if (bvb.tbl() != nullptr) {
       switch (bvb.select()) {
       case BoolVarBranch::SEL_MERIT_MIN:
         return new (home) ViewSelMinTbl<MeritFunction<BoolView>>(home,bvb);
@@ -232,7 +232,7 @@ namespace Gecode { namespace Int { namespace Branch {
       }
     }
     GECODE_NEVER;
-    return NULL;
+    return nullptr;
   }
 
 }}}

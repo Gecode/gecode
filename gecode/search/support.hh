@@ -51,7 +51,7 @@ namespace Gecode { namespace Search {
   public:
     /// Initialization
     WorkerToEngine(Space* s, const Options& o);
-    /// Return next solution (NULL, if none exists or search has been stopped)
+    /// Return next solution (nullptr, if none exists or search has been stopped)
     virtual Space* next(void);
     /// Return statistics
     virtual Search::Statistics statistics(void) const;

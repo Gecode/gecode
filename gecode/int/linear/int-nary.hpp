@@ -302,7 +302,7 @@ namespace Gecode { namespace Int { namespace Linear {
   template<class Val, class P, class N>
   forceinline Actor*
   eqtobin(Space&, Propagator&, ViewArray<P>&, ViewArray<N>&, Val) {
-    return NULL;
+    return nullptr;
   }
   template<class Val>
   forceinline Actor*
@@ -341,7 +341,7 @@ namespace Gecode { namespace Int { namespace Linear {
   template<class Val, class P, class N>
   forceinline Actor*
   eqtoter(Space&, Propagator&, ViewArray<P>&, ViewArray<N>&, Val) {
-    return NULL;
+    return nullptr;
   }
   template<class Val>
   forceinline Actor*
@@ -504,7 +504,7 @@ namespace Gecode { namespace Int { namespace Linear {
   template<class Val, class P, class N>
   forceinline Actor*
   nqtobin(Space&, Propagator&, ViewArray<P>&, ViewArray<N>&, Val) {
-    return NULL;
+    return nullptr;
   }
   template<class Val>
   forceinline Actor*
@@ -543,7 +543,7 @@ namespace Gecode { namespace Int { namespace Linear {
   template<class Val, class P, class N>
   forceinline Actor*
   nqtoter(Space&, Propagator&,ViewArray<P>&, ViewArray<N>&, Val) {
-    return NULL;
+    return nullptr;
   }
   template<class Val>
   forceinline Actor*
@@ -653,7 +653,7 @@ namespace Gecode { namespace Int { namespace Linear {
   template<class Val, class P, class N>
   forceinline Actor*
   lqtobin(Space&, Propagator&,ViewArray<P>&, ViewArray<N>&, Val) {
-    return NULL;
+    return nullptr;
   }
   template<class Val>
   forceinline Actor*
@@ -692,7 +692,7 @@ namespace Gecode { namespace Int { namespace Linear {
   template<class Val, class P, class N>
   forceinline Actor*
   lqtoter(Space&, Propagator&, ViewArray<P>&, ViewArray<N>&, Val) {
-    return NULL;
+    return nullptr;
   }
   template<class Val>
   forceinline Actor*

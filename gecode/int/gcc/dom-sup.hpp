@@ -507,7 +507,7 @@ namespace Gecode { namespace Int { namespace GCC {
   Node::Node(void) {}
   forceinline
   Node::Node(NodeFlag nf0, int i)
-    : e(NULL), fst(NULL), lst(NULL), ie(NULL), idx(i),
+    : e(nullptr), fst(nullptr), lst(nullptr), ie(nullptr), idx(i),
       nf(static_cast<unsigned char>(nf0)), noe(0) {}
 
   forceinline Edge**
@@ -571,7 +571,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
   forceinline
   VarNode::VarNode(int x) :
-    Node(NF_NONE,x), ubm(NULL), lbm(NULL) {}
+    Node(NF_NONE,x), ubm(nullptr), lbm(nullptr) {}
 
   forceinline bool
   VarNode::matched(BC bc) const {
@@ -600,9 +600,9 @@ namespace Gecode { namespace Int { namespace GCC {
   forceinline void
   VarNode::unmatch(BC bc) {
     if (bc == UBC) {
-      nf &= ~NF_M_UBC; ubm = NULL;
+      nf &= ~NF_M_UBC; ubm = nullptr;
     } else {
-      nf &= ~NF_M_LBC; lbm = NULL;
+      nf &= ~NF_M_LBC; lbm = nullptr;
     }
   }
 
@@ -810,9 +810,9 @@ namespace Gecode { namespace Int { namespace GCC {
     Edge* p = prev_edge;
     Edge* n = next_edge;
 
-    if (p != NULL)
+    if (p != nullptr)
       *p->next_ref() = n;
-    if (n != NULL)
+    if (n != nullptr)
       *n->prev_ref() = p;
 
     if (this == x->first()) {
@@ -828,9 +828,9 @@ namespace Gecode { namespace Int { namespace GCC {
     Edge* pv = prev_vedge;
     Edge* nv = next_vedge;
 
-    if (pv != NULL)
+    if (pv != nullptr)
       *pv->vnext_ref() = nv;
-    if (nv != NULL)
+    if (nv != nullptr)
       *nv->vprev_ref() = pv;
     if (this == v->first()) {
       Edge** ref = v->adj();
@@ -844,8 +844,8 @@ namespace Gecode { namespace Int { namespace GCC {
   forceinline
   Edge::Edge(VarNode* var, ValNode* val) :
     x(var), v(val),
-    next_edge(NULL), prev_edge(NULL),
-    next_vedge(NULL), prev_vedge(NULL), ef(EF_NONE) {}
+    next_edge(nullptr), prev_edge(nullptr),
+    next_vedge(nullptr), prev_vedge(nullptr), ef(EF_NONE) {}
 
   forceinline void
   Edge::use(BC bc) {
@@ -911,13 +911,13 @@ namespace Gecode { namespace Int { namespace GCC {
   }
   forceinline VarNode*
   Edge::getVar(void) const {
-    assert(x != NULL);
+    assert(x != nullptr);
     return x;
   }
 
   forceinline ValNode*
   Edge::getVal(void) const {
-    assert(v != NULL);
+    assert(v != nullptr);
     return v;
   }
 
@@ -1050,13 +1050,13 @@ namespace Gecode { namespace Int { namespace GCC {
           j++;
         *xadjacent = new (home) Edge(vars[i],vals[j]);
         vars[i]->noe++;
-        if (vars[i]->first() == NULL)
+        if (vars[i]->first() == nullptr)
           vars[i]->first(*xadjacent);
         Edge* oldprev  = vars[i]->last();
         vars[i]->last(*xadjacent);
         *vars[i]->last()->prev_ref() = oldprev;
 
-        if (vals[j]->first() == NULL) {
+        if (vals[j]->first() == nullptr) {
           vals[j]->first(*xadjacent);
           vals[j]->last(*xadjacent);
         } else {
@@ -1068,7 +1068,7 @@ namespace Gecode { namespace Int { namespace GCC {
         vals[j]->noe++;
         xadjacent = (*xadjacent)->next_ref();
       }
-      *xadjacent = NULL;
+      *xadjacent = nullptr;
     }
   }
 
@@ -1083,9 +1083,9 @@ namespace Gecode { namespace Int { namespace GCC {
       if (vln->noe > 0) {
         if (k[i].min() == vln->noe) {
           // all variable nodes reachable from vln should be equal to vln->val
-          for (Edge* e = vln->first(); e != NULL; e = e->vnext()) {
+          for (Edge* e = vln->first(); e != nullptr; e = e->vnext()) {
             VarNode* vrn = e->getVar();
-            for (Edge* f = vrn->first(); f != NULL; f = f->next())
+            for (Edge* f = vrn->first(); f != nullptr; f = f->next())
               if (f != e) {
                 ValNode* w = f->getVal();
                 w->noe--;
@@ -1158,30 +1158,30 @@ namespace Gecode { namespace Int { namespace GCC {
 
     for (int i = n_node; i--; )
       if (i >= n_var) {
-        vals[i-n_var]->inedge(NULL);
+        vals[i-n_var]->inedge(nullptr);
         start[i] = vals[i-n_var]->first();
       } else {
-        vars[i]->inedge(NULL);
+        vars[i]->inedge(nullptr);
         start[i] = vars[i]->first();
       }
 
-    v->inedge(NULL);
+    v->inedge(nullptr);
     ns.push(v);
     visited.set(static_cast<unsigned int>(v->index()));
     while (!ns.empty()) {
       Node* vv = ns.top();
-      Edge* e = NULL;
+      Edge* e = nullptr;
       if (vv->type() == sp) {
         e = start[vv->index()];
-        while ((e != NULL) && e->matched(bc))
+        while ((e != nullptr) && e->matched(bc))
           e = e->next(vv->type());
       } else {
         e = start[vv->index()];
-        while ((e != NULL) && !e->matched(bc))
+        while ((e != nullptr) && !e->matched(bc))
           e = e->next(vv->type());
         start[vv->index()] = e;
       }
-      if (e != NULL) {
+      if (e != nullptr) {
         start[vv->index()] = e->next(vv->type());
         Node* w = e->getMate(vv->type());
         if (!visited.get(static_cast<unsigned int>(w->index()))) {
@@ -1190,7 +1190,7 @@ namespace Gecode { namespace Int { namespace GCC {
             static_cast<ValNode*>(w)->matched(bc) :
             static_cast<VarNode*>(w)->matched(bc);
           if (!m && w->type() != sp) {
-            if (vv->inedge() != NULL) {
+            if (vv->inedge() != nullptr) {
               // augmenting path of length l > 1
               e->match(bc);
               break;
@@ -1284,7 +1284,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
       for (int i = n_var; i--; ) {
         Edge* mub = vars[i]->get_match(UBC);
-        if (mub != NULL) {
+        if (mub != nullptr) {
           ValNode* vu = mub->getVal();
           if ((vars[i]->noe != 1) && vu->card_conflict()) {
             vu->red_conflict();
@@ -1305,13 +1305,13 @@ namespace Gecode { namespace Int { namespace GCC {
         if (x[i].assigned()) {
           int  v = x[i].val();
           Edge* mub = vrn->get_match(UBC);
-          if ((mub != NULL) && (v != mub->getVal()->val)) {
+          if ((mub != nullptr) && (v != mub->getVal()->val)) {
             mub->unmatch(UBC);
             re.push(vars[i]);
           }
 
           Edge* mlb = vrn->get_match(LBC);
-          if (mlb != NULL) {
+          if (mlb != nullptr) {
             ValNode* vln = mlb->getVal();
             if (v != vln->val) {
               mlb->unmatch(LBC);
@@ -1320,7 +1320,7 @@ namespace Gecode { namespace Int { namespace GCC {
             }
           }
 
-          for (Edge* e = vrn->first(); e != NULL; e = e->next()) {
+          for (Edge* e = vrn->first(); e != nullptr; e = e->next()) {
             ValNode* vln = e->getVal();
             if (vln->val != v) {
               vrn->noe--;
@@ -1337,10 +1337,10 @@ namespace Gecode { namespace Int { namespace GCC {
           Edge*  mlb = vrn->get_match(LBC);
           Edge** p   = vrn->adj();
           Edge*  e   = *p;
-          GECODE_ASSUME(e != NULL);
+          GECODE_ASSUME(e != nullptr);
           do {
             // search the edge that has to be deleted
-            while ((e != NULL) && (e->getVal()->val < xiter.val())) {
+            while ((e != nullptr) && (e->getVal()->val < xiter.val())) {
               // Skip edge
               e->getVal()->noe--;
               vrn->noe--;
@@ -1349,7 +1349,7 @@ namespace Gecode { namespace Int { namespace GCC {
               e = e ->next();
               *p = e;
             }
-            GECODE_ASSUME(e != NULL);
+            GECODE_ASSUME(e != nullptr);
 
             assert(xiter.val() == e->getVal()->val);
 
@@ -1360,8 +1360,8 @@ namespace Gecode { namespace Int { namespace GCC {
             p = e->next_ref();
             e = e->next();
           } while (xiter());
-          *p = NULL;
-          while (e != NULL) {
+          *p = nullptr;
+          while (e != nullptr) {
             e->getVar()->noe--;
             e->getVal()->noe--;
             e->del_edge();
@@ -1369,13 +1369,13 @@ namespace Gecode { namespace Int { namespace GCC {
             e = e->next();
           }
 
-          if ((mub != NULL) && mub->deleted()) {
+          if ((mub != nullptr) && mub->deleted()) {
             mub->unmatch(UBC);
             re.push(vars[i]);
           }
 
           //lower bound matching can be zero
-          if ((mlb != NULL) && mlb->deleted()) {
+          if ((mlb != nullptr) && mlb->deleted()) {
             ValNode* vln = mlb->getVal();
             mlb->unmatch(LBC);
             if (vln->incid_match(LBC) < vln->kmin())
@@ -1445,7 +1445,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
           bool delall = v->card_conflict() && (v->noe > v->kmax());
 
-          for (Edge* e = v->last(); e != NULL; e = e->vprev()) {
+          for (Edge* e = v->last(); e != nullptr; e = e->vprev()) {
             VarNode* vrn = e->getVar();
             if (vrn->noe == 1) {
               vrn->noe--;
@@ -1494,7 +1494,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
     for (int i = n_var; i--; ) {
       if (vars[i]->noe > 1) {
-        for (Edge* e = vars[i]->first(); e != NULL; e = e->next()) {
+        for (Edge* e = vars[i]->first(); e != nullptr; e = e->next()) {
           if (!e->matched(bc) && !e->used(bc)) {
             GECODE_ME_CHECK(x[i].nq(home, e->getVal()->val));
           } else {
@@ -1513,7 +1513,7 @@ namespace Gecode { namespace Int { namespace GCC {
     // find an intial matching in O(n*d)
     // greedy algorithm
     for (int i = n_val; i--; )
-      for (Edge* e = vals[i]->first(); e != NULL ; e = e->vnext())
+      for (Edge* e = vals[i]->first(); e != nullptr ; e = e->vnext())
         if (!e->getVar()->matched(bc) && !vals[i]->matched(bc)) {
           e->match(bc); card_match++;
         }
@@ -1611,7 +1611,7 @@ namespace Gecode { namespace Int { namespace GCC {
         // ValNode
         ValNode* vln = static_cast<ValNode*>(node);
 
-        for (Edge* cur = vln->first(); cur != NULL; cur = cur->vnext()) {
+        for (Edge* cur = vln->first(); cur != nullptr; cur = cur->vnext()) {
           VarNode* mate = cur->getVar();
           switch (bc) {
           case LBC:
@@ -1645,7 +1645,7 @@ namespace Gecode { namespace Int { namespace GCC {
         switch (bc) {
         case LBC:
           // after LBC-matching we can follow every unmatched edge
-          for (Edge* cur = vrn->first(); cur != NULL; cur = cur->next()) {
+          for (Edge* cur = vrn->first(); cur != nullptr; cur = cur->next()) {
             ValNode* mate = cur->getVal();
             if (!cur->matched(LBC)) {
               cur->use(LBC);
@@ -1660,7 +1660,7 @@ namespace Gecode { namespace Int { namespace GCC {
           // after UBC-matching we can only follow a matched edge
           {
             Edge* cur = vrn->get_match(UBC);
-            if (cur != NULL) {
+            if (cur != nullptr) {
               cur->use(UBC);
               ValNode* mate = cur->getVal();
               if (!visited.get(static_cast<unsigned int>(mate->index()))) {
@@ -1690,7 +1690,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
     unfinished.push(v);
     roots.push(v);
-    for (Edge* e = v->first(); e != NULL; e = e->next(v->type())) {
+    for (Edge* e = v->first(); e != nullptr; e = e->next(v->type())) {
       bool m;
       switch (bc) {
       case LBC:

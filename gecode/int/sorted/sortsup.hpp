@@ -172,8 +172,8 @@ namespace Gecode { namespace Int { namespace Sorted {
 
   OfflineMin::OfflineMin(void){
     n = 0;
-    sequence = NULL;
-    vertices = NULL;
+    sequence = nullptr;
+    vertices = nullptr;
   }
 
   OfflineMin::OfflineMin(OfflineMinItem s[], int v[], int size){

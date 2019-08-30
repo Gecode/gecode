@@ -157,13 +157,13 @@ namespace Gecode { namespace Int { namespace Sequence {
   template<class View, class Val, bool iss>
   forceinline bool
   ViewValSupport<View,Val,iss>::retired(void) const {
-    return NULL == y;
+    return nullptr == y;
   }
 
   template<class View, class Val, bool iss>
   forceinline void
   ViewValSupport<View,Val,iss>::retire(void) {
-    y = NULL;
+    y = nullptr;
   }
 
   template<class View,class Val, bool iss>
@@ -211,7 +211,7 @@ namespace Gecode { namespace Int { namespace Sequence {
   ViewValSupport<View,Val,iss>::update(Space& home,
                                        ViewValSupport<View,Val,iss>& vvs,
                                        int n0) {
-    y = NULL;
+    y = nullptr;
     if ( !vvs.retired() ) {
       y = home.alloc<int>(n0);
       for ( int l=0; l<n0; l++ ) {
@@ -409,7 +409,7 @@ namespace Gecode { namespace Int { namespace Sequence {
   }
 
   template<class View,class Val,bool iss>
-  ViewValSupportArray<View,Val,iss>::ViewValSupportArray(void) : xs(NULL), n(0) {
+  ViewValSupportArray<View,Val,iss>::ViewValSupportArray(void) : xs(nullptr), n(0) {
   }
 
   template<class View,class Val,bool iss>
@@ -418,7 +418,7 @@ namespace Gecode { namespace Int { namespace Sequence {
   }
 
   template<class View,class Val,bool iss>
-  ViewValSupportArray<View,Val,iss>::ViewValSupportArray(Space& home,ViewArray<View>& x, Val s, int q) : xs(NULL) {
+  ViewValSupportArray<View,Val,iss>::ViewValSupportArray(Space& home,ViewArray<View>& x, Val s, int q) : xs(nullptr) {
     n = x.size();
     if ( n > 0 ) {
       xs = ViewValSupport<View,Val,iss>::allocate(home,n);
@@ -429,7 +429,7 @@ namespace Gecode { namespace Int { namespace Sequence {
   }
 
   template<class View,class Val,bool iss>
-  ViewValSupportArray<View,Val,iss>::ViewValSupportArray(Space& home, int n0) : xs(NULL) {
+  ViewValSupportArray<View,Val,iss>::ViewValSupportArray(Space& home, int n0) : xs(nullptr) {
     n = n0;
     if (n>0) {
       xs = ViewValSupport<View,Val,iss>::allocate(home,n);

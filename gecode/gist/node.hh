@@ -121,7 +121,7 @@ namespace Gecode { namespace Gist {
      */
     int noOfChildren;
 
-    /// The parent of this node, or NULL for the root
+    /// The parent of this node, or nullptr for the root
     int parent;
 
     /// Read the tag of childrenOrFirstChild

@@ -238,7 +238,7 @@ namespace Gecode { namespace FlatZinc {
           AST::Array* oa = _output[i].second->getArray();
           for (unsigned int j=0; j<oa->a.size(); j++) {
             a->a.push_back(oa->a[j]);
-            oa->a[j] = NULL;
+            oa->a[j] = nullptr;
           }
           delete _output[i].second;
         } else {

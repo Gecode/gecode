@@ -39,13 +39,13 @@ namespace Gecode { namespace Int {
    */
   forceinline
   ValSet::ValSet(void)
-    : fst(NULL), lst(NULL), n(0) {}
+    : fst(nullptr), lst(nullptr), n(0) {}
 
   forceinline void
   ValSet::add(Space& home, int v) {
     RangeList*  c = fst;
     RangeList** p = &fst;
-    while (c != NULL) {
+    while (c != nullptr) {
       if (v < c->min()) {
         if (v+1 == c->min()) {
           c->min(v); n++;
@@ -58,7 +58,7 @@ namespace Gecode { namespace Int {
         // Value already included
         return;
       } else if (v == c->max()+1) {
-        if ((c->next() != NULL) && (v+1 == c->next()->min())) {
+        if ((c->next() != nullptr) && (v+1 == c->next()->min())) {
           c->next()->min(c->min());
           *p = c->next();
           c->dispose(home,c);
@@ -73,7 +73,7 @@ namespace Gecode { namespace Int {
         c = *p;
       }
     }
-    *p = new (home) RangeList(v,v,NULL); n++;
+    *p = new (home) RangeList(v,v,nullptr); n++;
     lst = *p;
   }
 
@@ -103,28 +103,28 @@ namespace Gecode { namespace Int {
       n = vs.n;
       // Count number of ranges
       int m = 0;
-      for (RangeList* c = vs.fst; c != NULL; c = c->next())
+      for (RangeList* c = vs.fst; c != nullptr; c = c->next())
         m++;
       fst = home.alloc<RangeList>(m);
       lst = fst + (m-1);
       int i=0;
-      for (RangeList* c = vs.fst; c != NULL; c = c->next()) {
+      for (RangeList* c = vs.fst; c != nullptr; c = c->next()) {
         fst[i].min(c->min()); fst[i].max(c->max());
         fst[i].next(fst+i+1);
         i++;
       }
-      lst->next(NULL);
+      lst->next(nullptr);
     }
   }
 
   forceinline void
   ValSet::flush(void) {
-    fst = lst = NULL;
+    fst = lst = nullptr;
   }
 
   forceinline void
   ValSet::dispose(Space& home) {
-    if (fst != NULL)
+    if (fst != nullptr)
       fst->dispose(home,lst);
   }
 
@@ -134,7 +134,7 @@ namespace Gecode { namespace Int {
 
   forceinline bool
   ValSet::Ranges::operator ()(void) const {
-    return c != NULL;
+    return c != nullptr;
   }
 
   forceinline void

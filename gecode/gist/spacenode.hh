@@ -79,7 +79,7 @@ namespace Gecode { namespace Gist {
   /// \brief Static reference to the currently best space
   class BestNode {
   public:
-    /// The currently best node found, or NULL
+    /// The currently best node found, or nullptr
     SpaceNode* s;
     /// Constructor
     BestNode(SpaceNode* s0);
@@ -88,7 +88,7 @@ namespace Gecode { namespace Gist {
   /// \brief A node of a search tree of %Gecode spaces
   class SpaceNode : public Node {
   protected:
-    /** \brief A copy used for recomputation, or NULL
+    /** \brief A copy used for recomputation, or nullptr
      *
      * If the copy is marked, it is a working copy, i.e.,
      * it does not have to be kept for recomputation.

@@ -214,7 +214,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
       RangeList* t = range(j);
       *c = t; c = &t->next;
     }
-    *c = NULL;
+    *c = nullptr;
     return h;
   }
 
@@ -224,7 +224,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
     // The current rangelist
     RangeList** c = &u;
 
-    while ((*c != NULL) && i())
+    while ((*c != nullptr) && i())
       if ((*c)->max+1 < i.min()) {
         // Keep range from union
         c = &(*c)->next;
@@ -245,7 +245,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
         ++i;
 
       nextb:
-        if ((s != NULL) && (s->min <= max+1)) {
+        if ((s != nullptr) && (s->min <= max+1)) {
           max = std::max(max,s->max);
           RangeList* t = s;
           s = s->next;
@@ -260,26 +260,26 @@ namespace Gecode { namespace Iter { namespace Ranges {
         // Store computed max and shunt skipped ranges from union
         (*c)->max = max; (*c)->next = s;
       }
-    if (*c == NULL) {
+    if (*c == nullptr) {
       // Copy remaining ranges from iterator
       for ( ; i(); ++i) {
         RangeList* t = range(i,f);
         *c = t; c = &t->next;
       }
-      *c = NULL;
+      *c = nullptr;
     }
   }
 
 
   forceinline
   NaryUnion::NaryUnion(void)
-    : f(NULL) {}
+    : f(nullptr) {}
 
   template<class I>
   forceinline void
   NaryUnion::init(Region& r, I& i) {
     RangeListIter::init(r);
-    f = NULL;
+    f = nullptr;
     set(copy(i));
   }
 
@@ -287,14 +287,14 @@ namespace Gecode { namespace Iter { namespace Ranges {
   forceinline void
   NaryUnion::init(Region& r, I& i, J& j) {
     RangeListIter::init(r);
-    f = NULL;
+    f = nullptr;
     set(two(i,j));
   }
 
   template<class I>
   forceinline void
   NaryUnion::init(Region& r, I* i, int n) {
-    f = NULL;
+    f = nullptr;
     RangeListIter::init(r);
 
     int m = 0;
@@ -348,7 +348,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
 
   forceinline NaryUnion&
   NaryUnion::operator =(const NaryUnion& m) {
-    f = NULL;
+    f = nullptr;
     return static_cast<NaryUnion&>(RangeListIter::operator =(m));
   }
 

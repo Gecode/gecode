@@ -109,7 +109,7 @@ namespace Gecode { namespace Kernel {
 
   forceinline
   GPI::Block::Block(void)
-    : next(NULL), free(n_info) {}
+    : next(nullptr), free(n_info) {}
 
   forceinline void
   GPI::Block::rescale(void) {
@@ -127,7 +127,7 @@ namespace Gecode { namespace Kernel {
     m.acquire();
     c.afc = invd * (c.afc + 1.0);
     if (c.afc > Kernel::Config::rescale_limit)
-      for (Block* i = b; i != NULL; i = i->next)
+      for (Block* i = b; i != nullptr; i = i->next)
         i->rescale();
     m.release();
   }

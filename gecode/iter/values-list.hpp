@@ -107,17 +107,17 @@ namespace Gecode { namespace Iter { namespace Values {
 
   forceinline
   ValueListIter::ValueListIter(void)
-    : vlio(NULL) {}
+    : vlio(nullptr) {}
 
   forceinline
   ValueListIter::ValueListIter(Region& r)
     : vlio(new (r.ralloc(sizeof(VLIO))) VLIO(r)),
-      h(NULL), c(NULL) {}
+      h(nullptr), c(nullptr) {}
 
   forceinline void
   ValueListIter::init(Region& r) {
     vlio = new (r.ralloc(sizeof(VLIO))) VLIO(r);
-    h = c = NULL;
+    h = c = nullptr;
   }
 
   forceinline
@@ -158,7 +158,7 @@ namespace Gecode { namespace Iter { namespace Values {
 
   forceinline bool
   ValueListIter::operator ()(void) const {
-    return c != NULL;
+    return c != nullptr;
   }
 
   forceinline void

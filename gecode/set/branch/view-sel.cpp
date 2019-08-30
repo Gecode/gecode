@@ -44,7 +44,7 @@ namespace Gecode { namespace Set { namespace Branch {
       return new (home) ViewSelRnd<SetView>(home,svb);
     default: break;
     }
-    if (svb.tbl() != NULL) {
+    if (svb.tbl() != nullptr) {
       switch (svb.select()) {
       case SetVarBranch::SEL_MERIT_MIN:
         return new (home) ViewSelMinTbl<MeritFunction<SetView>>(home,svb);
@@ -152,7 +152,7 @@ namespace Gecode { namespace Set { namespace Branch {
       }
     }
     GECODE_NEVER;
-    return NULL;
+    return nullptr;
   }
 
 }}}

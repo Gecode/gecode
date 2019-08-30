@@ -45,12 +45,12 @@ namespace Gecode { namespace Int {
   int
   IntVarImp::med(void) const {
     // Computes the median
-    if (fst() == NULL)
+    if (fst() == nullptr)
       return (dom.min()+dom.max())/2 - ((dom.min()+dom.max())%2 < 0 ? 1 : 0);
     unsigned int i = size() / 2;
     if (size() % 2 == 0)
       i--;
-    const RangeList* p = NULL;
+    const RangeList* p = nullptr;
     const RangeList* c = fst();
     while (i >= c->width()) {
       i -= c->width();
@@ -62,14 +62,14 @@ namespace Gecode { namespace Int {
   bool
   IntVarImp::in_full(int m) const {
     if (closer_min(m)) {
-      const RangeList* p = NULL;
+      const RangeList* p = nullptr;
       const RangeList* c = fst();
       while (m > c->max()) {
         const RangeList* n=c->next(p); p=c; c=n;
       }
       return (m >= c->min());
     } else {
-      const RangeList* n = NULL;
+      const RangeList* n = nullptr;
       const RangeList* c = lst();
       while (m < c->min()) {
         const RangeList* p=c->prev(n); n=c; c=p;
@@ -91,13 +91,13 @@ namespace Gecode { namespace Int {
     if (range()) { // Is already range...
       dom.max(m);
       if (assigned()) me = ME_INT_VAL;
-    } else if (m < fst()->next(NULL)->min()) { // Becomes range...
+    } else if (m < fst()->next(nullptr)->min()) { // Becomes range...
       dom.max(std::min(m,fst()->max()));
-      fst()->dispose(home,NULL,lst());
-      fst(NULL); holes = 0;
+      fst()->dispose(home,nullptr,lst());
+      fst(nullptr); holes = 0;
       if (assigned()) me = ME_INT_VAL;
     } else { // Stays non-range...
-      RangeList* n = NULL;
+      RangeList* n = nullptr;
       RangeList* c = lst();
       unsigned int h = 0;
       while (m < c->min()) {
@@ -110,7 +110,7 @@ namespace Gecode { namespace Int {
       dom.max(max_c); c->max(max_c);
       if (c != lst()) {
         n->dispose(home,lst());
-        c->next(n,NULL); lst(c);
+        c->next(n,nullptr); lst(c);
       }
     }
     IntDelta d(dom.max()+1,old_max);
@@ -125,13 +125,13 @@ namespace Gecode { namespace Int {
     if (range()) { // Is already range...
       dom.min(m);
       if (assigned()) me = ME_INT_VAL;
-    } else if (m > lst()->prev(NULL)->max()) { // Becomes range...
+    } else if (m > lst()->prev(nullptr)->max()) { // Becomes range...
       dom.min(std::max(m,lst()->min()));
-      fst()->dispose(home,NULL,lst());
-      fst(NULL); holes = 0;
+      fst()->dispose(home,nullptr,lst());
+      fst(nullptr); holes = 0;
       if (assigned()) me = ME_INT_VAL;
     } else { // Stays non-range...
-      RangeList* p = NULL;
+      RangeList* p = nullptr;
       RangeList* c = fst();
       unsigned int h = 0;
       while (m > c->max()) {
@@ -144,7 +144,7 @@ namespace Gecode { namespace Int {
       dom.min(min_c); c->min(min_c);
       if (c != fst()) {
         fst()->dispose(home,p);
-        c->prev(p,NULL); fst(c);
+        c->prev(p,nullptr); fst(c);
       }
     }
     IntDelta d(old_min,dom.min()-1);
@@ -156,19 +156,19 @@ namespace Gecode { namespace Int {
     dom.min(m); dom.max(m);
     if (!range()) {
       bool failed = false;
-      RangeList* p = NULL;
+      RangeList* p = nullptr;
       RangeList* c = fst();
       while (m > c->max()) {
         RangeList* n=c->next(p); c->fix(n); p=c; c=n;
       }
       if (m < c->min())
         failed = true;
-      while (c != NULL) {
+      while (c != nullptr) {
         RangeList* n=c->next(p); c->fix(n); p=c; c=n;
       }
       assert(p == lst());
       fst()->dispose(home,p);
-      fst(NULL); holes = 0;
+      fst(nullptr); holes = 0;
       if (failed)
         return fail(home);
     }
@@ -192,25 +192,25 @@ namespace Gecode { namespace Int {
       } else {
         RangeList* f = new (home) RangeList(dom.min(),m-1);
         RangeList* l = new (home) RangeList(m+1,dom.max());
-        f->prevnext(NULL,l);
-        l->prevnext(f,NULL);
+        f->prevnext(nullptr,l);
+        l->prevnext(f,nullptr);
         fst(f); lst(l); holes = 1;
       }
-    } else if (m < fst()->next(NULL)->min()) { // Concerns the first range...
+    } else if (m < fst()->next(nullptr)->min()) { // Concerns the first range...
       int f_max = fst()->max();
       if (m > f_max)
         return ME_INT_NONE;
       int f_min = dom.min();
       if ((m == f_min) && (m == f_max)) {
-        RangeList* f_next = fst()->next(NULL);
+        RangeList* f_next = fst()->next(nullptr);
         dom.min(f_next->min());
         if (f_next == lst()) { // Turns into range
-          // Works as at the ends there are only NULL pointers
+          // Works as at the ends there are only nullptr pointers
           fst()->dispose(home,f_next);
-          fst(NULL); holes = 0;
+          fst(nullptr); holes = 0;
           me = assigned() ? ME_INT_VAL : ME_INT_BND;
         } else { // Remains non-range
-          f_next->prev(fst(),NULL);
+          f_next->prev(fst(),nullptr);
           fst()->dispose(home); fst(f_next);
           holes -= dom.min() - f_min - 1;
           me = ME_INT_BND;
@@ -223,25 +223,25 @@ namespace Gecode { namespace Int {
       } else {
         // Create new hole
         RangeList* f = new (home) RangeList(f_min,m-1);
-        f->prevnext(NULL,fst());
-        fst()->min(m+1); fst()->prev(NULL,f);
+        f->prevnext(nullptr,fst());
+        fst()->min(m+1); fst()->prev(nullptr,f);
         fst(f); holes += 1;
       }
-    } else if (m > lst()->prev(NULL)->max()) { // Concerns the last range...
+    } else if (m > lst()->prev(nullptr)->max()) { // Concerns the last range...
       int l_min = lst()->min();
       if (m < l_min)
         return ME_INT_NONE;
       int l_max = dom.max();
       if ((m == l_min) && (m == l_max)) {
-        RangeList* l_prev = lst()->prev(NULL);
+        RangeList* l_prev = lst()->prev(nullptr);
         dom.max(l_prev->max());
         if (l_prev == fst()) {
           // Turns into range
           l_prev->dispose(home,lst());
-          fst(NULL); holes = 0;
+          fst(nullptr); holes = 0;
           me = assigned() ? ME_INT_VAL : ME_INT_BND;
         } else { // Remains non-range
-          l_prev->next(lst(),NULL);
+          l_prev->next(lst(),nullptr);
           lst()->dispose(home); lst(l_prev);
           holes -= l_max - dom.max() - 1;
           me = ME_INT_BND;
@@ -253,8 +253,8 @@ namespace Gecode { namespace Int {
         lst()->min(m+1); holes += 1;
       } else { // Create new hole
         RangeList* l = new (home) RangeList(m+1,l_max);
-        l->prevnext(lst(),NULL);
-        lst()->max(m-1); lst()->next(NULL,l);
+        l->prevnext(lst(),nullptr);
+        lst()->max(m-1); lst()->next(nullptr,l);
         lst(l); holes += 1;
       }
     } else { // Concerns element in the middle of the list of ranges
@@ -263,7 +263,7 @@ namespace Gecode { namespace Int {
       RangeList* n;
       if (closer_min(m)) {
         assert(m > fst()->max());
-        p = NULL;
+        p = nullptr;
         c = fst();
         do {
           n=c->next(p); p=c; c=n;
@@ -273,7 +273,7 @@ namespace Gecode { namespace Int {
         n=c->next(p);
       } else {
         assert(m < lst()->min());
-        n = NULL;
+        n = nullptr;
         c = lst();
         do {
           p=c->prev(n); n=c; c=p;
@@ -322,30 +322,30 @@ namespace Gecode { namespace Int {
       // Compute length
       {
         RangeList* s_p = x.fst();
-        RangeList* s_c = s_p->next(NULL);
+        RangeList* s_c = s_p->next(nullptr);
         do {
           m++;
           RangeList* s_n = s_c->next(s_p); s_p=s_c; s_c=s_n;
-        } while (s_c != NULL);
+        } while (s_c != nullptr);
       }
       RangeList* d_c = home.alloc<RangeList>(m);
       fst(d_c); lst(d_c+m-1);
       d_c->min(x.fst()->min());
       d_c->max(x.fst()->max());
-      d_c->prevnext(NULL,NULL);
+      d_c->prevnext(nullptr,nullptr);
       RangeList* s_p = x.fst();
-      RangeList* s_c = s_p->next(NULL);
+      RangeList* s_c = s_p->next(nullptr);
       do {
         RangeList* d_n = d_c + 1;
-        d_c->next(NULL,d_n);
-        d_n->prevnext(d_c,NULL);
+        d_c->next(nullptr,d_n);
+        d_n->prevnext(d_c,nullptr);
         d_n->min(s_c->min()); d_n->max(s_c->max());
         d_c = d_n;
         RangeList* s_n=s_c->next(s_p); s_p=s_c; s_c=s_n;
-      } while (s_c != NULL);
-      d_c->next(NULL,NULL);
+      } while (s_c != nullptr);
+      d_c->next(nullptr,nullptr);
     } else {
-      fst(NULL);
+      fst(nullptr);
     }
   }
 

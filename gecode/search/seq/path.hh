@@ -65,7 +65,7 @@ namespace Gecode { namespace Search { namespace Seq {
     /// %Search tree edge for recomputation
     class Edge {
     protected:
-      /// Space corresponding to this edge (might be NULL)
+      /// Space corresponding to this edge (might be nullptr)
       Space* _space;
       /// Current alternative
       unsigned int _alt;
@@ -76,7 +76,7 @@ namespace Gecode { namespace Search { namespace Seq {
     public:
       /// Default constructor
       Edge(void);
-      /// Edge for space \a s with clone \a c (possibly NULL)
+      /// Edge for space \a s with clone \a c (possibly nullptr)
       Edge(Space* s, Space* c, unsigned int nid);
 
       /// Return space for edge
@@ -118,7 +118,7 @@ namespace Gecode { namespace Search { namespace Seq {
     unsigned int ngdl(void) const;
     /// Set no-good depth limit to \a l
     void ngdl(unsigned int l);
-    /// Push space \a c (a clone of \a s or NULL)
+    /// Push space \a c (a clone of \a s or nullptr)
     const Choice* push(Worker& stat, Space* s, Space* c, unsigned int nid);
     /// Generate path for next node
     void next(void);

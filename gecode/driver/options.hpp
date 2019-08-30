@@ -53,7 +53,7 @@ namespace Gecode {
      */
     inline
     StringOption::StringOption(const char* o, const char* e, int v)
-      : BaseOption(o,e), cur(v), fst(NULL), lst(NULL) {}
+      : BaseOption(o,e), cur(v), fst(nullptr), lst(nullptr) {}
     inline void
     StringOption::value(int v) {
       cur = v;
@@ -579,19 +579,19 @@ namespace Gecode {
   }
   forceinline Gist::Inspector*
   Options::_I::click(unsigned int i) const {
-    return (i < n_click) ? _click[i] : NULL;
+    return (i < n_click) ? _click[i] : nullptr;
   }
   forceinline Gist::Inspector*
   Options::_I::solution(unsigned int i) const {
-    return (i < n_solution) ? _solution[i] : NULL;
+    return (i < n_solution) ? _solution[i] : nullptr;
   }
   forceinline Gist::Inspector*
   Options::_I::move(unsigned int i) const {
-    return (i < n_move) ? _move[i] : NULL;
+    return (i < n_move) ? _move[i] : nullptr;
   }
   forceinline Gist::Comparator*
   Options::_I::compare(unsigned int i) const {
-    return (i < n_compare) ? _compare[i] : NULL;
+    return (i < n_compare) ? _compare[i] : nullptr;
   }
 #endif
 

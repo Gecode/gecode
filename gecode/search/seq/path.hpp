@@ -180,7 +180,7 @@ namespace Gecode { namespace Search { namespace Seq {
   forceinline int
   Path<Tracer>::lc(void) const {
     int l = ds.entries()-1;
-    while (ds[l].space() == NULL)
+    while (ds[l].space() == nullptr)
       l--;
     return l;
   }
@@ -194,7 +194,7 @@ namespace Gecode { namespace Search { namespace Seq {
   template<class Tracer>
   forceinline void
   Path<Tracer>::unwind(int l, Tracer& t) {
-    assert((ds[l].space() == NULL) || ds[l].space()->failed());
+    assert((ds[l].space() == nullptr) || ds[l].space()->failed());
     int n = ds.entries();
     if (t) {
       for (int i=l; i<n; i++) {
@@ -229,11 +229,11 @@ namespace Gecode { namespace Search { namespace Seq {
     // Also say distance to copy (d == 0) requires immediate copying
 
     // Check for LAO
-    if ((ds.top().space() != NULL) && ds.top().rightmost()) {
+    if ((ds.top().space() != nullptr) && ds.top().rightmost()) {
       Space* s = ds.top().space();
       s->commit(*ds.top().choice(),ds.top().alt());
       assert(ds.entries()-1 == lc());
-      ds.top().space(NULL);
+      ds.top().space(nullptr);
       // Mark as reusable
       if (static_cast<unsigned int>(ds.entries()) > ngdl())
         ds.top().next();
@@ -274,7 +274,7 @@ namespace Gecode { namespace Search { namespace Seq {
           delete s;
           stat.fail++;
           unwind(i,t);
-          return NULL;
+          return nullptr;
         }
         ds[i].space(s->clone());
         d = static_cast<unsigned int>(n-i);
@@ -296,7 +296,7 @@ namespace Gecode { namespace Search { namespace Seq {
     // Also say distance to copy (d == 0) requires immediate copying
 
     // Check for LAO
-    if ((ds.top().space() != NULL) && ds.top().rightmost()) {
+    if ((ds.top().space() != nullptr) && ds.top().rightmost()) {
       Space* s = ds.top().space();
       s->commit(*ds.top().choice(),ds.top().alt());
       assert(ds.entries()-1 == lc());
@@ -304,7 +304,7 @@ namespace Gecode { namespace Search { namespace Seq {
         mark = ds.entries()-1;
         s->constrain(best);
       }
-      ds.top().space(NULL);
+      ds.top().space(nullptr);
       // Mark as reusable
       if (static_cast<unsigned int>(ds.entries()) > ngdl())
         ds.top().next();
@@ -328,7 +328,7 @@ namespace Gecode { namespace Search { namespace Seq {
         // s does not need deletion as it is on the stack (unwind does this)
         stat.fail++;
         unwind(l,t);
-        return NULL;
+        return nullptr;
       }
       // It is important to replace the space on the stack with the
       // copy: a copy might be much smaller due to flushed caches
@@ -368,7 +368,7 @@ namespace Gecode { namespace Search { namespace Seq {
           delete s;
           stat.fail++;
           unwind(i,t);
-          return NULL;
+          return nullptr;
         }
         ds[i].space(s->clone());
         d = static_cast<unsigned int>(n-i);

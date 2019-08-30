@@ -73,7 +73,7 @@ namespace Gecode { namespace Support {
     void push(const T& x);
   private:
     /// Allocate memory from heap (disabled)
-    static void* operator new(size_t s) throw() { (void) s; return NULL; }
+    static void* operator new(size_t s) throw() { (void) s; return nullptr; }
     /// Free memory allocated from heap (disabled)
     static void  operator delete(void* p) { (void) p; };
     /// Copy constructor (disabled)

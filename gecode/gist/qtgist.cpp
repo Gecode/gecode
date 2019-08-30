@@ -644,7 +644,7 @@ namespace Gecode { namespace Gist {
 
       navRoot->setEnabled(true);
       VisualNode* p = n->getParent(*canvas->na);
-      if (p == NULL) {
+      if (p == nullptr) {
         inspectBeforeFP->setEnabled(false);
         inspectBeforeFPGroup->setEnabled(false);
         navUp->setEnabled(false);

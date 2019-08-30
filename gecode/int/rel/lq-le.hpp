@@ -174,13 +174,13 @@ namespace Gecode { namespace Int { namespace Rel {
   template<class View, int o>
   forceinline bool
   NaryLqLe<View,o>::empty(void) const {
-    return pos == NULL;
+    return pos == nullptr;
   }
   template<class View, int o>
   forceinline void
   NaryLqLe<View,o>::push(Space& home, int p) {
     // Try to avoid entering same position twice
-    if ((pos != NULL) && (pos->p == p))
+    if ((pos != nullptr) && (pos->p == p))
       return;
     pos = new (home) Pos(p,pos);
   }
@@ -198,7 +198,7 @@ namespace Gecode { namespace Int { namespace Rel {
   forceinline
   NaryLqLe<View,o>::NaryLqLe(Home home, ViewArray<View>& x)
     : NaryPropagator<View,PC_INT_NONE>(home,x),
-      c(home), pos(NULL), run(false), n_subsumed(0) {
+      c(home), pos(nullptr), run(false), n_subsumed(0) {
     for (int i=0; i<x.size(); i++)
       x[i].subscribe(home, *new (home) Index(home,*this,c,i));
   }
@@ -281,8 +281,8 @@ namespace Gecode { namespace Int { namespace Rel {
   forceinline
   NaryLqLe<View,o>::NaryLqLe(Space& home, NaryLqLe<View,o>& p)
     : NaryPropagator<View,PC_INT_NONE>(home,p),
-      pos(NULL), run(false), n_subsumed(p.n_subsumed) {
-    assert(p.pos == NULL);
+      pos(nullptr), run(false), n_subsumed(p.n_subsumed) {
+    assert(p.pos == nullptr);
     c.update(home, p.c);
   }
 

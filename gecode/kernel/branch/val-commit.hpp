@@ -139,7 +139,7 @@ namespace Gecode {
   template<class View>
   forceinline NGL*
   ValCommitFunction<View>::ngl(Space&, unsigned int, View, Val) const {
-    return NULL;
+    return nullptr;
   }
   template<class View>
   forceinline void

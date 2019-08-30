@@ -61,7 +61,7 @@ namespace Gecode { namespace Float { namespace Branch {
   }
   forceinline NGL*
   ValCommitLqGq::ngl(Space&, unsigned int, FloatView, FloatNumBranch) const {
-    return NULL;
+    return nullptr;
   }
   forceinline void
   ValCommitLqGq::print(const Space&, unsigned int a, FloatView, int i,

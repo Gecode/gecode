@@ -156,7 +156,7 @@ namespace Gecode { namespace Int { namespace ViewValGraph {
     int val(void) const;
     /// Set matching edge to \a m
     void matching(Edge<View>* m);
-    /// Return matching edge (NULL if unmatched)
+    /// Return matching edge (nullptr if unmatched)
     Edge<View>* matching(void) const;
     /// Return pointer to next value node fields
     ValNode<View>** next_val_ref(void);

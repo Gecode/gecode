@@ -44,7 +44,7 @@ namespace Gecode { namespace Set {
 
   forceinline
   BndSet::BndSet(void) :
-    first(NULL), last(NULL), _size(0), _card(0) {}
+    first(nullptr), last(nullptr), _size(0), _card(0) {}
 
   forceinline RangeList*
   BndSet::fst(void) const {
@@ -58,7 +58,7 @@ namespace Gecode { namespace Set {
 
   forceinline void
   BndSet::dispose(Space& home) {
-    if (fst()!=NULL)
+    if (fst()!=nullptr)
       fst()->dispose(home,lst());
   }
 
@@ -75,10 +75,10 @@ namespace Gecode { namespace Set {
   forceinline
   BndSet::BndSet(Space& home, int mn, int mx) {
     if (mn>mx) {
-      fst(NULL); lst(NULL); _size = 0;
+      fst(nullptr); lst(nullptr); _size = 0;
     } else {
       RangeList* p =
-        new (home) RangeList(mn,mx,NULL);
+        new (home) RangeList(mn,mx,nullptr);
       fst(p); lst(p);
       _size = static_cast<unsigned int>(mx-mn+1);
     }
@@ -101,7 +101,7 @@ namespace Gecode { namespace Set {
 
   forceinline int
   BndSet::min(void) const {
-    if (fst()==NULL)
+    if (fst()==nullptr)
       return MIN_OF_EMPTY;
     else
       return fst()->min();
@@ -109,7 +109,7 @@ namespace Gecode { namespace Set {
 
   forceinline int
   BndSet::max(void) const {
-    if (lst()==NULL)
+    if (lst()==nullptr)
       return MAX_OF_EMPTY;
     else
       return lst()->max();
@@ -118,7 +118,7 @@ namespace Gecode { namespace Set {
   // nth smallest element
   forceinline int
   BndSet::minN(unsigned int n) const {
-    for (RangeList* c = fst(); c != NULL; c = c->next()) {
+    for (RangeList* c = fst(); c != nullptr; c = c->next()) {
       if (c->width() > n)
         return static_cast<int>(c->min() + n);
       n -= c->width();
@@ -140,16 +140,16 @@ namespace Gecode { namespace Set {
   BndSet::update(Space& home, BndSet& d) {
     if (d.fst() == fst())
       return;
-    if (fst() != NULL)
+    if (fst() != nullptr)
       fst()->dispose(home,lst());
     _size = d.size();
     if (_size == 0) {
-      fst(NULL); lst(NULL);
+      fst(nullptr); lst(nullptr);
       return;
     }
 
     int n=0;
-    for (RangeList* c = d.fst(); c != NULL; c = c->next())
+    for (RangeList* c = d.fst(); c != nullptr; c = c->next())
       n++;
 
     RangeList* r = home.alloc<RangeList>(n);
@@ -164,7 +164,7 @@ namespace Gecode { namespace Set {
         c = c->next();
       }
     }
-    r[n-1].next(NULL);
+    r[n-1].next(nullptr);
   }
 
   template<class I> forceinline bool
@@ -172,29 +172,29 @@ namespace Gecode { namespace Set {
     // Is new domain empty?
     if (!ri()) {
       //Was it empty?
-      if (fst()==NULL)
+      if (fst()==nullptr)
         return false;
       fst()->dispose(home,lst());
-      _size=0; fst(NULL); lst(NULL);
+      _size=0; fst(nullptr); lst(nullptr);
       return true;
     }
 
     RangeList* f =
-      new (home) RangeList(ri.min(),ri.max(),NULL);
+      new (home) RangeList(ri.min(),ri.max(),nullptr);
     RangeList* l = f;
     unsigned int s = ri.width();
 
     ++ri;
 
     while (ri()) {
-      RangeList *n = new (home) RangeList(ri.min(),ri.max(),NULL);
+      RangeList *n = new (home) RangeList(ri.min(),ri.max(),nullptr);
       l->next(n);
       l=n;
       s += ri.width();
       ++ri;
     }
 
-    if (fst() != NULL)
+    if (fst() != nullptr)
       fst()->dispose(home,lst());
     fst(f); lst(l);
 
@@ -209,8 +209,8 @@ namespace Gecode { namespace Set {
 
   forceinline void
   BndSet::become(Space& home, const BndSet& that) {
-    if (fst()!=NULL) {
-      assert(lst()!=NULL);
+    if (fst()!=nullptr) {
+      assert(lst()!=nullptr);
       assert(fst()!= that.fst());
       fst()->dispose(home,lst());
     }
@@ -222,7 +222,7 @@ namespace Gecode { namespace Set {
 
   forceinline bool
   BndSet::in(int i) const {
-    for (RangeList* c = fst(); c != NULL; c = c->next()) {
+    for (RangeList* c = fst(); c != nullptr; c = c->next()) {
       if (c->min() <= i && c->max() >= i)
         return true;
       if (c->min() > i)
@@ -270,16 +270,16 @@ namespace Gecode { namespace Set {
   forceinline void
   GLBndSet::init(Space& home) {
     dispose(home);
-    fst(NULL);
-    lst(NULL);
+    fst(nullptr);
+    lst(nullptr);
     _size = 0;
   }
 
   forceinline bool
   GLBndSet::include(Space& home, int mi, int ma, SetDelta& d) {
     assert(ma >= mi);
-    if (fst()==NULL) {
-      RangeList* p = new (home) RangeList(mi,ma,NULL);
+    if (fst()==nullptr) {
+      RangeList* p = new (home) RangeList(mi,ma,nullptr);
       fst(p);
       lst(p);
       _size=static_cast<unsigned int>(ma-mi+1);
@@ -329,7 +329,7 @@ namespace Gecode { namespace Set {
     RangeList *p =
       new (home) RangeList(Limits::min,
                            Limits::max,
-                           NULL);
+                           nullptr);
     fst(p);
     lst(p);
     _size = Limits::card;
@@ -342,7 +342,7 @@ namespace Gecode { namespace Set {
     if (mi <= min() && ma >= max() ) { //the range covers the whole set
       d._lubMin = min();
       d._lubMax = max();
-      fst()->dispose(home,lst()); fst(NULL); lst(NULL);
+      fst()->dispose(home,lst()); fst(nullptr); lst(nullptr);
       _size=0;
       return true;
     }
@@ -357,7 +357,7 @@ namespace Gecode { namespace Set {
     if ((mi <= min()) && (ma >= max())) { return false; }
     if (_size == 0) return false;
     if (ma < min() || mi > max() ) { // empty the whole set
-     fst()->dispose(home,lst()); fst(NULL); lst(NULL);
+     fst()->dispose(home,lst()); fst(nullptr); lst(nullptr);
      _size=0;
      return true;
     }
@@ -368,9 +368,9 @@ namespace Gecode { namespace Set {
 
   template<class I> bool
   LUBndSet::intersectI(Space& home, I& i) {
-    if (fst()==NULL) { return false; }
+    if (fst()==nullptr) { return false; }
     if (!i()) {
-      fst()->dispose(home,lst()); fst(NULL); lst(NULL);
+      fst()->dispose(home,lst()); fst(nullptr); lst(nullptr);
       _size=0;
       return true;
     }
@@ -393,7 +393,7 @@ namespace Gecode { namespace Set {
 
   forceinline void
   LUBndSet::excludeAll(Space& home) {
-    fst()->dispose(home,lst()); fst(NULL); lst(NULL);
+    fst()->dispose(home,lst()); fst(nullptr); lst(nullptr);
     _size=0;
   }
 

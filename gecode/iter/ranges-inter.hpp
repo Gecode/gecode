@@ -163,7 +163,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
   forceinline void
   NaryInter::init(Region& r, I& i) {
     RangeListIter::init(r);
-    f = NULL;
+    f = nullptr;
     set(copy(i));
   }
 
@@ -171,7 +171,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
   forceinline void
   NaryInter::init(Region& r, I& i, J& j) {
     RangeListIter::init(r);
-    f = NULL;
+    f = nullptr;
     RangeList*  h;
     RangeList** c = &h;
     while (i() && j()) {
@@ -188,7 +188,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
       if (i.max() < j.max()) ++i; else ++j;
     }
   done:
-    *c = NULL;
+    *c = nullptr;
     set(h);
   }
 
@@ -196,7 +196,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
   forceinline void
   NaryInter::init(Region& r, I* i, int n) {
     RangeListIter::init(r);
-    f = NULL;
+    f = nullptr;
     if ((n > 0) && i[0]()) {
       RangeList*  h;
       RangeList** c = &h;
@@ -230,7 +230,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
         min = max + 2;
       }
     done:
-      *c = NULL;
+      *c = nullptr;
       set(h);
     }
   }
@@ -258,17 +258,17 @@ namespace Gecode { namespace Iter { namespace Ranges {
     // The new rangelist
     RangeList* h;
     RangeList** c = &h;
-    while (i() && (j != NULL)) {
+    while (i() && (j != nullptr)) {
       do {
         while (i() && (i.max() < j->min))
           ++i;
         if (!i()) goto done;
-        while ((j != NULL) && (j->max < i.min())) {
+        while ((j != nullptr) && (j->max < i.min())) {
           RangeList* t = j->next;
           j->next = f; f = j;
           j = t;
         }
-        if (j == NULL) goto done;
+        if (j == nullptr) goto done;
       } while (i.max() < j->min);
       // Now the intervals overlap: consume the smaller interval
       RangeList* t = range(std::max(i.min(),j->min),
@@ -284,18 +284,18 @@ namespace Gecode { namespace Iter { namespace Ranges {
     }
   done:
     // Put remaining elements into freelist
-    while (j != NULL) {
+    while (j != nullptr) {
       RangeList* t = j->next;
       j->next = f; f = j;
       j = t;
     }
-    *c = NULL;
+    *c = nullptr;
     set(h);
   }
 
   forceinline NaryInter&
   NaryInter::operator =(const NaryInter& m) {
-    f = NULL;
+    f = nullptr;
     return static_cast<NaryInter&>(RangeListIter::operator =(m));
   }
 

@@ -75,7 +75,7 @@ namespace Gecode { namespace Iter { namespace Values {
   void
   Minus::init(Region& r, I& i) {
     ValueListIter::init(r);
-    ValueList* p = NULL;
+    ValueList* p = nullptr;
     for (; i(); ++i) {
       ValueList* t = new (*vlio) ValueList;
       t->next = p;

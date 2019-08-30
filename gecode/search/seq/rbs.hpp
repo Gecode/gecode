@@ -65,7 +65,7 @@ namespace Gecode { namespace Search { namespace Seq {
   RBS::RBS(Space* s, RestartStop* stop0,
            Engine* e0, const Search::Statistics& stat, const Options& opt,
            bool best0)
-    : e(e0), master(s), last(NULL), co(opt.cutoff), stop(stop0),
+    : e(e0), master(s), last(nullptr), co(opt.cutoff), stop(stop0),
       sslr(0),
       complete(true), restart(false), best(best0) {
     stop->limit(stat,(*co)());

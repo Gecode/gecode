@@ -142,12 +142,12 @@ namespace Gecode { namespace Search { namespace Seq {
   Probe<Tracer>::next(const Options& opt) {
     start();
     while (true) {
-      if (cur == NULL) {
+      if (cur == nullptr) {
       backtrack:
         if (ds.empty())
-          return NULL;
+          return nullptr;
         if (stop(opt))
-          return NULL;
+          return nullptr;
         unsigned int a = ds.top().alt();
         const Choice* ch = ds.top().choice();
         unsigned int nid = ds.top().nid();
@@ -173,7 +173,7 @@ namespace Gecode { namespace Search { namespace Seq {
         while (s->status(*this) == SS_BRANCH) {
           if (stop(opt)) {
             cur = s;
-            return NULL;
+            return nullptr;
           }
           const Choice* ch = s->choice();
           if (ch->alternatives() > 1)
@@ -190,7 +190,7 @@ namespace Gecode { namespace Search { namespace Seq {
           node++;
           delete ch;
         }
-        cur = NULL;
+        cur = nullptr;
         if (s->failed()) {
           if (tracer) {
             SearchTracer::NodeInfo ni(SearchTracer::NodeType::FAILED,
@@ -221,14 +221,14 @@ namespace Gecode { namespace Search { namespace Seq {
           }
           fail++;
           delete cur;
-          cur = NULL;
+          cur = nullptr;
           goto backtrack;
         case SS_SOLVED:
           if (tracer) {
             tracer.skip(*tracer.ei());
           }
           delete cur;
-          cur = NULL;
+          cur = nullptr;
           goto backtrack;
         case SS_BRANCH:
           {
@@ -270,11 +270,11 @@ namespace Gecode { namespace Search { namespace Seq {
   template<class Tracer>
   forceinline
   LDS<Tracer>::LDS(Space* s, const Options& o)
-    : opt(o), e(opt), root(NULL), d(0) {
+    : opt(o), e(opt), root(nullptr), d(0) {
     e.node = 1;
     if (s->status(e) == SS_FAILED) {
       e.fail++;
-      e.init(NULL);
+      e.init(nullptr);
     } else {
       Space* c = snapshot(s,opt);
       if (opt.d_l > 0) {
@@ -289,19 +289,19 @@ namespace Gecode { namespace Search { namespace Seq {
   LDS<Tracer>::next(void) {
     while (true) {
       Space* s = e.next(opt);
-      if (s != NULL)
+      if (s != nullptr)
         return s;
-      if (((s == NULL) && e.stopped()) || (++d > opt.d_l) || e.done())
+      if (((s == nullptr) && e.stopped()) || (++d > opt.d_l) || e.done())
         break;
       if (d == opt.d_l) {
-        if (root != NULL)
+        if (root != nullptr)
           e.reset(root,d);
-        root = NULL;
-      } else if (root != NULL) {
+        root = nullptr;
+      } else if (root != nullptr) {
         e.reset(root->clone(),d);
       }
     }
-    return NULL;
+    return nullptr;
   }
 
   template<class Tracer>
@@ -320,12 +320,12 @@ namespace Gecode { namespace Search { namespace Seq {
   template<class Tracer>
   forceinline void
   LDS<Tracer>::reset(Space* s) {
-    delete root; root=NULL; d=0;
+    delete root; root=nullptr; d=0;
     e.node = 1;
-    if ((s == NULL) || (s->status(e) == SS_FAILED)) {
+    if ((s == nullptr) || (s->status(e) == SS_FAILED)) {
       delete s;
       e.fail++;
-      e.reset(NULL,0);
+      e.reset(nullptr,0);
     } else {
       if (opt.d_l > 0) {
         root = s->clone();

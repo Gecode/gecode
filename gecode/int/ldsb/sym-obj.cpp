@@ -35,27 +35,27 @@
 
 namespace Gecode {
   SymmetryHandle::SymmetryHandle(void)
-    : ref(NULL) {}
+    : ref(nullptr) {}
   SymmetryHandle::SymmetryHandle(Int::LDSB::SymmetryObject* o)
     : ref(o) {}
   SymmetryHandle::SymmetryHandle(const SymmetryHandle& h)
     : ref(h.ref) {
-    if (ref != NULL)
+    if (ref != nullptr)
       increment();
   }
   const SymmetryHandle&
   SymmetryHandle::operator=(const SymmetryHandle& h) {
     if (h.ref == ref)
       return *this;
-    if (ref != NULL)
+    if (ref != nullptr)
       decrement();
     ref = h.ref;
-    if (ref != NULL)
+    if (ref != nullptr)
       increment();
     return *this;
   }
   SymmetryHandle::~SymmetryHandle(void) {
-    if (ref != NULL)
+    if (ref != nullptr)
       decrement();
   }
   void
@@ -67,7 +67,7 @@ namespace Gecode {
     (ref->nrefs)--;
     if (ref->nrefs == 0)
       delete ref;
-    ref = NULL;
+    ref = nullptr;
   }
 }
 

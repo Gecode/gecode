@@ -86,7 +86,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
   RangeList::init(const Gecode::RangeList* s) { c = s; }
 
   forceinline bool
-  RangeList::operator ()(void) const { return c != NULL; }
+  RangeList::operator ()(void) const { return c != nullptr; }
 
   forceinline void
   RangeList::operator ++(void) {

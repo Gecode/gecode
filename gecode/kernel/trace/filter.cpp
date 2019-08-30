@@ -42,9 +42,9 @@ namespace Gecode {
   bool
   TFE::Node::decrement(void) {
     if (--use == 0) {
-      if ((l != NULL) && l->decrement())
+      if ((l != nullptr) && l->decrement())
         delete l;
-      if ((r != NULL) && r->decrement())
+      if ((r != nullptr) && r->decrement())
         delete r;
       return true;
     }

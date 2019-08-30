@@ -219,9 +219,9 @@ namespace Gecode {
 
   forceinline
   TFE::Node::Node(void)
-    : use(1), l(NULL), r(NULL) {}
+    : use(1), l(nullptr), r(nullptr) {}
   forceinline
-  TFE::TFE(void) : n(NULL) {}
+  TFE::TFE(void) : n(nullptr) {}
   forceinline
   TFE::TFE(TFE::Node* n0) : n(n0) {}
 
@@ -244,11 +244,11 @@ namespace Gecode {
    *
    */
   forceinline
-  TraceFilter::TFO::TFO(void) : n(0), f(NULL) {}
+  TraceFilter::TFO::TFO(void) : n(0), f(nullptr) {}
   forceinline
   TraceFilter::TFO::TFO(const TFE& e)
     : n(e.n->n),
-      f((n == 0) ? NULL : heap.alloc<Filter>(n)) {
+      f((n == 0) ? nullptr : heap.alloc<Filter>(n)) {
     if (n > 0)
       fill(e.n);
   }

@@ -77,7 +77,7 @@ namespace Gecode { namespace Search {
 
   forceinline bool
   Worker::stop(const Options& o) {
-    if (o.stop == NULL)
+    if (o.stop == nullptr)
       return false;
     _stopped |= o.stop->stop(*this,o);
     return _stopped;

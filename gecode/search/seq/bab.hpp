@@ -41,14 +41,14 @@ namespace Gecode { namespace Search { namespace Seq {
   forceinline
   BAB<Tracer>::BAB(Space* s, const Options& o)
     : tracer(o.tracer), opt(o), path(opt.nogoods_limit), d(0), mark(0), 
-      best(NULL) {
+      best(nullptr) {
     if (tracer) {
       tracer.engine(SearchTracer::EngineType::BAB, 1U);
       tracer.worker();
     }
-    if ((s == NULL) || (s->status(*this) == SS_FAILED)) {
+    if ((s == nullptr) || (s->status(*this) == SS_FAILED)) {
       fail++;
-      cur = NULL;
+      cur = nullptr;
       if (!o.clone)
         delete s;
     } else {
@@ -61,9 +61,9 @@ namespace Gecode { namespace Search { namespace Seq {
   BAB<Tracer>::next(void) {
     /*
      * The engine maintains the following invariant:
-     *  - If the current space (cur) is not NULL, the path always points
+     *  - If the current space (cur) is not nullptr, the path always points
      *    to exactly that space.
-     *  - If the current space (cur) is NULL, the path always points
+     *  - If the current space (cur) is nullptr, the path always points
      *    to the next space (if there is any).
      *
      * This invariant is needed so that no-goods can be extracted properly
@@ -78,13 +78,13 @@ namespace Gecode { namespace Search { namespace Seq {
     start();
     while (true) {
       if (stop(opt))
-        return NULL;
+        return nullptr;
       // Recompute and add constraint if necessary
-      while (cur == NULL) {
+      while (cur == nullptr) {
         if (path.empty())
-          return NULL;
+          return nullptr;
         cur = path.recompute(d,opt.a_d,*this,*best,mark,tracer);
-        if (cur != NULL)
+        if (cur != nullptr)
           break;
         path.next();
       }
@@ -104,7 +104,7 @@ namespace Gecode { namespace Search { namespace Seq {
         }
         fail++;
         delete cur;
-        cur = NULL;
+        cur = nullptr;
         path.next();
         break;
       case SS_SOLVED:
@@ -118,7 +118,7 @@ namespace Gecode { namespace Search { namespace Seq {
           (void) cur->choice();
           delete best;
           best = cur;
-          cur = NULL;
+          cur = nullptr;
           path.next();
           mark = path.entries();
         }
@@ -130,7 +130,7 @@ namespace Gecode { namespace Search { namespace Seq {
             c = cur->clone();
             d = 1;
           } else {
-            c = NULL;
+            c = nullptr;
             d++;
           }
           const Choice* ch = path.push(*this,cur,c,nid);
@@ -147,7 +147,7 @@ namespace Gecode { namespace Search { namespace Seq {
       }
     }
     GECODE_NEVER;
-    return NULL;
+    return nullptr;
   }
 
   template<class Tracer>
@@ -159,7 +159,7 @@ namespace Gecode { namespace Search { namespace Seq {
   template<class Tracer>
   forceinline void
   BAB<Tracer>::constrain(const Space& b) {
-    if (best != NULL) {
+    if (best != nullptr) {
       // Check whether b is in fact better than best
       best->constrain(b);
       if (best->status(*this) != SS_FAILED)
@@ -168,7 +168,7 @@ namespace Gecode { namespace Search { namespace Seq {
         delete best;
     }
     best = b.clone();
-    if (cur != NULL)
+    if (cur != nullptr)
       cur->constrain(b);
     mark = path.entries();
   }
@@ -178,14 +178,14 @@ namespace Gecode { namespace Search { namespace Seq {
   BAB<Tracer>::reset(Space* s) {
     tracer.round();
     delete best;
-    best = NULL;
+    best = nullptr;
     path.reset();
     d = 0;
     mark = 0;
     delete cur;
-    if ((s == NULL) || (s->status(*this) == SS_FAILED)) {
+    if ((s == nullptr) || (s->status(*this) == SS_FAILED)) {
       delete s;
-      cur = NULL;
+      cur = nullptr;
     } else {
       cur = s;
     }

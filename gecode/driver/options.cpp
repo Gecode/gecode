@@ -50,8 +50,8 @@ namespace Gecode {
      */
     char*
     BaseOption::strdup(const char* s) {
-      if (s == NULL)
-        return NULL;
+      if (s == nullptr)
+        return nullptr;
       char* d = heap.alloc<char>(static_cast<unsigned long int>(strlen(s)+1));
       (void) strcpy(d,s);
       return d;
@@ -59,8 +59,8 @@ namespace Gecode {
 
     char*
     BaseOption::stredup(const char* s) {
-      if (s == NULL)
-        return NULL;
+      if (s == nullptr)
+        return nullptr;
       char* d = heap.alloc<char>(static_cast<unsigned long int>(strlen(s)+2));
       d[0] = '-';
       (void) strcpy(d+1,s);
@@ -69,7 +69,7 @@ namespace Gecode {
 
     void
     BaseOption::strdel(const char* s) {
-      if (s == NULL)
+      if (s == nullptr)
         return;
       heap.rfree(const_cast<char*>(s));
     }
@@ -77,17 +77,17 @@ namespace Gecode {
     char*
     BaseOption::argument(int argc, char* argv[]) const {
       if (argc < 2)
-        return NULL;
+        return nullptr;
       const char* s = argv[1];
       if (s[0] == '-') {
         s++;
         if (s[0] == '-')
           s++;
       } else {
-        return NULL;
+        return nullptr;
       }
       if (strcmp(s,eopt))
-        return NULL;
+        return nullptr;
       if (argc == 2) {
         std::cerr << "Missing argument for option \"" << iopt << "\""
                   << std::endl;
@@ -125,7 +125,7 @@ namespace Gecode {
     void
     StringValueOption::help(void) {
       std::cerr << '\t' << iopt << " (string) default: "
-                << ((cur == NULL) ? "NONE" : cur) << std::endl
+                << ((cur == nullptr) ? "NONE" : cur) << std::endl
                 << "\t\t" << exp << std::endl;
     }
     StringValueOption::~StringValueOption(void) {
@@ -140,8 +140,8 @@ namespace Gecode {
       n->val  = v;
       n->opt  = strdup(o);
       n->help = strdup(h);
-      n->next = NULL;
-      if (fst == NULL) {
+      n->next = nullptr;
+      if (fst == nullptr) {
         fst = n;
       } else {
         lst->next = n;
@@ -151,7 +151,7 @@ namespace Gecode {
     int
     StringOption::parse(int argc, char* argv[]) {
       if (char* a = argument(argc,argv)) {
-        for (Value* v = fst; v != NULL; v = v->next)
+        for (Value* v = fst; v != nullptr; v = v->next)
           if (!strcmp(a,v->opt)) {
             cur = v->val;
             return 2;
@@ -165,27 +165,27 @@ namespace Gecode {
     }
     void
     StringOption::help(void) {
-      if (fst == NULL)
+      if (fst == nullptr)
         return;
       std::cerr << '\t' << iopt << " (";
-      const char* d = NULL;
-      for (Value* v = fst; v != NULL; v = v->next) {
-        std::cerr << v->opt << ((v->next != NULL) ? ", " : "");
+      const char* d = nullptr;
+      for (Value* v = fst; v != nullptr; v = v->next) {
+        std::cerr << v->opt << ((v->next != nullptr) ? ", " : "");
         if (v->val == cur)
           d = v->opt;
       }
       std::cerr << ")";
-      if (d != NULL)
+      if (d != nullptr)
         std::cerr << " default: " << d;
       std::cerr << std::endl << "\t\t" << exp << std::endl;
-      for (Value* v = fst; v != NULL; v = v->next)
-        if (v->help != NULL)
+      for (Value* v = fst; v != nullptr; v = v->next)
+        if (v->help != nullptr)
           std::cerr << "\t\t  " << v->opt << ": " << v->help << std::endl;
     }
 
     StringOption::~StringOption(void) {
       Value* v = fst;
-      while (v != NULL) {
+      while (v != nullptr) {
         strdel(v->opt);
         strdel(v->help);
         Value* n = v->next;
@@ -489,8 +489,8 @@ namespace Gecode {
 
   void
   BaseOptions::add(Driver::BaseOption& o) {
-    o.next = NULL;
-    if (fst == NULL) {
+    o.next = nullptr;
+    if (fst == nullptr) {
       fst=&o;
     } else {
       lst->next=&o;
@@ -498,7 +498,7 @@ namespace Gecode {
     lst=&o;
   }
   BaseOptions::BaseOptions(const char* n)
-    : fst(NULL), lst(NULL),
+    : fst(nullptr), lst(nullptr),
       _name(Driver::BaseOption::strdup(n)) {}
 
   void
@@ -557,7 +557,7 @@ namespace Gecode {
               << "Options for " << name() << ":" << std::endl
               << "\t-help, --help, -?" << std::endl
               << "\t\tprint this help message" << std::endl;
-    for (Driver::BaseOption* o = fst; o != NULL; o = o->next)
+    for (Driver::BaseOption* o = fst; o != nullptr; o = o->next)
       o->help();
   }
 
@@ -566,7 +566,7 @@ namespace Gecode {
     int c = argc;
     char** v = argv;
   next:
-    for (Driver::BaseOption* o = fst; o != NULL; o = o->next)
+    for (Driver::BaseOption* o = fst; o != nullptr; o = o->next)
       if (int a = o->parse(c,v)) {
         c -= a; v += a;
         goto next;
@@ -698,7 +698,7 @@ namespace Gecode {
 
 
   InstanceOptions::InstanceOptions(const char* e)
-    : Options(e), _inst(NULL) {}
+    : Options(e), _inst(nullptr) {}
 
   void
   InstanceOptions::instance(const char* s) {

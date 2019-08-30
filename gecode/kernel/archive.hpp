@@ -168,7 +168,7 @@ namespace Gecode {
    */
 
   forceinline
-  Archive::Archive(void) : _size(0), _n(0), _a(NULL), _pos(0) {}
+  Archive::Archive(void) : _size(0), _n(0), _a(nullptr), _pos(0) {}
 
   forceinline void
   Archive::put(unsigned int i) {

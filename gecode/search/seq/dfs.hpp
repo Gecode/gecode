@@ -41,9 +41,9 @@ namespace Gecode { namespace Search { namespace Seq {
       tracer.engine(SearchTracer::EngineType::DFS, 1U);
       tracer.worker();
     }
-    if ((s == NULL) || (s->status(*this) == SS_FAILED)) {
+    if ((s == nullptr) || (s->status(*this) == SS_FAILED)) {
       fail++;
-      cur = NULL;
+      cur = nullptr;
       if (!opt.clone)
         delete s;
     } else {
@@ -58,9 +58,9 @@ namespace Gecode { namespace Search { namespace Seq {
     delete cur;
     path.reset();
     d = 0;
-    if ((s == NULL) || (s->status(*this) == SS_FAILED)) {
+    if ((s == nullptr) || (s->status(*this) == SS_FAILED)) {
       delete s;
-      cur = NULL;
+      cur = nullptr;
     } else {
       cur = s;
     }
@@ -78,9 +78,9 @@ namespace Gecode { namespace Search { namespace Seq {
   DFS<Tracer>::next(void) {
     /*
      * The engine maintains the following invariant:
-     *  - If the current space (cur) is not NULL, the path always points
+     *  - If the current space (cur) is not nullptr, the path always points
      *    to exactly that space.
-     *  - If the current space (cur) is NULL, the path always points
+     *  - If the current space (cur) is nullptr, the path always points
      *    to the next space (if there is any).
      *
      * This invariant is needed so that no-goods can be extracted properly
@@ -90,12 +90,12 @@ namespace Gecode { namespace Search { namespace Seq {
     start();
     while (true) {
       if (stop(opt))
-        return NULL;
-      while (cur == NULL) {
+        return nullptr;
+      while (cur == nullptr) {
         if (path.empty())
-          return NULL;
+          return nullptr;
         cur = path.recompute(d,opt.a_d,*this,tracer);
-        if (cur != NULL)
+        if (cur != nullptr)
           break;
         path.next();
       }
@@ -115,7 +115,7 @@ namespace Gecode { namespace Search { namespace Seq {
         }
         fail++;
         delete cur;
-        cur = NULL;
+        cur = nullptr;
         path.next();
         break;
       case SS_SOLVED:
@@ -128,7 +128,7 @@ namespace Gecode { namespace Search { namespace Seq {
           // Deletes all pending branchers
           (void) cur->choice();
           Space* s = cur;
-          cur = NULL;
+          cur = nullptr;
           path.next();
           return s;
         }
@@ -139,7 +139,7 @@ namespace Gecode { namespace Search { namespace Seq {
             c = cur->clone();
             d = 1;
           } else {
-            c = NULL;
+            c = nullptr;
             d++;
           }
           const Choice* ch = path.push(*this,cur,c,nid);
@@ -156,7 +156,7 @@ namespace Gecode { namespace Search { namespace Seq {
       }
     }
     GECODE_NEVER;
-    return NULL;
+    return nullptr;
   }
 
   template<class Tracer>

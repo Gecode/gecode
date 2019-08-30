@@ -68,7 +68,7 @@ namespace Gecode { namespace Search { namespace Par {
     _worker[0] = new Worker(s,*this);
     // All other workers start with no work
     for (unsigned int i=1; i<workers(); i++)
-      _worker[i] = new Worker(NULL,*this);
+      _worker[i] = new Worker(nullptr,*this);
     // Block all workers
     block();
     // Create and start threads
@@ -85,12 +85,12 @@ namespace Gecode { namespace Search { namespace Par {
   DFS<Tracer>::Worker::reset(Space* s, unsigned int ngdl) {
     delete cur;
     tracer.round();
-    path.reset((s != NULL) ? ngdl : 0);
+    path.reset((s != nullptr) ? ngdl : 0);
     d = 0;
     idle = false;
-    if ((s == NULL) || (s->status(*this) == SS_FAILED)) {
+    if ((s == nullptr) || (s->status(*this) == SS_FAILED)) {
       delete s;
-      cur = NULL;
+      cur = nullptr;
     } else {
       cur = s;
     }
@@ -162,9 +162,9 @@ namespace Gecode { namespace Search { namespace Par {
   DFS<Tracer>::Worker::run(void) {
     /*
      * The engine maintains the following invariant:
-     *  - If the current space (cur) is not NULL, the path always points
+     *  - If the current space (cur) is not nullptr, the path always points
      *    to exactly that space.
-     *  - If the current space (cur) is NULL, the path always points
+     *  - If the current space (cur) is nullptr, the path always points
      *    to the next space (if there is any).
      *
      * This invariant is needed so that no-goods can be extracted properly
@@ -204,7 +204,7 @@ namespace Gecode { namespace Search { namespace Par {
             m.release();
             // Try to find new work
             find();
-          } else if (cur != NULL) {
+          } else if (cur != nullptr) {
             start();
             if (stop(engine().opt())) {
               // Report stop
@@ -233,7 +233,7 @@ namespace Gecode { namespace Search { namespace Par {
                 }
                 fail++;
                 delete cur;
-                cur = NULL;
+                cur = nullptr;
                 path.next();
                 m.release();
                 break;
@@ -248,7 +248,7 @@ namespace Gecode { namespace Search { namespace Par {
                   (void) cur->choice();
                   Space* s = cur->clone();
                   delete cur;
-                  cur = NULL;
+                  cur = nullptr;
                   path.next();
                   m.release();
                   engine().solution(s);
@@ -261,7 +261,7 @@ namespace Gecode { namespace Search { namespace Par {
                     c = cur->clone();
                     d = 1;
                   } else {
-                    c = NULL;
+                    c = nullptr;
                     d++;
                   }
                   const Choice* ch = path.push(*this,cur,c,nid);
@@ -280,7 +280,7 @@ namespace Gecode { namespace Search { namespace Par {
             }
           } else if (!path.empty()) {
             cur = path.recompute(d,engine().opt().a_d,*this,tracer);
-            if (cur == NULL)
+            if (cur == nullptr)
               path.next();
             m.release();
           } else {
@@ -315,7 +315,7 @@ namespace Gecode { namespace Search { namespace Par {
     // All workers are marked as busy again
     n_busy = workers();
     for (unsigned int i=1U; i<workers(); i++)
-      worker(i)->reset(NULL,0);
+      worker(i)->reset(nullptr,0);
     worker(0U)->reset(s,opt().nogoods_limit);
     // Block workers again to ensure invariant
     block();

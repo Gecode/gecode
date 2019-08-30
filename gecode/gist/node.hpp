@@ -98,7 +98,7 @@ namespace Gecode { namespace Gist {
     assert(i/NodeBlockSize < n);
     assert(i/NodeBlockSize < cur_b || i%NodeBlockSize <= cur_t);
     int bi = b[i/NodeBlockSize]->best[i%NodeBlockSize];
-    return bi == -1 ? NULL : (*this)[bi];
+    return bi == -1 ? nullptr : (*this)[bi];
   }
 
   template<class T>
@@ -173,7 +173,7 @@ namespace Gecode { namespace Gist {
 
   forceinline
   Node::Node(int p, bool failed) : parent(p) {
-    childrenOrFirstChild = NULL;
+    childrenOrFirstChild = nullptr;
     noOfChildren = 0;
     setTag(failed ? LEAF : UNDET);
   }
@@ -185,7 +185,7 @@ namespace Gecode { namespace Gist {
 
   forceinline VisualNode*
   Node::getParent(const NodeAllocator& na) const {
-    return parent < 0 ? NULL : na[parent];
+    return parent < 0 ? nullptr : na[parent];
   }
 
   forceinline bool

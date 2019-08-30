@@ -468,47 +468,47 @@ namespace Gecode { namespace FlatZinc { namespace AST {
   }
   inline bool
   Node::isIntVar(void) {
-    return (dynamic_cast<IntVar*>(this) != NULL);
+    return (dynamic_cast<IntVar*>(this) != nullptr);
   }
   inline bool
   Node::isBoolVar(void) {
-    return (dynamic_cast<BoolVar*>(this) != NULL);
+    return (dynamic_cast<BoolVar*>(this) != nullptr);
   }
   inline bool
   Node::isSetVar(void) {
-    return (dynamic_cast<SetVar*>(this) != NULL);
+    return (dynamic_cast<SetVar*>(this) != nullptr);
   }
   inline bool
   Node::isFloatVar(void) {
-    return (dynamic_cast<FloatVar*>(this) != NULL);
+    return (dynamic_cast<FloatVar*>(this) != nullptr);
   }
   inline bool
   Node::isInt(void) {
-    return (dynamic_cast<IntLit*>(this) != NULL);
+    return (dynamic_cast<IntLit*>(this) != nullptr);
   }
   inline bool
   Node::isBool(void) {
-    return (dynamic_cast<BoolLit*>(this) != NULL);
+    return (dynamic_cast<BoolLit*>(this) != nullptr);
   }
   inline bool
   Node::isFloat(void) {
-    return (dynamic_cast<FloatLit*>(this) != NULL);
+    return (dynamic_cast<FloatLit*>(this) != nullptr);
   }
   inline bool
   Node::isSet(void) {
-    return (dynamic_cast<SetLit*>(this) != NULL);
+    return (dynamic_cast<SetLit*>(this) != nullptr);
   }
   inline bool
   Node::isString(void) {
-    return (dynamic_cast<String*>(this) != NULL);
+    return (dynamic_cast<String*>(this) != nullptr);
   }
   inline bool
   Node::isArray(void) {
-    return (dynamic_cast<Array*>(this) != NULL);
+    return (dynamic_cast<Array*>(this) != nullptr);
   }
   inline bool
   Node::isAtom(void) {
-    return (dynamic_cast<Atom*>(this) != NULL);
+    return (dynamic_cast<Atom*>(this) != nullptr);
   }
 
   inline Node*
@@ -516,7 +516,7 @@ namespace Gecode { namespace FlatZinc { namespace AST {
     if (Array* a = dynamic_cast<Array*>(n)) {
       if (a->a.size() == 1) {
         Node *ret = a->a[0];
-        a->a[0] = NULL;
+        a->a[0] = nullptr;
         delete a;
         return ret;
       }

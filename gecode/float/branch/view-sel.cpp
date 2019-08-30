@@ -44,7 +44,7 @@ namespace Gecode { namespace Float { namespace Branch {
       return new (home) ViewSelRnd<FloatView>(home,fvb);
     default: break;
     }
-    if (fvb.tbl() != NULL) {
+    if (fvb.tbl() != nullptr) {
       switch (fvb.select()) {
       case FloatVarBranch::SEL_MERIT_MIN:
         return new (home) ViewSelMinTbl<MeritFunction<FloatView>>(home,fvb);
@@ -152,7 +152,7 @@ namespace Gecode { namespace Float { namespace Branch {
       }
     }
     GECODE_NEVER;
-    return NULL;
+    return nullptr;
   }
 
 }}}

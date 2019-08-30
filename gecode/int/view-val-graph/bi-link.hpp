@@ -68,11 +68,11 @@ namespace Gecode { namespace Int { namespace ViewValGraph {
 
   forceinline void
   BiLink::mark(void) {
-    _next = NULL;
+    _next = nullptr;
   }
   forceinline bool
   BiLink::marked(void) const {
-    return _next == NULL;
+    return _next == nullptr;
   }
   forceinline bool
   BiLink::empty(void) const {

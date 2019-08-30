@@ -37,13 +37,13 @@ namespace Gecode { namespace Int { namespace ViewValGraph {
   forceinline
   IterPruneVal<View>::IterPruneVal(ViewNode<View>* y)
     : x(y), e(y->val_edges()) {
-    while ((e != NULL) && e->used(x))
+    while ((e != nullptr) && e->used(x))
       e = e->next_edge();
   }
   template<class View>
   forceinline bool
   IterPruneVal<View>::operator ()(void) const {
-    return e != NULL;
+    return e != nullptr;
   }
   template<class View>
   forceinline void
@@ -51,7 +51,7 @@ namespace Gecode { namespace Int { namespace ViewValGraph {
     assert(!e->used(x));
     do {
       e = e->next_edge();
-    } while ((e != NULL) && e->used(x));
+    } while ((e != nullptr) && e->used(x));
   }
   template<class View>
   forceinline int

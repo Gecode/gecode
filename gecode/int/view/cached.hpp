@@ -47,7 +47,7 @@ namespace Gecode { namespace Int {
   template<class View>
   forceinline
   CachedView<View>::CachedView(const View& y)
-    : DerivedView<View>(y), _firstRange(NULL), _lastRange(NULL),
+    : DerivedView<View>(y), _firstRange(nullptr), _lastRange(nullptr),
       _size(0) {}
 
 
@@ -282,13 +282,13 @@ namespace Gecode { namespace Int {
     DerivedView<View>::update(home,y);
     if (y._firstRange) {
       _firstRange = new (home) RangeList(y._firstRange->min(),
-                                         y._firstRange->max(),NULL);
+                                         y._firstRange->max(),nullptr);
       RangeList* cur = _firstRange;
 
-      for (RangeList* y_cur = y._firstRange->next(); y_cur != NULL;
+      for (RangeList* y_cur = y._firstRange->next(); y_cur != nullptr;
            y_cur = y_cur->next()) {
         RangeList* next =
-          new (home) RangeList(y_cur->min(),y_cur->max(),NULL);
+          new (home) RangeList(y_cur->min(),y_cur->max(),nullptr);
         cur->next(next);
         cur = next;
       }
@@ -305,7 +305,7 @@ namespace Gecode { namespace Int {
   template<class View>
   void
   CachedView<View>::initCache(Space& home, const IntSet& s) {
-    _firstRange = NULL;
+    _firstRange = nullptr;
     for (int i=s.ranges(); i--;) {
       _firstRange = new (home) RangeList(s.min(i),s.max(i),_firstRange);
       if (i==s.ranges()-1)
@@ -319,11 +319,11 @@ namespace Gecode { namespace Int {
   CachedView<View>::cache(Space& home) {
     _firstRange->dispose(home,_lastRange);
     ViewRanges<View> xr(x);
-    _firstRange = new (home) RangeList(xr.min(),xr.max(),NULL);
+    _firstRange = new (home) RangeList(xr.min(),xr.max(),nullptr);
     ++xr;
     RangeList* cur = _firstRange;
     for (; xr(); ++xr) {
-      RangeList* next = new (home) RangeList(xr.min(),xr.max(),NULL);
+      RangeList* next = new (home) RangeList(xr.min(),xr.max(),nullptr);
       cur->next(next);
       cur = next;
     }

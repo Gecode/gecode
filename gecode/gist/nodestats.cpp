@@ -104,7 +104,7 @@ namespace Gecode { namespace Gist {
                           VisualNode* n, const Statistics&, bool) {
     if (isVisible()) {
       int nd = -1;
-      for (VisualNode* p = n; p != NULL; p = p->getParent(na))
+      for (VisualNode* p = n; p != nullptr; p = p->getParent(na))
         nd++;
       nodeDepthLabel->setPlainText(QString("%1").arg(nd));;
       StatCursor sc(n,na);

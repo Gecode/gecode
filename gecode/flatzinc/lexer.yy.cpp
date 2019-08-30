@@ -116,7 +116,7 @@ typedef unsigned int flex_uint32_t;
 #endif
 
 /* Returned upon end-of-file. */
-#define YY_NULL 0
+#define YY_nullptr 0
 
 /* Promotes a possibly negative, possibly signed char to an
  *   integer in range [0..255] for use as an array index.
@@ -294,13 +294,13 @@ struct yy_buffer_state
  * future we want to put the buffer states in a more general
  * "scanner state".
  *
- * Returns the top of the stack, or NULL.
+ * Returns the top of the stack, or nullptr.
  */
 #define YY_CURRENT_BUFFER ( yyg->yy_buffer_stack \
                           ? yyg->yy_buffer_stack[yyg->yy_buffer_stack_top] \
-                          : NULL)
+                          : nullptr)
 /* Same as previous macro, but useful when we know that the buffer stack is not
- * NULL or when we need an lvalue. For internal use only.
+ * nullptr or when we need an lvalue. For internal use only.
  */
 #define YY_CURRENT_BUFFER_LVALUE yyg->yy_buffer_stack[yyg->yy_buffer_stack_top]
 
@@ -652,7 +652,7 @@ int stringbuflen;
 int stringbufpos;
 
 bool parseInt(const char* text, int& value) {
-  long int result = strtol(text,NULL,0);
+  long int result = strtol(text,nullptr,0);
   if ( (result == LONG_MAX || result == LONG_MIN) && errno == ERANGE )
     return false;
   if (result < Gecode::Int::Limits::min || result > Gecode::Int::Limits::max)
@@ -817,7 +817,7 @@ static int input ( yyscan_t yyscanner );
 #define ECHO do { if (fwrite( yytext, (size_t) yyleng, 1, yyout )) {} } while (0)
 #endif
 
-/* Gets input and stuffs it into "buf".  number of characters read, or YY_NULL,
+/* Gets input and stuffs it into "buf".  number of characters read, or YY_nullptr,
  * is returned in "result".
  */
 #ifndef YY_INPUT
@@ -858,7 +858,7 @@ static int input ( yyscan_t yyscanner );
  * some compilers to complain about unreachable statements.
  */
 #ifndef yyterminate
-#define yyterminate() return YY_NULL
+#define yyterminate() return YY_nullptr
 #endif
 
 /* Number of entries by which start-condition stack grows. */
@@ -1083,19 +1083,19 @@ YY_RULE_SETUP
 case 9:
 YY_RULE_SETUP
 #line 114 "gecode/flatzinc/lexer.lxx"
-{ yylval->dValue = strtod(yytext,NULL);
+{ yylval->dValue = strtod(yytext,nullptr);
                     return FZ_FLOAT_LIT; }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
 #line 116 "gecode/flatzinc/lexer.lxx"
-{ yylval->dValue = strtod(yytext,NULL);
+{ yylval->dValue = strtod(yytext,nullptr);
                                    return FZ_FLOAT_LIT; }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
 #line 118 "gecode/flatzinc/lexer.lxx"
-{ yylval->dValue = strtod(yytext,NULL);
+{ yylval->dValue = strtod(yytext,nullptr);
                            return FZ_FLOAT_LIT; }
 	YY_BREAK
 case 12:
@@ -1412,8 +1412,8 @@ case YY_STATE_EOF(INITIAL):
 					 * yy_c_buf_p so that if some total
 					 * hoser (like flex itself) wants to
 					 * call the scanner after we return the
-					 * YY_NULL, it'll still work - another
-					 * YY_NULL will get returned.
+					 * YY_nullptr, it'll still work - another
+					 * YY_nullptr will get returned.
 					 */
 					yyg->yy_c_buf_p = yyg->yytext_ptr + YY_MORE_ADJ;
 
@@ -1542,7 +1542,7 @@ static int yy_get_next_buffer (yyscan_t yyscanner)
 				}
 			else
 				/* Can't grow it, we don't own it. */
-				b->yy_ch_buf = NULL;
+				b->yy_ch_buf = nullptr;
 
 			if ( ! b->yy_ch_buf )
 				YY_FATAL_ERROR(
@@ -1972,7 +1972,7 @@ static void yy_load_buffer_state  (yyscan_t yyscanner)
 void yypush_buffer_state (YY_BUFFER_STATE new_buffer , yyscan_t yyscanner)
 {
     struct yyguts_t * yyg = (struct yyguts_t*)yyscanner;
-	if (new_buffer == NULL)
+	if (new_buffer == nullptr)
 		return;
 
 	yyensure_buffer_stack(yyscanner);
@@ -2007,7 +2007,7 @@ void yypop_buffer_state (yyscan_t yyscanner)
 		return;
 
 	yy_delete_buffer(YY_CURRENT_BUFFER , yyscanner);
-	YY_CURRENT_BUFFER_LVALUE = NULL;
+	YY_CURRENT_BUFFER_LVALUE = nullptr;
 	if (yyg->yy_buffer_stack_top > 0)
 		--yyg->yy_buffer_stack_top;
 
@@ -2078,7 +2078,7 @@ YY_BUFFER_STATE yy_scan_buffer  (char * base, yy_size_t  size , yyscan_t yyscann
 	     base[size-2] != YY_END_OF_BUFFER_CHAR ||
 	     base[size-1] != YY_END_OF_BUFFER_CHAR )
 		/* They forgot to leave room for the EOB's. */
-		return NULL;
+		return nullptr;
 
 	b = (YY_BUFFER_STATE) yyalloc( sizeof( struct yy_buffer_state ) , yyscanner );
 	if ( ! b )
@@ -2087,7 +2087,7 @@ YY_BUFFER_STATE yy_scan_buffer  (char * base, yy_size_t  size , yyscan_t yyscann
 	b->yy_buf_size = (int) (size - 2);	/* "- 2" to take care of EOB's */
 	b->yy_buf_pos = b->yy_ch_buf = base;
 	b->yy_is_our_buffer = 0;
-	b->yy_input_file = NULL;
+	b->yy_input_file = nullptr;
 	b->yy_n_chars = b->yy_buf_size;
 	b->yy_is_interactive = 0;
 	b->yy_at_bol = 1;
@@ -2345,14 +2345,14 @@ void yyset_lval (YYSTYPE *  yylval_param , yyscan_t yyscanner)
  */
 int yylex_init(yyscan_t* ptr_yy_globals)
 {
-    if (ptr_yy_globals == NULL){
+    if (ptr_yy_globals == nullptr){
         errno = EINVAL;
         return 1;
     }
 
-    *ptr_yy_globals = (yyscan_t) yyalloc ( sizeof( struct yyguts_t ), NULL );
+    *ptr_yy_globals = (yyscan_t) yyalloc ( sizeof( struct yyguts_t ), nullptr );
 
-    if (*ptr_yy_globals == NULL){
+    if (*ptr_yy_globals == nullptr){
         errno = ENOMEM;
         return 1;
     }
@@ -2376,14 +2376,14 @@ int yylex_init_extra( YY_EXTRA_TYPE yy_user_defined, yyscan_t* ptr_yy_globals )
 
     yyset_extra (yy_user_defined, &dummy_yyguts);
 
-    if (ptr_yy_globals == NULL){
+    if (ptr_yy_globals == nullptr){
         errno = EINVAL;
         return 1;
     }
 
     *ptr_yy_globals = (yyscan_t) yyalloc ( sizeof( struct yyguts_t ), &dummy_yyguts );
 
-    if (*ptr_yy_globals == NULL){
+    if (*ptr_yy_globals == nullptr){
         errno = ENOMEM;
         return 1;
     }
@@ -2404,24 +2404,24 @@ static int yy_init_globals (yyscan_t yyscanner)
      * This function is called from yylex_destroy(), so don't allocate here.
      */
 
-    yyg->yy_buffer_stack = NULL;
+    yyg->yy_buffer_stack = nullptr;
     yyg->yy_buffer_stack_top = 0;
     yyg->yy_buffer_stack_max = 0;
-    yyg->yy_c_buf_p = NULL;
+    yyg->yy_c_buf_p = nullptr;
     yyg->yy_init = 0;
     yyg->yy_start = 0;
 
     yyg->yy_start_stack_ptr = 0;
     yyg->yy_start_stack_depth = 0;
-    yyg->yy_start_stack =  NULL;
+    yyg->yy_start_stack =  nullptr;
 
 /* Defined in main.c */
 #ifdef YY_STDINIT
     yyin = stdin;
     yyout = stdout;
 #else
-    yyin = NULL;
-    yyout = NULL;
+    yyin = nullptr;
+    yyout = nullptr;
 #endif
 
     /* For future reference: Set errno on error, since we are called by
@@ -2438,17 +2438,17 @@ int yylex_destroy  (yyscan_t yyscanner)
     /* Pop the buffer stack, destroying each element. */
 	while(YY_CURRENT_BUFFER){
 		yy_delete_buffer( YY_CURRENT_BUFFER , yyscanner );
-		YY_CURRENT_BUFFER_LVALUE = NULL;
+		YY_CURRENT_BUFFER_LVALUE = nullptr;
 		yypop_buffer_state(yyscanner);
 	}
 
 	/* Destroy the stack itself. */
 	yyfree(yyg->yy_buffer_stack , yyscanner);
-	yyg->yy_buffer_stack = NULL;
+	yyg->yy_buffer_stack = nullptr;
 
     /* Destroy the start condition stack. */
         yyfree( yyg->yy_start_stack , yyscanner );
-        yyg->yy_start_stack = NULL;
+        yyg->yy_start_stack = nullptr;
 
     /* Reset the globals. This is important in a non-reentrant scanner so the next time
      * yylex() is called, initialization will occur. */
@@ -2456,7 +2456,7 @@ int yylex_destroy  (yyscan_t yyscanner)
 
     /* Destroy the main struct (reentrant only). */
     yyfree ( yyscanner , yyscanner );
-    yyscanner = NULL;
+    yyscanner = nullptr;
     return 0;
 }
 

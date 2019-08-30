@@ -53,7 +53,7 @@ namespace Gecode { namespace Int { namespace Branch {
     if (a == 0)
       return new (home) EqNGL<View>(home,x,n);
     else
-      return NULL;
+      return nullptr;
   }
   template<class View>
   forceinline void
@@ -83,7 +83,7 @@ namespace Gecode { namespace Int { namespace Branch {
     if (a == 0)
       return new (home) LqNGL<View>(home,x,n);
     else
-      return NULL;
+      return nullptr;
   }
   template<class View>
   forceinline void
@@ -113,7 +113,7 @@ namespace Gecode { namespace Int { namespace Branch {
     if (a == 0)
       return new (home) GqNGL<View>(home,x,n);
     else
-      return NULL;
+      return nullptr;
   }
   template<class View>
   forceinline void
@@ -143,7 +143,7 @@ namespace Gecode { namespace Int { namespace Branch {
     if (a == 0)
       return new (home) GqNGL<View>(home,x,n+1);
     else
-      return NULL;
+      return nullptr;
   }
   template<class View>
   forceinline void

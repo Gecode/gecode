@@ -190,7 +190,7 @@ namespace Gecode { namespace Int { namespace LDSB {
         valseqref->seq_size);
     }
     GECODE_NEVER;
-    return NULL;
+    return nullptr;
   }
 
   /// Create a boolean symmetry implementation from a symmetry handle
@@ -247,7 +247,7 @@ namespace Gecode { namespace Int { namespace LDSB {
         valseqref->seq_size);
     }
     GECODE_NEVER;
-    return NULL;
+    return nullptr;
   }
 }}}
 

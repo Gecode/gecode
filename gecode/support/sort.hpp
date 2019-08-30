@@ -54,7 +54,7 @@ namespace Gecode { namespace Support {
     static const int maxsize = sizeof(int) * CHAR_BIT;
     /// Top of stack
     Type** tos;
-    /// Stack entries (terminated by NULL entry)
+    /// Stack entries (terminated by nullptr entry)
     Type*  stack[2*maxsize+1];
   public:
     /// Initialize stack as empty
@@ -70,13 +70,13 @@ namespace Gecode { namespace Support {
   template<class Type>
   forceinline
   QuickSortStack<Type>::QuickSortStack(void) : tos(&stack[0]) {
-    *(tos++) = NULL;
+    *(tos++) = nullptr;
   }
 
   template<class Type>
   forceinline bool
   QuickSortStack<Type>::empty(void) const {
-    return *(tos-1) == NULL;
+    return *(tos-1) == nullptr;
   }
 
   template<class Type>

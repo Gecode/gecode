@@ -59,7 +59,7 @@ namespace Gecode { namespace Search {
     E engine(dynamic_cast<T*>(s),opt);
     Base<T>* eb = &engine;
     Engine* e = eb->e;
-    eb->e = NULL;
+    eb->e = nullptr;
     return e;
   }
 
@@ -69,7 +69,7 @@ namespace Gecode { namespace Search {
     E<T> engine(dynamic_cast<T*>(s),opt);
     Base<T>* eb = &engine;
     Engine* e = eb->e;
-    eb->e = NULL;
+    eb->e = nullptr;
     return e;
   }
 

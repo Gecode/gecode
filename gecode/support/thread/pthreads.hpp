@@ -48,14 +48,14 @@ namespace Gecode { namespace Support {
   */
   forceinline
   Mutex::Mutex(void) {
-    if (&os_unfair_lock_lock != NULL)
+    if (&os_unfair_lock_lock != nullptr)
       u.unfair_lck = OS_UNFAIR_LOCK_INIT;
     else
       u.spin_lck = OS_SPINLOCK_INIT;
   }
   forceinline void
   Mutex::acquire(void) {
-    if (&os_unfair_lock_lock != NULL) {
+    if (&os_unfair_lock_lock != nullptr) {
       os_unfair_lock_lock(&u.unfair_lck);
     } else {
       OSSpinLockLock(&u.spin_lck);
@@ -63,14 +63,14 @@ namespace Gecode { namespace Support {
   }
   forceinline bool
   Mutex::tryacquire(void) {
-    if (&os_unfair_lock_trylock != NULL)
+    if (&os_unfair_lock_trylock != nullptr)
       return os_unfair_lock_trylock(&u.unfair_lck);
     else
       return OSSpinLockTry(&u.spin_lck);
   }
   forceinline void
   Mutex::release(void) {
-    if (&os_unfair_lock_unlock != NULL)
+    if (&os_unfair_lock_unlock != nullptr)
       os_unfair_lock_unlock(&u.unfair_lck);
     else
       OSSpinLockUnlock(&u.spin_lck);
@@ -87,7 +87,7 @@ namespace Gecode { namespace Support {
    */
   forceinline
   Mutex::Mutex(void) {
-    if (pthread_mutex_init(&p_m,NULL) != 0)
+    if (pthread_mutex_init(&p_m,nullptr) != 0)
       throw OperatingSystemError("Mutex::Mutex[pthread_mutex_init]");
   }
   forceinline void
@@ -154,9 +154,9 @@ namespace Gecode { namespace Support {
    */
   forceinline
   Event::Event(void) : p_s(false) {
-    if (pthread_mutex_init(&p_m,NULL) != 0)
+    if (pthread_mutex_init(&p_m,nullptr) != 0)
       throw OperatingSystemError("Event::Event[pthread_mutex_init]");
-    if (pthread_cond_init(&p_c,NULL) != 0)
+    if (pthread_cond_init(&p_c,nullptr) != 0)
       throw OperatingSystemError("Event::Event[pthread_cond_init]");
   }
   forceinline void

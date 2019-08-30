@@ -203,7 +203,7 @@ namespace Gecode { namespace Support {
     if (jobs() && !stopped()) {
       j = jobs.job(); i=idx++;
     } else {
-      j = NULL;
+      j = nullptr;
       n_threads--;
       e.signal();
     }
@@ -244,7 +244,7 @@ namespace Gecode { namespace Support {
       }
       delete job;
       job = master->next(idx);
-    } while (job != NULL);
+    } while (job != nullptr);
   }
 
   template<class Jobs, class RetType>

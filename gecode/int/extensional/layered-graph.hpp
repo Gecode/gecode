@@ -437,7 +437,7 @@ namespace Gecode { namespace Int { namespace Extensional {
   LayeredGraph<View,Val,Degree,StateIdx>::advise(Space& home,
                                                  Advisor& _a, const Delta& d) {
     // Check whether state information has already been created
-    if (layers[0].states == NULL) {
+    if (layers[0].states == nullptr) {
       State* states = home.alloc<State>(n_states);
       for (unsigned int i=0; i<n_states; i++)
         states[i].init();
@@ -709,7 +709,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     c.update(home,p.c);
     // Do not allocate states, postpone to advise!
     layers[n].n_states = p.layers[n].n_states;
-    layers[n].states = NULL;
+    layers[n].states = nullptr;
     // Allocate memory for edges
     Edge* edges = home.alloc<Edge>(n_edges);
     // Copy layers
@@ -728,7 +728,7 @@ namespace Gecode { namespace Int { namespace Extensional {
         edges += layers[i].support[j].n_edges;
       }
       layers[i].n_states = p.layers[i].n_states;
-      layers[i].states = NULL;
+      layers[i].states = nullptr;
     }
     audit();
   }

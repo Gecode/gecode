@@ -90,7 +90,7 @@ namespace Gecode {
    */
   NGL*
   Brancher::ngl(Space&, const Choice&, unsigned int) const {
-    return NULL;
+    return nullptr;
   }
 
   void
@@ -118,14 +118,14 @@ namespace Gecode {
 #endif
 #ifdef GECODE_HAS_VAR_DISPOSE
     for (int i=0; i<AllVarConf::idx_d; i++)
-      _vars_d[i] = NULL;
+      _vars_d[i] = nullptr;
 #endif
     // Initialize propagator and brancher links
     pl.init();
     bl.init();
     b_status = b_commit = Brancher::cast(&bl);
     // Initialize array for forced deletion to be empty
-    d_fst = d_cur = d_lst = NULL;
+    d_fst = d_cur = d_lst = nullptr;
     // Initialize space as stable but not failed
     pc.p.active = &pc.p.queue[0]-1;
     // Initialize propagator queues
@@ -139,14 +139,14 @@ namespace Gecode {
   void
   Space::ap_notice_dispose(Actor* a, bool duplicate) {
     // Note that a might be a marked pointer!
-    if (duplicate && (d_fst != NULL)) {
+    if (duplicate && (d_fst != nullptr)) {
       for (Actor** f = d_fst; f < d_cur; f++)
         if (a == *f)
           return;
     }
     if (d_cur == d_lst) {
       // Resize
-      if (d_fst == NULL) {
+      if (d_fst == nullptr) {
         // Create new array
         d_fst = alloc<Actor*>(4);
         d_cur = d_fst;
@@ -166,7 +166,7 @@ namespace Gecode {
   void
   Space::ap_ignore_dispose(Actor* a, bool duplicate) {
     // Note that a might be a marked pointer!
-    assert(d_fst != NULL);
+    assert(d_fst != nullptr);
     Actor** f = d_fst;
     if (duplicate) {
       while (f < d_cur)
@@ -191,7 +191,7 @@ namespace Gecode {
       Actor** a = d_fst;
       Actor** e = d_cur;
       // So that d_unforce knows that deletion is in progress
-      d_fst = NULL;
+      d_fst = nullptr;
       while (a < e) {
         // Ignore entries for tracers
         if (!Support::marked(*a))
@@ -202,7 +202,7 @@ namespace Gecode {
 #ifdef GECODE_HAS_VAR_DISPOSE
     // Delete variables that were registered for disposal
     for (int i=0; i<AllVarConf::idx_d; i++)
-      if (_vars_d[i] != NULL)
+      if (_vars_d[i] != nullptr)
         vd[i]->dispose(*this, _vars_d[i]);
 #endif
     // Release memory from memory manager
@@ -233,7 +233,7 @@ namespace Gecode {
   Space::post(const PostInfo& pi) {
     assert(pc.p.bid_sc & sc_trace);
     TraceRecorder* tr = findtracerecorder();
-    if ((tr != NULL) && (tr->events() & TE_POST)) {
+    if ((tr != nullptr) && (tr->events() & TE_POST)) {
       GECODE_ASSUME(ssd.data().gpi.pid() >= pi.pid);
       unsigned int n = ssd.data().gpi.pid() - pi.pid;
       PostTraceInfo::Status s;
@@ -386,7 +386,7 @@ namespace Gecode {
         // Support disabled propagators and tracing
 
 #define GECODE_STATUS_TRACE(q,s) \
-  if ((tr != NULL) && (tr->events() & TE_PROPAGATE) && \
+  if ((tr != nullptr) && (tr->events() & TE_PROPAGATE) && \
       (tr->filter()(p->group()))) {                    \
     PropagateTraceInfo pti(p->id(),p->group(),q,       \
                            PropagateTraceInfo::s);     \
@@ -452,7 +452,7 @@ namespace Gecode {
           assert(pc.p.active < &pc.p.queue[0]);
           goto t_stable;
         case __ES_SUBSUMED:
-          GECODE_STATUS_TRACE(NULL,SUBSUMED);
+          GECODE_STATUS_TRACE(nullptr,SUBSUMED);
           p->unlink(); rfree(p,p->u.size);
           goto t_stable_or_unstable;
         case __ES_PARTIAL:
@@ -548,7 +548,7 @@ namespace Gecode {
       }
       bl.init();
       b_status = b_commit = Brancher::cast(&bl);
-      return NULL;
+      return nullptr;
     }
     /*
      * The call to choice() says that no older choices
@@ -588,7 +588,7 @@ namespace Gecode {
       // There is a matching brancher
       if (pc.p.bid_sc & sc_trace) {
         TraceRecorder* tr = findtracerecorder();
-        if ((tr != NULL) && (tr->events() & TE_COMMIT) &&
+        if ((tr != nullptr) && (tr->events() & TE_COMMIT) &&
             tr->filter()(b->group())) {
           CommitTraceInfo cti(*b,c,a);
           tr->tracer()._commit(*this,cti);
@@ -619,7 +619,7 @@ namespace Gecode {
       // There is a matching brancher
       if (pc.p.bid_sc & sc_trace) {
         TraceRecorder* tr = findtracerecorder();
-        if ((tr != NULL) && (tr->events() & TE_COMMIT) &&
+        if ((tr != nullptr) && (tr->events() & TE_COMMIT) &&
             tr->filter()(b->group())) {
           CommitTraceInfo cti(*b,c,a);
           tr->tracer()._commit(*this,cti);
@@ -642,12 +642,12 @@ namespace Gecode {
     if (a >= c.alternatives())
       throw SpaceIllegalAlternative("Space::ngl");
     if (failed())
-      return NULL;
+      return nullptr;
     if (Brancher* b = brancher(c.bid)) {
       // There is a matching brancher
       return b->ngl(*this,c,a);
     } else {
-      return NULL;
+      return nullptr;
     }
   }
 
@@ -699,12 +699,12 @@ namespace Gecode {
       d_fst(&Actor::sentinel) {
 #ifdef GECODE_HAS_VAR_DISPOSE
     for (int i=0; i<AllVarConf::idx_d; i++)
-      _vars_d[i] = NULL;
+      _vars_d[i] = nullptr;
 #endif
     for (int i=0; i<AllVarConf::idx_c; i++)
-      pc.c.vars_u[i] = NULL;
-    pc.c.vars_noidx = NULL;
-    pc.c.local = NULL;
+      pc.c.vars_u[i] = nullptr;
+    pc.c.vars_noidx = nullptr;
+    pc.c.local = nullptr;
     // Copy all propagators
     {
       ActorLink* p = &pl;
@@ -764,7 +764,7 @@ namespace Gecode {
       unsigned int n = static_cast<unsigned int>(d_cur - d_fst);
       if (n == 0) {
         // No actors
-        c->d_fst = c->d_cur = c->d_lst = NULL;
+        c->d_fst = c->d_cur = c->d_lst = nullptr;
       } else {
         // Leave one entry free
         c->d_fst = c->alloc<Actor*>(n+1);
@@ -783,9 +783,9 @@ namespace Gecode {
     // Update variables without indexing structure
     VarImp<NoIdxVarImpConf>* x =
       static_cast<VarImp<NoIdxVarImpConf>*>(c->pc.c.vars_noidx);
-    while (x != NULL) {
+    while (x != nullptr) {
       VarImp<NoIdxVarImpConf>* n = x->next();
-      x->b.base = NULL; x->u.idx[0] = 0;
+      x->b.base = nullptr; x->u.idx[0] = 0;
       if (sizeof(ActorLink**) > sizeof(unsigned int))
         *(1+&x->u.idx[0]) = 0;
       x = n;
@@ -800,12 +800,12 @@ namespace Gecode {
       // First update propagators and advisors
       while (c_a != &pl) {
         Propagator* p = Propagator::cast(c_a);
-        if (p->u.advisors != NULL) {
+        if (p->u.advisors != nullptr) {
           ActorLink* a = p->u.advisors;
-          p->u.advisors = NULL;
+          p->u.advisors = nullptr;
           do {
             a->prev(p); a = a->next();
-          } while (a != NULL);
+          } while (a != nullptr);
         }
         c_a->prev(p_a); p_a = c_a; c_a = c_a->next();
       }
@@ -820,8 +820,8 @@ namespace Gecode {
     }
 
     // Reset links for local objects
-    for (ActorLink* l = c->pc.c.local; l != NULL; l = l->next())
-      l->prev(NULL);
+    for (ActorLink* l = c->pc.c.local; l != nullptr; l = l->next())
+      l->prev(nullptr);
 
     // Initialize propagator queue
     c->pc.p.active = &c->pc.p.queue[0]-1;
@@ -845,7 +845,7 @@ namespace Gecode {
   Space::master(const MetaInfo& mi) {
     switch (mi.type()) {
     case MetaInfo::RESTART:
-      if (mi.last() != NULL)
+      if (mi.last() != nullptr)
         constrain(*mi.last());
       mi.nogoods().post(*this);
       // Perform a restart even if a solution has been found

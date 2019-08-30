@@ -126,35 +126,35 @@ namespace Gecode { namespace Iter { namespace Ranges {
 
   forceinline
   RangeListIter::RangeListIter(void)
-    : rlio(NULL), h(NULL), c(NULL) {}
+    : rlio(nullptr), h(nullptr), c(nullptr) {}
 
   forceinline
   RangeListIter::RangeListIter(Region& r)
-    : rlio(new (r.ralloc(sizeof(RLIO))) RLIO(r)), h(NULL), c(NULL) {}
+    : rlio(new (r.ralloc(sizeof(RLIO))) RLIO(r)), h(nullptr), c(nullptr) {}
 
   forceinline void
   RangeListIter::init(Region& r) {
     rlio = new (r.ralloc(sizeof(RLIO))) RLIO(r);
-    h = c = NULL;
+    h = c = nullptr;
   }
 
   forceinline
   RangeListIter::RangeListIter(const RangeListIter& i)
     : rlio(i.rlio), h(i.h), c(i.c)  {
-    if (rlio != NULL)
+    if (rlio != nullptr)
       rlio->use_cnt++;
   }
 
   forceinline RangeListIter&
   RangeListIter::operator =(const RangeListIter& i) {
     if (&i != this) {
-      if ((rlio != NULL) && (--rlio->use_cnt == 0)) {
+      if ((rlio != nullptr) && (--rlio->use_cnt == 0)) {
         Region& r = rlio->allocator();
         rlio->~RLIO();
         r.rfree(rlio,sizeof(RLIO));
       }
       rlio = i.rlio;
-      if (rlio != NULL)
+      if (rlio != nullptr)
         rlio->use_cnt++;
       c=i.c; h=i.h;
     }
@@ -163,7 +163,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
 
   forceinline
   RangeListIter::~RangeListIter(void) {
-    if ((rlio != NULL) && (--rlio->use_cnt == 0)) {
+    if ((rlio != nullptr) && (--rlio->use_cnt == 0)) {
       Region& r = rlio->allocator();
       rlio->~RLIO();
       r.rfree(rlio,sizeof(RLIO));
@@ -185,7 +185,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
   RangeListIter::range(int min, int max, RangeList*& f) {
     RangeList* t;
     // Take element from freelist if possible
-    if (f != NULL) {
+    if (f != nullptr) {
       t = f; f = f->next;
     } else {
       t = new (*rlio) RangeList;
@@ -222,13 +222,13 @@ namespace Gecode { namespace Iter { namespace Ranges {
       RangeList* t = range(i);
       *c = t; c = &t->next;
     }
-    *c = NULL;
+    *c = nullptr;
     return h;
   }
 
   forceinline bool
   RangeListIter::operator ()(void) const {
-    return c != NULL;
+    return c != nullptr;
   }
 
   forceinline void

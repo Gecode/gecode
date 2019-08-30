@@ -110,7 +110,7 @@ namespace Gecode { namespace Search { namespace Seq {
           cur++; n_exhausted++;
         } else {
           slave_stop = true;
-          return NULL;
+          return nullptr;
         }
       } else {
         // This slave is done, kill it after saving the statistics
@@ -129,7 +129,7 @@ namespace Gecode { namespace Search { namespace Seq {
       if (cur == n_slaves)
         cur = 0;
     }
-    return NULL;
+    return nullptr;
   }
 
   template<bool best>

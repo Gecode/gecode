@@ -86,7 +86,7 @@ namespace Gecode {
   template<class VarImp>
   forceinline
   VarImpVar<VarImp>::VarImpVar(void)
-    : x(NULL) {}
+    : x(nullptr) {}
   template<class VarImp>
   forceinline
   VarImpVar<VarImp>::VarImpVar(VarImp* y)

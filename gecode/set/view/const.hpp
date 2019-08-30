@@ -46,7 +46,7 @@ namespace Gecode { namespace Set {
     /// \name Constructors and initialization
     //@{
     /// Default constructor
-    ArrayRanges(void) : _ranges(NULL), _size(0), _pos(0) {}
+    ArrayRanges(void) : _ranges(nullptr), _size(0), _pos(0) {}
     /// Initialize with ranges for array \a ranges which is of size \a size
     ArrayRanges(int *ranges, int size)
       : _ranges(ranges), _size(size), _pos(0) {}
@@ -78,7 +78,7 @@ namespace Gecode { namespace Set {
   };
 
   forceinline
-  ConstSetView::ConstSetView(void) : ranges(NULL), size(0), domSize(0) {}
+  ConstSetView::ConstSetView(void) : ranges(nullptr), size(0), domSize(0) {}
 
   forceinline
   ConstSetView::ConstSetView(Space& home, const IntSet& dom) {
@@ -94,7 +94,7 @@ namespace Gecode { namespace Set {
         domSize += static_cast<unsigned int>(max-min+1);
       }
     } else {
-      ranges = NULL;
+      ranges = nullptr;
     }
   }
 
@@ -223,7 +223,7 @@ namespace Gecode { namespace Set {
     domSize = p.domSize;
     size = p.size;
     if (size == 0) {
-      ranges = NULL;
+      ranges = nullptr;
     } else {
       // copy ranges from p
       ranges = home.alloc<int>(2*size);

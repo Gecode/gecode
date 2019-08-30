@@ -54,7 +54,7 @@ namespace Gecode { namespace Set { namespace Branch {
     if (a == 0)
       return new (home) IncNGL(home,x,n);
     else
-      return NULL;
+      return nullptr;
   }
   forceinline void
   ValCommitInc::print(const Space&, unsigned int a, SetView, int i, int n,
@@ -78,7 +78,7 @@ namespace Gecode { namespace Set { namespace Branch {
     if (a == 0)
       return new (home) ExcNGL(home,x,n);
     else
-      return NULL;
+      return nullptr;
   }
   forceinline void
   ValCommitExc::print(const Space&, unsigned int a, SetView, int i, int n,

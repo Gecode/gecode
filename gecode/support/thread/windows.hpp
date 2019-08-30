@@ -63,8 +63,8 @@ namespace Gecode { namespace Support {
    */
   forceinline
   Event::Event(void)
-    : w_h(CreateEvent(NULL, FALSE, FALSE, NULL)) {
-    if (w_h == NULL)
+    : w_h(CreateEvent(nullptr, FALSE, FALSE, nullptr)) {
+    if (w_h == nullptr)
       throw OperatingSystemError("Event::Event[Windows::CreateEvent]");
   }
   forceinline void

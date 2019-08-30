@@ -69,14 +69,14 @@ namespace Gecode { namespace Int {
 
   forceinline void
   IntTraceView::prune(Space& home, IntView y, const Delta& d) {
-    if (y.range() && (dom->next() == NULL)) {
+    if (y.range() && (dom->next() == nullptr)) {
       dom->min(y.min()); dom->max(y.max());
     } else if (!y.any(d) && (y.max(d)+1 == y.min())) {
       // The lower bound has been adjusted
       if (y.min() > dom->max()) {
         RangeList* p = dom;
         RangeList* l = p->next();
-        while ((l != NULL) && (l->max() < y.min())) {
+        while ((l != nullptr) && (l->max() < y.min())) {
           p=l; l=l->next();
         }
         dom->dispose(home,p);
@@ -85,18 +85,18 @@ namespace Gecode { namespace Int {
       dom->min(y.min());
     } else if (!y.any(d) && (y.max()+1 == y.min(d))) {
       // upper bound has been adjusted
-      if ((y.max() <= dom->max()) && (dom->next() == NULL)) {
+      if ((y.max() <= dom->max()) && (dom->next() == nullptr)) {
         dom->max(y.max());
       } else {
         RangeList* p = dom;
         RangeList* l = p->next();
-        while ((l != NULL) && (l->min() <= y.max())) {
+        while ((l != nullptr) && (l->min() <= y.max())) {
           p=l; l=l->next();
         }
         p->max(y.max());
-        if (p->next() != NULL)
+        if (p->next() != nullptr)
           p->next()->dispose(home);
-        p->next(NULL);
+        p->next(nullptr);
       }
     } else {
       // Just copy the domain

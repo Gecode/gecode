@@ -114,7 +114,7 @@ namespace Gecode { namespace Search { namespace Par {
   protected:
     /// Currently best solution
     Space* b;
-    /// Who has reported the best solution (NULL if solution has already been reported)
+    /// Who has reported the best solution (nullptr if solution has already been reported)
     Slave<CollectBest>* reporter;
   public:
     /// Whether it collects best solutions
@@ -171,7 +171,7 @@ namespace Gecode { namespace Search { namespace Par {
   public:
     /// Initialize
     PBS(Engine** s, Stop** so, unsigned int n, const Statistics& stat);
-    /// Return next solution (NULL, if none exists or search has been stopped)
+    /// Return next solution (nullptr, if none exists or search has been stopped)
     virtual Space* next(void);
     /// Return statistics
     virtual Statistics statistics(void) const;

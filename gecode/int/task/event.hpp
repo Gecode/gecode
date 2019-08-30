@@ -112,7 +112,7 @@ namespace Gecode { namespace Int {
       }
 
     if (!required)
-      return NULL;
+      return nullptr;
 
     // Sort events
     Support::quicksort(e, n);
@@ -140,7 +140,7 @@ namespace Gecode { namespace Int {
         }
       } else {
         assert(!t[i].excluded());
-        return NULL;
+        return nullptr;
       }
 
     // Sort events

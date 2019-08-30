@@ -45,7 +45,7 @@ namespace Gecode { namespace Set { namespace LDSB {
     : LDSBBrancher<View,n,Val,a,Filter,Print>
   (home, x, vs, vsc, syms, nsyms, bf, vvp),
       _prevPos(-1),
-      _copiedSyms(NULL),
+      _copiedSyms(nullptr),
       _nCopiedSyms(0),
       _stable(false) {
     // Put all the value symmetries at the end of the list.
@@ -82,7 +82,7 @@ namespace Gecode { namespace Set { namespace LDSB {
         _copiedSyms[i] = static_cast<ValueSymmetryImp<View>*>(
           b._copiedSyms[i]->copy(home));
     } else {
-      _copiedSyms = NULL;
+      _copiedSyms = nullptr;
     }
   }
 
@@ -93,7 +93,7 @@ namespace Gecode { namespace Set { namespace LDSB {
    * symmetry and \a usedValues, updates the symmetry to eliminate the
    * used values, and makes a new symmetry containing the intersection
    * values, if there are at least two.  Returns the new symmetry, or
-   * NULL if the intersection has fewer than two elements.
+   * nullptr if the intersection has fewer than two elements.
    */
   template <class View>
   ValueSymmetryImp<View>*
@@ -116,7 +116,7 @@ namespace Gecode { namespace Set { namespace LDSB {
     }
 
     if (intersection.size() < 2)
-      return NULL;
+      return nullptr;
     int *a = new int[intersection.size()];
     for (int i = 0 ; i < intersection.size() ; i++) {
       a[i] = intersection[i];

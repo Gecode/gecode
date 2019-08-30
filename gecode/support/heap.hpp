@@ -307,7 +307,7 @@ namespace Gecode {
     //@}
   private:
     /// Allocate memory from heap (disabled)
-    static void* operator new(size_t s) throw() { (void) s; return NULL; }
+    static void* operator new(size_t s) throw() { (void) s; return nullptr; }
     /// Free memory allocated from heap (disabled)
     static void  operator delete(void* p) { (void) p; };
     /// Copy constructor (disabled)
@@ -362,7 +362,7 @@ public:
     _peak = std::max(_peak,_cur);
     _m.release();
 #endif
-    if (p != NULL)
+    if (p != nullptr)
       return p;
     throw MemoryExhausted();
   }
@@ -401,7 +401,7 @@ public:
     _peak = std::max(_peak,_cur);
     _m.release();
 #endif
-    if (p != NULL || s == 0)
+    if (p != nullptr || s == 0)
       return p;
     throw MemoryExhausted();
   }

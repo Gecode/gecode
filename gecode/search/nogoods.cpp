@@ -70,7 +70,7 @@ namespace Gecode { namespace Search {
   NGL*
   NoNGL::copy(Space&) {
     GECODE_NEVER;
-    return NULL;
+    return nullptr;
   }
 
   Actor*
@@ -87,11 +87,11 @@ namespace Gecode { namespace Search {
   NoGoodsProp::reschedule(Space& home) {
     root->reschedule(home,*this);
     NGL* l = root->next();
-    while ((l != NULL) && l->leaf()) {
+    while ((l != nullptr) && l->leaf()) {
       l->reschedule(home,*this);
       l = l->next();
     }
-    if (l != NULL)
+    if (l != nullptr)
       l->reschedule(home,*this);
   }
 
@@ -108,24 +108,24 @@ namespace Gecode { namespace Search {
       {
         NGL* l = disposenext(root,home,*this,true); n--;
         // Prune leaf-literals
-        while ((l != NULL) && l->leaf()) {
+        while ((l != nullptr) && l->leaf()) {
           l->cancel(home,*this); n--;
           GECODE_ES_CHECK(l->prune(home));
           l = disposenext(l,home,*this,false);
         }
         root = l;
         // Is there anything left?
-        if (l == NULL)
+        if (l == nullptr)
           return home.ES_SUBSUMED(*this);
         // Skip literal that already has a subscription
         l = l->next();
         // Create subscriptions for leafs
-        while ((l != NULL) && l->leaf()) {
+        while ((l != nullptr) && l->leaf()) {
           l->subscribe(home,*this); n++;
           l = l->next();
         }
         // Create subscription for possible non-leaf literal
-        if (l != NULL) {
+        if (l != nullptr) {
           l->subscribe(home,*this); n++;
         }
         goto restart;
@@ -140,7 +140,7 @@ namespace Gecode { namespace Search {
       NGL* l = p->next();
 
       // Check the leaves
-      while ((l != NULL) && l->leaf()) {
+      while ((l != nullptr) && l->leaf()) {
         switch (l->status(home)) {
         case NGL::SUBSUMED:
           l = disposenext(l,home,*this,true); n--;
@@ -161,12 +161,12 @@ namespace Gecode { namespace Search {
       }
 
       // Check the next subtree
-      if (l != NULL) {
+      if (l != nullptr) {
         switch (l->status(home)) {
         case NGL::FAILED:
           (void) disposenext(l,home,*this,true); n--;
           // Prune entire subtree
-          p->next(NULL);
+          p->next(nullptr);
           break;
         case NGL::SUBSUMED:
           {
@@ -174,11 +174,11 @@ namespace Gecode { namespace Search {
             l = disposenext(l,home,*this,true); n--;
             p->next(l);
             // Create subscriptions
-            while ((l != NULL) && l->leaf()) {
+            while ((l != nullptr) && l->leaf()) {
               l->subscribe(home,*this); n++;
               l = l->next();
             }
-            if (l != NULL) {
+            if (l != nullptr) {
               l->subscribe(home,*this); n++;
             }
           }
@@ -197,19 +197,19 @@ namespace Gecode { namespace Search {
     if (home.failed()) {
       // This will be executed when one ngl returned true for notice()
       NGL* l = root;
-      while (l != NULL) {
+      while (l != nullptr) {
         NGL* t = l->next();
         (void) l->dispose(home);
         l = t;
       }
-    } else if (root != NULL) {
+    } else if (root != nullptr) {
       // This will be executed for subsumption
       NGL* l = disposenext(root,home,*this,true);
-      while ((l != NULL) && l->leaf())
+      while ((l != nullptr) && l->leaf())
         l = disposenext(l,home,*this,true);
-      if (l != NULL)
+      if (l != nullptr)
         l = disposenext(l,home,*this,true);
-      while (l != NULL)
+      while (l != nullptr)
         l = disposenext(l,home,*this,false);
     }
     home.ignore(*this,AP_DISPOSE,true);

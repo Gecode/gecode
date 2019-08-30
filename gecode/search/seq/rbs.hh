@@ -75,7 +75,7 @@ namespace Gecode { namespace Search { namespace Seq {
     Engine* e;
     /// The master space to restart from
     Space* master;
-    /// The last solution space (possibly NULL)
+    /// The last solution space (possibly nullptr)
     Space* last;
     /// The cutoff object
     Cutoff* co;
@@ -95,7 +95,7 @@ namespace Gecode { namespace Search { namespace Seq {
     /// Constructor
     RBS(Space* s, RestartStop* stop0, Engine* e0,
         const Search::Statistics& stat, const Options& o, bool best);
-    /// Return next solution (NULL, if none exists or search has been stopped)
+    /// Return next solution (nullptr, if none exists or search has been stopped)
     virtual Space* next(void);
     /// Return statistics
     virtual Statistics statistics(void) const;

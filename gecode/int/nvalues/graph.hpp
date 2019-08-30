@@ -61,12 +61,12 @@ namespace Gecode { namespace Int { namespace NValues {
         *v = nv; v = nv->next_val_ref();
         // Create and link single edge
         Edge<IntView>** e = view[i]->val_edges_ref();
-        *e = new (home) Edge<IntView>(nv,view[i],NULL);
+        *e = new (home) Edge<IntView>(nv,view[i],nullptr);
         // Match edge
         (*e)->revert(view[i]); nv->matching(*e);
         i++;
       }
-      *v = NULL;
+      *v = nullptr;
       n_val = vs.size();
       n_matched = vs.size();
       assert(i - x.size() == vs.size());
@@ -101,10 +101,10 @@ namespace Gecode { namespace Int { namespace NValues {
       if (!x->fake()) {
         if (x->changed()) {
           ViewRanges<IntView> rx(x->view());
-          Edge<IntView>*  m = x->matched() ? x->edge_fst() : NULL;
+          Edge<IntView>*  m = x->matched() ? x->edge_fst() : nullptr;
           Edge<IntView>** p = x->val_edges_ref();
           Edge<IntView>*  e = *p;
-          GECODE_ASSUME(e != NULL);
+          GECODE_ASSUME(e != nullptr);
           do {
             while (e->val(x)->val() < rx.min()) {
               // Skip edge
@@ -121,20 +121,20 @@ namespace Gecode { namespace Int { namespace NValues {
             }
             ++rx;
           } while (rx());
-          *p = NULL;
-          while (e != NULL) {
+          *p = nullptr;
+          while (e != nullptr) {
             e->unlink(); e->mark();
             e = e->next_edge();
           }
-          if ((m != NULL) && m->marked()) {
+          if ((m != nullptr) && m->marked()) {
             // Matching has been deleted!
-            m->val(x)->matching(NULL);
+            m->val(x)->matching(nullptr);
             rematch = true;
             n_matched--;
           }
         } else {
           // Just free edges
-          for (Edge<IntView>* e=x->val_edges(); e != NULL; e = e->next_edge())
+          for (Edge<IntView>* e=x->val_edges(); e != nullptr; e = e->next_edge())
             e->free();
         }
       }
@@ -163,7 +163,7 @@ namespace Gecode { namespace Int { namespace NValues {
       count++;
       {
         ValNode<IntView>** v = &val;
-        while (*v != NULL)
+        while (*v != nullptr)
           // Is the node free?
           if (!(*v)->matching()) {
             // Eliminate empty value nodes
@@ -224,12 +224,12 @@ namespace Gecode { namespace Int { namespace NValues {
       while (!visit.empty()) {
         n_view_visited++;
         ViewNode<IntView>* x = visit.pop();
-        for (Edge<IntView>* e = x->val_edges(); e != NULL; e = e->next_edge())
+        for (Edge<IntView>* e = x->val_edges(); e != nullptr; e = e->next_edge())
           // Consider only free edges
           if (e != x->edge_fst()) {
             ValNode<IntView>* n = e->val(x);
             // Is there a matched edge from the value node to a view node?
-            if (n->matching() != NULL) {
+            if (n->matching() != nullptr) {
               e->use();
               n->matching()->use();
               ViewNode<IntView>* y = n->matching()->view(n);
@@ -260,8 +260,8 @@ namespace Gecode { namespace Int { namespace NValues {
       if (!x->fake()) {
         if (x->matched() && !x->edge_fst()->used(x)) {
           GECODE_ME_CHECK(x->view().eq(home,x->edge_fst()->val(x)->val()));
-          x->edge_fst()->val(x)->matching(NULL);
-          for (Edge<IntView>* e = x->val_edges(); e != NULL; e=e->next_edge())
+          x->edge_fst()->val(x)->matching(nullptr);
+          for (Edge<IntView>* e = x->val_edges(); e != nullptr; e=e->next_edge())
             e->unlink();
           view[i] = view[--n_view];
         } else {

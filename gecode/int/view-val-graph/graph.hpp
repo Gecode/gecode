@@ -38,12 +38,12 @@ namespace Gecode { namespace Int { namespace ViewValGraph {
   template<class View>
   forceinline
   Graph<View>::Graph(void)
-    : view(NULL), val(NULL), n_view(0), n_val(0), count(1U) {}
+    : view(nullptr), val(nullptr), n_view(0), n_val(0), count(1U) {}
 
   template<class View>
   forceinline
   Graph<View>::operator bool(void) const {
-    return view != NULL;
+    return view != nullptr;
   }
 
   template<class View>
@@ -52,7 +52,7 @@ namespace Gecode { namespace Int { namespace ViewValGraph {
     Edge<View>** edge_p = x->val_edges_ref();
     ViewValues<View> xi(x->view());
     ValNode<View>** v = &val;
-    while (xi() && (*v != NULL)) {
+    while (xi() && (*v != nullptr)) {
       if ((*v)->val() == xi.val()) {
         // Value node does already exist, create new edge
         *edge_p = new (home) Edge<View>(*v,x);
@@ -79,7 +79,7 @@ namespace Gecode { namespace Int { namespace ViewValGraph {
       edge_p = (*edge_p)->next_edge_ref();
       ++xi; n_val++;
     }
-    *edge_p = NULL;
+    *edge_p = nullptr;
   }
 
   template<class View>
@@ -91,7 +91,7 @@ namespace Gecode { namespace Int { namespace ViewValGraph {
     {
       Edge<View>* e = x->val_edges();
       // This holds true as domains are never empty
-      assert(e != NULL);
+      assert(e != nullptr);
       do {
         if (!e->val(x)->matching()) {
           e->revert(x); e->val(x)->matching(e);
@@ -104,7 +104,7 @@ namespace Gecode { namespace Int { namespace ViewValGraph {
           return true;
         }
         e = e->next_edge();
-      } while (e != NULL);
+      } while (e != nullptr);
     }
     // No, find matching edge by augmenting path method
     Edge<View>* e = x->val_edges();
@@ -117,7 +117,7 @@ namespace Gecode { namespace Int { namespace ViewValGraph {
       }
     next:
       e = e->next_edge();
-    } while (e != NULL);
+    } while (e != nullptr);
     if (!m.empty()) {
       x = m.pop(); e = x->iter; goto next;
     }
@@ -132,7 +132,7 @@ namespace Gecode { namespace Int { namespace ViewValGraph {
       count = 1;
       for (int i=0; i<n_view; i++)
         view[i]->min = 0;
-      for (ValNode<View>* v = val; v != NULL; v = v->next_val())
+      for (ValNode<View>* v = val; v != nullptr; v = v->next_val())
         v->min = 0;
     }
   }

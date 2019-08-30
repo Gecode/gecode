@@ -256,13 +256,13 @@ namespace Gecode {
         /// Add comparator
         void compare(Comparator* c);
 
-        /// Return click inspector number \a i, or NULL if it does not exist
+        /// Return click inspector number \a i, or nullptr if it does not exist
         Inspector* click(unsigned int i) const;
-        /// Return solution inspector number \a i, or NULL if it does not exist
+        /// Return solution inspector number \a i, or nullptr if it does not exist
         Inspector* solution(unsigned int i) const;
-        /// Return move inspector number \a i, or NULL if it does not exist
+        /// Return move inspector number \a i, or nullptr if it does not exist
         Inspector* move(unsigned int i) const;
-        /// Return comparator number \a i, or NULL if it does not exist
+        /// Return comparator number \a i, or nullptr if it does not exist
         Comparator* compare(unsigned int i) const;
       } inspect;
       /// Default options

@@ -114,7 +114,7 @@ namespace Gecode { namespace Support {
   inline void
   Thread::run(Runnable* r) {
     m()->acquire();
-    if (idle != NULL) {
+    if (idle != nullptr) {
       Run* i = idle;
       idle = idle->n;
       m()->release();

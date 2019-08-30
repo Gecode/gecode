@@ -205,7 +205,7 @@ namespace Gecode {
   forceinline void
   RangeList::dispose(Space& home) {
     RangeList* l = this;
-    while (l->next() != NULL)
+    while (l->next() != nullptr)
       l=l->next();
     dispose(home,l);
   }
@@ -219,7 +219,7 @@ namespace Gecode {
       RangeList* n = new (home) RangeList(i.min(),i.max());
       p->next(n); p=n; ++i;
     }
-    p->next(NULL);
+    p->next(nullptr);
     r = sentinel.next();
   }
 
@@ -229,13 +229,13 @@ namespace Gecode {
     RangeList sentinel; sentinel.next(r);
     RangeList* p = &sentinel;
     RangeList* c = p->next();
-    while ((c != NULL) && i()) {
+    while ((c != nullptr) && i()) {
       c->min(i.min()); c->max(i.max());
       p=c; c=c->next(); ++i;
     }
-    if ((c == NULL) && !i())
+    if ((c == nullptr) && !i())
       return;
-    if (c == NULL) {
+    if (c == nullptr) {
       assert(i());
       // New elements needed
       do {
@@ -244,11 +244,11 @@ namespace Gecode {
       } while (i());
     } else {
       // Dispose excess elements
-      while (c->next() != NULL)
+      while (c->next() != nullptr)
         c=c->next();
       p->next()->dispose(home,c);
     }
-    p->next(NULL);
+    p->next(nullptr);
     r = sentinel.next();
   }
 
@@ -259,7 +259,7 @@ namespace Gecode {
     sentinel.next(r);
     RangeList* p = &sentinel;
     RangeList* c = p->next();
-    while ((c != NULL) && i()) {
+    while ((c != nullptr) && i()) {
       if ((c->max()+1 < i.min())) {
         p=c; c=c->next();
       } else if (i.max()+1 < c->min()) {
@@ -271,7 +271,7 @@ namespace Gecode {
         RangeList* f=c;
         p=c; c=c->next(); ++i;
       next:
-        if ((c != NULL) && (c->min() <= max+1)) {
+        if ((c != nullptr) && (c->min() <= max+1)) {
           max = std::max(max,c->max());
           p=c; c=c->next();
           goto next;
@@ -287,13 +287,13 @@ namespace Gecode {
         f->min(min); f->max(max); f->next(c);
       }
     }
-    if (c == NULL) {
+    if (c == nullptr) {
       while (i()) {
         RangeList* n = new (home) RangeList(i.min(),i.max());
         p->next(n); p=n;
         ++i;
       }
-      p->next(NULL);
+      p->next(nullptr);
     }
     r = sentinel.next();
   }

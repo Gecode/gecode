@@ -126,7 +126,7 @@ namespace Gecode { namespace Set { namespace LDSB {
         valseqref->seq_size);
     }
     GECODE_NEVER;
-    return NULL;
+    return nullptr;
   }
 }}}
 

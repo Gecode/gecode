@@ -70,7 +70,7 @@ namespace Gecode { namespace Gist {
   : SpaceNode(p)
   , offset(0)
   {
-    shape = NULL;
+    shape = nullptr;
     setDirty(true);
     setChildrenLayoutDone(false);
     setHidden(false);
@@ -83,7 +83,7 @@ namespace Gecode { namespace Gist {
   : SpaceNode(root)
   , offset(0)
   {
-    shape = NULL;
+    shape = nullptr;
     setDirty(true);
     setChildrenLayoutDone(false);
     setHidden(false);
@@ -250,12 +250,12 @@ namespace Gecode { namespace Gist {
     VisualNode* cur = this;
     int depth = y / Layout::dist_y;
 
-    while (depth > 0 && cur != NULL) {
+    while (depth > 0 && cur != nullptr) {
       if (cur->isHidden()) {
         break;
       }
       VisualNode* oldCur = cur;
-      cur = NULL;
+      cur = nullptr;
       for (unsigned int i=0; i<oldCur->getNumberOfChildren(); i++) {
         VisualNode* nextChild = oldCur->getChild(na,i);
         int newX = x - nextChild->getOffset();
@@ -270,7 +270,7 @@ namespace Gecode { namespace Gist {
     }
 
     if(cur == this && !cur->containsCoordinateAtDepth(x, 0)) {
-      return NULL;
+      return nullptr;
     }
     return cur;
   }

@@ -306,14 +306,14 @@ namespace Gecode { namespace FlatZinc {
   };
 
   BranchInformation::BranchInformation(void)
-    : SharedHandle(NULL) {}
+    : SharedHandle(nullptr) {}
 
   BranchInformation::BranchInformation(const BranchInformation& bi)
     : SharedHandle(bi) {}
 
   void
   BranchInformation::init(void) {
-    assert(object() == NULL);
+    assert(object() == nullptr);
     object(new BranchInformationO());
   }
 
@@ -773,8 +773,8 @@ namespace Gecode { namespace FlatZinc {
 
   FlatZincSpace::FlatZincSpace(FlatZincSpace& f)
     : Space(f),
-      _initData(NULL), _random(f._random),
-      _solveAnnotations(NULL), iv_boolalias(NULL),
+      _initData(nullptr), _random(f._random),
+      _solveAnnotations(nullptr), iv_boolalias(nullptr),
 #ifdef GECODE_HAS_FLOAT_VARS
       step(f.step),
 #endif
@@ -848,7 +848,7 @@ namespace Gecode { namespace FlatZinc {
     intVarCount(-1), boolVarCount(-1), floatVarCount(-1), setVarCount(-1),
     _optVar(-1), _optVarIsInt(true), _lns(0), _lnsInitialSolution(0),
     _random(random),
-    _solveAnnotations(NULL), needAuxVars(true) {
+    _solveAnnotations(nullptr), needAuxVars(true) {
     branchInfo.init();
   }
 
@@ -1015,7 +1015,7 @@ namespace Gecode { namespace FlatZinc {
         throw FlatZinc::Error("Type error", e.what());
       }
       delete ces[i];
-      ces[i] = NULL;
+      ces[i] = nullptr;
     }
   }
 
@@ -1870,7 +1870,7 @@ namespace Gecode { namespace FlatZinc {
       }
       bool printAll = _method == SAT || opt.allSolutions() || noOfSolutions != 0;
       int findSol = noOfSolutions;
-      FlatZincSpace* sol = NULL;
+      FlatZincSpace* sol = nullptr;
       while (FlatZincSpace* next_sol = se.next()) {
         delete sol;
         sol = next_sol;
@@ -2001,7 +2001,7 @@ namespace Gecode { namespace FlatZinc {
   bool
   FlatZincSpace::slave(const MetaInfo& mi) {
     if ((mi.type() == MetaInfo::RESTART) && (mi.restart() != 0) &&
-        (_lns > 0) && (mi.last()==NULL) && (_lnsInitialSolution.size()>0)) {
+        (_lns > 0) && (mi.last()==nullptr) && (_lnsInitialSolution.size()>0)) {
       for (unsigned int i=iv_lns.size(); i--;) {
         if (_random(99) <= _lns) {
           rel(*this, iv_lns[i], IRT_EQ, _lnsInitialSolution[i]);
@@ -2640,7 +2640,7 @@ namespace Gecode { namespace FlatZinc {
                    const Gecode::FloatVarArray& fv
 #endif
                    ) const {
-    if (_output == NULL)
+    if (_output == nullptr)
       return;
     for (unsigned int i=0; i< _output->a.size(); i++) {
       AST::Node* ai = _output->a[i];
@@ -2691,7 +2691,7 @@ namespace Gecode { namespace FlatZinc {
                    const Gecode::FloatVarArray& fv2
 #endif
                    ) const {
-    if (_output == NULL)
+    if (_output == nullptr)
       return;
     for (unsigned int i=0; i< _output->a.size(); i++) {
       AST::Node* ai = _output->a[i];
@@ -2795,7 +2795,7 @@ namespace Gecode { namespace FlatZinc {
                         Gecode::FloatVarArray& fv
 #endif
                        ) {
-    if (_output == NULL) {
+    if (_output == nullptr) {
       if (optVarIsInt && optVar != -1) {
         IntVar ov = iv[optVar];
         iv = IntVarArray(home, 1);

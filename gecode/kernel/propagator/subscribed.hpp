@@ -88,7 +88,7 @@ namespace Gecode {
   template<class View>
   forceinline void
   SubscribedPropagators::init(ConstView<View>&) {
-    c = ep = ea = NULL;
+    c = ep = ea = nullptr;
   }
   template<class View>
   forceinline

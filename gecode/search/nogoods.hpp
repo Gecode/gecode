@@ -53,15 +53,15 @@ namespace Gecode { namespace Search {
     root->subscribe(home,*this); n++;
     bool notice = root->notice();
     NGL* l = root->next();
-    while ((l != NULL) && l->leaf()) {
+    while ((l != nullptr) && l->leaf()) {
       l->subscribe(home,*this); n++;
       notice = notice || l->notice();
       l = l->next();
     }
-    if (l != NULL) {
+    if (l != nullptr) {
       l->subscribe(home,*this); n++;
     }
-    while (!notice && (l != NULL)) {
+    while (!notice && (l != nullptr)) {
       notice = notice || l->notice();
       l = l->next();
     }
@@ -72,10 +72,10 @@ namespace Gecode { namespace Search {
   forceinline
   NoGoodsProp::NoGoodsProp(Space& home, NoGoodsProp& p)
     : Propagator(home,p), n(p.n) {
-    assert(p.root != NULL);
+    assert(p.root != nullptr);
     NoNGL s;
     NGL* c = &s;
-    for (NGL* pc = p.root; pc != NULL; pc = pc->next()) {
+    for (NGL* pc = p.root; pc != nullptr; pc = pc->next()) {
       NGL* n = pc->copy(home);
       n->leaf(pc->leaf());
       c->next(n); c=n;
@@ -114,7 +114,7 @@ namespace Gecode { namespace Search {
         for (unsigned int a=0U; a<p.ds[s].truealt(); a++) {
           NGL* l = home.ngl(*p.ds[s].choice(),a);
           // Does the brancher support no-good literals?
-          if (l == NULL)
+          if (l == nullptr)
             return ES_OK;
           GECODE_ES_CHECK(l->prune(home));
         }
@@ -136,18 +136,18 @@ namespace Gecode { namespace Search {
            ((n-s == 1) && (c != &nn)));
 
     // Remember the last leaf
-    NGL* ll = NULL;
+    NGL* ll = nullptr;
 
     // Create literals
     for (int i=s; i<n; i++) {
       // Add leaves
       for (unsigned int a=0U; a<p.ds[i].truealt(); a++) {
         NGL* l = home.ngl(*p.ds[i].choice(),a);
-        if (l == NULL) {
+        if (l == nullptr) {
           // The brancher does not support no-goods
-          if (ll == NULL)
+          if (ll == nullptr)
             return ES_OK;
-          ll->next(NULL);
+          ll->next(nullptr);
           break;
         }
         c = c->add(l,true); ll = c;
@@ -158,9 +158,9 @@ namespace Gecode { namespace Search {
         c = c->add(l,false);
       } else if (!p.ds[i].rightmost()) {
         // The brancher does not support no-goods
-        if (ll == NULL)
+        if (ll == nullptr)
           return ES_OK;
-        ll->next(NULL);
+        ll->next(nullptr);
         break;
       }
     }

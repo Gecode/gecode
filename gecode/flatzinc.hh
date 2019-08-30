@@ -150,7 +150,7 @@ namespace Gecode { namespace FlatZinc {
 #endif
                        ) const;
   public:
-    Printer(void) : _output(NULL) {}
+    Printer(void) : _output(nullptr) {}
     void init(AST::Array* output);
 
     void print(std::ostream& out,
@@ -455,7 +455,7 @@ namespace Gecode { namespace FlatZinc {
     /// Percentage of variables to keep in LNS (or 0 for no LNS)
     unsigned int _lns;
 
-    /// Initial solution to start the LNS (or NULL for no LNS)
+    /// Initial solution to start the LNS (or nullptr for no LNS)
     IntSharedArray _lnsInitialSolution;
 
     /// Random number generator
@@ -674,22 +674,22 @@ namespace Gecode { namespace FlatZinc {
   /**
    * \brief Parse FlatZinc file \a fileName into \a fzs and return it.
    *
-   * Creates a new empty FlatZincSpace if \a fzs is NULL.
+   * Creates a new empty FlatZincSpace if \a fzs is nullptr.
    */
   GECODE_FLATZINC_EXPORT
   FlatZincSpace* parse(const std::string& fileName,
                        Printer& p, std::ostream& err = std::cerr,
-                       FlatZincSpace* fzs=NULL, Rnd& rnd=defrnd);
+                       FlatZincSpace* fzs=nullptr, Rnd& rnd=defrnd);
 
   /**
    * \brief Parse FlatZinc from \a is into \a fzs and return it.
    *
-   * Creates a new empty FlatZincSpace if \a fzs is NULL.
+   * Creates a new empty FlatZincSpace if \a fzs is nullptr.
    */
   GECODE_FLATZINC_EXPORT
   FlatZincSpace* parse(std::istream& is,
                        Printer& p, std::ostream& err = std::cerr,
-                       FlatZincSpace* fzs=NULL, Rnd& rnd=defrnd);
+                       FlatZincSpace* fzs=nullptr, Rnd& rnd=defrnd);
 
 }}
 

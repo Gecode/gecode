@@ -58,9 +58,9 @@ namespace Gecode { namespace Driver {
     CombinedStop(unsigned long long int node, 
                  unsigned long long int fail,
                  double time)
-      : ns((node > 0ULL) ? new Search::NodeStop(node) : NULL),
-        fs((fail > 0ULL) ? new Search::FailStop(fail) : NULL),
-        ts((time > 0.0)  ? new Search::TimeStop(time) : NULL) {
+      : ns((node > 0ULL) ? new Search::NodeStop(node) : nullptr),
+        fs((fail > 0ULL) ? new Search::FailStop(fail) : nullptr),
+        ts((time > 0.0)  ? new Search::TimeStop(time) : nullptr) {
       sigint = false;
     }
   public:
@@ -75,16 +75,16 @@ namespace Gecode { namespace Driver {
     virtual bool stop(const Search::Statistics& s, const Search::Options& o) {
       return
         sigint ||
-        ((ns != NULL) && ns->stop(s,o)) ||
-        ((fs != NULL) && fs->stop(s,o)) ||
-        ((ts != NULL) && ts->stop(s,o));
+        ((ns != nullptr) && ns->stop(s,o)) ||
+        ((fs != nullptr) && fs->stop(s,o)) ||
+        ((ts != nullptr) && ts->stop(s,o));
     }
     /// Report reason why search has been stopped
     int reason(const Search::Statistics& s, const Search::Options& o) {
       return
-        (((ns != NULL) && ns->stop(s,o)) ? SR_NODE : 0) |
-        (((fs != NULL) && fs->stop(s,o)) ? SR_FAIL : 0) |
-        (((ts != NULL) && ts->stop(s,o)) ? SR_TIME : 0) |
+        (((ns != nullptr) && ns->stop(s,o)) ? SR_NODE : 0) |
+        (((fs != nullptr) && fs->stop(s,o)) ? SR_FAIL : 0) |
+        (((ts != nullptr) && ts->stop(s,o)) ? SR_TIME : 0) |
         (sigint                          ? SR_INT  : 0);
     }
     /// Create appropriate stop-object
@@ -94,7 +94,7 @@ namespace Gecode { namespace Driver {
            double time,
            bool intr) {
       if (!intr && (node == 0ULL) && (fail == 0ULL) && (time == 0.0))
-        return NULL;
+        return nullptr;
       else
         return new CombinedStop(node,fail,time);
     }
@@ -157,7 +157,7 @@ namespace Gecode { namespace Driver {
   createCutoff(const Options& o) {
     switch (o.restart()) {
     case RM_NONE:
-      return NULL;
+      return nullptr;
     case RM_CONSTANT:
       return Search::Cutoff::constant(o.restart_scale());
     case RM_LINEAR:
@@ -168,7 +168,7 @@ namespace Gecode { namespace Driver {
       return Search::Cutoff::geometric(o.restart_scale(),o.restart_base());
     default: GECODE_NEVER;
     }
-    return NULL;
+    return nullptr;
   }
 
 
@@ -332,15 +332,15 @@ namespace Gecode { namespace Driver {
           opt.clone = false;
           opt.c_d   = o.c_d();
           opt.a_d   = o.a_d();
-          for (unsigned int i=0; o.inspect.click(i) != NULL; i++)
+          for (unsigned int i=0; o.inspect.click(i) != nullptr; i++)
             opt.inspect.click(o.inspect.click(i));
-          for (unsigned int i=0; o.inspect.solution(i) != NULL; i++)
+          for (unsigned int i=0; o.inspect.solution(i) != nullptr; i++)
             opt.inspect.solution(o.inspect.solution(i));
-          for (unsigned int i=0; o.inspect.move(i) != NULL; i++)
+          for (unsigned int i=0; o.inspect.move(i) != nullptr; i++)
             opt.inspect.move(o.inspect.move(i));
-          for (unsigned int i=0; o.inspect.compare(i) != NULL; i++)
+          for (unsigned int i=0; o.inspect.compare(i) != nullptr; i++)
             opt.inspect.compare(o.inspect.compare(i));
-          if (s == NULL)
+          if (s == nullptr)
             s = new Script(o);
           (void) GistEngine<Engine<Script> >::explore(s, opt);
         }
@@ -369,7 +369,7 @@ namespace Gecode { namespace Driver {
           Support::Timer t;
           int i = static_cast<int>(o.solutions());
           t.start();
-          if (s == NULL)
+          if (s == nullptr)
             s = new Script(o);
           unsigned int n_p = PropagatorGroup::all.size(*s);
           unsigned int n_b = BrancherGroup::all.size(*s);
@@ -389,11 +389,11 @@ namespace Gecode { namespace Driver {
           {
             Meta<Script,Engine> e(s,so);
             if (o.print_last()) {
-              Script* px = NULL;
+              Script* px = nullptr;
               do {
                 Script* ex = e.next();
-                if (ex == NULL) {
-                  if (px != NULL) {
+                if (ex == nullptr) {
+                  if (px != nullptr) {
                     px->print(s_out);
                     delete px;
                   }
@@ -406,7 +406,7 @@ namespace Gecode { namespace Driver {
             } else {
               do {
                 Script* ex = e.next();
-                if (ex == NULL)
+                if (ex == nullptr)
                   break;
                 ex->print(s_out);
                 delete ex;
@@ -465,7 +465,7 @@ namespace Gecode { namespace Driver {
           Support::Timer t;
           int i = static_cast<int>(o.solutions());
           t.start();
-          if (s == NULL)
+          if (s == nullptr)
             s = new Script(o);
           unsigned int n_p = PropagatorGroup::all.size(*s);
           unsigned int n_b = BrancherGroup::all.size(*s);
@@ -487,7 +487,7 @@ namespace Gecode { namespace Driver {
             Meta<Script,Engine> e(s,so);
             do {
               Script* ex = e.next();
-              if (ex == NULL)
+              if (ex == nullptr)
                 break;
               delete ex;
             } while (--i != 0);
@@ -545,7 +545,7 @@ namespace Gecode { namespace Driver {
                 Meta<Script,Engine> e(s1,sok);
                 do {
                   Script* ex = e.next();
-                  if (ex == NULL)
+                  if (ex == nullptr)
                     break;
                   delete ex;
                 } while (--i != 0);

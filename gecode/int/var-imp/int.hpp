@@ -161,12 +161,12 @@ namespace Gecode { namespace Int {
 
   forceinline IntVarImp::RangeList*
   IntVarImp::fst(void) const {
-    return dom.next(NULL);
+    return dom.next(nullptr);
   }
 
   forceinline void
   IntVarImp::fst(IntVarImp::RangeList* f) {
-    dom.prevnext(NULL,f);
+    dom.prevnext(nullptr,f);
   }
 
   forceinline IntVarImp::RangeList*
@@ -186,7 +186,7 @@ namespace Gecode { namespace Int {
 
   forceinline
   IntVarImp::IntVarImp(Space& home, int min, int max)
-    : IntVarImpBase(home), dom(min,max,NULL,NULL), holes(0) {}
+    : IntVarImpBase(home), dom(min,max,nullptr,nullptr), holes(0) {}
 
   forceinline
   IntVarImp::IntVarImp(Space& home, const IntSet& d)
@@ -199,7 +199,7 @@ namespace Gecode { namespace Int {
       unsigned int h = static_cast<unsigned int>(d.max()-d.min())+1;
       h -= d.width(0);
       r[0].min(d.min(0)); r[0].max(d.max(0));
-      r[0].prevnext(NULL,&r[1]);
+      r[0].prevnext(nullptr,&r[1]);
       for (int i = 1; i < n-1; i++) {
         h -= d.width(i);
         r[i].min(d.min(i)); r[i].max(d.max(i));
@@ -207,10 +207,10 @@ namespace Gecode { namespace Int {
       }
       h -= d.width(n-1);
       r[n-1].min(d.min(n-1)); r[n-1].max(d.max(n-1));
-      r[n-1].prevnext(&r[n-2],NULL);
+      r[n-1].prevnext(&r[n-2],nullptr);
       holes = h;
     } else {
-      fst(NULL); holes = 0;
+      fst(nullptr); holes = 0;
     }
   }
 
@@ -236,7 +236,7 @@ namespace Gecode { namespace Int {
 
   forceinline bool
   IntVarImp::range(void) const {
-    return fst() == NULL;
+    return fst() == nullptr;
   }
   forceinline bool
   IntVarImp::assigned(void) const {
@@ -256,20 +256,20 @@ namespace Gecode { namespace Int {
 
   forceinline unsigned int
   IntVarImp::regret_min(void) const {
-    if (fst() == NULL) {
+    if (fst() == nullptr) {
       return (dom.min() == dom.max()) ? 0U : 1U;
     } else if (dom.min() == fst()->max()) {
-      return static_cast<unsigned int>(fst()->next(NULL)->min()-dom.min());
+      return static_cast<unsigned int>(fst()->next(nullptr)->min()-dom.min());
     } else {
       return 1U;
     }
   }
   forceinline unsigned int
   IntVarImp::regret_max(void) const {
-    if (fst() == NULL) {
+    if (fst() == nullptr) {
       return (dom.min() == dom.max()) ? 0U : 1U;
     } else if (dom.max() == lst()->min()) {
-      return static_cast<unsigned int>(dom.max()-lst()->prev(NULL)->max());
+      return static_cast<unsigned int>(dom.max()-lst()->prev(nullptr)->max());
     } else {
       return 1U;
     }
@@ -286,13 +286,13 @@ namespace Gecode { namespace Int {
   IntVarImp::in(int n) const {
     if ((n < dom.min()) || (n > dom.max()))
       return false;
-    return (fst() == NULL) || in_full(n);
+    return (fst() == nullptr) || in_full(n);
   }
   forceinline bool
   IntVarImp::in(long long int n) const {
     if ((n < dom.min()) || (n > dom.max()))
       return false;
-    return (fst() == NULL) || in_full(static_cast<int>(n));
+    return (fst() == nullptr) || in_full(static_cast<int>(n));
   }
 
 
@@ -303,12 +303,12 @@ namespace Gecode { namespace Int {
 
   forceinline const IntVarImp::RangeList*
   IntVarImp::ranges_fwd(void) const {
-    return (fst() == NULL) ? &dom : fst();
+    return (fst() == nullptr) ? &dom : fst();
   }
 
   forceinline const IntVarImp::RangeList*
   IntVarImp::ranges_bwd(void) const {
-    return (fst() == NULL) ? &dom : lst();
+    return (fst() == nullptr) ? &dom : lst();
   }
 
 
@@ -427,15 +427,15 @@ namespace Gecode { namespace Int {
   IntVarImpFwd::IntVarImpFwd(void) {}
   forceinline
   IntVarImpFwd::IntVarImpFwd(const IntVarImp* x)
-    : p(NULL), c(x->ranges_fwd()) {}
+    : p(nullptr), c(x->ranges_fwd()) {}
   forceinline void
   IntVarImpFwd::init(const IntVarImp* x) {
-    p=NULL; c=x->ranges_fwd();
+    p=nullptr; c=x->ranges_fwd();
   }
 
   forceinline bool
   IntVarImpFwd::operator ()(void) const {
-    return c != NULL;
+    return c != nullptr;
   }
   forceinline void
   IntVarImpFwd::operator ++(void) {
@@ -465,15 +465,15 @@ namespace Gecode { namespace Int {
   IntVarImpBwd::IntVarImpBwd(void) {}
   forceinline
   IntVarImpBwd::IntVarImpBwd(const IntVarImp* x)
-    : n(NULL), c(x->ranges_bwd()) {}
+    : n(nullptr), c(x->ranges_bwd()) {}
   forceinline void
   IntVarImpBwd::init(const IntVarImp* x) {
-    n=NULL; c=x->ranges_bwd();
+    n=nullptr; c=x->ranges_bwd();
   }
 
   forceinline bool
   IntVarImpBwd::operator ()(void) const {
-    return c != NULL;
+    return c != nullptr;
   }
   forceinline void
   IntVarImpBwd::operator ++(void) {
@@ -516,8 +516,8 @@ namespace Gecode { namespace Int {
       // Remove possible rangelist (if it was not a range, the domain
       // must have been narrowed!)
       if (fst()) {
-        fst()->dispose(home,NULL,lst());
-        fst(NULL); holes = 0;
+        fst()->dispose(home,nullptr,lst());
+        fst(nullptr); holes = 0;
       }
       const int min1 = dom.min(); dom.min(min0);
       const int max1 = dom.max(); dom.max(max0);
@@ -529,18 +529,18 @@ namespace Gecode { namespace Int {
 
     if (depends || range()) {
       // Construct new rangelist
-      RangeList*   f = new (home) RangeList(min0,max0,NULL,NULL);
+      RangeList*   f = new (home) RangeList(min0,max0,nullptr,nullptr);
       RangeList*   l = f;
       unsigned int s = static_cast<unsigned int>(max0-min0+1);
       do {
-        RangeList* n = new (home) RangeList(ri.min(),ri.max(),l,NULL);
-        l->next(NULL,n);
+        RangeList* n = new (home) RangeList(ri.min(),ri.max(),l,nullptr);
+        l->next(nullptr,n);
         l = n;
         s += ri.width();
         ++ri;
       } while (ri());
-      if (fst() != NULL)
-        fst()->dispose(home,NULL,lst());
+      if (fst() != nullptr)
+        fst()->dispose(home,nullptr,lst());
       fst(f); lst(l);
 
       // Check for modification
@@ -557,15 +557,15 @@ namespace Gecode { namespace Int {
       // Set up two sentinel elements
       RangeList f, l;
       // Put all ranges between sentinels
-      f.prevnext(NULL,fst()); l.prevnext(lst(),NULL);
-      fst()->prev(NULL,&f);   lst()->next(NULL,&l);
+      f.prevnext(nullptr,fst()); l.prevnext(lst(),nullptr);
+      fst()->prev(nullptr,&f);   lst()->next(nullptr,&l);
 
       // Number of values removed (potential holes)
       unsigned int h = 0;
       // The previous range
       RangeList* p = &f;
       // The current range
-      RangeList* r = f.next(NULL);
+      RangeList* r = f.next(nullptr);
 
       while (true) {
         assert((r != &f) && (r != &l));
@@ -628,8 +628,8 @@ namespace Gecode { namespace Int {
       assert((r == &l) && !ri());
 
       // New first and last ranges
-      RangeList* fn = f.next(NULL);
-      RangeList* ln = l.prev(NULL);
+      RangeList* fn = f.next(nullptr);
+      RangeList* ln = l.prev(nullptr);
 
       // All ranges pruned?
       assert(fn != &l);
@@ -640,7 +640,7 @@ namespace Gecode { namespace Int {
       // The number of removed values
       holes += h;
       // Unlink sentinel ranges
-      fn->prev(&f,NULL); ln->next(&l,NULL);
+      fn->prev(&f,nullptr); ln->next(&l,nullptr);
       // How many values where removed at the bounds
       unsigned int b = (static_cast<unsigned int>(fn->min()-dom.min()) +
                         static_cast<unsigned int>(dom.max()-ln->max()));
@@ -710,11 +710,11 @@ namespace Gecode { namespace Int {
     if (range()) {
       // Create a new rangelist just for simplicity
       RangeList* n = new (home) RangeList(min(),max(),&f,&l);
-      f.prevnext(NULL,n); l.prevnext(n,NULL);
+      f.prevnext(nullptr,n); l.prevnext(n,nullptr);
     } else {
       // Link the two sentinel elements
-      f.prevnext(NULL,fst()); l.prevnext(lst(),NULL);
-      fst()->prev(NULL,&f);   lst()->next(NULL,&l);
+      f.prevnext(nullptr,fst()); l.prevnext(lst(),nullptr);
+      fst()->prev(nullptr,&f);   lst()->next(nullptr,&l);
     }
 
     // Number of values removed (potential holes)
@@ -722,7 +722,7 @@ namespace Gecode { namespace Int {
     // The previous range
     RangeList* p = &f;
     // The current range
-    RangeList* r = f.next(NULL);
+    RangeList* r = f.next(nullptr);
 
     while (true) {
       assert((r != &f) && (r != &l));
@@ -779,12 +779,12 @@ namespace Gecode { namespace Int {
     }
 
     // New first and last ranges
-    RangeList* fn = f.next(NULL);
-    RangeList* ln = l.prev(NULL);
+    RangeList* fn = f.next(nullptr);
+    RangeList* ln = l.prev(nullptr);
 
     // All ranges pruned?
     if (fn == &l) {
-      fst(NULL); lst(NULL); holes=0;
+      fst(nullptr); lst(nullptr); holes=0;
       return fail(home);
     }
 
@@ -796,7 +796,7 @@ namespace Gecode { namespace Int {
       assert(h > 0);
       dom.min(fn->min()); dom.max(fn->max());
       fn->dispose(home);
-      fst(NULL); lst(NULL);
+      fst(nullptr); lst(nullptr);
       holes = 0;
       me = assigned() ? ME_INT_VAL : ME_INT_BND;
       goto notify;
@@ -805,7 +805,7 @@ namespace Gecode { namespace Int {
     // The number of removed values
     holes += h;
     // Unlink sentinel ranges
-    fn->prev(&f,NULL); ln->next(&l,NULL);
+    fn->prev(&f,nullptr); ln->next(&l,nullptr);
     // How many values where removed at the bounds
     b = (static_cast<unsigned int>(fn->min()-dom.min()) +
          static_cast<unsigned int>(dom.max()-ln->max()));
@@ -876,11 +876,11 @@ namespace Gecode { namespace Int {
     if (range()) {
       // Create a new rangelist just for simplicity
       RangeList* n = new (home) RangeList(min(),max(),&f,&l);
-      f.prevnext(NULL,n); l.prevnext(n,NULL);
+      f.prevnext(nullptr,n); l.prevnext(n,nullptr);
     } else {
       // Link the two sentinel elements
-      f.prevnext(NULL,fst()); l.prevnext(lst(),NULL);
-      fst()->prev(NULL,&f);   lst()->next(NULL,&l);
+      f.prevnext(nullptr,fst()); l.prevnext(lst(),nullptr);
+      fst()->prev(nullptr,&f);   lst()->next(nullptr,&l);
     }
 
     // Number of values removed (potential holes)
@@ -888,7 +888,7 @@ namespace Gecode { namespace Int {
     // The previous range
     RangeList* p = &f;
     // The current range
-    RangeList* r = f.next(NULL);
+    RangeList* r = f.next(nullptr);
 
     while (true) {
       assert((r != &f) && (r != &l));
@@ -932,12 +932,12 @@ namespace Gecode { namespace Int {
     assert((r == &l) || !i());
 
     // New first and last ranges
-    RangeList* fn = f.next(NULL);
-    RangeList* ln = l.prev(NULL);
+    RangeList* fn = f.next(nullptr);
+    RangeList* ln = l.prev(nullptr);
 
     // All ranges pruned?
     if (fn == &l) {
-      fst(NULL); lst(NULL); holes=0;
+      fst(nullptr); lst(nullptr); holes=0;
       return fail(home);
     }
 
@@ -948,7 +948,7 @@ namespace Gecode { namespace Int {
       assert(h > 0);
       dom.min(fn->min()); dom.max(fn->max());
       fn->dispose(home);
-      fst(NULL); lst(NULL);
+      fst(nullptr); lst(nullptr);
       holes = 0;
       if (assigned())
         return notify(home,ME_INT_VAL,d);
@@ -959,7 +959,7 @@ namespace Gecode { namespace Int {
     // The number of removed values
     holes += h;
     // Unlink sentinel ranges
-    fn->prev(&f,NULL); ln->next(&l,NULL);
+    fn->prev(&f,nullptr); ln->next(&l,nullptr);
     // How many values where removed at the bounds
     unsigned int b = (static_cast<unsigned int>(fn->min()-dom.min()) +
                       static_cast<unsigned int>(dom.max()-ln->max()));

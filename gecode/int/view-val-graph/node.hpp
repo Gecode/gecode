@@ -74,11 +74,11 @@ namespace Gecode { namespace Int { namespace ViewValGraph {
   template<class View>
   forceinline
   ValNode<View>::ValNode(int v)
-    : _val(v), _matching(NULL) {}
+    : _val(v), _matching(nullptr) {}
   template<class View>
   forceinline
   ValNode<View>::ValNode(int v, ValNode<View>* n)
-    : _val(v), _matching(NULL), _next_val(n) {}
+    : _val(v), _matching(nullptr), _next_val(n) {}
   template<class View>
   forceinline int
   ValNode<View>::val(void) const {
@@ -120,7 +120,7 @@ namespace Gecode { namespace Int { namespace ViewValGraph {
   template<class View>
   forceinline
   ViewNode<View>::ViewNode(void)
-    : _view(View(NULL)) {}
+    : _view(View(nullptr)) {}
   template<class View>
   forceinline
   ViewNode<View>::ViewNode(View x)
@@ -138,7 +138,7 @@ namespace Gecode { namespace Int { namespace ViewValGraph {
   template<class View>
   forceinline bool
   ViewNode<View>::fake(void) const {
-    return _view.varimp() == NULL;
+    return _view.varimp() == nullptr;
   }
   template<class View>
   forceinline View

@@ -898,7 +898,7 @@ namespace Gecode { namespace Search {
    */
   class GECODE_SEARCH_EXPORT Engine : public HeapAllocated {
   public:
-    /// Return next solution (NULL, if none exists or search has been stopped)
+    /// Return next solution (nullptr, if none exists or search has been stopped)
     virtual Space* next(void) = 0;
     /// Return statistics
     virtual Statistics statistics(void) const = 0;
@@ -931,9 +931,9 @@ namespace Gecode { namespace Search {
     /// The actual search engine
     Engine* e;
     /// Constructor
-    Base(Engine* e = NULL);
+    Base(Engine* e = nullptr);
   public:
-    /// Return next solution (NULL, if none exists or search has been stopped)
+    /// Return next solution (nullptr, if none exists or search has been stopped)
     virtual T* next(void);
     /// Return statistics
     virtual Statistics statistics(void) const;

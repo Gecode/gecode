@@ -76,7 +76,7 @@ namespace Gecode {
   inline T*
   bab(T* s, const Search::Options& o) {
     BAB<T> b(s,o);
-    T* l = NULL;
+    T* l = nullptr;
     while (T* n = b.next()) {
       delete l; l = n;
     }

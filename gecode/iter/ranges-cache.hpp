@@ -73,7 +73,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
   void
   Cache::init(Region& r, I& i) {
     RangeListIter::init(r);
-    RangeList* h = NULL;
+    RangeList* h = nullptr;
     RangeList** p = &h;
     for (; i(); ++i) {
       RangeList* t = new (*rlio) RangeList;
@@ -81,7 +81,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
       t->min = i.min();
       t->max = i.max();
     }
-    *p = NULL;
+    *p = nullptr;
     RangeListIter::set(h);
   }
 

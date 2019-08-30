@@ -291,7 +291,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
   template<class Card>
   forceinline
-  PartialSum<Card>::PartialSum(void) : sum(NULL), size(-1) {}
+  PartialSum<Card>::PartialSum(void) : sum(nullptr), size(-1) {}
 
   template<class Card>
   forceinline
@@ -315,7 +315,7 @@ namespace Gecode { namespace Int { namespace GCC {
     size  = elements.size() + holes + 5;
 
     // memory allocation
-    if (sum == NULL) {
+    if (sum == nullptr) {
       sum = home.alloc<int>(2*size);
     }
     int* ds  = &sum[size];

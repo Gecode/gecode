@@ -58,12 +58,12 @@ namespace Gecode { namespace Gist {
   Comparator::~Comparator(void) {}
 
   TextOutput::TextOutput(const std::string& name)
-    : t(NULL), n(name) {}
+    : t(nullptr), n(name) {}
 
   void
   TextOutput::finalize(void) {
     delete t;
-    t = NULL;
+    t = nullptr;
   }
 
   TextOutput::~TextOutput(void) {
@@ -75,7 +75,7 @@ namespace Gecode { namespace Gist {
 
   void
   TextOutput::init(void) {
-    if (t == NULL) {
+    if (t == nullptr) {
       t = new TextOutputI(n);
     }
     t->setVisible(true);

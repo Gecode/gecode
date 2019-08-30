@@ -59,7 +59,7 @@
 
 /**
  * \def GECODE_NOT_NULL
- * \brief Assert that a pointer is never NULL
+ * \brief Assert that a pointer is never nullptr
  *
  * This is preferred over assert as it is used for optimization,
  * if supported by a compiler (for example, Microsoft Visual C++).
@@ -68,11 +68,11 @@
 
 #if defined(_MSC_VER) && defined(NDEBUG)
 
-#define GECODE_NOT_NULL(p) __assume(p != NULL)
+#define GECODE_NOT_NULL(p) __assume(p != nullptr)
 
 #else
 
-#define GECODE_NOT_NULL(p) assert(p != NULL)
+#define GECODE_NOT_NULL(p) assert(p != nullptr)
 
 #endif
 

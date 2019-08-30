@@ -45,7 +45,7 @@ namespace Gecode { namespace Int { namespace Linear {
       _fst = home.alloc<ScaleBool>(n);
       _lst = _fst+n;
     } else {
-      _fst = _lst = NULL;
+      _fst = _lst = nullptr;
     }
   }
   forceinline void
@@ -74,7 +74,7 @@ namespace Gecode { namespace Int { namespace Linear {
         _fst[i].x.update(home,sba._fst[i].x);
       }
     } else {
-      _fst = _lst = NULL;
+      _fst = _lst = nullptr;
     }
   }
   forceinline ScaleBool*
@@ -131,9 +131,9 @@ namespace Gecode { namespace Int { namespace Linear {
   forceinline void
   EmptyScaleBoolArray::update(Space&, EmptyScaleBoolArray&) {}
   forceinline ScaleBool*
-  EmptyScaleBoolArray::fst(void) const { return NULL; }
+  EmptyScaleBoolArray::fst(void) const { return nullptr; }
   forceinline ScaleBool*
-  EmptyScaleBoolArray::lst(void) const { return NULL; }
+  EmptyScaleBoolArray::lst(void) const { return nullptr; }
   forceinline void
   EmptyScaleBoolArray::fst(ScaleBool*) {}
   forceinline void

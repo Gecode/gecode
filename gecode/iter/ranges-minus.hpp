@@ -75,7 +75,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
   void
   Minus::init(Region& r, I& i) {
     RangeListIter::init(r);
-    RangeList* p = NULL;
+    RangeList* p = nullptr;
     for (; i(); ++i) {
       RangeList* t = new (*rlio) RangeList;
       t->next = p;
