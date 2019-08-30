@@ -271,6 +271,13 @@ if (HAVE_EXT_HASH_MAP)
   set(GECODE_HAS_GNU_HASH_MAP "/**/")
 endif ()
 
+check_cxx_source_compiles("
+   #include <unordered_map>
+   int main() {}" HAVE_UNORDERED_MAP)
+if (HAVE_UNORDERED_MAP)
+  set(GECODE_HAS_UNORDERED_MAP "/**/")
+endif ()
+
 include(CheckTypeSize)
 check_type_size(int SIZEOF_INT)
 
