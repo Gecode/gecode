@@ -49,11 +49,11 @@
 
 #if defined(_MSC_VER) && defined(NDEBUG)
 
-#define GECODE_NEVER __assume(false);
+#define GECODE_NEVER __assume(false)
 
 #else
 
-#define GECODE_NEVER assert(false);
+#define GECODE_NEVER assert(false)
 
 #endif
 
@@ -68,11 +68,11 @@
 
 #if defined(_MSC_VER) && defined(NDEBUG)
 
-#define GECODE_NOT_NULL(p) __assume(p != NULL);
+#define GECODE_NOT_NULL(p) __assume(p != NULL)
 
 #else
 
-#define GECODE_NOT_NULL(p) assert(p != NULL);
+#define GECODE_NOT_NULL(p) assert(p != NULL)
 
 #endif
 
@@ -87,11 +87,11 @@
 
 #if defined(_MSC_VER) && defined(NDEBUG)
 
-#define GECODE_VALID_FUNCTION(f) __assume(static_cast<bool>(f));
+#define GECODE_VALID_FUNCTION(f) __assume(static_cast<bool>(f))
 
 #else
 
-#define GECODE_VALID_FUNCTION(f) assert(static_cast<bool>(f));
+#define GECODE_VALID_FUNCTION(f) assert(static_cast<bool>(f))
 
 #endif
 
@@ -107,11 +107,11 @@
 
 #if defined(_MSC_VER) && defined(NDEBUG)
 
-#define GECODE_ASSUME(p) __assume((p));
+#define GECODE_ASSUME(p) __assume((p))
 
 #else
 
-#define GECODE_ASSUME(p) assert((p));
+#define GECODE_ASSUME(p) assert((p))
 
 #endif
 
