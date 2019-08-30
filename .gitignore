@@ -72,6 +72,7 @@ examples/graph-color
 examples/grocery
 examples/hamming
 examples/ind-set
+examples/job-shop
 examples/kakuro
 examples/knights
 examples/langford-number
