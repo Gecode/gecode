@@ -441,7 +441,7 @@ namespace Gecode {
   template<class View, PropCond pc>
   PropCost
   TernaryPropagator<View,pc>::cost(const Space&, const ModEventDelta&) const {
-    return PropCost::ternary(PropCost::LO);;
+    return PropCost::ternary(PropCost::LO);
   }
 
   template<class View, PropCond pc>

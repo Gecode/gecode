@@ -1430,8 +1430,8 @@ namespace Gecode {
     Support::BitSet<Region> seen(r,static_cast<unsigned int>(b+1));
     int j=0;
     for (int i=0; i<n; i++)
-      if (!seen.get(bkt[i])) {
-        x[j++]=x[i]; seen.set(bkt[i]);
+      if (!seen.get(static_cast<unsigned int>(bkt[i]))) {
+        x[j++]=x[i]; seen.set(static_cast<unsigned int>(bkt[i]));
       } else {
         x[j]=x[i];
       }

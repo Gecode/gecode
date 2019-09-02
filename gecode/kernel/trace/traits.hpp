@@ -39,9 +39,9 @@ namespace Gecode {
    * The traits used for tracing are as follows:
    *     - <code>typedef Type TraceView</code>  where \c Type is the type
    *       of an appropriate duplicate view of \a View.
-   *     - <code>typedef Type TraceDelta/code>  where \c Type is the type
+   *     - <code>typedef Type TraceDelta</code>  where \c Type is the type
    *       of an appropriate trace delta for \a View.
-   *     - <code>typedef Type TraceSlack/code>  where \c Type is the type
+   *     - <code>typedef Type TraceSlack</code>  where \c Type is the type
    *       of an appropriate measure of slack for \a View.
    *
    */

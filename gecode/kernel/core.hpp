@@ -871,6 +871,8 @@ namespace Gecode {
     Home(Space& s, Propagator* p=nullptr,
          PropagatorGroup pg=PropagatorGroup::def,
          BrancherGroup bg=BrancherGroup::def);
+    /// Copy constructor
+    Home(const Home& h);
     /// Assignment operator
     Home& operator =(const Home& h);
     /// Retrieve the space of the home
@@ -2009,6 +2011,8 @@ namespace Gecode {
      */
     GECODE_KERNEL_EXPORT
     Space(Space& s);
+    /// Assignment operator
+    Space& operator =(const Space& s) = default;
     /**
      * \brief Destructor
      * \ingroup TaskModelScript
@@ -2298,7 +2302,7 @@ namespace Gecode {
 
 
     /**
-     * \Brief %Propagator \a p is subsumed
+     * \brief %Propagator \a p is subsumed
      *
      * First disposes the propagator and then returns subsumption.
      *
@@ -3262,6 +3266,9 @@ namespace Gecode {
   Home::Home(Space& s0, Propagator* p0,
              PropagatorGroup pg0, BrancherGroup bg0)
     : s(s0), p(p0), pg(pg0), bg(bg0) {}
+  forceinline
+  Home::Home(const Home& h)
+    : s(h.s), p(h.p), pg(h.pg), bg(h.bg) {}
   forceinline Home&
   Home::operator =(const Home& h) {
     s=h.s; p=h.p; pg=h.pg; bg=h.bg;

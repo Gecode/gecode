@@ -88,8 +88,8 @@ namespace Gecode { namespace Search {
   CutoffRandom::CutoffRandom(unsigned int seed,
                              unsigned long long int min0,
                              unsigned long long int max0,
-                             unsigned long long int n0)
-      : rnd(seed), min(min0), n(n0 == 0 ? (max0-min+1U) : n0),
+                             unsigned int n0)
+      : rnd(seed), min(min0), n(n0),
         step(std::max(1ULL,
                       static_cast<unsigned long long int>((max0-min0+1U)/n))) {
     cur = ++(*this);

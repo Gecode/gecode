@@ -71,6 +71,12 @@ namespace Gecode { namespace Search { namespace Seq {
     /// Stop object
     Stop* stop;
   public:
+    /// Default constructor
+    Slave(void);
+    /// Copy constructor
+    Slave(const Slave& s) = default;
+    /// Assigment operator
+    Slave& operator =(const Slave& s) = default;
     /// Initialize with slave \a s and its stop object \a so
     void init(Engine* s, Stop* so);
     /// Return next solution

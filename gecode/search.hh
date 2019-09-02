@@ -494,18 +494,19 @@ namespace Gecode { namespace Search {
      *  \a scale using base \a base
      */
     static Cutoff*
-    geometric(unsigned long long int scale=Config::slice, double base=Config::base);
+    geometric(unsigned long long int scale=Config::slice,
+              double base=Config::base);
     /// Create generator for luby sequence with scale-factor \a scale
     static Cutoff*
     luby(unsigned long long int scale=Config::slice);
     /** Create generator for random sequence with seed \a seed that
      *  generates values between \a min and \a max with \a n steps
-     *  between the extreme values (use 0 for \a n to get step size 1).
+     *  between the extreme values.
      */
     static Cutoff*
     rnd(unsigned int seed,
         unsigned long long int min, unsigned long long int max,
-        unsigned long long int n);
+        unsigned int n);
     /// Append cutoff values from \a c2 after \a n values from \a c1
     static Cutoff*
     append(Cutoff* c1, unsigned long long int n, Cutoff* c2);
@@ -613,7 +614,7 @@ namespace Gecode { namespace Search {
     /// Minimum cutoff value
     unsigned long long int min;
     /// Random values
-    unsigned long long int n;
+    unsigned int n;
     /// Step size
     unsigned long long int step;
     /// Current value
@@ -622,7 +623,7 @@ namespace Gecode { namespace Search {
     /// Constructor
     CutoffRandom(unsigned int seed,
                  unsigned long long int min, unsigned long long int max,
-                 unsigned long long int n);
+                 unsigned int n);
     /// Return the current cutoff value
     virtual unsigned long long int operator ()(void) const;
     /// Increment and return the next cutoff value
@@ -682,7 +683,7 @@ namespace Gecode { namespace Search {
     /// Actual cutoff generator
     Cutoff* c;
     // Current cutoff
-    unsigned int cutoff;
+    unsigned long long int cutoff;
     // Iteration
     unsigned long long int i;
     // Number of repetitions

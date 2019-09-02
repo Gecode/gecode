@@ -129,7 +129,8 @@ namespace Gecode { namespace Search {
     Stop** stops = r.alloc<Stop*>(n_slaves);
 
     WrapTraceRecorder::engine(opt.tracer,
-                              SearchTracer::EngineType::PBS, n_slaves);
+                              SearchTracer::EngineType::PBS,
+                              static_cast<unsigned int>(n_slaves));
 
     for (int i=0; i<n_slaves; i++) {
       // Re-configure slave options
@@ -138,12 +139,13 @@ namespace Gecode { namespace Search {
       sebs[i]->options().clone = false;
       Space* slave = (i == n_slaves-1) ?
         master : master->clone();
-      (void) slave->slave(i);
+      (void) slave->slave(static_cast<unsigned int>(i));
       slaves[i] = (*sebs[i])(slave);
       delete sebs[i];
     }
 
-    return Seq::pbsengine(slaves,stops,n_slaves,stat,opt,best);
+    return Seq::pbsengine(slaves,stops,static_cast<unsigned int>(n_slaves),
+                          stat,opt,best);
   }
 
 #ifdef GECODE_HAS_THREADS
@@ -170,7 +172,7 @@ namespace Gecode { namespace Search {
       opt.stop = stops[i] = Par::pbsstop(stop);
       Space* slave = (i == n_slaves-1) ?
         master : master->clone();
-      (void) slave->slave(i);
+      (void) slave->slave(static_cast<unsigned int>(i));
       slaves[i] = build<T,E>(slave,opt);
     }
 
@@ -188,7 +190,8 @@ namespace Gecode { namespace Search {
                             sebs.size());
 
     WrapTraceRecorder::engine(opt.tracer,
-                              SearchTracer::EngineType::PBS, n_slaves);
+                              SearchTracer::EngineType::PBS,
+                              static_cast<unsigned int>(n_slaves));
 
     Engine** slaves = r.alloc<Engine*>(n_slaves);
     Stop** stops = r.alloc<Stop*>(n_slaves);
@@ -200,7 +203,7 @@ namespace Gecode { namespace Search {
       sebs[i]->options().clone = false;
       Space* slave = (i == n_slaves-1) ?
         master : master->clone();
-      (void) slave->slave(i);
+      (void) slave->slave(static_cast<unsigned int>(i));
       slaves[i] = (*sebs[i])(slave);
       delete sebs[i];
     }
@@ -208,7 +211,8 @@ namespace Gecode { namespace Search {
     for (int i=n_slaves; i<sebs.size(); i++)
       delete sebs[i];
 
-    return Par::pbsengine(slaves,stops,n_slaves,stat,best);
+    return Par::pbsengine(slaves,stops,static_cast<unsigned int>(n_slaves),
+                          stat,best);
   }
 
 #endif

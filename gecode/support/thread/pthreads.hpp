@@ -215,10 +215,10 @@ namespace Gecode { namespace Support {
   forceinline unsigned int
   Thread::npu(void) {
 #ifdef GECODE_HAS_UNISTD_H
-    int n=static_cast<int>(sysconf(_SC_NPROCESSORS_ONLN));
-    return (n>1) ? n : 1;
+    unsigned int n=static_cast<unsigned int>(sysconf(_SC_NPROCESSORS_ONLN));
+    return (n>1U) ? n : 1U;
 #else
-    return 1;
+    return 1U;
 #endif
   }
 

@@ -45,6 +45,9 @@ namespace Gecode { namespace Search { namespace Seq {
   }
 
 
+  forceinline
+  Slave::Slave(void)
+    : slave(nullptr), stop(nullptr) {}
   forceinline void
   Slave::init(Engine* e, Stop* s) {
     slave = e; stop = s;

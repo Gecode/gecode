@@ -523,6 +523,7 @@ namespace Gecode {
       top->u.med = 0;
       switch (top->propagate(*this,top_med_o)) {
       case ES_FIX:
+        break;
       case __ES_SUBSUMED:
         break;
       default:

@@ -350,7 +350,7 @@ namespace Gecode {
 
   forceinline
   Region::Region(void)
-    : chunk(pool().chunk()), hi(0) {}
+    : chunk(pool().chunk()), hi(nullptr) {}
 
   forceinline void
   Region::free(void) {

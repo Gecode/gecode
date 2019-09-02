@@ -312,7 +312,8 @@ namespace Gecode { namespace Kernel {
     sz += overhead;
     // Round size to next multiple of current heap chunk size
     size_t allocate = ((sz > cur_hcsz) ?
-                       (((size_t) (sz / cur_hcsz)) + 1) * cur_hcsz : cur_hcsz);
+                       (static_cast<size_t>(sz / cur_hcsz) + 1) * cur_hcsz 
+                       : cur_hcsz);
     // Request a chunk of preferably size allocate, but at least size sz
     HeapChunk* hc = sm.alloc(allocate,sz);
     start = ptr_cast<char*>(&hc->area[0]);
@@ -457,7 +458,9 @@ namespace Gecode { namespace Kernel {
       fl[sz2i(sz)] = ptr_cast<FreeList*>(block);
       int i = MemoryConfig::fl_refill-2;
       do {
-        ptr_cast<FreeList*>(block+i*sz)->next(ptr_cast<FreeList*>(block+(i+1)*sz));
+        ptr_cast<FreeList*>(block+static_cast<unsigned int>(i)*sz)
+          ->next(ptr_cast<FreeList*>(block+
+                                     (static_cast<unsigned int>(i)+1)*sz));
       } while (--i >= 0);
       ptr_cast<FreeList*>(block+
                           (MemoryConfig::fl_refill-1)*sz)->next
