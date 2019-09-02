@@ -100,7 +100,7 @@ namespace Gecode { namespace Driver {
     }
 #ifdef GECODE_THREADS_WINDOWS
     /// Handler for catching Ctrl-C
-    static BOOL interrupt(DWORD t) throw() {
+    static BOOL interrupt(DWORD t) noexcept {
       if (t == CTRL_C_EVENT) {
         sigint = true;
         installCtrlHandler(false,true);

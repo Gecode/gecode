@@ -202,12 +202,12 @@ typedef std::set<int, std::less<int>, Gecode::region_allocator<int> > SR;
      * \brief Construction
      * @param space The space whose heap to allocate objects from.
      */
-    space_allocator(Space& space) throw() : space(space) {}
+    space_allocator(Space& space) noexcept : space(space) {}
     /**
      * \brief Copy construction
      * @param al The allocator to copy.
      */
-    space_allocator(space_allocator const& al) throw() : space(al.space) {}
+    space_allocator(space_allocator const& al) noexcept : space(al.space) {}
     /**
      * \brief Assignment operator
      * @param al The allocator to assign.
@@ -222,14 +222,14 @@ typedef std::set<int, std::less<int>, Gecode::region_allocator<int> > SR;
      * @param al The source allocator.
      */
     template<class U>
-    space_allocator(space_allocator<U> const& al) throw() : space(al.space) {}
+    space_allocator(space_allocator<U> const& al) noexcept : space(al.space) {}
 
     /// Convert a reference \a x to a pointer
     pointer address(reference x) const { return &x; }
     /// Convert a const reference \a x to a const pointer
     const_pointer address(const_reference x) const { return &x; }
     /// Returns the largest size for which a call to allocate might succeed.
-    size_type max_size(void) const throw() {
+    size_type max_size(void) const noexcept {
       return std::numeric_limits<size_type>::max() /
         (sizeof(T)>0 ? sizeof(T) : 1);
     }
@@ -290,7 +290,7 @@ typedef std::set<int, std::less<int>, Gecode::region_allocator<int> > SR;
    */
   template<class T1, class T2>
   bool operator==(space_allocator<T1> const& al1,
-                  space_allocator<T2> const& al2) throw() {
+                  space_allocator<T2> const& al2) noexcept {
     return &al1.space == &al2.space;
   }
 
@@ -302,7 +302,7 @@ typedef std::set<int, std::less<int>, Gecode::region_allocator<int> > SR;
    */
   template<class T1, class T2>
   bool operator!=(space_allocator<T1> const& al1,
-                  space_allocator<T2> const& al2) throw() {
+                  space_allocator<T2> const& al2) noexcept {
     return &al1.space != &al2.space;
   }
 
@@ -364,20 +364,20 @@ typedef std::set<int, std::less<int>, Gecode::region_allocator<int> > SR;
      * \brief Construction
      * @param region The region to allocate objects from.
      */
-    region_allocator(Region& region) throw()
+    region_allocator(Region& region) noexcept
       : region(region) {}
     /**
      * \brief Copy construction
      * @param al The allocator to copy.
      */
-    region_allocator(region_allocator const& al) throw()
+    region_allocator(region_allocator const& al) noexcept
       : region(al.region) {}
     /**
      * \brief Copy from other instantiation.
      * @param al The source allocator.
      */
     template<class U>
-    region_allocator(region_allocator<U> const& al) throw()
+    region_allocator(region_allocator<U> const& al) noexcept
       : region(al.region) {}
 
     /// Convert a reference \a x to a pointer
@@ -385,7 +385,7 @@ typedef std::set<int, std::less<int>, Gecode::region_allocator<int> > SR;
     /// Convert a const reference \a x to a const pointer
     const_pointer address(const_reference x) const { return &x; }
     /// Returns the largest size for which a call to allocate might succeed.
-    size_type max_size(void) const throw() {
+    size_type max_size(void) const noexcept {
       return std::numeric_limits<size_type>::max()
         / (sizeof(T)>0 ? sizeof(T) : 1);
     }
@@ -455,7 +455,7 @@ typedef std::set<int, std::less<int>, Gecode::region_allocator<int> > SR;
    */
   template<class T1, class T2>
   bool operator==(region_allocator<T1> const& al1,
-                  region_allocator<T2> const& al2) throw() {
+                  region_allocator<T2> const& al2) noexcept {
     return &al1.region == &al2.region;
   }
 
@@ -467,7 +467,7 @@ typedef std::set<int, std::less<int>, Gecode::region_allocator<int> > SR;
    */
   template<class T1, class T2>
   bool operator!=(region_allocator<T1> const& al1,
-                  region_allocator<T2> const& al2) throw() {
+                  region_allocator<T2> const& al2) noexcept {
     return &al1.region != &al2.region;
   }
 

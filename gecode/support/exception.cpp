@@ -39,7 +39,7 @@ namespace Gecode {
    * Base class for exceptions
    *
    */
-  Exception::Exception(const char* l, const char* i) throw() {
+  Exception::Exception(const char* l, const char* i) noexcept {
     int j = 0;
     while ((*l != 0) && (j < li_max))
       li[j++] = *(l++);
@@ -52,7 +52,7 @@ namespace Gecode {
     li[j] = 0;
   }
   const char*
-  Exception::what(void) const throw() {
+  Exception::what(void) const noexcept {
     return &li[0];
   }
 
