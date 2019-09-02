@@ -71,15 +71,14 @@ namespace Gecode { namespace Support {
     /// Push element \a x on top of stack
     void push(const T& x);
 
-  private:
     /// Allocate memory from heap (disabled)
-    static void* operator new(size_t s) throw() { (void) s; return nullptr; }
+    static void* operator new(size_t s) = delete;
     /// Free memory allocated from heap (disabled)
-    static void  operator delete(void* p) { (void) p; };
+    static void  operator delete(void* p) = delete;
     /// Copy constructor (disabled)
-    StaticStack(const StaticStack& s) : a(s.a) {}
+    StaticStack(const StaticStack& s) = delete;
     /// Assignment operator (disabled)
-    const StaticStack& operator =(const StaticStack&) { return *this; }
+    const StaticStack& operator =(const StaticStack&) = delete;
   };
 
   template<class T, class A>

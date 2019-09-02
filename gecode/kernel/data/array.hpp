@@ -202,9 +202,11 @@ namespace Gecode {
     /// Update array to be a clone of array \a a
     void update(Space& home, VarArray<Var>& a);
     //@}
-  private:
-    static void* operator new(size_t) throw();
-    static void  operator delete(void*,size_t);
+
+    /// Allocate memory from heap (disabled)
+    static void* operator new(size_t s) = delete;
+    /// Free memory allocated from heap (disabled)
+    static void  operator delete(void* p) = delete;
   };
 
   /** Concatenate \a x and \a y and return result
@@ -482,9 +484,11 @@ namespace Gecode {
     /// Remove all duplicate views from array (changes element order)
     void unique(void);
     //@}
-  private:
-    static void* operator new(size_t) throw();
-    static void  operator delete(void*,size_t);
+
+    /// Allocate memory from heap (disabled)
+    static void* operator new(size_t s) = delete;
+    /// Free memory allocated from heap (disabled)
+    static void  operator delete(void* p) = delete;
   };
 
 
@@ -1030,16 +1034,6 @@ namespace Gecode {
     return true;
   }
 
-  template<class Var>
-  forceinline void*
-  VarArray<Var>::operator new(size_t) throw() {
-    return nullptr;
-  }
-
-  template<class Var>
-  forceinline void
-  VarArray<Var>::operator delete(void*,size_t) {
-  }
 
   template<class Var>
   typename ArrayTraits<VarArray<Var>>::ArgsType
@@ -1443,17 +1437,6 @@ namespace Gecode {
       }
     assert(j == b+1);
     n = j;
-  }
-
-  template<class View>
-  forceinline void*
-  ViewArray<View>::operator new(size_t) throw() {
-    return nullptr;
-  }
-
-  template<class View>
-  forceinline void
-  ViewArray<View>::operator delete(void*,size_t) {
   }
 
 

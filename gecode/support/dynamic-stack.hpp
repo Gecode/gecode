@@ -86,15 +86,15 @@ namespace Gecode { namespace Support {
      * element pushed last.
      */
     const T& operator [](int i) const;
-  private:
+
     /// Allocate memory from heap (disabled)
-    static void* operator new(size_t s) throw() { (void) s; return nullptr; }
+    static void* operator new(size_t s) = delete;
     /// Free memory allocated from heap (disabled)
-    static void  operator delete(void* p) { (void) p; };
+    static void  operator delete(void* p) = delete;
     /// Copy constructor (disabled)
-    DynamicStack(const DynamicStack& s) : a(s.a) {}
+    DynamicStack(const DynamicStack& s) = delete;
     /// Assignment operator (disabled)
-    const DynamicStack& operator =(const DynamicStack&) { return *this; }
+    const DynamicStack& operator =(const DynamicStack&) = delete;
   };
 
 

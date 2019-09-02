@@ -71,15 +71,15 @@ namespace Gecode { namespace Support {
     T pop(void);
     /// Push element \a x to queue
     void push(const T& x);
-  private:
+
     /// Allocate memory from heap (disabled)
-    static void* operator new(size_t s) throw() { (void) s; return nullptr; }
+    static void* operator new(size_t s) = delete;
     /// Free memory allocated from heap (disabled)
-    static void  operator delete(void* p) { (void) p; };
+    static void  operator delete(void* p) = delete;
     /// Copy constructor (disabled)
-    DynamicQueue(const DynamicQueue& s) : a(s.a) {}
+    DynamicQueue(const DynamicQueue& s) = delete;
     /// Assignment operator (disabled)
-    const DynamicQueue& operator =(const DynamicQueue&) { return *this; }
+    const DynamicQueue& operator =(const DynamicQueue&) = delete;
   };
 
 

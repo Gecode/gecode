@@ -313,15 +313,15 @@ namespace Gecode {
     //@}
     /// Return memory
     ~Region(void);
-  private:
+
     /// Allocate memory from heap (disabled)
-    static void* operator new(size_t s) throw() { (void) s; return nullptr; }
+    static void* operator new(size_t s) = delete;
     /// Free memory allocated from heap (disabled)
-    static void  operator delete(void* p) { (void) p; };
+    static void  operator delete(void* p) = delete;
     /// Copy constructor (disabled)
-    Region(const Region&) {}
+    Region(const Region&) = delete;
     /// Assignment operator (disabled)
-    const Region& operator =(const Region&) { return *this; }
+    const Region& operator =(const Region&) = delete;
   };
   //@}
 
