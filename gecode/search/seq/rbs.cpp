@@ -97,7 +97,7 @@ namespace Gecode { namespace Search { namespace Seq {
         MetaInfo mi(stop->m_stat.restart,sslr,e->statistics().fail,last,ng);
         (void) master->master(mi);
         stop->m_stat.nogood += ng.ng();
-        long unsigned int nl = ++(*co);
+        unsigned long long int nl = ++(*co);
         stop->limit(e->statistics(),nl);
         if (master->status(stop->m_stat) == SS_FAILED)
           return nullptr;

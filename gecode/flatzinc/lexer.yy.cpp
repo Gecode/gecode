@@ -116,7 +116,7 @@ typedef unsigned int flex_uint32_t;
 #endif
 
 /* Returned upon end-of-file. */
-#define YY_nullptr 0
+#define YY_NULL 0
 
 /* Promotes a possibly negative, possibly signed char to an
  *   integer in range [0..255] for use as an array index.
@@ -294,13 +294,13 @@ struct yy_buffer_state
  * future we want to put the buffer states in a more general
  * "scanner state".
  *
- * Returns the top of the stack, or nullptr.
+ * Returns the top of the stack, or NULL.
  */
 #define YY_CURRENT_BUFFER ( yyg->yy_buffer_stack \
                           ? yyg->yy_buffer_stack[yyg->yy_buffer_stack_top] \
-                          : nullptr)
+                          : NULL)
 /* Same as previous macro, but useful when we know that the buffer stack is not
- * nullptr or when we need an lvalue. For internal use only.
+ * NULL or when we need an lvalue. For internal use only.
  */
 #define YY_CURRENT_BUFFER_LVALUE yyg->yy_buffer_stack[yyg->yy_buffer_stack_top]
 
@@ -597,7 +597,7 @@ static const flex_int32_t yy_rule_can_match_eol[57] =
 #define yymore() yymore_used_but_not_detected
 #define YY_MORE_ADJ 0
 #define YY_RESTORE_YY_MORE_OFFSET
-#line 1 "gecode/flatzinc/lexer.lxx"
+#line 1 "./gecode/flatzinc/lexer.lxx"
 /* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
@@ -630,7 +630,7 @@ static const flex_int32_t yy_rule_can_match_eol[57] =
  *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
-#line 40 "gecode/flatzinc/lexer.lxx"
+#line 40 "./gecode/flatzinc/lexer.lxx"
 #if defined __GNUC__
 #pragma GCC diagnostic ignored "-Wunused-function"
 #pragma GCC diagnostic ignored "-Wunused-parameter"
@@ -652,7 +652,7 @@ int stringbuflen;
 int stringbufpos;
 
 bool parseInt(const char* text, int& value) {
-  long int result = strtol(text,nullptr,0);
+  long int result = strtol(text,NULL,0);
   if ( (result == LONG_MAX || result == LONG_MIN) && errno == ERANGE )
     return false;
   if (result < Gecode::Int::Limits::min || result > Gecode::Int::Limits::max)
@@ -817,7 +817,7 @@ static int input ( yyscan_t yyscanner );
 #define ECHO do { if (fwrite( yytext, (size_t) yyleng, 1, yyout )) {} } while (0)
 #endif
 
-/* Gets input and stuffs it into "buf".  number of characters read, or YY_nullptr,
+/* Gets input and stuffs it into "buf".  number of characters read, or YY_NULL,
  * is returned in "result".
  */
 #ifndef YY_INPUT
@@ -858,7 +858,7 @@ static int input ( yyscan_t yyscanner );
  * some compilers to complain about unreachable statements.
  */
 #ifndef yyterminate
-#define yyterminate() return YY_nullptr
+#define yyterminate() return YY_NULL
 #endif
 
 /* Number of entries by which start-condition stack grows. */
@@ -939,7 +939,7 @@ YY_DECL
 		}
 
 	{
-#line 75 "gecode/flatzinc/lexer.lxx"
+#line 75 "./gecode/flatzinc/lexer.lxx"
 
 
 #line 945 "gecode/flatzinc/lexer.yy.cpp"
@@ -1014,32 +1014,32 @@ do_action:	/* This label is used only to access EOF actions. */
 case 1:
 /* rule 1 can match eol */
 YY_RULE_SETUP
-#line 77 "gecode/flatzinc/lexer.lxx"
+#line 77 "./gecode/flatzinc/lexer.lxx"
 { /*yylineno++;*/ /* ignore EOL */ }
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 78 "gecode/flatzinc/lexer.lxx"
+#line 78 "./gecode/flatzinc/lexer.lxx"
 { /* ignore whitespace */ }
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 79 "gecode/flatzinc/lexer.lxx"
+#line 79 "./gecode/flatzinc/lexer.lxx"
 { /* ignore comments */ }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 81 "gecode/flatzinc/lexer.lxx"
+#line 81 "./gecode/flatzinc/lexer.lxx"
 { yylval->iValue = 1; return FZ_BOOL_LIT; }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 82 "gecode/flatzinc/lexer.lxx"
+#line 82 "./gecode/flatzinc/lexer.lxx"
 { yylval->iValue = 0; return FZ_BOOL_LIT; }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 83 "gecode/flatzinc/lexer.lxx"
+#line 83 "./gecode/flatzinc/lexer.lxx"
 { if (parseInt(yytext,yylval->iValue))
                       return FZ_INT_LIT;
                     else
@@ -1052,265 +1052,261 @@ YY_RULE_SETUP
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 92 "gecode/flatzinc/lexer.lxx"
+#line 92 "./gecode/flatzinc/lexer.lxx"
 {  if (parseInt(yytext,yylval->iValue))
                       return FZ_INT_LIT;
                     else
                       yyerror(("The literal '" + std::string(yytext)
-                      + "' of the type int is out of range. The range"
-                        " of valid integers is between "
+                      + "' of the type int is out of range ("
                       + std::to_string(Gecode::Int::Limits::min)
-                      + " and "
-                      + std::to_string(Gecode::Int::Limits::max)
-                      + ".").c_str());
+                      + ".." + std::to_string(Gecode::Int::Limits::max)
+                      + ")").c_str());
                   }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 103 "gecode/flatzinc/lexer.lxx"
+#line 101 "./gecode/flatzinc/lexer.lxx"
 { if (parseInt(yytext,yylval->iValue))
                       return FZ_INT_LIT;
                     else
                       yyerror(("The literal '" + std::string(yytext)
-                      + "' of the type int is out of range. The range"
-                        " of valid integers is between "
+                      + "' of the type int is out of range ("
                       + std::to_string(Gecode::Int::Limits::min)
-                      + " and "
-                      + std::to_string(Gecode::Int::Limits::max)
-                      + ".").c_str());
+                      + ".." + std::to_string(Gecode::Int::Limits::max)
+                      + ")").c_str());
                   }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 114 "gecode/flatzinc/lexer.lxx"
-{ yylval->dValue = strtod(yytext,nullptr);
+#line 110 "./gecode/flatzinc/lexer.lxx"
+{ yylval->dValue = strtod(yytext,NULL);
                     return FZ_FLOAT_LIT; }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 116 "gecode/flatzinc/lexer.lxx"
-{ yylval->dValue = strtod(yytext,nullptr);
+#line 112 "./gecode/flatzinc/lexer.lxx"
+{ yylval->dValue = strtod(yytext,NULL);
                                    return FZ_FLOAT_LIT; }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 118 "gecode/flatzinc/lexer.lxx"
-{ yylval->dValue = strtod(yytext,nullptr);
+#line 114 "./gecode/flatzinc/lexer.lxx"
+{ yylval->dValue = strtod(yytext,NULL);
                            return FZ_FLOAT_LIT; }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 120 "gecode/flatzinc/lexer.lxx"
+#line 116 "./gecode/flatzinc/lexer.lxx"
 { return *yytext; }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 121 "gecode/flatzinc/lexer.lxx"
+#line 117 "./gecode/flatzinc/lexer.lxx"
 { return FZ_DOTDOT; }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 122 "gecode/flatzinc/lexer.lxx"
+#line 118 "./gecode/flatzinc/lexer.lxx"
 { return FZ_COLONCOLON; }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 123 "gecode/flatzinc/lexer.lxx"
+#line 119 "./gecode/flatzinc/lexer.lxx"
 { return FZ_ANNOTATION; }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 124 "gecode/flatzinc/lexer.lxx"
+#line 120 "./gecode/flatzinc/lexer.lxx"
 { return FZ_ANY; }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 125 "gecode/flatzinc/lexer.lxx"
+#line 121 "./gecode/flatzinc/lexer.lxx"
 { return FZ_ARRAY; }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 126 "gecode/flatzinc/lexer.lxx"
+#line 122 "./gecode/flatzinc/lexer.lxx"
 { return FZ_BOOL; }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 127 "gecode/flatzinc/lexer.lxx"
+#line 123 "./gecode/flatzinc/lexer.lxx"
 { return FZ_CASE; }
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 128 "gecode/flatzinc/lexer.lxx"
+#line 124 "./gecode/flatzinc/lexer.lxx"
 { return FZ_CONSTRAINT; }
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 129 "gecode/flatzinc/lexer.lxx"
+#line 125 "./gecode/flatzinc/lexer.lxx"
 { return FZ_DEFAULT; }
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 130 "gecode/flatzinc/lexer.lxx"
+#line 126 "./gecode/flatzinc/lexer.lxx"
 { return FZ_ELSE; }
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 131 "gecode/flatzinc/lexer.lxx"
+#line 127 "./gecode/flatzinc/lexer.lxx"
 { return FZ_ELSEIF; }
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 132 "gecode/flatzinc/lexer.lxx"
+#line 128 "./gecode/flatzinc/lexer.lxx"
 { return FZ_ENDIF; }
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 133 "gecode/flatzinc/lexer.lxx"
+#line 129 "./gecode/flatzinc/lexer.lxx"
 { return FZ_ENUM; }
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 134 "gecode/flatzinc/lexer.lxx"
+#line 130 "./gecode/flatzinc/lexer.lxx"
 { return FZ_FLOAT; }
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 135 "gecode/flatzinc/lexer.lxx"
+#line 131 "./gecode/flatzinc/lexer.lxx"
 { return FZ_FUNCTION; }
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 136 "gecode/flatzinc/lexer.lxx"
+#line 132 "./gecode/flatzinc/lexer.lxx"
 { return FZ_IF; }
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 137 "gecode/flatzinc/lexer.lxx"
+#line 133 "./gecode/flatzinc/lexer.lxx"
 { return FZ_INCLUDE; }
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 138 "gecode/flatzinc/lexer.lxx"
+#line 134 "./gecode/flatzinc/lexer.lxx"
 { return FZ_INT; }
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 139 "gecode/flatzinc/lexer.lxx"
+#line 135 "./gecode/flatzinc/lexer.lxx"
 { return FZ_LET; }
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 140 "gecode/flatzinc/lexer.lxx"
+#line 136 "./gecode/flatzinc/lexer.lxx"
 { yylval->bValue = false; return FZ_MAXIMIZE; }
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 141 "gecode/flatzinc/lexer.lxx"
+#line 137 "./gecode/flatzinc/lexer.lxx"
 { yylval->bValue = true; return FZ_MINIMIZE; }
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 142 "gecode/flatzinc/lexer.lxx"
+#line 138 "./gecode/flatzinc/lexer.lxx"
 { return FZ_OF; }
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 143 "gecode/flatzinc/lexer.lxx"
+#line 139 "./gecode/flatzinc/lexer.lxx"
 { return FZ_SATISFY; }
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 144 "gecode/flatzinc/lexer.lxx"
+#line 140 "./gecode/flatzinc/lexer.lxx"
 { return FZ_OUTPUT; }
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 145 "gecode/flatzinc/lexer.lxx"
+#line 141 "./gecode/flatzinc/lexer.lxx"
 { yylval->bValue = false; return FZ_PAR; }
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 146 "gecode/flatzinc/lexer.lxx"
+#line 142 "./gecode/flatzinc/lexer.lxx"
 { return FZ_PREDICATE; }
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 147 "gecode/flatzinc/lexer.lxx"
+#line 143 "./gecode/flatzinc/lexer.lxx"
 { return FZ_RECORD; }
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 148 "gecode/flatzinc/lexer.lxx"
+#line 144 "./gecode/flatzinc/lexer.lxx"
 { return FZ_SET; }
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 149 "gecode/flatzinc/lexer.lxx"
+#line 145 "./gecode/flatzinc/lexer.lxx"
 { return FZ_SHOWCOND; }
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 150 "gecode/flatzinc/lexer.lxx"
+#line 146 "./gecode/flatzinc/lexer.lxx"
 { return FZ_SHOW; }
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 151 "gecode/flatzinc/lexer.lxx"
+#line 147 "./gecode/flatzinc/lexer.lxx"
 { return FZ_SOLVE; }
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 152 "gecode/flatzinc/lexer.lxx"
+#line 148 "./gecode/flatzinc/lexer.lxx"
 { return FZ_STRING; }
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
-#line 153 "gecode/flatzinc/lexer.lxx"
+#line 149 "./gecode/flatzinc/lexer.lxx"
 { return FZ_TEST; }
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
-#line 154 "gecode/flatzinc/lexer.lxx"
+#line 150 "./gecode/flatzinc/lexer.lxx"
 { return FZ_THEN; }
 	YY_BREAK
 case 47:
 YY_RULE_SETUP
-#line 155 "gecode/flatzinc/lexer.lxx"
+#line 151 "./gecode/flatzinc/lexer.lxx"
 { return FZ_TUPLE; }
 	YY_BREAK
 case 48:
 YY_RULE_SETUP
-#line 156 "gecode/flatzinc/lexer.lxx"
+#line 152 "./gecode/flatzinc/lexer.lxx"
 { return FZ_TYPE; }
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
-#line 157 "gecode/flatzinc/lexer.lxx"
+#line 153 "./gecode/flatzinc/lexer.lxx"
 { yylval->bValue = true; return FZ_VAR; }
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
-#line 158 "gecode/flatzinc/lexer.lxx"
+#line 154 "./gecode/flatzinc/lexer.lxx"
 { return FZ_VARIANT_RECORD; }
 	YY_BREAK
 case 51:
 YY_RULE_SETUP
-#line 159 "gecode/flatzinc/lexer.lxx"
+#line 155 "./gecode/flatzinc/lexer.lxx"
 { return FZ_WHERE; }
 	YY_BREAK
 case 52:
 YY_RULE_SETUP
-#line 160 "gecode/flatzinc/lexer.lxx"
+#line 156 "./gecode/flatzinc/lexer.lxx"
 { yylval->sValue = strdup(yytext); return FZ_ID; }
 	YY_BREAK
 case 53:
 YY_RULE_SETUP
-#line 161 "gecode/flatzinc/lexer.lxx"
+#line 157 "./gecode/flatzinc/lexer.lxx"
 { yylval->sValue = strdup(yytext); return FZ_U_ID; }
 	YY_BREAK
 case 54:
 YY_RULE_SETUP
-#line 162 "gecode/flatzinc/lexer.lxx"
+#line 158 "./gecode/flatzinc/lexer.lxx"
 {
                     yylval->sValue = strdup(yytext+1);
                     yylval->sValue[strlen(yytext)-2] = 0;
@@ -1318,15 +1314,15 @@ YY_RULE_SETUP
 	YY_BREAK
 case 55:
 YY_RULE_SETUP
-#line 166 "gecode/flatzinc/lexer.lxx"
+#line 162 "./gecode/flatzinc/lexer.lxx"
 { yyerror("Unknown character"); }
 	YY_BREAK
 case 56:
 YY_RULE_SETUP
-#line 167 "gecode/flatzinc/lexer.lxx"
+#line 163 "./gecode/flatzinc/lexer.lxx"
 ECHO;
 	YY_BREAK
-#line 1329 "gecode/flatzinc/lexer.yy.cpp"
+#line 1325 "gecode/flatzinc/lexer.yy.cpp"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1412,8 +1408,8 @@ case YY_STATE_EOF(INITIAL):
 					 * yy_c_buf_p so that if some total
 					 * hoser (like flex itself) wants to
 					 * call the scanner after we return the
-					 * YY_nullptr, it'll still work - another
-					 * YY_nullptr will get returned.
+					 * YY_NULL, it'll still work - another
+					 * YY_NULL will get returned.
 					 */
 					yyg->yy_c_buf_p = yyg->yytext_ptr + YY_MORE_ADJ;
 
@@ -1542,7 +1538,7 @@ static int yy_get_next_buffer (yyscan_t yyscanner)
 				}
 			else
 				/* Can't grow it, we don't own it. */
-				b->yy_ch_buf = nullptr;
+				b->yy_ch_buf = NULL;
 
 			if ( ! b->yy_ch_buf )
 				YY_FATAL_ERROR(
@@ -1972,7 +1968,7 @@ static void yy_load_buffer_state  (yyscan_t yyscanner)
 void yypush_buffer_state (YY_BUFFER_STATE new_buffer , yyscan_t yyscanner)
 {
     struct yyguts_t * yyg = (struct yyguts_t*)yyscanner;
-	if (new_buffer == nullptr)
+	if (new_buffer == NULL)
 		return;
 
 	yyensure_buffer_stack(yyscanner);
@@ -2007,7 +2003,7 @@ void yypop_buffer_state (yyscan_t yyscanner)
 		return;
 
 	yy_delete_buffer(YY_CURRENT_BUFFER , yyscanner);
-	YY_CURRENT_BUFFER_LVALUE = nullptr;
+	YY_CURRENT_BUFFER_LVALUE = NULL;
 	if (yyg->yy_buffer_stack_top > 0)
 		--yyg->yy_buffer_stack_top;
 
@@ -2078,7 +2074,7 @@ YY_BUFFER_STATE yy_scan_buffer  (char * base, yy_size_t  size , yyscan_t yyscann
 	     base[size-2] != YY_END_OF_BUFFER_CHAR ||
 	     base[size-1] != YY_END_OF_BUFFER_CHAR )
 		/* They forgot to leave room for the EOB's. */
-		return nullptr;
+		return NULL;
 
 	b = (YY_BUFFER_STATE) yyalloc( sizeof( struct yy_buffer_state ) , yyscanner );
 	if ( ! b )
@@ -2087,7 +2083,7 @@ YY_BUFFER_STATE yy_scan_buffer  (char * base, yy_size_t  size , yyscan_t yyscann
 	b->yy_buf_size = (int) (size - 2);	/* "- 2" to take care of EOB's */
 	b->yy_buf_pos = b->yy_ch_buf = base;
 	b->yy_is_our_buffer = 0;
-	b->yy_input_file = nullptr;
+	b->yy_input_file = NULL;
 	b->yy_n_chars = b->yy_buf_size;
 	b->yy_is_interactive = 0;
 	b->yy_at_bol = 1;
@@ -2345,14 +2341,14 @@ void yyset_lval (YYSTYPE *  yylval_param , yyscan_t yyscanner)
  */
 int yylex_init(yyscan_t* ptr_yy_globals)
 {
-    if (ptr_yy_globals == nullptr){
+    if (ptr_yy_globals == NULL){
         errno = EINVAL;
         return 1;
     }
 
-    *ptr_yy_globals = (yyscan_t) yyalloc ( sizeof( struct yyguts_t ), nullptr );
+    *ptr_yy_globals = (yyscan_t) yyalloc ( sizeof( struct yyguts_t ), NULL );
 
-    if (*ptr_yy_globals == nullptr){
+    if (*ptr_yy_globals == NULL){
         errno = ENOMEM;
         return 1;
     }
@@ -2376,14 +2372,14 @@ int yylex_init_extra( YY_EXTRA_TYPE yy_user_defined, yyscan_t* ptr_yy_globals )
 
     yyset_extra (yy_user_defined, &dummy_yyguts);
 
-    if (ptr_yy_globals == nullptr){
+    if (ptr_yy_globals == NULL){
         errno = EINVAL;
         return 1;
     }
 
     *ptr_yy_globals = (yyscan_t) yyalloc ( sizeof( struct yyguts_t ), &dummy_yyguts );
 
-    if (*ptr_yy_globals == nullptr){
+    if (*ptr_yy_globals == NULL){
         errno = ENOMEM;
         return 1;
     }
@@ -2404,24 +2400,24 @@ static int yy_init_globals (yyscan_t yyscanner)
      * This function is called from yylex_destroy(), so don't allocate here.
      */
 
-    yyg->yy_buffer_stack = nullptr;
+    yyg->yy_buffer_stack = NULL;
     yyg->yy_buffer_stack_top = 0;
     yyg->yy_buffer_stack_max = 0;
-    yyg->yy_c_buf_p = nullptr;
+    yyg->yy_c_buf_p = NULL;
     yyg->yy_init = 0;
     yyg->yy_start = 0;
 
     yyg->yy_start_stack_ptr = 0;
     yyg->yy_start_stack_depth = 0;
-    yyg->yy_start_stack =  nullptr;
+    yyg->yy_start_stack =  NULL;
 
 /* Defined in main.c */
 #ifdef YY_STDINIT
     yyin = stdin;
     yyout = stdout;
 #else
-    yyin = nullptr;
-    yyout = nullptr;
+    yyin = NULL;
+    yyout = NULL;
 #endif
 
     /* For future reference: Set errno on error, since we are called by
@@ -2438,17 +2434,17 @@ int yylex_destroy  (yyscan_t yyscanner)
     /* Pop the buffer stack, destroying each element. */
 	while(YY_CURRENT_BUFFER){
 		yy_delete_buffer( YY_CURRENT_BUFFER , yyscanner );
-		YY_CURRENT_BUFFER_LVALUE = nullptr;
+		YY_CURRENT_BUFFER_LVALUE = NULL;
 		yypop_buffer_state(yyscanner);
 	}
 
 	/* Destroy the stack itself. */
 	yyfree(yyg->yy_buffer_stack , yyscanner);
-	yyg->yy_buffer_stack = nullptr;
+	yyg->yy_buffer_stack = NULL;
 
     /* Destroy the start condition stack. */
         yyfree( yyg->yy_start_stack , yyscanner );
-        yyg->yy_start_stack = nullptr;
+        yyg->yy_start_stack = NULL;
 
     /* Reset the globals. This is important in a non-reentrant scanner so the next time
      * yylex() is called, initialization will occur. */
@@ -2456,7 +2452,7 @@ int yylex_destroy  (yyscan_t yyscanner)
 
     /* Destroy the main struct (reentrant only). */
     yyfree ( yyscanner , yyscanner );
-    yyscanner = nullptr;
+    yyscanner = NULL;
     return 0;
 }
 
@@ -2518,7 +2514,7 @@ void yyfree (void * ptr , yyscan_t yyscanner)
 
 #define YYTABLES_NAME "yytables"
 
-#line 167 "gecode/flatzinc/lexer.lxx"
+#line 163 "./gecode/flatzinc/lexer.lxx"
 
 int yy_input_proc(char* buf, int size, yyscan_t yyscanner) {
   Gecode::FlatZinc::ParserState* parm =

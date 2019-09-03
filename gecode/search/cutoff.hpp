@@ -70,12 +70,12 @@ namespace Gecode { namespace Search {
       if (i <= n_start)
         return static_cast<unsigned long long int>(start[i-1]);
       unsigned long long int l = log(i);
-      if (i == (1U<<(l+1))-1)
-        return 1UL<<l;
-      i=i-(1U<<l)+1;
+      if (i == (1ULL<<(l+1))-1)
+        return 1ULL<<l;
+      i=i-(1ULL<<l)+1;
     }
     GECODE_NEVER;
-    return 0;
+    return 0ULL;
   }
 
 

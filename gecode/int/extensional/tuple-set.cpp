@@ -350,7 +350,7 @@ namespace Gecode {
             layers[i+1].states[t.o_state()].n_tuples
               += layers[i].states[t.i_state()].n_tuples;
           }
-          assert(n_edges <= dfa.max_degree());
+          assert(static_cast<unsigned int>(n_edges) <= dfa.max_degree());
         }
         // Found a support for the value
         if (n_edges > 0) {
