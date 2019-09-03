@@ -506,9 +506,9 @@ namespace Gecode {
     int search(void) const;
 
     /// Set default number of solutions to search for
-    void solutions(unsigned int n);
+    void solutions(unsigned long long int n);
     /// Return number of solutions to search for
-    unsigned int solutions(void) const;
+    unsigned long long int solutions(void) const;
 
     /// Set number of parallel threads
     void threads(double n);

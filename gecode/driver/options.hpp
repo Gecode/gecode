@@ -297,10 +297,10 @@ namespace Gecode {
   }
 
   inline void
-  Options::solutions(unsigned int n) {
+  Options::solutions(unsigned long long int n) {
     _solutions.value(n);
   }
-  inline unsigned int
+  inline unsigned long long int
   Options::solutions(void) const {
     return _solutions.value();
   }

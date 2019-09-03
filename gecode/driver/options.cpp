@@ -52,8 +52,9 @@ namespace Gecode {
     BaseOption::strdup(const char* s) {
       if (s == nullptr)
         return nullptr;
-      char* d = heap.alloc<char>(static_cast<unsigned long int>(strlen(s)+1));
-      (void) strcpy(d,s);
+      size_t l = strlen(s) + 1;
+      char* d = static_cast<char*>(heap.ralloc(l));
+      (void) memcpy(d,s,l);
       return d;
     }
 
@@ -61,9 +62,10 @@ namespace Gecode {
     BaseOption::stredup(const char* s) {
       if (s == nullptr)
         return nullptr;
-      char* d = heap.alloc<char>(static_cast<unsigned long int>(strlen(s)+2));
+      size_t l = strlen(s) + 1;
+      char* d = static_cast<char*>(heap.ralloc(l+1));
       d[0] = '-';
-      (void) strcpy(d+1,s);
+      (void) memcpy(d+1,s,l);
       return d;
     }
 

@@ -367,7 +367,9 @@ namespace Gecode { namespace Driver {
         {
           l_out << o.name() << endl;
           Support::Timer t;
-          int i = static_cast<int>(o.solutions());
+          unsigned long long int s_l =
+            (o.solutions() == 0) ? ULLONG_MAX : o.solutions();
+          unsigned long long int s_n = 0;
           t.start();
           if (s == nullptr)
             s = new Script(o);
@@ -399,10 +401,11 @@ namespace Gecode { namespace Driver {
                   }
                   break;
                 } else {
+                  s_n++;
                   delete px;
                   px = ex;
                 }
-              } while (--i != 0);
+              } while (s_n < s_l);
             } else {
               do {
                 Script* ex = e.next();
@@ -410,7 +413,8 @@ namespace Gecode { namespace Driver {
                   break;
                 ex->print(s_out);
                 delete ex;
-              } while (--i != 0);
+                s_n++;
+              } while (s_n < s_l);
             }
             if (o.interrupt())
               CombinedStop::installCtrlHandler(false);
@@ -440,8 +444,7 @@ namespace Gecode { namespace Driver {
                   << "\truntime:      ";
             stop(t, l_out);
             l_out << endl
-                  << "\tsolutions:    "
-                  << ::abs(static_cast<int>(o.solutions()) - i) << endl
+                  << "\tsolutions:    " << s_n << endl
                   << "\tpropagations: " << stat.propagate << endl
                   << "\tnodes:        " << stat.node << endl
                   << "\tfailures:     " << stat.fail << endl
@@ -463,7 +466,9 @@ namespace Gecode { namespace Driver {
         {
           l_out << o.name() << endl;
           Support::Timer t;
-          int i = static_cast<int>(o.solutions());
+          unsigned long long int s_l =
+            (o.solutions() == 0) ? ULLONG_MAX : o.solutions();
+          unsigned long long int s_n = 0;
           t.start();
           if (s == nullptr)
             s = new Script(o);
@@ -490,7 +495,8 @@ namespace Gecode { namespace Driver {
               if (ex == nullptr)
                 break;
               delete ex;
-            } while (--i != 0);
+              s_n++;
+            } while (s_n < s_l);
             if (o.interrupt())
               CombinedStop::installCtrlHandler(false);
             Search::Statistics stat = e.statistics();
@@ -500,8 +506,7 @@ namespace Gecode { namespace Driver {
                   << "\truntime:      ";
             stop(t, l_out);
             l_out << endl
-                  << "\tsolutions:    "
-                  << ::abs(static_cast<int>(o.solutions()) - i) << endl
+                  << "\tsolutions:    " << s_n << endl
                   << "\tpropagations: " << stat.propagate << endl
                   << "\tnodes:        " << stat.node << endl
                   << "\tfailures:     " << stat.fail << endl
@@ -525,9 +530,11 @@ namespace Gecode { namespace Driver {
           double* ts = new double[o.samples()];
           bool stopped = false;
           for (unsigned int ns = o.samples(); !stopped && ns--; ) {
+            unsigned long long int s_l =
+              (o.solutions() == 0) ? ULLONG_MAX : o.solutions();
             t.start();
             for (unsigned int k = o.iterations(); !stopped && k--; ) {
-              unsigned int i = o.solutions();
+              unsigned long long int s_n = 0;
               Script* s1 = new Script(o);
               Search::Options sok;
               sok.clone   = false;
@@ -548,7 +555,8 @@ namespace Gecode { namespace Driver {
                   if (ex == nullptr)
                     break;
                   delete ex;
-                } while (--i != 0);
+                  s_n++;
+                } while (s_n < s_l);
                 if (e.stopped())
                   stopped = true;
               }
