@@ -5475,7 +5475,7 @@ namespace Gecode {
    *
    * The variables in \a x are assigned values from the assigned variables
    * in the solution \a sx with a relaxation probability \a p. That is,
-   * if \$fp=0.1\f$ approximately 10% of the variables in \a x will be
+   * if \f$p=0.1\f$ approximately 10% of the variables in \a x will be
    * assigned a value from \a sx.
    *
    * The random numbers are generated from the generator \a r. At least
@@ -5500,7 +5500,7 @@ namespace Gecode {
    *
    * The variables in \a x are assigned values from the assigned variables
    * in the solution \a sx with a relaxation probability \a p. That is,
-   * if \$fp=0.1\f$ approximately 10% of the variables in \a x will be
+   * if \f$p=0.1\f$ approximately 10% of the variables in \a x will be
    * assigned a value from \a sx.
    *
    * The random numbers are generated from the generator \a r. At least
