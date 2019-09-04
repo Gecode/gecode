@@ -164,7 +164,7 @@ namespace Gecode { namespace Search {
   Cutoff::rnd(unsigned int seed,
               unsigned long long int min,
               unsigned long long int max,
-              unsigned int n) {
+              unsigned long long int n) {
     return new CutoffRandom(seed,min,max,n);
   }
   Cutoff*

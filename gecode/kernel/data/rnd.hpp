@@ -55,8 +55,18 @@ namespace Gecode {
       unsigned int seed(void) const;
       /// Set seed to \a s
       void seed(unsigned int s);
-      /// Get number between zero and \a n
+      /// Returns a random integer from the interval \f$[0\ldots n)\f$
       unsigned int operator ()(unsigned int n);
+      /**
+       * \brief Returns a random integer
+       *
+       * If \f$n\leq 0\f$ the returned integer is from the interval
+       * \f$[0\ldots n)\f$, otherwise from \f$(n\ldots 0]\f$.
+       *
+       */
+      int operator ()(int n);
+      /// Returns a random integer from the interval \f$[0\ldots n)\f$
+      unsigned long long int operator ()(unsigned long long int n);
       /// Delete implemenentation
       virtual ~IMP(void);
     };
@@ -89,8 +99,14 @@ namespace Gecode {
     void hw(void);
     /// Return current seed
     unsigned int seed(void) const;
-    /// Return a random integer from the interval [0..n)
+    /// Returns a random integer from the interval \f$[0\ldots n)\f$
     unsigned int operator ()(unsigned int n);
+    /// Returns a random integer from the interval \f$[0\ldots n)\f$
+    int operator ()(int n);
+    /// Returns a random integer from the interval \f$[0\ldots n)\f$
+    unsigned long long int operator ()(unsigned long long int n);
+    /// Returns a random integer from the interval \f$[0\ldots n)\f$
+    long long int operator ()(long long int n);
   };
 
   forceinline unsigned int
@@ -115,6 +131,30 @@ namespace Gecode {
     m.release();
     return r;
   }
+  forceinline int
+  Rnd::IMP::operator ()(int n) {
+    unsigned int r;
+    m.acquire();
+    r=rg(n);
+    m.release();
+    return r;
+  }
+  forceinline unsigned long long int
+  Rnd::IMP::operator ()(unsigned long long int n) {
+    unsigned long long int r;
+    m.acquire();
+    r=rg(n);
+    m.release();
+    return r;
+  }
+  forceinline long long int
+  Rnd::IMP::operator ()(long long int n) {
+    unsigned long long int r;
+    m.acquire();
+    r=rg(n);
+    m.release();
+    return r;
+  }
 
   forceinline unsigned int
   Rnd::seed(void) const {
@@ -123,6 +163,21 @@ namespace Gecode {
   }
   forceinline unsigned int
   Rnd::operator ()(unsigned int n) {
+    IMP* i = static_cast<IMP*>(object());
+    return (*i)(n);
+  }
+  forceinline int
+  Rnd::operator ()(int n) {
+    IMP* i = static_cast<IMP*>(object());
+    return (*i)(n);
+  }
+  forceinline unsigned long long int
+  Rnd::operator ()(unsigned long long int n) {
+    IMP* i = static_cast<IMP*>(object());
+    return (*i)(n);
+  }
+  forceinline long long int
+  Rnd::operator ()(long long int n) {
     IMP* i = static_cast<IMP*>(object());
     return (*i)(n);
   }

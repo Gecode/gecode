@@ -33,6 +33,8 @@
  *
  */
 
+#include <algorithm>
+
 namespace Gecode { namespace Support {
 
   /** \brief Template for linear congruential generators
@@ -58,8 +60,14 @@ namespace Gecode { namespace Support {
     LinearCongruentialGenerator(unsigned int s = 1);
     /// Return current seed
     unsigned int seed(void) const;
-    /// Returns a random integer from the interval [0..n)
+    /// Returns a random integer from the interval \f$[0\ldots n)\f$
     unsigned int operator ()(unsigned int n);
+    /// Returns a random integer from the interval \f$[0\ldots n)\f$
+    int operator ()(int n);
+    /// Returns a random integer from the interval \f$[0\ldots n)\f$
+    unsigned long long int operator ()(unsigned long long int n);
+    /// Returns a random integer from the interval \f$[0\ldots n)\f$
+    long long int operator ()(long long int n);
     /// Report size occupied
     size_t size(void) const;
   };
@@ -92,12 +100,40 @@ namespace Gecode { namespace Support {
   template<unsigned int m, unsigned int a, unsigned int q, unsigned int r>
   forceinline unsigned int
   LinearCongruentialGenerator<m,a,q,r>::operator ()(unsigned int n) {
-    unsigned int x1 = next() & ((1<<16)-1);
-    unsigned int x2 = next() & ((1<<16)-1);
-    if (n < 2) return 0;
+    unsigned int x1 = next() & ((1U<<16)-1U);
+    unsigned int x2 = next() & ((1U<<16)-1U);
+    if (n < 2)
+      return 0;
     double d = static_cast<double>(((x1<<16) | x2) % max) / max;
     unsigned int val = static_cast<unsigned int>(n * d);
     return (val < n) ? val : (n-1);
+  }
+  template<unsigned int m, unsigned int a, unsigned int q, unsigned int r>
+  forceinline int
+  LinearCongruentialGenerator<m,a,q,r>::operator ()(int n) {
+    return (n < 0) ? 0 :
+      static_cast<int>((*this)(static_cast<unsigned int>(n)));
+  }
+  template<unsigned int m, unsigned int a, unsigned int q, unsigned int r>
+  forceinline unsigned long long int
+  LinearCongruentialGenerator<m,a,q,r>::operator ()
+    (unsigned long long int n) {
+    if (n <= UINT_MAX)
+      return (*this)(static_cast<unsigned int>(n));
+    unsigned long long int x1 = next() & ((1LLU<<16)-1LLU);
+    unsigned long long int x2 = next() & ((1LLU<<16)-1LLU);
+    unsigned long long int x3 = next() & ((1LLU<<16)-1LLU);
+    unsigned long long int x4 = next() & ((1LLU<<16)-1LLU);
+    if (n < 2)
+      return 0;
+    return ((x1 << 48) | (x2 << 32) | (x3 << 16) | x4) % n;
+  }
+  template<unsigned int m, unsigned int a, unsigned int q, unsigned int r>
+  forceinline long long int
+  LinearCongruentialGenerator<m,a,q,r>::operator ()(long long int  n) {
+    return (n < 0) ? 0 :
+      static_cast<long long int>
+      ((*this)(static_cast<unsigned long long int>(n)));
   }
   template<unsigned int m, unsigned int a, unsigned int q, unsigned int r>
   forceinline size_t

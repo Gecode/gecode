@@ -506,7 +506,7 @@ namespace Gecode { namespace Search {
     static Cutoff*
     rnd(unsigned int seed,
         unsigned long long int min, unsigned long long int max,
-        unsigned int n);
+        unsigned long long int n);
     /// Append cutoff values from \a c2 after \a n values from \a c1
     static Cutoff*
     append(Cutoff* c1, unsigned long long int n, Cutoff* c2);
@@ -614,7 +614,7 @@ namespace Gecode { namespace Search {
     /// Minimum cutoff value
     unsigned long long int min;
     /// Random values
-    unsigned int n;
+    unsigned long long int n;
     /// Step size
     unsigned long long int step;
     /// Current value
@@ -623,7 +623,7 @@ namespace Gecode { namespace Search {
     /// Constructor
     CutoffRandom(unsigned int seed,
                  unsigned long long int min, unsigned long long int max,
-                 unsigned int n);
+                 unsigned long long int n);
     /// Return the current cutoff value
     virtual unsigned long long int operator ()(void) const;
     /// Increment and return the next cutoff value
