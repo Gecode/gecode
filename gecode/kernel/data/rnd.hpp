@@ -57,16 +57,12 @@ namespace Gecode {
       void seed(unsigned int s);
       /// Returns a random integer from the interval \f$[0\ldots n)\f$
       unsigned int operator ()(unsigned int n);
-      /**
-       * \brief Returns a random integer
-       *
-       * If \f$n\leq 0\f$ the returned integer is from the interval
-       * \f$[0\ldots n)\f$, otherwise from \f$(n\ldots 0]\f$.
-       *
-       */
+      /// Returns a random integer from the interval \f$[0\ldots n)\f$
       int operator ()(int n);
       /// Returns a random integer from the interval \f$[0\ldots n)\f$
       unsigned long long int operator ()(unsigned long long int n);
+      /// Returns a random integer from the interval \f$[0\ldots n)\f$
+      long long int operator ()(long long int n);
       /// Delete implemenentation
       virtual ~IMP(void);
     };
