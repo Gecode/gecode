@@ -129,7 +129,7 @@ namespace Gecode {
   }
   forceinline int
   Rnd::IMP::operator ()(int n) {
-    unsigned int r;
+    int r;
     m.acquire();
     r=rg(n);
     m.release();
@@ -145,7 +145,7 @@ namespace Gecode {
   }
   forceinline long long int
   Rnd::IMP::operator ()(long long int n) {
-    unsigned long long int r;
+    long long int r;
     m.acquire();
     r=rg(n);
     m.release();

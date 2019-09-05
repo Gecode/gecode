@@ -103,19 +103,28 @@ namespace Gecode { namespace Support {
 
   template<class A>
   forceinline bool
-  BitSetOffset<A>::get(int i) const { return BitSetBase::get(i-_offset); }
+  BitSetOffset<A>::get(int i) const { 
+    return BitSetBase::get(static_cast<unsigned int>(i-_offset));
+  }
 
   template<class A>
   forceinline void
-  BitSetOffset<A>::set(int i) { BitSetBase::set(i-_offset); }
+  BitSetOffset<A>::set(int i) {
+    BitSetBase::set(static_cast<unsigned int>(i-_offset));
+  }
 
   template<class A>
   forceinline void
-  BitSetOffset<A>::clear(int i) { BitSetBase::clear(i-_offset); }
+  BitSetOffset<A>::clear(int i) {
+    BitSetBase::clear(static_cast<unsigned int>(i-_offset));
+  }
 
   template<class A>
   forceinline int
-  BitSetOffset<A>::next(int i) const { return _offset + BitSetBase::next(i-_offset); }
+  BitSetOffset<A>::next(int i) const {
+    return _offset + static_cast<int>
+      (BitSetBase::next(static_cast<unsigned int>(i-_offset)));
+  }
 
   template<class A>
   void
@@ -133,7 +142,7 @@ namespace Gecode { namespace Support {
   template<class A>
   forceinline int
   BitSetOffset<A>::max_bit(void) const {
-    return _offset + size() - 1;
+    return _offset + static_cast<int>(size()) - 1;
   }
 
   template<class A>
