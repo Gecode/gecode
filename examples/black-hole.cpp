@@ -41,6 +41,21 @@
 using namespace Gecode;
 
 namespace {
+
+  /// Wrapper for random number generator
+  class Random {
+  private:
+    /// The actual generator
+    Support::RandomGenerator g;
+  public:
+    /// Initialize
+    Random(unsigned int seed) : g(seed) {}
+    /// Generate a random number
+    int operator ()(int n) {
+      return g(n);
+    }
+  };
+
   using std::vector;
 
   /// Layout of the cards
@@ -60,7 +75,7 @@ namespace {
     // Deck without the Ace of Spades
     vector<int> deck(51);
     for (int i = 51; i--; ) deck[i] = i+1;
-    Support::RandomGenerator rnd(seed+1);
+    Random rnd(seed+1);
     std::random_shuffle(deck.begin(), deck.end(), rnd);
 
     // Place cards from deck
