@@ -2003,7 +2003,7 @@ namespace Gecode { namespace FlatZinc {
     if ((mi.type() == MetaInfo::RESTART) && (mi.restart() != 0) &&
         (_lns > 0) && (mi.last()==nullptr) && (_lnsInitialSolution.size()>0)) {
       for (unsigned int i=iv_lns.size(); i--;) {
-        if (_random(99) <= _lns) {
+        if (_random(99U) <= _lns) {
           rel(*this, iv_lns[i], IRT_EQ, _lnsInitialSolution[i]);
         }
       }
@@ -2013,7 +2013,7 @@ namespace Gecode { namespace FlatZinc {
       const FlatZincSpace& last =
         static_cast<const FlatZincSpace&>(*mi.last());
       for (unsigned int i=iv_lns.size(); i--;) {
-        if (_random(99) <= _lns) {
+        if (_random(99U) <= _lns) {
           rel(*this, iv_lns[i], IRT_EQ, last.iv_lns[i]);
         }
       }
