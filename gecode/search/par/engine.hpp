@@ -72,13 +72,13 @@ namespace Gecode { namespace Search { namespace Par {
   forceinline void
   Engine<Tracer>::block(void) {
     _cmd = C_WAIT;
-    _m_wait.acquire();
+    Support::Thread::acquireGlobalMutex(&_m_wait);
   }
   template<class Tracer>
   forceinline void
   Engine<Tracer>::release(Cmd c) {
     _cmd = c;
-    _m_wait.release();
+    Support::Thread::releaseGlobalMutex(&_m_wait);
   }
   template<class Tracer>
   forceinline void
