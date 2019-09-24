@@ -124,16 +124,16 @@ namespace Gecode { namespace Support {
     
     class GlobalMutexRunnableInit {
     public:
-      GlobalMutexRunnable gmr;
-      GlobalMutexRunnableInit(void) {
-        Thread::run(&gmr);
+      GlobalMutexRunnable* gmr;
+      GlobalMutexRunnableInit(void) : gmr(new GlobalMutexRunnable) {
+        Thread::run(gmr);
       }
     };
     
     GlobalMutexRunnable&
     globalMutexRunnable(void) {
       static GlobalMutexRunnableInit gmri;
-      return gmri.gmr;
+      return *gmri.gmr;
     }
   }
 
