@@ -336,6 +336,10 @@ namespace Gecode { namespace Support {
     static void sleep(unsigned int ms);
     /// Return number of processing units (1 if information not available)
     static unsigned int npu(void);
+    /// acquire mutex \a m globally and possibly lock
+    GECODE_SUPPORT_EXPORT static void acquireGlobalMutex(Mutex* m);
+    /// release globally acquired mutex \a m
+    GECODE_SUPPORT_EXPORT static void releaseGlobalMutex(Mutex* m);
   private:
     /// A thread cannot be copied
     Thread(const Thread&) {}

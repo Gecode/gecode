@@ -74,6 +74,79 @@ namespace Gecode { namespace Support {
     }
   }
 
+  namespace {
+
+    class GlobalMutexRunnable : public Runnable {
+    protected:
+      Mutex _m;
+      Mutex _m_write;
+      Event _e;
+      Event _e_done;
+      Mutex* _to_acquire;
+      Mutex* _to_release;
+    public:
+      GlobalMutexRunnable(void) : _to_acquire(nullptr), _to_release(nullptr) {}
+      virtual void run(void) {
+        while (true) {
+          _m.acquire();
+          if (_to_acquire) {
+            _to_acquire->acquire();
+            _to_acquire = nullptr;
+            _e_done.signal();
+          } else if (_to_release) {
+            _to_release->release();
+            _to_release = nullptr;
+            _e_done.signal();
+          }
+          _m.release();
+          _e.wait();
+        }
+      }
+      void acquire(Mutex* m) {
+        _m_write.acquire();
+        _m.acquire();
+        _to_acquire = m;
+        _m.release();
+        _e.signal();
+        _e_done.wait();
+        _m_write.release();
+      }
+      void release(Mutex* m) {
+        _m_write.acquire();
+        _m.acquire();
+        _to_release = m;
+        _m.release();
+        _e.signal();
+        _e_done.wait();
+        _m_write.release();
+      }
+    };
+    
+    class GlobalMutexRunnableInit {
+    public:
+      GlobalMutexRunnable* gmr;
+      GlobalMutexRunnableInit(void) : gmr(new GlobalMutexRunnable) {
+        Thread::run(gmr);
+      }
+    };
+    
+    GlobalMutexRunnable&
+    globalMutexRunnable(void) {
+      static GlobalMutexRunnableInit gmri;
+      return *gmri.gmr;
+    }
+  }
+
+  void
+  Thread::acquireGlobalMutex(Mutex* m) {
+    globalMutexRunnable().acquire(m);
+  }
+
+  void
+  Thread::releaseGlobalMutex(Mutex* m) {
+    globalMutexRunnable().release(m);
+  }
+
 }}
 
 // STATISTICS: support-any
