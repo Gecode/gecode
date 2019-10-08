@@ -252,33 +252,22 @@ namespace Test { namespace Int {
     return "NONE";
   }
 
-  inline
-  std::string
+  inline std::string
   Test::str(bool b) {
-    std::stringstream s;
-    if (b)
-      s << "+";
-    else 
-      s << "-";
-    return s.str();
+    return Base::str(b);
   }
 
-  inline
-  std::string
+  inline std::string
   Test::str(int i) {
-    std::stringstream s;
-    s << i;
-    return s.str();
+    return Base::str(i);
   }
 
-  inline
-  std::string
+  inline std::string
   Test::str(const Gecode::IntArgs& x) {
-    std::string s = "";
-    for (int i=0; i<x.size()-1; i++)
-      s += str(x[i]) + ",";
-    return "[" + s + str(x[x.size()-1]) + "]";
+    return Base::str(x);
   }
+
+
 
   template<class T>
   inline bool

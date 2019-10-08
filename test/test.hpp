@@ -67,6 +67,32 @@ namespace Test {
     return rand(opt.fixprob) == 0;
   }
 
+  inline std::string
+  Base::str(bool b) {
+    std::stringstream s;
+    if (b)
+      s << "+";
+    else 
+      s << "-";
+    return s.str();
+  }
+
+  inline std::string
+  Base::str(int i) {
+    std::stringstream s;
+    s << i;
+    return s.str();
+  }
+
+  inline std::string
+  Base::str(const Gecode::IntArgs& x) {
+    std::string s = "";
+    for (int i=0; i<x.size()-1; i++)
+      s += str(x[i]) + ",";
+    return "[" + s + str(x[x.size()-1]) + "]";
+  }
+
+
 }
 
 // STATISTICS: test-core

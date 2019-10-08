@@ -307,18 +307,18 @@ namespace Test {
       virtual bool run(void);
       /// \name Mapping scalar values to strings
       //@{
-      /// Map integer propagation level to string
-      static std::string str(Gecode::IntPropLevel ipl);
-      /// Map integer relation to string
-      static std::string str(Gecode::IntRelType irl);
-      /// Map Boolean operation to string
-      static std::string str(Gecode::BoolOpType bot);
       /// Map bool to string
       static std::string str(bool b);
       /// Map integer to string
       static std::string str(int i);
       /// Map integer array to string
       static std::string str(const Gecode::IntArgs& i);
+      /// Map integer propagation level to string
+      static std::string str(Gecode::IntPropLevel ipl);
+      /// Map integer relation to string
+      static std::string str(Gecode::IntRelType irl);
+      /// Map Boolean operation to string
+      static std::string str(Gecode::BoolOpType bot);
       //@}
       /// \name General support
       //@{

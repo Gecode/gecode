@@ -40,6 +40,7 @@
 
 #include <gecode/kernel.hh>
 #include <gecode/search.hh>
+#include <gecode/int.hh>
 
 #include <iostream>
 #include <sstream>
@@ -129,6 +130,16 @@ namespace Test {
     static bool fixpoint(void);
     /// Destructor
     virtual ~Base(void);
+
+    /// \name Mapping scalar values to strings
+    //@{
+    /// Map bool to string
+    static std::string str(bool b);
+    /// Map integer to string
+    static std::string str(int i);
+    /// Map integer array to string
+    static std::string str(const Gecode::IntArgs& i);
+    //@}
 
     /// Random number generator
     static Gecode::Support::RandomGenerator rand;
