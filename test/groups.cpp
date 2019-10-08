@@ -41,19 +41,20 @@ namespace Test { namespace Groups {
   /// Test space
   class GroupSpace : public Gecode::Space {
   protected:
-    /// Two integer variables
-    Gecode::IntVar x, y;
+    /// Integer variables
+    Gecode::IntVarArray x;
   public:
     /// Propagator groups
     Gecode::PropagatorGroup a, b;
     /// Constructor for creation
-    GroupSpace(int n) : x(*this,0,10), y(*this,0,10) {
+    GroupSpace(int n) : x(*this,10,-10,10) {
+      using namespace Gecode;
       switch (n) {
       case 2:
-        Gecode::rel((*this)(b), x, Gecode::IRT_LE, y);
+        distinct((*this)(b), x, IPL_DOM);
         // fall through
       case 1:
-        Gecode::rel((*this)(a), x, Gecode::IRT_LE, y);
+        rel((*this)(a), x[0], Gecode::IRT_LE, x[1]);
         break;
       default:
         break;
@@ -62,7 +63,6 @@ namespace Test { namespace Groups {
     /// Constructor for cloning \a s
     GroupSpace(GroupSpace& s) : Space(s), a(s.a), b(s.b) {
       x.update(*this,s.x);
-      y.update(*this,s.y);
     }
     /// Copy during cloning
     virtual Space* copy(void) {

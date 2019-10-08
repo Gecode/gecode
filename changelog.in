@@ -69,6 +69,14 @@ Date: 2019-??-??
 Let's see.
 
 [ENTRY]
+Module: kernel
+What:   bug
+Rank:   minor
+Thanks:	Konstantin Popov
+[DESCRIPTION]
+Fixed crash when killing the last propagator in a space.
+
+[ENTRY]
 Module: example
 What:   bug
 Rank:   minor
