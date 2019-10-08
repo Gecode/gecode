@@ -3665,6 +3665,18 @@ namespace Gecode {
     assert(!failed());
     p.unlink();
     rfree(&p,p.dispose(*this));
+    // Is the space already stable?
+    if (pc.p.active < &pc.p.queue[0])
+      return;
+    // Enforce that empty queues are ignored
+    do {
+      assert(pc.p.active >= &pc.p.queue[0]);
+      // First propagator or link back to queue?
+      if (pc.p.active != pc.p.active->next())
+        return; // A propagator is left in the queue
+    } while (--pc.p.active >= &pc.p.queue[0]);
+    // The space is stable now
+    assert(pc.p.active < &pc.p.queue[0]);
   }
 
   forceinline Brancher*
