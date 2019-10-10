@@ -69,6 +69,16 @@ Date: 2019-??-??
 Let's see.
 
 [ENTRY]
+Module: minimodel
+What:   change
+Rank:   minor
+Thanks:	Marco Correia
+[DESCRIPTION]
+Do not require that cost for FloatMinimizeSpace (use the maximum
+instead) and FloatMaximizeSpace (use the minimum instead) must be
+assigned.
+
+[ENTRY]
 Module: kernel
 What:   bug
 Rank:   minor

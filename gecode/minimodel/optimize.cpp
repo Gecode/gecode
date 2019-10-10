@@ -89,7 +89,7 @@ namespace Gecode {
       dynamic_cast<const FloatMinimizeSpace*>(&_best);
     if (best == nullptr)
       throw DynamicCastFailed("FloatMinimizeSpace::constrain");
-    rel(*this, cost(), FRT_LE, best->cost().val()-step);
+    rel(*this, cost(), FRT_LE, best->cost().max()-step);
   }
 
 
@@ -99,7 +99,7 @@ namespace Gecode {
       dynamic_cast<const FloatMaximizeSpace*>(&_best);
     if (best == nullptr)
       throw DynamicCastFailed("FloatMaximizeSpace::constrain");
-    rel(*this, cost(), FRT_GR, best->cost().val()+step);
+    rel(*this, cost(), FRT_GR, best->cost().min()+step);
   }
 
 #endif
