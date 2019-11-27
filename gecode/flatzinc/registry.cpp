@@ -69,6 +69,7 @@ namespace Gecode { namespace FlatZinc {
   Registry::add(const std::string& id, poster p) {
     r[id] = p;
     r["gecode_" + id] = p;
+    r["fzn_" + id] = p;
   }
 
   namespace {
@@ -1562,8 +1563,11 @@ namespace Gecode { namespace FlatZinc {
         registry().add("array_bool_lt", &p_array_bool_lt);
         registry().add("array_bool_lq", &p_array_bool_lq);
         registry().add("count", &p_count);
-        registry().add("count_reif", &p_count_reif);
-        registry().add("count_imp", &p_count_imp);
+        registry().add("count", &p_count_reif);
+        registry().add("count", &p_count_imp);
+        registry().add("count_eq", &p_count);
+        registry().add("count_eq_reif", &p_count_reif);
+        registry().add("count_eq_imp", &p_count_imp);
         registry().add("at_least_int", &p_at_least);
         registry().add("at_most_int", &p_at_most);
         registry().add("gecode_bin_packing_load", &p_bin_packing_load);

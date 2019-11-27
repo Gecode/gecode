@@ -69,6 +69,16 @@ Date: 2019-??-??
 Let's see.
 
 [ENTRY]
+Module: flatzinc
+What:   change
+Rank:   minor
+[DESCRIPTION]
+The MiniZinc global constraint library has been updated for MiniZinc
+version 2.3.0 and higher, taking advantage of the new library
+structure that separates the modelling-level definition of a predicate
+from the solver-level one.
+
+[ENTRY]
 Module: minimodel
 What:   change
 Rank:   minor
