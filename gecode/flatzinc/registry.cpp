@@ -1223,6 +1223,14 @@ namespace Gecode { namespace FlatZinc {
         return;
       }
 
+      bool nonzeroDuration = true;
+      for (int i=0; i<n; i++) {
+        if (duration[i].min() <= 0) {
+          nonzeroDuration = false;
+          break;
+        }
+      }
+
       int minHeight = std::min(height[0].min(),height[1].min());
       int minHeight2 = std::max(height[0].min(),height[1].min());
       for (int i=2; i<n; i++) {
@@ -1233,9 +1241,9 @@ namespace Gecode { namespace FlatZinc {
           minHeight2 = height[i].min();
         }
       }
-      bool disjunctive =
+      bool disjunctive = nonzeroDuration && (
        (minHeight > bound.max()/2) ||
-       (minHeight2 > bound.max()/2 && minHeight+minHeight2>bound.max());
+       (minHeight2 > bound.max()/2 && minHeight+minHeight2>bound.max()));
       if (disjunctive) {
         rel(s, bound >= max(height));
         // Unary
@@ -1252,7 +1260,7 @@ namespace Gecode { namespace FlatZinc {
           unshare(s,start);
           unary(s,start,duration,end);
         }
-      } else if (height.assigned()) {
+      } else if (nonzeroDuration && height.assigned()) {
         IntArgs heightI(n);
         for (int i=n; i--;)
           heightI[i] = height[i].val();
@@ -1267,7 +1275,7 @@ namespace Gecode { namespace FlatZinc {
             end[i] = expr(s,start[i]+duration[i]);
           cumulative(s, bound, start, duration, end, heightI);
         }
-      } else if (bound.assigned()) {
+      } else if (nonzeroDuration && bound.assigned()) {
         IntArgs machine = IntArgs::create(n,0,0);
         IntArgs limit({bound.val()});
         IntVarArgs end(n);

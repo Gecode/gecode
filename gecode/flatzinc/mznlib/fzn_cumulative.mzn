@@ -37,7 +37,6 @@ predicate fzn_cumulative(array[int] of var int: s,
                          array[int] of var int: r, var int: b) =
   gecode_cumulatives(s, d, r, b);
 
-% Specialized cumulatives propagator is only for fixed bounds
 predicate gecode_cumulatives(array[int] of var int: s,
                              array[int] of var int: d,
                              array[int] of var int: r, var int: b);
