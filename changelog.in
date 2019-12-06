@@ -70,6 +70,21 @@ Let's see.
 
 [ENTRY]
 Module: flatzinc
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+The cumulative constraint now respects the semantics of the MiniZinc
+definition for 0-duration tasks.
+
+[ENTRY]
+Module: flatzinc
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+The roots and int_set_channel constraints now work for empty sets and arrays.
+
+[ENTRY]
+Module: flatzinc
 What:   change
 Rank:   minor
 [DESCRIPTION]
