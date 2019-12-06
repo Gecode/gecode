@@ -38,7 +38,7 @@ predicate gecode_array_set_element_union(var set of int: x,
 
 predicate fzn_roots(array[int] of var int: x, var set of int: s,
                     var set of int: t) =
-  if (min(index_set(x)) < 0 \/ min(ub(t)) < 1) then
+  if (length(x)=0 \/ ub(s)={} \/ ub(t)={} \/ min(index_set(x)) < 0 \/ min(ub(t)) < 1) then
       % All values in 's' must map to a value in 't'.
       forall(i in ub(s)) (
           i in s -> x[i] in t
