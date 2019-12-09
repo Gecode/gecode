@@ -1571,8 +1571,8 @@ namespace Gecode { namespace FlatZinc {
         registry().add("array_bool_lt", &p_array_bool_lt);
         registry().add("array_bool_lq", &p_array_bool_lq);
         registry().add("count", &p_count);
-        registry().add("count", &p_count_reif);
-        registry().add("count", &p_count_imp);
+        registry().add("count_reif", &p_count_reif);
+        registry().add("count_imp", &p_count_imp);
         registry().add("count_eq", &p_count);
         registry().add("count_eq_reif", &p_count_reif);
         registry().add("count_eq_imp", &p_count_imp);
