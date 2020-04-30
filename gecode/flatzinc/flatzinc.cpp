@@ -2846,31 +2846,43 @@ namespace Gecode { namespace FlatZinc {
     }
 
     IntVarArgs iva(iv_new.size());
+    std::vector<std::string> iv_names_new(iv_new.size());
     for (std::map<int,int>::iterator i=iv_new.begin(); i != iv_new.end(); ++i) {
       iva[(*i).second] = iv[(*i).first];
+      iv_names_new[(*i).second] = iv_names[(*i).first];
     }
     iv = IntVarArray(home, iva);
+    iv_names = iv_names_new;
 
     BoolVarArgs bva(bv_new.size());
+    std::vector<std::string> bv_names_new(bv_new.size());
     for (std::map<int,int>::iterator i=bv_new.begin(); i != bv_new.end(); ++i) {
       bva[(*i).second] = bv[(*i).first];
+      bv_names_new[(*i).second] = bv_names[(*i).first];
     }
     bv = BoolVarArray(home, bva);
+    bv_names = bv_names_new;
 
 #ifdef GECODE_HAS_SET_VARS
     SetVarArgs sva(sv_new.size());
+    std::vector<std::string> sv_names_new(sv_new.size());
     for (std::map<int,int>::iterator i=sv_new.begin(); i != sv_new.end(); ++i) {
       sva[(*i).second] = sv[(*i).first];
+      sv_names_new[(*i).second] = sv_names[(*i).first];
     }
     sv = SetVarArray(home, sva);
+    sv_names = sv_names_new;
 #endif
 
 #ifdef GECODE_HAS_FLOAT_VARS
     FloatVarArgs fva(fv_new.size());
+    std::vector<std::string> fv_names_new(fv_new.size());
     for (std::map<int,int>::iterator i=fv_new.begin(); i != fv_new.end(); ++i) {
       fva[(*i).second] = fv[(*i).first];
+      fv_names_new[(*i).second] = fv_names[(*i).first];
     }
     fv = FloatVarArray(home, fva);
+    fv_names = fv_names_new;
 #endif
   }
 
