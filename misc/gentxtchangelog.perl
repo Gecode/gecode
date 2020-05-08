@@ -4,9 +4,13 @@
 #     Christian Schulte <schulte@gecode.org>
 #     Guido Tack <tack@gecode.org>
 #
+#  Contributing authors:
+#     Mikael Lagerkvist <lagerkvist@gecode.org>
+#
 #  Copyright:
 #     Christian Schulte, 2005
 #     Guido Tack, 2006
+#     Mikael Lagerkvist, 2020
 #
 #  This file is part of Gecode, the generic constraint
 #  development environment:
@@ -63,6 +67,7 @@ $modclear{"support"} = "Support algorithms and datastructures";
 $modclear{"example"} = "Example scripts";
 $modclear{"test"} = "Systematic tests";
 $modclear{"gist"} = "Gist";
+$modclear{"flatzinc"} = "Gecode/FlatZinc";
 $modclear{"other"} = "General";
 
 $whatclear{"bug"} = "Bug fixes";
@@ -76,7 +81,7 @@ $rankclear{"minor"} = "minor";
 $rankclear{"major"} = "major";
 
 @modorder = ("kernel","search","int","set","cpltset","scheduling","minimodel",
-	     "iter","support","example","test","gist","other");
+	     "iter","support","example","test","gist","flatzinc","other");
 
 @whatorder = ("new","change","bug","performance","documentation");
 
