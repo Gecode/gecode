@@ -134,9 +134,10 @@ while ($l = <>) {
     goto LINE;
   }
   if ($l =~ /^\[ENTRY\]/) {
-    my $mod, $what, $rank, $bug, $desc, $thanks;
+    my $mod, $what, $rank, $bug, $issue, $desc, $thanks;
     $desc = "";
     $bug = "";
+    $issue = "";
     $rank = "";
     $what = "";
     $mod = "";
@@ -151,6 +152,8 @@ while ($l = <>) {
 	$rank = $1;
       } elsif ($l =~ /Bug:[\t ]*(.*)$/) {
 	$bug  = $1;
+      } elsif ($l =~ /Issue:[\t ]*(.*)$/) {
+	$issue  = $1;
       } elsif ($l =~ /Thanks:[\t ]*(.*)$/) {
 	$thanks  = $1;
       }
@@ -175,6 +178,9 @@ while ($l = <>) {
 	$rb = $rb . ", bugzilla entry $bug";
 #      $rb = $rb . ", <a href=\"http://www.gecode.org/bugzilla/show_bug.cgi?id="
 #	. $bug . "\">bugzilla entry</a>";
+    }
+    if (!($issue eq "")) {
+      $rb = $rb . ", github issue $issue";
     }
     if (!($thanks eq "")) {
       $rb = $rb . ", thanks to $thanks";
