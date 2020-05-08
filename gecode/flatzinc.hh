@@ -668,7 +668,42 @@ namespace Gecode { namespace FlatZinc {
   public:
     Error(const std::string& where, const std::string& what)
     : msg(where+": "+what) {}
+    Error(const std::string& where, const std::string& what, AST::Array *const ann)
+    : msg(make_message(where, what, ann)) {}
     const std::string& toString(void) const { return msg; }
+  private:
+    static std::string make_message(const std::string &where, const std::string &what, AST::Array *const ann) {
+      std::ostringstream result;
+      result << where << ": " << what;
+
+      std::vector<std::string> names = get_constraint_names(ann);
+      if (names.size() > 1) {
+        result << " in constraints ";
+        for (int i = 0; i < names.size(); ++i) {
+          result << '\"' << names[i] << '\"';
+          if (i < names.size() - 1) {
+            result << ",";
+          }
+          result << " ";
+        }
+      } else if (names.size() == 1) {
+        result << " in constraint " << '\"' << names[0] << '\"';
+      }
+
+      return result.str();
+    }
+    static std::vector<std::string> get_constraint_names(AST::Array *const ann) {
+      std::vector<std::string> result;
+      for (const auto & i : ann->a) {
+        if (i->isArray()) {
+          auto nested_result = get_constraint_names(i->getArray());
+          result.insert(result.end(), nested_result.begin(), nested_result.end());
+        } else if (i->isCall("mzn_constraint_name")) {
+          result.emplace_back(i->getCall()->args->getString());
+        }
+      }
+      return result;
+    }
   };
 
   /**

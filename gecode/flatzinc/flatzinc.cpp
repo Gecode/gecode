@@ -766,7 +766,7 @@ namespace Gecode { namespace FlatZinc {
     typedef std::unordered_set<DFA> DFASet;
     /// Hash table of DFAs
     DFASet dfaSet;
-    
+
     /// Initialize
     FlatZincSpaceInitData(void) {}
   };
@@ -1010,9 +1010,9 @@ namespace Gecode { namespace FlatZinc {
       try {
         registry().post(*this, ce);
       } catch (Gecode::Exception& e) {
-        throw FlatZinc::Error("Gecode", e.what());
+          throw FlatZinc::Error("Gecode", e.what(), ce.ann);
       } catch (AST::TypeError& e) {
-        throw FlatZinc::Error("Type error", e.what());
+          throw FlatZinc::Error("Type error", e.what(), ce.ann);
       }
       delete ces[i];
       ces[i] = nullptr;
@@ -1494,7 +1494,7 @@ namespace Gecode { namespace FlatZinc {
       branch(bg(*this), sv_sol, def_set_varsel, def_set_valsel, nullptr,
              &varValPrint<SetVar>);
       branchInfo.add(bg,def_set_rel_left,def_set_rel_right,sv_sol_names);
-      
+
     }
 #endif
     iv_aux = IntVarArray(*this, iv_tmp);
@@ -1905,7 +1905,7 @@ namespace Gecode { namespace FlatZinc {
         double initTime = totalTime - solveTime;
         out << std::endl
             << "%%%mzn-stat: initTime=" << initTime
-            << std::endl;      
+            << std::endl;
         out << "%%%mzn-stat: solveTime=" << solveTime
             << std::endl;
         out << "%%%mzn-stat: solutions="
@@ -2151,8 +2151,8 @@ namespace Gecode { namespace FlatZinc {
       }
       _initData->tupleSetSet.insert(ts);
     }
-    
-    
+
+
     return ts;
   }
   IntSharedArray
@@ -2166,7 +2166,7 @@ namespace Gecode { namespace FlatZinc {
       }
       _initData->intSharedArraySet.insert(sia);
     }
-    
+
     return sia;
   }
   IntArgs
@@ -2190,7 +2190,7 @@ namespace Gecode { namespace FlatZinc {
       }
       _initData->intSharedArraySet.insert(sia);
     }
-    
+
     return sia;
   }
   IntSet
