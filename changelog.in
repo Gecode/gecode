@@ -70,6 +70,17 @@ Date: 2019-??-??
 Let's see.
 
 [ENTRY]
+Module: other
+What:   change
+Rank:   minor
+Issue:  63
+Thanks: Markus Elfring
+[DESCRIPTION]
+Gecode used to use include guards of the form __GECODE_KERNEL_HH__.
+Using a double underscore in an identifier is reserved, and thus
+undefined behaviour. Use guards of the form GECODE_KERNEL_HH instead.
+
+[ENTRY]
 Module: flatzinc
 What:   bug
 Rank:   minor
