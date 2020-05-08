@@ -35,8 +35,8 @@
  *
  */
 
-#ifndef __GECODE_SET_CHANNEL_HH__
-#define __GECODE_SET_CHANNEL_HH__
+#ifndef GECODE_SET_CHANNEL_HH
+#define GECODE_SET_CHANNEL_HH
 
 #include <gecode/set.hh>
 

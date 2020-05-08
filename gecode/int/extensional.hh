@@ -35,8 +35,8 @@
  *
  */
 
-#ifndef __GECODE_INT_EXTENSIONAL_HH__
-#define __GECODE_INT_EXTENSIONAL_HH__
+#ifndef GECODE_INT_EXTENSIONAL_HH
+#define GECODE_INT_EXTENSIONAL_HH
 
 #include <gecode/int.hh>
 

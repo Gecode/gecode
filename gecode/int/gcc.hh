@@ -37,8 +37,8 @@
  *
  */
 
-#ifndef __GECODE_INT_GCC_HH__
-#define __GECODE_INT_GCC_HH__
+#ifndef GECODE_INT_GCC_HH
+#define GECODE_INT_GCC_HH
 
 #include <gecode/int.hh>
 

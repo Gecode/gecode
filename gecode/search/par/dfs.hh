@@ -31,8 +31,8 @@
  *
  */
 
-#ifndef __GECODE_SEARCH_PAR_DFS_HH__
-#define __GECODE_SEARCH_PAR_DFS_HH__
+#ifndef GECODE_SEARCH_PAR_DFS_HH
+#define GECODE_SEARCH_PAR_DFS_HH
 
 #include <gecode/search/par/engine.hh>
 

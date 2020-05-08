@@ -37,8 +37,8 @@
  *
  */
 
-#ifndef __GECODE_TEST_BRANCH_HH__
-#define __GECODE_TEST_BRANCH_HH__
+#ifndef GECODE_TEST_BRANCH_HH
+#define GECODE_TEST_BRANCH_HH
 
 #include <gecode/kernel.hh>
 

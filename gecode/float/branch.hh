@@ -33,8 +33,8 @@
  *
  */
 
-#ifndef __GECODE_FLOAT_BRANCH_HH__
-#define __GECODE_FLOAT_BRANCH_HH__
+#ifndef GECODE_FLOAT_BRANCH_HH
+#define GECODE_FLOAT_BRANCH_HH
 
 #include <gecode/float.hh>
 

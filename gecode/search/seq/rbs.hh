@@ -31,8 +31,8 @@
  *
  */
 
-#ifndef __GECODE_SEARCH_SEQ_RBS_HH__
-#define __GECODE_SEARCH_SEQ_RBS_HH__
+#ifndef GECODE_SEARCH_SEQ_RBS_HH
+#define GECODE_SEARCH_SEQ_RBS_HH
 
 #include <gecode/search.hh>
 

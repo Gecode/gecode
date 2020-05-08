@@ -35,8 +35,8 @@
  *
  */
 
-#ifndef __GECODE_TEST_FLOAT_HH__
-#define __GECODE_TEST_FLOAT_HH__
+#ifndef GECODE_TEST_FLOAT_HH
+#define GECODE_TEST_FLOAT_HH
 
 #include "test/test.hh"
 

@@ -31,8 +31,8 @@
  *
  */
 
-#ifndef __GECODE_FLATZINC_VARSPEC__HH__
-#define __GECODE_FLATZINC_VARSPEC__HH__
+#ifndef GECODE_FLATZINC_VARSPEC__HH
+#define GECODE_FLATZINC_VARSPEC__HH
 
 #include <gecode/flatzinc/option.hh>
 #include <gecode/flatzinc/ast.hh>

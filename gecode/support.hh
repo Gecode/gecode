@@ -31,8 +31,8 @@
  *
  */
 
-#ifndef __GECODE_SUPPORT_HH__
-#define __GECODE_SUPPORT_HH__
+#ifndef GECODE_SUPPORT_HH
+#define GECODE_SUPPORT_HH
 
 #include <cassert>
 

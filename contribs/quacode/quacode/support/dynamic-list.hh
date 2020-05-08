@@ -47,8 +47,8 @@
  *
  */
 
-#ifndef __GECODE_SUPPORT_DYNAMIC_LIST_HH__
-#define __GECODE_SUPPORT_DYNAMIC_LIST_HH__
+#ifndef GECODE_SUPPORT_DYNAMIC_LIST_HH
+#define GECODE_SUPPORT_DYNAMIC_LIST_HH
 
 namespace Gecode { namespace Support {
 

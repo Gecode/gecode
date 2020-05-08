@@ -31,8 +31,8 @@
  *
  */
 
-#ifndef __GECODE_INT_MEMBER_HH__
-#define __GECODE_INT_MEMBER_HH__
+#ifndef GECODE_INT_MEMBER_HH
+#define GECODE_INT_MEMBER_HH
 
 #include <gecode/int.hh>
 #include <gecode/int/val-set.hh>

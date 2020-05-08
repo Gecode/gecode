@@ -35,8 +35,8 @@
  *
  */
 
-#ifndef __GECODE_TEST_TEST_HH__
-#define __GECODE_TEST_TEST_HH__
+#ifndef GECODE_TEST_TEST_HH
+#define GECODE_TEST_TEST_HH
 
 #include <gecode/kernel.hh>
 #include <gecode/search.hh>

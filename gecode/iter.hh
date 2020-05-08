@@ -31,8 +31,8 @@
  *
  */
 
-#ifndef __GECODE_ITER_HH__
-#define __GECODE_ITER_HH__
+#ifndef GECODE_ITER_HH
+#define GECODE_ITER_HH
 
 #include <gecode/kernel.hh>
 

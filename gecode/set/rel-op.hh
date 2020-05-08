@@ -37,8 +37,8 @@
  *
  */
 
-#ifndef __GECODE_SET_RELOP_HH__
-#define __GECODE_SET_RELOP_HH__
+#ifndef GECODE_SET_RELOP_HH
+#define GECODE_SET_RELOP_HH
 
 #include <gecode/set.hh>
 #include <gecode/set/rel.hh>

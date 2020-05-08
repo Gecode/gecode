@@ -31,8 +31,8 @@
  *
  */
 
-#ifndef __GECODE_TEST_FLATZINC_HH__
-#define __GECODE_TEST_FLATZINC_HH__
+#ifndef GECODE_TEST_FLATZINC_HH
+#define GECODE_TEST_FLATZINC_HH
 
 #include <gecode/kernel.hh>
 #include <gecode/flatzinc.hh>

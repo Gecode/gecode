@@ -35,8 +35,8 @@
  *
  */
 
-#ifndef __GECODE_FLOAT_HH__
-#define __GECODE_FLOAT_HH__
+#ifndef GECODE_FLOAT_HH
+#define GECODE_FLOAT_HH
 
 #include <climits>
 #include <cfloat>

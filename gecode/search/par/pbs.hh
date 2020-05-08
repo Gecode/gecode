@@ -31,8 +31,8 @@
  *
  */
 
-#ifndef __GECODE_SEARCH_PAR_PBS_HH__
-#define __GECODE_SEARCH_PAR_PBS_HH__
+#ifndef GECODE_SEARCH_PAR_PBS_HH
+#define GECODE_SEARCH_PAR_PBS_HH
 
 #include <gecode/search.hh>
 

@@ -37,8 +37,8 @@
  *
  */
 
-#ifndef __GECODE_SET_RELOP_COMM_ICC__
-#define __GECODE_SET_RELOP_COMM_ICC__
+#ifndef GECODE_SET_RELOP_COMM_ICC
+#define GECODE_SET_RELOP_COMM_ICC
 
 namespace Gecode {
 

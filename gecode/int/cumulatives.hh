@@ -31,8 +31,8 @@
  *
  */
 
-#ifndef __GECODE_INT_CUMULATIVES_HH__
-#define __GECODE_INT_CUMULATIVES_HH__
+#ifndef GECODE_INT_CUMULATIVES_HH
+#define GECODE_INT_CUMULATIVES_HH
 
 #include <gecode/int.hh>
 

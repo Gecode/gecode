@@ -31,8 +31,8 @@
  *
  */
 
-#ifndef __GECODE_INT_DIV_HH__
-#define __GECODE_INT_DIV_HH__
+#ifndef GECODE_INT_DIV_HH
+#define GECODE_INT_DIV_HH
 
 #include <gecode/int.hh>
 

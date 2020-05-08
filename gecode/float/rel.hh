@@ -39,8 +39,8 @@
  *
  */
 
-#ifndef __GECODE_FLOAT_REL_HH__
-#define __GECODE_FLOAT_REL_HH__
+#ifndef GECODE_FLOAT_REL_HH
+#define GECODE_FLOAT_REL_HH
 
 #include <gecode/int.hh>
 #include <gecode/float.hh>

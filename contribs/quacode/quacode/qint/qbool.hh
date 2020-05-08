@@ -49,8 +49,8 @@
  *
  */
 
-#ifndef __GECODE_INT_QBOOL_HH__
-#define __GECODE_INT_QBOOL_HH__
+#ifndef GECODE_INT_QBOOL_HH
+#define GECODE_INT_QBOOL_HH
 
 #include <gecode/int.hh>
 #include <quacode/qcsp.hh>

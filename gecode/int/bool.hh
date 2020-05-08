@@ -33,8 +33,8 @@
  *
  */
 
-#ifndef __GECODE_INT_BOOL_HH__
-#define __GECODE_INT_BOOL_HH__
+#ifndef GECODE_INT_BOOL_HH
+#define GECODE_INT_BOOL_HH
 
 #include <gecode/int.hh>
 

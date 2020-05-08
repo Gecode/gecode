@@ -31,8 +31,8 @@
  *
  */
 
-#ifndef __GECODE_DRIVER_HH__
-#define __GECODE_DRIVER_HH__
+#ifndef GECODE_DRIVER_HH
+#define GECODE_DRIVER_HH
 
 #include <gecode/minimodel.hh>
 #include <gecode/search.hh>

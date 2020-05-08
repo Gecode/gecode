@@ -35,8 +35,8 @@
  *
  */
 
-#ifndef __GECODE_FLOAT_LINEAR_HH__
-#define __GECODE_FLOAT_LINEAR_HH__
+#ifndef GECODE_FLOAT_LINEAR_HH
+#define GECODE_FLOAT_LINEAR_HH
 
 #include <gecode/int.hh>
 #include <gecode/float.hh>
