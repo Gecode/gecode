@@ -1,12 +1,12 @@
 /* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
- *     Håkan Kjellerstrand <hakank@bonetmail.com>
+ *     HÃ¥kan Kjellerstrand <hakank@bonetmail.com>
  *     Mikael Lagerkvist <lagerkvist@gecode.org>
  *     Christian Schulte <schulte@gecode.org>
  *
  *  Copyright:
- *     Håkan Kjellerstrand, 2009
+ *     HÃ¥kan Kjellerstrand, 2009
  *     Mikael Lagerkvist, 2009
  *     Christian Schulte, 2009
  *

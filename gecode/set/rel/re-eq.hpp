@@ -5,7 +5,7 @@
  *     Christian Schulte <schulte@gecode.org>
  *
  *  Bugfixes provided by:
- *     Grégoire Dooms <dooms@info.ucl.ac.be>
+ *     GrÃ©goire Dooms <dooms@info.ucl.ac.be>
  *
  *  Copyright:
  *     Guido Tack, 2004

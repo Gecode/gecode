@@ -292,7 +292,7 @@ namespace Gecode {
   Action::Storage::update(int i) {
     /*
      * The trick to inverse decay is from: An Extensible SAT-solver,
-     * Niklas Eén, Niklas Sörensson, SAT 2003.
+     * Niklas EÃ©n, Niklas SÃ¶rensson, SAT 2003.
      */
     assert((i >= 0) && (i < n));
     a[i] = invd * (a[i] + 1.0);

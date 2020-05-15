@@ -523,7 +523,7 @@ and nroot.
 Module: kernel
 What:   change
 Rank:   minor
-Thanks: Rui Machado, Jens Krüger
+Thanks: Rui Machado, Jens KrÃ¼ger
 [DESCRIPTION]
 The alignment of memory allocated from a Region is now as
 prescribed by the maximum of std::max_align_t and
@@ -967,7 +967,7 @@ Add redefinition of disjunctive_strict in terms of cumulative.
 Module: driver
 What:   new
 Rank:   major
-Thanks:	Roberto Castañeda Lozano
+Thanks:	Roberto CastaÃ±eda Lozano
 [DESCRIPTION]
 Added IntLexMinimizeScript and IntLexMaximizeScript for
 lexicographic optimization.
@@ -976,7 +976,7 @@ lexicographic optimization.
 Module: minimodel
 What:   new
 Rank:   major
-Thanks:	Roberto Castañeda Lozano
+Thanks:	Roberto CastaÃ±eda Lozano
 [DESCRIPTION]
 Added IntLexMinimizeSpace and IntLexMaximizeSpace for
 lexicographic optimization.
@@ -1757,7 +1757,7 @@ the -relax commandline option.
 Module: int
 What:   bug
 Rank:   major
-Thanks:	Roberto Castañeda Lozano
+Thanks:	Roberto CastaÃ±eda Lozano
 [DESCRIPTION]
 The domain consistent dom() constraint for integer ranges was
 only bounds consistent...
@@ -2100,7 +2100,7 @@ syntax error during parsing.
 Module: minimodel
 What:   bug
 Rank:   minor
-Thanks: Roberto Castañeda Lozano, Matthias Balzer
+Thanks: Roberto CastaÃ±eda Lozano, Matthias Balzer
 [DESCRIPTION]
 Fixed posting of Boolean element expressions and relations.
 
@@ -2385,7 +2385,7 @@ unassigned variables appearing in the output.
 Module: flatzinc
 What:   bug
 Rank:   minor
-Thanks: Jean-Noël Monette
+Thanks: Jean-NoÃ«l Monette
 [DESCRIPTION]
 Improve error messages in FlatZinc for some type errors.
 
@@ -2470,7 +2470,7 @@ Exposed class definitions for common cutoff generators.
 Module: flatzinc
 What:   bug
 Rank:   minor
-Thanks: Håkan Kjellerstrand
+Thanks: HÃ¥kan Kjellerstrand
 [DESCRIPTION]
 LNS could fail when the search was restarted before finding the first solution.
 
@@ -2478,7 +2478,7 @@ LNS could fail when the search was restarted before finding the first solution.
 Module: search
 What:   bug
 Rank:   major
-Thanks: Håkan Kjellerstrand
+Thanks: HÃ¥kan Kjellerstrand
 [DESCRIPTION]
 Fix memory leak in the DFS and BAB search engines that could make restart-based
 search run out of memory very quickly.
@@ -2599,7 +2599,7 @@ incorrectly turn a cumulatives into a disjunctive constraint.
 Module: flatzinc
 What:   bug
 Rank:   minor
-Thanks: Björn Böttcher
+Thanks: BjÃ¶rn BÃ¶ttcher
 [DESCRIPTION]
 Fix behavior of -a command line option for satisfaction problems.
 
@@ -2654,7 +2654,7 @@ Fix cmake build file to work better when building with Qt.
 Module: flatzinc
 What:   bug
 Rank:   major
-Thanks: Jean-Noël Monette
+Thanks: Jean-NoÃ«l Monette
 [DESCRIPTION]
 Fixed major bug that would cause the FlatZinc interpreter to crash
 on most models.
@@ -2715,7 +2715,7 @@ Added support for building examples with CMake.
 Module: minimodel
 What:   bug
 Rank:   minor
-Thanks:	Léonard Benedetti
+Thanks:	LÃ©onard Benedetti
 [DESCRIPTION]
 Removed potentially undefined behavior for regular expressions. 
 
@@ -2913,7 +2913,7 @@ Fixed posting of set relations involving constants.
 Module: int
 What:   bug
 Rank:   major
-Thanks:	Roberto Castañeda Lozano, Gabriel Hjort Blindell
+Thanks:	Roberto CastaÃ±eda Lozano, Gabriel Hjort Blindell
 [DESCRIPTION]
 In extremely rare cases, the bounds-consistent distinct (and
 hence all other distinct propagators as they use the
@@ -2924,7 +2924,7 @@ numerical overflow.
 Module: kernel
 What:   bug
 Rank:   minor
-Thanks:	Roberto Castañeda Lozano
+Thanks:	Roberto CastaÃ±eda Lozano
 [DESCRIPTION]
 The function brancher did not return a handle.
 
@@ -2955,7 +2955,7 @@ Compiles with MSVC 2013.
 Module: search
 What:   bug
 Rank:   major
-Thanks:	Roberto Castañeda Lozano
+Thanks:	Roberto CastaÃ±eda Lozano
 [DESCRIPTION]
 Fix for restart-based search when the master does not have a branching.
 
@@ -2963,7 +2963,7 @@ Fix for restart-based search when the master does not have a branching.
 Module: search
 What:   bug
 Rank:   major
-Thanks:	Roberto Castañeda Lozano
+Thanks:	Roberto CastaÃ±eda Lozano
 [DESCRIPTION]
 Restart-based search did not work when the cutoff limit did not
 strictly increase.
@@ -2972,7 +2972,7 @@ strictly increase.
 Module: search
 What:   new
 Rank:   minor
-Thanks:	Roberto Castañeda Lozano
+Thanks:	Roberto CastaÃ±eda Lozano
 [DESCRIPTION]
 Added support for a repeat cutoff generator.
 
@@ -3371,7 +3371,7 @@ variable types.
 Module: minimodel
 What:   bug
 Rank:   minor
-Thanks:	Roberto Castañeda Lozano
+Thanks:	Roberto CastaÃ±eda Lozano
 [DESCRIPTION]
 Boolean expressions could lead to a segfault when initialized
 with default constructor.
@@ -3474,7 +3474,7 @@ Fixed missing propagation in reified rel-constraints.
 Module: search
 What:   bug
 Rank:   major
-Thanks: Chris Mears, Roberto Castañeda Lozano
+Thanks: Chris Mears, Roberto CastaÃ±eda Lozano
 [DESCRIPTION]
 Fixed a bug in restart-based search, which would crash if the
 problem is failed at the root or only had a single solution
@@ -3678,7 +3678,7 @@ Updated to compile with Qt version 5.0 (still works with Qt >= 4.3 as well).
 Module: int
 What:   bug
 Rank:   minor
-Thanks:	Roberto Castañeda Lozano
+Thanks:	Roberto CastaÃ±eda Lozano
 [DESCRIPTION]
 Fixed precede constraint with less than two values.
 
@@ -3686,7 +3686,7 @@ Fixed precede constraint with less than two values.
 Module: set
 What:   bug
 Rank:   minor
-Thanks:	Roberto Castañeda Lozano
+Thanks:	Roberto CastaÃ±eda Lozano
 [DESCRIPTION]
 Fixed precede constraint with less than two values.
 
@@ -3769,7 +3769,7 @@ MPG).
 Module: int
 What:   change
 Rank:   minor
-Thanks:	Roberto Castañeda Lozano
+Thanks:	Roberto CastaÃ±eda Lozano
 [DESCRIPTION]
 Generalized definition of no-overlap propagators for better reuse.
 
@@ -3908,7 +3908,7 @@ statistics to arbitrary files and streams.
 Module: flatzinc
 What:   bug
 Rank:   minor
-Thanks: Jean-Noël Monette
+Thanks: Jean-NoÃ«l Monette
 [DESCRIPTION]
 Exported registry and helper functions so that users can add
 constraint handlers to the FlatZinc interpreter.
@@ -3932,7 +3932,7 @@ single integer variable.
 Module: int
 What:   bug
 Rank:   minor
-Thanks: Jean-Noël Monette
+Thanks: Jean-NoÃ«l Monette
 [DESCRIPTION]
 Added missing propagation for nary min/max constraint.
 
@@ -4004,7 +4004,7 @@ Added support for float variables.
 Module:	int
 What:	new
 Rank:	minor
-Thanks: Kathrin Dannmann, Roberto Castañeda Lozano
+Thanks: Kathrin Dannmann, Roberto CastaÃ±eda Lozano
 [DESCRIPTION]
 The binpacking constraint now also accepts items of size zero.
 
@@ -4319,7 +4319,7 @@ switched off.
 Module: flatzinc
 What:   bug
 Rank:   major
-Thanks: Håkan Kjellerstrand
+Thanks: HÃ¥kan Kjellerstrand
 [DESCRIPTION]
 Fixed linear inequations over integer variables that are channeled
 from Boolean variables.
@@ -4497,7 +4497,7 @@ as arguments.
 Module: set
 What:   bug
 Rank:   minor
-Thanks: Johannes Inführ
+Thanks: Johannes InfÃ¼hr
 [DESCRIPTION]
 Fixed a memory leak in the set weights constraint, and use
 IntSharedArray instead of IntArgs as parameters for weights.
@@ -4702,7 +4702,7 @@ path). See "Modeling and Programming with Gecode" for details.
 Module: flatzinc
 What:   new
 Rank:   minor
-Thanks: Håkan Kjellerstrand
+Thanks: HÃ¥kan Kjellerstrand
 [DESCRIPTION]
 Support indomain_middle and indomain_interval search annotation by
 replacing them with indomain_median and indomain_split, respectively.
@@ -4891,7 +4891,7 @@ minizinc driver script.
 Module: flatzinc
 What:   bug
 Rank:   minor
-Thanks: Håkan Kjellerstrand
+Thanks: HÃ¥kan Kjellerstrand
 [DESCRIPTION]
 Re-enabled the global cardinality constraint in the FlatZinc interpreter.
 
@@ -4899,7 +4899,7 @@ Re-enabled the global cardinality constraint in the FlatZinc interpreter.
 Module: flatzinc
 What:   bug
 Rank:   minor
-Thanks: Håkan Kjellerstrand
+Thanks: HÃ¥kan Kjellerstrand
 [DESCRIPTION]
 Fixed the MiniZinc definition for the circuit constraints to work with 
 arbitrarily indexed arrays.
@@ -4985,7 +4985,7 @@ Embed resource information into Gecode DLLs and EXEs on Windows.
 Module: flatzinc
 What:   bug
 Rank:   major
-Thanks: Roberto Castañeda Lozano
+Thanks: Roberto CastaÃ±eda Lozano
 [DESCRIPTION]
 Fixed incorrect posting of linear constraints with variable arrays
 of size one.
@@ -5079,7 +5079,7 @@ Removed obsolete Glossary in reference documentation.
 Module: int
 What:   bug
 Rank:   minor
-Thanks: Gustavo A. Gómez Farhat
+Thanks: Gustavo A. GÃ³mez Farhat
 [DESCRIPTION]
 Do not inline functions with variable arguments.
 
@@ -5111,7 +5111,7 @@ the automatic cast from integers to LinExpr was sometimes ambiguous).
 Module: scheduling
 What:   bug
 Rank:   major
-Thanks: Roberto Castañeda Lozano
+Thanks: Roberto CastaÃ±eda Lozano
 [DESCRIPTION]
 Fixed initialization for unary and cumulative edge-finding (just
 worked accidentally).
@@ -5281,7 +5281,7 @@ Added propagators for cumulative scheduling.
 Module: minimodel
 What:   bug
 Rank:   minor
-Thanks: Håkan Kjellerstrand
+Thanks: HÃ¥kan Kjellerstrand
 [DESCRIPTION]
 Fixed a bug in minimodel, which could crash when using zero
 coefficients.
@@ -5915,7 +5915,7 @@ Fixed bug in the ICL_VAL propagator for global cardinality.
 Module: flatzinc
 What:   bug
 Rank:   minor
-Thanks: Håkan Kjellerstrand
+Thanks: HÃ¥kan Kjellerstrand
 [DESCRIPTION]
 Support search annotations with constants in the variable arrays.
 
@@ -6004,7 +6004,7 @@ array to have zero occurrences, while in MiniZinc they are unrestricted.
 Module: flatzinc
 What:   bug
 Rank:   major
-Thanks: Håkan Kjellerstrand
+Thanks: HÃ¥kan Kjellerstrand
 [DESCRIPTION]
 Element constraints in reified positions produced an error in the mzn2fzn
 translation.
@@ -6025,7 +6025,7 @@ a little this and that as always.
 Module: minimodel
 What:   performance
 Rank:   minor
-Thanks:	Håkan Kjellerstrand
+Thanks:	HÃ¥kan Kjellerstrand
 [DESCRIPTION]
 Conversion of a regular expression to a DFA would crash on
 regular expressions with several million nodes (due to running
@@ -6094,7 +6094,7 @@ Fixed segfault in matrix element constraint.
 Module:	example
 What:	new
 Rank:	minor
-Author:	Håkan Kjellerstrand
+Author:	HÃ¥kan Kjellerstrand
 [DESCRIPTION]
 Added word square puzzle.
 
@@ -6502,7 +6502,7 @@ Added branch and assign for single set variable.
 Module: minimodel
 What:   new
 Rank:   minor
-Thanks: Håkan Kjellerstrand
+Thanks: HÃ¥kan Kjellerstrand
 [DESCRIPTION]
 Added element constraints for Matrix interface to arrays.
 
@@ -6510,7 +6510,7 @@ Added element constraints for Matrix interface to arrays.
 Module: int
 What:   new
 Rank:   minor
-Thanks: Håkan Kjellerstrand
+Thanks: HÃ¥kan Kjellerstrand
 [DESCRIPTION]
 Added element constraints for Matrix arrays.
 
@@ -6518,7 +6518,7 @@ Added element constraints for Matrix arrays.
 Module: set
 What:   new
 Rank:   minor
-Thanks: Håkan Kjellerstrand
+Thanks: HÃ¥kan Kjellerstrand
 [DESCRIPTION]
 Added element constraints for Matrix arrays.
 
@@ -6723,7 +6723,7 @@ transition from 2.2.0 to 3.0.*. Please update asap.
 Module: example
 What:   bug
 Rank:   minor
-Thanks: Håkan Kjellerstrand
+Thanks: HÃ¥kan Kjellerstrand
 [DESCRIPTION]
 The radiotherapy example was missing in the Makefile.
 
@@ -6851,7 +6851,7 @@ PageHowToChange_3 "How to Change to Gecode 3.0.0".
 Module: example
 What:   performance
 Rank:   minor
-Thanks:	Håkan Kjellerstrand
+Thanks:	HÃ¥kan Kjellerstrand
 [DESCRIPTION]
 Improved branching for Nonogram examples.
 

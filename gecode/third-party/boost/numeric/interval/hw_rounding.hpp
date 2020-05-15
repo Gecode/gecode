@@ -1,6 +1,6 @@
 /* Boost interval/hw_rounding.hpp template implementation file
  *
- * Copyright 2002 Hervé Brönnimann, Guillaume Melquiond, Sylvain Pion
+ * Copyright 2002 HervÃ© BrÃ¶nnimann, Guillaume Melquiond, Sylvain Pion
  * Copyright 2005 Guillaume Melquiond
  *
  * Distributed under the Boost Software License, Version 1.0.

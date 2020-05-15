@@ -49,7 +49,7 @@ namespace Gecode { namespace Int { namespace Sorted {
    *
    * The algorithm is taken from: Sven Thiel, Efficient Algorithms
    * for Constraint Propagation and for Processing Tree Descriptions,
-   * PhD thesis, Universit‰t des Saarlandes, Germany, 2004, pages 39-59.
+   * PhD thesis, Universit√§t des Saarlandes, Germany, 2004, pages 39-59.
    *
    * Requires \code #include <gecode/int/sorted.hh> \endcode
    * \ingroup FuncIntProp

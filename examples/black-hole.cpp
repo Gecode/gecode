@@ -89,7 +89,7 @@ namespace {
  *
  * The model of the problem is mostly taken from "Search in the
  * Patience Game 'Black Hole'", by Ian P. Gent, Chris Jefferson, Tom
- * Kelsey, Inês Lynce, Ian Miguel, Peter Nightingale, Barbara
+ * Kelsey, InÃªs Lynce, Ian Miguel, Peter Nightingale, Barbara
  * M. Smith, and S. Armagan Tarim.
  *
  * The conditional symmetry identified in the above paper can be

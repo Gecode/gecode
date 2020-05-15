@@ -570,7 +570,7 @@ namespace {
 
   /*
    * Instances taken from:
-   * A. Scholl, R. Klein, and C. Jürgens: BISON: a fast hybrid procedure
+   * A. Scholl, R. Klein, and C. JÃ¼rgens: BISON: a fast hybrid procedure
    * for exactly solving the one-dimensional bin packing problem.
    * Computers & Operations Research 24 (1997) 627-645.
    *

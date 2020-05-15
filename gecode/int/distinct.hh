@@ -271,7 +271,7 @@ namespace Gecode { namespace Int { namespace Distinct {
    * propagation and only then uses domain consistent propagation.
    *
    * The algorithm is taken from:
-   *    Jean-Charles Régin, A filtering algorithm for constraints
+   *    Jean-Charles RÃ©gin, A filtering algorithm for constraints
    *    of difference in CSPs, Proceedings of the Twelfth National
    *    Conference on Artificial Intelligence, pages 362--367.
    *    Seattle, WA, USA, 1994.
