@@ -4,10 +4,12 @@ dnl   Guido Tack <tack@gecode.org>
 dnl
 dnl Contributing authors:
 dnl   Samuel Gagnon <samuel.gagnon92@gmail.com>
+dnl   Mikael Lagerkvist <lagerkvist@gecode.org>
 dnl
 dnl Copyright:
 dnl   Guido Tack, 2004, 2005
 dnl   Samuel Gagnon, 2018
+dnl   Mikael Lagerkvist, 2020
 dnl
 dnl This file is part of Gecode, the generic constraint
 dnl development environment:
@@ -1576,3 +1578,26 @@ AC_DEFUN([AC_GECODE_RESOURCE],[
     AC_SUBST(RESCOMP, [@true])
   fi
 ])
+
+dnl Macro:
+dnl   AC_GECODE_RUNENVIRONMENT
+dnl
+dnl Description:
+dnl   Configure appropriate run environment flags for different platforms for running
+dnl   executables from the makefile with compiled but not installed shared libraries
+dnl
+dnl Authors:
+dnl   Mikael Lagerkvist <lagerkvist@gecode.org>
+dnl
+AC_DEFUN([AC_GECODE_RUNENVIRONMENT],
+ [case $host_os in
+     darwin*)
+       AC_SUBST(RUNENVIRONMENT, [DYLD_LIBRARY_PATH=.])
+       ;;
+     windows*)
+       AC_SUBST(RUNENVIRONMENT, [''])
+       ;;
+     *)
+       AC_SUBST(RUNENVIRONMENT, [LD_LIBRARY_PATH=.])
+       ;;
+  esac])

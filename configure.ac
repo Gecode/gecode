@@ -95,6 +95,9 @@ AC_CHECK_PROG(PROG_PERL, perl, [ok])
     AC_MSG_ERROR([In order to compile Gecode, you need perl.])
  fi
 
+dnl Check for environment ot use when running programs in the Makefile
+AC_GECODE_RUNENVIRONMENT
+
 dnl determine which compiler we are using
 AC_CXX_COMPILER_VENDOR(ac_gecode_compiler_vendor)
 case $ac_gecode_compiler_vendor in

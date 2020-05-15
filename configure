@@ -726,6 +726,7 @@ enable_resource
 RESCOMP
 HAVE_RC
 CXXCPP
+RUNENVIRONMENT
 PROG_PERL
 PROG_SED
 PROG_MAKE
@@ -4150,6 +4151,21 @@ fi
  if test "${PROG_PERL}x" = "x"; then
     as_fn_error $? "In order to compile Gecode, you need perl." "$LINENO" 5
  fi
+
+case $host_os in
+     darwin*)
+       RUNENVIRONMENT=DYLD_LIBRARY_PATH=.
+
+       ;;
+     windows*)
+       RUNENVIRONMENT=''
+
+       ;;
+     *)
+       RUNENVIRONMENT=LD_LIBRARY_PATH=.
+
+       ;;
+  esac
 
 ac_ext=cpp
 ac_cpp='$CXXCPP $CPPFLAGS'

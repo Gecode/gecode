@@ -4,9 +4,13 @@
 #     Christian Schulte <schulte@gecode.org>
 #     Guido Tack <tack@gecode.org>
 #
+#  Contributing authors:
+#     Mikael Lagerkvist <lagerkvist@gecode.org>
+#
 #  Copyright:
 #     Christian Schulte, 2005
 #     Guido Tack, 2005
+#     Mikael Lagerkvist, 2020
 #
 #  This file is part of Gecode, the generic constraint
 #  development environment:
@@ -90,6 +94,8 @@ export DLLPATH = @DLLPATH@
 
 export RANLIB = @RANLIB@
 export TAR = tar
+
+export RUNENVIRONMENT = @RUNENVIRONMENT@
 
 #
 # Use suffixes to get consistent treatment of dots
@@ -1274,7 +1280,7 @@ test: mkcompiledirs
 
 # A basic integrity test
 check: test
-	$(TESTEXE) -iter 2 -test Branch::Int::Dense::3 \
+	$(RUNENVIRONMENT) $(TESTEXE) -iter 2 -test Branch::Int::Dense::3 \
 			   -test FlatZinc::magic_square \
 			   -test Int::Arithmetic::Abs \
 			   -test Int::Arithmetic::ArgMax \
