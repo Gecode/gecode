@@ -382,11 +382,11 @@ AC_DEFUN([AC_GECODE_ENABLE_MODULE],
         enable_$1="no";
         AC_MSG_RESULT(no)
      fi
-        AC_SUBST(enable_$1, ${enable_$1})])    
+        AC_SUBST(enable_$1, ${enable_$1})])
 
 dnl Description:
 dnl   Makes an enable check for a contrib
-dnl   The third argument can be used for dependency checking 
+dnl   The third argument can be used for dependency checking
 dnl
 dnl Authors:
 dnl   Grégoire Dooms <dooms@info.ucl.ac.be>
@@ -495,7 +495,7 @@ AC_DEFUN([AC_GECODE_LEAK_DEBUG],
               [AC_DEFINE([GECODE_HAS_MTRACE],[],
                        [Whether we have mtrace for memory leak debugging])],
               [AC_MSG_ERROR(mtrace not available.)],
-              [[#include <mcheck.h>]])        
+              [[#include <mcheck.h>]])
      else
         AC_MSG_RESULT(no)
      fi])
@@ -514,7 +514,7 @@ AC_DEFUN([AC_GECODE_PEAKHEAP],
           AC_MSG_RESULT(yes)
         ],
         [
-          AC_CHECK_HEADERS([malloc/malloc.h], 
+          AC_CHECK_HEADERS([malloc/malloc.h],
           [
             AC_CHECK_FUNC(malloc_size,
             [
@@ -530,7 +530,7 @@ AC_DEFUN([AC_GECODE_PEAKHEAP],
             ])
           ],
           [
-            AC_CHECK_HEADERS([malloc.h], 
+            AC_CHECK_HEADERS([malloc.h],
             [
               AC_CHECK_FUNC(malloc_usable_size,
               [
@@ -853,7 +853,7 @@ AC_DEFUN([AC_GECODE_MSVC_SWITCHES],
     GLDFLAGS="-link -DEBUG -OPT:REF -OPT:ICF -MANIFEST -INCREMENTAL:NO"
   else
     dnl compiler flags for a debug build
-    AC_GECODE_ADD_TO_COMPILERFLAGS([-MDd -Zi -wd4355])  
+    AC_GECODE_ADD_TO_COMPILERFLAGS([-MDd -Zi -wd4355])
 
     dnl flags for creating debug dlls
     AC_GECODE_ADD_TO_DLLFLAGS([${CXXFLAGS} -LDd])
@@ -1260,8 +1260,8 @@ AC_DEFUN([AC_GECODE_MPFR],
         gnu)
           CPPFLAGS="${CPPFLAGS}${CPPFLAGS:+ } ${MPFR_CPPFLAGS} ${GMP_CPPFLAGS}"
           LIBS="${LIBS}${LIBS:+ } ${MPFR_LIB_PATH} ${GMP_LIB_PATH} ${MPFR_LINK} ${GMP_LINK}"
-          AC_CHECK_HEADERS([gmp.h], 
-            AC_CHECK_HEADERS([mpfr.h], 
+          AC_CHECK_HEADERS([gmp.h],
+            AC_CHECK_HEADERS([mpfr.h],
                              AC_CHECK_LIB(mpfr, mpfr_add,
                                           AC_DEFINE([GECODE_HAS_MPFR],[],[Whether MPFR is available])
                                           enable_mpfr=yes;,
@@ -1272,8 +1272,8 @@ AC_DEFUN([AC_GECODE_MPFR],
         microsoft)
           CPPFLAGS="${CPPFLAGS}${CPPFLAGS:+ } ${MPFR_CPPFLAGS} ${GMP_CPPFLAGS}"
           LIBS="${LIBS}${LIBS:+ } /link ${MPFR_LIB_PATH} ${GMP_LIB_PATH} ${MPFR_LINK} ${GMP_LINK}"
-          AC_CHECK_HEADERS([gmp.h], 
-            AC_CHECK_HEADERS([mpfr.h], 
+          AC_CHECK_HEADERS([gmp.h],
+            AC_CHECK_HEADERS([mpfr.h],
                              AC_CHECK_FUNC(mpfr_add,
                                           AC_DEFINE([GECODE_HAS_MPFR],[],[Whether MPFR is available])
                                           enable_mpfr=yes;,
