@@ -44,9 +44,9 @@
  *
  * The edge-finding and overload-checking algorithms and data structures
  * follow (mostly):
- *   Petr Vilím, Max Energy Filtering Algorithm for Discrete
+ *   Petr VilÃ­m, Max Energy Filtering Algorithm for Discrete
  *   Cumulative Resources, CP-AI-OR, 2009.
- *   Petr Vilím, Edge Finding Filtering Algorithm for Discrete
+ *   Petr VilÃ­m, Edge Finding Filtering Algorithm for Discrete
  *   Cumulative Resources in O(kn log n), CP, 2009.
  *
  * \brief %Scheduling for cumulative resources

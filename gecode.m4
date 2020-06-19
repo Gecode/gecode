@@ -216,7 +216,7 @@ dnl Check for the definition of macro MACRO-NAME using the current
 dnl language's compiler.
 dnl
 dnl @category Misc
-dnl @author Ludovic Court�s <ludo@chbouib.org>
+dnl @author Ludovic Courtès <ludo@chbouib.org>
 dnl @version 2004-09-07
 dnl @license AllPermissive
 AC_DEFUN([_AC_C_IFDEF],
@@ -234,7 +234,7 @@ dnl Set VENDOR-NAME to the lower-case name of the compiler vendor or `unknown'
 dnl if the compiler's vendor is unknown.
 dnl
 dnl @version 20040907
-dnl @author  Ludovic Court�s <ludo@chbouib.org>
+dnl @author  Ludovic Courtès <ludo@chbouib.org>
 dnl Modified by G. Tack to recognize only those compilers we need.
 AC_DEFUN([AC_ADD_DLL_ARCH],
   [ac_gecode_library_architecture="-$1${ac_gecode_library_architecture}"])
@@ -387,7 +387,7 @@ dnl   Makes an enable check for a contrib
 dnl   The third argument can be used for dependency checking 
 dnl
 dnl Authors:
-dnl   Gr�goire Dooms <dooms@info.ucl.ac.be>
+dnl   Grégoire Dooms <dooms@info.ucl.ac.be>
 AC_DEFUN([AC_GECODE_ENABLE_CONTRIB],
 [
    AC_ARG_ENABLE([$1],

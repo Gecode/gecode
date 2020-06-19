@@ -13723,7 +13723,7 @@ Dictionary::~Dictionary(void) {
  *     phosphoric pinhole sappy seres unrealistically unworldly
  *
  * 55: becquerel brickie centralist cine conveyancing courgette
- *     disarmingly garçon gobstopper infilling insipidity
+ *     disarmingly garÃ§on gobstopper infilling insipidity
  *     internationalist kabuki lyrebirds obscurantism rejigged
  *     revisionist satsuma slapper sozzled sublieutenants teletext vino
  *     wellness wracking
@@ -13782,7 +13782,7 @@ Dictionary::~Dictionary(void) {
  * hide a common typo of "or".  No one should need to use a size larger
  * than 80, the 95 size is labeled insane for a reason.
  *
- * Accents are present on certain words such as café in iso8859-1 format.
+ * Accents are present on certain words such as cafÃ© in iso8859-1 format.
  *
  * CHANGES:
  *

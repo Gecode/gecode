@@ -42,7 +42,7 @@
  * \namespace Gecode::Int::Unary
  *
  * The algorithms and data structures follow (mostly):
- *   Petr Vilím, Global Constraints in Int, PhD thesis,
+ *   Petr VilÃ­m, Global Constraints in Int, PhD thesis,
  *   Charles University, Prague, Czech Republic, 2007.
  *
  * \brief %Int for unary resources

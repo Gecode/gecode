@@ -90,7 +90,7 @@ namespace Gecode { namespace Int { namespace GCC {
    * \brief Bounds consistent global cardinality propagator
    *
    * The algorithm is taken from:
-   *    Claude-Guy Quimper, Peter van Beek, Alejandro López-Ortiz,
+   *    Claude-Guy Quimper, Peter van Beek, Alejandro LÃ³pez-Ortiz,
    *    Alexander Golynski, and Sayyed Bashir Sadjad. An Efficient
    *    Bounds Consistency Algorithm for the Global Cardinality
    *    Constraint, CP 2003, pages 600-614.
@@ -208,7 +208,7 @@ namespace Gecode { namespace Int { namespace GCC {
    * \brief Domain consistent global cardinality propagator
    *
    * The algorithm is taken from:
-   *   Claude-Guy Quimper, Peter van Beek, Alejandro López-Ortiz,
+   *   Claude-Guy Quimper, Peter van Beek, Alejandro LÃ³pez-Ortiz,
    *   and Alexander Golynski. Improved Algorithms for the
    *   Global Cardinality Constraint, CP 2004, pages 542-556.
    *

@@ -95,7 +95,7 @@ public:
     nvalues(*this, b, IRT_LQ, q);
 
     /*
-     * According to: P. R. J. Östergard and W. D. Weakley, Values
+     * According to: P. R. J. Ã–stergard and W. D. Weakley, Values
      * of Domination Numbers of the Queen's Graph, Electronic Journal
      * of Combinatorics, 8:1-19, 2001, for n <= 120, the minimal number
      * of queens is either ceil(n/2) or ceil(n/2 + 1).
