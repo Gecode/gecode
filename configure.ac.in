@@ -91,6 +91,9 @@ AC_CHECK_PROG(PROG_PERL, perl, [ok])
     AC_MSG_ERROR([In order to compile Gecode, you need perl.])
  fi
 
+dnl Check for environment to use when running programs in the Makefile
+AC_GECODE_RUNENVIRONMENT
+
 dnl determine which compiler we are using
 AC_CXX_COMPILER_VENDOR(ac_gecode_compiler_vendor)
 case $ac_gecode_compiler_vendor in
@@ -250,7 +253,7 @@ AC_GECODE_VTI(float,
 	 AC_SUBST(LINKFLOAT,[${LINKLIBDIR}${LINKPREFIX}${FLOAT}${DLL_ARCH}${LINKSUFFIX}])
 	],
 	[
-	 AC_SUBST(LINKFLOAT,[]) 
+	 AC_SUBST(LINKFLOAT,[])
 	]
       )
 

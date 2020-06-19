@@ -4,10 +4,12 @@ dnl   Guido Tack <tack@gecode.org>
 dnl
 dnl Contributing authors:
 dnl   Samuel Gagnon <samuel.gagnon92@gmail.com>
+dnl   Mikael Lagerkvist <lagerkvist@gecode.org>
 dnl
 dnl Copyright:
 dnl   Guido Tack, 2004, 2005
 dnl   Samuel Gagnon, 2018
+dnl   Mikael Lagerkvist, 2020
 dnl
 dnl This file is part of Gecode, the generic constraint
 dnl development environment:
@@ -380,11 +382,11 @@ AC_DEFUN([AC_GECODE_ENABLE_MODULE],
         enable_$1="no";
         AC_MSG_RESULT(no)
      fi
-        AC_SUBST(enable_$1, ${enable_$1})])    
+        AC_SUBST(enable_$1, ${enable_$1})])
 
 dnl Description:
 dnl   Makes an enable check for a contrib
-dnl   The third argument can be used for dependency checking 
+dnl   The third argument can be used for dependency checking
 dnl
 dnl Authors:
 dnl   Grégoire Dooms <dooms@info.ucl.ac.be>
@@ -493,7 +495,7 @@ AC_DEFUN([AC_GECODE_LEAK_DEBUG],
               [AC_DEFINE([GECODE_HAS_MTRACE],[],
                        [Whether we have mtrace for memory leak debugging])],
               [AC_MSG_ERROR(mtrace not available.)],
-              [[#include <mcheck.h>]])        
+              [[#include <mcheck.h>]])
      else
         AC_MSG_RESULT(no)
      fi])
@@ -512,7 +514,7 @@ AC_DEFUN([AC_GECODE_PEAKHEAP],
           AC_MSG_RESULT(yes)
         ],
         [
-          AC_CHECK_HEADERS([malloc/malloc.h], 
+          AC_CHECK_HEADERS([malloc/malloc.h],
           [
             AC_CHECK_FUNC(malloc_size,
             [
@@ -528,7 +530,7 @@ AC_DEFUN([AC_GECODE_PEAKHEAP],
             ])
           ],
           [
-            AC_CHECK_HEADERS([malloc.h], 
+            AC_CHECK_HEADERS([malloc.h],
             [
               AC_CHECK_FUNC(malloc_usable_size,
               [
@@ -851,7 +853,7 @@ AC_DEFUN([AC_GECODE_MSVC_SWITCHES],
     GLDFLAGS="-link -DEBUG -OPT:REF -OPT:ICF -MANIFEST -INCREMENTAL:NO"
   else
     dnl compiler flags for a debug build
-    AC_GECODE_ADD_TO_COMPILERFLAGS([-MDd -Zi -wd4355])  
+    AC_GECODE_ADD_TO_COMPILERFLAGS([-MDd -Zi -wd4355])
 
     dnl flags for creating debug dlls
     AC_GECODE_ADD_TO_DLLFLAGS([${CXXFLAGS} -LDd])
@@ -1258,8 +1260,8 @@ AC_DEFUN([AC_GECODE_MPFR],
         gnu)
           CPPFLAGS="${CPPFLAGS}${CPPFLAGS:+ } ${MPFR_CPPFLAGS} ${GMP_CPPFLAGS}"
           LIBS="${LIBS}${LIBS:+ } ${MPFR_LIB_PATH} ${GMP_LIB_PATH} ${MPFR_LINK} ${GMP_LINK}"
-          AC_CHECK_HEADERS([gmp.h], 
-            AC_CHECK_HEADERS([mpfr.h], 
+          AC_CHECK_HEADERS([gmp.h],
+            AC_CHECK_HEADERS([mpfr.h],
                              AC_CHECK_LIB(mpfr, mpfr_add,
                                           AC_DEFINE([GECODE_HAS_MPFR],[],[Whether MPFR is available])
                                           enable_mpfr=yes;,
@@ -1270,8 +1272,8 @@ AC_DEFUN([AC_GECODE_MPFR],
         microsoft)
           CPPFLAGS="${CPPFLAGS}${CPPFLAGS:+ } ${MPFR_CPPFLAGS} ${GMP_CPPFLAGS}"
           LIBS="${LIBS}${LIBS:+ } /link ${MPFR_LIB_PATH} ${GMP_LIB_PATH} ${MPFR_LINK} ${GMP_LINK}"
-          AC_CHECK_HEADERS([gmp.h], 
-            AC_CHECK_HEADERS([mpfr.h], 
+          AC_CHECK_HEADERS([gmp.h],
+            AC_CHECK_HEADERS([mpfr.h],
                              AC_CHECK_FUNC(mpfr_add,
                                           AC_DEFINE([GECODE_HAS_MPFR],[],[Whether MPFR is available])
                                           enable_mpfr=yes;,
@@ -1576,3 +1578,26 @@ AC_DEFUN([AC_GECODE_RESOURCE],[
     AC_SUBST(RESCOMP, [@true])
   fi
 ])
+
+dnl Macro:
+dnl   AC_GECODE_RUNENVIRONMENT
+dnl
+dnl Description:
+dnl   Configure appropriate run environment flags for different platforms for running
+dnl   executables from the makefile with compiled but not installed shared libraries
+dnl
+dnl Authors:
+dnl   Mikael Lagerkvist <lagerkvist@gecode.org>
+dnl
+AC_DEFUN([AC_GECODE_RUNENVIRONMENT],
+ [case $host_os in
+     darwin*)
+       AC_SUBST(RUNENVIRONMENT, [DYLD_LIBRARY_PATH=.])
+       ;;
+     windows*)
+       AC_SUBST(RUNENVIRONMENT, [''])
+       ;;
+     *)
+       AC_SUBST(RUNENVIRONMENT, [LD_LIBRARY_PATH=.])
+       ;;
+  esac])

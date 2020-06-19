@@ -4,9 +4,13 @@
 #     Christian Schulte <schulte@gecode.org>
 #     Guido Tack <tack@gecode.org>
 #
+#  Contributing authors:
+#     Mikael Lagerkvist <lagerkvist@gecode.org>
+#
 #  Copyright:
 #     Christian Schulte, 2005
 #     Guido Tack, 2005
+#     Mikael Lagerkvist, 2020
 #
 #  This file is part of Gecode, the generic constraint
 #  development environment:
@@ -91,6 +95,8 @@ export DLLPATH = @DLLPATH@
 export RANLIB = @RANLIB@
 export TAR = tar
 
+export RUNENVIRONMENT = @RUNENVIRONMENT@
+
 #
 # Use suffixes to get consistent treatment of dots
 #
@@ -131,7 +137,7 @@ endif
 
 ifeq "@enable_resource@" "yes"
 %.res: %.rc
-	$(RESCOMP) -fo $@ $< 
+	$(RESCOMP) -fo $@ $<
 .PRECIOUS: %.res %.rc
 endif
 
@@ -163,7 +169,7 @@ ifeq "@need_soname@" "yes"
 export SUPPORTSONAME     = \
 	@WLSONAME@$(LIBPREFIX)@SUPPORT@$(SOSUFFIX)
 else
-export SUPPORTSONAME     = 
+export SUPPORTSONAME     =
 endif
 export SUPPORTSTATICLIB	= $(LIBPREFIX)@SUPPORT@$(STATICLIBSUFFIX)
 export LINKSUPPORT      = \
@@ -226,7 +232,7 @@ ifeq "@need_soname@" "yes"
 export KERNELSONAME     = \
 	@WLSONAME@$(LIBPREFIX)@KERNEL@$(SOSUFFIX)
 else
-export KERNELSONAME     = 
+export KERNELSONAME     =
 endif
 export KERNELSTATICLIB	= $(LIBPREFIX)@KERNEL@$(STATICLIBSUFFIX)
 export LINKKERNEL      	= $(LINKPREFIX)@KERNEL@$(LINKSUFFIX)
@@ -285,7 +291,7 @@ ifeq "@need_soname@" "yes"
 export SEARCHSONAME     = \
 	@WLSONAME@$(LIBPREFIX)@SEARCH@$(SOSUFFIX)
 else
-export SEARCHSONAME     = 
+export SEARCHSONAME     =
 ifeq "@enable_resource@" "yes"
 export SEARCHRC		= $(LIBPREFIX)@SEARCH@$(RCSUFFIX)
 export SEARCHRES	= $(LIBPREFIX)@SEARCH@$(RESSUFFIX)
@@ -442,7 +448,7 @@ ifeq "@need_soname@" "yes"
 export INTSONAME     = \
 	@WLSONAME@$(LIBPREFIX)@INT@$(SOSUFFIX)
 else
-export INTSONAME     = 
+export INTSONAME     =
 endif
 ifeq "@enable_resource@" "yes"
 export INTRC		= $(LIBPREFIX)@INT@$(RCSUFFIX)
@@ -516,7 +522,7 @@ ifeq "@need_soname@" "yes"
 export FLOATSONAME     = \
 	@WLSONAME@$(LIBPREFIX)@FLOAT@$(SOSUFFIX)
 else
-export FLOATSONAME     = 
+export FLOATSONAME     =
 endif
 ifeq "@enable_resource@" "yes"
 export FLOATRC		= $(LIBPREFIX)@FLOAT@$(RCSUFFIX)
@@ -612,7 +618,7 @@ ifeq "@need_soname@" "yes"
 export SETSONAME     = \
 	@WLSONAME@$(LIBPREFIX)@SET@$(SOSUFFIX)
 else
-export SETSONAME     = 
+export SETSONAME     =
 endif
 ifeq "@enable_resource@" "yes"
 export SETRC		= $(LIBPREFIX)@SET@$(RCSUFFIX)
@@ -665,7 +671,7 @@ ifeq "@need_soname@" "yes"
 export MMSONAME     = \
 	@WLSONAME@$(LIBPREFIX)@MM@$(SOSUFFIX)
 else
-export MMSONAME     = 
+export MMSONAME     =
 endif
 ifeq "@enable_resource@" "yes"
 export MMRC		= $(LIBPREFIX)@MM@$(RCSUFFIX)
@@ -705,7 +711,7 @@ ifeq "@need_soname@" "yes"
 export DRIVERSONAME     = \
 	@WLSONAME@$(LIBPREFIX)@DRIVER@$(SOSUFFIX)
 else
-export DRIVERSONAME     = 
+export DRIVERSONAME     =
 endif
 ifeq "@enable_resource@" "yes"
 export DRIVERRC		= $(LIBPREFIX)@DRIVER@$(RCSUFFIX)
@@ -788,7 +794,7 @@ ifeq "@need_soname@" "yes"
 export GISTSONAME     = \
 	@WLSONAME@$(LIBPREFIX)@GIST@$(SOSUFFIX)
 else
-export GISTSONAME     = 
+export GISTSONAME     =
 endif
 ifeq "@enable_resource@" "yes"
 export GISTRC		= $(LIBPREFIX)@GIST@$(RCSUFFIX)
@@ -802,7 +808,7 @@ export GISTDLL		=
 export GISTSTATICLIB	=
 export GISTLIB		=
 export LINKGIST      	=
-export GISTSONAME	= 
+export GISTSONAME	=
 export GISTRES		=
 export GISTRC		=
 endif
@@ -858,7 +864,7 @@ export FLATZINCSTATICLIB	=
 export FLATZINCLIB		=
 export LINKFLATZINC		=
 export FLATZINCSONAME		=
-export FLATZINCMZNLIB		= 
+export FLATZINCMZNLIB		=
 export FLATZINCRES		=
 export FLATZINCRC		=
 FLATZINCEXE	=
@@ -899,7 +905,7 @@ ifeq "@enable_float_vars@" "yes"
   ifeq "@enable_mpfr@" "yes"
   MPFRFLOATEXAMPLEEXE  = $(MPFRFLOATEXAMPLESRC:%.cpp=%$(EXESUFFIX))
   else
-  MPFRFLOATEXAMPLEEXE  = 
+  MPFRFLOATEXAMPLEEXE  =
   endif
 endif
 
@@ -909,7 +915,7 @@ FLOATEXAMPLESRC  = $(FLOATEXAMPLESRC0:%=examples/%.cpp)
 ifeq "@enable_float_vars@" "yes"
 FLOATEXAMPLEEXE  = $(FLOATEXAMPLESRC:%.cpp=%$(EXESUFFIX))
 else
-FLOATEXAMPLEEXE  = 
+FLOATEXAMPLEEXE  =
 endif
 
 SETEXAMPLESRC0 = \
@@ -918,7 +924,7 @@ SETEXAMPLESRC  = $(SETEXAMPLESRC0:%=examples/%.cpp)
 ifeq "@enable_set_vars@" "yes"
 SETEXAMPLEEXE  = $(SETEXAMPLESRC:%.cpp=%$(EXESUFFIX))
 else
-SETEXAMPLEEXE  = 
+SETEXAMPLEEXE  =
 endif
 
 EXAMPLEBUILDDIRS = examples
@@ -1274,7 +1280,7 @@ test: mkcompiledirs
 
 # A basic integrity test
 check: test
-	$(TESTEXE) -iter 2 -test Branch::Int::Dense::3 \
+	$(RUNENVIRONMENT) $(TESTEXE) -iter 2 -test Branch::Int::Dense::3 \
 			   -test FlatZinc::magic_square \
 			   -test Int::Arithmetic::Abs \
 			   -test Int::Arithmetic::ArgMax \
@@ -1763,7 +1769,7 @@ examples/%$(EXESUFFIX): examples/%$(OBJSUFFIX) examples/%$(EXESUFFIX).res \
 	$(ALLLIB)
 	$(CXX) @EXEOUTPUT@$@ $< $@.res \
 		$(DLLPATH) $(CXXFLAGS) \
-		$(LINKALL) $(GLDFLAGS) $(LINKQT) 
+		$(LINKALL) $(GLDFLAGS) $(LINKQT)
 	$(FIXMANIFEST) $@.manifest
 	$(MANIFEST) -manifest $@.manifest -outputresource:$@\;1
 else
@@ -1804,7 +1810,7 @@ endif
 $(FLATZINCEXE): $(FLATZINCEXEOBJ) $(FLATZINCEXERES) $(ALLLIB)
 	$(CXX) @EXEOUTPUT@$@ $(FLATZINCEXEOBJ) $(FLATZINCEXERES) \
 	$(DLLPATH) $(CXXFLAGS) \
-	$(LINKALL) $(GLDFLAGS) $(LINKSTATICQT) 
+	$(LINKALL) $(GLDFLAGS) $(LINKSTATICQT)
 	$(FIXMANIFEST) $@.manifest
 	$(MANIFEST) -manifest $@.manifest -outputresource:$@\;1
 
