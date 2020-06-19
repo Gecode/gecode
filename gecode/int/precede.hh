@@ -35,8 +35,8 @@
  *
  */
 
-#ifndef __GECODE_INT_PRECEDE_HH__
-#define __GECODE_INT_PRECEDE_HH__
+#ifndef GECODE_INT_PRECEDE_HH
+#define GECODE_INT_PRECEDE_HH
 
 #include <gecode/int.hh>
 

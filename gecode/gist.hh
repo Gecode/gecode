@@ -30,8 +30,8 @@
  *
  */
 
-#ifndef __GECODE_GIST_HH__
-#define __GECODE_GIST_HH__
+#ifndef GECODE_GIST_HH
+#define GECODE_GIST_HH
 
 #include <gecode/kernel.hh>
 #include <gecode/search.hh>

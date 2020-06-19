@@ -33,8 +33,8 @@
  *
  */
 
-#ifndef __GECODE_INT_VIEW_VAL_GRAPH_HH__
-#define __GECODE_INT_VIEW_VAL_GRAPH_HH__
+#ifndef GECODE_INT_VIEW_VAL_GRAPH_HH
+#define GECODE_INT_VIEW_VAL_GRAPH_HH
 
 #include <gecode/int.hh>
 

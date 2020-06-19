@@ -33,8 +33,8 @@
  *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
-#ifndef __GECODE_QSPACEINFO_HH__
-#define __GECODE_QSPACEINFO_HH__
+#ifndef GECODE_QSPACEINFO_HH
+#define GECODE_QSPACEINFO_HH
 
 #include <iomanip>
 #include <quacode/qcsp.hh>

@@ -35,8 +35,8 @@
  *
  */
 
-#ifndef __GECODE_INT_BIN_PACKING_HH__
-#define __GECODE_INT_BIN_PACKING_HH__
+#ifndef GECODE_INT_BIN_PACKING_HH
+#define GECODE_INT_BIN_PACKING_HH
 
 #include <gecode/int.hh>
 

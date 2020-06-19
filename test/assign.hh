@@ -35,8 +35,8 @@
  *
  */
 
-#ifndef __GECODE_TEST_ASSIGN_HH__
-#define __GECODE_TEST_ASSIGN_HH__
+#ifndef GECODE_TEST_ASSIGN_HH
+#define GECODE_TEST_ASSIGN_HH
 
 #include <gecode/kernel.hh>
 #include <gecode/int.hh>

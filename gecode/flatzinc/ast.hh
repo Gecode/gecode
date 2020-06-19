@@ -31,8 +31,8 @@
  *
  */
 
-#ifndef __GECODE_FLATZINC_AST_HH__
-#define __GECODE_FLATZINC_AST_HH__
+#ifndef GECODE_FLATZINC_AST_HH
+#define GECODE_FLATZINC_AST_HH
 
 #include <vector>
 #include <string>

@@ -31,8 +31,8 @@
  *
  */
 
-#ifndef __GECODE_FLATZINC_BRANCH_HH__
-#define __GECODE_FLATZINC_BRANCH_HH__
+#ifndef GECODE_FLATZINC_BRANCH_HH
+#define GECODE_FLATZINC_BRANCH_HH
 
 #include <gecode/int.hh>
 #include <gecode/int/branch.hh>

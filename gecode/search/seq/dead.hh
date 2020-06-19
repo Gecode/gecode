@@ -33,8 +33,8 @@
 
 #include <gecode/search.hh>
 
-#ifndef __GECODE_SEARCH_SEQ_DEAD_HH__
-#define __GECODE_SEARCH_SEQ_DEAD_HH__
+#ifndef GECODE_SEARCH_SEQ_DEAD_HH
+#define GECODE_SEARCH_SEQ_DEAD_HH
 
 namespace Gecode { namespace Search { namespace Seq {
 

@@ -31,8 +31,8 @@
  *
  */
 
-#ifndef __GECODE_FLOAT_TRANSCENDENTAL_HH__
-#define __GECODE_FLOAT_TRANSCENDENTAL_HH__
+#ifndef GECODE_FLOAT_TRANSCENDENTAL_HH
+#define GECODE_FLOAT_TRANSCENDENTAL_HH
 
 #include <gecode/float.hh>
 

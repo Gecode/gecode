@@ -37,8 +37,8 @@
  *
  */
 
-#ifndef __GECODE_SET_SEQUENCE_HH__
-#define __GECODE_SET_SEQUENCE_HH__
+#ifndef GECODE_SET_SEQUENCE_HH
+#define GECODE_SET_SEQUENCE_HH
 
 #include <gecode/set.hh>
 

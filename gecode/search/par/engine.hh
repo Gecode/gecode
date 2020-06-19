@@ -31,8 +31,8 @@
  *
  */
 
-#ifndef __GECODE_SEARCH_PAR_ENGINE_HH__
-#define __GECODE_SEARCH_PAR_ENGINE_HH__
+#ifndef GECODE_SEARCH_PAR_ENGINE_HH
+#define GECODE_SEARCH_PAR_ENGINE_HH
 
 #include <gecode/search.hh>
 #include <gecode/search/support.hh>

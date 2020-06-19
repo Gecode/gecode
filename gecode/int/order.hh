@@ -31,8 +31,8 @@
  *
  */
 
-#ifndef __GECODE_INT_ORDER_HH__
-#define __GECODE_INT_ORDER_HH__
+#ifndef GECODE_INT_ORDER_HH
+#define GECODE_INT_ORDER_HH
 
 #include <gecode/int.hh>
 

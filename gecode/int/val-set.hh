@@ -31,8 +31,8 @@
  *
  */
 
-#ifndef __GECODE_INT_VALSET_HH__
-#define __GECODE_INT_VALSET_HH__
+#ifndef GECODE_INT_VALSET_HH
+#define GECODE_INT_VALSET_HH
 
 #include <gecode/int.hh>
 

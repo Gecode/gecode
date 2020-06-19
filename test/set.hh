@@ -33,8 +33,8 @@
  *
  */
 
-#ifndef __GECODE_TEST_SET_HH__
-#define __GECODE_TEST_SET_HH__
+#ifndef GECODE_TEST_SET_HH
+#define GECODE_TEST_SET_HH
 
 #include <gecode/set.hh>
 #include "test/test.hh"

@@ -33,8 +33,8 @@
  *
  */
 
-#ifndef __GECODE_INT_UNARY_HH__
-#define __GECODE_INT_UNARY_HH__
+#ifndef GECODE_INT_UNARY_HH
+#define GECODE_INT_UNARY_HH
 
 #include <gecode/int/task.hh>
 

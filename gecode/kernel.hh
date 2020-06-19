@@ -35,8 +35,8 @@
  *
  */
 
-#ifndef __GECODE_KERNEL_HH__
-#define __GECODE_KERNEL_HH__
+#ifndef GECODE_KERNEL_HH
+#define GECODE_KERNEL_HH
 
 #include <cstddef>
 #include <cstdlib>

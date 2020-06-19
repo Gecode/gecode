@@ -35,8 +35,8 @@
  *
  */
 
-#ifndef __GECODE_FLOAT_CHANNEL_HH__
-#define __GECODE_FLOAT_CHANNEL_HH__
+#ifndef GECODE_FLOAT_CHANNEL_HH
+#define GECODE_FLOAT_CHANNEL_HH
 
 #include <gecode/int.hh>
 #include <gecode/float.hh>

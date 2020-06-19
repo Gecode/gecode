@@ -31,8 +31,8 @@
  *
  */
 
-#ifndef __GECODE_FLATZINC_PLUGIN_HH__
-#define __GECODE_FLATZINC_PLUGIN_HH__
+#ifndef GECODE_FLATZINC_PLUGIN_HH
+#define GECODE_FLATZINC_PLUGIN_HH
 
 #ifdef GECODE_HAS_QT
 #include <QtCore>

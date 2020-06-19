@@ -31,8 +31,8 @@
  *
  */
 
-#ifndef __GECODE_INT_CIRCUIT_HH__
-#define __GECODE_INT_CIRCUIT_HH__
+#ifndef GECODE_INT_CIRCUIT_HH
+#define GECODE_INT_CIRCUIT_HH
 
 #include <gecode/int.hh>
 #include <gecode/int/distinct.hh>

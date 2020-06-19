@@ -31,8 +31,8 @@
  *
  */
 
-#ifndef __GECODE_SEARCH_RELAX_HH__
-#define __GECODE_SEARCH_RELAX_HH__
+#ifndef GECODE_SEARCH_RELAX_HH
+#define GECODE_SEARCH_RELAX_HH
 
 #include <gecode/kernel.hh>
 #include <gecode/search.hh>

@@ -47,8 +47,8 @@
  *
  */
 
-#ifndef __GECODE_SEARCH_SEQUENTIAL_QPATH_HH__
-#define __GECODE_SEARCH_SEQUENTIAL_QPATH_HH__
+#ifndef GECODE_SEARCH_SEQUENTIAL_QPATH_HH
+#define GECODE_SEARCH_SEQUENTIAL_QPATH_HH
 
 #include <quacode/qcsp.hh>
 #include <quacode/qspaceinfo.hh>

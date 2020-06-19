@@ -43,8 +43,8 @@
  *
  */
 
-#ifndef __GECODE_INT_HH__
-#define __GECODE_INT_HH__
+#ifndef GECODE_INT_HH
+#define GECODE_INT_HH
 
 #include <climits>
 #include <cfloat>

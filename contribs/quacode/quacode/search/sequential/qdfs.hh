@@ -47,8 +47,8 @@
  *
  */
 
-#ifndef __GECODE_SEARCH_SEQUENTIAL_QDFS_HH__
-#define __GECODE_SEARCH_SEQUENTIAL_QDFS_HH__
+#ifndef GECODE_SEARCH_SEQUENTIAL_QDFS_HH
+#define GECODE_SEARCH_SEQUENTIAL_QDFS_HH
 
 #include <gecode/search.hh>
 #include <gecode/search/support.hh>

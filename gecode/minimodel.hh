@@ -39,8 +39,8 @@
  *
  */
 
-#ifndef __GECODE_MINIMODEL_HH__
-#define __GECODE_MINIMODEL_HH__
+#ifndef GECODE_MINIMODEL_HH
+#define GECODE_MINIMODEL_HH
 
 #include <gecode/kernel.hh>
 #include <gecode/int.hh>

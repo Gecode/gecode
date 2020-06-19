@@ -33,8 +33,8 @@
  *
  */
 
-#ifndef __GECODE_INT_ELEMENT_HH__
-#define __GECODE_INT_ELEMENT_HH__
+#ifndef GECODE_INT_ELEMENT_HH
+#define GECODE_INT_ELEMENT_HH
 
 #include <gecode/int.hh>
 #include <gecode/int/rel.hh>

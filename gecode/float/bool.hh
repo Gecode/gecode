@@ -31,8 +31,8 @@
  *
  */
 
-#ifndef __GECODE_FLOAT_BOOL_HH__
-#define __GECODE_FLOAT_BOOL_HH__
+#ifndef GECODE_FLOAT_BOOL_HH
+#define GECODE_FLOAT_BOOL_HH
 
 #include <gecode/float.hh>
 

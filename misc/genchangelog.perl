@@ -135,10 +135,11 @@ while ($l = <>) {
     goto LINE;
   }
   if ($l =~ /^\[ENTRY\]/) {
-    my $mod, $what, $rank, $bug, $desc, $more, $thanks, $author;
+    my $mod, $what, $rank, $bug, $issue, $desc, $more, $thanks, $author;
     $desc = "";
     $more = "";
     $bug = "";
+    $issue = "";
     $rank = "";
     $what = "";
     $mod = "";
@@ -153,6 +154,8 @@ while ($l = <>) {
 	$rank = $1;
       } elsif ($l =~ /Bug:[\t ]*(.*)$/) {
 	$bug  = $1;
+      } elsif ($l =~ /Issue:[\t ]*(.*)$/) {
+	$issue  = $1;
       } elsif ($l =~ /Thanks:[\t ]*(.*)$/) {
 	$thanks  = $1;
       } elsif ($l =~ /Author:[\t ]*(.*)$/) {
@@ -184,6 +187,9 @@ while ($l = <>) {
     $more =~ s/\n([ \t]*)\n/\n\1<br>\n/g;
     $hastext{$mod} = 1;
     $rb = $rankclear{$rank};
+    if (!($issue eq "")) {
+      $rb = $rb . ", <a href=\"https://github.com/gecode/gecode/issues/$issue\">issue $issue</a>";
+    }
     if (!($thanks eq "")) {
       $rb = $rb . ", thanks to $thanks";
     }

@@ -39,8 +39,8 @@
  *
  */
 
-#ifndef __GECODE_SEARCH_HH__
-#define __GECODE_SEARCH_HH__
+#ifndef GECODE_SEARCH_HH
+#define GECODE_SEARCH_HH
 
 #include <initializer_list>
 
