@@ -806,6 +806,8 @@ enable_audit
 enable_profile
 enable_gcov
 enable_thread
+with_freelist32_size_max
+with_freelist64_size_max
 enable_cpp11
 enable_gcc_visibility
 enable_doc_dot
@@ -1510,6 +1512,10 @@ Optional Packages:
   --with-architectures    architectures to compile for on Mac OS X
   --with-lib-prefix       add user-defined prefix to library names
   --with-lib-suffix       add user-defined suffix to library names
+  --with-freelist32-size-max
+                          max size of freelist on 32 bit platforms
+  --with-freelist64-size-max
+                          max size of freelist on 64 bit platforms
   --with-vis              additional variable implementation specifications
   --with-gmp-include      path to the gmp or mpir header files
   --with-gmp-lib          path to the gmp or mpir library
@@ -2637,6 +2643,9 @@ GECODE_FLATZINC_VERSION=${ac_gecode_flatzincversion}
 # checks for programs
 
 : ${CXXFLAGS=""} : ${CFLAGS=""}   : ${DLLFLAGS=""}   : ${GLDFLAGS=""}
+
+
+
 
 
 
@@ -6587,6 +6596,37 @@ $as_echo "#define GECODE_USE_CLOCK 1" >>confdefs.h
 
 fi
 
+
+
+
+
+# Check whether --with-freelist32-size-max was given.
+if test "${with_freelist32_size_max+set}" = set; then :
+  withval=$with_freelist32_size_max;
+fi
+
+  if test "${with_freelist32_size_max:-no}" != "no"; then
+
+cat >>confdefs.h <<_ACEOF
+#define GECODE_FREELIST_SIZE_MAX32 ${with_freelist32_size_max}
+_ACEOF
+
+  fi
+
+
+
+# Check whether --with-freelist64-size-max was given.
+if test "${with_freelist64_size_max+set}" = set; then :
+  withval=$with_freelist64_size_max;
+fi
+
+  if test "${with_freelist64_size_max:-no}" != "no"; then
+
+cat >>confdefs.h <<_ACEOF
+#define GECODE_FREELIST_SIZE_MAX64 ${with_freelist64_size_max}
+_ACEOF
+
+  fi
 
 
 

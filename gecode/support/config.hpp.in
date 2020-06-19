@@ -45,6 +45,12 @@
 /* Supported version of FlatZinc */
 #undef GECODE_FLATZINC_VERSION
 
+/* max freelist size on 32 bit platforms */
+#undef GECODE_FREELIST_SIZE_MAX32
+
+/* max freelist size on 64 bit platforms */
+#undef GECODE_FREELIST_SIZE_MAX64
+
 /* Whether gcc understands visibility attributes */
 #undef GECODE_GCC_HAS_CLASS_VISIBILITY
 
