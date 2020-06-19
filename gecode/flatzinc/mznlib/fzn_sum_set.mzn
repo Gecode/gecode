@@ -3,7 +3,7 @@
 %     Guido Tack <tack@gecode.org>
 %
 %  Copyright:
-%     Guido Tack, 2007
+%     Guido Tack, 2020
 %
 %  This file is part of Gecode, the generic constraint
 %  development environment:
@@ -31,8 +31,8 @@
 %
 
 predicate gecode_set_weights(array[int] of int: csi,array[int] of int: cs,
-    var set of int: x, var int: y);
+                             var set of int: x, var int: y);
 
-predicate sum_set(array[int] of int: vs, array[int] of int: ws,
-                  var set of int: x, var int: s) =
+predicate fzn_sum_set(array[int] of int: vs, array[int] of int: ws,
+                      var set of int: x, var int: s) =
     gecode_set_weights(vs,ws,x,s);
