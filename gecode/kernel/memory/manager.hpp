@@ -38,6 +38,8 @@
  *
  */
 
+#include <memory>
+
 namespace Gecode { namespace Kernel {
 
   /// Memory chunk with size information
@@ -386,16 +388,23 @@ namespace Gecode { namespace Kernel {
       }
     }
 #endif
-    if (s < (MemoryConfig::fl_size_min<<MemoryConfig::fl_unit_size))
+
+    size_t aligned_s = s;
+    void* aligned_p = std::align(std::min(static_cast<size_t>(GECODE_MEMORY_ALIGNMENT), s),
+                                 MemoryConfig::fl_size_min<<MemoryConfig::fl_unit_size,
+                                 p, aligned_s);
+
+    if (aligned_p==nullptr ||
+        aligned_s < (MemoryConfig::fl_size_min<<MemoryConfig::fl_unit_size))
       return;
-    if (s > (MemoryConfig::fl_size_max<<MemoryConfig::fl_unit_size)) {
-      MemoryChunk* rc = static_cast<MemoryChunk*>(p);
+    if (aligned_s > (MemoryConfig::fl_size_max<<MemoryConfig::fl_unit_size)) {
+      MemoryChunk* rc = static_cast<MemoryChunk*>(aligned_p);
       rc->next = slack;
-      rc->size = s;
+      rc->size = aligned_s;
       slack = rc;
     } else {
-      size_t i = sz2i(s);
-      FreeList* f = static_cast<FreeList*>(p);
+      size_t i = sz2i(aligned_s);
+      FreeList* f = static_cast<FreeList*>(aligned_p);
       f->next(fl[i]); fl[i]=f;
     }
   }
