@@ -70,6 +70,15 @@ Date: 2019-??-??
 Let's see.
 
 [ENTRY]
+Module: flatzinc
+What:   bug
+Issue:  61
+Rank:   minor
+[DESCRIPTION]
+Fix fzn_table_bool and fzn_table_bool_reif predicates, which had
+incorrect types.
+
+[ENTRY]
 Module: other
 What:   change
 Rank:   minor
