@@ -60,7 +60,7 @@ namespace Gecode { namespace FlatZinc {
     std::map<std::string,poster>::iterator i = r.find(ce.id);
     if (i == r.end()) {
       throw FlatZinc::Error("Registry",
-        std::string("Constraint ")+ce.id+" not found");
+        std::string("Constraint ")+ce.id+" not found", ce.ann);
     }
     i->second(s, ce, ce.ann);
   }
@@ -464,7 +464,7 @@ namespace Gecode { namespace FlatZinc {
       IntVar x0 = s.arg2IntVar(ce[0]);
       IntVar x2 = s.arg2IntVar(ce[2]);
       pow(s, x0, ce[1]->getInt(), x2, s.ann2ipl(ann));
-    }    
+    }
     void p_int_div(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
       IntVar x0 = s.arg2IntVar(ce[0]);
       IntVar x1 = s.arg2IntVar(ce[1]);
@@ -1041,7 +1041,7 @@ namespace Gecode { namespace FlatZinc {
 
     void p_maximum_arg_bool(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
       BoolVarArgs bv = s.arg2boolvarargs(ce[0]);
-      int offset = ce[1]->getInt();      
+      int offset = ce[1]->getInt();
       argmax(s, bv, offset, s.arg2IntVar(ce[2]), true, s.ann2ipl(ann));
     }
 
@@ -1171,7 +1171,7 @@ namespace Gecode { namespace FlatZinc {
       TupleSet ts = s.arg2tupleset(tuples,x.size());
       extensional(s,x,ts,Reify(s.arg2BoolVar(ce[2]),RM_IMP),s.ann2ipl(ann));
     }
-    
+
     void
     p_table_bool(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
       BoolVarArgs x = s.arg2boolvarargs(ce[0]);

@@ -70,6 +70,16 @@ Let's see.
 
 [ENTRY]
 Module: flatzinc
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Add MiniZinc constraint names to FlatZinc errors when applicable and available.
+[MORE]
+A constraint name is specified in MiniZinc using a string annotation "my name" on the constraint item,
+and is translated into FlatZinc using the mzn_constraint_name("my name").
+
+[ENTRY]
+Module: flatzinc
 What:   bug
 Rank:   minor
 [DESCRIPTION]
