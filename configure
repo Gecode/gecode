@@ -763,7 +763,6 @@ infodir
 docdir
 oldincludedir
 includedir
-runstatedir
 localstatedir
 sharedstatedir
 sysconfdir
@@ -806,6 +805,8 @@ enable_audit
 enable_profile
 enable_gcov
 enable_thread
+with_freelist32_size_max
+with_freelist64_size_max
 enable_cpp11
 enable_gcc_visibility
 enable_doc_dot
@@ -882,7 +883,6 @@ datadir='${datarootdir}'
 sysconfdir='${prefix}/etc'
 sharedstatedir='${prefix}/com'
 localstatedir='${prefix}/var'
-runstatedir='${localstatedir}/run'
 includedir='${prefix}/include'
 oldincludedir='/usr/include'
 docdir='${datarootdir}/doc/${PACKAGE_TARNAME}'
@@ -1135,15 +1135,6 @@ do
   | -silent | --silent | --silen | --sile | --sil)
     silent=yes ;;
 
-  -runstatedir | --runstatedir | --runstatedi | --runstated \
-  | --runstate | --runstat | --runsta | --runst | --runs \
-  | --run | --ru | --r)
-    ac_prev=runstatedir ;;
-  -runstatedir=* | --runstatedir=* | --runstatedi=* | --runstated=* \
-  | --runstate=* | --runstat=* | --runsta=* | --runst=* | --runs=* \
-  | --run=* | --ru=* | --r=*)
-    runstatedir=$ac_optarg ;;
-
   -sbindir | --sbindir | --sbindi | --sbind | --sbin | --sbi | --sb)
     ac_prev=sbindir ;;
   -sbindir=* | --sbindir=* | --sbindi=* | --sbind=* | --sbin=* \
@@ -1281,7 +1272,7 @@ fi
 for ac_var in	exec_prefix prefix bindir sbindir libexecdir datarootdir \
 		datadir sysconfdir sharedstatedir localstatedir includedir \
 		oldincludedir docdir infodir htmldir dvidir pdfdir psdir \
-		libdir localedir mandir runstatedir
+		libdir localedir mandir
 do
   eval ac_val=\$$ac_var
   # Remove trailing slashes.
@@ -1434,7 +1425,6 @@ Fine tuning of the installation directories:
   --sysconfdir=DIR        read-only single-machine data [PREFIX/etc]
   --sharedstatedir=DIR    modifiable architecture-independent data [PREFIX/com]
   --localstatedir=DIR     modifiable single-machine data [PREFIX/var]
-  --runstatedir=DIR       modifiable per-process data [LOCALSTATEDIR/run]
   --libdir=DIR            object code libraries [EPREFIX/lib]
   --includedir=DIR        C header files [PREFIX/include]
   --oldincludedir=DIR     C header files for non-gcc [/usr/include]
@@ -1521,6 +1511,10 @@ Optional Packages:
   --with-architectures    architectures to compile for on Mac OS X
   --with-lib-prefix       add user-defined prefix to library names
   --with-lib-suffix       add user-defined suffix to library names
+  --with-freelist32-size-max
+                          max size of freelist on 32 bit platforms
+  --with-freelist64-size-max
+                          max size of freelist on 64 bit platforms
   --with-vis              additional variable implementation specifications
   --with-gmp-include      path to the gmp or mpir header files
   --with-gmp-lib          path to the gmp or mpir library
@@ -2648,6 +2642,9 @@ GECODE_FLATZINC_VERSION=${ac_gecode_flatzincversion}
 # checks for programs
 
 : ${CXXFLAGS=""} : ${CFLAGS=""}   : ${DLLFLAGS=""}   : ${GLDFLAGS=""}
+
+
+
 
 
 
@@ -6581,6 +6578,37 @@ $as_echo "#define GECODE_USE_CLOCK 1" >>confdefs.h
 
 fi
 
+
+
+
+
+# Check whether --with-freelist32-size-max was given.
+if test "${with_freelist32_size_max+set}" = set; then :
+  withval=$with_freelist32_size_max;
+fi
+
+  if test "${with_freelist32_size_max:-no}" != "no"; then
+
+cat >>confdefs.h <<_ACEOF
+#define GECODE_FREELIST_SIZE_MAX32 ${with_freelist32_size_max}
+_ACEOF
+
+  fi
+
+
+
+# Check whether --with-freelist64-size-max was given.
+if test "${with_freelist64_size_max+set}" = set; then :
+  withval=$with_freelist64_size_max;
+fi
+
+  if test "${with_freelist64_size_max:-no}" != "no"; then
+
+cat >>confdefs.h <<_ACEOF
+#define GECODE_FREELIST_SIZE_MAX64 ${with_freelist64_size_max}
+_ACEOF
+
+  fi
 
 
 

@@ -612,6 +612,27 @@ AC_DEFUN([AC_GECODE_GCOV],
         AC_MSG_RESULT(no)
      fi])
 
+AC_DEFUN([AC_GECODE_FREELIST_32_SIZE],
+  [dnl max size of freelist on 32 bit platforms
+  AC_ARG_WITH([freelist32-size-max],
+    AC_HELP_STRING([--with-freelist32-size-max],
+    [max size of freelist on 32 bit platforms]))
+  if test "${with_freelist32_size_max:-no}" != "no"; then
+    AC_DEFINE_UNQUOTED([GECODE_FREELIST_SIZE_MAX32],[${with_freelist32_size_max}],[max freelist size on 32 bit platforms])
+  fi
+  ]
+)
+
+AC_DEFUN([AC_GECODE_FREELIST_64_SIZE],
+  [dnl max size of freelist on 64 bit platforms
+  AC_ARG_WITH([freelist64-size-max],
+    AC_HELP_STRING([--with-freelist64-size-max],
+    [max size of freelist on 64 bit platforms]))
+  if test "${with_freelist64_size_max:-no}" != "no"; then
+    AC_DEFINE_UNQUOTED([GECODE_FREELIST_SIZE_MAX64],[${with_freelist64_size_max}],[max freelist size on 64 bit platforms])
+  fi
+  ]
+)
 
 # Test for platform specific behaviour of arithmetic
 

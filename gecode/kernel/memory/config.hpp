@@ -34,6 +34,13 @@
  *
  */
 
+#ifndef GECODE_FREELIST_SIZE_MAX32
+#define GECODE_FREELIST_SIZE_MAX32 3
+#endif
+#ifndef GECODE_FREELIST_SIZE_MAX64
+#define GECODE_FREELIST_SIZE_MAX64 3
+#endif
+
 namespace Gecode { namespace Kernel {
 
   /**
@@ -105,7 +112,7 @@ namespace Gecode { namespace Kernel {
      * Currently, for 32 bit machines, the maximal size is 12 bytes.
      * For 64 bit machines, it is 24 bytes.
      */
-    const int fl_size_max  = ((sizeof(void*) == 4) ? 3 : 3);
+    const int fl_size_max  = ((sizeof(void*) == 4) ? GECODE_FREELIST_SIZE_MAX32 : GECODE_FREELIST_SIZE_MAX64);
     /**
      * \brief Number of free lists elements to allocate
      *

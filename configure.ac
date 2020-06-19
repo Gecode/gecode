@@ -159,6 +159,10 @@ AC_GECODE_THREADS
 dnl checking for timer to use
 AC_GECODE_TIMER
 
+dnl checking for freelist sizes to use
+AC_GECODE_FREELIST_32_SIZE
+AC_GECODE_FREELIST_64_SIZE
+
 case $ac_gecode_compiler_vendor in
 gnu)
   dnl general compiler flags
