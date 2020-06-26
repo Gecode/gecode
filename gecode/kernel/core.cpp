@@ -307,10 +307,10 @@ namespace Gecode {
           } while (--pc.p.active >= &pc.p.queue[0]);
           assert(pc.p.active < &pc.p.queue[0]);
           goto f_stable;
-        case __ES_SUBSUMED:
+        case ES_SUBSUMED_:
           p->unlink(); rfree(p,p->u.size);
           goto f_stable_or_unstable;
-        case __ES_PARTIAL:
+        case ES_PARTIAL_:
           // Schedule propagator with specified propagator events
           assert(p->u.med != 0);
           enqueue(p);
@@ -370,10 +370,10 @@ namespace Gecode {
           } while (--pc.p.active >= &pc.p.queue[0]);
           assert(pc.p.active < &pc.p.queue[0]);
           goto d_stable;
-        case __ES_SUBSUMED:
+        case ES_SUBSUMED_:
           p->unlink(); rfree(p,p->u.size);
           goto d_stable_or_unstable;
-        case __ES_PARTIAL:
+        case ES_PARTIAL_:
           // Schedule propagator with specified propagator events
           assert(p->u.med != 0);
           enqueue(p);
@@ -451,11 +451,11 @@ namespace Gecode {
           } while (--pc.p.active >= &pc.p.queue[0]);
           assert(pc.p.active < &pc.p.queue[0]);
           goto t_stable;
-        case __ES_SUBSUMED:
+        case ES_SUBSUMED_:
           GECODE_STATUS_TRACE(nullptr,SUBSUMED);
           p->unlink(); rfree(p,p->u.size);
           goto t_stable_or_unstable;
-        case __ES_PARTIAL:
+        case ES_PARTIAL_:
           GECODE_STATUS_TRACE(p,NOFIX);
           // Schedule propagator with specified propagator events
           assert(p->u.med != 0);
@@ -524,7 +524,7 @@ namespace Gecode {
       switch (top->propagate(*this,top_med_o)) {
       case ES_FIX:
         break;
-      case __ES_SUBSUMED:
+      case ES_SUBSUMED_:
         break;
       default:
         GECODE_NEVER;

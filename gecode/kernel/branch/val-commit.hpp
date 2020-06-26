@@ -40,15 +40,15 @@ namespace Gecode {
    */
   //@{
   /// Base class for value commit
-  template<class _View, class _Val>
+  template<class View_, class Val_>
   class ValCommit {
   public:
     /// View type
-    typedef _View View;
+    typedef View_ View;
     /// Corresponding variable type
     typedef typename View::VarType Var;
     /// Value type
-    typedef _Val Val;
+    typedef Val_ Val;
   public:
     /// Constructor for initialization
     ValCommit(Space& home, const ValBranch<Var>& vb);

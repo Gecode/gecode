@@ -557,40 +557,40 @@ namespace Gecode {
 
 #ifdef GECODE_HAS_GIST
   forceinline
-  Options::_I::_I(void) : _click(heap,1), n_click(0),
+  Options::I_::I_(void) : _click(heap,1), n_click(0),
     _solution(heap,1), n_solution(0), _move(heap,1), n_move(0),
     _compare(heap,1), n_compare(0) {}
 
   forceinline void
-  Options::_I::click(Gist::Inspector* i) {
+  Options::I_::click(Gist::Inspector* i) {
     _click[static_cast<int>(n_click++)] = i;
   }
   forceinline void
-  Options::_I::solution(Gist::Inspector* i) {
+  Options::I_::solution(Gist::Inspector* i) {
     _solution[static_cast<int>(n_solution++)] = i;
   }
   forceinline void
-  Options::_I::move(Gist::Inspector* i) {
+  Options::I_::move(Gist::Inspector* i) {
     _move[static_cast<int>(n_move++)] = i;
   }
   forceinline void
-  Options::_I::compare(Gist::Comparator* i) {
+  Options::I_::compare(Gist::Comparator* i) {
     _compare[static_cast<int>(n_compare++)] = i;
   }
   forceinline Gist::Inspector*
-  Options::_I::click(unsigned int i) const {
+  Options::I_::click(unsigned int i) const {
     return (i < n_click) ? _click[i] : nullptr;
   }
   forceinline Gist::Inspector*
-  Options::_I::solution(unsigned int i) const {
+  Options::I_::solution(unsigned int i) const {
     return (i < n_solution) ? _solution[i] : nullptr;
   }
   forceinline Gist::Inspector*
-  Options::_I::move(unsigned int i) const {
+  Options::I_::move(unsigned int i) const {
     return (i < n_move) ? _move[i] : nullptr;
   }
   forceinline Gist::Comparator*
-  Options::_I::compare(unsigned int i) const {
+  Options::I_::compare(unsigned int i) const {
     return (i < n_compare) ? _compare[i] : nullptr;
   }
 #endif

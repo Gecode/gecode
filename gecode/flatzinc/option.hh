@@ -31,8 +31,8 @@
  *
  */
 
-#ifndef __FLATZINC_OPTION_HH__
-#define __FLATZINC_OPTION_HH__
+#ifndef FLATZINC_OPTION_HH
+#define FLATZINC_OPTION_HH
 
 namespace Gecode { namespace FlatZinc {
 

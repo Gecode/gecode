@@ -31,8 +31,8 @@
  *
  */
 
-#ifndef __GECODE_GIST_GECODELOGO_HH_
-#define __GECODE_GIST_GECODELOGO_HH_
+#ifndef GECODE_GIST_GECODELOGO_HH
+#define GECODE_GIST_GECODELOGO_HH
 
 namespace Gecode { namespace Gist {
 

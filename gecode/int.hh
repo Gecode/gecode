@@ -193,7 +193,7 @@ namespace Gecode {
       /// Check whether \a n is included in the set
       GECODE_INT_EXPORT bool in(int n) const;
       /// Perform equality test on ranges
-      GECODE_INT_EXPORT bool equal(const IntSetObject& so) const; 
+      GECODE_INT_EXPORT bool equal(const IntSetObject& so) const;
       /// Delete object
       GECODE_INT_EXPORT virtual ~IntSetObject(void);
     };
@@ -232,7 +232,7 @@ namespace Gecode {
     template<class I>
     explicit IntSet(const I& i);
     /// Initialize with integers from list \a r
-    GECODE_INT_EXPORT 
+    GECODE_INT_EXPORT
     explicit IntSet(std::initializer_list<int> r);
     /** \brief Initialize with ranges from vector \a r
      *
@@ -981,7 +981,7 @@ namespace Gecode {
     IPL_BASIC = 4,    ///< Use basic propagation algorithm
     IPL_ADVANCED = 8, ///< Use advanced propagation algorithm
     IPL_BASIC_ADVANCED = IPL_BASIC | IPL_ADVANCED, ///< Use both
-    _IPL_BITS = 4 ///< Number of bits required (internal)
+    IPL_BITS_ = 4 ///< Number of bits required (internal)
   };
 
   /// Extract value, bounds, or domain propagation from propagation level
@@ -4194,7 +4194,7 @@ namespace Gecode {
    *
    * \ingroup TaskModelIntBranch
    */
-  typedef std::function<double(const Space& home, IntVar x, int i)> 
+  typedef std::function<double(const Space& home, IntVar x, int i)>
     IntBranchMerit;
   /**
    * \brief Branch merit function type for Boolean variables

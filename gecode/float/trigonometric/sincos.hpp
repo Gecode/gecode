@@ -40,11 +40,11 @@ namespace Gecode { namespace Float { namespace Trigonometric {
    */
 template<class V>
 void aSinProject(Rounding& r, const V& aSinIv, FloatNum& iv_min, FloatNum& iv_max, int& n_min, int& n_max) {
-  #define I0__PI_2I    FloatVal(0,pi_half_upper())
-  #define IPI_2__PII   FloatVal(pi_half_lower(),pi_upper())
-  #define IPI__3PI_2I  FloatVal(pi_lower(),3*pi_half_upper())
-  #define I3PI_2__2PII FloatVal(3*pi_half_lower(),pi_twice_upper())
-  #define POS(X) ((I0__PI_2I.in(X))?0: (IPI_2__PII.in(X))?1: (IPI__3PI_2I.in(X))?2: 3 )
+  #define I0_PI_2I    FloatVal(0,pi_half_upper())
+  #define IPI_2_PII   FloatVal(pi_half_lower(),pi_upper())
+  #define IPI_3PI_2I  FloatVal(pi_lower(),3*pi_half_upper())
+  #define I3PI_2_2PII FloatVal(3*pi_half_lower(),pi_twice_upper())
+  #define POS(X) ((I0_PI_2I.in(X))?0: (IPI_2_PII.in(X))?1: (IPI_3PI_2I.in(X))?2: 3 )
   #define ASININF_DOWN r.asin_down(aSinIv.min())
   #define ASINSUP_UP r.asin_up(aSinIv.max())
 
@@ -104,10 +104,10 @@ void aSinProject(Rounding& r, const V& aSinIv, FloatNum& iv_min, FloatNum& iv_ma
   #undef ASININF_DOWN
   #undef ASINSUP_UP
   #undef POS
-  #undef I0__PI_2I
-  #undef IPI_2__PII
-  #undef IPI__3PI_2I
-  #undef I3PI_2__2PII
+  #undef I0_PI_2I
+  #undef IPI_2_PII
+  #undef IPI_3PI_2I
+  #undef I3PI_2_2PII
 }
 
 /*

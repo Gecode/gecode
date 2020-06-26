@@ -85,19 +85,27 @@ Rank:   minor
 Issue:  63
 Thanks: Markus Elfring
 [DESCRIPTION]
+Remove usages of reserved identifiers such as __GECODE_KERNEL_HH__ and
+_View.
+[MORE]
 Gecode used to use include guards of the form __GECODE_KERNEL_HH__.
 Using a double underscore in an identifier is reserved, and thus
 undefined behaviour. Use guards of the form GECODE_KERNEL_HH instead.
-
+Similarly, names with a single leading underscore followed by a
+capital letter are also reserved, and usage is thus undefined
+behaviour, and are removed.
+	
 [ENTRY]
 Module: flatzinc
 What:   new
 Rank:   minor
 [DESCRIPTION]
-Add MiniZinc constraint names to FlatZinc errors when applicable and available.
+Add MiniZinc constraint names to FlatZinc errors when applicable and
+available.
 [MORE]
-A constraint name is specified in MiniZinc using a string annotation "my name" on the constraint item,
-and is translated into FlatZinc using the mzn_constraint_name("my name").
+A constraint name is specified in MiniZinc using a string annotation
+"my name" on the constraint item, and is translated into FlatZinc
+using the mzn_constraint_name("my name").
 
 [ENTRY]
 Module: flatzinc
