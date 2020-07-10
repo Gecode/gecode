@@ -470,13 +470,13 @@ namespace Gecode {
    * \ingroup TaskActor
    */
   enum ExecStatus {
-    __ES_SUBSUMED       = -2, ///< Internal: propagator is subsumed, do not use
+    ES_SUBSUMED_       = -2, ///< Internal: propagator is subsumed, do not use
     ES_FAILED           = -1, ///< Execution has resulted in failure
     ES_NOFIX            =  0, ///< Propagation has not computed fixpoint
     ES_OK               =  0, ///< Execution is okay
     ES_FIX              =  1, ///< Propagation has computed fixpoint
     ES_NOFIX_FORCE      =  2, ///< Advisor forces rescheduling of propagator
-    __ES_PARTIAL        =  2  ///< Internal: propagator has computed partial fixpoint, do not use
+    ES_PARTIAL_        =  2  ///< Internal: propagator has computed partial fixpoint, do not use
   };
 
   /**
@@ -1027,7 +1027,7 @@ namespace Gecode {
     /// Return alternative
     unsigned int alternative(void) const;
   };
- 
+
   /**
    * \brief Post trace information
    */
@@ -3563,27 +3563,27 @@ namespace Gecode {
   forceinline ExecStatus
   Space::ES_SUBSUMED_DISPOSED(Propagator& p, size_t s) {
     p.u.size = s;
-    return __ES_SUBSUMED;
+    return ES_SUBSUMED_;
   }
 
   forceinline ExecStatus
   Space::ES_SUBSUMED(Propagator& p) {
     p.u.size = p.dispose(*this);
-    return __ES_SUBSUMED;
+    return ES_SUBSUMED_;
   }
 
   forceinline ExecStatus
   Space::ES_FIX_PARTIAL(Propagator& p, const ModEventDelta& med) {
     p.u.med = med;
     assert(p.u.med != 0);
-    return __ES_PARTIAL;
+    return ES_PARTIAL_;
   }
 
   forceinline ExecStatus
   Space::ES_NOFIX_PARTIAL(Propagator& p, const ModEventDelta& med) {
     p.u.med = AllVarConf::med_combine(p.u.med,med);
     assert(p.u.med != 0);
-    return __ES_PARTIAL;
+    return ES_PARTIAL_;
   }
 
 
@@ -4550,7 +4550,7 @@ namespace Gecode {
       case ES_NOFIX_FORCE:
         schedule(home,p,me,true);
         break;
-      case __ES_SUBSUMED:
+      case ES_SUBSUMED_:
       default:
         GECODE_NEVER;
       }
@@ -4587,7 +4587,7 @@ namespace Gecode {
   template<class VIC>
   ModEvent
   VarImp<VIC>::fail(Space& home) {
-    _fail(home); 
+    _fail(home);
     return ME_GEN_FAILED;
   }
 
@@ -4604,8 +4604,8 @@ namespace Gecode {
 
     unsigned int np =
       static_cast<unsigned int>(x->actorNonZero(pc_max+1) - x->actor(0));
-    unsigned int na = 
-      static_cast<unsigned int >(x->b.base + x->entries - 
+    unsigned int na =
+      static_cast<unsigned int >(x->b.base + x->entries -
                                  x->actorNonZero(pc_max+1));
     unsigned int n  = na + np;
     assert(n == x->degree());
@@ -4620,7 +4620,7 @@ namespace Gecode {
       ActorLink* p3 = f[3]->prev();
       ActorLink* p0 = f[0]->prev();
       ActorLink* p1 = f[1]->prev();
-      ActorLink* p2 = f[2]->prev(); 
+      ActorLink* p2 = f[2]->prev();
       t[0] = p0; t[1] = p1; t[2] = p2; t[3] = p3;
       np -= 4; t += 4; f += 4;
     }
@@ -4640,7 +4640,7 @@ namespace Gecode {
       ptrdiff_t m0, m1, m2, m3;
       ActorLink* p3 =
         static_cast<ActorLink*>(Support::ptrsplit(f[3],m3))->prev();
-      ActorLink* p0 = 
+      ActorLink* p0 =
         static_cast<ActorLink*>(Support::ptrsplit(f[0],m0))->prev();
       ActorLink* p1 =
         static_cast<ActorLink*>(Support::ptrsplit(f[1],m1))->prev();
@@ -4654,7 +4654,7 @@ namespace Gecode {
     }
     if (na >= 2) {
       ptrdiff_t m0, m1;
-      ActorLink* p0 = 
+      ActorLink* p0 =
         static_cast<ActorLink*>(Support::ptrsplit(f[0],m0))->prev();
       ActorLink* p1 =
         static_cast<ActorLink*>(Support::ptrsplit(f[1],m1))->prev();
@@ -4664,7 +4664,7 @@ namespace Gecode {
     }
     if (na > 0) {
       ptrdiff_t m0;
-      ActorLink* p0 = 
+      ActorLink* p0 =
         static_cast<ActorLink*>(Support::ptrsplit(f[0],m0))->prev();
       t[0] = static_cast<ActorLink*>(Support::ptrjoin(p0,m0));
     }

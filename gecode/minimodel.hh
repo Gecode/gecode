@@ -100,22 +100,22 @@ namespace Gecode {
   /// Class for specifying integer propagation levels used by minimodel
   class IntPropLevels {
   protected:
-    IntPropLevel _linear2 : _IPL_BITS; ///< For binary linear
-    IntPropLevel _linear  : _IPL_BITS; ///< For n-ary linear
-    IntPropLevel _abs     : _IPL_BITS; ///< For absolute value
-    IntPropLevel _max2    : _IPL_BITS; ///< For binary maximum
-    IntPropLevel _max     : _IPL_BITS; ///< For n-ary maximum
-    IntPropLevel _min2    : _IPL_BITS; ///< For binary minimum
-    IntPropLevel _min     : _IPL_BITS; ///< For minimum
-    IntPropLevel _mult    : _IPL_BITS; ///< For multiplication
-    IntPropLevel _div     : _IPL_BITS; ///< For division
-    IntPropLevel _mod     : _IPL_BITS; ///< For modulo
-    IntPropLevel _sqr     : _IPL_BITS; ///< For square
-    IntPropLevel _sqrt    : _IPL_BITS; ///< For square root
-    IntPropLevel _pow     : _IPL_BITS; ///< For power
-    IntPropLevel _nroot   : _IPL_BITS; ///< For root
-    IntPropLevel _element : _IPL_BITS; ///< For element
-    IntPropLevel _ite     : _IPL_BITS; ///< For if-then-else
+    IntPropLevel _linear2 : IPL_BITS_; ///< For binary linear
+    IntPropLevel _linear  : IPL_BITS_; ///< For n-ary linear
+    IntPropLevel _abs     : IPL_BITS_; ///< For absolute value
+    IntPropLevel _max2    : IPL_BITS_; ///< For binary maximum
+    IntPropLevel _max     : IPL_BITS_; ///< For n-ary maximum
+    IntPropLevel _min2    : IPL_BITS_; ///< For binary minimum
+    IntPropLevel _min     : IPL_BITS_; ///< For minimum
+    IntPropLevel _mult    : IPL_BITS_; ///< For multiplication
+    IntPropLevel _div     : IPL_BITS_; ///< For division
+    IntPropLevel _mod     : IPL_BITS_; ///< For modulo
+    IntPropLevel _sqr     : IPL_BITS_; ///< For square
+    IntPropLevel _sqrt    : IPL_BITS_; ///< For square root
+    IntPropLevel _pow     : IPL_BITS_; ///< For power
+    IntPropLevel _nroot   : IPL_BITS_; ///< For root
+    IntPropLevel _element : IPL_BITS_; ///< For element
+    IntPropLevel _ite     : IPL_BITS_; ///< For if-then-else
   public:
     /// Initialize with default propagation level
     IntPropLevels(IntPropLevel ipl=IPL_DEF);

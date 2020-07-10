@@ -39,8 +39,8 @@ namespace Gecode { namespace Float { namespace Trigonometric {
   template<class V>
   void
   aTanProject(Rounding& r, const V& aTanIv, FloatNum& iv_min, FloatNum& iv_max, int& n_min, int& n_max) {
-    #define I0__PI_2I    FloatVal(0,pi_half_upper())
-    #define POS(X) ((I0__PI_2I.in(X))?0:1)
+    #define I0_PI_2I    FloatVal(0,pi_half_upper())
+    #define POS(X) ((I0_PI_2I.in(X))?0:1)
     #define ATANINF_DOWN r.atan_down(aTanIv.min())
     #define ATANSUP_UP   r.atan_up(aTanIv.max())
 
@@ -80,7 +80,7 @@ namespace Gecode { namespace Float { namespace Trigonometric {
     #undef ATANINF_DOWN
     #undef ATANSUP_UP
     #undef POS
-    #undef I0__PI_2I
+    #undef I0_PI_2I
   }
 
   /*
@@ -96,10 +96,10 @@ namespace Gecode { namespace Float { namespace Trigonometric {
     int n_max = static_cast<int>(r.div_up(x0.max() + pi_half_upper(), pi_upper()));
 
     if (x0 == x1) {
-      #define I0__PI_2I    FloatVal(0,pi_half_upper())
-      if (I0__PI_2I.in(x0.max()))  GECODE_ME_CHECK(x0.lq(home,0));
-      if (I0__PI_2I.in(-x0.min())) GECODE_ME_CHECK(x0.gq(home,0));
-      #undef I0__PI_2I
+      #define I0_PI_2I    FloatVal(0,pi_half_upper())
+      if (I0_PI_2I.in(x0.max()))  GECODE_ME_CHECK(x0.lq(home, 0));
+      if (I0_PI_2I.in(-x0.min())) GECODE_ME_CHECK(x0.gq(home, 0));
+      #undef I0_PI_2I
 
       n_min = static_cast<int>(r.div_up(x0.min(), pi_upper()));
       n_max = static_cast<int>(r.div_up(x0.max(), pi_upper()));
@@ -150,10 +150,10 @@ namespace Gecode { namespace Float { namespace Trigonometric {
   ExecStatus
   Tan<A,B>::post(Home home, A x0, B x1) {
     if (x0 == x1) {
-      #define I0__PI_2I    FloatVal(0,pi_half_upper())
-      if (I0__PI_2I.in(x0.max()))  GECODE_ME_CHECK(x0.lq(home,0));
-      if (I0__PI_2I.in(-x0.min())) GECODE_ME_CHECK(x0.gq(home,0));
-      #undef I0__PI_2I
+      #define I0_PI_2I    FloatVal(0,pi_half_upper())
+      if (I0_PI_2I.in(x0.max()))  GECODE_ME_CHECK(x0.lq(home, 0));
+      if (I0_PI_2I.in(-x0.min())) GECODE_ME_CHECK(x0.gq(home, 0));
+      #undef I0_PI_2I
     }
     GECODE_ES_CHECK(dopropagate(home,x0,x1));
     (void) new (home) Tan<A,B>(home,x0,x1);

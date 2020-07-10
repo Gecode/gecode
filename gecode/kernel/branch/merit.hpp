@@ -42,15 +42,15 @@ namespace Gecode {
   /**
    * \brief Base-class for merit class
    */
-  template<class _View, class _Val>
+  template<class View_, class Val_>
   class MeritBase {
   public:
     /// View type
-    typedef _View View;
+    typedef View_ View;
     /// Corresponding variable type
     typedef typename View::VarType Var;
     /// Type of merit
-    typedef _Val Val;
+    typedef Val_ Val;
     /// Constructor for initialization
     MeritBase(Space& home, const VarBranch<Var>& vb);
     /// Constructor for cloning

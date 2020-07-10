@@ -234,7 +234,7 @@ namespace Gecode {
     class Options : public Search::Options {
     public:
       /// Helper class storing inspectors
-      class _I {
+      class I_ {
       private:
         Support::DynamicArray<Inspector*,Heap> _click;
         unsigned int n_click;
@@ -246,7 +246,7 @@ namespace Gecode {
         unsigned int n_compare;
       public:
         /// Constructor
-        _I(void);
+        I_(void);
         /// Add inspector that reacts on node double clicks
         void click(Inspector* i);
         /// Add inspector that reacts on each new solution that is found

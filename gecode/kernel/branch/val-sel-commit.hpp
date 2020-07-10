@@ -40,15 +40,15 @@ namespace Gecode {
    */
   //@{
   /// Base class for value selection and commit
-  template<class _View, class _Val>
+  template<class View_, class Val_>
   class ValSelCommitBase {
   public:
     /// View type
-    typedef _View View;
+    typedef View_ View;
     /// Corresponding variable type
     typedef typename View::VarType Var;
     /// Value type
-    typedef _Val Val;
+    typedef Val_ Val;
   public:
     /// Constructor for initialization
     ValSelCommitBase(Space& home, const ValBranch<Var>& vb);
@@ -128,7 +128,7 @@ namespace Gecode {
 
   template<class View, class Val>
   forceinline
-  ValSelCommitBase<View,Val>::ValSelCommitBase(Space&, 
+  ValSelCommitBase<View,Val>::ValSelCommitBase(Space&,
                                                const ValBranch<Var>&) {}
   template<class View, class Val>
   forceinline

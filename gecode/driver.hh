@@ -646,7 +646,7 @@ namespace Gecode {
 
 #ifdef GECODE_HAS_GIST
     /// Helper class storing Gist inspectors
-    class _I {
+    class I_ {
     private:
       /// The double click inspectors
       Support::DynamicArray<Gist::Inspector*,Heap> _click;
@@ -666,7 +666,7 @@ namespace Gecode {
       unsigned int n_compare;
     public:
       /// Constructor
-      _I(void);
+      I_(void);
       /// Add inspector that reacts on node double clicks
       void click(Gist::Inspector* i);
       /// Add inspector that reacts on each new solution that is found

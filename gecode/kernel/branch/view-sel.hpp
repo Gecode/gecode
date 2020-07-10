@@ -40,11 +40,11 @@ namespace Gecode {
    */
   //@{
   /// Abstract class for view selection
-  template<class _View>
+  template<class View_>
   class ViewSel {
   public:
     /// Define the view type
-    typedef _View View;
+    typedef View_ View;
     /// The corresponding variable type
     typedef typename View::VarType Var;
     /// \name Initialization

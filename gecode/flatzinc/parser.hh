@@ -31,8 +31,8 @@
  *
  */
 
-#ifndef __FLATZINC_PARSER_HH__
-#define __FLATZINC_PARSER_HH__
+#ifndef FLATZINC_PARSER_HH
+#define FLATZINC_PARSER_HH
 
 #include <gecode/flatzinc.hh>
 
