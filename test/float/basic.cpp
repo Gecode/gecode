@@ -51,10 +51,10 @@ namespace Test { namespace Float {
      public:
        /// Initialize test
        Basic(Gecode::FloatNum n, Gecode::FloatNum s)
-         : Test("Basic",3,-n,n,s,CPLT_ASSIGNMENT,true) {}
+         : Test("Basic",3,-n,n,s,CPLT_ASSIGNMENT,false) {}
        /// Initialize test
        Basic(Gecode::FloatVal v, Gecode::FloatNum s)
-          : Test("Basic",3,v,s,CPLT_ASSIGNMENT,true) {}
+          : Test("Basic",3,v,s,CPLT_ASSIGNMENT,false) {}
        /// Check whether \a x is a solution
        virtual MaybeType solution(const Assignment&) const {
          return MT_TRUE;
@@ -63,9 +63,9 @@ namespace Test { namespace Float {
        virtual void post(Gecode::Space&, Gecode::FloatVarArray&) {
        }
        /// Post reified constraint on \a x for \a r
-       virtual void post(Gecode::Space& home, Gecode::FloatVarArray&,
-                         Gecode::Reify r) {
-         Gecode::rel(home, r.var(), Gecode::IRT_EQ, 1);
+       virtual void post(Gecode::Space&, Gecode::FloatVarArray&, Gecode::Reify) {
+         // Reification for no constraint is not interesting
+         GECODE_NEVER;
        }
      };
 
