@@ -70,7 +70,7 @@ namespace Test {
     /// Return random index of non-null space
     int space(TestSpace* s[]) {
       int i = rand(n);
-      while (s[i] == NULL)
+      while (s[i] == nullptr)
         i = (i+1) % n;
       return i;
     }
@@ -89,7 +89,7 @@ namespace Test {
       int n_s = 1;
 
       for (int i=n; i--; )
-        s[i] = NULL;
+        s[i] = nullptr;
       s[0] = new TestSpace;
 
       for (int o=n_ops; o--; )
@@ -98,9 +98,9 @@ namespace Test {
           // clone space
           {
             int i = index();
-            if ((s[i] != NULL)) {
+            if ((s[i] != nullptr)) {
               if (n_s > 1) {
-                delete s[i]; s[i]=NULL; n_s--;
+                delete s[i]; s[i]=nullptr; n_s--;
               } else {
                 break;
               }
@@ -115,7 +115,7 @@ namespace Test {
           // delete space
           if (n_s > 1) {
             int i = space(s);
-            delete s[i]; s[i]=NULL; n_s--;
+            delete s[i]; s[i]=nullptr; n_s--;
           }
           break;
         case 2:

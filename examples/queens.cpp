@@ -129,7 +129,7 @@ protected:
   static const int unit = 20;
 public:
   /// Constructor
-  QueensInspector(void) : scene(NULL), mw(NULL) {}
+  QueensInspector(void) : scene(nullptr), mw(nullptr) {}
   /// Inspect space \a s
   virtual void inspect(const Space& s) {
     const Queens& q = static_cast<const Queens&>(s);
@@ -177,7 +177,7 @@ public:
   /// Finalize inspector
   virtual void finalize(void) {
     delete mw;
-    mw = NULL;
+    mw = nullptr;
   }
 };
 

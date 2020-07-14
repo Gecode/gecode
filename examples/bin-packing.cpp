@@ -61,7 +61,7 @@ namespace {
   public:
     /// Whether a valid specification has been found
     bool valid(void) const {
-      return data != NULL;
+      return data != nullptr;
     }
     /// Return maximal capacity of a bin
     int capacity(void) const {
@@ -78,10 +78,10 @@ namespace {
   protected:
     /// Find instance by name \a s
     static const int* find(const char* s) {
-      for (int i=0; name[i] != NULL; i++)
+      for (int i=0; name[i] != nullptr; i++)
         if (!strcmp(s,name[i]))
           return bpp[i];
-      return NULL;
+      return nullptr;
     }
     /// Compute lower bound
     int clower(void) const {
@@ -25382,7 +25382,7 @@ namespace {
     "t501_07", "t501_08", "t501_09", "t501_10", "t501_11", "t501_12", "t501_13",
     "t501_14", "t501_15", "t501_16", "t501_17", "t501_18", "t501_19",
 
-    NULL
+    nullptr
   };
 
 }

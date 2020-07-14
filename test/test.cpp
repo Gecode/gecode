@@ -61,7 +61,7 @@ namespace Test {
     _tests = this; _n_tests++;
   }
 
-  Base* Base::_tests = NULL;
+  Base* Base::_tests = nullptr;
   unsigned int Base::_n_tests = 0;
 
   /// Sort tests by name
@@ -113,7 +113,7 @@ namespace Test {
   };
 
   std::vector<std::pair<MatchType, const char*> > testpat;
-  const char* startFrom = NULL;
+  const char* startFrom = nullptr;
   bool list = false;
 
   void
@@ -160,7 +160,7 @@ namespace Test {
       } else if (!strcmp(argv[i],"-seed")) {
         if (++i == argc) goto missing;
         if (!strcmp(argv[i],"time")) {
-          seed = static_cast<unsigned int>(time(NULL));
+          seed = static_cast<unsigned int>(time(nullptr));
         } else {
           seed = static_cast<unsigned int>(atoi(argv[i]));
         }
@@ -216,7 +216,7 @@ main(int argc, char* argv[]) {
   Base::sort();
 
   if (list) {
-    for (Base* t = Base::tests() ; t != NULL; t = t->next() ) {
+    for (Base* t = Base::tests() ; t != nullptr; t = t->next() ) {
       std::cout << t->name() << std::endl;
     }
     exit(EXIT_SUCCESS);
@@ -224,9 +224,9 @@ main(int argc, char* argv[]) {
 
   Base::rand.seed(opt.seed);
 
-  bool started = startFrom == NULL ? true : false;
+  bool started = startFrom == nullptr ? true : false;
 
-  for (Base* t = Base::tests() ; t != NULL; t = t->next() ) {
+  for (Base* t = Base::tests() ; t != nullptr; t = t->next() ) {
     try {
       if (!started) {
         if (t->name().find(startFrom) != std::string::npos)

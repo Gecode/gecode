@@ -48,7 +48,7 @@ namespace Test { namespace FlatZinc {
     Gecode::FlatZinc::FlatZincOptions fznopt("Gecode/FlatZinc");
     fznopt.allSolutions(_allSolutions);
     Gecode::FlatZinc::Printer p;
-    Gecode::FlatZinc::FlatZincSpace* fg = NULL;
+    Gecode::FlatZinc::FlatZincSpace* fg = nullptr;
     try {
       std::stringstream ss(_source);
       fg = Gecode::FlatZinc::parse(ss, p, olog);

@@ -252,7 +252,7 @@ namespace Test {
         // Compare whether the a or the same solution is found with no-goods
         Model* s_nogoods = dfs(m);
 
-        bool ok = ((s_nogoods != NULL) &&
+        bool ok = ((s_nogoods != nullptr) &&
                    ((t != 1) || s_plain->same(*s_nogoods)));
 
         delete m;

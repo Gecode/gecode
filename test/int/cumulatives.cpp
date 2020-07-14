@@ -101,22 +101,22 @@ namespace Test { namespace Int {
          e = new Gecode::DFS<Ass>(a);
          delete a;
          nxt = cur = e->next();
-         if (cur != NULL)
+         if (cur != nullptr)
            nxt = e->next();
        }
        /// %Test whether all assignments have been iterated
        virtual bool operator()(void) const {
-         return nxt != NULL;
+         return nxt != nullptr;
        }
        /// Move to next assignment
        virtual void operator++(void) {
          delete cur;
          cur = nxt;
-         if (cur != NULL) nxt = e->next();
+         if (cur != nullptr) nxt = e->next();
        }
        /// Return value for variable \a i
        virtual int  operator[](int i) const {
-         assert((i>=0) && (i<n) && (cur != NULL));
+         assert((i>=0) && (i<n) && (cur != nullptr));
          return cur->x[i].val();
        }
        /// Destructor

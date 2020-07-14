@@ -338,7 +338,7 @@ protected:
   static const int unit = 30;
 public:
   /// Constructor
-  KnightsInspector(void) : scene(NULL), mw(NULL) {}
+  KnightsInspector(void) : scene(nullptr), mw(nullptr) {}
   /// Inspect space \a s
   virtual void inspect(const Space& s) {
     const Knights& k = static_cast<const Knights&>(s);
@@ -395,7 +395,7 @@ public:
   /// Finalize inspector
   virtual void finalize(void) {
     delete mw;
-    mw = NULL;
+    mw = nullptr;
   }
 };
 #endif

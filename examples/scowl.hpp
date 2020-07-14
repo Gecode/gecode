@@ -41,7 +41,7 @@ protected:
 public:
   /// Initialize with name \a s
   FileSizeOptions(const char* s);
-  /// Return file name (NULL if none given)
+  /// Return file name (nullptr if none given)
   const char* file(void) const;
 };
 
@@ -66,7 +66,7 @@ public:
   /**
    * \brief Perform actual initialization
    *
-   * Reads words from file with name \a fn. If \a fn is NULL, the
+   * Reads words from file with name \a fn. If \a fn is nullptr, the
    * predefined dictionary is used.
    */
   void init(const char* fn);
@@ -13472,15 +13472,15 @@ FileSizeOptions::file(void) const {
 
 inline
 Dictionary::Dictionary(void)
-  : max_len(0), n_all_words(0), chunk(NULL) {
+  : max_len(0), n_all_words(0), chunk(nullptr) {
   for (int i=0; i<max_len; i++) {
-    n_words[i]=0; s_words[i]=NULL;
+    n_words[i]=0; s_words[i]=nullptr;
   }
 }
 
 inline void
 Dictionary::init(const char* fn) {
-  if (fn == NULL) {
+  if (fn == nullptr) {
     // Initialize from predefined dictionary
 
     // Set up information
@@ -13529,7 +13529,7 @@ Dictionary::init(const char* fn) {
         {
           int n = static_cast<int>(s.size());
           for (int i=0; i<n; i++)
-            if (!isalpha(s[static_cast<unsigned int>(i)]) || 
+            if (!isalpha(s[static_cast<unsigned int>(i)]) ||
                 !islower(s[static_cast<unsigned int>(i)]))
               goto skip1;
           // Found a legal word
@@ -13570,7 +13570,7 @@ Dictionary::init(const char* fn) {
         {
           int n = static_cast<int>(s.size());
           for (int i=0; i<n; i++)
-            if (!isalpha(s[static_cast<unsigned int>(i)]) || 
+            if (!isalpha(s[static_cast<unsigned int>(i)]) ||
                 !islower(s[static_cast<unsigned int>(i)]))
               goto skip2;
           // Found a legal word, copy it
