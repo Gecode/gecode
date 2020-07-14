@@ -44,6 +44,7 @@
 #include <cstdlib>
 #include <cstring>
 #include <ctime>
+#include <utility>
 #include <vector>
 #include <utility>
 
@@ -56,8 +57,8 @@ namespace Test {
    * Base class for tests
    *
    */
-  Base::Base(const std::string& s)
-    : _name(s), _next(_tests) {
+  Base::Base(std::string  s)
+    : _name(std::move(s)), _next(_tests) {
     _tests = this; _n_tests++;
   }
 
@@ -74,31 +75,31 @@ namespace Test {
   };
 
   void
-  Base::sort(void) {
+  Base::sort() {
     Base** b = Gecode::heap.alloc<Base*>(_n_tests);
     unsigned int i=0;
-    for (Base* t = _tests; t != NULL; t = t->next())
+    for (Base* t = _tests; t != nullptr; t = t->next())
       b[i++] = t;
     SortByName sbn;
-    Gecode::Support::quicksort(b,_n_tests,sbn);
+    Gecode::Support::quicksort(b, _n_tests,sbn);
     i=0;
-    _tests = NULL;
+    _tests = nullptr;
     for ( ; i < _n_tests; i++) {
       b[i]->next(_tests); _tests = b[i];
     }
     Gecode::heap.free(b,_n_tests);
   }
 
-  Base::~Base(void) {}
+  Base::~Base() = default;
 
   Gecode::Support::RandomGenerator Base::rand
   = Gecode::Support::RandomGenerator();
 
   Options opt;
 
-  void report_error(std::string name) {
+  void report_error(const std::string& name) {
     std::cout << "Options: -seed " << opt.seed;
-    if (opt.fixprob != opt.deffixprob)
+    if (opt.fixprob != Test::Options::deffixprob)
       std::cout << " -fixprob " << opt.fixprob;
     std::cout << " -test " << name << std::endl;
     if (opt.log)
@@ -173,11 +174,11 @@ namespace Test {
       } else if (!strcmp(argv[i],"-test")) {
         if (++i == argc) goto missing;
         if (argv[i][0] == '^')
-          testpat.push_back(std::make_pair(MT_FIRST, argv[i] + 1));
+          testpat.emplace_back(MT_FIRST, argv[i] + 1);
         else if (argv[i][0] == '-')
-          testpat.push_back(std::make_pair(MT_NOT, argv[i] + 1));
+          testpat.emplace_back(MT_NOT, argv[i] + 1);
         else
-          testpat.push_back(std::make_pair(MT_ANY, argv[i]));
+          testpat.emplace_back(MT_ANY, argv[i]);
       } else if (!strcmp(argv[i],"-start")) {
         if (++i == argc) goto missing;
         startFrom = argv[i];
@@ -234,7 +235,7 @@ main(int argc, char* argv[]) {
         else
           goto next;
       }
-      if (testpat.size() != 0) {
+      if (!testpat.empty()) {
         bool match_found   = false;
         bool some_positive = false;
         for (unsigned int i = 0; i < testpat.size(); ++i) {
@@ -267,7 +268,7 @@ main(int argc, char* argv[]) {
         }
       }
     std::cout << std::endl;
-    } catch (Gecode::Exception e) {
+    } catch (Gecode::Exception& e) {
       std::cout << "Exception in \"Gecode::" << e.what()
                 << "." << std::endl
                 << "Stopping..." << std::endl;

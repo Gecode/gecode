@@ -113,7 +113,7 @@ namespace Test {
     static unsigned int _n_tests;
   public:
     /// Create and register test with name \a s
-    Base(const std::string& s);
+    Base(std::string  s);
     /// Sort tests alphabetically
     static void sort(void);
     /// Return name of test
