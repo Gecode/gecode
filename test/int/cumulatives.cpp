@@ -109,13 +109,13 @@ namespace Test { namespace Int {
          return nxt != nullptr;
        }
        /// Move to next assignment
-       virtual void operator++(void) {
+       virtual void next(void) {
          delete cur;
          cur = nxt;
          if (cur != nullptr) nxt = e->next();
        }
        /// Return value for variable \a i
-       virtual int  operator[](int i) const {
+       virtual int operator[](int i) const {
          assert((i>=0) && (i<n) && (cur != nullptr));
          return cur->x[i].val();
        }

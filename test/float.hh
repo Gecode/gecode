@@ -87,7 +87,7 @@ namespace Test {
       /// Test whether all assignments have been iterated
       virtual bool operator()(void) const = 0;
       /// Move to next assignment
-      virtual void operator++(void) = 0;
+      virtual void next(void) = 0;
       /// Return value for variable \a i
       virtual Gecode::FloatVal operator[](int i) const = 0;
       /// Set assignment to value \a val for variable \a i
@@ -109,7 +109,7 @@ namespace Test {
       /// Test whether all assignments have been iterated
       virtual bool operator()(void) const;
       /// Move to next assignment
-      virtual void operator++(void);
+      virtual void next(void);
       /// Return value for variable \a i
       virtual Gecode::FloatVal operator[](int i) const;
       /// Set assignment to value \a val for variable \a i
@@ -130,7 +130,7 @@ namespace Test {
       /// Test whether all assignments have been iterated
       virtual bool operator()(void) const;
       /// Move to next assignment
-      virtual void operator++(void);
+      virtual void next(void);
       /// Return value for variable \a i
       virtual Gecode::FloatVal operator[](int i) const;
       /// Set assignment to value \a val for variable \a i
@@ -153,7 +153,7 @@ namespace Test {
       /// Test whether all assignments have been iterated
       virtual bool operator()(void) const;
       /// Move to next assignment
-      virtual void operator++(void);
+      virtual void next(void);
       /// Return value for variable \a i
       virtual Gecode::FloatVal operator[](int i) const;
       /// Set assignment to value \a val for variable \a i

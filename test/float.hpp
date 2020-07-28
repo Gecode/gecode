@@ -87,7 +87,7 @@ namespace Test { namespace Float {
     using namespace Gecode;
     for (int i=n-1; i--; )
       dsv[i] = FloatVal(d.min(),nextafter(d.min(),d.max()));
-    ++(*this);
+    (*this).next();
   }
   inline bool
   ExtAssignment::operator()(void) const {

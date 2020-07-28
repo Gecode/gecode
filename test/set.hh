@@ -159,7 +159,7 @@ namespace Test {
       /// Test whether all assignments have been iterated
       bool operator()(void) const { return !done; }
       /// Move to next assignment
-      void operator++(void);
+      void next(void);
       /// Return value for variable \a i
       int operator[](int i) const {
         assert((i>=0) && (i<n));
