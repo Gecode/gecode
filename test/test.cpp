@@ -205,6 +205,47 @@ namespace Test {
 
 }
 
+/// Check if a test name should be run if there are test name patterns specified
+bool is_test_name_matching(const std::string& test_name) {
+  if (!Test::testpat.empty()) {
+    bool positive_patterns = false;
+    bool match_found = false;
+    for (const auto& type_pattern: Test::testpat ) {
+      const auto& type = type_pattern.first;
+      const auto& pattern = type_pattern.second;
+      if (type == Test::MT_NOT) { // Negative pattern
+        if (test_name.find(pattern) != std::string::npos) {
+          // Test matches a negative pattern, should not run
+          return false;
+        }
+      } else {
+        // Positive pattern
+        positive_patterns = true;
+        if (!match_found) {
+          // No match found yet, test with current pattern
+          if (((type == Test::MT_ANY)   && (test_name.find(pattern) != std::string::npos)) ||
+              ((type == Test::MT_FIRST) && (test_name.find(pattern) == 0)))
+            match_found = true;
+        }
+      }
+    }
+
+    if (positive_patterns && match_found) {
+      // Some positive pattern matched the test name
+      return true;
+    } else if (positive_patterns && !match_found) {
+      // No positive pattern matched the test name
+      return false;
+    } else {
+      // No positive patterns, but no negative pattern ruled the test name out
+      return true;
+    }
+  } else {
+    // With no test-patterns, all tests should run.
+    return true;
+  }
+}
+
 int
 main(int argc, char* argv[]) {
   using namespace Test;
@@ -225,59 +266,49 @@ main(int argc, char* argv[]) {
 
   Base::rand.seed(opt.seed);
 
+  std::vector<Base*> tests;
   bool started = startFrom == nullptr ? true : false;
-
   for (Base* t = Base::tests() ; t != nullptr; t = t->next() ) {
+    if (!started) {
+      if (t->name().find(startFrom) != std::string::npos) {
+        started = true;
+      } else {
+        continue;
+      }
+    }
+    if (is_test_name_matching(t->name())) {
+      tests.emplace_back(t);
+    }
+  }
+
+  for (auto test : tests) {
     try {
-      if (!started) {
-        if (t->name().find(startFrom) != std::string::npos)
-          started = true;
-        else
-          goto next;
-      }
-      if (!testpat.empty()) {
-        bool match_found   = false;
-        bool some_positive = false;
-        for (unsigned int i = 0; i < testpat.size(); ++i) {
-          if (testpat[i].first == MT_NOT) { // Negative pattern
-            if (t->name().find(testpat[i].second) != std::string::npos)
-              goto next;
-          } else {               // Positive pattern
-            some_positive = true;
-            if (((testpat[i].first == MT_ANY) &&
-                 (t->name().find(testpat[i].second) != std::string::npos)) ||
-                ((testpat[i].first == MT_FIRST) &&
-                 (t->name().find(testpat[i].second) == 0)))
-              match_found = true;
-          }
-        }
-        if (some_positive && !match_found) goto next;
-      }
-      std::cout << t->name() << " ";
+      std::cout << test->name() << " ";
       std::cout.flush();
-      for (unsigned int i = opt.iter; i--; ) {
+      for (unsigned int i = opt.iter; i--;) {
         opt.seed = Base::rand.seed();
-        if (t->run()) {
+        if (test->run()) {
           std::cout << '+';
           std::cout.flush();
         } else {
           std::cout << "-" << std::endl;
-          report_error(t->name());
+          report_error(test->name());
           if (opt.stop)
             return 1;
         }
       }
-    std::cout << std::endl;
+      std::cout << std::endl;
     } catch (Gecode::Exception& e) {
       std::cout << "Exception in \"Gecode::" << e.what()
                 << "." << std::endl
                 << "Stopping..." << std::endl;
-      report_error(t->name());
+      report_error(test->name());
       if (opt.stop)
         return 1;
     }
-  next:;
+
   }
+
   return 0;
 }
 
