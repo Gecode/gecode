@@ -47,7 +47,7 @@ namespace Test { namespace Float {
    *
    */
   void
-  CpltAssignment::operator++(void) {
+  CpltAssignment::next(void) {
     using namespace Gecode;
     int i = n-1;
     while (true) {
@@ -64,7 +64,7 @@ namespace Test { namespace Float {
    *
    */
   void
-  ExtAssignment::operator++(void) {
+  ExtAssignment::next(void) {
     using namespace Gecode;
     assert(n > 1);
     int i = n-2;
@@ -86,7 +86,7 @@ namespace Test { namespace Float {
    *
    */
   void
-  RandomAssignment::operator++(void) {
+  RandomAssignment::next(void) {
     for (int i = n; i--; )
       vals[i]=randval();
     a--;
@@ -868,7 +868,7 @@ do {                                                            \
         }
       }
 
-      ++a;
+      a.next();
     }
 
     if (testsearch) {

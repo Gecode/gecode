@@ -521,7 +521,7 @@ namespace Test { namespace Int {
              for (int i = 5; i--; ) tuple[i] = ass[i];
              t.add(tuple);
            }
-           ++ass;
+           ass.next();
          }
          t.finalize();
        }
@@ -550,7 +550,7 @@ namespace Test { namespace Int {
          extensional(home, x, t, pos, r, ipl);
        }
      };
-     
+
      /// %Test with bool tuple set
      class TupleSetBool : public Test {
      protected:
@@ -572,7 +572,7 @@ namespace Test { namespace Int {
              for (int i = 5; i--; ) tuple[i] = ass[i];
              t.add(tuple);
            }
-           ++ass;
+           ass.next();
          }
          t.finalize();
        }
@@ -630,7 +630,7 @@ namespace Test { namespace Int {
            IntArgs tuple(arity);
            for (int j = arity; j--; ) tuple[j] = ass[j];
            ts.add(tuple);
-           ++ass;
+           ass.next();
          }
          ts.finalize();
          assert(ts.tuples() == size);
@@ -650,12 +650,12 @@ namespace Test { namespace Int {
            for (int i = n; i--; ) tuple[i] = ass[i];
            t.add(tuple);
          }
-         ++ass;
+         ass.next();
        }
        t.finalize();
        return t;
      }
-     
+
      /// Help class to create and register tests
      class Create {
      public:
@@ -751,7 +751,7 @@ namespace Test { namespace Int {
                tuple[4] = 1;
                for (int i = 4; i--; ) tuple[i] = ass[i];
                t.add(tuple);
-               ++ass;
+               ass.next();
              }
              t.add({2,2,4,3,4});
              t.finalize();
@@ -762,7 +762,7 @@ namespace Test { namespace Int {
              CpltAssignment ass(4, IntSet(1, 6));
              while (ass()) {
                t.add({ass[0],0,ass[1],ass[2]});
-               ++ass;
+               ass.next();
              }
              t.add({2,-1,3,4});
              t.finalize();
@@ -778,7 +778,7 @@ namespace Test { namespace Int {
                  for (int i = 9; i--; ) tuple[i+1] = ass[i];
                  t.add(tuple);
                }
-               ++ass;
+               ass.next();
              }
              t.add({1,1,1,1,1,1,1,1,1,1});
              t.add({1,2,3,4,4,2,1,2,3,3});
@@ -791,7 +791,7 @@ namespace Test { namespace Int {
          }
        }
      };
-     
+
      Create c;
 
      RegSimpleA ra;

@@ -45,7 +45,7 @@ namespace Test { namespace Int {
    *
    */
   void
-  CpltAssignment::operator++(void) {
+  CpltAssignment::next(void) {
     int i = n-1;
     while (true) {
       ++dsv[i];
@@ -59,15 +59,14 @@ namespace Test { namespace Int {
    * Random assignments
    *
    */
-  void
-  RandomAssignment::operator++(void) {
-    for (int i = n; i--; )
-      vals[i]=randval();
-    a--;
+  void RandomAssignment::next() {
+    for (int i = this->n; i--; )
+      this->vals[i]= this->randval();
+    this->a--;
   }
 
   void
-  RandomMixAssignment::operator++(void) {
+  RandomMixAssignment::next(void) {
     for (int i=n-_n1; i--; )
       vals[i] = randval(d);
     for (int i=_n1; i--; )
@@ -1077,7 +1076,7 @@ do {                                                            \
         }
       }
 
-      ++a;
+      a.next();
     }
 
     if (testsearch) {

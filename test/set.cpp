@@ -73,7 +73,7 @@ namespace Test { namespace Set {
   }
 
   void
-  SetAssignment::operator++(void) {
+  SetAssignment::next(void) {
     int i = n-1;
     while (true) {
       ++dsv[i];
@@ -86,7 +86,7 @@ namespace Test { namespace Set {
           done = true;
           return;
         }
-        ++ir;
+        ir.next();
         if (ir()) {
           i = n-1;
           for (int j=n; j--; )
@@ -1173,7 +1173,7 @@ if (!(T)) {                                                     \
           delete s;
         }
       }
-      ++a;
+      a.next();
     }
     delete ap;
     return true;

@@ -79,7 +79,7 @@ namespace Test { namespace Int {
         return dsv[0]();
       }
       /// Move to next assignment
-      virtual void operator++(void) {
+      virtual void next(void) {
         // Try to generate next bin assignment
         {
           int i = n_items-1;
