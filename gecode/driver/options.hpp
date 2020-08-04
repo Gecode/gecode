@@ -173,6 +173,18 @@ namespace Gecode {
       return cur;
     }
 
+    /*
+     * Profiler option
+     *
+     */
+    inline
+    ProfilerOption::ProfilerOption(const char* o, const char* e, unsigned int p, int i)
+      : BaseOption(o,e), cur_port(p), cur_execution_id(i) {}
+    inline void ProfilerOption::port(unsigned int p) { cur_port = p; }
+    inline unsigned int ProfilerOption::port(void) const { return cur_port; }
+    inline void ProfilerOption::execution_id(int i) { cur_execution_id = i; }
+    inline int ProfilerOption::execution_id(void) const { return cur_execution_id; }
+
   }
 
   /*
@@ -530,29 +542,20 @@ namespace Gecode {
    */
   inline void
   Options::profiler_id(int i) {
-    _profiler_id.value(i);
+    _profiler.execution_id(i);
   }
   inline int
   Options::profiler_id(void) const {
-    return _profiler_id.value();
+    return _profiler.execution_id();
   }
   inline void
   Options::profiler_port(unsigned int p) {
-    _profiler_port.value(p);
+    _profiler.port(p);
   }
   inline unsigned int
   Options::profiler_port(void) const {
-    return _profiler_port.value();
+    return _profiler.port();
   }
-  inline void
-  Options::profiler_info(bool b) {
-    _profiler_info.value(b);
-  }
-  inline bool
-  Options::profiler_info(void) const {
-    return _profiler_info.value();
-  }
-
 #endif
 
 #ifdef GECODE_HAS_GIST

@@ -255,11 +255,7 @@ namespace Gecode { namespace FlatZinc {
       Gecode::Driver::StringValueOption _output;     ///< Output file
 
 #ifdef GECODE_HAS_CPPROFILER
-
-      Gecode::Driver::IntOption         _profiler_id; ///< Use this execution id for the CP-profiler
-      Gecode::Driver::UnsignedIntOption _profiler_port; ///< Connect to this port
-      Gecode::Driver::BoolOption        _profiler_info; ///< Whether solution information should be sent to the CP-profiler
-
+      Gecode::Driver::ProfilerOption    _profiler; ///< Use this execution id for the CP-profiler
 #endif
 
       //@}
@@ -295,16 +291,12 @@ namespace Gecode { namespace FlatZinc {
 
 #ifdef GECODE_HAS_CPPROFILER
       ,
-      _profiler_id("cpprofiler-id", "use this execution id with cpprofiler", 0),
-      _profiler_port("cpprofiler-port", "connect to cpprofiler on this port", 6565),
-      _profiler_info("cpprofiler-info", "send solution information to cpprofiler", false)
-
+      _profiler("cpprofiler", "use this execution id and port (comma separated) with CP-profiler")
 #endif
     {
       _mode.add(Gecode::SM_SOLUTION, "solution");
       _mode.add(Gecode::SM_STAT, "stat");
       _mode.add(Gecode::SM_GIST, "gist");
-      _mode.add(Gecode::SM_CPPROFILER, "cpprofiler");
       _restart.add(RM_NONE,"none");
       _restart.add(RM_CONSTANT,"constant");
       _restart.add(RM_LINEAR,"linear");
@@ -323,9 +315,7 @@ namespace Gecode { namespace FlatZinc {
       add(_mode); add(_stat);
       add(_output);
 #ifdef GECODE_HAS_CPPROFILER
-      add(_profiler_id);
-      add(_profiler_port);
-      add(_profiler_info);
+      add(_profiler);
 #endif
     }
 
@@ -382,9 +372,9 @@ namespace Gecode { namespace FlatZinc {
 
 #ifdef GECODE_HAS_CPPROFILER
 
-    int profiler_id(void) const { return _profiler_id.value(); }
-    unsigned int profiler_port(void) const { return _profiler_port.value(); }
-    bool profiler_info(void) const { return _profiler_info.value(); }
+    int profiler_id(void) const { return _profiler.execution_id(); }
+    unsigned int profiler_port(void) const { return _profiler.port(); }
+    bool profiler_info(void) const { return true; }
 
 #endif
 

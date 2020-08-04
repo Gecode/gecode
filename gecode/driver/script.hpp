@@ -349,22 +349,20 @@ namespace Gecode { namespace Driver {
 #else
         goto solution;
 #endif
-      case SM_CPPROFILER:
-#ifdef GECODE_HAS_CPPROFILER
-        {
-          CPProfilerSearchTracer::GetInfo* getInfo = nullptr;
-          if (o.profiler_info())
-            getInfo = new ScriptGetInfo<BaseSpace>;
-          so.tracer = new CPProfilerSearchTracer
-            (o.profiler_id(), o.name(), o.profiler_port(), getInfo);
-        }
-        /* FALL THROUGH */
-#endif
       case SM_SOLUTION:
 #ifndef GECODE_HAS_GIST
       solution:
 #endif
         {
+#ifdef GECODE_HAS_CPPROFILER
+          if (o.profiler_port()) {
+            CPProfilerSearchTracer::GetInfo* getInfo = nullptr;
+            if (o.profiler_info())
+              getInfo = new ScriptGetInfo<BaseSpace>;
+            so.tracer = new CPProfilerSearchTracer
+              (o.profiler_id(), o.name(), o.profiler_port(), getInfo);
+          }
+#endif
           l_out << o.name() << endl;
           Support::Timer t;
           unsigned long long int s_l =

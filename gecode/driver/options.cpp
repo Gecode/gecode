@@ -486,6 +486,23 @@ namespace Gecode {
       cerr << endl << "\t\t" << exp << endl;
     }
 
+    
+    int ProfilerOption::parse(int argc, char* argv[]) {
+      if (char* a = argument(argc, argv)) {
+        char* sep = strchr(a, ',');
+        if (!sep) {
+          std::cerr << "Wrong argument \"" << a << "\" for option \"" << iopt << "\"" << std::endl;
+          exit(EXIT_FAILURE);
+        }
+        cur_execution_id = static_cast<unsigned int>(atoi(a));
+        cur_port = atoi(sep + 1);
+        return 2;
+      }
+      return 0;
+    }
+
+    void ProfilerOption::help(void) { std::cerr << '\t' << iopt << " (unsigned int,int) default: " << cur_port << "," << cur_execution_id << std::endl << "\t\t" << exp << std::endl; }
+
 
   }
 
@@ -641,10 +658,7 @@ namespace Gecode {
 
 #ifdef GECODE_HAS_CPPROFILER
       ,
-      _profiler_id("cpprofiler-id", "use this execution id with CP-profiler", 0),
-      _profiler_port("cpprofiler-port", "connect to CP-profiler on this port",
-                     Search::Config::cpprofiler_port),
-      _profiler_info("cpprofiler-info", "send solution information to CP-profiler", false) 
+      _profiler("cpprofiler", "use this execution id and port (comma separated) with CP-profiler")
 #endif
   {
 
@@ -652,7 +666,6 @@ namespace Gecode {
     _mode.add(SM_TIME,       "time");
     _mode.add(SM_STAT,       "stat");
     _mode.add(SM_GIST,       "gist");
-    _mode.add(SM_CPPROFILER, "cpprofiler");
 
     _restart.add(RM_NONE,"none");
     _restart.add(RM_CONSTANT,"constant");
@@ -672,9 +685,7 @@ namespace Gecode {
     add(_mode); add(_iterations); add(_samples); add(_print_last);
     add(_out_file); add(_log_file); add(_trace);
 #ifdef GECODE_HAS_CPPROFILER
-    add(_profiler_id);
-    add(_profiler_port);
-    add(_profiler_info);
+    add(_profiler);
 #endif
   }
 
