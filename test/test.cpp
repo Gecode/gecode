@@ -58,7 +58,7 @@ namespace Test {
    *
    */
   Base::Base(std::string  s)
-    : _name(std::move(s)), _next(_tests) {
+    : _name(std::move(s)), _next(_tests), _rand(Gecode::Support::RandomGenerator()) {
     _tests = this; _n_tests++;
   }
 
@@ -92,13 +92,10 @@ namespace Test {
 
   Base::~Base() = default;
 
-  Gecode::Support::RandomGenerator Base::rand
-  = Gecode::Support::RandomGenerator();
-
   Options opt;
 
-  void report_error(const std::string& name) {
-    std::cout << "Options: -seed " << opt.seed;
+  void report_error(const std::string& name, unsigned int seed) {
+    std::cout << "Options: -seed " << seed;
     if (opt.fixprob != Test::Options::deffixprob)
       std::cout << " -fixprob " << opt.fixprob;
     std::cout << " -test " << name << std::endl;
@@ -264,7 +261,6 @@ main(int argc, char* argv[]) {
     exit(EXIT_SUCCESS);
   }
 
-  Base::rand.seed(opt.seed);
 
   std::vector<Base*> tests;
   bool started = startFrom == nullptr ? true : false;
@@ -281,18 +277,21 @@ main(int argc, char* argv[]) {
     }
   }
 
+  Gecode::Support::RandomGenerator seed_sequence(opt.seed);
+
   for (auto test : tests) {
     try {
       std::cout << test->name() << " ";
       std::cout.flush();
+      test->_rand.seed(seed_sequence.next());
       for (unsigned int i = opt.iter; i--;) {
-        opt.seed = Base::rand.seed();
+        unsigned int seed = test->_rand.seed();
         if (test->run()) {
           std::cout << '+';
           std::cout.flush();
         } else {
           std::cout << "-" << std::endl;
-          report_error(test->name());
+          report_error(test->name(), seed);
           if (opt.stop)
             return 1;
         }
@@ -302,7 +301,7 @@ main(int argc, char* argv[]) {
       std::cout << "Exception in \"Gecode::" << e.what()
                 << "." << std::endl
                 << "Stopping..." << std::endl;
-      report_error(test->name());
+      report_error(test->name(), opt.seed);
       if (opt.stop)
         return 1;
     }

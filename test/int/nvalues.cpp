@@ -64,7 +64,7 @@ namespace Test { namespace Int {
        /// Create and register initial assignment
        virtual Assignment* assignment(void) const {
          if (arity > 5)
-           return new RandomAssignment(arity,dom,500);
+           return new RandomAssignment(arity, dom, 500, _rand);
          else
            return new CpltAssignment(arity,dom);
        }

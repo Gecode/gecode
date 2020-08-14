@@ -73,7 +73,7 @@ namespace Test { namespace Set {
   }
 
   void
-  SetAssignment::next(void) {
+  SetAssignment::next(Gecode::Support::RandomGenerator& rand) {
     int i = n-1;
     while (true) {
       ++dsv[i];
@@ -86,7 +86,7 @@ namespace Test { namespace Set {
           done = true;
           return;
         }
-        ir.next();
+        ir.next(rand);
         if (ir.has_more()) {
           i = n-1;
           for (int j=n; j--; )
@@ -255,17 +255,17 @@ namespace Test { namespace Set {
   }
 
   void
-  SetTestSpace::assign(const SetAssignment& a) {
+  SetTestSpace::assign(const SetAssignment& a, Gecode::Support::RandomGenerator& rand) {
     for (int i=a.size(); i--; ) {
       CountableSetRanges csv(a.lub, a[i]);
       Gecode::IntSet ai(csv);
       rel(i, Gecode::SRT_EQ, ai);
-      if (Base::fixpoint() && failed())
+      if (Base::fixpoint(rand) && failed())
         return;
     }
     for (int i=withInt; i--; ) {
       rel(i, Gecode::IRT_EQ, a.ints()[i]);
-      if (Base::fixpoint() && failed())
+      if (Base::fixpoint(rand) && failed())
         return;
     }
   }
@@ -402,7 +402,7 @@ namespace Test { namespace Set {
   }
 
   bool
-  SetTestSpace::prune(const SetAssignment& a) {
+  SetTestSpace::prune(const SetAssignment& a, Gecode::Support::RandomGenerator& rand) {
     using namespace Gecode;
     bool setsAssigned = true;
     for (int j=x.size(); j--; )
@@ -420,11 +420,11 @@ namespace Test { namespace Set {
     // Select variable to be pruned
     int i;
     if (intsAssigned) {
-      i = Base::rand(x.size());
+      i = rand(x.size());
     } else if (setsAssigned) {
-      i = Base::rand(y.size());
+      i = rand(y.size());
     } else {
-      i = Base::rand(x.size()+y.size());
+      i = rand(x.size()+y.size());
     }
 
     if (setsAssigned || i>=x.size()) {
@@ -436,11 +436,11 @@ namespace Test { namespace Set {
       // Prune int var
 
       // Select mode for pruning
-      switch (Base::rand(3)) {
+      switch (rand(3)) {
       case 0:
         if (a.ints()[i] < y[i].max()) {
           int v=a.ints()[i]+1+
-            Base::rand(static_cast<unsigned int>(y[i].max()-a.ints()[i]));
+            rand(static_cast<unsigned int>(y[i].max()-a.ints()[i]));
           assert((v > a.ints()[i]) && (v <= y[i].max()));
           rel(i, Gecode::IRT_LE, v);
         }
@@ -448,7 +448,7 @@ namespace Test { namespace Set {
       case 1:
         if (a.ints()[i] > y[i].min()) {
           int v=y[i].min()+
-            Base::rand(static_cast<unsigned int>(a.ints()[i]-y[i].min()));
+            rand(static_cast<unsigned int>(a.ints()[i]-y[i].min()));
           assert((v < a.ints()[i]) && (v >= y[i].min()));
           rel(i, Gecode::IRT_GR, v);
         }
@@ -456,7 +456,7 @@ namespace Test { namespace Set {
       default:
         int v;
         Gecode::Int::ViewRanges<Gecode::Int::IntView> it(y[i]);
-        unsigned int skip = Base::rand(y[i].size()-1);
+        unsigned int skip = rand(y[i].size()-1);
         while (true) {
           if (it.width() > skip) {
             v = it.min() + skip;
@@ -476,7 +476,7 @@ namespace Test { namespace Set {
         }
         rel(i, Gecode::IRT_NQ, v);
       }
-      return (!Base::fixpoint() || fixprob());
+      return (!Base::fixpoint(rand) || fixprob());
     }
     while (x[i].assigned()) {
       i = (i+1) % x.size();
@@ -494,23 +494,23 @@ namespace Test { namespace Set {
     unsigned int aisize = Gecode::Iter::Ranges::size(aisizer);
 
     // Select mode for pruning
-    switch (Base::rand(5)) {
+    switch (rand(5)) {
     case 0:
       if (inter()) {
-        int v = Base::rand(Gecode::Iter::Ranges::size(inter));
+        int v = rand(Gecode::Iter::Ranges::size(inter));
         addToGlb(v, i, a);
       }
       break;
     case 1:
       if (diff()) {
-        int v = Base::rand(Gecode::Iter::Ranges::size(diff));
+        int v = rand(Gecode::Iter::Ranges::size(diff));
         removeFromLub(v, i, a);
       }
       break;
     case 2:
       if (x[i].cardMin() < aisize) {
         unsigned int newc = x[i].cardMin() + 1 +
-          Base::rand(aisize - x[i].cardMin());
+          rand(aisize - x[i].cardMin());
         assert( newc > x[i].cardMin() );
         assert( newc <= aisize );
         cardinality(i, newc, Gecode::Set::Limits::card);
@@ -519,7 +519,7 @@ namespace Test { namespace Set {
     case 3:
       if (x[i].cardMax() > aisize) {
         unsigned int newc = x[i].cardMax() - 1 -
-          Base::rand(x[i].cardMax() - aisize);
+          rand(x[i].cardMax() - aisize);
         assert( newc < x[i].cardMax() );
         assert( newc >= aisize );
         cardinality(i, 0, newc);
@@ -527,18 +527,18 @@ namespace Test { namespace Set {
       break;
     default:
       if (inter()) {
-        int v = Base::rand(Gecode::Iter::Ranges::size(inter));
+        int v = rand(Gecode::Iter::Ranges::size(inter));
         addToGlb(v, i, a);
       } else {
-        int v = Base::rand(Gecode::Iter::Ranges::size(diff));
+        int v = rand(Gecode::Iter::Ranges::size(diff));
         removeFromLub(v, i, a);
       }
     }
-    return (!Base::fixpoint() || fixprob());
+    return (!Base::fixpoint(rand) || fixprob());
   }
 
   bool
-  SetTestSpace::disabled(const SetAssignment& a, SetTestSpace& c) {
+  SetTestSpace::disabled(const SetAssignment& a, SetTestSpace& c, Gecode::Support::RandomGenerator& rand) {
     c.disable();
     using namespace Gecode;
     bool setsAssigned = true;
@@ -557,11 +557,11 @@ namespace Test { namespace Set {
     // Select variable to be pruned
     int i;
     if (intsAssigned) {
-      i = Base::rand(x.size());
+      i = rand(x.size());
     } else if (setsAssigned) {
-      i = Base::rand(y.size());
+      i = rand(y.size());
     } else {
-      i = Base::rand(x.size()+y.size());
+      i = rand(x.size()+y.size());
     }
 
     if (setsAssigned || i>=x.size()) {
@@ -573,11 +573,11 @@ namespace Test { namespace Set {
       // Prune int var
 
       // Select mode for pruning
-      switch (Base::rand(3)) {
+      switch (rand(3)) {
       case 0:
         if (a.ints()[i] < y[i].max()) {
           int v=a.ints()[i]+1+
-            Base::rand(static_cast<unsigned int>(y[i].max()-a.ints()[i]));
+            rand(static_cast<unsigned int>(y[i].max()-a.ints()[i]));
           assert((v > a.ints()[i]) && (v <= y[i].max()));
           rel(i, Gecode::IRT_LE, v);
           c.rel(i, Gecode::IRT_LE, v);
@@ -586,7 +586,7 @@ namespace Test { namespace Set {
       case 1:
         if (a.ints()[i] > y[i].min()) {
           int v=y[i].min()+
-            Base::rand(static_cast<unsigned int>(a.ints()[i]-y[i].min()));
+            rand(static_cast<unsigned int>(a.ints()[i]-y[i].min()));
           assert((v < a.ints()[i]) && (v >= y[i].min()));
           rel(i, Gecode::IRT_GR, v);
           c.rel(i, Gecode::IRT_GR, v);
@@ -595,7 +595,7 @@ namespace Test { namespace Set {
       default:
         int v;
         Gecode::Int::ViewRanges<Gecode::Int::IntView> it(y[i]);
-        unsigned int skip = Base::rand(y[i].size()-1);
+        unsigned int skip = rand(y[i].size()-1);
         while (true) {
           if (it.width() > skip) {
             v = it.min() + skip;
@@ -635,23 +635,23 @@ namespace Test { namespace Set {
     unsigned int aisize = Gecode::Iter::Ranges::size(aisizer);
 
     // Select mode for pruning
-    switch (Base::rand(5)) {
+    switch (rand(5)) {
     case 0:
       if (inter()) {
-        int v = Base::rand(Gecode::Iter::Ranges::size(inter));
+        int v = rand(Gecode::Iter::Ranges::size(inter));
         addToGlb(v, i, a, c);
       }
       break;
     case 1:
       if (diff()) {
-        int v = Base::rand(Gecode::Iter::Ranges::size(diff));
+        int v = rand(Gecode::Iter::Ranges::size(diff));
         removeFromLub(v, i, a, c);
       }
       break;
     case 2:
       if (x[i].cardMin() < aisize) {
         unsigned int newc = x[i].cardMin() + 1 +
-          Base::rand(aisize - x[i].cardMin());
+          rand(aisize - x[i].cardMin());
         assert( newc > x[i].cardMin() );
         assert( newc <= aisize );
         cardinality(i, newc, Gecode::Set::Limits::card);
@@ -661,7 +661,7 @@ namespace Test { namespace Set {
     case 3:
       if (x[i].cardMax() > aisize) {
         unsigned int newc = x[i].cardMax() - 1 -
-          Base::rand(x[i].cardMax() - aisize);
+          rand(x[i].cardMax() - aisize);
         assert( newc < x[i].cardMax() );
         assert( newc >= aisize );
         cardinality(i, 0, newc);
@@ -670,10 +670,10 @@ namespace Test { namespace Set {
       break;
     default:
       if (inter()) {
-        int v = Base::rand(Gecode::Iter::Ranges::size(inter));
+        int v = rand(Gecode::Iter::Ranges::size(inter));
         addToGlb(v, i, a, c);
       } else {
-        int v = Base::rand(Gecode::Iter::Ranges::size(diff));
+        int v = rand(Gecode::Iter::Ranges::size(diff));
         removeFromLub(v, i, a, c);
       }
     }
@@ -737,7 +737,7 @@ if (!(T)) {                                                     \
         SetTestSpace* s = new SetTestSpace(arity,lub,withInt,this);
         SetTestSpace* sc = nullptr;
         s->post();
-        switch (Base::rand(2)) {
+        switch (_rand(2)) {
           case 0:
             if (opt.log)
               olog << ind(3) << "No copy" << std::endl;
@@ -755,7 +755,7 @@ if (!(T)) {                                                     \
             break;
           default: assert(false);
         }
-        sc->assign(a);
+        sc->assign(a, _rand);
         if (is_sol) {
           CHECK_TEST(!sc->failed(), "Failed on solution");
           CHECK_TEST(sc->subsumed(testsubsumed), "No subsumption");
@@ -769,7 +769,7 @@ if (!(T)) {                                                     \
         SetTestSpace* s = new SetTestSpace(arity,lub,withInt,this);
         s->post();
         s->disable();
-        s->assign(a);
+        s->assign(a, _rand);
         s->enable();
         if (is_sol) {
           CHECK_TEST(!s->failed(), "Failed on solution");
@@ -782,7 +782,7 @@ if (!(T)) {                                                     \
       START_TEST("Assignment (before posting)");
       {
         SetTestSpace* s = new SetTestSpace(arity,lub,withInt,this);
-        s->assign(a);
+        s->assign(a, _rand);
         s->post();
         if (is_sol) {
           CHECK_TEST(!s->failed(), "Failed on solution");
@@ -797,12 +797,12 @@ if (!(T)) {                                                     \
         SetTestSpace* s = new SetTestSpace(arity,lub,withInt,this);
         s->post();
         while (!s->failed() && !s->assigned())
-           if (!s->prune(a)) {
+           if (!s->prune(a, _rand)) {
              problem = "No fixpoint";
              delete s;
              goto failed;
            }
-        s->assign(a);
+        s->assign(a, _rand);
         if (is_sol) {
           CHECK_TEST(!s->failed(), "Failed on solution");
           CHECK_TEST(s->subsumed(testsubsumed), "No subsumption");
@@ -818,12 +818,13 @@ if (!(T)) {                                                     \
           SetTestSpace* c = new SetTestSpace(arity,lub,withInt,this);
           s->post(); c->post();
           while (!s->failed() && !s->assigned())
-            if (!s->disabled(a,*c)) {
+            if (!s->disabled(a, *c, _rand)) {
               problem = "Different result after re-enable";
               delete s; delete c;
               goto failed;
             }
-          s->assign(a); c->assign(a);
+          s->assign(a, _rand);
+          c->assign(a, _rand);
           if (s->failed() != c->failed()) {
             problem = "Different failure after re-enable";
             delete s; delete c;
@@ -838,7 +839,7 @@ if (!(T)) {                                                     \
           SetTestSpace* s = new SetTestSpace(arity,lub,withInt,this,RM_EQV);
           s->post();
           s->rel(is_sol);
-          s->assign(a);
+          s->assign(a, _rand);
           CHECK_TEST(!s->failed(), "Failed");
           CHECK_TEST(s->subsumed(testsubsumed), "No subsumption");
           delete s;
@@ -848,7 +849,7 @@ if (!(T)) {                                                     \
           SetTestSpace* s = new SetTestSpace(arity,lub,withInt,this,RM_IMP);
           s->post();
           s->rel(is_sol);
-          s->assign(a);
+          s->assign(a, _rand);
           CHECK_TEST(!s->failed(), "Failed");
           CHECK_TEST(s->subsumed(testsubsumed), "No subsumption");
           delete s;
@@ -858,7 +859,7 @@ if (!(T)) {                                                     \
           SetTestSpace* s = new SetTestSpace(arity,lub,withInt,this,RM_PMI);
           s->post();
           s->rel(is_sol);
-          s->assign(a);
+          s->assign(a, _rand);
           CHECK_TEST(!s->failed(), "Failed");
           CHECK_TEST(s->subsumed(testsubsumed), "No subsumption");
           delete s;
@@ -868,7 +869,7 @@ if (!(T)) {                                                     \
           SetTestSpace* s = new SetTestSpace(arity,lub,withInt,this,RM_EQV);
           s->post();
           s->rel(!is_sol);
-          s->assign(a);
+          s->assign(a, _rand);
           CHECK_TEST(s->failed(), "Not failed");
           delete s;
         }
@@ -877,7 +878,7 @@ if (!(T)) {                                                     \
           SetTestSpace* s = new SetTestSpace(arity,lub,withInt,this,RM_IMP);
           s->post();
           s->rel(!is_sol);
-          s->assign(a);
+          s->assign(a, _rand);
           if (is_sol) {
             CHECK_TEST(!s->failed(), "Failed");
             CHECK_TEST(s->subsumed(testsubsumed), "No subsumption");
@@ -891,7 +892,7 @@ if (!(T)) {                                                     \
           SetTestSpace* s = new SetTestSpace(arity,lub,withInt,this,RM_PMI);
           s->post();
           s->rel(!is_sol);
-          s->assign(a);
+          s->assign(a, _rand);
           if (is_sol) {
             CHECK_TEST(s->failed(), "Not failed");
           } else {
@@ -905,7 +906,7 @@ if (!(T)) {                                                     \
           SetTestSpace* s = new SetTestSpace(arity,lub,withInt,this,RM_EQV);
           s->rel(is_sol);
           s->post();
-          s->assign(a);
+          s->assign(a, _rand);
           CHECK_TEST(!s->failed(), "Failed");
           CHECK_TEST(s->subsumed(testsubsumed), "No subsumption");
           delete s;
@@ -915,7 +916,7 @@ if (!(T)) {                                                     \
           SetTestSpace* s = new SetTestSpace(arity,lub,withInt,this,RM_IMP);
           s->rel(is_sol);
           s->post();
-          s->assign(a);
+          s->assign(a, _rand);
           CHECK_TEST(!s->failed(), "Failed");
           CHECK_TEST(s->subsumed(testsubsumed), "No subsumption");
           delete s;
@@ -925,7 +926,7 @@ if (!(T)) {                                                     \
           SetTestSpace* s = new SetTestSpace(arity,lub,withInt,this,RM_PMI);
           s->rel(is_sol);
           s->post();
-          s->assign(a);
+          s->assign(a, _rand);
           CHECK_TEST(!s->failed(), "Failed");
           CHECK_TEST(s->subsumed(testsubsumed), "No subsumption");
           delete s;
@@ -935,7 +936,7 @@ if (!(T)) {                                                     \
           SetTestSpace* s = new SetTestSpace(arity,lub,withInt,this,RM_EQV);
           s->rel(!is_sol);
           s->post();
-          s->assign(a);
+          s->assign(a, _rand);
           CHECK_TEST(s->failed(), "Not failed");
           delete s;
         }
@@ -944,7 +945,7 @@ if (!(T)) {                                                     \
           SetTestSpace* s = new SetTestSpace(arity,lub,withInt,this,RM_IMP);
           s->rel(!is_sol);
           s->post();
-          s->assign(a);
+          s->assign(a, _rand);
           if (is_sol) {
             CHECK_TEST(!s->failed(), "Failed");
             CHECK_TEST(s->subsumed(testsubsumed), "No subsumption");
@@ -958,7 +959,7 @@ if (!(T)) {                                                     \
           SetTestSpace* s = new SetTestSpace(arity,lub,withInt,this,RM_PMI);
           s->rel(!is_sol);
           s->post();
-          s->assign(a);
+          s->assign(a, _rand);
           if (is_sol) {
             CHECK_TEST(s->failed(), "Not failed");
           } else {
@@ -970,7 +971,7 @@ if (!(T)) {                                                     \
         START_TEST("Assignment reified (before posting, <=>)");
         {
           SetTestSpace* s = new SetTestSpace(arity,lub,withInt,this,RM_EQV);
-          s->assign(a);
+          s->assign(a, _rand);
           s->post();
           CHECK_TEST(!s->failed(), "Failed");
           CHECK_TEST(s->subsumed(testsubsumed), "No subsumption");
@@ -985,7 +986,7 @@ if (!(T)) {                                                     \
         START_TEST("Assignment reified (before posting, =>)");
         {
           SetTestSpace* s = new SetTestSpace(arity,lub,withInt,this,RM_IMP);
-          s->assign(a);
+          s->assign(a, _rand);
           s->post();
           CHECK_TEST(!s->failed(), "Failed");
           CHECK_TEST(s->subsumed(testsubsumed), "No subsumption");
@@ -1000,7 +1001,7 @@ if (!(T)) {                                                     \
         START_TEST("Assignment reified (before posting, <=)");
         {
           SetTestSpace* s = new SetTestSpace(arity,lub,withInt,this,RM_PMI);
-          s->assign(a);
+          s->assign(a, _rand);
           s->post();
           CHECK_TEST(!s->failed(), "Failed");
           CHECK_TEST(s->subsumed(testsubsumed), "No subsumption");
@@ -1016,7 +1017,7 @@ if (!(T)) {                                                     \
         {
           SetTestSpace* s = new SetTestSpace(arity,lub,withInt,this,RM_EQV);
           s->post();
-          s->assign(a);
+          s->assign(a, _rand);
           CHECK_TEST(!s->failed(), "Failed");
           CHECK_TEST(s->subsumed(testsubsumed), "No subsumption");
           CHECK_TEST(s->r.var().assigned(), "Control variable unassigned");
@@ -1031,7 +1032,7 @@ if (!(T)) {                                                     \
         {
           SetTestSpace* s = new SetTestSpace(arity,lub,withInt,this,RM_IMP);
           s->post();
-          s->assign(a);
+          s->assign(a, _rand);
           CHECK_TEST(!s->failed(), "Failed");
           CHECK_TEST(s->subsumed(testsubsumed), "No subsumption");
           if (is_sol) {
@@ -1046,7 +1047,7 @@ if (!(T)) {                                                     \
         {
           SetTestSpace* s = new SetTestSpace(arity,lub,withInt,this,RM_PMI);
           s->post();
-          s->assign(a);
+          s->assign(a, _rand);
           CHECK_TEST(!s->failed(), "Failed");
           CHECK_TEST(s->subsumed(testsubsumed), "No subsumption");
           if (is_sol) {
@@ -1062,7 +1063,7 @@ if (!(T)) {                                                     \
           SetTestSpace* s = new SetTestSpace(arity,lub,withInt,this,RM_EQV);
           s->post();
           s->disable();
-          s->assign(a);
+          s->assign(a, _rand);
           s->enable();
           CHECK_TEST(!s->failed(), "Failed");
           CHECK_TEST(s->subsumed(testsubsumed), "No subsumption");
@@ -1079,7 +1080,7 @@ if (!(T)) {                                                     \
           SetTestSpace* s = new SetTestSpace(arity,lub,withInt,this,RM_IMP);
           s->post();
           s->disable();
-          s->assign(a);
+          s->assign(a, _rand);
           s->enable();
           CHECK_TEST(!s->failed(), "Failed");
           CHECK_TEST(s->subsumed(testsubsumed), "No subsumption");
@@ -1096,7 +1097,7 @@ if (!(T)) {                                                     \
           SetTestSpace* s = new SetTestSpace(arity,lub,withInt,this,RM_PMI);
           s->post();
           s->disable();
-          s->assign(a);
+          s->assign(a, _rand);
           s->enable();
           CHECK_TEST(!s->failed(), "Failed");
           CHECK_TEST(s->subsumed(testsubsumed), "No subsumption");
@@ -1114,7 +1115,7 @@ if (!(T)) {                                                     \
           s->post();
           while (!s->failed() &&
                  (!s->assigned() || !s->r.var().assigned()))
-            if (!s->prune(a)) {
+            if (!s->prune(a, _rand)) {
               problem = "No fixpoint";
               delete s;
               goto failed;
@@ -1135,7 +1136,7 @@ if (!(T)) {                                                     \
           s->post();
           while (!s->failed() &&
                  (!s->assigned() || (!is_sol && !s->r.var().assigned()))) {
-            if (!s->prune(a)) {
+            if (!s->prune(a, _rand)) {
               problem = "No fixpoint";
               delete s;
               goto failed;
@@ -1157,7 +1158,7 @@ if (!(T)) {                                                     \
           s->post();
           while (!s->failed() &&
                  (!s->assigned() || (is_sol && !s->r.var().assigned())))
-            if (!s->prune(a)) {
+            if (!s->prune(a, _rand)) {
               problem = "No fixpoint";
               delete s;
               goto failed;
@@ -1173,7 +1174,7 @@ if (!(T)) {                                                     \
           delete s;
         }
       }
-      a.next();
+      a.next(_rand);
     }
     delete ap;
     return true;

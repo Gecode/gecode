@@ -87,7 +87,7 @@ namespace Test {
       /// Test whether all assignments have been iterated
       virtual bool has_more(void) const = 0;
       /// Move to next assignment
-      virtual void next(void) = 0;
+      virtual void next(Gecode::Support::RandomGenerator& rand) = 0;
       /// Return value for variable \a i
       virtual Gecode::FloatVal operator[](int i) const = 0;
       /// Set assignment to value \a val for variable \a i
@@ -109,7 +109,7 @@ namespace Test {
       /// Test whether all assignments have been iterated
       virtual bool has_more(void) const;
       /// Move to next assignment
-      virtual void next(void);
+      virtual void next(Gecode::Support::RandomGenerator& rand);
       /// Return value for variable \a i
       virtual Gecode::FloatVal operator[](int i) const;
       /// Set assignment to value \a val for variable \a i
@@ -126,11 +126,12 @@ namespace Test {
       Gecode::FloatNum step; ///< Step for next assignment
     public:
       /// Initialize assignments for \a n variables and values \a d with step \a s
-      ExtAssignment(int n, const Gecode::FloatVal& d, Gecode::FloatNum s, const Test * pb);
+      ExtAssignment(int n, const Gecode::FloatVal& d, Gecode::FloatNum s, const Test* pb,
+                    Gecode::Support::RandomGenerator& rand);
       /// Test whether all assignments have been iterated
       virtual bool has_more(void) const;
       /// Move to next assignment
-      virtual void next(void);
+      virtual void next(Gecode::Support::RandomGenerator& rand);
       /// Return value for variable \a i
       virtual Gecode::FloatVal operator[](int i) const;
       /// Set assignment to value \a val for variable \a i
@@ -146,14 +147,14 @@ namespace Test {
       Gecode::FloatVal* vals; ///< The current values for the variables
       int  a;                 ///< How many assigments still to be generated
       /// Generate new value according to domain
-      Gecode::FloatNum randval(void);
+      Gecode::FloatNum randval(Gecode::Support::RandomGenerator& rand);
     public:
       /// Initialize for \a a assignments for \a n variables and values \a d
-      RandomAssignment(int n, const Gecode::FloatVal& d, int a);
+      RandomAssignment(int n, const Gecode::FloatVal& d, int a0, Gecode::Support::RandomGenerator& rand);
       /// Test whether all assignments have been iterated
       virtual bool has_more(void) const;
       /// Move to next assignment
-      virtual void next(void);
+      virtual void next(Gecode::Support::RandomGenerator& rand);
       /// Return value for variable \a i
       virtual Gecode::FloatVal operator[](int i) const;
       /// Set assignment to value \a val for variable \a i
@@ -216,19 +217,19 @@ namespace Test {
       /// Assign all (or all but one, if \a skip is true) variables to values in \a a
       /// If assignment of a variable is MT_MAYBE (if the two intervals are contiguous),
       /// \a sol is set to MT_MAYBE
-      void assign(const Assignment& a, MaybeType& sol, bool skip=false);
+      void assign(const Assignment& a, MaybeType& sol, bool skip, Gecode::Support::RandomGenerator& rand);
       /// Assing a random variable to a random bound
-      void bound(void);
+      void bound(Gecode::Support::RandomGenerator& rand);
       /// Cut the bigger variable to an half sized interval. It returns
       /// the new size of the cut interval. \a cutDirections gives the direction
       /// to follow (upper part or lower part of the interval).
       Gecode::FloatNum cut(int* cutDirections);
       /// Prune some random values from variable \a i
-      void prune(int i);
+      void prune(int i, Gecode::Support::RandomGenerator& rand);
       /// Prune some random values for some random variable
-      void prune(void);
+      void prune(Gecode::Support::RandomGenerator& rand);
       /// Prune values but not those in assignment \a a
-      bool prune(const Assignment& a, bool testfix);
+      bool prune(const Assignment& a, bool testfix, Gecode::Support::RandomGenerator& rand);
       /// Disable propagators in space and compute fixpoint (make all idle)
       void disable(void);
       /// Enable propagators in space

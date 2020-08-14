@@ -159,7 +159,7 @@ namespace Test {
       /// Test whether all assignments have been iterated
       bool operator()(void) const { return !done; }
       /// Move to next assignment
-      void next(void);
+      void next(Gecode::Support::RandomGenerator& rand);
       /// Return value for variable \a i
       int operator[](int i) const {
         assert((i>=0) && (i<n));
@@ -237,7 +237,7 @@ namespace Test {
       /// Perform Boolean tell on \a b
       void rel(bool sol);
       /// Assign all variables to values in \a a
-      void assign(const SetAssignment& a);
+      void assign(const SetAssignment& a, Gecode::Support::RandomGenerator& rand);
       /// Test whether all variables are assigned
       bool assigned(void) const;
       /// Remove value \a v from the upper bound of \a x[i]
@@ -253,7 +253,7 @@ namespace Test {
       /// Perform fixpoint computation
       bool fixprob(void);
       /// Perform random pruning
-      bool prune(const SetAssignment& a);
+      bool prune(const SetAssignment& a, Gecode::Support::RandomGenerator& rand);
       /// Return the number of propagators
       unsigned int propagators(void);
       /// Disable propagators in space and compute fixpoint (make all idle)
@@ -261,7 +261,7 @@ namespace Test {
       /// Enable propagators in space
       void enable(void);
       /// Prune values also in a space \a c with disabled propagators, but not those in assignment \a a
-      bool disabled(const SetAssignment& a, SetTestSpace& c);
+      bool disabled(const SetAssignment& a, SetTestSpace& c, Gecode::Support::RandomGenerator& rand);
       /// Check whether propagation is the same as in \a c
       bool same(SetTestSpace& c);
     };

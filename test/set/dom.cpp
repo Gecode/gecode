@@ -167,7 +167,7 @@ namespace Test { namespace Set {
       /// Post reified constraint on \a x for \a b
       virtual void post(Space& home, SetVarArray& x, IntVarArray&, Reify r) {
         assert(x.size() == 1);
-        if (Base::rand(2) != 0) {
+        if (_rand(2) != 0) {
           Gecode::dom(home, x[0], srt, is, r);
         } else {
            switch (r.mode()) {
@@ -261,7 +261,7 @@ namespace Test { namespace Set {
       /// Post reified constraint on \a x for \a b
       virtual void post(Space& home, SetVarArray& x, IntVarArray&, Reify r) {
         assert(x.size() == 1);
-        if (Base::rand(2) != 0) {
+        if (_rand(2) != 0) {
           Gecode::dom(home, x[0], srt, -3, -1, r);
         } else {
            switch (r.mode()) {
@@ -357,7 +357,7 @@ namespace Test { namespace Set {
       /// Post reified constraint on \a x for \a b
       virtual void post(Space& home, SetVarArray& x, IntVarArray&, Reify r) {
         assert(x.size() == 1);
-        if (Base::rand(2) != 0) {
+        if (_rand(2) != 0) {
           Gecode::dom(home, x[0], srt, -3, r);
         } else {
            switch (r.mode()) {
