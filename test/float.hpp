@@ -61,7 +61,7 @@ namespace Test { namespace Float {
       dsv[i] = FloatVal(d.min(),nextafter(d.min(),d.max()));
   }
   inline bool
-  CpltAssignment::operator()(void) const {
+  CpltAssignment::has_more() const {
     return dsv[0].min() <= d.max();
   }
   inline Gecode::FloatVal
@@ -90,7 +90,7 @@ namespace Test { namespace Float {
     (*this).next();
   }
   inline bool
-  ExtAssignment::operator()(void) const {
+  ExtAssignment::has_more() const {
     return dsv[0].min() <= d.max();
   }
   inline Gecode::FloatVal
@@ -134,7 +134,7 @@ namespace Test { namespace Float {
   }
 
   inline bool
-  RandomAssignment::operator()(void) const {
+  RandomAssignment::has_more() const {
     return a>0;
   }
   inline Gecode::FloatVal

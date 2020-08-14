@@ -105,7 +105,7 @@ namespace Test { namespace Int {
            nxt = e->next();
        }
        /// %Test whether all assignments have been iterated
-       virtual bool operator()(void) const {
+       virtual bool has_more(void) const {
          return nxt != nullptr;
        }
        /// Move to next assignment

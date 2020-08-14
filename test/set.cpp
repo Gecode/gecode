@@ -87,7 +87,7 @@ namespace Test { namespace Set {
           return;
         }
         ir.next();
-        if (ir()) {
+        if (ir.has_more()) {
           i = n-1;
           for (int j=n; j--; )
             dsv[j].init(lub);

@@ -491,7 +491,7 @@ do {                                                            \
     Search::Options search_o;
     search_o.threads = 1;
     DFS<TestSpace> * e_s = new DFS<TestSpace>(search_s,search_o);
-    while (a()) {
+    while (a.has_more()) {
       MaybeType sol = solution(a);
       if (opt.log) {
         olog << ind(1) << "Assignment: " << a;
@@ -896,7 +896,7 @@ do {                                                            \
       olog << "FAILURE" << std::endl
            << ind(1) << "Test:       " << test << std::endl
            << ind(1) << "Problem:    " << problem << std::endl;
-    if (a() && opt.log)
+    if (a.has_more() && opt.log)
       olog << ind(1) << "Assignment: " << a << std::endl;
     delete ap;
     delete search_s;
