@@ -38,15 +38,15 @@
  */
 
 #define GECODE_SET_ME_CHECK_VAL(p,f) {                   \
-    ModEvent _me_ ## __LINE__ = (p);                   \
-    if (me_failed(_me_ ## __LINE__)) return ES_FAILED; \
-    if (ME_GEN_ASSIGNED==(_me_ ## __LINE__))f=true; }
+    ModEvent gecode_me_ ## __LINE__ = (p);                   \
+    if (me_failed(gecode_me_ ## __LINE__)) return ES_FAILED; \
+    if (ME_GEN_ASSIGNED==(gecode_me_ ## __LINE__))f=true; }
 
 #define GECODE_SET_ME_CHECK_VAL_B(modified, tell, f) \
   {                                                  \
     ModEvent me = (tell);                            \
     modified |= me_modified(me);                     \
-    if (ME_GEN_ASSIGNED==(me))f=true;                \
+    if (ME_GEN_ASSIGNED==(me)) f=true;               \
     GECODE_ME_CHECK(me);                             \
   }
 

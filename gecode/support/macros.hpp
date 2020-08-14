@@ -36,7 +36,7 @@
 /// Concatenate macro-expanded \a R and \a LINE
 #define GECODE_CAT(R,LINE) GECODE_CAT2(R,LINE)
 /// Generate fresh name with prefix P
-#define GECODE_FRESH(P) GECODE_CAT(_GECODE_ ## P, __LINE__)
+#define GECODE_FRESH(P) GECODE_CAT(GECODE_ ## P, __LINE__)
 
 /**
  * \def GECODE_NEVER
