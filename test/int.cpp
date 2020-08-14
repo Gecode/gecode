@@ -444,19 +444,23 @@ namespace Test { namespace Int {
 
   /// Check the test result and handle failed test
 #define CHECK_TEST(T,M)                                         \
+do {                                                            \
 if (opt.log)                                                    \
   olog << ind(3) << "Check: " << (M) << std::endl;              \
 if (!(T)) {                                                     \
   problem = (M); delete s; goto failed;                         \
-}
+}                                                               \
+} while (false)
 
   /// Start new test
 #define START_TEST(T)                                           \
+do {                                                            \
   if (opt.log) {                                                \
      olog.str("");                                              \
      olog << ind(2) << "Testing: " << (T) << std::endl;         \
   }                                                             \
-  test = (T);
+  test = (T);                                                   \
+} while (false)
 
   bool
   Test::ignore(const Assignment&) const {
