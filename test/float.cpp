@@ -309,16 +309,16 @@ namespace Test { namespace Float {
     for (int j=x.size(); j--; ) {
       if (!x[j].assigned() && (x[j].size() > x[i].size())) i = j;
     }
-    Rounding r;
+    Rounding rounding;
     if (cutDirections[i]) {
-      FloatNum m = r.div_up(r.add_up(x[i].min(),x[i].max()),2);
+      FloatNum m = rounding.div_up(rounding.add_up(x[i].min(), x[i].max()), 2);
       FloatNum n = nextafter(x[i].min(), x[i].max());
       if (m > n)
         rel(i, FRT_LQ, m);
       else
         rel(i, FRT_LQ, n);
     } else {
-      FloatNum m = r.div_down(r.add_down(x[i].min(),x[i].max()),2);
+      FloatNum m = rounding.div_down(rounding.add_down(x[i].min(), x[i].max()), 2);
       FloatNum n = nextafter(x[i].max(), x[i].min());
       if (m < n)
         rel(i, FRT_GQ, m);
@@ -392,8 +392,8 @@ namespace Test { namespace Float {
       if (c->failed()) {
         delete c; return false;
       }
-      for (int i=x.size(); i--; )
-        if (x[i].size() != c->x[i].size()) {
+      for (int j=x.size(); j--; )
+        if (x[j].size() != c->x[j].size()) {
           delete c; return false;
         }
       if (reified && (r.var().size() != c->r.var().size())) {
@@ -447,19 +447,23 @@ namespace Test { namespace Float {
 
   /// Check the test result and handle failed test
 #define CHECK_TEST(T,M)                                         \
+do {                                                            \
 if (opt.log)                                                    \
   olog << ind(3) << "Check: " << (M) << std::endl;              \
 if (!(T)) {                                                     \
   problem = (M); delete s; goto failed;                         \
-}
+}                                                               \
+} while (false)
 
   /// Start new test
 #define START_TEST(T)                                           \
+do {                                                            \
   if (opt.log) {                                                \
      olog.str("");                                              \
      olog << ind(2) << "Testing: " << (T) << std::endl;         \
   }                                                             \
-  test = (T);
+  test = (T);                                                   \
+} while (false)
 
   bool
   Test::ignore(const Assignment&) const {
