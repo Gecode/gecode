@@ -64,7 +64,7 @@ namespace Test {
       /// Initialize assignments for \a n0 variables and values \a d0
       Assignment(int n0, const Gecode::IntSet& d0);
       /// Test whether all assignments have been iterated
-      virtual bool operator()(void) const = 0;
+      virtual bool has_more(void) const = 0;
       /// Move to next assignment
       virtual void next(void) = 0;
       /// Return value for variable \a i
@@ -83,7 +83,7 @@ namespace Test {
       /// Initialize assignments for \a n0 variables and values \a d0
       CpltAssignment(int n, const Gecode::IntSet& d);
       /// Test whether all assignments have been iterated
-      virtual bool operator()(void) const;
+      virtual bool has_more(void) const;
       /// Move to next assignment
       virtual void next(void);
       /// Return value for variable \a i
@@ -103,7 +103,7 @@ namespace Test {
       /// Initialize for \a a assignments for \a n0 variables and values \a d0
       RandomAssignment(int n, const Gecode::IntSet& d, int a);
       /// Test whether all assignments have been iterated
-      virtual bool operator()(void) const;
+      virtual bool has_more(void) const;
       /// Move to next assignment
       virtual void next(void);
       /// Return value for variable \a i
@@ -126,7 +126,7 @@ namespace Test {
       RandomMixAssignment(int n0, const Gecode::IntSet& d0,
                           int n1, const Gecode::IntSet& d1, int a0);
       /// Test whether all assignments have been iterated
-      virtual bool operator()(void) const;
+      virtual bool has_more(void) const;
       /// Move to next assignment
       virtual void next(void);
       /// Return value for variable \a i

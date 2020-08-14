@@ -58,7 +58,7 @@ namespace Test { namespace Int {
       dsv[i].init(d);
   }
   inline bool
-  CpltAssignment::operator()(void) const {
+  CpltAssignment::has_more(void) const {
     return dsv[0]();
   }
   inline int
@@ -92,7 +92,7 @@ namespace Test { namespace Int {
   }
 
   inline bool
-  RandomAssignment::operator()(void) const {
+  RandomAssignment::has_more(void) const {
     return a>0;
   }
   inline int
@@ -130,7 +130,7 @@ namespace Test { namespace Int {
   }
 
   inline bool
-  RandomMixAssignment::operator()(void) const {
+  RandomMixAssignment::has_more(void) const {
     return a>0;
   }
 

@@ -489,7 +489,7 @@ do {                                                            \
     DFS<TestSpace> e_s(search_s,search_o);
     delete search_s;
 
-    while (a()) {
+    while (a.has_more()) {
       bool sol = solution(a);
       if (opt.log) {
         olog << ind(1) << "Assignment: " << a
@@ -1142,7 +1142,7 @@ do {                                                            \
       olog << "FAILURE" << std::endl
            << ind(1) << "Test:       " << test << std::endl
            << ind(1) << "Problem:    " << problem << std::endl;
-    if (a() && opt.log)
+    if (a.has_more() && opt.log)
       olog << ind(1) << "Assignment: " << a << std::endl;
     delete ap;
 

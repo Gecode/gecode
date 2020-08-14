@@ -515,7 +515,7 @@ namespace Test { namespace Int {
          using namespace Gecode;
 
          CpltAssignment ass(5, IntSet(1, 5));
-         while (ass()) {
+         while (ass.has_more()) {
            if (Base::rand(100) <= prob*100) {
              IntArgs tuple(5);
              for (int i = 5; i--; ) tuple[i] = ass[i];
@@ -566,7 +566,7 @@ namespace Test { namespace Int {
          using namespace Gecode;
 
          CpltAssignment ass(5, IntSet(0, 1));
-         while (ass()) {
+         while (ass.has_more()) {
            if (Base::rand(100) <= prob*100) {
              IntArgs tuple(5);
              for (int i = 5; i--; ) tuple[i] = ass[i];
@@ -626,7 +626,7 @@ namespace Test { namespace Int {
          TupleSet ts(arity);
          CpltAssignment ass(arity, IntSet(0, 4));
          for (int i = size; i--; ) {
-           assert(ass());
+           assert(ass.has_more());
            IntArgs tuple(arity);
            for (int j = arity; j--; ) tuple[j] = ass[j];
            ts.add(tuple);
@@ -644,7 +644,7 @@ namespace Test { namespace Int {
        using namespace Gecode;
        TupleSet t(n);
        CpltAssignment ass(n, IntSet(min, max));
-       while (ass()) {
+       while (ass.has_more()) {
          if (Base::rand(100) <= prob*100) {
            IntArgs tuple(n);
            for (int i = n; i--; ) tuple[i] = ass[i];
@@ -746,7 +746,7 @@ namespace Test { namespace Int {
            {
              TupleSet t(5);
              CpltAssignment ass(4, IntSet(1, 4));
-             while (ass()) {
+             while (ass.has_more()) {
                IntArgs tuple(5);
                tuple[4] = 1;
                for (int i = 4; i--; ) tuple[i] = ass[i];
@@ -760,7 +760,7 @@ namespace Test { namespace Int {
            {
              TupleSet t(4);
              CpltAssignment ass(4, IntSet(1, 6));
-             while (ass()) {
+             while (ass.has_more()) {
                t.add({ass[0],0,ass[1],ass[2]});
                ass.next();
              }
@@ -771,7 +771,7 @@ namespace Test { namespace Int {
            {
              TupleSet t(10);
              CpltAssignment ass(9, IntSet(1, 4));
-             while (ass()) {
+             while (ass.has_more()) {
                if (Base::rand(100) <= 0.25*100) {
                  IntArgs tuple(10);
                  tuple[0] = 2;

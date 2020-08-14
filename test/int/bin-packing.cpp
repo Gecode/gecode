@@ -75,7 +75,7 @@ namespace Test { namespace Int {
           dsv[n_bins+i].init(d_bin);
       }
       /// Test whether all assignments have been iterated
-      virtual bool operator()(void) const {
+      virtual bool has_more(void) const {
         return dsv[0]();
       }
       /// Move to next assignment
