@@ -127,7 +127,9 @@ namespace Test {
     /// Run test
     virtual bool run(void) = 0;
     /// Throw a coin whether to compute a fixpoint
-    static bool fixpoint(void);
+    bool fixpoint(void);
+    /// Throw a coin whether to compute a fixpoint
+    static bool fixpoint(Gecode::Support::RandomGenerator& rand);
     /// Destructor
     virtual ~Base(void);
 
@@ -142,7 +144,7 @@ namespace Test {
     //@}
 
     /// Random number generator
-    static Gecode::Support::RandomGenerator rand;
+    mutable Gecode::Support::RandomGenerator _rand;
   };
   //@}
 

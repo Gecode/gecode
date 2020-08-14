@@ -79,7 +79,7 @@ namespace Test { namespace Int {
         return dsv[0]();
       }
       /// Move to next assignment
-      virtual void next(void) {
+      virtual void next(Gecode::Support::RandomGenerator&) {
         // Try to generate next bin assignment
         {
           int i = n_items-1;
@@ -283,7 +283,7 @@ namespace Test { namespace Int {
           s[i]=1;
         // Create some random conflicts
         for (int i=clique.size()-1; i--; )
-          s[rand(n_items)*2+0]=2;
+          s[_rand(n_items)*2+0]=2;
         // Create conflicts corresponding to the clique
         for (int i=clique.size(); i--; )
           s[clique[i]*2+1]=2;

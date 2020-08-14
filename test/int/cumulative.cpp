@@ -81,7 +81,7 @@ namespace Test { namespace Int {
       }
       /// Create and register initial assignment
       virtual Assignment* assignment(void) const {
-        return new RandomAssignment(arity,dom,500);
+        return new RandomAssignment(arity, dom, 500, _rand);
       }
       /// Test whether \a x is solution
       virtual bool solution(const Assignment& x) const {
@@ -185,7 +185,7 @@ namespace Test { namespace Int {
       }
       /// Create and register initial assignment
       virtual Assignment* assignment(void) const {
-        return new RandomAssignment(arity,dom,500);
+        return new RandomAssignment(arity, dom, 500, _rand);
       }
       /// Test whether \a x is solution
       virtual bool solution(const Assignment& x) const {
@@ -292,9 +292,9 @@ namespace Test { namespace Int {
       }
       /// Create and register initial assignment
       virtual Assignment* assignment(void) const {
-        return new RandomMixAssignment((c >= 0) ? arity/2 : arity/2+1,
-                                       dom,arity/2,
-                                       Gecode::IntSet(_minP,_maxP),500);
+        return new RandomMixAssignment((c >= 0) ? arity / 2 : arity / 2 + 1,
+                                       dom, arity / 2,
+                                       Gecode::IntSet(_minP, _maxP), 500, _rand);
       }
       /// Test whether \a x is solution
       virtual bool solution(const Assignment& x) const {
@@ -406,9 +406,9 @@ namespace Test { namespace Int {
       }
       /// Create and register initial assignment
       virtual Assignment* assignment(void) const {
-        return new RandomMixAssignment((c >= 0) ? 2*(arity/3) : 2*(arity/3)+1,
-                                       dom,arity/3,
-                                       Gecode::IntSet(_minP,_maxP),500);
+        return new RandomMixAssignment((c >= 0) ? 2 * (arity / 3) : 2 * (arity / 3) + 1,
+                                       dom, arity / 3,
+                                       Gecode::IntSet(_minP, _maxP), 500, _rand);
       }
       /// Test whether \a x is solution
       virtual bool solution(const Assignment& x) const {

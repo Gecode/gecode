@@ -109,7 +109,7 @@ namespace Test { namespace Int {
          return nxt != nullptr;
        }
        /// Move to next assignment
-       virtual void next(void) {
+       virtual void next(Gecode::Support::RandomGenerator&) {
          delete cur;
          cur = nxt;
          if (cur != nullptr) nxt = e->next();

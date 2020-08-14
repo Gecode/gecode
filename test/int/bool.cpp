@@ -455,7 +455,7 @@ namespace Test { namespace Int {
        /// Post constraint
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          using namespace Gecode;
-         if (Base::rand(2) != 0)
+         if (_rand(2) != 0)
            ite(home,channel(home,x[0]),x[1],x[2],x[3]);
          else
            rel(home, ite(channel(home,x[0]),x[1],x[2]) == x[3]);

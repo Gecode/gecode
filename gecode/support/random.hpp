@@ -51,8 +51,6 @@ namespace Gecode { namespace Support {
     static const unsigned int max = 1UL<<31;
     /// Current seed value
     unsigned int s;
-    /// Generate next number in series
-    unsigned int next(void);
     /// Returns a random integer from the interval \f$[0\ldots n)\f$
     unsigned int u(unsigned int n);
     /// Returns a random integer from the interval \f$[0\ldots n)\f$
@@ -64,6 +62,8 @@ namespace Gecode { namespace Support {
     LinearCongruentialGenerator(unsigned int s = 1);
     /// Return current seed
     unsigned int seed(void) const;
+    /// Generate next number in series
+    unsigned int next(void);
     /// Returns a random integer from the interval \f$[0\ldots n)\f$
     template<class Type>
     Type operator ()(Type n);

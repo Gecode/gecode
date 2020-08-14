@@ -351,7 +351,7 @@ namespace Test { namespace Set {
       virtual void post(Space& home, SetVarArray& x, IntVarArray& y,
                         Reify r) {
         assert((x.size() == 1) && (y.size() == 1));
-        if ((r.mode() != Gecode::RM_EQV) || (Base::rand(2) != 0)) {
+        if ((r.mode() != Gecode::RM_EQV) || (_rand(2) != 0)) {
           if (!swapped)
             Gecode::rel(home, x[0], irt, y[0], r);
           else

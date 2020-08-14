@@ -70,7 +70,7 @@ namespace Test { namespace Int {
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x,
                          Gecode::Reify r) {
          assert(x.size() == 1);
-         if (Base::rand(2) != 0) {
+         if (_rand(2) != 0) {
            Gecode::dom(home, x[0], -2, r);
          } else {
            switch (r.mode()) {
@@ -112,7 +112,7 @@ namespace Test { namespace Int {
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x,
                          Gecode::Reify r) {
          assert(x.size() == 1);
-         if (Base::rand(2) != 0) {
+         if (_rand(2) != 0) {
            Gecode::dom(home, x[0], -2, 2, r);
          } else {
            switch (r.mode()) {
@@ -182,7 +182,7 @@ namespace Test { namespace Int {
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x,
                          Gecode::Reify r) {
          assert(x.size() == 1);
-         if (Base::rand(2) != 0) {
+         if (_rand(2) != 0) {
            Gecode::dom(home, x[0], d, r);
          } else {
            switch (r.mode()) {

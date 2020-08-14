@@ -205,7 +205,7 @@ namespace Test {
       // Space for the test
       TestSpace s;
       // VarArray for the test
-      Array a(s,rand(n));
+      Array a(s,_rand(n));
       // Run the iterator test
       return runTestForArray(a);
     }
@@ -226,7 +226,7 @@ namespace Test {
       // Space for the test
       TestSpace s;
       // VarArray for the test
-      Array a(rand(n));
+      Array a(_rand(n));
       // Run the iterator test
       return runTestForArray(a);
     }
@@ -247,7 +247,7 @@ namespace Test {
       // Space for the test
       TestSpace s;
       // VarArray for the test
-      Array a(s,rand(n));
+      Array a(s,_rand(n));
       // Run the iterator test
       return runTestForArray(a);
     }
@@ -266,7 +266,7 @@ namespace Test {
     /// Perform actual tests
     bool run(void) {
       // SharedArray for the test
-      Array a(rand(n));
+      Array a(_rand(n));
       // Run the iterator test
       return runTestForArray(a);
     }

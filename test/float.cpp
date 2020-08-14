@@ -47,7 +47,7 @@ namespace Test { namespace Float {
    *
    */
   void
-  CpltAssignment::next(void) {
+  CpltAssignment::next(Gecode::Support::RandomGenerator&) {
     using namespace Gecode;
     int i = n-1;
     while (true) {
@@ -64,7 +64,7 @@ namespace Test { namespace Float {
    *
    */
   void
-  ExtAssignment::next(void) {
+  ExtAssignment::next(Gecode::Support::RandomGenerator& rand) {
     using namespace Gecode;
     assert(n > 1);
     int i = n-2;
@@ -86,9 +86,9 @@ namespace Test { namespace Float {
    *
    */
   void
-  RandomAssignment::next(void) {
+  RandomAssignment::next(Gecode::Support::RandomGenerator& rand) {
     for (int i = n; i--; )
-      vals[i]=randval();
+      vals[i]= randval(rand);
     a--;
   }
 
@@ -105,7 +105,7 @@ operator<<(std::ostream& os, const Test::Float::Assignment& a) {
 
 namespace Test { namespace Float {
 
-  Gecode::FloatNum randFValDown(Gecode::FloatNum l, Gecode::FloatNum u) {
+  Gecode::FloatNum randFValDown(Gecode::FloatNum l, Gecode::FloatNum u, Gecode::Support::RandomGenerator& rand) {
     using namespace Gecode;
     using namespace Gecode::Float;
     Rounding r;
@@ -114,7 +114,7 @@ namespace Test { namespace Float {
         l,
         r.mul_down(
                    r.div_down(
-                              Base::rand(static_cast<unsigned int>(Int::Limits::max)),
+                              rand(static_cast<unsigned int>(Int::Limits::max)),
                               static_cast<FloatNum>(Int::Limits::max)
                               ),
                    r.sub_down(u,l)
@@ -122,7 +122,7 @@ namespace Test { namespace Float {
         );
   }
 
-  Gecode::FloatNum randFValUp(Gecode::FloatNum l, Gecode::FloatNum u) {
+  Gecode::FloatNum randFValUp(Gecode::FloatNum l, Gecode::FloatNum u, Gecode::Support::RandomGenerator& rand) {
     using namespace Gecode;
     using namespace Gecode::Float;
     Rounding r;
@@ -131,7 +131,7 @@ namespace Test { namespace Float {
         u,
         r.mul_down(
           r.div_down(
-            Base::rand(static_cast<unsigned int>(Int::Limits::max)),
+            rand(static_cast<unsigned int>(Int::Limits::max)),
             static_cast<FloatNum>(Int::Limits::max)
           ),
           r.sub_down(u,l)
@@ -267,9 +267,9 @@ namespace Test { namespace Float {
   }
 
   void
-  TestSpace::assign(const Assignment& a, MaybeType& sol, bool skip) {
+  TestSpace::assign(const Assignment& a, MaybeType& sol, bool skip, Gecode::Support::RandomGenerator& rand) {
     using namespace Gecode;
-    int i = skip ? static_cast<int>(Base::rand(a.size())) : -1;
+    int i = skip ? static_cast<int>(rand(a.size())) : -1;
 
     for (int j=a.size(); j--; )
       if (i != j) {
@@ -279,20 +279,20 @@ namespace Test { namespace Float {
           return;
         }
         rel(j, FRT_EQ, a[j]);
-        if (Base::fixpoint() && failed())
+        if (Base::fixpoint(rand) && failed())
           return;
       }
   }
 
   void
-  TestSpace::bound(void) {
+  TestSpace::bound(Gecode::Support::RandomGenerator& rand) {
     using namespace Gecode;
     // Select variable to be assigned
-    int i = Base::rand(x.size());
+    int i = rand(x.size());
     while (x[i].assigned()) {
       i = (i+1) % x.size();
     }
-    bool min = Base::rand(2);
+    bool min = rand(2);
     if (min)
       rel(i, FRT_LQ, nextafter(x[i].min(), x[i].max()));
     else
@@ -329,43 +329,43 @@ namespace Test { namespace Float {
   }
 
   void
-  TestSpace::prune(int i) {
+  TestSpace::prune(int i, Gecode::Support::RandomGenerator& rand) {
     using namespace Gecode;
     // Prune values
-    if (Base::rand(2) && !x[i].assigned()) {
-      Gecode::FloatNum v=randFValUp(x[i].min(),x[i].max());
+    if (rand(2) && !x[i].assigned()) {
+      Gecode::FloatNum v= randFValUp(x[i].min(), x[i].max(), rand);
       assert((v >= x[i].min()) && (v <= x[i].max()));
       rel(i, Gecode::FRT_LQ, v);
     }
-    if (Base::rand(2) && !x[i].assigned()) {
-      Gecode::FloatNum v=randFValDown(x[i].min(),x[i].max());
+    if (rand(2) && !x[i].assigned()) {
+      Gecode::FloatNum v= randFValDown(x[i].min(), x[i].max(), rand);
       assert((v <= x[i].max()) && (v >= x[i].min()));
       rel(i, Gecode::FRT_GQ, v);
     }
   }
 
   void
-  TestSpace::prune(void) {
+  TestSpace::prune(Gecode::Support::RandomGenerator& rand) {
     using namespace Gecode;
     // Select variable to be pruned
-    int i = Base::rand(x.size());
+    int i = rand(x.size());
     while (x[i].assigned()) {
       i = (i+1) % x.size();
     }
-    prune(i);
+    prune(i, rand);
   }
 
   bool
-  TestSpace::prune(const Assignment& a, bool testfix) {
+  TestSpace::prune(const Assignment& a, bool testfix, Gecode::Support::RandomGenerator& rand) {
     // Select variable to be pruned
-    int i = Base::rand(x.size());
+    int i = rand(x.size());
     while (x[i].assigned())
       i = (i+1) % x.size();
     // Select mode for pruning
-    switch (Base::rand(2)) {
+    switch (rand(2)) {
     case 0:
       if (a[i].max() < x[i].max()) {
-        Gecode::FloatNum v=randFValDown(a[i].max(),x[i].max());
+        Gecode::FloatNum v= randFValDown(a[i].max(), x[i].max(), rand);
         if (v==x[i].max())
           v = a[i].max();
         assert((v >= a[i].max()) && (v <= x[i].max()));
@@ -374,7 +374,7 @@ namespace Test { namespace Float {
       break;
     case 1:
       if (a[i].min() > x[i].min()) {
-        Gecode::FloatNum v=randFValUp(x[i].min(),a[i].min());
+        Gecode::FloatNum v= randFValUp(x[i].min(), a[i].min(), rand);
         if (v==x[i].min())
           v = a[i].min();
         assert((v <= a[i].min()) && (v >= x[i].min()));
@@ -382,7 +382,7 @@ namespace Test { namespace Float {
       }
       break;
     }
-    if (Base::fixpoint()) {
+    if (Base::fixpoint(rand)) {
       if (failed() || !testfix)
         return true;
       TestSpace* c = static_cast<TestSpace*>(clone());
@@ -422,9 +422,9 @@ namespace Test { namespace Float {
     case CPLT_ASSIGNMENT:
       return new CpltAssignment(arity,dom,step);
     case RANDOM_ASSIGNMENT:
-      return new RandomAssignment(arity,dom,step);
+      return new RandomAssignment(arity, dom, step, _rand);
     case EXTEND_ASSIGNMENT:
-      return new ExtAssignment(arity,dom,step,this);
+      return new ExtAssignment(arity, dom, step, this, _rand);
     default :
       GECODE_NEVER;
     }
@@ -507,7 +507,7 @@ do {                                                            \
         TestSpace* s = new TestSpace(arity,dom,step,this);
         TestSpace* sc = nullptr;
         s->post();
-        switch (Base::rand(2)) {
+        switch (_rand(2)) {
           case 0:
             if (opt.log)
               olog << ind(3) << "No copy" << std::endl;
@@ -525,7 +525,7 @@ do {                                                            \
             break;
           default: assert(false);
         }
-        sc->assign(a,sol);
+        sc->assign(a, sol, false, _rand);
         if (sol == MT_TRUE) {
           CHECK_TEST(!sc->failed(), "Failed on solution");
           CHECK_TEST(subsumed(*sc), "No subsumption");
@@ -538,9 +538,9 @@ do {                                                            \
       {
         TestSpace* s = new TestSpace(arity,dom,step,this);
         s->post();
-        s->assign(a,sol,true);
+        s->assign(a, sol, true, _rand);
         (void) s->failed();
-        s->assign(a,sol);
+        s->assign(a, sol, false, _rand);
         if (sol == MT_TRUE) {
           CHECK_TEST(!s->failed(), "Failed on solution");
           CHECK_TEST(subsumed(*s), "No subsumption");
@@ -555,7 +555,7 @@ do {                                                            \
         s->post();
         s->disable();
         s->enable();
-        s->assign(a,sol);
+        s->assign(a, sol, false, _rand);
         if (sol == MT_TRUE) {
           CHECK_TEST(!s->failed(), "Failed on solution");
           CHECK_TEST(subsumed(*s), "No subsumption");
@@ -570,9 +570,9 @@ do {                                                            \
         s->post();
         s->disable();
         s->enable();
-        s->assign(a,sol,true);
+        s->assign(a, sol, true, _rand);
         (void) s->failed();
-        s->assign(a,sol);
+        s->assign(a, sol, false, _rand);
         if (sol == MT_TRUE) {
           CHECK_TEST(!s->failed(), "Failed on solution");
           CHECK_TEST(subsumed(*s), "No subsumption");
@@ -584,7 +584,7 @@ do {                                                            \
       START_TEST("Assignment (before posting)");
       {
         TestSpace* s = new TestSpace(arity,dom,step,this);
-        s->assign(a,sol);
+        s->assign(a, sol, false, _rand);
         s->post();
         if (sol == MT_TRUE) {
           CHECK_TEST(!s->failed(), "Failed on solution");
@@ -597,10 +597,10 @@ do {                                                            \
       START_TEST("Partial assignment (before posting)");
       {
         TestSpace* s = new TestSpace(arity,dom,step,this);
-        s->assign(a,sol,true);
+        s->assign(a, sol, true, _rand);
         s->post();
         (void) s->failed();
-        s->assign(a,sol);
+        s->assign(a, sol, false, _rand);
         if (sol == MT_TRUE) {
           CHECK_TEST(!s->failed(), "Failed on solution");
           CHECK_TEST(subsumed(*s), "No subsumption");
@@ -614,12 +614,12 @@ do {                                                            \
         TestSpace* s = new TestSpace(arity,dom,step,this);
         s->post();
         while (!s->failed() && !s->assigned() && !s->matchAssignment(a))
-          if (!s->prune(a,testfix)) {
+          if (!s->prune(a, testfix, _rand)) {
             problem = "No fixpoint";
             delete s;
             goto failed;
           }
-        s->assign(a,sol);
+        s->assign(a, sol, false, _rand);
         if (sol == MT_TRUE) {
           CHECK_TEST(!s->failed(), "Failed on solution");
           CHECK_TEST(subsumed(*s), "No subsumption");
@@ -634,7 +634,7 @@ do {                                                            \
           TestSpace* s = new TestSpace(arity,dom,step,this,RM_EQV);
           s->post();
           s->rel(sol == MT_TRUE);
-          s->assign(a,sol);
+          s->assign(a, sol, false, _rand);
           CHECK_TEST(!s->failed(), "Failed");
           CHECK_TEST(subsumed(*s), "No subsumption");
           delete s;
@@ -644,7 +644,7 @@ do {                                                            \
           TestSpace* s = new TestSpace(arity,dom,step,this,RM_IMP);
           s->post();
           s->rel(sol == MT_TRUE);
-          s->assign(a,sol);
+          s->assign(a, sol, false, _rand);
           CHECK_TEST(!s->failed(), "Failed");
           CHECK_TEST(subsumed(*s), "No subsumption");
           delete s;
@@ -654,7 +654,7 @@ do {                                                            \
           TestSpace* s = new TestSpace(arity,dom,step,this,RM_PMI);
           s->post();
           s->rel(sol == MT_TRUE);
-          s->assign(a,sol);
+          s->assign(a, sol, false, _rand);
           CHECK_TEST(!s->failed(), "Failed");
           CHECK_TEST(subsumed(*s), "No subsumption");
           delete s;
@@ -664,7 +664,7 @@ do {                                                            \
           TestSpace* s = new TestSpace(arity,dom,step,this,RM_EQV);
           s->rel(sol == MT_TRUE);
           s->post();
-          s->assign(a,sol);
+          s->assign(a, sol, false, _rand);
           CHECK_TEST(!s->failed(), "Failed");
           CHECK_TEST(subsumed(*s), "No subsumption");
           delete s;
@@ -674,7 +674,7 @@ do {                                                            \
           TestSpace* s = new TestSpace(arity,dom,step,this,RM_IMP);
           s->rel(sol == MT_TRUE);
           s->post();
-          s->assign(a,sol);
+          s->assign(a, sol, false, _rand);
           CHECK_TEST(!s->failed(), "Failed");
           CHECK_TEST(subsumed(*s), "No subsumption");
           delete s;
@@ -684,7 +684,7 @@ do {                                                            \
           TestSpace* s = new TestSpace(arity,dom,step,this,RM_PMI);
           s->rel(sol == MT_TRUE);
           s->post();
-          s->assign(a,sol);
+          s->assign(a, sol, false, _rand);
           CHECK_TEST(!s->failed(), "Failed");
           CHECK_TEST(subsumed(*s), "No subsumption");
           delete s;
@@ -692,7 +692,7 @@ do {                                                            \
         if (eqv()) {
           START_TEST("Assignment reified (before posting, <=>)");
           TestSpace* s = new TestSpace(arity,dom,step,this,RM_EQV);
-          s->assign(a,sol);
+          s->assign(a, sol, false, _rand);
           s->post();
           CHECK_TEST(!s->failed(), "Failed");
           CHECK_TEST(subsumed(*s), "No subsumption");
@@ -708,7 +708,7 @@ do {                                                            \
         if (imp()) {
           START_TEST("Assignment reified (before posting, =>)");
           TestSpace* s = new TestSpace(arity,dom,step,this,RM_IMP);
-          s->assign(a,sol);
+          s->assign(a, sol, false, _rand);
           s->post();
           CHECK_TEST(!s->failed(), "Failed");
           CHECK_TEST(subsumed(*s), "No subsumption");
@@ -722,7 +722,7 @@ do {                                                            \
         if (pmi()) {
           START_TEST("Assignment reified (before posting, <=)");
           TestSpace* s = new TestSpace(arity,dom,step,this,RM_PMI);
-          s->assign(a,sol);
+          s->assign(a, sol, false, _rand);
           s->post();
           CHECK_TEST(!s->failed(), "Failed");
           CHECK_TEST(subsumed(*s), "No subsumption");
@@ -739,7 +739,7 @@ do {                                                            \
           START_TEST("Assignment reified (after posting, <=>)");
           TestSpace* s = new TestSpace(arity,dom,step,this,RM_EQV);
           s->post();
-          s->assign(a,sol);
+          s->assign(a, sol, false, _rand);
           CHECK_TEST(!s->failed(), "Failed");
           CHECK_TEST(subsumed(*s), "No subsumption");
           if (s->r.var().assigned()) {
@@ -755,7 +755,7 @@ do {                                                            \
           START_TEST("Assignment reified (after posting, =>)");
           TestSpace* s = new TestSpace(arity,dom,step,this,RM_IMP);
           s->post();
-          s->assign(a,sol);
+          s->assign(a, sol, false, _rand);
           CHECK_TEST(!s->failed(), "Failed");
           CHECK_TEST(subsumed(*s), "No subsumption");
           if (sol == MT_TRUE) {
@@ -769,7 +769,7 @@ do {                                                            \
           START_TEST("Assignment reified (after posting, <=)");
           TestSpace* s = new TestSpace(arity,dom,step,this,RM_PMI);
           s->post();
-          s->assign(a,sol);
+          s->assign(a, sol, false, _rand);
           CHECK_TEST(!s->failed(), "Failed");
           CHECK_TEST(subsumed(*s), "No subsumption");
           if (sol == MT_TRUE) {
@@ -787,7 +787,7 @@ do {                                                            \
           s->post();
           while (!s->failed() && !s->matchAssignment(a) &&
                  (!s->assigned() || !s->r.var().assigned()))
-            if (!s->prune(a,testfix)) {
+            if (!s->prune(a, testfix, _rand)) {
               problem = "No fixpoint";
               delete s;
               goto failed;
@@ -810,7 +810,7 @@ do {                                                            \
           while (!s->failed() && !s->matchAssignment(a) &&
                  (!s->assigned() || ((sol == MT_FALSE) &&
                                      !s->r.var().assigned())))
-            if (!s->prune(a,testfix)) {
+            if (!s->prune(a, testfix, _rand)) {
               problem = "No fixpoint";
               delete s;
               goto failed;
@@ -831,7 +831,7 @@ do {                                                            \
           while (!s->failed() && !s->matchAssignment(a) &&
                  (!s->assigned() || ((sol == MT_TRUE) &&
                                      !s->r.var().assigned())))
-            if (!s->prune(a,testfix)) {
+            if (!s->prune(a, testfix, _rand)) {
               problem = "No fixpoint";
               delete s;
               goto failed;
@@ -868,7 +868,7 @@ do {                                                            \
         }
       }
 
-      a.next();
+      a.next(_rand);
     }
 
     if (testsearch) {
