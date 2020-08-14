@@ -39,7 +39,7 @@
  */
 #define GECODE_POST \
   if (home.failed()) return;             \
-  ::Gecode::PostInfo __gecode__pi(home);
+  ::Gecode::PostInfo gecode_pi_(home);
 
 
 /**
@@ -61,11 +61,11 @@
  * or the commit member function of a brancher.
  * \ingroup TaskActor
  */
-#define GECODE_ME_CHECK_MODIFIED(modified, me) do {        \
-    ::Gecode::ModEvent __me__ ## __LINE__ = (me);          \
-    if (::Gecode::me_failed(__me__ ## __LINE__))           \
-      return ::Gecode::ES_FAILED;                          \
-    modified |= ::Gecode::me_modified(__me__ ## __LINE__); \
+#define GECODE_ME_CHECK_MODIFIED(modified, me) do {             \
+    ::Gecode::ModEvent gecode_me_ ## __LINE__ = (me);           \
+    if (::Gecode::me_failed(gecode_me_ ## __LINE__))            \
+      return ::Gecode::ES_FAILED;                               \
+    modified |= ::Gecode::me_modified(gecode_me_ ## __LINE__);  \
   } while (0)
 
 /**
@@ -74,10 +74,10 @@
  * To be used inside post functions.
  * \ingroup TaskActor
  */
-#define GECODE_ME_FAIL(me) do {                 \
-  if (::Gecode::me_failed(me)) {                \
-    (home).fail();                              \
-    return;                                     \
+#define GECODE_ME_FAIL(me) do {   \
+  if (::Gecode::me_failed(me)) {  \
+    (home).fail();                \
+    return;                       \
   }} while (0)
 
 
@@ -89,9 +89,9 @@
  * \ingroup TaskActor
  */
 #define GECODE_ES_CHECK(es) do {                        \
-    ::Gecode::ExecStatus __es__ ## __LINE__ = (es);     \
-    if (__es__ ## __LINE__ < ::Gecode::ES_OK)           \
-      return __es__ ## __LINE__;                        \
+    ::Gecode::ExecStatus gecode_es_ ## __LINE__ = (es); \
+    if (gecode_es_ ## __LINE__ < ::Gecode::ES_OK)       \
+      return gecode_es_ ## __LINE__;                    \
   } while (0)
 
 /**
@@ -101,9 +101,9 @@
  * \ingroup TaskActor
  */
 #define GECODE_ES_FAIL(es) do {                                 \
-    ::Gecode::ExecStatus __es__ ## __LINE__ = (es);             \
-    assert(__es__ ## __LINE__ != ::Gecode::__ES_SUBSUMED);      \
-    if (__es__ ## __LINE__ < ::Gecode::ES_OK) {                 \
+    ::Gecode::ExecStatus gecode_es_ ## __LINE__ = (es);         \
+    assert(gecode_es_ ## __LINE__ != ::Gecode::ES_SUBSUMED_);   \
+    if (gecode_es_ ## __LINE__ < ::Gecode::ES_OK) {             \
       (home).fail(); return;                                    \
     }                                                           \
   } while (0)
@@ -113,13 +113,13 @@
  *
  * \ingroup TaskActor
  */
-#define GECODE_REWRITE(prop,post) do {                                   \
-  ::Gecode::Propagator& __p__ ## __LINE__ = (prop);                      \
-  size_t __s__ ## __LINE__  = __p__ ## __LINE__.dispose(home);           \
-  ::Gecode::ExecStatus __es__ ## __LINE__ = (post);                      \
-  if (__es__ ## __LINE__ != ::Gecode::ES_OK)                             \
-    return ::Gecode::ES_FAILED;                                          \
-  return home.ES_SUBSUMED_DISPOSED(__p__ ## __LINE__,__s__ ## __LINE__); \
+#define GECODE_REWRITE(prop,post) do {                                             \
+  ::Gecode::Propagator& gecode_p_ ## __LINE__ = (prop);                            \
+  size_t gecode_s_ ## __LINE__  = gecode_p_ ## __LINE__.dispose(home);             \
+  ::Gecode::ExecStatus gecode_es_ ## __LINE__ = (post);                            \
+  if (gecode_es_ ## __LINE__ != ::Gecode::ES_OK)                                   \
+    return ::Gecode::ES_FAILED;                                                    \
+  return home.ES_SUBSUMED_DISPOSED(gecode_p_ ## __LINE__, gecode_s_ ## __LINE__);  \
 } while (0)
 
 // STATISTICS: kernel-other
