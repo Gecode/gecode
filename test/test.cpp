@@ -103,17 +103,6 @@ namespace Test {
       std::cout << olog.str();
   }
 
-  /// How to match
-  enum MatchType {
-    MT_ANY,  //< Positive match anywhere in string
-    MT_NOT,  //< Negative match
-    MT_FIRST //< Positive match at beginning
-  };
-
-  std::vector<std::pair<MatchType, const char*> > testpat;
-  const char* startFrom = nullptr;
-  bool list = false;
-
   void
   Options::parse(int argc, char* argv[]) {
     int i = 1;
@@ -178,7 +167,7 @@ namespace Test {
           testpat.emplace_back(MT_ANY, argv[i]);
       } else if (!strcmp(argv[i],"-start")) {
         if (++i == argc) goto missing;
-        startFrom = argv[i];
+        start_from = argv[i];
       } else if (!strcmp(argv[i],"-log")) {
         log = true;
       } else if (!strcmp(argv[i],"-stop")) {
@@ -200,6 +189,47 @@ namespace Test {
     exit(EXIT_FAILURE);
   }
 
+  bool Options::is_test_name_matching(const std::string& test_name) {
+    if (!testpat.empty()) {
+      bool positive_patterns = false;
+      bool match_found = false;
+      for (const auto& type_pattern: testpat) {
+        const auto& type = type_pattern.first;
+        const auto& pattern = type_pattern.second;
+        if (type == MT_NOT) { // Negative pattern
+          if (test_name.find(pattern) != std::string::npos) {
+            // Test matches a negative pattern, should not run
+            return false;
+          }
+        } else {
+          // Positive pattern
+          positive_patterns = true;
+          if (!match_found) {
+            // No match found yet, test with current pattern
+            if (((type == MT_ANY)   && (test_name.find(pattern) != std::string::npos)) ||
+                ((type == MT_FIRST) && (test_name.find(pattern) == 0)))
+              match_found = true;
+          }
+        }
+      }
+
+      if (positive_patterns && match_found) {
+        // Some positive pattern matched the test name
+        return true;
+      } else if (positive_patterns && !match_found) {
+        // No positive pattern matched the test name
+        return false;
+      } else {
+        // No positive patterns, but no negative pattern ruled the test name out
+        return true;
+      }
+    } else {
+      // With no test-patterns, all tests should run.
+      return true;
+    }
+  }
+
+  /// Run all the tests with the supplied options.
   int run_tests(const std::vector<Base*>& tests, const Options& options) {
     Gecode::Support::RandomGenerator seed_sequence(options.seed);
 
@@ -234,46 +264,6 @@ namespace Test {
   }
 }
 
-/// Check if a test name should be run if there are test name patterns specified
-bool is_test_name_matching(const std::string& test_name) {
-  if (!Test::testpat.empty()) {
-    bool positive_patterns = false;
-    bool match_found = false;
-    for (const auto& type_pattern: Test::testpat ) {
-      const auto& type = type_pattern.first;
-      const auto& pattern = type_pattern.second;
-      if (type == Test::MT_NOT) { // Negative pattern
-        if (test_name.find(pattern) != std::string::npos) {
-          // Test matches a negative pattern, should not run
-          return false;
-        }
-      } else {
-        // Positive pattern
-        positive_patterns = true;
-        if (!match_found) {
-          // No match found yet, test with current pattern
-          if (((type == Test::MT_ANY)   && (test_name.find(pattern) != std::string::npos)) ||
-              ((type == Test::MT_FIRST) && (test_name.find(pattern) == 0)))
-            match_found = true;
-        }
-      }
-    }
-
-    if (positive_patterns && match_found) {
-      // Some positive pattern matched the test name
-      return true;
-    } else if (positive_patterns && !match_found) {
-      // No positive pattern matched the test name
-      return false;
-    } else {
-      // No positive patterns, but no negative pattern ruled the test name out
-      return true;
-    }
-  } else {
-    // With no test-patterns, all tests should run.
-    return true;
-  }
-}
 
 int
 main(int argc, char* argv[]) {
@@ -286,7 +276,7 @@ main(int argc, char* argv[]) {
 
   Base::sort();
 
-  if (list) {
+  if (opt.list) {
     for (Base* t = Base::tests() ; t != nullptr; t = t->next() ) {
       std::cout << t->name() << std::endl;
     }
@@ -295,16 +285,16 @@ main(int argc, char* argv[]) {
 
 
   std::vector<Base*> tests;
-  bool started = startFrom == nullptr ? true : false;
+  bool started = opt.start_from == nullptr ? true : false;
   for (Base* t = Base::tests() ; t != nullptr; t = t->next() ) {
     if (!started) {
-      if (t->name().find(startFrom) != std::string::npos) {
+      if (t->name().find(opt.start_from) != std::string::npos) {
         started = true;
       } else {
         continue;
       }
     }
-    if (is_test_name_matching(t->name())) {
+    if (opt.is_test_name_matching(t->name())) {
       tests.emplace_back(t);
     }
   }

@@ -39,7 +39,7 @@ namespace Test {
    */
   inline
   Options::Options(void)
-    : seed(0), iter(defiter), fixprob(deffixprob), stop(true), log(false)
+    : seed(0), iter(defiter), fixprob(deffixprob), stop(true), log(false), testpat(), start_from(nullptr), list(false)
   {}
 
   /*
