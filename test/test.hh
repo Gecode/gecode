@@ -72,6 +72,12 @@ namespace Test {
     ind(int i) : l(i) {}
   };
 
+  /// How to match
+  enum MatchType {
+    MT_ANY,  //< Positive match anywhere in string
+    MT_NOT,  //< Negative match
+    MT_FIRST //< Positive match at beginning
+  };
 
   /// Commandline options
   class Options {
@@ -90,11 +96,20 @@ namespace Test {
     bool stop;
     /// Whether to log the tests
     bool log;
+    /// Patterns to test against
+    std::vector<std::pair<MatchType, const char*> > testpat;
+    /// Name of first test to start with
+    const char* start_from;
+    /// Whether to list all tests
+    bool list;
 
     /// Initialize options with defaults
     Options(void);
     /// Parse commandline arguments
     void parse(int argc, char* argv[]);
+
+    /// True iff a test name should be executed according to the patterns. With no patterns, always true.
+    bool is_test_name_matching(const std::string& test_name);
   };
 
   /// The options
