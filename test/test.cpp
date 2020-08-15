@@ -94,13 +94,13 @@ namespace Test {
 
   Options opt;
 
-  void report_error(const std::string& name, unsigned int seed, Options& options) {
-    std::cout << "Options: -seed " << seed;
+  void report_error(const std::string& name, unsigned int seed, Options& options, std::ostream& ostream) {
+    ostream << "Options: -seed " << seed;
     if (options.fixprob != Test::Options::deffixprob)
-      std::cout << " -fixprob " << options.fixprob;
-    std::cout << " -test " << name << std::endl;
+      ostream << " -fixprob " << options.fixprob;
+    ostream << " -test " << name << std::endl;
     if (options.log)
-      std::cout << olog.str();
+      ostream << olog.str();
   }
 
   void
@@ -229,38 +229,49 @@ namespace Test {
     }
   }
 
+  /// Run a single test, returning true iff the test succeeded
+  bool run_test(Base* test, unsigned int test_seed, const Options& options, std::ostream& ostream) {
+    try {
+      ostream << test->name() << " ";
+      ostream.flush();
+      test->_rand.seed(test_seed);
+      for (unsigned int i = options.iter; i--;) {
+        unsigned int seed = test->_rand.seed();
+        if (test->run()) {
+          ostream << '+';
+          ostream.flush();
+        } else {
+          ostream << "-" << std::endl;
+          report_error(test->name(), seed, opt, ostream);
+          return false;
+        }
+      }
+      ostream << std::endl;
+      return true;
+    } catch (Gecode::Exception& e) {
+      ostream << "Exception in \"Gecode::" << e.what()
+                << "." << std::endl
+                << "Stopping..." << std::endl;
+      report_error(test->name(), options.seed, opt, ostream);
+      return false;
+    }
+  }
+
   /// Run all the tests with the supplied options.
   int run_tests(const std::vector<Base*>& tests, const Options& options) {
     Gecode::Support::RandomGenerator seed_sequence(options.seed);
-
+    int result = EXIT_SUCCESS;
     for (auto test : tests) {
-      try {
-        std::cout << test->name() << " ";
-        std::cout.flush();
-        test->_rand.seed(seed_sequence.next());
-        for (unsigned int i = options.iter; i--;) {
-          unsigned int seed = test->_rand.seed();
-          if (test->run()) {
-            std::cout << '+';
-            std::cout.flush();
-          } else {
-            std::cout << "-" << std::endl;
-            report_error(test->name(), seed, Test::opt);
-            if (options.stop)
-              return EXIT_FAILURE;
-          }
-        }
-        std::cout << std::endl;
-      } catch (Gecode::Exception& e) {
-        std::cout << "Exception in \"Gecode::" << e.what()
-                  << "." << std::endl
-                  << "Stopping..." << std::endl;
-        Test::report_error(test->name(), options.seed, Test::opt);
-        if (options.stop)
+      unsigned int test_seed = seed_sequence.next();
+      if (!run_test(test, test_seed, options, std::cout)) {
+        if (opt.stop) {
           return EXIT_FAILURE;
+        } else {
+          result = EXIT_FAILURE;
+        }
       }
     }
-    return EXIT_SUCCESS;
+    return result;
   }
 }
 
