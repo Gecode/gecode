@@ -109,6 +109,9 @@ namespace Test {
     while (i < argc) {
       if (!strcmp(argv[i],"-help") || !strcmp(argv[i],"--help")) {
         std::cerr << "Options for testing:" << std::endl
+                  << "\t-threads (unsigned int) default: " << threads << std::endl
+                  << "\t\tnumber of threads to use. If 0, as many threads as there are cores are used."
+                  << "\t\tThreaded execution and logging can not be used at the same time."
                   << "\t-seed (unsigned int or \"time\") default: "
                   << seed << std::endl
                   << "\t\tseed for random number generator (unsigned int),"
@@ -144,6 +147,14 @@ namespace Test {
                   << "\t\toutput list of all test cases and exit" << std::endl
           ;
         exit(EXIT_SUCCESS);
+      } else if (!strcmp(argv[i],"-threads")) {
+        if (++i == argc) goto missing;
+        unsigned int argument = static_cast<unsigned int>(atoi(argv[i]));
+        if (argument == 0) {
+          threads = Gecode::Support::Thread::npu();
+        } else {
+          threads = argument;
+        }
       } else if (!strcmp(argv[i],"-seed")) {
         if (++i == argc) goto missing;
         if (!strcmp(argv[i],"time")) {
@@ -182,6 +193,12 @@ namespace Test {
       }
       i++;
     }
+
+    if (threads > 1 && log) {
+      std::cerr << "Logging and multi threading can not be used jointly." << std::endl;
+      exit(EXIT_FAILURE);
+    }
+
     return;
   missing:
     std::cerr << "Erroneous argument (" << argv[i-1] << ")" << std::endl
@@ -273,6 +290,165 @@ namespace Test {
     }
     return result;
   }
+
+  class TestExecutor;
+
+  /**
+   * Class that manages the state and control for running tests.
+   */
+  class TestExecutionControl {
+    /// All the tests to run
+    const std::vector<Base*>& tests;
+    /// The options to use when running tests
+    const Options& options;
+    /// Mutex controlling output from the threads
+    Gecode::Support::Mutex output_mutex;
+    /// The next starting index among the tests.
+    std::atomic<size_t> next_tests;
+    /// The number of tests to allocate to each thread each time
+    const size_t batch_size;
+    /// The result
+    std::atomic<int> result;
+    /// The number of test runners that are to be set up.
+    std::atomic<int> running_threads;
+    /// Flag indicating smoe thread is waiting on the execution to be done.
+    std::atomic<bool> execution_done_wait_started;
+    /// Event for signalling that execution is done.
+    Gecode::Support::Event execution_done_event;
+
+    friend class TestExecutor;
+
+    /// Choose a batch size based on the number of tests to divide
+    static size_t choose_batch_size(size_t test_count, int thread_count) {
+      const int batches_per_thread = 5;
+      std::vector<size_t> batch_sizes = {25, 10, 5, 2};
+      for (auto batch_size : batch_sizes) {
+        if (test_count > batch_size * thread_count * batches_per_thread) {
+          return batch_size;
+        }
+      }
+      return 1;
+    }
+
+  public:
+    TestExecutionControl(const std::vector<Base*>& tests0, const Options& options0, int thread_count)
+      : tests(tests0), options(options0), output_mutex(),
+        next_tests(0), batch_size(choose_batch_size(tests0.size(), thread_count)),
+        result(EXIT_SUCCESS), running_threads(thread_count),
+        execution_done_wait_started(false), execution_done_event() {}
+
+    /// Get the current result (either \a EXIT_SUCCESS or \a EXIT_FAILURE). Requires all threads to be done first.
+    int get_result() {
+      assert(running_threads.load() == 0);
+      return result.load();
+    }
+
+    /** Wait for test-runners to be completed.
+     *
+     * Important: may only be called once by a single thread!
+     */
+    void await_test_runners_completed() {
+#ifndef NDEBUG
+      bool some_waiting =
+#endif
+        execution_done_wait_started.exchange(true);
+      assert(some_waiting == false && "Only one thread is allowed to await the result");
+      execution_done_event.wait();
+    }
+  private:
+    /// Set flag that failure has occurred.
+    void set_failure() {
+      result.store(EXIT_FAILURE);
+    }
+
+    /// Indicate that a thread is done executing.
+    void thread_done() {
+      if (running_threads.fetch_sub(1) == 1) {
+        execution_done_event.signal();
+      }
+    }
+
+    /// Get the start of the next batch. Important, may be a number larger than available number of tests
+    size_t next_batch_start() {
+      return next_tests.fetch_add(batch_size);
+    }
+
+    /// True iff the runners should continue running tests
+    bool continue_testing() {
+      // Note: implementation should be cheap to call form multiple threads often
+      return !options.stop || result.load() == EXIT_SUCCESS;
+    }
+
+    /// Write a string to standard output, synchronized across all test runners
+    void write_output(std::string output) {
+      Gecode::Support::Lock lock(output_mutex);
+      std::cout << output;
+      std::cout.flush();
+    }
+  };
+
+  /**
+   * Class that is responsible for running tests.
+   */
+  class TestExecutor : public Gecode::Support::Runnable {
+    /// The common controller for running tests
+    TestExecutionControl& tec;
+    /// The initial seed to start with
+    const int initial_seed;
+  public:
+
+    TestExecutor(TestExecutionControl& tec, const int initialSeed)
+      : tec(tec), initial_seed(initialSeed) {}
+
+    void run(void) override {
+      // Set up a local source of randomness seeds based on the initial seed supplied.
+      Gecode::Support::RandomGenerator seed_sequence(initial_seed);
+
+      // Loop runs tests continuously in batches from the test execution control
+      while (true) {
+        // Get next batch
+        const size_t batch_start = tec.next_batch_start();
+        if (batch_start >= tec.tests.size()) {
+          // No more tests to run
+          break;
+        }
+        // Run each test in the batch, handling output and failures
+        for (size_t i = batch_start; i < batch_start + tec.batch_size && i < tec.tests.size(); ++i) {
+          if (!tec.continue_testing()) {
+            break;
+          }
+          auto test = tec.tests[i];
+          unsigned int test_seed = seed_sequence.next();
+          std::ostringstream test_output;
+          if (!run_test(test, test_seed, tec.options, test_output)) {
+            tec.set_failure();
+          }
+          tec.write_output(test_output.str());
+        }
+        if (!tec.continue_testing()) {
+          break;
+        }
+      }
+
+      // Signal that this thread is done. Last one signals the waiting main thread.
+      tec.thread_done();
+    }
+  };
+
+  /// Run all the tests with the supplied options i parallel.
+  int run_tests_parallel(const std::vector<Base*>& tests, const Options& options) {
+    using namespace Gecode::Support;
+    RandomGenerator seed_sequence(options.seed);
+
+    TestExecutionControl tec(tests, options, opt.threads);
+
+    for (unsigned int i = 0; i < opt.threads; ++i) {
+      Thread::run(new TestExecutor(tec, seed_sequence.next()));
+    }
+    tec.await_test_runners_completed();
+
+    return tec.get_result();
+  }
 }
 
 
@@ -294,7 +470,6 @@ main(int argc, char* argv[]) {
     exit(EXIT_SUCCESS);
   }
 
-
   std::vector<Base*> tests;
   bool started = opt.start_from == nullptr ? true : false;
   for (Base* t = Base::tests() ; t != nullptr; t = t->next() ) {
@@ -310,9 +485,11 @@ main(int argc, char* argv[]) {
     }
   }
 
-  Test::Options& options = opt;
-
-  return run_tests(tests, options);
+  if (opt.threads > 1) {
+    return run_tests_parallel(tests, opt);
+  } else {
+    return run_tests(tests, opt);
+  }
 }
 
 std::ostream&

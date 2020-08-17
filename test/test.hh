@@ -82,6 +82,8 @@ namespace Test {
   /// Commandline options
   class Options {
   public:
+    /// Number of threads to use
+    unsigned int threads;
     /// The random seed to be used
     unsigned int seed;
     /// Number of iterations for each test
