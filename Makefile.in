@@ -1280,7 +1280,7 @@ test: mkcompiledirs
 
 # A basic integrity test
 check: test
-	$(RUNENVIRONMENT) $(TESTEXE) -iter 2 -test Branch::Int::Dense::3 \
+	$(RUNENVIRONMENT) $(TESTEXE) -iter 2 -threads 0 -test Branch::Int::Dense::3 \
 			   -test FlatZinc::magic_square \
 			   -test Int::Arithmetic::Abs \
 			   -test Int::Arithmetic::ArgMax \

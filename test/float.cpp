@@ -64,7 +64,7 @@ namespace Test { namespace Float {
    *
    */
   void
-  ExtAssignment::next(Gecode::Support::RandomGenerator& rand) {
+  ExtAssignment::next(Gecode::Support::RandomGenerator&) {
     using namespace Gecode;
     assert(n > 1);
     int i = n-2;

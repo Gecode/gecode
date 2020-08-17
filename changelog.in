@@ -70,6 +70,24 @@ Date: 2020-??-??
 Let's see.
 
 [ENTRY]
+Module: test
+What:   new
+Rank:   major
+[DESCRIPTION]
+Teests can now be run using multiple threads. Use the -threads n argument to
+the test runner to run the tests using n threads. A value of 0 uses the number
+of processing units to set the thread count.
+Using 6 parallel threads, running the full test suite went from 4 hours 15 minutes
+to 55 minutes on a 6-core machine. While not a perfect speed-up, it significantly
+reduces the time to test Gecode.
+[MORE]
+Due to the the high frequency of memory operations when running tests in parallel,
+the system allocation on macOS has a hard time keeping up. To get full performance,
+we recommend using another allocator, such as for example mimalloc.
+Note also that logging and multiple threads for running tests do not work at the
+same time.
+
+[ENTRY]
 Module: flatzinc
 What:   change
 Rank:   minor
