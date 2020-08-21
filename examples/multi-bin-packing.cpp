@@ -56,17 +56,17 @@ namespace {
     const char* n;
     /// Find instance by name \a s
     static const int* find(const char* s) {
-      for (int i=0; name[i] != NULL; i++)
+      for (int i=0; name[i] != nullptr; i++)
         if (!strcmp(s,name[i]))
           return mbpp[i];
-      return NULL;
+      return nullptr;
     }
   public:
     /// Initialize
     Spec(const char* s) : data(find(s)), n(s) {}
     /// Whether a valid specification has been found
     bool valid(void) const {
-      return data != NULL;
+      return data != nullptr;
     }
     /// Return dimension
     int dimension(void) const {
@@ -47821,7 +47821,7 @@ namespace {
     "6-18-6-24_52", "6-18-6-25_52", "6-18-6-26_52", "6-18-6-27_52", "6-18-6-28_52",
     "6-18-6-29_52", "6-18-6-30_52", "6-18-6-31_52", "6-18-6-32_52", "6-18-6-33_52",
     "6-18-6-34_52", "6-18-6-35_52",
-    NULL
+    nullptr
   };
 
 }

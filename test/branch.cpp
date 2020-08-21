@@ -419,7 +419,7 @@ namespace Test { namespace Branch {
     int s = 0;
     do {
       Gecode::Space* ex = e_s.next();
-      if (ex == NULL) break;
+      if (ex == nullptr) break;
       delete ex;
       ++s;
       if ((maxNbSol >= 0) && (maxNbSol == s)) break;

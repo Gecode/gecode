@@ -731,14 +731,14 @@ if (!(T)) {                                                     \
       START_TEST("Assignment (after posting)");
       {
         SetTestSpace* s = new SetTestSpace(arity,lub,withInt,this);
-        SetTestSpace* sc = NULL;
+        SetTestSpace* sc = nullptr;
         s->post();
         switch (Base::rand(2)) {
           case 0:
             if (opt.log)
               olog << ind(3) << "No copy" << std::endl;
             sc = s;
-            s = NULL;
+            s = nullptr;
             break;
           case 1:
             if (opt.log)
@@ -746,7 +746,7 @@ if (!(T)) {                                                     \
             if (s->status() != Gecode::SS_FAILED) {
               sc = static_cast<SetTestSpace*>(s->clone());
             } else {
-              sc = s; s = NULL;
+              sc = s; s = nullptr;
             }
             break;
           default: assert(false);

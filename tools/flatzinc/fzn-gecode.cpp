@@ -55,13 +55,13 @@ int main(int argc, char** argv) {
   opt.name(filename);
 
   FlatZinc::Printer p;
-  FlatZinc::FlatZincSpace* fg = NULL;
+  FlatZinc::FlatZincSpace* fg = nullptr;
   Rnd rnd(opt.seed());
   try {
     if (!strcmp(filename, "-")) {
-      fg = FlatZinc::parse(cin, p, std::cerr, NULL, rnd);
+      fg = FlatZinc::parse(cin, p, std::cerr, nullptr, rnd);
     } else {
-      fg = FlatZinc::parse(filename, p, std::cerr, NULL, rnd);
+      fg = FlatZinc::parse(filename, p, std::cerr, nullptr, rnd);
     }
 
     if (fg) {

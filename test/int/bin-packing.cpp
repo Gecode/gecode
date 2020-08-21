@@ -255,7 +255,7 @@ namespace Test { namespace Int {
         TestSpace(void) {}
         // Copy function
         virtual Gecode::Space* copy(void) {
-          return NULL;
+          return nullptr;
         }
       };
     public:

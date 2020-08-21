@@ -205,7 +205,7 @@ namespace Test { namespace Int {
     default:
       {
         Gecode::Int::ViewRanges<Gecode::Int::IntView> it(x[i]);
-        unsigned int skip = 
+        unsigned int skip =
           Base::rand(static_cast<unsigned int>(x[i].size()-1));
         while (true) {
           if (it.width() > skip) {
@@ -258,7 +258,7 @@ namespace Test { namespace Int {
   void
   TestSpace::assign(const Assignment& a, bool skip) {
     using namespace Gecode;
-    int i = skip ? 
+    int i = skip ?
       static_cast<int>(Base::rand(static_cast<unsigned int>(a.size()))) : -1;
     for (int j=a.size(); j--; )
       if (i != j) {
@@ -296,7 +296,7 @@ namespace Test { namespace Int {
         rel(i, Gecode::IRT_GR, v);
       }
     } else {
-      for (int vals = 
+      for (int vals =
              static_cast<int>(Base::rand(static_cast<unsigned int>(x[i].size()-1))+1); vals--; ) {
         int v;
         Gecode::Int::ViewRanges<Gecode::Int::IntView> it(x[i]);
@@ -497,14 +497,14 @@ if (!(T)) {                                                     \
       START_TEST("Assignment (after posting)");
       {
         TestSpace* s = new TestSpace(arity,dom,this);
-        TestSpace* sc = NULL;
+        TestSpace* sc = nullptr;
         s->post();
         switch (Base::rand(2)) {
           case 0:
             if (opt.log)
               olog << ind(3) << "No copy" << std::endl;
             sc = s;
-            s = NULL;
+            s = nullptr;
             break;
           case 1:
             if (opt.log)
@@ -512,7 +512,7 @@ if (!(T)) {                                                     \
             if (s->status() != SS_FAILED) {
               sc = static_cast<TestSpace*>(s->clone());
             } else {
-              sc = s; s = NULL;
+              sc = s; s = nullptr;
             }
             break;
           default: assert(false);
@@ -1063,7 +1063,7 @@ if (!(T)) {                                                     \
         if (sol) {
           START_TEST("Search");
           TestSpace* s = e_s.next();
-          CHECK_TEST(s != NULL, "Solutions exhausted");
+          CHECK_TEST(s != nullptr, "Solutions exhausted");
           CHECK_TEST(s->propagators()==0, "No subsumption");
           for (int i=a.size(); i--; ) {
             CHECK_TEST(s->x[i].assigned(), "Unassigned variable");
@@ -1078,7 +1078,7 @@ if (!(T)) {                                                     \
 
     if (testsearch) {
       test = "Search";
-      if (e_s.next() != NULL) {
+      if (e_s.next() != nullptr) {
         problem = "Excess solutions";
         goto failed;
       }

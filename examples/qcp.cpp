@@ -103,15 +103,15 @@ namespace {
     }
     /// Find instance by name \a s
     static const int* find(const char* s) {
-      for (int i=0; name[i] != NULL; i++)
+      for (int i=0; name[i] != nullptr; i++)
         if (!strcmp(s,name[i]))
           return qcp[i];
-      return NULL;
+      return nullptr;
     }
   public:
     /// Whether a valid specification has been found
     bool valid(void) const {
-      return data != NULL;
+      return data != nullptr;
     }
     /// Initialize
     Spec(const char* s) : data(find(s)) {}
@@ -3991,7 +3991,7 @@ namespace {
     "50-750-bal", "50-825-bal",
     "60-1080-bal", "60-1152-bal", "60-1440", "60-1620",
     "70-2450", "70-2940",
-    NULL
+    nullptr
   };
 
 }

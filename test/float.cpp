@@ -428,7 +428,7 @@ namespace Test { namespace Float {
     default :
       GECODE_NEVER;
     }
-    return NULL; // Avoid compiler warnings
+    return nullptr; // Avoid compiler warnings
   }
 
   bool
@@ -501,14 +501,14 @@ if (!(T)) {                                                     \
       START_TEST("Assignment (after posting)");
       {
         TestSpace* s = new TestSpace(arity,dom,step,this);
-        TestSpace* sc = NULL;
+        TestSpace* sc = nullptr;
         s->post();
         switch (Base::rand(2)) {
           case 0:
             if (opt.log)
               olog << ind(3) << "No copy" << std::endl;
             sc = s;
-            s = NULL;
+            s = nullptr;
             break;
           case 1:
             if (opt.log)
@@ -516,7 +516,7 @@ if (!(T)) {                                                     \
             if (s->status() != SS_FAILED) {
               sc = static_cast<TestSpace*>(s->clone());
             } else {
-              sc = s; s = NULL;
+              sc = s; s = nullptr;
             }
             break;
           default: assert(false);
@@ -854,7 +854,7 @@ if (!(T)) {                                                     \
             delete ss;
           }
           TestSpace* s = e_s->next();
-          CHECK_TEST(s != NULL, "Solutions exhausted");
+          CHECK_TEST(s != nullptr, "Solutions exhausted");
           CHECK_TEST(subsumed(*s), "No subsumption");
           for (int i=a.size(); i--; ) {
             CHECK_TEST(s->x[i].assigned(), "Unassigned variable");
@@ -876,7 +876,7 @@ if (!(T)) {                                                     \
         e_s = new DFS<TestSpace>(ss,search_o);
         delete ss;
       }
-      if (e_s->next() != NULL) {
+      if (e_s->next() != nullptr) {
         problem = "Excess solutions";
         goto failed;
       }

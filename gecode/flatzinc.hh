@@ -679,7 +679,7 @@ namespace Gecode { namespace FlatZinc {
       std::vector<std::string> names = get_constraint_names(ann);
       if (names.size() > 1) {
         result << " in constraints ";
-        for (int i = 0; i < names.size(); ++i) {
+        for (unsigned int i = 0; i < names.size(); ++i) {
           result << '\"' << names[i] << '\"';
           if (i < names.size() - 1) {
             result << ",";

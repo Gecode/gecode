@@ -103,7 +103,7 @@ namespace Test { namespace LDSB {
     int nexpected = expected.size();
     for (int i = 0 ; i < nexpected ; ++i) {
       T* s = e.next();
-      if (s == NULL) {
+      if (s == nullptr) {
         if (opt.log) {
           olog << "Expected a solution but there are no more solutions." << std::endl;
           olog << "(Expected " << nexpected << " but only found " << i << ")" << std::endl;
@@ -122,7 +122,7 @@ namespace Test { namespace LDSB {
       delete s;
     }
     T* s = e.next();
-    if (s != NULL) {
+    if (s != nullptr) {
       if (opt.log) {
         olog << "More solutions than expected:" << std::endl;
         olog << "(Expected only " << nexpected << ")" << std::endl;
@@ -160,7 +160,7 @@ namespace Test { namespace LDSB {
       return a;
     }
     /// Expected solutions
-    virtual IntArgs* expectedSolutions(void) { return NULL; }
+    virtual IntArgs* expectedSolutions(void) { return nullptr; }
   };
 
 #ifdef GECODE_HAS_SET_VARS
@@ -190,7 +190,7 @@ namespace Test { namespace LDSB {
       return a;
     }
     /// Expected solutions
-    virtual IntSetArgs* expectedSolutions(void) { return NULL; }
+    virtual IntSetArgs* expectedSolutions(void) { return nullptr; }
   };
 #endif
 

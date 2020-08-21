@@ -430,10 +430,10 @@ namespace {
     Entry* cache; ///< Where all entries start
   public:
     /// Initialize cache as empty
-    Cache(void) : cache(NULL) {}
+    Cache(void) : cache(nullptr) {}
     /// Return possibly cached Data for \a n distinct variables with sum \a c
     TupleSet get(int n, int c) {
-      for (Entry* e = cache; e != NULL; e = e->next)
+      for (Entry* e = cache; e != nullptr; e = e->next)
         if ((e->n == n) && (e->c == c))
           return e->ts;
       {
@@ -449,7 +449,7 @@ namespace {
     /// Delete cache entries
     ~Cache(void) {
       Entry* e = cache;
-      while (e != NULL) {
+      while (e != nullptr) {
         Entry* d = e;
         e = e->next;
         delete d;

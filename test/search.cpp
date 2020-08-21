@@ -82,7 +82,7 @@ namespace Test {
       /// Master configuration function that does not restart
       virtual bool master(const MetaInfo& mi) {
         if (mi.type() == MetaInfo::RESTART) {
-          if (mi.last() != NULL)
+          if (mi.last() != nullptr)
             constrain(*mi.last());
           return false;
         } else {
@@ -289,7 +289,7 @@ namespace Test {
       virtual bool master(const MetaInfo& mi) {
         switch (mi.type()) {
         case MetaInfo::RESTART:
-          if (mi.last() != NULL) {
+          if (mi.last() != nullptr) {
             const HasSolutions* s
               = static_cast<const HasSolutions*>(mi.last());
             BoolVarArgs b;
@@ -386,10 +386,10 @@ namespace Test {
         delete m;
         while (true) {
           Model* s = dfs.next();
-          if (s != NULL) {
+          if (s != nullptr) {
             n--; delete s;
           }
-          if ((s == NULL) && !dfs.stopped())
+          if ((s == nullptr) && !dfs.stopped())
             break;
           f.limit(f.limit()+2);
         }
@@ -423,10 +423,10 @@ namespace Test {
         delete m;
         while (true) {
           Model* s = lds.next();
-          if (s != NULL) {
+          if (s != nullptr) {
             n--; delete s;
           }
-          if ((s == NULL) && !lds.stopped())
+          if ((s == nullptr) && !lds.stopped())
             break;
           f.limit(f.limit()+2);
         }
@@ -464,17 +464,17 @@ namespace Test {
         o.stop = &f;
         Gecode::BAB<Model> bab(m,o);
         delete m;
-        Model* b = NULL;
+        Model* b = nullptr;
         while (true) {
           Model* s = bab.next();
-          if (s != NULL) {
+          if (s != nullptr) {
             delete b; b=s;
           }
-          if ((s == NULL) && !bab.stopped())
+          if ((s == nullptr) && !bab.stopped())
             break;
           f.limit(f.limit()+2);
         }
-        bool ok = (b == NULL) || b->best();
+        bool ok = (b == nullptr) || b->best();
         delete b;
         return ok;
       }
@@ -505,10 +505,10 @@ namespace Test {
         delete m;
         while (true) {
           Model* s = rbs.next();
-          if (s != NULL) {
+          if (s != nullptr) {
             n--; delete s;
           }
-          if ((s == NULL) && !rbs.stopped())
+          if ((s == nullptr) && !rbs.stopped())
             break;
           f.limit(f.limit()+2);
         }
@@ -542,17 +542,17 @@ namespace Test {
         o.stop = &f;
         Gecode::PBS<Model,Engine> pbs(m,o);
         if (best) {
-          Model* b = NULL;
+          Model* b = nullptr;
           while (true) {
             Model* s = pbs.next();
-            if (s != NULL) {
+            if (s != nullptr) {
               delete b; b=s;
             }
-            if ((s == NULL) && !pbs.stopped())
+            if ((s == nullptr) && !pbs.stopped())
               break;
             f.limit(f.limit()+2);
           }
-          bool ok = (b == NULL) || b->best();
+          bool ok = (b == nullptr) || b->best();
           delete b;
           return ok;
         } else {
@@ -560,10 +560,10 @@ namespace Test {
           delete m;
           while (true) {
             Model* s = pbs.next();
-            if (s != NULL) {
+            if (s != nullptr) {
               n--; delete s;
             }
-            if ((s == NULL) && !pbs.stopped())
+            if ((s == nullptr) && !pbs.stopped())
               break;
             f.limit(f.limit()+2);
           }
@@ -610,17 +610,17 @@ namespace Test {
           Gecode::PBS<Model,Gecode::BAB> pbs(m, sebs, mo);
           delete m;
 
-          Model* b = NULL;
+          Model* b = nullptr;
           while (true) {
             Model* s = pbs.next();
-            if (s != NULL) {
+            if (s != nullptr) {
               delete b; b=s;
             }
-            if ((s == NULL) && !pbs.stopped())
+            if ((s == nullptr) && !pbs.stopped())
               break;
             f.limit(f.limit()+2);
           }
-          bool ok = (b == NULL) || b->best();
+          bool ok = (b == nullptr) || b->best();
           delete b;
           return ok;
         } else {
@@ -635,10 +635,10 @@ namespace Test {
 
           while (true) {
             Model* s = pbs.next();
-            if (s != NULL) {
+            if (s != nullptr) {
               n--; delete s;
             }
-            if ((s == NULL) && !pbs.stopped())
+            if ((s == nullptr) && !pbs.stopped())
               break;
             f.limit(f.limit()+2);
           }
