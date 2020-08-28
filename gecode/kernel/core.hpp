@@ -4086,19 +4086,27 @@ namespace Gecode {
       pc.p.bid_sc |= sc_trace;
     }
     // Currently unused
-    if (p & AP_WEAKLY) {}
+    if (p & AP_WEAKLY) {
+      // Nothing to do
+    }
   }
 
   forceinline void
   Space::ignore(Actor& a, ActorProperty p, bool d) {
-    // Check wether array has already been discarded as space
+    // Check whether array has already been discarded as space
     // deletion is already in progress
     if ((p & AP_DISPOSE) && (d_fst != nullptr))
       ap_ignore_dispose(&a,d);
-    if (p & AP_VIEW_TRACE) {}
-    if (p & AP_TRACE) {}
+    if (p & AP_VIEW_TRACE) {
+      // Nothing to do
+    }
+    if (p & AP_TRACE) {
+      // Nothing to do
+    }
     // Currently unused
-    if (p & AP_WEAKLY) {}
+    if (p & AP_WEAKLY) {
+      // Nothing to do
+    }
   }
 
 
