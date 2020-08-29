@@ -127,8 +127,8 @@ namespace Gecode { namespace Iter { namespace Ranges {
   ScaleUp<Val,UnsVal,I>::init(I& i0, int a0) {
     i = i0; a = a0;
     if (i()) {
-      cur = a * i.min();
-      end = a * i.max();
+      cur = static_cast<Val>(a) * static_cast<Val>(i.min());
+      end = static_cast<Val>(a) * static_cast<Val>(i.max());
     } else {
       cur = 1;
       end = 0;
@@ -139,8 +139,8 @@ namespace Gecode { namespace Iter { namespace Ranges {
   inline
   ScaleUp<Val,UnsVal,I>::ScaleUp(I& i0, int a0) : i(i0), a(a0) {
     if (i()) {
-      cur = a * i.min();
-      end = a * i.max();
+      cur = static_cast<Val>(a) * static_cast<Val>(i.min());
+      end = static_cast<Val>(a) * static_cast<Val>(i.max());
     } else {
       cur = 1;
       end = 0;

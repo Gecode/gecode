@@ -68,8 +68,7 @@ namespace Gecode { namespace Int {
         n++;
         return;
       } else {
-        // FIXME: HOW TO CAST HERE?
-        p = reinterpret_cast<RangeList**>(c->nextRef());
+        p = c->nextRef();
         c = *p;
       }
     }

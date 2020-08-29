@@ -145,22 +145,25 @@ namespace Gecode { namespace Int { namespace Sorted {
    */
   class OfflineMin {
   private:
+    /// The set/forest of items.
     OfflineMinItem* sequence;
+    /// Scratch memory for path compression
     int* vertices;
+    /// The number of elements in the set
     int  n;
   public:
     OfflineMin(void);
     OfflineMin(OfflineMinItem[], int[], int);
     /**
      *  Find the set x belongs to
-     *  (wihtout path compression)
+     *  (without path compression)
      */
-    int  find(int x);
+    int find(int x);
     /**
      *  Find the set x belongs to
      *  (using path compression)
      */
-    int  find_pc(int x);
+    int find_pc(int x);
     /// Unite two sets \a a and \a b and label the union with \a c
     void unite(int a, int b, int c);
     /// Initialization of the datastructure
@@ -194,15 +197,17 @@ namespace Gecode { namespace Int { namespace Sorted {
 
   forceinline int
   OfflineMin::find_pc(int x){
-    int vsize = 0;
+    int path_length = 0;
     while (sequence[x].parent != x) {
-      vertices[x] = x;
+      vertices[path_length++] = x;
       x = sequence[x].parent;
     }
     // x is now the root of the tree
-    for (int i=0; i<vsize; i++)
+    // Compress path up to the root
+    for (int i=0; i < path_length-1; i++) {
       sequence[vertices[i]].parent = x;
-    // return the set, x belongs to
+    }
+    // return the set x belongs to
     return sequence[x].name;
   }
 
@@ -235,6 +240,7 @@ namespace Gecode { namespace Int { namespace Sorted {
       cur.succ   = i + 1;
       cur.iset   = -5;
     }
+    // no need to zero vertices, as it is only used as scratch area
   }
 
   forceinline int

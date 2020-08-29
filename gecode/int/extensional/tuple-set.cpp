@@ -108,7 +108,8 @@ namespace Gecode {
 
     // Initialization
     if (n_tuples == 0) {
-      delete td; td=nullptr;
+      heap.rfree(td);
+      td=nullptr;
       return;
     }
 

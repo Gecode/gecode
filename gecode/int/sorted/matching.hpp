@@ -73,7 +73,7 @@ namespace Gecode { namespace Int { namespace Sorted {
     for (int i = 0; i < xs; i++) {
       // the upper bound of the x-node should be minimal
       int perm = tau[i];
-      // find the iteration where \tau(i) became a maching candidate
+      // find the iteration where \tau(i) became a matching candidate
       int iter = seq[perm].iset;
       if (iter<0)
         return false;
