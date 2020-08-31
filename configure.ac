@@ -40,11 +40,11 @@ dnl
 
 AC_REVISION([$Id$])
 AC_PREREQ(2.53)
-AC_INIT(GECODE, 6.2.1, users@gecode.org)
+AC_INIT(GECODE, 6.3.0, users@gecode.org)
 AC_CONFIG_HEADERS([gecode/support/config.hpp])
 AC_CONFIG_SRCDIR(gecode/kernel.hh)
 
-ac_gecode_soversion=50
+ac_gecode_soversion=51
 AC_SUBST(GECODE_SOVERSION, ${ac_gecode_soversion})
 ac_gecode_flatzincversion=1.6
 AC_SUBST(GECODE_FLATZINC_VERSION, ${ac_gecode_flatzincversion})
@@ -95,7 +95,7 @@ AC_CHECK_PROG(PROG_PERL, perl, [ok])
     AC_MSG_ERROR([In order to compile Gecode, you need perl.])
  fi
 
-dnl Check for environment ot use when running programs in the Makefile
+dnl Check for environment to use when running programs in the Makefile
 AC_GECODE_RUNENVIRONMENT
 
 dnl determine which compiler we are using
@@ -261,7 +261,7 @@ AC_GECODE_VTI(float,
 	 AC_SUBST(LINKFLOAT,[${LINKLIBDIR}${LINKPREFIX}${FLOAT}${DLL_ARCH}${LINKSUFFIX}])
 	],
 	[
-	 AC_SUBST(LINKFLOAT,[]) 
+	 AC_SUBST(LINKFLOAT,[])
 	]
       )
 

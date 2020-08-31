@@ -29,10 +29,10 @@
 #  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 
-# 
+#
 # This file contains entries for changelogs
 #
-# There are two kinds of entries: one marking releases and the others 
+# There are two kinds of entries: one marking releases and the others
 # being actual entries.
 #
 # All the lines for describing entries must start at the beginning.
@@ -42,12 +42,12 @@
 #   Version: <version string>
 #   Date:    <when release>
 #   [DESCRIPTION]
-#   ... All the text up to the next [ENTRY] is included 
+#   ... All the text up to the next [ENTRY] is included
 #   as description
 #
 # An entry is described as follows:
 #   [ENTRY]
-#   Module: 
+#   Module:
 #     kernel|search|int|set|cpltset|example|minimodel|iter|support|
 #     driver|test|gist|flatzinc|other
 #   What:   bug|documentation|performance|new|removed|change
@@ -56,7 +56,7 @@
 #   Issue:  <optional, for number from github>
 #   Thanks: <optional, who reported etc>
 #   [DESCRIPTION]
-#   ... All the text up to the next [ENTRY] or [RELEASE] is included 
+#   ... All the text up to the next [ENTRY] or [RELEASE] is included
 #   as description
 #   [MORE]
 #    ... If a more section is included, then it will be displayed as an
@@ -64,8 +64,8 @@
 #
 
 [RELEASE]
-Version: 6.2.1
-Date: 2019-??-??
+Version: 6.3.0
+Date: 2020-??-??
 [DESCRIPTION]
 Let's see.
 
