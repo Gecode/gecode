@@ -61,7 +61,7 @@ extern "C" int isatty(int);
 #include <gecode/flatzinc/varspec.hh>
 #include <gecode/flatzinc/conexpr.hh>
 #include <gecode/flatzinc/ast.hh>
-#include <gecode/flatzinc/parser.tab.hh>
+#include <gecode/flatzinc/parser.tab.hpp>
 #include <gecode/flatzinc/symboltable.hh>
 
 namespace Gecode { namespace FlatZinc {

@@ -36,6 +36,7 @@
 #  - all filenames are relative to root directory, which is the first argument
 #  - #ifdef can be safely ignored
 #
+use File::Basename;
 
 $i=0;
 
@@ -50,17 +51,32 @@ while ($target = $ARGV[$i++]) {
       open FILE, "$f" or die "File missing: $root/$f\n";
 
     while ($l = <FILE>) {
-      if ($l =~ /^\#include <(gecode\/.*)>/ || $l =~ /^\#include "(.*)"/) {
-	$g = $1;
-	$g =~ s|^\./||og;
-	if (!($g =~ /^gecode\/third-party/) && !$done{$g}) {
-	  push @todo, $g;
-	  if (-e "$root/$g") {
-	    $done{$g} = "$root/";
-	  } else {
-	    $done{$g} = "";
-	  }
-	}
+      if ($l =~ /^\#include <(gecode\/.*)>/ ) {
+        $g = $1;
+        $g =~ s|^\./||og;
+        if (!($g =~ /^gecode\/third-party/) && !$done{$g}) {
+          push @todo, $g;
+          if (-e "$root/$g") {
+            $done{$g} = "$root/";
+          } else {
+            $done{$g} = "";
+          }
+        }
+      } elsif ($l =~ /^\#include "(.*)"/) {
+        $g = $1;
+        $g =~ s|^\./||og;
+        if (! -e $g && ! -e "$root/$g") {
+          $dir = dirname("$f");
+          $g = "$dir/$g";
+        }
+        if (!$done{$g}) {
+          push @todo, $g;
+          if (-e "$root/$g") {
+            $done{$g} = "$root/";
+          } else {
+            $done{$g} = "";
+          }
+        }
       }
     }
     close FILE;
