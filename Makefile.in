@@ -248,7 +248,7 @@ KERNELBUILDDIRS = kernel \
 	kernel/data kernel/propagator kernel/branch kernel/memory kernel/trace
 
 ifeq "@enable_flatzinc@" "yes"
-EXTRA_HEADERS   = gecode/support/config.hpp gecode/flatzinc/parser.tab.hh
+EXTRA_HEADERS   = gecode/support/config.hpp gecode/flatzinc/parser.tab.hpp
 else
 EXTRA_HEADERS   = gecode/support/config.hpp
 endif
@@ -1466,19 +1466,18 @@ gecode/gist/moc_%.cpp: $(top_srcdir)/gecode/gist/%.hh
 ifeq "@HAVE_FLEXBISON@" "yes"
 gecode/flatzinc/lexer.yy.cpp: \
 	$(top_srcdir)/gecode/flatzinc/lexer.lxx \
-	$(top_srcdir)/gecode/flatzinc/parser.tab.hh
+	$(top_srcdir)/gecode/flatzinc/parser.tab.hpp
 	flex -ogecode/flatzinc/lexer.yy.cpp \
 		$(top_srcdir)/gecode/flatzinc/lexer.lxx
 
-gecode/flatzinc/parser.tab.hh gecode/flatzinc/parser.tab.cpp: \
+gecode/flatzinc/parser.tab.hpp gecode/flatzinc/parser.tab.cpp: \
 	$(top_srcdir)/gecode/flatzinc/parser.yxx
 	bison -t -o gecode/flatzinc/parser.tab.cpp -d $<
-	mv gecode/flatzinc/parser.tab.hpp gecode/flatzinc/parser.tab.hh
 else
 ifneq "$(top_srcdir)" "."
 gecode/flatzinc/lexer.yy.cpp: $(top_srcdir)/gecode/flatzinc/lexer.yy.cpp
 	cp $(@:%=$(top_srcdir)/%) $@
-gecode/flatzinc/parser.tab.hh: $(top_srcdir)/gecode/flatzinc/parser.tab.hh
+gecode/flatzinc/parser.tab.hpp: $(top_srcdir)/gecode/flatzinc/parser.tab.hpp
 	cp $(@:%=$(top_srcdir)/%) $@
 gecode/flatzinc/parser.tab.cpp: $(top_srcdir)/gecode/flatzinc/parser.tab.cpp
 	cp $(@:%=$(top_srcdir)/%) $@
@@ -2111,7 +2110,7 @@ distclean: veryclean
 	$(RMF) config.log config.status Makefile.dep
 
 depend: mkcompiledirs
-	@$(MAKE) $(VARIMP) gecode/flatzinc/parser.tab.hh
+	@$(MAKE) $(VARIMP) gecode/flatzinc/parser.tab.hpp
 	perl $(top_srcdir)/misc/makedepend.perl \
 	$(top_srcdir) \
 	$(ALLSRC) \

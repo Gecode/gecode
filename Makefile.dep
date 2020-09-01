@@ -18834,7 +18834,7 @@ tools/flatzinc/fzn-gecode$(OBJSUFFIX) tools/flatzinc/fzn-gecode$(SBJSUFFIX): \
 gecode/flatzinc/parser.tab$(OBJSUFFIX) gecode/flatzinc/parser.tab$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/flatzinc.hh ./gecode/flatzinc/ast.hh ./gecode/flatzinc/conexpr.hh \
-	./gecode/flatzinc/option.hh ./gecode/flatzinc/parser.hh ./gecode/flatzinc/parser.tab.hh \
+	./gecode/flatzinc/option.hh ./gecode/flatzinc/parser.hh ./gecode/flatzinc/parser.tab.hpp \
 	./gecode/flatzinc/symboltable.hh ./gecode/flatzinc/varspec.hh ./gecode/float.hh \
 	./gecode/float/array-traits.hpp ./gecode/float/array.hpp ./gecode/float/branch.hpp \
 	./gecode/float/branch/action.hpp ./gecode/float/branch/afc.hpp ./gecode/float/branch/assign.hpp \
@@ -18930,7 +18930,7 @@ gecode/flatzinc/parser.tab$(OBJSUFFIX) gecode/flatzinc/parser.tab$(SBJSUFFIX): \
 gecode/flatzinc/lexer.yy$(OBJSUFFIX) gecode/flatzinc/lexer.yy$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/flatzinc.hh ./gecode/flatzinc/ast.hh ./gecode/flatzinc/conexpr.hh \
-	./gecode/flatzinc/option.hh ./gecode/flatzinc/parser.hh ./gecode/flatzinc/parser.tab.hh \
+	./gecode/flatzinc/option.hh ./gecode/flatzinc/parser.hh ./gecode/flatzinc/parser.tab.hpp \
 	./gecode/flatzinc/symboltable.hh ./gecode/flatzinc/varspec.hh ./gecode/float.hh \
 	./gecode/float/array-traits.hpp ./gecode/float/array.hpp ./gecode/float/branch.hpp \
 	./gecode/float/branch/action.hpp ./gecode/float/branch/afc.hpp ./gecode/float/branch/assign.hpp \

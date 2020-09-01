@@ -71,6 +71,16 @@ Let's see.
 
 [ENTRY]
 Module: flatzinc
+What:   change
+Issue:  77
+Rank:   minor
+[DESCRIPTION]
+Move parser.tab.hh to parser.tab.hpp, Bison's standard location. This
+ensures that the generated implementation file is compatible with
+Bison 3.7.
+
+[ENTRY]
+Module: flatzinc
 What:   bug
 Issue:  61
 Rank:   minor
