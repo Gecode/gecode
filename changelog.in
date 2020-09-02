@@ -76,6 +76,14 @@ Date: 2020-??-??
 Let's see.
 
 [ENTRY]
+Module: test
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Fix testing for IntAction, BoolAction, SetAction, FloatAction with
+merit functions.
+
+[ENTRY]
 Module: flatzinc
 What:   change
 Issue:  77
