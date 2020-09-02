@@ -516,7 +516,7 @@ namespace Test { namespace Branch {
 
             Rnd rb(2);
             IntVarBranch ivbb;
-            IntAction iab(*c, c->x, 0.9, &int_merit);
+            IntAction iab(*c, c->x, 0.9, true, true, &int_merit);
             IntCHB icb(*c, c->x, &int_merit);
             switch (varb) {
             case  0: ivbb = INT_VAR_NONE(); break;
@@ -664,7 +664,7 @@ namespace Test { namespace Branch {
 
             Rnd rb(2);
             BoolVarBranch bvbb;
-            BoolAction bab(*c, c->x, 0.9, &bool_merit);
+            BoolAction bab(*c, c->x, 0.9, true, true, &bool_merit);
             BoolCHB bcb(*c, c->x, &bool_merit);
             switch (varb) {
             case  0: bvbb = BOOL_VAR_NONE(); break;
@@ -812,7 +812,7 @@ namespace Test { namespace Branch {
 
             Rnd rb(2);
             SetVarBranch svbb;
-            SetAction sab(*c, c->x, 0.9, &set_merit);
+            SetAction sab(*c, c->x, 0.9, true, true, &set_merit);
             SetCHB scb(*c, c->x, &set_merit);
             switch (varb) {
             case  0: break;
@@ -969,7 +969,7 @@ namespace Test { namespace Branch {
 
             Rnd rb(2);
             FloatVarBranch fvbb;
-            FloatAction fab(*c, c->x, 0.9, &float_merit);
+            FloatAction fab(*c, c->x, 0.9, true, true, &float_merit);
             FloatCHB fcb(*c, c->x, &float_merit);
             switch (varb) {
             case  0: break;
