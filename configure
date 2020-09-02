@@ -9371,8 +9371,8 @@ $as_echo "#define GECODE_MEMORY_ALIGNMENT sizeof(void*)" >>confdefs.h
   if test "${enable_debug:-no}" = "no"; then
         CFLAGS="${ac_gecode_cl_optimize_flag}${CFLAGS:+ }${CFLAGS}"
     CXXFLAGS="${ac_gecode_cl_optimize_flag}${CXXFLAGS:+ }${CXXFLAGS}"
-    CFLAGS="-MD -GS- -wd4355${CFLAGS:+ }${CFLAGS}"
-    CXXFLAGS="-MD -GS- -wd4355${CXXFLAGS:+ }${CXXFLAGS}"
+    CFLAGS="-MD -GS- -wd4355 -wd4068${CFLAGS:+ }${CFLAGS}"
+    CXXFLAGS="-MD -GS- -wd4355 -wd4068${CXXFLAGS:+ }${CXXFLAGS}"
 
    if test "${ac_cv_cxx_compiler_vendor}" = "microsoft"; then
      { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether ${CXX} accepts -arch:SSE2" >&5
@@ -9491,8 +9491,8 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
         DLLFLAGS="${CXXFLAGS} -LD${DLLFLAGS:+ }${DLLFLAGS}"
         GLDFLAGS="-link -DEBUG -OPT:REF -OPT:ICF -MANIFEST -INCREMENTAL:NO"
   else
-        CFLAGS="-MDd -Zi -wd4355${CFLAGS:+ }${CFLAGS}"
-    CXXFLAGS="-MDd -Zi -wd4355${CXXFLAGS:+ }${CXXFLAGS}"
+        CFLAGS="-MDd -Zi -wd4355 -wd4068${CFLAGS:+ }${CFLAGS}"
+    CXXFLAGS="-MDd -Zi -wd4355 -wd4068${CXXFLAGS:+ }${CXXFLAGS}"
 
         DLLFLAGS="${CXXFLAGS} -LDd${DLLFLAGS:+ }${DLLFLAGS}"
     GLDFLAGS="-link -MANIFEST -INCREMENTAL:NO"
@@ -11574,8 +11574,8 @@ $as_echo "#define GECODE_MEMORY_ALIGNMENT sizeof(void*)" >>confdefs.h
   if test "${enable_debug:-no}" = "no"; then
         CFLAGS="${ac_gecode_cl_optimize_flag}${CFLAGS:+ }${CFLAGS}"
     CXXFLAGS="${ac_gecode_cl_optimize_flag}${CXXFLAGS:+ }${CXXFLAGS}"
-    CFLAGS="-MD -GS- -wd4355${CFLAGS:+ }${CFLAGS}"
-    CXXFLAGS="-MD -GS- -wd4355${CXXFLAGS:+ }${CXXFLAGS}"
+    CFLAGS="-MD -GS- -wd4355 -wd4068${CFLAGS:+ }${CFLAGS}"
+    CXXFLAGS="-MD -GS- -wd4355 -wd4068${CXXFLAGS:+ }${CXXFLAGS}"
 
    if test "${ac_cv_cxx_compiler_vendor}" = "microsoft"; then
      { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether ${CXX} accepts -arch:SSE2" >&5
@@ -11694,8 +11694,8 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
         DLLFLAGS="${CXXFLAGS} -LD${DLLFLAGS:+ }${DLLFLAGS}"
         GLDFLAGS="-link -DEBUG -OPT:REF -OPT:ICF -MANIFEST -INCREMENTAL:NO"
   else
-        CFLAGS="-MDd -Zi -wd4355${CFLAGS:+ }${CFLAGS}"
-    CXXFLAGS="-MDd -Zi -wd4355${CXXFLAGS:+ }${CXXFLAGS}"
+        CFLAGS="-MDd -Zi -wd4355 -wd4068${CFLAGS:+ }${CFLAGS}"
+    CXXFLAGS="-MDd -Zi -wd4355 -wd4068${CXXFLAGS:+ }${CXXFLAGS}"
 
         DLLFLAGS="${CXXFLAGS} -LDd${DLLFLAGS:+ }${DLLFLAGS}"
     GLDFLAGS="-link -MANIFEST -INCREMENTAL:NO"
