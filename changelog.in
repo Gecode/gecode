@@ -70,6 +70,22 @@ Date: 2020-??-??
 Let's see.
 
 [ENTRY]
+Module: flatzinc
+What:   change
+Rank:   minor
+[DESCRIPTION]
+Accept combined -cp-profiler flag for activating CP-Profiler and always
+send information to profiler.
+
+[ENTRY]
+Module: driver
+What:   change
+Rank:   minor
+[DESCRIPTION]
+Accept combined -cp-profiler flag for activating CP-Profiler instead of
+using separate script mode.
+
+[ENTRY]
 Module: test
 What:   bug
 Rank:   minor
