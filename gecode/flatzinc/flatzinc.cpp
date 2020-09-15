@@ -1842,8 +1842,7 @@ namespace Gecode { namespace FlatZinc {
     o.a_d = opt.a_d();
 
 #ifdef GECODE_HAS_CPPROFILER
-
-    if (opt.mode() == SM_CPPROFILER) {
+    if (opt.profiler_port()) {
       FlatZincGetInfo* getInfo = nullptr;
       if (opt.profiler_info())
         getInfo = new FlatZincGetInfo(p);

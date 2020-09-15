@@ -96,7 +96,6 @@ namespace Gecode {
     SM_TIME,      ///< Measure average runtime
     SM_STAT,      ///< Print statistics for script
     SM_GIST,      ///< Run script in Gist
-    SM_CPPROFILER ///< Run script with CP-profiler
   };
 
   /**
@@ -343,6 +342,30 @@ namespace Gecode {
       virtual void help(void);
     };
 
+    /**
+     * \brief Profiler option
+     *
+     */
+    class GECODE_DRIVER_EXPORT ProfilerOption : public BaseOption {
+     protected:
+      unsigned int cur_port;  ///< Current port
+      int cur_execution_id;   ///< Current execution ID
+     public:
+      /// Initialize for option \a o and explanation \a e and default value \a v
+      ProfilerOption(const char* o, const char* e, unsigned int p = 0, int v = -1);
+      /// Set default port to \a p
+      void port(unsigned int p);
+      /// Return current port
+      unsigned int port(void) const;
+      /// Set default execution ID to \a i
+      void execution_id(int i);
+      /// Return current execution ID
+      int execution_id(void) const;
+      /// Parse option at first position and return number of parsed arguments
+      virtual int parse(int argc, char* argv[]);
+      /// Print help text
+      virtual void help(void);
+    };
   }
 
   /**
@@ -434,9 +457,7 @@ namespace Gecode {
     Driver::TraceOption       _trace;         ///< Trace flags for tracing
 
 #ifdef GECODE_HAS_CPPROFILER
-    Driver::IntOption         _profiler_id;   ///< Use this execution id for the CP-profiler
-    Driver::UnsignedIntOption _profiler_port; ///< Connect to this port
-    Driver::BoolOption        _profiler_info; ///< Whether solution information should be sent to the CPProfiler
+    Driver::ProfilerOption    _profiler;      ///< Options for the CP Profiler
 #endif
 
     //@}
