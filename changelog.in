@@ -69,6 +69,17 @@ Date: 2020-??-??
 [DESCRIPTION]
 Let's see.
 
+
+[ENTRY]
+Module: kernel
+What:   change
+Rank:   minor
+[DESCRIPTION]
+Make the region pool thread local.
+[MORE]
+When running tests in parallel, having a shared pool for regions took too much
+time on macOS. This change makes the pool into a thread_local instead.
+
 [ENTRY]
 Module: kernel
 What:   change
