@@ -76,7 +76,7 @@ namespace Gecode {
   }
 
   Region::Pool& Region::pool(void) {
-    static Region::Pool _p;
+    thread_local static Region::Pool _p;
     return _p;
   }
 
