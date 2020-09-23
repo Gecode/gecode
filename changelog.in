@@ -69,6 +69,13 @@ Date: 2020-??-??
 [DESCRIPTION]
 Let's see.
 
+[ENTRY]
+Module: other
+What:   change
+Rank:   major
+[DESCRIPTION]
+Gecode now requires C++ 11, the support for compiling without C++ 11
+has been removed.
 
 [ENTRY]
 Module: kernel
