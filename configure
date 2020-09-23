@@ -808,7 +808,6 @@ enable_gcov
 enable_thread
 with_freelist32_size_max
 with_freelist64_size_max
-enable_cpp11
 enable_gcc_visibility
 enable_doc_dot
 enable_doc_search
@@ -1470,7 +1469,6 @@ Optional Features:
   --enable-profile        build with profiling information [default=no]
   --enable-gcov           build with gcov support [default=no]
   --enable-thread         build with multi-threading support [default=yes]
-  --enable-cpp11          compile for C++11 standard [default=yes]
   --enable-gcc-visibility use gcc visibility attributes [default=yes]
   --enable-doc-dot        enable graphs in documentation [default=yes]
   --enable-doc-search     enable documentation search engine [default=no]
@@ -7322,13 +7320,6 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 
    fi
 
-  # Check whether --enable-cpp11 was given.
-if test "${enable_cpp11+set}" = set; then :
-  enableval=$enable_cpp11;
-fi
-
-  if test "${enable_cpp11:-yes}" = "yes"; then
-
    if test "${ac_cv_cxx_compiler_vendor}" = "microsoft"; then
      { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether ${CXX} accepts -std=c++11" >&5
 $as_echo_n "checking whether ${CXX} accepts -std=c++11... " >&6; }
@@ -7442,12 +7433,6 @@ ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ex
 ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 
    fi
-  else
-    { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether to compile for C++11 standard" >&5
-$as_echo_n "checking whether to compile for C++11 standard... " >&6; }
-    { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
-  fi
 
   if test "${ac_cv_cxx_compiler_vendor}" = "microsoft"; then
      { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether ${CXX} accepts -ggdb" >&5
@@ -10412,13 +10397,6 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 
    fi
 
-  # Check whether --enable-cpp11 was given.
-if test "${enable_cpp11+set}" = set; then :
-  enableval=$enable_cpp11;
-fi
-
-  if test "${enable_cpp11:-yes}" = "yes"; then
-
    if test "${ac_cv_cxx_compiler_vendor}" = "microsoft"; then
      { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether ${CXX} accepts -std=c++11" >&5
 $as_echo_n "checking whether ${CXX} accepts -std=c++11... " >&6; }
@@ -10532,12 +10510,6 @@ ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ex
 ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 
    fi
-  else
-    { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether to compile for C++11 standard" >&5
-$as_echo_n "checking whether to compile for C++11 standard... " >&6; }
-    { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
-  fi
 
   if test "${ac_cv_cxx_compiler_vendor}" = "microsoft"; then
      { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether ${CXX} accepts -ggdb" >&5
