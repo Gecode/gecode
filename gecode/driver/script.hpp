@@ -55,7 +55,7 @@ namespace Gecode { namespace Driver {
     GECODE_DRIVER_EXPORT
     static bool sigint;   ///< Whether search was interrupted using Ctrl-C
     /// Initialize stop object
-    CombinedStop(unsigned long long int node, 
+    CombinedStop(unsigned long long int node,
                  unsigned long long int fail,
                  double time)
       : ns((node > 0ULL) ? new Search::NodeStop(node) : nullptr),
@@ -225,7 +225,7 @@ namespace Gecode { namespace Driver {
     /// Return info for a space (which must be a script)
     virtual std::string getInfo(const Space& home) const;
   };
-  
+
 #endif
 
   template<class BaseSpace>
@@ -275,7 +275,7 @@ namespace Gecode { namespace Driver {
       sb->print(ss);
     return ss.str();
   }
-  
+
 #endif
 
 
@@ -357,8 +357,7 @@ namespace Gecode { namespace Driver {
 #ifdef GECODE_HAS_CPPROFILER
           if (o.profiler_port()) {
             CPProfilerSearchTracer::GetInfo* getInfo = nullptr;
-            if (o.profiler_info())
-              getInfo = new ScriptGetInfo<BaseSpace>;
+            getInfo = new ScriptGetInfo<BaseSpace>;
             so.tracer = new CPProfilerSearchTracer
               (o.profiler_id(), o.name(), o.profiler_port(), getInfo);
           }

@@ -658,10 +658,6 @@ namespace Gecode {
     void profiler_port(unsigned int p);
     /// Return profiler execution id
     unsigned int profiler_port(void) const;
-    /// Whether solution info should be sent to profiler
-    void profiler_info(bool b);
-    /// Return whether solution info should be sent to profiler
-    bool profiler_info(void) const;
 #endif
     //@}
 
