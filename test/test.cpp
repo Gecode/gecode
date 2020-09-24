@@ -305,13 +305,11 @@ namespace Test {
     Gecode::Support::Mutex output_mutex;
     /// The next starting index among the tests.
     std::atomic<size_t> next_tests;
-    /// The number of tests to allocate to each thread each time
-    const size_t batch_size;
     /// The result
     std::atomic<int> result;
     /// The number of test runners that are to be set up.
     std::atomic<int> running_threads;
-    /// Flag indicating smoe thread is waiting on the execution to be done.
+    /// Flag indicating some thread is waiting on the execution to be done.
     std::atomic<bool> execution_done_wait_started;
     /// Event for signalling that execution is done.
     Gecode::Support::Event execution_done_event;
@@ -321,7 +319,7 @@ namespace Test {
     /// Choose a batch size based on the number of tests to divide
     static size_t choose_batch_size(size_t test_count, int thread_count) {
       const int batches_per_thread = 5;
-      std::vector<size_t> batch_sizes = {25, 10, 5, 2};
+      std::array<size_t, 4> batch_sizes = {25, 10, 5, 2};
       for (auto batch_size : batch_sizes) {
         if (test_count > batch_size * thread_count * batches_per_thread) {
           return batch_size;
@@ -333,8 +331,7 @@ namespace Test {
   public:
     TestExecutionControl(const std::vector<Base*>& tests0, const Options& options0, int thread_count)
       : tests(tests0), options(options0), output_mutex(),
-        next_tests(0), batch_size(choose_batch_size(tests0.size(), thread_count)),
-        result(EXIT_SUCCESS), running_threads(thread_count),
+        next_tests(0), result(EXIT_SUCCESS), running_threads(thread_count),
         execution_done_wait_started(false), execution_done_event() {}
 
     /// Get the current result (either \a EXIT_SUCCESS or \a EXIT_FAILURE). Requires all threads to be done first.
@@ -368,9 +365,13 @@ namespace Test {
       }
     }
 
-    /// Get the start of the next batch. Important, may be a number larger than available number of tests
-    size_t next_batch_start() {
-      return next_tests.fetch_add(batch_size);
+    /// Get the start of the next batch and the batch size.
+    /// Important, may be a number larger than available number of tests
+    std::pair<size_t, size_t> next_batch() {
+      const size_t current_start = next_tests.load();
+      const size_t batch_size = choose_batch_size(tests.size() - current_start, running_threads);
+      const size_t next_start = next_tests.fetch_add(batch_size);
+      return std::make_pair(next_start, batch_size);
     }
 
     /// True iff the runners should continue running tests
@@ -407,13 +408,15 @@ namespace Test {
       // Loop runs tests continuously in batches from the test execution control
       while (true) {
         // Get next batch
-        const size_t batch_start = tec.next_batch_start();
+        const std::pair<size_t, size_t>& start_and_size = tec.next_batch();
+        const size_t batch_start = start_and_size.first;
+        const size_t batch_size = start_and_size.second;
         if (batch_start >= tec.tests.size()) {
           // No more tests to run
           break;
         }
         // Run each test in the batch, handling output and failures
-        for (size_t i = batch_start; i < batch_start + tec.batch_size && i < tec.tests.size(); ++i) {
+        for (size_t i = batch_start; i < batch_start + batch_size && i < tec.tests.size(); ++i) {
           if (!tec.continue_testing()) {
             break;
           }
