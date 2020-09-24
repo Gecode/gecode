@@ -112,6 +112,7 @@ namespace Test {
                   << "\t-threads (unsigned int) default: " << threads << std::endl
                   << "\t\tnumber of threads to use. If 0, as many threads as there are cores are used."
                   << "\t\tThreaded execution and logging can not be used at the same time."
+                  << std::endl
                   << "\t-seed (unsigned int or \"time\") default: "
                   << seed << std::endl
                   << "\t\tseed for random number generator (unsigned int),"
@@ -319,7 +320,7 @@ namespace Test {
     /// Choose a batch size based on the number of tests to divide
     static size_t choose_batch_size(size_t test_count, int thread_count) {
       const int batches_per_thread = 5;
-      std::array<size_t, 4> batch_sizes = {25, 10, 5, 2};
+      std::vector<size_t> batch_sizes = {25, 10, 5, 2};
       for (auto batch_size : batch_sizes) {
         if (test_count > batch_size * thread_count * batches_per_thread) {
           return batch_size;
