@@ -2007,6 +2007,9 @@ namespace Gecode {
      * Must copy and update all data structures (such as variables
      * and variable arrays) required by the subclass of Space.
      *
+     * Should not be used directly, use Space::clone to create a clone
+     * of a Space.
+     *
      * \ingroup TaskModelScript
      */
     GECODE_KERNEL_EXPORT
@@ -2023,6 +2026,10 @@ namespace Gecode {
      * \brief Copying member function
      *
      * Must create a new object using the constructor for cloning.
+     *
+     * Should not be used directly, use Space::clone to create a clone
+     * of a Space.
+     *
      * \ingroup TaskModelScript
      */
     virtual Space* copy(void) = 0;
