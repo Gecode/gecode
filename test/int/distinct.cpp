@@ -173,7 +173,7 @@ namespace Test { namespace Int {
        }
        /// Create and register initial assignment
        virtual Assignment* assignment(void) const {
-         return new RandomAssignment(arity,dom,100);
+         return new RandomAssignment(arity, dom, 100, _rand);
        }
        /// Check whether \a x is solution
        virtual bool solution(const Assignment& x) const {

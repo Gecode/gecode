@@ -496,7 +496,7 @@ namespace Test { namespace Int {
        /// Create and register initial assignment
        virtual Assignment* assignment(void) const {
          using namespace Gecode;
-         return new RandomAssignment(arity,dom,1000);
+         return new RandomAssignment(arity, dom, 1000, _rand);
        }
      };
 
@@ -515,13 +515,13 @@ namespace Test { namespace Int {
          using namespace Gecode;
 
          CpltAssignment ass(5, IntSet(1, 5));
-         while (ass()) {
-           if (Base::rand(100) <= prob*100) {
+         while (ass.has_more()) {
+           if (_rand(100) <= prob*100) {
              IntArgs tuple(5);
              for (int i = 5; i--; ) tuple[i] = ass[i];
              t.add(tuple);
            }
-           ++ass;
+           ass.next(_rand);
          }
          t.finalize();
        }
@@ -550,7 +550,7 @@ namespace Test { namespace Int {
          extensional(home, x, t, pos, r, ipl);
        }
      };
-     
+
      /// %Test with bool tuple set
      class TupleSetBool : public Test {
      protected:
@@ -566,13 +566,13 @@ namespace Test { namespace Int {
          using namespace Gecode;
 
          CpltAssignment ass(5, IntSet(0, 1));
-         while (ass()) {
-           if (Base::rand(100) <= prob*100) {
+         while (ass.has_more()) {
+           if (_rand(100) <= prob*100) {
              IntArgs tuple(5);
              for (int i = 5; i--; ) tuple[i] = ass[i];
              t.add(tuple);
            }
-           ++ass;
+           ass.next(_rand);
          }
          t.finalize();
        }
@@ -613,7 +613,7 @@ namespace Test { namespace Int {
      class TupleSetTestSize {
      public:
        /// Perform creation and registration
-       TupleSetTestSize(int size, bool pos) {
+       TupleSetTestSize(int size, bool pos, Gecode::Support::RandomGenerator& rand) {
          using namespace Gecode;
          /// Find the arity needed for creating sufficient number of tuples
          int arity = 2;
@@ -626,11 +626,11 @@ namespace Test { namespace Int {
          TupleSet ts(arity);
          CpltAssignment ass(arity, IntSet(0, 4));
          for (int i = size; i--; ) {
-           assert(ass());
+           assert(ass.has_more());
            IntArgs tuple(arity);
            for (int j = arity; j--; ) tuple[j] = ass[j];
            ts.add(tuple);
-           ++ass;
+           ass.next(rand);
          }
          ts.finalize();
          assert(ts.tuples() == size);
@@ -640,27 +640,34 @@ namespace Test { namespace Int {
        }
      };
 
-     Gecode::TupleSet randomTupleSet(int n, int min, int max, double prob) {
+     Gecode::TupleSet randomTupleSet(int n, int min, int max, double prob, Gecode::Support::RandomGenerator& rand) {
        using namespace Gecode;
        TupleSet t(n);
        CpltAssignment ass(n, IntSet(min, max));
-       while (ass()) {
-         if (Base::rand(100) <= prob*100) {
+       while (ass.has_more()) {
+         if (rand(100) <= prob*100) {
            IntArgs tuple(n);
            for (int i = n; i--; ) tuple[i] = ass[i];
            t.add(tuple);
          }
-         ++ass;
+         ass.next(rand);
        }
        t.finalize();
        return t;
      }
-     
+
      /// Help class to create and register tests
      class Create {
      public:
        /// Perform creation and registration
        Create(void) {
+         // This code is executed on load, and thus a random number generator source from the supplied
+         // seed is not available.
+         // In order to get interesting data her, but still have deterministic and repeatable execution, a fixed seed
+         // is used for a local random number generator.
+         // TODO: Make this code later on test run, and use the supplied seed/random number generator.
+         Gecode::Support::RandomGenerator rand(42);
+
          using namespace Gecode;
          for (bool pos : { false, true }) {
            {
@@ -724,7 +731,7 @@ namespace Test { namespace Int {
              for (int i = 0; i < 10000; i++) {
                IntArgs tuple(7);
                for (int j = 0; j < 7; j++) {
-                 tuple[j] = Base::rand(j+1);
+                 tuple[j] = rand(j+1);
                }
                ts.add(tuple);
              }
@@ -733,25 +740,25 @@ namespace Test { namespace Int {
            }
            {
              for (int i = 0; i <= 64*6; i+=32)
-               (void) new TupleSetTestSize(i,pos);
+               (void) new TupleSetTestSize(i, pos, rand);
            }
            {
              (void) new RandomTupleSetTest("Rand(10,-1,2)", pos,
                                            IntSet(-1,2),
-                                           randomTupleSet(10,-1,2,0.05));
+                                           randomTupleSet(10, -1, 2, 0.05, rand));
              (void) new RandomTupleSetTest("Rand(5,-10,10)", pos,
                                            IntSet(-10,10),
-                                           randomTupleSet(5,-10,10,0.05));
+                                           randomTupleSet(5, -10, 10, 0.05, rand));
            }
            {
              TupleSet t(5);
              CpltAssignment ass(4, IntSet(1, 4));
-             while (ass()) {
+             while (ass.has_more()) {
                IntArgs tuple(5);
                tuple[4] = 1;
                for (int i = 4; i--; ) tuple[i] = ass[i];
                t.add(tuple);
-               ++ass;
+               ass.next(rand);
              }
              t.add({2,2,4,3,4});
              t.finalize();
@@ -760,9 +767,9 @@ namespace Test { namespace Int {
            {
              TupleSet t(4);
              CpltAssignment ass(4, IntSet(1, 6));
-             while (ass()) {
+             while (ass.has_more()) {
                t.add({ass[0],0,ass[1],ass[2]});
-               ++ass;
+               ass.next(rand);
              }
              t.add({2,-1,3,4});
              t.finalize();
@@ -771,14 +778,14 @@ namespace Test { namespace Int {
            {
              TupleSet t(10);
              CpltAssignment ass(9, IntSet(1, 4));
-             while (ass()) {
-               if (Base::rand(100) <= 0.25*100) {
+             while (ass.has_more()) {
+               if (rand(100) <= 0.25*100) {
                  IntArgs tuple(10);
                  tuple[0] = 2;
                  for (int i = 9; i--; ) tuple[i+1] = ass[i];
                  t.add(tuple);
                }
-               ++ass;
+               ass.next(rand);
              }
              t.add({1,1,1,1,1,1,1,1,1,1});
              t.add({1,2,3,4,4,2,1,2,3,3});
@@ -791,7 +798,7 @@ namespace Test { namespace Int {
          }
        }
      };
-     
+
      Create c;
 
      RegSimpleA ra;

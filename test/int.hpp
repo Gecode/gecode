@@ -58,7 +58,7 @@ namespace Test { namespace Int {
       dsv[i].init(d);
   }
   inline bool
-  CpltAssignment::operator()(void) const {
+  CpltAssignment::has_more(void) const {
     return dsv[0]();
   }
   inline int
@@ -73,8 +73,8 @@ namespace Test { namespace Int {
 
 
   forceinline int
-  RandomAssignment::randval(void) {
-    unsigned int skip = Base::rand(d.size());
+  RandomAssignment::randval(Gecode::Support::RandomGenerator& rand) {
+    unsigned int skip = rand(d.size());
     for (Gecode::IntSetRanges it(d); true; ++it) {
       if (it.width() > skip)
         return it.min() + static_cast<int>(skip);
@@ -85,14 +85,14 @@ namespace Test { namespace Int {
   }
 
   inline
-  RandomAssignment::RandomAssignment(int n, const Gecode::IntSet& d, int a0)
+  RandomAssignment::RandomAssignment(int n, const Gecode::IntSet& d, int a0, Gecode::Support::RandomGenerator& rand)
     : Assignment(n,d), vals(new int[static_cast<size_t>(n)]), a(a0) {
     for (int i=n; i--; )
-      vals[i] = randval();
+      vals[i] = randval(rand);
   }
 
   inline bool
-  RandomAssignment::operator()(void) const {
+  RandomAssignment::has_more(void) const {
     return a>0;
   }
   inline int
@@ -106,8 +106,8 @@ namespace Test { namespace Int {
   }
 
   forceinline int
-  RandomMixAssignment::randval(const Gecode::IntSet& d) {
-    unsigned int skip = Base::rand(d.size());
+  RandomMixAssignment::randval(const Gecode::IntSet& d, Gecode::Support::RandomGenerator& rand) {
+    unsigned int skip = rand(d.size());
     for (Gecode::IntSetRanges it(d); true; ++it) {
       if (it.width() > skip)
         return it.min() + static_cast<int>(skip);
@@ -118,19 +118,18 @@ namespace Test { namespace Int {
   }
 
   inline
-  RandomMixAssignment::RandomMixAssignment(int n0, const Gecode::IntSet& d0,
-                                           int n1, const Gecode::IntSet& d1,
-                                           int a0)
+  RandomMixAssignment::RandomMixAssignment(int n0, const Gecode::IntSet& d0, int n1, const Gecode::IntSet& d1, int a0,
+                                           Gecode::Support::RandomGenerator& rand)
     : Assignment(n0+n1,d0),vals(new int[static_cast<size_t>(n0+n1)]),
       a(a0),_n1(n1),_d1(d1) {
     for (int i=n0; i--; )
-      vals[i] = randval(d);
+      vals[i] = randval(d, rand);
     for (int i=n1; i--; )
-      vals[n0+i] = randval(_d1);
+      vals[n0+i] = randval(_d1, rand);
   }
 
   inline bool
-  RandomMixAssignment::operator()(void) const {
+  RandomMixAssignment::has_more(void) const {
     return a>0;
   }
 

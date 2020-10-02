@@ -39,7 +39,7 @@ namespace Test {
    */
   inline
   Options::Options(void)
-    : seed(0), iter(defiter), fixprob(deffixprob), stop(true), log(false)
+    : seed(0), iter(defiter), fixprob(deffixprob), stop(true), log(false), testpat(), start_from(nullptr), list(false)
   {}
 
   /*
@@ -64,6 +64,11 @@ namespace Test {
   }
   inline bool
   Base::fixpoint(void) {
+    return fixpoint(_rand);
+  }
+
+  inline bool
+  Base::fixpoint(Gecode::Support::RandomGenerator& rand) {
     return rand(opt.fixprob) == 0;
   }
 
@@ -72,7 +77,7 @@ namespace Test {
     std::stringstream s;
     if (b)
       s << "+";
-    else 
+    else
       s << "-";
     return s.str();
   }

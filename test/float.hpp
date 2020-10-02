@@ -61,7 +61,7 @@ namespace Test { namespace Float {
       dsv[i] = FloatVal(d.min(),nextafter(d.min(),d.max()));
   }
   inline bool
-  CpltAssignment::operator()(void) const {
+  CpltAssignment::has_more() const {
     return dsv[0].min() <= d.max();
   }
   inline Gecode::FloatVal
@@ -80,17 +80,18 @@ namespace Test { namespace Float {
   }
 
   inline
-  ExtAssignment::ExtAssignment(int n, const Gecode::FloatVal& d, Gecode::FloatNum s, const Test * pb)
+  ExtAssignment::ExtAssignment(int n, const Gecode::FloatVal& d, Gecode::FloatNum s, const Test* pb,
+                               Gecode::Support::RandomGenerator& rand)
   : Assignment(n,d),curPb(pb),
   dsv(new Gecode::FloatVal[static_cast<unsigned int>(n)]),
   step(s) {
     using namespace Gecode;
     for (int i=n-1; i--; )
       dsv[i] = FloatVal(d.min(),nextafter(d.min(),d.max()));
-    ++(*this);
+    (*this).next(rand);
   }
   inline bool
-  ExtAssignment::operator()(void) const {
+  ExtAssignment::has_more() const {
     return dsv[0].min() <= d.max();
   }
   inline Gecode::FloatVal
@@ -109,7 +110,7 @@ namespace Test { namespace Float {
   }
 
   forceinline Gecode::FloatNum
-  RandomAssignment::randval(void) {
+  RandomAssignment::randval(Gecode::Support::RandomGenerator& rand) {
     using namespace Gecode;
     using namespace Gecode::Float;
     Rounding r;
@@ -118,7 +119,7 @@ namespace Test { namespace Float {
         d.min(),
         r.mul_down(
           r.div_down(
-            Base::rand(static_cast<unsigned int>(Gecode::Int::Limits::max)),
+            rand(static_cast<unsigned int>(Gecode::Int::Limits::max)),
             static_cast<FloatNum>(Gecode::Int::Limits::max)
           ),
           r.sub_down(d.max(),d.min())
@@ -127,14 +128,14 @@ namespace Test { namespace Float {
   }
 
   inline
-  RandomAssignment::RandomAssignment(int n, const Gecode::FloatVal& d, int a0)
+  RandomAssignment::RandomAssignment(int n, const Gecode::FloatVal& d, int a0, Gecode::Support::RandomGenerator& rand)
     : Assignment(n,d), vals(new Gecode::FloatVal[n]), a(a0) {
     for (int i=n; i--; )
-      vals[i] = randval();
+      vals[i] = randval(rand);
   }
 
   inline bool
-  RandomAssignment::operator()(void) const {
+  RandomAssignment::has_more() const {
     return a>0;
   }
   inline Gecode::FloatVal
@@ -271,7 +272,7 @@ namespace Test { namespace Float {
 
   inline bool
   Test::flip(void) {
-    return Base::rand(2U) == 0U;
+    return _rand(2U) == 0U;
   }
 
   inline MaybeType

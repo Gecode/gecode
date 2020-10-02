@@ -38,19 +38,23 @@
 
 /// Check the test result and handle failed test
 #define CHECK_TEST(T,M)                                         \
+do {                                                            \
 if (opt.log)                                                    \
   olog << ind(3) << "Check: " << (M) << std::endl;              \
 if (!(T)) {                                                     \
-  problem = (M); goto failed;                         \
-}
+  problem = (M); goto failed;                                   \
+}                                                               \
+} while (false)
 
 /// Start new test
 #define START_TEST(T)                                           \
+do {                                                            \
   if (opt.log) {                                                \
      olog.str("");                                              \
      olog << ind(2) << "Testing: " << (T) << std::endl;         \
   }                                                             \
-  test = (T);
+  test = (T);                                                   \
+} while (false)
 
 namespace Test {
 
@@ -201,7 +205,7 @@ namespace Test {
       // Space for the test
       TestSpace s;
       // VarArray for the test
-      Array a(s,rand(n));
+      Array a(s,_rand(n));
       // Run the iterator test
       return runTestForArray(a);
     }
@@ -222,7 +226,7 @@ namespace Test {
       // Space for the test
       TestSpace s;
       // VarArray for the test
-      Array a(rand(n));
+      Array a(_rand(n));
       // Run the iterator test
       return runTestForArray(a);
     }
@@ -243,7 +247,7 @@ namespace Test {
       // Space for the test
       TestSpace s;
       // VarArray for the test
-      Array a(s,rand(n));
+      Array a(s,_rand(n));
       // Run the iterator test
       return runTestForArray(a);
     }
@@ -262,7 +266,7 @@ namespace Test {
     /// Perform actual tests
     bool run(void) {
       // SharedArray for the test
-      Array a(rand(n));
+      Array a(_rand(n));
       // Run the iterator test
       return runTestForArray(a);
     }

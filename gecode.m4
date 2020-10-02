@@ -671,16 +671,7 @@ AC_DEFUN([AC_GECODE_GCC_GENERAL_SWITCHES],
   AC_GECODE_CHECK_COMPILERFLAG([-Wall])
   AC_GECODE_CHECK_COMPILERFLAG([-Wno-unknown-pragmas])
   AC_GECODE_CHECK_COMPILERFLAG([-pipe])
-
-  AC_ARG_ENABLE([cpp11],
-       AC_HELP_STRING([--enable-cpp11],
-         [compile for C++11 standard @<:@default=yes@:>@]))
-  if test "${enable_cpp11:-yes}" = "yes"; then
-    AC_GECODE_CHECK_COMPILERFLAG([-std=c++11])
-  else
-    AC_MSG_CHECKING(whether to compile for C++11 standard)
-    AC_MSG_RESULT(no)
-  fi
+  AC_GECODE_CHECK_COMPILERFLAG([-std=c++11])
 
   AC_GECODE_CHECK_CXXFLAG(-ggdb,
      AC_GECODE_ADD_TO_COMPILERFLAGS(-ggdb),

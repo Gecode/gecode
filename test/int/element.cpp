@@ -261,7 +261,7 @@ namespace Test { namespace Int {
          for (int i=0; i<x.size()-1; i++)
            c[i]=channel(home,x[1+i]);
          if (r == 1) {
-           switch (Base::rand(3)) {
+           switch (_rand(3)) {
            case 0:
              element(home, c, x[0], 1);
              break;

@@ -105,17 +105,17 @@ namespace Test { namespace Int {
            nxt = e->next();
        }
        /// %Test whether all assignments have been iterated
-       virtual bool operator()(void) const {
+       virtual bool has_more(void) const {
          return nxt != nullptr;
        }
        /// Move to next assignment
-       virtual void operator++(void) {
+       virtual void next(Gecode::Support::RandomGenerator&) {
          delete cur;
          cur = nxt;
          if (cur != nullptr) nxt = e->next();
        }
        /// Return value for variable \a i
-       virtual int  operator[](int i) const {
+       virtual int operator[](int i) const {
          assert((i>=0) && (i<n) && (cur != nullptr));
          return cur->x[i].val();
        }

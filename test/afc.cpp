@@ -69,14 +69,14 @@ namespace Test {
     static const int n = 16;
     /// Return random index of non-null space
     int space(TestSpace* s[]) {
-      int i = rand(n);
+      int i = _rand(n);
       while (s[i] == nullptr)
         i = (i+1) % n;
       return i;
     }
     /// Return random index
     int index(void) {
-      return rand(n);
+      return _rand(n);
     }
   public:
     /// Initialize test
@@ -93,7 +93,7 @@ namespace Test {
       s[0] = new TestSpace;
 
       for (int o=n_ops; o--; )
-        switch (rand(3)) {
+        switch (_rand(3)) {
         case 0:
           // clone space
           {
