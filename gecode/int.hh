@@ -1483,6 +1483,14 @@ namespace Gecode {
   GECODE_INT_EXPORT void
   element(Home home, IntSharedArray n, IntVar x0, IntVar x1,
           IntPropLevel ipl=IPL_DEF);
+  /** \brief Post domain consistent propagator for \f$ n_{x_0+offset}=x_1\f$
+   *
+   *  Throws an exception of type Int::OutOfLimits, if
+   *  the integers in \a n exceed the limits in Int::Limits.
+   */
+  GECODE_INT_EXPORT void
+  element(Home home, IntSharedArray n, IntVar x0, int offset, IntVar x1,
+          IntPropLevel ipl=IPL_DEF);
   /** \brief Post domain consistent propagator for \f$ n_{x_0}=x_1\f$
    *
    *  Throws an exception of type Int::OutOfLimits, if
@@ -1490,6 +1498,14 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   element(Home home, IntSharedArray n, IntVar x0, BoolVar x1,
+          IntPropLevel ipl=IPL_DEF);
+  /** \brief Post domain consistent propagator for \f$ n_{x_0+offset}=x_1\f$
+   *
+   *  Throws an exception of type Int::OutOfLimits, if
+   *  the integers in \a n exceed the limits in Int::Limits.
+   */
+  GECODE_INT_EXPORT void
+  element(Home home, IntSharedArray n, IntVar x0, int offset, BoolVar x1,
           IntPropLevel ipl=IPL_DEF);
   /** \brief Post domain consistent propagator for \f$ n_{x_0}=x_1\f$
    *
@@ -1499,6 +1515,14 @@ namespace Gecode {
   GECODE_INT_EXPORT void
   element(Home home, IntSharedArray n, IntVar x0, int x1,
           IntPropLevel ipl=IPL_DEF);
+  /** \brief Post domain consistent propagator for \f$ n_{x_0+offset}=x_1\f$
+   *
+   *  Throws an exception of type Int::OutOfLimits, if
+   *  the integers in \a n exceed the limits in Int::Limits.
+   */
+  GECODE_INT_EXPORT void
+  element(Home home, IntSharedArray n, IntVar x0, int offset, int x1,
+          IntPropLevel ipl=IPL_DEF);
   /** \brief Post propagator for \f$ x_{y_0}=y_1\f$
    *
    * Supports both bounds (\a ipl = IPL_BND) and
@@ -1506,6 +1530,14 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   element(Home home, const IntVarArgs& x, IntVar y0, IntVar y1,
+          IntPropLevel ipl=IPL_DEF);
+  /** \brief Post propagator for \f$ x_{y_0+offset}=y_1\f$
+   *
+   * Supports both bounds (\a ipl = IPL_BND) and
+   * domain consistency (\a ipl = IPL_DOM, default).
+   */
+  GECODE_INT_EXPORT void
+  element(Home home, const IntVarArgs& x, IntVar y0, int offset, IntVar y1,
           IntPropLevel ipl=IPL_DEF);
   /** \brief Post propagator for \f$ x_{y_0}=y_1\f$
    *
@@ -1515,13 +1547,29 @@ namespace Gecode {
   GECODE_INT_EXPORT void
   element(Home home, const IntVarArgs& x, IntVar y0, int y1,
           IntPropLevel ipl=IPL_DEF);
+  /** \brief Post propagator for \f$ x_{y_0+offset}=y_1\f$
+   *
+   * Supports both bounds (\a ipl = IPL_BND) and
+   * domain consistency (\a ipl = IPL_DOM, default).
+   */
+  GECODE_INT_EXPORT void
+  element(Home home, const IntVarArgs& x, IntVar y0, int offset, int y1,
+          IntPropLevel ipl=IPL_DEF);
   /// Post domain consistent propagator for \f$ x_{y_0}=y_1\f$
   GECODE_INT_EXPORT void
   element(Home home, const BoolVarArgs& x, IntVar y0, BoolVar y1,
           IntPropLevel ipl=IPL_DEF);
+  /// Post domain consistent propagator for \f$ x_{y_0+offset}=y_1\f$
+  GECODE_INT_EXPORT void
+  element(Home home, const BoolVarArgs& x, IntVar y0, int offset, BoolVar y1,
+          IntPropLevel ipl=IPL_DEF);
   /// Post domain consistent propagator for \f$ x_{y_0}=y_1\f$
   GECODE_INT_EXPORT void
   element(Home home, const BoolVarArgs& x, IntVar y0, int y1,
+          IntPropLevel ipl=IPL_DEF);
+  /// Post domain consistent propagator for \f$ x_{y_0+offset}=y_1\f$
+  GECODE_INT_EXPORT void
+  element(Home home, const BoolVarArgs& x, IntVar y0, int offset, int y1,
           IntPropLevel ipl=IPL_DEF);
 
   /** \brief Post domain consistent propagator for \f$ a_{x+w\cdot y}=z\f$
@@ -1540,6 +1588,23 @@ namespace Gecode {
   element(Home home, IntSharedArray a,
           IntVar x, int w, IntVar y, int h, IntVar z,
           IntPropLevel ipl=IPL_DEF);
+  /** \brief Post domain consistent propagator for \f$ a_{x+xoff+w\cdot (y+yoff)}=z\f$
+   *
+   * If \a a is regarded as a two-dimensional array in row-major
+   * order of width \a w and height \a h, then \a z is constrained
+   * to be the element in column \a x and row \a y, offset by
+   * xoff and yoff.
+   *
+   * Throws an exception of type Int::OutOfLimits, if
+   * the integers in \a n exceed the limits in Int::Limits.
+   *
+   * Throws an exception of type Int::ArgumentSizeMismatch, if
+   * \f$ w\cdot h\neq|a|\f$.
+   */
+  GECODE_INT_EXPORT void
+  element(Home home, IntSharedArray a,
+          IntVar x, int xoff, int w, IntVar y, int yoff, int h, IntVar z,
+          IntPropLevel ipl=IPL_DEF);
   /** \brief Post domain consistent propagator for \f$ a_{x+w\cdot y}=z\f$
    *
    * If \a a is regarded as a two-dimensional array in row-major
@@ -1555,6 +1620,23 @@ namespace Gecode {
   GECODE_INT_EXPORT void
   element(Home home, IntSharedArray a,
           IntVar x, int w, IntVar y, int h, BoolVar z,
+          IntPropLevel ipl=IPL_DEF);
+  /** \brief Post domain consistent propagator for \f$ a_{x+xoff+w\cdot (y+yoff)}=z\f$
+   *
+   * If \a a is regarded as a two-dimensional array in row-major
+   * order of width \a w and height \a h, then \a z is constrained
+   * to be the element in column \a x and row \a y, offset by
+   * xoff and yoff.
+   *
+   * Throws an exception of type Int::OutOfLimits, if
+   * the integers in \a n exceed the limits in Int::Limits.
+   *
+   * Throws an exception of type Int::ArgumentSizeMismatch, if
+   * \f$ w\cdot h\neq|a|\f$.
+   */
+  GECODE_INT_EXPORT void
+  element(Home home, IntSharedArray a,
+          IntVar x, int xoff, int w, IntVar y, int yoff, int h, BoolVar z,
           IntPropLevel ipl=IPL_DEF);
   /** \brief Post propagator for \f$ a_{x+w\cdot y}=z\f$
    *
@@ -1575,6 +1657,26 @@ namespace Gecode {
   element(Home home, const IntVarArgs& a,
           IntVar x, int w, IntVar y, int h, IntVar z,
           IntPropLevel ipl=IPL_DEF);
+  /** \brief Post propagator for \f$ a_{x+xoff+w\cdot (y+yoff)}=z\f$
+   *
+   * If \a a is regarded as a two-dimensional array in row-major
+   * order of width \a w and height \a h, then \a z is constrained
+   * to be the element in column \a x and row \a y, offset by
+   * xoff and yoff.
+   *
+   * Supports both bounds (\a ipl = IPL_BND) and
+   * domain consistency (\a ipl = IPL_DOM, default).
+   *
+   * Throws an exception of type Int::OutOfLimits, if
+   * the integers in \a n exceed the limits in Int::Limits.
+   *
+   * Throws an exception of type Int::ArgumentSizeMismatch, if
+   * \f$ w\cdot h\neq|a|\f$.
+   */
+  GECODE_INT_EXPORT void
+  element(Home home, const IntVarArgs& a,
+          IntVar x, int xoff, int w, IntVar y, int yoff, int h, IntVar z,
+          IntPropLevel ipl=IPL_DEF);
   /** \brief Post domain consistent propagator for \f$ a_{x+w\cdot y}=z\f$
    *
    * If \a a is regarded as a two-dimensional array in row-major
@@ -1590,6 +1692,23 @@ namespace Gecode {
   GECODE_INT_EXPORT void
   element(Home home, const BoolVarArgs& a,
           IntVar x, int w, IntVar y, int h, BoolVar z,
+          IntPropLevel ipl=IPL_DEF);
+  /** \brief Post domain consistent propagator for \f$ a_{x+xoff+w\cdot (y+yoff)}=z\f$
+   *
+   * If \a a is regarded as a two-dimensional array in row-major
+   * order of width \a w and height \a h, then \a z is constrained
+   * to be the element in column \a x and row \a y, offset by
+   * xoff and yoff.
+   *
+   * Throws an exception of type Int::OutOfLimits, if
+   * the integers in \a n exceed the limits in Int::Limits.
+   *
+   * Throws an exception of type Int::ArgumentSizeMismatch, if
+   * \f$ w\cdot h\neq|a|\f$.
+   */
+  GECODE_INT_EXPORT void
+  element(Home home, const BoolVarArgs& a,
+          IntVar x, int xoff, int w, IntVar y, int yoff, int h, BoolVar z,
           IntPropLevel ipl=IPL_DEF);
   //@}
 

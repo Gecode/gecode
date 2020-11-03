@@ -316,6 +316,35 @@ namespace Gecode { namespace Int { namespace Element {
     GECODE_INT_EXPORT virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
   };
 
+ /**
+  * \brief Domain consistent pair-with-offsets propagator
+  *
+  * Requires \code #include <gecode/int/element.hh> \endcode
+  *
+  * \ingroup FuncIntProp
+  */
+ class GECODE_VTABLE_EXPORT PairWithOffsets
+   : public TernaryPropagator<OffsetView,PC_INT_DOM> {
+ protected:
+   using TernaryPropagator<OffsetView,PC_INT_DOM>::x0;
+   using TernaryPropagator<OffsetView,PC_INT_DOM>::x1;
+   using TernaryPropagator<OffsetView,PC_INT_DOM>::x2;
+   /// Width
+   int w;
+   /// Constructor for cloning \a p
+   PairWithOffsets(Space& home, PairWithOffsets& p);
+ public:
+   /// Constructor for posting
+   PairWithOffsets(Home home, OffsetView x0, OffsetView x1, IntView x2, int w);
+   /// Post propagator \f$x_0+x_1\cdot w=x_2\f$
+   static ExecStatus post(Home home, OffsetView x0, OffsetView x1, IntView x2,
+                          int w, int h);
+   /// Copy propagator during cloning
+   GECODE_INT_EXPORT virtual Actor* copy(Space& home);
+   /// Perform propagation
+   GECODE_INT_EXPORT virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+ };
+
 }}}
 
 #include <gecode/int/element/int.hpp>
