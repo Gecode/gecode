@@ -82,7 +82,7 @@ namespace Gecode { namespace Support {
     void init(bool setbits=false);
     /// Get number of data elements for \a s bits
     static unsigned int data(unsigned int s);
-    /// Test wether any bit with position greater or equal to \a i is set
+    /// Test whether any bit with position greater or equal to \a i is set
     bool operator ()(unsigned int i=0U) const;
     /// Access value at bit \a i
     bool get(unsigned int i) const;
