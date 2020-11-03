@@ -41,21 +41,22 @@ namespace Gecode { namespace Int { namespace Element {
   }
 
   /// Value iterator for pair of iterators
+  template<class View>
   class PairValues {
   private:
     /// View for x-values
-    IntView x;
+    View x;
     /// Iterator for x-values
-    ViewValues<IntView> xv;
+    ViewValues<View> xv;
     /// Iterator for y-values
-    ViewValues<IntView> yv;
+    ViewValues<View> yv;
     /// Width
     int w;
   public:
     /// \name Constructors and initialization
     //@{
     /// Initialize with views \a x and \a y and width \a w
-    PairValues(IntView x, IntView y, int w);
+    PairValues(View x, View y, int w);
     //@}
 
     /// \name Iteration control
@@ -73,22 +74,26 @@ namespace Gecode { namespace Int { namespace Element {
     //@}
   };
 
+  template<class View>
   forceinline
-  PairValues::PairValues(IntView x0, IntView y0, int w0)
+  PairValues<View>::PairValues(View x0, View y0, int w0)
     : x(x0), xv(x0), yv(y0), w(w0) {}
+  template<class View>
   forceinline void
-  PairValues::operator ++(void) {
+  PairValues<View>::operator ++(void) {
     ++xv;
     if (!xv()) {
       xv.init(x); ++yv;
     }
   }
+  template<class View>
   forceinline bool
-  PairValues::operator ()(void) const {
+  PairValues<View>::operator ()(void) const {
     return yv();
   }
+  template<class View>
   forceinline int
-  PairValues::val(void) const {
+  PairValues<View>::val(void) const {
     return xv.val()+w*yv.val();
   }
 
@@ -129,7 +134,60 @@ namespace Gecode { namespace Int { namespace Element {
                             ::post(home(*this),x0x1w,x2)));
     }
 
-    PairValues xy(x0,x1,w);
+    PairValues<IntView> xy(x0,x1,w);
+    GECODE_ME_CHECK(x2.inter_v(home,xy,false));
+
+    if (x2.assigned()) {
+      GECODE_ME_CHECK(x0.eq(home,x2.val() % w));
+      GECODE_ME_CHECK(x1.eq(home,static_cast<int>(x2.val() / w)));
+      return home.ES_SUBSUMED(*this);
+    }
+
+    return ES_NOFIX;
+  }
+
+  Actor*
+  PairWithOffsets::copy(Space& home) {
+    return new (home) PairWithOffsets(home,*this);
+  }
+
+  ExecStatus
+  PairWithOffsets::propagate(Space& home, const ModEventDelta&) {
+    Region r;
+
+    if (x0.assigned()) {
+      // Bitset for supported div and mod values
+      Support::BitSet<Region> d(r,static_cast<unsigned int>((x2.max() / w)+1));
+      for (ViewValues<OffsetView> i(x2); i(); ++i) {
+        d.set(static_cast<unsigned int>(i.val() / w));
+      }
+      Iter::Values::BitSet<Support::BitSet<Region> > id(d,x1.min(),x1.max());
+      GECODE_ME_CHECK(x1.inter_v(home,id,false));
+    } else {
+      // Bitset for supported div and mod values
+      Support::BitSet<Region>
+        d(r,static_cast<unsigned int>((x2.max() / w)+1)),
+        m(r,static_cast<unsigned int>(w));
+      for (ViewValues<OffsetView> i(x2); i(); ++i) {
+        d.set(static_cast<unsigned int>(i.val() / w));
+        m.set(static_cast<unsigned int>(i.val() % w));
+      }
+      Iter::Values::BitSet<Support::BitSet<Region> > im(m,x0.min(),x0.max());
+      GECODE_ME_CHECK(x0.inter_v(home,im,false));
+      Iter::Values::BitSet<Support::BitSet<Region> > id(d,x1.min(),x1.max());
+      GECODE_ME_CHECK(x1.inter_v(home,id,false));
+    }
+
+    if (x0.assigned() && x1.assigned()) {
+      GECODE_ME_CHECK(x2.eq(home,x0.val()+w*x1.val()));
+      return home.ES_SUBSUMED(*this);
+    } else if (x1.assigned()) {
+      OffsetView x0x1w(x0.base(),x0.offset()+x1.val()*w);
+      GECODE_REWRITE(*this,(Rel::EqDom<OffsetView,OffsetView>
+                            ::post(home(*this),x0x1w,x2)));
+    }
+
+    PairValues<OffsetView> xy(x0,x1,w);
     GECODE_ME_CHECK(x2.inter_v(home,xy,false));
 
     if (x2.assigned()) {

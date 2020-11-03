@@ -117,6 +117,22 @@ Note also that logging and multiple threads for running tests do not work at the
 same time.
 
 [ENTRY]
+Module: int
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Add versions of element constraints with offsets, to enable fast domain
+consistent index set transformations.
+
+[ENTRY]
+Module: flatzinc
+What:   change
+Rank:   minor
+[DESCRIPTION]
+Use element-with-offset and 2d element propagators instead of performing
+index transformations in MiniZinc.
+
+[ENTRY]
 Module: flatzinc
 What:   change
 Rank:   minor

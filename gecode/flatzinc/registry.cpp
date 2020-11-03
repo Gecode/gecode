@@ -700,11 +700,60 @@ namespace Gecode { namespace FlatZinc {
       IntVar selector = s.arg2IntVar(ce[0]);
       rel(s, selector > 0);
       if (isConstant) {
-        IntSharedArray sia = s.arg2intsharedarray(ce[1], 1);
-        element(s, sia, selector, s.arg2IntVar(ce[2]), s.ann2ipl(ann));
+        IntSharedArray sia = s.arg2intsharedarray(ce[1]);
+        element(s, sia, selector, 1, s.arg2IntVar(ce[2]), s.ann2ipl(ann));
       } else {
-        IntVarArgs iv = s.arg2intvarargs(ce[1], 1);
-        element(s, iv, selector, s.arg2IntVar(ce[2]), s.ann2ipl(ann));
+        IntVarArgs iv = s.arg2intvarargs(ce[1]);
+        element(s, iv, selector, 1, s.arg2IntVar(ce[2]), s.ann2ipl(ann));
+      }
+    }
+    void p_array_int_element_offset(FlatZincSpace& s, const ConExpr& ce,
+                                    AST::Node* ann) {
+      bool isConstant = true;
+      AST::Array* a = ce[2]->getArray();
+      for (int i=a->a.size(); i--;) {
+        if (!a->a[i]->isInt()) {
+          isConstant = false;
+          break;
+        }
+      }
+      IntVar selector = s.arg2IntVar(ce[0]);
+      int offset = ce[1]->getInt();
+      rel(s, selector >= offset);
+      if (isConstant) {
+        IntSharedArray sia = s.arg2intsharedarray(ce[2]);
+        element(s, sia, selector, -offset, s.arg2IntVar(ce[3]), s.ann2ipl(ann));
+      } else {
+        IntVarArgs iv = s.arg2intvarargs(ce[2]);
+        element(s, iv, selector, -offset, s.arg2IntVar(ce[3]), s.ann2ipl(ann));
+      }
+    }
+    void p_array_int_element2d(FlatZincSpace& s, const ConExpr& ce,
+                               AST::Node* ann) {
+      bool isConstant = true;
+      AST::Array* a = ce[2]->getArray();
+      for (int i=a->a.size(); i--;) {
+        if (!a->a[i]->isInt()) {
+          isConstant = false;
+          break;
+        }
+      }
+      IntVar selector0 = s.arg2IntVar(ce[0]);
+      IntVar selector1 = s.arg2IntVar(ce[1]);
+      IntSet idxset0 = s.arg2intset(ce[3]);
+      IntSet idxset1 = s.arg2intset(ce[4]);
+
+      int w = idxset1.size();
+      int s1off = idxset1.min();
+      int h = idxset0.size();
+      int s0off = idxset0.min();
+
+      if (isConstant) {
+        IntSharedArray sia = s.arg2intsharedarray(ce[2], 0);
+        element(s, sia, selector1, -s1off, w, selector0, -s0off, h, s.arg2IntVar(ce[5]), s.ann2ipl(ann));
+      } else {
+        IntVarArgs iv = s.arg2intvarargs(ce[1], 0);
+        element(s, iv, selector1, -s1off, w, selector0, -s0off, h, s.arg2IntVar(ce[5]), s.ann2ipl(ann));
       }
     }
     void p_array_bool_element(FlatZincSpace& s, const ConExpr& ce,
@@ -725,6 +774,55 @@ namespace Gecode { namespace FlatZinc {
       } else {
         BoolVarArgs iv = s.arg2boolvarargs(ce[1], 1);
         element(s, iv, selector, s.arg2BoolVar(ce[2]), s.ann2ipl(ann));
+      }
+    }
+    void p_array_bool_element_offset(FlatZincSpace& s, const ConExpr& ce,
+                                     AST::Node* ann) {
+      bool isConstant = true;
+      AST::Array* a = ce[2]->getArray();
+      for (int i=a->a.size(); i--;) {
+        if (!a->a[i]->isBool()) {
+          isConstant = false;
+          break;
+        }
+      }
+      IntVar selector = s.arg2IntVar(ce[0]);
+      int offset = ce[1]->getInt();
+      rel(s, selector >= offset);
+      if (isConstant) {
+        IntSharedArray sia = s.arg2boolsharedarray(ce[2]);
+        element(s, sia, selector, -offset, s.arg2BoolVar(ce[3]), s.ann2ipl(ann));
+      } else {
+        BoolVarArgs iv = s.arg2boolvarargs(ce[2]);
+        element(s, iv, selector, -offset, s.arg2BoolVar(ce[3]), s.ann2ipl(ann));
+      }
+    }
+    void p_array_bool_element2d(FlatZincSpace& s, const ConExpr& ce,
+                                AST::Node* ann) {
+      bool isConstant = true;
+      AST::Array* a = ce[2]->getArray();
+      for (int i=a->a.size(); i--;) {
+        if (!a->a[i]->isBool()) {
+          isConstant = false;
+          break;
+        }
+      }
+      IntVar selector0 = s.arg2IntVar(ce[0]);
+      IntVar selector1 = s.arg2IntVar(ce[1]);
+      IntSet idxset0 = s.arg2intset(ce[3]);
+      IntSet idxset1 = s.arg2intset(ce[4]);
+
+      int w = idxset1.size();
+      int s1off = idxset1.min();
+      int h = idxset0.size();
+      int s0off = idxset0.min();
+
+      if (isConstant) {
+        IntSharedArray sia = s.arg2boolsharedarray(ce[2], 0);
+        element(s, sia, selector1, -s1off, w, selector0, -s0off, h, s.arg2BoolVar(ce[5]), s.ann2ipl(ann));
+      } else {
+        BoolVarArgs iv = s.arg2boolvarargs(ce[1], 0);
+        element(s, iv, selector1, -s1off, w, selector0, -s0off, h, s.arg2BoolVar(ce[5]), s.ann2ipl(ann));
       }
     }
 
@@ -1554,8 +1652,14 @@ namespace Gecode { namespace FlatZinc {
         registry().add("bool_not", &p_bool_not);
         registry().add("array_int_element", &p_array_int_element);
         registry().add("array_var_int_element", &p_array_int_element);
+        registry().add("gecode_int_element", &p_array_int_element_offset);
+        registry().add("gecode_var_int_element", &p_array_int_element_offset);
+        registry().add("gecode_int_element2d", &p_array_int_element2d);
         registry().add("array_bool_element", &p_array_bool_element);
         registry().add("array_var_bool_element", &p_array_bool_element);
+        registry().add("gecode_bool_element", &p_array_bool_element_offset);
+        registry().add("gecode_var_bool_element", &p_array_bool_element_offset);
+        registry().add("gecode_bool_element2d", &p_array_bool_element2d);
         registry().add("bool2int", &p_bool2int);
         registry().add("int_in", &p_int_in);
         registry().add("int_in_reif", &p_int_in_reif);
