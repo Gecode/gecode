@@ -684,12 +684,14 @@ namespace Gecode { namespace FlatZinc {
     }
     static std::vector<std::string> get_constraint_names(AST::Array *const ann) {
       std::vector<std::string> result;
-      for (const auto & i : ann->a) {
-        if (i->isArray()) {
-          auto nested_result = get_constraint_names(i->getArray());
-          result.insert(result.end(), nested_result.begin(), nested_result.end());
-        } else if (i->isCall("mzn_constraint_name")) {
-          result.emplace_back(i->getCall()->args->getString());
+      if (ann) {
+        for (const auto & i : ann->a) {
+          if (i->isArray()) {
+            auto nested_result = get_constraint_names(i->getArray());
+            result.insert(result.end(), nested_result.begin(), nested_result.end());
+          } else if (i->isCall("mzn_constraint_name")) {
+            result.emplace_back(i->getCall()->args->getString());
+          }
         }
       }
       return result;
