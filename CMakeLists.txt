@@ -495,9 +495,9 @@ add_test(test gecode-test
 # Install libraries and executables
 install(
   TARGETS ${GECODE_INSTALL_TARGETS}
-  RUNTIME DESTINATION bin
-  LIBRARY DESTINATION lib
-  ARCHIVE DESTINATION lib
+  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+  ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
 )
 install(
   FILES ${MZN_SCRIPT}
@@ -518,7 +518,7 @@ install(
 )
 install(
   FILES ${PROJECT_BINARY_DIR}/gecode/support/config.hpp
-  DESTINATION include/gecode/support/
+  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/gecode/support/
 )
 # Install MiniZinc library
 install(
