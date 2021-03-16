@@ -821,7 +821,7 @@ namespace Gecode { namespace FlatZinc {
         IntSharedArray sia = s.arg2boolsharedarray(ce[2], 0);
         element(s, sia, selector1, -s1off, w, selector0, -s0off, h, s.arg2BoolVar(ce[5]), s.ann2ipl(ann));
       } else {
-        BoolVarArgs iv = s.arg2boolvarargs(ce[1], 0);
+        BoolVarArgs iv = s.arg2boolvarargs(ce[2], 0);
         element(s, iv, selector1, -s1off, w, selector0, -s0off, h, s.arg2BoolVar(ce[5]), s.ann2ipl(ann));
       }
     }
