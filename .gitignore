@@ -17,6 +17,7 @@ cmake_install.cmake
 CMakeFiles
 bin
 gecode/support/config.hpp
+tools/flatzinc/gecode.msc
 tools/flatzinc/mzn-gecode.bat
 tools/flatzinc/fzn-gecode
 tools/flatzinc/mzn-gecode

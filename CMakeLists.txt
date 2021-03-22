@@ -469,6 +469,11 @@ else()
   )
   set(MZN_SCRIPT ${PROJECT_BINARY_DIR}/tools/flatzinc/mzn-gecode)
 endif()
+configure_file(
+  ${PROJECT_SOURCE_DIR}/tools/flatzinc/gecode.msc.in
+  ${PROJECT_BINARY_DIR}/tools/flatzinc/gecode.msc
+  @ONLY
+)
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
@@ -518,5 +523,9 @@ install(
 # Install MiniZinc library
 install(
   DIRECTORY gecode/flatzinc/mznlib
-  DESTINATION share/gecode
+  DESTINATION share/minizinc/gecode
+)
+install(
+  FILES ${PROJECT_BINARY_DIR}/tools/flatzinc/gecode.msc
+  DESTINATION share/minizinc/solvers
 )

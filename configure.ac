@@ -334,6 +334,7 @@ AC_CONFIG_SUBDIRS()
 dnl @SUBDIRS@
 
 AC_SUBST(VERSION, ${PACKAGE_VERSION})
+AC_SUBST(GECODE_VERSION, ${PACKAGE_VERSION})
 AC_SUBST(DLLFLAGS, ${DLLFLAGS})
 AC_SUBST(GLDFLAGS, ${GLDFLAGS})
 AC_SUBST(ALLVIS, ${ac_gecode_vis})
@@ -374,6 +375,7 @@ else
   AC_SUBST(BATCHFILE, "")
   AC_CONFIG_FILES([tools/flatzinc/mzn-gecode:tools/flatzinc/mzn-gecode.in],[chmod +x tools/flatzinc/mzn-gecode])
 fi
+AC_CONFIG_FILES([tools/flatzinc/gecode.msc:tools/flatzinc/gecode.msc.in])
 AC_CONFIG_FILES([doxygen.conf:doxygen/doxygen.conf.in])
 AC_CONFIG_FILES([doxygen.hh:doxygen/doxygen.hh.in])
 AC_OUTPUT
