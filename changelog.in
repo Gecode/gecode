@@ -117,6 +117,15 @@ Note also that logging and multiple threads for running tests do not work at the
 same time.
 
 [ENTRY]
+Module: flatzinc
+What:   change
+Rank:   minor
+Thanks: Jip J. Dekker
+[DESCRIPTION]
+Automatically generate and install a MiniZinc solver configuration and
+install MiniZinc library into the share/minizinc/gecode standard location.
+
+[ENTRY]
 Module: int
 What:   new
 Rank:   minor
