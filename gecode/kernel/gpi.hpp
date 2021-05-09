@@ -186,7 +186,11 @@ namespace Gecode { namespace Kernel {
     }
     c = &b->info[--b->free];
     m.release();
-    c->init(npid.fetch_add(std::memory_order::memory_order_seq_cst),gid);
+#if _LIBCPP_STD_VER <= 17
+    c->init(npid.fetch_add(1, std::memory_order::memory_order_seq_cst),gid);
+#else
+    c->init(npid.fetch_add(1, std::memory_order_seq_cst),gid);
+#endif
     return c;
   }
 
