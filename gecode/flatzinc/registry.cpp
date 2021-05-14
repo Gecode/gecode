@@ -701,10 +701,10 @@ namespace Gecode { namespace FlatZinc {
       rel(s, selector > 0);
       if (isConstant) {
         IntSharedArray sia = s.arg2intsharedarray(ce[1]);
-        element(s, sia, selector, 1, s.arg2IntVar(ce[2]), s.ann2ipl(ann));
+        element(s, sia, selector, -1, s.arg2IntVar(ce[2]), s.ann2ipl(ann));
       } else {
         IntVarArgs iv = s.arg2intvarargs(ce[1]);
-        element(s, iv, selector, 1, s.arg2IntVar(ce[2]), s.ann2ipl(ann));
+        element(s, iv, selector, -1, s.arg2IntVar(ce[2]), s.ann2ipl(ann));
       }
     }
     void p_array_int_element_offset(FlatZincSpace& s, const ConExpr& ce,

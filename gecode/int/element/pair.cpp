@@ -94,7 +94,7 @@ namespace Gecode { namespace Int { namespace Element {
   template<class View>
   forceinline int
   PairValues<View>::val(void) const {
-    return xv.val()+w*yv.val();
+    return xv.val() + w*yv.val();
   }
 
 
