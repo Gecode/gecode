@@ -429,7 +429,7 @@ namespace Test { namespace Float {
      };
 
      const Gecode::FloatNum step = 0.15;
-     const Gecode::FloatNum step2 = 2*step;
+
      Gecode::FloatVal a(-8,5);
      Gecode::FloatVal b(9,12);
      Gecode::FloatVal c(-8,8);
