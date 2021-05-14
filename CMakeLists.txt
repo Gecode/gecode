@@ -407,7 +407,7 @@ foreach (lib support kernel search int set float
     endforeach ()
     add_library(gecode${lib} ${sources} ${${libupper}HDR})
     target_include_directories(gecode${lib}
-      PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
+      PUBLIC ${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR} )
     list(APPEND GECODE_INSTALL_TARGETS gecode${lib})
   endif ()
 endforeach ()
