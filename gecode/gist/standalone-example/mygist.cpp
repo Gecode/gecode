@@ -44,13 +44,13 @@ class TestSpace : public Space {
 public:
   IntVarArray x;
   TestSpace(void) : x(*this,2,0,2) {
-    branch(*this, x, INT_VAR_NONE, INT_VAL_MIN);
+    branch(*this, x, INT_VAR_NONE(), INT_VAL_MIN());
   }
-  TestSpace(bool share, TestSpace& t) : Space(share, t) {
-    x.update(*this, share, t.x);
+  TestSpace(TestSpace& t) : Space(t) {
+    x.update(*this, t.x);
   }
-  virtual Space* copy(bool share) {
-    return new TestSpace(share,*this);
+  virtual Space* copy() {
+    return new TestSpace(*this);
   }
   virtual void print(std::ostream& os) const {
     os << x << std::endl;
