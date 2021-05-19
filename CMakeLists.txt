@@ -492,6 +492,7 @@ add_test(test gecode-test
   -test Search::BAB::Sol::BalGr::Binary::Binary::Binary::1::1)
 
 ## Installation Target
+include(GNUInstallDirs)
 # Install libraries and executables
 install(
   TARGETS ${GECODE_INSTALL_TARGETS}
@@ -501,12 +502,12 @@ install(
 )
 install(
   FILES ${MZN_SCRIPT}
-  DESTINATION bin
+  DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
 # Install include directory
 install(
   DIRECTORY gecode
-  DESTINATION include
+  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
   FILES_MATCHING
     PATTERN "**.hh"
     PATTERN "**.hpp"
@@ -523,9 +524,9 @@ install(
 # Install MiniZinc library
 install(
   DIRECTORY gecode/flatzinc/mznlib
-  DESTINATION share/minizinc/gecode
+  DESTINATION ${CMAKE_INSTALL_DATADIR}/minizinc/gecode
 )
 install(
   FILES ${PROJECT_BINARY_DIR}/tools/flatzinc/gecode.msc
-  DESTINATION share/minizinc/solvers
+  DESTINATION ${CMAKE_INSTALL_DATADIR}/minizinc/solvers
 )
