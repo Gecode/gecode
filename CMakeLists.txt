@@ -523,7 +523,7 @@ install(
 )
 # Install MiniZinc library
 install(
-  DIRECTORY gecode/flatzinc/mznlib
+  DIRECTORY gecode/flatzinc/mznlib/
   DESTINATION ${CMAKE_INSTALL_DATADIR}/minizinc/gecode
 )
 install(
