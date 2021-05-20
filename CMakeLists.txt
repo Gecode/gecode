@@ -33,7 +33,7 @@
 # CMake build script for Gecode.
 #
 
-cmake_minimum_required(VERSION 3.17)
+cmake_minimum_required(VERSION 3.7.0)
 
 project(GECODE)
 
