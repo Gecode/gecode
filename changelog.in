@@ -69,6 +69,16 @@ Date: 2020-??-??
 [DESCRIPTION]
 Let's see.
 
+[ENTRY]
+Module: search 
+What:   new
+Rank:   minor
+Thanks: Jip J. Dekker
+[DESCRIPTION]
+Add RestartStop class to enforce a limit on the amount of restarts conducted
+in a search. RestartStop is included in CombinedStop and accessible from the
+FlatZinc interface through the --restart-limit flag.
+
 [RELEASE]
 Version: 6.3.0
 Date: 2020-??-??

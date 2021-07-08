@@ -426,6 +426,15 @@ namespace Gecode {
   }
 
   inline void
+  Options::restart_limit(unsigned long long int n) {
+    _r_limit.value(n);
+  }
+  inline unsigned long long int
+  Options::restart_limit(void) const {
+    return _r_limit.value();
+  }
+
+  inline void
   Options::nogoods(bool b) {
     _nogoods.value(b);
   }

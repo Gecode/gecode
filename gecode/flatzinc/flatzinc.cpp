@@ -1836,7 +1836,7 @@ namespace Gecode { namespace FlatZinc {
       n_p = PropagatorGroup::all.size(*this);
     }
     Search::Options o;
-    o.stop = Driver::CombinedStop::create(opt.node(), opt.fail(), opt.time(),
+    o.stop = Driver::CombinedStop::create(opt.node(), opt.fail(), opt.time(), opt.restart_limit(),
                                           true);
     o.c_d = opt.c_d();
     o.a_d = opt.a_d();
