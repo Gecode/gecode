@@ -637,6 +637,7 @@ namespace Gecode {
               Search::Config::base),
       _r_scale("restart-scale","scale factor for restart sequence",
                Search::Config::slice),
+      _r_limit("restart-limit","restart cutoff (0 = none, solution mode)"),
       _nogoods("nogoods","whether to use no-goods from restarts",false),
       _nogoods_limit("nogoods-limit","depth limit for no-good extraction",
                      Search::Config::nogoods_limit),
@@ -679,7 +680,7 @@ namespace Gecode {
     add(_d_l);
     add(_node); add(_fail); add(_time); add(_interrupt);
     add(_assets); add(_slice);
-    add(_restart); add(_r_base); add(_r_scale);
+    add(_restart); add(_r_base); add(_r_scale); add(_r_limit);
     add(_nogoods); add(_nogoods_limit);
     add(_relax);
     add(_mode); add(_iterations); add(_samples); add(_print_last);
