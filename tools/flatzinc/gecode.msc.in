@@ -21,6 +21,7 @@
     ],
     ["--restart-base", "Base for geometric restart sequence", "float", "1.5"],
     ["--restart-scale", "Scale factor for restart sequence", "int", "250"],
+    ["--restart-limit", "Restart cutoff", "int", "0"],
     ["--nogoods", "Use no-goods from restarts", "bool", "false"],
     ["--nogoods-limit", "Depth limit for no-good extraction", "int", "128"]
   ],

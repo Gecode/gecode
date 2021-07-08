@@ -242,6 +242,7 @@ namespace Gecode { namespace FlatZinc {
       Gecode::Driver::StringOption      _restart;   ///< Restart method option
       Gecode::Driver::DoubleOption      _r_base;    ///< Restart base
       Gecode::Driver::UnsignedIntOption _r_scale;   ///< Restart scale factor
+      Gecode::Driver::UnsignedLongLongIntOption _r_limit; ///< Cutoff for number of restarts 
       Gecode::Driver::BoolOption        _nogoods;   ///< Whether to use no-goods
       Gecode::Driver::UnsignedIntOption _nogoods_limit; ///< Depth limit for extracting no-goods
       Gecode::Driver::BoolOption        _interrupt; ///< Whether to catch SIGINT
@@ -279,6 +280,7 @@ namespace Gecode { namespace FlatZinc {
       _restart("restart","restart sequence type",RM_NONE),
       _r_base("restart-base","base for geometric restart sequence",1.5),
       _r_scale("restart-scale","scale factor for restart sequence",250),
+      _r_limit("restart-limit","restart cutoff (0 = none, solution mode)"),
       _nogoods("nogoods","whether to use no-goods from restarts",false),
       _nogoods_limit("nogoods-limit","depth limit for no-good extraction",
                      Search::Config::nogoods_limit),
@@ -310,7 +312,7 @@ namespace Gecode { namespace FlatZinc {
       add(_node); add(_fail); add(_time); add(_time_limit); add(_interrupt);
       add(_seed);
       add(_step);
-      add(_restart); add(_r_base); add(_r_scale);
+      add(_restart); add(_r_base); add(_r_scale); add(_r_limit);
       add(_nogoods); add(_nogoods_limit);
       add(_mode); add(_stat);
       add(_output);
@@ -366,6 +368,7 @@ namespace Gecode { namespace FlatZinc {
     void restart_base(double d) { _r_base.value(d); }
     unsigned int restart_scale(void) const { return _r_scale.value(); }
     void restart_scale(int i) { _r_scale.value(i); }
+    unsigned long long int restart_limit(void) const { return _r_limit.value(); }
     bool nogoods(void) const { return _nogoods.value(); }
     unsigned int nogoods_limit(void) const { return _nogoods_limit.value(); }
     bool interrupt(void) const { return _interrupt.value(); }

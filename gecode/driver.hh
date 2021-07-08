@@ -440,6 +440,8 @@ namespace Gecode {
     Driver::StringOption      _restart;       ///< Restart method option
     Driver::DoubleOption      _r_base;        ///< Restart base
     Driver::UnsignedIntOption _r_scale;       ///< Restart scale factor
+    Driver::UnsignedLongLongIntOption
+                              _r_limit;       ///< Cutoff for number of restarts 
     Driver::BoolOption        _nogoods;       ///< Whether to use no-goods
     Driver::UnsignedIntOption _nogoods_limit; ///< Limit for no-good extraction
     Driver::DoubleOption      _relax;         ///< Probability to relax variable
@@ -590,6 +592,11 @@ namespace Gecode {
     void restart_scale(unsigned int scale);
     /// Return restart scale factor
     unsigned int restart_scale(void) const;
+
+    /// Set default restart cutoff
+    void restart_limit(unsigned long long int n);
+    /// Return restart cutoff
+    unsigned long long int restart_limit(void) const;
 
     /// Set default nogoods posting behavior
     void nogoods(bool b);

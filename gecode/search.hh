@@ -816,6 +816,8 @@ namespace Gecode { namespace Search {
     static Stop* fail(unsigned long long int l);
     /// Stop if time limit \a l (in milliseconds) has been exceeded
     static Stop* time(double l);
+    /// Stop if restart limit \a l has been exceeded
+    static Stop* restart(unsigned long long int l);
     //@}
   };
 
@@ -885,6 +887,25 @@ namespace Gecode { namespace Search {
     /// Reset time to zero
     void reset(void);
     /// Return true if time limit is exceeded
+    virtual bool stop(const Statistics& s, const Options& o);
+  };
+
+  /**
+   * \brief %Stop-object based on number of restarts
+   * \ingroup TaskModelSearchStop
+   */
+  class GECODE_SEARCH_EXPORT RestartStop : public Stop {
+  protected:
+    /// Restart limit
+    unsigned long long int l;
+  public:
+    /// Stop if restart limit \a l is exceeded
+    RestartStop(unsigned long long int l);
+    /// Return current limit
+    unsigned long long int limit(void) const;
+    /// Set current limit to \a l restarts 
+    void limit(unsigned long long int l);
+    /// Return true if failure limit is exceeded
     virtual bool stop(const Statistics& s, const Options& o);
   };
 

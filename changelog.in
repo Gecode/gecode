@@ -70,6 +70,16 @@ Date: 2020-??-??
 Let's see.
 
 [ENTRY]
+Module: search
+What:   new
+Rank:   minor
+Thanks: Jip J. Dekker
+[DESCRIPTION]
+Add RestartStop class to enforce a limit on the amount of restarts conducted
+in a search. RestartStop is included in CombinedStop and accessible from the
+FlatZinc interface through the --restart-limit flag.
+
+[ENTRY]
 Module: int
 What:   bug
 Rank:   minor
@@ -79,7 +89,6 @@ Thanks: Mattias Grönkvist
 Distinct propagation (as used by distinct, channel, and circuit) would
 sometimes read from uninitialized memory.
 
-[ENTRY]
 Module: flatzinc
 What:   bug
 Rank:   minor

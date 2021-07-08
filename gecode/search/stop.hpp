@@ -107,6 +107,24 @@ namespace Gecode { namespace Search {
     t.start();
   }
 
+  /*
+   * Stopping for restart limit
+   *
+   */
+
+  forceinline
+  RestartStop::RestartStop(unsigned long long int l0) : l(l0) {}
+
+  forceinline unsigned long long int
+  RestartStop::limit(void) const {
+    return l;
+  }
+
+  forceinline void
+  RestartStop::limit(unsigned long long int l0) {
+    l=l0;
+  }
+
 }}
 
 // STATISTICS: search-other
