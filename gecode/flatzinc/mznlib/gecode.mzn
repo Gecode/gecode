@@ -38,10 +38,10 @@ annotation afc_min;
 annotation afc_size_min;
 annotation afc_max;
 annotation afc_size_max;
-annotation activity_min;
-annotation activity_size_min;
-annotation activity_max;
-annotation activity_size_max;
+annotation action_min;
+annotation action_size_min;
+annotation action_max;
+annotation action_size_max;
 annotation random;
 annotation int_assign(array[int] of var int: x, ann:a);
 

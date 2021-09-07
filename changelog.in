@@ -70,6 +70,15 @@ Date: 2020-??-??
 Let's see.
 
 [ENTRY]
+Module: flatzinc
+What:   bug
+Rank:   minor
+Thanks: Luis Quesada
+[DESCRIPTION]
+The gecode.mzn file now contains search annotation definitions for action
+branching renamed from the previous erroneous and not working activity.
+
+[ENTRY]
 Module: other
 What:   change
 Rank:   major
