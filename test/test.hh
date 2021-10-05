@@ -92,7 +92,7 @@ namespace Test {
     static const int defiter = 5;
     /// The probability for computing a fixpoint
     unsigned int fixprob;
-    /// Default fixpoint probaibility
+    /// Default fixpoint probability
     static const unsigned int deffixprob = 10;
     /// Whether to stop on an error
     bool stop;

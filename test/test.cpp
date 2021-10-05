@@ -110,7 +110,7 @@ namespace Test {
       if (!strcmp(argv[i],"-help") || !strcmp(argv[i],"--help")) {
         std::cerr << "Options for testing:" << std::endl
                   << "\t-threads (unsigned int) default: " << threads << std::endl
-                  << "\t\tnumber of threads to use. If 0, as many threads as there are cores are used."
+                  << "\t\tnumber of threads to use. If 0, as many threads as there are cores are used.\n"
                   << "\t\tThreaded execution and logging can not be used at the same time."
                   << std::endl
                   << "\t-seed (unsigned int or \"time\") default: "
