@@ -239,7 +239,6 @@ namespace Gecode { namespace Int { namespace Distinct {
   forceinline ExecStatus
   Graph<View>::prune(Space& home, bool& assigned) {
     using namespace ViewValGraph;
-    assigned = false;
     // Tell constraints and also eliminate nodes and edges
     for (int i = n_view; i--; ) {
       ViewNode<View>* x = view[i];

@@ -98,7 +98,7 @@ namespace Gecode { namespace Int { namespace Circuit {
     if (esc != ES_FIX)
       return esc;
 
-    // Elminiate assigned views from y, as they have been assigned
+    // Eliminate assigned views from y, as they have been assigned
     // and propagated by domain consistent propagation. This is required
     // as we need to know how many assigned views actually exist.
     if (assigned)
