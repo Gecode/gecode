@@ -158,6 +158,9 @@ namespace Gecode {
     /// Return a reverse and read-only iterator past the beginning of the array
     const_reverse_iterator rend(void) const;
     //@}
+
+    /// Assignment operator
+    SharedArray& operator =(const SharedArray&) = default;
   };
 
   /**

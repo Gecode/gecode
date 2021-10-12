@@ -930,6 +930,9 @@ namespace Gecode {
     /// Test whether \a n is contained in domain
     bool in(const FloatVal& n) const;
     //@}
+
+    /// Assignment operator
+    FloatVar& operator =(const FloatVar&) = default;
   };
 
   /**
@@ -1053,6 +1056,9 @@ namespace Gecode {
     GECODE_FLOAT_EXPORT
     FloatVarArray(Space& home, int n, FloatNum min, FloatNum max);
     //@}
+
+    /// Assignment operator
+    FloatVarArray& operator =(const FloatVarArray&) = default;
   };
 
 }

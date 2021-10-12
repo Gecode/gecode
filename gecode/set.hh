@@ -258,6 +258,9 @@ namespace Gecode {
     /// Test whether \a i is not in the least upper bound
     bool notContains(int i) const;
     //@}
+
+    /// Assignment operator
+    SetVar& operator =(const SetVar&) = default;
   };
 
   /**
@@ -621,6 +624,9 @@ namespace Gecode {
                 unsigned int minCard = 0,
                 unsigned int maxCard = Set::Limits::card);
     //@}
+
+    /// Assignment operator
+    SetVarArray& operator =(const SetVarArray&) = default;
   };
 
 }
