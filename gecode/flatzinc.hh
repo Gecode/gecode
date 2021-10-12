@@ -406,6 +406,8 @@ namespace Gecode { namespace FlatZinc {
                unsigned int a, int i, const FloatNumBranch& nl,
                std::ostream& o) const;
 #endif
+    /// Assignment operator
+    BranchInformation& operator =(const BranchInformation&) = default;
   };
 
   /// Uninitialized default random number generator

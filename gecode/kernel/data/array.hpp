@@ -738,6 +738,9 @@ namespace Gecode {
     friend
     typename ArrayTraits<ArgArray<T>>::ArgsType
     operator + <>(const T& x, const ArgArray<T>& y);
+
+    /// Assignment operator
+    ArgArray& operator =(const ArgArray&) = default;
   };
 
   template<class> class VarArgArray;
@@ -825,6 +828,9 @@ namespace Gecode {
     friend
     typename ArrayTraits<VarArgArray<Var>>::ArgsType
     operator + <>(const Var& x, const VarArgArray<Var>& y);
+
+    /// Assignment operator
+    VarArgArray& operator =(const VarArgArray&) = default;
   };
 
 
