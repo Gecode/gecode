@@ -95,6 +95,8 @@ namespace Gecode { namespace Iter { namespace Ranges {
     /// Initialize with \a n iterators in \a i
     template<class I>
     NaryUnion(Region& r, I* i, int n);
+    /// Copy constructor
+    NaryUnion(const NaryUnion&) = default;
     /// Initialize with single iterator \a i
     template<class I>
     void init(Region& r, I& i);
