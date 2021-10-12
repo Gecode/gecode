@@ -456,6 +456,9 @@ namespace Gecode {
     /// Test whether \a n is contained in domain
     bool in(int n) const;
     //@}
+
+    /// Assignment operator
+    IntVar& operator =(const IntVar&) = default;
   };
 
   /**
@@ -588,6 +591,9 @@ namespace Gecode {
     /// Test whether domain is neither zero nor one
     bool none(void) const;
     //@}
+
+    /// Assignment operator
+    BoolVar& operator =(const BoolVar&) = default;
   };
 
   /**
@@ -699,6 +705,9 @@ namespace Gecode {
     GECODE_INT_EXPORT
     IntVarArgs(Space& home, int n, const IntSet& s);
     //@}
+
+    /// Assignment operator
+    IntVarArgs& operator =(const IntVarArgs&) = default;
   };
 
   /** \brief Passing Boolean variables
@@ -799,6 +808,9 @@ namespace Gecode {
     GECODE_INT_EXPORT
     IntVarArray(Space& home, int n, const IntSet& s);
     //@}
+
+    /// Assignment operator
+    IntVarArray& operator =(const IntVarArray&) = default;
   };
 
   /**
@@ -831,6 +843,9 @@ namespace Gecode {
     GECODE_INT_EXPORT
     BoolVarArray(Space& home, int n, int min, int max);
     //@}
+
+    /// Assignment operator
+    BoolVarArray& operator =(const BoolVarArray&) = default;
   };
 
 }
