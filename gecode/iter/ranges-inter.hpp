@@ -89,6 +89,8 @@ namespace Gecode { namespace Iter { namespace Ranges {
     /// Initialize with \a n iterators in \a i
     template<class I>
     NaryInter(Region& r, I* i, int n);
+    /// Copy constructor
+    NaryInter(const NaryInter&) = default;
     /// Initialize with single iterator \a i
     template<class I>
     void init(Region& r, I& i);
