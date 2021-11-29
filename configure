@@ -7322,9 +7322,9 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
    fi
 
    if test "${ac_cv_cxx_compiler_vendor}" = "microsoft"; then
-     { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether ${CXX} accepts -std=c++11" >&5
-$as_echo_n "checking whether ${CXX} accepts -std=c++11... " >&6; }
-   if ${CXX} -std=c++11 2>&1 | grep "ignoring unknown option" -q; then
+     { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether ${CXX} accepts -std=c++17" >&5
+$as_echo_n "checking whether ${CXX} accepts -std=c++17... " >&6; }
+   if ${CXX} -std=c++17 2>&1 | grep "ignoring unknown option" -q; then
      { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
 $as_echo "no" >&6; }
      :
@@ -7332,14 +7332,14 @@ $as_echo "no" >&6; }
      { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
 $as_echo "yes" >&6; }
 
-       CXXFLAGS="-std=c++11${CXXFLAGS:+ }${CXXFLAGS}"
-       CFLAGS="-std=c++11${CFLAGS:+ }${CFLAGS}"
+       CXXFLAGS="-std=c++17${CXXFLAGS:+ }${CXXFLAGS}"
+       CFLAGS="-std=c++17${CFLAGS:+ }${CFLAGS}"
    fi
    else
-     { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether ${CXX} accepts -std=c++11" >&5
-$as_echo_n "checking whether ${CXX} accepts -std=c++11... " >&6; }
+     { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether ${CXX} accepts -std=c++17" >&5
+$as_echo_n "checking whether ${CXX} accepts -std=c++17... " >&6; }
    ac_gecode_save_CXXFLAGS="${CXXFLAGS}"
-   CXXFLAGS="-std=c++11${CXXFLAGS:+ }${CXXFLAGS} -Werror"
+   CXXFLAGS="-std=c++17${CXXFLAGS:+ }${CXXFLAGS} -Werror"
    ac_ext=cpp
 ac_cpp='$CXXCPP $CPPFLAGS'
 ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
@@ -7368,7 +7368,7 @@ $as_echo "no" >&6; }
         { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
 $as_echo "yes" >&6; }
 
-        CXXFLAGS="-std=c++11${CXXFLAGS:+ }${CXXFLAGS}"
+        CXXFLAGS="-std=c++17${CXXFLAGS:+ }${CXXFLAGS}"
       fi
 
 else
@@ -7385,10 +7385,10 @@ ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ex
 ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 
 
-   { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether ${CC} accepts -std=c++11" >&5
-$as_echo_n "checking whether ${CC} accepts -std=c++11... " >&6; }
+   { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether ${CC} accepts -std=c++17" >&5
+$as_echo_n "checking whether ${CC} accepts -std=c++17... " >&6; }
    ac_gecode_save_CFLAGS="${CFLAGS}"
-   CFLAGS="-std=c++11${CFLAGS:+ }${CFLAGS} -Werror"
+   CFLAGS="-std=c++17${CFLAGS:+ }${CFLAGS} -Werror"
    ac_ext=c
 ac_cpp='$CPP $CPPFLAGS'
 ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
@@ -7417,7 +7417,7 @@ $as_echo "no" >&6; }
         { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
 $as_echo "yes" >&6; }
 
-        CFLAGS="-std=c++11${CFLAGS:+ }${CFLAGS}"
+        CFLAGS="-std=c++17${CFLAGS:+ }${CFLAGS}"
       fi
 
 else
@@ -10399,9 +10399,9 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
    fi
 
    if test "${ac_cv_cxx_compiler_vendor}" = "microsoft"; then
-     { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether ${CXX} accepts -std=c++11" >&5
-$as_echo_n "checking whether ${CXX} accepts -std=c++11... " >&6; }
-   if ${CXX} -std=c++11 2>&1 | grep "ignoring unknown option" -q; then
+     { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether ${CXX} accepts -std=c++17" >&5
+$as_echo_n "checking whether ${CXX} accepts -std=c++17... " >&6; }
+   if ${CXX} -std=c++17 2>&1 | grep "ignoring unknown option" -q; then
      { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
 $as_echo "no" >&6; }
      :
@@ -10409,14 +10409,14 @@ $as_echo "no" >&6; }
      { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
 $as_echo "yes" >&6; }
 
-       CXXFLAGS="-std=c++11${CXXFLAGS:+ }${CXXFLAGS}"
-       CFLAGS="-std=c++11${CFLAGS:+ }${CFLAGS}"
+       CXXFLAGS="-std=c++17${CXXFLAGS:+ }${CXXFLAGS}"
+       CFLAGS="-std=c++17${CFLAGS:+ }${CFLAGS}"
    fi
    else
-     { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether ${CXX} accepts -std=c++11" >&5
-$as_echo_n "checking whether ${CXX} accepts -std=c++11... " >&6; }
+     { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether ${CXX} accepts -std=c++17" >&5
+$as_echo_n "checking whether ${CXX} accepts -std=c++17... " >&6; }
    ac_gecode_save_CXXFLAGS="${CXXFLAGS}"
-   CXXFLAGS="-std=c++11${CXXFLAGS:+ }${CXXFLAGS} -Werror"
+   CXXFLAGS="-std=c++17${CXXFLAGS:+ }${CXXFLAGS} -Werror"
    ac_ext=cpp
 ac_cpp='$CXXCPP $CPPFLAGS'
 ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
@@ -10445,7 +10445,7 @@ $as_echo "no" >&6; }
         { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
 $as_echo "yes" >&6; }
 
-        CXXFLAGS="-std=c++11${CXXFLAGS:+ }${CXXFLAGS}"
+        CXXFLAGS="-std=c++17${CXXFLAGS:+ }${CXXFLAGS}"
       fi
 
 else
@@ -10462,10 +10462,10 @@ ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ex
 ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 
 
-   { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether ${CC} accepts -std=c++11" >&5
-$as_echo_n "checking whether ${CC} accepts -std=c++11... " >&6; }
+   { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether ${CC} accepts -std=c++17" >&5
+$as_echo_n "checking whether ${CC} accepts -std=c++17... " >&6; }
    ac_gecode_save_CFLAGS="${CFLAGS}"
-   CFLAGS="-std=c++11${CFLAGS:+ }${CFLAGS} -Werror"
+   CFLAGS="-std=c++17${CFLAGS:+ }${CFLAGS} -Werror"
    ac_ext=c
 ac_cpp='$CPP $CPPFLAGS'
 ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
@@ -10494,7 +10494,7 @@ $as_echo "no" >&6; }
         { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
 $as_echo "yes" >&6; }
 
-        CFLAGS="-std=c++11${CFLAGS:+ }${CFLAGS}"
+        CFLAGS="-std=c++17${CFLAGS:+ }${CFLAGS}"
       fi
 
 else
@@ -12664,7 +12664,7 @@ $as_echo "#define GECODE_HAS_QT /**/" >>confdefs.h
                 ac_gecode_qt_tmpdir=`mktemp -d gistqt.XXXXXX` || exit 1
         cd ${ac_gecode_qt_tmpdir}
         echo "CONFIG += release" > a.pro
-        if test ${ac_gecode_qt_major} -eq 5; then
+        if test ${ac_gecode_qt_major} -ge 5; then
           echo "QT += widgets printsupport" >> a.pro
         fi
         ${QMAKE}

@@ -671,7 +671,7 @@ AC_DEFUN([AC_GECODE_GCC_GENERAL_SWITCHES],
   AC_GECODE_CHECK_COMPILERFLAG([-Wall])
   AC_GECODE_CHECK_COMPILERFLAG([-Wno-unknown-pragmas])
   AC_GECODE_CHECK_COMPILERFLAG([-pipe])
-  AC_GECODE_CHECK_COMPILERFLAG([-std=c++11])
+  AC_GECODE_CHECK_COMPILERFLAG([-std=c++17])
 
   AC_GECODE_CHECK_CXXFLAG(-ggdb,
      AC_GECODE_ADD_TO_COMPILERFLAGS(-ggdb),
@@ -1347,7 +1347,7 @@ AC_DEFUN([AC_GECODE_QT],
         ac_gecode_qt_tmpdir=`mktemp -d gistqt.XXXXXX` || exit 1
         cd ${ac_gecode_qt_tmpdir}
         echo "CONFIG += release" > a.pro
-        if test ${ac_gecode_qt_major} -eq 5; then
+        if test ${ac_gecode_qt_major} -ge 5; then
           echo "QT += widgets printsupport" >> a.pro
         fi
         ${QMAKE}
