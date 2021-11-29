@@ -2384,11 +2384,12 @@ namespace Gecode { namespace FlatZinc {
   IntPropLevel
   FlatZincSpace::ann2ipl(AST::Node* ann) {
     if (ann) {
-      if (ann->hasAtom("val"))
+      if (ann->hasAtom("val") || ann->hasAtom("value_propagation"))
         return IPL_VAL;
-      if (ann->hasAtom("domain"))
+      if (ann->hasAtom("domain") || ann->hasAtom("domain_propagation"))
         return IPL_DOM;
       if (ann->hasAtom("bounds") ||
+          ann->hasAtom("bounds_propagation") ||
           ann->hasAtom("boundsR") ||
           ann->hasAtom("boundsD") ||
           ann->hasAtom("boundsZ"))
