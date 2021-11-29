@@ -376,6 +376,7 @@ else
   AC_CONFIG_FILES([tools/flatzinc/mzn-gecode:tools/flatzinc/mzn-gecode.in],[chmod +x tools/flatzinc/mzn-gecode])
 fi
 AC_CONFIG_FILES([tools/flatzinc/gecode.msc:tools/flatzinc/gecode.msc.in])
+AC_CONFIG_FILES([tools/flatzinc/gecode-gist.msc:tools/flatzinc/gecode-gist.msc.in])
 AC_CONFIG_FILES([doxygen.conf:doxygen/doxygen.conf.in])
 AC_CONFIG_FILES([doxygen.hh:doxygen/doxygen.hh.in])
 AC_OUTPUT

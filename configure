@@ -13433,6 +13433,8 @@ else
 fi
 ac_config_files="$ac_config_files tools/flatzinc/gecode.msc:tools/flatzinc/gecode.msc.in"
 
+ac_config_files="$ac_config_files tools/flatzinc/gecode-gist.msc:tools/flatzinc/gecode-gist.msc.in"
+
 ac_config_files="$ac_config_files doxygen.conf:doxygen/doxygen.conf.in"
 
 ac_config_files="$ac_config_files doxygen.hh:doxygen/doxygen.hh.in"
@@ -14131,6 +14133,7 @@ do
     "tools/flatzinc/mzn-gecode.bat") CONFIG_FILES="$CONFIG_FILES tools/flatzinc/mzn-gecode.bat:tools/flatzinc/mzn-gecode.bat.in" ;;
     "tools/flatzinc/mzn-gecode") CONFIG_FILES="$CONFIG_FILES tools/flatzinc/mzn-gecode:tools/flatzinc/mzn-gecode.in" ;;
     "tools/flatzinc/gecode.msc") CONFIG_FILES="$CONFIG_FILES tools/flatzinc/gecode.msc:tools/flatzinc/gecode.msc.in" ;;
+    "tools/flatzinc/gecode-gist.msc") CONFIG_FILES="$CONFIG_FILES tools/flatzinc/gecode-gist.msc:tools/flatzinc/gecode-gist.msc.in" ;;
     "doxygen.conf") CONFIG_FILES="$CONFIG_FILES doxygen.conf:doxygen/doxygen.conf.in" ;;
     "doxygen.hh") CONFIG_FILES="$CONFIG_FILES doxygen.hh:doxygen/doxygen.hh.in" ;;
 

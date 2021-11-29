@@ -474,6 +474,13 @@ configure_file(
   ${PROJECT_BINARY_DIR}/tools/flatzinc/gecode.msc
   @ONLY
 )
+if (GECODE_HAS_GIST)
+	configure_file(
+		${PROJECT_SOURCE_DIR}/tools/flatzinc/gecode-gist.msc.in
+		${PROJECT_BINARY_DIR}/tools/flatzinc/gecode-gist.msc
+		@ONLY
+	)
+endif()
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
@@ -530,3 +537,9 @@ install(
   FILES ${PROJECT_BINARY_DIR}/tools/flatzinc/gecode.msc
   DESTINATION ${CMAKE_INSTALL_DATADIR}/minizinc/solvers
 )
+if (GECODE_HAS_GIST)
+	install(
+		FILES ${PROJECT_BINARY_DIR}/tools/flatzinc/gecode-gist.msc
+		DESTINATION share/minizinc/solvers
+	)
+endif()
