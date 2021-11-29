@@ -1,0 +1,34 @@
+{
+  "id": "org.gecode.gist",
+  "name": "Gecode Gist",
+  "description": "Gecode FlatZinc executable",
+  "version": "@GECODE_VERSION@",
+  "mznlib": "../gecode",
+  "executable": ["../../../bin/fzn-gecode", "-mode", "gist"],
+  "tags": ["cp", "int", "float", "set", "restart"],
+  "stdFlags": ["-a", "-f", "-n", "-p", "-r", "-s", "-t", "--cp-profiler"],
+  "extraFlags": [
+    ["--c-d", "Recomputation commit distance", "int", "8"],
+    ["--a-d", "Recomputation adaption distance", "int", "2"],
+    ["--decay", "Decay factor", "float", "0.99"],
+    ["--node", "Node cutoff", "int", "0"],
+    ["--fail", "Failure cutoff", "int", "0"],
+    [
+      "--restart",
+      "Restart sequence type",
+      "opt:none:constant:linear:luby:geometric",
+      "none"
+    ],
+    ["--restart-base", "Base for geometric restart sequence", "float", "1.5"],
+    ["--restart-scale", "Scale factor for restart sequence", "int", "250"],
+    ["--restart-limit", "Restart cutoff", "int", "0"],
+    ["--nogoods", "Use no-goods from restarts", "bool", "false"],
+    ["--nogoods-limit", "Depth limit for no-good extraction", "int", "128"]
+  ],
+  "supportsMzn": false,
+  "supportsFzn": true,
+  "needsSolns2Out": true,
+  "needsMznExecutable": false,
+  "needsStdlibDir": false,
+  "isGUIApplication": true 
+}

@@ -70,6 +70,14 @@ Date: 2020-??-??
 Let's see.
 
 [ENTRY]
+Module: flatzinc 
+What:   new
+Rank:   minor
+Thanks: Jip J. Dekker
+[DESCRIPTION]
+Generate MiniZinc solver configuration for the Gecode FlatZinc using Gist.
+
+[ENTRY]
 Module: search
 What:   new
 Rank:   minor

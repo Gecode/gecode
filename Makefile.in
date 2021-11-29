@@ -845,7 +845,11 @@ export FLATZINCSTATICLIB	= $(LIBPREFIX)@FLATZINC@$(STATICLIBSUFFIX)
 export FLATZINCLIB		= $(LIBPREFIX)@FLATZINC@$(LIBSUFFIX)
 export LINKFLATZINC		= $(LINKPREFIX)@FLATZINC@$(LINKSUFFIX)
 export FLATZINCMZNLIB		= gecode/flatzinc/mznlib
+ifeq "@enable_gist@" "yes"
+export FLATZINCCONFIG		= tools/flatzinc/gecode.msc tools/flatzinc/gecode-gist.msc
+else
 export FLATZINCCONFIG		= tools/flatzinc/gecode.msc
+endif
 FLATZINCEXE	= tools/flatzinc/fzn-gecode$(EXESUFFIX)
 ifeq "@need_soname@" "yes"
 export FLATZINCSONAME = @WLSONAME@$(LIBPREFIX)@FLATZINC@$(SOSUFFIX)
@@ -1972,7 +1976,7 @@ endif
 
 endif
 
-doinstallheaders: $(ALLHDR:%=$(top_srcdir)/%) $(EXTRA_HEADERS) $(VARIMPHDR)
+doinstallheaders: $(ALLHDR:%=$(top_srcdir)/%) $(EXTRA_HEADERS) $(VARIMPHDR) $(FLATZINCCONFIG)
 	mkdir -p $(DESTDIR)$(includedir) && \
 	(cd $(top_srcdir) && tar cf - $(ALLHDR)) | \
 	  (cd $(DESTDIR)$(includedir) && tar xf -) && \
@@ -1982,9 +1986,11 @@ doinstallheaders: $(ALLHDR:%=$(top_srcdir)/%) $(EXTRA_HEADERS) $(VARIMPHDR)
 	for_extraheaders="$(EXTRA_HEADERS)" && \
 	  for f in $$for_extraheaders; do \
 	    cp $$f $(DESTDIR)$(includedir)/$$f; done && \
+	mkdir -p $(DESTDIR)$(datadir)/minizinc/solvers && \
+	for_flatconf="$(FLATZINCCONFIG)" && \
+	  for f in $$for_flatconf; do \
+			cp $$f $(DESTDIR)$(datadir)/minizinc/solvers; done && \
 	for_mznlib="$(FLATZINCMZNLIB)" && \
-	  mkdir -p $(DESTDIR)$(datadir)/minizinc/solvers; \
-      cp $(FLATZINCCONFIG) $(DESTDIR)$(datadir)/minizinc/solvers/; \
 	  mkdir -p $(DESTDIR)$(datadir)/minizinc/gecode; \
 	  for f in $$for_mznlib; do \
 		cp $(top_srcdir)/$$f/*.mzn \
