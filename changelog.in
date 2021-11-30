@@ -75,6 +75,14 @@ What:   new
 Rank:   minor
 Thanks: Jip J. Dekker
 [DESCRIPTION]
+Add support for disjunctive and cumulative on optional variables.
+
+[ENTRY]
+Module: flatzinc 
+What:   new
+Rank:   minor
+Thanks: Jip J. Dekker
+[DESCRIPTION]
 Generate MiniZinc solver configuration for the Gecode FlatZinc using Gist.
 
 [ENTRY]
