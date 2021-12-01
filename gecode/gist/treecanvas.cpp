@@ -52,8 +52,10 @@ namespace Gecode { namespace Gist {
   TreeCanvas::TreeCanvas(Space* rootSpace, bool bab,
                          QWidget* parent, const Options& opt)
     : QWidget(parent)
+#if QT_VERSION < 0x060000
     , mutex(QMutex::Recursive)
     , layoutMutex(QMutex::Recursive)
+#endif
     , finishedFlag(false)
     , compareNodes(false), compareNodesBeforeFP(false)
     , autoHideFailed(true), autoZoom(false)
@@ -103,7 +105,11 @@ namespace Gecode { namespace Gist {
 
       connect(&scrollTimeLine, SIGNAL(frameChanged(int)),
               this, SLOT(scroll(int)));
+#if QT_VERSION >= 0x060000
+      scrollTimeLine.setEasingCurve(QEasingCurve::InOutSine);
+#else
       scrollTimeLine.setCurveShape(QTimeLine::EaseInOutCurve);
+#endif
 
       scaleBar = new QSlider(Qt::Vertical, this);
       scaleBar->setObjectName("scaleBar");
@@ -118,7 +124,11 @@ namespace Gecode { namespace Gist {
 
       connect(&zoomTimeLine, SIGNAL(frameChanged(int)),
               scaleBar, SLOT(setValue(int)));
+#if QT_VERSION >= 0x060000
+      zoomTimeLine.setEasingCurve(QEasingCurve::InOutSine);
+#else
       zoomTimeLine.setCurveShape(QTimeLine::EaseInOutCurve);
+#endif
 
       qRegisterMetaType<Statistics>("Statistics");
       update();
@@ -1020,15 +1030,24 @@ namespace Gecode { namespace Gist {
 
       BoundingBox bb = n->getBoundingBox();
       printer.setFullPage(true);
+#if QT_VERSION >= 0x060000
+      printer.setPageSize(QPageSize(QSizeF(bb.right-bb.left+Layout::extent,
+                                           n->getShape()->depth() * Layout::dist_y +
+                                           Layout::extent), QPageSize::Point));
+#else
       printer.setPaperSize(QSizeF(bb.right-bb.left+Layout::extent,
                                   n->getShape()->depth() * Layout::dist_y +
                                   Layout::extent), QPrinter::Point);
+#endif
       printer.setOutputFileName(filename);
       QPainter painter(&printer);
 
       painter.setRenderHint(QPainter::Antialiasing);
-
+#if QT_VERSION >= 0x060000
+      QRect pageRect = printer.pageLayout().paintRectPixels(printer.resolution());
+#else
       QRect pageRect = printer.pageRect();
+#endif
       double newXScale =
         static_cast<double>(pageRect.width()) / (bb.right - bb.left +
                                                  Layout::extent);
@@ -1074,7 +1093,11 @@ namespace Gecode { namespace Gist {
       QMutexLocker locker(&mutex);
 
       BoundingBox bb = root->getBoundingBox();
+#if QT_VERSION >= 0x060000
+      QRect pageRect = printer.pageLayout().paintRectPixels(printer.resolution());
+#else
       QRect pageRect = printer.pageRect();
+#endif
       double newXScale =
         static_cast<double>(pageRect.width()) / (bb.right - bb.left +
                                                  Layout::extent);
@@ -1117,8 +1140,13 @@ namespace Gecode { namespace Gist {
     case QEvent::MouseMove:
         {
           QMouseEvent* me = static_cast<QMouseEvent*>(event);
+#if QT_VERSION >= 0x060000
+          x = me->position().x();
+          y = me->position().y();
+#else
           x = me->x();
           y = me->y();
+#endif
           break;
         }
     case QEvent::ContextMenu:
@@ -1264,9 +1292,15 @@ namespace Gecode { namespace Gist {
   TreeCanvas::wheelEvent(QWheelEvent* event) {
     if (event->modifiers() & Qt::ShiftModifier) {
       event->accept();
+#if QT_VERSION >= 0x060000
+      if (event->angleDelta().y() != 0 && !autoZoom)
+        scaleTree(scale*100+ceil(static_cast<double>(event->angleDelta().y())/4.0),
+                  event->position().x(), event->position().y());
+#else
       if (event->orientation() == Qt::Vertical && !autoZoom)
         scaleTree(scale*100+ceil(static_cast<double>(event->delta())/4.0),
                   event->x(), event->y());
+#endif
     } else {
       event->ignore();
     }

@@ -107,7 +107,11 @@ namespace Gecode { namespace Gist {
       QString label = na.getLabel(n);
       int alt = n->getAlternative(na);
       int n_alt = n->getParent(na)->getNumberOfChildren();
+#if QT_VERSION >= 0x060000
+      int tw = fm.horizontalAdvance(label);
+#else
       int tw = fm.width(label);
+#endif
       int lx;
       if (alt==0 && n_alt > 1) {
         lx = myx-tw-4;
