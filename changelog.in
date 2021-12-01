@@ -70,6 +70,14 @@ Date: 2020-??-??
 Let's see.
 
 [ENTRY]
+Module: gist
+What:   change
+Rank:   minor
+Thanks: Jip J. Dekker
+[DESCRIPTION]
+Add support for building Gecode Gist with Qt6.
+
+[ENTRY]
 Module: flatzinc 
 What:   new
 Rank:   minor
