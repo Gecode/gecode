@@ -67,8 +67,9 @@ namespace Gecode {
                   typename BranchTraits<typename View::VarType>::ValType> {
   public:
     /// The corresponding variable type
-    using typename ValSel<View,
-                          typename BranchTraits<typename View::VarType>::ValType>::Var;
+    typedef typename ValSel<View,
+                            typename BranchTraits<typename View::VarType>
+                              ::ValType>::Var Var;
     /// The corresponding value type
     typedef typename ValSel<View,
                             typename BranchTraits<typename View::VarType>
