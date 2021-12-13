@@ -70,6 +70,15 @@ Date: 2020-??-??
 Let's see.
 
 [ENTRY]
+Module: other
+What:   bug
+Rank:   minor
+Thanks: Joerg Strebel
+Issue:  136
+[DESCRIPTION]
+Fix compilation without threads
+
+[ENTRY]
 Module: gist
 What:   change
 Rank:   minor
