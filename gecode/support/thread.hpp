@@ -110,8 +110,10 @@ namespace Gecode { namespace Support {
 #elif defined(GECODE_THREADS_PTHREADS)
     /// The Pthread mutex
     pthread_mutex_t p_m;
-#else
+#elif defined(GECODE_HAS_THREADS)
 #error No suitable mutex implementation found
+#else
+    // When no threads are used, Mutex is a no-op
 #endif
   public:
     /// Initialize mutex
