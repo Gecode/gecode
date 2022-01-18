@@ -48,7 +48,7 @@ namespace Gecode { namespace Support {
   class LinearCongruentialGenerator {
   private:
     /// The maximum size of random numbers generated.
-    static const unsigned int max = 1UL<<31;
+    static constexpr unsigned int max_value = 1UL<<31;
     /// Current seed value
     unsigned int s;
     /// Returns a random integer from the interval \f$[0\ldots n)\f$
@@ -75,6 +75,16 @@ namespace Gecode { namespace Support {
     long long int operator ()(long long int n);
     /// Report size occupied
     size_t size(void) const;
+
+    // Interface for conforming to C++ UniformRandomBitGenerator
+    /// Type of the produced values
+    typedef unsigned int result_type;
+    /// Minimum value that may be produced when no bound is specified
+    static constexpr result_type min() { return 0; }
+    /// Maximum value that may be produced when no bound is specified
+    static constexpr result_type max() { return max_value; }
+    /// Returns a random integer from the interval \f$[0\ldots max()]\f$
+    result_type operator()() { return next(); }
   };
 
   template<unsigned int m, unsigned int a, unsigned int q, unsigned int r>
@@ -110,7 +120,7 @@ namespace Gecode { namespace Support {
     unsigned int x2 = next() & ((1U<<16)-1U);
     if (n < 2)
       return 0;
-    double d = static_cast<double>(((x1<<16) | x2) % max) / max;
+    double d = static_cast<double>(((x1<<16) | x2) % max_value) / max_value;
     unsigned int val = static_cast<unsigned int>(n * d);
     return (val < n) ? val : (n-1);
   }
