@@ -146,6 +146,7 @@ namespace Gecode {
 
   void
   CPProfilerSearchTracer::done(void) {
+    connector->done();
     connector->disconnect();
   }
 
