@@ -704,10 +704,9 @@ namespace Gecode {
      */
     GECODE_INT_EXPORT
     IntVarArgs(Space& home, int n, const IntSet& s);
-    //@}
-
     /// Assignment operator
     IntVarArgs& operator =(const IntVarArgs&) = default;
+    //@}
   };
 
   /** \brief Passing Boolean variables
@@ -750,6 +749,8 @@ namespace Gecode {
      */
     GECODE_INT_EXPORT
     BoolVarArgs(Space& home, int n, int min, int max);
+    /// Assignment operator
+    BoolVarArgs& operator =(const BoolVarArgs&) = default;
     //@}
   };
   //@}

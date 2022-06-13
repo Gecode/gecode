@@ -1011,6 +1011,8 @@ namespace Gecode {
      */
     GECODE_FLOAT_EXPORT
     FloatVarArgs(Space& home, int n, FloatNum min, FloatNum max);
+    /// Assignment operator
+    FloatVarArgs& operator =(const FloatVarArgs&) = default;
     //@}
   };
   //@}
@@ -1055,10 +1057,9 @@ namespace Gecode {
      */
     GECODE_FLOAT_EXPORT
     FloatVarArray(Space& home, int n, FloatNum min, FloatNum max);
-    //@}
-
     /// Assignment operator
     FloatVarArray& operator =(const FloatVarArray&) = default;
+    //@}
   };
 
 }
