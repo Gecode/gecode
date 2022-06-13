@@ -1010,10 +1010,6 @@ namespace Gecode { namespace Int { namespace GCC {
       sum_min(smin),
       sum_max(smax) {
 
-    unsigned int noe = 0;
-    for (int i=x.size(); i--; )
-      noe += x[i].size();
-
     vars = home.alloc<VarNode*>(n_var);
     vals = home.alloc<ValNode*>(n_val);
 
