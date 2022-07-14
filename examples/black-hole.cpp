@@ -62,7 +62,7 @@ namespace {
     vector<int> deck(51);
     for (int i = 51; i--; ) deck[i] = i+1;
     Support::RandomGenerator rnd(seed+1);
-    std::random_shuffle(deck.begin(), deck.end(), rnd);
+    std::shuffle(deck.begin(), deck.end(), rnd);
 
     // Place cards from deck
     int pos = 0;
