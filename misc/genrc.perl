@@ -172,7 +172,7 @@ if ($file =~ /Gecode(.*)-([0-9]+-[0-9]+-[0-9]+-[rd]-.+)\.dll$/) {
     close SRCFILE;
     $description = "Gecode example: $example";
   } else {
-    die "Illegal file";
+    die "Illegal file $file";
   }
 }
 
