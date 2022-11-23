@@ -239,6 +239,7 @@ Thanks: Mattias Grönkvist
 Distinct propagation (as used by distinct, channel, and circuit) would
 sometimes read from uninitialized memory.
 
+[ENTRY]
 Module: flatzinc
 What:   bug
 Rank:   minor
