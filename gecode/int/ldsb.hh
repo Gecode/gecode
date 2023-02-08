@@ -186,9 +186,9 @@ namespace Gecode { namespace Int { namespace LDSB {
     Support::BitSetOffset<Space> indices;
   public:
     /// Constructor for creation
-    VariableSymmetryImp<View>(Space& home, int* vs, unsigned int n);
+    VariableSymmetryImp(Space& home, int* vs, unsigned int n);
     /// Copy constructor
-    VariableSymmetryImp<View>(Space& home, const VariableSymmetryImp<View>& other);
+    VariableSymmetryImp(Space& home, const VariableSymmetryImp<View>& other);
     /// Disposal
     virtual size_t dispose(Space& home);
     /// Left-branch update
@@ -206,9 +206,9 @@ namespace Gecode { namespace Int { namespace LDSB {
     /// Symmetric values
     Support::BitSetOffset<Space> values;
     /// Constructor for creation
-    ValueSymmetryImp<View>(Space& home, int* vs, unsigned int n);
+    ValueSymmetryImp(Space& home, int* vs, unsigned int n);
     /// Copy constructor
-    ValueSymmetryImp<View>(Space& home, const ValueSymmetryImp<View>& other);
+    ValueSymmetryImp(Space& home, const ValueSymmetryImp<View>& other);
     /// Disposal
     virtual size_t dispose(Space& home);
     /// Left-branch update
@@ -248,9 +248,9 @@ namespace Gecode { namespace Int { namespace LDSB {
     int getVal(unsigned int sequence, unsigned int position) const;
   public:
     /// Constructor for creation
-    VariableSequenceSymmetryImp<View>(Space& home, int *_indices, unsigned int n, unsigned int seqsize);
+    VariableSequenceSymmetryImp(Space& home, int *_indices, unsigned int n, unsigned int seqsize);
     /// Copy constructor
-    VariableSequenceSymmetryImp<View>(Space& home, const VariableSequenceSymmetryImp<View>& s);
+    VariableSequenceSymmetryImp(Space& home, const VariableSequenceSymmetryImp<View>& s);
     /// Disposal
     virtual size_t dispose(Space& home);
     /// Search left-branch update
@@ -279,12 +279,12 @@ namespace Gecode { namespace Int { namespace LDSB {
     /// position.  (Both are zero-based.)
     int getVal(unsigned int sequence, unsigned int position) const;
   private:
-    ValueSequenceSymmetryImp<View>(const ValueSequenceSymmetryImp<View>&);
+    ValueSequenceSymmetryImp(const ValueSequenceSymmetryImp<View>&);
   public:
     /// Constructor for creation
-    ValueSequenceSymmetryImp<View>(Space& home, int* _values, unsigned int n, unsigned int seqsize);
+    ValueSequenceSymmetryImp(Space& home, int* _values, unsigned int n, unsigned int seqsize);
     /// Copy constructor
-    ValueSequenceSymmetryImp<View>(Space& home, const ValueSequenceSymmetryImp<View>& vss);
+    ValueSequenceSymmetryImp(Space& home, const ValueSequenceSymmetryImp<View>& vss);
     /// Disposal
     virtual size_t dispose(Space& home);
     /// Left-branch update
