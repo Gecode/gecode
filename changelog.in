@@ -70,6 +70,17 @@ Date: 2020-??-??
 Let's see.
 
 [ENTRY]
+Module: flatzinc
+What:   bug
+Rank:   minor
+Thanks: Jip J. Dekker
+[DESCRIPTION]
+The FlatZinc decomposition of "int_pow" would use a zero default value for the
+base even raised to a negative value, causing unsatisfiability. The fix
+introduces a simpler decomposition that moves the default values for impossible
+exponent values to the result.
+
+[ENTRY]
 Module: other
 What:   bug
 Rank:   minor

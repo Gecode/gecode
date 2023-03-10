@@ -83,10 +83,10 @@ predicate gecode_int_pow(var int: x, int: y, var int: z);
 predicate int_pow(var int: x, var int: y, var int: z) =
     if is_fixed(y) then gecode_int_pow(x,fix(y),z)
     else let {
-        array[lb(y)..ub(y)] of var int: pow_x = array1d(lb(y)..ub(y),
-          [if y=i then x else 0 endif | i in lb(y)..ub(y)]);
-        array[lb(y)..ub(y)] of var int: pow_table = array1d(lb(y)..ub(y),
-          [pow(pow_x[i],i) | i in lb(y)..ub(y)]);
+        array[lb(y)..ub(y)] of var int: pow_table = [
+            i: if i in dom(y) then pow(x, i) else lb(z) endif
+            | i in lb(y)..ub(y)
+        ];
     } in z=pow_table[y]
     endif;
 
