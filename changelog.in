@@ -81,6 +81,15 @@ introduces a simpler decomposition that moves the default values for impossible
 exponent values to the result.
 
 [ENTRY]
+Module: flatzinc
+What:   change
+Rank:   minor
+Thanks: Jason Nguyen
+[DESCRIPTION]
+Rewrite "int_pow_fixed" into "gecode_int_pow" rather than using the default
+MiniZinc decomposition.
+
+[ENTRY]
 Module: other
 What:   bug
 Rank:   minor
