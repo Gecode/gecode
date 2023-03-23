@@ -70,6 +70,17 @@ Date: 2020-??-??
 Let's see.
 
 [ENTRY]
+Module: search
+What:   bug
+Rank:   minor
+Thanks: Alexis LG
+Issue:  156
+[DESCRIPTION]
+The parallel search engines could in some cases leak memory, when multiple
+solutions are produced but not consumed. The fix clears the queue of solutions
+on destruction.
+
+[ENTRY]
 Module: flatzinc
 What:   bug
 Rank:   minor
