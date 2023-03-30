@@ -70,6 +70,15 @@ Date: 2020-??-??
 Let's see.
 
 [ENTRY]
+Module: other
+What:   new
+Rank:   minor
+Thanks:	Jason Nguyen
+[DESCRIPTION]
+Set CMake policy for finding OpenGL to be compatible with application bundlers
+on new systems.
+
+[ENTRY]
 Module: search
 What:   bug
 Rank:   minor
