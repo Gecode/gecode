@@ -79,6 +79,15 @@ Set CMake policy for finding OpenGL to be compatible with application bundlers
 on new systems.
 
 [ENTRY]
+Module: other
+What:   new
+Rank:   minor
+Thanks:	Jip J. Dekker
+[DESCRIPTION]
+Add optional support for compiling gecode with MPFR using the CMake build
+system.
+
+[ENTRY]
 Module: search
 What:   bug
 Rank:   minor
