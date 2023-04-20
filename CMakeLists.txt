@@ -38,6 +38,9 @@ cmake_minimum_required(VERSION 3.7.0)
 project(GECODE)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/misc/cmake_modules)
+
+find_package(MPFR)
 
 include(CheckCXXCompilerFlag)
 if (GECODE_DISABLE_WARNINGS)
@@ -209,6 +212,9 @@ set(GECODE_HAS_SET_VARS "/**/")
 set(GECODE_HAS_FLOAT_VARS "/**/")
 set(GECODE_STATIC_LIBS 1)
 set(GECODE_ALLOCATOR "/**/")
+if (MPFR_FOUND)
+  set(GECODE_HAS_MPFR "/**/")
+endif ()
 
 check_cxx_compiler_flag(-fvisibility=hidden HAVE_VISIBILITY_HIDDEN_FLAG)
 if (HAVE_VISIBILITY_HIDDEN_FLAG)
@@ -411,7 +417,7 @@ foreach (lib support kernel search int set float
     set(sources )
     foreach (src ${${libupper}SRC} ${${libupper}_GENSRC})
       if ((src STREQUAL "gecode/support/thread/pthreads.cpp" AND MSVC) OR
-           src STREQUAL "gecode/float/rounding.cpp")
+           (src STREQUAL "gecode/float/rounding.cpp" AND NOT ${MPFR_FOUND}))
         # ignore empty source files to prevent linker warnings
       else ()
         set(sources ${sources} ${src})
@@ -458,6 +464,10 @@ endif ()
 if (FLOATSRC)
   target_link_libraries(gecodefloat gecodekernel)
   target_link_libraries(gecodeminimodel gecodefloat)
+  if (MPFR_FOUND)
+    target_link_libraries(gecodefloat ${MPFR_LIBRARIES})
+    target_include_directories(gecodefloat PRIVATE ${MPFR_INCLUDES})
+  endif ()
 endif ()
 
 add_executable(gecode-test EXCLUDE_FROM_ALL ${TESTSRC} ${TESTHDR})
