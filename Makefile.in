@@ -146,14 +146,14 @@ endif
 #
 SUPPORTSRC0 = \
 	exception allocator heap \
-	thread/thread thread/windows thread/pthreads \
+	thread/thread \
 	hw-rnd
 SUPPORTHDR0 = \
 	block-allocator cast hash dynamic-array \
 	dynamic-stack exception allocator heap \
 	macros random sort static-stack \
 	marked-pointer int-type auto-link \
-	thread thread/thread thread/windows thread/pthreads thread/none timer \
+	thread thread/thread timer \
 	dynamic-queue bitset-base bitset bitset-offset \
 	hw-rnd run-jobs ref-count
 

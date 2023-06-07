@@ -80,16 +80,6 @@
 #include <gecode/support/auto-link.hpp>
 #endif
 
-// Configure threads
-#ifdef GECODE_THREADS_WINDOWS
-#define GECODE_HAS_THREADS
-#endif
-
-#ifdef GECODE_THREADS_PTHREADS
-#define GECODE_HAS_THREADS
-#endif
-
-
 /*
  * Basic support needed everywhere
  *
@@ -126,16 +116,6 @@
  * Operating system support
  *
  */
-
-#ifdef GECODE_THREADS_WINDOWS
-#include <gecode/support/thread/windows.hpp>
-#endif
-#ifdef GECODE_THREADS_PTHREADS
-#include <gecode/support/thread/pthreads.hpp>
-#endif
-#ifndef GECODE_HAS_THREADS
-#include <gecode/support/thread/none.hpp>
-#endif
 
 #include <gecode/support/thread/thread.hpp>
 

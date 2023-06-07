@@ -70,6 +70,13 @@ Date: 2020-??-??
 Let's see.
 
 [ENTRY]
+Module: support
+What:   change
+Rank:   major
+[DESCRIPTION]
+Replace platform-specific multithreading code with standard C++ threads.
+
+[ENTRY]
 Module: test
 What:   new
 Rank:   minor

@@ -74,6 +74,19 @@ namespace Gecode { namespace Support {
     }
   }
 
+  Thread::Run::Run(Runnable* r0) {
+#ifdef GECODE_HAS_THREADS
+    m.acquire();
+    r = r0;
+    m.release();
+    std::thread t([](Thread::Run* r){r->exec();}, this);
+    t.detach();
+#else
+    throw OperatingSystemError("Thread::run[Threads not supported]");
+#endif
+  }
+
+
   namespace {
 
     class GlobalMutexRunnable : public Runnable {

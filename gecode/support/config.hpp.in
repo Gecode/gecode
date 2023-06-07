@@ -117,20 +117,8 @@
 /* Whether we are compiling static libraries */
 #undef GECODE_STATIC_LIBS
 
-/* Whether we have Mac OS threads */
-#undef GECODE_THREADS_OSX
-
-/* Whether we have Mac OS threads (new version) */
-#undef GECODE_THREADS_OSX_UNFAIR
-
-/* Whether we have posix threads */
-#undef GECODE_THREADS_PTHREADS
-
-/* Whether we have posix spinlocks */
-#undef GECODE_THREADS_PTHREADS_SPINLOCK
-
-/* Whether we have windows threads */
-#undef GECODE_THREADS_WINDOWS
+/* Whether we are compiling with thread support */
+#undef GECODE_HAS_THREADS
 
 /* Use clock() for time-measurement */
 #undef GECODE_USE_CLOCK
