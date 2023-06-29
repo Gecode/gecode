@@ -207,11 +207,9 @@ namespace Gecode { namespace Support {
       /// Next idle thread
       Run* n;
       /// Runnable object to execute
-      Runnable* r;
+      std::atomic<Runnable*> r;
       /// Event to wait for next runnable object to execute
       Event e;
-      /// Mutex for synchronization
-      Mutex m;
       /// Create a new thread
       GECODE_SUPPORT_EXPORT Run(Runnable* r);
       /// Infinite loop for execution

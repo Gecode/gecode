@@ -154,9 +154,7 @@ namespace Gecode { namespace Support {
   }
   inline void
   Thread::Run::run(Runnable* r0) {
-    m.acquire();
-    r = r0;
-    m.release();
+    r.store(r0);
     e.signal();
   }
   inline void

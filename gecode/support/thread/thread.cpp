@@ -51,11 +51,8 @@ namespace Gecode { namespace Support {
     while (true) {
       // Execute runnable
       {
-        Runnable* e;
-        m.acquire();
         GECODE_ASSUME(r != nullptr);
-        e=r; r=nullptr;
-        m.release();
+        Runnable* e = r.exchange(nullptr);
         assert(e != nullptr);
         e->run();
         if (e->todelete()) {
@@ -76,9 +73,7 @@ namespace Gecode { namespace Support {
 
   Thread::Run::Run(Runnable* r0) {
 #ifdef GECODE_HAS_THREADS
-    m.acquire();
-    r = r0;
-    m.release();
+    r.store(r0);
     std::thread t([](Thread::Run* r){r->exec();}, this);
     t.detach();
 #else
