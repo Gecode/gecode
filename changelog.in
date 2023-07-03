@@ -69,6 +69,15 @@ Date: 2020-??-??
 [DESCRIPTION]
 Let's see.
 
+
+[ENTRY]
+Module: search
+What:   new
+Rank:   minor
+Thanks: Jip J. Dekker
+[DESCRIPTION]
+Add the reason for restarting to the MetaInfo object available when restarting. 
+
 [ENTRY]
 Module: other
 What:   new

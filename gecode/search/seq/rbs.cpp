@@ -60,7 +60,7 @@ namespace Gecode { namespace Search { namespace Seq {
       NoGoods& ng = e->nogoods();
       // Reset number of no-goods found
       ng.ng(0);
-      MetaInfo mi(stop->m_stat.restart,sslr,e->statistics().fail,last,ng);
+      MetaInfo mi(stop->m_stat.restart,MetaInfo::RR_SOL,sslr,e->statistics().fail,last,ng);
       bool r = master->master(mi);
       stop->m_stat.nogood += ng.ng();
       if (master->status(stop->m_stat) == SS_FAILED) {
@@ -96,7 +96,7 @@ namespace Gecode { namespace Search { namespace Seq {
         sslr = 0;
         NoGoods& ng = e->nogoods();
         ng.ng(0);
-        MetaInfo mi(stop->m_stat.restart,sslr,e->statistics().fail,last,ng);
+        MetaInfo mi(stop->m_stat.restart,e->stopped() ? MetaInfo::RR_LIM : MetaInfo::RR_CMPL,sslr,e->statistics().fail,last,ng);
         (void) master->master(mi);
         stop->m_stat.nogood += ng.ng();
         unsigned long long int nl = ++(*co);
