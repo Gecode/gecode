@@ -36,6 +36,7 @@
 
 #include <gecode/flatzinc.hh>
 #include <gecode/int.hh>
+#include <gecode/int/idx-view.hh>
 
 using namespace Gecode::Int;
 
@@ -73,6 +74,65 @@ namespace Gecode { namespace FlatZinc {
       return ES_OK;
     }
   };
+
+  /**
+   * Record (and forget) the values of any assigned views in \a x in the right position in \a last_val.
+   */
+  void record_assigned_int(IdxViewArray<IntView>& x, std::vector<int>& last_val) {
+    int n = x.size();
+    for (int i = n; i--; ) {
+      if (x[i].view.assigned()) {
+        last_val[x[i].idx] = x[i].view.val();
+        x[i] = x[--n];
+      }
+    }
+    x.size(n);
+  }
+
+  class NaryLastValInt : public Propagator {
+  protected:
+    /// Array of views and their indices
+    IdxViewArray<IntView> x;
+
+    /// Constructor for cloning \a p
+    NaryLastValInt(Space& home, NaryLastValInt& p) : Propagator(home,p) {
+      x.update(home, p.x);
+    };
+    /// Constructor for posting
+    NaryLastValInt(FlatZincSpace& home, IdxViewArray<IntView> x0) : Propagator(home), x(x0) {
+      x.subscribe(home, *this, PC_INT_VAL);
+      for (int i = 0; i < x.size(); ++i) {
+        home.restart_data().last_val_int[x[i].idx] = x[i].view.min();
+      }
+    }
+  public:
+    /// Copy propagator during cloning
+    virtual Actor* copy(Space& home){ return new (home) NaryLastValInt(home,*this); }
+    virtual void reschedule(Space &home) {
+      x.reschedule(home,*this,PC_INT_VAL);
+    }
+    /// Cost function
+    virtual PropCost cost(const Space& /* home */, const ModEventDelta& /* med */) const { return PropCost::record(); }
+    /// Perform propagation
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& /* med */) {
+      record_assigned_int(x, static_cast<FlatZincSpace&>(home).restart_data().last_val_int);
+      if (x.size() == 0) {
+        return home.ES_SUBSUMED(*this);
+      } else {
+        return ES_FIX;
+      }
+    }
+
+    static ExecStatus post(FlatZincSpace& home, IntVarArgs x) {
+      IdxViewArray<IntView> ix(home, x);
+      record_assigned_int(ix, static_cast<FlatZincSpace&>(home).restart_data().last_val_int);
+      if (ix.size() > 0) {
+        (void) new (home) NaryLastValInt(home, ix);
+      }
+      return ES_OK;
+    }
+  };
+
 
   class LastValBool : public UnaryPropagator<BoolView, PC_BOOL_VAL> {
   protected:

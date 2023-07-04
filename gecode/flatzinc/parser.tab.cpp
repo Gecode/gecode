@@ -371,10 +371,12 @@ void initfg(ParserState* pp) {
       base += pp->sol_int.size() * 2;
 
       pp->fg->restart_data().last_val_int = std::vector<int>(pp->last_val_int.size());
+      IntVarArgs last_val_args;
       for (size_t i = 0; i < pp->last_val_int.size(); ++i) {
         pp->fg->on_restart_iv[base + i] = pp->fg->iv[(pp->last_val_int[i][1])];
-        LastValInt::post(*(pp->fg), pp->fg->iv[(pp->last_val_int[i][0])], i);
+        last_val_args << pp->fg->iv[(pp->last_val_int[i][0])];
       }
+      NaryLastValInt::post(*(pp->fg), last_val_args);
       base += pp->last_val_int.size();
 
       pp->fg->restart_data().uniform_range_int.reserve(pp->uniform_int.size());
