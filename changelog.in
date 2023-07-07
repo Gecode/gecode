@@ -70,6 +70,13 @@ Date: 2020-??-??
 Let's see.
 
 [ENTRY]
+Module: test
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Add ability to add command line options to a FlatZinc test
+
+[ENTRY]
 Module: flatzinc
 What:   new
 Rank:   minor
