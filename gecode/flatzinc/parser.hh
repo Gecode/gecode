@@ -54,6 +54,7 @@ extern "C" int isatty(int);
 
 #include <string>
 #include <vector>
+#include <array>
 #include <iostream>
 #include <algorithm>
 
@@ -211,6 +212,23 @@ namespace Gecode { namespace FlatZinc {
     std::vector<ConExpr*> constraints;
 
     std::vector<ConExpr*> domainConstraints;
+
+    int status_idx = -1;
+    int complete_idx = -1;
+    std::vector<std::array<int, 2>> last_val_int;
+    std::vector<std::array<int, 2>> sol_int;
+    std::vector<std::array<int, 3>> uniform_int;
+    std::vector<std::array<int, 2>> sol_bool;
+    std::vector<std::array<int, 2>> last_val_bool;
+#ifdef GECODE_HAS_SET_VARS
+    std::vector<std::array<int, 2>> sol_set;
+    std::vector<std::array<int, 2>> last_val_set;
+#endif
+#ifdef GECODE_HAS_FLOAT_VARS
+    std::vector<std::array<int, 2>> last_val_float;
+    std::vector<std::array<int, 2>> sol_float;
+    std::vector<std::tuple<FloatVal, FloatVal, int>> uniform_float;
+#endif
 
     bool hadError;
     std::ostream& err;

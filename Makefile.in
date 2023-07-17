@@ -821,7 +821,7 @@ FLATZINCSRC0 = flatzinc.cpp registry.cpp branch.cpp
 FLATZINC_GENSRC0 = parser.tab.cpp lexer.yy.cpp
 FLATZINCHDR0 = ast.hh conexpr.hh option.hh parser.hh \
 	plugin.hh registry.hh symboltable.hh varspec.hh \
-	branch.hh branch.hpp
+	branch.hh branch.hpp lastval.hh complete.hh
 
 FLATZINCSRC = $(FLATZINCSRC0:%=gecode/flatzinc/%)
 FLATZINC_GENSRC = $(FLATZINC_GENSRC0:%=gecode/flatzinc/%)
@@ -1208,7 +1208,16 @@ FLATZINCTESTSRC0 = \
   test/flatzinc/oss.cpp \
   test/flatzinc/steiner_triples.cpp \
   test/flatzinc/timetabling.cpp \
-  test/flatzinc/trucking.cpp
+  test/flatzinc/trucking.cpp \
+	test/flatzinc/on_restart_complete.cpp \
+	test/flatzinc/on_restart_last_val_bool.cpp \
+	test/flatzinc/on_restart_last_val_float.cpp \
+	test/flatzinc/on_restart_last_val_int.cpp \
+	test/flatzinc/on_restart_last_val_set.cpp \
+	test/flatzinc/on_restart_sol_bool.cpp \
+	test/flatzinc/on_restart_sol_float.cpp \
+	test/flatzinc/on_restart_sol_int.cpp \
+	test/flatzinc/on_restart_sol_set.cpp
 
 ifeq "@enable_flatzinc@" "yes"
 FLATZINCTESTOBJ = $(FLATZINCTESTSRC0:%.cpp=%$(OBJSUFFIX))

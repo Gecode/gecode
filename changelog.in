@@ -70,6 +70,33 @@ Date: 2020-??-??
 Let's see.
 
 [ENTRY]
+Module: test
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Add ability to add command line options to a FlatZinc test
+
+[ENTRY]
+Module: flatzinc
+What:   new
+Rank:   minor
+Thanks: Jip J. Dekker
+[DESCRIPTION]
+Add the implementation of the experimental "meta-search on restart" FlatZinc
+feature. This features enforces search restrictions when the solver restarts,
+allowing users to express many types of common meta-search operation. Examples
+are (structured) large neighbourhood, lexicographic optimization, and pareto
+front optimization.
+
+[ENTRY]
+Module: search
+What:   new
+Rank:   minor
+Thanks: Jip J. Dekker
+[DESCRIPTION]
+Add the reason for restarting to the MetaInfo object available when restarting. 
+
+[ENTRY]
 Module: other
 What:   new
 Rank:   minor
