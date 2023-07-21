@@ -38,6 +38,12 @@
 
 #ifdef GECODE_HAS_THREADS
 #include <thread>
+
+#ifdef GECODE_USE_OSX_UNFAIR_MUTEX
+#include <os/lock.h>
+#include <libkern/OSAtomic.h>
+#endif
+
 #endif
 
 /**
@@ -69,8 +75,13 @@ namespace Gecode { namespace Support {
   class Mutex {
   private:
 #ifdef GECODE_HAS_THREADS
+#ifndef GECODE_USE_OSX_UNFAIR_MUTEX
     /// The mutex
     std::mutex m;
+#else
+    /// The unfair lock
+    os_unfair_lock l;
+#endif
 #endif
   public:
     /// Initialize mutex
@@ -91,9 +102,6 @@ namespace Gecode { namespace Support {
     /// A mutex cannot be assigned
     void operator=(const Mutex&) {}
   };
-
-  typedef Mutex FastMutex;
-
 
   /**
    * \brief A lock as a scoped frontend for a mutex

@@ -61,18 +61,30 @@ namespace Gecode { namespace Support {
    *
    */
   forceinline
-  Mutex::Mutex(void) {}
+  Mutex::Mutex(void) {
+#ifdef GECODE_USE_OSX_UNFAIR_MUTEX
+    l = OS_UNFAIR_LOCK_INIT;
+#endif
+  }
   forceinline void
   Mutex::acquire(void) {
 #ifdef GECODE_HAS_THREADS
+#ifndef GECODE_USE_OSX_UNFAIR_MUTEX
     m.lock();
+#else
+    os_unfair_lock_lock(&l);
+#endif
 #endif
   }
 
   forceinline bool
   Mutex::tryacquire(void) {
 #ifdef GECODE_HAS_THREADS
+#ifndef GECODE_USE_OSX_UNFAIR_MUTEX
     return m.try_lock();
+#else
+    return os_unfair_lock_trylock(&l);
+#endif
 #else
     return true;
 #endif
@@ -81,7 +93,11 @@ namespace Gecode { namespace Support {
   forceinline void
   Mutex::release(void) {
 #ifdef GECODE_HAS_THREADS
+#ifndef GECODE_USE_OSX_UNFAIR_MUTEX
     m.unlock();
+#else
+    os_unfair_lock_unlock(&l);
+#endif
 #endif
   }
 

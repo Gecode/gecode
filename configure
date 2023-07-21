@@ -807,6 +807,7 @@ enable_audit
 enable_profile
 enable_gcov
 enable_thread
+enable_osx_unfair_mutex
 with_freelist32_size_max
 with_freelist64_size_max
 enable_gcc_visibility
@@ -1470,6 +1471,8 @@ Optional Features:
   --enable-profile        build with profiling information [default=no]
   --enable-gcov           build with gcov support [default=no]
   --enable-thread         build with multi-threading support [default=yes]
+  --enable-osx-unfair-mutex
+                          use unfair mutexes on macOS [default=yes]
   --enable-gcc-visibility use gcc visibility attributes [default=yes]
   --enable-doc-dot        enable graphs in documentation [default=yes]
   --enable-doc-search     enable documentation search engine [default=no]
@@ -6505,6 +6508,28 @@ $as_echo "yes" >&6; }
 
 $as_echo "#define GECODE_HAS_THREADS 1" >>confdefs.h
 
+  else
+    { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+  fi
+  # Check whether --enable-osx-unfair-mutex was given.
+if test "${enable_osx_unfair_mutex+set}" = set; then :
+  enableval=$enable_osx_unfair_mutex;
+fi
+
+  { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether to use unfair mutexes on macOS" >&5
+$as_echo_n "checking whether to use unfair mutexes on macOS... " >&6; }
+  if test "${enable_osx_unfair_mutex:-yes}" = "yes"; then
+    if test "${host_os}" = "darwin"; then
+      { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+
+$as_echo "#define GECODE_USE_OSX_UNFAIR_MUTEX 1" >>confdefs.h
+
+    else
+      { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+    fi
   else
     { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
 $as_echo "no" >&6; }

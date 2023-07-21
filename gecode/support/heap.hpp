@@ -308,7 +308,7 @@ namespace Gecode {
 #ifdef GECODE_PEAKHEAP
   private:
     /// Mutex for accessing heap size
-    Support::FastMutex _m;
+    Support::Mutex _m;
     /// Peak heap size
     size_t _peak;
     /// Current heap size

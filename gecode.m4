@@ -1503,6 +1503,20 @@ AC_DEFUN([AC_GECODE_THREADS],[
   else
     AC_MSG_RESULT(no)
   fi
+  AC_ARG_ENABLE([osx-unfair-mutex],
+    AC_HELP_STRING([--enable-osx-unfair-mutex],
+      [use unfair mutexes on macOS @<:@default=yes@:>@]))
+  AC_MSG_CHECKING(whether to use unfair mutexes on macOS)
+  if test "${enable_osx_unfair_mutex:-yes}" = "yes"; then
+    if test "${host_os}" = "darwin"; then    
+      AC_MSG_RESULT(yes)
+      AC_DEFINE(GECODE_USE_OSX_UNFAIR_MUTEX,1,[Whether to use unfair mutexes on macOS])
+    else
+      AC_MSG_RESULT(no)
+    fi
+  else
+    AC_MSG_RESULT(no)
+  fi
 ])
 
 AC_DEFUN([AC_GECODE_TIMER],[
