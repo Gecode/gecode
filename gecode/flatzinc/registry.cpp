@@ -1120,25 +1120,31 @@ namespace Gecode { namespace FlatZinc {
     }
 
     void p_minimum_arg(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
-      IntVarArgs iv = s.arg2intvarargs(ce[0]);
+      IntVar x = s.arg2IntVar(ce[2]);
+      IntVarArgs iv = x + s.arg2intvarargs(ce[0]);
+      unshare(s, iv);
       int offset = ce[1]->getInt();
-      argmin(s, iv, offset, s.arg2IntVar(ce[2]), true, s.ann2ipl(ann));
+      argmin(s, iv.slice(1), offset, x, true, s.ann2ipl(ann));
     }
 
     void p_maximum_arg(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
-      IntVarArgs iv = s.arg2intvarargs(ce[0]);
+      IntVar x = s.arg2IntVar(ce[2]);
+      IntVarArgs iv = x + s.arg2intvarargs(ce[0]);
+      unshare(s, iv);
       int offset = ce[1]->getInt();
-      argmax(s, iv, offset, s.arg2IntVar(ce[2]), true, s.ann2ipl(ann));
+      argmax(s, iv.slice(1), offset, x, true, s.ann2ipl(ann));
     }
 
     void p_minimum_arg_bool(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
       BoolVarArgs bv = s.arg2boolvarargs(ce[0]);
+      unshare(s, bv);
       int offset = ce[1]->getInt();
       argmin(s, bv, offset, s.arg2IntVar(ce[2]), true, s.ann2ipl(ann));
     }
 
     void p_maximum_arg_bool(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
       BoolVarArgs bv = s.arg2boolvarargs(ce[0]);
+      unshare(s, bv);
       int offset = ce[1]->getInt();
       argmax(s, bv, offset, s.arg2IntVar(ce[2]), true, s.ann2ipl(ann));
     }

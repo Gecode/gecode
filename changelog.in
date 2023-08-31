@@ -70,6 +70,14 @@ Date: 2020-??-??
 Let's see.
 
 [ENTRY]
+Module: flatzinc
+What:   bug
+Issue:  169
+Rank:   minor
+[DESCRIPTION]
+Unshare variables for maximum_arg / minimum_arg constraints.
+
+[ENTRY]
 Module: int
 What:   bug
 Issue:  167
