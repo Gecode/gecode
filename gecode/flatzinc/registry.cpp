@@ -1220,12 +1220,12 @@ namespace Gecode { namespace FlatZinc {
     void
     p_inverse_offsets(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
       IntVarArgs x = s.arg2intvarargs(ce[0]);
-      unshare(s, x);
       int xoff = ce[1]->getInt();
       IntVarArgs y = s.arg2intvarargs(ce[2]);
-      unshare(s, y);
       int yoff = ce[3]->getInt();
-      channel(s, x, xoff, y, yoff, s.ann2ipl(ann));
+      IntVarArgs xy = x + y;
+      unshare(s, xy);
+      channel(s, xy.slice(0, 1, x.size()), xoff, xy.slice(x.size()), yoff, s.ann2ipl(ann));
     }
 
     void

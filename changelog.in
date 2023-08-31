@@ -72,6 +72,14 @@ Let's see.
 [ENTRY]
 Module: flatzinc
 What:   bug
+Issue:  171
+Rank:   minor
+[DESCRIPTION]
+Correctly unshare variables for inverse constraint.
+
+[ENTRY]
+Module: flatzinc
+What:   bug
 Issue:  169
 Rank:   minor
 [DESCRIPTION]
