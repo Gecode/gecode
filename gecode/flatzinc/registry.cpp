@@ -1251,6 +1251,7 @@ namespace Gecode { namespace FlatZinc {
       IntVarArgs x = s.arg2intvarargs(ce[0]);
       IntArgs tuples = s.arg2intargs(ce[1]);
       TupleSet ts = s.arg2tupleset(tuples,x.size());
+      unshare(s,x);
       extensional(s,x,ts,s.ann2ipl(ann));
     }
 
@@ -1259,6 +1260,7 @@ namespace Gecode { namespace FlatZinc {
       IntVarArgs x = s.arg2intvarargs(ce[0]);
       IntArgs tuples = s.arg2intargs(ce[1]);
       TupleSet ts = s.arg2tupleset(tuples,x.size());
+      unshare(s,x);
       extensional(s,x,ts,Reify(s.arg2BoolVar(ce[2]),RM_EQV),s.ann2ipl(ann));
     }
 
@@ -1267,6 +1269,7 @@ namespace Gecode { namespace FlatZinc {
       IntVarArgs x = s.arg2intvarargs(ce[0]);
       IntArgs tuples = s.arg2intargs(ce[1]);
       TupleSet ts = s.arg2tupleset(tuples,x.size());
+      unshare(s,x);
       extensional(s,x,ts,Reify(s.arg2BoolVar(ce[2]),RM_IMP),s.ann2ipl(ann));
     }
 
@@ -1275,6 +1278,7 @@ namespace Gecode { namespace FlatZinc {
       BoolVarArgs x = s.arg2boolvarargs(ce[0]);
       IntArgs tuples = s.arg2boolargs(ce[1]);
       TupleSet ts = s.arg2tupleset(tuples,x.size());
+      unshare(s,x);
       extensional(s,x,ts,s.ann2ipl(ann));
     }
 
@@ -1283,6 +1287,7 @@ namespace Gecode { namespace FlatZinc {
       BoolVarArgs x = s.arg2boolvarargs(ce[0]);
       IntArgs tuples = s.arg2boolargs(ce[1]);
       TupleSet ts = s.arg2tupleset(tuples,x.size());
+      unshare(s,x);
       extensional(s,x,ts,Reify(s.arg2BoolVar(ce[2]),RM_EQV),s.ann2ipl(ann));
     }
 
@@ -1291,6 +1296,7 @@ namespace Gecode { namespace FlatZinc {
       BoolVarArgs x = s.arg2boolvarargs(ce[0]);
       IntArgs tuples = s.arg2boolargs(ce[1]);
       TupleSet ts = s.arg2tupleset(tuples,x.size());
+      unshare(s,x);
       extensional(s,x,ts,Reify(s.arg2BoolVar(ce[2]),RM_IMP),s.ann2ipl(ann));
     }
 

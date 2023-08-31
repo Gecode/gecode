@@ -70,6 +70,16 @@ Date: 2020-??-??
 Let's see.
 
 [ENTRY]
+Module: int
+What:   bug
+Issue:  167
+Rank:   minor
+[DESCRIPTION]
+Make extensional (compact-table) constraints check for duplicated variables.
+Also fixes the FlatZinc interface to unshare arguments for extensional
+constraints.
+
+[ENTRY]
 Module: support
 What:   change
 Rank:   major
