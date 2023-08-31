@@ -327,6 +327,9 @@ namespace Gecode {
   divmod(Home home, IntVar x0, IntVar x1, IntVar x2, IntVar x3,
          IntPropLevel) {
     using namespace Int;
+    IntVarArgs allvars = {x0, x1, x2, x3};
+    if (same(allvars))
+      throw ArgumentSame("Int::divmod");
     GECODE_POST;
 
     IntVar prod(home, Int::Limits::min, Int::Limits::max);

@@ -469,13 +469,17 @@ namespace Gecode { namespace FlatZinc {
       IntVar x0 = s.arg2IntVar(ce[0]);
       IntVar x1 = s.arg2IntVar(ce[1]);
       IntVar x2 = s.arg2IntVar(ce[2]);
-      div(s,x0,x1,x2, s.ann2ipl(ann));
+      IntVarArgs x = {x0, x1, x2};
+      unshare(s, x);
+      div(s,x[0],x[1],x[2], s.ann2ipl(ann));
     }
     void p_int_mod(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
       IntVar x0 = s.arg2IntVar(ce[0]);
       IntVar x1 = s.arg2IntVar(ce[1]);
       IntVar x2 = s.arg2IntVar(ce[2]);
-      mod(s,x0,x1,x2, s.ann2ipl(ann));
+      IntVarArgs x = {x0, x1, x2};
+      unshare(s, x);
+      mod(s,x[0],x[1],x[2], s.ann2ipl(ann));
     }
 
     void p_int_min(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {

@@ -80,6 +80,14 @@ Correctly unshare variables for inverse constraint.
 [ENTRY]
 Module: flatzinc
 What:   bug
+Issue:  170
+Rank:   minor
+[DESCRIPTION]
+Correctly unshare variables for div and mod constraints.
+
+[ENTRY]
+Module: flatzinc
+What:   bug
 Issue:  169
 Rank:   minor
 [DESCRIPTION]
