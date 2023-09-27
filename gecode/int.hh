@@ -5555,7 +5555,7 @@ namespace Gecode {
   /**
    * \brief Branch over \a x using counting-based search
    *
-   * Branches on the <variable, value> pair that has the the highest solution
+   * Branches on the <variable, value> pair that has the highest solution
    * density across all active propagators. Computing solution density is
    * currently supported for the following propagators:
    *
@@ -5579,7 +5579,7 @@ namespace Gecode {
   /**
    * \brief Branch over \a x using counting-based search
    *
-   * Branches on the <variable, value> pair that has the the highest solution
+   * Branches on the <variable, value> pair that has the highest solution
    * density across all active propagators. Computing solution density is
    * currently supported for the following propagators:
    *

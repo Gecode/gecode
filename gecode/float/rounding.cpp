@@ -44,7 +44,7 @@
 
 namespace Gecode { namespace Float {
 
-  /// Type signatur of mpfr function
+  /// Type signature of mpfr function
   typedef int mpfr_func(mpfr_t, const __mpfr_struct*, mp_rnd_t);
 
   /// Routine to call mpfr function with proper rounding

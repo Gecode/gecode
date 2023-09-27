@@ -243,7 +243,7 @@ namespace Gecode { namespace Int { namespace GCC {
     void dec(BC bc);
     /// increase the node-capacity
     void inc(BC bc);
-    /// return the the node-capacity
+    /// return the node-capacity
     int cap(BC bc) const;
     /// set the node-capacity to \a c
     void cap(BC bc, int c);
@@ -428,7 +428,7 @@ namespace Gecode { namespace Int { namespace GCC {
     /**
      * \brief Constructor for the variable-value-graph
      *
-     * The variable parition is initialized with the variables from \a x,
+     * The variable partition is initialized with the variables from \a x,
      * the value partition is initialized with the values from \a k.
      **/
     VarValGraph(Space& home,
@@ -774,7 +774,7 @@ namespace Gecode { namespace Int { namespace GCC {
     return _kidx;
   }
 
-  /// Returs the number of incident matching edges on the node
+  /// Returns the number of incident matching edges on the node
   forceinline int
   ValNode::incid_match(BC bc) const {
     if (bc == LBC)
@@ -1428,7 +1428,7 @@ namespace Gecode { namespace Int { namespace GCC {
         if (Card::propagate)
           GECODE_ME_CHECK(k[i].lq(home, v->noe));
 
-        // If the maximum number of occurences of a value is reached
+        // If the maximum number of occurrences of a value is reached
         // it cannot be consumed by another view
 
         if (v->kcount() == v->kmax()) {
@@ -1506,7 +1506,7 @@ namespace Gecode { namespace Int { namespace GCC {
   inline ExecStatus
   VarValGraph<Card>::maximum_matching(void) {
     int card_match = 0;
-    // find an intial matching in O(n*d)
+    // find an initial matching in O(n*d)
     // greedy algorithm
     for (int i = n_val; i--; )
       for (Edge* e = vals[i]->first(); e != nullptr ; e = e->vnext())

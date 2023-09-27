@@ -38,7 +38,7 @@
 
 namespace Gecode { namespace Search { namespace Par {
 
-  /// Stop object used for controling slaves in a portfolio
+  /// Stop object used for controlling slaves in a portfolio
   class GECODE_SEARCH_EXPORT PortfolioStop : public Stop {
   private:
     /// The stop object for the slaves
@@ -163,8 +163,8 @@ namespace Gecode { namespace Search { namespace Par {
     /**
      * The key invariant of the engine is as follows:
      *  - n_busy is always zero outside the next() function.
-     *  - that entails, that locking is only needed insided next().
-     *  - the slaves 0..n_active-1 still might not have exausted their
+     *  - that entails, that locking is only needed inside next().
+     *  - the slaves 0..n_active-1 still might not have exhausted their
      *    search space.
      *  - the slaves n_active..n_slaves-1 have exhausted their search space.
      */

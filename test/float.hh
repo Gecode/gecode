@@ -191,7 +191,7 @@ namespace Test {
        * \brief Create test space
        *
        * Creates \a n variables with domain \a d and step \a s for
-       * test \a t annd reification mode \a rm.
+       * test \a t and reification mode \a rm.
        *
        */
       TestSpace(int n, Gecode::FloatVal& d, Gecode::FloatNum s, Test* t,
@@ -218,7 +218,7 @@ namespace Test {
       /// If assignment of a variable is MT_MAYBE (if the two intervals are contiguous),
       /// \a sol is set to MT_MAYBE
       void assign(const Assignment& a, MaybeType& sol, bool skip, Gecode::Support::RandomGenerator& rand);
-      /// Assing a random variable to a random bound
+      /// Assign a random variable to a random bound
       void bound(Gecode::Support::RandomGenerator& rand);
       /// Cut the bigger variable to an half sized interval. It returns
       /// the new size of the cut interval. \a cutDirections gives the direction
