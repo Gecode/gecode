@@ -51,7 +51,7 @@ namespace {
 
   /** \brief Generates\ref layout.
    *
-   * This function generates the layeout and intializes \ref layer and
+   * This function generates the layout and initializes \ref layer and
    * \ref pile from it. The layout is randomly generated from the
    * supplied seed.
    */

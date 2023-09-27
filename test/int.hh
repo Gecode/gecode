@@ -96,7 +96,7 @@ namespace Test {
     class RandomAssignment : public Assignment {
     protected:
       int* vals; ///< The current values for the variables
-      int  a;    ///< How many assigments still to be generated
+      int  a;    ///< How many assignments still to be generated
       /// Generate new value according to domain
       int randval(Gecode::Support::RandomGenerator& rand);
     public:
@@ -116,7 +116,7 @@ namespace Test {
     class RandomMixAssignment : public Assignment {
     protected:
       int* vals; ///< The current values for the variables
-      int  a;    ///< How many assigments still to be generated
+      int  a;    ///< How many assignments still to be generated
       int _n1;   ///< How many variables in the second set
       Gecode::IntSet _d1; ///< Domain for second set of variables
       /// Generate new value according to domain \a d
@@ -194,7 +194,7 @@ namespace Test {
       void rel(bool sol);
       /// Assign all (or all but one, if \a skip is true) variables to values in \a a
       void assign(const Assignment& a, bool skip, Gecode::Support::RandomGenerator& rand);
-      /// Assing a random variable to a random bound
+      /// Assign a random variable to a random bound
       void bound(Gecode::Support::RandomGenerator& rand);
       /** \brief Prune some random values from variable \a i
        *

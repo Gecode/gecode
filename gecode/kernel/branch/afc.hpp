@@ -45,7 +45,7 @@ namespace Gecode {
     /// \name Constructors and initialization
     //@{
     /**
-     * \brief Construct as not yet intialized
+     * \brief Construct as not yet initialized
      *
      * The only member functions that can be used on a constructed but not
      * yet initialized AFC storage is init and the assignment operator.
