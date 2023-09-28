@@ -33,9 +33,12 @@
 # CMake build script for Gecode.
 #
 
-cmake_minimum_required(VERSION 3.7.0)
+cmake_minimum_required(VERSION 3.8.0)
 
 project(GECODE)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/misc/cmake_modules)
@@ -58,26 +61,12 @@ if (GECODE_DISABLE_WARNINGS)
   endif ()
 endif ()
 
-if ( (CMAKE_VERSION VERSION_GREATER 3.1.0) OR (CMAKE_VERSION VERSION_EQUAL 3.1.0) )
-  set (CMAKE_CXX_STANDARD 11)
-endif()
 if(CMAKE_VERSION VERSION_GREATER_EQUAL 3.11.0)
   cmake_policy(SET CMP0072 NEW)
   set (OpenGL_GL_PREFERENCE LEGACY)
 endif()
 if(CMAKE_VERSION VERSION_GREATER_EQUAL 3.17.0)
   cmake_policy(SET CMP0100 NEW)
-endif()
-check_cxx_compiler_flag(-std=c++11 HAS_STDCPP11)
-if (HAS_STDCPP11)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-else()
-  check_cxx_compiler_flag(-std=c++0x HAS_STDCPP0X)
-  if (HAS_STDCPP0X)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
-  else()
-    message("Warning: Initial check for C++11 unsuccessful. This is fine if HAS_CPP11 test below succeeds.")
-  endif()
 endif()
 
 # The following part of config.h is hard to derive from configure.ac.
