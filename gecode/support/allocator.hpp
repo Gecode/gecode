@@ -42,6 +42,14 @@
 #include <malloc/malloc.h>
 #endif
 
+#ifdef GECODE_JEMALLOC_H
+#include <jemalloc/jemalloc.h>
+#endif
+
+#ifdef GECODE_TCMALLOC_H
+#include <gperftools/tcmalloc.h>
+#endif
+
 #ifdef GECODE_ALLOCATOR
 
 namespace Gecode { namespace Support {
@@ -77,15 +85,27 @@ namespace Gecode { namespace Support {
   }
   forceinline void*
   Allocator::alloc(size_t n) {
+  #ifdef GECODE_TCMALLOC_H
+    return tc_mallock(n);
+  #else
     return ::malloc(n);
+  #endif
   }
   forceinline void*
   Allocator::realloc(void* p, size_t n) {
+  #ifdef GECODE_TCMALLOC_H
+    return tc_realloc(p,n);
+  #else
     return ::realloc(p,n);
+  #endif
   }
   forceinline void
   Allocator::free(void* p) {
+  #ifdef GECODE_TCMALLOC_H
+    tc_free(p);
+  #else
     ::free(p);
+  #endif
   }
   forceinline void*
   Allocator::memcpy(void *d, const void *s, size_t n) {
