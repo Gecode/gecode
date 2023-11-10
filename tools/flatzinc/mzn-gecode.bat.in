@@ -34,4 +34,4 @@ rem
 
 setlocal
 set FLATZINC_CMD=fzn-gecode
-minizinc -I "%GECODEDIR%\mznlib" %*
+minizinc -I "%GECODEDIR%\share\minizinc\gecode" %*

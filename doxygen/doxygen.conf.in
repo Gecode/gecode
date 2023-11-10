@@ -657,8 +657,10 @@ HTML_FOOTER            = @top_srcdir@/misc/doxygen/footer.html
 # will generate a default style sheet. Note that doxygen will try to copy
 # the style sheet file to the HTML output directory, so don't put your own
 # stylesheet in the HTML output directory as well, or it will be erased!
+# Note: this is now superseded by HTML_EXTRA_STYLESHEET, an extra
+# stylesheeet applied on top of the standard doxygen stylesheet.
 
-HTML_STYLESHEET        = @top_srcdir@/misc/doxygen/stylesheet.css
+HTML_EXTRA_STYLESHEET  = @top_srcdir@/misc/doxygen/stylesheet.css
 
 # If the HTML_ALIGN_MEMBERS tag is set to YES, the members of classes,
 # files or namespaces will be aligned in HTML using tables. If set to

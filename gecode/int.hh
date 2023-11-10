@@ -873,14 +873,14 @@ namespace Gecode {
      * \brief Implication for reification
      *
      * For a constraint \f$c\f$ and a Boolean control variable \f$b\f$
-     * defines that \f$b=1\Leftarrow c\f$ is propagated.
+     * defines that \f$b=1\Rightarrow c\f$ is propagated.
      */
     RM_IMP,
     /**
      * \brief Inverse implication for reification
      *
      * For a constraint \f$c\f$ and a Boolean control variable \f$b\f$
-     * defines that \f$b=1\Rightarrow c\f$ is propagated.
+     * defines that \f$c\Rightarrow b=1\f$ is propagated.
      */
     RM_PMI
   };
