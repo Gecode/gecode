@@ -1323,6 +1323,80 @@ namespace Gecode { namespace FlatZinc {
 
     void p_cumulatives(FlatZincSpace& s, const ConExpr& ce,
                       AST::Node* ann) {
+      if (ce.size() == 6) {
+        // Full cumulatives call
+        IntVarArgs start = s.arg2intvarargs(ce[0]);
+        IntVarArgs duration = s.arg2intvarargs(ce[1]);
+        IntVarArgs resources = s.arg2intvarargs(ce[2]);
+        IntVarArgs machine = s.arg2intvarargs(ce[3]);
+        IntArgs bound = s.arg2intargs(ce[4]);
+        bool upper = ce[5]->getBool();
+        int n = start.size();
+
+        if (duration.assigned()) {
+          IntArgs durationI(n);
+          for (int i = n; (i--) != 0;) {
+            durationI[i] = duration[i].val();
+          }
+          IntVarArgs end(n);
+          for (int i = n; (i--) != 0;) {
+            end[i] = expr(s, start[i] + durationI[i]);
+          }
+          if (machine.assigned()) {
+            IntArgs machineI(n);
+            for (int i = n; (i--) != 0;) {
+              machineI[i] = machine[i].val();
+            }
+            if (resources.assigned()) {
+              IntArgs resourcesI(n);
+              for (int i = n; (i--) != 0;) {
+                resourcesI[i] = resources[i].val();
+              }
+              cumulatives(s, machineI, start, durationI, end, resourcesI, bound, upper, s.ann2ipl(ann));
+            } else {
+              cumulatives(s, machineI, start, durationI, end, resources, bound, upper, s.ann2ipl(ann));
+            }
+          } else if (resources.assigned()) {
+            IntArgs resourcesI(n);
+            for (int i = n; (i--) != 0;) {
+              resourcesI[i] = resources[i].val();
+            }
+            cumulatives(s, machine, start, durationI, end, resourcesI, bound, upper, s.ann2ipl(ann));
+          } else {
+            cumulatives(s, machine, start, durationI, end, resources, bound, upper, s.ann2ipl(ann));
+          }
+        } else {
+          IntVarArgs end(n);
+          for (int i = n; (i--) != 0;) {
+            end[i] = expr(s, start[i] + duration[i]);
+          }
+          if (machine.assigned()) {
+            IntArgs machineI(n);
+            for (int i = n; (i--) != 0;) {
+              machineI[i] = machine[i].val();
+            }
+            if (resources.assigned()) {
+              IntArgs resourcesI(n);
+              for (int i = n; (i--) != 0;) {
+                resourcesI[i] = resources[i].val();
+              }
+              cumulatives(s, machineI, start, duration, end, resourcesI, bound, upper, s.ann2ipl(ann));
+            } else {
+              cumulatives(s, machineI, start, duration, end, resources, bound, upper, s.ann2ipl(ann));
+            }
+          } else if (resources.assigned()) {
+            IntArgs resourcesI(n);
+            for (int i = n; (i--) != 0;) {
+              resourcesI[i] = resources[i].val();
+            }
+            cumulatives(s, machine, start, duration, end, resourcesI, bound, upper, s.ann2ipl(ann));
+          } else {
+            cumulatives(s, machine, start, duration, end, resources, bound, upper, s.ann2ipl(ann));
+          }
+        }
+        return;
+      }
+
       IntVarArgs start = s.arg2intvarargs(ce[0]);
       IntVarArgs duration = s.arg2intvarargs(ce[1]);
       IntVarArgs height = s.arg2intvarargs(ce[2]);

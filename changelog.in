@@ -71,6 +71,13 @@ Let's see.
 
 [ENTRY]
 Module: flatzinc
+What:   change
+Rank:   minor
+[DESCRIPTION]
+Expose the full cumulatives scheduling constraint to MiniZinc.
+
+[ENTRY]
+Module: flatzinc
 What:   bug
 Issue:  171
 Rank:   minor

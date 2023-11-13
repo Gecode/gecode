@@ -50,9 +50,9 @@ namespace Test { namespace FlatZinc {
       std::string cmd("fzn-gecode");
       int argc = static_cast<int>(_cmdlineOpt.size()) + 1;
       std::vector<char*> argv(argc);
-      argv[0] = cmd.data();
+      argv[0] = const_cast<char*>(cmd.data());
       for (int i = 1; i < argc; ++i) {
-        argv[i] = _cmdlineOpt[i-1].data();
+        argv[i] = const_cast<char*>(_cmdlineOpt[i-1].data());
       }
       fznopt.parse(argc, argv.data());
     }
