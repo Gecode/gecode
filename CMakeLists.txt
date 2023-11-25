@@ -74,41 +74,8 @@ file(READ gecode/support/config.hpp.in CONFIG)
 string(REGEX REPLACE "^/\\*([^*]|\\*[^/])*\\*/" "" CONFIG ${CONFIG})
 string(REGEX MATCHALL "[^\n]*\n" CONFIG
 "${CONFIG}
-/* Define to 1 if you have the `getpagesize' function. */
-#undef HAVE_GETPAGESIZE
-
-/* Define to 1 if you have the <inttypes.h> header file. */
-#undef HAVE_INTTYPES_H
-
-/* Define to 1 if you have the <memory.h> header file. */
-#undef HAVE_MEMORY_H
-
 /* Define to 1 if you have a working `mmap' system call. */
 #undef HAVE_MMAP
-
-/* Define to 1 if you have the <stdint.h> header file. */
-#undef HAVE_STDINT_H
-
-/* Define to 1 if you have the <stdlib.h> header file. */
-#undef HAVE_STDLIB_H
-
-/* Define to 1 if you have the <strings.h> header file. */
-#undef HAVE_STRINGS_H
-
-/* Define to 1 if you have the <string.h> header file. */
-#undef HAVE_STRING_H
-
-/* Define to 1 if you have the <sys/param.h> header file. */
-#undef HAVE_SYS_PARAM_H
-
-/* Define to 1 if you have the <sys/stat.h> header file. */
-#undef HAVE_SYS_STAT_H
-
-/* Define to 1 if you have the <sys/types.h> header file. */
-#undef HAVE_SYS_TYPES_H
-
-/* Define to 1 if you have the <unistd.h> header file. */
-#undef HAVE_UNISTD_H
 
 /* Define to the address where bug reports for this package should be sent. */
 #undef PACKAGE_BUGREPORT
@@ -127,12 +94,6 @@ string(REGEX MATCHALL "[^\n]*\n" CONFIG
 
 /* Define to the version of this package. */
 #undef PACKAGE_VERSION
-
-/* The size of `int', as computed by sizeof. */
-#undef SIZEOF_INT
-
-/* Define to 1 if you have the ANSI C header files. */
-#undef STDC_HEADERS
 ")
 
 # Get version numbers and parts of config.h from configure.ac.
@@ -251,25 +212,12 @@ if (NOT DEFINED GECODE_USE_QT OR GECODE_USE_QT)
 endif ()
 
 include(CheckSymbolExists)
-check_symbol_exists(getpagesize unistd.h HAVE_GETPAGESIZE)
 check_symbol_exists(mmap sys/mman.h HAVE_MMAP)
-
-# Checks for header files.
-include(CheckIncludeFiles)
-foreach (header inttypes.h memory.h stdint.h stdlib.h strings.h string.h
-                sys/param.h sys/stat.h sys/time.h sys/types.h unistd.h)
-  string(TOUPPER HAVE_${header} var)
-  string(REGEX REPLACE "\\.|/" "_" var ${var})
-  check_include_files(${header} ${var})
-endforeach ()
-check_include_files(stdio.h STDC_HEADERS)
-if (HAVE_SYS_TIME_H)
+check_symbol_exists(gettimeofday sys/time.h HAVE_GETTIMEOFDAY)
+if (HAVE_GETTIMEOFDAY)
   set(GECODE_USE_GETTIMEOFDAY 1)
 else ()
   set(GECODE_USE_CLOCK 1)
-endif ()
-if (HAVE_UNISTD_H)
-  set(GECODE_HAS_UNISTD_H 1)
 endif ()
 
 include(CheckCXXSourceCompiles)
@@ -286,9 +234,6 @@ check_cxx_source_compiles("
 if (HAVE_UNORDERED_MAP)
   set(GECODE_HAS_UNORDERED_MAP "/**/")
 endif ()
-
-include(CheckTypeSize)
-check_type_size(int SIZEOF_INT)
 
 # Check for inline.
 include(CheckCSourceCompiles)

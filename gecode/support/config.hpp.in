@@ -90,9 +90,6 @@
 /* Whether to build SET variables */
 #undef GECODE_HAS_SET_VARS
 
-/* Whether unistd.h is available */
-#undef GECODE_HAS_UNISTD_H
-
 /* Whether unordered_map is available */
 #undef GECODE_HAS_UNORDERED_MAP
 
