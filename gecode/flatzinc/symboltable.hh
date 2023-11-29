@@ -34,15 +34,8 @@
 #ifndef GECODE_FLATZINC_SYMBOLTABLE_HH
 #define GECODE_FLATZINC_SYMBOLTABLE_HH
 
-#include <vector>
-
-#ifdef GECODE_HAS_UNORDERED_MAP
 #include <unordered_map>
-#elif defined(GECODE_HAS_GNU_HASH_MAP)
-#include <ext/hash_map>
-#else
-#include <map>
-#endif
+#include <vector>
 
 namespace Gecode { namespace FlatZinc {
 
@@ -50,20 +43,7 @@ namespace Gecode { namespace FlatZinc {
   template<class Val>
   class SymbolTable {
   private:
-#ifdef GECODE_HAS_UNORDERED_MAP
-    typedef std::unordered_map<std::string,Val> mymap;
-#elif defined(GECODE_HAS_GNU_HASH_MAP)
-    class hashString {
-    public:
-      size_t operator ()(const std::string& x) const {
-        return __gnu_cxx::hash<const char*>()(x.c_str());
-      }
-    };
-    typedef __gnu_cxx::hash_map<std::string,Val,hashString> mymap;
-#else
-    typedef std::map<std::string,Val> mymap;
-#endif
-    mymap m;
+    std::unordered_map<std::string,Val> m;
   public:
     /// Insert \a val with \a key
     bool put(const std::string& key, const Val& val);
@@ -74,7 +54,7 @@ namespace Gecode { namespace FlatZinc {
   template<class Val>
   bool
   SymbolTable<Val>::put(const std::string& key, const Val& val) {
-    typename mymap::const_iterator i = m.find(key);
+    const auto& i = m.find(key);
     bool fresh = (i == m.end());
     m[key] = val;
     return fresh;
@@ -83,7 +63,7 @@ namespace Gecode { namespace FlatZinc {
   template<class Val>
   bool
   SymbolTable<Val>::get(const std::string& key, Val& val) const {
-    typename mymap::const_iterator i = m.find(key);
+    const auto& i = m.find(key);
     if (i == m.end())
       return false;
     val = i->second;
