@@ -11769,24 +11769,6 @@ fi
   ;;
 esac
 
-ac_fn_cxx_check_header_mongrel "$LINENO" "ext/hash_map" "ac_cv_header_ext_hash_map" "$ac_includes_default"
-if test "x$ac_cv_header_ext_hash_map" = xyes; then :
-
-$as_echo "#define GECODE_HAS_GNU_HASH_MAP /**/" >>confdefs.h
-
-fi
-
-
-
-ac_fn_cxx_check_header_mongrel "$LINENO" "unordered_map" "ac_cv_header_unordered_map" "$ac_includes_default"
-if test "x$ac_cv_header_unordered_map" = xyes; then :
-
-$as_echo "#define GECODE_HAS_UNORDERED_MAP /**/" >>confdefs.h
-
-fi
-
-
-
 
    # Check whether --enable-doc-dot was given.
 if test "${enable_doc_dot+set}" = set; then :
