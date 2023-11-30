@@ -258,6 +258,13 @@ if (HAVE_BUILTIN_FFSL)
   set(GECODE_HAS_BUILTIN_FFSL "/**/")
 endif ()
 
+# Check for popcount
+check_c_source_compiles("
+  int main() { return __builtin_popcountll(0); }" HAVE_BUILTIN_POPCOUNTLL)
+if (HAVE_BUILTIN_POPCOUNTLL)
+  set(GECODE_HAS_BUILTIN_POPCOUNTLL "/**/")
+endif ()
+
 # Process config.hpp using autoconf rules.
 list(LENGTH CONFIG length)
 math(EXPR length "${length} - 1")
