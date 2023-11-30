@@ -18,6 +18,7 @@ CMakeFiles
 bin
 gecode/support/config.hpp
 tools/flatzinc/gecode.msc
+tools/flatzinc/gecode-gist.msc
 tools/flatzinc/mzn-gecode.bat
 tools/flatzinc/fzn-gecode
 tools/flatzinc/mzn-gecode
