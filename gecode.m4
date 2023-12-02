@@ -1519,12 +1519,6 @@ AC_DEFUN([AC_GECODE_THREADS],[
   fi
 ])
 
-AC_DEFUN([AC_GECODE_TIMER],[
-  AC_CHECK_HEADER(sys/time.h,
-  [AC_DEFINE(GECODE_USE_GETTIMEOFDAY,1,[Use gettimeofday for time-measurement])],
-  [AC_DEFINE(GECODE_USE_CLOCK,1,[Use clock() for time-measurement])])
-])
-
 dnl check whether we have suifficiently recent versions of flex/bison
 AC_DEFUN([AC_GECODE_FLEXBISON],
   [AC_CHECK_TOOL(HAVEFLEX, flex)
