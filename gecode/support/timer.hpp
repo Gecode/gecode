@@ -31,13 +31,7 @@
  *
  */
 
-#ifdef GECODE_USE_GETTIMEOFDAY
-#include <sys/time.h>
-#endif
-
-#ifdef GECODE_USE_CLOCK
-#include <ctime>
-#endif
+#include <chrono>
 
 namespace Gecode { namespace Support {
 
@@ -50,11 +44,9 @@ namespace Gecode { namespace Support {
    */
   class GECODE_SUPPORT_EXPORT Timer {
   private:
-#if   defined(GECODE_USE_GETTIMEOFDAY)
-    timeval t0; ///< Start time
-#elif defined(GECODE_USE_CLOCK)
-    clock_t t0; ///< Start time
-#endif
+    using time_point = std::chrono::time_point<std::chrono::steady_clock>;
+    time_point t0; ///< Start time
+
   public:
     /// Start timer
     void start(void);
@@ -64,34 +56,13 @@ namespace Gecode { namespace Support {
 
   inline void
   Timer::start(void) {
-#if   defined(GECODE_USE_GETTIMEOFDAY)
-    if (gettimeofday(&t0, nullptr))
-      throw OperatingSystemError("Timer::start[gettimeofday]");
-#elif defined(GECODE_USE_CLOCK)
-    t0 = clock();
-#endif
+    t0 = std::chrono::steady_clock::now();
   }
 
   inline double
   Timer::stop(void) {
-#if   defined(GECODE_USE_GETTIMEOFDAY)
-    timeval t1, t;
-    if (gettimeofday(&t1, nullptr))
-      throw OperatingSystemError("Timer::stop[gettimeofday]");
-
-    // t = t1 - t2
-    t.tv_sec = t1.tv_sec - t0.tv_sec;
-    t.tv_usec = t1.tv_usec - t0.tv_usec;
-    if (t.tv_usec < 0) {
-      t.tv_sec--;
-      t.tv_usec += 1000000;
-    }
-
-    return (static_cast<double>(t.tv_sec) * 1000.0) +
-      (static_cast<double>(t.tv_usec)/1000.0);
-#elif defined(GECODE_USE_CLOCK)
-    return (static_cast<double>(clock()-t0) / CLOCKS_PER_SEC) * 1000.0;
-#endif
+    std::chrono::duration<double, std::milli> duration = std::chrono::steady_clock::now() - t0;
+    return duration.count();
   }
 
 }}

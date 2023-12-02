@@ -114,12 +114,6 @@
 /* Whether to use unfair mutexes on macOS */
 #undef GECODE_USE_OSX_UNFAIR_MUTEX
 
-/* Use clock() for time-measurement */
-#undef GECODE_USE_CLOCK
-
-/* Use gettimeofday for time-measurement */
-#undef GECODE_USE_GETTIMEOFDAY
-
 /* Gecode version */
 #undef GECODE_VERSION
 

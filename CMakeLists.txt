@@ -213,12 +213,6 @@ endif ()
 
 include(CheckSymbolExists)
 check_symbol_exists(mmap sys/mman.h HAVE_MMAP)
-check_symbol_exists(gettimeofday sys/time.h HAVE_GETTIMEOFDAY)
-if (HAVE_GETTIMEOFDAY)
-  set(GECODE_USE_GETTIMEOFDAY 1)
-else ()
-  set(GECODE_USE_CLOCK 1)
-endif ()
 
 # Check for inline.
 include(CheckCSourceCompiles)

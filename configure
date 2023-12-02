@@ -6537,21 +6537,6 @@ $as_echo "no" >&6; }
 
 
 
-  ac_fn_cxx_check_header_mongrel "$LINENO" "sys/time.h" "ac_cv_header_sys_time_h" "$ac_includes_default"
-if test "x$ac_cv_header_sys_time_h" = xyes; then :
-
-$as_echo "#define GECODE_USE_GETTIMEOFDAY 1" >>confdefs.h
-
-else
-
-$as_echo "#define GECODE_USE_CLOCK 1" >>confdefs.h
-
-fi
-
-
-
-
-
 # Check whether --with-freelist32-size-max was given.
 if test "${with_freelist32_size_max+set}" = set; then :
   withval=$with_freelist32_size_max;
