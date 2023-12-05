@@ -335,8 +335,7 @@ foreach (lib support kernel search int set float
   if (${libupper}SRC)
     set(sources )
     foreach (src ${${libupper}SRC} ${${libupper}_GENSRC})
-      if ((src STREQUAL "gecode/support/thread/pthreads.cpp" AND MSVC) OR
-           (src STREQUAL "gecode/float/rounding.cpp" AND NOT ${MPFR_FOUND}))
+      if (src STREQUAL "gecode/float/rounding.cpp" AND NOT ${MPFR_FOUND})
         # ignore empty source files to prevent linker warnings
       else ()
         set(sources ${sources} ${src})
