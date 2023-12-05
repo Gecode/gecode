@@ -7,6 +7,27 @@ env:
   BUILD_TYPE: Release
 
 jobs:
+  build-autoconf:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [macos-latest, ubuntu-latest]
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Configure
+      shell: bash
+      run: ./configure
+
+    - name: Build
+      shell: bash
+      run: make test -j4
+
+    - name: Check
+      shell: bash
+      run: make check
+
   build-cmake:
     runs-on: ${{ matrix.os }}
     strategy:
