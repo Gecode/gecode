@@ -2906,7 +2906,7 @@ yyreduce:
       {
         SymbolEntry e;
         ParserState* pp = static_cast<ParserState*>(parm);
-        if (pp->symbols.get((yyvsp[0].sValue), e) && e.t == ST_INTVAR)
+        if (pp->symbols.get((yyvsp[0].sValue), e) && (e.t == ST_INTVAR || e.t == ST_INT))
           (yyval.varSpec) = new IntVarSpec(Alias(e.i),false,false);
         else {
           pp->err << "Error: undefined identifier for type int " << (yyvsp[0].sValue)
@@ -2986,7 +2986,7 @@ yyreduce:
       {
         SymbolEntry e;
         ParserState* pp = static_cast<ParserState*>(parm);
-        if (pp->symbols.get((yyvsp[0].sValue), e) && e.t == ST_FLOATVAR)
+        if (pp->symbols.get((yyvsp[0].sValue), e) && (e.t == ST_FLOATVAR || e.t == ST_FLOAT))
           (yyval.varSpec) = new FloatVarSpec(Alias(e.i),false,false);
         else {
           pp->err << "Error: undefined identifier for type float " << (yyvsp[0].sValue)
@@ -3065,7 +3065,7 @@ yyreduce:
       {
         SymbolEntry e;
         ParserState* pp = static_cast<ParserState*>(parm);
-        if (pp->symbols.get((yyvsp[0].sValue), e) && e.t == ST_BOOLVAR)
+        if (pp->symbols.get((yyvsp[0].sValue), e) && (e.t == ST_BOOLVAR || e.t == ST_BOOL))
           (yyval.varSpec) = new BoolVarSpec(Alias(e.i),false,false);
         else {
           pp->err << "Error: undefined identifier for type bool " << (yyvsp[0].sValue)
@@ -3144,7 +3144,7 @@ yyreduce:
       {
         ParserState* pp = static_cast<ParserState*>(parm);
         SymbolEntry e;
-        if (pp->symbols.get((yyvsp[0].sValue), e) && e.t == ST_SETVAR)
+        if (pp->symbols.get((yyvsp[0].sValue), e) && (e.t == ST_SETVAR || e.t == ST_SET))
           (yyval.varSpec) = new SetVarSpec(Alias(e.i),false,false);
         else {
           pp->err << "Error: undefined identifier for type set " << (yyvsp[0].sValue)

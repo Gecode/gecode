@@ -71,6 +71,13 @@ Let's see.
 
 [ENTRY]
 Module: flatzinc
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Allow par identifiers in var array initialisers.
+
+[ENTRY]
+Module: flatzinc
 What:   change
 Rank:   minor
 [DESCRIPTION]
