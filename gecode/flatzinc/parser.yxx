@@ -1327,7 +1327,7 @@ int_init :
       {
         SymbolEntry e;
         ParserState* pp = static_cast<ParserState*>(parm);
-        if (pp->symbols.get($1, e) && e.t == ST_INTVAR)
+        if (pp->symbols.get($1, e) && (e.t == ST_INTVAR || e.t == ST_INT))
           $$ = new IntVarSpec(Alias(e.i),false,false);
         else {
           pp->err << "Error: undefined identifier for type int " << $1
@@ -1384,7 +1384,7 @@ float_init :
       {
         SymbolEntry e;
         ParserState* pp = static_cast<ParserState*>(parm);
-        if (pp->symbols.get($1, e) && e.t == ST_FLOATVAR)
+        if (pp->symbols.get($1, e) && (e.t == ST_FLOATVAR || e.t == ST_FLOAT))
           $$ = new FloatVarSpec(Alias(e.i),false,false);
         else {
           pp->err << "Error: undefined identifier for type float " << $1
@@ -1439,7 +1439,7 @@ bool_init :
       {
         SymbolEntry e;
         ParserState* pp = static_cast<ParserState*>(parm);
-        if (pp->symbols.get($1, e) && e.t == ST_BOOLVAR)
+        if (pp->symbols.get($1, e) && (e.t == ST_BOOLVAR || e.t == ST_BOOL))
           $$ = new BoolVarSpec(Alias(e.i),false,false);
         else {
           pp->err << "Error: undefined identifier for type bool " << $1
@@ -1492,7 +1492,7 @@ set_init :
       {
         ParserState* pp = static_cast<ParserState*>(parm);
         SymbolEntry e;
-        if (pp->symbols.get($1, e) && e.t == ST_SETVAR)
+        if (pp->symbols.get($1, e) && (e.t == ST_SETVAR || e.t == ST_SET))
           $$ = new SetVarSpec(Alias(e.i),false,false);
         else {
           pp->err << "Error: undefined identifier for type set " << $1

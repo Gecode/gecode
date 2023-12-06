@@ -1215,6 +1215,7 @@ FLATZINCTESTSRC0 = \
   test/flatzinc/magicsq_5.cpp \
   test/flatzinc/oss.cpp \
   test/flatzinc/steiner_triples.cpp \
+  test/flatzinc/subtyping.cpp \
   test/flatzinc/timetabling.cpp \
   test/flatzinc/trucking.cpp \
 	test/flatzinc/on_restart_complete.cpp \
