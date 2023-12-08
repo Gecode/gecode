@@ -2010,7 +2010,7 @@ namespace Gecode { namespace FlatZinc {
   bool
   FlatZincSpace::slave(const MetaInfo& mi) {
     if (mi.type() == MetaInfo::RESTART) {
-      if (restart_data().mark_complete) {
+      if (restart_data.initialized() && restart_data().mark_complete) {
         // Fail the space
         this->fail();
         // Return true to signal we are in the global search space

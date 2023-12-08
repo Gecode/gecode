@@ -529,6 +529,7 @@ namespace Gecode { namespace FlatZinc {
           object(new OnRestartData());
         }
       }
+      bool initialized() const { return object() != nullptr; }
       OnRestartData& operator ()() {
         return *static_cast<OnRestartData*>(object());
       };
