@@ -97,7 +97,7 @@ namespace Gecode {
     } else {
       Space* master = m_opt.clone ? s->clone() : s;
       Space* slave  = master->clone();
-      MetaInfo mi(0,0,0,nullptr,NoGoods::eng);
+      MetaInfo mi(0,MetaInfo::RR_INIT,0,0,nullptr,NoGoods::eng);
       slave->slave(mi);
       e = Search::Seq::rbsengine(master,e_opt.stop,
                                  Search::build<T,E>(slave,e_opt),

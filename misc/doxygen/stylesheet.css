@@ -6,13 +6,6 @@ margin:0;
 padding:0;
 }
 
-#content {
-position:absolute; top:30px; left:60px;
-width:60%;
-padding:0 0 50px 0;
-color:#000000;
-}
-
 #contentfront {
 position:absolute; top:250px; left:60px;
 width:50%;

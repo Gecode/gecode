@@ -1,10 +1,10 @@
 /* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
- *     Christian Schulte <schulte@gecode.org>
+ *     Jason Nguyen <jason.nguyen@monash.edu>
  *
  *  Copyright:
- *     Christian Schulte, 2009
+ *     Jason nguyen, 2023
  *
  *  This file is part of Gecode, the generic constraint
  *  development environment:
@@ -31,34 +31,46 @@
  *
  */
 
-#include <gecode/support.hh>
+#include "test/flatzinc.hh"
 
-#ifdef GECODE_THREADS_WINDOWS
+namespace Test { namespace FlatZinc {
 
-namespace Gecode { namespace Support {
+  namespace {
+    /// Helper class to create and register tests
+    class Create {
+    public:
 
-  /// Function to start execution
-  DWORD WINAPI
-  bootstrap(LPVOID p) noexcept {
-    static_cast<Thread::Run*>(p)->exec();
-    return 0;
-  }
+      /// Perform creation and registration
+      Create(void) {
+        (void) new FlatZincTest("cumulatives_full::4",
+R"FZN(
+var 1..10: s1 :: output_var;
+var 1..10: s2 :: output_var;
+var 2..3: r1;
+var 2..5: r2;
+var 4..14: e1;
+var 2..15: e2;
+var 4..15: ms :: output_var;
+constraint gecode_int_element(s1, -1, [3, 2, 3, 2, 3, 2, 3, 2, 3, 2], r1);
+constraint gecode_int_element(s2, -1, [2, 3, 2, 3, 2, 3, 2, 3, 2, 3], r2);
+constraint gecode_cumulatives([s1, s2], [3, 5], [r1, r2], [0, 1], [4, 6], true);
+constraint int_lin_eq([1, -1], [s1, e1], -3);
+constraint int_lin_eq([1, -1], [s2, e2], -5);
+constraint array_int_maximum(ms, [e1, e2]);
+solve minimize ms;
+)FZN",
+R"OUT(ms = 6;
+s1 = 1;
+s2 = 1;
+----------
+==========
+)OUT");
+      }
+    };
 
-  Thread::Run::Run(Runnable* r0) {
-    m.acquire();
-    r = r0;
-    m.release();
-    // The Windows specific handle to a thread
-    HANDLE w_h;
-    w_h = CreateThread(nullptr, 0, bootstrap, this, 0, nullptr);
-    if (w_h == nullptr)
-      throw OperatingSystemError("Thread::run[Windows::CreateThread]");
-    if (CloseHandle(w_h) == 0)
-      throw OperatingSystemError("Thread::run[Windows::CloseHandle]");
+    Create c;
   }
 
 }}
 
-#endif
-
-// STATISTICS: support-any
+// STATISTICS: test-flatzinc

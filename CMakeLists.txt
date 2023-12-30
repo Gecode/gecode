@@ -33,11 +33,17 @@
 # CMake build script for Gecode.
 #
 
-cmake_minimum_required(VERSION 3.7.0)
+cmake_minimum_required(VERSION 3.8.0)
 
 project(GECODE)
 
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/misc/cmake_modules)
+
+find_package(MPFR)
 
 include(CheckCXXCompilerFlag)
 if (GECODE_DISABLE_WARNINGS)
@@ -55,21 +61,12 @@ if (GECODE_DISABLE_WARNINGS)
   endif ()
 endif ()
 
-set (CMAKE_CXX_STANDARD 11)
-
+if(CMAKE_VERSION VERSION_GREATER_EQUAL 3.11.0)
+  cmake_policy(SET CMP0072 NEW)
+  set (OpenGL_GL_PREFERENCE LEGACY)
+endif()
 if(CMAKE_VERSION VERSION_GREATER_EQUAL 3.17.0)
   cmake_policy(SET CMP0100 NEW)
-endif()
-check_cxx_compiler_flag(-std=c++11 HAS_STDCPP11)
-if (HAS_STDCPP11)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-else()
-  check_cxx_compiler_flag(-std=c++0x HAS_STDCPP0X)
-  if (HAS_STDCPP0X)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
-  else()
-    message("Warning: Initial check for C++11 unsuccessful. This is fine if HAS_CPP11 test below succeeds.")
-  endif()
 endif()
 
 # The following part of config.h is hard to derive from configure.ac.
@@ -77,41 +74,8 @@ file(READ gecode/support/config.hpp.in CONFIG)
 string(REGEX REPLACE "^/\\*([^*]|\\*[^/])*\\*/" "" CONFIG ${CONFIG})
 string(REGEX MATCHALL "[^\n]*\n" CONFIG
 "${CONFIG}
-/* Define to 1 if you have the `getpagesize' function. */
-#undef HAVE_GETPAGESIZE
-
-/* Define to 1 if you have the <inttypes.h> header file. */
-#undef HAVE_INTTYPES_H
-
-/* Define to 1 if you have the <memory.h> header file. */
-#undef HAVE_MEMORY_H
-
 /* Define to 1 if you have a working `mmap' system call. */
 #undef HAVE_MMAP
-
-/* Define to 1 if you have the <stdint.h> header file. */
-#undef HAVE_STDINT_H
-
-/* Define to 1 if you have the <stdlib.h> header file. */
-#undef HAVE_STDLIB_H
-
-/* Define to 1 if you have the <strings.h> header file. */
-#undef HAVE_STRINGS_H
-
-/* Define to 1 if you have the <string.h> header file. */
-#undef HAVE_STRING_H
-
-/* Define to 1 if you have the <sys/param.h> header file. */
-#undef HAVE_SYS_PARAM_H
-
-/* Define to 1 if you have the <sys/stat.h> header file. */
-#undef HAVE_SYS_STAT_H
-
-/* Define to 1 if you have the <sys/types.h> header file. */
-#undef HAVE_SYS_TYPES_H
-
-/* Define to 1 if you have the <unistd.h> header file. */
-#undef HAVE_UNISTD_H
 
 /* Define to the address where bug reports for this package should be sent. */
 #undef PACKAGE_BUGREPORT
@@ -130,12 +94,6 @@ string(REGEX MATCHALL "[^\n]*\n" CONFIG
 
 /* Define to the version of this package. */
 #undef PACKAGE_VERSION
-
-/* The size of `int', as computed by sizeof. */
-#undef SIZEOF_INT
-
-/* Define to 1 if you have the ANSI C header files. */
-#undef STDC_HEADERS
 ")
 
 # Get version numbers and parts of config.h from configure.ac.
@@ -206,17 +164,19 @@ set(GECODE_HAS_SET_VARS "/**/")
 set(GECODE_HAS_FLOAT_VARS "/**/")
 set(GECODE_STATIC_LIBS 1)
 set(GECODE_ALLOCATOR "/**/")
+if (MPFR_FOUND)
+  set(GECODE_HAS_MPFR "/**/")
+endif ()
 
 check_cxx_compiler_flag(-fvisibility=hidden HAVE_VISIBILITY_HIDDEN_FLAG)
 if (HAVE_VISIBILITY_HIDDEN_FLAG)
   set(GECODE_GCC_HAS_CLASS_VISIBILITY "/**/")
 endif ()
 
-if (WIN32)
-  set(GECODE_THREADS_WINDOWS 1)
-else ()
-  set(GECODE_THREADS_PTHREADS 1)
-endif ()
+option(ENABLE_THREADS "Enable thread support" ON)
+if (ENABLE_THREADS)
+  set(GECODE_HAS_THREADS 1)
+endif()
 
 option(ENABLE_GIST "Enable gist" OFF)
 if (ENABLE_GIST)
@@ -254,44 +214,7 @@ if (NOT DEFINED GECODE_USE_QT OR GECODE_USE_QT)
 endif ()
 
 include(CheckSymbolExists)
-check_symbol_exists(getpagesize unistd.h HAVE_GETPAGESIZE)
 check_symbol_exists(mmap sys/mman.h HAVE_MMAP)
-
-# Checks for header files.
-include(CheckIncludeFiles)
-foreach (header inttypes.h memory.h stdint.h stdlib.h strings.h string.h
-                sys/param.h sys/stat.h sys/time.h sys/types.h unistd.h)
-  string(TOUPPER HAVE_${header} var)
-  string(REGEX REPLACE "\\.|/" "_" var ${var})
-  check_include_files(${header} ${var})
-endforeach ()
-check_include_files(stdio.h STDC_HEADERS)
-if (HAVE_SYS_TIME_H)
-  set(GECODE_USE_GETTIMEOFDAY 1)
-else ()
-  set(GECODE_USE_CLOCK 1)
-endif ()
-if (HAVE_UNISTD_H)
-  set(GECODE_HAS_UNISTD_H 1)
-endif ()
-
-include(CheckCXXSourceCompiles)
-check_cxx_source_compiles("
-   #include <ext/hash_map>
-   int main() {}" HAVE_EXT_HASH_MAP)
-if (HAVE_EXT_HASH_MAP)
-  set(GECODE_HAS_GNU_HASH_MAP "/**/")
-endif ()
-
-check_cxx_source_compiles("
-   #include <unordered_map>
-   int main() {}" HAVE_UNORDERED_MAP)
-if (HAVE_UNORDERED_MAP)
-  set(GECODE_HAS_UNORDERED_MAP "/**/")
-endif ()
-
-include(CheckTypeSize)
-check_type_size(int SIZEOF_INT)
 
 # Check for inline.
 include(CheckCSourceCompiles)
@@ -314,6 +237,13 @@ check_c_source_compiles("
   int main() { return __builtin_ffsl(0); }" HAVE_BUILTIN_FFSL)
 if (HAVE_BUILTIN_FFSL)
   set(GECODE_HAS_BUILTIN_FFSL "/**/")
+endif ()
+
+# Check for popcount
+check_c_source_compiles("
+  int main() { return __builtin_popcountll(0); }" HAVE_BUILTIN_POPCOUNTLL)
+if (HAVE_BUILTIN_POPCOUNTLL)
+  set(GECODE_HAS_BUILTIN_POPCOUNTLL "/**/")
 endif ()
 
 # Process config.hpp using autoconf rules.
@@ -407,8 +337,7 @@ foreach (lib support kernel search int set float
   if (${libupper}SRC)
     set(sources )
     foreach (src ${${libupper}SRC} ${${libupper}_GENSRC})
-      if ((src STREQUAL "gecode/support/thread/pthreads.cpp" AND MSVC) OR
-           src STREQUAL "gecode/float/rounding.cpp")
+      if (src STREQUAL "gecode/float/rounding.cpp" AND NOT ${MPFR_FOUND})
         # ignore empty source files to prevent linker warnings
       else ()
         set(sources ${sources} ${src})
@@ -456,6 +385,10 @@ endif ()
 if (FLOATSRC)
   target_link_libraries(gecodefloat gecodekernel)
   target_link_libraries(gecodeminimodel gecodefloat)
+  if (MPFR_FOUND)
+    target_link_libraries(gecodefloat ${MPFR_LIBRARIES})
+    target_include_directories(gecodefloat PRIVATE ${MPFR_INCLUDES})
+  endif ()
 endif ()
 
 add_executable(gecode-test EXCLUDE_FROM_ALL ${TESTSRC} ${TESTHDR})

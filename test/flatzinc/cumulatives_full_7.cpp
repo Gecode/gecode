@@ -1,10 +1,10 @@
 /* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
- *     Christian Schulte <schulte@gecode.org>
+ *     Jason Nguyen <jason.nguyen@monash.edu>
  *
  *  Copyright:
- *     Christian Schulte, 2009
+ *     Jason nguyen, 2023
  *
  *  This file is part of Gecode, the generic constraint
  *  development environment:
@@ -31,32 +31,46 @@
  *
  */
 
-#include <gecode/support.hh>
+#include "test/flatzinc.hh"
 
-#ifdef GECODE_THREADS_PTHREADS
+namespace Test { namespace FlatZinc {
 
-namespace Gecode { namespace Support {
+  namespace {
+    /// Helper class to create and register tests
+    class Create {
+    public:
 
-  /// Function to start execution
-  void*
-  bootstrap(void* p) {
-    static_cast<Thread::Run*>(p)->exec();
-    pthread_exit(nullptr);
-    return nullptr;
-  }
+      /// Perform creation and registration
+      Create(void) {
+        (void) new FlatZincTest("cumulatives_full::7",
+R"FZN(
+var 1..10: s1 :: output_var;
+var 1..10: s2 :: output_var;
+var 0..1: m1 :: output_var;
+var 0..1: m2 :: output_var;
+var 4..14: e1;
+var 2..15: e2;
+var 4..15: ms :: output_var;
+constraint gecode_cumulatives([s1, s2], [3, 5], [3, 2], [m1, m2], [4, 6], true);
+constraint int_lin_eq([1, -1], [s1, e1], -3);
+constraint int_lin_eq([1, -1], [s2, e2], -5);
+constraint array_int_maximum(ms, [e1, e2]);
+solve minimize ms;
+)FZN",
+R"OUT(m1 = 1;
+m2 = 0;
+ms = 6;
+s1 = 1;
+s2 = 1;
+----------
+==========
+)OUT");
+      }
+    };
 
-  Thread::Run::Run(Runnable* r0) {
-    m.acquire();
-    r = r0;
-    m.release();
-    // The Pthread specific thread datastructure
-    pthread_t p_t;
-    if (pthread_create(&p_t, nullptr, bootstrap, this) != 0)
-      throw OperatingSystemError("Thread::run[pthread_create]");
+    Create c;
   }
 
 }}
 
-#endif
-
-// STATISTICS: support-any
+// STATISTICS: test-flatzinc

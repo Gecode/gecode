@@ -51,7 +51,7 @@ namespace {
 
   /** \brief Generates\ref layout.
    *
-   * This function generates the layeout and intializes \ref layer and
+   * This function generates the layout and initializes \ref layer and
    * \ref pile from it. The layout is randomly generated from the
    * supplied seed.
    */
@@ -62,7 +62,7 @@ namespace {
     vector<int> deck(51);
     for (int i = 51; i--; ) deck[i] = i+1;
     Support::RandomGenerator rnd(seed+1);
-    std::random_shuffle(deck.begin(), deck.end(), rnd);
+    std::shuffle(deck.begin(), deck.end(), rnd);
 
     // Place cards from deck
     int pos = 0;

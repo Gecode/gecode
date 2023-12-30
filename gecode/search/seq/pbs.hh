@@ -47,7 +47,7 @@ namespace Gecode { namespace Search { namespace Seq {
     unsigned long long int l;
   };
 
-  /// Stop object used for controling slaves in a portfolio
+  /// Stop object used for controlling slaves in a portfolio
   class GECODE_SEARCH_EXPORT PortfolioStop : public Stop {
   private:
     /// The stop object for the slaves
@@ -57,7 +57,7 @@ namespace Gecode { namespace Search { namespace Seq {
   public:
     /// Initialize
     PortfolioStop(Stop* so);
-    /// Intialize shared stop information
+    /// Initialize shared stop information
     void share(SharedStopInfo* ssi);
     /// Return true if portfolio engine must be stopped
     virtual bool stop(const Statistics& s, const Options& o);
@@ -75,7 +75,7 @@ namespace Gecode { namespace Search { namespace Seq {
     Slave(void);
     /// Copy constructor
     Slave(const Slave& s) = default;
-    /// Assigment operator
+    /// Assignment operator
     Slave& operator =(const Slave& s) = default;
     /// Initialize with slave \a s and its stop object \a so
     void init(Engine* s, Stop* so);

@@ -39,6 +39,9 @@
 
 #include "test/test.hh"
 
+#include <string>
+#include <vector>
+
 namespace Test {
 
   /// Tests for FlatZinc
@@ -54,10 +57,12 @@ namespace Test {
       std::string _source;
       std::string _expected;
       bool _allSolutions;
+      std::vector<std::string> _cmdlineOpt;
     public:
       /// Construct and register test
       FlatZincTest(const std::string& name, const std::string& source,
-                   const std::string& expected, bool allSolutions = false);
+                   const std::string& expected, bool allSolutions = false,
+                   std::vector<std::string> cmdlineOpt = {});
       /// Perform test
       virtual bool run(void);
     };

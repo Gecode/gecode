@@ -1621,6 +1621,19 @@ namespace Gecode {
       /// Information is provided by a portfolio-based engine
       PORTFOLIO
     };
+    /// Reason for restarting 
+    enum RestartReason {
+      /// No reason - used for PORTFOLIO
+      RR_NO,
+      /// Restarting after initialisation
+      RR_INIT,
+      /// Restarting after a solution is found
+      RR_SOL,
+      /// Restarting after exhausting search space
+      RR_CMPL,
+      /// Restarting after reaching restart limit
+      RR_LIM
+    };
   protected:
     /// Type of information
     const Type t;
@@ -1628,6 +1641,8 @@ namespace Gecode {
     //@{
     /// Number of restarts
     const unsigned long int r;
+    /// Reason for restarting
+    const RestartReason rr;
     /// Number of solutions since last restart
     const unsigned long long int s;
     /// Number of failures since last restart
@@ -1647,6 +1662,7 @@ namespace Gecode {
     //@{
     /// Constructor for restart-based engine
     MetaInfo(unsigned long int r,
+             RestartReason rr,
              unsigned long long int s,
              unsigned long long int f,
              const Space* l,
@@ -1660,6 +1676,8 @@ namespace Gecode {
     //@{
     /// Return number of restarts
     unsigned long int restart(void) const;
+    /// Return reason for restarting
+    RestartReason reason(void) const;
     /// Return number of solutions since last restart
     unsigned long long int solution(void) const;
     /// Return number of failures since last restart
@@ -3079,15 +3097,16 @@ namespace Gecode {
    */
   forceinline
   MetaInfo::MetaInfo(unsigned long int r0,
+                     RestartReason rr0,
                      unsigned long long int s0,
                      unsigned long long int f0,
                      const Space* l0,
                      NoGoods& ng0)
-    : t(RESTART), r(r0), s(s0), f(f0), l(l0), ng(ng0), a(0) {}
+    : t(RESTART), r(r0), rr(rr0), s(s0), f(f0), l(l0), ng(ng0), a(0) {}
 
   forceinline
   MetaInfo::MetaInfo(unsigned int a0)
-    : t(PORTFOLIO), r(0), s(0), f(0), l(nullptr), ng(NoGoods::eng), a(a0) {}
+    : t(PORTFOLIO), r(0), rr(RR_NO), s(0), f(0), l(nullptr), ng(NoGoods::eng), a(a0) {}
 
   forceinline MetaInfo::Type
   MetaInfo::type(void) const {
@@ -3097,6 +3116,10 @@ namespace Gecode {
   MetaInfo::restart(void) const {
     assert(type() == RESTART);
     return r;
+  }
+  forceinline MetaInfo::RestartReason
+  MetaInfo::reason(void) const {
+    return rr;
   }
   forceinline unsigned long long int
   MetaInfo::solution(void) const {

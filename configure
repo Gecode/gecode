@@ -807,6 +807,7 @@ enable_audit
 enable_profile
 enable_gcov
 enable_thread
+enable_osx_unfair_mutex
 with_freelist32_size_max
 with_freelist64_size_max
 enable_gcc_visibility
@@ -1470,6 +1471,8 @@ Optional Features:
   --enable-profile        build with profiling information [default=no]
   --enable-gcov           build with gcov support [default=no]
   --enable-thread         build with multi-threading support [default=yes]
+  --enable-osx-unfair-mutex
+                          use unfair mutexes on macOS [default=yes]
   --enable-gcc-visibility use gcc visibility attributes [default=yes]
   --enable-doc-dot        enable graphs in documentation [default=yes]
   --enable-doc-search     enable documentation search engine [default=no]
@@ -6502,100 +6505,35 @@ $as_echo_n "checking whether to build with multi-threading support... " >&6; }
   if test "${enable_thread:-yes}" = "yes"; then
     { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
 $as_echo "yes" >&6; }
-    ac_fn_cxx_check_header_mongrel "$LINENO" "unistd.h" "ac_cv_header_unistd_h" "$ac_includes_default"
-if test "x$ac_cv_header_unistd_h" = xyes; then :
 
-$as_echo "#define GECODE_HAS_UNISTD_H 1" >>confdefs.h
-
-
-fi
-
-
-    ac_fn_cxx_check_header_mongrel "$LINENO" "pthread.h" "ac_cv_header_pthread_h" "$ac_includes_default"
-if test "x$ac_cv_header_pthread_h" = xyes; then :
-
-$as_echo "#define GECODE_THREADS_PTHREADS 1" >>confdefs.h
-
-     CFLAGS="-pthread${CFLAGS:+ }${CFLAGS}"
-    CXXFLAGS="-pthread${CXXFLAGS:+ }${CXXFLAGS}"
-     DLLFLAGS="-pthread${DLLFLAGS:+ }${DLLFLAGS}"
-     ac_fn_cxx_check_header_mongrel "$LINENO" "os/lock.h" "ac_cv_header_os_lock_h" "$ac_includes_default"
-if test "x$ac_cv_header_os_lock_h" = xyes; then :
-
-$as_echo "#define GECODE_THREADS_OSX_UNFAIR 1" >>confdefs.h
-
-else
-  ac_fn_cxx_check_header_mongrel "$LINENO" "libkern/OSAtomic.h" "ac_cv_header_libkern_OSAtomic_h" "$ac_includes_default"
-if test "x$ac_cv_header_libkern_OSAtomic_h" = xyes; then :
-
-$as_echo "#define GECODE_THREADS_OSX 1" >>confdefs.h
-
-else
-  { $as_echo "$as_me:${as_lineno-$LINENO}: checking for spin locks" >&5
-$as_echo_n "checking for spin locks... " >&6; }
-          cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-#include <pthread.h>
-int
-main ()
-{
-pthread_spinlock_t t;
-  ;
-  return 0;
-}
-_ACEOF
-if ac_fn_cxx_try_compile "$LINENO"; then :
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
-$as_echo "yes" >&6; }
-
-$as_echo "#define GECODE_THREADS_PTHREADS_SPINLOCK 1" >>confdefs.h
-
-else
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
-
-fi
-rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
-
-fi
-
-
-
-fi
-
-
-else
-  ac_fn_cxx_check_header_mongrel "$LINENO" "windows.h" "ac_cv_header_windows_h" "$ac_includes_default"
-if test "x$ac_cv_header_windows_h" = xyes; then :
-
-$as_echo "#define GECODE_THREADS_WINDOWS 1" >>confdefs.h
-
-fi
-
-
-
-fi
-
+$as_echo "#define GECODE_HAS_THREADS 1" >>confdefs.h
 
   else
     { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
 $as_echo "no" >&6; }
   fi
-
-
-
-  ac_fn_cxx_check_header_mongrel "$LINENO" "sys/time.h" "ac_cv_header_sys_time_h" "$ac_includes_default"
-if test "x$ac_cv_header_sys_time_h" = xyes; then :
-
-$as_echo "#define GECODE_USE_GETTIMEOFDAY 1" >>confdefs.h
-
-else
-
-$as_echo "#define GECODE_USE_CLOCK 1" >>confdefs.h
-
+  # Check whether --enable-osx-unfair-mutex was given.
+if test "${enable_osx_unfair_mutex+set}" = set; then :
+  enableval=$enable_osx_unfair_mutex;
 fi
 
+  { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether to use unfair mutexes on macOS" >&5
+$as_echo_n "checking whether to use unfair mutexes on macOS... " >&6; }
+  if test "${enable_osx_unfair_mutex:-yes}" = "yes"; then
+    if test "${host_os}" = "darwin"; then
+      { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
 
+$as_echo "#define GECODE_USE_OSX_UNFAIR_MUTEX 1" >>confdefs.h
+
+    else
+      { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+    fi
+  else
+    { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+  fi
 
 
 
@@ -11815,24 +11753,6 @@ fi
   as_fn_error $? "Gecode currently only supports the GNU and Microsoft compilers." "$LINENO" 5
   ;;
 esac
-
-ac_fn_cxx_check_header_mongrel "$LINENO" "ext/hash_map" "ac_cv_header_ext_hash_map" "$ac_includes_default"
-if test "x$ac_cv_header_ext_hash_map" = xyes; then :
-
-$as_echo "#define GECODE_HAS_GNU_HASH_MAP /**/" >>confdefs.h
-
-fi
-
-
-
-ac_fn_cxx_check_header_mongrel "$LINENO" "unordered_map" "ac_cv_header_unordered_map" "$ac_includes_default"
-if test "x$ac_cv_header_unordered_map" = xyes; then :
-
-$as_echo "#define GECODE_HAS_UNORDERED_MAP /**/" >>confdefs.h
-
-fi
-
-
 
 
    # Check whether --enable-doc-dot was given.

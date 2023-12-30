@@ -60,6 +60,47 @@ namespace Gecode { namespace Support {
    * Mutexes
    *
    */
+  forceinline
+  Mutex::Mutex(void) {
+#ifdef GECODE_USE_OSX_UNFAIR_MUTEX
+    l = OS_UNFAIR_LOCK_INIT;
+#endif
+  }
+  forceinline void
+  Mutex::acquire(void) {
+#ifdef GECODE_HAS_THREADS
+#ifndef GECODE_USE_OSX_UNFAIR_MUTEX
+    m.lock();
+#else
+    os_unfair_lock_lock(&l);
+#endif
+#endif
+  }
+
+  forceinline bool
+  Mutex::tryacquire(void) {
+#ifdef GECODE_HAS_THREADS
+#ifndef GECODE_USE_OSX_UNFAIR_MUTEX
+    return m.try_lock();
+#else
+    return os_unfair_lock_trylock(&l);
+#endif
+#else
+    return true;
+#endif
+  }
+
+  forceinline void
+  Mutex::release(void) {
+#ifdef GECODE_HAS_THREADS
+#ifndef GECODE_USE_OSX_UNFAIR_MUTEX
+    m.unlock();
+#else
+    os_unfair_lock_unlock(&l);
+#endif
+#endif
+  }
+
   forceinline void*
   Mutex::operator new(size_t s) {
     return Gecode::heap.ralloc(s);
@@ -70,23 +111,6 @@ namespace Gecode { namespace Support {
     Gecode::heap.rfree(p);
   }
 
-#if ! ( defined(GECODE_THREADS_WINDOWS) || defined(GECODE_THREADS_OSX_UNFAIR) || !defined(GECODE_THREADS_PTHREADS_SPINLOCK) )
-
-  /*
-   * Fast mutexes
-   *
-   */
-  forceinline void*
-  FastMutex::operator new(size_t s) {
-    return Gecode::heap.ralloc(s);
-  }
-
-  forceinline void
-  FastMutex::operator delete(void* p) {
-    Gecode::heap.rfree(p);
-  }
-
-#endif
 
   /*
    * Locks
@@ -100,15 +124,53 @@ namespace Gecode { namespace Support {
     m.release();
   }
 
+  /*
+   * Events
+   */
+  forceinline
+  Event::Event(void) : s(false) {}
+  forceinline void
+  Event::signal(void) {
+#ifdef GECODE_HAS_THREADS
+    std::unique_lock<std::mutex> l(m);
+    if (!s) {
+      s = true;
+      c.notify_one();
+    }
+#endif
+  }
+  forceinline void
+  Event::wait(void) {
+#ifdef GECODE_HAS_THREADS
+    std::unique_lock<std::mutex> l(m);
+    c.wait(l, [this]{return this->s;});
+    s = false;
+#endif
+  }
+
 
   /*
    * Threads
    */
+  forceinline void
+  Thread::sleep(unsigned int ms) {
+#ifdef GECODE_HAS_THREADS
+    std::this_thread::sleep_for(std::chrono::milliseconds(ms));
+#else
+    (void) ms;
+#endif
+  }
+  forceinline unsigned int
+  Thread::npu(void) {
+#ifdef GECODE_HAS_THREADS
+    return std::thread::hardware_concurrency();
+#else
+    return 1;
+#endif
+  }
   inline void
   Thread::Run::run(Runnable* r0) {
-    m.acquire();
-    r = r0;
-    m.release();
+    r.store(r0);
     e.signal();
   }
   inline void

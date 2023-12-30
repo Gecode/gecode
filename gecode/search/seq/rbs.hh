@@ -83,8 +83,6 @@ namespace Gecode { namespace Search { namespace Seq {
     RestartStop* stop;
     /// How many solutions since the last restart
     unsigned long int sslr;
-    /// Whether the slave can share info (AFC) with the master
-    bool shared_info;
     /// Whether search for the next solution will be complete
     bool complete;
     /// Whether a restart must be performed when next is called

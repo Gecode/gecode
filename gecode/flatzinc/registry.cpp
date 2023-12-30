@@ -469,13 +469,17 @@ namespace Gecode { namespace FlatZinc {
       IntVar x0 = s.arg2IntVar(ce[0]);
       IntVar x1 = s.arg2IntVar(ce[1]);
       IntVar x2 = s.arg2IntVar(ce[2]);
-      div(s,x0,x1,x2, s.ann2ipl(ann));
+      IntVarArgs x = {x0, x1, x2};
+      unshare(s, x);
+      div(s,x[0],x[1],x[2], s.ann2ipl(ann));
     }
     void p_int_mod(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
       IntVar x0 = s.arg2IntVar(ce[0]);
       IntVar x1 = s.arg2IntVar(ce[1]);
       IntVar x2 = s.arg2IntVar(ce[2]);
-      mod(s,x0,x1,x2, s.ann2ipl(ann));
+      IntVarArgs x = {x0, x1, x2};
+      unshare(s, x);
+      mod(s,x[0],x[1],x[2], s.ann2ipl(ann));
     }
 
     void p_int_min(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
@@ -1120,25 +1124,31 @@ namespace Gecode { namespace FlatZinc {
     }
 
     void p_minimum_arg(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
-      IntVarArgs iv = s.arg2intvarargs(ce[0]);
+      IntVar x = s.arg2IntVar(ce[2]);
+      IntVarArgs iv = x + s.arg2intvarargs(ce[0]);
+      unshare(s, iv);
       int offset = ce[1]->getInt();
-      argmin(s, iv, offset, s.arg2IntVar(ce[2]), true, s.ann2ipl(ann));
+      argmin(s, iv.slice(1), offset, x, true, s.ann2ipl(ann));
     }
 
     void p_maximum_arg(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
-      IntVarArgs iv = s.arg2intvarargs(ce[0]);
+      IntVar x = s.arg2IntVar(ce[2]);
+      IntVarArgs iv = x + s.arg2intvarargs(ce[0]);
+      unshare(s, iv);
       int offset = ce[1]->getInt();
-      argmax(s, iv, offset, s.arg2IntVar(ce[2]), true, s.ann2ipl(ann));
+      argmax(s, iv.slice(1), offset, x, true, s.ann2ipl(ann));
     }
 
     void p_minimum_arg_bool(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
       BoolVarArgs bv = s.arg2boolvarargs(ce[0]);
+      unshare(s, bv);
       int offset = ce[1]->getInt();
       argmin(s, bv, offset, s.arg2IntVar(ce[2]), true, s.ann2ipl(ann));
     }
 
     void p_maximum_arg_bool(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
       BoolVarArgs bv = s.arg2boolvarargs(ce[0]);
+      unshare(s, bv);
       int offset = ce[1]->getInt();
       argmax(s, bv, offset, s.arg2IntVar(ce[2]), true, s.ann2ipl(ann));
     }
@@ -1214,12 +1224,12 @@ namespace Gecode { namespace FlatZinc {
     void
     p_inverse_offsets(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
       IntVarArgs x = s.arg2intvarargs(ce[0]);
-      unshare(s, x);
       int xoff = ce[1]->getInt();
       IntVarArgs y = s.arg2intvarargs(ce[2]);
-      unshare(s, y);
       int yoff = ce[3]->getInt();
-      channel(s, x, xoff, y, yoff, s.ann2ipl(ann));
+      IntVarArgs xy = x + y;
+      unshare(s, xy);
+      channel(s, xy.slice(0, 1, x.size()), xoff, xy.slice(x.size()), yoff, s.ann2ipl(ann));
     }
 
     void
@@ -1251,6 +1261,7 @@ namespace Gecode { namespace FlatZinc {
       IntVarArgs x = s.arg2intvarargs(ce[0]);
       IntArgs tuples = s.arg2intargs(ce[1]);
       TupleSet ts = s.arg2tupleset(tuples,x.size());
+      unshare(s,x);
       extensional(s,x,ts,s.ann2ipl(ann));
     }
 
@@ -1259,6 +1270,7 @@ namespace Gecode { namespace FlatZinc {
       IntVarArgs x = s.arg2intvarargs(ce[0]);
       IntArgs tuples = s.arg2intargs(ce[1]);
       TupleSet ts = s.arg2tupleset(tuples,x.size());
+      unshare(s,x);
       extensional(s,x,ts,Reify(s.arg2BoolVar(ce[2]),RM_EQV),s.ann2ipl(ann));
     }
 
@@ -1267,6 +1279,7 @@ namespace Gecode { namespace FlatZinc {
       IntVarArgs x = s.arg2intvarargs(ce[0]);
       IntArgs tuples = s.arg2intargs(ce[1]);
       TupleSet ts = s.arg2tupleset(tuples,x.size());
+      unshare(s,x);
       extensional(s,x,ts,Reify(s.arg2BoolVar(ce[2]),RM_IMP),s.ann2ipl(ann));
     }
 
@@ -1275,6 +1288,7 @@ namespace Gecode { namespace FlatZinc {
       BoolVarArgs x = s.arg2boolvarargs(ce[0]);
       IntArgs tuples = s.arg2boolargs(ce[1]);
       TupleSet ts = s.arg2tupleset(tuples,x.size());
+      unshare(s,x);
       extensional(s,x,ts,s.ann2ipl(ann));
     }
 
@@ -1283,6 +1297,7 @@ namespace Gecode { namespace FlatZinc {
       BoolVarArgs x = s.arg2boolvarargs(ce[0]);
       IntArgs tuples = s.arg2boolargs(ce[1]);
       TupleSet ts = s.arg2tupleset(tuples,x.size());
+      unshare(s,x);
       extensional(s,x,ts,Reify(s.arg2BoolVar(ce[2]),RM_EQV),s.ann2ipl(ann));
     }
 
@@ -1291,6 +1306,7 @@ namespace Gecode { namespace FlatZinc {
       BoolVarArgs x = s.arg2boolvarargs(ce[0]);
       IntArgs tuples = s.arg2boolargs(ce[1]);
       TupleSet ts = s.arg2tupleset(tuples,x.size());
+      unshare(s,x);
       extensional(s,x,ts,Reify(s.arg2BoolVar(ce[2]),RM_IMP),s.ann2ipl(ann));
     }
 
@@ -1307,6 +1323,80 @@ namespace Gecode { namespace FlatZinc {
 
     void p_cumulatives(FlatZincSpace& s, const ConExpr& ce,
                       AST::Node* ann) {
+      if (ce.size() == 6) {
+        // Full cumulatives call
+        IntVarArgs start = s.arg2intvarargs(ce[0]);
+        IntVarArgs duration = s.arg2intvarargs(ce[1]);
+        IntVarArgs resources = s.arg2intvarargs(ce[2]);
+        IntVarArgs machine = s.arg2intvarargs(ce[3]);
+        IntArgs bound = s.arg2intargs(ce[4]);
+        bool upper = ce[5]->getBool();
+        int n = start.size();
+
+        if (duration.assigned()) {
+          IntArgs durationI(n);
+          for (int i = n; (i--) != 0;) {
+            durationI[i] = duration[i].val();
+          }
+          IntVarArgs end(n);
+          for (int i = n; (i--) != 0;) {
+            end[i] = expr(s, start[i] + durationI[i]);
+          }
+          if (machine.assigned()) {
+            IntArgs machineI(n);
+            for (int i = n; (i--) != 0;) {
+              machineI[i] = machine[i].val();
+            }
+            if (resources.assigned()) {
+              IntArgs resourcesI(n);
+              for (int i = n; (i--) != 0;) {
+                resourcesI[i] = resources[i].val();
+              }
+              cumulatives(s, machineI, start, durationI, end, resourcesI, bound, upper, s.ann2ipl(ann));
+            } else {
+              cumulatives(s, machineI, start, durationI, end, resources, bound, upper, s.ann2ipl(ann));
+            }
+          } else if (resources.assigned()) {
+            IntArgs resourcesI(n);
+            for (int i = n; (i--) != 0;) {
+              resourcesI[i] = resources[i].val();
+            }
+            cumulatives(s, machine, start, durationI, end, resourcesI, bound, upper, s.ann2ipl(ann));
+          } else {
+            cumulatives(s, machine, start, durationI, end, resources, bound, upper, s.ann2ipl(ann));
+          }
+        } else {
+          IntVarArgs end(n);
+          for (int i = n; (i--) != 0;) {
+            end[i] = expr(s, start[i] + duration[i]);
+          }
+          if (machine.assigned()) {
+            IntArgs machineI(n);
+            for (int i = n; (i--) != 0;) {
+              machineI[i] = machine[i].val();
+            }
+            if (resources.assigned()) {
+              IntArgs resourcesI(n);
+              for (int i = n; (i--) != 0;) {
+                resourcesI[i] = resources[i].val();
+              }
+              cumulatives(s, machineI, start, duration, end, resourcesI, bound, upper, s.ann2ipl(ann));
+            } else {
+              cumulatives(s, machineI, start, duration, end, resources, bound, upper, s.ann2ipl(ann));
+            }
+          } else if (resources.assigned()) {
+            IntArgs resourcesI(n);
+            for (int i = n; (i--) != 0;) {
+              resourcesI[i] = resources[i].val();
+            }
+            cumulatives(s, machine, start, duration, end, resourcesI, bound, upper, s.ann2ipl(ann));
+          } else {
+            cumulatives(s, machine, start, duration, end, resources, bound, upper, s.ann2ipl(ann));
+          }
+        }
+        return;
+      }
+
       IntVarArgs start = s.arg2intvarargs(ce[0]);
       IntVarArgs duration = s.arg2intvarargs(ce[1]);
       IntVarArgs height = s.arg2intvarargs(ce[2]);

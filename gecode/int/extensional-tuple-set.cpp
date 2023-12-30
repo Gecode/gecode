@@ -47,6 +47,8 @@ namespace Gecode {
       throw NotYetFinalized("Int::extensional");
     if (t.arity() != x.size())
       throw ArgumentSizeMismatch("Int::extensional");
+    if (same(x))
+      throw ArgumentSame("Int::extensional");
     GECODE_POST;
 
     ViewArray<IntView> xv(home,x);
@@ -65,6 +67,8 @@ namespace Gecode {
       throw NotYetFinalized("Int::extensional");
     if (t.arity() != x.size())
       throw ArgumentSizeMismatch("Int::extensional");
+    if (same(x))
+      throw ArgumentSame("Int::extensional");
     GECODE_POST;
 
     ViewArray<IntView> xv(home,x);
@@ -114,6 +118,8 @@ namespace Gecode {
       throw ArgumentSizeMismatch("Int::extensional");
     if ((t.min() < 0) || (t.max() > 1))
       throw NotZeroOne("Int::extensional");
+    if (same(x))
+      throw ArgumentSame("Int::extensional");
     GECODE_POST;
 
     ViewArray<BoolView> xv(home,x);
@@ -134,6 +140,8 @@ namespace Gecode {
       throw ArgumentSizeMismatch("Int::extensional");
     if ((t.min() < 0) || (t.max() > 1))
       throw NotZeroOne("Int::extensional");
+    if (same(x))
+      throw ArgumentSame("Int::extensional");
     GECODE_POST;
 
     ViewArray<BoolView> xv(home,x);

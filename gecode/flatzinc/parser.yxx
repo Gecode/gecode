@@ -31,7 +31,7 @@
  *
  */
 
-%pure-parser
+%define api.pure
 %parse-param {void *parm}
 %lex-param {void *YYLEX_PARAM}
 %{
@@ -39,6 +39,8 @@
 #define YYLEX_PARAM static_cast<ParserState*>(parm)->yyscanner
 #include <gecode/flatzinc.hh>
 #include <gecode/flatzinc/parser.hh>
+#include <gecode/flatzinc/lastval.hh>
+#include <gecode/flatzinc/complete.hh>
 #include <iostream>
 #include <fstream>
 
@@ -317,6 +319,144 @@ void initfg(ParserState* pp) {
     pp->floatvars[i].second = NULL;
   }
   if (!pp->hadError) {
+    int iv_size = pp->sol_int.size() * 2;
+    iv_size += pp->last_val_int.size();
+    iv_size += pp->uniform_int.size();
+    iv_size += (pp->status_idx >= 0) ? 1 : 0;
+
+    if (iv_size > 0) {
+      pp->fg->restart_data.init();
+      pp->fg->on_restart_iv = IntVarArray(*(pp->fg), iv_size);
+      int base = 0;
+
+      pp->fg->restart_data().on_restart_iv_sol = pp->sol_int.size();
+      for (size_t i = 0; i < pp->sol_int.size(); ++i) {
+        pp->fg->on_restart_iv[base + i] = pp->fg->iv[(pp->sol_int[i][0])];
+        pp->fg->on_restart_iv[base + pp->sol_int.size() + i] = pp->fg->iv[(pp->sol_int[i][1])];
+      }
+      base += pp->sol_int.size() * 2;
+
+      pp->fg->restart_data().last_val_int = std::vector<int>(pp->last_val_int.size());
+      IntVarArgs last_val_args;
+      for (size_t i = 0; i < pp->last_val_int.size(); ++i) {
+        pp->fg->on_restart_iv[base + i] = pp->fg->iv[(pp->last_val_int[i][1])];
+        last_val_args << pp->fg->iv[(pp->last_val_int[i][0])];
+      }
+      LastValInt::post(*(pp->fg), last_val_args);
+      base += pp->last_val_int.size();
+
+      pp->fg->restart_data().uniform_range_int = std::vector<std::pair<int, int>>(pp->uniform_int.size());
+      for (size_t i = 0; i < pp->uniform_int.size(); ++i) {
+        pp->fg->restart_data().uniform_range_int[i] = std::pair<int, int>(pp->uniform_int[i][0], pp->uniform_int[i][1]);
+        pp->fg->on_restart_iv[base + i] = pp->fg->iv[pp->uniform_int[i][2]];
+      }
+      base += pp->uniform_int.size();
+
+      if (pp->status_idx >= 0) {
+        pp->fg->restart_data().on_restart_status = true;
+        pp->fg->on_restart_iv[base] = pp->fg->iv[pp->status_idx];
+        base += 1;
+      }
+      assert(base == iv_size);
+    }
+  }
+  if (!pp->hadError) {
+    int bv_size = pp->sol_bool.size() * 2;
+    bv_size += pp->last_val_bool.size();
+
+    if (bv_size > 0) {
+      pp->fg->restart_data.init();
+      pp->fg->on_restart_bv = BoolVarArray(*(pp->fg), bv_size);
+      int base = 0;
+
+      pp->fg->restart_data().on_restart_bv_sol = pp->sol_bool.size();
+      for (size_t i = 0; i < pp->sol_bool.size(); ++i) {
+        pp->fg->on_restart_bv[base + i] = pp->fg->bv[(pp->sol_bool[i][0])];
+        pp->fg->on_restart_bv[base + pp->sol_bool.size() + i] = pp->fg->bv[(pp->sol_bool[i][1])];
+      }
+      base += pp->sol_bool.size() * 2;
+
+      pp->fg->restart_data().last_val_bool = std::vector<bool>(pp->last_val_bool.size());
+      BoolVarArgs last_val_args;
+      for (size_t i = 0; i < pp->last_val_bool.size(); ++i) {
+        pp->fg->on_restart_bv[base + i] = pp->fg->bv[(pp->last_val_bool[i][1])];
+        last_val_args << pp->fg->bv[(pp->last_val_bool[i][0])];
+      }
+      LastValBool::post(*(pp->fg), last_val_args);
+      base += pp->last_val_bool.size();
+      assert(base == bv_size);
+    }
+    if (pp->complete_idx >= 0) {
+      Complete::post(*(pp->fg), pp->fg->bv[pp->complete_idx]);
+    }
+  }
+#ifdef GECODE_HAS_SET_VARS
+  if (!pp->hadError) {
+    int sv_size = pp->sol_set.size() * 2;
+    sv_size += pp->last_val_set.size();
+
+    if (sv_size > 0) {
+      pp->fg->restart_data.init();
+      pp->fg->on_restart_sv = SetVarArray(*(pp->fg), sv_size);
+      int base = 0;
+      
+      pp->fg->restart_data().on_restart_sv_sol = pp->sol_set.size();
+      for (size_t i = 0; i < pp->sol_set.size(); ++i) {
+        pp->fg->on_restart_sv[base + i] = pp->fg->sv[(pp->sol_set[i][0])];
+        pp->fg->on_restart_sv[base + pp->sol_set.size() + i] = pp->fg->sv[(pp->sol_set[i][1])];
+      }
+      base += pp->sol_set.size() * 2;
+
+      pp->fg->restart_data().last_val_set = std::vector<IntSet>(pp->last_val_set.size());
+      SetVarArgs last_val_args;
+      for (size_t i = 0; i < pp->last_val_set.size(); ++i) {
+        pp->fg->on_restart_sv[base + i] = pp->fg->sv[(pp->last_val_set[i][1])];
+        last_val_args << pp->fg->sv[(pp->last_val_set[i][0])];
+      }
+      LastValSet::post(*(pp->fg), last_val_args);
+      base += pp->last_val_set.size();
+      assert(base == sv_size);
+    }
+  }
+#endif
+#ifdef GECODE_HAS_FLOAT_VARS
+  if (!pp->hadError) {
+    int fv_size = pp->sol_float.size() * 2;
+    fv_size += pp->last_val_float.size();
+    fv_size += pp->uniform_float.size();
+
+    if (fv_size > 0) {
+      pp->fg->restart_data.init();
+      pp->fg->on_restart_fv = FloatVarArray(*(pp->fg), fv_size);
+      int base = 0;
+
+      pp->fg->restart_data().on_restart_fv_sol =  pp->sol_float.size();
+      for (size_t i = 0; i < pp->sol_float.size(); ++i) {
+        pp->fg->on_restart_fv[base + i] = pp->fg->fv[(pp->sol_float[i][0])];
+        pp->fg->on_restart_fv[base + pp->sol_float.size() + i] = pp->fg->fv[(pp->sol_float[i][1])];
+      }
+      base += pp->sol_float.size() * 2;
+      
+      pp->fg->restart_data().last_val_float = std::vector<FloatVal>(pp->last_val_float.size());
+      FloatVarArgs last_val_args;
+      for (size_t i = 0; i < pp->last_val_float.size(); ++i) {
+        pp->fg->on_restart_fv[base + i] = pp->fg->fv[(pp->last_val_float[i][1])];
+        last_val_args << pp->fg->fv[(pp->last_val_float[i][0])];
+      }
+      LastValFloat::post(*(pp->fg), last_val_args);
+      base += pp->last_val_float.size();
+
+      pp->fg->restart_data().uniform_range_float = std::vector<std::pair<FloatVal, FloatVal>>(pp->uniform_float.size());
+      for (size_t i = 0; i < pp->uniform_float.size(); ++i) {
+        pp->fg->restart_data().uniform_range_float[i] = std::pair<FloatVal, FloatVal>(std::get<0>(pp->uniform_float[i]), std::get<1>(pp->uniform_float[i]));
+        pp->fg->on_restart_fv[base + i] = pp->fg->fv[std::get<2>(pp->uniform_float[i])];
+      }
+      base += pp->uniform_float.size();
+      assert(base == fv_size);
+    }
+  }
+#endif
+  if (!pp->hadError) {
     pp->fg->postConstraints(pp->domainConstraints);
     pp->fg->postConstraints(pp->constraints);
   }
@@ -347,7 +487,7 @@ void fillPrinter(ParserState& pp, Gecode::FlatZinc::Printer& p) {
       p.addSetVarName(pp.setvars[i].first);
     }
   }
-#endif  
+#endif
 }
 
 AST::Node* arrayOutput(AST::Call* ann) {
@@ -482,7 +622,7 @@ namespace Gecode { namespace FlatZinc {
          Gecode::FlatZinc::AST::Array* argVec;
        }
 
-%error-verbose
+%define parse.error verbose
 
 %token <iValue> FZ_INT_LIT FZ_BOOL_LIT
 %token <dValue> FZ_FLOAT_LIT
@@ -1187,7 +1327,7 @@ int_init :
       {
         SymbolEntry e;
         ParserState* pp = static_cast<ParserState*>(parm);
-        if (pp->symbols.get($1, e) && e.t == ST_INTVAR)
+        if (pp->symbols.get($1, e) && (e.t == ST_INTVAR || e.t == ST_INT))
           $$ = new IntVarSpec(Alias(e.i),false,false);
         else {
           pp->err << "Error: undefined identifier for type int " << $1
@@ -1244,7 +1384,7 @@ float_init :
       {
         SymbolEntry e;
         ParserState* pp = static_cast<ParserState*>(parm);
-        if (pp->symbols.get($1, e) && e.t == ST_FLOATVAR)
+        if (pp->symbols.get($1, e) && (e.t == ST_FLOATVAR || e.t == ST_FLOAT))
           $$ = new FloatVarSpec(Alias(e.i),false,false);
         else {
           pp->err << "Error: undefined identifier for type float " << $1
@@ -1299,7 +1439,7 @@ bool_init :
       {
         SymbolEntry e;
         ParserState* pp = static_cast<ParserState*>(parm);
-        if (pp->symbols.get($1, e) && e.t == ST_BOOLVAR)
+        if (pp->symbols.get($1, e) && (e.t == ST_BOOLVAR || e.t == ST_BOOL))
           $$ = new BoolVarSpec(Alias(e.i),false,false);
         else {
           pp->err << "Error: undefined identifier for type bool " << $1
@@ -1352,7 +1492,7 @@ set_init :
       {
         ParserState* pp = static_cast<ParserState*>(parm);
         SymbolEntry e;
-        if (pp->symbols.get($1, e) && e.t == ST_SETVAR)
+        if (pp->symbols.get($1, e) && (e.t == ST_SETVAR || e.t == ST_SET))
           $$ = new SetVarSpec(Alias(e.i),false,false);
         else {
           pp->err << "Error: undefined identifier for type set " << $1
@@ -1429,7 +1569,53 @@ constraint_item :
         ParserState *pp = static_cast<ParserState*>(parm);
         if (!pp->hadError) {
           std::string cid($2);
-          if (cid=="int_eq" && $4->a[0]->isIntVar() && $4->a[1]->isIntVar()) {
+          if (cid=="gecode_on_restart_status" && $4->a[0]->isIntVar()) {
+            pp->status_idx = getBaseIntVar(pp,$4->a[0]->getIntVar());
+          } else if (cid=="gecode_on_restart_complete" && $4->a[0]->isBoolVar()) {
+            pp->complete_idx = getBaseBoolVar(pp,$4->a[0]->getBoolVar());
+          } else if (cid=="gecode_on_restart_last_val_int" && $4->a[0]->isIntVar() && $4->a[1]->isIntVar()) {
+            int base0 = getBaseIntVar(pp,$4->a[0]->getIntVar());
+            int base1 = getBaseIntVar(pp,$4->a[1]->getIntVar());
+            pp->last_val_int.emplace_back(std::array<int, 2>{ base0, base1 });
+          } else if (cid=="gecode_on_restart_sol_int" && $4->a[0]->isIntVar() && $4->a[1]->isIntVar()) {
+            int base0 = getBaseIntVar(pp,$4->a[0]->getIntVar());
+            int base1 = getBaseIntVar(pp,$4->a[1]->getIntVar());
+            pp->sol_int.emplace_back(std::array<int, 2>{ base0, base1 });
+          } else if (cid=="gecode_on_restart_uniform_int" && $4->a[0]->isInt() && $4->a[1]->isInt() && $4->a[2]->isIntVar()) {
+            int base = getBaseIntVar(pp,$4->a[2]->getIntVar());
+            pp->uniform_int.emplace_back(std::array<int, 3>{ $4->a[0]->getInt(), $4->a[1]->getInt(), base });
+          } else if (cid=="gecode_on_restart_last_val_bool" && $4->a[0]->isBoolVar() && $4->a[1]->isBoolVar()) {
+            int base0 = getBaseBoolVar(pp,$4->a[0]->getBoolVar());
+            int base1 = getBaseBoolVar(pp,$4->a[1]->getBoolVar());
+            pp->last_val_bool.emplace_back(std::array<int, 2>{ base0, base1 });
+          } else if (cid=="gecode_on_restart_sol_bool" && $4->a[0]->isBoolVar() && $4->a[1]->isBoolVar()) {
+            int base0 = getBaseBoolVar(pp,$4->a[0]->getBoolVar());
+            int base1 = getBaseBoolVar(pp,$4->a[1]->getBoolVar());
+            pp->sol_bool.emplace_back(std::array<int, 2>{ base0, base1 });
+#ifdef GECODE_HAS_SET_VARS
+          } else if (cid=="gecode_on_restart_last_val_set" && $4->a[0]->isSetVar() && $4->a[1]->isSetVar()) {
+            int base0 = getBaseSetVar(pp,$4->a[0]->getSetVar());
+            int base1 = getBaseSetVar(pp,$4->a[1]->getSetVar());
+            pp->last_val_set.emplace_back(std::array<int, 2>{ base0, base1 });
+          } else if (cid=="gecode_on_restart_sol_set" && $4->a[0]->isSetVar() && $4->a[1]->isSetVar()) {
+            int base0 = getBaseSetVar(pp,$4->a[0]->getSetVar());
+            int base1 = getBaseSetVar(pp,$4->a[1]->getSetVar());
+            pp->sol_set.emplace_back(std::array<int, 2>{ base0, base1 });
+#endif
+#ifdef GECODE_HAS_FLOAT_VARS
+          } else if (cid=="gecode_on_restart_last_val_float" && $4->a[0]->isFloatVar() && $4->a[1]->isFloatVar()) {
+            int base0 = getBaseFloatVar(pp,$4->a[0]->getFloatVar());
+            int base1 = getBaseFloatVar(pp,$4->a[1]->getFloatVar());
+            pp->last_val_float.emplace_back(std::array<int, 2>{ base0, base1 });
+          } else if (cid=="gecode_on_restart_sol_float" && $4->a[0]->isFloatVar() && $4->a[1]->isFloatVar()) {
+            int base0 = getBaseFloatVar(pp,$4->a[0]->getFloatVar());
+            int base1 = getBaseFloatVar(pp,$4->a[1]->getFloatVar());
+            pp->sol_float.emplace_back(std::array<int, 2>{ base0, base1 });
+          } else if (cid=="gecode_on_restart_uniform_float" && $4->a[0]->isFloat() && $4->a[1]->isFloat() && $4->a[2]->isFloatVar()) {
+            int base = getBaseFloatVar(pp,$4->a[2]->getFloatVar());
+            pp->uniform_float.emplace_back( $4->a[0]->getFloat(), $4->a[1]->getFloat(), base );
+#endif
+          } else if (cid=="int_eq" && $4->a[0]->isIntVar() && $4->a[1]->isIntVar()) {
             int base0 = getBaseIntVar(pp,$4->a[0]->getIntVar());
             int base1 = getBaseIntVar(pp,$4->a[1]->getIntVar());
             if (base0 > base1) {

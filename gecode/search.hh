@@ -966,7 +966,7 @@ namespace Gecode { namespace Search {
   private:
     /// Disallow copy constructor
     Base(const Base&);
-    /// Disallow assigment operator
+    /// Disallow assignment operator
     Base& operator =(const Base&);
   };
 

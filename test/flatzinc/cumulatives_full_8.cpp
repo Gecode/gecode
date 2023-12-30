@@ -1,10 +1,10 @@
 /* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
- *     Christian Schulte <schulte@gecode.org>
+ *     Jason Nguyen <jason.nguyen@monash.edu>
  *
  *  Copyright:
- *     Christian Schulte, 2009
+ *     Jason nguyen, 2023
  *
  *  This file is part of Gecode, the generic constraint
  *  development environment:
@@ -31,53 +31,42 @@
  *
  */
 
-namespace Gecode { namespace Support {
+#include "test/flatzinc.hh"
 
-  /*
-   * Mutex
-   */
-  forceinline
-  Mutex::Mutex(void) {}
-  forceinline void
-  Mutex::acquire(void) {}
-  forceinline bool
-  Mutex::tryacquire(void) {
-    return true;
+namespace Test { namespace FlatZinc {
+
+  namespace {
+    /// Helper class to create and register tests
+    class Create {
+    public:
+
+      /// Perform creation and registration
+      Create(void) {
+        (void) new FlatZincTest("cumulatives_full::8",
+R"FZN(
+var 1..10: s1 :: output_var;
+var 1..10: s2 :: output_var;
+var 4..14: e1;
+var 2..15: e2;
+var 4..15: ms :: output_var;
+constraint gecode_cumulatives([s1, s2], [3, 5], [3, 2], [0, 1], [4, 6], true);
+constraint int_lin_eq([1, -1], [s1, e1], -3);
+constraint int_lin_eq([1, -1], [s2, e2], -5);
+constraint array_int_maximum(ms, [e1, e2]);
+solve minimize ms;
+)FZN",
+R"OUT(ms = 6;
+s1 = 1;
+s2 = 1;
+----------
+==========
+)OUT");
+      }
+    };
+
+    Create c;
   }
-  forceinline void
-  Mutex::release(void) {}
-  forceinline
-  Mutex::~Mutex(void) {}
-
-
-  /*
-   * Event
-   */
-  forceinline
-  Event::Event(void) {}
-  forceinline void
-  Event::signal(void) {}
-  forceinline void
-  Event::wait(void) {}
-  forceinline
-  Event::~Event(void) {}
-
-
-  /*
-   * Thread
-   */
-  inline
-  Thread::Run::Run(Runnable*) {
-    throw OperatingSystemError("Thread::run[Threads not supported]");
-  }
-  forceinline void
-  Thread::sleep(unsigned int) {}
-  forceinline unsigned int
-  Thread::npu(void) {
-    return 1;
-  }
-
 
 }}
 
-// STATISTICS: support-any
+// STATISTICS: test-flatzinc

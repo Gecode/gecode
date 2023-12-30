@@ -43,8 +43,8 @@ namespace Gecode { namespace Search {
 
   Engine*
   babengine(Space* s, const Options& o) {
-#ifdef GECODE_HAS_THREADS
     Options to = o.expand();
+#ifdef GECODE_HAS_THREADS
     if (to.threads == 1.0) {
       if (to.tracer)
         return new WorkerToEngine<Seq::BAB<TraceRecorder>>(s,to);

@@ -704,10 +704,9 @@ namespace Gecode {
      */
     GECODE_INT_EXPORT
     IntVarArgs(Space& home, int n, const IntSet& s);
-    //@}
-
     /// Assignment operator
     IntVarArgs& operator =(const IntVarArgs&) = default;
+    //@}
   };
 
   /** \brief Passing Boolean variables
@@ -750,6 +749,8 @@ namespace Gecode {
      */
     GECODE_INT_EXPORT
     BoolVarArgs(Space& home, int n, int min, int max);
+    /// Assignment operator
+    BoolVarArgs& operator =(const BoolVarArgs&) = default;
     //@}
   };
   //@}
@@ -872,14 +873,14 @@ namespace Gecode {
      * \brief Implication for reification
      *
      * For a constraint \f$c\f$ and a Boolean control variable \f$b\f$
-     * defines that \f$b=1\Leftarrow c\f$ is propagated.
+     * defines that \f$b=1\Rightarrow c\f$ is propagated.
      */
     RM_IMP,
     /**
      * \brief Inverse implication for reification
      *
      * For a constraint \f$c\f$ and a Boolean control variable \f$b\f$
-     * defines that \f$b=1\Rightarrow c\f$ is propagated.
+     * defines that \f$c\Rightarrow b=1\f$ is propagated.
      */
     RM_PMI
   };
@@ -5554,7 +5555,7 @@ namespace Gecode {
   /**
    * \brief Branch over \a x using counting-based search
    *
-   * Branches on the <variable, value> pair that has the the highest solution
+   * Branches on the <variable, value> pair that has the highest solution
    * density across all active propagators. Computing solution density is
    * currently supported for the following propagators:
    *
@@ -5578,7 +5579,7 @@ namespace Gecode {
   /**
    * \brief Branch over \a x using counting-based search
    *
-   * Branches on the <variable, value> pair that has the the highest solution
+   * Branches on the <variable, value> pair that has the highest solution
    * density across all active propagators. Computing solution density is
    * currently supported for the following propagators:
    *

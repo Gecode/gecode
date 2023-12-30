@@ -72,9 +72,6 @@
 /* Whether Gist is available */
 #undef GECODE_HAS_GIST
 
-/* Whether GNU hash_map is available */
-#undef GECODE_HAS_GNU_HASH_MAP
-
 /* Whether to build INT variables */
 #undef GECODE_HAS_INT_VARS
 
@@ -89,12 +86,6 @@
 
 /* Whether to build SET variables */
 #undef GECODE_HAS_SET_VARS
-
-/* Whether unistd.h is available */
-#undef GECODE_HAS_UNISTD_H
-
-/* Whether unordered_map is available */
-#undef GECODE_HAS_UNORDERED_MAP
 
 /* Gecode version */
 #undef GECODE_LIBRARY_VERSION
@@ -117,26 +108,11 @@
 /* Whether we are compiling static libraries */
 #undef GECODE_STATIC_LIBS
 
-/* Whether we have Mac OS threads */
-#undef GECODE_THREADS_OSX
+/* Whether we are compiling with thread support */
+#undef GECODE_HAS_THREADS
 
-/* Whether we have Mac OS threads (new version) */
-#undef GECODE_THREADS_OSX_UNFAIR
-
-/* Whether we have posix threads */
-#undef GECODE_THREADS_PTHREADS
-
-/* Whether we have posix spinlocks */
-#undef GECODE_THREADS_PTHREADS_SPINLOCK
-
-/* Whether we have windows threads */
-#undef GECODE_THREADS_WINDOWS
-
-/* Use clock() for time-measurement */
-#undef GECODE_USE_CLOCK
-
-/* Use gettimeofday for time-measurement */
-#undef GECODE_USE_GETTIMEOFDAY
+/* Whether to use unfair mutexes on macOS */
+#undef GECODE_USE_OSX_UNFAIR_MUTEX
 
 /* Gecode version */
 #undef GECODE_VERSION

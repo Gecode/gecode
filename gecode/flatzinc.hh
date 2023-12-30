@@ -484,6 +484,71 @@ namespace Gecode { namespace FlatZinc {
     /// The integer variables used in LNS
     Gecode::IntVarArray iv_lns;
 
+    /* === Experimental `on_restart` support === */
+    class OnRestartHandle : public SharedHandle {
+    protected:
+      class OnRestartData : public SharedHandle::Object {
+        public:
+        /// Marker set to `true` if solve process can be marked as complete
+        bool mark_complete = false;
+        /// Inclusive ranges to assign random values
+        std::vector<std::pair<int, int>> uniform_range_int;
+#ifdef GECODE_HAS_FLOAT_VARS
+        std::vector<std::pair<FloatVal, FloatVal>> uniform_range_float;
+#endif
+        /// Last assigned values for different types of decisions
+        std::vector<bool> last_val_bool;
+        std::vector<int> last_val_int;
+#ifdef GECODE_HAS_SET_VARS
+        std::vector<IntSet> last_val_set;
+#endif
+#ifdef GECODE_HAS_FLOAT_VARS
+        std::vector<FloatVal> last_val_float;
+#endif
+        /// Number of `sol` calls for which variables are stored in
+        /// on_restart_iv. In the array you first find this number of variable
+        /// for which the solution is read, then you find the same number of
+        /// variables which value is set.
+        int on_restart_iv_sol = 0;
+        int on_restart_bv_sol = 0;
+        int on_restart_sv_sol = 0;
+        int on_restart_fv_sol = 0;
+        /// Whether the last on_restart_iv should be set to the restart status
+        bool on_restart_status = false;
+      };
+    public:
+      OnRestartHandle() : SharedHandle() {}
+      OnRestartHandle(const OnRestartHandle& handle): SharedHandle(handle) {}
+      OnRestartHandle& operator =(const OnRestartHandle& handle) {
+        return static_cast<OnRestartHandle&>(SharedHandle::operator =(handle));
+      }
+      virtual ~OnRestartHandle() {};
+
+      void init() {
+        if (object() == nullptr) {
+          object(new OnRestartData());
+        }
+      }
+      bool initialized() const { return object() != nullptr; }
+      OnRestartData& operator ()() {
+        return *static_cast<OnRestartData*>(object());
+      };
+    };
+    OnRestartHandle restart_data;
+    /// On Restart Tracked Integer Variables
+    Gecode::IntVarArray on_restart_iv;
+    /// On Restart Tracked Boolean Variables
+    Gecode::BoolVarArray on_restart_bv;
+#ifdef GECODE_HAS_SET_VARS
+    /// On Restart Tracked Set Variables
+    Gecode::SetVarArray on_restart_sv;
+#endif
+#ifdef GECODE_HAS_FLOAT_VARS
+    /// On Restart Tracked Floating Point Variables
+    Gecode::FloatVarArray on_restart_fv;
+#endif
+    /* === End `on_restart` === */
+
     /// Indicates whether an integer variable is introduced by mzn2fzn
     std::vector<bool> iv_introduced;
     /// Indicates whether an integer variable aliases a Boolean variable

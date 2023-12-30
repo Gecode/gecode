@@ -13771,11 +13771,11 @@ Dictionary::~Dictionary(void) {
  * Size 35 is the recommended small size, 50 the medium and 70 the large.
  * Sizes 70 and below contain words found in most dictionaries while the
  * 80 size contains all the strange and unusual words people like to use
- * in word games such as Scrabble (TM).  While a lot of the the words in
+ * in word games such as Scrabble (TM).  While a lot of the words in
  * the 80 size are not used very often, they are all generally considered
  * valid words in the English language.  The 95 contains just about every
  * English word in existence and then some.  Many of the words at the 95
- * level will probally not be considered valid english words by most
+ * level will probably not be considered valid english words by most
  * people.  I don't recommend anyone use levels above 70 for spell
  * checking as they contain rarely used words which can hide misspellings
  * of similar more commonly used words.  For example the word "ort" can
@@ -13825,7 +13825,7 @@ Dictionary::~Dictionary(void) {
  *   Updated to the latest version of many of the source dictionaries.
  *
  *   Removed the DEC Word List due to the questionable licence and
- *   because removing it will not seriously decrese the quality of SCOWL
+ *   because removing it will not seriously decrease the quality of SCOWL
  *   (there are a few less proper names).
  *
  * From Revision 4 to 4a (April 4, 2001)
@@ -13840,13 +13840,13 @@ Dictionary::~Dictionary(void) {
  *   Added words in the Ispell word list at the 65 level.
  *
  *   Other changes due to using more recent versions of various sources
- *   included a more accurete version of AGID thanks to the word of
+ *   included a more accurate version of AGID thanks to the word of
  *   Alan Beale
  *
  * From Revision 2 to 3 (August 18, 2000)
  *
  *   Renamed special-unix-terms to special-hacker and added a large
- *   number of communly used words within the hacker (not cracker)
+ *   number of commonly used words within the hacker (not cracker)
  *   community.
  *
  *   Added a couple more signature words including "newbie".

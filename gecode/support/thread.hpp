@@ -36,33 +36,15 @@
 
 #include <cstddef>
 
-#ifdef GECODE_THREADS_WINDOWS
+#ifdef GECODE_HAS_THREADS
+#include <thread>
+#include <mutex>
+#include <condition_variable>
+#include <atomic>
 
-#ifndef NOMINMAX
-#  define NOMINMAX
-#endif
-
-#ifndef _WIN32_WINNT
-#  define _WIN32_WINNT 0x400
-#endif
-
-#ifndef WIN32_LEAN_AND_MEAN
-#  define WIN32_LEAN_AND_MEAN
-#endif
-
-#include <windows.h>
-
-#endif
-
-#ifdef GECODE_THREADS_PTHREADS
-
-#include <pthread.h>
-
-#ifdef GECODE_THREADS_OSX_UNFAIR
-
+#ifdef GECODE_USE_OSX_UNFAIR_MUTEX
 #include <os/lock.h>
 #include <libkern/OSAtomic.h>
-
 #endif
 
 #endif
@@ -95,23 +77,14 @@ namespace Gecode { namespace Support {
    */
   class Mutex {
   private:
-#if defined(GECODE_THREADS_WINDOWS)
-    /// Use a simple but more efficient critical section on Windows
-    CRITICAL_SECTION w_cs;
-#elif defined(GECODE_THREADS_OSX_UNFAIR)
-    /// Use unfair lock on macOS if available, OSSpinLock on older macOS
-    union {
-      os_unfair_lock unfair_lck;
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-      OSSpinLock spin_lck;
-#pragma clang diagnostic pop
-    } u;
-#elif defined(GECODE_THREADS_PTHREADS)
-    /// The Pthread mutex
-    pthread_mutex_t p_m;
+#ifdef GECODE_HAS_THREADS
+#ifndef GECODE_USE_OSX_UNFAIR_MUTEX
+    /// The mutex
+    std::mutex m;
 #else
-#error No suitable mutex implementation found
+    /// The unfair lock
+    os_unfair_lock l;
+#endif
 #endif
   public:
     /// Initialize mutex
@@ -122,8 +95,6 @@ namespace Gecode { namespace Support {
     bool tryacquire(void);
     /// Release the mutex
     void release(void);
-    /// Delete mutex
-    ~Mutex(void);
     /// Allocate memory from heap
     static void* operator new(size_t s);
     /// Free memory allocated from heap
@@ -134,54 +105,6 @@ namespace Gecode { namespace Support {
     /// A mutex cannot be assigned
     void operator=(const Mutex&) {}
   };
-
-#ifndef GECODE_THREADS_PTHREADS_SPINLOCK
-
-  typedef Mutex FastMutex;
-
-#else
-
-  /**
-   * \brief A fast mutex for mutual exclausion among several threads
-   *
-   * This mutex is implemeneted using spin locks on some platforms
-   * and is not guaranteed to be compatible with events. It should be used
-   * for low-contention locks that are only acquired for short periods of
-   * time.
-   *
-   * It is not specified whether the mutex is recursive or not.
-   * Likewise, there is no guarantee of fairness among the
-   * blocking threads.
-   *
-   * \ingroup FuncSupportThread
-   */
-  class FastMutex {
-  private:
-    /// The Pthread spinlock
-    pthread_spinlock_t p_s;
-  public:
-    /// Initialize mutex
-    FastMutex(void);
-    /// Acquire the mutex and possibly block
-    void acquire(void);
-    /// Try to acquire the mutex, return true if succesful
-    bool tryacquire(void);
-    /// Release the mutex
-    void release(void);
-    /// Delete mutex
-    ~FastMutex(void);
-    /// Allocate memory from heap
-    static void* operator new(size_t s);
-    /// Free memory allocated from heap
-    static void  operator delete(void* p);
-  private:
-    /// A mutex cannot be copied
-    FastMutex(const FastMutex&) {}
-    /// A mutex cannot be assigned
-    void operator=(const FastMutex&) {}
-  };
-
-#endif
 
   /**
    * \brief A lock as a scoped frontend for a mutex
@@ -214,18 +137,14 @@ namespace Gecode { namespace Support {
    */
   class Event {
   private:
-#ifdef GECODE_THREADS_WINDOWS
-    /// The Windows specific handle to an event
-    HANDLE w_h;
+#ifdef GECODE_HAS_THREADS
+    /// The mutex
+    std::mutex m;
+    /// The condition variable
+    std::condition_variable c;
 #endif
-#ifdef GECODE_THREADS_PTHREADS
-    /// The Pthread mutex
-    pthread_mutex_t p_m;
-    /// The Pthread condition variable
-    pthread_cond_t p_c;
     /// Whether the event is signalled
-    bool p_s;
-#endif
+    bool s;
   public:
     /// Initialize event
     Event(void);
@@ -233,8 +152,6 @@ namespace Gecode { namespace Support {
     void signal(void);
     /// Wait until the event becomes signalled
     void wait(void);
-    /// Delete event
-    ~Event(void);
   private:
     /// An event cannot be copied
     Event(const Event&) {}
@@ -301,11 +218,9 @@ namespace Gecode { namespace Support {
       /// Next idle thread
       Run* n;
       /// Runnable object to execute
-      Runnable* r;
+      std::atomic<Runnable*> r;
       /// Event to wait for next runnable object to execute
       Event e;
-      /// Mutex for synchronization
-      Mutex m;
       /// Create a new thread
       GECODE_SUPPORT_EXPORT Run(Runnable* r);
       /// Infinite loop for execution

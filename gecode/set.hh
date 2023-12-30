@@ -551,6 +551,8 @@ namespace Gecode {
                const IntSet& glb,const IntSet& lub,
                unsigned int minCard = 0,
                unsigned int maxCard = Set::Limits::card);
+    /// Assignment operator
+    SetVarArgs& operator =(const SetVarArgs&) = default;
     //@}
   };
   //@}
@@ -623,10 +625,9 @@ namespace Gecode {
                 const IntSet& glb,const IntSet& lub,
                 unsigned int minCard = 0,
                 unsigned int maxCard = Set::Limits::card);
-    //@}
-
     /// Assignment operator
     SetVarArray& operator =(const SetVarArray&) = default;
+    //@}
   };
 
 }
