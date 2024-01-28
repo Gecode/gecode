@@ -71,6 +71,13 @@ Let's see.
 
 [ENTRY]
 Module: flatzinc
+What:   change
+Rank:   minor
+[DESCRIPTION]
+Add MiniZinc documentation comments to the Gecode-specific library file.
+
+[ENTRY]
+Module: flatzinc
 What:   bug
 Rank:   minor
 [DESCRIPTION]
