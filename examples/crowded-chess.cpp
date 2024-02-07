@@ -310,8 +310,8 @@ public:
       extensional(*this, b, bishops, opt.ipl());
     }
 
-    // Handle knigths
-    // Connect knigths to board
+    // Handle knights
+    // Connect knights to board
     for(int i = n*n; i--; )
       knights[i] = expr(*this, (s[i] == K));
     knight_constraints();

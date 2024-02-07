@@ -134,7 +134,7 @@ namespace Gecode { namespace Search { namespace Par {
     virtual void terminated(void);
     /// For worker to wait until termination is legal
     void wait_terminate(void);
-    /// For engine to peform thread termination
+    /// For engine to perform thread termination
     void terminate(void);
     //@}
 

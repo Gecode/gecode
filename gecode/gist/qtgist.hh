@@ -73,7 +73,7 @@ namespace Gecode {  namespace Gist {
    * \brief %Gecode Interactive %Search Tool
    *
    * This class provides an interactive search tree viewer and explorer as
-   * a Qt widget. You can embedd or inherit from this widget to use %Gist
+   * a Qt widget. You can embed or inherit from this widget to use %Gist
    * in your own project.
    *
    * \ingroup TaskGist

@@ -76,7 +76,7 @@ namespace Test { namespace Float {
          return eq(exp(x[0]), x[1]);
        }
        /// Extend assignment \a x
-       virtual bool extendAssignement(Assignment& x) const {
+       virtual bool extendAssignment(Assignment& x) const {
          Gecode::FloatVal d = exp(x[0]);
          if (Gecode::Float::subset(d, dom)) {
            x.set(1, d);
@@ -141,7 +141,7 @@ namespace Test { namespace Float {
          return eq(log(x[0]), x[1]);
        }
        /// Extend assignment \a x
-       virtual bool extendAssignement(Assignment& x) const {
+       virtual bool extendAssignment(Assignment& x) const {
          if (x[0].max() < 0.0) return false;
          Gecode::FloatVal d = log(x[0]);
          if (Gecode::Float::subset(d, dom)) {
@@ -208,7 +208,7 @@ namespace Test { namespace Float {
          return eq(log(x[0]) / log(base), x[1]);
        }
        /// Extend assignment \a x
-       virtual bool extendAssignement(Assignment& x) const {
+       virtual bool extendAssignment(Assignment& x) const {
          if ((x[0].max() <= 0.0) || (base <= 0.0))
            return false;
          Gecode::FloatVal d = log(x[0])/log(base);
@@ -277,7 +277,7 @@ namespace Test { namespace Float {
          return eq(exp(x[0] * log(base)), x[1]);
        }
        /// Extend assignment \a x
-       virtual bool extendAssignement(Assignment& x) const {
+       virtual bool extendAssignment(Assignment& x) const {
          if (base <= 0.0) return false;
          Gecode::FloatVal d = exp(x[0]*log(base));
          if (Gecode::Float::subset(d, dom)) {

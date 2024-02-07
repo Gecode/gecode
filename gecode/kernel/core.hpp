@@ -1189,7 +1189,7 @@ namespace Gecode {
     //@}
     /// \name Information
     //@{
-    /// Return the accumlated failure count
+    /// Return the accumulated failure count
     double afc(void) const;
     //@}
 #ifdef GECODE_HAS_CBS
@@ -1929,7 +1929,7 @@ namespace Gecode {
      * and the alternative \a a. The statistics information \a stat is
      * updated.
      *
-     * Note that no propagation is perfomed (to support path
+     * Note that no propagation is performed (to support path
      * recomputation), in order to perform propagation the member
      * function status must be used.
      *
@@ -1964,7 +1964,7 @@ namespace Gecode {
      * and the alternative \a a. The statistics information \a stat is
      * updated.
      *
-     * Note that no propagation is perfomed (to support path
+     * Note that no propagation is performed (to support path
      * recomputation), in order to perform propagation the member
      * function status must be used.
      *
@@ -2205,7 +2205,7 @@ namespace Gecode {
      * and the alternative \a a. The statistics information \a stat is
      * updated.
      *
-     * Note that no propagation is perfomed (to support path
+     * Note that no propagation is performed (to support path
      * recomputation), in order to perform propagation the member
      * function status must be used.
      *
@@ -2241,7 +2241,7 @@ namespace Gecode {
      * and the alternative \a a. The statistics information \a stat is
      * updated.
      *
-     * Note that no propagation is perfomed (to support path
+     * Note that no propagation is performed (to support path
      * recomputation), in order to perform propagation the member
      * function status must be used.
      *
@@ -4372,7 +4372,7 @@ namespace Gecode {
       unsigned int n = degree();
       // Find out whether the area is most likely in the special area
       // reserved for subscriptions. If yes, just resize mildly otherwise
-      // more agressively
+      // more aggressively
       ActorLink** s = static_cast<ActorLink**>(home.mm.subscriptions());
       unsigned int m =
         ((s <= b.base) && (b.base < s+home.pc.p.n_sub)) ?

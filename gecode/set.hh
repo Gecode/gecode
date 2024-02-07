@@ -1055,7 +1055,7 @@ namespace Gecode {
    * \ingroup TaskModelSet
    *
    * Synchronized execution executes a function or a static member function
-   * when a certain event happends.
+   * when a certain event happens.
    *
    * \ingroup TaskModelSet
    */
@@ -1805,7 +1805,7 @@ namespace Gecode {
     //@{
     /// Give access to iterator for delta in greatest lower bound (values that have been included)
     Glb& glb(void);
-    /// Give access iterator for delta in leat bound (values that have been removed)
+    /// Give access iterator for delta in least bound (values that have been removed)
     Lub& lub(void);
     //@}
   };

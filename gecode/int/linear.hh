@@ -1370,8 +1370,8 @@ namespace Gecode { namespace Int { namespace Linear {
    * \param c result of linear constraint
    *
    * All variants for linear constraints share the following properties:
-   *  - Variables occuring multiply in the term array are replaced
-   *    by a single occurence: for example, \f$ax+bx\f$ becomes
+   *  - Variables occurring multiply in the term array are replaced
+   *    by a single occurrence: for example, \f$ax+bx\f$ becomes
    *    \f$(a+b)x\f$.
    *  - If in the above simplification the value for \f$(a+b)\f$ (or for
    *    \f$a\f$ and \f$b\f$) exceeds the limits for integers as
@@ -1403,8 +1403,8 @@ namespace Gecode { namespace Int { namespace Linear {
    *
    * All variants for linear constraints share the following properties:
    *  - Only bounds consistency is supported.
-   *  - Variables occuring multiply in the term array are replaced
-   *    by a single occurence: for example, \f$ax+bx\f$ becomes
+   *  - Variables occurring multiply in the term array are replaced
+   *    by a single occurrence: for example, \f$ax+bx\f$ becomes
    *    \f$(a+b)x\f$.
    *  - If in the above simplification the value for \f$(a+b)\f$ (or for
    *    \f$a\f$ and \f$b\f$) exceeds the limits for integers as
@@ -1434,8 +1434,8 @@ namespace Gecode { namespace Int { namespace Linear {
    * \param c result of linear constraint
    *
    * All variants for linear constraints share the following properties:
-   *  - Variables occuring multiply in the term array are replaced
-   *    by a single occurence: for example, \f$ax+bx\f$ becomes
+   *  - Variables occurring multiply in the term array are replaced
+   *    by a single occurrence: for example, \f$ax+bx\f$ becomes
    *    \f$(a+b)x\f$.
    *  - If in the above simplification the value for \f$(a+b)\f$ (or for
    *    \f$a\f$ and \f$b\f$) exceeds the limits for integers as
@@ -1466,8 +1466,8 @@ namespace Gecode { namespace Int { namespace Linear {
    * \param r reification specification
    *
    * All variants for linear constraints share the following properties:
-   *  - Variables occuring multiply in the term array are replaced
-   *    by a single occurence: for example, \f$ax+bx\f$ becomes
+   *  - Variables occurring multiply in the term array are replaced
+   *    by a single occurrence: for example, \f$ax+bx\f$ becomes
    *    \f$(a+b)x\f$.
    *  - If in the above simplification the value for \f$(a+b)\f$ (or for
    *    \f$a\f$ and \f$b\f$) exceeds the limits for integers as
@@ -1498,8 +1498,8 @@ namespace Gecode { namespace Int { namespace Linear {
    * \param c constant right hand side of linear constraint
    *
    * All variants for linear constraints share the following properties:
-   *  - Variables occuring multiply in the term array are replaced
-   *    by a single occurence: for example, \f$ax+bx\f$ becomes
+   *  - Variables occurring multiply in the term array are replaced
+   *    by a single occurrence: for example, \f$ax+bx\f$ becomes
    *    \f$(a+b)x\f$.
    *  - If in the above simplification the value for \f$(a+b)\f$ (or for
    *    \f$a\f$ and \f$b\f$) exceeds the limits for integers as
@@ -1530,8 +1530,8 @@ namespace Gecode { namespace Int { namespace Linear {
    * \param r reification specification
    *
    * All variants for linear constraints share the following properties:
-   *  - Variables occuring multiply in the term array are replaced
-   *    by a single occurence: for example, \f$ax+bx\f$ becomes
+   *  - Variables occurring multiply in the term array are replaced
+   *    by a single occurrence: for example, \f$ax+bx\f$ becomes
    *    \f$(a+b)x\f$.
    *  - If in the above simplification the value for \f$(a+b)\f$ (or for
    *    \f$a\f$ and \f$b\f$) exceeds the limits for integers as

@@ -56,7 +56,7 @@ namespace Gecode { namespace Int { namespace Sorted {
    * \brief Perform bounds consistent sortedness propagation
    *
    * Implements the propagation algorithm for Sorted::Sorted
-   * and is provided as seperate function, because a second pass of
+   * and is provided as separate function, because a second pass of
    * the propagation algorithm is needed in order to achieve idempotency
    * in case explicit permutation variables are provided.
    *
@@ -585,7 +585,7 @@ namespace Gecode { namespace Int { namespace Sorted {
     }
 
     // sorted check bounds
-    // final check that variables are consitent with least and greatest possible
+    // final check that variables are consistent with least and greatest possible
     // values
     int tlb = std::min(x[0].min(), y[0].min());
     int tub = std::max(x[x.size() - 1].max(), y[y.size() - 1].max());

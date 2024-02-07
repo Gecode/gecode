@@ -76,7 +76,7 @@ namespace Test { namespace Float {
          return eq(sin(x[0]), x[1]);
        }
        /// Extend assignment \a x
-       virtual bool extendAssignement(Assignment& x) const {
+       virtual bool extendAssignment(Assignment& x) const {
          Gecode::FloatVal d = sin(x[0]);
          if (Gecode::Float::subset(d, dom)) {
            x.set(1, d);
@@ -137,7 +137,7 @@ namespace Test { namespace Float {
          return eq(cos(x[0]), x[1]);
        }
        /// Extend assignment \a x
-       virtual bool extendAssignement(Assignment& x) const {
+       virtual bool extendAssignment(Assignment& x) const {
          Gecode::FloatVal d = cos(x[0]);
          if (Gecode::Float::subset(d, dom)) {
            x.set(1, d);
@@ -198,7 +198,7 @@ namespace Test { namespace Float {
          return eq(tan(x[0]), x[1]);
        }
        /// Extend assignment \a x
-       virtual bool extendAssignement(Assignment& x) const {
+       virtual bool extendAssignment(Assignment& x) const {
          Gecode::FloatVal d = tan(x[0]);
          if (Gecode::Float::subset(d, dom)) {
            x.set(1, d);
@@ -263,7 +263,7 @@ namespace Test { namespace Float {
          return eq(asin(x[0]), x[1]);
        }
        /// Extend assignment \a x
-       virtual bool extendAssignement(Assignment& x) const {
+       virtual bool extendAssignment(Assignment& x) const {
          if ((x[0].min() > 1.0) || (x[0].max() < -1.0))
            return false;
          Gecode::FloatVal d = asin(x[0]);
@@ -332,7 +332,7 @@ namespace Test { namespace Float {
          return eq(acos(x[0]), x[1]);
        }
        /// Extend assignment \a x
-       virtual bool extendAssignement(Assignment& x) const {
+       virtual bool extendAssignment(Assignment& x) const {
          if ((x[0].min() > 1.0) || (x[0].max() < -1.0))
            return false;
          Gecode::FloatVal d = acos(x[0]);
@@ -397,7 +397,7 @@ namespace Test { namespace Float {
          return eq(atan(x[0]), x[1]);
        }
        /// Extend assignment \a x
-       virtual bool extendAssignement(Assignment& x) const {
+       virtual bool extendAssignment(Assignment& x) const {
          Gecode::FloatVal d = atan(x[0]);
          if (Gecode::Float::subset(d, dom)) {
            x.set(1, d);

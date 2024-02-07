@@ -38,7 +38,7 @@
 
 namespace Gecode { namespace Search {
 
-  /// Clone space \a s dependening on options \a o
+  /// Clone space \a s depending on options \a o
   forceinline Space*
   snapshot(Space* s, const Options& o);
 

@@ -107,7 +107,7 @@ namespace Gecode { namespace Int { namespace GCC {
     }
 
     // less than or equal than the total number of free variables
-    // to satisfy the required occurences
+    // to satisfy the required occurrences
     for (int i=0; i<k.size(); i++)
       GECODE_ME_CHECK(k[i].lq(home, x.size()+removed-(sum_min - k[i].min())));
 
@@ -131,13 +131,13 @@ namespace Gecode { namespace Int { namespace GCC {
       return home.ES_SUBSUMED(p);
     }
 
-    // total number of unsatisfied miminum occurences
+    // total number of unsatisfied miminum occurrences
     int req = 0;
     // number of values whose min requirements are not yet met
     int n_r = 0;
     // if only one value is unsatisified single holds the index of that value
     int single = -1;
-    // total number of assigned views wrt. the original probem size
+    // total number of assigned views wrt. the original problem size
     int t_noa = 0;
 
     for (int i = k.size(); i--; ) {
@@ -150,13 +150,13 @@ namespace Gecode { namespace Int { namespace GCC {
       }
 
       // number of unassigned views cannot satisfy
-      // the required minimum occurence
+      // the required minimum occurrence
       if (req > non) {
         return ES_FAILED;
       }
     }
 
-    // if only one unsatisfied occurences is left
+    // if only one unsatisfied occurrences is left
     if ((req == non) && (n_r == 1)) {
       // This works as the x are not shared!
       for (int i = x.size(); i--; ) {
@@ -183,7 +183,7 @@ namespace Gecode { namespace Int { namespace GCC {
         assert(!rem.get(i));
         rem.set(static_cast<unsigned int>(i));
         k[i].counter(ci);
-        // the solution contains ci occurences of value k[i].card();
+        // the solution contains ci occurrences of value k[i].card();
         GECODE_ME_CHECK(k[i].eq(home, ci));
       } else {
         if (ci > k[i].max()) {

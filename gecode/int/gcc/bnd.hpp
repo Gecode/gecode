@@ -141,7 +141,7 @@ namespace Gecode { namespace Int { namespace GCC {
     int v = 0;
 
     //initialization of the tree structure
-    int rightmost = nb + 1; // rightmost accesible value in bounds
+    int rightmost = nb + 1; // rightmost accessible value in bounds
     int bsize     = nb + 2;
     w = rightmost;
 
@@ -285,7 +285,7 @@ namespace Gecode { namespace Int { namespace GCC {
       pathset_t(hall, succ, z, z); // path compression
     }
 
-    /* If there is a FAILURE SET left the minimum occurences of the values
+    /* If there is a FAILURE SET left the minimum occurrences of the values
      * are not guaranteed. In order to satisfy the LBC the last value
      * in the stable and unstable datastructure hall[].h must point to
      * the sentinel at the beginning of bounds.
@@ -403,7 +403,7 @@ namespace Gecode { namespace Int { namespace GCC {
   forceinline ExecStatus
   Bnd<Card>::ubc(Space& home, int& nb,
                            HallInfo hall[], Rank rank[], int mu[], int nu[]) {
-    int rightmost = nb + 1; // rightmost accesible value in bounds
+    int rightmost = nb + 1; // rightmost accessible value in bounds
     int bsize = nb + 2; // number of unique bounds including sentinels
 
     //Narrow lower bounds (UBC)
@@ -486,14 +486,14 @@ namespace Gecode { namespace Int { namespace GCC {
        *     pointers is equal to the maximum capacity of the interval,i.e.
        *     the number of variables whose domain is contained in the
        *     interval is equal to the sum over all u[i] for a value v_i that
-       *     lies in the Hall-Intervall which can also be thought of as a
+       *     lies in the Hall-Interval which can also be thought of as a
        *     Hall-Set
        *
-       *    ZeroTestLemma: Let k and l be succesive critical indices.
+       *    ZeroTestLemma: Let k and l be successive critical indices.
        *          v^i_k=0  =>  v^i_k = max_i+1-l+d
        *                   <=> v^i_k = y + 1 - z + d
        *                   <=> d = z-1-y
-       *    if this equation holds the interval [j,z-1] is a hall intervall
+       *    if this equation holds the interval [j,z-1] is a hall interval
        */
 
       if (hall[z].d == ups.sumup(hall[y].bounds, hall[z].bounds - 1)) {
@@ -762,7 +762,7 @@ namespace Gecode { namespace Int { namespace GCC {
       }
     }
 
-    int rightmost = nb + 1; // rightmost accesible value in bounds
+    int rightmost = nb + 1; // rightmost accessible value in bounds
     hall[rightmost].bounds = ups.lastValue + 1 ;
 
     if (Card::propagate) {

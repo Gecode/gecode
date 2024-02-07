@@ -107,7 +107,7 @@ namespace Gecode { namespace Support {
     }
   }
 
-  /// Standard partioning
+  /// Standard partitioning
   template<class Type, class Less>
   forceinline Type*
   partition(Type* l, Type* r, Less &less) {

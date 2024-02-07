@@ -118,7 +118,7 @@ namespace Gecode {
 
     /// \name Ordering
     //@{
-    /// Whether this view comes before view \a y (arbitray order)
+    /// Whether this view comes before view \a y (arbitrary order)
     bool operator <(const ConstView& y) const;
     //@}
   };
@@ -216,7 +216,7 @@ namespace Gecode {
 
     /// \name Ordering
     //@{
-    /// Whether this view comes before view \a y (arbitray order)
+    /// Whether this view comes before view \a y (arbitrary order)
     bool operator <(const VarImpView& y) const;
     //@}
   };
@@ -313,7 +313,7 @@ namespace Gecode {
 
     /// \name Ordering
     //@{
-    /// Whether this view comes before view \a y (arbitray order)
+    /// Whether this view comes before view \a y (arbitrary order)
     bool operator <(const DerivedView<View>& y) const;
     //@}
   };

@@ -56,7 +56,7 @@ namespace Gecode { namespace Int { namespace Distinct {
 
     unsigned int width = static_cast<unsigned int>(max-min+1);
 
-    // Definitly not enough values
+    // Definitely not enough values
     if (width < static_cast<unsigned int>(n_view))
       return ES_FAILED;
 

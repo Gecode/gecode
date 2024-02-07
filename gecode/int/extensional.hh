@@ -57,7 +57,7 @@ namespace Gecode { namespace Int { namespace Extensional {
    *   for Finite Sequences of Variables, CP 2004.
    *   Pages 482-495, LNCS 3258, Springer-Verlag, 2004.
    *
-   * The propagator is not capable of dealing with multiple occurences
+   * The propagator is not capable of dealing with multiple occurrences
    * of the same view.
    *
    * Requires \code #include <gecode/int/extensional.hh> \endcode

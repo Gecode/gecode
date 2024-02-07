@@ -430,7 +430,7 @@ namespace Gecode {
       virtual ~GetInfo(void);
     };
   private:
-    /// Connector to connect to running instnace of CPProfiler
+    /// Connector to connect to running instance of CPProfiler
     CPProfiler::Connector* connector;
     /// Execution id to be displayed by CPProfiler
     int execution_id;

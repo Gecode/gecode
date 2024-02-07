@@ -248,7 +248,7 @@ namespace Gecode {  namespace Gist {
     /// Signals that a bookmark has been removed
     void removedBookmark(int idx);
   protected:
-    /// Mutex for synchronizing acccess to the tree
+    /// Mutex for synchronizing access to the tree
     GecodeQMutex mutex;
     /// Mutex for synchronizing layout and drawing
     GecodeQMutex layoutMutex;

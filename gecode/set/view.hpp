@@ -301,7 +301,7 @@ namespace Gecode { namespace Set {
 
     /// \name Ordering
     //@{
-    /// Whether this view comes before view \a y (arbitray order)
+    /// Whether this view comes before view \a y (arbitrary order)
     bool operator <(const ConstSetView& y) const;
     //@}
   };
@@ -937,7 +937,7 @@ namespace Gecode { namespace Set {
    * \brief Cached set view
    *
    * A cached set view \f$s\f$ for a set view \f$t\f$ adds operations
-   * for cacheing the current domain of \f$t\f$ and comparing the current
+   * for caching the current domain of \f$t\f$ and comparing the current
    * domain to the cached domain. Cached views make it easy to implement
    * incremental propagation algorithms.
    *

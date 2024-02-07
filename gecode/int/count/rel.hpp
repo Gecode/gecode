@@ -95,7 +95,7 @@ namespace Gecode { namespace Int { namespace Count {
   template<class VY>
   forceinline void
   reschedule(Space& home, Propagator& p, VY y) {
-    (void) y; // To satisy MSVC
+    (void) y; // To satisfy MSVC
     y.schedule(home, p, PC_INT_DOM);
   }
 

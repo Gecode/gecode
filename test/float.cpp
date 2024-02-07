@@ -72,7 +72,7 @@ namespace Test { namespace Float {
       FloatNum ns = dsv[i].min() + step;
       dsv[i] = FloatVal(ns,nextafter(ns,ns+1));
       if ((dsv[i].max() < d.max()) || (i == 0)) {
-        if (curPb->extendAssignement(*this)) return;
+        if (curPb->extendAssignment(*this)) return;
         if ((dsv[i].max() >= d.max()) && (i == 0)) return;
         continue;
       }
@@ -418,7 +418,7 @@ namespace Test { namespace Float {
 
   Assignment*
   Test::assignment(void) const {
-    switch (assigmentType) {
+    switch (assignmentType) {
     case CPLT_ASSIGNMENT:
       return new CpltAssignment(arity,dom,step);
     case RANDOM_ASSIGNMENT:
@@ -432,7 +432,7 @@ namespace Test { namespace Float {
   }
 
   bool
-  Test::extendAssignement(Assignment&) const {
+  Test::extendAssignment(Assignment&) const {
     GECODE_NEVER;
     return false;
   }
@@ -441,7 +441,7 @@ namespace Test { namespace Float {
   Test::subsumed(const TestSpace& ts) const {
     if (!testsubsumed) return true;
     if (const_cast<TestSpace&>(ts).propagators() == 0) return true;
-    if (assigmentType == EXTEND_ASSIGNMENT) return true;
+    if (assignmentType == EXTEND_ASSIGNMENT) return true;
     return false;
   }
 

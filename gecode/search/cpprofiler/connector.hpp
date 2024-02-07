@@ -218,7 +218,7 @@ namespace Gecode { namespace CPProfiler {
    * The following code is taken from:
    *   Beej's Guide to Network Programming
    *   http://beej.us/guide/bgnet/
-   * with the folloiwng license:
+   * with the following license:
    *
    * Beej's Guide to Network Programming is Copyright © 2015 Brian "Beej Jorgensen" Hall.
    * With specific exceptions for source code and translations, below, this work is licensed under the Creative Commons Attribution- Noncommercial- No Derivative Works 3.0 License. To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-nd/3.0/ or send a letter to Creative Commons, 171 Second Street, Suite 300, San Francisco, California, 94105, USA.

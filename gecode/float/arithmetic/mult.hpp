@@ -35,7 +35,7 @@
 
 namespace Gecode { namespace Float { namespace Arithmetic {
 
-  /// Test whether \a x is postive
+  /// Test whether \a x is positive
   template<class View>
   forceinline bool
   pos(const View& x) {
