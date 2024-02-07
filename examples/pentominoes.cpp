@@ -227,7 +227,7 @@ namespace {
  * place. Given that we place three pieces, and that the above shown
  * piece is number one, we will replace each \f$0\f$-expression with
  * the expression \f$(0|2|3)\f$. Thus, the second regular expression
- * becomes \f$(0|2|3)^*1(0|2|3)(0|2|3)111(0|2|3)^*\f$. Additionaly,
+ * becomes \f$(0|2|3)^*1(0|2|3)(0|2|3)111(0|2|3)^*\f$. Additionally,
  * the end of line marker gets its own value.
  *
  * This generalization suffers from the fact that the automata become

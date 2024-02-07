@@ -84,7 +84,7 @@ namespace Gecode { namespace Int {
     : Exception(l,"Variable in symmetry not branched on") {}
 
   LDSBBadValueSelection::LDSBBadValueSelection(const char* l)
-    : Exception(l,"Value selection incomatible with LDSB") {}
+    : Exception(l,"Value selection incompatible with LDSB") {}
 
 }}
 

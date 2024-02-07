@@ -59,11 +59,11 @@ namespace Test {
    * \brief Stream used for logging
    *
    * The olog is buffered and printed only if an error has
-   * occured.
+   * occurred.
    */
   extern std::ostringstream olog;
 
-  /// Simple class for describing identation
+  /// Simple class for describing indentation
   class ind {
   public:
     /// Which indentation level

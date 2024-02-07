@@ -681,7 +681,7 @@ namespace Gecode { namespace Int {
     /**
      * \brief Schedule propagator \a p with modification event \a me
      *
-     * The modfication event \a me can be a modification event for
+     * The modification event \a me can be a modification event for
      * integer variables, however \a me will be ignored if it is not
      * ME_INT_VAL (or ME_BOOL_VAL).
      */

@@ -102,15 +102,15 @@ namespace Gecode { namespace Int { namespace Linear {
    * \param t array of linear terms
    * \param n size of array
    * \param t_p array of linear terms over integers with positive coefficients
-   * \param n_p number of postive terms
+   * \param n_p number of positive terms
    * \param t_n array of linear terms over integers with negative coefficients
    * \param n_n number of negative terms
    * \param gcd greatest common divisor of all coefficients
    *
    * Replaces all negative coefficients by positive coefficients.
    *
-   *  - Variables occuring multiply in the term array are replaced
-   *    by a single occurence: for example, \f$ax+bx\f$ becomes
+   *  - Variables occurring multiply in the term array are replaced
+   *    by a single occurrence: for example, \f$ax+bx\f$ becomes
    *    \f$(a+b)x\f$.
    *  - If in the above simplification the value for \f$(a+b)\f$ (or for
    *    \f$a\f$ and \f$b\f$) exceeds the limits for integers as
@@ -161,7 +161,7 @@ namespace Gecode { namespace Int { namespace Linear {
     }
 
     /*
-     * Partition into positive/negative coefficents
+     * Partition into positive/negative coefficients
      *
      */
     if (n > 0) {

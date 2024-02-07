@@ -41,7 +41,7 @@ namespace Gecode { namespace Int { namespace Distinct {
   /**
    * \brief Minc and Brégman factors
    *
-   * Factors precomputed for every value in the domain of x. Thoses factors are
+   * Factors precomputed for every value in the domain of x. Those factors are
    * used to compute the Minc and Brégman upper bound for the permanent in
    * counting base search
    */
@@ -56,7 +56,7 @@ namespace Gecode { namespace Int { namespace Distinct {
   /**
    * \brief Liang and Bai factors
    *
-   * Factors precomputed for every index and domain size in x. Thoses factors
+   * Factors precomputed for every index and domain size in x. Those factors
    * are used to compute the Liang and Bai upper bound for the permanent in
    * counting base search
    */

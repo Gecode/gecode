@@ -119,7 +119,7 @@ namespace Gecode { namespace Search {
           return home.ES_SUBSUMED(*this);
         // Skip literal that already has a subscription
         l = l->next();
-        // Create subscriptions for leafs
+        // Create subscriptions for leaves
         while ((l != nullptr) && l->leaf()) {
           l->subscribe(home,*this); n++;
           l = l->next();

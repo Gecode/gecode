@@ -63,7 +63,7 @@ namespace Gecode {
     void dispose(Space& home);
   };
 
-  /// Class withot a branch filter function
+  /// Class without a branch filter function
   template<class View>
   class BrancherNoFilter {
   public:

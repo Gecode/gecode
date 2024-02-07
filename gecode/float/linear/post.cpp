@@ -162,7 +162,7 @@ namespace Gecode { namespace Float { namespace Linear {
     int n_p, n_n;
 
     /*
-     * Partition into positive/negative coefficents
+     * Partition into positive/negative coefficients
      *
      */
     if (n > 0) {

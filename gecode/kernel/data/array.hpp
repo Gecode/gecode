@@ -45,7 +45,7 @@
 
 namespace Gecode { namespace Kernel {
 
-  /// Occurence information for a view
+  /// Occurrence information for a view
   template<class View>
   class ViewOcc {
   public:
@@ -470,7 +470,7 @@ namespace Gecode {
     /// \name View equality
     //@{
     /**
-     * \brief Test whether array has multiple occurence of the same view
+     * \brief Test whether array has multiple occurrence of the same view
      *
      * Note that assigned views are ignored.
      */
@@ -1918,7 +1918,7 @@ namespace Gecode {
 
 
   /*
-   * Checking for multiple occurences of the same variable
+   * Checking for multiple occurrences of the same variable
    *
    */
   template<class Var>

@@ -85,7 +85,7 @@ enum {
  * (transportation cost plus construction cost) is smallest.
  *
  * Taken from:
- *   Pascal Van Hentenryck, The OPL Optmization Programming Language,
+ *   Pascal Van Hentenryck, The OPL Optimization Programming Language,
  *   The MIT Press, 1999.
  *
  * See also problem 34 at http://www.csplib.org/.

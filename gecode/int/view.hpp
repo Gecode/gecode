@@ -588,7 +588,7 @@ namespace Gecode { namespace Int {
 
     /// \name Ordering
     //@{
-    /// Whether this view comes before view \a y (arbitray order)
+    /// Whether this view comes before view \a y (arbitrary order)
     bool operator <(const OffsetView& y) const;
     //@}
   };
@@ -792,7 +792,7 @@ namespace Gecode { namespace Int {
 
     /// \name Ordering
     //@{
-    /// Whether this view comes before view \a y (arbitray order)
+    /// Whether this view comes before view \a y (arbitrary order)
     bool operator <(const ScaleView<Val,UnsVal>& y) const;
     //@}
   };
@@ -979,7 +979,7 @@ namespace Gecode { namespace Int {
 
     /// \name Ordering
     //@{
-    /// Whether this view comes before view \a y (arbitray order)
+    /// Whether this view comes before view \a y (arbitrary order)
     bool operator <(const ConstIntView& y) const;
     //@}
   };
@@ -1156,7 +1156,7 @@ namespace Gecode { namespace Int {
    * \brief Cached integer view
    *
    * A cached integer view \f$c\f$ for an integer view \f$x\f$ adds operations
-   * for cacheing the current domain of \f$x\f$ and comparing the current
+   * for caching the current domain of \f$x\f$ and comparing the current
    * domain to the cached domain. Cached views make it easy to implement
    * incremental propagation algorithms.
    *

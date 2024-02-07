@@ -112,7 +112,7 @@ namespace Gecode { namespace Support {
       /// Queue of not yet requested results
       DynamicQueue<RetType,Heap> rs;
     public:
-      /// Get next job witth index \a i, if possible
+      /// Get next job with index \a i, if possible
       Job<RetType>* next(int& i);
       /// Report result \a r by a worker
       void report(RetType r);
@@ -122,7 +122,7 @@ namespace Gecode { namespace Support {
       bool done(void) const;
       /// Initialize with job iterator \a j and maximal number of threads \a m
       Master(Jobs& j, unsigned int m);
-      /// Run next job and return true if succesful and assign \a r to its result
+      /// Run next job and return true if successful and assign \a r to its result
       bool run(RetType& r);
       /// Whether a job has thrown a \a JobStop exception
       bool stopped(void) const;
@@ -149,7 +149,7 @@ namespace Gecode { namespace Support {
   public:
     /// Initialize with job iterator \a j and maximal number of threads \a m
     RunJobs(Jobs& j, unsigned int m);
-    /// Run next job and return true if succesful and assign \a r to its result
+    /// Run next job and return true if successful and assign \a r to its result
     bool run(RetType& r);
     /// Whether a job has thrown a \a JobStop exception with index \a i and result \a r
     bool stopped(int& i, RetType& r) const;

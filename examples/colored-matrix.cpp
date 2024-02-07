@@ -133,7 +133,7 @@ namespace {
    */
   DFA no_monochrome_rectangle_dfa(int colors);
 
-  /** Return counts for using a global cardninality constraint for the distinct exept 0 constraint.
+  /** Return counts for using a global cardninality constraint for the distinct except 0 constraint.
    */
   IntSetArgs distinct_except_0_counts(int colors, int size);
 
@@ -319,7 +319,7 @@ public:
   enum {
     SYMMETRY_NONE   = 0,   ///< No symmetry breaking
     SYMMETRY_MATRIX = 1, ///< Order rows and columns of matrix
-    SYMMETRY_VALUES = 2, ///< Order value occurences
+    SYMMETRY_VALUES = 2, ///< Order value occurrences
   };
   /// Model variants
   enum {
@@ -329,9 +329,9 @@ public:
   };
   /// Not all equal variants
   enum {
-    NOT_ALL_EQUAL_NQ,      ///< Use direct constraint for implemeting not all equals
-    NOT_ALL_EQUAL_NAIVE,   ///< Use naive reification for implemeting not all equals
-    NOT_ALL_EQUAL_REIFIED, ///< Use reification for implemeting not all equals
+    NOT_ALL_EQUAL_NQ,      ///< Use direct constraint for implementing not all equals
+    NOT_ALL_EQUAL_NAIVE,   ///< Use naive reification for implementing not all equals
+    NOT_ALL_EQUAL_REIFIED, ///< Use reification for implementing not all equals
     NOT_ALL_EQUAL_NVALUES, ///< Use nvalues for implementing not all equals
     NOT_ALL_EQUAL_COUNT,   ///< Use count for implementing not all equals
     NOT_ALL_EQUAL_DFA,     ///< Use dfa for implementing not all equals
@@ -400,7 +400,7 @@ public:
 
     // Symmetry breaking constraints.
     {
-      // Lexical order for all columns and rows (all are interchangable)
+      // Lexical order for all columns and rows (all are interchangeable)
       if (opt.symmetry() & SYMMETRY_MATRIX) {
         for (int r = 0; r < height-1; ++r) {
           rel(*this, m.row(r), IRT_LE, m.row(r+1));

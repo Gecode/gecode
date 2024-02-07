@@ -300,7 +300,7 @@ main(int argc, char* argv[]) {
 
   opt.parse(argc,argv);
   if (!Spec(opt.instance()).valid()) {
-    std::cerr << "Error: unkown instance" << std::endl;
+    std::cerr << "Error: unknown instance" << std::endl;
     return 1;
   }
   Script::run<QCP,DFS,QCPOptions>(opt);

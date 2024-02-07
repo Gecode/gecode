@@ -231,7 +231,7 @@ main(int argc, char* argv[]) {
   opt.propagation(Golf::PROP_SET);
   opt.propagation(Golf::PROP_SET, "set", "Use set intersection cardinality for pair play constraints");
   opt.propagation(Golf::PROP_INT, "int", "Use integer distinct for pair play constraints");
-  opt.propagation(Golf::PROP_MIXED, "mixed", "Use set interesection cardinality and integer distinct for pair play constraints");
+  opt.propagation(Golf::PROP_MIXED, "mixed", "Use set intersection cardinality and integer distinct for pair play constraints");
   opt.ipl(IPL_DOM);
   opt.solutions(1);
   opt.parse(argc,argv);

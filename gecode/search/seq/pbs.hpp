@@ -121,7 +121,7 @@ namespace Gecode { namespace Search { namespace Seq {
         slaves[cur].~Slave();
         slaves[cur] = slaves[--n_slaves];
         if (n_slaves == 1)
-          // Disable stoping by seeting a high limit
+          // Disable stopping by setting a high limit
           ssi.l = ULONG_MAX;
       }
       if (n_exhausted == n_slaves) {

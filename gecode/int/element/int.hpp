@@ -380,7 +380,7 @@ namespace Gecode { namespace Int { namespace Element {
     // Prune values
     prune_val();
 
-    // Peform tell
+    // Perform tell
     {
       IterIdxUnmark i(iv);
       GECODE_ME_CHECK(x0.narrow_v(home,i,false));

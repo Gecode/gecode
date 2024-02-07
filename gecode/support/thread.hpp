@@ -91,7 +91,7 @@ namespace Gecode { namespace Support {
     Mutex(void);
     /// Acquire the mutex and possibly block
     void acquire(void);
-    /// Try to acquire the mutex, return true if succesful
+    /// Try to acquire the mutex, return true if successful
     bool tryacquire(void);
     /// Release the mutex
     void release(void);
