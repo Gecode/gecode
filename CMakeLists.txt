@@ -341,11 +341,24 @@ foreach (lib support kernel search int set float
         set(sources ${sources} ${src})
       endif ()
     endforeach ()
-    add_library(gecode${lib} ${sources} ${${libupper}HDR})
-    target_include_directories(gecode${lib}
-      PUBLIC ${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR} )
-    list(APPEND GECODE_INSTALL_TARGETS gecode${lib})
+    add_library(${lib}  ${sources} ${${libupper}HDR})
+    # target_include_directories(${lib}
+    #   PUBLIC ${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR} )
+    target_include_directories(${lib}
+    PUBLIC
+      $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
+      $<BUILD_INTERFACE: ${CMAKE_CURRENT_SOURCE_DIR}>
+      $<INSTALL_INTERFACE:include>
+  )
+    list(APPEND GECODE_INSTALL_TARGETS ${lib})
   endif ()
+  # Install the binaries
+  install(TARGETS ${lib} EXPORT gecode-targets
+    ARCHIVE DESTINATION lib
+    LIBRARY DESTINATION lib
+    RUNTIME DESTINATION bin
+  )
+  target_compile_features(${lib} PUBLIC cxx_std_17)
 endforeach ()
 
 option(ENABLE_CPPROFILER "Enable cpprofiler tracer mode" ON)
@@ -354,45 +367,55 @@ if(ENABLE_CPPROFILER)
 endif()
 
 find_package(Threads)
-target_link_libraries(gecodesupport ${CMAKE_THREAD_LIBS_INIT})
-target_link_libraries(gecodekernel gecodesupport)
-target_link_libraries(gecodesearch gecodekernel)
-target_link_libraries(gecodeint gecodekernel)
-target_link_libraries(gecodeset gecodeint)
-target_link_libraries(gecodefloat gecodeint)
-target_link_libraries(gecodeminimodel gecodeint gecodeset gecodesearch)
-target_link_libraries(gecodedriver gecodeint)
-target_link_libraries(gecodeflatzinc gecodeminimodel gecodedriver)
+target_link_libraries(support ${CMAKE_THREAD_LIBS_INIT})
+target_link_libraries(kernel support)
+target_link_libraries(search kernel)
+target_link_libraries(int kernel)
+target_link_libraries(set int)
+target_link_libraries(float int)
+target_link_libraries(minimodel int set search)
+target_link_libraries(driver int)
+target_link_libraries(flatzinc minimodel driver)
+message(STATUS "Qt5 Core found: ${Qt5Core_FOUND}")
+message(STATUS "Qt5 Widgets found: ${Qt5Widgets_FOUND}")
+message(STATUS "Qt5 Gui found: ${Qt5Gui_FOUND}")
+message(STATUS "Qt5 PrintSupport found: ${Qt5PrintSupport_FOUND}")
+
+get_target_property(QT_CORE_LIB Qt5::Core LOCATION)
+message(STATUS "Qt5::Core library: ${QT_CORE_LIB}")
+get_target_property(FLATZINC_LINK_LIBRARIES flatzinc INTERFACE_LINK_LIBRARIES)
+message(STATUS "gecode::flatzinc link libraries: ${FLATZINC_LINK_LIBRARIES}")
 
 if (GECODE_HAS_QT)
   if (Qt6_FOUND)
-		target_link_libraries(gecodegist Qt6::Widgets Qt6::Gui Qt6::PrintSupport)
-		target_link_libraries(gecodeflatzinc Qt6::Core)
-    target_link_libraries(gecodeflatzinc gecodegist)
+		target_link_libraries(gist Qt6::Widgets Qt6::Gui Qt6::PrintSupport)
+		target_link_libraries(flatzinc Qt6::Core)
+    target_link_libraries(flatzinc gist)
+
 	elseif (Qt5_FOUND)
-		target_link_libraries(gecodegist Qt5::Widgets Qt5::Gui Qt5::PrintSupport)
-		target_link_libraries(gecodeflatzinc Qt5::Core)
-    target_link_libraries(gecodeflatzinc gecodegist)
+		target_link_libraries(gist PUBLIC Qt5::Widgets Qt5::Gui Qt5::PrintSupport)
+		target_link_libraries(flatzinc Qt5::Core)
+    target_link_libraries(flatzinc gist)
   else()
-    target_link_libraries(gecodegist ${QT_LIBRARIES})
-    target_link_libraries(gecodeflatzinc gecodegist ${QT_LIBRARIES})
+    target_link_libraries(gist ${QT_LIBRARIES})
+    target_link_libraries(flatzinc gist ${QT_LIBRARIES})
   endif()
 endif ()
 
 if (FLOATSRC)
-  target_link_libraries(gecodefloat gecodekernel)
-  target_link_libraries(gecodeminimodel gecodefloat)
+  target_link_libraries(float kernel)
+  target_link_libraries(minimodel float)
   if (MPFR_FOUND)
-    target_link_libraries(gecodefloat ${MPFR_LIBRARIES})
-    target_include_directories(gecodefloat PRIVATE ${MPFR_INCLUDES})
+    target_link_libraries(float ${MPFR_LIBRARIES})
+    target_include_directories(float PRIVATE ${MPFR_INCLUDES})
   endif ()
 endif ()
 
 add_executable(gecode-test EXCLUDE_FROM_ALL ${TESTSRC} ${TESTHDR})
-target_link_libraries(gecode-test gecodeflatzinc gecodeminimodel)
+target_link_libraries(gecode-test flatzinc minimodel)
 
 add_executable(fzn-gecode ${FLATZINCEXESRC})
-target_link_libraries(fzn-gecode gecodeflatzinc gecodeminimodel gecodedriver)
+target_link_libraries(fzn-gecode flatzinc minimodel driver)
 list(APPEND GECODE_INSTALL_TARGETS fzn-gecode)
 
 set(prefix ${CMAKE_INSTALL_PREFIX})
@@ -487,3 +510,32 @@ if (GECODE_HAS_GIST)
 		DESTINATION share/minizinc/solvers
 	)
 endif()
+
+
+ # Export the library interface
+  install(EXPORT gecode-targets
+    NAMESPACE gecode::
+    DESTINATION lib/cmake/gecode
+  )
+  if(GECODE_HAS_GIST)  
+    if (Qt6_FOUND)
+      set(QT_DEPENDENCY "find_package(Qt6 QUIET COMPONENTS Core Gui Widgets PrintSupport)")
+    elseif (Qt5_FOUND)
+      set(QT_DEPENDENCY "find_package(Qt5 QUIET COMPONENTS Core Gui Widgets PrintSupport)")
+    else()
+      set(QT_DEPENDENCY "find_package(Qt4)")
+    
+    endif()
+  endif()
+
+  configure_file(
+    ${CMAKE_SOURCE_DIR}/cmake/gecode-config.cmake.in
+    ${CMAKE_BINARY_DIR}/gecode-config.cmake
+    @ONLY
+  )
+  install(
+    FILES
+    ${CMAKE_BINARY_DIR}/gecode-config.cmake
+    DESTINATION
+      lib/cmake/gecode
+  )
