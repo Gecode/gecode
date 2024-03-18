@@ -347,7 +347,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
 
   /*
-   * The domain consisten equality propagator
+   * The domain consistent equality propagator
    *
    */
   template<class Val, class View>

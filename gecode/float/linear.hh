@@ -197,8 +197,8 @@ namespace Gecode { namespace Float { namespace Linear {
    * \param c result of linear constraint
    *
    * All variants for linear constraints share the following properties:
-   *  - Variables occuring multiply in the term array are replaced
-   *    by a single occurence: for example, \f$ax+bx\f$ becomes
+   *  - Variables occurring multiply in the term array are replaced
+   *    by a single occurrence: for example, \f$ax+bx\f$ becomes
    *    \f$(a+b)x\f$.
    *
    * Requires \code #include <gecode/float/linear.hh> \endcode
@@ -217,8 +217,8 @@ namespace Gecode { namespace Float { namespace Linear {
    * \param r reification specification
    *
    * All variants for linear constraints share the following properties:
-   *  - Variables occuring multiply in the term array are replaced
-   *    by a single occurence: for example, \f$ax+bx\f$ becomes
+   *  - Variables occurring multiply in the term array are replaced
+   *    by a single occurrence: for example, \f$ax+bx\f$ becomes
    *    \f$(a+b)x\f$.
    *
    * Requires \code #include <gecode/float/linear.hh> \endcode

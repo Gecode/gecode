@@ -64,7 +64,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     return static_cast<long long int>(x) - 1;
   }
 
-  /// Test whether \a x is postive
+  /// Test whether \a x is positive
   template<class View>
   forceinline bool
   pos(const View& x) {

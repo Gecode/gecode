@@ -872,7 +872,7 @@ Thanks: Rui Machado, Jens Krüger
 The alignment of memory allocated from a Region is now as
 prescribed by the maximum of std::max_align_t and
 GECODE_MEMORY_ALIGNMENT (which can be re-defined). Please also check
-MPG for a tip on alignment of memory handeled by Gecode.
+MPG for a tip on alignment of memory handled by Gecode.
 
 [ENTRY]
 Module: flatzinc
@@ -901,7 +901,7 @@ Module: int
 What:   bug
 Rank:   major
 [DESCRIPTION]
-Fixed scheduling for Boolean variables (funnily, only occured
+Fixed scheduling for Boolean variables (funnily, only occurred
 with a newly added propagator).
 
 [ENTRY]
@@ -1908,7 +1908,7 @@ What:   bug
 Rank:   major
 [DESCRIPTION]
 In certain situations the AFC could be incremented twice (could
-only have occured for linear constraints with Boolean variables
+only have occurred for linear constraints with Boolean variables
 and sequence constraints).
 
 [ENTRY]
@@ -2154,7 +2154,7 @@ What:   bug
 Rank:   major
 Thanks: Matthias Balzer
 [DESCRIPTION]
-Fixed memory leak for regions (occured for many large allocation
+Fixed memory leak for regions (occurred for many large allocation
 requests).
 
 [ENTRY]
@@ -4628,7 +4628,7 @@ What:   change
 Rank:   minor
 [DESCRIPTION]
 The semantics of n-ary Boolean implication has been changed (to
-the more convential reading): rel(home, BOT_IMP, x, y) where x is
+the more conventional reading): rel(home, BOT_IMP, x, y) where x is
 an array of Boolean variable now assumes implication to be right
 associative. See MPG for explanation.
 
@@ -4688,7 +4688,7 @@ What:   bug
 Rank:   major
 [DESCRIPTION]
 Do not use SharedArray<IntSet> in the set element constraints,
-because it does not properly udpate the IntSet during copying.
+because it does not properly update the IntSet during copying.
 This could cause memory corruption.
 
 [ENTRY]
@@ -4891,7 +4891,7 @@ Rank:   minor
 Cached iterators such as n-ary union and intersection, minus, and
 cache (of course) are not any longer template classes but take
 template constructors and member functions. N-ary union and
-intersection iterators can now also be initialized incrementaly
+intersection iterators can now also be initialized incrementally
 with iterators of different types.
 
 [ENTRY]
@@ -5897,7 +5897,7 @@ What:   bug
 Rank:   major
 [DESCRIPTION]
 Fixed extensional constraint with finite automata for very
-unlikely (but apparantely possible) border case.
+unlikely (but apparently possible) border case.
 
 [ENTRY]
 Module: gist
@@ -6186,7 +6186,7 @@ What:   removed
 Rank:   minor
 [DESCRIPTION]
 Removed special cases for posting linear and Boolean expressions
-consisting of a single variable only (was highly ambigious).
+consisting of a single variable only (was highly ambiguous).
 
 [ENTRY]
 Module: minimodel
@@ -10398,7 +10398,7 @@ Module: int
 What:   bug
 Rank:   minor
 [DESCRIPTION]
-Fixed subsumption detection for regular with multiple variable occurences.
+Fixed subsumption detection for regular with multiple variable occurrences.
 
 [ENTRY]
 Module: int

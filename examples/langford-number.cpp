@@ -101,9 +101,9 @@ public:
         Matrix<IntVarArgs> p(pv,n,k);
 
         /*
-         * The occurences of v in the Langford sequence are v numbers apart.
+         * The occurrences of v in the Langford sequence are v numbers apart.
          *
-         * Let \#(i, v) denote the position of the i-th occurence of
+         * Let \#(i, v) denote the position of the i-th occurrence of
          * value v in the Langford Sequence. Then
          *
          * \f$ \forall i, j \in \{1, \dots, k\}, i \neq j:

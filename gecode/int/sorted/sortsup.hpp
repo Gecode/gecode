@@ -69,7 +69,7 @@ namespace Gecode { namespace Int { namespace Sorted {
    * variables of the ViewArrays
    * \a x, \a y and \a z are determined and the constraint holds.
    * In addition to the subsumption test check_subsumption
-   * determines, whether we can reduce the orginial problem
+   * determines, whether we can reduce the original problem
    * to a smaller one, by dropping already matched variables.
    */
 
@@ -376,7 +376,7 @@ namespace Gecode { namespace Int { namespace Sorted {
    * \brief Check for assignment of a variable array
    *
    * Check whether one of the argument arrays is completely assigned
-   * and udpates the other array respectively.
+   * and updates the other array respectively.
    */
 
   template<class View, bool Perm>

@@ -1002,7 +1002,7 @@ namespace Gecode {
      * \brief Initialize array with \a n new variables
      *
      * The variables are created with a domain ranging from \a min
-     * to \a max. The following execptions might be thrown:
+     * to \a max. The following exceptions might be thrown:
      *  - If \a min is greater than \a max, an exception of type
      *    Gecode::Float::VariableEmptyDomain is thrown.
      *  - If \a min or \a max exceed the limits for floats as defined
@@ -1048,7 +1048,7 @@ namespace Gecode {
      * \brief Initialize array with \a n new variables
      *
      * The variables are created with a domain ranging from \a min
-     * to \a max. The following execptions might be thrown:
+     * to \a max. The following exceptions might be thrown:
      *  - If \a min is greater than \a max, an exception of type
      *    Gecode::Float::VariableEmptyDomain is thrown.
      *  - If \a min or \a max exceed the limits for floats as defined
@@ -1417,7 +1417,7 @@ namespace Gecode {
    * \ingroup TaskModelFloat
    *
    * Synchronized execution executes a function or a static member function
-   * when a certain event happends.
+   * when a certain event happens.
    */
   //@{
   /// Execute \a c when \a x becomes assigned

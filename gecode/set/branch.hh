@@ -62,7 +62,7 @@ namespace Gecode { namespace Set { namespace Branch {
    */
 
   /**
-   * \brief Merit class for mimimum of set views
+   * \brief Merit class for minimum of set views
    *
    * Requires \code #include <gecode/set/branch.hh> \endcode
    * \ingroup FuncSetViewSel
@@ -221,7 +221,7 @@ namespace Gecode { namespace Set { namespace Branch {
    */
 
   /**
-   * \brief Value selection class for mimimum of view
+   * \brief Value selection class for minimum of view
    *
    * Requires \code #include <gecode/set/branch.hh> \endcode
    * \ingroup FuncSetValSel

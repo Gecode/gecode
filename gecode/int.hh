@@ -682,7 +682,7 @@ namespace Gecode {
      * \brief Initialize array with \a n new variables
      *
      * The variables are created with a domain ranging from \a min
-     * to \a max. The following execptions might be thrown:
+     * to \a max. The following exceptions might be thrown:
      *  - If \a min is greater than \a max, an exception of type
      *    Gecode::Int::VariableEmptyDomain is thrown.
      *  - If \a min or \a max exceed the limits for integers as defined
@@ -695,7 +695,7 @@ namespace Gecode {
      * \brief Initialize array with \a n new variables
      *
      * The variables are created with a domain described by \a s.
-     * The following execptions might be thrown:
+     * The following exceptions might be thrown:
      *  - If \a s is empty, an exception of type
      *    Gecode::Int::VariableEmptyDomain is thrown.
      *  - If \a s contains values that exceed the limits for integers
@@ -740,7 +740,7 @@ namespace Gecode {
      * \brief Initialize array with \a n new variables
      *
      * The variables are created with a domain ranging from \a min
-     * to \a max. The following execptions might be thrown:
+     * to \a max. The following exceptions might be thrown:
      *  - If \a min is greater than \a max, an exception of type
      *    Gecode::Int::VariableEmptyDomain is thrown.
      *  - If \a min is less than 0 or \a max is greater than 1,
@@ -786,7 +786,7 @@ namespace Gecode {
      * \brief Initialize array with \a n new variables
      *
      * The variables are created with a domain ranging from \a min
-     * to \a max. The following execptions might be thrown:
+     * to \a max. The following exceptions might be thrown:
      *  - If \a min is greater than \a max, an exception of type
      *    Gecode::Int::VariableEmptyDomain is thrown.
      *  - If \a min or \a max exceed the limits for integers as defined
@@ -799,7 +799,7 @@ namespace Gecode {
      * \brief Initialize array with \a n new variables
      *
      * The variables are created with a domain described by \a s.
-     * The following execptions might be thrown:
+     * The following exceptions might be thrown:
      *  - If \a s is empty, an exception of type
      *    Gecode::Int::VariableEmptyDomain is thrown.
      *  - If \a s contains values that exceed the limits for integers
@@ -834,7 +834,7 @@ namespace Gecode {
      * \brief Initialize array with \a n new variables
      *
      * The variables are created with a domain ranging from \a min
-     * to \a max. The following execptions might be thrown:
+     * to \a max. The following exceptions might be thrown:
      *  - If \a min is greater than \a max, an exception of type
      *    Gecode::Int::VariableEmptyDomain is thrown.
      *  - If \a min is less than 0 or \a max is greater than 1,
@@ -2315,7 +2315,7 @@ namespace Gecode {
 
 namespace Gecode {
 
-  /** \brief Class represeting a set of tuples.
+  /** \brief Class representing a set of tuples.
    *
    * A TupleSet is used for storing an extensional representation of a
    * constraint. After a TupleSet is finalized, no more tuples may be
@@ -2431,7 +2431,7 @@ namespace Gecode {
   public:
     /// \name Initialization
     //@{
-    /// Construct an unitialized tuple set
+    /// Construct an uninitialized tuple set
     TupleSet(void);
     /// Initialize for a tuple set with arity \a a
     GECODE_INT_EXPORT
@@ -2538,7 +2538,7 @@ namespace Gecode {
    * the DFA \a d.
    *
    * Throws an exception of type Int::ArgumentSame, if \a x contains
-   * the same unassigned variable multiply. If shared occurences of variables
+   * the same unassigned variable multiply. If shared occurrences of variables
    * are required, unshare should be used.
    *
    * \ingroup TaskModelIntExt
@@ -2554,7 +2554,7 @@ namespace Gecode {
    * the DFA \a d.
    *
    * Throws an exception of type Int::ArgumentSame, if \a x contains
-   * the same unassigned variable multiply. If shared occurences of variables
+   * the same unassigned variable multiply. If shared occurrences of variables
    * are required, unshare should be used.
    *
    * \ingroup TaskModelIntExt
@@ -3428,7 +3428,7 @@ namespace Gecode {
    *  - If \a IPL_BASIC is set, the propagator performs overload checking
    *    and time-tabling propagation.
    *  - If \a IPL_ADVANCED is set, the propagator performs overload checking,
-   *    detectable precendence propagation, not-first-not-last propagation,
+   *    detectable precedence propagation, not-first-not-last propagation,
    *    and edge finding.
    *  - If both flags are combined (default), all the above listed propagation
    *    is performed.
@@ -3460,7 +3460,7 @@ namespace Gecode {
    *  - If \a IPL_BASIC is set, the propagator performs overload checking
    *    and time-tabling propagation.
    *  - If \a IPL_ADVANCED is set, the propagator performs overload checking,
-   *    detectable precendence propagation, not-first-not-last propagation,
+   *    detectable precedence propagation, not-first-not-last propagation,
    *    and edge finding.
    *  - If both flags are combined (default), all the above listed propagation
    *    is performed.
@@ -3502,7 +3502,7 @@ namespace Gecode {
    *  - If \a IPL_BASIC is set, the propagator performs overload checking
    *    and time-tabling propagation.
    *  - If \a IPL_ADVANCED is set, the propagator performs overload checking,
-   *    detectable precendence propagation, not-first-not-last propagation,
+   *    detectable precedence propagation, not-first-not-last propagation,
    *    and edge finding.
    *  - If both flags are combined (default), all the above listed propagation
    *    is performed.
@@ -3544,7 +3544,7 @@ namespace Gecode {
    *  - If \a IPL_BASIC is set, the propagator performs overload checking
    *    and time-tabling propagation.
    *  - If \a IPL_ADVANCED is set, the propagator performs overload checking,
-   *    detectable precendence propagation, not-first-not-last propagation,
+   *    detectable precedence propagation, not-first-not-last propagation,
    *    and edge finding.
    *  - If both flags are combined (default), all the above listed propagation
    *    is performed.
@@ -3577,7 +3577,7 @@ namespace Gecode {
    *  - If \a IPL_BASIC is set, the propagator performs overload checking
    *    and time-tabling propagation.
    *  - If \a IPL_ADVANCED is set, the propagator performs overload checking,
-   *    detectable precendence propagation, not-first-not-last propagation,
+   *    detectable precedence propagation, not-first-not-last propagation,
    *    and edge finding.
    *  - If both flags are combined (default), all the above listed propagation
    *    is performed.
@@ -3606,7 +3606,7 @@ namespace Gecode {
    *  - If \a IPL_BASIC is set, the propagator performs overload checking
    *    and time-tabling propagation.
    *  - If \a IPL_ADVANCED is set, the propagator performs overload checking,
-   *    detectable precendence propagation, not-first-not-last propagation,
+   *    detectable precedence propagation, not-first-not-last propagation,
    *    and edge finding.
    *  - If both flags are combined, all the above listed propagation is
    *    performed (default).
@@ -4223,7 +4223,7 @@ namespace Gecode {
    * \ingroup TaskModelInt
    *
    * Synchronized execution executes a function or a static member function
-   * when a certain event happends.
+   * when a certain event happens.
    */
   //@{
   /// Execute \a c when \a x becomes assigned
@@ -4261,21 +4261,21 @@ namespace Gecode {
    * \defgroup TaskModelIntUnshare Unsharing variables
    * \ingroup TaskModelInt
    *
-   * Unsharing replaces multiple occurences of the same variable by
+   * Unsharing replaces multiple occurrences of the same variable by
    * fresh yet equal (enforced through propagators for equality)
    * variables: after unsharing a variable appears at most once. Note
    * that this is only done for not yet assigned variables (as all
-   * propagators can handle multiple occurences of the same variable
+   * propagators can handle multiple occurrences of the same variable
    * provided it is already assigned).
    *
    * Unsharing is useful for constraints that only accept variable
-   * arrays without multiple occurences of the same variable, for
+   * arrays without multiple occurrences of the same variable, for
    * example extensional.
    *
    */
   //@{
   /**
-   * \brief Replace multiple variable occurences in \a x by fresh variables
+   * \brief Replace multiple variable occurrences in \a x by fresh variables
    *
    * Supports domain consistency (\a ipl = IPL_DOM, default) and
    * bounds consistency (\a ipl = IPL_BND).
@@ -4284,7 +4284,7 @@ namespace Gecode {
   GECODE_INT_EXPORT void
   unshare(Home home, IntVarArgs& x,
           IntPropLevel ipl=IPL_DEF);
-  /// Replace multiple variable occurences in \a x by fresh variables
+  /// Replace multiple variable occurrences in \a x by fresh variables
   GECODE_INT_EXPORT void
   unshare(Home home, BoolVarArgs& x,
           IntPropLevel ipl=IPL_DEF);

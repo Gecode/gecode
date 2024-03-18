@@ -126,7 +126,7 @@ namespace Gecode { namespace Int { namespace Cumulatives {
 
   /// Types of events for the sweep-line
   typedef enum {EVENT_CHCK, EVENT_PROF, EVENT_PRUN} ev_t;
-  /// An event collects the information for one evnet for the sweep-line
+  /// An event collects the information for one event for the sweep-line
   class Event
   {
   public:

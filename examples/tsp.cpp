@@ -253,7 +253,7 @@ public:
     // Cost of each edge
     IntVarArgs costs(*this, n, Int::Limits::min, Int::Limits::max);
 
-    // Enforce that the succesors yield a tour with appropriate costs
+    // Enforce that the successors yield a tour with appropriate costs
     circuit(*this, c, succ, costs, total, opt.ipl());
 
     // Just assume that the circle starts forwards

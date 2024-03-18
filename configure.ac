@@ -180,7 +180,7 @@ gnu)
     dnl compiler flags for optimize float computings
     dnl AC_GECODE_CHECK_COMPILERFLAG([-ffast-math])
     dnl ffast-math implies:-fno-math-errno -funsafe-math-optimizations -ffinite-math-only -fno-rounding-math -fno-signaling-nans -fcx-limited-range
-    dnl but -funsafe-math-optimizations break IEEE float comptability, so we have to avoid it
+    dnl but -funsafe-math-optimizations break IEEE float compatibility, so we have to avoid it
     AC_GECODE_CHECK_COMPILERFLAG([-fno-math-errno])
     AC_GECODE_CHECK_COMPILERFLAG([-ffinite-math-only])
     AC_GECODE_CHECK_COMPILERFLAG([-fno-rounding-math])

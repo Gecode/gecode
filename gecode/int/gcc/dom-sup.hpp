@@ -165,13 +165,13 @@ namespace Gecode { namespace Int { namespace GCC {
   /// Value node
   class ValNode : public Node {
   protected:
-    /// Minimal required occurence of the value as stored in k
+    /// Minimal required occurrence of the value as stored in k
     int _klb;
-    /// Maximal required occurence of the value as stored in k
+    /// Maximal required occurrence of the value as stored in k
     int _kub;
-    /// Index to acces the value via cardinality array k
+    /// Index to access the value via cardinality array k
     int _kidx;
-    /// Stores the current number of occurences of the value
+    /// Stores the current number of occurrences of the value
     int _kcount;
     /// Store numbre of conflicting matching edges
     int noc;
@@ -211,7 +211,7 @@ namespace Gecode { namespace Int { namespace GCC {
     void red_conflict(void);
     /// increases the value counter
     void inc(void);
-    /// returns the current number of occurences of the value
+    /// returns the current number of occurrences of the value
     int kcount(void) const;
     /// returns the number of incident matching edges on a value node
     int incid_match(BC bc) const;

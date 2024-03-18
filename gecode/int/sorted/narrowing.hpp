@@ -41,7 +41,7 @@ namespace Gecode { namespace Int { namespace Sorted {
    *   edges \f$e_1(y_j, x_{\phi(j)})\f$ and \f$e_2(x_{\phi(j)},y_j)\f$
    *   are both contained in the oriented intersection graph.
    *
-   *   Hence a scc containg more than two nodes is represented as an
+   *   Hence a scc containing more than two nodes is represented as an
    *   array of SccComponent entries,
    *   \f$[ y_{j_0},x_{\phi(j_0)},\dots,y_{j_k},x_{\phi(j_k)}]\f$.
    *
@@ -113,7 +113,7 @@ namespace Gecode { namespace Int { namespace Sorted {
   /**
    *   \brief Narrowing the domains of the x variables
    *
-   *   Due to the correspondance between perfect matchings in the "reduced"
+   *   Due to the correspondence between perfect matchings in the "reduced"
    *   intersection graph of \a x and \a y views and feasible
    *   assignments for the sorted constraint the new domain bounds for
    *   views in \a x are computed as

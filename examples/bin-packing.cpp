@@ -559,7 +559,7 @@ main(int argc, char* argv[]) {
   opt.solutions(0);
   opt.parse(argc,argv);
   if (!Spec(opt.instance()).valid()) {
-    std::cerr << "Error: unkown instance" << std::endl;
+    std::cerr << "Error: unknown instance" << std::endl;
     return 1;
   }
   IntMinimizeScript::run<BinPacking,BAB,InstanceOptions>(opt);
@@ -574,7 +574,7 @@ namespace {
    * for exactly solving the one-dimensional bin packing problem.
    * Computers & Operations Research 24 (1997) 627-645.
    *
-   * The item size have been sorted for simplicty.
+   * The item size have been sorted for simplicity.
    *
    */
 
@@ -20778,7 +20778,7 @@ namespace {
    * E. Falkenauer. A hybrid grouping genetic algorithm fir bin packing.
    * Journal of Heuristics, 2:5-30, 1996.
    *
-   * The item size have been sorted for simplicty and fractional capacities
+   * The item size have been sorted for simplicity and fractional capacities
    * have been converted to integers.
    *
    */

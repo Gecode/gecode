@@ -73,7 +73,7 @@ namespace Gecode { namespace Int { namespace GCC {
   public:
     /// Copy propagator during cloning
     virtual Actor* copy(Space& home);
-    /// Cost funtion returning high linear
+    /// Cost function returning high linear
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Schedule function
     virtual void reschedule(Space& home);
@@ -134,7 +134,7 @@ namespace Gecode { namespace Int { namespace GCC {
      */
     bool card_fixed;
     /**
-     * \brief Stores whether the minium required occurences of
+     * \brief Stores whether the minimum required occurrences of
      *        the cardinalities are all zero. If so, we do not need
      *        to perform lower bounds propagation.
      */
@@ -191,7 +191,7 @@ namespace Gecode { namespace Int { namespace GCC {
   public:
     /// Copy propagator during cloning
     virtual Actor* copy(Space& home);
-    /// Cost funtion
+    /// Cost function
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Schedule function
     virtual void reschedule(Space& home);

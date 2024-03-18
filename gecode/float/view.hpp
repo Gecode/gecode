@@ -360,7 +360,7 @@ namespace Gecode { namespace Float {
 
     /// \name Ordering
     //@{
-    /// Whether this view comes before view \a y (arbitray order)
+    /// Whether this view comes before view \a y (arbitrary order)
     bool operator <(const OffsetView& y) const;
     //@}
   };
@@ -489,7 +489,7 @@ namespace Gecode { namespace Float {
 
     /// \name Ordering
     //@{
-    /// Whether this view comes before view \a y (arbitray order)
+    /// Whether this view comes before view \a y (arbitrary order)
     bool operator <(const ScaleView& y) const;
     //@}
   };

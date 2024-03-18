@@ -49,7 +49,7 @@ namespace Gecode { namespace Int {
   public:
     /// The index
     int idx;
-    /// Thhe view
+    /// The view
     View view;
     /// Allocate memory for \a n index-view pairs
     static IdxView* allocate(Space& home, int n);

@@ -80,7 +80,7 @@ namespace Test { namespace Float {
          return eq(x[0] * x[1], x[2]);
        }
        /// Extend assignment \a x
-       virtual bool extendAssignement(Assignment& x) const {
+       virtual bool extendAssignment(Assignment& x) const {
          Gecode::FloatVal d = x[0]*x[1];
          if (Gecode::Float::subset(d, dom)) {
            x.set(2, d);
@@ -122,7 +122,7 @@ namespace Test { namespace Float {
          return eq(x[0] * x[0], x[1]);
        }
        /// Extend assignment \a x
-       virtual bool extendAssignement(Assignment& x) const {
+       virtual bool extendAssignment(Assignment& x) const {
          Gecode::FloatVal d = x[0]*x[0];
          if (Gecode::Float::subset(d, dom)) {
            x.set(1, d);
@@ -215,7 +215,7 @@ namespace Test { namespace Float {
          return eq(x[0] / x[1], x[2]);
        }
        /// Extend assignment \a x
-       virtual bool extendAssignement(Assignment& x) const {
+       virtual bool extendAssignment(Assignment& x) const {
          Gecode::FloatVal d = x[0]/x[1];
          if (Gecode::Float::subset(d, dom)) {
            x.set(2, d);
@@ -260,7 +260,7 @@ namespace Test { namespace Float {
          return eq(x[0] * x[0], x[1]);
        }
        /// Extend assignment \a x
-       virtual bool extendAssignement(Assignment& x) const {
+       virtual bool extendAssignment(Assignment& x) const {
          Gecode::FloatVal d = sqr(x[0]);
          if (Gecode::Float::subset(d, dom)) {
            x.set(1, d);
@@ -331,7 +331,7 @@ namespace Test { namespace Float {
          }
        }
        /// Extend assignment \a x
-       virtual bool extendAssignement(Assignment& x) const {
+       virtual bool extendAssignment(Assignment& x) const {
          Gecode::FloatVal d = sqrt(abs(x[0]));
          if (Gecode::Float::subset(d, dom)) {
            x.set(1, d);
@@ -399,7 +399,7 @@ namespace Test { namespace Float {
          return eq(pow(x[0],n), x[1]);
        }
        /// Extend assignment \a x
-       virtual bool extendAssignement(Assignment& x) const {
+       virtual bool extendAssignment(Assignment& x) const {
          Gecode::FloatVal d = pow(x[0],n);
          if (Gecode::Float::subset(d, dom)) {
            x.set(1, d);
@@ -467,7 +467,7 @@ namespace Test { namespace Float {
          return eq(nroot(x[0],n), x[1]);
        }
        /// Extend assignment \a x
-       virtual bool extendAssignement(Assignment& x) const {
+       virtual bool extendAssignment(Assignment& x) const {
          if ((n == 0) || (x[0].max() < 0))
            return false;
          Gecode::FloatVal d = nroot(x[0],n);

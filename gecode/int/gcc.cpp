@@ -66,7 +66,7 @@ namespace Gecode {
       return z;
     }
 
-    /// Remove dupliate entries in \a v from both \a v and \a c
+    /// Remove duplicate entries in \a v from both \a v and \a c
     template<class A>
     void removeDuplicates(Home home, A& c, IntArgs& v) {
       typedef typename A::value_type S;

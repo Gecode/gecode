@@ -88,7 +88,7 @@ namespace Gecode { namespace Gist {
     BoundingBox bb;
     /// The shape is an array of extents, one for each depth level
     Extent shape[1];
-    /// Copy construtor
+    /// Copy constructor
     Shape(const Shape&);
     /// Assignment operator
     Shape& operator =(const Shape&);

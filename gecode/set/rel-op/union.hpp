@@ -302,7 +302,7 @@ namespace Gecode { namespace Set { namespace RelOp {
       }
 
     } while (modified);
-    // When we run out of variables, make a final check and disolve:
+    // When we run out of variables, make a final check and dissolve:
     if (x.size()==0) {
       BndSetRanges all1(unionOfDets);
       GECODE_ME_CHECK( y.intersectI(home,all1) );

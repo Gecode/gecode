@@ -58,7 +58,7 @@ namespace Gecode { namespace Float { namespace Branch {
    */
 
   /**
-   * \brief Merit class for mimimum
+   * \brief Merit class for minimum
    *
    * Requires \code #include <gecode/float/branch.hh> \endcode
    * \ingroup FuncFloatViewSel

@@ -41,7 +41,7 @@ namespace Gecode { namespace Int { namespace Branch {
     public:
       /// Start position of range
       unsigned int pos;
-      /// Minmum of range
+      /// Minimum of range
       int min;
     };
     /// Number of ranges

@@ -80,7 +80,7 @@ namespace Gecode {
     TFE(Node* n);
     /// Initialize with propagator group \a g and flags \a what
     void init(Group g, char what);
-    /// Return negated the expresssion
+    /// Return negated the expression
     TFE negate(void) const;
   public:
     /// An expression for a propagator group \a g

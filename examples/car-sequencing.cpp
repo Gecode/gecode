@@ -77,13 +77,13 @@ namespace {
 
 
   /**
-   * \brief Propagator that pushes all occurences of a value to the end.
+   * \brief Propagator that pushes all occurrences of a value to the end.
    *
    * This propagator uses a variable array \f$x=\langle
    * x_1,x_2,\ldots,x_n\rangle\f$, a variable \f$y\f$, and a value
    * \f$val\f$. It It makes sure that the last \f$y\f$ variables of
    * \f$x\f$ are assigned the value, and that the value does not
-   * appear in the rest of the array. Furthermore, the constriant
+   * appear in the rest of the array. Furthermore, the constraint
    * ensure that \$fval\$f isnot adjacent to \$fval-1\$f.
    *
    * Since the propagator is custom-made for the car sequencing

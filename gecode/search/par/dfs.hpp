@@ -171,7 +171,7 @@ namespace Gecode { namespace Search { namespace Par {
      * when the engine is stopped or has found a solution.
      *
      */
-    // Peform initial delay, if not first worker
+    // Perform initial delay, if not first worker
     if (this != engine().worker(0))
       Support::Thread::sleep(Config::initial_delay);
     // Okay, we are in business, start working

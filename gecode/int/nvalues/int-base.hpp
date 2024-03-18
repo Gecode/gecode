@@ -278,7 +278,7 @@ namespace Gecode { namespace Int { namespace NValues {
 
     // Prune, if possible
     if (vs.size() + n_ind == y.max()) {
-      // Only values from the indepent set a can be taken
+      // Only values from the independent set a can be taken
       ViewRanges<IntView>* r_ind = r.alloc<ViewRanges<IntView> >(n_ind);
       for (int i=n_ind; i--; )
         r_ind[i] = ViewRanges<IntView>(x[ind[i]]);

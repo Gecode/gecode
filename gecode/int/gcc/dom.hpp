@@ -43,9 +43,9 @@ namespace Gecode { namespace Int { namespace GCC {
    * Analogously to "gcc/bnd.hpp" we split the algorithm
    * in two parts:
    *   1) the UBC (Upper Bound Constraint) stating that there are
-   *      at most k[i].max() occurences of the value v_i
+   *      at most k[i].max() occurrences of the value v_i
    *   2) the LBC (Lower Bound Constraint) stating that there are
-   *      at least k[i].min() occurences of the value v_i
+   *      at least k[i].min() occurrences of the value v_i
    *
    * The algorithm proceeds in 5 STEPS:
    *
@@ -138,7 +138,7 @@ namespace Gecode { namespace Int { namespace GCC {
       for (int i = k.size(); i--; ) {
         if ((k[i].min() > count[i]) || (count[i] > k[i].max()))
           return ES_FAILED;
-        // the solution contains ci occurences of value k[i].card();
+        // the solution contains ci occurrences of value k[i].card();
         if (Card::propagate)
           GECODE_ME_CHECK(k[i].eq(home, count[i]));
       }
@@ -267,7 +267,7 @@ namespace Gecode { namespace Int { namespace GCC {
       for (int i = k.size(); i--; ) {
         if ((k[i].min() > count[i]) || (count[i] > k[i].max()))
           return ES_FAILED;
-        // the solution contains count[i] occurences of value k[i].card();
+        // the solution contains count[i] occurrences of value k[i].card();
         if (Card::propagate)
           GECODE_ME_CHECK(k[i].eq(home,count[i]));
       }

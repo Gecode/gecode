@@ -47,7 +47,7 @@ namespace Gecode { namespace Set {
     SetTraceView(Space& home, SetView x);
     /// Return range list for greatest lower bound
     RangeList* glb(void) const;
-    /// Return range list for leat upper bound
+    /// Return range list for least upper bound
     RangeList* lub(void) const;
     /// Update duplicated view from view \a y and delta \a d
     void prune(Space& home, SetView y, const Delta& d);

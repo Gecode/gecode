@@ -60,7 +60,7 @@ namespace Gecode { namespace Int { namespace Branch {
    */
 
   /**
-   * \brief Merit class for mimimum of integer views
+   * \brief Merit class for minimum of integer views
    *
    * Requires \code #include <gecode/int/branch.hh> \endcode
    * \ingroup FuncIntViewSel
@@ -272,7 +272,7 @@ namespace Gecode { namespace Int { namespace Branch {
    */
 
   /**
-   * \brief Value selection class for mimimum of view
+   * \brief Value selection class for minimum of view
    *
    * Requires \code #include <gecode/int/branch.hh> \endcode
    * \ingroup FuncIntValSel
@@ -704,7 +704,7 @@ namespace Gecode { namespace Int { namespace Branch {
         /// The map we want to share
         std::unordered_map<unsigned int, unsigned int> _varIdToPos;
       public:
-        /// Default constructur
+        /// Default constructor
         VarIdToPosO(void) = default;
         /// Delete implementation
         virtual ~VarIdToPosO(void) = default;
@@ -727,7 +727,7 @@ namespace Gecode { namespace Int { namespace Branch {
      *
      * Keeps the best branching choice for each propagators (i.e. variable and
      * value with highest solution density). We also keep \a domsum to know
-     * wether we need to recompute solution densities for the given propagator
+     * whether we need to recompute solution densities for the given propagator
      * when computing a new branching choice.
      */
     struct PropInfo {
@@ -782,7 +782,7 @@ namespace Gecode { namespace Int { namespace Branch {
     virtual void print(const Space& home, const Choice& c, unsigned int a,
                        std::ostream& o) const;
   private:
-    /// Returns wether a variable is in \a x or not
+    /// Returns whether a variable is in \a x or not
     bool inbrancher(unsigned int varId) const;
   };
 

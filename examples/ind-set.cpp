@@ -83,7 +83,7 @@ protected:
   const Graph& g;
   /// Whether vertex included in independent set
   BoolVarArray v;
-  /// How many elements has indipendent set
+  /// How many elements has independent set
   IntVar       k;
 public:
   /// Actual model

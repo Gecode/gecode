@@ -50,7 +50,7 @@ using namespace Gecode;
 /** \brief Custom brancher for knight's tours using Warnsdorff's rule
  *
  * This class implements Warnsdorff's rule for finding knight's
- * tours. The next position is choosen by taking the jump that
+ * tours. The next position is chosen by taking the jump that
  * minimizes the number of alternatives in the next step.
  *
  * \relates Knights
@@ -252,7 +252,7 @@ public:
   KnightsReified(const SizeOptions& opt) : Knights(opt) {
     const int nn = n*n;
 
-    // Map knight to its predecessor of succesor on board
+    // Map knight to its predecessor of successor on board
     IntVarArgs jump(nn);
     IntVarArgs pred(nn);
 

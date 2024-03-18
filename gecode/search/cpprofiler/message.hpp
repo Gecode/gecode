@@ -307,7 +307,7 @@ namespace Gecode { namespace CPProfiler {
       msg.reset();
       msg.set_type(MsgType::START);
       msg.set_version(PROFILER_PROTOCOL_VERSION);
-      msg.set_info(info); /// info containts name, has_restarts, execution id
+      msg.set_info(info); /// info contains name, has_restarts, execution id
         }
     
     void makeRestart(const std::string& info) {

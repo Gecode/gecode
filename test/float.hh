@@ -145,7 +145,7 @@ namespace Test {
     class RandomAssignment : public Assignment {
     protected:
       Gecode::FloatVal* vals; ///< The current values for the variables
-      int  a;                 ///< How many assigments still to be generated
+      int  a;                 ///< How many assignments still to be generated
       /// Generate new value according to domain
       Gecode::FloatNum randval(Gecode::Support::RandomGenerator& rand);
     public:
@@ -251,7 +251,7 @@ namespace Test {
       /// Step for going to next solution
       Gecode::FloatNum step;
       /// Gives the type of assignment to use
-      AssignmentType assigmentType;
+      AssignmentType assignmentType;
       /// Does the constraint also exist as reified constraint
       bool reified;
       /// Which reification modes are supported
@@ -297,11 +297,11 @@ namespace Test {
       virtual Assignment* assignment(void) const;
       /// Complete the current assignment to get a feasible one (which satisfies all constraint).
       /// If such an assignment is computed, it returns true, false otherwise
-      virtual bool extendAssignement(Assignment& a) const;
+      virtual bool extendAssignment(Assignment& a) const;
       /// Check for solution
       virtual MaybeType solution(const Assignment&) const = 0;
       /// Test if \a ts is subsumed or not (i.e. if there is no more propagator unless
-      /// the assignment is an extended assigment.
+      /// the assignment is an extended assignment.
       bool subsumed(const TestSpace& ts) const;
       /// Whether to ignore assignment for reification
       virtual bool ignore(const Assignment& a) const;

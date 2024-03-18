@@ -190,7 +190,7 @@ namespace Gecode { namespace Int { namespace Element {
     virtual size_t dispose(Space& home);
   };
 
-  /// Post propagator with apropriate index and value types
+  /// Post propagator with appropriate index and value types
   template<class V0, class V1>
   ExecStatus post_int(Home home, IntSharedArray& c, V0 x0, V1 x1);
 
