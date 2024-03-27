@@ -356,7 +356,7 @@ foreach (lib support kernel search int set float
     RUNTIME DESTINATION bin
   )
   target_compile_features(${lib} PUBLIC cxx_std_17)
-  set_target_properties(${lib} PROPERTIES OUTPUT_NAME gecode_${lib})
+  set_target_properties(${lib} PROPERTIES OUTPUT_NAME gecode${lib})
 endforeach ()
 
 option(ENABLE_CPPROFILER "Enable cpprofiler tracer mode" ON)
