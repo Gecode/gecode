@@ -47,6 +47,7 @@
 #include <gecode/float.hh>
 #endif
 #include <gecode/flatzinc.hh>
+#include <gecode/flatzinc/blackbox.hh>
 
 namespace Gecode { namespace FlatZinc {
 
@@ -1660,6 +1661,88 @@ namespace Gecode { namespace FlatZinc {
       member(s,x,y,s.arg2BoolVar(ce[2]),s.ann2ipl(ann));
     }
 
+    /// Read a `blackbox_exec` / `blackbox_dll` source annotation into \a mode,
+    /// \a instantiation (the executable/library) and \a args (its argument
+    /// list). Supports both the single-argument form (no arguments) and the
+    /// `(target, args)` form.
+    void blackbox_source(AST::Node* ann, std::string& mode,
+                         std::string& instantiation,
+                         std::vector<std::string>& args) {
+      AST::Call* c = nullptr;
+      if (ann->hasCall("blackbox_dll")) {
+        c = ann->getCall("blackbox_dll");
+        mode = "dll";
+      } else if (ann->hasCall("blackbox_exec")) {
+        c = ann->getCall("blackbox_exec");
+        mode = "exec";
+      } else {
+        throw FlatZinc::Error("Registry",
+        "Blackbox constraint is missing a valid annotation specifying execution method.");
+      }
+      // For a single-argument call `args` is the bare argument node; for the
+      // `(target, args)` form it is an array of the two arguments.
+      if (AST::Array* arr = dynamic_cast<AST::Array*>(c->args)) {
+        instantiation = arr->a[0]->getString();
+        if (arr->a.size() > 1) {
+          AST::Array* al = arr->a[1]->getArray();
+          for (unsigned int i = 0; i < al->a.size(); i++) {
+            args.push_back(al->a[i]->getString());
+          }
+        }
+      } else {
+        instantiation = c->args->getString();
+      }
+    }
+
+    void p_blackbox(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
+      std::string mode;
+      std::string instantiation;
+      std::vector<std::string> args;
+      blackbox_source(ann, mode, instantiation, args);
+      IntVarArgs int_input = s.arg2intvarargs(ce[0]);
+      IntVarArgs int_output = s.arg2intvarargs(ce[2]);
+#ifdef GECODE_HAS_FLOAT_VARS
+      FloatVarArgs float_input = s.arg2floatvarargs(ce[1]);
+      FloatVarArgs float_output = s.arg2floatvarargs(ce[3]);
+#else
+      if (!ce[1]->getArray()->a.empty() || !ce[3]->getArray()->a.empty()) {
+        throw FlatZinc::Error("Registry",
+        "Blackbox propagator cannot use floating point values when Gecode is compiled without floating point decision variable support.");
+      }
+#endif
+      FlatZinc::blackbox(s, int_input, int_output,
+#ifdef GECODE_HAS_FLOAT_VARS
+float_input, float_output,
+#endif
+      mode, instantiation, args);
+    }
+
+    void p_blackbox_bounds(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
+      std::string mode;
+      std::string instantiation;
+      std::vector<std::string> args;
+      blackbox_source(ann, mode, instantiation, args);
+      IntVarArgs ivar = s.arg2intvarargs(ce[0]);
+#ifdef GECODE_HAS_FLOAT_VARS
+      FloatVarArgs fvar = s.arg2floatvarargs(ce[1]);
+#else
+      if (!ce[1]->getArray()->a.empty()) {
+        throw FlatZinc::Error("Registry",
+        "Blackbox propagator cannot use floating point values when Gecode is compiled without floating point decision variable support.");
+      }
+#endif
+      IntArgs flat_reason = s.arg2intargs(ce[2]);
+      std::vector<int> reason(flat_reason.size());
+      for (int i = 0; i < flat_reason.size(); i++) {
+        reason[i] = flat_reason[i];
+      }
+      FlatZinc::blackbox_bounds(s, ivar,
+#ifdef GECODE_HAS_FLOAT_VARS
+fvar,
+#endif
+      mode, instantiation, args, reason);
+    }
+
     class IntPoster {
     public:
       IntPoster(void) {
@@ -1848,6 +1931,9 @@ namespace Gecode { namespace FlatZinc {
         registry().add("gecode_member_int_reif",&p_member_int_reif);
         registry().add("member_bool",&p_member_bool);
         registry().add("gecode_member_bool_reif",&p_member_bool_reif);
+
+        registry().add("gecode_blackbox", &p_blackbox);
+        registry().add("gecode_blackbox_bounds", &p_blackbox_bounds);
       }
     };
     IntPoster __int_poster;

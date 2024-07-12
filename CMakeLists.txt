@@ -1285,6 +1285,13 @@ if(GECODE_ENABLE_FLATZINC)
       endif()
     endforeach()
   endif()
+  if(CMAKE_DL_LIBS)
+    foreach(kind shared static)
+      if(TARGET gecodeflatzinc_${kind})
+        target_link_libraries(gecodeflatzinc_${kind} PUBLIC ${CMAKE_DL_LIBS})
+      endif()
+    endforeach()
+  endif()
 endif()
 
 # Compatibility aggregate target for downstream projects expecting Gecode::gecode.

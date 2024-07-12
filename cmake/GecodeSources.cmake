@@ -232,6 +232,7 @@ set(GECODE_GIST_SOURCES
 )
 
 set(GECODE_FLATZINC_SOURCES
+  gecode/flatzinc/blackbox.cpp
   gecode/flatzinc/branch.cpp
   gecode/flatzinc/flatzinc.cpp
   gecode/flatzinc/lexer.yy.cpp
