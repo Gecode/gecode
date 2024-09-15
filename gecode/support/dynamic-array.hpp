@@ -75,6 +75,9 @@ namespace Gecode { namespace Support {
 
     /// Cast in to pointer of type \a T
     operator T*(void);
+
+    /// Return the capacity of the array
+    int capacity(void) const;
   };
 
 
@@ -152,6 +155,12 @@ namespace Gecode { namespace Support {
   forceinline
   DynamicArray<T,A>::operator T*(void) {
     return x;
+  }
+
+  template<class T, class A>
+  forceinline int
+  DynamicArray<T,A>::capacity() const {
+    return n;
   }
 
 }}
