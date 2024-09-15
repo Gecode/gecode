@@ -127,12 +127,18 @@ namespace Gecode { namespace Int { namespace BinPacking {
     int operator [](int i) const;
   };
 
+  /// Range of lambda values  
+  struct LambdaRange {int min; int max;};
+
+  /// Integer Dynamic Array
+  using IntDynamicArray = Support::DynamicArray<int,Region>;
 
   /**
    * \brief Bin-packing propagator
    *
    * The algorithm is taken from:
    *   Paul Shaw. A Constraint for Bin Packing. CP 2004.
+   *   Tardivo et al. CP for Bin Packing with Multi-Core and GPUs. CP 2024.
    *
    * Requires \code #include <gecode/int/bin-packing.hh> \endcode
    *
@@ -175,6 +181,31 @@ namespace Gecode { namespace Int { namespace BinPacking {
     virtual Actor* copy(Space& home);
     /// Destructor
     virtual size_t dispose(Space& home);
+    /// Reductions
+    static int const nReductions = 3;
+    static void calcReductions(const ViewArray<Item>& bs, const ViewArray<OffsetView>& l, IntDynamicArray & weightsBaseReduction, int & capacityBaseReduction, IntDynamicArray & deltaReductions);
+    /// Dual Feasible Functions
+    static int fCCM1(int w, int l, int c);
+    static int fMT(int w, int l, int c);
+    static int fBJ1(int w, int l, int c);
+    static int fVB2Base(int w, int l, int c);
+    static int fVB2(int w, int l, int c);
+    static int fFS1(int w, int l, int c);
+    static int fRAD2Base(int w, int l, int c);
+    static int fRAD2(int w, int l, int c);
+    static int const nLambdaSamples = 256;
+    static LambdaRange lCCM1(int c);
+    static LambdaRange lMT(int c);
+    static LambdaRange lBJ1(int c);
+    static LambdaRange lVB2(int c);
+    static LambdaRange lFS1(int c);
+    static LambdaRange lRAD2(int c);
+    static LambdaRange sanitizeLambdaRange(LambdaRange lambda, int nWeights, int maxWeight);
+    /// Lower bound
+    template<int f(int,int,int)>
+    static int calcDffLowerboundSingleLambda(const IntDynamicArray & weights, int capacity, int lambda);
+    template<int f(int,int,int), LambdaRange l(int)>
+    static int calcDffLowerbound(const IntDynamicArray & weights, int capacity, int nNotZeroWeights, int maxWeight, bool sanitize = false);
   };
 
 
