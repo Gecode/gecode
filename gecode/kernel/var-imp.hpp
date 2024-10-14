@@ -493,5 +493,46 @@ namespace Gecode {
     Gecode::VarImp<Gecode::Float::FloatVarImpConf>::update(*this,sub);
 #endif
   }
+
+  forceinline void Space::updateNoIdx(Space* space, bool recover)
+  {
+
+    VarImp<NoIdxVarImpConf>* x =
+      static_cast<VarImp<NoIdxVarImpConf>*>(space->pc.c.vars_noidx);
+    while (x != NULL) {
+#ifndef NDEBUG
+      std::cout << (recover? "recover": "update") <<
+                  "variable without indexing structure " << x << std::endl;
+      std::cout << "x is copied?" << x->copied() << std::endl;
+#endif
+      VarImp<NoIdxVarImpConf>* n = x->next();
+      x->b.base = NULL; x->u.idx[0] = 0;
+      if (sizeof(ActorLink**) > sizeof(unsigned int))
+        *(1+&x->u.idx[0]) = 0;
+      x = n;
+    }
+  }
+
+    // void recover(VarImp* x, ActorLink**& sub);
+  forceinline void
+  Space::recover(ActorLink** sub)
+  {
+    //recover non-indexed variables
+    Space::updateNoIdx(this, true); // recover current space
+#ifdef GECODE_HAS_INT_VARS
+    Gecode::VarImp<Gecode::Int::IntVarImpConf>::recover(*this,sub);
+#endif
+#ifdef GECODE_HAS_INT_VARS
+    Gecode::VarImp<Gecode::Int::BoolVarImpConf>::recover(*this,sub);
+#endif
+#ifdef GECODE_HAS_SET_VARS
+    Gecode::VarImp<Gecode::Set::SetVarImpConf>::recover(*this,sub);
+#endif
+#ifdef GECODE_HAS_FLOAT_VARS
+    Gecode::VarImp<Gecode::Float::FloatVarImpConf>::recover(*this,sub);
+#endif
+  }
+
+
 }
 // STATISTICS: kernel-var

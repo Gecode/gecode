@@ -299,6 +299,9 @@ namespace Gecode {
      */
     static void update(Space& home, ActorLink**& sub);
 
+    /// Recover variables after OOM situations
+    static void recover(Space& home, ActorLink**& sub);
+
     /// Enter propagator to subscription array
     void enter(Space& home, Propagator* p, PropCond pc);
     /// Enter advisor to subscription array
@@ -1025,7 +1028,7 @@ namespace Gecode {
     /// Return alternative
     unsigned int alternative(void) const;
   };
- 
+
   /**
    * \brief Post trace information
    */
@@ -1871,6 +1874,11 @@ namespace Gecode {
     /// Update all cloned variables
     void update(ActorLink** sub);
     //@}
+
+    /// Update variables without indexing structure
+    void updateNoIdx(Space* space, bool recover);
+
+    void recover(ActorLink** sub);
 
     /// First actor for forced disposal
     Actor** d_fst;
@@ -4244,13 +4252,22 @@ namespace Gecode {
   : var_id(x.var_id)
 #endif
   {
+#ifndef NDEBUG
+    std::cout << "Generate in space " << &home << " in var-imp copy constructor " << this << " from x " << &x << std::endl;
+#endif
     VarImpBase** reg;
     free_and_bits = x.free_and_bits & ((1 << free_bits) - 1);
     if (x.b.base == NULL) {
       // Variable implementation needs no index structure
+#ifndef NDEBUG
+      std::cout << "x is not an indexed var " << std::endl;
+#endif
       reg = &home.pc.c.vars_noidx;
       assert(x.degree() == 0);
     } else {
+#ifndef NDEBUG
+      std::cout << "x is indexed var " << std::endl;
+#endif
       reg = &home.pc.c.vars_u[idx_c];
     }
     // Save subscriptions in copy
@@ -4261,6 +4278,9 @@ namespace Gecode {
 
     // Set forwarding pointer
     x.b.fwd = static_cast<VarImp<VIC>*>(Support::mark(this));
+#ifndef NDEBUG
+    std::cout << "marked x as copied" << std::endl;
+#endif
     // Register original
     x.u.next = static_cast<VarImp<VIC>*>(*reg); *reg = &x;
   }
@@ -4431,6 +4451,10 @@ namespace Gecode {
     while (*f != a) f++;
 #endif
     // Remove actor
+#ifndef NDEBUG
+    std::cout << "trying to remove actor" << std::endl;
+    std::cout << "current varimp " << this << " with base being " << b.base << std::endl;
+#endif
     *f = *(actorNonZero(pc+1)-1);
     for (PropCond j = pc+1; j< pc_max+1; j++) {
       *(actorNonZero(j)-1) = *(actorNonZero(j+1)-1);
@@ -4568,7 +4592,7 @@ namespace Gecode {
   template<class VIC>
   ModEvent
   VarImp<VIC>::fail(Space& home) {
-    _fail(home); 
+    _fail(home);
     return ME_GEN_FAILED;
   }
 
@@ -4578,6 +4602,10 @@ namespace Gecode {
     // this refers to the variable to be updated (clone)
     // x refers to the original
     // Recover from copy
+#ifndef NDEBUG
+    std::cout << "type in update is " << typeid(VarImp<VIC>).name() << std::endl;
+    std::cout << "construct update, update original x was " << x << " and in storage recovered base is " << b.base << std::endl;
+#endif
     x->b.base = b.base;
     x->u.idx[0] = u.idx[0];
     if (pc_max > 0 && sizeof(ActorLink**) > sizeof(unsigned int))
@@ -4585,8 +4613,8 @@ namespace Gecode {
 
     unsigned int np =
       static_cast<unsigned int>(x->actorNonZero(pc_max+1) - x->actor(0));
-    unsigned int na = 
-      static_cast<unsigned int >(x->b.base + x->entries - 
+    unsigned int na =
+      static_cast<unsigned int >(x->b.base + x->entries -
                                  x->actorNonZero(pc_max+1));
     unsigned int n  = na + np;
     assert(n == x->degree());
@@ -4596,12 +4624,15 @@ namespace Gecode {
 
     sub += n;
     b.base = t;
+#ifndef NDEBUG
+    std::cout << "constructed new x " << this << " with base = " << b.base << std::endl;
+#endif
     // Process propagator subscriptions
     while (np >= 4) {
       ActorLink* p3 = f[3]->prev();
       ActorLink* p0 = f[0]->prev();
       ActorLink* p1 = f[1]->prev();
-      ActorLink* p2 = f[2]->prev(); 
+      ActorLink* p2 = f[2]->prev();
       t[0] = p0; t[1] = p1; t[2] = p2; t[3] = p3;
       np -= 4; t += 4; f += 4;
     }
@@ -4621,7 +4652,7 @@ namespace Gecode {
       ptrdiff_t m0, m1, m2, m3;
       ActorLink* p3 =
         static_cast<ActorLink*>(Support::ptrsplit(f[3],m3))->prev();
-      ActorLink* p0 = 
+      ActorLink* p0 =
         static_cast<ActorLink*>(Support::ptrsplit(f[0],m0))->prev();
       ActorLink* p1 =
         static_cast<ActorLink*>(Support::ptrsplit(f[1],m1))->prev();
@@ -4635,7 +4666,7 @@ namespace Gecode {
     }
     if (na >= 2) {
       ptrdiff_t m0, m1;
-      ActorLink* p0 = 
+      ActorLink* p0 =
         static_cast<ActorLink*>(Support::ptrsplit(f[0],m0))->prev();
       ActorLink* p1 =
         static_cast<ActorLink*>(Support::ptrsplit(f[1],m1))->prev();
@@ -4645,7 +4676,7 @@ namespace Gecode {
     }
     if (na > 0) {
       ptrdiff_t m0;
-      ActorLink* p0 = 
+      ActorLink* p0 =
         static_cast<ActorLink*>(Support::ptrsplit(f[0],m0))->prev();
       t[0] = static_cast<ActorLink*>(Support::ptrjoin(p0,m0));
     }
@@ -4654,9 +4685,46 @@ namespace Gecode {
   template<class VIC>
   forceinline void
   VarImp<VIC>::update(Space& home, ActorLink**& sub) {
+#ifndef NDEBUG
+    std::cout << "update space " << &home << std::endl;
+#endif
     VarImp<VIC>* x = static_cast<VarImp<VIC>*>(home.pc.c.vars_u[idx_c]);
     while (x != NULL) {
       VarImp<VIC>* n = x->next(); x->forward()->update(x,sub); x = n;
+    }
+  }
+
+  template<class VIC>
+  forceinline void
+  VarImp<VIC>::recover(Space& home, ActorLink**& sub) {
+    VarImp<VIC>* x = static_cast<VarImp<VIC>*>(home.pc.c.vars_u[idx_c]);
+#ifndef NDEBUG
+    std::cout << "type in recover is " << typeid(VarImp<VIC>).name() << std::endl;
+    std::cout << "trying to recover for idx_c " << idx_c << " via space " << &home  << " the original variable " << x << std::endl;
+#endif
+    while (x != NULL) {
+      if(x->copied())
+      {
+        VarImp<VIC>* n = x->next();
+        VarImp<VIC>* copy = x->forward();
+#ifndef NDEBUG
+        std::cout << "recover x" << std::endl;
+        std::cout << "was copied, x is " << x << " copy pointer is " << copy << std::endl;
+        std::cout << "set.base from  " << x->b.base << " to " << copy->b.base << std::endl;
+#endif
+        x->b.base = copy->b.base;
+        x->u.idx[0] = copy->u.idx[0];
+        if (pc_max > 0 && sizeof(ActorLink**) > sizeof(unsigned int))
+          x->u.idx[1] = copy->u.idx[1];
+        x = n;
+        std::cout << "n = " << n << std::endl;
+      }
+      else {
+#ifndef NDEBUG
+        std::cout << "nope, x = " << x << " was not copied" << std::endl;
+#endif
+        break;
+      }
     }
   }
 

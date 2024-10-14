@@ -194,7 +194,7 @@ namespace Gecode {
       d_fst = NULL;
       while (a < e) {
         // Ignore entries for tracers
-        if (!Support::marked(*a))
+        if (!Support::marked(*a) && dynamic_cast<Actor*>(*a) != nullptr)
           (void) (*a)->dispose(*this);
         a++;
       }
@@ -701,48 +701,56 @@ namespace Gecode {
     for (int i=0; i<AllVarConf::idx_d; i++)
       _vars_d[i] = NULL;
 #endif
-    for (int i=0; i<AllVarConf::idx_c; i++)
-      pc.c.vars_u[i] = NULL;
-    pc.c.vars_noidx = NULL;
-    pc.c.local = NULL;
-    // Copy all propagators
-    {
-      ActorLink* p = &pl;
-      ActorLink* e = &s.pl;
-      for (ActorLink* a = e->next(); a != e; a = a->next()) {
-        Actor* c = Actor::cast(a)->copy(*this);
-        // Link copied actor
-        p->next(ActorLink::cast(c)); ActorLink::cast(c)->prev(p);
-        // Note that forwarding is done in the constructors
-        p = c;
+    try{
+      for (int i=0; i<AllVarConf::idx_c; i++)
+        pc.c.vars_u[i] = NULL;
+      pc.c.vars_noidx = NULL;
+      pc.c.local = NULL;
+      // Copy all propagators
+      {
+        ActorLink* p = &pl;
+        ActorLink* e = &s.pl;
+        for (ActorLink* a = e->next(); a != e; a = a->next()) {
+          Actor* c = Actor::cast(a)->copy(*this);
+          // Link copied actor
+          p->next(ActorLink::cast(c)); ActorLink::cast(c)->prev(p);
+          // Note that forwarding is done in the constructors
+          p = c;
+        }
+        // Link last actor
+        p->next(&pl); pl.prev(p);
       }
-      // Link last actor
-      p->next(&pl); pl.prev(p);
-    }
-    // Copy all branchers
-    {
-      ActorLink* p = &bl;
-      ActorLink* e = &s.bl;
-      for (ActorLink* a = e->next(); a != e; a = a->next()) {
-        Actor* c = Actor::cast(a)->copy(*this);
-        // Link copied actor
-        p->next(ActorLink::cast(c)); ActorLink::cast(c)->prev(p);
-        // Note that forwarding is done in the constructors
-        p = c;
+      // Copy all branchers
+      {
+        ActorLink* p = &bl;
+        ActorLink* e = &s.bl;
+        for (ActorLink* a = e->next(); a != e; a = a->next()) {
+          Actor* c = Actor::cast(a)->copy(*this);
+          // Link copied actor
+          p->next(ActorLink::cast(c)); ActorLink::cast(c)->prev(p);
+          // Note that forwarding is done in the constructors
+          p = c;
+        }
+        // Link last actor
+        p->next(&bl); bl.prev(p);
       }
-      // Link last actor
-      p->next(&bl); bl.prev(p);
+      // Setup brancher pointers
+      if (s.b_status == &s.bl) {
+        b_status = Brancher::cast(&bl);
+      } else {
+        b_status = Brancher::cast(s.b_status->prev());
+      }
+      if (s.b_commit == &s.bl) {
+        b_commit = Brancher::cast(&bl);
+      } else {
+        b_commit = Brancher::cast(s.b_commit->prev());
+      }
     }
-    // Setup brancher pointers
-    if (s.b_status == &s.bl) {
-      b_status = Brancher::cast(&bl);
-    } else {
-      b_status = Brancher::cast(s.b_status->prev());
-    }
-    if (s.b_commit == &s.bl) {
-      b_commit = Brancher::cast(&bl);
-    } else {
-      b_commit = Brancher::cast(s.b_commit->prev());
+    catch(...)
+    {
+      recover(static_cast<ActorLink**>(mm.subscriptions()));
+      mm.release(ssd.data().sm);
+      throw;
     }
   }
 
@@ -781,15 +789,8 @@ namespace Gecode {
     }
 
     // Update variables without indexing structure
-    VarImp<NoIdxVarImpConf>* x =
-      static_cast<VarImp<NoIdxVarImpConf>*>(c->pc.c.vars_noidx);
-    while (x != NULL) {
-      VarImp<NoIdxVarImpConf>* n = x->next();
-      x->b.base = NULL; x->u.idx[0] = 0;
-      if (sizeof(ActorLink**) > sizeof(unsigned int))
-        *(1+&x->u.idx[0]) = 0;
-      x = n;
-    }
+    updateNoIdx(c, false); //on space copy
+
     // Update variables with indexing structure
     c->update(static_cast<ActorLink**>(c->mm.subscriptions()));
 
@@ -863,7 +864,6 @@ namespace Gecode {
   Space::slave(const MetaInfo&) {
     return true;
   }
-
 
   void
   Space::afc_unshare(void) {
