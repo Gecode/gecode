@@ -696,7 +696,7 @@ namespace Gecode {
 #ifdef GECODE_HAS_CBS
       var_id_counter(s.var_id_counter),
 #endif
-      d_fst(&Actor::sentinel) {
+      d_fst(&Actor::sentinel),d_cur(nullptr),d_lst(nullptr){
 #ifdef GECODE_HAS_VAR_DISPOSE
     for (int i=0; i<AllVarConf::idx_d; i++)
       _vars_d[i] = NULL;
