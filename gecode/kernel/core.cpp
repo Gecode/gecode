@@ -194,7 +194,7 @@ namespace Gecode {
       d_fst = NULL;
       while (a < e) {
         // Ignore entries for tracers
-        if (!Support::marked(*a) && dynamic_cast<Actor*>(*a) != nullptr)
+        if (!Support::marked(*a))
           (void) (*a)->dispose(*this);
         a++;
       }
@@ -696,7 +696,7 @@ namespace Gecode {
 #ifdef GECODE_HAS_CBS
       var_id_counter(s.var_id_counter),
 #endif
-      d_fst(&Actor::sentinel),d_cur(nullptr),d_lst(nullptr){
+      d_fst(&Actor::sentinel),d_cur(nullptr),d_lst(nullptr) {
 #ifdef GECODE_HAS_VAR_DISPOSE
     for (int i=0; i<AllVarConf::idx_d; i++)
       _vars_d[i] = NULL;
@@ -746,7 +746,7 @@ namespace Gecode {
         b_commit = Brancher::cast(s.b_commit->prev());
       }
     }
-    catch(...)
+    catch(const std::exception&)
     {
       recover(static_cast<ActorLink**>(mm.subscriptions()));
       mm.release(ssd.data().sm);
@@ -864,6 +864,7 @@ namespace Gecode {
   Space::slave(const MetaInfo&) {
     return true;
   }
+
 
   void
   Space::afc_unshare(void) {

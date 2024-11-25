@@ -1878,6 +1878,7 @@ namespace Gecode {
     /// Update variables without indexing structure
     void updateNoIdx(Space* space, bool recover);
 
+    /// Recover after OOM situations
     void recover(ActorLink** sub);
 
     /// First actor for forced disposal

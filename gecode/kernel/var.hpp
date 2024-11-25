@@ -75,7 +75,6 @@ namespace Gecode {
     //@{
     /// Update this variable to be a clone of variable \a y
     void update(Space& home, VarImpVar<VarImp>& y);
-
     //@}
   };
 

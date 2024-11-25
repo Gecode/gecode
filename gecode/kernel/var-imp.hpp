@@ -496,15 +496,9 @@ namespace Gecode {
 
   forceinline void Space::updateNoIdx(Space* space, bool recover)
   {
-
     VarImp<NoIdxVarImpConf>* x =
       static_cast<VarImp<NoIdxVarImpConf>*>(space->pc.c.vars_noidx);
     while (x != NULL) {
-#ifndef NDEBUG
-      std::cout << (recover? "recover": "update") <<
-                  "variable without indexing structure " << x << std::endl;
-      std::cout << "x is copied?" << x->copied() << std::endl;
-#endif
       VarImp<NoIdxVarImpConf>* n = x->next();
       x->b.base = NULL; x->u.idx[0] = 0;
       if (sizeof(ActorLink**) > sizeof(unsigned int))
@@ -513,7 +507,6 @@ namespace Gecode {
     }
   }
 
-    // void recover(VarImp* x, ActorLink**& sub);
   forceinline void
   Space::recover(ActorLink** sub)
   {
