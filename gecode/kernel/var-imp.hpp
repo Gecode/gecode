@@ -508,21 +508,38 @@ namespace Gecode {
   }
 
   forceinline void
-  Space::recover(ActorLink** sub)
+  Space::recover(Space& source)
   {
+    //dispose the propagators of the (not fully) copied clone, since they are not registered for disposale
+    ActorLink* p_a = &(source.pl);
+    ActorLink* c_a = p_a->next();
+
+    //before being recovered loop over the source-propagators
+    //if the previous not the current previous, then it has to be a copied on, right
+    while (c_a != &(source.pl)) {
+      if(c_a->prev() != p_a)
+      {
+        assert(this->inPrematureDestructionMode());
+        if (!Support::marked(Actor::cast(c_a->prev())))
+          (void) Actor::cast(c_a->prev())->dispose(*this);
+      }
+      p_a = c_a; c_a = c_a->next();
+    }
+
     //recover non-indexed variables
+    ActorLink** sub = static_cast<ActorLink**>(mm.subscriptions());
     Space::updateNoIdx(this, true); // recover current space
 #ifdef GECODE_HAS_INT_VARS
-    Gecode::VarImp<Gecode::Int::IntVarImpConf>::recover(*this,sub);
+    Gecode::VarImp<Gecode::Int::IntVarImpConf>::revertHarmfulChangesOfUnfinishedClone(*this,sub);
 #endif
 #ifdef GECODE_HAS_INT_VARS
-    Gecode::VarImp<Gecode::Int::BoolVarImpConf>::recover(*this,sub);
+    Gecode::VarImp<Gecode::Int::BoolVarImpConf>::revertHarmfulChangesOfUnfinishedClone(*this,sub);
 #endif
 #ifdef GECODE_HAS_SET_VARS
-    Gecode::VarImp<Gecode::Set::SetVarImpConf>::recover(*this,sub);
+    Gecode::VarImp<Gecode::Set::SetVarImpConf>::revertHarmfulChangesOfUnfinishedClone(*this,sub);
 #endif
 #ifdef GECODE_HAS_FLOAT_VARS
-    Gecode::VarImp<Gecode::Float::FloatVarImpConf>::recover(*this,sub);
+    Gecode::VarImp<Gecode::Float::FloatVarImpConf>::revertHarmfulChangesOfUnfinishedClone(*this,sub);
 #endif
   }
 

@@ -112,7 +112,7 @@ namespace Gecode {
   VarImpDisposerBase* Space::vd[AllVarConf::idx_d];
 #endif
 
-  Space::Space(void) : mm(ssd.data().sm) {
+  Space::Space(void) : mm(ssd.data().sm), isFullyConstructed(false) {
 #ifdef GECODE_HAS_CBS
     var_id_counter = 0;
 #endif
@@ -134,6 +134,7 @@ namespace Gecode {
     pc.p.bid_sc = (reserved_bid+1) << sc_bits;
     pc.p.n_sub  = 0;
     pc.p.vti.other();
+    isFullyConstructed = true;
   }
 
   void
@@ -166,7 +167,7 @@ namespace Gecode {
   void
   Space::ap_ignore_dispose(Actor* a, bool duplicate) {
     // Note that a might be a marked pointer!
-    assert(d_fst != NULL);
+  assert(d_fst != NULL || inPrematureDestructionMode());
     Actor** f = d_fst;
     if (duplicate) {
       while (f < d_cur)
@@ -693,6 +694,7 @@ namespace Gecode {
   Space::Space(Space& s)
     : ssd(s.ssd),
       mm(ssd.data().sm,s.mm,s.pc.p.n_sub*sizeof(Propagator**)),
+      isFullyConstructed(false),
 #ifdef GECODE_HAS_CBS
       var_id_counter(s.var_id_counter),
 #endif
@@ -748,7 +750,14 @@ namespace Gecode {
     }
     catch(const std::exception&)
     {
-      recover(static_cast<ActorLink**>(mm.subscriptions()));
+      recover(s);
+      mm.release(ssd.data().sm);
+      throw;
+    }
+    catch(...)
+    {
+      std::cout << "Caught non-std exception in copy ctor, recover";
+      recover(s);
       mm.release(ssd.data().sm);
       throw;
     }
@@ -763,6 +772,7 @@ namespace Gecode {
 
     // Copy all data structures (which in turn will invoke the constructor)
     Space* c = copy();
+    c->isFullyConstructed = false;
 
     if (c->d_fst != &Actor::sentinel)
       throw SpaceNotCloned("Space::clone");
@@ -775,15 +785,22 @@ namespace Gecode {
         c->d_fst = c->d_cur = c->d_lst = NULL;
       } else {
         // Leave one entry free
-        c->d_fst = c->alloc<Actor*>(n+1);
-        c->d_cur = c->d_fst;
-        c->d_lst = c->d_fst+n+1;
-        for (Actor** d_fst_iter = d_fst; d_fst_iter != d_cur; d_fst_iter++) {
-          ptrdiff_t m;
-          Actor* a = static_cast<Actor*>(Support::ptrsplit(*d_fst_iter,m));
-          if (a->prev())
-            *(c->d_cur++) = Actor::cast(static_cast<ActorLink*>
-                                        (Support::ptrjoin(a->prev(),m)));
+        try{
+          c->d_fst = c->alloc<Actor*>(n+1);
+          c->d_cur = c->d_fst;
+          c->d_lst = c->d_fst+n+1;
+          for (Actor** d_fst_iter = d_fst; d_fst_iter != d_cur; d_fst_iter++) {
+            ptrdiff_t m;
+            Actor* a = static_cast<Actor*>(Support::ptrsplit(*d_fst_iter,m));
+            if (a->prev())
+              *(c->d_cur++) = Actor::cast(static_cast<ActorLink*>
+                                          (Support::ptrjoin(a->prev(),m)));
+          }
+        }
+        catch(const std::exception&)
+        {
+          c->recover(*this);
+          throw;
         }
       }
     }
@@ -835,6 +852,7 @@ namespace Gecode {
     // Reset execution information
     c->pc.p.vti.other(); pc.p.vti.other();
 
+    c->isFullyConstructed = true;
     return c;
   }
 
