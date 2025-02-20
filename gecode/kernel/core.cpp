@@ -167,7 +167,14 @@ namespace Gecode {
   void
   Space::ap_ignore_dispose(Actor* a, bool duplicate) {
     // Note that a might be a marked pointer!
-  assert(d_fst != NULL || inPrematureDestructionMode());
+
+    if(inPrematureDestructionMode())//actor array is not set up yet
+    {
+      return;
+    }
+
+    assert(d_fst != NULL);
+
     Actor** f = d_fst;
     if (duplicate) {
       while (f < d_cur)
@@ -756,7 +763,6 @@ namespace Gecode {
     }
     catch(...)
     {
-      std::cout << "Caught non-std exception in copy ctor, recover";
       recover(s);
       mm.release(ssd.data().sm);
       throw;
@@ -800,6 +806,7 @@ namespace Gecode {
         catch(const std::exception&)
         {
           c->recover(*this);
+          delete c;
           throw;
         }
       }
