@@ -522,6 +522,7 @@ namespace Gecode {
         assert(this->inPrematureDestructionMode());
         if (!Support::marked(Actor::cast(c_a->prev())))
           (void) Actor::cast(c_a->prev())->dispose(*this);
+        c_a->prev(p_a);
       }
       p_a = c_a; c_a = c_a->next();
     }

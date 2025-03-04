@@ -2005,7 +2005,7 @@ namespace Gecode {
   protected:
     /// Recover after OOM situations
     GECODE_KERNEL_EXPORT
-    void recover(Space& source);
+    virtual void recover(Space& source);
 
   public:
     GECODE_KERNEL_EXPORT
@@ -4498,7 +4498,7 @@ namespace Gecode {
   template<class VIC>
   forceinline void
   VarImp<VIC>::cancel(Space& home, Advisor& a, bool fail) {
-    if (b.base != NULL) {
+    if (b.base != NULL && !home.inPrematureDestructionMode()) {
       Advisor* ma = static_cast<Advisor*>(Support::ptrjoin(&a,fail ? 1 : 0));
       remove(home,ma);
     }
