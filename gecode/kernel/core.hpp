@@ -2007,6 +2007,12 @@ namespace Gecode {
     GECODE_KERNEL_EXPORT
     virtual void recover(Space& source);
 
+    GECODE_KERNEL_EXPORT
+    virtual void trackPropagation(StatusStatistics& stat, const Propagator* /*p*/)
+    {
+      stat.propagate++;
+    }
+
   public:
     GECODE_KERNEL_EXPORT
     bool inPrematureDestructionMode()

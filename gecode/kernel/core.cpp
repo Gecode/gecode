@@ -271,7 +271,7 @@ namespace Gecode {
         // Check whether space is stable but not failed
         goto f_unstable;
       f_execute:
-        stat.propagate++;
+        trackPropagation(stat, p);
         // Keep old modification event delta
         med_o = p->u.med;
         // Clear med but leave propagator in queue
@@ -331,7 +331,7 @@ namespace Gecode {
         // Support for disabled propagators
         goto d_unstable;
       d_execute:
-        stat.propagate++;
+        trackPropagation(stat, p);
         if (p->disabled())
           goto d_put_into_idle;
         // Keep old modification event delta
@@ -408,7 +408,7 @@ namespace Gecode {
         goto t_unstable;
 
       t_execute:
-        stat.propagate++;
+        trackPropagation(stat, p);
         if (p->disabled())
           goto t_put_into_idle;
         pc.p.vti.propagator(*p);
