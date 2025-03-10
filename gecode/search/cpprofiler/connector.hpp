@@ -42,7 +42,7 @@
 #include <vector>
 #include <cstring>
 
-#ifdef WIN32
+#ifdef _WIN32
 
 #include <winsock2.h>
 #include <ws2tcpip.h>
@@ -270,7 +270,7 @@ namespace Gecode { namespace CPProfiler {
     struct addrinfo hints, *servinfo, *p;
     int rv;
       
-#ifdef WIN32
+#ifdef _WIN32
     // Initialise Winsock.
     WSADATA wsaData;
     int startupResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
@@ -297,7 +297,7 @@ namespace Gecode { namespace CPProfiler {
       }
       
       if (::connect(sockfd, p->ai_addr, p->ai_addrlen) == -1) {
-#ifdef WIN32
+#ifdef _WIN32
         closesocket(sockfd);
 #else
         close(sockfd);
@@ -378,7 +378,7 @@ namespace Gecode { namespace CPProfiler {
   
   inline void
   Connector::disconnect() {
-#ifdef WIN32
+#ifdef _WIN32
     closesocket(sockfd);
 #else
     close(sockfd);
