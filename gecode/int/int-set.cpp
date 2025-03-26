@@ -39,7 +39,14 @@ namespace Gecode {
   IntSet::IntSetObject::allocate(int n) {
     IntSetObject* o = new IntSetObject;
     o->n = n;
-    o->r = heap.alloc<Range>(n);
+    try {
+      o->r = heap.alloc<Range>(n);
+    }
+    catch (const std::bad_alloc& ex)
+    {
+      delete(o);
+      throw ex;
+    }
     return o;
   }
 
@@ -165,7 +172,7 @@ namespace Gecode {
     Region reg;
     Range* dr = reg.alloc<Range>(n);
     int j=0;
-    for (const std::pair<int,int>& k : r) 
+    for (const std::pair<int,int>& k : r)
       if (k.first <= k.second) {
         dr[j].min=k.first; dr[j].max=k.second; j++;
       }
