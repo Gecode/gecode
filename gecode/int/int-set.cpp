@@ -37,8 +37,7 @@ namespace Gecode {
 
   IntSet::IntSetObject*
   IntSet::IntSetObject::allocate(int n) {
-    IntSetObject* o = new IntSetObject;
-    o->n = n;
+    IntSetObject* o = new IntSetObject(n);
     try {
       o->r = heap.alloc<Range>(n);
     }
