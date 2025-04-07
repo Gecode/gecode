@@ -44,7 +44,7 @@ namespace Gecode {
     catch (const std::bad_alloc& ex)
     {
       delete(o);
-      throw ex;
+      throw;
     }
     return o;
   }
