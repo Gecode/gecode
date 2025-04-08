@@ -149,14 +149,33 @@ namespace Gecode {
       // Resize
       if (d_fst == NULL) {
         // Create new array
-        d_fst = alloc<Actor*>(4);
+        try {
+          d_fst = alloc<Actor*>(4);
+        }
+        catch (const std::bad_alloc& e)
+        {
+          if (a != nullptr)
+            a->dispose(*this);
+            throw;
+        }
+
         d_cur = d_fst;
         d_lst = d_fst+4;
       } else {
         // Resize existing array
         unsigned int n = static_cast<unsigned int>(d_lst - d_fst);
         assert(n != 0);
-        d_fst = realloc<Actor*>(d_fst,n,2*n);
+
+        try {
+          d_fst = realloc<Actor*>(d_fst,n,2*n);
+        }
+        catch (const std::bad_alloc&)
+        {
+          if (a != nullptr)
+            a->dispose(*this);
+            throw;
+        }
+
         d_cur = d_fst+n;
         d_lst = d_fst+2*n;
       }
