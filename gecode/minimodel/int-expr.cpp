@@ -109,6 +109,7 @@ namespace Gecode {
       break;
     default: ;
     }
+    decrement();
   }
 
   forceinline void*
@@ -405,7 +406,14 @@ namespace Gecode {
     n->t = NT_SUM_INT;
     n->l = n->r = nullptr;
     if (x.size() > 0) {
-      n->sum.ti = heap.alloc<Int::Linear::Term<Int::IntView> >(x.size());
+      try {
+        n->sum.ti = heap.alloc<Int::Linear::Term<Int::IntView> >(x.size());
+      }
+      catch(const std::bad_alloc&)
+      {
+        delete n;
+        throw;
+      }
       for (int i=x.size(); i--; ) {
         n->sum.ti[i].x = x[i];
         n->sum.ti[i].a = 1;
@@ -422,7 +430,14 @@ namespace Gecode {
     n->t = NT_SUM_INT;
     n->l = n->r = nullptr;
     if (x.size() > 0) {
-      n->sum.ti = heap.alloc<Int::Linear::Term<Int::IntView> >(x.size());
+      try {
+        n->sum.ti = heap.alloc<Int::Linear::Term<Int::IntView> >(x.size());
+      }
+      catch (const std::bad_alloc&)
+      {
+        delete n;
+        throw;
+      }
       for (int i=x.size(); i--; ) {
         n->sum.ti[i].x = x[i];
         n->sum.ti[i].a = a[i];
@@ -437,7 +452,15 @@ namespace Gecode {
     n->t = NT_SUM_BOOL;
     n->l = n->r = nullptr;
     if (x.size() > 0) {
-      n->sum.tb = heap.alloc<Int::Linear::Term<Int::BoolView> >(x.size());
+      try {
+        n->sum.tb = heap.alloc<Int::Linear::Term<Int::BoolView> >(x.size());
+      }
+      catch (const std::bad_alloc&)
+      {
+        delete n;
+        throw;
+      }
+
       for (int i=x.size(); i--; ) {
         n->sum.tb[i].x = x[i];
         n->sum.tb[i].a = 1;
@@ -454,7 +477,14 @@ namespace Gecode {
     n->t = NT_SUM_BOOL;
     n->l = n->r = nullptr;
     if (x.size() > 0) {
-      n->sum.tb = heap.alloc<Int::Linear::Term<Int::BoolView> >(x.size());
+      try {
+        n->sum.tb = heap.alloc<Int::Linear::Term<Int::BoolView> >(x.size());
+      }
+      catch (const std::bad_alloc&)
+      {
+        delete n;
+        throw;
+      }
       for (int i=x.size(); i--; ) {
         n->sum.tb[i].x = x[i];
         n->sum.tb[i].a = a[i];
@@ -492,7 +522,15 @@ namespace Gecode {
   }
 
   LinIntExpr::LinIntExpr(NonLinIntExpr* e) :
-    n(new Node) {
+    n(nullptr) {
+    try {
+      n = new Node;
+    }
+    catch (const std::bad_alloc&)
+    {
+      delete e;
+      throw;
+    }
     n->n_int = 1;
     n->n_bool = 0;
     n->t = NT_NONLIN;
