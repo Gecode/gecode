@@ -888,7 +888,7 @@ INTEXAMPLESRC0 =						\
 	money ortho-latin partition photo queens sudoku sudoku-advanced kakuro  \
 	nonogram pentominoes crowded-chess black-hole		\
 	minesweeper domino steel-mill sports-league		\
-	all-interval langford-number warehouses	radiotherapy    \
+	all-interval dispersion langford-number warehouses	radiotherapy    \
 	word-square crossword open-shop car-sequencing sat      \
 	bin-packing knights tsp perfect-square schurs-lemma     \
 	dominating-queens colored-matrix multi-bin-packing	\
