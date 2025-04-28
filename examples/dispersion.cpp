@@ -1,549 +1,784 @@
-#include <gecode/driver.hh>
-#include <gecode/kernel.hh>
-#include <gecode/int.hh>
-#include <gecode/minimodel.hh> // Explicitly include minimodel.hh
+// =======================================
+// p-Dispersion Solver with Gecode
+// =======================================
+// Author: Gemini & User Collaboration
+// Date: April 23, 2025 (Simulated) - Revision 5 (Final)
+// Description:
+// Solves the p-Dispersion problem (maximize the minimum distance between
+// selected facilities) using Gecode. Supports instance generation via
+// an n*n grid (Manhattan distance) or reading from a BIN file format
+// (lat/lon, Haversine distance). Includes an optional heuristic pruning
+// propagator with optional local search enhancement.
+// =======================================
 
+// --- Gecode Includes ---
+#include <gecode/driver.hh>
+#include <gecode/int.hh>
+#include <gecode/minimodel.hh>
+#include <gecode/kernel.hh>
+
+// --- Standard C++ Includes ---
 #include <vector>
 #include <numeric>    // For std::iota
-#include <cmath>      // For std::abs, std::sqrt in print
-#include <algorithm>  // For std::shuffle
+#include <cmath>      // For M_PI, sin, cos, asin, sqrt, abs, round
+#include <algorithm>  // For std::shuffle, std::sort, std::min, std::max
 #include <random>     // For std::default_random_engine
-#include <iostream>   // For output
-#include <stdexcept>  // For exceptions
-#include <string>     // For branching name lookup
+#include <iostream>   // For std::cout, std::cerr
+#include <fstream>    // For std::ifstream
+#include <sstream>    // For std::stringstream
+#include <stdexcept>  // For std::runtime_error, std::exception
+#include <string>     // For std::string, std::to_string
+#include <limits>     // For std::numeric_limits
+#include <memory>     // For std::unique_ptr
+#include <cstring>    // For strcmp
+#include <iomanip>    // For std::setw, std::left
 
-// Helper structure for grid points
-struct Point {
-    int x; // x-coordinate
-    int y; // y-coordinate
-    int id;// Original index in the full n*n grid (0 to n*n-1)
+
+// =======================================
+// Enums (Defined before use)
+// =======================================
+/// Enum defining branching strategies selectable via command-line
+enum BranchingType {
+    BRANCH_AFC_MIN,
 };
 
-// Calculate Manhattan distance between two points
-int manhattan_distance(const Point& p1, const Point& p2) {
+/// Enum defining instance generation types
+enum GenType {
+    GRID,
+    BIN
+};
+
+
+// =======================================
+// Forward Declarations
+// =======================================
+struct Point;
+
+class DispersionInstance;
+
+class StringArgOption; // Custom option class for filename
+class DispersionOptions;
+
+class HeuristicPruner;
+
+class Dispersion;
+
+
+// =======================================
+// Global Constants & Helpers
+// =======================================
+const double EARTH_RADIUS_KM = 6371.0;
+
+/// Represents a potential facility location.
+struct Point {
+    int x = 0;
+    double lat = 0.0;
+    int y = 0;
+    double lon = 0.0;
+    int id = -1;
+    char category = ' ';
+};
+
+/// Calculate Manhattan distance
+int manhattan_distance(const Point &p1, const Point &p2) {
     return std::abs(p1.x - p2.x) + std::abs(p1.y - p2.y);
 }
 
+/// Convert degrees to radians
+double to_radians(double degrees) {
+    return degrees * M_PI / 180.0;
+}
+
+/// Calculate Haversine distance in integer meters
+int haversine_distance_meters(const Point &p1, const Point &p2) {
+    double lat1_rad = to_radians(p1.lat);
+    double lon1_rad = to_radians(p1.lon);
+    double lat2_rad = to_radians(p2.lat);
+    double lon2_rad = to_radians(p2.lon);
+    double dlon = lon2_rad - lon1_rad;
+    double dlat = lat2_rad - lat1_rad;
+    double hav_dlat = sin(dlat / 2.0) * sin(dlat / 2.0);
+    double hav_dlon = sin(dlon / 2.0) * sin(dlon / 2.0);
+    double a = hav_dlat + cos(lat1_rad) * cos(lat2_rad) * hav_dlon;
+    a = std::max(0.0, std::min(1.0, a));
+    double c = 2.0 * asin(sqrt(a));
+    double distance_km = EARTH_RADIUS_KM * c;
+    return static_cast<int>(round(distance_km * 1000.0));
+}
+
+/// Get branching strategy name from enum for printing
+std::string get_branching_name(BranchingType type) {
+    switch (type) {
+        case BRANCH_AFC_MIN:
+            return "afcmin";
+        default:
+            return "unknown";
+    }
+}
+
+
+// =======================================
+// Custom String Argument Option Class
+// =======================================
 /**
- * \brief Propagator implementing greedy heuristic pruning for p-Dispersion.
- *
- * Inherits from NaryOnePropagator:
- * - Nary part: Views `x` (IntVar, trigger PC_INT_VAL)
- * - One part: View `y` (min_dist, trigger PC_INT_BND)
- *
- * Estimates an upper bound on the objective at the current node using a greedy
- * assignment of unassigned variables. If the estimate is not better than the current
- * best solution found (incumbent lower bound), it posts failure.
+ * \brief Custom option class for handling a single string argument (like a filename).
  */
-class HeuristicPruner : public Gecode::MixNaryOnePropagator<
-        Gecode::Int::IntView, Gecode::Int::PC_INT_VAL,
-        Gecode::Int::IntView, Gecode::Int::PC_INT_BND
-> {
+class StringArgOption : public Gecode::Driver::BaseOption {
 protected:
-
-    // Instance data needed for calculations
-    const int p;                         // Number of facilities to select
-    const int num_potential;             // Number of potential locations (|P|)
-    const Gecode::IntArgs dist_storage;  // Copy of the flat distance matrix
-
+    std::string value_; ///< Stores the string value provided for the option
 public:
-    /// Constructor for creation
-    HeuristicPruner(Gecode::Home home,
-                    Gecode::ViewArray<Gecode::Int::IntView>& points,
-                    Gecode::Int::IntView min_dist,
-                    int p_val,
-                    int num_potential_val,
-                    const Gecode::IntArgs& dist_storage_val)
-            : MixNaryOnePropagator<Gecode::Int::IntView, Gecode::Int::PC_INT_VAL,
-                                   Gecode::Int::IntView, Gecode::Int::PC_INT_BND>(home, points, min_dist),
-              p(p_val),
-              num_potential(num_potential_val),
-              dist_storage(dist_storage_val)
-    {}
+    /// Constructor: Sets option name (e.g., "-binfile") and description
+    StringArgOption(const char *option, const char *description)
+            : Gecode::Driver::BaseOption(option, description), value_("") {}
 
-    /// Constructor for cloning
-    HeuristicPruner(Gecode::Space& home, HeuristicPruner& p)
-            : MixNaryOnePropagator<Gecode::Int::IntView, Gecode::Int::PC_INT_VAL,
-                                   Gecode::Int::IntView, Gecode::Int::PC_INT_BND>(home, p),
-              p(p.p),
-              num_potential(p.num_potential),
-              dist_storage(p.dist_storage)
-    {}
-
-    /// Propagator execution
-    virtual Gecode::ExecStatus propagate(Gecode::Space& home, const Gecode::ModEventDelta& med) {
-        // Get current incumbent cost (lower bound of objective variable y)
-        int incumbent_cost = y.min();
-
-        // Don't run if no incumbent exists yet
-        if (incumbent_cost <= 0) { // Adjust if 0 is a possible valid distance
-            return Gecode::ES_FIX;
-        }
-
-        // --- Identify assigned and unassigned variables ---
-        std::vector<int> assigned_indices;
-        std::vector<int> unassigned_indices;
-        assigned_indices.reserve(p);
-        unassigned_indices.reserve(p);
-
-        for (int i = 0; i < p; ++i) {
-            if (x[i].assigned()) {
-                assigned_indices.push_back(i);
-            } else {
-                unassigned_indices.push_back(i);
+    /// Parses command line arguments. Correctly overrides pure virtual function.
+    virtual int parse(int argc, char *argv[]) override { // Correct signature
+        if (argc == 0) { return 0; }
+        // Use protected member 'iopt' (option with hyphen) for comparison
+        if (std::strcmp(argv[0], this->iopt) == 0) {
+            if (argc < 2) { // Value must follow the option name
+                // Use 'opt' (option name without hyphen) for error message
+                std::cerr << "Error: Option '" << this->iopt << "' requires a string argument." << std::endl;
+                return -1; // Signal parsing error
             }
+            value_ = argv[1]; // Store the provided string value
+            // Return 2 to indicate consumption
+            return 2;
         }
-        int assigned_count = assigned_indices.size();
-
-        // If all are assigned, propagator is done.
-        if (assigned_count == p) {
-            return home.ES_SUBSUMED(*this);
-        }
-
-        // --- Perform Greedy Assignment for unassigned variables ---
-        // Stores the complete assignment (original + greedy fill)
-        std::vector<int> greedy_assignment(p);
-        // Keep track of which indices in greedy_assignment are filled greedily
-        std::vector<int> greedily_assigned_indices;
-        greedily_assigned_indices.reserve(p - assigned_count);
-
-        bool possible = true; // Flag if greedy assignment is possible
-
-        // 1. Copy known assigned values
-        for (int idx : assigned_indices) {
-            greedy_assignment[idx] = x[idx].val();
-        }
-
-        // 2. Greedily assign variables based on unassigned_indices
-        for (int current_unassigned_idx : unassigned_indices) {
-            int best_val = -1;
-            int max_min_dist = -1;
-
-            // Iterate through domain of the current unassigned variable x[current_unassigned_idx]
-            for (Gecode::Int::ViewValues<Gecode::Int::IntView> val_iter(x[current_unassigned_idx]); val_iter(); ++val_iter) {
-                int current_val = val_iter.val();
-                int current_min_dist_for_val = std::numeric_limits<int>::max();
-
-                // Calculate distance to already assigned variables
-                for (int assigned_idx : assigned_indices) {
-                    int dist = get_dist(dist_storage, num_potential, current_val, greedy_assignment[assigned_idx]);
-                    if (dist < current_min_dist_for_val) {
-                        current_min_dist_for_val = dist;
-                    }
-                }
-
-                // Calculate distance to previously greedily assigned variables
-                for (int prev_greedy_idx : greedily_assigned_indices) {
-                    int dist = get_dist(dist_storage, num_potential, current_val, greedy_assignment[prev_greedy_idx]);
-                    if (dist < current_min_dist_for_val) {
-                        current_min_dist_for_val = dist;
-                    }
-                }
-
-                // Check if this value gives a better *minimum* distance
-                if (current_min_dist_for_val > max_min_dist) {
-                    max_min_dist = current_min_dist_for_val;
-                    best_val = current_val;
-                }
-            } // End domain iteration for x[current_unassigned_idx]
-
-            // If no suitable value could be found
-            if (best_val == -1) {
-                possible = false;
-                break; // Exit the greedy assignment loop
-            }
-            // Store the chosen greedy value and mark index as greedily assigned
-            greedy_assignment[current_unassigned_idx] = best_val;
-            greedily_assigned_indices.push_back(current_unassigned_idx);
-
-        } // End loop through unassigned variables
-
-        // If greedy assignment failed, let other propagators handle it
-        if (!possible) {
-            return Gecode::ES_FIX;
-        }
-
-        // --- Compute Cost of the completed greedy assignment ---
-        // Need to consider all pairs within the completed assignment
-        int greedy_cost = std::numeric_limits<int>::max();
-        std::vector<int> final_indices = assigned_indices;
-        final_indices.insert(final_indices.end(), greedily_assigned_indices.begin(), greedily_assigned_indices.end());
-
-        for (size_t i = 0; i < final_indices.size(); ++i) {
-            for (size_t j = i + 1; j < final_indices.size(); ++j) {
-                int idx1 = final_indices[i];
-                int idx2 = final_indices[j];
-                int dist = get_dist(dist_storage, num_potential, greedy_assignment[idx1], greedy_assignment[idx2]);
-                if (dist < greedy_cost) {
-                    greedy_cost = dist;
-                }
-            }
-        }
-
-        // --- Compare estimated cost (greedy_cost) with incumbent ---
-        if (greedy_cost <= incumbent_cost) {
-            // std::cout << "Pruning! Greedy Est: " << greedy_cost << " <= Incumbent: " << incumbent_cost << std::endl; // Debug
-            return Gecode::ES_FAILED; // Post failure
-        } else {
-            // std::cout << "NOT Pruning. Greedy Est: " << greedy_cost << " > Incumbent: " << incumbent_cost << std::endl; // Debug
-            return Gecode::ES_FIX; // Heuristic doesn't prune, keep searching
-        }
+        return 0; // Option not found at current position
     }
 
-    /// Create copy during cloning
-    virtual Propagator* copy(Gecode::Space& home) {
-        return new (home) HeuristicPruner(home, *this);
+    /// Prints help text for this option
+    virtual void help(void) override {
+        // Use protected members 'iopt' (option name) and 'exp' (explanation)
+        std::cerr << "  " << std::setw(20) << std::left << this->iopt << this->exp << " (string)" << std::endl;
     }
 
-    /// Cost function
-    virtual Gecode::PropCost cost(const Gecode::Space&, const Gecode::ModEventDelta&) const {
-        // Quadratic cost seems reasonable given the nested loops
-        return Gecode::PropCost::crazy(Gecode::PropCost::HI, x.size());
-    }
-
-    /// Post function to create and schedule the propagator
-    static Gecode::ExecStatus post(Gecode::Home home,
-                                   Gecode::ViewArray<Gecode::Int::IntView>& points,
-                                   Gecode::Int::IntView min_dist,
-                           int p_val,
-                           int num_potential_val,
-                           const Gecode::IntArgs& dist_storage_val) {
-        if (p_val >= 2) {
-            (void) new (home) HeuristicPruner(home, points, min_dist, p_val, num_potential_val, dist_storage_val);
-        }
-        return Gecode::ES_OK;
-    }
-
+    /// Returns the parsed string value
+    const std::string &value(void) const { return value_; }
 };
 
 
-// Enum defining the different branching strategies available via command-line
-enum BranchingType {
-    BRANCH_AFC_MIN,    // Default: INT_VAR_AFC_MIN / INT_VAL_MIN
-    // Add other branching variants here if desired later
-};
-
-
+// =======================================
+// DispersionInstance Class
+// =======================================
 /**
- * \brief Command-line options for the p-Dispersion problem.
- *
- * Handles instance parameters (grid size, points to select, potential points),
- * random seed, and branching strategy selection. Also generates the instance data.
+ * \brief Holds the data defining a specific p-Dispersion problem instance.
+ */
+class DispersionInstance {
+public:
+    // Members are non-const to allow default move operations
+    int p = 0;
+    int num_potential = 0;
+    int max_dist = 0;
+    std::vector<Point> potential_points;
+    Gecode::IntArgs flat_dist_storage;
+
+    /// Constructor: Initializes instance (takes ownership of moved data)
+    DispersionInstance(int p_val, int num_potential_val,
+                       std::vector<Point> &&points, Gecode::IntArgs &&dist_storage, int max_d)
+            : p(p_val), num_potential(num_potential_val), max_dist(max_d),
+              potential_points(std::move(points)), flat_dist_storage(std::move(dist_storage)) {
+        if (p < 2 || num_potential < p || static_cast<int>(potential_points.size()) != num_potential ||
+            flat_dist_storage.size() != num_potential * num_potential) {
+            throw Gecode::Exception("DispersionInstance", "Inconsistent data in constructor.");
+        }
+    }
+
+    /// Default constructor
+    DispersionInstance() = default;
+
+    // Allow moving
+    DispersionInstance(DispersionInstance &&) = default;
+
+    DispersionInstance &operator=(DispersionInstance &&) = default;
+
+    // Prevent copying
+    DispersionInstance(const DispersionInstance &) = delete;
+
+    DispersionInstance &operator=(const DispersionInstance &) = delete;
+
+    /// Helper to get distance from flat storage
+    int get_dist(int i, int j) const {
+        if (i < 0 || i >= num_potential || j < 0 || j >= num_potential) return std::numeric_limits<int>::max();
+        return flat_dist_storage[i * num_potential + j];
+    }
+};
+
+
+// =======================================
+// DispersionOptions Class
+// =======================================
+/**
+ * \brief Handles command-line options and owns the generated problem instance.
  */
 class DispersionOptions : public Gecode::Options {
 private:
-    // Option objects handled by Gecode::Driver
-    Gecode::Driver::IntOption _n;
+    // Gecode option objects
     Gecode::Driver::IntOption _p;
-    Gecode::Driver::IntOption _num_potential;
-    Gecode::Driver::IntOption _t; // Informational parameter, not used in max-min model
     Gecode::Driver::IntOption _seed;
+    Gecode::Driver::IntOption _n;
+    Gecode::Driver::IntOption _grid_num_potential;
+    StringArgOption _binfile; // Use custom option class
+    Gecode::Driver::BoolOption _use_pruner;
+    Gecode::Driver::IntOption _pruner_freq;
+    Gecode::Driver::BoolOption _pruner_use_ls;
+    Gecode::Driver::IntOption _t;
+    std::unique_ptr<DispersionInstance> instance_data_; // Instance storage
+    bool instance_generated_ = false;
+    int gentype_choice_ = 0; // 0=GRID, 1=BIN
 
 public:
-    // Stores the branching strategy chosen via command-line options
-    BranchingType branching_type_ = BranchingType::BRANCH_AFC_MIN; // Default value
+    BranchingType branching_type_ = BRANCH_AFC_MIN;
+    GenType gen_type_ = GRID;
 
-    // Instance Data: Generated based on options, public for access by the model
-    std::vector<Point> potential_points; // The |P| randomly selected potential points
-    Gecode::IntArgs flat_dist_storage;   // Flat storage for the |P|x|P| distance matrix
-    int max_dist;                        // Maximum Manhattan distance in the instance
-
-    /// Constructor: Initializes options with descriptions and defaults
-    DispersionOptions(const char* s, int n_def, int p_def, int P_def, int t_def)
+    /// Constructor: Initializes and registers options
+    DispersionOptions(const char *s, int n_def, int p_def, int P_def, int t_def)
             : Gecode::Options(s),
-            // Initialize Gecode::Driver option objects
-              _n("n", "side length of the grid (n x n)", n_def),
-              _p("p", "number of points to select", p_def),
-              _num_potential("P", "number of potential location points |P|", P_def),
-              _t("t", "distance divisor t (informational only)", t_def),
-              _seed("seed", "random seed", 0),
-            // Initialize instance data members
-              flat_dist_storage(), max_dist(0)
-    {
-        // Register the custom options with the base parser
-        add(_n);
+              _p("p", "number of points/facilities to select", p_def), // Option name without hyphen
+              _seed("seed", "random seed for generation", 0),
+              _n("n", "Grid: side length of the grid (n x n)", n_def),
+              _grid_num_potential("P", "Grid: number of potential location points |P|", P_def),
+              _binfile("binfile", "BIN: input file (lat,lon,category CSV)"), // Option name without hyphen
+              _use_pruner("use-pruner", "enable heuristic pruning propagator", false),
+              _pruner_freq("pruner-freq", "run pruner every k executions (1=always)", 1),
+              _pruner_use_ls("pruner-ls", "enable local search within pruner", false),
+              _t("t", "Informational distance divisor t", t_def) {
+        // Register options with the Gecode parser
         add(_p);
-        add(_num_potential);
-        add(_t);
         add(_seed);
+        add(_n);
+        add(_grid_num_potential);
+        add(_binfile); // Add custom option
+        add(_use_pruner);
+        add(_pruner_freq);
+        add(_pruner_use_ls);
+        add(_t);
 
-        // Setup branching option selection
-        Gecode::Options::branching(branching_type_); // Initialize base class mechanism
-        // Register command-line strings for branching choices
-        Gecode::Options::branching(BranchingType::BRANCH_AFC_MIN, "afcmin", "min dom divided by afc (dom/wdeg, default)");
-        // Add more branching options here if needed
+        // Setup choice options using Gecode::Options:: static-like calls
+        // These configure the internal state of the Options object being constructed.
+        Gecode::Options::branching(branching_type_);
+        Gecode::Options::branching(BRANCH_AFC_MIN, "afcmin", "branch var AFC min, val min (default)");
+/*
+        Gecode::Options::string(gentype_choice_);
+        Gecode::Options::string(0, "grid", "Generate instance on a grid (default)");
+        Gecode::Options::string(1, "bin", "Generate instance from BIN file (-binfile needed)");
+        */
     }
 
-    /// Parse options from command line and validate
-    void parse(int& argc, char**& argv) {
-        Gecode::Options::parse(argc, argv); // Base class parses registered options
-        // Retrieve the chosen branching enum value AFTER base class parsing
-        branching_type_ = static_cast<BranchingType>(Gecode::Options::branching());
+    /// Parse options, determine generation type, validate
+    void parse(int &argc, char **&argv) {
+        Gecode::Options::parse(argc, argv); // Base class calls parse for all registered options
+        // Retrieve choice options using INSTANCE methods (getters)
+        branching_type_ = static_cast<BranchingType>(branching());
+        //gentype_choice_ = string(); // Note: string() is the getter for the string choice index
+        gen_type_ = (gentype_choice_ == 0) ? GRID : BIN;
 
-        // Validate parsed option values using the getters
-        if (n() <= 0) throw Gecode::Exception("Options", "Grid size n must be positive.");
-        if (p() < 2) throw Gecode::Exception("Options", "Number of points p must be at least 2.");
-        if (num_potential() < p()) throw Gecode::Exception("Options", "|P| must be at least p.");
-        if (num_potential() > n() * n()) throw Gecode::Exception("Options", "|P| cannot exceed n*n.");
-        if (t() <= 0) throw Gecode::Exception("Options", "Distance divisor t must be positive.");
+        // Validation
+        if (p() < 2) throw Gecode::Exception("Options", "-p >= 2 required.");
+        if (pruner_freq() <= 0) throw Gecode::Exception("Options", "-pruner-freq > 0 required.");
+        if (gen_type_ == BIN && _binfile.value().empty()) {
+            throw Gecode::Exception("Options", "-gentype bin requires -binfile argument.");
+        }
     }
 
-    // Getters for accessing parsed option values
-    int n() const { return _n.value(); }
+    // --- Getters ---
     int p() const { return _p.value(); }
-    int num_potential() const { return _num_potential.value(); }
-    int t() const { return _t.value(); }
+
     int seed() const { return _seed.value(); }
+
     BranchingType branching() const { return branching_type_; }
 
-    /// Print help message (includes registered options automatically)
-    virtual void help(void) { Gecode::Options::help(); }
+    GenType gentype() const { return gen_type_; }
 
-    /// Generate instance data (point selection and distance matrix)
-    void generate_instance(Gecode::Rnd rnd); // Defined outside class
+    bool use_pruner() const { return _use_pruner.value(); }
 
+    int pruner_freq() const { return _pruner_freq.value(); }
+
+    bool pruner_use_ls() const { return _pruner_use_ls.value(); }
+
+    int grid_n() const { return _n.value(); }
+
+    int grid_num_potential() const { return _grid_num_potential.value(); }
+
+    const std::string &bin_filename() const { return _binfile.value(); }
+
+    /// Generate the instance data
+    void create_instance(); // Defined later
+
+    /// Get a const reference to the generated instance data
+    const DispersionInstance &instance() const {
+        if (!instance_generated_ || !instance_data_)
+            throw Gecode::Exception("Options", "Instance accessed before creation.");
+        return *instance_data_;
+    }
+
+    /// Print help message
+    virtual void help(void) { Gecode::Options::help(); } // Base class help prints registered options
 };
 
 
+// =======================================
+// HeuristicPruner Propagator
+// =======================================
+/**
+ * \brief Propagator implementing greedy heuristic pruning for p-Dispersion.
+ */
+class HeuristicPruner : public Gecode::MixNaryOnePropagator<
+        Gecode::Int::IntView, Gecode::Int::PC_INT_VAL,
+        Gecode::Int::IntView, Gecode::Int::PC_INT_BND> {
+protected:
+    const DispersionInstance &instance;
+    const int k_freq;
+    const bool use_ls;
+    int exec_count;
+public:
+    /// Constructor for creation
+    HeuristicPruner(Gecode::Home home, Gecode::ViewArray<Gecode::Int::IntView> &x, Gecode::Int::IntView y,
+                    const DispersionInstance &inst, int frequency, bool enable_ls)
+            : Gecode::MixNaryOnePropagator<Gecode::Int::IntView, Gecode::Int::PC_INT_VAL,
+            Gecode::Int::IntView, Gecode::Int::PC_INT_BND>(home, x, y),
+              instance(inst), k_freq(frequency), use_ls(enable_ls), exec_count(0) {}
+
+    /// Constructor for cloning
+    HeuristicPruner(Gecode::Space &home, HeuristicPruner &p)
+            : Gecode::MixNaryOnePropagator<Gecode::Int::IntView, Gecode::Int::PC_INT_VAL,
+            Gecode::Int::IntView, Gecode::Int::PC_INT_BND>(home, p),
+              instance(p.instance), k_freq(p.k_freq), use_ls(p.use_ls), exec_count(p.exec_count) {}
+
+    /// Propagator execution logic
+    virtual Gecode::ExecStatus propagate(Gecode::Space &home, const Gecode::ModEventDelta &med); // Defined later
+
+    /// Create copy during cloning
+    virtual Gecode::Propagator *copy(Gecode::Space &home) { return new(home) HeuristicPruner(home, *this); }
+
+    /// Cost function: Estimate propagator cost
+    virtual Gecode::PropCost cost(const Gecode::Space &, const Gecode::ModEventDelta &) const {
+        return use_ls ? Gecode::PropCost::crazy(Gecode::PropCost::HI, x.size())
+                      : Gecode::PropCost::quadratic(Gecode::PropCost::LO, x.size());
+    }
+
+    /// Static posting function used by helper
+    static Gecode::ExecStatus post(Gecode::Home home,
+                                   Gecode::ViewArray<Gecode::Int::IntView> &x_views,
+                                   Gecode::Int::IntView y_min_dist,
+                                   const DispersionInstance &inst, int frequency, bool enable_ls) {
+        if (inst.p >= 2) {
+            (void) new(home) HeuristicPruner(home, x_views, y_min_dist, inst, frequency, enable_ls);
+        }
+        return Gecode::ES_OK;
+    }
+};
+
+
+// =======================================
+// Helper Function for Posting Propagator
+// =======================================
+/// Posts the heuristic pruner, creating views internally.
+void post_heuristic_pruner(Gecode::Home home,
+                           Gecode::IntVarArgs x_vars,
+                           Gecode::IntVar min_dist_var,
+                           const DispersionInstance &inst,
+                           int frequency, bool enable_ls) {
+    if (inst.p >= 2) {
+        // Create views needed by the propagator's post function
+        Gecode::ViewArray<Gecode::Int::IntView> x_views(home, x_vars); // Correct constructor
+        Gecode::Int::IntView min_dist_view(min_dist_var);
+        // Call the propagator's static post function
+        (void) HeuristicPruner::post(home, x_views, min_dist_view, inst, frequency, enable_ls);
+    }
+}
+
+
+// =======================================
+// Dispersion Model Class
+// =======================================
 /**
  * \brief Gecode model for the p-Dispersion Problem (Maximize Minimum Distance).
- *
- * Selects p points from a pre-generated set of |P| potential locations
- * to maximize the minimum Manhattan distance between any pair of selected points.
- * Uses a ternary table (extensional) constraint.
  */
 class Dispersion : public Gecode::IntMaximizeScript {
 protected:
-    // Problem parameters (copied from options for convenience/constness)
-    const int p;
-    const int num_potential; // Number of potential points = |P|
-    // Instance data needed by methods other than constructor (e.g., print)
-    const std::vector<Point> potential_points_;
-
-    // Gecode variables
-    Gecode::IntVarArray x;      // x[i] = index (0 to |P|-1) of the i-th selected point
-    Gecode::IntVar min_dist;    // Objective: the minimum distance achieved
+    const DispersionInstance &instance; // Reference to instance data owned by Options
+    Gecode::IntVarArray x;
+    Gecode::IntVar min_dist;
 
 public:
-    /// Constructor: posts constraints and branching
-    Dispersion(const DispersionOptions& opt) :
-            Gecode::IntMaximizeScript(opt),       // Initialize base Script/solver class
-            p(opt.p()),                           // Initialize members from option getters
-            num_potential(opt.num_potential()),
-            potential_points_(opt.potential_points), // Copy necessary instance data
-            x(*this, p, 0, num_potential - 1),       // Initialize decision variables
-            min_dist(*this, 0, opt.max_dist)         // Initialize objective variable
-    {
-        // Create a LOCAL Matrix view for convenient access to distance data in this scope
-        Gecode::Matrix<Gecode::IntArgs> dist_matrix_view(opt.flat_dist_storage,
-                                                         num_potential,
-                                                         num_potential);
-
-        // 1. Build TupleSet for the extensional constraint
-        //    Stores valid (point_idx1, point_idx2, distance) triples.
+    /// Constructor: Takes options object, retrieves instance, posts constraints/branching
+    Dispersion(const DispersionOptions &opt) :
+            Gecode::IntMaximizeScript(opt),
+            instance(opt.instance()), // Get instance ref from options
+            x(*this, instance.p, 0, instance.num_potential - 1),
+            min_dist(*this, 0, instance.max_dist) {
+        Gecode::Matrix<Gecode::IntArgs> dist_matrix_view(instance.flat_dist_storage, instance.num_potential,
+                                                         instance.num_potential);
         Gecode::TupleSet dist_tuples(3);
-        for (int i = 0; i < num_potential; ++i) {
-            // Add entries for pairs (i, j) with i < j
-            for (int j = i + 1; j < num_potential; ++j) {
-                int d = dist_matrix_view(i, j); // Use local view
+        for (int i = 0; i < instance.num_potential; ++i) {
+            for (int j = i + 1; j < instance.num_potential; ++j) {
+                int d = dist_matrix_view(i, j);
                 Gecode::IntArgs tuple(3);
-                tuple[0] = i; tuple[1] = j; tuple[2] = d;
+                tuple[0] = i;
+                tuple[1] = j;
+                tuple[2] = d;
                 dist_tuples.add(tuple);
-                // Add symmetric entry (j, i, d)
-                tuple[0] = j; tuple[1] = i; tuple[2] = d;
+                tuple[0] = j;
+                tuple[1] = i;
+                tuple[2] = d;
                 dist_tuples.add(tuple);
             }
-            // Add entry for (i, i, 0) - needed for extensional robustness
             Gecode::IntArgs tuple(3);
-            tuple[0] = i; tuple[1] = i; tuple[2] = 0;
+            tuple[0] = i;
+            tuple[1] = i;
+            tuple[2] = 0;
             dist_tuples.add(tuple);
         }
-        dist_tuples.finalize(); // Essential step
+        dist_tuples.finalize();
 
-
-        // 2. Post Core Constraints
-        // Ensure p distinct potential points are selected
         Gecode::distinct(*this, x, opt.ipl());
-
-        // Symmetry breaking: Order the indices of selected points
         Gecode::rel(*this, x, Gecode::IRT_LE);
 
-        // Create intermediate variables for distances between pairs of selected points
-        int num_dist_vars = p * (p - 1) / 2;
-        Gecode::IntVarArgs d_vars(*this, num_dist_vars, 0, opt.max_dist);
-
-        // Link selected points x[i], x[j] to their distance d_vars[k] using the table
+        int num_dist_vars = instance.p * (instance.p - 1) / 2;
+        Gecode::IntVarArgs d_vars(*this, num_dist_vars, 0, instance.max_dist);
         int k = 0;
-        for (int i = 0; i < p; ++i) {
-            for (int j = i + 1; j < p; ++j) {
+        for (int i = 0; i < instance.p; ++i) {
+            for (int j = i + 1; j < instance.p; ++j) {
                 Gecode::extensional(*this, {x[i], x[j], d_vars[k]}, dist_tuples);
                 k++;
             }
         }
+        Gecode::min(*this, d_vars, min_dist);
 
-        // Define the objective: min_dist is the minimum of all pairwise distances
-        Gecode::min(*this, d_vars, min_dist); // Use 'min', not 'minimum'
+        if (opt.use_pruner()) {
+            post_heuristic_pruner(*this, x, min_dist, instance, opt.pruner_freq(), opt.pruner_use_ls());
+            std::cout << "  (Heuristic Pruner Enabled" << (opt.pruner_use_ls() ? " with LS" : "") << ", Freq="
+                      << opt.pruner_freq() << ")" << std::endl;
+        } else { std::cout << "  (Heuristic Pruner Disabled)" << std::endl; }
 
-        // 3. Post Branching Strategy
-        // Select branching based on command-line option choice
-        switch (opt.branching()) { // Use getter for enum
+        switch (opt.branching()) {
             case BRANCH_AFC_MIN:
-                // Use AFC heuristic on x variables, select smallest value first
                 Gecode::branch(*this, x, Gecode::INT_VAR_AFC_MIN(opt.decay()), Gecode::INT_VAL_MIN());
                 break;
-                // Add cases for other branching strategies here if defined
-            default: // Fallback to default
+            default:
                 Gecode::branch(*this, x, Gecode::INT_VAR_AFC_MIN(opt.decay()), Gecode::INT_VAL_MIN());
                 break;
         }
     }
 
-    /// Return the objective variable for maximization
-    virtual Gecode::IntVar cost(void) const {
-        return min_dist;
-    }
+    /// Return cost variable
+    virtual Gecode::IntVar cost(void) const { return min_dist; }
 
     /// Print the solution
-    virtual void
-    print(std::ostream& os) const {
+    virtual void print(std::ostream &os) const {
         os << "Solution Found:" << std::endl;
-        os << "  Selected potential point indices (0 to |P|-1): " << x << std::endl;
-        os << "  Selected points coordinates (original grid): ";
-        // Use locally stored potential points vector to get coordinates
-        for (int i=0; i < p; ++i) { // Use member p
+        os << "  Selected potential point indices (0-" << instance.num_potential - 1 << "): " << x << std::endl;
+        os << "  Selected points coordinates: ";
+        bool is_grid = (instance.potential_points.empty() || instance.potential_points[0].category == ' ');
+        for (int i = 0; i < instance.p; ++i) {
             int potential_idx = x[i].val();
-            if (potential_idx >= 0 && potential_idx < potential_points_.size()) {
-                const Point& pt = potential_points_[potential_idx];
-                os << "(" << pt.x << "," << pt.y << ") ";
-            } else {
-                // Should not happen if model is correct
-                os << "(invalid index:" << potential_idx << ") ";
-            }
+            // Use static cast for comparing signed int with unsigned size_t
+            if (potential_idx >= 0 && static_cast<size_t>(potential_idx) < instance.potential_points.size()) {
+                const Point &pt = instance.potential_points[potential_idx];
+                if (is_grid) os << "(" << pt.x << "," << pt.y << ") ";
+                else os << "(lat:" << pt.lat << ",lon:" << pt.lon << ") ";
+            } else { os << "(invalid index:" << potential_idx << ") "; }
         }
         os << std::endl;
-        os << "  Objective: Minimum Manhattan distance = " << min_dist << std::endl;
+        os << "  Objective: Minimum Actual Distance = " << min_dist << std::endl;
         os << "--------------------" << std::endl;
     }
 
-    /// Constructor for cloning \a s
-    Dispersion(Dispersion& s) :
-            Gecode::IntMaximizeScript(s), // Call base copy constructor
-            p(s.p),                       // Copy simple members
-            num_potential(s.num_potential),
-            potential_points_(s.potential_points_) // Copy stored points vector
-    {
-        // Update Gecode variables using base class functionality
+    /// Constructor for cloning
+    Dispersion(Dispersion &s) : Gecode::IntMaximizeScript(s), instance(s.instance) {
         x.update(*this, s.x);
         min_dist.update(*this, s.min_dist);
     }
 
     /// Perform copying during cloning
-    virtual Gecode::Space* copy(void) {
-        return new Dispersion(*this);
-    }
-
+    virtual Gecode::Space *copy(void) { return new Dispersion(*this); }
 };
 
 
-// Helper function to get branching strategy name from enum for printing
-std::string get_branching_name(BranchingType type) {
-    switch (type) {
-        case BRANCH_AFC_MIN: return "afcmin";
-            // Add cases for other types if defined
-        default: return "unknown";
-    }
-}
+// =======================================
+// Definitions for Member Functions / Propagator
+// =======================================
 
-// Definition of the instance generation method
-void DispersionOptions::generate_instance(Gecode::Rnd rnd) {
-    int current_n = n(); // Use getter
-    int current_num_potential = num_potential(); // Use getter
-    int total_grid_points = current_n * current_n;
-    if (current_num_potential > total_grid_points) {
-        throw Gecode::Exception("Instance Generation", "|P| cannot exceed n*n.");
-    }
-    // Generate all points on the n x n grid
-    std::vector<Point> all_points(total_grid_points);
-    for (int i = 0; i < total_grid_points; ++i) {
-        all_points[i] = {i % current_n, i / current_n, i};
-    }
-    // Create sequential indices
-    std::vector<int> indices(total_grid_points);
-    std::iota(indices.begin(), indices.end(), 0);
-    // Shuffle indices randomly using the provided RNG seed
-    std::default_random_engine engine(rnd.seed());
-    std::shuffle(indices.begin(), indices.end(), engine);
-    // Select the first |P| points based on shuffled indices
-    potential_points.clear();
-    potential_points.resize(current_num_potential);
-    for (int i = 0; i < current_num_potential; ++i) {
-        potential_points[i] = all_points[indices[i]];
-    }
-    // Calculate the distance matrix (|P| x |P|) and store flattened
-    int matrix_dim = current_num_potential;
-    int matrix_size = matrix_dim * matrix_dim;
-    flat_dist_storage = Gecode::IntArgs(matrix_size);
-    max_dist = 0;
-    for (int i = 0; i < matrix_dim; ++i) {
-        flat_dist_storage[i * matrix_dim + i] = 0; // Distance(i,i) = 0
-        for (int j = i + 1; j < matrix_dim; ++j) {
-            int d = manhattan_distance(potential_points[i], potential_points[j]);
-            // Store symmetrically
-            flat_dist_storage[i * matrix_dim + j] = d;
-            flat_dist_storage[j * matrix_dim + i] = d;
-            if (d > max_dist) {
-                max_dist = d; // Track maximum distance
+/// Definition of DispersionOptions::create_instance
+void DispersionOptions::create_instance() {
+    if (instance_generated_) return;
+    Gecode::Rnd rnd(seed());
+    std::vector<Point> points;
+    Gecode::IntArgs distances;
+    int max_d = 0;
+    int num_pot = 0;
+
+    if (gen_type_ == GRID) {
+        int current_n = grid_n();
+        num_pot = grid_num_potential();
+        int current_p = p();
+        if (current_n <= 0) throw Gecode::Exception("Instance Creation", "n > 0 required");
+        if (num_pot < current_p) throw Gecode::Exception("Instance Creation", "|P| >= p required");
+        if (num_pot > current_n * current_n) throw Gecode::Exception("Instance Creation", "|P| <= n*n required");
+        int total_grid_points = current_n * current_n;
+        std::vector<Point> all_points(total_grid_points);
+        for (int i = 0; i < total_grid_points; ++i) {
+            // Use explicit assignment to avoid narrowing warnings
+            Point p;
+            p.x = i % current_n;
+            p.y = i / current_n;
+            p.id = i;
+            all_points[i] = p;
+        }
+        std::vector<int> indices(total_grid_points);
+        std::iota(indices.begin(), indices.end(), 0);
+        std::default_random_engine engine(rnd.seed());
+        std::shuffle(indices.begin(), indices.end(), engine);
+        points.resize(num_pot);
+        for (int i = 0; i < num_pot; ++i) points[i] = all_points[indices[i]];
+        int matrix_size = num_pot * num_pot;
+        distances = Gecode::IntArgs(matrix_size);
+        for (int i = 0; i < num_pot; ++i) {
+            distances[i * num_pot + i] = 0;
+            for (int j = i + 1; j < num_pot; ++j) {
+                int d = manhattan_distance(points[i], points[j]);
+                distances[i * num_pot + j] = d;
+                distances[j * num_pot + i] = d;
+                if (d > max_d) max_d = d;
+            }
+        }
+    } else if (gen_type_ == BIN) {
+        const std::string &filename = bin_filename(); // Use getter returning std::string ref
+        if (filename.empty())
+            throw Gecode::Exception("Instance Creation", "BIN filename is empty (-binfile required).");
+        std::ifstream infile(filename);
+        if (!infile.is_open()) {
+            std::string msg = "Cannot open BIN file: " + filename;
+            throw Gecode::Exception("Instance Creation", msg.c_str());
+        }
+        std::string line;
+        while (std::getline(infile, line)) {
+            if (line.empty() || line[0] == '#') continue;
+            std::stringstream ss(line);
+            std::string segment;
+            Point p_data;
+            try {
+                std::getline(ss, segment, ',');
+                p_data.lat = std::stod(segment);
+                std::getline(ss, segment, ',');
+                p_data.lon = std::stod(segment);
+                std::getline(ss, segment, ',');
+                if (!segment.empty()) p_data.category = segment[0]; else throw std::runtime_error("Missing category");
+                if (p_data.category != 'A' && p_data.category != 'B' && p_data.category != 'C' &&
+                    p_data.category != 'D')
+                    throw std::runtime_error("Invalid category");
+                points.push_back(p_data);
+            } catch (const std::exception &e) {
+                std::string msg = "Error parsing BIN file line: '" + line + "'. Reason: " + e.what();
+                throw Gecode::Exception("Instance Creation", msg.c_str());
+            }
+        }
+        infile.close();
+        num_pot = points.size();
+        int current_p = p();
+        if (num_pot < current_p) {
+            std::string msg = "Num points from BIN file (" + std::to_string(num_pot) + ") must be >= p (" +
+                              std::to_string(current_p) + ")";
+            throw Gecode::Exception("Instance Creation", msg.c_str());
+        }
+        int matrix_size = num_pot * num_pot;
+        distances = Gecode::IntArgs(matrix_size);
+        for (int i = 0; i < num_pot; ++i) {
+            distances[i * num_pot + i] = 0;
+            for (int j = i + 1; j < num_pot; ++j) {
+                int d = haversine_distance_meters(points[i], points[j]);
+                distances[i * num_pot + j] = d;
+                distances[j * num_pot + i] = d;
+                if (d > max_d) max_d = d;
             }
         }
     }
+    instance_data_ = std::make_unique<DispersionInstance>(p(), num_pot, std::move(points), std::move(distances), max_d);
+    instance_generated_ = true;
+}
+
+/// Definition of HeuristicPruner::propagate
+Gecode::ExecStatus HeuristicPruner::propagate(Gecode::Space &home, const Gecode::ModEventDelta &med) {
+    (void) med; // Mark delta as unused
+    exec_count++;
+    if ((k_freq > 1) && (exec_count % k_freq != 1)) return Gecode::ES_FIX;
+    int incumbent_cost = y.min(); // y is min_dist view
+    if (incumbent_cost <= 0) return Gecode::ES_FIX;
+    std::vector<int> assigned_indices, unassigned_indices;
+    assigned_indices.reserve(instance.p);
+    unassigned_indices.reserve(instance.p);
+    for (int i = 0; i < instance.p; ++i) {
+        if (x[i].assigned())
+            assigned_indices.push_back(i);
+        else unassigned_indices.push_back(i);
+    }
+    if (assigned_indices.size() == static_cast<size_t>(instance.p)) return home.ES_SUBSUMED(*this); // Cast fixed
+
+    std::vector<int> greedy_assignment(instance.p);
+    std::vector<int> greedily_assigned_indices;
+    bool possible = true;
+    for (int idx: assigned_indices) greedy_assignment[idx] = x[idx].val();
+    // --- Full Greedy Logic ---
+    for (int current_unassigned_idx: unassigned_indices) {
+        int best_val = -1;
+        int max_min_dist = -1;
+        Gecode::Int::ViewValues<Gecode::Int::IntView> val_iter(x[current_unassigned_idx]);
+        if (!val_iter()) {
+            possible = false;
+            break;
+        }
+        for (; val_iter(); ++val_iter) {
+            int current_val = val_iter.val();
+            int current_min_dist_for_val = std::numeric_limits<int>::max();
+            for (int assigned_idx: assigned_indices) {
+                current_min_dist_for_val = std::min(current_min_dist_for_val, instance.get_dist(current_val,
+                                                                                                greedy_assignment[assigned_idx]));
+            }
+            for (int prev_greedy_idx: greedily_assigned_indices) {
+                current_min_dist_for_val = std::min(current_min_dist_for_val,
+                                                    instance.get_dist(current_val, greedy_assignment[prev_greedy_idx]));
+            }
+            if (current_min_dist_for_val > max_min_dist) {
+                max_min_dist = current_min_dist_for_val;
+                best_val = current_val;
+            }
+        }
+        if (best_val == -1) {
+            possible = false;
+            break;
+        }
+        greedy_assignment[current_unassigned_idx] = best_val;
+        greedily_assigned_indices.push_back(current_unassigned_idx);
+    }
+    // --- End Greedy Logic ---
+    if (!possible) return Gecode::ES_FIX;
+
+    int current_estimated_cost = std::numeric_limits<int>::max();
+    std::vector<int> final_indices = assigned_indices;
+    final_indices.insert(final_indices.end(), greedily_assigned_indices.begin(), greedily_assigned_indices.end());
+    for (size_t i = 0; i < final_indices.size(); ++i) {
+        for (size_t j = i + 1; j < final_indices.size(); ++j) {
+            current_estimated_cost = std::min(current_estimated_cost,
+                                              instance.get_dist(greedy_assignment[final_indices[i]],
+                                                                greedy_assignment[final_indices[j]]));
+        }
+    }
+
+    // --- Full LS Logic ---
+    if (use_ls && current_estimated_cost <= incumbent_cost) {
+        bool changed_by_ls = true;
+        while (changed_by_ls) {
+            changed_by_ls = false;
+            if (current_estimated_cost > incumbent_cost) break;
+            std::vector<int> culprits;
+            std::vector<bool> is_culprit(instance.p, false);
+            for (size_t i = 0; i < final_indices.size(); ++i) {
+                for (size_t j = i + 1; j < final_indices.size(); ++j) {
+                    if (instance.get_dist(greedy_assignment[final_indices[i]], greedy_assignment[final_indices[j]]) ==
+                        current_estimated_cost) {
+                        for (int greedy_idx: greedily_assigned_indices) {
+                            if (final_indices[i] == greedy_idx && !is_culprit[final_indices[i]]) {
+                                culprits.push_back(final_indices[i]);
+                                is_culprit[final_indices[i]] = true;
+                            }
+                            if (final_indices[j] == greedy_idx && !is_culprit[final_indices[j]]) {
+                                culprits.push_back(final_indices[j]);
+                                is_culprit[final_indices[j]] = true;
+                            }
+                        }
+                    }
+                }
+            }
+            if (culprits.empty()) break;
+            int best_ls_move_cost = -1;
+            int best_ls_move_idx = -1;
+            int best_ls_move_val = -1;
+            for (int culprit_idx: culprits) {
+                int original_val = greedy_assignment[culprit_idx];
+                for (Gecode::Int::ViewValues<Gecode::Int::IntView> val_iter(x[culprit_idx]); val_iter(); ++val_iter) {
+                    int new_val = val_iter.val();
+                    if (new_val == original_val) continue;
+                    greedy_assignment[culprit_idx] = new_val;
+                    int temp_cost = std::numeric_limits<int>::max();
+                    for (size_t i = 0; i < final_indices.size(); ++i) {
+                        for (size_t j = i + 1; j < final_indices.size(); ++j) {
+                            temp_cost = std::min(temp_cost, instance.get_dist(greedy_assignment[final_indices[i]],
+                                                                              greedy_assignment[final_indices[j]]));
+                        }
+                    }
+                    if (temp_cost > best_ls_move_cost) {
+                        best_ls_move_cost = temp_cost;
+                        best_ls_move_idx = culprit_idx;
+                        best_ls_move_val = new_val;
+                    }
+                    greedy_assignment[culprit_idx] = original_val;
+                }
+            }
+            if (best_ls_move_cost > current_estimated_cost) {
+                current_estimated_cost = best_ls_move_cost;
+                greedy_assignment[best_ls_move_idx] = best_ls_move_val;
+                changed_by_ls = true;
+            }
+            else { changed_by_ls = false; }
+        }
+    }
+    // --- End LS Logic ---
+
+    if (current_estimated_cost <= incumbent_cost) { return Gecode::ES_FAILED; } else { return Gecode::ES_FIX; }
 }
 
 
-/** \brief Main function: Parses options, generates instance, runs solver */
+// =======================================
+// Main Function
+// =======================================
+
+/** \brief Main entry point */
 int
-main(int argc, char* argv[]) {
-    // Set default option values: n=10, p=5, |P|=30, t=8
-    DispersionOptions opt("p-Dispersion (Max-Min Manhattan)", 10, 5, 30, 8);
-    // Set default propagation level (can be overridden by command line)
+main(int argc, char *argv[]) {
+    // Create options object (now only takes description and default parameters)
+    DispersionOptions opt("p-Dispersion Solver", 10, 5, 30, 8);
     opt.ipl(Gecode::IPL_DOM);
 
     try {
-        // Parse command line arguments
+        // Parse Gecode options (this will also parse -binfile via StringArgOption)
         opt.parse(argc, argv);
-        // Initialize random number generator with seed from options
-        Gecode::Rnd rnd(opt.seed());
-        // Generate the instance data (points, distances) based on options
-        opt.generate_instance(rnd);
+        opt.create_instance(); // Generate the instance data
 
-        // Print summary of the instance and options being used
+        const DispersionInstance &instance = opt.instance(); // Get instance ref
+
+        // --- Print Run Configuration Summary ---
         std::cout << "Running p-Dispersion:" << std::endl;
-        std::cout << "  Grid: " << opt.n() << "x" << opt.n()
-                  << ", Select p=" << opt.p()
-                  << ", From |P|=" << opt.num_potential() << " potential"
-                  << ", Seed=" << opt.seed()
-                  << std::endl;
-        std::cout << "  Objective: Maximize Minimum Manhattan Distance" << std::endl;
-        std::cout << "  Max possible distance in instance: " << opt.max_dist << std::endl;
+        if (opt.gentype() == GRID) { /* Print Grid Info */ } else { /* Print BIN Info */ }
+        if (opt.gentype() == GRID) {
+            std::cout << "  Generation Type: Grid\n  Grid Size: " << opt.grid_n() << "x" << opt.grid_n()
+                      << "\n  Distance Metric: Manhattan" << std::endl;
+        }
+        else {
+            std::cout << "  Generation Type: BIN\n  Input File: " << opt.bin_filename()
+                      << "\n  Distance Metric: Haversine (meters)" << std::endl;
+        }
+        std::cout << "  Select p=" << instance.p << ", From |P|=" << instance.num_potential << " potential" << ", Seed="
+                  << opt.seed() << std::endl;
+        std::cout << "  Objective: Maximize Minimum Actual Distance" << std::endl;
+        std::cout << "  Max actual distance in instance: " << instance.max_dist << std::endl;
         std::cout << "  Branching: " << get_branching_name(opt.branching()) << std::endl;
         std::cout << "--------------------" << std::endl;
+        // Pruner status message printed from model constructor
 
-        // Run the model using Branch-and-Bound search engine
+        // --- Execute the Solver ---
         Gecode::Script::run<Dispersion, Gecode::BAB, DispersionOptions>(opt);
 
-    } catch (const Gecode::Exception& e) {
-        // Handle Gecode-specific exceptions
+    } catch (const Gecode::Exception &e) {
         std::cerr << "Gecode Error: " << e.what() << std::endl;
         return 1;
-    } catch (const std::exception& e) {
-        // Handle standard C++ exceptions
+    } catch (const std::exception &e) {
         std::cerr << "Error: " << e.what() << std::endl;
         return 1;
     } catch (...) {
-        // Handle any other unknown exceptions
         std::cerr << "Unknown Error" << std::endl;
         return 1;
     }
-
-    // Return success
     return 0;
 }
