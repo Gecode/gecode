@@ -109,7 +109,6 @@ namespace Gecode {
       break;
     default: ;
     }
-    decrement();
   }
 
   forceinline void*
@@ -362,11 +361,10 @@ namespace Gecode {
   }
 
   LinIntExpr::LinIntExpr(void) :
-    n(new Node) {
-    n->n_int = n->n_bool = 0;
-    n->t = NT_VAR_INT;
-    n->l = n->r = nullptr;
-    n->a = 0;
+    n(nullptr) {
+  // This default constructor is only used in ArithNonLinIntExpr ctor to allocate memory
+  // Afterwards,  LinIntExpr is initialized for each operation by setting up the a array,
+  // which would leak memory if a node is allocated here
   }
 
   LinIntExpr::LinIntExpr(int c) :
@@ -542,7 +540,7 @@ namespace Gecode {
   const LinIntExpr&
   LinIntExpr::operator =(const LinIntExpr& e) {
     if (this != &e) {
-      if (n->decrement())
+      if (n != nullptr && n->decrement())
         delete n;
       n = e.n; n->use++;
     }
@@ -550,7 +548,7 @@ namespace Gecode {
   }
 
   LinIntExpr::~LinIntExpr(void) {
-    if (n->decrement())
+    if (n !=nullptr && n->decrement())
       delete n;
   }
 

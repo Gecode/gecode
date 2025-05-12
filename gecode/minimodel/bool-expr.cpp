@@ -88,7 +88,6 @@ namespace Gecode {
 
   BoolExpr::Node::~Node(void) {
     delete m;
-    decrement();
   }
 
   void*

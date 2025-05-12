@@ -53,23 +53,24 @@ namespace Gecode { namespace MiniModel {
       ANLE_ELMNT, ///< Element expression
       ANLE_ITE    ///< If-then-else expression
     } t;
-    /// Expressions
-    LinIntExpr* a;
+    /// Boolean expression argument (used in ite for example)
+    BoolExpr b;
     /// Size of variable array
     int n;
     /// Integer argument (used in nroot for example)
     int aInt;
-    /// Boolean expression argument (used in ite for example)
-    BoolExpr b;
+    /// Expressions
+    LinIntExpr* a;
+
     /// Constructor
     ArithNonLinIntExpr(ArithNonLinIntExprType t0, int n0)
-      : t(t0), a(heap.alloc<LinIntExpr>(n0)), n(n0) {}
+      : t(t0), b(), n(n0), aInt(0), a(heap.alloc<LinIntExpr>(n0)) {} // in case of OOM on a, dtor of b will be called
     /// Constructor
     ArithNonLinIntExpr(ArithNonLinIntExprType t0, int n0, int a0)
-      : t(t0), a(heap.alloc<LinIntExpr>(n0)), n(n0), aInt(a0) {}
+      : t(t0), b(), n(n0), aInt(a0), a(heap.alloc<LinIntExpr>(n0)) {} // ditto
     /// Constructor
     ArithNonLinIntExpr(ArithNonLinIntExprType t0, int n0, const BoolExpr& b0)
-      : t(t0), a(heap.alloc<LinIntExpr>(n0)), n(n0), b(b0) {}
+      : t(t0), b(b0), n(n0), aInt(0), a(heap.alloc<LinIntExpr>(n0)) {} // ditto
     /// Destructor
     ~ArithNonLinIntExpr(void) {
       heap.free<LinIntExpr>(a,n);
