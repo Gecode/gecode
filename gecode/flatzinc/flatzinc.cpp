@@ -2040,7 +2040,7 @@ namespace Gecode { namespace FlatZinc {
         // Assign uniform_int random values 
         for (size_t i = 0; i < restart_data().uniform_range_int.size(); ++i) {
           const auto& range = restart_data().uniform_range_int[i];
-          const int rndVal = range.first + _random(static_cast<unsigned int>(range.second - range.first));
+          const int rndVal = range.first + _random(static_cast<unsigned int>(range.second - range.first + 1));
           rel(*this, on_restart_iv[base + i], IRT_EQ, rndVal);
         }
         base += restart_data().uniform_range_int.size();
