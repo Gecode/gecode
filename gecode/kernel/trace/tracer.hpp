@@ -256,7 +256,9 @@ namespace Gecode {
   forceinline void
   ViewTracer<View>::_init(const Space& home,
                           const ViewTraceRecorder<View>& t) {
+#ifdef GECODE_HAS_SYNCHED_TRACE
     Support::Lock l(m);
+#endif
     init(home,t);
   }
   template<class View>
@@ -265,28 +267,36 @@ namespace Gecode {
                            const ViewTraceRecorder<View>& t,
                            const ViewTraceInfo& vti,
                            int i, typename TraceTraits<View>::TraceDelta& d) {
+#ifdef GECODE_HAS_SYNCHED_TRACE
     Support::Lock l(m);
+#endif
     prune(home,t,vti,i,d);
   }
   template<class View>
   forceinline void
   ViewTracer<View>::_fail(const Space& home,
                           const ViewTraceRecorder<View>& t) {
+#ifdef GECODE_HAS_SYNCHED_TRACE
     Support::Lock l(m);
+#endif
     fail(home,t);
   }
   template<class View>
   forceinline void
   ViewTracer<View>::_fix(const Space& home,
                          const ViewTraceRecorder<View>& t) {
+#ifdef GECODE_HAS_SYNCHED_TRACE
     Support::Lock l(m);
+#endif
     fix(home,t);
   }
   template<class View>
   forceinline void
   ViewTracer<View>::_done(const Space& home,
                           const ViewTraceRecorder<View>& t) {
+#ifdef GECODE_HAS_SYNCHED_TRACE
     Support::Lock l(m);
+#endif
     done(home,t);
   }
 
@@ -307,19 +317,25 @@ namespace Gecode {
   forceinline void
   Tracer::_propagate(const Space& home,
                      const PropagateTraceInfo& pti) {
+#ifdef GECODE_HAS_SYNCHED_TRACE
     Support::Lock l(m);
+#endif
     propagate(home,pti);
   }
   forceinline void
   Tracer::_commit(const Space& home,
                   const CommitTraceInfo& cti) {
+#ifdef GECODE_HAS_SYNCHED_TRACE
     Support::Lock l(m);
+#endif
     commit(home,cti);
   }
   forceinline void
   Tracer::_post(const Space& home,
                 const PostTraceInfo& pti) {
+#ifdef GECODE_HAS_SYNCHED_TRACE
     Support::Lock l(m);
+#endif
     post(home,pti);
   }
 

@@ -78,7 +78,7 @@ namespace Gecode { namespace Kernel {
     /// The first block
     Block fst;
     /// Mutex to synchronize globally shared access
-    GECODE_KERNEL_EXPORT static Support::Mutex m;
+    Support::Mutex m;
   public:
     /// Initialize
     GPI(void);
@@ -124,58 +124,52 @@ namespace Gecode { namespace Kernel {
 
   forceinline void
   GPI::fail(Info& c) {
-    m.acquire();
+    Support::Lock l(m);
     c.afc = invd * (c.afc + 1.0);
     if (c.afc > Kernel::Config::rescale_limit)
       for (Block* i = b; i != NULL; i = i->next)
         i->rescale();
-    m.release();
   }
 
   forceinline double
   GPI::decay(void) const {
     double d;
-    const_cast<GPI&>(*this).m.acquire();
+    Support::Lock l(const_cast<GPI&>(*this).m);
     d = 1.0 / invd;
-    const_cast<GPI&>(*this).m.release();
     return d;
   }
 
   forceinline unsigned int
   GPI::pid(void) const {
     unsigned int p;
-    const_cast<GPI&>(*this).m.acquire();
+    Support::Lock l(const_cast<GPI&>(*this).m);
     p = npid;
-    const_cast<GPI&>(*this).m.release();
     return p;
   }
 
   forceinline bool
   GPI::unshare(void) {
     bool u;
-    m.acquire();
+    Support::Lock l(m);
     u = us; us = true;
-    m.release();
     return u;
   }
 
   forceinline void
   GPI::decay(double d) {
-    m.acquire();
+    Support::Lock l(m);
     invd = 1.0 / d;
-    m.release();
   }
 
   forceinline GPI::Info*
   GPI::allocate(unsigned int p, unsigned int gid) {
     Info* c;
-    m.acquire();
+    Support::Lock l(m);
     if (b->free == 0) {
       Block* n = new Block;
       n->next = b; b = n;
     }
     c = &b->info[--b->free];
-    m.release();
     c->init(p,gid);
     return c;
   }
@@ -183,14 +177,13 @@ namespace Gecode { namespace Kernel {
   forceinline GPI::Info*
   GPI::allocate(unsigned int gid) {
     Info* c;
-    m.acquire();
+    Support::Lock l(m);
     if (b->free == 0) {
       Block* n = new Block;
       n->next = b; b = n;
     }
     c = &b->info[--b->free];
     c->init(npid++,gid);
-    m.release();
     return c;
   }
 

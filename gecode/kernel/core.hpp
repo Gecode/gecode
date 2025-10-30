@@ -692,10 +692,7 @@ namespace Gecode {
     unsigned int gid;
     /// Next group id
     GECODE_KERNEL_EXPORT
-    static unsigned int next;
-    /// Mutex for protection
-    GECODE_KERNEL_EXPORT
-    static Support::Mutex m;
+    static std::atomic_uint next;
     /// Construct with predefined group id \a gid0
     Group(unsigned int gid0);
   public:

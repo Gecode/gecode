@@ -959,14 +959,11 @@ namespace Gecode {
   BrancherGroup BrancherGroup::all(GROUPID_ALL);
   BrancherGroup BrancherGroup::def(GROUPID_DEF);
 
-  unsigned int Group::next = GROUPID_DEF+1;
-  Support::Mutex Group::m;
-
+  std::atomic_uint Group::next{GROUPID_DEF+1};
 
   Group::Group(void) {
     {
-      Support::Lock l(m);
-      gid = next++;
+      gid = next.fetch_add(1);
     }
     if (gid == GROUPID_MAX)
       throw TooManyGroups("Group::Group");

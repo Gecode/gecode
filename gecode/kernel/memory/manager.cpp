@@ -36,7 +36,6 @@
 namespace Gecode { namespace Kernel {
 
   Support::Mutex& SharedMemory::m(void) {
-    static Support::Mutex _m;
     return _m;
   }
 
@@ -50,5 +49,3 @@ namespace Gecode { namespace Kernel {
 }}
 
 // STATISTICS: kernel-memory
-
-

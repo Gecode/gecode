@@ -81,7 +81,7 @@ namespace Gecode {
     assert((type() == EngineType::RBS) || (type() == EngineType::PBS));
     return _fst;
   }
-  
+
   forceinline unsigned int
   SearchTracer::EngineInfo::elst(void) const {
     assert((type() == EngineType::RBS) || (type() == EngineType::PBS));
@@ -91,7 +91,7 @@ namespace Gecode {
   forceinline
   unsigned int SearchTracer::EngineInfo::engines(void) const {
     return elst() - efst();
-  }      
+  }
 
 
   /*
@@ -200,24 +200,30 @@ namespace Gecode {
    */
   forceinline void
   SearchTracer::_round(unsigned int eid) {
+#ifdef GECODE_HAS_SYNCHED_TRACE
     Support::Lock l(m);
+#endif
     round(eid);
   }
 
   forceinline void
   SearchTracer::_skip(const EdgeInfo& ei) {
+#ifdef GECODE_HAS_SYNCHED_TRACE
     Support::Lock l(m);
+#endif
     skip(ei);
   }
 
   forceinline void
   SearchTracer::_node(const EdgeInfo& ei, const NodeInfo& ni) {
+#ifdef GECODE_HAS_SYNCHED_TRACE
     Support::Lock l(m);
+#endif
     node(ei,ni);
   }
 
   forceinline
-  SearchTracer::SearchTracer(void) 
+  SearchTracer::SearchTracer(void)
     : pending(1U), n_e(0U), n_w(0U), es(heap), w2e(heap) {}
 
   forceinline void
@@ -252,7 +258,9 @@ namespace Gecode {
 
   forceinline void
   SearchTracer::worker(void) {
+#ifdef GECODE_HAS_SYNCHED_TRACE
     Support::Lock l(m);
+#endif
     if (--n_active == 0U)
       done();
   }

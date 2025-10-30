@@ -35,8 +35,6 @@
 
 namespace Gecode { namespace Kernel {
 
-  Support::Mutex GPI::m;
-
 }}
 
 // STATISTICS: kernel-prop

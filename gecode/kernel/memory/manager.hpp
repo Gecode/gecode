@@ -66,8 +66,9 @@ namespace Gecode { namespace Kernel {
       /// A list of cached heap chunks
       HeapChunk* hc;
     } heap;
+    Support::Mutex _m;
     /// A mutex for access
-    GECODE_KERNEL_EXPORT static Support::Mutex& m(void);
+    GECODE_KERNEL_EXPORT Support::Mutex& m(void);
   public:
     /// Initialize
     SharedMemory(void);
