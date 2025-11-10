@@ -2164,7 +2164,7 @@ namespace Gecode { namespace FlatZinc {
         for (size_t i = 0; i < restart_data().uniform_range_float.size(); ++i) {
           const auto& range = restart_data().uniform_range_float[i];
           /* rndVal will be an element of [range.first, range.second] */
-          const FloatVal rndVal = (static_cast<FloatVal>(_random(INT_MAX)) / INT_MAX)*(range.second - range.first) + range.first;
+          const FloatVal rndVal = (static_cast<FloatVal>(_random(INT_MAX)) / (INT_MAX - 1))*(range.second - range.first) + range.first;
           rel(*this, on_restart_fv[base + i], FRT_EQ, rndVal);
         }
         base += restart_data().uniform_range_float.size();
