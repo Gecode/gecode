@@ -651,7 +651,7 @@ namespace Gecode { namespace Int { namespace Linear {
         d /= gcd;
         break;
       case IRT_NQ:
-        if ((d % gcd) == 0) {
+        if ((d % gcd) != 0) {
           if (r.mode() != RM_IMP)
             GECODE_ME_FAIL(BoolView(r.var()).one(home));
           return;
