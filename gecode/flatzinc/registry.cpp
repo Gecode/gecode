@@ -1153,17 +1153,15 @@ namespace Gecode { namespace FlatZinc {
       argmax(s, bv, offset, s.arg2IntVar(ce[2]), true, s.ann2ipl(ann));
     }
 
-    void p_regular(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
-      IntVarArgs iv = s.arg2intvarargs(ce[0]);
-      int q = ce[1]->getInt();
-      int symbols = ce[2]->getInt();
-      IntArgs d = s.arg2intargs(ce[3]);
-      int q0 = ce[4]->getInt();
+    void p_regular(FlatZincSpace& s, IntVarArgs iv, int q, int symbols_min,
+                   int symbols_max,  IntArgs d, int q0, AST::SetLit* finals,
+                   AST::Node* ann) {
+      int symbols = symbols_max - symbols_min + 1;
 
       int noOfTrans = 0;
-      for (int i=1; i<=q; i++) {
-        for (int j=1; j<=symbols; j++) {
-          if (d[(i-1)*symbols+(j-1)] > 0)
+      for (int i=0; i<q; i++) {
+        for (int j=0; j<symbols; j++) {
+          if (d[i*symbols+j] > 0)
             noOfTrans++;
         }
       }
@@ -1172,11 +1170,11 @@ namespace Gecode { namespace FlatZinc {
       DFA::Transition* t = re.alloc<DFA::Transition>(noOfTrans+1);
       noOfTrans = 0;
       for (int i=1; i<=q; i++) {
-        for (int j=1; j<=symbols; j++) {
-          if (d[(i-1)*symbols+(j-1)] > 0) {
+        for (int j=0; j<symbols; j++) {
+          if (d[(i-1)*symbols+j] > 0) {
             t[noOfTrans].i_state = i;
-            t[noOfTrans].symbol  = j;
-            t[noOfTrans].o_state = d[(i-1)*symbols+(j-1)];
+            t[noOfTrans].symbol  = symbols_min + j;
+            t[noOfTrans].o_state = d[(i-1)*symbols+j];
             noOfTrans++;
           }
         }
@@ -1184,26 +1182,36 @@ namespace Gecode { namespace FlatZinc {
       t[noOfTrans].i_state = -1;
 
       // Final states
-      AST::SetLit* sl = ce[5]->getSet();
       int* f;
-      if (sl->interval) {
-        f = static_cast<int*>(heap.ralloc(sizeof(int)*(sl->max-sl->min+2)));
-        for (int i=sl->min; i<=sl->max; i++)
-          f[i-sl->min] = i;
-        f[sl->max-sl->min+1] = -1;
+      if (finals->interval) {
+        f = static_cast<int*>(heap.ralloc(sizeof(int)*(finals->max-finals->min+2)));
+        for (int i=finals->min; i<=finals->max; i++)
+          f[i-finals->min] = i;
+        f[finals->max-finals->min+1] = -1;
       } else {
-        f = static_cast<int*>(heap.ralloc(sizeof(int)*(sl->s.size()+1)));
-        for (int j=sl->s.size(); j--; )
-          f[j] = sl->s[j];
-        f[sl->s.size()] = -1;
+        f = static_cast<int*>(heap.ralloc(sizeof(int)*(finals->s.size()+1)));
+        for (int j=finals->s.size(); j--; )
+          f[j] = finals->s[j];
+        f[finals->s.size()] = -1;
       }
 
       DFA dfa(q0,t,f);
       free(f);
       unshare(s, iv);
-      extensional(s, iv, s.getSharedDFA(dfa), s.ann2ipl(ann));
+      extensional(s, iv, s.getSharedDFA(dfa), s.ann2ipl(ann));      
     }
 
+    void p_regular(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
+      p_regular(s, s.arg2intvarargs(ce[0]), ce[1]->getInt(), 1, ce[2]->getInt(),
+                s.arg2intargs(ce[3]), ce[4]->getInt(), ce[5]->getSet(), ann);
+    }
+
+    void p_regular_set(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
+      p_regular(s, s.arg2intvarargs(ce[0]), ce[1]->getInt(), ce[2]->getInt(),
+                ce[3]->getInt(), s.arg2intargs(ce[4]), ce[5]->getInt(),
+                ce[6]->getSet(), ann);
+    }
+    
     void
     p_sort(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
       IntVarArgs x = s.arg2intvarargs(ce[0]);
@@ -1788,6 +1796,7 @@ namespace Gecode { namespace FlatZinc {
         registry().add("gecode_maximum_arg_bool_offset", &p_maximum_arg_bool);
         registry().add("array_int_maximum", &p_maximum);
         registry().add("gecode_regular", &p_regular);
+        registry().add("gecode_regular_set", &p_regular_set);
         registry().add("sort", &p_sort);
         registry().add("inverse_offsets", &p_inverse_offsets);
         registry().add("increasing_int", &p_increasing_int);
