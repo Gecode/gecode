@@ -74,6 +74,15 @@ Module: flatzinc
 What:   change
 Rank:   minor
 [DESCRIPTION]
+Add support for fzn_sliding_among constraints. These are now in the
+minizinc standard library and replace the previous Gecode-specific
+among_seq constraints.
+
+[ENTRY]
+Module: flatzinc
+What:   change
+Rank:   minor
+[DESCRIPTION]
 Add support for fzn_regular_set constraint.
 
 [ENTRY]
