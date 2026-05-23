@@ -87,6 +87,9 @@
 
 #include <gecode/support/macros.hpp>
 #include <gecode/support/exception.hpp>
+#ifdef GECODE_HAS_FAULT_INJECTION
+#include <gecode/support/failpoint.hpp>
+#endif
 #include <gecode/support/cast.hpp>
 #include <gecode/support/hash.hpp>
 #include <gecode/support/thread.hpp>

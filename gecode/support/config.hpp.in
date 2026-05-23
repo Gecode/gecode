@@ -108,6 +108,9 @@
 /* Whether we are compiling with thread support */
 #undef GECODE_HAS_THREADS
 
+/* Whether deterministic test failpoints are enabled */
+#undef GECODE_HAS_FAULT_INJECTION
+
 /* Whether to use unfair mutexes on macOS */
 #undef GECODE_USE_OSX_UNFAIR_MUTEX
 
