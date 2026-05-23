@@ -169,6 +169,15 @@ namespace Test { namespace Fault {
     }
   };
 
+  class MiniModelSpace : public Space {
+  public:
+    MiniModelSpace(void) {}
+    MiniModelSpace(MiniModelSpace& s) : Space(s) {}
+    virtual Space* copy(void) {
+      return new MiniModelSpace(*this);
+    }
+  };
+
   class DerivedCopySpace : public Space {
   public:
     IntVarArray x;
@@ -367,6 +376,35 @@ namespace Test { namespace Fault {
     }
   }
 
+  bool minimodel_failure_releases_default_nodes(void) {
+    LinIntExpr::fault_reset_allocations();
+    Support::FailPoint::reset();
+    try {
+      MiniModelSpace home;
+      IntVarArgs x(home,2,0,1);
+      Support::FailPoint::fail_after(Phase::MiniModel,1);
+      LinIntExpr e = min(x);
+      (void) e;
+      Support::FailPoint::reset();
+      return false;
+    } catch (const MemoryExhausted&) {
+      Support::FailPoint::reset();
+      return LinIntExpr::fault_live_allocations() == 0;
+    } catch (...) {
+      Support::FailPoint::reset();
+      return false;
+    }
+  }
+
+  class MiniModelDefaultNodes : public Base {
+  public:
+    MiniModelDefaultNodes(void)
+      : Base("Fault::MiniModel::DefaultNodes") {}
+    virtual bool run(void) {
+      return minimodel_failure_releases_default_nodes();
+    }
+  };
+
   class IntSetAllocation : public Base {
   public:
     IntSetAllocation(void)
@@ -433,6 +471,7 @@ namespace Test { namespace Fault {
   CloneDisposalArray clone_disposal_array;
   DisposeNoticeArray dispose_notice_array;
   IntSetAllocation int_set_allocation;
+  MiniModelDefaultNodes minimodel_default_nodes;
   ClonePropagatorCopy clone_propagator_copy;
   CloneBrancherCopy clone_brancher_copy;
   CloneDerivedSpaceCopy clone_derived_space_copy;

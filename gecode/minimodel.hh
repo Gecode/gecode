@@ -272,6 +272,12 @@ namespace Gecode {
     /// Default constructor
     GECODE_MINIMODEL_EXPORT
     LinIntExpr(void);
+#ifdef GECODE_HAS_FAULT_INJECTION
+    /// Reset live node accounting for fault-injection tests
+    GECODE_MINIMODEL_EXPORT static void fault_reset_allocations(void);
+    /// Return live node accounting for fault-injection tests
+    GECODE_MINIMODEL_EXPORT static int fault_live_allocations(void);
+#endif
     /// Create expression for constant \a c
     GECODE_MINIMODEL_EXPORT
     LinIntExpr(int c);
