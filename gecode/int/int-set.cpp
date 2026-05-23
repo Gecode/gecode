@@ -35,10 +35,39 @@
 
 namespace Gecode {
 
+#ifdef GECODE_HAS_FAULT_INJECTION
+  int IntSet::IntSetObject::fault_live_objects = 0;
+
+  void*
+  IntSet::IntSetObject::operator new(size_t s) {
+    fault_live_objects++;
+    return ::operator new(s);
+  }
+
+  void
+  IntSet::IntSetObject::operator delete(void* p) {
+    fault_live_objects--;
+    ::operator delete(p);
+  }
+
+  void
+  IntSet::fault_reset_allocations(void) {
+    IntSetObject::fault_live_objects = 0;
+  }
+
+  int
+  IntSet::fault_live_allocations(void) {
+    return IntSetObject::fault_live_objects;
+  }
+#endif
+
   IntSet::IntSetObject*
   IntSet::IntSetObject::allocate(int n) {
     IntSetObject* o = new IntSetObject;
     o->n = n;
+#ifdef GECODE_HAS_FAULT_INJECTION
+    Support::FailPoint::check(Support::FailPoint::Phase::IntSet);
+#endif
     o->r = heap.alloc<Range>(n);
     return o;
   }
@@ -188,4 +217,3 @@ namespace Gecode {
 }
 
 // STATISTICS: int-var
-

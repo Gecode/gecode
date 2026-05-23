@@ -349,6 +349,33 @@ namespace Test { namespace Fault {
     }
   }
 
+  bool int_set_failure_releases_object(void) {
+    int ranges[2][2] = {{0, 0}, {2, 2}};
+    IntSet::fault_reset_allocations();
+    Support::FailPoint::reset();
+    Support::FailPoint::fail_after(Phase::IntSet,0);
+    try {
+      IntSet s(ranges,2);
+      Support::FailPoint::reset();
+      return false;
+    } catch (const MemoryExhausted&) {
+      Support::FailPoint::reset();
+      return IntSet::fault_live_allocations() == 0;
+    } catch (...) {
+      Support::FailPoint::reset();
+      return false;
+    }
+  }
+
+  class IntSetAllocation : public Base {
+  public:
+    IntSetAllocation(void)
+      : Base("Fault::IntSet::Allocation") {}
+    virtual bool run(void) {
+      return int_set_failure_releases_object();
+    }
+  };
+
   class DisposeNoticeArray : public Base {
   public:
     DisposeNoticeArray(void)
@@ -405,6 +432,7 @@ namespace Test { namespace Fault {
 
   CloneDisposalArray clone_disposal_array;
   DisposeNoticeArray dispose_notice_array;
+  IntSetAllocation int_set_allocation;
   ClonePropagatorCopy clone_propagator_copy;
   CloneBrancherCopy clone_brancher_copy;
   CloneDerivedSpaceCopy clone_derived_space_copy;

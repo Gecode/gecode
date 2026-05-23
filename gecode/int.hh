@@ -188,6 +188,14 @@ namespace Gecode {
       int n;
       /// Array of ranges
       Range* r;
+#ifdef GECODE_HAS_FAULT_INJECTION
+      /// Number of live objects for fault-injection tests
+      static int fault_live_objects;
+      /// Memory management for fault-injection accounting
+      static void* operator new(size_t s);
+      /// Memory management for fault-injection accounting
+      static void operator delete(void* p);
+#endif
       /// Allocate object with \a m elements
       GECODE_INT_EXPORT static IntSetObject* allocate(int m);
       /// Check whether \a n is included in the set
@@ -208,6 +216,12 @@ namespace Gecode {
     /// Initialize with \a n ranges from array \a r
     GECODE_INT_EXPORT void init(const int r[][2], int n);
   public:
+#ifdef GECODE_HAS_FAULT_INJECTION
+    /// Reset live object accounting for fault-injection tests
+    GECODE_INT_EXPORT static void fault_reset_allocations(void);
+    /// Return live object accounting for fault-injection tests
+    GECODE_INT_EXPORT static int fault_live_allocations(void);
+#endif
     /// \name Constructors and initialization
     //@{
     /// Initialize as empty set
