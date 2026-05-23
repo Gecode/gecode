@@ -83,6 +83,10 @@ namespace Gecode {
     static void* operator new(size_t size);
     /// Memory management
     static void  operator delete(void* p,size_t size);
+#ifdef GECODE_HAS_FAULT_INJECTION
+    /// Number of live nodes for fault-injection tests
+    static int fault_live_nodes;
+#endif
   };
 
   /*
@@ -92,6 +96,20 @@ namespace Gecode {
   forceinline
   LinIntExpr::Node::Node(void) : use(1) {
   }
+
+#ifdef GECODE_HAS_FAULT_INJECTION
+  int LinIntExpr::Node::fault_live_nodes = 0;
+
+  void
+  LinIntExpr::fault_reset_allocations(void) {
+    Node::fault_live_nodes = 0;
+  }
+
+  int
+  LinIntExpr::fault_live_allocations(void) {
+    return Node::fault_live_nodes;
+  }
+#endif
 
   forceinline
   LinIntExpr::Node::~Node(void) {
@@ -113,11 +131,21 @@ namespace Gecode {
 
   forceinline void*
   LinIntExpr::Node::operator new(size_t size) {
-    return heap.ralloc(size);
+#ifdef GECODE_HAS_FAULT_INJECTION
+    Support::FailPoint::check(Support::FailPoint::Phase::MiniModel);
+#endif
+    void* p = heap.ralloc(size);
+#ifdef GECODE_HAS_FAULT_INJECTION
+    fault_live_nodes++;
+#endif
+    return p;
   }
 
   forceinline void
   LinIntExpr::Node::operator delete(void* p, size_t) {
+#ifdef GECODE_HAS_FAULT_INJECTION
+    fault_live_nodes--;
+#endif
     heap.rfree(p);
   }
   bool
