@@ -148,6 +148,9 @@ namespace Gecode {
       // Resize
       if (d_fst == nullptr) {
         // Create new array
+#ifdef GECODE_HAS_FAULT_INJECTION
+        Support::FailPoint::check(Support::FailPoint::Phase::SpaceDisposeNoticeArray);
+#endif
         d_fst = alloc<Actor*>(4);
         d_cur = d_fst;
         d_lst = d_fst+4;
@@ -155,6 +158,9 @@ namespace Gecode {
         // Resize existing array
         unsigned int n = static_cast<unsigned int>(d_lst - d_fst);
         assert(n != 0);
+#ifdef GECODE_HAS_FAULT_INJECTION
+        Support::FailPoint::check(Support::FailPoint::Phase::SpaceDisposeNoticeArray);
+#endif
         d_fst = realloc<Actor*>(d_fst,n,2*n);
         d_cur = d_fst+n;
         d_lst = d_fst+2*n;

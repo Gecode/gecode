@@ -46,6 +46,7 @@ namespace Gecode { namespace Support { namespace FailPoint {
     BrancherCopy,
     DerivedSpaceCopy,
     LocalObjectCopy,
+    SpaceDisposeNoticeArray,
     SpaceDisposalArray,
     IntSet,
     MiniModel

@@ -137,6 +137,38 @@ namespace Test { namespace Fault {
     }
   };
 
+  class NoticeDisposeActor : public Actor {
+  public:
+    static int disposed;
+
+    NoticeDisposeActor(Home home) : Actor() {
+      home.notice(*this,AP_DISPOSE);
+    }
+    static void post(Home home) {
+      (void) new (home) NoticeDisposeActor(home);
+    }
+    virtual Actor* copy(Space& home) {
+      return new (home) NoticeDisposeActor(home);
+    }
+    virtual size_t dispose(Space&) {
+      disposed++;
+      return sizeof(*this);
+    }
+  };
+
+  int NoticeDisposeActor::disposed = 0;
+
+  class NoticeDisposeSpace : public Space {
+  public:
+    NoticeDisposeSpace(void) {
+      NoticeDisposeActor::post(*this);
+    }
+    NoticeDisposeSpace(NoticeDisposeSpace& s) : Space(s) {}
+    virtual Space* copy(void) {
+      return new NoticeDisposeSpace(*this);
+    }
+  };
+
   class DerivedCopySpace : public Space {
   public:
     IntVarArray x;
@@ -300,6 +332,32 @@ namespace Test { namespace Fault {
     return ok;
   }
 
+  bool dispose_notice_failure_disposes_actor(void) {
+    NoticeDisposeActor::disposed = 0;
+    Support::FailPoint::reset();
+    Support::FailPoint::fail_after(Phase::SpaceDisposeNoticeArray,0);
+    try {
+      NoticeDisposeSpace s;
+      Support::FailPoint::reset();
+      return false;
+    } catch (const MemoryExhausted&) {
+      Support::FailPoint::reset();
+      return NoticeDisposeActor::disposed == 1;
+    } catch (...) {
+      Support::FailPoint::reset();
+      return false;
+    }
+  }
+
+  class DisposeNoticeArray : public Base {
+  public:
+    DisposeNoticeArray(void)
+      : Base("Fault::Dispose::NoticeArray") {}
+    virtual bool run(void) {
+      return dispose_notice_failure_disposes_actor();
+    }
+  };
+
   class CloneDisposalArray : public Base {
   public:
     CloneDisposalArray(void)
@@ -346,6 +404,7 @@ namespace Test { namespace Fault {
   };
 
   CloneDisposalArray clone_disposal_array;
+  DisposeNoticeArray dispose_notice_array;
   ClonePropagatorCopy clone_propagator_copy;
   CloneBrancherCopy clone_brancher_copy;
   CloneDerivedSpaceCopy clone_derived_space_copy;
