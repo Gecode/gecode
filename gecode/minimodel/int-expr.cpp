@@ -167,7 +167,8 @@ namespace Gecode {
 
   LinIntExpr::LinIntExpr(const LinIntExpr& e)
     : n(e.n) {
-    n->use++;
+    if (n != nullptr)
+      n->use++;
   }
 
   int
@@ -385,16 +386,11 @@ namespace Gecode {
 
   NonLinIntExpr*
   LinIntExpr::nle(void) const {
-    return n->t == NT_NONLIN ? n->sum.ne : nullptr;
+    return ((n != nullptr) && (n->t == NT_NONLIN)) ? n->sum.ne : nullptr;
   }
 
   LinIntExpr::LinIntExpr(void) :
-    n(new Node) {
-    n->n_int = n->n_bool = 0;
-    n->t = NT_VAR_INT;
-    n->l = n->r = nullptr;
-    n->a = 0;
-  }
+    n(nullptr) {}
 
   LinIntExpr::LinIntExpr(int c) :
     n(new Node) {
@@ -532,15 +528,17 @@ namespace Gecode {
   const LinIntExpr&
   LinIntExpr::operator =(const LinIntExpr& e) {
     if (this != &e) {
-      if (n->decrement())
+      if ((n != nullptr) && n->decrement())
         delete n;
-      n = e.n; n->use++;
+      n = e.n;
+      if (n != nullptr)
+        n->use++;
     }
     return *this;
   }
 
   LinIntExpr::~LinIntExpr(void) {
-    if (n->decrement())
+    if ((n != nullptr) && n->decrement())
       delete n;
   }
 
