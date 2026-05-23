@@ -768,6 +768,9 @@ namespace Gecode {
         c->d_fst = c->d_cur = c->d_lst = nullptr;
       } else {
         // Leave one entry free
+#ifdef GECODE_HAS_FAULT_INJECTION
+        Support::FailPoint::check(Support::FailPoint::Phase::SpaceDisposalArray);
+#endif
         c->d_fst = c->alloc<Actor*>(n+1);
         c->d_cur = c->d_fst;
         c->d_lst = c->d_fst+n+1;

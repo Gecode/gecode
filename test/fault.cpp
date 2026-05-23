@@ -32,6 +32,7 @@
  */
 
 #include <gecode/minimodel.hh>
+#include <gecode/search.hh>
 
 #include "test/test.hh"
 
@@ -119,6 +120,20 @@ namespace Test { namespace Fault {
     CloneCopySpace(CloneCopySpace& s) : Space(s) {}
     virtual Space* copy(void) {
       return new CloneCopySpace(*this);
+    }
+  };
+
+  class DisposeSpace : public Space {
+  public:
+    IntVarArray x;
+    DisposeSpace(void) : x(*this,3,0,2) {
+      branch(*this,x,INT_VAR_ACTION_SIZE_MAX(),INT_VAL_MIN());
+    }
+    DisposeSpace(DisposeSpace& s) : Space(s) {
+      x.update(*this,s.x);
+    }
+    virtual Space* copy(void) {
+      return new DisposeSpace(*this);
     }
   };
 
@@ -258,6 +273,42 @@ namespace Test { namespace Fault {
     return false;
   }
 
+  bool clone_after_failed_disposal_array(void) {
+    DisposeSpace s;
+    if (s.status() == SS_FAILED)
+      return false;
+    Support::FailPoint::reset();
+    Support::FailPoint::fail_after(Phase::SpaceDisposalArray,0);
+    try {
+      Space* c = s.clone();
+      delete c;
+      Support::FailPoint::reset();
+      return false;
+    } catch (const MemoryExhausted&) {
+      Support::FailPoint::reset();
+    } catch (...) {
+      Support::FailPoint::reset();
+      return false;
+    }
+    Space* c = s.clone();
+    delete c;
+    DisposeSpace* root = static_cast<DisposeSpace*>(s.clone());
+    DFS<DisposeSpace> e(root);
+    Space* sol = e.next();
+    bool ok = (sol != nullptr);
+    delete sol;
+    return ok;
+  }
+
+  class CloneDisposalArray : public Base {
+  public:
+    CloneDisposalArray(void)
+      : Base("Fault::Clone::DisposalArray") {}
+    virtual bool run(void) {
+      return clone_after_failed_disposal_array();
+    }
+  };
+
   class ClonePropagatorCopy : public Base {
   public:
     ClonePropagatorCopy(void)
@@ -294,6 +345,7 @@ namespace Test { namespace Fault {
     }
   };
 
+  CloneDisposalArray clone_disposal_array;
   ClonePropagatorCopy clone_propagator_copy;
   CloneBrancherCopy clone_brancher_copy;
   CloneDerivedSpaceCopy clone_derived_space_copy;
