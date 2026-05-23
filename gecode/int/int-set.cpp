@@ -64,11 +64,19 @@ namespace Gecode {
   IntSet::IntSetObject*
   IntSet::IntSetObject::allocate(int n) {
     IntSetObject* o = new IntSetObject;
-    o->n = n;
+    o->size = 0U;
+    o->n = 0;
+    o->r = nullptr;
+    try {
 #ifdef GECODE_HAS_FAULT_INJECTION
-    Support::FailPoint::check(Support::FailPoint::Phase::IntSet);
+      Support::FailPoint::check(Support::FailPoint::Phase::IntSet);
 #endif
-    o->r = heap.alloc<Range>(n);
+      o->r = heap.alloc<Range>(n);
+    } catch (...) {
+      delete o;
+      throw;
+    }
+    o->n = n;
     return o;
   }
 
@@ -102,7 +110,8 @@ namespace Gecode {
   }
 
   IntSet::IntSetObject::~IntSetObject(void) {
-    heap.free<Range>(r,n);
+    if (r != nullptr)
+      heap.free<Range>(r,n);
   }
 
   /// Sort ranges according to increasing minimum
