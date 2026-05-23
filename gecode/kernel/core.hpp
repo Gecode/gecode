@@ -298,6 +298,9 @@ namespace Gecode {
      * to be stored.
      */
     static void update(Space& home, ActorLink**& sub);
+    /// Recover copied variables after failed clone construction
+    static void revertHarmfulChangesOfUnfinishedClone(Space& home,
+                                                      ActorLink**& sub);
 
     /// Enter propagator to subscription array
     void enter(Space& home, Propagator* p, PropCond pc);
@@ -1892,6 +1895,15 @@ namespace Gecode {
     void update(ActorLink** sub);
     //@}
 
+    /// Update variables without indexing structure
+    void updateNoIdx(Space* space, bool recover);
+
+    /// Recover after failed clone construction
+    virtual void recover(Space& source);
+
+    /// Test whether clone construction has not reached a disposable state
+    bool inPrematureDestructionMode(void) const;
+
     /// First actor for forced disposal
     Actor** d_fst;
     /// Current actor for forced disposal
@@ -3029,6 +3041,11 @@ namespace Gecode {
     _vars_d[VIC::idx_d] = x;
   }
 #endif
+
+  forceinline bool
+  Space::inPrematureDestructionMode(void) const {
+    return d_fst == &Actor::sentinel;
+  }
 
   // Space allocated entities: Actors, variable implementations, and advisors
   forceinline void
@@ -4503,7 +4520,7 @@ namespace Gecode {
   template<class VIC>
   forceinline void
   VarImp<VIC>::cancel(Space& home, Propagator& p, PropCond pc) {
-    if (b.base != nullptr)
+    if ((b.base != nullptr) && !home.inPrematureDestructionMode())
       remove(home,&p,pc);
   }
 
@@ -4533,7 +4550,7 @@ namespace Gecode {
   template<class VIC>
   forceinline void
   VarImp<VIC>::cancel(Space& home, Advisor& a, bool fail) {
-    if (b.base != nullptr) {
+    if ((b.base != nullptr) && !home.inPrematureDestructionMode()) {
       Advisor* ma = static_cast<Advisor*>(Support::ptrjoin(&a,fail ? 1 : 0));
       remove(home,ma);
     }
@@ -4720,6 +4737,26 @@ namespace Gecode {
     VarImp<VIC>* x = static_cast<VarImp<VIC>*>(home.pc.c.vars_u[idx_c]);
     while (x != nullptr) {
       VarImp<VIC>* n = x->next(); x->forward()->update(x,sub); x = n;
+    }
+  }
+
+  template<class VIC>
+  forceinline void
+  VarImp<VIC>::revertHarmfulChangesOfUnfinishedClone(Space& home,
+                                                     ActorLink**&) {
+    VarImp<VIC>* x = static_cast<VarImp<VIC>*>(home.pc.c.vars_u[idx_c]);
+    while (x != nullptr) {
+      if (x->copied()) {
+        VarImp<VIC>* n = x->next();
+        VarImp<VIC>* copy = x->forward();
+        x->b.base = copy->b.base;
+        x->u.idx[0] = copy->u.idx[0];
+        if (pc_max > 0 && sizeof(ActorLink**) > sizeof(unsigned int))
+          x->u.idx[1] = copy->u.idx[1];
+        x = n;
+      } else {
+        break;
+      }
     }
   }
 

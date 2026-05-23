@@ -479,6 +479,19 @@ namespace Gecode { namespace Float {
 namespace Gecode {
 
   forceinline void
+  Space::updateNoIdx(Space* space, bool) {
+    VarImp<NoIdxVarImpConf>* x =
+      static_cast<VarImp<NoIdxVarImpConf>*>(space->pc.c.vars_noidx);
+    while (x != nullptr) {
+      VarImp<NoIdxVarImpConf>* n = x->next();
+      x->b.base = nullptr; x->u.idx[0] = 0;
+      if (sizeof(ActorLink**) > sizeof(unsigned int))
+        *(1+&x->u.idx[0]) = 0;
+      x = n;
+    }
+  }
+
+  forceinline void
   Space::update(ActorLink** sub) {
 #ifdef GECODE_HAS_INT_VARS
     Gecode::VarImp<Gecode::Int::IntVarImpConf>::update(*this,sub);
@@ -491,6 +504,70 @@ namespace Gecode {
 #endif
 #ifdef GECODE_HAS_FLOAT_VARS
     Gecode::VarImp<Gecode::Float::FloatVarImpConf>::update(*this,sub);
+#endif
+  }
+
+  forceinline void
+  Space::recover(Space& source) {
+    ActorLink* clone_lists[2] = {&pl, &bl};
+    for (int i=0; i<2; i++) {
+      ActorLink* l = clone_lists[i];
+      ActorLink* c = l->next();
+      while (c != l) {
+        ActorLink* n = c->next();
+        (void) Actor::cast(c)->dispose(*this);
+        c = n;
+      }
+      l->init();
+    }
+    while (pc.c.local != nullptr) {
+      LocalObject* l = pc.c.local;
+      ActorLink* n = l->next();
+      pc.c.local = (n == nullptr) ? nullptr : LocalObject::cast(n);
+      ActorLink* fwd = l->prev();
+      if (fwd != nullptr) {
+        (void) Actor::cast(fwd)->dispose(*this);
+        l->prev(nullptr);
+      }
+    }
+
+    ActorLink* lists[2] = {&source.pl, &source.bl};
+    for (int i=0; i<2; i++) {
+      ActorLink* l = lists[i];
+      ActorLink* p_a = l;
+      ActorLink* c_a = p_a->next();
+      while (c_a != l) {
+        if (i == 0) {
+          Propagator* p = Propagator::cast(c_a);
+          if (p->u.advisors != nullptr) {
+            ActorLink* a = p->u.advisors;
+            p->u.advisors = nullptr;
+            do {
+              a->prev(p); a = a->next();
+            } while (a != nullptr);
+          }
+        }
+        ActorLink* fwd = c_a->prev();
+        if (fwd != p_a) {
+          c_a->prev(p_a);
+        }
+        p_a = c_a; c_a = c_a->next();
+      }
+    }
+
+    ActorLink** sub = static_cast<ActorLink**>(mm.subscriptions());
+    Space::updateNoIdx(this, true);
+#ifdef GECODE_HAS_INT_VARS
+    Gecode::VarImp<Gecode::Int::IntVarImpConf>::revertHarmfulChangesOfUnfinishedClone(*this,sub);
+#endif
+#ifdef GECODE_HAS_INT_VARS
+    Gecode::VarImp<Gecode::Int::BoolVarImpConf>::revertHarmfulChangesOfUnfinishedClone(*this,sub);
+#endif
+#ifdef GECODE_HAS_SET_VARS
+    Gecode::VarImp<Gecode::Set::SetVarImpConf>::revertHarmfulChangesOfUnfinishedClone(*this,sub);
+#endif
+#ifdef GECODE_HAS_FLOAT_VARS
+    Gecode::VarImp<Gecode::Float::FloatVarImpConf>::revertHarmfulChangesOfUnfinishedClone(*this,sub);
 #endif
   }
 }
