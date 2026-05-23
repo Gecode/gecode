@@ -166,6 +166,9 @@ namespace Gecode {
   void
   Space::ap_ignore_dispose(Actor* a, bool duplicate) {
     // Note that a might be a marked pointer!
+    if (inPrematureDestructionMode())
+      return;
+
     assert(d_fst != nullptr);
     Actor** f = d_fst;
     if (duplicate) {
@@ -768,18 +771,26 @@ namespace Gecode {
         c->d_fst = c->d_cur = c->d_lst = nullptr;
       } else {
         // Leave one entry free
+        try {
 #ifdef GECODE_HAS_FAULT_INJECTION
-        Support::FailPoint::check(Support::FailPoint::Phase::SpaceDisposalArray);
+          Support::FailPoint::check(Support::FailPoint::Phase::SpaceDisposalArray);
 #endif
-        c->d_fst = c->alloc<Actor*>(n+1);
-        c->d_cur = c->d_fst;
-        c->d_lst = c->d_fst+n+1;
-        for (Actor** d_fst_iter = d_fst; d_fst_iter != d_cur; d_fst_iter++) {
-          ptrdiff_t m;
-          Actor* a = static_cast<Actor*>(Support::ptrsplit(*d_fst_iter,m));
-          if (a->prev())
-            *(c->d_cur++) = Actor::cast(static_cast<ActorLink*>
-                                        (Support::ptrjoin(a->prev(),m)));
+          c->d_fst = c->alloc<Actor*>(n+1);
+          c->d_cur = c->d_fst;
+          c->d_lst = c->d_fst+n+1;
+          for (Actor** d_fst_iter = d_fst; d_fst_iter != d_cur; d_fst_iter++) {
+            ptrdiff_t m;
+            Actor* a = static_cast<Actor*>(Support::ptrsplit(*d_fst_iter,m));
+            if (a->prev())
+              *(c->d_cur++) = Actor::cast(static_cast<ActorLink*>
+                                          (Support::ptrjoin(a->prev(),m)));
+          }
+        }
+        catch (const std::exception&) {
+          c->recover(*this);
+          c->d_fst = c->d_cur = c->d_lst = nullptr;
+          delete c;
+          throw;
         }
       }
     }
