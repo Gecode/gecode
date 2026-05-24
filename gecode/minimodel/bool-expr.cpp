@@ -197,7 +197,13 @@ namespace Gecode {
 #endif
 
   BoolExpr::BoolExpr(BoolExpr::Misc* m)
-    : n(new Node) {
+    : n(nullptr) {
+    try {
+      n = new Node;
+    } catch (...) {
+      delete m;
+      throw;
+    }
     n->same = 1;
     n->t    = NT_MISC;
     n->l    = nullptr;
