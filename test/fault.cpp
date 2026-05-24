@@ -396,12 +396,52 @@ namespace Test { namespace Fault {
     }
   }
 
+  class FaultBoolMisc : public BoolExpr::Misc {
+  public:
+    static int disposed;
+
+    FaultBoolMisc(void) {}
+    virtual ~FaultBoolMisc(void) {
+      disposed++;
+    }
+    virtual void post(Home, BoolVar, bool, const IntPropLevels&) {}
+  };
+
+  int FaultBoolMisc::disposed = 0;
+
+  bool minimodel_failure_releases_bool_misc(void) {
+    FaultBoolMisc::disposed = 0;
+    Support::FailPoint::reset();
+    Support::FailPoint::fail_after(Phase::MiniModel,0);
+    try {
+      BoolExpr b(new FaultBoolMisc);
+      (void) b;
+      Support::FailPoint::reset();
+      return false;
+    } catch (const MemoryExhausted&) {
+      Support::FailPoint::reset();
+      return FaultBoolMisc::disposed == 1;
+    } catch (...) {
+      Support::FailPoint::reset();
+      return false;
+    }
+  }
+
   class MiniModelDefaultNodes : public Base {
   public:
     MiniModelDefaultNodes(void)
       : Base("Fault::MiniModel::DefaultNodes") {}
     virtual bool run(void) {
       return minimodel_failure_releases_default_nodes();
+    }
+  };
+
+  class MiniModelBoolMisc : public Base {
+  public:
+    MiniModelBoolMisc(void)
+      : Base("Fault::MiniModel::BoolMisc") {}
+    virtual bool run(void) {
+      return minimodel_failure_releases_bool_misc();
     }
   };
 
@@ -472,6 +512,7 @@ namespace Test { namespace Fault {
   DisposeNoticeArray dispose_notice_array;
   IntSetAllocation int_set_allocation;
   MiniModelDefaultNodes minimodel_default_nodes;
+  MiniModelBoolMisc minimodel_bool_misc;
   ClonePropagatorCopy clone_propagator_copy;
   CloneBrancherCopy clone_brancher_copy;
   CloneDerivedSpaceCopy clone_derived_space_copy;
