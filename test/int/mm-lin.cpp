@@ -98,10 +98,10 @@ namespace Test { namespace Int {
          using namespace Gecode;
          LinIntExpr e;
          LinIntExpr c(e);
-         LinIntExpr a = e + 1;
+         LinIntExpr a = e + x;
          LinIntExpr b = 2 + c;
          LinIntExpr m = 3 * e;
-         rel(*this, x == expr(*this, a + b + m));
+         rel(*this, a + b + m == 3);
        }
        LinExprDefaultSpace(LinExprDefaultSpace& s) : Gecode::Space(s) {
          x.update(*this,s.x);
@@ -122,7 +122,7 @@ namespace Test { namespace Int {
          LinExprDefaultSpace* sol = e.next();
          if (sol == nullptr)
            return false;
-         bool ok = sol->x.assigned() && (sol->x.val() == 3);
+         bool ok = sol->x.assigned() && (sol->x.val() == 1);
          delete sol;
          return ok && (e.next() == nullptr);
        }

@@ -4377,10 +4377,14 @@ namespace Gecode {
   template<class VIC>
   forceinline void
   VarImp<VIC>::schedule(Space& home, PropCond pc1, PropCond pc2, ModEvent me) {
-    ActorLink** b = actor(pc1);
-    ActorLink** p = actorNonZero(pc2+1);
-    while (p-- > b)
-      schedule(home,*Propagator::cast(*p),me);
+    if (b.base == nullptr)
+      return;
+    ActorLink** begin = actor(pc1);
+    ActorLink** end = actorNonZero(pc2+1);
+    while (end > begin) {
+      end--;
+      schedule(home,*Propagator::cast(*end),me);
+    }
   }
 
   template<class VIC>

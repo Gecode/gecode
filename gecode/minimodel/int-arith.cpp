@@ -61,15 +61,23 @@ namespace Gecode { namespace MiniModel {
     int aInt;
     /// Boolean expression argument (used in ite for example)
     BoolExpr b;
+    /// Allocate internal expression slots without public default nodes
+    static LinIntExpr* allocate(int n) {
+      LinIntExpr* a = static_cast<LinIntExpr*>
+        (heap.ralloc(sizeof(LinIntExpr)*n));
+      for (int i=0; i<n; i++)
+        (void) new (a+i) LinIntExpr(LinIntExpr::NoNode());
+      return a;
+    }
     /// Constructor
     ArithNonLinIntExpr(ArithNonLinIntExprType t0, int n0)
-      : t(t0), a(heap.alloc<LinIntExpr>(n0)), n(n0) {}
+      : t(t0), a(allocate(n0)), n(n0) {}
     /// Constructor
     ArithNonLinIntExpr(ArithNonLinIntExprType t0, int n0, int a0)
-      : t(t0), a(heap.alloc<LinIntExpr>(n0)), n(n0), aInt(a0) {}
+      : t(t0), a(allocate(n0)), n(n0), aInt(a0) {}
     /// Constructor
     ArithNonLinIntExpr(ArithNonLinIntExprType t0, int n0, const BoolExpr& b0)
-      : t(t0), a(heap.alloc<LinIntExpr>(n0)), n(n0), b(b0) {}
+      : t(t0), a(allocate(n0)), n(n0), b(b0) {}
     /// Destructor
     ~ArithNonLinIntExpr(void) {
       heap.free<LinIntExpr>(a,n);
