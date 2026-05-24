@@ -41,6 +41,20 @@ namespace Test { namespace Fault {
   using namespace Gecode;
   using Gecode::Support::FailPoint::Phase;
 
+  Support::Mutex fault_mutex;
+
+  class FaultScope {
+  private:
+    Support::Lock lock;
+  public:
+    FaultScope(void) : lock(fault_mutex) {
+      Support::FailPoint::reset();
+    }
+    ~FaultScope(void) {
+      Support::FailPoint::reset();
+    }
+  };
+
   class ThrowingPropagator : public Propagator {
   protected:
     ThrowingPropagator(Home home) : Propagator(home) {}
@@ -244,6 +258,7 @@ namespace Test { namespace Fault {
   };
 
   bool clone_after_failed_copy(Phase p) {
+    FaultScope scope;
     CloneCopySpace s;
     if (s.status() == SS_FAILED)
       return false;
@@ -272,6 +287,7 @@ namespace Test { namespace Fault {
   }
 
   bool expect_memory_exhausted(Phase p, unsigned long long n) {
+    FaultScope scope;
     DerivedCopySpace s;
     if (s.status() == SS_FAILED)
       return false;
@@ -300,6 +316,7 @@ namespace Test { namespace Fault {
   }
 
   bool clone_after_failed_local_object_copy(void) {
+    FaultScope scope;
     LocalCopySpace s;
     Support::FailPoint::reset();
     Support::FailPoint::fail_after(Phase::LocalObjectCopy,0);
@@ -323,6 +340,7 @@ namespace Test { namespace Fault {
   }
 
   bool clone_after_failed_disposal_array(void) {
+    FaultScope scope;
     DisposeSpace s;
     if (s.status() == SS_FAILED)
       return false;
@@ -350,6 +368,7 @@ namespace Test { namespace Fault {
   }
 
   bool dispose_notice_initial_failure_does_not_dispose_actor(void) {
+    FaultScope scope;
     NoticeDisposeActor::disposed = 0;
     Support::FailPoint::reset();
     Support::FailPoint::fail_after(Phase::SpaceDisposeNoticeArray,0);
@@ -367,6 +386,7 @@ namespace Test { namespace Fault {
   }
 
   bool dispose_notice_resize_failure_does_not_dispose_unregistered_actor(void) {
+    FaultScope scope;
     NoticeDisposeActor::disposed = 0;
     Support::FailPoint::reset();
     try {
@@ -383,6 +403,7 @@ namespace Test { namespace Fault {
   }
 
   bool int_set_failure_releases_object(void) {
+    FaultScope scope;
     int ranges[2][2] = {{0, 0}, {2, 2}};
     IntSet::fault_reset_allocations();
     Support::FailPoint::reset();
@@ -401,6 +422,7 @@ namespace Test { namespace Fault {
   }
 
   bool minimodel_failure_releases_default_nodes(void) {
+    FaultScope scope;
     LinIntExpr::fault_reset_allocations();
     Support::FailPoint::reset();
     try {
@@ -434,6 +456,7 @@ namespace Test { namespace Fault {
   int FaultBoolMisc::disposed = 0;
 
   bool minimodel_failure_releases_bool_misc(void) {
+    FaultScope scope;
     FaultBoolMisc::disposed = 0;
     Support::FailPoint::reset();
     Support::FailPoint::fail_after(Phase::MiniModel,0);
