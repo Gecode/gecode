@@ -304,14 +304,14 @@ namespace Gecode {
 
     /// Enter propagator to subscription array
     void enter(Space& home, Propagator* p, PropCond pc);
-    /// Enter advisor to subscription array
-    void enter(Space& home, Advisor* a);
+    /// Enter possibly marked advisor to subscription array
+    void enter(Space& home, ActorLink* a);
     /// Resize subscription array
     void resize(Space& home);
     /// Remove propagator from subscription array
     void remove(Space& home, Propagator* p, PropCond pc);
-    /// Remove advisor from subscription array
-    void remove(Space& home, Advisor* a);
+    /// Remove possibly marked advisor from subscription array
+    void remove(Space& home, ActorLink* a);
 
 
   protected:
@@ -1306,6 +1306,8 @@ namespace Gecode {
     static Advisor* cast(ActorLink* al);
     /// Static cast
     static const Advisor* cast(const ActorLink* al);
+    /// Cast to actor link
+    static ActorLink* link(Advisor& a);
   protected:
     /// Return the advisor's propagator
     Propagator& propagator(void) const;
@@ -3921,6 +3923,11 @@ namespace Gecode {
     return static_cast<const Advisor*>(al);
   }
 
+  forceinline ActorLink*
+  Advisor::link(Advisor& a) {
+    return static_cast<ActorLink*>(&a);
+  }
+
   forceinline Propagator&
   Advisor::propagator(void) const {
     assert(!disposed());
@@ -4440,7 +4447,7 @@ namespace Gecode {
 
   template<class VIC>
   forceinline void
-  VarImp<VIC>::enter(Space& home, Advisor* a) {
+  VarImp<VIC>::enter(Space& home, ActorLink* a) {
     // Note that a might be a marked pointer
     // Count one new subscription
     home.pc.p.n_sub += 1;
@@ -4473,7 +4480,8 @@ namespace Gecode {
   forceinline void
   VarImp<VIC>::subscribe(Space& home, Advisor& a, bool assigned, bool fail) {
     if (!assigned) {
-      Advisor* ma = static_cast<Advisor*>(Support::ptrjoin(&a,fail ? 1 : 0));
+      ActorLink* ma = static_cast<ActorLink*>
+        (Support::ptrjoin(Advisor::link(a),fail ? 1 : 0));
       enter(home,ma);
     }
   }
@@ -4528,7 +4536,7 @@ namespace Gecode {
 
   template<class VIC>
   void
-  VarImp<VIC>::remove(Space& home, Advisor* a) {
+  VarImp<VIC>::remove(Space& home, ActorLink* a) {
     // Note that a might be a marked pointer
     // Find actor in dependency array
     ActorLink** f = actorNonZero(pc_max+1);
@@ -4553,7 +4561,8 @@ namespace Gecode {
   forceinline void
   VarImp<VIC>::cancel(Space& home, Advisor& a, bool fail) {
     if ((b.base != nullptr) && !home.inPrematureDestructionMode()) {
-      Advisor* ma = static_cast<Advisor*>(Support::ptrjoin(&a,fail ? 1 : 0));
+      ActorLink* ma = static_cast<ActorLink*>
+        (Support::ptrjoin(Advisor::link(a),fail ? 1 : 0));
       remove(home,ma);
     }
   }
