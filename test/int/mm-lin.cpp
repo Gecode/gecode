@@ -90,6 +90,44 @@ namespace Test { namespace Int {
       * \ingroup TaskTestInt
       */
      //@{
+     /// %Test public default linear expression behavior
+     class LinExprDefaultSpace : public Gecode::Space {
+     public:
+       Gecode::IntVar x;
+       LinExprDefaultSpace(void) : x(*this,-5,5) {
+         using namespace Gecode;
+         LinIntExpr e;
+         LinIntExpr c(e);
+         LinIntExpr a = e + 1;
+         LinIntExpr b = 2 + c;
+         LinIntExpr m = 3 * e;
+         rel(*this, x == expr(*this, a + b + m));
+       }
+       LinExprDefaultSpace(LinExprDefaultSpace& s) : Gecode::Space(s) {
+         x.update(*this,s.x);
+       }
+       virtual Gecode::Space* copy(void) {
+         return new LinExprDefaultSpace(*this);
+       }
+     };
+
+     /// %Test public default linear expression behavior
+     class LinExprDefault : public Test::Base {
+     public:
+       LinExprDefault(void) : Test::Base("MiniModel::LinExpr::Default") {}
+       virtual bool run(void) {
+         LinExprDefaultSpace* s = new LinExprDefaultSpace;
+         Gecode::DFS<LinExprDefaultSpace> e(s);
+         delete s;
+         LinExprDefaultSpace* sol = e.next();
+         if (sol == nullptr)
+           return false;
+         bool ok = sol->x.assigned() && (sol->x.val() == 3);
+         delete sol;
+         return ok && (e.next() == nullptr);
+       }
+     };
+
      /// %Test linear expressions over integer variables
      class LinExprInt : public Test {
      protected:
@@ -2172,6 +2210,7 @@ namespace Test { namespace Int {
        }
      };
 
+     LinExprDefault lin_expr_default;
      Create c;
      //@}
    }
