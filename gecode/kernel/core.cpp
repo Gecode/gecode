@@ -205,6 +205,13 @@ namespace Gecode {
   }
 
   Space::~Space(void) {
+    if (inPrematureDestructionMode()) {
+      if (pc.c.source != nullptr) {
+        recover(*pc.c.source);
+        pc.c.source = nullptr;
+      }
+      d_fst = d_cur = d_lst = nullptr;
+    }
     // Mark space as failed
     fail();
     // Delete actors that must be deleted
@@ -718,53 +725,64 @@ namespace Gecode {
 #ifdef GECODE_HAS_CBS
       var_id_counter(s.var_id_counter),
 #endif
-      d_fst(&Actor::sentinel) {
+      d_fst(&Actor::sentinel),d_cur(nullptr),d_lst(nullptr) {
 #ifdef GECODE_HAS_VAR_DISPOSE
     for (int i=0; i<AllVarConf::idx_d; i++)
       _vars_d[i] = nullptr;
 #endif
-    for (int i=0; i<AllVarConf::idx_c; i++)
-      pc.c.vars_u[i] = nullptr;
-    pc.c.vars_noidx = nullptr;
-    pc.c.local = nullptr;
-    // Copy all propagators
-    {
-      ActorLink* p = &pl;
-      ActorLink* e = &s.pl;
-      for (ActorLink* a = e->next(); a != e; a = a->next()) {
-        Actor* c = Actor::cast(a)->copy(*this);
-        // Link copied actor
-        p->next(ActorLink::cast(c)); ActorLink::cast(c)->prev(p);
-        // Note that forwarding is done in the constructors
-        p = c;
+    try {
+      for (int i=0; i<AllVarConf::idx_c; i++)
+        pc.c.vars_u[i] = nullptr;
+      pc.c.vars_noidx = nullptr;
+      pc.c.local = nullptr;
+      pc.c.source = &s;
+      pl.init();
+      bl.init();
+      b_status = b_commit = Brancher::cast(&bl);
+      // Copy all propagators
+      {
+        ActorLink* p = &pl;
+        ActorLink* e = &s.pl;
+        for (ActorLink* a = e->next(); a != e; a = a->next()) {
+          Actor* c = Actor::cast(a)->copy(*this);
+          // Link copied actor
+          p->next(ActorLink::cast(c)); ActorLink::cast(c)->prev(p);
+          // Note that forwarding is done in the constructors
+          p = c;
+        }
+        // Link last actor
+        p->next(&pl); pl.prev(p);
       }
-      // Link last actor
-      p->next(&pl); pl.prev(p);
-    }
-    // Copy all branchers
-    {
-      ActorLink* p = &bl;
-      ActorLink* e = &s.bl;
-      for (ActorLink* a = e->next(); a != e; a = a->next()) {
-        Actor* c = Actor::cast(a)->copy(*this);
-        // Link copied actor
-        p->next(ActorLink::cast(c)); ActorLink::cast(c)->prev(p);
-        // Note that forwarding is done in the constructors
-        p = c;
+      // Copy all branchers
+      {
+        ActorLink* p = &bl;
+        ActorLink* e = &s.bl;
+        for (ActorLink* a = e->next(); a != e; a = a->next()) {
+          Actor* c = Actor::cast(a)->copy(*this);
+          // Link copied actor
+          p->next(ActorLink::cast(c)); ActorLink::cast(c)->prev(p);
+          // Note that forwarding is done in the constructors
+          p = c;
+        }
+        // Link last actor
+        p->next(&bl); bl.prev(p);
       }
-      // Link last actor
-      p->next(&bl); bl.prev(p);
-    }
-    // Setup brancher pointers
-    if (s.b_status == &s.bl) {
-      b_status = Brancher::cast(&bl);
-    } else {
-      b_status = Brancher::cast(s.b_status->prev());
-    }
-    if (s.b_commit == &s.bl) {
-      b_commit = Brancher::cast(&bl);
-    } else {
-      b_commit = Brancher::cast(s.b_commit->prev());
+      // Setup brancher pointers
+      if (s.b_status == &s.bl) {
+        b_status = Brancher::cast(&bl);
+      } else {
+        b_status = Brancher::cast(s.b_status->prev());
+      }
+      if (s.b_commit == &s.bl) {
+        b_commit = Brancher::cast(&bl);
+      } else {
+        b_commit = Brancher::cast(s.b_commit->prev());
+      }
+    } catch (...) {
+      recover(s);
+      pc.c.source = nullptr;
+      mm.release(ssd.data().sm);
+      throw;
     }
   }
 
