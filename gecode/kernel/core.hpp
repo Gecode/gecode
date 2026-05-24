@@ -1903,7 +1903,7 @@ namespace Gecode {
     void updateNoIdx(Space* space, bool recover);
 
     /// Recover after failed clone construction
-    virtual void recover(Space& source);
+    void recover(Space& source);
 
     /// Test whether clone construction has not reached a disposable state
     bool inPrematureDestructionMode(void) const;
