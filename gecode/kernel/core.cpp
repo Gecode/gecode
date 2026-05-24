@@ -154,8 +154,6 @@ namespace Gecode {
 #endif
           d_fst = alloc<Actor*>(4);
         } catch (...) {
-          if ((a != nullptr) && !Support::marked(a))
-            (void) a->dispose(*this);
           throw;
         }
         d_cur = d_fst;
@@ -170,8 +168,6 @@ namespace Gecode {
 #endif
           d_fst = realloc<Actor*>(d_fst,n,2*n);
         } catch (...) {
-          if ((a != nullptr) && !Support::marked(a))
-            (void) a->dispose(*this);
           throw;
         }
         d_cur = d_fst+n;
