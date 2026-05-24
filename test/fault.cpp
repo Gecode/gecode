@@ -150,7 +150,8 @@ namespace Test { namespace Fault {
     virtual Actor* copy(Space& home) {
       return new (home) NoticeDisposeActor(home);
     }
-    virtual size_t dispose(Space&) {
+    virtual size_t dispose(Space& home) {
+      home.ignore(*this,AP_DISPOSE);
       disposed++;
       return sizeof(*this);
     }
@@ -160,8 +161,15 @@ namespace Test { namespace Fault {
 
   class NoticeDisposeSpace : public Space {
   public:
-    NoticeDisposeSpace(void) {
-      NoticeDisposeActor::post(*this);
+    NoticeDisposeSpace(int registered = 0, bool fail_next = false) {
+      for (int i=0; i<registered; i++)
+        NoticeDisposeActor::post(*this);
+      if (fail_next) {
+        Support::FailPoint::fail_after(Phase::SpaceDisposeNoticeArray,0);
+        NoticeDisposeActor::post(*this);
+      } else if (registered == 0) {
+        NoticeDisposeActor::post(*this);
+      }
     }
     NoticeDisposeSpace(NoticeDisposeSpace& s) : Space(s) {}
     virtual Space* copy(void) {
@@ -341,7 +349,7 @@ namespace Test { namespace Fault {
     return ok;
   }
 
-  bool dispose_notice_failure_disposes_actor(void) {
+  bool dispose_notice_initial_failure_does_not_dispose_actor(void) {
     NoticeDisposeActor::disposed = 0;
     Support::FailPoint::reset();
     Support::FailPoint::fail_after(Phase::SpaceDisposeNoticeArray,0);
@@ -351,7 +359,23 @@ namespace Test { namespace Fault {
       return false;
     } catch (const MemoryExhausted&) {
       Support::FailPoint::reset();
-      return NoticeDisposeActor::disposed == 1;
+      return NoticeDisposeActor::disposed == 0;
+    } catch (...) {
+      Support::FailPoint::reset();
+      return false;
+    }
+  }
+
+  bool dispose_notice_resize_failure_does_not_dispose_unregistered_actor(void) {
+    NoticeDisposeActor::disposed = 0;
+    Support::FailPoint::reset();
+    try {
+      NoticeDisposeSpace s(4,true);
+      Support::FailPoint::reset();
+      return false;
+    } catch (const MemoryExhausted&) {
+      Support::FailPoint::reset();
+      return NoticeDisposeActor::disposed == 4;
     } catch (...) {
       Support::FailPoint::reset();
       return false;
@@ -459,7 +483,16 @@ namespace Test { namespace Fault {
     DisposeNoticeArray(void)
       : Base("Fault::Dispose::NoticeArray") {}
     virtual bool run(void) {
-      return dispose_notice_failure_disposes_actor();
+      return dispose_notice_initial_failure_does_not_dispose_actor();
+    }
+  };
+
+  class DisposeNoticeArrayResize : public Base {
+  public:
+    DisposeNoticeArrayResize(void)
+      : Base("Fault::Dispose::NoticeArrayResize") {}
+    virtual bool run(void) {
+      return dispose_notice_resize_failure_does_not_dispose_unregistered_actor();
     }
   };
 
@@ -510,6 +543,7 @@ namespace Test { namespace Fault {
 
   CloneDisposalArray clone_disposal_array;
   DisposeNoticeArray dispose_notice_array;
+  DisposeNoticeArrayResize dispose_notice_array_resize;
   IntSetAllocation int_set_allocation;
   MiniModelDefaultNodes minimodel_default_nodes;
   MiniModelBoolMisc minimodel_bool_misc;
