@@ -822,7 +822,7 @@ namespace Gecode {
                                           (Support::ptrjoin(a->prev(),m)));
           }
         }
-        catch (const std::exception&) {
+        catch (...) {
           c->recover(*this);
           c->d_fst = c->d_cur = c->d_lst = nullptr;
           delete c;
