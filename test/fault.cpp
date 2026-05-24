@@ -216,6 +216,22 @@ namespace Test { namespace Fault {
     }
   };
 
+  class DerivedUpdateSpace : public Space {
+  public:
+    IntVarArray x;
+    DerivedUpdateSpace(void) : x(*this,2,0,1) {
+      rel(*this,x[0] != x[1]);
+      branch(*this,x,INT_VAR_SIZE_MIN(),INT_VAL_MIN());
+    }
+    DerivedUpdateSpace(DerivedUpdateSpace& s) : Space(s) {
+      x.update(*this,s.x);
+      Support::FailPoint::check(Phase::DerivedSpaceCopy);
+    }
+    virtual Space* copy(void) {
+      return new DerivedUpdateSpace(*this);
+    }
+  };
+
   class FaultLocalObject : public LocalObject {
   public:
     int value;
@@ -365,6 +381,52 @@ namespace Test { namespace Fault {
     bool ok = (sol != nullptr);
     delete sol;
     return ok;
+  }
+
+  bool clone_after_failed_derived_update(void) {
+    FaultScope scope;
+    DerivedUpdateSpace s;
+    if (s.status() == SS_FAILED)
+      return false;
+    Support::FailPoint::reset();
+    Support::FailPoint::fail_after(Phase::DerivedSpaceCopy,0);
+    try {
+      Space* c = s.clone();
+      delete c;
+      Support::FailPoint::reset();
+      return false;
+    } catch (const MemoryExhausted&) {
+      Support::FailPoint::reset();
+    } catch (...) {
+      Support::FailPoint::reset();
+      return false;
+    }
+    Space* c = s.clone();
+    delete c;
+    DerivedUpdateSpace* root = static_cast<DerivedUpdateSpace*>(s.clone());
+    DFS<DerivedUpdateSpace> e(root);
+    Space* sol = e.next();
+    bool ok = (sol != nullptr);
+    delete sol;
+    return ok;
+  }
+
+  bool heap_allocation_failpoint_throws(void) {
+    FaultScope scope;
+    Support::FailPoint::reset();
+    Support::FailPoint::fail_after(Phase::Heap,0);
+    try {
+      int* x = heap.alloc<int>(1);
+      heap.free<int>(x,1);
+      Support::FailPoint::reset();
+      return false;
+    } catch (const MemoryExhausted&) {
+      Support::FailPoint::reset();
+      return true;
+    } catch (...) {
+      Support::FailPoint::reset();
+      return false;
+    }
   }
 
   bool dispose_notice_initial_failure_does_not_dispose_actor(void) {
@@ -528,6 +590,24 @@ namespace Test { namespace Fault {
     }
   };
 
+  class CloneDerivedSpaceUpdate : public Base {
+  public:
+    CloneDerivedSpaceUpdate(void)
+      : Base("Fault::Clone::DerivedSpaceUpdate") {}
+    virtual bool run(void) {
+      return clone_after_failed_derived_update();
+    }
+  };
+
+  class HeapAllocation : public Base {
+  public:
+    HeapAllocation(void)
+      : Base("Fault::Heap::Allocation") {}
+    virtual bool run(void) {
+      return heap_allocation_failpoint_throws();
+    }
+  };
+
   class ClonePropagatorCopy : public Base {
   public:
     ClonePropagatorCopy(void)
@@ -565,8 +645,10 @@ namespace Test { namespace Fault {
   };
 
   CloneDisposalArray clone_disposal_array;
+  CloneDerivedSpaceUpdate clone_derived_space_update;
   DisposeNoticeArray dispose_notice_array;
   DisposeNoticeArrayResize dispose_notice_array_resize;
+  HeapAllocation heap_allocation;
   IntSetAllocation int_set_allocation;
   MiniModelDefaultNodes minimodel_default_nodes;
   MiniModelBoolMisc minimodel_bool_misc;
