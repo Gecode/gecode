@@ -389,8 +389,17 @@ namespace Gecode {
     return ((n != nullptr) && (n->t == NT_NONLIN)) ? n->sum.ne : nullptr;
   }
 
-  LinIntExpr::LinIntExpr(void) :
+  LinIntExpr::LinIntExpr(NoNode) :
     n(nullptr) {}
+
+  LinIntExpr::LinIntExpr(void) :
+    n(new Node) {
+    n->n_int = n->n_bool = 0;
+    n->t = NT_CONST;
+    n->l = n->r = nullptr;
+    n->a = 0;
+    n->c = 0;
+  }
 
   LinIntExpr::LinIntExpr(int c) :
     n(new Node) {
