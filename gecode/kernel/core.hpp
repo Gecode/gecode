@@ -1873,6 +1873,8 @@ namespace Gecode {
         VarImpBase* vars_noidx;
         /// Linked list of local objects
         LocalObject* local;
+        /// Source space during clone construction
+        Space* source;
       } c;
     } pc;
     /// Put propagator \a p into right queue
