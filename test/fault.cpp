@@ -273,6 +273,29 @@ namespace Test { namespace Fault {
     }
   };
 
+  class BranchPostSpace : public Space {
+  public:
+    IntVarArray x;
+    BranchPostSpace(void) : x(*this,4,0,3) {
+      rel(*this,x[0] != x[1]);
+    }
+    BranchPostSpace(BranchPostSpace& s) : Space(s) {
+      x.update(*this,s.x);
+    }
+    virtual Space* copy(void) {
+      return new BranchPostSpace(*this);
+    }
+    void post_action_branch(void) {
+      branch(*this,x,INT_VAR_ACTION_SIZE_MAX(),INT_VAL_MIN());
+    }
+    void post_chb_branch(void) {
+      branch(*this,x,INT_VAR_CHB_SIZE_MAX(),INT_VAL_MIN());
+    }
+    void post_plain_branch(void) {
+      branch(*this,x,INT_VAR_SIZE_MIN(),INT_VAL_MIN());
+    }
+  };
+
   bool clone_after_failed_copy(Phase p) {
     FaultScope scope;
     CloneCopySpace s;
@@ -383,6 +406,17 @@ namespace Test { namespace Fault {
     return ok;
   }
 
+  bool derived_update_space_is_usable(DerivedUpdateSpace& s) {
+    Space* c = s.clone();
+    delete c;
+    DerivedUpdateSpace* root = static_cast<DerivedUpdateSpace*>(s.clone());
+    DFS<DerivedUpdateSpace> e(root);
+    Space* sol = e.next();
+    bool ok = (sol != nullptr);
+    delete sol;
+    return ok;
+  }
+
   bool clone_after_failed_derived_update(void) {
     FaultScope scope;
     DerivedUpdateSpace s;
@@ -401,14 +435,7 @@ namespace Test { namespace Fault {
       Support::FailPoint::reset();
       return false;
     }
-    Space* c = s.clone();
-    delete c;
-    DerivedUpdateSpace* root = static_cast<DerivedUpdateSpace*>(s.clone());
-    DFS<DerivedUpdateSpace> e(root);
-    Space* sol = e.next();
-    bool ok = (sol != nullptr);
-    delete sol;
-    return ok;
+    return derived_update_space_is_usable(s);
   }
 
   bool heap_allocation_failpoint_throws(void) {
@@ -428,6 +455,215 @@ namespace Test { namespace Fault {
       return false;
     }
   }
+
+  bool heap_reallocation_failpoint_throws(void) {
+    FaultScope scope;
+    int* x = heap.alloc<int>(1);
+    Support::FailPoint::reset();
+    Support::FailPoint::fail_after(Phase::Heap,0);
+    try {
+      int* y = heap.realloc<int>(x,1,2);
+      Support::FailPoint::reset();
+      heap.free<int>(y,2);
+      return false;
+    } catch (const MemoryExhausted&) {
+      Support::FailPoint::reset();
+      heap.free<int>(x,1);
+      return true;
+    } catch (...) {
+      Support::FailPoint::reset();
+      heap.free<int>(x,1);
+      return false;
+    }
+  }
+
+  bool clone_heap_failures_recover_source(void) {
+    FaultScope scope;
+    DerivedUpdateSpace s;
+    if (s.status() == SS_FAILED)
+      return false;
+    bool saw_failure = false;
+    for (unsigned long long budget = 0; budget < 32; budget++) {
+      Support::FailPoint::reset();
+      Support::FailPoint::fail_after(Phase::Heap,budget);
+      try {
+        Space* c = s.clone();
+        unsigned long long checks = Support::FailPoint::count();
+        Support::FailPoint::reset();
+        delete c;
+        return saw_failure && (checks > 0) && derived_update_space_is_usable(s);
+      } catch (const MemoryExhausted&) {
+        Support::FailPoint::reset();
+        saw_failure = true;
+        if (!derived_update_space_is_usable(s))
+          return false;
+      } catch (...) {
+        Support::FailPoint::reset();
+        return false;
+      }
+    }
+    return false;
+  }
+
+  bool branch_post_heap_failures_are_recoverable(bool chb) {
+    FaultScope scope;
+    bool saw_failure = false;
+    for (unsigned long long budget = 0; budget < 32; budget++) {
+      BranchPostSpace s;
+      if (s.status() == SS_FAILED)
+        return false;
+      Support::FailPoint::reset();
+      Support::FailPoint::fail_after(Phase::Heap,budget);
+      try {
+        if (chb)
+          s.post_chb_branch();
+        else
+          s.post_action_branch();
+        unsigned long long checks = Support::FailPoint::count();
+        Support::FailPoint::reset();
+        BranchPostSpace* root = static_cast<BranchPostSpace*>(s.clone());
+        DFS<BranchPostSpace> e(root);
+        Space* sol = e.next();
+        bool ok = (sol != nullptr);
+        delete sol;
+        return saw_failure && (checks > 0) && ok;
+      } catch (const MemoryExhausted&) {
+        Support::FailPoint::reset();
+        saw_failure = true;
+        s.post_plain_branch();
+        BranchPostSpace* root = static_cast<BranchPostSpace*>(s.clone());
+        DFS<BranchPostSpace> e(root);
+        Space* sol = e.next();
+        bool ok = (sol != nullptr);
+        delete sol;
+        if (!ok)
+          return false;
+      } catch (...) {
+        Support::FailPoint::reset();
+        return false;
+      }
+    }
+    return false;
+  }
+
+  bool int_set_heap_failures_release_object(void) {
+    FaultScope scope;
+    int ranges[3][2] = {{0, 0}, {2, 2}, {4, 4}};
+    bool saw_failure = false;
+    for (unsigned long long budget = 0; budget < 8; budget++) {
+      IntSet::fault_reset_allocations();
+      Support::FailPoint::reset();
+      Support::FailPoint::fail_after(Phase::Heap,budget);
+      try {
+        unsigned long long checks;
+        {
+          IntSet s(ranges,3);
+          checks = Support::FailPoint::count();
+        }
+        Support::FailPoint::reset();
+        return saw_failure && (checks > 0) &&
+          (IntSet::fault_live_allocations() == 0);
+      } catch (const MemoryExhausted&) {
+        Support::FailPoint::reset();
+        saw_failure = true;
+        if (IntSet::fault_live_allocations() != 0)
+          return false;
+      } catch (...) {
+        Support::FailPoint::reset();
+        return false;
+      }
+    }
+    return false;
+  }
+
+  bool minimodel_heap_failures_release_nodes(void) {
+    FaultScope scope;
+    bool saw_failure = false;
+    for (unsigned long long budget = 0; budget < 32; budget++) {
+      LinIntExpr::fault_reset_allocations();
+      Support::FailPoint::reset();
+      try {
+        MiniModelSpace home;
+        IntVarArgs x(home,4,0,3);
+        Support::FailPoint::fail_after(Phase::Heap,budget);
+        {
+          LinIntExpr e = min(x);
+          (void) e;
+        }
+        unsigned long long checks = Support::FailPoint::count();
+        Support::FailPoint::reset();
+        return saw_failure && (checks > 0) &&
+          (LinIntExpr::fault_live_allocations() == 0);
+      } catch (const MemoryExhausted&) {
+        Support::FailPoint::reset();
+        saw_failure = true;
+        if (LinIntExpr::fault_live_allocations() != 0)
+          return false;
+      } catch (...) {
+        Support::FailPoint::reset();
+        return false;
+      }
+    }
+    return false;
+  }
+
+#ifdef GECODE_HAS_FLOAT_VARS
+  bool minimodel_float_heap_failures_are_recoverable(void) {
+    FaultScope scope;
+    bool saw_failure = false;
+    for (unsigned long long budget = 0; budget < 32; budget++) {
+      Support::FailPoint::reset();
+      try {
+        MiniModelSpace home;
+        FloatVarArgs x(home,4,0.0,3.0);
+        Support::FailPoint::fail_after(Phase::Heap,budget);
+        {
+          LinFloatExpr e = min(x);
+          (void) e;
+        }
+        unsigned long long checks = Support::FailPoint::count();
+        Support::FailPoint::reset();
+        return saw_failure && (checks > 0);
+      } catch (const MemoryExhausted&) {
+        Support::FailPoint::reset();
+        saw_failure = true;
+      } catch (...) {
+        Support::FailPoint::reset();
+        return false;
+      }
+    }
+    return false;
+  }
+#endif
+
+#ifdef GECODE_HAS_SET_VARS
+  bool minimodel_set_heap_failures_are_recoverable(void) {
+    FaultScope scope;
+    bool saw_failure = false;
+    for (unsigned long long budget = 0; budget < 32; budget++) {
+      Support::FailPoint::reset();
+      try {
+        MiniModelSpace home;
+        SetVarArgs x(home,4,IntSet::empty,1,1);
+        Support::FailPoint::fail_after(Phase::Heap,budget);
+        {
+          SetExpr e = setunion(x);
+          (void) e;
+        }
+        unsigned long long checks = Support::FailPoint::count();
+        Support::FailPoint::reset();
+        return saw_failure && (checks > 0);
+      } catch (const MemoryExhausted&) {
+        Support::FailPoint::reset();
+        saw_failure = true;
+      } catch (...) {
+        Support::FailPoint::reset();
+        return false;
+      }
+    }
+    return false;
+  }
+#endif
 
   bool dispose_notice_initial_failure_does_not_dispose_actor(void) {
     FaultScope scope;
@@ -608,6 +844,82 @@ namespace Test { namespace Fault {
     }
   };
 
+  class HeapReallocation : public Base {
+  public:
+    HeapReallocation(void)
+      : Base("Fault::Heap::Reallocation") {}
+    virtual bool run(void) {
+      return heap_reallocation_failpoint_throws();
+    }
+  };
+
+  class CloneHeapFailures : public Base {
+  public:
+    CloneHeapFailures(void)
+      : Base("Fault::Clone::HeapFailures") {}
+    virtual bool run(void) {
+      return clone_heap_failures_recover_source();
+    }
+  };
+
+  class BranchActionHeapFailures : public Base {
+  public:
+    BranchActionHeapFailures(void)
+      : Base("Fault::Branch::ActionHeapFailures") {}
+    virtual bool run(void) {
+      return branch_post_heap_failures_are_recoverable(false);
+    }
+  };
+
+  class BranchChbHeapFailures : public Base {
+  public:
+    BranchChbHeapFailures(void)
+      : Base("Fault::Branch::ChbHeapFailures") {}
+    virtual bool run(void) {
+      return branch_post_heap_failures_are_recoverable(true);
+    }
+  };
+
+  class IntSetHeapFailures : public Base {
+  public:
+    IntSetHeapFailures(void)
+      : Base("Fault::IntSet::HeapFailures") {}
+    virtual bool run(void) {
+      return int_set_heap_failures_release_object();
+    }
+  };
+
+  class MiniModelHeapFailures : public Base {
+  public:
+    MiniModelHeapFailures(void)
+      : Base("Fault::MiniModel::HeapFailures") {}
+    virtual bool run(void) {
+      return minimodel_heap_failures_release_nodes();
+    }
+  };
+
+#ifdef GECODE_HAS_FLOAT_VARS
+  class MiniModelFloatHeapFailures : public Base {
+  public:
+    MiniModelFloatHeapFailures(void)
+      : Base("Fault::MiniModel::FloatHeapFailures") {}
+    virtual bool run(void) {
+      return minimodel_float_heap_failures_are_recoverable();
+    }
+  };
+#endif
+
+#ifdef GECODE_HAS_SET_VARS
+  class MiniModelSetHeapFailures : public Base {
+  public:
+    MiniModelSetHeapFailures(void)
+      : Base("Fault::MiniModel::SetHeapFailures") {}
+    virtual bool run(void) {
+      return minimodel_set_heap_failures_are_recoverable();
+    }
+  };
+#endif
+
   class ClonePropagatorCopy : public Base {
   public:
     ClonePropagatorCopy(void)
@@ -644,14 +956,26 @@ namespace Test { namespace Fault {
     }
   };
 
+  BranchActionHeapFailures branch_action_heap_failures;
+  BranchChbHeapFailures branch_chb_heap_failures;
   CloneDisposalArray clone_disposal_array;
   CloneDerivedSpaceUpdate clone_derived_space_update;
+  CloneHeapFailures clone_heap_failures;
   DisposeNoticeArray dispose_notice_array;
   DisposeNoticeArrayResize dispose_notice_array_resize;
   HeapAllocation heap_allocation;
+  HeapReallocation heap_reallocation;
   IntSetAllocation int_set_allocation;
+  IntSetHeapFailures int_set_heap_failures;
   MiniModelDefaultNodes minimodel_default_nodes;
   MiniModelBoolMisc minimodel_bool_misc;
+  MiniModelHeapFailures minimodel_heap_failures;
+#ifdef GECODE_HAS_FLOAT_VARS
+  MiniModelFloatHeapFailures minimodel_float_heap_failures;
+#endif
+#ifdef GECODE_HAS_SET_VARS
+  MiniModelSetHeapFailures minimodel_set_heap_failures;
+#endif
   ClonePropagatorCopy clone_propagator_copy;
   CloneBrancherCopy clone_brancher_copy;
   CloneDerivedSpaceCopy clone_derived_space_copy;
