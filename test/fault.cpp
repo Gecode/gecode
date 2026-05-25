@@ -772,6 +772,26 @@ namespace Test { namespace Fault {
     }
   }
 
+  bool minimodel_heap_failure_releases_bool_misc(void) {
+    FaultScope scope;
+    FaultBoolMisc::disposed = 0;
+    FaultBoolMisc* m = new FaultBoolMisc;
+    Support::FailPoint::reset();
+    Support::FailPoint::fail_after(Phase::Heap,0);
+    try {
+      BoolExpr b(m);
+      (void) b;
+      Support::FailPoint::reset();
+      return false;
+    } catch (const MemoryExhausted&) {
+      Support::FailPoint::reset();
+      return FaultBoolMisc::disposed == 1;
+    } catch (...) {
+      Support::FailPoint::reset();
+      return false;
+    }
+  }
+
   class MiniModelDefaultNodes : public Base {
   public:
     MiniModelDefaultNodes(void)
@@ -898,6 +918,15 @@ namespace Test { namespace Fault {
     }
   };
 
+  class MiniModelBoolMiscHeapFailure : public Base {
+  public:
+    MiniModelBoolMiscHeapFailure(void)
+      : Base("Fault::MiniModel::BoolMiscHeapFailure") {}
+    virtual bool run(void) {
+      return minimodel_heap_failure_releases_bool_misc();
+    }
+  };
+
 #ifdef GECODE_HAS_FLOAT_VARS
   class MiniModelFloatHeapFailures : public Base {
   public:
@@ -969,6 +998,7 @@ namespace Test { namespace Fault {
   IntSetHeapFailures int_set_heap_failures;
   MiniModelDefaultNodes minimodel_default_nodes;
   MiniModelBoolMisc minimodel_bool_misc;
+  MiniModelBoolMiscHeapFailure minimodel_bool_misc_heap_failure;
   MiniModelHeapFailures minimodel_heap_failures;
 #ifdef GECODE_HAS_FLOAT_VARS
   MiniModelFloatHeapFailures minimodel_float_heap_failures;
