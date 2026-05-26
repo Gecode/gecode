@@ -80,6 +80,13 @@ namespace Test {
     MT_FIRST //< Positive match at beginning
   };
 
+  /// Tags for test selection
+  enum TestTag {
+    TAG_CHECK  = 1U << 0, ///< Basic integrity tests
+    TAG_NORMAL = 1U << 1, ///< Normal test suite
+    TAG_SWEEP  = 1U << 2  ///< Really heavy sweep tests
+  };
+
   /// Commandline options
   class Options {
   public:
@@ -101,10 +108,18 @@ namespace Test {
     bool log;
     /// Patterns to test against
     std::vector<std::pair<MatchType, const char*> > testpat;
+    /// Tags to test against
+    unsigned int testtags;
+    /// Whether test tags have been requested
+    bool use_testtags;
     /// Name of first test to start with
     const char* start_from;
     /// Whether to list all tests
     bool list;
+    /// Whether to list known tags
+    bool list_tags;
+    /// Whether to include tags when listing tests
+    bool list_with_tags;
 
     /// Initialize options with defaults
     Options(void);
@@ -113,6 +128,8 @@ namespace Test {
 
     /// True iff a test name should be executed according to the patterns. With no patterns, always true.
     bool is_test_name_matching(const std::string& test_name) const;
+    /// True iff test tags should be executed according to the requested tags. With no tag request, always true.
+    bool is_test_tags_matching(unsigned int tags) const;
   };
 
   /// The options
@@ -123,6 +140,8 @@ namespace Test {
   private:
     /// Name of the test
     std::string _name;
+    /// Tags assigned to the test
+    unsigned int _tags;
     /// Next test
     Base* _next;
     /// All tests
@@ -132,10 +151,20 @@ namespace Test {
   public:
     /// Create and register test with name \a s
     Base(std::string  s);
+    /// Create and register test with name \a s and tags \a t
+    Base(std::string s, unsigned int t);
     /// Sort tests alphabetically
     static void sort(void);
     /// Return name of test
     const std::string& name(void) const;
+    /// Return tags for test
+    unsigned int tags(void) const;
+    /// Add tags \a t to test
+    void add_tags(unsigned int t);
+    /// Remove tags \a t from test
+    void remove_tags(unsigned int t);
+    /// Return default tags for test named \a s
+    static unsigned int default_tags(const std::string& s);
     /// Return all tests
     static Base* tests(void);
     /// Return next test

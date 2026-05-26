@@ -40,7 +40,8 @@ namespace Test {
   inline
   Options::Options(void)
     : threads(1), seed(0), iter(defiter), fixprob(deffixprob),
-      stop(true), log(false), testpat(), start_from(nullptr), list(false)
+      stop(true), log(false), testpat(), testtags(0), use_testtags(false),
+      start_from(nullptr), list(false), list_tags(false), list_with_tags(false)
   {}
 
   /*
@@ -50,6 +51,18 @@ namespace Test {
   inline const std::string&
   Base::name(void) const {
     return _name;
+  }
+  inline unsigned int
+  Base::tags(void) const {
+    return _tags;
+  }
+  inline void
+  Base::add_tags(unsigned int t) {
+    _tags |= t;
+  }
+  inline void
+  Base::remove_tags(unsigned int t) {
+    _tags &= ~t;
   }
   inline Base*
   Base::tests(void) {
