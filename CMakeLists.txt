@@ -1505,16 +1505,14 @@ if(BUILD_TESTING)
       FIXTURES_SETUP "${GECODE_TEST_BUILD_FIXTURES}"
       RESOURCE_LOCK gecode-test-build)
     add_test(NAME test COMMAND gecode-test ${GECODE_CHECK_ARGS})
-    add_test(NAME test-normal COMMAND gecode-test -tag normal)
-    add_test(NAME test-sweep COMMAND gecode-test -tag sweep)
-    set_tests_properties(test test-normal test-sweep PROPERTIES
+    set_tests_properties(test PROPERTIES
       FIXTURES_REQUIRED gecode-test-built)
     if(GECODE_ENABLE_FLATZINC)
       set(GECODE_TEST_BLACKBOX_ENV
         "GECODE_TEST_BLACKBOX_EXEC=$<TARGET_FILE:gecode-test-blackbox-exec>"
         "GECODE_TEST_BLACKBOX_DLL=$<TARGET_FILE:gecode-test-blackbox-dll>"
         "GECODE_TEST_BLACKBOX_LOG=${GECODE_TEST_BLACKBOX_LOG}")
-      set_tests_properties(test test-normal test-sweep PROPERTIES
+      set_tests_properties(test PROPERTIES
         ENVIRONMENT "${GECODE_TEST_BLACKBOX_ENV}")
     endif()
     set(GECODE_CHECK_DEPENDS gecode-test)
