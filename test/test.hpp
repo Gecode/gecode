@@ -34,13 +34,49 @@
 namespace Test {
 
   /*
+   * Test tags
+   *
+   */
+  inline
+  TestTags::TestTags(unsigned int m)
+    : _mask(m) {}
+  inline
+  TestTags::TestTags(void)
+    : _mask(0) {}
+  inline
+  TestTags::TestTags(TestTag t)
+    : _mask(static_cast<unsigned int>(t)) {}
+  inline TestTags
+  TestTags::all(void) {
+    return TestTags(static_cast<unsigned int>(TestTag::check) |
+                    static_cast<unsigned int>(TestTag::normal) |
+                    static_cast<unsigned int>(TestTag::sweep));
+  }
+  inline bool
+  TestTags::empty(void) const {
+    return _mask == 0;
+  }
+  inline bool
+  TestTags::overlaps(TestTags t) const {
+    return (_mask & t._mask) != 0;
+  }
+  inline void
+  TestTags::add(TestTags t) {
+    _mask |= t._mask;
+  }
+  inline void
+  TestTags::remove(TestTags t) {
+    _mask &= ~t._mask;
+  }
+
+  /*
    * Commandline options
    *
    */
   inline
   Options::Options(void)
     : threads(1), seed(0), iter(defiter), fixprob(deffixprob),
-      stop(true), log(false), testpat(), testtags(0), use_testtags(false),
+      stop(true), log(false), testpat(), testtags(), use_testtags(false),
       start_from(nullptr), list(false), list_tags(false), list_with_tags(false)
   {}
 
@@ -52,17 +88,17 @@ namespace Test {
   Base::name(void) const {
     return _name;
   }
-  inline unsigned int
+  inline TestTags
   Base::tags(void) const {
     return _tags;
   }
   inline void
-  Base::add_tags(unsigned int t) {
-    _tags |= t;
+  Base::add_tags(TestTags t) {
+    _tags.add(t);
   }
   inline void
-  Base::remove_tags(unsigned int t) {
-    _tags &= ~t;
+  Base::remove_tags(TestTags t) {
+    _tags.remove(t);
   }
   inline Base*
   Base::tests(void) {

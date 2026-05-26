@@ -61,10 +61,10 @@ namespace Test {
   };
 
   /// Masks of tags supported by the test runner
-  static const unsigned int tag_masks[] = {
-    TAG_CHECK,
-    TAG_NORMAL,
-    TAG_SWEEP
+  static const TestTag tag_values[] = {
+    TestTag::check,
+    TestTag::normal,
+    TestTag::sweep
   };
 
   /// Patterns that reproduce the historic make check selection
@@ -110,15 +110,15 @@ namespace Test {
     return false;
   }
 
-  /// Return the tag mask for \a name, or zero if not known
-  static unsigned int
-  tag_mask(const char* name) {
+  /// Return the tag set for \a name, or an empty set if not known
+  static TestTags
+  tag_set(const char* name) {
     for (int i=0; tag_names[i] != nullptr; i++)
       if (!strcmp(name, tag_names[i]))
-        return tag_masks[i];
+        return TestTags(tag_values[i]);
     if (!strcmp(name, "all"))
-      return TAG_CHECK | TAG_NORMAL | TAG_SWEEP;
-    return 0;
+      return TestTags::all();
+    return TestTags();
   }
 
   /// Print all tag names
@@ -130,10 +130,10 @@ namespace Test {
 
   /// Convert \a tags to a comma-separated string
   static std::string
-  tags_to_string(unsigned int tags) {
+  tags_to_string(TestTags tags) {
     std::string s;
     for (int i=0; tag_names[i] != nullptr; i++) {
-      if ((tags & tag_masks[i]) != 0) {
+      if (tags.overlaps(TestTags(tag_values[i]))) {
         if (!s.empty())
           s += ",";
         s += tag_names[i];
@@ -149,7 +149,7 @@ namespace Test {
   Base::Base(std::string s)
     : Base(s, default_tags(s)) {}
 
-  Base::Base(std::string s, unsigned int t)
+  Base::Base(std::string s, TestTags t)
     : _name(std::move(s)), _tags(t), _next(_tests), _rand(Gecode::Support::RandomGenerator()) {
     _tests = this; _n_tests++;
   }
@@ -184,13 +184,13 @@ namespace Test {
 
   Base::~Base() = default;
 
-  unsigned int
+  TestTags
   Base::default_tags(const std::string& s) {
-    unsigned int tags = TAG_NORMAL;
+    TestTags tags(TestTag::normal);
     if (matches_any_pattern(s, sweep_patterns))
-      tags = TAG_SWEEP;
+      tags = TestTags(TestTag::sweep);
     if (matches_any_pattern(s, check_patterns))
-      tags |= TAG_CHECK;
+      tags.add(TestTag::check);
     return tags;
   }
 
@@ -289,13 +289,13 @@ namespace Test {
           testpat.emplace_back(MT_ANY, argv[i]);
       } else if (!strcmp(argv[i],"-tag")) {
         if (++i == argc) goto missing;
-        unsigned int tag = tag_mask(argv[i]);
-        if (tag == 0) {
+        TestTags tag = tag_set(argv[i]);
+        if (tag.empty()) {
           std::cerr << "Erroneous argument (-tag)" << std::endl
                     << "  unknown tag: " << argv[i] << std::endl;
           exit(EXIT_FAILURE);
         }
-        testtags |= tag;
+        testtags.add(tag);
         use_testtags = true;
       } else if (!strcmp(argv[i],"-start")) {
         if (++i == argc) goto missing;
@@ -371,8 +371,8 @@ namespace Test {
     }
   }
 
-  bool Options::is_test_tags_matching(unsigned int tags) const {
-    return !use_testtags || ((tags & testtags) != 0);
+  bool Options::is_test_tags_matching(TestTags tags) const {
+    return !use_testtags || tags.overlaps(testtags);
   }
 
   /// Run a single test, returning true iff the test succeeded
