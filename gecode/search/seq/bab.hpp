@@ -83,7 +83,7 @@ namespace Gecode { namespace Search { namespace Seq {
       while (cur == nullptr) {
         if (path.empty())
           return nullptr;
-        cur = path.recompute(d,opt.a_d,*this,*best,mark,tracer);
+        cur = path.recompute(d,opt.a_d,*this,best,mark,tracer);
         if (cur != nullptr)
           break;
         path.next();
