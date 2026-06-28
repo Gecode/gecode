@@ -118,7 +118,7 @@ namespace Gecode { namespace Search { namespace Par {
     : so(so0), tostop(nullptr) {}
 
   forceinline void
-  PortfolioStop::share(volatile bool* ts) {
+  PortfolioStop::share(std::atomic<bool>* ts) {
     tostop = ts;
   }
 
@@ -174,10 +174,10 @@ namespace Gecode { namespace Search { namespace Par {
     if (s != nullptr) {
       b = solutions.add(s,slave);
       if (b)
-        tostop = true;
+        tostop.store(true, std::memory_order_release);
     } else if (slave->stopped()) {
-      if (!tostop)
-        slave_stop = true;
+      if (!tostop.load(std::memory_order_acquire))
+        slave_stop.store(true, std::memory_order_release);
     } else {
       // Move slave to inactive, as it has exhausted its engine
       unsigned int i=0;
@@ -186,7 +186,7 @@ namespace Gecode { namespace Search { namespace Par {
       assert(i < n_active);
       assert(n_active > 0);
       std::swap(slaves[i],slaves[--n_active]);
-      tostop = true;
+      tostop.store(true, std::memory_order_release);
     }
     if (b) {
       if (--n_busy == 0)
@@ -211,12 +211,12 @@ namespace Gecode { namespace Search { namespace Par {
     m.acquire();
     if (solutions.empty()) {
       // Clear all
-      tostop = false;
-      slave_stop = false;
+      tostop.store(false, std::memory_order_release);
+      slave_stop.store(false, std::memory_order_release);
 
       // Invariant: all slaves are idle!
       assert(n_busy == 0);
-      assert(!tostop);
+      assert(!tostop.load(std::memory_order_acquire));
 
       if (n_active > 0) {
         // Run all active slaves
@@ -254,7 +254,7 @@ namespace Gecode { namespace Search { namespace Par {
   template<class Collect>
   bool
   PBS<Collect>::stopped(void) const {
-    return slave_stop;
+    return slave_stop.load(std::memory_order_acquire);
   }
 
   template<class Collect>

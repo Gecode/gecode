@@ -63,7 +63,7 @@ namespace Gecode { namespace Search {
    */
   bool
   NodeStop::stop(const Statistics& s, const Options&) {
-    return s.node > l;
+    return s.node > l.load(std::memory_order_acquire);
   }
 
 
@@ -73,7 +73,7 @@ namespace Gecode { namespace Search {
    */
   bool
   FailStop::stop(const Statistics& s, const Options&) {
-    return s.fail > l;
+    return s.fail > l.load(std::memory_order_acquire);
   }
 
 
@@ -83,7 +83,7 @@ namespace Gecode { namespace Search {
    */
   bool
   TimeStop::stop(const Statistics&, const Options&) {
-    return t.stop() > l;
+    return t.stop() > l.load(std::memory_order_acquire);
   }
 
   /*
@@ -92,7 +92,7 @@ namespace Gecode { namespace Search {
    */
   bool
   RestartStop::stop(const Statistics& s, const Options&) {
-    return s.restart > l;
+    return s.restart > l.load(std::memory_order_acquire);
   }
 
 }}
