@@ -154,7 +154,8 @@ namespace Gecode {
       IntSetObject* o = IntSetObject::allocate(n);
       unsigned int s = 0;
       for (int i=0; i<n; i++) {
-        s += static_cast<unsigned int>(r[i].max-r[i].min+1);
+        s += static_cast<unsigned int>(r[i].max) -
+          static_cast<unsigned int>(r[i].min) + 1U;
         o->r[i]=r[i];
       }
       o->size = s;
@@ -217,7 +218,7 @@ namespace Gecode {
     if (n <= m) {
       IntSetObject* o = IntSetObject::allocate(1);
       o->r[0].min = n; o->r[0].max = m;
-      o->size = static_cast<unsigned int>(m - n + 1);
+      o->size = static_cast<unsigned int>(m) - static_cast<unsigned int>(n) + 1U;
       object(o);
     }
   }

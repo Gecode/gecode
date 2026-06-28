@@ -164,7 +164,8 @@ namespace Gecode {
   IntSet::width(int i) const {
     assert(object() != nullptr);
     IntSetObject* o = static_cast<IntSetObject*>(object());
-    return static_cast<unsigned int>(o->r[i].max-o->r[i].min)+1;
+    return static_cast<unsigned int>(o->r[i].max) -
+      static_cast<unsigned int>(o->r[i].min) + 1U;
   }
 
   forceinline int
@@ -203,7 +204,8 @@ namespace Gecode {
   forceinline unsigned int
   IntSet::width(void) const {
     IntSetObject* o = static_cast<IntSetObject*>(object());
-    return (o == nullptr) ? 0U : static_cast<unsigned int>(max()-min()+1);
+    return (o == nullptr) ? 0U :
+      static_cast<unsigned int>(max()) - static_cast<unsigned int>(min()) + 1U;
   }
 
   forceinline bool
@@ -265,7 +267,8 @@ namespace Gecode {
   }
   forceinline unsigned int
   IntSetRanges::width(void) const {
-    return static_cast<unsigned int>(i->max - i->min) + 1;
+    return static_cast<unsigned int>(i->max) -
+      static_cast<unsigned int>(i->min) + 1U;
   }
 
   /*
@@ -311,4 +314,3 @@ namespace Gecode {
 }
 
 // STATISTICS: int-var
-

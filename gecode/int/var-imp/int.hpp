@@ -45,6 +45,12 @@ namespace Gecode { namespace Int {
 #define GECODE_INT_RL2PD(r) reinterpret_cast<ptrdiff_t>(r)
 #define GECODE_INT_PD2RL(p) reinterpret_cast<RangeList*>(p)
 
+  forceinline unsigned int
+  range_width(int min, int max) {
+    return static_cast<unsigned int>(max) -
+      static_cast<unsigned int>(min) + 1U;
+  }
+
   forceinline
   IntVarImp::RangeList::RangeList(void) {}
 
@@ -104,7 +110,7 @@ namespace Gecode { namespace Int {
   }
   forceinline unsigned int
   IntVarImp::RangeList::width(void) const {
-    return static_cast<unsigned int>(_max - _min) + 1;
+    return range_width(_min,_max);
   }
 
 
@@ -196,7 +202,7 @@ namespace Gecode { namespace Int {
       assert(n >= 2);
       RangeList* r = home.alloc<RangeList>(n);
       fst(r); lst(r+n-1);
-      unsigned int h = static_cast<unsigned int>(d.max()-d.min())+1;
+      unsigned int h = range_width(d.min(),d.max());
       h -= d.width(0);
       r[0].min(d.min(0)); r[0].max(d.max(0));
       r[0].prevnext(nullptr,&r[1]);
@@ -259,7 +265,8 @@ namespace Gecode { namespace Int {
     if (fst() == nullptr) {
       return (dom.min() == dom.max()) ? 0U : 1U;
     } else if (dom.min() == fst()->max()) {
-      return static_cast<unsigned int>(fst()->next(nullptr)->min()-dom.min());
+      return static_cast<unsigned int>(fst()->next(nullptr)->min()) -
+        static_cast<unsigned int>(dom.min());
     } else {
       return 1U;
     }
@@ -269,7 +276,8 @@ namespace Gecode { namespace Int {
     if (fst() == nullptr) {
       return (dom.min() == dom.max()) ? 0U : 1U;
     } else if (dom.max() == lst()->min()) {
-      return static_cast<unsigned int>(dom.max()-lst()->prev(nullptr)->max());
+      return static_cast<unsigned int>(dom.max()) -
+        static_cast<unsigned int>(lst()->prev(nullptr)->max());
     } else {
       return 1U;
     }
@@ -531,7 +539,7 @@ namespace Gecode { namespace Int {
       // Construct new rangelist
       RangeList*   f = new (home) RangeList(min0,max0,nullptr,nullptr);
       RangeList*   l = f;
-      unsigned int s = static_cast<unsigned int>(max0-min0+1);
+      unsigned int s = range_width(min0,max0);
       do {
         RangeList* n = new (home) RangeList(ri.min(),ri.max(),l,nullptr);
         l->next(nullptr,n);
@@ -604,8 +612,9 @@ namespace Gecode { namespace Int {
             min0=ri.min(); max0=ri.max(); ++ri;
             if (max0 > end)
               break;
-            assert(h > static_cast<unsigned int>(max0-min0+1));
-            h -= max0-min0+1;
+            unsigned int w = range_width(min0,max0);
+            assert(h > w);
+            h -= w;
             RangeList* n = new (home) RangeList(min0,max0,p,r);
             p->next(r,n); r->prev(p,n);
             p=n;
@@ -642,8 +651,10 @@ namespace Gecode { namespace Int {
       // Unlink sentinel ranges
       fn->prev(&f,nullptr); ln->next(&l,nullptr);
       // How many values where removed at the bounds
-      unsigned int b = (static_cast<unsigned int>(fn->min()-dom.min()) +
-                        static_cast<unsigned int>(dom.max()-ln->max()));
+      unsigned int b = (static_cast<unsigned int>(fn->min()) -
+                        static_cast<unsigned int>(dom.min()) +
+                        static_cast<unsigned int>(dom.max()) -
+                        static_cast<unsigned int>(ln->max()));
       // Set new first and last ranges
       fst(fn); lst(ln);
 
@@ -747,7 +758,7 @@ namespace Gecode { namespace Int {
           break;
       } else if ((i_min > r->min()) && (i_max < r->max())) {
         // i is included in r: create new range before the current one
-        h += static_cast<unsigned int>(i_max - i_min) + 1;
+        h += range_width(i_min,i_max);
         RangeList* n = new (home) RangeList(r->min(),i_min-1,p,r);
         r->min(i_max+1);
         p->next(r,n); r->prev(p,n);
@@ -760,7 +771,7 @@ namespace Gecode { namespace Int {
       } else if (i_max < r->max()) {
         assert(i_min <= r->min());
         // i ends before r: adjust minimum of r
-        h += i_max-r->min()+1;
+        h += range_width(r->min(),i_max);
         r->min(i_max+1);
         if (!i())
           break;
@@ -770,7 +781,7 @@ namespace Gecode { namespace Int {
       } else {
         assert((i_max >= r->max()) && (r->min() < i_min));
         // r ends before i: adjust maximum of r
-        h += r->max()-i_min+1;
+        h += range_width(i_min,r->max());
         r->max(i_min-1);
         RangeList* n=r->next(p); p=r; r=n;
         if (r == &l)
@@ -807,8 +818,10 @@ namespace Gecode { namespace Int {
     // Unlink sentinel ranges
     fn->prev(&f,nullptr); ln->next(&l,nullptr);
     // How many values where removed at the bounds
-    b = (static_cast<unsigned int>(fn->min()-dom.min()) +
-         static_cast<unsigned int>(dom.max()-ln->max()));
+    b = (static_cast<unsigned int>(fn->min()) -
+         static_cast<unsigned int>(dom.min()) +
+         static_cast<unsigned int>(dom.max()) -
+         static_cast<unsigned int>(ln->max()));
     // Set new first and last ranges
     fst(fn); lst(ln);
 
@@ -961,8 +974,10 @@ namespace Gecode { namespace Int {
     // Unlink sentinel ranges
     fn->prev(&f,nullptr); ln->next(&l,nullptr);
     // How many values where removed at the bounds
-    unsigned int b = (static_cast<unsigned int>(fn->min()-dom.min()) +
-                      static_cast<unsigned int>(dom.max()-ln->max()));
+    unsigned int b = (static_cast<unsigned int>(fn->min()) -
+                      static_cast<unsigned int>(dom.min()) +
+                      static_cast<unsigned int>(dom.max()) -
+                      static_cast<unsigned int>(ln->max()));
     // Set new first and last ranges
     fst(fn); lst(ln);
 

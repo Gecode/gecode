@@ -44,6 +44,7 @@
  *
  */
 
+#include <atomic>
 #include <iostream>
 
 namespace Gecode {
@@ -1595,7 +1596,7 @@ namespace Gecode {
   class GECODE_VTABLE_EXPORT NoGoods {
   protected:
     /// Number of no-goods
-    unsigned long int n;
+    std::atomic<unsigned long int> n;
   public:
     /// Initialize
     NoGoods(void);
@@ -1915,11 +1916,11 @@ namespace Gecode {
     /// Last actor for forced disposal
     Actor** d_lst;
 
-    /// Used for default argument
+    /// Legacy unused status statistics
     GECODE_KERNEL_EXPORT static StatusStatistics unused_status;
-    /// Used for default argument
+    /// Legacy unused clone statistics
     GECODE_KERNEL_EXPORT static CloneStatistics unused_clone;
-    /// Used for default argument
+    /// Legacy unused commit statistics
     GECODE_KERNEL_EXPORT static CommitStatistics unused_commit;
 
     /**
@@ -2148,7 +2149,9 @@ namespace Gecode {
      * \ingroup TaskSearch
      */
     GECODE_KERNEL_EXPORT
-    SpaceStatus status(StatusStatistics& stat=unused_status);
+    SpaceStatus status(StatusStatistics& stat);
+    /// Query space status without collecting statistics
+    SpaceStatus status(void);
 
     /**
      * \brief Create new choice for current brancher
@@ -2211,7 +2214,10 @@ namespace Gecode {
      *
      * \ingroup TaskSearch
      */
-    Space* clone(CloneStatistics& stat=unused_clone) const;
+    /// Clone space without collecting statistics
+    Space* clone(void) const;
+    /// Clone space
+    Space* clone(CloneStatistics& stat) const;
 
     /**
      * \brief Commit choice \a c for alternative \a a
@@ -2247,8 +2253,11 @@ namespace Gecode {
      *
      * \ingroup TaskSearch
      */
+    /// Commit choice \a c for alternative \a a without collecting statistics
+    void commit(const Choice& c, unsigned int a);
+    /// Commit choice \a c for alternative \a a
     void commit(const Choice& c, unsigned int a,
-                CommitStatistics& stat=unused_commit);
+                CommitStatistics& stat);
     /**
      * \brief If possible, commit choice \a c for alternative \a a
      *
@@ -2281,8 +2290,11 @@ namespace Gecode {
      *
      * \ingroup TaskSearch
      */
+    /// If possible, commit choice \a c for alternative \a a without collecting statistics
+    void trycommit(const Choice& c, unsigned int a);
+    /// If possible, commit choice \a c for alternative \a a
     void trycommit(const Choice& c, unsigned int a,
-                   CommitStatistics& stat=unused_commit);
+                   CommitStatistics& stat);
     /**
      * \brief Create no-good literal for choice \a c and alternative \a a
      *
@@ -3103,11 +3115,11 @@ namespace Gecode {
     : n(0) {}
   forceinline unsigned long int
   NoGoods::ng(void) const {
-    return n;
+    return n.load(std::memory_order_acquire);
   }
   forceinline void
   NoGoods::ng(unsigned long int n0) {
-    n=n0;
+    n.store(n0, std::memory_order_release);
   }
   forceinline
   NoGoods::~NoGoods(void) {}
@@ -3275,6 +3287,18 @@ namespace Gecode {
     s.notice(a,p,duplicate);
   }
 
+  forceinline SpaceStatus
+  Space::status(void) {
+    StatusStatistics stat;
+    return status(stat);
+  }
+
+  forceinline Space*
+  Space::clone(void) const {
+    CloneStatistics stat;
+    return clone(stat);
+  }
+
   forceinline Space*
   Space::clone(CloneStatistics&) const {
     // Clone is only const for search engines. During cloning, several data
@@ -3284,8 +3308,20 @@ namespace Gecode {
   }
 
   forceinline void
+  Space::commit(const Choice& c, unsigned int a) {
+    CommitStatistics stat;
+    commit(c,a,stat);
+  }
+
+  forceinline void
   Space::commit(const Choice& c, unsigned int a, CommitStatistics&) {
     _commit(c,a);
+  }
+
+  forceinline void
+  Space::trycommit(const Choice& c, unsigned int a) {
+    CommitStatistics stat;
+    trycommit(c,a,stat);
   }
 
   forceinline void

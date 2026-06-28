@@ -45,6 +45,8 @@ namespace Gecode { namespace Search { namespace Seq {
     template<class,template<class>class> friend class ::Gecode::RBS;
     friend class ::Gecode::Search::Seq::RBS;
   private:
+    /// Mutex protecting restart stop state
+    mutable Support::Mutex m;
     /// The failure limit for the engine
     unsigned long long int l;
     /// The stop object for the meta engine
@@ -58,6 +60,14 @@ namespace Gecode { namespace Search { namespace Seq {
     RestartStop(Stop* s);
     /// Return true if meta engine must be stopped
     virtual bool stop(const Statistics& s, const Options& o);
+    /// Return current restart count
+    unsigned long int restarts(void) const;
+    /// Increment current restart count
+    void restart(void);
+    /// Add no-goods to meta statistics
+    void nogood(unsigned long int n);
+    /// Test master status with meta statistics
+    SpaceStatus status(Space* s);
     /// Set current limit for the engine to \a l fails
     void limit(const Statistics& s, unsigned long long int l);
     /// Update statistics

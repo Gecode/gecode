@@ -38,10 +38,12 @@ namespace Gecode { namespace Search { namespace Seq {
 
   bool
   RestartStop::stop(const Statistics& s, const Options& o) {
+    Support::Lock lock(m);
     // Stop if the fail limit for the engine says so
     if (s.fail > l) {
+      if (!e_stopped)
+        m_stat.restart++;
       e_stopped = true;
-      m_stat.restart++;
       return true;
     }
     // Stop if the stop object for the meta engine says so
@@ -60,10 +62,10 @@ namespace Gecode { namespace Search { namespace Seq {
       NoGoods& ng = e->nogoods();
       // Reset number of no-goods found
       ng.ng(0);
-      MetaInfo mi(stop->m_stat.restart,MetaInfo::RR_SOL,sslr,e->statistics().fail,last,ng);
+      MetaInfo mi(stop->restarts(),MetaInfo::RR_SOL,sslr,e->statistics().fail,last,ng);
       bool r = master->master(mi);
-      stop->m_stat.nogood += ng.ng();
-      if (master->status(stop->m_stat) == SS_FAILED) {
+      stop->nogood(ng.ng());
+      if (stop->status(master) == SS_FAILED) {
         stop->update(e->statistics());
         delete master;
         master = nullptr;
@@ -76,7 +78,7 @@ namespace Gecode { namespace Search { namespace Seq {
         complete = slave->slave(mi);
         e->reset(slave);
         sslr = 0;
-        stop->m_stat.restart++;
+        stop->restart();
       }
     }
     while (true) {
@@ -92,16 +94,16 @@ namespace Gecode { namespace Search { namespace Seq {
         // The engine must perform a true restart
         // The number of the restart has been incremented in the stop object
         if (!complete && !e->stopped())
-          stop->m_stat.restart++;
+          stop->restart();
         sslr = 0;
         NoGoods& ng = e->nogoods();
         ng.ng(0);
-        MetaInfo mi(stop->m_stat.restart,e->stopped() ? MetaInfo::RR_LIM : MetaInfo::RR_CMPL,sslr,e->statistics().fail,last,ng);
+        MetaInfo mi(stop->restarts(),e->stopped() ? MetaInfo::RR_LIM : MetaInfo::RR_CMPL,sslr,e->statistics().fail,last,ng);
         (void) master->master(mi);
-        stop->m_stat.nogood += ng.ng();
+        stop->nogood(ng.ng());
         unsigned long long int nl = ++(*co);
         stop->limit(e->statistics(),nl);
-        if (master->status(stop->m_stat) == SS_FAILED)
+        if (stop->status(master) == SS_FAILED)
           return nullptr;
         Space* slave = master;
         master = master->clone();
