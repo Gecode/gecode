@@ -353,7 +353,7 @@ namespace Gecode { namespace Search { namespace Par {
   template<class Tracer>
   forceinline Space*
   Path<Tracer>::recompute(unsigned int& d, unsigned int a_d, Worker& stat,
-                          const Space& best, int& mark,
+                          const Space* best, int& mark,
                           Tracer& t) {
     assert(!ds.empty());
     // Recompute space according to path
@@ -364,9 +364,9 @@ namespace Gecode { namespace Search { namespace Par {
       Space* s = ds.top().space();
       s->commit(*ds.top().choice(),ds.top().alt());
       assert(ds.entries()-1 == lc());
-      if (mark > ds.entries()-1) {
+      if ((best != nullptr) && (mark > ds.entries()-1)) {
         mark = ds.entries()-1;
-        s->constrain(best);
+        s->constrain(*best);
       }
       ds.top().space(nullptr);
       // Mark as reusable
@@ -383,9 +383,9 @@ namespace Gecode { namespace Search { namespace Par {
 
     Space* s = ds[l].space(); // Last clone
 
-    if (l < mark) {
+    if ((best != nullptr) && (l < mark)) {
       mark = l;
-      s->constrain(best);
+      s->constrain(*best);
       // The space on the stack could be failed now as an additional
       // constraint might have been added.
       if (s->status(stat) == SS_FAILED) {

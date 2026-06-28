@@ -331,7 +331,7 @@ namespace Gecode { namespace Search { namespace Par {
               }
             }
           } else if (!path.empty()) {
-            cur = path.recompute(d,engine().opt().a_d,*this,*best,mark,tracer);
+            cur = path.recompute(d,engine().opt().a_d,*this,best,mark,tracer);
             if (cur == nullptr)
               path.next();
             m.release();

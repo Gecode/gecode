@@ -143,7 +143,7 @@ namespace Gecode { namespace Search { namespace Par {
                      Tracer& t);
     /// Recompute space according to path
     Space* recompute(unsigned int& d, unsigned int a_d, Worker& s,
-                     const Space& best, int& mark,
+                     const Space* best, int& mark,
                      Tracer& t);
     /// Return number of entries on stack
     int entries(void) const;
