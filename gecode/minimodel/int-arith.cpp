@@ -53,16 +53,18 @@ namespace Gecode { namespace MiniModel {
       ANLE_ELMNT, ///< Element expression
       ANLE_ITE    ///< If-then-else expression
     } t;
-    /// Expressions
-    LinIntExpr* a;
+    /// Boolean expression argument (used in ite for example)
+    BoolExpr b;
     /// Size of variable array
     int n;
     /// Integer argument (used in nroot for example)
     int aInt;
-    /// Boolean expression argument (used in ite for example)
-    BoolExpr b;
+    /// Expressions
+    LinIntExpr* a;
     /// Allocate internal expression slots without public default nodes
     static LinIntExpr* allocate(int n) {
+      if (n == 0)
+        return nullptr;
       LinIntExpr* a = static_cast<LinIntExpr*>
         (heap.ralloc(sizeof(LinIntExpr)*n));
       for (int i=0; i<n; i++)
@@ -71,16 +73,17 @@ namespace Gecode { namespace MiniModel {
     }
     /// Constructor
     ArithNonLinIntExpr(ArithNonLinIntExprType t0, int n0)
-      : t(t0), a(allocate(n0)), n(n0) {}
+      : t(t0), b(), n(n0), aInt(0), a(allocate(n0)) {}
     /// Constructor
     ArithNonLinIntExpr(ArithNonLinIntExprType t0, int n0, int a0)
-      : t(t0), a(allocate(n0)), n(n0), aInt(a0) {}
+      : t(t0), b(), n(n0), aInt(a0), a(allocate(n0)) {}
     /// Constructor
     ArithNonLinIntExpr(ArithNonLinIntExprType t0, int n0, const BoolExpr& b0)
-      : t(t0), a(allocate(n0)), n(n0), b(b0) {}
+      : t(t0), b(b0), n(n0), aInt(0), a(allocate(n0)) {}
     /// Destructor
     ~ArithNonLinIntExpr(void) {
-      heap.free<LinIntExpr>(a,n);
+      if (a != nullptr)
+        heap.free<LinIntExpr>(a,n);
     }
     /// Post expression
     virtual IntVar post(Home home, IntVar* ret,
@@ -326,8 +329,8 @@ namespace Gecode {
       new ArithNonLinIntExpr(ArithNonLinIntExpr::ANLE_ABS,1);
     ArithNonLinIntExprGuard g(ae);
     ae->a[0] = e;
-    LinIntExpr r(ae);
     g.release();
+    LinIntExpr r(ae);
     return r;
   }
 
@@ -362,8 +365,8 @@ namespace Gecode {
     } else {
       ae->a[i++] = e1;
     }
-    LinIntExpr r(ae);
     g.release();
+    LinIntExpr r(ae);
     return r;
   }
 
@@ -398,8 +401,8 @@ namespace Gecode {
     } else {
       ae->a[i++] = e1;
     }
-    LinIntExpr r(ae);
     g.release();
+    LinIntExpr r(ae);
     return r;
   }
 
@@ -411,8 +414,8 @@ namespace Gecode {
     ArithNonLinIntExprGuard g(ae);
     for (int i=x.size(); i--;)
       ae->a[i] = x[i];
-    LinIntExpr r(ae);
     g.release();
+    LinIntExpr r(ae);
     return r;
   }
 
@@ -424,8 +427,8 @@ namespace Gecode {
     ArithNonLinIntExprGuard g(ae);
     for (int i=x.size(); i--;)
       ae->a[i] = x[i];
-    LinIntExpr r(ae);
     g.release();
+    LinIntExpr r(ae);
     return r;
   }
 
@@ -437,8 +440,8 @@ namespace Gecode {
     ArithNonLinIntExprGuard g(ae);
     ae->a[0] = e0;
     ae->a[1] = e1;
-    LinIntExpr r(ae);
     g.release();
+    LinIntExpr r(ae);
     return r;
   }
 
@@ -449,8 +452,8 @@ namespace Gecode {
       new ArithNonLinIntExpr(ArithNonLinIntExpr::ANLE_SQR,1);
     ArithNonLinIntExprGuard g(ae);
     ae->a[0] = e;
-    LinIntExpr r(ae);
     g.release();
+    LinIntExpr r(ae);
     return r;
   }
 
@@ -461,8 +464,8 @@ namespace Gecode {
       new ArithNonLinIntExpr(ArithNonLinIntExpr::ANLE_SQRT,1);
     ArithNonLinIntExprGuard g(ae);
     ae->a[0] = e;
-    LinIntExpr r(ae);
     g.release();
+    LinIntExpr r(ae);
     return r;
   }
 
@@ -473,8 +476,8 @@ namespace Gecode {
       new ArithNonLinIntExpr(ArithNonLinIntExpr::ANLE_POW,1,n);
     ArithNonLinIntExprGuard g(ae);
     ae->a[0] = e;
-    LinIntExpr r(ae);
     g.release();
+    LinIntExpr r(ae);
     return r;
   }
 
@@ -485,8 +488,8 @@ namespace Gecode {
       new ArithNonLinIntExpr(ArithNonLinIntExpr::ANLE_NROOT,1,n);
     ArithNonLinIntExprGuard g(ae);
     ae->a[0] = e;
-    LinIntExpr r(ae);
     g.release();
+    LinIntExpr r(ae);
     return r;
   }
 
@@ -498,8 +501,8 @@ namespace Gecode {
     ArithNonLinIntExprGuard g(ae);
     ae->a[0] = e0;
     ae->a[1] = e1;
-    LinIntExpr r(ae);
     g.release();
+    LinIntExpr r(ae);
     return r;
   }
 
@@ -511,8 +514,8 @@ namespace Gecode {
     ArithNonLinIntExprGuard g(ae);
     ae->a[0] = e0;
     ae->a[1] = e1;
-    LinIntExpr r(ae);
     g.release();
+    LinIntExpr r(ae);
     return r;
   }
 
@@ -525,8 +528,8 @@ namespace Gecode {
     for (int i=x.size(); i--;)
       ae->a[i] = x[i];
     ae->a[x.size()] = e;
-    LinIntExpr r(ae);
     g.release();
+    LinIntExpr r(ae);
     return r;
   }
 
@@ -539,8 +542,8 @@ namespace Gecode {
     for (int i=x.size(); i--;)
       ae->a[i] = x[i];
     ae->a[x.size()] = e;
-    LinIntExpr r(ae);
     g.release();
+    LinIntExpr r(ae);
     return r;
   }
 
@@ -552,8 +555,8 @@ namespace Gecode {
     ArithNonLinIntExprGuard g(ae);
     ae->a[0] = e0;
     ae->a[1] = e1;
-    LinIntExpr r(ae);
     g.release();
+    LinIntExpr r(ae);
     return r;
   }
 

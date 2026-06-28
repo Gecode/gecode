@@ -4016,26 +4016,37 @@ namespace Gecode {
       ActorLink** a_f = &c.advisors;
       // Advisors in to-space
       A* a_t = nullptr;
-      while (*a_f != nullptr) {
-        if (static_cast<A*>(*a_f)->disposed()) {
-          *a_f = (*a_f)->next();
-        } else {
-          // Run specific copying part
-          A* a = new (home) A(home,*static_cast<A*>(*a_f));
-          // Set propagator pointer
-          a->prev(p_t);
-          // Set forwarding pointer
-          (*a_f)->prev(a);
-          // Link
-          a->next(a_t);
-          a_t = a;
-          a_f = (*a_f)->next_ref();
-        }
-      }
-      advisors = a_t;
-      // Enter advisor link for reset
+      // Enter advisor link early so failed clone recovery can restore links.
       assert(p_f->u.advisors == nullptr);
       p_f->u.advisors = c.advisors;
+      try {
+        while (*a_f != nullptr) {
+          if (static_cast<A*>(*a_f)->disposed()) {
+            *a_f = (*a_f)->next();
+          } else {
+            // Run specific copying part
+            A* a = new (home) A(home,*static_cast<A*>(*a_f));
+            // Set propagator pointer
+            a->prev(p_t);
+            // Set forwarding pointer
+            (*a_f)->prev(a);
+            // Link
+            a->next(a_t);
+            a_t = a;
+            advisors = a_t;
+            a_f = (*a_f)->next_ref();
+          }
+        }
+      } catch (...) {
+        dispose(home);
+        advisors = nullptr;
+        for (ActorLink* a = c.advisors; a != nullptr; a = a->next())
+          if (!static_cast<A*>(a)->disposed())
+            a->prev(p_f);
+        p_f->u.advisors = nullptr;
+        throw;
+      }
+      advisors = a_t;
     } else {
       advisors = nullptr;
     }
