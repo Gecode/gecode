@@ -43,6 +43,7 @@
 #define GECODE_SEARCH_HH
 
 #include <initializer_list>
+#include <atomic>
 
 #include <gecode/kernel.hh>
 
@@ -832,7 +833,7 @@ namespace Gecode { namespace Search {
   class GECODE_SEARCH_EXPORT NodeStop : public Stop {
   protected:
     /// Node limit
-    unsigned long long int l;
+    std::atomic<unsigned long long int> l;
   public:
     /// Stop if node limit \a l is exceeded
     NodeStop(unsigned long long int l);
@@ -855,7 +856,7 @@ namespace Gecode { namespace Search {
   class GECODE_SEARCH_EXPORT FailStop : public Stop {
   protected:
     /// Failure limit
-    unsigned long long int l;
+    std::atomic<unsigned long long int> l;
   public:
     /// Stop if failure limit \a l is exceeded
     FailStop(unsigned long long int l);
@@ -876,7 +877,7 @@ namespace Gecode { namespace Search {
     /// Time when execution should stop
     Support::Timer t;
     /// Current limit in milliseconds
-    double l;
+    std::atomic<double> l;
   public:
     /// Stop if search exceeds \a l milliseconds (from creation of this object)
     TimeStop(double l);
@@ -897,7 +898,7 @@ namespace Gecode { namespace Search {
   class GECODE_SEARCH_EXPORT RestartStop : public Stop {
   protected:
     /// Restart limit
-    unsigned long long int l;
+    std::atomic<unsigned long long int> l;
   public:
     /// Stop if restart limit \a l is exceeded
     RestartStop(unsigned long long int l);

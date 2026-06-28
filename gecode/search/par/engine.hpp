@@ -55,7 +55,7 @@ namespace Gecode { namespace Search { namespace Par {
   template<class Tracer>
   forceinline bool
   Engine<Tracer>::stopped(void) const {
-    return has_stopped;
+    return has_stopped.load(std::memory_order_acquire);
   }
 
 
@@ -66,18 +66,18 @@ namespace Gecode { namespace Search { namespace Par {
   template<class Tracer>
   forceinline typename Engine<Tracer>::Cmd
   Engine<Tracer>::cmd(void) const {
-    return _cmd;
+    return _cmd.load(std::memory_order_acquire);
   }
   template<class Tracer>
   forceinline void
   Engine<Tracer>::block(void) {
-    _cmd = C_WAIT;
+    _cmd.store(C_WAIT, std::memory_order_release);
     Support::Thread::acquireGlobalMutex(&_m_wait);
   }
   template<class Tracer>
   forceinline void
   Engine<Tracer>::release(Cmd c) {
-    _cmd = c;
+    _cmd.store(c, std::memory_order_release);
     Support::Thread::releaseGlobalMutex(&_m_wait);
   }
   template<class Tracer>
@@ -114,13 +114,13 @@ namespace Gecode { namespace Search { namespace Par {
   template<class Tracer>
   forceinline
   Engine<Tracer>::Engine(const Options& o)
-    : _opt(o), solutions(heap) {
+    : _opt(o), _cmd(C_WAIT), solutions(heap) {
     // Initialize termination information
     _n_term_not_ack = workers();
     _n_not_terminated = workers();
     // Initialize search information
     n_busy = workers();
-    has_stopped = false;
+    has_stopped.store(false, std::memory_order_release);
     // Initialize reset information
     _n_reset_not_ack = workers();
   }
@@ -145,7 +145,8 @@ namespace Gecode { namespace Search { namespace Par {
   template<class Tracer>
   forceinline bool
   Engine<Tracer>::signal(void) const {
-    return solutions.empty() && (n_busy > 0) && !has_stopped;
+    return solutions.empty() && (n_busy > 0) &&
+      !has_stopped.load(std::memory_order_acquire);
   }
   template<class Tracer>
   forceinline void
@@ -172,7 +173,7 @@ namespace Gecode { namespace Search { namespace Par {
   Engine<Tracer>::stop(void) {
     m_search.acquire();
     bool bs = signal();
-    has_stopped = true;
+    has_stopped.store(true, std::memory_order_release);
     if (bs)
       e_search.signal();
     m_search.release();
@@ -270,10 +271,8 @@ namespace Gecode { namespace Search { namespace Par {
      * If that is not true any longer, the worker will be asked
      * again eventually.
      */
-    if (!path.steal())
-      return nullptr;
     m.acquire();
-    Space* s = path.steal(*this,d,myt,ot);
+    Space* s = path.steal() ? path.steal(*this,d,myt,ot) : nullptr;
     m.release();
     // Tell that there will be one more busy worker
     if (s != nullptr)
@@ -305,7 +304,7 @@ namespace Gecode { namespace Search { namespace Par {
       return s;
     }
     // We ignore stopped (it will be reported again if needed)
-    has_stopped = false;
+    has_stopped.store(false, std::memory_order_release);
     // No more solutions?
     if (n_busy == 0) {
       m_search.release();
@@ -333,7 +332,7 @@ namespace Gecode { namespace Search { namespace Par {
         return s;
       }
       // No more solutions or stopped?
-      if ((n_busy == 0) || has_stopped) {
+      if ((n_busy == 0) || has_stopped.load(std::memory_order_acquire)) {
         m_search.release();
         // Make workers wait again
         block();

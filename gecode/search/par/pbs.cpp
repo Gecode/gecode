@@ -37,7 +37,8 @@ namespace Gecode { namespace Search { namespace Par {
 
   bool
   PortfolioStop::stop(const Statistics& s, const Options& o) {
-    return *tostop || ((so != nullptr) && so->stop(s,o));
+    return tostop->load(std::memory_order_acquire) ||
+      ((so != nullptr) && so->stop(s,o));
   }
 
 }}}

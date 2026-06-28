@@ -35,6 +35,7 @@
 #define GECODE_SEARCH_PAR_PBS_HH
 
 #include <gecode/search.hh>
+#include <atomic>
 
 namespace Gecode { namespace Search { namespace Par {
 
@@ -44,12 +45,12 @@ namespace Gecode { namespace Search { namespace Par {
     /// The stop object for the slaves
     Stop* so;
     /// Whether search must be stopped
-    volatile bool* tostop;
+    std::atomic<bool>* tostop;
   public:
     /// Initialize
     PortfolioStop(Stop* so);
     /// Set pointer to shared \a tostop variable
-    void share(volatile bool* ts);
+    void share(std::atomic<bool>* ts);
     /// Return true if portfolio engine must be stopped
     virtual bool stop(const Statistics& s, const Options& o);
     /// Signal whether search must be stopped
@@ -147,9 +148,9 @@ namespace Gecode { namespace Search { namespace Par {
     /// Number of active slave engines
     unsigned int n_active;
     /// Whether a slave has been stopped
-    bool slave_stop;
+    std::atomic<bool> slave_stop;
     /// Shared stop flag
-    volatile bool tostop;
+    std::atomic<bool> tostop;
     /// Collect solutions in this
     Collect solutions;
     /// Mutex for synchronization

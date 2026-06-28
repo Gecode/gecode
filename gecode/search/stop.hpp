@@ -53,12 +53,12 @@ namespace Gecode { namespace Search {
 
   forceinline unsigned long long int
   NodeStop::limit(void) const {
-    return l;
+    return l.load(std::memory_order_acquire);
   }
 
   forceinline void
   NodeStop::limit(unsigned long long int l0) {
-    l=l0;
+    l.store(l0, std::memory_order_release);
   }
 
 
@@ -72,12 +72,12 @@ namespace Gecode { namespace Search {
 
   forceinline unsigned long long int
   FailStop::limit(void) const {
-    return l;
+    return l.load(std::memory_order_acquire);
   }
 
   forceinline void
   FailStop::limit(unsigned long long int l0) {
-    l=l0;
+    l.store(l0, std::memory_order_release);
   }
 
 
@@ -94,12 +94,12 @@ namespace Gecode { namespace Search {
 
   forceinline double
   TimeStop::limit(void) const {
-    return l;
+    return l.load(std::memory_order_acquire);
   }
 
   forceinline void
   TimeStop::limit(double l0) {
-    l=l0;
+    l.store(l0, std::memory_order_release);
   }
 
   forceinline void
@@ -117,12 +117,12 @@ namespace Gecode { namespace Search {
 
   forceinline unsigned long long int
   RestartStop::limit(void) const {
-    return l;
+    return l.load(std::memory_order_acquire);
   }
 
   forceinline void
   RestartStop::limit(unsigned long long int l0) {
-    l=l0;
+    l.store(l0, std::memory_order_release);
   }
 
 }}

@@ -38,6 +38,7 @@
 #include <gecode/search/support.hh>
 #include <gecode/search/worker.hh>
 #include <gecode/search/par/path.hh>
+#include <atomic>
 
 namespace Gecode { namespace Search { namespace Par {
 
@@ -98,7 +99,7 @@ namespace Gecode { namespace Search { namespace Par {
     };
   protected:
     /// The current command
-    volatile Cmd _cmd;
+    std::atomic<Cmd> _cmd;
     /// Mutex for forcing workers to wait
     Support::Mutex _m_wait;
   public:
@@ -172,7 +173,7 @@ namespace Gecode { namespace Search { namespace Par {
     /// Number of busy workers
     volatile unsigned int n_busy;
     /// Whether a worker had been stopped
-    volatile bool has_stopped;
+    std::atomic<bool> has_stopped;
     /// Whether search state changed such that signal is needed
     bool signal(void) const;
   public:
