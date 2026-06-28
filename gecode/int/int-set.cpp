@@ -40,8 +40,9 @@ namespace Gecode {
 
   void*
   IntSet::IntSetObject::operator new(size_t s) {
+    void* p = ::operator new(s);
     fault_live_objects++;
-    return ::operator new(s);
+    return p;
   }
 
   void

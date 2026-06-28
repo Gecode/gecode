@@ -82,6 +82,69 @@ namespace Test { namespace Fault {
     }
   };
 
+  class AdvisorCopyPropagator;
+
+  class ThrowingAdvisor : public Advisor {
+  protected:
+    int id;
+  public:
+    ThrowingAdvisor(Space& home, Propagator& p,
+                    Council<ThrowingAdvisor>& c, int id0)
+      : Advisor(home,p,c), id(id0) {}
+    ThrowingAdvisor(Space& home, ThrowingAdvisor& a)
+      : Advisor(home,a), id(a.id) {
+      Support::FailPoint::check(Phase::AdvisorCopy);
+    }
+    Propagator* owner(void) const {
+      return &propagator();
+    }
+    void dispose(Space& home, Council<ThrowingAdvisor>& c) {
+      Advisor::dispose(home,c);
+    }
+  };
+
+  class AdvisorCopyPropagator : public Propagator {
+  protected:
+    Council<ThrowingAdvisor> c;
+    AdvisorCopyPropagator(Home home) : Propagator(home), c(home) {
+      (void) new (home) ThrowingAdvisor(home,*this,c,0);
+      (void) new (home) ThrowingAdvisor(home,*this,c,1);
+    }
+    AdvisorCopyPropagator(Space& home, AdvisorCopyPropagator& p)
+      : Propagator(home,p) {
+      c.update(home,p.c);
+    }
+  public:
+    static AdvisorCopyPropagator* post(Home home) {
+      return new (home) AdvisorCopyPropagator(home);
+    }
+    bool advisors_point_to_self(void) const {
+      Advisors<ThrowingAdvisor> as(c);
+      int n = 0;
+      while (as()) {
+        if (as.advisor().owner() != this)
+          return false;
+        ++n; ++as;
+      }
+      return n == 2;
+    }
+    virtual Actor* copy(Space& home) {
+      return new (home) AdvisorCopyPropagator(home,*this);
+    }
+    virtual PropCost cost(const Space&, const ModEventDelta&) const {
+      return PropCost::unary(PropCost::LO);
+    }
+    virtual void reschedule(Space&) {}
+    virtual ExecStatus propagate(Space&, const ModEventDelta&) {
+      return ES_FIX;
+    }
+    virtual size_t dispose(Space& home) {
+      c.dispose(home);
+      (void) Propagator::dispose(home);
+      return sizeof(*this);
+    }
+  };
+
   class ThrowingChoice : public Choice {
   public:
     ThrowingChoice(const Brancher& b) : Choice(b,1) {}
@@ -273,6 +336,20 @@ namespace Test { namespace Fault {
     }
   };
 
+  class AdvisorCopySpace : public Space {
+  public:
+    AdvisorCopyPropagator* p;
+    AdvisorCopySpace(void)
+      : p(AdvisorCopyPropagator::post(*this)) {}
+    AdvisorCopySpace(AdvisorCopySpace& s) : Space(s), p(nullptr) {}
+    virtual Space* copy(void) {
+      return new AdvisorCopySpace(*this);
+    }
+    bool advisors_point_to_source(void) const {
+      return (p != nullptr) && p->advisors_point_to_self();
+    }
+  };
+
   class BranchPostSpace : public Space {
   public:
     IntVarArray x;
@@ -376,6 +453,32 @@ namespace Test { namespace Fault {
     }
     Support::FailPoint::reset();
     return false;
+  }
+
+  bool clone_after_failed_advisor_copy(void) {
+    FaultScope scope;
+    AdvisorCopySpace s;
+    if (!s.advisors_point_to_source())
+      return false;
+    Support::FailPoint::reset();
+    Support::FailPoint::fail_after(Phase::AdvisorCopy,1);
+    try {
+      Space* c = s.clone();
+      delete c;
+      Support::FailPoint::reset();
+      return false;
+    } catch (const MemoryExhausted&) {
+      Support::FailPoint::reset();
+      if (!s.advisors_point_to_source())
+        return false;
+      AdvisorCopySpace* c = static_cast<AdvisorCopySpace*>(s.clone());
+      bool ok = (c != nullptr);
+      delete c;
+      return ok && s.advisors_point_to_source();
+    } catch (...) {
+      Support::FailPoint::reset();
+      return false;
+    }
   }
 
   bool clone_after_failed_disposal_array(void) {
@@ -605,6 +708,70 @@ namespace Test { namespace Fault {
       }
     }
     return false;
+  }
+
+  bool linear_sum_constructor_heap_failures_release_nodes(int kind) {
+    FaultScope scope;
+    bool saw_failure = false;
+    for (unsigned long long budget = 0; budget < 8; budget++) {
+      LinIntExpr::fault_reset_allocations();
+      Support::FailPoint::reset();
+      try {
+        MiniModelSpace home;
+        IntVarArgs x(home,4,0,3);
+        BoolVarArgs b(home,4,0,1);
+        IntArgs a({1,2,3,4});
+        Support::FailPoint::fail_after(Phase::Heap,budget);
+        switch (kind) {
+        case 0:
+          {
+            LinIntExpr e(x);
+            (void) e;
+          }
+          break;
+        case 1:
+          {
+            LinIntExpr e(a,x);
+            (void) e;
+          }
+          break;
+        case 2:
+          {
+            LinIntExpr e(b);
+            (void) e;
+          }
+          break;
+        case 3:
+          {
+            LinIntExpr e(a,b);
+            (void) e;
+          }
+          break;
+        default:
+          return false;
+        }
+        unsigned long long checks = Support::FailPoint::count();
+        Support::FailPoint::reset();
+        return saw_failure && (checks > 0) &&
+          (LinIntExpr::fault_live_allocations() == 0);
+      } catch (const MemoryExhausted&) {
+        Support::FailPoint::reset();
+        saw_failure = true;
+        if (LinIntExpr::fault_live_allocations() != 0)
+          return false;
+      } catch (...) {
+        Support::FailPoint::reset();
+        return false;
+      }
+    }
+    return false;
+  }
+
+  bool minimodel_linear_sum_heap_failures_release_nodes(void) {
+    for (int kind = 0; kind < 4; kind++)
+      if (!linear_sum_constructor_heap_failures_release_nodes(kind))
+        return false;
+    return true;
   }
 
 #ifdef GECODE_HAS_FLOAT_VARS
@@ -918,6 +1085,15 @@ namespace Test { namespace Fault {
     }
   };
 
+  class MiniModelLinearSumHeapFailures : public Base {
+  public:
+    MiniModelLinearSumHeapFailures(void)
+      : Base("Fault::MiniModel::LinearSumHeapFailures") {}
+    virtual bool run(void) {
+      return minimodel_linear_sum_heap_failures_release_nodes();
+    }
+  };
+
   class MiniModelBoolMiscHeapFailure : public Base {
   public:
     MiniModelBoolMiscHeapFailure(void)
@@ -967,6 +1143,15 @@ namespace Test { namespace Fault {
     }
   };
 
+  class CloneAdvisorCopy : public Base {
+  public:
+    CloneAdvisorCopy(void)
+      : Base("Fault::Clone::AdvisorCopy") {}
+    virtual bool run(void) {
+      return clone_after_failed_advisor_copy();
+    }
+  };
+
   class CloneDerivedSpaceCopy : public Base {
   public:
     CloneDerivedSpaceCopy(void)
@@ -1008,8 +1193,10 @@ namespace Test { namespace Fault {
 #endif
   ClonePropagatorCopy clone_propagator_copy;
   CloneBrancherCopy clone_brancher_copy;
+  CloneAdvisorCopy clone_advisor_copy;
   CloneDerivedSpaceCopy clone_derived_space_copy;
   CloneLocalObjectCopy clone_local_object_copy;
+  MiniModelLinearSumHeapFailures minimodel_linear_sum_heap_failures;
 
 }}
 
