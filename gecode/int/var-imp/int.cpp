@@ -37,8 +37,10 @@ namespace Gecode { namespace Int {
 
   forceinline bool
   IntVarImp::closer_min(int n) const {
-    unsigned int l = static_cast<unsigned int>(n - dom.min());
-    unsigned int r = static_cast<unsigned int>(dom.max() - n);
+    unsigned int l = static_cast<unsigned int>(n) -
+      static_cast<unsigned int>(dom.min());
+    unsigned int r = static_cast<unsigned int>(dom.max()) -
+      static_cast<unsigned int>(n);
     return l < r;
   }
 
@@ -102,7 +104,8 @@ namespace Gecode { namespace Int {
       unsigned int h = 0;
       while (m < c->min()) {
         RangeList* p = c->prev(n); c->fix(n);
-        h += (c->min() - p->max() - 1);
+        h += static_cast<unsigned int>(c->min()) -
+          static_cast<unsigned int>(p->max()) - 1U;
         n=c; c=p;
       }
       holes -= h;
@@ -136,7 +139,8 @@ namespace Gecode { namespace Int {
       unsigned int h = 0;
       while (m > c->max()) {
         RangeList* n = c->next(p); c->fix(n);
-        h += (n->min() - c->max() - 1);
+        h += static_cast<unsigned int>(n->min()) -
+          static_cast<unsigned int>(c->max()) - 1U;
         p=c; c=n;
       }
       holes -= h;
@@ -212,7 +216,8 @@ namespace Gecode { namespace Int {
         } else { // Remains non-range
           f_next->prev(fst(),nullptr);
           fst()->dispose(home); fst(f_next);
-          holes -= dom.min() - f_min - 1;
+          holes -= static_cast<unsigned int>(dom.min()) -
+            static_cast<unsigned int>(f_min) - 1U;
           me = ME_INT_BND;
         }
       } else if (m == f_min) {
@@ -243,7 +248,8 @@ namespace Gecode { namespace Int {
         } else { // Remains non-range
           l_prev->next(lst(),nullptr);
           lst()->dispose(home); lst(l_prev);
-          holes -= l_max - dom.max() - 1;
+          holes -= static_cast<unsigned int>(l_max) -
+            static_cast<unsigned int>(dom.max()) - 1U;
           me = ME_INT_BND;
         }
       } else if (m == l_max) {

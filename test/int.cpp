@@ -185,16 +185,20 @@ namespace Test { namespace Int {
     switch (rand(3)) {
     case 0:
       if (a[i] < x[i].max()) {
-        v=a[i]+1+
-          static_cast<int>(rand(static_cast<unsigned int>(x[i].max()-a[i])));
+        unsigned int n =
+          static_cast<unsigned int>(x[i].max()) - static_cast<unsigned int>(a[i]);
+        unsigned int offset = rand(n);
+        v = static_cast<int>(static_cast<long long>(a[i]) + 1LL + offset);
         assert((v > a[i]) && (v <= x[i].max()));
         irt = IRT_LE;
       }
       break;
     case 1:
       if (a[i] > x[i].min()) {
-        v=x[i].min()+
-          static_cast<int>(rand(static_cast<unsigned int>(a[i]-x[i].min())));
+        unsigned int n =
+          static_cast<unsigned int>(a[i]) - static_cast<unsigned int>(x[i].min());
+        unsigned int offset = rand(n);
+        v = static_cast<int>(static_cast<long long>(x[i].min()) + offset);
         assert((v < a[i]) && (v >= x[i].min()));
         irt = IRT_GR;
       }
@@ -205,7 +209,7 @@ namespace Test { namespace Int {
         unsigned int skip = rand(static_cast<unsigned int>(x[i].size()-1));
         while (true) {
           if (it.width() > skip) {
-            v = it.min() + static_cast<int>(skip);
+            v = static_cast<int>(static_cast<long long>(it.min()) + skip);
             if (v == a[i]) {
               if (it.width() == 1) {
                 ++it; v = it.min();
@@ -278,14 +282,21 @@ namespace Test { namespace Int {
     // Prune values
     if (bounds_only) {
       if (rand(2) && !x[i].assigned()) {
-        int v=x[i].min()+1+
-          static_cast<int>(rand(static_cast<unsigned int>(x[i].max()-x[i].min())));
+        unsigned int n =
+          static_cast<unsigned int>(x[i].max()) -
+          static_cast<unsigned int>(x[i].min());
+        unsigned int offset = rand(n);
+        int v = static_cast<int>(static_cast<long long>(x[i].min()) +
+          1LL + offset);
         assert((v > x[i].min()) && (v <= x[i].max()));
         rel(i, Gecode::IRT_LE, v);
       }
       if (rand(2) && !x[i].assigned()) {
-        int v=x[i].min()+
-          static_cast<int>(rand(static_cast<unsigned int>(x[i].max()-x[i].min())));
+        unsigned int n =
+          static_cast<unsigned int>(x[i].max()) -
+          static_cast<unsigned int>(x[i].min());
+        unsigned int offset = rand(n);
+        int v = static_cast<int>(static_cast<long long>(x[i].min()) + offset);
         assert((v < x[i].max()) && (v >= x[i].min()));
         rel(i, Gecode::IRT_GR, v);
       }
@@ -297,7 +308,8 @@ namespace Test { namespace Int {
         unsigned int skip = rand(x[i].size()-1);
         while (true) {
           if (it.width() > skip) {
-            v = it.min() + static_cast<int>(skip); break;
+            v = static_cast<int>(static_cast<long long>(it.min()) + skip);
+            break;
           }
           skip -= it.width(); ++it;
         }

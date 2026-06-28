@@ -52,7 +52,7 @@ namespace Gecode { namespace Int {
   }
   forceinline unsigned int
   IntDelta::width(void) const {
-    return static_cast<unsigned int>(_max - _min + 1);
+    return static_cast<unsigned int>(_max) - static_cast<unsigned int>(_min) + 1U;
   }
   forceinline bool
   IntDelta::any(void) const {
