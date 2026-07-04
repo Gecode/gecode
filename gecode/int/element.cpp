@@ -283,7 +283,7 @@ namespace Gecode {
       OffsetView ov(x0,offset);
       GECODE_ES_FAIL((Element::ViewBnd<BoolView,OffsetView,ConstIntView>
                            ::post(home,iv,ov,v1)));
-      
+
     }
   }
 

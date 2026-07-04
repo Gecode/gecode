@@ -314,7 +314,7 @@ namespace Gecode { namespace Kernel {
     sz += overhead;
     // Round size to next multiple of current heap chunk size
     size_t allocate = ((sz > cur_hcsz) ?
-                       (static_cast<size_t>(sz / cur_hcsz) + 1) * cur_hcsz 
+                       (static_cast<size_t>(sz / cur_hcsz) + 1) * cur_hcsz
                        : cur_hcsz);
     // Request a chunk of preferably size allocate, but at least size sz
     HeapChunk* hc = sm.alloc(allocate,sz);

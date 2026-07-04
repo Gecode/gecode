@@ -203,11 +203,11 @@ public:
       _fail_probe("fail-probe","failure limit per probe",
                   JobShopConfig::fail_probe),
       _time_probe("time-probe","time-out for probing (in milliseconds)",
-                   JobShopConfig::time_probe),                   
+                   JobShopConfig::time_probe),
       _time_adjust("time-adjust","time-out for adjusting (in milliseconds)",
-                   JobShopConfig::time_adjust),                   
+                   JobShopConfig::time_adjust),
       _time_solve("time-solve","time-out for solving (in milliseconds)",
-                  JobShopConfig::time_solve),                   
+                  JobShopConfig::time_solve),
       _tbf("tbf", "tie-breaking factor", 0.0) {
     add(_verbose);
     add(_probes);
@@ -306,7 +306,7 @@ public:
         jobs[spec.machine(i,j)*n+i] = start[i*m+j];
         dur[spec.machine(i,j)*n+i] = spec.duration(i,j);
       }
-    
+
     for (int j=0; j<m; j++) {
       IntVarArgs jpm(n);
       IntArgs dpm(n);
@@ -471,7 +471,7 @@ public:
 
     // Number of jobs and machines/steps
     int n = spec.jobs(), m = spec.machines();
-   
+
     fst.init(m*n*(n-1)/2);
     snd.init(m*n*(n-1)/2);
 
@@ -563,7 +563,7 @@ public:
   }
   /// Constructor for cloning \a s
   JobShopSolve(JobShopSolve& s)
-    : JobShopBase(s), sorder(s.sorder), fst(s.fst), snd(s.snd), 
+    : JobShopBase(s), sorder(s.sorder), fst(s.fst), snd(s.snd),
       iafc(s.iafc), iaction(s.iaction), baction(s.baction),
       ichb(s.ichb), bchb(s.bchb), rnd(s.rnd) {}
   /// Copy during cloning
@@ -646,17 +646,17 @@ solve(const JobShopOptions& opt) {
     bool stopped = false;
 
     std::cout << "\tProbing..." << std::endl;
-    
+
     std::cout << "\t\tBounds: [" << l << "," << u << "]"
               << std::endl;
-    
+
     for (unsigned int p=0; p<opt.probes(); p++) {
       JobShopProbe* jsp = static_cast<JobShopProbe*>(master->clone());
       jsp->branch(p,rnd);
       DFS<JobShopProbe> dfs(jsp,so);
       JobShopProbe* s = dfs.next();
       Search::Statistics statj = dfs.statistics();
-      
+
       if (s != nullptr) {
         if (u > s->cost().val()) {
           u = s->cost().val();
@@ -687,7 +687,7 @@ solve(const JobShopOptions& opt) {
   {
     JobShopSolve* master = new JobShopSolve(opt);
 
-    
+
     if (master->status() == SS_FAILED) {
       delete master;
       std::cerr << "Error: has no solution..." << std::endl;
@@ -747,7 +747,7 @@ solve(const JobShopOptions& opt) {
     }
 
 
-    { 
+    {
       Support::Timer t; t.start();
       std::cout << std::endl << "\tSolving..." << std::endl;
 

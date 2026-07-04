@@ -441,7 +441,7 @@ namespace Gecode {
     Driver::DoubleOption      _r_base;        ///< Restart base
     Driver::UnsignedIntOption _r_scale;       ///< Restart scale factor
     Driver::UnsignedLongLongIntOption
-                              _r_limit;       ///< Cutoff for number of restarts 
+                              _r_limit;       ///< Cutoff for number of restarts
     Driver::BoolOption        _nogoods;       ///< Whether to use no-goods
     Driver::UnsignedIntOption _nogoods_limit; ///< Limit for no-good extraction
     Driver::DoubleOption      _relax;         ///< Probability to relax variable

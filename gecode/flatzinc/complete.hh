@@ -76,3 +76,5 @@ namespace Gecode { namespace FlatZinc {
 }}
 
 #endif // FLATZINC_COMPLETE_HH
+
+// STATISTICS: flatzinc-branch

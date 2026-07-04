@@ -42,7 +42,7 @@
  *
  */
 
-#if !defined(GIST_STATIC_LIBS) && \
+#if !defined(GECODE_STATIC_LIBS) && \
     (defined(__CYGWIN__) || defined(__MINGW32__) || defined(_MSC_VER))
 
 #ifdef GECODE_BUILD_GIST

@@ -123,9 +123,7 @@ public:
 };
 
 
-/** \brief Main-function
- *  \relates IndSet
- */
+/** \brief Main-function */
 int
 main(int argc, char* argv[]) {
   SizeOptions opt("IndSet");
@@ -138,4 +136,3 @@ main(int argc, char* argv[]) {
 }
 
 // STATISTICS: example-any
-

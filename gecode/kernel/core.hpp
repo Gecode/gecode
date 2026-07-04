@@ -1621,7 +1621,7 @@ namespace Gecode {
       /// Information is provided by a portfolio-based engine
       PORTFOLIO
     };
-    /// Reason for restarting 
+    /// Reason for restarting
     enum RestartReason {
       /// No reason - used for PORTFOLIO
       RR_NO,

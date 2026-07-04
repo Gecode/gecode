@@ -174,3 +174,5 @@ namespace Gecode { namespace FlatZinc {
 }}
 
 #endif //__FLATZINC_LASTVAL_HH__
+
+// STATISTICS: flatzinc-branch

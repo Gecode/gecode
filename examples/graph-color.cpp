@@ -435,9 +435,7 @@ public:
 };
 
 
-/** \brief Main-function
- *  \relates GraphColor
- */
+/** \brief Main-function */
 int
 main(int argc, char* argv[]) {
   SizeOptions opt("GraphColor");
@@ -468,4 +466,3 @@ main(int argc, char* argv[]) {
 }
 
 // STATISTICS: example-any
-

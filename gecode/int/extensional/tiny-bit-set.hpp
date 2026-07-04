@@ -46,11 +46,11 @@ namespace Gecode { namespace Int { namespace Extensional {
   TinyBitSet<sz>::TinyBitSet(Space&, unsigned int n) {
     assert(n <= sz);
     /// Set the active bits
-      for (unsigned int i=0U; i<n; i++)
-        _bits[i].init(true);
-      /// Clear unused suffix bits
-        for (unsigned int i=n; i<sz; i++)
-          _bits[i].init(false);
+    for (unsigned int i=0U; i<n; i++)
+      _bits[i].init(true);
+    /// Clear unused suffix bits
+    for (unsigned int i=n; i<sz; i++)
+      _bits[i].init(false);
   }
 
   template<unsigned int sz>

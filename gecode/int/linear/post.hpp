@@ -105,7 +105,7 @@ namespace Gecode { namespace Int { namespace Linear {
    * \param n_p number of positive terms
    * \param t_n array of linear terms over integers with negative coefficients
    * \param n_n number of negative terms
-   * \param gcd greatest common divisor of all coefficients
+   * \param g greatest common divisor of all coefficients
    *
    * Replaces all negative coefficients by positive coefficients.
    *
@@ -224,4 +224,3 @@ namespace Gecode { namespace Int { namespace Linear {
 }}}
 
 // STATISTICS: int-post
-

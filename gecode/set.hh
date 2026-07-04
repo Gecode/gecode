@@ -752,7 +752,7 @@ namespace Gecode {
   /// Post reified propagator for \f$\left(|s|\geq 1 \land \forall i\in s:\ i \sim_{rt} x\right)\equiv r\f$
   GECODE_SET_EXPORT void
   rel(Home home, SetVar s, IntRelType rt, IntVar x, Reify r);
-  /// Post reified propagator for \f$\left(|s|\geq 1 \land \forall i\in s:\ x \sim_{rt} i\right)\f\equiv r$
+  /// Post reified propagator for \f$\left(|s|\geq 1 \land \forall i\in s:\ x \sim_{rt} i\right)\equiv r\f$
   void
   rel(Home home, IntVar x, IntRelType rt, SetVar s, Reify r);
   //@}

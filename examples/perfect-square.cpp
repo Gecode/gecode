@@ -289,9 +289,7 @@ public:
   }
 };
 
-/** \brief Main-function
- *  \relates PerfectSquare
- */
+/** \brief Main-function */
 int
 main(int argc, char* argv[]) {
   SizeOptions opt("PerfectSquare");
@@ -311,4 +309,3 @@ main(int argc, char* argv[]) {
 }
 
 // STATISTICS: example-any
-

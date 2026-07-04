@@ -103,7 +103,7 @@ namespace Gecode { namespace Support {
 
   template<class A>
   forceinline bool
-  BitSetOffset<A>::get(int i) const { 
+  BitSetOffset<A>::get(int i) const {
     return BitSetBase::get(static_cast<unsigned int>(i-_offset));
   }
 

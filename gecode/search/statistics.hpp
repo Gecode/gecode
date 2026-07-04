@@ -43,7 +43,7 @@ namespace Gecode { namespace Search {
 
   forceinline
   Statistics::Statistics(void)
-    : fail(0ULL), node(0ULL), 
+    : fail(0ULL), node(0ULL),
       depth(0UL), restart(0UL), nogood(0UL) {}
 
   forceinline Statistics&

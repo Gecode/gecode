@@ -115,11 +115,9 @@ namespace Test { namespace Set {
             return false;
         }
         for (int i=0; i<ssize; i++) {
-          int size = 0;
           for (CountableSetValues csv(x.lub, x[i]); csv(); ++csv) {
             if (csv.val() < 0 || csv.val() >= isize) return false;
             if (x.ints()[csv.val()] != i) return false;
-            size++;
           }
         }
         return true;

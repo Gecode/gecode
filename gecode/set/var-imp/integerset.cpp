@@ -300,7 +300,6 @@ namespace Gecode { namespace Set {
       return false;
     }
 
-    RangeList *p=nullptr;
     RangeList *c=fst();
 
     int min = c->min();
@@ -312,7 +311,7 @@ namespace Gecode { namespace Set {
     }
 
     RangeList *nc=c->next();
-    p=c; c=nc;
+    c=nc;
     while (c) {
       if (max<min) {
         std::cerr << "1";
@@ -331,7 +330,7 @@ namespace Gecode { namespace Set {
       max = c->max();
 
       nc=c->next();
-      p=c; c=nc;
+      c=nc;
     }
 #endif
     return true;

@@ -7,7 +7,7 @@
  *  Contributing authors:
  *     Kevin Leo <kevin.leo@monash.edu>
  *     Maxim Shishmarev <maxim.shishmarev@monash.edu>
- * 
+ *
  *  Copyright:
  *     Kevin Leo, 2017
  *     Christian Schulte, 2002
@@ -903,7 +903,7 @@ namespace Gecode { namespace Search {
     RestartStop(unsigned long long int l);
     /// Return current limit
     unsigned long long int limit(void) const;
-    /// Set current limit to \a l restarts 
+    /// Set current limit to \a l restarts
     void limit(unsigned long long int l);
     /// Return true if failure limit is exceeded
     virtual bool stop(const Statistics& s, const Options& o);

@@ -36,7 +36,7 @@
  *
  */
 
-#if defined(_MSC_VER)
+#if defined(_MSC_VER) && !defined(GECODE_NO_AUTOLINK)
 
 #if defined(_M_IX86)
 #define GECODE_DLL_PLATFORM "x86"

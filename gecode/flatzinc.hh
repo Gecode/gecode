@@ -242,7 +242,7 @@ namespace Gecode { namespace FlatZinc {
       Gecode::Driver::StringOption      _restart;   ///< Restart method option
       Gecode::Driver::DoubleOption      _r_base;    ///< Restart base
       Gecode::Driver::UnsignedIntOption _r_scale;   ///< Restart scale factor
-      Gecode::Driver::UnsignedLongLongIntOption _r_limit; ///< Cutoff for number of restarts 
+      Gecode::Driver::UnsignedLongLongIntOption _r_limit; ///< Cutoff for number of restarts
       Gecode::Driver::BoolOption        _nogoods;   ///< Whether to use no-goods
       Gecode::Driver::UnsignedIntOption _nogoods_limit; ///< Depth limit for extracting no-goods
       Gecode::Driver::BoolOption        _interrupt; ///< Whether to catch SIGINT

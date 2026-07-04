@@ -121,7 +121,7 @@ union YYSTYPE
          Gecode::FlatZinc::Option<std::vector<Gecode::FlatZinc::VarSpec*>* > oVarSpecVec;
          Gecode::FlatZinc::AST::Node* arg;
          Gecode::FlatZinc::AST::Array* argVec;
-       
+
 
 #line 127 "gecode/flatzinc/parser.tab.hpp"
 

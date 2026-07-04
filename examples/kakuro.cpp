@@ -366,9 +366,7 @@ namespace {
   const unsigned int n_examples = sizeof(examples)/sizeof(const int*);
 
 
-  /** \brief Class for solutions of a distinct-linear constraint problem.
-   * \relates Kakuro
-   */
+  /** \brief Class for solutions of a distinct-linear constraint problem. */
   class DistinctLinear : public Space {
   protected:
     /// The variables
@@ -398,9 +396,7 @@ namespace {
     }
   };
 
-  /** \brief Generate tuple set for \a n distinct variables with sum \a c
-   * \relates Kakuro
-   */
+  /** \brief Generate tuple set for \a n distinct variables with sum \a c */
   TupleSet generate(int n, int c) {
     // Setup search engine that enumerates all solutions
     DistinctLinear* e = new DistinctLinear(n,c);
@@ -414,9 +410,7 @@ namespace {
     return ts;
   }
 
-  /** \brief Class to remember already computed specifications
-   * \relates Kakuro
-   */
+  /** \brief Class to remember already computed specifications */
   class Cache {
   private:
     /// Cache entry

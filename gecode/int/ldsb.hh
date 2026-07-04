@@ -381,7 +381,7 @@ namespace Gecode { namespace Int { namespace LDSB {
                         BranchFilter<typename View::VarType> bf,
                         VarValPrint<typename View::VarType,Val> vvp);
 
-  /// Exclude value \v from variable view \x
+  /// Exclude value \a v from variable view \a x
   template<class View>
   ModEvent prune(Space& home, View x, int v);
 
@@ -393,4 +393,3 @@ namespace Gecode { namespace Int { namespace LDSB {
 #endif
 
 // STATISTICS: int-branch
-

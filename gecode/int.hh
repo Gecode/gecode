@@ -5477,7 +5477,7 @@ namespace Gecode {
 
   /// The values from \a lower to \a upper (inclusive) can be reflected
   GECODE_INT_EXPORT SymmetryHandle values_reflect(int lower, int upper);
-  /// The values in the domain of \x can be reflected
+  /// The values in the domain of \a x can be reflected
   GECODE_INT_EXPORT SymmetryHandle values_reflect(IntVar x);
   //@}
 
@@ -5849,4 +5849,3 @@ namespace Gecode {
 
 // IFDEF: GECODE_HAS_INT_VARS
 // STATISTICS: int-post
-

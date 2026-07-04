@@ -43,7 +43,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
    * Arithmetic help functions
    *
    */
-  /// Multiply \a x and \y
+  /// Multiply \a x and \a y
   forceinline long long int
   mll(long long int x, long long int y) {
     return x*y;
@@ -353,4 +353,3 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 }}}
 
 // STATISTICS: int-prop
-

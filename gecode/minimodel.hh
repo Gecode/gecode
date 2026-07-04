@@ -2327,7 +2327,7 @@ namespace Gecode {
   SymmetryHandle columns_reflect(const Matrix<A>& m);
   /** \brief Reflect around main diagonal symmetry specification.
    *
-   * The matrix \m must be square.
+   * The matrix \a m must be square.
    * \relates Gecode::Matrix
    */
   template<class A>
@@ -2494,4 +2494,3 @@ namespace Gecode {
 
 // IFDEF: GECODE_HAS_INT_VARS
 // STATISTICS: minimodel-any
-

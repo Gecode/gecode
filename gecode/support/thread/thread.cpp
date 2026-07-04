@@ -129,7 +129,7 @@ namespace Gecode { namespace Support {
         _m_write.release();
       }
     };
-    
+
     class GlobalMutexRunnableInit {
     public:
       GlobalMutexRunnable* gmr;
@@ -137,7 +137,7 @@ namespace Gecode { namespace Support {
         Thread::run(gmr);
       }
     };
-    
+
     GlobalMutexRunnable&
     globalMutexRunnable(void) {
       static GlobalMutexRunnableInit gmri;

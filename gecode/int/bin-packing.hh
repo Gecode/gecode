@@ -216,7 +216,7 @@ namespace Gecode { namespace Int { namespace BinPacking {
       /**
        * Initialize \a ac as intersection of \a a and \a c,
        * \a bc as intersection of \a b and \a c where \a n
-       * is the maximal number of nodes. Return whether both \ac
+       * is the maximal number of nodes. Return whether both \a ac
        * and \a bc are empty.
        */
       static bool iwn(NodeSet& iwa, const NodeSet& a,
@@ -327,4 +327,3 @@ namespace Gecode { namespace Int { namespace BinPacking {
 #endif
 
 // STATISTICS: int-prop
-

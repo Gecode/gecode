@@ -486,7 +486,7 @@ namespace Gecode {
       cerr << endl << "\t\t" << exp << endl;
     }
 
-    
+
     int ProfilerOption::parse(int argc, char* argv[]) {
       if (char* a = argument(argc, argv)) {
         char* sep = strchr(a, ',');

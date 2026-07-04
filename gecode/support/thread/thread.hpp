@@ -62,7 +62,7 @@ namespace Gecode { namespace Support {
    */
   forceinline
   Mutex::Mutex(void) {
-#ifdef GECODE_USE_OSX_UNFAIR_MUTEX
+#if defined(GECODE_HAS_THREADS) && defined(GECODE_USE_OSX_UNFAIR_MUTEX)
     l = OS_UNFAIR_LOCK_INIT;
 #endif
   }

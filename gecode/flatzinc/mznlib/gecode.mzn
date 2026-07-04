@@ -31,8 +31,8 @@
 %
 
 /***
- @groupdef gecode Additional declarations for Gecode 
- 
+ @groupdef gecode Additional declarations for Gecode
+
  These annotations and predicates are available for the Gecode
  solver. In order to use them in a model, include the file "gecode.mzn".
 */

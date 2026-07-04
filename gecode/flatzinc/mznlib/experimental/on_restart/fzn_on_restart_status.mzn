@@ -1,4 +1,4 @@
-/* 
+/*
   Set the variable `s` to one of the following numbers before solving and after
   each restart to reflect the result of searching since the last restart:
 	 - 1 (START) -> The solver has not yet been restarted

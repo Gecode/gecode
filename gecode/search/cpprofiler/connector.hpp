@@ -42,13 +42,15 @@
 #include <vector>
 #include <cstring>
 
-#ifdef WIN32
+#if defined(_WIN32)
 
 #include <winsock2.h>
 #include <ws2tcpip.h>
+#if defined(_MSC_VER)
 #pragma comment(lib, "Ws2_32.lib")
 #pragma comment(lib, "Mswsock.lib")
 #pragma comment(lib, "AdvApi32.lib")
+#endif
 
 #include <basetsd.h>
 typedef SSIZE_T ssize_t;
@@ -106,6 +108,9 @@ namespace Gecode { namespace CPProfiler {
     
     int sockfd;
     bool _connected;
+#if defined(_WIN32)
+    bool _winsock_started;
+#endif
     
     static int sendall(int s, const char* buf, int* len);
     void sendOverSocket(void);
@@ -209,7 +214,12 @@ namespace Gecode { namespace CPProfiler {
    * Connector
    */
   inline
-  Connector::Connector(unsigned int port) : port(port), _connected(false) {}
+  Connector::Connector(unsigned int port)
+    : port(port), sockfd(-1), _connected(false)
+#if defined(_WIN32)
+    , _winsock_started(false)
+#endif
+  {}
 
   inline bool Connector::connected() const { return _connected; }
 
@@ -270,13 +280,15 @@ namespace Gecode { namespace CPProfiler {
     struct addrinfo hints, *servinfo, *p;
     int rv;
       
-#ifdef WIN32
+#if defined(_WIN32)
     // Initialise Winsock.
     WSADATA wsaData;
     int startupResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
     if (startupResult != 0) {
       printf("WSAStartup failed with error: %d\n", startupResult);
+      goto giveup;
     }
+    _winsock_started = true;
 #endif
     
     memset(&hints, 0, sizeof hints);
@@ -297,11 +309,12 @@ namespace Gecode { namespace CPProfiler {
       }
       
       if (::connect(sockfd, p->ai_addr, p->ai_addrlen) == -1) {
-#ifdef WIN32
+#if defined(_WIN32)
         closesocket(sockfd);
 #else
         close(sockfd);
 #endif
+        sockfd = -1;
         // errno is set here, but we don't examine it.
         continue;
       }
@@ -311,6 +324,7 @@ namespace Gecode { namespace CPProfiler {
     
     // Connection failed; give up.
     if (p == nullptr) {
+      freeaddrinfo(servinfo);
       goto giveup;
     }
       
@@ -321,6 +335,12 @@ namespace Gecode { namespace CPProfiler {
     return;
   giveup:
     _connected = false;
+#if defined(_WIN32)
+    if (_winsock_started) {
+      WSACleanup();
+      _winsock_started = false;
+    }
+#endif
     return;
     
   }
@@ -378,10 +398,20 @@ namespace Gecode { namespace CPProfiler {
   
   inline void
   Connector::disconnect() {
-#ifdef WIN32
-    closesocket(sockfd);
+    if (sockfd != -1) {
+#if defined(_WIN32)
+      closesocket(sockfd);
 #else
-    close(sockfd);
+      close(sockfd);
+#endif
+      sockfd = -1;
+    }
+    _connected = false;
+#if defined(_WIN32)
+    if (_winsock_started) {
+      WSACleanup();
+      _winsock_started = false;
+    }
 #endif
   }
   

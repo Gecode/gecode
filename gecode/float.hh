@@ -1208,12 +1208,12 @@ namespace Gecode {
   GECODE_FLOAT_EXPORT void
   sqrt(Home home, FloatVar x0, FloatVar x1);
 
-  /** \brief Post propagator for \f${x_0}^{n}=x_1\f$ for $n\geq 0$
+  /** \brief Post propagator for \f${x_0}^{n}=x_1\f$ for \f$n\geq 0\f$
    */
   GECODE_FLOAT_EXPORT void
   pow(Home home, FloatVar x0, int n, FloatVar x1);
 
-  /** \brief Post propagator for \f${x_0}^{1/n}=x_1\f$ for $n\geq 0$
+  /** \brief Post propagator for \f${x_0}^{1/n}=x_1\f$ for \f$n\geq 0\f$
    */
   GECODE_FLOAT_EXPORT void
   nroot(Home home, FloatVar x0, int n, FloatVar x1);
@@ -2153,4 +2153,3 @@ namespace Gecode {
 
 // IFDEF: GECODE_HAS_FLOAT_VARS
 // STATISTICS: float-post
-

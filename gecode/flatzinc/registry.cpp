@@ -1198,7 +1198,7 @@ namespace Gecode { namespace FlatZinc {
       DFA dfa(q0,t,f);
       free(f);
       unshare(s, iv);
-      extensional(s, iv, s.getSharedDFA(dfa), s.ann2ipl(ann));      
+      extensional(s, iv, s.getSharedDFA(dfa), s.ann2ipl(ann));
     }
 
     void p_regular(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
@@ -1211,7 +1211,7 @@ namespace Gecode { namespace FlatZinc {
                 ce[3]->getInt(), s.arg2intargs(ce[4]), ce[5]->getInt(),
                 ce[6]->getSet(), ann);
     }
-    
+
     void
     p_sort(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
       IntVarArgs x = s.arg2intvarargs(ce[0]);

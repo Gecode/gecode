@@ -36,7 +36,7 @@ namespace Gecode { namespace Iter { namespace Values {
   /**
    * \brief Iterator over value lists
    *
-   * \ingroup FuncIterVlues
+   * \ingroup FuncIterValues
    */
   class ValueListIter {
   protected:
@@ -179,4 +179,3 @@ namespace Gecode { namespace Iter { namespace Values {
 }}}
 
 // STATISTICS: iter-any
-

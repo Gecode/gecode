@@ -259,17 +259,12 @@ public:
   };
 };
 
-/** \brief Position of a piece in a square board.
- *
- * \relates QueenArmies
- */
+/** \brief Position of a piece in a square board. */
 int pos(int i, int j, int n) {
   return i*n + j;
 }
 
-/** \brief Main-function
- *  \relates QueenArmies
- */
+/** \brief Main-function */
 int
 main(int argc, char* argv[]) {
   SizeOptions opt("QueenArmies");

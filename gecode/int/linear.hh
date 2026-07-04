@@ -1368,6 +1368,7 @@ namespace Gecode { namespace Int { namespace Linear {
    * \param n size of array
    * \param irt type of relation
    * \param c result of linear constraint
+   * \param ipl integer propagation level
    *
    * All variants for linear constraints share the following properties:
    *  - Variables occurring multiply in the term array are replaced
@@ -1390,7 +1391,7 @@ namespace Gecode { namespace Int { namespace Linear {
    */
   GECODE_INT_EXPORT void
   post(Home home, Term<IntView>* t, int n, IntRelType irt, int c,
-       IntPropLevel=IPL_DEF);
+       IntPropLevel ipl=IPL_DEF);
 
   /**
    * \brief Post reified propagator for linear constraint
@@ -1400,6 +1401,7 @@ namespace Gecode { namespace Int { namespace Linear {
    * \param irt type of relation
    * \param c result of linear constraint
    * \param r reification specification
+   * \param ipl integer propagation level
    *
    * All variants for linear constraints share the following properties:
    *  - Only bounds consistency is supported.
@@ -1423,7 +1425,7 @@ namespace Gecode { namespace Int { namespace Linear {
    */
   GECODE_INT_EXPORT void
   post(Home home, Term<IntView>* t, int n, IntRelType irt, int c, Reify r,
-       IntPropLevel=IPL_DEF);
+       IntPropLevel ipl=IPL_DEF);
 
   /**
    * \brief Post propagator for linear constraint over Booleans
@@ -1432,6 +1434,7 @@ namespace Gecode { namespace Int { namespace Linear {
    * \param n size of array
    * \param irt type of relation
    * \param c result of linear constraint
+   * \param ipl integer propagation level
    *
    * All variants for linear constraints share the following properties:
    *  - Variables occurring multiply in the term array are replaced
@@ -1454,7 +1457,7 @@ namespace Gecode { namespace Int { namespace Linear {
    */
   GECODE_INT_EXPORT void
   post(Home home, Term<BoolView>* t, int n, IntRelType irt, int c,
-       IntPropLevel=IPL_DEF);
+       IntPropLevel ipl=IPL_DEF);
 
   /**
    * \brief Post propagator for reified linear constraint over Booleans
@@ -1464,6 +1467,7 @@ namespace Gecode { namespace Int { namespace Linear {
    * \param irt type of relation
    * \param c result of linear constraint
    * \param r reification specification
+   * \param ipl integer propagation level
    *
    * All variants for linear constraints share the following properties:
    *  - Variables occurring multiply in the term array are replaced
@@ -1486,7 +1490,7 @@ namespace Gecode { namespace Int { namespace Linear {
    */
   GECODE_INT_EXPORT void
   post(Home home, Term<BoolView>* t, int n, IntRelType irt, int c, Reify r,
-       IntPropLevel=IPL_DEF);
+       IntPropLevel ipl=IPL_DEF);
 
   /**
    * \brief Post propagator for linear constraint over Booleans
@@ -1496,6 +1500,7 @@ namespace Gecode { namespace Int { namespace Linear {
    * \param irt type of relation
    * \param y variable right hand side of linear constraint
    * \param c constant right hand side of linear constraint
+   * \param ipl integer propagation level
    *
    * All variants for linear constraints share the following properties:
    *  - Variables occurring multiply in the term array are replaced
@@ -1518,7 +1523,7 @@ namespace Gecode { namespace Int { namespace Linear {
    */
   GECODE_INT_EXPORT void
   post(Home home, Term<BoolView>* t, int n, IntRelType irt, IntView y, int c=0,
-       IntPropLevel=IPL_DEF);
+       IntPropLevel ipl=IPL_DEF);
 
   /**
    * \brief Post propagator for reified linear constraint over Booleans
@@ -1528,6 +1533,7 @@ namespace Gecode { namespace Int { namespace Linear {
    * \param irt type of relation
    * \param y variable right hand side of linear constraint
    * \param r reification specification
+   * \param ipl integer propagation level
    *
    * All variants for linear constraints share the following properties:
    *  - Variables occurring multiply in the term array are replaced
@@ -1550,7 +1556,7 @@ namespace Gecode { namespace Int { namespace Linear {
    */
   GECODE_INT_EXPORT void
   post(Home home, Term<BoolView>* t, int n, IntRelType irt, IntView y,
-       Reify r, IntPropLevel=IPL_DEF);
+       Reify r, IntPropLevel ipl=IPL_DEF);
 
 }}}
 

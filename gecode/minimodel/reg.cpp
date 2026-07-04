@@ -715,7 +715,6 @@ namespace Gecode {
 
     forceinline int
     StatePool::state(StatePoolAllocator& spm, PosSet* ps) {
-      int d = 0;
       StateNode** p = nullptr;
       StateNode*  n = &root;
       do {
@@ -725,7 +724,6 @@ namespace Gecode {
         case PSC_GR: p = &n->right; n = *p; break;
         default: GECODE_NEVER;
         }
-        d++;
       } while (n != nullptr);
       n = new (spm) StateNode; *p = n;
       n->pos   = ps;

@@ -35,12 +35,12 @@
  */
 
 #include <cstddef>
+#include <atomic>
 
 #ifdef GECODE_HAS_THREADS
 #include <thread>
 #include <mutex>
 #include <condition_variable>
-#include <atomic>
 
 #ifdef GECODE_USE_OSX_UNFAIR_MUTEX
 #include <os/lock.h>
