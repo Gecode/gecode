@@ -1,0 +1,57 @@
+{
+  "version": 3,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 21,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "vs2022-vcpkg",
+      "displayName": "Visual Studio 2022 + vcpkg (x64)",
+      "description": "Windows multi-config configure with vcpkg manifest dependencies (MPFR).",
+      "generator": "Visual Studio 17 2022",
+      "architecture": "x64",
+      "binaryDir": "${sourceDir}/build/vs2022-vcpkg",
+      "cacheVariables": {
+        "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
+        "VCPKG_TARGET_TRIPLET": "x64-windows",
+        "GECODE_ENABLE_MPFR": "ON",
+        "GECODE_ENABLE_QT": "OFF",
+        "GECODE_ENABLE_GIST": "OFF"
+      },
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "vs2022-vcpkg-release",
+      "displayName": "Build Release (VS + vcpkg)",
+      "configurePreset": "vs2022-vcpkg",
+      "configuration": "Release",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      }
+    },
+    {
+      "name": "vs2022-vcpkg-check",
+      "displayName": "Run check target (VS + vcpkg)",
+      "configurePreset": "vs2022-vcpkg",
+      "configuration": "Release",
+      "targets": [
+        "check"
+      ],
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      }
+    }
+  ]
+}

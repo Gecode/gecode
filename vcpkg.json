@@ -1,0 +1,9 @@
+{
+  "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg-tool/main/docs/vcpkg.schema.json",
+  "name": "gecode",
+  "version-string": "6.4.0",
+  "builtin-baseline": "01e2abc86d9a6e2bee0f6355eb7f8650b6cea100",
+  "dependencies": [
+    "mpfr"
+  ]
+}
