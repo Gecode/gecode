@@ -75,6 +75,7 @@ export EXAMPLES_EXTRA_CXXFLAGS = @EXAMPLES_EXTRA_CXXFLAGS@
 
 export QT_CPPFLAGS = @QTDEFINES@ @QTINCLUDES@
 export LINKQT = @QTLIBS@
+export LINKCPPROFILER = @LINKCPPROFILER@
 export MPFR_CPPFLAGS = @GMP_CPPFLAGS@ @MPFR_CPPFLAGS@
 ifeq "@enable_mpfr@" "yes"
 export LINKMPFR = @MPFR_LIB_PATH@ @GMP_LIB_PATH@ @MPFR_LINK@ @GMP_LINK@
@@ -124,10 +125,11 @@ export SOSUFFIX         = @DLL_ARCH@@USERSUFFIX@@SOSUFFIX@
 #
 export RMF		= rm -rf
 export MV		= mv
+export UVRUN		= @PROG_UV@ run --script
 export MANIFEST		= @MANIFEST@ -nologo
-export FIXMANIFEST	= perl $(top_srcdir)/misc/fixmanifest.perl $(DLLSUFFIX)
+export FIXMANIFEST	= $(UVRUN) $(top_srcdir)/misc/fixmanifest.py $(DLLSUFFIX)
 export RESCOMP		= @RESCOMP@ -n -i$(top_srcdir)
-export RCGEN		= perl $(top_srcdir)/misc/genrc.perl $(DLLSUFFIX) $(top_srcdir)
+export RCGEN		= $(UVRUN) $(top_srcdir)/misc/genrc.py $(DLLSUFFIX) $(top_srcdir)
 
 ifeq "@need_soname@" "yes"
 export CREATELINK       = ln -fs
@@ -1336,21 +1338,6 @@ makecompletedmessage:
 	@echo make install
 	@echo
 
-# ugly hack by Gr�goire Dooms to call a target on a contribs after evaluating all the variables in this Makefile.
-# used as make contribs:cpgraph:doc or make contribs:cpgraph:Makefile.in
-.PHONY: contribs\:%
-contribs\:%:
-	$(MAKE) -C $(shell echo $@ | sed 's/\(contribs:[^:]*\):.*/\1/;s+:+/+') $(shell echo $@ | sed 's/contribs:[^:]*:\(.*\)/\1/;s+:+/+')
-
-# less ugly hack by Guido Tack to call a target
-# Just give ICD (in-contrib-dir) and ICT (in-contrib-target) as arguments
-# to make incontrib
-ICT=
-ICD=
-.PHONY: incontrib
-incontrib:
-	$(MAKE) -C contribs/$(ICD) $(ICT)
-
 compilesubdirs:
 	@for_subdirs="$(subdirs)"; for i in $$for_subdirs; do \
 	  if test -f $$i/Makefile; then \
@@ -1365,12 +1352,12 @@ compilesubdirs:
 
 VIS = @ALLVIS@
 VISDEP = $(VIS) \
-	$(top_srcdir)/misc/genvarimp.perl Makefile
+	$(top_srcdir)/misc/genvarimp.py Makefile
 
 gecode/kernel/var-type.hpp: $(VISDEP)
-	perl $(top_srcdir)/misc/genvarimp.perl -typehpp $(VIS) > $@
+	$(UVRUN) $(top_srcdir)/misc/genvarimp.py -typehpp $(VIS) > $@
 gecode/kernel/var-imp.hpp: $(VISDEP)
-	perl $(top_srcdir)/misc/genvarimp.perl -header $(VIS) > $@
+	$(UVRUN) $(top_srcdir)/misc/genvarimp.py -header $(VIS) > $@
 
 #
 # Object targets
@@ -1527,6 +1514,10 @@ $(FLATZINC_GENSRC:%.cpp=%$(SBJSUFFIX)): gecode/flatzinc/%$(SBJSUFFIX): gecode/fl
 	@GECODE_BUILD_FLATZINC_FLAG@ \
 	@COMPILESBJ@$@ @CXXIN@$<
 
+# Generated FlatZinc sources include parser.tab.hpp; make dependency explicit for parallel builds.
+gecode/flatzinc/parser.tab$(OBJSUFFIX) gecode/flatzinc/lexer.yy$(OBJSUFFIX): gecode/flatzinc/parser.tab.hpp
+gecode/flatzinc/parser.tab$(SBJSUFFIX) gecode/flatzinc/lexer.yy$(SBJSUFFIX): gecode/flatzinc/parser.tab.hpp
+
 #
 # DLL Targets
 #
@@ -1555,7 +1546,7 @@ $(KERNELDLL): $(KERNELOBJ) $(SUPPORTDLL)
 	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOSUFFIX))
 $(SEARCHDLL): $(SEARCHOBJ) $(SUPPORTDLL) $(KERNELDLL)
 	$(CXX) $(DLLFLAGS) $(SEARCHOBJ) $(SEARCHSONAME) \
-		@DLLPATH@ $(LINKSUPPORT) $(LINKKERNEL) \
+		@DLLPATH@ $(LINKSUPPORT) $(LINKKERNEL) $(LINKCPPROFILER) \
 		@LINKOUTPUT@$(SEARCHDLL)
 	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOLINKSUFFIX))
 	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOSUFFIX))
@@ -1632,7 +1623,7 @@ $(SEARCHRC):
 endif
 $(SEARCHDLL) $(SEARCHLIB): $(SEARCHOBJ) $(SEARCHRES) $(SUPPORTDLL) $(KERNELDLL)
 	$(CXX) $(DLLFLAGS) $(SEARCHOBJ) $(SEARCHRES) \
-		@DLLPATH@ @LINKOUTPUT@$(SEARCHDLL) $(GLDFLAGS)
+		@DLLPATH@ @LINKOUTPUT@$(SEARCHDLL) $(GLDFLAGS) $(LINKCPPROFILER)
 	$(FIXMANIFEST) $(SEARCHDLL).manifest
 	$(MANIFEST) -manifest $(SEARCHDLL).manifest \
 		    -outputresource:$(SEARCHDLL)\;2
@@ -1785,19 +1776,19 @@ endif
 .PRECIOUS: examples/%$(OBJSUFFIX)
 ifeq "@enable_resource@" "yes"
 .PRECIOUS: examples/%$(EXESUFFIX).rc examples/%$(EXESUFFIX).res
-examples/%$(EXESUFFIX).rc:
+examples/%$(EXESUFFIX).rc: examples/%.cpp
 	$(RCGEN) $(@:%.rc=%) $< > $@
 examples/%$(EXESUFFIX): examples/%$(OBJSUFFIX) examples/%$(EXESUFFIX).res \
 	$(ALLLIB)
 	$(CXX) @EXEOUTPUT@$@ $< $@.res \
 		$(DLLPATH) $(CXXFLAGS) \
-		$(LINKALL) $(GLDFLAGS) $(LINKQT)
+		$(LINKALL) $(GLDFLAGS) $(LINKQT) $(LINKCPPROFILER)
 	$(FIXMANIFEST) $@.manifest
 	$(MANIFEST) -manifest $@.manifest -outputresource:$@\;1
 else
 examples/%$(EXESUFFIX): examples/%$(OBJSUFFIX) $(ALLLIB)
 	$(CXX) @EXEOUTPUT@$@ $< $(DLLPATH) $(CXXFLAGS) \
-	$(LINKALL) $(GLDFLAGS) $(LINKQT)
+	$(LINKALL) $(GLDFLAGS) $(LINKQT) $(LINKCPPROFILER)
 	$(FIXMANIFEST) $@.manifest
 	$(MANIFEST) -manifest $@.manifest -outputresource:$@\;1
 endif
@@ -1811,7 +1802,7 @@ TESTRES =
 endif
 $(TESTEXE): $(TESTOBJ) $(TESTRES) $(ALLLIB)
 	$(CXX) @EXEOUTPUT@$@ $(TESTOBJ) $(TESTRES) $(DLLPATH) $(CXXFLAGS) \
-	$(LINKALL) $(GLDFLAGS) $(LINKQT)
+	$(LINKALL) $(GLDFLAGS) $(LINKQT) $(LINKCPPROFILER)
 	$(FIXMANIFEST) $@.manifest $(DLLSUFFIX)
 	$(MANIFEST) -manifest $@.manifest -outputresource:$@\;1
 
@@ -1831,8 +1822,8 @@ FLATZINCEXERES =
 endif
 $(FLATZINCEXE): $(FLATZINCEXEOBJ) $(FLATZINCEXERES) $(ALLLIB)
 	$(CXX) @EXEOUTPUT@$@ $(FLATZINCEXEOBJ) $(FLATZINCEXERES) \
-	$(DLLPATH) $(CXXFLAGS) \
-	$(LINKALL) $(GLDFLAGS) $(LINKSTATICQT)
+		$(DLLPATH) $(CXXFLAGS) \
+	$(LINKALL) $(GLDFLAGS) $(LINKSTATICQT) $(LINKCPPROFILER)
 	$(FIXMANIFEST) $@.manifest
 	$(MANIFEST) -manifest $@.manifest -outputresource:$@\;1
 
@@ -1841,7 +1832,8 @@ $(FLATZINCEXE): $(FLATZINCEXEOBJ) $(FLATZINCEXERES) $(ALLLIB)
 # Autoconf
 #
 
-$(top_srcdir)/configure: $(top_srcdir)/configure.ac
+$(top_srcdir)/configure: $(top_srcdir)/configure.ac \
+		$(top_srcdir)/gecode-version.m4 $(top_srcdir)/gecode.m4
 	(cd $(top_srcdir) && autoconf)
 config.status: $(top_srcdir)/configure
 	./config.status --recheck
@@ -1857,9 +1849,8 @@ doxygen.conf: $(top_srcdir)/doxygen/doxygen.conf.in config.status
 # Documentation
 #
 
-export ENABLEDOCCHM	= @ENABLEDOCCHM@
-export ENABLEDOCDOCSET	= @ENABLEDOCDOCSET@
 ENABLEDOCSEARCH = @ENABLEDOCSEARCH@
+DOXYGEN_MIN_VERSION = 1.17.0
 
 .PHONY: doc
 
@@ -1867,73 +1858,28 @@ DOCSRC_NOTGENERATED = \
 	misc/doxygen/back.png misc/doxygen/footer.html \
 	misc/doxygen/gecode-logo-100.png \
 	misc/doxygen/stylesheet.css \
-	misc/genlicense.perl misc/genstatistics.perl \
-	misc/genchangelog.perl
+	misc/genlicense.py misc/genstatistics.py \
+	misc/genchangelog.py
 DOCSRC = $(DOCSRC_NOTGENERATED:%=$(top_srcdir)/%) \
 	doxygen.conf.use header.html \
 	doxygen.hh license.hh stat.hh changelog.hh
 
 changelog.hh: $(top_srcdir)/changelog.in
-	perl $(top_srcdir)/misc/genchangelog.perl < $^ > changelog.hh
+	$(UVRUN) $(top_srcdir)/misc/genchangelog.py < $^ > changelog.hh
 
 ChangeLog: $(top_srcdir)/changelog.in
-	perl $(top_srcdir)/misc/gentxtchangelog.perl < $^ > ChangeLog
+	$(UVRUN) $(top_srcdir)/misc/gentxtchangelog.py < $^ > ChangeLog
 
 license.hh: $(ALLGECODEHDR:%=$(top_srcdir)/%) $(ALLSRC:%=$(top_srcdir)/%) \
 	$(VARIMPHDR)
-	perl $(top_srcdir)/misc/genlicense.perl $^ > license.hh
+	$(UVRUN) $(top_srcdir)/misc/genlicense.py $^ > license.hh
 
 stat.hh: $(ALLGECODEHDR:%=$(top_srcdir)/%) $(ALLSRC:%=$(top_srcdir)/%) \
 	$(TESTHDR:%=$(top_srcdir)/%) $(TESTSRC:%=$(top_srcdir)/%) \
 	$(VARIMPHDR)
-	perl $(top_srcdir)/misc/genstatistics.perl $^ > stat.hh
+	$(UVRUN) $(top_srcdir)/misc/genstatistics.py $^ > stat.hh
 
 
-ifeq "@ENABLEDOCCHM@" "yes"
-
-DOCTARGET=GecodeReference.chm
-
-header.html: $(top_srcdir)/misc/doxygen/header.html doxygen.conf
-	grep -v '<form.*form>' < $< > $@
-doxygen.conf.use: doxygen.conf
-	(echo "GENERATE_HTMLHELP = YES"; \
-	 echo "SEARCHENGINE = NO";\
-	 echo "HAVE_DOT = @GECODE_DOXYGEN_DOT@") | \
-		cat $< - > $@
-
-doc: $(ALLGECODEHDR:%=$(top_srcdir)/%) $(VARIMPHDR) \
-	$(ALLSRC:%=$(top_srcdir)/%) $(DOCSRC)
-	mkdir -p doc/html
-	cp -f $(top_srcdir)/misc/doxygen/back.png \
-	$(top_srcdir)/misc/doxygen/gecode-logo-100.png doc/html
-	doxygen doxygen.conf.use
-	mv doc/html/GecodeReference.chm GecodeReference.chm
-
-else
-ifeq "@ENABLEDOCDOCSET@" "yes"
-
-DOCTARGET=org.gecode.@VERSION@.docset
-
-header.html: $(top_srcdir)/misc/doxygen/header.html doxygen.conf
-	grep -v '<form.*form>' < $< > $@
-doxygen.conf.use: doxygen.conf
-	(echo "SEARCHENGINE = NO";\
-	 echo "HAVE_DOT = @GECODE_DOXYGEN_DOT@";\
-	 echo "GENERATE_DOCSET = YES";\
-	 echo "DOCSET_BUNDLE_ID = org.gecode.@VERSION@";\
-	 echo "DOCSET_FEEDNAME = Gecode") | \
-		cat $< - > $@
-
-doc: $(ALLGECODEHDR:%=$(top_srcdir)/%) $(VARIMPHDR) \
-	$(ALLSRC:%=$(top_srcdir)/%) $(DOCSRC)
-	mkdir -p doc/html
-	cp -f $(top_srcdir)/misc/doxygen/back.png \
-	$(top_srcdir)/misc/doxygen/gecode-logo-100.png doc/html
-	doxygen doxygen.conf.use
-	cd doc/html && make
-	mv doc/html/$(DOCTARGET) .
-
-else
 DOCTARGET=doc/html
 
 ifeq "@ENABLEDOCSEARCH@" "yes"
@@ -1941,8 +1887,7 @@ ifeq "@ENABLEDOCSEARCH@" "yes"
 header.html: $(top_srcdir)/misc/doxygen/header.html doxygen.conf
 	cat < $< > $@
 doxygen.conf.use: doxygen.conf
-	(echo "GENERATE_HTMLHELP = NO"; \
-	 echo "SEARCHENGINE = YES"; \
+	(echo "SEARCHENGINE = YES"; \
 	 echo "SERVER_BASED_SEARCH = YES"; \
 	 echo "HAVE_DOT = @GECODE_DOXYGEN_DOT@") | \
 		cat $< - > $@
@@ -1951,15 +1896,20 @@ else
 header.html: $(top_srcdir)/misc/doxygen/header.html doxygen.conf
 	grep -v '<form.*form>' < $< > $@
 doxygen.conf.use: doxygen.conf
-	(echo "GENERATE_HTMLHELP = NO"; \
-	 echo "SEARCHENGINE = NO"; \
+	(echo "SEARCHENGINE = NO"; \
 	 echo "HAVE_DOT = @GECODE_DOXYGEN_DOT@") | \
 		cat $< - > $@
 
 endif
 
-doc: $(ALLGECODEHDR:%=$(top_srcdir)/%) $(VARIMPHDR) \
-	$(ALLSRC:%=$(top_srcdir)/%) $(DOCSRC)
+doc: mkcompiledirs $(ALLGECODEHDR:%=$(top_srcdir)/%) $(VARIMPHDR) \
+		$(ALLSRC:%=$(top_srcdir)/%) $(DOCSRC)
+	@doxygen_version=`doxygen --version 2>/dev/null`; \
+	case "$$doxygen_version" in \
+	  1.17|1.17.*|1.18|1.18.*|1.19|1.19.*|1.[2-9][0-9]|1.[2-9][0-9].*|[2-9]|[2-9].*) ;; \
+	  "") echo "Doxygen >= $(DOXYGEN_MIN_VERSION) is required for make doc"; exit 1 ;; \
+	  *) echo "Doxygen >= $(DOXYGEN_MIN_VERSION) is required for make doc (found $$doxygen_version)"; exit 1 ;; \
+	esac
 	mkdir -p doc/html
 	cp -f $(top_srcdir)/misc/doxygen/back.png \
 	$(top_srcdir)/misc/doxygen/gecode-logo-100.png doc/html
@@ -1971,9 +1921,6 @@ ifeq "@ENABLEDOCSEARCH@" "yes"
 	sed -e 's|<div class="qindex">|<div><div class="qindex">|' \
 	  doc/html/search2.php > doc/html/search.php
 	rm doc/html/search2.php
-endif
-
-endif
 endif
 
 #
@@ -2126,7 +2073,7 @@ veryclean: clean
 	$(RMF) $(EXAMPLEEXE)
 	$(RMF) $(TESTEXE)
 	$(RMF) $(FLATZINCEXE)
-	$(RMF) doc GecodeReference.chm ChangeLog
+	$(RMF) doc ChangeLog
 	$(RMF) $(ALLOBJ:%$(OBJSUFFIX)=%.gcno) $(TESTOBJ:%$(OBJSUFFIX)=%.gcno)
 	$(RMF) $(ALLOBJ:%$(OBJSUFFIX)=%.gcda) $(TESTOBJ:%$(OBJSUFFIX)=%.gcda)
 
@@ -2138,7 +2085,7 @@ distclean: veryclean
 
 depend: mkcompiledirs
 	@$(MAKE) $(VARIMP) gecode/flatzinc/parser.tab.hpp
-	perl $(top_srcdir)/misc/makedepend.perl \
+	$(UVRUN) $(top_srcdir)/misc/makedepend.py \
 	$(top_srcdir) \
 	$(ALLSRC) \
 	$(FLATZINC_GENSRC) \
