@@ -68,6 +68,61 @@
 #
 
 [RELEASE]
+Version: 6.4.0
+Date: 2026-07-07
+[DESCRIPTION]
+This release modernizes the Gecode build infrastructure, adds a
+first-class CMake package for downstream consumers, refreshes the
+autoconf build path, and updates CI coverage for current platforms.
+
+[ENTRY]
+Module: other
+What:   change
+Rank:   major
+[DESCRIPTION]
+Modernize the build infrastructure across CMake and autoconf:
+raise CMake minimum version to 3.21, update autoconf macros to
+current style, make configure.ac the canonical autoconf source,
+and centralize shared version metadata in gecode-version.m4.
+
+[ENTRY]
+Module: gist
+What:   change
+Rank:   minor
+[DESCRIPTION]
+Prefer Qt 6 for Gist and Qt-backed builds while keeping Qt 5.15+
+as the supported legacy baseline. Installed CMake packages now
+request the Qt major/minor version used to build Gecode.
+
+[ENTRY]
+Module: other
+What:   change
+Rank:   major
+[DESCRIPTION]
+Migrate build helper scripts from Perl to Python and execute them
+via uv. This removes Perl as a build-time dependency and unifies
+script execution in autoconf, CMake, and CI.
+
+[ENTRY]
+Module: search
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Fix CPProfiler compilation on Windows and MinGW by using the
+standard _WIN32 platform guard, guarding MSVC-specific pragmas,
+and linking against the Windows socket library where required.
+
+[ENTRY]
+Module: other
+What:   removed
+Rank:   major
+[DESCRIPTION]
+Remove outdated contrib modules (qecode and quacode) from the
+main build, release artifacts, and repository maintenance path.
+Downstream users that still need these modules should continue to
+use an older Gecode release or maintain them outside the main tree.
+
+[RELEASE]
 Version: 6.3.0
 Date: 2026-07-07
 [DESCRIPTION]
@@ -184,7 +239,7 @@ What:   new
 Rank:   minor
 Thanks: Jip J. Dekker
 [DESCRIPTION]
-Add the reason for restarting to the MetaInfo object available when restarting. 
+Add the reason for restarting to the MetaInfo object available when restarting.
 
 [ENTRY]
 Module: other
@@ -253,7 +308,7 @@ Thanks: Jip J. Dekker
 Add support for building Gecode Gist with Qt6.
 
 [ENTRY]
-Module: flatzinc 
+Module: flatzinc
 What:   new
 Rank:   minor
 Thanks: Jip J. Dekker
@@ -261,7 +316,7 @@ Thanks: Jip J. Dekker
 Add support for disjunctive and cumulative on optional variables.
 
 [ENTRY]
-Module: flatzinc 
+Module: flatzinc
 What:   new
 Rank:   minor
 Thanks: Jip J. Dekker
