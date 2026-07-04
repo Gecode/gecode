@@ -31,11 +31,15 @@
 #
 #
 
-prefix=@prefix@
-datarootdir=@datarootdir@
+script_dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+datadir_spec="@GECODE_MZN_DATADIR_FROM_BINDIR@"
+case "$datadir_spec" in
+    /*) datadir="$datadir_spec" ;;
+    *)  datadir=$(CDPATH= cd -- "$script_dir/$datadir_spec" && pwd) ;;
+esac
 if command -v minizinc >/dev/null 2>&1; then
     MZN_CMD=minizinc
 else
     MZN_CMD=mzn-fzn
 fi
-FLATZINC_CMD=fzn-gecode $MZN_CMD -I @datadir@/gecode/mznlib "$@"
+FLATZINC_CMD="$script_dir/fzn-gecode" "$MZN_CMD" -I "$datadir/minizinc/gecode" "$@"

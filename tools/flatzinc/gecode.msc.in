@@ -3,10 +3,10 @@
   "name": "Gecode",
   "description": "Gecode FlatZinc executable",
   "version": "@GECODE_VERSION@",
-  "mznlib": "../gecode",
-  "executable": "../../../bin/fzn-gecode",
+  "mznlib": "@GECODE_MSC_MZNLIB_FROM_SOLVERDIR@",
+  "executable": "@GECODE_MSC_EXECUTABLE_FROM_SOLVERDIR@",
   "tags": ["cp", "int", "float", "set", "restart"],
-  "stdFlags": ["-a", "-f", "-n", "-p", "-r", "-s", "-t", "--cp-profiler"],
+  "stdFlags": [@GECODE_MSC_STD_FLAGS@],
   "extraFlags": [
     ["--c-d", "Recomputation commit distance", "int", "8"],
     ["--a-d", "Recomputation adaption distance", "int", "2"],
