@@ -617,6 +617,7 @@ have run into division by zero issues. And just changing the
 implementation is not good enough because the values of these
 measures can now be exposed during tie-breaking.
 
+*/
 
 /**
  * \page PageHowToChange_5 How to Change from %Gecode 4.4.0 to %Gecode 5.0.0
