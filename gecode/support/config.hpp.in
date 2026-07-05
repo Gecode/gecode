@@ -42,9 +42,6 @@
 /* User-defined suffix of dll names */
 #undef GECODE_DLL_USERSUFFIX
 
-/* Supported version of FlatZinc */
-#undef GECODE_FLATZINC_VERSION
-
 /* max freelist size on 32 bit platforms */
 #undef GECODE_FREELIST_SIZE_MAX32
 

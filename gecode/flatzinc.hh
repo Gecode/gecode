@@ -335,7 +335,7 @@ namespace Gecode { namespace FlatZinc {
 
     virtual void help(void) {
       std::cerr << "Gecode FlatZinc interpreter" << std::endl
-                << " - Supported FlatZinc version: " << GECODE_FLATZINC_VERSION
+                << " - FlatZinc text interface"
                 << std::endl << std::endl;
       Gecode::BaseOptions::help();
     }

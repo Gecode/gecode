@@ -775,7 +775,6 @@ CXXFLAGS
 CXX
 gecode_host_toolchain
 gecode_host_os
-GECODE_FLATZINC_VERSION
 GECODE_SOVERSION
 target_alias
 host_alias
@@ -3280,9 +3279,6 @@ ac_config_headers="$ac_config_headers gecode/support/config.hpp"
 
 ac_gecode_soversion=51
 GECODE_SOVERSION=${ac_gecode_soversion}
-
-ac_gecode_flatzincversion=1.6
-GECODE_FLATZINC_VERSION=${ac_gecode_flatzincversion}
 
 
 # checks for programs
@@ -14546,10 +14542,6 @@ printf "%s\n" "#define GECODE_LIBRARY_VERSION \"${VERSION_DASHES}\"" >>confdefs.
 
 
 printf "%s\n" "#define GECODE_VERSION_NUMBER ${PACKAGE_VERSION_NUMBER}" >>confdefs.h
-
-
-
-printf "%s\n" "#define GECODE_FLATZINC_VERSION \"${GECODE_FLATZINC_VERSION}\"" >>confdefs.h
 
 
 ac_gecode_library_architecture=-${VERSION_DASHES}${ac_gecode_library_architecture}

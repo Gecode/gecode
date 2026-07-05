@@ -440,7 +440,6 @@ endfunction()
 
 gecode_extract_version_metadata("GECODE_M4_VERSION" VERSION)
 gecode_extract_version_metadata("GECODE_M4_SOVERSION" GECODE_SOVERSION)
-gecode_extract_version_metadata("GECODE_M4_FLATZINC_VERSION" GECODE_FLATZINC_VERSION)
 
 set(PACKAGE "GECODE")
 set(PACKAGE_BUGREPORT "users@gecode.org")
