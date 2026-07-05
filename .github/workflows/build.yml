@@ -57,33 +57,7 @@ jobs:
     - name: Custom VIS dependency smoke
       if: runner.os == 'Linux'
       shell: bash
-      run: |
-        set -euxo pipefail
-
-        git clean -ffdx
-        touch configure
-
-        awk '
-          /^Name:[[:space:]]*Int$/ { print "Name:           Custom"; next }
-          /^Namespace:[[:space:]]*Gecode::Int$/ { print "Namespace:      Gecode::Custom"; next }
-          /^Ifdef:[[:space:]]*GECODE_HAS_INT_VARS$/ { next }
-          { print }
-        ' gecode/int/var-imp/int.vis > custom.vis
-
-        CFLAGS="-fPIC" \
-        CXXFLAGS="-std=c++11 -fPIC -DGECODE_MEMORY_ALIGNMENT=16" \
-          ./configure \
-            --with-vis="$PWD/custom.vis" \
-            --disable-cpprofiler \
-            --disable-examples \
-            --disable-flatzinc \
-            --disable-float-vars \
-            --disable-gist \
-            --disable-qt
-
-        rm -f gecode/kernel/var-type.hpp gecode/kernel/var-imp.hpp
-        make -j4
-        grep -q "CustomVarImpConf" gecode/kernel/var-type.hpp
+      run: bash .github/ci/custom-vis-smoke.sh
 
   build-cmake-unix:
     runs-on: ${{ matrix.os }}
@@ -151,228 +125,17 @@ jobs:
     - name: Consumer smoke tests
       if: matrix.os == 'ubuntu-latest'
       shell: bash
-      run: |
-        set -euxo pipefail
-
-        prefix="$GITHUB_WORKSPACE/install"
-        expected_include="/tmp/gecode-install-abs-include"
-        work="$RUNNER_TEMP/gecode-consumers"
-        rm -rf "$work"
-        mkdir -p "$work/a" "$work/b" "$work/c" "$work/d/cmake" "$work/e/cmake" "$work/e/stale"
-
-        cat > "$work/a/CMakeLists.txt" <<'EOF'
-        cmake_minimum_required(VERSION 3.21)
-        project(consumer_a LANGUAGES CXX)
-        find_package(Gecode CONFIG REQUIRED)
-        message(STATUS "Gecode_VERSION=${Gecode_VERSION}")
-        message(STATUS "Gecode_INCLUDE_DIRS=${Gecode_INCLUDE_DIRS}")
-        add_executable(consumer_a main.cpp)
-        target_link_libraries(consumer_a PRIVATE Gecode::gecode)
-        EOF
-        cat > "$work/a/main.cpp" <<'EOF'
-        #include <gecode/support/config.hpp>
-        int main(void) { return 0; }
-        EOF
-
-        cat > "$work/b/CMakeLists.txt" <<'EOF'
-        cmake_minimum_required(VERSION 3.21)
-        project(consumer_b LANGUAGES CXX)
-        find_package(Gecode CONFIG REQUIRED COMPONENTS driver)
-        add_executable(consumer_b main.cpp)
-        target_link_libraries(consumer_b PRIVATE Gecode::gecodedriver)
-        EOF
-        cat > "$work/b/main.cpp" <<'EOF'
-        #include <gecode/driver.hh>
-        int main(void) {
-          Gecode::Options options("consumer_b");
-          return options.model();
-        }
-        EOF
-
-        cat > "$work/c/CMakeLists.txt" <<'EOF'
-        cmake_minimum_required(VERSION 3.21)
-        project(consumer_c LANGUAGES CXX)
-        find_package(Gecode CONFIG REQUIRED COMPONENTS gecodedriver)
-        add_executable(consumer_c main.cpp)
-        target_link_libraries(consumer_c PRIVATE Gecode::gecodedriver)
-        EOF
-        cat > "$work/c/main.cpp" <<'EOF'
-        #include <gecode/driver.hh>
-        int main(void) {
-          Gecode::Options options("consumer_c");
-          return options.model();
-        }
-        EOF
-
-        cat > "$work/d/CMakeLists.txt" <<'EOF'
-        cmake_minimum_required(VERSION 3.21)
-        project(consumer_d LANGUAGES CXX)
-        list(PREPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
-        find_package(Gecode CONFIG REQUIRED COMPONENTS float)
-        if(NOT TARGET MPFR::MPFR)
-          message(FATAL_ERROR "Expected Gecode package to provide MPFR::MPFR")
-        endif()
-        if(TARGET Gecode::gecodefloat_shared)
-          get_target_property(gecodefloat_links Gecode::gecodefloat_shared INTERFACE_LINK_LIBRARIES)
-        elseif(TARGET Gecode::gecodefloat_static)
-          get_target_property(gecodefloat_links Gecode::gecodefloat_static INTERFACE_LINK_LIBRARIES)
-        else()
-          message(FATAL_ERROR "Expected an exported gecodefloat library target")
-        endif()
-        if(NOT gecodefloat_links MATCHES "MPFR::MPFR")
-          message(FATAL_ERROR "Expected gecodefloat to link MPFR::MPFR, got: ${gecodefloat_links}")
-        endif()
-        add_executable(consumer_d main.cpp)
-        target_link_libraries(consumer_d PRIVATE Gecode::gecode)
-        EOF
-        cat > "$work/d/main.cpp" <<'EOF'
-        #include <gecode/support/config.hpp>
-        #ifndef GECODE_HAS_MPFR
-        #error "Expected installed Gecode package to enable MPFR"
-        #endif
-        #include <gecode/float.hh>
-        int main(void) {
-          Gecode::Float::Rounding rounding;
-          return rounding.exp_down(1.0) > 0.0 ? 0 : 1;
-        }
-        EOF
-        cat > "$work/d/cmake/FindMPFR.cmake" <<'EOF'
-        set(MPFR_FOUND TRUE)
-        set(MPFR_INCLUDE_DIRS "/bad/consumer/mpfr/include")
-        set(MPFR_LIBRARIES "/bad/consumer/mpfr/lib/libmpfr.a")
-        EOF
-
-        cat > "$work/e/CMakeLists.txt" <<'EOF'
-        cmake_minimum_required(VERSION 3.21)
-        project(consumer_e LANGUAGES CXX)
-        list(PREPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/stale")
-        find_package(BadDep CONFIG REQUIRED PATHS "${CMAKE_CURRENT_LIST_DIR}/cmake" NO_DEFAULT_PATH)
-        find_package(Gecode CONFIG REQUIRED)
-        if(NOT TARGET MPFR::MPFR)
-          message(FATAL_ERROR "Expected Gecode package to recover MPFR::MPFR after stale dependency lookup")
-        endif()
-        add_executable(consumer_e main.cpp)
-        target_link_libraries(consumer_e PRIVATE Gecode::gecode)
-        EOF
-        cat > "$work/e/main.cpp" <<'EOF'
-        #include <gecode/support/config.hpp>
-        #ifndef GECODE_HAS_MPFR
-        #error "Expected installed Gecode package to enable MPFR"
-        #endif
-        #include <gecode/float.hh>
-        int main(void) {
-          Gecode::Float::Rounding rounding;
-          return rounding.log_down(2.0) >= 0.0 ? 0 : 1;
-        }
-        EOF
-        cat > "$work/e/cmake/BadDepConfig.cmake" <<'EOF'
-        include(CMakeFindDependencyMacro)
-        find_dependency(MPFR)
-        EOF
-        cat > "$work/e/stale/FindMPFR.cmake" <<'EOF'
-        set(MPFR_FOUND TRUE)
-        set(MPFR_INCLUDE_DIRS "/bad/prior/mpfr/include")
-        set(MPFR_LIBRARIES "/bad/prior/mpfr/lib/libmpfr.a")
-        EOF
-
-        cmake -S "$work/a" -B "$work/a/build" -DCMAKE_PREFIX_PATH="$prefix" 2>&1 | tee "$work/a/configure.log"
-        cmake --build "$work/a/build" -j4
-
-        cmake -S "$work/b" -B "$work/b/build" -DCMAKE_PREFIX_PATH="$prefix"
-        cmake --build "$work/b/build" -j4
-
-        cmake -S "$work/c" -B "$work/c/build" -DCMAKE_PREFIX_PATH="$prefix"
-        cmake --build "$work/c/build" -j4
-
-        cmake -S "$work/d" -B "$work/d/build" -DCMAKE_PREFIX_PATH="$prefix"
-        cmake --build "$work/d/build" -j4
-
-        cmake -S "$work/e" -B "$work/e/build" -DCMAKE_PREFIX_PATH="$prefix"
-        cmake --build "$work/e/build" -j4
-
-        grep -q "Gecode_VERSION=" "$work/a/configure.log"
-        grep -q "Gecode_INCLUDE_DIRS=$expected_include" "$work/a/configure.log"
-        grep -q '^#define GECODE_HAS_MPFR /\*\*/' "$expected_include/gecode/support/config.hpp"
-        "$prefix/bin/fzn-gecode" --help
-        test -x "$prefix/bin/mzn-gecode"
-        ! grep -q "/usr/local" "$prefix/bin/mzn-gecode"
+      run: bash .github/ci/cmake-consumer-smoke.sh "$GITHUB_WORKSPACE/install" "/tmp/gecode-install-abs-include"
 
     - name: Disabled module closure checks
       if: matrix.os == 'ubuntu-latest'
       shell: bash
-      run: |
-        set -euxo pipefail
-        cmake -S "$GITHUB_WORKSPACE" -B "$RUNNER_TEMP/gecode-closure-minimodel" \
-          -DCMAKE_BUILD_TYPE=$BUILD_TYPE \
-          -DGECODE_ENABLE_QT=OFF \
-          -DGECODE_ENABLE_GIST=OFF \
-          -DGECODE_ENABLE_MINIMODEL=ON \
-          -DGECODE_ENABLE_INT_VARS=OFF
-        grep -q 'GECODE_ENABLE_INT_VARS:BOOL=ON' "$RUNNER_TEMP/gecode-closure-minimodel/CMakeCache.txt"
-        cmake -S "$GITHUB_WORKSPACE" -B "$RUNNER_TEMP/gecode-closure-examples" \
-          -DCMAKE_BUILD_TYPE=$BUILD_TYPE \
-          -DGECODE_ENABLE_QT=OFF \
-          -DGECODE_ENABLE_GIST=OFF \
-          -DGECODE_ENABLE_EXAMPLES=ON \
-          -DGECODE_ENABLE_SET_VARS=OFF
-        grep -q 'GECODE_ENABLE_SET_VARS:BOOL=ON' "$RUNNER_TEMP/gecode-closure-examples/CMakeCache.txt"
-        cmake -S "$GITHUB_WORKSPACE" -B "$RUNNER_TEMP/gecode-no-cpprofiler" \
-          -DCMAKE_BUILD_TYPE=$BUILD_TYPE \
-          -DGECODE_ENABLE_QT=OFF \
-          -DGECODE_ENABLE_GIST=OFF \
-          -DGECODE_ENABLE_CPPROFILER=OFF \
-          -DGECODE_ENABLE_MPFR=OFF \
-          -DGECODE_ENABLE_EXAMPLES=OFF
-        ! grep -q -- '--cp-profiler' "$RUNNER_TEMP/gecode-no-cpprofiler/tools/flatzinc/gecode.msc"
+      run: bash .github/ci/cmake-closure-checks.sh
 
     - name: Qt minimum version checks
       if: matrix.os == 'ubuntu-latest'
       shell: bash
-      run: |
-        set -euxo pipefail
-
-        fake_qt="$RUNNER_TEMP/fake-qt5-old"
-        fake_qt_config="$fake_qt/lib/cmake/Qt5"
-        mkdir -p "$fake_qt_config"
-        cat > "$fake_qt_config/Qt5Config.cmake" <<'EOF'
-        set(QT_VERSION "5.12.0")
-        set(QT_VERSION_MAJOR 5)
-        set(Qt5Core_VERSION "5.12.0")
-        set(Qt5_FOUND TRUE)
-        set(Qt5Core_FOUND TRUE)
-        if(NOT TARGET Qt5::Core)
-          add_library(Qt5::Core INTERFACE IMPORTED)
-        endif()
-        EOF
-
-        cmake -S "$GITHUB_WORKSPACE" -B "$RUNNER_TEMP/gecode-old-qt-default" \
-          -DCMAKE_BUILD_TYPE=$BUILD_TYPE \
-          -DCMAKE_PREFIX_PATH="$fake_qt" \
-          -DGECODE_ENABLE_GIST=OFF \
-          -DGECODE_ENABLE_FLATZINC=OFF \
-          -DGECODE_ENABLE_EXAMPLES=OFF \
-          -DGECODE_ENABLE_MPFR=OFF
-        cmake -S "$GITHUB_WORKSPACE" -B "$RUNNER_TEMP/gecode-old-qt-default" \
-          -DCMAKE_BUILD_TYPE=$BUILD_TYPE \
-          -DCMAKE_PREFIX_PATH="$fake_qt" \
-          -DGECODE_ENABLE_GIST=OFF \
-          -DGECODE_ENABLE_FLATZINC=OFF \
-          -DGECODE_ENABLE_EXAMPLES=OFF \
-          -DGECODE_ENABLE_MPFR=OFF
-        grep -q '^GECODE_ENABLE_QT:STRING=AUTO' "$RUNNER_TEMP/gecode-old-qt-default/CMakeCache.txt"
-        grep -Fq '/* #undef GECODE_HAS_QT */' "$RUNNER_TEMP/gecode-old-qt-default/gecode/support/config.hpp"
-
-        if cmake -S "$GITHUB_WORKSPACE" -B "$RUNNER_TEMP/gecode-old-qt-explicit" \
-          -DCMAKE_BUILD_TYPE=$BUILD_TYPE \
-          -DCMAKE_PREFIX_PATH="$fake_qt" \
-          -DGECODE_ENABLE_QT=ON \
-          -DGECODE_ENABLE_GIST=OFF \
-          -DGECODE_ENABLE_FLATZINC=OFF \
-          -DGECODE_ENABLE_EXAMPLES=OFF \
-          -DGECODE_ENABLE_MPFR=OFF; then
-          echo "Expected explicit GECODE_ENABLE_QT=ON with old Qt to fail" >&2
-          exit 1
-        fi
+      run: bash .github/ci/qt-minimum-version-checks.sh
 
   build-cmake-unix-ninja:
     runs-on: ubuntu-latest
@@ -417,9 +180,7 @@ jobs:
       run: |
         set -euxo pipefail
         cmake --install "$GITHUB_WORKSPACE/build-ninja" --prefix "$GITHUB_WORKSPACE/install-ninja"
-        "$GITHUB_WORKSPACE/install-ninja/bin/fzn-gecode" --help
-        test -x "$GITHUB_WORKSPACE/install-ninja/bin/mzn-gecode"
-        ! grep -q "/usr/local" "$GITHUB_WORKSPACE/install-ninja/bin/mzn-gecode"
+        bash .github/ci/flatzinc-tools-smoke.sh "$GITHUB_WORKSPACE/install-ninja"
 
   build-cmake-qt-gist:
     runs-on: ubuntu-latest
@@ -458,33 +219,7 @@ jobs:
 
     - name: Qt/Gist consumer smoke test
       shell: bash
-      run: |
-        set -euxo pipefail
-
-        prefix="$GITHUB_WORKSPACE/install-qt-gist"
-        work="$RUNNER_TEMP/gecode-qt-gist-consumer"
-        rm -rf "$work"
-        mkdir -p "$work"
-
-        cat > "$work/CMakeLists.txt" <<'EOF'
-        cmake_minimum_required(VERSION 3.21)
-        project(qt_gist_consumer LANGUAGES CXX)
-        find_package(Gecode CONFIG REQUIRED COMPONENTS gist flatzinc)
-        add_executable(qt_gist_consumer main.cpp)
-        target_link_libraries(qt_gist_consumer PRIVATE Gecode::gecodegist Gecode::gecodeflatzinc)
-        get_target_property(gecodeflatzinc_links Gecode::gecodeflatzinc_shared INTERFACE_LINK_LIBRARIES)
-        if(NOT gecodeflatzinc_links MATCHES "Qt6::Core")
-          message(FATAL_ERROR "Expected Gecode::gecodeflatzinc_shared to link Qt6::Core, got: ${gecodeflatzinc_links}")
-        endif()
-        EOF
-        cat > "$work/main.cpp" <<'EOF'
-        #include <gecode/gist.hh>
-        #include <gecode/flatzinc.hh>
-        int main(void) { return 0; }
-        EOF
-
-        cmake -S "$work" -B "$work/build" -DCMAKE_PREFIX_PATH="$prefix"
-        cmake --build "$work/build" -j4
+      run: bash .github/ci/qt-gist-consumer-smoke.sh "$GITHUB_WORKSPACE/install-qt-gist"
 
   build-cmake-qt5-gist-smoke:
     runs-on: ubuntu-24.04
@@ -532,32 +267,7 @@ jobs:
 
     - name: Qt 5/Gist consumer smoke test
       shell: bash
-      run: |
-        set -euxo pipefail
-
-        prefix="$GITHUB_WORKSPACE/install-qt5-gist"
-        work="$RUNNER_TEMP/gecode-qt5-gist-consumer"
-        rm -rf "$work"
-        mkdir -p "$work"
-
-        cat > "$work/CMakeLists.txt" <<'EOF'
-        cmake_minimum_required(VERSION 3.21)
-        project(qt5_gist_consumer LANGUAGES CXX)
-        find_package(Gecode CONFIG REQUIRED COMPONENTS gist)
-        add_executable(qt5_gist_consumer main.cpp)
-        target_link_libraries(qt5_gist_consumer PRIVATE Gecode::gecodegist)
-        get_target_property(gecodegist_links Gecode::gecodegist_shared INTERFACE_LINK_LIBRARIES)
-        if(NOT gecodegist_links MATCHES "Qt5::Widgets")
-          message(FATAL_ERROR "Expected Gecode::gecodegist_shared to link Qt5::Widgets, got: ${gecodegist_links}")
-        endif()
-        EOF
-        cat > "$work/main.cpp" <<'EOF'
-        #include <gecode/gist.hh>
-        int main(void) { return 0; }
-        EOF
-
-        cmake -S "$work" -B "$work/build" -DCMAKE_PREFIX_PATH="$prefix"
-        cmake --build "$work/build" -j4
+      run: bash .github/ci/qt5-gist-consumer-smoke.sh "$GITHUB_WORKSPACE/install-qt5-gist"
 
   build-cmake-windows:
     runs-on: windows-2022
@@ -609,67 +319,7 @@ jobs:
 
     - name: Consumer smoke tests
       shell: pwsh
-      run: |
-        $prefix = "${{ github.workspace }}\install"
-        $work = Join-Path $env:RUNNER_TEMP "gecode-consumers-win"
-        if (Test-Path $work) { Remove-Item -Recurse -Force $work }
-        New-Item -ItemType Directory -Force -Path (Join-Path $work "a"), (Join-Path $work "b"), (Join-Path $work "c") | Out-Null
-
-        @'
-        cmake_minimum_required(VERSION 3.21)
-        project(consumer_a LANGUAGES CXX)
-        find_package(Gecode CONFIG REQUIRED)
-        message(STATUS "Gecode_VERSION=${Gecode_VERSION}")
-        add_executable(consumer_a main.cpp)
-        target_link_libraries(consumer_a PRIVATE Gecode::gecode)
-        '@ | Set-Content -Encoding utf8 (Join-Path $work "a\CMakeLists.txt")
-        @'
-        #include <gecode/support/config.hpp>
-        int main(void) { return 0; }
-        '@ | Set-Content -Encoding utf8 (Join-Path $work "a\main.cpp")
-
-        @'
-        cmake_minimum_required(VERSION 3.21)
-        project(consumer_b LANGUAGES CXX)
-        find_package(Gecode CONFIG REQUIRED COMPONENTS driver)
-        add_executable(consumer_b main.cpp)
-        target_link_libraries(consumer_b PRIVATE Gecode::gecodedriver)
-        '@ | Set-Content -Encoding utf8 (Join-Path $work "b\CMakeLists.txt")
-        @'
-        #include <gecode/driver.hh>
-        int main(void) {
-          Gecode::Options options("consumer_b");
-          return options.model();
-        }
-        '@ | Set-Content -Encoding utf8 (Join-Path $work "b\main.cpp")
-
-        @'
-        cmake_minimum_required(VERSION 3.21)
-        project(consumer_c LANGUAGES CXX)
-        find_package(Gecode CONFIG REQUIRED COMPONENTS gecodedriver)
-        add_executable(consumer_c main.cpp)
-        target_link_libraries(consumer_c PRIVATE Gecode::gecodedriver)
-        '@ | Set-Content -Encoding utf8 (Join-Path $work "c\CMakeLists.txt")
-        @'
-        #include <gecode/driver.hh>
-        int main(void) {
-          Gecode::Options options("consumer_c");
-          return options.model();
-        }
-        '@ | Set-Content -Encoding utf8 (Join-Path $work "c\main.cpp")
-
-        cmake -S (Join-Path $work "a") -B (Join-Path $work "a\build") -G "Visual Studio 17 2022" -A x64 "-DCMAKE_PREFIX_PATH=$prefix" 2>&1 | Tee-Object -FilePath (Join-Path $work "a\configure.log")
-        cmake --build (Join-Path $work "a\build") --config ${{ env.BUILD_TYPE }}
-
-        cmake -S (Join-Path $work "b") -B (Join-Path $work "b\build") -G "Visual Studio 17 2022" -A x64 "-DCMAKE_PREFIX_PATH=$prefix"
-        cmake --build (Join-Path $work "b\build") --config ${{ env.BUILD_TYPE }}
-
-        cmake -S (Join-Path $work "c") -B (Join-Path $work "c\build") -G "Visual Studio 17 2022" -A x64 "-DCMAKE_PREFIX_PATH=$prefix"
-        cmake --build (Join-Path $work "c\build") --config ${{ env.BUILD_TYPE }}
-
-        if (-not (Select-String -Path (Join-Path $work "a\configure.log") -Pattern "Gecode_VERSION=" -Quiet)) {
-          throw "Gecode_VERSION was not reported during consumer configure."
-        }
+      run: .\.github\ci\cmake-consumer-smoke.ps1 "${{ github.workspace }}\install"
 
   build-cmake-windows-vcpkg:
     runs-on: windows-2022
@@ -709,103 +359,7 @@ jobs:
 
     - name: Consumer smoke tests
       shell: pwsh
-      run: |
-        $prefix = "${{ github.workspace }}\install-vcpkg"
-        $work = Join-Path $env:RUNNER_TEMP "gecode-consumers-win-vcpkg"
-        $toolchain = "$env:VCPKG_ROOT\scripts\buildsystems\vcpkg.cmake"
-        $manifest = Join-Path $work "manifest"
-        $consumerVcpkgInstalled = Join-Path $work "vcpkg_installed"
-        if (Test-Path $work) { Remove-Item -Recurse -Force $work }
-        New-Item -ItemType Directory -Force -Path (Join-Path $work "a"), (Join-Path $work "b"), (Join-Path $work "c"), $manifest | Out-Null
-
-        $baseline = (Get-Content "${{ github.workspace }}\vcpkg.json" | ConvertFrom-Json).'builtin-baseline'
-        @"
-        {
-          "name": "gecode-consumer-smoke",
-          "version-string": "0",
-          "builtin-baseline": "$baseline",
-          "dependencies": [
-            "mpfr"
-          ]
-        }
-        "@ | Set-Content -Encoding utf8 (Join-Path $manifest "vcpkg.json")
-
-        @'
-        cmake_minimum_required(VERSION 3.21)
-        project(consumer_a LANGUAGES CXX)
-        find_package(Gecode CONFIG REQUIRED)
-        message(STATUS "Gecode_VERSION=${Gecode_VERSION}")
-        add_executable(consumer_a main.cpp)
-        target_link_libraries(consumer_a PRIVATE Gecode::gecode)
-        '@ | Set-Content -Encoding utf8 (Join-Path $work "a\CMakeLists.txt")
-        @'
-        #include <gecode/support/config.hpp>
-        int main(void) { return 0; }
-        '@ | Set-Content -Encoding utf8 (Join-Path $work "a\main.cpp")
-
-        @'
-        cmake_minimum_required(VERSION 3.21)
-        project(consumer_b LANGUAGES CXX)
-        find_package(Gecode CONFIG REQUIRED COMPONENTS driver)
-        add_executable(consumer_b main.cpp)
-        target_link_libraries(consumer_b PRIVATE Gecode::gecodedriver)
-        '@ | Set-Content -Encoding utf8 (Join-Path $work "b\CMakeLists.txt")
-        @'
-        #include <gecode/driver.hh>
-        int main(void) {
-          Gecode::Options options("consumer_b");
-          return options.model();
-        }
-        '@ | Set-Content -Encoding utf8 (Join-Path $work "b\main.cpp")
-
-        @'
-        cmake_minimum_required(VERSION 3.21)
-        project(consumer_c LANGUAGES CXX)
-        find_package(Gecode CONFIG REQUIRED COMPONENTS gecodedriver)
-        add_executable(consumer_c main.cpp)
-        target_link_libraries(consumer_c PRIVATE Gecode::gecodedriver)
-        '@ | Set-Content -Encoding utf8 (Join-Path $work "c\CMakeLists.txt")
-        @'
-        #include <gecode/driver.hh>
-        int main(void) {
-          Gecode::Options options("consumer_c");
-          return options.model();
-        }
-        '@ | Set-Content -Encoding utf8 (Join-Path $work "c\main.cpp")
-
-        cmake -S (Join-Path $work "a") -B (Join-Path $work "a\build") -G "Visual Studio 17 2022" -A x64 `
-          "-DCMAKE_TOOLCHAIN_FILE=$toolchain" `
-          "-DVCPKG_MANIFEST_MODE=ON" `
-          "-DVCPKG_MANIFEST_DIR=$manifest" `
-          "-DVCPKG_INSTALLED_DIR=$consumerVcpkgInstalled" `
-          "-DVCPKG_TARGET_TRIPLET=x64-windows" `
-          "-DCMAKE_PREFIX_PATH=$prefix" 2>&1 | Tee-Object -FilePath (Join-Path $work "a\configure.log")
-        if ($LASTEXITCODE -ne 0) {
-          throw "consumer_a configure failed."
-        }
-        cmake --build (Join-Path $work "a\build") --config ${{ env.BUILD_TYPE }}
-
-        cmake -S (Join-Path $work "b") -B (Join-Path $work "b\build") -G "Visual Studio 17 2022" -A x64 `
-          "-DCMAKE_TOOLCHAIN_FILE=$toolchain" `
-          "-DVCPKG_MANIFEST_MODE=ON" `
-          "-DVCPKG_MANIFEST_DIR=$manifest" `
-          "-DVCPKG_INSTALLED_DIR=$consumerVcpkgInstalled" `
-          "-DVCPKG_TARGET_TRIPLET=x64-windows" `
-          "-DCMAKE_PREFIX_PATH=$prefix"
-        cmake --build (Join-Path $work "b\build") --config ${{ env.BUILD_TYPE }}
-
-        cmake -S (Join-Path $work "c") -B (Join-Path $work "c\build") -G "Visual Studio 17 2022" -A x64 `
-          "-DCMAKE_TOOLCHAIN_FILE=$toolchain" `
-          "-DVCPKG_MANIFEST_MODE=ON" `
-          "-DVCPKG_MANIFEST_DIR=$manifest" `
-          "-DVCPKG_INSTALLED_DIR=$consumerVcpkgInstalled" `
-          "-DVCPKG_TARGET_TRIPLET=x64-windows" `
-          "-DCMAKE_PREFIX_PATH=$prefix"
-        cmake --build (Join-Path $work "c\build") --config ${{ env.BUILD_TYPE }}
-
-        if (-not (Select-String -Path (Join-Path $work "a\configure.log") -Pattern "Gecode_VERSION=" -Quiet)) {
-          throw "Gecode_VERSION was not reported during consumer configure."
-        }
+      run: .\.github\ci\cmake-consumer-smoke-vcpkg.ps1 "${{ github.workspace }}\install-vcpkg"
 
   build-cmake-windows-msys2:
     runs-on: windows-2022
