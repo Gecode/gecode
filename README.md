@@ -110,16 +110,16 @@ Use `Gecode_VERSION` from package config for version checks.
 
 ## Download Gecode
 
-Gecode packages (source, Apple MacOS, Microsoft Windows) can be downloaded from
+Gecode 6.4.0 is distributed as source code. Source archives can be downloaded from
 [GitHub](https://github.com/Gecode/gecode/releases)
 or
 [Gecode's webpages](https://gecode.github.io/download.html).
 
 ## Contributing to Gecode
 
-We happily accept smaller contributions and fixes, please provide them as pull requests against the develop branch. For larger contributions, please get in touch.
+We happily accept smaller contributions and fixes, please provide them as pull requests against the main branch. For larger contributions, please get in touch.
 
 ## Gecode License
 
 Gecode is licensed under the
-[MIT license](https://github.com/Gecode/gecode/blob/master/LICENSE).
+[MIT license](https://github.com/Gecode/gecode/blob/main/LICENSE).
