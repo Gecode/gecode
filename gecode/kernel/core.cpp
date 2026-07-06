@@ -4,10 +4,16 @@
  *     Christian Schulte <schulte@gecode.dev>
  *
  *  Contributing authors:
+ *     Kris Coester <kris.coester@sap.com>
+ *     Alexander Shepil <alexander.shepil@sap.com>
+ *     Mikael Zayenz Lagerkvist <lagerkvist@gecode.dev>
  *     Samuel Gagnon <samuel.gagnon92@gmail.com>
  *
  *  Copyright:
  *     Christian Schulte, 2002
+ *     Kris Coester, 2024
+ *     Alexander Shepil, 2024
+ *     Mikael Zayenz Lagerkvist, 2026
  *     Samuel Gagnon, 2018
  *
  *  This file is part of Gecode, the generic constraint

@@ -7,11 +7,15 @@
  *     Mikael Zayenz Lagerkvist <lagerkvist@gecode.dev>
  *     Vincent Barichard <Vincent.Barichard@univ-angers.fr>
  *
+ *  Contributing authors:
+ *     Alexander Shepil <alexander.shepil@sap.com>
+ *
  *  Copyright:
  *     Christian Schulte, 2004
  *     Fraunhofer ITWM, 2017
  *     Guido Tack, 2004
- *     Mikael Zayenz Lagerkvist, 2005
+ *     Mikael Zayenz Lagerkvist, 2005, 2026
+ *     Alexander Shepil, 2024
  *     Vincent Barichard, 2012
  *
  *  This file is part of Gecode, the generic constraint

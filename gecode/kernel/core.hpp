@@ -7,12 +7,16 @@
  *
  *  Contributing authors:
  *     Filip Konvicka <filip.konvicka@logis.cz>
+ *     Kris Coester <kris.coester@sap.com>
+ *     Alexander Shepil <alexander.shepil@sap.com>
  *     Samuel Gagnon <samuel.gagnon92@gmail.com>
  *
  *  Copyright:
  *     Christian Schulte, 2002
  *     Guido Tack, 2003
- *     Mikael Zayenz Lagerkvist, 2006
+ *     Mikael Zayenz Lagerkvist, 2006, 2026
+ *     Kris Coester, 2024
+ *     Alexander Shepil, 2024
  *     LOGIS, s.r.o., 2009
  *     Samuel Gagnon, 2018
  *

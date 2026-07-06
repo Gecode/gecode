@@ -5,9 +5,15 @@
  *     Christian Schulte <schulte@gecode.dev>
  *     Vincent Barichard <Vincent.Barichard@univ-angers.fr>
  *
+ *  Contributing authors:
+ *     Alexander Shepil <alexander.shepil@sap.com>
+ *     Mikael Zayenz Lagerkvist <lagerkvist@gecode.dev>
+ *
  *  Copyright:
  *     Guido Tack, 2004
  *     Christian Schulte, 2004
+ *     Alexander Shepil, 2024
+ *     Mikael Zayenz Lagerkvist, 2026
  *     Vincent Barichard, 2012
  *
  *  This file is part of Gecode, the generic constraint

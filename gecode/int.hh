@@ -12,7 +12,7 @@
  *
  *  Copyright:
  *     Stefano Gualandi, 2013
- *     Mikael Zayenz Lagerkvist, 2006
+ *     Mikael Zayenz Lagerkvist, 2006, 2026
  *     David Rijsman, 2009
  *     Christian Schulte, 2002
  *     Guido Tack, 2004

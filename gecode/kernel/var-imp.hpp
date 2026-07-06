@@ -13,8 +13,16 @@
  *  Main author:
  *     Christian Schulte <schulte@gecode.dev>
  *
+ *  Contributing authors:
+ *     Kris Coester <kris.coester@sap.com>
+ *     Alexander Shepil <alexander.shepil@sap.com>
+ *     Mikael Zayenz Lagerkvist <lagerkvist@gecode.dev>
+ *
  *  Copyright:
  *     Christian Schulte, 2007
+ *     Kris Coester, 2024
+ *     Alexander Shepil, 2024
+ *     Mikael Zayenz Lagerkvist, 2026
  *
  *  The generated code fragments are part of Gecode, the generic
  *  constraint development environment:

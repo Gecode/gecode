@@ -6,7 +6,7 @@
  *
  *  Copyright:
  *     Christian Schulte, 2005
- *     Mikael Zayenz Lagerkvist, 2005
+ *     Mikael Zayenz Lagerkvist, 2005, 2026
  *
  *  This file is part of Gecode, the generic constraint
  *  development environment:

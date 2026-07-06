@@ -5,10 +5,12 @@
  *
  *  Contributing authors:
  *     Guido Tack <tack@gecode.dev>
+ *     Mikael Zayenz Lagerkvist <lagerkvist@gecode.dev>
  *
  *  Copyright:
  *     Christian Schulte, 2003
  *     Guido Tack, 2004
+ *     Mikael Zayenz Lagerkvist, 2026
  *
  *  This file is part of Gecode, the generic constraint
  *  development environment:

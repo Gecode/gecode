@@ -3,8 +3,14 @@
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
  *
+ *  Contributing authors:
+ *     Alexander Shepil <alexander.shepil@sap.com>
+ *     Mikael Zayenz Lagerkvist <lagerkvist@gecode.dev>
+ *
  *  Copyright:
  *     Christian Schulte, 2010
+ *     Alexander Shepil, 2024
+ *     Mikael Zayenz Lagerkvist, 2026
  *
  *  This file is part of Gecode, the generic constraint
  *  development environment:
