@@ -1,14 +1,14 @@
 /* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
- *     Guido Tack <tack@gecode.org>
+ *     Guido Tack <tack@gecode.dev>
  *
  *  Copyright:
  *     Guido Tack, 2007
  *
  *  This file is part of Gecode, the generic constraint
  *  development environment:
- *     http://www.gecode.org
+ *     http://www.gecode.dev
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -37,7 +37,7 @@ namespace Gecode { namespace Gist {
 
   PreferencesDialog::PreferencesDialog(const Options& opt, QWidget *parent)
   : QDialog(parent) {
-    QSettings settings("gecode.org", "Gist");
+    QSettings settings("gecode.dev", "Gist");
     hideFailed = settings.value("search/hideFailed", true).toBool();
     zoom = settings.value("search/zoom", false).toBool();
     copies = settings.value("search/copies", false).toBool();
@@ -154,7 +154,7 @@ namespace Gecode { namespace Gist {
     copies = copiesCheck->isChecked();
     c_d = cdBox->value();
     a_d = adBox->value();
-    QSettings settings("gecode.org", "Gist");
+    QSettings settings("gecode.dev", "Gist");
     settings.setValue("search/hideFailed", hideFailed);
     settings.setValue("search/zoom", zoom);
     settings.setValue("search/copies", copies);

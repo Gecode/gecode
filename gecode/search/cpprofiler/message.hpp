@@ -4,7 +4,7 @@
  *     Maxim Shishmarev <maxim.shishmarev@monash.edu>
  *
  *  Contributing authors:
- *     Guido Tack <tack@gecode.org>
+ *     Guido Tack <tack@gecode.dev>
  *     Kevin Leo <kevin.leo@monash.edu>
  *
  *  Copyright:
@@ -14,7 +14,7 @@
  *
  *  This file is part of Gecode, the generic constraint
  *  development environment:
- *     http://www.gecode.org
+ *     http://www.gecode.dev
  *
  *  Permission is hereby granted, free of charge, to any person obtaining
  *  a copy of this software and associated documentation files (the

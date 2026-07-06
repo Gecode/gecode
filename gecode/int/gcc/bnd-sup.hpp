@@ -4,8 +4,8 @@
  *     Patrick Pekczynski <pekczynski@ps.uni-sb.de>
  *
  *  Contributing authors:
- *     Christian Schulte <schulte@gecode.org>
- *     Guido Tack <tack@gecode.org>
+ *     Christian Schulte <schulte@gecode.dev>
+ *     Guido Tack <tack@gecode.dev>
  *
  *  Copyright:
  *     Patrick Pekczynski, 2004
@@ -14,7 +14,7 @@
  *
  *  This file is part of Gecode, the generic constraint
  *  development environment:
- *     http://www.gecode.org
+ *     http://www.gecode.dev
  *
  *  Permission is hereby granted, free of charge, to any person obtaining
  *  a copy of this software and associated documentation files (the

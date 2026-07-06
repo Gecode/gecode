@@ -1,19 +1,19 @@
 dnl
 dnl Main authors:
-dnl   Guido Tack <tack@gecode.org>
+dnl   Guido Tack <tack@gecode.dev>
 dnl
 dnl Contributing authors:
 dnl   Samuel Gagnon <samuel.gagnon92@gmail.com>
-dnl   Mikael Lagerkvist <lagerkvist@gecode.org>
+dnl   Mikael Zayenz Lagerkvist <lagerkvist@gecode.dev>
 dnl
 dnl Copyright:
 dnl   Guido Tack, 2004, 2005
 dnl   Samuel Gagnon, 2018
-dnl   Mikael Lagerkvist, 2020
+dnl   Mikael Zayenz Lagerkvist, 2020
 dnl
 dnl This file is part of Gecode, the generic constraint
 dnl development environment:
-dnl   http://www.gecode.org
+dnl   http://www.gecode.dev
 dnl
 dnl Permission is hereby granted, free of charge, to any person obtaining
 dnl a copy of this software and associated documentation files (the
@@ -101,7 +101,7 @@ dnl   the shell commands ACTION-IF-TRUE if it is, ACTION-IF-FALSE
 dnl   otherwise.
 dnl
 dnl Authors:
-dnl   Guido Tack <tack@gecode.org>
+dnl   Guido Tack <tack@gecode.dev>
 dnl
 AC_DEFUN([AC_GECODE_CHECK_MS_CL_FLAG],
   [AC_MSG_CHECKING(whether ${CXX} accepts [$1])
@@ -123,7 +123,7 @@ dnl   the shell commands ACTION-IF-TRUE if it is, ACTION-IF-FALSE
 dnl   otherwise.
 dnl
 dnl Authors:
-dnl   Guido Tack <tack@gecode.org>
+dnl   Guido Tack <tack@gecode.dev>
 dnl
 AC_DEFUN([AC_GECODE_CHECK_GXX_FLAG],
    [AC_MSG_CHECKING(whether ${CXX} accepts [$1])
@@ -156,7 +156,7 @@ dnl   the shell commands ACTION-IF-TRUE if it is, ACTION-IF-FALSE
 dnl   otherwise.
 dnl
 dnl Authors:
-dnl   Guido Tack <tack@gecode.org>
+dnl   Guido Tack <tack@gecode.dev>
 dnl
 AC_DEFUN([AC_GECODE_CHECK_GCC_FLAG],[
    AC_MSG_CHECKING(whether ${CC} accepts [$1])
@@ -335,7 +335,7 @@ dnl   enabled by default. ACTION-IF-ENABLED can be used to perform additional
 dnl   actions in case this variable type is enabled.
 dnl
 dnl Authors:
-dnl   Guido Tack <tack@gecode.org>
+dnl   Guido Tack <tack@gecode.dev>
 AC_DEFUN([AC_GECODE_ADD_VTI],
    [AC_DEFINE(GECODE_HAS_$1_VARS, [], [Whether to build $1 variables])])
 AC_DEFUN([AC_GECODE_VIS],[
@@ -373,7 +373,7 @@ dnl Description:
 dnl   Produces a configure switch --enable-<module>.
 dnl
 dnl Authors:
-dnl   Guido Tack <tack@gecode.org>
+dnl   Guido Tack <tack@gecode.dev>
 AC_DEFUN([AC_GECODE_ENABLE_MODULE],
      [
      AC_ARG_ENABLE([$1],
@@ -941,7 +941,7 @@ dnl   Produces the configure switches --enable-doc-search,
 dnl   and --enable-doc-tagfile.
 dnl
 dnl Authors:
-dnl   Guido Tack <tack@gecode.org>
+dnl   Guido Tack <tack@gecode.dev>
 AC_DEFUN([AC_GECODE_DOC_SWITCHES],
   [dnl check if we can use dot for generating graphs in the documentation
    AC_ARG_ENABLE([doc-dot],
@@ -998,7 +998,7 @@ dnl   Produces the configure switches --enable-universal and --with-sdk
 dnl   for compiling universal binaries on Mac OS X.
 dnl
 dnl Authors:
-dnl   Guido Tack <tack@gecode.org>
+dnl   Guido Tack <tack@gecode.dev>
 AC_DEFUN([AC_GECODE_UNIVERSAL],
   [dnl build universal binaries on Mac OS X
   AC_ARG_WITH([sdk],
@@ -1050,7 +1050,7 @@ dnl   Produces the configure switch --enable-framework
 dnl   for creating a Mac OS X framework instead of individual libraries.
 dnl
 dnl Authors:
-dnl   Guido Tack <tack@gecode.org>
+dnl   Guido Tack <tack@gecode.dev>
 AC_DEFUN([AC_GECODE_FRAMEWORK],
   [dnl build framework bundle on Mac OS X
   AC_ARG_ENABLE([framework],
@@ -1272,7 +1272,7 @@ dnl   Produces the configure switch --enable-qt
 dnl   for compiling parts of Gecode that need the Qt library.
 dnl
 dnl Authors:
-dnl   Guido Tack <tack@gecode.org>
+dnl   Guido Tack <tack@gecode.dev>
 AC_DEFUN([AC_GECODE_QT],
   [
   AC_ARG_ENABLE([qt],
@@ -1365,7 +1365,7 @@ dnl   Produces the configure switch --enable-gist
 dnl   for compiling the Gecode Interactive Search Tool.
 dnl
 dnl Authors:
-dnl   Guido Tack <tack@gecode.org>
+dnl   Guido Tack <tack@gecode.dev>
 AC_DEFUN([AC_GECODE_GIST],
   [
   AC_ARG_ENABLE([gist],
@@ -1414,8 +1414,8 @@ dnl   Produces the configure switch --enable-cpprofiler
 dnl   for compiling with support for the CPProfiler.
 dnl
 dnl Authors:
-dnl   Guido Tack <tack@gecode.org>
-dnl   Christian Schulte <schulte@gecode.org>
+dnl   Guido Tack <tack@gecode.dev>
+dnl   Christian Schulte <schulte@gecode.dev>
 AC_DEFUN([AC_GECODE_CPPROFILER],
   [
   AC_ARG_ENABLE([cpprofiler],
@@ -1565,7 +1565,7 @@ dnl   Configure appropriate run environment flags for different platforms for ru
 dnl   executables from the makefile with compiled but not installed shared libraries
 dnl
 dnl Authors:
-dnl   Mikael Lagerkvist <lagerkvist@gecode.org>
+dnl   Mikael Zayenz Lagerkvist <lagerkvist@gecode.dev>
 dnl
 AC_DEFUN([AC_GECODE_RUNENVIRONMENT],
  [case $gecode_host_os in

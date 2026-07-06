@@ -11,14 +11,14 @@
  *  copyrighted as follows:
  *
  *  Main author:
- *     Christian Schulte <schulte@gecode.org>
+ *     Christian Schulte <schulte@gecode.dev>
  *
  *  Copyright:
  *     Christian Schulte, 2007
  *
  *  The generated code fragments are part of Gecode, the generic
  *  constraint development environment:
- *     http://www.gecode.org
+ *     http://www.gecode.dev
  *
  *  Permission is hereby granted, free of charge, to any person obtaining
  *  a copy of this software and associated documentation files (the

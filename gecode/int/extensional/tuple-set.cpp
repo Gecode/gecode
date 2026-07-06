@@ -2,17 +2,17 @@
 /*
  *  Main authors:
  *     Linnea Ingmar <linnea.ingmar@hotmail.com>
- *     Mikael Lagerkvist <lagerkvist@gecode.org>
- *     Christian Schulte <schulte@gecode.org>
+ *     Mikael Zayenz Lagerkvist <lagerkvist@gecode.dev>
+ *     Christian Schulte <schulte@gecode.dev>
  *
  *  Copyright:
  *     Linnea Ingmar, 2017
- *     Mikael Lagerkvist, 2007
+ *     Mikael Zayenz Lagerkvist, 2007
  *     Christian Schulte, 2017
  *
  *  This file is part of Gecode, the generic constraint
  *  development environment:
- *     http://www.gecode.org
+ *     http://www.gecode.dev
  *
  *  Permission is hereby granted, free of charge, to any person obtaining
  *  a copy of this software and associated documentation files (the

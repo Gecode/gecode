@@ -1,9 +1,9 @@
 /* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
- *     Guido Tack <tack@gecode.org>
- *     Gabor Szokoli <szokoli@gecode.org>
- *     Christian Schulte <schulte@gecode.org>
+ *     Guido Tack <tack@gecode.dev>
+ *     Gabor Szokoli <szokoli@gecode.dev>
+ *     Christian Schulte <schulte@gecode.dev>
  *
  *  Copyright:
  *     Guido Tack, 2004
@@ -12,7 +12,7 @@
  *
  *  This file is part of Gecode, the generic constraint
  *  development environment:
- *     http://www.gecode.org
+ *     http://www.gecode.dev
  *
  *  Permission is hereby granted, free of charge, to any person obtaining
  *  a copy of this software and associated documentation files (the

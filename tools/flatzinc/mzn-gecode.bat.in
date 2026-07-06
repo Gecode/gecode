@@ -2,14 +2,14 @@
 
 rem
 rem  Main authors:
-rem     Guido Tack <tack@gecode.org>
+rem     Guido Tack <tack@gecode.dev>
 rem
 rem  Copyright:
 rem     Guido Tack, 2012
 rem
 rem  This file is part of Gecode, the generic constraint
 rem  development environment:
-rem     http://www.gecode.org
+rem     http://www.gecode.dev
 rem
 rem  Permission is hereby granted, free of charge, to any person obtaining
 rem  a copy of this software and associated documentation files (the

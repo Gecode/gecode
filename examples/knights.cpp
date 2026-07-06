@@ -1,16 +1,16 @@
 /* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
- *     Mikael Lagerkvist <lagerkvist@gecode.org>
- *     Christian Schulte <schulte@gecode.org>
+ *     Mikael Zayenz Lagerkvist <lagerkvist@gecode.dev>
+ *     Christian Schulte <schulte@gecode.dev>
  *
  *  Copyright:
- *     Mikael Lagerkvist, 2008
+ *     Mikael Zayenz Lagerkvist, 2008
  *     Christian Schulte, 2001
  *
  *  This file is part of Gecode, the generic constraint
  *  development environment:
- *     http://www.gecode.org
+ *     http://www.gecode.dev
  *
  *  Permission is hereby granted, free of charge, to any person obtaining
  *  a copy of this software and associated documentation files (the

@@ -1,14 +1,14 @@
 /* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
- *     Guido Tack <tack@gecode.org>
+ *     Guido Tack <tack@gecode.dev>
  *
  *  Copyright:
  *     Guido Tack, 2006
  *
  *  This file is part of Gecode, the generic constraint
  *  development environment:
- *     http://www.gecode.org
+ *     http://www.gecode.dev
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -62,7 +62,7 @@ namespace Gecode { namespace Gist {
                      "<p><b>The Gecode Interactive Search Tool</b</p> "
                     "<p>You can find more information about Gecode and Gist "
                     "at</p>"
-                    "<p><a href='http://www.gecode.org'>www.gecode.org</a>"
+                    "<p><a href='http://www.gecode.dev'>www.gecode.dev</a>"
                     "</p"));
     aboutLabel->setOpenExternalLinks(true);
     aboutLabel->setWordWrap(true);

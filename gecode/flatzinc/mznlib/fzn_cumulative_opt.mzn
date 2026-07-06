@@ -1,15 +1,15 @@
 %
 %  Main authors:
-%     Guido Tack <tack@gecode.org>
-%     Mikael lagerkvist <lagerkvist@gecode.org>
+%     Guido Tack <tack@gecode.dev>
+%     Mikael Zayenz Lagerkvist <lagerkvist@gecode.dev>
 %
 %  Copyright:
 %     Guido Tack, 2007
-%     Mikael Lagerkvist, 2009
+%     Mikael Zayenz Lagerkvist, 2009
 %
 %  This file is part of Gecode, the generic constraint
 %  development environment:
-%     http://www.gecode.org
+%     http://www.gecode.dev
 %
 %  Permission is hereby granted, free of charge, to any person obtaining
 %  a copy of this software and associated documentation files (the

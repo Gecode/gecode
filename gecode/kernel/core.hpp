@@ -1,9 +1,9 @@
 /* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
- *     Christian Schulte <schulte@gecode.org>
- *     Guido Tack <tack@gecode.org>
- *     Mikael Lagerkvist <lagerkvist@gecode.org>
+ *     Christian Schulte <schulte@gecode.dev>
+ *     Guido Tack <tack@gecode.dev>
+ *     Mikael Zayenz Lagerkvist <lagerkvist@gecode.dev>
  *
  *  Contributing authors:
  *     Filip Konvicka <filip.konvicka@logis.cz>
@@ -12,7 +12,7 @@
  *  Copyright:
  *     Christian Schulte, 2002
  *     Guido Tack, 2003
- *     Mikael Lagerkvist, 2006
+ *     Mikael Zayenz Lagerkvist, 2006
  *     LOGIS, s.r.o., 2009
  *     Samuel Gagnon, 2018
  *
@@ -21,7 +21,7 @@
  *
  *  This file is part of Gecode, the generic constraint
  *  development environment:
- *     http://www.gecode.org
+ *     http://www.gecode.dev
  *
  *  Permission is hereby granted, free of charge, to any person obtaining
  *  a copy of this software and associated documentation files (the

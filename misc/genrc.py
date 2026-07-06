@@ -63,14 +63,14 @@ def main() -> int:
  *  copyrighted as follows:
  *
  *  Main author:
- *     Christian Schulte <schulte@gecode.org>
+ *     Christian Schulte <schulte@gecode.dev>
  *
  *  Copyright:
  *     Christian Schulte, 2010
  *
  *  The generated code fragments are part of Gecode, the generic
  *  constraint development environment:
- *     http://www.gecode.org
+ *     http://www.gecode.dev
  *
  *  Permission is hereby granted, free of charge, to any person obtaining
  *  a copy of this software and associated documentation files (the
@@ -179,7 +179,7 @@ BEGIN
             VALUE "FileDescription",  "{description}"
             VALUE "FileVersion",      "{revx}.{revy}.{revz}"
             VALUE "InternalName",     "{basename}"
-            VALUE "LegalCopyright",   "{copyright_text} (license information available from www.gecode.org)"
+            VALUE "LegalCopyright",   "{copyright_text} (license information available from www.gecode.dev)"
             VALUE "OriginalFilename", "{filename}"
             VALUE "ProductName",      "Gecode"
             VALUE "ProductVersion",   "{revx}.{revy}.{revz}"

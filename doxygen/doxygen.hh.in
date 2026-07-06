@@ -1,7 +1,7 @@
 /*
  *  Main authors:
- *     Christian Schulte <schulte@gecode.org>
- *     Guido Tack <tack@gecode.org>
+ *     Christian Schulte <schulte@gecode.dev>
+ *     Guido Tack <tack@gecode.dev>
  *
  *  Copyright:
  *     Christian Schulte, 2005
@@ -9,7 +9,7 @@
  *
  *  This file is part of Gecode, the generic constraint
  *  development environment:
- *     http://www.gecode.org
+ *     http://www.gecode.dev
  *
  *  Permission is hereby granted, free of charge, to any person obtaining
  *  a copy of this software and associated documentation files (the
@@ -333,7 +333,7 @@
  * \mainpage %Gecode Reference Documentation
  *
  * This document provides reference information about
- * <A HREF="http://www.gecode.org">%Gecode</A>.
+ * <A HREF="http://www.gecode.dev">%Gecode</A>.
  * The documentation is structured into three major groups:
  * getting started, common programming tasks, and
  * available functionality.
@@ -345,7 +345,7 @@
  *
  * For your fist steps with %Gecode, including detailed instructions on
  * installing the library and compiling against it, please refer to the
- * document <A HREF="http://www.gecode.org/doc-latest/MPG.pdf">Modeling and
+ * document <A HREF="http://www.gecode.dev/doc-latest/MPG.pdf">Modeling and
  * Programming with Gecode</A>.
  *
  * You may also want to have a look at our \ref PageNotation as well as

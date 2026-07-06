@@ -442,7 +442,7 @@ gecode_extract_version_metadata("GECODE_M4_VERSION" VERSION)
 gecode_extract_version_metadata("GECODE_M4_SOVERSION" GECODE_SOVERSION)
 
 set(PACKAGE "GECODE")
-set(PACKAGE_BUGREPORT "users@gecode.org")
+set(PACKAGE_BUGREPORT "users@gecode.dev")
 
 set(PACKAGE_NAME ${PACKAGE})
 string(TOLOWER ${PACKAGE} PACKAGE_TARNAME)

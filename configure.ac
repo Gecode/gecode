@@ -1,6 +1,6 @@
 dnl
 dnl Main authors:
-dnl   Guido Tack <tack@gecode.org>
+dnl   Guido Tack <tack@gecode.dev>
 dnl
 dnl Contributing authors:
 dnl   Samuel Gagnon <samuel.gagnon92@gmail.com>
@@ -11,7 +11,7 @@ dnl   Samuel Gagnon, 2018
 dnl
 dnl This file is part of Gecode, the generic constraint
 dnl development environment:
-dnl   http://www.gecode.org
+dnl   http://www.gecode.dev
 dnl
 dnl Permission is hereby granted, free of charge, to any person obtaining
 dnl a copy of this software and associated documentation files (the
@@ -37,7 +37,7 @@ m4_include([gecode-version.m4])
 
 AC_REVISION([$Id$])
 AC_PREREQ([2.69])
-AC_INIT([GECODE], GECODE_M4_VERSION, [users@gecode.org])
+AC_INIT([GECODE], GECODE_M4_VERSION, [users@gecode.dev])
 AC_CONFIG_HEADERS([gecode/support/config.hpp])
 AC_CONFIG_SRCDIR(gecode/kernel.hh)
 

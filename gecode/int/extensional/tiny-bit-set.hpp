@@ -4,7 +4,7 @@
  *     Linnea Ingmar <linnea.ingmar@hotmail.com>
  *
  *  Contributing authors:
- *     Christian Schulte <schulte@gecode.org>
+ *     Christian Schulte <schulte@gecode.dev>
  *
  *  Copyright:
  *     Linnea Ingmar, 2017
@@ -12,7 +12,7 @@
  *
  *  This file is part of Gecode, the generic constraint
  *  development environment:
- *     http://www.gecode.org
+ *     http://www.gecode.dev
  *
  *  Permission is hereby granted, free of charge, to any person obtaining
  *  a copy of this software and associated documentation files (the
