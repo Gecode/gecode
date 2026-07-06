@@ -140,6 +140,62 @@ Avoid rewriting the generated CMake config.hpp file when its
 contents have not changed.
 
 [ENTRY]
+Module: kernel
+What:   bug
+Rank:   major
+Issue:  211
+Thanks: Kris Coester and Alexander Shepil
+[DESCRIPTION]
+Make failed space cloning transactional. If copying actors, advisors,
+local objects, variable implementations, or clone disposal metadata
+throws, Gecode now restores the source space and releases the partial
+clone without leaving forwarding links, actor lists, or dispose notices
+in an inconsistent state.
+
+[ENTRY]
+Module: kernel
+What:   bug
+Rank:   minor
+Issue:  211
+Thanks: Alexander Shepil
+[DESCRIPTION]
+Harden dispose-notice registration against allocation failure. Actors
+are no longer disposed by the space when an AP_DISPOSE registration
+fails before ownership has been transferred to the dispose-notice list.
+
+[ENTRY]
+Module: int
+What:   bug
+Rank:   minor
+Issue:  211
+Thanks: Alexander Shepil
+[DESCRIPTION]
+Fix exception safety in IntSet object allocation. Partially constructed
+IntSet objects now initialize their cleanup state before allocating
+range storage and release the object if range allocation fails.
+
+[ENTRY]
+Module: int
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Avoid signed integer overflow when computing integer-domain widths and
+holes. Range width calculations now use unsigned arithmetic after
+conversion, including full-domain integer ranges.
+
+[ENTRY]
+Module: minimodel
+What:   bug
+Rank:   minor
+Issue:  211
+Thanks: Alexander Shepil
+[DESCRIPTION]
+Fix MiniModel expression ownership during allocation failure. Boolean
+misc-expression nodes and non-linear integer expression nodes now clean
+up partially transferred objects and internal expression arrays while
+preserving the public default LinIntExpr zero-expression invariant.
+
+[ENTRY]
 Module: search
 What:   bug
 Rank:   minor
@@ -148,6 +204,26 @@ Thanks: Stefan Brüns
 [DESCRIPTION]
 Send CPProfiler's DONE message before disconnecting from the
 profiler socket.
+
+[ENTRY]
+Module: search
+What:   bug
+Rank:   major
+[DESCRIPTION]
+Fix sanitizer-detected search issues, including branch-and-bound
+recomputation undefined behavior, parallel search command and stop-state
+races, PBS slave lifetime hazards, restart-stop state races, stop-object
+limit races, and shared no-good accounting races.
+
+[ENTRY]
+Module: test
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Add opt-in deterministic fault injection and sanitizer build support.
+The new fault-injection tests exercise clone, dispose-notice, IntSet,
+MiniModel, and heap-allocation failure paths that are otherwise hard to
+reproduce reliably.
 
 [ENTRY]
 Module: other

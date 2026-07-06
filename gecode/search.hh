@@ -6,11 +6,13 @@
  *
  *  Contributing authors:
  *     Kevin Leo <kevin.leo@monash.edu>
+ *     Mikael Zayenz Lagerkvist <lagerkvist@gecode.dev>
  *     Maxim Shishmarev <maxim.shishmarev@monash.edu>
  *
  *  Copyright:
  *     Kevin Leo, 2017
  *     Christian Schulte, 2002
+ *     Mikael Zayenz Lagerkvist, 2026
  *     Maxim Shishmarev, 2017
  *     Guido Tack, 2004
  *
