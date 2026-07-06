@@ -864,9 +864,9 @@ def generate_header(files: List[Dict], out: List[str]) -> None:
         """namespace Gecode {
 
   forceinline void
-  Space::updateNoIdx(Space* space, bool) {
+  Space::recover_noidx(void) {
     VarImp<NoIdxVarImpConf>* x =
-      static_cast<VarImp<NoIdxVarImpConf>*>(space->pc.c.vars_noidx);
+      static_cast<VarImp<NoIdxVarImpConf>*>(pc.c.vars_noidx);
     while (x != nullptr) {
       VarImp<NoIdxVarImpConf>* n = x->next();
       x->b.base = nullptr; x->u.idx[0] = 0;
@@ -938,13 +938,13 @@ def generate_header(files: List[Dict], out: List[str]) -> None:
     }
 
     ActorLink** sub = static_cast<ActorLink**>(mm.subscriptions());
-    Space::updateNoIdx(this, true);
+    recover_noidx();
 """
     )
 
     for d in files:
         out.append(d["ifdef"])
-        out.append(f"    {d['base']}::revertHarmfulChangesOfUnfinishedClone(*this,sub);\n")
+        out.append(f"    {d['base']}::recover(*this,sub);\n")
         out.append(d["endif"])
 
     out.append(
