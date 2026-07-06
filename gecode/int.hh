@@ -49,6 +49,10 @@
 #include <climits>
 #include <cfloat>
 
+#ifdef GECODE_HAS_FAULT_INJECTION
+#include <atomic>
+#endif
+
 #include <iostream>
 #include <vector>
 #include <unordered_map>
@@ -190,7 +194,7 @@ namespace Gecode {
       Range* r;
 #ifdef GECODE_HAS_FAULT_INJECTION
       /// Number of live objects for fault-injection tests
-      static int fault_live_objects;
+      static std::atomic<int> fault_live_objects;
       /// Memory management for fault-injection accounting
       static void* operator new(size_t s);
       /// Memory management for fault-injection accounting

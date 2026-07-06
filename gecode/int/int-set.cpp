@@ -42,29 +42,29 @@
 namespace Gecode {
 
 #ifdef GECODE_HAS_FAULT_INJECTION
-  int IntSet::IntSetObject::fault_live_objects = 0;
+  std::atomic<int> IntSet::IntSetObject::fault_live_objects{0};
 
   void*
   IntSet::IntSetObject::operator new(size_t s) {
     void* p = ::operator new(s);
-    fault_live_objects++;
+    fault_live_objects.fetch_add(1, std::memory_order_relaxed);
     return p;
   }
 
   void
   IntSet::IntSetObject::operator delete(void* p) {
-    fault_live_objects--;
+    fault_live_objects.fetch_sub(1, std::memory_order_relaxed);
     ::operator delete(p);
   }
 
   void
   IntSet::fault_reset_allocations(void) {
-    IntSetObject::fault_live_objects = 0;
+    IntSetObject::fault_live_objects.store(0, std::memory_order_relaxed);
   }
 
   int
   IntSet::fault_live_allocations(void) {
-    return IntSetObject::fault_live_objects;
+    return IntSetObject::fault_live_objects.load(std::memory_order_relaxed);
   }
 #endif
 
