@@ -55,6 +55,10 @@
 #include <gecode/float.hh>
 #endif
 
+#ifdef GECODE_HAS_FAULT_INJECTION
+#include <atomic>
+#endif
+
 #include <iostream>
 
 /*

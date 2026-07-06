@@ -91,7 +91,7 @@ namespace Gecode {
     static void  operator delete(void* p,size_t size);
 #ifdef GECODE_HAS_FAULT_INJECTION
     /// Number of live nodes for fault-injection tests
-    static int fault_live_nodes;
+    static std::atomic<int> fault_live_nodes;
 #endif
   };
 
@@ -104,16 +104,16 @@ namespace Gecode {
   }
 
 #ifdef GECODE_HAS_FAULT_INJECTION
-  int LinIntExpr::Node::fault_live_nodes = 0;
+  std::atomic<int> LinIntExpr::Node::fault_live_nodes{0};
 
   void
   LinIntExpr::fault_reset_allocations(void) {
-    Node::fault_live_nodes = 0;
+    Node::fault_live_nodes.store(0, std::memory_order_relaxed);
   }
 
   int
   LinIntExpr::fault_live_allocations(void) {
-    return Node::fault_live_nodes;
+    return Node::fault_live_nodes.load(std::memory_order_relaxed);
   }
 #endif
 
@@ -142,7 +142,7 @@ namespace Gecode {
 #endif
     void* p = heap.ralloc(size);
 #ifdef GECODE_HAS_FAULT_INJECTION
-    fault_live_nodes++;
+    fault_live_nodes.fetch_add(1, std::memory_order_relaxed);
 #endif
     return p;
   }
@@ -150,7 +150,7 @@ namespace Gecode {
   forceinline void
   LinIntExpr::Node::operator delete(void* p, size_t) {
 #ifdef GECODE_HAS_FAULT_INJECTION
-    fault_live_nodes--;
+    fault_live_nodes.fetch_sub(1, std::memory_order_relaxed);
 #endif
     heap.rfree(p);
   }
