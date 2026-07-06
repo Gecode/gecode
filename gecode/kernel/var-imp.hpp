@@ -487,9 +487,9 @@ namespace Gecode { namespace Float {
 namespace Gecode {
 
   forceinline void
-  Space::updateNoIdx(Space* space, bool) {
+  Space::recover_noidx(void) {
     VarImp<NoIdxVarImpConf>* x =
-      static_cast<VarImp<NoIdxVarImpConf>*>(space->pc.c.vars_noidx);
+      static_cast<VarImp<NoIdxVarImpConf>*>(pc.c.vars_noidx);
     while (x != nullptr) {
       VarImp<NoIdxVarImpConf>* n = x->next();
       x->b.base = nullptr; x->u.idx[0] = 0;
@@ -564,18 +564,18 @@ namespace Gecode {
     }
 
     ActorLink** sub = static_cast<ActorLink**>(mm.subscriptions());
-    Space::updateNoIdx(this, true);
+    recover_noidx();
 #ifdef GECODE_HAS_INT_VARS
-    Gecode::VarImp<Gecode::Int::IntVarImpConf>::revertHarmfulChangesOfUnfinishedClone(*this,sub);
+    Gecode::VarImp<Gecode::Int::IntVarImpConf>::recover(*this,sub);
 #endif
 #ifdef GECODE_HAS_INT_VARS
-    Gecode::VarImp<Gecode::Int::BoolVarImpConf>::revertHarmfulChangesOfUnfinishedClone(*this,sub);
+    Gecode::VarImp<Gecode::Int::BoolVarImpConf>::recover(*this,sub);
 #endif
 #ifdef GECODE_HAS_SET_VARS
-    Gecode::VarImp<Gecode::Set::SetVarImpConf>::revertHarmfulChangesOfUnfinishedClone(*this,sub);
+    Gecode::VarImp<Gecode::Set::SetVarImpConf>::recover(*this,sub);
 #endif
 #ifdef GECODE_HAS_FLOAT_VARS
-    Gecode::VarImp<Gecode::Float::FloatVarImpConf>::revertHarmfulChangesOfUnfinishedClone(*this,sub);
+    Gecode::VarImp<Gecode::Float::FloatVarImpConf>::recover(*this,sub);
 #endif
   }
 }

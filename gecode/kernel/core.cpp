@@ -186,7 +186,7 @@ namespace Gecode {
   void
   Space::ap_ignore_dispose(Actor* a, bool duplicate) {
     // Note that a might be a marked pointer!
-    if (inPrematureDestructionMode())
+    if (is_partial_clone())
       return;
 
     assert(d_fst != nullptr);
@@ -207,7 +207,7 @@ namespace Gecode {
   }
 
   Space::~Space(void) {
-    if (inPrematureDestructionMode()) {
+    if (is_partial_clone()) {
       if (pc.c.source != nullptr) {
         recover(*pc.c.source);
         pc.c.source = nullptr;
