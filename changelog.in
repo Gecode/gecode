@@ -120,6 +120,16 @@ initializing their exponent fields and rejecting nth-root test
 assignments whose source interval is not fully non-negative.
 
 [ENTRY]
+Module: flatzinc
+What:   bug
+Rank:   minor
+Issue:  207
+Thanks: Nathan Tran
+[DESCRIPTION]
+Include the upper endpoint when generating FlatZinc on_restart
+uniform integer and float values.
+
+[ENTRY]
 Module: other
 What:   change
 Rank:   major

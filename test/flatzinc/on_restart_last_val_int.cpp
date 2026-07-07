@@ -3,8 +3,12 @@
  *  Main authors:
  *     Jip J. Dekker <jip.dekker@monash.edu>
  *
+ *  Contributing authors:
+ *     Nathan Tran <kieron.qtran@gmail.com>
+ *
  *  Copyright:
  *     Jip J. Dekker, 2023
+ *     Nathan Tran, 2025
  *
  *  This file is part of Gecode, the generic constraint
  *  development environment:
@@ -80,6 +84,18 @@ y = 3;
 ----------
 ==========
 )OUT", true, {"--restart", "constant", "--restart-base", "100"});
+
+        (void) new FlatZincTest("on_restart::uniform_int_upper_bound",
+R"FZN(
+predicate gecode_on_restart_uniform_int(int: low,int: high,var int: out);
+var 0..1: y:: output_var;
+constraint gecode_on_restart_uniform_int(0,1,y);
+constraint int_eq(y,1);
+solve satisfy;
+)FZN",
+R"OUT(y = 1;
+----------
+)OUT", true, {"--restart", "constant", "--restart-base", "100", "--seed", "2"});
       }
     };
 
