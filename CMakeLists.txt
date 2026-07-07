@@ -1263,7 +1263,15 @@ if(BUILD_TESTING)
       list(APPEND GECODE_CHECK_ARGS -test ${gecode_check_test})
     endforeach()
 
+    # Keep ctest robust while leaving the large test binary out of the default build.
+    add_test(NAME build-gecode-test
+      COMMAND ${CMAKE_COMMAND} --build "${CMAKE_BINARY_DIR}"
+              --target gecode-test --config $<CONFIG>)
+    set_tests_properties(build-gecode-test PROPERTIES
+      FIXTURES_SETUP gecode-test-built)
     add_test(NAME test COMMAND gecode-test ${GECODE_CHECK_ARGS})
+    set_tests_properties(test PROPERTIES
+      FIXTURES_REQUIRED gecode-test-built)
     add_custom_target(check
       COMMAND $<TARGET_FILE:gecode-test> ${GECODE_CHECK_ARGS}
       DEPENDS gecode-test

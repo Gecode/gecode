@@ -192,6 +192,23 @@ jobs:
         cmake --build "$GITHUB_WORKSPACE/build-ninja" --target check
         ctest --test-dir "$GITHUB_WORKSPACE/build-ninja" --output-on-failure -R '^test$'
 
+    - name: Configure CMake Debug audit smoke
+      shell: bash
+      run: >
+        cmake -S "$GITHUB_WORKSPACE" -B "$GITHUB_WORKSPACE/build-ninja-debug"
+        -G Ninja
+        -DCMAKE_BUILD_TYPE=Debug
+        -DGECODE_ENABLE_AUDIT=ON
+        -DGECODE_ENABLE_QT=OFF
+        -DGECODE_ENABLE_GIST=OFF
+        -DGECODE_ENABLE_MPFR=OFF
+        -DGECODE_ENABLE_EXAMPLES=OFF
+        -DGECODE_ENABLE_FLATZINC=OFF
+
+    - name: Build Debug audit smoke
+      shell: bash
+      run: cmake --build "$GITHUB_WORKSPACE/build-ninja-debug"
+
     - name: Install and smoke test FlatZinc tools
       shell: bash
       run: |
