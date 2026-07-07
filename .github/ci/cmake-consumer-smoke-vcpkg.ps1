@@ -10,7 +10,12 @@ $toolchain = "$env:VCPKG_ROOT\scripts\buildsystems\vcpkg.cmake"
 $manifest = Join-Path $work "manifest"
 $consumerVcpkgInstalled = Join-Path $work "vcpkg_installed"
 if (Test-Path $work) { Remove-Item -Recurse -Force $work }
-New-Item -ItemType Directory -Force -Path (Join-Path $work "a"), (Join-Path $work "b"), (Join-Path $work "c"), $manifest | Out-Null
+New-Item -ItemType Directory -Force -Path `
+  (Join-Path $work "a"), `
+  (Join-Path $work "b"), `
+  (Join-Path $work "c"), `
+  (Join-Path $work "d"), `
+  $manifest | Out-Null
 
 $baseline = (Get-Content "$env:GITHUB_WORKSPACE\vcpkg.json" | ConvertFrom-Json).'builtin-baseline'
 @"
@@ -67,6 +72,38 @@ int main(void) {
 }
 '@ | Set-Content -Encoding utf8 (Join-Path $work "c\main.cpp")
 
+@'
+cmake_minimum_required(VERSION 3.21)
+project(consumer_d LANGUAGES CXX)
+find_package(Gecode CONFIG REQUIRED COMPONENTS float)
+if(NOT TARGET MPFR::MPFR)
+  message(FATAL_ERROR "Expected Gecode package to provide MPFR::MPFR")
+endif()
+if(TARGET Gecode::gecodefloat_shared)
+  get_target_property(gecodefloat_links Gecode::gecodefloat_shared INTERFACE_LINK_LIBRARIES)
+elseif(TARGET Gecode::gecodefloat_static)
+  get_target_property(gecodefloat_links Gecode::gecodefloat_static INTERFACE_LINK_LIBRARIES)
+else()
+  message(FATAL_ERROR "Expected an exported gecodefloat library target")
+endif()
+if(NOT gecodefloat_links MATCHES "MPFR::MPFR")
+  message(FATAL_ERROR "Expected gecodefloat to link MPFR::MPFR, got: ${gecodefloat_links}")
+endif()
+add_executable(consumer_d main.cpp)
+target_link_libraries(consumer_d PRIVATE Gecode::gecodefloat)
+'@ | Set-Content -Encoding utf8 (Join-Path $work "d\CMakeLists.txt")
+@'
+#include <gecode/support/config.hpp>
+#ifndef GECODE_HAS_MPFR
+#error "Expected installed Gecode package to enable MPFR"
+#endif
+#include <gecode/float.hh>
+int main(void) {
+  Gecode::Float::Rounding rounding;
+  return rounding.exp_down(1.0) > 0.0 ? 0 : 1;
+}
+'@ | Set-Content -Encoding utf8 (Join-Path $work "d\main.cpp")
+
 cmake -S (Join-Path $work "a") -B (Join-Path $work "a\build") -G "Visual Studio 17 2022" -A x64 `
   "-DCMAKE_TOOLCHAIN_FILE=$toolchain" `
   "-DVCPKG_MANIFEST_MODE=ON" `
@@ -96,6 +133,15 @@ cmake -S (Join-Path $work "c") -B (Join-Path $work "c\build") -G "Visual Studio 
   "-DVCPKG_TARGET_TRIPLET=x64-windows" `
   "-DCMAKE_PREFIX_PATH=$prefix"
 cmake --build (Join-Path $work "c\build") --config $env:BUILD_TYPE
+
+cmake -S (Join-Path $work "d") -B (Join-Path $work "d\build") -G "Visual Studio 17 2022" -A x64 `
+  "-DCMAKE_TOOLCHAIN_FILE=$toolchain" `
+  "-DVCPKG_MANIFEST_MODE=ON" `
+  "-DVCPKG_MANIFEST_DIR=$manifest" `
+  "-DVCPKG_INSTALLED_DIR=$consumerVcpkgInstalled" `
+  "-DVCPKG_TARGET_TRIPLET=x64-windows" `
+  "-DCMAKE_PREFIX_PATH=$prefix"
+cmake --build (Join-Path $work "d\build") --config $env:BUILD_TYPE
 
 if (-not (Select-String -Path (Join-Path $work "a\configure.log") -Pattern "Gecode_VERSION=" -Quiet)) {
   throw "Gecode_VERSION was not reported during consumer configure."

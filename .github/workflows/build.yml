@@ -129,9 +129,20 @@ jobs:
       run: cmake --install . --config $BUILD_TYPE --prefix "$GITHUB_WORKSPACE/install"
 
     - name: Consumer smoke tests
-      if: matrix.os == 'ubuntu-latest'
       shell: bash
-      run: bash .github/ci/cmake-consumer-smoke.sh "$GITHUB_WORKSPACE/install" "/tmp/gecode-install-abs-include"
+      run: |
+        set -euxo pipefail
+        if [ "${{ matrix.os }}" = "ubuntu-latest" ]; then
+          bash .github/ci/cmake-consumer-smoke.sh \
+            "$GITHUB_WORKSPACE/install" \
+            "/tmp/gecode-install-abs-include" \
+            mpfr
+        else
+          bash .github/ci/cmake-consumer-smoke.sh \
+            "$GITHUB_WORKSPACE/install" \
+            "$GITHUB_WORKSPACE/install/include" \
+            core
+        fi
 
     - name: Disabled module closure checks
       if: matrix.os == 'ubuntu-latest'
@@ -397,11 +408,18 @@ jobs:
           -DGECODE_ENABLE_EXAMPLES=OFF \
           -DGECODE_ENABLE_FLATZINC=OFF
 
-    - name: Build static search library
+    - name: Build and install static package
       shell: msys2 {0}
       run: |
         workspace=$(cygpath -u "$GITHUB_WORKSPACE")
-        cmake --build "$workspace/build-msys2" --target gecodesearch_static
+        cmake --build "$workspace/build-msys2"
+        cmake --install "$workspace/build-msys2" --prefix "$workspace/install-msys2"
+
+    - name: Static package consumer smoke
+      shell: msys2 {0}
+      run: |
+        workspace=$(cygpath -u "$GITHUB_WORKSPACE")
+        bash "$workspace/.github/ci/cmake-consumer-smoke-msys2.sh" "$workspace/install-msys2"
 
   build-autoconf-windows:
     runs-on: windows-2022

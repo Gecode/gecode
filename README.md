@@ -56,6 +56,8 @@ Version metadata shared by autoconf and CMake lives in `gecode-version.m4`.
 | `--with-lib-prefix` | `GECODE_LIB_PREFIX` | Supported directly | Prefixes generated library basenames |
 | `--with-lib-suffix` | `GECODE_LIB_SUFFIX` | Supported directly | Suffixes generated library basenames |
 | `--enable-debug` | `CMAKE_BUILD_TYPE=Debug` (or multi-config `Debug`) | Mapped to native CMake mechanism | Use standard CMake build-type workflows |
+| `--enable-small-codesize` | `CMAKE_BUILD_TYPE=MinSizeRel` or compiler size flags | Mapped to native CMake mechanism | Use standard size-optimized build settings |
+| `--enable-leak-debug` | None | Not supported in CMake | No CMake option enables the `GECODE_HAS_MTRACE` test hook |
 | `--enable-profile` | Toolchain/CMake compile+link flags | Mapped to native CMake mechanism | Configure profiling via standard compiler flags |
 | `--enable-gcov` | Toolchain/CMake coverage flags | Mapped to native CMake mechanism | Configure coverage instrumentation via compiler/linker flags |
 | `--with-mpfr-include`, `--with-mpfr-lib` | `CMAKE_PREFIX_PATH`, `MPFR_ROOT`, toolchain include/link paths | Mapped to native CMake mechanism | Use CMake package and toolchain discovery |
@@ -65,6 +67,7 @@ Version metadata shared by autoconf and CMake lives in `gecode-version.m4`.
 | `--with-sdk`, `--with-macosx-version-min`, `--with-architectures` | None | Not supported in CMake | Use native CMake/macOS toolchain settings |
 | `--enable-framework` | None | Not supported in CMake | No framework-bundle generator path is implemented |
 | `--enable-resource` | None | Not supported in CMake | No autoconf-style resource toggle in CMake |
+| `--enable-peakheap` | None | Not supported in CMake | No CMake option defines the peak-heap tracking macros |
 | `--enable-doc-dot`, `--enable-doc-search`, `--enable-doc-tagfile` | `GECODE_DOC_DOT`, `GECODE_DOC_SEARCH`, `GECODE_DOC_TAGFILE` | Supported by `doc` target | Requires Doxygen 1.17.0 or newer; helper pages require `uv` |
 
 By default, CMake uses checked-in `gecode/kernel/var-type.hpp` and
@@ -89,10 +92,9 @@ MPFR), see [`docs/cmake-build.md`](docs/cmake-build.md).
 Qt 6 is the preferred Qt line for Gecode builds. Qt 5.15 or newer remains
 supported for legacy environments, but older Qt releases are ignored unless
 `GECODE_ENABLE_QT=ON`, in which case configuration fails. On macOS, use a Qt
-build that supports the active macOS SDK; for current macOS releases that means
-Qt 6.11 or newer. Gist is opt-in for CMake builds on macOS. Use
-`-DGECODE_ENABLE_GIST=ON` when Qt is installed and its framework link interface
-is usable.
+build that supports the active macOS SDK; recent Qt 6 releases are the safest
+choice. Gist is opt-in for CMake builds on macOS. Use `-DGECODE_ENABLE_GIST=ON`
+when Qt is installed and its framework link interface is usable.
 
 ## CMake Package Consumption
 

@@ -1,5 +1,7 @@
 @PACKAGE_INIT@
 
+set(_gecode_package_prefix_dir "${PACKAGE_PREFIX_DIR}")
+
 include(CMakeFindDependencyMacro)
 if("@GECODE_PACKAGE_NEEDS_THREADS@" STREQUAL "ON")
   find_dependency(Threads)
@@ -74,11 +76,14 @@ elseif("@GECODE_PACKAGE_QT_MAJOR@" STREQUAL "5")
 endif()
 unset(_gecode_qt_version)
 
+set(PACKAGE_PREFIX_DIR "${_gecode_package_prefix_dir}")
+
 include("${CMAKE_CURRENT_LIST_DIR}/GecodeTargets.cmake")
 
 set(Gecode_VERSION "@GECODE_PROJECT_VERSION@")
 set_and_check(Gecode_INCLUDE_DIRS "@PACKAGE_CMAKE_INSTALL_INCLUDEDIR@")
 set(Gecode_LIBRARIES Gecode::gecode)
+unset(_gecode_package_prefix_dir)
 
 set(_gecode_supported_components
   support
