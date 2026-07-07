@@ -440,7 +440,7 @@ namespace Test { namespace Float {
        : Test("Arithmetic::NRoot::N::"+str(_n)+"::XY::"+s,2,d,st,CPLT_ASSIGNMENT,false), n(_n) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
-         if ((n == 0) || (x[0].max() < 0.0))
+         if ((n == 0) || (x[0].min() < 0.0))
            return MT_FALSE;
          return eq(nroot(x[0],n), x[1]);
        }
@@ -462,13 +462,13 @@ namespace Test { namespace Float {
        : Test("Arithmetic::NRoot::N::"+str(_n)+"::XY::Sol::"+s,2,d,st,EXTEND_ASSIGNMENT,false), n(_n) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
-         if ((n == 0) || (x[0].max() < 0.0))
+         if ((n == 0) || (x[0].min() < 0.0))
            return MT_FALSE;
          return eq(nroot(x[0],n), x[1]);
        }
        /// Extend assignment \a x
        virtual bool extendAssignment(Assignment& x) const {
-         if ((n == 0) || (x[0].max() < 0))
+         if ((n == 0) || (x[0].min() < 0))
            return false;
          Gecode::FloatVal d = nroot(x[0],n);
          if (Gecode::Float::subset(d, dom)) {
@@ -493,7 +493,7 @@ namespace Test { namespace Float {
        : Test("Arithmetic::NRoot::N::"+str(_n)+"::XX::"+s,1,d,st,CPLT_ASSIGNMENT,false), n(_n) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
-         if ((n == 0) || (x[0].max() < 0))
+         if ((n == 0) || (x[0].min() < 0))
            return MT_FALSE;
          return eq(nroot(x[0],n), x[0]);
        }
