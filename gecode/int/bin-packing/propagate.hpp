@@ -3,7 +3,11 @@
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
  *
+ *  Contributing authors:
+ *     Fabio Tardivo <ftardivo@nmsu.edu>
+ *
  *  Copyright:
+ *     Fabio Tardivo, 2024
  *     Christian Schulte, 2010
  *
  *  This file is part of Gecode, the generic constraint
@@ -208,9 +212,8 @@ namespace Gecode { namespace Int { namespace BinPacking {
     return nosum(s, a, b, ap, bp);
   }
 
-  forceinline int 
-  Pack::fCCM1(int w, int l, int c)
-  {
+  forceinline int
+  Pack::f_ccm1(int w, int l, int c) {
     // Conditions
     int const c0 = 2 * w > c;  // x > c / 2
     int const c1 = 2 * w == c; // x == c / 2
@@ -224,12 +227,11 @@ namespace Gecode { namespace Int { namespace BinPacking {
     return (c0 * v0) + (c1 * v1) + (c2 * v2);
   }
 
-  forceinline int 
-  Pack::fMT(int w, int l, int c)
-  {
+  forceinline int
+  Pack::f_mt(int w, int l, int c) {
     // Conditions
     int const c0 = w < l;
-    int const c1 = l <= w and w <= c - l;
+    int const c1 = (l <= w) && (w <= c - l);
     int const c2 = c - l < w;
 
     // Values
@@ -240,9 +242,8 @@ namespace Gecode { namespace Int { namespace BinPacking {
     return (c0 * v0) + (c1 * v1) + (c2 * v2);
   }
 
-  forceinline int 
-  Pack::fBJ1(int w, int l, int c)
-  {
+  forceinline int
+  Pack::f_bj1(int w, int l, int c) {
     // Auxiliary values
     int const p = l - (c % l);
 
@@ -257,23 +258,21 @@ namespace Gecode { namespace Int { namespace BinPacking {
     return (c0 * v0) + (c1 * v1);
   }
 
-  forceinline int 
-  Pack::fVB2Base(int w, int l, int c)
-  {
-      int v = ceil_div_pp(l * w, c);
-      return v > 0 ? v - 1 : 0;
+  forceinline int
+  Pack::f_vb2_base(int w, int l, int c) {
+    int v = ceil_div_pp(l * w, c);
+    return v > 0 ? v - 1 : 0;
   }
 
-  forceinline int 
-  Pack::fVB2(int w, int l, int c)
-  {
+  forceinline int
+  Pack::f_vb2(int w, int l, int c) {
     int const c0 = 2 * w > c;
     int const c1 = 2 * w == c;
     int const c2 = 2 * w < c;
 
-    int const t0 = fVB2Base(c, l, c);
-    int const t1 = fVB2Base(w, l, c);
-    int const t2 = fVB2Base(c - w, l, c);
+    int const t0 = f_vb2_base(c, l, c);
+    int const t1 = f_vb2_base(w, l, c);
+    int const t2 = f_vb2_base(c - w, l, c);
 
     int const v0 = 2 * t0 - 2 * t2;
     int const v1 = t0;
@@ -282,27 +281,25 @@ namespace Gecode { namespace Int { namespace BinPacking {
     return (c0 * v0) + (c1 * v1) + (c2 * v2);
   }
 
-  forceinline int 
-  Pack::fFS1(int w, int l, int c)
-  {
+  forceinline int
+  Pack::f_fs1(int w, int l, int c) {
     // Conditions
-    int c0 = w * (l + 1) % c == 0;
-    int c1 = w * (l + 1) % c != 0;
+    int const c0 = w * (l + 1) % c == 0;
+    int const c1 = w * (l + 1) % c != 0;
 
     // Values
-    int v0 = w * l;
-    int v1 = ((w * (l + 1)) / c) * c;
+    int const v0 = w * l;
+    int const v1 = ((w * (l + 1)) / c) * c;
 
     return (c0 * v0) + (c1 * v1);
   }
 
-  forceinline int 
-  Pack::fRAD2Base(int w, int l, int c)
-  {
+  forceinline int
+  Pack::f_rad2_base(int w, int l, int c) {
     // Conditions
     int const c0 = w < l;
-    int const c1 = l <= w and w <= c - 2 * l;
-    int const c2 = c - 2 * l < w and w < 2 * l;
+    int const c1 = (l <= w) && (w <= c - 2 * l);
+    int const c2 = (c - 2 * l < w) && (w < 2 * l);
 
     // Values
     int const v0 = 0;
@@ -312,82 +309,107 @@ namespace Gecode { namespace Int { namespace BinPacking {
     return (c0 * v0) + (c1 * v1) + (c2 * v2);
   }
 
-  forceinline int 
-  Pack::fRAD2(int w, int l, int c)
-  {
+  forceinline int
+  Pack::f_rad2(int w, int l, int c) {
     // Conditions
     int const c0 = w < 2 * l;
     int const c1 = 2 * l <= w;
 
     // Values
-    int const v0 = fRAD2Base(w, l, c);
-    int const v1 = c - fRAD2Base(c - w, l, c);
+    int const v0 = f_rad2_base(w, l, c);
+    int const v1 = c - f_rad2_base(c - w, l, c);
 
     return (c0 * v0) + (c1 * v1);
   }
 
-  forceinline LambdaRange Pack::lCCM1(int c) {return {1, c / 2};};
+  forceinline LambdaRange
+  Pack::l_ccm1(int c) {
+    return {1, c / 2};
+  }
 
-  forceinline LambdaRange Pack::lMT(int c)   {return {0, c / 2};}; // The 0 value is included to calculate the L0 bound
+  forceinline LambdaRange
+  Pack::l_mt(int c) {
+    return {0, c / 2};
+  }
 
-  forceinline LambdaRange Pack::lBJ1(int c)  {return {1, c};}
+  forceinline LambdaRange
+  Pack::l_bj1(int c) {
+    return {1, c};
+  }
 
-  forceinline LambdaRange Pack::lVB2(int c)  {return {2, c};};
+  forceinline LambdaRange
+  Pack::l_vb2(int c) {
+    return {2, c};
+  }
 
-  forceinline LambdaRange Pack::lFS1(int c)  {return {1, 100};};
+  forceinline LambdaRange
+  Pack::l_fs1(int) {
+    return {1, 100};
+  }
 
-  forceinline LambdaRange Pack::lRAD2(int c) {return {c / 4 + 1, c / 3};};
+  forceinline LambdaRange
+  Pack::l_rad2(int c) {
+    return {c / 4 + 1, c / 3};
+  }
 
-  forceinline LambdaRange 
-  Pack::sanitizeLambdaRange(LambdaRange lambdaRange, int nNotZeroWeights, int maxWeight)
-  {
-    if (nNotZeroWeights * maxWeight != 0)
-    {
-        int lMax = std::min(std::numeric_limits<int>::max() / (nNotZeroWeights * maxWeight), lambdaRange.max);
-        return {lambdaRange.min, lMax};
-    }
-    else
-    {
-        return {0,-1};
+  forceinline LambdaRange
+  Pack::sanitize_lambda_range(LambdaRange lambda_range,
+                              int n_not_zero_weights, int max_weight) {
+    long long int n = static_cast<long long int>(n_not_zero_weights) *
+      static_cast<long long int>(max_weight);
+    if (n != 0) {
+      int l_max =
+        std::min(static_cast<int>(std::numeric_limits<int>::max() / n),
+                 lambda_range.max);
+      return {lambda_range.min, l_max};
+    } else {
+      return {0, -1};
     }
   }
 
   template<int f(int,int,int)>
-  forceinline int 
-  Pack::calcDffLowerboundSingleLambda(const IntDynamicArray& weights, int capacity, int lambda)
-  {
-      // Transform and sum the weights
-      int sumTransformedWeights = 0;
-      int nWeights = weights.capacity();
-      for (int wIdx = 0; wIdx < nWeights; wIdx += 1)
-      {
-          sumTransformedWeights += f(weights[wIdx], lambda, capacity);
-      }
+  forceinline int
+  Pack::calc_dff_lower_bound_single_lambda(const int* weights, int n_weights,
+                                           int capacity, int lambda) {
+    // Transform and sum the weights
+    int sum_transformed_weights = 0;
+    for (int w_idx = 0; w_idx < n_weights; w_idx += 1)
+      sum_transformed_weights += f(weights[w_idx], lambda, capacity);
 
-      // Transform the capacity
-      int transformedCapacity = f(capacity, lambda, capacity);
+    // Transform the capacity
+    int transformed_capacity = f(capacity, lambda, capacity);
 
-      // Lowerbound
-      return ceil_div_pp(sumTransformedWeights, transformedCapacity);
+    // Lower bound
+    return ceil_div_pp(sum_transformed_weights, transformed_capacity);
   }
 
   template<int f(int,int,int), LambdaRange l(int)>
-  forceinline int 
-  Pack::calcDffLowerbound(const IntDynamicArray& weights, int capacity, int nNotZeroWeights, int maxWeight, bool sanitize)
-  {
-      int fLowerbound = 0;
-      LambdaRange lambdaRange = l(capacity);
-      lambdaRange = sanitize ? sanitizeLambdaRange(lambdaRange, nNotZeroWeights, maxWeight) : lambdaRange;
-      int lStep = ceil_div_pp(lambdaRange.max - lambdaRange.min + 1, nLambdaSamples + 1);
-      for (int lambda = lambdaRange.min + lStep; lambda < lambdaRange.max; lambda += lStep)
-      {
-          int lowerbound = calcDffLowerboundSingleLambda<f>(weights, capacity, lambda);
-          fLowerbound = std::max(fLowerbound, lowerbound);
-      }
-      return fLowerbound;
+  forceinline int
+  Pack::calc_dff_lower_bound(const int* weights, int n_weights,
+                             int capacity, int n_not_zero_weights,
+                             int max_weight, bool sanitize) {
+    LambdaRange lambda_range = l(capacity);
+    lambda_range =
+      sanitize ? sanitize_lambda_range(lambda_range, n_not_zero_weights,
+                                       max_weight) :
+                 lambda_range;
+    if (lambda_range.min >= lambda_range.max)
+      return 0;
+
+    int lower_bound = 0;
+    int l_step =
+      ceil_div_pp(lambda_range.max - lambda_range.min + 1,
+                  n_lambda_samples + 1);
+    for (int lambda = lambda_range.min + l_step;
+         lambda < lambda_range.max; lambda += l_step) {
+      int cur_lower_bound =
+        calc_dff_lower_bound_single_lambda<f>(weights, n_weights,
+                                              capacity, lambda);
+      lower_bound = std::max(lower_bound, cur_lower_bound);
+    }
+    return lower_bound;
   }
 
 }}}
 
 // STATISTICS: int-prop
-

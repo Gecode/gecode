@@ -120,6 +120,7 @@ initializing their exponent fields and rejecting nth-root test
 assignments whose source interval is not fully non-negative.
 
 [ENTRY]
+<<<<<<< HEAD
 Module: flatzinc
 What:   bug
 Rank:   minor
@@ -224,6 +225,17 @@ Add opt-in deterministic fault injection and sanitizer build support.
 The new fault-injection tests exercise clone, dispose-notice, IntSet,
 MiniModel, and heap-allocation failure paths that are otherwise hard to
 reproduce reliably.
+
+[ENTRY]
+Module: int
+What:   performance
+Rank:   minor
+Issue:  202
+Thanks: Fabio Tardivo
+[DESCRIPTION]
+Strengthen bin-packing propagation with lower bounds based on
+dual-feasible functions, improving early detection of infeasible
+packing states.
 
 [ENTRY]
 Module: other
