@@ -102,6 +102,17 @@ Dispose the random view selector used by random variable branching so
 its random generator handle is released when the brancher is discarded.
 
 [ENTRY]
+Module: kernel
+What:   bug
+Rank:   minor
+Issue:  205
+Thanks: intractabilis
+[DESCRIPTION]
+Fix construction of argument arrays from empty `std::vector` instances
+so zero-length copies do not take the address of a nonexistent first
+element.
+
+[ENTRY]
 Module: float
 What:   bug
 Rank:   minor
