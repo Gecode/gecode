@@ -140,6 +140,16 @@ Avoid rewriting the generated CMake config.hpp file when its
 contents have not changed.
 
 [ENTRY]
+Module: search
+What:   bug
+Rank:   minor
+Issue:  150
+Thanks: Stefan Brüns
+[DESCRIPTION]
+Send CPProfiler's DONE message before disconnecting from the
+profiler socket.
+
+[ENTRY]
 Module: other
 What:   change
 Rank:   major

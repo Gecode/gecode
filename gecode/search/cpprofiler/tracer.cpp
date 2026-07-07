@@ -6,11 +6,13 @@
  *  Contributing authors:
  *     Kevin Leo <kevin.leo@monash.edu>
  *     Christian Schulte <schulte@gecode.dev>
+ *     Stefan Brüns <stefan.bruens@rwth-aachen.de>
  *
  *  Copyright:
  *     Kevin Leo, 2017
  *     Christian Schulte, 2017
  *     Maxim Shishmarev, 2017
+ *     Stefan Brüns, 2022
  *
  *  This file is part of Gecode, the generic constraint
  *  development environment:
@@ -146,6 +148,7 @@ namespace Gecode {
 
   void
   CPProfilerSearchTracer::done(void) {
+    connector->done();
     connector->disconnect();
   }
 
