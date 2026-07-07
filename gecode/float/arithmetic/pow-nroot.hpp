@@ -116,7 +116,7 @@ namespace Gecode { namespace Float { namespace Arithmetic {
     } else {
       GECODE_ME_CHECK(x0.eq(home,nroot(x1.domain(),m_n)));
     }
-    return x0.assigned() ? home.ES_SUBSUMED(*this) : ES_FIX;
+    return x0.assigned() ? home.ES_SUBSUMED(*this) : ES_NOFIX;
   }
 
   /*
@@ -156,11 +156,10 @@ namespace Gecode { namespace Float { namespace Arithmetic {
   NthRoot<A,B>::propagate(Space& home, const ModEventDelta&) {
     GECODE_ME_CHECK(x1.eq(home,nroot(x0.domain(),m_n)));
     GECODE_ME_CHECK(x0.eq(home,pow(x1.domain(),m_n)));
-    return x0.assigned() ? home.ES_SUBSUMED(*this) : ES_FIX;
+    return x0.assigned() ? home.ES_SUBSUMED(*this) : ES_NOFIX;
   }
 
 
 }}}
 
 // STATISTICS: float-prop
-
