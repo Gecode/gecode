@@ -52,6 +52,14 @@ jobs:
       shell: bash
       run: make check
 
+    - name: Autoconf install smoke
+      shell: bash
+      run: bash .github/ci/autoconf-install-smoke.sh "$RUNNER_TEMP/gecode-autoconf-install"
+
+    - name: Generated Autoconf files stay clean
+      shell: bash
+      run: git diff --exit-code -- configure gecode/kernel/var-type.hpp gecode/kernel/var-imp.hpp
+
     - name: Custom VIS dependency smoke
       if: runner.os == 'Linux'
       shell: bash

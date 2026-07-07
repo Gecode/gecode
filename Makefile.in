@@ -1956,10 +1956,13 @@ doinstallheaders: $(ALLHDR:%=$(top_srcdir)/%) $(EXTRA_HEADERS) $(VARIMPHDR) $(FL
 	  for f in $$for_flatconf; do \
 			cp $$f $(DESTDIR)$(datadir)/minizinc/solvers; done && \
 	for_mznlib="$(FLATZINCMZNLIB)" && \
-	  mkdir -p $(DESTDIR)$(datadir)/minizinc/gecode; \
+	  mznlibdir="$(DESTDIR)$(datadir)/minizinc/gecode" && \
+	  mkdir -p "$$mznlibdir" && \
 	  for f in $$for_mznlib; do \
-		cp $(top_srcdir)/$$f/*.mzn \
-		  $(DESTDIR)$(datadir)/minizinc/gecode; done
+	    srcdir="$(top_srcdir)/$$f"; \
+	    (cd "$$srcdir" && find . -type f -name '*.mzn' \
+	      -exec sh -c 'mznlibdir=$$1; shift; for mznfile do mznfile=$${mznfile#./}; mzndir=$${mznfile%/*}; if test "$$mzndir" != "$$mznfile"; then mkdir -p "$$mznlibdir/$$mzndir" || exit 1; fi; cp "$$mznfile" "$$mznlibdir/$$mznfile" || exit 1; done' sh "$$mznlibdir" {} +) || exit 1; \
+	  done
 
 doinstalllib:
 	mkdir -p $(DESTDIR)$(sharedlibdir) && \

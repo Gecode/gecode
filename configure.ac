@@ -359,18 +359,90 @@ gecode_config_datadir=${datadir}
 gecode_config_bindir=${bindir}
 gecode_save_prefix=${prefix}
 gecode_save_exec_prefix=${exec_prefix}
+gecode_save_datarootdir=${datarootdir}
 prefix=${gecode_config_prefix}
 exec_prefix=${gecode_config_exec_prefix}
 eval "gecode_config_exec_prefix=\"${gecode_config_exec_prefix}\""
 eval "gecode_config_datarootdir=\"${gecode_config_datarootdir}\""
+datarootdir=${gecode_config_datarootdir}
 eval "gecode_config_datadir=\"${gecode_config_datadir}\""
 eval "gecode_config_bindir=\"${gecode_config_bindir}\""
 prefix=${gecode_save_prefix}
 exec_prefix=${gecode_save_exec_prefix}
-AC_SUBST(GECODE_MZN_DATADIR_FROM_BINDIR, ["${gecode_config_datadir}"])
-AC_SUBST(GECODE_MZN_DATADIR_FROM_BINDIR_WIN, ["${gecode_config_datadir}"])
-AC_SUBST(GECODE_MSC_MZNLIB_FROM_SOLVERDIR, ["${gecode_config_datadir}/minizinc/gecode"])
-AC_SUBST(GECODE_MSC_EXECUTABLE_FROM_SOLVERDIR, ["${gecode_config_bindir}/fzn-gecode${EXEEXT}"])
+datarootdir=${gecode_save_datarootdir}
+gecode_config_solverdir=${gecode_config_datadir}/minizinc/solvers
+gecode_config_mznlibdir=${gecode_config_datadir}/minizinc/gecode
+gecode_config_fzn_executable=${gecode_config_bindir}/fzn-gecode${EXEEXT}
+gecode_config_relative_path() {
+  gecode_config_from=$1
+  gecode_config_to=$2
+
+  while test "x${gecode_config_from}" != x/; do
+    case ${gecode_config_from} in
+      */) gecode_config_from=${gecode_config_from%/} ;;
+      *) break ;;
+    esac
+  done
+  while test "x${gecode_config_to}" != x/; do
+    case ${gecode_config_to} in
+      */) gecode_config_to=${gecode_config_to%/} ;;
+      *) break ;;
+    esac
+  done
+
+  case ${gecode_config_from}:${gecode_config_to} in
+    /*:/*) ;;
+    *) printf "%s\n" "${gecode_config_to}"; return ;;
+  esac
+
+  if test "x${gecode_config_from}" = "x${gecode_config_to}"; then
+    printf ".\n"
+    return
+  fi
+
+  gecode_config_common=${gecode_config_from}
+  gecode_config_up=
+  while :; do
+    if test "x${gecode_config_common}" = x/; then
+      gecode_config_suffix=${gecode_config_to#/}
+      break
+    fi
+    case ${gecode_config_to} in
+      "${gecode_config_common}"/*)
+        gecode_config_suffix=${gecode_config_to#"${gecode_config_common}"/}
+        break
+        ;;
+    esac
+    gecode_config_common=${gecode_config_common%/*}
+    test "x${gecode_config_common}" != x || gecode_config_common=/
+    if test "x${gecode_config_up}" = x; then
+      gecode_config_up=..
+    else
+      gecode_config_up=${gecode_config_up}/..
+    fi
+  done
+
+  if test "x${gecode_config_up}" = x; then
+    printf "%s\n" "${gecode_config_suffix}"
+  elif test "x${gecode_config_suffix}" = x; then
+    printf "%s\n" "${gecode_config_up}"
+  else
+    printf "%s/%s\n" "${gecode_config_up}" "${gecode_config_suffix}"
+  fi
+}
+GECODE_MZN_DATADIR_FROM_BINDIR=`gecode_config_relative_path "${gecode_config_bindir}" "${gecode_config_datadir}"`
+GECODE_MZN_DATADIR_FROM_BINDIR_WIN=`printf "%s\n" "${GECODE_MZN_DATADIR_FROM_BINDIR}" | sed 's,/,\\\\,g'`
+GECODE_MSC_MZNLIB_FROM_SOLVERDIR=`gecode_config_relative_path "${gecode_config_solverdir}" "${gecode_config_mznlibdir}"`
+GECODE_MSC_EXECUTABLE_FROM_SOLVERDIR=`gecode_config_relative_path "${gecode_config_solverdir}" "${gecode_config_fzn_executable}"`
+GECODE_MSC_STD_FLAGS='"-a", "-f", "-n", "-p", "-r", "-s", "-t"'
+if test "${enable_cpprofiler:-yes}" = "yes"; then
+  GECODE_MSC_STD_FLAGS="${GECODE_MSC_STD_FLAGS}, \"--cp-profiler\""
+fi
+AC_SUBST([GECODE_MZN_DATADIR_FROM_BINDIR])
+AC_SUBST([GECODE_MZN_DATADIR_FROM_BINDIR_WIN])
+AC_SUBST([GECODE_MSC_MZNLIB_FROM_SOLVERDIR])
+AC_SUBST([GECODE_MSC_EXECUTABLE_FROM_SOLVERDIR])
+AC_SUBST([GECODE_MSC_STD_FLAGS])
 AC_CONFIG_FILES([tools/flatzinc/gecode.msc:tools/flatzinc/gecode.msc.in])
 AC_CONFIG_FILES([tools/flatzinc/gecode-gist.msc:tools/flatzinc/gecode-gist.msc.in])
 AC_CONFIG_FILES([doxygen.conf:doxygen/doxygen.conf.in])
