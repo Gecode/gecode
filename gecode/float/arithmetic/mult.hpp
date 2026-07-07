@@ -199,114 +199,15 @@ namespace Gecode { namespace Float { namespace Arithmetic {
   template<class View>
   ExecStatus
   Mult<View>::propagate(Space& home, const ModEventDelta&) {
-    Rounding r;
-    if (pos(x0)) {
-      if (pos(x1) || pos(x2)) goto rewrite_ppp;
-      if (neg(x1) || neg(x2)) goto rewrite_pnn;
-      goto prop_pxx;
-    }
-    if (neg(x0)) {
-      if (neg(x1) || pos(x2)) goto rewrite_nnp;
-      if (pos(x1) || neg(x2)) goto rewrite_npn;
-      goto prop_nxx;
-    }
-    if (pos(x1)) {
-      if (pos(x2)) goto rewrite_ppp;
-      if (neg(x2)) goto rewrite_npn;
-      goto prop_xpx;
-    }
-    if (neg(x1)) {
-      if (pos(x2)) goto rewrite_nnp;
-      if (neg(x2)) goto rewrite_pnn;
-      goto prop_xnx;
-    }
-
-    assert(any(x0) && any(x1));
-    GECODE_ME_CHECK(x2.lq(home,std::max(r.mul_up(x0.max(),x1.max()),
-                                        r.mul_up(x0.min(),x1.min()))));
-    GECODE_ME_CHECK(x2.gq(home,std::min(r.mul_down(x0.min(),x1.max()),
-                                        r.mul_down(x0.max(),x1.min()))));
-
-    if (pos(x2)) {
-      if (r.div_up(x2.min(),x1.min()) < x0.min())
-        GECODE_ME_CHECK(x0.gq(home,0));
-      if (r.div_up(x2.min(),x0.min()) < x1.min())
-        GECODE_ME_CHECK(x1.gq(home,0));
-    }
-    if (neg(x2)) {
-      if (r.div_up(x2.max(),x1.max()) < x0.min())
-        GECODE_ME_CHECK(x0.gq(home,0));
-      if (r.div_up(x2.max(),x0.max()) < x1.min())
-        GECODE_ME_CHECK(x1.gq(home,0));
-    }
-
-    if (x0.assigned()) {
-      assert((x0.val() == 0.0) && (x2.val() == 0.0));
+    GECODE_ME_CHECK(x2.eq(home,x0.val()*x1.val()));
+    if (!x1.zero_in())
+      GECODE_ME_CHECK(x0.eq(home,x2.val() / x1.val()));
+    if (!x0.zero_in())
+      GECODE_ME_CHECK(x1.eq(home,x2.val() / x0.val()));
+    GECODE_ME_CHECK(x2.eq(home,x0.val()*x1.val()));
+    if (x0.assigned() && x1.assigned() && x2.assigned())
       return home.ES_SUBSUMED(*this);
-    }
-
-    if (x1.assigned()) {
-      assert((x1.val() == 0.0) && (x2.val() == 0.0));
-      return home.ES_SUBSUMED(*this);
-    }
-
     return ES_NOFIX;
-
-  prop_xpx:
-    std::swap(x0,x1);
-  prop_pxx:
-    assert(pos(x0) && any(x1) && any(x2));
-
-    GECODE_ME_CHECK(x2.lq(home,r.mul_up(x0.max(),x1.max())));
-    GECODE_ME_CHECK(x2.gq(home,r.mul_down(x0.max(),x1.min())));
-
-    if (pos(x2)) goto rewrite_ppp;
-    if (neg(x2)) goto rewrite_pnn;
-
-    GECODE_ME_CHECK(x1.lq(home,r.div_up(x2.max(),x0.min())));
-    GECODE_ME_CHECK(x1.gq(home,r.div_down(x2.min(),x0.min())));
-
-    if (x0.assigned() && x1.assigned()) {
-      GECODE_ME_CHECK(x2.eq(home,x0.val()*x1.val()));
-      return home.ES_SUBSUMED(*this);
-    }
-
-    return ES_NOFIX;
-
-  prop_xnx:
-    std::swap(x0,x1);
-  prop_nxx:
-    assert(neg(x0) && any(x1) && any(x2));
-
-    GECODE_ME_CHECK(x2.lq(home,r.mul_up(x0.min(),x1.min())));
-    GECODE_ME_CHECK(x2.gq(home,r.mul_down(x0.min(),x1.max())));
-
-    if (pos(x2)) goto rewrite_nnp;
-    if (neg(x2)) goto rewrite_npn;
-
-    if (x0.max() != 0.0) {
-      GECODE_ME_CHECK(x1.lq(home,r.div_up(x2.min(),x0.max())));
-      GECODE_ME_CHECK(x1.gq(home,r.div_down(x2.max(),x0.max())));
-    }
-
-    if (x0.assigned() && x1.assigned()) {
-      GECODE_ME_CHECK(x2.eq(home,x0.val()*x1.val()));
-      return home.ES_SUBSUMED(*this);
-    }
-
-    return ES_NOFIX;
-
-  rewrite_ppp:
-    GECODE_REWRITE(*this,(MultPlus<FloatView,FloatView,FloatView>
-                         ::post(home(*this),x0,x1,x2)));
-  rewrite_nnp:
-    GECODE_REWRITE(*this,(MultPlus<MinusView,MinusView,FloatView>
-                         ::post(home(*this),MinusView(x0),MinusView(x1),x2)));
-  rewrite_pnn:
-    std::swap(x0,x1);
-  rewrite_npn:
-    GECODE_REWRITE(*this,(MultPlus<MinusView,FloatView,MinusView>
-                         ::post(home(*this),MinusView(x0),x1,MinusView(x2))));
   }
 
   template<class View>
@@ -318,39 +219,20 @@ namespace Gecode { namespace Float { namespace Arithmetic {
       return MultZeroOne<View>::post(home,x0,x1);
     if (x1 == x2)
       return MultZeroOne<View>::post(home,x1,x0);
-    if (pos(x0)) {
-      if (pos(x1) || pos(x2)) goto post_ppp;
-      if (neg(x1) || neg(x2)) goto post_pnn;
-    } else if (neg(x0)) {
-      if (neg(x1) || pos(x2)) goto post_nnp;
-      if (pos(x1) || neg(x2)) goto post_npn;
-    } else if (pos(x1)) {
-      if (pos(x2)) goto post_ppp;
-      if (neg(x2)) goto post_npn;
-    } else if (neg(x1)) {
-      if (pos(x2)) goto post_nnp;
-      if (neg(x2)) goto post_pnn;
-    }
-    {
-      GECODE_ME_CHECK(x2.eq(home,x0.val()*x1.val()));
-      (void) new (home) Mult<View>(home,x0,x1,x2);
-    }
-    return ES_OK;
+    GECODE_ME_CHECK(x2.eq(home,x0.val()*x1.val()));
+    if (!x1.zero_in())
+      GECODE_ME_CHECK(x0.eq(home,x2.val() / x1.val()));
+    if (!x0.zero_in())
+      GECODE_ME_CHECK(x1.eq(home,x2.val() / x0.val()));
+    GECODE_ME_CHECK(x2.eq(home,x0.val()*x1.val()));
+    if (x0.assigned() && x1.assigned() && x2.assigned())
+      return ES_OK;
 
-  post_ppp:
-    return MultPlus<FloatView,FloatView,FloatView>::post(home,x0,x1,x2);
-  post_nnp:
-    return MultPlus<MinusView,MinusView,FloatView>::post(home,
-      MinusView(x0),MinusView(x1),x2);
-  post_pnn:
-    std::swap(x0,x1);
-  post_npn:
-    return MultPlus<MinusView,FloatView,MinusView>::post(home,
-      MinusView(x0),x1,MinusView(x2));
+    (void) new (home) Mult<View>(home,x0,x1,x2);
+    return ES_OK;
   }
 
 
 }}}
 
 // STATISTICS: float-prop
-
