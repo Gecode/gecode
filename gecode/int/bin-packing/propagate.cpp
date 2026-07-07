@@ -3,7 +3,11 @@
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
  *
+ *  Contributing authors:
+ *     Fabio Tardivo <ftardivo@nmsu.edu>
+ *
  *  Copyright:
+ *     Fabio Tardivo, 2024
  *     Christian Schulte, 2010
  *
  *  This file is part of Gecode, the generic constraint
@@ -278,134 +282,81 @@ namespace Gecode { namespace Int { namespace BinPacking {
     // Perform lower bound checking
     if (n > 0) {
 
-      bool useDffLowerbounds = true;
-      if (not useDffLowerbounds)
-      {
-        
-        // Find capacity estimate (we start from bs[0] as it might be
-        // not packable, actually (will be detected later anyway)!
-        int c = bs[0].size();
-        for (int j=0; j<m; j++)
-          c = std::max(c,l[j].max());
-
-        // Count how many items have a certain size (bucket sort)
-        int* n_s = region.alloc<int>(c+1);
-
-        for (int i=0; i<c+1; i++)
-          n_s[i] = 0;
-
-        // Count unpacked items
-        for (int i=0; i<n; i++)
-          n_s[bs[i].size()]++;
-
-        // Number of items and remaining bin load
-        int nm = n;
-
-        // Only count positive remaining bin loads
-        for (int j=0; j<m; j++)
-          if (l[j].max() < 0) {
-            return ES_FAILED;
-          } else if (c > l[j].max()) {
-            n_s[c - l[j].max()]++; nm++;
-          }
-
-        // Sizes of items and remaining bin loads
-        int* s = region.alloc<int>(nm);
-
-        // Setup sorted sizes
-        {
-          int k=0;
-          for (int i=c+1; i--; )
-            for (int j=n_s[i]; j--; )
-              s[k++]=i;
-          assert(k == nm);
-        }
-
-        // Items in N1 are from 0 ... n1 - 1
-        int n1 = 0;
-        // Items in N2 are from n1 ... n12 - 1, we count elements in N1 and N2
-        int n12 = 0;
-        // Items in N3 are from n12 ... n3 - 1
-        int n3 = 0;
-        // Free space in N2
-        int f2 = 0;
-        // Total size of items in N3
-        int s3 = 0;
-
-        // Initialize n12 and f2
-        for (; (n12 < nm) && (s[n12] > c/2); n12++)
-          f2 += c - s[n12];
-
-        // Initialize n3 and s3
-        for (n3 = n12; n3 < nm; n3++)
-          s3 += s[n3];
-
-        // Compute lower bounds
-        for (int k=0; k<=c/2; k++) {
-          // Make N1 larger by adding elements and N2 smaller
-          for (; (n1 < nm) && (s[n1] > c-k); n1++)
-            f2 -= c - s[n1];
-          assert(n1 <= n12);
-          // Make N3 smaller by removing elements
-          for (; (s[n3-1] < k) && (n3 > n12); n3--)
-            s3 -= s[n3-1];
-          // Overspill
-          int o = (s3 > f2) ? ((s3 - f2 + c - 1) / c) : 0;
-          if (n12 + o > m)
-            return ES_FAILED;
-        }
-      }
-      else
       {
         // Allocate auxiliary data
-        int nBins = l.size();
-        int nWeightsReductions = nBins + bs.size();
-        IntDynamicArray weightsBaseReduction(region, nWeightsReductions);
-        IntDynamicArray weightsCurrentReduction(region, nWeightsReductions);
-        IntDynamicArray deltaReductions(region, nReductions);
+        int n_bins = l.size();
+        int n_weights_reductions = n_bins + bs.size();
+        int* weights_base_reduction =
+          region.alloc<int>(n_weights_reductions);
+        int* weights_current_reduction =
+          region.alloc<int>(n_weights_reductions);
+        int* delta_reductions = region.alloc<int>(n_reductions);
 
         // Initialize reductions
-        int capacityBaseReduction = 0;
-        calcReductions(bs, l, weightsBaseReduction, capacityBaseReduction, deltaReductions);
+        int capacity_base_reduction = 0;
+        calc_reductions(bs, l, weights_base_reduction,
+                        capacity_base_reduction, delta_reductions);
 
-        for (int rIdx = 0; rIdx < nReductions; rIdx += 1)
-        {
+        for (int r_idx = 0; r_idx < n_reductions; r_idx += 1) {
           // Calculate reduction parameters
-          int & delta = deltaReductions[rIdx];
-          int capacity = capacityBaseReduction + delta;
+          int& delta = delta_reductions[r_idx];
+          int capacity = capacity_base_reduction + delta;
 
-          if (capacity > 0)
-          {
+          if (capacity > 0) {
             // Calculate reduction
-            int nNotZeroWeights = 0;
-            int maxWeight = 0;
-            IntDynamicArray & weights = weightsCurrentReduction;
-            for (int wIdx = 0; wIdx < nWeightsReductions; wIdx += 1)
-            {
-              int weight = weightsBaseReduction[wIdx] + (wIdx < nBins ? delta : 0);
-              nNotZeroWeights += weight != 0;
-              maxWeight = std::max(maxWeight, weight);
-              weights[wIdx] = weight;
+            int n_not_zero_weights = 0;
+            int max_weight = 0;
+            int* weights = weights_current_reduction;
+            for (int w_idx = 0; w_idx < n_weights_reductions; w_idx += 1) {
+              int weight =
+                weights_base_reduction[w_idx] + (w_idx < n_bins ? delta : 0);
+              n_not_zero_weights += weight != 0;
+              max_weight = std::max(max_weight, weight);
+              weights[w_idx] = weight;
             }
 
-            // Check lowerbounds
-            int lowerbound = calcDffLowerbound<fCCM1, lCCM1>(weights, capacity, nNotZeroWeights, maxWeight);
-            if (lowerbound > nBins) return ES_FAILED;
+            // Check lower bounds
+            int lower_bound =
+              calc_dff_lower_bound<f_ccm1, l_ccm1>
+                (weights, n_weights_reductions, capacity,
+                 n_not_zero_weights, max_weight);
+            if (lower_bound > n_bins)
+              return ES_FAILED;
 
-            lowerbound = calcDffLowerbound<fMT, lMT>(weights, capacity, nNotZeroWeights, maxWeight);
-            if (lowerbound > nBins) return ES_FAILED;
+            lower_bound =
+              calc_dff_lower_bound<f_mt, l_mt>
+                (weights, n_weights_reductions, capacity,
+                 n_not_zero_weights, max_weight);
+            if (lower_bound > n_bins)
+              return ES_FAILED;
 
-            lowerbound = calcDffLowerbound<fBJ1, lBJ1>(weights, capacity, nNotZeroWeights, maxWeight);
-            if (lowerbound > nBins) return ES_FAILED;
+            lower_bound =
+              calc_dff_lower_bound<f_bj1, l_bj1>
+                (weights, n_weights_reductions, capacity,
+                 n_not_zero_weights, max_weight);
+            if (lower_bound > n_bins)
+              return ES_FAILED;
 
-            lowerbound = calcDffLowerbound<fVB2, lVB2>(weights, capacity, nNotZeroWeights, maxWeight, true);
-            if (lowerbound > nBins) return ES_FAILED;
+            lower_bound =
+              calc_dff_lower_bound<f_vb2, l_vb2>
+                (weights, n_weights_reductions, capacity,
+                 n_not_zero_weights, max_weight, true);
+            if (lower_bound > n_bins)
+              return ES_FAILED;
 
-            lowerbound = calcDffLowerbound<fFS1, lFS1>(weights, capacity, nNotZeroWeights, maxWeight, true);
-            if (lowerbound > nBins) return ES_FAILED;
+            lower_bound =
+              calc_dff_lower_bound<f_fs1, l_fs1>
+                (weights, n_weights_reductions, capacity,
+                 n_not_zero_weights, max_weight, true);
+            if (lower_bound > n_bins)
+              return ES_FAILED;
 
-            lowerbound = calcDffLowerbound<fRAD2, lRAD2>(weights, capacity, nNotZeroWeights, maxWeight);
-            if (lowerbound > nBins) return ES_FAILED;
+            lower_bound =
+              calc_dff_lower_bound<f_rad2, l_rad2>
+                (weights, n_weights_reductions, capacity,
+                 n_not_zero_weights, max_weight);
+            if (lower_bound > n_bins)
+              return ES_FAILED;
           }
         }
       }
@@ -453,55 +404,49 @@ namespace Gecode { namespace Int { namespace BinPacking {
     }
   }
 
-  void 
-  Pack::calcReductions(const ViewArray<Item>& bs, const ViewArray<OffsetView>& l, IntDynamicArray & weightsBaseReduction, int & capacityBaseReduction, IntDynamicArray & deltaReductions)
-  {     
-      // Reset values
-      int nWeightsReductions = weightsBaseReduction.capacity();
-      for (int wIdx = 0; wIdx < nWeightsReductions; wIdx += 1)
-      {
-        weightsBaseReduction[wIdx] = 0;
-      }
+  void
+  Pack::calc_reductions(const ViewArray<Item>& bs,
+                        const ViewArray<OffsetView>& l,
+                        int* weights_base_reduction,
+                        int& capacity_base_reduction,
+                        int* delta_reductions) {
+    // Reset values
+    int n_weights_reductions = l.size() + bs.size();
+    for (int w_idx = 0; w_idx < n_weights_reductions; w_idx += 1)
+      weights_base_reduction[w_idx] = 0;
 
-      // R0
-      int nBins = l.size();
-      int nItems = bs.size();
-      capacityBaseReduction = 0;
-      for (int bIdx = 0; bIdx < nBins; bIdx += 1)
-      {
-          capacityBaseReduction = std::max(capacityBaseReduction, l[bIdx].max());
+    // R0
+    int n_bins = l.size();
+    int n_items = bs.size();
+    capacity_base_reduction = 0;
+    for (int b_idx = 0; b_idx < n_bins; b_idx += 1)
+      capacity_base_reduction =
+        std::max(capacity_base_reduction, l[b_idx].max());
+    for (int b_idx = 0; b_idx < n_bins; b_idx += 1)
+      weights_base_reduction[b_idx] =
+        capacity_base_reduction - l[b_idx].max();
+    for (int i_idx = 0; i_idx < n_items; i_idx += 1) {
+      bool i_assigned = bs[i_idx].bin().assigned();
+      int i_weight = bs[i_idx].size();
+      if (i_assigned) {
+        int b_idx = bs[i_idx].bin().val();
+        weights_base_reduction[b_idx] += i_weight;
+      } else {
+        weights_base_reduction[n_bins + i_idx] = i_weight;
       }
-      for (int bIdx = 0; bIdx < nBins; bIdx += 1)
-      {
-          weightsBaseReduction[bIdx] = capacityBaseReduction - l[bIdx].max();
-      }
-      for (int iIdx = 0; iIdx < nItems; iIdx += 1)
-      {
-          bool iAssigned = bs[iIdx].bin().assigned();
-          int iWeight = bs[iIdx].size();
-          if (iAssigned)
-          {
-            int bIdx = bs[iIdx].bin().val();
-            weightsBaseReduction[bIdx] += iWeight;
-          }
-          else
-          {
-              weightsBaseReduction[nBins + iIdx] = iWeight;
-          }
-      }
+    }
 
-      // RMin, RMax
-      int smallestVirtualWeight = std::numeric_limits<int>::max();
-      for (auto bIdx = 0; bIdx < nBins; bIdx += 1)
-      {
-          smallestVirtualWeight = std::min(smallestVirtualWeight, weightsBaseReduction[bIdx]);
-      }
-      deltaReductions[0] = -smallestVirtualWeight;
-      deltaReductions[1] = 0;
-      deltaReductions[2] = capacityBaseReduction - 2 * smallestVirtualWeight + 1;
+    // RMin, RMax
+    int smallest_virtual_weight = std::numeric_limits<int>::max();
+    for (int b_idx = 0; b_idx < n_bins; b_idx += 1)
+      smallest_virtual_weight =
+        std::min(smallest_virtual_weight, weights_base_reduction[b_idx]);
+    delta_reductions[0] = -smallest_virtual_weight;
+    delta_reductions[1] = 0;
+    delta_reductions[2] =
+      capacity_base_reduction - 2 * smallest_virtual_weight + 1;
   }
 
 }}}
 
 // STATISTICS: int-prop
-
