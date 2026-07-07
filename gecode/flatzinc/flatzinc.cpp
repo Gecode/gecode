@@ -5,10 +5,12 @@
  *
  *  Contributing authors:
  *     Gabriel Hjort Blindell <gabriel.hjort.blindell@gmail.com>
+ *     Nathan Tran <kieron.qtran@gmail.com>
  *
  *  Copyright:
  *     Guido Tack, 2007-2012
  *     Gabriel Hjort Blindell, 2012
+ *     Nathan Tran, 2025
  *
  *  This file is part of Gecode, the generic constraint
  *  development environment:
@@ -2040,7 +2042,13 @@ namespace Gecode { namespace FlatZinc {
         // Assign uniform_int random values
         for (size_t i = 0; i < restart_data().uniform_range_int.size(); ++i) {
           const auto& range = restart_data().uniform_range_int[i];
-          const int rndVal = range.first + _random(static_cast<unsigned int>(range.second - range.first));
+          const unsigned long long int width =
+            static_cast<unsigned long long int>(
+              static_cast<long long int>(range.second) -
+              static_cast<long long int>(range.first)) + 1ULL;
+          const int rndVal =
+            static_cast<int>(static_cast<long long int>(range.first) +
+                             static_cast<long long int>(_random(width)));
           rel(*this, on_restart_iv[base + i], IRT_EQ, rndVal);
         }
         base += restart_data().uniform_range_int.size();
@@ -2164,7 +2172,10 @@ namespace Gecode { namespace FlatZinc {
         for (size_t i = 0; i < restart_data().uniform_range_float.size(); ++i) {
           const auto& range = restart_data().uniform_range_float[i];
           /* rndVal will be an element of [range.first, range.second] */
-          const FloatVal rndVal = (static_cast<FloatVal>(_random(INT_MAX)) / INT_MAX)*(range.second - range.first) + range.first;
+          const FloatVal rndVal =
+            (static_cast<FloatVal>(_random(INT_MAX)) /
+             static_cast<FloatVal>(INT_MAX - 1)) *
+            (range.second - range.first) + range.first;
           rel(*this, on_restart_fv[base + i], FRT_EQ, rndVal);
         }
         base += restart_data().uniform_range_float.size();
