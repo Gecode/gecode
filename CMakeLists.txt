@@ -801,6 +801,7 @@ if(GECODE_DOC_TAGFILE)
 endif()
 
 set(top_srcdir "${CMAKE_CURRENT_SOURCE_DIR}")
+set(abs_top_srcdir "${CMAKE_CURRENT_SOURCE_DIR}")
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/doxygen/doxygen.hh.in
                ${CMAKE_CURRENT_BINARY_DIR}/doxygen.hh @ONLY)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/doxygen/doxygen.conf.in
@@ -869,6 +870,8 @@ if(NOT GECODE_UV_EXECUTABLE)
 endif()
 
 set(GECODE_DOXYGEN_HELPER ${CMAKE_CURRENT_SOURCE_DIR}/cmake/RunDoxygenGenerator.cmake)
+set(GECODE_DOXYGEN_COMPAT_ALIASES
+  ${CMAKE_CURRENT_SOURCE_DIR}/cmake/GenerateDoxygenCompatibilityAliases.cmake)
 set(GECODE_DOXYGEN_GENERATED_FILES
   ${CMAKE_CURRENT_BINARY_DIR}/changelog.hh
   ${CMAKE_CURRENT_BINARY_DIR}/license.hh
@@ -917,18 +920,23 @@ if(DOXYGEN_FOUND AND GECODE_UV_EXECUTABLE)
     VERBATIM)
 
   add_custom_target(doc
+    COMMAND ${CMAKE_COMMAND} -E rm -rf ${CMAKE_CURRENT_BINARY_DIR}/doc/html
     COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_BINARY_DIR}/doc/html
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
             ${CMAKE_CURRENT_SOURCE_DIR}/misc/doxygen/back.png
             ${CMAKE_CURRENT_SOURCE_DIR}/misc/doxygen/gecode-logo-100.png
             ${CMAKE_CURRENT_BINARY_DIR}/doc/html
     COMMAND ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/doxygen.conf.use
+    COMMAND ${CMAKE_COMMAND}
+            "-DGECODE_DOXYGEN_HTML_DIR=${CMAKE_CURRENT_BINARY_DIR}/doc/html"
+            -P ${GECODE_DOXYGEN_COMPAT_ALIASES}
     DEPENDS gecode-varimp-gen
             ${CMAKE_CURRENT_BINARY_DIR}/doxygen.hh
             ${CMAKE_CURRENT_BINARY_DIR}/doxygen.conf.use
             ${CMAKE_CURRENT_BINARY_DIR}/header.html
             ${CMAKE_CURRENT_SOURCE_DIR}/misc/doxygen/footer.html
             ${CMAKE_CURRENT_SOURCE_DIR}/misc/doxygen/stylesheet.css
+            ${GECODE_DOXYGEN_COMPAT_ALIASES}
             ${GECODE_DOXYGEN_GENERATED_FILES}
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
     USES_TERMINAL)

@@ -422,13 +422,13 @@ namespace Gecode { namespace Int {
   std::basic_ostream<Char,Traits>&
   operator <<(std::basic_ostream<Char,Traits>& os, const MinusView& x);
 
-  /** \name View comparison
-   *  \relates Gecode::Int::MinusView
-   */
+  /// \name View comparison
   //@{
   /// Test whether views \a x and \a y are the same
+  /// \relates Gecode::Int::MinusView
   bool operator ==(const MinusView& x, const MinusView& y);
   /// Test whether views \a x and \a y are not the same
+  /// \relates Gecode::Int::MinusView
   bool operator !=(const MinusView& x, const MinusView& y);
   //@}
 
@@ -601,13 +601,13 @@ namespace Gecode { namespace Int {
   std::basic_ostream<Char,Traits>&
   operator <<(std::basic_ostream<Char,Traits>& os, const OffsetView& x);
 
-  /** \name View comparison
-   *  \relates Gecode::Int::OffsetView
-   */
+  /// \name View comparison
   //@{
   /// Test whether views \a x and \a y are the same
+  /// \relates Gecode::Int::OffsetView
   bool operator ==(const OffsetView& x, const OffsetView& y);
   /// Test whether views \a x and \a y are not the same
+  /// \relates Gecode::Int::OffsetView
   bool operator !=(const OffsetView& x, const OffsetView& y);
   //@}
 
@@ -825,15 +825,15 @@ namespace Gecode { namespace Int {
   std::basic_ostream<Char,Traits>&
   operator <<(std::basic_ostream<Char,Traits>& os, const LLongScaleView& x);
 
-  /** \name View comparison
-   *  \relates Gecode::Int::ScaleView
-   */
+  /// \name View comparison
   //@{
   /// Test whether views \a x and \a y are the same
+  /// \relates Gecode::Int::ScaleView
   template<class Val, class UnsVal>
   bool operator ==(const ScaleView<Val,UnsVal>& x,
                    const ScaleView<Val,UnsVal>& y);
   /// Test whether views \a x and \a y are not the same
+  /// \relates Gecode::Int::ScaleView
   template<class Val, class UnsVal>
   bool operator !=(const ScaleView<Val,UnsVal>& x,
                    const ScaleView<Val,UnsVal>& y);
@@ -992,14 +992,13 @@ namespace Gecode { namespace Int {
   std::basic_ostream<Char,Traits>&
   operator <<(std::basic_ostream<Char,Traits>& os, const ConstIntView& x);
 
-  /**
-   * \name View comparison
-   * \relates Gecode::Int::ConstIntView
-   */
+  /// \name View comparison
   //@{
   /// Test whether views \a x and \a y are the same
+  /// \relates Gecode::Int::ConstIntView
   bool operator ==(const ConstIntView& x, const ConstIntView& y);
   /// Test whether views \a x and \a y are not the same
+  /// \relates Gecode::Int::ConstIntView
   bool operator !=(const ConstIntView& x, const ConstIntView& y);
   //@}
 
@@ -1139,14 +1138,13 @@ namespace Gecode { namespace Int {
   std::basic_ostream<Char,Traits>&
   operator <<(std::basic_ostream<Char,Traits>& os, const ZeroIntView& x);
 
-  /**
-   * \name View comparison
-   * \relates Gecode::Int::ZeroIntView
-   */
+  /// \name View comparison
   //@{
   /// Test whether views \a x and \a y are the same
+  /// \relates Gecode::Int::ZeroIntView
   bool operator ==(const ZeroIntView& x, const ZeroIntView& y);
   /// Test whether views \a x and \a y are the same
+  /// \relates Gecode::Int::ZeroIntView
   bool operator !=(const ZeroIntView& x, const ZeroIntView& y);
   //@}
 
@@ -1329,14 +1327,14 @@ namespace Gecode { namespace Int {
   std::basic_ostream<Char,Traits>&
   operator <<(std::basic_ostream<Char,Traits>& os, const CachedView<View>& x);
 
-  /** \name View comparison
-   *  \relates Gecode::Int::CachedView
-   */
+  /// \name View comparison
   //@{
   /// Test whether views \a x and \a y are the same
+  /// \relates Gecode::Int::CachedView
   template<class View>
   bool operator ==(const CachedView<View>& x, const CachedView<View>& y);
   /// Test whether views \a x and \a y are not the same
+  /// \relates Gecode::Int::CachedView
   template<class View>
   bool operator !=(const CachedView<View>& x, const CachedView<View>& y);
   //@}
@@ -1683,13 +1681,13 @@ namespace Gecode { namespace Int {
     //@}
   };
 
-  /** \name View comparison
-   *  \relates Gecode::Int::NegBoolView
-   */
+  /// \name View comparison
   //@{
   /// Test whether views \a x and \a y are the same
+  /// \relates Gecode::Int::NegBoolView
   bool operator ==(const NegBoolView& x, const NegBoolView& y);
   /// Test whether views \a x and \a y are not the same
+  /// \relates Gecode::Int::NegBoolView
   bool operator !=(const NegBoolView& x, const NegBoolView& y);
   //@}
 

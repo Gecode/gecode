@@ -55,6 +55,7 @@ namespace Gecode {
     return false;
   }
 
+  /// \cond INTERNAL
   template<>
   forceinline bool
   viewarrayshared<Set::ComplementView<Set::SingletonView>,Set::SetView>
@@ -71,6 +72,7 @@ namespace Gecode {
    const Set::ComplementView<Set::SetView>&) {
     return false;
   }
+  /// \endcond
 
 
 namespace Set { namespace RelOp {

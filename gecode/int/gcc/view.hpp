@@ -100,7 +100,7 @@ namespace Gecode { namespace Int { namespace GCC {
     ///@{
     /// Test whether view is assigned
     bool assigned(void) const;
-    ///@}
+    //@}
 
     /// \name Domain update by value
     ///@{

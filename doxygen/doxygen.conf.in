@@ -140,7 +140,10 @@ FULL_PATH_NAMES        = YES
 # If left blank the directory from which doxygen is run is used as the
 # path to strip.
 
-STRIP_FROM_PATH        =
+STRIP_FROM_PATH        = @top_srcdir@/ \
+                         @top_srcdir@ \
+                         @abs_top_srcdir@/ \
+                         @abs_top_srcdir@
 
 # The STRIP_FROM_INC_PATH tag can be used to strip a user-defined part of
 # the path mentioned in the documentation of a class, which tells
@@ -149,7 +152,10 @@ STRIP_FROM_PATH        =
 # definition is used. Otherwise one should specify the include paths that
 # are normally passed to the compiler using the -I flag.
 
-STRIP_FROM_INC_PATH    =
+STRIP_FROM_INC_PATH    = @top_srcdir@/ \
+                         @top_srcdir@ \
+                         @abs_top_srcdir@/ \
+                         @abs_top_srcdir@
 
 # If the SHORT_NAMES tag is set to YES, doxygen will generate much shorter
 # (but less readable) file names. This can be useful is your file systems
@@ -474,6 +480,7 @@ INPUT                  = doxygen.hh \
 
 FILE_PATTERNS          = *.h \
                          *.hh \
+                         *.hpp \
                          *.cpp
 
 # The RECURSIVE tag can be used to turn specify whether or not subdirectories

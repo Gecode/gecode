@@ -314,13 +314,13 @@ namespace Gecode { namespace Set {
   std::basic_ostream<Char,Traits>&
   operator <<(std::basic_ostream<Char,Traits>& os, const ConstSetView& x);
 
-  /** \name View comparison
-   *  \relates Gecode::Set::ConstSetView
-   */
+  /// \name View comparison
   //@{
   /// Test whether views \a x and \a y are the same
+  /// \relates Gecode::Set::ConstSetView
   bool operator ==(const ConstSetView& x, const ConstSetView& y);
   /// Test whether views \a x and \a y are not the same
+  /// \relates Gecode::Set::ConstSetView
   bool operator !=(const ConstSetView& x, const ConstSetView& y);
   //@}
 
@@ -442,13 +442,13 @@ namespace Gecode { namespace Set {
   operator <<(std::basic_ostream<Char,Traits>& os, const EmptyView& x);
 
 
-  /** \name View comparison
-   *  \relates Gecode::Set::EmptyView
-   */
+  /// \name View comparison
   //@{
   /// Test whether views \a x and \a y are the same
+  /// \relates Gecode::Set::EmptyView
   bool operator ==(const EmptyView& x, const EmptyView& y);
   /// Test whether views \a x and \a y are the same
+  /// \relates Gecode::Set::EmptyView
   bool operator !=(const EmptyView& x, const EmptyView& y);
   //@}
 
@@ -571,13 +571,13 @@ namespace Gecode { namespace Set {
   operator <<(std::basic_ostream<Char,Traits>& os, const UniverseView& x);
 
 
-  /** \name View comparison
-   *  \relates Gecode::Set::UniverseView
-   */
+  /// \name View comparison
   //@{
   /// Test whether views \a x and \a y are the same
+  /// \relates Gecode::Set::UniverseView
   bool operator ==(const UniverseView& x, const UniverseView& y);
   /// Test whether views \a x and \a y are the not same
+  /// \relates Gecode::Set::UniverseView
   bool operator !=(const UniverseView& x, const UniverseView& y);
   //@}
 
@@ -746,13 +746,13 @@ namespace Gecode { namespace Set {
   std::basic_ostream<Char,Traits>&
   operator <<(std::basic_ostream<Char,Traits>& os, const SingletonView& x);
 
-  /** \name View comparison
-   *  \relates Gecode::Set::SingletonView
-   */
+  /// \name View comparison
   //@{
   /// Test whether views \a x and \a y are the same
+  /// \relates Gecode::Set::SingletonView
   bool operator ==(const SingletonView& x, const SingletonView& y);
   /// Test whether views \a x and \a y are the not same
+  /// \relates Gecode::Set::SingletonView
   bool operator !=(const SingletonView& x, const SingletonView& y);
   //@}
 
@@ -916,15 +916,15 @@ namespace Gecode { namespace Set {
   operator <<(std::basic_ostream<Char,Traits>& os,
               const ComplementView<View>& x);
 
-  /** \name View comparison
-   *  \relates Gecode::Set::ComplementView
-   */
+  /// \name View comparison
   //@{
   /// Test whether views \a x and \a y are the same
+  /// \relates Gecode::Set::ComplementView
   template<class View>
   bool operator ==(const ComplementView<View>& x,
                    const ComplementView<View>& y);
   /// Test whether views \a x and \a y are the not same
+  /// \relates Gecode::Set::ComplementView
   template<class View>
   bool operator !=(const ComplementView<View>& x,
                    const ComplementView<View>& y);
@@ -1117,14 +1117,14 @@ namespace Gecode { namespace Set {
   operator <<(std::basic_ostream<Char,Traits>& os,
               const CachedView<View>& x);
 
-  /** \name View comparison
-   *  \relates Gecode::Set::CachedView
-   */
+  /// \name View comparison
   //@{
   /// Test whether views \a x and \a y are the same
+  /// \relates Gecode::Set::CachedView
   template<class View>
   bool operator ==(const CachedView<View>& x, const CachedView<View>& y);
   /// Test whether views \a x and \a y are the not same
+  /// \relates Gecode::Set::CachedView
   template<class View>
   bool operator !=(const CachedView<View>& x, const CachedView<View>& y);
   //@}

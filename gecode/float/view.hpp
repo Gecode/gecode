@@ -244,13 +244,13 @@ namespace Gecode { namespace Float {
   std::basic_ostream<Char,Traits>&
   operator <<(std::basic_ostream<Char,Traits>& os, const MinusView& x);
 
-  /** \name View comparison
-   *  \relates Gecode::Float::MinusView
-   */
+  /// \name View comparison
   //@{
   /// Test whether views \a x and \a y are the same
+  /// \relates Gecode::Float::MinusView
   bool operator ==(const MinusView& x, const MinusView& y);
   /// Test whether views \a x and \a y are not the same
+  /// \relates Gecode::Float::MinusView
   bool operator !=(const MinusView& x, const MinusView& y);
   //@}
 
@@ -373,13 +373,13 @@ namespace Gecode { namespace Float {
   std::basic_ostream<Char,Traits>&
   operator <<(std::basic_ostream<Char,Traits>& os, const OffsetView& x);
 
-  /** \name View comparison
-   *  \relates Gecode::Float::OffsetView
-   */
+  /// \name View comparison
   //@{
   /// Test whether views \a x and \a y are the same
+  /// \relates Gecode::Float::OffsetView
   bool operator ==(const OffsetView& x, const OffsetView& y);
   /// Test whether views \a x and \a y are not the same
+  /// \relates Gecode::Float::OffsetView
   bool operator !=(const OffsetView& x, const OffsetView& y);
   //@}
 
@@ -502,13 +502,13 @@ namespace Gecode { namespace Float {
   std::basic_ostream<Char,Traits>&
   operator <<(std::basic_ostream<Char,Traits>& os, const ScaleView& x);
 
-  /** \name View comparison
-   *  \relates Gecode::Float::ScaleView
-   */
+  /// \name View comparison
   //@{
   /// Test whether views \a x and \a y are the same
+  /// \relates Gecode::Float::ScaleView
   bool operator ==(const ScaleView& x, const ScaleView& y);
   /// Test whether views \a x and \a y are not the same
+  /// \relates Gecode::Float::ScaleView
   bool operator !=(const ScaleView& x, const ScaleView& y);
   //@}
 
