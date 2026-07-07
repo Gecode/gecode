@@ -70,15 +70,18 @@ namespace Gecode { namespace Float { namespace Arithmetic {
     }
 
     if ((n % 2) == 0) {
+      if (x1.min() < 0.0) return ES_FAILED;
+      FloatVal d((x1.min() <= 0.0) ? 0.0 : x1.min(), x1.max());
+      FloatVal r = positive_nroot(d,n);
       if (x0.min() >= 0)
-        GECODE_ME_CHECK(x0.eq(home,nroot(x1.domain(),n)));
+        GECODE_ME_CHECK(x0.eq(home,r));
       else if (x0.max() <= 0)
-        GECODE_ME_CHECK(x0.eq(home,-nroot(x1.domain(),n)));
+        GECODE_ME_CHECK(x0.eq(home,-r));
       else
         GECODE_ME_CHECK(x0.eq(home,
                               hull(
-                                  nroot(x1.domain(),n),
-                                  -nroot(x1.domain(),n)
+                                  r,
+                                  -r
                               )
                         ));
     } else {
@@ -112,15 +115,18 @@ namespace Gecode { namespace Float { namespace Arithmetic {
     }
 
     if ((m_n % 2) == 0) {
+      if (x1.min() < 0.0) return ES_FAILED;
+      FloatVal d((x1.min() <= 0.0) ? 0.0 : x1.min(), x1.max());
+      FloatVal r = positive_nroot(d,m_n);
       if (x0.min() >= 0)
-        GECODE_ME_CHECK(x0.eq(home,nroot(x1.domain(),m_n)));
+        GECODE_ME_CHECK(x0.eq(home,r));
       else if (x0.max() <= 0)
-        GECODE_ME_CHECK(x0.eq(home,-nroot(x1.domain(),m_n)));
+        GECODE_ME_CHECK(x0.eq(home,-r));
       else
         GECODE_ME_CHECK(x0.eq(home,
                               hull(
-                                  nroot(x1.domain(),m_n),
-                                  -nroot(x1.domain(),m_n)
+                                  r,
+                                  -r
                               )
                         ));
     } else {
