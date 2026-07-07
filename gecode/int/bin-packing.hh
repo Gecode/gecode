@@ -4,9 +4,11 @@
  *     Christian Schulte <schulte@gecode.dev>
  *
  *  Contributing authors:
+ *     Fabio Tardivo <ftardivo@nmsu.edu>
  *     Stefano Gualandi <stefano.gualandi@gmail.com>
  *
  *  Copyright:
+ *     Fabio Tardivo, 2024
  *     Stefano Gualandi, 2013
  *     Christian Schulte, 2010
  *
@@ -127,11 +129,11 @@ namespace Gecode { namespace Int { namespace BinPacking {
     int operator [](int i) const;
   };
 
-  /// Range of lambda values  
-  struct LambdaRange {int min; int max;};
-
-  /// Integer Dynamic Array
-  using IntDynamicArray = Support::DynamicArray<int,Region>;
+  /// Range of lambda values
+  struct LambdaRange {
+    int min;
+    int max;
+  };
 
   /**
    * \brief Bin-packing propagator
@@ -182,30 +184,39 @@ namespace Gecode { namespace Int { namespace BinPacking {
     /// Destructor
     virtual size_t dispose(Space& home);
     /// Reductions
-    static int const nReductions = 3;
-    static void calcReductions(const ViewArray<Item>& bs, const ViewArray<OffsetView>& l, IntDynamicArray & weightsBaseReduction, int & capacityBaseReduction, IntDynamicArray & deltaReductions);
+    static int const n_reductions = 3;
+    static void calc_reductions(const ViewArray<Item>& bs,
+                                const ViewArray<OffsetView>& l,
+                                int* weights_base_reduction,
+                                int& capacity_base_reduction,
+                                int* delta_reductions);
     /// Dual Feasible Functions
-    static int fCCM1(int w, int l, int c);
-    static int fMT(int w, int l, int c);
-    static int fBJ1(int w, int l, int c);
-    static int fVB2Base(int w, int l, int c);
-    static int fVB2(int w, int l, int c);
-    static int fFS1(int w, int l, int c);
-    static int fRAD2Base(int w, int l, int c);
-    static int fRAD2(int w, int l, int c);
-    static int const nLambdaSamples = 256;
-    static LambdaRange lCCM1(int c);
-    static LambdaRange lMT(int c);
-    static LambdaRange lBJ1(int c);
-    static LambdaRange lVB2(int c);
-    static LambdaRange lFS1(int c);
-    static LambdaRange lRAD2(int c);
-    static LambdaRange sanitizeLambdaRange(LambdaRange lambda, int nWeights, int maxWeight);
+    static int f_ccm1(int w, int l, int c);
+    static int f_mt(int w, int l, int c);
+    static int f_bj1(int w, int l, int c);
+    static int f_vb2_base(int w, int l, int c);
+    static int f_vb2(int w, int l, int c);
+    static int f_fs1(int w, int l, int c);
+    static int f_rad2_base(int w, int l, int c);
+    static int f_rad2(int w, int l, int c);
+    static int const n_lambda_samples = 256;
+    static LambdaRange l_ccm1(int c);
+    static LambdaRange l_mt(int c);
+    static LambdaRange l_bj1(int c);
+    static LambdaRange l_vb2(int c);
+    static LambdaRange l_fs1(int c);
+    static LambdaRange l_rad2(int c);
+    static LambdaRange sanitize_lambda_range(LambdaRange lambda,
+                                             int n_weights, int max_weight);
     /// Lower bound
     template<int f(int,int,int)>
-    static int calcDffLowerboundSingleLambda(const IntDynamicArray & weights, int capacity, int lambda);
+    static int calc_dff_lower_bound_single_lambda(const int* weights,
+                                                  int n_weights,
+                                                  int capacity, int lambda);
     template<int f(int,int,int), LambdaRange l(int)>
-    static int calcDffLowerbound(const IntDynamicArray & weights, int capacity, int nNotZeroWeights, int maxWeight, bool sanitize = false);
+    static int calc_dff_lower_bound(const int* weights, int n_weights,
+                                    int capacity, int n_not_zero_weights,
+                                    int max_weight, bool sanitize = false);
   };
 
 

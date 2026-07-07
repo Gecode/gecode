@@ -104,6 +104,17 @@ initializing their exponent fields and rejecting nth-root test
 assignments whose source interval is not fully non-negative.
 
 [ENTRY]
+Module: int
+What:   performance
+Rank:   minor
+Issue:  202
+Thanks: Fabio Tardivo
+[DESCRIPTION]
+Strengthen bin-packing propagation with lower bounds based on
+dual-feasible functions, improving early detection of infeasible
+packing states.
+
+[ENTRY]
 Module: other
 What:   change
 Rank:   major

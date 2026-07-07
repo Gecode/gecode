@@ -309,6 +309,37 @@ namespace Test { namespace Int {
       }
     };
 
+    /// Test that DFF lower bounds detect infeasible packing
+    class DFFLowerBound : public Base {
+    protected:
+      /// Simple test space class
+      class TestSpace : public Gecode::Space {
+      public:
+        /// Constructor
+        TestSpace(void) {}
+        /// Copy function
+        virtual Gecode::Space* copy(void) {
+          return nullptr;
+        }
+      };
+    public:
+      /// Constructor
+      DFFLowerBound(void)
+        : Base("Int::BinPacking::DFFLowerBound") {}
+      /// Run the actual test
+      virtual bool run(void) {
+        using namespace Gecode;
+        TestSpace* home = new TestSpace;
+        IntVarArgs l(*home, 3, 0, 5);
+        IntVarArgs b(*home, 6, 0, 2);
+        IntArgs s({4,2,2,2,2,2});
+        binpacking(*home, l, b, s);
+        bool failed = home->status() == SS_FAILED;
+        delete home;
+        return failed;
+      }
+    };
+
     /// Help class to create and register tests
     class Create {
     public:
@@ -392,6 +423,8 @@ namespace Test { namespace Int {
           (void) new CliqueMBPT(c48);
           (void) new CliqueMBPT(c49);
         }
+
+        (void) new DFFLowerBound;
       }
     };
 
@@ -405,4 +438,3 @@ namespace Test { namespace Int {
 
 
 // STATISTICS: test-int
-
