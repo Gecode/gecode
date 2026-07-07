@@ -34,6 +34,8 @@
 #include <gecode/kernel.hh>
 #include <gecode/int.hh>
 
+#include <vector>
+
 #include "test/test.hh"
 
 /// Check the test result and handle failed test
@@ -189,6 +191,32 @@ namespace Test {
       return new TestSpace(*this);
     }
   };
+
+  /// Test name prefix for vector construction
+  static const std::string vectorPrefix("Array::Vector::");
+
+  /// %Class for testing construction from empty vectors
+  class EmptyVector : public Test::Base {
+  public:
+    /// Initialize test
+    EmptyVector(void) : Test::Base(vectorPrefix + "Empty") {}
+    /// Perform actual tests
+    bool run(void) {
+      std::vector<int> ints;
+      Gecode::IntArgs ia(ints);
+      if (ia.size() != 0)
+        return false;
+
+      std::vector<Gecode::IntVar> intVars;
+      Gecode::IntVarArgs iva(intVars);
+      if (iva.size() != 0)
+        return false;
+
+      std::vector<Gecode::BoolVar> boolVars;
+      Gecode::BoolVarArgs bva(boolVars);
+      return bva.size() == 0;
+    }
+  } emptyVectorTest;
 
   /// %Class for testing the VarArray iterator
   class VarArrayIterator : public Iterator {
