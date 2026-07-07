@@ -113,6 +113,17 @@ so zero-length copies do not take the address of a nonexistent first
 element.
 
 [ENTRY]
+Module: minimodel
+What:   bug
+Rank:   minor
+Issue:  139
+Thanks: yuri@FreeBSD
+[DESCRIPTION]
+Fix default-constructed Boolean expressions so they can be used as
+empty accumulators for conjunction and disjunction without reading
+uninitialized node state.
+
+[ENTRY]
 Module: float
 What:   bug
 Rank:   minor
