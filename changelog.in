@@ -132,6 +132,16 @@ uniform integer and float values.
 [ENTRY]
 Module: other
 What:   change
+Rank:   minor
+Issue:  203
+Thanks: Bruce Mitchener
+[DESCRIPTION]
+Avoid rewriting the generated CMake config.hpp file when its
+contents have not changed.
+
+[ENTRY]
+Module: other
+What:   change
 Rank:   major
 [DESCRIPTION]
 Modernize the build infrastructure across CMake and autoconf:

@@ -697,7 +697,7 @@ foreach(i RANGE ${length})
   set(CONFIG_OUT "${CONFIG_OUT}${line}")
 endforeach()
 
-file(WRITE ${GECODE_BINARY_DIR}/gecode/support/config.hpp
+file(CONFIGURE OUTPUT "${GECODE_BINARY_DIR}/gecode/support/config.hpp" CONTENT
 "/* gecode/support/config.hpp.  Generated from config.hpp.in by configure.  */
 /* gecode/support/config.hpp.in.  Generated from configure.ac by autoheader.  */
 
