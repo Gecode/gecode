@@ -165,6 +165,41 @@ namespace Test { namespace Int {
        }
      };
 
+     /// %Test Boolean expressions with default-constructed accumulators
+     class BoolExprDefaultAccumulator : public Test {
+     protected:
+       /// Boolean operation to accumulate
+       BoolOpcode o;
+       /// Whether the default expression starts on the right hand side
+       bool rhs;
+     public:
+       /// Create and register test
+       BoolExprDefaultAccumulator(BoolOpcode o0, bool rhs0)
+         : Test("MiniModel::BoolExpr::Default::"+
+                std::string(o0 == BO_AND ? "And" : "Or")+
+                (rhs0 ? "::Rhs" : "::Lhs"),3,0,1), o(o0), rhs(rhs0) {}
+       /// %Test whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         int r = (o == BO_AND) ? (x[0] & x[1]) : (x[0] | x[1]);
+         return r == x[2];
+       }
+       /// Post constraint on \a x
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
+         using namespace Gecode;
+         Gecode::BoolExpr e;
+         Gecode::BoolExpr x0(channel(home,x[0]));
+         Gecode::BoolExpr x1(channel(home,x[1]));
+         if (o == BO_AND) {
+           e = rhs ? (x0 && e) : (e && x0);
+           e = e && x1;
+         } else {
+           e = rhs ? (x0 || e) : (e || x0);
+           e = e || x1;
+         }
+         rel(home, expr(home,e), IRT_EQ, channel(home,x[2]));
+       }
+     };
+
     const BoolInstr bi000[] = {
       {BO_AND,0,1,0},{BO_AND,2,3,1},{BO_AND,0,1,0},
       {BO_HLT,0,0,0}
@@ -4382,6 +4417,10 @@ namespace Test { namespace Int {
         (void) new BoolElement("Expr::A",0);
         (void) new BoolElement("Expr::B",1);
         (void) new BoolElement("Rel",2);
+        (void) new BoolExprDefaultAccumulator(BO_AND,false);
+        (void) new BoolExprDefaultAccumulator(BO_AND,true);
+        (void) new BoolExprDefaultAccumulator(BO_OR,false);
+        (void) new BoolExprDefaultAccumulator(BO_OR,true);
       }
     };
 
