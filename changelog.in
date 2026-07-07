@@ -76,6 +76,34 @@ first-class CMake package for downstream consumers, refreshes the
 autoconf build path, and updates CI coverage for current platforms.
 
 [ENTRY]
+Module: float
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Fix bounds propagation for floating-point power and nth-root
+constraints so they no longer report fixpoint prematurely and no
+longer call interval nth-root on zero-anchored even-root intervals
+that can underflow in Boost interval arithmetic.
+
+[ENTRY]
+Module: float
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Fix floating-point multiplication propagation by using direct interval
+contraction for the signed product relation. This avoids lossy sign
+rewrites that could accept tight non-solution intervals.
+
+[ENTRY]
+Module: test
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Fix float power and nth-root tests with shared variables by
+initializing their exponent fields and rejecting nth-root test
+assignments whose source interval is not fully non-negative.
+
+[ENTRY]
 Module: other
 What:   change
 Rank:   major
