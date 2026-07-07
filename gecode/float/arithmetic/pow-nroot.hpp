@@ -33,6 +33,16 @@
 
 namespace Gecode { namespace Float { namespace Arithmetic {
 
+  /// Return nth root for a non-negative interval
+  forceinline FloatVal
+  positive_nroot(const FloatVal& x, int n) {
+    if (((n % 2) == 0) && (x.min() == 0.0)) {
+      FloatNum u = std::pow(x.max(), 1.0 / static_cast<FloatNum>(n));
+      return FloatVal(0.0, std::nextafter(u, Limits::max));
+    }
+    return nroot(x,n);
+  }
+
 
   /*
    * Bounds consistent square operator
@@ -134,7 +144,9 @@ namespace Gecode { namespace Float { namespace Arithmetic {
   NthRoot<A,B>::post(Home home, A x0, B x1, int n) {
     if (n == 0) return ES_FAILED;
     GECODE_ME_CHECK(x0.gq(home,0.0));
-    GECODE_ME_CHECK(x1.eq(home,nroot(x0.domain(),n)));
+    if (x0.min() < 0.0) return ES_FAILED;
+    FloatVal d((x0.min() <= 0.0) ? 0.0 : x0.min(), x0.max());
+    GECODE_ME_CHECK(x1.eq(home,positive_nroot(d,n)));
     GECODE_ME_CHECK(x0.eq(home,pow(x1.domain(),n)));
     (void) new (home) NthRoot<A,B>(home,x0,x1,n);
     return ES_OK;
@@ -154,7 +166,9 @@ namespace Gecode { namespace Float { namespace Arithmetic {
   template<class A, class B>
   ExecStatus
   NthRoot<A,B>::propagate(Space& home, const ModEventDelta&) {
-    GECODE_ME_CHECK(x1.eq(home,nroot(x0.domain(),m_n)));
+    if (x0.min() < 0.0) return ES_FAILED;
+    FloatVal d((x0.min() <= 0.0) ? 0.0 : x0.min(), x0.max());
+    GECODE_ME_CHECK(x1.eq(home,positive_nroot(d,m_n)));
     GECODE_ME_CHECK(x0.eq(home,pow(x1.domain(),m_n)));
     return x0.assigned() ? home.ES_SUBSUMED(*this) : ES_NOFIX;
   }
