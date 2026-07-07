@@ -92,6 +92,16 @@ Restore the legacy GIST_STATIC_LIBS compatibility macro for static
 Windows clients. GECODE_STATIC_LIBS remains the preferred spelling.
 
 [ENTRY]
+Module: kernel
+What:   bug
+Rank:   minor
+Issue:  62
+Thanks: k0stjap
+[DESCRIPTION]
+Dispose the random view selector used by random variable branching so
+its random generator handle is released when the brancher is discarded.
+
+[ENTRY]
 Module: float
 What:   bug
 Rank:   minor

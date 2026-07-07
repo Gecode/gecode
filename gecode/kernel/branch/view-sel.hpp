@@ -182,6 +182,10 @@ namespace Gecode {
     //@{
     /// Create copy during cloning
     virtual ViewSel<View>* copy(Space& home);
+    /// Whether dispose must always be called (that is, notice is needed)
+    virtual bool notice(void) const;
+    /// Delete view selection
+    virtual void dispose(Space& home);
     //@}
   };
 
@@ -538,6 +542,16 @@ namespace Gecode {
   ViewSel<View>*
   ViewSelRnd<View>::copy(Space& home) {
     return new (home) ViewSelRnd<View>(home,*this);
+  }
+  template<class View>
+  forceinline bool
+  ViewSelRnd<View>::notice(void) const {
+    return true;
+  }
+  template<class View>
+  forceinline void
+  ViewSelRnd<View>::dispose(Space&) {
+    r.~Rnd();
   }
 
 
