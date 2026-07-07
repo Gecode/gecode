@@ -90,7 +90,7 @@ namespace Gecode {
    *
    */
   BoolExpr::Node::Node(void)
-    : use(1), l(nullptr), r(nullptr), m(nullptr) {}
+    : use(1), same(0), t(NT_AND), l(nullptr), r(nullptr), m(nullptr) {}
 
   BoolExpr::Node::~Node(void) {
     delete m;
@@ -134,8 +134,18 @@ namespace Gecode {
     n->x    = x;
   }
 
-  BoolExpr::BoolExpr(const BoolExpr& l, NodeType t, const BoolExpr& r)
-    : n(new Node) {
+  BoolExpr::BoolExpr(const BoolExpr& l, NodeType t, const BoolExpr& r) {
+    if (((t == NT_AND) || (t == NT_OR)) && (l.n->same == 0)) {
+      n = r.n;
+      n->use++;
+      return;
+    }
+    if (((t == NT_AND) || (t == NT_OR)) && (r.n->same == 0)) {
+      n = l.n;
+      n->use++;
+      return;
+    }
+    n = new Node;
     int ls = ((l.n->t == t) || (l.n->t == NT_VAR)) ? l.n->same : 1;
     int rs = ((r.n->t == t) || (r.n->t == NT_VAR)) ? r.n->same : 1;
     n->same = ls+rs;
@@ -149,7 +159,10 @@ namespace Gecode {
   BoolExpr::BoolExpr(const BoolExpr& l, NodeType t) {
     (void) t;
     assert(t == NT_NOT);
-    if (l.n->t == NT_NOT) {
+    if (l.n->same == 0) {
+      n = l.n;
+      n->use++;
+    } else if (l.n->t == NT_NOT) {
       n = l.n->l;
       n->use++;
     } else {
@@ -520,6 +533,8 @@ namespace Gecode {
 
     NNF*
     NNF::nnf(Region& r, Node* n, bool neg) {
+      if (n->same == 0)
+        throw MiniModel::TooFewArguments("BoolExpr");
       switch (n->t) {
       case BoolExpr::NT_VAR:
       case BoolExpr::NT_RLIN:
