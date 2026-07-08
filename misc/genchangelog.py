@@ -80,6 +80,27 @@ def main() -> int:
     versions = ""
     body = ""
 
+    def flush_current_release() -> None:
+        nonlocal versions, body
+
+        sid = f"SectionChanges_{version}"
+        sid = sid.replace(".", "_")
+        versions = versions + f'\n - \\ref {sid} "Gecode {version} ({date})"'
+        body = body + f"\\section {sid} Changes in Version {version} ({date})\n\n"
+        body = body + f"{info}\n\n"
+
+        for mod in modorder:
+            if hastext[mod]:
+                body = body + " - " + modclear[mod] + "\n"
+                hastext[mod] = 0
+                for what in whatorder:
+                    k = f"{mod}-{what}"
+                    if text[k] != "":
+                        body = body + "   - " + whatclear[what] + "\n"
+                        body = body + text[k]
+                        text[k] = ""
+        body = body + "\n\n"
+
     lines = sys.stdin.readlines()
     idx = 0
     current = None
@@ -99,23 +120,7 @@ def main() -> int:
 
         if re.match(r"^\[RELEASE\]", l):
             if not first:
-                sid = f"SectionChanges_{version}"
-                sid = sid.replace(".", "_")
-                versions = versions + f'\n - \\ref {sid} "Gecode {version} ({date})"'
-                body = body + f"\\section {sid} Changes in Version {version} ({date})\n\n"
-                body = body + f"{info}\n\n"
-
-                for mod in modorder:
-                    if hastext[mod]:
-                        body = body + " - " + modclear[mod] + "\n"
-                        hastext[mod] = 0
-                        for what in whatorder:
-                            k = f"{mod}-{what}"
-                            if text[k] != "":
-                                body = body + "   - " + whatclear[what] + "\n"
-                                body = body + text[k]
-                                text[k] = ""
-                body = body + "\n\n"
+                flush_current_release()
 
             first = False
             version = ""
@@ -206,12 +211,13 @@ def main() -> int:
             more = trim_trailing_ws(more)
             more = more.replace("<", "\\<")
             more = more.replace(">", "\\>")
-            more = more.replace("<", "\\<")
             more = more.replace("&", "\\&")
             more = re.sub(r"\n([ \t]*)\n", r"\n\1<br>\n", more)
 
             hastext[mod] = 1
             rb = rankclear.get(rank, "")
+            if bug != "":
+                rb = rb + f", bugzilla entry {bug}"
             if issue != "":
                 rb = rb + f', <a href="https://github.com/gecode/gecode/issues/{issue}">issue {issue}</a>'
             if thanks != "":
@@ -237,6 +243,9 @@ def main() -> int:
             current = l
             continue
 
+    if not first:
+        flush_current_release()
+
     sys.stdout.write(
         f"""/**
 
@@ -245,7 +254,6 @@ def main() -> int:
 \\section SectionChangeList Changes in Gecode Versions
 
 {versions}
- - \\ref SectionChanges_1_0_0 "Gecode 1.0.0 (2005-12-06)"
 
 \\section SectionChangeWhat Gecode Version Numbers
 
@@ -263,14 +271,6 @@ according to the following rules (of thumb):
     )
 
     sys.stdout.write(body)
-    sys.stdout.write(
-        """\\section SectionChanges_1_0_0 Changes in Version 1.0.0 (2005-12-06, initial release)
-
-No changes, of course.
-
-
-"""
-    )
     sys.stdout.write("\n*/\n")
     return 0
 
