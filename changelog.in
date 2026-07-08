@@ -887,7 +887,7 @@ exp(0.0) now correctly evaluates to 1.0 (and not 0.0).
 
 [ENTRY]
 Module: int
-What:   changed
+What:   change
 Rank:   minor
 Thanks: Jens Krueger
 [DESCRIPTION]
@@ -1030,6 +1030,21 @@ Rank:   minor
 [DESCRIPTION]
 Added missing definitions for declarations of creating Home
 objects from spaces with propagator and brancher groups.
+
+[ENTRY]
+Module: kernel
+What:   new
+Rank:   minor
+Thanks: Gilles Pesant and Samuel Gagnon
+[DESCRIPTION]
+Introduction of a basic structure for supporting counting-based
+search as described in:
+S. Gagnon, G. Pesant, Accelerating Counting-Based Search, CPAIOR 2018.
+This is only enabled if Gecode has been compiled with the option
+--enable-cbs.
+[MORE]
+A branching option will be added to compatible examples as
+counting algorithms are added to constraints.
 
 [ENTRY]
 Module: int
@@ -1844,7 +1859,7 @@ Tracing now also records failure-events, see MPG for details.
 
 [ENTRY]
 Module: int
-What:   changed
+What:   change
 Rank:   minor
 Thanks:	Conrad Drescher
 [DESCRIPTION]
@@ -1941,7 +1956,7 @@ heuristic for branching. See MPG for details.
 
 [ENTRY]
 Module:	kernel
-What:   changed
+What:   change
 Rank:   minor
 [DESCRIPTION]
 Do not count number of weakly monotonic propagators, nobody used
@@ -2032,7 +2047,7 @@ and sequence constraints).
 
 [ENTRY]
 Module:	int
-What:   changed
+What:   change
 Rank:   major
 [DESCRIPTION]
 All branching functions (merit, value, commit, tie-breaking
@@ -2040,7 +2055,7 @@ limit, filter, print) can now be of std::function type.
 
 [ENTRY]
 Module:	set
-What:   changed
+What:   change
 Rank:   major
 [DESCRIPTION]
 All branching functions (merit, value, commit, tie-breaking
@@ -2048,7 +2063,7 @@ limit, filter, print) can now be of std::function type.
 
 [ENTRY]
 Module:	float
-What:   changed
+What:   change
 Rank:   major
 [DESCRIPTION]
 All branching functions (merit, value, commit, tie-breaking
@@ -2056,7 +2071,7 @@ limit, filter, print) can now be of std::function type.
 
 [ENTRY]
 Module:	kernel
-What:   changed
+What:   change
 Rank:   major
 [DESCRIPTION]
 All branching functions (merit, value, commit, tie-breaking
@@ -6634,8 +6649,8 @@ Sudoku and GraphColor now uses smallest size over accumulated failure
 count (AFC) as the default heuristic.
 
 [ENTRY]
-Module: bug
-What:   set
+Module: set
+What:   bug
 Rank:   minor
 [DESCRIPTION]
 For branching, SET_VAR_DEGREE_MAX would select the variable with
@@ -8383,7 +8398,7 @@ Rank:   minor
 Fixed bug in unreflection of empty VarArrays.
 
 [ENTRY]
-Module: linear
+Module: int
 What:   bug
 Rank:   major
 [DESCRIPTION]
@@ -8550,7 +8565,7 @@ The number of propagators and branchings can be accurately
 retrieved from both failed and non-stable spaces.
 
 [ENTRY]
-Module: examples
+Module: example
 What:   new
 Rank:   minor
 [DESCRIPTION]
@@ -10613,18 +10628,3 @@ Version:	1.0.0
 Date:		2005-12-06
 [DESCRIPTION]
 Initial release.
-
-[ENTRY]
-Module: kernel
-What:   new
-Rank:   minor
-Thanks: Gilles Pesant and Samuel Gagnon
-[DESCRIPTION]
-Introduction of a basic structure for supporting counting-based
-search as described in:
-S. Gagnon, G. Pesant, Accelerating Counting-Based Search, CPAIOR 2018.
-This is only enabled if Gecode has been compiled with the option
---enable-cbs.
-[MORE]
-A branching option will be added to compatible examples as
-counting algorithms are added to constraints.
