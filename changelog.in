@@ -76,6 +76,14 @@ first-class CMake package for downstream consumers, refreshes the
 autoconf build path, and updates CI coverage for current platforms.
 
 [ENTRY]
+Module: minimodel
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Fix MSVC compilation of matrix slice conversion operators by fully
+qualifying their dependent return types.
+
+[ENTRY]
 Module: float
 What:   bug
 Rank:   minor

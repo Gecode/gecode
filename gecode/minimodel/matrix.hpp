@@ -67,23 +67,23 @@ namespace Gecode {
 
   template<class A>
   inline
-  Slice<A>::operator ArgsType(void) {
+  Slice<A>::operator typename Slice<A>::ArgsType(void) {
     return _r;
   }
   template<class A>
   inline
-  Slice<A>::operator Matrix<ArgsType>(void) {
-    return Matrix<ArgsType>(_r, _tc-_fc, _tr-_fr);
+  Slice<A>::operator Matrix<typename Slice<A>::ArgsType>(void) {
+    return Matrix<typename Slice<A>::ArgsType>(_r, _tc-_fc, _tr-_fr);
   }
   template<class A>
   inline
-  Slice<A>::operator const ArgsType(void) const {
+  Slice<A>::operator typename Slice<A>::ArgsType const(void) const {
     return _r;
   }
   template<class A>
   inline
-  Slice<A>::operator const Matrix<ArgsType>(void) const {
-    return Matrix<ArgsType>(_r, _tc-_fc, _tr-_fr);
+  Slice<A>::operator Matrix<typename Slice<A>::ArgsType> const(void) const {
+    return Matrix<typename Slice<A>::ArgsType>(_r, _tc-_fc, _tr-_fr);
   }
 
   template<class A>
