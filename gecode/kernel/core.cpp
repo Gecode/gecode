@@ -749,6 +749,7 @@ namespace Gecode {
           Actor* c = Actor::cast(a)->copy(*this);
           // Link copied actor
           p->next(ActorLink::cast(c)); ActorLink::cast(c)->prev(p);
+          ActorLink::cast(c)->next(&pl); pl.prev(ActorLink::cast(c));
           // Note that forwarding is done in the constructors
           p = c;
         }
@@ -763,6 +764,7 @@ namespace Gecode {
           Actor* c = Actor::cast(a)->copy(*this);
           // Link copied actor
           p->next(ActorLink::cast(c)); ActorLink::cast(c)->prev(p);
+          ActorLink::cast(c)->next(&bl); bl.prev(ActorLink::cast(c));
           // Note that forwarding is done in the constructors
           p = c;
         }
