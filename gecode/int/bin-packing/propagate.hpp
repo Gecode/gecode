@@ -215,9 +215,9 @@ namespace Gecode { namespace Int { namespace BinPacking {
   forceinline int
   Pack::f_ccm1(int w, int l, int c) {
     // Conditions
-    int const c0 = 2 * w > c;  // x > c / 2
-    int const c1 = 2 * w == c; // x == c / 2
-    int const c2 = 2 * w < c;  // x < c / 2
+    int const c0 = w > c - w;  // x > c / 2
+    int const c1 = w == c - w; // x == c / 2
+    int const c2 = w < c - w;  // x < c / 2
 
     // Values
     int const v0 = 2 * ((c / l) - ((c - w) / l));
@@ -266,9 +266,9 @@ namespace Gecode { namespace Int { namespace BinPacking {
 
   forceinline int
   Pack::f_vb2(int w, int l, int c) {
-    int const c0 = 2 * w > c;
-    int const c1 = 2 * w == c;
-    int const c2 = 2 * w < c;
+    int const c0 = w > c - w;
+    int const c1 = w == c - w;
+    int const c2 = w < c - w;
 
     int const t0 = f_vb2_base(c, l, c);
     int const t1 = f_vb2_base(w, l, c);
@@ -372,7 +372,7 @@ namespace Gecode { namespace Int { namespace BinPacking {
   Pack::calc_dff_lower_bound_single_lambda(const int* weights, int n_weights,
                                            int capacity, int lambda) {
     // Transform and sum the weights
-    int sum_transformed_weights = 0;
+    long long int sum_transformed_weights = 0;
     for (int w_idx = 0; w_idx < n_weights; w_idx += 1)
       sum_transformed_weights += f(weights[w_idx], lambda, capacity);
 
@@ -380,7 +380,9 @@ namespace Gecode { namespace Int { namespace BinPacking {
     int transformed_capacity = f(capacity, lambda, capacity);
 
     // Lower bound
-    return ceil_div_pp(sum_transformed_weights, transformed_capacity);
+    return static_cast<int>
+      (ceil_div_pp(sum_transformed_weights,
+                   static_cast<long long int>(transformed_capacity)));
   }
 
   template<int f(int,int,int), LambdaRange l(int)>
@@ -401,11 +403,14 @@ namespace Gecode { namespace Int { namespace BinPacking {
       ceil_div_pp(lambda_range.max - lambda_range.min + 1,
                   n_lambda_samples + 1);
     for (int lambda = lambda_range.min + l_step;
-         lambda < lambda_range.max; lambda += l_step) {
+         lambda < lambda_range.max; ) {
       int cur_lower_bound =
         calc_dff_lower_bound_single_lambda<f>(weights, n_weights,
                                               capacity, lambda);
       lower_bound = std::max(lower_bound, cur_lower_bound);
+      if (lambda > lambda_range.max - l_step)
+        break;
+      lambda += l_step;
     }
     return lower_bound;
   }

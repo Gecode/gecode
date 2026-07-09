@@ -152,7 +152,6 @@ initializing their exponent fields and rejecting nth-root test
 assignments whose source interval is not fully non-negative.
 
 [ENTRY]
-<<<<<<< HEAD
 Module: flatzinc
 What:   bug
 Rank:   minor

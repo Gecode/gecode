@@ -300,9 +300,12 @@ namespace Gecode { namespace Int { namespace BinPacking {
         for (int r_idx = 0; r_idx < n_reductions; r_idx += 1) {
           // Calculate reduction parameters
           int& delta = delta_reductions[r_idx];
-          int capacity = capacity_base_reduction + delta;
+          long long int capacity_ll =
+            static_cast<long long int>(capacity_base_reduction) + delta;
 
-          if (capacity > 0) {
+          if ((capacity_ll > 0) &&
+              (capacity_ll <= std::numeric_limits<int>::max())) {
+            int capacity = static_cast<int>(capacity_ll);
             // Calculate reduction
             int n_not_zero_weights = 0;
             int max_weight = 0;
@@ -443,8 +446,8 @@ namespace Gecode { namespace Int { namespace BinPacking {
         std::min(smallest_virtual_weight, weights_base_reduction[b_idx]);
     delta_reductions[0] = -smallest_virtual_weight;
     delta_reductions[1] = 0;
-    delta_reductions[2] =
-      capacity_base_reduction - 2 * smallest_virtual_weight + 1;
+    delta_reductions[2] = capacity_base_reduction -
+      smallest_virtual_weight - smallest_virtual_weight + 1;
   }
 
 }}}
