@@ -54,6 +54,14 @@ namespace Gecode { namespace Search {
 
   forceinline
   NodeStop::NodeStop(unsigned long long int l0) : l(l0) {}
+  forceinline
+  NodeStop::NodeStop(const NodeStop& s) : Stop(s), l(s.limit()) {}
+  forceinline NodeStop&
+  NodeStop::operator =(const NodeStop& s) {
+    Stop::operator =(s);
+    limit(s.limit());
+    return *this;
+  }
 
   forceinline unsigned long long int
   NodeStop::limit(void) const {
@@ -73,6 +81,14 @@ namespace Gecode { namespace Search {
 
   forceinline
   FailStop::FailStop(unsigned long long int l0) : l(l0) {}
+  forceinline
+  FailStop::FailStop(const FailStop& s) : Stop(s), l(s.limit()) {}
+  forceinline FailStop&
+  FailStop::operator =(const FailStop& s) {
+    Stop::operator =(s);
+    limit(s.limit());
+    return *this;
+  }
 
   forceinline unsigned long long int
   FailStop::limit(void) const {
@@ -94,6 +110,16 @@ namespace Gecode { namespace Search {
   TimeStop::TimeStop(double l0)
     : l(l0) {
     t.start();
+  }
+  forceinline
+  TimeStop::TimeStop(const TimeStop& s)
+    : Stop(s), t(s.t), l(s.limit()) {}
+  forceinline TimeStop&
+  TimeStop::operator =(const TimeStop& s) {
+    Stop::operator =(s);
+    t = s.t;
+    limit(s.limit());
+    return *this;
   }
 
   forceinline double
@@ -118,6 +144,14 @@ namespace Gecode { namespace Search {
 
   forceinline
   RestartStop::RestartStop(unsigned long long int l0) : l(l0) {}
+  forceinline
+  RestartStop::RestartStop(const RestartStop& s) : Stop(s), l(s.limit()) {}
+  forceinline RestartStop&
+  RestartStop::operator =(const RestartStop& s) {
+    Stop::operator =(s);
+    limit(s.limit());
+    return *this;
+  }
 
   forceinline unsigned long long int
   RestartStop::limit(void) const {

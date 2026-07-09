@@ -3,8 +3,12 @@
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
  *
+ *  Contributing authors:
+ *     Mikael Zayenz Lagerkvist <lagerkvist@gecode.dev>
+ *
  *  Copyright:
  *     Christian Schulte, 2008
+ *     Mikael Zayenz Lagerkvist, 2026
  *
  *  This file is part of Gecode, the generic constraint
  *  development environment:
@@ -35,6 +39,29 @@
 #include <gecode/search.hh>
 
 #include "test/test.hh"
+
+#include <type_traits>
+
+static_assert(std::is_copy_constructible<Gecode::NoGoods>::value,
+              "NoGoods must remain copy constructible");
+static_assert(std::is_copy_assignable<Gecode::NoGoods>::value,
+              "NoGoods must remain copy assignable");
+static_assert(std::is_copy_constructible<Gecode::Search::NodeStop>::value,
+              "NodeStop must remain copy constructible");
+static_assert(std::is_copy_assignable<Gecode::Search::NodeStop>::value,
+              "NodeStop must remain copy assignable");
+static_assert(std::is_copy_constructible<Gecode::Search::FailStop>::value,
+              "FailStop must remain copy constructible");
+static_assert(std::is_copy_assignable<Gecode::Search::FailStop>::value,
+              "FailStop must remain copy assignable");
+static_assert(std::is_copy_constructible<Gecode::Search::TimeStop>::value,
+              "TimeStop must remain copy constructible");
+static_assert(std::is_copy_assignable<Gecode::Search::TimeStop>::value,
+              "TimeStop must remain copy assignable");
+static_assert(std::is_copy_constructible<Gecode::Search::RestartStop>::value,
+              "RestartStop must remain copy constructible");
+static_assert(std::is_copy_assignable<Gecode::Search::RestartStop>::value,
+              "RestartStop must remain copy assignable");
 
 namespace Test {
 
