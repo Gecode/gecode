@@ -104,6 +104,12 @@ Visual Studio is a multi-config generator, so use `--config Release` (or
   usable Qt GUI stack is available. `ON` requires Gist dependencies and fails
   configuration if they are unavailable. Gist requires Qt Gui, Widgets, and
   PrintSupport in addition to Qt Core.
+- `GECODE_ENABLE_FAULT_INJECTION`: builds deterministic allocation and copy
+  failpoints together with the `Fault::*` regression suite. This facility is
+  CMake-only and disabled by default.
+- `GECODE_SANITIZER`: selects `address`, `undefined`, `address-undefined`, or
+  `thread` instrumentation. These modes currently require a compiler that
+  accepts GCC/Clang sanitizer flags.
 - `GECODE_DOC_DOT`, `GECODE_DOC_SEARCH`, `GECODE_DOC_TAGFILE`: configure the
   Doxygen `doc` target. Building docs requires Doxygen 1.17.0 or newer and
   `uv`; Graphviz `dot` is used when available and `GECODE_DOC_DOT=ON`.
@@ -119,6 +125,28 @@ Subproject defaults (`add_subdirectory`):
 - `GECODE_ENABLE_EXAMPLES=OFF`
 - `BUILD_TESTING=OFF` (unless enabled by parent project)
 - `GECODE_INSTALL=OFF`
+
+### Fault injection and sanitizers
+
+Fault injection is process-global, so its tests must not share a test process
+with ordinary tests running on other threads. The CMake targets enforce this:
+
+```bash
+cmake -S . -B build-fault -DGECODE_ENABLE_FAULT_INJECTION=ON
+cmake --build build-fault --target check-fault
+```
+
+The ordinary `check` target also runs `check-fault` when fault injection is
+enabled. CTest registers the fault suite as a separate single-threaded test
+process.
+
+For a sanitizer build, configure a separate build directory. For example:
+
+```bash
+cmake -S . -B build-asan-ubsan \
+  -DGECODE_SANITIZER=address-undefined
+cmake --build build-asan-ubsan --target check
+```
 
 ## Using Gecode From Other CMake Projects
 
