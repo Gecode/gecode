@@ -340,6 +340,62 @@ namespace Test { namespace Int {
       }
     };
 
+    /// Test DFF arithmetic at the largest supported integer value
+    class DFFLargeWeights : public Base {
+    protected:
+      /// Simple test space class
+      class TestSpace : public Gecode::Space {
+      public:
+        /// Constructor
+        TestSpace(void) {}
+        /// Copy function
+        virtual Gecode::Space* copy(void) {
+          return nullptr;
+        }
+      };
+    public:
+      /// Constructor
+      DFFLargeWeights(void)
+        : Base("Int::BinPacking::DFFLargeWeights") {}
+      /// Run the actual test
+      virtual bool run(void) {
+        using namespace Gecode;
+        {
+          TestSpace* home = new TestSpace;
+          IntVarArgs l(*home, 2, 0, Gecode::Int::Limits::max);
+          IntVarArgs b(*home, 1, 0, 1);
+          IntArgs s({Gecode::Int::Limits::max});
+          binpacking(*home, l, b, s);
+          bool failed = home->status() == SS_FAILED;
+          delete home;
+          if (failed)
+            return false;
+        }
+        {
+          TestSpace* home = new TestSpace;
+          int c = Gecode::Int::Limits::max / 2;
+          IntVarArgs l(*home, 2, 0, c);
+          IntVarArgs b(*home, 1, 0, 1);
+          IntArgs s({c});
+          binpacking(*home, l, b, s);
+          bool failed = home->status() == SS_FAILED;
+          delete home;
+          if (failed)
+            return false;
+        }
+        {
+          TestSpace* home = new TestSpace;
+          IntVarArgs l(*home, 2, 0, 1100000000);
+          IntVarArgs b(*home, 2, 0, 1);
+          IntArgs s({1000000000,1000000000});
+          binpacking(*home, l, b, s);
+          bool failed = home->status() == SS_FAILED;
+          delete home;
+          return !failed;
+        }
+      }
+    };
+
     /// Help class to create and register tests
     class Create {
     public:
@@ -425,6 +481,7 @@ namespace Test { namespace Int {
         }
 
         (void) new DFFLowerBound;
+        (void) new DFFLargeWeights;
       }
     };
 
