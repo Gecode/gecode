@@ -49,6 +49,8 @@ Version metadata shared by autoconf and CMake lives in `gecode-version.m4`.
 | `--enable-mpfr` | `GECODE_ENABLE_MPFR` | Supported directly | Default `ON`; uses `find_package(MPFR)` |
 | `--enable-allocator` | `GECODE_ENABLE_ALLOCATOR` | Supported directly | Default `ON` |
 | `--enable-audit` | `GECODE_ENABLE_AUDIT` | Supported directly | Default `OFF` |
+| None | `GECODE_ENABLE_FAULT_INJECTION` | CMake-only | Builds deterministic failpoints and a serial `check-fault` suite; default `OFF` |
+| None | `GECODE_SANITIZER` | CMake-only | `address`, `undefined`, `address-undefined`, or `thread`; currently requires GCC/Clang-style flags |
 | `--enable-gcc-visibility` | `GECODE_ENABLE_GCC_VISIBILITY` | Supported directly | Default `ON` |
 | `--with-freelist32-size-max` | `GECODE_FREELIST32_SIZE_MAX` | Supported directly | Cache string |
 | `--with-freelist64-size-max` | `GECODE_FREELIST64_SIZE_MAX` | Supported directly | Cache string |

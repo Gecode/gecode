@@ -1381,6 +1381,17 @@ if(BUILD_TESTING)
       COMMAND $<TARGET_FILE:gecode-test> ${GECODE_CHECK_ARGS}
       DEPENDS ${GECODE_CHECK_DEPENDS}
       USES_TERMINAL)
+    if(GECODE_ENABLE_FAULT_INJECTION)
+      set(GECODE_FAULT_CHECK_ARGS -iter 1 -threads 1 -test "^Fault::")
+      add_test(NAME fault COMMAND gecode-test ${GECODE_FAULT_CHECK_ARGS})
+      set_tests_properties(fault PROPERTIES
+        FIXTURES_REQUIRED gecode-test-built)
+      add_custom_target(check-fault
+        COMMAND $<TARGET_FILE:gecode-test> ${GECODE_FAULT_CHECK_ARGS}
+        DEPENDS gecode-test
+        USES_TERMINAL)
+      add_dependencies(check check-fault)
+    endif()
   else()
     message(WARNING "Skipping gecode-test/check targets because required modules are disabled")
     add_custom_target(check
