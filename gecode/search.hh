@@ -839,6 +839,10 @@ namespace Gecode { namespace Search {
   public:
     /// Stop if node limit \a l is exceeded
     NodeStop(unsigned long long int l);
+    /// Copy constructor
+    NodeStop(const NodeStop& s);
+    /// Assignment operator
+    NodeStop& operator =(const NodeStop& s);
     /// Return current limit
     unsigned long long int limit(void) const;
     /// Set current limit to \a l nodes
@@ -862,6 +866,10 @@ namespace Gecode { namespace Search {
   public:
     /// Stop if failure limit \a l is exceeded
     FailStop(unsigned long long int l);
+    /// Copy constructor
+    FailStop(const FailStop& s);
+    /// Assignment operator
+    FailStop& operator =(const FailStop& s);
     /// Return current limit
     unsigned long long int limit(void) const;
     /// Set current limit to \a l failures
@@ -883,6 +891,10 @@ namespace Gecode { namespace Search {
   public:
     /// Stop if search exceeds \a l milliseconds (from creation of this object)
     TimeStop(double l);
+    /// Copy constructor
+    TimeStop(const TimeStop& s);
+    /// Assignment operator
+    TimeStop& operator =(const TimeStop& s);
     /// Return current limit in milliseconds
     double limit(void) const;
     /// Set current limit to \a l milliseconds
@@ -904,6 +916,10 @@ namespace Gecode { namespace Search {
   public:
     /// Stop if restart limit \a l is exceeded
     RestartStop(unsigned long long int l);
+    /// Copy constructor
+    RestartStop(const RestartStop& s);
+    /// Assignment operator
+    RestartStop& operator =(const RestartStop& s);
     /// Return current limit
     unsigned long long int limit(void) const;
     /// Set current limit to \a l restarts

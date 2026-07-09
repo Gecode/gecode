@@ -1603,6 +1603,10 @@ namespace Gecode {
   public:
     /// Initialize
     NoGoods(void);
+    /// Copy constructor
+    NoGoods(const NoGoods& ng);
+    /// Assignment operator
+    NoGoods& operator =(const NoGoods& ng);
     /// Post no-goods
     GECODE_KERNEL_EXPORT
     virtual void post(Space& home) const;
@@ -3116,6 +3120,14 @@ namespace Gecode {
   forceinline
   NoGoods::NoGoods(void)
     : n(0) {}
+  forceinline
+  NoGoods::NoGoods(const NoGoods& ng0)
+    : n(ng0.ng()) {}
+  forceinline NoGoods&
+  NoGoods::operator =(const NoGoods& ng0) {
+    ng(ng0.ng());
+    return *this;
+  }
   forceinline unsigned long int
   NoGoods::ng(void) const {
     return n.load(std::memory_order_acquire);
