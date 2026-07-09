@@ -192,6 +192,8 @@ namespace Test { namespace Fault {
   public:
     CloneCopySpace(void) {
       ThrowingPropagator::post(*this);
+      ThrowingPropagator::post(*this);
+      ThrowingBrancher::post(*this);
       ThrowingBrancher::post(*this);
     }
     CloneCopySpace(CloneCopySpace& s) : Space(s) {}
@@ -373,13 +375,13 @@ namespace Test { namespace Fault {
     }
   };
 
-  bool clone_after_failed_copy(Phase p) {
+  bool clone_after_failed_copy(Phase p, unsigned long long n) {
     FaultScope scope;
     CloneCopySpace s;
     if (s.status() == SS_FAILED)
       return false;
     Support::FailPoint::reset();
-    Support::FailPoint::fail_after(p,0);
+    Support::FailPoint::fail_after(p,n);
     try {
       Space* c = s.clone();
       delete c;
@@ -1130,7 +1132,8 @@ namespace Test { namespace Fault {
     ClonePropagatorCopy(void)
       : Base("Fault::Clone::PropagatorCopy") {}
     virtual bool run(void) {
-      return clone_after_failed_copy(Phase::PropagatorCopy);
+      return clone_after_failed_copy(Phase::PropagatorCopy,0) &&
+        clone_after_failed_copy(Phase::PropagatorCopy,1);
     }
   };
 
@@ -1139,7 +1142,8 @@ namespace Test { namespace Fault {
     CloneBrancherCopy(void)
       : Base("Fault::Clone::BrancherCopy") {}
     virtual bool run(void) {
-      return clone_after_failed_copy(Phase::BrancherCopy);
+      return clone_after_failed_copy(Phase::BrancherCopy,0) &&
+        clone_after_failed_copy(Phase::BrancherCopy,1);
     }
   };
 
