@@ -1586,8 +1586,17 @@ constraint_item :
             int base1 = getBaseIntVar(pp,$4->a[1]->getIntVar());
             pp->sol_int.emplace_back(std::array<int, 2>{ base0, base1 });
           } else if (cid=="gecode_on_restart_uniform_int" && $4->a[0]->isInt() && $4->a[1]->isInt() && $4->a[2]->isIntVar()) {
-            int base = getBaseIntVar(pp,$4->a[2]->getIntVar());
-            pp->uniform_int.emplace_back(std::array<int, 3>{ $4->a[0]->getInt(), $4->a[1]->getInt(), base });
+            const int low = $4->a[0]->getInt();
+            const int high = $4->a[1]->getInt();
+            if (low > high) {
+              std::ostringstream oss;
+              oss << "gecode_on_restart_uniform_int requires low (" << low
+                  << ") <= high (" << high << ")";
+              yyerror(pp, oss.str().c_str());
+            } else {
+              int base = getBaseIntVar(pp,$4->a[2]->getIntVar());
+              pp->uniform_int.emplace_back(std::array<int, 3>{ low, high, base });
+            }
           } else if (cid=="gecode_on_restart_last_val_bool" && $4->a[0]->isBoolVar() && $4->a[1]->isBoolVar()) {
             int base0 = getBaseBoolVar(pp,$4->a[0]->getBoolVar());
             int base1 = getBaseBoolVar(pp,$4->a[1]->getBoolVar());
