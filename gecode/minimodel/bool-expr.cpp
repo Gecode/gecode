@@ -134,13 +134,19 @@ namespace Gecode {
     n->x    = x;
   }
 
-  BoolExpr::BoolExpr(const BoolExpr& l, NodeType t, const BoolExpr& r) {
-    if (((t == NT_AND) || (t == NT_OR)) && (l.n->same == 0)) {
+  BoolExpr::BoolExpr(const BoolExpr& l, NodeType t, const BoolExpr& r)
+    : BoolExpr(l,t,r,false) {}
+
+  BoolExpr::BoolExpr(const BoolExpr& l, NodeType t, const BoolExpr& r,
+                     bool accumulator) {
+    if (accumulator && ((t == NT_AND) || (t == NT_OR)) &&
+        (l.n->same == 0)) {
       n = r.n;
       n->use++;
       return;
     }
-    if (((t == NT_AND) || (t == NT_OR)) && (r.n->same == 0)) {
+    if (accumulator && ((t == NT_AND) || (t == NT_OR)) &&
+        (r.n->same == 0)) {
       n = l.n;
       n->use++;
       return;
@@ -159,10 +165,7 @@ namespace Gecode {
   BoolExpr::BoolExpr(const BoolExpr& l, NodeType t) {
     (void) t;
     assert(t == NT_NOT);
-    if (l.n->same == 0) {
-      n = l.n;
-      n->use++;
-    } else if (l.n->t == NT_NOT) {
+    if (l.n->t == NT_NOT) {
       n = l.n->l;
       n->use++;
     } else {
@@ -615,11 +618,11 @@ namespace Gecode {
 
   BoolExpr
   operator &&(const BoolExpr& l, const BoolExpr& r) {
-    return BoolExpr(l,BoolExpr::NT_AND,r);
+    return BoolExpr(l,BoolExpr::NT_AND,r,true);
   }
   BoolExpr
   operator ||(const BoolExpr& l, const BoolExpr& r) {
-    return BoolExpr(l,BoolExpr::NT_OR,r);
+    return BoolExpr(l,BoolExpr::NT_OR,r,true);
   }
   BoolExpr
   operator ^(const BoolExpr& l, const BoolExpr& r) {

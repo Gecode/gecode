@@ -1382,8 +1382,20 @@ namespace Gecode {
   private:
     /// Pointer to node for expression
     Node* n;
+    /// Construct an expression, optionally treating an empty operand as an accumulator
+    BoolExpr(const BoolExpr& l, NodeType t, const BoolExpr& r,
+             bool accumulator);
+    friend GECODE_MINIMODEL_EXPORT
+    BoolExpr operator &&(const BoolExpr&, const BoolExpr&);
+    friend GECODE_MINIMODEL_EXPORT
+    BoolExpr operator ||(const BoolExpr&, const BoolExpr&);
   public:
-    /// Default constructor
+    /** Default constructor
+     *
+     * Creates an empty accumulator for direct use with the public && and ||
+     * accumulation operators. In every other context, the expression is
+     * invalid; materialization throws MiniModel::TooFewArguments.
+     */
     GECODE_MINIMODEL_EXPORT
     BoolExpr(void);
     /// Copy constructor
@@ -1444,10 +1456,22 @@ namespace Gecode {
   /// Negated Boolean expression
   GECODE_MINIMODEL_EXPORT BoolExpr
   operator !(const BoolExpr&);
-  /// Conjunction of Boolean expressions
+  /** Conjunction of Boolean expressions
+   *
+   * A default-constructed BoolExpr is treated as an empty accumulator
+   * only when it is a direct operand of this operator, in either operand
+   * position. This permits repeated accumulation; an empty expression in
+   * any other context remains invalid until materialization.
+   */
   GECODE_MINIMODEL_EXPORT BoolExpr
   operator &&(const BoolExpr&, const BoolExpr&);
-  /// Disjunction of Boolean expressions
+  /** Disjunction of Boolean expressions
+   *
+   * A default-constructed BoolExpr is treated as an empty accumulator
+   * only when it is a direct operand of this operator, in either operand
+   * position. This permits repeated accumulation; an empty expression in
+   * any other context remains invalid until materialization.
+   */
   GECODE_MINIMODEL_EXPORT BoolExpr
   operator ||(const BoolExpr&, const BoolExpr&);
   /// Exclusive-or of Boolean expressions
