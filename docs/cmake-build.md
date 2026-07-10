@@ -106,7 +106,8 @@ Visual Studio is a multi-config generator, so use `--config Release` (or
   PrintSupport in addition to Qt Core.
 - `GECODE_ENABLE_FAULT_INJECTION`: builds deterministic allocation and copy
   failpoints together with the `Fault::*` regression suite. This facility is
-  CMake-only and disabled by default.
+  test-only, process-global, isolated to the dedicated single-threaded fault
+  test executable, CMake-only, and disabled by default.
 - `GECODE_SANITIZER`: selects `address`, `undefined`, `address-undefined`, or
   `thread` instrumentation. These modes currently require a compiler that
   accepts GCC/Clang sanitizer flags.
@@ -128,8 +129,9 @@ Subproject defaults (`add_subdirectory`):
 
 ### Fault injection and sanitizers
 
-Fault injection is process-global, so its tests must not share a test process
-with ordinary tests running on other threads. The CMake targets enforce this:
+Fault injection is test-only and process-global. Its tests run in a dedicated,
+isolated single-threaded executable and must not share a test process with
+ordinary tests. The CMake targets enforce this:
 
 ```bash
 cmake -S . -B build-fault -DGECODE_ENABLE_FAULT_INJECTION=ON
@@ -137,8 +139,9 @@ cmake --build build-fault --target check-fault
 ```
 
 The ordinary `check` target also runs `check-fault` when fault injection is
-enabled. CTest registers the fault suite as a separate single-threaded test
-process.
+enabled. CTest registers the fault suite as a separate process with
+`-threads 1` and serializes it with the fault-injection resource lock. The
+FailPoint facility is not a supported application API.
 
 For a sanitizer build, configure a separate build directory. For example:
 
