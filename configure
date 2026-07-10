@@ -14458,6 +14458,104 @@ printf "%s\n" "#define HAVE_MMAP 1" >>confdefs.h
 fi
 rm -f conftest.mmap conftest.txt
 
+
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for POSIX_SPAWN_CLOEXEC_DEFAULT and posix_spawn_file_actions_addinherit_np" >&5
+printf %s "checking for POSIX_SPAWN_CLOEXEC_DEFAULT and posix_spawn_file_actions_addinherit_np... " >&6; }
+if test ${ac_cv_gecode_posix_spawn_cloexec_default_addinherit_np+y}
+then :
+  printf %s "(cached) " >&6
+else case e in #(
+  e) cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+#include <spawn.h>
+#ifndef POSIX_SPAWN_CLOEXEC_DEFAULT
+#error POSIX_SPAWN_CLOEXEC_DEFAULT is unavailable
+#endif
+
+int
+main (void)
+{
+
+posix_spawn_file_actions_t actions;
+return posix_spawn_file_actions_addinherit_np(&actions, 2);
+
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_cxx_try_link "$LINENO"
+then :
+  ac_cv_gecode_posix_spawn_cloexec_default_addinherit_np=yes
+else case e in #(
+  e) ac_cv_gecode_posix_spawn_cloexec_default_addinherit_np=no ;;
+esac
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.beam \
+    conftest$ac_exeext conftest.$ac_ext ;;
+esac
+fi
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $ac_cv_gecode_posix_spawn_cloexec_default_addinherit_np" >&5
+printf "%s\n" "$ac_cv_gecode_posix_spawn_cloexec_default_addinherit_np" >&6; }
+if test "x$ac_cv_gecode_posix_spawn_cloexec_default_addinherit_np" = "xyes"
+then :
+
+
+printf "%s\n" "#define GECODE_HAS_POSIX_SPAWN_CLOEXEC_DEFAULT 1" >>confdefs.h
+
+
+printf "%s\n" "#define GECODE_HAS_POSIX_SPAWN_ADDINHERIT_NP 1" >>confdefs.h
+
+
+fi
+
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for posix_spawn_file_actions_addclosefrom_np" >&5
+printf %s "checking for posix_spawn_file_actions_addclosefrom_np... " >&6; }
+if test ${ac_cv_gecode_posix_spawn_addclosefrom_np+y}
+then :
+  printf %s "(cached) " >&6
+else case e in #(
+  e) cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+#ifndef _GNU_SOURCE
+#define _GNU_SOURCE 1
+#endif
+#include <spawn.h>
+
+int
+main (void)
+{
+
+posix_spawn_file_actions_t actions;
+return posix_spawn_file_actions_addclosefrom_np(&actions, 3);
+
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_cxx_try_link "$LINENO"
+then :
+  ac_cv_gecode_posix_spawn_addclosefrom_np=yes
+else case e in #(
+  e) ac_cv_gecode_posix_spawn_addclosefrom_np=no ;;
+esac
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.beam \
+    conftest$ac_exeext conftest.$ac_ext ;;
+esac
+fi
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $ac_cv_gecode_posix_spawn_addclosefrom_np" >&5
+printf "%s\n" "$ac_cv_gecode_posix_spawn_addclosefrom_np" >&6; }
+if test "x$ac_cv_gecode_posix_spawn_addclosefrom_np" = "xyes"
+then :
+
+
+printf "%s\n" "#define GECODE_HAS_POSIX_SPAWN_ADDCLOSEFROM_NP 1" >>confdefs.h
+
+
+fi
+
 GECODE_SAVE_LIBS=${LIBS}
 { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for library containing dlopen" >&5
 printf %s "checking for library containing dlopen... " >&6; }

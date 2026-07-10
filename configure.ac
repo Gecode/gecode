@@ -279,6 +279,49 @@ AC_GECODE_CBS
 AC_GECODE_CPPROFILER
 AC_GECODE_FLEXBISON
 AC_FUNC_MMAP
+
+AC_CACHE_CHECK(
+  [for POSIX_SPAWN_CLOEXEC_DEFAULT and posix_spawn_file_actions_addinherit_np],
+  [ac_cv_gecode_posix_spawn_cloexec_default_addinherit_np],
+  [AC_LINK_IFELSE(
+    [AC_LANG_PROGRAM([[
+#include <spawn.h>
+#ifndef POSIX_SPAWN_CLOEXEC_DEFAULT
+#error POSIX_SPAWN_CLOEXEC_DEFAULT is unavailable
+#endif
+]], [[
+posix_spawn_file_actions_t actions;
+return posix_spawn_file_actions_addinherit_np(&actions, 2);
+]])],
+    [ac_cv_gecode_posix_spawn_cloexec_default_addinherit_np=yes],
+    [ac_cv_gecode_posix_spawn_cloexec_default_addinherit_np=no])])
+AS_IF([test "x$ac_cv_gecode_posix_spawn_cloexec_default_addinherit_np" = "xyes"], [
+  AC_DEFINE([GECODE_HAS_POSIX_SPAWN_CLOEXEC_DEFAULT], [1],
+    [Whether POSIX_SPAWN_CLOEXEC_DEFAULT is available])
+  AC_DEFINE([GECODE_HAS_POSIX_SPAWN_ADDINHERIT_NP], [1],
+    [Whether posix_spawn_file_actions_addinherit_np is available])
+])
+
+AC_CACHE_CHECK(
+  [for posix_spawn_file_actions_addclosefrom_np],
+  [ac_cv_gecode_posix_spawn_addclosefrom_np],
+  [AC_LINK_IFELSE(
+    [AC_LANG_PROGRAM([[
+#ifndef _GNU_SOURCE
+#define _GNU_SOURCE 1
+#endif
+#include <spawn.h>
+]], [[
+posix_spawn_file_actions_t actions;
+return posix_spawn_file_actions_addclosefrom_np(&actions, 3);
+]])],
+    [ac_cv_gecode_posix_spawn_addclosefrom_np=yes],
+    [ac_cv_gecode_posix_spawn_addclosefrom_np=no])])
+AS_IF([test "x$ac_cv_gecode_posix_spawn_addclosefrom_np" = "xyes"], [
+  AC_DEFINE([GECODE_HAS_POSIX_SPAWN_ADDCLOSEFROM_NP], [1],
+    [Whether posix_spawn_file_actions_addclosefrom_np is available])
+])
+
 GECODE_SAVE_LIBS=${LIBS}
 AC_SEARCH_LIBS([dlopen], [dl], [GECODE_DL_LIBS=${ac_cv_search_dlopen}],
   [GECODE_DL_LIBS=])
