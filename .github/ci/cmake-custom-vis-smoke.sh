@@ -72,7 +72,11 @@ test "$float_line" -lt "$custom_one_line"
 test "$custom_one_line" -lt "$custom_two_line"
 
 mtime() {
-  stat -f '%m' "$1" 2>/dev/null || stat -c '%Y' "$1"
+  if stat -c '%Y' "$1" >/dev/null 2>&1; then
+    stat -c '%Y' "$1"
+  else
+    stat -f '%m' "$1"
+  fi
 }
 type_mtime="$(mtime "$type_header")"
 imp_mtime="$(mtime "$imp_header")"

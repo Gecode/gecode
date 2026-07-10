@@ -80,6 +80,11 @@ Build-time script execution uses `uv run --script ...` and requires Python
 for generated-script paths such as `-DGECODE_REGENERATE_VARIMP=ON` and the
 `doc` target. Documentation generation requires Doxygen 1.17.0 or newer.
 
+When changing generated-source inputs, run `make regenerate` after configuring
+the project. This uses the same version-checked workflow as CI and caches the
+Autoconf 2.72 bootstrap locally; Bison 3.8.2, Flex 2.6.4, and `uv` must be
+available. Ordinary C++ changes do not require regeneration.
+
 `GECODE_ENABLE_QT` and `GECODE_ENABLE_GIST` accept `AUTO`, `ON`, and `OFF`.
 Use `ON` to require the dependency and fail configuration if it is missing or
 too old, `OFF` to disable it, and `AUTO` to use it when the local toolchain

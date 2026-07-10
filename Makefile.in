@@ -1349,6 +1349,10 @@ check: test
 	$(RUNENVIRONMENT) $(TESTEXE) -iter 2 -threads 0 -fixprob 1 \
 		$(CHECKTESTS:%=-test %)
 
+.PHONY: regenerate
+regenerate:
+	bash "$(top_srcdir)/.github/ci/generated-source-freshness.sh" --update
+
 ifeq "@top_srcdir@" "."
 mkcompiledirs:
 else
