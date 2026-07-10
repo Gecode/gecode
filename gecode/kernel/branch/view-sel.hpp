@@ -520,8 +520,8 @@ namespace Gecode {
   void
   ViewSelRnd<View>::ties(Space& home, ViewArray<View>& x, int s,
                          int* ties, int& n,
-                         BrancherFilter<View>&) {
-    n=1; ties[0] = select(home,x,s);
+                         BrancherFilter<View>& f) {
+    n=1; ties[0] = select(home,x,s,f);
   }
   template<class View>
   void
