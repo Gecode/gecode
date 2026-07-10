@@ -1736,7 +1736,7 @@ namespace Gecode { namespace FlatZinc {
         "Blackbox propagator cannot use floating point values when Gecode is compiled without floating point decision variable support.");
       }
 #endif
-      FlatZinc::blackbox(s, s.blackBoxState(), int_input, int_output,
+      FlatZinc::blackbox(s, BlackBoxAccess::state(s), int_input, int_output,
 #ifdef GECODE_HAS_FLOAT_VARS
 float_input, float_output,
 #endif
@@ -1762,7 +1762,7 @@ float_input, float_output,
       for (int i = 0; i < flat_reason.size(); i++) {
         reason[i] = flat_reason[i];
       }
-      FlatZinc::blackbox_bounds(s, s.blackBoxState(), ivar,
+      FlatZinc::blackbox_bounds(s, BlackBoxAccess::state(s), ivar,
 #ifdef GECODE_HAS_FLOAT_VARS
 fvar,
 #endif

@@ -39,6 +39,7 @@
 
 #include "test/test.hh"
 
+#include <functional>
 #include <string>
 #include <vector>
 
@@ -53,25 +54,34 @@ namespace Test {
      */
     class FlatZincTest : public Base {
     protected:
+      typedef std::function<bool(const std::string&)> OutputCheck;
+      typedef std::function<void(void)> BeforeRun;
       std::string _name;
       std::string _source;
       std::string _expected;
       bool _allSolutions;
       std::vector<std::string> _cmdlineOpt;
+      OutputCheck _check;
+      BeforeRun _before;
     public:
       /// Construct and register test
       FlatZincTest(const std::string& name, const std::string& source,
                    const std::string& expected, bool allSolutions = false,
-                   std::vector<std::string> cmdlineOpt = {});
+                   std::vector<std::string> cmdlineOpt = {},
+                   OutputCheck check = OutputCheck(),
+                   BeforeRun before = BeforeRun());
       /// Perform test
       virtual bool run(void);
     };
 
     class FlatZincErrorTest : public FlatZincTest {
+    private:
+      std::string _expectedMessage;
     public:
       /// Construct and register test
       FlatZincErrorTest(const std::string& name, const std::string& source,
-                        std::vector<std::string> cmdlineOpt = {});
+                        std::vector<std::string> cmdlineOpt = {},
+                        std::string expectedMessage = "");
       /// Perform test
       virtual bool run(void);
     };

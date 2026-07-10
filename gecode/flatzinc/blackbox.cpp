@@ -886,6 +886,10 @@ public:
       DWORD count = 0;
       BOOL success = ReadFile(pipe_receive, c, sizeof(c) - 1, &count, NULL);
       if (!success) {
+        if (GetLastError() == ERROR_BROKEN_PIPE) {
+          throw Error("BlackBoxExec",
+                      "Blackbox process provided an incomplete response");
+        }
         throw Error(
             "BlackBoxExec",
             "Failed to read blackbox process output from pipe");
@@ -1071,8 +1075,9 @@ BlackBoxExec::Session::open_windows(const std::string &program,
                      &piProcInfo);          // receives PROCESS_INFORMATION
 
   if (!processStarted) {
-    throw Error("BlackBoxExec", windows_error("Unable to start program `" +
-                                             program + "'", GetLastError()));
+    throw Error("BlackBoxExec",
+                windows_error("starting blackbox process failed for program `" +
+                              program + "'", GetLastError()));
   }
   WindowsHandle process_handle(piProcInfo.hProcess);
   WindowsHandle thread_handle(piProcInfo.hThread);
@@ -1576,7 +1581,7 @@ ExecStatus BlackBox::propagate(Space &home, const ModEventDelta &) {
   ) {
     std::vector<int64_t> int_in(int_input.size());
     std::vector<int64_t> int_out(int_output.size());
-    for (int i = 0; i < int_in.size(); i++) {
+    for (size_t i = 0; i < int_in.size(); i++) {
       int_in[i] = static_cast<int64_t>(int_input[i].val());
     }
     std::vector<double> float_in;
@@ -1596,7 +1601,7 @@ ExecStatus BlackBox::propagate(Space &home, const ModEventDelta &) {
       return ES_FAILED;
     }
 
-    for (int i = 0; i < int_out.size(); i++) {
+    for (size_t i = 0; i < int_out.size(); i++) {
       GECODE_ME_CHECK(int_output[i].eq(home, static_cast<int>(int_out[i])));
     }
 #ifdef GECODE_HAS_FLOAT_VARS

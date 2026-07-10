@@ -31,8 +31,8 @@
  *
  */
 
-#ifndef __FLATZINC_BLACKBOX_HH__
-#define __FLATZINC_BLACKBOX_HH__
+#ifndef GECODE_FLATZINC_BLACKBOX_HH
+#define GECODE_FLATZINC_BLACKBOX_HH
 
 #include <cstddef>
 #include <cstdint>
@@ -72,6 +72,12 @@ public:
                    const std::vector<double> &float_in,
                    std::vector<int64_t> &int_out,
                    std::vector<double> &float_out) = 0;
+};
+
+/// Access to FlatZincSpace state used only while posting blackbox constraints
+class BlackBoxAccess {
+public:
+  static SharedHandle& state(FlatZincSpace& s);
 };
 
 /// Implementation of a black box function that dynamically loads a library and
@@ -238,7 +244,7 @@ public:
     home.notice(*this, AP_DISPOSE);
   }
   /// Cost function (defined as exponential)
-  PropCost cost(const Space &home, const ModEventDelta &med) const override {
+  PropCost cost(const Space &, const ModEventDelta &) const override {
     return PropCost::crazy(PropCost::HI, int_input.size()
 #ifdef GECODE_HAS_FLOAT_VARS
     + float_input.size()
@@ -403,7 +409,7 @@ public:
     home.notice(*this, AP_WEAKLY);
   }
   /// Cost function (defined as exponential)
-  PropCost cost(const Space &home, const ModEventDelta &med) const override {
+  PropCost cost(const Space &, const ModEventDelta &) const override {
     return PropCost::crazy(PropCost::HI, ivar.size()
 #ifdef GECODE_HAS_FLOAT_VARS
     + fvar.size()
@@ -528,4 +534,4 @@ void blackbox_bounds(Home home, SharedHandle &black_box_state,
 } // namespace FlatZinc
 } // namespace Gecode
 
-#endif //__FLATZINC_BLACKBOX_HH__
+#endif // GECODE_FLATZINC_BLACKBOX_HH
