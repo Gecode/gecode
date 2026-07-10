@@ -37,9 +37,98 @@
 
 #include "test/flatzinc.hh"
 
+#include "gecode/flatzinc/restart-random.hpp"
+
 namespace Test { namespace FlatZinc {
 
   namespace {
+    /// Check that reversed uniform integer ranges fail during parsing
+    class UniformIntInvalidRange : public Base {
+    public:
+      /// Create and register test
+      UniformIntInvalidRange(void)
+        : Base("FlatZinc::on_restart::uniform_int_invalid_range") {}
+      /// Perform test
+      virtual bool run(void) {
+        std::stringstream source(R"FZN(
+predicate gecode_on_restart_uniform_int(int: low,int: high,var int: out);
+var 0..1: y;
+constraint gecode_on_restart_uniform_int(1,0,y);
+solve satisfy;
+)FZN");
+        Gecode::FlatZinc::Printer p;
+        std::ostringstream err;
+        Gecode::FlatZinc::FlatZincSpace* fg =
+          Gecode::FlatZinc::parse(source, p, err);
+        const std::string message = err.str();
+        return fg == nullptr &&
+          message.find("gecode_on_restart_uniform_int") != std::string::npos &&
+          message.find("low (1) <= high (0)") != std::string::npos;
+      }
+    };
+
+    /// Scripted generator for testing wide restart integer sampling
+    class ScriptedRandom {
+    private:
+      const unsigned int* values;
+      unsigned int size;
+      unsigned int next;
+    public:
+      /// Initialize with the values to return
+      ScriptedRandom(const unsigned int* values0, unsigned int size0)
+        : values(values0), size(size0), next(0) {}
+      /// Return the next scripted 31-bit chunk
+      unsigned int operator ()(unsigned int n) {
+        if ((n != (1U << 31)) || (next >= size))
+          return 0;
+        return values[next++];
+      }
+      /// Stub for the narrow-path overload
+      unsigned long long int operator ()(unsigned long long int) {
+        return 0;
+      }
+      /// Return whether all scripted chunks were consumed
+      bool done(void) const {
+        return next == size;
+      }
+    };
+
+    /// Test wide restart integer range endpoints deterministically
+    class WideUniformInt : public Base {
+    public:
+      /// Create and register test
+      WideUniformInt(void)
+        : Base("FlatZinc::on_restart::uniform_int_wide_endpoints") {}
+      /// Perform test
+      virtual bool run(void) {
+        {
+          const unsigned int chunks[] = {
+            (1U << 31) - 1U, (1U << 31) - 1U, 1U, 0U
+          };
+          ScriptedRandom random(chunks, 4);
+          const unsigned long long int width = (1ULL << 31) + 1ULL;
+          const unsigned long long int offset =
+            Gecode::FlatZinc::Internal::uniform_int_offset(random,width);
+          if ((offset != width - 1ULL) ||
+              (static_cast<long long int>(INT_MIN) +
+               static_cast<long long int>(offset) != 0) || !random.done())
+            return false;
+        }
+        {
+          const unsigned int chunks[] = {1U, (1U << 31) - 1U};
+          ScriptedRandom random(chunks, 2);
+          const unsigned long long int width = 1ULL << 32;
+          const unsigned long long int offset =
+            Gecode::FlatZinc::Internal::uniform_int_offset(random,width);
+          if ((offset != width - 1ULL) ||
+              (static_cast<long long int>(INT_MIN) +
+               static_cast<long long int>(offset) != INT_MAX) || !random.done())
+            return false;
+        }
+        return true;
+      }
+    };
+
     /// Helper class to create and register tests
     class Create {
     public:
@@ -100,6 +189,8 @@ R"OUT(y = 1;
     };
 
     Create c;
+    UniformIntInvalidRange invalid_range;
+    WideUniformInt w;
   }
 
 }}
