@@ -280,6 +280,44 @@ if(GECODE_EFFECTIVE_ENABLE_GCC_VISIBILITY)
   endif()
 endif()
 
+# Probe the exact atomic clock-origin operations used by TimeStop.  Some
+# 32-bit targets compile these operations but need libatomic at link time.
+set(GECODE_ATOMIC_LINK_LIBRARIES)
+if(GECODE_ENABLE_SEARCH)
+  include(CheckCXXSourceCompiles)
+  set(_gecode_atomic_probe_source [=[
+#include <atomic>
+#include <chrono>
+
+int main() {
+  using rep = std::chrono::steady_clock::time_point::rep;
+  std::atomic<rep> origin;
+  const rep now = std::chrono::steady_clock::now().time_since_epoch().count();
+  origin.store(now, std::memory_order_release);
+  return origin.load(std::memory_order_acquire) == now ? 0 : 1;
+}
+]=])
+  set(_gecode_saved_required_libraries "${CMAKE_REQUIRED_LIBRARIES}")
+  unset(GECODE_ATOMIC_WORKS CACHE)
+  unset(GECODE_ATOMIC_WORKS_WITH_LIBATOMIC CACHE)
+  set(CMAKE_REQUIRED_LIBRARIES)
+  check_cxx_source_compiles("${_gecode_atomic_probe_source}" GECODE_ATOMIC_WORKS)
+  if(NOT GECODE_ATOMIC_WORKS)
+    set(CMAKE_REQUIRED_LIBRARIES atomic)
+    check_cxx_source_compiles(
+      "${_gecode_atomic_probe_source}" GECODE_ATOMIC_WORKS_WITH_LIBATOMIC)
+    if(GECODE_ATOMIC_WORKS_WITH_LIBATOMIC)
+      set(GECODE_ATOMIC_LINK_LIBRARIES atomic)
+    else()
+      message(FATAL_ERROR
+        "TimeStop atomic operations do not link with or without libatomic")
+    endif()
+  endif()
+  set(CMAKE_REQUIRED_LIBRARIES "${_gecode_saved_required_libraries}")
+  unset(_gecode_saved_required_libraries)
+  unset(_gecode_atomic_probe_source)
+endif()
+
 set(GECODE_QT_MIN_VERSION "5.15")
 
 if(GECODE_REGENERATE_VARIMP)
@@ -1169,6 +1207,14 @@ endif()
 
 gecode_link_component(kernel support)
 if(GECODE_ENABLE_SEARCH)
+  if(GECODE_ATOMIC_LINK_LIBRARIES)
+    foreach(kind shared static)
+      if(TARGET gecodesearch_${kind})
+        target_link_libraries(gecodesearch_${kind}
+          PUBLIC ${GECODE_ATOMIC_LINK_LIBRARIES})
+      endif()
+    endforeach()
+  endif()
   gecode_link_component(search kernel)
   if(WIN32 AND GECODE_ENABLE_CPPROFILER)
     gecode_link_component(search ws2_32)

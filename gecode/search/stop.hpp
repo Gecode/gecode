@@ -108,17 +108,19 @@ namespace Gecode { namespace Search {
 
   forceinline
   TimeStop::TimeStop(double l0)
-    : l(l0) {
-    t.start();
-  }
+    : t0(clock::now().time_since_epoch().count()), l(l0) {}
   forceinline
   TimeStop::TimeStop(const TimeStop& s)
-    : Stop(s), t(s.t), l(s.limit()) {}
+    : Stop(s),
+      t0(s.t0.load(std::memory_order_acquire)),
+      l(s.l.load(std::memory_order_acquire)) {}
   forceinline TimeStop&
   TimeStop::operator =(const TimeStop& s) {
+    const clock_rep t00 = s.t0.load(std::memory_order_acquire);
+    const double l0 = s.l.load(std::memory_order_acquire);
     Stop::operator =(s);
-    t = s.t;
-    limit(s.limit());
+    t0.store(t00, std::memory_order_release);
+    l.store(l0, std::memory_order_release);
     return *this;
   }
 
@@ -134,7 +136,8 @@ namespace Gecode { namespace Search {
 
   forceinline void
   TimeStop::reset(void) {
-    t.start();
+    t0.store(clock::now().time_since_epoch().count(),
+             std::memory_order_release);
   }
 
   /*

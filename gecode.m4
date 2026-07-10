@@ -1498,6 +1498,49 @@ AC_DEFUN([AC_GECODE_THREADS],[
   fi
 ])
 
+AC_DEFUN([AC_GECODE_ATOMIC],[
+  AC_SUBST([LINKATOMIC], [])
+  AC_MSG_CHECKING([whether steady-clock atomic operations link without libatomic])
+  ac_gecode_save_LIBS="${LIBS}"
+  AC_LINK_IFELSE(
+    [AC_LANG_PROGRAM([[#include <atomic>
+#include <chrono>]], [[
+      using rep = std::chrono::steady_clock::time_point::rep;
+      std::atomic<rep> origin;
+      const rep now =
+        std::chrono::steady_clock::now().time_since_epoch().count();
+      origin.store(now, std::memory_order_release);
+      return origin.load(std::memory_order_acquire) == now ? 0 : 1;
+    ]])],
+    [AC_MSG_RESULT([yes])],
+    [case "${ac_gecode_compiler_vendor}" in
+       microsoft)
+         AC_MSG_RESULT([no])
+         AC_MSG_ERROR([steady-clock atomic operations do not link])
+         ;;
+       *)
+         AC_MSG_RESULT([no])
+         AC_MSG_CHECKING([whether steady-clock atomic operations link with -latomic])
+         LIBS="${ac_gecode_save_LIBS}${ac_gecode_save_LIBS:+ }-latomic"
+         AC_LINK_IFELSE(
+           [AC_LANG_PROGRAM([[#include <atomic>
+#include <chrono>]], [[
+             using rep = std::chrono::steady_clock::time_point::rep;
+             std::atomic<rep> origin;
+             const rep now =
+               std::chrono::steady_clock::now().time_since_epoch().count();
+             origin.store(now, std::memory_order_release);
+             return origin.load(std::memory_order_acquire) == now ? 0 : 1;
+           ]])],
+           [AC_MSG_RESULT([yes])
+            AC_SUBST([LINKATOMIC], [-latomic])],
+           [AC_MSG_RESULT([no])
+            AC_MSG_ERROR([steady-clock atomic operations do not link with or without -latomic])])
+         ;;
+     esac])
+  LIBS="${ac_gecode_save_LIBS}"
+])
+
 dnl check whether we have suifficiently recent versions of flex/bison
 AC_DEFUN([AC_GECODE_FLEXBISON],
   [AC_CHECK_TOOL(HAVEFLEX, flex)
