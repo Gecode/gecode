@@ -736,6 +736,32 @@ if(HAVE_FORCE_INLINE)
   set(forceinline "__forceinline")
 endif()
 
+include(CheckCXXSourceCompiles)
+check_cxx_source_compiles("#include <spawn.h>
+#ifndef POSIX_SPAWN_CLOEXEC_DEFAULT
+#error POSIX_SPAWN_CLOEXEC_DEFAULT is unavailable
+#endif
+int main() {
+  posix_spawn_file_actions_t actions;
+  return posix_spawn_file_actions_addinherit_np(&actions, 2);
+}" HAVE_POSIX_SPAWN_CLOEXEC_DEFAULT_AND_ADDINHERIT_NP)
+if(HAVE_POSIX_SPAWN_CLOEXEC_DEFAULT_AND_ADDINHERIT_NP)
+  set(GECODE_HAS_POSIX_SPAWN_CLOEXEC_DEFAULT 1)
+  set(GECODE_HAS_POSIX_SPAWN_ADDINHERIT_NP 1)
+endif()
+
+check_cxx_source_compiles("#ifndef _GNU_SOURCE
+#define _GNU_SOURCE 1
+#endif
+#include <spawn.h>
+int main() {
+  posix_spawn_file_actions_t actions;
+  return posix_spawn_file_actions_addclosefrom_np(&actions, 3);
+}" HAVE_POSIX_SPAWN_ADDCLOSEFROM_NP)
+if(HAVE_POSIX_SPAWN_ADDCLOSEFROM_NP)
+  set(GECODE_HAS_POSIX_SPAWN_ADDCLOSEFROM_NP 1)
+endif()
+
 check_c_source_compiles("int main() { return __builtin_ffsll(0); }" HAVE_BUILTIN_FFSLL)
 if(HAVE_BUILTIN_FFSLL)
   set(GECODE_HAS_BUILTIN_FFSLL "/**/")

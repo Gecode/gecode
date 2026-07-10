@@ -82,6 +82,15 @@
 /* Whether we have mtrace for memory leak debugging */
 #undef GECODE_HAS_MTRACE
 
+/* Whether posix_spawn_file_actions_addclosefrom_np is available */
+#undef GECODE_HAS_POSIX_SPAWN_ADDCLOSEFROM_NP
+
+/* Whether posix_spawn_file_actions_addinherit_np is available */
+#undef GECODE_HAS_POSIX_SPAWN_ADDINHERIT_NP
+
+/* Whether POSIX_SPAWN_CLOEXEC_DEFAULT is available */
+#undef GECODE_HAS_POSIX_SPAWN_CLOEXEC_DEFAULT
+
 /* Whether Qt is available */
 #undef GECODE_HAS_QT
 

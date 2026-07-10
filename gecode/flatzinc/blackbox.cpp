@@ -31,6 +31,10 @@
  *
  */
 
+#if !defined(_WIN32) && !defined(_GNU_SOURCE)
+#define _GNU_SOURCE 1
+#endif
+
 #include <gecode/kernel.hh>
 #include <gecode/flatzinc.hh>
 #include <gecode/flatzinc/blackbox.hh>
@@ -65,6 +69,7 @@
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <time.h>
 #include <unistd.h>
 extern char **environ;
 #endif
@@ -162,6 +167,79 @@ move_from_standard_fd(int fd) {
   ::close(fd);
   return nfd;
 }
+
+class FileDescriptor {
+private:
+  int fd;
+public:
+  explicit FileDescriptor(int fd0=-1) : fd(fd0) {}
+  ~FileDescriptor(void) { reset(); }
+
+  int get(void) const { return fd; }
+  int release(void) {
+    int fd0 = fd;
+    fd = -1;
+    return fd0;
+  }
+  void reset(int fd0=-1) {
+    if (fd != -1) {
+      ::close(fd);
+    }
+    fd = fd0;
+  }
+};
+
+int
+move_away_from_standard_fd(FileDescriptor &fd) {
+  int old = fd.release();
+  int nfd = move_from_standard_fd(old);
+  if (nfd == -1) {
+    fd.reset(old);
+  } else {
+    fd.reset(nfd);
+  }
+  return nfd;
+}
+
+class SpawnFileActions {
+private:
+  posix_spawn_file_actions_t actions;
+  bool initialized;
+public:
+  SpawnFileActions(void) : initialized(false) {}
+  ~SpawnFileActions(void) {
+    if (initialized) {
+      posix_spawn_file_actions_destroy(&actions);
+    }
+  }
+
+  int init(void) {
+    int err = posix_spawn_file_actions_init(&actions);
+    initialized = err == 0;
+    return err;
+  }
+  posix_spawn_file_actions_t *get(void) { return &actions; }
+};
+
+class SpawnAttributes {
+private:
+  posix_spawnattr_t attr;
+  bool initialized;
+public:
+  SpawnAttributes(void) : initialized(false) {}
+  ~SpawnAttributes(void) {
+    if (initialized) {
+      posix_spawnattr_destroy(&attr);
+    }
+  }
+
+  int init(void) {
+    int err = posix_spawnattr_init(&attr);
+    initialized = err == 0;
+    return err;
+  }
+  posix_spawnattr_t *get(void) { return &attr; }
+};
 
 int
 create_socketpair(int sv[2]) {
@@ -482,22 +560,38 @@ protected:
                     const std::vector<std::string> &args);
   void close_windows(void);
 #else
-  static bool reap_child(pid_t pid, int &status) {
-    pid_t r;
-    do {
-      r = waitpid(pid, &status, WNOHANG);
-    } while ((r == -1) && (errno == EINTR));
-    return (r == pid) || ((r == -1) && (errno == ECHILD));
+  static void sleep_grace_period(void) {
+    struct timespec remaining = {0, 10000000};
+    while ((nanosleep(&remaining, &remaining) == -1) && (errno == EINTR)) {}
   }
 
-  static bool wait_child(pid_t pid, int &status, int attempts) {
-    for (int i = 0; i < attempts; i++) {
-      if (reap_child(pid, status)) {
-        return true;
+  static bool child_exited(pid_t pid) {
+    siginfo_t info;
+    do {
+      info.si_pid = 0;
+      if (waitid(P_PID, pid, &info, WEXITED | WNOHANG | WNOWAIT) == 0) {
+        return info.si_pid != 0;
       }
-      usleep(10000);
+    } while (errno == EINTR);
+    return false;
+  }
+
+  static void signal_group(pid_t pid, int signal) {
+    if ((kill(-pid, signal) == -1) && (errno == ESRCH)) {
+      return;
     }
-    return reap_child(pid, status);
+  }
+
+  static void wait_group(pid_t pid, int attempts) {
+    for (int i = 0; i < attempts; i++) {
+      if ((kill(-pid, 0) == -1) && (errno == ESRCH)) {
+        return;
+      }
+      if (child_exited(pid)) {
+        return;
+      }
+      sleep_grace_period();
+    }
   }
 
   static void terminate_child(pid_t pid) {
@@ -505,23 +599,31 @@ protected:
       return;
     }
     int status = 0;
-    if (wait_child(pid, status, 100)) {
-      return;
-    }
-    if (kill(-pid, SIGTERM) != 0) {
-      kill(pid, SIGTERM);
-    }
-    if (wait_child(pid, status, 100)) {
-      return;
-    }
-    if (kill(-pid, SIGKILL) != 0) {
-      kill(pid, SIGKILL);
-    }
+    // Keep the child unreaped until the group has received both signals.
+    signal_group(pid, SIGTERM);
+    wait_group(pid, 100);
+    signal_group(pid, SIGKILL);
     do {
       if (waitpid(pid, &status, 0) != -1) {
         return;
       }
     } while (errno == EINTR);
+  }
+
+  static void check_sigchld(void) {
+    struct sigaction action;
+    if (sigaction(SIGCHLD, NULL, &action) != 0) {
+      throw Error("BlackBoxExec", last_error("SIGCHLD query failed"));
+    }
+    if ((action.sa_handler != SIG_DFL)
+#ifdef SA_NOCLDWAIT
+        || (action.sa_flags & SA_NOCLDWAIT)
+#endif
+       ) {
+      throw Error("BlackBoxExec",
+                  "Cannot start a blackbox process unless SIGCHLD uses "
+                  "SIG_DFL without SA_NOCLDWAIT");
+    }
   }
 
   void open_posix(const std::string &program,
@@ -633,10 +735,15 @@ public:
           throw Error("BlackBoxExec",
                       "Blackbox process provided an incomplete response");
         }
+        int err = errno;
+        if (err == EINTR) {
+          clearerr(file_receive);
+          continue;
+        }
         throw Error("BlackBoxExec",
                     std::string("Reading blackbox process output from pipe "
                                 "failed with errno ") +
-                        std::to_string(errno));
+                        std::to_string(err));
       }
       in_buffer += static_cast<char>(ch);
       if (in_buffer.size() > max_exec_response_size) {
@@ -859,35 +966,6 @@ BlackBoxExec::Session::open_posix(const std::string &program,
                                   const std::vector<std::string> &args) {
   const int READ = 0;
   const int WRITE = 1;
-  int child_in[2] = {-1, -1};
-  int child_out[2] = {-1, -1};
-  if (create_socketpair(child_in) != 0) {
-    throw Error("BlackBoxExec", last_error("stdin socket creation failed"));
-  }
-  if (create_socketpair(child_out) != 0) {
-    ::close(child_in[READ]);
-    ::close(child_in[WRITE]);
-    throw Error("BlackBoxExec", last_error("stdout socket creation failed"));
-  }
-  int fds[4] = {child_in[READ], child_in[WRITE],
-                child_out[READ], child_out[WRITE]};
-  for (int i = 0; i < 4; i++) {
-    int moved = move_from_standard_fd(fds[i]);
-    if (moved == -1) {
-      int e = errno;
-      for (int j = 0; j < 4; j++)
-        ::close(fds[j]);
-      errno = e;
-      throw Error("BlackBoxExec",
-                  last_error("moving session descriptors away from stdio "
-                             "failed"));
-    }
-    fds[i] = moved;
-  }
-  child_in[READ] = fds[0];
-  child_in[WRITE] = fds[1];
-  child_out[READ] = fds[2];
-  child_out[WRITE] = fds[3];
 
   std::vector<char *> argv;
   argv.reserve(args.size() + 2);
@@ -897,94 +975,120 @@ BlackBoxExec::Session::open_posix(const std::string &program,
   }
   argv.push_back(nullptr);
 
-  posix_spawn_file_actions_t actions;
-  int err = posix_spawn_file_actions_init(&actions);
+#if !((defined(GECODE_HAS_POSIX_SPAWN_CLOEXEC_DEFAULT) && \
+      defined(GECODE_HAS_POSIX_SPAWN_ADDINHERIT_NP)) || \
+     defined(GECODE_HAS_POSIX_SPAWN_ADDCLOSEFROM_NP))
+  throw Error("BlackBoxExec",
+              "Persistent process blackboxes require a safe posix_spawn "
+              "descriptor-inheritance facility on this platform");
+#endif
+  check_sigchld();
+
+  FileDescriptor child_in[2];
+  FileDescriptor child_out[2];
+  int fds[2];
+  if (create_socketpair(fds) != 0) {
+    throw Error("BlackBoxExec", last_error("stdin socket creation failed"));
+  }
+  child_in[READ].reset(fds[READ]);
+  child_in[WRITE].reset(fds[WRITE]);
+  if (create_socketpair(fds) != 0) {
+    throw Error("BlackBoxExec", last_error("stdout socket creation failed"));
+  }
+  child_out[READ].reset(fds[READ]);
+  child_out[WRITE].reset(fds[WRITE]);
+  FileDescriptor *session_fds[] = {
+    &child_in[READ], &child_in[WRITE],
+    &child_out[READ], &child_out[WRITE]
+  };
+  for (FileDescriptor *fd : session_fds) {
+    if (move_away_from_standard_fd(*fd) == -1) {
+      throw Error("BlackBoxExec",
+                  last_error("moving session descriptors away from stdio "
+                             "failed"));
+    }
+  }
+
+  SpawnFileActions actions;
+  int err = actions.init();
   if (err != 0) {
-    ::close(child_in[READ]);
-    ::close(child_in[WRITE]);
-    ::close(child_out[READ]);
-    ::close(child_out[WRITE]);
     errno = err;
     throw Error("BlackBoxExec", last_error("spawn file action init failed"));
   }
 
-  posix_spawnattr_t attr;
-  err = posix_spawnattr_init(&attr);
+  SpawnAttributes attr;
+  err = attr.init();
   if (err != 0) {
-    posix_spawn_file_actions_destroy(&actions);
-    ::close(child_in[READ]);
-    ::close(child_in[WRITE]);
-    ::close(child_out[READ]);
-    ::close(child_out[WRITE]);
     errno = err;
     throw Error("BlackBoxExec", last_error("spawn attribute init failed"));
   }
 
-  err = posix_spawnattr_setpgroup(&attr, 0);
+  err = posix_spawnattr_setpgroup(attr.get(), 0);
   if (err == 0) {
-    err = posix_spawnattr_setflags(&attr, POSIX_SPAWN_SETPGROUP);
+    short flags = POSIX_SPAWN_SETPGROUP;
+#if defined(GECODE_HAS_POSIX_SPAWN_CLOEXEC_DEFAULT) && \
+    defined(GECODE_HAS_POSIX_SPAWN_ADDINHERIT_NP)
+    flags |= POSIX_SPAWN_CLOEXEC_DEFAULT;
+#endif
+    err = posix_spawnattr_setflags(attr.get(), flags);
   }
   if (err == 0) {
-    err = posix_spawn_file_actions_adddup2(&actions, child_in[READ],
+    err = posix_spawn_file_actions_adddup2(actions.get(),
+                                           child_in[READ].get(),
                                            STDIN_FILENO);
   }
   if (err == 0) {
-    err = posix_spawn_file_actions_adddup2(&actions, child_out[WRITE],
+    err = posix_spawn_file_actions_adddup2(actions.get(),
+                                           child_out[WRITE].get(),
                                            STDOUT_FILENO);
   }
+#if defined(GECODE_HAS_POSIX_SPAWN_CLOEXEC_DEFAULT) && \
+    defined(GECODE_HAS_POSIX_SPAWN_ADDINHERIT_NP)
   if (err == 0) {
-    err = posix_spawn_file_actions_addclose(&actions, child_in[READ]);
+    err = posix_spawn_file_actions_addinherit_np(actions.get(),
+                                                  STDERR_FILENO);
   }
+#elif defined(GECODE_HAS_POSIX_SPAWN_ADDCLOSEFROM_NP)
   if (err == 0) {
-    err = posix_spawn_file_actions_addclose(&actions, child_in[WRITE]);
+    err = posix_spawn_file_actions_addclosefrom_np(actions.get(),
+                                                    STDERR_FILENO + 1);
   }
+#endif
   if (err == 0) {
-    err = posix_spawn_file_actions_addclose(&actions, child_out[READ]);
+    err = posix_spawnp(&child, program.c_str(), actions.get(), attr.get(),
+                       argv.data(), environ);
   }
-  if (err == 0) {
-    err = posix_spawn_file_actions_addclose(&actions, child_out[WRITE]);
-  }
-  if (err == 0) {
-    err = posix_spawnp(&child, program.c_str(), &actions, &attr, argv.data(),
-                       environ);
-  }
-  posix_spawnattr_destroy(&attr);
-  posix_spawn_file_actions_destroy(&actions);
   if (err != 0) {
-    ::close(child_in[READ]);
-    ::close(child_in[WRITE]);
-    ::close(child_out[READ]);
-    ::close(child_out[WRITE]);
     child = -1;
     errno = err;
     throw Error("BlackBoxExec", last_error("starting blackbox process failed"));
   }
 
-  ::close(child_in[READ]);
-  ::close(child_out[WRITE]);
+  child_in[READ].reset();
+  child_out[WRITE].reset();
 
-  pipe_send = child_in[WRITE];
 #ifdef SO_NOSIGPIPE
   int nosigpipe = 1;
-  if (setsockopt(pipe_send, SOL_SOCKET, SO_NOSIGPIPE, &nosigpipe,
+  if (setsockopt(child_in[WRITE].get(), SOL_SOCKET, SO_NOSIGPIPE, &nosigpipe,
                  sizeof(nosigpipe)) != 0) {
-    ::close(pipe_send);
-    pipe_send = -1;
-    ::close(child_out[READ]);
+    int e = errno;
     terminate_child(child);
     child = -1;
+    errno = e;
     throw Error("BlackBoxExec", last_error("SO_NOSIGPIPE setup failed"));
   }
 #endif
-  file_receive = fdopen(child_out[READ], "r");
-  if (file_receive == NULL) {
-    ::close(pipe_send);
-    pipe_send = -1;
-    ::close(child_out[READ]);
+  FILE *receive = fdopen(child_out[READ].get(), "r");
+  if (receive == NULL) {
+    int e = errno;
     terminate_child(child);
     child = -1;
+    errno = e;
     throw Error("BlackBoxExec", last_error("fdopen failed"));
   }
+  file_receive = receive;
+  child_out[READ].release();
+  pipe_send = child_in[WRITE].release();
 }
 
 void
