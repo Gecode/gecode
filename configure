@@ -14556,6 +14556,16 @@ printf "%s\n" "#define GECODE_HAS_POSIX_SPAWN_ADDCLOSEFROM_NP 1" >>confdefs.h
 
 fi
 
+if test "x$ac_cv_gecode_posix_spawn_cloexec_default_addinherit_np" = "xyes" ||
+       test "x$ac_cv_gecode_posix_spawn_addclosefrom_np" = "xyes"
+then :
+
+
+printf "%s\n" "#define GECODE_HAS_POSIX_BLACKBOX_EXEC 1" >>confdefs.h
+
+
+fi
+
 GECODE_SAVE_LIBS=${LIBS}
 { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for library containing dlopen" >&5
 printf %s "checking for library containing dlopen... " >&6; }

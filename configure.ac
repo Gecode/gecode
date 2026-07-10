@@ -322,6 +322,12 @@ AS_IF([test "x$ac_cv_gecode_posix_spawn_addclosefrom_np" = "xyes"], [
     [Whether posix_spawn_file_actions_addclosefrom_np is available])
 ])
 
+AS_IF([test "x$ac_cv_gecode_posix_spawn_cloexec_default_addinherit_np" = "xyes" ||
+       test "x$ac_cv_gecode_posix_spawn_addclosefrom_np" = "xyes"], [
+  AC_DEFINE([GECODE_HAS_POSIX_BLACKBOX_EXEC], [1],
+    [Whether persistent process blackboxes are supported])
+])
+
 GECODE_SAVE_LIBS=${LIBS}
 AC_SEARCH_LIBS([dlopen], [dl], [GECODE_DL_LIBS=${ac_cv_search_dlopen}],
   [GECODE_DL_LIBS=])
