@@ -703,6 +703,7 @@ GECODE_DOXYGEN_TAGFILE
 ENABLEDOCSEARCH
 GECODE_DOXYGEN_DOT
 DOT
+LINKATOMIC
 DRIVER
 FLATZINC
 GIST
@@ -3347,6 +3348,8 @@ GECODE_SOVERSION=${ac_gecode_soversion}
 
 
 # Test for platform specific behaviour of arithmetic
+
+
 
 
 
@@ -12917,6 +12920,89 @@ fi
   as_fn_error $? "Gecode currently only supports the GNU and Microsoft compilers." "$LINENO" 5
   ;;
 esac
+
+
+
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking whether steady-clock atomic operations link without libatomic" >&5
+printf %s "checking whether steady-clock atomic operations link without libatomic... " >&6; }
+  ac_gecode_save_LIBS="${LIBS}"
+  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+#include <atomic>
+#include <chrono>
+int
+main (void)
+{
+
+      using rep = std::chrono::steady_clock::time_point::rep;
+      std::atomic<rep> origin;
+      const rep now =
+        std::chrono::steady_clock::now().time_since_epoch().count();
+      origin.store(now, std::memory_order_release);
+      return origin.load(std::memory_order_acquire) == now ? 0 : 1;
+
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_cxx_try_link "$LINENO"
+then :
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+printf "%s\n" "yes" >&6; }
+else case e in #(
+  e) case "${ac_gecode_compiler_vendor}" in
+       microsoft)
+         { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
+printf "%s\n" "no" >&6; }
+         as_fn_error $? "steady-clock atomic operations do not link" "$LINENO" 5
+         ;;
+       *)
+         { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
+printf "%s\n" "no" >&6; }
+         { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking whether steady-clock atomic operations link with -latomic" >&5
+printf %s "checking whether steady-clock atomic operations link with -latomic... " >&6; }
+         LIBS="${ac_gecode_save_LIBS}${ac_gecode_save_LIBS:+ }-latomic"
+         cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+#include <atomic>
+#include <chrono>
+int
+main (void)
+{
+
+             using rep = std::chrono::steady_clock::time_point::rep;
+             std::atomic<rep> origin;
+             const rep now =
+               std::chrono::steady_clock::now().time_since_epoch().count();
+             origin.store(now, std::memory_order_release);
+             return origin.load(std::memory_order_acquire) == now ? 0 : 1;
+
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_cxx_try_link "$LINENO"
+then :
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+printf "%s\n" "yes" >&6; }
+            LINKATOMIC=-latomic
+
+else case e in #(
+  e) { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
+printf "%s\n" "no" >&6; }
+            as_fn_error $? "steady-clock atomic operations do not link with or without -latomic" "$LINENO" 5 ;;
+esac
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.beam \
+    conftest$ac_exeext conftest.$ac_ext
+         ;;
+     esac ;;
+esac
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.beam \
+    conftest$ac_exeext conftest.$ac_ext
+  LIBS="${ac_gecode_save_LIBS}"
+
 
 
    # Check whether --enable-doc-dot was given.

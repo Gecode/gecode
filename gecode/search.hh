@@ -44,6 +44,7 @@
 #ifndef GECODE_SEARCH_HH
 #define GECODE_SEARCH_HH
 
+#include <chrono>
 #include <initializer_list>
 #include <atomic>
 
@@ -884,8 +885,10 @@ namespace Gecode { namespace Search {
    */
   class GECODE_SEARCH_EXPORT TimeStop : public Stop {
   protected:
-    /// Time when execution should stop
-    Support::Timer t;
+    using clock = std::chrono::steady_clock;
+    using clock_rep = clock::time_point::rep;
+    /// Clock representation at the start of timing
+    std::atomic<clock_rep> t0;
     /// Current limit in milliseconds
     std::atomic<double> l;
   public:

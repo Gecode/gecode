@@ -221,6 +221,9 @@ microsoft)
   ;;
 esac
 
+dnl check whether the atomic clock representation needs libatomic
+AC_GECODE_ATOMIC
+
 dnl find out what parts the user wants to build
 
 AC_GECODE_DOC_SWITCHES

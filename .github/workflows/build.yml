@@ -254,6 +254,23 @@ jobs:
         cmake --install "$GITHUB_WORKSPACE/build-ninja" --prefix "$GITHUB_WORKSPACE/install-ninja"
         bash .github/ci/flatzinc-tools-smoke.sh "$GITHUB_WORKSPACE/install-ninja"
 
+  build-32-bit-linkage:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+
+    - name: Install 32-bit toolchain
+      shell: bash
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y g++-multilib
+
+    - name: Build and link 32-bit stop consumer
+      shell: bash
+      run: bash .github/ci/32-bit-linkage-smoke.sh \
+        "$GITHUB_WORKSPACE" "$RUNNER_TEMP/gecode-32-bit-linkage"
+
   build-cmake-qt-gist:
     runs-on: ubuntu-latest
 

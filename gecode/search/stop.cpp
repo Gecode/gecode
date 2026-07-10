@@ -87,7 +87,10 @@ namespace Gecode { namespace Search {
    */
   bool
   TimeStop::stop(const Statistics&, const Options&) {
-    return t.stop() > l.load(std::memory_order_acquire);
+    const clock::rep now = clock::now().time_since_epoch().count();
+    const clock::duration elapsed(now - t0.load(std::memory_order_acquire));
+    return std::chrono::duration<double, std::milli>(elapsed).count() >
+      l.load(std::memory_order_acquire);
   }
 
   /*
