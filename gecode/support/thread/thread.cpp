@@ -58,14 +58,14 @@ namespace Gecode { namespace Support {
         GECODE_ASSUME(r != nullptr);
         Runnable* e = r.exchange(nullptr);
         assert(e != nullptr);
-        const bool delete_after_run = e->todelete();
-        Terminator* t = delete_after_run ? e->terminator() : nullptr;
         e->run();
+        const bool delete_after_run = e->todelete();
+        Terminator* t = e->terminator();
         if (delete_after_run) {
           delete e;
-          if (t)
-            t->terminated();
         }
+        if (t)
+          t->terminated();
       }
       // Put into idle stack
       Thread::m()->acquire();

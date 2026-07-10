@@ -71,6 +71,19 @@ namespace Gecode { namespace Search { namespace Par {
   template<class Collect>
   class GECODE_SEARCH_EXPORT Slave : public Support::Runnable {
   protected:
+    /// Completion event for the current run
+    class Completion : public Support::Terminator {
+    protected:
+      /// The completion event
+      Support::Event done;
+    public:
+      /// Initialize as completed
+      Completion(void);
+      /// Signal completion
+      virtual void terminated(void);
+      /// Wait for completion and consume the signal
+      void wait(void);
+    } completion;
     /// The master engine
     PBS<Collect>* master;
     /// The slave engine
@@ -84,6 +97,10 @@ namespace Gecode { namespace Search { namespace Par {
     Statistics statistics(void) const;
     /// Check whether slave has been stopped
     bool stopped(void) const;
+    /// Return the completion terminator
+    virtual Support::Terminator* terminator(void) const;
+    /// Wait for the slave to complete its current run
+    void wait(void);
     /// Constrain with better solution \a b
     void constrain(const Space& b);
     /// Perform one run
