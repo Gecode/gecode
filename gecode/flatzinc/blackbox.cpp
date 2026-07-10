@@ -36,11 +36,13 @@
 #include <gecode/flatzinc/blackbox.hh>
 
 #include <algorithm>
+#include <atomic>
 #include <cassert>
 #include <cerrno>
 #include <cstdio>
 #include <cstdlib>
 #include <cstdint>
+#include <exception>
 #include <locale>
 #include <memory>
 #include <limits>
@@ -56,6 +58,7 @@
 #else
 #include <dlfcn.h>
 #include <fcntl.h>
+#include <limits.h>
 #include <pthread.h>
 #include <signal.h>
 #include <spawn.h>
@@ -265,9 +268,9 @@ const size_t max_exec_response_size = 1024 * 1024;
 
 } // namespace
 
-BlackBoxLibrary::BlackBoxLibrary(const std::string &name,
-                                 const std::vector<std::string> &args)
-    : library(nullptr), library_fzn_blackbox(nullptr) {
+BlackBoxLibrary::BlackBoxLibrary(const std::string &name)
+    : library(nullptr), library_fzn_blackbox(nullptr),
+      library_fzn_initialize(nullptr) {
   std::string loadError;
   void *loaded = nullptr;
 #ifdef _WIN32
@@ -341,44 +344,69 @@ BlackBoxLibrary::BlackBoxLibrary(const std::string &name,
                     symError);
   }
 
-  // Optionally call the initialisation function with the given arguments. It is
-  // not an error for the library to omit `fzn_initialize`.
-  void(GECODE_BLACKBOX_CALL *dll_fzn_initialize)(const char **, size_t) =
-      nullptr;
 #ifdef _WIN32
-  dll_fzn_initialize = reinterpret_cast<decltype(dll_fzn_initialize)>(
+  char path[MAX_PATH];
+  DWORD path_size = GetModuleFileNameA(static_cast<HMODULE>(loaded), path,
+                                       static_cast<DWORD>(sizeof(path)));
+  if ((path_size > 0) && (path_size < sizeof(path))) {
+    library_identity.assign(path, path_size);
+  }
+#else
+  Dl_info info;
+  if ((dladdr(reinterpret_cast<void *>(library_fzn_blackbox), &info) != 0) &&
+      (info.dli_fname != nullptr)) {
+    char resolved[PATH_MAX];
+    if (realpath(info.dli_fname, resolved) != nullptr) {
+      library_identity = resolved;
+    } else {
+      library_identity = info.dli_fname;
+    }
+  }
+#endif
+  if (library_identity.empty()) {
+    library_identity = name;
+  }
+
+  // Look up the optional initialization function.  Calling it is deferred
+  // until the model-local backend cache has checked its configuration.
+#ifdef _WIN32
+  library_fzn_initialize = reinterpret_cast<decltype(library_fzn_initialize)>(
       GetProcAddress((HMODULE)loaded, "fzn_initialize"));
 #if defined(_M_IX86) || defined(__i386__)
-  if (!dll_fzn_initialize) {
-    dll_fzn_initialize = reinterpret_cast<decltype(dll_fzn_initialize)>(
+  if (!library_fzn_initialize) {
+    library_fzn_initialize = reinterpret_cast<decltype(library_fzn_initialize)>(
         GetProcAddress((HMODULE)loaded, "_fzn_initialize@8"));
   }
-  if (!dll_fzn_initialize) {
-    dll_fzn_initialize = reinterpret_cast<decltype(dll_fzn_initialize)>(
+  if (!library_fzn_initialize) {
+    library_fzn_initialize = reinterpret_cast<decltype(library_fzn_initialize)>(
         GetProcAddress((HMODULE)loaded, "fzn_initialize@8"));
   }
 #endif
 #else
-  *(void **)(&dll_fzn_initialize) = dlsym(loaded, "fzn_initialize");
+  *(void **)(&library_fzn_initialize) = dlsym(loaded, "fzn_initialize");
 #endif
-  try {
-    if (dll_fzn_initialize != nullptr) {
-      std::vector<const char *> argv;
-      argv.reserve(args.size());
-      for (const std::string &a : args) {
-        argv.push_back(a.c_str());
-      }
-      dll_fzn_initialize(argv.data(), argv.size());
-    }
-  } catch (...) {
-    close_library(loaded);
-    throw;
-  }
   library = loaded;
 }
 
 BlackBoxLibrary::~BlackBoxLibrary() {
   close_library(library);
+}
+
+void
+BlackBoxLibrary::initialize(const std::vector<std::string> &args) {
+  if (library_fzn_initialize != nullptr) {
+    std::vector<const char *> argv;
+    argv.reserve(args.size());
+    for (const std::string &a : args) {
+      argv.push_back(a.c_str());
+    }
+    library_fzn_initialize(argv.data(), argv.size());
+  }
+}
+
+const std::string &
+BlackBoxLibrary::identity(void) const {
+  return library_identity;
 }
 
 void
@@ -988,6 +1016,158 @@ BlackBoxExec::~BlackBoxExec(void) {
   sessions.clear();
 }
 
+class BlackBoxState : public SharedHandle::Object {
+protected:
+  class ExecEntry {
+  public:
+    std::string program;
+    std::vector<std::string> args;
+    BlackBoxHandle handle;
+    ExecEntry(const std::string &program0, const std::vector<std::string> &args0,
+              const BlackBoxHandle &handle0)
+        : program(program0), args(args0), handle(handle0) {}
+  };
+  class LibraryEntry {
+  public:
+    std::string identity;
+    std::vector<std::string> args;
+    std::vector<std::string> names;
+    BlackBoxHandle handle;
+    LibraryEntry(const std::string &identity0,
+                 const std::vector<std::string> &args0,
+                 const std::string &name, const BlackBoxHandle &handle0)
+        : identity(identity0), args(args0), names(1, name), handle(handle0) {}
+  };
+
+  mutable Support::Mutex mutex;
+  std::vector<ExecEntry> exec;
+  std::vector<LibraryEntry> library;
+  std::exception_ptr exception;
+  std::atomic<bool> error_recorded;
+
+public:
+  BlackBoxState(void) : error_recorded(false) {}
+  BlackBoxHandle blackBox(const std::string &mode,
+                          const std::string &instantiation,
+                          const std::vector<std::string> &args);
+  void fail(std::exception_ptr e);
+  bool failed(void) const;
+  void rethrow(void) const;
+};
+
+BlackBoxStateHandle
+BlackBoxStateHandle::init(SharedHandle &handle) {
+  BlackBoxStateHandle state(handle);
+  if (!state) {
+    state.object(new BlackBoxState);
+    handle = state;
+  }
+  return state;
+}
+
+BlackBoxHandle
+BlackBoxStateHandle::blackBox(const std::string &mode,
+                              const std::string &instantiation,
+                              const std::vector<std::string> &args) const {
+  return static_cast<BlackBoxState *>(object())->blackBox(mode, instantiation,
+                                                           args);
+}
+
+void
+BlackBoxStateHandle::fail(std::exception_ptr e) const {
+  static_cast<BlackBoxState *>(object())->fail(e);
+}
+
+bool
+BlackBoxStateHandle::failed(void) const {
+  return static_cast<bool>(*this) &&
+    static_cast<BlackBoxState *>(object())->failed();
+}
+
+void
+BlackBoxStateHandle::rethrow(void) const {
+  if (*this) {
+    static_cast<BlackBoxState *>(object())->rethrow();
+  }
+}
+
+BlackBoxHandle
+BlackBoxState::blackBox(const std::string &mode,
+                        const std::string &instantiation,
+                        const std::vector<std::string> &args) {
+  Support::Lock lock(mutex);
+  if (mode == "exec") {
+    for (const ExecEntry &e : exec) {
+      if ((e.program == instantiation) && (e.args == args)) {
+        return e.handle;
+      }
+    }
+    BlackBoxHandle handle(new BlackBoxExec(instantiation, args));
+    exec.push_back(ExecEntry(instantiation, args, handle));
+    return handle;
+  }
+  if (mode == "dll") {
+    for (LibraryEntry &e : library) {
+      if (std::find(e.names.begin(), e.names.end(), instantiation) !=
+          e.names.end()) {
+        if (e.args != args) {
+          throw Error("Blackbox", "Conflicting initialization arguments for "
+                      "dynamic library `" + e.identity + "'");
+        }
+        return e.handle;
+      }
+    }
+
+    BlackBoxHandle handle(new BlackBoxLibrary(instantiation));
+    BlackBoxLibrary *black_box =
+        static_cast<BlackBoxLibrary *>(handle());
+    for (LibraryEntry &e : library) {
+      if (e.identity == black_box->identity()) {
+        if (e.args != args) {
+          throw Error("Blackbox", "Conflicting initialization arguments for "
+                      "dynamic library `" + e.identity + "'");
+        }
+        e.names.push_back(instantiation);
+        return e.handle;
+      }
+    }
+    black_box->initialize(args);
+    library.push_back(LibraryEntry(black_box->identity(), args, instantiation,
+                                   handle));
+    return handle;
+  }
+  throw Error("Blackbox", "Unknown blackbox protocol `" + mode + "'");
+}
+
+void
+BlackBoxState::fail(std::exception_ptr e) {
+  Support::Lock lock(mutex);
+  if (!error_recorded.load(std::memory_order_relaxed)) {
+    exception = e;
+    error_recorded.store(true, std::memory_order_release);
+  }
+}
+
+bool
+BlackBoxState::failed(void) const {
+  return error_recorded.load(std::memory_order_acquire);
+}
+
+void
+BlackBoxState::rethrow(void) const {
+  if (!error_recorded.load(std::memory_order_acquire)) {
+    return;
+  }
+  std::exception_ptr e;
+  {
+    Support::Lock lock(mutex);
+    e = exception;
+  }
+  if (e != nullptr) {
+    std::rethrow_exception(e);
+  }
+}
+
 BlackBoxExec::Session &BlackBoxExec::session(void) {
   Support::Lock lock(mutex);
   for (Session *s : sessions) {
@@ -1148,7 +1328,12 @@ ExecStatus BlackBox::propagate(Space &home, const ModEventDelta &) {
     }
 #endif
 
-    black_box()->run(int_in, float_in, int_out, float_out);
+    try {
+      black_box()->run(int_in, float_in, int_out, float_out);
+    } catch (...) {
+      black_box_state.fail(std::current_exception());
+      return ES_FAILED;
+    }
 
     for (int i = 0; i < int_out.size(); i++) {
       // std::cerr << int_out[i] << " ";
@@ -1184,7 +1369,12 @@ ExecStatus BlackBoxBounds::propagate(Space &home, const ModEventDelta &) {
   }
 #endif
 
-  black_box()->run(int_in, float_in, int_out, float_out);
+  try {
+    black_box()->run(int_in, float_in, int_out, float_out);
+  } catch (...) {
+    black_box_state.fail(std::current_exception());
+    return ES_FAILED;
+  }
 
   for (int i = 0; i < ivar.size(); i++) {
     // std::cerr << int_out[i*2] << ".." << int_out[i*2+1] << " ";
@@ -1201,7 +1391,8 @@ ExecStatus BlackBoxBounds::propagate(Space &home, const ModEventDelta &) {
   return ES_NOFIX;
 }
 
-void blackbox(Home home, const IntVarArgs &int_in, const IntVarArgs &int_out,
+void blackbox(Home home, SharedHandle &black_box_state,
+              const IntVarArgs &int_in, const IntVarArgs &int_out,
 #ifdef GECODE_HAS_FLOAT_VARS
               const FloatVarArgs &float_in, const FloatVarArgs &float_out,
 #endif
@@ -1216,11 +1407,13 @@ void blackbox(Home home, const IntVarArgs &int_in, const IntVarArgs &int_out,
 
   if (home.failed())
     return;
+  BlackBoxStateHandle state = BlackBoxStateHandle::init(black_box_state);
   PostInfo pi(home);
   ExecStatus es = BlackBox::post(home, int_input, int_output,
 #ifdef GECODE_HAS_FLOAT_VARS
                                  float_input, float_output,
 #endif
+                                 state,
                                  mode, instantiation, args);
   GECODE_ES_FAIL(es);
 }
@@ -1307,7 +1500,8 @@ static void reason_subscriptions(const std::vector<int> &reason, int n_int,
   }
 }
 
-void blackbox_bounds(Home home, const IntVarArgs &ivar,
+void blackbox_bounds(Home home, SharedHandle &black_box_state,
+                     const IntVarArgs &ivar,
 #ifdef GECODE_HAS_FLOAT_VARS
               const FloatVarArgs &fvar,
 #endif
@@ -1331,6 +1525,7 @@ void blackbox_bounds(Home home, const IntVarArgs &ivar,
 
   if (home.failed())
     return;
+  BlackBoxStateHandle state = BlackBoxStateHandle::init(black_box_state);
   PostInfo pi(home);
   ExecStatus es = BlackBoxBounds::post(home, int_var,
 #ifdef GECODE_HAS_FLOAT_VARS
@@ -1340,6 +1535,7 @@ void blackbox_bounds(Home home, const IntVarArgs &ivar,
 #ifdef GECODE_HAS_FLOAT_VARS
                                  sub_float,
 #endif
+                                 state,
                                  mode, instantiation, args);
   GECODE_ES_FAIL(es);
 }

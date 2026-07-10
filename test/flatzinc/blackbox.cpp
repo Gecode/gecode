@@ -86,6 +86,12 @@ namespace Test { namespace FlatZinc {
       "[\"-u\", \"-c\", "
       "\"import sys; [print(chr(59)+chr(0)+chr(120), "
       "flush=True) for line in sys.stdin]\"])";
+
+    const char* python_malformed =
+      "blackbox_exec(\"python3\", "
+      "[\"-u\", \"-c\", "
+      "\"import sys; [print(chr(120)+chr(59), "
+      "flush=True) for line in sys.stdin]\"])";
   }
 
   namespace Blackbox {
@@ -185,6 +191,36 @@ namespace Test { namespace FlatZinc {
           "constraint gecode_blackbox([], [], [y], []) :: "
           "blackbox_exec([]);\n"
           "solve satisfy;\n");
+
+        (void) new FlatZincErrorTest("blackbox::missing_exec_parallel",
+          std::string(blackbox_decl) +
+          "var 0..1: x :: output_var;\n"
+          "var 0..1: y :: output_var;\n"
+          "constraint gecode_blackbox([x], [], [y], []) :: "
+          "blackbox_exec(\"gecode-blackbox-missing-program\");\n"
+          "solve :: int_search([x], first_fail, indomain_min, complete) "
+          "satisfy;\n",
+          {"-p", "2"});
+
+        (void) new FlatZincErrorTest("blackbox::missing_exec_root_status",
+          std::string(blackbox_decl) +
+          "var 0..0: x :: output_var;\n"
+          "var 0..1: y :: output_var;\n"
+          "constraint gecode_blackbox([x], [], [y], []) :: "
+          "blackbox_exec(\"gecode-blackbox-missing-program\");\n"
+          "solve satisfy;\n",
+          {"-p", "2"});
+
+        (void) new FlatZincErrorTest("blackbox::malformed_exec_parallel",
+          std::string(blackbox_decl) +
+          "var 0..1: x :: output_var;\n"
+          "var 0..1: y :: output_var;\n"
+          "constraint gecode_blackbox([x], [], [y], []) :: " +
+          python_malformed +
+          ";\n"
+          "solve :: int_search([x], first_fail, indomain_min, complete) "
+          "satisfy;\n",
+          {"-p", "2"});
       }
     };
 

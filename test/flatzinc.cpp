@@ -71,8 +71,9 @@ namespace Test { namespace FlatZinc {
       _allSolutions(allSolutions), _cmdlineOpt(cmdlineOpt) {}
 
   FlatZincErrorTest::FlatZincErrorTest(const std::string& name,
-                                       const std::string& source)
-    : FlatZincTest(name, source, "") {}
+                                       const std::string& source,
+                                       std::vector<std::string> cmdlineOpt)
+    : FlatZincTest(name, source, "", false, cmdlineOpt) {}
 
   bool
   FlatZincTest::run(void) {
@@ -131,6 +132,16 @@ namespace Test { namespace FlatZinc {
     Support::Timer t_total;
     t_total.start();
     Gecode::FlatZinc::FlatZincOptions fznopt("Gecode/FlatZinc");
+    if (!_cmdlineOpt.empty()) {
+      std::string cmd("fzn-gecode");
+      int argc = static_cast<int>(_cmdlineOpt.size()) + 1;
+      std::vector<char*> argv(argc);
+      argv[0] = const_cast<char*>(cmd.data());
+      for (int i = 1; i < argc; ++i) {
+        argv[i] = const_cast<char*>(_cmdlineOpt[i-1].data());
+      }
+      fznopt.parse(argc, argv.data());
+    }
     Gecode::FlatZinc::Printer p;
     Gecode::FlatZinc::FlatZincSpace* fg = nullptr;
     try {
