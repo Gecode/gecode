@@ -334,9 +334,9 @@ AC_DEFINE_UNQUOTED(GECODE_VERSION_NUMBER,
   [Gecode version])
 
 ac_gecode_library_architecture=-${VERSION_DASHES}${ac_gecode_library_architecture}
-if test   "$ac_gecode_compiler_vendor" == "microsoft" \
-       -o \( "$ac_gecode_compiler_vendor" == "intel" \
-            -a "$gecode_host_os" == "windows" \) ; then
+if test   "$ac_gecode_compiler_vendor" = "microsoft" \
+       -o \( "$ac_gecode_compiler_vendor" = "intel" \
+            -a "$gecode_host_os" = "windows" \) ; then
   AC_SUBST(DLL_ARCH,[${ac_gecode_library_architecture}])
 else
   AC_SUBST(DLL_ARCH,[""])
