@@ -343,7 +343,7 @@ AC_DEFUN([AC_GECODE_VIS],[
     AS_HELP_STRING([--with-vis],
     [additional variable implementation specifications]))
     if test "${with_vis:-no}" != "no"; then
-      with_vis=${with_vis//,/ }
+      with_vis=`printf '%s\n' "$with_vis" | sed 's/,/ /g'`
       ac_gecode_vis="${with_vis}${ac_gecode_vis:+ }${ac_gecode_vis}"
     fi])
 AC_DEFUN([AC_GECODE_VTI],

@@ -19,23 +19,35 @@ cd "$work"
 touch configure
 
 awk '
-  /^Name:[[:space:]]*Int$/ { print "Name:           Custom"; next }
-  /^Namespace:[[:space:]]*Gecode::Int$/ { print "Namespace:      Gecode::Custom"; next }
+  /^Name:[[:space:]]*Int$/ { print "Name:           CustomOne"; next }
+  /^Namespace:[[:space:]]*Gecode::Int$/ { print "Namespace:      Gecode::CustomOne"; next }
   /^Ifdef:[[:space:]]*GECODE_HAS_INT_VARS$/ { next }
   { print }
-' gecode/int/var-imp/int.vis > custom.vis
+' gecode/int/var-imp/int.vis > custom-one.vis
+
+awk '
+  /^Name:[[:space:]]*Int$/ { print "Name:           CustomTwo"; next }
+  /^Namespace:[[:space:]]*Gecode::Int$/ { print "Namespace:      Gecode::CustomTwo"; next }
+  /^Ifdef:[[:space:]]*GECODE_HAS_INT_VARS$/ { next }
+  { print }
+' gecode/int/var-imp/int.vis > custom-two.vis
 
 CFLAGS="-fPIC" \
 CXXFLAGS="-std=c++11 -fPIC -DGECODE_MEMORY_ALIGNMENT=16" \
-  ./configure \
-    --with-vis="$PWD/custom.vis" \
+  dash ./configure \
+    --with-vis="$PWD/custom-one.vis,$PWD/custom-two.vis" \
     --disable-cpprofiler \
     --disable-examples \
     --disable-flatzinc \
     --disable-float-vars \
     --disable-gist \
-    --disable-qt
+    --disable-qt 2>&1 | tee configure.log
+
+! grep -Fq "unexpected operator" configure.log
+grep -Eq '^export DLLSUFFIX[[:space:]]*=[[:space:]]*\.' Makefile
+grep -Fq "VIS = \$(top_srcdir)/gecode/int/var-imp/int.vis \$(top_srcdir)/gecode/int/var-imp/bool.vis \$(top_srcdir)/gecode/set/var-imp/set.vis \$(top_srcdir)/gecode/float/var-imp/float.vis $PWD/custom-one.vis $PWD/custom-two.vis" Makefile
 
 rm -f gecode/kernel/var-type.hpp gecode/kernel/var-imp.hpp
 make -j4
-grep -q "CustomVarImpConf" gecode/kernel/var-type.hpp
+grep -q "CustomOneVarImpConf" gecode/kernel/var-type.hpp
+grep -q "CustomTwoVarImpConf" gecode/kernel/var-type.hpp

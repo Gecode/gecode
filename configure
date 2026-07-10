@@ -13043,7 +13043,7 @@ then :
 fi
 
     if test "${with_vis:-no}" != "no"; then
-      with_vis=${with_vis//,/ }
+      with_vis=`printf '%s\n' "$with_vis" | sed 's/,/ /g'`
       ac_gecode_vis="${with_vis}${ac_gecode_vis:+ }${ac_gecode_vis}"
     fi
 
@@ -14546,9 +14546,9 @@ printf "%s\n" "#define GECODE_VERSION_NUMBER ${PACKAGE_VERSION_NUMBER}" >>confde
 
 
 ac_gecode_library_architecture=-${VERSION_DASHES}${ac_gecode_library_architecture}
-if test   "$ac_gecode_compiler_vendor" == "microsoft" \
-       -o \( "$ac_gecode_compiler_vendor" == "intel" \
-            -a "$gecode_host_os" == "windows" \) ; then
+if test   "$ac_gecode_compiler_vendor" = "microsoft" \
+       -o \( "$ac_gecode_compiler_vendor" = "intel" \
+            -a "$gecode_host_os" = "windows" \) ; then
   DLL_ARCH=${ac_gecode_library_architecture}
 
 else
