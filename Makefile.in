@@ -1303,23 +1303,51 @@ compileexamples: $(EXAMPLEEXE)
 test: mkcompiledirs
 	@$(MAKE) $(VARIMP) $(TESTEXE)
 
+CHECKTESTS = Branch::Int::Dense::3 \
+	FlatZinc::magic_square \
+	Int::Arithmetic::Abs \
+	Int::Arithmetic::ArgMax \
+	Int::Arithmetic::Max::Nary \
+	Int::Cumulative::Man::Fix::0::4 \
+	Int::Distinct::Random \
+	Int::Linear::Bool::Int::Lq \
+	Int::MiniModel::LinExpr::Bool::352 \
+	NoGoods::Queens \
+	Search::DFS::Sol::Binary::Nary::Binary::1::1::1 \
+	Set::Dom::Dom::Gr \
+	Set::RelOp::ConstSSI::Union \
+	Set::Sequence::SeqU1 \
+	Set::Wait
+
+ifeq "@enable_float_vars@" "yes"
+FLOATCHECKTESTS = Float::Arithmetic::PositiveNRootBounds \
+	Float::Arithmetic::PowConsistency \
+	Float::Arithmetic::MultZeroEndpoint \
+	Float::Arithmetic::Pow::N::2::XY::Sol::C \
+	Float::Arithmetic::NRoot::N::2::XY::Sol::C \
+	Float::Arithmetic::Mult::XYZ::Sol::C
+CHECKTESTS += $(FLOATCHECKTESTS)
+REQUIREDFLOATCHECKTESTS = Float::Arithmetic::PositiveNRootBounds \
+	Float::Arithmetic::PowConsistency \
+	Float::Arithmetic::MultZeroEndpoint \
+	Float::Arithmetic::Pow::N::2::XY::Sol::C \
+	Float::Arithmetic::NRoot::N::2::XY::Sol::C \
+	Float::Arithmetic::Mult::XYZ::Sol::C
+endif
+
 # A basic integrity test
 check: test
-	$(RUNENVIRONMENT) $(TESTEXE) -iter 2 -threads 0 -test Branch::Int::Dense::3 \
-			   -test FlatZinc::magic_square \
-			   -test Int::Arithmetic::Abs \
-			   -test Int::Arithmetic::ArgMax \
-			   -test Int::Arithmetic::Max::Nary \
-			   -test Int::Cumulative::Man::Fix::0::4 \
-			   -test Int::Distinct::Random \
-			   -test Int::Linear::Bool::Int::Lq \
-			   -test Int::MiniModel::LinExpr::Bool::352  \
-			   -test NoGoods::Queens \
-			   -test Search::DFS::Sol::Binary::Nary::Binary::1::1::1 \
-			   -test Set::Dom::Dom::Gr \
-			   -test Set::RelOp::ConstSSI::Union \
-			   -test Set::Sequence::SeqU1 \
-			   -test Set::Wait
+	@for t in $(REQUIREDFLOATCHECKTESTS); do \
+		case " $(CHECKTESTS) " in *" $$t "*) ;; \
+		*) echo "Required Float check test is missing: $$t" >&2; exit 1 ;; \
+		esac; \
+		if ! $(RUNENVIRONMENT) $(TESTEXE) -list | grep -Fqx "$$t"; then \
+			echo "Required Float check test is not registered: $$t" >&2; \
+			exit 1; \
+		fi; \
+	done
+	$(RUNENVIRONMENT) $(TESTEXE) -iter 2 -threads 0 -fixprob 1 \
+		$(CHECKTESTS:%=-test %)
 
 ifeq "@top_srcdir@" "."
 mkcompiledirs:

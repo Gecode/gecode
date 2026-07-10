@@ -51,7 +51,21 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y flex bison libgmp-dev libmpfr-dev
 
-    - name: Stabilize generated configure script timestamp
+    - name: Install generated-source tools
+      if: runner.os == 'macOS'
+      shell: bash
+      run: |
+        # The freshness script enforces exact versions and fails on formula drift.
+        brew install autoconf bison flex
+        echo "$(brew --prefix bison)/bin" >> "$GITHUB_PATH"
+        echo "$(brew --prefix flex)/bin" >> "$GITHUB_PATH"
+
+    - name: Check generated source freshness
+      if: runner.os == 'macOS'
+      shell: bash
+      run: bash .github/ci/generated-source-freshness.sh
+
+    - name: Avoid redundant configure regeneration during build
       shell: bash
       run: touch configure
 
@@ -70,10 +84,6 @@ jobs:
     - name: Autoconf install smoke
       shell: bash
       run: bash .github/ci/autoconf-install-smoke.sh "$RUNNER_TEMP/gecode-autoconf-install"
-
-    - name: Generated Autoconf files stay clean
-      shell: bash
-      run: git diff --exit-code -- configure gecode/kernel/var-type.hpp gecode/kernel/var-imp.hpp
 
     - name: Custom VIS dependency smoke
       if: runner.os == 'Linux'
@@ -136,7 +146,6 @@ jobs:
       run: |
         set -euxo pipefail
         cmake --build . --config $BUILD_TYPE --target check
-        ctest --output-on-failure -R '^test$'
 
     - name: Install CMake package
       working-directory: ${{github.workspace}}/build
@@ -159,10 +168,24 @@ jobs:
             core
         fi
 
+    - name: Package version checks
+      shell: bash
+      run: bash .github/ci/cmake-package-version-checks.sh "$GITHUB_WORKSPACE/install"
+
     - name: Disabled module closure checks
       if: matrix.os == 'ubuntu-latest'
       shell: bash
       run: bash .github/ci/cmake-closure-checks.sh
+
+    - name: CMake custom VIS checks
+      if: matrix.os == 'ubuntu-latest'
+      shell: bash
+      run: bash .github/ci/cmake-custom-vis-smoke.sh
+
+    - name: Gist static macro compatibility
+      if: matrix.os == 'ubuntu-latest'
+      shell: bash
+      run: bash .github/ci/gist-static-macro-smoke.sh
 
     - name: Qt minimum version checks
       if: matrix.os == 'ubuntu-latest'
@@ -202,10 +225,9 @@ jobs:
 
     - name: Check
       shell: bash
-      run: |
-        set -euxo pipefail
-        cmake --build "$GITHUB_WORKSPACE/build-ninja" --target check
-        ctest --test-dir "$GITHUB_WORKSPACE/build-ninja" --output-on-failure -R '^test$'
+      run: >
+        ctest --test-dir "$GITHUB_WORKSPACE/build-ninja"
+        --output-on-failure -R '^(build-gecode-test|test)$'
 
     - name: Configure CMake Debug audit smoke
       shell: bash
@@ -497,7 +519,7 @@ jobs:
         export PATH="$UV_DIR:$PATH"
         uv --version
 
-    - name: Stabilize generated configure script timestamp
+    - name: Avoid redundant configure regeneration during build
       shell: msys2 {0}
       run: touch configure
 
