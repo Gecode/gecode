@@ -415,6 +415,7 @@ namespace Gecode { namespace FlatZinc {
   extern Rnd defrnd;
 
   class FlatZincSpaceInitData;
+  class BlackBoxAccess;
 
   /**
    * \brief A space that can be initialized with a %FlatZinc model
@@ -462,6 +463,7 @@ namespace Gecode { namespace FlatZinc {
     /// Copy constructor
     FlatZincSpace(FlatZincSpace&);
   private:
+    friend class BlackBoxAccess;
     /// Run the search engine
     template<template<class> class Engine>
     void
@@ -603,9 +605,6 @@ namespace Gecode { namespace FlatZinc {
 
     /// Post a constraint specified by \a ce
     void postConstraints(std::vector<ConExpr*>& ces);
-
-    /// Return opaque state used while posting blackbox constraints
-    SharedHandle& blackBoxState(void);
 
     /// Post the solve item
     void solve(AST::Array* annotation);

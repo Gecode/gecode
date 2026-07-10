@@ -869,9 +869,9 @@ namespace Gecode { namespace FlatZinc {
   }
 
   SharedHandle&
-  FlatZincSpace::blackBoxState(void) {
-    assert(_initData != nullptr);
-    return _initData->blackBoxState;
+  BlackBoxAccess::state(FlatZincSpace& s) {
+    assert(s._initData != nullptr);
+    return s._initData->blackBoxState;
   }
 
   void
@@ -1861,9 +1861,11 @@ namespace Gecode { namespace FlatZinc {
                          const FlatZincOptions& opt, Support::Timer& t_total) {
 #ifdef GECODE_HAS_GIST
     if (opt.mode() == SM_GIST) {
+      BlackBoxStateHandle black_box_state(BlackBoxAccess::state(*this));
+      (void) status();
+      black_box_state.rethrow();
       FZPrintingInspector<FlatZincSpace> pi(p);
       FZPrintingComparator<FlatZincSpace> pc(p);
-      BlackBoxStateHandle black_box_state(blackBoxState());
       (void) GistEngine<Engine<FlatZincSpace> >::explore(this,opt,&pi,&pc);
       black_box_state.rethrow();
       return;
@@ -1876,7 +1878,7 @@ namespace Gecode { namespace FlatZinc {
     if (status(sstat) != SS_FAILED) {
       n_p = PropagatorGroup::all.size(*this);
     }
-    BlackBoxStateHandle black_box_state(blackBoxState());
+    BlackBoxStateHandle black_box_state(BlackBoxAccess::state(*this));
     black_box_state.rethrow();
     Search::Options o;
     o.stop = Driver::CombinedStop::create(opt.node(), opt.fail(), opt.time(),

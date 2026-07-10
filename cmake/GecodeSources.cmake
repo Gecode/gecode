@@ -424,4 +424,7 @@ set(GECODE_TEST_SOURCES
   test/test.cpp
 )
 
+set(GECODE_TEST_BLACKBOX_EXEC_SOURCE test/flatzinc/blackbox-exec.cpp)
+set(GECODE_TEST_BLACKBOX_DLL_SOURCE test/flatzinc/blackbox-dll.cpp)
+
 set(GECODE_FLATZINC_EXE_SOURCE tools/flatzinc/fzn-gecode.cpp)

@@ -42,6 +42,9 @@
 % must keep reading requests and writing complete newline-terminated responses;
 % otherwise it can block the solver. During parallel search each worker thread
 % gets its own process.
+% POSIX exec teardown contains descendants that remain in the spawned process
+% group; helpers that deliberately detach are outside this containment and
+% trusted-code contract.
 %
 % All blackboxes must be deterministic from FlatZinc's point of view: equal
 % input arrays must produce equal output arrays, regardless of call order or
