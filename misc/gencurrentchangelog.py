@@ -21,6 +21,7 @@ def main() -> int:
         "search": "Search engines",
         "int": "Finite domain integers",
         "set": "Finite integer sets",
+        "float": "Floats",
         "cpltset": "Finite integer sets with complete representation",
         "minimodel": "Minimal modeling support",
         "graph": "Graph constraints",
@@ -51,6 +52,7 @@ def main() -> int:
         "search",
         "int",
         "set",
+        "float",
         "cpltset",
         "scheduling",
         "graph",
@@ -72,6 +74,7 @@ def main() -> int:
     lines = sys.stdin.readlines()
     idx = 0
     current = None
+    entry_number = 0
 
     while True:
         if current is None:
@@ -131,6 +134,7 @@ def main() -> int:
             continue
 
         if re.match(r"^\[ENTRY\]", l):
+            entry_number += 1
             desc = ""
             bug = ""
             rank = ""
@@ -175,8 +179,30 @@ def main() -> int:
 
             if desc.endswith("\n"):
                 desc = desc[:-1]
+            if mod not in modclear or mod not in modorder:
+                print(
+                    f"gencurrentchangelog: entry {entry_number}: "
+                    f"unknown module {mod!r}",
+                    file=sys.stderr,
+                )
+                return 1
+            if what not in whatclear or what not in whatorder:
+                print(
+                    f"gencurrentchangelog: entry {entry_number}: "
+                    f"unknown change type {what!r}",
+                    file=sys.stderr,
+                )
+                return 1
+            if rank not in rankclear:
+                print(
+                    f"gencurrentchangelog: entry {entry_number}: "
+                    f"unknown rank {rank!r}",
+                    file=sys.stderr,
+                )
+                return 1
+
             hastext[mod] = 1
-            rb = rankclear.get(rank, "")
+            rb = rankclear[rank]
             if bug != "":
                 rb = rb + f", bugzilla entry {bug}"
             if thanks != "":
