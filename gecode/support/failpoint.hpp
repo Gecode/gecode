@@ -36,6 +36,13 @@
 
 #include <atomic>
 
+/**
+ * \brief Internal, test-only deterministic fault injection support
+ *
+ * FailPoint state is process-global.  This API is supported only by the
+ * dedicated isolated single-threaded fault-test executable; it is not a
+ * supported application API and must not be used for concurrent execution.
+ */
 namespace Gecode { namespace Support { namespace FailPoint {
 
   /// Named phase for deterministic test failure injection

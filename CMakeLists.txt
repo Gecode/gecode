@@ -124,7 +124,9 @@ option(GECODE_ENABLE_FLATZINC "Build FlatZinc module" ON)
 option(GECODE_ENABLE_MPFR "Enable MPFR support" ON)
 option(GECODE_ENABLE_ALLOCATOR "Enable default allocator" ON)
 option(GECODE_ENABLE_AUDIT "Enable audit code" OFF)
-option(GECODE_ENABLE_FAULT_INJECTION "Enable deterministic test failpoints" OFF)
+# Test-only; FailPoint state is process-global and is supported only by the
+# dedicated isolated single-threaded fault-test executable below.
+option(GECODE_ENABLE_FAULT_INJECTION "Enable deterministic test-only failpoints" OFF)
 option(GECODE_ENABLE_GCC_VISIBILITY "Enable GCC visibility attributes" ON)
 option(GECODE_ENABLE_OSX_UNFAIR_MUTEX "Enable macOS unfair mutexes" ON)
 option(GECODE_REGENERATE_VARIMP "Regenerate checked-in var-imp headers during build" OFF)
@@ -783,7 +785,7 @@ ${CONFIG_OUT}")
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/GecodeSources.cmake)
 if(GECODE_ENABLE_FAULT_INJECTION)
   list(APPEND GECODE_SUPPORT_SOURCES gecode/support/failpoint.cpp)
-  list(APPEND GECODE_TEST_SOURCES test/fault.cpp)
+  set(GECODE_FAULT_TEST_SOURCES test/test.cpp test/fault.cpp)
 endif()
 
 # ---------------------------------------------------------------------------
@@ -1348,6 +1350,11 @@ if(BUILD_TESTING)
       list(APPEND GECODE_TEST_LINK_LIBS gecodeflatzinc)
     endif()
     target_link_libraries(gecode-test PRIVATE ${GECODE_TEST_LINK_LIBS})
+    if(GECODE_ENABLE_FAULT_INJECTION)
+      add_executable(gecode-fault-test EXCLUDE_FROM_ALL
+        ${GECODE_FAULT_TEST_SOURCES})
+      target_link_libraries(gecode-fault-test PRIVATE ${GECODE_TEST_LINK_LIBS})
+    endif()
 
     set(GECODE_CHECK_TESTS
       Branch::Int::Dense::3
@@ -1403,12 +1410,18 @@ if(BUILD_TESTING)
       list(APPEND GECODE_CHECK_ARGS -test ${gecode_check_test})
     endforeach()
 
-    # Keep ctest robust while leaving the large test binary out of the default build.
+    # Keep ctest robust while leaving the large test binaries out of the default build.
+    set(GECODE_TEST_BUILD_TARGETS gecode-test)
+    set(GECODE_TEST_BUILD_FIXTURES gecode-test-built)
+    if(GECODE_ENABLE_FAULT_INJECTION)
+      list(APPEND GECODE_TEST_BUILD_TARGETS gecode-fault-test)
+      list(APPEND GECODE_TEST_BUILD_FIXTURES gecode-fault-test-built)
+    endif()
     add_test(NAME build-gecode-test
       COMMAND ${CMAKE_COMMAND} --build "${CMAKE_BINARY_DIR}"
-              --target gecode-test --config $<CONFIG>)
+              --target ${GECODE_TEST_BUILD_TARGETS} --config $<CONFIG>)
     set_tests_properties(build-gecode-test PROPERTIES
-      FIXTURES_SETUP gecode-test-built)
+      FIXTURES_SETUP "${GECODE_TEST_BUILD_FIXTURES}")
     add_test(NAME test COMMAND gecode-test ${GECODE_CHECK_ARGS})
     set_tests_properties(test PROPERTIES
       FIXTURES_REQUIRED gecode-test-built)
@@ -1429,12 +1442,13 @@ if(BUILD_TESTING)
       USES_TERMINAL)
     if(GECODE_ENABLE_FAULT_INJECTION)
       set(GECODE_FAULT_CHECK_ARGS -iter 1 -threads 1 -test "^Fault::")
-      add_test(NAME fault COMMAND gecode-test ${GECODE_FAULT_CHECK_ARGS})
+      add_test(NAME fault COMMAND gecode-fault-test ${GECODE_FAULT_CHECK_ARGS})
       set_tests_properties(fault PROPERTIES
-        FIXTURES_REQUIRED gecode-test-built)
+        FIXTURES_REQUIRED gecode-fault-test-built
+        RESOURCE_LOCK gecode-fault-injection)
       add_custom_target(check-fault
-        COMMAND $<TARGET_FILE:gecode-test> ${GECODE_FAULT_CHECK_ARGS}
-        DEPENDS gecode-test
+        COMMAND $<TARGET_FILE:gecode-fault-test> ${GECODE_FAULT_CHECK_ARGS}
+        DEPENDS gecode-fault-test
         USES_TERMINAL)
       add_dependencies(check check-fault)
     endif()
