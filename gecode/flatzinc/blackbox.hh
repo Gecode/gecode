@@ -36,7 +36,6 @@
 
 #include <cstddef>
 #include <cstdint>
-#include <limits>
 #include <string>
 #include <vector>
 
@@ -74,23 +73,21 @@ public:
 /// Implementation of a black box function that dynamically loads a library and
 /// run a contained function.
 ///
-/// The DLL entry points can be called concurrently by parallel search workers
-/// and must therefore be thread-safe.
-class BlackBoxDLL : public BlackBoxFn {
+/// The native library entry points can be called concurrently by parallel
+/// search workers and must therefore be thread-safe.
+class BlackBoxLibrary : public BlackBoxFn {
 public:
-  BlackBoxDLL(const std::string &name, const std::vector<std::string> &args);
-  ~BlackBoxDLL();
+  BlackBoxLibrary(const std::string &name,
+                  const std::vector<std::string> &args);
+  ~BlackBoxLibrary();
   void run(const std::vector<int64_t> &int_in,
-           const std::vector<double> &float_in, std::vector<int64_t> &int_out,
-           std::vector<double> &float_out) override {
-    dll_fzn_blackbox(int_in.data(), int_in.size(), float_in.data(),
-                     float_in.size(), int_out.data(), int_out.size(),
-                     float_out.data(), float_out.size());
-  }
+           const std::vector<double> &float_in,
+           std::vector<int64_t> &int_out,
+           std::vector<double> &float_out) override;
 
 protected:
   void *library;
-  void(GECODE_BLACKBOX_CALL *dll_fzn_blackbox)(
+  void(GECODE_BLACKBOX_CALL *library_fzn_blackbox)(
       const int64_t *, size_t, const double *, size_t, int64_t *, size_t,
       double *, size_t);
 };
@@ -112,13 +109,13 @@ public:
 protected:
   class Session;
 
-  /// The executable to run for each worker-thread session
+  /// The executable to run for each worker-thread session.
   std::string program;
-  /// Arguments passed to each executable session
+  /// Arguments passed to each executable session.
   std::vector<std::string> args;
-  /// Mutex protecting the session table
+  /// Mutex protecting the session table.
   Support::Mutex mutex;
-  /// One persistent process session for each calling thread
+  /// One persistent process session for each calling thread.
   std::vector<Session *> sessions;
 
   Session &session(void);
@@ -231,7 +228,7 @@ public:
                          const std::vector<std::string> &args) {
     BlackBoxFn *black_box(nullptr);
     if (mode == "dll") {
-      black_box = new BlackBoxDLL(instantiation, args);
+      black_box = new BlackBoxLibrary(instantiation, args);
     } else if (mode == "exec") {
       black_box = new BlackBoxExec(instantiation, args);
     } else {
@@ -250,11 +247,13 @@ public:
 
 class BlackBoxBounds : public Propagator {
 protected:
-  /// Integer variables whose bounds are input and computed by the blackbox function (in order).
+  /// Integer variables whose bounds are input and computed by the blackbox
+  /// function, in order.
   ViewArray<Int::IntView> ivar;
 
 #ifdef GECODE_HAS_FLOAT_VARS
-  /// Floating-point variables whose bounds are input and computed by the blackbox function (in order).
+  /// Floating-point variables whose bounds are input and computed by the
+  /// blackbox function, in order.
   ViewArray<Float::FloatView> fvar;
 #endif
 
@@ -389,7 +388,7 @@ public:
                          const std::vector<std::string> &args) {
     BlackBoxFn *black_box(nullptr);
     if (mode == "dll") {
-      black_box = new BlackBoxDLL(instantiation, args);
+      black_box = new BlackBoxLibrary(instantiation, args);
     } else if (mode == "exec") {
       black_box = new BlackBoxExec(instantiation, args);
     } else {

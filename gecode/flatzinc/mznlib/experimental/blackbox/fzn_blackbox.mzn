@@ -1,3 +1,5 @@
+include "blackbox_annotations.mzn";
+
 predicate fzn_blackbox(
 	array[int] of var int: int_input,
 	array[int] of var float: float_input,
