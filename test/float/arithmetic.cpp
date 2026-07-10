@@ -39,6 +39,8 @@
 
 #include <cmath>
 #include <algorithm>
+#include <cfenv>
+#include <limits>
 
 namespace Test { namespace Float {
 
@@ -50,6 +52,474 @@ namespace Test { namespace Float {
       * \ingroup TaskTestFloat
       */
      //@{
+     /// Regression test for outward positive even-root bounds
+     class PositiveNRootBounds : public Base {
+     protected:
+       /// Space exercising the Pow and NthRoot propagators
+       class RootSpace : public Gecode::Space {
+       public:
+         /// Variables used by the propagator
+         Gecode::FloatVar x0, x1;
+         /// Post an extreme Pow or NthRoot instance
+         RootSpace(Gecode::FloatNum hi, Gecode::FloatNum witness, int n,
+                   bool usePow)
+           : x0(*this, 0.0, usePow ? witness : hi),
+             x1(*this, usePow ? 0.0 : witness, usePow ? hi : witness) {
+           if (usePow) {
+             Gecode::pow(*this,x0,n,x1);
+             Gecode::rel(*this,x0,Gecode::FRT_EQ,witness);
+           } else {
+             Gecode::nroot(*this,x0,n,x1);
+           }
+         }
+         /// Clone constructor
+         RootSpace(RootSpace& s) : Gecode::Space(s) {
+           x0.update(*this,s.x0);
+           x1.update(*this,s.x1);
+         }
+         /// Copy space during cloning
+         virtual Gecode::Space* copy(void) {
+           return new RootSpace(*this);
+         }
+       };
+
+       /// Space exposing the propagated NthRoot upper bound
+       class NRootBoundSpace : public Gecode::Space {
+       public:
+         /// Source and root variables
+         Gecode::FloatVar source, root;
+         /// Post an NthRoot constraint with an unconstrained root
+         NRootBoundSpace(Gecode::FloatNum hi, int n)
+           : source(*this,0.0,hi),
+             root(*this,0.0,Gecode::Float::Limits::max) {
+           Gecode::nroot(*this,source,n,root);
+         }
+         /// Clone constructor
+         NRootBoundSpace(NRootBoundSpace& s) : Gecode::Space(s) {
+           source.update(*this,s.source);
+           root.update(*this,s.root);
+         }
+         /// Copy space during cloning
+         virtual Gecode::Space* copy(void) {
+           return new NRootBoundSpace(*this);
+         }
+       };
+
+       /// Check that a known feasible boundary value is not removed
+       bool check(Gecode::FloatNum hi, Gecode::FloatNum witness, int n,
+                  int mode, bool usePow) const {
+         if (std::fesetround(mode) != 0)
+           return true;
+         RootSpace s(hi,witness,n,usePow);
+         if (s.status() != Gecode::SS_FAILED)
+           return true;
+         olog << "Root bound removed a solution for "
+              << (usePow ? "pow" : "nroot") << ", n=" << n
+              << ", mode=" << mode << std::endl;
+         return false;
+       }
+       /// Check that propagation returns a genuinely outward upper bound
+       bool checkBound(Gecode::FloatNum hi, Gecode::FloatNum rejected,
+                       int n, int mode) const {
+         if (std::fesetround(mode) != 0)
+           return true;
+         NRootBoundSpace s(hi,n);
+         if ((s.status() != Gecode::SS_FAILED) &&
+             (s.root.max() > rejected))
+           return true;
+         olog << "NRoot upper bound was not outward for n=" << n
+              << ", mode=" << mode << std::endl;
+         return false;
+       }
+     public:
+       /// Create and register test
+       PositiveNRootBounds(void)
+         : Base("Float::Arithmetic::PositiveNRootBounds") {}
+       /// Run test under every supported IEEE-754 rounding mode
+       virtual bool run(void) {
+         const int oldMode = std::fegetround();
+         const int modes[] = {
+           FE_TONEAREST, FE_DOWNWARD, FE_UPWARD, FE_TOWARDZERO
+         };
+         struct Case {
+           Gecode::FloatNum hi;
+           Gecode::FloatNum witness;
+           int n;
+         } cases[] = {
+           {std::ldexp(static_cast<Gecode::FloatNum>(0x156e1fc2f8f359ULL),
+                       -1049),
+            std::ldexp(static_cast<Gecode::FloatNum>(0x14484bfeebc28cULL),
+                       -152), 10},
+           {std::numeric_limits<Gecode::FloatNum>::denorm_min(),
+            std::ldexp(static_cast<Gecode::FloatNum>(0x18406003b2ae42ULL),
+                       -160), 10},
+           {std::numeric_limits<Gecode::FloatNum>::max(),
+            std::ldexp(static_cast<Gecode::FloatNum>(0x1965fea53d6e0fULL),
+                       118), 6}
+         };
+         bool result = true;
+         const Gecode::FloatNum roundingHi =
+           std::ldexp(static_cast<Gecode::FloatNum>(0x1751def03d6f38ULL),
+                      458);
+         const Gecode::FloatNum rejectedUpper =
+           std::ldexp(static_cast<Gecode::FloatNum>(0x1350f4c43079ceULL),
+                      203);
+         for (unsigned int m=0; m<sizeof(modes)/sizeof(modes[0]); m++) {
+           for (unsigned int c=0; c<sizeof(cases)/sizeof(cases[0]); c++) {
+             result = check(cases[c].hi,cases[c].witness,cases[c].n,
+                            modes[m],false) && result;
+             result = check(cases[c].hi,cases[c].witness,cases[c].n,
+                            modes[m],true) && result;
+           }
+           result = checkBound(roundingHi,rejectedUpper,2,modes[m]) && result;
+         }
+         if (oldMode != -1)
+           std::fesetround(oldMode);
+         return result;
+       }
+     } positive_nroot_bounds;
+
+     /// Regression tests for Pow zero semantics and propagation fixpoints
+     class PowConsistency : public Base {
+     protected:
+       /// Space for direct and delayed assignment of the base to zero
+       class ZeroSpace : public Gecode::Space {
+       public:
+         /// Base and result variables
+         Gecode::FloatVar x, y;
+         /// Post a power constraint with either a zero or a wide base
+         ZeroSpace(int n, bool direct)
+           : x(*this,direct ? 0.0 : -1.0,direct ? 0.0 : 1.0),
+             y(*this,-1.0,2.0) {
+           Gecode::pow(*this,x,n,y);
+         }
+         /// Clone constructor
+         ZeroSpace(ZeroSpace& s) : Gecode::Space(s) {
+           x.update(*this,s.x);
+           y.update(*this,s.y);
+         }
+         /// Copy space during cloning
+         virtual Gecode::Space* copy(void) {
+           return new ZeroSpace(*this);
+         }
+       };
+
+       /// Space for an adjacent interval containing zero at one endpoint
+       class AdjacentZeroSpace : public Gecode::Space {
+       public:
+         /// Base and result variables
+         Gecode::FloatVar x, y;
+         /// Post exponent zero on a positive or negative adjacent interval
+         AdjacentZeroSpace(bool positive)
+           : x(*this,
+               positive ? 0.0
+                        : -std::numeric_limits<Gecode::FloatNum>::denorm_min(),
+               positive ? std::numeric_limits<Gecode::FloatNum>::denorm_min()
+                        : -0.0),
+             y(*this,-1.0,2.0) {
+           Gecode::pow(*this,x,0,y);
+         }
+         /// Clone constructor
+         AdjacentZeroSpace(AdjacentZeroSpace& s) : Gecode::Space(s) {
+           x.update(*this,s.x);
+           y.update(*this,s.y);
+         }
+         /// Copy space during cloning
+         virtual Gecode::Space* copy(void) {
+           return new AdjacentZeroSpace(*this);
+         }
+       };
+
+       /// Space reproducing a Pow inverse-to-forward fixpoint
+       class FixpointSpace : public Gecode::Space {
+       public:
+         /// Base and result variables
+         Gecode::FloatVar x, y;
+         /// Post the fixpoint regression instance
+         FixpointSpace(void)
+           : x(*this,
+               -std::ldexp(static_cast<Gecode::FloatNum>
+                           (0x10000000000006ULL),-53),
+               -std::ldexp(static_cast<Gecode::FloatNum>
+                           (0x10000000000004ULL),-53)),
+             y(*this,
+               std::ldexp(static_cast<Gecode::FloatNum>
+                          (0x1000000000000aULL),-54),
+               std::ldexp(static_cast<Gecode::FloatNum>
+                          (0x1000000000000cULL),-54)) {
+           Gecode::pow(*this,x,2,y);
+         }
+         /// Clone constructor
+         FixpointSpace(FixpointSpace& s) : Gecode::Space(s) {
+           x.update(*this,s.x);
+           y.update(*this,s.y);
+         }
+         /// Copy space during cloning
+         virtual Gecode::Space* copy(void) {
+           return new FixpointSpace(*this);
+         }
+       };
+
+       /// Space for direct and delayed assignment of the result to zero
+       class ZeroResultSpace : public Gecode::Space {
+       public:
+         /// Base and result variables
+         Gecode::FloatVar x, y;
+         /// Post a power constraint with either a zero or a wide result
+         ZeroResultSpace(int n, bool direct)
+           : x(*this,-1.0,1.0),
+             y(*this,direct ? 0.0 : -1.0,direct ? 0.0 : 1.0) {
+           Gecode::pow(*this,x,n,y);
+         }
+         /// Clone constructor
+         ZeroResultSpace(ZeroResultSpace& s) : Gecode::Space(s) {
+           x.update(*this,s.x);
+           y.update(*this,s.y);
+         }
+         /// Copy space during cloning
+         virtual Gecode::Space* copy(void) {
+           return new ZeroResultSpace(*this);
+         }
+       };
+
+       /// Test one exponent with direct and delayed zero assignment
+       bool checkZero(int n) const {
+         ZeroSpace direct(n,true);
+         ZeroSpace delayed(n,false);
+         if (delayed.status() == Gecode::SS_FAILED) {
+           olog << "Pow wide base failed for n=" << n << std::endl;
+           return false;
+         }
+         ZeroSpace* clone = static_cast<ZeroSpace*>(delayed.clone());
+         Gecode::rel(*clone,clone->x,Gecode::FRT_EQ,0.0);
+         if (n == 0) {
+           const bool zeroRejected =
+             (direct.status() == Gecode::SS_FAILED) &&
+             (clone->status() == Gecode::SS_FAILED);
+           delete clone;
+           ZeroSpace* nonZero = static_cast<ZeroSpace*>(delayed.clone());
+           Gecode::rel(*nonZero,nonZero->x,Gecode::FRT_EQ,0.5);
+           const bool nonZeroAccepted =
+             (nonZero->status() != Gecode::SS_FAILED) &&
+             (nonZero->y.min() == 1.0) && (nonZero->y.max() == 1.0) &&
+             (Gecode::PropagatorGroup::all.size(*nonZero) == 0);
+           delete nonZero;
+           if (!zeroRejected || !nonZeroAccepted)
+             olog << "Pow exponent-zero semantics failed" << std::endl;
+           return zeroRejected && nonZeroAccepted;
+         }
+         const bool result =
+           (direct.status() != Gecode::SS_FAILED) &&
+           (direct.y.min() == 0.0) && (direct.y.max() == 0.0) &&
+           (clone->status() != Gecode::SS_FAILED) &&
+           (clone->y.min() == 0.0) && (clone->y.max() == 0.0);
+         delete clone;
+         if (!result)
+           olog << "Pow delayed zero failed for n=" << n << std::endl;
+         return result;
+       }
+       /// Test that a zero result forces a zero base
+       bool checkZeroResult(int n, bool direct) const {
+         ZeroResultSpace initial(n,direct);
+         if (initial.status() == Gecode::SS_FAILED) {
+           olog << "Pow zero result failed for n=" << n << std::endl;
+           return false;
+         }
+         ZeroResultSpace* clone =
+           static_cast<ZeroResultSpace*>(initial.clone());
+         if (!direct)
+           Gecode::rel(*clone,clone->y,Gecode::FRT_EQ,0.0);
+         const bool contracted =
+           (clone->status() != Gecode::SS_FAILED) &&
+           (clone->x.min() == 0.0) && (clone->x.max() == 0.0);
+         Gecode::rel(*clone,clone->x,Gecode::FRT_EQ,1.0);
+         const bool inconsistentRejected =
+           clone->status() == Gecode::SS_FAILED;
+         delete clone;
+         if (!contracted || !inconsistentRejected)
+           olog << "Pow zero result did not force zero base for n=" << n
+                << (direct ? " (direct)" : " (delayed)") << std::endl;
+         return contracted && inconsistentRejected;
+       }
+       /// Test exponent zero on an adjacent interval containing zero
+       bool checkAdjacentZero(bool positive) const {
+         AdjacentZeroSpace initial(positive);
+         const bool actorRetained =
+           (initial.status() != Gecode::SS_FAILED) &&
+           (initial.y.min() == 1.0) && (initial.y.max() == 1.0) &&
+           (Gecode::PropagatorGroup::all.size(initial) == 1);
+
+         AdjacentZeroSpace* clone =
+           static_cast<AdjacentZeroSpace*>(initial.clone());
+         const bool cloneRetained =
+           (clone->status() != Gecode::SS_FAILED) &&
+           (clone->y.min() == 1.0) && (clone->y.max() == 1.0) &&
+           (Gecode::PropagatorGroup::all.size(*clone) == 1);
+         delete clone;
+
+         if (!actorRetained || !cloneRetained)
+           olog << "Pow adjacent exponent-zero semantics failed"
+                << (positive ? " (positive)" : " (negative)") << std::endl;
+         return actorRetained && cloneRetained;
+       }
+     public:
+       /// Create and register test
+       PowConsistency(void) : Base("Float::Arithmetic::PowConsistency") {}
+       /// Run zero and fixpoint regressions
+       virtual bool run(void) {
+         bool result = true;
+         for (int n=0; n<=3; n++)
+           result = checkZero(n) && result;
+         for (int n=1; n<=3; n++) {
+           result = checkZeroResult(n,true) && result;
+           result = checkZeroResult(n,false) && result;
+         }
+         result = checkAdjacentZero(true) && result;
+         result = checkAdjacentZero(false) && result;
+
+         FixpointSpace once;
+         if (once.status() == Gecode::SS_FAILED) {
+           olog << "Pow fixpoint instance failed" << std::endl;
+           return false;
+         }
+         FixpointSpace* twice = static_cast<FixpointSpace*>(once.clone());
+         Gecode::pow(*twice,twice->x,2,twice->y);
+         const bool fixpoint =
+           (twice->status() != Gecode::SS_FAILED) &&
+           (once.x.min() == twice->x.min()) &&
+           (once.x.max() == twice->x.max()) &&
+           (once.y.min() == twice->y.min()) &&
+           (once.y.max() == twice->y.max());
+         delete twice;
+         if (!fixpoint)
+           olog << "Pow posting did not reach a fixpoint" << std::endl;
+         return fixpoint && result;
+       }
+     } pow_consistency;
+
+     /// Regression tests for multiplication through a zero endpoint
+     class MultZeroEndpoint : public Base {
+     protected:
+       /// Space exposing multiplication propagation at the public API
+       class MultSpace : public Gecode::Space {
+       public:
+         /// Factors and product
+         Gecode::FloatVar x, y, z;
+         /// Post x * y = z for the supplied intervals
+         MultSpace(Gecode::FloatNum xl, Gecode::FloatNum xu,
+                   Gecode::FloatNum yl, Gecode::FloatNum yu,
+                   Gecode::FloatNum zl, Gecode::FloatNum zu)
+           : x(*this,xl,xu), y(*this,yl,yu), z(*this,zl,zu) {
+           Gecode::mult(*this,x,y,z);
+         }
+         /// Clone constructor
+         MultSpace(MultSpace& s) : Gecode::Space(s) {
+           x.update(*this,s.x);
+           y.update(*this,s.y);
+           z.update(*this,s.z);
+         }
+         /// Copy space during cloning
+         virtual Gecode::Space* copy(void) {
+           return new MultSpace(*this);
+         }
+       };
+
+       /// Check one endpoint-zero sign and magnitude contraction
+       bool check(Gecode::FloatNum xl, Gecode::FloatNum xu,
+                  Gecode::FloatNum yl, Gecode::FloatNum yu,
+                  Gecode::FloatNum zl, Gecode::FloatNum zu,
+                  Gecode::FloatNum expectedMin,
+                  Gecode::FloatNum expectedMax) const {
+         MultSpace s(xl,xu,yl,yu,zl,zu);
+         if ((s.status() == Gecode::SS_FAILED) ||
+             (s.x.min() < expectedMin) || (s.x.max() > expectedMax)) {
+           olog << "Multiplication endpoint-zero contraction failed: x="
+                << s.x << ", y=" << s.y << ", z=" << s.z << std::endl;
+           return false;
+         }
+         MultSpace* clone = static_cast<MultSpace*>(s.clone());
+         Gecode::mult(*clone,clone->x,clone->y,clone->z);
+         const bool fixpoint =
+           (clone->status() != Gecode::SS_FAILED) &&
+           (clone->x.min() == s.x.min()) && (clone->x.max() == s.x.max()) &&
+           (clone->y.min() == s.y.min()) && (clone->y.max() == s.y.max()) &&
+           (clone->z.min() == s.z.min()) && (clone->z.max() == s.z.max());
+         delete clone;
+         if (!fixpoint)
+           olog << "Multiplication endpoint-zero case was not at a fixpoint"
+                << std::endl;
+         return fixpoint;
+       }
+       /// Exercise supported points across endpoint-zero sign combinations
+       bool fuzz(void) const {
+         unsigned int state = 0x6d756c74U;
+         for (unsigned int i=0; i<5000; i++) {
+           state = state * 1664525U + 1013904223U;
+           const Gecode::FloatNum am =
+             0.125 + static_cast<Gecode::FloatNum>((state >> 8) % 8000) /
+                     512.0;
+           state = state * 1664525U + 1013904223U;
+           const Gecode::FloatNum bm =
+             0.125 + static_cast<Gecode::FloatNum>((state >> 8) % 8000) /
+                     512.0;
+           const Gecode::FloatNum a = (i & 1U) ? -am : am;
+           const Gecode::FloatNum b = (i & 2U) ? -bm : bm;
+           const Gecode::FloatNum p = a * b;
+           const Gecode::FloatNum slack = 1.0 + am / 4.0;
+           const Gecode::FloatNum xl = a - slack;
+           const Gecode::FloatNum xu = a + slack;
+           const Gecode::FloatNum yl = (b < 0.0) ? -(bm + 1.0) : 0.0;
+           const Gecode::FloatNum yu = (b < 0.0) ? -0.0 : bm + 1.0;
+           MultSpace s(xl,xu,yl,yu,p,p);
+           if ((s.status() == Gecode::SS_FAILED) ||
+               (s.x.min() > a) || (s.x.max() < a) ||
+               (s.y.min() > b) || (s.y.max() < b) ||
+               (s.z.min() > p) || (s.z.max() < p)) {
+             olog << "Multiplication removed supported fuzz point " << i
+                  << ": (" << a << ", " << b << ", " << p << ")"
+                  << std::endl;
+             return false;
+           }
+         }
+         return true;
+       }
+     public:
+       /// Create and register test
+       MultZeroEndpoint(void)
+         : Base("Float::Arithmetic::MultZeroEndpoint") {}
+       /// Run sign, symmetry, signed-zero, and zero-product cases
+       virtual bool run(void) {
+         bool result = true;
+         result = check(-1.0,1.0, 0.0,1.0, 0.5,1.0,
+                        0.5,1.0) && result;
+         result = check(-1.0,1.0,-1.0,-0.0, 0.5,1.0,
+                       -1.0,-0.5) && result;
+         result = check(-1.0,1.0, 0.0,1.0,-1.0,-0.5,
+                       -1.0,-0.5) && result;
+         result = check(-1.0,1.0,-1.0,-0.0,-1.0,-0.5,
+                        0.5,1.0) && result;
+
+         // Swapping the factors must recover the same contraction.
+         MultSpace swapped(0.0,1.0,-1.0,1.0,0.5,1.0);
+         result = (swapped.status() != Gecode::SS_FAILED) &&
+                  (swapped.y.min() >= 0.5) && result;
+
+         // A zero product gives no sign information about the other factor.
+         MultSpace zeroProduct(-1.0,1.0,0.0,1.0,0.0,0.0);
+         result = (zeroProduct.status() != Gecode::SS_FAILED) &&
+                  (zeroProduct.x.min() == -1.0) &&
+                  (zeroProduct.x.max() == 1.0) && result;
+         MultSpace zeroFactor(0.0,0.0,-1.0,1.0,0.0,0.0);
+         result = (zeroFactor.status() != Gecode::SS_FAILED) &&
+                  (zeroFactor.y.min() == -1.0) &&
+                  (zeroFactor.y.max() == 1.0) && result;
+         if (!result)
+           olog << "Multiplication zero or swapped regression failed"
+                << std::endl;
+         return fuzz() && result;
+       }
+     } mult_zero_endpoint;
+
      /// %Test for multiplication constraint
      class MultXYZ : public Test {
      public:

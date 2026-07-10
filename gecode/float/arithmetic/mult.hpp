@@ -196,14 +196,38 @@ namespace Gecode { namespace Float { namespace Arithmetic {
     return new (home) Mult<View>(home,*this);
   }
 
+  /// Contract a quotient when the denominator has zero as one endpoint
+  template<class View>
+  forceinline ModEvent
+  div_zero_endpoint(Home home, View x, const FloatVal& n, const View& d) {
+    if ((d.min() == 0.0) && (d.max() > 0.0)) {
+      const FloatVal q = n / FloatVal(d.max());
+      if (n.min() > 0.0)
+        return x.gq(home,q.min());
+      if (n.max() < 0.0)
+        return x.lq(home,q.max());
+    } else if ((d.max() == 0.0) && (d.min() < 0.0)) {
+      const FloatVal q = n / FloatVal(d.min());
+      if (n.min() > 0.0)
+        return x.lq(home,q.max());
+      if (n.max() < 0.0)
+        return x.gq(home,q.min());
+    }
+    return ME_FLOAT_NONE;
+  }
+
   template<class View>
   ExecStatus
   Mult<View>::propagate(Space& home, const ModEventDelta&) {
     GECODE_ME_CHECK(x2.eq(home,x0.val()*x1.val()));
     if (!x1.zero_in())
       GECODE_ME_CHECK(x0.eq(home,x2.val() / x1.val()));
+    else
+      GECODE_ME_CHECK(div_zero_endpoint(home,x0,x2.val(),x1));
     if (!x0.zero_in())
       GECODE_ME_CHECK(x1.eq(home,x2.val() / x0.val()));
+    else
+      GECODE_ME_CHECK(div_zero_endpoint(home,x1,x2.val(),x0));
     GECODE_ME_CHECK(x2.eq(home,x0.val()*x1.val()));
     if (x0.assigned() && x1.assigned() && x2.assigned())
       return home.ES_SUBSUMED(*this);
@@ -222,8 +246,12 @@ namespace Gecode { namespace Float { namespace Arithmetic {
     GECODE_ME_CHECK(x2.eq(home,x0.val()*x1.val()));
     if (!x1.zero_in())
       GECODE_ME_CHECK(x0.eq(home,x2.val() / x1.val()));
+    else
+      GECODE_ME_CHECK(div_zero_endpoint(home,x0,x2.val(),x1));
     if (!x0.zero_in())
       GECODE_ME_CHECK(x1.eq(home,x2.val() / x0.val()));
+    else
+      GECODE_ME_CHECK(div_zero_endpoint(home,x1,x2.val(),x0));
     GECODE_ME_CHECK(x2.eq(home,x0.val()*x1.val()));
     if (x0.assigned() && x1.assigned() && x2.assigned())
       return ES_OK;
