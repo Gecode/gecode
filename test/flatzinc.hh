@@ -70,7 +70,8 @@ namespace Test {
     class FlatZincErrorTest : public FlatZincTest {
     public:
       /// Construct and register test
-      FlatZincErrorTest(const std::string& name, const std::string& source);
+      FlatZincErrorTest(const std::string& name, const std::string& source,
+                        std::vector<std::string> cmdlineOpt = {});
       /// Perform test
       virtual bool run(void);
     };

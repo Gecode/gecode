@@ -604,6 +604,9 @@ namespace Gecode { namespace FlatZinc {
     /// Post a constraint specified by \a ce
     void postConstraints(std::vector<ConExpr*>& ces);
 
+    /// Return opaque state used while posting blackbox constraints
+    SharedHandle& blackBoxState(void);
+
     /// Post the solve item
     void solve(AST::Array* annotation);
     /// Post that integer variable \a var should be minimized
