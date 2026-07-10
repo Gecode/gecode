@@ -39,6 +39,27 @@
 
 namespace Gecode { namespace Search { namespace Par {
 
+  template<class Collect>
+  forceinline
+  Slave<Collect>::Completion::Completion(void) {
+    // A slave has not been submitted yet.  This initial signal lets the
+    // first submission use the same consume-before-reuse handshake as all
+    // subsequent submissions.
+    done.signal();
+  }
+
+  template<class Collect>
+  forceinline void
+  Slave<Collect>::Completion::terminated(void) {
+    done.signal();
+  }
+
+  template<class Collect>
+  forceinline void
+  Slave<Collect>::Completion::wait(void) {
+    done.wait();
+  }
+
 
   forceinline
   CollectAll::CollectAll(void)
@@ -142,6 +163,16 @@ namespace Gecode { namespace Search { namespace Par {
     return slave->stopped();
   }
   template<class Collect>
+  forceinline Support::Terminator*
+  Slave<Collect>::terminator(void) const {
+    return const_cast<Completion*>(&completion);
+  }
+  template<class Collect>
+  forceinline void
+  Slave<Collect>::wait(void) {
+    completion.wait();
+  }
+  template<class Collect>
   forceinline void
   Slave<Collect>::constrain(const Space& b) {
     slave->constrain(b);
@@ -225,8 +256,12 @@ namespace Gecode { namespace Search { namespace Par {
       if (n_active > 0) {
         // Run all active slaves
         n_busy = n_active;
-        for (unsigned int i=0U; i<n_active; i++)
+        for (unsigned int i=0U; i<n_active; i++) {
+          // Consume the previous completion before reusing this slave.  The
+          // initial signal handles the first submission.
+          slaves[i]->wait();
           Support::Thread::run(slaves[i]);
+        }
         m.release();
         // Wait for all slaves to become idle
         idle.wait();
@@ -286,6 +321,11 @@ namespace Gecode { namespace Search { namespace Par {
 
   template<class Collect>
   PBS<Collect>::~PBS(void) {
+    // A report can make n_busy zero before Slave::run and Thread::Run::exec
+    // have returned.  Wait for the completion handshake before deleting the
+    // PBS-owned slaves.
+    for (unsigned int i=0U; i<n_slaves; i++)
+      slaves[i]->wait();
     assert(n_busy == 0);
     for (unsigned int i=0U; i<n_slaves; i++)
       delete slaves[i];
