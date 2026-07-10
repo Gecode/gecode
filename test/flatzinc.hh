@@ -67,6 +67,14 @@ namespace Test {
       virtual bool run(void);
     };
 
+    class FlatZincErrorTest : public FlatZincTest {
+    public:
+      /// Construct and register test
+      FlatZincErrorTest(const std::string& name, const std::string& source);
+      /// Perform test
+      virtual bool run(void);
+    };
+
   }
 
 }

@@ -70,6 +70,10 @@ namespace Test { namespace FlatZinc {
     : Base("FlatZinc::"+name), _name(name), _source(source), _expected(expected),
       _allSolutions(allSolutions), _cmdlineOpt(cmdlineOpt) {}
 
+  FlatZincErrorTest::FlatZincErrorTest(const std::string& name,
+                                       const std::string& source)
+    : FlatZincTest(name, source, "") {}
+
   bool
   FlatZincTest::run(void) {
     using namespace Gecode;
@@ -119,6 +123,42 @@ namespace Test { namespace FlatZinc {
       return false;
     }
     return true;
+  }
+
+  bool
+  FlatZincErrorTest::run(void) {
+    using namespace Gecode;
+    Support::Timer t_total;
+    t_total.start();
+    Gecode::FlatZinc::FlatZincOptions fznopt("Gecode/FlatZinc");
+    Gecode::FlatZinc::Printer p;
+    Gecode::FlatZinc::FlatZincSpace* fg = nullptr;
+    try {
+      std::stringstream ss(_source);
+      fg = Gecode::FlatZinc::parse(ss, p, olog);
+      if (fg) {
+        fg->createBranchers(p, fg->solveAnnotations(), fznopt,
+                            false, olog);
+        fg->shrinkArrays(p);
+        std::ostringstream os;
+        fg->run(os, p, fznopt, t_total);
+      }
+      delete fg;
+      return false;
+    } catch (Gecode::FlatZinc::Error& e) {
+      delete fg;
+      if (opt.log)
+        olog << ind(2) << "Expected FlatZinc error : "
+             << e.toString() << std::endl;
+      return true;
+    } catch (Gecode::Exception& e) {
+      delete fg;
+      if (opt.log)
+        olog << ind(2) << "Expected Gecode exception : "
+             << e.what() << std::endl;
+      return true;
+    }
+    return false;
   }
 
 }}

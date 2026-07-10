@@ -1668,29 +1668,52 @@ namespace Gecode { namespace FlatZinc {
     void blackbox_source(AST::Node* ann, std::string& mode,
                          std::string& instantiation,
                          std::vector<std::string>& args) {
+      auto error = [](const std::string& message) {
+        throw FlatZinc::Error("Registry", message);
+      };
+      auto string_arg = [&](AST::Node* n, const char* what) {
+        if ((n == nullptr) || !n->isString()) {
+          error(std::string("Malformed blackbox annotation: ") + what +
+                " must be a string.");
+        }
+        return n->getString();
+      };
       AST::Call* c = nullptr;
-      if (ann->hasCall("blackbox_dll")) {
+      bool has_dll = (ann != nullptr) && ann->hasCall("blackbox_dll");
+      bool has_exec = (ann != nullptr) && ann->hasCall("blackbox_exec");
+      if (has_dll && has_exec) {
+        error("Blackbox constraint has multiple execution method annotations.");
+      } else if (has_dll) {
         c = ann->getCall("blackbox_dll");
         mode = "dll";
-      } else if (ann->hasCall("blackbox_exec")) {
+      } else if (has_exec) {
         c = ann->getCall("blackbox_exec");
         mode = "exec";
       } else {
-        throw FlatZinc::Error("Registry",
-        "Blackbox constraint is missing a valid annotation specifying execution method.");
+        error("Blackbox constraint is missing a valid annotation specifying "
+              "execution method.");
+      }
+      if ((c == nullptr) || (c->args == nullptr)) {
+        error("Malformed blackbox annotation: missing target.");
       }
       // For a single-argument call `args` is the bare argument node; for the
       // `(target, args)` form it is an array of the two arguments.
       if (AST::Array* arr = dynamic_cast<AST::Array*>(c->args)) {
-        instantiation = arr->a[0]->getString();
-        if (arr->a.size() > 1) {
-          AST::Array* al = arr->a[1]->getArray();
-          for (unsigned int i = 0; i < al->a.size(); i++) {
-            args.push_back(al->a[i]->getString());
-          }
+        if (arr->a.size() != 2) {
+          error("Malformed blackbox annotation: expected a target string and "
+                "an argument array.");
+        }
+        instantiation = string_arg(arr->a[0], "target");
+        if (!arr->a[1]->isArray()) {
+          error("Malformed blackbox annotation: argument list must be an array "
+                "of strings.");
+        }
+        AST::Array* al = arr->a[1]->getArray();
+        for (unsigned int i = 0; i < al->a.size(); i++) {
+          args.push_back(string_arg(al->a[i], "argument"));
         }
       } else {
-        instantiation = c->args->getString();
+        instantiation = string_arg(c->args, "target");
       }
     }
 

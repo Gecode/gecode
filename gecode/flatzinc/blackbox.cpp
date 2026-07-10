@@ -40,6 +40,8 @@
 #include <cerrno>
 #include <cstdio>
 #include <cstdlib>
+#include <cstdint>
+#include <locale>
 #include <memory>
 #include <limits>
 #include <sstream>
@@ -228,6 +230,39 @@ checked_int(long long v, const char *source, size_t i) {
   return static_cast<int>(v);
 }
 
+#ifdef GECODE_HAS_FLOAT_VARS
+void
+check_float(double v, const char *source, size_t i) {
+  static_assert(sizeof(double) == sizeof(std::uint64_t) &&
+                std::numeric_limits<double>::is_iec559,
+                "blackbox floats must use IEEE-754 binary64");
+  std::uint64_t bits = 0;
+  const volatile unsigned char *raw =
+      reinterpret_cast<const volatile unsigned char *>(&v);
+  unsigned char *target = reinterpret_cast<unsigned char *>(&bits);
+  for (size_t j = 0; j < sizeof(bits); j++) {
+    target[j] = raw[j];
+  }
+  if (((bits & UINT64_C(0x7ff0000000000000)) ==
+       UINT64_C(0x7ff0000000000000)) ||
+      (v < Float::Limits::min) || (v > Float::Limits::max)) {
+    throw Error("Blackbox", std::string(source) + " float " +
+                              std::to_string(i) +
+                              " is not a finite value in Gecode's floating "
+                              "point range");
+  }
+}
+
+void
+check_floats(const std::vector<double> &v, const char *source) {
+  for (size_t i = 0; i < v.size(); i++) {
+    check_float(v[i], source, i);
+  }
+}
+#endif
+
+const size_t max_exec_response_size = 1024 * 1024;
+
 } // namespace
 
 BlackBoxLibrary::BlackBoxLibrary(const std::string &name,
@@ -357,6 +392,9 @@ BlackBoxLibrary::run(const std::vector<int64_t> &int_in,
   for (size_t i = 0; i < int_out.size(); ++i) {
     int_out[i] = checked_int(int_out[i], "library output", i);
   }
+#ifdef GECODE_HAS_FLOAT_VARS
+  check_floats(float_out, "library output");
+#endif
 }
 
 class BlackBoxExec::Session {
@@ -517,6 +555,7 @@ public:
 
     char c[2] = {0, 0};
     std::ostringstream oss;
+    size_t response_size = 0;
     while (c[0] != '\n') {
       DWORD count = 0;
       BOOL success = ReadFile(pipe_receive, c, sizeof(c) - 1, &count, NULL);
@@ -529,6 +568,10 @@ public:
                     "Blackbox process provided an incomplete response");
       }
       assert(count == 1);
+      if (++response_size > max_exec_response_size) {
+        throw Error("BlackBoxExec",
+                    "Blackbox process response exceeds the size limit");
+      }
       oss << c[0];
     }
     return oss.str();
@@ -553,22 +596,29 @@ public:
       remaining -= static_cast<size_t>(n);
     }
 
-    char *str = NULL;
-    size_t size = 0;
-    errno = 0;
-    if (getline(&str, &size, file_receive) == -1) {
-      free(str);
-      if (feof(file_receive)) {
+    std::string in_buffer;
+    while (true) {
+      errno = 0;
+      int ch = fgetc(file_receive);
+      if (ch == EOF) {
+        if (feof(file_receive)) {
+          throw Error("BlackBoxExec",
+                      "Blackbox process provided an incomplete response");
+        }
         throw Error("BlackBoxExec",
-                    "Blackbox process provided an incomplete response");
+                    std::string("Reading blackbox process output from pipe "
+                                "failed with errno ") +
+                        std::to_string(errno));
       }
-      throw Error(
-          "BlackBoxExec",
-          "Reading blackbox process output from pipe failed with errno " +
-              std::to_string(errno));
+      in_buffer += static_cast<char>(ch);
+      if (in_buffer.size() > max_exec_response_size) {
+        throw Error("BlackBoxExec",
+                    "Blackbox process response exceeds the size limit");
+      }
+      if (ch == '\n') {
+        break;
+      }
     }
-    std::string in_buffer(str);
-    free(str);
     return in_buffer;
 #endif
   }
@@ -958,7 +1008,8 @@ void BlackBoxExec::run(const std::vector<int64_t> &int_in,
                        std::vector<double> &float_out) {
   // Construct program input: comma-separated integers, a semicolon, then
   // comma-separated floats, terminated by a newline (e.g. "5,-7;2.5,1.125\n").
-  std::stringstream out;
+  std::ostringstream out;
+  out.imbue(std::locale::classic());
   out.precision(std::numeric_limits<double>::max_digits10);
   for (size_t i = 0; i < int_in.size(); ++i) {
     if (i != 0) {
@@ -976,10 +1027,13 @@ void BlackBoxExec::run(const std::vector<int64_t> &int_in,
   out << "\n";
   std::string out_buf = out.str();
   std::string in_buffer = session().run(out_buf);
+  if (in_buffer.find('\0') != std::string::npos) {
+    throw Error("BlackBoxExec",
+                "Blackbox process response contains NUL data.");
+  }
   // Parse the response in a single left-to-right pass: comma-separated
   // integers, a semicolon, then comma-separated floats (e.g. "5,-7;2.5,1.125\n").
   const char *p = in_buffer.c_str();
-  char *end = nullptr;
   auto skip_ws = [](const char *&q) {
     while (*q == ' ' || *q == '\t' || *q == '\r') {
       ++q;
@@ -990,11 +1044,28 @@ void BlackBoxExec::run(const std::vector<int64_t> &int_in,
       ++q;
     }
   };
+  auto value_end = [](const char *q) {
+    while (*q != ',' && *q != ';' && *q != '\n' && *q != '\0') {
+      ++q;
+    }
+    return q;
+  };
+  auto check_number_tail = [](std::istringstream &in) {
+    char c;
+    while (in.get(c)) {
+      if (c != ' ' && c != '\t' && c != '\r') {
+        return false;
+      }
+    }
+    return true;
+  };
   for (size_t i = 0; i < int_out.size(); ++i) {
     skip_ws(p);
-    errno = 0;
-    long long v = std::strtoll(p, &end, 10);
-    if ((end == p) || (errno == ERANGE)) {
+    const char *end = value_end(p);
+    std::istringstream in(std::string(p, end));
+    in.imbue(std::locale::classic());
+    long long v;
+    if (!(in >> v) || !check_number_tail(in)) {
       throw Error("BlackBoxExec", "Failed to read output integer " +
                                       std::to_string(i) +
                                       " from blackbox process output, " +
@@ -1022,15 +1093,20 @@ void BlackBoxExec::run(const std::vector<int64_t> &int_in,
   ++p;
   for (size_t i = 0; i < float_out.size(); ++i) {
     skip_ws(p);
-    errno = 0;
-    double v = std::strtod(p, &end);
-    if ((end == p) || (errno == ERANGE)) {
+    const char *end = value_end(p);
+    std::istringstream in(std::string(p, end));
+    in.imbue(std::locale::classic());
+    double v;
+    if (!(in >> v) || !check_number_tail(in)) {
       throw Error("BlackBoxExec", "Failed to read output float " +
                                       std::to_string(i) +
                                       " from blackbox process output, " +
                                       std::to_string(float_out.size()) +
                                       " floating point values were expected.");
     }
+#ifdef GECODE_HAS_FLOAT_VARS
+    check_float(v, "blackbox process output", i);
+#endif
     float_out[i] = v;
     p = end;
     skip_ws(p);
@@ -1060,7 +1136,6 @@ ExecStatus BlackBox::propagate(Space &home, const ModEventDelta &) {
     std::vector<int64_t> int_out(int_output.size());
     // std::cerr << "Black Box Fn input: ";
     for (int i = 0; i < int_in.size(); i++) {
-      // std::cerr << int_input[i].val() << " ";
       int_in[i] = int_input[i].val();
     }
     std::vector<double> float_in;
@@ -1069,26 +1144,21 @@ ExecStatus BlackBox::propagate(Space &home, const ModEventDelta &) {
     float_in.resize(float_input.size());
     float_out.resize(float_output.size());
     for (int i = 0; i < float_in.size(); i++) {
-      // std::cerr << float_input[i].val() << " ";
       float_in[i] = float_input[i].val().med();
     }
 #endif
-    // std::cerr << std::endl;
 
     black_box()->run(int_in, float_in, int_out, float_out);
 
-    // std::cerr << "Black Box Fn output: ";
     for (int i = 0; i < int_out.size(); i++) {
       // std::cerr << int_out[i] << " ";
       GECODE_ME_CHECK(int_output[i].eq(home, static_cast<int>(int_out[i])));
     }
 #ifdef GECODE_HAS_FLOAT_VARS
     for (int i = 0; i < float_out.size(); i++) {
-      // std::cerr << float_out[i] << " ";
       GECODE_ME_CHECK(float_output[i].eq(home, float_out[i]));
     }
 #endif
-    // std::cerr << std::endl;
 
     return home.ES_SUBSUMED(*this);
   }
@@ -1100,7 +1170,6 @@ ExecStatus BlackBoxBounds::propagate(Space &home, const ModEventDelta &) {
   std::vector<int64_t> int_out(ivar.size() * 2);
   // std::cerr << "Black Box Bounds Fn input: ";
   for (int i = 0; i < ivar.size(); i++) {
-    // std::cerr << ivar[i].min() << " " << ivar[i].max() << " ";
     int_in[i*2] = ivar[i].min();
     int_in[i*2+1] = ivar[i].max();
   }
@@ -1110,16 +1179,13 @@ ExecStatus BlackBoxBounds::propagate(Space &home, const ModEventDelta &) {
   float_in.resize(fvar.size() * 2);
   float_out.resize(fvar.size() * 2);
   for (int i = 0; i < fvar.size(); i++) {
-    // std::cerr << fvar[i].min() << " " << fvar[i].max() << " ";
     float_in[i*2] = fvar[i].min();
     float_in[i*2+1] = fvar[i].max();
   }
 #endif
-  // std::cerr << std::endl;
 
   black_box()->run(int_in, float_in, int_out, float_out);
 
-  // std::cerr << "Black Box Fn output: ";
   for (int i = 0; i < ivar.size(); i++) {
     // std::cerr << int_out[i*2] << ".." << int_out[i*2+1] << " ";
     GECODE_ME_CHECK(ivar[i].gq(home, static_cast<int>(int_out[i*2])));
@@ -1127,12 +1193,10 @@ ExecStatus BlackBoxBounds::propagate(Space &home, const ModEventDelta &) {
   }
 #ifdef GECODE_HAS_FLOAT_VARS
   for (int i = 0; i < fvar.size(); i++) {
-    // std::cerr << float_out[i*2] << ".." << float_out[i*2+1] << " ";
     GECODE_ME_CHECK(fvar[i].gq(home, float_out[i*2]));
     GECODE_ME_CHECK(fvar[i].lq(home, float_out[i*2+1]));
   }
 #endif
-  // std::cerr << std::endl;
 
   return ES_NOFIX;
 }
@@ -1168,23 +1232,19 @@ void blackbox(Home home, const IntVarArgs &int_in, const IntVarArgs &int_out,
 /// variables first, then float variables.
 ///
 /// The flat reason is a concatenation of one entry per variable, each entry
-/// being `[idx, |R_lb|, (var, bnd)..., |R_ub|, (var, bnd)...]`. An empty reason
-/// falls back to subscribing to every variable.
+/// being `[idx, |R_lb|, (var, bnd)..., |R_ub|, (var, bnd)...]`.
 static void reason_subscriptions(const std::vector<int> &reason, int n_int,
                                  int n_float, SharedArray<bool> &sub_int,
                                  SharedArray<bool> &sub_float) {
-  const bool all = reason.empty();
   for (int i = 0; i < n_int; i++) {
-    sub_int[i] = all;
+    sub_int[i] = false;
   }
   for (int i = 0; i < n_float; i++) {
-    sub_float[i] = all;
-  }
-  if (all) {
-    return;
+    sub_float[i] = false;
   }
 
   const int n_total = n_int + n_float;
+  std::vector<bool> explained(n_total, false);
   size_t pos = 0;
   auto require = [&](size_t n, const char *what) {
     if (reason.size() - pos < n) {
@@ -1200,6 +1260,12 @@ static void reason_subscriptions(const std::vector<int> &reason, int n_int,
                   "Malformed blackbox bounds reason: explained variable index "
                   "is out of range.");
     }
+    if (explained[idx - 1]) {
+      throw Error("Blackbox",
+                  "Malformed blackbox bounds reason: duplicate explained "
+                  "variable index.");
+    }
+    explained[idx - 1] = true;
     for (int side = 0; side < 2; side++) { // lower- then upper-bound literals
       require(1, "missing reason literal count");
       int count = reason[pos++];
@@ -1207,10 +1273,14 @@ static void reason_subscriptions(const std::vector<int> &reason, int n_int,
         throw Error("Blackbox",
                     "Malformed blackbox bounds reason: negative literal count.");
       }
-      require(static_cast<size_t>(count) * 2, "truncated reason literals");
+      if (static_cast<size_t>(count) > (reason.size() - pos) / 2) {
+        throw Error("Blackbox",
+                    "Malformed blackbox bounds reason: truncated reason "
+                    "literals.");
+      }
       for (int k = 0; k < count; k++) {
         int var = reason[pos++]; // 1-based combined variable index
-        pos++;                   // bound code (per-variable granularity only)
+        int bnd = reason[pos++];
         if (var >= 1 && var <= n_int) {
           sub_int[var - 1] = true;
         } else if (var > n_int && var <= n_int + n_float) {
@@ -1220,7 +1290,19 @@ static void reason_subscriptions(const std::vector<int> &reason, int n_int,
                       "Malformed blackbox bounds reason: dependency variable "
                       "index is out of range.");
         }
+        if (bnd != 1 && bnd != 2) { // MiniZinc PropBnd: PR_LB, PR_UB
+          throw Error("Blackbox",
+                      "Malformed blackbox bounds reason: dependency bound "
+                      "code is out of range.");
+        }
       }
+    }
+  }
+  for (int i = 0; i < n_total; i++) {
+    if (!explained[i]) {
+      throw Error("Blackbox",
+                  "Malformed blackbox bounds reason: missing explained "
+                  "variable entry.");
     }
   }
 }

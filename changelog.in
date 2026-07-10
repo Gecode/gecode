@@ -84,9 +84,11 @@ Add support for the experimental MiniZinc black-box propagator interface. A
 FlatZinc model can request propagation using an external function, implemented
 either as a shared library or as a subprocess, through two generic propagators:
 gecode_blackbox (value propagation, scheduled once all inputs are fixed) and
-gecode_blackbox_bounds (bounds propagation, scheduled on bound changes).The
+gecode_blackbox_bounds (bounds propagation, scheduled on bound changes). The
 blackbox_exec and blackbox_dll annotations select the execution mode and pass
-through extra arguments.
+through extra arguments. These annotations intentionally execute user-provided
+code and should only be used with trusted models and trusted executable or
+library paths.
 
 [ENTRY]
 Module: minimodel
