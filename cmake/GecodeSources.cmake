@@ -264,6 +264,7 @@ set(GECODE_TEST_SOURCES
   test/flatzinc/battleships5.cpp
   test/flatzinc/battleships7.cpp
   test/flatzinc/battleships9.cpp
+  test/flatzinc/blackbox.cpp
   test/flatzinc/blocksworld_instance_1.cpp
   test/flatzinc/blocksworld_instance_2.cpp
   test/flatzinc/bool_clause.cpp

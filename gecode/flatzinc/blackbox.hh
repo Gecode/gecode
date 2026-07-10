@@ -236,6 +236,34 @@ public:
     }
 
     BlackBoxHandle black_box_handle(black_box);
+    if ((int_input.size() == 0)
+#ifdef GECODE_HAS_FLOAT_VARS
+        && (float_input.size() == 0)
+#endif
+    ) {
+      std::vector<int> int_in;
+      std::vector<int> int_out(int_output.size());
+      std::vector<double> float_in;
+      std::vector<double> float_out;
+#ifdef GECODE_HAS_FLOAT_VARS
+      float_out.resize(float_output.size());
+#endif
+      black_box_handle()->run(int_in, float_in, int_out, float_out);
+      for (int i = 0; i < int_output.size(); i++) {
+        if (me_failed(int_output[i].eq(home, int_out[i]))) {
+          return ES_FAILED;
+        }
+      }
+#ifdef GECODE_HAS_FLOAT_VARS
+      for (int i = 0; i < float_output.size(); i++) {
+        if (me_failed(float_output[i].eq(home, float_out[i]))) {
+          return ES_FAILED;
+        }
+      }
+#endif
+      return ES_OK;
+    }
+
     new (home) BlackBox(home, int_input, int_output,
 #ifdef GECODE_HAS_FLOAT_VARS
                         float_input, float_output,
@@ -321,6 +349,7 @@ public:
     }
 #endif
     home.notice(*this, AP_DISPOSE);
+    home.notice(*this, AP_WEAKLY);
   }
   /// Cost function (defined as exponential)
   PropCost cost(const Space &home, const ModEventDelta &med) const override {
@@ -360,6 +389,7 @@ public:
     }
 #endif
     home.ignore(*this, AP_DISPOSE);
+    home.ignore(*this, AP_WEAKLY);
     black_box.~BlackBoxHandle();
     sub_int.~SharedArray<bool>();
 #ifdef GECODE_HAS_FLOAT_VARS
@@ -396,6 +426,50 @@ public:
     }
 
     BlackBoxHandle black_box_handle(black_box);
+    bool has_subscription = false;
+    for (int i = 0; i < ivar.size(); i++) {
+      has_subscription = has_subscription || sub_int[i];
+    }
+#ifdef GECODE_HAS_FLOAT_VARS
+    for (int i = 0; i < fvar.size(); i++) {
+      has_subscription = has_subscription || sub_float[i];
+    }
+#endif
+    if (!has_subscription) {
+      std::vector<int> int_in(ivar.size() * 2);
+      std::vector<int> int_out(ivar.size() * 2);
+      for (int i = 0; i < ivar.size(); i++) {
+        int_in[i*2] = ivar[i].min();
+        int_in[i*2+1] = ivar[i].max();
+      }
+      std::vector<double> float_in;
+      std::vector<double> float_out;
+#ifdef GECODE_HAS_FLOAT_VARS
+      float_in.resize(fvar.size() * 2);
+      float_out.resize(fvar.size() * 2);
+      for (int i = 0; i < fvar.size(); i++) {
+        float_in[i*2] = fvar[i].min();
+        float_in[i*2+1] = fvar[i].max();
+      }
+#endif
+      black_box_handle()->run(int_in, float_in, int_out, float_out);
+      for (int i = 0; i < ivar.size(); i++) {
+        if (me_failed(ivar[i].gq(home, int_out[i*2])) ||
+            me_failed(ivar[i].lq(home, int_out[i*2+1]))) {
+          return ES_FAILED;
+        }
+      }
+#ifdef GECODE_HAS_FLOAT_VARS
+      for (int i = 0; i < fvar.size(); i++) {
+        if (me_failed(fvar[i].gq(home, float_out[i*2])) ||
+            me_failed(fvar[i].lq(home, float_out[i*2+1]))) {
+          return ES_FAILED;
+        }
+      }
+#endif
+      return ES_OK;
+    }
+
     new (home) BlackBoxBounds(home, ivar,
 #ifdef GECODE_HAS_FLOAT_VARS
                         fvar,

@@ -77,6 +77,7 @@ export QT_CPPFLAGS = @QTDEFINES@ @QTINCLUDES@
 export LINKQT = @QTLIBS@
 export LINKCPPROFILER = @LINKCPPROFILER@
 export LINKATOMIC = @LINKATOMIC@
+export LINKDL = @GECODE_DL_LIBS@
 export MPFR_CPPFLAGS = @GMP_CPPFLAGS@ @MPFR_CPPFLAGS@
 ifeq "@enable_mpfr@" "yes"
 export LINKMPFR = @MPFR_LIB_PATH@ @GMP_LIB_PATH@ @MPFR_LINK@ @GMP_LINK@
@@ -1168,6 +1169,7 @@ FLATZINCTESTSRC0 = \
   test/flatzinc/battleships5.cpp \
   test/flatzinc/battleships7.cpp \
   test/flatzinc/battleships9.cpp \
+  test/flatzinc/blackbox.cpp \
   test/flatzinc/blocksworld_instance_1.cpp \
   test/flatzinc/blocksworld_instance_2.cpp \
   test/flatzinc/cumulatives.cpp \
@@ -1395,6 +1397,8 @@ gecode/kernel/var-type.hpp: $(VISDEP)
 gecode/kernel/var-imp.hpp: $(VISDEP)
 	$(UVRUN) $(top_srcdir)/misc/genvarimp.py -header $(VIS) > $@
 
+$(ALLOBJ) $(ALLSBJ) $(TESTOBJ) $(TESTSBJ): $(VARIMP)
+
 #
 # Object targets
 #
@@ -1566,7 +1570,7 @@ else
 export LINKALL = \
 	$(LINKFLATZINC) $(LINKDRIVER) $(LINKGIST) \
 	$(LINKSEARCH) $(LINKMM) $(LINKSET) $(LINKFLOAT) $(LINKMPFR) $(LINKINT) \
-	$(LINKKERNEL) $(LINKSUPPORT) $(LINKATOMIC)
+	$(LINKKERNEL) $(LINKSUPPORT) $(LINKATOMIC) $(LINKDL)
 endif
 
 $(SUPPORTDLL): $(SUPPORTOBJ)
@@ -1627,7 +1631,7 @@ $(FLATZINCDLL): $(FLATZINCOBJ) $(SUPPORTDLL) $(KERNELDLL) $(SEARCHDLL) \
 	$(CXX) $(DLLFLAGS) $(FLATZINCOBJ) $(FLATZINCSONAME) \
 		@DLLPATH@ $(LINKSUPPORT) $(LINKKERNEL) $(LINKSEARCH) $(LINKINT) \
 		$(LINKSET) $(LINKFLOAT) $(LINKMM) $(LINKGIST) $(LINKDRIVER) $(LINKQT) \
-		@LINKOUTPUT@$(FLATZINCDLL)
+		$(LINKDL) @LINKOUTPUT@$(FLATZINCDLL)
 	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOLINKSUFFIX))
 	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOSUFFIX))
 else
@@ -1735,7 +1739,7 @@ $(FLATZINCDLL) $(FLATZINCLIB): $(FLATZINCOBJ) $(FLATZINCRES) \
 	$(SUPPORTDLL) $(KERNELDLL) $(SEARCHDLL) $(INTDLL) \
 	$(SETDLL) $(FLOATDLL) $(GISTDLL) $(MMDLL) $(DRIVERDLL)
 	$(CXX) $(DLLFLAGS) $(FLATZINCOBJ) $(FLATZINCRES) \
-		@DLLPATH@ @LINKOUTPUT@$(FLATZINCDLL) $(GLDFLAGS) $(LINKQT)
+		@DLLPATH@ @LINKOUTPUT@$(FLATZINCDLL) $(GLDFLAGS) $(LINKQT) $(LINKDL)
 	$(FIXMANIFEST) $(FLATZINCDLL).manifest
 	$(MANIFEST) -manifest $(FLATZINCDLL).manifest \
 		    -outputresource:$(FLATZINCDLL)\;2

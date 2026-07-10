@@ -37,7 +37,6 @@ esac
 fi
 
 
-
 # Reset variables that may have inherited troublesome values from
 # the environment.
 
@@ -665,6 +664,7 @@ enable_minimodel
 enable_examples
 enable_flatzinc
 enable_driver
+GECODE_DL_LIBS
 host_os
 host_vendor
 host_cpu
@@ -14457,6 +14457,75 @@ printf "%s\n" "#define HAVE_MMAP 1" >>confdefs.h
 
 fi
 rm -f conftest.mmap conftest.txt
+
+GECODE_SAVE_LIBS=${LIBS}
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for library containing dlopen" >&5
+printf %s "checking for library containing dlopen... " >&6; }
+if test ${ac_cv_search_dlopen+y}
+then :
+  printf %s "(cached) " >&6
+else case e in #(
+  e) ac_func_search_save_LIBS=$LIBS
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+namespace conftest {
+  extern "C" int dlopen ();
+}
+int
+main (void)
+{
+return conftest::dlopen ();
+  ;
+  return 0;
+}
+_ACEOF
+for ac_lib in '' dl
+do
+  if test -z "$ac_lib"; then
+    ac_res="none required"
+  else
+    ac_res=-l$ac_lib
+    LIBS="-l$ac_lib  $ac_func_search_save_LIBS"
+  fi
+  if ac_fn_cxx_try_link "$LINENO"
+then :
+  ac_cv_search_dlopen=$ac_res
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.beam \
+    conftest$ac_exeext
+  if test ${ac_cv_search_dlopen+y}
+then :
+  break
+fi
+done
+if test ${ac_cv_search_dlopen+y}
+then :
+
+else case e in #(
+  e) ac_cv_search_dlopen=no ;;
+esac
+fi
+rm conftest.$ac_ext
+LIBS=$ac_func_search_save_LIBS ;;
+esac
+fi
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $ac_cv_search_dlopen" >&5
+printf "%s\n" "$ac_cv_search_dlopen" >&6; }
+ac_res=$ac_cv_search_dlopen
+if test "$ac_res" != no
+then :
+  test "$ac_res" = "none required" || LIBS="$ac_res $LIBS"
+  GECODE_DL_LIBS=${ac_cv_search_dlopen}
+else case e in #(
+  e) GECODE_DL_LIBS= ;;
+esac
+fi
+
+LIBS=${GECODE_SAVE_LIBS}
+if test "x${GECODE_DL_LIBS}" = "xnone required"; then
+  GECODE_DL_LIBS=
+fi
 
 
 

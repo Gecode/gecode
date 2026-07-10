@@ -279,6 +279,14 @@ AC_GECODE_CBS
 AC_GECODE_CPPROFILER
 AC_GECODE_FLEXBISON
 AC_FUNC_MMAP
+GECODE_SAVE_LIBS=${LIBS}
+AC_SEARCH_LIBS([dlopen], [dl], [GECODE_DL_LIBS=${ac_cv_search_dlopen}],
+  [GECODE_DL_LIBS=])
+LIBS=${GECODE_SAVE_LIBS}
+if test "x${GECODE_DL_LIBS}" = "xnone required"; then
+  GECODE_DL_LIBS=
+fi
+AC_SUBST([GECODE_DL_LIBS])
 
 AC_GECODE_ENABLE_MODULE(driver, yes,
 	[build script commandline driver library],
