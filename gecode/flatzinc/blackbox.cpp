@@ -31,7 +31,16 @@
  *
  */
 
-#if !defined(_WIN32) && !defined(_GNU_SOURCE)
+#if defined(_WIN32)
+#if !defined(_WIN32_WINNT) || (_WIN32_WINNT < 0x0600)
+#undef _WIN32_WINNT
+#define _WIN32_WINNT 0x0600
+#endif
+#if !defined(WINVER) || (WINVER < 0x0600)
+#undef WINVER
+#define WINVER 0x0600
+#endif
+#elif !defined(_GNU_SOURCE)
 #define _GNU_SOURCE 1
 #endif
 
@@ -39,10 +48,11 @@
 #include <gecode/flatzinc.hh>
 #include <gecode/flatzinc/blackbox.hh>
 
-#include <algorithm>
 #include <atomic>
 #include <cassert>
 #include <cerrno>
+#include <charconv>
+#include <cctype>
 #include <cstdio>
 #include <cstdlib>
 #include <cstdint>
@@ -61,8 +71,8 @@
 #include <windows.h>
 #else
 #include <dlfcn.h>
+#ifdef GECODE_HAS_POSIX_BLACKBOX_EXEC
 #include <fcntl.h>
-#include <limits.h>
 #include <pthread.h>
 #include <signal.h>
 #include <spawn.h>
@@ -72,6 +82,7 @@
 #include <time.h>
 #include <unistd.h>
 extern char **environ;
+#endif
 #endif
 
 #ifdef GECODE_HAS_THREADS
@@ -107,6 +118,125 @@ windows_error(const std::string &prefix, DWORD err) {
   return prefix + " (Windows error " + std::to_string(err) + ")";
 }
 
+class WindowsHandle {
+private:
+  HANDLE handle;
+public:
+  explicit WindowsHandle(HANDLE handle0=NULL) : handle(handle0) {}
+  ~WindowsHandle(void) { reset(); }
+
+  WindowsHandle(const WindowsHandle &) = delete;
+  WindowsHandle &operator=(const WindowsHandle &) = delete;
+
+  HANDLE get(void) const { return handle; }
+  HANDLE *put(void) {
+    reset();
+    return &handle;
+  }
+  HANDLE release(void) {
+    HANDLE handle0 = handle;
+    handle = NULL;
+    return handle0;
+  }
+  bool valid(void) const {
+    return (handle != NULL) && (handle != INVALID_HANDLE_VALUE);
+  }
+  void reset(HANDLE handle0=NULL) {
+    if (valid()) {
+      CloseHandle(handle);
+    }
+    handle = handle0;
+  }
+};
+
+class WindowsAttributeList {
+private:
+  std::vector<char> buffer;
+  LPPROC_THREAD_ATTRIBUTE_LIST list;
+  bool initialized;
+public:
+  WindowsAttributeList(void) : list(NULL), initialized(false) {}
+  ~WindowsAttributeList(void) {
+    if (initialized) {
+      DeleteProcThreadAttributeList(list);
+    }
+  }
+
+  void init(void) {
+    SIZE_T size = 0;
+    InitializeProcThreadAttributeList(NULL, 1, 0, &size);
+    if (size == 0) {
+      throw Error("BlackBoxExec",
+                  windows_error("ProcThreadAttributeList size query failed",
+                                GetLastError()));
+    }
+    buffer.resize(size);
+    list = reinterpret_cast<LPPROC_THREAD_ATTRIBUTE_LIST>(buffer.data());
+    if (!InitializeProcThreadAttributeList(list, 1, 0, &size)) {
+      throw Error("BlackBoxExec",
+                  windows_error("InitializeProcThreadAttributeList failed",
+                                GetLastError()));
+    }
+    initialized = true;
+  }
+
+  void set_inherited_handles(HANDLE *handles, DWORD count) {
+    if (!UpdateProcThreadAttribute(list, 0, PROC_THREAD_ATTRIBUTE_HANDLE_LIST,
+                                   handles, sizeof(HANDLE) * count, NULL,
+                                   NULL)) {
+      throw Error("BlackBoxExec",
+                  windows_error("PROC_THREAD_ATTRIBUTE_HANDLE_LIST failed",
+                                GetLastError()));
+    }
+  }
+
+  LPPROC_THREAD_ATTRIBUTE_LIST get(void) const { return list; }
+};
+
+bool
+has_dll_suffix(const std::string &name) {
+  if (name.size() < 4) {
+    return false;
+  }
+  const char *suffix = ".dll";
+  for (size_t i = 0; i < 4; i++) {
+    if (std::tolower(static_cast<unsigned char>(name[name.size() - 4 + i])) !=
+        suffix[i]) {
+      return false;
+    }
+  }
+  return true;
+}
+
+std::vector<std::string>
+dll_candidates(const std::string &name) {
+  std::vector<std::string> candidates;
+  candidates.push_back(name);
+  if (!has_dll_suffix(name)) {
+    candidates.push_back(name + ".dll");
+  }
+  const size_t separator = name.find_last_of("\\/");
+  const std::string directory =
+      (separator == std::string::npos) ? std::string() :
+      name.substr(0, separator + 1);
+  const std::string basename =
+      (separator == std::string::npos) ? name : name.substr(separator + 1);
+  if (basename.compare(0, 3, "lib") != 0) {
+    std::string prefixed = directory + "lib" + basename;
+    if (!has_dll_suffix(prefixed)) {
+      prefixed += ".dll";
+    }
+    candidates.push_back(prefixed);
+  }
+  return candidates;
+}
+
+bool
+qualified_path(const std::wstring &program) {
+  return (program.find_first_of(L"\\/") != std::wstring::npos) ||
+         ((program.size() > 1) && (program[1] == L':'));
+}
+
 void
 close_library(void *library) {
   if (library != nullptr) {
@@ -121,6 +251,7 @@ close_library(void *library) {
   }
 }
 
+#ifdef GECODE_HAS_POSIX_BLACKBOX_EXEC
 int
 set_cloexec(int fd) {
   int flags = fcntl(fd, F_GETFD);
@@ -298,17 +429,43 @@ send_no_sigpipe(int fd, const char *data, size_t size) {
 #endif
 }
 #endif
+#endif
 
-int
-checked_int(long long v, const char *source, size_t i) {
-  if ((v < Int::Limits::min) || (v > Int::Limits::max) ||
-      (v < std::numeric_limits<int>::min()) ||
-      (v > std::numeric_limits<int>::max())) {
+template<class T>
+T
+library_symbol(void *library, const char *name, unsigned int stdcall_bytes) {
+#ifdef _WIN32
+  FARPROC symbol = GetProcAddress(static_cast<HMODULE>(library), name);
+#if defined(_M_IX86) || defined(__i386__)
+  if (symbol == nullptr) {
+    const std::string decorated =
+        std::string("_") + name + "@" + std::to_string(stdcall_bytes);
+    symbol = GetProcAddress(static_cast<HMODULE>(library), decorated.c_str());
+  }
+  if (symbol == nullptr) {
+    const std::string decorated =
+        std::string(name) + "@" + std::to_string(stdcall_bytes);
+    symbol = GetProcAddress(static_cast<HMODULE>(library), decorated.c_str());
+  }
+#else
+  (void)stdcall_bytes;
+#endif
+  return reinterpret_cast<T>(symbol);
+#else
+  (void)stdcall_bytes;
+  T symbol = nullptr;
+  *(void **)(&symbol) = dlsym(library, name);
+  return symbol;
+#endif
+}
+
+void
+check_int(int64_t v, const char *source, size_t i) {
+  if (!Int::Limits::valid(static_cast<long long int>(v))) {
     throw Error("Blackbox", std::string(source) + " integer " +
                               std::to_string(i) +
                               " is outside Gecode's integer range");
   }
-  return static_cast<int>(v);
 }
 
 #ifdef GECODE_HAS_FLOAT_VARS
@@ -346,30 +503,41 @@ const size_t max_exec_response_size = 1024 * 1024;
 
 } // namespace
 
-BlackBoxLibrary::BlackBoxLibrary(const std::string &name)
-    : library(nullptr), library_fzn_blackbox(nullptr),
-      library_fzn_initialize(nullptr) {
+#ifdef GECODE_HAS_THREADS
+class BlackBoxLibrary::Instance {
+public:
+  std::thread::id owner;
+  void *value;
+  Support::Mutex mutex;
+
+  Instance(const std::thread::id &owner0, void *value0)
+      : owner(owner0), value(value0) {}
+};
+#endif
+
+BlackBoxLibrary::BlackBoxLibrary(const std::string &name,
+                                 const std::vector<std::string> &args)
+    : library(nullptr), library_fzn_init(nullptr), library_fzn_clone(nullptr),
+      library_fzn_blackbox(nullptr), library_fzn_free(nullptr),
+      root_instance(nullptr)
+{
   std::string loadError;
   void *loaded = nullptr;
 #ifdef _WIN32
-  DWORD err = 0;
-  std::wstring wname = utf8_to_wide(name);
-  loaded = LoadLibraryW(wname.c_str());
-  if (!loaded) {
+  DWORD err = ERROR_FILE_NOT_FOUND;
+  std::string failed_candidate = name;
+  for (const std::string &candidate : dll_candidates(name)) {
+    loaded = LoadLibraryW(utf8_to_wide(candidate).c_str());
+    if (loaded != nullptr) {
+      break;
+    }
+    failed_candidate = candidate;
     err = GetLastError();
-    loadError = std::string("unable to locate library `") + name + "'";
-    std::wstring wdll = utf8_to_wide(name + ".dll");
-    loaded = LoadLibraryW(wdll.c_str());
-    if (!loaded) {
-      err = GetLastError();
-    }
   }
-  if (!loaded) {
-    std::wstring wlibdll = utf8_to_wide(std::string("lib") + name + ".dll");
-    loaded = LoadLibraryW(wlibdll.c_str());
-    if (!loaded) {
-      loadError += " (" + windows_error("LoadLibraryW failed", err) + ")";
-    }
+  if (loaded == nullptr) {
+    loadError = std::string("unable to locate library `") + name + "' (" +
+                windows_error("LoadLibraryW failed for `" + failed_candidate +
+                              "'", err) + ")";
   }
 #else
   loaded = dlopen(name.c_str(), RTLD_LAZY);
@@ -393,110 +561,137 @@ BlackBoxLibrary::BlackBoxLibrary(const std::string &name)
     throw Error("Blackbox", "Unable to open dynamic library: " + loadError);
   }
 
-  // find symbol for blackbox function
-#ifdef _WIN32
-  library_fzn_blackbox = reinterpret_cast<decltype(library_fzn_blackbox)>(
-      GetProcAddress((HMODULE)loaded, "fzn_blackbox"));
-#if defined(_M_IX86) || defined(__i386__)
-  if (!library_fzn_blackbox) {
-    library_fzn_blackbox = reinterpret_cast<decltype(library_fzn_blackbox)>(
-        GetProcAddress((HMODULE)loaded, "_fzn_blackbox@32"));
-  }
-  if (!library_fzn_blackbox) {
-    library_fzn_blackbox = reinterpret_cast<decltype(library_fzn_blackbox)>(
-        GetProcAddress((HMODULE)loaded, "fzn_blackbox@32"));
-  }
+  bool root_initialized = false;
+  try {
+    // fzn_blackbox is the only required entry point.
+#ifndef _WIN32
+    dlerror();
 #endif
-  std::string symError = ".";
-#else
-  *(void **)(&library_fzn_blackbox) = dlsym(loaded, "fzn_blackbox");
-  std::string symError(": ");
-  if (!library_fzn_blackbox) {
-    symError += std::string(dlerror());
-  }
-#endif
-  if (!library_fzn_blackbox) {
-    close_library(loaded);
-    throw Error("Blackbox",
-                "Unable to find symbol `fzn_blackbox` in dynamic library" +
-                    symError);
-  }
-
+    library_fzn_blackbox =
+        library_symbol<decltype(library_fzn_blackbox)>(loaded, "fzn_blackbox",
+                                                        36);
+    std::string symError(".");
+    if (library_fzn_blackbox == nullptr) {
 #ifdef _WIN32
-  char path[MAX_PATH];
-  DWORD path_size = GetModuleFileNameA(static_cast<HMODULE>(loaded), path,
-                                       static_cast<DWORD>(sizeof(path)));
-  if ((path_size > 0) && (path_size < sizeof(path))) {
-    library_identity.assign(path, path_size);
-  }
+      symError += " (" +
+          windows_error("GetProcAddress failed", GetLastError()) + ")";
 #else
-  Dl_info info;
-  if ((dladdr(reinterpret_cast<void *>(library_fzn_blackbox), &info) != 0) &&
-      (info.dli_fname != nullptr)) {
-    char resolved[PATH_MAX];
-    if (realpath(info.dli_fname, resolved) != nullptr) {
-      library_identity = resolved;
-    } else {
-      library_identity = info.dli_fname;
+      const char *error = dlerror();
+      if (error != nullptr) {
+        symError += std::string(": ") + error;
+      }
+#endif
+      throw Error("Blackbox",
+                  "Unable to find symbol `fzn_blackbox` in dynamic library" +
+                      symError);
     }
-  }
-#endif
-  if (library_identity.empty()) {
-    library_identity = name;
-  }
 
-  // Look up the optional initialization function.  Calling it is deferred
-  // until the model-local backend cache has checked its configuration.
-#ifdef _WIN32
-  library_fzn_initialize = reinterpret_cast<decltype(library_fzn_initialize)>(
-      GetProcAddress((HMODULE)loaded, "fzn_initialize"));
-#if defined(_M_IX86) || defined(__i386__)
-  if (!library_fzn_initialize) {
-    library_fzn_initialize = reinterpret_cast<decltype(library_fzn_initialize)>(
-        GetProcAddress((HMODULE)loaded, "_fzn_initialize@8"));
+    library_fzn_init =
+        library_symbol<decltype(library_fzn_init)>(loaded, "fzn_init", 8);
+    library_fzn_clone =
+        library_symbol<decltype(library_fzn_clone)>(loaded, "fzn_clone", 4);
+    library_fzn_free =
+        library_symbol<decltype(library_fzn_free)>(loaded, "fzn_free", 4);
+    if ((library_fzn_init != nullptr) && (library_fzn_clone == nullptr)) {
+      throw Error("Blackbox",
+                  "Dynamic library exports `fzn_init` but not `fzn_clone`");
+    }
+    if (library_fzn_init != nullptr) {
+      std::vector<const char *> argv;
+      argv.reserve(args.size());
+      for (const std::string &arg : args) {
+        argv.push_back(arg.c_str());
+      }
+      root_instance = library_fzn_init(argv.data(), argv.size());
+      root_initialized = true;
+    }
+    library = loaded;
+  } catch (...) {
+    if (root_initialized && (library_fzn_free != nullptr)) {
+      try {
+        library_fzn_free(root_instance);
+      } catch (...) {}
+    }
+    close_library(loaded);
+    throw;
   }
-  if (!library_fzn_initialize) {
-    library_fzn_initialize = reinterpret_cast<decltype(library_fzn_initialize)>(
-        GetProcAddress((HMODULE)loaded, "fzn_initialize@8"));
-  }
-#endif
-#else
-  *(void **)(&library_fzn_initialize) = dlsym(loaded, "fzn_initialize");
-#endif
-  library = loaded;
 }
 
 BlackBoxLibrary::~BlackBoxLibrary() {
+  if ((library_fzn_init != nullptr) && (library_fzn_free != nullptr)) {
+#ifdef GECODE_HAS_THREADS
+    for (Instance *instance : instances) {
+      try {
+        library_fzn_free(instance->value);
+      } catch (...) {}
+    }
+#endif
+    try {
+      library_fzn_free(root_instance);
+    } catch (...) {}
+  }
+#ifdef GECODE_HAS_THREADS
+  for (Instance *instance : instances) {
+    delete instance;
+  }
+#endif
   close_library(library);
 }
 
-void
-BlackBoxLibrary::initialize(const std::vector<std::string> &args) {
-  if (library_fzn_initialize != nullptr) {
-    std::vector<const char *> argv;
-    argv.reserve(args.size());
-    for (const std::string &a : args) {
-      argv.push_back(a.c_str());
+#ifdef GECODE_HAS_THREADS
+BlackBoxLibrary::Instance *
+BlackBoxLibrary::instance(void) {
+  const std::thread::id owner = std::this_thread::get_id();
+  Support::Lock lock(mutex);
+  for (Instance *instance : instances) {
+    if (instance->owner == owner) {
+      return instance;
     }
-    library_fzn_initialize(argv.data(), argv.size());
+  }
+  void *value = library_fzn_clone(root_instance);
+  Instance *clone = nullptr;
+  try {
+    clone = new Instance(owner, value);
+    instances.push_back(clone);
+    return clone;
+  } catch (...) {
+    delete clone;
+    if (library_fzn_free != nullptr) {
+      try {
+        library_fzn_free(value);
+      } catch (...) {}
+    }
+    throw;
   }
 }
-
-const std::string &
-BlackBoxLibrary::identity(void) const {
-  return library_identity;
-}
+#endif
 
 void
 BlackBoxLibrary::run(const std::vector<int64_t> &int_in,
                      const std::vector<double> &float_in,
                      std::vector<int64_t> &int_out,
                      std::vector<double> &float_out) {
-  library_fzn_blackbox(int_in.data(), int_in.size(), float_in.data(),
-                       float_in.size(), int_out.data(), int_out.size(),
+#ifdef GECODE_HAS_THREADS
+  if (library_fzn_init != nullptr) {
+    Instance *selected = this->instance();
+    Support::Lock lock(selected->mutex);
+    library_fzn_blackbox(selected->value, int_in.data(), int_in.size(),
+                         float_in.data(), float_in.size(), int_out.data(),
+                         int_out.size(), float_out.data(), float_out.size());
+  } else {
+    library_fzn_blackbox(nullptr, int_in.data(), int_in.size(),
+                         float_in.data(), float_in.size(), int_out.data(),
+                         int_out.size(),
+                         float_out.data(), float_out.size());
+  }
+#else
+  library_fzn_blackbox(root_instance, int_in.data(), int_in.size(),
+                       float_in.data(), float_in.size(), int_out.data(),
+                       int_out.size(),
                        float_out.data(), float_out.size());
+#endif
   for (size_t i = 0; i < int_out.size(); ++i) {
-    int_out[i] = checked_int(int_out[i], "library output", i);
+    check_int(int_out[i], "library output", i);
   }
 #ifdef GECODE_HAS_FLOAT_VARS
   check_floats(float_out, "library output");
@@ -510,7 +705,7 @@ protected:
   HANDLE process;
   HANDLE pipe_send;
   HANDLE pipe_receive;
-#else
+#elif defined(GECODE_HAS_POSIX_BLACKBOX_EXEC)
   pid_t child;
   int pipe_send;
   FILE *file_receive;
@@ -522,8 +717,10 @@ protected:
   static std::string last_error(const std::string &prefix) {
 #ifdef _WIN32
     return prefix + " (Windows error " + std::to_string(GetLastError()) + ")";
-#else
+#elif defined(GECODE_HAS_POSIX_BLACKBOX_EXEC)
     return prefix + " (errno " + std::to_string(errno) + ")";
+#else
+    return prefix;
 #endif
   }
 
@@ -559,7 +756,7 @@ protected:
   void open_windows(const std::string &program,
                     const std::vector<std::string> &args);
   void close_windows(void);
-#else
+#elif defined(GECODE_HAS_POSIX_BLACKBOX_EXEC)
   static void sleep_grace_period(void) {
     struct timespec remaining = {0, 10000000};
     while ((nanosleep(&remaining, &remaining) == -1) && (errno == EINTR)) {}
@@ -633,26 +830,25 @@ protected:
 
 public:
   Session(const std::string &program, const std::vector<std::string> &args)
-#ifdef GECODE_HAS_THREADS
-#ifdef _WIN32
-      : job(NULL), process(NULL), pipe_send(NULL), pipe_receive(NULL),
-        owner(std::this_thread::get_id())
-#else
-      : child(-1), pipe_send(-1), file_receive(NULL),
-        owner(std::this_thread::get_id())
-#endif
-#else
 #ifdef _WIN32
       : job(NULL), process(NULL), pipe_send(NULL), pipe_receive(NULL)
-#else
+#elif defined(GECODE_HAS_POSIX_BLACKBOX_EXEC)
       : child(-1), pipe_send(-1), file_receive(NULL)
 #endif
-#endif
   {
+#ifdef GECODE_HAS_THREADS
+    owner = std::this_thread::get_id();
+#endif
 #ifdef _WIN32
     open_windows(program, args);
-#else
+#elif defined(GECODE_HAS_POSIX_BLACKBOX_EXEC)
     open_posix(program, args);
+#else
+    (void)program;
+    (void)args;
+    throw Error("BlackBoxExec",
+                "Persistent process blackboxes are not supported on this "
+                "platform");
 #endif
   }
 
@@ -705,7 +901,7 @@ public:
       oss << c[0];
     }
     return oss.str();
-#else
+#elif defined(GECODE_HAS_POSIX_BLACKBOX_EXEC)
     const char *p = out_buf.c_str();
     size_t remaining = out_buf.size();
     while (remaining > 0) {
@@ -755,13 +951,18 @@ public:
       }
     }
     return in_buffer;
+#else
+    (void)out_buf;
+    throw Error("BlackBoxExec",
+                "Persistent process blackboxes are not supported on this "
+                "platform");
 #endif
   }
 
   void close(void) {
 #ifdef _WIN32
     close_windows();
-#else
+#elif defined(GECODE_HAS_POSIX_BLACKBOX_EXEC)
     close_posix();
 #endif
   }
@@ -782,107 +983,83 @@ BlackBoxExec::Session::open_windows(const std::string &program,
   std::vector<wchar_t> cmdline(prog.begin(), prog.end());
   cmdline.push_back(L'\0');
 
-  SIZE_T attr_size = 0;
-  InitializeProcThreadAttributeList(NULL, 1, 0, &attr_size);
-  std::vector<char> attr_buf(attr_size);
-
   SECURITY_ATTRIBUTES saAttr;
   saAttr.nLength = sizeof(SECURITY_ATTRIBUTES);
   saAttr.bInheritHandle = TRUE;
   saAttr.lpSecurityDescriptor = NULL;
 
-  HANDLE child_stdin_read = NULL;
-  HANDLE child_stdin_write = NULL;
-  HANDLE child_stdout_read = NULL;
-  HANDLE child_stdout_write = NULL;
-  HANDLE child_stderr_write = NULL;
-  LPPROC_THREAD_ATTRIBUTE_LIST attr_list = NULL;
-
-  auto close_startup_handles = [&]() {
-    close_handle(child_stdin_read);
-    close_handle(child_stdin_write);
-    close_handle(child_stdout_read);
-    close_handle(child_stdout_write);
-    close_handle(child_stderr_write);
-  };
-  auto destroy_attr_list = [&]() {
-    if (attr_list != NULL) {
-      DeleteProcThreadAttributeList(attr_list);
-      attr_list = NULL;
-    }
-  };
-
-  if (!CreatePipe(&child_stdout_read, &child_stdout_write, &saAttr, 0)) {
+  WindowsHandle child_stdin_read;
+  WindowsHandle child_stdin_write;
+  WindowsHandle child_stdout_read;
+  WindowsHandle child_stdout_write;
+  WindowsHandle child_stderr_write;
+  if (!CreatePipe(child_stdout_read.put(), child_stdout_write.put(), &saAttr,
+                  0)) {
     throw Error("BlackBoxExec", last_error("Stdout CreatePipe failed"));
   }
-  if (!SetHandleInformation(child_stdout_read, HANDLE_FLAG_INHERIT, 0)) {
-    DWORD err = GetLastError();
-    close_startup_handles();
+  if (!SetHandleInformation(child_stdout_read.get(), HANDLE_FLAG_INHERIT, 0)) {
     throw Error("BlackBoxExec",
-                windows_error("Stdout SetHandleInformation failed", err));
+                last_error("Stdout SetHandleInformation failed"));
   }
-  if (!CreatePipe(&child_stdin_read, &child_stdin_write, &saAttr, 0)) {
-    DWORD err = GetLastError();
-    close_startup_handles();
-    throw Error("BlackBoxExec", windows_error("Stdin CreatePipe failed", err));
+  if (!CreatePipe(child_stdin_read.put(), child_stdin_write.put(), &saAttr,
+                  0)) {
+    throw Error("BlackBoxExec", last_error("Stdin CreatePipe failed"));
   }
-  if (!SetHandleInformation(child_stdin_write, HANDLE_FLAG_INHERIT, 0)) {
-    DWORD err = GetLastError();
-    close_startup_handles();
+  if (!SetHandleInformation(child_stdin_write.get(), HANDLE_FLAG_INHERIT, 0)) {
     throw Error("BlackBoxExec",
-                windows_error("Stdin SetHandleInformation failed", err));
+                last_error("Stdin SetHandleInformation failed"));
   }
 
   HANDLE parent_stderr = GetStdHandle(STD_ERROR_HANDLE);
   if ((parent_stderr != NULL) && (parent_stderr != INVALID_HANDLE_VALUE)) {
     if (!DuplicateHandle(GetCurrentProcess(), parent_stderr,
-                         GetCurrentProcess(), &child_stderr_write, 0, TRUE,
+                         GetCurrentProcess(), child_stderr_write.put(), 0, TRUE,
                          DUPLICATE_SAME_ACCESS)) {
-      DWORD err = GetLastError();
-      close_startup_handles();
       throw Error("BlackBoxExec",
-                  windows_error("stderr DuplicateHandle failed", err));
+                  last_error("stderr DuplicateHandle failed"));
     }
+  } else {
+    HANDLE nul = CreateFileW(L"NUL", GENERIC_WRITE,
+                             FILE_SHARE_READ | FILE_SHARE_WRITE, &saAttr,
+                             OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+    if (nul == INVALID_HANDLE_VALUE) {
+      throw Error("BlackBoxExec", last_error("stderr NUL CreateFile failed"));
+    }
+    child_stderr_write.reset(nul);
   }
 
+  WindowsAttributeList attr_list;
+  attr_list.init();
   PROCESS_INFORMATION piProcInfo;
   STARTUPINFOEXW siStartInfo;
   ZeroMemory(&piProcInfo, sizeof(PROCESS_INFORMATION));
   ZeroMemory(&siStartInfo, sizeof(STARTUPINFOEXW));
   siStartInfo.StartupInfo.cb = sizeof(STARTUPINFOEXW);
-  siStartInfo.StartupInfo.hStdOutput = child_stdout_write;
-  siStartInfo.StartupInfo.hStdInput = child_stdin_read;
-  siStartInfo.StartupInfo.hStdError = child_stderr_write;
+  siStartInfo.StartupInfo.hStdOutput = child_stdout_write.get();
+  siStartInfo.StartupInfo.hStdInput = child_stdin_read.get();
+  siStartInfo.StartupInfo.hStdError = child_stderr_write.get();
   siStartInfo.StartupInfo.dwFlags |= STARTF_USESTDHANDLES;
 
-  HANDLE inherit_handles[3] = {child_stdin_read, child_stdout_write, NULL};
-  DWORD inherit_count = 2;
-  if (child_stderr_write != NULL) {
-    inherit_handles[inherit_count++] = child_stderr_write;
-  }
+  HANDLE inherit_handles[3] = {child_stdin_read.get(), child_stdout_write.get(),
+                               child_stderr_write.get()};
+  attr_list.set_inherited_handles(inherit_handles, 3);
+  siStartInfo.lpAttributeList = attr_list.get();
 
-  attr_list = reinterpret_cast<LPPROC_THREAD_ATTRIBUTE_LIST>(attr_buf.data());
-  siStartInfo.lpAttributeList = attr_list;
-  if (!InitializeProcThreadAttributeList(attr_list, 1, 0, &attr_size)) {
-    DWORD err = GetLastError();
-    close_startup_handles();
-    throw Error("BlackBoxExec",
-                windows_error("InitializeProcThreadAttributeList failed", err));
+  WindowsHandle process_job(CreateJobObjectW(NULL, NULL));
+  if (!process_job.valid()) {
+    throw Error("BlackBoxExec", last_error("CreateJobObject failed"));
   }
-  if (!UpdateProcThreadAttribute(attr_list, 0,
-                                 PROC_THREAD_ATTRIBUTE_HANDLE_LIST,
-                                 inherit_handles,
-                                 sizeof(HANDLE) * inherit_count,
-                                 NULL, NULL)) {
-    DWORD err = GetLastError();
-    destroy_attr_list();
-    close_startup_handles();
-    throw Error("BlackBoxExec",
-                windows_error("PROC_THREAD_ATTRIBUTE_HANDLE_LIST failed", err));
+  JOBOBJECT_EXTENDED_LIMIT_INFORMATION job_info;
+  ZeroMemory(&job_info, sizeof(job_info));
+  job_info.BasicLimitInformation.LimitFlags = JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE;
+  if (!SetInformationJobObject(process_job.get(),
+                               JobObjectExtendedLimitInformation, &job_info,
+                               sizeof(job_info))) {
+    throw Error("BlackBoxExec", last_error("SetInformationJobObject failed"));
   }
 
   BOOL processStarted =
-      CreateProcessW(nullptr,
+      CreateProcessW(qualified_path(program_w) ? program_w.c_str() : NULL,
                      cmdline.data(),        // command line
                      nullptr,               // process security attributes
                      nullptr,               // primary thread security attributes
@@ -892,54 +1069,67 @@ BlackBoxExec::Session::open_windows(const std::string &program,
                      nullptr,               // use parent's current directory
                      &siStartInfo.StartupInfo,
                      &piProcInfo);          // receives PROCESS_INFORMATION
-  destroy_attr_list();
 
   if (!processStarted) {
-    DWORD err = GetLastError();
-    close_startup_handles();
     throw Error("BlackBoxExec", windows_error("Unable to start program `" +
-                                             program + "'", err));
+                                             program + "'", GetLastError()));
   }
-
-  HANDLE process_job = CreateJobObjectW(NULL, NULL);
-  if (process_job != NULL) {
-    JOBOBJECT_EXTENDED_LIMIT_INFORMATION job_info;
-    ZeroMemory(&job_info, sizeof(job_info));
-    job_info.BasicLimitInformation.LimitFlags =
-        JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE;
-    if (!SetInformationJobObject(process_job, JobObjectExtendedLimitInformation,
-                                 &job_info, sizeof(job_info)) ||
-        !AssignProcessToJobObject(process_job, piProcInfo.hProcess)) {
-      CloseHandle(process_job);
-      process_job = NULL;
-    }
-  }
-
-  if (ResumeThread(piProcInfo.hThread) == static_cast<DWORD>(-1)) {
+  WindowsHandle process_handle(piProcInfo.hProcess);
+  WindowsHandle thread_handle(piProcInfo.hThread);
+  if (!AssignProcessToJobObject(process_job.get(), process_handle.get())) {
     DWORD err = GetLastError();
-    if (process_job != NULL) {
-      TerminateJobObject(process_job, 1);
-    } else {
-      TerminateProcess(piProcInfo.hProcess, 1);
+    DWORD terminate_err = ERROR_SUCCESS;
+    if (!TerminateProcess(process_handle.get(), 1)) {
+      terminate_err = GetLastError();
     }
-    WaitForSingleObject(piProcInfo.hProcess, 5000);
-    CloseHandle(piProcInfo.hThread);
-    CloseHandle(piProcInfo.hProcess);
-    close_handle(process_job);
-    close_startup_handles();
-    throw Error("BlackBoxExec",
-                windows_error("ResumeThread failed for blackbox process", err));
+    DWORD wait = WaitForSingleObject(process_handle.get(), 5000);
+    std::string message = windows_error(
+        "Unable to assign blackbox process to required job", err);
+    if (terminate_err != ERROR_SUCCESS) {
+      message += "; " + windows_error("TerminateProcess cleanup failed",
+                                       terminate_err);
+    }
+    if (wait == WAIT_FAILED) {
+      message += "; " + last_error("process cleanup wait failed");
+    } else if (wait == WAIT_TIMEOUT) {
+      message += "; process cleanup timed out";
+    }
+    throw Error("BlackBoxExec", message);
   }
-  CloseHandle(piProcInfo.hThread);
 
-  close_handle(child_stdout_write);
-  close_handle(child_stdin_read);
-  close_handle(child_stderr_write);
+  if (ResumeThread(thread_handle.get()) == static_cast<DWORD>(-1)) {
+    DWORD err = GetLastError();
+    DWORD terminate_err = ERROR_SUCCESS;
+    if (!TerminateJobObject(process_job.get(), 1)) {
+      terminate_err = GetLastError();
+    }
+    HANDLE assigned_job = process_job.release();
+    DWORD close_err = ERROR_SUCCESS;
+    if (!CloseHandle(assigned_job)) {
+      close_err = GetLastError();
+    }
+    DWORD wait = WaitForSingleObject(process_handle.get(), 5000);
+    std::string message = windows_error(
+        "ResumeThread failed for blackbox process", err);
+    if (terminate_err != ERROR_SUCCESS) {
+      message += "; " + windows_error("TerminateJobObject cleanup failed",
+                                       terminate_err);
+    }
+    if (close_err != ERROR_SUCCESS) {
+      message += "; " + windows_error("job cleanup close failed", close_err);
+    }
+    if (wait == WAIT_FAILED) {
+      message += "; " + last_error("process cleanup wait failed");
+    } else if (wait == WAIT_TIMEOUT) {
+      message += "; process cleanup timed out";
+    }
+    throw Error("BlackBoxExec", message);
+  }
 
-  pipe_send = child_stdin_write;
-  pipe_receive = child_stdout_read;
-  process = piProcInfo.hProcess;
-  job = process_job;
+  pipe_send = child_stdin_write.release();
+  pipe_receive = child_stdout_read.release();
+  process = process_handle.release();
+  job = process_job.release();
 }
 
 void
@@ -960,7 +1150,7 @@ BlackBoxExec::Session::close_windows(void) {
   }
   close_handle(job);
 }
-#else
+#elif defined(GECODE_HAS_POSIX_BLACKBOX_EXEC)
 void
 BlackBoxExec::Session::open_posix(const std::string &program,
                                   const std::vector<std::string> &args) {
@@ -975,13 +1165,6 @@ BlackBoxExec::Session::open_posix(const std::string &program,
   }
   argv.push_back(nullptr);
 
-#if !((defined(GECODE_HAS_POSIX_SPAWN_CLOEXEC_DEFAULT) && \
-      defined(GECODE_HAS_POSIX_SPAWN_ADDINHERIT_NP)) || \
-     defined(GECODE_HAS_POSIX_SPAWN_ADDCLOSEFROM_NP))
-  throw Error("BlackBoxExec",
-              "Persistent process blackboxes require a safe posix_spawn "
-              "descriptor-inheritance facility on this platform");
-#endif
   check_sigchld();
 
   FileDescriptor child_in[2];
@@ -1131,21 +1314,8 @@ protected:
               const BlackBoxHandle &handle0)
         : program(program0), args(args0), handle(handle0) {}
   };
-  class LibraryEntry {
-  public:
-    std::string identity;
-    std::vector<std::string> args;
-    std::vector<std::string> names;
-    BlackBoxHandle handle;
-    LibraryEntry(const std::string &identity0,
-                 const std::vector<std::string> &args0,
-                 const std::string &name, const BlackBoxHandle &handle0)
-        : identity(identity0), args(args0), names(1, name), handle(handle0) {}
-  };
-
   mutable Support::Mutex mutex;
   std::vector<ExecEntry> exec;
-  std::vector<LibraryEntry> library;
   std::exception_ptr exception;
   std::atomic<bool> error_recorded;
 
@@ -1199,8 +1369,8 @@ BlackBoxHandle
 BlackBoxState::blackBox(const std::string &mode,
                         const std::string &instantiation,
                         const std::vector<std::string> &args) {
-  Support::Lock lock(mutex);
   if (mode == "exec") {
+    Support::Lock lock(mutex);
     for (const ExecEntry &e : exec) {
       if ((e.program == instantiation) && (e.args == args)) {
         return e.handle;
@@ -1211,34 +1381,7 @@ BlackBoxState::blackBox(const std::string &mode,
     return handle;
   }
   if (mode == "dll") {
-    for (LibraryEntry &e : library) {
-      if (std::find(e.names.begin(), e.names.end(), instantiation) !=
-          e.names.end()) {
-        if (e.args != args) {
-          throw Error("Blackbox", "Conflicting initialization arguments for "
-                      "dynamic library `" + e.identity + "'");
-        }
-        return e.handle;
-      }
-    }
-
-    BlackBoxHandle handle(new BlackBoxLibrary(instantiation));
-    BlackBoxLibrary *black_box =
-        static_cast<BlackBoxLibrary *>(handle());
-    for (LibraryEntry &e : library) {
-      if (e.identity == black_box->identity()) {
-        if (e.args != args) {
-          throw Error("Blackbox", "Conflicting initialization arguments for "
-                      "dynamic library `" + e.identity + "'");
-        }
-        e.names.push_back(instantiation);
-        return e.handle;
-      }
-    }
-    black_box->initialize(args);
-    library.push_back(LibraryEntry(black_box->identity(), args, instantiation,
-                                   handle));
-    return handle;
+    return BlackBoxHandle(new BlackBoxLibrary(instantiation, args));
   }
   throw Error("Blackbox", "Unknown blackbox protocol `" + mode + "'");
 }
@@ -1334,6 +1477,15 @@ void BlackBoxExec::run(const std::vector<int64_t> &int_in,
     }
     return q;
   };
+  auto check_integer_tail = [](const char *q, const char *end) {
+    while (q != end) {
+      if (*q != ' ' && *q != '\t' && *q != '\r') {
+        return false;
+      }
+      ++q;
+    }
+    return true;
+  };
   auto check_number_tail = [](std::istringstream &in) {
     char c;
     while (in.get(c)) {
@@ -1346,17 +1498,23 @@ void BlackBoxExec::run(const std::vector<int64_t> &int_in,
   for (size_t i = 0; i < int_out.size(); ++i) {
     skip_ws(p);
     const char *end = value_end(p);
-    std::istringstream in(std::string(p, end));
-    in.imbue(std::locale::classic());
-    long long v;
-    if (!(in >> v) || !check_number_tail(in)) {
+    const char *integer = p;
+    if (*integer == '+') {
+      ++integer;
+    }
+    int64_t value;
+    const std::from_chars_result parsed =
+      std::from_chars(integer, end, value);
+    if ((parsed.ptr == integer) || (parsed.ec != std::errc()) ||
+        !check_integer_tail(parsed.ptr, end)) {
       throw Error("BlackBoxExec", "Failed to read output integer " +
                                       std::to_string(i) +
                                       " from blackbox process output, " +
                                       std::to_string(int_out.size()) +
                                       " integer values were expected.");
     }
-    int_out[i] = checked_int(v, "blackbox process output", i);
+    check_int(value, "blackbox process output", i);
+    int_out[i] = value;
     p = end;
     skip_ws(p);
     if (i + 1 < int_out.size()) {
@@ -1418,9 +1576,8 @@ ExecStatus BlackBox::propagate(Space &home, const ModEventDelta &) {
   ) {
     std::vector<int64_t> int_in(int_input.size());
     std::vector<int64_t> int_out(int_output.size());
-    // std::cerr << "Black Box Fn input: ";
     for (int i = 0; i < int_in.size(); i++) {
-      int_in[i] = int_input[i].val();
+      int_in[i] = static_cast<int64_t>(int_input[i].val());
     }
     std::vector<double> float_in;
     std::vector<double> float_out;
@@ -1440,7 +1597,6 @@ ExecStatus BlackBox::propagate(Space &home, const ModEventDelta &) {
     }
 
     for (int i = 0; i < int_out.size(); i++) {
-      // std::cerr << int_out[i] << " ";
       GECODE_ME_CHECK(int_output[i].eq(home, static_cast<int>(int_out[i])));
     }
 #ifdef GECODE_HAS_FLOAT_VARS
@@ -1454,13 +1610,18 @@ ExecStatus BlackBox::propagate(Space &home, const ModEventDelta &) {
   return ES_FIX;
 }
 
-ExecStatus BlackBoxBounds::propagate(Space &home, const ModEventDelta &) {
+ExecStatus
+BlackBoxBounds::evaluate(Home home, ViewArray<Int::IntView> &ivar,
+#ifdef GECODE_HAS_FLOAT_VARS
+                         ViewArray<Float::FloatView> &fvar,
+#endif
+                         BlackBoxHandle &black_box,
+                         const BlackBoxStateHandle &black_box_state) {
   std::vector<int64_t> int_in(ivar.size() * 2);
   std::vector<int64_t> int_out(ivar.size() * 2);
-  // std::cerr << "Black Box Bounds Fn input: ";
   for (int i = 0; i < ivar.size(); i++) {
-    int_in[i*2] = ivar[i].min();
-    int_in[i*2+1] = ivar[i].max();
+    int_in[i*2] = static_cast<int64_t>(ivar[i].min());
+    int_in[i*2+1] = static_cast<int64_t>(ivar[i].max());
   }
   std::vector<double> float_in;
   std::vector<double> float_out;
@@ -1481,18 +1642,30 @@ ExecStatus BlackBoxBounds::propagate(Space &home, const ModEventDelta &) {
   }
 
   for (int i = 0; i < ivar.size(); i++) {
-    // std::cerr << int_out[i*2] << ".." << int_out[i*2+1] << " ";
-    GECODE_ME_CHECK(ivar[i].gq(home, static_cast<int>(int_out[i*2])));
-    GECODE_ME_CHECK(ivar[i].lq(home, static_cast<int>(int_out[i*2+1])));
+    if (me_failed(ivar[i].gq(home, static_cast<int>(int_out[i*2]))) ||
+        me_failed(ivar[i].lq(home, static_cast<int>(int_out[i*2+1])))) {
+      return ES_FAILED;
+    }
   }
 #ifdef GECODE_HAS_FLOAT_VARS
   for (int i = 0; i < fvar.size(); i++) {
-    GECODE_ME_CHECK(fvar[i].gq(home, float_out[i*2]));
-    GECODE_ME_CHECK(fvar[i].lq(home, float_out[i*2+1]));
+    if (me_failed(fvar[i].gq(home, float_out[i*2])) ||
+        me_failed(fvar[i].lq(home, float_out[i*2+1]))) {
+      return ES_FAILED;
+    }
   }
 #endif
 
-  return ES_NOFIX;
+  return ES_OK;
+}
+
+ExecStatus BlackBoxBounds::propagate(Space &home, const ModEventDelta &) {
+  ExecStatus es = evaluate(home, ivar,
+#ifdef GECODE_HAS_FLOAT_VARS
+                           fvar,
+#endif
+                           black_box, black_box_state);
+  return (es == ES_OK) ? ES_NOFIX : es;
 }
 
 void blackbox(Home home, SharedHandle &black_box_state,

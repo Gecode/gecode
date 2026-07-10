@@ -45,6 +45,9 @@
 #ifdef GECODE_HAS_FLOAT_VARS
 #include <gecode/float.hh>
 #endif
+#ifdef GECODE_HAS_THREADS
+#include <thread>
+#endif
 
 #ifdef _WIN32
 #define GECODE_BLACKBOX_CALL __stdcall
@@ -74,16 +77,18 @@ public:
 /// Implementation of a black box function that dynamically loads a library and
 /// run a contained function.
 ///
-/// The native library entry points can be called concurrently by parallel
-/// search workers and must therefore be thread-safe.
-class BlackBoxLibrary : public BlackBoxFn {
+/// A library backend belongs to one blackbox constraint. If the library exports
+/// fzn_init, it creates a root instance for that constraint. With threads, the
+/// root is a prototype: each calling thread receives and reuses its own clone,
+/// and the same clone is never used by concurrent calls. Without threads,
+/// fzn_blackbox receives the root instance. A library without fzn_init is
+/// stateless: fzn_blackbox receives a null instance and can be called
+/// concurrently.
+class GECODE_FLATZINC_EXPORT BlackBoxLibrary : public BlackBoxFn {
 public:
-  BlackBoxLibrary(const std::string &name);
+  BlackBoxLibrary(const std::string &name,
+                  const std::vector<std::string> &args);
   ~BlackBoxLibrary();
-  /// Initialize the library with the model-specific configuration
-  void initialize(const std::vector<std::string> &args);
-  /// Return the loaded library identity
-  const std::string &identity(void) const;
   void run(const std::vector<int64_t> &int_in,
            const std::vector<double> &float_in,
            std::vector<int64_t> &int_out,
@@ -91,11 +96,23 @@ public:
 
 protected:
   void *library;
-  std::string library_identity;
-  void(GECODE_BLACKBOX_CALL *library_fzn_blackbox)(
-      const int64_t *, size_t, const double *, size_t, int64_t *, size_t,
-      double *, size_t);
-  void(GECODE_BLACKBOX_CALL *library_fzn_initialize)(const char **, size_t);
+  void *(GECODE_BLACKBOX_CALL *library_fzn_init)(const char **, size_t);
+  void *(GECODE_BLACKBOX_CALL *library_fzn_clone)(void *);
+  void (GECODE_BLACKBOX_CALL *library_fzn_blackbox)(
+      void *, const int64_t *, size_t, const double *, size_t, int64_t *,
+      size_t, double *, size_t);
+  void (GECODE_BLACKBOX_CALL *library_fzn_free)(void *);
+  void *root_instance;
+
+#ifdef GECODE_HAS_THREADS
+  class Instance;
+  /// Mutex protecting the worker-to-instance table.
+  Support::Mutex mutex;
+  /// Cloned instances, one for each calling worker.
+  std::vector<Instance *> instances;
+
+  Instance *instance(void);
+#endif
 };
 
 /// Implementation of a blackbox function that starts a separate process to
@@ -104,12 +121,13 @@ protected:
 /// Parallel search workers do not share a process stream: each calling thread
 /// gets its own persistent process session, created lazily and reused by that
 /// thread until the shared blackbox object is destroyed.
-class BlackBoxExec : public BlackBoxFn {
+class GECODE_FLATZINC_EXPORT BlackBoxExec : public BlackBoxFn {
 public:
   BlackBoxExec(const std::string &program, const std::vector<std::string> &args);
   ~BlackBoxExec();
   void run(const std::vector<int64_t> &int_in,
-           const std::vector<double> &float_in, std::vector<int64_t> &int_out,
+           const std::vector<double> &float_in,
+           std::vector<int64_t> &int_out,
            std::vector<double> &float_out) override;
 
 protected:
@@ -270,8 +288,8 @@ public:
         && (float_input.size() == 0)
 #endif
     ) {
-      std::vector<int> int_in;
-      std::vector<int> int_out(int_output.size());
+      std::vector<int64_t> int_in;
+      std::vector<int64_t> int_out(int_output.size());
       std::vector<double> float_in;
       std::vector<double> float_out;
 #ifdef GECODE_HAS_FLOAT_VARS
@@ -279,7 +297,8 @@ public:
 #endif
       black_box_handle()->run(int_in, float_in, int_out, float_out);
       for (int i = 0; i < int_output.size(); i++) {
-        if (me_failed(int_output[i].eq(home, int_out[i]))) {
+        if (me_failed(int_output[i].eq(
+                home, static_cast<int>(int_out[i])))) {
           return ES_FAILED;
         }
       }
@@ -434,6 +453,13 @@ public:
 
   ExecStatus propagate(Space &home, const ModEventDelta &) override;
 
+  static ExecStatus evaluate(Home home, ViewArray<Int::IntView> &ivar,
+#ifdef GECODE_HAS_FLOAT_VARS
+                             ViewArray<Float::FloatView> &fvar,
+#endif
+                             BlackBoxHandle &black_box,
+                             const BlackBoxStateHandle &black_box_state);
+
   Propagator *copy(Space &home) override {
     return new (home) BlackBoxBounds(home, *this);
   }
@@ -462,38 +488,11 @@ public:
     }
 #endif
     if (!has_subscription) {
-      std::vector<int> int_in(ivar.size() * 2);
-      std::vector<int> int_out(ivar.size() * 2);
-      for (int i = 0; i < ivar.size(); i++) {
-        int_in[i*2] = ivar[i].min();
-        int_in[i*2+1] = ivar[i].max();
-      }
-      std::vector<double> float_in;
-      std::vector<double> float_out;
+      return evaluate(home, ivar,
 #ifdef GECODE_HAS_FLOAT_VARS
-      float_in.resize(fvar.size() * 2);
-      float_out.resize(fvar.size() * 2);
-      for (int i = 0; i < fvar.size(); i++) {
-        float_in[i*2] = fvar[i].min();
-        float_in[i*2+1] = fvar[i].max();
-      }
+                      fvar,
 #endif
-      black_box_handle()->run(int_in, float_in, int_out, float_out);
-      for (int i = 0; i < ivar.size(); i++) {
-        if (me_failed(ivar[i].gq(home, int_out[i*2])) ||
-            me_failed(ivar[i].lq(home, int_out[i*2+1]))) {
-          return ES_FAILED;
-        }
-      }
-#ifdef GECODE_HAS_FLOAT_VARS
-      for (int i = 0; i < fvar.size(); i++) {
-        if (me_failed(fvar[i].gq(home, float_out[i*2])) ||
-            me_failed(fvar[i].lq(home, float_out[i*2+1]))) {
-          return ES_FAILED;
-        }
-      }
-#endif
-      return ES_OK;
+                      black_box_handle, black_box_state);
     }
 
     new (home) BlackBoxBounds(home, ivar,

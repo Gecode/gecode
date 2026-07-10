@@ -82,6 +82,9 @@
 /* Whether we have mtrace for memory leak debugging */
 #undef GECODE_HAS_MTRACE
 
+/* Whether persistent process blackboxes are supported */
+#undef GECODE_HAS_POSIX_BLACKBOX_EXEC
+
 /* Whether posix_spawn_file_actions_addclosefrom_np is available */
 #undef GECODE_HAS_POSIX_SPAWN_ADDCLOSEFROM_NP
 
