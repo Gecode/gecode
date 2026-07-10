@@ -268,8 +268,7 @@ jobs:
 
     - name: Build and link 32-bit stop consumer
       shell: bash
-      run: bash .github/ci/32-bit-linkage-smoke.sh \
-        "$GITHUB_WORKSPACE" "$RUNNER_TEMP/gecode-32-bit-linkage"
+      run: bash .github/ci/32-bit-linkage-smoke.sh "$GITHUB_WORKSPACE" "$RUNNER_TEMP/gecode-32-bit-linkage"
 
   build-cmake-qt-gist:
     runs-on: ubuntu-latest
