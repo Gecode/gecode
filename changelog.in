@@ -52,8 +52,8 @@
 # An entry is described as follows:
 #   [ENTRY]
 #   Module:
-#     kernel|search|int|set|cpltset|example|minimodel|iter|support|
-#     driver|test|gist|flatzinc|other
+#     kernel|search|int|set|float|cpltset|scheduling|graph|minimodel|
+#     driver|iter|support|example|test|gist|flatzinc|other
 #   What:   bug|documentation|performance|new|removed|change
 #   Rank:   minor|major
 #   Bug:    <optional, for number from bugzilla>
@@ -69,7 +69,7 @@
 
 [RELEASE]
 Version: 6.4.0
-Date: 2026-07-07
+Date: 2026-??-??
 [DESCRIPTION]
 This release modernizes the Gecode build infrastructure, adds a
 first-class CMake package for downstream consumers, refreshes the
@@ -82,6 +82,14 @@ Rank:   minor
 [DESCRIPTION]
 Fix MSVC compilation of matrix slice conversion operators by fully
 qualifying their dependent return types.
+
+[ENTRY]
+Module: gist
+What:   change
+Rank:   minor
+[DESCRIPTION]
+Restore the legacy GIST_STATIC_LIBS compatibility macro for static
+Windows clients. GECODE_STATIC_LIBS remains the preferred spelling.
 
 [ENTRY]
 Module: float
@@ -129,6 +137,17 @@ Rank:   minor
 Prefer Qt 6 for Gist and Qt-backed builds while keeping Qt 5.15+
 as the supported legacy baseline. Installed CMake packages now
 request the Qt major/minor version used to build Gecode.
+
+[ENTRY]
+Module: flatzinc
+What:   removed
+Rank:   major
+[DESCRIPTION]
+Remove the public GECODE_FLATZINC_VERSION macro. It described a fixed
+FlatZinc language revision that no longer matches the capability-based
+MiniZinc interface. Code that only needs the Gecode release should use
+GECODE_VERSION; FlatZinc integrations should use the installed MiniZinc
+solver metadata instead of gating parser use on a language-version macro.
 
 [ENTRY]
 Module: other
