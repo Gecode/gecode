@@ -37,61 +37,267 @@
 
 #include <algorithm>
 #include <cassert>
+#include <cerrno>
+#include <cstdio>
 #include <cstdlib>
+#include <memory>
 #include <limits>
 #include <sstream>
 #include <string>
 #include <vector>
 
-#ifndef _WIN32
-#include <cstdlib>
+#ifdef _WIN32
+#define NOMINMAX // Ensure the words min/max remain available
+#include <windows.h>
+#else
 #include <dlfcn.h>
-#include <stdio.h>
+#include <fcntl.h>
+#include <pthread.h>
+#include <signal.h>
+#include <spawn.h>
+#include <sys/socket.h>
+#include <sys/types.h>
+#include <sys/wait.h>
 #include <unistd.h>
+extern char **environ;
+#endif
+
+#ifdef GECODE_HAS_THREADS
+#include <thread>
 #endif
 
 namespace Gecode {
 namespace FlatZinc {
 
-BlackBoxDLL::BlackBoxDLL(const std::string &name,
-                         const std::vector<std::string> &args) {
-  std::string loadError;
+namespace {
+
 #ifdef _WIN32
-  library = LoadLibraryA(name.c_str());
-  if (!library) {
-    loadError = std::string("unable to locate library `") + name + "'";
-    library = LoadLibraryA((std::string(name) + ".dll").c_str());
+std::wstring
+utf8_to_wide(const std::string &s) {
+  if (s.empty()) {
+    return std::wstring();
   }
-  if (!library) {
-    library = LoadLibraryA((std::string("lib") + name + ".dll").c_str());
+  int n = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, s.c_str(),
+                              static_cast<int>(s.size()), NULL, 0);
+  if (n == 0) {
+    throw Error("Blackbox", "Invalid UTF-8 string in blackbox path or argument");
   }
+  std::wstring w(static_cast<size_t>(n), L'\0');
+  if (MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, s.c_str(),
+                          static_cast<int>(s.size()), &w[0], n) == 0) {
+    throw Error("Blackbox", "Invalid UTF-8 string in blackbox path or argument");
+  }
+  return w;
+}
+
+std::string
+windows_error(const std::string &prefix, DWORD err) {
+  return prefix + " (Windows error " + std::to_string(err) + ")";
+}
+
+void
+close_library(void *library) {
+  if (library != nullptr) {
+    FreeLibrary(static_cast<HMODULE>(library));
+  }
+}
 #else
-  library = dlopen(name.c_str(), RTLD_LAZY);
-  if (!library) {
-    loadError = std::string(dlerror());
-    library = dlopen((name + ".so").c_str(), RTLD_NOW);
+void
+close_library(void *library) {
+  if (library != nullptr) {
+    dlclose(library);
   }
-  if (!library) {
-    library = dlopen((std::string("lib") + name + ".so").c_str(), RTLD_NOW);
+}
+
+int
+set_cloexec(int fd) {
+  int flags = fcntl(fd, F_GETFD);
+  if (flags == -1) {
+    return -1;
+  }
+  return fcntl(fd, F_SETFD, flags | FD_CLOEXEC);
+}
+
+int
+dup_cloexec(int fd, int min_fd) {
+  int nfd;
+#ifdef F_DUPFD_CLOEXEC
+  nfd = fcntl(fd, F_DUPFD_CLOEXEC, min_fd);
+  if (nfd != -1) {
+    return nfd;
+  }
+  if (errno != EINVAL) {
+    return -1;
   }
 #endif
-  if (!library) {
+  nfd = fcntl(fd, F_DUPFD, min_fd);
+  if (nfd == -1) {
+    return -1;
+  }
+  if (set_cloexec(nfd) != 0) {
+    int e = errno;
+    ::close(nfd);
+    errno = e;
+    return -1;
+  }
+  return nfd;
+}
+
+int
+move_from_standard_fd(int fd) {
+  if (fd > STDERR_FILENO) {
+    return fd;
+  }
+  int nfd = dup_cloexec(fd, STDERR_FILENO + 1);
+  if (nfd == -1) {
+    return -1;
+  }
+  ::close(fd);
+  return nfd;
+}
+
+int
+create_socketpair(int sv[2]) {
+#ifdef SOCK_CLOEXEC
+  if (socketpair(AF_UNIX, SOCK_STREAM | SOCK_CLOEXEC, 0, sv) == 0) {
+    return 0;
+  }
+  if (errno != EINVAL) {
+    return -1;
+  }
+#endif
+  if (socketpair(AF_UNIX, SOCK_STREAM, 0, sv) != 0) {
+    return -1;
+  }
+  if ((set_cloexec(sv[0]) != 0) || (set_cloexec(sv[1]) != 0)) {
+    int e = errno;
+    ::close(sv[0]);
+    ::close(sv[1]);
+    errno = e;
+    return -1;
+  }
+  return 0;
+}
+
+ssize_t
+send_no_sigpipe(int fd, const char *data, size_t size) {
+#ifdef MSG_NOSIGNAL
+  return send(fd, data, size, MSG_NOSIGNAL);
+#else
+#ifdef SO_NOSIGPIPE
+  return send(fd, data, size, 0);
+#else
+  sigset_t block;
+  sigset_t old;
+  sigset_t pending;
+  sigemptyset(&block);
+  sigaddset(&block, SIGPIPE);
+  bool blocked = false;
+  bool was_pending = false;
+  if (pthread_sigmask(SIG_BLOCK, &block, &old) == 0) {
+    blocked = true;
+    if (sigpending(&pending) == 0) {
+      was_pending = sigismember(&pending, SIGPIPE) == 1;
+    }
+  }
+  ssize_t n = send(fd, data, size, 0);
+  if ((n == -1) && (errno == EPIPE) && !was_pending) {
+    const struct timespec timeout = {0, 0};
+    sigtimedwait(&block, NULL, &timeout);
+  }
+  if (blocked) {
+    pthread_sigmask(SIG_SETMASK, &old, NULL);
+  }
+  return n;
+#endif
+#endif
+}
+#endif
+
+int
+checked_int(long long v, const char *source, size_t i) {
+  if ((v < Int::Limits::min) || (v > Int::Limits::max) ||
+      (v < std::numeric_limits<int>::min()) ||
+      (v > std::numeric_limits<int>::max())) {
+    throw Error("Blackbox", std::string(source) + " integer " +
+                              std::to_string(i) +
+                              " is outside Gecode's integer range");
+  }
+  return static_cast<int>(v);
+}
+
+} // namespace
+
+BlackBoxDLL::BlackBoxDLL(const std::string &name,
+                         const std::vector<std::string> &args)
+    : library(nullptr), dll_fzn_blackbox(nullptr) {
+  std::string loadError;
+  void *loaded = nullptr;
+#ifdef _WIN32
+  std::wstring wname = utf8_to_wide(name);
+  loaded = LoadLibraryW(wname.c_str());
+  if (!loaded) {
+    DWORD err = GetLastError();
+    loadError = std::string("unable to locate library `") + name + "'";
+    std::wstring wdll = utf8_to_wide(name + ".dll");
+    loaded = LoadLibraryW(wdll.c_str());
+    if (!loaded) {
+      err = GetLastError();
+    }
+  }
+  if (!loaded) {
+    std::wstring wlibdll = utf8_to_wide(std::string("lib") + name + ".dll");
+    loaded = LoadLibraryW(wlibdll.c_str());
+    if (!loaded) {
+      loadError += " (" + windows_error("LoadLibraryW failed", err) + ")";
+    }
+  }
+#else
+  loaded = dlopen(name.c_str(), RTLD_LAZY);
+  if (!loaded) {
+    loadError = std::string(dlerror());
+    loaded = dlopen((name + ".so").c_str(), RTLD_NOW);
+  }
+  if (!loaded) {
+    loaded = dlopen((std::string("lib") + name + ".so").c_str(), RTLD_NOW);
+  }
+#ifdef __APPLE__
+  if (!loaded) {
+    loaded = dlopen((name + ".dylib").c_str(), RTLD_NOW);
+  }
+  if (!loaded) {
+    loaded = dlopen((std::string("lib") + name + ".dylib").c_str(), RTLD_NOW);
+  }
+#endif
+#endif
+  if (!loaded) {
     throw Error("Blackbox", "Unable to open dynamic library: " + loadError);
   }
 
-  // find symbol for blacbox function
+  // find symbol for blackbox function
 #ifdef _WIN32
   dll_fzn_blackbox = reinterpret_cast<decltype(dll_fzn_blackbox)>(
-      GetProcAddress((HMODULE)library, "fzn_blackbox"));
+      GetProcAddress((HMODULE)loaded, "fzn_blackbox"));
+#if defined(_M_IX86) || defined(__i386__)
+  if (!dll_fzn_blackbox) {
+    dll_fzn_blackbox = reinterpret_cast<decltype(dll_fzn_blackbox)>(
+        GetProcAddress((HMODULE)loaded, "_fzn_blackbox@32"));
+  }
+  if (!dll_fzn_blackbox) {
+    dll_fzn_blackbox = reinterpret_cast<decltype(dll_fzn_blackbox)>(
+        GetProcAddress((HMODULE)loaded, "fzn_blackbox@32"));
+  }
+#endif
   std::string symError = ".";
 #else
-  *(void **)(&dll_fzn_blackbox) = dlsym(library, "fzn_blackbox");
+  *(void **)(&dll_fzn_blackbox) = dlsym(loaded, "fzn_blackbox");
   std::string symError(": ");
   if (!dll_fzn_blackbox) {
     symError += std::string(dlerror());
   }
 #endif
   if (!dll_fzn_blackbox) {
+    close_library(loaded);
     throw Error("Blackbox",
                 "Unable to find symbol `fzn_blackbox` in dynamic library" +
                     symError);
@@ -99,36 +305,167 @@ BlackBoxDLL::BlackBoxDLL(const std::string &name,
 
   // Optionally call the initialisation function with the given arguments. It is
   // not an error for the library to omit `fzn_initialize`.
-  void(__stdcall *dll_fzn_initialize)(const char **, size_t) = nullptr;
+  void(GECODE_BLACKBOX_CALL *dll_fzn_initialize)(const char **, size_t) =
+      nullptr;
 #ifdef _WIN32
   dll_fzn_initialize = reinterpret_cast<decltype(dll_fzn_initialize)>(
-      GetProcAddress((HMODULE)library, "fzn_initialize"));
-#else
-  *(void **)(&dll_fzn_initialize) = dlsym(library, "fzn_initialize");
-#endif
-  if (dll_fzn_initialize != nullptr) {
-    std::vector<const char *> argv;
-    argv.reserve(args.size());
-    for (const std::string &a : args) {
-      argv.push_back(a.c_str());
-    }
-    dll_fzn_initialize(argv.data(), argv.size());
+      GetProcAddress((HMODULE)loaded, "fzn_initialize"));
+#if defined(_M_IX86) || defined(__i386__)
+  if (!dll_fzn_initialize) {
+    dll_fzn_initialize = reinterpret_cast<decltype(dll_fzn_initialize)>(
+        GetProcAddress((HMODULE)loaded, "_fzn_initialize@8"));
   }
+  if (!dll_fzn_initialize) {
+    dll_fzn_initialize = reinterpret_cast<decltype(dll_fzn_initialize)>(
+        GetProcAddress((HMODULE)loaded, "fzn_initialize@8"));
+  }
+#endif
+#else
+  *(void **)(&dll_fzn_initialize) = dlsym(loaded, "fzn_initialize");
+#endif
+  try {
+    if (dll_fzn_initialize != nullptr) {
+      std::vector<const char *> argv;
+      argv.reserve(args.size());
+      for (const std::string &a : args) {
+        argv.push_back(a.c_str());
+      }
+      dll_fzn_initialize(argv.data(), argv.size());
+    }
+  } catch (...) {
+    close_library(loaded);
+    throw;
+  }
+  library = loaded;
 }
 
 BlackBoxDLL::~BlackBoxDLL() {
-  if (library) {
-#ifdef _WIN32
-    FreeLibrary((HMODULE)library);
-#else
-    dlclose(library);
-#endif
-  }
+  close_library(library);
 }
 
-BlackBoxExec::BlackBoxExec(const std::string &program,
-                           const std::vector<std::string> &args) {
+class BlackBoxExec::Session {
+protected:
 #ifdef _WIN32
+  HANDLE job;
+  HANDLE process;
+  HANDLE pipe_send;
+  HANDLE pipe_receive;
+#else
+  pid_t child;
+  int pipe_send;
+  FILE *file_receive;
+#endif
+#ifdef GECODE_HAS_THREADS
+  std::thread::id owner;
+#endif
+
+  static std::string last_error(const std::string &prefix) {
+#ifdef _WIN32
+    return prefix + " (Windows error " + std::to_string(GetLastError()) + ")";
+#else
+    return prefix + " (errno " + std::to_string(errno) + ")";
+#endif
+  }
+
+#ifdef _WIN32
+  static std::wstring quote_argument(const std::wstring &arg) {
+    std::wstring q(L"\"");
+    unsigned int backslashes = 0;
+    for (wchar_t ch : arg) {
+      if (ch == L'\\') {
+        backslashes++;
+      } else if (ch == L'"') {
+        q.append(backslashes * 2 + 1, L'\\');
+        q += ch;
+        backslashes = 0;
+      } else {
+        q.append(backslashes, L'\\');
+        q += ch;
+        backslashes = 0;
+      }
+    }
+    q.append(backslashes * 2, L'\\');
+    q += L'"';
+    return q;
+  }
+#else
+  static bool reap_child(pid_t pid, int &status) {
+    pid_t r;
+    do {
+      r = waitpid(pid, &status, WNOHANG);
+    } while ((r == -1) && (errno == EINTR));
+    return (r == pid) || ((r == -1) && (errno == ECHILD));
+  }
+
+  static bool wait_child(pid_t pid, int &status, int attempts) {
+    for (int i = 0; i < attempts; i++) {
+      if (reap_child(pid, status)) {
+        return true;
+      }
+      usleep(10000);
+    }
+    return reap_child(pid, status);
+  }
+
+  static void terminate_child(pid_t pid) {
+    if (pid <= 0) {
+      return;
+    }
+    int status = 0;
+    if (wait_child(pid, status, 100)) {
+      return;
+    }
+    if (kill(-pid, SIGTERM) != 0) {
+      kill(pid, SIGTERM);
+    }
+    if (wait_child(pid, status, 100)) {
+      return;
+    }
+    if (kill(-pid, SIGKILL) != 0) {
+      kill(pid, SIGKILL);
+    }
+    do {
+      if (waitpid(pid, &status, 0) != -1) {
+        return;
+      }
+    } while (errno == EINTR);
+  }
+#endif
+
+public:
+  Session(const std::string &program, const std::vector<std::string> &args)
+#ifdef GECODE_HAS_THREADS
+#ifdef _WIN32
+      : job(NULL), process(NULL), pipe_send(NULL), pipe_receive(NULL),
+        owner(std::this_thread::get_id())
+#else
+      : child(-1), pipe_send(-1), file_receive(NULL),
+        owner(std::this_thread::get_id())
+#endif
+#else
+#ifdef _WIN32
+      : job(NULL), process(NULL), pipe_send(NULL), pipe_receive(NULL)
+#else
+      : child(-1), pipe_send(-1), file_receive(NULL)
+#endif
+#endif
+  {
+#ifdef _WIN32
+  // Build the command line before opening OS handles so allocation/conversion
+  // failures cannot leak partially constructed process state.
+  std::wstring program_w = utf8_to_wide(program);
+  std::wstring prog = quote_argument(program_w);
+  for (const std::string &a : args) {
+    prog += L" ";
+    prog += quote_argument(utf8_to_wide(a));
+  }
+  std::vector<wchar_t> cmdline(prog.begin(), prog.end());
+  cmdline.push_back(L'\0');
+
+  SIZE_T attr_size = 0;
+  InitializeProcThreadAttributeList(NULL, 1, 0, &attr_size);
+  std::vector<char> attr_buf(attr_size);
+
   SECURITY_ATTRIBUTES saAttr;
   saAttr.nLength = sizeof(SECURITY_ATTRIBUTES);
   saAttr.bInheritHandle = TRUE;
@@ -138,117 +475,462 @@ BlackBoxExec::BlackBoxExec(const std::string &program,
   HANDLE g_hChildStd_IN_Wr = NULL;
   HANDLE g_hChildStd_OUT_Rd = NULL;
   HANDLE g_hChildStd_OUT_Wr = NULL;
+  HANDLE g_hChildStd_ERR_Wr = NULL;
 
   // Create a pipe for the child process's STDOUT.
-  if (!CreatePipe(&g_hChildStd_OUT_Rd, &g_hChildStd_OUT_Wr, &saAttr, 0))
-    std::cerr << "Stdout CreatePipe" << std::endl;
+  if (!CreatePipe(&g_hChildStd_OUT_Rd, &g_hChildStd_OUT_Wr, &saAttr, 0)) {
+    throw Error("BlackBoxExec", last_error("Stdout CreatePipe failed"));
+  }
   // Ensure the read handle to the pipe for STDOUT is not inherited.
-  if (!SetHandleInformation(g_hChildStd_OUT_Rd, HANDLE_FLAG_INHERIT, 0))
-    std::cerr << "Stdout SetHandleInformation" << std::endl;
+  if (!SetHandleInformation(g_hChildStd_OUT_Rd, HANDLE_FLAG_INHERIT, 0)) {
+    CloseHandle(g_hChildStd_OUT_Rd);
+    CloseHandle(g_hChildStd_OUT_Wr);
+    throw Error("BlackBoxExec",
+                last_error("Stdout SetHandleInformation failed"));
+  }
 
   // Create a pipe for the child process's STDIN
-  if (!CreatePipe(&g_hChildStd_IN_Rd, &g_hChildStd_IN_Wr, &saAttr, 0))
-    std::cerr << "Stdin CreatePipe" << std::endl;
+  if (!CreatePipe(&g_hChildStd_IN_Rd, &g_hChildStd_IN_Wr, &saAttr, 0)) {
+    CloseHandle(g_hChildStd_OUT_Rd);
+    CloseHandle(g_hChildStd_OUT_Wr);
+    throw Error("BlackBoxExec", last_error("Stdin CreatePipe failed"));
+  }
   // Ensure the write handle to the pipe for STDIN is not inherited.
-  if (!SetHandleInformation(g_hChildStd_IN_Wr, HANDLE_FLAG_INHERIT, 0))
-    std::cerr << "Stdin SetHandleInformation" << std::endl;
+  if (!SetHandleInformation(g_hChildStd_IN_Wr, HANDLE_FLAG_INHERIT, 0)) {
+    DWORD err = GetLastError();
+    CloseHandle(g_hChildStd_OUT_Rd);
+    CloseHandle(g_hChildStd_OUT_Wr);
+    CloseHandle(g_hChildStd_IN_Rd);
+    CloseHandle(g_hChildStd_IN_Wr);
+    throw Error("BlackBoxExec", windows_error(
+                                     "Stdin SetHandleInformation failed", err));
+  }
+
+  HANDLE parent_stderr = GetStdHandle(STD_ERROR_HANDLE);
+  if ((parent_stderr != NULL) && (parent_stderr != INVALID_HANDLE_VALUE)) {
+    if (!DuplicateHandle(GetCurrentProcess(), parent_stderr,
+                         GetCurrentProcess(), &g_hChildStd_ERR_Wr, 0, TRUE,
+                         DUPLICATE_SAME_ACCESS)) {
+      DWORD err = GetLastError();
+      CloseHandle(g_hChildStd_OUT_Rd);
+      CloseHandle(g_hChildStd_OUT_Wr);
+      CloseHandle(g_hChildStd_IN_Rd);
+      CloseHandle(g_hChildStd_IN_Wr);
+      throw Error("BlackBoxExec",
+                  windows_error("stderr DuplicateHandle failed", err));
+    }
+  }
 
   PROCESS_INFORMATION piProcInfo;
-  STARTUPINFOA siStartInfo;
+  STARTUPINFOEXW siStartInfo;
 
   // Set up members of the PROCESS_INFORMATION structure.
   ZeroMemory(&piProcInfo, sizeof(PROCESS_INFORMATION));
 
   // Set up members of the STARTUPINFO structure.
   // This structure specifies the STDIN and STDOUT handles for redirection.
-  ZeroMemory(&siStartInfo, sizeof(STARTUPINFOA));
-  siStartInfo.cb = sizeof(STARTUPINFOA);
-  siStartInfo.hStdOutput = g_hChildStd_OUT_Wr;
-  siStartInfo.hStdInput = g_hChildStd_IN_Rd;
-  siStartInfo.dwFlags |= STARTF_USESTDHANDLES;
+  ZeroMemory(&siStartInfo, sizeof(STARTUPINFOEXW));
+  siStartInfo.StartupInfo.cb = sizeof(STARTUPINFOEXW);
+  siStartInfo.StartupInfo.hStdOutput = g_hChildStd_OUT_Wr;
+  siStartInfo.StartupInfo.hStdInput = g_hChildStd_IN_Rd;
+  siStartInfo.StartupInfo.hStdError = g_hChildStd_ERR_Wr;
+  siStartInfo.StartupInfo.dwFlags |= STARTF_USESTDHANDLES;
 
-  // Build the command line: the program followed by the (quoted) arguments.
-  std::string prog = program;
-  for (const std::string &a : args) {
-    prog += " \"";
-    for (char ch : a) {
-      if (ch == '"' || ch == '\\') {
-        prog += '\\';
-      }
-      prog += ch;
-    }
-    prog += '"';
+  HANDLE inherit_handles[3] = {g_hChildStd_IN_Rd, g_hChildStd_OUT_Wr, NULL};
+  DWORD inherit_count = 2;
+  if (g_hChildStd_ERR_Wr != NULL) {
+    inherit_handles[inherit_count++] = siStartInfo.StartupInfo.hStdError;
   }
+
+  siStartInfo.lpAttributeList =
+      reinterpret_cast<LPPROC_THREAD_ATTRIBUTE_LIST>(attr_buf.data());
+  if (!InitializeProcThreadAttributeList(siStartInfo.lpAttributeList, 1, 0,
+                                         &attr_size)) {
+    DWORD err = GetLastError();
+    CloseHandle(g_hChildStd_OUT_Rd);
+    CloseHandle(g_hChildStd_OUT_Wr);
+    CloseHandle(g_hChildStd_IN_Rd);
+    CloseHandle(g_hChildStd_IN_Wr);
+    if (g_hChildStd_ERR_Wr != NULL)
+      CloseHandle(g_hChildStd_ERR_Wr);
+    throw Error("BlackBoxExec",
+                windows_error("InitializeProcThreadAttributeList failed", err));
+  }
+  if (!UpdateProcThreadAttribute(siStartInfo.lpAttributeList, 0,
+                                 PROC_THREAD_ATTRIBUTE_HANDLE_LIST,
+                                 inherit_handles,
+                                 sizeof(HANDLE) * inherit_count,
+                                 NULL, NULL)) {
+    DWORD err = GetLastError();
+    DeleteProcThreadAttributeList(siStartInfo.lpAttributeList);
+    CloseHandle(g_hChildStd_OUT_Rd);
+    CloseHandle(g_hChildStd_OUT_Wr);
+    CloseHandle(g_hChildStd_IN_Rd);
+    CloseHandle(g_hChildStd_IN_Wr);
+    if (g_hChildStd_ERR_Wr != NULL)
+      CloseHandle(g_hChildStd_ERR_Wr);
+    throw Error("BlackBoxExec",
+                windows_error("PROC_THREAD_ATTRIBUTE_HANDLE_LIST failed", err));
+  }
+
   BOOL processStarted =
-      CreateProcessA(nullptr,
-                     prog.data(),  // command line
-                     nullptr,      // process security attributes
-                     nullptr,      // primary thread security attributes
-                     TRUE,         // handles are inherited
-                     0,            // creation flags
-                     nullptr,      // use parent's environment
-                     nullptr,      // use parent's current directory
-                     &siStartInfo, // STARTUPINFO pointer
-                     &piProcInfo); // receives PROCESS_INFORMATION
+      CreateProcessW(nullptr,
+                     cmdline.data(),        // command line
+                     nullptr,               // process security attributes
+                     nullptr,               // primary thread security attributes
+                     TRUE,                  // handles from attribute list
+                     EXTENDED_STARTUPINFO_PRESENT | CREATE_SUSPENDED,
+                     nullptr,               // use parent's environment
+                     nullptr,               // use parent's current directory
+                     &siStartInfo.StartupInfo,
+                     &piProcInfo);          // receives PROCESS_INFORMATION
+  DeleteProcThreadAttributeList(siStartInfo.lpAttributeList);
 
   if (!processStarted) {
-    throw Error("BlackBoxExec", "Unable to start program `" + program + "'");
+    DWORD err = GetLastError();
+    CloseHandle(g_hChildStd_OUT_Rd);
+    CloseHandle(g_hChildStd_OUT_Wr);
+    CloseHandle(g_hChildStd_IN_Rd);
+    CloseHandle(g_hChildStd_IN_Wr);
+    if (g_hChildStd_ERR_Wr != NULL)
+      CloseHandle(g_hChildStd_ERR_Wr);
+    throw Error("BlackBoxExec", windows_error("Unable to start program `" +
+                                             program + "'", err));
   }
 
+  HANDLE process_job = CreateJobObjectW(NULL, NULL);
+  if (process_job != NULL) {
+    JOBOBJECT_EXTENDED_LIMIT_INFORMATION job_info;
+    ZeroMemory(&job_info, sizeof(job_info));
+    job_info.BasicLimitInformation.LimitFlags =
+        JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE;
+    if (!SetInformationJobObject(process_job, JobObjectExtendedLimitInformation,
+                                 &job_info, sizeof(job_info)) ||
+        !AssignProcessToJobObject(process_job, piProcInfo.hProcess)) {
+      CloseHandle(process_job);
+      process_job = NULL;
+    }
+  }
+
+  if (ResumeThread(piProcInfo.hThread) == static_cast<DWORD>(-1)) {
+    DWORD err = GetLastError();
+    if (process_job != NULL) {
+      TerminateJobObject(process_job, 1);
+    } else {
+      TerminateProcess(piProcInfo.hProcess, 1);
+    }
+    WaitForSingleObject(piProcInfo.hProcess, 5000);
+    CloseHandle(piProcInfo.hThread);
+    CloseHandle(piProcInfo.hProcess);
+    if (process_job != NULL)
+      CloseHandle(process_job);
+    CloseHandle(g_hChildStd_OUT_Rd);
+    CloseHandle(g_hChildStd_OUT_Wr);
+    CloseHandle(g_hChildStd_IN_Rd);
+    CloseHandle(g_hChildStd_IN_Wr);
+    if (g_hChildStd_ERR_Wr != NULL)
+      CloseHandle(g_hChildStd_ERR_Wr);
+    throw Error("BlackBoxExec",
+                windows_error("ResumeThread failed for blackbox process", err));
+  }
   CloseHandle(piProcInfo.hThread);
   // Stop ReadFile from blocking
   CloseHandle(g_hChildStd_OUT_Wr);
   // Just close the child's in pipe here
   CloseHandle(g_hChildStd_IN_Rd);
+  if (g_hChildStd_ERR_Wr != NULL)
+    CloseHandle(g_hChildStd_ERR_Wr);
 
   pipe_send = g_hChildStd_IN_Wr;
   pipe_receive = g_hChildStd_OUT_Rd;
+  process = piProcInfo.hProcess;
+  job = process_job;
 #else
   const int READ = 0;
   const int WRITE = 1;
-  int child_in[2];
-  int child_out[2];
-  pipe(child_in);
-  pipe(child_out);
-
-  if (fork() != 0) {
-    close(child_in[READ]);
-    close(child_out[WRITE]);
-
-    pipe_send = child_in[WRITE];
-    int pipe_receive = child_out[READ];
-    file_receive = fdopen(pipe_receive, "r");
-    return;
+  int child_in[2] = {-1, -1};
+  int child_out[2] = {-1, -1};
+  if (create_socketpair(child_in) != 0) {
+    throw Error("BlackBoxExec", last_error("stdin socket creation failed"));
   }
-  close(STDIN_FILENO);
-  close(STDOUT_FILENO);
-  dup2(child_in[READ], STDIN_FILENO);
-  dup2(child_out[WRITE], STDOUT_FILENO);
-  close(child_in[WRITE]);
-  close(child_out[READ]);
+  if (create_socketpair(child_out) != 0) {
+    ::close(child_in[READ]);
+    ::close(child_in[WRITE]);
+    throw Error("BlackBoxExec", last_error("stdout socket creation failed"));
+  }
+  int fds[4] = {child_in[READ], child_in[WRITE],
+                child_out[READ], child_out[WRITE]};
+  for (int i = 0; i < 4; i++) {
+    int moved = move_from_standard_fd(fds[i]);
+    if (moved == -1) {
+      int e = errno;
+      for (int j = 0; j < 4; j++)
+        ::close(fds[j]);
+      errno = e;
+      throw Error("BlackBoxExec",
+                  last_error("moving session descriptors away from stdio "
+                             "failed"));
+    }
+    fds[i] = moved;
+  }
+  child_in[READ] = fds[0];
+  child_in[WRITE] = fds[1];
+  child_out[READ] = fds[2];
+  child_out[WRITE] = fds[3];
 
-  // Launch the program directly (no shell), passing the annotation arguments as
-  // its command-line arguments.
   std::vector<char *> argv;
+  argv.reserve(args.size() + 2);
   argv.push_back(const_cast<char *>(program.c_str()));
   for (const std::string &a : args) {
     argv.push_back(const_cast<char *>(a.c_str()));
   }
   argv.push_back(nullptr);
-  execvp(program.c_str(), argv.data());
-  // execvp only returns on failure.
-  std::exit(127);
+
+  posix_spawn_file_actions_t actions;
+  int err = posix_spawn_file_actions_init(&actions);
+  if (err != 0) {
+    ::close(child_in[READ]);
+    ::close(child_in[WRITE]);
+    ::close(child_out[READ]);
+    ::close(child_out[WRITE]);
+    errno = err;
+    throw Error("BlackBoxExec", last_error("spawn file action init failed"));
+  }
+
+  posix_spawnattr_t attr;
+  err = posix_spawnattr_init(&attr);
+  if (err != 0) {
+    posix_spawn_file_actions_destroy(&actions);
+    ::close(child_in[READ]);
+    ::close(child_in[WRITE]);
+    ::close(child_out[READ]);
+    ::close(child_out[WRITE]);
+    errno = err;
+    throw Error("BlackBoxExec", last_error("spawn attribute init failed"));
+  }
+
+  err = posix_spawnattr_setpgroup(&attr, 0);
+  if (err == 0) {
+    err = posix_spawnattr_setflags(&attr, POSIX_SPAWN_SETPGROUP);
+  }
+  if (err == 0) {
+    err = posix_spawn_file_actions_adddup2(&actions, child_in[READ],
+                                           STDIN_FILENO);
+  }
+  if (err == 0) {
+    err = posix_spawn_file_actions_adddup2(&actions, child_out[WRITE],
+                                           STDOUT_FILENO);
+  }
+  if (err == 0) {
+    err = posix_spawn_file_actions_addclose(&actions, child_in[READ]);
+  }
+  if (err == 0) {
+    err = posix_spawn_file_actions_addclose(&actions, child_in[WRITE]);
+  }
+  if (err == 0) {
+    err = posix_spawn_file_actions_addclose(&actions, child_out[READ]);
+  }
+  if (err == 0) {
+    err = posix_spawn_file_actions_addclose(&actions, child_out[WRITE]);
+  }
+  if (err == 0) {
+    err = posix_spawnp(&child, program.c_str(), &actions, &attr, argv.data(),
+                       environ);
+  }
+  posix_spawnattr_destroy(&attr);
+  posix_spawn_file_actions_destroy(&actions);
+  if (err != 0) {
+    ::close(child_in[READ]);
+    ::close(child_in[WRITE]);
+    ::close(child_out[READ]);
+    ::close(child_out[WRITE]);
+    child = -1;
+    errno = err;
+    throw Error("BlackBoxExec", last_error("starting blackbox process failed"));
+  }
+
+  ::close(child_in[READ]);
+  ::close(child_out[WRITE]);
+
+  pipe_send = child_in[WRITE];
+#ifdef SO_NOSIGPIPE
+  int nosigpipe = 1;
+  if (setsockopt(pipe_send, SOL_SOCKET, SO_NOSIGPIPE, &nosigpipe,
+                 sizeof(nosigpipe)) != 0) {
+    ::close(pipe_send);
+    pipe_send = -1;
+    ::close(child_out[READ]);
+    terminate_child(child);
+    child = -1;
+    throw Error("BlackBoxExec", last_error("SO_NOSIGPIPE setup failed"));
+  }
 #endif
+  file_receive = fdopen(child_out[READ], "r");
+  if (file_receive == NULL) {
+    ::close(pipe_send);
+    pipe_send = -1;
+    ::close(child_out[READ]);
+    terminate_child(child);
+    child = -1;
+    throw Error("BlackBoxExec", last_error("fdopen failed"));
+  }
+  return;
+#endif
+  }
+
+  ~Session(void) { close(); }
+
+  bool owned_by_current_thread(void) const {
+#ifdef GECODE_HAS_THREADS
+    return owner == std::this_thread::get_id();
+#else
+    return true;
+#endif
+  }
+
+  std::string run(const std::string &out_buf) {
+#ifdef _WIN32
+    size_t written = 0;
+    while (written < out_buf.size()) {
+      DWORD count = 0;
+      DWORD remaining =
+          static_cast<DWORD>(out_buf.size() - written);
+      BOOL success =
+          WriteFile(pipe_send, out_buf.data() + written, remaining, &count,
+                    nullptr);
+      if (!success || count == 0) {
+        throw Error("BlackBoxExec",
+                    last_error("Writing blackbox process input failed"));
+      }
+      written += count;
+    }
+
+    char c[2] = {0, 0};
+    std::ostringstream oss;
+    while (c[0] != '\n') {
+      DWORD count = 0;
+      BOOL success = ReadFile(pipe_receive, c, sizeof(c) - 1, &count, NULL);
+      if (!success) {
+        throw Error(
+            "BlackBoxExec",
+            "Reading blackbox process output from pipe resulted did not succeed");
+      } else if (count == 0) {
+        throw Error("BlackBoxExec",
+                    "Blackbox process provided an incomplete response");
+      }
+      assert(count == 1);
+      oss << c[0];
+    }
+    return oss.str();
+#else
+    const char *p = out_buf.c_str();
+    size_t remaining = out_buf.size();
+    while (remaining > 0) {
+      ssize_t n = send_no_sigpipe(pipe_send, p, remaining);
+      if (n < 0) {
+        if (errno == EINTR) {
+          continue;
+        }
+        throw Error("BlackBoxExec",
+                    "Writing blackbox process input failed with errno " +
+                        std::to_string(errno));
+      }
+      if (n == 0) {
+        throw Error("BlackBoxExec",
+                    "Writing blackbox process input wrote zero bytes");
+      }
+      p += n;
+      remaining -= static_cast<size_t>(n);
+    }
+
+    char *str = NULL;
+    size_t size = 0;
+    errno = 0;
+    if (getline(&str, &size, file_receive) == -1) {
+      free(str);
+      if (feof(file_receive)) {
+        throw Error("BlackBoxExec",
+                    "Blackbox process provided an incomplete response");
+      }
+      throw Error(
+          "BlackBoxExec",
+          "Reading blackbox process output from pipe resulted in error no. " +
+              std::to_string(errno));
+    }
+    std::string in_buffer(str);
+    free(str);
+    return in_buffer;
+#endif
+  }
+
+  void close(void) {
+#ifdef _WIN32
+    if (pipe_send != NULL) {
+      CloseHandle(pipe_send);
+      pipe_send = NULL;
+    }
+    if (pipe_receive != NULL) {
+      CloseHandle(pipe_receive);
+      pipe_receive = NULL;
+    }
+    if (process != NULL) {
+      DWORD wait = WaitForSingleObject(process, 1000);
+      if (wait == WAIT_TIMEOUT) {
+        if (job != NULL) {
+          TerminateJobObject(job, 1);
+        } else {
+          TerminateProcess(process, 1);
+        }
+        WaitForSingleObject(process, 5000);
+      }
+      CloseHandle(process);
+      process = NULL;
+    }
+    if (job != NULL) {
+      CloseHandle(job);
+      job = NULL;
+    }
+#else
+    if (pipe_send != -1) {
+      ::close(pipe_send);
+      pipe_send = -1;
+    }
+    if (file_receive != NULL) {
+      fclose(file_receive);
+      file_receive = NULL;
+    }
+    if (child > 0) {
+      terminate_child(child);
+      child = -1;
+    }
+#endif
+  }
 };
 
-BlackBoxExec::~BlackBoxExec() {
-#ifdef _WIN32
-  CloseHandle(pipe_send);
-  CloseHandle(pipe_receive);
-#else
-  close(pipe_send);
-  fclose(file_receive);
-#endif
+BlackBoxExec::BlackBoxExec(const std::string &program0,
+                           const std::vector<std::string> &args0)
+    : program(program0), args(args0) {}
+
+BlackBoxExec::~BlackBoxExec(void) {
+  Support::Lock lock(mutex);
+  for (Session *s : sessions) {
+    delete s;
+  }
+  sessions.clear();
+}
+
+BlackBoxExec::Session &BlackBoxExec::session(void) {
+  Support::Lock lock(mutex);
+  for (Session *s : sessions) {
+    if (s->owned_by_current_thread()) {
+      return *s;
+    }
+  }
+  std::unique_ptr<Session> s(new Session(program, args));
+  Session *r = s.get();
+  sessions.push_back(r);
+  s.release();
+  return *r;
 }
 
 void BlackBoxExec::run(const std::vector<int64_t> &int_in,
@@ -274,51 +956,7 @@ void BlackBoxExec::run(const std::vector<int64_t> &int_in,
   }
   out << "\n";
   std::string out_buf = out.str();
-#ifdef _WIN32
-  // Write to process input pipe
-  BOOL success =
-      WriteFile(pipe_send, out_buf.c_str(), out_buf.size(), nullptr, nullptr);
-  assert(success);
-
-  // Read output from process by pipe
-  char c[2] = {0, 0};
-  std::ostringstream oss;
-  while (c[0] != '\n') {
-    DWORD count = 0;
-    BOOL success = ReadFile(pipe_receive, c, sizeof(c) - 1, &count, NULL);
-    if (!success) {
-      throw Error(
-          "BlackBoxExec",
-          "Reading blackbox process output from pipe resulted did not succeed");
-    } else if (count == 0) {
-      throw Error("BlackBoxExec",
-                  "Blackbox process provided an incomplete response");
-    }
-    assert(count == 1);
-    oss << c[0];
-  }
-  std::string in_buffer(oss.str());
-#else
-  // Write to process input pipe
-  ssize_t bytes_written = write(pipe_send, out_buf.c_str(), out_buf.size());
-  if (bytes_written != static_cast<ssize_t>(out_buf.size())) {
-    throw Error("BlackBoxExec",
-                "Failed to write the full request to the blackbox process.");
-  }
-
-  // Read from process output pipe
-  char *str = NULL;
-  size_t size = 0;
-
-  if (getline(&str, &size, file_receive) == -1) {
-    throw Error(
-        "BlackBoxExec",
-        "Reading blackbox process output from pipe resulted in error no. " +
-            std::to_string(errno));
-  }
-  std::string in_buffer(str);
-  free(str);
-#endif
+  std::string in_buffer = session().run(out_buf);
   // Parse the response in a single left-to-right pass: comma-separated
   // integers, a semicolon, then comma-separated floats (e.g. "5,-7;2.5,1.125\n").
   const char *p = in_buffer.c_str();
@@ -328,19 +966,31 @@ void BlackBoxExec::run(const std::vector<int64_t> &int_in,
       ++q;
     }
   };
+  auto skip_final_ws = [](const char *&q) {
+    while (*q == ' ' || *q == '\t' || *q == '\r' || *q == '\n') {
+      ++q;
+    }
+  };
   for (size_t i = 0; i < int_out.size(); ++i) {
+    skip_ws(p);
+    errno = 0;
     long long v = std::strtoll(p, &end, 10);
-    if (end == p) {
+    if ((end == p) || (errno == ERANGE)) {
       throw Error("BlackBoxExec", "Failed to read output integer " +
                                       std::to_string(i) +
                                       " from blackbox process output, " +
                                       std::to_string(int_out.size()) +
-                                      " integer values where expected.");
+                                      " integer values were expected.");
     }
-    int_out[i] = static_cast<int64_t>(v);
+    int_out[i] = checked_int(v, "blackbox process output", i);
     p = end;
     skip_ws(p);
-    if (*p == ',') {
+    if (i + 1 < int_out.size()) {
+      if (*p != ',') {
+        throw Error("BlackBoxExec",
+                    "Blackbox process response is missing an integer output "
+                    "separator.");
+      }
       ++p;
     }
   }
@@ -352,20 +1002,32 @@ void BlackBoxExec::run(const std::vector<int64_t> &int_in,
   }
   ++p;
   for (size_t i = 0; i < float_out.size(); ++i) {
+    skip_ws(p);
+    errno = 0;
     double v = std::strtod(p, &end);
-    if (end == p) {
+    if ((end == p) || (errno == ERANGE)) {
       throw Error("BlackBoxExec", "Failed to read output float " +
                                       std::to_string(i) +
                                       " from blackbox process output, " +
                                       std::to_string(float_out.size()) +
-                                      " floating point values where expected.");
+                                      " floating point values were expected.");
     }
     float_out[i] = v;
     p = end;
     skip_ws(p);
-    if (*p == ',') {
+    if (i + 1 < float_out.size()) {
+      if (*p != ',') {
+        throw Error("BlackBoxExec",
+                    "Blackbox process response is missing a floating point "
+                    "output separator.");
+      }
       ++p;
     }
+  }
+  skip_final_ws(p);
+  if (*p != '\0') {
+    throw Error("BlackBoxExec",
+                "Blackbox process response contains trailing data.");
   }
 }
 
@@ -503,11 +1165,30 @@ static void reason_subscriptions(const std::vector<int> &reason, int n_int,
     return;
   }
 
+  const int n_total = n_int + n_float;
   size_t pos = 0;
+  auto require = [&](size_t n, const char *what) {
+    if (reason.size() - pos < n) {
+      throw Error("Blackbox", std::string("Malformed blackbox bounds reason: ") +
+                                  what + ".");
+    }
+  };
   while (pos < reason.size()) {
-    pos++; // idx: the variable being explained (not needed for subscription)
+    require(1, "missing explained variable index");
+    int idx = reason[pos++];
+    if ((idx < 1) || (idx > n_total)) {
+      throw Error("Blackbox",
+                  "Malformed blackbox bounds reason: explained variable index "
+                  "is out of range.");
+    }
     for (int side = 0; side < 2; side++) { // lower- then upper-bound literals
+      require(1, "missing reason literal count");
       int count = reason[pos++];
+      if (count < 0) {
+        throw Error("Blackbox",
+                    "Malformed blackbox bounds reason: negative literal count.");
+      }
+      require(static_cast<size_t>(count) * 2, "truncated reason literals");
       for (int k = 0; k < count; k++) {
         int var = reason[pos++]; // 1-based combined variable index
         pos++;                   // bound code (per-variable granularity only)
@@ -515,6 +1196,10 @@ static void reason_subscriptions(const std::vector<int> &reason, int n_int,
           sub_int[var - 1] = true;
         } else if (var > n_int && var <= n_int + n_float) {
           sub_float[var - 1 - n_int] = true;
+        } else {
+          throw Error("Blackbox",
+                      "Malformed blackbox bounds reason: dependency variable "
+                      "index is out of range.");
         }
       }
     }
