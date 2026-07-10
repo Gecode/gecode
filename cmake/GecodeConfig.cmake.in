@@ -2,11 +2,97 @@
 
 set(_gecode_package_prefix_dir "${PACKAGE_PREFIX_DIR}")
 
+set(_gecode_supported_components
+  support
+  kernel
+  search
+  int
+  set
+  float
+  minimodel
+  driver
+  flatzinc
+  gist)
+set(_gecode_built_components "@GECODE_LIBRARY_COMPONENTS@")
+
+foreach(_gecode_component IN LISTS _gecode_supported_components)
+  if(_gecode_component IN_LIST _gecode_built_components)
+    set(_gecode_component_found TRUE)
+  else()
+    set(_gecode_component_found FALSE)
+  endif()
+  set(Gecode_${_gecode_component}_FOUND ${_gecode_component_found})
+  set(Gecode_gecode${_gecode_component}_FOUND ${_gecode_component_found})
+endforeach()
+
+set(_gecode_dependency_roots)
+set(Gecode_LIBRARIES)
+if(Gecode_FIND_COMPONENTS)
+  foreach(_gecode_requested_component IN LISTS Gecode_FIND_COMPONENTS)
+    set(_gecode_canonical_component "${_gecode_requested_component}")
+    if(_gecode_canonical_component MATCHES "^gecode(.+)$")
+      set(_gecode_canonical_component "${CMAKE_MATCH_1}")
+    endif()
+    if(_gecode_canonical_component IN_LIST _gecode_supported_components)
+      if(_gecode_canonical_component IN_LIST _gecode_built_components)
+        list(APPEND _gecode_dependency_roots ${_gecode_canonical_component})
+        list(APPEND Gecode_LIBRARIES "Gecode::gecode${_gecode_canonical_component}")
+      endif()
+    elseif(NOT DEFINED Gecode_${_gecode_requested_component}_FOUND)
+      set(Gecode_${_gecode_requested_component}_FOUND FALSE)
+    endif()
+  endforeach()
+  list(REMOVE_DUPLICATES _gecode_dependency_roots)
+  list(REMOVE_DUPLICATES Gecode_LIBRARIES)
+else()
+  set(_gecode_dependency_roots ${_gecode_built_components})
+  set(Gecode_LIBRARIES Gecode::gecode)
+endif()
+
+# Compute the transitive component closure before importing targets.  Importing
+# an unused target whose interface names an unavailable external target can
+# otherwise make CMake's generate step fail for a support-only consumer.
+set(_gecode_dependency_queue ${_gecode_dependency_roots})
+set(_gecode_component_closure)
+while(_gecode_dependency_queue)
+  list(POP_FRONT _gecode_dependency_queue _gecode_dependency_component)
+  if(_gecode_dependency_component IN_LIST _gecode_component_closure)
+    continue()
+  endif()
+  list(APPEND _gecode_component_closure ${_gecode_dependency_component})
+  set(_gecode_component_dependencies)
+  if(_gecode_dependency_component STREQUAL kernel)
+    set(_gecode_component_dependencies support)
+  elseif(_gecode_dependency_component STREQUAL search OR
+         _gecode_dependency_component STREQUAL int)
+    set(_gecode_component_dependencies kernel)
+  elseif(_gecode_dependency_component STREQUAL set)
+    set(_gecode_component_dependencies int)
+  elseif(_gecode_dependency_component STREQUAL float)
+    set(_gecode_component_dependencies int kernel)
+  elseif(_gecode_dependency_component STREQUAL minimodel)
+    set(_gecode_component_dependencies int set search float)
+  elseif(_gecode_dependency_component STREQUAL gist)
+    set(_gecode_component_dependencies search int set float)
+  elseif(_gecode_dependency_component STREQUAL driver)
+    set(_gecode_component_dependencies int search minimodel gist)
+  elseif(_gecode_dependency_component STREQUAL flatzinc)
+    set(_gecode_component_dependencies minimodel driver gist)
+  endif()
+  foreach(_gecode_component_dependency IN LISTS _gecode_component_dependencies)
+    if(_gecode_component_dependency IN_LIST _gecode_built_components)
+      list(APPEND _gecode_dependency_queue ${_gecode_component_dependency})
+    endif()
+  endforeach()
+endwhile()
+
 include(CMakeFindDependencyMacro)
-if("@GECODE_PACKAGE_NEEDS_THREADS@" STREQUAL "ON")
+if(support IN_LIST _gecode_component_closure AND
+   "@GECODE_PACKAGE_NEEDS_THREADS@" STREQUAL "ON")
   find_dependency(Threads)
 endif()
-if("@GECODE_PACKAGE_NEEDS_MPFR@" STREQUAL "ON")
+if(float IN_LIST _gecode_component_closure AND
+   "@GECODE_PACKAGE_NEEDS_MPFR@" STREQUAL "ON")
   set(_gecode_mpfr_args)
   if(Gecode_FIND_QUIETLY)
     list(APPEND _gecode_mpfr_args QUIET)
@@ -69,9 +155,15 @@ if("@GECODE_PACKAGE_NEEDS_MPFR@" STREQUAL "ON")
 endif()
 set(_gecode_qt_components "@GECODE_PACKAGE_QT_COMPONENTS@")
 set(_gecode_qt_version "@GECODE_PACKAGE_QT_VERSION@")
-if("@GECODE_PACKAGE_QT_MAJOR@" STREQUAL "6")
+set(_gecode_needs_qt FALSE)
+if(gist IN_LIST _gecode_component_closure OR
+   (flatzinc IN_LIST _gecode_component_closure AND
+    NOT "@GECODE_PACKAGE_QT_MAJOR@" STREQUAL ""))
+  set(_gecode_needs_qt TRUE)
+endif()
+if(_gecode_needs_qt AND "@GECODE_PACKAGE_QT_MAJOR@" STREQUAL "6")
   find_dependency(Qt6 ${_gecode_qt_version} COMPONENTS ${_gecode_qt_components})
-elseif("@GECODE_PACKAGE_QT_MAJOR@" STREQUAL "5")
+elseif(_gecode_needs_qt AND "@GECODE_PACKAGE_QT_MAJOR@" STREQUAL "5")
   find_dependency(Qt5 ${_gecode_qt_version} COMPONENTS ${_gecode_qt_components})
 endif()
 unset(_gecode_qt_version)
@@ -82,41 +174,20 @@ include("${CMAKE_CURRENT_LIST_DIR}/GecodeTargets.cmake")
 
 set(Gecode_VERSION "@GECODE_PROJECT_VERSION@")
 set_and_check(Gecode_INCLUDE_DIRS "@PACKAGE_CMAKE_INSTALL_INCLUDEDIR@")
-set(Gecode_LIBRARIES Gecode::gecode)
-unset(_gecode_package_prefix_dir)
 
-set(_gecode_supported_components
-  support
-  kernel
-  search
-  int
-  set
-  float
-  minimodel
-  driver
-  flatzinc
-  gist)
-
-foreach(_gecode_component IN LISTS _gecode_supported_components)
-  set(_gecode_component_target "Gecode::gecode${_gecode_component}")
-  if(TARGET ${_gecode_component_target})
-    set(_gecode_component_found TRUE)
-  else()
-    set(_gecode_component_found FALSE)
-  endif()
-  set(Gecode_${_gecode_component}_FOUND ${_gecode_component_found})
-  set(Gecode_gecode${_gecode_component}_FOUND ${_gecode_component_found})
-endforeach()
-
-foreach(_gecode_requested_component IN LISTS Gecode_FIND_COMPONENTS)
-  if(NOT DEFINED Gecode_${_gecode_requested_component}_FOUND)
-    set(Gecode_${_gecode_requested_component}_FOUND FALSE)
-  endif()
-endforeach()
-
+unset(_gecode_canonical_component)
+unset(_gecode_built_components)
 unset(_gecode_component)
+unset(_gecode_component_closure)
+unset(_gecode_component_dependencies)
+unset(_gecode_component_dependency)
 unset(_gecode_component_found)
 unset(_gecode_component_target)
+unset(_gecode_dependency_component)
+unset(_gecode_dependency_queue)
+unset(_gecode_dependency_roots)
+unset(_gecode_needs_qt)
+unset(_gecode_package_prefix_dir)
 unset(_gecode_requested_component)
 unset(_gecode_supported_components)
 

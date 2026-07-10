@@ -72,7 +72,9 @@ Version metadata shared by autoconf and CMake lives in `gecode-version.m4`.
 
 By default, CMake uses checked-in `gecode/kernel/var-type.hpp` and
 `gecode/kernel/var-imp.hpp`; regeneration is opt-in via
-`-DGECODE_REGENERATE_VARIMP=ON`.
+`-DGECODE_REGENERATE_VARIMP=ON`. A nonempty `GECODE_WITH_VIS` list enables
+regeneration automatically and validates every specification during
+configuration; relative paths are resolved from the source directory.
 Build-time script execution uses `uv run --script ...` and requires Python
 3.11 or newer. Autoconf builds require `uv` on `PATH`; CMake requires it only
 for generated-script paths such as `-DGECODE_REGENERATE_VARIMP=ON` and the

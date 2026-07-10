@@ -1,5 +1,15 @@
 $ErrorActionPreference = "Stop"
 
+function Assert-NativeCommandSucceeded {
+  param(
+    [int] $ExitCode,
+    [string] $Description
+  )
+  if ($ExitCode -ne 0) {
+    throw "$Description failed with exit code $ExitCode."
+  }
+}
+
 $prefix = $args[0]
 if (-not $prefix) {
   throw "usage: cmake-consumer-smoke-vcpkg.ps1 <install-prefix>"
@@ -111,10 +121,9 @@ cmake -S (Join-Path $work "a") -B (Join-Path $work "a\build") -G "Visual Studio 
   "-DVCPKG_INSTALLED_DIR=$consumerVcpkgInstalled" `
   "-DVCPKG_TARGET_TRIPLET=x64-windows" `
   "-DCMAKE_PREFIX_PATH=$prefix" 2>&1 | Tee-Object -FilePath (Join-Path $work "a\configure.log")
-if ($LASTEXITCODE -ne 0) {
-  throw "consumer_a configure failed."
-}
+Assert-NativeCommandSucceeded $LASTEXITCODE "consumer_a configure"
 cmake --build (Join-Path $work "a\build") --config $env:BUILD_TYPE
+Assert-NativeCommandSucceeded $LASTEXITCODE "consumer_a build"
 
 cmake -S (Join-Path $work "b") -B (Join-Path $work "b\build") -G "Visual Studio 17 2022" -A x64 `
   "-DCMAKE_TOOLCHAIN_FILE=$toolchain" `
@@ -123,7 +132,9 @@ cmake -S (Join-Path $work "b") -B (Join-Path $work "b\build") -G "Visual Studio 
   "-DVCPKG_INSTALLED_DIR=$consumerVcpkgInstalled" `
   "-DVCPKG_TARGET_TRIPLET=x64-windows" `
   "-DCMAKE_PREFIX_PATH=$prefix"
+Assert-NativeCommandSucceeded $LASTEXITCODE "consumer_b configure"
 cmake --build (Join-Path $work "b\build") --config $env:BUILD_TYPE
+Assert-NativeCommandSucceeded $LASTEXITCODE "consumer_b build"
 
 cmake -S (Join-Path $work "c") -B (Join-Path $work "c\build") -G "Visual Studio 17 2022" -A x64 `
   "-DCMAKE_TOOLCHAIN_FILE=$toolchain" `
@@ -132,7 +143,9 @@ cmake -S (Join-Path $work "c") -B (Join-Path $work "c\build") -G "Visual Studio 
   "-DVCPKG_INSTALLED_DIR=$consumerVcpkgInstalled" `
   "-DVCPKG_TARGET_TRIPLET=x64-windows" `
   "-DCMAKE_PREFIX_PATH=$prefix"
+Assert-NativeCommandSucceeded $LASTEXITCODE "consumer_c configure"
 cmake --build (Join-Path $work "c\build") --config $env:BUILD_TYPE
+Assert-NativeCommandSucceeded $LASTEXITCODE "consumer_c build"
 
 cmake -S (Join-Path $work "d") -B (Join-Path $work "d\build") -G "Visual Studio 17 2022" -A x64 `
   "-DCMAKE_TOOLCHAIN_FILE=$toolchain" `
@@ -141,7 +154,9 @@ cmake -S (Join-Path $work "d") -B (Join-Path $work "d\build") -G "Visual Studio 
   "-DVCPKG_INSTALLED_DIR=$consumerVcpkgInstalled" `
   "-DVCPKG_TARGET_TRIPLET=x64-windows" `
   "-DCMAKE_PREFIX_PATH=$prefix"
+Assert-NativeCommandSucceeded $LASTEXITCODE "consumer_d configure"
 cmake --build (Join-Path $work "d\build") --config $env:BUILD_TYPE
+Assert-NativeCommandSucceeded $LASTEXITCODE "consumer_d build"
 
 if (-not (Select-String -Path (Join-Path $work "a\configure.log") -Pattern "Gecode_VERSION=" -Quiet)) {
   throw "Gecode_VERSION was not reported during consumer configure."
