@@ -200,6 +200,64 @@ namespace Test { namespace Int {
        }
      };
 
+     /// Invalid Boolean expressions that must fail when materialized
+     enum BoolExprInvalidKind {
+       BE_EMPTY,
+       BE_NOT_EMPTY,
+       BE_IMP_EMPTY_LHS,
+       BE_IMP_EMPTY_RHS,
+       BE_RIMP_EMPTY_LHS,
+       BE_RIMP_EMPTY_RHS,
+       BE_NOT_AND,
+       BE_NOT_OR,
+       BE_XOR_EMPTY,
+       BE_EQV_EMPTY,
+       BE_NEQ_EMPTY
+     };
+
+     /// %Test invalid Boolean expressions
+     class BoolExprInvalid : public Test {
+     protected:
+       /// Kind of invalid expression
+       BoolExprInvalidKind k;
+     public:
+       /// Create and register test
+       BoolExprInvalid(BoolExprInvalidKind k0, const std::string& s)
+         : Test("MiniModel::BoolExpr::Invalid::"+s,1,0,1), k(k0) {}
+       /// %Test whether an assignment is a solution
+       virtual bool solution(const Assignment&) const {
+         return false;
+       }
+       /// Post expression and check that materialization fails
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
+         using namespace Gecode;
+         BoolExpr empty;
+         BoolExpr v(channel(home,x[0]));
+         BoolExpr e;
+         switch (k) {
+         case BE_EMPTY:          e = empty;       break;
+         case BE_NOT_EMPTY:      e = !empty;      break;
+         case BE_IMP_EMPTY_LHS:  e = empty >> v;  break;
+         case BE_IMP_EMPTY_RHS:  e = v >> empty;  break;
+         case BE_RIMP_EMPTY_LHS: e = empty << v;  break;
+         case BE_RIMP_EMPTY_RHS: e = v << empty;  break;
+         case BE_NOT_AND:        e = !empty && v; break;
+         case BE_NOT_OR:         e = !empty || v; break;
+         case BE_XOR_EMPTY:      e = empty ^ v;   break;
+         case BE_EQV_EMPTY:      e = empty == v;  break;
+         case BE_NEQ_EMPTY:      e = empty != v;  break;
+         default: GECODE_NEVER;
+         }
+         try {
+           (void) expr(home,e);
+         } catch (MiniModel::TooFewArguments&) {
+           home.fail();
+           return;
+         }
+         home.fail();
+       }
+     };
+
     const BoolInstr bi000[] = {
       {BO_AND,0,1,0},{BO_AND,2,3,1},{BO_AND,0,1,0},
       {BO_HLT,0,0,0}
@@ -4421,6 +4479,17 @@ namespace Test { namespace Int {
         (void) new BoolExprDefaultAccumulator(BO_AND,true);
         (void) new BoolExprDefaultAccumulator(BO_OR,false);
         (void) new BoolExprDefaultAccumulator(BO_OR,true);
+        (void) new BoolExprInvalid(BE_EMPTY,"Empty");
+        (void) new BoolExprInvalid(BE_NOT_EMPTY,"NotEmpty");
+        (void) new BoolExprInvalid(BE_IMP_EMPTY_LHS,"Imp::EmptyLhs");
+        (void) new BoolExprInvalid(BE_IMP_EMPTY_RHS,"Imp::EmptyRhs");
+        (void) new BoolExprInvalid(BE_RIMP_EMPTY_LHS,"RImp::EmptyLhs");
+        (void) new BoolExprInvalid(BE_RIMP_EMPTY_RHS,"RImp::EmptyRhs");
+        (void) new BoolExprInvalid(BE_NOT_AND,"NotAnd");
+        (void) new BoolExprInvalid(BE_NOT_OR,"NotOr");
+        (void) new BoolExprInvalid(BE_XOR_EMPTY,"Xor");
+        (void) new BoolExprInvalid(BE_EQV_EMPTY,"Eqv");
+        (void) new BoolExprInvalid(BE_NEQ_EMPTY,"Neq");
       }
     };
 
