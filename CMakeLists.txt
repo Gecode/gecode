@@ -136,6 +136,12 @@ set(GECODE_WITH_VIS "" CACHE STRING "Additional .vis files (comma-separated)")
 set(GECODE_LIB_PREFIX "" CACHE STRING "User-defined prefix for generated library basenames")
 set(GECODE_LIB_SUFFIX "" CACHE STRING "User-defined suffix for generated library basenames")
 
+if(NOT GECODE_WITH_VIS STREQUAL "" AND NOT GECODE_REGENERATE_VARIMP)
+  set(GECODE_REGENERATE_VARIMP ON)
+  message(STATUS
+    "GECODE_WITH_VIS activates GECODE_REGENERATE_VARIMP for generated headers")
+endif()
+
 # Deprecated compatibility aliases for the Gecode 6.x line.
 if(GECODE_USED_ENABLE_THREADS_ALIAS)
   set(GECODE_ENABLE_THREAD ${GECODE_ALIAS_ENABLE_THREAD_VALUE} CACHE BOOL "Enable thread support" FORCE)
@@ -526,6 +532,9 @@ string(REGEX MATCHALL "[^\n]*\n" CONFIG
 /* Define to 1 if you have a working `mmap' system call. */
 #undef HAVE_MMAP
 
+/* Whether legacy MSVC automatic library selection is disabled. */
+#undef GECODE_NO_AUTOLINK
+
 /* Define to the address where bug reports for this package should be sent. */
 #undef PACKAGE_BUGREPORT
 
@@ -584,6 +593,10 @@ endif()
 
 set(GECODE_DLL_USERPREFIX "${GECODE_LIB_PREFIX}")
 set(GECODE_DLL_USERSUFFIX "${GECODE_LIB_SUFFIX}")
+# CMake consumers link explicitly, either through the exported targets or by
+# naming the installed libraries.  Keep the installed headers from also
+# injecting the legacy, Autoconf-specific MSVC library names.
+set(GECODE_NO_AUTOLINK 1)
 if(GECODE_ENABLE_INT_VARS)
   set(GECODE_HAS_INT_VARS "/**/")
 endif()
@@ -714,7 +727,12 @@ if(GECODE_ENABLE_FLOAT_VARS)
 endif()
 if(GECODE_WITH_VIS)
   string(REPLACE "," ";" _extra_vis "${GECODE_WITH_VIS}")
-  foreach(vis ${_extra_vis})
+  foreach(vis IN LISTS _extra_vis)
+    string(STRIP "${vis}" vis)
+    if(vis STREQUAL "")
+      message(FATAL_ERROR
+        "GECODE_WITH_VIS contains an empty variable implementation specification")
+    endif()
     list(APPEND GECODE_VIS_FILES "${vis}")
   endforeach()
 endif()
@@ -727,19 +745,28 @@ endif()
 
 set(GECODE_VIS_DEPENDS)
 set(GECODE_VIS_FILES_FOR_GEN)
-foreach(vis ${GECODE_VIS_FILES})
+foreach(vis IN LISTS GECODE_VIS_FILES)
   if(IS_ABSOLUTE "${vis}")
-    list(APPEND GECODE_VIS_DEPENDS "${vis}")
-    list(APPEND GECODE_VIS_FILES_FOR_GEN "${vis}")
+    set(_vis_path "${vis}")
   else()
-    list(APPEND GECODE_VIS_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/${vis}")
-    if(vis MATCHES "^\\./")
-      list(APPEND GECODE_VIS_FILES_FOR_GEN "${vis}")
-    else()
-      list(APPEND GECODE_VIS_FILES_FOR_GEN "./${vis}")
-    endif()
+    set(_vis_path "${CMAKE_CURRENT_SOURCE_DIR}/${vis}")
   endif()
+  cmake_path(NORMAL_PATH _vis_path)
+  if(NOT EXISTS "${_vis_path}")
+    message(FATAL_ERROR
+      "Variable implementation specification '${vis}' does not exist "
+      "(resolved to '${_vis_path}')")
+  endif()
+  if(IS_DIRECTORY "${_vis_path}")
+    message(FATAL_ERROR
+      "Variable implementation specification '${vis}' is a directory; "
+      "expected a .vis file")
+  endif()
+  list(APPEND GECODE_VIS_DEPENDS "${_vis_path}")
+  list(APPEND GECODE_VIS_FILES_FOR_GEN "${_vis_path}")
 endforeach()
+list(REMOVE_DUPLICATES GECODE_VIS_DEPENDS)
+list(REMOVE_DUPLICATES GECODE_VIS_FILES_FOR_GEN)
 string(JOIN "||" GECODE_VIS_FILES_SERIALIZED ${GECODE_VIS_FILES_FOR_GEN})
 
 set(GECODE_VAR_TYPE_HPP_SOURCE ${CMAKE_CURRENT_SOURCE_DIR}/gecode/kernel/var-type.hpp)
@@ -1257,8 +1284,35 @@ if(BUILD_TESTING)
         Set::Sequence::SeqU1
         Set::Wait)
     endif()
+    if(GECODE_ENABLE_FLOAT_VARS)
+      set(GECODE_FLOAT_CHECK_TESTS
+        Float::Arithmetic::PositiveNRootBounds
+        Float::Arithmetic::PowConsistency
+        Float::Arithmetic::MultZeroEndpoint
+        Float::Arithmetic::Pow::N::2::XY::Sol::C
+        Float::Arithmetic::NRoot::N::2::XY::Sol::C
+        Float::Arithmetic::Mult::XYZ::Sol::C)
+      list(APPEND GECODE_CHECK_TESTS ${GECODE_FLOAT_CHECK_TESTS})
 
-    set(GECODE_CHECK_ARGS -iter 2 -threads 0)
+      # Keep the fast CI selection honest when Float regressions are added or
+      # the list above is edited.  These names must remain registered in the
+      # ordinary check target rather than living only in ad-hoc test commands.
+      set(GECODE_REQUIRED_FLOAT_CHECK_TESTS
+        Float::Arithmetic::PositiveNRootBounds
+        Float::Arithmetic::PowConsistency
+        Float::Arithmetic::MultZeroEndpoint
+        Float::Arithmetic::Pow::N::2::XY::Sol::C
+        Float::Arithmetic::NRoot::N::2::XY::Sol::C
+        Float::Arithmetic::Mult::XYZ::Sol::C)
+      foreach(gecode_required_float_test ${GECODE_REQUIRED_FLOAT_CHECK_TESTS})
+        if(NOT gecode_required_float_test IN_LIST GECODE_CHECK_TESTS)
+          message(FATAL_ERROR
+            "Required Float check test is missing: ${gecode_required_float_test}")
+        endif()
+      endforeach()
+    endif()
+
+    set(GECODE_CHECK_ARGS -iter 2 -threads 0 -fixprob 1)
     foreach(gecode_check_test ${GECODE_CHECK_TESTS})
       list(APPEND GECODE_CHECK_ARGS -test ${gecode_check_test})
     endforeach()
@@ -1272,9 +1326,20 @@ if(BUILD_TESTING)
     add_test(NAME test COMMAND gecode-test ${GECODE_CHECK_ARGS})
     set_tests_properties(test PROPERTIES
       FIXTURES_REQUIRED gecode-test-built)
+    set(GECODE_CHECK_DEPENDS gecode-test)
+    if(GECODE_ENABLE_FLOAT_VARS)
+      add_custom_target(verify-gecode-check-tests
+        COMMAND ${CMAKE_COMMAND}
+          "-DTEST_EXECUTABLE=$<TARGET_FILE:gecode-test>"
+          "-DREQUIRED_TESTS=${GECODE_REQUIRED_FLOAT_CHECK_TESTS}"
+          -P ${CMAKE_CURRENT_SOURCE_DIR}/cmake/VerifyTestSelection.cmake
+        DEPENDS gecode-test
+        VERBATIM)
+      list(APPEND GECODE_CHECK_DEPENDS verify-gecode-check-tests)
+    endif()
     add_custom_target(check
       COMMAND $<TARGET_FILE:gecode-test> ${GECODE_CHECK_ARGS}
-      DEPENDS gecode-test
+      DEPENDS ${GECODE_CHECK_DEPENDS}
       USES_TERMINAL)
   else()
     message(WARNING "Skipping gecode-test/check targets because required modules are disabled")
@@ -1419,7 +1484,7 @@ if(GECODE_INSTALL)
   write_basic_package_version_file(
     ${CMAKE_CURRENT_BINARY_DIR}/GecodeConfigVersion.cmake
     VERSION ${GECODE_PROJECT_VERSION}
-    COMPATIBILITY SameMajorVersion)
+    COMPATIBILITY SameMinorVersion)
 
   install(EXPORT GecodeTargets
     FILE GecodeTargets.cmake
