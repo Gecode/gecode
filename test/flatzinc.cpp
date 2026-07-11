@@ -35,6 +35,36 @@
 
 namespace Test { namespace FlatZinc {
 
+  namespace {
+
+    /// Verify that FlatZinc table conversion uses automatic representation.
+    class TupleSetAutoRepresentation : public Base {
+    public:
+      TupleSetAutoRepresentation(void)
+        : Base("FlatZinc::TupleSet::AutoRepresentation") {}
+
+      virtual bool run(void) {
+        using namespace Gecode;
+
+        const int n = 4096;
+        IntArgs tuples(2*n);
+        for (int i=0; i<n; i++) {
+          tuples[2*i] = i;
+          tuples[2*i+1] = n+i;
+        }
+
+        Gecode::FlatZinc::FlatZincSpace space;
+        TupleSet ts = space.arg2tupleset(tuples,2);
+        return ts.finalized() &&
+          (ts.representation() == EPK_DENSE_COMPRESSED) &&
+          (ts.tuples() == n);
+      }
+    };
+
+    TupleSetAutoRepresentation tuple_set_auto_representation;
+
+  }
+
   FlatZincTest::FlatZincTest(const std::string& name, const std::string& source,
                              const std::string& expected, bool allSolutions, std::vector<std::string> cmdlineOpt)
     : Base("FlatZinc::"+name), _name(name), _source(source), _expected(expected),
