@@ -269,6 +269,32 @@ dual-feasible functions, improving early detection of infeasible
 packing states.
 
 [ENTRY]
+Module: int
+What:   new
+Rank:   major
+[DESCRIPTION]
+Add selectable TupleSet support representations for extensional integer
+constraints.
+[MORE]
+Tuple sets can use dense, sparse, compressed-dense, or automatic support
+selection. Extensional posting selects the matching propagator. DFA-derived
+tuple sets accept the same selector, while FlatZinc tables and examples that
+materialize larger tuple sets use automatic selection.
+
+A failed finalization leaves the tuple set in a terminal failed state,
+reported by failed(); it cannot be finalized again.
+
+[ENTRY]
+Module: int
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Avoid reading past TupleSet range data when a negative compact-table
+propagator receives an assignment outside every table range. Positive
+compact-table propagators also preserve pending updates when a disabled
+space is cloned and later enabled.
+
+[ENTRY]
 Module: other
 What:   change
 Rank:   major
