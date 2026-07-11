@@ -2338,7 +2338,7 @@ namespace Gecode { namespace FlatZinc {
       }
       ts.add(t);
     }
-    ts.finalize();
+    ts.finalize(EPK_AUTO);
 
     if (_initData) {
       FlatZincSpaceInitData::TupleSetSet::iterator it = _initData->tupleSetSet.find(ts);
