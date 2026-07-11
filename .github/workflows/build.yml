@@ -420,14 +420,25 @@ jobs:
       with:
         enable-cache: false
 
+    - name: Cache vcpkg binary packages
+      uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+      with:
+        path: ${{ runner.temp }}\vcpkg-binary-cache
+        key: vcpkg-${{ runner.os }}-x64-windows-d015e31e90838a4c9dfa3eed45979bc70d9357fc-${{ hashFiles('vcpkg.json') }}
+        restore-keys: |
+          vcpkg-${{ runner.os }}-x64-windows-d015e31e90838a4c9dfa3eed45979bc70d9357fc-
+
     - name: Setup vcpkg
       shell: pwsh
       run: |
         $vcpkgRoot = Join-Path $env:RUNNER_TEMP "vcpkg"
+        $vcpkgBinaryCache = Join-Path $env:RUNNER_TEMP "vcpkg-binary-cache"
+        New-Item -ItemType Directory -Force -Path $vcpkgBinaryCache | Out-Null
         git clone https://github.com/microsoft/vcpkg $vcpkgRoot
         git -C $vcpkgRoot checkout d015e31e90838a4c9dfa3eed45979bc70d9357fc
         & (Join-Path $vcpkgRoot "bootstrap-vcpkg.bat") -disableMetrics
         "VCPKG_ROOT=$vcpkgRoot" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+        "VCPKG_DEFAULT_BINARY_CACHE=$vcpkgBinaryCache" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
 
     - name: Configure CMake (preset)
       shell: pwsh
