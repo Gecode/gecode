@@ -333,7 +333,7 @@ namespace Test { namespace Int {
         IntVarArgs l(*home, 3, 0, 5);
         IntVarArgs b(*home, 6, 0, 2);
         IntArgs s({4,2,2,2,2,2});
-        binpacking(*home, l, b, s);
+        binpacking(*home, l, b, s, IPL_FULL);
         bool failed = home->status() == SS_FAILED;
         delete home;
         return failed;
@@ -353,11 +353,11 @@ namespace Test { namespace Int {
       };
       /// Check one propagation-level test case
       bool check_case(int n_bins, int capacity, const Gecode::IntArgs& sizes,
-                      const bool expected_failed[3]) const {
+                      const bool expected_failed[4]) const {
         using namespace Gecode;
         IntPropLevel const levels[] =
-          {IPL_BASIC, IPL_ADVANCED, IPL_FULL};
-        for (unsigned int i = 0; i < 3; i += 1) {
+          {IPL_BASIC, IPL_DEF, IPL_ADVANCED, IPL_FULL};
+        for (unsigned int i = 0; i < 4; i += 1) {
           TestSpace* home = new TestSpace;
           IntVarArgs l(*home, n_bins, 0, capacity);
           IntVarArgs b(*home, sizes.size(), 0, n_bins-1);
@@ -376,8 +376,8 @@ namespace Test { namespace Int {
       /// Run the actual test
       virtual bool run(void) {
         using namespace Gecode;
-        bool const advanced_failed[] = {false, true, true};
-        bool const full_failed[] = {false, false, true};
+        bool const advanced_failed[] = {false, true, true, true};
+        bool const full_failed[] = {false, false, false, true};
         return
           check_case(3, 5, IntArgs({4,2,2,2,2,2}), advanced_failed) &&
           check_case(5, 35,
