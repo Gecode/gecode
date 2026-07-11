@@ -3155,9 +3155,9 @@ namespace Gecode {
    * The propagation level \a ipl controls the amount of filtering:
    *  - \a IPL_BASIC performs basic load and item filtering only.
    *  - \a IPL_ADVANCED performs basic filtering, knapsack filtering using
-   *    NoSum, and a small DFF portfolio (CCM1 and MT).
+   *    NoSum, and a small DFF portfolio (CCM1 and MT). It is the default
+   *    (\a IPL_DEF).
    *  - \a IPL_FULL performs all of the above and the complete DFF portfolio.
-   *    It is the default (\a IPL_DEF).
    *
    * Throws the following exceptions:
    *  - Of type Int::ArgumentSizeMismatch if \a b and \a s are not of
@@ -3205,9 +3205,9 @@ namespace Gecode {
    * per-dimension bin-packing propagator:
    *  - \a IPL_BASIC performs basic load and item filtering only.
    *  - \a IPL_ADVANCED performs basic filtering, knapsack filtering using
-   *    NoSum, and a small DFF portfolio (CCM1 and MT).
+   *    NoSum, and a small DFF portfolio (CCM1 and MT). It is the default
+   *    (\a IPL_DEF).
    *  - \a IPL_FULL performs all of the above and the complete DFF portfolio.
-   *    It is the default (\a IPL_DEF).
    *
    * Throws the following exceptions:
    *  - Of type Int::ArgumentSizeMismatch if any of the following properties
