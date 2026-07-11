@@ -213,6 +213,10 @@ namespace Gecode { namespace Int { namespace BinPacking {
       region.free();
     }
 
+    // Stop after basic propagation unless stronger filtering is requested.
+    if (ba(ipl) == IPL_BASIC)
+      return ES_NOFIX;
+
     // Only if the propagator is at fixpoint here, continue with the more
     // expensive stage for propagation.
     if (IntView::me(modeventdelta()) != ME_INT_NONE)
@@ -291,6 +295,7 @@ namespace Gecode { namespace Int { namespace BinPacking {
         int* weights_current_reduction =
           region.alloc<int>(n_weights_reductions);
         int* delta_reductions = region.alloc<int>(n_reductions);
+        bool full = ba(ipl) != IPL_ADVANCED;
 
         // Initialize reductions
         int capacity_base_reduction = 0;
@@ -318,7 +323,7 @@ namespace Gecode { namespace Int { namespace BinPacking {
               weights[w_idx] = weight;
             }
 
-            // Check lower bounds
+            // Check the small DFF portfolio used by advanced propagation.
             int lower_bound =
               calc_dff_lower_bound<f_ccm1, l_ccm1>
                 (weights, n_weights_reductions, capacity,
@@ -333,33 +338,36 @@ namespace Gecode { namespace Int { namespace BinPacking {
             if (lower_bound > n_bins)
               return ES_FAILED;
 
-            lower_bound =
-              calc_dff_lower_bound<f_bj1, l_bj1>
-                (weights, n_weights_reductions, capacity,
-                 n_not_zero_weights, max_weight);
-            if (lower_bound > n_bins)
-              return ES_FAILED;
+            if (full) {
+              // Check the remaining DFFs for full propagation.
+              lower_bound =
+                calc_dff_lower_bound<f_bj1, l_bj1>
+                  (weights, n_weights_reductions, capacity,
+                   n_not_zero_weights, max_weight);
+              if (lower_bound > n_bins)
+                return ES_FAILED;
 
-            lower_bound =
-              calc_dff_lower_bound<f_vb2, l_vb2>
-                (weights, n_weights_reductions, capacity,
-                 n_not_zero_weights, max_weight, true);
-            if (lower_bound > n_bins)
-              return ES_FAILED;
+              lower_bound =
+                calc_dff_lower_bound<f_vb2, l_vb2>
+                  (weights, n_weights_reductions, capacity,
+                   n_not_zero_weights, max_weight, true);
+              if (lower_bound > n_bins)
+                return ES_FAILED;
 
-            lower_bound =
-              calc_dff_lower_bound<f_fs1, l_fs1>
-                (weights, n_weights_reductions, capacity,
-                 n_not_zero_weights, max_weight, true);
-            if (lower_bound > n_bins)
-              return ES_FAILED;
+              lower_bound =
+                calc_dff_lower_bound<f_fs1, l_fs1>
+                  (weights, n_weights_reductions, capacity,
+                   n_not_zero_weights, max_weight, true);
+              if (lower_bound > n_bins)
+                return ES_FAILED;
 
-            lower_bound =
-              calc_dff_lower_bound<f_rad2, l_rad2>
-                (weights, n_weights_reductions, capacity,
-                 n_not_zero_weights, max_weight);
-            if (lower_bound > n_bins)
-              return ES_FAILED;
+              lower_bound =
+                calc_dff_lower_bound<f_rad2, l_rad2>
+                  (weights, n_weights_reductions, capacity,
+                   n_not_zero_weights, max_weight);
+              if (lower_bound > n_bins)
+                return ES_FAILED;
+            }
           }
         }
       }
@@ -370,7 +378,8 @@ namespace Gecode { namespace Int { namespace BinPacking {
   }
 
   ExecStatus
-  Pack::post(Home home, ViewArray<OffsetView>& l, ViewArray<Item>& bs) {
+  Pack::post(Home home, ViewArray<OffsetView>& l, ViewArray<Item>& bs,
+             IntPropLevel ipl) {
     // Sort according to size
     Support::quicksort(&bs[0], bs.size());
     // Total size of items
@@ -402,7 +411,7 @@ namespace Gecode { namespace Int { namespace BinPacking {
         GECODE_ME_CHECK(l[j].gq(home,0));
         GECODE_ME_CHECK(l[j].lq(home,s));
       }
-      (void) new (home) Pack(home,l,bs);
+      (void) new (home) Pack(home,l,bs,ipl);
       return ES_OK;
     }
   }

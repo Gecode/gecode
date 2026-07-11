@@ -41,7 +41,7 @@ namespace Gecode {
   binpacking(Home home,
              const IntVarArgs& l,
              const IntVarArgs& b, const IntArgs& s,
-             IntPropLevel) {
+             IntPropLevel ipl) {
     using namespace Int;
     if (same(l,b))
       throw ArgumentSame("Int::binpacking");
@@ -59,14 +59,14 @@ namespace Gecode {
     for (int i=0; i<bs.size(); i++)
       bs[i] = BinPacking::Item(b[i],s[i]);
 
-    GECODE_ES_FAIL(Int::BinPacking::Pack::post(home,lv,bs));
+    GECODE_ES_FAIL(Int::BinPacking::Pack::post(home,lv,bs,ipl));
   }
 
   IntSet
   binpacking(Home home, int d,
              const IntVarArgs& l, const IntVarArgs& b,
              const IntArgs& s, const IntArgs& c,
-             IntPropLevel) {
+             IntPropLevel ipl) {
     using namespace Int;
 
     if (same(l,b))
@@ -110,7 +110,7 @@ namespace Gecode {
       for (int i=0; i<n; i++)
         bv[i] = BinPacking::Item(b[i],s[i*d+k]);
 
-      if (Int::BinPacking::Pack::post(home,lv,bv) == ES_FAILED) {
+      if (Int::BinPacking::Pack::post(home,lv,bv,ipl) == ES_FAILED) {
         home.fail();
         return IntSet::empty;
       }

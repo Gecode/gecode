@@ -138,8 +138,10 @@ namespace Gecode { namespace Int { namespace BinPacking {
   /**
    * \brief Bin-packing propagator
    *
-   * The algorithm is taken from:
+   * Basic and knapsack propagation are based on:
    *   Paul Shaw. A Constraint for Bin Packing. CP 2004.
+   *
+   * The lower-bound phase uses dual-feasible functions described in:
    *   Tardivo et al. CP for Bin Packing with Multi-Core and GPUs. CP 2024.
    *
    * Requires \code #include <gecode/int/bin-packing.hh> \endcode
@@ -152,17 +154,21 @@ namespace Gecode { namespace Int { namespace BinPacking {
     ViewArray<OffsetView> l;
     /// Items with bin and size
     ViewArray<Item> bs;
+    /// Propagation level
+    IntPropLevel ipl;
     /// Total size of all items
     int t;
     /// Constructor for posting
-    Pack(Home home, ViewArray<OffsetView>& l, ViewArray<Item>& bs);
+    Pack(Home home, ViewArray<OffsetView>& l, ViewArray<Item>& bs,
+         IntPropLevel ipl);
     /// Constructor for cloning \a p
     Pack(Space& home, Pack& p);
   public:
     /// Post propagator for loads \a l and items \a bs
     GECODE_INT_EXPORT
     static ExecStatus post(Home home,
-                           ViewArray<OffsetView>& l, ViewArray<Item>& bs);
+                           ViewArray<OffsetView>& l, ViewArray<Item>& bs,
+                           IntPropLevel ipl=IPL_DEF);
     /// Detect non-existence of sums in \a a .. \a b
     template<class SizeSet>
     bool nosum(const SizeSet& s, int a, int b, int& ap, int& bp);

@@ -151,8 +151,9 @@ namespace Gecode { namespace Int { namespace BinPacking {
    */
 
   forceinline
-  Pack::Pack(Home home, ViewArray<OffsetView>& l0, ViewArray<Item>& bs0)
-    : Propagator(home), l(l0), bs(bs0), t(0) {
+  Pack::Pack(Home home, ViewArray<OffsetView>& l0, ViewArray<Item>& bs0,
+             IntPropLevel ipl0)
+    : Propagator(home), l(l0), bs(bs0), ipl(ipl0), t(0) {
     l.subscribe(home,*this,PC_INT_BND);
     bs.subscribe(home,*this,PC_INT_DOM);
     for (int i=0; i<bs.size(); i++)
@@ -161,7 +162,7 @@ namespace Gecode { namespace Int { namespace BinPacking {
 
   forceinline
   Pack::Pack(Space& home, Pack& p)
-    : Propagator(home,p), t(p.t) {
+    : Propagator(home,p), ipl(p.ipl), t(p.t) {
     l.update(home,p.l);
     bs.update(home,p.bs);
   }

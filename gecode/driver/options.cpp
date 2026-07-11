@@ -329,6 +329,7 @@ namespace Gecode {
           else if (!strncmp("dom",a,e))      { b = IPL_DOM; }
           else if (!strncmp("basic",a,e))    { m |= IPL_BASIC; }
           else if (!strncmp("advanced",a,e)) { m |= IPL_ADVANCED; }
+          else if (!strncmp("full",a,e))     { m |= IPL_FULL; }
           else {
             std::cerr << "Wrong argument \"" << a
                       << "\" for option \"" << iopt << "\""
@@ -350,7 +351,7 @@ namespace Gecode {
     IplOption::help(void) {
       using namespace std;
       cerr << '\t' << iopt
-           << " (def,val,bnd,dom,basic,advanced)" << endl
+           << " (def,val,bnd,dom,basic,advanced,full)" << endl
            << "\t\tdefault: ";
       switch (vbd(cur)) {
       case IPL_DEF: cerr << "def"; break;
@@ -359,8 +360,12 @@ namespace Gecode {
       case IPL_DOM: cerr << "dom"; break;
       default: GECODE_NEVER;
       }
-      if (cur & IPL_BASIC)    cerr << ",basic";
-      if (cur & IPL_ADVANCED) cerr << ",advanced";
+      if ((cur & IPL_FULL) == IPL_FULL)
+        cerr << ",full";
+      else {
+        if (cur & IPL_BASIC)    cerr << ",basic";
+        if (cur & IPL_ADVANCED) cerr << ",advanced";
+      }
       cerr << endl << "\t\t" << exp << endl;
     }
 

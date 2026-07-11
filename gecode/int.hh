@@ -1015,6 +1015,7 @@ namespace Gecode {
     IPL_BASIC = 4,    ///< Use basic propagation algorithm
     IPL_ADVANCED = 8, ///< Use advanced propagation algorithm
     IPL_BASIC_ADVANCED = IPL_BASIC | IPL_ADVANCED, ///< Use both
+    IPL_FULL = IPL_BASIC_ADVANCED, ///< Use full propagation
     IPL_BITS_ = 4 ///< Number of bits required (internal)
   };
 
@@ -3147,7 +3148,16 @@ namespace Gecode {
    * for each \f$i\f$ with \f$0\leq i<|b|\f$ the constraint
    * \f$0\leq b_i<|l|\f$ holds.
    *
-   * The propagation follows: Paul Shaw. A Constraint for Bin Packing. CP 2004.
+   * Basic and knapsack propagation are based on:
+   *   Paul Shaw. A Constraint for Bin Packing. CP 2004.
+   * The lower-bound phase uses dual-feasible functions described in:
+   *   Tardivo et al. CP for Bin Packing with Multi-Core and GPUs. CP 2024.
+   * The propagation level \a ipl controls the amount of filtering:
+   *  - \a IPL_BASIC performs basic load and item filtering only.
+   *  - \a IPL_ADVANCED performs basic filtering, knapsack filtering using
+   *    NoSum, and a small DFF portfolio (CCM1 and MT).
+   *  - \a IPL_FULL performs all of the above and the complete DFF portfolio.
+   *    It is the default (\a IPL_DEF).
    *
    * Throws the following exceptions:
    *  - Of type Int::ArgumentSizeMismatch if \a b and \a s are not of
@@ -3190,6 +3200,14 @@ namespace Gecode {
    * Note that posting the constraint has exponential complexity in the
    * number of items due to the Bron-Kerbosch algorithm used for finding
    * the maximal conflict item sets.
+   *
+   * The propagation level \a ipl controls the filtering performed by each
+   * per-dimension bin-packing propagator:
+   *  - \a IPL_BASIC performs basic load and item filtering only.
+   *  - \a IPL_ADVANCED performs basic filtering, knapsack filtering using
+   *    NoSum, and a small DFF portfolio (CCM1 and MT).
+   *  - \a IPL_FULL performs all of the above and the complete DFF portfolio.
+   *    It is the default (\a IPL_DEF).
    *
    * Throws the following exceptions:
    *  - Of type Int::ArgumentSizeMismatch if any of the following properties
