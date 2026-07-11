@@ -1363,6 +1363,8 @@ if(BUILD_TESTING)
       Int::Arithmetic::Max::Nary
       Int::Cumulative::Man::Fix::0::4
       Int::Distinct::Random
+      Int::Extensional::TupleSet::Sparse::IncrementalDelta
+      Int::Extensional::TupleSet::Auto::DefaultDispatch
       Int::Linear::Bool::Int::Lq
       Int::MiniModel::LinExpr::Bool::352
       NoGoods::Queens
