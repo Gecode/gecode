@@ -2332,7 +2332,44 @@ namespace Gecode {
 
 #include <gecode/int/extensional/dfa.hpp>
 
+namespace Gecode { namespace Int { namespace Extensional {
+
+  class TupleSetAccess;
+
+}}}
+
 namespace Gecode {
+
+  /**
+   * \brief Support representation selection for extensional tuple sets
+   *
+   * The selector controls which support representation is materialized by
+   * TupleSet::finalize(ExtensionalPropKind). Tuple-set posting dispatches to
+   * the propagator for the concrete representation stored in the tuple set.
+   * During finalization, EPK_AUTO selects dense or compressed support
+   * according to the normal size and density policy; it never selects sparse
+   * support.
+   *
+   * \ingroup TaskModelIntExt
+   */
+  enum class ExtensionalPropKind {
+    EPK_AUTO,   ///< Select dense or compressed representation automatically
+    EPK_DENSE,  ///< Use dense support representation
+    EPK_SPARSE, ///< Use sparse support representation
+    EPK_DENSE_COMPRESSED ///< Use compressed dense support representation
+  };
+  /// Select dense or compressed representation automatically
+  static constexpr ExtensionalPropKind EPK_AUTO =
+    ExtensionalPropKind::EPK_AUTO;
+  /// Use dense support representation
+  static constexpr ExtensionalPropKind EPK_DENSE =
+    ExtensionalPropKind::EPK_DENSE;
+  /// Use sparse support representation
+  static constexpr ExtensionalPropKind EPK_SPARSE =
+    ExtensionalPropKind::EPK_SPARSE;
+  /// Use compressed dense support representation
+  static constexpr ExtensionalPropKind EPK_DENSE_COMPRESSED =
+    ExtensionalPropKind::EPK_DENSE_COMPRESSED;
 
   /** \brief Class representing a set of tuples.
    *
@@ -2343,6 +2380,7 @@ namespace Gecode {
    * \ingroup TaskModelIntExt
    */
   class TupleSet : public SharedHandle {
+    friend class Int::Extensional::TupleSetAccess;
   public:
     /** \brief Type of a tuple
      *
@@ -2351,6 +2389,12 @@ namespace Gecode {
     typedef int* Tuple;
     /// Import bit set data type
     typedef Gecode::Support::BitSetData BitSetData;
+    /// Compressed support data for one tuple-word block
+    class CSupportWord {
+    public:
+      unsigned int widx; ///< Word index in tuple-word array
+      BitSetData bits;   ///< Support bits in that word
+    };
     /// Range information
     class Range {
     public:
@@ -2362,7 +2406,12 @@ namespace Gecode {
       BitSetData* s;
       /// Return the width
       unsigned int width(void) const;
-      /// Return the supports for value \a n
+      /**
+       * \brief Return the dense supports for value \a n
+       *
+       * Returns \c nullptr if the tuple set does not use the dense
+       * representation.
+       */
       const BitSetData* supports(unsigned int n_words, int n) const;
     };
   protected:
@@ -2373,6 +2422,8 @@ namespace Gecode {
       unsigned int n;
       /// Ranges
       Range* r;
+      /// Base support id for each range (sparse and compressed only)
+      unsigned int* base;
       /// Find start range for value \a n
       unsigned int start(int n) const;
     };
@@ -2384,6 +2435,15 @@ namespace Gecode {
     protected:
       /// Initial number of free tuples
       static const int n_initial_free = 1024;
+    public:
+      /// Tuple set lifecycle state and finalized representation
+      enum State {
+        TS_BUILDING,
+        TS_FAILED,
+        TS_DENSE,
+        TS_SPARSE,
+        TS_DENSE_COMPRESSED
+      };
     public:
       /// Arity
       int arity;
@@ -2405,8 +2465,26 @@ namespace Gecode {
       ValueData* vd;
       /// Pointer to all ranges
       Range* range;
+      /// Pointer to all range support ids
+      unsigned int* range_base;
       /// Pointer to all support data
       BitSetData* support;
+      /// Tuple set lifecycle state and finalized representation
+      State state;
+      /// Number of sparse support values
+      unsigned int sparse_n_vals;
+      /// Sparse support offsets (size sparse_n_vals+1)
+      unsigned int* sparse_offsets;
+      /// Sparse support tuple ids (size arity*n_tuples)
+      unsigned int* sparse_tuples;
+      /// Tuple cell to sparse support id map (size arity*n_tuples)
+      unsigned int* sparse_tv;
+      /// Compressed support offsets (size n_vals+1)
+      unsigned int* compressed_offsets;
+      /// Compressed support words (size compressed_n_entries)
+      CSupportWord* compressed_words;
+      /// Number of compressed support entries
+      unsigned int compressed_n_entries;
 
       /// Return newly added tuple
       Tuple add(void);
@@ -2425,11 +2503,28 @@ namespace Gecode {
       /// Finalize datastructure (disallows additions of more Tuples)
       GECODE_INT_EXPORT
       void finalize(void);
+      /// Finalize datastructure (disallows additions of more Tuples)
+      GECODE_INT_EXPORT
+      void finalize(ExtensionalPropKind epk);
       /// Resize tuple data
       GECODE_INT_EXPORT
       void resize(void);
+      /// Release partially or fully constructed support data
+      void clear_support(void);
+      /// Select the state for an empty finalized tuple set
+      State empty_state(ExtensionalPropKind epk) const;
+      /// Select the finalized state for the computed table layout
+      State select_state(
+        ExtensionalPropKind epk, bool dense_possible,
+        bool sparse_possible, bool compressed_possible,
+        bool support_bits_sparse, unsigned long long dense_bytes) const;
       /// Is datastructure finalized
       bool finalized(void) const;
+      /// Has finalization failed
+      bool failed(void) const;
+      /// Is datastructure no longer mutable
+      bool terminal(void) const;
+
       /// Initialize as empty tuple set with arity \a a
       Data(int a);
       /// Delete implementation
@@ -2464,9 +2559,12 @@ namespace Gecode {
     /// Assignment operator
     GECODE_INT_EXPORT
     TupleSet& operator =(const TupleSet& t);
-    /// Initialize with DFA \a dfa for arity \a a
+    /// Initialize with DFA \a dfa for arity \a a using dense supports
     GECODE_INT_EXPORT
     TupleSet(int a, const DFA& dfa);
+    /// Initialize with DFA \a dfa for arity \a a and representation \a epk
+    GECODE_INT_EXPORT
+    TupleSet(int a, const DFA& dfa, ExtensionalPropKind epk);
     /// Test whether tuple set has been initialized
     operator bool(void) const;
     /// Test whether tuple set is equal to \a t
@@ -2479,10 +2577,27 @@ namespace Gecode {
     //@{
     /// Add tuple \a t to tuple set
     TupleSet& add(const IntArgs& t);
-    /// Is tuple set finalized
+    /// Is tuple set successfully finalized
     bool finalized(void) const;
-    /// Finalize tuple set
+    /**
+     * \brief Has tuple-set finalization failed
+     *
+     * A failed tuple set is terminal: no tuples can be added and
+     * finalization cannot be attempted again.
+     */
+    bool failed(void) const;
+    /// Finalize tuple set with dense support data
     void finalize(void);
+    /// Finalize tuple set with representation \a epk
+    /**
+     * Explicit representation selection materializes only the selected
+     * support representation. EPK_AUTO selects dense or compressed support
+     * according to the normal size and density policy and never selects
+     * sparse support. Tuple-set posting uses the selected concrete
+     * representation.
+     * If finalization throws, the tuple set is terminal and failed().
+     */
+    void finalize(ExtensionalPropKind epk);
     //@}
 
     /// \name Tuple access
@@ -2501,6 +2616,27 @@ namespace Gecode {
     int max(void) const;
     /// Return hash key
     std::size_t hash(void) const;
+    /// Return materialized tuple-set representation
+    ExtensionalPropKind representation(void) const;
+  private:
+    /// Return number of sparse support values
+    unsigned int sparse_values(void) const;
+    /// Return tuple-value sparse ids (size tuples()*arity())
+    const unsigned int* sparse_tuple_value_ids(void) const;
+    /// Return sparse support offsets (size sparse_values()+1)
+    const unsigned int* sparse_support_offsets(void) const;
+    /// Return support id for position/value, false if absent
+    bool support_id(int p, int n, unsigned int& gid) const;
+    /// Return sparse support tuple id range for position/value, false if absent
+    bool sparse_support(int p, int n,
+                        const unsigned int*& b,
+                        const unsigned int*& e,
+                        unsigned int& gid) const;
+    /// Return compressed support words for position/value, false if absent
+    bool dense_compressed_support(int p, int n,
+                                  const CSupportWord*& b,
+                                  const CSupportWord*& e) const;
+  public:
     //@}
 
     /// \name Range access and iteration
@@ -2543,6 +2679,33 @@ namespace Gecode {
     };
     //@}
   };
+
+  namespace Int { namespace Extensional {
+
+    /// Internal access to finalized tuple-set support representations
+    class TupleSetAccess {
+    public:
+      /// Return number of sparse support values
+      static unsigned int sparse_values(const TupleSet& ts);
+      /// Return tuple-value sparse ids
+      static const unsigned int* sparse_tuple_value_ids(const TupleSet& ts);
+      /// Return sparse support offsets
+      static const unsigned int* sparse_support_offsets(const TupleSet& ts);
+      /// Return support id for position/value
+      static bool support_id(const TupleSet& ts, int p, int n,
+                             unsigned int& gid);
+      /// Return sparse support tuple id range for position/value
+      static bool sparse_support(const TupleSet& ts, int p, int n,
+                                 const unsigned int*& b,
+                                 const unsigned int*& e,
+                                 unsigned int& gid);
+      /// Return compressed support words for position/value
+      static bool dense_compressed_support(const TupleSet& ts, int p, int n,
+                                           const TupleSet::CSupportWord*& b,
+                                           const TupleSet::CSupportWord*& e);
+    };
+
+  }}
 
 }
 

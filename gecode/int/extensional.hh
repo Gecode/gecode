@@ -49,6 +49,27 @@
 
 namespace Gecode { namespace Int { namespace Extensional {
 
+  /// Compressed tuple-word support list
+  class CompressedSupport {
+  protected:
+    /// First support word
+    const TupleSet::CSupportWord* b;
+    /// One past last support word
+    const TupleSet::CSupportWord* e;
+  public:
+    /// Initialize as empty support list
+    CompressedSupport(void);
+    /// Initialize from support word range
+    CompressedSupport(const TupleSet::CSupportWord* b0,
+                      const TupleSet::CSupportWord* e0);
+    /// Return first support word
+    const TupleSet::CSupportWord* begin(void) const;
+    /// Return one past last support word
+    const TupleSet::CSupportWord* end(void) const;
+    /// Whether support list is empty
+    bool empty(void) const;
+  };
+
   /**
    * \brief Domain consistent layered graph (regular) propagator
    *
@@ -236,17 +257,21 @@ namespace Gecode { namespace Int { namespace Extensional {
     template<class> friend class BitSet;
     template<unsigned int> friend class TinyBitSet;
   protected:
-    /// Limit
-    IndexType _limit;
-    /// Indices
-    IndexType* _index;
-    /// Words
-    BitSetData* _bits;
-    /// Replace the \a i th word with \a w, decrease \a limit if \a w is zero
-    void replace_and_decrease(IndexType i, BitSetData w);
+    /// Number of active words
+    IndexType _active_words;
+    /// Number of addressable word slots
+    IndexType _word_capacity;
+    /// Original word index for each active word position
+    IndexType* _word_index;
+    /// Active word data
+    BitSetData* _word_bits;
+    /// Reverse map from word index to active position+1 (optional)
+    IndexType* _active_position;
+    /// Replace active word \a active_pos, dropping it if \a word is zero
+    void replace_and_decrease(IndexType active_pos, BitSetData word);
   public:
     /// Initialize bit set for a number of words \a n
-    BitSet(Space& home, unsigned int n);
+    BitSet(Space& home, unsigned int n, bool indexed=false);
     /// Initialize during cloning
     template<class OldIndexType>
     BitSet(Space& home, const BitSet<OldIndexType>& bs);
@@ -258,7 +283,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     BitSet(Space& home, const TinyBitSet<3U>& tbs);
     /// Initialize during cloning (unused)
     BitSet(Space& home, const TinyBitSet<4U>& tbs);
-    /// Get the limit
+    /// Get the number of active words
     unsigned int limit(void) const;
     /// Check whether the set is empty
     bool empty(void) const;
@@ -266,23 +291,36 @@ namespace Gecode { namespace Int { namespace Extensional {
     void flush(void);
     /// Return the highest active index
     unsigned int width(void) const;
-    /// Clear the first \a limit words in \a mask
+    /// Clear all active words in \a mask
     void clear_mask(BitSetData* mask) const;
-    /// Add \b to \a mask
-    void add_to_mask(const BitSetData* b, BitSetData* mask) const;
+    /// Add \a support to \a mask
+    void add_to_mask(const BitSetData* support, BitSetData* mask) const;
+    /// Add compressed support list to \a mask
+    void add_to_mask(const CompressedSupport& support, BitSetData* mask) const;
     /// Intersect with \a mask, sparse mask if \a sparse is true
     template<bool sparse>
     void intersect_with_mask(const BitSetData* mask);
-    /// Intersect with the "or" of \a and \a b
+    /// Intersect with compressed support list
+    void intersect_with_mask(const CompressedSupport& support);
+    /// Intersect with the "or" of \a a and \a b
     void intersect_with_masks(const BitSetData* a, const BitSetData* b);
+    /// Intersect with the "or" of two compressed support lists
+    void intersect_with_masks(const CompressedSupport& a,
+                              const CompressedSupport& b);
     /// Check if \a has a non-empty intersection with the set
-    bool intersects(const BitSetData* b) const;
-    /// Perform "nand" with \a b
-    void nand_with_mask(const BitSetData* b);
+    bool intersects(const BitSetData* mask) const;
+    /// Check if compressed support list intersects with the set
+    bool intersects(const CompressedSupport& support) const;
+    /// Perform "nand" with \a mask
+    void nand_with_mask(const BitSetData* mask);
+    /// Perform "nand" with compressed support list
+    void nand_with_mask(const CompressedSupport& support);
     /// Return the number of ones
     unsigned long long int ones(void) const;
-    /// Return the number of ones after intersection with \a b
-    unsigned long long int ones(const BitSetData* b) const;
+    /// Return the number of ones after intersection with \a mask
+    unsigned long long int ones(const BitSetData* mask) const;
+    /// Return the number of ones after intersection with compressed support list
+    unsigned long long int ones(const CompressedSupport& support) const;
     /// Return an upper bound on the number of bits
     unsigned long long int bits(void) const;
     /// Return the number of required bit set words
@@ -306,7 +344,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     BitSetData _bits[_size];
   public:
     /// Initialize sparse bit set for a number of words \a n
-    TinyBitSet(Space& home, unsigned int n);
+    TinyBitSet(Space& home, unsigned int n, bool indexed=false);
     /// Initialize during cloning
     template<unsigned int largersize>
     TinyBitSet(Space& home, const TinyBitSet<largersize>& tbs);
@@ -325,21 +363,34 @@ namespace Gecode { namespace Int { namespace Extensional {
     void clear_mask(BitSetData* mask);
     /// Add \b to \a mask
     void add_to_mask(const BitSetData* b, BitSetData* mask) const;
+    /// Add compressed support list to \a mask
+    void add_to_mask(const CompressedSupport& s, BitSetData* mask) const;
     /// Intersect with \a mask, sparse mask if \a sparse is true
     template<bool sparse>
     void intersect_with_mask(const BitSetData* mask);
+    /// Intersect with compressed support list
+    void intersect_with_mask(const CompressedSupport& s);
     /// Intersect with the "or" of \a and \a b
     void intersect_with_masks(const BitSetData* a, const BitSetData* b);
+    /// Intersect with the "or" of two compressed support lists
+    void intersect_with_masks(const CompressedSupport& a,
+                              const CompressedSupport& b);
     /// Check if \a has a non-empty intersection with the set
     bool intersects(const BitSetData* b);
+    /// Check if compressed support list intersects with the set
+    bool intersects(const CompressedSupport& s);
     /// Perform "nand" with \a b
     void nand_with_mask(const BitSetData* b);
+    /// Perform "nand" with compressed support list
+    void nand_with_mask(const CompressedSupport& s);
     /// Perform "nand" with and the "or" of \a a and \a b
     void nand_with_masks(const BitSetData* a, const BitSetData* b);
     /// Return the number of ones
     unsigned long long int ones(void) const;
     /// Return the number of ones after intersection with \a b
     unsigned long long int ones(const BitSetData* b) const;
+    /// Return the number of ones after intersection with compressed support list
+    unsigned long long int ones(const CompressedSupport& s) const;
     /// Return an upper bound on the number of bits
     unsigned long long int bits(void) const;
     /// Return the number of required bit set words
@@ -357,6 +408,103 @@ namespace Gecode { namespace Int { namespace Extensional {
   /// Tuple type
   typedef TupleSet::Tuple Tuple;
 
+  /// Optional variable index stored by a compact-table advisor
+  template<bool indexed>
+  class CompactAdvisorIndex;
+
+  /// Compact-table advisor without a variable index
+  template<>
+  class CompactAdvisorIndex<false> {
+  protected:
+    /// Initialize without storing \a i
+    CompactAdvisorIndex(int i);
+    /// Return a dummy index
+    int index(void) const;
+  };
+
+  /// Compact-table advisor with a variable index
+  template<>
+  class CompactAdvisorIndex<true> {
+  protected:
+    /// Variable index
+    int _index;
+    /// Initialize with index \a i
+    CompactAdvisorIndex(int i);
+    /// Return the variable index
+    int index(void) const;
+  };
+
+  /// Advisor shared by compact-table support representations
+  template<class View, bool pos, bool indexed>
+  class CompactAdvisor : public ViewAdvisor<View>,
+                         private CompactAdvisorIndex<indexed> {
+  protected:
+    /// Range type for supports
+    typedef TupleSet::Range Range;
+    /// First range of support data structure
+    const Range* _fst;
+    /// Last range of support data structure
+    const Range* _lst;
+  public:
+    using ViewAdvisor<View>::view;
+    /// Initialize from parameters
+    CompactAdvisor(Space& home, Propagator& p,
+                   Council<CompactAdvisor>& c, const TupleSet& ts,
+                   View x, int i);
+    /// Clone advisor \a a
+    CompactAdvisor(Space& home, CompactAdvisor& a);
+    /// Adjust supports to the current view bounds
+    void adjust(void);
+    /// Return the variable index
+    int index(void) const;
+    /// Return first range of support data structure
+    const Range* fst(void) const;
+    /// Return last range of support data structure
+    const Range* lst(void) const;
+    /// Dispose advisor
+    void dispose(Space& home, Council<CompactAdvisor>& c);
+  };
+
+  /// Touched-advisor status shared by positive compact-table propagators
+  template<class Advisor>
+  class CompactStatus {
+  protected:
+    /// A tagged advisor pointer or a status value
+    ptrdiff_t s;
+  public:
+    /// Type of status
+    enum StatusType {
+      SINGLE      = 0, ///< A single view has been touched
+      MULTIPLE    = 1, ///< Multiple views have been touched
+      NONE        = 2, ///< No view has been touched
+      PROPAGATING = 3  ///< The propagator is currently running
+    };
+    /// Initialize with status \a t
+    CompactStatus(StatusType t);
+    /// Copy constructor
+    CompactStatus(const CompactStatus& status);
+    /// Return status type
+    StatusType type(void) const;
+    /// Test whether only advisor \a a was touched
+    bool single(Advisor& a) const;
+    /// Record that advisor \a a was touched
+    void touched(Advisor& a);
+    /// Record that no advisor has been touched
+    void none(void);
+    /// Record that propagation is in progress
+    void propagating(void);
+  };
+
+  /// Shared implementation of positive compact-table propagation
+  template<class Actor>
+  class PosCompactAlgorithm;
+  /// Shared implementation of negative compact-table propagation
+  template<class Actor>
+  class NegCompactAlgorithm;
+  /// Shared implementation of reified compact-table propagation
+  template<class Actor>
+  class ReCompactAlgorithm;
+
   /// Base class for compact table propagator
   template<class View, bool pos>
   class Compact : public Propagator {
@@ -364,32 +512,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     /// Range type for supports
     typedef TupleSet::Range Range;
     /// Advisor for updating current table
-    class CTAdvisor : public ViewAdvisor<View> {
-    public:
-      using ViewAdvisor<View>::view;
-    protected:
-      /// First range of support data structure
-      const Range* _fst;
-      /// Last range of support data structure
-      const Range* _lst;
-    public:
-      /// \name Constructors
-      //@{
-      /// Initialise from parameters
-      CTAdvisor(Space& home, Propagator& p, Council<CTAdvisor>& c,
-                const TupleSet& ts, View x0, int i);
-      /// Clone advisor \a a
-      CTAdvisor(Space& home, CTAdvisor& a);
-      //@}
-      /// Adjust supports
-      void adjust(void);
-      /// Return first range of support data structure
-      const Range* fst(void) const;
-      /// Return lasst range of support data structure
-      const Range* lst(void) const;
-      /// Dispose advisor
-      void dispose(Space& home, Council<CTAdvisor>& c);
-    };
+    typedef CompactAdvisor<View,pos,false> CTAdvisor;
     //@}
     /// \name Support iterators
     //@{
@@ -399,17 +522,17 @@ namespace Gecode { namespace Int { namespace Extensional {
       /// Number of words
       const unsigned int n_words;
       /// Maximal value
-      int max;
+      int max_value;
       /// Range iterator
-      ViewRanges<View> xr;
+      ViewRanges<View> view_ranges;
       /// Support iterator
-      const Range* sr;
+      const Range* support_range;
       /// The last range
-      const Range* lst;
+      const Range* last_support_range;
       /// The value
-      int n;
+      int value;
       /// The value's support
-      const BitSetData* s;
+      const BitSetData* support_words;
       /// Find a new value (only for negative case)
       void find(void);
     public:
@@ -421,8 +544,8 @@ namespace Gecode { namespace Int { namespace Extensional {
       void operator ++(void);
       /// Whether there are still supports left
       bool operator ()(void) const;
-      /// Return supports
-      const BitSetData* supports(void) const;
+      /// Return support representation
+      const BitSetData* support(void) const;
       /// Return supported value
       int val(void) const;
     };
@@ -432,25 +555,25 @@ namespace Gecode { namespace Int { namespace Extensional {
       /// Number of words
       const unsigned int n_words;
       /// Range information
-      const Range* r;
+      const Range* support_range;
       /// Last range
-      const Range* lst;
+      const Range* last_support_range;
       /// Low value
-      int l;
+      int value;
       /// High value
-      int h;
+      int last_value;
       /// The lost value's support
-      const BitSetData* s;
+      const BitSetData* support_words;
     public:
-      /// Initialize iterator for values between \a l and \a h
+      /// Initialize iterator for values between \a first_value and \a last_value
       LostSupports(const Compact<View,pos>& p, CTAdvisor& a,
-                   int l, int h);
+                   int first_value, int last_value);
       /// Move iterator to next value
       void operator ++(void);
       /// Whether iterator is done
       bool operator ()(void) const;
-      /// Provide access to corresponding supports
-      const BitSetData* supports(void) const;
+      /// Return support representation
+      const BitSetData* support(void) const;
     };
     //@}
     /// \name Testing the number of unassigned variables
@@ -502,7 +625,9 @@ namespace Gecode { namespace Int { namespace Extensional {
    */
   template<class View, class Table>
   class PosCompact : public Compact<View,true> {
+    template<class Actor> friend class PosCompactAlgorithm;
   public:
+    typedef View ViewType;
     typedef typename Compact<View,true>::ValidSupports ValidSupports;
     typedef typename Compact<View,true>::Range Range;
     typedef typename Compact<View,true>::CTAdvisor CTAdvisor;
@@ -515,36 +640,10 @@ namespace Gecode { namespace Int { namespace Extensional {
     using Compact<View,true>::c;
     using Compact<View,true>::ts;
 
-    /// \name Status management
-    //@{ 
-    /// Type of status
-    enum StatusType {
-      SINGLE      = 0, ///< A single view has been touched
-      MULTIPLE    = 1, ///< Multiple view have been touched
-      NONE        = 2, ///< No view has been touched
-      PROPAGATING = 3  ///< The propagator is currently running
-    };
     /// Status management
-    class Status {
-    protected:
-      /// A tagged pointer for storing the status
-      ptrdiff_t s;
-    public:
-      /// Initialize with type \a t (either NONE or SEVERAL)
-      Status(StatusType t);
-      /// Copy constructor
-      Status(const Status& s);
-      /// Return status type
-      StatusType type(void) const;
-      /// Check whether status is single and equal to \a a
-      bool single(CTAdvisor& a) const;
-      /// Set status to SINGLE or MULTIPLE depending on \a a
-      void touched(CTAdvisor& a);
-      /// Set status to NONE
-      void none(void);
-      /// Set status to PROPAGATING
-      void propagating(void);
-    };
+    typedef CompactStatus<CTAdvisor> Status;
+    /// Status type
+    typedef typename Status::StatusType StatusType;
     /// Propagator status
     Status status;
     /// Current table
@@ -574,6 +673,10 @@ namespace Gecode { namespace Int { namespace Extensional {
   /// Post function for positive compact table propagator
   template<class View>
   ExecStatus postposcompact(Home home, ViewArray<View>& x, const TupleSet& ts);
+  /// Post function for positive compact table with compressed supports
+  template<class View>
+  ExecStatus postposcompact_compressed(Home home, ViewArray<View>& x,
+                                       const TupleSet& ts);
 
   /**
    * \brief Domain consistent negative extensional propagator
@@ -592,7 +695,9 @@ namespace Gecode { namespace Int { namespace Extensional {
    */
   template<class View, class Table>
   class NegCompact : public Compact<View,false> {
+    template<class Actor> friend class NegCompactAlgorithm;
   public:
+    typedef View ViewType;
     typedef typename Compact<View,false>::ValidSupports ValidSupports;
     typedef typename Compact<View,false>::Range Range;
     typedef typename Compact<View,false>::CTAdvisor CTAdvisor;
@@ -629,12 +734,19 @@ namespace Gecode { namespace Int { namespace Extensional {
   /// Post function for compact table propagator
   template<class View>
   ExecStatus postnegcompact(Home home, ViewArray<View>& x, const TupleSet& ts);
+  /// Post function for negative compact table with compressed supports
+  template<class View>
+  ExecStatus postnegcompact_compressed(Home home, ViewArray<View>& x,
+                                       const TupleSet& ts);
 
 
   /// Domain consistent reified extensional propagator
   template<class View, class Table, class CtrlView, ReifyMode rm>
   class ReCompact : public Compact<View,false> {
+    template<class Actor> friend class ReCompactAlgorithm;
   public:
+    typedef View ViewType;
+    static constexpr ReifyMode mode = rm;
     typedef typename Compact<View,false>::ValidSupports ValidSupports;
     typedef typename Compact<View,false>::Range Range;
     typedef typename Compact<View,false>::CTAdvisor CTAdvisor;
@@ -656,6 +768,10 @@ namespace Gecode { namespace Int { namespace Extensional {
     ReCompact(Space& home, TableProp& p);
     /// Constructor for posting
     ReCompact(Home home, ViewArray<View>& x, const TupleSet& ts, CtrlView b);
+    static ExecStatus post_pos(Home home, ViewArray<View>& x,
+                               const TupleSet& ts);
+    static ExecStatus post_neg(Home home, ViewArray<View>& x,
+                               const TupleSet& ts);
   public:
     /// Schedule function
     virtual void reschedule(Space& home);
@@ -676,6 +792,10 @@ namespace Gecode { namespace Int { namespace Extensional {
   template<class View, class CtrlView, ReifyMode rm>
   ExecStatus postrecompact(Home home, ViewArray<View>& x, const TupleSet& ts,
                            CtrlView b);
+  /// Post function for reified compact table with compressed supports
+  template<class View, class CtrlView, ReifyMode rm>
+  ExecStatus postrecompact_compressed(Home home, ViewArray<View>& x,
+                                      const TupleSet& ts, CtrlView b);
 
 }}}
 
