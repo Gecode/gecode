@@ -624,7 +624,7 @@ namespace {
         }
       }
     }
-    result.finalize();
+    result.finalize(EPK_AUTO);
     return result;
   }
 

@@ -406,7 +406,7 @@ namespace {
     while (DistinctLinear* s = d.next()) {
       ts.add(s->solution()); delete s;
     }
-    ts.finalize();
+    ts.finalize(EPK_AUTO);
     return ts;
   }
 

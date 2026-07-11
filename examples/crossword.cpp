@@ -174,7 +174,7 @@ public:
               ts.add(w);
             }
           }
-          ts.finalize();
+          ts.finalize(EPK_AUTO);
 
           // Array of all words of length w_l
           IntVarArgs words(*this,n,0,n_w-1);

@@ -126,7 +126,7 @@ public:
       for (int p1=0; p1<playerCount-1; p1++)
         for (int p2=p1+1; p2<playerCount; p2++)
           ts.add({p1, p2, pairCount++});
-      ts.finalize();
+      ts.finalize(EPK_AUTO);
 
       // Collect pairs of golfers into pairs
       IntVarArgs pairs;
