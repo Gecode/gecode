@@ -177,7 +177,7 @@ public:
           for (int s2 = 4; s2--; )
             for (int i = -1; i <= 1; i+=2)
               ts.add({r+13*s1, (r+i+52+13*s2)%52});
-      ts.finalize();
+      ts.finalize(EPK_AUTO);
 
       for (int i = 51; i--; )
         extensional(*this, IntVarArgs({x[i],x[i+1]}), ts);

@@ -115,7 +115,7 @@ namespace {
       delete s;
     }
 
-    bishops.finalize();
+    bishops.finalize(EPK_AUTO);
   }
 }
 /**
