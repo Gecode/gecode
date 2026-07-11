@@ -392,6 +392,8 @@ What:   change
 Rank:   minor
 [DESCRIPTION]
 Short.
+[MORE]
+Additional detail.
 
 [ENTRY]
 Module: other

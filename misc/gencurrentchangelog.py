@@ -141,6 +141,7 @@ def main() -> int:
             what = ""
             mod = ""
             thanks = ""
+            more = False
 
             while idx < len(lines):
                 l = lines[idx]
@@ -171,7 +172,9 @@ def main() -> int:
                 if re.search(r"\[ENTRY\]", l) or re.search(r"\[RELEASE\]", l):
                     current = l
                     break
-                if not re.search(r"\[MORE\]", l):
+                if re.search(r"\[MORE\]", l):
+                    more = True
+                elif not more:
                     if desc == "":
                         desc = l
                     else:
