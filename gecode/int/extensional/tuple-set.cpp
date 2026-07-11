@@ -37,6 +37,7 @@
 
 #include <gecode/int.hh>
 #include <algorithm>
+#include <limits>
 
 namespace Gecode { namespace Int { namespace Extensional {
 
@@ -100,37 +101,145 @@ namespace Gecode {
    *
    */
   void
+  TupleSet::Data::clear_support(void) {
+    heap.rfree(range);
+    heap.rfree(range_base);
+    heap.rfree(support);
+    heap.rfree(sparse_offsets);
+    heap.rfree(sparse_tuples);
+    heap.rfree(sparse_tv);
+    heap.rfree(compressed_offsets);
+    heap.rfree(compressed_words);
+    range = nullptr;
+    range_base = nullptr;
+    support = nullptr;
+    sparse_n_vals = 0U;
+    sparse_offsets = nullptr;
+    sparse_tuples = nullptr;
+    sparse_tv = nullptr;
+    compressed_offsets = nullptr;
+    compressed_words = nullptr;
+    compressed_n_entries = 0U;
+    for (int a=0; a<arity; a++) {
+      vd[a].n = 0U;
+      vd[a].r = nullptr;
+      vd[a].base = nullptr;
+    }
+  }
+
+  TupleSet::Data::State
+  TupleSet::Data::empty_state(ExtensionalPropKind epk) const {
+    switch (epk) {
+    case EPK_AUTO:
+    case EPK_DENSE:
+      return TS_DENSE;
+    case EPK_SPARSE:
+      return TS_SPARSE;
+    case EPK_DENSE_COMPRESSED:
+      return TS_DENSE_COMPRESSED;
+    default:
+      GECODE_NEVER;
+    }
+    return TS_FAILED;
+  }
+
+  TupleSet::Data::State
+  TupleSet::Data::select_state(
+    ExtensionalPropKind epk, bool dense_possible,
+    bool sparse_possible, bool compressed_possible,
+    bool support_bits_sparse, unsigned long long dense_bytes) const {
+    const unsigned long long dense_small_threshold =
+      2ULL * 1024ULL * 1024ULL;
+    switch (epk) {
+    case EPK_AUTO:
+      if (dense_possible &&
+          ((dense_bytes <= dense_small_threshold) || !support_bits_sparse))
+        return TS_DENSE;
+      if (compressed_possible)
+        return TS_DENSE_COMPRESSED;
+      if (dense_possible)
+        return TS_DENSE;
+      break;
+    case EPK_DENSE:
+      if (dense_possible)
+        return TS_DENSE;
+      break;
+    case EPK_SPARSE:
+      if (sparse_possible)
+        return TS_SPARSE;
+      break;
+    case EPK_DENSE_COMPRESSED:
+      if (compressed_possible)
+        return TS_DENSE_COMPRESSED;
+      break;
+    default:
+      GECODE_NEVER;
+    }
+    throw Int::OutOfLimits("TupleSet::finalize()");
+  }
+
+  void
   TupleSet::Data::finalize(void) {
+    finalize(EPK_DENSE);
+  }
+
+  void
+  TupleSet::Data::finalize(ExtensionalPropKind epk) {
     using namespace Int::Extensional;
-    assert(!finalized());
-    // Mark as finalized
-    n_free = -1;
+    assert(!terminal());
+
+    state = TS_FAILED;
+
+    class FinalizeGuard {
+    protected:
+      Data& d;
+      bool committed;
+    public:
+      FinalizeGuard(Data& d0) : d(d0), committed(false) {}
+      ~FinalizeGuard(void) {
+        if (!committed) {
+          d.clear_support();
+          d.n_words = 0U;
+          d.min = Int::Limits::max;
+          d.max = Int::Limits::min;
+          d.key = 0U;
+          d.state = TS_FAILED;
+        }
+      }
+      void commit(State selected) {
+        assert((selected != TS_BUILDING) && (selected != TS_FAILED));
+        d.state = selected;
+        committed = true;
+      }
+    } guard(*this);
 
     // Initialization
     if (n_tuples == 0) {
+      const State selected = empty_state(epk);
       heap.rfree(td);
       td=nullptr;
+      guard.commit(selected);
       return;
     }
 
     // Compact and copy data
-    Region r;
+    Region region;
     // Set up tuple pointers
-    Tuple* tuple = r.alloc<Tuple>(n_tuples);
+    Tuple* tuples = region.alloc<Tuple>(n_tuples);
     {
       for (int t=0; t<n_tuples; t++)
-        tuple[t] = td + t*arity;
+        tuples[t] = td + t*arity;
       TupleCompare tc(arity);
-      Support::quicksort(tuple, n_tuples, tc);
+      Support::quicksort(tuples, n_tuples, tc);
       // Remove duplicates
       int j=1;
       for (int t=1; t<n_tuples; t++) {
         for (int a=0; a<arity; a++)
-          if (tuple[t-1][a] != tuple[t][a])
+          if (tuples[t-1][a] != tuples[t][a])
             goto notsame;
         goto same;
       notsame: ;
-        tuple[j++] = tuple[t];
+        tuples[j++] = tuples[t];
       same: ;
       }
       assert(j <= n_tuples);
@@ -139,108 +248,336 @@ namespace Gecode {
       key = static_cast<std::size_t>(n_tuples);
       cmb_hash(key, arity);
       // Copy into now possibly smaller area
-      int* new_td = heap.alloc<int>(n_tuples*arity);
+      const unsigned long long n_tcells64 =
+        static_cast<unsigned long long>(n_tuples) *
+        static_cast<unsigned long long>(arity);
+      if (n_tcells64 > static_cast<unsigned long long>
+          (std::numeric_limits<unsigned long>::max()))
+        throw Int::OutOfLimits("TupleSet::finalize()");
+      const unsigned long n_tcells = static_cast<unsigned long>(n_tcells64);
+      for (int t=0; t<n_tuples; t++)
+        for (int a=0; a<arity; a++)
+          if (!Int::Limits::valid(tuples[t][a]))
+            throw Int::OutOfLimits("TupleSet::finalize()");
+      int* new_td = heap.alloc<int>(n_tcells);
       for (int t=0; t<n_tuples; t++) {
         for (int a=0; a<arity; a++) {
-          new_td[t*arity+a] = tuple[t][a];
-          cmb_hash(key,tuple[t][a]);
+          new_td[static_cast<unsigned long>(t) *
+                 static_cast<unsigned long>(arity) +
+                 static_cast<unsigned long>(a)] = tuples[t][a];
+          cmb_hash(key,tuples[t][a]);
         }
-        tuple[t] = new_td + t*arity;
+        tuples[t] = new_td + static_cast<unsigned long>(t) *
+          static_cast<unsigned long>(arity);
       }
       heap.rfree(td);
       td = new_td;
     }
     
-    // Only now compute how many tuples are needed!
+    // Only now compute how many words are needed!
     n_words = BitSetData::data(static_cast<unsigned int>(n_tuples));
 
+    State selected = TS_BUILDING;
     // Compute range information
     {
       /*
        * Pass one: compute how many values and ranges are needed
        */
       // How many values
-      unsigned int n_vals = 0U;
+      unsigned long long n_vals64 = 0ULL;
       // How many ranges
-      unsigned int n_ranges = 0U;
+      unsigned long long n_ranges64 = 0ULL;
       for (int a=0; a<arity; a++) {
         // Sort tuple according to position
         PosCompare pc(a);
-        Support::quicksort(tuple, n_tuples, pc);
+        Support::quicksort(tuples, n_tuples, pc);
         // Scan values
         {
-          int max=tuple[0][a];
-          n_vals++; n_ranges++;
+          int last_value=tuples[0][a];
+          n_vals64++; n_ranges64++;
           for (int i=1; i<n_tuples; i++) {
-            assert(tuple[i-1][a] <= tuple[i][a]);
-            if (max+1 == tuple[i][a]) {
-              n_vals++;
-              max=tuple[i][a];
-            } else if (max+1 < tuple[i][a]) {
-              n_vals++; n_ranges++;
-              max=tuple[i][a];
+            assert(tuples[i-1][a] <= tuples[i][a]);
+            if (last_value+1 == tuples[i][a]) {
+              n_vals64++;
+              last_value=tuples[i][a];
+            } else if (last_value+1 < tuples[i][a]) {
+              n_vals64++; n_ranges64++;
+              last_value=tuples[i][a];
             } else {
-              assert(max == tuple[i][a]);
+              assert(last_value == tuples[i][a]);
             }
           }
         }
       }
+      const unsigned long long max_u64 =
+        std::numeric_limits<unsigned long long>::max();
+      const bool support_entries_overflow =
+        (n_words != 0U) &&
+        (n_vals64 > max_u64 / static_cast<unsigned long long>(n_words));
+      const unsigned long long n_support_entries64 =
+        support_entries_overflow ? max_u64 :
+        static_cast<unsigned long long>(n_words) * n_vals64;
+      const unsigned long long n_tcells64 =
+        static_cast<unsigned long long>(n_tuples) *
+        static_cast<unsigned long long>(arity);
+      const unsigned long long sparse_support_cells_per_entry =
+        static_cast<unsigned long long>(BitSetData::bpb / 4U);
+      const bool support_bits_sparse =
+        support_entries_overflow ||
+        (n_support_entries64 > max_u64 / sparse_support_cells_per_entry) ||
+        (n_tcells64 <=
+         n_support_entries64 * sparse_support_cells_per_entry);
+      const bool dense_possible = !support_entries_overflow &&
+        (n_support_entries64 <= static_cast<unsigned long long>
+         (std::numeric_limits<unsigned int>::max()));
+      unsigned int n_offsets = 0U;
+      const bool support_offsets_possible =
+        support_offsets_size(n_vals64,n_offsets);
+      const bool sparse_possible =
+        (n_tcells64 <=
+         static_cast<unsigned long long>(std::numeric_limits<unsigned int>::max())) &&
+        support_offsets_possible;
+      const bool compressed_possible = sparse_possible;
+      const unsigned long long dense_bytes =
+        (support_entries_overflow ||
+         (n_support_entries64 > max_u64 / sizeof(BitSetData))) ? max_u64 :
+        n_support_entries64 * static_cast<unsigned long long>(sizeof(BitSetData));
+
+      // AUTO keeps small or genuinely dense payloads dense. Larger sparse
+      // support matrices use the shared compressed representation; the sparse
+      // representation is selected only when explicitly requested.
+      selected = select_state(epk,dense_possible,sparse_possible,
+                              compressed_possible,support_bits_sparse,
+                              dense_bytes);
+      const bool build_dense = (selected == TS_DENSE);
+      const bool build_sparse = (selected == TS_SPARSE);
+      const bool build_compressed = (selected == TS_DENSE_COMPRESSED);
+      if ((n_vals64 > static_cast<unsigned long long>
+           (std::numeric_limits<unsigned int>::max())) ||
+          (n_ranges64 > static_cast<unsigned long long>
+           (std::numeric_limits<unsigned int>::max())))
+        throw Int::OutOfLimits("TupleSet::finalize()");
+      const unsigned int n_vals = static_cast<unsigned int>(n_vals64);
+      const unsigned int n_ranges = static_cast<unsigned int>(n_ranges64);
       /*
        * Pass 2: allocate memory and fill data structures
        */
       // Allocate memory for ranges
-      Range* cr = range = heap.alloc<Range>(n_ranges);
-      // Allocate and initialize memory for supports
-      BitSetData* cs = support = heap.alloc<BitSetData>(n_words * n_vals);
-      for (unsigned int i=0; i<n_vals * n_words; i++)
-        cs[i].init();
+      Range* range_cursor = range = heap.alloc<Range>(n_ranges);
+      // Allocate and initialize memory for support data.
+      support = nullptr;
+      sparse_n_vals = 0U;
+      sparse_offsets = nullptr;
+      sparse_tuples = nullptr;
+      sparse_tv = nullptr;
+      compressed_offsets = nullptr;
+      compressed_words = nullptr;
+      compressed_n_entries = 0U;
+      BitSetData* support_cursor = nullptr;
+      unsigned int n_support_entries_u32 = 0U;
+      if (build_dense) {
+        assert((n_words == 0U) ||
+               (n_vals <= std::numeric_limits<unsigned int>::max() / n_words));
+        n_support_entries_u32 = n_words * n_vals;
+        support_cursor = support = heap.alloc<BitSetData>(n_support_entries_u32);
+        for (unsigned int i=0; i<n_support_entries_u32; i++)
+          support_cursor[i].init();
+      }
       for (int a=0; a<arity; a++) {
         // Set range pointer
-        vd[a].r = cr;
+        vd[a].r = range_cursor;
+        vd[a].base = nullptr;
         // Sort tuple according to position
         PosCompare pc(a);
-        Support::quicksort(tuple, n_tuples, pc);
+        Support::quicksort(tuples, n_tuples, pc);
         // Update min and max
-        min = std::min(min,tuple[0][a]);
-        max = std::max(max,tuple[n_tuples-1][a]);
+        min = std::min(min,tuples[0][a]);
+        max = std::max(max,tuples[n_tuples-1][a]);
         // Compress into non-overlapping ranges
         {
           unsigned int j=0U;
-          vd[a].r[0].max=vd[a].r[0].min=tuple[0][a];
+          vd[a].r[0].max=vd[a].r[0].min=tuples[0][a];
           for (int i=1; i<n_tuples; i++) {
-            assert(tuple[i-1][a] <= tuple[i][a]);
-            if (vd[a].r[j].max+1 == tuple[i][a]) {
-              vd[a].r[j].max=tuple[i][a];
-            } else if (vd[a].r[j].max+1 < tuple[i][a]) {
-              j++; vd[a].r[j].min=vd[a].r[j].max=tuple[i][a];
+            assert(tuples[i-1][a] <= tuples[i][a]);
+            if (vd[a].r[j].max+1 == tuples[i][a]) {
+              vd[a].r[j].max=tuples[i][a];
+            } else if (vd[a].r[j].max+1 < tuples[i][a]) {
+              j++; vd[a].r[j].min=vd[a].r[j].max=tuples[i][a];
             } else {
-              assert(vd[a].r[j].max == tuple[i][a]);
+              assert(vd[a].r[j].max == tuples[i][a]);
             }
           }
           vd[a].n = j+1U;
-          cr += j+1U;
+          range_cursor += j+1U;
         }
         // Set support pointer and set bits
         for (unsigned int i=0U; i<vd[a].n; i++) {
-          vd[a].r[i].s = cs;
-          cs += n_words * vd[a].r[i].width();
+          vd[a].r[i].s = support_cursor;
+          if (build_dense)
+            support_cursor += n_words * vd[a].r[i].width();
         }
-        {
+        if (build_dense) {
           int j=0;
           for (int i=0; i<n_tuples; i++) {
-            while (tuple[i][a] > vd[a].r[j].max)
+            while (tuples[i][a] > vd[a].r[j].max)
               j++;
             set(const_cast<BitSetData*>
-                (vd[a].r[j].supports(n_words,tuple[i][a])),
-                tuple2idx(tuple[i]));
+                (vd[a].r[j].supports(n_words,tuples[i][a])),
+                tuple2idx(tuples[i]));
           }
         }
       }
-      assert(cs == support + n_words * n_vals);
-      assert(cr == range + n_ranges);
+      if (build_sparse || build_compressed) {
+        assert(support_offsets_possible);
+        assert(n_tcells64 <=
+               static_cast<unsigned long long>
+               (std::numeric_limits<unsigned int>::max()));
+        const unsigned int n_tcells = static_cast<unsigned int>(n_tcells64);
+        range_base = (n_ranges > 0U) ?
+          heap.alloc<unsigned int>(n_ranges) : nullptr;
+        unsigned int* base_cursor = range_base;
+        unsigned int first_support_id = 0U;
+        for (int a=0; a<arity; a++) {
+          vd[a].base = base_cursor;
+          for (unsigned int i=0U; i<vd[a].n; i++) {
+            vd[a].base[i] = first_support_id;
+            first_support_id += vd[a].r[i].width();
+          }
+          base_cursor += vd[a].n;
+        }
+        assert(first_support_id == n_vals);
+        assert((n_ranges == 0U) ||
+               (base_cursor == range_base + n_ranges));
+
+        unsigned int* support_offsets;
+        if (build_sparse) {
+          sparse_n_vals = n_vals;
+          sparse_offsets = heap.alloc<unsigned int>(n_offsets);
+          sparse_tv = (n_tcells > 0U) ?
+            heap.alloc<unsigned int>(n_tcells) : nullptr;
+          support_offsets = sparse_offsets;
+        } else {
+          support_offsets = region.alloc<unsigned int>(n_offsets);
+        }
+        for (unsigned int i=0U; i<n_offsets; i++)
+          support_offsets[i] = 0U;
+        for (unsigned int tid=0U;
+             tid<static_cast<unsigned int>(n_tuples); tid++) {
+          const Tuple t = td + tid*arity;
+          for (int a=0; a<arity; a++) {
+            const unsigned int range_index = vd[a].start(t[a]);
+            const unsigned int support_id =
+              vd[a].base[range_index] +
+              static_cast<unsigned int>
+              (t[a] - vd[a].r[range_index].min);
+            if (build_sparse)
+              sparse_tv[tid*arity+a] = support_id;
+            support_offsets[support_id+1U]++;
+          }
+        }
+
+        for (unsigned int i=1U; i<n_offsets; i++)
+          support_offsets[i] += support_offsets[i-1U];
+
+        if (build_sparse) {
+          sparse_tuples = (n_tcells > 0U) ?
+            heap.alloc<unsigned int>(n_tcells) : nullptr;
+          unsigned int* next_support = (n_vals > 0U) ?
+            region.alloc<unsigned int>(n_vals) : nullptr;
+          for (unsigned int i=0U; i<n_vals; i++)
+            next_support[i] = sparse_offsets[i];
+          for (unsigned int tid=0U;
+               tid<static_cast<unsigned int>(n_tuples); tid++) {
+            for (int a=0; a<arity; a++) {
+              const unsigned int support_id = sparse_tv[tid*arity+a];
+              sparse_tuples[next_support[support_id]++] = tid;
+            }
+          }
+        } else {
+          unsigned int* tuples_by_support = (n_tcells > 0U) ?
+            region.alloc<unsigned int>(n_tcells) : nullptr;
+          unsigned int* next_support = (n_vals > 0U) ?
+            region.alloc<unsigned int>(n_vals) : nullptr;
+          for (unsigned int i=0U; i<n_vals; i++)
+            next_support[i] = support_offsets[i];
+          // Tuple ids are visited in increasing order, so each support list
+          // is already sorted by tuple id (and hence by word index).
+          for (unsigned int tid=0U;
+               tid<static_cast<unsigned int>(n_tuples); tid++) {
+            const Tuple t = td + tid*arity;
+            for (int a=0; a<arity; a++) {
+              const unsigned int range_index = vd[a].start(t[a]);
+              const unsigned int support_id =
+                vd[a].base[range_index] +
+                static_cast<unsigned int>
+                (t[a] - vd[a].r[range_index].min);
+              tuples_by_support[next_support[support_id]++] = tid;
+            }
+          }
+
+          compressed_offsets = heap.alloc<unsigned int>(n_offsets);
+          compressed_offsets[0] = 0U;
+          unsigned long long entries64 = 0ULL;
+          for (unsigned int gid=0U; gid<n_vals; gid++) {
+            unsigned int count = 0U;
+            unsigned int last_widx = std::numeric_limits<unsigned int>::max();
+            for (unsigned int p=support_offsets[gid];
+                 p<support_offsets[gid+1U]; p++) {
+              const unsigned int tid = tuples_by_support[p];
+              const unsigned int widx = tid / BitSetData::bpb;
+              if (widx != last_widx) {
+                count++;
+                last_widx = widx;
+              }
+            }
+            entries64 += static_cast<unsigned long long>(count);
+            if (entries64 >
+                static_cast<unsigned long long>(std::numeric_limits<unsigned int>::max()))
+              throw Int::OutOfLimits("TupleSet::finalize()");
+            compressed_offsets[gid+1U] = static_cast<unsigned int>(entries64);
+          }
+          compressed_n_entries = static_cast<unsigned int>(entries64);
+          compressed_words = (compressed_n_entries > 0U) ?
+            heap.alloc<CSupportWord>(compressed_n_entries) : nullptr;
+
+          unsigned int out = 0U;
+          for (unsigned int gid=0U; gid<n_vals; gid++) {
+            unsigned int current_widx = std::numeric_limits<unsigned int>::max();
+            BitSetData bits;
+            bits.init(false);
+            const unsigned int begin = support_offsets[gid];
+            const unsigned int end = support_offsets[gid+1U];
+            for (unsigned int p=begin; p<end; p++) {
+              const unsigned int tid = tuples_by_support[p];
+              const unsigned int widx = tid / BitSetData::bpb;
+              if (widx != current_widx) {
+                if (current_widx != std::numeric_limits<unsigned int>::max()) {
+                  compressed_words[out].widx = current_widx;
+                  compressed_words[out].bits = bits;
+                  out++;
+                }
+                current_widx = widx;
+                bits.init(false);
+              }
+              bits.set(tid % BitSetData::bpb);
+            }
+            if (current_widx != std::numeric_limits<unsigned int>::max()) {
+              compressed_words[out].widx = current_widx;
+              compressed_words[out].bits = bits;
+              out++;
+            }
+            assert(out == compressed_offsets[gid+1U]);
+          }
+          assert(out == compressed_n_entries);
+        }
+      }
+      if (build_dense)
+        assert(support_cursor == support + n_support_entries_u32);
+      assert(range_cursor == range + n_ranges);
     }
     if ((min < Int::Limits::min) || (max > Int::Limits::max))
       throw Int::OutOfLimits("TupleSet::finalize()");
+    guard.commit(selected);
     assert(finalized());
   }
 
@@ -253,10 +590,9 @@ namespace Gecode {
   }
 
   TupleSet::Data::~Data(void) {
+    clear_support();
     heap.rfree(td);
     heap.rfree(vd);
-    heap.rfree(range);
-    heap.rfree(support);
   }
 
 
@@ -278,7 +614,11 @@ namespace Gecode {
     return *this;
   }
 
-  TupleSet::TupleSet(int a, const Gecode::DFA& dfa) {
+  TupleSet::TupleSet(int a, const Gecode::DFA& dfa)
+    : TupleSet(a,dfa,EPK_DENSE) {}
+
+  TupleSet::TupleSet(int a, const Gecode::DFA& dfa,
+                     ExtensionalPropKind epk) {
     /// Edges in layered graph
     struct Edge {
       int i_state; ///< Number of in-state
@@ -367,7 +707,7 @@ namespace Gecode {
           Heap::copy(r.alloc<Support>(n_supports),supports,n_supports);
         layers[i].n_supports = n_supports;
       } else {
-        finalize();
+        finalize(epk);
         return;
       }
     }
@@ -400,7 +740,7 @@ namespace Gecode {
           layers[i].supports[j] = layers[i].supports[--layers[i].n_supports];
       }
       if (layers[i].n_supports == 0U) {
-        finalize();
+        finalize(epk);
         return;
       }
     }
@@ -441,7 +781,7 @@ namespace Gecode {
       }
     }
   
-    finalize();
+    finalize(epk);
   } 
 
   bool
@@ -461,7 +801,7 @@ namespace Gecode {
   TupleSet::_add(const IntArgs& t) {
     if (!*this)
       throw Int::UninitializedTupleSet("TupleSet::add()");
-    if (raw().finalized())
+    if (raw().terminal())
       throw Int::AlreadyFinalized("TupleSet::add()");
     if (t.size() != raw().arity)
       throw Int::ArgumentSizeMismatch("TupleSet::add()");
@@ -473,4 +813,3 @@ namespace Gecode {
 }
 
 // STATISTICS: int-prop
-

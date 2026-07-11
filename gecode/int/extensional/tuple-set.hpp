@@ -49,7 +49,12 @@ namespace Gecode {
   forceinline const TupleSet::BitSetData*
   TupleSet::Range::supports(unsigned int n_words, int n) const {
     assert((min <= n) && (n <= max));
-    return s + n_words * static_cast<unsigned int>(n - min);
+    if (s == nullptr)
+      return nullptr;
+    const unsigned long offset =
+      static_cast<unsigned long>(n_words) *
+      static_cast<unsigned long>(n - min);
+    return s + offset;
   }
 
   
@@ -64,12 +69,29 @@ namespace Gecode {
       min(Int::Limits::max), max(Int::Limits::min), key(0),
       td(heap.alloc<int>(n_initial_free * a)),
       vd(heap.alloc<ValueData>(a)),
-      range(nullptr), support(nullptr) {
+      range(nullptr), range_base(nullptr), support(nullptr),
+      state(TS_BUILDING),
+      sparse_n_vals(0U), sparse_offsets(nullptr),
+      sparse_tuples(nullptr), sparse_tv(nullptr),
+      compressed_offsets(nullptr), compressed_words(nullptr),
+      compressed_n_entries(0U) {
   }
   
   forceinline bool
   TupleSet::Data::finalized(void) const {
-    return n_free < 0;
+    return (state == TS_DENSE) ||
+      (state == TS_SPARSE) ||
+      (state == TS_DENSE_COMPRESSED);
+  }
+
+  forceinline bool
+  TupleSet::Data::failed(void) const {
+    return state == TS_FAILED;
+  }
+
+  forceinline bool
+  TupleSet::Data::terminal(void) const {
+    return state != TS_BUILDING;
   }
 
   forceinline TupleSet::Tuple
@@ -154,23 +176,52 @@ namespace Gecode {
   forceinline void
   TupleSet::finalize(void) {
     Data* d = static_cast<Data*>(object());
+    if (d == nullptr)
+      throw Int::UninitializedTupleSet("TupleSet::finalize()");
+    if (d->failed())
+      throw Int::AlreadyFinalized("TupleSet::finalize()");
     if (!d->finalized())
       d->finalize();
   }
 
+  forceinline void
+  TupleSet::finalize(ExtensionalPropKind epk) {
+    Data* d = static_cast<Data*>(object());
+    if (d == nullptr)
+      throw Int::UninitializedTupleSet("TupleSet::finalize()");
+    if (d->failed())
+      throw Int::AlreadyFinalized("TupleSet::finalize()");
+    if (!d->finalized())
+      d->finalize(epk);
+  }
+
   forceinline bool
   TupleSet::finalized(void) const {
-    return static_cast<Data*>(object())->finalized();
+    const Data* d = static_cast<Data*>(object());
+    return (d != nullptr) && d->finalized();
+  }
+
+  forceinline bool
+  TupleSet::failed(void) const {
+    const Data* d = static_cast<Data*>(object());
+    return (d != nullptr) && d->failed();
   }
 
   forceinline TupleSet::Data&
   TupleSet::data(void) const {
-    assert(finalized());
-    return *static_cast<Data*>(object());
+    Data* d = static_cast<Data*>(object());
+    if (d == nullptr)
+      throw Int::UninitializedTupleSet("TupleSet");
+    if (!d->finalized())
+      throw Int::NotYetFinalized("TupleSet");
+    return *d;
   }
   forceinline TupleSet::Data&
   TupleSet::raw(void) const {
-    return *static_cast<Data*>(object());
+    Data* d = static_cast<Data*>(object());
+    if (d == nullptr)
+      throw Int::UninitializedTupleSet("TupleSet");
+    return *d;
   }
 
   forceinline bool
@@ -227,6 +278,144 @@ namespace Gecode {
   TupleSet::hash(void) const {
     return data().key;
   }
+
+  forceinline ExtensionalPropKind
+  TupleSet::representation(void) const {
+    switch (data().state) {
+    case Data::TS_DENSE:
+      return EPK_DENSE;
+    case Data::TS_SPARSE:
+      return EPK_SPARSE;
+    case Data::TS_DENSE_COMPRESSED:
+      return EPK_DENSE_COMPRESSED;
+    case Data::TS_FAILED:
+    case Data::TS_BUILDING:
+    default:
+      GECODE_NEVER;
+      return EPK_DENSE;
+    }
+  }
+
+  forceinline unsigned int
+  TupleSet::sparse_values(void) const {
+    return data().sparse_n_vals;
+  }
+
+  forceinline const unsigned int*
+  TupleSet::sparse_tuple_value_ids(void) const {
+    return data().sparse_tv;
+  }
+
+  forceinline const unsigned int*
+  TupleSet::sparse_support_offsets(void) const {
+    return data().sparse_offsets;
+  }
+
+  forceinline bool
+  TupleSet::support_id(int p, int n, unsigned int& gid) const {
+    const Data& d = data();
+    if ((p < 0) || (p >= d.arity))
+      return false;
+    const ValueData& v = d.vd[p];
+    if (v.base == nullptr)
+      return false;
+    unsigned int l = 0U, h = v.n;
+    while (l < h) {
+      const unsigned int m = l + ((h-l) >> 1);
+      if (n < v.r[m].min)
+        h = m;
+      else if (n > v.r[m].max)
+        l = m+1U;
+      else {
+        gid = v.base[m] + static_cast<unsigned int>(n - v.r[m].min);
+        return true;
+      }
+    }
+    return false;
+  }
+
+  forceinline bool
+  TupleSet::sparse_support(int p, int n,
+                           const unsigned int*& b,
+                           const unsigned int*& e,
+                           unsigned int& gid) const {
+    const Data& d = data();
+    if ((d.sparse_offsets == nullptr) ||
+        (d.sparse_tuples == nullptr) ||
+        (d.sparse_n_vals == 0U))
+      return false;
+    if (!support_id(p,n,gid))
+      return false;
+    b = d.sparse_tuples + d.sparse_offsets[gid];
+    e = d.sparse_tuples + d.sparse_offsets[gid+1U];
+    return true;
+  }
+
+  forceinline bool
+  TupleSet::dense_compressed_support(int p, int n,
+                                     const CSupportWord*& b,
+                                     const CSupportWord*& e) const {
+    const Data& d = data();
+    if ((d.compressed_offsets == nullptr) ||
+        (d.compressed_words == nullptr))
+      return false;
+    unsigned int support_id0 = 0U;
+    if (!support_id(p,n,support_id0))
+      return false;
+    b = d.compressed_words + d.compressed_offsets[support_id0];
+    e = d.compressed_words + d.compressed_offsets[support_id0+1U];
+    return true;
+  }
+
+  namespace Int { namespace Extensional {
+
+    forceinline bool
+    support_offsets_size(unsigned long long n_vals,
+                         unsigned int& n_offsets) {
+      if (n_vals >= static_cast<unsigned long long>
+          (std::numeric_limits<unsigned int>::max()))
+        return false;
+      n_offsets = static_cast<unsigned int>(n_vals) + 1U;
+      return true;
+    }
+
+    forceinline unsigned int
+    TupleSetAccess::sparse_values(const TupleSet& ts) {
+      return ts.sparse_values();
+    }
+
+    forceinline const unsigned int*
+    TupleSetAccess::sparse_tuple_value_ids(const TupleSet& ts) {
+      return ts.sparse_tuple_value_ids();
+    }
+
+    forceinline const unsigned int*
+    TupleSetAccess::sparse_support_offsets(const TupleSet& ts) {
+      return ts.sparse_support_offsets();
+    }
+
+    forceinline bool
+    TupleSetAccess::support_id(const TupleSet& ts, int p, int n,
+                               unsigned int& gid) {
+      return ts.support_id(p,n,gid);
+    }
+
+    forceinline bool
+    TupleSetAccess::sparse_support(const TupleSet& ts, int p, int n,
+                                   const unsigned int*& b,
+                                   const unsigned int*& e,
+                                   unsigned int& gid) {
+      return ts.sparse_support(p,n,b,e,gid);
+    }
+
+    forceinline bool
+    TupleSetAccess::dense_compressed_support(const TupleSet& ts, int p, int n,
+                                             const TupleSet::CSupportWord*& b,
+                                             const TupleSet::CSupportWord*& e) {
+      return ts.dense_compressed_support(p,n,b,e);
+    }
+
+  }}
 
 
   template<class Char, class Traits>
@@ -287,4 +476,3 @@ namespace Gecode {
 }
 
 // STATISTICS: int-prop
-
