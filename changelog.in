@@ -88,7 +88,9 @@ gecode_blackbox_bounds (bounds propagation, scheduled on bound changes). The
 blackbox_exec and blackbox_dll annotations select the execution mode and pass
 through extra arguments. These annotations intentionally execute user-provided
 code and should only be used with trusted models and trusted executable or
-library paths.
+library paths. Bounds callbacks must return valid enclosing intervals and give
+complete dependency reasons; Gecode uses those reasons to decide when the
+callback must run again.
 
 [ENTRY]
 Module: minimodel
