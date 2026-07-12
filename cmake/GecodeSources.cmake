@@ -233,6 +233,9 @@ set(GECODE_GIST_SOURCES
 
 set(GECODE_FLATZINC_SOURCES
   gecode/flatzinc/blackbox-backend.cpp
+  gecode/flatzinc/blackbox-process-none.cpp
+  gecode/flatzinc/blackbox-process-posix.cpp
+  gecode/flatzinc/blackbox-process-windows.cpp
   gecode/flatzinc/blackbox-propagator.cpp
   gecode/flatzinc/branch.cpp
   gecode/flatzinc/flatzinc.cpp

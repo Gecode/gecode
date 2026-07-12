@@ -3,6 +3,9 @@
  *  Main authors:
  *     Jip J. Dekker <jip.dekker@monash.edu>
  *
+ *  Contributing authors:
+ *     Mikael Zayenz Lagerkvist <lagerkvist@gecode.dev>
+ *
  *  Copyright:
  *     Jip J. Dekker, 2026
  *
@@ -53,6 +56,8 @@
 
 namespace Gecode {
 namespace FlatZinc {
+
+class BlackBoxProcessSession;
 
 /// Inputs and pre-sized output buffers for one backend call.
 struct BlackBoxCall {
@@ -113,12 +118,11 @@ public:
   void run(BlackBoxCall& call) override;
 
 protected:
-  class Session;
   std::string program;
   std::vector<std::string> args;
   Support::Mutex mutex;
-  std::vector<Session*> sessions;
-  Session& session(void);
+  std::vector<BlackBoxProcessSession*> sessions;
+  BlackBoxProcessSession& session(void);
 };
 
 /// Encode one request for the executable backend's line protocol.
