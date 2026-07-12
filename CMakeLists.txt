@@ -1630,6 +1630,7 @@ if(GECODE_INSTALL)
       PATTERN "LICENSE_1_0.txt"
       PATTERN "mznlib" EXCLUDE
       PATTERN "flatzinc/blackbox.hh" EXCLUDE
+      PATTERN "flatzinc/blackbox-backend.hh" EXCLUDE
       PATTERN "exampleplugin" EXCLUDE
       PATTERN "standalone-example" EXCLUDE
       PATTERN "abi*" EXCLUDE)

@@ -1662,11 +1662,11 @@ namespace Gecode { namespace FlatZinc {
     }
 
     /// Read a `blackbox_exec` / `blackbox_dll` source annotation into \a mode,
-    /// \a instantiation (the executable/library) and \a args (its argument
+    /// \a target (the executable/library) and \a args (its argument
     /// list). Supports both the single-argument form (no arguments) and the
     /// `(target, args)` form.
     void blackbox_source(AST::Node* ann, std::string& mode,
-                         std::string& instantiation,
+                         std::string& target,
                          std::vector<std::string>& args) {
       auto string_arg = [](AST::Node* n, const char* what) {
         if ((n == nullptr) || !n->isString()) {
@@ -1705,7 +1705,7 @@ namespace Gecode { namespace FlatZinc {
               "Registry", "Malformed blackbox annotation: expected a target string and "
               "an argument array.");
         }
-        instantiation = string_arg(arr->a[0], "target");
+        target = string_arg(arr->a[0], "target");
         if (!arr->a[1]->isArray()) {
           throw FlatZinc::Error(
               "Registry", "Malformed blackbox annotation: argument list must be an array "
@@ -1716,15 +1716,15 @@ namespace Gecode { namespace FlatZinc {
           args.push_back(string_arg(al->a[i], "argument"));
         }
       } else {
-        instantiation = string_arg(c->args, "target");
+        target = string_arg(c->args, "target");
       }
     }
 
     void p_blackbox(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
       std::string mode;
-      std::string instantiation;
+      std::string target;
       std::vector<std::string> args;
-      blackbox_source(ann, mode, instantiation, args);
+      blackbox_source(ann, mode, target, args);
       IntVarArgs int_input = s.arg2intvarargs(ce[0]);
       IntVarArgs int_output = s.arg2intvarargs(ce[2]);
 #ifdef GECODE_HAS_FLOAT_VARS
@@ -1736,18 +1736,18 @@ namespace Gecode { namespace FlatZinc {
         "Blackbox propagator cannot use floating point values when Gecode is compiled without floating point decision variable support.");
       }
 #endif
-      FlatZinc::blackbox(s, BlackBoxAccess::state(s), int_input, int_output,
+      FlatZinc::blackbox(s, BlackBoxAccess::context(s), int_input, int_output,
 #ifdef GECODE_HAS_FLOAT_VARS
 float_input, float_output,
 #endif
-      mode, instantiation, args);
+      mode, target, args);
     }
 
     void p_blackbox_bounds(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
       std::string mode;
-      std::string instantiation;
+      std::string target;
       std::vector<std::string> args;
-      blackbox_source(ann, mode, instantiation, args);
+      blackbox_source(ann, mode, target, args);
       IntVarArgs ivar = s.arg2intvarargs(ce[0]);
 #ifdef GECODE_HAS_FLOAT_VARS
       FloatVarArgs fvar = s.arg2floatvarargs(ce[1]);
@@ -1762,11 +1762,11 @@ float_input, float_output,
       for (int i = 0; i < flat_reason.size(); i++) {
         reason[i] = flat_reason[i];
       }
-      FlatZinc::blackbox_bounds(s, BlackBoxAccess::state(s), ivar,
+      FlatZinc::blackbox_bounds(s, BlackBoxAccess::context(s), ivar,
 #ifdef GECODE_HAS_FLOAT_VARS
 fvar,
 #endif
-      mode, instantiation, args, reason);
+      mode, target, args, reason);
     }
 
     class IntPoster {

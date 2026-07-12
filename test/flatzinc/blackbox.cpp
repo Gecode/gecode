@@ -33,7 +33,7 @@
 
 #include "test/flatzinc.hh"
 
-#include <gecode/flatzinc/blackbox.hh>
+#include <gecode/flatzinc/blackbox-backend.hh>
 
 #include <cstdint>
 #include <cerrno>
@@ -251,6 +251,30 @@ namespace Test { namespace FlatZinc {
   }
 
   namespace Blackbox {
+    class NativeProtocol : public Base {
+    public:
+      NativeProtocol(void) : Base("FlatZinc::blackbox::native_protocol") {}
+      virtual bool run(void) {
+        std::vector<int64_t> int_input{-2};
+        std::vector<double> float_input{1.25};
+        std::vector<int64_t> int_output(1);
+        std::vector<double> float_output(1);
+        Gecode::FlatZinc::BlackBoxCall call = {
+          int_input, float_input, int_output, float_output
+        };
+        try {
+          if (Gecode::FlatZinc::encode_blackbox_request(call) !=
+              "-2;1.25\n") {
+            return false;
+          }
+          Gecode::FlatZinc::decode_blackbox_response("7;2.5\n", call);
+        } catch (...) {
+          return false;
+        }
+        return (int_output[0] == 7) && (float_output[0] == 2.5);
+      }
+    };
+
 #ifdef GECODE_HAS_THREADS
     template<class T>
     bool
@@ -344,6 +368,7 @@ namespace Test { namespace FlatZinc {
     public:
       /// Perform creation and registration
       Create(void) {
+        (void) new NativeProtocol;
         (void) new FlatZincErrorTest("blackbox::malformed_annotation",
           std::string(blackbox_decl) +
           "var 0..1: y;\n"
@@ -396,6 +421,19 @@ namespace Test { namespace FlatZinc {
             "solve satisfy;\n",
             "x = 5;\n----------\n");
 
+          (void) new FlatZincTest("blackbox::bounds_rescheduled_after_branch",
+            std::string(blackbox_bounds_decl) +
+            "var 0..1: x :: output_var;\n"
+            "var 0..5: y :: output_var;\n"
+            "constraint gecode_blackbox_bounds([x,y], [], "
+            "[1,0,0,2,1,1,1,1,1,2]) :: " +
+            fixture_annotation("exec", executable, {"dependent_bounds"}) +
+            ";\nsolve :: int_search([x], input_order, indomain_min, complete) "
+            "satisfy;\n",
+            "x = 0;\ny = 0;\n----------\n"
+            "x = 1;\ny = 5;\n----------\n==========\n",
+            false, {"-a"});
+
 #ifdef GECODE_HAS_FLOAT_VARS
           (void) new FlatZincErrorTest("blackbox::missing_bounds_reason_entry",
             std::string(blackbox_bounds_decl) +
@@ -445,17 +483,6 @@ namespace Test { namespace FlatZinc {
             "solve :: int_search([x], first_fail, indomain_min, complete) "
             "satisfy;\n",
             {"-p", "2"}, "Failed to read output integer 0");
-
-          (void) new FlatZincTest("blackbox::native_exec_rounds",
-            std::string(blackbox_decl) +
-            "var 1..1: a :: output_var;\n"
-            "var 2..2: b :: output_var;\n"
-            "constraint gecode_blackbox([], [], [a], []) :: " +
-            fixture_annotation("exec", executable, {"normal"}) + ";\n"
-            "constraint gecode_blackbox([], [], [b], []) :: " +
-            fixture_annotation("exec", executable, {"normal"}) + ";\n"
-            "solve satisfy;\n",
-            "a = 1;\nb = 2;\n----------\n");
 
           for (int kind = 1; kind <= 5; ++kind) {
             const char* expected = nullptr;

@@ -147,6 +147,21 @@ namespace {
     std::cout.flush();
   }
 
+  bool
+  dependent_bounds(const std::string& request) {
+    long long xmin, xmax, ymin, ymax;
+    if (std::sscanf(request.c_str(), "%lld,%lld,%lld,%lld;",
+                    &xmin, &xmax, &ymin, &ymax) != 4) {
+      return false;
+    }
+    (void) ymin;
+    (void) ymax;
+    write_response(std::to_string(xmin) + "," + std::to_string(xmax) + "," +
+                   std::to_string(5 * xmin) + "," +
+                   std::to_string(5 * xmax) + ";");
+    return true;
+  }
+
   const std::string*
   fixed_response(const std::string& mode) {
     static const std::string value7("7;");
@@ -245,6 +260,13 @@ main(int argc, char* argv[]) {
       }
 #endif
       write_response("1;");
+      continue;
+    }
+
+    if (mode == "dependent_bounds") {
+      if (!dependent_bounds(request)) {
+        return 1;
+      }
       continue;
     }
 
