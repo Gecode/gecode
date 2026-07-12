@@ -1,5 +1,3 @@
-include "blackbox_annotations.mzn";
-
 % Bounds blackbox. Integer variables come first, followed by float variables.
 % Each array is encoded as consecutive lower/upper pairs, so variable i uses
 % positions 2*i-1 and 2*i in the corresponding backend array. Returned bounds
