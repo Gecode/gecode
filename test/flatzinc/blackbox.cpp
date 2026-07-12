@@ -3,6 +3,9 @@
  *  Main authors:
  *     Jip J. Dekker <jip.dekker@monash.edu>
  *
+ *  Contributing authors:
+ *     Mikael Zayenz Lagerkvist <lagerkvist@gecode.dev>
+ *
  *  Copyright:
  *     Jip J. Dekker, 2026
  *
