@@ -79,18 +79,16 @@ autoconf build path, and updates CI coverage for current platforms.
 Module: flatzinc
 What:   new
 Rank:   minor
+Thanks: Jip J. Dekker
 [DESCRIPTION]
-Add support for the experimental MiniZinc black-box propagator interface. A
-FlatZinc model can request propagation using an external function, implemented
-either as a shared library or as a subprocess, through two generic propagators:
-gecode_blackbox (value propagation, scheduled once all inputs are fixed) and
-gecode_blackbox_bounds (bounds propagation, scheduled on bound changes). The
-blackbox_exec and blackbox_dll annotations select the execution mode and pass
-through extra arguments. These annotations intentionally execute user-provided
-code and should only be used with trusted models and trusted executable or
-library paths. Bounds callbacks must return valid enclosing intervals and give
-complete dependency reasons; Gecode uses those reasons to decide when the
-callback must run again.
+Add support for the experimental MiniZinc black-box propagator interface,
+contributed by Jip J. Dekker.
+[MORE]
+FlatZinc models can implement custom value and bounds propagation in a shared
+library or persistent subprocess. The blackbox_dll and blackbox_exec annotations
+select the backend and pass its arguments. Bounds callbacks return enclosing
+intervals together with the dependencies that determine when the callback must
+run again.
 
 [ENTRY]
 Module: minimodel

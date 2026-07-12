@@ -1,5 +1,8 @@
 /* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
+ *  Contributing authors:
+ *     Mikael Zayenz Lagerkvist <lagerkvist@gecode.dev>
+ *
  *  Copyright:
  *     Jip J. Dekker, 2026
  *
