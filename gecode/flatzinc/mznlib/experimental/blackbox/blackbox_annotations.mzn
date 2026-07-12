@@ -41,7 +41,10 @@
 % ranges. Response lines are limited to 1 MiB. The helper is trusted code and
 % must keep reading requests and writing complete newline-terminated responses;
 % otherwise it can block the solver. During parallel search each worker thread
-% gets its own process.
+% gets its own process. Constraints with the same command and argument list
+% share this worker-local process session. A blackbox_dll constraint instead
+% owns its root instance; cloned spaces and search workers share that constraint
+% backend according to the fzn_clone rules above.
 % POSIX exec teardown contains descendants that remain in the spawned process
 % group; helpers that deliberately detach are outside this containment and
 % trusted-code contract.
