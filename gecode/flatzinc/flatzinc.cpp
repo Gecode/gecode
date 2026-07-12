@@ -49,6 +49,7 @@
 #include <string>
 #include <sstream>
 #include <limits>
+#include <memory>
 #include <unordered_set>
 
 
@@ -771,7 +772,7 @@ namespace Gecode { namespace FlatZinc {
     DFASet dfaSet;
 
     /// Opaque state shared by blackbox propagators in this model
-    SharedHandle blackBoxState;
+    BlackBoxContextHandle blackBoxContext;
 
     /// Initialize
     FlatZincSpaceInitData(void) {}
@@ -868,10 +869,10 @@ namespace Gecode { namespace FlatZinc {
     branchInfo.init();
   }
 
-  SharedHandle&
-  BlackBoxAccess::state(FlatZincSpace& s) {
+  BlackBoxContextHandle&
+  BlackBoxAccess::context(FlatZincSpace& s) {
     assert(s._initData != nullptr);
-    return s._initData->blackBoxState;
+    return s._initData->blackBoxContext;
   }
 
   void
@@ -1751,18 +1752,29 @@ namespace Gecode { namespace FlatZinc {
 
   class FlatZincStop : public Search::Stop {
   protected:
-    Search::Stop* stop_object;
-    BlackBoxStateHandle black_box_state;
+    std::unique_ptr<Search::Stop> stop_object;
+    BlackBoxContextHandle black_box_context;
   public:
     FlatZincStop(Search::Stop* stop_object0,
-                 const BlackBoxStateHandle& black_box_state0)
-      : stop_object(stop_object0), black_box_state(black_box_state0) {}
+                 const BlackBoxContextHandle& black_box_context0)
+      : stop_object(stop_object0), black_box_context(black_box_context0) {}
     bool stop(const Search::Statistics& s, const Search::Options& o) override {
-      return black_box_state.failed() ||
-        ((stop_object != nullptr) && stop_object->stop(s,o));
+      return black_box_context.failed() ||
+        ((stop_object.get() != nullptr) && stop_object->stop(s,o));
     }
-    ~FlatZincStop(void) {
-      delete stop_object;
+  };
+
+  class InterruptHandlerGuard {
+  protected:
+    bool installed;
+  public:
+    explicit InterruptHandlerGuard(bool install) : installed(install) {
+      if (installed)
+        Driver::CombinedStop::installCtrlHandler(true);
+    }
+    ~InterruptHandlerGuard(void) {
+      if (installed)
+        Driver::CombinedStop::installCtrlHandler(false);
     }
   };
 
@@ -1861,13 +1873,13 @@ namespace Gecode { namespace FlatZinc {
                          const FlatZincOptions& opt, Support::Timer& t_total) {
 #ifdef GECODE_HAS_GIST
     if (opt.mode() == SM_GIST) {
-      BlackBoxStateHandle black_box_state(BlackBoxAccess::state(*this));
+      BlackBoxContextHandle& black_box_context = BlackBoxAccess::context(*this);
       (void) status();
-      black_box_state.rethrow();
+      black_box_context.rethrow();
       FZPrintingInspector<FlatZincSpace> pi(p);
       FZPrintingComparator<FlatZincSpace> pc(p);
       (void) GistEngine<Engine<FlatZincSpace> >::explore(this,opt,&pi,&pc);
-      black_box_state.rethrow();
+      black_box_context.rethrow();
       return;
     }
 #endif
@@ -1878,14 +1890,17 @@ namespace Gecode { namespace FlatZinc {
     if (status(sstat) != SS_FAILED) {
       n_p = PropagatorGroup::all.size(*this);
     }
-    BlackBoxStateHandle black_box_state(BlackBoxAccess::state(*this));
-    black_box_state.rethrow();
+    BlackBoxContextHandle& black_box_context = BlackBoxAccess::context(*this);
+    black_box_context.rethrow();
     Search::Options o;
-    o.stop = Driver::CombinedStop::create(opt.node(), opt.fail(), opt.time(),
-                                          opt.restart_limit(), true);
-    if (black_box_state) {
-      o.stop = new FlatZincStop(o.stop, black_box_state);
+    std::unique_ptr<Search::Stop> stop(
+      Driver::CombinedStop::create(opt.node(), opt.fail(), opt.time(),
+                                   opt.restart_limit(), true));
+    if (black_box_context) {
+      stop.reset(new FlatZincStop(stop.release(), black_box_context));
     }
+    o.stop = stop.get();
+    std::unique_ptr<SearchTracer> tracer;
     o.c_d = opt.c_d();
     o.a_d = opt.a_d();
 
@@ -1894,9 +1909,10 @@ namespace Gecode { namespace FlatZinc {
       FlatZincGetInfo* getInfo = nullptr;
       if (opt.profiler_info())
         getInfo = new FlatZincGetInfo(p);
-      o.tracer = new CPProfilerSearchTracer(opt.profiler_id(),
-                                            opt.name(), opt.profiler_port(),
-                                            getInfo);
+      tracer.reset(new CPProfilerSearchTracer(opt.profiler_id(),
+                                              opt.name(), opt.profiler_port(),
+                                              getInfo));
+      o.tracer = tracer.get();
     }
 
 #endif
@@ -1907,8 +1923,6 @@ namespace Gecode { namespace FlatZinc {
     o.threads = opt.threads();
     o.nogoods_limit = opt.nogoods() ? opt.nogoods_limit() : 0;
     o.cutoff  = new Search::CutoffAppend(new Search::CutoffConstant(0), 1, Driver::createCutoff(opt));
-    if (opt.interrupt())
-      Driver::CombinedStop::installCtrlHandler(true);
     int noOfSolutions = opt.solutions();
     if (noOfSolutions == -1) {
       noOfSolutions = (_method == SAT) ? 1 : 0;
@@ -1918,46 +1932,33 @@ namespace Gecode { namespace FlatZinc {
     bool solution_limit_reached = false;
     bool engine_stopped = false;
     Gecode::Search::Statistics stat;
-    FlatZincSpace* sol = nullptr;
-    try {
-      {
-        Meta<FlatZincSpace,Engine> se(this,o);
-        while (FlatZincSpace* next_sol = se.next()) {
-          if (black_box_state.failed()) {
-            delete next_sol;
-            break;
-          }
-          delete sol;
-          sol = next_sol;
-          if (printAll) {
-            sol->print(out, p);
-            out << "----------" << std::endl;
-          }
-          if (--findSol == 0) {
-            solution_limit_reached = true;
-            break;
-          }
+    std::unique_ptr<FlatZincSpace> sol;
+    {
+      InterruptHandlerGuard interrupt_handler(opt.interrupt());
+      Meta<FlatZincSpace,Engine> se(this,o);
+      while (FlatZincSpace* next = se.next()) {
+        std::unique_ptr<FlatZincSpace> next_sol(next);
+        if (black_box_context.failed()) {
+          break;
         }
-        engine_stopped = se.stopped();
-        if (opt.mode() == SM_STAT) {
-          stat = se.statistics();
+        sol = std::move(next_sol);
+        if (printAll) {
+          sol->print(out, p);
+          out << "----------" << std::endl;
+        }
+        if (--findSol == 0) {
+          solution_limit_reached = true;
+          break;
         }
       }
-    } catch (...) {
-      delete sol;
-      if (opt.interrupt())
-        Driver::CombinedStop::installCtrlHandler(false);
-      delete o.stop;
-      delete o.tracer;
-      throw;
+      engine_stopped = se.stopped();
+      if (opt.mode() == SM_STAT) {
+        stat = se.statistics();
+      }
     }
-    if (opt.interrupt())
-      Driver::CombinedStop::installCtrlHandler(false);
-    delete o.stop;
-    delete o.tracer;
-    if (black_box_state.failed()) {
-      delete sol;
-      black_box_state.rethrow();
+    if (black_box_context.failed()) {
+      sol.reset();
+      black_box_context.rethrow();
     }
     if (sol && !printAll) {
       sol->print(out, p);
@@ -1974,7 +1975,6 @@ namespace Gecode { namespace FlatZinc {
         out << "=====UNKNOWN=====" << std::endl;
       }
     }
-    delete sol;
     if (opt.mode() == SM_STAT) {
       double totalTime = (t_total.stop() / 1000.0);
       double solveTime = (t_solve.stop() / 1000.0);
