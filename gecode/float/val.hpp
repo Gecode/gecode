@@ -80,7 +80,11 @@ namespace Gecode {
   }
   forceinline FloatNum
   FloatVal::med(void) const {
-    return gecode_boost::numeric::median(x);
+    const FloatNum l = x.lower();
+    const FloatNum u = x.upper();
+    if ((l < 0.0) && (u > 0.0))
+      return l / 2.0 + u / 2.0;
+    return l + (u - l) / 2.0;
   }
 
   forceinline bool

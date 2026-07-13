@@ -136,6 +136,17 @@ Build CMake examples only when their required variable modules and MPFR support
 are enabled.
 
 [ENTRY]
+Module: float
+What: bug
+Rank: major
+Issue: 164
+Thanks: Pierre Talbot
+[DESCRIPTION]
+Compute interval medians without overflowing at large positive or negative
+bounds. Float search over an unbounded FlatZinc variable can otherwise fail to
+make progress.
+
+[ENTRY]
 Module: flatzinc
 What:   new
 Rank:   minor
