@@ -860,6 +860,7 @@ else
 export FLATZINCCONFIG		= tools/flatzinc/gecode.msc
 endif
 FLATZINCEXE	= tools/flatzinc/fzn-gecode$(EXESUFFIX)
+FLATZINCLAUNCHER = tools/flatzinc/mzn-gecode@BATCHFILE@
 ifeq "@need_soname@" "yes"
 export FLATZINCSONAME = @WLSONAME@$(LIBPREFIX)@FLATZINC@$(SOSUFFIX)
 else
@@ -882,6 +883,7 @@ export FLATZINCMZNLIB		=
 export FLATZINCRES		=
 export FLATZINCRC		=
 FLATZINCEXE	=
+FLATZINCLAUNCHER =
 endif
 
 #
@@ -1039,9 +1041,16 @@ ALLGECODEHDR = \
 	$(SUPPORTHDR) $(KERNELHDR) $(SEARCHHDR) \
         $(INTHDR) $(FLOATHDR) $(SETHDR) $(MMHDR) \
 	$(DRIVERHDR) $(ITERHDR) $(GISTHDR) $(FLATZINCHDR) \
-	$(INSTALLEXAMPLEHDR)
+	$(INTEXAMPLEHDR)
 ALLHDR = \
 	$(ALLGECODEHDR) $(THIRDHDR)
+INSTALLGECODEHDR = \
+	$(SUPPORTHDR) $(KERNELHDR) $(SEARCHHDR) \
+        $(INTHDR) $(FLOATHDR) $(SETHDR) $(MMHDR) \
+	$(DRIVERHDR) $(ITERHDR) $(GISTHDR) $(FLATZINCHDR) \
+	$(INSTALLEXAMPLEHDR)
+INSTALLHDR = \
+	$(INSTALLGECODEHDR) $(THIRDHDR)
 ALLOBJ0 = $(ALLSRC:%.cpp=%$(OBJSUFFIX)) \
 	$(GISTMOCSRC:%.cpp=%$(OBJSUFFIX)) \
 	$(FLATZINC_GENSRC:%.cpp=%$(OBJSUFFIX))
@@ -1098,7 +1107,7 @@ LIBLIBTARGETS =
 PDBTARGETS =
 endif
 
-EXETARGETS = $(FLATZINCEXE) tools/flatzinc/mzn-gecode@BATCHFILE@
+EXETARGETS = $(FLATZINCEXE) $(FLATZINCLAUNCHER)
 
 #
 # Testing
@@ -2034,9 +2043,9 @@ endif
 
 endif
 
-doinstallheaders: $(ALLHDR:%=$(top_srcdir)/%) $(EXTRA_HEADERS) $(VARIMPHDR) $(FLATZINCCONFIG)
+doinstallheaders: $(INSTALLHDR:%=$(top_srcdir)/%) $(EXTRA_HEADERS) $(VARIMPHDR) $(FLATZINCCONFIG)
 	mkdir -p $(DESTDIR)$(includedir) && \
-	(cd $(top_srcdir) && tar cf - $(ALLHDR)) | \
+	(cd $(top_srcdir) && tar cf - $(INSTALLHDR)) | \
 	  (cd $(DESTDIR)$(includedir) && tar xf -) && \
 	for_varimpheaders="$(VARIMPHDR)" && \
 	  for f in $$for_varimpheaders; do \
