@@ -82,9 +82,22 @@ namespace Gecode {
   FloatVal::med(void) const {
     const FloatNum l = x.lower();
     const FloatNum u = x.upper();
-    if ((l < 0.0) && (u > 0.0))
-      return l / 2.0 + u / 2.0;
-    return l + (u - l) / 2.0;
+    const FloatNum inf = std::numeric_limits<FloatNum>::infinity();
+    const FloatNum max = std::numeric_limits<FloatNum>::max();
+    if (l == -inf) {
+      if (u == -inf)
+        return l;
+      // Preserve the extended endpoint for semi-infinite intervals.
+      return (u == inf) ? 0.0 : l;
+    }
+    if (u == inf)
+      return u;
+
+    Float::Rounding r;
+    const FloatNum h = max / 2.0;
+    if ((u > h) || (l < -h))
+      return std::ldexp(r.median(l / 2.0,u / 2.0),1);
+    return r.median(l,u);
   }
 
   forceinline bool
