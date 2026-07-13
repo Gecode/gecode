@@ -84,7 +84,7 @@ namespace Test { namespace Float {
        /// Perform test
        virtual bool run(void) {
          using namespace Gecode;
-         const FloatNum m = Float::Limits::max;
+         const FloatNum m = Gecode::Float::Limits::max;
          const FloatVal negative(-m, -m / 2.0);
          const FloatVal positive(m / 2.0, m);
          const FloatVal mixed(-m, m);
