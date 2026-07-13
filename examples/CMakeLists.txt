@@ -61,14 +61,35 @@ set(GECODE_EXAMPLE_SOURCES
   warehouses.cpp
   word-square.cpp)
 
-set(GECODE_MPFR_EXAMPLES
+set(GECODE_SET_EXAMPLES
+  crew
+  golf
+  hamming
+  queen-armies
+  steiner)
+
+set(GECODE_FLOAT_EXAMPLES
+  cartesian-heart
+  descartes-folium)
+
+set(GECODE_MPFR_FLOAT_EXAMPLES
   archimedean-spiral
   golden-spiral)
 
 function(gecode_add_example source_file)
   get_filename_component(example_name "${source_file}" NAME_WE)
 
-  if(example_name IN_LIST GECODE_MPFR_EXAMPLES AND
+  if(example_name IN_LIST GECODE_SET_EXAMPLES AND NOT GECODE_ENABLE_SET_VARS)
+    message(STATUS "Skipping example: ${example_name} (requires set variables)")
+    return()
+  endif()
+
+  if(example_name IN_LIST GECODE_FLOAT_EXAMPLES AND NOT GECODE_ENABLE_FLOAT_VARS)
+    message(STATUS "Skipping example: ${example_name} (requires float variables)")
+    return()
+  endif()
+
+  if(example_name IN_LIST GECODE_MPFR_FLOAT_EXAMPLES AND
      (NOT GECODE_ENABLE_FLOAT_VARS OR NOT GECODE_ENABLE_MPFR OR NOT MPFR_FOUND))
     message(STATUS "Skipping example: ${example_name} (requires MPFR float support)")
     return()
