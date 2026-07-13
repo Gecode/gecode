@@ -1417,7 +1417,8 @@ namespace Gecode { namespace Int { namespace GCC {
         ValNode* v = vars[i]->first()->getVal();
         vars[i]->first()->free(bc);
         GECODE_ME_CHECK(x[i].eq(home, v->val));
-        v->inc();
+        if (bc == UBC)
+          v->inc();
       }
 
     for (int i = n_val; i--; ) {
@@ -1765,5 +1766,4 @@ namespace Gecode { namespace Int { namespace GCC {
 }}}
 
 // STATISTICS: int-prop
-
 

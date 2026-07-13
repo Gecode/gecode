@@ -76,6 +76,16 @@ first-class CMake package for downstream consumers, refreshes the
 autoconf build path, and updates CI coverage for current platforms.
 
 [ENTRY]
+Module: int
+What:   bug
+Rank:   major
+Issue:  166
+Thanks: Mats Carlsson
+[DESCRIPTION]
+Fix domain-level global cardinality propagation losing solutions when search
+recomputation applies several branch choices before propagation.
+
+[ENTRY]
 Module: flatzinc
 What:   new
 Rank:   minor
