@@ -1432,6 +1432,7 @@ if(BUILD_TESTING)
       Search::DFS::Sol::Binary::Nary::Binary::1::1::1)
     if(GECODE_ENABLE_FLATZINC)
       list(INSERT GECODE_CHECK_TESTS 1
+        FlatZinc::Options
         FlatZinc::magic_square
         FlatZinc::blackbox)
     endif()

@@ -93,6 +93,15 @@ namespace Test { namespace FlatZinc {
 
     GistStatisticsMode gist_statistics_mode;
 
+#ifndef GECODE_HAS_GIST
+    /// Verify that unavailable Gist mode is rejected instead of running search.
+    FlatZincErrorTest gist_unavailable(
+      "Options::GistUnavailable",
+      "var 1..1: x :: output_var;\nsolve satisfy;\n",
+      {"-mode", "gist", "-s"},
+      "Gist mode is unavailable in this build");
+#endif
+
   }
 
   FlatZincTest::FlatZincTest(const std::string& name, const std::string& source,

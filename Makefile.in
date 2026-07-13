@@ -1363,7 +1363,7 @@ CHECKTESTS = Branch::Int::Dense::3 \
 	Set::Wait
 
 ifeq "@enable_flatzinc@" "yes"
-CHECKTESTS += FlatZinc::blackbox
+CHECKTESTS += FlatZinc::Options FlatZinc::blackbox
 BLACKBOXCHECKENV = \
 	GECODE_TEST_BLACKBOX_EXEC=$(abspath $(BLACKBOXEXEC)) \
 	GECODE_TEST_BLACKBOX_DLL=$(abspath $(BLACKBOXDLL)) \

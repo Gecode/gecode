@@ -153,7 +153,8 @@ Rank: minor
 Issue: 99
 [DESCRIPTION]
 Keep an explicitly selected Gist execution mode when FlatZinc statistics are
-requested.
+requested, and report an error instead of silently running in solution mode
+when Gist support is unavailable.
 
 [ENTRY]
 Module: flatzinc

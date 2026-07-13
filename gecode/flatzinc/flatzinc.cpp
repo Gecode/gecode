@@ -2039,6 +2039,11 @@ namespace Gecode { namespace FlatZinc {
   void
   FlatZincSpace::run(std::ostream& out, const Printer& p,
                       const FlatZincOptions& opt, Support::Timer& t_total) {
+#ifndef GECODE_HAS_GIST
+    if (opt.mode() == SM_GIST)
+      throw FlatZinc::Error("FlatZinc",
+        "Gist mode is unavailable in this build");
+#endif
     switch (_method) {
     case MIN:
     case MAX:
