@@ -906,6 +906,11 @@ INTEXAMPLESRC0 =						\
 
 INTEXAMPLEHDR  = $(INTEXAMPLEHDR0:%=examples/%.hpp)
 INTEXAMPLESRC  = $(INTEXAMPLESRC0:%=examples/%.cpp)
+ifeq "@enable_examples@" "yes"
+INSTALLEXAMPLEHDR = $(INTEXAMPLEHDR)
+else
+INSTALLEXAMPLEHDR =
+endif
 ifeq "@enable_int_vars@" "yes"
 INTEXAMPLEEXE  = $(INTEXAMPLESRC:%.cpp=%$(EXESUFFIX))
 else
@@ -1034,7 +1039,7 @@ ALLGECODEHDR = \
 	$(SUPPORTHDR) $(KERNELHDR) $(SEARCHHDR) \
         $(INTHDR) $(FLOATHDR) $(SETHDR) $(MMHDR) \
 	$(DRIVERHDR) $(ITERHDR) $(GISTHDR) $(FLATZINCHDR) \
-	$(INTEXAMPLEHDR)
+	$(INSTALLEXAMPLEHDR)
 ALLHDR = \
 	$(ALLGECODEHDR) $(THIRDHDR)
 ALLOBJ0 = $(ALLSRC:%.cpp=%$(OBJSUFFIX)) \
@@ -2039,18 +2044,22 @@ doinstallheaders: $(ALLHDR:%=$(top_srcdir)/%) $(EXTRA_HEADERS) $(VARIMPHDR) $(FL
 	for_extraheaders="$(EXTRA_HEADERS)" && \
 	  for f in $$for_extraheaders; do \
 	    cp $$f $(DESTDIR)$(includedir)/$$f; done && \
-	mkdir -p $(DESTDIR)$(datadir)/minizinc/solvers && \
 	for_flatconf="$(FLATZINCCONFIG)" && \
-	  for f in $$for_flatconf; do \
-			cp $$f $(DESTDIR)$(datadir)/minizinc/solvers; done && \
+	  if test -n "$$for_flatconf"; then \
+	    mkdir -p $(DESTDIR)$(datadir)/minizinc/solvers && \
+	    for f in $$for_flatconf; do \
+			cp $$f $(DESTDIR)$(datadir)/minizinc/solvers; done; \
+	  fi && \
 	for_mznlib="$(FLATZINCMZNLIB)" && \
-	  mznlibdir="$(DESTDIR)$(datadir)/minizinc/gecode" && \
-	  mkdir -p "$$mznlibdir" && \
-	  for f in $$for_mznlib; do \
-	    srcdir="$(top_srcdir)/$$f"; \
-	    (cd "$$srcdir" && find . -type f -name '*.mzn' \
-	      -exec sh -c 'mznlibdir=$$1; shift; for mznfile do mznfile=$${mznfile#./}; mzndir=$${mznfile%/*}; if test "$$mzndir" != "$$mznfile"; then mkdir -p "$$mznlibdir/$$mzndir" || exit 1; fi; cp "$$mznfile" "$$mznlibdir/$$mznfile" || exit 1; done' sh "$$mznlibdir" {} +) || exit 1; \
-	  done
+	  if test -n "$$for_mznlib"; then \
+	    mznlibdir="$(DESTDIR)$(datadir)/minizinc/gecode" && \
+	    mkdir -p "$$mznlibdir" && \
+	    for f in $$for_mznlib; do \
+	      srcdir="$(top_srcdir)/$$f"; \
+	      (cd "$$srcdir" && find . -type f -name '*.mzn' \
+	        -exec sh -c 'mznlibdir=$$1; shift; for mznfile do mznfile=$${mznfile#./}; mzndir=$${mznfile%/*}; if test "$$mzndir" != "$$mznfile"; then mkdir -p "$$mznlibdir/$$mzndir" || exit 1; fi; cp "$$mznfile" "$$mznlibdir/$$mznfile" || exit 1; done' sh "$$mznlibdir" {} +) || exit 1; \
+	    done; \
+	  fi
 
 doinstalllib:
 	mkdir -p $(DESTDIR)$(sharedlibdir) && \
