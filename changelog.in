@@ -87,6 +87,16 @@ assigned variables twice and retaining stale conflict marks when cardinality
 bounds shrink.
 
 [ENTRY]
+Module: int
+What:   bug
+Rank:   major
+Issue:  168
+Thanks: Mats Carlsson
+[DESCRIPTION]
+Fix non-terminating propagation for sorted constraints when a matching
+component contains no interval compatible with an input variable.
+
+[ENTRY]
 Module: flatzinc
 What:   new
 Rank:   minor

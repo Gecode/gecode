@@ -152,7 +152,10 @@ namespace Gecode { namespace Int { namespace Sorted {
        */
       int start = sinfo[scclist[i]].leftmost;
       while (y[start].max() < xmin) {
-        start = sinfo[start].right;
+        int next = sinfo[start].right;
+        if (next == start)
+          return false;
+        start = next;
       }
 
       if (Perm) {
@@ -184,7 +187,10 @@ namespace Gecode { namespace Int { namespace Sorted {
        */
       start = sinfo[scclist[ptau]].rightmost;
       while (y[start].min() > xmax) {
-        start = sinfo[start].left;
+        int next = sinfo[start].left;
+        if (next == start)
+          return false;
+        start = next;
       }
 
       if (Perm) {
