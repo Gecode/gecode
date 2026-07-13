@@ -1268,7 +1268,8 @@ namespace Gecode { namespace Int { namespace GCC {
               v->maxlow(k[i].max() - (inc_lbc));
               if (v->kmin() == v->kmax())
                 v->cap(LBC,k[i].max() - (inc_lbc));
-              v->card_conflict(rm);
+              int matched = inc_ubc - v->kcount();
+              v->card_conflict(std::min(rm, matched));
             }
           }
         }

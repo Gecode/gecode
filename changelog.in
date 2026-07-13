@@ -82,8 +82,9 @@ Rank:   major
 Issue:  166
 Thanks: Mats Carlsson
 [DESCRIPTION]
-Fix domain-level global cardinality propagation losing solutions when search
-recomputation applies several branch choices before propagation.
+Fix domain-level global cardinality propagation losing solutions by counting
+assigned variables twice and retaining stale conflict marks when cardinality
+bounds shrink.
 
 [ENTRY]
 Module: flatzinc
