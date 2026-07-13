@@ -35,6 +35,8 @@
 
 #include "test/float.hh"
 
+#include <cmath>
+
 namespace Test { namespace Float {
 
    /// %Tests for basic setup
@@ -72,6 +74,34 @@ namespace Test { namespace Float {
      namespace {
        Basic b1(3,1.5);
        Basic b2(Gecode::FloatVal(-2,10),1.5);
+     }
+
+     /// Test that interval medians remain finite at the numerical limits
+     class MedianLimits : public Base {
+     public:
+       /// Create and register test
+       MedianLimits(void) : Base("Float::Basic::MedianLimits") {}
+       /// Perform test
+       virtual bool run(void) {
+         using namespace Gecode;
+         const FloatNum m = Float::Limits::max;
+         const FloatVal negative(-m, -m / 2.0);
+         const FloatVal positive(m / 2.0, m);
+         const FloatVal mixed(-m, m);
+         return std::isfinite(negative.med()) &&
+           (negative.med() >= negative.min()) &&
+           (negative.med() <= negative.max()) &&
+           std::isfinite(positive.med()) &&
+           (positive.med() >= positive.min()) &&
+           (positive.med() <= positive.max()) &&
+           std::isfinite(mixed.med()) &&
+           (mixed.med() >= mixed.min()) &&
+           (mixed.med() <= mixed.max());
+       }
+     };
+
+     namespace {
+       MedianLimits ml;
      }
      //@}
 
