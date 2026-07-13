@@ -131,7 +131,6 @@ Module: example
 What: bug
 Rank: minor
 Issue: 83
-Thanks: Mikael Zayenz Lagerkvist
 [DESCRIPTION]
 Build CMake examples only when their required variable modules and MPFR support
 are enabled.
