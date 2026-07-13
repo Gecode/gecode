@@ -293,6 +293,7 @@ set(GECODE_TEST_SOURCES
   test/flatzinc/golomb.cpp
   test/flatzinc/int_set_as_type1.cpp
   test/flatzinc/int_set_as_type2.cpp
+  test/flatzinc/issue166.cpp
   test/flatzinc/jobshop.cpp
   test/flatzinc/jobshop2x2.cpp
   test/flatzinc/knights.cpp

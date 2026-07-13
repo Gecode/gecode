@@ -1141,6 +1141,7 @@ FLATZINCTESTSRC0 = \
   test/flatzinc/empty_domain_2.cpp \
   test/flatzinc/int_set_as_type1.cpp \
   test/flatzinc/int_set_as_type2.cpp \
+  test/flatzinc/issue166.cpp \
   test/flatzinc/jobshop.cpp \
   test/flatzinc/no_warn_empty_domain.cpp \
   test/flatzinc/output_test.cpp \
