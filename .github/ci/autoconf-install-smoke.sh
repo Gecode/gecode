@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
 set -euxo pipefail
 
-destdir="${1:?usage: autoconf-install-smoke.sh <destdir> [logical-prefix]}"
+destdir="${1:?usage: autoconf-install-smoke.sh <destdir> [logical-prefix] [examples-enabled] [flatzinc-enabled]}"
 logical_prefix="${2:-/usr/local}"
+examples_enabled="${3:-yes}"
+flatzinc_enabled="${4:-yes}"
 
 case "$logical_prefix" in
   /*) ;;
@@ -23,12 +25,40 @@ solver_config="$solver_dir/gecode.msc"
 mznlib_dir="$install_prefix/share/minizinc/gecode"
 
 test -f "$install_prefix/include/gecode/support/config.hpp"
-test -x "$install_prefix/bin/fzn-gecode"
-test -x "$install_prefix/bin/mzn-gecode"
-! grep -q "/usr/local" "$install_prefix/bin/mzn-gecode"
 
-test -f "$solver_config"
-test -f "$mznlib_dir/experimental/on_restart/fzn_on_restart_complete.mzn"
+case "$examples_enabled" in
+  yes)
+    test -f "$install_prefix/include/examples/scowl.hpp"
+    test -f "$install_prefix/include/examples/job-shop-instances.hpp"
+    ;;
+  no)
+    test ! -e "$install_prefix/include/examples"
+    ;;
+  *)
+    echo "examples-enabled must be yes or no: $examples_enabled" >&2
+    exit 2
+    ;;
+esac
+
+case "$flatzinc_enabled" in
+  yes)
+    test -x "$install_prefix/bin/fzn-gecode"
+    test -x "$install_prefix/bin/mzn-gecode"
+    ! grep -q "/usr/local" "$install_prefix/bin/mzn-gecode"
+    test -f "$solver_config"
+    test -f "$mznlib_dir/experimental/on_restart/fzn_on_restart_complete.mzn"
+    ;;
+  no)
+    test ! -e "$install_prefix/bin/fzn-gecode"
+    test ! -e "$install_prefix/bin/mzn-gecode"
+    test ! -e "$install_prefix/share/minizinc"
+    exit 0
+    ;;
+  *)
+    echo "flatzinc-enabled must be yes or no: $flatzinc_enabled" >&2
+    exit 2
+    ;;
+esac
 
 python3 - "$solver_config" "$solver_dir" <<'PY'
 import json
