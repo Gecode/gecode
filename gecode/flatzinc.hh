@@ -329,7 +329,7 @@ namespace Gecode { namespace FlatZinc {
       if (_time_limit.value()) {
         _time.value(_time_limit.value());
       }
-      if (_stat.value())
+      if (_stat.value() && (_mode.value() == Gecode::SM_SOLUTION))
         _mode.value(Gecode::SM_STAT);
     }
 
