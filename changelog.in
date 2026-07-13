@@ -127,6 +127,16 @@ Treat zero entries in the TSP example as valid zero-cost edges. This lets the
 br17 instance reach its optimum.
 
 [ENTRY]
+Module: example
+What: bug
+Rank: minor
+Issue: 83
+Thanks: Mikael Zayenz Lagerkvist
+[DESCRIPTION]
+Build CMake examples only when their required variable modules and MPFR support
+are enabled.
+
+[ENTRY]
 Module: flatzinc
 What:   new
 Rank:   minor

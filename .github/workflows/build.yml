@@ -224,6 +224,10 @@ jobs:
       shell: bash
       run: cmake --build "$GITHUB_WORKSPACE/build-ninja"
 
+    - name: Example feature selection
+      shell: bash
+      run: bash .github/ci/cmake-example-feature-smoke.sh
+
     - name: Check
       shell: bash
       run: >
