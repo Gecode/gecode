@@ -97,6 +97,26 @@ Fix non-terminating propagation for sorted constraints when a matching
 component contains no interval compatible with an input variable.
 
 [ENTRY]
+Module: other
+What:   bug
+Rank:   minor
+Issue:  107
+Thanks: Yuri Victorovich
+[DESCRIPTION]
+Do not install example data headers when examples are disabled in an Autotools
+build.
+
+[ENTRY]
+Module: other
+What:   bug
+Rank:   minor
+Issue:  108
+Thanks: Yuri Victorovich
+[DESCRIPTION]
+Do not create empty MiniZinc directories when FlatZinc is disabled in an
+Autotools build.
+
+[ENTRY]
 Module: flatzinc
 What:   new
 Rank:   minor
