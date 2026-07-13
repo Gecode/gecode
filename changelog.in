@@ -148,6 +148,16 @@ make progress.
 
 [ENTRY]
 Module: flatzinc
+What: bug
+Rank: minor
+Issue: 99
+Thanks: Mikael Zayenz Lagerkvist
+[DESCRIPTION]
+Keep an explicitly selected Gist execution mode when FlatZinc statistics are
+requested.
+
+[ENTRY]
+Module: flatzinc
 What:   new
 Rank:   minor
 Thanks: Jip J. Dekker

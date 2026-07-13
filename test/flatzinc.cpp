@@ -65,6 +65,34 @@ namespace Test { namespace FlatZinc {
 
     TupleSetAutoRepresentation tuple_set_auto_representation;
 
+    /// Verify that statistics do not override an explicit Gist mode.
+    class GistStatisticsMode : public Base {
+    private:
+      static Gecode::ScriptMode mode(std::vector<std::string> args) {
+        Gecode::FlatZinc::FlatZincOptions opt("Gecode/FlatZinc");
+        std::string cmd("fzn-gecode");
+        int argc = static_cast<int>(args.size()) + 1;
+        std::vector<char*> argv(argc);
+        argv[0] = const_cast<char*>(cmd.data());
+        for (int i=1; i<argc; i++)
+          argv[i] = const_cast<char*>(args[i-1].data());
+        opt.parse(argc,argv.data());
+        return opt.mode();
+      }
+    public:
+      GistStatisticsMode(void)
+        : Base("FlatZinc::Options::GistStatisticsMode") {}
+
+      virtual bool run(void) {
+        return
+          (mode({"-s"}) == Gecode::SM_STAT) &&
+          (mode({"-mode", "gist", "-s"}) == Gecode::SM_GIST) &&
+          (mode({"-s", "-mode", "gist"}) == Gecode::SM_GIST);
+      }
+    };
+
+    GistStatisticsMode gist_statistics_mode;
+
   }
 
   FlatZincTest::FlatZincTest(const std::string& name, const std::string& source,
