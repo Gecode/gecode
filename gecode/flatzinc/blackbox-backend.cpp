@@ -244,7 +244,6 @@ class BlackBoxLibrary::Instance {
 public:
   std::thread::id owner;
   void *value;
-  Support::Mutex mutex;
 
   Instance(const std::thread::id &owner0, void *value0)
       : owner(owner0), value(value0) {}
@@ -379,6 +378,7 @@ BlackBoxLibrary::Instance *
 BlackBoxLibrary::instance(void) {
   const std::thread::id owner = std::this_thread::get_id();
   Support::Lock lock(mutex);
+  // Each live thread has exclusive access to its selected instance.
   for (Instance *instance : instances) {
     if (instance->owner == owner) {
       return instance;
@@ -407,7 +407,6 @@ BlackBoxLibrary::run(BlackBoxCall& call) {
 #ifdef GECODE_HAS_THREADS
   if (library_fzn_init != nullptr) {
     Instance *selected = this->instance();
-    Support::Lock lock(selected->mutex);
     library_fzn_blackbox(selected->value,
                          call.int_input.data(), call.int_input.size(),
                          call.float_input.data(), call.float_input.size(),
