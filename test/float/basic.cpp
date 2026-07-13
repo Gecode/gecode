@@ -76,32 +76,45 @@ namespace Test { namespace Float {
        Basic b2(Gecode::FloatVal(-2,10),1.5);
      }
 
-     /// Test that interval medians remain finite at the numerical limits
-     class MedianLimits : public Base {
+     /// Test interval medians at the numerical limits and special values
+     class Median : public Base {
+     private:
+       /// Test median inclusion and splitting of non-tight intervals
+       static bool valid(const Gecode::FloatVal& x) {
+         const Gecode::FloatNum m = x.med();
+         return (m >= x.min()) && (m <= x.max()) &&
+           (x.tight() || ((m > x.min()) && (m < x.max())));
+       }
      public:
        /// Create and register test
-       MedianLimits(void) : Base("Float::Basic::MedianLimits") {}
+       Median(void) : Base("Float::Basic::Median") {}
        /// Perform test
        virtual bool run(void) {
          using namespace Gecode;
          const FloatNum m = Gecode::Float::Limits::max;
+         const FloatNum i = std::numeric_limits<FloatNum>::infinity();
+         const FloatNum d = std::numeric_limits<FloatNum>::denorm_min();
          const FloatVal negative(-m, -m / 2.0);
          const FloatVal positive(m / 2.0, m);
          const FloatVal mixed(-m, m);
-         return std::isfinite(negative.med()) &&
-           (negative.med() >= negative.min()) &&
-           (negative.med() <= negative.max()) &&
-           std::isfinite(positive.med()) &&
-           (positive.med() >= positive.min()) &&
-           (positive.med() <= positive.max()) &&
-           std::isfinite(mixed.med()) &&
-           (mixed.med() >= mixed.min()) &&
-           (mixed.med() <= mixed.max());
+         // The subtraction-based formula rounds this median one ULP upward.
+         const FloatVal closest(3.07187504409887e-53,
+                                7.805365587017815e-45);
+         return valid(negative) && valid(positive) && valid(mixed) &&
+           (closest.med() == 3.902682808868283e-45) &&
+           (FloatVal(-i,-1.0).med() == -i) &&
+           (FloatVal(1.0,i).med() == i) &&
+           (FloatVal(-i,i).med() == 0.0) &&
+           (FloatVal(-i,-i).med() == -i) &&
+           (FloatVal(i,i).med() == i) &&
+           !std::signbit(FloatVal(-0.0,0.0).med()) &&
+           (FloatVal(0.0,2.0*d).med() == d) &&
+           (FloatVal(-2.0*d,0.0).med() == -d);
        }
      };
 
      namespace {
-       MedianLimits ml;
+       Median median;
      }
      //@}
 
