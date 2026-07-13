@@ -244,12 +244,6 @@ public:
     // Cost matrix
     IntArgs c(n*n, p.d());
 
-    // Disallow disconnected nodes
-    for (int i=0; i<n; i++)
-      for (int j=0; j<n; j++)
-        if (p.d(i,j) == 0)
-          rel(*this, succ[i], IRT_NQ, j);
-
     // Cost of each edge
     IntVarArgs costs(*this, n, Int::Limits::min, Int::Limits::max);
 

@@ -117,6 +117,16 @@ Do not create empty MiniZinc directories when FlatZinc is disabled in an
 Autotools build.
 
 [ENTRY]
+Module: example
+What: bug
+Rank: minor
+Issue: 151
+Thanks: Ioannis Papatsoris
+[DESCRIPTION]
+Treat zero entries in the TSP example as valid zero-cost edges. This lets the
+br17 instance reach its optimum.
+
+[ENTRY]
 Module: flatzinc
 What:   new
 Rank:   minor
