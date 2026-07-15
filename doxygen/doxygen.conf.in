@@ -683,6 +683,11 @@ HTML_FOOTER            = @top_srcdir@/misc/doxygen/footer.html
 
 HTML_EXTRA_STYLESHEET  = @top_srcdir@/misc/doxygen/stylesheet.css
 
+# Gecode's custom stylesheet is light-only. Disable Doxygen's automatic dark
+# mode so its generated colors cannot conflict with the custom colors.
+
+HTML_COLORSTYLE        = LIGHT
+
 # If the HTML_ALIGN_MEMBERS tag is set to YES, the members of classes,
 # files or namespaces will be aligned in HTML using tables. If set to
 # NO a bullet list will be used.
