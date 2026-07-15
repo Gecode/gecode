@@ -69,7 +69,7 @@
 
 [RELEASE]
 Version: 6.4.0
-Date: 2026-??-??
+Date: 2026-07-15
 [DESCRIPTION]
 This release modernizes the Gecode build infrastructure, adds a
 first-class CMake package for downstream consumers, refreshes the
