@@ -21,3 +21,5 @@ create_blackbox_process(const std::string&, const std::vector<std::string>&) {
 
 }}
 #endif
+
+// STATISTICS: flatzinc-other

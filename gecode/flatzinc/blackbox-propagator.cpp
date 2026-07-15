@@ -719,3 +719,5 @@ void blackbox_bounds(Home home, BlackBoxContextHandle& context,
 
 } // namespace FlatZinc
 } // namespace Gecode
+
+// STATISTICS: flatzinc-prop

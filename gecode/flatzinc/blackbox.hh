@@ -104,3 +104,5 @@ void blackbox_bounds(Home home, BlackBoxContextHandle& context,
 } // namespace Gecode
 
 #endif // GECODE_FLATZINC_BLACKBOX_HH
+
+// STATISTICS: flatzinc-prop

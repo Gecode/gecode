@@ -612,3 +612,5 @@ BlackBoxExec::run(BlackBoxCall& call) {
 
 } // namespace FlatZinc
 } // namespace Gecode
+
+// STATISTICS: flatzinc-other

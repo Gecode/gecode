@@ -426,3 +426,5 @@ create_blackbox_process(const std::string& program,
 
 }}
 #endif
+
+// STATISTICS: flatzinc-other

@@ -137,3 +137,5 @@ void decode_blackbox_response(const std::string& response,
 } // namespace Gecode
 
 #endif // GECODE_FLATZINC_BLACKBOX_BACKEND_HH
+
+// STATISTICS: flatzinc-other
