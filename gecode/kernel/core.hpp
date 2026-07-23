@@ -2105,7 +2105,7 @@ namespace Gecode {
      * \li A portfolio meta engine calls this function once on
      *     the origin space. The return value is ignored.
      *
-     *     The default function does nothing.
+     *     The default function removes all common branchers.
      *
      * \ingroup TaskModelScript
      */

@@ -4,6 +4,8 @@
 
 Gecode 7 names the two `Space` roles used by restart-based search (RBS) and
 portfolio-based search (PBS) **Origin** and **Variant**.
+The [Origin and Variant terminology contract](origin-variant-terminology.md)
+records the lifecycle and naming rationale behind these roles.
 
 An Origin is the persistent or common Space from which an exploration Space
 is derived. A Variant is the derived Space configured for one RBS restart

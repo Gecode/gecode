@@ -40,6 +40,7 @@
 
 #include "test/test.hh"
 
+#include <atomic>
 #include <type_traits>
 
 static_assert(std::is_copy_constructible<Gecode::NoGoods>::value,
@@ -336,6 +337,282 @@ namespace Test {
       /// Use the default completeness contract for each derived exploration
       bool variant(const MetaInfo&) override {
         return true;
+      }
+    };
+
+    /// Observations shared by meta-search dispatch test spaces
+    struct MetaDispatchState {
+      std::atomic<unsigned int> origin_calls;
+      std::atomic<unsigned int> variant_calls;
+      std::atomic<unsigned int> origin_reasons;
+      std::atomic<unsigned int> variant_reasons;
+      std::atomic<unsigned int> assets;
+      bool restart_after_solution;
+      bool solution_variant_complete;
+      bool fail_solution_variant;
+
+      /// Initialize without observations
+      MetaDispatchState(void)
+        : origin_calls(0), variant_calls(0),
+          origin_reasons(0), variant_reasons(0), assets(0),
+          restart_after_solution(true),
+          solution_variant_complete(true),
+          fail_solution_variant(false) {}
+    };
+
+    /// Common implementation for meta-search dispatch test spaces
+    class MetaDispatchSpace : public Space {
+    protected:
+      /// Variable used to provide two solutions
+      IntVar x;
+      /// Shared hook observations and configuration
+      MetaDispatchState* state;
+
+      /// Record and implement an Origin callback
+      bool observe_origin(const MetaInfo& mi) {
+        state->origin_calls.fetch_add(1, std::memory_order_relaxed);
+        if (mi.type() == MetaInfo::PORTFOLIO)
+          // PBS must ignore the callback result.
+          return false;
+        state->origin_reasons.fetch_or(
+          1U << static_cast<unsigned int>(mi.reason()),
+          std::memory_order_relaxed);
+        bool default_result = Space::origin(mi);
+        return (mi.reason() == MetaInfo::RR_SOL) ?
+          state->restart_after_solution : default_result;
+      }
+
+      /// Record and implement a Variant callback
+      bool observe_variant(const MetaInfo& mi) {
+        state->variant_calls.fetch_add(1, std::memory_order_relaxed);
+        if (mi.type() == MetaInfo::PORTFOLIO) {
+          state->assets.fetch_or(1U << mi.asset(),
+                                 std::memory_order_relaxed);
+          // PBS must ignore the callback result.
+          return false;
+        }
+        state->variant_reasons.fetch_or(
+          1U << static_cast<unsigned int>(mi.reason()),
+          std::memory_order_relaxed);
+        if ((mi.reason() == MetaInfo::RR_SOL) &&
+            state->fail_solution_variant)
+          fail();
+        return (mi.reason() == MetaInfo::RR_SOL) ?
+          state->solution_variant_complete : true;
+      }
+
+    public:
+      /// Initialize with shared observations \a s
+      MetaDispatchSpace(MetaDispatchState& s)
+        : x(*this,0,1), state(&s) {
+        Gecode::branch(*this,x,INT_VAL_MIN());
+      }
+      /// Clone \a s
+      MetaDispatchSpace(MetaDispatchSpace& s)
+        : Space(s), state(s.state) {
+        x.update(*this,s.x);
+      }
+      /// Exclude the preceding solution during an RBS restart
+      void constrain(const Space& _s) override {
+        const MetaDispatchSpace& s =
+          static_cast<const MetaDispatchSpace&>(_s);
+        rel(*this,x,IRT_NQ,s.x.val());
+      }
+    };
+
+    /// Dispatch test space overriding only Origin
+    class OriginDispatchSpace : public MetaDispatchSpace {
+    public:
+      /// Initialize with shared observations \a s
+      OriginDispatchSpace(MetaDispatchState& s)
+        : MetaDispatchSpace(s) {}
+      /// Clone \a s
+      OriginDispatchSpace(OriginDispatchSpace& s)
+        : MetaDispatchSpace(s) {}
+      /// Copy during cloning
+      Space* copy(void) override {
+        return new OriginDispatchSpace(*this);
+      }
+      /// Observe Origin dispatch
+      bool origin(const MetaInfo& mi) override {
+        return observe_origin(mi);
+      }
+    };
+
+    /// Dispatch test space overriding only Variant
+    class VariantDispatchSpace : public MetaDispatchSpace {
+    public:
+      /// Initialize with shared observations \a s
+      VariantDispatchSpace(MetaDispatchState& s)
+        : MetaDispatchSpace(s) {}
+      /// Clone \a s
+      VariantDispatchSpace(VariantDispatchSpace& s)
+        : MetaDispatchSpace(s) {}
+      /// Copy during cloning
+      Space* copy(void) override {
+        return new VariantDispatchSpace(*this);
+      }
+      /// Observe Variant dispatch
+      bool variant(const MetaInfo& mi) override {
+        return observe_variant(mi);
+      }
+    };
+
+    /// Dispatch test space overriding both Origin and Variant
+    class OriginVariantDispatchSpace : public MetaDispatchSpace {
+    public:
+      /// Initialize with shared observations \a s
+      OriginVariantDispatchSpace(MetaDispatchState& s)
+        : MetaDispatchSpace(s) {}
+      /// Clone \a s
+      OriginVariantDispatchSpace(OriginVariantDispatchSpace& s)
+        : MetaDispatchSpace(s) {}
+      /// Copy during cloning
+      Space* copy(void) override {
+        return new OriginVariantDispatchSpace(*this);
+      }
+      /// Observe Origin dispatch
+      bool origin(const MetaInfo& mi) override {
+        return observe_origin(mi);
+      }
+      /// Observe Variant dispatch
+      bool variant(const MetaInfo& mi) override {
+        return observe_variant(mi);
+      }
+    };
+
+    /// Focused meta-search hook dispatch test
+    class MetaDispatch : public Base {
+    public:
+      /// Dispatch scenario
+      enum Scenario {
+        RBS_ORIGIN_CONTINUE,
+        RBS_ORIGIN_RESTART,
+        RBS_VARIANT_COMPLETE,
+        RBS_VARIANT_INCOMPLETE,
+        PBS_ORIGIN_ONLY,
+        PBS_VARIANT_ONLY,
+        PBS_SINGLE,
+        PBS_SEQUENTIAL,
+        PBS_PARALLEL
+      };
+    protected:
+      /// Scenario under test
+      Scenario scenario;
+
+      /// Return a bit for restart reason \a r
+      static unsigned int reason(MetaInfo::RestartReason r) {
+        return 1U << static_cast<unsigned int>(r);
+      }
+
+      /// Run one RBS dispatch scenario
+      bool rbs(bool restart_after_solution,
+               bool fail_solution_variant,
+               bool solution_variant_complete) {
+        MetaDispatchState state;
+        state.restart_after_solution = restart_after_solution;
+        state.fail_solution_variant = fail_solution_variant;
+        state.solution_variant_complete = solution_variant_complete;
+
+        OriginVariantDispatchSpace* m =
+          new OriginVariantDispatchSpace(state);
+        Gecode::Search::Options o;
+        o.threads = 1;
+        o.cutoff = Gecode::Search::Cutoff::constant(100);
+        Gecode::RBS<OriginVariantDispatchSpace,Gecode::DFS> search(m,o);
+        delete m;
+
+        OriginVariantDispatchSpace* first = search.next();
+        bool ok = first != nullptr;
+        delete first;
+
+        OriginVariantDispatchSpace* second = search.next();
+        if (!fail_solution_variant) {
+          ok = ok && (second != nullptr) &&
+            (state.origin_calls.load(std::memory_order_relaxed) == 1U) &&
+            (state.variant_calls.load(std::memory_order_relaxed) ==
+             (restart_after_solution ? 2U : 1U)) &&
+            (state.origin_reasons.load(std::memory_order_relaxed) ==
+             reason(MetaInfo::RR_SOL)) &&
+            (state.variant_reasons.load(std::memory_order_relaxed) ==
+             (reason(MetaInfo::RR_INIT) |
+              (restart_after_solution ? reason(MetaInfo::RR_SOL) : 0U)));
+        } else if (solution_variant_complete) {
+          ok = ok && (second == nullptr) &&
+            (state.origin_calls.load(std::memory_order_relaxed) == 1U) &&
+            (state.variant_calls.load(std::memory_order_relaxed) == 2U) &&
+            (state.origin_reasons.load(std::memory_order_relaxed) ==
+             reason(MetaInfo::RR_SOL)) &&
+            (state.variant_reasons.load(std::memory_order_relaxed) ==
+             (reason(MetaInfo::RR_INIT) | reason(MetaInfo::RR_SOL)));
+        } else {
+          ok = ok && (second != nullptr) &&
+            (state.origin_calls.load(std::memory_order_relaxed) == 2U) &&
+            (state.variant_calls.load(std::memory_order_relaxed) == 3U) &&
+            (state.origin_reasons.load(std::memory_order_relaxed) ==
+             (reason(MetaInfo::RR_SOL) | reason(MetaInfo::RR_CMPL))) &&
+            (state.variant_reasons.load(std::memory_order_relaxed) ==
+             (reason(MetaInfo::RR_INIT) | reason(MetaInfo::RR_SOL) |
+              reason(MetaInfo::RR_CMPL)));
+        }
+        delete second;
+        return ok;
+      }
+
+      /// Run one PBS dispatch scenario
+      template<class Model>
+      bool pbs(unsigned int assets, double threads,
+               unsigned int origin_calls, unsigned int variant_calls,
+               unsigned int asset_mask) {
+        MetaDispatchState state;
+        Model* m = new Model(state);
+        Gecode::Search::Options o;
+        o.assets = assets;
+        o.threads = threads;
+        Gecode::PBS<Model,Gecode::DFS> search(m,o);
+        delete m;
+
+        Model* solution = search.next();
+        bool ok =
+          (solution != nullptr) &&
+          (state.origin_calls.load(std::memory_order_relaxed) ==
+           origin_calls) &&
+          (state.variant_calls.load(std::memory_order_relaxed) ==
+           variant_calls) &&
+          (state.assets.load(std::memory_order_relaxed) == asset_mask);
+        delete solution;
+        return ok;
+      }
+
+    public:
+      /// Initialize scenario \a s with name \a n
+      MetaDispatch(const std::string& n, Scenario s)
+        : Base("Search::MetaDispatch::"+n), scenario(s) {}
+      /// Run test
+      bool run(void) override {
+        switch (scenario) {
+        case RBS_ORIGIN_CONTINUE:
+          return rbs(false,false,true);
+        case RBS_ORIGIN_RESTART:
+          return rbs(true,false,true);
+        case RBS_VARIANT_COMPLETE:
+          return rbs(true,true,true);
+        case RBS_VARIANT_INCOMPLETE:
+          return rbs(true,true,false);
+        case PBS_ORIGIN_ONLY:
+          return pbs<OriginDispatchSpace>(1,1,1,0,0);
+        case PBS_VARIANT_ONLY:
+          return pbs<VariantDispatchSpace>(1,1,0,1,1);
+        case PBS_SINGLE:
+          return pbs<OriginVariantDispatchSpace>(1,1,1,1,1);
+        case PBS_SEQUENTIAL:
+          return pbs<OriginVariantDispatchSpace>(3,1,1,3,7);
+        case PBS_PARALLEL:
+          return pbs<OriginVariantDispatchSpace>(3,3,1,3,7);
+        default:
+          GECODE_NEVER;
+        }
+        return false;
       }
     };
 
@@ -785,6 +1062,14 @@ namespace Test {
                 (HTC_NONE,HTB_NONE,HTB_NONE,HTB_NONE,c_d,a_d,t);
             }
         // Restart-based search
+        (void) new MetaDispatch("RBS::OriginContinue",
+                                MetaDispatch::RBS_ORIGIN_CONTINUE);
+        (void) new MetaDispatch("RBS::OriginRestart",
+                                MetaDispatch::RBS_ORIGIN_RESTART);
+        (void) new MetaDispatch("RBS::VariantComplete",
+                                MetaDispatch::RBS_VARIANT_COMPLETE);
+        (void) new MetaDispatch("RBS::VariantIncomplete",
+                                MetaDispatch::RBS_VARIANT_INCOMPLETE);
         for (unsigned int t=1; t<=4; t++) {
           (void) new RBS<HasSolutions,Gecode::DFS>("DFS",t);
           (void) new RBS<HasSolutions,Gecode::LDS>("LDS",t);
@@ -797,6 +1082,18 @@ namespace Test {
           (void) new RBS<SolveImmediate,Gecode::BAB>("BAB",t);
         }
         // Portfolio-based search
+        (void) new MetaDispatch("PBS::OriginOnly",
+                                MetaDispatch::PBS_ORIGIN_ONLY);
+        (void) new MetaDispatch("PBS::VariantOnly",
+                                MetaDispatch::PBS_VARIANT_ONLY);
+        (void) new MetaDispatch("PBS::Single",
+                                MetaDispatch::PBS_SINGLE);
+        (void) new MetaDispatch("PBS::Sequential",
+                                MetaDispatch::PBS_SEQUENTIAL);
+#ifdef GECODE_HAS_THREADS
+        (void) new MetaDispatch("PBS::Parallel",
+                                MetaDispatch::PBS_PARALLEL);
+#endif
         for (unsigned int a=1; a<=4; a++)
           for (unsigned int t=1; t<=2*a; t++) {
             (void) new PBS<HasSolutions,Gecode::DFS>("DFS",false,a,t);
