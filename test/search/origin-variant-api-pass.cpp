@@ -51,3 +51,5 @@ namespace Test { namespace Search {
   };
 
 }}
+
+// STATISTICS: test-search

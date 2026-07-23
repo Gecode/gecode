@@ -350,6 +350,11 @@ namespace Test {
       std::atomic<unsigned int> live_spaces;
       std::atomic<unsigned int> copies;
       std::atomic<unsigned int> constrain_calls;
+      std::atomic<unsigned int> constrain_origin_calls;
+      std::atomic<unsigned int> constrain_variant_calls;
+      std::atomic<unsigned int> constrain_asset_mask;
+      std::atomic<unsigned int> constrain_origin_asset_mask;
+      std::atomic<unsigned int> constrain_variant_asset_mask;
       std::atomic<unsigned int> nogood_handoffs;
       bool restart_after_solution;
       bool solution_variant_complete;
@@ -361,6 +366,9 @@ namespace Test {
         : origin_calls(0), variant_calls(0),
           origin_reasons(0), variant_reasons(0), assets(0),
           live_spaces(0), copies(0), constrain_calls(0),
+          constrain_origin_calls(0), constrain_variant_calls(0),
+          constrain_asset_mask(0), constrain_origin_asset_mask(0),
+          constrain_variant_asset_mask(0),
           nogood_handoffs(0),
           restart_after_solution(true),
           solution_variant_complete(true),
@@ -376,6 +384,13 @@ namespace Test {
       IntVarArray q;
       /// Shared hook observations and configuration
       MetaDispatchState* state;
+      /// RBS role retained across cloning
+      enum RestartRole {
+        RESTART_ROLE_ORIGIN,
+        RESTART_ROLE_VARIANT
+      } restart_role;
+      /// PBS asset identity, or -1 before portfolio dispatch
+      int portfolio_asset;
 
       /// Record and implement an Origin callback
       bool observe_origin(const MetaInfo& mi) {
@@ -383,6 +398,7 @@ namespace Test {
         if (mi.type() == MetaInfo::PORTFOLIO)
           // PBS must ignore the callback result.
           return false;
+        restart_role = RESTART_ROLE_ORIGIN;
         state->origin_reasons.fetch_or(
           1U << static_cast<unsigned int>(mi.reason()),
           std::memory_order_relaxed);
@@ -397,6 +413,7 @@ namespace Test {
       bool observe_variant(const MetaInfo& mi) {
         state->variant_calls.fetch_add(1, std::memory_order_relaxed);
         if (mi.type() == MetaInfo::PORTFOLIO) {
+          portfolio_asset = static_cast<int>(mi.asset());
           state->assets.fetch_or(1U << mi.asset(),
                                  std::memory_order_relaxed);
           // PBS must ignore the callback result.
@@ -405,6 +422,7 @@ namespace Test {
         state->variant_reasons.fetch_or(
           1U << static_cast<unsigned int>(mi.reason()),
           std::memory_order_relaxed);
+        restart_role = RESTART_ROLE_VARIANT;
         if ((mi.reason() == MetaInfo::RR_SOL) &&
             state->fail_solution_variant)
           fail();
@@ -415,7 +433,8 @@ namespace Test {
     public:
       /// Initialize with shared observations \a s
       MetaDispatchSpace(MetaDispatchState& s)
-        : x(*this,0,1), q(*this,s.nogood_model ? 8 : 0,0,7), state(&s) {
+        : x(*this,0,1), q(*this,s.nogood_model ? 8 : 0,0,7), state(&s),
+          restart_role(RESTART_ROLE_ORIGIN), portfolio_asset(-1) {
         state->live_spaces.fetch_add(1,std::memory_order_relaxed);
         if (state->nogood_model) {
           distinct(*this,IntArgs::create(q.size(),0,1),q,IPL_VAL);
@@ -427,7 +446,8 @@ namespace Test {
       }
       /// Clone \a s
       MetaDispatchSpace(MetaDispatchSpace& s)
-        : Space(s), state(s.state) {
+        : Space(s), state(s.state), restart_role(s.restart_role),
+          portfolio_asset(s.portfolio_asset) {
         state->live_spaces.fetch_add(1,std::memory_order_relaxed);
         state->copies.fetch_add(1,std::memory_order_relaxed);
         x.update(*this,s.x);
@@ -440,6 +460,24 @@ namespace Test {
       /// Exclude the preceding solution during an RBS restart
       void constrain(const Space& _s) override {
         state->constrain_calls.fetch_add(1,std::memory_order_relaxed);
+        if (restart_role == RESTART_ROLE_ORIGIN)
+          state->constrain_origin_calls.fetch_add(1,
+                                                 std::memory_order_relaxed);
+        else if (restart_role == RESTART_ROLE_VARIANT)
+          state->constrain_variant_calls.fetch_add(1,
+                                                  std::memory_order_relaxed);
+        if (portfolio_asset >= 0) {
+          const unsigned int asset = 1U <<
+            static_cast<unsigned int>(portfolio_asset);
+          state->constrain_asset_mask.fetch_or(asset,
+                                               std::memory_order_relaxed);
+          if (restart_role == RESTART_ROLE_ORIGIN)
+            state->constrain_origin_asset_mask.fetch_or(
+              asset,std::memory_order_relaxed);
+          else if (restart_role == RESTART_ROLE_VARIANT)
+            state->constrain_variant_asset_mask.fetch_or(
+              asset,std::memory_order_relaxed);
+        }
         const MetaDispatchSpace& s =
           static_cast<const MetaDispatchSpace&>(_s);
         rel(*this,x,IRT_NQ,s.x.val());
@@ -516,6 +554,8 @@ namespace Test {
     public:
       /// Dispatch scenario
       enum Scenario {
+        RBS_ORIGIN_ONLY,
+        RBS_VARIANT_ONLY,
         RBS_ORIGIN_CONTINUE,
         RBS_ORIGIN_RESTART,
         RBS_VARIANT_COMPLETE,
@@ -523,7 +563,13 @@ namespace Test {
         PBS_ORIGIN_ONLY,
         PBS_VARIANT_ONLY,
         PBS_SINGLE,
+        PBS_SEQUENTIAL_ORIGIN_ONLY,
+        PBS_SEQUENTIAL_VARIANT_ONLY,
         PBS_SEQUENTIAL,
+#ifdef GECODE_HAS_THREADS
+        PBS_PARALLEL_ORIGIN_ONLY,
+        PBS_PARALLEL_VARIANT_ONLY,
+#endif
         PBS_PARALLEL,
         RBS_NOGOODS_RESET_OWNERSHIP,
         META_STOP_OWNERSHIP,
@@ -536,6 +582,30 @@ namespace Test {
       /// Return a bit for restart reason \a r
       static unsigned int reason(MetaInfo::RestartReason r) {
         return 1U << static_cast<unsigned int>(r);
+      }
+
+      /// Check independent callback dispatch for one RBS model
+      template<class Model>
+      bool rbs_dispatch(unsigned int origin_calls,
+                        unsigned int variant_calls) {
+        MetaDispatchState state;
+        Model* m = new Model(state);
+        Gecode::Search::Options o;
+        o.threads = 1;
+        o.cutoff = Gecode::Search::Cutoff::constant(100);
+        Gecode::RBS<Model,Gecode::DFS> search(m,o);
+        delete m;
+
+        Model* first = search.next();
+        Model* second = search.next();
+        bool ok = (first != nullptr) && (second != nullptr) &&
+          (state.origin_calls.load(std::memory_order_relaxed) ==
+           origin_calls) &&
+          (state.variant_calls.load(std::memory_order_relaxed) ==
+           variant_calls);
+        delete first;
+        delete second;
+        return ok;
       }
 
       /// Run one RBS dispatch scenario
@@ -701,16 +771,25 @@ namespace Test {
           Gecode::Search::Options o;
           o.threads = 1;
           o.cutoff = Gecode::Search::Cutoff::constant(100);
-          Gecode::RBS<OriginVariantDispatchSpace,Gecode::BAB> search(m,o);
+          Gecode::SEB builder =
+            Gecode::rbs<OriginVariantDispatchSpace,Gecode::BAB>(o);
+          Gecode::Search::Engine* search = (*builder)(m);
+          delete builder;
           delete m;
           OriginVariantDispatchSpace* best = nullptr;
-          while (OriginVariantDispatchSpace* solution = search.next()) {
+          while (OriginVariantDispatchSpace* solution =
+                   static_cast<OriginVariantDispatchSpace*>(search->next())) {
+            search->constrain(*solution);
             delete best;
             best = solution;
           }
           ok = (best != nullptr) && (best->value() == 1) &&
-            (rbs_state.constrain_calls.load(std::memory_order_relaxed) > 0U);
+            (rbs_state.constrain_origin_calls.load(
+              std::memory_order_relaxed) > 0U) &&
+            (rbs_state.constrain_variant_calls.load(
+              std::memory_order_relaxed) > 0U);
           delete best;
+          delete search;
         }
         ok = ok &&
           (rbs_state.live_spaces.load(std::memory_order_relaxed) == 0U);
@@ -730,11 +809,50 @@ namespace Test {
             best = solution;
           }
           ok = ok && (best != nullptr) && (best->value() == 1) &&
-            (pbs_state.constrain_calls.load(std::memory_order_relaxed) > 0U);
+            (pbs_state.constrain_asset_mask.load(
+              std::memory_order_relaxed) == 7U);
+          delete best;
+        }
+        ok = ok &&
+          (pbs_state.live_spaces.load(std::memory_order_relaxed) == 0U);
+
+        MetaDispatchState nested_state;
+        {
+          OriginVariantDispatchSpace* m =
+            new OriginVariantDispatchSpace(nested_state);
+          Gecode::Search::Options outer;
+          outer.assets = 3;
+          outer.threads = 1;
+          Gecode::Search::Options inner[3];
+          for (unsigned int i=0; i<3; i++) {
+            inner[i].threads = 1;
+            // Each RBS engine owns and deletes its cutoff.
+            inner[i].cutoff = Gecode::Search::Cutoff::constant(100);
+          }
+          Gecode::SEBs variants(3);
+          variants[0] =
+            Gecode::rbs<OriginVariantDispatchSpace,Gecode::BAB>(inner[0]);
+          variants[1] =
+            Gecode::rbs<OriginVariantDispatchSpace,Gecode::BAB>(inner[1]);
+          variants[2] =
+            Gecode::rbs<OriginVariantDispatchSpace,Gecode::BAB>(inner[2]);
+          Gecode::PBS<OriginVariantDispatchSpace,Gecode::BAB>
+            search(m,variants,outer);
+          delete m;
+          OriginVariantDispatchSpace* best = nullptr;
+          while (OriginVariantDispatchSpace* solution = search.next()) {
+            delete best;
+            best = solution;
+          }
+          ok = ok && (best != nullptr) && (best->value() == 1) &&
+            (nested_state.constrain_origin_asset_mask.load(
+              std::memory_order_relaxed) == 7U) &&
+            (nested_state.constrain_variant_asset_mask.load(
+              std::memory_order_relaxed) == 7U);
           delete best;
         }
         return ok &&
-          (pbs_state.live_spaces.load(std::memory_order_relaxed) == 0U);
+          (nested_state.live_spaces.load(std::memory_order_relaxed) == 0U);
       }
 
     public:
@@ -744,6 +862,10 @@ namespace Test {
       /// Run test
       bool run(void) override {
         switch (scenario) {
+        case RBS_ORIGIN_ONLY:
+          return rbs_dispatch<OriginDispatchSpace>(1,0);
+        case RBS_VARIANT_ONLY:
+          return rbs_dispatch<VariantDispatchSpace>(0,2);
         case RBS_ORIGIN_CONTINUE:
           return rbs(false,false,true);
         case RBS_ORIGIN_RESTART:
@@ -758,8 +880,18 @@ namespace Test {
           return pbs<VariantDispatchSpace>(1,1,0,1,1);
         case PBS_SINGLE:
           return pbs<OriginVariantDispatchSpace>(1,1,1,1,1);
+        case PBS_SEQUENTIAL_ORIGIN_ONLY:
+          return pbs<OriginDispatchSpace>(3,1,1,0,0);
+        case PBS_SEQUENTIAL_VARIANT_ONLY:
+          return pbs<VariantDispatchSpace>(3,1,0,3,7);
         case PBS_SEQUENTIAL:
           return pbs<OriginVariantDispatchSpace>(3,1,1,3,7);
+#ifdef GECODE_HAS_THREADS
+        case PBS_PARALLEL_ORIGIN_ONLY:
+          return pbs<OriginDispatchSpace>(3,3,1,0,0);
+        case PBS_PARALLEL_VARIANT_ONLY:
+          return pbs<VariantDispatchSpace>(3,3,0,3,7);
+#endif
         case PBS_PARALLEL:
           return pbs<OriginVariantDispatchSpace>(3,3,1,3,7);
         case RBS_NOGOODS_RESET_OWNERSHIP:
@@ -1221,6 +1353,10 @@ namespace Test {
                 (HTC_NONE,HTB_NONE,HTB_NONE,HTB_NONE,c_d,a_d,t);
             }
         // Restart-based search
+        (void) new MetaDispatch("RBS::OriginOnly",
+                                MetaDispatch::RBS_ORIGIN_ONLY);
+        (void) new MetaDispatch("RBS::VariantOnly",
+                                MetaDispatch::RBS_VARIANT_ONLY);
         (void) new MetaDispatch("RBS::OriginContinue",
                                 MetaDispatch::RBS_ORIGIN_CONTINUE);
         (void) new MetaDispatch("RBS::OriginRestart",
@@ -1253,9 +1389,17 @@ namespace Test {
                                 MetaDispatch::PBS_VARIANT_ONLY);
         (void) new MetaDispatch("PBS::Single",
                                 MetaDispatch::PBS_SINGLE);
+        (void) new MetaDispatch("PBS::SequentialOriginOnly",
+                                MetaDispatch::PBS_SEQUENTIAL_ORIGIN_ONLY);
+        (void) new MetaDispatch("PBS::SequentialVariantOnly",
+                                MetaDispatch::PBS_SEQUENTIAL_VARIANT_ONLY);
         (void) new MetaDispatch("PBS::Sequential",
                                 MetaDispatch::PBS_SEQUENTIAL);
 #ifdef GECODE_HAS_THREADS
+        (void) new MetaDispatch("PBS::ParallelOriginOnly",
+                                MetaDispatch::PBS_PARALLEL_ORIGIN_ONLY);
+        (void) new MetaDispatch("PBS::ParallelVariantOnly",
+                                MetaDispatch::PBS_PARALLEL_VARIANT_ONLY);
         (void) new MetaDispatch("PBS::Parallel",
                                 MetaDispatch::PBS_PARALLEL);
 #endif

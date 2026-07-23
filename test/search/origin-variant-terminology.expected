@@ -1,62 +1,75 @@
-docs/gecode-7-migration.md:26
-docs/gecode-7-migration.md:27
-docs/origin-variant-terminology.md:81
-examples/origin-variant.cpp:32
-examples/origin-variant.cpp:33
-examples/perfect-square.cpp:46
-examples/scowl.hpp:1089
-examples/scowl.hpp:1900
-examples/scowl.hpp:2242
-examples/scowl.hpp:3414
-examples/scowl.hpp:14029
-gecode/int/cumulative/tree.hpp:146
-gecode/support/run-jobs.hpp:78
-gecode/support/run-jobs.hpp:84
-gecode/support/run-jobs.hpp:85
-gecode/support/run-jobs.hpp:90
-gecode/support/run-jobs.hpp:96
-gecode/support/run-jobs.hpp:124
-gecode/support/run-jobs.hpp:134
-gecode/support/run-jobs.hpp:136
-gecode/support/run-jobs.hpp:139
-gecode/support/run-jobs.hpp:140
-gecode/support/run-jobs.hpp:142
-gecode/support/run-jobs.hpp:143
-gecode/support/run-jobs.hpp:147
-gecode/support/run-jobs.hpp:148
-gecode/support/run-jobs.hpp:177
-gecode/support/run-jobs.hpp:179
-gecode/support/run-jobs.hpp:187
-gecode/support/run-jobs.hpp:194
-gecode/support/run-jobs.hpp:200
-gecode/support/run-jobs.hpp:216
-gecode/support/run-jobs.hpp:225
-gecode/support/run-jobs.hpp:241
-gecode/support/run-jobs.hpp:243
-gecode/support/run-jobs.hpp:246
-gecode/support/run-jobs.hpp:252
-gecode/support/run-jobs.hpp:258
-gecode/support/run-jobs.hpp:272
-gecode/support/run-jobs.hpp:303
-gecode/support/run-jobs.hpp:316
-gecode/support/run-jobs.hpp:325
-gecode/support/run-jobs.hpp:326
-gecode/support/run-jobs.hpp:331
-gecode/support/run-jobs.hpp:341
-gecode/support/run-jobs.hpp:348
-gecode/support/run-jobs.hpp:353
-gecode/support/run-jobs.hpp:359
-gecode/support/run-jobs.hpp:360
-gecode/support/run-jobs.hpp:362
-test/search/origin-variant-api-fail.cpp:46
-test/search/origin-variant-api-fail.cpp:50
-changelog.in:343
-changelog.in:2936
-changelog.in:2969
-changelog.in:3319
-changelog.in:3320
-changelog.in:3321
-changelog.in:3444
-changelog.in:3728
-changelog.in:3906
-changelog.in:3907
+CMakeLists.txt:1383:58	master	negative-api-build-check	    "${CMAKE_CURRENT_BINARY_DIR}/origin-variant-api-fail-master"
+CMakeLists.txt:1394:58	slave	negative-api-build-check	    "${CMAKE_CURRENT_BINARY_DIR}/origin-variant-api-fail-slave"
+Makefile.in:1395:15	MASTER	negative-api-build-check	\t@for hook in MASTER SLAVE; do \\
+Makefile.in:1395:22	SLAVE	negative-api-build-check	\t@for hook in MASTER SLAVE; do \\
+changelog.in:343:12	slave	historical-changelog	races, PBS slave lifetime hazards, restart-stop state races, stop-object
+changelog.in:2936:60	master	historical-changelog	BrancherGroup::all.kill(home). This is the default for the master()
+changelog.in:2969:5	master	historical-changelog	The master() and slave() configuration functions has been changed
+changelog.in:2969:18	slave	historical-changelog	The master() and slave() configuration functions has been changed
+changelog.in:3319:12	slave	historical-changelog	Change the slave function for meta search engines to return whether the search
+changelog.in:3320:8	slave	historical-changelog	in the slave is going to be complete. This is necessary for example in LNS,
+changelog.in:3321:36	slave	historical-changelog	where completing the search in the slave does not mean that the overall search
+changelog.in:3444:1	master	historical-changelog	master() and slave() configuration functions have been extended
+changelog.in:3444:14	slave	historical-changelog	master() and slave() configuration functions have been extended
+changelog.in:3728:39	master	historical-changelog	Fix for restart-based search when the master does not have a branching.
+changelog.in:3906:5	master	historical-changelog	The master() member function used during restart-based search now
+changelog.in:3907:52	master	historical-changelog	takes an additional no-goods argument. The default master()
+docs/gecode-7-migration.md:26:6	master	historical-migration	bool master(const Gecode::MetaInfo& mi) override;
+docs/gecode-7-migration.md:27:6	slave	historical-migration	bool slave(const Gecode::MetaInfo& mi) override;
+docs/origin-variant-terminology.md:81:5	Master	design-rationale	- **Master / Slave** is the terminology being removed. It describes authority
+docs/origin-variant-terminology.md:81:14	Slave	design-rationale	- **Master / Slave** is the terminology being removed. It describes authority
+examples/origin-variant.cpp:32:10	master	historical-migration	 *  bool master(const MetaInfo&) override;  bool origin(const MetaInfo&) override;
+examples/origin-variant.cpp:33:10	slave	historical-migration	 *  bool slave(const MetaInfo&) override;   bool variant(const MetaInfo&) override;
+examples/perfect-square.cpp:46:27	master	unrelated-domain	 * second the size of the master square, and the remaining the
+examples/scowl.hpp:1089:42	slave	third-party	    "slaps", "slash", "slate", "slats", "slave", "slays", "sleds",
+examples/scowl.hpp:1900:56	master	third-party	    "masons", "masque", "massed", "masses", "massif", "master",
+examples/scowl.hpp:2242:26	slaves	third-party	    "slaved", "slaver", "slaves", "slayed", "slayer", "sleaze",
+examples/scowl.hpp:3414:6	masters	third-party	    "masters", "mastery", "mastiff", "mastoid", "matador", "matched",
+examples/scowl.hpp:14029:17	master	third-party	 *   The ENABLE master word list, WORD.LST, is herewith formally released
+gecode/int/cumulative/tree.hpp:146:8	Master	bibliography	     * Master Thesis, Uppsala University, 2010 (in preparation).
+gecode/support/run-jobs.hpp:78:11	Master	unrelated-scheduler	    class Master;
+gecode/support/run-jobs.hpp:84:15	master	unrelated-scheduler	      /// The master to communicate with
+gecode/support/run-jobs.hpp:85:7	Master	unrelated-scheduler	      Master* master;
+gecode/support/run-jobs.hpp:85:15	master	unrelated-scheduler	      Master* master;
+gecode/support/run-jobs.hpp:90:31	Master	unrelated-scheduler	      Worker(Job<RetType>* j, Master* m, int i);
+gecode/support/run-jobs.hpp:96:11	Master	unrelated-scheduler	    class Master {
+gecode/support/run-jobs.hpp:124:7	Master	unrelated-scheduler	      Master(Jobs& j, unsigned int m);
+gecode/support/run-jobs.hpp:134:8	Master	unrelated-scheduler	      ~Master(void);
+gecode/support/run-jobs.hpp:136:31	master	unrelated-scheduler	    /// A class to delete the master (running in parallel)
+gecode/support/run-jobs.hpp:139:15	master	unrelated-scheduler	      /// The master to be deleted
+gecode/support/run-jobs.hpp:140:7	Master	unrelated-scheduler	      Master* master;
+gecode/support/run-jobs.hpp:140:15	master	unrelated-scheduler	      Master* master;
+gecode/support/run-jobs.hpp:142:27	master	unrelated-scheduler	      /// Initialize with master \\a m
+gecode/support/run-jobs.hpp:143:15	Master	unrelated-scheduler	      Deleter(Master* m);
+gecode/support/run-jobs.hpp:147:20	master	unrelated-scheduler	    /// The actual master
+gecode/support/run-jobs.hpp:148:5	Master	unrelated-scheduler	    Master* master;
+gecode/support/run-jobs.hpp:148:13	master	unrelated-scheduler	    Master* master;
+gecode/support/run-jobs.hpp:177:41	Master	unrelated-scheduler	                                        Master* m,
+gecode/support/run-jobs.hpp:179:31	master	unrelated-scheduler	    : Runnable(true), job(j), master(m), idx(i) {}
+gecode/support/run-jobs.hpp:187:26	Master	unrelated-scheduler	  RunJobs<Jobs,RetType>::Master::stoppedjob(RetType& r) const {
+gecode/support/run-jobs.hpp:194:26	Master	unrelated-scheduler	  RunJobs<Jobs,RetType>::Master::stopped(void) const {
+gecode/support/run-jobs.hpp:200:26	Master	unrelated-scheduler	  RunJobs<Jobs,RetType>::Master::next(int& i) {
+gecode/support/run-jobs.hpp:216:26	Master	unrelated-scheduler	  RunJobs<Jobs,RetType>::Master::report(RetType r) {
+gecode/support/run-jobs.hpp:225:26	Master	unrelated-scheduler	  RunJobs<Jobs,RetType>::Master::stop(RetType r, int i) {
+gecode/support/run-jobs.hpp:241:9	master	unrelated-scheduler	        master->report(r);
+gecode/support/run-jobs.hpp:243:9	master	unrelated-scheduler	        master->stop(js.result(),idx);
+gecode/support/run-jobs.hpp:246:13	master	unrelated-scheduler	      job = master->next(idx);
+gecode/support/run-jobs.hpp:252:26	Master	unrelated-scheduler	  RunJobs<Jobs,RetType>::Master::done(void) const {
+gecode/support/run-jobs.hpp:258:26	Master	unrelated-scheduler	  RunJobs<Jobs,RetType>::Master::Master(Jobs& j, unsigned int m_threads)\s
+gecode/support/run-jobs.hpp:258:34	Master	unrelated-scheduler	  RunJobs<Jobs,RetType>::Master::Master(Jobs& j, unsigned int m_threads)\s
+gecode/support/run-jobs.hpp:272:26	Master	unrelated-scheduler	  RunJobs<Jobs,RetType>::Master::run(RetType& r) {
+gecode/support/run-jobs.hpp:303:26	Master	unrelated-scheduler	  RunJobs<Jobs,RetType>::Master::needthread(void) {
+gecode/support/run-jobs.hpp:316:26	Master	unrelated-scheduler	  RunJobs<Jobs,RetType>::Master::~Master(void) {
+gecode/support/run-jobs.hpp:316:35	Master	unrelated-scheduler	  RunJobs<Jobs,RetType>::Master::~Master(void) {
+gecode/support/run-jobs.hpp:325:43	Master	unrelated-scheduler	  RunJobs<Jobs,RetType>::Deleter::Deleter(Master* m)\s
+gecode/support/run-jobs.hpp:326:23	master	unrelated-scheduler	    : Runnable(true), master(m) {}
+gecode/support/run-jobs.hpp:331:12	master	unrelated-scheduler	    delete master;
+gecode/support/run-jobs.hpp:341:9	master	unrelated-scheduler	    i = master->stoppedjob(r);
+gecode/support/run-jobs.hpp:348:7	master	unrelated-scheduler	    : master(new Master(j,m)) {}
+gecode/support/run-jobs.hpp:348:18	Master	unrelated-scheduler	    : master(new Master(j,m)) {}
+gecode/support/run-jobs.hpp:353:12	master	unrelated-scheduler	    return master->run(r);
+gecode/support/run-jobs.hpp:359:10	master	unrelated-scheduler	    if (!master->needthread())
+gecode/support/run-jobs.hpp:360:14	master	unrelated-scheduler	      delete master;
+gecode/support/run-jobs.hpp:362:31	master	unrelated-scheduler	      Thread::run(new Deleter(master));
+test/search/origin-variant-api-fail.cpp:46:8	master	negative-api-fixture	  bool master(const Gecode::MetaInfo&) override {
+test/search/origin-variant-api-fail.cpp:50:8	slave	negative-api-fixture	  bool slave(const Gecode::MetaInfo&) override {

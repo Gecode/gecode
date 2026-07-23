@@ -79,3 +79,5 @@ main(int argc, char* argv[]) {
   Script::run<OriginVariant,DFS,Options>(opt);
   return 0;
 }
+
+// STATISTICS: example-any
