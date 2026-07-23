@@ -118,7 +118,8 @@ namespace Gecode { namespace Search { namespace Par {
   template<class Tracer>
   forceinline
   Engine<Tracer>::Engine(const Options& o)
-    : _opt(o), _cmd(C_WAIT), solutions(heap) {
+    : Search::Engine(o,static_cast<unsigned int>(o.threads)),
+      _opt(o), _cmd(C_WAIT), solutions(heap) {
     // Initialize termination information
     _n_term_not_ack = workers();
     _n_not_terminated = workers();

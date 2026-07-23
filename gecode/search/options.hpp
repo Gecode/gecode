@@ -37,6 +37,7 @@ namespace Gecode { namespace Search {
   Options::Options(void)
     : clone(Config::clone),
       threads(Config::threads),
+      worker_control(),
       c_d(Config::c_d), a_d(Config::a_d),
       d_l(Config::d_l),
       assets(0), slice(Config::slice), nogoods_limit(0),

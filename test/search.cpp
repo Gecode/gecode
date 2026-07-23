@@ -40,7 +40,10 @@
 
 #include "test/test.hh"
 
+#include <atomic>
+#include <thread>
 #include <type_traits>
+#include <vector>
 
 static_assert(std::is_copy_constructible<Gecode::NoGoods>::value,
               "NoGoods must remain copy constructible");
@@ -62,6 +65,16 @@ static_assert(std::is_copy_constructible<Gecode::Search::RestartStop>::value,
               "RestartStop must remain copy constructible");
 static_assert(std::is_copy_assignable<Gecode::Search::RestartStop>::value,
               "RestartStop must remain copy assignable");
+static_assert(
+  std::is_copy_constructible<Gecode::Search::WorkerControl>::value,
+  "WorkerControl must remain copy constructible");
+static_assert(
+  std::is_copy_assignable<Gecode::Search::WorkerControl>::value,
+  "WorkerControl must remain copy assignable");
+static_assert(std::is_copy_constructible<Gecode::Search::Options>::value,
+              "Search::Options must remain copy constructible");
+static_assert(std::is_copy_assignable<Gecode::Search::Options>::value,
+              "Search::Options must remain copy assignable");
 
 namespace Test {
 
@@ -332,6 +345,257 @@ namespace Test {
           break;
         }
         return false;
+      }
+    };
+
+    /// Focused tests for external worker control
+    class WorkerControl : public Base {
+    private:
+      enum Scenario {
+        VALUES,
+        ERRORS,
+        BINDING,
+        CONCURRENT,
+        COMPATIBILITY
+      } scenario;
+
+      template<class Exception, class Function>
+      static bool throws(Function function) {
+        try {
+          function();
+        } catch (const Exception&) {
+          return true;
+        } catch (...) {
+          return false;
+        }
+        return false;
+      }
+
+      static unsigned int capacity(void) {
+#ifdef GECODE_HAS_THREADS
+        return 4U;
+#else
+        return 1U;
+#endif
+      }
+
+      static Gecode::Search::Engine*
+      dfs_engine(Gecode::Search::Options& o) {
+        HasSolutions* m =
+          new HasSolutions(HTB_BINARY,HTB_BINARY,HTB_BINARY);
+        Gecode::Search::Engine* e;
+        try {
+          e = Gecode::Search::dfsengine(m,o);
+        } catch (...) {
+          delete m;
+          throw;
+        }
+        delete m;
+        return e;
+      }
+
+      static bool values(void) {
+        Gecode::Search::WorkerControl empty;
+        Gecode::Search::Options defaults;
+        if (empty || (empty.requested() != 0U) ||
+            (empty.capacity() != 0U) || defaults.worker_control)
+          return false;
+
+        Gecode::Search::WorkerControl control(3U);
+        Gecode::Search::WorkerControl copy(control);
+        Gecode::Search::WorkerControl assigned;
+        assigned = copy;
+        Gecode::Search::Options o;
+        o.worker_control = assigned;
+        Gecode::Search::Options copied_options(o);
+        copy.request(2U);
+        return control && (control.requested() == 2U) &&
+          (assigned.requested() == 2U) &&
+          (o.worker_control.requested() == 2U) &&
+          (copied_options.worker_control.requested() == 2U) &&
+          (control.capacity() == 0U);
+      }
+
+      static bool errors(void) {
+        if (!throws<Gecode::Search::InvalidWorkerRequest>([] {
+              Gecode::Search::WorkerControl invalid(0U);
+              (void) invalid;
+            }))
+          return false;
+        Gecode::Search::WorkerControl empty;
+        if (!throws<Gecode::Search::UninitializedWorkerControl>(
+              [&] { empty.request(1U); }))
+          return false;
+        Gecode::Search::WorkerControl unbound(1U);
+        if (!throws<Gecode::Search::InvalidWorkerRequest>(
+              [&] { unbound.request(0U); }))
+          return false;
+
+        Gecode::Search::Options too_many;
+        too_many.threads = 1.0;
+        too_many.worker_control =
+          Gecode::Search::WorkerControl(2U);
+        if (!throws<Gecode::Search::InvalidWorkerRequest>([&] {
+              Gecode::Search::Engine* e = dfs_engine(too_many);
+              delete e;
+            }))
+          return false;
+
+        Gecode::Search::Options o;
+        o.threads = 4.0;
+        o.worker_control = Gecode::Search::WorkerControl(1U);
+        Gecode::Search::Engine* e = dfs_engine(o);
+        bool exact = throws<Gecode::Search::InvalidWorkerRequest>(
+          [&] { o.worker_control.request(capacity()+1U); });
+        delete e;
+        return exact;
+      }
+
+      static bool binding(void) {
+        Gecode::Search::Options o;
+        o.threads = 4.0;
+        o.worker_control = Gecode::Search::WorkerControl(1U);
+        Gecode::Search::Options copied(o);
+        Gecode::Search::Engine* first = dfs_engine(o);
+        bool ok = (o.threads == 4.0) && (copied.threads == 4.0) &&
+          (o.worker_control.capacity() == capacity()) &&
+          (copied.worker_control.capacity() == capacity());
+        bool while_live = throws<Gecode::Search::WorkerControlInUse>([&] {
+          Gecode::Search::Engine* e = dfs_engine(copied);
+          delete e;
+        });
+        delete first;
+        bool after_destroy = throws<Gecode::Search::WorkerControlInUse>([&] {
+          Gecode::Search::Engine* e = dfs_engine(copied);
+          delete e;
+        });
+        o.worker_control.request(1U);
+
+        Gecode::Search::Options sequential_dfs;
+        sequential_dfs.threads = 1.0;
+        sequential_dfs.worker_control =
+          Gecode::Search::WorkerControl(1U);
+        Gecode::Search::Engine* dfs = dfs_engine(sequential_dfs);
+        ok = ok && (sequential_dfs.worker_control.capacity() == 1U);
+        delete dfs;
+
+        Gecode::Search::Options sequential_bab;
+        sequential_bab.threads = 1.0;
+        sequential_bab.worker_control =
+          Gecode::Search::WorkerControl(1U);
+        HasSolutions* m = new HasSolutions(
+          HTB_BINARY,HTB_BINARY,HTB_BINARY,HTC_LEX_LE);
+        Gecode::Search::Engine* bab =
+          Gecode::Search::babengine(m,sequential_bab);
+        delete m;
+        ok = ok && (sequential_bab.worker_control.capacity() == 1U);
+        delete bab;
+
+        return ok && while_live && after_destroy &&
+          (copied.worker_control.requested() == 1U);
+      }
+
+      static bool concurrent(void) {
+        Gecode::Search::Options o;
+        o.threads = 4.0;
+        o.worker_control = Gecode::Search::WorkerControl(1U);
+        Gecode::Search::Engine* e = dfs_engine(o);
+#ifdef GECODE_HAS_THREADS
+        std::vector<std::thread> writers;
+        for (unsigned int writer=0U; writer<4U; writer++) {
+          Gecode::Search::WorkerControl copy(o.worker_control);
+          writers.emplace_back([copy,writer] () mutable {
+            for (unsigned int i=0U; i<2000U; i++)
+              copy.request(1U + ((i+writer) % 4U));
+          });
+        }
+        for (std::thread& writer : writers)
+          writer.join();
+
+        std::atomic<bool> started(false);
+        Gecode::Search::WorkerControl copy(o.worker_control);
+        std::thread during_destruction([copy,&started] () mutable {
+          started.store(true,std::memory_order_release);
+          for (unsigned int i=0U; i<10000U; i++)
+            copy.request(1U + (i % 4U));
+        });
+        while (!started.load(std::memory_order_acquire)) {}
+        delete e;
+        during_destruction.join();
+#else
+        o.worker_control.request(1U);
+        delete e;
+#endif
+        o.worker_control.request(1U);
+        return (o.worker_control.capacity() == capacity()) &&
+          (o.worker_control.requested() == 1U);
+      }
+
+      static int dfs_solutions(const Gecode::Search::WorkerControl& control) {
+        HasSolutions* m =
+          new HasSolutions(HTB_BINARY,HTB_BINARY,HTB_BINARY);
+        Gecode::Search::Options o;
+        o.threads = 4.0;
+        o.worker_control = control;
+        Gecode::DFS<HasSolutions> dfs(m,o);
+        delete m;
+        int solutions = 0;
+        while (HasSolutions* solution = dfs.next()) {
+          solutions++;
+          delete solution;
+        }
+        return solutions;
+      }
+
+      static bool bab_best(const Gecode::Search::WorkerControl& control) {
+        HasSolutions* m = new HasSolutions(
+          HTB_BINARY,HTB_BINARY,HTB_BINARY,HTC_LEX_LE);
+        Gecode::Search::Options o;
+        o.threads = 4.0;
+        o.worker_control = control;
+        Gecode::BAB<HasSolutions> bab(m,o);
+        delete m;
+        HasSolutions* best = nullptr;
+        while (HasSolutions* solution = bab.next()) {
+          delete best;
+          best = solution;
+        }
+        bool ok = (best != nullptr) && best->best();
+        delete best;
+        return ok;
+      }
+
+      static bool compatibility(void) {
+        Gecode::Search::WorkerControl empty;
+        Gecode::Search::WorkerControl dfs_control(capacity());
+        Gecode::Search::WorkerControl bab_control(capacity());
+        return (dfs_solutions(empty) == 8) &&
+          (dfs_solutions(dfs_control) == 8) &&
+          bab_best(empty) && bab_best(bab_control);
+      }
+
+    public:
+      WorkerControl(const std::string& name, Scenario s)
+        : Base("Search::WorkerControl::"+name), scenario(s) {}
+
+      bool run(void) override {
+        switch (scenario) {
+        case VALUES:        return values();
+        case ERRORS:        return errors();
+        case BINDING:       return binding();
+        case CONCURRENT:    return concurrent();
+        case COMPATIBILITY: return compatibility();
+        default:            GECODE_NEVER;
+        }
+        return false;
+      }
+
+      static void create(void) {
+        (void) new WorkerControl("Values",VALUES);
+        (void) new WorkerControl("Errors",ERRORS);
+        (void) new WorkerControl("Binding",BINDING);
+        (void) new WorkerControl("Concurrent",CONCURRENT);
+        (void) new WorkerControl("Compatibility",COMPATIBILITY);
       }
     };
 

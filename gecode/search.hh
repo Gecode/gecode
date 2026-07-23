@@ -709,6 +709,43 @@ namespace Gecode { namespace Search {
 
 namespace Gecode { namespace Search {
 
+  class WorkerControlAccess;
+
+  /**
+   * \brief External control for the requested number of search workers
+   *
+   * A worker control is a copyable handle. Copies share the same request
+   * and can be used concurrently. The worker capacity is fixed when the
+   * handle is first attached to a search engine.
+   *
+   * \ingroup TaskModelSearch
+   */
+  class GECODE_SEARCH_EXPORT WorkerControl {
+  private:
+    class State;
+    State* state;
+    friend class WorkerControlAccess;
+  public:
+    /// Construct an empty handle
+    WorkerControl(void) noexcept;
+    /// Construct an engaged handle with initial request \a requested
+    explicit WorkerControl(unsigned int requested);
+    /// Copy constructor
+    WorkerControl(const WorkerControl& control);
+    /// Assignment operator
+    WorkerControl& operator =(const WorkerControl& control);
+    /// Destructor
+    ~WorkerControl(void);
+    /// Whether this handle is engaged
+    explicit operator bool(void) const noexcept;
+    /// Return the requested number of workers, or zero for an empty handle
+    unsigned int requested(void) const noexcept;
+    /// Request \a workers workers
+    void request(unsigned int workers);
+    /// Return the fixed worker capacity, or zero before attachment
+    unsigned int capacity(void) const noexcept;
+  };
+
     class Stop;
 
     /**
@@ -754,6 +791,13 @@ namespace Gecode { namespace Search {
       bool clone;
       /// Number of threads to use
       double threads;
+      /**
+       * External worker control
+       *
+       * After option expansion, \a threads is the immutable worker capacity.
+       * Requests through this handle never change \a threads.
+       */
+      WorkerControl worker_control;
       /// Create a clone after every \a c_d commits (commit distance)
       unsigned int c_d;
       /// Create a clone during recomputation if distance is greater than \a a_d (adaptive distance)
@@ -941,6 +985,13 @@ namespace Gecode { namespace Search {
    * \brief %Search engine implementation interface
    */
   class GECODE_SEARCH_EXPORT Engine : public HeapAllocated {
+  protected:
+    /// Control retained for the lifetime of a leaf engine
+    WorkerControl worker_control;
+    /// Construct a meta engine without worker control
+    Engine(void);
+    /// Construct a leaf engine and bind worker control to \a capacity
+    Engine(const Options& o, unsigned int capacity);
   public:
     /// Return next solution (nullptr, if none exists or search has been stopped)
     virtual Space* next(void) = 0;

@@ -1,10 +1,10 @@
 /* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
- *  Main authors:
- *     Christian Schulte <schulte@gecode.dev>
+ *  Main author:
+ *     Mikael Zayenz Lagerkvist <lagerkvist@gecode.dev>
  *
  *  Copyright:
- *     Christian Schulte, 2015
+ *     Mikael Zayenz Lagerkvist, 2026
  *
  *  This file is part of Gecode, the generic constraint
  *  development environment:
@@ -28,7 +28,26 @@
  *  LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
  *  OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- *
  */
 
-// STATISTICS: search-other
+#ifndef GECODE_SEARCH_WORKER_CONTROL_HH
+#define GECODE_SEARCH_WORKER_CONTROL_HH
+
+#include <gecode/search.hh>
+
+namespace Gecode { namespace Search {
+
+  /// Private access to worker-control attachment state
+  class WorkerControlAccess {
+  public:
+    /// Attach \a control to a leaf engine with fixed \a capacity
+    static void attach(WorkerControl& control, unsigned int capacity);
+    /// Detach \a control from its leaf engine
+    static void detach(WorkerControl& control);
+    /// Return the request generation
+    static unsigned long long int generation(const WorkerControl& control);
+  };
+
+}}
+
+#endif
