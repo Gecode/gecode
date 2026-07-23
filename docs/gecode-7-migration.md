@@ -33,6 +33,9 @@ bool variant(const Gecode::MetaInfo& mi) override;
 
 There are no compatibility aliases. Keeping `override` on model hooks makes
 the compiler identify every model that still uses a Gecode 6 signature.
+The build-checked
+[Origin and Variant migration example](../examples/origin-variant.cpp)
+contains both current override declarations.
 
 The rename does not change callback timing or behavior:
 
@@ -50,3 +53,6 @@ The rename does not change callback timing or behavior:
 Origin and Variant describe Spaces. They do not replace runtime terms such as
 portfolio coordinator, wrapped engine, or worker thread where those terms
 describe different objects.
+
+The [retained terminology inventory](origin-variant-terminology-inventory.md)
+classifies every remaining occurrence of the Gecode 6 role terms.

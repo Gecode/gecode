@@ -41,6 +41,7 @@ set(GECODE_EXAMPLE_SOURCES
   multi-bin-packing.cpp
   nonogram.cpp
   open-shop.cpp
+  origin-variant.cpp
   ortho-latin.cpp
   partition.cpp
   pentominoes.cpp

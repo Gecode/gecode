@@ -903,7 +903,7 @@ INTEXAMPLESRC0 =						\
 	word-square crossword open-shop car-sequencing sat      \
 	bin-packing knights tsp perfect-square schurs-lemma     \
 	dominating-queens colored-matrix multi-bin-packing	\
-	qcp job-shop
+	qcp job-shop origin-variant
 
 
 INTEXAMPLEHDR  = $(INTEXAMPLEHDR0:%=examples/%.hpp)
@@ -1267,7 +1267,8 @@ BRANCHTESTSRC0 = \
 	test/assign/set.cpp test/assign/float.cpp
 
 SEARCHTESTSRC0 = \
-	test/search.cpp test/nogoods.cpp
+	test/search.cpp test/nogoods.cpp \
+	test/search/origin-variant-api-pass.cpp
 
 ARRAYTESTSRC0 = \
 	test/array.cpp
@@ -1297,6 +1298,8 @@ TESTOBJ	= $(INTTESTOBJ) $(SETTESTOBJ) $(FLOATTESTOBJ) \
 	$(TESTSRC0:%.cpp=%$(OBJSUFFIX))
 TESTSBJ	= $(TESTOBJ:%$(OBJSUFFIX)=%$(SBJSUFFIX))
 TESTEXE	= test/test$(EXESUFFIX)
+ORIGINVARIANTTERMSRC = test/search/verify-origin-variant-terminology.cpp
+ORIGINVARIANTTERMEXE = test/search/verify-origin-variant-terminology$(EXESUFFIX)
 BLACKBOXEXECOBJ = $(BLACKBOXEXECSRC:%.cpp=%$(OBJSUFFIX))
 BLACKBOXDLLOBJ = $(BLACKBOXDLLSRC:%.cpp=%$(OBJSUFFIX))
 BLACKBOXEXEC = test/flatzinc/blackbox-exec$(EXESUFFIX)
@@ -1310,7 +1313,7 @@ BLACKBOXFIXTURES =
 endif
 
 TESTBUILDDIRS = \
-	test test/int test/set test/float \
+	test test/int test/set test/float test/search \
 	test/branch test/assign \
 	test/flatzinc
 
@@ -1387,7 +1390,21 @@ REQUIREDFLOATCHECKTESTS = Float::Arithmetic::PositiveNRootBounds \
 endif
 
 # A basic integrity test
-check: test
+check: test verify-origin-variant-terminology \
+		$(top_srcdir)/test/search/origin-variant-api-fail.cpp
+	@for hook in MASTER SLAVE; do \
+	  if $(CXX) $(CXXFLAGS) $(EXAMPLES_EXTRA_CXXFLAGS) \
+	      -DGECODE_TEST_REMOVED_$$hook \
+	      -I$(top_builddir) -I$(top_srcdir) -c \
+	      $(top_srcdir)/test/search/origin-variant-api-fail.cpp \
+	      -o test/search/origin-variant-api-fail$(OBJSUFFIX) \
+	      >/dev/null 2>&1; then \
+	    $(RMF) test/search/origin-variant-api-fail$(OBJSUFFIX); \
+	    echo "A removed meta-search Space hook unexpectedly compiles" >&2; \
+	    exit 1; \
+	  fi; \
+	  $(RMF) test/search/origin-variant-api-fail$(OBJSUFFIX); \
+	done
 	@for t in $(REQUIREDFLOATCHECKTESTS); do \
 		case " $(CHECKTESTS) " in *" $$t "*) ;; \
 		*) echo "Required Float check test is missing: $$t" >&2; exit 1 ;; \
@@ -1400,6 +1417,17 @@ check: test
 	$(BLACKBOXCHECKENV) $(RUNENVIRONMENT) \
 		$(TESTEXE) -iter 2 -threads 0 -fixprob 1 \
 		$(CHECKTESTS:%=-test %)
+
+.PHONY: verify-origin-variant-terminology
+verify-origin-variant-terminology: mkcompiledirs \
+		$(top_srcdir)/$(ORIGINVARIANTTERMSRC) \
+		$(top_srcdir)/test/search/origin-variant-terminology.expected
+	$(CXX) $(CXXFLAGS) $(EXAMPLES_EXTRA_CXXFLAGS) -std=c++17 \
+	  $(top_srcdir)/$(ORIGINVARIANTTERMSRC) \
+	  -o $(ORIGINVARIANTTERMEXE)
+	$(ORIGINVARIANTTERMEXE) \
+	  $(top_srcdir) \
+	  $(top_srcdir)/test/search/origin-variant-terminology.expected
 
 .PHONY: regenerate
 regenerate:
@@ -1978,6 +2006,7 @@ license.hh: $(ALLGECODEHDR:%=$(top_srcdir)/%) $(ALLSRC:%=$(top_srcdir)/%) \
 
 stat.hh: $(ALLGECODEHDR:%=$(top_srcdir)/%) $(ALLSRC:%=$(top_srcdir)/%) \
 	$(TESTHDR:%=$(top_srcdir)/%) $(TESTSRC:%=$(top_srcdir)/%) \
+	$(ORIGINVARIANTTERMSRC:%=$(top_srcdir)/%) \
 	$(VARIMPHDR)
 	$(UVRUN) $(top_srcdir)/misc/genstatistics.py $^ > stat.hh
 
@@ -2177,6 +2206,8 @@ clean:
 		$(EXAMPLEEXE:%=%.rc) $(EXAMPLEEXE:%=%.res)
 	$(RMF) $(TESTEXE:%.exe=%.pdb) $(TESTEXE:%=%.manifest) \
 		$(TESTEXE:%=%.rc) $(TESTEXE:%=%.res)
+	$(RMF) $(ORIGINVARIANTTERMEXE) \
+		$(ORIGINVARIANTTERMEXE:%.exe=%.pdb)
 	$(RMF) $(BLACKBOXEXEC:%.exe=%.pdb) $(BLACKBOXEXEC:%=%.manifest) \
 		$(BLACKBOXDLL:%$(DLLSUFFIX)=%$(LIBSUFFIX)) \
 		$(BLACKBOXDLL:%$(DLLSUFFIX)=%$(PDBSUFFIX)) \
@@ -2213,6 +2244,6 @@ depend: mkcompiledirs
 	$(top_srcdir) \
 	$(ALLSRC) \
 	$(FLATZINC_GENSRC) \
-	$(TESTSRC) > Makefile.dep
+	$(TESTSRC) $(ORIGINVARIANTTERMSRC) > Makefile.dep
 
 -include Makefile.dep

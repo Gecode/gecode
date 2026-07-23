@@ -1354,6 +1354,64 @@ if(GECODE_ENABLE_FLATZINC)
 endif()
 
 if(BUILD_TESTING)
+  unset(GECODE_CURRENT_META_HOOKS_COMPILE CACHE)
+  unset(GECODE_REMOVED_MASTER_HOOK_COMPILES CACHE)
+  unset(GECODE_REMOVED_SLAVE_HOOK_COMPILES CACHE)
+  set(GECODE_HAD_TRY_COMPILE_TARGET_TYPE FALSE)
+  if(DEFINED CMAKE_TRY_COMPILE_TARGET_TYPE)
+    set(GECODE_HAD_TRY_COMPILE_TARGET_TYPE TRUE)
+  endif()
+  set(GECODE_SAVED_TRY_COMPILE_TARGET_TYPE
+    "${CMAKE_TRY_COMPILE_TARGET_TYPE}")
+  set(CMAKE_TRY_COMPILE_TARGET_TYPE STATIC_LIBRARY)
+  try_compile(
+    GECODE_CURRENT_META_HOOKS_COMPILE
+    "${CMAKE_CURRENT_BINARY_DIR}/origin-variant-api-pass"
+    SOURCES
+      "${CMAKE_CURRENT_SOURCE_DIR}/test/search/origin-variant-api-pass.cpp"
+    CMAKE_FLAGS
+      "-DINCLUDE_DIRECTORIES=${CMAKE_CURRENT_SOURCE_DIR};${CMAKE_CURRENT_BINARY_DIR}"
+      "-DCMAKE_CXX_STANDARD=17"
+      "-DCMAKE_CXX_STANDARD_REQUIRED=ON")
+  if(NOT GECODE_CURRENT_META_HOOKS_COMPILE)
+    message(FATAL_ERROR
+      "Current origin/variant Space hooks do not compile")
+  endif()
+
+  try_compile(
+    GECODE_REMOVED_MASTER_HOOK_COMPILES
+    "${CMAKE_CURRENT_BINARY_DIR}/origin-variant-api-fail-master"
+    SOURCES
+      "${CMAKE_CURRENT_SOURCE_DIR}/test/search/origin-variant-api-fail.cpp"
+    COMPILE_DEFINITIONS
+      -DGECODE_TEST_REMOVED_MASTER
+    CMAKE_FLAGS
+      "-DINCLUDE_DIRECTORIES=${CMAKE_CURRENT_SOURCE_DIR};${CMAKE_CURRENT_BINARY_DIR}"
+      "-DCMAKE_CXX_STANDARD=17"
+      "-DCMAKE_CXX_STANDARD_REQUIRED=ON")
+  try_compile(
+    GECODE_REMOVED_SLAVE_HOOK_COMPILES
+    "${CMAKE_CURRENT_BINARY_DIR}/origin-variant-api-fail-slave"
+    SOURCES
+      "${CMAKE_CURRENT_SOURCE_DIR}/test/search/origin-variant-api-fail.cpp"
+    COMPILE_DEFINITIONS
+      -DGECODE_TEST_REMOVED_SLAVE
+    CMAKE_FLAGS
+      "-DINCLUDE_DIRECTORIES=${CMAKE_CURRENT_SOURCE_DIR};${CMAKE_CURRENT_BINARY_DIR}"
+      "-DCMAKE_CXX_STANDARD=17"
+      "-DCMAKE_CXX_STANDARD_REQUIRED=ON")
+  if(GECODE_REMOVED_MASTER_HOOK_COMPILES OR
+     GECODE_REMOVED_SLAVE_HOOK_COMPILES)
+    message(FATAL_ERROR
+      "Removed meta-search Space hooks unexpectedly compile")
+  endif()
+  if(GECODE_HAD_TRY_COMPILE_TARGET_TYPE)
+    set(CMAKE_TRY_COMPILE_TARGET_TYPE
+      "${GECODE_SAVED_TRY_COMPILE_TARGET_TYPE}")
+  else()
+    unset(CMAKE_TRY_COMPILE_TARGET_TYPE)
+  endif()
+
   set(GECODE_CAN_BUILD_TESTS TRUE)
   foreach(required search int minimodel driver)
     if(NOT TARGET gecode${required})
@@ -1500,6 +1558,17 @@ if(BUILD_TESTING)
         ENVIRONMENT "${GECODE_TEST_BLACKBOX_ENV}")
     endif()
     set(GECODE_CHECK_DEPENDS gecode-test)
+    add_executable(gecode-verify-origin-variant-terminology EXCLUDE_FROM_ALL
+      test/search/verify-origin-variant-terminology.cpp)
+    target_compile_features(gecode-verify-origin-variant-terminology
+      PRIVATE cxx_std_17)
+    add_custom_target(verify-origin-variant-terminology
+      COMMAND $<TARGET_FILE:gecode-verify-origin-variant-terminology>
+        ${CMAKE_CURRENT_SOURCE_DIR}
+        ${CMAKE_CURRENT_SOURCE_DIR}/test/search/origin-variant-terminology.expected
+      DEPENDS gecode-verify-origin-variant-terminology
+      VERBATIM)
+    list(APPEND GECODE_CHECK_DEPENDS verify-origin-variant-terminology)
     if(GECODE_ENABLE_FLOAT_VARS)
       add_custom_target(verify-gecode-check-tests
         COMMAND ${CMAKE_COMMAND}

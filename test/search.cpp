@@ -347,17 +347,24 @@ namespace Test {
       std::atomic<unsigned int> origin_reasons;
       std::atomic<unsigned int> variant_reasons;
       std::atomic<unsigned int> assets;
+      std::atomic<unsigned int> live_spaces;
+      std::atomic<unsigned int> copies;
+      std::atomic<unsigned int> constrain_calls;
+      std::atomic<unsigned int> nogood_handoffs;
       bool restart_after_solution;
       bool solution_variant_complete;
       bool fail_solution_variant;
+      bool nogood_model;
 
       /// Initialize without observations
       MetaDispatchState(void)
         : origin_calls(0), variant_calls(0),
           origin_reasons(0), variant_reasons(0), assets(0),
+          live_spaces(0), copies(0), constrain_calls(0),
+          nogood_handoffs(0),
           restart_after_solution(true),
           solution_variant_complete(true),
-          fail_solution_variant(false) {}
+          fail_solution_variant(false), nogood_model(false) {}
     };
 
     /// Common implementation for meta-search dispatch test spaces
@@ -365,6 +372,8 @@ namespace Test {
     protected:
       /// Variable used to provide two solutions
       IntVar x;
+      /// Optional queens model used to force restart no-good extraction
+      IntVarArray q;
       /// Shared hook observations and configuration
       MetaDispatchState* state;
 
@@ -378,6 +387,8 @@ namespace Test {
           1U << static_cast<unsigned int>(mi.reason()),
           std::memory_order_relaxed);
         bool default_result = Space::origin(mi);
+        if ((mi.type() == MetaInfo::RESTART) && (mi.nogoods().ng() > 0))
+          state->nogood_handoffs.fetch_add(1,std::memory_order_relaxed);
         return (mi.reason() == MetaInfo::RR_SOL) ?
           state->restart_after_solution : default_result;
       }
@@ -404,19 +415,38 @@ namespace Test {
     public:
       /// Initialize with shared observations \a s
       MetaDispatchSpace(MetaDispatchState& s)
-        : x(*this,0,1), state(&s) {
+        : x(*this,0,1), q(*this,s.nogood_model ? 8 : 0,0,7), state(&s) {
+        state->live_spaces.fetch_add(1,std::memory_order_relaxed);
+        if (state->nogood_model) {
+          distinct(*this,IntArgs::create(q.size(),0,1),q,IPL_VAL);
+          distinct(*this,IntArgs::create(q.size(),0,-1),q,IPL_VAL);
+          distinct(*this,q,IPL_VAL);
+          Gecode::branch(*this,q,INT_VAR_NONE(),INT_VAL_MIN());
+        }
         Gecode::branch(*this,x,INT_VAL_MIN());
       }
       /// Clone \a s
       MetaDispatchSpace(MetaDispatchSpace& s)
         : Space(s), state(s.state) {
+        state->live_spaces.fetch_add(1,std::memory_order_relaxed);
+        state->copies.fetch_add(1,std::memory_order_relaxed);
         x.update(*this,s.x);
+        q.update(*this,s.q);
+      }
+      /// Record destruction for clone-ownership checks
+      ~MetaDispatchSpace(void) override {
+        state->live_spaces.fetch_sub(1,std::memory_order_relaxed);
       }
       /// Exclude the preceding solution during an RBS restart
       void constrain(const Space& _s) override {
+        state->constrain_calls.fetch_add(1,std::memory_order_relaxed);
         const MetaDispatchSpace& s =
           static_cast<const MetaDispatchSpace&>(_s);
         rel(*this,x,IRT_NQ,s.x.val());
+      }
+      /// Return the solution value
+      int value(void) const {
+        return x.val();
       }
     };
 
@@ -494,7 +524,10 @@ namespace Test {
         PBS_VARIANT_ONLY,
         PBS_SINGLE,
         PBS_SEQUENTIAL,
-        PBS_PARALLEL
+        PBS_PARALLEL,
+        RBS_NOGOODS_RESET_OWNERSHIP,
+        META_STOP_OWNERSHIP,
+        BAB_INCUMBENT
       };
     protected:
       /// Scenario under test
@@ -584,6 +617,126 @@ namespace Test {
         return ok;
       }
 
+      /// Exercise RBS no-good posting, reset, and clone ownership
+      bool rbs_nogoods_reset_ownership(void) {
+        MetaDispatchState state;
+        state.nogood_model = true;
+        bool ok = true;
+        {
+          OriginVariantDispatchSpace* m =
+            new OriginVariantDispatchSpace(state);
+          Gecode::Search::Options o;
+          o.threads = 1;
+          o.nogoods_limit = 16;
+          o.cutoff = Gecode::Search::Cutoff::constant(1);
+          Gecode::RBS<OriginVariantDispatchSpace,Gecode::DFS> search(m,o);
+          delete m;
+
+          unsigned int solutions = 0;
+          while (OriginVariantDispatchSpace* solution = search.next()) {
+            solutions++;
+            delete solution;
+          }
+          ok = (solutions == 2U) &&
+            (state.variant_calls.load(std::memory_order_relaxed) >= 2U) &&
+            (state.constrain_calls.load(std::memory_order_relaxed) >= 1U) &&
+            (state.nogood_handoffs.load(std::memory_order_relaxed) >= 1U);
+        }
+        return ok &&
+          (state.live_spaces.load(std::memory_order_relaxed) == 0U) &&
+          (state.copies.load(std::memory_order_relaxed) > 0U);
+      }
+
+      /// Stop RBS and PBS, then verify orderly clone destruction
+      bool meta_stop_ownership(void) {
+        MetaDispatchState rbs_state;
+        bool ok = true;
+        {
+          Gecode::Search::NodeStop stop(0);
+          OriginVariantDispatchSpace* m =
+            new OriginVariantDispatchSpace(rbs_state);
+          Gecode::Search::Options o;
+          o.threads = 1;
+          o.stop = &stop;
+          o.cutoff = Gecode::Search::Cutoff::constant(1);
+          Gecode::RBS<OriginVariantDispatchSpace,Gecode::DFS> search(m,o);
+          delete m;
+          OriginVariantDispatchSpace* solution = search.next();
+          ok = (solution == nullptr) && search.stopped();
+          delete solution;
+        }
+        ok = ok &&
+          (rbs_state.live_spaces.load(std::memory_order_relaxed) == 0U);
+
+        MetaDispatchState pbs_state;
+        {
+          Gecode::Search::NodeStop stop(0);
+          OriginVariantDispatchSpace* m =
+            new OriginVariantDispatchSpace(pbs_state);
+          Gecode::Search::Options o;
+          o.assets = 3;
+#ifdef GECODE_HAS_THREADS
+          o.threads = 3;
+#else
+          o.threads = 1;
+#endif
+          o.stop = &stop;
+          Gecode::PBS<OriginVariantDispatchSpace,Gecode::DFS> search(m,o);
+          delete m;
+          OriginVariantDispatchSpace* solution = search.next();
+          ok = ok && (solution == nullptr) && search.stopped();
+          delete solution;
+        }
+        return ok &&
+          (pbs_state.live_spaces.load(std::memory_order_relaxed) == 0U);
+      }
+
+      /// Exercise incumbent propagation through RBS and PBS wrappers
+      bool bab_incumbent(void) {
+        MetaDispatchState rbs_state;
+        bool ok = true;
+        {
+          OriginVariantDispatchSpace* m =
+            new OriginVariantDispatchSpace(rbs_state);
+          Gecode::Search::Options o;
+          o.threads = 1;
+          o.cutoff = Gecode::Search::Cutoff::constant(100);
+          Gecode::RBS<OriginVariantDispatchSpace,Gecode::BAB> search(m,o);
+          delete m;
+          OriginVariantDispatchSpace* best = nullptr;
+          while (OriginVariantDispatchSpace* solution = search.next()) {
+            delete best;
+            best = solution;
+          }
+          ok = (best != nullptr) && (best->value() == 1) &&
+            (rbs_state.constrain_calls.load(std::memory_order_relaxed) > 0U);
+          delete best;
+        }
+        ok = ok &&
+          (rbs_state.live_spaces.load(std::memory_order_relaxed) == 0U);
+
+        MetaDispatchState pbs_state;
+        {
+          OriginVariantDispatchSpace* m =
+            new OriginVariantDispatchSpace(pbs_state);
+          Gecode::Search::Options o;
+          o.assets = 3;
+          o.threads = 1;
+          Gecode::PBS<OriginVariantDispatchSpace,Gecode::BAB> search(m,o);
+          delete m;
+          OriginVariantDispatchSpace* best = nullptr;
+          while (OriginVariantDispatchSpace* solution = search.next()) {
+            delete best;
+            best = solution;
+          }
+          ok = ok && (best != nullptr) && (best->value() == 1) &&
+            (pbs_state.constrain_calls.load(std::memory_order_relaxed) > 0U);
+          delete best;
+        }
+        return ok &&
+          (pbs_state.live_spaces.load(std::memory_order_relaxed) == 0U);
+      }
+
     public:
       /// Initialize scenario \a s with name \a n
       MetaDispatch(const std::string& n, Scenario s)
@@ -609,6 +762,12 @@ namespace Test {
           return pbs<OriginVariantDispatchSpace>(3,1,1,3,7);
         case PBS_PARALLEL:
           return pbs<OriginVariantDispatchSpace>(3,3,1,3,7);
+        case RBS_NOGOODS_RESET_OWNERSHIP:
+          return rbs_nogoods_reset_ownership();
+        case META_STOP_OWNERSHIP:
+          return meta_stop_ownership();
+        case BAB_INCUMBENT:
+          return bab_incumbent();
         default:
           GECODE_NEVER;
         }
@@ -1070,6 +1229,12 @@ namespace Test {
                                 MetaDispatch::RBS_VARIANT_COMPLETE);
         (void) new MetaDispatch("RBS::VariantIncomplete",
                                 MetaDispatch::RBS_VARIANT_INCOMPLETE);
+        (void) new MetaDispatch("RBS::NoGoodsResetOwnership",
+                                MetaDispatch::RBS_NOGOODS_RESET_OWNERSHIP);
+        (void) new MetaDispatch("Lifecycle::StopOwnership",
+                                MetaDispatch::META_STOP_OWNERSHIP);
+        (void) new MetaDispatch("BAB::Incumbent",
+                                MetaDispatch::BAB_INCUMBENT);
         for (unsigned int t=1; t<=4; t++) {
           (void) new RBS<HasSolutions,Gecode::DFS>("DFS",t);
           (void) new RBS<HasSolutions,Gecode::LDS>("LDS",t);
