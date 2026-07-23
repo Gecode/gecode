@@ -629,16 +629,16 @@ solve(const JobShopOptions& opt) {
   {
     Support::Timer t; t.start();
     Search::Statistics stat;
-    JobShopProbe* master = new JobShopProbe(opt);
+    JobShopProbe* origin = new JobShopProbe(opt);
 
-    if (master->status() != SS_SOLVED) {
-      delete master;
+    if (origin->status() != SS_SOLVED) {
+      delete origin;
       std::cerr << "Error: has no solution..." << std::endl;
       return;
     }
 
-    l = master->cost().min();
-    u = master->cost().max();
+    l = origin->cost().min();
+    u = origin->cost().max();
 
     FailTimeStop fts(opt.fail_probe(),opt.time_probe());
     CommonOptions so(opt);
@@ -651,7 +651,7 @@ solve(const JobShopOptions& opt) {
               << std::endl;
 
     for (unsigned int p=0; p<opt.probes(); p++) {
-      JobShopProbe* jsp = static_cast<JobShopProbe*>(master->clone());
+      JobShopProbe* jsp = static_cast<JobShopProbe*>(origin->clone());
       jsp->branch(p,rnd);
       DFS<JobShopProbe> dfs(jsp,so);
       JobShopProbe* s = dfs.next();
@@ -669,7 +669,7 @@ solve(const JobShopOptions& opt) {
       }
       stat += statj;
     }
-    delete master;
+    delete origin;
 
     print(stat,false);
     std::cout << "\t\t\truntime:    ";
@@ -685,11 +685,11 @@ solve(const JobShopOptions& opt) {
 
   // Dichotomic search
   {
-    JobShopSolve* master = new JobShopSolve(opt);
+    JobShopSolve* origin = new JobShopSolve(opt);
 
 
-    if (master->status() == SS_FAILED) {
-      delete master;
+    if (origin->status() == SS_FAILED) {
+      delete origin;
       std::cerr << "Error: has no solution..." << std::endl;
       return;
     }
@@ -704,7 +704,7 @@ solve(const JobShopOptions& opt) {
       while (l < u) {
         std::cout << "\t\tBounds: [" << l << "," << u << "]"
                   << std::endl;
-        JobShopSolve* jss = static_cast<JobShopSolve*>(master->clone());
+        JobShopSolve* jss = static_cast<JobShopSolve*>(origin->clone());
         int m = (l + u) / 2;
         rel(*jss, jss->cost() >= l);
         rel(*jss, jss->cost() <= m);
@@ -739,7 +739,7 @@ solve(const JobShopOptions& opt) {
     }
 
     if (l == u) {
-      delete master;
+      delete origin;
       std::cout << std::endl
                 << "\tFound best solution and proved optimality."
                 << std::endl;
@@ -751,15 +751,15 @@ solve(const JobShopOptions& opt) {
       Support::Timer t; t.start();
       std::cout << std::endl << "\tSolving..." << std::endl;
 
-      rel(*master, master->cost() >= l);
-      rel(*master, master->cost() < u);
+      rel(*origin, origin->cost() >= l);
+      rel(*origin, origin->cost() < u);
 
       CommonOptions so(opt);
       if (opt.time_solve() > 0U)
         so.stop = Search::Stop::time(opt.time_solve());
       so.cutoff = Search::Cutoff::geometric(JobShopConfig::restart_scale,
                                             JobShopConfig::restart_base);
-      RBS<JobShopSolve,BAB> rbs(master,so);
+      RBS<JobShopSolve,BAB> rbs(origin,so);
       while (JobShopSolve* s = rbs.next()) {
         s->print(std::cout);
         u = s->cost().val();

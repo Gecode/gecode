@@ -46,31 +46,31 @@ namespace Gecode { namespace Search { namespace Seq {
 
 
   forceinline
-  Slave::Slave(void)
-    : slave(nullptr), stop(nullptr) {}
+  Variant::Variant(void)
+    : engine(nullptr), stop(nullptr) {}
   forceinline void
-  Slave::init(Engine* e, Stop* s) {
-    slave = e; stop = s;
+  Variant::init(Engine* e, Stop* s) {
+    engine = e; stop = s;
   }
   forceinline Space*
-  Slave::next(void) {
-    return slave->next();
+  Variant::next(void) {
+    return engine->next();
   }
   forceinline Statistics
-  Slave::statistics(void) const {
-    return slave->statistics();
+  Variant::statistics(void) const {
+    return engine->statistics();
   }
   forceinline bool
-  Slave::stopped(void) const {
-    return slave->stopped();
+  Variant::stopped(void) const {
+    return engine->stopped();
   }
   forceinline void
-  Slave::constrain(const Space& b) {
-    slave->constrain(b);
+  Variant::constrain(const Space& b) {
+    engine->constrain(b);
   }
   forceinline
-  Slave::~Slave(void) {
-    delete slave;
+  Variant::~Variant(void) {
+    delete engine;
     delete stop;
   }
 
@@ -81,13 +81,13 @@ namespace Gecode { namespace Search { namespace Seq {
                  const Statistics& stat0,
                  const Search::Options& opt)
     : stat(stat0), slice(opt.slice),
-      slaves(heap.alloc<Slave>(n)), n_slaves(n), cur(0),
-      slave_stop(false) {
+      variants(heap.alloc<Variant>(n)), n_variants(n), cur(0),
+      variant_stop(false) {
     ssi.done = false;
     ssi.l = opt.slice;
 
     for (unsigned int i=0U; i<n; i++) {
-      slaves[i].init(e[i],static_cast<PortfolioStop*>(s[i]));
+      variants[i].init(e[i],static_cast<PortfolioStop*>(s[i]));
       static_cast<PortfolioStop*>(s[i])->share(&ssi);
     }
   }
@@ -95,41 +95,41 @@ namespace Gecode { namespace Search { namespace Seq {
   template<bool best>
   Space*
   PBS<best>::next(void) {
-    slave_stop = false;
+    variant_stop = false;
     unsigned int n_exhausted = 0;
-    while (n_slaves > 0) {
-      if (Space* s = slaves[cur].next()) {
-        // Constrain other slaves
+    while (n_variants > 0) {
+      if (Space* s = variants[cur].next()) {
+        // Constrain other variants
         if (best) {
           for (unsigned int i=0U; i<cur; i++)
-            slaves[i].constrain(*s);
-          for (unsigned int i=cur+1; i<n_slaves; i++)
-            slaves[i].constrain(*s);
+            variants[i].constrain(*s);
+          for (unsigned int i=cur+1; i<n_variants; i++)
+            variants[i].constrain(*s);
         }
         return s;
       }
-      if (slaves[cur].stopped()) {
+      if (variants[cur].stopped()) {
         if (ssi.done) {
           cur++; n_exhausted++;
         } else {
-          slave_stop = true;
+          variant_stop = true;
           return nullptr;
         }
       } else {
-        // This slave is done, kill it after saving the statistics
-        stat += slaves[cur].statistics();
-        slaves[cur].~Slave();
-        slaves[cur] = slaves[--n_slaves];
-        if (n_slaves == 1)
+        // This variant is done, kill it after saving the statistics
+        stat += variants[cur].statistics();
+        variants[cur].~Variant();
+        variants[cur] = variants[--n_variants];
+        if (n_variants == 1)
           // Disable stopping by setting a high limit
           ssi.l = ULONG_MAX;
       }
-      if (n_exhausted == n_slaves) {
+      if (n_exhausted == n_variants) {
         n_exhausted = 0;
         // Increment by one slice
         ssi.l += slice;
       }
-      if (cur == n_slaves)
+      if (cur == n_variants)
         cur = 0;
     }
     return nullptr;
@@ -138,15 +138,15 @@ namespace Gecode { namespace Search { namespace Seq {
   template<bool best>
   bool
   PBS<best>::stopped(void) const {
-    return slave_stop;
+    return variant_stop;
   }
 
   template<bool best>
   Statistics
   PBS<best>::statistics(void) const {
     Statistics s(stat);
-    for (unsigned int i=0U; i<n_slaves; i++)
-      s += slaves[i].statistics();
+    for (unsigned int i=0U; i<n_variants; i++)
+      s += variants[i].statistics();
     return s;
   }
 
@@ -155,16 +155,16 @@ namespace Gecode { namespace Search { namespace Seq {
   PBS<best>::constrain(const Space& b) {
     if (!best)
       throw NoBest("PBS::constrain");
-    for (unsigned int i=0U; i<n_slaves; i++)
-      slaves[i].constrain(b);
+    for (unsigned int i=0U; i<n_variants; i++)
+      variants[i].constrain(b);
   }
 
   template<bool best>
   PBS<best>::~PBS(void) {
-    for (unsigned int i=0U; i<n_slaves; i++)
-      slaves[i].~Slave();
-    // Note that n_slaves might be different now!
-    heap.rfree(slaves);
+    for (unsigned int i=0U; i<n_variants; i++)
+      variants[i].~Variant();
+    // Note that n_variants might be different now!
+    heap.rfree(variants);
   }
 
 }}}

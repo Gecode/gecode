@@ -211,8 +211,8 @@ public:
       }
     }
   }
-  /// Slave function for portfolio search
-  virtual bool slave(const MetaInfo& mi) {
+  /// Variant function for portfolio search
+  virtual bool variant(const MetaInfo& mi) {
     if (mi.type() == MetaInfo::PORTFOLIO) {
       double tbf = opt.tbf();
       Rnd r(seeds[mi.asset() % n_seeds]);
@@ -3997,4 +3997,3 @@ namespace {
 }
 
 // STATISTICS: example-any
-

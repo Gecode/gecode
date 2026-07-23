@@ -43,10 +43,10 @@
 
 namespace Gecode { namespace Search { namespace Par {
 
-  /// Stop object used for controlling slaves in a portfolio
+  /// Stop object used for controlling variants in a portfolio
   class GECODE_SEARCH_EXPORT PortfolioStop : public Stop {
   private:
-    /// The stop object for the slaves
+    /// The stop object for the variants
     Stop* so;
     /// Whether search must be stopped
     std::atomic<bool>* tostop;
@@ -67,9 +67,9 @@ namespace Gecode { namespace Search { namespace Par {
   template<class Collect>
   class PBS;
 
-  /// Runnable slave of a portfolio master
+  /// Runnable variant in a portfolio
   template<class Collect>
-  class GECODE_SEARCH_EXPORT Slave : public Support::Runnable {
+  class GECODE_SEARCH_EXPORT Variant : public Support::Runnable {
   protected:
     /// Completion event for the current run
     class Completion : public Support::Terminator {
@@ -84,29 +84,29 @@ namespace Gecode { namespace Search { namespace Par {
       /// Wait for completion and consume the signal
       void wait(void);
     } completion;
-    /// The master engine
-    PBS<Collect>* master;
-    /// The slave engine
-    Engine* slave;
+    /// The portfolio engine
+    PBS<Collect>* portfolio;
+    /// The wrapped search engine
+    Engine* engine;
     /// Stop object
     Stop* stop;
   public:
-    /// Initialize with master \a m, slave \a s, and its stop object \a so
-    Slave(PBS<Collect>* m, Engine* s, Stop* so);
-    /// Return statistics of slave
+    /// Initialize with portfolio \a p, engine \a e, and its stop object \a so
+    Variant(PBS<Collect>* p, Engine* e, Stop* so);
+    /// Return statistics of variant
     Statistics statistics(void) const;
-    /// Check whether slave has been stopped
+    /// Check whether variant has been stopped
     bool stopped(void) const;
     /// Return the completion terminator
     virtual Support::Terminator* terminator(void) const;
-    /// Wait for the slave to complete its current run
+    /// Wait for the variant to complete its current run
     void wait(void);
     /// Constrain with better solution \a b
     void constrain(const Space& b);
     /// Perform one run
     virtual void run(void);
-    /// Delete slave
-    virtual ~Slave(void);
+    /// Delete variant
+    virtual ~Variant(void);
   };
 
   /// Collect all solutions
@@ -120,13 +120,13 @@ namespace Gecode { namespace Search { namespace Par {
     /// Initialize
     CollectAll(void);
     /// Add a solution \a a reported by \a r and always return true
-    bool add(Space* s, Slave<CollectAll>* r);
+    bool add(Space* s, Variant<CollectAll>* r);
     /// Dummy function
     bool constrain(const Space& b);
     /// Check whether there is any solution left
     bool empty(void) const;
     /// Return solution reported by \a r
-    Space* get(Slave<CollectAll>*& r);
+    Space* get(Variant<CollectAll>*& r);
     /// Destructor
     ~CollectAll(void);
   };
@@ -137,20 +137,20 @@ namespace Gecode { namespace Search { namespace Par {
     /// Currently best solution
     Space* b;
     /// Who has reported the best solution (nullptr if solution has already been reported)
-    Slave<CollectBest>* reporter;
+    Variant<CollectBest>* reporter;
   public:
     /// Whether it collects best solutions
     static const bool best = true;
     /// Initialize
     CollectBest(void);
     /// Add a solution \a s by \a r and return whether is was better
-    bool add(Space* s, Slave<CollectBest>* r);
+    bool add(Space* s, Variant<CollectBest>* r);
     /// Check whether \a b better and update accordingly
     bool constrain(const Space& b);
     /// Check whether there is any solution left
     bool empty(void) const;
     /// Return solution reported by \a r (only if a better one was found)
-    Space* get(Slave<CollectBest>*& r);
+    Space* get(Variant<CollectBest>*& r);
     /// Destructor
     ~CollectBest(void);
   };
@@ -158,37 +158,37 @@ namespace Gecode { namespace Search { namespace Par {
   /// Parallel portfolio engine implementation
   template<class Collect>
   class GECODE_SEARCH_EXPORT PBS : public Engine {
-    friend class Slave<Collect>;
+    friend class Variant<Collect>;
   protected:
-    /// Master statistics
+    /// Portfolio statistics
     Statistics stat;
-    /// Slave engines
-    Slave<Collect>** slaves;
-    /// Number of slave engines
-    unsigned int n_slaves;
-    /// Number of active slave engines
+    /// Variant engines
+    Variant<Collect>** variants;
+    /// Number of variant engines
+    unsigned int n_variants;
+    /// Number of active variant engines
     unsigned int n_active;
-    /// Whether a slave has been stopped
-    std::atomic<bool> slave_stop;
+    /// Whether a variant has been stopped
+    std::atomic<bool> variant_stop;
     /// Shared stop flag
     std::atomic<bool> tostop;
     /// Collect solutions in this
     Collect solutions;
     /// Mutex for synchronization
     Support::Mutex m;
-    /// Number of busy slaves
+    /// Number of busy variants
     unsigned int n_busy;
-    /// Signal that number of busy slaves becomes zero
+    /// Signal that number of busy variants becomes zero
     Support::Event idle;
-    /// Process report from slave, return false if solution was ignored
-    bool report(Slave<Collect>* slave, Space* s);
+    /// Process report from variant, return false if solution was ignored
+    bool report(Variant<Collect>* variant, Space* s);
     /**
      * The key invariant of the engine is as follows:
      *  - n_busy is always zero outside the next() function.
      *  - that entails, that locking is only needed inside next().
-     *  - the slaves 0..n_active-1 still might not have exhausted their
+     *  - the variants 0..n_active-1 still might not have exhausted their
      *    search space.
-     *  - the slaves n_active..n_slaves-1 have exhausted their search space.
+     *  - the variants n_active..n_variants-1 have exhausted their search space.
      */
   public:
     /// Initialize

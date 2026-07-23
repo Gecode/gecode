@@ -47,10 +47,10 @@ namespace Gecode { namespace Search { namespace Seq {
     unsigned long long int l;
   };
 
-  /// Stop object used for controlling slaves in a portfolio
+  /// Stop object used for controlling variants in a portfolio
   class GECODE_SEARCH_EXPORT PortfolioStop : public Stop {
   private:
-    /// The stop object for the slaves
+    /// The stop object for the variants
     Stop* so;
     /// Pointer to shared stop information
     SharedStopInfo* ssi;
@@ -63,57 +63,57 @@ namespace Gecode { namespace Search { namespace Seq {
     virtual bool stop(const Statistics& s, const Options& o);
   };
 
-  /// Runnable slave of a portfolio master
-  class Slave {
+  /// Variant engine in a sequential portfolio
+  class Variant {
   protected:
-    /// The slave engine
-    Engine* slave;
+    /// The wrapped search engine
+    Engine* engine;
     /// Stop object
     Stop* stop;
   public:
     /// Default constructor
-    Slave(void);
+    Variant(void);
     /// Copy constructor
-    Slave(const Slave& s) = default;
+    Variant(const Variant& s) = default;
     /// Assignment operator
-    Slave& operator =(const Slave& s) = default;
-    /// Initialize with slave \a s and its stop object \a so
+    Variant& operator =(const Variant& s) = default;
+    /// Initialize with engine \a s and its stop object \a so
     void init(Engine* s, Stop* so);
     /// Return next solution
     Space* next(void);
-    /// Return statistics of slave
+    /// Return statistics of the variant
     Statistics statistics(void) const;
-    /// Check whether slave has been stopped
+    /// Check whether the variant has been stopped
     bool stopped(void) const;
     /// Constrain with better solution \a b
     void constrain(const Space& b);
     /// Perform one run
     void run(void);
-    /// Delete slave
-    ~Slave(void);
+    /// Delete variant
+    ~Variant(void);
   };
 
   /// Sequential portfolio engine implementation
   template<bool best>
   class GECODE_SEARCH_EXPORT PBS : public Engine {
   protected:
-    /// Master statistics
+    /// Initial statistics
     Statistics stat;
-    /// Shared slave information
+    /// Shared variant information
     SharedStopInfo ssi;
     /// Size of a slice
     unsigned int slice;
-    /// Slaves
-    Slave* slaves;
-    /// Number of slave engines
-    unsigned int n_slaves;
-    /// Current slave to run
+    /// Variants
+    Variant* variants;
+    /// Number of variant engines
+    unsigned int n_variants;
+    /// Current variant to run
     unsigned int cur;
-    /// Whether a slave has been stopped
-    bool slave_stop;
+    /// Whether a variant has been stopped
+    bool variant_stop;
   public:
     /// Initialize
-    PBS(Engine** slaves, Stop** stops, unsigned int n,
+    PBS(Engine** variants, Stop** stops, unsigned int n,
         const Statistics& stat, const Search::Options& opt);
     /// Return next solution (nullptr, if none exists or search has been stopped)
     virtual Space* next(void);

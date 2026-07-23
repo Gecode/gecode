@@ -106,8 +106,8 @@ namespace Test {
       virtual int solutions(void) const = 0;
       /// Verify that this is best solution
       virtual bool best(void) const = 0;
-      /// Master configuration function that does not restart
-      virtual bool master(const MetaInfo& mi) {
+      /// Origin configuration function that does not restart
+      bool origin(const MetaInfo& mi) override {
         if (mi.type() == MetaInfo::RESTART) {
           if (mi.last() != nullptr)
             constrain(*mi.last());
@@ -313,7 +313,7 @@ namespace Test {
         return "Sol";
       }
       /// Rule out that solution is found more than once during restarts
-      virtual bool master(const MetaInfo& mi) {
+      bool origin(const MetaInfo& mi) override {
         switch (mi.type()) {
         case MetaInfo::RESTART:
           if (mi.last() != nullptr) {
@@ -332,6 +332,10 @@ namespace Test {
           break;
         }
         return false;
+      }
+      /// Use the default completeness contract for each derived exploration
+      bool variant(const MetaInfo&) override {
+        return true;
       }
     };
 
@@ -605,9 +609,9 @@ namespace Test {
     private:
       /// Whether best solution search is used
       bool best;
-      /// Number of master threads
+      /// Number of portfolio threads
       unsigned int mt;
-      /// Number of slave threads
+      /// Number of variant threads
       unsigned int st;
     public:
       /// Initialize test

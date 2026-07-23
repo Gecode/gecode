@@ -41,8 +41,8 @@ namespace Gecode { namespace Search { namespace Par {
 
   template<class Collect>
   forceinline
-  Slave<Collect>::Completion::Completion(void) {
-    // A slave has not been submitted yet.  This initial signal lets the
+  Variant<Collect>::Completion::Completion(void) {
+    // A variant has not been submitted yet.  This initial signal lets the
     // first submission use the same consume-before-reuse handshake as all
     // subsequent submissions.
     done.signal();
@@ -50,13 +50,13 @@ namespace Gecode { namespace Search { namespace Par {
 
   template<class Collect>
   forceinline void
-  Slave<Collect>::Completion::terminated(void) {
+  Variant<Collect>::Completion::terminated(void) {
     done.signal();
   }
 
   template<class Collect>
   forceinline void
-  Slave<Collect>::Completion::wait(void) {
+  Variant<Collect>::Completion::wait(void) {
     done.wait();
   }
 
@@ -65,7 +65,7 @@ namespace Gecode { namespace Search { namespace Par {
   CollectAll::CollectAll(void)
     : solutions(heap) {}
   forceinline bool
-  CollectAll::add(Space* s, Slave<CollectAll>*) {
+  CollectAll::add(Space* s, Variant<CollectAll>*) {
     solutions.push(s);
     return true;
   }
@@ -79,7 +79,7 @@ namespace Gecode { namespace Search { namespace Par {
     return solutions.empty();
   }
   forceinline Space*
-  CollectAll::get(Slave<CollectAll>*&) {
+  CollectAll::get(Variant<CollectAll>*&) {
     return solutions.pop();
   }
   forceinline
@@ -93,7 +93,7 @@ namespace Gecode { namespace Search { namespace Par {
   CollectBest::CollectBest(void)
     : b(nullptr), reporter(nullptr) {}
   forceinline bool
-  CollectBest::add(Space* s, Slave<CollectBest>* r) {
+  CollectBest::add(Space* s, Variant<CollectBest>* r) {
     if (b != nullptr) {
       b->constrain(*s);
       if (b->status() == SS_FAILED) {
@@ -126,7 +126,7 @@ namespace Gecode { namespace Search { namespace Par {
     return reporter == nullptr;
   }
   forceinline Space*
-  CollectBest::get(Slave<CollectBest>*& r) {
+  CollectBest::get(Variant<CollectBest>*& r) {
     assert(!empty());
     r = reporter;
     reporter = nullptr;
@@ -150,36 +150,36 @@ namespace Gecode { namespace Search { namespace Par {
 
   template<class Collect>
   forceinline
-  Slave<Collect>::Slave(PBS<Collect>* m, Engine* s, Stop* so)
-    : Support::Runnable(false), master(m), slave(s), stop(so) {}
+  Variant<Collect>::Variant(PBS<Collect>* p, Engine* e, Stop* so)
+    : Support::Runnable(false), portfolio(p), engine(e), stop(so) {}
   template<class Collect>
   forceinline Statistics
-  Slave<Collect>::statistics(void) const {
-    return slave->statistics();
+  Variant<Collect>::statistics(void) const {
+    return engine->statistics();
   }
   template<class Collect>
   forceinline bool
-  Slave<Collect>::stopped(void) const {
-    return slave->stopped();
+  Variant<Collect>::stopped(void) const {
+    return engine->stopped();
   }
   template<class Collect>
   forceinline Support::Terminator*
-  Slave<Collect>::terminator(void) const {
+  Variant<Collect>::terminator(void) const {
     return const_cast<Completion*>(&completion);
   }
   template<class Collect>
   forceinline void
-  Slave<Collect>::wait(void) {
+  Variant<Collect>::wait(void) {
     completion.wait();
   }
   template<class Collect>
   forceinline void
-  Slave<Collect>::constrain(const Space& b) {
-    slave->constrain(b);
+  Variant<Collect>::constrain(const Space& b) {
+    engine->constrain(b);
   }
   template<class Collect>
-  Slave<Collect>::~Slave(void) {
-    delete slave;
+  Variant<Collect>::~Variant(void) {
+    delete engine;
     delete stop;
   }
 
@@ -189,12 +189,12 @@ namespace Gecode { namespace Search { namespace Par {
   forceinline
   PBS<Collect>::PBS(Engine** engines, Stop** stops, unsigned int n,
                     const Statistics& stat0)
-    : stat(stat0), slaves(heap.alloc<Slave<Collect>*>(n)),
-      n_slaves(n), n_active(n),
-      slave_stop(false), tostop(false), n_busy(0) {
-    // Initialize slaves
-    for (unsigned int i=0U; i<n_slaves; i++) {
-      slaves[i] = new Slave<Collect>(this,engines[i],stops[i]);
+    : stat(stat0), variants(heap.alloc<Variant<Collect>*>(n)),
+      n_variants(n), n_active(n),
+      variant_stop(false), tostop(false), n_busy(0) {
+    // Initialize variants
+    for (unsigned int i=0U; i<n_variants; i++) {
+      variants[i] = new Variant<Collect>(this,engines[i],stops[i]);
       static_cast<PortfolioStop*>(stops[i])->share(&tostop);
     }
   }
@@ -202,25 +202,25 @@ namespace Gecode { namespace Search { namespace Par {
 
   template<class Collect>
   forceinline bool
-  PBS<Collect>::report(Slave<Collect>* slave, Space* s) {
+  PBS<Collect>::report(Variant<Collect>* variant, Space* s) {
     // If b is false the report should be repeated (solution was worse)
     bool b = true;
     m.acquire();
     if (s != nullptr) {
-      b = solutions.add(s,slave);
+      b = solutions.add(s,variant);
       if (b)
         tostop.store(true, std::memory_order_release);
-    } else if (slave->stopped()) {
+    } else if (variant->stopped()) {
       if (!tostop.load(std::memory_order_acquire))
-        slave_stop.store(true, std::memory_order_release);
+        variant_stop.store(true, std::memory_order_release);
     } else {
-      // Move slave to inactive, as it has exhausted its engine
+      // Move variant to inactive, as it has exhausted its engine
       unsigned int i=0;
-      while (slaves[i] != slave)
+      while (variants[i] != variant)
         i++;
       assert(i < n_active);
       assert(n_active > 0);
-      std::swap(slaves[i],slaves[--n_active]);
+      std::swap(variants[i],variants[--n_active]);
       tostop.store(true, std::memory_order_release);
     }
     if (b) {
@@ -233,11 +233,11 @@ namespace Gecode { namespace Search { namespace Par {
 
   template<class Collect>
   void
-  Slave<Collect>::run(void) {
+  Variant<Collect>::run(void) {
     Space* s;
     do {
-      s = slave->next();
-    } while (!master->report(this,s));
+      s = engine->next();
+    } while (!portfolio->report(this,s));
   }
 
   template<class Collect>
@@ -247,29 +247,29 @@ namespace Gecode { namespace Search { namespace Par {
     if (solutions.empty()) {
       // Clear all
       tostop.store(false, std::memory_order_release);
-      slave_stop.store(false, std::memory_order_release);
+      variant_stop.store(false, std::memory_order_release);
 
-      // Invariant: all slaves are idle!
+      // Invariant: all variants are idle!
       assert(n_busy == 0);
       assert(!tostop.load(std::memory_order_acquire));
 
       if (n_active > 0) {
-        // Run all active slaves
+        // Run all active variants
         n_busy = n_active;
         for (unsigned int i=0U; i<n_active; i++) {
-          // Consume the previous completion before reusing this slave.  The
+          // Consume the previous completion before reusing this variant.  The
           // initial signal handles the first submission.
-          slaves[i]->wait();
-          Support::Thread::run(slaves[i]);
+          variants[i]->wait();
+          Support::Thread::run(variants[i]);
         }
         m.release();
-        // Wait for all slaves to become idle
+        // Wait for all variants to become idle
         idle.wait();
         m.acquire();
       }
     }
 
-    // Invariant all slaves are idle!
+    // Invariant all variants are idle!
     assert(n_busy == 0);
 
     Space* s;
@@ -278,12 +278,12 @@ namespace Gecode { namespace Search { namespace Par {
     if (solutions.empty()) {
       s = nullptr;
     } else {
-      Slave<Collect>* r;
+      Variant<Collect>* r;
       s = solutions.get(r);
       if (Collect::best)
         for (unsigned int i=0U; i<n_active; i++)
-          if (slaves[i] != r)
-            slaves[i]->constrain(*s);
+          if (variants[i] != r)
+            variants[i]->constrain(*s);
     }
 
     m.release();
@@ -293,7 +293,7 @@ namespace Gecode { namespace Search { namespace Par {
   template<class Collect>
   bool
   PBS<Collect>::stopped(void) const {
-    return slave_stop.load(std::memory_order_acquire);
+    return variant_stop.load(std::memory_order_acquire);
   }
 
   template<class Collect>
@@ -301,8 +301,8 @@ namespace Gecode { namespace Search { namespace Par {
   PBS<Collect>::statistics(void) const {
     assert(n_busy == 0);
     Statistics s(stat);
-    for (unsigned int i=0U; i<n_slaves; i++)
-      s += slaves[i]->statistics();
+    for (unsigned int i=0U; i<n_variants; i++)
+      s += variants[i]->statistics();
     return s;
   }
 
@@ -315,21 +315,21 @@ namespace Gecode { namespace Search { namespace Par {
     if (solutions.constrain(b)) {
       // The solution is better
       for (unsigned int i=0U; i<n_active; i++)
-        slaves[i]->constrain(b);
+        variants[i]->constrain(b);
     }
   }
 
   template<class Collect>
   PBS<Collect>::~PBS(void) {
-    // A report can make n_busy zero before Slave::run and Thread::Run::exec
+    // A report can make n_busy zero before Variant::run and Thread::Run::exec
     // have returned.  Wait for the completion handshake before deleting the
-    // PBS-owned slaves.
-    for (unsigned int i=0U; i<n_slaves; i++)
-      slaves[i]->wait();
+    // PBS-owned variants.
+    for (unsigned int i=0U; i<n_variants; i++)
+      variants[i]->wait();
     assert(n_busy == 0);
-    for (unsigned int i=0U; i<n_slaves; i++)
-      delete slaves[i];
-    heap.free<Slave<Collect>*>(slaves,n_slaves);
+    for (unsigned int i=0U; i<n_variants; i++)
+      delete variants[i];
+    heap.free<Variant<Collect>*>(variants,n_variants);
   }
 
 }}}

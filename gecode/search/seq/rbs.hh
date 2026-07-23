@@ -70,7 +70,7 @@ namespace Gecode { namespace Search { namespace Seq {
     void restart(void);
     /// Add no-goods to meta statistics
     void nogood(unsigned long int n);
-    /// Test master status with meta statistics
+    /// Test origin status with meta statistics
     SpaceStatus status(Space* s);
     /// Set current limit for the engine to \a l fails
     void limit(const Statistics& s, unsigned long long int l);
@@ -87,8 +87,8 @@ namespace Gecode { namespace Search { namespace Seq {
   protected:
     /// The actual engine
     Engine* e;
-    /// The master space to restart from
-    Space* master;
+    /// The origin space to restart from
+    Space* origin;
     /// The last solution space (possibly nullptr)
     Space* last;
     /// The cutoff object

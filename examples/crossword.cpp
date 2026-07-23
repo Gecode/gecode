@@ -282,7 +282,7 @@ public:
        << n;
   }
   /// Do not perform a restart when a solution is found
-  bool master(const MetaInfo& mi) {
+  bool origin(const MetaInfo& mi) {
     if (mi.type() == MetaInfo::RESTART)
       // Post no-goods
       mi.nogoods().post(*this);

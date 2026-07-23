@@ -19,6 +19,9 @@ In particular,
 Gecode comes with
 [extensive tutorial and reference documentation](https://gecode.github.io/documentation.html).
 
+For source-level breaking changes, see the
+[Gecode 7 migration notes](docs/gecode-7-migration.md).
+
 ## CMake Build Options
 
 CMake exposes options aligned with the Autoconf build switches.

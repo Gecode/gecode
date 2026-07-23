@@ -41,9 +41,9 @@ namespace Gecode { namespace Search { namespace Seq {
   }
 
   Engine*
-  rbsengine(Space* master, Stop* stop, Engine* slave,
+  rbsengine(Space* origin, Stop* stop, Engine* variant,
             const Search::Statistics& stat, const Options& opt, bool best) {
-    return new RBS(master,static_cast<RestartStop*>(stop), slave,
+    return new RBS(origin,static_cast<RestartStop*>(stop), variant,
                    stat,opt,best);
   }
 

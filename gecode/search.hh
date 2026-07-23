@@ -1181,13 +1181,13 @@ namespace Gecode {
    * periodically restart the search of engine \a E.
    *
    * The class \a T can implement member functions
-   * \code virtual bool master(const MetaInfo& mi) \endcode
+   * \code virtual bool origin(const MetaInfo& mi) \endcode
    * and
-   * \code virtual bool slave(const MetaInfo& mi) \endcode
+   * \code virtual bool variant(const MetaInfo& mi) \endcode
    *
    * Whenever exploration restarts or a solution is found, the
-   * engine executes the functions on the master and slave
-   * space. For more details, consult "Modeling and Programming
+   * engine executes the functions on the origin and variant
+   * spaces. For more details, consult "Modeling and Programming
    * with Gecode".
    *
    * \ingroup TaskModelSearch
@@ -1209,13 +1209,13 @@ namespace Gecode {
    * periodically restart the search of engine \a E.
    *
    * The class \a T can implement member functions
-   * \code virtual bool master(const MetaInfo& mi) \endcode
+   * \code virtual bool origin(const MetaInfo& mi) \endcode
    * and
-   * \code virtual bool slave(const MetaInfo& mi) \endcode
+   * \code virtual bool variant(const MetaInfo& mi) \endcode
    *
    * Whenever exploration restarts or a solution is found, the
-   * engine executes the functions on the master and slave
-   * space. For more details, consult "Modeling and Programming
+   * engine executes the functions on the origin and variant
+   * spaces. For more details, consult "Modeling and Programming
    * with Gecode".
    *
    * \ingroup TaskModelSearch
@@ -1235,22 +1235,22 @@ namespace Gecode { namespace Search { namespace Meta {
 
   /// Build a sequential engine
   template<class T, template<class> class E>
-  Engine* sequential(T* master, const Search::Statistics& stat, Options& opt);
+  Engine* sequential(T* origin, const Search::Statistics& stat, Options& opt);
 
   /// Build a sequential engine
   template<class T, template<class> class E>
-  Engine* sequential(T* master, SEBs& sebs,
+  Engine* sequential(T* origin, SEBs& sebs,
                      const Search::Statistics& stat, Options& opt, bool best);
 
 #ifdef GECODE_HAS_THREADS
 
   /// Build a parallel engine
   template<class T, template<class> class E>
-  Engine* parallel(T* master, const Search::Statistics& stat, Options& opt);
+  Engine* parallel(T* origin, const Search::Statistics& stat, Options& opt);
 
   /// Build a parallel engine
   template<class T, template<class> class E>
-  Engine* parallel(T* master, SEBs& sebs,
+  Engine* parallel(T* origin, SEBs& sebs,
                    const Search::Statistics& stat, Options& opt, bool best);
 
 #endif
@@ -1267,9 +1267,9 @@ namespace Gecode {
    * assets by using the number of threads as defined by the options.
    *
    * The class \a T can implement member functions
-   * \code virtual bool master(const MetaInfo& mi) \endcode
+   * \code virtual bool origin(const MetaInfo& mi) \endcode
    * and
-   * \code virtual bool slave(const MetaInfo& mi) \endcode
+   * \code virtual bool variant(const MetaInfo& mi) \endcode
    *
    * When the assets are created, these functions are executed.
    * For more details, consult "Modeling and Programming with Gecode".
@@ -1299,9 +1299,9 @@ namespace Gecode {
    * assets by using the number of threads as defined by the options.
    *
    * The class \a T can implement member functions
-   * \code virtual bool master(const MetaInfo& mi) \endcode
+   * \code virtual bool origin(const MetaInfo& mi) \endcode
    * and
-   * \code virtual bool slave(const MetaInfo& mi) \endcode
+   * \code virtual bool variant(const MetaInfo& mi) \endcode
    *
    * When the assets are created, these functions are executed.
    * For more details, consult "Modeling and Programming with Gecode".

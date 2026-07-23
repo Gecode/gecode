@@ -128,8 +128,8 @@ public:
       break;
     }
   }
-  /// Slave function for restarts
-  bool slave(const MetaInfo& mi) {
+  /// Variant function for restarts
+  bool variant(const MetaInfo& mi) {
     if ((mi.type() == MetaInfo::RESTART) &&
         (mi.restart() > 0) && (p > 0.0)) {
       const Photo& l = static_cast<const Photo&>(*mi.last());

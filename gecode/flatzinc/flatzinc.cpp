@@ -2077,7 +2077,7 @@ namespace Gecode { namespace FlatZinc {
   }
 
   bool
-  FlatZincSpace::slave(const MetaInfo& mi) {
+  FlatZincSpace::variant(const MetaInfo& mi) {
     if (mi.type() == MetaInfo::RESTART) {
       if (restart_data.initialized() && restart_data().mark_complete) {
         // Fail the space

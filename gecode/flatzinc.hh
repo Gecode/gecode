@@ -672,8 +672,8 @@ namespace Gecode { namespace FlatZinc {
     virtual void constrain(const Space& s);
     /// Copy function
     virtual Gecode::Space* copy(void);
-    /// Slave function for restarts
-    virtual bool slave(const MetaInfo& mi);
+    /// Variant function for restarts
+    virtual bool variant(const MetaInfo& mi);
 
     /// \name AST to variable and value conversion
     //@{

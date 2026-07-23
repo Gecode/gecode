@@ -67,20 +67,20 @@ namespace Gecode { namespace Search { namespace Seq {
       // Reset number of no-goods found
       ng.ng(0);
       MetaInfo mi(stop->restarts(),MetaInfo::RR_SOL,sslr,e->statistics().fail,last,ng);
-      bool r = master->master(mi);
+      bool r = origin->origin(mi);
       stop->nogood(ng.ng());
-      if (stop->status(master) == SS_FAILED) {
+      if (stop->status(origin) == SS_FAILED) {
         stop->update(e->statistics());
-        delete master;
-        master = nullptr;
+        delete origin;
+        origin = nullptr;
         e->reset(nullptr);
         return nullptr;
       } else if (r) {
         stop->update(e->statistics());
-        Space* slave = master;
-        master = master->clone();
-        complete = slave->slave(mi);
-        e->reset(slave);
+        Space* variant = origin;
+        origin = origin->clone();
+        complete = variant->variant(mi);
+        e->reset(variant);
         sslr = 0;
         stop->restart();
       }
@@ -103,16 +103,16 @@ namespace Gecode { namespace Search { namespace Seq {
         NoGoods& ng = e->nogoods();
         ng.ng(0);
         MetaInfo mi(stop->restarts(),e->stopped() ? MetaInfo::RR_LIM : MetaInfo::RR_CMPL,sslr,e->statistics().fail,last,ng);
-        (void) master->master(mi);
+        (void) origin->origin(mi);
         stop->nogood(ng.ng());
         unsigned long long int nl = ++(*co);
         stop->limit(e->statistics(),nl);
-        if (stop->status(master) == SS_FAILED)
+        if (stop->status(origin) == SS_FAILED)
           return nullptr;
-        Space* slave = master;
-        master = master->clone();
-        complete = slave->slave(mi);
-        e->reset(slave);
+        Space* variant = origin;
+        origin = origin->clone();
+        complete = variant->variant(mi);
+        e->reset(variant);
       } else {
         return nullptr;
       }
@@ -139,7 +139,7 @@ namespace Gecode { namespace Search { namespace Seq {
       }
     }
     last = b.clone();
-    master->constrain(b);
+    origin->constrain(b);
     e->constrain(b);
   }
 
@@ -157,7 +157,7 @@ namespace Gecode { namespace Search { namespace Seq {
 
   RBS::~RBS(void) {
     delete e;
-    delete master;
+    delete origin;
     delete last;
     delete co;
     delete stop;

@@ -70,7 +70,7 @@ namespace Gecode { namespace Search { namespace Seq {
 
   /// Create sequential portfolio engine
   GECODE_SEARCH_EXPORT Engine*
-  pbsengine(Engine** slaves, Stop** stops, unsigned int n_slaves,
+  pbsengine(Engine** variants, Stop** stops, unsigned int n_variants,
             const Statistics& stat, const Search::Options& opt, bool best);
 
 }}}
@@ -83,7 +83,7 @@ namespace Gecode { namespace Search { namespace Par {
 
   /// Create parallel portfolio engine
   GECODE_SEARCH_EXPORT Engine*
-  pbsengine(Engine** slaves, Stop** stops, unsigned int n_slaves,
+  pbsengine(Engine** variants, Stop** stops, unsigned int n_variants,
             const Statistics& stat, bool best);
 
 }}}
@@ -92,7 +92,7 @@ namespace Gecode { namespace Search {
 
   template<class T, template<class> class E>
   Engine*
-  pbsseq(T* master, const Search::Statistics& stat, Options& opt) {
+  pbsseq(T* origin, const Search::Statistics& stat, Options& opt) {
     Stop* stop = opt.stop;
     Region r;
 
@@ -100,51 +100,51 @@ namespace Gecode { namespace Search {
     opt.threads = std::max(floor(opt.threads /
                                  static_cast<double>(opt.assets)),1.0);
 
-    unsigned int n_slaves = opt.assets;
-    Engine** slaves = r.alloc<Engine*>(n_slaves);
-    Stop** stops = r.alloc<Stop*>(n_slaves);
+    unsigned int n_variants = opt.assets;
+    Engine** variants = r.alloc<Engine*>(n_variants);
+    Stop** stops = r.alloc<Stop*>(n_variants);
 
     WrapTraceRecorder::engine(opt.tracer,
-                              SearchTracer::EngineType::PBS, n_slaves);
+                              SearchTracer::EngineType::PBS, n_variants);
 
-    for (unsigned int i=0U; i<n_slaves; i++) {
+    for (unsigned int i=0U; i<n_variants; i++) {
       opt.stop = stops[i] = Seq::pbsstop(stop);
-      Space* slave = (i == n_slaves-1) ?
-        master : master->clone();
-      (void) slave->slave(i);
-      slaves[i] = build<T,E>(slave,opt);
+      Space* variant = (i == n_variants-1) ?
+        origin : origin->clone();
+      (void) variant->variant(i);
+      variants[i] = build<T,E>(variant,opt);
     }
 
-    return Seq::pbsengine(slaves,stops,n_slaves,stat,opt,E<T>::best);
+    return Seq::pbsengine(variants,stops,n_variants,stat,opt,E<T>::best);
   }
 
   template<class T, template<class> class E>
   Engine*
-  pbsseq(T* master, SEBs& sebs,
+  pbsseq(T* origin, SEBs& sebs,
              const Search::Statistics& stat, Options& opt, bool best) {
     Region r;
 
-    int n_slaves = sebs.size();
-    Engine** slaves = r.alloc<Engine*>(n_slaves);
-    Stop** stops = r.alloc<Stop*>(n_slaves);
+    int n_variants = sebs.size();
+    Engine** variants = r.alloc<Engine*>(n_variants);
+    Stop** stops = r.alloc<Stop*>(n_variants);
 
     WrapTraceRecorder::engine(opt.tracer,
                               SearchTracer::EngineType::PBS,
-                              static_cast<unsigned int>(n_slaves));
+                              static_cast<unsigned int>(n_variants));
 
-    for (int i=0; i<n_slaves; i++) {
-      // Re-configure slave options
+    for (int i=0; i<n_variants; i++) {
+      // Re-configure variant options
       stops[i] = Seq::pbsstop(sebs[i]->options().stop);
       sebs[i]->options().stop  = stops[i];
       sebs[i]->options().clone = false;
-      Space* slave = (i == n_slaves-1) ?
-        master : master->clone();
-      (void) slave->slave(static_cast<unsigned int>(i));
-      slaves[i] = (*sebs[i])(slave);
+      Space* variant = (i == n_variants-1) ?
+        origin : origin->clone();
+      (void) variant->variant(static_cast<unsigned int>(i));
+      variants[i] = (*sebs[i])(variant);
       delete sebs[i];
     }
 
-    return Seq::pbsengine(slaves,stops,static_cast<unsigned int>(n_slaves),
+    return Seq::pbsengine(variants,stops,static_cast<unsigned int>(n_variants),
                           stat,opt,best);
   }
 
@@ -152,66 +152,66 @@ namespace Gecode { namespace Search {
 
   template<class T, template<class> class E>
   Engine*
-  pbspar(T* master, const Search::Statistics& stat, Options& opt) {
+  pbspar(T* origin, const Search::Statistics& stat, Options& opt) {
     Stop* stop = opt.stop;
     Region r;
 
-    // Limit the number of slaves to the number of threads
-    unsigned int n_slaves = std::min(static_cast<unsigned int>(opt.threads),
-                                     opt.assets);
-    // Redistribute additional threads to slaves
-    opt.threads = floor(opt.threads / static_cast<double>(n_slaves));
+    // Limit the number of variants to the number of threads
+    unsigned int n_variants = std::min(static_cast<unsigned int>(opt.threads),
+                                       opt.assets);
+    // Redistribute additional threads to variants
+    opt.threads = floor(opt.threads / static_cast<double>(n_variants));
 
     WrapTraceRecorder::engine(opt.tracer,
-                              SearchTracer::EngineType::PBS, n_slaves);
+                              SearchTracer::EngineType::PBS, n_variants);
 
-    Engine** slaves = r.alloc<Engine*>(n_slaves);
-    Stop** stops = r.alloc<Stop*>(n_slaves);
+    Engine** variants = r.alloc<Engine*>(n_variants);
+    Stop** stops = r.alloc<Stop*>(n_variants);
 
-    for (unsigned int i=0U; i<n_slaves; i++) {
+    for (unsigned int i=0U; i<n_variants; i++) {
       opt.stop = stops[i] = Par::pbsstop(stop);
-      Space* slave = (i == n_slaves-1) ?
-        master : master->clone();
-      (void) slave->slave(static_cast<unsigned int>(i));
-      slaves[i] = build<T,E>(slave,opt);
+      Space* variant = (i == n_variants-1) ?
+        origin : origin->clone();
+      (void) variant->variant(static_cast<unsigned int>(i));
+      variants[i] = build<T,E>(variant,opt);
     }
 
-    return Par::pbsengine(slaves,stops,n_slaves,stat,E<T>::best);
+    return Par::pbsengine(variants,stops,n_variants,stat,E<T>::best);
   }
 
   template<class T, template<class> class E>
   Engine*
-  pbspar(T* master, SEBs& sebs,
+  pbspar(T* origin, SEBs& sebs,
          const Search::Statistics& stat, Options& opt, bool best) {
     Region r;
 
-    // Limit the number of slaves to the number of threads
-    int n_slaves = std::min(static_cast<int>(opt.threads),
-                            sebs.size());
+    // Limit the number of variants to the number of threads
+    int n_variants = std::min(static_cast<int>(opt.threads),
+                              sebs.size());
 
     WrapTraceRecorder::engine(opt.tracer,
                               SearchTracer::EngineType::PBS,
-                              static_cast<unsigned int>(n_slaves));
+                              static_cast<unsigned int>(n_variants));
 
-    Engine** slaves = r.alloc<Engine*>(n_slaves);
-    Stop** stops = r.alloc<Stop*>(n_slaves);
+    Engine** variants = r.alloc<Engine*>(n_variants);
+    Stop** stops = r.alloc<Stop*>(n_variants);
 
-    for (int i=0; i<n_slaves; i++) {
-      // Re-configure slave options
+    for (int i=0; i<n_variants; i++) {
+      // Re-configure variant options
       stops[i] = Par::pbsstop(sebs[i]->options().stop);
       sebs[i]->options().stop  = stops[i];
       sebs[i]->options().clone = false;
-      Space* slave = (i == n_slaves-1) ?
-        master : master->clone();
-      (void) slave->slave(static_cast<unsigned int>(i));
-      slaves[i] = (*sebs[i])(slave);
+      Space* variant = (i == n_variants-1) ?
+        origin : origin->clone();
+      (void) variant->variant(static_cast<unsigned int>(i));
+      variants[i] = (*sebs[i])(variant);
       delete sebs[i];
     }
     // Delete excess builders
-    for (int i=n_slaves; i<sebs.size(); i++)
+    for (int i=n_variants; i<sebs.size(); i++)
       delete sebs[i];
 
-    return Par::pbsengine(slaves,stops,static_cast<unsigned int>(n_slaves),
+    return Par::pbsengine(variants,stops,static_cast<unsigned int>(n_variants),
                           stat,best);
   }
 
@@ -239,26 +239,26 @@ namespace Gecode {
     }
 
     // Check whether a clone must be used
-    T* master = opt.clone ?
+    T* origin = opt.clone ?
       dynamic_cast<T*>(s->clone()) : s;
     opt.clone = false;
 
-    // Always execute master function
-    (void) master->master(0);
+    // Always execute origin function
+    (void) origin->origin(0);
 
-    // No need to create a portfolio engine but must run slave function
+    // No need to create a portfolio engine but must run variant function
     if (o.assets == 1) {
-      (void) master->slave(0);
-      e = Search::build<T,E>(master,opt);
+      (void) origin->variant(0);
+      e = Search::build<T,E>(origin,opt);
       return;
     }
 
 #ifdef GECODE_HAS_THREADS
     if (opt.threads > 1.0)
-      e = Search::pbspar<T,E>(master,stat,opt);
+      e = Search::pbspar<T,E>(origin,stat,opt);
     else
 #endif
-      e = Search::pbsseq<T,E>(master,stat,opt);
+      e = Search::pbsseq<T,E>(origin,stat,opt);
   }
 
   template<class T, template<class> class E>
@@ -287,19 +287,19 @@ namespace Gecode {
     }
 
     // Check whether a clone must be used
-    T* master = opt.clone ?
+    T* origin = opt.clone ?
       dynamic_cast<T*>(s->clone()) : s;
     opt.clone = false;
 
-    // Always execute master function
-    (void) master->master(0);
+    // Always execute origin function
+    (void) origin->origin(0);
 
 #ifdef GECODE_HAS_THREADS
     if (opt.threads > 1.0)
-      e = Search::pbspar<T,E>(master,sebs,stat,opt,best);
+      e = Search::pbspar<T,E>(origin,sebs,stat,opt,best);
     else
 #endif
-      e = Search::pbsseq<T,E>(master,sebs,stat,opt,best);
+      e = Search::pbsseq<T,E>(origin,sebs,stat,opt,best);
   }
 
   template<class T, template<class> class E>

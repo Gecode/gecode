@@ -44,7 +44,7 @@ namespace Gecode { namespace Search { namespace Seq {
 
   /// Create restart engine
   GECODE_SEARCH_EXPORT Engine*
-  rbsengine(Space* master, Stop* stop, Engine* slave,
+  rbsengine(Space* origin, Stop* stop, Engine* variant,
             const Search::Statistics& stat, const Options& opt,
             bool best);
 
@@ -95,12 +95,12 @@ namespace Gecode {
         delete s;
       e = Search::Seq::dead(e_opt, stat);
     } else {
-      Space* master = m_opt.clone ? s->clone() : s;
-      Space* slave  = master->clone();
+      Space* origin = m_opt.clone ? s->clone() : s;
+      Space* variant = origin->clone();
       MetaInfo mi(0,MetaInfo::RR_INIT,0,0,nullptr,NoGoods::eng);
-      slave->slave(mi);
-      e = Search::Seq::rbsengine(master,e_opt.stop,
-                                 Search::build<T,E>(slave,e_opt),
+      variant->variant(mi);
+      e = Search::Seq::rbsengine(origin,e_opt.stop,
+                                 Search::build<T,E>(variant,e_opt),
                                  stat,m_opt,E<T>::best);
     }
   }
