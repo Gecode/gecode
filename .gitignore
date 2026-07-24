@@ -111,5 +111,6 @@ test/test
 # Ignore build tree outputs (version metadata lives in top-level
 # gecode-version.m4).
 build/
+/results/
 CMakeUserPresets.json
 CMakePresets.json.user

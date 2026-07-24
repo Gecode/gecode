@@ -1399,6 +1399,13 @@ if(BUILD_TESTING)
       list(APPEND GECODE_TEST_LINK_LIBS gecodeflatzinc)
     endif()
     target_link_libraries(gecode-test PRIVATE ${GECODE_TEST_LINK_LIBS})
+    if(GECODE_ENABLE_THREAD)
+      add_executable(gecode-worker-control-benchmark EXCLUDE_FROM_ALL
+        test/benchmark-worker-control.cpp)
+      target_compile_features(gecode-worker-control-benchmark PRIVATE cxx_std_17)
+      target_link_libraries(gecode-worker-control-benchmark
+        PRIVATE gecodeminimodel)
+    endif()
     if(GECODE_ENABLE_FAULT_INJECTION)
       add_executable(gecode-fault-test EXCLUDE_FROM_ALL
         ${GECODE_FAULT_TEST_SOURCES})
