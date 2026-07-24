@@ -180,6 +180,6 @@ grow latency reflects waking already resident workers. Peak RSS is a
 process-level comparison and not an exact per-thread stack-reservation
 measurement.
 
-The automated result is **provisional pass**. The human release decision
-remains pending until these results and their platform-specific limitations
-have been reviewed.
+The automated result is **provisional pass**. After reviewing these results
+and their platform-specific limitations, the user accepted the feature for
+Gecode 7 release on 2026-07-24.
