@@ -37,6 +37,7 @@
 
 #include <gecode/minimodel.hh>
 #include <gecode/search.hh>
+#include <gecode/search/worker-control.hh>
 
 #include "test/test.hh"
 
@@ -356,8 +357,38 @@ namespace Test {
         ERRORS,
         BINDING,
         CONCURRENT,
-        COMPATIBILITY
+        COMPATIBILITY,
+        DFS_RESIZE_ENUMERATION,
+        DFS_RESIZE_LIFECYCLE
       } scenario;
+
+      /// Stable finite tree used by the DFS resizing tests
+      class ResizeSpace : public Gecode::Space {
+      public:
+        Gecode::BoolVarArray x;
+
+        ResizeSpace(void)
+          : x(*this,12,0,1) {
+          Gecode::branch(*this,x,Gecode::BOOL_VAR_NONE(),
+                         Gecode::BOOL_VAL_MIN());
+        }
+
+        ResizeSpace(ResizeSpace& s)
+          : Gecode::Space(s) {
+          x.update(*this,s.x);
+        }
+
+        virtual Gecode::Space* copy(void) {
+          return new ResizeSpace(*this);
+        }
+
+        unsigned int id(void) const {
+          unsigned int result = 0U;
+          for (int i=0; i<x.size(); i++)
+            result = (result << 1) | static_cast<unsigned int>(x[i].val());
+          return result;
+        }
+      };
 
       template<class Exception, class Function>
       static bool throws(Function function) {
@@ -574,6 +605,140 @@ namespace Test {
           bab_best(empty) && bab_best(bab_control);
       }
 
+      static bool resized_enumeration(void) {
+#ifdef GECODE_HAS_THREADS
+        Gecode::Search::WorkerControl control(4U);
+        Gecode::Search::Options o;
+        o.threads = 4.0;
+        o.worker_control = control;
+        ResizeSpace* root = new ResizeSpace;
+        Gecode::DFS<ResizeSpace> dfs(root,o);
+        delete root;
+
+        std::atomic<unsigned int> solutions(0U);
+        std::atomic<bool> controller_ok(true);
+        std::thread controller([&] {
+          const unsigned int limits[] = {1U,3U,1U,4U};
+          const unsigned int milestones[] = {1U,64U,128U,192U};
+          for (unsigned int i=0U; i<4U; i++) {
+            while (solutions.load(std::memory_order_acquire) <
+                   milestones[i])
+              std::this_thread::yield();
+            if (i == 0U) {
+              bool multiple_owners = false;
+              for (unsigned int spin=0U; spin<10000000U; spin++) {
+                if (Gecode::Search::WorkerControlAccess::owners(control) >=
+                    2U) {
+                  multiple_owners = true;
+                  break;
+                }
+                std::this_thread::yield();
+              }
+              if (!multiple_owners) {
+                controller_ok.store(false,std::memory_order_release);
+                return;
+              }
+            }
+            unsigned long long int handoffs =
+              Gecode::Search::WorkerControlAccess::handoffs(control);
+            try {
+              control.request(limits[i]);
+            } catch (...) {
+              controller_ok.store(false,std::memory_order_release);
+              return;
+            }
+            unsigned long long int generation =
+              Gecode::Search::WorkerControlAccess::generation(control);
+            bool converged = false;
+            for (unsigned int spin=0U; spin<10000000U; spin++) {
+              if ((Gecode::Search::WorkerControlAccess::
+                   observed_generation(control) == generation) &&
+                  (Gecode::Search::WorkerControlAccess::leases(control) <=
+                   limits[i]) &&
+                  (Gecode::Search::WorkerControlAccess::parked(control) >=
+                   4U-limits[i]) &&
+                  ((i != 0U) ||
+                   (Gecode::Search::WorkerControlAccess::
+                    parked_owners(control) > 0U))) {
+                converged = true;
+                break;
+              }
+              std::this_thread::yield();
+            }
+            if (!converged) {
+              controller_ok.store(false,std::memory_order_release);
+              return;
+            }
+            if (i == 0U) {
+              bool handed_off = false;
+              for (unsigned int spin=0U; spin<50000000U; spin++) {
+                if (Gecode::Search::WorkerControlAccess::handoffs(control) >
+                    handoffs) {
+                  handed_off = true;
+                  break;
+                }
+                std::this_thread::yield();
+              }
+              if (!handed_off) {
+                controller_ok.store(false,std::memory_order_release);
+                return;
+              }
+            }
+          }
+        });
+
+        std::vector<unsigned int> counts(1U << 12,0U);
+        while (ResizeSpace* solution = dfs.next()) {
+          counts[solution->id()]++;
+          delete solution;
+          (void) solutions.fetch_add(1U,std::memory_order_release);
+        }
+        controller.join();
+        if (!controller_ok.load(std::memory_order_acquire) ||
+            (solutions.load(std::memory_order_acquire) != counts.size()))
+          return false;
+        for (unsigned int count : counts)
+          if (count != 1U)
+            return false;
+#endif
+        return true;
+      }
+
+      static bool resize_lifecycle(void) {
+#ifdef GECODE_HAS_THREADS
+        Gecode::Search::WorkerControl control(1U);
+        Gecode::Search::NodeStop stop(10U);
+        Gecode::Search::Options o;
+        o.threads = 4.0;
+        o.nogoods_limit = 16U;
+        o.stop = &stop;
+        o.worker_control = control;
+        ResizeSpace* root = new ResizeSpace;
+        Gecode::Search::Engine* dfs =
+          Gecode::Search::dfsengine(root,o);
+        delete root;
+
+        ResizeSpace* solution = static_cast<ResizeSpace*>(dfs->next());
+        bool ok = (solution == nullptr) && dfs->stopped() &&
+          (dfs->statistics().node > 0U);
+        delete solution;
+        (void) dfs->nogoods();
+
+        control.request(3U);
+        root = new ResizeSpace;
+        dfs->reset(root);
+        control.request(1U);
+        stop.limit(100000U);
+        solution = static_cast<ResizeSpace*>(dfs->next());
+        ok = ok && (solution != nullptr);
+        delete solution;
+        delete dfs;
+        return ok;
+#else
+        return true;
+#endif
+      }
+
     public:
       WorkerControl(const std::string& name, Scenario s)
         : Base("Search::WorkerControl::"+name), scenario(s) {}
@@ -585,6 +750,8 @@ namespace Test {
         case BINDING:       return binding();
         case CONCURRENT:    return concurrent();
         case COMPATIBILITY: return compatibility();
+        case DFS_RESIZE_ENUMERATION: return resized_enumeration();
+        case DFS_RESIZE_LIFECYCLE:   return resize_lifecycle();
         default:            GECODE_NEVER;
         }
         return false;
@@ -596,6 +763,10 @@ namespace Test {
         (void) new WorkerControl("Binding",BINDING);
         (void) new WorkerControl("Concurrent",CONCURRENT);
         (void) new WorkerControl("Compatibility",COMPATIBILITY);
+        (void) new WorkerControl("DFSResize::Enumeration",
+                                 DFS_RESIZE_ENUMERATION);
+        (void) new WorkerControl("DFSResize::Lifecycle",
+                                 DFS_RESIZE_LIFECYCLE);
       }
     };
 

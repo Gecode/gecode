@@ -41,6 +41,7 @@
 #include <gecode/search.hh>
 #include <gecode/search/support.hh>
 #include <gecode/search/worker.hh>
+#include <gecode/search/worker-control.hh>
 #include <gecode/search/par/path.hh>
 #include <atomic>
 
@@ -86,11 +87,56 @@ namespace Gecode { namespace Search { namespace Par {
     };
     /// Search options
     Options _opt;
+    /// Logical worker state used by adjustable DFS admission
+    enum SchedulerLogical {
+      SL_OWNER,
+      SL_PENDING,
+      SL_IDLE
+    };
+    /// Per-worker adjustable DFS admission state
+    struct SchedulerWorker {
+      bool lease;
+      bool parked;
+      SchedulerLogical logical;
+    };
+    /// Whether adjustable DFS admission is enabled
+    bool scheduler_enabled;
+    /// Mutex for adjustable DFS admission
+    Support::Mutex scheduler_mutex;
+    /// Per-worker adjustable DFS admission state
+    SchedulerWorker* scheduler_worker;
+    /// Current requested lease count
+    unsigned int scheduler_requested;
+    /// Current lease count
+    unsigned int scheduler_leases;
+    /// Round-robin cursor for lease handoff
+    unsigned int scheduler_cursor;
+    /// Last request generation reconciled by the scheduler
+    std::atomic<unsigned long long int> scheduler_generation;
+    /// Select a no-lease worker by logical state
+    unsigned int scheduler_select(SchedulerLogical logical,
+                                  unsigned int exclude) const;
+    /// Grant leases up to the current request
+    bool scheduler_grow(void);
+    /// Publish scheduler state for focused tests
+    void scheduler_observe(void);
   public:
     /// Provide access to search options
     const Options& opt(void) const;
     /// Return number of workers
     unsigned int workers(void) const;
+    /// Enable adjustable DFS admission
+    void scheduler_enable(bool root_owner);
+    /// Reset adjustable DFS state while all workers are blocked
+    void scheduler_reset(bool root_owner);
+    /// Admit worker \a worker for one DFS exploration action
+    bool scheduler_admit(unsigned int worker);
+    /// Record that worker \a worker owns search
+    void scheduler_owner(unsigned int worker);
+    /// Record that worker \a worker is idle
+    void scheduler_idle(unsigned int worker);
+    /// Hand worker \a worker's lease to a parked logical worker
+    void scheduler_handoff(unsigned int worker, bool work_remains);
 
     /// \name Commands from engine to workers and wait management
     //@{
@@ -187,6 +233,8 @@ namespace Gecode { namespace Search { namespace Par {
     void busy(void);
     /// Report that worker has been stopped
     void stop(void);
+    /// Whether logical search work remains
+    bool work_remains(void);
     //@}
 
     /// \name Engine interface
