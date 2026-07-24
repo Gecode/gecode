@@ -486,6 +486,9 @@ namespace Gecode { namespace Search { namespace Par {
   Engine<Tracer>::terminate(void) {
     // Grab the wait mutex for termination
     _m_wait_terminate.acquire();
+    // Test gates must not keep a worker from observing termination
+    WorkerControlAccess::gate_release_all(
+      _opt.worker_control,WorkerControlAccess::GATE_ACTION_BEGIN);
     // Release all threads
     release(C_TERMINATE);
     // Wait until all threads have acknowledged termination request

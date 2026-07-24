@@ -33,8 +33,6 @@
 #ifndef GECODE_SEARCH_WORKER_CONTROL_HH
 #define GECODE_SEARCH_WORKER_CONTROL_HH
 
-#include <gecode/search.hh>
-
 namespace Gecode { namespace Search {
 
   /// Private access to worker-control attachment state
@@ -45,6 +43,7 @@ namespace Gecode { namespace Search {
       GATE_ADMISSION,
       GATE_EVENT_WAIT,
       GATE_FAILED_SCAN,
+      GATE_ACTION_BEGIN,
       GATE_COUNT
     };
     /// Select every worker for a test boundary gate
@@ -57,6 +56,11 @@ namespace Gecode { namespace Search {
     static unsigned long long int generation(const WorkerControl& control);
     /// Return whether \a control is engaged
     static bool engaged(const WorkerControl& control);
+    /// Return whether \a control is currently attached to a leaf engine
+    static bool attached(const WorkerControl& control);
+    /// Return whether \a x and \a y share one control identity
+    static bool same_identity(const WorkerControl& x,
+                              const WorkerControl& y);
     /// Return the current request
     static unsigned int requested(const WorkerControl& control);
     /// Return a consistent request and generation snapshot
