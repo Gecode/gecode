@@ -38,7 +38,7 @@
 namespace Gecode { namespace Search {
 
   /// Private access to worker-control attachment state
-  class WorkerControlAccess {
+  class GECODE_SEARCH_EXPORT WorkerControlAccess {
   public:
     /// Attach \a control to a leaf engine with fixed \a capacity
     static void attach(WorkerControl& control, unsigned int capacity);
@@ -46,6 +46,39 @@ namespace Gecode { namespace Search {
     static void detach(WorkerControl& control);
     /// Return the request generation
     static unsigned long long int generation(const WorkerControl& control);
+    /// Return whether \a control is engaged
+    static bool engaged(const WorkerControl& control);
+    /// Return the current request
+    static unsigned int requested(const WorkerControl& control);
+    /// Return a consistent request and generation snapshot
+    static void snapshot(const WorkerControl& control, unsigned int& requested,
+                         unsigned long long int& generation);
+    /// Wait for the event belonging to worker \a worker
+    static void wait(WorkerControl& control, unsigned int worker);
+    /// Signal the event belonging to worker \a worker
+    static void signal(WorkerControl& control, unsigned int worker);
+    /// Signal every worker event
+    static void signal_all(WorkerControl& control);
+    /// Publish an internal scheduler snapshot
+    static void observe(WorkerControl& control,
+                        unsigned long long int generation,
+                        unsigned int leases, unsigned int parked,
+                        unsigned int owners, unsigned int parked_owners);
+    /// Record an internal scheduler handoff
+    static void handoff(WorkerControl& control);
+    /// Return the scheduler's observed request generation
+    static unsigned long long int observed_generation(
+      const WorkerControl& control);
+    /// Return the observed execution lease count
+    static unsigned int leases(const WorkerControl& control);
+    /// Return the observed parked worker count
+    static unsigned int parked(const WorkerControl& control);
+    /// Return the observed logical owner count
+    static unsigned int owners(const WorkerControl& control);
+    /// Return the observed parked logical owner count
+    static unsigned int parked_owners(const WorkerControl& control);
+    /// Return the observed lease handoff count
+    static unsigned long long int handoffs(const WorkerControl& control);
   };
 
 }}

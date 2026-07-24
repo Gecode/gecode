@@ -53,8 +53,8 @@ namespace Gecode { namespace Search { namespace Par {
    */
   template<class Tracer>
   forceinline
-  DFS<Tracer>::Worker::Worker(Space* s, DFS& e)
-    : Engine<Tracer>::Worker(s,e) {}
+  DFS<Tracer>::Worker::Worker(Space* s, DFS& e, unsigned int index0)
+    : Engine<Tracer>::Worker(s,e), index(index0) {}
   template<class Tracer>
   forceinline
   DFS<Tracer>::DFS(Space* s, const Options& o)
@@ -65,10 +65,11 @@ namespace Gecode { namespace Search { namespace Par {
     _worker = static_cast<Worker**>
       (heap.ralloc(workers() * sizeof(Worker*)));
     // The first worker gets the entire search tree
-    _worker[0] = new Worker(s,*this);
+    _worker[0] = new Worker(s,*this,0U);
     // All other workers start with no work
     for (unsigned int i=1; i<workers(); i++)
-      _worker[i] = new Worker(nullptr,*this);
+      _worker[i] = new Worker(nullptr,*this,i);
+    this->scheduler_enable(_worker[0]->owns_work());
     // Block all workers
     block();
     // Create and start threads
@@ -97,6 +98,12 @@ namespace Gecode { namespace Search { namespace Par {
     Search::Worker::reset();
   }
 
+  template<class Tracer>
+  forceinline bool
+  DFS<Tracer>::Worker::owns_work(void) const {
+    return (cur != nullptr) || !path.empty();
+  }
+
 
   /*
    * Engine: search control
@@ -118,7 +125,7 @@ namespace Gecode { namespace Search { namespace Par {
    * Worker: finding and stealing working
    */
   template<class Tracer>
-  forceinline void
+  forceinline bool
   DFS<Tracer>::Worker::find(void) {
     // Try to find new work (even if there is none)
     for (unsigned int i=0U; i<engine().workers(); i++) {
@@ -136,9 +143,11 @@ namespace Gecode { namespace Search { namespace Par {
         Search::Worker::reset(r_d);
         (*this) += t;
         m.release();
-        return;
+        engine().scheduler_owner(index);
+        return true;
       }
     }
+    return false;
   }
 
   /*
@@ -199,11 +208,15 @@ namespace Gecode { namespace Search { namespace Par {
       case C_WORK:
         // Perform exploration work
         {
+          if (!engine().scheduler_admit(index))
+            break;
           m.acquire();
           if (idle) {
             m.release();
             // Try to find new work
-            find();
+            if (!find()) {
+              engine().scheduler_handoff(index,engine().work_remains());
+            }
           } else if (cur != nullptr) {
             start();
             if (stop(engine().opt())) {
@@ -289,6 +302,8 @@ namespace Gecode { namespace Search { namespace Par {
             m.release();
             // Report that worker is idle
             engine().idle();
+            engine().scheduler_idle(index);
+            engine().scheduler_handoff(index,engine().work_remains());
           }
         }
         break;
@@ -323,6 +338,7 @@ namespace Gecode { namespace Search { namespace Par {
     m_wait_reset.release();
     // Wait for reset cycle stopped
     e_reset_ack_stop.wait();
+    this->scheduler_reset(worker(0U)->owns_work());
   }
 
 

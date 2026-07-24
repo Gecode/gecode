@@ -82,6 +82,9 @@ namespace Gecode { namespace Search { namespace Par {
   forceinline void
   Engine<Tracer>::release(Cmd c) {
     _cmd.store(c, std::memory_order_release);
+    if (scheduler_enabled && ((c == C_WORK) || (c == C_RESET) ||
+                              (c == C_TERMINATE)))
+      WorkerControlAccess::signal_all(worker_control);
     Support::Thread::releaseGlobalMutex(&_m_wait);
   }
   template<class Tracer>
@@ -119,7 +122,10 @@ namespace Gecode { namespace Search { namespace Par {
   forceinline
   Engine<Tracer>::Engine(const Options& o)
     : Search::Engine(o,static_cast<unsigned int>(o.threads)),
-      _opt(o), _cmd(C_WAIT), solutions(heap) {
+      _opt(o), scheduler_enabled(false),
+      scheduler_worker(nullptr), scheduler_requested(workers()),
+      scheduler_leases(0U), scheduler_cursor(0U), scheduler_generation(0U),
+      _cmd(C_WAIT), solutions(heap) {
     // Initialize termination information
     _n_term_not_ack = workers();
     _n_not_terminated = workers();
@@ -130,6 +136,209 @@ namespace Gecode { namespace Search { namespace Par {
     _n_reset_not_ack = workers();
   }
 
+  template<class Tracer>
+  unsigned int
+  Engine<Tracer>::scheduler_select(SchedulerLogical logical,
+                                    unsigned int exclude) const {
+    for (unsigned int offset=0U; offset<workers(); offset++) {
+      unsigned int i = (scheduler_cursor + offset) % workers();
+      if ((i != exclude) && !scheduler_worker[i].lease &&
+          scheduler_worker[i].parked &&
+          (scheduler_worker[i].logical == logical))
+        return i;
+    }
+    return workers();
+  }
+
+  template<class Tracer>
+  bool
+  Engine<Tracer>::scheduler_grow(void) {
+    bool wake = false;
+    while (scheduler_leases < scheduler_requested) {
+      unsigned int i = scheduler_select(SL_OWNER,workers());
+      if (i == workers())
+        i = scheduler_select(SL_PENDING,workers());
+      if (i == workers())
+        i = scheduler_select(SL_IDLE,workers());
+      if (i == workers()) {
+        for (i=0U; i<workers(); i++)
+          if (!scheduler_worker[i].lease)
+            break;
+      }
+      if (i == workers())
+        break;
+      scheduler_worker[i].lease = true;
+      scheduler_worker[i].parked = false;
+      scheduler_leases++;
+      scheduler_cursor = (i+1U) % workers();
+      wake = true;
+    }
+    return wake;
+  }
+
+  template<class Tracer>
+  void
+  Engine<Tracer>::scheduler_observe(void) {
+    unsigned int parked = 0U;
+    unsigned int owners = 0U;
+    unsigned int parked_owners = 0U;
+    for (unsigned int i=0U; i<workers(); i++) {
+      if (scheduler_worker[i].parked)
+        parked++;
+      if (scheduler_worker[i].logical == SL_OWNER) {
+        owners++;
+        if (scheduler_worker[i].parked)
+          parked_owners++;
+      }
+    }
+    WorkerControlAccess::observe(
+      worker_control,
+      scheduler_generation.load(std::memory_order_relaxed),
+      scheduler_leases,parked,owners,parked_owners);
+  }
+
+  template<class Tracer>
+  void
+  Engine<Tracer>::scheduler_enable(bool root_owner) {
+    if (!WorkerControlAccess::engaged(worker_control))
+      return;
+    scheduler_worker = static_cast<SchedulerWorker*>
+      (heap.ralloc(workers() * sizeof(SchedulerWorker)));
+    unsigned long long int generation;
+    WorkerControlAccess::snapshot(
+      worker_control,scheduler_requested,generation);
+    scheduler_leases = scheduler_requested;
+    for (unsigned int i=0U; i<workers(); i++) {
+      scheduler_worker[i].lease = i < scheduler_requested;
+      scheduler_worker[i].parked = false;
+      scheduler_worker[i].logical =
+        ((i == 0U) && root_owner) ? SL_OWNER : SL_PENDING;
+    }
+    scheduler_generation.store(generation,std::memory_order_release);
+    scheduler_observe();
+    scheduler_enabled = true;
+  }
+
+  template<class Tracer>
+  void
+  Engine<Tracer>::scheduler_reset(bool root_owner) {
+    if (!scheduler_enabled)
+      return;
+    unsigned int requested;
+    unsigned long long int generation;
+    WorkerControlAccess::snapshot(worker_control,requested,generation);
+    scheduler_mutex.acquire();
+    scheduler_requested = requested;
+    scheduler_leases = scheduler_requested;
+    scheduler_cursor = 0U;
+    for (unsigned int i=0U; i<workers(); i++) {
+      scheduler_worker[i].lease = i < scheduler_requested;
+      scheduler_worker[i].parked = false;
+      scheduler_worker[i].logical =
+        ((i == 0U) && root_owner) ? SL_OWNER : SL_PENDING;
+    }
+    scheduler_generation.store(generation,std::memory_order_release);
+    scheduler_observe();
+    scheduler_mutex.release();
+  }
+
+  template<class Tracer>
+  bool
+  Engine<Tracer>::scheduler_admit(unsigned int worker) {
+    if (!scheduler_enabled)
+      return true;
+    while (cmd() == C_WORK) {
+      unsigned long long int generation =
+        WorkerControlAccess::generation(worker_control);
+      if ((generation ==
+           scheduler_generation.load(std::memory_order_acquire)) &&
+          (WorkerControlAccess::requested(worker_control) == workers()))
+        return true;
+
+      bool wake;
+      bool admitted;
+      unsigned int requested;
+      WorkerControlAccess::snapshot(worker_control,requested,generation);
+      scheduler_mutex.acquire();
+      if (generation >
+          scheduler_generation.load(std::memory_order_relaxed)) {
+        scheduler_requested = requested;
+        scheduler_generation.store(generation,std::memory_order_release);
+      }
+      wake = scheduler_grow();
+      if (scheduler_worker[worker].lease &&
+          (scheduler_leases > scheduler_requested)) {
+        scheduler_worker[worker].lease = false;
+        scheduler_leases--;
+      }
+      admitted = scheduler_worker[worker].lease;
+      scheduler_worker[worker].parked = !admitted;
+      scheduler_observe();
+      scheduler_mutex.release();
+
+      if (wake)
+        WorkerControlAccess::signal_all(worker_control);
+      if (admitted)
+        return true;
+      WorkerControlAccess::wait(worker_control,worker);
+    }
+    return false;
+  }
+
+  template<class Tracer>
+  void
+  Engine<Tracer>::scheduler_owner(unsigned int worker) {
+    if (!scheduler_enabled)
+      return;
+    scheduler_mutex.acquire();
+    scheduler_worker[worker].logical = SL_OWNER;
+    scheduler_observe();
+    scheduler_mutex.release();
+  }
+
+  template<class Tracer>
+  void
+  Engine<Tracer>::scheduler_idle(unsigned int worker) {
+    if (!scheduler_enabled)
+      return;
+    scheduler_mutex.acquire();
+    scheduler_worker[worker].logical = SL_IDLE;
+    scheduler_observe();
+    scheduler_mutex.release();
+  }
+
+  template<class Tracer>
+  void
+  Engine<Tracer>::scheduler_handoff(unsigned int worker,
+                                    bool work_remains) {
+    if (!scheduler_enabled)
+      return;
+    unsigned int target = workers();
+    scheduler_mutex.acquire();
+    if (scheduler_worker[worker].lease) {
+      if (scheduler_leases > scheduler_requested) {
+        scheduler_worker[worker].lease = false;
+        scheduler_worker[worker].parked = true;
+        scheduler_leases--;
+      } else if (work_remains) {
+        target = scheduler_select(SL_OWNER,worker);
+        if (target == workers())
+          target = scheduler_select(SL_PENDING,worker);
+        if (target != workers()) {
+          scheduler_worker[worker].lease = false;
+          scheduler_worker[worker].parked = true;
+          scheduler_worker[target].lease = true;
+          scheduler_worker[target].parked = false;
+          scheduler_cursor = (target+1U) % workers();
+          WorkerControlAccess::handoff(worker_control);
+        }
+      }
+    }
+    scheduler_observe();
+    scheduler_mutex.release();
+    if (target != workers())
+      WorkerControlAccess::signal(worker_control,target);
+  }
 
   /*
    * Statistics
@@ -182,6 +391,15 @@ namespace Gecode { namespace Search { namespace Par {
     if (bs)
       e_search.signal();
     m_search.release();
+  }
+
+  template<class Tracer>
+  forceinline bool
+  Engine<Tracer>::work_remains(void) {
+    m_search.acquire();
+    bool remains = n_busy > 0;
+    m_search.release();
+    return remains;
   }
 
 
@@ -372,6 +590,8 @@ namespace Gecode { namespace Search { namespace Par {
   Engine<Tracer>::~Engine(void) {
     while (!solutions.empty())
       delete solutions.pop();
+    if (scheduler_worker != nullptr)
+      heap.rfree(scheduler_worker);
   }
 
 }}}
