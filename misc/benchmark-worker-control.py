@@ -220,7 +220,7 @@ def build_cases(args: argparse.Namespace, binary: pathlib.Path) -> list[Case]:
                 "control",
                 "baseline",
             )
-            for workload, iterations in (("overhead-dfs", 1), ("overhead-bab", 8)):
+            for workload, iterations in (("overhead-dfs", 8), ("overhead-bab", 8)):
                 for variant in order:
                     cases.append(
                         make_case(
