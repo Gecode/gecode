@@ -827,6 +827,8 @@ namespace Gecode { namespace Search {
 
 }}
 
+#include <gecode/search/worker-control.hh>
+
 #include <gecode/search/options.hpp>
 
 namespace Gecode { namespace Search {
@@ -1316,6 +1318,10 @@ namespace Gecode {
    * The engine will run a portfolio with a number of assets as defined
    * by the options \a o. The engine supports parallel execution of
    * assets by using the number of threads as defined by the options.
+   * An external worker control in \a o is supported only for a single
+   * homogeneous asset. Multiple controlled assets require explicit engine
+   * builders, each with its own control and immutable worker capacity.
+   * PBS does not allocate workers or adjust those controls.
    *
    * The class \a T can implement member functions
    * \code virtual bool master(const MetaInfo& mi) \endcode
@@ -1336,8 +1342,15 @@ namespace Gecode {
   public:
     /// Initialize with engines running copies of \a s with options \a o
     PBS(T* s, const Search::Options& o=Search::Options::def);
-    /// Initialize with engine builders \a sebs
+    /**
+     * Initialize with engine builders \a sebs
+     *
+     * The outer options must not contain a worker control. Each builder can
+     * instead supply a distinct control for its underlying engine.
+     */
     PBS(T* s, SEBs& sebs, const Search::Options& o=Search::Options::def);
+    /// Constrain future portfolio solutions to be better than \a b
+    void constrain(const T& b);
     /// Whether engine does best solution search
     static const bool best = E<T>::best;
   };
@@ -1348,6 +1361,8 @@ namespace Gecode {
    * The engine will run a portfolio with a number of assets as defined
    * by the options \a o. The engine supports parallel execution of
    * assets by using the number of threads as defined by the options.
+   * An external worker control is supported only when \a o selects one
+   * asset. PBS does not implement worker-allocation policy.
    *
    * The class \a T can implement member functions
    * \code virtual bool master(const MetaInfo& mi) \endcode

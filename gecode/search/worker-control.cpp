@@ -30,6 +30,7 @@
  *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+#include <gecode/search.hh>
 #include <gecode/search/worker-control.hh>
 
 namespace Gecode { namespace Search {
@@ -268,6 +269,20 @@ namespace Gecode { namespace Search {
   bool
   WorkerControlAccess::engaged(const WorkerControl& control) {
     return control.state != nullptr;
+  }
+
+  bool
+  WorkerControlAccess::attached(const WorkerControl& control) {
+    if (control.state == nullptr)
+      return false;
+    Support::Lock lock(control.state->mutex);
+    return control.state->lifecycle == WorkerControl::State::ATTACHED;
+  }
+
+  bool
+  WorkerControlAccess::same_identity(const WorkerControl& x,
+                                     const WorkerControl& y) {
+    return x.state == y.state;
   }
 
   unsigned int
@@ -571,21 +586,27 @@ namespace Gecode { namespace Search {
                                               std::memory_order_release);
     unsigned int current =
       support->admitted.fetch_add(1U,std::memory_order_acq_rel) + 1U;
+    bool measured_action = true;
     {
       Support::Lock lock(state->mutex);
       unsigned long long int measured =
         support->measured_generation.load(std::memory_order_relaxed);
       if (measured != 0U) {
         if (action_generation != measured)
-          return;
-        current = support->generation_admitted.fetch_add(
-          1U,std::memory_order_relaxed) + 1U;
+          measured_action = false;
+        else
+          current = support->generation_admitted.fetch_add(
+            1U,std::memory_order_relaxed) + 1U;
       }
-      unsigned int maximum =
-        support->max_admitted.load(std::memory_order_relaxed);
-      if (maximum < current)
-        support->max_admitted.store(current,std::memory_order_release);
+      if (measured_action) {
+        unsigned int maximum =
+          support->max_admitted.load(std::memory_order_relaxed);
+        if (maximum < current)
+          support->max_admitted.store(current,std::memory_order_release);
+      }
     }
+    if (measured_action)
+      WorkerControlAccess::gate(control,GATE_ACTION_BEGIN,worker);
   }
 
   void
