@@ -153,3 +153,33 @@ measurements are reported rather than assigned universal limits: acceptable
 values depend on propagation granularity, platform, stack configuration, and
 the portfolio's reallocation timescale. A human release decision is required
 after reviewing the retained results.
+
+### Retained Gecode 7 measurement
+
+The retained `worker-control-release-20260724-final` run at commit
+`6e2e8a707771bf540b03c809cf3422d4d006b49b` executed 590 child cases on
+Apple Silicon with Apple Clang 21.0.0:
+
+| Measurement | Result |
+| --- | ---: |
+| DFS fixed-capacity median overhead; bootstrap 95% CI | -0.896%; [-3.873%, 3.885%] |
+| BAB fixed-capacity median overhead; bootstrap 95% CI | -0.045%; [-0.224%, 0.129%] |
+| Cheap grow latency, p50 / p95 | 12.688 µs / 17.966 µs |
+| Propagation-heavy grow latency, p50 / p95 | 12.500 µs / 19.664 µs |
+| Cheap shrink latency, p50 / p95 | 7.488 ms / 7.532 ms |
+| Propagation-heavy shrink latency, p50 / p95 | 7.493 ms / 7.518 ms |
+| Median peak-RSS delta, four resident workers with three parked | 368 KiB |
+| Median CPU/wall ratio, one worker / three of four parked | 1.000 / 1.459 |
+| PBS maximum summed admitted high-water mark / budget | 4 / 4 |
+
+Both unchanged-limit overhead gates passed, all child cases completed, and all
+30 PBS samples respected the active-worker bound. Negative point estimates are
+measurement noise, not a claim that the control improves fixed-capacity
+performance. Shrink latency reflects cooperative completion of current work;
+grow latency reflects waking already resident workers. Peak RSS is a
+process-level comparison and not an exact per-thread stack-reservation
+measurement.
+
+The automated result is **provisional pass**. The human release decision
+remains pending until these results and their platform-specific limitations
+have been reviewed.
