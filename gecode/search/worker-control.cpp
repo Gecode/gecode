@@ -42,6 +42,70 @@ namespace Gecode { namespace Search {
       DETACHED
     };
 
+    class TestSupport {
+    public:
+      unsigned int capacity;
+      std::atomic<unsigned long long int>
+        epoch[WorkerControlAccess::GATE_COUNT];
+      std::atomic<unsigned int>
+        worker[WorkerControlAccess::GATE_COUNT];
+      std::atomic<unsigned int>
+        expected[WorkerControlAccess::GATE_COUNT];
+      std::atomic<unsigned int>
+        reached_count[WorkerControlAccess::GATE_COUNT];
+      std::atomic<bool> enabled[WorkerControlAccess::GATE_COUNT];
+      Support::Event reached[WorkerControlAccess::GATE_COUNT];
+      Support::Event* release;
+      std::atomic<unsigned long long int>* seen;
+      std::atomic<bool>* waiting;
+      std::atomic<unsigned int> admitted;
+      std::atomic<unsigned int> max_admitted;
+      std::atomic<unsigned int>* logical;
+      std::atomic<bool>* lease;
+      std::atomic<bool>* parked;
+
+      TestSupport(unsigned int capacity0)
+        : capacity(capacity0),
+          release(new Support::Event
+                  [WorkerControlAccess::GATE_COUNT * capacity]),
+          seen(new std::atomic<unsigned long long int>
+               [WorkerControlAccess::GATE_COUNT * capacity]),
+          waiting(new std::atomic<bool>
+                  [WorkerControlAccess::GATE_COUNT * capacity]),
+          admitted(0U), max_admitted(0U),
+          logical(new std::atomic<unsigned int>[capacity]),
+          lease(new std::atomic<bool>[capacity]),
+          parked(new std::atomic<bool>[capacity]) {
+        for (unsigned int i=0U; i<capacity; i++) {
+          logical[i].store(0U,std::memory_order_relaxed);
+          lease[i].store(false,std::memory_order_relaxed);
+          parked[i].store(false,std::memory_order_relaxed);
+        }
+        for (unsigned int g=0U; g<WorkerControlAccess::GATE_COUNT; g++) {
+          epoch[g].store(0U,std::memory_order_relaxed);
+          worker[g].store(WorkerControlAccess::ALL_WORKERS,
+                          std::memory_order_relaxed);
+          expected[g].store(0U,std::memory_order_relaxed);
+          reached_count[g].store(0U,std::memory_order_relaxed);
+          enabled[g].store(false,std::memory_order_relaxed);
+          for (unsigned int i=0U; i<capacity; i++)
+            {
+              seen[g*capacity+i].store(0U,std::memory_order_relaxed);
+              waiting[g*capacity+i].store(false,std::memory_order_relaxed);
+            }
+        }
+      }
+
+      ~TestSupport(void) {
+        delete [] release;
+        delete [] seen;
+        delete [] waiting;
+        delete [] logical;
+        delete [] lease;
+        delete [] parked;
+      }
+    };
+
     std::atomic<unsigned int> requested;
     std::atomic<unsigned int> capacity;
     std::atomic<unsigned long long int> generation;
@@ -51,6 +115,12 @@ namespace Gecode { namespace Search {
     std::atomic<unsigned int> parked;
     std::atomic<unsigned int> owners;
     std::atomic<unsigned int> parked_owners;
+    std::atomic<unsigned int> last_handoff_from;
+    std::atomic<unsigned int> last_handoff_to;
+    std::atomic<unsigned int> last_solution_worker;
+    std::atomic<unsigned int> solution_handoff_from;
+    std::atomic<unsigned int> solution_handoff_to;
+    std::atomic<TestSupport*> test_support;
     Support::Mutex mutex;
     Lifecycle lifecycle;
     Support::Event* events;
@@ -59,9 +129,16 @@ namespace Gecode { namespace Search {
       : RefCount(1U), requested(workers), capacity(0U), generation(0U),
         observed_generation(0U), handoffs(0U), leases(0U), parked(0U),
         owners(0U), parked_owners(0U),
+        last_handoff_from(WorkerControlAccess::ALL_WORKERS),
+        last_handoff_to(WorkerControlAccess::ALL_WORKERS),
+        last_solution_worker(WorkerControlAccess::ALL_WORKERS),
+        solution_handoff_from(WorkerControlAccess::ALL_WORKERS),
+        solution_handoff_to(WorkerControlAccess::ALL_WORKERS),
+        test_support(nullptr),
         lifecycle(NEVER_BOUND), events(nullptr) {}
     ~State(void) {
       delete [] events;
+      delete test_support.load(std::memory_order_relaxed);
     }
   };
 
@@ -271,9 +348,227 @@ namespace Gecode { namespace Search {
   }
 
   void
-  WorkerControlAccess::handoff(WorkerControl& control) {
-    if (control.state != nullptr)
-      (void) control.state->handoffs.fetch_add(1U,std::memory_order_relaxed);
+  WorkerControlAccess::observe_worker(WorkerControl& control,
+                                     unsigned int worker,
+                                     unsigned int logical,
+                                     bool lease, bool parked) {
+    WorkerControl::State* state = control.state;
+    if (state == nullptr)
+      return;
+    WorkerControl::State::TestSupport* support =
+      state->test_support.load(std::memory_order_acquire);
+    if (support == nullptr)
+      return;
+    assert(worker < support->capacity);
+    support->logical[worker].store(logical,std::memory_order_release);
+    support->lease[worker].store(lease,std::memory_order_release);
+    support->parked[worker].store(parked,std::memory_order_release);
+  }
+
+  void
+  WorkerControlAccess::handoff(WorkerControl& control, unsigned int from,
+                               unsigned int to) {
+    if (control.state == nullptr)
+      return;
+    control.state->last_handoff_from.store(from,std::memory_order_release);
+    control.state->last_handoff_to.store(to,std::memory_order_release);
+    (void) control.state->handoffs.fetch_add(1U,std::memory_order_release);
+  }
+
+  void
+  WorkerControlAccess::solution(WorkerControl& control, unsigned int worker) {
+    if (control.state == nullptr)
+      return;
+    control.state->solution_handoff_from.store(
+      control.state->last_handoff_from.load(std::memory_order_acquire),
+      std::memory_order_release);
+    control.state->solution_handoff_to.store(
+      control.state->last_handoff_to.load(std::memory_order_acquire),
+      std::memory_order_release);
+    control.state->last_solution_worker.store(worker,
+                                               std::memory_order_release);
+  }
+
+  void
+  WorkerControlAccess::gate(WorkerControl& control, Gate gate,
+                            unsigned int worker) {
+    WorkerControl::State* state = control.state;
+    if (state == nullptr)
+      return;
+    WorkerControl::State::TestSupport* support =
+      state->test_support.load(std::memory_order_acquire);
+    if (support == nullptr)
+      return;
+    unsigned int g = static_cast<unsigned int>(gate);
+    if (!support->enabled[g].load(std::memory_order_acquire))
+      return;
+    unsigned int selected =
+      support->worker[g].load(std::memory_order_relaxed);
+    if ((selected != ALL_WORKERS) && (selected != worker))
+      return;
+    unsigned int capacity = support->capacity;
+    if (worker >= capacity)
+      return;
+    unsigned long long int epoch =
+      support->epoch[g].load(std::memory_order_acquire);
+    std::atomic<unsigned long long int>& seen =
+      support->seen[g*capacity+worker];
+    unsigned long long int old = seen.load(std::memory_order_relaxed);
+    while ((old != epoch) &&
+           !seen.compare_exchange_weak(old,epoch,
+                                      std::memory_order_acq_rel,
+                                      std::memory_order_relaxed)) {}
+    if (old == epoch)
+      return;
+    support->waiting[g*capacity+worker].store(true,
+                                              std::memory_order_release);
+    unsigned int reached =
+      support->reached_count[g].fetch_add(1U,
+                                          std::memory_order_acq_rel) + 1U;
+    if (reached == support->expected[g].load(std::memory_order_acquire))
+      support->reached[g].signal();
+    support->release[g*capacity+worker].wait();
+    support->waiting[g*capacity+worker].store(false,
+                                              std::memory_order_release);
+  }
+
+  void
+  WorkerControlAccess::gate_install(WorkerControl& control, Gate gate,
+                                    unsigned int worker,
+                                    unsigned int expected) {
+    WorkerControl::State* state = control.state;
+    if (state == nullptr)
+      return;
+    WorkerControl::State::TestSupport* support;
+    {
+      Support::Lock lock(state->mutex);
+      support = state->test_support.load(std::memory_order_relaxed);
+      if (support == nullptr) {
+        unsigned int capacity =
+          state->capacity.load(std::memory_order_relaxed);
+        support = new WorkerControl::State::TestSupport(capacity);
+        state->test_support.store(support,std::memory_order_release);
+      }
+    }
+    unsigned int capacity = support->capacity;
+    assert((worker == ALL_WORKERS) || (worker < capacity));
+    assert((expected > 0U) && (expected <= capacity));
+    unsigned int g = static_cast<unsigned int>(gate);
+    support->enabled[g].store(false,std::memory_order_release);
+    support->worker[g].store(worker,std::memory_order_relaxed);
+    support->expected[g].store(expected,std::memory_order_relaxed);
+    support->reached_count[g].store(0U,std::memory_order_relaxed);
+    (void) support->epoch[g].fetch_add(1U,std::memory_order_release);
+    support->enabled[g].store(true,std::memory_order_release);
+  }
+
+  void
+  WorkerControlAccess::gate_wait(WorkerControl& control, Gate gate) {
+    if (control.state == nullptr)
+      return;
+    WorkerControl::State::TestSupport* support =
+      control.state->test_support.load(std::memory_order_acquire);
+    assert(support != nullptr);
+    support->reached[static_cast<unsigned int>(gate)].wait();
+  }
+
+  void
+  WorkerControlAccess::gate_release(WorkerControl& control, Gate gate,
+                                    unsigned int worker) {
+    WorkerControl::State* state = control.state;
+    if (state == nullptr)
+      return;
+    WorkerControl::State::TestSupport* support =
+      state->test_support.load(std::memory_order_acquire);
+    assert(support != nullptr);
+    unsigned int capacity = support->capacity;
+    assert(worker < capacity);
+    unsigned int slot =
+      static_cast<unsigned int>(gate)*capacity+worker;
+    if (support->waiting[slot].load(std::memory_order_acquire))
+      support->release[slot].signal();
+  }
+
+  void
+  WorkerControlAccess::gate_release_all(WorkerControl& control, Gate gate) {
+    WorkerControl::State* state = control.state;
+    if (state == nullptr)
+      return;
+    WorkerControl::State::TestSupport* support =
+      state->test_support.load(std::memory_order_acquire);
+    if (support == nullptr)
+      return;
+    unsigned int g = static_cast<unsigned int>(gate);
+    support->enabled[g].store(false,std::memory_order_release);
+    unsigned int capacity = support->capacity;
+    unsigned long long int epoch =
+      support->epoch[g].load(std::memory_order_acquire);
+    for (unsigned int i=0U; i<capacity; i++)
+      if (support->seen[g*capacity+i].load(std::memory_order_acquire) ==
+          epoch &&
+          support->waiting[g*capacity+i].load(std::memory_order_acquire))
+        support->release[g*capacity+i].signal();
+  }
+
+  void
+  WorkerControlAccess::action_begin(WorkerControl& control) {
+    WorkerControl::State* state = control.state;
+    if (state == nullptr)
+      return;
+    WorkerControl::State::TestSupport* support =
+      state->test_support.load(std::memory_order_acquire);
+    if (support == nullptr)
+      return;
+    unsigned int current =
+      support->admitted.fetch_add(1U,std::memory_order_acq_rel) + 1U;
+    unsigned int maximum =
+      support->max_admitted.load(std::memory_order_relaxed);
+    while ((maximum < current) &&
+           !support->max_admitted.compare_exchange_weak(
+             maximum,current,std::memory_order_release,
+             std::memory_order_relaxed)) {}
+  }
+
+  void
+  WorkerControlAccess::action_end(WorkerControl& control) {
+    if (control.state == nullptr)
+      return;
+    WorkerControl::State::TestSupport* support =
+      control.state->test_support.load(std::memory_order_acquire);
+    if (support != nullptr)
+      (void) support->admitted.fetch_sub(1U,std::memory_order_release);
+  }
+
+  void
+  WorkerControlAccess::reset_max_admitted(WorkerControl& control) {
+    if (control.state != nullptr) {
+      WorkerControl::State::TestSupport* support =
+        control.state->test_support.load(std::memory_order_acquire);
+      assert(support != nullptr);
+      unsigned int current =
+        support->admitted.load(std::memory_order_acquire);
+      support->max_admitted.store(current,std::memory_order_release);
+    }
+  }
+
+  unsigned int
+  WorkerControlAccess::admitted(const WorkerControl& control) {
+    if (control.state == nullptr)
+      return 0U;
+    WorkerControl::State::TestSupport* support =
+      control.state->test_support.load(std::memory_order_acquire);
+    return (support == nullptr) ? 0U :
+      support->admitted.load(std::memory_order_acquire);
+  }
+
+  unsigned int
+  WorkerControlAccess::max_admitted(const WorkerControl& control) {
+    if (control.state == nullptr)
+      return 0U;
+    WorkerControl::State::TestSupport* support =
+      control.state->test_support.load(std::memory_order_acquire);
+    return (support == nullptr) ? 0U :
+      support->max_admitted.load(std::memory_order_acquire);
   }
 
   unsigned long long int
@@ -310,6 +605,72 @@ namespace Gecode { namespace Search {
   WorkerControlAccess::handoffs(const WorkerControl& control) {
     return (control.state == nullptr) ? 0U :
       control.state->handoffs.load(std::memory_order_acquire);
+  }
+
+  unsigned int
+  WorkerControlAccess::last_handoff_from(const WorkerControl& control) {
+    return (control.state == nullptr) ? ALL_WORKERS :
+      control.state->last_handoff_from.load(std::memory_order_acquire);
+  }
+
+  unsigned int
+  WorkerControlAccess::last_handoff_to(const WorkerControl& control) {
+    return (control.state == nullptr) ? ALL_WORKERS :
+      control.state->last_handoff_to.load(std::memory_order_acquire);
+  }
+
+  unsigned int
+  WorkerControlAccess::last_solution_worker(const WorkerControl& control) {
+    return (control.state == nullptr) ? ALL_WORKERS :
+      control.state->last_solution_worker.load(std::memory_order_acquire);
+  }
+
+  unsigned int
+  WorkerControlAccess::solution_handoff_from(const WorkerControl& control) {
+    return (control.state == nullptr) ? ALL_WORKERS :
+      control.state->solution_handoff_from.load(std::memory_order_acquire);
+  }
+
+  unsigned int
+  WorkerControlAccess::solution_handoff_to(const WorkerControl& control) {
+    return (control.state == nullptr) ? ALL_WORKERS :
+      control.state->solution_handoff_to.load(std::memory_order_acquire);
+  }
+
+  bool
+  WorkerControlAccess::owner(const WorkerControl& control,
+                             unsigned int worker) {
+    WorkerControl::State* state = control.state;
+    if (state == nullptr)
+      return false;
+    WorkerControl::State::TestSupport* support =
+      state->test_support.load(std::memory_order_acquire);
+    assert((support != nullptr) && (worker < support->capacity));
+    return support->logical[worker].load(std::memory_order_acquire) == 0U;
+  }
+
+  bool
+  WorkerControlAccess::leased(const WorkerControl& control,
+                              unsigned int worker) {
+    WorkerControl::State* state = control.state;
+    if (state == nullptr)
+      return false;
+    WorkerControl::State::TestSupport* support =
+      state->test_support.load(std::memory_order_acquire);
+    assert((support != nullptr) && (worker < support->capacity));
+    return support->lease[worker].load(std::memory_order_acquire);
+  }
+
+  bool
+  WorkerControlAccess::worker_parked(const WorkerControl& control,
+                                     unsigned int worker) {
+    WorkerControl::State* state = control.state;
+    if (state == nullptr)
+      return false;
+    WorkerControl::State::TestSupport* support =
+      state->test_support.load(std::memory_order_acquire);
+    assert((support != nullptr) && (worker < support->capacity));
+    return support->parked[worker].load(std::memory_order_acquire);
   }
 
 }}

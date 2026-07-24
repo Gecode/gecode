@@ -359,6 +359,8 @@ namespace Test {
         CONCURRENT,
         COMPATIBILITY,
         DFS_RESIZE_ENUMERATION,
+        DFS_RESIZE_BOUNDARIES,
+        DFS_RESIZE_HANDOFF,
         DFS_RESIZE_LIFECYCLE
       } scenario;
 
@@ -389,6 +391,57 @@ namespace Test {
           return result;
         }
       };
+
+      /// One non-stealable current solution and no stealable path
+      class SingleSolutionSpace : public Gecode::Space {
+      public:
+        SingleSolutionSpace(void) {}
+        SingleSolutionSpace(SingleSolutionSpace& s)
+          : Gecode::Space(s) {}
+        virtual Gecode::Space* copy(void) {
+          return new SingleSolutionSpace(*this);
+        }
+      };
+
+      /// Thread-safe trace lifecycle observations
+      class CountingTracer : public Gecode::SearchTracer {
+      public:
+        std::atomic<unsigned int> init_count;
+        std::atomic<unsigned int> node_count;
+        std::atomic<unsigned int> done_count;
+        std::atomic<unsigned int> nodes_at_done;
+
+        CountingTracer(void)
+          : init_count(0U), node_count(0U), done_count(0U),
+            nodes_at_done(0U) {}
+        virtual void init(void) {
+          (void) init_count.fetch_add(1U,std::memory_order_relaxed);
+        }
+        virtual void round(unsigned int) {}
+        virtual void skip(const EdgeInfo&) {}
+        virtual void node(const EdgeInfo&, const NodeInfo&) {
+          (void) node_count.fetch_add(1U,std::memory_order_relaxed);
+        }
+        virtual void done(void) {
+          nodes_at_done.store(node_count.load(std::memory_order_acquire),
+                              std::memory_order_release);
+          (void) done_count.fetch_add(1U,std::memory_order_release);
+        }
+      };
+
+      static bool converged(const Gecode::Search::WorkerControl& control,
+                            unsigned long long int generation,
+                            unsigned int leases) {
+        for (unsigned int spin=0U; spin<10000000U; spin++) {
+          if ((Gecode::Search::WorkerControlAccess::
+               observed_generation(control) == generation) &&
+              (Gecode::Search::WorkerControlAccess::leases(control) ==
+               leases))
+            return true;
+          std::this_thread::yield();
+        }
+        return false;
+      }
 
       template<class Exception, class Function>
       static bool throws(Function function) {
@@ -704,24 +757,260 @@ namespace Test {
         return true;
       }
 
+      static bool resize_boundaries(void) {
+#ifdef GECODE_HAS_THREADS
+        using Gecode::Search::WorkerControlAccess;
+        Gecode::Search::WorkerControl control(4U);
+        Gecode::Search::Options o;
+        o.threads = 4.0;
+        o.worker_control = control;
+        ResizeSpace* root = new ResizeSpace;
+        Gecode::DFS<ResizeSpace> dfs(root,o);
+        delete root;
+
+        WorkerControlAccess::gate_install(
+          control,WorkerControlAccess::GATE_ADMISSION,
+          WorkerControlAccess::ALL_WORKERS,4U);
+        std::atomic<bool> finish(false);
+        std::atomic<unsigned int> solutions(0U);
+        std::thread consumer([&] {
+          while (!finish.load(std::memory_order_acquire)) {
+            ResizeSpace* solution = dfs.next();
+            if (solution == nullptr)
+              return;
+            delete solution;
+            (void) solutions.fetch_add(1U,std::memory_order_release);
+          }
+        });
+
+        WorkerControlAccess::gate_wait(
+          control,WorkerControlAccess::GATE_ADMISSION);
+        if (WorkerControlAccess::admitted(control) != 0U) {
+          WorkerControlAccess::gate_release_all(
+            control,WorkerControlAccess::GATE_ADMISSION);
+          finish.store(true,std::memory_order_release);
+          consumer.join();
+          return false;
+        }
+
+        WorkerControlAccess::gate_install(
+          control,WorkerControlAccess::GATE_EVENT_WAIT,
+          WorkerControlAccess::ALL_WORKERS,3U);
+        control.request(1U);
+        unsigned long long int generation =
+          WorkerControlAccess::generation(control);
+        WorkerControlAccess::reset_max_admitted(control);
+        WorkerControlAccess::gate_release(
+          control,WorkerControlAccess::GATE_ADMISSION,0U);
+        WorkerControlAccess::gate_release(
+          control,WorkerControlAccess::GATE_ADMISSION,1U);
+        WorkerControlAccess::gate_release(
+          control,WorkerControlAccess::GATE_ADMISSION,2U);
+        WorkerControlAccess::gate_wait(
+          control,WorkerControlAccess::GATE_EVENT_WAIT);
+        bool ok = converged(control,generation,1U) &&
+          (WorkerControlAccess::max_admitted(control) <= 1U);
+        WorkerControlAccess::gate_release(
+          control,WorkerControlAccess::GATE_ADMISSION,3U);
+        for (unsigned int spin=0U;
+             (spin<10000000U) &&
+             (WorkerControlAccess::max_admitted(control) == 0U); spin++)
+          std::this_thread::yield();
+        ok = ok && (WorkerControlAccess::max_admitted(control) == 1U);
+
+        // The request is published and signals worker events while the
+        // parked workers are still stopped immediately before event wait.
+        control.request(3U);
+        generation = WorkerControlAccess::generation(control);
+        WorkerControlAccess::reset_max_admitted(control);
+        WorkerControlAccess::gate_release_all(
+          control,WorkerControlAccess::GATE_EVENT_WAIT);
+        ok = ok && converged(control,generation,3U) &&
+          (WorkerControlAccess::max_admitted(control) <= 3U);
+
+        WorkerControlAccess::gate_install(
+          control,WorkerControlAccess::GATE_ADMISSION,
+          WorkerControlAccess::ALL_WORKERS,3U);
+        WorkerControlAccess::gate_wait(
+          control,WorkerControlAccess::GATE_ADMISSION);
+        unsigned int leased[3];
+        unsigned int n_leased = 0U;
+        for (unsigned int i=0U; i<4U; i++)
+          if (WorkerControlAccess::leased(control,i)) {
+            if (n_leased < 3U)
+              leased[n_leased] = i;
+            n_leased++;
+          }
+        if (n_leased != 3U) {
+          finish.store(true,std::memory_order_release);
+          WorkerControlAccess::gate_release_all(
+            control,WorkerControlAccess::GATE_ADMISSION);
+          consumer.join();
+          return false;
+        }
+        WorkerControlAccess::gate_install(
+          control,WorkerControlAccess::GATE_EVENT_WAIT,
+          WorkerControlAccess::ALL_WORKERS,2U);
+        control.request(1U);
+        generation = WorkerControlAccess::generation(control);
+        WorkerControlAccess::reset_max_admitted(control);
+        WorkerControlAccess::gate_release(
+          control,WorkerControlAccess::GATE_ADMISSION,leased[0]);
+        WorkerControlAccess::gate_release(
+          control,WorkerControlAccess::GATE_ADMISSION,leased[1]);
+        WorkerControlAccess::gate_wait(
+          control,WorkerControlAccess::GATE_EVENT_WAIT);
+        ok = ok && converged(control,generation,1U) &&
+          (WorkerControlAccess::max_admitted(control) <= 1U);
+        WorkerControlAccess::gate_release(
+          control,WorkerControlAccess::GATE_ADMISSION,leased[2]);
+        for (unsigned int spin=0U;
+             (spin<10000000U) &&
+             (WorkerControlAccess::max_admitted(control) == 0U); spin++)
+          std::this_thread::yield();
+        ok = ok && (WorkerControlAccess::max_admitted(control) == 1U);
+
+        finish.store(true,std::memory_order_release);
+        WorkerControlAccess::gate_release_all(
+          control,WorkerControlAccess::GATE_ADMISSION);
+        WorkerControlAccess::gate_release_all(
+          control,WorkerControlAccess::GATE_EVENT_WAIT);
+        consumer.join();
+        return ok && (solutions.load(std::memory_order_acquire) > 0U);
+#else
+        return true;
+#endif
+      }
+
+      static bool resize_handoff(void) {
+#ifdef GECODE_HAS_THREADS
+        using Gecode::Search::WorkerControlAccess;
+        Gecode::Search::WorkerControl control(4U);
+        Gecode::Search::Options o;
+        o.threads = 4.0;
+        o.worker_control = control;
+        SingleSolutionSpace* root = new SingleSolutionSpace;
+        Gecode::DFS<SingleSolutionSpace> dfs(root,o);
+        delete root;
+
+        WorkerControlAccess::gate_install(
+          control,WorkerControlAccess::GATE_ADMISSION,
+          WorkerControlAccess::ALL_WORKERS,4U);
+        std::atomic<SingleSolutionSpace*> result(nullptr);
+        std::thread consumer([&] {
+          result.store(dfs.next(),std::memory_order_release);
+        });
+        WorkerControlAccess::gate_wait(
+          control,WorkerControlAccess::GATE_ADMISSION);
+
+        WorkerControlAccess::gate_install(
+          control,WorkerControlAccess::GATE_FAILED_SCAN,3U,1U);
+        // Let worker 3 declare its initially empty state idle. With no parked
+        // target at capacity, its next action completes a failed steal scan.
+        WorkerControlAccess::gate_release(
+          control,WorkerControlAccess::GATE_ADMISSION,3U);
+        WorkerControlAccess::gate_wait(
+          control,WorkerControlAccess::GATE_FAILED_SCAN);
+
+        WorkerControlAccess::gate_install(
+          control,WorkerControlAccess::GATE_EVENT_WAIT,
+          WorkerControlAccess::ALL_WORKERS,3U);
+        control.request(1U);
+        WorkerControlAccess::gate_release(
+          control,WorkerControlAccess::GATE_ADMISSION,0U);
+        WorkerControlAccess::gate_release(
+          control,WorkerControlAccess::GATE_ADMISSION,1U);
+        WorkerControlAccess::gate_release(
+          control,WorkerControlAccess::GATE_ADMISSION,2U);
+        WorkerControlAccess::gate_wait(
+          control,WorkerControlAccess::GATE_EVENT_WAIT);
+
+        bool exact_setup =
+          WorkerControlAccess::owner(control,0U) &&
+          WorkerControlAccess::worker_parked(control,0U) &&
+          WorkerControlAccess::leased(control,3U);
+        WorkerControlAccess::gate_release_all(
+          control,WorkerControlAccess::GATE_EVENT_WAIT);
+
+        unsigned long long int handoffs =
+          WorkerControlAccess::handoffs(control);
+        bool before_handoff = exact_setup &&
+          WorkerControlAccess::leased(control,3U) &&
+          WorkerControlAccess::worker_parked(control,0U);
+        WorkerControlAccess::gate_release(
+          control,WorkerControlAccess::GATE_FAILED_SCAN,3U);
+        consumer.join();
+
+        SingleSolutionSpace* solution =
+          result.load(std::memory_order_acquire);
+        bool ok = before_handoff && (solution != nullptr) &&
+          (WorkerControlAccess::handoffs(control) >= handoffs+1U) &&
+          (WorkerControlAccess::last_solution_worker(control) == 0U);
+        ok = ok &&
+          (WorkerControlAccess::solution_handoff_from(control) == 3U) &&
+          (WorkerControlAccess::solution_handoff_to(control) == 0U);
+        delete solution;
+        WorkerControlAccess::gate_release_all(
+          control,WorkerControlAccess::GATE_ADMISSION);
+        WorkerControlAccess::gate_release_all(
+          control,WorkerControlAccess::GATE_FAILED_SCAN);
+        return ok;
+#else
+        return true;
+#endif
+      }
+
       static bool resize_lifecycle(void) {
 #ifdef GECODE_HAS_THREADS
         Gecode::Search::WorkerControl control(1U);
         Gecode::Search::NodeStop stop(10U);
+        CountingTracer tracer;
         Gecode::Search::Options o;
         o.threads = 4.0;
         o.nogoods_limit = 16U;
         o.stop = &stop;
+        o.tracer = &tracer;
         o.worker_control = control;
         ResizeSpace* root = new ResizeSpace;
         Gecode::Search::Engine* dfs =
           Gecode::Search::dfsengine(root,o);
         delete root;
 
-        ResizeSpace* solution = static_cast<ResizeSpace*>(dfs->next());
+        using Gecode::Search::WorkerControlAccess;
+        WorkerControlAccess::gate_install(
+          control,WorkerControlAccess::GATE_ADMISSION,
+          WorkerControlAccess::ALL_WORKERS,4U);
+        std::atomic<ResizeSpace*> stopped_result(nullptr);
+        std::thread stopped_next([&] {
+          stopped_result.store(static_cast<ResizeSpace*>(dfs->next()),
+                               std::memory_order_release);
+        });
+        WorkerControlAccess::gate_wait(
+          control,WorkerControlAccess::GATE_ADMISSION);
+        WorkerControlAccess::gate_install(
+          control,WorkerControlAccess::GATE_EVENT_WAIT,
+          WorkerControlAccess::ALL_WORKERS,3U);
+        WorkerControlAccess::gate_release(
+          control,WorkerControlAccess::GATE_ADMISSION,1U);
+        WorkerControlAccess::gate_release(
+          control,WorkerControlAccess::GATE_ADMISSION,2U);
+        WorkerControlAccess::gate_release(
+          control,WorkerControlAccess::GATE_ADMISSION,3U);
+        WorkerControlAccess::gate_wait(
+          control,WorkerControlAccess::GATE_EVENT_WAIT);
+        WorkerControlAccess::gate_release(
+          control,WorkerControlAccess::GATE_ADMISSION,0U);
+        stopped_next.join();
+        ResizeSpace* solution =
+          stopped_result.load(std::memory_order_acquire);
         bool ok = (solution == nullptr) && dfs->stopped() &&
-          (dfs->statistics().node > 0U);
+          (dfs->statistics().node > 0U) &&
+          (WorkerControlAccess::parked(control) >= 3U);
         delete solution;
+        WorkerControlAccess::gate_release_all(
+          control,WorkerControlAccess::GATE_ADMISSION);
+        WorkerControlAccess::gate_release_all(
+          control,WorkerControlAccess::GATE_EVENT_WAIT);
         (void) dfs->nogoods();
 
         control.request(3U);
@@ -733,7 +1022,12 @@ namespace Test {
         ok = ok && (solution != nullptr);
         delete solution;
         delete dfs;
-        return ok;
+        return ok &&
+          (tracer.init_count.load(std::memory_order_acquire) == 1U) &&
+          (tracer.node_count.load(std::memory_order_acquire) > 0U) &&
+          (tracer.done_count.load(std::memory_order_acquire) == 1U) &&
+          (tracer.nodes_at_done.load(std::memory_order_acquire) ==
+           tracer.node_count.load(std::memory_order_acquire));
 #else
         return true;
 #endif
@@ -751,6 +1045,8 @@ namespace Test {
         case CONCURRENT:    return concurrent();
         case COMPATIBILITY: return compatibility();
         case DFS_RESIZE_ENUMERATION: return resized_enumeration();
+        case DFS_RESIZE_BOUNDARIES:  return resize_boundaries();
+        case DFS_RESIZE_HANDOFF:     return resize_handoff();
         case DFS_RESIZE_LIFECYCLE:   return resize_lifecycle();
         default:            GECODE_NEVER;
         }
@@ -765,6 +1061,10 @@ namespace Test {
         (void) new WorkerControl("Compatibility",COMPATIBILITY);
         (void) new WorkerControl("DFSResize::Enumeration",
                                  DFS_RESIZE_ENUMERATION);
+        (void) new WorkerControl("DFSResize::Boundaries",
+                                 DFS_RESIZE_BOUNDARIES);
+        (void) new WorkerControl("DFSResize::Handoff",
+                                 DFS_RESIZE_HANDOFF);
         (void) new WorkerControl("DFSResize::Lifecycle",
                                  DFS_RESIZE_LIFECYCLE);
       }

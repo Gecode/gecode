@@ -210,11 +210,13 @@ namespace Gecode { namespace Search { namespace Par {
         {
           if (!engine().scheduler_admit(index))
             break;
+          engine().scheduler_action_begin();
           m.acquire();
           if (idle) {
             m.release();
             // Try to find new work
             if (!find()) {
+              engine().scheduler_failed_scan(index);
               engine().scheduler_handoff(index,engine().work_remains());
             }
           } else if (cur != nullptr) {
@@ -264,6 +266,7 @@ namespace Gecode { namespace Search { namespace Par {
                   cur = nullptr;
                   path.next();
                   m.release();
+                  engine().scheduler_solution(index);
                   engine().solution(s);
                 }
                 break;
@@ -305,6 +308,7 @@ namespace Gecode { namespace Search { namespace Par {
             engine().scheduler_idle(index);
             engine().scheduler_handoff(index,engine().work_remains());
           }
+          engine().scheduler_action_end();
         }
         break;
       default:

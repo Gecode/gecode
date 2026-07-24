@@ -195,6 +195,11 @@ namespace Gecode { namespace Search { namespace Par {
       worker_control,
       scheduler_generation.load(std::memory_order_relaxed),
       scheduler_leases,parked,owners,parked_owners);
+    for (unsigned int i=0U; i<workers(); i++)
+      WorkerControlAccess::observe_worker(
+        worker_control,i,
+        static_cast<unsigned int>(scheduler_worker[i].logical),
+        scheduler_worker[i].lease,scheduler_worker[i].parked);
   }
 
   template<class Tracer>
@@ -247,6 +252,8 @@ namespace Gecode { namespace Search { namespace Par {
   Engine<Tracer>::scheduler_admit(unsigned int worker) {
     if (!scheduler_enabled)
       return true;
+    WorkerControlAccess::gate(worker_control,
+                              WorkerControlAccess::GATE_ADMISSION,worker);
     while (cmd() == C_WORK) {
       unsigned long long int generation =
         WorkerControlAccess::generation(worker_control);
@@ -280,9 +287,33 @@ namespace Gecode { namespace Search { namespace Par {
         WorkerControlAccess::signal_all(worker_control);
       if (admitted)
         return true;
+      WorkerControlAccess::gate(worker_control,
+                                WorkerControlAccess::GATE_EVENT_WAIT,worker);
       WorkerControlAccess::wait(worker_control,worker);
     }
     return false;
+  }
+
+  template<class Tracer>
+  forceinline void
+  Engine<Tracer>::scheduler_action_begin(void) {
+    if (scheduler_enabled)
+      WorkerControlAccess::action_begin(worker_control);
+  }
+
+  template<class Tracer>
+  forceinline void
+  Engine<Tracer>::scheduler_action_end(void) {
+    if (scheduler_enabled)
+      WorkerControlAccess::action_end(worker_control);
+  }
+
+  template<class Tracer>
+  forceinline void
+  Engine<Tracer>::scheduler_failed_scan(unsigned int worker) {
+    if (scheduler_enabled)
+      WorkerControlAccess::gate(worker_control,
+                                WorkerControlAccess::GATE_FAILED_SCAN,worker);
   }
 
   template<class Tracer>
@@ -309,6 +340,13 @@ namespace Gecode { namespace Search { namespace Par {
 
   template<class Tracer>
   void
+  Engine<Tracer>::scheduler_solution(unsigned int worker) {
+    if (scheduler_enabled)
+      WorkerControlAccess::solution(worker_control,worker);
+  }
+
+  template<class Tracer>
+  void
   Engine<Tracer>::scheduler_handoff(unsigned int worker,
                                     bool work_remains) {
     if (!scheduler_enabled)
@@ -330,7 +368,7 @@ namespace Gecode { namespace Search { namespace Par {
           scheduler_worker[target].lease = true;
           scheduler_worker[target].parked = false;
           scheduler_cursor = (target+1U) % workers();
-          WorkerControlAccess::handoff(worker_control);
+          WorkerControlAccess::handoff(worker_control,worker,target);
         }
       }
     }
