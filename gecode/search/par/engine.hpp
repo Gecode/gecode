@@ -296,16 +296,17 @@ namespace Gecode { namespace Search { namespace Par {
 
   template<class Tracer>
   forceinline void
-  Engine<Tracer>::scheduler_action_begin(void) {
+  Engine<Tracer>::scheduler_action_begin(unsigned int worker) {
     if (scheduler_enabled)
-      WorkerControlAccess::action_begin(worker_control);
+      WorkerControlAccess::action_begin(
+        worker_control,worker,scheduler_generation);
   }
 
   template<class Tracer>
   forceinline void
-  Engine<Tracer>::scheduler_action_end(void) {
+  Engine<Tracer>::scheduler_action_end(unsigned int worker) {
     if (scheduler_enabled)
-      WorkerControlAccess::action_end(worker_control);
+      WorkerControlAccess::action_end(worker_control,worker);
   }
 
   template<class Tracer>

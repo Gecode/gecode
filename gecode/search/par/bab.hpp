@@ -268,7 +268,7 @@ namespace Gecode { namespace Search { namespace Par {
         {
           if (!engine().scheduler_admit(index))
             break;
-          engine().scheduler_action_begin();
+          engine().scheduler_action_begin(index);
           m.acquire();
           if (idle) {
             m.release();
@@ -365,7 +365,7 @@ namespace Gecode { namespace Search { namespace Par {
             engine().scheduler_idle(index);
             engine().scheduler_handoff(index,engine().work_remains());
           }
-          engine().scheduler_action_end();
+          engine().scheduler_action_end(index);
         }
         break;
       default:

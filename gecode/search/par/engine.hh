@@ -132,9 +132,9 @@ namespace Gecode { namespace Search { namespace Par {
     /// Admit worker \a worker for one exploration action
     bool scheduler_admit(unsigned int worker);
     /// Begin an admitted exploration action
-    void scheduler_action_begin(void);
+    void scheduler_action_begin(unsigned int worker);
     /// End an admitted exploration action
-    void scheduler_action_end(void);
+    void scheduler_action_end(unsigned int worker);
     /// Pause after worker \a worker completes a failed steal scan
     void scheduler_failed_scan(unsigned int worker);
     /// Record that worker \a worker owns search

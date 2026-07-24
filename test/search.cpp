@@ -362,6 +362,8 @@ namespace Test {
         DFS_RESIZE_BOUNDARIES,
         DFS_RESIZE_HANDOFF,
         DFS_RESIZE_LIFECYCLE,
+        BAB_RESIZE_OPTIMALITY_DEFAULT,
+        BAB_RESIZE_OPTIMALITY_FREQUENT,
         BAB_RESIZE_INCUMBENTS,
         BAB_RESIZE_LIFECYCLE
       } scenario;
@@ -417,6 +419,11 @@ namespace Test {
 
         explicit BABResizeSpace(int value)
           : x(*this,value,value) {}
+
+        BABResizeSpace(int min, int max)
+          : x(*this,min,max) {
+          Gecode::branch(*this,x,Gecode::INT_VAL_MAX());
+        }
 
         BABResizeSpace(BABResizeSpace& s)
           : Gecode::Space(s) {
@@ -478,6 +485,22 @@ namespace Test {
         return false;
       }
 
+      static bool settled(const Gecode::Search::WorkerControl& control,
+                          unsigned long long int generation,
+                          unsigned int leases) {
+        for (unsigned int spin=0U; spin<10000000U; spin++) {
+          if ((Gecode::Search::WorkerControlAccess::
+               observed_generation(control) == generation) &&
+              (Gecode::Search::WorkerControlAccess::leases(control) ==
+               leases) &&
+              (Gecode::Search::WorkerControlAccess::admitted(control) <=
+               leases))
+            return true;
+          std::this_thread::yield();
+        }
+        return false;
+      }
+
       template<class Exception, class Function>
       static bool throws(Function function) {
         try {
@@ -525,6 +548,19 @@ namespace Test {
         }
         delete m;
         return e;
+      }
+
+      static int bab_resize_best(Gecode::Search::Options o) {
+        Gecode::Search::Engine* bab = bab_resize_engine(o);
+        int best = 4096;
+        while (BABResizeSpace* solution =
+               static_cast<BABResizeSpace*>(bab->next())) {
+          best = solution->value();
+          delete solution;
+        }
+        bool ok = !bab->stopped();
+        delete bab;
+        return ok ? best : 4096;
       }
 
       static bool values(void) {
@@ -720,28 +756,39 @@ namespace Test {
         std::atomic<unsigned int> solutions(0U);
         std::atomic<bool> controller_ok(true);
         std::atomic<unsigned int> paused(0U);
-        std::atomic<unsigned int> resumed(0U);
+        std::atomic<unsigned int> published(0U);
         std::atomic<unsigned int> completed(0U);
+        std::atomic<bool> exhausted(false);
         const unsigned int limits[] = {1U,3U,1U,4U};
         const unsigned int milestones[] = {1U,64U,128U,192U};
-        // Pause enumeration at each milestone so every resize precedes
-        // exhaustion. DFSResize::Handoff covers causal owner handoff.
+        // The consumer processes no solution beyond a milestone until the
+        // controller has observed convergence for that milestone's request.
         std::thread controller([&] {
           for (unsigned int i=0U; i<4U; i++) {
-            while (paused.load(std::memory_order_acquire) < i+1U)
+            while ((paused.load(std::memory_order_acquire) < i+1U) &&
+                   !exhausted.load(std::memory_order_acquire))
               std::this_thread::yield();
+            if (exhausted.load(std::memory_order_acquire)) {
+              controller_ok.store(false,std::memory_order_release);
+              published.store(4U,std::memory_order_release);
+              completed.store(4U,std::memory_order_release);
+              return;
+            }
             try {
               control.request(limits[i]);
             } catch (...) {
               controller_ok.store(false,std::memory_order_release);
-              resumed.store(i+1U,std::memory_order_release);
+              published.store(4U,std::memory_order_release);
+              completed.store(4U,std::memory_order_release);
               return;
             }
             unsigned long long int generation =
               Gecode::Search::WorkerControlAccess::generation(control);
-            resumed.store(i+1U,std::memory_order_release);
+            published.store(i+1U,std::memory_order_release);
             bool converged = false;
             for (unsigned int spin=0U; spin<10000000U; spin++) {
+              if (exhausted.load(std::memory_order_acquire))
+                break;
               if ((Gecode::Search::WorkerControlAccess::
                    observed_generation(control) == generation) &&
                   (Gecode::Search::WorkerControlAccess::leases(control) <=
@@ -755,7 +802,6 @@ namespace Test {
             }
             if (!converged) {
               controller_ok.store(false,std::memory_order_release);
-              resumed.store(4U,std::memory_order_release);
               completed.store(4U,std::memory_order_release);
               return;
             }
@@ -764,20 +810,43 @@ namespace Test {
         });
 
         std::vector<unsigned int> counts(1U << 12,0U);
+        std::vector<ResizeSpace*> pending;
         unsigned int next_milestone = 0U;
-        while (ResizeSpace* solution = dfs.next()) {
+        bool search_exhausted = false;
+        while (!search_exhausted || !pending.empty()) {
+          ResizeSpace* solution;
+          if (pending.empty()) {
+            solution = dfs.next();
+            if (solution == nullptr) {
+              search_exhausted = true;
+              exhausted.store(true,std::memory_order_release);
+              continue;
+            }
+          } else {
+            solution = pending.back();
+            pending.pop_back();
+          }
           counts[solution->id()]++;
           delete solution;
           unsigned int n =
             solutions.fetch_add(1U,std::memory_order_release)+1U;
           if ((next_milestone < 4U) &&
-              (n >= milestones[next_milestone]) &&
-              (completed.load(std::memory_order_acquire) >=
-               next_milestone)) {
+              (n == milestones[next_milestone])) {
+            unsigned int phase = next_milestone+1U;
             paused.store(next_milestone+1U,std::memory_order_release);
-            while (resumed.load(std::memory_order_acquire) <
-                   next_milestone+1U)
+            while ((published.load(std::memory_order_acquire) < phase) &&
+                   controller_ok.load(std::memory_order_acquire))
               std::this_thread::yield();
+            while ((completed.load(std::memory_order_acquire) < phase) &&
+                   controller_ok.load(std::memory_order_acquire)) {
+              ResizeSpace* extra = dfs.next();
+              if (extra == nullptr) {
+                search_exhausted = true;
+                exhausted.store(true,std::memory_order_release);
+                break;
+              }
+              pending.push_back(extra);
+            }
             next_milestone++;
           }
         }
@@ -1068,6 +1137,124 @@ namespace Test {
 #endif
       }
 
+      static bool bab_resize_optimality(bool frequent) {
+#ifdef GECODE_HAS_THREADS
+        using Gecode::Search::WorkerControlAccess;
+        Gecode::Search::Options baseline_options;
+        baseline_options.threads = 4.0;
+        if (frequent) {
+          baseline_options.c_d = 1U;
+          baseline_options.a_d = 1U;
+        }
+        int baseline = bab_resize_best(baseline_options);
+
+        Gecode::Search::WorkerControl control(4U);
+        Gecode::Search::Options o(baseline_options);
+        o.worker_control = control;
+        Gecode::Search::Engine* bab = bab_resize_engine(o);
+        WorkerControlAccess::gate_install(
+          control,WorkerControlAccess::GATE_ADMISSION,
+          WorkerControlAccess::ALL_WORKERS,4U);
+        std::atomic<int> best(4096);
+        std::atomic<unsigned int> allowed(0U);
+        std::atomic<unsigned int> completed(0U);
+        std::atomic<unsigned long long int> phase_generation(0U);
+        std::atomic<bool> complete(false);
+        std::atomic<bool> consumer_ok(true);
+        std::thread consumer([&] {
+          for (unsigned int phase=0U; phase<4U; phase++) {
+            while (allowed.load(std::memory_order_acquire) <= phase)
+              std::this_thread::yield();
+            do {
+              BABResizeSpace* solution =
+                static_cast<BABResizeSpace*>(bab->next());
+              if (solution == nullptr) {
+                consumer_ok.store(false,std::memory_order_release);
+                completed.store(4U,std::memory_order_release);
+                return;
+              }
+              best.store(solution->value(),std::memory_order_release);
+              delete solution;
+            } while (WorkerControlAccess::completed_generation(control) <
+                     phase_generation.load(std::memory_order_acquire));
+            while (WorkerControlAccess::admitted(control) != 0U)
+              std::this_thread::yield();
+            completed.store(phase+1U,std::memory_order_release);
+          }
+          while (BABResizeSpace* solution =
+                 static_cast<BABResizeSpace*>(bab->next())) {
+            best.store(solution->value(),std::memory_order_release);
+            delete solution;
+          }
+          complete.store(true,std::memory_order_release);
+        });
+
+        allowed.store(1U,std::memory_order_release);
+        WorkerControlAccess::gate_wait(
+          control,WorkerControlAccess::GATE_ADMISSION);
+        WorkerControlAccess::gate_install(
+          control,WorkerControlAccess::GATE_EVENT_WAIT,
+          WorkerControlAccess::ALL_WORKERS,3U);
+        control.request(1U);
+        unsigned long long int generation =
+          WorkerControlAccess::generation(control);
+        phase_generation.store(generation,std::memory_order_release);
+        WorkerControlAccess::reset_max_admitted(control,generation);
+        WorkerControlAccess::gate_release(
+          control,WorkerControlAccess::GATE_ADMISSION,1U);
+        WorkerControlAccess::gate_release(
+          control,WorkerControlAccess::GATE_ADMISSION,2U);
+        WorkerControlAccess::gate_release(
+          control,WorkerControlAccess::GATE_ADMISSION,3U);
+        WorkerControlAccess::gate_wait(
+          control,WorkerControlAccess::GATE_EVENT_WAIT);
+        bool ok = settled(control,generation,1U);
+        WorkerControlAccess::gate_release(
+          control,WorkerControlAccess::GATE_ADMISSION,0U);
+        while (completed.load(std::memory_order_acquire) < 1U)
+          std::this_thread::yield();
+        ok = ok && consumer_ok.load(std::memory_order_acquire) &&
+          (WorkerControlAccess::max_admitted(control) <= 1U);
+
+        const unsigned int limits[] = {3U,1U,4U};
+        for (unsigned int i=0U; i<3U; i++) {
+          unsigned int limit = limits[i];
+          control.request(limit);
+          generation = WorkerControlAccess::generation(control);
+          phase_generation.store(generation,std::memory_order_release);
+          WorkerControlAccess::reset_max_admitted(control,generation);
+          if (limit > 1U)
+            WorkerControlAccess::gate_release_all(
+              control,WorkerControlAccess::GATE_EVENT_WAIT);
+          allowed.store(i+2U,std::memory_order_release);
+          while (completed.load(std::memory_order_acquire) < i+2U)
+            std::this_thread::yield();
+          ok = ok && consumer_ok.load(std::memory_order_acquire) &&
+            settled(control,generation,limit) &&
+            (WorkerControlAccess::max_admitted(control) <= limit);
+        }
+
+        consumer.join();
+        ok = ok && complete.load(std::memory_order_acquire) &&
+          !bab->stopped() && (baseline == 0) &&
+          (best.load(std::memory_order_acquire) == baseline);
+        WorkerControlAccess::gate_release_all(
+          control,WorkerControlAccess::GATE_ADMISSION);
+        WorkerControlAccess::gate_release_all(
+          control,WorkerControlAccess::GATE_EVENT_WAIT);
+        delete bab;
+        return ok;
+#else
+        Gecode::Search::Options o;
+        o.threads = 1.0;
+        if (frequent) {
+          o.c_d = 1U;
+          o.a_d = 1U;
+        }
+        return bab_resize_best(o) == 0;
+#endif
+      }
+
       static bool bab_resize_incumbents(void) {
 #ifdef GECODE_HAS_THREADS
         using Gecode::Search::WorkerControlAccess;
@@ -1083,6 +1270,7 @@ namespace Test {
         std::atomic<BABResizeSpace*> first(nullptr);
         std::atomic<bool> first_done(false);
         std::atomic<bool> proceed(false);
+        std::atomic<bool> solutions_better(true);
         std::atomic<unsigned int> solutions(0U);
         std::atomic<int> best(4096);
         std::thread consumer([&] {
@@ -1093,6 +1281,8 @@ namespace Test {
           while (!proceed.load(std::memory_order_acquire))
             std::this_thread::yield();
           while (solution != nullptr) {
+            if (solution->value() >= 3000)
+              solutions_better.store(false,std::memory_order_release);
             best.store(solution->value(),std::memory_order_release);
             (void) solutions.fetch_add(1U,std::memory_order_release);
             delete solution;
@@ -1161,8 +1351,86 @@ namespace Test {
 
         consumer.join();
         ok = ok && !bab->stopped() &&
+          solutions_better.load(std::memory_order_acquire) &&
           (solutions.load(std::memory_order_acquire) > 0U) &&
           (best.load(std::memory_order_acquire) == 0);
+        delete bab;
+
+        // Repeat external constrain while a resize generation is pending
+        // and worker 0 remains stopped at the admission boundary.
+        Gecode::Search::WorkerControl transition_control(4U);
+        Gecode::Search::Options transition_options;
+        transition_options.threads = 4.0;
+        transition_options.worker_control = transition_control;
+        bab = bab_resize_engine(transition_options);
+        WorkerControlAccess::gate_install(
+          transition_control,WorkerControlAccess::GATE_ADMISSION,
+          WorkerControlAccess::ALL_WORKERS,4U);
+        std::atomic<bool> transition_ok(true);
+        std::atomic<int> transition_best(4096);
+        std::thread transition_consumer([&] {
+          while (BABResizeSpace* solution =
+                 static_cast<BABResizeSpace*>(bab->next())) {
+            if (solution->value() >= 2000)
+              transition_ok.store(false,std::memory_order_release);
+            transition_best.store(solution->value(),
+                                  std::memory_order_release);
+            delete solution;
+          }
+        });
+        WorkerControlAccess::gate_wait(
+          transition_control,WorkerControlAccess::GATE_ADMISSION);
+        WorkerControlAccess::gate_install(
+          transition_control,WorkerControlAccess::GATE_EVENT_WAIT,
+          WorkerControlAccess::ALL_WORKERS,3U);
+        transition_control.request(1U);
+        WorkerControlAccess::gate_release(
+          transition_control,WorkerControlAccess::GATE_ADMISSION,1U);
+        WorkerControlAccess::gate_release(
+          transition_control,WorkerControlAccess::GATE_ADMISSION,2U);
+        WorkerControlAccess::gate_release(
+          transition_control,WorkerControlAccess::GATE_ADMISSION,3U);
+        WorkerControlAccess::gate_wait(
+          transition_control,WorkerControlAccess::GATE_EVENT_WAIT);
+
+        unsigned long long int transition_before[4];
+        for (unsigned int i=0U; i<4U; i++)
+          transition_before[i] =
+            WorkerControlAccess::incumbent_deliveries(
+              transition_control,i);
+        transition_control.request(3U);
+        generation =
+          WorkerControlAccess::generation(transition_control);
+        BABResizeSpace transition_external(2000);
+        (void) transition_external.status();
+        bab->constrain(transition_external);
+        ok = ok &&
+          WorkerControlAccess::gate_waiting(
+            transition_control,WorkerControlAccess::GATE_ADMISSION,0U) &&
+          (WorkerControlAccess::observed_generation(transition_control) !=
+           generation);
+        for (unsigned int i=0U; i<4U; i++)
+          ok = ok &&
+            (WorkerControlAccess::incumbent_deliveries(
+               transition_control,i) == transition_before[i]+1U);
+        ok = ok &&
+          WorkerControlAccess::worker_parked(transition_control,1U) &&
+          WorkerControlAccess::worker_parked(transition_control,2U) &&
+          WorkerControlAccess::worker_parked(transition_control,3U);
+
+        // Worker 1 reconciles the pending generation before any original
+        // active worker leaves admission.
+        WorkerControlAccess::gate_release(
+          transition_control,WorkerControlAccess::GATE_EVENT_WAIT,1U);
+        ok = ok && settled(transition_control,generation,3U);
+        WorkerControlAccess::gate_release_all(
+          transition_control,WorkerControlAccess::GATE_EVENT_WAIT);
+        WorkerControlAccess::gate_release_all(
+          transition_control,WorkerControlAccess::GATE_ADMISSION);
+        transition_consumer.join();
+        ok = ok && transition_ok.load(std::memory_order_acquire) &&
+          !bab->stopped() &&
+          (transition_best.load(std::memory_order_acquire) == 0);
         delete bab;
         return ok;
 #else
@@ -1188,6 +1456,8 @@ namespace Test {
       }
 
       static bool bab_resize_lifecycle(void) {
+#ifdef GECODE_HAS_THREADS
+        using Gecode::Search::WorkerControlAccess;
         Gecode::Search::WorkerControl control(capacity());
         Gecode::Search::NodeStop stop(0U);
         CountingTracer tracer;
@@ -1199,36 +1469,102 @@ namespace Test {
         o.worker_control = control;
         Gecode::Search::Engine* bab = bab_resize_engine(o);
 
+        WorkerControlAccess::gate_install(
+          control,WorkerControlAccess::GATE_ADMISSION,
+          WorkerControlAccess::ALL_WORKERS,4U);
+        std::atomic<BABResizeSpace*> stopped_result(nullptr);
+        std::thread stopped_next([&] {
+          stopped_result.store(
+            static_cast<BABResizeSpace*>(bab->next()),
+            std::memory_order_release);
+        });
+        WorkerControlAccess::gate_wait(
+          control,WorkerControlAccess::GATE_ADMISSION);
+        WorkerControlAccess::gate_install(
+          control,WorkerControlAccess::GATE_EVENT_WAIT,
+          WorkerControlAccess::ALL_WORKERS,3U);
+        control.request(1U);
+        WorkerControlAccess::gate_release(
+          control,WorkerControlAccess::GATE_ADMISSION,1U);
+        WorkerControlAccess::gate_release(
+          control,WorkerControlAccess::GATE_ADMISSION,2U);
+        WorkerControlAccess::gate_release(
+          control,WorkerControlAccess::GATE_ADMISSION,3U);
+        WorkerControlAccess::gate_wait(
+          control,WorkerControlAccess::GATE_EVENT_WAIT);
+        BABResizeSpace old_external(1000);
+        (void) old_external.status();
+        bab->constrain(old_external);
+        bool ok = (WorkerControlAccess::parked(control) == 3U);
+        WorkerControlAccess::gate_release_all(
+          control,WorkerControlAccess::GATE_EVENT_WAIT);
+        WorkerControlAccess::gate_release(
+          control,WorkerControlAccess::GATE_ADMISSION,0U);
+        stopped_next.join();
         BABResizeSpace* solution =
-          static_cast<BABResizeSpace*>(bab->next());
-        bool ok = (solution == nullptr) && bab->stopped() &&
-          (bab->statistics().node > 0U);
+          stopped_result.load(std::memory_order_acquire);
+        ok = ok && (solution == nullptr) && bab->stopped() &&
+          (bab->statistics().node > 0U) &&
+          (WorkerControlAccess::parked(control) >= 3U);
         delete solution;
         (void) bab->nogoods();
+        ok = ok && (WorkerControlAccess::leases(control) == 1U) &&
+          (WorkerControlAccess::parked(control) >= 3U);
 
-        control.request(capacity());
-        BABResizeSpace* root = new BABResizeSpace;
+        control.request(3U);
+        unsigned long long int generation =
+          WorkerControlAccess::generation(control);
+        BABResizeSpace* root = new BABResizeSpace(2000,4095);
         bab->reset(root);
-        control.request(1U);
-        BABResizeSpace external(1000);
+        ok = ok && settled(control,generation,3U);
+        stop.limit(100000U);
+        BABResizeSpace external(3000);
         (void) external.status();
         bab->constrain(external);
-        stop.limit(100000U);
         int best = 4096;
         while ((solution = static_cast<BABResizeSpace*>(bab->next()))
                != nullptr) {
           best = solution->value();
           delete solution;
         }
-        ok = ok && !bab->stopped() && (best == 0) &&
-          (control.requested() == 1U);
+        // Reaching 2000 proves reset discarded the prior bound of 1000.
+        ok = ok && !bab->stopped() && (best == 2000) &&
+          (control.requested() == 3U);
         delete bab;
-        return ok &&
+        bool trace_ok =
           (tracer.init_count.load(std::memory_order_acquire) == 1U) &&
           (tracer.node_count.load(std::memory_order_acquire) > 0U) &&
           (tracer.done_count.load(std::memory_order_acquire) == 1U) &&
           (tracer.nodes_at_done.load(std::memory_order_acquire) ==
            tracer.node_count.load(std::memory_order_acquire));
+        return ok && trace_ok;
+#else
+        Gecode::Search::WorkerControl control(1U);
+        Gecode::Search::Options o;
+        o.threads = 1.0;
+        o.worker_control = control;
+        Gecode::Search::Engine* bab = bab_resize_engine(o);
+        control.request(1U);
+        BABResizeSpace old_external(1000);
+        (void) old_external.status();
+        bab->constrain(old_external);
+        BABResizeSpace* root = new BABResizeSpace(2000,4095);
+        bab->reset(root);
+        BABResizeSpace external(3000);
+        (void) external.status();
+        bab->constrain(external);
+        BABResizeSpace* solution;
+        int best = 4096;
+        while ((solution = static_cast<BABResizeSpace*>(bab->next()))
+               != nullptr) {
+          best = solution->value();
+          delete solution;
+        }
+        bool ok = !bab->stopped() && (best == 2000) &&
+          (control.capacity() == 1U) && (control.requested() == 1U);
+        delete bab;
+        return ok;
+#endif
       }
 
     public:
@@ -1246,6 +1582,10 @@ namespace Test {
         case DFS_RESIZE_BOUNDARIES:  return resize_boundaries();
         case DFS_RESIZE_HANDOFF:     return resize_handoff();
         case DFS_RESIZE_LIFECYCLE:   return resize_lifecycle();
+        case BAB_RESIZE_OPTIMALITY_DEFAULT:
+          return bab_resize_optimality(false);
+        case BAB_RESIZE_OPTIMALITY_FREQUENT:
+          return bab_resize_optimality(true);
         case BAB_RESIZE_INCUMBENTS:  return bab_resize_incumbents();
         case BAB_RESIZE_LIFECYCLE:   return bab_resize_lifecycle();
         default:            GECODE_NEVER;
@@ -1267,6 +1607,10 @@ namespace Test {
                                  DFS_RESIZE_HANDOFF);
         (void) new WorkerControl("DFSResize::Lifecycle",
                                  DFS_RESIZE_LIFECYCLE);
+        (void) new WorkerControl("BABResize::Optimality::Default",
+                                 BAB_RESIZE_OPTIMALITY_DEFAULT);
+        (void) new WorkerControl("BABResize::Optimality::Frequent",
+                                 BAB_RESIZE_OPTIMALITY_FREQUENT);
         (void) new WorkerControl("BABResize::Incumbents",
                                  BAB_RESIZE_INCUMBENTS);
         (void) new WorkerControl("BABResize::Lifecycle",
