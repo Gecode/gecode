@@ -131,10 +131,18 @@ namespace Gecode { namespace Search { namespace Par {
     void scheduler_reset(bool root_owner);
     /// Admit worker \a worker for one DFS exploration action
     bool scheduler_admit(unsigned int worker);
+    /// Begin an admitted DFS exploration action
+    void scheduler_action_begin(void);
+    /// End an admitted DFS exploration action
+    void scheduler_action_end(void);
+    /// Pause after worker \a worker completes a failed steal scan
+    void scheduler_failed_scan(unsigned int worker);
     /// Record that worker \a worker owns search
     void scheduler_owner(unsigned int worker);
     /// Record that worker \a worker is idle
     void scheduler_idle(unsigned int worker);
+    /// Record that worker \a worker produced a solution
+    void scheduler_solution(unsigned int worker);
     /// Hand worker \a worker's lease to a parked logical worker
     void scheduler_handoff(unsigned int worker, bool work_remains);
 

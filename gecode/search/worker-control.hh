@@ -40,6 +40,15 @@ namespace Gecode { namespace Search {
   /// Private access to worker-control attachment state
   class GECODE_SEARCH_EXPORT WorkerControlAccess {
   public:
+    /// Test boundary in adjustable DFS scheduling
+    enum Gate {
+      GATE_ADMISSION,
+      GATE_EVENT_WAIT,
+      GATE_FAILED_SCAN,
+      GATE_COUNT
+    };
+    /// Select every worker for a test boundary gate
+    static const unsigned int ALL_WORKERS = static_cast<unsigned int>(-1);
     /// Attach \a control to a leaf engine with fixed \a capacity
     static void attach(WorkerControl& control, unsigned int capacity);
     /// Detach \a control from its leaf engine
@@ -64,8 +73,36 @@ namespace Gecode { namespace Search {
                         unsigned long long int generation,
                         unsigned int leases, unsigned int parked,
                         unsigned int owners, unsigned int parked_owners);
+    /// Record the state of worker \a worker
+    static void observe_worker(WorkerControl& control, unsigned int worker,
+                               unsigned int logical, bool lease, bool parked);
     /// Record an internal scheduler handoff
-    static void handoff(WorkerControl& control);
+    static void handoff(WorkerControl& control, unsigned int from,
+                        unsigned int to);
+    /// Record which worker produced a solution
+    static void solution(WorkerControl& control, unsigned int worker);
+    /// Pause a worker at an installed internal test boundary
+    static void gate(WorkerControl& control, Gate gate, unsigned int worker);
+    /// Install an internal test boundary gate
+    static void gate_install(WorkerControl& control, Gate gate,
+                             unsigned int worker, unsigned int expected);
+    /// Wait until the installed gate has reached its expected count
+    static void gate_wait(WorkerControl& control, Gate gate);
+    /// Release one worker from an installed gate
+    static void gate_release(WorkerControl& control, Gate gate,
+                             unsigned int worker);
+    /// Release all workers and disable an installed gate
+    static void gate_release_all(WorkerControl& control, Gate gate);
+    /// Begin one admitted DFS action
+    static void action_begin(WorkerControl& control);
+    /// End one admitted DFS action
+    static void action_end(WorkerControl& control);
+    /// Reset the admitted-action high-water mark
+    static void reset_max_admitted(WorkerControl& control);
+    /// Return the current admitted-action count
+    static unsigned int admitted(const WorkerControl& control);
+    /// Return the admitted-action high-water mark
+    static unsigned int max_admitted(const WorkerControl& control);
     /// Return the scheduler's observed request generation
     static unsigned long long int observed_generation(
       const WorkerControl& control);
@@ -79,6 +116,23 @@ namespace Gecode { namespace Search {
     static unsigned int parked_owners(const WorkerControl& control);
     /// Return the observed lease handoff count
     static unsigned long long int handoffs(const WorkerControl& control);
+    /// Return the source worker of the last handoff
+    static unsigned int last_handoff_from(const WorkerControl& control);
+    /// Return the target worker of the last handoff
+    static unsigned int last_handoff_to(const WorkerControl& control);
+    /// Return the worker that most recently produced a solution
+    static unsigned int last_solution_worker(const WorkerControl& control);
+    /// Return the handoff source observed when the last solution was produced
+    static unsigned int solution_handoff_from(const WorkerControl& control);
+    /// Return the handoff target observed when the last solution was produced
+    static unsigned int solution_handoff_to(const WorkerControl& control);
+    /// Return whether worker \a worker is a logical owner
+    static bool owner(const WorkerControl& control, unsigned int worker);
+    /// Return whether worker \a worker holds an execution lease
+    static bool leased(const WorkerControl& control, unsigned int worker);
+    /// Return whether worker \a worker is parked
+    static bool worker_parked(const WorkerControl& control,
+                              unsigned int worker);
   };
 
 }}
