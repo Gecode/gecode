@@ -71,14 +71,20 @@ namespace Gecode { namespace Search { namespace Par {
     Search::Worker::reset();
   }
 
+  template<class Tracer>
+  forceinline bool
+  BAB<Tracer>::Worker::owns_work(void) const {
+    return (cur != nullptr) || !path.empty();
+  }
+
 
   /*
    * Engine: initialization
    */
   template<class Tracer>
   forceinline
-  BAB<Tracer>::Worker::Worker(Space* s, BAB& e)
-    : Engine<Tracer>::Worker(s,e), mark(0), best(nullptr) {}
+  BAB<Tracer>::Worker::Worker(Space* s, BAB& e, unsigned int index0)
+    : Engine<Tracer>::Worker(s,e), mark(0), best(nullptr), index(index0) {}
 
   template<class Tracer>
   forceinline
@@ -90,10 +96,11 @@ namespace Gecode { namespace Search { namespace Par {
     _worker = static_cast<Worker**>
       (heap.ralloc(workers() * sizeof(Worker*)));
     // The first worker gets the entire search tree
-    _worker[0] = new Worker(s,*this);
+    _worker[0] = new Worker(s,*this,0U);
     // All other workers start with no work
     for (unsigned int i=1U; i<workers(); i++)
-      _worker[i] = new Worker(nullptr,*this);
+      _worker[i] = new Worker(nullptr,*this,i);
+    this->scheduler_enable(_worker[0]->owns_work());
     // Block all workers
     block();
     // Create and start threads
@@ -114,11 +121,12 @@ namespace Gecode { namespace Search { namespace Par {
     mark = path.entries();
     if (cur != nullptr)
       cur->constrain(*best);
+    engine().scheduler_incumbent(index);
     m.release();
   }
   template<class Tracer>
   forceinline void
-  BAB<Tracer>::solution(Space* s) {
+  BAB<Tracer>::solution(Space* s, unsigned int producer) {
     m_search.acquire();
     if (best != nullptr) {
       s->constrain(*best);
@@ -141,6 +149,7 @@ namespace Gecode { namespace Search { namespace Par {
     if (bs)
       e_search.signal();
     m_search.release();
+    this->scheduler_solution(producer);
   }
 
 
@@ -148,7 +157,7 @@ namespace Gecode { namespace Search { namespace Par {
    * Worker: finding and stealing working
    */
   template<class Tracer>
-  forceinline void
+  forceinline bool
   BAB<Tracer>::Worker::find(void) {
     // Try to find new work (even if there is none)
     for (unsigned int i=0U; i<engine().workers(); i++) {
@@ -169,9 +178,11 @@ namespace Gecode { namespace Search { namespace Par {
         Search::Worker::reset(r_d);
         (*this) += t;
         m.release();
-        return;
+        engine().scheduler_owner(index);
+        return true;
       }
     }
+    return false;
   }
 
   /*
@@ -255,11 +266,17 @@ namespace Gecode { namespace Search { namespace Par {
       case C_WORK:
         // Perform exploration work
         {
+          if (!engine().scheduler_admit(index))
+            break;
+          engine().scheduler_action_begin();
           m.acquire();
           if (idle) {
             m.release();
             // Try to find new work
-            find();
+            if (!find()) {
+              engine().scheduler_failed_scan(index);
+              engine().scheduler_handoff(index,engine().work_remains());
+            }
           } else if (cur != nullptr) {
             start();
             if (stop(engine().opt())) {
@@ -307,7 +324,7 @@ namespace Gecode { namespace Search { namespace Par {
                   cur = nullptr;
                   path.next();
                   m.release();
-                  engine().solution(s);
+                  engine().solution(s,index);
                 }
                 break;
               case SS_BRANCH:
@@ -345,7 +362,10 @@ namespace Gecode { namespace Search { namespace Par {
             m.release();
             // Report that worker is idle
             engine().idle();
+            engine().scheduler_idle(index);
+            engine().scheduler_handoff(index,engine().work_remains());
           }
+          engine().scheduler_action_end();
         }
         break;
       default:
@@ -381,6 +401,7 @@ namespace Gecode { namespace Search { namespace Par {
     m_wait_reset.release();
     // Wait for reset cycle stopped
     e_reset_ack_stop.wait();
+    this->scheduler_reset(worker(0U)->owns_work());
   }
 
 

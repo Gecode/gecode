@@ -40,7 +40,7 @@ namespace Gecode { namespace Search {
   /// Private access to worker-control attachment state
   class GECODE_SEARCH_EXPORT WorkerControlAccess {
   public:
-    /// Test boundary in adjustable DFS scheduling
+    /// Test boundary in adjustable parallel scheduling
     enum Gate {
       GATE_ADMISSION,
       GATE_EVENT_WAIT,
@@ -81,6 +81,8 @@ namespace Gecode { namespace Search {
                         unsigned int to);
     /// Record which worker produced a solution
     static void solution(WorkerControl& control, unsigned int worker);
+    /// Record incumbent delivery to worker \a worker
+    static void incumbent(WorkerControl& control, unsigned int worker);
     /// Pause a worker at an installed internal test boundary
     static void gate(WorkerControl& control, Gate gate, unsigned int worker);
     /// Install an internal test boundary gate
@@ -93,9 +95,9 @@ namespace Gecode { namespace Search {
                              unsigned int worker);
     /// Release all workers and disable an installed gate
     static void gate_release_all(WorkerControl& control, Gate gate);
-    /// Begin one admitted DFS action
+    /// Begin one admitted parallel-search action
     static void action_begin(WorkerControl& control);
-    /// End one admitted DFS action
+    /// End one admitted parallel-search action
     static void action_end(WorkerControl& control);
     /// Reset the admitted-action high-water mark
     static void reset_max_admitted(WorkerControl& control);
@@ -133,6 +135,9 @@ namespace Gecode { namespace Search {
     /// Return whether worker \a worker is parked
     static bool worker_parked(const WorkerControl& control,
                               unsigned int worker);
+    /// Return incumbent deliveries observed for worker \a worker
+    static unsigned long long int incumbent_deliveries(
+      const WorkerControl& control, unsigned int worker);
   };
 
 }}
