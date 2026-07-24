@@ -87,23 +87,23 @@ namespace Gecode { namespace Search { namespace Par {
     };
     /// Search options
     Options _opt;
-    /// Logical worker state used by adjustable DFS admission
+    /// Logical worker state used by adjustable parallel admission
     enum SchedulerLogical {
       SL_OWNER,
       SL_PENDING,
       SL_IDLE
     };
-    /// Per-worker adjustable DFS admission state
+    /// Per-worker adjustable parallel admission state
     struct SchedulerWorker {
       bool lease;
       bool parked;
       SchedulerLogical logical;
     };
-    /// Whether adjustable DFS admission is enabled
+    /// Whether adjustable parallel admission is enabled
     bool scheduler_enabled;
-    /// Mutex for adjustable DFS admission
+    /// Mutex for adjustable parallel admission
     Support::Mutex scheduler_mutex;
-    /// Per-worker adjustable DFS admission state
+    /// Per-worker adjustable parallel admission state
     SchedulerWorker* scheduler_worker;
     /// Current requested lease count
     unsigned int scheduler_requested;
@@ -125,15 +125,15 @@ namespace Gecode { namespace Search { namespace Par {
     const Options& opt(void) const;
     /// Return number of workers
     unsigned int workers(void) const;
-    /// Enable adjustable DFS admission
+    /// Enable adjustable parallel admission
     void scheduler_enable(bool root_owner);
-    /// Reset adjustable DFS state while all workers are blocked
+    /// Reset adjustable parallel state while all workers are blocked
     void scheduler_reset(bool root_owner);
-    /// Admit worker \a worker for one DFS exploration action
+    /// Admit worker \a worker for one exploration action
     bool scheduler_admit(unsigned int worker);
-    /// Begin an admitted DFS exploration action
+    /// Begin an admitted exploration action
     void scheduler_action_begin(void);
-    /// End an admitted DFS exploration action
+    /// End an admitted exploration action
     void scheduler_action_end(void);
     /// Pause after worker \a worker completes a failed steal scan
     void scheduler_failed_scan(unsigned int worker);
@@ -143,6 +143,8 @@ namespace Gecode { namespace Search { namespace Par {
     void scheduler_idle(unsigned int worker);
     /// Record that worker \a worker produced a solution
     void scheduler_solution(unsigned int worker);
+    /// Record delivery of an incumbent to worker \a worker
+    void scheduler_incumbent(unsigned int worker);
     /// Hand worker \a worker's lease to a parked logical worker
     void scheduler_handoff(unsigned int worker, bool work_remains);
 

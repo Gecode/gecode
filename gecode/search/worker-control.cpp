@@ -63,6 +63,7 @@ namespace Gecode { namespace Search {
       std::atomic<unsigned int>* logical;
       std::atomic<bool>* lease;
       std::atomic<bool>* parked;
+      std::atomic<unsigned long long int>* incumbent_deliveries;
 
       TestSupport(unsigned int capacity0)
         : capacity(capacity0),
@@ -75,11 +76,14 @@ namespace Gecode { namespace Search {
           admitted(0U), max_admitted(0U),
           logical(new std::atomic<unsigned int>[capacity]),
           lease(new std::atomic<bool>[capacity]),
-          parked(new std::atomic<bool>[capacity]) {
+          parked(new std::atomic<bool>[capacity]),
+          incumbent_deliveries(
+            new std::atomic<unsigned long long int>[capacity]) {
         for (unsigned int i=0U; i<capacity; i++) {
           logical[i].store(0U,std::memory_order_relaxed);
           lease[i].store(false,std::memory_order_relaxed);
           parked[i].store(false,std::memory_order_relaxed);
+          incumbent_deliveries[i].store(0U,std::memory_order_relaxed);
         }
         for (unsigned int g=0U; g<WorkerControlAccess::GATE_COUNT; g++) {
           epoch[g].store(0U,std::memory_order_relaxed);
@@ -103,6 +107,7 @@ namespace Gecode { namespace Search {
         delete [] logical;
         delete [] lease;
         delete [] parked;
+        delete [] incumbent_deliveries;
       }
     };
 
@@ -390,6 +395,21 @@ namespace Gecode { namespace Search {
   }
 
   void
+  WorkerControlAccess::incumbent(WorkerControl& control,
+                                 unsigned int worker) {
+    WorkerControl::State* state = control.state;
+    if (state == nullptr)
+      return;
+    WorkerControl::State::TestSupport* support =
+      state->test_support.load(std::memory_order_acquire);
+    if (support == nullptr)
+      return;
+    assert(worker < support->capacity);
+    (void) support->incumbent_deliveries[worker].fetch_add(
+      1U,std::memory_order_release);
+  }
+
+  void
   WorkerControlAccess::gate(WorkerControl& control, Gate gate,
                             unsigned int worker) {
     WorkerControl::State* state = control.state;
@@ -671,6 +691,19 @@ namespace Gecode { namespace Search {
       state->test_support.load(std::memory_order_acquire);
     assert((support != nullptr) && (worker < support->capacity));
     return support->parked[worker].load(std::memory_order_acquire);
+  }
+
+  unsigned long long int
+  WorkerControlAccess::incumbent_deliveries(
+    const WorkerControl& control, unsigned int worker) {
+    WorkerControl::State* state = control.state;
+    if (state == nullptr)
+      return 0U;
+    WorkerControl::State::TestSupport* support =
+      state->test_support.load(std::memory_order_acquire);
+    assert((support != nullptr) && (worker < support->capacity));
+    return support->incumbent_deliveries[worker].load(
+      std::memory_order_acquire);
   }
 
 }}

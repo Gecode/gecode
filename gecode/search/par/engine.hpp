@@ -346,6 +346,13 @@ namespace Gecode { namespace Search { namespace Par {
   }
 
   template<class Tracer>
+  forceinline void
+  Engine<Tracer>::scheduler_incumbent(unsigned int worker) {
+    if (scheduler_enabled)
+      WorkerControlAccess::incumbent(worker_control,worker);
+  }
+
+  template<class Tracer>
   void
   Engine<Tracer>::scheduler_handoff(unsigned int worker,
                                     bool work_remains) {
