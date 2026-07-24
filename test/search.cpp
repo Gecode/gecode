@@ -366,7 +366,10 @@ namespace Test {
         BAB_RESIZE_OPTIMALITY_DEFAULT,
         BAB_RESIZE_OPTIMALITY_FREQUENT,
         BAB_RESIZE_INCUMBENTS,
-        BAB_RESIZE_LIFECYCLE
+        BAB_RESIZE_LIFECYCLE,
+        STRESS_DFS,
+        STRESS_BAB,
+        STRESS_DESTRUCTION
       } scenario;
 
       /// Stable finite tree used by the DFS resizing tests
@@ -1568,6 +1571,144 @@ namespace Test {
 #endif
       }
 
+      static bool stress_dfs(void) {
+#ifdef GECODE_HAS_THREADS
+        for (unsigned int round=0U; round<8U; round++) {
+          Gecode::Search::WorkerControl control(4U);
+          Gecode::Search::Options o;
+          o.threads = 4.0;
+          o.worker_control = control;
+          ResizeSpace* root = new ResizeSpace;
+          Gecode::DFS<ResizeSpace> dfs(root,o);
+          delete root;
+
+          std::atomic<bool> complete(false);
+          std::atomic<bool> controller_ok(true);
+          std::thread controller([&] {
+            static const unsigned int limits[] = {
+              1U,4U,2U,3U,1U,2U,4U,3U
+            };
+            for (unsigned int request=0U;
+                 (request<4096U) &&
+                 !complete.load(std::memory_order_acquire); request++) {
+              try {
+                control.request(limits[(request+round) % 8U]);
+              } catch (...) {
+                controller_ok.store(false,std::memory_order_release);
+                return;
+              }
+              std::this_thread::yield();
+            }
+          });
+
+          std::vector<unsigned int> counts(1U << 12,0U);
+          while (ResizeSpace* solution = dfs.next()) {
+            counts[solution->id()]++;
+            delete solution;
+          }
+          complete.store(true,std::memory_order_release);
+          controller.join();
+          if (!controller_ok.load(std::memory_order_acquire) ||
+              dfs.stopped())
+            return false;
+          for (unsigned int count : counts)
+            if (count != 1U)
+              return false;
+        }
+#endif
+        return true;
+      }
+
+      static bool stress_bab(void) {
+#ifdef GECODE_HAS_THREADS
+        for (unsigned int round=0U; round<8U; round++) {
+          Gecode::Search::WorkerControl control(4U);
+          Gecode::Search::Options o;
+          o.threads = 4.0;
+          o.worker_control = control;
+          if ((round & 1U) != 0U) {
+            o.c_d = 1U;
+            o.a_d = 1U;
+          }
+          Gecode::Search::Engine* bab = bab_resize_engine(o);
+          std::atomic<bool> complete(false);
+          std::atomic<bool> controller_ok(true);
+          std::thread controller([&] {
+            static const unsigned int limits[] = {
+              4U,1U,3U,2U,1U,4U,2U,3U
+            };
+            for (unsigned int request=0U;
+                 (request<4096U) &&
+                 !complete.load(std::memory_order_acquire); request++) {
+              try {
+                control.request(limits[(request+round) % 8U]);
+              } catch (...) {
+                controller_ok.store(false,std::memory_order_release);
+                return;
+              }
+              std::this_thread::yield();
+            }
+          });
+
+          int best = 4096;
+          while (BABResizeSpace* solution =
+                 static_cast<BABResizeSpace*>(bab->next())) {
+            best = solution->value();
+            delete solution;
+          }
+          complete.store(true,std::memory_order_release);
+          controller.join();
+          bool ok = controller_ok.load(std::memory_order_acquire) &&
+            !bab->stopped() && (best == 0);
+          delete bab;
+          if (!ok)
+            return false;
+        }
+#endif
+        return true;
+      }
+
+      static bool stress_destruction(void) {
+#ifdef GECODE_HAS_THREADS
+        for (unsigned int round=0U; round<64U; round++) {
+          Gecode::Search::Options o;
+          o.threads = 4.0;
+          o.worker_control = Gecode::Search::WorkerControl(4U);
+          Gecode::Search::Engine* engine =
+            ((round & 1U) == 0U) ? dfs_engine(o) : bab_resize_engine(o);
+          std::atomic<bool> started(false);
+          std::atomic<bool> controller_ok(true);
+          Gecode::Search::WorkerControl control(o.worker_control);
+          std::thread controller([control,&started,&controller_ok,round]
+                                 () mutable {
+            static const unsigned int limits[] = {
+              1U,3U,2U,4U,2U,1U,4U,3U
+            };
+            started.store(true,std::memory_order_release);
+            for (unsigned int request=0U; request<2048U; request++) {
+              try {
+                control.request(limits[(request+round) % 8U]);
+              } catch (...) {
+                controller_ok.store(false,std::memory_order_release);
+                return;
+              }
+            }
+          });
+          while (!started.load(std::memory_order_acquire))
+            std::this_thread::yield();
+          delete engine;
+          controller.join();
+          if (!controller_ok.load(std::memory_order_acquire))
+            return false;
+          control.request(1U);
+          if ((control.capacity() != 4U) ||
+              (control.requested() != 1U))
+            return false;
+        }
+#endif
+        return true;
+      }
+
     public:
       WorkerControl(const std::string& name, Scenario s)
         : Base("Search::WorkerControl::"+name), scenario(s) {}
@@ -1589,6 +1730,9 @@ namespace Test {
           return bab_resize_optimality(true);
         case BAB_RESIZE_INCUMBENTS:  return bab_resize_incumbents();
         case BAB_RESIZE_LIFECYCLE:   return bab_resize_lifecycle();
+        case STRESS_DFS:             return stress_dfs();
+        case STRESS_BAB:             return stress_bab();
+        case STRESS_DESTRUCTION:     return stress_destruction();
         default:            GECODE_NEVER;
         }
         return false;
@@ -1616,6 +1760,10 @@ namespace Test {
                                  BAB_RESIZE_INCUMBENTS);
         (void) new WorkerControl("BABResize::Lifecycle",
                                  BAB_RESIZE_LIFECYCLE);
+        (void) new WorkerControl("Stress::DFS",STRESS_DFS);
+        (void) new WorkerControl("Stress::BAB",STRESS_BAB);
+        (void) new WorkerControl("Stress::Destruction",
+                                 STRESS_DESTRUCTION);
       }
     };
 
