@@ -95,16 +95,27 @@ namespace Gecode { namespace Search {
                              unsigned int worker);
     /// Release all workers and disable an installed gate
     static void gate_release_all(WorkerControl& control, Gate gate);
+    /// Return whether worker \a worker is stopped at gate \a gate
+    static bool gate_waiting(const WorkerControl& control, Gate gate,
+                             unsigned int worker);
     /// Begin one admitted parallel-search action
-    static void action_begin(WorkerControl& control);
+    static void action_begin(
+      WorkerControl& control, unsigned int worker,
+      const std::atomic<unsigned long long int>& generation);
     /// End one admitted parallel-search action
-    static void action_end(WorkerControl& control);
+    static void action_end(WorkerControl& control, unsigned int worker);
     /// Reset the admitted-action high-water mark
     static void reset_max_admitted(WorkerControl& control);
+    /// Reset the high-water mark for actions admitted in \a generation
+    static void reset_max_admitted(WorkerControl& control,
+                                   unsigned long long int generation);
     /// Return the current admitted-action count
     static unsigned int admitted(const WorkerControl& control);
     /// Return the admitted-action high-water mark
     static unsigned int max_admitted(const WorkerControl& control);
+    /// Return the newest generation with a completed admitted action
+    static unsigned long long int completed_generation(
+      const WorkerControl& control);
     /// Return the scheduler's observed request generation
     static unsigned long long int observed_generation(
       const WorkerControl& control);

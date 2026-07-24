@@ -59,7 +59,11 @@ namespace Gecode { namespace Search {
       std::atomic<unsigned long long int>* seen;
       std::atomic<bool>* waiting;
       std::atomic<unsigned int> admitted;
+      std::atomic<unsigned int> generation_admitted;
       std::atomic<unsigned int> max_admitted;
+      std::atomic<unsigned long long int> measured_generation;
+      std::atomic<unsigned long long int> completed_generation;
+      std::atomic<unsigned long long int>* action_generation;
       std::atomic<unsigned int>* logical;
       std::atomic<bool>* lease;
       std::atomic<bool>* parked;
@@ -73,7 +77,10 @@ namespace Gecode { namespace Search {
                [WorkerControlAccess::GATE_COUNT * capacity]),
           waiting(new std::atomic<bool>
                   [WorkerControlAccess::GATE_COUNT * capacity]),
-          admitted(0U), max_admitted(0U),
+          admitted(0U), generation_admitted(0U), max_admitted(0U),
+          measured_generation(0U), completed_generation(0U),
+          action_generation(
+            new std::atomic<unsigned long long int>[capacity]),
           logical(new std::atomic<unsigned int>[capacity]),
           lease(new std::atomic<bool>[capacity]),
           parked(new std::atomic<bool>[capacity]),
@@ -84,6 +91,7 @@ namespace Gecode { namespace Search {
           lease[i].store(false,std::memory_order_relaxed);
           parked[i].store(false,std::memory_order_relaxed);
           incumbent_deliveries[i].store(0U,std::memory_order_relaxed);
+          action_generation[i].store(0U,std::memory_order_relaxed);
         }
         for (unsigned int g=0U; g<WorkerControlAccess::GATE_COUNT; g++) {
           epoch[g].store(0U,std::memory_order_relaxed);
@@ -108,6 +116,7 @@ namespace Gecode { namespace Search {
         delete [] lease;
         delete [] parked;
         delete [] incumbent_deliveries;
+        delete [] action_generation;
       }
     };
 
@@ -530,8 +539,25 @@ namespace Gecode { namespace Search {
         support->release[g*capacity+i].signal();
   }
 
+  bool
+  WorkerControlAccess::gate_waiting(const WorkerControl& control, Gate gate,
+                                    unsigned int worker) {
+    WorkerControl::State* state = control.state;
+    if (state == nullptr)
+      return false;
+    WorkerControl::State::TestSupport* support =
+      state->test_support.load(std::memory_order_acquire);
+    if ((support == nullptr) || (worker >= support->capacity))
+      return false;
+    unsigned int g = static_cast<unsigned int>(gate);
+    return support->waiting[g*support->capacity+worker].load(
+      std::memory_order_acquire);
+  }
+
   void
-  WorkerControlAccess::action_begin(WorkerControl& control) {
+  WorkerControlAccess::action_begin(
+    WorkerControl& control, unsigned int worker,
+    const std::atomic<unsigned long long int>& generation) {
     WorkerControl::State* state = control.state;
     if (state == nullptr)
       return;
@@ -539,35 +565,82 @@ namespace Gecode { namespace Search {
       state->test_support.load(std::memory_order_acquire);
     if (support == nullptr)
       return;
+    unsigned long long int action_generation =
+      generation.load(std::memory_order_acquire);
+    support->action_generation[worker].store(action_generation,
+                                              std::memory_order_release);
     unsigned int current =
       support->admitted.fetch_add(1U,std::memory_order_acq_rel) + 1U;
-    unsigned int maximum =
-      support->max_admitted.load(std::memory_order_relaxed);
-    while ((maximum < current) &&
-           !support->max_admitted.compare_exchange_weak(
-             maximum,current,std::memory_order_release,
-             std::memory_order_relaxed)) {}
+    {
+      Support::Lock lock(state->mutex);
+      unsigned long long int measured =
+        support->measured_generation.load(std::memory_order_relaxed);
+      if (measured != 0U) {
+        if (action_generation != measured)
+          return;
+        current = support->generation_admitted.fetch_add(
+          1U,std::memory_order_relaxed) + 1U;
+      }
+      unsigned int maximum =
+        support->max_admitted.load(std::memory_order_relaxed);
+      if (maximum < current)
+        support->max_admitted.store(current,std::memory_order_release);
+    }
   }
 
   void
-  WorkerControlAccess::action_end(WorkerControl& control) {
+  WorkerControlAccess::action_end(WorkerControl& control,
+                                  unsigned int worker) {
     if (control.state == nullptr)
       return;
     WorkerControl::State::TestSupport* support =
       control.state->test_support.load(std::memory_order_acquire);
-    if (support != nullptr)
+    if (support != nullptr) {
       (void) support->admitted.fetch_sub(1U,std::memory_order_release);
+      unsigned long long int generation =
+        support->action_generation[worker].load(std::memory_order_acquire);
+      {
+        Support::Lock lock(control.state->mutex);
+        if (support->measured_generation.load(std::memory_order_relaxed) ==
+            generation)
+          (void) support->generation_admitted.fetch_sub(
+            1U,std::memory_order_relaxed);
+      }
+      unsigned long long int old =
+        support->completed_generation.load(std::memory_order_relaxed);
+      while ((old < generation) &&
+             !support->completed_generation.compare_exchange_weak(
+               old,generation,std::memory_order_release,
+               std::memory_order_relaxed)) {}
+    }
   }
 
   void
   WorkerControlAccess::reset_max_admitted(WorkerControl& control) {
     if (control.state != nullptr) {
+      Support::Lock lock(control.state->mutex);
       WorkerControl::State::TestSupport* support =
         control.state->test_support.load(std::memory_order_acquire);
       assert(support != nullptr);
       unsigned int current =
         support->admitted.load(std::memory_order_acquire);
+      support->measured_generation.store(0U,std::memory_order_release);
       support->max_admitted.store(current,std::memory_order_release);
+    }
+  }
+
+  void
+  WorkerControlAccess::reset_max_admitted(
+    WorkerControl& control, unsigned long long int generation) {
+    if (control.state != nullptr) {
+      Support::Lock lock(control.state->mutex);
+      WorkerControl::State::TestSupport* support =
+        control.state->test_support.load(std::memory_order_acquire);
+      assert(support != nullptr);
+      support->generation_admitted.store(0U,std::memory_order_release);
+      support->max_admitted.store(0U,std::memory_order_release);
+      support->measured_generation.store(generation,
+                                          std::memory_order_release);
     }
   }
 
@@ -589,6 +662,16 @@ namespace Gecode { namespace Search {
       control.state->test_support.load(std::memory_order_acquire);
     return (support == nullptr) ? 0U :
       support->max_admitted.load(std::memory_order_acquire);
+  }
+
+  unsigned long long int
+  WorkerControlAccess::completed_generation(const WorkerControl& control) {
+    if (control.state == nullptr)
+      return 0U;
+    WorkerControl::State::TestSupport* support =
+      control.state->test_support.load(std::memory_order_acquire);
+    return (support == nullptr) ? 0U :
+      support->completed_generation.load(std::memory_order_acquire);
   }
 
   unsigned long long int
