@@ -42,6 +42,7 @@
 #include "test/test.hh"
 
 #include <atomic>
+#include <memory>
 #include <thread>
 #include <type_traits>
 #include <vector>
@@ -1618,6 +1619,912 @@ namespace Test {
       }
     };
 
+    /// Shared observations for worker-controlled meta-engine tests
+    struct MetaResizeState {
+      std::atomic<unsigned int> master_calls;
+      std::atomic<unsigned int> slave_calls;
+      std::atomic<unsigned int> portfolio_assets;
+      std::atomic<unsigned int> restart_slaves;
+      std::atomic<unsigned int> nogood_handoffs;
+      std::atomic<unsigned int> live_spaces;
+      bool partition_portfolio;
+      unsigned int maximum;
+
+      explicit MetaResizeState(unsigned int maximum0=15U)
+        : master_calls(0U), slave_calls(0U), portfolio_assets(0U),
+          restart_slaves(0U), nogood_handoffs(0U), live_spaces(0U),
+          partition_portfolio(false), maximum(maximum0) {}
+    };
+
+    /// Partitionable finite model for RBS and PBS worker-control tests
+    class MetaResizeSpace : public Space {
+    public:
+      IntVar x;
+      MetaResizeState* observations;
+
+      MetaResizeSpace(MetaResizeState& state)
+        : x(*this,0,static_cast<int>(state.maximum)), observations(&state) {
+        observations->live_spaces.fetch_add(1U,std::memory_order_relaxed);
+        Gecode::branch(*this,x,INT_VAL_MAX());
+      }
+
+      MetaResizeSpace(MetaResizeState& state, int value)
+        : x(*this,value,value), observations(&state) {
+        observations->live_spaces.fetch_add(1U,std::memory_order_relaxed);
+      }
+
+      MetaResizeSpace(MetaResizeSpace& s)
+        : Space(s), observations(s.observations) {
+        observations->live_spaces.fetch_add(1U,std::memory_order_relaxed);
+        x.update(*this,s.x);
+      }
+
+      ~MetaResizeSpace(void) override {
+        observations->live_spaces.fetch_sub(1U,std::memory_order_relaxed);
+      }
+
+      Space* copy(void) override {
+        return new MetaResizeSpace(*this);
+      }
+
+      void constrain(const Space& _s) override {
+        const MetaResizeSpace& s =
+          static_cast<const MetaResizeSpace&>(_s);
+        rel(*this,x,IRT_LE,s.x.val());
+      }
+
+      bool master(const MetaInfo& mi) override {
+        observations->master_calls.fetch_add(1U,std::memory_order_relaxed);
+        if ((mi.type() == MetaInfo::RESTART) && (mi.last() != nullptr)) {
+          const MetaResizeSpace& last =
+            static_cast<const MetaResizeSpace&>(*mi.last());
+          rel(*this,x,IRT_NQ,last.x.val());
+          if (mi.nogoods().ng() > 0U)
+            observations->nogood_handoffs.fetch_add(
+              1U,std::memory_order_relaxed);
+          return true;
+        }
+        return false;
+      }
+
+      bool slave(const MetaInfo& mi) override {
+        observations->slave_calls.fetch_add(1U,
+                                               std::memory_order_relaxed);
+        if (mi.type() == MetaInfo::PORTFOLIO) {
+          unsigned int asset = mi.asset();
+          observations->portfolio_assets.fetch_or(
+            1U << asset,std::memory_order_relaxed);
+          if (observations->partition_portfolio) {
+            int boundary = static_cast<int>(observations->maximum / 2U);
+            if (asset == 0U)
+              rel(*this,x,IRT_LQ,boundary);
+            else
+              rel(*this,x,IRT_GR,boundary);
+          }
+        } else {
+          observations->restart_slaves.fetch_add(
+            1U,std::memory_order_relaxed);
+        }
+        return true;
+      }
+
+      int value(void) const {
+        return x.val();
+      }
+    };
+
+    struct MetaResizeBuilderFailure {};
+
+    /// Builder used to verify cleanup after explicit PBS construction fails
+    class MetaResizeThrowBuilder : public Gecode::Search::Builder {
+    private:
+      std::atomic<unsigned int>* live;
+      bool fail;
+    public:
+      MetaResizeThrowBuilder(const Gecode::Search::Options& o,
+                             std::atomic<unsigned int>& live0, bool fail0)
+        : Gecode::Search::Builder(o,false), live(&live0), fail(fail0) {
+        live->fetch_add(1U,std::memory_order_relaxed);
+      }
+
+      Gecode::Search::Engine* operator()(Space* s) const override {
+        if (fail)
+          throw MetaResizeBuilderFailure();
+        return Gecode::Search::build<
+          MetaResizeSpace,Gecode::DFS<MetaResizeSpace> >(s,opt);
+      }
+
+      ~MetaResizeThrowBuilder(void) override {
+        live->fetch_sub(1U,std::memory_order_relaxed);
+      }
+    };
+
+    /// Focused RBS and PBS worker-control transport tests
+    class MetaResize : public Base {
+    private:
+      enum Scenario {
+        VALIDATION,
+        RBS_DFS,
+        RBS_BAB,
+        PBS_EXPLICIT_DFS,
+        PBS_EXPLICIT_BAB,
+        PBS_EXPLICIT_BAB_CONSTRAIN,
+        PBS_NESTED,
+        PBS_NESTED_BAB,
+        PBS_STOP_LIFECYCLE
+      } scenario;
+
+      template<class Exception, class Function>
+      static bool throws(Function function) {
+        try {
+          function();
+        } catch (const Exception&) {
+          return true;
+        } catch (...) {
+          return false;
+        }
+        return false;
+      }
+
+      static bool settled(const Gecode::Search::WorkerControl& control,
+                          unsigned long long int generation,
+                          unsigned int leases) {
+        for (unsigned int spin=0U; spin<10000000U; spin++) {
+          if ((Gecode::Search::WorkerControlAccess::
+               observed_generation(control) == generation) &&
+              (Gecode::Search::WorkerControlAccess::leases(control) ==
+               leases) &&
+              (Gecode::Search::WorkerControlAccess::admitted(control) == 0U))
+            return true;
+          std::this_thread::yield();
+        }
+        return false;
+      }
+
+      static unsigned int exhaust_dfs(
+        Gecode::Search::Base<MetaResizeSpace>& engine,
+        unsigned int seen[16]) {
+        unsigned int solutions = 0U;
+        while (MetaResizeSpace* solution = engine.next()) {
+          int value = solution->value();
+          if ((value >= 0) && (value < 16))
+            seen[value]++;
+          solutions++;
+          delete solution;
+        }
+        return solutions;
+      }
+
+#ifdef GECODE_HAS_THREADS
+      template<class Engine>
+      static void action_portfolio_leaf(
+        Engine& engine,
+        Gecode::Search::WorkerControl& control, unsigned int request,
+        unsigned long long int generation,
+        std::vector<MetaResizeSpace*>& results, bool& ok) {
+        using Gecode::Search::WorkerControlAccess;
+        WorkerControlAccess::gate_install(
+          control,WorkerControlAccess::GATE_ACTION_BEGIN,
+          WorkerControlAccess::ALL_WORKERS,request);
+        WorkerControlAccess::reset_max_admitted(control,generation);
+        std::atomic<bool> action_ready(false);
+        std::atomic<bool> exhausted(false);
+        std::atomic<bool> consumer_done(false);
+        std::thread consumer([&] {
+          while (true) {
+            MetaResizeSpace* result =
+              static_cast<MetaResizeSpace*>(engine.next());
+            if (result == nullptr) {
+              exhausted.store(true,std::memory_order_release);
+              consumer_done.store(true,std::memory_order_release);
+              return;
+            }
+            results.push_back(result);
+            if (action_ready.load(std::memory_order_acquire)) {
+              consumer_done.store(true,std::memory_order_release);
+              return;
+            }
+          }
+        });
+        unsigned int waiting = 0U;
+        auto deadline = std::chrono::steady_clock::now() +
+          std::chrono::seconds(3);
+        do {
+          waiting = 0U;
+          for (unsigned int worker=0U; worker<control.capacity(); worker++)
+            waiting += WorkerControlAccess::gate_waiting(
+              control,WorkerControlAccess::GATE_ACTION_BEGIN,worker);
+          if (waiting >= request)
+            break;
+          std::this_thread::yield();
+        } while (!consumer_done.load(std::memory_order_acquire) &&
+                 (std::chrono::steady_clock::now() < deadline));
+        bool reached = waiting >= request;
+        bool action_ok = reached &&
+          (WorkerControlAccess::observed_generation(control) == generation) &&
+          (WorkerControlAccess::leases(control) == request) &&
+          (WorkerControlAccess::max_admitted(control) == request);
+        action_ready.store(true,std::memory_order_release);
+        WorkerControlAccess::gate_release_all(
+          control,WorkerControlAccess::GATE_ACTION_BEGIN);
+        consumer.join();
+        ok = ok && action_ok &&
+          !exhausted.load(std::memory_order_acquire) &&
+          settled(control,generation,request) &&
+          (WorkerControlAccess::completed_generation(control) >= generation);
+      }
+
+      template<class Engine>
+      static void action_portfolio_phase(
+        Engine& engine,
+        Gecode::Search::WorkerControl& first, unsigned int first_request,
+        Gecode::Search::WorkerControl& second, unsigned int second_request,
+        std::vector<MetaResizeSpace*>& results, bool& ok) {
+        using Gecode::Search::WorkerControlAccess;
+        first.request(first_request);
+        second.request(second_request);
+        unsigned long long int fg = WorkerControlAccess::generation(first);
+        unsigned long long int sg = WorkerControlAccess::generation(second);
+        action_portfolio_leaf(
+          engine,first,first_request,fg,results,ok);
+        action_portfolio_leaf(
+          engine,second,second_request,sg,results,ok);
+        ok = ok &&
+          (WorkerControlAccess::observed_generation(first) == fg) &&
+          (WorkerControlAccess::observed_generation(second) == sg) &&
+          (WorkerControlAccess::leases(first) == first_request) &&
+          (WorkerControlAccess::leases(second) == second_request) &&
+          (WorkerControlAccess::max_admitted(first) == first_request) &&
+          (WorkerControlAccess::max_admitted(second) == second_request);
+      }
+#endif
+
+      static bool validation(void) {
+#ifdef GECODE_HAS_THREADS
+        const unsigned int leaf_threads = 4U;
+#else
+        const unsigned int leaf_threads = 1U;
+#endif
+        bool ok = true;
+
+        MetaResizeState single_state;
+        Gecode::Search::WorkerControl single(1U);
+        {
+          MetaResizeSpace* root = new MetaResizeSpace(single_state);
+          Gecode::Search::Options o;
+          o.assets = 1U;
+          o.threads = static_cast<double>(leaf_threads);
+          o.worker_control = single;
+          Gecode::PBS<MetaResizeSpace,Gecode::DFS> engine(root,o);
+          delete root;
+          ok = ok && (single.capacity() == leaf_threads);
+          unsigned int seen[16] = {};
+          ok = ok && (exhaust_dfs(engine,seen) == 16U);
+          for (unsigned int count : seen)
+            ok = ok && (count == 1U);
+        }
+        single.request(1U);
+        ok = ok &&
+          (single_state.master_calls.load(std::memory_order_relaxed) == 1U) &&
+          (single_state.slave_calls.load(std::memory_order_relaxed) == 1U);
+        if (!ok)
+          return false;
+
+        MetaResizeState homogeneous_state;
+        Gecode::Search::WorkerControl homogeneous(1U);
+        MetaResizeSpace* homogeneous_root =
+          new MetaResizeSpace(homogeneous_state);
+        Gecode::Search::Options homogeneous_options;
+        homogeneous_options.assets = 2U;
+        homogeneous_options.threads = 2.0;
+        homogeneous_options.worker_control = homogeneous;
+        ok = ok && throws<Gecode::Search::WorkerControlInUse>([&] {
+          Gecode::PBS<MetaResizeSpace,Gecode::DFS>
+            engine(homogeneous_root,homogeneous_options);
+        });
+        ok = ok && (homogeneous.capacity() == 0U) &&
+          (homogeneous_state.master_calls.load(
+             std::memory_order_relaxed) == 0U) &&
+          (homogeneous_state.slave_calls.load(
+             std::memory_order_relaxed) == 0U);
+        delete homogeneous_root;
+        if (!ok)
+          return false;
+
+        MetaResizeState outer_state;
+        Gecode::Search::WorkerControl outer(1U);
+        Gecode::Search::Options builder_options;
+        builder_options.threads = static_cast<double>(leaf_threads);
+        Gecode::SEBs outer_builders(1);
+        outer_builders[0] = Gecode::dfs<MetaResizeSpace>(builder_options);
+        MetaResizeSpace* outer_root = new MetaResizeSpace(outer_state);
+        Gecode::Search::Options outer_options;
+        outer_options.threads = 1.0;
+        outer_options.worker_control = outer;
+        ok = ok && throws<Gecode::Search::WorkerControlInUse>([&] {
+          Gecode::PBS<MetaResizeSpace,Gecode::DFS>
+            engine(outer_root,outer_builders,outer_options);
+        });
+        ok = ok && (outer.capacity() == 0U) &&
+          (outer_state.master_calls.load(std::memory_order_relaxed) == 0U);
+        delete outer_builders[0];
+        delete outer_root;
+        if (!ok)
+          return false;
+
+#ifdef GECODE_HAS_THREADS
+        MetaResizeState duplicate_state;
+        Gecode::Search::WorkerControl duplicate(1U);
+        Gecode::Search::Options duplicate_options;
+        duplicate_options.threads = 2.0;
+        duplicate_options.worker_control = duplicate;
+        Gecode::SEBs duplicate_builders(2);
+        duplicate_builders[0] =
+          Gecode::dfs<MetaResizeSpace>(duplicate_options);
+        duplicate_builders[1] =
+          Gecode::dfs<MetaResizeSpace>(duplicate_options);
+        MetaResizeSpace* duplicate_root =
+          new MetaResizeSpace(duplicate_state);
+        Gecode::Search::Options duplicate_outer;
+        duplicate_outer.threads = 2.0;
+        ok = ok && throws<Gecode::Search::WorkerControlInUse>([&] {
+          Gecode::PBS<MetaResizeSpace,Gecode::DFS>
+            engine(duplicate_root,duplicate_builders,duplicate_outer);
+        });
+        ok = ok && (duplicate.capacity() == 0U) &&
+          (duplicate_state.master_calls.load(
+             std::memory_order_relaxed) == 0U);
+        delete duplicate_builders[0];
+        delete duplicate_builders[1];
+        delete duplicate_root;
+        if (!ok)
+          return false;
+
+        MetaResizeState distinct_state;
+        distinct_state.partition_portfolio = true;
+        Gecode::Search::WorkerControl first(1U), second(1U), discarded(1U);
+        Gecode::Search::Options
+          first_options, second_options, discarded_options;
+        first_options.threads = 2.0;
+        first_options.worker_control = first;
+        second_options.threads = 3.0;
+        second_options.worker_control = second;
+        discarded_options.threads = 4.0;
+        discarded_options.worker_control = discarded;
+        Gecode::SEBs distinct_builders(3);
+        distinct_builders[0] = Gecode::dfs<MetaResizeSpace>(first_options);
+        distinct_builders[1] = Gecode::dfs<MetaResizeSpace>(second_options);
+        distinct_builders[2] =
+          Gecode::dfs<MetaResizeSpace>(discarded_options);
+        unsigned int distinct_solutions = 0U;
+        bool distinct_exact = true;
+        {
+          MetaResizeSpace* root = new MetaResizeSpace(distinct_state);
+          Gecode::Search::Options portfolio;
+          portfolio.threads = 2.0;
+          Gecode::PBS<MetaResizeSpace,Gecode::DFS>
+            engine(root,distinct_builders,portfolio);
+          delete root;
+          ok = ok && (first.capacity() == 2U) &&
+            (second.capacity() == 3U) && (discarded.capacity() == 0U);
+          unsigned int seen[16] = {};
+          distinct_solutions = exhaust_dfs(engine,seen);
+          ok = ok && (distinct_solutions == 16U);
+          for (unsigned int count : seen)
+            distinct_exact = distinct_exact && (count == 1U);
+          ok = ok && distinct_exact;
+        }
+
+        MetaResizeState failure_state;
+        Gecode::Search::WorkerControl bound(1U), failing(1U), excess(1U);
+        Gecode::Search::WorkerControl bound_copy(bound);
+        Gecode::Search::Options failure_options[3];
+        failure_options[0].threads = 2.0;
+        failure_options[0].worker_control = bound;
+        failure_options[1].threads = 3.0;
+        failure_options[1].worker_control = failing;
+        failure_options[2].threads = 4.0;
+        failure_options[2].worker_control = excess;
+        std::atomic<unsigned int> live_builders(0U);
+        Gecode::SEBs failure_builders(3);
+        failure_builders[0] = new MetaResizeThrowBuilder(
+          failure_options[0],live_builders,false);
+        failure_builders[1] = new MetaResizeThrowBuilder(
+          failure_options[1],live_builders,true);
+        failure_builders[2] = new MetaResizeThrowBuilder(
+          failure_options[2],live_builders,false);
+        MetaResizeSpace* failure_root = new MetaResizeSpace(failure_state);
+        Gecode::Search::Options failure_outer;
+        failure_outer.threads = 2.0;
+        bool construction_failed = false;
+        try {
+          Gecode::PBS<MetaResizeSpace,Gecode::DFS>
+            engine(failure_root,failure_builders,failure_outer);
+        } catch (const MetaResizeBuilderFailure&) {
+          construction_failed = true;
+        }
+        delete failure_root;
+        ok = ok && construction_failed &&
+          (live_builders.load(std::memory_order_relaxed) == 0U) &&
+          (failure_state.live_spaces.load(std::memory_order_relaxed) == 0U) &&
+          Gecode::Search::WorkerControlAccess::same_identity(
+            bound,bound_copy) &&
+          !Gecode::Search::WorkerControlAccess::attached(bound) &&
+          !Gecode::Search::WorkerControlAccess::attached(bound_copy) &&
+          !Gecode::Search::WorkerControlAccess::attached(failing) &&
+          (excess.capacity() == 0U);
+#endif
+        return ok;
+      }
+
+      static bool rbs_dfs(void) {
+        MetaResizeState state;
+        state.partition_portfolio = true;
+#ifdef GECODE_HAS_THREADS
+        const unsigned int capacity = 4U;
+#else
+        const unsigned int capacity = 1U;
+#endif
+        Gecode::Search::WorkerControl control(capacity);
+        Gecode::Search::Options o;
+        o.threads = static_cast<double>(capacity);
+        o.worker_control = control;
+        o.nogoods_limit = 16U;
+        o.cutoff = Gecode::Search::Cutoff::constant(1U);
+        MetaResizeSpace* root = new MetaResizeSpace(state);
+        Gecode::RBS<MetaResizeSpace,Gecode::DFS> engine(root,o);
+        delete root;
+        bool ok = control.capacity() == capacity;
+        unsigned int seen[16] = {};
+#ifdef GECODE_HAS_THREADS
+        const unsigned int requests[] = {1U,3U,1U,4U};
+#else
+        const unsigned int requests[] = {1U,1U,1U,1U};
+#endif
+        std::vector<MetaResizeSpace*> results;
+        for (unsigned int request : requests) {
+          control.request(request);
+          unsigned long long int generation =
+            Gecode::Search::WorkerControlAccess::generation(control);
+          MetaResizeSpace* solution = engine.next();
+          if (solution != nullptr)
+            results.push_back(solution);
+#ifdef GECODE_HAS_THREADS
+          ok = ok && (solution != nullptr) &&
+            settled(control,generation,request);
+#else
+          ok = ok && (solution != nullptr);
+#endif
+        }
+        for (MetaResizeSpace* solution : results) {
+          seen[solution->value()]++;
+          delete solution;
+        }
+        unsigned int solutions =
+          static_cast<unsigned int>(results.size()) +
+          exhaust_dfs(engine,seen);
+        ok = ok && (solutions == 16U) &&
+          (control.capacity() == capacity) &&
+          (state.restart_slaves.load(std::memory_order_relaxed) >= 2U);
+        for (unsigned int count : seen)
+          ok = ok && (count == 1U);
+        return ok;
+      }
+
+      static bool rbs_bab(void) {
+        MetaResizeState state;
+        state.partition_portfolio = true;
+#ifdef GECODE_HAS_THREADS
+        const unsigned int capacity = 4U;
+#else
+        const unsigned int capacity = 1U;
+#endif
+        Gecode::Search::WorkerControl control(capacity);
+        Gecode::Search::Options o;
+        o.threads = static_cast<double>(capacity);
+        o.worker_control = control;
+        o.cutoff = Gecode::Search::Cutoff::constant(1U);
+        MetaResizeSpace* root = new MetaResizeSpace(state);
+        Gecode::SEB builder =
+          Gecode::rbs<MetaResizeSpace,Gecode::BAB>(o);
+        Gecode::Search::Engine* engine = (*builder)(root);
+        delete builder;
+        delete root;
+        bool ok = control.capacity() == capacity;
+        int best = 16;
+#ifdef GECODE_HAS_THREADS
+        control.request(1U);
+        unsigned long long int first_generation =
+          Gecode::Search::WorkerControlAccess::generation(control);
+#else
+        control.request(1U);
+#endif
+        MetaResizeSpace* solution =
+          static_cast<MetaResizeSpace*>(engine->next());
+        ok = ok && (solution != nullptr);
+        if (solution != nullptr) {
+          best = solution->value();
+          delete solution;
+        }
+#ifdef GECODE_HAS_THREADS
+        ok = ok && settled(control,first_generation,1U);
+#endif
+        MetaResizeSpace external(state,10);
+        (void) external.status();
+        engine->constrain(external);
+#ifdef GECODE_HAS_THREADS
+        control.request(3U);
+        unsigned long long int second_generation =
+          Gecode::Search::WorkerControlAccess::generation(control);
+#else
+        control.request(1U);
+#endif
+        while ((solution =
+                static_cast<MetaResizeSpace*>(engine->next())) != nullptr) {
+          best = solution->value();
+          delete solution;
+        }
+#ifdef GECODE_HAS_THREADS
+        ok = ok && settled(control,second_generation,3U);
+#endif
+        delete engine;
+        return ok && (best == 0) &&
+          (control.capacity() == capacity) &&
+          (state.restart_slaves.load(std::memory_order_relaxed) >= 2U);
+      }
+
+      template<template<class> class Engine>
+      static bool pbs_explicit(bool best_search, bool constant=false,
+                               bool external_incumbent=false) {
+#ifndef GECODE_HAS_THREADS
+        (void) best_search;
+        (void) constant;
+        (void) external_incumbent;
+        return true;
+#else
+        MetaResizeState state(
+          (best_search && !external_incumbent) ? 15U : 4095U);
+        state.partition_portfolio = true;
+        Gecode::Search::WorkerControl
+          first(constant ? 3U : 4U), second(constant ? 1U : 4U);
+        Gecode::Search::NodeStop first_stop(0U), second_stop(0U);
+        Gecode::Search::Options child[2];
+        for (unsigned int i=0U; i<2U; i++)
+          child[i].threads = 4.0;
+        child[0].worker_control = first;
+        child[1].worker_control = second;
+        if (external_incumbent) {
+          child[0].stop = &first_stop;
+          child[1].stop = &second_stop;
+        }
+        Gecode::SEBs builders(2);
+        builders[0] = best_search ?
+          Gecode::bab<MetaResizeSpace>(child[0]) :
+          Gecode::dfs<MetaResizeSpace>(child[0]);
+        builders[1] = best_search ?
+          Gecode::bab<MetaResizeSpace>(child[1]) :
+          Gecode::dfs<MetaResizeSpace>(child[1]);
+        Gecode::Search::Options outer;
+        outer.threads = 2.0;
+        MetaResizeSpace* root = new MetaResizeSpace(state);
+        Gecode::PBS<MetaResizeSpace,Engine> engine(root,builders,outer);
+        delete root;
+        bool ok = (first.capacity() == 4U) && (second.capacity() == 4U);
+        bool phase_ok = true, parked_ok = true, result_ok = true;
+        std::vector<MetaResizeSpace*> results;
+        if (external_incumbent) {
+          first.request(1U);
+          second.request(1U);
+          Gecode::Search::WorkerControl* controls[2] = {&first,&second};
+          for (unsigned int c=0U; c<2U; c++) {
+            Gecode::Search::WorkerControlAccess::gate_install(
+              *controls[c],
+              Gecode::Search::WorkerControlAccess::GATE_ACTION_BEGIN,
+              Gecode::Search::WorkerControlAccess::ALL_WORKERS,1U);
+            Gecode::Search::WorkerControlAccess::gate_release_all(
+              *controls[c],
+              Gecode::Search::WorkerControlAccess::GATE_ACTION_BEGIN);
+          }
+          MetaResizeSpace* prelude = engine.next();
+          parked_ok =
+            (prelude == nullptr) && engine.stopped() &&
+            (Gecode::Search::WorkerControlAccess::parked(first) == 3U) &&
+            (Gecode::Search::WorkerControlAccess::parked(second) == 3U);
+          delete prelude;
+          first_stop.limit(1000000U);
+          second_stop.limit(1000000U);
+          unsigned long long int before[2][4];
+          unsigned int forwarded = 0U, parked_forwarded = 0U;
+          for (unsigned int c=0U; c<2U; c++)
+            for (unsigned int worker=0U; worker<4U; worker++)
+              before[c][worker] =
+                Gecode::Search::WorkerControlAccess::
+                  incumbent_deliveries(*controls[c],worker);
+          MetaResizeSpace external(state,-1);
+          (void) external.status();
+          engine.constrain(external);
+          for (unsigned int c=0U; c<2U; c++)
+            for (unsigned int worker=0U; worker<4U; worker++)
+              if (Gecode::Search::WorkerControlAccess::
+                    incumbent_deliveries(*controls[c],worker) >
+                  before[c][worker]) {
+                forwarded++;
+                if (Gecode::Search::WorkerControlAccess::
+                      worker_parked(*controls[c],worker))
+                  parked_forwarded++;
+              }
+          ok = ok && parked_ok && (forwarded == 8U) &&
+            (parked_forwarded == 6U);
+        } else if (!constant) {
+          action_portfolio_phase(
+            engine,first,3U,second,1U,results,phase_ok);
+          ok = ok && phase_ok;
+          parked_ok =
+            (Gecode::Search::WorkerControlAccess::parked(first) == 1U) &&
+            (Gecode::Search::WorkerControlAccess::parked(second) == 3U);
+          ok = ok && parked_ok;
+          if (!best_search) {
+            action_portfolio_phase(
+              engine,first,1U,second,3U,results,ok);
+            action_portfolio_phase(
+              engine,first,2U,second,2U,results,ok);
+          }
+        }
+
+        if (best_search) {
+          int best = static_cast<int>(state.maximum+1U);
+          for (MetaResizeSpace* solution : results) {
+            best = solution->value();
+            delete solution;
+          }
+          while (MetaResizeSpace* solution = engine.next()) {
+            best = solution->value();
+            delete solution;
+          }
+          result_ok = external_incumbent ?
+            (best == static_cast<int>(state.maximum+1U)) :
+            (best == 0);
+          ok = ok && result_ok;
+        } else {
+          std::vector<unsigned int> seen(state.maximum+1U,0U);
+          bool valid = constant || !results.empty();
+          for (MetaResizeSpace* solution : results) {
+            valid = valid && (solution->value() >= 0) &&
+              (static_cast<unsigned int>(solution->value()) <=
+               state.maximum);
+            if ((solution->value() >= 0) &&
+                (static_cast<unsigned int>(solution->value()) <=
+                 state.maximum))
+              seen[static_cast<unsigned int>(solution->value())]++;
+            delete solution;
+          }
+          while (MetaResizeSpace* solution = engine.next()) {
+            valid = valid && (solution->value() >= 0) &&
+              (static_cast<unsigned int>(solution->value()) <=
+               state.maximum);
+            if ((solution->value() >= 0) &&
+                (static_cast<unsigned int>(solution->value()) <=
+                 state.maximum))
+              seen[static_cast<unsigned int>(solution->value())]++;
+            delete solution;
+          }
+          for (unsigned int i=0U; i<seen.size(); i++) {
+            unsigned int count = seen[i];
+            valid = valid && (count == 1U);
+          }
+          ok = ok && valid;
+        }
+        bool result = ok && (first.capacity() == 4U) &&
+          (second.capacity() == 4U) &&
+          (state.master_calls.load(std::memory_order_relaxed) == 1U) &&
+          (state.slave_calls.load(std::memory_order_relaxed) == 2U) &&
+          (state.portfolio_assets.load(std::memory_order_relaxed) == 3U);
+        return result;
+#endif
+      }
+
+      static bool nested(void) {
+        MetaResizeState state;
+        state.partition_portfolio = true;
+#ifdef GECODE_HAS_THREADS
+        const unsigned int capacity = 2U;
+#else
+        const unsigned int capacity = 1U;
+#endif
+        Gecode::Search::WorkerControl first(capacity), second(capacity);
+        Gecode::Search::Options child[2];
+        for (unsigned int i=0U; i<2U; i++) {
+          child[i].threads = static_cast<double>(capacity);
+          child[i].cutoff = Gecode::Search::Cutoff::constant(1U);
+        }
+        child[0].worker_control = first;
+        child[1].worker_control = second;
+        Gecode::SEBs builders(2);
+        builders[0] =
+          Gecode::rbs<MetaResizeSpace,Gecode::DFS>(child[0]);
+        builders[1] =
+          Gecode::rbs<MetaResizeSpace,Gecode::DFS>(child[1]);
+        Gecode::Search::Options outer;
+#ifdef GECODE_HAS_THREADS
+        outer.threads = 2.0;
+#else
+        outer.threads = 1.0;
+#endif
+        MetaResizeSpace* root = new MetaResizeSpace(state);
+        Gecode::PBS<MetaResizeSpace,Gecode::DFS>
+          engine(root,builders,outer);
+        delete root;
+        first.request(1U);
+        second.request(capacity);
+        unsigned int seen[16] = {};
+        unsigned int solutions = exhaust_dfs(engine,seen);
+        bool ok = (solutions == 16U) &&
+          (first.capacity() == capacity) &&
+          (second.capacity() == capacity) &&
+          (state.portfolio_assets.load(std::memory_order_relaxed) == 3U) &&
+          (state.restart_slaves.load(std::memory_order_relaxed) >= 2U);
+        for (unsigned int count : seen)
+          ok = ok && (count == 1U);
+        return ok;
+      }
+
+      static bool nested_bab(void) {
+        MetaResizeState state;
+        state.partition_portfolio = true;
+#ifdef GECODE_HAS_THREADS
+        const unsigned int capacity = 2U;
+#else
+        const unsigned int capacity = 1U;
+#endif
+        Gecode::Search::WorkerControl first(capacity), second(capacity);
+        Gecode::Search::Options child[2];
+        for (unsigned int i=0U; i<2U; i++) {
+          child[i].threads = static_cast<double>(capacity);
+          child[i].cutoff = Gecode::Search::Cutoff::constant(1U);
+        }
+        child[0].worker_control = first;
+        child[1].worker_control = second;
+        Gecode::SEBs builders(2);
+        builders[0] =
+          Gecode::rbs<MetaResizeSpace,Gecode::BAB>(child[0]);
+        builders[1] =
+          Gecode::rbs<MetaResizeSpace,Gecode::BAB>(child[1]);
+        Gecode::Search::Options outer;
+#ifdef GECODE_HAS_THREADS
+        outer.threads = 2.0;
+#else
+        outer.threads = 1.0;
+#endif
+        MetaResizeSpace* root = new MetaResizeSpace(state);
+        Gecode::PBS<MetaResizeSpace,Gecode::BAB>
+          engine(root,builders,outer);
+        delete root;
+        first.request(1U);
+        second.request(capacity);
+        int best = 16;
+        while (MetaResizeSpace* solution = engine.next()) {
+          best = solution->value();
+          delete solution;
+        }
+        return (best == 0) &&
+          (first.capacity() == capacity) &&
+          (second.capacity() == capacity) &&
+          (state.portfolio_assets.load(std::memory_order_relaxed) == 3U) &&
+          (state.restart_slaves.load(std::memory_order_relaxed) >= 2U);
+      }
+
+      static bool pbs_stop_lifecycle(void) {
+        MetaResizeState state(4095U);
+        state.partition_portfolio = true;
+#ifdef GECODE_HAS_THREADS
+        const unsigned int capacity = 4U;
+#else
+        const unsigned int capacity = 1U;
+#endif
+        Gecode::Search::WorkerControl first(capacity), second(capacity);
+        Gecode::Search::WorkerControl first_copy(first), second_copy(second);
+        Gecode::Search::NodeStop first_stop(0U), second_stop(0U);
+        Gecode::Search::Options child[2];
+        for (unsigned int i=0U; i<2U; i++)
+          child[i].threads = static_cast<double>(capacity);
+        child[0].worker_control = first;
+        child[1].worker_control = second;
+        child[0].stop = &first_stop;
+        child[1].stop = &second_stop;
+        bool ok = true;
+        {
+          Gecode::SEBs builders(2);
+          builders[0] = Gecode::dfs<MetaResizeSpace>(child[0]);
+          builders[1] = Gecode::dfs<MetaResizeSpace>(child[1]);
+          Gecode::Search::Options outer;
+#ifdef GECODE_HAS_THREADS
+          outer.threads = 2.0;
+#else
+          outer.threads = 1.0;
+#endif
+          MetaResizeSpace* root = new MetaResizeSpace(state);
+          Gecode::PBS<MetaResizeSpace,Gecode::DFS>
+            engine(root,builders,outer);
+          delete root;
+          first.request(1U);
+          second.request(1U);
+          unsigned long long int fg =
+            Gecode::Search::WorkerControlAccess::generation(first);
+          unsigned long long int sg =
+            Gecode::Search::WorkerControlAccess::generation(second);
+          Gecode::Search::WorkerControlAccess::gate_install(
+            first,Gecode::Search::WorkerControlAccess::GATE_ACTION_BEGIN,
+            Gecode::Search::WorkerControlAccess::ALL_WORKERS,1U);
+          Gecode::Search::WorkerControlAccess::gate_install(
+            second,Gecode::Search::WorkerControlAccess::GATE_ACTION_BEGIN,
+            Gecode::Search::WorkerControlAccess::ALL_WORKERS,1U);
+          Gecode::Search::WorkerControlAccess::gate_release_all(
+            first,Gecode::Search::WorkerControlAccess::GATE_ACTION_BEGIN);
+          Gecode::Search::WorkerControlAccess::gate_release_all(
+            second,Gecode::Search::WorkerControlAccess::GATE_ACTION_BEGIN);
+          MetaResizeSpace* solution = engine.next();
+          delete solution;
+          ok = ok && (solution == nullptr) && engine.stopped() &&
+            (Gecode::Search::WorkerControlAccess::
+               completed_generation(first) >= fg) &&
+            (Gecode::Search::WorkerControlAccess::
+               completed_generation(second) >= sg);
+#ifdef GECODE_HAS_THREADS
+          ok = ok &&
+            (Gecode::Search::WorkerControlAccess::parked(first) == 3U) &&
+            (Gecode::Search::WorkerControlAccess::parked(second) == 3U);
+#endif
+        }
+        return ok &&
+          !Gecode::Search::WorkerControlAccess::attached(first) &&
+          !Gecode::Search::WorkerControlAccess::attached(second) &&
+          !Gecode::Search::WorkerControlAccess::attached(first_copy) &&
+          !Gecode::Search::WorkerControlAccess::attached(second_copy) &&
+          (state.live_spaces.load(std::memory_order_relaxed) == 0U);
+      }
+
+    public:
+      MetaResize(const std::string& name, Scenario s)
+        : Base("Search::WorkerControl::MetaResize::"+name), scenario(s) {}
+
+      bool run(void) override {
+        switch (scenario) {
+        case VALIDATION:       return validation();
+        case RBS_DFS:          return rbs_dfs();
+        case RBS_BAB:          return rbs_bab();
+        case PBS_EXPLICIT_DFS: {
+          bool constant = pbs_explicit<Gecode::DFS>(false,true);
+          bool dynamic = pbs_explicit<Gecode::DFS>(false);
+          return constant && dynamic;
+        }
+        case PBS_EXPLICIT_BAB:
+          return pbs_explicit<Gecode::BAB>(true,true);
+        case PBS_EXPLICIT_BAB_CONSTRAIN:
+          return pbs_explicit<Gecode::BAB>(true,false,true);
+        case PBS_NESTED:       return nested();
+        case PBS_NESTED_BAB:   return nested_bab();
+        case PBS_STOP_LIFECYCLE:
+          return pbs_stop_lifecycle();
+        default:               GECODE_NEVER;
+        }
+        return false;
+      }
+
+      static void create(void) {
+        (void) new MetaResize("Validation",VALIDATION);
+        (void) new MetaResize("RBS::DFS",RBS_DFS);
+        (void) new MetaResize("RBS::BAB",RBS_BAB);
+        (void) new MetaResize("PBS::Explicit::DFS",PBS_EXPLICIT_DFS);
+        (void) new MetaResize("PBS::Explicit::BAB::Optimality",
+                             PBS_EXPLICIT_BAB);
+        (void) new MetaResize("PBS::Explicit::BAB::Constrain",
+                             PBS_EXPLICIT_BAB_CONSTRAIN);
+        (void) new MetaResize("PBS::NestedRBS",PBS_NESTED);
+        (void) new MetaResize("PBS::NestedRBS::BAB",PBS_NESTED_BAB);
+        (void) new MetaResize("PBS::StopLifecycle",PBS_STOP_LIFECYCLE);
+      }
+    };
+
     /// %Base class for search tests
     class Test : public Base {
     public:
@@ -2016,6 +2923,8 @@ namespace Test {
     public:
       /// Perform creation and registration
       Create(void) {
+        WorkerControl::create();
+        MetaResize::create();
         // Depth-first search
         for (unsigned int t = 1; t<=4; t++)
           for (unsigned int c_d = 1; c_d<10; c_d++)

@@ -382,6 +382,8 @@ namespace Gecode { namespace Search { namespace Par {
   template<class Tracer>
   void
   BAB<Tracer>::reset(Space* s) {
+    WorkerControlAccess::gate_release_all(
+      this->_opt.worker_control,WorkerControlAccess::GATE_ACTION_BEGIN);
     // Grab wait lock for reset
     m_wait_reset.acquire();
     // Release workers for reset

@@ -150,17 +150,17 @@ namespace Gecode { namespace Search { namespace Par {
 
   template<class Collect>
   forceinline
-  Slave<Collect>::Slave(PBS<Collect>* m, Engine* s, Stop* so)
-    : Support::Runnable(false), master(m), slave(s), stop(so) {}
+  Slave<Collect>::Slave(PBS<Collect>* p, Engine* e, Stop* so)
+    : Support::Runnable(false), portfolio(p), engine(e), stop(so) {}
   template<class Collect>
   forceinline Statistics
   Slave<Collect>::statistics(void) const {
-    return slave->statistics();
+    return engine->statistics();
   }
   template<class Collect>
   forceinline bool
   Slave<Collect>::stopped(void) const {
-    return slave->stopped();
+    return engine->stopped();
   }
   template<class Collect>
   forceinline Support::Terminator*
@@ -175,11 +175,11 @@ namespace Gecode { namespace Search { namespace Par {
   template<class Collect>
   forceinline void
   Slave<Collect>::constrain(const Space& b) {
-    slave->constrain(b);
+    engine->constrain(b);
   }
   template<class Collect>
   Slave<Collect>::~Slave(void) {
-    delete slave;
+    delete engine;
     delete stop;
   }
 
@@ -236,37 +236,37 @@ namespace Gecode { namespace Search { namespace Par {
   Slave<Collect>::run(void) {
     Space* s;
     do {
-      s = slave->next();
-    } while (!master->report(this,s));
+      s = engine->next();
+    } while (!portfolio->report(this,s));
   }
 
   template<class Collect>
   Space*
   PBS<Collect>::next(void) {
     m.acquire();
-    if (solutions.empty()) {
-      // Clear all
-      tostop.store(false, std::memory_order_release);
+    if (solutions.empty())
       slave_stop.store(false, std::memory_order_release);
+    while (solutions.empty() && (n_active > 0) &&
+           !slave_stop.load(std::memory_order_acquire)) {
+      // Clear the internal stop used to interrupt sibling slaves
+      tostop.store(false, std::memory_order_release);
 
       // Invariant: all slaves are idle!
       assert(n_busy == 0);
       assert(!tostop.load(std::memory_order_acquire));
 
-      if (n_active > 0) {
-        // Run all active slaves
-        n_busy = n_active;
-        for (unsigned int i=0U; i<n_active; i++) {
-          // Consume the previous completion before reusing this slave.  The
-          // initial signal handles the first submission.
-          slaves[i]->wait();
-          Support::Thread::run(slaves[i]);
-        }
-        m.release();
-        // Wait for all slaves to become idle
-        idle.wait();
-        m.acquire();
+      // Run all active slaves
+      n_busy = n_active;
+      for (unsigned int i=0U; i<n_active; i++) {
+        // Consume the previous completion before reusing this slave.  The
+        // initial signal handles the first submission.
+        slaves[i]->wait();
+        Support::Thread::run(slaves[i]);
       }
+      m.release();
+      // Wait for all slaves to become idle
+      idle.wait();
+      m.acquire();
     }
 
     // Invariant all slaves are idle!
