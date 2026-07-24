@@ -58,6 +58,15 @@ namespace Gecode { namespace Search {
     static bool engaged(const WorkerControl& control);
     /// Return whether \a control is currently attached to a leaf engine
     static bool attached(const WorkerControl& control);
+    /// Return the test-instrumentation flag retained by \a control
+    static const std::atomic<bool>*
+    instrumentation(const WorkerControl& control);
+    /// Return the unchanged-capacity fast-admission flag
+    static const std::atomic<bool>*
+    fast_admission(const WorkerControl& control);
+    /// Publish fast admission after reconciling \a generation at capacity
+    static void fast_admission(WorkerControl& control,
+                               unsigned long long int generation);
     /// Return whether \a x and \a y share one control identity
     static bool same_identity(const WorkerControl& x,
                               const WorkerControl& y);
