@@ -135,6 +135,8 @@ namespace Gecode { namespace Search {
     std::atomic<unsigned int> last_solution_worker;
     std::atomic<unsigned int> solution_handoff_from;
     std::atomic<unsigned int> solution_handoff_to;
+    std::atomic<bool> fast_admit;
+    std::atomic<bool> instrumented;
     std::atomic<TestSupport*> test_support;
     Support::Mutex mutex;
     Lifecycle lifecycle;
@@ -149,7 +151,7 @@ namespace Gecode { namespace Search {
         last_solution_worker(WorkerControlAccess::ALL_WORKERS),
         solution_handoff_from(WorkerControlAccess::ALL_WORKERS),
         solution_handoff_to(WorkerControlAccess::ALL_WORKERS),
-        test_support(nullptr),
+        fast_admit(false), instrumented(false), test_support(nullptr),
         lifecycle(NEVER_BOUND), events(nullptr) {}
     ~State(void) {
       delete [] events;
@@ -215,6 +217,7 @@ namespace Gecode { namespace Search {
       unsigned int old =
         state->requested.load(std::memory_order_relaxed);
       if (old != workers) {
+        state->fast_admit.store(false,std::memory_order_release);
         state->requested.store(workers,std::memory_order_release);
         (void) state->generation.fetch_add(1U,std::memory_order_release);
         changed = true;
@@ -244,6 +247,9 @@ namespace Gecode { namespace Search {
       throw InvalidWorkerRequest("WorkerControlAccess::attach");
     state->events = new Support::Event[capacity];
     state->capacity.store(capacity,std::memory_order_release);
+    state->fast_admit.store(
+      state->requested.load(std::memory_order_relaxed) == capacity,
+      std::memory_order_release);
     state->lifecycle = WorkerControl::State::ATTACHED;
   }
 
@@ -277,6 +283,32 @@ namespace Gecode { namespace Search {
       return false;
     Support::Lock lock(control.state->mutex);
     return control.state->lifecycle == WorkerControl::State::ATTACHED;
+  }
+
+  const std::atomic<bool>*
+  WorkerControlAccess::instrumentation(const WorkerControl& control) {
+    return (control.state == nullptr) ? nullptr :
+      &control.state->instrumented;
+  }
+
+  const std::atomic<bool>*
+  WorkerControlAccess::fast_admission(const WorkerControl& control) {
+    return (control.state == nullptr) ? nullptr :
+      &control.state->fast_admit;
+  }
+
+  void
+  WorkerControlAccess::fast_admission(
+    WorkerControl& control, unsigned long long int generation) {
+    if (control.state == nullptr)
+      return;
+    WorkerControl::State* state = control.state;
+    Support::Lock lock(state->mutex);
+    if (!state->instrumented.load(std::memory_order_relaxed) &&
+        (state->generation.load(std::memory_order_relaxed) == generation) &&
+        (state->requested.load(std::memory_order_relaxed) ==
+         state->capacity.load(std::memory_order_relaxed)))
+      state->fast_admit.store(true,std::memory_order_release);
   }
 
   bool
@@ -486,12 +518,14 @@ namespace Gecode { namespace Search {
     WorkerControl::State::TestSupport* support;
     {
       Support::Lock lock(state->mutex);
+      state->fast_admit.store(false,std::memory_order_release);
       support = state->test_support.load(std::memory_order_relaxed);
       if (support == nullptr) {
         unsigned int capacity =
           state->capacity.load(std::memory_order_relaxed);
         support = new WorkerControl::State::TestSupport(capacity);
         state->test_support.store(support,std::memory_order_release);
+        state->instrumented.store(true,std::memory_order_release);
       }
     }
     unsigned int capacity = support->capacity;

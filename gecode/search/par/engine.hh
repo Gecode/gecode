@@ -101,6 +101,10 @@ namespace Gecode { namespace Search { namespace Par {
     };
     /// Whether adjustable parallel admission is enabled
     bool scheduler_enabled;
+    /// Dynamically enabled test instrumentation
+    const std::atomic<bool>* scheduler_instrumented;
+    /// Unchanged-capacity admission fast path
+    const std::atomic<bool>* scheduler_fast_admit;
     /// Mutex for adjustable parallel admission
     Support::Mutex scheduler_mutex;
     /// Per-worker adjustable parallel admission state

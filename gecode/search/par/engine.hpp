@@ -123,6 +123,8 @@ namespace Gecode { namespace Search { namespace Par {
   Engine<Tracer>::Engine(const Options& o)
     : Search::Engine(o,static_cast<unsigned int>(o.threads)),
       _opt(o), scheduler_enabled(false),
+      scheduler_instrumented(nullptr),
+      scheduler_fast_admit(nullptr),
       scheduler_worker(nullptr), scheduler_requested(workers()),
       scheduler_leases(0U), scheduler_cursor(0U), scheduler_generation(0U),
       _cmd(C_WAIT), solutions(heap) {
@@ -207,6 +209,10 @@ namespace Gecode { namespace Search { namespace Par {
   Engine<Tracer>::scheduler_enable(bool root_owner) {
     if (!WorkerControlAccess::engaged(worker_control))
       return;
+    scheduler_instrumented =
+      WorkerControlAccess::instrumentation(worker_control);
+    scheduler_fast_admit =
+      WorkerControlAccess::fast_admission(worker_control);
     scheduler_worker = static_cast<SchedulerWorker*>
       (heap.ralloc(workers() * sizeof(SchedulerWorker)));
     unsigned long long int generation;
@@ -252,8 +258,11 @@ namespace Gecode { namespace Search { namespace Par {
   Engine<Tracer>::scheduler_admit(unsigned int worker) {
     if (!scheduler_enabled)
       return true;
-    WorkerControlAccess::gate(worker_control,
-                              WorkerControlAccess::GATE_ADMISSION,worker);
+    if (scheduler_fast_admit->load(std::memory_order_acquire))
+      return true;
+    if (scheduler_instrumented->load(std::memory_order_acquire))
+      WorkerControlAccess::gate(worker_control,
+                                WorkerControlAccess::GATE_ADMISSION,worker);
     while (cmd() == C_WORK) {
       unsigned long long int generation =
         WorkerControlAccess::generation(worker_control);
@@ -283,12 +292,15 @@ namespace Gecode { namespace Search { namespace Par {
       scheduler_observe();
       scheduler_mutex.release();
 
+      if (requested == workers())
+        WorkerControlAccess::fast_admission(worker_control,generation);
       if (wake)
         WorkerControlAccess::signal_all(worker_control);
       if (admitted)
         return true;
-      WorkerControlAccess::gate(worker_control,
-                                WorkerControlAccess::GATE_EVENT_WAIT,worker);
+      if (scheduler_instrumented->load(std::memory_order_acquire))
+        WorkerControlAccess::gate(worker_control,
+                                  WorkerControlAccess::GATE_EVENT_WAIT,worker);
       WorkerControlAccess::wait(worker_control,worker);
     }
     return false;
@@ -297,7 +309,8 @@ namespace Gecode { namespace Search { namespace Par {
   template<class Tracer>
   forceinline void
   Engine<Tracer>::scheduler_action_begin(unsigned int worker) {
-    if (scheduler_enabled)
+    if (scheduler_enabled &&
+        scheduler_instrumented->load(std::memory_order_acquire))
       WorkerControlAccess::action_begin(
         worker_control,worker,scheduler_generation);
   }
@@ -305,14 +318,16 @@ namespace Gecode { namespace Search { namespace Par {
   template<class Tracer>
   forceinline void
   Engine<Tracer>::scheduler_action_end(unsigned int worker) {
-    if (scheduler_enabled)
+    if (scheduler_enabled &&
+        scheduler_instrumented->load(std::memory_order_acquire))
       WorkerControlAccess::action_end(worker_control,worker);
   }
 
   template<class Tracer>
   forceinline void
   Engine<Tracer>::scheduler_failed_scan(unsigned int worker) {
-    if (scheduler_enabled)
+    if (scheduler_enabled &&
+        scheduler_instrumented->load(std::memory_order_acquire))
       WorkerControlAccess::gate(worker_control,
                                 WorkerControlAccess::GATE_FAILED_SCAN,worker);
   }
@@ -342,14 +357,16 @@ namespace Gecode { namespace Search { namespace Par {
   template<class Tracer>
   void
   Engine<Tracer>::scheduler_solution(unsigned int worker) {
-    if (scheduler_enabled)
+    if (scheduler_enabled &&
+        scheduler_instrumented->load(std::memory_order_acquire))
       WorkerControlAccess::solution(worker_control,worker);
   }
 
   template<class Tracer>
   forceinline void
   Engine<Tracer>::scheduler_incumbent(unsigned int worker) {
-    if (scheduler_enabled)
+    if (scheduler_enabled &&
+        scheduler_instrumented->load(std::memory_order_acquire))
       WorkerControlAccess::incumbent(worker_control,worker);
   }
 
@@ -376,7 +393,8 @@ namespace Gecode { namespace Search { namespace Par {
           scheduler_worker[target].lease = true;
           scheduler_worker[target].parked = false;
           scheduler_cursor = (target+1U) % workers();
-          WorkerControlAccess::handoff(worker_control,worker,target);
+          if (scheduler_instrumented->load(std::memory_order_acquire))
+            WorkerControlAccess::handoff(worker_control,worker,target);
         }
       }
     }
