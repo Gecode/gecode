@@ -1,0 +1,45 @@
+{
+  "schema_version": 1,
+  "area": "parallel-search-worker-control",
+  "state": "accepted",
+  "acceptances": [
+    {
+      "sequence": 1,
+      "summary": "Gecode 7 now supports externally owned, asynchronous worker requests for parallel DFS and BAB within an immutable construction-time capacity. Fixed resident workers park cooperatively, preserve logical search ownership and state, and reactivate without losing DFS completeness or BAB optimality. RBS transports one leaf control, PBS accepts independent per-asset controls without embedding allocation policy, and the retained performance suite passes the user-approved release gate.",
+      "objective_evidence": [
+        "Search::WorkerControl is a copyable shared-identity handle stored in Search::Options. Options::threads remains immutable capacity, legal requests are 1..capacity, and request() is nonblocking and safe while next() runs.",
+        "The shared parallel scheduler separates logical work ownership from execution leases, parks resident workers only at safe exploration boundaries, hands leases to parked owners when needed for progress, and wakes fixed barrier members for reset and termination.",
+        "Focused deterministic and stress tests preserve exact DFS solution sets, BAB optima and incumbent delivery, tracing, statistics, no-goods, reset, RBS restart, PBS stop propagation, and destruction under concurrent resize requests.",
+        "RBS retains one leaf control across restart/reset. Explicit PBS builders carry independent controls, validate identity and placement, forward incumbents, and leave allocation policy to the external portfolio controller.",
+        "The retained 590-case benchmark at commit 6e2e8a707771bf540b03c809cf3422d4d006b49b passed all semantic checks. DFS fixed-capacity overhead was -0.896% median with 95% CI [-3.873%, 3.885%]; BAB was -0.045% with 95% CI [-0.224%, 0.129%]. Both pass the approved 3% median / 5% CI-upper gate.",
+        "All 30 retained two-asset PBS trials respected a fixed active-worker budget of four through allocations (3,1), (1,3), and (2,2). The user reviewed and approved the release gate, cooperative latency, parked-thread cost, and policy-free PBS seam on 2026-07-24.",
+        "Gecode 7 consistently uses Origin and Variant for the shared RBS/PBS Space roles, with migration documentation, build-checked examples, dispatch tests, and an inventory of retained historical or third-party terminology."
+      ],
+      "validation": [
+        "Ordinary focused suite: /tmp/gecode-wc008-bench/bin/gecode-test -iter 5 -threads 4 -test '^Search::WorkerControl' — all 25 cases passed.",
+        "ThreadSanitizer: /tmp/gecode-wc008-tsan/bin/gecode-test -iter 5 -threads 4 -test '^Search::WorkerControl' — all 25 cases passed with no report.",
+        "AddressSanitizer and UndefinedBehaviorSanitizer: /tmp/gecode-wc008-asan-ubsan/bin/gecode-test -iter 10 -threads 4 -test '^Search::WorkerControl' — all 25 cases passed with no report.",
+        "Stress issue validation exercised eight DFS rounds, eight BAB rounds, and 64 destruction rounds per iteration under ordinary, TSan, ASan, and UBSan builds.",
+        "The final benchmark run worker-control-release-20260724-final completed 590 of 590 children and regenerated JSON analysis, Markdown, LaTeX, PNG, and SVG artifacts from retained raw results.",
+        "Origin/Variant threaded and non-threaded builds, focused MetaDispatch/RBS/PBS tests, the complete threaded Search suite, Doxygen, terminology sweeps, git diff --check, and zd check passed."
+      ],
+      "remaining_concerns": [
+        "Shrink latency is cooperative and workload-dependent; the retained p95 was about 7.5 ms and is not an interrupt-latency guarantee.",
+        "Parked workers retain operating-system threads, stacks, and engine-local state. The measured 368 KiB median peak-RSS delta is process-level and platform-specific.",
+        "The PBS experiment proves the control seam and active-worker bound for the tested sequence; it does not prescribe an allocation heuristic or claim universal portfolio speedup.",
+        "The Apple AddressSanitizer runtime does not support leak detection; address and lifetime validation ran with detect_leaks=0."
+      ],
+      "objective": "Allow an external portfolio controller to asynchronously adjust active DFS and BAB search workers within a fixed construction-time maximum while preserving completeness, optimization correctness, lifecycle safety, and low steady-state overhead.",
+      "objective_sha256": "sha256:568845b540bd0df612e3b178a78b8de43a826c4714b612f0be632c7cb89cee26",
+      "planning_sha256": "sha256:db81edec5d470d146622ba6a7be82a1acab3c3fc0291a7be2bca40ba1ae89167",
+      "issue_tree_sha256": "sha256:ca10f0be476935bf89372da5ff73858874d5e5a6bbe142af476a162dd2579fa5",
+      "issue_counts": {
+        "total": 12,
+        "open": 0,
+        "done": 12
+      },
+      "review_sha256": "sha256:5bc4f88be693a0b1263948071f5419bc55730ad3033b0fe3732c9487586080e5"
+    }
+  ],
+  "reopenings": []
+}

@@ -1,0 +1,4 @@
+schema_version = 1
+tag = "parallel-search-worker-control"
+title = "Externally adjustable parallel search workers"
+objective = "Allow an external portfolio controller to asynchronously adjust active DFS and BAB search workers within a fixed construction-time maximum while preserving completeness, optimization correctness, lifecycle safety, and low steady-state overhead."

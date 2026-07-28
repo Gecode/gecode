@@ -1,0 +1,8 @@
+schema_version = 1
+
+[project]
+name = "gecode"
+default_area = "parallel-search-worker-control"
+
+[writing]
+style = "zdev-bundled-default"

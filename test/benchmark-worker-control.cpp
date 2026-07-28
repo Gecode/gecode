@@ -158,11 +158,11 @@ namespace {
       return new PortfolioSpace(*this);
     }
 
-    bool origin(const MetaInfo&) override {
+    bool master(const MetaInfo&) override {
       return false;
     }
 
-    bool variant(const MetaInfo& mi) override {
+    bool slave(const MetaInfo& mi) override {
       if (mi.type() == MetaInfo::PORTFOLIO) {
         if (mi.asset() == 0U)
           Gecode::rel(*this,x,Gecode::IRT_LQ,32767);

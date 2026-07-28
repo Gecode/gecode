@@ -1,0 +1,188 @@
+# Research report: parallel-search-worker-control
+
+## Question
+
+> Research issue parallel-search-worker-control-009: Record the Origin and Variant meta-search terminology contract
+
+## Summary
+
+> # Origin and Variant terminology contract
+> 
+> ## Decision
+> 
+> Gecode 7 uses **Origin** and **Variant** for the two `Space` roles shared by restart-based search (RBS) and portfolio-based search (PBS).
+> 
+> An **Origin** is the persistent or common `Space` from which an exploration space is derived. A **Variant** is the derived `Space` configured for one RBS restart episode or one PBS portfolio asset. These are logical roles. In particular, an RBS origin can itself be a clone of the state used by the previous episode; it is still the origin of the next exploration.
+> 
+> The public migration is `Space::master(const MetaInfo&)` to `Space::origin(const MetaInfo&)` and `Space::slave(const MetaInfo&)` to `Space::variant(const MetaInfo&)`. Gecode 7 does not need compatibility aliases.
+> 
+> ## Shared structure
+> 
+> Both engines prepare common state and then specialize a space that will be explored. Naming that relationship is more accurate than naming an imagined authority relationship.
+> 
+> RBS lifecycle:
+> 
+> ```text
+> origin[n] -- origin(restart_info) --> prepared state
+>                                       |-- clone --> origin[n+1]
+>                                       `-- variant(restart_info) --> explored variant[n]
+> ```
+> 
+> The implementation moves the prepared object into the underlying engine and retains its clone. Object ancestry therefore changes from episode to episode, while the logical Origin role remains stable.
+> 
+> PBS lifecycle:
+> 
+> ```text
+> input space -- optional clone --> origin -- origin(portfolio_info)
+>                                           |-- derive/configure --> variant[0]
+>                                           |-- derive/configure --> variant[1]
+>                                           `-- derive/configure --> variant[n]
+> ```
+> 
+> The single-asset path applies both hooks to the same object. The object first has the Origin role and then the Variant role; the role names describe the two configuration stages rather than requiring distinct allocations.
+> 
+> ## Current behavior matrix
+> 
+> | Engine | Role | Invocation and derivation | Information and result | Default behavior |
+> | --- | --- | --- | --- | --- |
+> | RBS | Origin | Repeated after a solution and at restart boundaries, before retaining a clone | Restart reason, counts, last solution, and no-goods. `true` after a solution requests a restart; `false` continues the current exploration | Constrain against the last solution when present, post no-goods, return `true` |
+> | RBS | Variant | Once for each derived restart exploration, after the next Origin clone has been retained | Same restart information. Result declares the exploration complete or incomplete | No configuration; return `true` (complete) |
+> | PBS | Origin | Once on the common space before asset construction | Portfolio metadata. Result is ignored | Kill all branchers so assets can install their own branching; return `true` |
+> | PBS | Variant | Once per asset, including the single-asset path | Portfolio asset number starting at zero. Result is ignored | No configuration; return `true` |
+> 
+> The matrix exposes two different callback contracts behind today's common `bool` signatures. A common vocabulary does not require that conflation to remain. A later Gecode 7 API decision can introduce engine-specific metadata and result types while retaining the names Origin and Variant. The rename itself must preserve current behavior unless that contract change is approved separately.
+> 
+> ## Why topology names are weaker
+> 
+> `Controller/Worker`, `Driver/Executor`, and `Scheduler/Worker` name runtime components that allocate or execute work. The public hooks belong to `Space`, and a `Space` is model and solver state used for cloning and exploration. The PBS coordinator is a search-engine object, not the Space passed to the first hook. The retained RBS Space likewise stores persistent search state but does not schedule the underlying engine. Those topology pairs remain useful for real coordinator and worker objects, but they do not describe these two hooks.
+> 
+> This distinction also prevents a blind internal rename. A retained or common `Space*` can become `origin`; a derived exploration space or per-asset runnable can become `variant`. A pointer from a runnable to the enclosing PBS object should become `portfolio` or `coordinator`, while its wrapped `Engine*` should become `engine` or `variant_engine`.
+> 
+> ## Alternatives considered but not selected
+> 
+> | Pair | Useful property | Reason not selected |
+> | --- | --- | --- |
+> | Archetype / Variant | Precisely describes a common form and its specializations | `Archetype` is less immediate in a low-level C++ API |
+> | Basis / Variant | Handles an evolving RBS source without implying original object identity | `Basis` has strong linear-algebra associations for this audience |
+> | Coordinator / Explorer | Good operational names for an engine and its active search components | The first public hook is on a `Space` that does not perform coordination |
+> | Principal / Agent | Established noun pair for an authority relationship | Suggests delegation and autonomy that the clone relationship does not have |
+> | Archetype / Instance | Clear type-to-realization relation | `Instance` is already common Gecode language for a problem instance |
+> | Control / Asset | `Asset` matches existing PBS vocabulary | `Control` can be a verb and neither term describes the RBS pair well |
+> | Portfolio / Asset; Origin / Episode | Each engine receives locally expressive names | Four public role names hide the shared derivation structure and make dual-engine models harder to read |
+> 
+> ## Explicitly rejected names and designs
+> 
+> - **Master / Slave** is the terminology being removed. Beyond the inclusive-language reason, it describes control and subordination rather than persistent/common state and a derived exploration space.
+> - **Run / Search** was explicitly rejected because both words are verbs and already occur frequently throughout the search API and implementation. As member names they obscure whether a call denotes a role, starts work, or performs search.
+> - **Different public role vocabularies for PBS and RBS** were explicitly rejected. The engines have different callback semantics, but both expose the same Origin-to-Variant derivation. Contract differences should be represented by metadata, result types, or overloads rather than four unrelated role nouns.
+> 
+> ## Migration boundary
+> 
+> The Gecode 7 migration should rename the public virtual functions, overrides, calls, documentation, tests, and role-bearing internal identifiers. It should not add deprecated aliases, change restart decisions, change completeness reporting, change PBS asset numbering, or mechanically rename unrelated historical and third-party occurrences. Documentation should show the direct override mapping and link to this terminology contract.
+
+## Findings
+
+### Origin and Variant are the approved common role names
+
+> The issue fixes one noun pair for both meta-engines and defines the pair by derivation from persistent or common state to a specialized exploration space.
+
+Evidence:
+- `.zd/parallel-search-worker-control/issues/009-record-the-origin-and-variant-meta-search-terminology-contra.md` — > For Gecode 7, the approved breaking-change direction is to replace the master/slave Space roles with the same noun pair in both PBS and RBS. Origin/Variant was selected because it describes the shared derivation relationship between persistent or common state and a specialized exploration space.
+
+### The current shared signatures hide different contracts
+
+> RBS calls the first hook repeatedly and interprets both Boolean results, whereas PBS calls the hooks during construction and ignores their results.
+
+Evidence:
+- `gecode/kernel/core.hpp` — > A restart meta search engine calls this function on its
+>      *     master space whenever it finds a solution or exploration
+>      *     restarts. \a mi contains information about the current restart.
+- `gecode/kernel/core.hpp` — > A portfolio meta engine calls this function once on
+>      *     the master space. The return value is ignored.
+- `gecode/kernel/core.hpp` — > A portfolio meta engine calls this function once on each asset
+>      *     (that is, on each slave) and passes the number of the asset,
+>      *     starting from zero.
+
+### RBS retains a clone and explores the prepared object
+
+> The persistent role is logical rather than tied to object age: RBS moves the prepared object into the engine and keeps a clone as the origin for the next episode.
+
+Evidence:
+- `gecode/search/seq/rbs.cpp` — > Space* slave = master;
+>         master = master->clone();
+>         complete = slave->slave(mi);
+>         e->reset(slave);
+
+### PBS has an explicit common stage and per-asset stage
+
+> PBS calls the common hook before selecting its engine, and its single-asset path still applies the per-asset hook.
+
+Evidence:
+- `gecode/search/pbs.hpp` — > // Always execute master function
+>     (void) master->master(0);
+> 
+>     // No need to create a portfolio engine but must run slave function
+>     if (o.assets == 1) {
+>       (void) master->slave(0);
+>       e = Search::build<T,E>(master,opt);
+>       return;
+>     }
+
+### Default behavior differs by meta-engine
+
+> The first default hook updates RBS state but removes branchers for PBS, while the second default hook is a no-op returning true.
+
+Evidence:
+- `gecode/kernel/core.cpp` — > case MetaInfo::RESTART:
+>       if (mi.last() != nullptr)
+>         constrain(*mi.last());
+>       mi.nogoods().post(*this);
+>       // Perform a restart even if a solution has been found
+>       return true;
+>     case MetaInfo::PORTFOLIO:
+>       // Kill all branchers
+>       BrancherGroup::all.kill(*this);
+>       return true;
+- `gecode/kernel/core.cpp` — > bool
+>   Space::slave(const MetaInfo&) {
+>     return true;
+>   }
+
+### Space roles and runtime topology are different naming problems
+
+> The parallel PBS runnable contains a coordinator pointer and a wrapped engine. Those objects should receive topology-specific names rather than a mechanical Origin/Variant substitution.
+
+Evidence:
+- `gecode/search/par/pbs.hh` — > /// The master engine
+>     PBS<Collect>* master;
+>     /// The slave engine
+>     Engine* slave;
+- `gecode/search/par/pbs.hpp` — > Slave<Collect>::run(void) {
+>     Space* s;
+>     do {
+>       s = slave->next();
+>     } while (!master->report(this,s));
+>   }
+
+### The CP architecture literature supports structural Space terminology
+
+> The local knowledge base treats computation spaces, cloning, and parallel work as search architecture. It also records variant as current portfolio terminology.
+
+Evidence:
+- `.zd/parallel-search-worker-control/research/origin-variant-cpkb-evidence.md` — > > Search nodes as ephemeral states versus search nodes as first-class objects
+> > that can remain available for exploration, cloning, and parallel work.
+- `.zd/parallel-search-worker-control/research/origin-variant-cpkb-evidence.md` — > > We tested a portfolio of CP-based LNS variants running in parallel, with a
+> > multi-armed bandit to select which LNS variant to run.
+
+## Limitations
+
+- The CPKB page supporting current use of variant is marked draft; it establishes terminology usage, not an architectural theorem.
+- This research records the naming contract but does not decide whether Gecode 7 should split MetaInfo and Boolean results into engine-specific types.
+- No web sources are treated as evidence in this local run. The decision rests on repository behavior, the approved issue, and attributed CPKB excerpts.
+
+## Recommendations
+
+- Implement the breaking public rename without compatibility aliases and preserve current RBS and PBS behavior.
+- Use semantic internal names: origin and variant for Space roles, coordinator or portfolio for the enclosing PBS object, and engine or variant_engine for wrapped engines.
+- Track any typed PBS/RBS callback-contract split as a separate Gecode 7 API decision so it cannot enter as an accidental part of the rename.
+- Add compile-time override tests, RBS and PBS behavior tests, a migration example, and a classified repository terminology sweep.

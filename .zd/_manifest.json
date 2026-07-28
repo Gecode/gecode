@@ -1,0 +1,11 @@
+{
+  "format": "zdev-repository",
+  "managed_paths": {
+    ".zd/.gitignore": "user-owned-after-create",
+    ".zd/README.md": "user-owned-after-create",
+    ".zd/_manifest.json": "tool-owned",
+    ".zd/config.toml": "user-owned-after-create"
+  },
+  "schema_version": 1,
+  "template_version": 1
+}
