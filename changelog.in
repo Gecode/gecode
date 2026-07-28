@@ -68,6 +68,22 @@
 #
 
 [RELEASE]
+Version: 6.5.0
+Date: unreleased
+[DESCRIPTION]
+This is the development changelog for the next Gecode release.
+
+[ENTRY]
+Module: int
+What:   performance
+Rank:   major
+[DESCRIPTION]
+Reduce construction memory for regular constraints by building the layered
+graph from sparse forward frontiers and retaining only backward co-reachable
+states. This avoids allocating one temporary state for every automaton state
+at every sequence position while preserving the persistent graph.
+
+[RELEASE]
 Version: 6.4.0
 Date: 2026-07-15
 [DESCRIPTION]
