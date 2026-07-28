@@ -553,6 +553,85 @@ namespace Test { namespace Int {
        }
      };
 
+     /// %Test nondeterministic generated automata against a reference runner
+     class RegRandomNFADifferential : public Test {
+     protected:
+       /// Number of automaton states
+       static const int n_fa_states = 4;
+       /// Number of symbols
+       static const int n_symbols = 3;
+       /// Transition relation
+       bool next[n_fa_states][n_symbols][n_fa_states];
+       /// Allowed-symbol bit masks for each position
+       unsigned int allowed[5];
+     public:
+       /// Create and register test
+       RegRandomNFADifferential(unsigned int seed)
+         : Test("Extensional::Reg::Sparse::RandomNFADifferential::" +
+                Test::str(static_cast<int>(seed)),
+                5,0,n_symbols-1,false,Gecode::IPL_DOM) {
+         unsigned int random = seed;
+         for (int state=0; state<n_fa_states; state++)
+           for (int symbol=0; symbol<n_symbols; symbol++)
+             for (int output=0; output<n_fa_states; output++) {
+               random = 1664525U * random + 1013904223U;
+               next[state][symbol][output] = ((random >> 29) == 0U);
+             }
+         // Keep a nondeterministic fork and both of its branches relevant.
+         next[0][0][1] = true;
+         next[0][0][2] = true;
+         next[1][1][3] = true;
+         next[2][2][3] = true;
+         for (int symbol=0; symbol<n_symbols; symbol++)
+           next[3][symbol][3] = true;
+         for (int i=0; i<5; i++) {
+           random = 1664525U * random + 1013904223U;
+           allowed[i] = 1U + ((random >> 12) % 7U);
+         }
+         // Ensure both branches of the fixed fork can occur.
+         allowed[0] |= 1U;
+         allowed[1] |= 6U;
+       }
+       /// %Test whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         unsigned int states = 1U;
+         for (int i=0; i<x.size(); i++) {
+           const int symbol = x[i];
+           if ((allowed[i] & (1U << symbol)) == 0U)
+             return false;
+           unsigned int outputs = 0U;
+           for (int state=0; state<n_fa_states; state++)
+             if ((states & (1U << state)) != 0U)
+               for (int output=0; output<n_fa_states; output++)
+                 if (next[state][symbol][output])
+                   outputs |= 1U << output;
+           states = outputs;
+         }
+         return (states & (1U << 3)) != 0U;
+       }
+       /// Post constraint on \a x
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
+         using namespace Gecode;
+         DFA::Transition
+           transitions[n_fa_states*n_symbols*n_fa_states+1];
+         int n_transitions = 0;
+         for (int state=0; state<n_fa_states; state++)
+           for (int symbol=0; symbol<n_symbols; symbol++)
+             for (int output=0; output<n_fa_states; output++)
+               if (next[state][symbol][output])
+                 transitions[n_transitions++] =
+                   DFA::Transition(state,symbol,output);
+         transitions[n_transitions].i_state = -1;
+         int final_states[] = {3,-1};
+         DFA d(0,transitions,final_states,false);
+         for (int i=0; i<x.size(); i++)
+           for (int symbol=0; symbol<n_symbols; symbol++)
+             if ((allowed[i] & (1U << symbol)) == 0U)
+               rel(home,x[i],IRT_NQ,symbol);
+         extensional(home,x,d);
+       }
+     };
+
      /// %Test backward pruning caused by a position-specific domain
      class RegPositionDomainPruning : public Test {
      public:
@@ -2452,6 +2531,10 @@ namespace Test { namespace Int {
      RegRandomDifferential reg_sparse_random_differential_2(2);
      RegRandomDifferential reg_sparse_random_differential_3(3);
      RegRandomDifferential reg_sparse_random_differential_4(4);
+     RegRandomNFADifferential reg_sparse_random_nfa_differential_1(1);
+     RegRandomNFADifferential reg_sparse_random_nfa_differential_2(2);
+     RegRandomNFADifferential reg_sparse_random_nfa_differential_3(3);
+     RegRandomNFADifferential reg_sparse_random_nfa_differential_4(4);
      RegPositionDomainPruning reg_sparse_position_domain_pruning;
      RegNoAcceptingPath reg_sparse_no_accepting_path;
      RegTerminalMerged reg_sparse_terminal_merged;
