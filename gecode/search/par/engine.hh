@@ -101,8 +101,6 @@ namespace Gecode { namespace Search { namespace Par {
     };
     /// Whether adjustable parallel admission is enabled
     bool scheduler_enabled;
-    /// Dynamically enabled test instrumentation
-    const std::atomic<bool>* scheduler_instrumented;
     /// Unchanged-capacity admission fast path
     const std::atomic<bool>* scheduler_fast_admit;
     /// Mutex for adjustable parallel admission
@@ -122,8 +120,6 @@ namespace Gecode { namespace Search { namespace Par {
                                   unsigned int exclude) const;
     /// Grant leases up to the current request
     bool scheduler_grow(void);
-    /// Publish scheduler state for focused tests
-    void scheduler_observe(void);
   public:
     /// Provide access to search options
     const Options& opt(void) const;
@@ -135,20 +131,10 @@ namespace Gecode { namespace Search { namespace Par {
     void scheduler_reset(bool root_owner);
     /// Admit worker \a worker for one exploration action
     bool scheduler_admit(unsigned int worker);
-    /// Begin an admitted exploration action
-    void scheduler_action_begin(unsigned int worker);
-    /// End an admitted exploration action
-    void scheduler_action_end(unsigned int worker);
-    /// Pause after worker \a worker completes a failed steal scan
-    void scheduler_failed_scan(unsigned int worker);
     /// Record that worker \a worker owns search
     void scheduler_owner(unsigned int worker);
     /// Record that worker \a worker is idle
     void scheduler_idle(unsigned int worker);
-    /// Record that worker \a worker produced a solution
-    void scheduler_solution(unsigned int worker);
-    /// Record delivery of an incumbent to worker \a worker
-    void scheduler_incumbent(unsigned int worker);
     /// Hand worker \a worker's lease to a parked logical worker
     void scheduler_handoff(unsigned int worker, bool work_remains);
 

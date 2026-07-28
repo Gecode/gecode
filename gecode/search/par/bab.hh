@@ -111,7 +111,7 @@ namespace Gecode { namespace Search { namespace Par {
     /// \name Search control
     //@{
     /// Report solution \a s
-    void solution(Space* s, unsigned int producer);
+    void solution(Space* s);
     //@}
 
     /// \name Engine interface
