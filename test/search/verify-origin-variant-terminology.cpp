@@ -217,7 +217,8 @@ main(int argc, char* argv[]) {
         std::filesystem::absolute(iterator->path()).lexically_normal();
       const std::filesystem::path relative =
         std::filesystem::relative(path,root);
-      if ((path != expected_path) &&
+      if ((relative != std::filesystem::path("Makefile")) &&
+          (path != expected_path) &&
           (relative !=
            std::filesystem::path(
              "test/search/origin-variant-terminology.expected")))

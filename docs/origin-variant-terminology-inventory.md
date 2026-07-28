@@ -4,7 +4,8 @@ This inventory retains the result of a case-insensitive, whole-word scan for
 the two Gecode 6 meta-search role terms, including their plurals. The verifier
 walks the entire repository. It excludes only `.git/`, `.zd/`,
 `autom4te.cache/`, directories whose names begin with `build`, binary files,
-and the manifest itself. Root build files are therefore in scope.
+the generated root `Makefile`, and the manifest itself. Source build files such
+as `Makefile.in` remain in scope.
 
 `test/search/verify-origin-variant-terminology.cpp` builds a standalone
 verifier for the Autoconf and CMake `check` targets. The occurrence-level
