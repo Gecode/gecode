@@ -121,12 +121,11 @@ namespace Gecode { namespace Search { namespace Par {
     mark = path.entries();
     if (cur != nullptr)
       cur->constrain(*best);
-    engine().scheduler_incumbent(index);
     m.release();
   }
   template<class Tracer>
   forceinline void
-  BAB<Tracer>::solution(Space* s, unsigned int producer) {
+  BAB<Tracer>::solution(Space* s) {
     m_search.acquire();
     if (best != nullptr) {
       s->constrain(*best);
@@ -149,7 +148,6 @@ namespace Gecode { namespace Search { namespace Par {
     if (bs)
       e_search.signal();
     m_search.release();
-    this->scheduler_solution(producer);
   }
 
 
@@ -268,13 +266,11 @@ namespace Gecode { namespace Search { namespace Par {
         {
           if (!engine().scheduler_admit(index))
             break;
-          engine().scheduler_action_begin(index);
           m.acquire();
           if (idle) {
             m.release();
             // Try to find new work
             if (!find()) {
-              engine().scheduler_failed_scan(index);
               engine().scheduler_handoff(index,engine().work_remains());
             }
           } else if (cur != nullptr) {
@@ -324,7 +320,7 @@ namespace Gecode { namespace Search { namespace Par {
                   cur = nullptr;
                   path.next();
                   m.release();
-                  engine().solution(s,index);
+                  engine().solution(s);
                 }
                 break;
               case SS_BRANCH:
@@ -365,7 +361,6 @@ namespace Gecode { namespace Search { namespace Par {
             engine().scheduler_idle(index);
             engine().scheduler_handoff(index,engine().work_remains());
           }
-          engine().scheduler_action_end(index);
         }
         break;
       default:
@@ -382,8 +377,6 @@ namespace Gecode { namespace Search { namespace Par {
   template<class Tracer>
   void
   BAB<Tracer>::reset(Space* s) {
-    WorkerControlAccess::gate_release_all(
-      this->_opt.worker_control,WorkerControlAccess::GATE_ACTION_BEGIN);
     // Grab wait lock for reset
     m_wait_reset.acquire();
     // Release workers for reset

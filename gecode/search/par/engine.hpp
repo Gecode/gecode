@@ -123,7 +123,6 @@ namespace Gecode { namespace Search { namespace Par {
   Engine<Tracer>::Engine(const Options& o)
     : Search::Engine(o,static_cast<unsigned int>(o.threads)),
       _opt(o), scheduler_enabled(false),
-      scheduler_instrumented(nullptr),
       scheduler_fast_admit(nullptr),
       scheduler_worker(nullptr), scheduler_requested(workers()),
       scheduler_leases(0U), scheduler_cursor(0U), scheduler_generation(0U),
@@ -180,37 +179,9 @@ namespace Gecode { namespace Search { namespace Par {
 
   template<class Tracer>
   void
-  Engine<Tracer>::scheduler_observe(void) {
-    unsigned int parked = 0U;
-    unsigned int owners = 0U;
-    unsigned int parked_owners = 0U;
-    for (unsigned int i=0U; i<workers(); i++) {
-      if (scheduler_worker[i].parked)
-        parked++;
-      if (scheduler_worker[i].logical == SL_OWNER) {
-        owners++;
-        if (scheduler_worker[i].parked)
-          parked_owners++;
-      }
-    }
-    WorkerControlAccess::observe(
-      worker_control,
-      scheduler_generation.load(std::memory_order_relaxed),
-      scheduler_leases,parked,owners,parked_owners);
-    for (unsigned int i=0U; i<workers(); i++)
-      WorkerControlAccess::observe_worker(
-        worker_control,i,
-        static_cast<unsigned int>(scheduler_worker[i].logical),
-        scheduler_worker[i].lease,scheduler_worker[i].parked);
-  }
-
-  template<class Tracer>
-  void
   Engine<Tracer>::scheduler_enable(bool root_owner) {
     if (!WorkerControlAccess::engaged(worker_control))
       return;
-    scheduler_instrumented =
-      WorkerControlAccess::instrumentation(worker_control);
     scheduler_fast_admit =
       WorkerControlAccess::fast_admission(worker_control);
     scheduler_worker = static_cast<SchedulerWorker*>
@@ -226,7 +197,6 @@ namespace Gecode { namespace Search { namespace Par {
         ((i == 0U) && root_owner) ? SL_OWNER : SL_PENDING;
     }
     scheduler_generation.store(generation,std::memory_order_release);
-    scheduler_observe();
     scheduler_enabled = true;
   }
 
@@ -249,7 +219,6 @@ namespace Gecode { namespace Search { namespace Par {
         ((i == 0U) && root_owner) ? SL_OWNER : SL_PENDING;
     }
     scheduler_generation.store(generation,std::memory_order_release);
-    scheduler_observe();
     scheduler_mutex.release();
   }
 
@@ -260,9 +229,6 @@ namespace Gecode { namespace Search { namespace Par {
       return true;
     if (scheduler_fast_admit->load(std::memory_order_acquire))
       return true;
-    if (scheduler_instrumented->load(std::memory_order_acquire))
-      WorkerControlAccess::gate(worker_control,
-                                WorkerControlAccess::GATE_ADMISSION,worker);
     while (cmd() == C_WORK) {
       unsigned long long int generation =
         WorkerControlAccess::generation(worker_control);
@@ -289,7 +255,6 @@ namespace Gecode { namespace Search { namespace Par {
       }
       admitted = scheduler_worker[worker].lease;
       scheduler_worker[worker].parked = !admitted;
-      scheduler_observe();
       scheduler_mutex.release();
 
       if (requested == workers())
@@ -298,38 +263,9 @@ namespace Gecode { namespace Search { namespace Par {
         WorkerControlAccess::signal_all(worker_control);
       if (admitted)
         return true;
-      if (scheduler_instrumented->load(std::memory_order_acquire))
-        WorkerControlAccess::gate(worker_control,
-                                  WorkerControlAccess::GATE_EVENT_WAIT,worker);
       WorkerControlAccess::wait(worker_control,worker);
     }
     return false;
-  }
-
-  template<class Tracer>
-  forceinline void
-  Engine<Tracer>::scheduler_action_begin(unsigned int worker) {
-    if (scheduler_enabled &&
-        scheduler_instrumented->load(std::memory_order_acquire))
-      WorkerControlAccess::action_begin(
-        worker_control,worker,scheduler_generation);
-  }
-
-  template<class Tracer>
-  forceinline void
-  Engine<Tracer>::scheduler_action_end(unsigned int worker) {
-    if (scheduler_enabled &&
-        scheduler_instrumented->load(std::memory_order_acquire))
-      WorkerControlAccess::action_end(worker_control,worker);
-  }
-
-  template<class Tracer>
-  forceinline void
-  Engine<Tracer>::scheduler_failed_scan(unsigned int worker) {
-    if (scheduler_enabled &&
-        scheduler_instrumented->load(std::memory_order_acquire))
-      WorkerControlAccess::gate(worker_control,
-                                WorkerControlAccess::GATE_FAILED_SCAN,worker);
   }
 
   template<class Tracer>
@@ -339,7 +275,6 @@ namespace Gecode { namespace Search { namespace Par {
       return;
     scheduler_mutex.acquire();
     scheduler_worker[worker].logical = SL_OWNER;
-    scheduler_observe();
     scheduler_mutex.release();
   }
 
@@ -350,24 +285,7 @@ namespace Gecode { namespace Search { namespace Par {
       return;
     scheduler_mutex.acquire();
     scheduler_worker[worker].logical = SL_IDLE;
-    scheduler_observe();
     scheduler_mutex.release();
-  }
-
-  template<class Tracer>
-  void
-  Engine<Tracer>::scheduler_solution(unsigned int worker) {
-    if (scheduler_enabled &&
-        scheduler_instrumented->load(std::memory_order_acquire))
-      WorkerControlAccess::solution(worker_control,worker);
-  }
-
-  template<class Tracer>
-  forceinline void
-  Engine<Tracer>::scheduler_incumbent(unsigned int worker) {
-    if (scheduler_enabled &&
-        scheduler_instrumented->load(std::memory_order_acquire))
-      WorkerControlAccess::incumbent(worker_control,worker);
   }
 
   template<class Tracer>
@@ -393,12 +311,9 @@ namespace Gecode { namespace Search { namespace Par {
           scheduler_worker[target].lease = true;
           scheduler_worker[target].parked = false;
           scheduler_cursor = (target+1U) % workers();
-          if (scheduler_instrumented->load(std::memory_order_acquire))
-            WorkerControlAccess::handoff(worker_control,worker,target);
         }
       }
     }
-    scheduler_observe();
     scheduler_mutex.release();
     if (target != workers())
       WorkerControlAccess::signal(worker_control,target);
@@ -504,9 +419,6 @@ namespace Gecode { namespace Search { namespace Par {
   Engine<Tracer>::terminate(void) {
     // Grab the wait mutex for termination
     _m_wait_terminate.acquire();
-    // Test gates must not keep a worker from observing termination
-    WorkerControlAccess::gate_release_all(
-      _opt.worker_control,WorkerControlAccess::GATE_ACTION_BEGIN);
     // Release all threads
     release(C_TERMINATE);
     // Wait until all threads have acknowledged termination request
