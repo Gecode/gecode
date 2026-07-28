@@ -392,6 +392,296 @@ namespace Test { namespace Int {
 
      };
 
+     /// %Test an acyclic DFA whose states can occur at different depths
+     class RegAcyclicReconvergence : public Test {
+     public:
+       /// Create and register test
+       RegAcyclicReconvergence(void)
+         : Test("Extensional::Reg::Sparse::AcyclicReconvergence",
+                4,0,3,false,Gecode::IPL_DOM) {}
+       /// %Test whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         return
+           ((x[0] == 0) && (x[1] == 2) &&
+            (x[2] == 2) && (x[3] == 2)) ||
+           ((x[0] == 1) && (x[1] == 0) &&
+            (x[2] == 3) && (x[3] == 3));
+       }
+       /// Post constraint on \a x
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
+         using namespace Gecode;
+         // State 1 is reached at depth one by 0 and at depth two by 1,0.
+         // Its two acyclic suffixes have the corresponding lengths.
+         DFA d(0,
+               {
+                 {0,0,1}, {0,1,2}, {2,0,1},
+                 {1,2,3}, {3,2,4}, {4,2,7},
+                 {1,3,5}, {5,3,7}
+               },
+               {7},false);
+         extensional(home,x,d);
+       }
+     };
+
+     /// %Test a cyclic DFA whose frontier states recur across many layers
+     class RegCyclicFrontier : public Test {
+     public:
+       /// Create and register test
+       RegCyclicFrontier(void)
+         : Test("Extensional::Reg::Sparse::CyclicFrontier",
+                7,0,1,false,Gecode::IPL_DOM) {}
+       /// %Test whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         int parity = 0;
+         for (int i=0; i<x.size(); i++)
+           parity ^= x[i];
+         return parity == 0;
+       }
+       /// Post constraint on \a x
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
+         using namespace Gecode;
+         DFA d(0,
+               {
+                 {0,0,0}, {0,1,1},
+                 {1,0,1}, {1,1,0}
+               },
+               {0},false);
+         extensional(home,x,d);
+       }
+     };
+
+     /// %Test the Boolean-view regular posting route
+     class RegBoolCyclicFrontier : public Test {
+     public:
+       /// Create and register test
+       RegBoolCyclicFrontier(void)
+         : Test("Extensional::Reg::Sparse::BoolCyclicFrontier",
+                7,0,1,false,Gecode::IPL_DOM) {}
+       /// %Test whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         int parity = 0;
+         for (int i=0; i<x.size(); i++)
+           parity ^= x[i];
+         return parity == 0;
+       }
+       /// Post constraint on \a x
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
+         using namespace Gecode;
+         BoolVarArgs b(x.size());
+         for (int i=0; i<x.size(); i++)
+           b[i] = channel(home,x[i]);
+         DFA d(0,
+               {
+                 {0,0,0}, {0,1,1},
+                 {1,0,1}, {1,1,0}
+               },
+               {0},false);
+         extensional(home,b,d);
+       }
+     };
+
+     /// %Test deterministic generated DFAs against a reference runner
+     class RegRandomDifferential : public Test {
+     protected:
+       /// Number of DFA states
+       static const int n_dfa_states = 4;
+       /// Number of symbols
+       static const int n_symbols = 3;
+       /// Transition table, with -1 denoting no transition
+       int next[n_dfa_states][n_symbols];
+       /// Allowed-symbol bit masks for each position
+       unsigned int allowed[5];
+       /// Final-state bit mask
+       unsigned int finals;
+     public:
+       /// Create and register test
+       RegRandomDifferential(unsigned int seed)
+         : Test("Extensional::Reg::Sparse::RandomDifferential::" +
+                Test::str(static_cast<int>(seed)),
+                5,0,n_symbols-1,false,Gecode::IPL_DOM),
+           finals(0) {
+         unsigned int random = seed;
+         for (int state=0; state<n_dfa_states; state++)
+           for (int symbol=0; symbol<n_symbols; symbol++) {
+             random = 1664525U * random + 1013904223U;
+             next[state][symbol] =
+               ((random & 7U) == 0U) ? -1 :
+               static_cast<int>((random >> 8) % n_dfa_states);
+           }
+         for (int i=0; i<5; i++) {
+           random = 1664525U * random + 1013904223U;
+           allowed[i] = 1U + ((random >> 12) % 7U);
+         }
+         random = 1664525U * random + 1013904223U;
+         finals = 1U + ((random >> 16) % 15U);
+       }
+       /// %Test whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         int state = 0;
+         for (int i=0; i<x.size(); i++) {
+           const int symbol = x[i];
+           if (((allowed[i] & (1U << symbol)) == 0U) ||
+               (next[state][symbol] < 0))
+             return false;
+           state = next[state][symbol];
+         }
+         return (finals & (1U << state)) != 0U;
+       }
+       /// Post constraint on \a x
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
+         using namespace Gecode;
+         DFA::Transition transitions[n_dfa_states*n_symbols+1];
+         int n_transitions = 0;
+         for (int state=0; state<n_dfa_states; state++)
+           for (int symbol=0; symbol<n_symbols; symbol++)
+             if (next[state][symbol] >= 0)
+               transitions[n_transitions++] =
+                 DFA::Transition(state,symbol,next[state][symbol]);
+         transitions[n_transitions].i_state = -1;
+         int final_states[n_dfa_states+1];
+         int n_final_states = 0;
+         for (int state=0; state<n_dfa_states; state++)
+           if ((finals & (1U << state)) != 0U)
+             final_states[n_final_states++] = state;
+         final_states[n_final_states] = -1;
+         DFA d(0,transitions,final_states,false);
+         for (int i=0; i<x.size(); i++)
+           for (int symbol=0; symbol<n_symbols; symbol++)
+             if ((allowed[i] & (1U << symbol)) == 0U)
+               rel(home,x[i],IRT_NQ,symbol);
+         extensional(home,x,d);
+       }
+     };
+
+     /// %Test backward pruning caused by a position-specific domain
+     class RegPositionDomainPruning : public Test {
+     public:
+       /// Create and register test
+       RegPositionDomainPruning(void)
+         : Test("Extensional::Reg::Sparse::PositionDomainPruning",
+                3,0,1,false,Gecode::IPL_DOM) {}
+       /// %Test whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         return (x[0] == 0) && (x[1] == 0) && (x[2] == 0);
+       }
+       /// Post constraint on \a x
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
+         using namespace Gecode;
+         DFA d(0,
+               {
+                 {0,0,1}, {0,1,2},
+                 {1,0,3}, {2,1,4},
+                 {3,0,5}, {4,1,6}
+               },
+               {5,6},false);
+         rel(home,x[2],IRT_EQ,0);
+         extensional(home,x,d);
+       }
+     };
+
+     /// %Test failure when the forward frontier misses the terminal boundary
+     class RegNoAcceptingPath : public Test {
+     public:
+       /// Create and register test
+       RegNoAcceptingPath(void)
+         : Test("Extensional::Reg::Sparse::NoAcceptingPath",
+                3,0,0,false,Gecode::IPL_DOM) {
+         testsearch = false;
+       }
+       /// %Test whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         (void)x;
+         return false;
+       }
+       /// Post constraint on \a x
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
+         using namespace Gecode;
+         // Every position has a forward transition, but the sole final state
+         // is only reached after four symbols.
+         DFA d(0,
+               {
+                 {0,0,1}, {1,0,2}, {2,0,3}, {3,0,4}
+               },
+               {4},false);
+         extensional(home,x,d);
+       }
+     };
+
+     /// %Test merging several reached DFA final states
+     class RegTerminalMerged : public Test {
+     public:
+       /// Create and register test
+       RegTerminalMerged(void)
+         : Test("Extensional::Reg::Sparse::TerminalMerged",
+                1,0,2,false,Gecode::IPL_DOM) {}
+       /// %Test whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         (void)x;
+         return true;
+       }
+       /// Post constraint on \a x
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
+         using namespace Gecode;
+         DFA d(0,
+               {
+                 {0,0,1}, {0,1,2}, {0,2,3}
+               },
+               {1,2,3},false);
+         extensional(home,x,d);
+       }
+     };
+
+     /// %Test retaining separate terminal states when merging would overflow
+     class RegTerminalUnmerged : public Test {
+     public:
+       /// Create and register test
+       RegTerminalUnmerged(void)
+         : Test("Extensional::Reg::Sparse::TerminalUnmerged",
+                8,0,15,false,Gecode::IPL_DOM) {
+         testsearch = false;
+       }
+       /// Create a bounded random selection from the large uniform test domain
+       virtual Assignment* assignment(void) const {
+         return new RandomAssignment(arity,dom,1000,_rand);
+       }
+       /// %Test whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         for (int i=0; i<x.size(); i++)
+           if ((x[i] != 2*i) && (x[i] != 2*i+1))
+             return false;
+         return true;
+       }
+       /// Post constraint on \a x
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
+         using namespace Gecode;
+         // Symbols are unique per level. No symbol labels more than 128
+         // transitions, selecting the smallest Degree type, but 256 edges
+         // enter final states.
+         const int n_states = 511;
+         const int n_transitions = n_states - 1;
+         DFA::Transition* t = new DFA::Transition[n_transitions+1];
+         int ti = 0;
+         for (int depth=0; depth<8; depth++) {
+           const int first = (1 << depth) - 1;
+           const int width = 1 << depth;
+           for (int j=0; j<width; j++) {
+             const int i = first+j;
+             t[ti++] = DFA::Transition(i,2*depth,2*i+1);
+             t[ti++] = DFA::Transition(i,2*depth+1,2*i+2);
+           }
+         }
+         t[ti].i_state = -1;
+         int* f = new int[257];
+         for (int i=0; i<256; i++)
+           f[i] = 255+i;
+         f[256] = -1;
+         DFA d(0,t,f,false);
+         delete [] t;
+         delete [] f;
+         extensional(home,x,d);
+       }
+     };
+
      ///% Transform a TupleSet into a DFA
      Gecode::DFA tupleset2dfa(Gecode::TupleSet ts) {
        using namespace Gecode;
@@ -2154,6 +2444,18 @@ namespace Test { namespace Int {
      RegOpt ro5(SHRT_MAX);
      RegOpt ro6(static_cast<int>(USHRT_MAX-1));
      RegOpt ro7(static_cast<int>(USHRT_MAX));
+
+     RegAcyclicReconvergence reg_sparse_acyclic_reconvergence;
+     RegCyclicFrontier reg_sparse_cyclic_frontier;
+     RegBoolCyclicFrontier reg_sparse_bool_cyclic_frontier;
+     RegRandomDifferential reg_sparse_random_differential_1(1);
+     RegRandomDifferential reg_sparse_random_differential_2(2);
+     RegRandomDifferential reg_sparse_random_differential_3(3);
+     RegRandomDifferential reg_sparse_random_differential_4(4);
+     RegPositionDomainPruning reg_sparse_position_domain_pruning;
+     RegNoAcceptingPath reg_sparse_no_accepting_path;
+     RegTerminalMerged reg_sparse_terminal_merged;
+     RegTerminalUnmerged reg_sparse_terminal_unmerged;
 
      SparseTupleSetUnary sparse_tuple_set_unary;
      SparseTupleSetTernary sparse_tuple_set_ternary;

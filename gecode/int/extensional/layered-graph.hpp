@@ -33,6 +33,7 @@
 
 #include <climits>
 #include <algorithm>
+#include <limits>
 
 namespace Gecode { namespace Int { namespace Extensional {
 
@@ -266,163 +267,202 @@ namespace Gecode { namespace Int { namespace Extensional {
                                                      const VarArgArray<Var>& x,
                                                      const DFA& dfa) {
 
-    Region r;
-
     // Allocate memory for layers
     layers = home.alloc<Layer>(n+1);
 
-    // Allocate temporary memory for all possible states
-    State* states = r.alloc<State>(max_states*(n+1));
-    for (int i=0; i<static_cast<int>(max_states)*(n+1); i++)
-      states[i].init();
-    for (int i=0; i<n+1; i++)
-      layers[i].states = states + i*max_states;
+    const int n_dfa_states = dfa.n_states();
 
-    // Allocate temporary memory for edges
-    Edge* edges = r.alloc<Edge>(dfa.max_degree());
+    {
+      Region r;
 
-    // Mark initial state as being reachable
-    i_state(0,0).i_deg = 1;
+      // Allocate temporary memory for edges
+      Edge* edges = r.alloc<Edge>(dfa.max_degree());
 
-    // Forward pass: add transitions
-    for (int i=0; i<n; i++) {
-      layers[i].x = x[i];
-      layers[i].support = home.alloc<Support>(layers[i].x.size());
-      ValSize j=0;
-      // Enter links leaving reachable states (indegree != 0)
-      for (ViewValues<View> nx(layers[i].x); nx(); ++nx) {
-        Degree n_edges=0;
-        for (DFA::Transitions t(dfa,nx.val()); t(); ++t)
-          if (i_state(i,static_cast<StateIdx>(t.i_state())).i_deg != 0) {
-            i_state(i,static_cast<StateIdx>(t.i_state())).o_deg++;
-            o_state(i,static_cast<StateIdx>(t.o_state())).i_deg++;
-            edges[n_edges].i_state = static_cast<StateIdx>(t.i_state());
-            edges[n_edges].o_state = static_cast<StateIdx>(t.o_state());
-            n_edges++;
+      // Reachability sets and touched states
+      unsigned char* i_reachable = r.alloc<unsigned char>(n_dfa_states);
+      unsigned char* o_reachable = r.alloc<unsigned char>(n_dfa_states);
+      StateIdx* i_reached = r.alloc<StateIdx>(n_dfa_states);
+      StateIdx* o_reached = r.alloc<StateIdx>(n_dfa_states);
+      for (int i=0; i<n_dfa_states; i++)
+        i_reachable[i] = o_reachable[i] = 0;
+      unsigned int n_i_reached = 1;
+      unsigned int n_o_reached = 0;
+      i_reachable[0] = 1;
+      i_reached[0] = 0;
+
+      // Forward pass: add transitions
+      for (int i=0; i<n; i++) {
+        layers[i].x = x[i];
+        layers[i].support = home.alloc<Support>(layers[i].x.size());
+        ValSize j=0;
+        // Clear the next frontier
+        for (unsigned int k=0; k<n_o_reached; k++)
+          o_reachable[o_reached[k]] = 0;
+        n_o_reached = 0;
+        // Enter links leaving reachable states
+        for (ViewValues<View> nx(layers[i].x); nx(); ++nx) {
+          unsigned int n_support_edges=0;
+          for (DFA::Transitions t(dfa,nx.val()); t(); ++t)
+            if (i_reachable[t.i_state()] != 0) {
+              edges[n_support_edges].i_state =
+                static_cast<StateIdx>(t.i_state());
+              edges[n_support_edges].o_state =
+                static_cast<StateIdx>(t.o_state());
+              n_support_edges++;
+              if (o_reachable[t.o_state()] == 0) {
+                o_reachable[t.o_state()] = 1;
+                o_reached[n_o_reached++] =
+                  static_cast<StateIdx>(t.o_state());
+              }
+            }
+          assert(n_support_edges <= dfa.max_degree());
+          // Found support for value
+          if (n_support_edges > 0) {
+            Support& s = layers[i].support[j];
+            s.val = static_cast<Val>(nx.val());
+            s.n_edges = static_cast<Degree>(n_support_edges);
+            s.edges = Heap::copy(home.alloc<Edge>(n_support_edges),edges,
+                                 n_support_edges);
+            j++;
           }
-        assert(n_edges <= dfa.max_degree());
-        // Found support for value
-        if (n_edges > 0) {
-          Support& s = layers[i].support[j];
-          s.val = static_cast<Val>(nx.val());
-          s.n_edges = n_edges;
-          s.edges = Heap::copy(home.alloc<Edge>(n_edges),edges,n_edges);
-          j++;
         }
+        if ((layers[i].size = j) == 0)
+          return ES_FAILED;
+        std::swap(i_reachable,o_reachable);
+        std::swap(i_reached,o_reached);
+        std::swap(n_i_reached,n_o_reached);
       }
-      if ((layers[i].size = j) == 0)
-        return ES_FAILED;
     }
 
-    // Mark final states as reachable
-    for (int s=dfa.final_fst(); s<dfa.final_lst(); s++)
-      if (o_state(n-1,static_cast<StateIdx>(s)).i_deg != 0)
-        o_state(n-1,static_cast<StateIdx>(s)).o_deg = 1;
+    Region r;
 
-    // Backward pass: prune all transitions that do not lead to final state
+    // Maps from DFA state IDs to layer-local state indices
+    StateIdx* i_map = r.alloc<StateIdx>(n_dfa_states);
+    StateIdx* o_map = r.alloc<StateIdx>(n_dfa_states);
+    unsigned char* i_mapped = r.alloc<unsigned char>(n_dfa_states);
+    unsigned char* o_mapped = r.alloc<unsigned char>(n_dfa_states);
+    StateIdx* i_touched = r.alloc<StateIdx>(n_dfa_states);
+    StateIdx* o_touched = r.alloc<StateIdx>(n_dfa_states);
+    for (int i=0; i<n_dfa_states; i++)
+      i_mapped[i] = o_mapped[i] = 0;
+    unsigned int n_i_mapped = 0;
+    unsigned int n_o_mapped = 0;
+
+    // Count and map reachable edges entering final states
+    unsigned long long int final_degree = 0;
+    for (ValSize j=0; j<layers[n-1].size; j++) {
+      Support& s = layers[n-1].support[j];
+      for (unsigned int d=0; d<static_cast<unsigned int>(s.n_edges); d++) {
+        const int os = static_cast<int>(s.edges[d].o_state);
+        if ((os >= dfa.final_fst()) && (os < dfa.final_lst())) {
+          final_degree++;
+          if (o_mapped[os] == 0) {
+            o_mapped[os] = 1;
+            o_map[os] = static_cast<StateIdx>(n_o_mapped);
+            o_touched[n_o_mapped++] = static_cast<StateIdx>(os);
+          }
+        }
+      }
+    }
+    if (final_degree == 0)
+      return ES_FAILED;
+
+    // Initialize the map for the terminal layer
+    if (final_degree <= static_cast<unsigned long long int>
+        (Gecode::Support::IntTypeTraits<Degree>::max)) {
+      // Merge all terminal states
+      for (unsigned int i=0; i<n_o_mapped; i++)
+        o_map[o_touched[i]] = 0;
+      layers[n].n_states = 1;
+    } else {
+      // Keep terminal states separate
+      layers[n].n_states = static_cast<StateIdx>(n_o_mapped);
+    }
+
+    unsigned long long int total_states = layers[n].n_states;
+    unsigned long long int total_edges = 0;
+    unsigned int max_s = layers[n].n_states;
+
+    // Backward pass: prune and translate endpoints to layer-local indices
     for (int i=n; i--; ) {
-      ValSize k=0;
+      for (unsigned int j=0; j<n_i_mapped; j++)
+        i_mapped[i_touched[j]] = 0;
+      n_i_mapped = 0;
+      ValSize n_supports=0;
       for (ValSize j=0; j<layers[i].size; j++) {
         Support& s = layers[i].support[j];
-        for (Degree d=s.n_edges; d--; )
-          if (o_state(i,s.edges[d]).o_deg == 0) {
-            // Adapt states
-            i_dec(i,s.edges[d]); o_dec(i,s.edges[d]);
-            // Prune edge
-            s.edges[d] = s.edges[--s.n_edges];
+        unsigned int n_support_edges=0;
+        for (unsigned int d=0; d<static_cast<unsigned int>(s.n_edges); d++) {
+          Edge e = s.edges[d];
+          const int is = static_cast<int>(e.i_state);
+          const int os = static_cast<int>(e.o_state);
+          if (o_mapped[os] != 0) {
+            e.o_state = o_map[os];
+            if (i_mapped[is] == 0) {
+              i_mapped[is] = 1;
+              i_map[is] = static_cast<StateIdx>(n_i_mapped);
+              i_touched[n_i_mapped++] = static_cast<StateIdx>(is);
+            }
+            e.i_state = i_map[is];
+            s.edges[n_support_edges++] = e;
           }
-        // Value has support, copy the support information
-        if (s.n_edges > 0)
-          layers[i].support[k++]=s;
+        }
+        s.n_edges = static_cast<Degree>(n_support_edges);
+        if (n_support_edges > 0) {
+          layers[i].support[n_supports++] = s;
+          total_edges += n_support_edges;
+        }
       }
-      if ((layers[i].size = k) == 0)
+      if ((layers[i].size = n_supports) == 0)
         return ES_FAILED;
+      layers[i].n_states = static_cast<StateIdx>(n_i_mapped);
+      total_states += n_i_mapped;
+      max_s = std::max(max_s,n_i_mapped);
       LayerValues lv(layers[i]);
       GECODE_ME_CHECK(layers[i].x.narrow_v(home,lv,false));
       if (!layers[i].x.assigned())
         layers[i].x.subscribe(home, *new (home) Index(home,*this,c,i));
+
+      std::swap(i_map,o_map);
+      std::swap(i_mapped,o_mapped);
+      std::swap(i_touched,o_touched);
+      std::swap(n_i_mapped,n_o_mapped);
     }
 
-    // Copy and compress states, setup other information
-    {
-      // State map for in-states
-      StateIdx* i_map = r.alloc<StateIdx>(max_states);
-      // State map for out-states
-      StateIdx* o_map = r.alloc<StateIdx>(max_states);
-      // Number of in-states
-      StateIdx i_n = 0;
+    if ((total_states >
+         static_cast<unsigned long long int>
+         ((std::numeric_limits<unsigned int>::max)())) ||
+        (total_edges >
+         static_cast<unsigned long long int>
+         ((std::numeric_limits<unsigned int>::max)())))
+      throw OutOfLimits("Int::regular");
+    n_states = static_cast<unsigned int>(total_states);
+    n_edges = static_cast<unsigned int>(total_edges);
+    max_states = static_cast<StateIdx>(max_s);
 
-      // Initialize map for in-states (special for last layer)
-      // Degree for single final state
-      unsigned int d = 0;
-      for (StateIdx j=0; j<max_states; j++)
-        d += static_cast<unsigned int>(layers[n].states[j].i_deg);
-      // Check whether all final states can be joined to a single state
-      if (d >
-          static_cast<unsigned int>
-          (Gecode::Support::IntTypeTraits<Degree>::max)) {
-        // Initialize map for in-states
-        for (StateIdx j=max_states; j--; )
-          if ((layers[n].states[j].o_deg != 0) ||
-              (layers[n].states[j].i_deg != 0))
-            i_map[j]=i_n++;
-      } else {
-        i_n = 1;
-        for (StateIdx j=max_states; j--; ) {
-          layers[n].states[j].init();
-          i_map[j] = 0;
-        }
-        layers[n].states[0].i_deg = static_cast<Degree>(d);
-        layers[n].states[0].o_deg = 1;
-      }
-      layers[n].n_states = i_n;
+    // Allocate persistent states in terminal-first, descending-layer order
+    State* states = home.alloc<State>(n_states);
+    for (unsigned int i=0; i<n_states; i++)
+      states[i].init();
+    for (int i=n+1; i--; ) {
+      layers[i].states = states;
+      states += layers[i].n_states;
+    }
 
-      // Total number of states
-      n_states = i_n;
-      // Total number of edges
-      n_edges = 0;
-      // New maximal number of states
-      StateIdx max_s = i_n;
-
-      for (int i=n; i--; ) {
-        // In-states become out-states
-        std::swap(o_map,i_map); i_n=0;
-        // Initialize map for in-states
-        for (StateIdx j=max_states; j--; )
-          if ((layers[i].states[j].o_deg != 0) ||
-              (layers[i].states[j].i_deg != 0))
-            i_map[j]=i_n++;
-        layers[i].n_states = i_n;
-        n_states += i_n;
-        max_s = std::max(max_s,i_n);
-
-        // Update states in edges
-        for (ValSize j=layers[i].size; j--; ) {
-          Support& ls = layers[i].support[j];
-          n_edges += ls.n_edges;
-          for (Degree deg=ls.n_edges; deg--; ) {
-            ls.edges[deg].i_state = i_map[ls.edges[deg].i_state];
-            ls.edges[deg].o_state = o_map[ls.edges[deg].o_state];
-          }
+    // Reconstruct state degrees from the surviving edges
+    for (int i=0; i<n; i++)
+      for (ValSize j=0; j<layers[i].size; j++) {
+        Support& s = layers[i].support[j];
+        for (Degree d=s.n_edges; d--; ) {
+          i_state(i,s.edges[d]).o_deg++;
+          o_state(i,s.edges[d]).i_deg++;
         }
       }
 
-      // Allocate and copy states
-      State* a_states = home.alloc<State>(n_states);
-      for (int i=n+1; i--; ) {
-        StateIdx k=0;
-        for (StateIdx j=max_states; j--; )
-          if ((layers[i].states[j].o_deg != 0) ||
-              (layers[i].states[j].i_deg != 0))
-            a_states[k++] = layers[i].states[j];
-        assert(k == layers[i].n_states);
-        layers[i].states = a_states;
-        a_states += layers[i].n_states;
-      }
-
-      // Update maximal number of states
-      max_states = max_s;
-    }
+    // Restore artificial boundary degrees
+    layers[0].states[0].i_deg = 1;
+    for (StateIdx i=0; i<layers[n].n_states; i++)
+      layers[n].states[i].o_deg = 1;
 
     // Schedule if subsumption is needed
     if (c.empty())
@@ -980,4 +1020,3 @@ namespace Gecode { namespace Int { namespace Extensional {
 }}}
 
 // STATISTICS: int-prop
-
