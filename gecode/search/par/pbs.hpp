@@ -150,17 +150,17 @@ namespace Gecode { namespace Search { namespace Par {
 
   template<class Collect>
   forceinline
-  Slave<Collect>::Slave(PBS<Collect>* p, Engine* e, Stop* so)
-    : Support::Runnable(false), portfolio(p), engine(e), stop(so) {}
+  Slave<Collect>::Slave(PBS<Collect>* m, Engine* s, Stop* so)
+    : Support::Runnable(false), master(m), slave(s), stop(so) {}
   template<class Collect>
   forceinline Statistics
   Slave<Collect>::statistics(void) const {
-    return engine->statistics();
+    return slave->statistics();
   }
   template<class Collect>
   forceinline bool
   Slave<Collect>::stopped(void) const {
-    return engine->stopped();
+    return slave->stopped();
   }
   template<class Collect>
   forceinline Support::Terminator*
@@ -175,11 +175,11 @@ namespace Gecode { namespace Search { namespace Par {
   template<class Collect>
   forceinline void
   Slave<Collect>::constrain(const Space& b) {
-    engine->constrain(b);
+    slave->constrain(b);
   }
   template<class Collect>
   Slave<Collect>::~Slave(void) {
-    delete engine;
+    delete slave;
     delete stop;
   }
 
@@ -236,8 +236,8 @@ namespace Gecode { namespace Search { namespace Par {
   Slave<Collect>::run(void) {
     Space* s;
     do {
-      s = engine->next();
-    } while (!portfolio->report(this,s));
+      s = slave->next();
+    } while (!master->report(this,s));
   }
 
   template<class Collect>
