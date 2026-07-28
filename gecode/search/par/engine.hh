@@ -88,10 +88,10 @@ namespace Gecode { namespace Search { namespace Par {
     /// Search options
     Options _opt;
     /// Logical worker state used by adjustable parallel admission
-    enum SchedulerLogical {
-      SL_OWNER,
-      SL_PENDING,
-      SL_IDLE
+    enum class SchedulerLogical {
+      OWNER,
+      PENDING,
+      IDLE
     };
     /// Per-worker adjustable parallel admission state
     struct SchedulerWorker {

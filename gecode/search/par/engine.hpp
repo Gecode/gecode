@@ -156,11 +156,11 @@ namespace Gecode { namespace Search { namespace Par {
   Engine<Tracer>::scheduler_grow(void) {
     bool wake = false;
     while (scheduler_leases < scheduler_requested) {
-      unsigned int i = scheduler_select(SL_OWNER,workers());
+      unsigned int i = scheduler_select(SchedulerLogical::OWNER,workers());
       if (i == workers())
-        i = scheduler_select(SL_PENDING,workers());
+        i = scheduler_select(SchedulerLogical::PENDING,workers());
       if (i == workers())
-        i = scheduler_select(SL_IDLE,workers());
+        i = scheduler_select(SchedulerLogical::IDLE,workers());
       if (i == workers()) {
         for (i=0U; i<workers(); i++)
           if (!scheduler_worker[i].lease)
@@ -194,7 +194,8 @@ namespace Gecode { namespace Search { namespace Par {
       scheduler_worker[i].lease = i < scheduler_requested;
       scheduler_worker[i].parked = false;
       scheduler_worker[i].logical =
-        ((i == 0U) && root_owner) ? SL_OWNER : SL_PENDING;
+        ((i == 0U) && root_owner) ?
+        SchedulerLogical::OWNER : SchedulerLogical::PENDING;
     }
     scheduler_generation.store(generation,std::memory_order_release);
     scheduler_enabled = true;
@@ -216,7 +217,8 @@ namespace Gecode { namespace Search { namespace Par {
       scheduler_worker[i].lease = i < scheduler_requested;
       scheduler_worker[i].parked = false;
       scheduler_worker[i].logical =
-        ((i == 0U) && root_owner) ? SL_OWNER : SL_PENDING;
+        ((i == 0U) && root_owner) ?
+        SchedulerLogical::OWNER : SchedulerLogical::PENDING;
     }
     scheduler_generation.store(generation,std::memory_order_release);
     scheduler_mutex.release();
@@ -274,7 +276,7 @@ namespace Gecode { namespace Search { namespace Par {
     if (!scheduler_enabled)
       return;
     scheduler_mutex.acquire();
-    scheduler_worker[worker].logical = SL_OWNER;
+    scheduler_worker[worker].logical = SchedulerLogical::OWNER;
     scheduler_mutex.release();
   }
 
@@ -284,7 +286,7 @@ namespace Gecode { namespace Search { namespace Par {
     if (!scheduler_enabled)
       return;
     scheduler_mutex.acquire();
-    scheduler_worker[worker].logical = SL_IDLE;
+    scheduler_worker[worker].logical = SchedulerLogical::IDLE;
     scheduler_mutex.release();
   }
 
@@ -302,9 +304,9 @@ namespace Gecode { namespace Search { namespace Par {
         scheduler_worker[worker].parked = true;
         scheduler_leases--;
       } else if (work_remains) {
-        target = scheduler_select(SL_OWNER,worker);
+        target = scheduler_select(SchedulerLogical::OWNER,worker);
         if (target == workers())
-          target = scheduler_select(SL_PENDING,worker);
+          target = scheduler_select(SchedulerLogical::PENDING,worker);
         if (target != workers()) {
           scheduler_worker[worker].lease = false;
           scheduler_worker[worker].parked = true;
