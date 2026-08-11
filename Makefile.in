@@ -999,7 +999,7 @@ SETEXAMPLEEXE  =
 endif
 
 WORDEXAMPLESRC0 = \
-	word-arithmetic word-minimodel word-structure
+	word-arithmetic word-benchmark word-minimodel word-structure
 WORDEXAMPLESRC = $(WORDEXAMPLESRC0:%=examples/%.cpp)
 ifeq "@enable_word_vars@" "yes"
 WORDEXAMPLEEXE = $(WORDEXAMPLESRC:%.cpp=%$(EXESUFFIX))

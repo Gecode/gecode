@@ -60,6 +60,7 @@ set(GECODE_EXAMPLE_SOURCES
   tsp.cpp
   warehouses.cpp
   word-arithmetic.cpp
+  word-benchmark.cpp
   word-minimodel.cpp
   word-structure.cpp
   word-square.cpp)
@@ -81,6 +82,7 @@ set(GECODE_MPFR_FLOAT_EXAMPLES
 
 set(GECODE_WORD_EXAMPLES
   word-arithmetic
+  word-benchmark
   word-minimodel
   word-structure)
 

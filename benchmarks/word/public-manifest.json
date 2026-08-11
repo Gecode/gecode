@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "corpus": "public",
+  "redistributable": true,
+  "instances": [
+    {
+      "id": "word-xor-rotate-smoke",
+      "path": "fixtures/word-xor-rotate-smoke.json",
+      "license": "MIT",
+      "redistributable": true
+    }
+  ]
+}
