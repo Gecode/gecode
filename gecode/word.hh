@@ -245,6 +245,56 @@ namespace Gecode {
                               const WordVarArgs& x, WordVar y);
   //@}
 
+  /**
+   * \defgroup TaskModelWordStructure Fixed structural constraints
+   * \ingroup TaskModelWord
+   */
+  //@{
+  /// Extract \a width bits of \a x starting at least-significant index \a first
+  GECODE_WORD_EXPORT void extract(Home home, WordVar x,
+                                  unsigned int first, unsigned int width,
+                                  WordVar y);
+  /// Extract from an explicitly-sized constant
+  GECODE_WORD_EXPORT void extract(Home home, unsigned int input_width,
+                                  WordValue value, unsigned int first,
+                                  unsigned int width, WordVar y);
+  /// Concatenate \a high above \a low into \a result
+  GECODE_WORD_EXPORT void concat(Home home, WordVar high, WordVar low,
+                                 WordVar result);
+  /// Concatenate an explicitly-sized high constant above \a low
+  GECODE_WORD_EXPORT void concat(Home home, unsigned int high_width,
+                                 WordValue high, WordVar low, WordVar result);
+  /// Concatenate \a high above an explicitly-sized low constant
+  GECODE_WORD_EXPORT void concat(Home home, WordVar high,
+                                 unsigned int low_width, WordValue low,
+                                 WordVar result);
+  /// Repeat \a x in \a count blocks from least to most significant
+  GECODE_WORD_EXPORT void repeat(Home home, WordVar x,
+                                 unsigned int count, WordVar result);
+  /// Repeat an explicitly-sized constant
+  GECODE_WORD_EXPORT void repeat(Home home, unsigned int input_width,
+                                 WordValue value, unsigned int count,
+                                 WordVar result);
+  /// Zero-extend \a x to the explicitly declared \a result_width
+  GECODE_WORD_EXPORT void zero_extend(Home home, WordVar x,
+                                      unsigned int result_width,
+                                      WordVar result);
+  /// Zero-extend an explicitly-sized constant
+  GECODE_WORD_EXPORT void zero_extend(Home home, unsigned int input_width,
+                                      WordValue value,
+                                      unsigned int result_width,
+                                      WordVar result);
+  /// Sign-extend \a x to the explicitly declared \a result_width
+  GECODE_WORD_EXPORT void sign_extend(Home home, WordVar x,
+                                      unsigned int result_width,
+                                      WordVar result);
+  /// Sign-extend an explicitly-sized constant
+  GECODE_WORD_EXPORT void sign_extend(Home home, unsigned int input_width,
+                                      WordValue value,
+                                      unsigned int result_width,
+                                      WordVar result);
+  //@}
+
   /// Branch filter function type for word variables
   typedef std::function<bool(const Space& home, WordVar x, int i)>
     WordBranchFilter;

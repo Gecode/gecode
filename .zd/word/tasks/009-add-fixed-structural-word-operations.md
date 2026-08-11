@@ -3,7 +3,7 @@ schema_version = 1
 id = "word-009"
 key = "fixed-structure"
 area = "word"
-status = "open"
+status = "done"
 blocked_by = ["word-002"]
 +++
 # Add fixed structural word operations
@@ -19,11 +19,19 @@ Direct posting supports extraction, concatenation, repetition, zero extension, a
 
 ## Done when
 
-- [ ] Masked equality-style propagators implement every fixed structural operation without per-bit Boolean expansion.
-- [ ] Width-changing contracts, invalid dimensions, constants, aliases, failure, subsumption, cloning, and recomputation are covered.
-- [ ] Tests state and verify the claimed propagation property of each operation.
+- [x] Masked equality-style propagators implement every fixed structural operation without per-bit Boolean expansion.
+- [x] Width-changing contracts, invalid dimensions, constants, aliases, failure, subsumption, cloning, and recomputation are covered.
+- [x] Tests state and verify the claimed propagation property of each operation.
 
 ## Validation
 
 - Run assigned-value oracle and partial-domain soundness tests through the shared WordVar framework.
 - Run first-bit, last-bit, full-width slice, repetition, sign-bit, invalid-dimension, alias, and clone tests.
+
+## Result
+
+Added direct fixed structural WordVar operations for extraction, concatenation, repetition, zero extension, and sign extension with checked widths and explicit-width constant sources.
+
+Validation:
+
+- Independent verification passed focused Word::Structure and Word::TestFramework tests plus bidirectional mask, group semantics, alias, constant, width/shift safety, actor lifecycle, inventory, preamble, and git diff review.

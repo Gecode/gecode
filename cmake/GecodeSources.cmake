@@ -200,6 +200,7 @@ set(GECODE_WORD_SOURCES
   gecode/word/exception.cpp
   gecode/word/logic.cpp
   gecode/word/rel.cpp
+  gecode/word/structure.cpp
   gecode/word/trace.cpp
   gecode/word/trace/tracer.cpp
   gecode/word/var-imp/word.cpp
@@ -447,6 +448,7 @@ set(GECODE_TEST_SOURCES
   test/word/channel.cpp
   test/word/logic.cpp
   test/word/rel.cpp
+  test/word/structure.cpp
   test/word/trace.cpp
 )
 
