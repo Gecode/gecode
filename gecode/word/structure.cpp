@@ -69,6 +69,13 @@ namespace Gecode {
         throw Word::WidthMismatch(location);
     }
 
+    void check_same_width(unsigned int input_width,
+                          unsigned int result_width,
+                          const char* location) {
+      if (input_width != result_width)
+        throw Word::WidthMismatch(location);
+    }
+
     template<class View0, class View1>
     void post_fixed(Home home, View0 x, View1 result,
                     Word::Structure::FixedOp op,
@@ -81,6 +88,20 @@ namespace Gecode {
     void post_concat(Home home, View0 high, View1 low, View2 result) {
       GECODE_ES_FAIL((Word::Structure::Concat<View0,View1,View2>
                       ::post(home,high,low,result)));
+    }
+
+    void post_fixed_word(Home home, WordVar x, unsigned int amount,
+                         WordVar result, Word::Structure::FixedOp op) {
+      Word::WordView xv(x), rv(result);
+      if (xv == rv) {
+        if (amount == 0U)
+          return;
+        WordVar temporary(home,x.width());
+        post_fixed(home,xv,Word::WordView(temporary),op,amount);
+        rel(home,temporary,WRT_EQ,result);
+        return;
+      }
+      post_fixed(home,xv,rv,op,amount);
     }
   }
 
@@ -195,6 +216,102 @@ namespace Gecode {
     GECODE_POST;
     post_fixed(home,x,Word::WordView(result),
                Word::Structure::FO_SIGN_EXTEND);
+  }
+
+  void
+  shift_left(Home home, WordVar x, unsigned int amount, WordVar result) {
+    check_same_width(x.width(),result.width(),"Word::shift_left");
+    GECODE_POST;
+    post_fixed_word(home,x,amount,result,Word::Structure::FO_SHIFT_LEFT);
+  }
+
+  void
+  shift_left(Home home, unsigned int width, WordValue value,
+             unsigned int amount, WordVar result) {
+    Word::ConstWordView x(width,value);
+    check_same_width(width,result.width(),"Word::shift_left");
+    GECODE_POST;
+    post_fixed(home,x,Word::WordView(result),
+               Word::Structure::FO_SHIFT_LEFT,amount);
+  }
+
+  void
+  logical_shift_right(Home home, WordVar x, unsigned int amount,
+                      WordVar result) {
+    check_same_width(x.width(),result.width(),
+                     "Word::logical_shift_right");
+    GECODE_POST;
+    post_fixed_word(home,x,amount,result,
+                    Word::Structure::FO_LOGICAL_SHIFT_RIGHT);
+  }
+
+  void
+  logical_shift_right(Home home, unsigned int width, WordValue value,
+                      unsigned int amount, WordVar result) {
+    Word::ConstWordView x(width,value);
+    check_same_width(width,result.width(),"Word::logical_shift_right");
+    GECODE_POST;
+    post_fixed(home,x,Word::WordView(result),
+               Word::Structure::FO_LOGICAL_SHIFT_RIGHT,amount);
+  }
+
+  void
+  arithmetic_shift_right(Home home, WordVar x, unsigned int amount,
+                         WordVar result) {
+    check_same_width(x.width(),result.width(),
+                     "Word::arithmetic_shift_right");
+    GECODE_POST;
+    post_fixed_word(home,x,amount,result,
+                    Word::Structure::FO_ARITHMETIC_SHIFT_RIGHT);
+  }
+
+  void
+  arithmetic_shift_right(Home home, unsigned int width, WordValue value,
+                         unsigned int amount, WordVar result) {
+    Word::ConstWordView x(width,value);
+    check_same_width(width,result.width(),
+                     "Word::arithmetic_shift_right");
+    GECODE_POST;
+    post_fixed(home,x,Word::WordView(result),
+               Word::Structure::FO_ARITHMETIC_SHIFT_RIGHT,amount);
+  }
+
+  void
+  rotate_left(Home home, WordVar x, unsigned int amount, WordVar result) {
+    check_same_width(x.width(),result.width(),"Word::rotate_left");
+    amount %= x.width();
+    GECODE_POST;
+    post_fixed_word(home,x,amount,result,Word::Structure::FO_ROTATE_LEFT);
+  }
+
+  void
+  rotate_left(Home home, unsigned int width, WordValue value,
+              unsigned int amount, WordVar result) {
+    Word::ConstWordView x(width,value);
+    check_same_width(width,result.width(),"Word::rotate_left");
+    amount %= width;
+    GECODE_POST;
+    post_fixed(home,x,Word::WordView(result),
+               Word::Structure::FO_ROTATE_LEFT,amount);
+  }
+
+  void
+  rotate_right(Home home, WordVar x, unsigned int amount, WordVar result) {
+    check_same_width(x.width(),result.width(),"Word::rotate_right");
+    amount %= x.width();
+    GECODE_POST;
+    post_fixed_word(home,x,amount,result,Word::Structure::FO_ROTATE_RIGHT);
+  }
+
+  void
+  rotate_right(Home home, unsigned int width, WordValue value,
+               unsigned int amount, WordVar result) {
+    Word::ConstWordView x(width,value);
+    check_same_width(width,result.width(),"Word::rotate_right");
+    amount %= width;
+    GECODE_POST;
+    post_fixed(home,x,Word::WordView(result),
+               Word::Structure::FO_ROTATE_RIGHT,amount);
   }
 
 }

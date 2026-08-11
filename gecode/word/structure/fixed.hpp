@@ -33,6 +33,31 @@
 
 namespace Gecode { namespace Word { namespace Structure {
 
+  forceinline WordValue
+  low_mask(unsigned int n) {
+    return (n == 0U) ? 0 : ((WordValue(1) << n) - 1);
+  }
+
+  forceinline WordValue
+  rotate_left_value(WordValue value, unsigned int width,
+                    unsigned int amount) {
+    amount %= width;
+    if (amount == 0U)
+      return value;
+    const WordValue mask = width_mask(width);
+    return ((value << amount) | (value >> (width-amount))) & mask;
+  }
+
+  forceinline WordValue
+  rotate_right_value(WordValue value, unsigned int width,
+                     unsigned int amount) {
+    amount %= width;
+    if (amount == 0U)
+      return value;
+    const WordValue mask = width_mask(width);
+    return ((value >> amount) | (value << (width-amount))) & mask;
+  }
+
   template<class View0, class View1>
   forceinline
   Fixed<View0,View1>::Fixed(Home home, View0 y0, View1 y1,
@@ -104,6 +129,73 @@ namespace Gecode { namespace Word { namespace Structure {
       GECODE_ME_CHECK(x1.narrow(home,lo1,hi1));
       break;
     }
+    case FO_SHIFT_LEFT: {
+      if (a >= x0.width()) {
+        GECODE_ME_CHECK(x1.narrow(home,0,0));
+        break;
+      }
+      const WordValue relevant = x0.mask() >> a;
+      GECODE_ME_CHECK(x0.narrow(home,x0.lo() | (x1.lo() >> a),
+                                x0.hi() & ((x1.hi() >> a) |
+                                           (x0.mask() & ~relevant))));
+      GECODE_ME_CHECK(x1.narrow(home,(x0.lo() << a) & x1.mask(),
+                                (x0.hi() << a) & x1.mask()));
+      break;
+    }
+    case FO_LOGICAL_SHIFT_RIGHT: {
+      if (a >= x0.width()) {
+        GECODE_ME_CHECK(x1.narrow(home,0,0));
+        break;
+      }
+      const WordValue lost = low_mask(a);
+      GECODE_ME_CHECK(x0.narrow(home,x0.lo() | (x1.lo() << a),
+                                x0.hi() & ((x1.hi() << a) | lost)));
+      GECODE_ME_CHECK(x1.narrow(home,x0.lo() >> a,x0.hi() >> a));
+      break;
+    }
+    case FO_ARITHMETIC_SHIFT_RIGHT: {
+      const unsigned int width = x0.width();
+      const WordValue sign = WordValue(1) << (width-1);
+      const WordValue mapped = (a >= width) ? 0 : (x1.mask() >> a);
+      const WordValue extension = x1.mask() & ~mapped;
+      WordValue lo0 = x0.lo();
+      WordValue hi0 = x0.hi();
+      if (a < width) {
+        lo0 |= (x1.lo() & mapped) << a;
+        hi0 &= ((x1.hi() & mapped) << a) | low_mask(a);
+      }
+      if ((x1.lo() & extension) != 0)
+        lo0 |= sign;
+      if ((x1.hi() & extension) != extension)
+        hi0 &= ~sign;
+      GECODE_ME_CHECK(x0.narrow(home,lo0,hi0));
+      WordValue lo1 = (a >= width) ? 0 : (x0.lo() >> a);
+      WordValue hi1 = (a >= width) ? 0 : (x0.hi() >> a);
+      if ((x0.lo() & sign) != 0)
+        lo1 |= extension;
+      if ((x0.hi() & sign) != 0)
+        hi1 |= extension;
+      GECODE_ME_CHECK(x1.narrow(home,lo1,hi1));
+      break;
+    }
+    case FO_ROTATE_LEFT: {
+      GECODE_ME_CHECK(x0.narrow(home,
+        rotate_right_value(x1.lo(),x1.width(),a),
+        rotate_right_value(x1.hi(),x1.width(),a)));
+      GECODE_ME_CHECK(x1.narrow(home,
+        rotate_left_value(x0.lo(),x0.width(),a),
+        rotate_left_value(x0.hi(),x0.width(),a)));
+      break;
+    }
+    case FO_ROTATE_RIGHT: {
+      GECODE_ME_CHECK(x0.narrow(home,
+        rotate_left_value(x1.lo(),x1.width(),a),
+        rotate_left_value(x1.hi(),x1.width(),a)));
+      GECODE_ME_CHECK(x1.narrow(home,
+        rotate_right_value(x0.lo(),x0.width(),a),
+        rotate_right_value(x0.hi(),x0.width(),a)));
+      break;
+    }
     default:
       GECODE_NEVER;
     }
@@ -117,6 +209,21 @@ namespace Gecode { namespace Word { namespace Structure {
     if (op == FO_EXTRACT)
       return x1.assigned() &&
         ((x0.unknown() & (x1.mask() << a)) == 0);
+    if (op == FO_SHIFT_LEFT) {
+      const WordValue relevant = (a >= x0.width()) ? 0 : (x0.mask() >> a);
+      return x1.assigned() && ((x0.unknown() & relevant) == 0);
+    }
+    if (op == FO_LOGICAL_SHIFT_RIGHT) {
+      const WordValue relevant = (a >= x0.width()) ? 0 :
+        (x0.mask() & ~low_mask(a));
+      return x1.assigned() && ((x0.unknown() & relevant) == 0);
+    }
+    if (op == FO_ARITHMETIC_SHIFT_RIGHT) {
+      const WordValue relevant = (a >= x0.width()) ?
+        (WordValue(1) << (x0.width()-1)) :
+        (x0.mask() & ~low_mask(a));
+      return x1.assigned() && ((x0.unknown() & relevant) == 0);
+    }
     return x0.assigned() && x1.assigned();
   }
 

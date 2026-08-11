@@ -182,6 +182,173 @@ namespace Test { namespace Word {
     };
 
     Fixed fixed;
+
+    /**
+     * Constant shifts and rotations enforce bit consistency with direct
+     * fixed-width masked propagation.
+     */
+    class Shift : public Base {
+    private:
+      enum Op { SHL, LSHR, ASHR, ROL, ROR };
+
+      static Gecode::WordValue mask(unsigned int width) {
+        return (width == 64U) ? ~Gecode::WordValue(0) :
+          ((Gecode::WordValue(1) << width) - 1);
+      }
+
+      static Gecode::WordValue value(Op op, unsigned int width,
+                                     Gecode::WordValue x,
+                                     unsigned int amount) {
+        const Gecode::WordValue m = mask(width);
+        switch (op) {
+        case SHL:
+          return (amount >= width) ? 0 : ((x << amount) & m);
+        case LSHR:
+          return (amount >= width) ? 0 : (x >> amount);
+        case ASHR: {
+          const bool sign = (x & (Gecode::WordValue(1) << (width-1))) != 0;
+          if (amount >= width)
+            return sign ? m : 0;
+          return (x >> amount) |
+            (sign ? (m & ~(m >> amount)) : 0);
+        }
+        case ROL:
+          amount %= width;
+          return (amount == 0U) ? x :
+            (((x << amount) | (x >> (width-amount))) & m);
+        case ROR:
+          amount %= width;
+          return (amount == 0U) ? x :
+            (((x >> amount) | (x << (width-amount))) & m);
+        default:
+          GECODE_NEVER;
+        }
+        return 0;
+      }
+
+      static void post(Op op, Gecode::Home home, Gecode::WordVar x,
+                       unsigned int amount, Gecode::WordVar result) {
+        switch (op) {
+        case SHL:  Gecode::shift_left(home,x,amount,result); break;
+        case LSHR: Gecode::logical_shift_right(home,x,amount,result); break;
+        case ASHR: Gecode::arithmetic_shift_right(home,x,amount,result); break;
+        case ROL:  Gecode::rotate_left(home,x,amount,result); break;
+        case ROR:  Gecode::rotate_right(home,x,amount,result); break;
+        default: GECODE_NEVER;
+        }
+      }
+
+      static bool assigned_values(void) {
+        const unsigned int amounts[] = {0U,2U,3U,4U};
+        for (int op=SHL; op<=ROR; op++)
+          for (unsigned int ai=0; ai<4; ai++)
+            for (Gecode::WordValue x=0; x<8; x++) {
+              StructureSpace s(3,3);
+              Gecode::dom(s,s.x,x);
+              post(static_cast<Op>(op),s,s.x,amounts[ai],s.y);
+              if ((s.status() == Gecode::SS_FAILED) || !s.y.assigned() ||
+                  (s.y.val() != value(static_cast<Op>(op),3,x,
+                                      amounts[ai])))
+                return false;
+            }
+        return true;
+      }
+
+      static bool partial_masks(void) {
+        StructureSpace left(4,4);
+        Gecode::dom(left,left.x,2U,7U);
+        Gecode::shift_left(left,left.x,1,left.y);
+        if ((left.status() == Gecode::SS_FAILED) ||
+            (left.y.lo() != 4U) || (left.y.hi() != 14U)) return false;
+
+        StructureSpace logical(4,4);
+        Gecode::dom(logical,logical.y,2U,7U);
+        Gecode::logical_shift_right(logical,logical.x,1,logical.y);
+        if ((logical.status() == Gecode::SS_FAILED) ||
+            ((logical.x.lo() & 4U) == 0)) return false;
+
+        StructureSpace arithmetic(4,4);
+        Gecode::dom(arithmetic,arithmetic.y,8U,15U);
+        Gecode::arithmetic_shift_right(arithmetic,arithmetic.x,1,
+                                       arithmetic.y);
+        if ((arithmetic.status() == Gecode::SS_FAILED) ||
+            ((arithmetic.x.lo() & 8U) == 0) ||
+            ((arithmetic.y.lo() & 12U) != 12U)) return false;
+
+        StructureSpace rotation(4,4);
+        Gecode::dom(rotation,rotation.x,1U,7U);
+        Gecode::rotate_left(rotation,rotation.x,1,rotation.y);
+        return (rotation.status() != Gecode::SS_FAILED) &&
+          ((rotation.y.lo() & 2U) != 0);
+      }
+
+      static bool constants_and_boundaries(void) {
+        StructureSpace s(4,4,4);
+        Gecode::shift_left(s,4,9U,4,s.x);
+        Gecode::logical_shift_right(s,4,9U,5,s.y);
+        Gecode::rotate_left(s,4,9U,5,s.z);
+        if ((s.status() == Gecode::SS_FAILED) || (s.x.val() != 0U) ||
+            (s.y.val() != 0U) || (s.z.val() != 3U)) return false;
+
+        StructureSpace a(4,4);
+        Gecode::arithmetic_shift_right(a,4,9U,4,a.x);
+        Gecode::rotate_right(a,4,9U,5,a.y);
+        if ((a.status() == Gecode::SS_FAILED) || (a.x.val() != 15U) ||
+            (a.y.val() != 12U)) return false;
+
+        StructureSpace one(1,1);
+        Gecode::arithmetic_shift_right(one,1,1U,2,one.x);
+        if ((one.status() == Gecode::SS_FAILED) || (one.x.val() != 1U))
+          return false;
+
+        StructureSpace wide(64,64);
+        const Gecode::WordValue high = Gecode::WordValue(1) << 63;
+        Gecode::logical_shift_right(wide,64,high,63,wide.x);
+        Gecode::arithmetic_shift_right(wide,64,high,64,wide.y);
+        return (wide.status() != Gecode::SS_FAILED) &&
+          (wide.x.val() == 1U) &&
+          (wide.y.val() == ~Gecode::WordValue(0));
+      }
+
+      static bool alias_and_lifecycle(void) {
+        StructureSpace identity(4,4);
+        Gecode::shift_left(identity,identity.x,0,identity.x);
+        Gecode::rotate_left(identity,identity.x,4,identity.x);
+        Gecode::dom(identity,identity.x,5U);
+        if (identity.status() == Gecode::SS_FAILED) return false;
+
+        StructureSpace failed(4,4);
+        Gecode::dom(failed,failed.x,1U);
+        Gecode::shift_left(failed,failed.x,1,failed.x);
+        if (failed.status() != Gecode::SS_FAILED) return false;
+
+        StructureSpace source(4,4);
+        Gecode::rotate_right(source,source.x,1,source.y);
+        StructureSpace* clone = static_cast<StructureSpace*>(source.clone());
+        Gecode::dom(*clone,clone->x,3U);
+        bool ok = (clone->status() != Gecode::SS_FAILED) &&
+          clone->y.assigned() && (clone->y.val() == 9U) &&
+          !source.y.assigned();
+        delete clone;
+        if (!ok) return false;
+
+        try {
+          StructureSpace mismatch(3,4);
+          Gecode::shift_left(mismatch,mismatch.x,1,mismatch.y);
+          return false;
+        } catch (const Gecode::Word::WidthMismatch&) {}
+        return true;
+      }
+
+    public:
+      Shift(void) : Base("Word::Structure::Shift") {}
+      virtual bool run(void) {
+        return assigned_values() && partial_masks() &&
+          constants_and_boundaries() && alias_and_lifecycle();
+      }
+    };
+
+    Shift shift;
   }
 }}
 

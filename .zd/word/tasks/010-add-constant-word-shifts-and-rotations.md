@@ -3,7 +3,7 @@ schema_version = 1
 id = "word-010"
 key = "fixed-shifts"
 area = "word"
-status = "open"
+status = "done"
 blocked_by = ["word-002"]
 +++
 # Add constant word shifts and rotations
@@ -19,11 +19,19 @@ Direct posting supports constant logical and arithmetic shifts and constant left
 
 ## Done when
 
-- [ ] Constant shift and rotation propagators implement masked word-level updates and settled out-of-range semantics.
-- [ ] Constants, aliases, failure, subsumption, cloning, recomputation, and widths 1 and 64 are covered.
-- [ ] Tests state and verify the claimed propagation property.
+- [x] Constant shift and rotation propagators implement masked word-level updates and settled out-of-range semantics.
+- [x] Constants, aliases, failure, subsumption, cloning, recomputation, and widths 1 and 64 are covered.
+- [x] Tests state and verify the claimed propagation property.
 
 ## Validation
 
 - Run assigned-value oracle and partial-domain tests through the shared WordVar framework.
 - Run shift and rotation amounts 0, width minus one, width, and greater than width, plus alias and lifecycle tests.
+
+## Result
+
+Added constant logical left/right shifts, arithmetic right shift, and left/right rotations with fixed-width SMT-LIB shift semantics and modulo rotations.
+
+Validation:
+
+- Independent verification passed focused Word::Structure::Shift and Word::TestFramework implementation tests plus forward/backward mask, out-of-range, width 1/64, constant, alias, subsumption, clone, naming, and git diff review.

@@ -42,7 +42,12 @@ namespace Gecode { namespace Word { namespace Structure {
     FO_EXTRACT,
     FO_REPEAT,
     FO_ZERO_EXTEND,
-    FO_SIGN_EXTEND
+    FO_SIGN_EXTEND,
+    FO_SHIFT_LEFT,
+    FO_LOGICAL_SHIFT_RIGHT,
+    FO_ARITHMETIC_SHIFT_RIGHT,
+    FO_ROTATE_LEFT,
+    FO_ROTATE_RIGHT
   };
 
   /// Masked equality propagator for fixed unary structural operations

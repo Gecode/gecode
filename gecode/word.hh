@@ -293,6 +293,46 @@ namespace Gecode {
                                       WordValue value,
                                       unsigned int result_width,
                                       WordVar result);
+  /// Logically shift \a x left by the constant \a amount
+  GECODE_WORD_EXPORT void shift_left(Home home, WordVar x,
+                                     unsigned int amount, WordVar result);
+  /// Logically shift an explicitly-sized constant left
+  GECODE_WORD_EXPORT void shift_left(Home home, unsigned int width,
+                                     WordValue value, unsigned int amount,
+                                     WordVar result);
+  /// Logically shift \a x right by the constant \a amount
+  GECODE_WORD_EXPORT void logical_shift_right(Home home, WordVar x,
+                                              unsigned int amount,
+                                              WordVar result);
+  /// Logically shift an explicitly-sized constant right
+  GECODE_WORD_EXPORT void logical_shift_right(Home home, unsigned int width,
+                                              WordValue value,
+                                              unsigned int amount,
+                                              WordVar result);
+  /// Arithmetically shift \a x right by the constant \a amount
+  GECODE_WORD_EXPORT void arithmetic_shift_right(Home home, WordVar x,
+                                                 unsigned int amount,
+                                                 WordVar result);
+  /// Arithmetically shift an explicitly-sized constant right
+  GECODE_WORD_EXPORT void arithmetic_shift_right(Home home,
+                                                 unsigned int width,
+                                                 WordValue value,
+                                                 unsigned int amount,
+                                                 WordVar result);
+  /// Rotate \a x left by the constant \a amount modulo its width
+  GECODE_WORD_EXPORT void rotate_left(Home home, WordVar x,
+                                      unsigned int amount, WordVar result);
+  /// Rotate an explicitly-sized constant left
+  GECODE_WORD_EXPORT void rotate_left(Home home, unsigned int width,
+                                      WordValue value, unsigned int amount,
+                                      WordVar result);
+  /// Rotate \a x right by the constant \a amount modulo its width
+  GECODE_WORD_EXPORT void rotate_right(Home home, WordVar x,
+                                       unsigned int amount, WordVar result);
+  /// Rotate an explicitly-sized constant right
+  GECODE_WORD_EXPORT void rotate_right(Home home, unsigned int width,
+                                       WordValue value, unsigned int amount,
+                                       WordVar result);
   //@}
 
   /// Branch filter function type for word variables
