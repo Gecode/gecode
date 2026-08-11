@@ -75,6 +75,7 @@ namespace Test { namespace Word {
     virtual bool run(void) {
       CaptureTracer tracer;
       TraceSpace root(tracer);
+      if (root.status() == Gecode::SS_FAILED) return false;
       TraceSpace* clone = static_cast<TraceSpace*>(root.clone());
       Gecode::dom(*clone,clone->x[0],2,6);
       const bool ok = (clone->status() != Gecode::SS_FAILED) &&

@@ -345,6 +345,7 @@ namespace Test { namespace Word {
 
         StructureSpace source(4,4);
         Gecode::rotate_right(source,source.x,1,source.y);
+        if (source.status() == Gecode::SS_FAILED) return false;
         StructureSpace* clone = static_cast<StructureSpace*>(source.clone());
         Gecode::dom(*clone,clone->x,3U);
         bool ok = (clone->status() != Gecode::SS_FAILED) &&

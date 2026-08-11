@@ -3,9 +3,9 @@
 # Tasks: word
 
 - Total: 22
-- Ready: 1
+- Ready: 0
 - Blocked: 0
-- Done: 21
+- Done: 22
 
 | ID | Task | State | Blocked by |
 | --- | --- | --- | --- |
@@ -30,4 +30,4 @@
 | [word-019](tasks/019-add-arithmetic-minimodel-word-expressions.md) | Add arithmetic MiniModel word expressions | done | word-017, word-013, word-014, word-016 |
 | [word-020](tasks/020-document-and-demonstrate-word-vector-modeling.md) | Document and demonstrate word-vector modeling | done | word-007, word-018, word-019 |
 | [word-021](tasks/021-add-differential-word-benchmarking-with-a-private-corpus-bou.md) | Add differential word benchmarking with a private corpus boundary | done | word-007, word-018, word-019 |
-| [word-022](tasks/022-complete-word-module-build-packaging-and-lifecycle-validatio.md) | Complete word module build packaging and lifecycle validation | ready | word-020, word-021 |
+| [word-022](tasks/022-complete-word-module-build-packaging-and-lifecycle-validatio.md) | Complete word module build packaging and lifecycle validation | done | word-020, word-021 |

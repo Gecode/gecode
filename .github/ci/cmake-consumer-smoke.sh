@@ -21,6 +21,7 @@ work="$RUNNER_TEMP/gecode-consumers"
 rm -rf "$work"
 mkdir -p "$work/a" "$work/b" "$work/c" "$work/d/cmake" "$work/e/cmake" "$work/e/stale" \
   "$work/f" "$work/g" "$work/h" "$work/i" "$work/j" "$work/k" \
+  "$work/l" \
   "$work/mpfr-prefix/lib/cmake/MPFR"
 
 cat > "$work/a/CMakeLists.txt" <<'EOF'
@@ -55,7 +56,28 @@ target_link_libraries(consumer_a PRIVATE Gecode::gecode)
 EOF
 cat > "$work/a/main.cpp" <<'EOF'
 #include <gecode/support/config.hpp>
+#ifdef GECODE_HAS_WORD_VARS
+#include <gecode/word.hh>
+class AggregateWordModel : public Gecode::Space {
+public:
+  Gecode::WordVar x;
+  AggregateWordModel(void) : x(*this,4) {
+    Gecode::dom(*this,x,3U);
+  }
+  AggregateWordModel(AggregateWordModel& s) : Gecode::Space(s) {
+    x.update(*this,s.x);
+  }
+  virtual Gecode::Space* copy(void) {
+    return new AggregateWordModel(*this);
+  }
+};
+int main(void) {
+  AggregateWordModel model;
+  return model.status() == Gecode::SS_SOLVED ? 0 : 1;
+}
+#else
 int main(void) { return 0; }
+#endif
 EOF
 
 cat > "$work/b/CMakeLists.txt" <<'EOF'
@@ -244,6 +266,51 @@ cat > "$work/k/main.cpp" <<'EOF'
 int main(void) { Gecode::Float::Rounding rounding; return rounding.sqrt_down(4.0) == 2.0 ? 0 : 1; }
 EOF
 
+cat > "$work/l/CMakeLists.txt" <<'EOF'
+cmake_minimum_required(VERSION 3.21)
+project(consumer_l LANGUAGES CXX)
+find_package(Gecode CONFIG REQUIRED COMPONENTS word)
+if(NOT Gecode_LIBRARIES STREQUAL "Gecode::gecodeword")
+  message(FATAL_ERROR "Expected word-only Gecode_LIBRARIES, got: ${Gecode_LIBRARIES}")
+endif()
+if(TARGET Gecode::gecodeword_shared)
+  set(word_target Gecode::gecodeword_shared)
+  set(word_kind shared)
+elseif(TARGET Gecode::gecodeword_static)
+  set(word_target Gecode::gecodeword_static)
+  set(word_kind static)
+else()
+  message(FATAL_ERROR "Expected an exported gecodeword library target")
+endif()
+get_target_property(word_links ${word_target} INTERFACE_LINK_LIBRARIES)
+if(NOT word_links MATCHES "Gecode::gecodeint_${word_kind}" OR
+   NOT word_links MATCHES "Gecode::gecodekernel_${word_kind}")
+  message(FATAL_ERROR "Expected Word dependency closure, got: ${word_links}")
+endif()
+add_executable(consumer_l main.cpp)
+target_link_libraries(consumer_l PRIVATE Gecode::gecodeword)
+EOF
+cat > "$work/l/main.cpp" <<'EOF'
+#include <gecode/word.hh>
+class WordModel : public Gecode::Space {
+public:
+  Gecode::WordVar x;
+  WordModel(void) : x(*this,4) {
+    Gecode::dom(*this,x,9U);
+  }
+  WordModel(WordModel& s) : Gecode::Space(s) {
+    x.update(*this,s.x);
+  }
+  virtual Gecode::Space* copy(void) {
+    return new WordModel(*this);
+  }
+};
+int main(void) {
+  WordModel model;
+  return model.status() == Gecode::SS_SOLVED ? 0 : 1;
+}
+EOF
+
 cat > "$work/mpfr-prefix/lib/cmake/MPFR/MPFRConfig.cmake" <<'EOF'
 get_filename_component(PACKAGE_PREFIX_DIR "${CMAKE_CURRENT_LIST_DIR}/../../.." ABSOLUTE)
 if(NOT TARGET MPFR::MPFR)
@@ -270,6 +337,18 @@ cmake --build "$work/b/build" -j4
 
 cmake -S "$work/c" -B "$work/c/build" -DCMAKE_PREFIX_PATH="$prefix"
 cmake --build "$work/c/build" -j4
+
+if grep -q '^#define GECODE_HAS_WORD_VARS' "$expected_include/gecode/support/config.hpp"; then
+  cmake -S "$work/l" -B "$work/l/build" -DCMAKE_PREFIX_PATH="$prefix"
+  cmake --build "$work/l/build" -j4
+  "$work/l/build/consumer_l"
+else
+  if cmake -S "$work/l" -B "$work/l/missing-build" \
+      -DCMAKE_PREFIX_PATH="$prefix"; then
+    echo "Missing required Word component unexpectedly succeeded" >&2
+    exit 1
+  fi
+fi
 
 # A support-only consumer must not discover dependencies belonging exclusively
 # to Float, FlatZinc, or Gist, even when those targets exist in the package.

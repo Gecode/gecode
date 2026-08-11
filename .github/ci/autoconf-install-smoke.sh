@@ -26,6 +26,44 @@ mznlib_dir="$install_prefix/share/minizinc/gecode"
 
 test -f "$install_prefix/include/gecode/support/config.hpp"
 
+if grep -q '^#define GECODE_HAS_WORD_VARS' \
+    "$install_prefix/include/gecode/support/config.hpp"; then
+  test -f "$install_prefix/include/gecode/word.hh"
+  find "$install_prefix/lib" -maxdepth 1 -name '*gecodeword*' -print -quit | \
+    grep -q .
+  consumer_dir="$destdir/word-consumer"
+  mkdir -p "$consumer_dir"
+  cat > "$consumer_dir/main.cpp" <<'EOF'
+#include <gecode/word.hh>
+class WordInstallModel : public Gecode::Space {
+public:
+  Gecode::WordVar x;
+  WordInstallModel(void) : x(*this,4) {
+    Gecode::dom(*this,x,6U);
+  }
+  WordInstallModel(WordInstallModel& s) : Gecode::Space(s) {
+    x.update(*this,s.x);
+  }
+  virtual Gecode::Space* copy(void) {
+    return new WordInstallModel(*this);
+  }
+};
+int main(void) {
+  WordInstallModel model;
+  return model.status() == Gecode::SS_SOLVED ? 0 : 1;
+}
+EOF
+  "${CXX:-c++}" -std=c++17 \
+    -I"$install_prefix/include" -L"$install_prefix/lib" \
+    "$consumer_dir/main.cpp" -lgecodeword -lgecodeint -lgecodekernel \
+    -lgecodesupport -lpthread -o "$consumer_dir/word-consumer"
+  env DYLD_LIBRARY_PATH="$install_prefix/lib${DYLD_LIBRARY_PATH:+:$DYLD_LIBRARY_PATH}" \
+    LD_LIBRARY_PATH="$install_prefix/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}" \
+    "$consumer_dir/word-consumer"
+else
+  test -z "$(find "$install_prefix/lib" -maxdepth 1 -name '*gecodeword*' -print -quit)"
+fi
+
 case "$examples_enabled" in
   yes)
     test -f "$install_prefix/include/examples/scowl.hpp"
