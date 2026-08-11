@@ -224,6 +224,7 @@ set(GECODE_MINIMODEL_SOURCES
   gecode/minimodel/reg.cpp
   gecode/minimodel/set-expr.cpp
   gecode/minimodel/set-rel.cpp
+  gecode/minimodel/word-expr.cpp
 )
 
 set(GECODE_DRIVER_SOURCES
@@ -451,6 +452,7 @@ set(GECODE_TEST_SOURCES
   test/word/channel.cpp
   test/word/conditional.cpp
   test/word/logic.cpp
+  test/word/minimodel.cpp
   test/word/rel.cpp
   test/word/structure.cpp
   test/word/trace.cpp

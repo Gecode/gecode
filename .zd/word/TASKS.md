@@ -3,9 +3,9 @@
 # Tasks: word
 
 - Total: 22
-- Ready: 1
-- Blocked: 5
-- Done: 16
+- Ready: 2
+- Blocked: 3
+- Done: 17
 
 | ID | Task | State | Blocked by |
 | --- | --- | --- | --- |
@@ -25,9 +25,9 @@
 | [word-014](tasks/014-add-modular-word-multiplication.md) | Add modular word multiplication | done | word-013, word-010, word-011 |
 | [word-015](tasks/015-add-wordsemantics-and-unsigned-division.md) | Add WordSemantics and unsigned division | done | word-014, word-008, word-011 |
 | [word-016](tasks/016-add-signed-division-remainder-and-modulus.md) | Add signed division remainder and modulus | done | word-015, word-013 |
-| [word-017](tasks/017-add-core-minimodel-word-expressions.md) | Add core MiniModel word expressions | ready | word-003, word-005, word-004, word-008, word-011 |
-| [word-018](tasks/018-add-structural-minimodel-word-expressions.md) | Add structural MiniModel word expressions | blocked | word-017, word-009, word-010, word-012 |
-| [word-019](tasks/019-add-arithmetic-minimodel-word-expressions.md) | Add arithmetic MiniModel word expressions | blocked | word-017, word-013, word-014, word-016 |
+| [word-017](tasks/017-add-core-minimodel-word-expressions.md) | Add core MiniModel word expressions | done | word-003, word-005, word-004, word-008, word-011 |
+| [word-018](tasks/018-add-structural-minimodel-word-expressions.md) | Add structural MiniModel word expressions | ready | word-017, word-009, word-010, word-012 |
+| [word-019](tasks/019-add-arithmetic-minimodel-word-expressions.md) | Add arithmetic MiniModel word expressions | ready | word-017, word-013, word-014, word-016 |
 | [word-020](tasks/020-document-and-demonstrate-word-vector-modeling.md) | Document and demonstrate word-vector modeling | blocked | word-007, word-018, word-019 |
 | [word-021](tasks/021-add-differential-word-benchmarking-with-a-private-corpus-bou.md) | Add differential word benchmarking with a private corpus boundary | blocked | word-007, word-018, word-019 |
 | [word-022](tasks/022-complete-word-module-build-packaging-and-lifecycle-validatio.md) | Complete word module build packaging and lifecycle validation | blocked | word-020, word-021 |

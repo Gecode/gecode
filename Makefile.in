@@ -703,7 +703,7 @@ MMSRC0 = \
 	int-expr.cpp int-rel.cpp int-arith.cpp bool-expr.cpp \
 	set-expr.cpp set-rel.cpp dom.cpp \
 	float-expr.cpp float-rel.cpp float-arith.cpp \
-	reg.cpp optimize.cpp exception.cpp ipl.cpp
+	word-expr.cpp reg.cpp optimize.cpp exception.cpp ipl.cpp
 MMHDR0 = \
 	int-expr.hpp int-rel.hpp float-expr.hpp float-rel.hpp \
 	bool-expr.hpp set-expr.hpp set-rel.hpp \
@@ -1183,7 +1183,7 @@ else
 FLOATTESTOBJ=
 endif
 
-WORDTESTSRC00 = arithmetic branch channel conditional logic rel structure trace
+WORDTESTSRC00 = arithmetic branch channel conditional logic minimodel rel structure trace
 WORDTESTSRC0 = test/word.cpp $(WORDTESTSRC00:%=test/word/%.cpp)
 
 ifeq "@enable_word_vars@" "yes"
@@ -1730,9 +1730,9 @@ $(SETDLL): $(SETOBJ) $(SUPPORTDLL) $(KERNELDLL) $(INTDLL)
 		@LINKOUTPUT@$(SETDLL)
 	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOLINKSUFFIX))
 	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOSUFFIX))
-$(MMDLL): $(MMOBJ) $(SUPPORTDLL) $(KERNELDLL) $(INTDLL) $(SETDLL) $(FLOATDLL)
+$(MMDLL): $(MMOBJ) $(SUPPORTDLL) $(KERNELDLL) $(INTDLL) $(SETDLL) $(FLOATDLL) $(WORDDLL)
 	$(CXX) $(DLLFLAGS) $(MMOBJ) $(MMSONAME) \
-		@DLLPATH@ $(LINKSUPPORT) $(LINKKERNEL) $(LINKINT) $(LINKFLOAT) $(LINKSET) \
+		@DLLPATH@ $(LINKSUPPORT) $(LINKKERNEL) $(LINKINT) $(LINKFLOAT) $(LINKSET) $(LINKWORD) \
 		@LINKOUTPUT@$(MMDLL)
 	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOLINKSUFFIX))
 	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOSUFFIX))
@@ -1834,9 +1834,9 @@ $(MMRC):
 	$(RCGEN) $(MMDLL) $(MMHDR) $(MMSRC) > $@
 endif
 $(MMDLL) $(MMLIB): $(MMOBJ) $(MMRES) \
-	$(SUPPORTDLL) $(KERNELDLL) $(INTDLL) $(FLOATDLL) $(SETDLL)
+	$(SUPPORTDLL) $(KERNELDLL) $(INTDLL) $(FLOATDLL) $(SETDLL) $(WORDDLL)
 	$(CXX) $(DLLFLAGS) $(MMOBJ) $(MMRES) \
-		@DLLPATH@ @LINKOUTPUT@$(MMDLL) $(GLDFLAGS)
+		@DLLPATH@ @LINKOUTPUT@$(MMDLL) $(GLDFLAGS) $(LINKWORD)
 	$(FIXMANIFEST) $(MMDLL).manifest
 	$(MANIFEST) -manifest $(MMDLL).manifest \
 		    -outputresource:$(MMDLL)\;2

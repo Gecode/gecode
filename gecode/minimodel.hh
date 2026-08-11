@@ -54,6 +54,9 @@
 #ifdef GECODE_HAS_FLOAT_VARS
 #include <gecode/float.hh>
 #endif
+#ifdef GECODE_HAS_WORD_VARS
+#include <gecode/word.hh>
+#endif
 
 #ifdef GECODE_HAS_FAULT_INJECTION
 #include <atomic>
@@ -1493,6 +1496,110 @@ namespace Gecode {
 
   //@}
 
+#ifdef GECODE_HAS_WORD_VARS
+  /// Fixed-width word expressions
+  class WordExpr {
+  public:
+    /// Type of word expression
+    enum NodeType {
+      NT_VAR,       ///< Variable
+      NT_CONST,     ///< Explicitly-sized constant
+      NT_COMPL,     ///< Bitwise complement
+      NT_AND,       ///< Bitwise conjunction
+      NT_OR,        ///< Bitwise disjunction
+      NT_XOR,       ///< Bitwise exclusive disjunction
+      NT_NAND,      ///< Bitwise nand
+      NT_NOR,       ///< Bitwise nor
+      NT_XNOR,      ///< Bitwise equivalence
+      NT_BOOL_ITE,  ///< Boolean-controlled conditional
+      NT_WORD_ITE   ///< Word-mask conditional
+    };
+    /// Node for word expression
+    class Node;
+  private:
+    Node* n;
+    WordExpr(const BoolExpr& control, const WordExpr& then_word,
+             const WordExpr& else_word);
+    WordExpr(const WordExpr& control, const WordExpr& then_word,
+             const WordExpr& else_word);
+    friend GECODE_MINIMODEL_EXPORT WordExpr
+    ite(const BoolExpr&, const WordExpr&, const WordExpr&);
+    friend GECODE_MINIMODEL_EXPORT WordExpr
+    ite(const WordExpr&, const WordExpr&, const WordExpr&);
+  public:
+    /// Copy constructor
+    GECODE_MINIMODEL_EXPORT WordExpr(const WordExpr& e);
+    /// Construct a binary expression
+    GECODE_MINIMODEL_EXPORT
+    WordExpr(const WordExpr& l, NodeType t, const WordExpr& r);
+    /// Construct an expression for a variable
+    GECODE_MINIMODEL_EXPORT WordExpr(const WordVar& x);
+    /// Construct an explicitly-sized constant expression
+    GECODE_MINIMODEL_EXPORT
+    WordExpr(unsigned int width, WordValue value);
+    /// Construct a unary expression
+    GECODE_MINIMODEL_EXPORT WordExpr(const WordExpr& e, NodeType t);
+    /// Return expression width
+    GECODE_MINIMODEL_EXPORT unsigned int width(void) const;
+    /// Post and return the expression value
+    GECODE_MINIMODEL_EXPORT WordVar post(Home home) const;
+    /// Assignment operator
+    GECODE_MINIMODEL_EXPORT const WordExpr& operator =(const WordExpr& e);
+    /// Destructor
+    GECODE_MINIMODEL_EXPORT ~WordExpr(void);
+  };
+
+  /** \defgroup TaskModelMiniModelWord Word expressions
+   *  \ingroup TaskModelMiniModel
+   */
+  //@{
+  GECODE_MINIMODEL_EXPORT WordExpr operator ~(const WordExpr&);
+  GECODE_MINIMODEL_EXPORT WordExpr
+  operator &(const WordExpr&, const WordExpr&);
+  GECODE_MINIMODEL_EXPORT WordExpr
+  operator |(const WordExpr&, const WordExpr&);
+  GECODE_MINIMODEL_EXPORT WordExpr
+  operator ^(const WordExpr&, const WordExpr&);
+  GECODE_MINIMODEL_EXPORT WordExpr
+  nand(const WordExpr&, const WordExpr&);
+  GECODE_MINIMODEL_EXPORT WordExpr
+  nor(const WordExpr&, const WordExpr&);
+  GECODE_MINIMODEL_EXPORT WordExpr
+  xnor(const WordExpr&, const WordExpr&);
+
+  GECODE_MINIMODEL_EXPORT BoolExpr
+  operator ==(const WordExpr&, const WordExpr&);
+  GECODE_MINIMODEL_EXPORT BoolExpr
+  operator !=(const WordExpr&, const WordExpr&);
+  GECODE_MINIMODEL_EXPORT BoolExpr
+  operator <(const WordExpr&, const WordExpr&);
+  GECODE_MINIMODEL_EXPORT BoolExpr
+  operator <=(const WordExpr&, const WordExpr&);
+  GECODE_MINIMODEL_EXPORT BoolExpr
+  operator >(const WordExpr&, const WordExpr&);
+  GECODE_MINIMODEL_EXPORT BoolExpr
+  operator >=(const WordExpr&, const WordExpr&);
+  GECODE_MINIMODEL_EXPORT BoolExpr
+  signed_less(const WordExpr&, const WordExpr&);
+  GECODE_MINIMODEL_EXPORT BoolExpr
+  signed_less_equal(const WordExpr&, const WordExpr&);
+  GECODE_MINIMODEL_EXPORT BoolExpr
+  signed_greater(const WordExpr&, const WordExpr&);
+  GECODE_MINIMODEL_EXPORT BoolExpr
+  signed_greater_equal(const WordExpr&, const WordExpr&);
+
+  /// Return the selected bit as a Boolean expression
+  GECODE_MINIMODEL_EXPORT BoolExpr
+  bit(const WordExpr&, unsigned int bit_index);
+  /// Boolean-controlled word conditional
+  GECODE_MINIMODEL_EXPORT WordExpr
+  ite(const BoolExpr&, const WordExpr&, const WordExpr&);
+  /// Word-mask conditional
+  GECODE_MINIMODEL_EXPORT WordExpr
+  ite(const WordExpr&, const WordExpr&, const WordExpr&);
+  //@}
+#endif
+
   /**
    * \defgroup TaskModelMiniModelReified Reified expressions
    *
@@ -1639,6 +1746,11 @@ namespace Gecode {
   /// Post set expression and return its value
   GECODE_MINIMODEL_EXPORT SetVar
   expr(Home home, const SetExpr& e);
+#endif
+#ifdef GECODE_HAS_WORD_VARS
+  /// Post word expression and return its value
+  GECODE_MINIMODEL_EXPORT WordVar
+  expr(Home home, const WordExpr& e);
 #endif
   /// Post Boolean expression and return its value
   GECODE_MINIMODEL_EXPORT BoolVar
