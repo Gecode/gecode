@@ -44,6 +44,8 @@ namespace Gecode { namespace Word {
     : Exception(l,"Word widths do not match") {}
   UnknownRelation::UnknownRelation(const char* l)
     : Exception(l,"Unknown word relation") {}
+  UnknownOperation::UnknownOperation(const char* l)
+    : Exception(l,"Unknown word operation") {}
   UnknownReifyMode::UnknownReifyMode(const char* l)
     : Exception(l,"Unknown reification mode") {}
 }}

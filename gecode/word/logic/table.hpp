@@ -1,0 +1,120 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
+/*
+ *  Main authors:
+ *     Mikael Zayenz Lagerkvist <lagerkvist@gecode.dev>
+ *
+ *  Copyright:
+ *     Mikael Zayenz Lagerkvist, 2026
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.dev
+ *
+ *  Permission is hereby granted, free of charge, to any person obtaining
+ *  a copy of this software and associated documentation files (the
+ *  "Software"), to deal in the Software without restriction, including
+ *  without limitation the rights to use, copy, modify, merge, publish,
+ *  distribute, sublicense, and/or sell copies of the Software, and to
+ *  permit persons to whom the Software is furnished to do so, subject to
+ *  the following conditions:
+ *
+ *  The above copyright notice and this permission notice shall be
+ *  included in all copies or substantial portions of the Software.
+ *
+ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ *  EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ *  MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ *  NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ *  LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ *  OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
+
+namespace Gecode { namespace Word { namespace Logic {
+
+  forceinline
+  Table::Table(Home home, ViewArray<WordView>& y, const WordValue* a)
+    : NaryPropagator<WordView,PC_WORD_BITS>(home,y) {
+    const unsigned int tuples = 1U << y.size();
+    for (unsigned int t=0; t<tuples; t++)
+      allowed[t] = a[t];
+  }
+
+  forceinline
+  Table::Table(Space& home, Table& p)
+    : NaryPropagator<WordView,PC_WORD_BITS>(home,p) {
+    const unsigned int tuples = 1U << x.size();
+    for (unsigned int t=0; t<tuples; t++)
+      allowed[t] = p.allowed[t];
+  }
+
+  forceinline Actor*
+  Table::copy(Space& home) {
+    return new (home) Table(home,*this);
+  }
+
+  forceinline PropCost
+  Table::cost(const Space&, const ModEventDelta&) const {
+    return PropCost::linear(PropCost::LO,x.size());
+  }
+
+  forceinline ExecStatus
+  Table::narrow(Home home, ViewArray<WordView>& x,
+                const WordValue* allowed) {
+    assert((x.size() >= 1) && (x.size() <= 3));
+    const int n = x.size();
+    const WordValue mask = x[0].mask();
+    bool changed;
+    do {
+      WordValue support[3][2] = {{0,0},{0,0},{0,0}};
+      WordValue old_lo[3], old_hi[3];
+      for (int i=0; i<n; i++) {
+        old_lo[i] = x[i].lo();
+        old_hi[i] = x[i].hi();
+      }
+      const unsigned int tuples = 1U << n;
+      for (unsigned int t=0; t<tuples; t++) {
+        if (allowed[t] == 0)
+          continue;
+        WordValue tuple_support = allowed[t];
+        for (int i=0; i<n; i++)
+          tuple_support &= ((t & (1U << i)) != 0)
+            ? x[i].hi() : (~x[i].lo() & mask);
+        for (int i=0; i<n; i++)
+          support[i][(t >> i) & 1U] |= tuple_support;
+      }
+      for (int i=0; i<n; i++) {
+        const WordValue lo = x[i].lo() | (~support[i][0] & mask);
+        const WordValue hi = x[i].hi() & support[i][1];
+        GECODE_ME_CHECK(x[i].narrow(home,lo,hi));
+      }
+      changed = false;
+      for (int i=0; i<n; i++)
+        changed |= (x[i].lo() != old_lo[i]) || (x[i].hi() != old_hi[i]);
+    } while (changed);
+    return ES_OK;
+  }
+
+  forceinline ExecStatus
+  Table::post(Home home, ViewArray<WordView>& x, const WordValue* allowed) {
+    GECODE_ES_CHECK(narrow(home,x,allowed));
+    bool assigned = true;
+    for (int i=0; i<x.size(); i++)
+      assigned &= x[i].assigned();
+    if (!assigned)
+      (void) new (home) Table(home,x,allowed);
+    return ES_OK;
+  }
+
+  forceinline ExecStatus
+  Table::propagate(Space& home, const ModEventDelta&) {
+    GECODE_ES_CHECK(narrow(home,x,allowed));
+    for (int i=0; i<x.size(); i++)
+      if (!x[i].assigned())
+        return ES_FIX;
+    return home.ES_SUBSUMED(*this);
+  }
+
+}}}
+
+// STATISTICS: word-prop

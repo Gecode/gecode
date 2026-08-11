@@ -174,6 +174,16 @@ namespace Gecode {
     WRT_NQ  ///< Disequality
   };
 
+  /// Word logical operation type
+  enum WordOpType {
+    WOT_AND,  ///< Bitwise conjunction
+    WOT_OR,   ///< Bitwise disjunction
+    WOT_XOR,  ///< Bitwise exclusive disjunction
+    WOT_NAND, ///< Complement of bitwise conjunction
+    WOT_NOR,  ///< Complement of bitwise disjunction
+    WOT_XNOR  ///< Complement of bitwise exclusive disjunction
+  };
+
   /**
    * \defgroup TaskModelWordRel Word relations
    * \ingroup TaskModelWord
@@ -191,6 +201,39 @@ namespace Gecode {
   /// Post the relation \a wrt to a constant, reified by \a r
   GECODE_WORD_EXPORT void rel(Home home, WordVar x, WordRelType wrt,
                               unsigned int width, WordValue value, Reify r);
+  //@}
+
+  /**
+   * \defgroup TaskModelWordLogic Word logical constraints
+   * \ingroup TaskModelWord
+   */
+  //@{
+  /// Post bitwise complement \a y = ~\a x
+  GECODE_WORD_EXPORT void complement(Home home, WordVar x, WordVar y);
+  /// Post complement from an explicitly-sized constant input
+  GECODE_WORD_EXPORT void complement(Home home, unsigned int width,
+                                     WordValue value, WordVar y);
+  /// Post complement of \a x equal to an explicitly-sized constant
+  GECODE_WORD_EXPORT void complement(Home home, WordVar x,
+                                     unsigned int width, WordValue value);
+  /// Post the binary logical operation \a z = \a x \a wot \a y
+  GECODE_WORD_EXPORT void rel(Home home, WordVar x, WordOpType wot,
+                              WordVar y, WordVar z);
+  /// Post a binary operation with an explicitly-sized constant operand
+  GECODE_WORD_EXPORT void rel(Home home, WordVar x, WordOpType wot,
+                              unsigned int width, WordValue value, WordVar z);
+  /// Post a binary operation equal to an explicitly-sized constant result
+  GECODE_WORD_EXPORT void rel(Home home, WordVar x, WordOpType wot,
+                              WordVar y, unsigned int width, WordValue value);
+  /**
+   * \brief Post the n-ary logical operation \a y = \a wot(\a x)
+   *
+   * Nand, nor, and xnor are the complement of the complete and, or, and
+   * xor aggregate respectively. Empty aggregates use the corresponding
+   * fixed-width identity.
+   */
+  GECODE_WORD_EXPORT void rel(Home home, WordOpType wot,
+                              const WordVarArgs& x, WordVar y);
   //@}
 
   template<class Char, class Traits>
