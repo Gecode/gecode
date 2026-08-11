@@ -457,6 +457,48 @@ namespace Gecode {
   GECODE_WORD_EXPORT void mod(Home home, unsigned int width,
                               WordValue value, WordVar y, WordVar result,
                               WordSemantics semantics=WS_SMTLIB);
+  /// Post signed division \a result = \a x signed_div \a y
+  GECODE_WORD_EXPORT void signed_div(Home home, WordVar x, WordVar y,
+                                     WordVar result,
+                                     WordSemantics semantics=WS_SMTLIB);
+  /// Post signed division with an explicitly-sized right operand
+  GECODE_WORD_EXPORT void signed_div(Home home, WordVar x,
+                                     unsigned int width, WordValue value,
+                                     WordVar result,
+                                     WordSemantics semantics=WS_SMTLIB);
+  /// Post signed division with an explicitly-sized left operand
+  GECODE_WORD_EXPORT void signed_div(Home home, unsigned int width,
+                                     WordValue value, WordVar y,
+                                     WordVar result,
+                                     WordSemantics semantics=WS_SMTLIB);
+  /// Post signed remainder \a result = \a x signed_rem \a y
+  GECODE_WORD_EXPORT void signed_rem(Home home, WordVar x, WordVar y,
+                                     WordVar result,
+                                     WordSemantics semantics=WS_SMTLIB);
+  /// Post signed remainder with an explicitly-sized right operand
+  GECODE_WORD_EXPORT void signed_rem(Home home, WordVar x,
+                                     unsigned int width, WordValue value,
+                                     WordVar result,
+                                     WordSemantics semantics=WS_SMTLIB);
+  /// Post signed remainder with an explicitly-sized left operand
+  GECODE_WORD_EXPORT void signed_rem(Home home, unsigned int width,
+                                     WordValue value, WordVar y,
+                                     WordVar result,
+                                     WordSemantics semantics=WS_SMTLIB);
+  /// Post signed modulus \a result = \a x signed_mod \a y
+  GECODE_WORD_EXPORT void signed_mod(Home home, WordVar x, WordVar y,
+                                     WordVar result,
+                                     WordSemantics semantics=WS_SMTLIB);
+  /// Post signed modulus with an explicitly-sized right operand
+  GECODE_WORD_EXPORT void signed_mod(Home home, WordVar x,
+                                     unsigned int width, WordValue value,
+                                     WordVar result,
+                                     WordSemantics semantics=WS_SMTLIB);
+  /// Post signed modulus with an explicitly-sized left operand
+  GECODE_WORD_EXPORT void signed_mod(Home home, unsigned int width,
+                                     WordValue value, WordVar y,
+                                     WordVar result,
+                                     WordSemantics semantics=WS_SMTLIB);
   //@}
 
   /// Branch filter function type for word variables

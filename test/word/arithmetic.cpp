@@ -38,7 +38,16 @@ namespace Test { namespace Word {
 
   namespace Arithmetic {
 
-    enum Op { ADD, NEG, SUB, MULT, DIV, MOD };
+    enum Op { ADD, NEG, SUB, MULT, DIV, MOD, SIGNED_DIV, SIGNED_REM,
+              SIGNED_MOD };
+
+    static int
+    signed_value(Gecode::WordValue value, Gecode::WordValue mask) {
+      const Gecode::WordValue sign = (mask >> 1) + 1;
+      return (value & sign) ?
+        static_cast<int>(value) - static_cast<int>(mask) - 1 :
+        static_cast<int>(value);
+    }
 
     static Gecode::WordValue
     evaluate(Op op, Gecode::WordValue x, Gecode::WordValue y,
@@ -50,6 +59,37 @@ namespace Test { namespace Word {
       case MULT: return (x * y) & mask;
       case DIV: return (y == 0) ? mask : x / y;
       case MOD: return (y == 0) ? x : x % y;
+      case SIGNED_DIV: {
+        const int sx = signed_value(x,mask);
+        const int sy = signed_value(y,mask);
+        if (sy == 0)
+          return sx < 0 ? 1U : mask;
+        const int minimum = -static_cast<int>((mask >> 1) + 1);
+        if ((sx == minimum) && (sy == -1))
+          return x;
+        return static_cast<Gecode::WordValue>(sx / sy) & mask;
+      }
+      case SIGNED_REM: {
+        const int sx = signed_value(x,mask);
+        const int sy = signed_value(y,mask);
+        if (sy == 0)
+          return x;
+        const int minimum = -static_cast<int>((mask >> 1) + 1);
+        if ((sx == minimum) && (sy == -1))
+          return 0;
+        return static_cast<Gecode::WordValue>(sx % sy) & mask;
+      }
+      case SIGNED_MOD: {
+        const int sx = signed_value(x,mask);
+        const int sy = signed_value(y,mask);
+        if (sy == 0)
+          return x;
+        const int minimum = -static_cast<int>((mask >> 1) + 1);
+        int r = ((sx == minimum) && (sy == -1)) ? 0 : sx % sy;
+        if ((r != 0) && ((r < 0) != (sy < 0)))
+          r += sy;
+        return static_cast<Gecode::WordValue>(r) & mask;
+      }
       default: GECODE_NEVER;
       }
       return 0;
@@ -65,6 +105,9 @@ namespace Test { namespace Word {
       case MULT: Gecode::mult(home,x,y,result); break;
       case DIV: Gecode::div(home,x,y,result); break;
       case MOD: Gecode::mod(home,x,y,result); break;
+      case SIGNED_DIV: Gecode::signed_div(home,x,y,result); break;
+      case SIGNED_REM: Gecode::signed_rem(home,x,y,result); break;
+      case SIGNED_MOD: Gecode::signed_mod(home,x,y,result); break;
       default: GECODE_NEVER;
       }
     }
@@ -859,15 +902,321 @@ namespace Test { namespace Word {
       }
     };
 
+    class SignedDivisionLifecycle : public Base {
+    private:
+      class SignedSpace : public Gecode::Space {
+      public:
+        Gecode::WordVarArray x;
+        SignedSpace(int n=5, unsigned int width=4)
+          : x(*this,n,width,0,Gecode::Word::width_mask(width)) {}
+        SignedSpace(SignedSpace& s) : Gecode::Space(s) {
+          x.update(*this,s.x);
+        }
+        virtual Gecode::Space* copy(void) {
+          return new SignedSpace(*this);
+        }
+      };
+
+      static bool partial(Op op) {
+        for (PartialAssignment p(3,1); p.has_more(); p.next()) {
+          TestSpace s(3,Domain(1,0,1));
+          std::vector<Domain> domains;
+          for (int i=0; i<3; i++)
+            domains.push_back(p[i]);
+          s.narrow(domains);
+          Arithmetic::post(op,s,s.x[0],s.x[1],s.x[2]);
+          const bool failed = s.failed();
+          for (Values x(p[0]); x(); ++x)
+            for (Values y(p[1]); y(); ++y)
+              for (Values z(p[2]); z(); ++z)
+                if (z.val() == evaluate(op,x.val(),y.val(),1U)) {
+                  if (failed || !s.x[0].in(x.val()) ||
+                      !s.x[1].in(y.val()) || !s.x[2].in(z.val()))
+                    return false;
+                  TestSpace* tuple = static_cast<TestSpace*>(s.clone());
+                  Gecode::dom(*tuple,tuple->x[0],x.val());
+                  Gecode::dom(*tuple,tuple->x[1],y.val());
+                  Gecode::dom(*tuple,tuple->x[2],z.val());
+                  const bool feasible = !tuple->failed();
+                  delete tuple;
+                  if (!feasible)
+                    return false;
+                }
+        }
+        return true;
+      }
+
+      /** Tiny Boolean extensional reference for the three signed results. */
+      class DifferentialSpace : public Gecode::Space {
+      public:
+        Gecode::WordVar x;
+        Gecode::WordVar y;
+        Gecode::WordVar native_div;
+        Gecode::WordVar native_rem;
+        Gecode::WordVar native_mod;
+        Gecode::WordVar boolean_div;
+        Gecode::WordVar boolean_rem;
+        Gecode::WordVar boolean_mod;
+        DifferentialSpace(void)
+          : x(*this,2), y(*this,2), native_div(*this,2),
+            native_rem(*this,2), native_mod(*this,2),
+            boolean_div(*this,2), boolean_rem(*this,2),
+            boolean_mod(*this,2) {
+          Gecode::signed_div(*this,x,y,native_div);
+          Gecode::signed_rem(*this,x,y,native_rem);
+          Gecode::signed_mod(*this,x,y,native_mod);
+
+          Gecode::BoolVarArray bits(*this,10,0,1);
+          Gecode::WordVarArgs words = {x, y, boolean_div, boolean_rem,
+                                       boolean_mod};
+          for (int word=0; word<words.size(); word++)
+            for (unsigned int bit=0; bit<2; bit++)
+              Gecode::channel(*this,words[word],bit,bits[2*word+bit]);
+
+          Gecode::TupleSet tuples(10);
+          for (int xv=0; xv<4; xv++)
+            for (int yv=0; yv<4; yv++) {
+              const int q = static_cast<int>(
+                evaluate(SIGNED_DIV,xv,yv,3U));
+              const int r = static_cast<int>(
+                evaluate(SIGNED_REM,xv,yv,3U));
+              const int m = static_cast<int>(
+                evaluate(SIGNED_MOD,xv,yv,3U));
+              tuples.add(Gecode::IntArgs({xv & 1, (xv >> 1) & 1,
+                                          yv & 1, (yv >> 1) & 1,
+                                          q & 1, (q >> 1) & 1,
+                                          r & 1, (r >> 1) & 1,
+                                          m & 1, (m >> 1) & 1}));
+            }
+          tuples.finalize();
+          Gecode::extensional(*this,bits,tuples);
+        }
+        DifferentialSpace(DifferentialSpace& s) : Gecode::Space(s) {
+          x.update(*this,s.x);
+          y.update(*this,s.y);
+          native_div.update(*this,s.native_div);
+          native_rem.update(*this,s.native_rem);
+          native_mod.update(*this,s.native_mod);
+          boolean_div.update(*this,s.boolean_div);
+          boolean_rem.update(*this,s.boolean_rem);
+          boolean_mod.update(*this,s.boolean_mod);
+        }
+        virtual Gecode::Space* copy(void) {
+          return new DifferentialSpace(*this);
+        }
+      };
+
+      static bool boolean_parity(void) {
+        for (Gecode::WordValue x=0; x<4; x++)
+          for (Gecode::WordValue y=0; y<4; y++) {
+            DifferentialSpace s;
+            Gecode::dom(s,s.x,x);
+            Gecode::dom(s,s.y,y);
+            if ((s.status() == Gecode::SS_FAILED) ||
+                !s.native_div.assigned() || !s.native_rem.assigned() ||
+                !s.native_mod.assigned() || !s.boolean_div.assigned() ||
+                !s.boolean_rem.assigned() || !s.boolean_mod.assigned() ||
+                (s.native_div.val() != s.boolean_div.val()) ||
+                (s.native_rem.val() != s.boolean_rem.val()) ||
+                (s.native_mod.val() != s.boolean_mod.val()))
+              return false;
+          }
+        return true;
+      }
+
+      static bool constant(Op op, bool left, Gecode::WordValue variable,
+                           Gecode::WordValue value,
+                           Gecode::WordValue expected) {
+        SignedSpace s(2,4);
+        Gecode::dom(s,s.x[0],variable);
+        if (left) {
+          switch (op) {
+          case SIGNED_DIV:
+            Gecode::signed_div(s,4,value,s.x[0],s.x[1]); break;
+          case SIGNED_REM:
+            Gecode::signed_rem(s,4,value,s.x[0],s.x[1]); break;
+          case SIGNED_MOD:
+            Gecode::signed_mod(s,4,value,s.x[0],s.x[1]); break;
+          default: GECODE_NEVER;
+          }
+        } else {
+          switch (op) {
+          case SIGNED_DIV:
+            Gecode::signed_div(s,s.x[0],4,value,s.x[1]); break;
+          case SIGNED_REM:
+            Gecode::signed_rem(s,s.x[0],4,value,s.x[1]); break;
+          case SIGNED_MOD:
+            Gecode::signed_mod(s,s.x[0],4,value,s.x[1]); break;
+          default: GECODE_NEVER;
+          }
+        }
+        return (s.status() != Gecode::SS_FAILED) && s.x[1].assigned() &&
+          (s.x[1].val() == expected);
+      }
+
+      static bool lifecycle(void) {
+        if (!constant(SIGNED_DIV,false,10U,2U,13U) ||
+            !constant(SIGNED_DIV,true,14U,6U,13U) ||
+            !constant(SIGNED_REM,false,9U,3U,15U) ||
+            !constant(SIGNED_REM,true,13U,7U,1U) ||
+            !constant(SIGNED_MOD,false,9U,3U,2U) ||
+            !constant(SIGNED_MOD,true,13U,7U,14U))
+          return false;
+
+        SignedSpace edge(5,4);
+        Gecode::dom(edge,edge.x[0],8U);
+        Gecode::dom(edge,edge.x[1],15U);
+        Gecode::signed_div(edge,edge.x[0],edge.x[1],edge.x[2]);
+        Gecode::signed_rem(edge,edge.x[0],edge.x[1],edge.x[3]);
+        Gecode::signed_mod(edge,edge.x[0],edge.x[1],edge.x[4],
+                           Gecode::WS_SMTLIB);
+        if ((edge.status() == Gecode::SS_FAILED) ||
+            (edge.x[2].val() != 8U) || (edge.x[3].val() != 0U) ||
+            (edge.x[4].val() != 0U))
+          return false;
+
+        SignedSpace zero(5,4);
+        Gecode::dom(zero,zero.x[0],10U);
+        Gecode::dom(zero,zero.x[1],0U);
+        Gecode::signed_div(zero,zero.x[0],zero.x[1],zero.x[2]);
+        Gecode::signed_rem(zero,zero.x[0],zero.x[1],zero.x[3]);
+        Gecode::signed_mod(zero,zero.x[0],zero.x[1],zero.x[4]);
+        if ((zero.status() == Gecode::SS_FAILED) ||
+            (zero.x[2].val() != 1U) || (zero.x[3].val() != 10U) ||
+            (zero.x[4].val() != 10U))
+          return false;
+
+        SignedSpace distinct(5,4);
+        Gecode::dom(distinct,distinct.x[0],9U);
+        Gecode::dom(distinct,distinct.x[1],3U);
+        Gecode::signed_rem(distinct,distinct.x[0],distinct.x[1],
+                           distinct.x[2]);
+        Gecode::signed_mod(distinct,distinct.x[0],distinct.x[1],
+                           distinct.x[3]);
+        if ((distinct.status() == Gecode::SS_FAILED) ||
+            (distinct.x[2].val() != 15U) ||
+            (distinct.x[3].val() != 2U))
+          return false;
+
+        SignedSpace alias(5,4);
+        Gecode::dom(alias,alias.x[0],10U);
+        Gecode::dom(alias,alias.x[1],1U);
+        Gecode::signed_div(alias,alias.x[0],alias.x[1],alias.x[0]);
+        if ((alias.status() == Gecode::SS_FAILED) ||
+            (alias.x[0].val() != 10U))
+          return false;
+
+        SignedSpace failed(5,4);
+        Gecode::dom(failed,failed.x[0],9U);
+        Gecode::dom(failed,failed.x[1],3U);
+        Gecode::dom(failed,failed.x[2],13U);
+        Gecode::signed_div(failed,failed.x[0],failed.x[1],failed.x[2]);
+        if (failed.status() != Gecode::SS_FAILED)
+          return false;
+
+        SignedSpace source(5,3);
+        Gecode::signed_div(source,source.x[0],source.x[1],source.x[2]);
+        Gecode::signed_rem(source,source.x[0],source.x[1],source.x[3]);
+        Gecode::signed_mod(source,source.x[0],source.x[1],source.x[4]);
+        if (source.status() == Gecode::SS_FAILED)
+          return false;
+        SignedSpace* clone = static_cast<SignedSpace*>(source.clone());
+        Gecode::dom(*clone,clone->x[0],5U);
+        Gecode::dom(*clone,clone->x[1],3U);
+        const bool clone_ok = (clone->status() != Gecode::SS_FAILED) &&
+          clone->x[2].assigned() && (clone->x[2].val() == 7U) &&
+          clone->x[3].assigned() && (clone->x[3].val() == 0U) &&
+          clone->x[4].assigned() && (clone->x[4].val() == 0U) &&
+          !source.x[2].assigned();
+        delete clone;
+        if (!clone_ok)
+          return false;
+
+        try {
+          SignedSpace mismatch(5,3);
+          Gecode::WordVar other(mismatch,2);
+          Gecode::signed_div(mismatch,mismatch.x[0],other,mismatch.x[2]);
+          return false;
+        } catch (const Gecode::Word::WidthMismatch&) {}
+        return true;
+      }
+
+      static bool search_recomputation(void) {
+        using namespace Gecode;
+        class SearchSpace : public Space {
+        public:
+          WordVar x;
+          WordVar y;
+          WordVar quotient;
+          WordVar remainder;
+          WordVar modulus;
+          SearchSpace(void) : x(*this,2), y(*this,2), quotient(*this,2),
+            remainder(*this,2), modulus(*this,2) {
+            signed_div(*this,x,y,quotient);
+            signed_rem(*this,x,y,remainder);
+            signed_mod(*this,x,y,modulus);
+            WordVarArgs decision = {x,y};
+            branch(*this,decision,WORD_VAR_SIZE_MIN(),WORD_VAL_LSB());
+          }
+          SearchSpace(SearchSpace& s) : Space(s) {
+            x.update(*this,s.x);
+            y.update(*this,s.y);
+            quotient.update(*this,s.quotient);
+            remainder.update(*this,s.remainder);
+            modulus.update(*this,s.modulus);
+          }
+          virtual Space* copy(void) { return new SearchSpace(*this); }
+        };
+
+        SearchSpace* root = new SearchSpace;
+        Search::Options options;
+        options.c_d = 8;
+        options.a_d = 64;
+        DFS<SearchSpace> dfs(root,options);
+        delete root;
+        unsigned int solutions = 0;
+        while (SearchSpace* solution = dfs.next()) {
+          const bool ok = solution->x.assigned() && solution->y.assigned() &&
+            solution->quotient.assigned() && solution->remainder.assigned() &&
+            solution->modulus.assigned() &&
+            (solution->quotient.val() ==
+             evaluate(SIGNED_DIV,solution->x.val(),solution->y.val(),3U)) &&
+            (solution->remainder.val() ==
+             evaluate(SIGNED_REM,solution->x.val(),solution->y.val(),3U)) &&
+            (solution->modulus.val() ==
+             evaluate(SIGNED_MOD,solution->x.val(),solution->y.val(),3U)) &&
+            (PropagatorGroup::all.size(*solution) == 0);
+          delete solution;
+          if (!ok)
+            return false;
+          solutions++;
+        }
+        return solutions == 16;
+      }
+
+    public:
+      SignedDivisionLifecycle(void)
+        : Base("Word::Arithmetic::SignedDivisionLifecycle") {}
+      virtual bool run(void) {
+        return partial(SIGNED_DIV) && partial(SIGNED_REM) &&
+          partial(SIGNED_MOD) && boolean_parity() && lifecycle() &&
+          search_recomputation();
+      }
+    };
+
     Binary addition(ADD,"Add");
     Negation negation;
     Binary subtraction(SUB,"Sub");
     Binary multiplication(MULT,"Mult");
     Binary division(DIV,"Div");
     Binary remainder(MOD,"Mod");
+    Binary signed_division(SIGNED_DIV,"SignedDiv");
+    Binary signed_remainder(SIGNED_REM,"SignedRem");
+    Binary signed_modulus(SIGNED_MOD,"SignedMod");
     Lifecycle lifecycle;
     MultiplicationLifecycle multiplication_lifecycle;
     DivisionLifecycle division_lifecycle;
+    SignedDivisionLifecycle signed_division_lifecycle;
 
   }
 

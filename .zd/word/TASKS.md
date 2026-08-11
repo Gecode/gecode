@@ -3,9 +3,9 @@
 # Tasks: word
 
 - Total: 22
-- Ready: 2
+- Ready: 1
 - Blocked: 5
-- Done: 15
+- Done: 16
 
 | ID | Task | State | Blocked by |
 | --- | --- | --- | --- |
@@ -24,7 +24,7 @@
 | [word-013](tasks/013-add-modular-word-addition-negation-and-subtraction.md) | Add modular word addition negation and subtraction | done | word-005, word-010, word-004 |
 | [word-014](tasks/014-add-modular-word-multiplication.md) | Add modular word multiplication | done | word-013, word-010, word-011 |
 | [word-015](tasks/015-add-wordsemantics-and-unsigned-division.md) | Add WordSemantics and unsigned division | done | word-014, word-008, word-011 |
-| [word-016](tasks/016-add-signed-division-remainder-and-modulus.md) | Add signed division remainder and modulus | ready | word-015, word-013 |
+| [word-016](tasks/016-add-signed-division-remainder-and-modulus.md) | Add signed division remainder and modulus | done | word-015, word-013 |
 | [word-017](tasks/017-add-core-minimodel-word-expressions.md) | Add core MiniModel word expressions | ready | word-003, word-005, word-004, word-008, word-011 |
 | [word-018](tasks/018-add-structural-minimodel-word-expressions.md) | Add structural MiniModel word expressions | blocked | word-017, word-009, word-010, word-012 |
 | [word-019](tasks/019-add-arithmetic-minimodel-word-expressions.md) | Add arithmetic MiniModel word expressions | blocked | word-017, word-013, word-014, word-016 |
