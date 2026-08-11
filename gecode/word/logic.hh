@@ -47,7 +47,7 @@ namespace Gecode { namespace Word { namespace Logic {
   class Table : public NaryPropagator<WordView,PC_WORD_BITS> {
   protected:
     using NaryPropagator<WordView,PC_WORD_BITS>::x;
-    WordValue allowed[8];
+    WordValue allowed[16];
     Table(Home home, ViewArray<WordView>& x, const WordValue* allowed);
     Table(Space& home, Table& p);
     static ExecStatus narrow(Home home, ViewArray<WordView>& x,
@@ -60,6 +60,10 @@ namespace Gecode { namespace Word { namespace Logic {
     static ExecStatus post(Home home, ViewArray<WordView>& x,
                            const WordValue* allowed);
   };
+
+  /// Post a per-bit truth table, projecting aliases before actor creation
+  void post_table(Home home, const WordView* original, int n,
+                  const WordValue* allowed);
 
 }}}
 

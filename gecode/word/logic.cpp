@@ -76,33 +76,6 @@ namespace Gecode {
       return table;
     }
 
-    void post_table(Home home, const Word::WordView* original, int n,
-                    const WordValue* allowed) {
-      Word::WordView unique[3];
-      int map[3];
-      int m = 0;
-      for (int i=0; i<n; i++) {
-        map[i] = 0;
-        while ((map[i] < m) && !(original[i] == unique[map[i]]))
-          map[i]++;
-        if (map[i] == m)
-          unique[m++] = original[i];
-      }
-
-      WordValue projected[8] = {0,0,0,0,0,0,0,0};
-      for (unsigned int t=0; t<(1U << m); t++) {
-        unsigned int source = 0;
-        for (int i=0; i<n; i++)
-          source |= ((t >> map[i]) & 1U) << i;
-        projected[t] |= allowed[source];
-      }
-
-      ViewArray<Word::WordView> views(home,m);
-      for (int i=0; i<m; i++)
-        views[i] = unique[i];
-      GECODE_ES_FAIL(Word::Logic::Table::post(home,views,projected));
-    }
-
     void post_uniform_table(Home home, const Word::WordView* views, int n,
                             unsigned int table) {
       WordValue allowed[8] = {0,0,0,0,0,0,0,0};
@@ -110,7 +83,7 @@ namespace Gecode {
       for (unsigned int t=0; t<(1U << n); t++)
         if ((table & (1U << t)) != 0)
           allowed[t] = mask;
-      post_table(home,views,n,allowed);
+      Word::Logic::post_table(home,views,n,allowed);
     }
 
     void assign_identity(Home home, WordVar y, WordOpType wot) {
@@ -126,6 +99,41 @@ namespace Gecode {
       GECODE_ME_FAIL(Word::WordView(y).eq(home,value));
     }
   }
+
+  namespace Word { namespace Logic {
+
+    void
+    post_table(Home home, const WordView* original, int n,
+               const WordValue* allowed) {
+      assert((n >= 1) && (n <= 4));
+      WordView unique[4];
+      int map[4];
+      int m = 0;
+      for (int i=0; i<n; i++) {
+        map[i] = 0;
+        while ((map[i] < m) && !(original[i] == unique[map[i]]))
+          map[i]++;
+        if (map[i] == m)
+          unique[m++] = original[i];
+      }
+
+      WordValue projected[16] = {
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+      };
+      for (unsigned int t=0; t<(1U << m); t++) {
+        unsigned int source = 0;
+        for (int i=0; i<n; i++)
+          source |= ((t >> map[i]) & 1U) << i;
+        projected[t] |= allowed[source];
+      }
+
+      ViewArray<WordView> views(home,m);
+      for (int i=0; i<m; i++)
+        views[i] = unique[i];
+      GECODE_ES_FAIL(Table::post(home,views,projected));
+    }
+
+  }}
 
   void
   complement(Home home, WordVar x, WordVar y) {
@@ -184,7 +192,7 @@ namespace Gecode {
         allowed[t] |= c.val();
     }
     const Word::WordView views[] = {Word::WordView(x),Word::WordView(z)};
-    post_table(home,views,2,allowed);
+    Word::Logic::post_table(home,views,2,allowed);
   }
 
   void
@@ -202,7 +210,7 @@ namespace Gecode {
       allowed[t] = (logic_value(wot,xv,yv) == 0) ? zero : c.val();
     }
     const Word::WordView views[] = {Word::WordView(x),Word::WordView(y)};
-    post_table(home,views,2,allowed);
+    Word::Logic::post_table(home,views,2,allowed);
   }
 
   void

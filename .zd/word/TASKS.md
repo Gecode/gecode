@@ -3,9 +3,9 @@
 # Tasks: word
 
 - Total: 22
-- Ready: 2
-- Blocked: 10
-- Done: 10
+- Ready: 3
+- Blocked: 8
+- Done: 11
 
 | ID | Task | State | Blocked by |
 | --- | --- | --- | --- |
@@ -19,13 +19,13 @@
 | [word-008](tasks/008-add-signed-and-unsigned-word-ordering.md) | Add signed and unsigned word ordering | done | word-004 |
 | [word-009](tasks/009-add-fixed-structural-word-operations.md) | Add fixed structural word operations | done | word-002 |
 | [word-010](tasks/010-add-constant-word-shifts-and-rotations.md) | Add constant word shifts and rotations | done | word-002 |
-| [word-011](tasks/011-add-word-conditional-constraints.md) | Add word conditional constraints | ready | word-005, word-004 |
-| [word-012](tasks/012-add-shifts-by-a-word-variable.md) | Add shifts by a word variable | blocked | word-010, word-008, word-011 |
+| [word-011](tasks/011-add-word-conditional-constraints.md) | Add word conditional constraints | done | word-005, word-004 |
+| [word-012](tasks/012-add-shifts-by-a-word-variable.md) | Add shifts by a word variable | ready | word-010, word-008, word-011 |
 | [word-013](tasks/013-add-modular-word-addition-negation-and-subtraction.md) | Add modular word addition negation and subtraction | ready | word-005, word-010, word-004 |
 | [word-014](tasks/014-add-modular-word-multiplication.md) | Add modular word multiplication | blocked | word-013, word-010, word-011 |
 | [word-015](tasks/015-add-wordsemantics-and-unsigned-division.md) | Add WordSemantics and unsigned division | blocked | word-014, word-008, word-011 |
 | [word-016](tasks/016-add-signed-division-remainder-and-modulus.md) | Add signed division remainder and modulus | blocked | word-015, word-013 |
-| [word-017](tasks/017-add-core-minimodel-word-expressions.md) | Add core MiniModel word expressions | blocked | word-003, word-005, word-004, word-008, word-011 |
+| [word-017](tasks/017-add-core-minimodel-word-expressions.md) | Add core MiniModel word expressions | ready | word-003, word-005, word-004, word-008, word-011 |
 | [word-018](tasks/018-add-structural-minimodel-word-expressions.md) | Add structural MiniModel word expressions | blocked | word-017, word-009, word-010, word-012 |
 | [word-019](tasks/019-add-arithmetic-minimodel-word-expressions.md) | Add arithmetic MiniModel word expressions | blocked | word-017, word-013, word-014, word-016 |
 | [word-020](tasks/020-document-and-demonstrate-word-vector-modeling.md) | Document and demonstrate word-vector modeling | blocked | word-007, word-018, word-019 |

@@ -61,13 +61,13 @@ namespace Gecode { namespace Word { namespace Logic {
   forceinline ExecStatus
   Table::narrow(Home home, ViewArray<WordView>& x,
                 const WordValue* allowed) {
-    assert((x.size() >= 1) && (x.size() <= 3));
+    assert((x.size() >= 1) && (x.size() <= 4));
     const int n = x.size();
     const WordValue mask = x[0].mask();
     bool changed;
     do {
-      WordValue support[3][2] = {{0,0},{0,0},{0,0}};
-      WordValue old_lo[3], old_hi[3];
+      WordValue support[4][2] = {{0,0},{0,0},{0,0},{0,0}};
+      WordValue old_lo[4], old_hi[4];
       for (int i=0; i<n; i++) {
         old_lo[i] = x[i].lo();
         old_hi[i] = x[i].hi();

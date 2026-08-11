@@ -246,6 +246,45 @@ namespace Gecode {
   //@}
 
   /**
+   * \defgroup TaskModelWordConditional Word conditional constraints
+   * \ingroup TaskModelWord
+   */
+  //@{
+  /** \brief Post whole-word conditional
+   *
+   * Posts \a result = \a control ? \a then_word : \a else_word.
+   */
+  GECODE_WORD_EXPORT void ite(Home home, BoolVar control,
+                              WordVar then_word, WordVar else_word,
+                              WordVar result);
+  /// Post whole-word conditional with an explicitly-sized then constant
+  GECODE_WORD_EXPORT void ite(Home home, BoolVar control,
+                              unsigned int width, WordValue then_value,
+                              WordVar else_word, WordVar result);
+  /// Post whole-word conditional with an explicitly-sized else constant
+  GECODE_WORD_EXPORT void ite(Home home, BoolVar control,
+                              WordVar then_word, unsigned int width,
+                              WordValue else_value, WordVar result);
+  /**
+   * \brief Post bitwise conditional controlled by the mask \a control
+   *
+   * Each result bit is selected independently from the corresponding bit of
+   * \a then_word or \a else_word.
+   */
+  GECODE_WORD_EXPORT void ite(Home home, WordVar control,
+                              WordVar then_word, WordVar else_word,
+                              WordVar result);
+  /// Post bitwise conditional with an explicitly-sized then constant
+  GECODE_WORD_EXPORT void ite(Home home, WordVar control,
+                              unsigned int width, WordValue then_value,
+                              WordVar else_word, WordVar result);
+  /// Post bitwise conditional with an explicitly-sized else constant
+  GECODE_WORD_EXPORT void ite(Home home, WordVar control,
+                              WordVar then_word, unsigned int width,
+                              WordValue else_value, WordVar result);
+  //@}
+
+  /**
    * \defgroup TaskModelWordStructure Fixed structural constraints
    * \ingroup TaskModelWord
    */

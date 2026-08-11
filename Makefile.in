@@ -555,7 +555,7 @@ FLOATBUILDDIRS	= \
 
 WORDSRC0 = \
 	array.cpp branch.cpp channel.cpp channel/bit.cpp exception.cpp \
-	logic.cpp rel.cpp structure.cpp trace.cpp trace/tracer.cpp \
+	conditional.cpp logic.cpp rel.cpp structure.cpp trace.cpp trace/tracer.cpp \
 	var/word.cpp var-imp/word.cpp
 WORDHDR0 = \
 	array.hpp array-traits.hpp branch.hh branch.hpp branch/traits.hpp \
@@ -1182,7 +1182,7 @@ else
 FLOATTESTOBJ=
 endif
 
-WORDTESTSRC00 = branch channel logic rel structure trace
+WORDTESTSRC00 = branch channel conditional logic rel structure trace
 WORDTESTSRC0 = test/word.cpp $(WORDTESTSRC00:%=test/word/%.cpp)
 
 ifeq "@enable_word_vars@" "yes"
