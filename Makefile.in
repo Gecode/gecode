@@ -563,6 +563,7 @@ WORDHDR0 = \
 	exception.hpp logic.hh logic/table.hpp print.hpp view.hpp \
 	rel.hh rel/eq.hpp rel/lq-le.hpp rel/nq.hpp rel/re-eq.hpp rel/re-lq.hpp \
 	structure.hh structure/concat.hpp structure/fixed.hpp \
+	structure/variable-shift.hpp \
 	trace.hpp trace/delta.hpp trace/trace-view.hpp trace/traits.hpp \
 	var/word.hpp var-imp.hpp var-imp/delta.hpp var-imp/word.hpp
 WORDSRC = $(WORDSRC0:%=gecode/word/%)

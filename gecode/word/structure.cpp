@@ -103,6 +103,26 @@ namespace Gecode {
       }
       post_fixed(home,xv,rv,op,amount);
     }
+
+    void post_variable_shift(Home home, WordVar x, WordVar amount,
+                             WordVar result,
+                             Word::Structure::FixedOp op) {
+      Word::WordView xv(x), av(amount), rv(result);
+      if ((xv == av) || (xv == rv) || (av == rv)) {
+        WordVar x_proxy(home,x.width());
+        WordVar amount_proxy(home,x.width());
+        WordVar result_proxy(home,x.width());
+        rel(home,x,WRT_EQ,x_proxy);
+        rel(home,amount,WRT_EQ,amount_proxy);
+        rel(home,result,WRT_EQ,result_proxy);
+        GECODE_ES_FAIL((Word::Structure::VariableShift::post(
+          home,Word::WordView(x_proxy),Word::WordView(amount_proxy),
+          Word::WordView(result_proxy),op)));
+        return;
+      }
+      GECODE_ES_FAIL((Word::Structure::VariableShift::post(
+        home,xv,av,rv,op)));
+    }
   }
 
   void
@@ -226,6 +246,16 @@ namespace Gecode {
   }
 
   void
+  shift_left(Home home, WordVar x, WordVar amount, WordVar result) {
+    if ((x.width() != amount.width()) ||
+        (x.width() != result.width()))
+      throw Word::WidthMismatch("Word::shift_left");
+    GECODE_POST;
+    post_variable_shift(home,x,amount,result,
+                        Word::Structure::FO_SHIFT_LEFT);
+  }
+
+  void
   shift_left(Home home, unsigned int width, WordValue value,
              unsigned int amount, WordVar result) {
     Word::ConstWordView x(width,value);
@@ -246,6 +276,17 @@ namespace Gecode {
   }
 
   void
+  logical_shift_right(Home home, WordVar x, WordVar amount,
+                      WordVar result) {
+    if ((x.width() != amount.width()) ||
+        (x.width() != result.width()))
+      throw Word::WidthMismatch("Word::logical_shift_right");
+    GECODE_POST;
+    post_variable_shift(home,x,amount,result,
+                        Word::Structure::FO_LOGICAL_SHIFT_RIGHT);
+  }
+
+  void
   logical_shift_right(Home home, unsigned int width, WordValue value,
                       unsigned int amount, WordVar result) {
     Word::ConstWordView x(width,value);
@@ -263,6 +304,17 @@ namespace Gecode {
     GECODE_POST;
     post_fixed_word(home,x,amount,result,
                     Word::Structure::FO_ARITHMETIC_SHIFT_RIGHT);
+  }
+
+  void
+  arithmetic_shift_right(Home home, WordVar x, WordVar amount,
+                         WordVar result) {
+    if ((x.width() != amount.width()) ||
+        (x.width() != result.width()))
+      throw Word::WidthMismatch("Word::arithmetic_shift_right");
+    GECODE_POST;
+    post_variable_shift(home,x,amount,result,
+                        Word::Structure::FO_ARITHMETIC_SHIFT_RIGHT);
   }
 
   void

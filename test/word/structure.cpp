@@ -33,6 +33,8 @@
 
 #include "test/word.hh"
 
+#include <gecode/search.hh>
+
 namespace Test { namespace Word {
 
   namespace Structure {
@@ -48,6 +50,25 @@ namespace Test { namespace Word {
         x.update(*this,s.x); y.update(*this,s.y); z.update(*this,s.z);
       }
       virtual Gecode::Space* copy(void) { return new StructureSpace(*this); }
+    };
+
+    class DifferentialSpace : public Gecode::Space {
+    public:
+      Gecode::WordVar x;
+      Gecode::WordVar amount;
+      Gecode::WordVar native_result;
+      Gecode::WordVar boolean_result;
+      DifferentialSpace(unsigned int width)
+        : x(*this,width), amount(*this,width),
+          native_result(*this,width), boolean_result(*this,width) {}
+      DifferentialSpace(DifferentialSpace& s) : Gecode::Space(s) {
+        x.update(*this,s.x); amount.update(*this,s.amount);
+        native_result.update(*this,s.native_result);
+        boolean_result.update(*this,s.boolean_result);
+      }
+      virtual Gecode::Space* copy(void) {
+        return new DifferentialSpace(*this);
+      }
     };
 
     /**
@@ -349,6 +370,224 @@ namespace Test { namespace Word {
     };
 
     Shift shift;
+
+    /**
+     * Variable shifts use a bounded word-level cube-hull actor. The generic
+     * word test supplies the assigned-value oracle and ordinary clone path;
+     * these focused checks cover partial amounts and posting aliases.
+     */
+    class VariableShift : public Test {
+    public:
+      enum Op { SHL, LSHR, ASHR } op;
+    private:
+
+      static Gecode::WordValue word_mask(unsigned int width) {
+        return (width == 64U) ? ~Gecode::WordValue(0) :
+          ((Gecode::WordValue(1) << width) - 1);
+      }
+
+      static Gecode::WordValue evaluate(Op op, unsigned int width,
+                                        Gecode::WordValue x,
+                                        Gecode::WordValue amount) {
+        const Gecode::WordValue m = word_mask(width);
+        if (op == SHL)
+          return (amount >= width) ? 0 : ((x << amount) & m);
+        if (op == LSHR)
+          return (amount >= width) ? 0 : (x >> amount);
+        const bool sign = (x & (Gecode::WordValue(1) << (width-1))) != 0;
+        if (amount >= width)
+          return sign ? m : 0;
+        return (x >> amount) |
+          (sign ? (m & ~(m >> static_cast<unsigned int>(amount))) : 0);
+      }
+
+      static void post_op(Op op, Gecode::Home home, Gecode::WordVar x,
+                          Gecode::WordVar amount,
+                          Gecode::WordVar result) {
+        switch (op) {
+        case SHL:  Gecode::shift_left(home,x,amount,result); break;
+        case LSHR: Gecode::logical_shift_right(home,x,amount,result); break;
+        case ASHR: Gecode::arithmetic_shift_right(home,x,amount,result); break;
+        default: GECODE_NEVER;
+        }
+      }
+
+      static bool focused(void) {
+        StructureSpace amount(4,4,4);
+        Gecode::dom(amount,amount.x,1U);
+        Gecode::dom(amount,amount.z,4U);
+        Gecode::shift_left(amount,amount.x,amount.y,amount.z);
+        if ((amount.status() == Gecode::SS_FAILED) ||
+            !amount.y.assigned() || (amount.y.val() != 2U))
+          return false;
+
+        StructureSpace partial(4,4,4);
+        Gecode::dom(partial,partial.x,8U);
+        Gecode::dom(partial,partial.y,0U,1U);
+        Gecode::arithmetic_shift_right(
+          partial,partial.x,partial.y,partial.z);
+        if ((partial.status() == Gecode::SS_FAILED) ||
+            (partial.z.lo() != 8U) || (partial.z.hi() != 12U))
+          return false;
+
+        StructureSpace over(4,4,4);
+        Gecode::dom(over,over.y,4U,7U);
+        Gecode::dom(over,over.z,15U);
+        Gecode::arithmetic_shift_right(over,over.x,over.y,over.z);
+        if ((over.status() == Gecode::SS_FAILED) ||
+            ((over.x.lo() & 8U) == 0))
+          return false;
+
+        StructureSpace failed(4,4,4);
+        Gecode::dom(failed,failed.x,1U);
+        Gecode::dom(failed,failed.y,1U);
+        Gecode::dom(failed,failed.z,1U);
+        Gecode::shift_left(failed,failed.x,failed.y,failed.z);
+        if (failed.status() != Gecode::SS_FAILED)
+          return false;
+
+        StructureSpace same_result(4,4,4);
+        Gecode::shift_left(same_result,same_result.x,
+                           same_result.y,same_result.x);
+        Gecode::dom(same_result,same_result.x,1U);
+        if ((same_result.status() == Gecode::SS_FAILED) ||
+            !same_result.y.assigned() || (same_result.y.val() != 0U))
+          return false;
+
+        StructureSpace same_amount(4,4,4);
+        Gecode::logical_shift_right(same_amount,same_amount.x,
+                                    same_amount.y,same_amount.y);
+        Gecode::dom(same_amount,same_amount.x,0U);
+        if ((same_amount.status() == Gecode::SS_FAILED) ||
+            !same_amount.y.assigned() || (same_amount.y.val() != 0U))
+          return false;
+
+        StructureSpace same_input(4,4,4);
+        Gecode::shift_left(same_input,same_input.x,
+                           same_input.x,same_input.z);
+        Gecode::dom(same_input,same_input.x,1U);
+        if ((same_input.status() == Gecode::SS_FAILED) ||
+            !same_input.z.assigned() || (same_input.z.val() != 2U))
+          return false;
+
+        try {
+          StructureSpace mismatch(4,3,4);
+          Gecode::shift_left(mismatch,mismatch.x,mismatch.y,mismatch.z);
+          return false;
+        } catch (const Gecode::Word::WidthMismatch&) {}
+        return true;
+      }
+
+      static bool boolean_parity(void) {
+        const unsigned int width = 3;
+        for (int oi=SHL; oi<=ASHR; oi++)
+          for (Gecode::WordValue amount=0; amount<8; amount++)
+            for (Gecode::WordValue value=0; value<8; value++) {
+              const Op op = static_cast<Op>(oi);
+              DifferentialSpace s(width);
+              Gecode::dom(s,s.x,value);
+              Gecode::dom(s,s.amount,amount);
+              post_op(op,s,s.x,s.amount,s.native_result);
+
+              // Independently post the fixed-amount shift over Boolean bits;
+              // only the input and final result are channelled to words.
+              Gecode::BoolVarArray input(s,width,0,1);
+              Gecode::BoolVarArray output(s,width,0,1);
+              for (unsigned int bit=0; bit<width; bit++) {
+                Gecode::channel(s,s.x,bit,input[bit]);
+                Gecode::channel(s,s.boolean_result,bit,output[bit]);
+                if ((op == SHL) && (amount <= bit))
+                  Gecode::rel(s,output[bit],Gecode::IRT_EQ,
+                              input[bit-static_cast<unsigned int>(amount)]);
+                else if ((op != SHL) && (amount+bit < width))
+                  Gecode::rel(s,output[bit],Gecode::IRT_EQ,
+                              input[bit+static_cast<unsigned int>(amount)]);
+                else if (op == ASHR)
+                  Gecode::rel(s,output[bit],Gecode::IRT_EQ,input[width-1]);
+                else
+                  Gecode::rel(s,output[bit],Gecode::IRT_EQ,0);
+              }
+              if ((s.status() == Gecode::SS_FAILED) ||
+                  !s.native_result.assigned() ||
+                  !s.boolean_result.assigned() ||
+                  (s.native_result.val() != s.boolean_result.val()))
+                return false;
+            }
+        return true;
+      }
+
+      static bool search_recomputation(void) {
+        using namespace Gecode;
+        class ShiftSpace : public Space {
+        public:
+          WordVar x;
+          WordVar amount;
+          WordVar result;
+          ShiftSpace(void)
+            : x(*this,3,1U,3U), amount(*this,3,0U,1U),
+              result(*this,3) {
+            shift_left(*this,x,amount,result);
+            WordVarArgs decision(2);
+            decision[0] = x;
+            decision[1] = amount;
+            branch(*this,decision,WORD_VAR_SIZE_MIN(),WORD_VAL_LSB());
+          }
+          ShiftSpace(ShiftSpace& s) : Space(s) {
+            x.update(*this,s.x);
+            amount.update(*this,s.amount);
+            result.update(*this,s.result);
+          }
+          virtual Space* copy(void) { return new ShiftSpace(*this); }
+        };
+
+        ShiftSpace* root = new ShiftSpace;
+        Search::Options options;
+        // Keep only the root clone so later alternatives use replay.
+        options.c_d = 64;
+        options.a_d = 64;
+        DFS<ShiftSpace> dfs(root,options);
+        delete root;
+        unsigned int seen = 0;
+        while (ShiftSpace* solution = dfs.next()) {
+          const WordValue x = solution->x.val();
+          const WordValue amount = solution->amount.val();
+          const WordValue result = solution->result.val();
+          const bool ok = (result == (x << amount)) &&
+            (PropagatorGroup::all.size(*solution) == 0);
+          if (ok)
+            seen |= 1U << static_cast<unsigned int>((x << 1) | amount);
+          delete solution;
+          if (!ok)
+            return false;
+        }
+        return seen == ((1U << 2) | (1U << 3) |
+                        (1U << 6) | (1U << 7));
+      }
+
+    public:
+      VariableShift(Op op0, const std::string& name)
+        : Test("Structure::VariableShift::"+name,
+               3,Domain(3,0,7)), op(op0) {}
+
+      virtual bool solution(const Assignment& a) const {
+        return a[2] == evaluate(op,dom.width(),a[0],a[1]);
+      }
+
+      virtual void post(Gecode::Space& home, Gecode::WordVarArray& x) {
+        post_op(op,home,x[0],x[1],x[2]);
+      }
+
+      virtual bool run(void) {
+        return Test::run() &&
+          ((op != SHL) ||
+           (focused() && boolean_parity() && search_recomputation()));
+      }
+    };
+
+    VariableShift variable_shift_left(VariableShift::SHL,"Left");
+    VariableShift variable_logical_right(VariableShift::LSHR,"LogicalRight");
+    VariableShift variable_arithmetic_right(
+      VariableShift::ASHR,"ArithmeticRight");
   }
 }}
 

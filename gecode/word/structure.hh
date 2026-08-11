@@ -99,10 +99,42 @@ namespace Gecode { namespace Word { namespace Structure {
     static ExecStatus post(Home home, View0 high, View1 low, View2 result);
   };
 
+  /**
+   * \brief Shift controlled by an unsigned word amount
+   *
+   * The actor computes sound cube hulls over the at most \c width distinct
+   * in-range amounts and one overshift class. It is deliberately word-level:
+   * no amount bits are channelled to Boolean variables. The propagation
+   * property is cube-hull support over these bounded shift classes, not domain
+   * consistency.
+   */
+  class VariableShift : public TernaryPropagator<WordView,PC_WORD_BITS> {
+  protected:
+    using TernaryPropagator<WordView,PC_WORD_BITS>::x0;
+    using TernaryPropagator<WordView,PC_WORD_BITS>::x1;
+    using TernaryPropagator<WordView,PC_WORD_BITS>::x2;
+    FixedOp op;
+    VariableShift(Home home, WordView x, WordView amount,
+                  WordView result, FixedOp op);
+    VariableShift(Space& home, VariableShift& p);
+    static ExecStatus narrow(Home home, WordView x, WordView amount,
+                             WordView result, FixedOp op);
+    static bool done(WordView x, WordView amount, WordView result,
+                     FixedOp op);
+  public:
+    virtual Actor* copy(Space& home);
+    virtual PropCost cost(const Space& home,
+                          const ModEventDelta& med) const;
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+    static ExecStatus post(Home home, WordView x, WordView amount,
+                           WordView result, FixedOp op);
+  };
+
 }}}
 
 #include <gecode/word/structure/fixed.hpp>
 #include <gecode/word/structure/concat.hpp>
+#include <gecode/word/structure/variable-shift.hpp>
 
 #endif
 

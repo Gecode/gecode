@@ -3,7 +3,7 @@ schema_version = 1
 id = "word-012"
 key = "variable-shifts"
 area = "word"
-status = "open"
+status = "done"
 blocked_by = ["word-010", "word-008", "word-011"]
 +++
 # Add shifts by a word variable
@@ -20,11 +20,19 @@ A WordVar shift amount can control each supported variable shift while the imple
 
 ## Done when
 
-- [ ] Variable shifts implement the settled semantics for partial value and amount domains through a staged or word-level decomposition.
-- [ ] Amount and value aliases, failure, fixpoint, subsumption, cloning, and recomputation are covered.
-- [ ] The implementation records its propagation property and avoids unconditional bit blasting.
+- [x] Variable shifts implement the settled semantics for partial value and amount domains through a staged or word-level decomposition.
+- [x] Amount and value aliases, failure, fixpoint, subsumption, cloning, and recomputation are covered.
+- [x] The implementation records its propagation property and avoids unconditional bit blasting.
 
 ## Validation
 
 - Run assigned and partial-domain oracle tests for amounts 0, width minus one, width, and larger.
 - Run small-width differential Boolean models and focused lifecycle tests.
+
+## Result
+
+Implemented direct word-level variable shifts with SMT-LIB overshift semantics, bounded cube-hull propagation, fixed-amount rewrite, alias proxies, and honest linear cost.
+
+Validation:
+
+- Focused VariableShift and TestFramework tests pass, including independent width-3 Boolean parity, partial domains, failure, aliases, subsumption, cloning, and replay-based recomputation; independent verifier PASS.

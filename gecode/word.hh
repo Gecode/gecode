@@ -335,6 +335,13 @@ namespace Gecode {
   /// Logically shift \a x left by the constant \a amount
   GECODE_WORD_EXPORT void shift_left(Home home, WordVar x,
                                      unsigned int amount, WordVar result);
+  /** \brief Logically shift \a x left by unsigned word \a amount
+   *
+   * All operands have the same width. Amounts greater than or equal to the
+   * width produce zero, as in SMT-LIB.
+   */
+  GECODE_WORD_EXPORT void shift_left(Home home, WordVar x,
+                                     WordVar amount, WordVar result);
   /// Logically shift an explicitly-sized constant left
   GECODE_WORD_EXPORT void shift_left(Home home, unsigned int width,
                                      WordValue value, unsigned int amount,
@@ -342,6 +349,14 @@ namespace Gecode {
   /// Logically shift \a x right by the constant \a amount
   GECODE_WORD_EXPORT void logical_shift_right(Home home, WordVar x,
                                               unsigned int amount,
+                                              WordVar result);
+  /** \brief Logically shift \a x right by unsigned word \a amount
+   *
+   * All operands have the same width. Amounts greater than or equal to the
+   * width produce zero, as in SMT-LIB.
+   */
+  GECODE_WORD_EXPORT void logical_shift_right(Home home, WordVar x,
+                                              WordVar amount,
                                               WordVar result);
   /// Logically shift an explicitly-sized constant right
   GECODE_WORD_EXPORT void logical_shift_right(Home home, unsigned int width,
@@ -351,6 +366,14 @@ namespace Gecode {
   /// Arithmetically shift \a x right by the constant \a amount
   GECODE_WORD_EXPORT void arithmetic_shift_right(Home home, WordVar x,
                                                  unsigned int amount,
+                                                 WordVar result);
+  /** \brief Arithmetically shift \a x right by unsigned word \a amount
+   *
+   * All operands have the same width. Amounts greater than or equal to the
+   * width fill the result with the sign bit, as in SMT-LIB.
+   */
+  GECODE_WORD_EXPORT void arithmetic_shift_right(Home home, WordVar x,
+                                                 WordVar amount,
                                                  WordVar result);
   /// Arithmetically shift an explicitly-sized constant right
   GECODE_WORD_EXPORT void arithmetic_shift_right(Home home,
