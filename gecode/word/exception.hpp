@@ -52,6 +52,21 @@ namespace Gecode { namespace Word {
   public:
     ValOfUnassignedVar(const char* l);
   };
+  /// Word operands have different widths
+  class GECODE_WORD_EXPORT WidthMismatch : public Exception {
+  public:
+    WidthMismatch(const char* l);
+  };
+  /// Unknown word relation
+  class GECODE_WORD_EXPORT UnknownRelation : public Exception {
+  public:
+    UnknownRelation(const char* l);
+  };
+  /// Unknown reification mode
+  class GECODE_WORD_EXPORT UnknownReifyMode : public Exception {
+  public:
+    UnknownReifyMode(const char* l);
+  };
 }}
 
 #endif

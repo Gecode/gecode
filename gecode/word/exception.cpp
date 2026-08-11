@@ -40,4 +40,10 @@ namespace Gecode { namespace Word {
     : Exception(l,"Attempt to create word variable with empty domain") {}
   ValOfUnassignedVar::ValOfUnassignedVar(const char* l)
     : Exception(l,"Attempt to access value of unassigned word variable") {}
+  WidthMismatch::WidthMismatch(const char* l)
+    : Exception(l,"Word widths do not match") {}
+  UnknownRelation::UnknownRelation(const char* l)
+    : Exception(l,"Unknown word relation") {}
+  UnknownReifyMode::UnknownReifyMode(const char* l)
+    : Exception(l,"Unknown reification mode") {}
 }}

@@ -168,6 +168,31 @@ namespace Gecode {
                                   unsigned int bit, int value);
   //@}
 
+  /// Word relation type
+  enum WordRelType {
+    WRT_EQ, ///< Equality
+    WRT_NQ  ///< Disequality
+  };
+
+  /**
+   * \defgroup TaskModelWordRel Word relations
+   * \ingroup TaskModelWord
+   */
+  //@{
+  /// Post the relation \a wrt between \a x and \a y
+  GECODE_WORD_EXPORT void rel(Home home, WordVar x, WordRelType wrt,
+                              WordVar y);
+  /// Post the relation \a wrt between \a x and \a y, reified by \a r
+  GECODE_WORD_EXPORT void rel(Home home, WordVar x, WordRelType wrt,
+                              WordVar y, Reify r);
+  /// Post the relation \a wrt between \a x and an explicitly-sized constant
+  GECODE_WORD_EXPORT void rel(Home home, WordVar x, WordRelType wrt,
+                              unsigned int width, WordValue value);
+  /// Post the relation \a wrt to a constant, reified by \a r
+  GECODE_WORD_EXPORT void rel(Home home, WordVar x, WordRelType wrt,
+                              unsigned int width, WordValue value, Reify r);
+  //@}
+
   template<class Char, class Traits>
   std::basic_ostream<Char,Traits>&
   operator <<(std::basic_ostream<Char,Traits>& os, const WordVar& x);

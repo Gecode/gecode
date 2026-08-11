@@ -382,16 +382,26 @@ namespace Test { namespace Word {
       for (unsigned int i=0; reified && (i<3); i++) {
         if ((rms & (1 << modes[i])) == 0)
           continue;
-        TestSpace* rs = new TestSpace(arity,dom,this,modes[i]);
-        rs->post();
-        rs->rel(sol);
-        rs->assign(a,false,_rand);
-        if (rs->failed()) {
+        for (int bv=0; bv<=1; bv++) {
+          const bool b = (bv != 0);
+          bool allowed = false;
+          switch (modes[i]) {
+          case Gecode::RM_EQV: allowed = (b == sol); break;
+          case Gecode::RM_IMP: allowed = !b || sol; break;
+          case Gecode::RM_PMI: allowed = !sol || b; break;
+          default: GECODE_NEVER;
+          }
+          TestSpace* rs = new TestSpace(arity,dom,this,modes[i]);
+          rs->post();
+          rs->rel(b);
+          rs->assign(a,false,_rand);
+          const bool failed = rs->failed();
           delete rs;
-          delete ap;
-          return false;
+          if (failed == allowed) {
+            delete ap;
+            return false;
+          }
         }
-        delete rs;
       }
       a.next(_rand);
     }
