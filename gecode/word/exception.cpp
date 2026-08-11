@@ -48,4 +48,6 @@ namespace Gecode { namespace Word {
     : Exception(l,"Unknown word operation") {}
   UnknownReifyMode::UnknownReifyMode(const char* l)
     : Exception(l,"Unknown reification mode") {}
+  UnknownBranching::UnknownBranching(const char* l)
+    : Exception(l,"Unknown word branching") {}
 }}

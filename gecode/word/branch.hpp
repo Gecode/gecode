@@ -28,55 +28,50 @@
  *  LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
  *  OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- *
  */
 
-#ifndef GECODE_WORD_EXCEPTION_HPP
-#define GECODE_WORD_EXCEPTION_HPP
+#ifndef GECODE_WORD_BRANCH_HPP
+#define GECODE_WORD_BRANCH_HPP
 
-#include <gecode/kernel.hh>
+namespace Gecode {
 
-namespace Gecode { namespace Word {
-  /// Width or mask is outside the supported 1--64-bit range
-  class GECODE_WORD_EXPORT OutOfLimits : public Exception {
-  public:
-    OutOfLimits(const char* l);
-  };
-  /// A lower/upper mask pair describes an empty domain
-  class GECODE_WORD_EXPORT VariableEmptyDomain : public Exception {
-  public:
-    VariableEmptyDomain(const char* l);
-  };
-  /// Value of an unassigned word variable was requested
-  class GECODE_WORD_EXPORT ValOfUnassignedVar : public Exception {
-  public:
-    ValOfUnassignedVar(const char* l);
-  };
-  /// Word operands have different widths
-  class GECODE_WORD_EXPORT WidthMismatch : public Exception {
-  public:
-    WidthMismatch(const char* l);
-  };
-  /// Unknown word relation
-  class GECODE_WORD_EXPORT UnknownRelation : public Exception {
-  public:
-    UnknownRelation(const char* l);
-  };
-  /// Unknown word operation
-  class GECODE_WORD_EXPORT UnknownOperation : public Exception {
-  public:
-    UnknownOperation(const char* l);
-  };
-  /// Unknown reification mode
-  class GECODE_WORD_EXPORT UnknownReifyMode : public Exception {
-  public:
-    UnknownReifyMode(const char* l);
-  };
-  /// Unknown word branching strategy
-  class GECODE_WORD_EXPORT UnknownBranching : public Exception {
-  public:
-    UnknownBranching(const char* l);
-  };
-}}
+  forceinline
+  WordValBranch::WordValBranch(Select s0) : s(s0) {}
+  forceinline
+  WordValBranch::WordValBranch(Select s0, Rnd r)
+    : ValBranch<WordVar>(r), s(s0) {}
+  forceinline WordValBranch::Select
+  WordValBranch::select(void) const { return s; }
+
+  forceinline WordValBranch WORD_VAL_LSB(void) {
+    return WordValBranch(WordValBranch::SEL_LSB);
+  }
+  forceinline WordValBranch WORD_VAL_MSB(void) {
+    return WordValBranch(WordValBranch::SEL_MSB);
+  }
+  forceinline WordValBranch WORD_VAL_RND(Rnd r) {
+    return WordValBranch(WordValBranch::SEL_RND,r);
+  }
+
+  forceinline
+  WordAssign::WordAssign(Select s0) : s(s0) {}
+  forceinline
+  WordAssign::WordAssign(Select s0, Rnd r)
+    : ValBranch<WordVar>(r), s(s0) {}
+  forceinline WordAssign::Select
+  WordAssign::select(void) const { return s; }
+
+  forceinline WordAssign WORD_ASSIGN_LSB(void) {
+    return WordAssign(WordAssign::SEL_LSB);
+  }
+  forceinline WordAssign WORD_ASSIGN_MSB(void) {
+    return WordAssign(WordAssign::SEL_MSB);
+  }
+  forceinline WordAssign WORD_ASSIGN_RND(Rnd r) {
+    return WordAssign(WordAssign::SEL_RND,r);
+  }
+
+}
 
 #endif
+

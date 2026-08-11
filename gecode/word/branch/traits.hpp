@@ -28,55 +28,24 @@
  *  LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
  *  OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- *
  */
 
-#ifndef GECODE_WORD_EXCEPTION_HPP
-#define GECODE_WORD_EXCEPTION_HPP
+#ifndef GECODE_WORD_BRANCH_TRAITS_HPP
+#define GECODE_WORD_BRANCH_TRAITS_HPP
 
-#include <gecode/kernel.hh>
+namespace Gecode {
 
-namespace Gecode { namespace Word {
-  /// Width or mask is outside the supported 1--64-bit range
-  class GECODE_WORD_EXPORT OutOfLimits : public Exception {
+  template<>
+  class BranchTraits<WordVar> {
   public:
-    OutOfLimits(const char* l);
+    typedef WordBranchFilter Filter;
+    typedef WordBranchMerit Merit;
+    typedef WordBranchVal Val;
+    typedef unsigned int ValType;
+    typedef WordBranchCommit Commit;
   };
-  /// A lower/upper mask pair describes an empty domain
-  class GECODE_WORD_EXPORT VariableEmptyDomain : public Exception {
-  public:
-    VariableEmptyDomain(const char* l);
-  };
-  /// Value of an unassigned word variable was requested
-  class GECODE_WORD_EXPORT ValOfUnassignedVar : public Exception {
-  public:
-    ValOfUnassignedVar(const char* l);
-  };
-  /// Word operands have different widths
-  class GECODE_WORD_EXPORT WidthMismatch : public Exception {
-  public:
-    WidthMismatch(const char* l);
-  };
-  /// Unknown word relation
-  class GECODE_WORD_EXPORT UnknownRelation : public Exception {
-  public:
-    UnknownRelation(const char* l);
-  };
-  /// Unknown word operation
-  class GECODE_WORD_EXPORT UnknownOperation : public Exception {
-  public:
-    UnknownOperation(const char* l);
-  };
-  /// Unknown reification mode
-  class GECODE_WORD_EXPORT UnknownReifyMode : public Exception {
-  public:
-    UnknownReifyMode(const char* l);
-  };
-  /// Unknown word branching strategy
-  class GECODE_WORD_EXPORT UnknownBranching : public Exception {
-  public:
-    UnknownBranching(const char* l);
-  };
-}}
+
+}
 
 #endif
+

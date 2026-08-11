@@ -236,12 +236,99 @@ namespace Gecode {
                               const WordVarArgs& x, WordVar y);
   //@}
 
+  /// Branch filter function type for word variables
+  typedef std::function<bool(const Space& home, WordVar x, int i)>
+    WordBranchFilter;
+  /// Branch merit function type for word variables
+  typedef std::function<double(const Space& home, WordVar x, int i)>
+    WordBranchMerit;
+  /// Branch bit selection function type for word variables
+  typedef std::function<unsigned int(const Space& home, WordVar x, int i)>
+    WordBranchVal;
+  /// Branch commit function type for word variables
+  typedef std::function<void(Space& home, unsigned int a,
+                             WordVar x, int i, unsigned int bit)>
+    WordBranchCommit;
+
+}
+
+#include <gecode/word/branch/traits.hpp>
+
+namespace Gecode {
+
+  /**
+   * \defgroup TaskModelWordBranch Branching
+   * \ingroup TaskModelWord
+  */
+
+  /// Which unknown bit to select for branching
+  class WordValBranch : public ValBranch<WordVar> {
+  public:
+    /// Bit selection strategy
+    enum Select {
+      SEL_LSB, ///< Least-significant unknown bit
+      SEL_MSB, ///< Most-significant unknown bit
+      SEL_RND  ///< Random unknown bit
+    };
+  protected:
+    Select s;
+  public:
+    WordValBranch(Select s=SEL_LSB);
+    WordValBranch(Select s, Rnd r);
+    Select select(void) const;
+  };
+
+  /// Select the least-significant unknown bit
+  WordValBranch WORD_VAL_LSB(void);
+  /// Select the most-significant unknown bit
+  WordValBranch WORD_VAL_MSB(void);
+  /// Select a random unknown bit
+  WordValBranch WORD_VAL_RND(Rnd r);
+
+  /// Which unknown bit to select for assignment to zero
+  class WordAssign : public ValBranch<WordVar> {
+  public:
+    /// Bit selection strategy
+    enum Select {
+      SEL_LSB, ///< Least-significant unknown bit
+      SEL_MSB, ///< Most-significant unknown bit
+      SEL_RND  ///< Random unknown bit
+    };
+  protected:
+    Select s;
+  public:
+    WordAssign(Select s=SEL_LSB);
+    WordAssign(Select s, Rnd r);
+    Select select(void) const;
+  };
+
+  /// Assign unknown bits to zero, least-significant bit first
+  WordAssign WORD_ASSIGN_LSB(void);
+  /// Assign unknown bits to zero, most-significant bit first
+  WordAssign WORD_ASSIGN_MSB(void);
+  /// Assign unknown bits to zero in random order
+  WordAssign WORD_ASSIGN_RND(Rnd r);
+
+  /// Branch over all word variables, trying zero before one
+  GECODE_WORD_EXPORT void branch(Home home, const WordVarArgs& x,
+                                 WordValBranch vals=WORD_VAL_LSB());
+  /// Branch over one word variable, trying zero before one
+  GECODE_WORD_EXPORT void branch(Home home, WordVar x,
+                                 WordValBranch vals=WORD_VAL_LSB());
+  /// Assign all word variables by fixing selected unknown bits to zero
+  GECODE_WORD_EXPORT void assign(Home home, const WordVarArgs& x,
+                                 WordAssign vals=WORD_ASSIGN_LSB());
+  /// Assign one word variable by fixing selected unknown bits to zero
+  GECODE_WORD_EXPORT void assign(Home home, WordVar x,
+                                 WordAssign vals=WORD_ASSIGN_LSB());
+
   template<class Char, class Traits>
   std::basic_ostream<Char,Traits>&
   operator <<(std::basic_ostream<Char,Traits>& os, const WordVar& x);
 }
 
 #include <gecode/word/array.hpp>
+#include <gecode/word/branch.hpp>
 #include <gecode/word/print.hpp>
 
 #endif
