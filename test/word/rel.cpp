@@ -38,12 +38,36 @@ namespace Test { namespace Word {
   /// Tests for word relations
   namespace Rel {
 
+    static bool
+    holds(Gecode::WordRelType wrt, Gecode::WordValue x,
+          Gecode::WordValue y, unsigned int width) {
+      const Gecode::WordValue sign = Gecode::WordValue(1) << (width-1);
+      switch (wrt) {
+      case Gecode::WRT_EQ:  return x == y;
+      case Gecode::WRT_NQ:  return x != y;
+      case Gecode::WRT_ULQ: return x <= y;
+      case Gecode::WRT_ULE: return x < y;
+      case Gecode::WRT_UGQ: return x >= y;
+      case Gecode::WRT_UGR: return x > y;
+      case Gecode::WRT_SLQ: return (x ^ sign) <= (y ^ sign);
+      case Gecode::WRT_SLE: return (x ^ sign) < (y ^ sign);
+      case Gecode::WRT_SGQ: return (x ^ sign) >= (y ^ sign);
+      case Gecode::WRT_SGR: return (x ^ sign) > (y ^ sign);
+      default: GECODE_NEVER;
+      }
+      return false;
+    }
+
     /**
      * Equality is a direct mask-intersection propagator and enforces bit
      * consistency. Disequality is direct and excludes an assigned value when
      * that exclusion is representable by the word cube. Reified disequality
      * is a strength-preserving rewrite through reified equality and a negated
-     * Boolean view.
+     * Boolean view. Non-strict and strict ordering are direct MSB-first lo/hi
+     * propagators with word-level bound/bit consistency; greater relations
+     * rewrite by swapping operands, and reified strict relations rewrite as
+     * negated reversed non-strict relations. Signed ordering uses a sign-bit
+     * order transform and otherwise shares the same actors.
      */
     class Variable : public Test {
     private:
@@ -52,7 +76,7 @@ namespace Test { namespace Word {
       Variable(Gecode::WordRelType wrt0, const std::string& name)
         : Test("Rel::Variable::"+name,2,Domain(3,0,7),true), wrt(wrt0) {}
       virtual bool solution(const Assignment& a) const {
-        return (wrt == Gecode::WRT_EQ) ? (a[0] == a[1]) : (a[0] != a[1]);
+        return holds(wrt,a[0],a[1],a.domain().width());
       }
       virtual void post(Gecode::Space& home, Gecode::WordVarArray& x) {
         Gecode::rel(home,x[0],wrt,x[1]);
@@ -71,7 +95,7 @@ namespace Test { namespace Word {
       Constant(Gecode::WordRelType wrt0, const std::string& name)
         : Test("Rel::Constant::"+name,1,Domain(3,0,7),true), wrt(wrt0) {}
       virtual bool solution(const Assignment& a) const {
-        return (wrt == Gecode::WRT_EQ) ? (a[0] == 5U) : (a[0] != 5U);
+        return holds(wrt,a[0],5U,a.domain().width());
       }
       virtual void post(Gecode::Space& home, Gecode::WordVarArray& x) {
         Gecode::rel(home,x[0],wrt,3,5U);
@@ -113,8 +137,7 @@ namespace Test { namespace Word {
           for (; v0(); ++v0) {
             Values v1(d1);
             for (; v1(); ++v1) {
-              const bool solution = (wrt == Gecode::WRT_EQ) ?
-                (v0.val() == v1.val()) : (v0.val() != v1.val());
+              const bool solution = holds(wrt,v0.val(),v1.val(),1);
               if (solution) {
                 supported = true;
                 if (failed || !s.x[0].in(v0.val()) || !s.x[1].in(v1.val()))
@@ -133,7 +156,7 @@ namespace Test { namespace Word {
         RelSpace s;
         Gecode::rel(s,s.x[0],wrt,s.x[0],Gecode::Reify(s.b,rm));
         Gecode::rel(s,s.b,Gecode::IRT_EQ,b ? 1 : 0);
-        const bool solution = (wrt == Gecode::WRT_EQ);
+        const bool solution = holds(wrt,0U,0U,2);
         bool allowed = false;
         switch (rm) {
         case Gecode::RM_EQV: allowed = (b == solution); break;
@@ -150,6 +173,15 @@ namespace Test { namespace Word {
         if (!partial_sound(Gecode::WRT_EQ) ||
             !partial_sound(Gecode::WRT_NQ))
           return false;
+        const Gecode::WordRelType order[] = {
+          Gecode::WRT_ULQ, Gecode::WRT_ULE,
+          Gecode::WRT_UGQ, Gecode::WRT_UGR,
+          Gecode::WRT_SLQ, Gecode::WRT_SLE,
+          Gecode::WRT_SGQ, Gecode::WRT_SGR
+        };
+        for (unsigned int i=0; i<8; i++)
+          if (!partial_sound(order[i]))
+            return false;
 
         RelSpace eq_alias;
         Gecode::rel(eq_alias,eq_alias.x[0],Gecode::WRT_EQ,eq_alias.x[0]);
@@ -168,6 +200,11 @@ namespace Test { namespace Word {
             if (!alias_reified(Gecode::WRT_EQ,modes[i],b != 0) ||
                 !alias_reified(Gecode::WRT_NQ,modes[i],b != 0))
               return false;
+        for (unsigned int i=0; i<8; i++)
+          for (unsigned int j=0; j<3; j++)
+            for (int b=0; b<=1; b++)
+              if (!alias_reified(order[i],modes[j],b != 0))
+                return false;
 
         RelSpace source;
         Gecode::rel(source,source.x[0],Gecode::WRT_EQ,source.x[1],
@@ -182,6 +219,23 @@ namespace Test { namespace Word {
           !source.x[0].assigned();
         delete clone;
         if (!clone_ok)
+          return false;
+
+        RelSpace ordered_source;
+        Gecode::rel(ordered_source,ordered_source.x[0],Gecode::WRT_SLQ,
+                    ordered_source.x[1],
+                    Gecode::Reify(ordered_source.b,Gecode::RM_EQV));
+        if (ordered_source.status() == Gecode::SS_FAILED)
+          return false;
+        RelSpace* ordered_clone =
+          static_cast<RelSpace*>(ordered_source.clone());
+        Gecode::rel(*ordered_clone,ordered_clone->b,Gecode::IRT_EQ,1);
+        Gecode::dom(*ordered_clone,ordered_clone->x[0],3U);
+        Gecode::dom(*ordered_clone,ordered_clone->x[1],0U);
+        const bool ordered_clone_ok =
+          ordered_clone->status() != Gecode::SS_FAILED;
+        delete ordered_clone;
+        if (!ordered_clone_ok)
           return false;
 
         try {
@@ -204,6 +258,22 @@ namespace Test { namespace Word {
     Variable variable_nq(Gecode::WRT_NQ,"Nq");
     Constant constant_eq(Gecode::WRT_EQ,"Eq");
     Constant constant_nq(Gecode::WRT_NQ,"Nq");
+    Variable variable_ulq(Gecode::WRT_ULQ,"UnsignedLq");
+    Variable variable_ule(Gecode::WRT_ULE,"UnsignedLe");
+    Variable variable_ugq(Gecode::WRT_UGQ,"UnsignedGq");
+    Variable variable_ugr(Gecode::WRT_UGR,"UnsignedGr");
+    Variable variable_slq(Gecode::WRT_SLQ,"SignedLq");
+    Variable variable_sle(Gecode::WRT_SLE,"SignedLe");
+    Variable variable_sgq(Gecode::WRT_SGQ,"SignedGq");
+    Variable variable_sgr(Gecode::WRT_SGR,"SignedGr");
+    Constant constant_ulq(Gecode::WRT_ULQ,"UnsignedLq");
+    Constant constant_ule(Gecode::WRT_ULE,"UnsignedLe");
+    Constant constant_ugq(Gecode::WRT_UGQ,"UnsignedGq");
+    Constant constant_ugr(Gecode::WRT_UGR,"UnsignedGr");
+    Constant constant_slq(Gecode::WRT_SLQ,"SignedLq");
+    Constant constant_sle(Gecode::WRT_SLE,"SignedLe");
+    Constant constant_sgq(Gecode::WRT_SGQ,"SignedGq");
+    Constant constant_sgr(Gecode::WRT_SGR,"SignedGr");
     Lifecycle lifecycle;
 
   }

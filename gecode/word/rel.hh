@@ -103,11 +103,73 @@ namespace Gecode { namespace Word { namespace Rel {
     static ExecStatus post(Home home, View0 x0, View1 x1, CtrlView b);
   };
 
+  /**
+   * \brief Direct word ordering propagator
+   *
+   * Propagation applies the lo/hi bound rules of Wang et al. from the most
+   * significant bit. The \a sign template argument selects unsigned order or
+   * two's-complement signed order.
+   */
+  template<class View0, class View1, bool sign>
+  class Lq : public MixBinaryPropagator<
+    View0,PC_WORD_BITS,View1,PC_WORD_BITS> {
+  protected:
+    using MixBinaryPropagator<
+      View0,PC_WORD_BITS,View1,PC_WORD_BITS>::x0;
+    using MixBinaryPropagator<
+      View0,PC_WORD_BITS,View1,PC_WORD_BITS>::x1;
+    Lq(Home home, View0 x0, View1 x1);
+    Lq(Space& home, Lq& p);
+  public:
+    virtual Actor* copy(Space& home);
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+    static ExecStatus post(Home home, View0 x0, View1 x1);
+  };
+
+  /// Direct strict word ordering propagator
+  template<class View0, class View1, bool sign>
+  class Le : public MixBinaryPropagator<
+    View0,PC_WORD_BITS,View1,PC_WORD_BITS> {
+  protected:
+    using MixBinaryPropagator<
+      View0,PC_WORD_BITS,View1,PC_WORD_BITS>::x0;
+    using MixBinaryPropagator<
+      View0,PC_WORD_BITS,View1,PC_WORD_BITS>::x1;
+    Le(Home home, View0 x0, View1 x1);
+    Le(Space& home, Le& p);
+  public:
+    virtual Actor* copy(Space& home);
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+    static ExecStatus post(Home home, View0 x0, View1 x1);
+  };
+
+  /// Reified non-strict word ordering propagator
+  template<class View0, class View1, class CtrlView,
+           ReifyMode rm, bool sign>
+  class ReLq : public Propagator {
+  protected:
+    View0 x0;
+    View1 x1;
+    CtrlView b;
+    ReLq(Home home, View0 x0, View1 x1, CtrlView b);
+    ReLq(Space& home, ReLq& p);
+  public:
+    virtual Actor* copy(Space& home);
+    virtual PropCost cost(const Space& home,
+                          const ModEventDelta& med) const;
+    virtual void reschedule(Space& home);
+    virtual size_t dispose(Space& home);
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+    static ExecStatus post(Home home, View0 x0, View1 x1, CtrlView b);
+  };
+
 }}}
 
 #include <gecode/word/rel/eq.hpp>
 #include <gecode/word/rel/nq.hpp>
 #include <gecode/word/rel/re-eq.hpp>
+#include <gecode/word/rel/lq-le.hpp>
+#include <gecode/word/rel/re-lq.hpp>
 
 #endif
 

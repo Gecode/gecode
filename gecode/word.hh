@@ -172,7 +172,15 @@ namespace Gecode {
   /// Word relation type
   enum WordRelType {
     WRT_EQ, ///< Equality
-    WRT_NQ  ///< Disequality
+    WRT_NQ, ///< Disequality
+    WRT_ULQ, ///< Unsigned less than or equal
+    WRT_ULE, ///< Unsigned less than
+    WRT_UGQ, ///< Unsigned greater than or equal
+    WRT_UGR, ///< Unsigned greater than
+    WRT_SLQ, ///< Signed less than or equal
+    WRT_SLE, ///< Signed less than
+    WRT_SGQ, ///< Signed greater than or equal
+    WRT_SGR  ///< Signed greater than
   };
 
   /// Word logical operation type

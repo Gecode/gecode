@@ -45,6 +45,30 @@ namespace Gecode {
       case WRT_NQ:
         GECODE_ES_FAIL((Word::Rel::Nq<View0,View1>::post(home,x,y)));
         break;
+      case WRT_ULQ:
+        GECODE_ES_FAIL((Word::Rel::Lq<View0,View1,false>::post(home,x,y)));
+        break;
+      case WRT_ULE:
+        GECODE_ES_FAIL((Word::Rel::Le<View0,View1,false>::post(home,x,y)));
+        break;
+      case WRT_UGQ:
+        GECODE_ES_FAIL((Word::Rel::Lq<View1,View0,false>::post(home,y,x)));
+        break;
+      case WRT_UGR:
+        GECODE_ES_FAIL((Word::Rel::Le<View1,View0,false>::post(home,y,x)));
+        break;
+      case WRT_SLQ:
+        GECODE_ES_FAIL((Word::Rel::Lq<View0,View1,true>::post(home,x,y)));
+        break;
+      case WRT_SLE:
+        GECODE_ES_FAIL((Word::Rel::Le<View0,View1,true>::post(home,x,y)));
+        break;
+      case WRT_SGQ:
+        GECODE_ES_FAIL((Word::Rel::Lq<View1,View0,true>::post(home,y,x)));
+        break;
+      case WRT_SGR:
+        GECODE_ES_FAIL((Word::Rel::Le<View1,View0,true>::post(home,y,x)));
+        break;
       default:
         throw Word::UnknownRelation("Word::rel");
       }
@@ -71,6 +95,42 @@ namespace Gecode {
       }
     }
 
+    template<class View0, class View1, class CtrlView, bool sign>
+    void post_re_lq(Home home, View0 x, View1 y, CtrlView b,
+                    ReifyMode rm) {
+      switch (rm) {
+      case RM_EQV:
+        GECODE_ES_FAIL((Word::Rel::ReLq<
+          View0,View1,CtrlView,RM_EQV,sign>::post(home,x,y,b)));
+        break;
+      case RM_IMP:
+        GECODE_ES_FAIL((Word::Rel::ReLq<
+          View0,View1,CtrlView,RM_IMP,sign>::post(home,x,y,b)));
+        break;
+      case RM_PMI:
+        GECODE_ES_FAIL((Word::Rel::ReLq<
+          View0,View1,CtrlView,RM_PMI,sign>::post(home,x,y,b)));
+        break;
+      default:
+        throw Word::UnknownReifyMode("Word::rel");
+      }
+    }
+
+    template<class View0, class View1, class CtrlView, bool sign>
+    void post_re_not_lq(Home home, View0 x, View1 y, CtrlView b,
+                        ReifyMode rm) {
+      Int::NegBoolView nb(b);
+      switch (rm) {
+      case RM_EQV: post_re_lq<View0,View1,Int::NegBoolView,sign>(
+          home,x,y,nb,RM_EQV); break;
+      case RM_IMP: post_re_lq<View0,View1,Int::NegBoolView,sign>(
+          home,x,y,nb,RM_PMI); break;
+      case RM_PMI: post_re_lq<View0,View1,Int::NegBoolView,sign>(
+          home,x,y,nb,RM_IMP); break;
+      default: throw Word::UnknownReifyMode("Word::rel");
+      }
+    }
+
     template<class View0, class View1>
     void post_rel(Home home, View0 x, WordRelType wrt, View1 y, Reify r) {
       Int::BoolView b(r.var());
@@ -88,6 +148,38 @@ namespace Gecode {
         }
         break;
       }
+      case WRT_ULQ:
+        post_re_lq<View0,View1,Int::BoolView,false>(
+          home,x,y,b,r.mode());
+        break;
+      case WRT_ULE:
+        post_re_not_lq<View1,View0,Int::BoolView,false>(
+          home,y,x,b,r.mode());
+        break;
+      case WRT_UGQ:
+        post_re_lq<View1,View0,Int::BoolView,false>(
+          home,y,x,b,r.mode());
+        break;
+      case WRT_UGR:
+        post_re_not_lq<View0,View1,Int::BoolView,false>(
+          home,x,y,b,r.mode());
+        break;
+      case WRT_SLQ:
+        post_re_lq<View0,View1,Int::BoolView,true>(
+          home,x,y,b,r.mode());
+        break;
+      case WRT_SLE:
+        post_re_not_lq<View1,View0,Int::BoolView,true>(
+          home,y,x,b,r.mode());
+        break;
+      case WRT_SGQ:
+        post_re_lq<View1,View0,Int::BoolView,true>(
+          home,y,x,b,r.mode());
+        break;
+      case WRT_SGR:
+        post_re_not_lq<View0,View1,Int::BoolView,true>(
+          home,x,y,b,r.mode());
+        break;
       default:
         throw Word::UnknownRelation("Word::rel");
       }
@@ -100,13 +192,6 @@ namespace Gecode {
       throw Word::WidthMismatch("Word::rel");
     GECODE_POST;
     Word::WordView xv(x), yv(y);
-    if (xv == yv) {
-      if (wrt == WRT_NQ)
-        home.fail();
-      else if (wrt != WRT_EQ)
-        throw Word::UnknownRelation("Word::rel");
-      return;
-    }
     post_rel(home,xv,wrt,yv);
   }
 
@@ -116,22 +201,6 @@ namespace Gecode {
       throw Word::WidthMismatch("Word::rel");
     GECODE_POST;
     Word::WordView xv(x), yv(y);
-    if (xv == yv) {
-      Int::BoolView b(r.var());
-      switch (wrt) {
-      case WRT_EQ:
-        if (r.mode() != RM_IMP)
-          GECODE_ME_FAIL(b.one(home));
-        break;
-      case WRT_NQ:
-        if (r.mode() != RM_PMI)
-          GECODE_ME_FAIL(b.zero(home));
-        break;
-      default:
-        throw Word::UnknownRelation("Word::rel");
-      }
-      return;
-    }
     post_rel(home,xv,wrt,yv,r);
   }
 
