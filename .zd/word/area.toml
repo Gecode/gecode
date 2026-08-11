@@ -1,0 +1,6 @@
+schema_version = 1
+tag = "word"
+title = "Word vectors"
+objective = "Add fixed-width word-vector variables and their core propagators to Gecode, following Wang et al. where suitable, so models that would otherwise rely on SMT bit-blasting can use Gecode propagation, search, cloning, and tooling."
+branch = "feature/word-vectors"
+base_commit = "e1ec3da365f6c927d937b5ae9266d892a1cb9807"

@@ -192,6 +192,13 @@ set(GECODE_FLOAT_SOURCES
   gecode/float/var/float.cpp
 )
 
+set(GECODE_WORD_SOURCES
+  gecode/word/array.cpp
+  gecode/word/exception.cpp
+  gecode/word/var-imp/word.cpp
+  gecode/word/var/word.cpp
+)
+
 set(GECODE_MINIMODEL_SOURCES
   gecode/minimodel/bool-expr.cpp
   gecode/minimodel/dom.cpp

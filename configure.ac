@@ -236,6 +236,13 @@ dnl @VTIS@
 
 AC_GECODE_VIS
 
+AC_GECODE_VTI(word,
+	[word variable library],
+	yes,
+	[\$(top_srcdir)/gecode/word/var-imp/word.vis],
+	[AC_SUBST(LINKWORD,[${LINKLIBDIR}${LINKPREFIX}${WORD}${DLL_ARCH}${LINKSUFFIX}])],
+	[AC_SUBST(LINKWORD,[])])
+
 AC_GECODE_VTI(float,
 	[float variable library (implies --enable-int-vars)],
 	yes,
