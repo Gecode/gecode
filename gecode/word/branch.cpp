@@ -342,3 +342,5 @@ namespace Gecode {
   }
 
 }
+
+// STATISTICS: word-post

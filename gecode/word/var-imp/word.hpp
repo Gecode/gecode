@@ -114,3 +114,5 @@ namespace Gecode { namespace Word {
     return static_cast<const WordDelta&>(d).one();
   }
 }}
+
+// STATISTICS: word-var

@@ -1497,7 +1497,13 @@ namespace Gecode {
   //@}
 
 #ifdef GECODE_HAS_WORD_VARS
-  /// Fixed-width word expressions
+  /** \brief Fixed-width word expressions
+   *
+   * Expressions form a reference-counted DAG. Construction preserves result
+   * width, rejects incompatible operands before posting, and records
+   * WordSemantics on policy-dependent arithmetic nodes. Calling expr or post
+   * lowers every node through the corresponding direct word posting API.
+   */
   class WordExpr {
   public:
     /// Type of word expression
@@ -1623,6 +1629,12 @@ namespace Gecode {
   };
 
   /** \defgroup TaskModelMiniModelWord Word expressions
+   *
+   * Word expressions provide operator syntax where fixed-width meaning is
+   * unambiguous and named snake_case functions where signedness, shift kind,
+   * or arithmetic policy must remain visible. Explicitly-sized constants are
+   * constructed with WordExpr::WordExpr(unsigned int, WordValue).
+   *
    *  \ingroup TaskModelMiniModel
    */
   //@{
@@ -1671,43 +1683,43 @@ namespace Gecode {
   GECODE_MINIMODEL_EXPORT WordExpr
   ite(const WordExpr&, const WordExpr&, const WordExpr&);
 
-  /// Extract a width bits starting at least-significant index a first
+  /// Extract \a width bits starting at least-significant index \a first
   GECODE_MINIMODEL_EXPORT WordExpr
   extract(const WordExpr&, unsigned int first, unsigned int width);
-  /// Concatenate a high above a low
+  /// Concatenate \a high above \a low
   GECODE_MINIMODEL_EXPORT WordExpr
   concat(const WordExpr& high, const WordExpr& low);
-  /// Repeat the expression in a count blocks
+  /// Repeat the expression in \a count blocks
   GECODE_MINIMODEL_EXPORT WordExpr
   repeat(const WordExpr&, unsigned int count);
-  /// Zero-extend the expression to a result_width
+  /// Zero-extend the expression to \a result_width
   GECODE_MINIMODEL_EXPORT WordExpr
   zero_extend(const WordExpr&, unsigned int result_width);
-  /// Sign-extend the expression to a result_width
+  /// Sign-extend the expression to \a result_width
   GECODE_MINIMODEL_EXPORT WordExpr
   sign_extend(const WordExpr&, unsigned int result_width);
-  /// Logically shift the expression left by constant a amount
+  /// Logically shift the expression left by constant \a amount
   GECODE_MINIMODEL_EXPORT WordExpr
   operator <<(const WordExpr&, unsigned int amount);
-  /// Logically shift the expression left by word a amount
+  /// Logically shift the expression left by word \a amount
   GECODE_MINIMODEL_EXPORT WordExpr
   operator <<(const WordExpr&, const WordExpr& amount);
-  /// Logically shift the expression right by constant a amount
+  /// Logically shift the expression right by constant \a amount
   GECODE_MINIMODEL_EXPORT WordExpr
   logical_shift_right(const WordExpr&, unsigned int amount);
-  /// Logically shift the expression right by word a amount
+  /// Logically shift the expression right by word \a amount
   GECODE_MINIMODEL_EXPORT WordExpr
   logical_shift_right(const WordExpr&, const WordExpr& amount);
-  /// Arithmetically shift the expression right by constant a amount
+  /// Arithmetically shift the expression right by constant \a amount
   GECODE_MINIMODEL_EXPORT WordExpr
   arithmetic_shift_right(const WordExpr&, unsigned int amount);
-  /// Arithmetically shift the expression right by word a amount
+  /// Arithmetically shift the expression right by word \a amount
   GECODE_MINIMODEL_EXPORT WordExpr
   arithmetic_shift_right(const WordExpr&, const WordExpr& amount);
-  /// Rotate the expression left by constant a amount
+  /// Rotate the expression left by constant \a amount
   GECODE_MINIMODEL_EXPORT WordExpr
   rotate_left(const WordExpr&, unsigned int amount);
-  /// Rotate the expression right by constant a amount
+  /// Rotate the expression right by constant \a amount
   GECODE_MINIMODEL_EXPORT WordExpr
   rotate_right(const WordExpr&, unsigned int amount);
 

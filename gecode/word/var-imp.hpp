@@ -96,4 +96,6 @@ namespace Gecode { namespace Word {
 
 #include <gecode/word/var-imp/word.hpp>
 
+// STATISTICS: word-var
+
 #endif

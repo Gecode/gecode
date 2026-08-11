@@ -51,3 +51,5 @@ namespace Gecode { namespace Word {
   UnknownBranching::UnknownBranching(const char* l)
     : Exception(l,"Unknown word branching") {}
 }}
+
+// STATISTICS: word-other

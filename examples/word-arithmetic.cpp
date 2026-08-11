@@ -28,16 +28,58 @@
  *  LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
  *  OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- *
  */
 
-namespace Gecode { namespace Word {
-  forceinline WordDelta::WordDelta(void)
-    : _zero(0), _one(0) {}
-  forceinline WordDelta::WordDelta(WordValue zero, WordValue one)
-    : _zero(zero), _one(one) {}
-  forceinline WordValue WordDelta::zero(void) const { return _zero; }
-  forceinline WordValue WordDelta::one(void) const { return _one; }
-}}
+#include <gecode/driver.hh>
+#include <gecode/word.hh>
 
-// STATISTICS: word-var
+using namespace Gecode;
+
+/**
+ * \brief %Example: Direct fixed-width word arithmetic
+ *
+ * Finds the four-bit input satisfying input + 3 = 9 modulo 16.
+ *
+ * \ingroup Example
+ */
+class WordArithmetic : public Script {
+private:
+  /// Unknown input and constrained result
+  WordVar input;
+  WordVar result;
+public:
+  /// Actual model
+  WordArithmetic(const Options& opt)
+    : Script(opt), input(*this,4), result(*this,4) {
+    add(*this,input,4,3U,result);
+    dom(*this,result,9U);
+    branch(*this,input,WORD_VAL_LSB());
+  }
+  /// Constructor for cloning \a s
+  WordArithmetic(WordArithmetic& s) : Script(s) {
+    input.update(*this,s.input);
+    result.update(*this,s.result);
+  }
+  /// Copy during cloning
+  virtual Space* copy(void) {
+    return new WordArithmetic(*this);
+  }
+  /// Print solution
+  virtual void print(std::ostream& os) const {
+    os << "\tinput = 0x" << std::hex << input.val()
+       << ", result = 0x" << result.val() << std::dec << std::endl;
+  }
+};
+
+/** \brief Main-function
+ *  \relates WordArithmetic
+ */
+int
+main(int argc, char* argv[]) {
+  Options opt("WordArithmetic");
+  opt.parse(argc,argv);
+  Script::run<WordArithmetic,DFS,Options>(opt);
+  return 0;
+}
+
+// STATISTICS: example-any

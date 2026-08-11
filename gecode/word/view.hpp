@@ -128,4 +128,6 @@ namespace Gecode { namespace Word {
   };
 }}
 
+// STATISTICS: word-var
+
 #endif

@@ -47,5 +47,6 @@ namespace Gecode {
 
 }
 
-#endif
+// STATISTICS: word-branch
 
+#endif

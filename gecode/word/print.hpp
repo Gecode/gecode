@@ -43,3 +43,5 @@ namespace Gecode {
     return os;
   }
 }
+
+// STATISTICS: word-var

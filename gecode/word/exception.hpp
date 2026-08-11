@@ -79,4 +79,6 @@ namespace Gecode { namespace Word {
   };
 }}
 
+// STATISTICS: word-other
+
 #endif

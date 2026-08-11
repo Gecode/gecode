@@ -74,6 +74,41 @@ namespace Gecode {
 
   /**
    * \defgroup TaskModelWord Word-vector constraints
+   *
+   * A word variable has an immutable width from 1 through 64. Its domain is
+   * a cube represented by a known-one lower mask and a may-be-one upper mask;
+   * it is not an unsigned integer interval. Constants therefore always carry
+   * an explicit width. Arithmetic is fixed-width and wraps modulo
+   * \f$2^{width}\f$. Operations with policy-dependent edge cases default to
+   * WordSemantics::WS_SMTLIB.
+   *
+   * WordVar provides the variable and mask interface. WordRelType and
+   * WordOpType select direct relation and logical postings. Models branch with
+   * WordVarBranch and WordValBranch, and can observe changes with WordTracer.
+   * MiniModel users can compose the same operations with WordExpr; expression
+   * nodes lower through the direct posting API and retain their width and
+   * WordSemantics.
+   *
+   * \par Implementation and tested propagation inventory
+   *
+   * | Public operation | Initial implementation | Tested property |
+   * | --- | --- | --- |
+   * | `dom` and WordVar mask queries | Native word-domain update | Exact atomic cube narrowing, assignment, and failure |
+   * | `channel` | Direct word-bit/BoolVar actor | Bit consistency, aliases, cloning, and recomputation |
+   * | `rel` with `WRT_EQ`, `WRT_NQ` | Direct equality/disequality actors; reified disequality rewrites through equality | Equality bit consistency; disequality sound representable exclusion; all reification modes |
+   * | `rel` with unsigned and signed order types | Direct MSB-first non-strict/strict actors; greater relations swap operands and reified strict relations negate reversed non-strict relations | Assigned semantics and sound word-level bound/bit pruning |
+   * | `complement`; binary and n-ary logical `rel` with all WordOpType values | Direct native-word truth-table actors; n-ary forms fold primitive actors and optionally complement | Per-bit consistency and assigned semantics |
+   * | Boolean and word-mask `ite` | Boolean form decomposes through channel/sign extension; mask form is direct | Sound partial propagation; mask form is bit consistent |
+   * | `extract`, `concat`, `repeat`, `zero_extend`, `sign_extend` | Direct fixed masked-copy actors | Bit consistency for copied bits and groups |
+   * | Fixed `shift_left`, `logical_shift_right`, `arithmetic_shift_right`, `rotate_left`, `rotate_right` | Direct fixed masked actors | Bit consistency and boundary amounts |
+   * | Variable `shift_left`, `logical_shift_right`, `arithmetic_shift_right` | Bounded word-level cube-hull actor | Assigned semantics and partial-amount soundness |
+   * | `add`, `neg`, `sub` | Word-level carry, complement, and addition decompositions | Assigned semantics, partial-domain soundness, aliases, and lifecycle |
+   * | `mult` | Word-level schoolbook conditional-shift/add decomposition | Assigned semantics, Boolean differential parity, and partial-domain soundness |
+   * | Unsigned `div`, `mod` | Word-level shift/subtract decomposition | SMT-LIB zero-divisor semantics, Boolean parity, and partial-domain soundness |
+   * | `signed_div`, `signed_rem`, `signed_mod` | Sign/absolute-value lowering through unsigned division plus conditional negation/adjustment | SMT-LIB zero-divisor and overflow semantics, Boolean parity, and partial-domain soundness |
+   * | `branch`, `assign` and their selectors | Native unknown-bit choices | Archive, no-good, clone, and recomputation lifecycle |
+   * | `trace`, WordTraceDelta and word printing | Standard variable trace/print integration | Fixed-bit deltas and trace lifecycle |
+   * | WordExpr logical, relation, conditional, structural, and arithmetic expressions | Ref-counted MiniModel DAG lowered through the corresponding direct API | Direct-posting parity, width/policy rejection, copies, clones, and recomputation |
    */
   /**
    * \defgroup TaskModelWordVars Word-vector variables and arrays
@@ -93,20 +128,34 @@ namespace Gecode {
     using VarImpVar<Word::WordVarImp>::x;
     void _init(Space& home, unsigned int width, WordValue lo, WordValue hi);
   public:
+    /// Construct an uninitialized variable handle
     WordVar(void);
+    /// Copy variable handle \a y
     WordVar(const WordVar& y);
+    /// Construct a variable handle from view \a y
     WordVar(const Word::WordView& y);
+    /// Construct an unconstrained word of the given \a width
     GECODE_WORD_EXPORT WordVar(Space& home, unsigned int width);
+    /// Construct a word with cube bounds \a lo and \a hi
     GECODE_WORD_EXPORT WordVar(Space& home, unsigned int width,
                               WordValue lo, WordValue hi);
+    /// Return the immutable width
     unsigned int width(void) const;
+    /// Return the mask containing all significant bits
     WordValue mask(void) const;
+    /// Return the known-one lower mask
     WordValue lo(void) const;
+    /// Return the may-be-one upper mask
     WordValue hi(void) const;
+    /// Return the mask of unknown bits
     WordValue unknown(void) const;
+    /// Return the number of unknown bits
     unsigned int unknown_size(void) const;
+    /// Test whether the word is assigned
     bool assigned(void) const;
+    /// Test whether concrete \a value belongs to the cube
     bool in(WordValue value) const;
+    /// Return the assigned value
     WordValue val(void) const;
     WordVar& operator=(const WordVar&) = default;
   };
@@ -193,7 +242,13 @@ namespace Gecode {
     WOT_XNOR  ///< Complement of bitwise exclusive disjunction
   };
 
-  /// Policy for arithmetic operations with semantics-dependent edge cases
+  /** \brief Policy for semantics-dependent arithmetic edge cases
+   *
+   * The initial policy follows SMT-LIB: unsigned division by zero returns the
+   * all-one word, unsigned remainder by zero returns the dividend, and signed
+   * division, remainder, and modulus are total, including minimum/-1 overflow.
+   * The policy is explicit so later alternatives need not change WordVar.
+   */
   enum WordSemantics {
     WS_SMTLIB ///< SMT-LIB fixed-width word semantics
   };
@@ -785,3 +840,6 @@ namespace Gecode {
 #include <gecode/word/trace.hpp>
 
 #endif
+
+// IFDEF: GECODE_HAS_WORD_VARS
+// STATISTICS: word-post

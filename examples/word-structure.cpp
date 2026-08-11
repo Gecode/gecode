@@ -28,22 +28,65 @@
  *  LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
  *  OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- *
  */
 
+#include <gecode/driver.hh>
 #include <gecode/word.hh>
 
-namespace Gecode { namespace Word {
-  void WordVarImp::subscribe(Space& home, Propagator& p, PropCond pc,
-                             bool schedule) {
-    WordVarImpBase::subscribe(home,p,pc,assigned(),schedule);
-  }
-  void WordVarImp::reschedule(Space& home, Propagator& p, PropCond pc) {
-    WordVarImpBase::reschedule(home,p,pc,assigned());
-  }
-  void WordVarImp::subscribe(Space& home, Advisor& a, bool fail) {
-    WordVarImpBase::subscribe(home,a,assigned(),fail);
-  }
-}}
+using namespace Gecode;
 
-// STATISTICS: word-var
+/**
+ * \brief %Example: Direct structural word constraints
+ *
+ * Recovers an eight-bit input after exchanging its two nibbles.
+ *
+ * \ingroup Example
+ */
+class WordStructure : public Script {
+private:
+  /// Input, extracted nibbles, and nibble-swapped result
+  WordVar input;
+  WordVar high;
+  WordVar low;
+  WordVar swapped;
+public:
+  /// Actual model
+  WordStructure(const Options& opt)
+    : Script(opt), input(*this,8), high(*this,4), low(*this,4),
+      swapped(*this,8) {
+    extract(*this,input,4,4,high);
+    extract(*this,input,0,4,low);
+    concat(*this,low,high,swapped);
+    dom(*this,swapped,0x3aU);
+    branch(*this,input,WORD_VAL_LSB());
+  }
+  /// Constructor for cloning \a s
+  WordStructure(WordStructure& s) : Script(s) {
+    input.update(*this,s.input);
+    high.update(*this,s.high);
+    low.update(*this,s.low);
+    swapped.update(*this,s.swapped);
+  }
+  /// Copy during cloning
+  virtual Space* copy(void) {
+    return new WordStructure(*this);
+  }
+  /// Print solution
+  virtual void print(std::ostream& os) const {
+    os << "\tinput = 0x" << std::hex << input.val()
+       << ", swapped = 0x" << swapped.val() << std::dec << std::endl;
+  }
+};
+
+/** \brief Main-function
+ *  \relates WordStructure
+ */
+int
+main(int argc, char* argv[]) {
+  Options opt("WordStructure");
+  opt.parse(argc,argv);
+  Script::run<WordStructure,DFS,Options>(opt);
+  return 0;
+}
+
+// STATISTICS: example-any

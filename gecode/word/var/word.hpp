@@ -52,3 +52,5 @@ namespace Gecode {
     return x->val();
   }
 }
+
+// STATISTICS: word-var

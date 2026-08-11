@@ -58,3 +58,5 @@ namespace Gecode {
     GECODE_ME_FAIL(xv.eq(home,value));
   }
 }
+
+// STATISTICS: word-var

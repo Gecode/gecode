@@ -140,3 +140,5 @@ namespace Gecode { namespace Word { namespace Branch {
 }}}
 
 #endif
+
+// STATISTICS: word-branch

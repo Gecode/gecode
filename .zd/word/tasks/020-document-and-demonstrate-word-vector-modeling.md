@@ -3,7 +3,7 @@ schema_version = 1
 id = "word-020"
 key = "examples-docs"
 area = "word"
-status = "open"
+status = "done"
 blocked_by = ["word-007", "word-018", "word-019"]
 +++
 # Document and demonstrate word-vector modeling
@@ -20,13 +20,21 @@ Users have Doxygen and API documentation plus several redistributable direct-pos
 
 ## Done when
 
-- [ ] Doxygen documents WordVar, posting functions, operation and relation types, WordSemantics, branching, tracing, and MiniModel expressions.
-- [ ] Several direct-posting and MiniModel examples build through the normal example machinery and check expected solutions.
-- [ ] The documentation lists each public operation, its direct/rewrite/decomposition shape, and its tested propagation property.
-- [ ] Public and internal multiword names follow snake_case and types follow CamelCase.
+- [x] Doxygen documents WordVar, posting functions, operation and relation types, WordSemantics, branching, tracing, and MiniModel expressions.
+- [x] Several direct-posting and MiniModel examples build through the normal example machinery and check expected solutions.
+- [x] The documentation lists each public operation, its direct/rewrite/decomposition shape, and its tested propagation property.
+- [x] Public and internal multiword names follow snake_case and types follow CamelCase.
 
 ## Validation
 
 - Build and run all word examples with expected-solution checks.
 - Build Doxygen and run documentation link checks.
 - Audit the public API and propagation-property inventory against the area brief.
+
+## Result
+
+Documented the Word API and implementation properties and added three small direct and MiniModel examples through the normal example machinery.
+
+Validation:
+
+- All three focused examples build and produce their unique expected solutions; documentation statistics generation and diff checks pass; independent verifier PASS.

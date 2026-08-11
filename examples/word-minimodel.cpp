@@ -28,16 +28,59 @@
  *  LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
  *  OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- *
  */
 
-namespace Gecode { namespace Word {
-  forceinline WordDelta::WordDelta(void)
-    : _zero(0), _one(0) {}
-  forceinline WordDelta::WordDelta(WordValue zero, WordValue one)
-    : _zero(zero), _one(one) {}
-  forceinline WordValue WordDelta::zero(void) const { return _zero; }
-  forceinline WordValue WordDelta::one(void) const { return _one; }
-}}
+#include <gecode/driver.hh>
+#include <gecode/minimodel.hh>
+#include <gecode/word.hh>
 
-// STATISTICS: word-var
+using namespace Gecode;
+
+/**
+ * \brief %Example: MiniModel word expressions
+ *
+ * Recovers an eight-bit input from an invertible add, xor, and rotate
+ * expression.
+ *
+ * \ingroup Example
+ */
+class WordMiniModel : public Script {
+private:
+  /// Unknown input
+  WordVar input;
+public:
+  /// Actual model
+  WordMiniModel(const Options& opt)
+    : Script(opt), input(*this,8) {
+    WordExpr encoded = rotate_left(
+      (WordExpr(input) + WordExpr(8,0x3dU)) ^ WordExpr(8,0xa7U),3);
+    rel(*this,encoded == WordExpr(8,0xc6U));
+    branch(*this,input,WORD_VAL_LSB());
+  }
+  /// Constructor for cloning \a s
+  WordMiniModel(WordMiniModel& s) : Script(s) {
+    input.update(*this,s.input);
+  }
+  /// Copy during cloning
+  virtual Space* copy(void) {
+    return new WordMiniModel(*this);
+  }
+  /// Print solution
+  virtual void print(std::ostream& os) const {
+    os << "\tinput = 0x" << std::hex << input.val()
+       << std::dec << std::endl;
+  }
+};
+
+/** \brief Main-function
+ *  \relates WordMiniModel
+ */
+int
+main(int argc, char* argv[]) {
+  Options opt("WordMiniModel");
+  opt.parse(argc,argv);
+  Script::run<WordMiniModel,DFS,Options>(opt);
+  return 0;
+}
+
+// STATISTICS: example-any

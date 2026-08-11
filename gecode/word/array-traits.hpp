@@ -51,3 +51,5 @@ namespace Gecode {
     typedef WordVarArgs StorageType; typedef WordVar ValueType; typedef WordVarArgs ArgsType;
   };
 }
+
+// STATISTICS: word-other

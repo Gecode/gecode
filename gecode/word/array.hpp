@@ -46,3 +46,5 @@ namespace Gecode {
   forceinline WordVarArray::WordVarArray(const WordVarArray& a) : VarArray<WordVar>(a) {}
   forceinline WordVarArray::WordVarArray(Space& home, const WordVarArgs& a) : VarArray<WordVar>(home,a) {}
 }
+
+// STATISTICS: word-other

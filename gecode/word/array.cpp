@@ -49,3 +49,5 @@ namespace Gecode {
       x[i]._init(home,width,lo,hi);
   }
 }
+
+// STATISTICS: word-other
