@@ -1525,7 +1525,16 @@ namespace Gecode {
       NT_ARITHMETIC_SHIFT_RIGHT, ///< Constant arithmetic right shift
       NT_VAR_ARITHMETIC_SHIFT_RIGHT, ///< Variable arithmetic right shift
       NT_ROTATE_LEFT, ///< Constant left rotation
-      NT_ROTATE_RIGHT ///< Constant right rotation
+      NT_ROTATE_RIGHT, ///< Constant right rotation
+      NT_ADD,        ///< Modular addition
+      NT_NEG,        ///< Modular negation
+      NT_SUB,        ///< Modular subtraction
+      NT_MULT,       ///< Modular multiplication
+      NT_DIV,        ///< Unsigned division
+      NT_MOD,        ///< Unsigned remainder
+      NT_SIGNED_DIV, ///< Signed division
+      NT_SIGNED_REM, ///< Signed remainder
+      NT_SIGNED_MOD  ///< Signed modulus
     };
     /// Node for word expression
     class Node;
@@ -1539,6 +1548,9 @@ namespace Gecode {
              unsigned int extent, unsigned int result_width);
     WordExpr(const WordExpr& l, NodeType t, const WordExpr& r,
              unsigned int result_width);
+    WordExpr(const WordExpr& e, NodeType t, WordSemantics semantics);
+    WordExpr(const WordExpr& l, NodeType t, const WordExpr& r,
+             WordSemantics semantics);
     friend GECODE_MINIMODEL_EXPORT WordExpr
     ite(const BoolExpr&, const WordExpr&, const WordExpr&);
     friend GECODE_MINIMODEL_EXPORT WordExpr
@@ -1569,6 +1581,24 @@ namespace Gecode {
     rotate_left(const WordExpr&, unsigned int);
     friend GECODE_MINIMODEL_EXPORT WordExpr
     rotate_right(const WordExpr&, unsigned int);
+    friend GECODE_MINIMODEL_EXPORT WordExpr
+    operator +(const WordExpr&, const WordExpr&);
+    friend GECODE_MINIMODEL_EXPORT WordExpr
+    operator -(const WordExpr&);
+    friend GECODE_MINIMODEL_EXPORT WordExpr
+    operator -(const WordExpr&, const WordExpr&);
+    friend GECODE_MINIMODEL_EXPORT WordExpr
+    operator *(const WordExpr&, const WordExpr&);
+    friend GECODE_MINIMODEL_EXPORT WordExpr
+    div(const WordExpr&, const WordExpr&, WordSemantics);
+    friend GECODE_MINIMODEL_EXPORT WordExpr
+    mod(const WordExpr&, const WordExpr&, WordSemantics);
+    friend GECODE_MINIMODEL_EXPORT WordExpr
+    signed_div(const WordExpr&, const WordExpr&, WordSemantics);
+    friend GECODE_MINIMODEL_EXPORT WordExpr
+    signed_rem(const WordExpr&, const WordExpr&, WordSemantics);
+    friend GECODE_MINIMODEL_EXPORT WordExpr
+    signed_mod(const WordExpr&, const WordExpr&, WordSemantics);
   public:
     /// Copy constructor
     GECODE_MINIMODEL_EXPORT WordExpr(const WordExpr& e);
@@ -1680,6 +1710,39 @@ namespace Gecode {
   /// Rotate the expression right by constant a amount
   GECODE_MINIMODEL_EXPORT WordExpr
   rotate_right(const WordExpr&, unsigned int amount);
+
+  /// Modular addition
+  GECODE_MINIMODEL_EXPORT WordExpr
+  operator +(const WordExpr&, const WordExpr&);
+  /// Two's-complement modular negation
+  GECODE_MINIMODEL_EXPORT WordExpr
+  operator -(const WordExpr&);
+  /// Modular subtraction
+  GECODE_MINIMODEL_EXPORT WordExpr
+  operator -(const WordExpr&, const WordExpr&);
+  /// Modular multiplication
+  GECODE_MINIMODEL_EXPORT WordExpr
+  operator *(const WordExpr&, const WordExpr&);
+  /// Unsigned division under the selected semantics
+  GECODE_MINIMODEL_EXPORT WordExpr
+  div(const WordExpr&, const WordExpr&,
+      WordSemantics semantics=WS_SMTLIB);
+  /// Unsigned remainder under the selected semantics
+  GECODE_MINIMODEL_EXPORT WordExpr
+  mod(const WordExpr&, const WordExpr&,
+      WordSemantics semantics=WS_SMTLIB);
+  /// Signed division under the selected semantics
+  GECODE_MINIMODEL_EXPORT WordExpr
+  signed_div(const WordExpr&, const WordExpr&,
+             WordSemantics semantics=WS_SMTLIB);
+  /// Signed remainder under the selected semantics
+  GECODE_MINIMODEL_EXPORT WordExpr
+  signed_rem(const WordExpr&, const WordExpr&,
+             WordSemantics semantics=WS_SMTLIB);
+  /// Signed modulus under the selected semantics
+  GECODE_MINIMODEL_EXPORT WordExpr
+  signed_mod(const WordExpr&, const WordExpr&,
+             WordSemantics semantics=WS_SMTLIB);
   //@}
 #endif
 

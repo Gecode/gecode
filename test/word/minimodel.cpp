@@ -531,6 +531,187 @@ namespace Test { namespace Word {
       }
     };
 
+    class ArithmeticLifecycle : public Base {
+    private:
+      enum Operation {
+        OP_ADD, OP_NEG, OP_SUB, OP_MULT, OP_DIV, OP_MOD,
+        OP_SIGNED_DIV, OP_SIGNED_REM, OP_SIGNED_MOD, OP_COUNT
+      };
+
+      class ArithmeticSpace : public Gecode::Space {
+      public:
+        Gecode::WordVar x;
+        Gecode::WordVar y;
+        Gecode::WordVar direct_result;
+        Gecode::WordVar minimodel_result;
+        ArithmeticSpace(Operation op)
+          : x(*this,2), y(*this,2), direct_result(*this,2),
+            minimodel_result() {
+          using namespace Gecode;
+          WordExpr expression(x);
+          switch (op) {
+          case OP_ADD:
+            add(*this,x,y,direct_result);
+            expression = WordExpr(x) + WordExpr(y);
+            break;
+          case OP_NEG:
+            neg(*this,x,direct_result);
+            expression = -WordExpr(x);
+            break;
+          case OP_SUB:
+            sub(*this,x,y,direct_result);
+            expression = WordExpr(x) - WordExpr(y);
+            break;
+          case OP_MULT:
+            mult(*this,x,y,direct_result);
+            expression = WordExpr(x) * WordExpr(y);
+            break;
+          case OP_DIV:
+            Gecode::div(*this,x,y,direct_result,WS_SMTLIB);
+            expression = Gecode::div(WordExpr(x),WordExpr(y),WS_SMTLIB);
+            break;
+          case OP_MOD:
+            Gecode::mod(*this,x,y,direct_result,WS_SMTLIB);
+            expression = Gecode::mod(WordExpr(x),WordExpr(y),WS_SMTLIB);
+            break;
+          case OP_SIGNED_DIV:
+            signed_div(*this,x,y,direct_result,WS_SMTLIB);
+            expression = signed_div(WordExpr(x),WordExpr(y),WS_SMTLIB);
+            break;
+          case OP_SIGNED_REM:
+            signed_rem(*this,x,y,direct_result,WS_SMTLIB);
+            expression = signed_rem(WordExpr(x),WordExpr(y),WS_SMTLIB);
+            break;
+          case OP_SIGNED_MOD:
+            signed_mod(*this,x,y,direct_result,WS_SMTLIB);
+            expression = signed_mod(WordExpr(x),WordExpr(y),WS_SMTLIB);
+            break;
+          default:
+            GECODE_NEVER;
+          }
+          WordExpr copied(expression);
+          WordExpr assigned(x);
+          assigned = copied;
+          minimodel_result = expr(*this,assigned);
+        }
+        ArithmeticSpace(ArithmeticSpace& s) : Gecode::Space(s) {
+          x.update(*this,s.x);
+          y.update(*this,s.y);
+          direct_result.update(*this,s.direct_result);
+          minimodel_result.update(*this,s.minimodel_result);
+        }
+        virtual Gecode::Space* copy(void) {
+          return new ArithmeticSpace(*this);
+        }
+      };
+
+      static bool parity(void) {
+        for (unsigned int op=0; op<OP_COUNT; op++)
+          for (Gecode::WordValue x=0; x<4; x++)
+            for (Gecode::WordValue y=0; y<4; y++) {
+              ArithmeticSpace s(static_cast<Operation>(op));
+              Gecode::dom(s,s.x,x);
+              Gecode::dom(s,s.y,y);
+              if ((s.status() == Gecode::SS_FAILED) ||
+                  !s.direct_result.assigned() ||
+                  !s.minimodel_result.assigned() ||
+                  (s.direct_result.val() != s.minimodel_result.val()))
+                return false;
+            }
+        return true;
+      }
+
+      static bool invalid(void) {
+        ArithmeticSpace s(OP_ADD);
+        Gecode::WordVar narrow(s,1);
+        try {
+          (void) (Gecode::WordExpr(s.x) + Gecode::WordExpr(narrow));
+          return false;
+        } catch (const Gecode::Word::WidthMismatch&) {}
+        try {
+          (void) Gecode::div(Gecode::WordExpr(s.x),Gecode::WordExpr(narrow));
+          return false;
+        } catch (const Gecode::Word::WidthMismatch&) {}
+        try {
+          (void) Gecode::signed_mod(
+            Gecode::WordExpr(s.x),Gecode::WordExpr(s.y),
+            static_cast<Gecode::WordSemantics>(99));
+          return false;
+        } catch (const Gecode::Word::UnknownOperation&) {}
+        return true;
+      }
+
+      static bool clone(void) {
+        ArithmeticSpace source(OP_SIGNED_DIV);
+        if (source.status() == Gecode::SS_FAILED)
+          return false;
+        ArithmeticSpace* copy =
+          static_cast<ArithmeticSpace*>(source.clone());
+        Gecode::dom(*copy,copy->x,2U);
+        Gecode::dom(*copy,copy->y,3U);
+        const bool ok = (copy->status() != Gecode::SS_FAILED) &&
+          copy->direct_result.assigned() && copy->minimodel_result.assigned() &&
+          (copy->direct_result.val() == copy->minimodel_result.val()) &&
+          !source.x.assigned();
+        delete copy;
+        return ok;
+      }
+
+      static bool search_recomputation(void) {
+        using namespace Gecode;
+        class SearchSpace : public Space {
+        public:
+          WordVar x;
+          WordVar y;
+          WordVar result;
+          SearchSpace(void)
+            : x(*this,3), y(*this,3), result() {
+            WordExpr sum = WordExpr(x) + WordExpr(y);
+            WordExpr product = sum * WordExpr(3,3U);
+            result = expr(*this,Gecode::mod(product,WordExpr(y),WS_SMTLIB));
+            WordVarArgs decision = {x,y};
+            branch(*this,decision,WORD_VAR_SIZE_MIN(),WORD_VAL_LSB());
+          }
+          SearchSpace(SearchSpace& s) : Space(s) {
+            x.update(*this,s.x);
+            y.update(*this,s.y);
+            result.update(*this,s.result);
+          }
+          virtual Space* copy(void) { return new SearchSpace(*this); }
+        };
+
+        SearchSpace* root = new SearchSpace;
+        Search::Options options;
+        options.c_d = 16;
+        options.a_d = 64;
+        DFS<SearchSpace> dfs(root,options);
+        delete root;
+        unsigned int solutions = 0;
+        while (SearchSpace* solution = dfs.next()) {
+          const WordValue product =
+            ((solution->x.val()+solution->y.val()) * 3U) & 7U;
+          const WordValue expected = (solution->y.val() == 0) ? product :
+            product % solution->y.val();
+          const bool ok = solution->x.assigned() && solution->y.assigned() &&
+            solution->result.assigned() &&
+            (solution->result.val() == expected) &&
+            (PropagatorGroup::all.size(*solution) == 0);
+          delete solution;
+          if (!ok)
+            return false;
+          solutions++;
+        }
+        return solutions == 64;
+      }
+
+    public:
+      ArithmeticLifecycle(void)
+        : Base("Word::MiniModel::ArithmeticLifecycle") {}
+      virtual bool run(void) {
+        return parity() && invalid() && clone() && search_recomputation();
+      }
+    };
+
     Logic logic;
     NamedLogic named_logic;
     BooleanConditional boolean_conditional;
@@ -538,6 +719,7 @@ namespace Test { namespace Word {
     Relation relation;
     Lifecycle lifecycle;
     StructuralLifecycle structural_lifecycle;
+    ArithmeticLifecycle arithmetic_lifecycle;
 
   }
 

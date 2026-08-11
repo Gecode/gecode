@@ -46,6 +46,7 @@ namespace Gecode {
     unsigned int parameter;
     unsigned int extent;
     WordValue value;
+    WordSemantics semantics;
     BoolExpr* bool_control;
 
     Node(void);
@@ -59,7 +60,7 @@ namespace Gecode {
   WordExpr::Node::Node(void)
     : use(1), t(NT_VAR), l(nullptr), r(nullptr), c(nullptr),
       width(0), parameter(0), extent(0), value(0),
-      bool_control(nullptr) {}
+      semantics(WS_SMTLIB), bool_control(nullptr) {}
 
   WordExpr::Node::~Node(void) {
     delete bool_control;
@@ -97,6 +98,14 @@ namespace Gecode {
     check_width(unsigned int left, unsigned int right) {
       if (left != right)
         throw Word::WidthMismatch("MiniModel::WordExpr");
+    }
+
+    void
+    check_semantics(WordSemantics semantics) {
+      switch (semantics) {
+      case WS_SMTLIB: return;
+      default: throw Word::UnknownOperation("MiniModel::WordExpr");
+      }
     }
 
     WordOpType
@@ -278,6 +287,38 @@ namespace Gecode {
       }
       return result;
     }
+    case NT_NEG: {
+      WordVar operand = l->post(home);
+      WordVar result(home,width);
+      Gecode::neg(home,operand,result);
+      return result;
+    }
+    case NT_ADD: case NT_SUB: case NT_MULT:
+    case NT_DIV: case NT_MOD: case NT_SIGNED_DIV:
+    case NT_SIGNED_REM: case NT_SIGNED_MOD: {
+      WordVar left = l->post(home);
+      WordVar right = r->post(home);
+      WordVar result(home,width);
+      switch (t) {
+      case NT_ADD:
+        Gecode::add(home,left,right,result); break;
+      case NT_SUB:
+        Gecode::sub(home,left,right,result); break;
+      case NT_MULT:
+        Gecode::mult(home,left,right,result); break;
+      case NT_DIV:
+        Gecode::div(home,left,right,result,semantics); break;
+      case NT_MOD:
+        Gecode::mod(home,left,right,result,semantics); break;
+      case NT_SIGNED_DIV:
+        Gecode::signed_div(home,left,right,result,semantics); break;
+      case NT_SIGNED_REM:
+        Gecode::signed_rem(home,left,right,result,semantics); break;
+      default:
+        Gecode::signed_mod(home,left,right,result,semantics); break;
+      }
+      return result;
+    }
     default:
       throw Word::UnknownOperation("MiniModel::WordExpr");
     }
@@ -339,6 +380,26 @@ namespace Gecode {
                      unsigned int result_width) : n(new Node) {
     n->t = t;
     n->width = result_width;
+    n->l = l.n;
+    n->l->use++;
+    n->r = r.n;
+    n->r->use++;
+  }
+
+  WordExpr::WordExpr(const WordExpr& e, NodeType t,
+                     WordSemantics semantics) : n(new Node) {
+    n->t = t;
+    n->width = e.width();
+    n->semantics = semantics;
+    n->l = e.n;
+    n->l->use++;
+  }
+
+  WordExpr::WordExpr(const WordExpr& l, NodeType t, const WordExpr& r,
+                     WordSemantics semantics) : n(new Node) {
+    n->t = t;
+    n->width = l.width();
+    n->semantics = semantics;
     n->l = l.n;
     n->l->use++;
     n->r = r.n;
@@ -553,6 +614,69 @@ namespace Gecode {
   WordExpr
   rotate_right(const WordExpr& e, unsigned int amount) {
     return WordExpr(e,WordExpr::NT_ROTATE_RIGHT,amount,0,e.width());
+  }
+
+  WordExpr
+  operator +(const WordExpr& left, const WordExpr& right) {
+    check_width(left.width(),right.width());
+    return WordExpr(left,WordExpr::NT_ADD,right,WS_SMTLIB);
+  }
+
+  WordExpr
+  operator -(const WordExpr& e) {
+    return WordExpr(e,WordExpr::NT_NEG,WS_SMTLIB);
+  }
+
+  WordExpr
+  operator -(const WordExpr& left, const WordExpr& right) {
+    check_width(left.width(),right.width());
+    return WordExpr(left,WordExpr::NT_SUB,right,WS_SMTLIB);
+  }
+
+  WordExpr
+  operator *(const WordExpr& left, const WordExpr& right) {
+    check_width(left.width(),right.width());
+    return WordExpr(left,WordExpr::NT_MULT,right,WS_SMTLIB);
+  }
+
+  WordExpr
+  div(const WordExpr& left, const WordExpr& right,
+      WordSemantics semantics) {
+    check_width(left.width(),right.width());
+    check_semantics(semantics);
+    return WordExpr(left,WordExpr::NT_DIV,right,semantics);
+  }
+
+  WordExpr
+  mod(const WordExpr& left, const WordExpr& right,
+      WordSemantics semantics) {
+    check_width(left.width(),right.width());
+    check_semantics(semantics);
+    return WordExpr(left,WordExpr::NT_MOD,right,semantics);
+  }
+
+  WordExpr
+  signed_div(const WordExpr& left, const WordExpr& right,
+             WordSemantics semantics) {
+    check_width(left.width(),right.width());
+    check_semantics(semantics);
+    return WordExpr(left,WordExpr::NT_SIGNED_DIV,right,semantics);
+  }
+
+  WordExpr
+  signed_rem(const WordExpr& left, const WordExpr& right,
+             WordSemantics semantics) {
+    check_width(left.width(),right.width());
+    check_semantics(semantics);
+    return WordExpr(left,WordExpr::NT_SIGNED_REM,right,semantics);
+  }
+
+  WordExpr
+  signed_mod(const WordExpr& left, const WordExpr& right,
+             WordSemantics semantics) {
+    check_width(left.width(),right.width());
+    check_semantics(semantics);
+    return WordExpr(left,WordExpr::NT_SIGNED_MOD,right,semantics);
   }
 
   WordVar
