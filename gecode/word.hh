@@ -70,7 +70,7 @@ namespace Gecode {
 #include <gecode/word/var-imp.hpp>
 
 namespace Gecode {
-  namespace Word { class WordView; }
+  namespace Word { class WordView; class WordTraceView; }
 
   /**
    * \defgroup TaskModelWord Word-vector constraints
@@ -114,6 +114,7 @@ namespace Gecode {
 
 #include <gecode/word/var/word.hpp>
 #include <gecode/word/view.hpp>
+#include <gecode/word/trace/trace-view.hpp>
 
 namespace Gecode {
   forceinline WordVar::WordVar(const Word::WordView& y)
@@ -256,10 +257,139 @@ namespace Gecode {
 
 namespace Gecode {
 
+  /// Recording AFC information for word variables
+  class WordAFC : public AFC {
+  public:
+    WordAFC(void);
+    WordAFC(const WordAFC& a);
+    WordAFC& operator =(const WordAFC& a);
+    WordAFC(Home home, const WordVarArgs& x, double d=1.0,
+            bool share=true);
+    void init(Home home, const WordVarArgs& x, double d=1.0,
+              bool share=true);
+  };
+
+  /// Recording action information for word variables
+  class WordAction : public Action {
+  public:
+    WordAction(void);
+    WordAction(const WordAction& a);
+    WordAction& operator =(const WordAction& a);
+    GECODE_WORD_EXPORT
+    WordAction(Home home, const WordVarArgs& x, double d=1.0,
+               bool p=true, bool f=true, WordBranchMerit bm=nullptr);
+    GECODE_WORD_EXPORT void
+    init(Home home, const WordVarArgs& x, double d=1.0,
+         bool p=true, bool f=true, WordBranchMerit bm=nullptr);
+  };
+
+  /// Recording CHB information for word variables
+  class WordCHB : public CHB {
+  public:
+    WordCHB(void);
+    WordCHB(const WordCHB& c);
+    WordCHB& operator =(const WordCHB& c);
+    GECODE_WORD_EXPORT
+    WordCHB(Home home, const WordVarArgs& x, WordBranchMerit bm=nullptr);
+    GECODE_WORD_EXPORT void
+    init(Home home, const WordVarArgs& x, WordBranchMerit bm=nullptr);
+  };
+
+  /// Function type for printing branching alternatives for word variables
+  typedef std::function<void(const Space& home, const Brancher& b,
+                             unsigned int a, WordVar x, int i,
+                             const unsigned int& bit, std::ostream& o)>
+    WordVarValPrint;
+
   /**
    * \defgroup TaskModelWordBranch Branching
    * \ingroup TaskModelWord
   */
+
+  /// Which word variable to select for branching
+  class WordVarBranch : public VarBranch<WordVar> {
+  public:
+    enum Select {
+      SEL_NONE = 0,
+      SEL_RND,
+      SEL_MERIT_MIN,
+      SEL_MERIT_MAX,
+      SEL_DEGREE_MIN,
+      SEL_DEGREE_MAX,
+      SEL_AFC_MIN,
+      SEL_AFC_MAX,
+      SEL_ACTION_MIN,
+      SEL_ACTION_MAX,
+      SEL_CHB_MIN,
+      SEL_CHB_MAX,
+      SEL_SIZE_MIN,
+      SEL_SIZE_MAX,
+      SEL_DEGREE_SIZE_MIN,
+      SEL_DEGREE_SIZE_MAX,
+      SEL_AFC_SIZE_MIN,
+      SEL_AFC_SIZE_MAX,
+      SEL_ACTION_SIZE_MIN,
+      SEL_ACTION_SIZE_MAX,
+      SEL_CHB_SIZE_MIN,
+      SEL_CHB_SIZE_MAX
+    };
+  protected:
+    Select s;
+  public:
+    WordVarBranch(void);
+    WordVarBranch(Rnd r);
+    WordVarBranch(Select s, BranchTbl t);
+    WordVarBranch(Select s, double d, BranchTbl t);
+    WordVarBranch(Select s, WordAFC a, BranchTbl t);
+    WordVarBranch(Select s, WordAction a, BranchTbl t);
+    WordVarBranch(Select s, WordCHB c, BranchTbl t);
+    WordVarBranch(Select s, WordBranchMerit mf, BranchTbl t);
+    Select select(void) const;
+    void expand(Home home, const WordVarArgs& x);
+  };
+
+  WordVarBranch WORD_VAR_NONE(void);
+  WordVarBranch WORD_VAR_RND(Rnd r);
+  WordVarBranch WORD_VAR_MERIT_MIN(WordBranchMerit bm,
+                                   BranchTbl tbl=nullptr);
+  WordVarBranch WORD_VAR_MERIT_MAX(WordBranchMerit bm,
+                                   BranchTbl tbl=nullptr);
+  WordVarBranch WORD_VAR_DEGREE_MIN(BranchTbl tbl=nullptr);
+  WordVarBranch WORD_VAR_DEGREE_MAX(BranchTbl tbl=nullptr);
+  WordVarBranch WORD_VAR_AFC_MIN(double d=1.0, BranchTbl tbl=nullptr);
+  WordVarBranch WORD_VAR_AFC_MIN(WordAFC a, BranchTbl tbl=nullptr);
+  WordVarBranch WORD_VAR_AFC_MAX(double d=1.0, BranchTbl tbl=nullptr);
+  WordVarBranch WORD_VAR_AFC_MAX(WordAFC a, BranchTbl tbl=nullptr);
+  WordVarBranch WORD_VAR_ACTION_MIN(double d=1.0, BranchTbl tbl=nullptr);
+  WordVarBranch WORD_VAR_ACTION_MIN(WordAction a, BranchTbl tbl=nullptr);
+  WordVarBranch WORD_VAR_ACTION_MAX(double d=1.0, BranchTbl tbl=nullptr);
+  WordVarBranch WORD_VAR_ACTION_MAX(WordAction a, BranchTbl tbl=nullptr);
+  WordVarBranch WORD_VAR_CHB_MIN(BranchTbl tbl=nullptr);
+  WordVarBranch WORD_VAR_CHB_MIN(WordCHB c, BranchTbl tbl=nullptr);
+  WordVarBranch WORD_VAR_CHB_MAX(BranchTbl tbl=nullptr);
+  WordVarBranch WORD_VAR_CHB_MAX(WordCHB c, BranchTbl tbl=nullptr);
+  WordVarBranch WORD_VAR_SIZE_MIN(BranchTbl tbl=nullptr);
+  WordVarBranch WORD_VAR_SIZE_MAX(BranchTbl tbl=nullptr);
+  WordVarBranch WORD_VAR_DEGREE_SIZE_MIN(BranchTbl tbl=nullptr);
+  WordVarBranch WORD_VAR_DEGREE_SIZE_MAX(BranchTbl tbl=nullptr);
+  WordVarBranch WORD_VAR_AFC_SIZE_MIN(double d=1.0,
+                                      BranchTbl tbl=nullptr);
+  WordVarBranch WORD_VAR_AFC_SIZE_MIN(WordAFC a, BranchTbl tbl=nullptr);
+  WordVarBranch WORD_VAR_AFC_SIZE_MAX(double d=1.0,
+                                      BranchTbl tbl=nullptr);
+  WordVarBranch WORD_VAR_AFC_SIZE_MAX(WordAFC a, BranchTbl tbl=nullptr);
+  WordVarBranch WORD_VAR_ACTION_SIZE_MIN(double d=1.0,
+                                         BranchTbl tbl=nullptr);
+  WordVarBranch WORD_VAR_ACTION_SIZE_MIN(WordAction a,
+                                         BranchTbl tbl=nullptr);
+  WordVarBranch WORD_VAR_ACTION_SIZE_MAX(double d=1.0,
+                                         BranchTbl tbl=nullptr);
+  WordVarBranch WORD_VAR_ACTION_SIZE_MAX(WordAction a,
+                                         BranchTbl tbl=nullptr);
+  WordVarBranch WORD_VAR_CHB_SIZE_MIN(BranchTbl tbl=nullptr);
+  WordVarBranch WORD_VAR_CHB_SIZE_MIN(WordCHB c, BranchTbl tbl=nullptr);
+  WordVarBranch WORD_VAR_CHB_SIZE_MAX(BranchTbl tbl=nullptr);
+  WordVarBranch WORD_VAR_CHB_SIZE_MAX(WordCHB c, BranchTbl tbl=nullptr);
 
   /// Which unknown bit to select for branching
   class WordValBranch : public ValBranch<WordVar> {
@@ -311,16 +441,74 @@ namespace Gecode {
 
   /// Branch over all word variables, trying zero before one
   GECODE_WORD_EXPORT void branch(Home home, const WordVarArgs& x,
+                                 WordVarBranch vars, WordValBranch vals,
+                                 WordBranchFilter bf=nullptr,
+                                 WordVarValPrint vvp=nullptr);
+  /// Branch over all word variables, trying zero before one
+  GECODE_WORD_EXPORT void branch(Home home, const WordVarArgs& x,
                                  WordValBranch vals=WORD_VAL_LSB());
   /// Branch over one word variable, trying zero before one
   GECODE_WORD_EXPORT void branch(Home home, WordVar x,
                                  WordValBranch vals=WORD_VAL_LSB());
   /// Assign all word variables by fixing selected unknown bits to zero
   GECODE_WORD_EXPORT void assign(Home home, const WordVarArgs& x,
+                                 WordVarBranch vars, WordAssign vals,
+                                 WordBranchFilter bf=nullptr,
+                                 WordVarValPrint vvp=nullptr);
+  /// Assign all word variables by fixing selected unknown bits to zero
+  GECODE_WORD_EXPORT void assign(Home home, const WordVarArgs& x,
                                  WordAssign vals=WORD_ASSIGN_LSB());
   /// Assign one word variable by fixing selected unknown bits to zero
   GECODE_WORD_EXPORT void assign(Home home, WordVar x,
                                  WordAssign vals=WORD_ASSIGN_LSB());
+
+  /// Delta reported by word-variable tracing
+  class WordTraceDelta {
+  private:
+    WordValue _zero;
+    WordValue _one;
+  public:
+    WordTraceDelta(Word::WordTraceView o, Word::WordView n,
+                   const Delta& d);
+    WordValue zero(void) const;
+    WordValue one(void) const;
+  };
+
+}
+
+#include <gecode/word/trace/delta.hpp>
+#include <gecode/word/trace/traits.hpp>
+
+namespace Gecode {
+
+  /// Tracer for word variables
+  typedef ViewTracer<Word::WordView> WordTracer;
+  /// Trace recorder for word variables
+  typedef ViewTraceRecorder<Word::WordView> WordTraceRecorder;
+
+  /// Standard word-variable tracer
+  class GECODE_WORD_EXPORT StdWordTracer : public WordTracer {
+  protected:
+    std::ostream& os;
+  public:
+    StdWordTracer(std::ostream& os0=std::cerr);
+    virtual void init(const Space& home, const WordTraceRecorder& t);
+    virtual void prune(const Space& home, const WordTraceRecorder& t,
+                       const ViewTraceInfo& vti, int i, WordTraceDelta& d);
+    virtual void fix(const Space& home, const WordTraceRecorder& t);
+    virtual void fail(const Space& home, const WordTraceRecorder& t);
+    virtual void done(const Space& home, const WordTraceRecorder& t);
+    static StdWordTracer def;
+  };
+
+  GECODE_WORD_EXPORT void
+  trace(Home home, const WordVarArgs& x, TraceFilter tf,
+        int te=(TE_INIT | TE_PRUNE | TE_FIX | TE_FAIL | TE_DONE),
+        WordTracer& t=StdWordTracer::def);
+  void
+  trace(Home home, const WordVarArgs& x,
+        int te=(TE_INIT | TE_PRUNE | TE_FIX | TE_FAIL | TE_DONE),
+        WordTracer& t=StdWordTracer::def);
 
   template<class Char, class Traits>
   std::basic_ostream<Char,Traits>&
@@ -330,5 +518,6 @@ namespace Gecode {
 #include <gecode/word/array.hpp>
 #include <gecode/word/branch.hpp>
 #include <gecode/word/print.hpp>
+#include <gecode/word/trace.hpp>
 
 #endif

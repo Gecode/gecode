@@ -3,9 +3,9 @@
 # Tasks: word
 
 - Total: 22
-- Ready: 5
+- Ready: 4
 - Blocked: 11
-- Done: 6
+- Done: 7
 
 | ID | Task | State | Blocked by |
 | --- | --- | --- | --- |
@@ -15,7 +15,7 @@
 | [word-004](tasks/004-add-word-equality-disequality-and-reification.md) | Add word equality disequality and reification | done | word-002 |
 | [word-005](tasks/005-add-word-level-logical-constraints.md) | Add word-level logical constraints | done | word-002 |
 | [word-006](tasks/006-make-word-only-models-searchable.md) | Make word-only models searchable | done | word-002 |
-| [word-007](tasks/007-add-standard-word-selectors-and-tracing.md) | Add standard word selectors and tracing | ready | word-006 |
+| [word-007](tasks/007-add-standard-word-selectors-and-tracing.md) | Add standard word selectors and tracing | done | word-006 |
 | [word-008](tasks/008-add-signed-and-unsigned-word-ordering.md) | Add signed and unsigned word ordering | ready | word-004 |
 | [word-009](tasks/009-add-fixed-structural-word-operations.md) | Add fixed structural word operations | ready | word-002 |
 | [word-010](tasks/010-add-constant-word-shifts-and-rotations.md) | Add constant word shifts and rotations | ready | word-002 |

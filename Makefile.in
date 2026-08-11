@@ -555,12 +555,13 @@ FLOATBUILDDIRS	= \
 
 WORDSRC0 = \
 	array.cpp branch.cpp channel.cpp channel/bit.cpp exception.cpp \
-	logic.cpp rel.cpp var/word.cpp var-imp/word.cpp
+	logic.cpp rel.cpp trace.cpp trace/tracer.cpp var/word.cpp var-imp/word.cpp
 WORDHDR0 = \
 	array.hpp array-traits.hpp branch.hh branch.hpp branch/traits.hpp \
 	channel.hh channel/bit.hpp \
 	exception.hpp logic.hh logic/table.hpp print.hpp view.hpp \
 	rel.hh rel/eq.hpp rel/nq.hpp rel/re-eq.hpp \
+	trace.hpp trace/delta.hpp trace/trace-view.hpp trace/traits.hpp \
 	var/word.hpp var-imp.hpp var-imp/delta.hpp var-imp/word.hpp
 WORDSRC = $(WORDSRC0:%=gecode/word/%)
 WORDHDR = gecode/word.hh $(WORDHDR0:%=gecode/word/%)
@@ -591,7 +592,8 @@ export LINKWORD      =
 export WORDRC        =
 export WORDRES       =
 endif
-WORDBUILDDIRS = word word/channel word/logic word/rel word/var word/var-imp
+WORDBUILDDIRS = word word/branch word/channel word/logic word/rel word/trace \
+	word/var word/var-imp
 
 #
 # SET COMPONENTS
@@ -1177,7 +1179,7 @@ else
 FLOATTESTOBJ=
 endif
 
-WORDTESTSRC00 = branch channel logic rel
+WORDTESTSRC00 = branch channel logic rel trace
 WORDTESTSRC0 = test/word.cpp $(WORDTESTSRC00:%=test/word/%.cpp)
 
 ifeq "@enable_word_vars@" "yes"

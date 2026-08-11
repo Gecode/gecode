@@ -34,6 +34,116 @@
 
 namespace Gecode { namespace Word { namespace Branch {
 
+  MeritSize::MeritSize(Space& home, const VarBranch<Var>& vb)
+    : MeritBase<WordView,unsigned int>(home,vb) {}
+  MeritSize::MeritSize(Space& home, MeritSize& m)
+    : MeritBase<WordView,unsigned int>(home,m) {}
+  unsigned int
+  MeritSize::operator ()(const Space&, WordView x, int) {
+    return x.unknown_size();
+  }
+
+  MeritDegreeSize::MeritDegreeSize(Space& home, const VarBranch<Var>& vb)
+    : MeritBase<WordView,double>(home,vb) {}
+  MeritDegreeSize::MeritDegreeSize(Space& home, MeritDegreeSize& m)
+    : MeritBase<WordView,double>(home,m) {}
+  double
+  MeritDegreeSize::operator ()(const Space&, WordView x, int) {
+    return static_cast<double>(x.unknown_size()) /
+      static_cast<double>(x.degree());
+  }
+
+  MeritAFCSize::MeritAFCSize(Space& home, const VarBranch<Var>& vb)
+    : MeritBase<WordView,double>(home,vb), afc(vb.afc()) {}
+  MeritAFCSize::MeritAFCSize(Space& home, MeritAFCSize& m)
+    : MeritBase<WordView,double>(home,m), afc(m.afc) {}
+  double
+  MeritAFCSize::operator ()(const Space&, WordView x, int) {
+    return x.afc() / static_cast<double>(x.unknown_size());
+  }
+  bool MeritAFCSize::notice(void) const { return false; }
+  void MeritAFCSize::dispose(Space&) { afc.~AFC(); }
+
+  MeritActionSize::MeritActionSize(Space& home, const VarBranch<Var>& vb)
+    : MeritBase<WordView,double>(home,vb), action(vb.action()) {}
+  MeritActionSize::MeritActionSize(Space& home, MeritActionSize& m)
+    : MeritBase<WordView,double>(home,m), action(m.action) {}
+  double
+  MeritActionSize::operator ()(const Space&, WordView x, int i) {
+    return action[i] / static_cast<double>(x.unknown_size());
+  }
+  bool MeritActionSize::notice(void) const { return true; }
+  void MeritActionSize::dispose(Space&) { action.~Action(); }
+
+  MeritCHBSize::MeritCHBSize(Space& home, const VarBranch<Var>& vb)
+    : MeritBase<WordView,double>(home,vb), chb(vb.chb()) {}
+  MeritCHBSize::MeritCHBSize(Space& home, MeritCHBSize& m)
+    : MeritBase<WordView,double>(home,m), chb(m.chb) {}
+  double
+  MeritCHBSize::operator ()(const Space&, WordView x, int i) {
+    return chb[i] / static_cast<double>(x.unknown_size());
+  }
+  bool MeritCHBSize::notice(void) const { return true; }
+  void MeritCHBSize::dispose(Space&) { chb.~CHB(); }
+
+  template<template<class> class Selector, class Merit>
+  static ViewSel<WordView>*
+  select_merit(Space& home, const WordVarBranch& wvb) {
+    return new (home) Selector<Merit>(home,wvb);
+  }
+
+  ViewSel<WordView>*
+  viewsel(Space& home, const WordVarBranch& wvb) {
+    switch (wvb.select()) {
+    case WordVarBranch::SEL_NONE:
+      return new (home) ViewSelNone<WordView>(home,wvb);
+    case WordVarBranch::SEL_RND:
+      return new (home) ViewSelRnd<WordView>(home,wvb);
+    default: break;
+    }
+#define GECODE_WORD_VIEWSEL_CASE(Select, Merit) \
+    case WordVarBranch::Select##_MIN: \
+      return select_merit<ViewSelMin,Merit>(home,wvb); \
+    case WordVarBranch::Select##_MAX: \
+      return select_merit<ViewSelMax,Merit>(home,wvb)
+    if (wvb.tbl() == nullptr) {
+      switch (wvb.select()) {
+      GECODE_WORD_VIEWSEL_CASE(SEL_MERIT,MeritFunction<WordView>);
+      GECODE_WORD_VIEWSEL_CASE(SEL_DEGREE,MeritDegree<WordView>);
+      GECODE_WORD_VIEWSEL_CASE(SEL_AFC,MeritAFC<WordView>);
+      GECODE_WORD_VIEWSEL_CASE(SEL_ACTION,MeritAction<WordView>);
+      GECODE_WORD_VIEWSEL_CASE(SEL_CHB,MeritCHB<WordView>);
+      GECODE_WORD_VIEWSEL_CASE(SEL_SIZE,MeritSize);
+      GECODE_WORD_VIEWSEL_CASE(SEL_DEGREE_SIZE,MeritDegreeSize);
+      GECODE_WORD_VIEWSEL_CASE(SEL_AFC_SIZE,MeritAFCSize);
+      GECODE_WORD_VIEWSEL_CASE(SEL_ACTION_SIZE,MeritActionSize);
+      GECODE_WORD_VIEWSEL_CASE(SEL_CHB_SIZE,MeritCHBSize);
+      default: throw UnknownBranching("Word::branch");
+      }
+    } else {
+#undef GECODE_WORD_VIEWSEL_CASE
+#define GECODE_WORD_VIEWSEL_CASE(Select, Merit) \
+    case WordVarBranch::Select##_MIN: \
+      return new (home) ViewSelMinTbl<Merit>(home,wvb); \
+    case WordVarBranch::Select##_MAX: \
+      return new (home) ViewSelMaxTbl<Merit>(home,wvb)
+      switch (wvb.select()) {
+      GECODE_WORD_VIEWSEL_CASE(SEL_MERIT,MeritFunction<WordView>);
+      GECODE_WORD_VIEWSEL_CASE(SEL_DEGREE,MeritDegree<WordView>);
+      GECODE_WORD_VIEWSEL_CASE(SEL_AFC,MeritAFC<WordView>);
+      GECODE_WORD_VIEWSEL_CASE(SEL_ACTION,MeritAction<WordView>);
+      GECODE_WORD_VIEWSEL_CASE(SEL_CHB,MeritCHB<WordView>);
+      GECODE_WORD_VIEWSEL_CASE(SEL_SIZE,MeritSize);
+      GECODE_WORD_VIEWSEL_CASE(SEL_DEGREE_SIZE,MeritDegreeSize);
+      GECODE_WORD_VIEWSEL_CASE(SEL_AFC_SIZE,MeritAFCSize);
+      GECODE_WORD_VIEWSEL_CASE(SEL_ACTION_SIZE,MeritActionSize);
+      GECODE_WORD_VIEWSEL_CASE(SEL_CHB_SIZE,MeritCHBSize);
+      default: throw UnknownBranching("Word::branch");
+      }
+    }
+#undef GECODE_WORD_VIEWSEL_CASE
+  }
+
   ValSelLsb::ValSelLsb(Space& home, const ValBranch<Var>& vb)
     : ValSel<WordView,unsigned int>(home,vb) {}
   ValSelLsb::ValSelLsb(Space& home, ValSelLsb& vs)
@@ -164,16 +274,42 @@ namespace Gecode { namespace Word { namespace Branch {
 
 namespace Gecode {
 
+  WordAction::WordAction(Home home, const WordVarArgs& x, double d,
+                         bool p, bool f, WordBranchMerit bm) {
+    ViewArray<Word::WordView> y(home,x);
+    Action::init(home,y,d,p,f,bm);
+  }
   void
-  branch(Home home, const WordVarArgs& x, WordValBranch vals) {
+  WordAction::init(Home home, const WordVarArgs& x, double d,
+                   bool p, bool f, WordBranchMerit bm) {
+    ViewArray<Word::WordView> y(home,x);
+    Action::init(home,y,d,p,f,bm);
+  }
+  WordCHB::WordCHB(Home home, const WordVarArgs& x, WordBranchMerit bm) {
+    ViewArray<Word::WordView> y(home,x);
+    CHB::init(home,y,bm);
+  }
+  void
+  WordCHB::init(Home home, const WordVarArgs& x, WordBranchMerit bm) {
+    ViewArray<Word::WordView> y(home,x);
+    CHB::init(home,y,bm);
+  }
+
+  void
+  branch(Home home, const WordVarArgs& x, WordVarBranch vars,
+         WordValBranch vals, WordBranchFilter bf, WordVarValPrint vvp) {
     using namespace Word;
     if (home.failed()) return;
+    vars.expand(home,x);
     ViewArray<WordView> xv(home,x);
-    ViewSel<WordView>* vs[1] = {
-      new (home) ViewSelNone<WordView>(home,VarBranch<WordVar>())
-    };
+    ViewSel<WordView>* vs[1] = { Branch::viewsel(home,vars) };
     postviewvalbrancher<WordView,1,unsigned int,2>
-      (home,xv,vs,Branch::valselcommit(home,vals),nullptr,nullptr);
+      (home,xv,vs,Branch::valselcommit(home,vals),bf,vvp);
+  }
+
+  void
+  branch(Home home, const WordVarArgs& x, WordValBranch vals) {
+    branch(home,x,WORD_VAR_NONE(),vals,nullptr,nullptr);
   }
 
   void
@@ -183,15 +319,20 @@ namespace Gecode {
   }
 
   void
-  assign(Home home, const WordVarArgs& x, WordAssign vals) {
+  assign(Home home, const WordVarArgs& x, WordVarBranch vars,
+         WordAssign vals, WordBranchFilter bf, WordVarValPrint vvp) {
     using namespace Word;
     if (home.failed()) return;
+    vars.expand(home,x);
     ViewArray<WordView> xv(home,x);
-    ViewSel<WordView>* vs[1] = {
-      new (home) ViewSelNone<WordView>(home,VarBranch<WordVar>())
-    };
+    ViewSel<WordView>* vs[1] = { Branch::viewsel(home,vars) };
     postviewvalbrancher<WordView,1,unsigned int,1>
-      (home,xv,vs,Branch::valselcommit(home,vals),nullptr,nullptr);
+      (home,xv,vs,Branch::valselcommit(home,vals),bf,vvp);
+  }
+
+  void
+  assign(Home home, const WordVarArgs& x, WordAssign vals) {
+    assign(home,x,WORD_VAR_NONE(),vals,nullptr,nullptr);
   }
 
   void
@@ -201,4 +342,3 @@ namespace Gecode {
   }
 
 }
-

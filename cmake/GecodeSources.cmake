@@ -200,6 +200,8 @@ set(GECODE_WORD_SOURCES
   gecode/word/exception.cpp
   gecode/word/logic.cpp
   gecode/word/rel.cpp
+  gecode/word/trace.cpp
+  gecode/word/trace/tracer.cpp
   gecode/word/var-imp/word.cpp
   gecode/word/var/word.cpp
 )
@@ -445,6 +447,7 @@ set(GECODE_TEST_SOURCES
   test/word/channel.cpp
   test/word/logic.cpp
   test/word/rel.cpp
+  test/word/trace.cpp
 )
 
 set(GECODE_TEST_BLACKBOX_EXEC_SOURCE test/flatzinc/blackbox-exec.cpp)

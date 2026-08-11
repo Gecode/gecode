@@ -59,6 +59,98 @@ namespace Test { namespace Word {
 
   class Branch : public Base {
   private:
+    bool selectors(void) const {
+      using namespace Gecode;
+      class SelectorSpace : public Space {
+      public:
+        WordVarArray x;
+        SelectorSpace(WordVarBranch vars)
+          : x(*this,2) {
+          x[0] = WordVar(*this,4,0,1);
+          x[1] = WordVar(*this,4,0,15);
+          branch(*this,x,vars,WORD_VAL_LSB());
+        }
+        SelectorSpace(SelectorSpace& s) : Space(s) {
+          x.update(*this,s.x);
+        }
+        virtual Space* copy(void) { return new SelectorSpace(*this); }
+      };
+
+      SelectorSpace min_space(WORD_VAR_SIZE_MIN());
+      SelectorSpace max_space(WORD_VAR_SIZE_MAX());
+      const Choice* min_choice = min_space.choice();
+      const Choice* max_choice = max_space.choice();
+      std::ostringstream min_out, max_out;
+      min_space.print(*min_choice,0,min_out);
+      max_space.print(*max_choice,0,max_out);
+      delete min_choice; delete max_choice;
+      if ((min_out.str().find("var[0]") == std::string::npos) ||
+          (max_out.str().find("var[1]") == std::string::npos))
+        return false;
+
+      class StateSpace : public Space {
+      public:
+        WordVarArray x;
+        StateSpace(int state) : x(*this,2,4,0,15) {
+          if (state == 0) {
+            WordAFC afc(*this,x);
+            branch(*this,x,WORD_VAR_AFC_MAX(afc),WORD_VAL_LSB());
+          } else if (state == 1) {
+            WordAction action(*this,x);
+            branch(*this,x,WORD_VAR_ACTION_MAX(action),WORD_VAL_LSB());
+          } else {
+            WordCHB chb(*this,x);
+            branch(*this,x,WORD_VAR_CHB_MAX(chb),WORD_VAL_LSB());
+          }
+        }
+        StateSpace(StateSpace& s) : Space(s) { x.update(*this,s.x); }
+        virtual Space* copy(void) { return new StateSpace(*this); }
+      };
+      for (int state=0; state<3; state++) {
+        StateSpace* root = new StateSpace(state);
+        Search::Options o; o.c_d = 1; o.a_d = 1;
+        DFS<StateSpace> dfs(root,o);
+        delete root;
+        StateSpace* solution = dfs.next();
+        const bool ok = (solution != nullptr) &&
+          solution->x[0].assigned() && solution->x[1].assigned();
+        delete solution;
+        if (!ok) return false;
+      }
+      return true;
+    }
+
+    bool mixed_recomputation(void) const {
+      using namespace Gecode;
+      class MixedSpace : public Space {
+      public:
+        WordVar x;
+        BoolVar b;
+        MixedSpace(void) : x(*this,2), b(*this,0,1) {
+          channel(*this,x,0,b);
+          WordVarArgs xv(1); xv[0] = x;
+          branch(*this,xv,WORD_VAR_SIZE_MIN(),WORD_VAL_LSB());
+        }
+        MixedSpace(MixedSpace& s) : Space(s) {
+          x.update(*this,s.x); b.update(*this,s.b);
+        }
+        virtual Space* copy(void) { return new MixedSpace(*this); }
+      };
+      MixedSpace* root = new MixedSpace;
+      Search::Options o; o.c_d = 1; o.a_d = 1;
+      DFS<MixedSpace> dfs(root,o);
+      delete root;
+      int count = 0;
+      while (MixedSpace* s = dfs.next()) {
+        const bool ok = s->x.assigned() && s->b.assigned() &&
+          (static_cast<unsigned int>(s->b.val()) == (s->x.val() & 1U));
+        delete s;
+        if (!ok) return false;
+        count++;
+      }
+      return count == 4;
+    }
+
     bool search(Gecode::WordValBranch vals) const {
       BranchSpace* root = new BranchSpace(vals);
       Gecode::Search::Options o;
@@ -162,7 +254,8 @@ namespace Test { namespace Word {
       return search(WORD_VAL_LSB()) && search(WORD_VAL_MSB()) &&
         search(WORD_VAL_RND(rb)) &&
         assignment(WORD_ASSIGN_LSB()) && assignment(WORD_ASSIGN_MSB()) &&
-        assignment(WORD_ASSIGN_RND(ra)) && lifecycle() && random();
+        assignment(WORD_ASSIGN_RND(ra)) && lifecycle() && random() &&
+        selectors() && mixed_recomputation();
     }
   };
 
@@ -173,4 +266,3 @@ namespace Test { namespace Word {
 }}
 
 // STATISTICS: test-word
-

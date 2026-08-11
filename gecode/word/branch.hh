@@ -37,6 +37,55 @@
 
 namespace Gecode { namespace Word { namespace Branch {
 
+  class MeritSize : public MeritBase<WordView,unsigned int> {
+  public:
+    MeritSize(Space& home, const VarBranch<Var>& vb);
+    MeritSize(Space& home, MeritSize& m);
+    unsigned int operator ()(const Space& home, WordView x, int i);
+  };
+
+  class MeritDegreeSize : public MeritBase<WordView,double> {
+  public:
+    MeritDegreeSize(Space& home, const VarBranch<Var>& vb);
+    MeritDegreeSize(Space& home, MeritDegreeSize& m);
+    double operator ()(const Space& home, WordView x, int i);
+  };
+
+  class MeritAFCSize : public MeritBase<WordView,double> {
+  protected:
+    AFC afc;
+  public:
+    MeritAFCSize(Space& home, const VarBranch<Var>& vb);
+    MeritAFCSize(Space& home, MeritAFCSize& m);
+    double operator ()(const Space& home, WordView x, int i);
+    bool notice(void) const;
+    void dispose(Space& home);
+  };
+
+  class MeritActionSize : public MeritBase<WordView,double> {
+  protected:
+    Action action;
+  public:
+    MeritActionSize(Space& home, const VarBranch<Var>& vb);
+    MeritActionSize(Space& home, MeritActionSize& m);
+    double operator ()(const Space& home, WordView x, int i);
+    bool notice(void) const;
+    void dispose(Space& home);
+  };
+
+  class MeritCHBSize : public MeritBase<WordView,double> {
+  protected:
+    CHB chb;
+  public:
+    MeritCHBSize(Space& home, const VarBranch<Var>& vb);
+    MeritCHBSize(Space& home, MeritCHBSize& m);
+    double operator ()(const Space& home, WordView x, int i);
+    bool notice(void) const;
+    void dispose(Space& home);
+  };
+
+  ViewSel<WordView>* viewsel(Space& home, const WordVarBranch& wvb);
+
   class ValSelLsb : public ValSel<WordView,unsigned int> {
   public:
     ValSelLsb(Space& home, const ValBranch<Var>& vb);
@@ -91,4 +140,3 @@ namespace Gecode { namespace Word { namespace Branch {
 }}}
 
 #endif
-
