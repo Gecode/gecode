@@ -38,7 +38,7 @@ namespace Test { namespace Word {
 
   namespace Arithmetic {
 
-    enum Op { ADD, NEG, SUB };
+    enum Op { ADD, NEG, SUB, MULT };
 
     static Gecode::WordValue
     evaluate(Op op, Gecode::WordValue x, Gecode::WordValue y,
@@ -47,6 +47,7 @@ namespace Test { namespace Word {
       case ADD: return (x + y) & mask;
       case NEG: return (Gecode::WordValue(0) - x) & mask;
       case SUB: return (x - y) & mask;
+      case MULT: return (x * y) & mask;
       default: GECODE_NEVER;
       }
       return 0;
@@ -59,6 +60,7 @@ namespace Test { namespace Word {
       case ADD: Gecode::add(home,x,y,result); break;
       case NEG: Gecode::neg(home,x,result); break;
       case SUB: Gecode::sub(home,x,y,result); break;
+      case MULT: Gecode::mult(home,x,y,result); break;
       default: GECODE_NEVER;
       }
     }
@@ -352,10 +354,262 @@ namespace Test { namespace Word {
       }
     };
 
+    class MultiplicationLifecycle : public Base {
+    private:
+      class MultiplicationSpace : public Gecode::Space {
+      public:
+        Gecode::WordVarArray x;
+        MultiplicationSpace(int n=3, unsigned int width=4)
+          : x(*this,n,width,0,Gecode::Word::width_mask(width)) {}
+        MultiplicationSpace(MultiplicationSpace& s) : Gecode::Space(s) {
+          x.update(*this,s.x);
+        }
+        virtual Gecode::Space* copy(void) {
+          return new MultiplicationSpace(*this);
+        }
+      };
+
+      static bool partial(void) {
+        for (PartialAssignment p(3,1); p.has_more(); p.next()) {
+          TestSpace s(3,Domain(1,0,1));
+          std::vector<Domain> domains;
+          for (int i=0; i<3; i++)
+            domains.push_back(p[i]);
+          s.narrow(domains);
+          Gecode::mult(s,s.x[0],s.x[1],s.x[2]);
+          const bool failed = s.failed();
+          bool supported = false;
+          for (Values x(p[0]); x(); ++x)
+            for (Values y(p[1]); y(); ++y)
+              for (Values z(p[2]); z(); ++z)
+                if (z.val() == evaluate(MULT,x.val(),y.val(),1U)) {
+                  supported = true;
+                  if (failed || !s.x[0].in(x.val()) ||
+                      !s.x[1].in(y.val()) || !s.x[2].in(z.val()))
+                    return false;
+                }
+          if (failed == supported)
+            return false;
+        }
+        return true;
+      }
+
+      /** Tiny ordinary Boolean schoolbook multiplication for comparison. */
+      class DifferentialSpace : public Gecode::Space {
+      public:
+        Gecode::WordVar x;
+        Gecode::WordVar y;
+        Gecode::WordVar native_result;
+        Gecode::WordVar boolean_result;
+        DifferentialSpace(unsigned int width)
+          : x(*this,width), y(*this,width), native_result(*this,width),
+            boolean_result(*this,width) {
+          Gecode::mult(*this,x,y,native_result);
+          Gecode::BoolVarArray x_bits(*this,width,0,1);
+          Gecode::BoolVarArray y_bits(*this,width,0,1);
+          Gecode::BoolVarArray result_bits(*this,width,0,1);
+          for (unsigned int bit=0; bit<width; bit++) {
+            Gecode::channel(*this,x,bit,x_bits[bit]);
+            Gecode::channel(*this,y,bit,y_bits[bit]);
+            Gecode::channel(*this,boolean_result,bit,result_bits[bit]);
+          }
+
+          Gecode::BoolVarArray accumulator(*this,width,0,0);
+          for (unsigned int row=0; row<width; row++) {
+            Gecode::BoolVarArray term(*this,width,0,1);
+            for (unsigned int bit=0; bit<width; bit++) {
+              if (bit < row)
+                Gecode::rel(*this,term[bit],Gecode::IRT_EQ,0);
+              else
+                Gecode::rel(*this,x_bits[bit-row],Gecode::BOT_AND,
+                            y_bits[row],term[bit]);
+            }
+
+            Gecode::BoolVarArray next(*this,width,0,1);
+            Gecode::BoolVarArray carry(*this,width+1,0,1);
+            Gecode::rel(*this,carry[0],Gecode::IRT_EQ,0);
+            for (unsigned int bit=0; bit<width; bit++) {
+              Gecode::BoolVar xor_xy(*this,0,1);
+              Gecode::rel(*this,accumulator[bit],Gecode::BOT_XOR,
+                          term[bit],xor_xy);
+              Gecode::rel(*this,xor_xy,Gecode::BOT_XOR,
+                          carry[bit],next[bit]);
+              Gecode::BoolVar both_one(*this,0,1), carry_one(*this,0,1);
+              Gecode::rel(*this,accumulator[bit],Gecode::BOT_AND,
+                          term[bit],both_one);
+              Gecode::rel(*this,carry[bit],Gecode::BOT_AND,
+                          xor_xy,carry_one);
+              Gecode::rel(*this,both_one,Gecode::BOT_OR,
+                          carry_one,carry[bit+1]);
+            }
+            accumulator = next;
+          }
+          for (unsigned int bit=0; bit<width; bit++)
+            Gecode::rel(*this,accumulator[bit],Gecode::IRT_EQ,
+                        result_bits[bit]);
+        }
+        DifferentialSpace(DifferentialSpace& s) : Gecode::Space(s) {
+          x.update(*this,s.x);
+          y.update(*this,s.y);
+          native_result.update(*this,s.native_result);
+          boolean_result.update(*this,s.boolean_result);
+        }
+        virtual Gecode::Space* copy(void) {
+          return new DifferentialSpace(*this);
+        }
+      };
+
+      static bool boolean_parity(void) {
+        for (Gecode::WordValue x=0; x<8; x++)
+          for (Gecode::WordValue y=0; y<8; y++) {
+            DifferentialSpace s(3);
+            Gecode::dom(s,s.x,x);
+            Gecode::dom(s,s.y,y);
+            if ((s.status() == Gecode::SS_FAILED) ||
+                !s.native_result.assigned() ||
+                !s.boolean_result.assigned() ||
+                (s.native_result.val() != s.boolean_result.val()))
+              return false;
+          }
+        return true;
+      }
+
+      static bool assigned(Gecode::WordValue x, Gecode::WordValue y,
+                           Gecode::WordValue result) {
+        MultiplicationSpace s;
+        Gecode::dom(s,s.x[0],x);
+        Gecode::dom(s,s.x[1],y);
+        Gecode::mult(s,s.x[0],s.x[1],s.x[2]);
+        return (s.status() != Gecode::SS_FAILED) && s.x[2].assigned() &&
+          (s.x[2].val() == result);
+      }
+
+      static bool lifecycle(void) {
+        if (!assigned(0U,15U,0U) || !assigned(1U,15U,15U) ||
+            !assigned(15U,15U,1U) || !assigned(2U,4U,8U))
+          return false;
+
+        MultiplicationSpace constant;
+        Gecode::dom(constant,constant.x[0],5U);
+        Gecode::mult(constant,constant.x[0],4,3U,constant.x[2]);
+        if ((constant.status() == Gecode::SS_FAILED) ||
+            !constant.x[2].assigned() || (constant.x[2].val() != 15U))
+          return false;
+
+        MultiplicationSpace aliases;
+        Gecode::dom(aliases,aliases.x[0],3U);
+        Gecode::mult(aliases,aliases.x[0],aliases.x[0],aliases.x[2]);
+        Gecode::mult(aliases,aliases.x[0],4,1U,aliases.x[0]);
+        if ((aliases.status() == Gecode::SS_FAILED) ||
+            !aliases.x[2].assigned() || (aliases.x[2].val() != 9U))
+          return false;
+
+        MultiplicationSpace failed;
+        Gecode::dom(failed,failed.x[0],3U);
+        Gecode::dom(failed,failed.x[1],3U);
+        Gecode::dom(failed,failed.x[2],8U);
+        Gecode::mult(failed,failed.x[0],failed.x[1],failed.x[2]);
+        if (failed.status() != Gecode::SS_FAILED)
+          return false;
+
+        MultiplicationSpace source;
+        Gecode::mult(source,source.x[0],source.x[1],source.x[2]);
+        if (source.status() == Gecode::SS_FAILED)
+          return false;
+        MultiplicationSpace* clone =
+          static_cast<MultiplicationSpace*>(source.clone());
+        Gecode::dom(*clone,clone->x[0],3U);
+        Gecode::dom(*clone,clone->x[1],5U);
+        const bool clone_ok = (clone->status() != Gecode::SS_FAILED) &&
+          clone->x[2].assigned() && (clone->x[2].val() == 15U) &&
+          !source.x[2].assigned();
+        delete clone;
+        if (!clone_ok)
+          return false;
+
+        try {
+          MultiplicationSpace mismatch;
+          Gecode::WordVar other(mismatch,3);
+          Gecode::mult(mismatch,mismatch.x[0],other,mismatch.x[2]);
+          return false;
+        } catch (const Gecode::Word::WidthMismatch&) {}
+        return true;
+      }
+
+      static bool counters(void) {
+        const unsigned int width = 3;
+        MultiplicationSpace s(3,width);
+        Gecode::mult(s,s.x[0],s.x[1],s.x[2]);
+        // Per width: extract, sign extension, ite, and all but one shift;
+        // each of the width-1 additions contributes six propagators. There is
+        // no public variable-allocation counter for the ordinary intermediates.
+        const unsigned int expected = (4U*width - 1U) + 6U*(width-1U);
+        if (Gecode::PropagatorGroup::all.size(s) != expected)
+          return false;
+        Gecode::StatusStatistics statistics;
+        if (s.status(statistics) == Gecode::SS_FAILED)
+          return false;
+        return statistics.propagate >= expected;
+      }
+
+      static bool search_recomputation(void) {
+        using namespace Gecode;
+        class MultSpace : public Space {
+        public:
+          WordVar x;
+          WordVar y;
+          WordVar result;
+          MultSpace(void) : x(*this,2), y(*this,2), result(*this,2) {
+            mult(*this,x,y,result);
+            WordVarArgs decision(2);
+            decision[0] = x;
+            decision[1] = y;
+            branch(*this,decision,WORD_VAR_SIZE_MIN(),WORD_VAL_LSB());
+          }
+          MultSpace(MultSpace& s) : Space(s) {
+            x.update(*this,s.x);
+            y.update(*this,s.y);
+            result.update(*this,s.result);
+          }
+          virtual Space* copy(void) { return new MultSpace(*this); }
+        };
+
+        MultSpace* root = new MultSpace;
+        Search::Options options;
+        options.c_d = 8;
+        options.a_d = 64;
+        DFS<MultSpace> dfs(root,options);
+        delete root;
+        unsigned int solutions = 0;
+        while (MultSpace* solution = dfs.next()) {
+          const bool ok = solution->x.assigned() &&
+            solution->y.assigned() && solution->result.assigned() &&
+            (solution->result.val() ==
+             ((solution->x.val() * solution->y.val()) & 3U)) &&
+            (PropagatorGroup::all.size(*solution) == 0);
+          delete solution;
+          if (!ok)
+            return false;
+          solutions++;
+        }
+        return solutions == 16;
+      }
+
+    public:
+      MultiplicationLifecycle(void)
+        : Base("Word::Arithmetic::MultLifecycle") {}
+      virtual bool run(void) {
+        return partial() && boolean_parity() && lifecycle() && counters() &&
+          search_recomputation();
+      }
+    };
+
     Binary addition(ADD,"Add");
     Negation negation;
     Binary subtraction(SUB,"Sub");
+    Binary multiplication(MULT,"Mult");
     Lifecycle lifecycle;
+    MultiplicationLifecycle multiplication_lifecycle;
 
   }
 

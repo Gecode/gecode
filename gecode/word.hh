@@ -422,6 +422,12 @@ namespace Gecode {
   /// Post modular subtraction with an explicitly-sized left operand
   GECODE_WORD_EXPORT void sub(Home home, unsigned int width,
                               WordValue value, WordVar y, WordVar result);
+  /// Post modular multiplication \a result = \a x * \a y
+  GECODE_WORD_EXPORT void mult(Home home, WordVar x, WordVar y,
+                               WordVar result);
+  /// Post modular multiplication with an explicitly-sized constant operand
+  GECODE_WORD_EXPORT void mult(Home home, WordVar x, unsigned int width,
+                               WordValue value, WordVar result);
   //@}
 
   /// Branch filter function type for word variables

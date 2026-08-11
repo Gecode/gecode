@@ -3,7 +3,7 @@ schema_version = 1
 id = "word-014"
 key = "multiply"
 area = "word"
-status = "open"
+status = "done"
 blocked_by = ["word-013", "word-010", "word-011"]
 +++
 # Add modular word multiplication
@@ -19,11 +19,19 @@ Direct posting supports multiplication modulo 2^width through conditional shifte
 
 ## Done when
 
-- [ ] Multiplication implements wraparound semantics for assigned and partial domains.
-- [ ] Zero, one, maximum values, powers of two, constants, aliases, failure, cloning, and recomputation are covered.
-- [ ] Any implementation stronger than the approved decomposition is supported by measurements and keeps word-level state.
+- [x] Multiplication implements wraparound semantics for assigned and partial domains.
+- [x] Zero, one, maximum values, powers of two, constants, aliases, failure, cloning, and recomputation are covered.
+- [x] Any implementation stronger than the approved decomposition is supported by measurements and keeps word-level state.
 
 ## Validation
 
 - Run exhaustive assigned oracle and partial-domain soundness tests at small widths.
 - Run Boolean parity, lifecycle, allocation, and propagation guardrail tests.
+
+## Result
+
+Added modular Word multiplication through an all-Word schoolbook decomposition of conditional shifted terms folded with modular addition.
+
+Validation:
+
+- Focused multiplication and Word test-framework tests pass for assigned/partial domains, width one, overflow, constants, aliases, failure, cloning, independent Boolean parity, counters, replay recomputation, and subsumption; independent verifier PASS.
