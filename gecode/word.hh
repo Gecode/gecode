@@ -397,6 +397,33 @@ namespace Gecode {
                                        WordVar result);
   //@}
 
+  /**
+   * \defgroup TaskModelWordArithmetic Word arithmetic constraints
+   * \ingroup TaskModelWord
+   */
+  //@{
+  /// Post modular addition \a result = \a x + \a y
+  GECODE_WORD_EXPORT void add(Home home, WordVar x, WordVar y,
+                              WordVar result);
+  /// Post modular addition with an explicitly-sized constant operand
+  GECODE_WORD_EXPORT void add(Home home, WordVar x, unsigned int width,
+                              WordValue value, WordVar result);
+  /// Post two's-complement modular negation \a result = -\a x
+  GECODE_WORD_EXPORT void neg(Home home, WordVar x, WordVar result);
+  /// Post modular negation of an explicitly-sized constant
+  GECODE_WORD_EXPORT void neg(Home home, unsigned int width,
+                              WordValue value, WordVar result);
+  /// Post modular subtraction \a result = \a x - \a y
+  GECODE_WORD_EXPORT void sub(Home home, WordVar x, WordVar y,
+                              WordVar result);
+  /// Post modular subtraction with an explicitly-sized right operand
+  GECODE_WORD_EXPORT void sub(Home home, WordVar x, unsigned int width,
+                              WordValue value, WordVar result);
+  /// Post modular subtraction with an explicitly-sized left operand
+  GECODE_WORD_EXPORT void sub(Home home, unsigned int width,
+                              WordValue value, WordVar y, WordVar result);
+  //@}
+
   /// Branch filter function type for word variables
   typedef std::function<bool(const Space& home, WordVar x, int i)>
     WordBranchFilter;

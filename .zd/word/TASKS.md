@@ -4,8 +4,8 @@
 
 - Total: 22
 - Ready: 2
-- Blocked: 8
-- Done: 12
+- Blocked: 7
+- Done: 13
 
 | ID | Task | State | Blocked by |
 | --- | --- | --- | --- |
@@ -21,8 +21,8 @@
 | [word-010](tasks/010-add-constant-word-shifts-and-rotations.md) | Add constant word shifts and rotations | done | word-002 |
 | [word-011](tasks/011-add-word-conditional-constraints.md) | Add word conditional constraints | done | word-005, word-004 |
 | [word-012](tasks/012-add-shifts-by-a-word-variable.md) | Add shifts by a word variable | done | word-010, word-008, word-011 |
-| [word-013](tasks/013-add-modular-word-addition-negation-and-subtraction.md) | Add modular word addition negation and subtraction | ready | word-005, word-010, word-004 |
-| [word-014](tasks/014-add-modular-word-multiplication.md) | Add modular word multiplication | blocked | word-013, word-010, word-011 |
+| [word-013](tasks/013-add-modular-word-addition-negation-and-subtraction.md) | Add modular word addition negation and subtraction | done | word-005, word-010, word-004 |
+| [word-014](tasks/014-add-modular-word-multiplication.md) | Add modular word multiplication | ready | word-013, word-010, word-011 |
 | [word-015](tasks/015-add-wordsemantics-and-unsigned-division.md) | Add WordSemantics and unsigned division | blocked | word-014, word-008, word-011 |
 | [word-016](tasks/016-add-signed-division-remainder-and-modulus.md) | Add signed division remainder and modulus | blocked | word-015, word-013 |
 | [word-017](tasks/017-add-core-minimodel-word-expressions.md) | Add core MiniModel word expressions | ready | word-003, word-005, word-004, word-008, word-011 |

@@ -3,7 +3,7 @@ schema_version = 1
 id = "word-013"
 key = "linear-arithmetic"
 area = "word"
-status = "open"
+status = "done"
 blocked_by = ["word-005", "word-010", "word-004"]
 +++
 # Add modular word addition negation and subtraction
@@ -20,12 +20,20 @@ Direct posting supports addition, unary negation, and subtraction modulo 2^width
 
 ## Done when
 
-- [ ] Addition propagates through the full carry vector, and negation and subtraction preserve wraparound semantics.
-- [ ] Constants, aliases, failure, fixpoint, subsumption, cloning, and recomputation are covered.
-- [ ] Intermediate variables remain ordinary searchable Gecode variables without leaking through the public result API.
+- [x] Addition propagates through the full carry vector, and negation and subtraction preserve wraparound semantics.
+- [x] Constants, aliases, failure, fixpoint, subsumption, cloning, and recomputation are covered.
+- [x] Intermediate variables remain ordinary searchable Gecode variables without leaking through the public result API.
 
 ## Validation
 
 - Run exhaustive assigned and partial-domain oracle tests at small widths.
 - Run carry-chain, zero, maximum, wraparound, alias, and lifecycle tests.
 - Compare with a Boolean decomposition and record allocation and propagation counters.
+
+## Result
+
+Added modular Word add, neg, and sub posting APIs using Wang-style carry decomposition over ordinary hidden WordVar intermediates.
+
+Validation:
+
+- Focused Word::Arithmetic and Word::TestFramework tests pass for assigned/partial domains, carry/wraparound, constants, aliases, failure, cloning, Boolean full-adder parity, counters, replay recomputation, and subsumption; independent verifier PASS.

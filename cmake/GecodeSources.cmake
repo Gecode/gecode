@@ -193,6 +193,7 @@ set(GECODE_FLOAT_SOURCES
 )
 
 set(GECODE_WORD_SOURCES
+  gecode/word/arithmetic.cpp
   gecode/word/array.cpp
   gecode/word/branch.cpp
   gecode/word/channel.cpp
@@ -445,6 +446,7 @@ set(GECODE_TEST_SOURCES
   test/set/sequence.cpp
   test/test.cpp
   test/word.cpp
+  test/word/arithmetic.cpp
   test/word/branch.cpp
   test/word/channel.cpp
   test/word/conditional.cpp
