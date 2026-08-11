@@ -14,6 +14,7 @@ Direct posting supports extraction, concatenation, repetition, zero extension, a
 
 ## Boundaries
 
+- Treat this as an implementation spike: follow established Gecode patterns, reuse the normal framework and test machinery, and avoid novel infrastructure, special-case test paths, exhaustive hardening, or validation beyond what is proportionate to getting the slice working.
 - Do not add shifts or rotations in this task.
 
 ## Done when

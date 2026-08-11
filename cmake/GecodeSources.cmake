@@ -435,6 +435,7 @@ set(GECODE_TEST_SOURCES
   test/set/rel.cpp
   test/set/sequence.cpp
   test/test.cpp
+  test/word.cpp
 )
 
 set(GECODE_TEST_BLACKBOX_EXEC_SOURCE test/flatzinc/blackbox-exec.cpp)

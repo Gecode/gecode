@@ -14,6 +14,7 @@ MiniModel can construct and lower WordExpr values for logic, relations, reificat
 
 ## Boundaries
 
+- Treat this as an implementation spike: follow established Gecode patterns, reuse the normal framework and test machinery, and avoid novel infrastructure, special-case test paths, exhaustive hardening, or validation beyond what is proportionate to getting the slice working.
 - Do not add structural or arithmetic expression nodes yet.
 - Do not create an implicit full Boolean representation of a word.
 

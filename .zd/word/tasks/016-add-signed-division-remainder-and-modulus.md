@@ -14,6 +14,7 @@ Direct posting supports SMT-LIB signed division, signed remainder, and signed mo
 
 ## Boundaries
 
+- Treat this as an implementation spike: follow established Gecode patterns, reuse the normal framework and test machinery, and avoid novel infrastructure, special-case test paths, exhaustive hardening, or validation beyond what is proportionate to getting the slice working.
 - Interpret sign only in operation semantics and do not add a second WordSemantics policy.
 
 ## Done when

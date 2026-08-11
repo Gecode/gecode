@@ -14,6 +14,7 @@ Direct posting supports complement, conjunction, disjunction, exclusive-or, nand
 
 ## Boundaries
 
+- Treat this as an implementation spike: follow established Gecode patterns, reuse the normal framework and test machinery, and avoid novel infrastructure, special-case test paths, exhaustive hardening, or validation beyond what is proportionate to getting the slice working.
 - Derived operators may rewrite to an equally strong primitive set.
 - Do not expand word arguments into per-bit Boolean variables.
 

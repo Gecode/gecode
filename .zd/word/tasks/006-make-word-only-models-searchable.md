@@ -14,6 +14,7 @@ WordVar branch and assign posting can select least-significant, most-significant
 
 ## Boundaries
 
+- Treat this as an implementation spike: follow established Gecode patterns, reuse the normal framework and test machinery, and avoid novel infrastructure, special-case test paths, exhaustive hardening, or validation beyond what is proportionate to getting the slice working.
 - Leave advanced size, degree, AFC, action, CHB, tracing, and Gist integration to the branch engineering task.
 
 ## Done when

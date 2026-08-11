@@ -180,6 +180,8 @@ Every operator implementation records whether it is direct, rewritten, or decomp
 
 ## Boundaries
 
+- This area is a full implementation spike, not a battle-hardening exercise. Each task must follow established Gecode patterns, reuse normal framework and test machinery, and avoid novel infrastructure, special-case test paths, exhaustive edge-case campaigns, or verification beyond what is proportionate to getting the implementation working.
+- Prefer the ordinary Gecode implementation for the analogous variable, propagator, brancher, MiniModel, test, build, or documentation concern. Introduce a new pattern only when the Word domain genuinely requires it.
 - This area owns the native word variable, its constraints, search support, tracing, tests, build integration, and user documentation.
 - It does not add a SAT engine or explanation protocol to the Gecode kernel.
 - It does not promise competitive results on large industrial QF_BV benchmarks.

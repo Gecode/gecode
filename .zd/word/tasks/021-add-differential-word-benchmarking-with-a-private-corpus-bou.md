@@ -14,6 +14,7 @@ A repeatable benchmark harness compares native word propagation with an equivale
 
 ## Boundaries
 
+- Treat this as an implementation spike: follow established Gecode patterns, reuse the normal framework and test machinery, and avoid novel infrastructure, special-case test paths, exhaustive hardening, or validation beyond what is proportionate to getting the slice working.
 - Do not place private corpus payloads in Git, .zd, source archives, binary packages, or public CI.
 - Do not claim parity with specialist SMT solvers.
 

@@ -14,6 +14,7 @@ The direct posting boundary carries an extensible WordSemantics policy that defa
 
 ## Boundaries
 
+- Treat this as an implementation spike: follow established Gecode patterns, reuse the normal framework and test machinery, and avoid novel infrastructure, special-case test paths, exhaustive hardening, or validation beyond what is proportionate to getting the slice working.
 - Implement only the SMT-LIB policy in this task.
 - Leave signed division, remainder, and modulus to the following task.
 

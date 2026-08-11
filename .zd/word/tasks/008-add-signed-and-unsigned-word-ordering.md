@@ -14,6 +14,7 @@ Direct posting supports signed and unsigned less-than, less-or-equal, greater-th
 
 ## Boundaries
 
+- Treat this as an implementation spike: follow established Gecode patterns, reuse the normal framework and test machinery, and avoid novel infrastructure, special-case test paths, exhaustive hardening, or validation beyond what is proportionate to getting the slice working.
 - Rewrite dual relations instead of adding redundant actors when the rewrite is equally strong.
 
 ## Done when

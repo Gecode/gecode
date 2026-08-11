@@ -1173,6 +1173,14 @@ else
 FLOATTESTOBJ=
 endif
 
+WORDTESTSRC0 = test/word.cpp
+
+ifeq "@enable_word_vars@" "yes"
+WORDTESTOBJ = $(WORDTESTSRC0:%.cpp=%$(OBJSUFFIX))
+else
+WORDTESTOBJ=
+endif
+
 SETTESTSRC00 = \
 	construct dom rel rel-op rel-op-const convex sequence int element \
 	precede distinct exec mm-set channel
@@ -1321,15 +1329,15 @@ TESTSRC0 = test/test.cpp test/afc.cpp test/ldsb.cpp test/region.cpp \
 # FailPoint is CMake-only; keep the Autoconf test executable fault-free.
 
 TESTSRC = \
-	$(TESTSRC0) $(INTTESTSRC0) $(SETTESTSRC0) $(FLOATTESTSRC0) \
+	$(TESTSRC0) $(INTTESTSRC0) $(SETTESTSRC0) $(FLOATTESTSRC0) $(WORDTESTSRC0) \
 	$(BRANCHTESTSRC0) $(SEARCHTESTSRC0) \
 	$(ARRAYTESTSRC0) $(FLATZINCTESTSRC0) $(BLACKBOXSRC)
 
 TESTHDR0 = \
 	test.hh test.hpp int.hh int.hpp set.hh set.hpp float.hh float.hpp \
-	branch.hh assign.hh flatzinc.hh
+	word.hh word.hpp branch.hh assign.hh flatzinc.hh
 TESTHDR = $(TESTHDR0:%=test/%)
-TESTOBJ	= $(INTTESTOBJ) $(SETTESTOBJ) $(FLOATTESTOBJ) \
+TESTOBJ	= $(INTTESTOBJ) $(SETTESTOBJ) $(FLOATTESTOBJ) $(WORDTESTOBJ) \
 	$(FLATZINCTESTOBJ:%.cpp=%$(OBJSUFFIX)) \
 	$(BRANCHTESTSRC0:%.cpp=%$(OBJSUFFIX)) \
 	$(SEARCHTESTSRC0:%.cpp=%$(OBJSUFFIX)) \
@@ -1408,6 +1416,10 @@ BLACKBOXCHECKENV = \
 	GECODE_TEST_BLACKBOX_EXEC=$(abspath $(BLACKBOXEXEC)) \
 	GECODE_TEST_BLACKBOX_DLL=$(abspath $(BLACKBOXDLL)) \
 	GECODE_TEST_BLACKBOX_LOG=$(BLACKBOXLOG)
+endif
+
+ifeq "@enable_word_vars@" "yes"
+CHECKTESTS += Word::TestFramework
 endif
 
 ifeq "@enable_float_vars@" "yes"

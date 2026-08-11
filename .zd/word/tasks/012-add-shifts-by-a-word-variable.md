@@ -14,6 +14,7 @@ A WordVar shift amount can control each supported variable shift while the imple
 
 ## Boundaries
 
+- Treat this as an implementation spike: follow established Gecode patterns, reuse the normal framework and test machinery, and avoid novel infrastructure, special-case test paths, exhaustive hardening, or validation beyond what is proportionate to getting the slice working.
 - Do not eagerly channel every amount bit to Boolean variables.
 - Do not add variable rotations unless the area brief is amended.
 

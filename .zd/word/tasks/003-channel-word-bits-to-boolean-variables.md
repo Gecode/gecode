@@ -14,6 +14,7 @@ Models can connect a selected bit of a WordVar to a BoolVar, including already f
 
 ## Boundaries
 
+- Treat this as an implementation spike: follow established Gecode patterns, reuse the normal framework and test machinery, and avoid novel infrastructure, special-case test paths, exhaustive hardening, or validation beyond what is proportionate to getting the slice working.
 - Do not add eager whole-word bit blasting or a general word/Boolean expression layer.
 
 ## Done when
