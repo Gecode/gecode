@@ -193,6 +193,11 @@ namespace Gecode {
     WOT_XNOR  ///< Complement of bitwise exclusive disjunction
   };
 
+  /// Policy for arithmetic operations with semantics-dependent edge cases
+  enum WordSemantics {
+    WS_SMTLIB ///< SMT-LIB fixed-width word semantics
+  };
+
   /**
    * \defgroup TaskModelWordRel Word relations
    * \ingroup TaskModelWord
@@ -428,6 +433,30 @@ namespace Gecode {
   /// Post modular multiplication with an explicitly-sized constant operand
   GECODE_WORD_EXPORT void mult(Home home, WordVar x, unsigned int width,
                                WordValue value, WordVar result);
+  /// Post unsigned division \a result = \a x div \a y
+  GECODE_WORD_EXPORT void div(Home home, WordVar x, WordVar y,
+                              WordVar result,
+                              WordSemantics semantics=WS_SMTLIB);
+  /// Post unsigned division with an explicitly-sized right operand
+  GECODE_WORD_EXPORT void div(Home home, WordVar x, unsigned int width,
+                              WordValue value, WordVar result,
+                              WordSemantics semantics=WS_SMTLIB);
+  /// Post unsigned division with an explicitly-sized left operand
+  GECODE_WORD_EXPORT void div(Home home, unsigned int width,
+                              WordValue value, WordVar y, WordVar result,
+                              WordSemantics semantics=WS_SMTLIB);
+  /// Post unsigned remainder \a result = \a x mod \a y
+  GECODE_WORD_EXPORT void mod(Home home, WordVar x, WordVar y,
+                              WordVar result,
+                              WordSemantics semantics=WS_SMTLIB);
+  /// Post unsigned remainder with an explicitly-sized right operand
+  GECODE_WORD_EXPORT void mod(Home home, WordVar x, unsigned int width,
+                              WordValue value, WordVar result,
+                              WordSemantics semantics=WS_SMTLIB);
+  /// Post unsigned remainder with an explicitly-sized left operand
+  GECODE_WORD_EXPORT void mod(Home home, unsigned int width,
+                              WordValue value, WordVar y, WordVar result,
+                              WordSemantics semantics=WS_SMTLIB);
   //@}
 
   /// Branch filter function type for word variables

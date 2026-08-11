@@ -3,7 +3,7 @@ schema_version = 1
 id = "word-015"
 key = "unsigned-division"
 area = "word"
-status = "open"
+status = "done"
 blocked_by = ["word-014", "word-008", "word-011"]
 +++
 # Add WordSemantics and unsigned division
@@ -20,11 +20,19 @@ The direct posting boundary carries an extensible WordSemantics policy that defa
 
 ## Done when
 
-- [ ] WordSemantics is explicit only on operations whose concrete results can vary by policy and does not alter WordVar domains.
-- [ ] Unsigned division and remainder implement SMT-LIB behavior for ordinary and zero divisors.
-- [ ] Constants, aliases, failure, cloning, recomputation, and policy plumbing are covered.
+- [x] WordSemantics is explicit only on operations whose concrete results can vary by policy and does not alter WordVar domains.
+- [x] Unsigned division and remainder implement SMT-LIB behavior for ordinary and zero divisors.
+- [x] Constants, aliases, failure, cloning, recomputation, and policy plumbing are covered.
 
 ## Validation
 
 - Run exhaustive small-width assigned oracle tests, including every zero-divisor case.
 - Run partial-domain soundness, policy-plumbing, alias, lifecycle, and differential tests.
+
+## Result
+
+Added WordSemantics with SMT-LIB default and unsigned div/mod through a restoring word-level shift/compare/conditional-subtract decomposition.
+
+Validation:
+
+- Focused Div, Mod, DivisionLifecycle, and TestFramework tests pass for exhaustive assigned semantics including zero divisors, tuple-level partial soundness, both constant orientations, policy plumbing, aliases, failure, cloning, Boolean extensional parity, replay recomputation, and subsumption; independent verifier PASS.

@@ -120,6 +120,54 @@ namespace Gecode {
         }
       }
     }
+
+    void check_semantics(WordSemantics semantics, const char* location) {
+      switch (semantics) {
+      case WS_SMTLIB: return;
+      default: throw Word::UnknownOperation(location);
+      }
+    }
+
+    /**
+     * Unsigned shift-subtract division compares the divisor with the
+     * appropriately shifted current remainder. This avoids a width+1
+     * temporary. A zero divisor selects every quotient bit while each
+     * subtraction leaves the remainder unchanged, giving SMT-LIB's total
+     * zero-divisor results without a separate case.
+     */
+    void post_divmod(Home home, WordVar x, WordVar y, WordVar result,
+                     bool quotient) {
+      const unsigned int width = x.width();
+      WordVar remainder(x);
+      for (unsigned int bit=width; bit-- > 0;) {
+        WordVar shifted_remainder(remainder);
+        if (bit != 0) {
+          shifted_remainder = WordVar(home,width);
+          logical_shift_right(home,remainder,bit,shifted_remainder);
+        }
+
+        BoolVar subtract(home,0,1);
+        rel(home,y,WRT_ULQ,shifted_remainder,Reify(subtract,RM_EQV));
+        if (quotient)
+          channel(home,result,bit,subtract);
+
+        WordVar shifted_divisor(y);
+        if (bit != 0) {
+          shifted_divisor = WordVar(home,width);
+          shift_left(home,y,bit,shifted_divisor);
+        }
+        WordVar difference(home,width);
+        post_sub(home,remainder,shifted_divisor,difference);
+
+        WordVar next;
+        if (!quotient && (bit == 0))
+          next = result;
+        else
+          next = WordVar(home,width);
+        ite(home,subtract,difference,remainder,next);
+        remainder = next;
+      }
+    }
   }
 
   void
@@ -203,6 +251,72 @@ namespace Gecode {
     GECODE_POST;
     WordVar y(home,width,value,value);
     post_mult(home,x,y,result);
+  }
+
+  void
+  div(Home home, WordVar x, WordVar y, WordVar result,
+      WordSemantics semantics) {
+    check_widths(x,y,result,"Word::div");
+    check_semantics(semantics,"Word::div");
+    GECODE_POST;
+    post_divmod(home,x,y,result,true);
+  }
+
+  void
+  div(Home home, WordVar x, unsigned int width, WordValue value,
+      WordVar result, WordSemantics semantics) {
+    if ((x.width() != width) || (result.width() != width))
+      throw Word::WidthMismatch("Word::div");
+    check_semantics(semantics,"Word::div");
+    value = checked_value(width,value);
+    GECODE_POST;
+    WordVar y(home,width,value,value);
+    post_divmod(home,x,y,result,true);
+  }
+
+  void
+  div(Home home, unsigned int width, WordValue value, WordVar y,
+      WordVar result, WordSemantics semantics) {
+    if ((y.width() != width) || (result.width() != width))
+      throw Word::WidthMismatch("Word::div");
+    check_semantics(semantics,"Word::div");
+    value = checked_value(width,value);
+    GECODE_POST;
+    WordVar x(home,width,value,value);
+    post_divmod(home,x,y,result,true);
+  }
+
+  void
+  mod(Home home, WordVar x, WordVar y, WordVar result,
+      WordSemantics semantics) {
+    check_widths(x,y,result,"Word::mod");
+    check_semantics(semantics,"Word::mod");
+    GECODE_POST;
+    post_divmod(home,x,y,result,false);
+  }
+
+  void
+  mod(Home home, WordVar x, unsigned int width, WordValue value,
+      WordVar result, WordSemantics semantics) {
+    if ((x.width() != width) || (result.width() != width))
+      throw Word::WidthMismatch("Word::mod");
+    check_semantics(semantics,"Word::mod");
+    value = checked_value(width,value);
+    GECODE_POST;
+    WordVar y(home,width,value,value);
+    post_divmod(home,x,y,result,false);
+  }
+
+  void
+  mod(Home home, unsigned int width, WordValue value, WordVar y,
+      WordVar result, WordSemantics semantics) {
+    if ((y.width() != width) || (result.width() != width))
+      throw Word::WidthMismatch("Word::mod");
+    check_semantics(semantics,"Word::mod");
+    value = checked_value(width,value);
+    GECODE_POST;
+    WordVar x(home,width,value,value);
+    post_divmod(home,x,y,result,false);
   }
 
 }

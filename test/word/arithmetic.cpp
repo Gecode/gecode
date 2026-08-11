@@ -38,7 +38,7 @@ namespace Test { namespace Word {
 
   namespace Arithmetic {
 
-    enum Op { ADD, NEG, SUB, MULT };
+    enum Op { ADD, NEG, SUB, MULT, DIV, MOD };
 
     static Gecode::WordValue
     evaluate(Op op, Gecode::WordValue x, Gecode::WordValue y,
@@ -48,6 +48,8 @@ namespace Test { namespace Word {
       case NEG: return (Gecode::WordValue(0) - x) & mask;
       case SUB: return (x - y) & mask;
       case MULT: return (x * y) & mask;
+      case DIV: return (y == 0) ? mask : x / y;
+      case MOD: return (y == 0) ? x : x % y;
       default: GECODE_NEVER;
       }
       return 0;
@@ -61,6 +63,8 @@ namespace Test { namespace Word {
       case NEG: Gecode::neg(home,x,result); break;
       case SUB: Gecode::sub(home,x,y,result); break;
       case MULT: Gecode::mult(home,x,y,result); break;
+      case DIV: Gecode::div(home,x,y,result); break;
+      case MOD: Gecode::mod(home,x,y,result); break;
       default: GECODE_NEVER;
       }
     }
@@ -604,12 +608,266 @@ namespace Test { namespace Word {
       }
     };
 
+    class DivisionLifecycle : public Base {
+    private:
+      class DivisionSpace : public Gecode::Space {
+      public:
+        Gecode::WordVarArray x;
+        DivisionSpace(int n=4, unsigned int width=4)
+          : x(*this,n,width,0,Gecode::Word::width_mask(width)) {}
+        DivisionSpace(DivisionSpace& s) : Gecode::Space(s) {
+          x.update(*this,s.x);
+        }
+        virtual Gecode::Space* copy(void) {
+          return new DivisionSpace(*this);
+        }
+      };
+
+      static bool partial(Op op) {
+        for (PartialAssignment p(3,1); p.has_more(); p.next()) {
+          TestSpace s(3,Domain(1,0,1));
+          std::vector<Domain> domains;
+          for (int i=0; i<3; i++)
+            domains.push_back(p[i]);
+          s.narrow(domains);
+          Arithmetic::post(op,s,s.x[0],s.x[1],s.x[2]);
+          const bool failed = s.failed();
+          for (Values x(p[0]); x(); ++x)
+            for (Values y(p[1]); y(); ++y)
+              for (Values z(p[2]); z(); ++z)
+                if (z.val() == evaluate(op,x.val(),y.val(),1U)) {
+                  if (failed || !s.x[0].in(x.val()) ||
+                      !s.x[1].in(y.val()) || !s.x[2].in(z.val()))
+                    return false;
+                  TestSpace* tuple = static_cast<TestSpace*>(s.clone());
+                  Gecode::dom(*tuple,tuple->x[0],x.val());
+                  Gecode::dom(*tuple,tuple->x[1],y.val());
+                  Gecode::dom(*tuple,tuple->x[2],z.val());
+                  const bool feasible = !tuple->failed();
+                  delete tuple;
+                  if (!feasible)
+                    return false;
+                }
+        }
+        return true;
+      }
+
+      /** Tiny ordinary Boolean extensional reference for both results. */
+      class DifferentialSpace : public Gecode::Space {
+      public:
+        Gecode::WordVar x;
+        Gecode::WordVar y;
+        Gecode::WordVar native_div;
+        Gecode::WordVar native_mod;
+        Gecode::WordVar boolean_div;
+        Gecode::WordVar boolean_mod;
+        DifferentialSpace(void)
+          : x(*this,2), y(*this,2), native_div(*this,2),
+            native_mod(*this,2), boolean_div(*this,2),
+            boolean_mod(*this,2) {
+          Gecode::div(*this,x,y,native_div);
+          Gecode::mod(*this,x,y,native_mod);
+
+          Gecode::BoolVarArray bits(*this,8,0,1);
+          for (unsigned int bit=0; bit<2; bit++) {
+            Gecode::channel(*this,x,bit,bits[bit]);
+            Gecode::channel(*this,y,bit,bits[2+bit]);
+            Gecode::channel(*this,boolean_div,bit,bits[4+bit]);
+            Gecode::channel(*this,boolean_mod,bit,bits[6+bit]);
+          }
+          Gecode::TupleSet tuples(8);
+          for (int xv=0; xv<4; xv++)
+            for (int yv=0; yv<4; yv++) {
+              const int q = (yv == 0) ? 3 : xv/yv;
+              const int r = (yv == 0) ? xv : xv%yv;
+              tuples.add(Gecode::IntArgs({xv & 1, (xv >> 1) & 1,
+                                          yv & 1, (yv >> 1) & 1,
+                                          q & 1, (q >> 1) & 1,
+                                          r & 1, (r >> 1) & 1}));
+            }
+          tuples.finalize();
+          Gecode::extensional(*this,bits,tuples);
+        }
+        DifferentialSpace(DifferentialSpace& s) : Gecode::Space(s) {
+          x.update(*this,s.x);
+          y.update(*this,s.y);
+          native_div.update(*this,s.native_div);
+          native_mod.update(*this,s.native_mod);
+          boolean_div.update(*this,s.boolean_div);
+          boolean_mod.update(*this,s.boolean_mod);
+        }
+        virtual Gecode::Space* copy(void) {
+          return new DifferentialSpace(*this);
+        }
+      };
+
+      static bool boolean_parity(void) {
+        for (Gecode::WordValue x=0; x<4; x++)
+          for (Gecode::WordValue y=0; y<4; y++) {
+            DifferentialSpace s;
+            Gecode::dom(s,s.x,x);
+            Gecode::dom(s,s.y,y);
+            if ((s.status() == Gecode::SS_FAILED) ||
+                !s.native_div.assigned() || !s.native_mod.assigned() ||
+                !s.boolean_div.assigned() || !s.boolean_mod.assigned() ||
+                (s.native_div.val() != s.boolean_div.val()) ||
+                (s.native_mod.val() != s.boolean_mod.val()))
+              return false;
+          }
+        return true;
+      }
+
+      static bool policy_constants_aliases_lifecycle(void) {
+        DivisionSpace policy(4,3);
+        Gecode::dom(policy,policy.x[0],5U);
+        Gecode::dom(policy,policy.x[1],0U);
+        Gecode::div(policy,policy.x[0],policy.x[1],policy.x[2]);
+        Gecode::mod(policy,policy.x[0],policy.x[1],policy.x[3],
+                    Gecode::WS_SMTLIB);
+        if ((policy.status() == Gecode::SS_FAILED) ||
+            !policy.x[2].assigned() || (policy.x[2].val() != 7U) ||
+            !policy.x[3].assigned() || (policy.x[3].val() != 5U))
+          return false;
+
+        DivisionSpace constants(4,3);
+        Gecode::dom(constants,constants.x[0],6U);
+        Gecode::div(constants,constants.x[0],3,2U,constants.x[1]);
+        Gecode::mod(constants,3,5U,constants.x[0],constants.x[2]);
+        Gecode::div(constants,3,6U,constants.x[0],constants.x[3]);
+        if ((constants.status() == Gecode::SS_FAILED) ||
+            (constants.x[1].val() != 3U) ||
+            (constants.x[2].val() != 5U) ||
+            (constants.x[3].val() != 1U))
+          return false;
+
+        DivisionSpace right_mod(4,3);
+        Gecode::dom(right_mod,right_mod.x[0],6U);
+        Gecode::mod(right_mod,right_mod.x[0],3,4U,right_mod.x[1]);
+        if ((right_mod.status() == Gecode::SS_FAILED) ||
+            !right_mod.x[1].assigned() || (right_mod.x[1].val() != 2U))
+          return false;
+
+        DivisionSpace div_alias(4,3);
+        Gecode::dom(div_alias,div_alias.x[0],6U);
+        Gecode::dom(div_alias,div_alias.x[1],1U);
+        Gecode::div(div_alias,div_alias.x[0],div_alias.x[1],
+                    div_alias.x[0]);
+        if ((div_alias.status() == Gecode::SS_FAILED) ||
+            (div_alias.x[0].val() != 6U))
+          return false;
+
+        DivisionSpace mod_alias(4,3);
+        Gecode::dom(mod_alias,mod_alias.x[0],3U);
+        Gecode::dom(mod_alias,mod_alias.x[1],4U);
+        Gecode::mod(mod_alias,mod_alias.x[0],mod_alias.x[1],
+                    mod_alias.x[0]);
+        if ((mod_alias.status() == Gecode::SS_FAILED) ||
+            (mod_alias.x[0].val() != 3U))
+          return false;
+
+        DivisionSpace failed(4,3);
+        Gecode::dom(failed,failed.x[0],6U);
+        Gecode::dom(failed,failed.x[1],2U);
+        Gecode::dom(failed,failed.x[2],2U);
+        Gecode::div(failed,failed.x[0],failed.x[1],failed.x[2]);
+        if (failed.status() != Gecode::SS_FAILED)
+          return false;
+
+        DivisionSpace source(4,3);
+        Gecode::div(source,source.x[0],source.x[1],source.x[2]);
+        Gecode::mod(source,source.x[0],source.x[1],source.x[3]);
+        if (source.status() == Gecode::SS_FAILED)
+          return false;
+        DivisionSpace* clone = static_cast<DivisionSpace*>(source.clone());
+        Gecode::dom(*clone,clone->x[0],7U);
+        Gecode::dom(*clone,clone->x[1],2U);
+        const bool clone_ok = (clone->status() != Gecode::SS_FAILED) &&
+          clone->x[2].assigned() && (clone->x[2].val() == 3U) &&
+          clone->x[3].assigned() && (clone->x[3].val() == 1U) &&
+          !source.x[2].assigned() && !source.x[3].assigned();
+        delete clone;
+        if (!clone_ok)
+          return false;
+
+        try {
+          DivisionSpace mismatch(4,3);
+          Gecode::WordVar other(mismatch,2);
+          Gecode::div(mismatch,mismatch.x[0],other,mismatch.x[2]);
+          return false;
+        } catch (const Gecode::Word::WidthMismatch&) {}
+        return true;
+      }
+
+      static bool search_recomputation(void) {
+        using namespace Gecode;
+        class DivSpace : public Space {
+        public:
+          WordVar x;
+          WordVar y;
+          WordVar quotient;
+          WordVar remainder;
+          DivSpace(void) : x(*this,2), y(*this,2), quotient(*this,2),
+            remainder(*this,2) {
+            div(*this,x,y,quotient);
+            mod(*this,x,y,remainder);
+            WordVarArgs decision(2);
+            decision[0] = x;
+            decision[1] = y;
+            branch(*this,decision,WORD_VAR_SIZE_MIN(),WORD_VAL_LSB());
+          }
+          DivSpace(DivSpace& s) : Space(s) {
+            x.update(*this,s.x);
+            y.update(*this,s.y);
+            quotient.update(*this,s.quotient);
+            remainder.update(*this,s.remainder);
+          }
+          virtual Space* copy(void) { return new DivSpace(*this); }
+        };
+
+        DivSpace* root = new DivSpace;
+        Search::Options options;
+        options.c_d = 8;
+        options.a_d = 64;
+        DFS<DivSpace> dfs(root,options);
+        delete root;
+        unsigned int solutions = 0;
+        while (DivSpace* solution = dfs.next()) {
+          const WordValue expected_div = solution->y.val() == 0 ?
+            3U : solution->x.val() / solution->y.val();
+          const WordValue expected_mod = solution->y.val() == 0 ?
+            solution->x.val() : solution->x.val() % solution->y.val();
+          const bool ok = solution->x.assigned() &&
+            solution->y.assigned() && solution->quotient.assigned() &&
+            solution->remainder.assigned() &&
+            (solution->quotient.val() == expected_div) &&
+            (solution->remainder.val() == expected_mod) &&
+            (PropagatorGroup::all.size(*solution) == 0);
+          delete solution;
+          if (!ok)
+            return false;
+          solutions++;
+        }
+        return solutions == 16;
+      }
+
+    public:
+      DivisionLifecycle(void)
+        : Base("Word::Arithmetic::DivisionLifecycle") {}
+      virtual bool run(void) {
+        return partial(DIV) && partial(MOD) && boolean_parity() &&
+          policy_constants_aliases_lifecycle() && search_recomputation();
+      }
+    };
+
     Binary addition(ADD,"Add");
     Negation negation;
     Binary subtraction(SUB,"Sub");
     Binary multiplication(MULT,"Mult");
+    Binary division(DIV,"Div");
+    Binary remainder(MOD,"Mod");
     Lifecycle lifecycle;
     MultiplicationLifecycle multiplication_lifecycle;
+    DivisionLifecycle division_lifecycle;
 
   }
 
