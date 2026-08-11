@@ -299,6 +299,15 @@
  */
 
 /**
+ * \defgroup FuncWordProp Word propagators
+ *
+ * This module contains a description of all predefined word
+ * propagators. They can be reused, for example, for rewriting
+ * newly defined word propagators into already available propagators.
+ * \ingroup Other
+ */
+
+/**
  * \defgroup Example Example scripts (models)
  *
  * All scripts are compiled into simple standalone programs. All

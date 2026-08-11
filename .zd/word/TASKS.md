@@ -3,15 +3,15 @@
 # Tasks: word
 
 - Total: 22
-- Ready: 6
+- Ready: 5
 - Blocked: 14
-- Done: 2
+- Done: 3
 
 | ID | Task | State | Blocked by |
 | --- | --- | --- | --- |
 | [word-001](tasks/001-add-a-buildable-clone-safe-wordvar-kernel.md) | Add a buildable clone-safe WordVar kernel | done | — |
 | [word-002](tasks/002-extend-the-gecode-testing-framework-for-wordvar.md) | Extend the Gecode testing framework for WordVar | done | word-001 |
-| [word-003](tasks/003-channel-word-bits-to-boolean-variables.md) | Channel word bits to Boolean variables | ready | word-002 |
+| [word-003](tasks/003-channel-word-bits-to-boolean-variables.md) | Channel word bits to Boolean variables | done | word-002 |
 | [word-004](tasks/004-add-word-equality-disequality-and-reification.md) | Add word equality disequality and reification | ready | word-002 |
 | [word-005](tasks/005-add-word-level-logical-constraints.md) | Add word-level logical constraints | ready | word-002 |
 | [word-006](tasks/006-make-word-only-models-searchable.md) | Make word-only models searchable | ready | word-002 |

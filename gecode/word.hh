@@ -37,7 +37,7 @@
 #include <cstdint>
 #include <iostream>
 #include <vector>
-#include <gecode/kernel.hh>
+#include <gecode/int.hh>
 
 #if !defined(GECODE_STATIC_LIBS) && \
     (defined(__CYGWIN__) || defined(__MINGW32__) || defined(_MSC_VER))
@@ -154,6 +154,19 @@ namespace Gecode {
                               WordValue lo, WordValue hi);
   /// Assign \a x to \a value
   GECODE_WORD_EXPORT void dom(Home home, WordVar x, WordValue value);
+
+  /**
+   * \defgroup TaskModelWordChannel Channel constraints
+   * \ingroup TaskModelWord
+   */
+  //@{
+  /// Channel bit \a bit of \a x to Boolean variable \a b
+  GECODE_WORD_EXPORT void channel(Home home, WordVar x,
+                                  unsigned int bit, BoolVar b);
+  /// Channel bit \a bit of \a x to Boolean constant \a value
+  GECODE_WORD_EXPORT void channel(Home home, WordVar x,
+                                  unsigned int bit, int value);
+  //@}
 
   template<class Char, class Traits>
   std::basic_ostream<Char,Traits>&

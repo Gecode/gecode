@@ -1527,7 +1527,8 @@ Optional Features:
   --enable-doc-dot        enable graphs in documentation [default=yes]
   --enable-doc-search     enable documentation search engine [default=no]
   --enable-doc-tagfile    generate doxygen tagfile [default=yes]
-  --enable-word-vars      build word variable library [default=yes]
+  --enable-word-vars      build word variable library (implies
+                          --enable-int-vars) [default=yes]
   --enable-float-vars     build float variable library (implies
                           --enable-int-vars) [default=yes]
   --enable-set-vars       build finite set library (implies --enable-int-vars)
@@ -13178,7 +13179,8 @@ printf %s "checking whether to build the word variables library... " >&6; }
      { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: yes" >&5
 printf "%s\n" "yes" >&6; }
      enable_word_vars="yes";
-     LINKWORD=${LINKLIBDIR}${LINKPREFIX}${WORD}${DLL_ARCH}${LINKSUFFIX}
+     enable_int_vars="yes";
+	 LINKWORD=${LINKLIBDIR}${LINKPREFIX}${WORD}${DLL_ARCH}${LINKSUFFIX}
 
 
 printf "%s\n" "#define GECODE_HAS_WORD_VARS /**/" >>confdefs.h

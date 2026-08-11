@@ -3,7 +3,7 @@ schema_version = 1
 id = "word-003"
 key = "channel"
 area = "word"
-status = "open"
+status = "done"
 blocked_by = ["word-002"]
 +++
 # Channel word bits to Boolean variables
@@ -19,11 +19,19 @@ Models can connect a selected bit of a WordVar to a BoolVar, including already f
 
 ## Done when
 
-- [ ] The direct posting API channels one in-range word bit to a Boolean variable or constant and rejects invalid positions.
-- [ ] The propagator handles aliases, fixed arguments, failure, subsumption, cloning, and recomputation.
-- [ ] Tests use the shared WordVar testing framework and establish word-versus-Boolean solution parity for small widths.
+- [x] The direct posting API channels one in-range word bit to a Boolean variable or constant and rejects invalid positions.
+- [x] The propagator handles aliases, fixed arguments, failure, subsumption, cloning, and recomputation.
+- [x] Tests use the shared WordVar testing framework and establish word-versus-Boolean solution parity for small widths.
 
 ## Validation
 
 - Run exhaustive small-width channel tests through the WordVar testing framework.
 - Run focused clone, recomputation, alias, and out-of-range tests.
+
+## Result
+
+Added Gecode-style single-bit channeling between WordVar and BoolVar or 0/1 constants using a standard mixed binary propagator, with Word-to-Int component dependency and normal documentation/build integration.
+
+Validation:
+
+- Independent verification passed; all focused Word channel tests, Word test-framework smoke, a threaded repeat, generated-source freshness, build dependency inspection, and git diff checks passed.

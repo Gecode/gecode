@@ -554,9 +554,11 @@ FLOATBUILDDIRS	= \
 #
 
 WORDSRC0 = \
-	array.cpp exception.cpp var/word.cpp var-imp/word.cpp
+	array.cpp channel.cpp channel/bit.cpp exception.cpp \
+	var/word.cpp var-imp/word.cpp
 WORDHDR0 = \
-	array.hpp array-traits.hpp exception.hpp print.hpp view.hpp \
+	array.hpp array-traits.hpp channel.hh channel/bit.hpp \
+	exception.hpp print.hpp view.hpp \
 	var/word.hpp var-imp.hpp var-imp/delta.hpp var-imp/word.hpp
 WORDSRC = $(WORDSRC0:%=gecode/word/%)
 WORDHDR = gecode/word.hh $(WORDHDR0:%=gecode/word/%)
@@ -587,7 +589,7 @@ export LINKWORD      =
 export WORDRC        =
 export WORDRES       =
 endif
-WORDBUILDDIRS = word word/var word/var-imp
+WORDBUILDDIRS = word word/channel word/var word/var-imp
 
 #
 # SET COMPONENTS
@@ -1173,7 +1175,8 @@ else
 FLOATTESTOBJ=
 endif
 
-WORDTESTSRC0 = test/word.cpp
+WORDTESTSRC00 = channel
+WORDTESTSRC0 = test/word.cpp $(WORDTESTSRC00:%=test/word/%.cpp)
 
 ifeq "@enable_word_vars@" "yes"
 WORDTESTOBJ = $(WORDTESTSRC0:%.cpp=%$(OBJSUFFIX))
@@ -1707,9 +1710,9 @@ $(FLOATDLL): $(FLOATOBJ) $(SUPPORTDLL) $(KERNELDLL) $(INTDLL)
 		@LINKOUTPUT@$(FLOATDLL)
 	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOLINKSUFFIX))
 	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOSUFFIX))
-$(WORDDLL): $(WORDOBJ) $(SUPPORTDLL) $(KERNELDLL)
+$(WORDDLL): $(WORDOBJ) $(SUPPORTDLL) $(KERNELDLL) $(INTDLL)
 	$(CXX) $(DLLFLAGS) $(WORDOBJ) $(WORDSONAME) \
-		@DLLPATH@ $(LINKSUPPORT) $(LINKKERNEL) \
+		@DLLPATH@ $(LINKSUPPORT) $(LINKKERNEL) $(LINKINT) \
 		@LINKOUTPUT@$(WORDDLL)
 	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOLINKSUFFIX))
 	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOSUFFIX))
@@ -1802,7 +1805,7 @@ ifeq "@enable_resource@" "yes"
 $(WORDRC):
 	$(RCGEN) $(WORDDLL) $(WORDHDR) $(WORDSRC) > $@
 endif
-$(WORDDLL) $(WORDLIB): $(WORDOBJ) $(WORDRES) $(SUPPORTDLL) $(KERNELDLL)
+$(WORDDLL) $(WORDLIB): $(WORDOBJ) $(WORDRES) $(SUPPORTDLL) $(KERNELDLL) $(INTDLL)
 	$(CXX) $(DLLFLAGS) $(WORDOBJ) $(WORDRES) \
 		@DLLPATH@ @LINKOUTPUT@$(WORDDLL) $(GLDFLAGS)
 	$(FIXMANIFEST) $(WORDDLL).manifest
