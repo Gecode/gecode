@@ -43,6 +43,8 @@ namespace Gecode {
     Node *l, *r, *c;
     WordVar x;
     unsigned int width;
+    unsigned int parameter;
+    unsigned int extent;
     WordValue value;
     BoolExpr* bool_control;
 
@@ -56,7 +58,8 @@ namespace Gecode {
 
   WordExpr::Node::Node(void)
     : use(1), t(NT_VAR), l(nullptr), r(nullptr), c(nullptr),
-      width(0), value(0), bool_control(nullptr) {}
+      width(0), parameter(0), extent(0), value(0),
+      bool_control(nullptr) {}
 
   WordExpr::Node::~Node(void) {
     delete bool_control;
@@ -213,6 +216,68 @@ namespace Gecode {
       ite(home,control,then_word,else_word,result);
       return result;
     }
+    case NT_EXTRACT: {
+      WordVar operand = l->post(home);
+      WordVar result(home,width);
+      Gecode::extract(home,operand,parameter,extent,result);
+      return result;
+    }
+    case NT_CONCAT: {
+      WordVar high = l->post(home);
+      WordVar low = r->post(home);
+      WordVar result(home,width);
+      Gecode::concat(home,high,low,result);
+      return result;
+    }
+    case NT_REPEAT: {
+      WordVar operand = l->post(home);
+      WordVar result(home,width);
+      Gecode::repeat(home,operand,parameter,result);
+      return result;
+    }
+    case NT_ZERO_EXTEND: case NT_SIGN_EXTEND: {
+      WordVar operand = l->post(home);
+      WordVar result(home,width);
+      if (t == NT_ZERO_EXTEND)
+        Gecode::zero_extend(home,operand,width,result);
+      else
+        Gecode::sign_extend(home,operand,width,result);
+      return result;
+    }
+    case NT_SHIFT_LEFT: case NT_LOGICAL_SHIFT_RIGHT:
+    case NT_ARITHMETIC_SHIFT_RIGHT: case NT_ROTATE_LEFT:
+    case NT_ROTATE_RIGHT: {
+      WordVar operand = l->post(home);
+      WordVar result(home,width);
+      switch (t) {
+      case NT_SHIFT_LEFT:
+        Gecode::shift_left(home,operand,parameter,result); break;
+      case NT_LOGICAL_SHIFT_RIGHT:
+        Gecode::logical_shift_right(home,operand,parameter,result); break;
+      case NT_ARITHMETIC_SHIFT_RIGHT:
+        Gecode::arithmetic_shift_right(home,operand,parameter,result); break;
+      case NT_ROTATE_LEFT:
+        Gecode::rotate_left(home,operand,parameter,result); break;
+      default:
+        Gecode::rotate_right(home,operand,parameter,result); break;
+      }
+      return result;
+    }
+    case NT_VAR_SHIFT_LEFT: case NT_VAR_LOGICAL_SHIFT_RIGHT:
+    case NT_VAR_ARITHMETIC_SHIFT_RIGHT: {
+      WordVar operand = l->post(home);
+      WordVar amount = r->post(home);
+      WordVar result(home,width);
+      switch (t) {
+      case NT_VAR_SHIFT_LEFT:
+        Gecode::shift_left(home,operand,amount,result); break;
+      case NT_VAR_LOGICAL_SHIFT_RIGHT:
+        Gecode::logical_shift_right(home,operand,amount,result); break;
+      default:
+        Gecode::arithmetic_shift_right(home,operand,amount,result); break;
+      }
+      return result;
+    }
     default:
       throw Word::UnknownOperation("MiniModel::WordExpr");
     }
@@ -257,6 +322,27 @@ namespace Gecode {
     n->width = e.width();
     n->l = e.n;
     n->l->use++;
+  }
+
+  WordExpr::WordExpr(const WordExpr& e, NodeType t,
+                     unsigned int parameter, unsigned int extent,
+                     unsigned int result_width) : n(new Node) {
+    n->t = t;
+    n->width = result_width;
+    n->parameter = parameter;
+    n->extent = extent;
+    n->l = e.n;
+    n->l->use++;
+  }
+
+  WordExpr::WordExpr(const WordExpr& l, NodeType t, const WordExpr& r,
+                     unsigned int result_width) : n(new Node) {
+    n->t = t;
+    n->width = result_width;
+    n->l = l.n;
+    n->l->use++;
+    n->r = r.n;
+    n->r->use++;
   }
 
   WordExpr::WordExpr(const BoolExpr& control, const WordExpr& then_word,
@@ -386,6 +472,87 @@ namespace Gecode {
   ite(const WordExpr& control, const WordExpr& then_word,
       const WordExpr& else_word) {
     return WordExpr(control,then_word,else_word);
+  }
+
+  WordExpr
+  extract(const WordExpr& e, unsigned int first, unsigned int width) {
+    if ((width == 0) || (first >= e.width()) ||
+        (width > e.width() - first))
+      throw Word::OutOfLimits("MiniModel::extract");
+    return WordExpr(e,WordExpr::NT_EXTRACT,first,width,width);
+  }
+
+  WordExpr
+  concat(const WordExpr& high, const WordExpr& low) {
+    if (high.width() > 64U - low.width())
+      throw Word::WidthMismatch("MiniModel::concat");
+    return WordExpr(high,WordExpr::NT_CONCAT,low,
+                    high.width()+low.width());
+  }
+
+  WordExpr
+  repeat(const WordExpr& e, unsigned int count) {
+    if ((count == 0) || (count > 64U / e.width()))
+      throw Word::OutOfLimits("MiniModel::repeat");
+    return WordExpr(e,WordExpr::NT_REPEAT,count,0,e.width()*count);
+  }
+
+  WordExpr
+  zero_extend(const WordExpr& e, unsigned int result_width) {
+    if ((result_width < e.width()) || (result_width > 64U))
+      throw Word::OutOfLimits("MiniModel::zero_extend");
+    return WordExpr(e,WordExpr::NT_ZERO_EXTEND,0,0,result_width);
+  }
+
+  WordExpr
+  sign_extend(const WordExpr& e, unsigned int result_width) {
+    if ((result_width < e.width()) || (result_width > 64U))
+      throw Word::OutOfLimits("MiniModel::sign_extend");
+    return WordExpr(e,WordExpr::NT_SIGN_EXTEND,0,0,result_width);
+  }
+
+  WordExpr
+  operator <<(const WordExpr& e, unsigned int amount) {
+    return WordExpr(e,WordExpr::NT_SHIFT_LEFT,amount,0,e.width());
+  }
+
+  WordExpr
+  operator <<(const WordExpr& e, const WordExpr& amount) {
+    check_width(e.width(),amount.width());
+    return WordExpr(e,WordExpr::NT_VAR_SHIFT_LEFT,amount,e.width());
+  }
+
+  WordExpr
+  logical_shift_right(const WordExpr& e, unsigned int amount) {
+    return WordExpr(e,WordExpr::NT_LOGICAL_SHIFT_RIGHT,amount,0,e.width());
+  }
+
+  WordExpr
+  logical_shift_right(const WordExpr& e, const WordExpr& amount) {
+    check_width(e.width(),amount.width());
+    return WordExpr(e,WordExpr::NT_VAR_LOGICAL_SHIFT_RIGHT,amount,e.width());
+  }
+
+  WordExpr
+  arithmetic_shift_right(const WordExpr& e, unsigned int amount) {
+    return WordExpr(e,WordExpr::NT_ARITHMETIC_SHIFT_RIGHT,amount,0,e.width());
+  }
+
+  WordExpr
+  arithmetic_shift_right(const WordExpr& e, const WordExpr& amount) {
+    check_width(e.width(),amount.width());
+    return WordExpr(e,WordExpr::NT_VAR_ARITHMETIC_SHIFT_RIGHT,amount,
+                    e.width());
+  }
+
+  WordExpr
+  rotate_left(const WordExpr& e, unsigned int amount) {
+    return WordExpr(e,WordExpr::NT_ROTATE_LEFT,amount,0,e.width());
+  }
+
+  WordExpr
+  rotate_right(const WordExpr& e, unsigned int amount) {
+    return WordExpr(e,WordExpr::NT_ROTATE_RIGHT,amount,0,e.width());
   }
 
   WordVar

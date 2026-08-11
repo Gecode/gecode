@@ -3,7 +3,7 @@ schema_version = 1
 id = "word-018"
 key = "minimodel-structure"
 area = "word"
-status = "open"
+status = "done"
 blocked_by = ["word-017", "word-009", "word-010", "word-012"]
 +++
 # Add structural MiniModel word expressions
@@ -20,11 +20,19 @@ MiniModel covers extraction, concatenation, repetition, extension, shifts, and r
 
 ## Done when
 
-- [ ] Structural nodes preserve and validate result widths before lowering.
-- [ ] Every supported structural operation lowers through the same direct API covered by propagator tests.
-- [ ] Invalid expression shapes fail with the documented exception rather than truncating or extending silently.
+- [x] Structural nodes preserve and validate result widths before lowering.
+- [x] Every supported structural operation lowers through the same direct API covered by propagator tests.
+- [x] Invalid expression shapes fail with the documented exception rather than truncating or extending silently.
 
 ## Validation
 
 - Run direct-posting/MiniModel parity across structural edge cases and result widths.
 - Run invalid-expression, node-copy, clone, and recomputation tests.
+
+## Result
+
+Extended WordExpr with validated structural nodes for extract, concat, repeat, extension, shifts, and rotations, lowering through the direct Word API.
+
+Validation:
+
+- Focused Word MiniModel and TestFramework tests pass for all structural forms, edge amounts/result widths, valid partial parity, invalid shapes, copy/assignment, clone, replay, and subsumption; independent verifier PASS.

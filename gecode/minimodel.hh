@@ -1512,7 +1512,20 @@ namespace Gecode {
       NT_NOR,       ///< Bitwise nor
       NT_XNOR,      ///< Bitwise equivalence
       NT_BOOL_ITE,  ///< Boolean-controlled conditional
-      NT_WORD_ITE   ///< Word-mask conditional
+      NT_WORD_ITE,  ///< Word-mask conditional
+      NT_EXTRACT,   ///< Bit extraction
+      NT_CONCAT,    ///< Concatenation
+      NT_REPEAT,    ///< Repetition
+      NT_ZERO_EXTEND, ///< Zero extension
+      NT_SIGN_EXTEND, ///< Sign extension
+      NT_SHIFT_LEFT,  ///< Constant left shift
+      NT_VAR_SHIFT_LEFT, ///< Variable left shift
+      NT_LOGICAL_SHIFT_RIGHT, ///< Constant logical right shift
+      NT_VAR_LOGICAL_SHIFT_RIGHT, ///< Variable logical right shift
+      NT_ARITHMETIC_SHIFT_RIGHT, ///< Constant arithmetic right shift
+      NT_VAR_ARITHMETIC_SHIFT_RIGHT, ///< Variable arithmetic right shift
+      NT_ROTATE_LEFT, ///< Constant left rotation
+      NT_ROTATE_RIGHT ///< Constant right rotation
     };
     /// Node for word expression
     class Node;
@@ -1522,10 +1535,40 @@ namespace Gecode {
              const WordExpr& else_word);
     WordExpr(const WordExpr& control, const WordExpr& then_word,
              const WordExpr& else_word);
+    WordExpr(const WordExpr& e, NodeType t, unsigned int parameter,
+             unsigned int extent, unsigned int result_width);
+    WordExpr(const WordExpr& l, NodeType t, const WordExpr& r,
+             unsigned int result_width);
     friend GECODE_MINIMODEL_EXPORT WordExpr
     ite(const BoolExpr&, const WordExpr&, const WordExpr&);
     friend GECODE_MINIMODEL_EXPORT WordExpr
     ite(const WordExpr&, const WordExpr&, const WordExpr&);
+    friend GECODE_MINIMODEL_EXPORT WordExpr
+    extract(const WordExpr&, unsigned int, unsigned int);
+    friend GECODE_MINIMODEL_EXPORT WordExpr
+    concat(const WordExpr&, const WordExpr&);
+    friend GECODE_MINIMODEL_EXPORT WordExpr
+    repeat(const WordExpr&, unsigned int);
+    friend GECODE_MINIMODEL_EXPORT WordExpr
+    zero_extend(const WordExpr&, unsigned int);
+    friend GECODE_MINIMODEL_EXPORT WordExpr
+    sign_extend(const WordExpr&, unsigned int);
+    friend GECODE_MINIMODEL_EXPORT WordExpr
+    operator <<(const WordExpr&, unsigned int);
+    friend GECODE_MINIMODEL_EXPORT WordExpr
+    operator <<(const WordExpr&, const WordExpr&);
+    friend GECODE_MINIMODEL_EXPORT WordExpr
+    logical_shift_right(const WordExpr&, unsigned int);
+    friend GECODE_MINIMODEL_EXPORT WordExpr
+    logical_shift_right(const WordExpr&, const WordExpr&);
+    friend GECODE_MINIMODEL_EXPORT WordExpr
+    arithmetic_shift_right(const WordExpr&, unsigned int);
+    friend GECODE_MINIMODEL_EXPORT WordExpr
+    arithmetic_shift_right(const WordExpr&, const WordExpr&);
+    friend GECODE_MINIMODEL_EXPORT WordExpr
+    rotate_left(const WordExpr&, unsigned int);
+    friend GECODE_MINIMODEL_EXPORT WordExpr
+    rotate_right(const WordExpr&, unsigned int);
   public:
     /// Copy constructor
     GECODE_MINIMODEL_EXPORT WordExpr(const WordExpr& e);
@@ -1597,6 +1640,46 @@ namespace Gecode {
   /// Word-mask conditional
   GECODE_MINIMODEL_EXPORT WordExpr
   ite(const WordExpr&, const WordExpr&, const WordExpr&);
+
+  /// Extract a width bits starting at least-significant index a first
+  GECODE_MINIMODEL_EXPORT WordExpr
+  extract(const WordExpr&, unsigned int first, unsigned int width);
+  /// Concatenate a high above a low
+  GECODE_MINIMODEL_EXPORT WordExpr
+  concat(const WordExpr& high, const WordExpr& low);
+  /// Repeat the expression in a count blocks
+  GECODE_MINIMODEL_EXPORT WordExpr
+  repeat(const WordExpr&, unsigned int count);
+  /// Zero-extend the expression to a result_width
+  GECODE_MINIMODEL_EXPORT WordExpr
+  zero_extend(const WordExpr&, unsigned int result_width);
+  /// Sign-extend the expression to a result_width
+  GECODE_MINIMODEL_EXPORT WordExpr
+  sign_extend(const WordExpr&, unsigned int result_width);
+  /// Logically shift the expression left by constant a amount
+  GECODE_MINIMODEL_EXPORT WordExpr
+  operator <<(const WordExpr&, unsigned int amount);
+  /// Logically shift the expression left by word a amount
+  GECODE_MINIMODEL_EXPORT WordExpr
+  operator <<(const WordExpr&, const WordExpr& amount);
+  /// Logically shift the expression right by constant a amount
+  GECODE_MINIMODEL_EXPORT WordExpr
+  logical_shift_right(const WordExpr&, unsigned int amount);
+  /// Logically shift the expression right by word a amount
+  GECODE_MINIMODEL_EXPORT WordExpr
+  logical_shift_right(const WordExpr&, const WordExpr& amount);
+  /// Arithmetically shift the expression right by constant a amount
+  GECODE_MINIMODEL_EXPORT WordExpr
+  arithmetic_shift_right(const WordExpr&, unsigned int amount);
+  /// Arithmetically shift the expression right by word a amount
+  GECODE_MINIMODEL_EXPORT WordExpr
+  arithmetic_shift_right(const WordExpr&, const WordExpr& amount);
+  /// Rotate the expression left by constant a amount
+  GECODE_MINIMODEL_EXPORT WordExpr
+  rotate_left(const WordExpr&, unsigned int amount);
+  /// Rotate the expression right by constant a amount
+  GECODE_MINIMODEL_EXPORT WordExpr
+  rotate_right(const WordExpr&, unsigned int amount);
   //@}
 #endif
 

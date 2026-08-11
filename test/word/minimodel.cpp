@@ -287,12 +287,257 @@ namespace Test { namespace Word {
       }
     };
 
+    class StructuralLifecycle : public Base {
+    private:
+      enum Operation {
+        OP_EXTRACT, OP_CONCAT, OP_REPEAT, OP_ZERO_EXTEND, OP_SIGN_EXTEND,
+        OP_SHIFT_LEFT, OP_VAR_SHIFT_LEFT, OP_LOGICAL_SHIFT_RIGHT,
+        OP_VAR_LOGICAL_SHIFT_RIGHT, OP_ARITHMETIC_SHIFT_RIGHT,
+        OP_VAR_ARITHMETIC_SHIFT_RIGHT, OP_ROTATE_LEFT, OP_ROTATE_RIGHT,
+        OP_COUNT
+      };
+
+      static unsigned int result_width(Operation op) {
+        switch (op) {
+        case OP_EXTRACT: return 2;
+        case OP_CONCAT: case OP_REPEAT:
+        case OP_ZERO_EXTEND: case OP_SIGN_EXTEND: return 8;
+        default: return 4;
+        }
+      }
+
+      class StructuralSpace : public Gecode::Space {
+      public:
+        Gecode::WordVar x;
+        Gecode::WordVar amount;
+        Gecode::WordVar direct_result;
+        Gecode::WordVar minimodel_result;
+        StructuralSpace(Operation op, unsigned int fixed_amount)
+          : x(*this,4), amount(*this,4),
+            direct_result(*this,result_width(op)), minimodel_result() {
+          using namespace Gecode;
+          WordExpr expression(x);
+          switch (op) {
+          case OP_EXTRACT:
+            Gecode::extract(*this,x,1,2,direct_result);
+            expression = Gecode::extract(WordExpr(x),1,2);
+            break;
+          case OP_CONCAT:
+            Gecode::concat(*this,x,amount,direct_result);
+            expression = Gecode::concat(WordExpr(x),WordExpr(amount));
+            break;
+          case OP_REPEAT:
+            Gecode::repeat(*this,x,2,direct_result);
+            expression = Gecode::repeat(WordExpr(x),2);
+            break;
+          case OP_ZERO_EXTEND:
+            Gecode::zero_extend(*this,x,8,direct_result);
+            expression = Gecode::zero_extend(WordExpr(x),8);
+            break;
+          case OP_SIGN_EXTEND:
+            Gecode::sign_extend(*this,x,8,direct_result);
+            expression = Gecode::sign_extend(WordExpr(x),8);
+            break;
+          case OP_SHIFT_LEFT:
+            Gecode::shift_left(*this,x,fixed_amount,direct_result);
+            expression = WordExpr(x) << fixed_amount;
+            break;
+          case OP_VAR_SHIFT_LEFT:
+            Gecode::shift_left(*this,x,amount,direct_result);
+            expression = WordExpr(x) << WordExpr(amount);
+            break;
+          case OP_LOGICAL_SHIFT_RIGHT:
+            Gecode::logical_shift_right(*this,x,fixed_amount,direct_result);
+            expression = Gecode::logical_shift_right(WordExpr(x),fixed_amount);
+            break;
+          case OP_VAR_LOGICAL_SHIFT_RIGHT:
+            Gecode::logical_shift_right(*this,x,amount,direct_result);
+            expression = Gecode::logical_shift_right(WordExpr(x),
+                                                       WordExpr(amount));
+            break;
+          case OP_ARITHMETIC_SHIFT_RIGHT:
+            Gecode::arithmetic_shift_right(*this,x,fixed_amount,direct_result);
+            expression = Gecode::arithmetic_shift_right(WordExpr(x),
+                                                         fixed_amount);
+            break;
+          case OP_VAR_ARITHMETIC_SHIFT_RIGHT:
+            Gecode::arithmetic_shift_right(*this,x,amount,direct_result);
+            expression = Gecode::arithmetic_shift_right(WordExpr(x),
+                                                         WordExpr(amount));
+            break;
+          case OP_ROTATE_LEFT:
+            Gecode::rotate_left(*this,x,fixed_amount,direct_result);
+            expression = Gecode::rotate_left(WordExpr(x),fixed_amount);
+            break;
+          case OP_ROTATE_RIGHT:
+            Gecode::rotate_right(*this,x,fixed_amount,direct_result);
+            expression = Gecode::rotate_right(WordExpr(x),fixed_amount);
+            break;
+          default:
+            GECODE_NEVER;
+          }
+          WordExpr copied(expression);
+          WordExpr assigned(x);
+          assigned = copied;
+          minimodel_result = expr(*this,assigned);
+        }
+        StructuralSpace(StructuralSpace& s) : Gecode::Space(s) {
+          x.update(*this,s.x);
+          amount.update(*this,s.amount);
+          direct_result.update(*this,s.direct_result);
+          minimodel_result.update(*this,s.minimodel_result);
+        }
+        virtual Gecode::Space* copy(void) {
+          return new StructuralSpace(*this);
+        }
+      };
+
+      static bool parity(void) {
+        const unsigned int fixed_amounts[] = {0,3,4,7};
+        for (unsigned int op=0; op<OP_COUNT; op++)
+          for (unsigned int a=0; a<4; a++)
+            for (Gecode::WordValue x=0; x<16; x++)
+              for (Gecode::WordValue amount=0; amount<16; amount += 5) {
+                StructuralSpace s(static_cast<Operation>(op),
+                                  fixed_amounts[a]);
+                Gecode::dom(s,s.x,x);
+                Gecode::dom(s,s.amount,amount);
+                if ((s.status() == Gecode::SS_FAILED) ||
+                    (s.direct_result.width() != result_width(
+                       static_cast<Operation>(op))) ||
+                    (s.minimodel_result.width() != result_width(
+                       static_cast<Operation>(op))) ||
+                    !s.direct_result.assigned() ||
+                    !s.minimodel_result.assigned() ||
+                    (s.direct_result.val() != s.minimodel_result.val()))
+                  return false;
+              }
+
+        StructuralSpace partial(OP_CONCAT,0);
+        Gecode::dom(partial,partial.x,1U,11U);
+        Gecode::dom(partial,partial.amount,2U,11U);
+        if (partial.status() == Gecode::SS_FAILED)
+          return false;
+        return (partial.direct_result.lo() == partial.minimodel_result.lo()) &&
+          (partial.direct_result.hi() == partial.minimodel_result.hi());
+      }
+
+      static bool invalid(void) {
+        StructuralSpace s(OP_EXTRACT,0);
+        Gecode::WordVar narrow(s,3);
+        Gecode::WordVar wide0(s,40);
+        Gecode::WordVar wide1(s,40);
+        try {
+          (void) Gecode::extract(Gecode::WordExpr(s.x),0,0);
+          return false;
+        } catch (const Gecode::Word::OutOfLimits&) {}
+        try {
+          (void) Gecode::extract(Gecode::WordExpr(s.x),4,1);
+          return false;
+        } catch (const Gecode::Word::OutOfLimits&) {}
+        try {
+          (void) Gecode::extract(Gecode::WordExpr(s.x),3,2);
+          return false;
+        } catch (const Gecode::Word::OutOfLimits&) {}
+        try {
+          (void) Gecode::concat(Gecode::WordExpr(wide0),
+                                Gecode::WordExpr(wide1));
+          return false;
+        } catch (const Gecode::Word::WidthMismatch&) {}
+        try {
+          (void) Gecode::repeat(Gecode::WordExpr(s.x),0);
+          return false;
+        } catch (const Gecode::Word::OutOfLimits&) {}
+        try {
+          (void) Gecode::repeat(Gecode::WordExpr(s.x),17);
+          return false;
+        } catch (const Gecode::Word::OutOfLimits&) {}
+        try {
+          (void) Gecode::zero_extend(Gecode::WordExpr(s.x),3);
+          return false;
+        } catch (const Gecode::Word::OutOfLimits&) {}
+        try {
+          (void) Gecode::sign_extend(Gecode::WordExpr(s.x),65);
+          return false;
+        } catch (const Gecode::Word::OutOfLimits&) {}
+        try {
+          (void) (Gecode::WordExpr(s.x) << Gecode::WordExpr(narrow));
+          return false;
+        } catch (const Gecode::Word::WidthMismatch&) {}
+        try {
+          (void) Gecode::logical_shift_right(Gecode::WordExpr(s.x),
+                                              Gecode::WordExpr(narrow));
+          return false;
+        } catch (const Gecode::Word::WidthMismatch&) {}
+        try {
+          (void) Gecode::arithmetic_shift_right(Gecode::WordExpr(s.x),
+                                                 Gecode::WordExpr(narrow));
+          return false;
+        } catch (const Gecode::Word::WidthMismatch&) {}
+        return true;
+      }
+
+      static bool search_recomputation(void) {
+        using namespace Gecode;
+        class SearchSpace : public Space {
+        public:
+          WordVar x;
+          WordVar amount;
+          WordVar result;
+          SearchSpace(void)
+            : x(*this,2), amount(*this,2), result() {
+            WordExpr shifted = logical_shift_right(WordExpr(x),
+                                                   WordExpr(amount));
+            result = expr(*this,rotate_left(shifted,1));
+            WordVarArgs decision = {x,amount};
+            branch(*this,decision,WORD_VAR_SIZE_MIN(),WORD_VAL_LSB());
+          }
+          SearchSpace(SearchSpace& s) : Space(s) {
+            x.update(*this,s.x);
+            amount.update(*this,s.amount);
+            result.update(*this,s.result);
+          }
+          virtual Space* copy(void) { return new SearchSpace(*this); }
+        };
+
+        SearchSpace* root = new SearchSpace;
+        Search::Options options;
+        options.c_d = 8;
+        options.a_d = 64;
+        DFS<SearchSpace> dfs(root,options);
+        delete root;
+        unsigned int solutions = 0;
+        while (SearchSpace* solution = dfs.next()) {
+          const WordValue shifted = (solution->amount.val() < 2) ?
+            solution->x.val() >> solution->amount.val() : 0;
+          const WordValue expected = ((shifted << 1) | (shifted >> 1)) & 3U;
+          const bool ok = solution->x.assigned() &&
+            solution->amount.assigned() && solution->result.assigned() &&
+            (solution->result.val() == expected) &&
+            (PropagatorGroup::all.size(*solution) == 0);
+          delete solution;
+          if (!ok)
+            return false;
+          solutions++;
+        }
+        return solutions == 16;
+      }
+
+    public:
+      StructuralLifecycle(void)
+        : Base("Word::MiniModel::StructuralLifecycle") {}
+      virtual bool run(void) {
+        return parity() && invalid() && search_recomputation();
+      }
+    };
+
     Logic logic;
     NamedLogic named_logic;
     BooleanConditional boolean_conditional;
     MaskConditional mask_conditional;
     Relation relation;
     Lifecycle lifecycle;
+    StructuralLifecycle structural_lifecycle;
 
   }
 
