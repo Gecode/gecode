@@ -30,6 +30,7 @@
  *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+#include <gecode/word/arithmetic.hh>
 #include <gecode/word/logic.hh>
 #include <gecode/word/structure.hh>
 
@@ -47,24 +48,10 @@ namespace Gecode {
       return c.val();
     }
 
-    /**
-     * Wang et al.'s carry decomposition uses five ordinary intermediate
-     * WordVars and six existing word-level propagators. The carry-in word has
-     * bit zero fixed to zero; shifting the carry-out word discards overflow.
-     */
     void post_add(Home home, WordVar x, WordVar y, WordVar result) {
-      const unsigned int width = x.width();
-      WordVar xor_xy(home,width);
-      WordVar carry(home,width,0,Word::width_mask(width) & ~WordValue(1));
-      WordVar both_one(home,width);
-      WordVar carry_one(home,width);
-      WordVar carry_out(home,width);
-      rel(home,x,WOT_XOR,y,xor_xy);
-      rel(home,xor_xy,WOT_XOR,carry,result);
-      rel(home,x,WOT_AND,y,both_one);
-      rel(home,carry,WOT_AND,xor_xy,carry_one);
-      rel(home,both_one,WOT_OR,carry_one,carry_out);
-      shift_left(home,carry_out,1,carry);
+      GECODE_ES_FAIL(Word::Arithmetic::Add::post(
+                       home,Word::WordView(x),Word::WordView(y),
+                       Word::WordView(result)));
     }
 
     void post_neg(Home home, WordVar x, WordVar result) {

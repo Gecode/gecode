@@ -193,6 +193,49 @@ namespace Test { namespace Word {
         return true;
       }
 
+      /** Exhaustive width-two support hull for the native carry actor. */
+      static bool add_bit_consistency(void) {
+        const unsigned int width = 2;
+        const Gecode::WordValue mask = 3U;
+        for (PartialAssignment p(3,width); p.has_more(); p.next()) {
+          TestSpace s(3,Domain(width,0,mask));
+          std::vector<Domain> domains;
+          for (int i=0; i<3; i++)
+            domains.push_back(p[i]);
+          s.narrow(domains);
+          Gecode::add(s,s.x[0],s.x[1],s.x[2]);
+          const bool failed = s.failed();
+
+          bool supported = false;
+          Gecode::WordValue support_lo[3] = {mask,mask,mask};
+          Gecode::WordValue support_hi[3] = {0,0,0};
+          for (Values x(p[0]); x(); ++x)
+            for (Values y(p[1]); y(); ++y) {
+              const Gecode::WordValue z = (x.val()+y.val()) & mask;
+              if (!p[2].in(z))
+                continue;
+              supported = true;
+              const Gecode::WordValue tuple[3] = {x.val(),y.val(),z};
+              for (int i=0; i<3; i++) {
+                support_lo[i] &= tuple[i];
+                support_hi[i] |= tuple[i];
+              }
+            }
+          if (!supported) {
+            if (!failed)
+              return false;
+          } else {
+            if (failed)
+              return false;
+            for (int i=0; i<3; i++)
+              if ((s.x[i].lo() != support_lo[i]) ||
+                  (s.x[i].hi() != support_hi[i]))
+                return false;
+          }
+        }
+        return true;
+      }
+
       /** A tiny ordinary Boolean full-adder decomposition for comparison. */
       class DifferentialSpace : public Gecode::Space {
       public:
@@ -287,6 +330,14 @@ namespace Test { namespace Word {
             (carry.x[2].val() != 8U))
           return false;
 
+        ArithmeticSpace wide(3,64);
+        Gecode::dom(wide,wide.x[0],~Gecode::WordValue(0));
+        Gecode::dom(wide,wide.x[1],1U);
+        Gecode::add(wide,wide.x[0],wide.x[1],wide.x[2]);
+        if ((wide.status() == Gecode::SS_FAILED) ||
+            !wide.x[2].assigned() || (wide.x[2].val() != 0U))
+          return false;
+
         ArithmeticSpace aliases;
         Gecode::dom(aliases,aliases.x[0],8U);
         Gecode::dom(aliases,aliases.x[1],3U);
@@ -302,6 +353,15 @@ namespace Test { namespace Word {
                     add_alias.x[0]);
         if ((add_alias.status() == Gecode::SS_FAILED) ||
             !add_alias.x[1].assigned() || (add_alias.x[1].val() != 0U))
+          return false;
+
+        ArithmeticSpace add_repeated;
+        Gecode::dom(add_repeated,add_repeated.x[2],6U);
+        Gecode::add(add_repeated,add_repeated.x[0],add_repeated.x[0],
+                    add_repeated.x[2]);
+        if ((add_repeated.status() == Gecode::SS_FAILED) ||
+            (add_repeated.x[0].lo() != 3U) ||
+            (add_repeated.x[0].hi() != 11U))
           return false;
 
         ArithmeticSpace failed;
@@ -339,14 +399,13 @@ namespace Test { namespace Word {
       static bool counters(void) {
         ArithmeticSpace s;
         Gecode::add(s,s.x[0],s.x[1],s.x[2]);
-        // The fixed decomposition has five intermediate WordVars and six
-        // propagators; Gecode has no public variable-allocation counter.
-        if (Gecode::PropagatorGroup::all.size(s) != 6)
+        // Addition is one native actor with no model-level carry variables.
+        if (Gecode::PropagatorGroup::all.size(s) != 1)
           return false;
         Gecode::StatusStatistics statistics;
         if (s.status(statistics) == Gecode::SS_FAILED)
           return false;
-        return statistics.propagate >= 6;
+        return statistics.propagate >= 1;
       }
 
       static bool search_recomputation(void) {
@@ -395,7 +454,8 @@ namespace Test { namespace Word {
     public:
       Lifecycle(void) : Base("Word::Arithmetic::Lifecycle") {}
       virtual bool run(void) {
-        return partial(ADD) && partial(NEG) && partial(SUB) &&
+        return partial(ADD) && add_bit_consistency() &&
+          partial(NEG) && partial(SUB) &&
           boolean_parity() && constants_aliases_lifecycle() &&
           counters() && search_recomputation();
       }

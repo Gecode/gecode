@@ -162,6 +162,64 @@ Nand, nor, xnor, greater-than, and related dual operations do not require unique
 - Maintain as large a private development benchmark corpus as practical outside tracked repository content. The harness accepts an explicit external corpus root, reports missing private datasets cleanly, and makes accidental redistribution difficult through ignore rules and packaging checks.
 - Include small verification and cryptographic kernels, applicable Wang-style instances, and broader QF_BV material in the private corpus when licensing and local storage permit. Public CI uses only redistributable fixtures.
 
+## Performance follow-up
+
+The initial Release benchmarks establish two independent optimization targets.
+On 64-bit multiplication, the word model has 25.8 times fewer root
+propagators than the Boolean decomposition but is only 1.54 times faster. A
+sampling profile attributes 67.7 percent of native top-of-stack samples to
+`Word::Logic::Table::propagate` and another 21.8 percent to
+`WordView::narrow`. The existing addition and multiplication postings are
+decompositions, so actor scheduling and communication consume much of the
+representation advantage.
+
+The follow-up therefore has two separate implementation tracks:
+
+- implement compact native addition and multiplication propagators, declaring
+  and measuring each actor's propagation contract rather than assuming that a
+  smaller actor is stronger; and
+- optimize the generic `Word::Logic::Table` actor independently, preserving its
+  existing semantics and bit-consistency contract.
+
+Addition is implemented before multiplication. The native addition actor must
+achieve bit consistency for the fixed-width carry relation without model-level
+carry variables. The native multiplication actor must be sound, exact on
+assigned words, perform useful bidirectional cube narrowing, and document any
+gap from bit consistency. It must remain one ordinary Gecode actor rather than
+hiding the existing decomposition inside an actor.
+
+The final benchmark reconstructs four builds from the durable task commits:
+the original decomposed baseline, native arithmetic only, table optimization
+only, and both changes. Experimental switches do not become public API. The
+production posting keeps a native actor only when focused propagation and
+search benchmarks show a useful performance result without a material
+regression in the declared propagation contract.
+
+The benchmark separates forward assigned evaluation from partial-domain and
+inverse search cases. It reports wall time, peak RSS, actors, propagation calls,
+nodes, failures, and solution parity. Results distinguish representation and
+propagation effects from process startup and do not claim SMT-solver parity.
+
+## Testing
+
+Use focused coverage through the existing `test/word` framework and the normal
+benchmark harness. Addition receives exhaustive assigned semantics and
+small-width partial-domain checks sufficient to establish its declared bit
+consistency. Multiplication receives exhaustive assigned semantics at small
+width, representative partial/inverse cases, and differential solution checks;
+it does not require an exhaustive campaign over every partial multiplication
+cube. Table optimization reuses the existing logic and conditional tests and
+adds only focused regression coverage for a concrete optimized path when the
+current tests do not exercise it.
+
+Follow established Gecode actor, cloning, recomputation, and subsumption
+patterns. Do not add a new test executable or testing framework. Performance
+validation uses Release builds, resumable per-run artifacts, medians, and
+best-effort peak RSS. It must keep raw output and avoid timing instrumentation
+that traverses every actor in the measured process. Broad platform matrices,
+large industrial QF_BV corpora, SAT learning comparisons, and battle-hardening
+edge campaigns remain outside this follow-up.
+
 ## Validation
 
 Validation is layered so that a fast rule error does not hide behind end-to-end search:

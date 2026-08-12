@@ -558,6 +558,7 @@ WORDSRC0 = \
 	conditional.cpp logic.cpp rel.cpp structure.cpp trace.cpp trace/tracer.cpp \
 	var/word.cpp var-imp/word.cpp
 WORDHDR0 = \
+	arithmetic.hh arithmetic/add.hpp \
 	array.hpp array-traits.hpp branch.hh branch.hpp branch/traits.hpp \
 	channel.hh channel/bit.hpp \
 	exception.hpp logic.hh logic/table.hpp print.hpp view.hpp \
@@ -595,7 +596,7 @@ export LINKWORD      =
 export WORDRC        =
 export WORDRES       =
 endif
-WORDBUILDDIRS = word word/branch word/channel word/logic word/rel \
+WORDBUILDDIRS = word word/arithmetic word/branch word/channel word/logic word/rel \
 	word/structure word/trace \
 	word/var word/var-imp
 
