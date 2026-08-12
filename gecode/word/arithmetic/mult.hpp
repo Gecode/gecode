@@ -60,10 +60,10 @@ namespace Gecode { namespace Word { namespace Arithmetic {
   }
 
   forceinline unsigned int
-  mult_known_low(WordView x) {
-    const WordValue unknown = x.unknown();
+  mult_known_low(WordValue lo, WordValue hi, unsigned int width) {
+    const WordValue unknown = hi & ~lo;
     unsigned int bits = 0;
-    while ((bits < x.width()) &&
+    while ((bits < width) &&
            ((unknown & (WordValue(1) << bits)) == 0))
       bits++;
     return bits;
@@ -86,87 +86,125 @@ namespace Gecode { namespace Word { namespace Arithmetic {
     return inverse;
   }
 
-  forceinline ModEvent
-  mult_narrow_low(Home home, WordView x, unsigned int bits,
-                  WordValue value) {
-    const WordValue field = mult_low_mask(bits);
-    return x.narrow(home,x.lo() | (value & field),
-                    x.hi() & ((value & field) | ~field));
+  forceinline bool
+  mult_narrow(WordValue& lo, WordValue& hi,
+              WordValue next_lo, WordValue next_hi) {
+    lo |= next_lo;
+    hi &= next_hi;
+    return (lo & ~hi) == 0;
   }
 
-  forceinline ExecStatus
-  mult_equal(Home home, WordView x, WordView y) {
-    const WordValue lo = x.lo() | y.lo();
-    const WordValue hi = x.hi() & y.hi();
-    GECODE_ME_CHECK(x.narrow(home,lo,hi));
-    GECODE_ME_CHECK(y.narrow(home,lo,hi));
-    return ES_OK;
+  forceinline bool
+  mult_narrow_low(WordValue& lo, WordValue& hi, unsigned int bits,
+                  WordValue value) {
+    const WordValue field = mult_low_mask(bits);
+    return mult_narrow(lo,hi,value & field,(value & field) | ~field);
+  }
+
+  forceinline bool
+  mult_equal(WordValue& xlo, WordValue& xhi,
+             WordValue& ylo, WordValue& yhi) {
+    const WordValue lo = xlo | ylo;
+    const WordValue hi = xhi & yhi;
+    xlo=ylo=lo;
+    xhi=yhi=hi;
+    return (lo & ~hi) == 0;
   }
 
   /** Propagate c*y=z modulo 2^bits for fixed low prefixes c and z. */
-  forceinline ExecStatus
-  mult_inverse_prefix(Home home, WordView c, WordView y, WordView z) {
-    const unsigned int bits = std::min(mult_known_low(c),mult_known_low(z));
+  forceinline bool
+  mult_inverse_prefix(WordValue clo, WordValue chi,
+                      WordValue& ylo, WordValue& yhi,
+                      WordValue zlo, WordValue zhi,
+                      unsigned int width) {
+    const unsigned int bits =
+      std::min(mult_known_low(clo,chi,width),
+               mult_known_low(zlo,zhi,width));
     if (bits == 0)
-      return ES_OK;
+      return true;
     const WordValue field = mult_low_mask(bits);
-    const WordValue cv = c.lo() & field;
-    const WordValue zv = z.lo() & field;
+    const WordValue cv = clo & field;
+    const WordValue zv = zlo & field;
     const unsigned int zeros = mult_trailing_zeros(cv,bits);
     if (zeros == bits) {
       if (zv != 0)
-        return ES_FAILED;
-      return ES_OK;
+        return false;
+      return true;
     }
     if ((zv & mult_low_mask(zeros)) != 0)
-      return ES_FAILED;
+      return false;
     const unsigned int result_bits = bits-zeros;
     const WordValue odd = cv >> zeros;
     const WordValue result =
       ((zv >> zeros) * mult_inverse_odd(odd)) &
       mult_low_mask(result_bits);
-    GECODE_ME_CHECK(mult_narrow_low(home,y,result_bits,result));
-    return ES_OK;
+    return mult_narrow_low(ylo,yhi,result_bits,result);
   }
 
   forceinline ExecStatus
   Mult::narrow(Home home, WordView x, WordView y, WordView z) {
     const unsigned int width = x.width();
+    WordValue lo[] = {x.lo(),y.lo(),z.lo()};
+    WordValue hi[] = {x.hi(),y.hi(),z.hi()};
     bool changed;
     do {
-      const WordValue old[] = {x.lo(),x.hi(),y.lo(),y.hi(),z.lo(),z.hi()};
+      const WordValue old_lo[] = {lo[0],lo[1],lo[2]};
+      const WordValue old_hi[] = {hi[0],hi[1],hi[2]};
 
-      if ((x.assigned() && (x.val() == 0)) ||
-          (y.assigned() && (y.val() == 0))) {
-        GECODE_ME_CHECK(z.eq(home,0));
-      }
-      if (x.assigned() && (x.val() == 1))
-        GECODE_ES_CHECK(mult_equal(home,y,z));
-      if (y.assigned() && (y.val() == 1))
-        GECODE_ES_CHECK(mult_equal(home,x,z));
+      if (((lo[0] == hi[0]) && (lo[0] == 0)) ||
+          ((lo[1] == hi[1]) && (lo[1] == 0)))
+        if (!mult_narrow(lo[2],hi[2],0,0))
+          return ES_FAILED;
+      if ((lo[0] == hi[0]) && (lo[0] == 1))
+        if (!mult_equal(lo[1],hi[1],lo[2],hi[2]))
+          return ES_FAILED;
+      if ((lo[1] == hi[1]) && (lo[1] == 1))
+        if (!mult_equal(lo[0],hi[0],lo[2],hi[2]))
+          return ES_FAILED;
 
       // Multiplication modulo 2^k depends only on the low k operand bits.
-      const unsigned int known = std::min(mult_known_low(x),mult_known_low(y));
+      const unsigned int known =
+        std::min(mult_known_low(lo[0],hi[0],width),
+                 mult_known_low(lo[1],hi[1],width));
       if (known != 0)
-        GECODE_ME_CHECK(mult_narrow_low(home,z,known,x.lo()*y.lo()));
+        if (!mult_narrow_low(lo[2],hi[2],known,lo[0]*lo[1]))
+          return ES_FAILED;
 
       // Guaranteed powers of two in both operands force low product zeros.
-      const unsigned int xz = mult_trailing_zeros(x.hi(),width);
-      const unsigned int yz = mult_trailing_zeros(y.hi(),width);
+      const unsigned int xz = mult_trailing_zeros(hi[0],width);
+      const unsigned int yz = mult_trailing_zeros(hi[1],width);
       const unsigned int zeros = (xz > width-yz) ? width : xz+yz;
       if (zeros != 0)
-        GECODE_ME_CHECK(mult_narrow_low(home,z,zeros,0));
+        if (!mult_narrow_low(lo[2],hi[2],zeros,0))
+          return ES_FAILED;
 
       // A fixed result prefix and multiplicand prefix determine the other
       // operand prefix after stripping powers of two and inverting the odd
       // factor in the corresponding modular ring.
-      GECODE_ES_CHECK(mult_inverse_prefix(home,x,y,z));
-      GECODE_ES_CHECK(mult_inverse_prefix(home,y,x,z));
+      if (!mult_inverse_prefix(lo[0],hi[0],lo[1],hi[1],
+                               lo[2],hi[2],width) ||
+          !mult_inverse_prefix(lo[1],hi[1],lo[0],hi[0],
+                               lo[2],hi[2],width))
+        return ES_FAILED;
 
-      changed = (old[0] != x.lo()) || (old[1] != x.hi()) ||
-        (old[2] != y.lo()) || (old[3] != y.hi()) ||
-        (old[4] != z.lo()) || (old[5] != z.hi());
+      if ((x == y) && !mult_equal(lo[0],hi[0],lo[1],hi[1]))
+        return ES_FAILED;
+      if ((x == z) && !mult_equal(lo[0],hi[0],lo[2],hi[2]))
+        return ES_FAILED;
+      if ((y == z) && !mult_equal(lo[1],hi[1],lo[2],hi[2]))
+        return ES_FAILED;
+
+      changed = (old_lo[0] != lo[0]) || (old_hi[0] != hi[0]) ||
+        (old_lo[1] != lo[1]) || (old_hi[1] != hi[1]) ||
+        (old_lo[2] != lo[2]) || (old_hi[2] != hi[2]);
     } while (changed);
+
+    if ((x.lo() != lo[0]) || (x.hi() != hi[0]))
+      GECODE_ME_CHECK(x.narrow(home,lo[0],hi[0]));
+    if ((y.lo() != lo[1]) || (y.hi() != hi[1]))
+      GECODE_ME_CHECK(y.narrow(home,lo[1],hi[1]));
+    if ((z.lo() != lo[2]) || (z.hi() != hi[2]))
+      GECODE_ME_CHECK(z.narrow(home,lo[2],hi[2]));
     return ES_OK;
   }
 
