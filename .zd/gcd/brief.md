@@ -74,6 +74,9 @@ and focused regression coverage.
   `mod` convention.
 - Pair each ordinary n-ary product relation with a reified overload; reified
   GCD means reifying the full proposition `z = gcd(x,y)`.
+- Propagate the positive n-ary exact-product relation from variable bounds in
+  general, without making useful propagation depend on Cartesian support
+  enumeration or a small-domain tuple threshold.
 
 ## Open questions
 

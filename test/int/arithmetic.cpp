@@ -221,7 +221,7 @@ namespace Test { namespace Int {
        ProductXYZR(const std::string& s, const Gecode::IntSet& d,
                    Gecode::IntPropLevel ipl)
          : Test("Arithmetic::Product::XYZR::"+str(ipl)+"::"+s,
-                4,d,true,ipl) {}
+                4,d,true,ipl) { contest = CTL_NONE; }
        virtual bool solution(const Assignment& x) const {
          int p;
          return product_value(x,3,p) && (p == x[3]);
@@ -243,7 +243,7 @@ namespace Test { namespace Int {
        ProductEmpty(const std::string& s, const Gecode::IntSet& d,
                     Gecode::IntPropLevel ipl)
          : Test("Arithmetic::Product::Empty::"+str(ipl)+"::"+s,
-                1,d,true,ipl) {}
+                1,d,true,ipl) { contest = CTL_NONE; }
        virtual bool solution(const Assignment& x) const {
          return x[0] == 1;
        }
@@ -262,7 +262,7 @@ namespace Test { namespace Int {
        ProductSingleton(const std::string& s, const Gecode::IntSet& d,
                         Gecode::IntPropLevel ipl)
          : Test("Arithmetic::Product::Singleton::"+str(ipl)+"::"+s,
-                2,d,true,ipl) {}
+                2,d,true,ipl) { contest = CTL_NONE; }
        virtual bool solution(const Assignment& x) const {
          return x[0] == x[1];
        }
@@ -281,7 +281,7 @@ namespace Test { namespace Int {
        ProductXXYAlias(const std::string& s, const Gecode::IntSet& d,
                        Gecode::IntPropLevel ipl)
          : Test("Arithmetic::Product::XXYAlias::"+str(ipl)+"::"+s,
-                2,d,true,ipl) {}
+                2,d,true,ipl) { contest = CTL_NONE; }
        virtual bool solution(const Assignment& x) const {
          long long int p = static_cast<long long int>(x[0]) * x[0] * x[1];
          return (p >= Gecode::Int::Limits::min) &&
@@ -293,6 +293,43 @@ namespace Test { namespace Int {
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x,
                          Gecode::Reify r) {
          Gecode::product(home,Gecode::IntVarArgs({x[0],x[0],x[1]}),x[1],r,ipl);
+       }
+     };
+
+     /// %Test product bounds propagation beyond the support-enumeration cap
+     class ProductBoundsLarge : public ::Test::Base {
+     protected:
+       class TestSpace : public Gecode::Space {
+       public:
+         virtual Gecode::Space* copy(void) { return nullptr; }
+       };
+     public:
+       ProductBoundsLarge(void)
+         : ::Test::Base("Int::Arithmetic::Product::BoundsLarge") {}
+       virtual bool run(void) {
+         using namespace Gecode;
+         {
+           TestSpace home;
+           IntVarArgs x(home,3,2,100);
+           IntVar y(home,0,Gecode::Int::Limits::max);
+           BoolVar b(home,1,1);
+           product(home,x,y,Reify(b));
+           if ((home.status() == SS_FAILED) ||
+               (y.min() != 8) || (y.max() != 1000000))
+             return false;
+         }
+         {
+           TestSpace home;
+           IntVarArgs x(home,3,10,100);
+           IntVar y(home,1000,1000);
+           product(home,x,y);
+           if (home.status() == SS_FAILED)
+             return false;
+           for (int i=0; i<x.size(); i++)
+             if (!x[i].assigned() || (x[i].val() != 10))
+               return false;
+         }
+         return true;
        }
      };
 
@@ -1660,6 +1697,7 @@ namespace Test { namespace Int {
            (void) new ArgMinBoolShared(i,false);
          }
          (void) new ProductModInvalidModulus;
+         (void) new ProductBoundsLarge;
        }
      };
 

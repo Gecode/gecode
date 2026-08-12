@@ -861,13 +861,13 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
 namespace Gecode { namespace Int { namespace Arithmetic {
 
-  /** \brief Domain propagator for an exact n-ary product
+  /** \brief Bounds propagator for an exact n-ary product
    * \ingroup FuncIntProp
    */
-  class Product : public NaryOnePropagator<IntView,PC_INT_DOM> {
+  class Product : public NaryOnePropagator<IntView,PC_INT_BND> {
   protected:
-    using NaryOnePropagator<IntView,PC_INT_DOM>::x;
-    using NaryOnePropagator<IntView,PC_INT_DOM>::y;
+    using NaryOnePropagator<IntView,PC_INT_BND>::x;
+    using NaryOnePropagator<IntView,PC_INT_BND>::y;
     Product(Home home, ViewArray<IntView>& x, IntView y);
     Product(Space& home, Product& p);
   public:
