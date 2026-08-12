@@ -296,6 +296,137 @@ namespace Test { namespace Int {
        }
      };
 
+     /// Compute a canonical modular product for testing.
+     int product_mod_value(const Assignment& x, int n, int m) {
+       long long int p = 1 % m;
+       for (int i=0; i<n; i++) {
+         long long int q = static_cast<long long int>(x[i]) % m;
+         if (q < 0)
+           q += m;
+         p = (p*q) % m;
+       }
+       return static_cast<int>(p);
+     }
+
+     /// %Test for an ordinary and reified three-factor modular product
+     class ProductModXYZR : public Test {
+     protected:
+       int m;
+     public:
+       ProductModXYZR(const std::string& s, const Gecode::IntSet& d,
+                      int m0, Gecode::IntPropLevel ipl)
+         : Test("Arithmetic::ProductMod::XYZR::"+str(ipl)+"::"+s,
+                4,d,true,ipl), m(m0) {}
+       virtual bool solution(const Assignment& x) const {
+         return product_mod_value(x,3,m) == x[3];
+       }
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
+         Gecode::product_mod(home,Gecode::IntVarArgs({x[0],x[1],x[2]}),
+                             m,x[3],ipl);
+       }
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x,
+                         Gecode::Reify r) {
+         Gecode::product_mod(home,Gecode::IntVarArgs({x[0],x[1],x[2]}),
+                             m,x[3],r,ipl);
+       }
+     };
+
+     /// %Test for the empty modular product, including modulus one
+     class ProductModEmpty : public Test {
+     protected:
+       int m;
+     public:
+       ProductModEmpty(const std::string& s, const Gecode::IntSet& d,
+                       int m0, Gecode::IntPropLevel ipl)
+         : Test("Arithmetic::ProductMod::Empty::"+str(ipl)+"::"+s,
+                1,d,true,ipl), m(m0) {}
+       virtual bool solution(const Assignment& x) const {
+         return x[0] == (1 % m);
+       }
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
+         Gecode::product_mod(home,Gecode::IntVarArgs(),m,x[0],ipl);
+       }
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x,
+                         Gecode::Reify r) {
+         Gecode::product_mod(home,Gecode::IntVarArgs(),m,x[0],r,ipl);
+       }
+     };
+
+     /// %Test for a singleton modular product
+     class ProductModSingleton : public Test {
+     protected:
+       int m;
+     public:
+       ProductModSingleton(const std::string& s, const Gecode::IntSet& d,
+                           int m0, Gecode::IntPropLevel ipl)
+         : Test("Arithmetic::ProductMod::Singleton::"+str(ipl)+"::"+s,
+                2,d,true,ipl), m(m0) {}
+       virtual bool solution(const Assignment& x) const {
+         int r = x[0] % m;
+         if (r < 0)
+           r += m;
+         return r == x[1];
+       }
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
+         Gecode::product_mod(home,Gecode::IntVarArgs({x[0]}),m,x[1],ipl);
+       }
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x,
+                         Gecode::Reify r) {
+         Gecode::product_mod(home,Gecode::IntVarArgs({x[0]}),m,x[1],r,ipl);
+       }
+     };
+
+     /// %Test repeated factors with the result aliased to a factor
+     class ProductModXXYAlias : public Test {
+     protected:
+       int m;
+     public:
+       ProductModXXYAlias(const std::string& s, const Gecode::IntSet& d,
+                          int m0, Gecode::IntPropLevel ipl)
+         : Test("Arithmetic::ProductMod::XXYAlias::"+str(ipl)+"::"+s,
+                2,d,true,ipl), m(m0) {}
+       virtual bool solution(const Assignment& x) const {
+         long long int a = x[0] % m;
+         long long int b = x[1] % m;
+         if (a < 0) a += m;
+         if (b < 0) b += m;
+         return (((a*a) % m)*b) % m == x[1];
+       }
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
+         Gecode::product_mod(home,Gecode::IntVarArgs({x[0],x[0],x[1]}),
+                             m,x[1],ipl);
+       }
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x,
+                         Gecode::Reify r) {
+         Gecode::product_mod(home,Gecode::IntVarArgs({x[0],x[0],x[1]}),
+                             m,x[1],r,ipl);
+       }
+     };
+
+     /// %Test that a nonpositive modular-product modulus is rejected
+     class ProductModInvalidModulus : public ::Test::Base {
+     protected:
+       class TestSpace : public Gecode::Space {
+       public:
+         virtual Gecode::Space* copy(void) { return nullptr; }
+       };
+     public:
+       ProductModInvalidModulus(void)
+         : ::Test::Base("Int::Arithmetic::ProductMod::InvalidModulus") {}
+       virtual bool run(void) {
+         TestSpace home;
+         Gecode::IntVar y(home,0,1);
+         for (int m=0; m>=-1; m--) {
+           try {
+             Gecode::product_mod(home,Gecode::IntVarArgs(),m,y);
+             return false;
+           } catch (const Gecode::Int::OutOfLimits&) {
+           }
+         }
+         return true;
+       }
+     };
+
      /// %Test for multiplication constraint
      class MultXYZ : public Test {
      public:
@@ -1372,6 +1503,13 @@ namespace Test { namespace Int {
            (void) new ProductSingleton("C",q,ipls.ipl());
            (void) new ProductXXYAlias("C",q,ipls.ipl());
 
+           (void) new ProductModXYZR("C",q,5,ipls.ipl());
+           (void) new ProductModXYZR("Sparse",g,7,ipls.ipl());
+           (void) new ProductModEmpty("C",q,5,ipls.ipl());
+           (void) new ProductModEmpty("ModulusOne",q,1,ipls.ipl());
+           (void) new ProductModSingleton("C",g,5,ipls.ipl());
+           (void) new ProductModXXYAlias("C",q,5,ipls.ipl());
+
            (void) new AbsXY("A",a,ipls.ipl());
            (void) new AbsXY("B",b,ipls.ipl());
            (void) new AbsXY("C",c,ipls.ipl());
@@ -1521,6 +1659,7 @@ namespace Test { namespace Int {
            (void) new ArgMinBool(i,1,false);
            (void) new ArgMinBoolShared(i,false);
          }
+         (void) new ProductModInvalidModulus;
        }
      };
 

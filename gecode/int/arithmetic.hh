@@ -904,6 +904,52 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
 namespace Gecode { namespace Int { namespace Arithmetic {
 
+  /** \brief Domain propagator for a fixed-modulus n-ary product
+   * \ingroup FuncIntProp
+   */
+  class ProductMod : public NaryOnePropagator<IntView,PC_INT_DOM> {
+  protected:
+    using NaryOnePropagator<IntView,PC_INT_DOM>::x;
+    using NaryOnePropagator<IntView,PC_INT_DOM>::y;
+    int m;
+    ProductMod(Home home, ViewArray<IntView>& x, int m, IntView y);
+    ProductMod(Space& home, ProductMod& p);
+  public:
+    static ExecStatus post(Home home, ViewArray<IntView>& x, int m, IntView y);
+    virtual Actor* copy(Space& home);
+    virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+  };
+
+  /** \brief Reified domain propagator for a fixed-modulus n-ary product
+   * \ingroup FuncIntProp
+   */
+  template<ReifyMode rm>
+  class ReProductMod : public Propagator {
+  protected:
+    ViewArray<IntView> x;
+    IntView y;
+    BoolView b;
+    int m;
+    ReProductMod(Home home, ViewArray<IntView>& x, int m, IntView y,
+                 BoolView b);
+    ReProductMod(Space& home, ReProductMod<rm>& p);
+  public:
+    static ExecStatus post(Home home, ViewArray<IntView>& x, int m, IntView y,
+                           BoolView b);
+    virtual Actor* copy(Space& home);
+    virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    virtual void reschedule(Space& home);
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+    virtual size_t dispose(Space& home);
+  };
+
+}}}
+
+#include <gecode/int/arithmetic/product-mod.hpp>
+
+namespace Gecode { namespace Int { namespace Arithmetic {
+
   /**
    * \brief Bounds consistent positive division propagator
    *
