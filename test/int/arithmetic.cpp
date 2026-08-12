@@ -440,6 +440,106 @@ namespace Test { namespace Int {
        }
      };
 
+     /// Test repeated powers and result-alias cancellation
+     class ProductPowerAlias : public ::Test::Base {
+     protected:
+       class TestSpace : public Gecode::Space {
+       public:
+         virtual Gecode::Space* copy(void) { return nullptr; }
+       };
+     public:
+       ProductPowerAlias(void)
+         : ::Test::Base("Int::Arithmetic::Product::PowerAlias") {}
+       virtual bool run(void) {
+         using namespace Gecode;
+         {
+           TestSpace home;
+           IntVar x(home,-10,10), y(home,-10,100);
+           product(home,IntVarArgs({x,x}),y);
+           if ((home.status() == SS_FAILED) || (y.min() != 0))
+             return false;
+         }
+         {
+           TestSpace home;
+           IntVar x(home,-10,10), y(home,20,30);
+           product(home,IntVarArgs({x,x}),y);
+           if ((home.status() == SS_FAILED) ||
+               (x.min() != -5) || (x.max() != 5))
+             return false;
+         }
+         {
+           TestSpace home;
+           IntVar x(home,-10,10), y(home,20,30);
+           product(home,IntVarArgs({x,x,x}),y);
+           if ((home.status() == SS_FAILED) || !x.assigned() ||
+               (x.val() != 3))
+             return false;
+         }
+         {
+           TestSpace home;
+           IntVar x(home,-10,10), y(home,-30,-20);
+           product(home,IntVarArgs({x,x,x}),y);
+           if ((home.status() == SS_FAILED) || !x.assigned() ||
+               (x.val() != -3))
+             return false;
+         }
+         {
+           TestSpace home;
+           IntVar x(home,-10,10), two(home,2,2), y(home,50,72);
+           product(home,IntVarArgs({x,x,two}),y);
+           if ((home.status() == SS_FAILED) ||
+               (x.min() != -6) || (x.max() != 6))
+             return false;
+         }
+         {
+           // x*y=y has only the zero branch when x cannot be one.
+           TestSpace home;
+           IntVar x(home,2,4), y(home,-10,10);
+           product(home,IntVarArgs({x,y}),y);
+           if ((home.status() == SS_FAILED) || !y.assigned() ||
+               (y.val() != 0))
+             return false;
+         }
+         {
+           // A nonzero result permits cancellation of one result occurrence.
+           TestSpace home;
+           IntVar x(home,0,2), y(home,2,10);
+           product(home,IntVarArgs({x,y}),y);
+           if ((home.status() == SS_FAILED) || !x.assigned() ||
+               (x.val() != 1))
+             return false;
+         }
+         {
+           // Cancelling one of two result occurrences leaves y*x=1.
+           TestSpace home;
+           IntVar x(home,-1,0), y(home,-2,-1);
+           product(home,IntVarArgs({y,y,x}),y);
+           if ((home.status() == SS_FAILED) || !x.assigned() ||
+               !y.assigned() || (x.val() != -1) || (y.val() != -1))
+             return false;
+         }
+         {
+           // Direct n-ary evaluation retains zero after an overflowing prefix.
+           TestSpace home;
+           const int hi=Gecode::Int::Limits::max;
+           IntVar a(home,hi,hi), z(home,0,0), y(home,0,0);
+           product(home,IntVarArgs({a,a,z}),y);
+           if (home.status() == SS_FAILED)
+             return false;
+         }
+         {
+           TestSpace home;
+           IntVar x(home,-10,10), y(home,20,30);
+           BoolVar b(home,1,1);
+           product(home,IntVarArgs({x,x}),y,Reify(b,RM_EQV));
+           if ((home.status() == SS_FAILED) ||
+               (x.min() != -5) || (x.max() != 5))
+             return false;
+         }
+         return true;
+       }
+     };
+
      /// Test zero-aware inverse bounds for every cofactor sign class
      class ProductInverseBounds : public ::Test::Base {
      protected:
@@ -2330,6 +2430,7 @@ namespace Test { namespace Int {
          (void) new ProductModVarInactive;
          (void) new ProductBoundsLarge;
          (void) new ProductSimplifySign;
+         (void) new ProductPowerAlias;
          (void) new ProductInverseBounds;
        }
      };
