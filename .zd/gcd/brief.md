@@ -108,6 +108,13 @@ public APIs, and focused regression coverage.
   congruence, and algebraic rewrites. A fully assigned relation may be
   evaluated directly; reified relations otherwise remain conservative when
   entailment or disentailment cannot be established algebraically.
+- In particular, ordinary and reified GCD and reified divides must not use
+  small-domain enumeration as a stronger propagation level. Their propagation
+  and reified status use bounds, zero/sign cases, divisibility, gcd identities,
+  and conservative entailment or disentailment when algebra cannot decide.
+- Computing a single mathematically determined output from assigned inputs is
+  algebraic propagation and is permitted; enumerating combinations of
+  unassigned domains or projecting their supports is not.
 - Divisibility and congruence propagation should prefer interval tightening
   and algebraic rewrites. Do not materialize a large sparse support set or
   punch many holes into an integer domain merely because exact divisors or
