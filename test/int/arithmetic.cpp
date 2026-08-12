@@ -333,6 +333,68 @@ namespace Test { namespace Int {
        }
      };
 
+     /// Test zero-aware inverse bounds for every cofactor sign class
+     class ProductInverseBounds : public ::Test::Base {
+     protected:
+       class TestSpace : public Gecode::Space {
+       public:
+         virtual Gecode::Space* copy(void) { return nullptr; }
+       };
+       static bool bounds(const Gecode::IntVar& x, int min, int max) {
+         return (x.min() == min) && (x.max() == max);
+       }
+     public:
+       ProductInverseBounds(void)
+         : ::Test::Base("Int::Arithmetic::Product::InverseBounds") {}
+       virtual bool run(void) {
+         using namespace Gecode;
+         struct Case { int qmin; int qmax; int xmin; int xmax; };
+         const Case cases[] = {
+           { 2, 4,   5, 12}, // Positive
+           { 0, 4,   5, 24}, // Nonnegative
+           {-4,-2, -12, -5}, // Negative
+           {-4, 0, -24, -5}, // Nonpositive
+           {-4, 3, -24, 24}  // Mixed across zero
+         };
+         for (unsigned int i=0; i<sizeof(cases)/sizeof(Case); i++) {
+           TestSpace home;
+           IntVar x(home,-100,100);
+           IntVar q(home,cases[i].qmin,cases[i].qmax);
+           IntVar y(home,20,24);
+           product(home,IntVarArgs({x,q}),y);
+           if ((home.status() == SS_FAILED) ||
+               !bounds(x,cases[i].xmin,cases[i].xmax))
+             return false;
+         }
+         {
+           // When both the cofactor and result can be zero, no inverse
+           // pruning of the other factor is sound.
+           TestSpace home;
+           IntVar x(home,-100,100), q(home,-2,3), y(home,-10,10);
+           product(home,IntVarArgs({x,q}),y);
+           if ((home.status() == SS_FAILED) || !bounds(x,-100,100))
+             return false;
+         }
+         {
+           TestSpace home;
+           IntVar x(home,-100,100), zero(home,0,0), y(home,1,2);
+           product(home,IntVarArgs({x,zero}),y);
+           if (home.status() != SS_FAILED)
+             return false;
+         }
+         {
+           TestSpace home;
+           const int hi=Gecode::Int::Limits::max;
+           IntVar x(home,-1,1), a(home,hi,hi), b(home,hi,hi), y(home,0,0);
+           product(home,IntVarArgs({x,a,b}),y);
+           if ((home.status() == SS_FAILED) || !x.assigned() ||
+               (x.val() != 0))
+             return false;
+         }
+         return true;
+       }
+     };
+
      /// Compute a canonical modular product for testing.
      int product_mod_value(const Assignment& x, int n, int m) {
        long long int p = 1 % m;
@@ -2160,6 +2222,7 @@ namespace Test { namespace Int {
          (void) new ProductModVarAlgebraic;
          (void) new ProductModVarInactive;
          (void) new ProductBoundsLarge;
+         (void) new ProductInverseBounds;
        }
      };
 

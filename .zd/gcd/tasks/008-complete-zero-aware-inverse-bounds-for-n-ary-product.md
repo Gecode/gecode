@@ -3,7 +3,7 @@ schema_version = 1
 id = "gcd-008"
 key = "product-zero-aware-inverse-bounds"
 area = "gcd"
-status = "open"
+status = "done"
 blocked_by = []
 +++
 # Complete zero-aware inverse bounds for n-ary product
@@ -21,12 +21,12 @@ The exact n-ary Product actor performs sound backward bounds propagation for pos
 
 ## Done when
 
-- [ ] Backward factor propagation implements the full zero-aware quotient case split: no filter when cofactor and result both contain zero, failure when a zero cofactor cannot produce the result, magnitude bounds when a cofactor spans zero and the result excludes zero, and directed floor/ceiling quotient bounds for one-sided cofactors.
-- [ ] Positive, nonnegative, negative, nonpositive, mixed, and fixed-zero domain combinations produce sound bounds without division by zero or signed overflow.
-- [ ] Cofactor interval computation is structured to avoid unnecessary repeated whole-array recomputation while preserving safe saturation and alias behavior.
-- [ ] Ordinary propagation and positive reified rewrites reach an honest fixpoint with correct subscriptions, costs, cloning, and subsumption.
-- [ ] Focused tests exercise every sign/zero case, large domains, aliases, and overflow boundaries through the existing Product harness.
-- [ ] The affected integer library and focused Product tests build and pass.
+- [x] Backward factor propagation implements the full zero-aware quotient case split: no filter when cofactor and result both contain zero, failure when a zero cofactor cannot produce the result, magnitude bounds when a cofactor spans zero and the result excludes zero, and directed floor/ceiling quotient bounds for one-sided cofactors.
+- [x] Positive, nonnegative, negative, nonpositive, mixed, and fixed-zero domain combinations produce sound bounds without division by zero or signed overflow.
+- [x] Cofactor interval computation is structured to avoid unnecessary repeated whole-array recomputation while preserving safe saturation and alias behavior.
+- [x] Ordinary propagation and positive reified rewrites reach an honest fixpoint with correct subscriptions, costs, cloning, and subsumption.
+- [x] Focused tests exercise every sign/zero case, large domains, aliases, and overflow boundaries through the existing Product harness.
+- [x] The affected integer library and focused Product tests build and pass.
 
 ## Validation
 
@@ -34,3 +34,12 @@ The exact n-ary Product actor performs sound backward bounds propagation for pos
 - Run focused Int::Arithmetic::Product sign-class and inverse-bound tests with multiple iterations.
 - Run the broader Int::Arithmetic tests when available.
 - Run git diff --check and zd check gcd --format json.
+
+## Result
+
+Added complete zero-aware inverse bounds for n-ary Product using prefix/suffix cofactor intervals and safe quotient hulls for all sign classes.
+
+Validation:
+
+- Built gecodeint_shared and gecode-test; focused Product tests passed for five iterations and broader Int::Arithmetic passed.
+- Independent spec and standards verification, exhaustive small-interval diagnostics, git diff --check, and zd check passed.

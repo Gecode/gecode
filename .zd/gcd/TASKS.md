@@ -3,9 +3,9 @@
 # Tasks: gcd
 
 - Total: 13
-- Ready: 2
+- Ready: 1
 - Blocked: 2
-- Done: 9
+- Done: 10
 
 | ID | Task | State | Blocked by |
 | --- | --- | --- | --- |
@@ -16,7 +16,7 @@
 | [gcd-005](tasks/005-replace-n-ary-product-support-enumeration-with-bounds-propag.md) | Replace n-ary product support enumeration with bounds propagation | done | — |
 | [gcd-006](tasks/006-implement-n-ary-product-mod-with-an-intvar-modulus.md) | Implement n-ary product_mod with an IntVar modulus | done | — |
 | [gcd-007](tasks/007-implement-reified-n-ary-product-mod-with-an-intvar-modulus.md) | Implement reified n-ary product_mod with an IntVar modulus | done | gcd-006 |
-| [gcd-008](tasks/008-complete-zero-aware-inverse-bounds-for-n-ary-product.md) | Complete zero-aware inverse bounds for n-ary product | ready | — |
+| [gcd-008](tasks/008-complete-zero-aware-inverse-bounds-for-n-ary-product.md) | Complete zero-aware inverse bounds for n-ary product | done | — |
 | [gcd-009](tasks/009-add-zero-unit-and-sign-rewrites-for-n-ary-product.md) | Add zero, unit, and sign rewrites for n-ary product | ready | — |
 | [gcd-010](tasks/010-add-repeated-factor-and-result-alias-rewrites-for-n-ary-prod.md) | Add repeated-factor and result-alias rewrites for n-ary product | blocked | gcd-009 |
 | [gcd-011](tasks/011-add-algebraic-and-small-modulus-propagation-for-fixed-produc.md) | Add algebraic and bounds propagation for fixed product_mod | done | — |
