@@ -106,7 +106,7 @@ namespace Gecode {
    * | Variable `shift_left`, `logical_shift_right`, `arithmetic_shift_right` | Bounded word-level cube-hull actor | Assigned semantics and partial-amount soundness |
    * | `add`, `neg`, `sub` | Word-level carry, complement, and addition decompositions | Assigned semantics, partial-domain soundness, aliases, and lifecycle |
    * | `mult` | Word-level schoolbook conditional-shift/add decomposition | Assigned semantics, Boolean differential parity, and partial-domain soundness |
-   * | Unsigned `div`, `mod` | Word-level shift/subtract decomposition | SMT-LIB zero-divisor semantics, Boolean parity, and partial-domain soundness |
+   * | Unsigned `div`, `mod` | Compact native range-hull and low-bit actors | SMT-LIB zero-divisor semantics, Boolean parity, and sound partial/inverse propagation |
    * | `signed_div`, `signed_rem`, `signed_mod` | Sign/absolute-value lowering through unsigned division plus conditional negation/adjustment | SMT-LIB zero-divisor and overflow semantics, Boolean parity, and partial-domain soundness |
    * | `branch`, `assign` and their selectors | Native unknown-bit choices | Archive, no-good, clone, and recomputation lifecycle |
    * | `trace`, WordTraceDelta and word printing | Standard variable trace/print integration | Fixed-bit deltas and trace lifecycle |

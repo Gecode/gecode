@@ -169,11 +169,60 @@ namespace Gecode { namespace Word { namespace Arithmetic {
                            WordView x2);
   };
 
+  /** \brief Native unsigned division propagator
+   *
+   * Exact on assigned words, with sound unsigned range-hull propagation and
+   * inverse pruning for assigned quotient or divisor. It does not claim
+   * domain consistency for cube domains.
+   */
+  class Div : public TernaryPropagator<WordView,PC_WORD_BITS> {
+  protected:
+    using TernaryPropagator<WordView,PC_WORD_BITS>::x0;
+    using TernaryPropagator<WordView,PC_WORD_BITS>::x1;
+    using TernaryPropagator<WordView,PC_WORD_BITS>::x2;
+    Div(Home home, WordView x0, WordView x1, WordView x2);
+    Div(Space& home, Div& p);
+    static ExecStatus narrow(Home home, WordView x0, WordView x1,
+                             WordView x2);
+  public:
+    virtual Actor* copy(Space& home);
+    virtual PropCost cost(const Space& home,
+                          const ModEventDelta& med) const;
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+    static ExecStatus post(Home home, WordView x0, WordView x1,
+                           WordView x2);
+  };
+
+  /** \brief Native unsigned remainder propagator
+   *
+   * Exact on assigned words, with sound unsigned range-hull propagation and
+   * bidirectional low-bit propagation for power-of-two divisors. It does not
+   * claim domain consistency for cube domains.
+   */
+  class Mod : public TernaryPropagator<WordView,PC_WORD_BITS> {
+  protected:
+    using TernaryPropagator<WordView,PC_WORD_BITS>::x0;
+    using TernaryPropagator<WordView,PC_WORD_BITS>::x1;
+    using TernaryPropagator<WordView,PC_WORD_BITS>::x2;
+    Mod(Home home, WordView x0, WordView x1, WordView x2);
+    Mod(Space& home, Mod& p);
+    static ExecStatus narrow(Home home, WordView x0, WordView x1,
+                             WordView x2);
+  public:
+    virtual Actor* copy(Space& home);
+    virtual PropCost cost(const Space& home,
+                          const ModEventDelta& med) const;
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+    static ExecStatus post(Home home, WordView x0, WordView x1,
+                           WordView x2);
+  };
+
 }}}
 
 #include <gecode/word/arithmetic/add.hpp>
 #include <gecode/word/arithmetic/neg-sub.hpp>
 #include <gecode/word/arithmetic/mult.hpp>
+#include <gecode/word/arithmetic/divmod.hpp>
 
 #endif
 

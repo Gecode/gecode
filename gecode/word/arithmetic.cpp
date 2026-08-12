@@ -91,45 +91,14 @@ namespace Gecode {
       }
     }
 
-    /**
-     * Unsigned shift-subtract division compares the divisor with the
-     * appropriately shifted current remainder. This avoids a width+1
-     * temporary. A zero divisor selects every quotient bit while each
-     * subtraction leaves the remainder unchanged, giving SMT-LIB's total
-     * zero-divisor results without a separate case.
-     */
     void post_divmod(Home home, WordVar x, WordVar y, WordVar result,
                      bool quotient) {
-      const unsigned int width = x.width();
-      WordVar remainder(x);
-      for (unsigned int bit=width; bit-- > 0;) {
-        WordVar shifted_remainder(remainder);
-        if (bit != 0) {
-          shifted_remainder = WordVar(home,width);
-          logical_shift_right(home,remainder,bit,shifted_remainder);
-        }
-
-        BoolVar subtract(home,0,1);
-        rel(home,y,WRT_ULQ,shifted_remainder,Reify(subtract,RM_EQV));
-        if (quotient)
-          channel(home,result,bit,subtract);
-
-        WordVar shifted_divisor(y);
-        if (bit != 0) {
-          shifted_divisor = WordVar(home,width);
-          shift_left(home,y,bit,shifted_divisor);
-        }
-        WordVar difference(home,width);
-        post_sub(home,remainder,shifted_divisor,difference);
-
-        WordVar next;
-        if (!quotient && (bit == 0))
-          next = result;
-        else
-          next = WordVar(home,width);
-        ite(home,subtract,difference,remainder,next);
-        remainder = next;
-      }
+      if (quotient)
+        GECODE_ES_FAIL(Word::Arithmetic::Div::post(
+          home,Word::WordView(x),Word::WordView(y),Word::WordView(result)));
+      else
+        GECODE_ES_FAIL(Word::Arithmetic::Mod::post(
+          home,Word::WordView(x),Word::WordView(y),Word::WordView(result)));
     }
 
     void post_absolute(Home home, WordVar x, BoolVar negative,

@@ -3,7 +3,7 @@ schema_version = 1
 id = "word-033"
 key = "native-unsigned-divrem"
 area = "word"
-status = "open"
+status = "done"
 blocked_by = []
 +++
 # Implement native unsigned division and remainder propagators
@@ -22,13 +22,21 @@ The existing unsigned div and mod APIs can use compact native word actors instea
 
 ## Done when
 
-- [ ] Native unsigned quotient and remainder actors are exact on assigned inputs, sound on partial cubes, handle zero divisors and aliases, and use honest cost, cloning, scheduling, failure, and subsumption behavior.
-- [ ] The existing div and mod postings route to the retained native actors without width-proportional model-level intermediate variables.
-- [ ] Focused tests preserve existing assigned/zero/constant/alias semantics and add only representative partial/inverse cases needed for the declared actor contract and lifecycle.
-- [ ] A temporary Release baseline comparison reports actors, propagation calls, runtime, RSS, nodes, failures, and solution parity; the native path is retained only with a useful result and no material propagation regression.
+- [x] Native unsigned quotient and remainder actors are exact on assigned inputs, sound on partial cubes, handle zero divisors and aliases, and use honest cost, cloning, scheduling, failure, and subsumption behavior.
+- [x] The existing div and mod postings route to the retained native actors without width-proportional model-level intermediate variables.
+- [x] Focused tests preserve existing assigned/zero/constant/alias semantics and add only representative partial/inverse cases needed for the declared actor contract and lifecycle.
+- [x] A temporary Release baseline comparison reports actors, propagation calls, runtime, RSS, nodes, failures, and solution parity; the native path is retained only with a useful result and no material propagation regression.
 
 ## Validation
 
 - Run focused Word unsigned Div, Mod, arithmetic lifecycle, MiniModel parity, and Word::TestFramework tests in Release mode.
 - Inspect temporary assigned and inverse/partial benchmark medians and semantic parity.
 - Run git diff --check and confirm signed postings still have coherent behavior before their dedicated task.
+
+## Result
+
+Replaced unsigned division and remainder model graphs with compact native actors, preserving SMT-LIB semantics while documenting and benchmarking the speed-versus-propagation-strength tradeoff.
+
+Validation:
+
+- Fresh Release focused unsigned/signed arithmetic, MiniModel, and Word framework tests; independent lifecycle/source review; exact baseline 3dc82d8311 five-trial benchmark with solution/checksum parity, runtime/RSS/actor/propagation/node/failure metrics; zd check and git diff --check.

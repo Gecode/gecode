@@ -1154,6 +1154,70 @@ namespace Test { namespace Word {
         return true;
       }
 
+      static bool native_propagation(void) {
+        using namespace Gecode;
+        DivisionSpace quotient_inverse(3,4);
+        dom(quotient_inverse,quotient_inverse.x[1],2U);
+        dom(quotient_inverse,quotient_inverse.x[2],3U);
+        div(quotient_inverse,quotient_inverse.x[0],
+            quotient_inverse.x[1],quotient_inverse.x[2]);
+        if ((quotient_inverse.status() == SS_FAILED) ||
+            (quotient_inverse.x[0].lo() != 6U) ||
+            (quotient_inverse.x[0].hi() != 7U) ||
+            (PropagatorGroup::all.size(quotient_inverse) != 1U))
+          return false;
+
+        DivisionSpace divisor_inverse(3,4);
+        dom(divisor_inverse,divisor_inverse.x[0],6U);
+        dom(divisor_inverse,divisor_inverse.x[2],3U);
+        div(divisor_inverse,divisor_inverse.x[0],divisor_inverse.x[1],
+            divisor_inverse.x[2]);
+        if ((divisor_inverse.status() == SS_FAILED) ||
+            !divisor_inverse.x[1].assigned() ||
+            (divisor_inverse.x[1].val() != 2U))
+          return false;
+
+        DivisionSpace remainder_inverse(3,4);
+        dom(remainder_inverse,remainder_inverse.x[1],4U);
+        dom(remainder_inverse,remainder_inverse.x[2],2U);
+        mod(remainder_inverse,remainder_inverse.x[0],
+            remainder_inverse.x[1],remainder_inverse.x[2]);
+        if ((remainder_inverse.status() == SS_FAILED) ||
+            (remainder_inverse.x[0].lo() != 2U) ||
+            (remainder_inverse.x[0].hi() != 14U) ||
+            (PropagatorGroup::all.size(remainder_inverse) != 1U))
+          return false;
+
+        DivisionSpace zero_divisor_div(3,4);
+        dom(zero_divisor_div,zero_divisor_div.x[1],0U);
+        dom(zero_divisor_div,zero_divisor_div.x[2],15U);
+        div(zero_divisor_div,zero_divisor_div.x[0],
+            zero_divisor_div.x[1],zero_divisor_div.x[2]);
+        if ((zero_divisor_div.status() == SS_FAILED) ||
+            zero_divisor_div.x[0].assigned() ||
+            (PropagatorGroup::all.size(zero_divisor_div) != 0U))
+          return false;
+
+        DivisionSpace zero_divisor_mod(2,4);
+        dom(zero_divisor_mod,zero_divisor_mod.x[1],0U);
+        mod(zero_divisor_mod,zero_divisor_mod.x[0],
+            zero_divisor_mod.x[1],zero_divisor_mod.x[0]);
+        if ((zero_divisor_mod.status() == SS_FAILED) ||
+            zero_divisor_mod.x[0].assigned() ||
+            (PropagatorGroup::all.size(zero_divisor_mod) != 0U))
+          return false;
+
+        DivisionSpace zero_inverse(3,4);
+        dom(zero_inverse,zero_inverse.x[1],0U);
+        dom(zero_inverse,zero_inverse.x[2],5U);
+        mod(zero_inverse,zero_inverse.x[0],zero_inverse.x[1],
+            zero_inverse.x[2]);
+        return (zero_inverse.status() != SS_FAILED) &&
+          zero_inverse.x[0].assigned() &&
+          (zero_inverse.x[0].val() == 5U) &&
+          (PropagatorGroup::all.size(zero_inverse) == 0U);
+      }
+
       static bool search_recomputation(void) {
         using namespace Gecode;
         class DivSpace : public Space {
@@ -1211,7 +1275,8 @@ namespace Test { namespace Word {
         : Base("Word::Arithmetic::DivisionLifecycle") {}
       virtual bool run(void) {
         return partial(DIV) && partial(MOD) && boolean_parity() &&
-          policy_constants_aliases_lifecycle() && search_recomputation();
+          policy_constants_aliases_lifecycle() && native_propagation() &&
+          search_recomputation();
       }
     };
 
