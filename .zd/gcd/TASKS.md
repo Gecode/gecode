@@ -2,9 +2,9 @@
 
 # Tasks: gcd
 
-- Total: 5
-- Ready: 0
-- Blocked: 0
+- Total: 7
+- Ready: 1
+- Blocked: 1
 - Done: 5
 
 | ID | Task | State | Blocked by |
@@ -14,3 +14,5 @@
 | [gcd-003](tasks/003-implement-ordinary-and-reified-n-ary-product-constraints.md) | Implement ordinary and reified n-ary product constraints | done | — |
 | [gcd-004](tasks/004-implement-ordinary-and-reified-fixed-modulus-n-ary-product-c.md) | Implement ordinary and reified fixed-modulus n-ary product constraints | done | — |
 | [gcd-005](tasks/005-replace-n-ary-product-support-enumeration-with-bounds-propag.md) | Replace n-ary product support enumeration with bounds propagation | done | — |
+| [gcd-006](tasks/006-implement-n-ary-product-mod-with-an-intvar-modulus.md) | Implement n-ary product_mod with an IntVar modulus | ready | — |
+| [gcd-007](tasks/007-implement-reified-n-ary-product-mod-with-an-intvar-modulus.md) | Implement reified n-ary product_mod with an IntVar modulus | blocked | gcd-006 |
