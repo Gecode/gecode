@@ -4,8 +4,8 @@
 
 - Total: 43
 - Ready: 1
-- Blocked: 3
-- Done: 39
+- Blocked: 2
+- Done: 40
 
 | ID | Task | State | Blocked by |
 | --- | --- | --- | --- |
@@ -48,7 +48,7 @@
 | [word-037](tasks/037-add-native-n-ary-modular-addition.md) | Add native n-ary modular addition | done | — |
 | [word-038](tasks/038-optimize-n-ary-word-logic-local-closure-and-publication.md) | Optimize n-ary word logic local closure and publication | done | — |
 | [word-039](tasks/039-optimize-native-word-multiplication-local-closure.md) | Optimize native word multiplication local closure | done | word-038 |
-| [word-040](tasks/040-optimize-native-n-ary-addition-scratch-and-local-closure.md) | Optimize native n-ary addition scratch and local closure | ready | word-039 |
-| [word-041](tasks/041-evaluate-specialization-of-generic-word-logic-tables.md) | Evaluate specialization of generic word logic tables | blocked | word-040 |
+| [word-040](tasks/040-optimize-native-n-ary-addition-scratch-and-local-closure.md) | Optimize native n-ary addition scratch and local closure | done | word-039 |
+| [word-041](tasks/041-evaluate-specialization-of-generic-word-logic-tables.md) | Evaluate specialization of generic word logic tables | ready | word-040 |
 | [word-042](tasks/042-add-mixed-word-product-modulo-an-intvar.md) | Add mixed Word product modulo an IntVar | blocked | word-041 |
 | [word-043](tasks/043-add-reified-mixed-word-product-modulo-an-intvar.md) | Add reified mixed Word product modulo an IntVar | blocked | word-042 |

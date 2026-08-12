@@ -223,6 +223,9 @@ namespace Gecode { namespace Word { namespace Arithmetic {
   NaryAdd::narrow(Home home, ViewArray<WordView>& x, WordView y,
                   WordValue constant) {
     const unsigned int width=y.width();
+    Region region;
+    WordValue* input_lo=region.alloc<WordValue>(x.size());
+    WordValue* input_hi=region.alloc<WordValue>(x.size());
     for (;;) {
       unsigned long long forward_lo[65], forward_hi[65];
       unsigned long long backward_lo[65], backward_hi[65];
@@ -274,9 +277,6 @@ namespace Gecode { namespace Word { namespace Arithmetic {
           return ES_FAILED;
       }
 
-      Region region;
-      WordValue* input_lo=region.alloc<WordValue>(x.size());
-      WordValue* input_hi=region.alloc<WordValue>(x.size());
       for (int i=0; i<x.size(); i++)
         input_lo[i]=input_hi[i]=0;
       WordValue result_lo=0, result_hi=0;
@@ -326,11 +326,14 @@ namespace Gecode { namespace Word { namespace Arithmetic {
       }
 
       bool changed=(y.lo() != result_lo) || (y.hi() != result_hi);
-      GECODE_ME_CHECK(y.narrow(home,result_lo,result_hi));
+      if (changed)
+        GECODE_ME_CHECK(y.narrow(home,result_lo,result_hi));
       for (int i=0; i<x.size(); i++) {
-        changed |= (x[i].lo() != input_lo[i]) ||
+        const bool input_changed=(x[i].lo() != input_lo[i]) ||
           (x[i].hi() != input_hi[i]);
-        GECODE_ME_CHECK(x[i].narrow(home,input_lo[i],input_hi[i]));
+        changed |= input_changed;
+        if (input_changed)
+          GECODE_ME_CHECK(x[i].narrow(home,input_lo[i],input_hi[i]));
       }
       if (!changed)
         break;

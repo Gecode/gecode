@@ -3,7 +3,7 @@ schema_version = 1
 id = "word-040"
 key = "optimize-nary-addition-scratch"
 area = "word"
-status = "open"
+status = "done"
 blocked_by = ["word-039"]
 +++
 # Optimize native n-ary addition scratch and local closure
@@ -20,12 +20,22 @@ Native n-ary addition preserves its bounded-carry propagation while reducing per
 
 ## Done when
 
-- [ ] Scratch storage is reused across local fixpoint passes and the actor avoids avoidable repeated view publication, without weakening the existing carry reasoning.
-- [ ] Existing n-ary-add assigned, partial soundness, identity, alias, width-64, failure, clone, recomputation, subsumption, arithmetic regression, and TestFramework coverage passes.
-- [ ] A temporary Release benchmark/profile covers arity 4 and 8 assigned, partial, and search workloads and justifies every retained production change.
+- [x] Scratch storage is reused across local fixpoint passes and the actor avoids avoidable repeated view publication, without weakening the existing carry reasoning.
+- [x] Existing n-ary-add assigned, partial soundness, identity, alias, width-64, failure, clone, recomputation, subsumption, arithmetic regression, and TestFramework coverage passes.
+- [x] A temporary Release benchmark/profile covers arity 4 and 8 assigned, partial, and search workloads and justifies every retained production change.
 
 ## Validation
 
 - Build the focused Release Word library and gecode-test target.
 - Run registered Word NaryAdd, Arithmetic Lifecycle, full Arithmetic, and TestFramework filters.
 - Run a temporary exact-baseline Release benchmark/profile and git diff --check.
+
+## Result
+
+Reused n-ary addition scratch across local fixpoint passes and skipped unchanged view publication without changing bounded-carry propagation.
+
+Validation:
+
+- Focused and full Release Word Arithmetic plus TestFramework tests passed.
+- Exact arity 4 and 8 benchmarks preserved all semantic/search counters and improved partial/search workloads up to 17 percent.
+- Independent verification and git diff --check passed.
