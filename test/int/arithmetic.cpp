@@ -730,6 +730,125 @@ namespace Test { namespace Int {
        }
      };
 
+     /// Targeted algebraic propagation for a variable modulus
+     class ProductModVarAlgebraic : public ::Test::Base {
+     protected:
+       class TestSpace : public Gecode::Space {
+       public:
+         virtual Gecode::Space* copy(void) { return nullptr; }
+       };
+       static bool domain(const Gecode::IntVar& x, const int* v, int n) {
+         if (x.size() != static_cast<unsigned int>(n))
+           return false;
+         for (int i=0; i<n; i++)
+           if (!x.in(v[i]))
+             return false;
+         return true;
+       }
+     public:
+       ProductModVarAlgebraic(void)
+         : ::Test::Base("Int::Arithmetic::ProductModVar::Algebraic") {}
+       virtual bool run(void) {
+         using namespace Gecode;
+         {
+           TestSpace home;
+           IntVar m(home,2,Gecode::Int::Limits::max);
+           IntVar z(home,-100,100);
+           IntVar y(home,0,100);
+           product_mod(home,IntVarArgs({z,m}),m,y);
+           if ((home.status() == SS_FAILED) || !y.assigned() || (y.val()!=0))
+             return false;
+         }
+         {
+           TestSpace home;
+           const int mv[5] = {-3,0,1,7,1000000};
+           IntVar m(home,IntSet(mv,5));
+           IntVar y(home,0,0);
+           product_mod(home,IntVarArgs(),m,y);
+           if ((home.status() == SS_FAILED) || !m.assigned() || (m.val()!=1))
+             return false;
+         }
+         {
+           TestSpace home;
+           const int mv[4] = {1,2,17,1000000};
+           const int keep[3] = {2,17,1000000};
+           IntVar m(home,IntSet(mv,4));
+           IntVar y(home,1,1);
+           product_mod(home,IntVarArgs(),m,y);
+           if ((home.status() == SS_FAILED) || !domain(m,keep,3))
+             return false;
+         }
+         {
+           TestSpace home;
+           const int mv[10] = {5,7,8,9,14,16,28,55,56,1000000};
+           IntVar a(home,6,6), c(home,10,10);
+           IntVar m(home,IntSet(mv,10));
+           IntVar y(home,4,4);
+           product_mod(home,IntVarArgs({a,c}),m,y);
+           if ((home.status() == SS_FAILED) || (m.min() != 7) ||
+               (m.max() != 56))
+             return false;
+         }
+         {
+           TestSpace home;
+           const int mv[7] = {4,5,6,7,10,11,60};
+           IntVar a(home,6,6), c(home,10,10);
+           IntVar m(home,IntSet(mv,7));
+           IntVar y(home,0,0);
+           product_mod(home,IntVarArgs({a,c}),m,y);
+           if ((home.status() == SS_FAILED) || (m.min() != 4) ||
+               (m.max() != 60))
+             return false;
+         }
+         {
+           TestSpace home;
+           const int mv[3] = {13,101,1000000};
+           IntVar y(home,12,12);
+           IntVar m(home,IntSet(mv,3));
+           product_mod(home,IntVarArgs({y}),m,y);
+           if ((home.status() == SS_FAILED) || !domain(m,mv,3))
+             return false;
+         }
+         {
+           TestSpace home;
+           const int mv[3] = {2,17,1000000};
+           IntVar z(home,0,0), y(home,0,0);
+           IntVar m(home,IntSet(mv,3));
+           product_mod(home,IntVarArgs({z}),m,y);
+           if ((home.status() == SS_FAILED) || !domain(m,mv,3))
+             return false;
+         }
+         {
+           TestSpace home;
+           const int hi=Gecode::Int::Limits::max;
+           IntVar a(home,hi,hi), c(home,hi,hi), d(home,hi,hi);
+           IntVar m(home,2,hi), y(home,0,0);
+           product_mod(home,IntVarArgs({a,c,d}),m,y);
+           if (home.status() == SS_FAILED)
+             return false;
+         }
+         {
+           TestSpace home;
+           const int hi=Gecode::Int::Limits::max;
+           IntVar x(home,hi,hi), m(home,1,hi), y(home,0,0);
+           product_mod(home,IntVarArgs({x}),m,y);
+           if ((home.status() == SS_FAILED) || (m.min() != 1) ||
+               (m.max() != hi))
+             return false;
+         }
+         {
+           TestSpace home;
+           const int hi=Gecode::Int::Limits::max;
+           IntVar x(home,hi,hi), m(home,2,hi), y(home,1,1);
+           product_mod(home,IntVarArgs({x}),m,y);
+           if ((home.status() == SS_FAILED) || (m.min() != 5) ||
+               (m.max() != hi-1))
+             return false;
+         }
+         return true;
+       }
+     };
+
      /// Verify that inactive implication modes leave all integer views alone
      class ProductModVarInactive : public ::Test::Base {
      protected:
@@ -2038,6 +2157,7 @@ namespace Test { namespace Int {
          (void) new ProductModInvalidModulus;
          (void) new ProductModAlgebraic;
          (void) new ProductModVarBounds;
+         (void) new ProductModVarAlgebraic;
          (void) new ProductModVarInactive;
          (void) new ProductBoundsLarge;
        }

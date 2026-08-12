@@ -108,6 +108,11 @@ public APIs, and focused regression coverage.
   congruence, and algebraic rewrites. A fully assigned relation may be
   evaluated directly; reified relations otherwise remain conservative when
   entailment or disentailment cannot be established algebraically.
+- Divisibility and congruence propagation should prefer interval tightening
+  and algebraic rewrites. Do not materialize a large sparse support set or
+  punch many holes into an integer domain merely because exact divisors or
+  residues can be generated; retain conservative bounds and perform exact
+  checking at assignment unless interior removal has a clear, bounded benefit.
 
 ## Open questions
 
