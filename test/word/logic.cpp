@@ -32,6 +32,8 @@
 
 #include "test/word.hh"
 
+#include <gecode/search.hh>
+
 namespace Test { namespace Word {
 
   /// Tests for word logical constraints
@@ -82,7 +84,7 @@ namespace Test { namespace Word {
       }
     };
 
-    /// N-ary operators are word-level folds of their primitive aggregate
+    /// N-ary operators use bit-consistent primitive global actors
     class Nary : public Test {
     private:
       Gecode::WordOpType wot;
@@ -193,6 +195,132 @@ namespace Test { namespace Word {
         }
       }
 
+      static bool native_nary(void) {
+        const Gecode::WordOpType primitive[] = {
+          Gecode::WOT_AND,Gecode::WOT_OR,Gecode::WOT_XOR
+        };
+        for (unsigned int op=0; op<3; op++) {
+          LogicSpace compact(5,64);
+          Gecode::WordVarArgs args(4);
+          for (int i=0; i<4; i++) args[i]=compact.x[i];
+          Gecode::rel(compact,primitive[op],args,compact.x[4]);
+          if ((compact.status() == Gecode::SS_FAILED) ||
+              (Gecode::PropagatorGroup::all.size(compact) != 1U))
+            return false;
+        }
+
+        LogicSpace and_backward(4,4);
+        Gecode::dom(and_backward,and_backward.x[3],1U,15U);
+        Gecode::WordVarArgs and_args = {
+          and_backward.x[0],and_backward.x[1],and_backward.x[2]
+        };
+        Gecode::rel(and_backward,Gecode::WOT_AND,and_args,and_backward.x[3]);
+        if (and_backward.status() == Gecode::SS_FAILED)
+          return false;
+        for (int i=0; i<3; i++)
+          if ((and_backward.x[i].lo() & 1U) == 0)
+            return false;
+
+        LogicSpace or_backward(4,4);
+        Gecode::dom(or_backward,or_backward.x[0],0U,14U);
+        Gecode::dom(or_backward,or_backward.x[1],0U,14U);
+        Gecode::dom(or_backward,or_backward.x[3],1U,15U);
+        Gecode::WordVarArgs or_args = {
+          or_backward.x[0],or_backward.x[1],or_backward.x[2]
+        };
+        Gecode::rel(or_backward,Gecode::WOT_OR,or_args,or_backward.x[3]);
+        if ((or_backward.status() == Gecode::SS_FAILED) ||
+            ((or_backward.x[2].lo() & 1U) == 0))
+          return false;
+
+        LogicSpace xor_backward(4,4);
+        Gecode::dom(xor_backward,xor_backward.x[0],1U,15U);
+        Gecode::dom(xor_backward,xor_backward.x[1],0U,14U);
+        Gecode::dom(xor_backward,xor_backward.x[3],0U,14U);
+        Gecode::WordVarArgs xor_args = {
+          xor_backward.x[0],xor_backward.x[1],xor_backward.x[2]
+        };
+        Gecode::rel(xor_backward,Gecode::WOT_XOR,xor_args,
+                    xor_backward.x[3]);
+        if ((xor_backward.status() == Gecode::SS_FAILED) ||
+            ((xor_backward.x[2].lo() & 1U) == 0))
+          return false;
+
+        LogicSpace duplicates(3,4);
+        Gecode::WordVarArgs duplicate_args = {
+          duplicates.x[0],duplicates.x[0],duplicates.x[1]
+        };
+        Gecode::rel(duplicates,Gecode::WOT_XOR,duplicate_args,
+                    duplicates.x[2]);
+        Gecode::dom(duplicates,duplicates.x[1],6U);
+        if ((duplicates.status() == Gecode::SS_FAILED) ||
+            !duplicates.x[2].assigned() ||
+            (duplicates.x[2].val() != 6U))
+          return false;
+
+        LogicSpace result_alias(2,4);
+        Gecode::WordVarArgs alias_args = {
+          result_alias.x[0],result_alias.x[1]
+        };
+        Gecode::rel(result_alias,Gecode::WOT_XOR,alias_args,
+                    result_alias.x[0]);
+        if ((result_alias.status() == Gecode::SS_FAILED) ||
+            !result_alias.x[1].assigned() ||
+            (result_alias.x[1].val() != 0U) ||
+            result_alias.x[0].assigned() ||
+            (Gecode::PropagatorGroup::all.size(result_alias) != 0U))
+          return false;
+
+        LogicSpace absorbed(5,4);
+        Gecode::WordVarArgs absorbed_args = {
+          absorbed.x[0],absorbed.x[1],absorbed.x[2],absorbed.x[3]
+        };
+        Gecode::rel(absorbed,Gecode::WOT_AND,absorbed_args,absorbed.x[4]);
+        Gecode::dom(absorbed,absorbed.x[0],0U);
+        return (absorbed.status() != Gecode::SS_FAILED) &&
+          absorbed.x[4].assigned() && (absorbed.x[4].val() == 0U) &&
+          (Gecode::PropagatorGroup::all.size(absorbed) == 0U);
+      }
+
+      static bool search_recomputation(void) {
+        using namespace Gecode;
+        class SearchSpace : public Space {
+        public:
+          WordVarArray x;
+          WordVar result;
+          SearchSpace(void) : x(*this,3,1,0,1), result(*this,1) {
+            WordVarArgs args = {x[0],x[1],x[2]};
+            rel(*this,WOT_XOR,args,result);
+            branch(*this,x,WORD_VAR_SIZE_MIN(),WORD_VAL_LSB());
+          }
+          SearchSpace(SearchSpace& s) : Space(s) {
+            x.update(*this,s.x);
+            result.update(*this,s.result);
+          }
+          virtual Space* copy(void) { return new SearchSpace(*this); }
+        };
+
+        SearchSpace* root=new SearchSpace;
+        Search::Options options;
+        options.c_d=8;
+        options.a_d=64;
+        DFS<SearchSpace> dfs(root,options);
+        delete root;
+        unsigned int solutions=0;
+        while (SearchSpace* solution=dfs.next()) {
+          const WordValue expected=solution->x[0].val()^
+            solution->x[1].val()^solution->x[2].val();
+          const bool ok=solution->result.assigned() &&
+            (solution->result.val() == expected) &&
+            (PropagatorGroup::all.size(*solution) == 0U);
+          delete solution;
+          if (!ok)
+            return false;
+          solutions++;
+        }
+        return solutions == 8U;
+      }
+
     public:
       Lifecycle(void) : Base("Word::Logic::Lifecycle") {}
       virtual bool run(void) {
@@ -293,7 +421,7 @@ namespace Test { namespace Word {
           Gecode::complement(mismatch,mismatch.x[0],other);
           return false;
         } catch (const Gecode::Word::WidthMismatch&) {}
-        return true;
+        return native_nary() && search_recomputation();
       }
     };
 

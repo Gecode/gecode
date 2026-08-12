@@ -65,9 +65,44 @@ namespace Gecode { namespace Word { namespace Logic {
   void post_table(Home home, const WordView* original, int n,
                   const WordValue* allowed);
 
+  /// Primitive operation for a native n-ary word actor
+  enum NaryOperation {
+    NO_AND,
+    NO_OR,
+    NO_XOR
+  };
+
+  /** \brief Bit-consistent native n-ary word logic actor
+   *
+   * Assigned operands are represented by \a constant. The remaining input
+   * views are normalized before actor creation.
+   */
+  template<NaryOperation op, class VY>
+  class Nary : public MixNaryOnePropagator<
+    WordView,PC_WORD_BITS,VY,PC_WORD_BITS> {
+  protected:
+    using MixNaryOnePropagator<
+      WordView,PC_WORD_BITS,VY,PC_WORD_BITS>::x;
+    using MixNaryOnePropagator<
+      WordView,PC_WORD_BITS,VY,PC_WORD_BITS>::y;
+    WordValue constant;
+    Nary(Home home, ViewArray<WordView>& x, VY y, WordValue constant);
+    Nary(Space& home, Nary& p);
+    static ExecStatus narrow(Home home, ViewArray<WordView>& x, VY y,
+                             WordValue constant);
+  public:
+    virtual Actor* copy(Space& home);
+    virtual PropCost cost(const Space& home,
+                          const ModEventDelta& med) const;
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+    static ExecStatus post(Home home, ViewArray<WordView>& x, VY y,
+                           WordValue constant);
+  };
+
 }}}
 
 #include <gecode/word/logic/table.hpp>
+#include <gecode/word/logic/nary.hpp>
 
 #endif
 

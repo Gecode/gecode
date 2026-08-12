@@ -99,7 +99,7 @@ namespace Gecode {
    * | `popcount`, `count_leading_zeros`, `count_trailing_zeros` | Direct mixed Word/Int count actors | Population bounds/extrema and zero-prefix propagation |
    * | `rel` with `WRT_EQ`, `WRT_NQ` | Direct equality/disequality actors; reified disequality rewrites through equality | Equality bit consistency; disequality sound representable exclusion; all reification modes |
    * | `rel` with unsigned and signed order types | Direct MSB-first non-strict/strict actors; greater relations swap operands and reified strict relations negate reversed non-strict relations | Assigned semantics and sound word-level bound/bit pruning |
-   * | `complement`; binary and n-ary logical `rel` with all WordOpType values | Direct native-word truth-table actors; n-ary forms fold primitive actors and optionally complement | Per-bit consistency and assigned semantics |
+   * | `complement`; binary and n-ary logical `rel` with all WordOpType values | Direct native-word truth-table actors; n-ary forms use primitive global actors and optionally complement | Per-bit consistency and assigned semantics |
    * | Boolean and word-mask `ite` | Boolean form is a direct mixed actor; mask form is a direct per-bit actor | Sound partial propagation; mask form is bit consistent |
    * | `extract`, `concat`, `repeat`, `zero_extend`, `sign_extend` | Direct fixed masked-copy actors | Bit consistency for copied bits and groups |
    * | Fixed `shift_left`, `logical_shift_right`, `arithmetic_shift_right`, `rotate_left`, `rotate_right` | Direct fixed masked actors | Bit consistency and boundary amounts |

@@ -98,6 +98,76 @@ namespace Gecode {
       }
       GECODE_ME_FAIL(Word::WordView(y).eq(home,value));
     }
+
+    WordValue combine(WordOpType wot, WordValue x, WordValue y) {
+      switch (wot) {
+      case WOT_AND: return x&y;
+      case WOT_OR:  return x|y;
+      case WOT_XOR: return x^y;
+      default: GECODE_NEVER;
+      }
+      return 0;
+    }
+
+    void post_nary_primitive(Home home, WordOpType wot,
+                             const WordVarArgs& input, WordVar result) {
+      const WordValue mask=result.mask();
+      WordValue constant=(wot == WOT_AND) ? mask : 0;
+      ViewArray<Word::WordView> x(home,input.size());
+      int n=0;
+      for (int i=0; i<input.size(); i++) {
+        Word::WordView next(input[i]);
+        if (next.assigned()) {
+          constant=combine(wot,constant,next.val());
+          continue;
+        }
+        int duplicate=0;
+        while ((duplicate < n) && !(x[duplicate] == next))
+          duplicate++;
+        if (duplicate == n) {
+          x[n++]=next;
+        } else if (wot == WOT_XOR) {
+          n--;
+          x[duplicate]=x[n];
+        }
+      }
+      x.size(n);
+
+      if (wot == WOT_XOR) {
+        int alias=0;
+        Word::WordView y(result);
+        while ((alias < x.size()) && !(x[alias] == y))
+          alias++;
+        if (alias < x.size()) {
+          x.move_lst(alias);
+          Word::ConstWordView zero(result.width(),0);
+          GECODE_ES_FAIL((Word::Logic::Nary<
+            Word::Logic::NO_XOR,Word::ConstWordView>::post(
+              home,x,zero,constant)));
+          return;
+        }
+      }
+
+      switch (wot) {
+      case WOT_AND:
+        GECODE_ES_FAIL((Word::Logic::Nary<
+          Word::Logic::NO_AND,Word::WordView>::post(
+            home,x,Word::WordView(result),constant)));
+        break;
+      case WOT_OR:
+        GECODE_ES_FAIL((Word::Logic::Nary<
+          Word::Logic::NO_OR,Word::WordView>::post(
+            home,x,Word::WordView(result),constant)));
+        break;
+      case WOT_XOR:
+        GECODE_ES_FAIL((Word::Logic::Nary<
+          Word::Logic::NO_XOR,Word::WordView>::post(
+            home,x,Word::WordView(result),constant)));
+        break;
+      default:
+        GECODE_NEVER;
+      }
+    }
   }
 
   namespace Word { namespace Logic {
@@ -235,16 +305,12 @@ namespace Gecode {
       return;
     }
 
-    WordVar aggregate(x[0]);
-    for (int i=1; i<x.size(); i++) {
-      if (!negate && (i == x.size()-1)) {
-        rel(home,aggregate,base,x[i],y);
-        return;
-      }
-      WordVar next(home,y.width());
-      rel(home,aggregate,base,x[i],next);
-      aggregate = next;
+    if (!negate) {
+      post_nary_primitive(home,base,x,y);
+      return;
     }
+    WordVar aggregate(home,y.width());
+    post_nary_primitive(home,base,x,aggregate);
     complement(home,aggregate,y);
   }
 
