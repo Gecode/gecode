@@ -3113,6 +3113,17 @@ namespace Gecode {
   product_mod(Home home, const IntVarArgs& x, IntVar m, IntVar y,
               IntPropLevel ipl=IPL_DEF);
 
+  /** \brief Reify whether \a y is the product of \a x modulo \a m
+   *
+   * The reified proposition includes \f$m>0\f$, the canonical range
+   * \f$0\leq y<m\f$, and congruence with the product. The product of an
+   * empty array is one.
+   * \ingroup TaskModelInt
+   */
+  GECODE_INT_EXPORT void
+  product_mod(Home home, const IntVarArgs& x, IntVar m, IntVar y, Reify r,
+              IntPropLevel ipl=IPL_DEF);
+
   /** \brief Post propagator for \f$x_0\ \mathrm{div}\ x_1=x_2 \land x_0\ \mathrm{mod}\ x_1 = x_3\f$
    *
    * Supports bounds consistency (\a ipl = IPL_BND, default).

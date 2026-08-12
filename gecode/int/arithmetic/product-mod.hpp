@@ -233,7 +233,9 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   inline ExecStatus
   product_mod_var_supports(Space& home, ViewArray<IntView>& x,
-                           IntView m, IntView y) {
+                           IntView m, IntView y, bool positive=true,
+                           bool filter=true, bool* has_true_out=nullptr,
+                           bool* has_false_out=nullptr) {
     const int n = x.size();
     const int nv = n+2;
     Region r;
@@ -245,7 +247,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     for (int i=0; i<n; i++)
       cap64 *= x[i].size();
     const unsigned int cap = static_cast<unsigned int>(cap64);
-    int** support = r.alloc<int*>(nv);
+    int** support = filter ? r.alloc<int*>(nv) : nullptr;
 
     for (int i=0; i<n; i++) {
       size[i] = x[i].size(); pos[i] = 0;
@@ -253,33 +255,38 @@ namespace Gecode { namespace Int { namespace Arithmetic {
       unsigned int k=0;
       for (ViewValues<IntView> vi(x[i]); vi(); ++vi)
         values[i][k++] = vi.val();
-      support[i] = r.alloc<int>(cap);
+      if (filter) support[i] = r.alloc<int>(cap);
     }
     size[n] = m.size(); pos[n] = 0;
     values[n] = r.alloc<int>(size[n]);
     unsigned int k=0;
     for (ViewValues<IntView> vi(m); vi(); ++vi)
       values[n][k++] = vi.val();
-    support[n] = r.alloc<int>(cap);
+    if (filter) support[n] = r.alloc<int>(cap);
     size[n+1] = y.size(); pos[n+1] = 0;
     values[n+1] = r.alloc<int>(size[n+1]);
     k=0;
     for (ViewValues<IntView> vi(y); vi(); ++vi)
       values[n+1][k++] = vi.val();
-    support[n+1] = r.alloc<int>(cap);
+    if (filter) support[n+1] = r.alloc<int>(cap);
 
     int* tuple = r.alloc<int>(nv);
     unsigned int ns = 0;
+    bool has_true = false, has_false = false;
     bool more = true;
     while (more) {
       for (int i=0; i<nv; i++)
         tuple[i] = values[i][pos[i]];
-      if (product_mod_var_alias_ok(x,m,y,tuple) &&
-          (tuple[n] > 0) &&
-          (product_mod_value(tuple,n,tuple[n]) == tuple[n+1])) {
-        for (int i=0; i<nv; i++)
-          support[i][ns] = tuple[i];
-        ns++;
+      if (product_mod_var_alias_ok(x,m,y,tuple)) {
+        const bool relation = (tuple[n] > 0) && (tuple[n+1] >= 0) &&
+          (tuple[n+1] < tuple[n]) &&
+          (product_mod_value(tuple,n,tuple[n]) == tuple[n+1]);
+        has_true |= relation; has_false |= !relation;
+        if (filter && (relation == positive)) {
+          for (int i=0; i<nv; i++)
+            support[i][ns] = tuple[i];
+          ns++;
+        }
       }
       int i=nv-1;
       while ((i >= 0) && (++pos[i] == size[i])) {
@@ -288,6 +295,10 @@ namespace Gecode { namespace Int { namespace Arithmetic {
       more = i >= 0;
     }
 
+    if (has_true_out != nullptr) *has_true_out = has_true;
+    if (has_false_out != nullptr) *has_false_out = has_false;
+    if (!filter)
+      return ES_OK;
     if (ns == 0)
       return ES_FAILED;
     for (int i=0; i<nv; i++) {
@@ -379,6 +390,122 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     x.cancel(home,*this,PC_INT_DOM);
     m.cancel(home,*this,PC_INT_DOM);
     y.cancel(home,*this,PC_INT_DOM);
+    (void) Propagator::dispose(home);
+    return sizeof(*this);
+  }
+
+  template<ReifyMode rm>
+  forceinline
+  ReProductModVar<rm>::ReProductModVar(Home home, ViewArray<IntView>& z,
+                                       IntView modulus, IntView w, BoolView c)
+    : Propagator(home), x(z), m(modulus), y(w), b(c) {
+    x.subscribe(home,*this,PC_INT_DOM);
+    m.subscribe(home,*this,PC_INT_DOM);
+    y.subscribe(home,*this,PC_INT_DOM);
+    b.subscribe(home,*this,PC_BOOL_VAL);
+  }
+
+  template<ReifyMode rm>
+  inline ExecStatus
+  ReProductModVar<rm>::post(Home home, ViewArray<IntView>& x, IntView m,
+                            IntView y, BoolView b) {
+    if (b.one()) {
+      if (rm == RM_PMI) return ES_OK;
+      return ProductModVar::post(home,x,m,y);
+    }
+    if (b.zero() && (rm == RM_IMP))
+      return ES_OK;
+    (void) new (home) ReProductModVar<rm>(home,x,m,y,b);
+    return ES_OK;
+  }
+
+  template<ReifyMode rm>
+  forceinline
+  ReProductModVar<rm>::ReProductModVar(Space& home,
+                                       ReProductModVar<rm>& p)
+    : Propagator(home,p) {
+    x.update(home,p.x); m.update(home,p.m); y.update(home,p.y);
+    b.update(home,p.b);
+  }
+
+  template<ReifyMode rm>
+  forceinline Actor*
+  ReProductModVar<rm>::copy(Space& home) {
+    return new (home) ReProductModVar<rm>(home,*this);
+  }
+
+  template<ReifyMode rm>
+  forceinline PropCost
+  ReProductModVar<rm>::cost(const Space&, const ModEventDelta&) const {
+    return PropCost::linear(PropCost::HI,x.size()+3);
+  }
+
+  template<ReifyMode rm>
+  forceinline void
+  ReProductModVar<rm>::reschedule(Space& home) {
+    x.reschedule(home,*this,PC_INT_DOM);
+    m.reschedule(home,*this,PC_INT_DOM);
+    y.reschedule(home,*this,PC_INT_DOM);
+    b.reschedule(home,*this,PC_BOOL_VAL);
+  }
+
+  template<ReifyMode rm>
+  inline ExecStatus
+  ReProductModVar<rm>::propagate(Space& home, const ModEventDelta&) {
+    if (b.one()) {
+      if (rm == RM_PMI)
+        return home.ES_SUBSUMED(*this);
+      GECODE_REWRITE(*this,ProductModVar::post(home(*this),x,m,y));
+    }
+    if (b.zero()) {
+      if (rm == RM_IMP)
+        return home.ES_SUBSUMED(*this);
+      if (product_mod_var_enumerable(x,m,y)) {
+        bool ht, hf;
+        GECODE_ES_CHECK(product_mod_var_supports
+                        (home,x,m,y,false,true,&ht,&hf));
+        if (!ht)
+          return home.ES_SUBSUMED(*this);
+      } else if ((m == y) || (m.max() <= 0) || (y.max() < 0) ||
+                 (y.min() >= m.max())) {
+        return home.ES_SUBSUMED(*this);
+      }
+      return ES_FIX;
+    }
+
+    RelTest rt;
+    if (m == y) {
+      rt = RT_FALSE;
+    } else if ((m.max() <= 0) || (y.max() < 0) || (y.min() >= m.max())) {
+      rt = RT_FALSE;
+    } else if (product_mod_var_enumerable(x,m,y)) {
+      bool ht, hf;
+      GECODE_ES_CHECK(product_mod_var_supports
+                      (home,x,m,y,true,false,&ht,&hf));
+      rt = !ht ? RT_FALSE : (!hf ? RT_TRUE : RT_MAYBE);
+    } else {
+      rt = RT_MAYBE;
+    }
+    switch (rt) {
+    case RT_TRUE:
+      if (rm != RM_IMP) GECODE_ME_CHECK(b.one_none(home));
+      return home.ES_SUBSUMED(*this);
+    case RT_FALSE:
+      if (rm != RM_PMI) GECODE_ME_CHECK(b.zero_none(home));
+      return home.ES_SUBSUMED(*this);
+    case RT_MAYBE:
+      return ES_FIX;
+    default: GECODE_NEVER;
+    }
+  }
+
+  template<ReifyMode rm>
+  forceinline size_t
+  ReProductModVar<rm>::dispose(Space& home) {
+    x.cancel(home,*this,PC_INT_DOM);
+    m.cancel(home,*this,PC_INT_DOM);
+    y.cancel(home,*this,PC_INT_DOM);
+    b.cancel(home,*this,PC_BOOL_VAL);
     (void) Propagator::dispose(home);
     return sizeof(*this);
   }

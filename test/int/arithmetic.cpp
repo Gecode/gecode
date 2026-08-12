@@ -446,7 +446,7 @@ namespace Test { namespace Int {
        ProductModVarXYMR(const std::string& s, const Gecode::IntSet& d,
                          Gecode::IntPropLevel ipl)
          : Test("Arithmetic::ProductModVar::XYMR::"+str(ipl)+"::"+s,
-                4,d,false,ipl) {}
+                4,d,true,ipl) {}
        virtual bool solution(const Assignment& x) const {
          return (x[2] > 0) &&
            (product_mod_value(x,2,x[2]) == x[3]);
@@ -454,6 +454,11 @@ namespace Test { namespace Int {
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          Gecode::product_mod(home,Gecode::IntVarArgs({x[0],x[1]}),
                              x[2],x[3],ipl);
+       }
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x,
+                         Gecode::Reify r) {
+         Gecode::product_mod(home,Gecode::IntVarArgs({x[0],x[1]}),
+                             x[2],x[3],r,ipl);
        }
      };
 
@@ -463,12 +468,16 @@ namespace Test { namespace Int {
        ProductModVarEmpty(const std::string& s, const Gecode::IntSet& d,
                           Gecode::IntPropLevel ipl)
          : Test("Arithmetic::ProductModVar::Empty::"+str(ipl)+"::"+s,
-                2,d,false,ipl) {}
+                2,d,true,ipl) {}
        virtual bool solution(const Assignment& x) const {
          return (x[0] > 0) && (x[1] == (1 % x[0]));
        }
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          Gecode::product_mod(home,Gecode::IntVarArgs(),x[0],x[1],ipl);
+       }
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x,
+                         Gecode::Reify r) {
+         Gecode::product_mod(home,Gecode::IntVarArgs(),x[0],x[1],r,ipl);
        }
      };
 
@@ -478,7 +487,7 @@ namespace Test { namespace Int {
        ProductModVarSingleton(const std::string& s, const Gecode::IntSet& d,
                               Gecode::IntPropLevel ipl)
          : Test("Arithmetic::ProductModVar::Singleton::"+str(ipl)+"::"+s,
-                3,d,false,ipl) {}
+                3,d,true,ipl) {}
        virtual bool solution(const Assignment& x) const {
          if (x[1] <= 0)
            return false;
@@ -491,6 +500,11 @@ namespace Test { namespace Int {
          Gecode::product_mod(home,Gecode::IntVarArgs({x[0]}),
                              x[1],x[2],ipl);
        }
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x,
+                         Gecode::Reify r) {
+         Gecode::product_mod(home,Gecode::IntVarArgs({x[0]}),
+                             x[1],x[2],r,ipl);
+       }
      };
 
      /// %Test repeated factors with a variable modulus
@@ -499,7 +513,7 @@ namespace Test { namespace Int {
        ProductModVarRepeated(const std::string& s, const Gecode::IntSet& d,
                              Gecode::IntPropLevel ipl)
          : Test("Arithmetic::ProductModVar::Repeated::"+str(ipl)+"::"+s,
-                3,d,false,ipl) {}
+                3,d,true,ipl) {}
        virtual bool solution(const Assignment& x) const {
          if (x[1] <= 0)
            return false;
@@ -511,6 +525,11 @@ namespace Test { namespace Int {
          Gecode::product_mod(home,Gecode::IntVarArgs({x[0],x[0]}),
                              x[1],x[2],ipl);
        }
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x,
+                         Gecode::Reify r) {
+         Gecode::product_mod(home,Gecode::IntVarArgs({x[0],x[0]}),
+                             x[1],x[2],r,ipl);
+       }
      };
 
      /// %Test modulus/factor aliasing
@@ -520,13 +539,18 @@ namespace Test { namespace Int {
                                    const Gecode::IntSet& d,
                                    Gecode::IntPropLevel ipl)
          : Test("Arithmetic::ProductModVar::ModFactorAlias::"+
-                str(ipl)+"::"+s,2,d,false,ipl) {}
+                str(ipl)+"::"+s,2,d,true,ipl) {}
        virtual bool solution(const Assignment& x) const {
          return (x[0] > 0) && (x[1] == 0);
        }
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          Gecode::product_mod(home,Gecode::IntVarArgs({x[0]}),
                              x[0],x[1],ipl);
+       }
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x,
+                         Gecode::Reify r) {
+         Gecode::product_mod(home,Gecode::IntVarArgs({x[0]}),
+                             x[0],x[1],r,ipl);
        }
      };
 
@@ -537,7 +561,7 @@ namespace Test { namespace Int {
                                       const Gecode::IntSet& d,
                                       Gecode::IntPropLevel ipl)
          : Test("Arithmetic::ProductModVar::FactorResultAlias::"+
-                str(ipl)+"::"+s,2,d,false,ipl) {}
+                str(ipl)+"::"+s,2,d,true,ipl) {}
        virtual bool solution(const Assignment& x) const {
          if (x[1] <= 0)
            return false;
@@ -549,6 +573,11 @@ namespace Test { namespace Int {
          Gecode::product_mod(home,Gecode::IntVarArgs({x[0]}),
                              x[1],x[0],ipl);
        }
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x,
+                         Gecode::Reify r) {
+         Gecode::product_mod(home,Gecode::IntVarArgs({x[0]}),
+                             x[1],x[0],r,ipl);
+       }
      };
 
      /// %Test modulus/result aliasing, which is necessarily inconsistent
@@ -558,11 +587,16 @@ namespace Test { namespace Int {
                                    const Gecode::IntSet& d,
                                    Gecode::IntPropLevel ipl)
          : Test("Arithmetic::ProductModVar::ModResultAlias::"+
-                str(ipl)+"::"+s,2,d,false,ipl) {}
+                str(ipl)+"::"+s,2,d,true,ipl) {}
        virtual bool solution(const Assignment&) const { return false; }
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          Gecode::product_mod(home,Gecode::IntVarArgs({x[0]}),
                              x[1],x[1],ipl);
+       }
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x,
+                         Gecode::Reify r) {
+         Gecode::product_mod(home,Gecode::IntVarArgs({x[0]}),
+                             x[1],x[1],r,ipl);
        }
      };
 
@@ -595,6 +629,46 @@ namespace Test { namespace Int {
            IntVar y(home,0,0);
            product_mod(home,IntVarArgs({x}),m,y);
            if (home.status() == SS_FAILED)
+             return false;
+         }
+         return true;
+       }
+     };
+
+     /// Verify that inactive implication modes leave all integer views alone
+     class ProductModVarInactive : public ::Test::Base {
+     protected:
+       class TestSpace : public Gecode::Space {
+       public:
+         virtual Gecode::Space* copy(void) { return nullptr; }
+       };
+       static bool unchanged(const Gecode::IntVar& x, const int* v, int n) {
+         if (x.size() != static_cast<unsigned int>(n))
+           return false;
+         for (int i=0; i<n; i++)
+           if (!x.in(v[i]))
+             return false;
+         return true;
+       }
+     public:
+       ProductModVarInactive(void)
+         : ::Test::Base("Int::Arithmetic::ProductModVar::Inactive") {}
+       virtual bool run(void) {
+         using namespace Gecode;
+         const int xv[5] = {-3,-1,0,2,5};
+         const int mv[4] = {-2,0,1,4};
+         const int yv[4] = {-4,0,3,7};
+         for (int mode=0; mode<2; mode++) {
+           TestSpace home;
+           IntVar x(home,IntSet(xv,5));
+           IntVar m(home,IntSet(mv,4));
+           IntVar y(home,IntSet(yv,4));
+           BoolVar b(home,mode,mode);
+           Reify r(b,mode == 0 ? RM_IMP : RM_PMI);
+           product_mod(home,IntVarArgs({x,x}),m,y,r);
+           if ((home.status() == SS_FAILED) ||
+               !unchanged(x,xv,5) || !unchanged(m,mv,4) ||
+               !unchanged(y,yv,4))
              return false;
          }
          return true;
@@ -1868,6 +1942,7 @@ namespace Test { namespace Int {
          }
          (void) new ProductModInvalidModulus;
          (void) new ProductModVarBounds;
+         (void) new ProductModVarInactive;
          (void) new ProductBoundsLarge;
        }
      };
