@@ -188,12 +188,19 @@ assigned words, perform useful bidirectional cube narrowing, and document any
 gap from bit consistency. It must remain one ordinary Gecode actor rather than
 hiding the existing decomposition inside an actor.
 
-The final benchmark reconstructs four builds from the durable task commits:
+The final development benchmark reconstructs four builds from the durable task commits:
 the original decomposed baseline, native arithmetic only, table optimization
 only, and both changes. Experimental switches do not become public API. The
 production posting keeps a native actor only when focused propagation and
 search benchmarks show a useful performance result without a material
 regression in the declared propagation contract.
+
+This benchmark is temporary development work, not Gecode product
+infrastructure. Run it from temporary worktrees and scripts, retain raw results
+outside the repository, and record only the conclusions needed to justify the
+production implementation. Do not add a benchmark CLI, plotting stack,
+manifests, fixtures, or benchmark-only example target to Gecode for this
+follow-up.
 
 The benchmark separates forward assigned evaluation from partial-domain and
 inverse search cases. It reports wall time, peak RSS, actors, propagation calls,
@@ -202,8 +209,8 @@ propagation effects from process startup and do not claim SMT-solver parity.
 
 ## Testing
 
-Use focused coverage through the existing `test/word` framework and the normal
-benchmark harness. Addition receives exhaustive assigned semantics and
+Use focused coverage through the existing `test/word` framework and temporary
+development benchmarks. Addition receives exhaustive assigned semantics and
 small-width partial-domain checks sufficient to establish its declared bit
 consistency. Multiplication receives exhaustive assigned semantics at small
 width, representative partial/inverse cases, and differential solution checks;
