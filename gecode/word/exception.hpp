@@ -37,6 +37,11 @@
 #include <gecode/kernel.hh>
 
 namespace Gecode { namespace Word {
+  /// Too few arguments for a word constraint
+  class GECODE_WORD_EXPORT TooFewArguments : public Exception {
+  public:
+    TooFewArguments(const char* l);
+  };
   /// Width or mask is outside the supported 1--64-bit range
   class GECODE_WORD_EXPORT OutOfLimits : public Exception {
   public:

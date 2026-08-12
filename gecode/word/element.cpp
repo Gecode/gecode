@@ -28,30 +28,30 @@
  *  LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
  *  OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- *
  */
 
-#include <gecode/word.hh>
+#include <gecode/word/element.hh>
 
-namespace Gecode { namespace Word {
-  TooFewArguments::TooFewArguments(const char* l)
-    : Exception(l,"Too few arguments") {}
-  OutOfLimits::OutOfLimits(const char* l)
-    : Exception(l,"Word width or mask out of limits") {}
-  VariableEmptyDomain::VariableEmptyDomain(const char* l)
-    : Exception(l,"Attempt to create word variable with empty domain") {}
-  ValOfUnassignedVar::ValOfUnassignedVar(const char* l)
-    : Exception(l,"Attempt to access value of unassigned word variable") {}
-  WidthMismatch::WidthMismatch(const char* l)
-    : Exception(l,"Word widths do not match") {}
-  UnknownRelation::UnknownRelation(const char* l)
-    : Exception(l,"Unknown word relation") {}
-  UnknownOperation::UnknownOperation(const char* l)
-    : Exception(l,"Unknown word operation") {}
-  UnknownReifyMode::UnknownReifyMode(const char* l)
-    : Exception(l,"Unknown reification mode") {}
-  UnknownBranching::UnknownBranching(const char* l)
-    : Exception(l,"Unknown word branching") {}
-}}
+namespace Gecode {
 
-// STATISTICS: word-other
+  void
+  element(Home home, const WordVarArgs& x, IntVar i, WordVar y) {
+    if (x.size() == 0)
+      throw Word::TooFewArguments("Word::element");
+    const unsigned int width = y.width();
+    for (int j=0; j<x.size(); j++)
+      if (x[j].width() != width)
+        throw Word::WidthMismatch("Word::element");
+    GECODE_POST;
+    Int::IdxViewArray<Word::WordView> views(home,x.size());
+    for (int j=0; j<x.size(); j++) {
+      views[j].idx = j;
+      views[j].view = Word::WordView(x[j]);
+    }
+    GECODE_ES_FAIL((Word::Element::View::post(
+      home,views,Int::IntView(i),Word::WordView(y))));
+  }
+
+}
+
+// STATISTICS: word-post

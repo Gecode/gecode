@@ -28,30 +28,54 @@
  *  LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
  *  OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- *
  */
 
-#include <gecode/word.hh>
+#ifndef GECODE_WORD_ELEMENT_HH
+#define GECODE_WORD_ELEMENT_HH
 
-namespace Gecode { namespace Word {
-  TooFewArguments::TooFewArguments(const char* l)
-    : Exception(l,"Too few arguments") {}
-  OutOfLimits::OutOfLimits(const char* l)
-    : Exception(l,"Word width or mask out of limits") {}
-  VariableEmptyDomain::VariableEmptyDomain(const char* l)
-    : Exception(l,"Attempt to create word variable with empty domain") {}
-  ValOfUnassignedVar::ValOfUnassignedVar(const char* l)
-    : Exception(l,"Attempt to access value of unassigned word variable") {}
-  WidthMismatch::WidthMismatch(const char* l)
-    : Exception(l,"Word widths do not match") {}
-  UnknownRelation::UnknownRelation(const char* l)
-    : Exception(l,"Unknown word relation") {}
-  UnknownOperation::UnknownOperation(const char* l)
-    : Exception(l,"Unknown word operation") {}
-  UnknownReifyMode::UnknownReifyMode(const char* l)
-    : Exception(l,"Unknown reification mode") {}
-  UnknownBranching::UnknownBranching(const char* l)
-    : Exception(l,"Unknown word branching") {}
+#include <gecode/word.hh>
+#include <gecode/word/rel.hh>
+#include <gecode/int/idx-view.hh>
+
+namespace Gecode { namespace Int {
+  template<>
+  class ViewToVarArg<Word::WordView> {
+  public:
+    typedef WordVarArgs argtype;
+  };
 }}
 
-// STATISTICS: word-other
+namespace Gecode { namespace Word { namespace Element {
+
+  /**
+   * \brief Word-array element propagator
+   *
+   * Prunes unsupported indices and computes the cube hull of the remaining
+   * candidate words for the result.
+   */
+  class View : public Propagator {
+  protected:
+    Int::IdxViewArray<WordView> x;
+    Int::IntView i;
+    WordView y;
+    View(Home home, Int::IdxViewArray<WordView>& x,
+         Int::IntView i, WordView y);
+    View(Space& home, View& p);
+  public:
+    virtual Actor* copy(Space& home);
+    virtual PropCost cost(const Space& home,
+                          const ModEventDelta& med) const;
+    virtual void reschedule(Space& home);
+    virtual size_t dispose(Space& home);
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+    static ExecStatus post(Home home, Int::IdxViewArray<WordView>& x,
+                           Int::IntView i, WordView y);
+  };
+
+}}}
+
+#include <gecode/word/element/view.hpp>
+
+#endif
+
+// STATISTICS: word-prop

@@ -219,6 +219,12 @@ cube. Table optimization reuses the existing logic and conditional tests and
 adds only focused regression coverage for a concrete optimized path when the
 current tests do not exercise it.
 
+Every new or replacement Word propagator must add or update normal
+Gecode-style tests in the shared `test/word` infrastructure established by
+word-002, with the test source registered in the ordinary monolithic
+`gecode-test` inventories. Focused benchmarks, source inspection, and ad-hoc
+development drivers supplement these tests; they never replace them.
+
 Follow established Gecode actor, cloning, recomputation, and subsumption
 patterns. Do not add a new test executable or testing framework. Performance
 validation uses Release builds, resumable per-run artifacts, medians, and
@@ -226,6 +232,40 @@ best-effort peak RSS. It must keep raw output and avoid timing instrumentation
 that traverses every actor in the measured process. Broad platform matrices,
 large industrial QF_BV corpora, SAT learning comparisons, and battle-hardening
 edge campaigns remain outside this follow-up.
+
+## Accepted propagator follow-up
+
+The post-spike gap analysis identified a small second follow-up. It adds useful
+Gecode modeling constraints that are not part of the original Wang/Wombit
+surface, and replaces several remaining decompositions only where focused
+Release measurements justify the native actor.
+
+The accepted modeling additions are:
+
+- a Word-array `element` constraint with an `IntVar` index;
+- Word-to-Boolean reductions for conjunction, disjunction, and parity;
+- carry, borrow, and signed/unsigned arithmetic overflow predicates, including
+  the corresponding current SMT-LIB overflow operations;
+- population count and leading/trailing-zero counts with bounded `IntVar`
+  results; the zero-input semantics for the zero-count operations must be
+  explicit; and
+- MiniModel forms only where they follow the established direct-API lowering
+  pattern without creating a parallel representation.
+
+The accepted native-actor investigations are subtraction/negation, unsigned
+division/remainder, signed division/remainder/modulus, Boolean-controlled word
+ITE, n-ary word logic, and n-ary modular addition. These are not new semantics:
+the existing public APIs remain valid and the current decompositions are the
+baseline. Each native actor records its propagation contract and is retained
+only when a temporary Release comparison shows a useful actor, propagation,
+runtime, or memory result without a material semantic or propagation
+regression. Benchmark scripts and raw results remain outside the repository.
+
+General Word-to-Int conversion remains outside the accepted work because a
+Gecode `IntVar` cannot represent the entire unsigned or signed 64-bit Word
+range. Generic bit permutation, word `distinct`, table globals, arbitrary
+precision, and new frontend support remain evidence-gated rather than implied
+by these tasks.
 
 ## Validation
 

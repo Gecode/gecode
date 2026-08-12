@@ -95,6 +95,7 @@ namespace Gecode {
    * | --- | --- | --- |
    * | `dom` and WordVar mask queries | Native word-domain update | Exact atomic cube narrowing, assignment, and failure |
    * | `channel` | Direct word-bit/BoolVar actor | Bit consistency, aliases, cloning, and recomputation |
+   * | `element` | Direct mixed Int/Word array-selection actor | Index support pruning and supported-result cube hull |
    * | `rel` with `WRT_EQ`, `WRT_NQ` | Direct equality/disequality actors; reified disequality rewrites through equality | Equality bit consistency; disequality sound representable exclusion; all reification modes |
    * | `rel` with unsigned and signed order types | Direct MSB-first non-strict/strict actors; greater relations swap operands and reified strict relations negate reversed non-strict relations | Assigned semantics and sound word-level bound/bit pruning |
    * | `complement`; binary and n-ary logical `rel` with all WordOpType values | Direct native-word truth-table actors; n-ary forms fold primitive actors and optionally complement | Per-bit consistency and assigned semantics |
@@ -204,6 +205,21 @@ namespace Gecode {
                               WordValue lo, WordValue hi);
   /// Assign \a x to \a value
   GECODE_WORD_EXPORT void dom(Home home, WordVar x, WordValue value);
+
+  /**
+   * \defgroup TaskModelWordElement Element constraints
+   * \ingroup TaskModelWord
+   */
+  //@{
+  /**
+   * \brief Post the element constraint \f$x_i=y\f$
+   *
+   * The index \a i is zero based. All words in \a x and \a y must have
+   * the same width.
+   */
+  GECODE_WORD_EXPORT void element(Home home, const WordVarArgs& x,
+                                  IntVar i, WordVar y);
+  //@}
 
   /**
    * \defgroup TaskModelWordChannel Channel constraints

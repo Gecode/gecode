@@ -2,10 +2,10 @@
 
 # Tasks: word
 
-- Total: 26
-- Ready: 0
-- Blocked: 0
-- Done: 26
+- Total: 37
+- Ready: 7
+- Blocked: 2
+- Done: 28
 
 | ID | Task | State | Blocked by |
 | --- | --- | --- | --- |
@@ -35,3 +35,14 @@
 | [word-024](tasks/024-implement-and-measure-a-native-modular-multiplication-propag.md) | Implement and measure a native modular multiplication propagator | done | word-023 |
 | [word-025](tasks/025-benchmark-and-optimize-word-logic-table-propagation.md) | Benchmark and optimize Word Logic Table propagation | done | word-024 |
 | [word-026](tasks/026-run-the-native-arithmetic-and-logic-table-ablation-study.md) | Run the native arithmetic and Logic Table ablation study | done | word-025 |
+| [word-027](tasks/027-research-useful-missing-wordvar-propagators.md) | Research useful missing WordVar propagators | done | — |
+| [word-028](tasks/028-add-wordvar-array-element-constraint.md) | Add WordVar array element constraint | done | — |
+| [word-029](tasks/029-add-word-to-boolean-reduction-constraints.md) | Add Word-to-Boolean reduction constraints | ready | — |
+| [word-030](tasks/030-implement-native-negation-and-subtraction-propagators.md) | Implement native negation and subtraction propagators | ready | — |
+| [word-031](tasks/031-add-carry-borrow-and-arithmetic-overflow-constraints.md) | Add carry, borrow, and arithmetic overflow constraints | blocked | word-030 |
+| [word-032](tasks/032-add-population-and-zero-count-constraints.md) | Add population and zero-count constraints | ready | — |
+| [word-033](tasks/033-implement-native-unsigned-division-and-remainder-propagators.md) | Implement native unsigned division and remainder propagators | ready | — |
+| [word-034](tasks/034-implement-native-signed-division-remainder-and-modulus-propa.md) | Implement native signed division, remainder, and modulus propagators | blocked | word-033 |
+| [word-035](tasks/035-implement-a-direct-boolean-controlled-word-ite-actor.md) | Implement a direct Boolean-controlled Word ITE actor | ready | — |
+| [word-036](tasks/036-implement-native-n-ary-word-logic-actors.md) | Implement native n-ary Word logic actors | ready | — |
+| [word-037](tasks/037-add-native-n-ary-modular-addition.md) | Add native n-ary modular addition | ready | — |
