@@ -278,10 +278,71 @@ Validation is layered so that a fast rule error does not hide behind end-to-end 
 5. **Differential models:** channel words to Boolean arrays and compare solution sets with an independently posted Boolean decomposition.
 6. **MiniModel parity:** direct-posting and expression-based models have identical widths, semantics policies, solution sets, and documented propagation behavior.
 7. **Build and packaging:** CMake and Autoconf/Make, module on/off, checked-in generated sources, shared/static, install and downstream consumption.
+
 8. **Corpus boundary:** packaging and repository checks contain all public fixtures and no private benchmark payloads; manifests and benchmark code remain usable when the external corpus is absent.
 9. **Performance guardrails:** propagation-call counts, clone footprint, allocations, runtime, and peak memory on representative models. Results are compared with the Boolean decomposition and reported without claiming SMT-solver parity.
 
 Every operator implementation records whether it is direct, rewritten, or decomposed and what propagation property its tests enforce. This keeps later performance work from silently weakening a previously established contract.
+
+## Measured hot-path follow-up
+
+The expanded Release test campaign ran all 124 registered `Word::` tests under
+150 varied iterations per test, including sparse and aggressive fixing orders
+and a four-thread run, followed by 500 iterations of every Word test family.
+All runs passed. Temporary sustained workloads and sampling profiles then
+identified four bounded behavior-preserving optimization candidates:
+
+- n-ary AND, OR, and XOR repeatedly publish every input during their local
+  fixpoint; XOR sampling spent about one fifth of top-of-stack samples in
+  `WordView::narrow`;
+- native multiplication repeatedly publishes intermediate prefix and inverse
+  results during its local fixpoint; actor and `WordView::narrow` frames
+  accounted for about half of the sampled time;
+- native n-ary addition rebuilds its width-by-arity carry state and recreates a
+  `Region` plus input buffers on every local fixpoint pass; and
+- generic `Logic::Table` now spends most of its time in its small generic tuple
+  enumeration after the earlier publish-once optimization removed most kernel
+  narrowing overhead.
+
+Optimize these paths independently. Preserve the existing public API,
+propagation contract, aliases, lifecycle, and actor count. Prefer local mask
+closure and changed-only publication over advisors or a finer event design:
+the standard Word `ModEventDelta` exposes the event class, not the individual
+newly fixed bit masks. Table specialization is retained only if measurement
+justifies the extra code; a measured no-change outcome is valid.
+
+Testing remains proportionate. Reuse the ordinary registered `test/word`
+Logic, Conditional, Arithmetic, MiniModel, and TestFramework coverage. Add or
+adjust a normal Gecode-style test only when an optimized path is not already
+exercised; do not add a new harness or exhaustive matrix. Benchmark and profile
+temporary Release drivers outside the repository, recording semantic parity,
+actors, propagation calls, nodes, failures, solutions, wall time, and
+best-effort peak RSS. Retain a production change only for a useful repeatable
+gain without changing the declared propagation result.
+
+## Mixed modular product follow-up
+
+Add a mixed-domain modular product relation with two same-width Word operands,
+a positive `IntVar` modulus, and a same-width Word result. Its mathematical
+meaning is `result = (x * y) mod modulus`; implementation must compute assigned
+products without host overflow. This is a deliberate mixed constraint, not a
+general Word-to-Int conversion: the modulus remains within Gecode's ordinary
+integer limits, while operands and result retain Word widths up to 64.
+
+The direct API is
+`product_mod(Home, WordVar, WordVar, IntVar, WordVar)` followed by a standard
+`Reify` overload supporting `RM_EQV`, `RM_IMP`, and `RM_PMI`. Reject or prune
+nonpositive modulus values through the normal posting/propagation contract.
+Do not add constant overload matrices, alternate zero-modulus semantics,
+MiniModel syntax, or unrelated integer arithmetic changes in the first slice.
+
+Both propagators use the ordinary `test/word` infrastructure. The direct task
+covers assigned semantics, overflow-safe products, representative partial
+propagation, width and modulus contracts, aliases, failure, cloning,
+recomputation, and subsumption. The reified task covers the complete truth rows
+for all three modes, control rewrites, aliases, cloning/recomputation, and
+subsumption. Keep this proportionate: use small assigned domains and focused
+partial cases, not an exhaustive 64-bit campaign or a new harness.
 
 ## Boundaries
 

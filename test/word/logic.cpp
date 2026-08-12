@@ -271,6 +271,30 @@ namespace Test { namespace Word {
             (Gecode::PropagatorGroup::all.size(result_alias) != 0U))
           return false;
 
+        LogicSpace and_result_alias(3,4);
+        Gecode::dom(and_result_alias,and_result_alias.x[0],1U,15U);
+        Gecode::WordVarArgs and_alias_args = {
+          and_result_alias.x[0],and_result_alias.x[1],and_result_alias.x[2]
+        };
+        Gecode::rel(and_result_alias,Gecode::WOT_AND,and_alias_args,
+                    and_result_alias.x[0]);
+        if ((and_result_alias.status() == Gecode::SS_FAILED) ||
+            ((and_result_alias.x[1].lo()&1U) == 0) ||
+            ((and_result_alias.x[2].lo()&1U) == 0))
+          return false;
+
+        LogicSpace or_result_alias(3,4);
+        Gecode::dom(or_result_alias,or_result_alias.x[0],0U,14U);
+        Gecode::WordVarArgs or_alias_args = {
+          or_result_alias.x[0],or_result_alias.x[1],or_result_alias.x[2]
+        };
+        Gecode::rel(or_result_alias,Gecode::WOT_OR,or_alias_args,
+                    or_result_alias.x[0]);
+        if ((or_result_alias.status() == Gecode::SS_FAILED) ||
+            ((or_result_alias.x[1].hi()&1U) != 0) ||
+            ((or_result_alias.x[2].hi()&1U) != 0))
+          return false;
+
         LogicSpace absorbed(5,4);
         Gecode::WordVarArgs absorbed_args = {
           absorbed.x[0],absorbed.x[1],absorbed.x[2],absorbed.x[3]
