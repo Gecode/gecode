@@ -386,6 +386,109 @@ repository. Each retained propagator change preserves its public semantics and
 declared propagation contract, uses normal `test/word` coverage, and is kept
 only when a focused exact-baseline Release comparison shows a useful tradeoff.
 
+## Realistic profiling corpus research
+
+The next profiling pass must move beyond microbenchmarks while remaining small
+enough to understand. Research candidate WordVar models grounded in published
+bit-vector applications and standard QF_BV benchmark families, then calibrate
+public, reproducible instances to roughly 10--60 seconds on the current Release
+solver. Prefer workloads whose runtime comes from sustained propagation and
+search rather than construction, output, or a deliberately poor variable
+order.
+
+The initial source set is the Wang/Søndergaard/Stuckey word-level propagation
+and Wombit papers, which evaluate standard SMT-LIB QF_BV families including
+bounded-model-checking, Brummayer/Biere arithmetic, SAGE symbolic execution,
+and SPEAR software-analysis instances; CP work on automatically generated
+differential-cryptanalysis models for AES, CRAFT, Midori, and Skinny; and
+reduced-step MD5/SHA-1 inversion work. These sources motivate representative
+models but do not require importing private or third-party benchmark payloads.
+
+For each retained case, identify the public provenance, model shape, adjustable
+difficulty parameter, intended search order, and dominant Word operation
+families. Where reasonable, build an independent Boolean-array or ordinary
+integer decomposition through existing Gecode APIs and compare exact solution
+or checksum semantics. Do not force a decomposition where Gecode IntVar cannot
+represent the Word range or where the alternative would test a materially
+different relation. Record actor counts, propagation calls, nodes, failures,
+solutions/checksum, wall time, best-effort memory, and a bounded sampling
+profile. Temporary drivers and raw results stay outside the repository; the
+durable output is the ranked research conclusion and recommended later
+profiling corpus, not a benchmark framework or production implementation.
+
+### Recommended corpus and calibration
+
+The research retained three deterministic one-root instances, but they cover
+two application families rather than three. This limitation is important when
+interpreting the profiles.
+
+1. **CRC-16/CCITT-FALSE preimage** is the best control and decomposition case.
+   A 28-bit message starts from `0x1d0f`, uses polynomial `0x1021`, and
+   constrains the low four output bits to zero. The Word model enumerates
+   16,777,216 messages in 44.51 seconds, with 164 root actors, 1,102,413,424
+   propagation calls, 33,554,431 nodes, no failures, and checksum
+   2,251,799,805,296,640. An independent Boolean recurrence has the same
+   solutions, checksum, nodes, and failures; it takes 42.60 seconds with 455
+   actors and 1,021,866,623 propagation calls. The Boolean model is therefore
+   about 4% faster despite 2.8 times as many actors.
+2. **Constructed symbolic register/ALU path** is the best arithmetic-heavy
+   profile. One 22-bit input passes through 12 rotate/add, rotate/XOR, and
+   rotate/AND-plus-constant transitions before two output bits are constrained.
+   It enumerates 2,367,275 solutions in 59.14 seconds, with 40 root actors,
+   546,624,487 propagation calls, 6,081,663 nodes, 673,557 failures, and
+   checksum 4,897,215,055,457. The model is motivated by the SAGE/SPEAR and
+   symbolic-execution workload families in the Wang and Wombit evaluations,
+   but it is a public deterministic construction rather than a copied paper
+   instance. A Boolean ripple-add decomposition remains useful follow-up work.
+3. **Reflected CRC-16/X-25-style preimage** gives a distinct right-shift path.
+   It uses initial state `0xffff`, reflected polynomial `0x8408`, and the same
+   28-bit message/output restriction. The Word model takes 47.10 seconds with
+   164 actors, 1,144,169,916 propagation calls, 33,554,431 nodes, no failures,
+   16,777,216 solutions, and checksum 2,251,799,805,296,640. Its independent
+   Boolean recurrence takes 44.38 seconds with 455 actors and 1,050,569,834
+   calls; solutions, checksum, nodes, and failures match exactly. Keep this
+   instance as a reflected-shift comparison, not as evidence of a third
+   application family.
+
+Five-second macOS samples make the algorithmic hot paths concrete. In the
+CCITT Word model, `WordView::narrow` accounts for 910 top-of-stack samples,
+`Logic::Table::propagate` for 464, followed by search status/cloning, bit
+channeling, and fixed shifts. In the ALU model, `Arithmetic::Add::propagate`
+dominates with 2,573 samples, followed by `WordView::narrow` at 461 and
+`Logic::Table::propagate` at 205. These profiles point first to narrowing and
+the interaction among shifts, truth-table logic, channels, and conditional
+feedback in CRC; and to the native Add transition/support loop in the ALU
+model. They do not by themselves justify an implementation change.
+The reflected case has the same profile shape: `WordView::narrow` leads with
+944 top-of-stack samples and `Logic::Table::propagate` follows with 469; its
+successful sample is `/private/tmp/word049-crcr-word.sample.txt` with SHA-256
+`aa470ad4506f94c270a6ebc88b53af48113ff2f06330a353426d6f7f552d3de2`.
+
+The reduced-hash and differential-cryptanalysis candidates were not retained.
+The Zaikin paper supplies the exact MD5/SHA-1 step structures and a strong
+future target, but temporary reduced ARX models exceeded the 60-second bound
+even after reducing rounds or constraining more digest bits. The 18-round
+variants exceeded 130 seconds and an 8-round variant hit the 60-second hard
+limit. This exposes a calibration and propagation gap rather than a useful
+current benchmark. Tagada's AES/CRAFT/Midori/Skinny truncated-differential
+models use byte/nibble activity variables and extensional S-box/MixColumns
+relations; Word cube domains represent bit values, so translating that corpus
+would profile a different model. It was rejected before implementation. ALU
+variants with 24 and 48 transitions also exceeded the target window; the
+12-transition instance is the calibrated scale.
+
+The temporary driver is `/private/tmp/word049-profile.cpp` with SHA-256
+`57ebd2861752cfc8ba6afc01763f317d05277638b0d5b23c36d25155c98d3ac7`;
+the profiled Release binary has SHA-256
+`fa8d1750177f63d44eb81096359a81e9cbbdfa7aee72d9c37e13d272dfd0b0d1`
+and was built from commit `f04ac62b9bb2c72af83e2b635057ff6648413832`.
+Use a 60-second hard timeout for future calibration. Peak RSS is unavailable
+on this host because `/usr/bin/time -l` cannot read `kern.clockrate`; do not
+substitute process-wide historical RSS. The next research question is how to
+calibrate a faithful reduced MD5 or SHA-1 instance without using a deliberately
+bad branch order, followed by an exact Boolean ripple decomposition of the ALU
+case.
+
 ## Boundaries
 
 - This area is a full implementation spike, not a battle-hardening exercise. Each task must follow established Gecode patterns, reuse normal framework and test machinery, and avoid novel infrastructure, special-case test paths, exhaustive edge-case campaigns, or verification beyond what is proportionate to getting the implementation working.

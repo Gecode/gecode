@@ -2,10 +2,10 @@
 
 # Tasks: word
 
-- Total: 48
+- Total: 49
 - Ready: 0
 - Blocked: 0
-- Done: 48
+- Done: 49
 
 | ID | Task | State | Blocked by |
 | --- | --- | --- | --- |
@@ -57,3 +57,4 @@
 | [word-046](tasks/046-optimize-variable-word-shift-propagation.md) | Optimize variable Word shift propagation | done | word-045 |
 | [word-047](tasks/047-optimize-word-element-lookup-and-clone-footprint.md) | Optimize Word element lookup and clone footprint | done | word-046 |
 | [word-048](tasks/048-add-a-combined-unsigned-word-divmod-propagator.md) | Add a combined unsigned Word divmod propagator | done | word-047 |
+| [word-049](tasks/049-research-realistic-wordvar-profiling-instances.md) | Research realistic WordVar profiling instances | done | word-048 |
