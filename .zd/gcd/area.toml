@@ -1,0 +1,6 @@
+schema_version = 1
+tag = "gcd"
+title = "Integer number-theoretic and product propagators"
+objective = "Expose ordinary and reified integer constraints for GCD, divisibility, n-ary product, and fixed-modulus n-ary product, with sound propagation, public APIs, and focused regression coverage."
+branch = "feature/gcd"
+base_commit = "e1ec3da365f6c927d937b5ae9266d892a1cb9807"

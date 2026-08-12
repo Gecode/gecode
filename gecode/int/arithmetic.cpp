@@ -322,6 +322,35 @@ namespace Gecode {
     }
   }
 
+  void
+  gcd(Home home, IntVar x0, IntVar x1, IntVar x2, IntPropLevel) {
+    using namespace Int;
+    GECODE_POST;
+    GECODE_ES_FAIL(Arithmetic::Gcd::post(home,x0,x1,x2));
+  }
+
+  void
+  gcd(Home home, IntVar x0, IntVar x1, IntVar x2, Reify r,
+      IntPropLevel) {
+    using namespace Int;
+    GECODE_POST;
+    switch (r.mode()) {
+    case RM_EQV:
+      GECODE_ES_FAIL((Arithmetic::ReGcd<RM_EQV>
+                      ::post(home,x0,x1,x2,r.var())));
+      break;
+    case RM_IMP:
+      GECODE_ES_FAIL((Arithmetic::ReGcd<RM_IMP>
+                      ::post(home,x0,x1,x2,r.var())));
+      break;
+    case RM_PMI:
+      GECODE_ES_FAIL((Arithmetic::ReGcd<RM_PMI>
+                      ::post(home,x0,x1,x2,r.var())));
+      break;
+    default: GECODE_NEVER;
+    }
+  }
+
 
   void
   divmod(Home home, IntVar x0, IntVar x1, IntVar x2, IntVar x3,

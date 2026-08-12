@@ -48,6 +48,105 @@ namespace Test { namespace Int {
       * \ingroup TaskTestInt
       */
      //@{
+     /// Compute the mathematical greatest common divisor for testing.
+     int gcd_value(int a, int b) {
+       a = (a < 0) ? -a : a;
+       b = (b < 0) ? -b : b;
+       while (b != 0) {
+         int t = a % b;
+         a = b; b = t;
+       }
+       return a;
+     }
+
+     /// %Test for the ternary greatest-common-divisor constraint
+     class GcdXYZ : public Test {
+     public:
+       /// Create and register test
+       GcdXYZ(const std::string& s, const Gecode::IntSet& d,
+              Gecode::IntPropLevel ipl)
+         : Test("Arithmetic::Gcd::XYZ::"+str(ipl)+"::"+s,3,d,true,ipl) {}
+       /// %Test whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         return gcd_value(x[0],x[1]) == x[2];
+       }
+       /// Post constraint on \a x
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
+         Gecode::gcd(home,x[0],x[1],x[2],ipl);
+       }
+       /// Post reified constraint on \a x
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x,
+                         Gecode::Reify r) {
+         Gecode::gcd(home,x[0],x[1],x[2],r,ipl);
+       }
+     };
+
+     /// %Test for gcd with identical operands
+     class GcdXXY : public Test {
+     public:
+       /// Create and register test
+       GcdXXY(const std::string& s, const Gecode::IntSet& d,
+              Gecode::IntPropLevel ipl)
+         : Test("Arithmetic::Gcd::XXY::"+str(ipl)+"::"+s,2,d,true,ipl) {}
+       /// %Test whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         return gcd_value(x[0],x[0]) == x[1];
+       }
+       /// Post constraint on \a x
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
+         Gecode::gcd(home,x[0],x[0],x[1],ipl);
+       }
+       /// Post reified constraint on \a x
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x,
+                         Gecode::Reify r) {
+         Gecode::gcd(home,x[0],x[0],x[1],r,ipl);
+       }
+     };
+
+     /// %Test for gcd with result aliased to the first operand
+     class GcdXYX : public Test {
+     public:
+       /// Create and register test
+       GcdXYX(const std::string& s, const Gecode::IntSet& d,
+              Gecode::IntPropLevel ipl)
+         : Test("Arithmetic::Gcd::XYX::"+str(ipl)+"::"+s,2,d,true,ipl) {}
+       /// %Test whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         return gcd_value(x[0],x[1]) == x[0];
+       }
+       /// Post constraint on \a x
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
+         Gecode::gcd(home,x[0],x[1],x[0],ipl);
+       }
+       /// Post reified constraint on \a x
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x,
+                         Gecode::Reify r) {
+         Gecode::gcd(home,x[0],x[1],x[0],r,ipl);
+       }
+     };
+
+     /// %Test for gcd with all variables aliased
+     class GcdXXX : public Test {
+     public:
+       /// Create and register test
+       GcdXXX(const std::string& s, const Gecode::IntSet& d,
+              Gecode::IntPropLevel ipl)
+         : Test("Arithmetic::Gcd::XXX::"+str(ipl)+"::"+s,1,d,true,ipl) {}
+       /// %Test whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         return gcd_value(x[0],x[0]) == x[0];
+       }
+       /// Post constraint on \a x
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
+         Gecode::gcd(home,x[0],x[0],x[0],ipl);
+       }
+       /// Post reified constraint on \a x
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x,
+                         Gecode::Reify r) {
+         Gecode::gcd(home,x[0],x[0],x[0],r,ipl);
+       }
+     };
+
      /// %Test for multiplication constraint
      class MultXYZ : public Test {
      public:
@@ -1085,6 +1184,8 @@ namespace Test { namespace Int {
          Gecode::IntSet b(vb,9);
          Gecode::IntSet c(-8,8);
          Gecode::IntSet d(-70,70);
+         const int vg[7] = {-12,-6,-1,0,4,9,12};
+         Gecode::IntSet g(vg,7);
 
          (void) new DivMod("A",a);
          (void) new DivMod("B",b);
@@ -1100,6 +1201,12 @@ namespace Test { namespace Int {
 
 
          for (IntPropLevels ipls; ipls(); ++ipls) {
+           (void) new GcdXYZ("C",c,ipls.ipl());
+           (void) new GcdXYZ("Sparse",g,ipls.ipl());
+           (void) new GcdXXY("C",c,ipls.ipl());
+           (void) new GcdXYX("C",c,ipls.ipl());
+           (void) new GcdXXX("C",c,ipls.ipl());
+
            (void) new AbsXY("A",a,ipls.ipl());
            (void) new AbsXY("B",b,ipls.ipl());
            (void) new AbsXY("C",c,ipls.ipl());
