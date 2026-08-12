@@ -175,6 +175,193 @@ namespace Gecode { namespace Word { namespace Arithmetic {
   }
 
   forceinline
+  NaryAdd::NaryAdd(Home home, ViewArray<WordView>& x0, WordView y0,
+                   WordValue c)
+    : MixNaryOnePropagator<
+        WordView,PC_WORD_BITS,WordView,PC_WORD_BITS>(home,x0,y0),
+      constant(c) {}
+
+  forceinline
+  NaryAdd::NaryAdd(Space& home, NaryAdd& p)
+    : MixNaryOnePropagator<
+        WordView,PC_WORD_BITS,WordView,PC_WORD_BITS>(home,p),
+      constant(p.constant) {}
+
+  forceinline Actor*
+  NaryAdd::copy(Space& home) {
+    return new (home) NaryAdd(home,*this);
+  }
+
+  forceinline PropCost
+  NaryAdd::cost(const Space&, const ModEventDelta&) const {
+    return PropCost::linear(PropCost::HI,
+                            static_cast<unsigned int>(x.size())*y.width());
+  }
+
+  forceinline bool
+  nary_add_bit(WordView x, unsigned int bit, unsigned int value) {
+    const WordValue mask=WordValue(1) << bit;
+    return value != 0 ? (x.hi()&mask) != 0 : (x.lo()&mask) == 0;
+  }
+
+  forceinline bool
+  nary_add_support(unsigned long long lo, unsigned long long hi,
+                   unsigned int value, unsigned long long next_lo,
+                   unsigned long long next_hi) {
+    const unsigned long long required_lo=2*next_lo+value;
+    const unsigned long long required_hi=2*next_hi+value;
+    lo=std::max(lo,required_lo);
+    hi=std::min(hi,required_hi);
+    if (lo > hi)
+      return false;
+    if ((lo&1U) != value)
+      lo++;
+    return lo <= hi;
+  }
+
+  forceinline ExecStatus
+  NaryAdd::narrow(Home home, ViewArray<WordView>& x, WordView y,
+                  WordValue constant) {
+    const unsigned int width=y.width();
+    for (;;) {
+      unsigned long long forward_lo[65], forward_hi[65];
+      unsigned long long backward_lo[65], backward_hi[65];
+      unsigned long long count_lo[64], count_hi[64];
+      forward_lo[0]=forward_hi[0]=0;
+
+      for (unsigned int bit=0; bit<width; bit++) {
+        const WordValue mask=WordValue(1) << bit;
+        unsigned long long lo=(constant&mask) != 0 ? 1U : 0U;
+        unsigned long long hi=lo;
+        for (int i=0; i<x.size(); i++) {
+          lo += (x[i].lo()&mask) != 0 ? 1U : 0U;
+          hi += (x[i].hi()&mask) != 0 ? 1U : 0U;
+        }
+        count_lo[bit]=lo;
+        count_hi[bit]=hi;
+
+        unsigned long long total_lo=forward_lo[bit]+lo;
+        unsigned long long total_hi=forward_hi[bit]+hi;
+        if ((y.unknown()&mask) == 0) {
+          const unsigned int value=(y.lo()&mask) != 0 ? 1U : 0U;
+          if ((total_lo&1U) != value)
+            total_lo++;
+          if ((total_hi&1U) != value)
+            total_hi--;
+        }
+        if (total_lo > total_hi)
+          return ES_FAILED;
+        forward_lo[bit+1]=total_lo >> 1;
+        forward_hi[bit+1]=total_hi >> 1;
+      }
+
+      backward_lo[width]=forward_lo[width];
+      backward_hi[width]=forward_hi[width];
+      for (unsigned int bit=width; bit-- > 0;) {
+        const WordValue mask=WordValue(1) << bit;
+        const unsigned long long value_lo=(y.lo()&mask) != 0 ? 1U : 0U;
+        const unsigned long long value_hi=(y.hi()&mask) != 0 ? 1U : 0U;
+        const unsigned long long total_lo=2*backward_lo[bit+1]+value_lo;
+        const unsigned long long total_hi=2*backward_hi[bit+1]+value_hi;
+        unsigned long long carry_lo = total_lo > count_hi[bit] ?
+          total_lo-count_hi[bit] : 0;
+        if (total_hi < count_lo[bit])
+          return ES_FAILED;
+        const unsigned long long carry_hi=total_hi-count_lo[bit];
+        backward_lo[bit]=std::max(forward_lo[bit],carry_lo);
+        backward_hi[bit]=std::min(forward_hi[bit],carry_hi);
+        if (backward_lo[bit] > backward_hi[bit])
+          return ES_FAILED;
+      }
+
+      Region region;
+      WordValue* input_lo=region.alloc<WordValue>(x.size());
+      WordValue* input_hi=region.alloc<WordValue>(x.size());
+      for (int i=0; i<x.size(); i++)
+        input_lo[i]=input_hi[i]=0;
+      WordValue result_lo=0, result_hi=0;
+
+      for (unsigned int bit=0; bit<width; bit++) {
+        const WordValue mask=WordValue(1) << bit;
+        const unsigned long long total_lo=
+          backward_lo[bit]+count_lo[bit];
+        const unsigned long long total_hi=
+          backward_hi[bit]+count_hi[bit];
+        const bool result_zero=nary_add_bit(y,bit,0) &&
+          nary_add_support(total_lo,total_hi,0,
+                           backward_lo[bit+1],backward_hi[bit+1]);
+        const bool result_one=nary_add_bit(y,bit,1) &&
+          nary_add_support(total_lo,total_hi,1,
+                           backward_lo[bit+1],backward_hi[bit+1]);
+        if (!result_zero && !result_one)
+          return ES_FAILED;
+        if (!result_zero)
+          result_lo |= mask;
+        if (result_one)
+          result_hi |= mask;
+
+        for (int i=0; i<x.size(); i++) {
+          const unsigned long long own_lo=(x[i].lo()&mask) != 0 ? 1U : 0U;
+          const unsigned long long own_hi=(x[i].hi()&mask) != 0 ? 1U : 0U;
+          const unsigned long long other_lo=count_lo[bit]-own_lo;
+          const unsigned long long other_hi=count_hi[bit]-own_hi;
+          bool support[2] = {false,false};
+          for (unsigned int value=0; value<2; value++) {
+            if (!nary_add_bit(x[i],bit,value))
+              continue;
+            const unsigned long long lo=backward_lo[bit]+other_lo+value;
+            const unsigned long long hi=backward_hi[bit]+other_hi+value;
+            for (unsigned int result=0; result<2; result++)
+              support[value] |= nary_add_bit(y,bit,result) &&
+                nary_add_support(lo,hi,result,backward_lo[bit+1],
+                                 backward_hi[bit+1]);
+          }
+          if (!support[0] && !support[1])
+            return ES_FAILED;
+          if (!support[0])
+            input_lo[i] |= mask;
+          if (support[1])
+            input_hi[i] |= mask;
+        }
+      }
+
+      bool changed=(y.lo() != result_lo) || (y.hi() != result_hi);
+      GECODE_ME_CHECK(y.narrow(home,result_lo,result_hi));
+      for (int i=0; i<x.size(); i++) {
+        changed |= (x[i].lo() != input_lo[i]) ||
+          (x[i].hi() != input_hi[i]);
+        GECODE_ME_CHECK(x[i].narrow(home,input_lo[i],input_hi[i]));
+      }
+      if (!changed)
+        break;
+    }
+
+    bool assigned=y.assigned();
+    for (int i=0; i<x.size(); i++)
+      assigned &= x[i].assigned();
+    return assigned ? ES_OK : ES_FIX;
+  }
+
+  forceinline ExecStatus
+  NaryAdd::post(Home home, ViewArray<WordView>& x, WordView y,
+                WordValue constant) {
+    ExecStatus es=narrow(home,x,y,constant);
+    if (es == ES_FAILED)
+      return ES_FAILED;
+    if (es == ES_FIX)
+      (void) new (home) NaryAdd(home,x,y,constant);
+    return ES_OK;
+  }
+
+  forceinline ExecStatus
+  NaryAdd::propagate(Space& home, const ModEventDelta&) {
+    ExecStatus es=narrow(home,x,y,constant);
+    if (es == ES_FAILED)
+      return ES_FAILED;
+    return (es == ES_FIX) ? ES_FIX : home.ES_SUBSUMED(*this);
+  }
+
+  forceinline
   AddCarry::AddCarry(Home home, ViewArray<WordView>& z,
                      Int::BoolView carry)
     : MixNaryOnePropagator<

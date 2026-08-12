@@ -104,7 +104,7 @@ namespace Gecode {
    * | `extract`, `concat`, `repeat`, `zero_extend`, `sign_extend` | Direct fixed masked-copy actors | Bit consistency for copied bits and groups |
    * | Fixed `shift_left`, `logical_shift_right`, `arithmetic_shift_right`, `rotate_left`, `rotate_right` | Direct fixed masked actors | Bit consistency and boundary amounts |
    * | Variable `shift_left`, `logical_shift_right`, `arithmetic_shift_right` | Bounded word-level cube-hull actor | Assigned semantics and partial-amount soundness |
-   * | `add`, `neg`, `sub` | Word-level carry, complement, and addition decompositions | Assigned semantics, partial-domain soundness, aliases, and lifecycle |
+   * | `add`, n-ary `add`, `neg`, `sub` | Native bounded-carry actors | Assigned semantics, partial-domain soundness, aliases, and lifecycle |
    * | `mult` | Word-level schoolbook conditional-shift/add decomposition | Assigned semantics, Boolean differential parity, and partial-domain soundness |
    * | Unsigned `div`, `mod` | Compact native range-hull and low-bit actors | SMT-LIB zero-divisor semantics, Boolean parity, and sound partial/inverse propagation |
    * | `signed_div`, `signed_rem`, `signed_mod` | Compact native signed actors with fixed-divisor and sign-bit propagation | SMT-LIB zero-divisor and overflow semantics, Boolean parity, and partial-domain soundness |
@@ -521,6 +521,13 @@ namespace Gecode {
   //@{
   /// Post modular addition \a result = \a x + \a y
   GECODE_WORD_EXPORT void add(Home home, WordVar x, WordVar y,
+                              WordVar result);
+  /** \brief Post the modular sum of the variables in \a x
+   *
+   * The empty sum is zero and a singleton sum is equality. All variables
+   * must have the same width as \a result.
+   */
+  GECODE_WORD_EXPORT void add(Home home, const WordVarArgs& x,
                               WordVar result);
   /** \brief Post modular addition and expose its unsigned carry
    *

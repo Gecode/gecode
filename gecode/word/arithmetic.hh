@@ -61,6 +61,34 @@ namespace Gecode { namespace Word { namespace Arithmetic {
                            WordView x2);
   };
 
+  /** \brief Bounded-carry propagator for n-ary modular addition
+   *
+   * The propagator is exact on assigned operands and uses forward and
+   * backward carry bounds for sound cube narrowing. It does not claim bit or
+   * domain consistency for arbitrary n-ary cubes.
+   */
+  class NaryAdd : public MixNaryOnePropagator<
+    WordView,PC_WORD_BITS,WordView,PC_WORD_BITS> {
+  protected:
+    using MixNaryOnePropagator<
+      WordView,PC_WORD_BITS,WordView,PC_WORD_BITS>::x;
+    using MixNaryOnePropagator<
+      WordView,PC_WORD_BITS,WordView,PC_WORD_BITS>::y;
+    WordValue constant;
+    NaryAdd(Home home, ViewArray<WordView>& x, WordView y,
+            WordValue constant);
+    NaryAdd(Space& home, NaryAdd& p);
+    static ExecStatus narrow(Home home, ViewArray<WordView>& x,
+                             WordView y, WordValue constant);
+  public:
+    virtual Actor* copy(Space& home);
+    virtual PropCost cost(const Space& home,
+                          const ModEventDelta& med) const;
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+    static ExecStatus post(Home home, ViewArray<WordView>& x, WordView y,
+                           WordValue constant);
+  };
+
   /// Bit-consistent addition with an exposed final carry
   class AddCarry : public MixNaryOnePropagator<
     WordView,PC_WORD_BITS,Int::BoolView,Int::PC_BOOL_VAL> {

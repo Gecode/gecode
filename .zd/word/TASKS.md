@@ -3,9 +3,9 @@
 # Tasks: word
 
 - Total: 37
-- Ready: 1
+- Ready: 0
 - Blocked: 0
-- Done: 36
+- Done: 37
 
 | ID | Task | State | Blocked by |
 | --- | --- | --- | --- |
@@ -45,4 +45,4 @@
 | [word-034](tasks/034-implement-native-signed-division-remainder-and-modulus-propa.md) | Implement native signed division, remainder, and modulus propagators | done | word-033 |
 | [word-035](tasks/035-implement-a-direct-boolean-controlled-word-ite-actor.md) | Implement a direct Boolean-controlled Word ITE actor | done | — |
 | [word-036](tasks/036-implement-native-n-ary-word-logic-actors.md) | Implement native n-ary Word logic actors | done | — |
-| [word-037](tasks/037-add-native-n-ary-modular-addition.md) | Add native n-ary modular addition | ready | — |
+| [word-037](tasks/037-add-native-n-ary-modular-addition.md) | Add native n-ary modular addition | done | — |

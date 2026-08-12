@@ -139,6 +139,19 @@ namespace Test { namespace Word {
       }
     };
 
+    /// Assigned-value oracle for native n-ary modular addition
+    class NaryAddition : public Test {
+    public:
+      NaryAddition(void) : Test("Arithmetic::NaryAdd",4,Domain(3,0,7)) {}
+      virtual bool solution(const Assignment& a) const {
+        return a[3] == ((a[0]+a[1]+a[2]) & dom.mask());
+      }
+      virtual void post(Gecode::Space& home, Gecode::WordVarArray& x) {
+        Gecode::WordVarArgs args = {x[0],x[1],x[2]};
+        Gecode::add(home,args,x[3]);
+      }
+    };
+
     class Lifecycle : public Base {
     private:
       class ArithmeticSpace : public Gecode::Space {
@@ -187,6 +200,38 @@ namespace Test { namespace Word {
                   }
               }
             }
+          if (failed == supported)
+            return false;
+        }
+        return true;
+      }
+
+      static bool nary_add_partial(void) {
+        for (PartialAssignment p(4,1); p.has_more(); p.next()) {
+          TestSpace s(4,Domain(1,0,1));
+          std::vector<Domain> domains;
+          for (int i=0; i<4; i++)
+            domains.push_back(p[i]);
+          s.narrow(domains);
+          Gecode::WordVarArgs args = {s.x[0],s.x[1],s.x[2]};
+          Gecode::add(s,args,s.x[3]);
+          const bool failed=s.failed();
+          bool supported=false;
+          for (Values x(p[0]); x(); ++x)
+            for (Values y(p[1]); y(); ++y)
+              for (Values z(p[2]); z(); ++z) {
+                const Gecode::WordValue result=
+                  (x.val()+y.val()+z.val())&1U;
+                if (!p[3].in(result))
+                  continue;
+                supported=true;
+                const Gecode::WordValue tuple[4] = {
+                  x.val(),y.val(),z.val(),result
+                };
+                for (int i=0; i<4; i++)
+                  if (failed || !s.x[i].in(tuple[i]))
+                    return false;
+              }
           if (failed == supported)
             return false;
         }
@@ -593,6 +638,139 @@ namespace Test { namespace Word {
         return solutions == 64;
       }
 
+      static bool nary_add_lifecycle(void) {
+        using namespace Gecode;
+        ArithmeticSpace empty(1,4);
+        WordVarArgs no_args;
+        add(empty,no_args,empty.x[0]);
+        if ((empty.status() == SS_FAILED) || !empty.x[0].assigned() ||
+            (empty.x[0].val() != 0U) ||
+            (PropagatorGroup::all.size(empty) != 0U))
+          return false;
+
+        ArithmeticSpace singleton(2,4);
+        WordVarArgs one_arg = {singleton.x[0]};
+        add(singleton,one_arg,singleton.x[1]);
+        dom(singleton,singleton.x[0],9U);
+        if ((singleton.status() == SS_FAILED) ||
+            !singleton.x[1].assigned() || (singleton.x[1].val() != 9U))
+          return false;
+
+        ArithmeticSpace inverse(4,4);
+        WordVarArgs inverse_args = {
+          inverse.x[0],inverse.x[1],inverse.x[2]
+        };
+        add(inverse,inverse_args,inverse.x[3]);
+        dom(inverse,inverse.x[0],7U);
+        dom(inverse,inverse.x[1],1U);
+        dom(inverse,inverse.x[3],9U);
+        if ((inverse.status() == SS_FAILED) ||
+            !inverse.x[2].assigned() || (inverse.x[2].val() != 1U))
+          return false;
+
+        ArithmeticSpace repeated(3,4);
+        WordVarArgs repeated_args = {
+          repeated.x[0],repeated.x[0],repeated.x[1]
+        };
+        add(repeated,repeated_args,repeated.x[2]);
+        dom(repeated,repeated.x[0],3U);
+        dom(repeated,repeated.x[1],1U);
+        if ((repeated.status() == SS_FAILED) ||
+            !repeated.x[2].assigned() || (repeated.x[2].val() != 7U))
+          return false;
+
+        ArithmeticSpace result_alias(3,4);
+        WordVarArgs alias_args = {
+          result_alias.x[0],result_alias.x[1],result_alias.x[2]
+        };
+        add(result_alias,alias_args,result_alias.x[0]);
+        dom(result_alias,result_alias.x[1],1U);
+        dom(result_alias,result_alias.x[2],15U);
+        dom(result_alias,result_alias.x[0],6U);
+        if (result_alias.status() == SS_FAILED)
+          return false;
+
+        ArithmeticSpace wide(4,64);
+        WordVarArgs wide_args = {wide.x[0],wide.x[1],wide.x[2]};
+        dom(wide,wide.x[0],~WordValue(0));
+        dom(wide,wide.x[1],~WordValue(0));
+        dom(wide,wide.x[2],2U);
+        add(wide,wide_args,wide.x[3]);
+        if ((wide.status() == SS_FAILED) || !wide.x[3].assigned() ||
+            (wide.x[3].val() != 0U))
+          return false;
+
+        ArithmeticSpace failed(4,4);
+        WordVarArgs failed_args = {failed.x[0],failed.x[1],failed.x[2]};
+        dom(failed,failed.x[0],1U);
+        dom(failed,failed.x[1],2U);
+        dom(failed,failed.x[2],3U);
+        dom(failed,failed.x[3],7U);
+        add(failed,failed_args,failed.x[3]);
+        if (failed.status() != SS_FAILED)
+          return false;
+
+        ArithmeticSpace source(4,4);
+        WordVarArgs source_args = {source.x[0],source.x[1],source.x[2]};
+        add(source,source_args,source.x[3]);
+        if (source.status() == SS_FAILED)
+          return false;
+        ArithmeticSpace* clone=static_cast<ArithmeticSpace*>(source.clone());
+        dom(*clone,clone->x[0],15U);
+        dom(*clone,clone->x[1],1U);
+        dom(*clone,clone->x[2],2U);
+        const bool clone_ok=(clone->status() != SS_FAILED) &&
+          clone->x[3].assigned() && (clone->x[3].val() == 2U) &&
+          (PropagatorGroup::all.size(*clone) == 0U) &&
+          !source.x[3].assigned();
+        delete clone;
+        if (!clone_ok)
+          return false;
+
+        try {
+          ArithmeticSpace mismatch(4,4);
+          WordVar other(mismatch,3);
+          WordVarArgs mismatch_args = {mismatch.x[0],other,mismatch.x[1]};
+          add(mismatch,mismatch_args,mismatch.x[3]);
+          return false;
+        } catch (const Gecode::Word::WidthMismatch&) {}
+
+        class SearchSpace : public Space {
+        public:
+          WordVarArray x;
+          WordVar result;
+          SearchSpace(void) : x(*this,3,2,0,3), result(*this,2) {
+            WordVarArgs args = {x[0],x[1],x[2]};
+            add(*this,args,result);
+            branch(*this,x,WORD_VAR_SIZE_MIN(),WORD_VAL_LSB());
+          }
+          SearchSpace(SearchSpace& s) : Space(s) {
+            x.update(*this,s.x);
+            result.update(*this,s.result);
+          }
+          virtual Space* copy(void) { return new SearchSpace(*this); }
+        };
+        SearchSpace* root=new SearchSpace;
+        Search::Options options;
+        options.c_d=8;
+        options.a_d=64;
+        DFS<SearchSpace> dfs(root,options);
+        delete root;
+        unsigned int solutions=0;
+        while (SearchSpace* solution=dfs.next()) {
+          const WordValue expected=(solution->x[0].val()+
+            solution->x[1].val()+solution->x[2].val())&3U;
+          const bool ok=solution->result.assigned() &&
+            (solution->result.val() == expected) &&
+            (PropagatorGroup::all.size(*solution) == 0U);
+          delete solution;
+          if (!ok)
+            return false;
+          solutions++;
+        }
+        return solutions == 64U;
+      }
+
       static bool neg_sub_search_recomputation(void) {
         using namespace Gecode;
         class NegSubSpace : public Space {
@@ -644,12 +822,12 @@ namespace Test { namespace Word {
     public:
       Lifecycle(void) : Base("Word::Arithmetic::Lifecycle") {}
       virtual bool run(void) {
-        return partial(ADD) && add_bit_consistency() &&
+        return partial(ADD) && add_bit_consistency() && nary_add_partial() &&
           partial(NEG) && neg_bit_consistency() &&
           partial(SUB) && sub_bit_consistency() &&
           boolean_parity() && constants_aliases_lifecycle() &&
           counters() && search_recomputation() &&
-          neg_sub_search_recomputation();
+          neg_sub_search_recomputation() && nary_add_lifecycle();
       }
     };
 
@@ -1628,6 +1806,7 @@ namespace Test { namespace Word {
     };
 
     Binary addition(ADD,"Add");
+    NaryAddition nary_addition;
     Negation negation;
     Binary subtraction(SUB,"Sub");
     Binary multiplication(MULT,"Mult");

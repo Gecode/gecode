@@ -31,6 +31,7 @@
  */
 
 #include <gecode/word/arithmetic.hh>
+#include <gecode/word/rel.hh>
 #include <gecode/word/structure.hh>
 
 namespace Gecode {
@@ -51,6 +52,32 @@ namespace Gecode {
       GECODE_ES_FAIL(Word::Arithmetic::Add::post(
                        home,Word::WordView(x),Word::WordView(y),
                        Word::WordView(result)));
+    }
+
+    void post_nary_add(Home home, const WordVarArgs& input,
+                       WordVar result) {
+      WordValue constant=0;
+      ViewArray<Word::WordView> x(home,input.size());
+      int n=0;
+      for (int i=0; i<input.size(); i++) {
+        Word::WordView next(input[i]);
+        if (next.assigned())
+          constant += next.val();
+        else
+          x[n++]=next;
+      }
+      constant &= result.mask();
+      x.size(n);
+      if (x.size() == 0) {
+        GECODE_ME_FAIL(Word::WordView(result).eq(home,constant));
+      } else if ((x.size() == 1) && (constant == 0)) {
+        GECODE_ES_FAIL((Word::Rel::Eq<
+          Word::WordView,Word::WordView>::post(
+            home,x[0],Word::WordView(result))));
+      } else {
+        GECODE_ES_FAIL(Word::Arithmetic::NaryAdd::post(
+          home,x,Word::WordView(result),constant));
+      }
     }
 
     void post_add_carry(Home home, WordVar x, WordVar y, WordVar result,
@@ -181,6 +208,23 @@ namespace Gecode {
     check_widths(x,y,result,"Word::add");
     GECODE_POST;
     post_add(home,x,y,result);
+  }
+
+  void
+  add(Home home, const WordVarArgs& x, WordVar result) {
+    for (int i=0; i<x.size(); i++)
+      if (x[i].width() != result.width())
+        throw Word::WidthMismatch("Word::add");
+    GECODE_POST;
+    if (x.size() == 0) {
+      GECODE_ME_FAIL(Word::WordView(result).eq(home,0));
+    } else if (x.size() == 1) {
+      GECODE_ES_FAIL((Word::Rel::Eq<
+        Word::WordView,Word::WordView>::post(
+          home,Word::WordView(x[0]),Word::WordView(result))));
+    } else {
+      post_nary_add(home,x,result);
+    }
   }
 
   void
