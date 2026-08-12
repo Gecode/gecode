@@ -34,6 +34,7 @@
 #include <gecode/word/logic.hh>
 #include <gecode/word/rel.hh>
 #include <gecode/word/structure.hh>
+#include <gecode/word/conditional.hh>
 
 namespace Gecode {
 
@@ -93,11 +94,10 @@ namespace Gecode {
                              Word::WordView(result))));
       return;
     }
-    WordVar control_bit(home,1);
-    channel(home,control_bit,0,control);
-    WordVar control_mask(home,result.width());
-    sign_extend(home,control_bit,result.width(),control_mask);
-    post_mask_ite(home,control_mask,then_word,else_word,result);
+    GECODE_ES_FAIL((Word::Conditional::Ite<
+      Word::WordView,Word::WordView,Word::WordView>::post(
+        home,Int::BoolView(control),Word::WordView(then_word),
+        Word::WordView(else_word),Word::WordView(result))));
   }
 
   void
@@ -131,8 +131,10 @@ namespace Gecode {
     if ((else_word.width() != width) || (result.width() != width))
       throw Word::WidthMismatch("Word::ite");
     GECODE_POST;
-    WordVar then_word(home,width,constant.val(),constant.val());
-    ite(home,control,then_word,else_word,result);
+    GECODE_ES_FAIL((Word::Conditional::Ite<
+      Word::ConstWordView,Word::WordView,Word::WordView>::post(
+        home,Int::BoolView(control),constant,Word::WordView(else_word),
+        Word::WordView(result))));
   }
 
   void
@@ -142,8 +144,10 @@ namespace Gecode {
     if ((then_word.width() != width) || (result.width() != width))
       throw Word::WidthMismatch("Word::ite");
     GECODE_POST;
-    WordVar else_word(home,width,constant.val(),constant.val());
-    ite(home,control,then_word,else_word,result);
+    GECODE_ES_FAIL((Word::Conditional::Ite<
+      Word::WordView,Word::ConstWordView,Word::WordView>::post(
+        home,Int::BoolView(control),Word::WordView(then_word),constant,
+        Word::WordView(result))));
   }
 
 }

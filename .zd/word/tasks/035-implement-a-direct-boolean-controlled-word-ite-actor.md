@@ -3,7 +3,7 @@ schema_version = 1
 id = "word-035"
 key = "native-bool-ite"
 area = "word"
-status = "open"
+status = "done"
 blocked_by = []
 +++
 # Implement a direct Boolean-controlled Word ITE actor
@@ -22,13 +22,21 @@ Boolean-controlled word ITE posts one conventional mixed actor rather than chann
 
 ## Done when
 
-- [ ] One direct Bool/Word actor propagates among control, both branches, and result, including equal branches and aliases, without model-level control WordVars.
-- [ ] All existing direct and MiniModel Bool ITE postings route through the native actor while Word-mask ITE remains unchanged.
-- [ ] Focused existing-framework tests cover assigned and unknown controls, representative partial cubes, constants, aliases/failure, width 1 and 64, cloning, recomputation, and subsumption.
-- [ ] A temporary Release comparison against the channel/sign-extend decomposition reports actor, propagation, runtime, RSS, and solution parity and supports retaining the actor.
+- [x] One direct Bool/Word actor propagates among control, both branches, and result, including equal branches and aliases, without model-level control WordVars.
+- [x] All existing direct and MiniModel Bool ITE postings route through the native actor while Word-mask ITE remains unchanged.
+- [x] Focused existing-framework tests cover assigned and unknown controls, representative partial cubes, constants, aliases/failure, width 1 and 64, cloning, recomputation, and subsumption.
+- [x] A temporary Release comparison against the channel/sign-extend decomposition reports actor, propagation, runtime, RSS, and solution parity and supports retaining the actor.
 
 ## Validation
 
 - Run focused Word::Conditional, Word MiniModel, Word::Logic regression, and Word::TestFramework tests in Release mode.
 - Inspect temporary forward and search benchmark medians and parity.
 - Run git diff --check and confirm the Word-mask ITE implementation is unchanged.
+
+## Result
+
+Replaced Boolean-control channel/sign-extension ITE lowering with one direct mixed Bool/Word actor while preserving Word-mask ITE and all APIs.
+
+Validation:
+
+- Fresh Release Conditional, MiniModel, Logic, and Word framework tests; independent source/lifecycle review; exact baseline 7b4640c043 five-trial forward/partial/search benchmark with solution/checksum and search parity plus runtime/RSS/actor/propagation metrics; zd check and git diff --check.

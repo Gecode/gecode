@@ -562,7 +562,7 @@ WORDHDR0 = \
 	arithmetic/signed-divmod.hpp \
 	array.hpp array-traits.hpp branch.hh branch.hpp branch/traits.hpp \
 	channel.hh channel/bit.hpp channel/reduction.hpp element.hh element/view.hpp \
-	count.hh count/popcount.hpp count/zero-count.hpp \
+	count.hh count/popcount.hpp count/zero-count.hpp conditional.hh conditional/ite.hpp \
 	exception.hpp logic.hh logic/table.hpp print.hpp view.hpp \
 	rel.hh rel/eq.hpp rel/lq-le.hpp rel/nq.hpp rel/re-eq.hpp rel/re-lq.hpp \
 	structure.hh structure/concat.hpp structure/fixed.hpp \

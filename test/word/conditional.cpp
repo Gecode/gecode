@@ -33,6 +33,8 @@
 
 #include "test/word.hh"
 
+#include <gecode/search.hh>
+
 namespace Test { namespace Word {
 
   namespace Conditional {
@@ -59,8 +61,9 @@ namespace Test { namespace Word {
     };
 
     /**
-     * The Boolean form is a word-level decomposition through channeling and
-     * sign extension into the same direct mask actor.
+     * The Boolean form uses one direct mixed actor. With an unknown control,
+     * it narrows the result to the cube hull of both branches and rejects a
+     * branch only when it is disjoint from the result.
      */
     class Boolean : public Test {
     public:
@@ -81,8 +84,9 @@ namespace Test { namespace Word {
       public:
         Gecode::BoolVar control;
         Gecode::WordVarArray x;
-        ConditionalSpace(void)
-          : control(*this,0,1), x(*this,3,2,0,3) {}
+        ConditionalSpace(unsigned int width=2)
+          : control(*this,0,1),
+            x(*this,3,width,0,Gecode::Word::width_mask(width)) {}
         ConditionalSpace(ConditionalSpace& s) : Gecode::Space(s) {
           control.update(*this,s.control);
           x.update(*this,s.x);
@@ -129,6 +133,91 @@ namespace Test { namespace Word {
         return true;
       }
 
+      static bool native_propagation(void) {
+        ConditionalSpace hull(4);
+        Gecode::dom(hull,hull.x[0],1U,3U);
+        Gecode::dom(hull,hull.x[1],5U,7U);
+        Gecode::ite(hull,hull.control,hull.x[0],hull.x[1],hull.x[2]);
+        if ((hull.status() == Gecode::SS_FAILED) ||
+            (hull.x[2].lo() != 1U) || (hull.x[2].hi() != 7U) ||
+            (Gecode::PropagatorGroup::all.size(hull) != 1U))
+          return false;
+
+        ConditionalSpace infer(4);
+        Gecode::dom(infer,infer.x[0],0U,3U);
+        Gecode::dom(infer,infer.x[1],8U,11U);
+        Gecode::dom(infer,infer.x[2],9U);
+        Gecode::ite(infer,infer.control,infer.x[0],infer.x[1],infer.x[2]);
+        if ((infer.status() == Gecode::SS_FAILED) ||
+            !infer.control.assigned() || (infer.control.val() != 0) ||
+            !infer.x[1].assigned() || (infer.x[1].val() != 9U) ||
+            (Gecode::PropagatorGroup::all.size(infer) != 0U))
+          return false;
+
+        ConditionalSpace width_one(1);
+        Gecode::dom(width_one,width_one.x[0],0U);
+        Gecode::dom(width_one,width_one.x[1],1U);
+        Gecode::dom(width_one,width_one.x[2],0U);
+        Gecode::ite(width_one,width_one.control,width_one.x[0],
+                    width_one.x[1],width_one.x[2]);
+        if ((width_one.status() == Gecode::SS_FAILED) ||
+            !width_one.control.assigned() || (width_one.control.val() != 1))
+          return false;
+
+        ConditionalSpace width_sixty_four(64);
+        Gecode::ite(width_sixty_four,width_sixty_four.control,
+                    width_sixty_four.x[0],width_sixty_four.x[1],
+                    width_sixty_four.x[2]);
+        return (width_sixty_four.status() != Gecode::SS_FAILED) &&
+          (Gecode::PropagatorGroup::all.size(width_sixty_four) == 1U);
+      }
+
+      static bool search_recomputation(void) {
+        using namespace Gecode;
+        class SearchSpace : public Space {
+        public:
+          BoolVar control;
+          WordVar then_word;
+          WordVar else_word;
+          WordVar result;
+          SearchSpace(void)
+            : control(*this,0,1), then_word(*this,1), else_word(*this,1),
+              result(*this,1) {
+            ite(*this,control,then_word,else_word,result);
+            WordVarArgs decision = {then_word,else_word};
+            branch(*this,decision,WORD_VAR_SIZE_MIN(),WORD_VAL_LSB());
+            branch(*this,control,BOOL_VAL_MIN());
+          }
+          SearchSpace(SearchSpace& s) : Space(s) {
+            control.update(*this,s.control);
+            then_word.update(*this,s.then_word);
+            else_word.update(*this,s.else_word);
+            result.update(*this,s.result);
+          }
+          virtual Space* copy(void) { return new SearchSpace(*this); }
+        };
+
+        SearchSpace* root = new SearchSpace;
+        Search::Options options;
+        options.c_d = 8;
+        options.a_d = 64;
+        DFS<SearchSpace> dfs(root,options);
+        delete root;
+        unsigned int solutions=0;
+        while (SearchSpace* solution=dfs.next()) {
+          const WordValue expected=solution->control.val() ?
+            solution->then_word.val() : solution->else_word.val();
+          const bool ok=solution->result.assigned() &&
+            (solution->result.val() == expected) &&
+            (PropagatorGroup::all.size(*solution) == 0U);
+          delete solution;
+          if (!ok)
+            return false;
+          solutions++;
+        }
+        return solutions == 8U;
+      }
+
     public:
       Lifecycle(void) : Base("Word::Conditional::Lifecycle") {}
       virtual bool run(void) {
@@ -149,7 +238,8 @@ namespace Test { namespace Word {
         Gecode::dom(equal,equal.x[0],1U,3U);
         Gecode::ite(equal,equal.control,equal.x[0],equal.x[0],equal.x[1]);
         if ((equal.status() == Gecode::SS_FAILED) ||
-            (equal.x[1].lo() != 1U) || (equal.x[1].hi() != 3U))
+            (equal.x[1].lo() != 1U) || (equal.x[1].hi() != 3U) ||
+            (Gecode::PropagatorGroup::all.size(equal) != 1U))
           return false;
 
         ConditionalSpace constants;
@@ -182,7 +272,8 @@ namespace Test { namespace Word {
         ConditionalSpace source;
         Gecode::ite(source,source.control,
                     source.x[0],source.x[1],source.x[2]);
-        if (source.status() == Gecode::SS_FAILED)
+        if ((source.status() == Gecode::SS_FAILED) ||
+            (Gecode::PropagatorGroup::all.size(source) != 1U))
           return false;
         ConditionalSpace* clone =
           static_cast<ConditionalSpace*>(source.clone());
@@ -202,7 +293,7 @@ namespace Test { namespace Word {
                       mismatch.x[0],other,mismatch.x[2]);
           return false;
         } catch (const Gecode::Word::WidthMismatch&) {}
-        return true;
+        return native_propagation() && search_recomputation();
       }
     };
 
