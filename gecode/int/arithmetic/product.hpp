@@ -518,8 +518,9 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   ReProduct<rm>::ReProduct(Home home, ViewArray<IntView>& z, IntView w,
                            BoolView c)
     : Propagator(home), x(z), y(w), b(c) {
-    x.subscribe(home,*this,PC_INT_DOM);
-    y.subscribe(home,*this,PC_INT_DOM);
+    home.notice(*this,AP_WEAKLY);
+    x.subscribe(home,*this,PC_INT_BND);
+    y.subscribe(home,*this,PC_INT_BND);
     b.subscribe(home,*this,PC_BOOL_VAL);
   }
 
@@ -571,8 +572,8 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   template<ReifyMode rm>
   forceinline void
   ReProduct<rm>::reschedule(Space& home) {
-    x.reschedule(home,*this,PC_INT_DOM);
-    y.reschedule(home,*this,PC_INT_DOM);
+    x.reschedule(home,*this,PC_INT_BND);
+    y.reschedule(home,*this,PC_INT_BND);
     b.reschedule(home,*this,PC_BOOL_VAL);
   }
 
@@ -608,9 +609,10 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   template<ReifyMode rm>
   forceinline size_t
   ReProduct<rm>::dispose(Space& home) {
-    x.cancel(home,*this,PC_INT_DOM);
-    y.cancel(home,*this,PC_INT_DOM);
+    x.cancel(home,*this,PC_INT_BND);
+    y.cancel(home,*this,PC_INT_BND);
     b.cancel(home,*this,PC_BOOL_VAL);
+    home.ignore(*this,AP_WEAKLY);
     (void) Propagator::dispose(home);
     return sizeof(*this);
   }

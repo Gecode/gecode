@@ -35,18 +35,9 @@
 
 namespace Gecode { namespace Int { namespace Arithmetic {
 
-  /// Largest Cartesian product enumerated for domain propagation.
-  const unsigned long long divides_support_limit = 200000ULL;
-
   forceinline bool
   divides_value(int divisor, int dividend) {
     return (divisor == 0) ? (dividend == 0) : (dividend % divisor == 0);
-  }
-
-  forceinline bool
-  divides_enumerable(const IntView& x0, const IntView& x1) {
-    return (static_cast<unsigned long long>(x0.size()) * x1.size()) <=
-      divides_support_limit;
   }
 
   inline RelTest
@@ -61,58 +52,15 @@ namespace Gecode { namespace Int { namespace Arithmetic {
       return RT_FALSE;
     if (x0.assigned() && x1.assigned())
       return divides_value(x0.val(),x1.val()) ? RT_TRUE : RT_FALSE;
-    if (!divides_enumerable(x0,x1))
-      return RT_MAYBE;
-    bool has_true = false, has_false = false;
-    for (ViewValues<IntView> i0(x0); i0(); ++i0)
-      for (ViewValues<IntView> i1(x1); i1(); ++i1) {
-        if (divides_value(i0.val(),i1.val()))
-          has_true = true;
-        else
-          has_false = true;
-        if (has_true && has_false)
-          return RT_MAYBE;
-      }
-    return has_true ? RT_TRUE : RT_FALSE;
-  }
-
-  /// Keep precisely values with support in the relation (or its negation).
-  inline ExecStatus
-  divides_filter(Space& home, IntView x0, IntView x1, bool positive) {
-    if (x0 == x1)
-      return positive ? ES_OK : ES_FAILED;
-    if (!divides_enumerable(x0,x1))
-      return ES_OK;
-
-    Region r;
-    unsigned int cap = x0.size() * x1.size();
-    int* s0 = r.alloc<int>(cap);
-    int* s1 = r.alloc<int>(cap);
-    unsigned int n = 0;
-    for (ViewValues<IntView> i0(x0); i0(); ++i0)
-      for (ViewValues<IntView> i1(x1); i1(); ++i1)
-        if (divides_value(i0.val(),i1.val()) == positive) {
-          s0[n] = i0.val(); s1[n] = i1.val(); n++;
-        }
-    if (n == 0)
-      return ES_FAILED;
-    std::sort(s0,s0+n); std::sort(s1,s1+n);
-    unsigned int n0=1, n1=1;
-    for (unsigned int i=1; i<n; i++) {
-      if (s0[i] != s0[n0-1]) s0[n0++]=s0[i];
-      if (s1[i] != s1[n1-1]) s1[n1++]=s1[i];
-    }
-    Iter::Values::Array i0(s0,n0);
-    GECODE_ME_CHECK(x0.inter_v(home,i0,false));
-    Iter::Values::Array i1(s1,n1);
-    GECODE_ME_CHECK(x1.inter_v(home,i1,false));
-    return ES_OK;
+    return RT_MAYBE;
   }
 
   template<ReifyMode rm>
   forceinline
   ReDivides<rm>::ReDivides(Home home, IntView y0, IntView y1, BoolView b0)
-    : ReBinaryPropagator<IntView,PC_INT_DOM,BoolView>(home,y0,y1,b0) {}
+    : ReBinaryPropagator<IntView,PC_INT_BND,BoolView>(home,y0,y1,b0) {
+    home.notice(*this,AP_WEAKLY);
+  }
 
   template<ReifyMode rm>
   inline ExecStatus
@@ -139,7 +87,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   template<ReifyMode rm>
   forceinline
   ReDivides<rm>::ReDivides(Space& home, ReDivides<rm>& p)
-    : ReBinaryPropagator<IntView,PC_INT_DOM,BoolView>(home,p) {}
+    : ReBinaryPropagator<IntView,PC_INT_BND,BoolView>(home,p) {}
 
   template<ReifyMode rm>
   forceinline Actor*
@@ -150,7 +98,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   template<ReifyMode rm>
   forceinline PropCost
   ReDivides<rm>::cost(const Space&, const ModEventDelta&) const {
-    return PropCost::binary(PropCost::HI);
+    return PropCost::binary(PropCost::LO);
   }
 
   template<ReifyMode rm>
@@ -159,16 +107,18 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     if (b.one()) {
       if (rm == RM_PMI)
         return home.ES_SUBSUMED(*this);
-      GECODE_ES_CHECK(divides_filter(home,x0,x1,true));
-      if (divides_status(x0,x1) == RT_TRUE)
+      const RelTest rt=divides_status(x0,x1);
+      if (rt == RT_FALSE) return ES_FAILED;
+      if (rt == RT_TRUE)
         return home.ES_SUBSUMED(*this);
       return ES_FIX;
     }
     if (b.zero()) {
       if (rm == RM_IMP)
         return home.ES_SUBSUMED(*this);
-      GECODE_ES_CHECK(divides_filter(home,x0,x1,false));
-      if (divides_status(x0,x1) == RT_FALSE)
+      const RelTest rt=divides_status(x0,x1);
+      if (rt == RT_TRUE) return ES_FAILED;
+      if (rt == RT_FALSE)
         return home.ES_SUBSUMED(*this);
       return ES_FIX;
     }
@@ -187,6 +137,14 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     default: GECODE_NEVER;
     }
     return home.ES_SUBSUMED(*this);
+  }
+
+  template<ReifyMode rm>
+  forceinline size_t
+  ReDivides<rm>::dispose(Space& home) {
+    home.ignore(*this,AP_WEAKLY);
+    (void) ReBinaryPropagator<IntView,PC_INT_BND,BoolView>::dispose(home);
+    return sizeof(*this);
   }
 
 }}}

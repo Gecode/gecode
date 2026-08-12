@@ -148,7 +148,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   forceinline
   ProductMod::ProductMod(Home home, ViewArray<IntView>& z, int modulus,
                          IntView w)
-    : NaryOnePropagator<IntView,PC_INT_DOM>(home,z,w), m(modulus) {}
+    : NaryOnePropagator<IntView,PC_INT_BND>(home,z,w), m(modulus) {}
 
   inline ExecStatus
   ProductMod::post(Home home, ViewArray<IntView>& x, int m, IntView y) {
@@ -177,7 +177,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   forceinline
   ProductMod::ProductMod(Space& home, ProductMod& p)
-    : NaryOnePropagator<IntView,PC_INT_DOM>(home,p), m(p.m) {}
+    : NaryOnePropagator<IntView,PC_INT_BND>(home,p), m(p.m) {}
 
   forceinline Actor*
   ProductMod::copy(Space& home) {
@@ -434,9 +434,10 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   ProductModVar::ProductModVar(Home home, ViewArray<IntView>& z,
                                IntView modulus, IntView w)
     : Propagator(home), x(z), m(modulus), y(w) {
+    home.notice(*this,AP_WEAKLY);
     x.subscribe(home,*this,PC_INT_VAL);
     m.subscribe(home,*this,PC_INT_BND);
-    y.subscribe(home,*this,PC_INT_DOM);
+    y.subscribe(home,*this,PC_INT_BND);
   }
 
   inline ExecStatus
@@ -487,7 +488,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   ProductModVar::reschedule(Space& home) {
     x.reschedule(home,*this,PC_INT_VAL);
     m.reschedule(home,*this,PC_INT_BND);
-    y.reschedule(home,*this,PC_INT_DOM);
+    y.reschedule(home,*this,PC_INT_BND);
   }
 
   inline ExecStatus
@@ -558,7 +559,8 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   ProductModVar::dispose(Space& home) {
     x.cancel(home,*this,PC_INT_VAL);
     m.cancel(home,*this,PC_INT_BND);
-    y.cancel(home,*this,PC_INT_DOM);
+    y.cancel(home,*this,PC_INT_BND);
+    home.ignore(*this,AP_WEAKLY);
     (void) Propagator::dispose(home);
     return sizeof(*this);
   }
@@ -568,9 +570,10 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   ReProductModVar<rm>::ReProductModVar(Home home, ViewArray<IntView>& z,
                                        IntView modulus, IntView w, BoolView c)
     : Propagator(home), x(z), m(modulus), y(w), b(c) {
+    home.notice(*this,AP_WEAKLY);
     x.subscribe(home,*this,PC_INT_VAL);
-    m.subscribe(home,*this,PC_INT_DOM);
-    y.subscribe(home,*this,PC_INT_DOM);
+    m.subscribe(home,*this,PC_INT_BND);
+    y.subscribe(home,*this,PC_INT_BND);
     b.subscribe(home,*this,PC_BOOL_VAL);
   }
 
@@ -613,8 +616,8 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   forceinline void
   ReProductModVar<rm>::reschedule(Space& home) {
     x.reschedule(home,*this,PC_INT_VAL);
-    m.reschedule(home,*this,PC_INT_DOM);
-    y.reschedule(home,*this,PC_INT_DOM);
+    m.reschedule(home,*this,PC_INT_BND);
+    y.reschedule(home,*this,PC_INT_BND);
     b.reschedule(home,*this,PC_BOOL_VAL);
   }
 
@@ -655,9 +658,10 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   forceinline size_t
   ReProductModVar<rm>::dispose(Space& home) {
     x.cancel(home,*this,PC_INT_VAL);
-    m.cancel(home,*this,PC_INT_DOM);
-    y.cancel(home,*this,PC_INT_DOM);
+    m.cancel(home,*this,PC_INT_BND);
+    y.cancel(home,*this,PC_INT_BND);
     b.cancel(home,*this,PC_BOOL_VAL);
+    home.ignore(*this,AP_WEAKLY);
     (void) Propagator::dispose(home);
     return sizeof(*this);
   }
@@ -667,8 +671,9 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   ReProductMod<rm>::ReProductMod(Home home, ViewArray<IntView>& z,
                                  int modulus, IntView w, BoolView c)
     : Propagator(home), x(z), y(w), b(c), m(modulus) {
-    x.subscribe(home,*this,PC_INT_DOM);
-    y.subscribe(home,*this,PC_INT_DOM);
+    home.notice(*this,AP_WEAKLY);
+    x.subscribe(home,*this,PC_INT_BND);
+    y.subscribe(home,*this,PC_INT_BND);
     b.subscribe(home,*this,PC_BOOL_VAL);
   }
 
@@ -737,8 +742,8 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   template<ReifyMode rm>
   forceinline void
   ReProductMod<rm>::reschedule(Space& home) {
-    x.reschedule(home,*this,PC_INT_DOM);
-    y.reschedule(home,*this,PC_INT_DOM);
+    x.reschedule(home,*this,PC_INT_BND);
+    y.reschedule(home,*this,PC_INT_BND);
     b.reschedule(home,*this,PC_BOOL_VAL);
   }
 
@@ -776,9 +781,10 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   template<ReifyMode rm>
   forceinline size_t
   ReProductMod<rm>::dispose(Space& home) {
-    x.cancel(home,*this,PC_INT_DOM);
-    y.cancel(home,*this,PC_INT_DOM);
+    x.cancel(home,*this,PC_INT_BND);
+    y.cancel(home,*this,PC_INT_BND);
     b.cancel(home,*this,PC_BOOL_VAL);
+    home.ignore(*this,AP_WEAKLY);
     (void) Propagator::dispose(home);
     return sizeof(*this);
   }

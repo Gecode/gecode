@@ -3,9 +3,9 @@
 # Tasks: gcd
 
 - Total: 13
-- Ready: 1
+- Ready: 0
 - Blocked: 0
-- Done: 12
+- Done: 13
 
 | ID | Task | State | Blocked by |
 | --- | --- | --- | --- |
@@ -21,4 +21,4 @@
 | [gcd-010](tasks/010-add-repeated-factor-and-result-alias-rewrites-for-n-ary-prod.md) | Add repeated-factor and result-alias rewrites for n-ary product | done | gcd-009 |
 | [gcd-011](tasks/011-add-algebraic-and-small-modulus-propagation-for-fixed-produc.md) | Add algebraic and bounds propagation for fixed product_mod | done | — |
 | [gcd-012](tasks/012-add-algebraic-propagation-for-variable-product-mod.md) | Add algebraic propagation for variable product_mod | done | — |
-| [gcd-013](tasks/013-eliminate-support-enumeration-from-number-theoretic-propagat.md) | Eliminate support enumeration from number-theoretic propagators | ready | gcd-008, gcd-009, gcd-010, gcd-011, gcd-012 |
+| [gcd-013](tasks/013-eliminate-support-enumeration-from-number-theoretic-propagat.md) | Eliminate support enumeration from number-theoretic propagators | done | gcd-008, gcd-009, gcd-010, gcd-011, gcd-012 |
