@@ -62,6 +62,51 @@ namespace Gecode { namespace Word { namespace Arithmetic {
   };
 
   /**
+   * \brief Bit-consistent propagator for fixed-width modular negation
+   *
+   * Carries for two's-complement negation are represented by a temporary
+   * two-state chain during propagation.
+   */
+  class Neg : public BinaryPropagator<WordView,PC_WORD_BITS> {
+  protected:
+    using BinaryPropagator<WordView,PC_WORD_BITS>::x0;
+    using BinaryPropagator<WordView,PC_WORD_BITS>::x1;
+    Neg(Home home, WordView x0, WordView x1);
+    Neg(Space& home, Neg& p);
+    static ExecStatus narrow(Home home, WordView x0, WordView x1);
+  public:
+    virtual Actor* copy(Space& home);
+    virtual PropCost cost(const Space& home,
+                          const ModEventDelta& med) const;
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+    static ExecStatus post(Home home, WordView x0, WordView x1);
+  };
+
+  /**
+   * \brief Bit-consistent propagator for fixed-width modular subtraction
+   *
+   * Borrows are represented by a temporary two-state chain during
+   * propagation. No borrow variables or borrow state are stored in the space.
+   */
+  class Sub : public TernaryPropagator<WordView,PC_WORD_BITS> {
+  protected:
+    using TernaryPropagator<WordView,PC_WORD_BITS>::x0;
+    using TernaryPropagator<WordView,PC_WORD_BITS>::x1;
+    using TernaryPropagator<WordView,PC_WORD_BITS>::x2;
+    Sub(Home home, WordView x0, WordView x1, WordView x2);
+    Sub(Space& home, Sub& p);
+    static ExecStatus narrow(Home home, WordView x0, WordView x1,
+                             WordView x2);
+  public:
+    virtual Actor* copy(Space& home);
+    virtual PropCost cost(const Space& home,
+                          const ModEventDelta& med) const;
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+    static ExecStatus post(Home home, WordView x0, WordView x1,
+                           WordView x2);
+  };
+
+  /**
    * \brief Low-prefix propagator for fixed-width modular multiplication
    *
    * The propagator is exact for assigned operands and propagates fixed low
@@ -89,6 +134,7 @@ namespace Gecode { namespace Word { namespace Arithmetic {
 }}}
 
 #include <gecode/word/arithmetic/add.hpp>
+#include <gecode/word/arithmetic/neg-sub.hpp>
 #include <gecode/word/arithmetic/mult.hpp>
 
 #endif

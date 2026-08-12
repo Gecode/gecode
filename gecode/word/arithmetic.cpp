@@ -31,7 +31,6 @@
  */
 
 #include <gecode/word/arithmetic.hh>
-#include <gecode/word/logic.hh>
 #include <gecode/word/structure.hh>
 
 namespace Gecode {
@@ -55,16 +54,14 @@ namespace Gecode {
     }
 
     void post_neg(Home home, WordVar x, WordVar result) {
-      WordVar complemented(home,x.width());
-      complement(home,x,complemented);
-      WordVar one(home,x.width(),1,1);
-      post_add(home,complemented,one,result);
+      GECODE_ES_FAIL(Word::Arithmetic::Neg::post(
+                       home,Word::WordView(x),Word::WordView(result)));
     }
 
     void post_sub(Home home, WordVar x, WordVar y, WordVar result) {
-      WordVar negative_y(home,x.width());
-      post_neg(home,y,negative_y);
-      post_add(home,x,negative_y,result);
+      GECODE_ES_FAIL(Word::Arithmetic::Sub::post(
+                       home,Word::WordView(x),Word::WordView(y),
+                       Word::WordView(result)));
     }
 
     void post_mult(Home home, WordVar x, WordVar y, WordVar result) {

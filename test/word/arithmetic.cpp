@@ -236,6 +236,92 @@ namespace Test { namespace Word {
         return true;
       }
 
+      /** Exhaustive width-two support hull for native negation. */
+      static bool neg_bit_consistency(void) {
+        const unsigned int width = 2;
+        const Gecode::WordValue mask = 3U;
+        for (PartialAssignment p(2,width); p.has_more(); p.next()) {
+          TestSpace s(2,Domain(width,0,mask));
+          std::vector<Domain> domains;
+          domains.push_back(p[0]);
+          domains.push_back(p[1]);
+          s.narrow(domains);
+          Gecode::neg(s,s.x[0],s.x[1]);
+          const bool failed = s.failed();
+
+          bool supported = false;
+          Gecode::WordValue support_lo[2] = {mask,mask};
+          Gecode::WordValue support_hi[2] = {0,0};
+          for (Values x(p[0]); x(); ++x) {
+            const Gecode::WordValue z =
+              (Gecode::WordValue(0)-x.val()) & mask;
+            if (!p[1].in(z))
+              continue;
+            supported = true;
+            const Gecode::WordValue tuple[2] = {x.val(),z};
+            for (int i=0; i<2; i++) {
+              support_lo[i] &= tuple[i];
+              support_hi[i] |= tuple[i];
+            }
+          }
+          if (!supported) {
+            if (!failed)
+              return false;
+          } else {
+            if (failed)
+              return false;
+            for (int i=0; i<2; i++)
+              if ((s.x[i].lo() != support_lo[i]) ||
+                  (s.x[i].hi() != support_hi[i]))
+                return false;
+          }
+        }
+        return true;
+      }
+
+      /** Exhaustive width-two support hull for native subtraction. */
+      static bool sub_bit_consistency(void) {
+        const unsigned int width = 2;
+        const Gecode::WordValue mask = 3U;
+        for (PartialAssignment p(3,width); p.has_more(); p.next()) {
+          TestSpace s(3,Domain(width,0,mask));
+          std::vector<Domain> domains;
+          for (int i=0; i<3; i++)
+            domains.push_back(p[i]);
+          s.narrow(domains);
+          Gecode::sub(s,s.x[0],s.x[1],s.x[2]);
+          const bool failed = s.failed();
+
+          bool supported = false;
+          Gecode::WordValue support_lo[3] = {mask,mask,mask};
+          Gecode::WordValue support_hi[3] = {0,0,0};
+          for (Values x(p[0]); x(); ++x)
+            for (Values y(p[1]); y(); ++y) {
+              const Gecode::WordValue z = (x.val()-y.val()) & mask;
+              if (!p[2].in(z))
+                continue;
+              supported = true;
+              const Gecode::WordValue tuple[3] = {x.val(),y.val(),z};
+              for (int i=0; i<3; i++) {
+                support_lo[i] &= tuple[i];
+                support_hi[i] |= tuple[i];
+              }
+            }
+          if (!supported) {
+            if (!failed)
+              return false;
+          } else {
+            if (failed)
+              return false;
+            for (int i=0; i<3; i++)
+              if ((s.x[i].lo() != support_lo[i]) ||
+                  (s.x[i].hi() != support_hi[i]))
+                return false;
+          }
+        }
+        return true;
+      }
+
       /** A tiny ordinary Boolean full-adder decomposition for comparison. */
       class DifferentialSpace : public Gecode::Space {
       public:
@@ -338,6 +424,20 @@ namespace Test { namespace Word {
             !wide.x[2].assigned() || (wide.x[2].val() != 0U))
           return false;
 
+        ArithmeticSpace wide_neg_sub(3,64);
+        Gecode::dom(wide_neg_sub,wide_neg_sub.x[0],2U);
+        Gecode::dom(wide_neg_sub,wide_neg_sub.x[1],1U);
+        Gecode::neg(wide_neg_sub,wide_neg_sub.x[0],wide_neg_sub.x[2]);
+        Gecode::sub(wide_neg_sub,wide_neg_sub.x[0],wide_neg_sub.x[1],
+                    wide_neg_sub.x[1]);
+        if ((wide_neg_sub.status() == Gecode::SS_FAILED) ||
+            !wide_neg_sub.x[2].assigned() ||
+            (wide_neg_sub.x[2].val() !=
+             (~Gecode::WordValue(0)-Gecode::WordValue(1))) ||
+            !wide_neg_sub.x[1].assigned() ||
+            (wide_neg_sub.x[1].val() != 1U))
+          return false;
+
         ArithmeticSpace aliases;
         Gecode::dom(aliases,aliases.x[0],8U);
         Gecode::dom(aliases,aliases.x[1],3U);
@@ -387,6 +487,38 @@ namespace Test { namespace Word {
         if (!clone_ok)
           return false;
 
+        ArithmeticSpace neg_source;
+        Gecode::neg(neg_source,neg_source.x[0],neg_source.x[1]);
+        if (neg_source.status() == Gecode::SS_FAILED)
+          return false;
+        ArithmeticSpace* neg_clone =
+          static_cast<ArithmeticSpace*>(neg_source.clone());
+        Gecode::dom(*neg_clone,neg_clone->x[0],1U);
+        const bool neg_clone_ok =
+          (neg_clone->status() != Gecode::SS_FAILED) &&
+          neg_clone->x[1].assigned() && (neg_clone->x[1].val() == 15U) &&
+          !neg_source.x[1].assigned();
+        delete neg_clone;
+        if (!neg_clone_ok)
+          return false;
+
+        ArithmeticSpace sub_source;
+        Gecode::sub(sub_source,sub_source.x[0],sub_source.x[1],
+                    sub_source.x[2]);
+        if (sub_source.status() == Gecode::SS_FAILED)
+          return false;
+        ArithmeticSpace* sub_clone =
+          static_cast<ArithmeticSpace*>(sub_source.clone());
+        Gecode::dom(*sub_clone,sub_clone->x[0],1U);
+        Gecode::dom(*sub_clone,sub_clone->x[1],2U);
+        const bool sub_clone_ok =
+          (sub_clone->status() != Gecode::SS_FAILED) &&
+          sub_clone->x[2].assigned() && (sub_clone->x[2].val() == 15U) &&
+          !sub_source.x[2].assigned();
+        delete sub_clone;
+        if (!sub_clone_ok)
+          return false;
+
         try {
           ArithmeticSpace mismatch;
           Gecode::WordVar other(mismatch,3);
@@ -397,15 +529,25 @@ namespace Test { namespace Word {
       }
 
       static bool counters(void) {
-        ArithmeticSpace s;
-        Gecode::add(s,s.x[0],s.x[1],s.x[2]);
-        // Addition is one native actor with no model-level carry variables.
-        if (Gecode::PropagatorGroup::all.size(s) != 1)
+        ArithmeticSpace add_space;
+        Gecode::add(add_space,add_space.x[0],add_space.x[1],add_space.x[2]);
+        // Each operation is one native actor with no model-level state.
+        if (Gecode::PropagatorGroup::all.size(add_space) != 1)
           return false;
         Gecode::StatusStatistics statistics;
-        if (s.status(statistics) == Gecode::SS_FAILED)
+        if (add_space.status(statistics) == Gecode::SS_FAILED)
           return false;
-        return statistics.propagate >= 1;
+        if (statistics.propagate < 1)
+          return false;
+
+        ArithmeticSpace neg_space;
+        Gecode::neg(neg_space,neg_space.x[0],neg_space.x[1]);
+        if (Gecode::PropagatorGroup::all.size(neg_space) != 1)
+          return false;
+
+        ArithmeticSpace sub_space;
+        Gecode::sub(sub_space,sub_space.x[0],sub_space.x[1],sub_space.x[2]);
+        return Gecode::PropagatorGroup::all.size(sub_space) == 1;
       }
 
       static bool search_recomputation(void) {
@@ -451,13 +593,63 @@ namespace Test { namespace Word {
         return solutions == 64;
       }
 
+      static bool neg_sub_search_recomputation(void) {
+        using namespace Gecode;
+        class NegSubSpace : public Space {
+        public:
+          WordVar x;
+          WordVar y;
+          WordVar negative;
+          WordVar difference;
+          NegSubSpace(void) : x(*this,3), y(*this,3), negative(*this,3),
+            difference(*this,3) {
+            neg(*this,x,negative);
+            sub(*this,x,y,difference);
+            WordVarArgs decision = {x,y};
+            branch(*this,decision,WORD_VAR_SIZE_MIN(),WORD_VAL_LSB());
+          }
+          NegSubSpace(NegSubSpace& s) : Space(s) {
+            x.update(*this,s.x);
+            y.update(*this,s.y);
+            negative.update(*this,s.negative);
+            difference.update(*this,s.difference);
+          }
+          virtual Space* copy(void) { return new NegSubSpace(*this); }
+        };
+
+        NegSubSpace* root = new NegSubSpace;
+        Search::Options options;
+        options.c_d = 8;
+        options.a_d = 64;
+        DFS<NegSubSpace> dfs(root,options);
+        delete root;
+        unsigned int solutions = 0;
+        while (NegSubSpace* solution = dfs.next()) {
+          const bool ok = solution->x.assigned() && solution->y.assigned() &&
+            solution->negative.assigned() &&
+            solution->difference.assigned() &&
+            (solution->negative.val() ==
+             ((WordValue(0)-solution->x.val()) & 7U)) &&
+            (solution->difference.val() ==
+             ((solution->x.val()-solution->y.val()) & 7U)) &&
+            (PropagatorGroup::all.size(*solution) == 0);
+          delete solution;
+          if (!ok)
+            return false;
+          solutions++;
+        }
+        return solutions == 64;
+      }
+
     public:
       Lifecycle(void) : Base("Word::Arithmetic::Lifecycle") {}
       virtual bool run(void) {
         return partial(ADD) && add_bit_consistency() &&
-          partial(NEG) && partial(SUB) &&
+          partial(NEG) && neg_bit_consistency() &&
+          partial(SUB) && sub_bit_consistency() &&
           boolean_parity() && constants_aliases_lifecycle() &&
-          counters() && search_recomputation();
+          counters() && search_recomputation() &&
+          neg_sub_search_recomputation();
       }
     };
 
