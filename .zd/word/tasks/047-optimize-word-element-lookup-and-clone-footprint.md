@@ -3,7 +3,7 @@ schema_version = 1
 id = "word-047"
 key = "optimize-word-element"
 area = "word"
-status = "open"
+status = "done"
 blocked_by = ["word-046"]
 +++
 # Optimize Word element lookup and clone footprint
@@ -20,12 +20,21 @@ Word-array element lookup spends less time scanning candidates and copying actor
 
 ## Done when
 
-- [ ] Candidate scanning and clone/copy work are measured and a focused conventional optimization is retained only when it improves the realistic lookup workload.
-- [ ] Normal Word Element tests proportionately cover any retained path, including partial index/result pruning, duplicates, aliases, cloning/recomputation, and subsumption.
-- [ ] An exact-baseline Release lookup benchmark and profile record semantic parity, actors, propagations, nodes, failures, runtime, clone footprint, and best-effort RSS.
+- [x] Candidate scanning and clone/copy work are measured and a focused conventional optimization is retained only when it improves the realistic lookup workload.
+- [x] Normal Word Element tests proportionately cover any retained path, including partial index/result pruning, duplicates, aliases, cloning/recomputation, and subsumption.
+- [x] An exact-baseline Release lookup benchmark and profile record semantic parity, actors, propagations, nodes, failures, runtime, clone footprint, and best-effort RSS.
 
 ## Validation
 
 - Build the focused Release Word library and gecode-test and run Word Element, representative Int Element, and Word TestFramework filters.
 - Run a temporary lookup/register-file benchmark and before/after sampling profile.
 - Run git diff --check and inspect any shared-array lifetime/copy behavior.
+
+## Result
+
+Investigated Word Element scanning and clone costs; independently measured and rejected the candidate because realistic lookup performance did not improve repeatably.
+
+Validation:
+
+- Candidate preserved all semantic, actor, propagation, search, and solution counters but independent interleaved runs were flat/slightly slower, so production was restored.
+- Release Word Element, representative Int Element, Word TestFramework, zdev checks, and clean diff passed.
