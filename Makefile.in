@@ -560,7 +560,7 @@ WORDSRC0 = \
 WORDHDR0 = \
 	arithmetic.hh arithmetic/add.hpp arithmetic/mult.hpp \
 	array.hpp array-traits.hpp branch.hh branch.hpp branch/traits.hpp \
-	channel.hh channel/bit.hpp element.hh element/view.hpp \
+	channel.hh channel/bit.hpp channel/reduction.hpp element.hh element/view.hpp \
 	exception.hpp logic.hh logic/table.hpp print.hpp view.hpp \
 	rel.hh rel/eq.hpp rel/lq-le.hpp rel/nq.hpp rel/re-eq.hpp rel/re-lq.hpp \
 	structure.hh structure/concat.hpp structure/fixed.hpp \
@@ -1195,7 +1195,7 @@ else
 FLOATTESTOBJ=
 endif
 
-WORDTESTSRC00 = arithmetic branch channel conditional element logic minimodel rel structure trace
+WORDTESTSRC00 = arithmetic branch channel conditional element logic minimodel reduction rel structure trace
 WORDTESTSRC0 = test/word.cpp $(WORDTESTSRC00:%=test/word/%.cpp)
 
 ifeq "@enable_word_vars@" "yes"

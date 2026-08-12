@@ -3,9 +3,9 @@
 # Tasks: word
 
 - Total: 37
-- Ready: 7
+- Ready: 6
 - Blocked: 2
-- Done: 28
+- Done: 29
 
 | ID | Task | State | Blocked by |
 | --- | --- | --- | --- |
@@ -37,7 +37,7 @@
 | [word-026](tasks/026-run-the-native-arithmetic-and-logic-table-ablation-study.md) | Run the native arithmetic and Logic Table ablation study | done | word-025 |
 | [word-027](tasks/027-research-useful-missing-wordvar-propagators.md) | Research useful missing WordVar propagators | done | — |
 | [word-028](tasks/028-add-wordvar-array-element-constraint.md) | Add WordVar array element constraint | done | — |
-| [word-029](tasks/029-add-word-to-boolean-reduction-constraints.md) | Add Word-to-Boolean reduction constraints | ready | — |
+| [word-029](tasks/029-add-word-to-boolean-reduction-constraints.md) | Add Word-to-Boolean reduction constraints | done | — |
 | [word-030](tasks/030-implement-native-negation-and-subtraction-propagators.md) | Implement native negation and subtraction propagators | ready | — |
 | [word-031](tasks/031-add-carry-borrow-and-arithmetic-overflow-constraints.md) | Add carry, borrow, and arithmetic overflow constraints | blocked | word-030 |
 | [word-032](tasks/032-add-population-and-zero-count-constraints.md) | Add population and zero-count constraints | ready | — |

@@ -72,9 +72,50 @@ namespace Gecode { namespace Word { namespace Channel {
                            Int::BoolView b);
   };
 
+  /// Word-to-Boolean reduction operation
+  enum ReductionType {
+    RT_AND, ///< Conjunction of all significant bits
+    RT_OR,  ///< Disjunction of all significant bits
+    RT_XOR  ///< Exclusive-or of all significant bits
+  };
+
+  /**
+   * \brief Reduce all significant bits of a word to a Boolean variable
+   *
+   * Requires \code #include <gecode/word/channel.hh> \endcode
+   * \ingroup FuncWordProp
+   */
+  template<ReductionType rt>
+  class Reduction : public MixBinaryPropagator<
+    WordView,PC_WORD_BITS,Int::BoolView,Int::PC_BOOL_VAL> {
+  protected:
+    using MixBinaryPropagator<
+      WordView,PC_WORD_BITS,Int::BoolView,Int::PC_BOOL_VAL>::x0;
+    using MixBinaryPropagator<
+      WordView,PC_WORD_BITS,Int::BoolView,Int::PC_BOOL_VAL>::x1;
+    /// Constructor for cloning \a p
+    Reduction(Space& home, Reduction& p);
+    /// Constructor for creation
+    Reduction(Home home, WordView x, Int::BoolView b);
+    /// Test whether \a bits contains exactly one bit
+    static bool single_bit(WordValue bits);
+    /// Return the parity of \a bits
+    static bool parity(WordValue bits);
+    /// Propagate the reduction, returning ES_OK when it is decided
+    static ExecStatus prune(Home home, WordView x, Int::BoolView b);
+  public:
+    /// Copy propagator during cloning
+    virtual Actor* copy(Space& home);
+    /// Perform propagation
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+    /// Post propagator
+    static ExecStatus post(Home home, WordView x, Int::BoolView b);
+  };
+
 }}}
 
 #include <gecode/word/channel/bit.hpp>
+#include <gecode/word/channel/reduction.hpp>
 
 #endif
 

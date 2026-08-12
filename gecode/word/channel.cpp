@@ -60,6 +60,27 @@ namespace Gecode {
       GECODE_ME_FAIL(xv.narrow(home,xv.lo() | bit_mask,xv.hi()));
   }
 
+  void
+  reduce_and(Home home, WordVar x, BoolVar b) {
+    GECODE_POST;
+    GECODE_ES_FAIL((Word::Channel::Reduction<Word::Channel::RT_AND>
+                    ::post(home,Word::WordView(x),Int::BoolView(b))));
+  }
+
+  void
+  reduce_or(Home home, WordVar x, BoolVar b) {
+    GECODE_POST;
+    GECODE_ES_FAIL((Word::Channel::Reduction<Word::Channel::RT_OR>
+                    ::post(home,Word::WordView(x),Int::BoolView(b))));
+  }
+
+  void
+  reduce_xor(Home home, WordVar x, BoolVar b) {
+    GECODE_POST;
+    GECODE_ES_FAIL((Word::Channel::Reduction<Word::Channel::RT_XOR>
+                    ::post(home,Word::WordView(x),Int::BoolView(b))));
+  }
+
 }
 
 // STATISTICS: word-post

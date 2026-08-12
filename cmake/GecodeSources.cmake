@@ -456,6 +456,7 @@ set(GECODE_TEST_SOURCES
   test/word/logic.cpp
   test/word/minimodel.cpp
   test/word/rel.cpp
+  test/word/reduction.cpp
   test/word/structure.cpp
   test/word/trace.cpp
 )

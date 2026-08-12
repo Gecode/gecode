@@ -232,6 +232,15 @@ namespace Gecode {
   /// Channel bit \a bit of \a x to Boolean constant \a value
   GECODE_WORD_EXPORT void channel(Home home, WordVar x,
                                   unsigned int bit, int value);
+  /// Reduce all significant bits of \a x by conjunction into \a b
+  GECODE_WORD_EXPORT void reduce_and(Home home, WordVar x, BoolVar b);
+  /// Reduce all significant bits of \a x by disjunction into \a b
+  GECODE_WORD_EXPORT void reduce_or(Home home, WordVar x, BoolVar b);
+  /** \brief Reduce all significant bits of \a x by exclusive-or into \a b
+   *
+   * Parity can narrow a word cube only when at most one bit remains unknown.
+   */
+  GECODE_WORD_EXPORT void reduce_xor(Home home, WordVar x, BoolVar b);
   //@}
 
   /// Word relation type

@@ -1676,6 +1676,15 @@ namespace Gecode {
   /// Return the selected bit as a Boolean expression
   GECODE_MINIMODEL_EXPORT BoolExpr
   bit(const WordExpr&, unsigned int bit_index);
+  /// Conjunction of all significant bits
+  GECODE_MINIMODEL_EXPORT BoolExpr
+  reduce_and(const WordExpr&);
+  /// Disjunction of all significant bits
+  GECODE_MINIMODEL_EXPORT BoolExpr
+  reduce_or(const WordExpr&);
+  /// Exclusive-or of all significant bits
+  GECODE_MINIMODEL_EXPORT BoolExpr
+  reduce_xor(const WordExpr&);
   /// Boolean-controlled word conditional
   GECODE_MINIMODEL_EXPORT WordExpr
   ite(const BoolExpr&, const WordExpr&, const WordExpr&);

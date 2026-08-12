@@ -122,6 +122,65 @@ namespace Test { namespace Word {
       }
     };
 
+    class Reduction : public Test {
+    public:
+      enum Operation { OP_AND, OP_OR, OP_XOR };
+    private:
+      Operation op;
+      int expected;
+
+      static bool parity(Gecode::WordValue value) {
+        value ^= value >> 32;
+        value ^= value >> 16;
+        value ^= value >> 8;
+        value ^= value >> 4;
+        value ^= value >> 2;
+        value ^= value >> 1;
+        return (value & 1U) != 0;
+      }
+    public:
+      Reduction(Operation op0, int expected0, const std::string& name)
+        : Test("MiniModel::Reduction::"+name+"::"+str(expected0),
+               1,Domain(3,0,7)), op(op0), expected(expected0) {}
+      virtual bool solution(const Assignment& a) const {
+        bool actual = false;
+        switch (op) {
+        case OP_AND: actual = a[0] == 7U; break;
+        case OP_OR: actual = a[0] != 0; break;
+        case OP_XOR: actual = parity(a[0]); break;
+        }
+        return actual == (expected != 0);
+      }
+      virtual void post(Gecode::Space& home, Gecode::WordVarArray& x) {
+        using namespace Gecode;
+        BoolExpr e;
+        switch (op) {
+        case OP_AND: e = reduce_and(WordExpr(x[0])); break;
+        case OP_OR: e = reduce_or(WordExpr(x[0])); break;
+        case OP_XOR: e = reduce_xor(WordExpr(x[0])); break;
+        }
+        rel(home,expected ? e : !e);
+      }
+    };
+
+    class ReductionComposition : public Test {
+    public:
+      ReductionComposition(void)
+        : Test("MiniModel::ReductionComposition",1,Domain(3,0,7)) {}
+      virtual bool solution(const Assignment& a) const {
+        Gecode::WordValue value = a[0];
+        value ^= value >> 2;
+        value ^= value >> 1;
+        const bool parity = (value & 1U) != 0;
+        return (a[0] != 0) && (a[0] != 7U) && parity;
+      }
+      virtual void post(Gecode::Space& home, Gecode::WordVarArray& x) {
+        using namespace Gecode;
+        rel(home,reduce_or(WordExpr(x[0])) &&
+            !reduce_and(WordExpr(x[0])) && reduce_xor(WordExpr(x[0])));
+      }
+    };
+
     class Lifecycle : public Base {
     private:
       class ParitySpace : public Gecode::Space {
@@ -717,6 +776,13 @@ namespace Test { namespace Word {
     BooleanConditional boolean_conditional;
     MaskConditional mask_conditional;
     Relation relation;
+    Reduction reduction_and0(Reduction::OP_AND,0,"And");
+    Reduction reduction_and1(Reduction::OP_AND,1,"And");
+    Reduction reduction_or0(Reduction::OP_OR,0,"Or");
+    Reduction reduction_or1(Reduction::OP_OR,1,"Or");
+    Reduction reduction_xor0(Reduction::OP_XOR,0,"Xor");
+    Reduction reduction_xor1(Reduction::OP_XOR,1,"Xor");
+    ReductionComposition reduction_composition;
     Lifecycle lifecycle;
     StructuralLifecycle structural_lifecycle;
     ArithmeticLifecycle arithmetic_lifecycle;

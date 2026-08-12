@@ -181,6 +181,34 @@ namespace Gecode {
       }
     };
 
+    enum WordReductionType {
+      WRED_AND, WRED_OR, WRED_XOR
+    };
+
+    class WordReduction : public BoolExpr::Misc {
+    private:
+      WordExpr word;
+      WordReductionType reduction;
+    public:
+      WordReduction(const WordExpr& word0, WordReductionType reduction0)
+        : word(word0), reduction(reduction0) {}
+      virtual void post(Home home, BoolVar b, bool neg,
+                        const IntPropLevels&) {
+        WordVar x = word.post(home);
+        BoolVar actual = b;
+        if (neg)
+          actual = BoolVar(home,0,1);
+        switch (reduction) {
+        case WRED_AND: Gecode::reduce_and(home,x,actual); break;
+        case WRED_OR:  Gecode::reduce_or(home,x,actual); break;
+        case WRED_XOR: Gecode::reduce_xor(home,x,actual); break;
+        default: GECODE_NEVER;
+        }
+        if (neg)
+          Gecode::rel(home,b,IRT_NQ,actual);
+      }
+    };
+
     BoolExpr
     relation(const WordExpr& left, WordRelType wrt,
              const WordExpr& right) {
@@ -521,6 +549,18 @@ namespace Gecode {
 
   BoolExpr bit(const WordExpr& e, unsigned int bit_index) {
     return BoolExpr(new WordBit(e,bit_index));
+  }
+
+  BoolExpr reduce_and(const WordExpr& e) {
+    return BoolExpr(new WordReduction(e,WRED_AND));
+  }
+
+  BoolExpr reduce_or(const WordExpr& e) {
+    return BoolExpr(new WordReduction(e,WRED_OR));
+  }
+
+  BoolExpr reduce_xor(const WordExpr& e) {
+    return BoolExpr(new WordReduction(e,WRED_XOR));
   }
 
   WordExpr
