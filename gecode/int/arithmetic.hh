@@ -864,10 +864,10 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   /** \brief Bounds propagator for an exact n-ary product
    * \ingroup FuncIntProp
    */
-  class Product : public NaryOnePropagator<IntView,PC_INT_BND> {
+  class Product : public NaryOnePropagator<IntView,PC_INT_DOM> {
   protected:
-    using NaryOnePropagator<IntView,PC_INT_BND>::x;
-    using NaryOnePropagator<IntView,PC_INT_BND>::y;
+    using NaryOnePropagator<IntView,PC_INT_DOM>::x;
+    using NaryOnePropagator<IntView,PC_INT_DOM>::y;
     Product(Home home, ViewArray<IntView>& x, IntView y);
     Product(Space& home, Product& p);
   public:

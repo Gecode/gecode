@@ -59,6 +59,46 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     return r;
   }
 
+  /// Multiply two representable intervals.
+  forceinline ProductInterval
+  product_interval_mul(ProductInterval a, ProductInterval b) {
+    return product_interval_mul(a,b.min,b.max);
+  }
+
+  /// Compute the hull of quotients by a zero-free interval.
+  forceinline ProductInterval
+  product_quotient_interval(int ymin, int ymax,
+                            int qmin, int qmax) {
+    long long int c[4] = {
+      ceil_div_xx(static_cast<long long int>(ymin),
+                  static_cast<long long int>(qmin)),
+      ceil_div_xx(static_cast<long long int>(ymin),
+                  static_cast<long long int>(qmax)),
+      ceil_div_xx(static_cast<long long int>(ymax),
+                  static_cast<long long int>(qmin)),
+      ceil_div_xx(static_cast<long long int>(ymax),
+                  static_cast<long long int>(qmax))
+    };
+    long long int f[4] = {
+      floor_div_xx(static_cast<long long int>(ymin),
+                   static_cast<long long int>(qmin)),
+      floor_div_xx(static_cast<long long int>(ymin),
+                   static_cast<long long int>(qmax)),
+      floor_div_xx(static_cast<long long int>(ymax),
+                   static_cast<long long int>(qmin)),
+      floor_div_xx(static_cast<long long int>(ymax),
+                   static_cast<long long int>(qmax))
+    };
+    const long long int l = std::max
+      (static_cast<long long int>(Limits::min),std::min
+       (*std::min_element(c,c+4),static_cast<long long int>(Limits::max)));
+    const long long int u = std::max
+      (static_cast<long long int>(Limits::min),std::min
+       (*std::max_element(f,f+4),static_cast<long long int>(Limits::max)));
+    ProductInterval r = {static_cast<int>(l),static_cast<int>(u)};
+    return r;
+  }
+
   /// Compute product bounds, optionally omitting one factor.
   inline ProductInterval
   product_interval(const ViewArray<IntView>& x, int omit=-1) {
@@ -111,7 +151,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   forceinline
   Product::Product(Home home, ViewArray<IntView>& z, IntView w)
-    : NaryOnePropagator<IntView,PC_INT_BND>(home,z,w) {}
+    : NaryOnePropagator<IntView,PC_INT_DOM>(home,z,w) {}
 
   inline ExecStatus
   Product::post(Home home, ViewArray<IntView>& x, IntView y) {
@@ -125,7 +165,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   forceinline
   Product::Product(Space& home, Product& p)
-    : NaryOnePropagator<IntView,PC_INT_BND>(home,p) {}
+    : NaryOnePropagator<IntView,PC_INT_DOM>(home,p) {}
 
   forceinline Actor*
   Product::copy(Space& home) {
@@ -155,45 +195,54 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         modified |= me_modified(me);
       }
 
+      // Prefix and suffix products provide every omitted-factor interval in
+      // linear time. They are rebuilt after each narrowing pass.
+      Region r;
+      ProductInterval* prefix = r.alloc<ProductInterval>(x.size()+1);
+      ProductInterval* suffix = r.alloc<ProductInterval>(x.size()+1);
+      prefix[0] = ProductInterval{1,1};
+      for (int i=0; i<x.size(); i++)
+        prefix[i+1] = product_interval_mul
+          (prefix[i],x[i].min(),x[i].max());
+      suffix[x.size()] = ProductInterval{1,1};
+      for (int i=x.size(); i--;)
+        suffix[i] = product_interval_mul
+          (suffix[i+1],x[i].min(),x[i].max());
+
       for (int i=0; i<x.size(); i++) {
-        ProductInterval q = product_interval(x,i);
-        if ((q.min > 0) || (q.max < 0)) {
-          long long int c[4] = {
-            ceil_div_xx(static_cast<long long int>(y.min()),
-                        static_cast<long long int>(q.min)),
-            ceil_div_xx(static_cast<long long int>(y.min()),
-                        static_cast<long long int>(q.max)),
-            ceil_div_xx(static_cast<long long int>(y.max()),
-                        static_cast<long long int>(q.min)),
-            ceil_div_xx(static_cast<long long int>(y.max()),
-                        static_cast<long long int>(q.max))
-          };
-          long long int f[4] = {
-            floor_div_xx(static_cast<long long int>(y.min()),
-                         static_cast<long long int>(q.min)),
-            floor_div_xx(static_cast<long long int>(y.min()),
-                         static_cast<long long int>(q.max)),
-            floor_div_xx(static_cast<long long int>(y.max()),
-                         static_cast<long long int>(q.min)),
-            floor_div_xx(static_cast<long long int>(y.max()),
-                         static_cast<long long int>(q.max))
-          };
-          long long int l = *std::min_element(c,c+4);
-          long long int u = *std::max_element(f,f+4);
-          l = std::max(l,static_cast<long long int>(Limits::min));
-          u = std::min(u,static_cast<long long int>(Limits::max));
-          if (l > u)
-            return ES_FAILED;
-          {
-            ModEvent me = x[i].gq(home,static_cast<int>(l));
-            if (me_failed(me)) return ES_FAILED;
-            modified |= me_modified(me);
+        ProductInterval q = product_interval_mul(prefix[i],suffix[i+1]);
+        if ((q.min <= 0) && (q.max >= 0) && y.in(0))
+          continue;
+        if ((q.min == 0) && (q.max == 0))
+          return ES_FAILED;
+
+        bool have=false;
+        ProductInterval d = {Limits::max,Limits::min};
+        if (q.min < 0) {
+          ProductInterval n = product_quotient_interval
+            (y.min(),y.max(),q.min,std::min(q.max,-1));
+          d=n; have=true;
+        }
+        if (q.max > 0) {
+          ProductInterval p = product_quotient_interval
+            (y.min(),y.max(),std::max(q.min,1),q.max);
+          if (have) {
+            d.min=std::min(d.min,p.min); d.max=std::max(d.max,p.max);
+          } else {
+            d=p; have=true;
           }
-          {
-            ModEvent me = x[i].lq(home,static_cast<int>(u));
-            if (me_failed(me)) return ES_FAILED;
-            modified |= me_modified(me);
-          }
+        }
+        if (!have || (d.min > d.max))
+          return ES_FAILED;
+        {
+          ModEvent me = x[i].gq(home,d.min);
+          if (me_failed(me)) return ES_FAILED;
+          modified |= me_modified(me);
+        }
+        {
+          ModEvent me = x[i].lq(home,d.max);
+          if (me_failed(me)) return ES_FAILED;
+          modified |= me_modified(me);
         }
       }
     } while (modified);
