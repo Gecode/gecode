@@ -3052,6 +3052,16 @@ namespace Gecode {
   gcd(Home home, IntVar x0, IntVar x1, IntVar x2, Reify r,
       IntPropLevel ipl=IPL_DEF);
 
+  /** \brief Reify whether \a divisor divides \a dividend
+   *
+   * Divisibility means that an integer \f$k\f$ exists such that
+   * \f$dividend=divisor\cdot k\f$. Consequently, zero divides zero, but
+   * zero does not divide a nonzero integer. Supports all reification modes.
+   */
+  GECODE_INT_EXPORT void
+  divides(Home home, IntVar divisor, IntVar dividend, Reify r,
+          IntPropLevel ipl=IPL_DEF);
+
   /** \brief Post propagator for \f$x_0\ \mathrm{div}\ x_1=x_2 \land x_0\ \mathrm{mod}\ x_1 = x_3\f$
    *
    * Supports bounds consistency (\a ipl = IPL_BND, default).

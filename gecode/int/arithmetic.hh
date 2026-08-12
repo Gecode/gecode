@@ -827,6 +827,41 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 namespace Gecode { namespace Int { namespace Arithmetic {
 
   /**
+   * \brief Reified domain propagator for divisibility
+   *
+   * The relation is \f$\exists k\in\mathbb Z:x_1=x_0k\f$.
+   * Requires \code #include <gecode/int/arithmetic.hh> \endcode
+   * \ingroup FuncIntProp
+   */
+  template<ReifyMode rm>
+  class ReDivides :
+    public ReBinaryPropagator<IntView,PC_INT_DOM,BoolView> {
+  protected:
+    using ReBinaryPropagator<IntView,PC_INT_DOM,BoolView>::x0;
+    using ReBinaryPropagator<IntView,PC_INT_DOM,BoolView>::x1;
+    using ReBinaryPropagator<IntView,PC_INT_DOM,BoolView>::b;
+    /// Constructor for posting
+    ReDivides(Home home, IntView x0, IntView x1, BoolView b);
+    /// Constructor for cloning \a p
+    ReDivides(Space& home, ReDivides<rm>& p);
+  public:
+    /// Post propagator
+    static ExecStatus post(Home home, IntView x0, IntView x1, BoolView b);
+    /// Copy propagator during cloning
+    virtual Actor* copy(Space& home);
+    /// Cost function
+    virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    /// Perform propagation
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+  };
+
+}}}
+
+#include <gecode/int/arithmetic/divides.hpp>
+
+namespace Gecode { namespace Int { namespace Arithmetic {
+
+  /**
    * \brief Bounds consistent positive division propagator
    *
    * This propagator provides division for positive views only.

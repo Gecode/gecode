@@ -147,6 +147,54 @@ namespace Test { namespace Int {
        }
      };
 
+     /// %Test for the reified divisibility constraint
+     class DividesXY : public Test {
+     public:
+       /// Create and register test
+       DividesXY(const std::string& s, const Gecode::IntSet& d,
+                 Gecode::IntPropLevel ipl)
+         : Test("Arithmetic::Divides::XY::"+str(ipl)+"::"+s,
+                2,d,true,ipl) {}
+       /// %Test whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         return (x[0] == 0) ? (x[1] == 0) : (x[1] % x[0] == 0);
+       }
+       /// The constraint is deliberately exposed only as reified
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
+         Gecode::BoolVar b(home,1,1);
+         Gecode::divides(home,x[0],x[1],Gecode::Reify(b),ipl);
+       }
+       /// Post reified constraint on \a x
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x,
+                         Gecode::Reify r) {
+         Gecode::divides(home,x[0],x[1],r,ipl);
+       }
+     };
+
+     /// %Test divisibility with aliased operands
+     class DividesXX : public Test {
+     public:
+       /// Create and register test
+       DividesXX(const std::string& s, const Gecode::IntSet& d,
+                 Gecode::IntPropLevel ipl)
+         : Test("Arithmetic::Divides::XX::"+str(ipl)+"::"+s,
+                1,d,true,ipl) {}
+       /// Every integer divides itself, including zero
+       virtual bool solution(const Assignment&) const {
+         return true;
+       }
+       /// The constraint is deliberately exposed only as reified
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
+         Gecode::BoolVar b(home,1,1);
+         Gecode::divides(home,x[0],x[0],Gecode::Reify(b),ipl);
+       }
+       /// Post reified constraint on \a x
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x,
+                         Gecode::Reify r) {
+         Gecode::divides(home,x[0],x[0],r,ipl);
+       }
+     };
+
      /// %Test for multiplication constraint
      class MultXYZ : public Test {
      public:
@@ -1206,6 +1254,10 @@ namespace Test { namespace Int {
            (void) new GcdXXY("C",c,ipls.ipl());
            (void) new GcdXYX("C",c,ipls.ipl());
            (void) new GcdXXX("C",c,ipls.ipl());
+
+           (void) new DividesXY("C",c,ipls.ipl());
+           (void) new DividesXY("Sparse",g,ipls.ipl());
+           (void) new DividesXX("C",c,ipls.ipl());
 
            (void) new AbsXY("A",a,ipls.ipl());
            (void) new AbsXY("B",b,ipls.ipl());

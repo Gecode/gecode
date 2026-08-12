@@ -351,6 +351,28 @@ namespace Gecode {
     }
   }
 
+  void
+  divides(Home home, IntVar divisor, IntVar dividend, Reify r,
+          IntPropLevel) {
+    using namespace Int;
+    GECODE_POST;
+    switch (r.mode()) {
+    case RM_EQV:
+      GECODE_ES_FAIL((Arithmetic::ReDivides<RM_EQV>
+                      ::post(home,divisor,dividend,r.var())));
+      break;
+    case RM_IMP:
+      GECODE_ES_FAIL((Arithmetic::ReDivides<RM_IMP>
+                      ::post(home,divisor,dividend,r.var())));
+      break;
+    case RM_PMI:
+      GECODE_ES_FAIL((Arithmetic::ReDivides<RM_PMI>
+                      ::post(home,divisor,dividend,r.var())));
+      break;
+    default: GECODE_NEVER;
+    }
+  }
+
 
   void
   divmod(Home home, IntVar x0, IntVar x1, IntVar x2, IntVar x3,
