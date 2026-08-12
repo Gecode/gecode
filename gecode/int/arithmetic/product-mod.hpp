@@ -323,136 +323,119 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     return congruence_modified ? ES_NOFIX : ES_FIX;
   }
 
+  /// Whether the modulus occurs among the factors.
   inline bool
-  product_mod_var_enumerable(const ViewArray<IntView>& x,
-                             const IntView& m, const IntView& y) {
-    const unsigned long long support_limit=200000ULL;
-    unsigned long long n = static_cast<unsigned long long>(m.size()) * y.size();
-    if (n > support_limit)
-      return false;
-    for (int i=0; i<x.size(); i++) {
-      const unsigned long long s = x[i].size();
-      if ((s != 0ULL) && (n > support_limit / s))
-        return false;
-      n *= s;
-    }
-    return n <= support_limit;
+  product_mod_var_mod_factor(const ViewArray<IntView>& x, const IntView& m) {
+    for (int i=0; i<x.size(); i++)
+      if (x[i] == m)
+        return true;
+    return false;
   }
 
+  /// Compute the exact assigned product when it fits in a signed 64-bit value.
   inline bool
-  product_mod_var_alias_ok(const ViewArray<IntView>& x,
-                           const IntView& m, const IntView& y,
-                           const int* v) {
-    const int mi = x.size();
-    const int yi = mi+1;
-    if ((m == y) && (v[mi] != v[yi]))
-      return false;
+  product_mod_var_exact(const ViewArray<IntView>& x, long long int& p) {
+    long long int q=1;
     for (int i=0; i<x.size(); i++) {
-      for (int j=0; j<i; j++)
-        if ((x[i] == x[j]) && (v[i] != v[j]))
-          return false;
-      if ((x[i] == m) && (v[i] != v[mi]))
+      if (!x[i].assigned())
         return false;
-      if ((x[i] == y) && (v[i] != v[yi]))
+      const long long int v=x[i].val();
+      if (Limits::overflow_mul(q,v))
         return false;
+      q *= v;
     }
+    p=q;
     return true;
   }
 
-  inline ExecStatus
-  product_mod_var_supports(Space& home, ViewArray<IntView>& x,
-                           IntView m, IntView y, bool positive=true,
-                           bool filter=true, bool* has_true_out=nullptr,
-                           bool* has_false_out=nullptr) {
-    const int n = x.size();
-    const int nv = n+2;
-    Region r;
-    unsigned int* size = r.alloc<unsigned int>(nv);
-    unsigned int* pos = r.alloc<unsigned int>(nv);
-    int** values = r.alloc<int*>(nv);
-    unsigned long long cap64 = static_cast<unsigned long long>(m.size()) *
-      y.size();
-    for (int i=0; i<n; i++)
-      cap64 *= x[i].size();
-    const unsigned int cap = static_cast<unsigned int>(cap64);
-    int** support = filter ? r.alloc<int*>(nv) : nullptr;
-
-    for (int i=0; i<n; i++) {
-      size[i] = x[i].size(); pos[i] = 0;
-      values[i] = r.alloc<int>(size[i]);
-      unsigned int k=0;
-      for (ViewValues<IntView> vi(x[i]); vi(); ++vi)
-        values[i][k++] = vi.val();
-      if (filter) support[i] = r.alloc<int>(cap);
-    }
-    size[n] = m.size(); pos[n] = 0;
-    values[n] = r.alloc<int>(size[n]);
-    unsigned int k=0;
-    for (ViewValues<IntView> vi(m); vi(); ++vi)
-      values[n][k++] = vi.val();
-    if (filter) support[n] = r.alloc<int>(cap);
-    size[n+1] = y.size(); pos[n+1] = 0;
-    values[n+1] = r.alloc<int>(size[n+1]);
-    k=0;
-    for (ViewValues<IntView> vi(y); vi(); ++vi)
-      values[n+1][k++] = vi.val();
-    if (filter) support[n+1] = r.alloc<int>(cap);
-
-    int* tuple = r.alloc<int>(nv);
-    unsigned int ns = 0;
-    bool has_true = false, has_false = false;
-    bool more = true;
-    while (more) {
-      for (int i=0; i<nv; i++)
-        tuple[i] = values[i][pos[i]];
-      if (product_mod_var_alias_ok(x,m,y,tuple)) {
-        const bool relation = (tuple[n] > 0) && (tuple[n+1] >= 0) &&
-          (tuple[n+1] < tuple[n]) &&
-          (product_mod_value(tuple,n,tuple[n]) == tuple[n+1]);
-        has_true |= relation; has_false |= !relation;
-        if (filter && (relation == positive)) {
-          for (int i=0; i<nv; i++)
-            support[i][ns] = tuple[i];
-          ns++;
+  /// Find the extreme divisor bounds for a nonzero difference.
+  inline bool
+  product_mod_var_divisor_bounds(int lower, int upper, long long int d,
+                                 int& least, int& greatest) {
+    const unsigned long long int ad = d < 0
+      ? static_cast<unsigned long long int>(-(d+1))+1ULL
+      : static_cast<unsigned long long int>(d);
+    bool found=false;
+    for (unsigned long long int q=1; q <= ad/q; q++)
+      if ((ad % q) == 0) {
+        const unsigned long long int r=ad/q;
+        if ((q <= static_cast<unsigned long long int>(Limits::max)) &&
+            (q >= static_cast<unsigned long long int>(lower)) &&
+            (q <= static_cast<unsigned long long int>(upper))) {
+          const int v=static_cast<int>(q);
+          if (!found) least=greatest=v;
+          else { least=std::min(least,v); greatest=std::max(greatest,v); }
+          found=true;
+        }
+        if ((r != q) &&
+            (r <= static_cast<unsigned long long int>(Limits::max)) &&
+            (r >= static_cast<unsigned long long int>(lower)) &&
+            (r <= static_cast<unsigned long long int>(upper))) {
+          const int v=static_cast<int>(r);
+          if (!found) least=greatest=v;
+          else { least=std::min(least,v); greatest=std::max(greatest,v); }
+          found=true;
         }
       }
-      int i=nv-1;
-      while ((i >= 0) && (++pos[i] == size[i])) {
-        pos[i]=0; i--;
-      }
-      more = i >= 0;
-    }
+    return found;
+  }
 
-    if (has_true_out != nullptr) *has_true_out = has_true;
-    if (has_false_out != nullptr) *has_false_out = has_false;
-    if (!filter)
-      return ES_OK;
-    if (ns == 0)
-      return ES_FAILED;
-    for (int i=0; i<nv; i++) {
-      std::sort(support[i],support[i]+ns);
-      unsigned int nu=1;
-      for (unsigned int j=1; j<ns; j++)
-        if (support[i][j] != support[i][nu-1])
-          support[i][nu++] = support[i][j];
-      Iter::Values::Array si(support[i],nu);
-      if (i < n) {
-        GECODE_ME_CHECK(x[i].inter_v(home,si,false));
-      } else if (i == n) {
-        GECODE_ME_CHECK(m.inter_v(home,si,false));
-      } else {
-        GECODE_ME_CHECK(y.inter_v(home,si,false));
+  /// Determine algebraic status; evaluate the residue only when fully assigned.
+  inline RelTest
+  product_mod_var_status(const ViewArray<IntView>& x, const IntView& m,
+                         const IntView& y) {
+    if ((m == y) || (m.max() <= 0) || (y.max() < 0) ||
+        (y.min() >= m.max()))
+      return RT_FALSE;
+    const bool mf=product_mod_var_mod_factor(x,m);
+    if (mf) {
+      if (!y.in(0)) return RT_FALSE;
+      if ((m.min() > 0) && y.assigned()) return RT_TRUE;
+      return RT_MAYBE;
+    }
+    if (x.size() == 0) {
+      const bool zero=m.in(1) && y.in(0);
+      const bool one=(m.max() >= 2) && y.in(1);
+      if (!zero && !one) return RT_FALSE;
+      if ((m.min() > 0) &&
+          ((m.assigned() && (m.val() == 1) && y.assigned() &&
+            (y.val() == 0)) ||
+           ((m.min() >= 2) && y.assigned() && (y.val() == 1))))
+        return RT_TRUE;
+      return RT_MAYBE;
+    }
+    if (y.assigned()) {
+      long long int p;
+      if (product_mod_var_exact(x,p) &&
+          !Limits::overflow_sub(p,static_cast<long long int>(y.val()))) {
+        const long long int d=p-y.val();
+        if (d == 0)
+          return (y.val() >= 0) && (m.min() > y.val())
+            ? RT_TRUE : RT_MAYBE;
+        int least, greatest;
+        if (!product_mod_var_divisor_bounds
+            (std::max(m.min(),y.val()+1),m.max(),d,least,greatest))
+          return RT_FALSE;
       }
     }
-    return ES_OK;
+    bool assigned=m.assigned() && y.assigned();
+    for (int i=0; assigned && (i<x.size()); i++)
+      assigned=x[i].assigned();
+    if (!assigned)
+      return RT_MAYBE;
+    if ((m.val() <= 0) || (y.val() < 0) || (y.val() >= m.val()))
+      return RT_FALSE;
+    int residue;
+    (void) product_mod_assigned(x,m.val(),residue);
+    return residue == y.val() ? RT_TRUE : RT_FALSE;
   }
 
   forceinline
   ProductModVar::ProductModVar(Home home, ViewArray<IntView>& z,
                                IntView modulus, IntView w)
     : Propagator(home), x(z), m(modulus), y(w) {
-    x.subscribe(home,*this,PC_INT_DOM);
-    m.subscribe(home,*this,PC_INT_DOM);
+    x.subscribe(home,*this,PC_INT_VAL);
+    m.subscribe(home,*this,PC_INT_BND);
     y.subscribe(home,*this,PC_INT_DOM);
   }
 
@@ -464,6 +447,20 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     GECODE_ME_CHECK(y.gq(home,0));
     GECODE_ME_CHECK(y.lq(home,m.max()-1));
     GECODE_ME_CHECK(m.gq(home,y.min()+1));
+    if (product_mod_var_mod_factor(x,m)) {
+      GECODE_ME_CHECK(y.eq(home,0));
+      return ES_OK;
+    }
+    if (x.size() == 0) {
+      GECODE_ME_CHECK(y.lq(home,1));
+      if (!y.in(0)) {
+        GECODE_ME_CHECK(m.gq(home,2));
+        GECODE_ME_CHECK(y.eq(home,1));
+      } else if (!y.in(1)) {
+        GECODE_ME_CHECK(m.eq(home,1));
+        GECODE_ME_CHECK(y.eq(home,0));
+      }
+    }
     if (m.assigned())
       return ProductMod::post(home,x,m.val(),y);
     (void) new (home) ProductModVar(home,x,m,y);
@@ -488,8 +485,8 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   forceinline void
   ProductModVar::reschedule(Space& home) {
-    x.reschedule(home,*this,PC_INT_DOM);
-    m.reschedule(home,*this,PC_INT_DOM);
+    x.reschedule(home,*this,PC_INT_VAL);
+    m.reschedule(home,*this,PC_INT_BND);
     y.reschedule(home,*this,PC_INT_DOM);
   }
 
@@ -499,10 +496,54 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     GECODE_ME_CHECK(y.gq(home,0));
     GECODE_ME_CHECK(y.lq(home,m.max()-1));
     GECODE_ME_CHECK(m.gq(home,y.min()+1));
+    if (product_mod_var_mod_factor(x,m)) {
+      GECODE_ME_CHECK(y.eq(home,0));
+      return home.ES_SUBSUMED(*this);
+    }
+    for (int i=0; i<x.size(); i++)
+      if (x[i].assigned() && (x[i].val() == 0)) {
+        GECODE_ME_CHECK(y.eq(home,0));
+        return home.ES_SUBSUMED(*this);
+      }
+    if (x.size() == 0) {
+      GECODE_ME_CHECK(y.lq(home,1));
+      if (!y.in(0)) {
+        GECODE_ME_CHECK(m.gq(home,2));
+        GECODE_ME_CHECK(y.eq(home,1));
+        return home.ES_SUBSUMED(*this);
+      }
+      if (!y.in(1)) {
+        GECODE_ME_CHECK(m.eq(home,1));
+        GECODE_ME_CHECK(y.eq(home,0));
+        return home.ES_SUBSUMED(*this);
+      }
+      if (m.min() >= 2) {
+        GECODE_ME_CHECK(y.eq(home,1));
+        return home.ES_SUBSUMED(*this);
+      }
+      if (!m.in(1)) {
+        GECODE_ME_CHECK(y.eq(home,1));
+        return home.ES_SUBSUMED(*this);
+      }
+    }
     if (m.assigned())
       GECODE_REWRITE(*this,ProductMod::post(home(*this),x,m.val(),y));
-    if (product_mod_var_enumerable(x,m,y))
-      GECODE_ES_CHECK(product_mod_var_supports(home,x,m,y));
+
+    // With an assigned product and result, m must divide product-result.
+    long long int p;
+    if (y.assigned() && product_mod_var_exact(x,p)) {
+      if (!Limits::overflow_sub(p,static_cast<long long int>(y.val()))) {
+        const long long int d=p-y.val();
+        if (d == 0)
+          return home.ES_SUBSUMED(*this);
+        int least, greatest;
+        if (!product_mod_var_divisor_bounds
+            (m.min(),m.max(),d,least,greatest))
+          return ES_FAILED;
+        GECODE_ME_CHECK(m.gq(home,least));
+        GECODE_ME_CHECK(m.lq(home,greatest));
+      }
+    }
     if (m.assigned())
       GECODE_REWRITE(*this,ProductMod::post(home(*this),x,m.val(),y));
     bool assigned = m.assigned() && y.assigned();
@@ -515,8 +556,8 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   forceinline size_t
   ProductModVar::dispose(Space& home) {
-    x.cancel(home,*this,PC_INT_DOM);
-    m.cancel(home,*this,PC_INT_DOM);
+    x.cancel(home,*this,PC_INT_VAL);
+    m.cancel(home,*this,PC_INT_BND);
     y.cancel(home,*this,PC_INT_DOM);
     (void) Propagator::dispose(home);
     return sizeof(*this);
@@ -527,7 +568,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   ReProductModVar<rm>::ReProductModVar(Home home, ViewArray<IntView>& z,
                                        IntView modulus, IntView w, BoolView c)
     : Propagator(home), x(z), m(modulus), y(w), b(c) {
-    x.subscribe(home,*this,PC_INT_DOM);
+    x.subscribe(home,*this,PC_INT_VAL);
     m.subscribe(home,*this,PC_INT_DOM);
     y.subscribe(home,*this,PC_INT_DOM);
     b.subscribe(home,*this,PC_BOOL_VAL);
@@ -571,7 +612,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   template<ReifyMode rm>
   forceinline void
   ReProductModVar<rm>::reschedule(Space& home) {
-    x.reschedule(home,*this,PC_INT_DOM);
+    x.reschedule(home,*this,PC_INT_VAL);
     m.reschedule(home,*this,PC_INT_DOM);
     y.reschedule(home,*this,PC_INT_DOM);
     b.reschedule(home,*this,PC_BOOL_VAL);
@@ -588,32 +629,15 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     if (b.zero()) {
       if (rm == RM_IMP)
         return home.ES_SUBSUMED(*this);
-      if (product_mod_var_enumerable(x,m,y)) {
-        bool ht, hf;
-        GECODE_ES_CHECK(product_mod_var_supports
-                        (home,x,m,y,false,true,&ht,&hf));
-        if (!ht)
-          return home.ES_SUBSUMED(*this);
-      } else if ((m == y) || (m.max() <= 0) || (y.max() < 0) ||
-                 (y.min() >= m.max())) {
+      const RelTest rt=product_mod_var_status(x,m,y);
+      if (rt == RT_TRUE)
+        return ES_FAILED;
+      if (rt == RT_FALSE)
         return home.ES_SUBSUMED(*this);
-      }
       return ES_FIX;
     }
 
-    RelTest rt;
-    if (m == y) {
-      rt = RT_FALSE;
-    } else if ((m.max() <= 0) || (y.max() < 0) || (y.min() >= m.max())) {
-      rt = RT_FALSE;
-    } else if (product_mod_var_enumerable(x,m,y)) {
-      bool ht, hf;
-      GECODE_ES_CHECK(product_mod_var_supports
-                      (home,x,m,y,true,false,&ht,&hf));
-      rt = !ht ? RT_FALSE : (!hf ? RT_TRUE : RT_MAYBE);
-    } else {
-      rt = RT_MAYBE;
-    }
+    const RelTest rt=product_mod_var_status(x,m,y);
     switch (rt) {
     case RT_TRUE:
       if (rm != RM_IMP) GECODE_ME_CHECK(b.one_none(home));
@@ -630,7 +654,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   template<ReifyMode rm>
   forceinline size_t
   ReProductModVar<rm>::dispose(Space& home) {
-    x.cancel(home,*this,PC_INT_DOM);
+    x.cancel(home,*this,PC_INT_VAL);
     m.cancel(home,*this,PC_INT_DOM);
     y.cancel(home,*this,PC_INT_DOM);
     b.cancel(home,*this,PC_BOOL_VAL);
