@@ -278,6 +278,16 @@ namespace Gecode {
     WS_SMTLIB ///< SMT-LIB fixed-width word semantics
   };
 
+  /// Word arithmetic overflow operation type
+  enum WordOverflowType {
+    WOF_NEG_SIGNED,  ///< Signed negation overflow (SMT-LIB bvnego)
+    WOF_ADD_UNSIGNED,///< Unsigned addition overflow (SMT-LIB bvuaddo)
+    WOF_ADD_SIGNED,  ///< Signed addition overflow (SMT-LIB bvsaddo)
+    WOF_MULT_UNSIGNED,///< Unsigned multiplication overflow (SMT-LIB bvumulo)
+    WOF_MULT_SIGNED, ///< Signed multiplication overflow (SMT-LIB bvsmulo)
+    WOF_DIV_SIGNED   ///< Signed division overflow (QF_BV bvsdivo extension)
+  };
+
   /**
    * \defgroup TaskModelWordRel Word relations
    * \ingroup TaskModelWord
@@ -490,6 +500,13 @@ namespace Gecode {
   /// Post modular addition \a result = \a x + \a y
   GECODE_WORD_EXPORT void add(Home home, WordVar x, WordVar y,
                               WordVar result);
+  /** \brief Post modular addition and expose its unsigned carry
+   *
+   * Posts \a result = \a x + \a y modulo the common width. \a carry is one
+   * exactly when the unsigned sum is at least 2 raised to that width.
+   */
+  GECODE_WORD_EXPORT void add(Home home, WordVar x, WordVar y,
+                              WordVar result, BoolVar carry);
   /// Post modular addition with an explicitly-sized constant operand
   GECODE_WORD_EXPORT void add(Home home, WordVar x, unsigned int width,
                               WordValue value, WordVar result);
@@ -501,6 +518,13 @@ namespace Gecode {
   /// Post modular subtraction \a result = \a x - \a y
   GECODE_WORD_EXPORT void sub(Home home, WordVar x, WordVar y,
                               WordVar result);
+  /** \brief Post modular subtraction and expose its unsigned borrow
+   *
+   * Posts \a result = \a x - \a y modulo the common width. \a borrow is one
+   * exactly when \a x is unsigned-less-than \a y.
+   */
+  GECODE_WORD_EXPORT void sub(Home home, WordVar x, WordVar y,
+                              WordVar result, BoolVar borrow);
   /// Post modular subtraction with an explicitly-sized right operand
   GECODE_WORD_EXPORT void sub(Home home, WordVar x, unsigned int width,
                               WordValue value, WordVar result);
@@ -513,6 +537,14 @@ namespace Gecode {
   /// Post modular multiplication with an explicitly-sized constant operand
   GECODE_WORD_EXPORT void mult(Home home, WordVar x, unsigned int width,
                                WordValue value, WordVar result);
+  /// Post unary arithmetic overflow predicate \a wot for \a x
+  GECODE_WORD_EXPORT void overflow(Home home, WordVar x,
+                                   WordOverflowType wot, BoolVar b,
+                                   WordSemantics semantics=WS_SMTLIB);
+  /// Post binary arithmetic overflow predicate \a wot for \a x and \a y
+  GECODE_WORD_EXPORT void overflow(Home home, WordVar x,
+                                   WordOverflowType wot, WordVar y, BoolVar b,
+                                   WordSemantics semantics=WS_SMTLIB);
   /// Post unsigned division \a result = \a x div \a y
   GECODE_WORD_EXPORT void div(Home home, WordVar x, WordVar y,
                               WordVar result,

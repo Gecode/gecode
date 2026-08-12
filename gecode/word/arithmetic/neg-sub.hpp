@@ -192,7 +192,8 @@ namespace Gecode { namespace Word { namespace Arithmetic {
   }
 
   forceinline ExecStatus
-  Sub::narrow(Home home, WordView x, WordView y, WordView z) {
+  sub_narrow(Home home, WordView x, WordView y, WordView z,
+             unsigned int terminal, unsigned int& final) {
     const unsigned int width = x.width();
     const bool xy = x == y;
     const bool xz = x == z;
@@ -219,7 +220,10 @@ namespace Gecode { namespace Word { namespace Arithmetic {
         return ES_FAILED;
     }
 
-    backward[width] = 3U;
+    final = forward[width] & terminal;
+    if (final == 0)
+      return ES_FAILED;
+    backward[width] = static_cast<unsigned char>(terminal);
     for (unsigned int bit=width; bit-- > 0;) {
       unsigned int states = 0;
       for (unsigned int borrow=0; borrow<2; borrow++)
@@ -270,6 +274,12 @@ namespace Gecode { namespace Word { namespace Arithmetic {
   }
 
   forceinline ExecStatus
+  Sub::narrow(Home home, WordView x, WordView y, WordView z) {
+    unsigned int final;
+    return sub_narrow(home,x,y,z,3U,final);
+  }
+
+  forceinline ExecStatus
   Sub::post(Home home, WordView x0, WordView x1, WordView x2) {
     GECODE_ES_CHECK(narrow(home,x0,x1,x2));
     if (!(x0.assigned() && x1.assigned() && x2.assigned()))
@@ -281,6 +291,62 @@ namespace Gecode { namespace Word { namespace Arithmetic {
   Sub::propagate(Space& home, const ModEventDelta&) {
     GECODE_ES_CHECK(narrow(home,x0,x1,x2));
     if (x0.assigned() && x1.assigned() && x2.assigned())
+      return home.ES_SUBSUMED(*this);
+    return ES_FIX;
+  }
+
+  forceinline
+  SubBorrow::SubBorrow(Home home, ViewArray<WordView>& z,
+                       Int::BoolView borrow)
+    : MixNaryOnePropagator<
+        WordView,PC_WORD_BITS,Int::BoolView,Int::PC_BOOL_VAL>(home,z,borrow) {}
+
+  forceinline
+  SubBorrow::SubBorrow(Space& home, SubBorrow& p)
+    : MixNaryOnePropagator<
+        WordView,PC_WORD_BITS,Int::BoolView,Int::PC_BOOL_VAL>(home,p) {}
+
+  forceinline Actor*
+  SubBorrow::copy(Space& home) {
+    return new (home) SubBorrow(home,*this);
+  }
+
+  forceinline PropCost
+  SubBorrow::cost(const Space&, const ModEventDelta&) const {
+    return PropCost::linear(PropCost::LO,x[0].width());
+  }
+
+  forceinline ExecStatus
+  sub_borrow_narrow(Home home, WordView x0, WordView x1, WordView x2,
+                    Int::BoolView borrow) {
+    const unsigned int terminal = borrow.one() ? 2U : borrow.zero() ? 1U : 3U;
+    unsigned int final;
+    GECODE_ES_CHECK(sub_narrow(home,x0,x1,x2,terminal,final));
+    if (final == 1U)
+      GECODE_ME_CHECK(borrow.zero(home));
+    else if (final == 2U)
+      GECODE_ME_CHECK(borrow.one(home));
+    return ES_OK;
+  }
+
+  forceinline ExecStatus
+  SubBorrow::post(Home home, WordView x0, WordView x1, WordView x2,
+                  Int::BoolView borrow) {
+    GECODE_ES_CHECK(sub_borrow_narrow(home,x0,x1,x2,borrow));
+    if (!(x0.assigned() && x1.assigned() && x2.assigned() &&
+          borrow.assigned())) {
+      ViewArray<WordView> z(home,3);
+      z[0]=x0; z[1]=x1; z[2]=x2;
+      (void) new (home) SubBorrow(home,z,borrow);
+    }
+    return ES_OK;
+  }
+
+  forceinline ExecStatus
+  SubBorrow::propagate(Space& home, const ModEventDelta&) {
+    GECODE_ES_CHECK(sub_borrow_narrow(home,x[0],x[1],x[2],y));
+    if (x[0].assigned() && x[1].assigned() && x[2].assigned() &&
+        y.assigned())
       return home.ES_SUBSUMED(*this);
     return ES_FIX;
   }

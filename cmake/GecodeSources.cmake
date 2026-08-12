@@ -455,6 +455,7 @@ set(GECODE_TEST_SOURCES
   test/word/element.cpp
   test/word/logic.cpp
   test/word/minimodel.cpp
+  test/word/overflow.cpp
   test/word/rel.cpp
   test/word/reduction.cpp
   test/word/structure.cpp

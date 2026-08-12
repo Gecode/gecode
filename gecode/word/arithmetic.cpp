@@ -53,6 +53,13 @@ namespace Gecode {
                        Word::WordView(result)));
     }
 
+    void post_add_carry(Home home, WordVar x, WordVar y, WordVar result,
+                        BoolVar carry) {
+      GECODE_ES_FAIL(Word::Arithmetic::AddCarry::post(
+                       home,Word::WordView(x),Word::WordView(y),
+                       Word::WordView(result),Int::BoolView(carry)));
+    }
+
     void post_neg(Home home, WordVar x, WordVar result) {
       GECODE_ES_FAIL(Word::Arithmetic::Neg::post(
                        home,Word::WordView(x),Word::WordView(result)));
@@ -62,6 +69,13 @@ namespace Gecode {
       GECODE_ES_FAIL(Word::Arithmetic::Sub::post(
                        home,Word::WordView(x),Word::WordView(y),
                        Word::WordView(result)));
+    }
+
+    void post_sub_borrow(Home home, WordVar x, WordVar y, WordVar result,
+                         BoolVar borrow) {
+      GECODE_ES_FAIL(Word::Arithmetic::SubBorrow::post(
+                       home,Word::WordView(x),Word::WordView(y),
+                       Word::WordView(result),Int::BoolView(borrow)));
     }
 
     void post_mult(Home home, WordVar x, WordVar y, WordVar result) {
@@ -169,6 +183,53 @@ namespace Gecode {
       post_add(home,remainder,y,adjusted);
       ite(home,adjust,adjusted,remainder,result);
     }
+
+    void post_signed_add_overflow(Home home, WordVar x, WordVar y,
+                                  BoolVar overflow) {
+      const unsigned int width = x.width();
+      WordVar result(home,width);
+      post_add(home,x,y,result);
+      BoolVar x_sign(home,0,1), y_sign(home,0,1), result_sign(home,0,1);
+      channel(home,x,width-1,x_sign);
+      channel(home,y,width-1,y_sign);
+      channel(home,result,width-1,result_sign);
+      BoolVar same_operands(home,0,1), changed_sign(home,0,1);
+      rel(home,x_sign,BOT_EQV,y_sign,same_operands);
+      rel(home,x_sign,BOT_XOR,result_sign,changed_sign);
+      rel(home,same_operands,BOT_AND,changed_sign,overflow);
+    }
+
+    void post_unsigned_mult_overflow(Home home, WordVar x, WordVar y,
+                                     BoolVar overflow) {
+      const unsigned int width = x.width();
+      WordVar maximum(home,width,Word::width_mask(width),
+                      Word::width_mask(width));
+      WordVar quotient(home,width);
+      post_divmod(home,maximum,x,quotient,true);
+      rel(home,y,WRT_UGR,quotient,Reify(overflow,RM_EQV));
+    }
+
+    void post_signed_mult_overflow(Home home, WordVar x, WordVar y,
+                                   BoolVar overflow) {
+      const unsigned int width = x.width();
+      const WordValue sign = WordValue(1) << (width-1);
+      BoolVar x_negative(home,0,1), y_negative(home,0,1);
+      channel(home,x,width-1,x_negative);
+      channel(home,y,width-1,y_negative);
+      WordVar x_magnitude(home,width), y_magnitude(home,width);
+      post_absolute(home,x,x_negative,x_magnitude);
+      post_absolute(home,y,y_negative,y_magnitude);
+
+      BoolVar negative(home,0,1);
+      rel(home,x_negative,BOT_XOR,y_negative,negative);
+      WordVar positive_limit(home,width,sign-1,sign-1);
+      WordVar negative_limit(home,width,sign,sign);
+      WordVar limit(home,width);
+      ite(home,negative,negative_limit,positive_limit,limit);
+      WordVar quotient(home,width);
+      post_divmod(home,limit,x_magnitude,quotient,true);
+      rel(home,y_magnitude,WRT_UGR,quotient,Reify(overflow,RM_EQV));
+    }
   }
 
   void
@@ -176,6 +237,13 @@ namespace Gecode {
     check_widths(x,y,result,"Word::add");
     GECODE_POST;
     post_add(home,x,y,result);
+  }
+
+  void
+  add(Home home, WordVar x, WordVar y, WordVar result, BoolVar carry) {
+    check_widths(x,y,result,"Word::add");
+    GECODE_POST;
+    post_add_carry(home,x,y,result,carry);
   }
 
   void
@@ -212,6 +280,13 @@ namespace Gecode {
     check_widths(x,y,result,"Word::sub");
     GECODE_POST;
     post_sub(home,x,y,result);
+  }
+
+  void
+  sub(Home home, WordVar x, WordVar y, WordVar result, BoolVar borrow) {
+    check_widths(x,y,result,"Word::sub");
+    GECODE_POST;
+    post_sub_borrow(home,x,y,result,borrow);
   }
 
   void
@@ -252,6 +327,54 @@ namespace Gecode {
     GECODE_POST;
     WordVar y(home,width,value,value);
     post_mult(home,x,y,result);
+  }
+
+  void
+  overflow(Home home, WordVar x, WordOverflowType wot, BoolVar b,
+           WordSemantics semantics) {
+    check_semantics(semantics,"Word::overflow");
+    if (wot != WOF_NEG_SIGNED)
+      throw Word::UnknownOperation("Word::overflow");
+    GECODE_POST;
+    const WordValue minimum = WordValue(1) << (x.width()-1);
+    rel(home,x,WRT_EQ,x.width(),minimum,Reify(b,RM_EQV));
+  }
+
+  void
+  overflow(Home home, WordVar x, WordOverflowType wot, WordVar y, BoolVar b,
+           WordSemantics semantics) {
+    if (x.width() != y.width())
+      throw Word::WidthMismatch("Word::overflow");
+    check_semantics(semantics,"Word::overflow");
+    GECODE_POST;
+    switch (wot) {
+    case WOF_ADD_UNSIGNED: {
+      WordVar result(home,x.width());
+      post_add_carry(home,x,y,result,b);
+      break;
+    }
+    case WOF_ADD_SIGNED:
+      post_signed_add_overflow(home,x,y,b);
+      break;
+    case WOF_MULT_UNSIGNED:
+      post_unsigned_mult_overflow(home,x,y,b);
+      break;
+    case WOF_MULT_SIGNED:
+      post_signed_mult_overflow(home,x,y,b);
+      break;
+    case WOF_DIV_SIGNED: {
+      const unsigned int width = x.width();
+      BoolVar minimum(home,0,1), minus_one(home,0,1);
+      rel(home,x,WRT_EQ,width,WordValue(1) << (width-1),
+          Reify(minimum,RM_EQV));
+      rel(home,y,WRT_EQ,width,Word::width_mask(width),
+          Reify(minus_one,RM_EQV));
+      rel(home,minimum,BOT_AND,minus_one,b);
+      break;
+    }
+    default:
+      throw Word::UnknownOperation("Word::overflow");
+    }
   }
 
   void

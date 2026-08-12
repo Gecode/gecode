@@ -61,6 +61,25 @@ namespace Gecode { namespace Word { namespace Arithmetic {
                            WordView x2);
   };
 
+  /// Bit-consistent addition with an exposed final carry
+  class AddCarry : public MixNaryOnePropagator<
+    WordView,PC_WORD_BITS,Int::BoolView,Int::PC_BOOL_VAL> {
+  protected:
+    using MixNaryOnePropagator<
+      WordView,PC_WORD_BITS,Int::BoolView,Int::PC_BOOL_VAL>::x;
+    using MixNaryOnePropagator<
+      WordView,PC_WORD_BITS,Int::BoolView,Int::PC_BOOL_VAL>::y;
+    AddCarry(Home home, ViewArray<WordView>& x, Int::BoolView carry);
+    AddCarry(Space& home, AddCarry& p);
+  public:
+    virtual Actor* copy(Space& home);
+    virtual PropCost cost(const Space& home,
+                          const ModEventDelta& med) const;
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+    static ExecStatus post(Home home, WordView x0, WordView x1,
+                           WordView x2, Int::BoolView carry);
+  };
+
   /**
    * \brief Bit-consistent propagator for fixed-width modular negation
    *
@@ -104,6 +123,25 @@ namespace Gecode { namespace Word { namespace Arithmetic {
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     static ExecStatus post(Home home, WordView x0, WordView x1,
                            WordView x2);
+  };
+
+  /// Bit-consistent subtraction with an exposed final borrow
+  class SubBorrow : public MixNaryOnePropagator<
+    WordView,PC_WORD_BITS,Int::BoolView,Int::PC_BOOL_VAL> {
+  protected:
+    using MixNaryOnePropagator<
+      WordView,PC_WORD_BITS,Int::BoolView,Int::PC_BOOL_VAL>::x;
+    using MixNaryOnePropagator<
+      WordView,PC_WORD_BITS,Int::BoolView,Int::PC_BOOL_VAL>::y;
+    SubBorrow(Home home, ViewArray<WordView>& x, Int::BoolView borrow);
+    SubBorrow(Space& home, SubBorrow& p);
+  public:
+    virtual Actor* copy(Space& home);
+    virtual PropCost cost(const Space& home,
+                          const ModEventDelta& med) const;
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+    static ExecStatus post(Home home, WordView x0, WordView x1,
+                           WordView x2, Int::BoolView borrow);
   };
 
   /**

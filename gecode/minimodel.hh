@@ -1685,6 +1685,14 @@ namespace Gecode {
   /// Exclusive-or of all significant bits
   GECODE_MINIMODEL_EXPORT BoolExpr
   reduce_xor(const WordExpr&);
+  /// Arithmetic overflow predicate for a unary word operation
+  GECODE_MINIMODEL_EXPORT BoolExpr
+  overflow(const WordExpr&, WordOverflowType,
+           WordSemantics semantics=WS_SMTLIB);
+  /// Arithmetic overflow predicate for a binary word operation
+  GECODE_MINIMODEL_EXPORT BoolExpr
+  overflow(const WordExpr&, WordOverflowType, const WordExpr&,
+           WordSemantics semantics=WS_SMTLIB);
   /// Boolean-controlled word conditional
   GECODE_MINIMODEL_EXPORT WordExpr
   ite(const BoolExpr&, const WordExpr&, const WordExpr&);

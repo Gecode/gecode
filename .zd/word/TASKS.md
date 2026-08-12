@@ -3,9 +3,9 @@
 # Tasks: word
 
 - Total: 37
-- Ready: 6
+- Ready: 5
 - Blocked: 1
-- Done: 30
+- Done: 31
 
 | ID | Task | State | Blocked by |
 | --- | --- | --- | --- |
@@ -39,7 +39,7 @@
 | [word-028](tasks/028-add-wordvar-array-element-constraint.md) | Add WordVar array element constraint | done | — |
 | [word-029](tasks/029-add-word-to-boolean-reduction-constraints.md) | Add Word-to-Boolean reduction constraints | done | — |
 | [word-030](tasks/030-implement-native-negation-and-subtraction-propagators.md) | Implement native negation and subtraction propagators | done | — |
-| [word-031](tasks/031-add-carry-borrow-and-arithmetic-overflow-constraints.md) | Add carry, borrow, and arithmetic overflow constraints | ready | word-030 |
+| [word-031](tasks/031-add-carry-borrow-and-arithmetic-overflow-constraints.md) | Add carry, borrow, and arithmetic overflow constraints | done | word-030 |
 | [word-032](tasks/032-add-population-and-zero-count-constraints.md) | Add population and zero-count constraints | ready | — |
 | [word-033](tasks/033-implement-native-unsigned-division-and-remainder-propagators.md) | Implement native unsigned division and remainder propagators | ready | — |
 | [word-034](tasks/034-implement-native-signed-division-remainder-and-modulus-propa.md) | Implement native signed division, remainder, and modulus propagators | blocked | word-033 |

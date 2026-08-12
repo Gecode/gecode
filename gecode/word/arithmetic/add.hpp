@@ -74,7 +74,8 @@ namespace Gecode { namespace Word { namespace Arithmetic {
   }
 
   forceinline ExecStatus
-  Add::narrow(Home home, WordView x, WordView y, WordView z) {
+  add_narrow(Home home, WordView x, WordView y, WordView z,
+             unsigned int terminal, unsigned int& final) {
     const unsigned int width = x.width();
     const bool xy = x == y;
     const bool xz = x == z;
@@ -100,8 +101,10 @@ namespace Gecode { namespace Word { namespace Arithmetic {
         return ES_FAILED;
     }
 
-    // Modular addition discards overflow, so either final carry is accepted.
-    backward[width] = 3U;
+    final = forward[width] & terminal;
+    if (final == 0)
+      return ES_FAILED;
+    backward[width] = static_cast<unsigned char>(terminal);
     for (unsigned int bit=width; bit-- > 0;) {
       unsigned int states = 0;
       for (unsigned int carry=0; carry<2; carry++)
@@ -150,6 +153,12 @@ namespace Gecode { namespace Word { namespace Arithmetic {
   }
 
   forceinline ExecStatus
+  Add::narrow(Home home, WordView x, WordView y, WordView z) {
+    unsigned int final;
+    return add_narrow(home,x,y,z,3U,final);
+  }
+
+  forceinline ExecStatus
   Add::post(Home home, WordView x0, WordView x1, WordView x2) {
     GECODE_ES_CHECK(narrow(home,x0,x1,x2));
     if (!(x0.assigned() && x1.assigned() && x2.assigned()))
@@ -161,6 +170,62 @@ namespace Gecode { namespace Word { namespace Arithmetic {
   Add::propagate(Space& home, const ModEventDelta&) {
     GECODE_ES_CHECK(narrow(home,x0,x1,x2));
     if (x0.assigned() && x1.assigned() && x2.assigned())
+      return home.ES_SUBSUMED(*this);
+    return ES_FIX;
+  }
+
+  forceinline
+  AddCarry::AddCarry(Home home, ViewArray<WordView>& z,
+                     Int::BoolView carry)
+    : MixNaryOnePropagator<
+        WordView,PC_WORD_BITS,Int::BoolView,Int::PC_BOOL_VAL>(home,z,carry) {}
+
+  forceinline
+  AddCarry::AddCarry(Space& home, AddCarry& p)
+    : MixNaryOnePropagator<
+        WordView,PC_WORD_BITS,Int::BoolView,Int::PC_BOOL_VAL>(home,p) {}
+
+  forceinline Actor*
+  AddCarry::copy(Space& home) {
+    return new (home) AddCarry(home,*this);
+  }
+
+  forceinline PropCost
+  AddCarry::cost(const Space&, const ModEventDelta&) const {
+    return PropCost::linear(PropCost::LO,x[0].width());
+  }
+
+  forceinline ExecStatus
+  add_carry_narrow(Home home, WordView x0, WordView x1, WordView x2,
+                   Int::BoolView carry) {
+    const unsigned int terminal = carry.one() ? 2U : carry.zero() ? 1U : 3U;
+    unsigned int final;
+    GECODE_ES_CHECK(add_narrow(home,x0,x1,x2,terminal,final));
+    if (final == 1U)
+      GECODE_ME_CHECK(carry.zero(home));
+    else if (final == 2U)
+      GECODE_ME_CHECK(carry.one(home));
+    return ES_OK;
+  }
+
+  forceinline ExecStatus
+  AddCarry::post(Home home, WordView x0, WordView x1, WordView x2,
+                 Int::BoolView carry) {
+    GECODE_ES_CHECK(add_carry_narrow(home,x0,x1,x2,carry));
+    if (!(x0.assigned() && x1.assigned() && x2.assigned() &&
+          carry.assigned())) {
+      ViewArray<WordView> z(home,3);
+      z[0]=x0; z[1]=x1; z[2]=x2;
+      (void) new (home) AddCarry(home,z,carry);
+    }
+    return ES_OK;
+  }
+
+  forceinline ExecStatus
+  AddCarry::propagate(Space& home, const ModEventDelta&) {
+    GECODE_ES_CHECK(add_carry_narrow(home,x[0],x[1],x[2],y));
+    if (x[0].assigned() && x[1].assigned() && x[2].assigned() &&
+        y.assigned())
       return home.ES_SUBSUMED(*this);
     return ES_FIX;
   }

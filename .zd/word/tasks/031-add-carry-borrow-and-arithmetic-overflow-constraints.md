@@ -3,7 +3,7 @@ schema_version = 1
 id = "word-031"
 key = "word-arithmetic-flags"
 area = "word"
-status = "open"
+status = "done"
 blocked_by = ["word-030"]
 +++
 # Add carry, borrow, and arithmetic overflow constraints
@@ -22,13 +22,21 @@ Word models can observe and constrain addition carry, subtraction borrow, and si
 
 ## Done when
 
-- [ ] Public direct APIs expose addition with carry and subtraction with borrow while constraining both the modular Word result and BoolVar flag in all directions.
-- [ ] Public overflow predicates cover modular negation, unsigned/signed addition, unsigned/signed multiplication, and signed division overflow, with assigned semantics matching the current SMT-LIB definitions.
-- [ ] MiniModel BoolExpr forms are added where they follow the existing Misc/direct-lowering pattern without duplicating arithmetic expression state.
-- [ ] Focused tests cover small assigned truth tables, representative partial flag-to-word propagation, zero and signed min/-1 cases, width 1 and 64 seams, aliases/failure, cloning, recomputation, and subsumption at spike depth.
+- [x] Public direct APIs expose addition with carry and subtraction with borrow while constraining both the modular Word result and BoolVar flag in all directions.
+- [x] Public overflow predicates cover modular negation, unsigned/signed addition, unsigned/signed multiplication, and signed division overflow, with assigned semantics matching the current SMT-LIB definitions.
+- [x] MiniModel BoolExpr forms are added where they follow the existing Misc/direct-lowering pattern without duplicating arithmetic expression state.
+- [x] Focused tests cover small assigned truth tables, representative partial flag-to-word propagation, zero and signed min/-1 cases, width 1 and 64 seams, aliases/failure, cloning, recomputation, and subsumption at spike depth.
 
 ## Validation
 
 - Build Word, MiniModel, and the existing gecode-test target.
 - Run focused arithmetic flag/overflow, Word arithmetic regression, Word MiniModel, and Word::TestFramework tests.
 - Run git diff --check and verify the documented semantics against the official SMT-LIB FixedSizeBitVectors definitions.
+
+## Result
+
+Added modular addition carry and subtraction borrow result-plus-flag APIs backed by native terminal-state automata, plus a compact WordOverflowType predicate family for signed negation, unsigned/signed addition and multiplication, and signed division overflow. Added MiniModel BoolExpr lowering and normal registered Word overflow tests.
+
+Validation:
+
+- Independent verification PASS after correcting the test oracle to use overflow-safe unsigned sign/magnitude logic at widths 1 through 64. Focused ^Word::Overflow, ^Word::Arithmetic, ^Word::MiniModel, and ^Word::TestFramework tests passed. Source review confirmed carry/borrow backward propagation, all predicate semantics including zero/min/-1/width64, honest QF_BV-derived signed-div wording, MiniModel ownership, ordinary inventories, and git diff --check.

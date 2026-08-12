@@ -209,6 +209,53 @@ namespace Gecode {
       }
     };
 
+    class UnaryWordOverflow : public BoolExpr::Misc {
+    private:
+      WordExpr word;
+      WordOverflowType operation;
+      WordSemantics semantics;
+    public:
+      UnaryWordOverflow(const WordExpr& word0, WordOverflowType operation0,
+                        WordSemantics semantics0)
+        : word(word0), operation(operation0), semantics(semantics0) {}
+      virtual void post(Home home, BoolVar b, bool neg,
+                        const IntPropLevels&) {
+        WordVar x = word.post(home);
+        BoolVar actual = b;
+        if (neg)
+          actual = BoolVar(home,0,1);
+        Gecode::overflow(home,x,operation,actual,semantics);
+        if (neg)
+          Gecode::rel(home,b,IRT_NQ,actual);
+      }
+    };
+
+    class BinaryWordOverflow : public BoolExpr::Misc {
+    private:
+      WordExpr left;
+      WordExpr right;
+      WordOverflowType operation;
+      WordSemantics semantics;
+    public:
+      BinaryWordOverflow(const WordExpr& left0, WordOverflowType operation0,
+                         const WordExpr& right0, WordSemantics semantics0)
+        : left(left0), right(right0), operation(operation0),
+          semantics(semantics0) {
+        check_width(left.width(),right.width());
+      }
+      virtual void post(Home home, BoolVar b, bool neg,
+                        const IntPropLevels&) {
+        WordVar x = left.post(home);
+        WordVar y = right.post(home);
+        BoolVar actual = b;
+        if (neg)
+          actual = BoolVar(home,0,1);
+        Gecode::overflow(home,x,operation,y,actual,semantics);
+        if (neg)
+          Gecode::rel(home,b,IRT_NQ,actual);
+      }
+    };
+
     BoolExpr
     relation(const WordExpr& left, WordRelType wrt,
              const WordExpr& right) {
@@ -561,6 +608,16 @@ namespace Gecode {
 
   BoolExpr reduce_xor(const WordExpr& e) {
     return BoolExpr(new WordReduction(e,WRED_XOR));
+  }
+
+  BoolExpr overflow(const WordExpr& e, WordOverflowType operation,
+                    WordSemantics semantics) {
+    return BoolExpr(new UnaryWordOverflow(e,operation,semantics));
+  }
+
+  BoolExpr overflow(const WordExpr& l, WordOverflowType operation,
+                    const WordExpr& r, WordSemantics semantics) {
+    return BoolExpr(new BinaryWordOverflow(l,operation,r,semantics));
   }
 
   WordExpr
