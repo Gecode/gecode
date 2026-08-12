@@ -769,16 +769,16 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 namespace Gecode { namespace Int { namespace Arithmetic {
 
   /**
-   * \brief Domain propagator for \f$\gcd(x_0,x_1)=x_2\f$
+   * \brief Bounds propagator for \f$\gcd(x_0,x_1)=x_2\f$
    *
    * Requires \code #include <gecode/int/arithmetic.hh> \endcode
    * \ingroup FuncIntProp
    */
-  class Gcd : public TernaryPropagator<IntView,PC_INT_DOM> {
+  class Gcd : public TernaryPropagator<IntView,PC_INT_BND> {
   protected:
-    using TernaryPropagator<IntView,PC_INT_DOM>::x0;
-    using TernaryPropagator<IntView,PC_INT_DOM>::x1;
-    using TernaryPropagator<IntView,PC_INT_DOM>::x2;
+    using TernaryPropagator<IntView,PC_INT_BND>::x0;
+    using TernaryPropagator<IntView,PC_INT_BND>::x1;
+    using TernaryPropagator<IntView,PC_INT_BND>::x2;
     /// Constructor for cloning \a p
     Gcd(Space& home, Gcd& p);
     /// Constructor for posting
@@ -794,7 +794,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
   };
 
-  /** \brief Reified domain propagator for \f$\gcd(x_0,x_1)=x_2\f$ */
+  /** \brief Reified bounds propagator for \f$\gcd(x_0,x_1)=x_2\f$ */
   template<ReifyMode rm>
   class ReGcd : public Propagator {
   protected:
@@ -827,7 +827,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 namespace Gecode { namespace Int { namespace Arithmetic {
 
   /**
-   * \brief Reified domain propagator for divisibility
+   * \brief Reified bounds propagator for divisibility
    *
    * The relation is \f$\exists k\in\mathbb Z:x_1=x_0k\f$.
    * Requires \code #include <gecode/int/arithmetic.hh> \endcode
@@ -835,11 +835,11 @@ namespace Gecode { namespace Int { namespace Arithmetic {
    */
   template<ReifyMode rm>
   class ReDivides :
-    public ReBinaryPropagator<IntView,PC_INT_DOM,BoolView> {
+    public ReBinaryPropagator<IntView,PC_INT_BND,BoolView> {
   protected:
-    using ReBinaryPropagator<IntView,PC_INT_DOM,BoolView>::x0;
-    using ReBinaryPropagator<IntView,PC_INT_DOM,BoolView>::x1;
-    using ReBinaryPropagator<IntView,PC_INT_DOM,BoolView>::b;
+    using ReBinaryPropagator<IntView,PC_INT_BND,BoolView>::x0;
+    using ReBinaryPropagator<IntView,PC_INT_BND,BoolView>::x1;
+    using ReBinaryPropagator<IntView,PC_INT_BND,BoolView>::b;
     /// Constructor for posting
     ReDivides(Home home, IntView x0, IntView x1, BoolView b);
     /// Constructor for cloning \a p
@@ -853,6 +853,8 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+    /// Delete propagator and return its size
+    virtual size_t dispose(Space& home);
   };
 
 }}}
@@ -880,7 +882,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     virtual size_t dispose(Space& home);
   };
 
-  /** \brief Reified domain propagator for an exact n-ary product
+  /** \brief Reified bounds propagator for an exact n-ary product
    * \ingroup FuncIntProp
    */
   template<ReifyMode rm>
@@ -907,13 +909,13 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
 namespace Gecode { namespace Int { namespace Arithmetic {
 
-  /** \brief Domain propagator for a fixed-modulus n-ary product
+  /** \brief Bounds propagator for a fixed-modulus n-ary product
    * \ingroup FuncIntProp
    */
-  class ProductMod : public NaryOnePropagator<IntView,PC_INT_DOM> {
+  class ProductMod : public NaryOnePropagator<IntView,PC_INT_BND> {
   protected:
-    using NaryOnePropagator<IntView,PC_INT_DOM>::x;
-    using NaryOnePropagator<IntView,PC_INT_DOM>::y;
+    using NaryOnePropagator<IntView,PC_INT_BND>::x;
+    using NaryOnePropagator<IntView,PC_INT_BND>::y;
     int m;
     ProductMod(Home home, ViewArray<IntView>& x, int m, IntView y);
     ProductMod(Space& home, ProductMod& p);
@@ -924,7 +926,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
   };
 
-  /** \brief Domain propagator for a variable-modulus n-ary product
+  /** \brief Bounds propagator for a variable-modulus n-ary product
    * \ingroup FuncIntProp
    */
   class ProductModVar : public Propagator {
@@ -944,7 +946,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     virtual size_t dispose(Space& home);
   };
 
-  /** \brief Reified domain propagator for a variable-modulus product
+  /** \brief Reified bounds propagator for a variable-modulus product
    * \ingroup FuncIntProp
    */
   template<ReifyMode rm>
@@ -967,7 +969,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     virtual size_t dispose(Space& home);
   };
 
-  /** \brief Reified domain propagator for a fixed-modulus n-ary product
+  /** \brief Reified bounds propagator for a fixed-modulus n-ary product
    * \ingroup FuncIntProp
    */
   template<ReifyMode rm>

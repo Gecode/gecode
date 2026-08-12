@@ -65,7 +65,9 @@ namespace Test { namespace Int {
        /// Create and register test
        GcdXYZ(const std::string& s, const Gecode::IntSet& d,
               Gecode::IntPropLevel ipl)
-         : Test("Arithmetic::Gcd::XYZ::"+str(ipl)+"::"+s,3,d,true,ipl) {}
+         : Test("Arithmetic::Gcd::XYZ::"+str(ipl)+"::"+s,3,d,true,ipl) {
+         contest=CTL_NONE; testfix=false;
+       }
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          return gcd_value(x[0],x[1]) == x[2];
@@ -87,7 +89,9 @@ namespace Test { namespace Int {
        /// Create and register test
        GcdXXY(const std::string& s, const Gecode::IntSet& d,
               Gecode::IntPropLevel ipl)
-         : Test("Arithmetic::Gcd::XXY::"+str(ipl)+"::"+s,2,d,true,ipl) {}
+         : Test("Arithmetic::Gcd::XXY::"+str(ipl)+"::"+s,2,d,true,ipl) {
+         contest=CTL_NONE; testfix=false;
+       }
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          return gcd_value(x[0],x[0]) == x[1];
@@ -109,7 +113,9 @@ namespace Test { namespace Int {
        /// Create and register test
        GcdXYX(const std::string& s, const Gecode::IntSet& d,
               Gecode::IntPropLevel ipl)
-         : Test("Arithmetic::Gcd::XYX::"+str(ipl)+"::"+s,2,d,true,ipl) {}
+         : Test("Arithmetic::Gcd::XYX::"+str(ipl)+"::"+s,2,d,true,ipl) {
+         contest=CTL_NONE; testfix=false;
+       }
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          return gcd_value(x[0],x[1]) == x[0];
@@ -131,7 +137,9 @@ namespace Test { namespace Int {
        /// Create and register test
        GcdXXX(const std::string& s, const Gecode::IntSet& d,
               Gecode::IntPropLevel ipl)
-         : Test("Arithmetic::Gcd::XXX::"+str(ipl)+"::"+s,1,d,true,ipl) {}
+         : Test("Arithmetic::Gcd::XXX::"+str(ipl)+"::"+s,1,d,true,ipl) {
+         contest=CTL_NONE; testfix=false;
+       }
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          return gcd_value(x[0],x[0]) == x[0];
@@ -154,7 +162,7 @@ namespace Test { namespace Int {
        DividesXY(const std::string& s, const Gecode::IntSet& d,
                  Gecode::IntPropLevel ipl)
          : Test("Arithmetic::Divides::XY::"+str(ipl)+"::"+s,
-                2,d,true,ipl) {}
+                2,d,true,ipl) { contest=CTL_NONE; testfix=false; }
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          return (x[0] == 0) ? (x[1] == 0) : (x[1] % x[0] == 0);
@@ -178,7 +186,7 @@ namespace Test { namespace Int {
        DividesXX(const std::string& s, const Gecode::IntSet& d,
                  Gecode::IntPropLevel ipl)
          : Test("Arithmetic::Divides::XX::"+str(ipl)+"::"+s,
-                1,d,true,ipl) {}
+                1,d,true,ipl) { contest=CTL_NONE; testfix=false; }
        /// Every integer divides itself, including zero
        virtual bool solution(const Assignment&) const {
          return true;
@@ -622,7 +630,7 @@ namespace Test { namespace Int {
        ProductModXYZR(const std::string& s, const Gecode::IntSet& d,
                       int m0, Gecode::IntPropLevel ipl)
          : Test("Arithmetic::ProductMod::XYZR::"+str(ipl)+"::"+s,
-                4,d,true,ipl), m(m0) { contest=CTL_NONE; }
+                4,d,true,ipl), m(m0) { contest=CTL_NONE; testfix=false; }
        virtual bool solution(const Assignment& x) const {
          return product_mod_value(x,3,m) == x[3];
        }
@@ -645,7 +653,7 @@ namespace Test { namespace Int {
        ProductModEmpty(const std::string& s, const Gecode::IntSet& d,
                        int m0, Gecode::IntPropLevel ipl)
          : Test("Arithmetic::ProductMod::Empty::"+str(ipl)+"::"+s,
-                1,d,true,ipl), m(m0) { contest=CTL_NONE; }
+                1,d,true,ipl), m(m0) { contest=CTL_NONE; testfix=false; }
        virtual bool solution(const Assignment& x) const {
          return x[0] == (1 % m);
        }
@@ -666,7 +674,7 @@ namespace Test { namespace Int {
        ProductModSingleton(const std::string& s, const Gecode::IntSet& d,
                            int m0, Gecode::IntPropLevel ipl)
          : Test("Arithmetic::ProductMod::Singleton::"+str(ipl)+"::"+s,
-                2,d,true,ipl), m(m0) { contest=CTL_NONE; }
+                2,d,true,ipl), m(m0) { contest=CTL_NONE; testfix=false; }
        virtual bool solution(const Assignment& x) const {
          int r = x[0] % m;
          if (r < 0)
@@ -690,7 +698,7 @@ namespace Test { namespace Int {
        ProductModXXYAlias(const std::string& s, const Gecode::IntSet& d,
                           int m0, Gecode::IntPropLevel ipl)
          : Test("Arithmetic::ProductMod::XXYAlias::"+str(ipl)+"::"+s,
-                2,d,true,ipl), m(m0) { contest=CTL_NONE; }
+                2,d,true,ipl), m(m0) { contest=CTL_NONE; testfix=false; }
        virtual bool solution(const Assignment& x) const {
          long long int a = x[0] % m;
          long long int b = x[1] % m;
@@ -810,7 +818,7 @@ namespace Test { namespace Int {
        ProductModVarXYMR(const std::string& s, const Gecode::IntSet& d,
                          Gecode::IntPropLevel ipl)
          : Test("Arithmetic::ProductModVar::XYMR::"+str(ipl)+"::"+s,
-                4,d,true,ipl) { contest=CTL_NONE; }
+                4,d,true,ipl) { contest=CTL_NONE; testfix=false; }
        virtual bool solution(const Assignment& x) const {
          return (x[2] > 0) &&
            (product_mod_value(x,2,x[2]) == x[3]);
@@ -832,7 +840,7 @@ namespace Test { namespace Int {
        ProductModVarEmpty(const std::string& s, const Gecode::IntSet& d,
                           Gecode::IntPropLevel ipl)
          : Test("Arithmetic::ProductModVar::Empty::"+str(ipl)+"::"+s,
-                2,d,true,ipl) { contest=CTL_NONE; }
+                2,d,true,ipl) { contest=CTL_NONE; testfix=false; }
        virtual bool solution(const Assignment& x) const {
          return (x[0] > 0) && (x[1] == (1 % x[0]));
        }
@@ -851,7 +859,7 @@ namespace Test { namespace Int {
        ProductModVarSingleton(const std::string& s, const Gecode::IntSet& d,
                               Gecode::IntPropLevel ipl)
          : Test("Arithmetic::ProductModVar::Singleton::"+str(ipl)+"::"+s,
-                3,d,true,ipl) { contest=CTL_NONE; }
+                3,d,true,ipl) { contest=CTL_NONE; testfix=false; }
        virtual bool solution(const Assignment& x) const {
          if (x[1] <= 0)
            return false;
@@ -877,7 +885,7 @@ namespace Test { namespace Int {
        ProductModVarRepeated(const std::string& s, const Gecode::IntSet& d,
                              Gecode::IntPropLevel ipl)
          : Test("Arithmetic::ProductModVar::Repeated::"+str(ipl)+"::"+s,
-                3,d,true,ipl) { contest=CTL_NONE; }
+                3,d,true,ipl) { contest=CTL_NONE; testfix=false; }
        virtual bool solution(const Assignment& x) const {
          if (x[1] <= 0)
            return false;
@@ -903,7 +911,7 @@ namespace Test { namespace Int {
                                    const Gecode::IntSet& d,
                                    Gecode::IntPropLevel ipl)
          : Test("Arithmetic::ProductModVar::ModFactorAlias::"+
-                str(ipl)+"::"+s,2,d,true,ipl) { contest=CTL_NONE; }
+                str(ipl)+"::"+s,2,d,true,ipl) { contest=CTL_NONE; testfix=false; }
        virtual bool solution(const Assignment& x) const {
          return (x[0] > 0) && (x[1] == 0);
        }
@@ -925,7 +933,7 @@ namespace Test { namespace Int {
                                       const Gecode::IntSet& d,
                                       Gecode::IntPropLevel ipl)
          : Test("Arithmetic::ProductModVar::FactorResultAlias::"+
-                str(ipl)+"::"+s,2,d,true,ipl) { contest=CTL_NONE; }
+                str(ipl)+"::"+s,2,d,true,ipl) { contest=CTL_NONE; testfix=false; }
        virtual bool solution(const Assignment& x) const {
          if (x[1] <= 0)
            return false;
@@ -951,7 +959,7 @@ namespace Test { namespace Int {
                                    const Gecode::IntSet& d,
                                    Gecode::IntPropLevel ipl)
          : Test("Arithmetic::ProductModVar::ModResultAlias::"+
-                str(ipl)+"::"+s,2,d,true,ipl) { contest=CTL_NONE; }
+                str(ipl)+"::"+s,2,d,true,ipl) { contest=CTL_NONE; testfix=false; }
        virtual bool solution(const Assignment&) const { return false; }
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          Gecode::product_mod(home,Gecode::IntVarArgs({x[0]}),
@@ -1154,6 +1162,82 @@ namespace Test { namespace Int {
                !unchanged(y,yv,4))
              return false;
          }
+         return true;
+       }
+     };
+
+     /// Staged assigned leaves above the former Cartesian support cutoff
+     class ArithmeticLargeLeaves : public ::Test::Base {
+     protected:
+       class TestSpace : public Gecode::Space {
+       public:
+         virtual Gecode::Space* copy(void) { return nullptr; }
+       };
+       static bool control(const Gecode::BoolVar& b, Gecode::ReifyMode rm,
+                           bool truth) {
+         if (truth && (rm != Gecode::RM_IMP))
+           return b.assigned() && (b.val() == 1);
+         if (!truth && (rm != Gecode::RM_PMI))
+           return b.assigned() && (b.val() == 0);
+         return true;
+       }
+     public:
+       ArithmeticLargeLeaves(void)
+         : ::Test::Base("Int::Arithmetic::LargeAssignedLeaves") {}
+       virtual bool run(void) {
+         using namespace Gecode;
+         const ReifyMode rms[] = {RM_EQV,RM_IMP,RM_PMI};
+         for (unsigned int r=0; r<3; r++)
+           for (int truth=0; truth<=1; truth++) {
+             {
+               TestSpace home;
+               IntVar a(home,1,1000), c(home,1,1000), g(home,0,1000);
+               BoolVar b(home,0,1);
+               gcd(home,a,c,g,Reify(b,rms[r]));
+               rel(home,a,IRT_EQ,84); rel(home,c,IRT_EQ,30);
+               rel(home,g,IRT_EQ,truth ? 6 : 7);
+               if ((home.status() == SS_FAILED) || !control(b,rms[r],truth))
+                 return false;
+             }
+             {
+               TestSpace home;
+               IntVar d(home,1,1000), n(home,1,1000); BoolVar b(home,0,1);
+               divides(home,d,n,Reify(b,rms[r]));
+               rel(home,d,IRT_EQ,truth ? 7 : 8); rel(home,n,IRT_EQ,84);
+               if ((home.status() == SS_FAILED) || !control(b,rms[r],truth))
+                 return false;
+             }
+             {
+               TestSpace home;
+               IntVarArgs x(home,3,1,1000); IntVar y(home,1,1000000000);
+               BoolVar b(home,0,1); product(home,x,y,Reify(b,rms[r]));
+               rel(home,x[0],IRT_EQ,2); rel(home,x[1],IRT_EQ,3);
+               rel(home,x[2],IRT_EQ,5); rel(home,y,IRT_EQ,truth ? 30 : 31);
+               if ((home.status() == SS_FAILED) || !control(b,rms[r],truth))
+                 return false;
+             }
+             {
+               TestSpace home;
+               IntVarArgs x(home,3,1,1000); IntVar y(home,0,96);
+               BoolVar b(home,0,1);
+               product_mod(home,x,97,y,Reify(b,rms[r]));
+               rel(home,x[0],IRT_EQ,2); rel(home,x[1],IRT_EQ,3);
+               rel(home,x[2],IRT_EQ,5); rel(home,y,IRT_EQ,truth ? 30 : 31);
+               if ((home.status() == SS_FAILED) || !control(b,rms[r],truth))
+                 return false;
+             }
+             {
+               TestSpace home;
+               IntVarArgs x(home,3,1,1000); IntVar m(home,1,1000);
+               IntVar y(home,0,999); BoolVar b(home,0,1);
+               product_mod(home,x,m,y,Reify(b,rms[r]));
+               rel(home,x[0],IRT_EQ,2); rel(home,x[1],IRT_EQ,3);
+               rel(home,x[2],IRT_EQ,5); rel(home,m,IRT_EQ,97);
+               rel(home,y,IRT_EQ,truth ? 30 : 31);
+               if ((home.status() == SS_FAILED) || !control(b,rms[r],truth))
+                 return false;
+             }
+           }
          return true;
        }
      };
@@ -2428,6 +2512,7 @@ namespace Test { namespace Int {
          (void) new ProductModVarBounds;
          (void) new ProductModVarAlgebraic;
          (void) new ProductModVarInactive;
+         (void) new ArithmeticLargeLeaves;
          (void) new ProductBoundsLarge;
          (void) new ProductSimplifySign;
          (void) new ProductPowerAlias;
