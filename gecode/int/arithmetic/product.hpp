@@ -65,6 +65,64 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     return product_interval_mul(a,b.min,b.max);
   }
 
+  /// Compute a nonnegative power, saturating at the integer limit.
+  forceinline int
+  product_power_abs(int x, int n) {
+    const long long int a = x < 0 ? -static_cast<long long int>(x) : x;
+    long long int p=1;
+    for (int i=0; i<n; i++) {
+      if ((a != 0) && (p > static_cast<long long int>(Limits::max)/a))
+        return Limits::max;
+      p *= a;
+    }
+    return static_cast<int>(p);
+  }
+
+  /// Bounds for a repeated occurrence viewed as an integer power.
+  forceinline ProductInterval
+  product_power_interval(IntView x, int n) {
+    const int l=product_power_abs(x.min(),n);
+    const int u=product_power_abs(x.max(),n);
+    if ((n & 1) != 0) {
+      ProductInterval p = {x.min() < 0 ? -l : l,
+                           x.max() < 0 ? -u : u};
+      return p;
+    }
+    ProductInterval p = {
+      ((x.min() <= 0) && (x.max() >= 0)) ? 0 : std::min(l,u),
+      std::max(l,u)
+    };
+    return p;
+  }
+
+  forceinline bool
+  product_power_le(int x, int n, int limit) {
+    long long int p=1;
+    for (int i=0; i<n; i++) {
+      if ((x != 0) && (p > static_cast<long long int>(limit)/x))
+        return false;
+      p *= x;
+    }
+    return true;
+  }
+
+  /// Floor and ceiling of a nonnegative integer root.
+  inline int
+  product_floor_root(int x, int n) {
+    int l=0, u=x;
+    while (l < u) {
+      const int m=l+(u-l+1)/2;
+      if (product_power_le(m,n,x)) l=m; else u=m-1;
+    }
+    return l;
+  }
+
+  forceinline int
+  product_ceil_root(int x, int n) {
+    if (x <= 0) return 0;
+    return product_floor_root(x-1,n)+1;
+  }
+
   /// Compute the hull of quotients by a zero-free interval.
   forceinline ProductInterval
   product_quotient_interval(int ymin, int ymax,
@@ -103,9 +161,18 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   inline ProductInterval
   product_interval(const ViewArray<IntView>& x, int omit=-1) {
     ProductInterval r = {1,1};
-    for (int i=0; i<x.size(); i++)
-      if (i != omit)
-        r = product_interval_mul(r,x[i].min(),x[i].max());
+    for (int i=0; i<x.size(); i++) {
+      if (i == omit) continue;
+      bool first=true;
+      int n=0;
+      for (int j=0; j<x.size(); j++)
+        if ((j != omit) && (x[j] == x[i])) {
+          if (j < i) first=false;
+          n++;
+        }
+      if (first)
+        r = product_interval_mul(r,product_power_interval(x[i],n));
+    }
     return r;
   }
 
@@ -224,6 +291,30 @@ namespace Gecode { namespace Int { namespace Arithmetic {
       GECODE_REWRITE(*this,Product::post(home(*this),z,y,next_neg));
     }
 
+    // Cancel one result occurrence when it is nonzero. If cancellation is
+    // not yet possible, a remaining product that cannot be the required unit
+    // makes zero the only solution for the result.
+    int alias=-1;
+    for (int i=0; i<x.size(); i++)
+      if (x[i] == y) { alias=i; break; }
+    if (alias >= 0) {
+      if (y.assigned() && (y.val() == 0))
+        return home.ES_SUBSUMED(*this);
+      ViewArray<IntView> z(home,x.size()-1);
+      for (int i=0, j=0; i<x.size(); i++)
+        if (i != alias) z[j++]=x[i];
+      const int unit=neg ? -1 : 1;
+      if (!y.in(0)) {
+        IntVar u(home,unit,unit);
+        GECODE_REWRITE(*this,Product::post(home(*this),z,IntView(u)));
+      }
+      ProductInterval q=product_interval(z);
+      if ((unit < q.min) || (unit > q.max)) {
+        GECODE_ME_CHECK(y.eq(home,0));
+        return home.ES_SUBSUMED(*this);
+      }
+    }
+
     // A nonzero result excludes a bounds-visible zero endpoint.
     if (!y.in(0))
       for (int i=0; i<x.size(); i++) {
@@ -284,22 +375,36 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         modified |= me_modified(me);
       }
 
-      // Prefix and suffix products provide every omitted-factor interval in
-      // linear time. They are rebuilt after each narrowing pass.
+      // Group equal views as powers. Prefix and suffix products provide every
+      // omitted group interval in linear time after grouping.
       Region r;
-      ProductInterval* prefix = r.alloc<ProductInterval>(x.size()+1);
-      ProductInterval* suffix = r.alloc<ProductInterval>(x.size()+1);
-      prefix[0] = ProductInterval{1,1};
-      for (int i=0; i<x.size(); i++)
-        prefix[i+1] = product_interval_mul
-          (prefix[i],x[i].min(),x[i].max());
-      suffix[x.size()] = ProductInterval{1,1};
-      for (int i=x.size(); i--;)
-        suffix[i] = product_interval_mul
-          (suffix[i+1],x[i].min(),x[i].max());
-
+      int* representative=r.alloc<int>(x.size());
+      int* exponent=r.alloc<int>(x.size());
+      int groups=0;
       for (int i=0; i<x.size(); i++) {
-        ProductInterval q = product_interval_mul(prefix[i],suffix[i+1]);
+        int g=0;
+        while ((g < groups) && !(x[representative[g]] == x[i])) g++;
+        if (g == groups) {
+          representative[groups]=i; exponent[groups]=1; groups++;
+        } else {
+          exponent[g]++;
+        }
+      }
+      ProductInterval* power=r.alloc<ProductInterval>(groups);
+      ProductInterval* prefix = r.alloc<ProductInterval>(groups+1);
+      ProductInterval* suffix = r.alloc<ProductInterval>(groups+1);
+      prefix[0] = ProductInterval{1,1};
+      for (int g=0; g<groups; g++) {
+        power[g]=product_power_interval(x[representative[g]],exponent[g]);
+        prefix[g+1]=product_interval_mul(prefix[g],power[g]);
+      }
+      suffix[groups] = ProductInterval{1,1};
+      for (int g=groups; g--;)
+        suffix[g]=product_interval_mul(suffix[g+1],power[g]);
+
+      for (int g=0; g<groups; g++) {
+        IntView xi=x[representative[g]];
+        ProductInterval q=product_interval_mul(prefix[g],suffix[g+1]);
         if ((q.min <= 0) && (q.max >= 0) && y.in(0))
           continue;
         if ((q.min == 0) && (q.max == 0))
@@ -325,13 +430,52 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         }
         if (!have || (d.min > d.max))
           return ES_FAILED;
-        {
-          ModEvent me = x[i].gq(home,d.min);
+        const int n=exponent[g];
+        if (n == 1) {
+          ModEvent me=xi.gq(home,d.min);
           if (me_failed(me)) return ES_FAILED;
           modified |= me_modified(me);
-        }
-        {
-          ModEvent me = x[i].lq(home,d.max);
+          me=xi.lq(home,d.max);
+          if (me_failed(me)) return ES_FAILED;
+          modified |= me_modified(me);
+        } else if ((n & 1) != 0) {
+          const int l = d.min < 0 ?
+            -product_floor_root(-d.min,n) : product_ceil_root(d.min,n);
+          const int u = d.max < 0 ?
+            -product_ceil_root(-d.max,n) : product_floor_root(d.max,n);
+          if (l > u) return ES_FAILED;
+          ModEvent me=xi.gq(home,l);
+          if (me_failed(me)) return ES_FAILED;
+          modified |= me_modified(me);
+          me=xi.lq(home,u);
+          if (me_failed(me)) return ES_FAILED;
+          modified |= me_modified(me);
+        } else {
+          if (d.max < 0) return ES_FAILED;
+          const int lo=product_ceil_root(std::max(d.min,0),n);
+          const int hi=product_floor_root(d.max,n);
+          if (lo > hi) return ES_FAILED;
+          bool have_negative=xi.min() <= -lo;
+          bool have_positive=xi.max() >= lo;
+          int l=Limits::max, u=Limits::min;
+          if (have_negative) {
+            l=std::max(xi.min(),-hi); u=std::min(xi.max(),-lo);
+            have_negative=l <= u;
+          }
+          if (have_positive) {
+            const int pl=std::max(xi.min(),lo);
+            const int pu=std::min(xi.max(),hi);
+            have_positive=pl <= pu;
+            if (have_positive) {
+              if (have_negative) { l=std::min(l,pl); u=std::max(u,pu); }
+              else { l=pl; u=pu; }
+            }
+          }
+          if (!have_negative && !have_positive) return ES_FAILED;
+          ModEvent me=xi.gq(home,l);
+          if (me_failed(me)) return ES_FAILED;
+          modified |= me_modified(me);
+          me=xi.lq(home,u);
           if (me_failed(me)) return ES_FAILED;
           modified |= me_modified(me);
         }
@@ -421,7 +565,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   template<ReifyMode rm>
   forceinline PropCost
   ReProduct<rm>::cost(const Space&, const ModEventDelta&) const {
-    return PropCost::linear(PropCost::HI,x.size()+2);
+    return PropCost::quadratic(PropCost::HI,x.size()+2);
   }
 
   template<ReifyMode rm>
