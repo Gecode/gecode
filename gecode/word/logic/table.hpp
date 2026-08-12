@@ -58,20 +58,19 @@ namespace Gecode { namespace Word { namespace Logic {
     return PropCost::linear(PropCost::LO,x.size());
   }
 
+  template<int n>
   forceinline ExecStatus
-  Table::narrow(Home home, ViewArray<WordView>& x,
-                const WordValue* allowed) {
-    assert((x.size() >= 1) && (x.size() <= 4));
-    const int n = x.size();
+  table_narrow(Home home, ViewArray<WordView>& x,
+               const WordValue* allowed) {
     const WordValue mask = x[0].mask();
-    WordValue lo[4], hi[4];
+    WordValue lo[n], hi[n];
     for (int i=0; i<n; i++) {
       lo[i] = x[i].lo();
       hi[i] = x[i].hi();
     }
     bool changed;
     do {
-      WordValue support[4][2] = {{0,0},{0,0},{0,0},{0,0}};
+      WordValue support[n][2] = {};
       const unsigned int tuples = 1U << n;
       for (unsigned int t=0; t<tuples; t++) {
         if (allowed[t] == 0)
@@ -98,6 +97,20 @@ namespace Gecode { namespace Word { namespace Logic {
       if ((lo[i] != x[i].lo()) || (hi[i] != x[i].hi()))
         GECODE_ME_CHECK(x[i].narrow(home,lo[i],hi[i]));
     return ES_OK;
+  }
+
+  forceinline ExecStatus
+  Table::narrow(Home home, ViewArray<WordView>& x,
+                const WordValue* allowed) {
+    assert((x.size() >= 1) && (x.size() <= 4));
+    switch (x.size()) {
+    case 1: return table_narrow<1>(home,x,allowed);
+    case 2: return table_narrow<2>(home,x,allowed);
+    case 3: return table_narrow<3>(home,x,allowed);
+    case 4: return table_narrow<4>(home,x,allowed);
+    default: GECODE_NEVER;
+    }
+    return ES_FAILED;
   }
 
   forceinline ExecStatus
