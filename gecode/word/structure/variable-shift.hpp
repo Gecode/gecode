@@ -86,10 +86,9 @@ namespace Gecode { namespace Word { namespace Structure {
 
     forceinline bool
     backward(FixedOp op, WordView x, WordView result,
-             unsigned int amount, WordValue& lo, WordValue& hi) {
-      WordValue result_lo, result_hi;
-      forward(op,x,amount,result_lo,result_hi);
-      if (!intersects(result_lo,result_hi,result.lo(),result.hi()))
+             unsigned int amount, WordValue shifted_lo,
+             WordValue shifted_hi, WordValue& lo, WordValue& hi) {
+      if (!intersects(shifted_lo,shifted_hi,result.lo(),result.hi()))
         return false;
 
       const unsigned int width = x.width();
@@ -185,13 +184,14 @@ namespace Gecode { namespace Word { namespace Structure {
       for (unsigned int a=0; a<width; a++) {
         if (!amount.in(static_cast<WordValue>(a)))
           continue;
-        WordValue candidate_x_lo, candidate_x_hi;
-        if (!VariableShiftSupport::backward(
-              op,x,result,a,candidate_x_lo,candidate_x_hi))
-          continue;
         WordValue candidate_result_lo, candidate_result_hi;
         VariableShiftSupport::forward(
           op,x,a,candidate_result_lo,candidate_result_hi);
+        WordValue candidate_x_lo, candidate_x_hi;
+        if (!VariableShiftSupport::backward(
+              op,x,result,a,candidate_result_lo,candidate_result_hi,
+              candidate_x_lo,candidate_x_hi))
+          continue;
         candidate_result_lo |= result.lo();
         candidate_result_hi &= result.hi();
         VariableShiftSupport::add(any,x_lo,x_hi,
@@ -235,18 +235,24 @@ namespace Gecode { namespace Word { namespace Structure {
       if (!any)
         return ES_FAILED;
       modified = false;
-      ModEvent me = x.narrow(home,x_lo,x_hi);
-      if (me_failed(me))
-        return ES_FAILED;
-      modified |= me_modified(me);
-      me = amount.narrow(home,amount_lo,amount_hi);
-      if (me_failed(me))
-        return ES_FAILED;
-      modified |= me_modified(me);
-      me = result.narrow(home,result_lo,result_hi);
-      if (me_failed(me))
-        return ES_FAILED;
-      modified |= me_modified(me);
+      if ((x.lo() != x_lo) || (x.hi() != x_hi)) {
+        ModEvent me = x.narrow(home,x_lo,x_hi);
+        if (me_failed(me))
+          return ES_FAILED;
+        modified |= me_modified(me);
+      }
+      if ((amount.lo() != amount_lo) || (amount.hi() != amount_hi)) {
+        ModEvent me = amount.narrow(home,amount_lo,amount_hi);
+        if (me_failed(me))
+          return ES_FAILED;
+        modified |= me_modified(me);
+      }
+      if ((result.lo() != result_lo) || (result.hi() != result_hi)) {
+        ModEvent me = result.narrow(home,result_lo,result_hi);
+        if (me_failed(me))
+          return ES_FAILED;
+        modified |= me_modified(me);
+      }
     } while (modified);
     return ES_OK;
   }
