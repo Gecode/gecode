@@ -196,6 +196,193 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     return ES_FIX;
   }
 
+  inline bool
+  product_mod_var_enumerable(const ViewArray<IntView>& x,
+                             const IntView& m, const IntView& y) {
+    unsigned long long n = static_cast<unsigned long long>(m.size()) * y.size();
+    if (n > product_mod_support_limit)
+      return false;
+    for (int i=0; i<x.size(); i++) {
+      const unsigned long long s = x[i].size();
+      if ((s != 0ULL) && (n > product_mod_support_limit / s))
+        return false;
+      n *= s;
+    }
+    return n <= product_mod_support_limit;
+  }
+
+  inline bool
+  product_mod_var_alias_ok(const ViewArray<IntView>& x,
+                           const IntView& m, const IntView& y,
+                           const int* v) {
+    const int mi = x.size();
+    const int yi = mi+1;
+    if ((m == y) && (v[mi] != v[yi]))
+      return false;
+    for (int i=0; i<x.size(); i++) {
+      for (int j=0; j<i; j++)
+        if ((x[i] == x[j]) && (v[i] != v[j]))
+          return false;
+      if ((x[i] == m) && (v[i] != v[mi]))
+        return false;
+      if ((x[i] == y) && (v[i] != v[yi]))
+        return false;
+    }
+    return true;
+  }
+
+  inline ExecStatus
+  product_mod_var_supports(Space& home, ViewArray<IntView>& x,
+                           IntView m, IntView y) {
+    const int n = x.size();
+    const int nv = n+2;
+    Region r;
+    unsigned int* size = r.alloc<unsigned int>(nv);
+    unsigned int* pos = r.alloc<unsigned int>(nv);
+    int** values = r.alloc<int*>(nv);
+    unsigned long long cap64 = static_cast<unsigned long long>(m.size()) *
+      y.size();
+    for (int i=0; i<n; i++)
+      cap64 *= x[i].size();
+    const unsigned int cap = static_cast<unsigned int>(cap64);
+    int** support = r.alloc<int*>(nv);
+
+    for (int i=0; i<n; i++) {
+      size[i] = x[i].size(); pos[i] = 0;
+      values[i] = r.alloc<int>(size[i]);
+      unsigned int k=0;
+      for (ViewValues<IntView> vi(x[i]); vi(); ++vi)
+        values[i][k++] = vi.val();
+      support[i] = r.alloc<int>(cap);
+    }
+    size[n] = m.size(); pos[n] = 0;
+    values[n] = r.alloc<int>(size[n]);
+    unsigned int k=0;
+    for (ViewValues<IntView> vi(m); vi(); ++vi)
+      values[n][k++] = vi.val();
+    support[n] = r.alloc<int>(cap);
+    size[n+1] = y.size(); pos[n+1] = 0;
+    values[n+1] = r.alloc<int>(size[n+1]);
+    k=0;
+    for (ViewValues<IntView> vi(y); vi(); ++vi)
+      values[n+1][k++] = vi.val();
+    support[n+1] = r.alloc<int>(cap);
+
+    int* tuple = r.alloc<int>(nv);
+    unsigned int ns = 0;
+    bool more = true;
+    while (more) {
+      for (int i=0; i<nv; i++)
+        tuple[i] = values[i][pos[i]];
+      if (product_mod_var_alias_ok(x,m,y,tuple) &&
+          (tuple[n] > 0) &&
+          (product_mod_value(tuple,n,tuple[n]) == tuple[n+1])) {
+        for (int i=0; i<nv; i++)
+          support[i][ns] = tuple[i];
+        ns++;
+      }
+      int i=nv-1;
+      while ((i >= 0) && (++pos[i] == size[i])) {
+        pos[i]=0; i--;
+      }
+      more = i >= 0;
+    }
+
+    if (ns == 0)
+      return ES_FAILED;
+    for (int i=0; i<nv; i++) {
+      std::sort(support[i],support[i]+ns);
+      unsigned int nu=1;
+      for (unsigned int j=1; j<ns; j++)
+        if (support[i][j] != support[i][nu-1])
+          support[i][nu++] = support[i][j];
+      Iter::Values::Array si(support[i],nu);
+      if (i < n) {
+        GECODE_ME_CHECK(x[i].inter_v(home,si,false));
+      } else if (i == n) {
+        GECODE_ME_CHECK(m.inter_v(home,si,false));
+      } else {
+        GECODE_ME_CHECK(y.inter_v(home,si,false));
+      }
+    }
+    return ES_OK;
+  }
+
+  forceinline
+  ProductModVar::ProductModVar(Home home, ViewArray<IntView>& z,
+                               IntView modulus, IntView w)
+    : Propagator(home), x(z), m(modulus), y(w) {
+    x.subscribe(home,*this,PC_INT_DOM);
+    m.subscribe(home,*this,PC_INT_DOM);
+    y.subscribe(home,*this,PC_INT_DOM);
+  }
+
+  inline ExecStatus
+  ProductModVar::post(Home home, ViewArray<IntView>& x, IntView m, IntView y) {
+    if (m == y)
+      return ES_FAILED;
+    GECODE_ME_CHECK(m.gq(home,1));
+    GECODE_ME_CHECK(y.gq(home,0));
+    GECODE_ME_CHECK(y.lq(home,m.max()-1));
+    GECODE_ME_CHECK(m.gq(home,y.min()+1));
+    if (m.assigned())
+      return ProductMod::post(home,x,m.val(),y);
+    (void) new (home) ProductModVar(home,x,m,y);
+    return ES_OK;
+  }
+
+  forceinline
+  ProductModVar::ProductModVar(Space& home, ProductModVar& p)
+    : Propagator(home,p) {
+    x.update(home,p.x); m.update(home,p.m); y.update(home,p.y);
+  }
+
+  forceinline Actor*
+  ProductModVar::copy(Space& home) {
+    return new (home) ProductModVar(home,*this);
+  }
+
+  forceinline PropCost
+  ProductModVar::cost(const Space&, const ModEventDelta&) const {
+    return PropCost::linear(PropCost::HI,x.size()+2);
+  }
+
+  forceinline void
+  ProductModVar::reschedule(Space& home) {
+    x.reschedule(home,*this,PC_INT_DOM);
+    m.reschedule(home,*this,PC_INT_DOM);
+    y.reschedule(home,*this,PC_INT_DOM);
+  }
+
+  inline ExecStatus
+  ProductModVar::propagate(Space& home, const ModEventDelta&) {
+    GECODE_ME_CHECK(m.gq(home,1));
+    GECODE_ME_CHECK(y.gq(home,0));
+    GECODE_ME_CHECK(y.lq(home,m.max()-1));
+    GECODE_ME_CHECK(m.gq(home,y.min()+1));
+    if (m.assigned())
+      GECODE_REWRITE(*this,ProductMod::post(home(*this),x,m.val(),y));
+    if (product_mod_var_enumerable(x,m,y))
+      GECODE_ES_CHECK(product_mod_var_supports(home,x,m,y));
+    if (m.assigned())
+      GECODE_REWRITE(*this,ProductMod::post(home(*this),x,m.val(),y));
+    bool assigned = m.assigned() && y.assigned();
+    for (int i=0; assigned && (i<x.size()); i++)
+      assigned = x[i].assigned();
+    if (assigned)
+      return home.ES_SUBSUMED(*this);
+    return ES_FIX;
+  }
+
+  forceinline size_t
+  ProductModVar::dispose(Space& home) {
+    x.cancel(home,*this,PC_INT_DOM);
+    m.cancel(home,*this,PC_INT_DOM);
+    y.cancel(home,*this,PC_INT_DOM);
+    (void) Propagator::dispose(home);
+    return sizeof(*this);
+  }
+
   template<ReifyMode rm>
   forceinline
   ReProductMod<rm>::ReProductMod(Home home, ViewArray<IntView>& z,
