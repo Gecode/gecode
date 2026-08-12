@@ -50,27 +50,21 @@ namespace Gecode { namespace Word { namespace Arithmetic {
     return PropCost::linear(PropCost::LO,x0.width());
   }
 
-  forceinline bool
-  add_bit_in(WordView x, unsigned int bit, unsigned int value) {
-    const WordValue mask = WordValue(1) << bit;
-    return value != 0 ? (x.hi() & mask) != 0 : (x.lo() & mask) == 0;
+  forceinline unsigned int
+  add_bit_values(WordValue lo, WordValue hi, WordValue mask) {
+    return ((lo&mask) == 0 ? 1U : 0U) |
+      ((hi&mask) != 0 ? 2U : 0U);
   }
 
-  forceinline bool
-  add_transition(WordView x, WordView y, WordView z,
-                 bool xy, bool xz, bool yz, unsigned int bit,
-                 unsigned int carry, unsigned int xv, unsigned int yv,
-                 unsigned int zv, unsigned int& next) {
-    if (!add_bit_in(x,bit,xv) || !add_bit_in(y,bit,yv) ||
-        !add_bit_in(z,bit,zv) ||
-        (xy && (xv != yv)) || (xz && (xv != zv)) ||
-        (yz && (yv != zv)))
-      return false;
-    const unsigned int sum = xv+yv+carry;
-    if (zv != (sum & 1U))
-      return false;
-    next = sum >> 1;
-    return true;
+  forceinline unsigned int
+  add_transition(unsigned int carry, unsigned int tuple) {
+    // Tuple bits encode x, y, and z respectively; 2 denotes no transition.
+    //                       xyz: 000 001 010 011 100 101 110 111
+    static const unsigned char next[2][8] = {
+      {0,2,2,0,2,0,1,2},
+      {2,0,1,2,1,2,2,1}
+    };
+    return next[carry][tuple];
   }
 
   forceinline ExecStatus
@@ -80,21 +74,42 @@ namespace Gecode { namespace Word { namespace Arithmetic {
     const bool xy = x == y;
     const bool xz = x == z;
     const bool yz = y == z;
+    unsigned char allowed[64];
     unsigned char forward[65] = {0};
     unsigned char backward[65] = {0};
+    for (unsigned int bit=0; bit<width; bit++) {
+      const WordValue mask=WordValue(1) << bit;
+      const unsigned int x_values=add_bit_values(x.lo(),x.hi(),mask);
+      const unsigned int y_values=add_bit_values(y.lo(),y.hi(),mask);
+      const unsigned int z_values=add_bit_values(z.lo(),z.hi(),mask);
+      unsigned int tuples=0;
+      for (unsigned int tuple=0; tuple<8; tuple++) {
+        const unsigned int xv=(tuple >> 2) & 1U;
+        const unsigned int yv=(tuple >> 1) & 1U;
+        const unsigned int zv=tuple & 1U;
+        if (((x_values & (1U << xv)) != 0) &&
+            ((y_values & (1U << yv)) != 0) &&
+            ((z_values & (1U << zv)) != 0) &&
+            (!xy || (xv == yv)) && (!xz || (xv == zv)) &&
+            (!yz || (yv == zv)))
+          tuples |= 1U << tuple;
+      }
+      allowed[bit]=static_cast<unsigned char>(tuples);
+      if (tuples == 0)
+        return ES_FAILED;
+    }
     forward[0] = 1U;
     for (unsigned int bit=0; bit<width; bit++) {
       unsigned int states = 0;
       for (unsigned int carry=0; carry<2; carry++) {
         if ((forward[bit] & (1U << carry)) == 0)
           continue;
-        for (unsigned int xv=0; xv<2; xv++)
-          for (unsigned int yv=0; yv<2; yv++)
-            for (unsigned int zv=0; zv<2; zv++) {
-              unsigned int next;
-              if (add_transition(x,y,z,xy,xz,yz,bit,carry,xv,yv,zv,next))
-                states |= 1U << next;
-            }
+        for (unsigned int tuple=0; tuple<8; tuple++)
+          if ((allowed[bit] & (1U << tuple)) != 0) {
+            const unsigned int next=add_transition(carry,tuple);
+            if (next < 2)
+              states |= 1U << next;
+          }
       }
       forward[bit+1] = static_cast<unsigned char>(states);
       if (states == 0)
@@ -108,14 +123,13 @@ namespace Gecode { namespace Word { namespace Arithmetic {
     for (unsigned int bit=width; bit-- > 0;) {
       unsigned int states = 0;
       for (unsigned int carry=0; carry<2; carry++)
-        for (unsigned int xv=0; xv<2; xv++)
-          for (unsigned int yv=0; yv<2; yv++)
-            for (unsigned int zv=0; zv<2; zv++) {
-              unsigned int next;
-              if (add_transition(x,y,z,xy,xz,yz,bit,carry,xv,yv,zv,next) &&
-                  ((backward[bit+1] & (1U << next)) != 0))
-                states |= 1U << carry;
-            }
+        for (unsigned int tuple=0; tuple<8; tuple++)
+          if ((allowed[bit] & (1U << tuple)) != 0) {
+            const unsigned int next=add_transition(carry,tuple);
+            if ((next < 2) &&
+                ((backward[bit+1] & (1U << next)) != 0))
+              states |= 1U << carry;
+          }
       backward[bit] = static_cast<unsigned char>(states);
     }
     if ((backward[0] & 1U) == 0)
@@ -128,15 +142,16 @@ namespace Gecode { namespace Word { namespace Arithmetic {
       for (unsigned int carry=0; carry<2; carry++) {
         if ((forward[bit] & (1U << carry)) == 0)
           continue;
-        for (unsigned int xv=0; xv<2; xv++)
-          for (unsigned int yv=0; yv<2; yv++)
-            for (unsigned int zv=0; zv<2; zv++) {
-              unsigned int next;
-              if (add_transition(x,y,z,xy,xz,yz,bit,carry,xv,yv,zv,next) &&
-                  ((backward[bit+1] & (1U << next)) != 0)) {
-                support[0][xv] = support[1][yv] = support[2][zv] = 1U;
-              }
+        for (unsigned int tuple=0; tuple<8; tuple++)
+          if ((allowed[bit] & (1U << tuple)) != 0) {
+            const unsigned int next=add_transition(carry,tuple);
+            if ((next < 2) &&
+                ((backward[bit+1] & (1U << next)) != 0)) {
+              support[0][(tuple >> 2) & 1U] = 1U;
+              support[1][(tuple >> 1) & 1U] = 1U;
+              support[2][tuple & 1U] = 1U;
             }
+          }
       }
       const WordValue mask = WordValue(1) << bit;
       for (int i=0; i<3; i++) {
@@ -146,9 +161,12 @@ namespace Gecode { namespace Word { namespace Arithmetic {
           lo[i] |= mask;
       }
     }
-    GECODE_ME_CHECK(x.narrow(home,lo[0],hi[0]));
-    GECODE_ME_CHECK(y.narrow(home,lo[1],hi[1]));
-    GECODE_ME_CHECK(z.narrow(home,lo[2],hi[2]));
+    if ((x.lo() != lo[0]) || (x.hi() != hi[0]))
+      GECODE_ME_CHECK(x.narrow(home,lo[0],hi[0]));
+    if ((y.lo() != lo[1]) || (y.hi() != hi[1]))
+      GECODE_ME_CHECK(y.narrow(home,lo[1],hi[1]));
+    if ((z.lo() != lo[2]) || (z.hi() != hi[2]))
+      GECODE_ME_CHECK(z.narrow(home,lo[2],hi[2]));
     return ES_OK;
   }
 

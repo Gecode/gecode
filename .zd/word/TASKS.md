@@ -4,8 +4,8 @@
 
 - Total: 48
 - Ready: 1
-- Blocked: 3
-- Done: 44
+- Blocked: 2
+- Done: 45
 
 | ID | Task | State | Blocked by |
 | --- | --- | --- | --- |
@@ -53,7 +53,7 @@
 | [word-042](tasks/042-add-mixed-word-product-modulo-an-intvar.md) | Add mixed Word product modulo an IntVar | done | word-041 |
 | [word-043](tasks/043-add-reified-mixed-word-product-modulo-an-intvar.md) | Add reified mixed Word product modulo an IntVar | done | word-042 |
 | [word-044](tasks/044-add-realistic-word-modeling-and-search-examples.md) | Add realistic Word modeling and search examples | done | word-043 |
-| [word-045](tasks/045-optimize-binary-word-addition-propagation.md) | Optimize binary Word addition propagation | ready | word-044 |
-| [word-046](tasks/046-optimize-variable-word-shift-propagation.md) | Optimize variable Word shift propagation | blocked | word-045 |
+| [word-045](tasks/045-optimize-binary-word-addition-propagation.md) | Optimize binary Word addition propagation | done | word-044 |
+| [word-046](tasks/046-optimize-variable-word-shift-propagation.md) | Optimize variable Word shift propagation | ready | word-045 |
 | [word-047](tasks/047-optimize-word-element-lookup-and-clone-footprint.md) | Optimize Word element lookup and clone footprint | blocked | word-046 |
 | [word-048](tasks/048-add-a-combined-unsigned-word-divmod-propagator.md) | Add a combined unsigned Word divmod propagator | blocked | word-047 |
