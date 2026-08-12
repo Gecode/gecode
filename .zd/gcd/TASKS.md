@@ -3,13 +3,13 @@
 # Tasks: gcd
 
 - Total: 4
-- Ready: 2
+- Ready: 1
 - Blocked: 0
-- Done: 2
+- Done: 3
 
 | ID | Task | State | Blocked by |
 | --- | --- | --- | --- |
 | [gcd-001](tasks/001-implement-the-ternary-integer-gcd-constraint.md) | Implement ternary and reified integer GCD constraints | done | — |
 | [gcd-002](tasks/002-implement-the-reified-integer-divides-constraint.md) | Implement the reified integer divides constraint | done | — |
-| [gcd-003](tasks/003-implement-ordinary-and-reified-n-ary-product-constraints.md) | Implement ordinary and reified n-ary product constraints | ready | — |
+| [gcd-003](tasks/003-implement-ordinary-and-reified-n-ary-product-constraints.md) | Implement ordinary and reified n-ary product constraints | done | — |
 | [gcd-004](tasks/004-implement-ordinary-and-reified-fixed-modulus-n-ary-product-c.md) | Implement ordinary and reified fixed-modulus n-ary product constraints | ready | — |

@@ -195,6 +195,107 @@ namespace Test { namespace Int {
        }
      };
 
+     /// Evaluate an exact product for testing without overflowing.
+     bool product_value(const Assignment& x, int n, int& product) {
+       for (int i=0; i<n; i++)
+         if (x[i] == 0) {
+           product = 0;
+           return true;
+         }
+       long long int p = 1;
+       for (int i=0; i<n; i++) {
+         if (Gecode::Int::Limits::overflow_mul
+             (p,static_cast<long long int>(x[i])))
+           return false;
+         p *= static_cast<long long int>(x[i]);
+       }
+       if (!Gecode::Int::Limits::valid(p))
+         return false;
+       product = static_cast<int>(p);
+       return true;
+     }
+
+     /// %Test for an ordinary and reified three-factor product
+     class ProductXYZR : public Test {
+     public:
+       ProductXYZR(const std::string& s, const Gecode::IntSet& d,
+                   Gecode::IntPropLevel ipl)
+         : Test("Arithmetic::Product::XYZR::"+str(ipl)+"::"+s,
+                4,d,true,ipl) {}
+       virtual bool solution(const Assignment& x) const {
+         int p;
+         return product_value(x,3,p) && (p == x[3]);
+       }
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
+         Gecode::IntVarArgs f({x[0],x[1],x[2]});
+         Gecode::product(home,f,x[3],ipl);
+       }
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x,
+                         Gecode::Reify r) {
+         Gecode::IntVarArgs f({x[0],x[1],x[2]});
+         Gecode::product(home,f,x[3],r,ipl);
+       }
+     };
+
+     /// %Test for the empty product
+     class ProductEmpty : public Test {
+     public:
+       ProductEmpty(const std::string& s, const Gecode::IntSet& d,
+                    Gecode::IntPropLevel ipl)
+         : Test("Arithmetic::Product::Empty::"+str(ipl)+"::"+s,
+                1,d,true,ipl) {}
+       virtual bool solution(const Assignment& x) const {
+         return x[0] == 1;
+       }
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
+         Gecode::product(home,Gecode::IntVarArgs(),x[0],ipl);
+       }
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x,
+                         Gecode::Reify r) {
+         Gecode::product(home,Gecode::IntVarArgs(),x[0],r,ipl);
+       }
+     };
+
+     /// %Test for the singleton product
+     class ProductSingleton : public Test {
+     public:
+       ProductSingleton(const std::string& s, const Gecode::IntSet& d,
+                        Gecode::IntPropLevel ipl)
+         : Test("Arithmetic::Product::Singleton::"+str(ipl)+"::"+s,
+                2,d,true,ipl) {}
+       virtual bool solution(const Assignment& x) const {
+         return x[0] == x[1];
+       }
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
+         Gecode::product(home,Gecode::IntVarArgs({x[0]}),x[1],ipl);
+       }
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x,
+                         Gecode::Reify r) {
+         Gecode::product(home,Gecode::IntVarArgs({x[0]}),x[1],r,ipl);
+       }
+     };
+
+     /// %Test repeated factors and result aliasing
+     class ProductXXYAlias : public Test {
+     public:
+       ProductXXYAlias(const std::string& s, const Gecode::IntSet& d,
+                       Gecode::IntPropLevel ipl)
+         : Test("Arithmetic::Product::XXYAlias::"+str(ipl)+"::"+s,
+                2,d,true,ipl) {}
+       virtual bool solution(const Assignment& x) const {
+         long long int p = static_cast<long long int>(x[0]) * x[0] * x[1];
+         return (p >= Gecode::Int::Limits::min) &&
+           (p <= Gecode::Int::Limits::max) && (p == x[1]);
+       }
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
+         Gecode::product(home,Gecode::IntVarArgs({x[0],x[0],x[1]}),x[1],ipl);
+       }
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x,
+                         Gecode::Reify r) {
+         Gecode::product(home,Gecode::IntVarArgs({x[0],x[0],x[1]}),x[1],r,ipl);
+       }
+     };
+
      /// %Test for multiplication constraint
      class MultXYZ : public Test {
      public:
@@ -1234,6 +1335,11 @@ namespace Test { namespace Int {
          Gecode::IntSet d(-70,70);
          const int vg[7] = {-12,-6,-1,0,4,9,12};
          Gecode::IntSet g(vg,7);
+         const int vp[5] = {
+           Gecode::Int::Limits::min,-1,0,1,Gecode::Int::Limits::max
+         };
+         Gecode::IntSet p(vp,5);
+         Gecode::IntSet q(-2,2);
 
          (void) new DivMod("A",a);
          (void) new DivMod("B",b);
@@ -1258,6 +1364,13 @@ namespace Test { namespace Int {
            (void) new DividesXY("C",c,ipls.ipl());
            (void) new DividesXY("Sparse",g,ipls.ipl());
            (void) new DividesXX("C",c,ipls.ipl());
+
+           (void) new ProductXYZR("C",q,ipls.ipl());
+           (void) new ProductXYZR("Sparse",g,ipls.ipl());
+           (void) new ProductXYZR("Limits",p,ipls.ipl());
+           (void) new ProductEmpty("C",q,ipls.ipl());
+           (void) new ProductSingleton("C",q,ipls.ipl());
+           (void) new ProductXXYAlias("C",q,ipls.ipl());
 
            (void) new AbsXY("A",a,ipls.ipl());
            (void) new AbsXY("B",b,ipls.ipl());

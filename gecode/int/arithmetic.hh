@@ -861,6 +861,49 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
 namespace Gecode { namespace Int { namespace Arithmetic {
 
+  /** \brief Domain propagator for an exact n-ary product
+   * \ingroup FuncIntProp
+   */
+  class Product : public NaryOnePropagator<IntView,PC_INT_DOM> {
+  protected:
+    using NaryOnePropagator<IntView,PC_INT_DOM>::x;
+    using NaryOnePropagator<IntView,PC_INT_DOM>::y;
+    Product(Home home, ViewArray<IntView>& x, IntView y);
+    Product(Space& home, Product& p);
+  public:
+    static ExecStatus post(Home home, ViewArray<IntView>& x, IntView y);
+    virtual Actor* copy(Space& home);
+    virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+  };
+
+  /** \brief Reified domain propagator for an exact n-ary product
+   * \ingroup FuncIntProp
+   */
+  template<ReifyMode rm>
+  class ReProduct : public Propagator {
+  protected:
+    ViewArray<IntView> x;
+    IntView y;
+    BoolView b;
+    ReProduct(Home home, ViewArray<IntView>& x, IntView y, BoolView b);
+    ReProduct(Space& home, ReProduct<rm>& p);
+  public:
+    static ExecStatus post(Home home, ViewArray<IntView>& x, IntView y,
+                           BoolView b);
+    virtual Actor* copy(Space& home);
+    virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    virtual void reschedule(Space& home);
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+    virtual size_t dispose(Space& home);
+  };
+
+}}}
+
+#include <gecode/int/arithmetic/product.hpp>
+
+namespace Gecode { namespace Int { namespace Arithmetic {
+
   /**
    * \brief Bounds consistent positive division propagator
    *
