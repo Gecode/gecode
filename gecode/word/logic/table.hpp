@@ -64,14 +64,14 @@ namespace Gecode { namespace Word { namespace Logic {
     assert((x.size() >= 1) && (x.size() <= 4));
     const int n = x.size();
     const WordValue mask = x[0].mask();
+    WordValue lo[4], hi[4];
+    for (int i=0; i<n; i++) {
+      lo[i] = x[i].lo();
+      hi[i] = x[i].hi();
+    }
     bool changed;
     do {
       WordValue support[4][2] = {{0,0},{0,0},{0,0},{0,0}};
-      WordValue old_lo[4], old_hi[4];
-      for (int i=0; i<n; i++) {
-        old_lo[i] = x[i].lo();
-        old_hi[i] = x[i].hi();
-      }
       const unsigned int tuples = 1U << n;
       for (unsigned int t=0; t<tuples; t++) {
         if (allowed[t] == 0)
@@ -79,19 +79,24 @@ namespace Gecode { namespace Word { namespace Logic {
         WordValue tuple_support = allowed[t];
         for (int i=0; i<n; i++)
           tuple_support &= ((t & (1U << i)) != 0)
-            ? x[i].hi() : (~x[i].lo() & mask);
+            ? hi[i] : (~lo[i] & mask);
         for (int i=0; i<n; i++)
           support[i][(t >> i) & 1U] |= tuple_support;
       }
-      for (int i=0; i<n; i++) {
-        const WordValue lo = x[i].lo() | (~support[i][0] & mask);
-        const WordValue hi = x[i].hi() & support[i][1];
-        GECODE_ME_CHECK(x[i].narrow(home,lo,hi));
-      }
       changed = false;
-      for (int i=0; i<n; i++)
-        changed |= (x[i].lo() != old_lo[i]) || (x[i].hi() != old_hi[i]);
+      for (int i=0; i<n; i++) {
+        const WordValue next_lo = lo[i] | (~support[i][0] & mask);
+        const WordValue next_hi = hi[i] & support[i][1];
+        if ((next_lo & ~next_hi) != 0)
+          return ES_FAILED;
+        changed |= (next_lo != lo[i]) || (next_hi != hi[i]);
+        lo[i] = next_lo;
+        hi[i] = next_hi;
+      }
     } while (changed);
+    for (int i=0; i<n; i++)
+      if ((lo[i] != x[i].lo()) || (hi[i] != x[i].hi()))
+        GECODE_ME_CHECK(x[i].narrow(home,lo[i],hi[i]));
     return ES_OK;
   }
 
