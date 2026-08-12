@@ -3,7 +3,7 @@ schema_version = 1
 id = "word-048"
 key = "add-combined-unsigned-divmod"
 area = "word"
-status = "open"
+status = "done"
 blocked_by = ["word-047"]
 +++
 # Add a combined unsigned Word divmod propagator
@@ -20,12 +20,22 @@ Models needing both unsigned quotient and remainder can post one conventional Wo
 
 ## Done when
 
-- [ ] The combined relation implements exact assigned quotient/remainder semantics, including divisor zero, and provides sound useful shared forward and inverse propagation.
-- [ ] Normal registered tests cover assigned small widths, zero divisor, representative partial pruning, aliases, failure, clone/recomputation, and subsumption, and compare solutions with separate div plus mod postings.
-- [ ] A focused exact-baseline quotient/remainder model demonstrates whether shared reasoning improves actors, propagation calls, runtime, search, or memory without changing solutions.
+- [x] The combined relation implements exact assigned quotient/remainder semantics, including divisor zero, and provides sound useful shared forward and inverse propagation.
+- [x] Normal registered tests cover assigned small widths, zero divisor, representative partial pruning, aliases, failure, clone/recomputation, and subsumption, and compare solutions with separate div plus mod postings.
+- [x] A focused exact-baseline quotient/remainder model demonstrates whether shared reasoning improves actors, propagation calls, runtime, search, or memory without changing solutions.
 
 ## Validation
 
 - Build the focused Release Word library and gecode-test and run Div, Mod, Divmod, MiniModel arithmetic regression, and Word TestFramework filters.
 - Run temporary separate-versus-combined quotient/remainder benchmarks and profiles with exact solution/checksum parity.
 - Run git diff --check.
+
+## Result
+
+Added and independently verified one combined unsigned Word divmod actor sharing quotient/remainder propagation.
+
+Validation:
+
+- Release Div, Mod, DivisionLifecycle, MiniModel arithmetic regression, and Word TestFramework filters passed.
+- Exact-baseline combined-vs-separate search preserved solutions, checksum, nodes, and failures while reducing actors and propagations by half.
+- zdev checks and git diff --check passed; RSS remained unavailable in the sandbox.

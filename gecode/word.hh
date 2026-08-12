@@ -614,6 +614,11 @@ namespace Gecode {
   GECODE_WORD_EXPORT void mod(Home home, unsigned int width,
                               WordValue value, WordVar y, WordVar result,
                               WordSemantics semantics=WS_SMTLIB);
+  /// Post unsigned division and remainder together
+  GECODE_WORD_EXPORT void divmod(Home home, WordVar dividend,
+                                 WordVar divisor, WordVar quotient,
+                                 WordVar remainder,
+                                 WordSemantics semantics=WS_SMTLIB);
   /// Post signed division \a result = \a x signed_div \a y
   GECODE_WORD_EXPORT void signed_div(Home home, WordVar x, WordVar y,
                                      WordVar result,

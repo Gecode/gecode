@@ -297,6 +297,34 @@ namespace Gecode { namespace Word { namespace Arithmetic {
                            WordView x2);
   };
 
+  /** \brief Native combined unsigned division and remainder propagator
+   *
+   * Exact on assigned words, with shared sound unsigned range-hull and
+   * inverse propagation for quotient and remainder. It does not claim
+   * domain consistency for cube domains.
+   */
+  class DivModBoth : public Propagator {
+  protected:
+    WordView dividend;
+    WordView divisor;
+    WordView quotient;
+    WordView remainder;
+    DivModBoth(Home home, WordView dividend, WordView divisor,
+               WordView quotient, WordView remainder);
+    DivModBoth(Space& home, DivModBoth& p);
+    static ExecStatus narrow(Home home, WordView dividend, WordView divisor,
+                             WordView quotient, WordView remainder);
+  public:
+    virtual Actor* copy(Space& home);
+    virtual PropCost cost(const Space& home,
+                          const ModEventDelta& med) const;
+    virtual void reschedule(Space& home);
+    virtual size_t dispose(Space& home);
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+    static ExecStatus post(Home home, WordView dividend, WordView divisor,
+                           WordView quotient, WordView remainder);
+  };
+
   /// Operations supported by the native signed division actor
   enum SignedDivModOperation {
     SDO_DIV,

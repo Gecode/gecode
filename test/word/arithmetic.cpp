@@ -1193,14 +1193,18 @@ namespace Test { namespace Word {
         Gecode::WordVar y;
         Gecode::WordVar native_div;
         Gecode::WordVar native_mod;
+        Gecode::WordVar separate_div;
+        Gecode::WordVar separate_mod;
         Gecode::WordVar boolean_div;
         Gecode::WordVar boolean_mod;
         DifferentialSpace(void)
           : x(*this,2), y(*this,2), native_div(*this,2),
-            native_mod(*this,2), boolean_div(*this,2),
+            native_mod(*this,2), separate_div(*this,2),
+            separate_mod(*this,2), boolean_div(*this,2),
             boolean_mod(*this,2) {
-          Gecode::div(*this,x,y,native_div);
-          Gecode::mod(*this,x,y,native_mod);
+          Gecode::divmod(*this,x,y,native_div,native_mod);
+          Gecode::div(*this,x,y,separate_div);
+          Gecode::mod(*this,x,y,separate_mod);
 
           Gecode::BoolVarArray bits(*this,8,0,1);
           for (unsigned int bit=0; bit<2; bit++) {
@@ -1227,6 +1231,8 @@ namespace Test { namespace Word {
           y.update(*this,s.y);
           native_div.update(*this,s.native_div);
           native_mod.update(*this,s.native_mod);
+          separate_div.update(*this,s.separate_div);
+          separate_mod.update(*this,s.separate_mod);
           boolean_div.update(*this,s.boolean_div);
           boolean_mod.update(*this,s.boolean_mod);
         }
@@ -1243,7 +1249,10 @@ namespace Test { namespace Word {
             Gecode::dom(s,s.y,y);
             if ((s.status() == Gecode::SS_FAILED) ||
                 !s.native_div.assigned() || !s.native_mod.assigned() ||
+                !s.separate_div.assigned() || !s.separate_mod.assigned() ||
                 !s.boolean_div.assigned() || !s.boolean_mod.assigned() ||
+                (s.native_div.val() != s.separate_div.val()) ||
+                (s.native_mod.val() != s.separate_mod.val()) ||
                 (s.native_div.val() != s.boolean_div.val()) ||
                 (s.native_mod.val() != s.boolean_mod.val()))
               return false;
@@ -1308,8 +1317,8 @@ namespace Test { namespace Word {
           return false;
 
         DivisionSpace source(4,3);
-        Gecode::div(source,source.x[0],source.x[1],source.x[2]);
-        Gecode::mod(source,source.x[0],source.x[1],source.x[3]);
+        Gecode::divmod(source,source.x[0],source.x[1],source.x[2],
+                       source.x[3]);
         if (source.status() == Gecode::SS_FAILED)
           return false;
         DivisionSpace* clone = static_cast<DivisionSpace*>(source.clone());
@@ -1323,10 +1332,33 @@ namespace Test { namespace Word {
         if (!clone_ok)
           return false;
 
+        DivisionSpace combined_alias(4,3);
+        Gecode::dom(combined_alias,combined_alias.x[1],0U);
+        Gecode::divmod(combined_alias,combined_alias.x[0],
+                       combined_alias.x[1],combined_alias.x[2],
+                       combined_alias.x[0]);
+        if ((combined_alias.status() == Gecode::SS_FAILED) ||
+            !combined_alias.x[2].assigned() ||
+            (combined_alias.x[2].val() != 7U) ||
+            (Gecode::PropagatorGroup::all.size(combined_alias) != 0U))
+          return false;
+
+        DivisionSpace combined_failed(4,3);
+        Gecode::dom(combined_failed,combined_failed.x[0],6U);
+        Gecode::dom(combined_failed,combined_failed.x[1],2U);
+        Gecode::dom(combined_failed,combined_failed.x[2],2U);
+        Gecode::dom(combined_failed,combined_failed.x[3],0U);
+        Gecode::divmod(combined_failed,combined_failed.x[0],
+                       combined_failed.x[1],combined_failed.x[2],
+                       combined_failed.x[3]);
+        if (combined_failed.status() != Gecode::SS_FAILED)
+          return false;
+
         try {
           DivisionSpace mismatch(4,3);
           Gecode::WordVar other(mismatch,2);
-          Gecode::div(mismatch,mismatch.x[0],other,mismatch.x[2]);
+          Gecode::divmod(mismatch,mismatch.x[0],other,mismatch.x[2],
+                         mismatch.x[3]);
           return false;
         } catch (const Gecode::Word::WidthMismatch&) {}
         return true;
@@ -1364,6 +1396,19 @@ namespace Test { namespace Word {
             (remainder_inverse.x[0].lo() != 2U) ||
             (remainder_inverse.x[0].hi() != 14U) ||
             (PropagatorGroup::all.size(remainder_inverse) != 1U))
+          return false;
+
+        DivisionSpace combined_inverse(4,4);
+        dom(combined_inverse,combined_inverse.x[1],3U);
+        dom(combined_inverse,combined_inverse.x[2],2U);
+        dom(combined_inverse,combined_inverse.x[3],1U);
+        divmod(combined_inverse,combined_inverse.x[0],
+               combined_inverse.x[1],combined_inverse.x[2],
+               combined_inverse.x[3]);
+        if ((combined_inverse.status() == SS_FAILED) ||
+            !combined_inverse.x[0].assigned() ||
+            (combined_inverse.x[0].val() != 7U) ||
+            (PropagatorGroup::all.size(combined_inverse) != 0U))
           return false;
 
         DivisionSpace zero_divisor_div(3,4);
@@ -1406,8 +1451,7 @@ namespace Test { namespace Word {
           WordVar remainder;
           DivSpace(void) : x(*this,2), y(*this,2), quotient(*this,2),
             remainder(*this,2) {
-            div(*this,x,y,quotient);
-            mod(*this,x,y,remainder);
+            divmod(*this,x,y,quotient,remainder);
             WordVarArgs decision(2);
             decision[0] = x;
             decision[1] = y;

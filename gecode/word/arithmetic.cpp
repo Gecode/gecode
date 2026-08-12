@@ -468,6 +468,20 @@ namespace Gecode {
   }
 
   void
+  divmod(Home home, WordVar dividend, WordVar divisor, WordVar quotient,
+         WordVar remainder, WordSemantics semantics) {
+    if ((dividend.width() != divisor.width()) ||
+        (dividend.width() != quotient.width()) ||
+        (dividend.width() != remainder.width()))
+      throw Word::WidthMismatch("Word::divmod");
+    check_semantics(semantics,"Word::divmod");
+    GECODE_POST;
+    GECODE_ES_FAIL(Word::Arithmetic::DivModBoth::post(
+      home,Word::WordView(dividend),Word::WordView(divisor),
+      Word::WordView(quotient),Word::WordView(remainder)));
+  }
+
+  void
   signed_div(Home home, WordVar x, WordVar y, WordVar result,
              WordSemantics semantics) {
     check_widths(x,y,result,"Word::signed_div");
