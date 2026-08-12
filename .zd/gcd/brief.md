@@ -102,6 +102,12 @@ public APIs, and focused regression coverage.
   and directed floor/ceiling division for zero-free or one-sided cofactors.
 - Product-mod specialisation uses modular algebra rather than ordinary-product
   sign monotonicity, which does not survive Euclidean reduction.
+- None of the propagators introduced in this area use Cartesian domain-tuple
+  enumeration, support tables, or projected tuple supports as a propagation
+  strategy. Prefer bounds, sign and zero classification, divisibility,
+  congruence, and algebraic rewrites. A fully assigned relation may be
+  evaluated directly; reified relations otherwise remain conservative when
+  entailment or disentailment cannot be established algebraically.
 
 ## Open questions
 
@@ -123,8 +129,10 @@ coverage also includes nonpositive candidates, sparse modulus domains,
 modulus/result or modulus/factor aliasing, and inactive implication behavior.
 Focused propagation cases additionally cover all strict and non-strict sign
 classes, zero-containing cofactors, assigned zero/one/minus-one factors,
-repeated factors, result aliases, small-modulus residue sets, and large-domain
-algebraic pruning that does not depend on Cartesian enumeration.
+repeated factors, result aliases, and large-domain algebraic pruning that does
+not depend on Cartesian enumeration or support projection. Include cases above
+the former 200,000-tuple cutoff so useful behavior and fully assigned checking
+cannot accidentally depend on that threshold.
 Reuse existing arithmetic test helpers and commands; do not create new test
 infrastructure or an exhaustive large-domain performance matrix.
 
