@@ -29,6 +29,13 @@ public APIs, and focused regression coverage.
   empty, repeated, and aliased variable domains as applicable; their actors
   clone, subscribe, reschedule, rewrite, and subsume according to existing
   Gecode conventions.
+- Exact product propagation exploits strict and non-strict sign classes,
+  zero-aware inverse bounds, assigned units, repeated factors, powers, and
+  result aliases rather than treating every factor occurrence independently.
+- Product-mod propagation exploits algebraic cases that remain useful beyond
+  capped Cartesian enumeration, including zero factors, factors equal to the
+  modulus, small fixed moduli, empty products, and divisor reasoning for an
+  assigned exact product or product-result difference.
 - Focused integer tests validate solutions and propagation through the existing
   test harness.
 
@@ -44,6 +51,9 @@ public APIs, and focused regression coverage.
   not required.
 - Variable-modulus `product_mod` accepts one `IntVar` modulus; MiniModel and
   FlatZinc exposure remain outside scope.
+- Gecode has no proof-logging subsystem. Proof encodings, proof certificates,
+  and proof-logging APIs are outside scope; multiplication proof-logging work
+  may motivate mathematical case analysis but not implementation artifacts.
 
 ## Terms
 
@@ -61,6 +71,9 @@ public APIs, and focused regression coverage.
   `0 <= r < m`. Thus `product_mod([],m) = 1 mod m`, including zero when `m=1`.
 - Reification follows Gecode's `Reify` modes: equivalence (`RM_EQV`), forward
   implication (`RM_IMP`), and reverse implication (`RM_PMI`).
+- Multiplication sign classes distinguish zero, positive, nonnegative,
+  negative, nonpositive, and mixed domains. Strict sign classes exclude zero;
+  non-strict classes retain zero as a semantically important case.
 
 ## Decisions
 
@@ -82,6 +95,13 @@ public APIs, and focused regression coverage.
 - For a variable modulus, positivity is part of the `product_mod` relation.
   The ordinary constraint enforces it. Reification controls the full
   proposition, so inactive implications do not narrow the modulus or result.
+- Exact-product inverse propagation follows the complete zero-aware quotient
+  cases used by Gecode-style multiplication: no filtering when cofactor and
+  result both contain zero, failure for a zero cofactor with a nonzero result,
+  magnitude filtering when the cofactor spans zero but the result does not,
+  and directed floor/ceiling division for zero-free or one-sided cofactors.
+- Product-mod specialisation uses modular algebra rather than ordinary-product
+  sign monotonicity, which does not survive Euclidean reduction.
 
 ## Open questions
 
@@ -101,6 +121,10 @@ aliasing, exact-product overflow boundaries, and all reification modes. For
 and singleton arrays, aliasing, and all reification modes. Variable-modulus
 coverage also includes nonpositive candidates, sparse modulus domains,
 modulus/result or modulus/factor aliasing, and inactive implication behavior.
+Focused propagation cases additionally cover all strict and non-strict sign
+classes, zero-containing cofactors, assigned zero/one/minus-one factors,
+repeated factors, result aliases, small-modulus residue sets, and large-domain
+algebraic pruning that does not depend on Cartesian enumeration.
 Reuse existing arithmetic test helpers and commands; do not create new test
 infrastructure or an exhaustive large-domain performance matrix.
 
