@@ -120,6 +120,11 @@ public APIs, and focused regression coverage.
   punch many holes into an integer domain merely because exact divisors or
   residues can be generated; retain conservative bounds and perform exact
   checking at assignment unless interior removal has a clear, bounded benefit.
+- Prefer bounds subscriptions for bounds propagators even when an interior
+  domain change, such as removal of zero, could enable stronger pruning.
+  Missing that wakeup is acceptable weak monotonicity; do not subscribe to all
+  domain changes solely to observe it. Use the repository's weakly monotonic
+  execution-status convention so propagation remains lifecycle-correct.
 
 ## Open questions
 
