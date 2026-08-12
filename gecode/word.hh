@@ -106,7 +106,7 @@ namespace Gecode {
    * | Variable `shift_left`, `logical_shift_right`, `arithmetic_shift_right` | Bounded word-level cube-hull actor | Assigned semantics and partial-amount soundness |
    * | `add`, n-ary `add`, `neg`, `sub` | Native bounded-carry actors | Assigned semantics, partial-domain soundness, aliases, and lifecycle |
    * | `mult` | Word-level schoolbook conditional-shift/add decomposition | Assigned semantics, Boolean differential parity, and partial-domain soundness |
-   * | `product_mod` | Direct mixed Word/Int actor with overflow-safe assigned evaluation | Positive modulus, result cube hull, assigned semantics, and lifecycle |
+   * | `product_mod` | Direct and reified mixed Word/Int actors with overflow-safe assigned evaluation | Positive modulus, result cube hull, assigned semantics, all reification modes, and lifecycle |
    * | Unsigned `div`, `mod` | Compact native range-hull and low-bit actors | SMT-LIB zero-divisor semantics, Boolean parity, and sound partial/inverse propagation |
    * | `signed_div`, `signed_rem`, `signed_mod` | Compact native signed actors with fixed-divisor and sign-bit propagation | SMT-LIB zero-divisor and overflow semantics, Boolean parity, and partial-domain soundness |
    * | `branch`, `assign` and their selectors | Native unknown-bit choices | Archive, no-good, clone, and recomputation lifecycle |
@@ -574,6 +574,14 @@ namespace Gecode {
    */
   GECODE_WORD_EXPORT void product_mod(Home home, WordVar x, WordVar y,
                                       IntVar modulus, WordVar result);
+  /** \brief Post reified mathematical product modulo a positive modulus
+   *
+   * The positive-modulus contract is unconditional. The relation
+   * \f$result=(x\cdot y)\bmod modulus\f$ is reified by \a r.
+   */
+  GECODE_WORD_EXPORT void product_mod(Home home, WordVar x, WordVar y,
+                                      IntVar modulus, WordVar result,
+                                      Reify r);
   /// Post unary arithmetic overflow predicate \a wot for \a x
   GECODE_WORD_EXPORT void overflow(Home home, WordVar x,
                                    WordOverflowType wot, BoolVar b,

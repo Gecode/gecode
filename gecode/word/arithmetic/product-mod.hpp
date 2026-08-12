@@ -181,6 +181,169 @@ namespace Gecode { namespace Word { namespace Arithmetic {
     return (es == ES_FIX) ? ES_FIX : home.ES_SUBSUMED(*this);
   }
 
+  forceinline Int::RelTest
+  product_mod_test(WordView x, WordView y, Int::IntView modulus,
+                   WordView result) {
+    if (result.lo() >= static_cast<WordValue>(modulus.max()))
+      return Int::RT_FALSE;
+
+    WordValue value;
+    bool known=false;
+    if (modulus.assigned() && (modulus.val() == 1)) {
+      value=0;
+      known=true;
+    } else if ((x.assigned() && (x.val() == 0)) ||
+               (y.assigned() && (y.val() == 0))) {
+      value=0;
+      known=true;
+    } else if (x.assigned() && y.assigned()) {
+      if (modulus.assigned()) {
+        value=product_mod_value(
+          x.val(),y.val(),static_cast<WordValue>(modulus.val()));
+        known=true;
+      } else {
+        const WordValue limit=static_cast<WordValue>(modulus.min()-1);
+        if (x.val() <= limit/y.val()) {
+          value=x.val()*y.val();
+          known=true;
+        }
+      }
+    }
+    if (!known)
+      return Int::RT_MAYBE;
+    if (!result.in(value))
+      return Int::RT_FALSE;
+    return result.assigned() ? Int::RT_TRUE : Int::RT_MAYBE;
+  }
+
+  template<ReifyMode rm>
+  forceinline
+  ReProductMod<rm>::ReProductMod(Home home, WordView x0, WordView y0,
+                                 Int::IntView modulus0, WordView result0,
+                                 Int::BoolView b0)
+    : Propagator(home), x(x0), y(y0), modulus(modulus0), result(result0),
+      b(b0) {
+    x.subscribe(home,*this,PC_WORD_BITS);
+    y.subscribe(home,*this,PC_WORD_BITS);
+    modulus.subscribe(home,*this,Int::PC_INT_BND);
+    result.subscribe(home,*this,PC_WORD_BITS);
+    b.subscribe(home,*this,Int::PC_BOOL_VAL);
+  }
+
+  template<ReifyMode rm>
+  forceinline
+  ReProductMod<rm>::ReProductMod(Space& home, ReProductMod& p)
+    : Propagator(home,p) {
+    x.update(home,p.x);
+    y.update(home,p.y);
+    modulus.update(home,p.modulus);
+    result.update(home,p.result);
+    b.update(home,p.b);
+  }
+
+  template<ReifyMode rm>
+  forceinline Actor*
+  ReProductMod<rm>::copy(Space& home) {
+    return new (home) ReProductMod(home,*this);
+  }
+
+  template<ReifyMode rm>
+  forceinline PropCost
+  ReProductMod<rm>::cost(const Space&, const ModEventDelta&) const {
+    return PropCost::linear(PropCost::LO,x.width());
+  }
+
+  template<ReifyMode rm>
+  forceinline void
+  ReProductMod<rm>::reschedule(Space& home) {
+    x.reschedule(home,*this,PC_WORD_BITS);
+    y.reschedule(home,*this,PC_WORD_BITS);
+    modulus.reschedule(home,*this,Int::PC_INT_BND);
+    result.reschedule(home,*this,PC_WORD_BITS);
+    b.reschedule(home,*this,Int::PC_BOOL_VAL);
+  }
+
+  template<ReifyMode rm>
+  forceinline size_t
+  ReProductMod<rm>::dispose(Space& home) {
+    x.cancel(home,*this,PC_WORD_BITS);
+    y.cancel(home,*this,PC_WORD_BITS);
+    modulus.cancel(home,*this,Int::PC_INT_BND);
+    result.cancel(home,*this,PC_WORD_BITS);
+    b.cancel(home,*this,Int::PC_BOOL_VAL);
+    (void) Propagator::dispose(home);
+    return sizeof(*this);
+  }
+
+  template<ReifyMode rm>
+  ExecStatus
+  ReProductMod<rm>::post(Home home, WordView x, WordView y,
+                         Int::IntView modulus, WordView result,
+                         Int::BoolView b) {
+    GECODE_ME_CHECK(modulus.gq(home,1));
+    if (b.one()) {
+      if (rm == RM_PMI)
+        return ES_OK;
+      return ProductMod::post(home,x,y,modulus,result);
+    }
+    if (b.zero() && (rm == RM_IMP))
+      return ES_OK;
+
+    switch (product_mod_test(x,y,modulus,result)) {
+    case Int::RT_TRUE:
+      if (b.zero())
+        return ES_FAILED;
+      if (rm != RM_IMP)
+        GECODE_ME_CHECK(b.one(home));
+      return ES_OK;
+    case Int::RT_FALSE:
+      if (b.one())
+        return ES_FAILED;
+      if (rm != RM_PMI)
+        GECODE_ME_CHECK(b.zero(home));
+      return ES_OK;
+    case Int::RT_MAYBE:
+      (void) new (home) ReProductMod(home,x,y,modulus,result,b);
+      return ES_OK;
+    default:
+      GECODE_NEVER;
+    }
+    return ES_FAILED;
+  }
+
+  template<ReifyMode rm>
+  ExecStatus
+  ReProductMod<rm>::propagate(Space& home, const ModEventDelta&) {
+    if (b.one()) {
+      if (rm == RM_PMI)
+        return home.ES_SUBSUMED(*this);
+      GECODE_REWRITE(*this,(ProductMod::post(
+        home(*this),x,y,modulus,result)));
+    }
+    if (b.zero() && (rm == RM_IMP))
+      return home.ES_SUBSUMED(*this);
+
+    switch (product_mod_test(x,y,modulus,result)) {
+    case Int::RT_TRUE:
+      if (b.zero())
+        return ES_FAILED;
+      if (rm != RM_IMP)
+        GECODE_ME_CHECK(b.one_none(home));
+      break;
+    case Int::RT_FALSE:
+      if (b.one())
+        return ES_FAILED;
+      if (rm != RM_PMI)
+        GECODE_ME_CHECK(b.zero_none(home));
+      break;
+    case Int::RT_MAYBE:
+      return ES_FIX;
+    default:
+      GECODE_NEVER;
+    }
+    return home.ES_SUBSUMED(*this);
+  }
+
 }}}
 
 // STATISTICS: word-prop

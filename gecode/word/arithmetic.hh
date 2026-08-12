@@ -225,6 +225,30 @@ namespace Gecode { namespace Word { namespace Arithmetic {
                            Int::IntView modulus, WordView result);
   };
 
+  /// Reified mixed Word/Int mathematical product-modulo propagator
+  template<ReifyMode rm>
+  class ReProductMod : public Propagator {
+  protected:
+    WordView x;
+    WordView y;
+    Int::IntView modulus;
+    WordView result;
+    Int::BoolView b;
+    ReProductMod(Home home, WordView x, WordView y,
+                 Int::IntView modulus, WordView result, Int::BoolView b);
+    ReProductMod(Space& home, ReProductMod& p);
+  public:
+    virtual Actor* copy(Space& home);
+    virtual PropCost cost(const Space& home,
+                          const ModEventDelta& med) const;
+    virtual void reschedule(Space& home);
+    virtual size_t dispose(Space& home);
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+    static ExecStatus post(Home home, WordView x, WordView y,
+                           Int::IntView modulus, WordView result,
+                           Int::BoolView b);
+  };
+
   /** \brief Native unsigned division propagator
    *
    * Exact on assigned words, with sound unsigned range-hull propagation and

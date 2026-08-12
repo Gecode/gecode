@@ -328,6 +328,32 @@ namespace Gecode {
   }
 
   void
+  product_mod(Home home, WordVar x, WordVar y, IntVar modulus,
+              WordVar result, Reify r) {
+    check_widths(x,y,result,"Word::product_mod");
+    GECODE_POST;
+    Word::WordView xv(x), yv(y), rv(result);
+    Int::IntView mv(modulus);
+    Int::BoolView bv(r.var());
+    switch (r.mode()) {
+    case RM_EQV:
+      GECODE_ES_FAIL((Word::Arithmetic::ReProductMod<RM_EQV>::post(
+        home,xv,yv,mv,rv,bv)));
+      break;
+    case RM_IMP:
+      GECODE_ES_FAIL((Word::Arithmetic::ReProductMod<RM_IMP>::post(
+        home,xv,yv,mv,rv,bv)));
+      break;
+    case RM_PMI:
+      GECODE_ES_FAIL((Word::Arithmetic::ReProductMod<RM_PMI>::post(
+        home,xv,yv,mv,rv,bv)));
+      break;
+    default:
+      throw Word::UnknownReifyMode("Word::product_mod");
+    }
+  }
+
+  void
   overflow(Home home, WordVar x, WordOverflowType wot, BoolVar b,
            WordSemantics semantics) {
     check_semantics(semantics,"Word::overflow");
