@@ -3,8 +3,8 @@
 ## Objective
 
 Expose ordinary and reified integer constraints for GCD, divisibility, n-ary
-product, and fixed-modulus n-ary product, with sound propagation, public APIs,
-and focused regression coverage.
+product, and fixed- or variable-modulus n-ary product, with sound propagation,
+public APIs, and focused regression coverage.
 
 ## Success
 
@@ -23,6 +23,8 @@ and focused regression coverage.
 - The public integer API can post ordinary and reified
   `product_mod(home, factors, modulus, result, ..., ipl)` constraints for a
   fixed positive integer modulus and canonical Euclidean residue.
+- The public integer API can also post ordinary and reified `product_mod`
+  constraints whose positive modulus is an integer variable.
 - All constraints propagate soundly across negative, zero, sparse, assigned,
   empty, repeated, and aliased variable domains as applicable; their actors
   clone, subscribe, reschedule, rewrite, and subsume according to existing
@@ -40,8 +42,8 @@ and focused regression coverage.
 - Do not introduce a new test harness or broad solver-wide test matrix.
 - Only the reified `divides` API is in scope; a separate non-reified overload is
   not required.
-- `product_mod` accepts a fixed integer modulus only; an `IntVar` modulus
-  overload is outside scope.
+- Variable-modulus `product_mod` accepts one `IntVar` modulus; MiniModel and
+  FlatZinc exposure remain outside scope.
 
 ## Terms
 
@@ -55,7 +57,7 @@ and focused regression coverage.
   the empty product equal to one. Implementations must not silently overflow
   while computing supports or bounds.
 - `product_mod(x,m)` is the unique residue `r` such that
-  `r` is congruent to `product(x)` modulo the fixed positive integer `m` and
+  `m > 0`, `r` is congruent to `product(x)` modulo `m`, and
   `0 <= r < m`. Thus `product_mod([],m) = 1 mod m`, including zero when `m=1`.
 - Reification follows Gecode's `Reify` modes: equivalence (`RM_EQV`), forward
   implication (`RM_IMP`), and reverse implication (`RM_PMI`).
@@ -77,6 +79,9 @@ and focused regression coverage.
 - Propagate the positive n-ary exact-product relation from variable bounds in
   general, without making useful propagation depend on Cartesian support
   enumeration or a small-domain tuple threshold.
+- For a variable modulus, positivity is part of the `product_mod` relation.
+  The ordinary constraint enforces it. Reification controls the full
+  proposition, so inactive implications do not narrow the modulus or result.
 
 ## Open questions
 
@@ -93,9 +98,11 @@ normalization, the `(0,0)` case, and all reification modes. For `product`, cover
 empty and singleton arrays, zeros, signs, repeated or aliased factors, result
 aliasing, exact-product overflow boundaries, and all reification modes. For
 `product_mod`, cover modulus one, negative factors, canonical residues, empty
-and singleton arrays, aliasing, and all reification modes. Reuse existing
-arithmetic test helpers and commands; do not create new test infrastructure or
-an exhaustive large-domain performance matrix.
+and singleton arrays, aliasing, and all reification modes. Variable-modulus
+coverage also includes nonpositive candidates, sparse modulus domains,
+modulus/result or modulus/factor aliasing, and inactive implication behavior.
+Reuse existing arithmetic test helpers and commands; do not create new test
+infrastructure or an exhaustive large-domain performance matrix.
 
 ## Validation
 
