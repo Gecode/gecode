@@ -34,19 +34,39 @@
 
 namespace Gecode { namespace Int { namespace Arithmetic {
 
-  const unsigned long long product_support_limit = 200000ULL;
+  /// A representable, conservative interval for an exact product.
+  struct ProductInterval {
+    int min;
+    int max;
+  };
 
-  /// Return whether the Cartesian product can be enumerated safely.
-  inline bool
-  product_enumerable(const ViewArray<IntView>& x, const IntView& y) {
-    unsigned long long n = y.size();
-    for (int i=0; i<x.size(); i++) {
-      unsigned long long s = x[i].size();
-      if ((s != 0ULL) && (n > product_support_limit / s))
-        return false;
-      n *= s;
-    }
-    return n <= product_support_limit;
+  /// Multiply two representable intervals, clipping out-of-range endpoints.
+  forceinline ProductInterval
+  product_interval_mul(ProductInterval a, int bmin, int bmax) {
+    long long int p[4] = {
+      static_cast<long long int>(a.min) * bmin,
+      static_cast<long long int>(a.min) * bmax,
+      static_cast<long long int>(a.max) * bmin,
+      static_cast<long long int>(a.max) * bmax
+    };
+    long long int l = *std::min_element(p,p+4);
+    long long int u = *std::max_element(p,p+4);
+    l = std::max(static_cast<long long int>(Limits::min),
+                 std::min(l,static_cast<long long int>(Limits::max)));
+    u = std::max(static_cast<long long int>(Limits::min),
+                 std::min(u,static_cast<long long int>(Limits::max)));
+    ProductInterval r = {static_cast<int>(l),static_cast<int>(u)};
+    return r;
+  }
+
+  /// Compute product bounds, optionally omitting one factor.
+  inline ProductInterval
+  product_interval(const ViewArray<IntView>& x, int omit=-1) {
+    ProductInterval r = {1,1};
+    for (int i=0; i<x.size(); i++)
+      if (i != omit)
+        r = product_interval_mul(r,x[i].min(),x[i].max());
+    return r;
   }
 
   /// Evaluate a tuple without overflowing internal arithmetic.
@@ -69,97 +89,29 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     return true;
   }
 
-  /// Check that one enumerated tuple respects all aliased views.
-  inline bool
-  product_alias_ok(const ViewArray<IntView>& x, const IntView& y,
-                   const int* v) {
-    for (int i=0; i<x.size(); i++) {
-      for (int j=0; j<i; j++)
-        if ((x[i] == x[j]) && (v[i] != v[j]))
-          return false;
-      if ((x[i] == y) && (v[i] != v[x.size()]))
-        return false;
-    }
-    return true;
-  }
-
-  /** Enumerate supports. When \a filter is true, intersect every view with
-   * its supports. Return whether satisfying and violating assignments exist.
-   */
-  inline ExecStatus
-  product_supports(Space& home, ViewArray<IntView>& x, IntView y,
-                   bool positive, bool filter,
-                   bool& has_true, bool& has_false) {
-    const int n = x.size();
+  /// Determine the relation when bounds or assignments prove it.
+  inline RelTest
+  product_status(const ViewArray<IntView>& x, const IntView& y) {
+    ProductInterval p = product_interval(x);
+    if ((p.max < y.min()) || (p.min > y.max()))
+      return RT_FALSE;
+    bool assigned = true;
+    for (int i=0; assigned && (i<x.size()); i++)
+      assigned = x[i].assigned();
+    if (!assigned)
+      return RT_MAYBE;
     Region r;
-    unsigned int* size = r.alloc<unsigned int>(n+1);
-    unsigned int* pos = r.alloc<unsigned int>(n+1);
-    int** values = r.alloc<int*>(n+1);
-    unsigned long long cap64 = y.size();
-    for (int i=0; i<n; i++) cap64 *= x[i].size();
-    const unsigned int cap = static_cast<unsigned int>(cap64);
-    int** support = filter ? r.alloc<int*>(n+1) : nullptr;
-
-    for (int i=0; i<n; i++) {
-      size[i] = x[i].size(); pos[i] = 0;
-      values[i] = r.alloc<int>(size[i]);
-      unsigned int k=0;
-      for (ViewValues<IntView> vi(x[i]); vi(); ++vi)
-        values[i][k++] = vi.val();
-      if (filter) support[i] = r.alloc<int>(cap);
-    }
-    size[n] = y.size(); pos[n] = 0;
-    values[n] = r.alloc<int>(size[n]);
-    unsigned int k=0;
-    for (ViewValues<IntView> vi(y); vi(); ++vi)
-      values[n][k++] = vi.val();
-    if (filter) support[n] = r.alloc<int>(cap);
-
-    int* tuple = r.alloc<int>(n+1);
-    unsigned int ns = 0;
-    has_true = has_false = false;
-    bool more = true;
-    while (more) {
-      for (int i=0; i<=n; i++) tuple[i] = values[i][pos[i]];
-      if (product_alias_ok(x,y,tuple)) {
-        int p;
-        bool relation = product_value(tuple,n,p) && (p == tuple[n]);
-        has_true |= relation; has_false |= !relation;
-        if (filter && (relation == positive)) {
-          for (int i=0; i<=n; i++) support[i][ns] = tuple[i];
-          ns++;
-        }
-      }
-      int i=n;
-      while ((i >= 0) && (++pos[i] == size[i])) {
-        pos[i]=0; i--;
-      }
-      more = i >= 0;
-    }
-
-    if (!filter)
-      return ES_OK;
-    if (ns == 0)
-      return ES_FAILED;
-    for (int i=0; i<=n; i++) {
-      std::sort(support[i],support[i]+ns);
-      unsigned int nu=1;
-      for (unsigned int j=1; j<ns; j++)
-        if (support[i][j] != support[i][nu-1])
-          support[i][nu++] = support[i][j];
-      Iter::Values::Array si(support[i],nu);
-      if (i < n) {
-        GECODE_ME_CHECK(x[i].inter_v(home,si,false));
-      } else {
-        GECODE_ME_CHECK(y.inter_v(home,si,false));
-      }
-    }
-    return ES_OK;
+    int* v = r.alloc<int>(x.size());
+    for (int i=0; i<x.size(); i++) v[i] = x[i].val();
+    int q;
+    if (!product_value(v,x.size(),q) || !y.in(q))
+      return RT_FALSE;
+    return y.assigned() ? RT_TRUE : RT_MAYBE;
   }
 
   forceinline
   Product::Product(Home home, ViewArray<IntView>& z, IntView w)
-    : NaryOnePropagator<IntView,PC_INT_DOM>(home,z,w) {}
+    : NaryOnePropagator<IntView,PC_INT_BND>(home,z,w) {}
 
   inline ExecStatus
   Product::post(Home home, ViewArray<IntView>& x, IntView y) {
@@ -173,7 +125,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   forceinline
   Product::Product(Space& home, Product& p)
-    : NaryOnePropagator<IntView,PC_INT_DOM>(home,p) {}
+    : NaryOnePropagator<IntView,PC_INT_BND>(home,p) {}
 
   forceinline Actor*
   Product::copy(Space& home) {
@@ -182,20 +134,83 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   forceinline PropCost
   Product::cost(const Space&, const ModEventDelta&) const {
-    return PropCost::linear(PropCost::HI,x.size()+1);
+    return PropCost::quadratic(PropCost::LO,x.size()+1);
   }
 
   inline ExecStatus
   Product::propagate(Space& home, const ModEventDelta&) {
-    if (product_enumerable(x,y)) {
-      bool ht, hf;
-      GECODE_ES_CHECK(product_supports(home,x,y,true,true,ht,hf));
-    }
-    bool assigned = y.assigned();
-    for (int i=0; assigned && (i<x.size()); i++)
-      assigned = x[i].assigned();
-    if (assigned)
+    bool modified;
+    do {
+      modified = false;
+
+      ProductInterval p = product_interval(x);
+      {
+        ModEvent me = y.gq(home,p.min);
+        if (me_failed(me)) return ES_FAILED;
+        modified |= me_modified(me);
+      }
+      {
+        ModEvent me = y.lq(home,p.max);
+        if (me_failed(me)) return ES_FAILED;
+        modified |= me_modified(me);
+      }
+
+      for (int i=0; i<x.size(); i++) {
+        ProductInterval q = product_interval(x,i);
+        if ((q.min > 0) || (q.max < 0)) {
+          long long int c[4] = {
+            ceil_div_xx(static_cast<long long int>(y.min()),
+                        static_cast<long long int>(q.min)),
+            ceil_div_xx(static_cast<long long int>(y.min()),
+                        static_cast<long long int>(q.max)),
+            ceil_div_xx(static_cast<long long int>(y.max()),
+                        static_cast<long long int>(q.min)),
+            ceil_div_xx(static_cast<long long int>(y.max()),
+                        static_cast<long long int>(q.max))
+          };
+          long long int f[4] = {
+            floor_div_xx(static_cast<long long int>(y.min()),
+                         static_cast<long long int>(q.min)),
+            floor_div_xx(static_cast<long long int>(y.min()),
+                         static_cast<long long int>(q.max)),
+            floor_div_xx(static_cast<long long int>(y.max()),
+                         static_cast<long long int>(q.min)),
+            floor_div_xx(static_cast<long long int>(y.max()),
+                         static_cast<long long int>(q.max))
+          };
+          long long int l = *std::min_element(c,c+4);
+          long long int u = *std::max_element(f,f+4);
+          l = std::max(l,static_cast<long long int>(Limits::min));
+          u = std::min(u,static_cast<long long int>(Limits::max));
+          if (l > u)
+            return ES_FAILED;
+          {
+            ModEvent me = x[i].gq(home,static_cast<int>(l));
+            if (me_failed(me)) return ES_FAILED;
+            modified |= me_modified(me);
+          }
+          {
+            ModEvent me = x[i].lq(home,static_cast<int>(u));
+            if (me_failed(me)) return ES_FAILED;
+            modified |= me_modified(me);
+          }
+        }
+      }
+    } while (modified);
+
+    bool factors_assigned = true;
+    for (int i=0; factors_assigned && (i<x.size()); i++)
+      factors_assigned = x[i].assigned();
+    if (factors_assigned) {
+      Region r;
+      int* v = r.alloc<int>(x.size());
+      for (int i=0; i<x.size(); i++) v[i] = x[i].val();
+      int p;
+      if (!product_value(v,x.size(),p))
+        return ES_FAILED;
+      GECODE_ME_CHECK(y.eq(home,p));
       return home.ES_SUBSUMED(*this);
+    }
     return ES_FIX;
   }
 
@@ -271,26 +286,24 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     }
     if (b.zero()) {
       if (rm == RM_IMP) return home.ES_SUBSUMED(*this);
-      if (product_enumerable(x,y)) {
-        bool ht, hf;
-        GECODE_ES_CHECK(product_supports(home,x,y,false,true,ht,hf));
-        if (!ht) return home.ES_SUBSUMED(*this);
+      switch (product_status(x,y)) {
+      case RT_TRUE: return ES_FAILED;
+      case RT_FALSE: return home.ES_SUBSUMED(*this);
+      case RT_MAYBE: return ES_FIX;
+      default: GECODE_NEVER;
       }
+    }
+    switch (product_status(x,y)) {
+    case RT_TRUE:
+      if (rm != RM_IMP) GECODE_ME_CHECK(b.one_none(home));
+      return home.ES_SUBSUMED(*this);
+    case RT_FALSE:
+      if (rm != RM_PMI) GECODE_ME_CHECK(b.zero_none(home));
+      return home.ES_SUBSUMED(*this);
+    case RT_MAYBE:
       return ES_FIX;
+    default: GECODE_NEVER;
     }
-    if (product_enumerable(x,y)) {
-      bool ht, hf;
-      GECODE_ES_CHECK(product_supports(home,x,y,true,false,ht,hf));
-      if (!ht) {
-        if (rm != RM_PMI) GECODE_ME_CHECK(b.zero_none(home));
-        return home.ES_SUBSUMED(*this);
-      }
-      if (!hf) {
-        if (rm != RM_IMP) GECODE_ME_CHECK(b.one_none(home));
-        return home.ES_SUBSUMED(*this);
-      }
-    }
-    return ES_FIX;
   }
 
   template<ReifyMode rm>
