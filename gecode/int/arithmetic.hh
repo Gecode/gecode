@@ -769,6 +769,64 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 namespace Gecode { namespace Int { namespace Arithmetic {
 
   /**
+   * \brief Domain propagator for \f$\gcd(x_0,x_1)=x_2\f$
+   *
+   * Requires \code #include <gecode/int/arithmetic.hh> \endcode
+   * \ingroup FuncIntProp
+   */
+  class Gcd : public TernaryPropagator<IntView,PC_INT_DOM> {
+  protected:
+    using TernaryPropagator<IntView,PC_INT_DOM>::x0;
+    using TernaryPropagator<IntView,PC_INT_DOM>::x1;
+    using TernaryPropagator<IntView,PC_INT_DOM>::x2;
+    /// Constructor for cloning \a p
+    Gcd(Space& home, Gcd& p);
+    /// Constructor for posting
+    Gcd(Home home, IntView x0, IntView x1, IntView x2);
+  public:
+    /// Post propagator
+    static ExecStatus post(Home home, IntView x0, IntView x1, IntView x2);
+    /// Copy propagator during cloning
+    virtual Actor* copy(Space& home);
+    /// Cost function
+    virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    /// Perform propagation
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+  };
+
+  /** \brief Reified domain propagator for \f$\gcd(x_0,x_1)=x_2\f$ */
+  template<ReifyMode rm>
+  class ReGcd : public Propagator {
+  protected:
+    IntView x0, x1, x2;
+    BoolView b;
+    /// Constructor for posting
+    ReGcd(Home home, IntView x0, IntView x1, IntView x2, BoolView b);
+    /// Constructor for cloning \a p
+    ReGcd(Space& home, ReGcd<rm>& p);
+  public:
+    /// Post propagator
+    static ExecStatus post(Home home, IntView x0, IntView x1, IntView x2,
+                           BoolView b);
+    /// Copy propagator during cloning
+    virtual Actor* copy(Space& home);
+    /// Cost function
+    virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    /// Reschedule propagator
+    virtual void reschedule(Space& home);
+    /// Perform propagation
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+    /// Delete propagator and return its size
+    virtual size_t dispose(Space& home);
+  };
+
+}}}
+
+#include <gecode/int/arithmetic/gcd.hpp>
+
+namespace Gecode { namespace Int { namespace Arithmetic {
+
+  /**
    * \brief Bounds consistent positive division propagator
    *
    * This propagator provides division for positive views only.
@@ -857,4 +915,3 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 #endif
 
 // STATISTICS: int-prop
-
