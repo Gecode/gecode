@@ -15,13 +15,15 @@ Every propagator added in the gcd area uses bounds or algebraic reasoning instea
 ## Boundaries
 
 - Audit Gcd/ReGcd, ReDivides, Product/ReProduct, ProductMod/ReProductMod, and ProductModVar/ReProductModVar, including shared helpers.
+- Gcd/ReGcd and ReDivides must remove their 200,000-tuple thresholds, Cartesian domain scans, support arrays, and projected filtering rather than retaining enumeration for small domains.
 - Do not change the public relation semantics or add proof-logging artifacts.
-- Direct evaluation is allowed only when all variables relevant to the relation are assigned; do not collect or project tuple supports.
+- Direct evaluation of a complete relation is allowed when all relevant variables are assigned. Computing one determined output from assigned inputs is also allowed; do not enumerate combinations of unassigned domains or collect/project tuple supports.
 - Use the existing integer arithmetic test harness and the focused testing level in the area brief.
 
 ## Done when
 
 - [ ] No audited propagator or helper enumerates a Cartesian product of variable domains, allocates tuple-support tables, or filters domains by projected tuple supports.
+- [ ] Gcd/ReGcd and ReDivides use bounds and number-theoretic identities for propagation and conservative algebraic reification status, with no small-domain enumeration fallback.
 - [ ] Ordinary propagation is expressed through sound bounds, sign/zero classification, divisibility, congruence, or algebraic rewrites, with conservative behavior where those deductions are inconclusive.
 - [ ] Reified entailment and disentailment use sound bounds or algebraic tests and exact evaluation only for fully assigned relations; negative or unfixed cases wait conservatively instead of enumerating supports.
 - [ ] Propagation conditions, subscriptions, and costs match the information actually used, including bounds subscriptions where interior-domain events are no longer required.
