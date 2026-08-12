@@ -440,6 +440,167 @@ namespace Test { namespace Int {
        }
      };
 
+     /// %Test for an ordinary two-factor product with a variable modulus
+     class ProductModVarXYMR : public Test {
+     public:
+       ProductModVarXYMR(const std::string& s, const Gecode::IntSet& d,
+                         Gecode::IntPropLevel ipl)
+         : Test("Arithmetic::ProductModVar::XYMR::"+str(ipl)+"::"+s,
+                4,d,false,ipl) {}
+       virtual bool solution(const Assignment& x) const {
+         return (x[2] > 0) &&
+           (product_mod_value(x,2,x[2]) == x[3]);
+       }
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
+         Gecode::product_mod(home,Gecode::IntVarArgs({x[0],x[1]}),
+                             x[2],x[3],ipl);
+       }
+     };
+
+     /// %Test for the empty product with a variable modulus
+     class ProductModVarEmpty : public Test {
+     public:
+       ProductModVarEmpty(const std::string& s, const Gecode::IntSet& d,
+                          Gecode::IntPropLevel ipl)
+         : Test("Arithmetic::ProductModVar::Empty::"+str(ipl)+"::"+s,
+                2,d,false,ipl) {}
+       virtual bool solution(const Assignment& x) const {
+         return (x[0] > 0) && (x[1] == (1 % x[0]));
+       }
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
+         Gecode::product_mod(home,Gecode::IntVarArgs(),x[0],x[1],ipl);
+       }
+     };
+
+     /// %Test for a singleton product with a variable modulus
+     class ProductModVarSingleton : public Test {
+     public:
+       ProductModVarSingleton(const std::string& s, const Gecode::IntSet& d,
+                              Gecode::IntPropLevel ipl)
+         : Test("Arithmetic::ProductModVar::Singleton::"+str(ipl)+"::"+s,
+                3,d,false,ipl) {}
+       virtual bool solution(const Assignment& x) const {
+         if (x[1] <= 0)
+           return false;
+         int r = x[0] % x[1];
+         if (r < 0)
+           r += x[1];
+         return r == x[2];
+       }
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
+         Gecode::product_mod(home,Gecode::IntVarArgs({x[0]}),
+                             x[1],x[2],ipl);
+       }
+     };
+
+     /// %Test repeated factors with a variable modulus
+     class ProductModVarRepeated : public Test {
+     public:
+       ProductModVarRepeated(const std::string& s, const Gecode::IntSet& d,
+                             Gecode::IntPropLevel ipl)
+         : Test("Arithmetic::ProductModVar::Repeated::"+str(ipl)+"::"+s,
+                3,d,false,ipl) {}
+       virtual bool solution(const Assignment& x) const {
+         if (x[1] <= 0)
+           return false;
+         long long int a = x[0] % x[1];
+         if (a < 0) a += x[1];
+         return (a*a) % x[1] == x[2];
+       }
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
+         Gecode::product_mod(home,Gecode::IntVarArgs({x[0],x[0]}),
+                             x[1],x[2],ipl);
+       }
+     };
+
+     /// %Test modulus/factor aliasing
+     class ProductModVarModFactorAlias : public Test {
+     public:
+       ProductModVarModFactorAlias(const std::string& s,
+                                   const Gecode::IntSet& d,
+                                   Gecode::IntPropLevel ipl)
+         : Test("Arithmetic::ProductModVar::ModFactorAlias::"+
+                str(ipl)+"::"+s,2,d,false,ipl) {}
+       virtual bool solution(const Assignment& x) const {
+         return (x[0] > 0) && (x[1] == 0);
+       }
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
+         Gecode::product_mod(home,Gecode::IntVarArgs({x[0]}),
+                             x[0],x[1],ipl);
+       }
+     };
+
+     /// %Test factor/result aliasing
+     class ProductModVarFactorResultAlias : public Test {
+     public:
+       ProductModVarFactorResultAlias(const std::string& s,
+                                      const Gecode::IntSet& d,
+                                      Gecode::IntPropLevel ipl)
+         : Test("Arithmetic::ProductModVar::FactorResultAlias::"+
+                str(ipl)+"::"+s,2,d,false,ipl) {}
+       virtual bool solution(const Assignment& x) const {
+         if (x[1] <= 0)
+           return false;
+         int r = x[0] % x[1];
+         if (r < 0) r += x[1];
+         return r == x[0];
+       }
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
+         Gecode::product_mod(home,Gecode::IntVarArgs({x[0]}),
+                             x[1],x[0],ipl);
+       }
+     };
+
+     /// %Test modulus/result aliasing, which is necessarily inconsistent
+     class ProductModVarModResultAlias : public Test {
+     public:
+       ProductModVarModResultAlias(const std::string& s,
+                                   const Gecode::IntSet& d,
+                                   Gecode::IntPropLevel ipl)
+         : Test("Arithmetic::ProductModVar::ModResultAlias::"+
+                str(ipl)+"::"+s,2,d,false,ipl) {}
+       virtual bool solution(const Assignment&) const { return false; }
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
+         Gecode::product_mod(home,Gecode::IntVarArgs({x[0]}),
+                             x[1],x[1],ipl);
+       }
+     };
+
+     /// Targeted bounds and arithmetic checks for a variable modulus
+     class ProductModVarBounds : public ::Test::Base {
+     protected:
+       class TestSpace : public Gecode::Space {
+       public:
+         virtual Gecode::Space* copy(void) { return nullptr; }
+       };
+     public:
+       ProductModVarBounds(void)
+         : ::Test::Base("Int::Arithmetic::ProductModVar::Bounds") {}
+       virtual bool run(void) {
+         using namespace Gecode;
+         {
+           TestSpace home;
+           const int vm[5] = {-7,0,1,4,9};
+           IntVar m(home,IntSet(vm,5));
+           IntVar y(home,-5,12);
+           product_mod(home,IntVarArgs(),m,y);
+           if ((home.status() == SS_FAILED) || (m.min() != 1) ||
+               (y.min() != 0) || (y.max() >= m.max()))
+             return false;
+         }
+         {
+           TestSpace home;
+           IntVar x(home,Gecode::Int::Limits::max,Gecode::Int::Limits::max);
+           IntVar m(home,Gecode::Int::Limits::max,Gecode::Int::Limits::max);
+           IntVar y(home,0,0);
+           product_mod(home,IntVarArgs({x}),m,y);
+           if (home.status() == SS_FAILED)
+             return false;
+         }
+         return true;
+       }
+     };
+
      /// %Test that a nonpositive modular-product modulus is rejected
      class ProductModInvalidModulus : public ::Test::Base {
      protected:
@@ -1547,6 +1708,15 @@ namespace Test { namespace Int {
            (void) new ProductModSingleton("C",g,5,ipls.ipl());
            (void) new ProductModXXYAlias("C",q,5,ipls.ipl());
 
+           (void) new ProductModVarXYMR("C",q,ipls.ipl());
+           (void) new ProductModVarXYMR("Sparse",g,ipls.ipl());
+           (void) new ProductModVarEmpty("C",q,ipls.ipl());
+           (void) new ProductModVarSingleton("C",q,ipls.ipl());
+           (void) new ProductModVarRepeated("C",q,ipls.ipl());
+           (void) new ProductModVarModFactorAlias("C",q,ipls.ipl());
+           (void) new ProductModVarFactorResultAlias("C",q,ipls.ipl());
+           (void) new ProductModVarModResultAlias("C",q,ipls.ipl());
+
            (void) new AbsXY("A",a,ipls.ipl());
            (void) new AbsXY("B",b,ipls.ipl());
            (void) new AbsXY("C",c,ipls.ipl());
@@ -1697,6 +1867,7 @@ namespace Test { namespace Int {
            (void) new ArgMinBoolShared(i,false);
          }
          (void) new ProductModInvalidModulus;
+         (void) new ProductModVarBounds;
          (void) new ProductBoundsLarge;
        }
      };

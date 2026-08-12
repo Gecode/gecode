@@ -921,6 +921,26 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
   };
 
+  /** \brief Domain propagator for a variable-modulus n-ary product
+   * \ingroup FuncIntProp
+   */
+  class ProductModVar : public Propagator {
+  protected:
+    ViewArray<IntView> x;
+    IntView m;
+    IntView y;
+    ProductModVar(Home home, ViewArray<IntView>& x, IntView m, IntView y);
+    ProductModVar(Space& home, ProductModVar& p);
+  public:
+    static ExecStatus post(Home home, ViewArray<IntView>& x,
+                           IntView m, IntView y);
+    virtual Actor* copy(Space& home);
+    virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    virtual void reschedule(Space& home);
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+    virtual size_t dispose(Space& home);
+  };
+
   /** \brief Reified domain propagator for a fixed-modulus n-ary product
    * \ingroup FuncIntProp
    */

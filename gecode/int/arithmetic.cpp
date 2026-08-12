@@ -440,6 +440,15 @@ namespace Gecode {
     }
   }
 
+  void
+  product_mod(Home home, const IntVarArgs& x, IntVar m, IntVar y,
+              IntPropLevel) {
+    using namespace Int;
+    GECODE_POST;
+    ViewArray<IntView> xv(home,x);
+    GECODE_ES_FAIL(Arithmetic::ProductModVar::post(home,xv,m,y));
+  }
+
 
   void
   divmod(Home home, IntVar x0, IntVar x1, IntVar x2, IntVar x3,
