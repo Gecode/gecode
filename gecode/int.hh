@@ -3062,6 +3062,24 @@ namespace Gecode {
   divides(Home home, IntVar divisor, IntVar dividend, Reify r,
           IntPropLevel ipl=IPL_DEF);
 
+  /** \brief Constrain \a y to the exact product of the variables in \a x
+   *
+   * The product of an empty array is one.
+   * \ingroup TaskModelInt
+   */
+  GECODE_INT_EXPORT void
+  product(Home home, const IntVarArgs& x, IntVar y,
+          IntPropLevel ipl=IPL_DEF);
+
+  /** \brief Reify whether \a y is the exact product of the variables in \a x
+   *
+   * The product of an empty array is one.
+   * \ingroup TaskModelInt
+   */
+  GECODE_INT_EXPORT void
+  product(Home home, const IntVarArgs& x, IntVar y, Reify r,
+          IntPropLevel ipl=IPL_DEF);
+
   /** \brief Post propagator for \f$x_0\ \mathrm{div}\ x_1=x_2 \land x_0\ \mathrm{mod}\ x_1 = x_3\f$
    *
    * Supports bounds consistency (\a ipl = IPL_BND, default).

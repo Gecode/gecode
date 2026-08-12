@@ -352,7 +352,7 @@ INTHDR0 = \
 	idx-view.hh idx-view.hpp div.hh div.hpp \
 	exec.hh exec/when.hpp \
 	arithmetic/abs.hpp arithmetic/max.hpp arithmetic/argmax.hpp \
-	arithmetic/mult.hpp arithmetic/gcd.hpp arithmetic/divides.hpp arithmetic/divmod.hpp \
+	arithmetic/mult.hpp arithmetic/gcd.hpp arithmetic/divides.hpp arithmetic/product.hpp arithmetic/divmod.hpp \
 	arithmetic/pow-ops.hpp arithmetic/pow.hpp arithmetic/nroot.hpp \
 	bool/or.hpp bool/eq.hpp bool/lq.hpp bool/eqv.hpp bool/base.hpp \
 	bool/clause.hpp bool/ite.hpp \
