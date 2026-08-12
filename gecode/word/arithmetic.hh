@@ -61,9 +61,35 @@ namespace Gecode { namespace Word { namespace Arithmetic {
                            WordView x2);
   };
 
+  /**
+   * \brief Low-prefix propagator for fixed-width modular multiplication
+   *
+   * The propagator is exact for assigned operands and propagates fixed low
+   * prefixes in both directions, including modular inversion of odd factors.
+   * This is deliberately weaker than bit consistency for multiplication.
+   */
+  class Mult : public TernaryPropagator<WordView,PC_WORD_BITS> {
+  protected:
+    using TernaryPropagator<WordView,PC_WORD_BITS>::x0;
+    using TernaryPropagator<WordView,PC_WORD_BITS>::x1;
+    using TernaryPropagator<WordView,PC_WORD_BITS>::x2;
+    Mult(Home home, WordView x0, WordView x1, WordView x2);
+    Mult(Space& home, Mult& p);
+    static ExecStatus narrow(Home home, WordView x0, WordView x1,
+                             WordView x2);
+  public:
+    virtual Actor* copy(Space& home);
+    virtual PropCost cost(const Space& home,
+                          const ModEventDelta& med) const;
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+    static ExecStatus post(Home home, WordView x0, WordView x1,
+                           WordView x2);
+  };
+
 }}}
 
 #include <gecode/word/arithmetic/add.hpp>
+#include <gecode/word/arithmetic/mult.hpp>
 
 #endif
 

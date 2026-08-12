@@ -3,7 +3,7 @@ schema_version = 1
 id = "word-024"
 key = "native-mult"
 area = "word"
-status = "open"
+status = "done"
 blocked_by = ["word-023"]
 +++
 # Implement and measure a native modular multiplication propagator
@@ -21,10 +21,10 @@ Modular multiplication uses one compact native Gecode actor with useful bidirect
 
 ## Done when
 
-- [ ] A dedicated ternary multiplication actor is exact for assigned operands/results, detects incompatible fixed information, and performs documented useful forward and backward cube narrowing.
-- [ ] The ordinary multiplication posting path uses the actor with conventional alias, copy, scheduling, cost, and subsumption behavior.
-- [ ] Focused tests cover assigned small-width semantics, representative partial and inverse cases, constants, aliases, failure, clone/recomputation, and solution parity with the Boolean reference.
-- [ ] A focused Release width matrix records the crossover, actor/propagation reduction, runtime, peak RSS, and any search-strength change relative to both the previous word decomposition and Boolean schoolbook model.
+- [x] A dedicated ternary multiplication actor is exact for assigned operands/results, detects incompatible fixed information, and performs documented useful forward and backward cube narrowing.
+- [x] The ordinary multiplication posting path uses the actor with conventional alias, copy, scheduling, cost, and subsumption behavior.
+- [x] Focused tests cover assigned small-width semantics, representative partial and inverse cases, constants, aliases, failure, clone/recomputation, and solution parity with the Boolean reference.
+- [x] A focused Release width matrix records the crossover, actor/propagation reduction, runtime, peak RSS, and any search-strength change relative to both the previous word decomposition and Boolean schoolbook model.
 
 ## Validation
 
@@ -32,3 +32,14 @@ Modular multiplication uses one compact native Gecode actor with useful bidirect
 - Run focused Word multiplication tests and Word TestFramework smoke test.
 - Run assigned and partial/inverse multiplication benchmark slices and verify result/solution parity.
 - Run git diff --check.
+
+## Result
+
+Replaced schoolbook modular multiplication with one native low-prefix and modular-inverse propagator.
+
+Validation:
+
+- Release Mult, MultLifecycle, and TestFramework selections passed.
+- Focused tests passed assigned widths 1-4, partial prefix/inverse rules, constants, aliases, failure, clone/recomputation, and Boolean parity.
+- Corrected three-way benchmark against exact parent cf5af7f150 preserved all solution/node/failure counts and showed lower runtime, actors, propagation calls, and memory.
+- Independent Spec and Standards verification passed; git diff --check passed.

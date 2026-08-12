@@ -67,45 +67,10 @@ namespace Gecode {
       post_add(home,x,negative_y,result);
     }
 
-    /**
-     * The word-level schoolbook decomposition creates one conditional shifted
-     * term per multiplier bit and folds the terms through modular addition.
-     * Controls remain WordVars rather than a Boolean bit-blast. Each addition
-     * contributes its five ordinary carry variables.
-     */
     void post_mult(Home home, WordVar x, WordVar y, WordVar result) {
-      const unsigned int width = x.width();
-      WordVar zero(home,width,0,0);
-      WordVar accumulator;
-      for (unsigned int bit=0; bit<width; bit++) {
-        WordVar control_bit(home,1);
-        extract(home,y,bit,1,control_bit);
-        WordVar control_mask(home,width);
-        sign_extend(home,control_bit,width,control_mask);
-
-        WordVar shifted(x);
-        if (bit != 0) {
-          shifted = WordVar(home,width);
-          shift_left(home,x,bit,shifted);
-        }
-
-        WordVar term;
-        if (width == 1)
-          term = result;
-        else
-          term = WordVar(home,width);
-        ite(home,control_mask,shifted,zero,term);
-
-        if (bit == 0) {
-          accumulator = term;
-        } else if (bit+1 == width) {
-          post_add(home,accumulator,term,result);
-        } else {
-          WordVar next(home,width);
-          post_add(home,accumulator,term,next);
-          accumulator = next;
-        }
-      }
+      GECODE_ES_FAIL(Word::Arithmetic::Mult::post(
+                       home,Word::WordView(x),Word::WordView(y),
+                       Word::WordView(result)));
     }
 
     void check_semantics(WordSemantics semantics, const char* location) {

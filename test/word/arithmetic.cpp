@@ -591,6 +591,70 @@ namespace Test { namespace Word {
           (s.x[2].val() == result);
       }
 
+      static bool assigned_small(void) {
+        for (unsigned int width=1; width<=4; width++) {
+          const Gecode::WordValue mask = Gecode::Word::width_mask(width);
+          for (Gecode::WordValue x=0; x<=mask; x++)
+            for (Gecode::WordValue y=0; y<=mask; y++) {
+              MultiplicationSpace s(3,width);
+              Gecode::dom(s,s.x[0],x);
+              Gecode::dom(s,s.x[1],y);
+              Gecode::mult(s,s.x[0],s.x[1],s.x[2]);
+              if ((s.status() == Gecode::SS_FAILED) ||
+                  !s.x[2].assigned() ||
+                  (s.x[2].val() != ((x*y) & mask)))
+                return false;
+            }
+        }
+        return true;
+      }
+
+      static bool prefix_propagation(void) {
+        // Fixed low operand prefixes determine the same product prefix.
+        MultiplicationSpace forward;
+        Gecode::dom(forward,forward.x[0],3U,15U);
+        Gecode::dom(forward,forward.x[1],2U,14U);
+        Gecode::mult(forward,forward.x[0],forward.x[1],forward.x[2]);
+        if ((forward.status() == Gecode::SS_FAILED) ||
+            ((forward.x[2].lo() & 3U) != 2U) ||
+            ((forward.x[2].hi() & 3U) != 2U))
+          return false;
+
+        // Odd factors are invertible modulo 2^width.
+        MultiplicationSpace inverse;
+        Gecode::dom(inverse,inverse.x[0],3U);
+        Gecode::dom(inverse,inverse.x[2],9U);
+        Gecode::mult(inverse,inverse.x[0],inverse.x[1],inverse.x[2]);
+        if ((inverse.status() == Gecode::SS_FAILED) ||
+            !inverse.x[1].assigned() || (inverse.x[1].val() != 3U))
+          return false;
+
+        // Even factors determine the low prefix left after their power of two.
+        MultiplicationSpace even;
+        Gecode::dom(even,even.x[0],4U);
+        Gecode::dom(even,even.x[2],12U);
+        Gecode::mult(even,even.x[0],even.x[1],even.x[2]);
+        if ((even.status() == Gecode::SS_FAILED) ||
+            ((even.x[1].lo() & 3U) != 3U) ||
+            ((even.x[1].hi() & 3U) != 3U))
+          return false;
+
+        MultiplicationSpace zeros;
+        Gecode::dom(zeros,zeros.x[0],0U,12U);
+        Gecode::dom(zeros,zeros.x[1],0U,14U);
+        Gecode::mult(zeros,zeros.x[0],zeros.x[1],zeros.x[2]);
+        if ((zeros.status() == Gecode::SS_FAILED) ||
+            ((zeros.x[2].hi() & 7U) != 0U))
+          return false;
+
+        MultiplicationSpace incompatible;
+        Gecode::dom(incompatible,incompatible.x[0],4U);
+        Gecode::dom(incompatible,incompatible.x[2],2U);
+        Gecode::mult(incompatible,incompatible.x[0],incompatible.x[1],
+                     incompatible.x[2]);
+        return incompatible.status() == Gecode::SS_FAILED;
+      }
+
       static bool lifecycle(void) {
         if (!assigned(0U,15U,0U) || !assigned(1U,15U,15U) ||
             !assigned(15U,15U,1U) || !assigned(2U,4U,8U))
@@ -644,19 +708,15 @@ namespace Test { namespace Word {
       }
 
       static bool counters(void) {
-        const unsigned int width = 3;
-        MultiplicationSpace s(3,width);
+        MultiplicationSpace s(3,3);
         Gecode::mult(s,s.x[0],s.x[1],s.x[2]);
-        // Per width: extract, sign extension, ite, and all but one shift;
-        // each of the width-1 additions contributes six propagators. There is
-        // no public variable-allocation counter for the ordinary intermediates.
-        const unsigned int expected = (4U*width - 1U) + 6U*(width-1U);
-        if (Gecode::PropagatorGroup::all.size(s) != expected)
+        // Multiplication is one actor and allocates no model-level terms.
+        if (Gecode::PropagatorGroup::all.size(s) != 1U)
           return false;
         Gecode::StatusStatistics statistics;
         if (s.status(statistics) == Gecode::SS_FAILED)
           return false;
-        return statistics.propagate >= expected;
+        return statistics.propagate >= 1U;
       }
 
       static bool search_recomputation(void) {
@@ -706,7 +766,8 @@ namespace Test { namespace Word {
       MultiplicationLifecycle(void)
         : Base("Word::Arithmetic::MultLifecycle") {}
       virtual bool run(void) {
-        return partial() && boolean_parity() && lifecycle() && counters() &&
+        return partial() && assigned_small() && prefix_propagation() &&
+          boolean_parity() && lifecycle() && counters() &&
           search_recomputation();
       }
     };

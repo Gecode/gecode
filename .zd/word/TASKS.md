@@ -4,8 +4,8 @@
 
 - Total: 26
 - Ready: 1
-- Blocked: 2
-- Done: 23
+- Blocked: 1
+- Done: 24
 
 | ID | Task | State | Blocked by |
 | --- | --- | --- | --- |
@@ -32,6 +32,6 @@
 | [word-021](tasks/021-add-differential-word-benchmarking-with-a-private-corpus-bou.md) | Add differential word benchmarking with a private corpus boundary | done | word-007, word-018, word-019 |
 | [word-022](tasks/022-complete-word-module-build-packaging-and-lifecycle-validatio.md) | Complete word module build packaging and lifecycle validation | done | word-020, word-021 |
 | [word-023](tasks/023-implement-a-native-modular-addition-propagator.md) | Implement a native modular addition propagator | done | — |
-| [word-024](tasks/024-implement-and-measure-a-native-modular-multiplication-propag.md) | Implement and measure a native modular multiplication propagator | ready | word-023 |
-| [word-025](tasks/025-benchmark-and-optimize-word-logic-table-propagation.md) | Benchmark and optimize Word Logic Table propagation | blocked | word-024 |
+| [word-024](tasks/024-implement-and-measure-a-native-modular-multiplication-propag.md) | Implement and measure a native modular multiplication propagator | done | word-023 |
+| [word-025](tasks/025-benchmark-and-optimize-word-logic-table-propagation.md) | Benchmark and optimize Word Logic Table propagation | ready | word-024 |
 | [word-026](tasks/026-run-the-native-arithmetic-and-logic-table-ablation-study.md) | Run the native arithmetic and Logic Table ablation study | blocked | word-025 |
