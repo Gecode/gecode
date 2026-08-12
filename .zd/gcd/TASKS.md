@@ -3,9 +3,9 @@
 # Tasks: gcd
 
 - Total: 13
-- Ready: 4
+- Ready: 3
 - Blocked: 2
-- Done: 7
+- Done: 8
 
 | ID | Task | State | Blocked by |
 | --- | --- | --- | --- |
@@ -19,6 +19,6 @@
 | [gcd-008](tasks/008-complete-zero-aware-inverse-bounds-for-n-ary-product.md) | Complete zero-aware inverse bounds for n-ary product | ready | — |
 | [gcd-009](tasks/009-add-zero-unit-and-sign-rewrites-for-n-ary-product.md) | Add zero, unit, and sign rewrites for n-ary product | ready | — |
 | [gcd-010](tasks/010-add-repeated-factor-and-result-alias-rewrites-for-n-ary-prod.md) | Add repeated-factor and result-alias rewrites for n-ary product | blocked | gcd-009 |
-| [gcd-011](tasks/011-add-algebraic-and-small-modulus-propagation-for-fixed-produc.md) | Add algebraic and bounds propagation for fixed product_mod | ready | — |
+| [gcd-011](tasks/011-add-algebraic-and-small-modulus-propagation-for-fixed-produc.md) | Add algebraic and bounds propagation for fixed product_mod | done | — |
 | [gcd-012](tasks/012-add-algebraic-propagation-for-variable-product-mod.md) | Add algebraic propagation for variable product_mod | ready | — |
 | [gcd-013](tasks/013-eliminate-support-enumeration-from-number-theoretic-propagat.md) | Eliminate support enumeration from number-theoretic propagators | blocked | gcd-008, gcd-009, gcd-010, gcd-011, gcd-012 |
