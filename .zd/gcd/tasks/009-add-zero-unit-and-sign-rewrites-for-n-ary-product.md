@@ -3,7 +3,7 @@ schema_version = 1
 id = "gcd-009"
 key = "product-zero-unit-sign-rewrites"
 area = "gcd"
-status = "open"
+status = "done"
 blocked_by = []
 +++
 # Add zero, unit, and sign rewrites for n-ary product
@@ -21,12 +21,12 @@ Exact product posting and propagation simplify assigned zero, one, and minus-one
 
 ## Done when
 
-- [ ] A fixed-zero factor assigns the positive relation's result to zero; assigned one factors are removed; assigned minus-one factors are removed with the result sign transformed safely.
-- [ ] If the result excludes zero, bounds-visible zero endpoints are removed from nonnegative or nonpositive factors, and a zero result with exactly one possible zero source propagates that source to zero when sound.
-- [ ] Aggregate sign parity and zero possibility constrain the result sign and permit safe normalisation or rewriting to a positive-magnitude path when all remaining factors have strict signs.
-- [ ] Reified actors apply these deductions only when truth is required and preserve no-narrowing inactive implication behavior.
-- [ ] Focused tests cover zero, one, minus one, strict and non-strict sign combinations, sign parity, reification controls, cloning, and representable limits.
-- [ ] The affected integer library and focused Product tests build and pass.
+- [x] A fixed-zero factor assigns the positive relation's result to zero; assigned one factors are removed; assigned minus-one factors are removed with the result sign transformed safely.
+- [x] If the result excludes zero, bounds-visible zero endpoints are removed from nonnegative or nonpositive factors, and a zero result with exactly one possible zero source propagates that source to zero when sound.
+- [x] Aggregate sign parity and zero possibility constrain the result sign and permit safe normalisation or rewriting to a positive-magnitude path when all remaining factors have strict signs.
+- [x] Reified actors apply these deductions only when truth is required and preserve no-narrowing inactive implication behavior.
+- [x] Focused tests cover zero, one, minus one, strict and non-strict sign combinations, sign parity, reification controls, cloning, and representable limits.
+- [x] The affected integer library and focused Product tests build and pass.
 
 ## Validation
 
@@ -34,3 +34,12 @@ Exact product posting and propagation simplify assigned zero, one, and minus-one
 - Run focused Int::Arithmetic::Product simplification and sign tests with multiple iterations.
 - Run the broader Int::Arithmetic tests when available.
 - Run git diff --check and zd check gcd --format json.
+
+## Result
+
+Added zero/unit simplification, minus-unit parity, zero-source and aggregate-sign reasoning to Product using the bounds-subscribed weak-monotonic actor convention.
+
+Validation:
+
+- Built gecodeint_shared and gecode-test; focused Product tests passed for five iterations and broader Int::Arithmetic passed.
+- Independent spec/standards and explicit clone-disable-enable verification passed; git diff --check and zd check passed.

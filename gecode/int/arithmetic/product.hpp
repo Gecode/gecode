@@ -150,22 +150,36 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   }
 
   forceinline
-  Product::Product(Home home, ViewArray<IntView>& z, IntView w)
-    : NaryOnePropagator<IntView,PC_INT_DOM>(home,z,w) {}
+  Product::Product(Home home, ViewArray<IntView>& z, IntView w, bool n)
+    : NaryOnePropagator<IntView,PC_INT_BND>(home,z,w), neg(n) {
+    home.notice(*this,AP_WEAKLY);
+  }
 
   inline ExecStatus
-  Product::post(Home home, ViewArray<IntView>& x, IntView y) {
+  Product::post(Home home, ViewArray<IntView>& x, IntView y, bool neg) {
+    for (int i=x.size(); i--;) {
+      if (!x[i].assigned())
+        continue;
+      if (x[i].val() == 0) {
+        GECODE_ME_CHECK(y.eq(home,0));
+        return ES_OK;
+      }
+      if ((x[i].val() == 1) || (x[i].val() == -1)) {
+        neg ^= x[i].val() == -1;
+        x.move_lst(i);
+      }
+    }
     if (x.size() == 0) {
-      GECODE_ME_CHECK(y.eq(home,1));
+      GECODE_ME_CHECK(y.eq(home,neg ? -1 : 1));
       return ES_OK;
     }
-    (void) new (home) Product(home,x,y);
+    (void) new (home) Product(home,x,y,neg);
     return ES_OK;
   }
 
   forceinline
   Product::Product(Space& home, Product& p)
-    : NaryOnePropagator<IntView,PC_INT_DOM>(home,p) {}
+    : NaryOnePropagator<IntView,PC_INT_BND>(home,p), neg(p.neg) {}
 
   forceinline Actor*
   Product::copy(Space& home) {
@@ -177,20 +191,95 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     return PropCost::quadratic(PropCost::LO,x.size()+1);
   }
 
+  forceinline size_t
+  Product::dispose(Space& home) {
+    home.ignore(*this,AP_WEAKLY);
+    (void) NaryOnePropagator<IntView,PC_INT_BND>::dispose(home);
+    return sizeof(*this);
+  }
+
   inline ExecStatus
   Product::propagate(Space& home, const ModEventDelta&) {
+    // Absorb a fixed zero and rewrite when new units have appeared.
+    int units=0;
+    bool next_neg=neg;
+    for (int i=x.size(); i--;) {
+      if (!x[i].assigned())
+        continue;
+      if (x[i].val() == 0) {
+        GECODE_ME_CHECK(y.eq(home,0));
+        return home.ES_SUBSUMED(*this);
+      }
+      if ((x[i].val() == 1) || (x[i].val() == -1)) {
+        next_neg ^= x[i].val() == -1;
+        units++;
+      }
+    }
+    if (units > 0) {
+      ViewArray<IntView> z(home,x.size()-units);
+      int j=0;
+      for (int i=0; i<x.size(); i++)
+        if (!x[i].assigned() || ((x[i].val() != 1) && (x[i].val() != -1)))
+          z[j++]=x[i];
+      GECODE_REWRITE(*this,Product::post(home(*this),z,y,next_neg));
+    }
+
+    // A nonzero result excludes a bounds-visible zero endpoint.
+    if (!y.in(0))
+      for (int i=0; i<x.size(); i++) {
+        if ((x[i].min() == 0) && (x[i].max() > 0))
+          GECODE_ME_CHECK(x[i].gq(home,1));
+        else if ((x[i].max() == 0) && (x[i].min() < 0))
+          GECODE_ME_CHECK(x[i].lq(home,-1));
+      }
+
+    // Zero can only arise from a zero factor.
+    if (y.assigned() && (y.val() == 0)) {
+      int zero=-1;
+      for (int i=0; i<x.size(); i++)
+        if (x[i].in(0)) {
+          if (zero >= 0) { zero=-2; break; }
+          zero=i;
+        }
+      if (zero == -1)
+        return ES_FAILED;
+      if (zero >= 0) {
+        GECODE_ME_CHECK(x[zero].eq(home,0));
+        return home.ES_SUBSUMED(*this);
+      }
+    }
+
+    // Stable one-sided signs determine aggregate parity and zero possibility.
+    bool stable=true, strict=true, negative=neg;
+    for (int i=0; i<x.size(); i++) {
+      if (x[i].max() <= 0) {
+        negative=!negative;
+        strict &= x[i].max() < 0;
+      } else if (x[i].min() >= 0) {
+        strict &= x[i].min() > 0;
+      } else {
+        stable=false; strict=false; break;
+      }
+    }
+    if (stable) {
+      if (negative)
+        GECODE_ME_CHECK(y.lq(home,strict ? -1 : 0));
+      else
+        GECODE_ME_CHECK(y.gq(home,strict ? 1 : 0));
+    }
+
     bool modified;
     do {
       modified = false;
 
       ProductInterval p = product_interval(x);
       {
-        ModEvent me = y.gq(home,p.min);
+        ModEvent me = neg ? y.lq(home,-p.min) : y.gq(home,p.min);
         if (me_failed(me)) return ES_FAILED;
         modified |= me_modified(me);
       }
       {
-        ModEvent me = y.lq(home,p.max);
+        ModEvent me = neg ? y.gq(home,-p.max) : y.lq(home,p.max);
         if (me_failed(me)) return ES_FAILED;
         modified |= me_modified(me);
       }
@@ -220,12 +309,14 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         ProductInterval d = {Limits::max,Limits::min};
         if (q.min < 0) {
           ProductInterval n = product_quotient_interval
-            (y.min(),y.max(),q.min,std::min(q.max,-1));
+            (neg ? -y.max() : y.min(),neg ? -y.min() : y.max(),
+             q.min,std::min(q.max,-1));
           d=n; have=true;
         }
         if (q.max > 0) {
           ProductInterval p = product_quotient_interval
-            (y.min(),y.max(),std::max(q.min,1),q.max);
+            (neg ? -y.max() : y.min(),neg ? -y.min() : y.max(),
+             std::max(q.min,1),q.max);
           if (have) {
             d.min=std::min(d.min,p.min); d.max=std::max(d.max,p.max);
           } else {
@@ -247,6 +338,21 @@ namespace Gecode { namespace Int { namespace Arithmetic {
       }
     } while (modified);
 
+    // Result propagation above can have excluded zero during this call.
+    bool endpoint_modified=false;
+    if (!y.in(0))
+      for (int i=0; i<x.size(); i++) {
+        ModEvent me=ME_INT_NONE;
+        if ((x[i].min() == 0) && (x[i].max() > 0))
+          me=x[i].gq(home,1);
+        else if ((x[i].max() == 0) && (x[i].min() < 0))
+          me=x[i].lq(home,-1);
+        if (me_failed(me)) return ES_FAILED;
+        endpoint_modified |= me_modified(me);
+      }
+    if (endpoint_modified)
+      return ES_NOFIX;
+
     bool factors_assigned = true;
     for (int i=0; factors_assigned && (i<x.size()); i++)
       factors_assigned = x[i].assigned();
@@ -257,7 +363,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
       int p;
       if (!product_value(v,x.size(),p))
         return ES_FAILED;
-      GECODE_ME_CHECK(y.eq(home,p));
+      GECODE_ME_CHECK(y.eq(home,neg ? -p : p));
       return home.ES_SUBSUMED(*this);
     }
     return ES_FIX;

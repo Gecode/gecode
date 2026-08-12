@@ -864,17 +864,20 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   /** \brief Bounds propagator for an exact n-ary product
    * \ingroup FuncIntProp
    */
-  class Product : public NaryOnePropagator<IntView,PC_INT_DOM> {
+  class Product : public NaryOnePropagator<IntView,PC_INT_BND> {
   protected:
-    using NaryOnePropagator<IntView,PC_INT_DOM>::x;
-    using NaryOnePropagator<IntView,PC_INT_DOM>::y;
-    Product(Home home, ViewArray<IntView>& x, IntView y);
+    using NaryOnePropagator<IntView,PC_INT_BND>::x;
+    using NaryOnePropagator<IntView,PC_INT_BND>::y;
+    bool neg;
+    Product(Home home, ViewArray<IntView>& x, IntView y, bool neg);
     Product(Space& home, Product& p);
   public:
-    static ExecStatus post(Home home, ViewArray<IntView>& x, IntView y);
+    static ExecStatus post(Home home, ViewArray<IntView>& x, IntView y,
+                           bool neg=false);
     virtual Actor* copy(Space& home);
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+    virtual size_t dispose(Space& home);
   };
 
   /** \brief Reified domain propagator for an exact n-ary product

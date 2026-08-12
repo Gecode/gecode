@@ -221,7 +221,7 @@ namespace Test { namespace Int {
        ProductXYZR(const std::string& s, const Gecode::IntSet& d,
                    Gecode::IntPropLevel ipl)
          : Test("Arithmetic::Product::XYZR::"+str(ipl)+"::"+s,
-                4,d,true,ipl) { contest = CTL_NONE; }
+                4,d,true,ipl) { contest = CTL_NONE; testfix=false; }
        virtual bool solution(const Assignment& x) const {
          int p;
          return product_value(x,3,p) && (p == x[3]);
@@ -243,7 +243,7 @@ namespace Test { namespace Int {
        ProductEmpty(const std::string& s, const Gecode::IntSet& d,
                     Gecode::IntPropLevel ipl)
          : Test("Arithmetic::Product::Empty::"+str(ipl)+"::"+s,
-                1,d,true,ipl) { contest = CTL_NONE; }
+                1,d,true,ipl) { contest = CTL_NONE; testfix=false; }
        virtual bool solution(const Assignment& x) const {
          return x[0] == 1;
        }
@@ -262,7 +262,7 @@ namespace Test { namespace Int {
        ProductSingleton(const std::string& s, const Gecode::IntSet& d,
                         Gecode::IntPropLevel ipl)
          : Test("Arithmetic::Product::Singleton::"+str(ipl)+"::"+s,
-                2,d,true,ipl) { contest = CTL_NONE; }
+                2,d,true,ipl) { contest = CTL_NONE; testfix=false; }
        virtual bool solution(const Assignment& x) const {
          return x[0] == x[1];
        }
@@ -281,7 +281,7 @@ namespace Test { namespace Int {
        ProductXXYAlias(const std::string& s, const Gecode::IntSet& d,
                        Gecode::IntPropLevel ipl)
          : Test("Arithmetic::Product::XXYAlias::"+str(ipl)+"::"+s,
-                2,d,true,ipl) { contest = CTL_NONE; }
+                2,d,true,ipl) { contest = CTL_NONE; testfix=false; }
        virtual bool solution(const Assignment& x) const {
          long long int p = static_cast<long long int>(x[0]) * x[0] * x[1];
          return (p >= Gecode::Int::Limits::min) &&
@@ -328,6 +328,113 @@ namespace Test { namespace Int {
            for (int i=0; i<x.size(); i++)
              if (!x[i].assigned() || (x[i].val() != 10))
                return false;
+         }
+         return true;
+       }
+     };
+
+     /// Test zero, unit, and aggregate-sign product simplifications
+     class ProductSimplifySign : public ::Test::Base {
+     protected:
+       class TestSpace : public Gecode::Space {
+       public:
+         virtual Gecode::Space* copy(void) { return nullptr; }
+       };
+       class CloneSpace : public Gecode::Space {
+       public:
+         Gecode::IntVar x, q, y;
+         CloneSpace(void)
+           : x(*this,-2,2), q(*this,2,2), y(*this,-10,10) {
+           Gecode::product(*this,Gecode::IntVarArgs({x,q}),y);
+         }
+         CloneSpace(CloneSpace& s) : Gecode::Space(s) {
+           x.update(*this,s.x); q.update(*this,s.q); y.update(*this,s.y);
+         }
+         virtual Gecode::Space* copy(void) { return new CloneSpace(*this); }
+       };
+     public:
+       ProductSimplifySign(void)
+         : ::Test::Base("Int::Arithmetic::Product::SimplifySign") {}
+       virtual bool run(void) {
+         using namespace Gecode;
+         {
+           TestSpace home;
+           IntVar z(home,0,0), x(home,-100,100), y(home,-100,100);
+           product(home,IntVarArgs({x,z}),y);
+           if ((home.status() == SS_FAILED) || !y.assigned() || (y.val()!=0))
+             return false;
+         }
+         {
+           TestSpace home;
+           IntVar one(home,1,1), minus(home,-1,-1), x(home,2,5);
+           IntVar y(home,-100,100);
+           product(home,IntVarArgs({one,minus,minus,x}),y);
+           if ((home.status() == SS_FAILED) || (y.min()!=2) || (y.max()!=5))
+             return false;
+         }
+         {
+           TestSpace home;
+           IntVar minus(home,-1,-1), x(home,2,5), y(home,-100,100);
+           product(home,IntVarArgs({minus,x}),y);
+           if ((home.status() == SS_FAILED) || (y.min()!=-5) || (y.max()!=-2))
+             return false;
+         }
+         {
+           TestSpace home;
+           IntVar x(home,0,5), q(home,1,3), y(home,2,10);
+           product(home,IntVarArgs({x,q}),y);
+           if ((home.status() == SS_FAILED) || (x.min()!=1))
+             return false;
+         }
+         {
+           TestSpace home;
+           IntVar x(home,-2,2), q(home,1,3), y(home,0,0);
+           product(home,IntVarArgs({x,q}),y);
+           if ((home.status() == SS_FAILED) || !x.assigned() || (x.val()!=0))
+             return false;
+         }
+         {
+           TestSpace home;
+           IntVar x(home,-5,0), q(home,2,4), y(home,-100,100);
+           product(home,IntVarArgs({x,q}),y);
+           if ((home.status() == SS_FAILED) || (y.max()!=0))
+             return false;
+         }
+         {
+           TestSpace home;
+           IntVar x(home,-5,-2), q(home,-4,-2), y(home,-100,100);
+           product(home,IntVarArgs({x,q}),y);
+           if ((home.status() == SS_FAILED) || (y.min()!=4))
+             return false;
+         }
+         {
+           TestSpace home;
+           const int hi=Gecode::Int::Limits::max;
+           IntVar minus(home,-1,-1), x(home,hi,hi), y(home,-hi,hi);
+           product(home,IntVarArgs({minus,x}),y);
+           if ((home.status() == SS_FAILED) || !y.assigned() || (y.val()!=-hi))
+             return false;
+         }
+         {
+           CloneSpace home;
+           if (home.status() == SS_FAILED)
+             return false;
+           CloneSpace* clone=static_cast<CloneSpace*>(home.clone());
+           PropagatorGroup::all.disable(*clone);
+           rel(home,home.x,IRT_NQ,0);
+           rel(*clone,clone->x,IRT_NQ,0);
+           (void) home.status();
+           (void) clone->status();
+           rel(home,home.y,IRT_GQ,2);
+           rel(*clone,clone->y,IRT_GQ,2);
+           PropagatorGroup::all.enable(*clone);
+           const bool ok=(home.status()!=SS_FAILED) &&
+             (clone->status()!=SS_FAILED) && (home.x.min()==1) &&
+             (clone->x.min()==1) && (home.y.min()==2) &&
+             (clone->y.min()==2);
+           delete clone;
+           if (!ok)
+             return false;
          }
          return true;
        }
@@ -2222,6 +2329,7 @@ namespace Test { namespace Int {
          (void) new ProductModVarAlgebraic;
          (void) new ProductModVarInactive;
          (void) new ProductBoundsLarge;
+         (void) new ProductSimplifySign;
          (void) new ProductInverseBounds;
        }
      };
