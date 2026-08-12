@@ -59,9 +59,12 @@ set(GECODE_EXAMPLE_SOURCES
   sudoku.cpp
   tsp.cpp
   warehouses.cpp
+  word-arx-preimage.cpp
   word-arithmetic.cpp
   word-benchmark.cpp
+  word-bitboard.cpp
   word-minimodel.cpp
+  word-register-file.cpp
   word-structure.cpp
   word-square.cpp)
 
@@ -81,9 +84,12 @@ set(GECODE_MPFR_FLOAT_EXAMPLES
   golden-spiral)
 
 set(GECODE_WORD_EXAMPLES
+  word-arx-preimage
   word-arithmetic
   word-benchmark
+  word-bitboard
   word-minimodel
+  word-register-file
   word-structure)
 
 function(gecode_add_example source_file)
