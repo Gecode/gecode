@@ -107,7 +107,7 @@ namespace Gecode {
    * | `add`, `neg`, `sub` | Word-level carry, complement, and addition decompositions | Assigned semantics, partial-domain soundness, aliases, and lifecycle |
    * | `mult` | Word-level schoolbook conditional-shift/add decomposition | Assigned semantics, Boolean differential parity, and partial-domain soundness |
    * | Unsigned `div`, `mod` | Compact native range-hull and low-bit actors | SMT-LIB zero-divisor semantics, Boolean parity, and sound partial/inverse propagation |
-   * | `signed_div`, `signed_rem`, `signed_mod` | Sign/absolute-value lowering through unsigned division plus conditional negation/adjustment | SMT-LIB zero-divisor and overflow semantics, Boolean parity, and partial-domain soundness |
+   * | `signed_div`, `signed_rem`, `signed_mod` | Compact native signed actors with fixed-divisor and sign-bit propagation | SMT-LIB zero-divisor and overflow semantics, Boolean parity, and partial-domain soundness |
    * | `branch`, `assign` and their selectors | Native unknown-bit choices | Archive, no-good, clone, and recomputation lifecycle |
    * | `trace`, WordTraceDelta and word printing | Standard variable trace/print integration | Fixed-bit deltas and trace lifecycle |
    * | WordExpr logical, relation, conditional, structural, and arithmetic expressions | Ref-counted MiniModel DAG lowered through the corresponding direct API | Direct-posting parity, width/policy rejection, copies, clones, and recomputation |

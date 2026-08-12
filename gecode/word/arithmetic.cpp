@@ -110,47 +110,22 @@ namespace Gecode {
 
     void post_signed_divmod(Home home, WordVar x, WordVar y,
                             WordVar result, bool quotient) {
-      const unsigned int width = x.width();
-      BoolVar x_negative(home,0,1), y_negative(home,0,1);
-      channel(home,x,width-1,x_negative);
-      channel(home,y,width-1,y_negative);
-
-      WordVar x_magnitude(home,width), y_magnitude(home,width);
-      post_absolute(home,x,x_negative,x_magnitude);
-      post_absolute(home,y,y_negative,y_magnitude);
-      WordVar magnitude(home,width);
-      post_divmod(home,x_magnitude,y_magnitude,magnitude,quotient);
-
-      BoolVar result_negative(x_negative);
-      if (quotient) {
-        result_negative = BoolVar(home,0,1);
-        rel(home,x_negative,BOT_XOR,y_negative,result_negative);
-      }
-      WordVar negative_magnitude(home,width);
-      post_neg(home,magnitude,negative_magnitude);
-      ite(home,result_negative,negative_magnitude,magnitude,result);
+      if (quotient)
+        GECODE_ES_FAIL((Word::Arithmetic::SignedDivMod<
+          Word::Arithmetic::SDO_DIV>::post(
+            home,Word::WordView(x),Word::WordView(y),
+            Word::WordView(result))));
+      else
+        GECODE_ES_FAIL((Word::Arithmetic::SignedDivMod<
+          Word::Arithmetic::SDO_REM>::post(
+            home,Word::WordView(x),Word::WordView(y),
+            Word::WordView(result))));
     }
 
     void post_signed_mod(Home home, WordVar x, WordVar y, WordVar result) {
-      const unsigned int width = x.width();
-      WordVar remainder(home,width);
-      post_signed_divmod(home,x,y,remainder,false);
-
-      BoolVar x_negative(home,0,1), y_negative(home,0,1);
-      channel(home,x,width-1,x_negative);
-      channel(home,y,width-1,y_negative);
-      BoolVar signs_differ(home,0,1);
-      rel(home,x_negative,BOT_XOR,y_negative,signs_differ);
-
-      WordVar zero(home,width,0,0);
-      BoolVar nonzero(home,0,1);
-      rel(home,remainder,WRT_NQ,zero,Reify(nonzero,RM_EQV));
-      BoolVar adjust(home,0,1);
-      rel(home,signs_differ,BOT_AND,nonzero,adjust);
-
-      WordVar adjusted(home,width);
-      post_add(home,remainder,y,adjusted);
-      ite(home,adjust,adjusted,remainder,result);
+      GECODE_ES_FAIL((Word::Arithmetic::SignedDivMod<
+        Word::Arithmetic::SDO_MOD>::post(
+          home,Word::WordView(x),Word::WordView(y),Word::WordView(result))));
     }
 
     void post_signed_add_overflow(Home home, WordVar x, WordVar y,

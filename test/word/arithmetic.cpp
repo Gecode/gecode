@@ -1519,6 +1519,51 @@ namespace Test { namespace Word {
         return true;
       }
 
+      static bool native_propagation(void) {
+        SignedSpace compact_div(3,64);
+        Gecode::signed_div(compact_div,compact_div.x[0],compact_div.x[1],
+                           compact_div.x[2]);
+        if ((compact_div.status() == Gecode::SS_FAILED) ||
+            (Gecode::PropagatorGroup::all.size(compact_div) != 1U))
+          return false;
+
+        SignedSpace positive_rem(3,4);
+        Gecode::dom(positive_rem,positive_rem.x[0],0U,7U);
+        Gecode::dom(positive_rem,positive_rem.x[1],3U);
+        Gecode::signed_rem(positive_rem,positive_rem.x[0],
+                           positive_rem.x[1],positive_rem.x[2]);
+        if ((positive_rem.status() == Gecode::SS_FAILED) ||
+            ((positive_rem.x[2].hi() & 8U) != 0))
+          return false;
+
+        SignedSpace negative_mod(3,4);
+        Gecode::dom(negative_mod,negative_mod.x[1],8U,15U);
+        Gecode::dom(negative_mod,negative_mod.x[2],1U,15U);
+        Gecode::signed_mod(negative_mod,negative_mod.x[0],negative_mod.x[1],
+                           negative_mod.x[2]);
+        if ((negative_mod.status() == Gecode::SS_FAILED) ||
+            ((negative_mod.x[2].lo() & 8U) == 0))
+          return false;
+
+        SignedSpace zero_negative(3,4);
+        Gecode::dom(zero_negative,zero_negative.x[0],8U,15U);
+        Gecode::dom(zero_negative,zero_negative.x[1],0U);
+        Gecode::signed_div(zero_negative,zero_negative.x[0],
+                           zero_negative.x[1],zero_negative.x[2]);
+        if ((zero_negative.status() == Gecode::SS_FAILED) ||
+            !zero_negative.x[2].assigned() ||
+            (zero_negative.x[2].val() != 1U) ||
+            (Gecode::PropagatorGroup::all.size(zero_negative) != 0U))
+          return false;
+
+        SignedSpace minus_one(3,4);
+        Gecode::dom(minus_one,minus_one.x[1],15U);
+        Gecode::signed_div(minus_one,minus_one.x[0],minus_one.x[1],
+                           minus_one.x[2]);
+        return (minus_one.status() != Gecode::SS_FAILED) &&
+          (Gecode::PropagatorGroup::all.size(minus_one) == 1U);
+      }
+
       static bool search_recomputation(void) {
         using namespace Gecode;
         class SearchSpace : public Space {
@@ -1578,7 +1623,7 @@ namespace Test { namespace Word {
       virtual bool run(void) {
         return partial(SIGNED_DIV) && partial(SIGNED_REM) &&
           partial(SIGNED_MOD) && boolean_parity() && lifecycle() &&
-          search_recomputation();
+          native_propagation() && search_recomputation();
       }
     };
 

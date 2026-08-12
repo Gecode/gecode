@@ -217,12 +217,45 @@ namespace Gecode { namespace Word { namespace Arithmetic {
                            WordView x2);
   };
 
+  /// Operations supported by the native signed division actor
+  enum SignedDivModOperation {
+    SDO_DIV,
+    SDO_REM,
+    SDO_MOD
+  };
+
+  /** \brief Native signed division, remainder, and modulus propagator
+   *
+   * Exact on assigned words, with sound fixed-divisor and sign-bit
+   * propagation. It deliberately does not claim domain consistency for
+   * cube domains.
+   */
+  template<SignedDivModOperation op>
+  class SignedDivMod : public TernaryPropagator<WordView,PC_WORD_BITS> {
+  protected:
+    using TernaryPropagator<WordView,PC_WORD_BITS>::x0;
+    using TernaryPropagator<WordView,PC_WORD_BITS>::x1;
+    using TernaryPropagator<WordView,PC_WORD_BITS>::x2;
+    SignedDivMod(Home home, WordView x0, WordView x1, WordView x2);
+    SignedDivMod(Space& home, SignedDivMod& p);
+    static ExecStatus narrow(Home home, WordView x0, WordView x1,
+                             WordView x2);
+  public:
+    virtual Actor* copy(Space& home);
+    virtual PropCost cost(const Space& home,
+                          const ModEventDelta& med) const;
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+    static ExecStatus post(Home home, WordView x0, WordView x1,
+                           WordView x2);
+  };
+
 }}}
 
 #include <gecode/word/arithmetic/add.hpp>
 #include <gecode/word/arithmetic/neg-sub.hpp>
 #include <gecode/word/arithmetic/mult.hpp>
 #include <gecode/word/arithmetic/divmod.hpp>
+#include <gecode/word/arithmetic/signed-divmod.hpp>
 
 #endif
 
