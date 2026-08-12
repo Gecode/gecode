@@ -344,6 +344,48 @@ for all three modes, control rewrites, aliases, cloning/recomputation, and
 subsumption. Keep this proportionate: use small assigned domains and focused
 partial cases, not an exhaustive 64-bit campaign or a new harness.
 
+## System workload performance follow-up
+
+Temporary Release examples exposed the next system-level opportunities after
+the propagator-local optimizations. An 8-bit ARX preimage model took about 235
+ms per root and 158,975 nodes when branching on input bits from the least
+significant bit, but about 0.81 ms and 511 nodes when branching on output/state
+information first. Reversing the input order was worse still at about 539 ms
+and 370,815 nodes. This is a modeling and search-order result, not evidence for
+another ARX-specific propagator.
+
+Three other temporary models exercised distinct public surfaces: a lookup and
+register-file model using `element` and n-ary arithmetic (about 3.12 ms, 2,595
+nodes, and 13,915 propagations), a bitboard model using shifts, logic, and
+population count (about 0.126 ms, 463 nodes, and 1,766 propagations), and a
+combined quotient/remainder model (about 1.96 ms, 7,141 nodes, and 14,638
+propagations). A variable-shift decoder was small at about 0.0048 ms, 17 nodes,
+and 35 propagations. Using full copying instead of deeper recomputation reduced
+runtime by roughly 13% for ARX, 45% for lookup, 48% for quotient/remainder, and
+25% for the bitboard model with identical solutions and nodes; the tiny shift
+model was neutral. Examples should therefore demonstrate information-flow
+aware branching and mention search-option sensitivity without baking one
+global policy into WordVar.
+
+Sampling located the remaining implementation work. Binary Add accounted for
+roughly 46--56% of ARX top-of-stack samples, with Word narrowing another
+13--19%. The lookup model spent about 19% in NaryAdd, 18.5% in Element
+propagation, 8.2% in Element copying, and 8.6% in integer-domain operations.
+The quotient/remainder model spent about 27% in Word narrowing plus about 9%
+in Div and 4% in Mod, while the variable-shift model spent about 14% in Word
+narrowing and 10.5% in its actor. Popcount and the already-specialized generic
+logic table were not primary system bottlenecks in these workloads.
+
+Turn these findings into five narrow slices: normal ARX/lookup/bitboard examples
+and search guidance; binary Add local-loop optimization; variable-shift local
+closure/publication optimization; Element candidate/copy investigation; and a
+combined unsigned divmod relation that can share quotient/remainder reasoning.
+Examples are ordinary Gecode Script examples, not benchmark fixtures. All
+benchmark drivers, profiles, and raw results remain temporary and outside the
+repository. Each retained propagator change preserves its public semantics and
+declared propagation contract, uses normal `test/word` coverage, and is kept
+only when a focused exact-baseline Release comparison shows a useful tradeoff.
+
 ## Boundaries
 
 - This area is a full implementation spike, not a battle-hardening exercise. Each task must follow established Gecode patterns, reuse normal framework and test machinery, and avoid novel infrastructure, special-case test paths, exhaustive edge-case campaigns, or verification beyond what is proportionate to getting the implementation working.

@@ -197,6 +197,34 @@ namespace Gecode { namespace Word { namespace Arithmetic {
                            WordView x2);
   };
 
+  /** \brief Mixed Word/Int mathematical product-modulo propagator
+   *
+   * Relates three same-width words and a positive integer modulus by
+   * \f$r=(x\cdot y)\bmod m\f$. Assigned products are evaluated without
+   * forming the potentially overflowing host-word product.
+   */
+  class ProductMod : public Propagator {
+  protected:
+    WordView x;
+    WordView y;
+    Int::IntView modulus;
+    WordView result;
+    ProductMod(Home home, WordView x, WordView y,
+               Int::IntView modulus, WordView result);
+    ProductMod(Space& home, ProductMod& p);
+    static ExecStatus prune(Home home, WordView x, WordView y,
+                            Int::IntView modulus, WordView result);
+  public:
+    virtual Actor* copy(Space& home);
+    virtual PropCost cost(const Space& home,
+                          const ModEventDelta& med) const;
+    virtual void reschedule(Space& home);
+    virtual size_t dispose(Space& home);
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+    static ExecStatus post(Home home, WordView x, WordView y,
+                           Int::IntView modulus, WordView result);
+  };
+
   /** \brief Native unsigned division propagator
    *
    * Exact on assigned words, with sound unsigned range-hull propagation and
@@ -282,6 +310,7 @@ namespace Gecode { namespace Word { namespace Arithmetic {
 #include <gecode/word/arithmetic/add.hpp>
 #include <gecode/word/arithmetic/neg-sub.hpp>
 #include <gecode/word/arithmetic/mult.hpp>
+#include <gecode/word/arithmetic/product-mod.hpp>
 #include <gecode/word/arithmetic/divmod.hpp>
 #include <gecode/word/arithmetic/signed-divmod.hpp>
 

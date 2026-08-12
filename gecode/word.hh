@@ -106,6 +106,7 @@ namespace Gecode {
    * | Variable `shift_left`, `logical_shift_right`, `arithmetic_shift_right` | Bounded word-level cube-hull actor | Assigned semantics and partial-amount soundness |
    * | `add`, n-ary `add`, `neg`, `sub` | Native bounded-carry actors | Assigned semantics, partial-domain soundness, aliases, and lifecycle |
    * | `mult` | Word-level schoolbook conditional-shift/add decomposition | Assigned semantics, Boolean differential parity, and partial-domain soundness |
+   * | `product_mod` | Direct mixed Word/Int actor with overflow-safe assigned evaluation | Positive modulus, result cube hull, assigned semantics, and lifecycle |
    * | Unsigned `div`, `mod` | Compact native range-hull and low-bit actors | SMT-LIB zero-divisor semantics, Boolean parity, and sound partial/inverse propagation |
    * | `signed_div`, `signed_rem`, `signed_mod` | Compact native signed actors with fixed-divisor and sign-bit propagation | SMT-LIB zero-divisor and overflow semantics, Boolean parity, and partial-domain soundness |
    * | `branch`, `assign` and their selectors | Native unknown-bit choices | Archive, no-good, clone, and recomputation lifecycle |
@@ -566,6 +567,13 @@ namespace Gecode {
   /// Post modular multiplication with an explicitly-sized constant operand
   GECODE_WORD_EXPORT void mult(Home home, WordVar x, unsigned int width,
                                WordValue value, WordVar result);
+  /** \brief Post mathematical product modulo a positive integer modulus
+   *
+   * All word operands have the same width. The product is evaluated without
+   * host-word overflow and \a modulus is constrained to positive values.
+   */
+  GECODE_WORD_EXPORT void product_mod(Home home, WordVar x, WordVar y,
+                                      IntVar modulus, WordVar result);
   /// Post unary arithmetic overflow predicate \a wot for \a x
   GECODE_WORD_EXPORT void overflow(Home home, WordVar x,
                                    WordOverflowType wot, BoolVar b,

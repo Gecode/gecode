@@ -3,7 +3,7 @@ schema_version = 1
 id = "word-042"
 key = "add-mixed-product-mod"
 area = "word"
-status = "open"
+status = "done"
 blocked_by = ["word-041"]
 +++
 # Add mixed Word product modulo an IntVar
@@ -20,12 +20,22 @@ Models can constrain a same-width Word result to the overflow-safe mathematical 
 
 ## Done when
 
-- [ ] The public API validates equal Word widths, constrains the modulus to positive values, and computes assigned products modulo the IntVar without host overflow.
-- [ ] The mixed actor provides sound useful propagation in all directions, handles aliases, clones, recomputation, failure, and subsumption through standard lifecycle patterns.
-- [ ] Normal registered test/word coverage proportionately exercises assigned semantics including overflowing 64-bit products, representative partial propagation, modulus and width contracts, aliases, lifecycle, and search.
+- [x] The public API validates equal Word widths, constrains the modulus to positive values, and computes assigned products modulo the IntVar without host overflow.
+- [x] The mixed actor provides sound useful propagation in all directions, handles aliases, clones, recomputation, failure, and subsumption through standard lifecycle patterns.
+- [x] Normal registered test/word coverage proportionately exercises assigned semantics including overflowing 64-bit products, representative partial propagation, modulus and width contracts, aliases, lifecycle, and search.
 
 ## Validation
 
 - Build the focused Word library and monolithic gecode-test target.
 - Run the registered ProductMod, Word Arithmetic regression, representative Int arithmetic smoke, and Word TestFramework filters.
 - Run git diff --check and focused Release profiling sufficient to confirm the actor does not hide a width-proportional decomposition.
+
+## Result
+
+Implemented and independently verified one direct mixed Word/Int product_mod actor with overflow-safe arithmetic and standard lifecycle.
+
+Validation:
+
+- Release GecodeWord and gecode-test builds passed.
+- Word::ProductMod, full Word::Arithmetic, representative Int multiplication, and Word::TestFramework passed.
+- Recomputation/search, profile shape, zdev checks, and git diff --check passed.

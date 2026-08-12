@@ -318,6 +318,16 @@ namespace Gecode {
   }
 
   void
+  product_mod(Home home, WordVar x, WordVar y, IntVar modulus,
+              WordVar result) {
+    check_widths(x,y,result,"Word::product_mod");
+    GECODE_POST;
+    GECODE_ES_FAIL(Word::Arithmetic::ProductMod::post(
+      home,Word::WordView(x),Word::WordView(y),Int::IntView(modulus),
+      Word::WordView(result)));
+  }
+
+  void
   overflow(Home home, WordVar x, WordOverflowType wot, BoolVar b,
            WordSemantics semantics) {
     check_semantics(semantics,"Word::overflow");
