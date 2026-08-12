@@ -404,6 +404,42 @@ namespace Gecode {
     }
   }
 
+  void
+  product_mod(Home home, const IntVarArgs& x, int m, IntVar y,
+              IntPropLevel) {
+    using namespace Int;
+    Limits::positive(m,"Int::product_mod");
+    GECODE_POST;
+    IntView yv(y);
+    ViewArray<IntView> xv(home,x);
+    GECODE_ES_FAIL(Arithmetic::ProductMod::post(home,xv,m,yv));
+  }
+
+  void
+  product_mod(Home home, const IntVarArgs& x, int m, IntVar y, Reify r,
+              IntPropLevel) {
+    using namespace Int;
+    Limits::positive(m,"Int::product_mod");
+    GECODE_POST;
+    IntView yv(y);
+    ViewArray<IntView> xv(home,x);
+    switch (r.mode()) {
+    case RM_EQV:
+      GECODE_ES_FAIL((Arithmetic::ReProductMod<RM_EQV>
+                      ::post(home,xv,m,yv,r.var())));
+      break;
+    case RM_IMP:
+      GECODE_ES_FAIL((Arithmetic::ReProductMod<RM_IMP>
+                      ::post(home,xv,m,yv,r.var())));
+      break;
+    case RM_PMI:
+      GECODE_ES_FAIL((Arithmetic::ReProductMod<RM_PMI>
+                      ::post(home,xv,m,yv,r.var())));
+      break;
+    default: GECODE_NEVER;
+    }
+  }
+
 
   void
   divmod(Home home, IntVar x0, IntVar x1, IntVar x2, IntVar x3,
