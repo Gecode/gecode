@@ -447,6 +447,30 @@ namespace Test { namespace Word {
         (void) invalid;
         return false;
       } catch (const Gecode::Word::OutOfLimits&) {}
+      class InvalidChannelSpace : public Gecode::Space {
+      public:
+        Gecode::WordVar x;
+        Gecode::BoolVar b;
+        InvalidChannelSpace(void)
+          : x(*this,3), b(*this,0,1) {}
+        InvalidChannelSpace(InvalidChannelSpace& s)
+          : Gecode::Space(s) {
+          x.update(*this,s.x);
+          b.update(*this,s.b);
+        }
+        virtual Gecode::Space* copy(void) {
+          return new InvalidChannelSpace(*this);
+        }
+      } invalid_channel;
+      try {
+        Gecode::channel(invalid_channel,invalid_channel.x,3,
+                        invalid_channel.b);
+        return false;
+      } catch (const Gecode::Word::OutOfLimits& e) {
+        if (std::string(e.what()).find("Word argument out of limits") ==
+            std::string::npos)
+          return false;
+      }
 
       unsigned int partial = 0;
       for (PartialDomains i(3); i(); ++i) {

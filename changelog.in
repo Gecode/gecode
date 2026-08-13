@@ -52,7 +52,7 @@
 # An entry is described as follows:
 #   [ENTRY]
 #   Module:
-#     kernel|search|int|set|float|cpltset|scheduling|graph|minimodel|
+#     kernel|search|int|set|float|word|cpltset|scheduling|graph|minimodel|
 #     driver|iter|support|example|test|gist|flatzinc|other
 #   What:   bug|documentation|performance|new|removed|change
 #   Rank:   minor|major
@@ -74,6 +74,17 @@ Date: 2026-07-15
 This release modernizes the Gecode build infrastructure, adds a
 first-class CMake package for downstream consumers, refreshes the
 autoconf build path, and updates CI coverage for current platforms.
+
+[ENTRY]
+Module: word
+What:   new
+Rank:   major
+[DESCRIPTION]
+Add the optional GecodeWord module with fixed-width WordVar variables,
+direct posting and MiniModel expressions, standard search and tracing, and
+word-level logical, relational, structural, counting, and modular arithmetic
+constraints. Policy-dependent arithmetic defaults to SMT-LIB total semantics,
+including zero-divisor and signed-overflow edge cases.
 
 [ENTRY]
 Module: int

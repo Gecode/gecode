@@ -91,23 +91,25 @@ namespace Gecode {
    *
    * \par Implementation and tested propagation inventory
    *
-   * | Public operation | Initial implementation | Tested property |
+   * | Public operation | Implementation | Tested property |
    * | --- | --- | --- |
    * | `dom` and WordVar mask queries | Native word-domain update | Exact atomic cube narrowing, assignment, and failure |
    * | `channel` | Direct word-bit/BoolVar actor | Bit consistency, aliases, cloning, and recomputation |
+   * | `reduce_and`, `reduce_or`, `reduce_xor` | Direct Word/Bool reduction actors | Assigned semantics, decisive bits, parity completion, and lifecycle |
    * | `element` | Direct mixed Int/Word array-selection actor | Index support pruning and supported-result cube hull |
    * | `popcount`, `count_leading_zeros`, `count_trailing_zeros` | Direct mixed Word/Int count actors | Population bounds/extrema and zero-prefix propagation |
    * | `rel` with `WRT_EQ`, `WRT_NQ` | Direct equality/disequality actors; reified disequality rewrites through equality | Equality bit consistency; disequality sound representable exclusion; all reification modes |
    * | `rel` with unsigned and signed order types | Direct MSB-first non-strict/strict actors; greater relations swap operands and reified strict relations negate reversed non-strict relations | Assigned semantics and sound word-level bound/bit pruning |
-   * | `complement`; binary and n-ary logical `rel` with all WordOpType values | Direct native-word truth-table actors; n-ary forms use primitive global actors and optionally complement | Per-bit consistency and assigned semantics |
+   * | `complement`; binary and n-ary logical `rel` with all WordOpType values | Distinct-view binary OR/XOR use direct native actors; aliases and other binary forms use the generic Table actor; n-ary forms use primitive global actors and optional complement | Per-bit consistency and assigned semantics |
    * | Boolean and word-mask `ite` | Boolean form is a direct mixed actor; mask form is a direct per-bit actor | Sound partial propagation; mask form is bit consistent |
    * | `extract`, `concat`, `repeat`, `zero_extend`, `sign_extend` | Direct fixed masked-copy actors | Bit consistency for copied bits and groups |
    * | Fixed `shift_left`, `logical_shift_right`, `arithmetic_shift_right`, `rotate_left`, `rotate_right` | Direct fixed masked actors | Bit consistency and boundary amounts |
    * | Variable `shift_left`, `logical_shift_right`, `arithmetic_shift_right` | Bounded word-level cube-hull actor | Assigned semantics and partial-amount soundness |
-   * | `add`, n-ary `add`, `neg`, `sub` | Native bounded-carry actors | Assigned semantics, partial-domain soundness, aliases, and lifecycle |
-   * | `mult` | Word-level schoolbook conditional-shift/add decomposition | Assigned semantics, Boolean differential parity, and partial-domain soundness |
+   * | `add`, n-ary `add`, `neg`, `sub`; carry and borrow results | Native bounded-carry actors | Assigned semantics, partial-domain soundness, aliases, and lifecycle |
+   * | `mult` | Native low-prefix, forced-zero, and fixed-prefix inverse actor | Assigned semantics, Boolean differential parity, and sound partial/inverse propagation |
    * | `product_mod` | Direct and reified mixed Word/Int actors with overflow-safe assigned evaluation | Positive modulus, result cube hull, assigned semantics, all reification modes, and lifecycle |
-   * | Unsigned `div`, `mod` | Compact native range-hull and low-bit actors | SMT-LIB zero-divisor semantics, Boolean parity, and sound partial/inverse propagation |
+   * | Arithmetic `overflow` predicates | Compositions over native arithmetic, bit channels, and reified relations | Assigned semantics, SMT-LIB signed overflow cases, and lifecycle |
+   * | Unsigned `div`, `mod`, combined `divmod` | Compact native range-hull and low-bit actors; combined quotient/remainder uses one shared actor | SMT-LIB zero-divisor semantics, Boolean parity, and sound partial/inverse propagation |
    * | `signed_div`, `signed_rem`, `signed_mod` | Compact native signed actors with fixed-divisor and sign-bit propagation | SMT-LIB zero-divisor and overflow semantics, Boolean parity, and partial-domain soundness |
    * | `branch`, `assign` and their selectors | Native unknown-bit choices | Archive, no-good, clone, and recomputation lifecycle |
    * | `trace`, WordTraceDelta and word printing | Standard variable trace/print integration | Fixed-bit deltas and trace lifecycle |

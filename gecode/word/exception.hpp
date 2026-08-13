@@ -42,7 +42,7 @@ namespace Gecode { namespace Word {
   public:
     TooFewArguments(const char* l);
   };
-  /// Width or mask is outside the supported 1--64-bit range
+  /// A word constraint argument is outside its supported limits
   class GECODE_WORD_EXPORT OutOfLimits : public Exception {
   public:
     OutOfLimits(const char* l);

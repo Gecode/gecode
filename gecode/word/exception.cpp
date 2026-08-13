@@ -37,7 +37,7 @@ namespace Gecode { namespace Word {
   TooFewArguments::TooFewArguments(const char* l)
     : Exception(l,"Too few arguments") {}
   OutOfLimits::OutOfLimits(const char* l)
-    : Exception(l,"Word width or mask out of limits") {}
+    : Exception(l,"Word argument out of limits") {}
   VariableEmptyDomain::VariableEmptyDomain(const char* l)
     : Exception(l,"Attempt to create word variable with empty domain") {}
   ValOfUnassignedVar::ValOfUnassignedVar(const char* l)
