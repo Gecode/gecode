@@ -67,6 +67,59 @@ namespace Gecode { namespace Word { namespace Arithmetic {
     return next[carry][tuple];
   }
 
+  class AddSupportTables {
+  public:
+    unsigned char forward[256][4];
+    unsigned char backward[256][4];
+    unsigned char support[256][4][4];
+    AddSupportTables(void) {
+      for (unsigned int allowed=0; allowed<256; allowed++)
+        for (unsigned int states=0; states<4; states++) {
+          unsigned int next_states=0;
+          unsigned int previous_states=0;
+          for (unsigned int carry=0; carry<2; carry++)
+            for (unsigned int tuple=0; tuple<8; tuple++)
+              if ((allowed & (1U << tuple)) != 0) {
+                const unsigned int next=add_transition(carry,tuple);
+                if ((next < 2) && ((states & (1U << carry)) != 0))
+                  next_states |= 1U << next;
+                if ((next < 2) && ((states & (1U << next)) != 0))
+                  previous_states |= 1U << carry;
+              }
+          forward[allowed][states]=
+            static_cast<unsigned char>(next_states);
+          backward[allowed][states]=
+            static_cast<unsigned char>(previous_states);
+          for (unsigned int next_states_mask=0;
+               next_states_mask<4; next_states_mask++) {
+            unsigned int values=0;
+            for (unsigned int carry=0; carry<2; carry++) {
+              if ((states & (1U << carry)) == 0)
+                continue;
+              for (unsigned int tuple=0; tuple<8; tuple++)
+                if ((allowed & (1U << tuple)) != 0) {
+                  const unsigned int next=add_transition(carry,tuple);
+                  if ((next < 2) &&
+                      ((next_states_mask & (1U << next)) != 0)) {
+                    values |= 1U << (((tuple >> 2) & 1U) + 0);
+                    values |= 1U << (((tuple >> 1) & 1U) + 2);
+                    values |= 1U << ((tuple & 1U) + 4);
+                  }
+                }
+            }
+            support[allowed][states][next_states_mask]=
+              static_cast<unsigned char>(values);
+          }
+        }
+    }
+  };
+
+  forceinline const AddSupportTables&
+  add_support_tables(void) {
+    static const AddSupportTables tables;
+    return tables;
+  }
+
   forceinline ExecStatus
   add_narrow(Home home, WordView x, WordView y, WordView z,
              unsigned int terminal, unsigned int& final) {
@@ -77,6 +130,8 @@ namespace Gecode { namespace Word { namespace Arithmetic {
     unsigned char allowed[64];
     unsigned char forward[65] = {0};
     unsigned char backward[65] = {0};
+    const AddSupportTables& tables=add_support_tables();
+    forward[0] = 1U;
     for (unsigned int bit=0; bit<width; bit++) {
       const WordValue mask=WordValue(1) << bit;
       const unsigned int x_values=add_bit_values(x.lo(),x.hi(),mask);
@@ -97,20 +152,7 @@ namespace Gecode { namespace Word { namespace Arithmetic {
       allowed[bit]=static_cast<unsigned char>(tuples);
       if (tuples == 0)
         return ES_FAILED;
-    }
-    forward[0] = 1U;
-    for (unsigned int bit=0; bit<width; bit++) {
-      unsigned int states = 0;
-      for (unsigned int carry=0; carry<2; carry++) {
-        if ((forward[bit] & (1U << carry)) == 0)
-          continue;
-        for (unsigned int tuple=0; tuple<8; tuple++)
-          if ((allowed[bit] & (1U << tuple)) != 0) {
-            const unsigned int next=add_transition(carry,tuple);
-            if (next < 2)
-              states |= 1U << next;
-          }
-      }
+      const unsigned int states=tables.forward[tuples][forward[bit]];
       forward[bit+1] = static_cast<unsigned char>(states);
       if (states == 0)
         return ES_FAILED;
@@ -120,47 +162,24 @@ namespace Gecode { namespace Word { namespace Arithmetic {
     if (final == 0)
       return ES_FAILED;
     backward[width] = static_cast<unsigned char>(terminal);
-    for (unsigned int bit=width; bit-- > 0;) {
-      unsigned int states = 0;
-      for (unsigned int carry=0; carry<2; carry++)
-        for (unsigned int tuple=0; tuple<8; tuple++)
-          if ((allowed[bit] & (1U << tuple)) != 0) {
-            const unsigned int next=add_transition(carry,tuple);
-            if ((next < 2) &&
-                ((backward[bit+1] & (1U << next)) != 0))
-              states |= 1U << carry;
-          }
-      backward[bit] = static_cast<unsigned char>(states);
-    }
-    if ((backward[0] & 1U) == 0)
-      return ES_FAILED;
-
     WordValue lo[3] = {0,0,0};
     WordValue hi[3] = {0,0,0};
-    for (unsigned int bit=0; bit<width; bit++) {
-      unsigned int support[3][2] = {{0,0},{0,0},{0,0}};
-      for (unsigned int carry=0; carry<2; carry++) {
-        if ((forward[bit] & (1U << carry)) == 0)
-          continue;
-        for (unsigned int tuple=0; tuple<8; tuple++)
-          if ((allowed[bit] & (1U << tuple)) != 0) {
-            const unsigned int next=add_transition(carry,tuple);
-            if ((next < 2) &&
-                ((backward[bit+1] & (1U << next)) != 0)) {
-              support[0][(tuple >> 2) & 1U] = 1U;
-              support[1][(tuple >> 1) & 1U] = 1U;
-              support[2][tuple & 1U] = 1U;
-            }
-          }
-      }
+    for (unsigned int bit=width; bit-- > 0;) {
+      const unsigned int states=
+        tables.backward[allowed[bit]][backward[bit+1]];
+      const unsigned int support=
+        tables.support[allowed[bit]][forward[bit]][backward[bit+1]];
+      backward[bit] = static_cast<unsigned char>(states);
       const WordValue mask = WordValue(1) << bit;
       for (int i=0; i<3; i++) {
-        if (support[i][1] != 0)
+        if ((support & (1U << (2*i+1))) != 0)
           hi[i] |= mask;
-        if (support[i][0] == 0)
+        if ((support & (1U << (2*i))) == 0)
           lo[i] |= mask;
       }
     }
+    if ((backward[0] & 1U) == 0)
+      return ES_FAILED;
     if ((x.lo() != lo[0]) || (x.hi() != hi[0]))
       GECODE_ME_CHECK(x.narrow(home,lo[0],hi[0]));
     if ((y.lo() != lo[1]) || (y.hi() != hi[1]))

@@ -1287,6 +1287,115 @@ parity results in `/private/tmp/word064-raw`, samples in
 and temporary sources as `/private/tmp/word064-*.cpp`.  No driver, profile, or
 third-party input is tracked.
 
+## Binary Add algorithmic acceleration
+
+Task 065 starts from exact Release baseline `5546a91361` and isolates the
+current binary/AddCarry automaton.  Each call first scans the width to build an
+alias-filtered allowed-tuple mask, scans forward reachability, scans backward
+reachability, then scans again to project supported zero/one values into all
+three Word cubes before changed-only publication.  Temporary ALU-8/18 counters
+record 3,199,586 calls; 57,592,548 allowed-tuple bit scans; 56,459,731 forward,
+55,395,288 backward, and 55,395,288 support-projection bit scans; 635,295,334
+tuple-transition visits; 2,589,589 publications; 2,378,315 calls that narrow a
+view; and 122,070 internal failures.  Thus 74.3 percent of calls narrow and
+3.8 percent fail.  This rejects staged/advisor execution: most calls perform
+useful exact work, while a Council would add advice, clone, and disposal state.
+
+Exact bit consistency has an Ω(width) floor even if carry reachability is
+composed broadly: the actor must inspect each bit's potentially distinct,
+alias-sensitive tuple mask and emit supported zero/one masks for three views.
+A portable broadword/block transfer therefore cannot eliminate projection and
+would add boundary-summary and alias complexity.  Two exact conventional
+candidates were nevertheless prototyped.  The first fuses tuple construction
+with forward reachability and backward reachability with support projection,
+leaving two directional linear scans.  The second also uses an immutable
+process-global table keyed by the 8-bit allowed-tuple mask and two-bit carry
+state masks to precompute forward, backward, and six-value support summaries.
+It adds no actor member, subscription, event, copy, or disposal state.  The
+table is about 6 KiB; actor count and clone footprint are unchanged.
+
+Both candidates preserve exact focused Arithmetic Add/Lifecycle/TestFramework
+results.  On exhaustive symbolic ALU-8/18, five alternating fresh-process
+trials preserve 26 actors, 65,810 solutions, 18,230,041 propagations, 375,811
+nodes, and 122,096 failures.  Median user time falls from 2.25 seconds to 1.56
+with fusion and 1.20 with fusion plus tables.  On exhaustive Speck32/64 at 12
+rounds and 18 unknown key bits, three trials preserve 138 actors, one exact
+key, 64,089,495 propagations, 524,287 nodes, and 262,143 failures.  Median user
+time falls from 6.96 seconds to 5.09 and 3.91 respectively.  MD5-16/148 is an
+independent secondary guard: three exhaustive trials preserve 154 actors,
+1,048,576 solutions, 29,548,308 propagations, 2,114,231 nodes, and 8,540
+failures; table-candidate user time is 7.25--7.39 seconds versus baseline
+8.49--8.57.
+
+The retained-scale ALU-12/22 result confirms the end-to-end benefit.  Baseline
+and table candidate both use 40 actors and enumerate 2,367,275 solutions with
+546,624,487 propagations, 6,081,663 nodes, and 673,557 failures.  User time is
+78.51 versus 39.83 seconds, a 49 percent reduction.  The fused-only candidate
+is sound and useful but rejected because the table candidate consistently
+dominates it.  No weaker propagation was measured or retained.  AddCarry uses
+the same exact terminal-carry table path, and existing normal tests cover its
+terminal carry, assigned/partial/inverse support, aliases, width 64, failure,
+clone, recomputation, and subsumption seams; no new test is warranted for this
+implementation-only change.
+
+Best-effort high-water RSS from `/usr/bin/time -l` was unavailable because its
+macOS `sysctl kern.clockrate` query is blocked in the execution sandbox.  This
+is a measurement limitation, not a silent zero.  The actor and clone state are
+unchanged, and Mach-O segment sizes remain equal (`__TEXT` 557,056 bytes,
+`__DATA` 16,384 bytes) between baseline and retained libraries.
+
+Temporary sources/builds are `/private/tmp/gecode-word065-{base,fused,lookup}`
+and corresponding `-build` directories.  Exact commands are in
+`/private/tmp/word065-raw/commands.txt`, identities in `SHA256SUMS`, raw
+instrumentation/timing/statistics in `/private/tmp/word065-raw`, and the Speck
+source is `/private/tmp/word064-speck.cpp`.  No counter, driver, profile, or
+benchmark artifact is tracked.
+
+The same lookup/fusion mechanism was audited across the remaining Word
+actors.  Neg and Sub/SubBorrow are the only direct structural matches.  Neg is
+a two-state carry automaton over four `(x,z)` tuples with separate forward,
+backward, and support scans.  An exact immutable summary needs 16 allowed-tuple
+masks by four carry masks for forward and backward, plus 16 by four by four for
+four value-support bits: 384 bytes total.  Sub and SubBorrow use two borrow
+states and eight `(x,y,z)` tuples, so they can use Add's dimensions: 256 by
+four forward/backward and 256 by four by four six-bit support, 6,144 bytes.
+For both, an alias-filtered allowed mask can be built while scanning forward,
+and backward reachability can be fused with support projection.  This removes
+one width scan and repeated `2×4` or `2×8` transition loops while preserving
+exact support, aliases, and terminal borrow.
+
+This structural match is not yet performance evidence for retention.  None of
+the five realistic checked-in examples is materially Neg- or Sub-heavy; they
+appear only in ordinary arithmetic coverage.  Add's measured benefit proves
+that the pattern can matter when such an actor dominates, but it cannot be
+transferred as a timing claim.  One bounded follow-up investigation is
+justified: prototype Neg and Sub/SubBorrow summaries independently and compare
+them on a natural subtract/negate-heavy workload plus ordinary forward,
+inverse, alias, lifecycle, and terminal-borrow cases.  If no representative
+workload makes them hot, close the candidate without production changes.
+
+The other actors do not share Add's small-state per-bit loop.  Named binary
+logic, n-ary logic, reductions, mask/Bool ITE, fixed shifts, Bit channeling,
+and equality already use broadword formulas, direct masks, or delta-local
+advice.  Generic Logic::Table iterates up to 16 tuples but processes all word
+bits simultaneously in WordValue masks and already runs local closure; named
+operations bypass it, and earlier bounded-arity specialization was rejected.
+Ordering uses early-exit MSB numeric scans whose second pass depends on the
+first operand's pruning, not a finite tuple automaton.  Variable shift has up
+to width whole-word shift classes and repeated cube-hull closure, making table
+state grow with width.  Mult, division/modulo, combined/product-mod, and their
+signed forms use whole-word prefix, interval, inverse, or assigned arithmetic.
+NaryAdd carry state grows with dynamic arity and its closure is already
+optimized.  Concat/extract and remaining structural actors use direct masks.
+Lookup tables for these paths would either duplicate formulas, explode with
+width/arity, or worsen locality.  No follow-up for them is justified by this
+audit.
+
+The detailed classification and table-size estimate is preserved in
+`/private/tmp/word065-cross-audit.md`; source-audit commands are appended to
+`/private/tmp/word065-raw/commands.txt`.  No cross-propagator source change was
+made in task 065.
+
 ## Boundaries
 
 - This area is a full implementation spike, not a battle-hardening exercise. Each task must follow established Gecode patterns, reuse normal framework and test machinery, and avoid novel infrastructure, special-case test paths, exhaustive edge-case campaigns, or verification beyond what is proportionate to getting the implementation working.

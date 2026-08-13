@@ -3,7 +3,7 @@ schema_version = 1
 id = "word-065"
 key = "binary-add-algorithms"
 area = "word"
-status = "open"
+status = "done"
 blocked_by = []
 +++
 # Investigate alternative algorithms for bit-consistent binary Word addition
@@ -27,11 +27,11 @@ Speck profiling identifies binary Add as the dominant algorithmic frame. The cur
 
 ## Done when
 
-- [ ] The current actor's work is decomposed into measured phases, including calls, bit scans, transitions, support projection, publications, and useful changes.
-- [ ] At least two credible alternative binary-Add algorithms are implemented or analytically rejected with concrete complexity and Gecode-lifecycle reasoning.
-- [ ] Temporary candidates are compared against the exact current baseline on symbolic ALU, Speck32/64, focused forward and inverse Add cases, and MD5 as a secondary regression guard.
-- [ ] Exact candidates preserve assigned semantics, bit consistency, aliases, AddCarry terminal-carry behavior, actor lifecycle, and search solution parity.
-- [ ] The result establishes either a retained material improvement or a documented negative conclusion that the required support projection makes the current linear scan close to the practical floor.
+- [x] The current actor's work is decomposed into measured phases, including calls, bit scans, transitions, support projection, publications, and useful changes.
+- [x] At least two credible alternative binary-Add algorithms are implemented or analytically rejected with concrete complexity and Gecode-lifecycle reasoning.
+- [x] Temporary candidates are compared against the exact current baseline on symbolic ALU, Speck32/64, focused forward and inverse Add cases, and MD5 as a secondary regression guard.
+- [x] Exact candidates preserve assigned semantics, bit consistency, aliases, AddCarry terminal-carry behavior, actor lifecycle, and search solution parity.
+- [x] The result establishes either a retained material improvement or a documented negative conclusion that the required support projection makes the current linear scan close to the practical floor.
 
 ## Validation
 
@@ -39,3 +39,12 @@ Speck profiling identifies binary Add as the dominant algorithmic frame. The cur
 - Run focused Word Arithmetic Add, Lifecycle, and TestFramework tests for any retained production change.
 - Report wall time, propagations, nodes, failures, solutions, actor counts, phase counts, and best-effort memory.
 - Run zd check word and git diff --check.
+
+## Result
+
+Replaced repeated binary Add tuple scans with exact immutable transition/support summaries and fused directional passes, materially improving ALU, Speck, and MD5 while preserving bit consistency and lifecycle.
+
+Validation:
+
+- Independent Spec and Standards verification passed, including exhaustive table algebra, aliases, AddCarry terminal states, width 1/64, lifecycle, and cross-propagator audit.
+- Release Arithmetic, Overflow carry/lifecycle, and TestFramework tests passed; exact benchmark parity, provenance hashes, zd check word, and git diff --check passed.
