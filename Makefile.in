@@ -1385,7 +1385,7 @@ BLACKBOXFIXTURES =
 endif
 
 TESTBUILDDIRS = \
-	test test/int test/set test/float \
+	test test/int test/set test/float test/word \
 	test/branch test/assign \
 	test/flatzinc
 
