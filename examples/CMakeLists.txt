@@ -63,11 +63,14 @@ set(GECODE_EXAMPLE_SOURCES
   word-arithmetic.cpp
   word-benchmark.cpp
   word-bitboard.cpp
+  word-crc16-ccitt.cpp
+  word-crc16-x25.cpp
   word-md5-preimage.cpp
   word-minimodel.cpp
   word-register-file.cpp
   word-sha1-preimage.cpp
   word-structure.cpp
+  word-symbolic-alu.cpp
   word-square.cpp)
 
 set(GECODE_SET_EXAMPLES
@@ -90,11 +93,14 @@ set(GECODE_WORD_EXAMPLES
   word-arithmetic
   word-benchmark
   word-bitboard
+  word-crc16-ccitt
+  word-crc16-x25
   word-md5-preimage
   word-minimodel
   word-register-file
   word-sha1-preimage
-  word-structure)
+  word-structure
+  word-symbolic-alu)
 
 function(gecode_add_example source_file)
   get_filename_component(example_name "${source_file}" NAME_WE)

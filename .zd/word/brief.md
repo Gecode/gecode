@@ -752,6 +752,93 @@ Best-effort live RSS was 2,352 KiB; `/usr/bin/time -l` again could not report
 RSS because macOS denied `kern.clockrate`. No temporary instrumentation or raw
 result is tracked.
 
+### Five-example cross-corpus result
+
+The realistic example corpus now includes CRC-16/CCITT-FALSE, reflected
+CRC-16/X-25-style recurrence, and a constructed symbolic register/ALU path in
+addition to reduced MD5 and SHA-1. Their defaults finish in less than one
+millisecond; the explicit profiling configurations reproduce the word-049
+one-root scales. CCITT with 28 message bits takes 42.271 seconds for 16,777,216
+solutions, 1,102,413,424 propagations, 33,554,431 nodes, and no failures. The
+reflected case takes 44.461 seconds with the same solutions/tree and
+1,144,169,916 propagations. The 12-step, width-22 ALU path takes 59.047 seconds
+for 2,367,275 solutions, 546,624,487 propagations, 6,081,663 nodes, and 673,557
+failures.
+
+Independent Boolean CRC recurrences have exact parity at the bounded 26-bit
+scale. Both Word and Boolean variants enumerate 4,194,304 solutions with
+checksum 140,737,486,258,176, 8,388,607 nodes, and no failures. CCITT Word uses
+152 root actors and 404,887,158 propagations in 16.07 seconds; Boolean uses 421
+actors and 404,242,923 propagations in 15.82 seconds. Reflected Word uses 152
+actors and 420,878,621 propagations in 16.62 seconds; Boolean uses 421 actors
+and 421,083,475 propagations in 16.48 seconds. A complete ALU Boolean ripple
+model was omitted because the retained Word case already reaches the task's
+59-second bound; no parity or relative-performance claim is made for it.
+
+The five-model comparison sharpens the earlier hypotheses:
+
+- Repeated `NaryAdd` closure and bounded-carry support projection are confirmed
+  operation-specific hash costs. CRC and the ALU contain no `NaryAdd`. A
+  reconstructed experimental one-pass build reproduces exact MD5 and SHA-1
+  solutions, checksums, actors, propagations, nodes, and failures, with MD5
+  14.36 to 10.03 seconds and SHA-1 18.68 to 11.83 seconds. This still does not
+  prove the general fixpoint contract; the implementation task must derive and
+  test the condition under which a second pass is redundant rather than simply
+  deleting the loop.
+- Folding assigned round constants into the existing n-ary addition is useful
+  only in the hash model shapes. CRC has no addition, and the ALU has no
+  adjacent multi-input sum into which its constants can naturally fold. This
+  remains a small example cleanup after the actor investigation, not a general
+  API or propagator task.
+- Clone-distance sensitivity is general and larger for the CRC models. At 26
+  bits, CCITT changes from 16.07 seconds and 404,887,158 propagations at
+  `c_d=8` to 8.25 seconds and 193,462,323 at `c_d=1`; reflected changes from
+  16.62/420,878,621 to 8.72/197,984,295. ALU changes from roughly 59 seconds
+  and 533,099,261 propagations to 52.18 seconds and 486,316,626. Solutions,
+  checksums, nodes, and failures remain unchanged. This is example/search
+  guidance; no global clone policy follows from it.
+- Dynamic n-ary loop unrolling remains rejected because it changes no work and
+  gave only noise-scale timing movement.
+- Hot paths are workload-specific beyond search restoration. MD5/SHA-1 are
+  dominated by `NaryAdd`; the ALU sample has 2,534 binary `Add` frames, 490
+  `WordView::narrow` frames, and 214 `Logic::Table` frames. CRC profiles remain
+  led by Word narrowing followed by `Logic::Table`, channels, and fixed shifts.
+  These CRC/ALU samples identify where time is spent but do not yet identify a
+  new removable inefficiency, so they do not justify new Add, Table, channel,
+  or shift tasks.
+
+Sampled peak footprints are 1,184 KiB for ALU, 1,424/1,440 KiB for MD5/SHA-1,
+and 1,472/1,488 KiB for the two CRCs. This process-scale evidence shows no
+clone-state memory crisis and does not replace a supported peak-RSS facility.
+
+The resulting task split is deliberately small and dependency ordered:
+
+1. Investigate and, only if proved sound and measured useful, optimize
+   `NaryAdd` local closure. The task must preserve the public API, native actor,
+   aliases, bounded-carry propagation contract, cost/events, cloning, and
+   subsumption. It must add or update normal arithmetic tests for any changed
+   fixpoint logic and compare exact baseline/candidate results on MD5, SHA-1,
+   existing partial/inverse arithmetic tests, and a small general n-ary search.
+2. After that task, simplify the two hash examples by folding their assigned
+   round constants into the existing n-ary add posting. This changes model
+   propagation/search, so verify concrete targets/default output and report
+   retained-scale solution/checksum and search counters; add no API or tests.
+
+Do not create tasks for unrolling, clone policy, binary Add, CRC Table/channel,
+or fixed shifts from these profiles. A future task requires a concrete measured
+candidate rather than another sample naming a hot function.
+
+The cross-corpus profiling baseline is commit
+`8d38b69330` with Release libraries. Example source hashes are
+`f456e64938af5afa5e457bf9e692fd0d1a21b62808cb0a253631c6733a6ae775`
+(CCITT), `ca981becacb3ab877c88603ca8eb0e83bab4bc466e11d6308965ac5ec02b8b37`
+(reflected CRC), and
+`784828275334cbb13712d3cea14d2f9ef146ab65b3d34327a5805cc8022290a0`
+(ALU). Raw CRC/ALU/copy-distance results and the ALU sample remain under
+`/private/tmp/word052-*`; the ALU sample hashes to
+`f086f4d400eaf9bbf7914aaaec476b36c76924eddd65d6012fb0d9a4984b5c38`.
+No raw result, decomposition driver, or profiling probe is tracked.
+
 ## Boundaries
 
 - This area is a full implementation spike, not a battle-hardening exercise. Each task must follow established Gecode patterns, reuse normal framework and test machinery, and avoid novel infrastructure, special-case test paths, exhaustive edge-case campaigns, or verification beyond what is proportionate to getting the implementation working.

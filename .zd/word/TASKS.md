@@ -2,10 +2,10 @@
 
 # Tasks: word
 
-- Total: 52
+- Total: 54
 - Ready: 1
-- Blocked: 0
-- Done: 51
+- Blocked: 1
+- Done: 52
 
 | ID | Task | State | Blocked by |
 | --- | --- | --- | --- |
@@ -60,4 +60,6 @@
 | [word-049](tasks/049-research-realistic-wordvar-profiling-instances.md) | Research realistic WordVar profiling instances | done | word-048 |
 | [word-050](tasks/050-calibrate-faithful-reduced-md5-and-sha-1-preimages.md) | Calibrate faithful reduced MD5 and SHA-1 preimages | done | word-049 |
 | [word-051](tasks/051-add-reduced-hash-examples-and-profile-their-hot-paths.md) | Add reduced-hash examples and profile their hot paths | done | word-050 |
-| [word-052](tasks/052-add-crc-and-symbolic-alu-examples-and-profile-the-corpus.md) | Add CRC and symbolic ALU examples and profile the corpus | ready | word-051 |
+| [word-052](tasks/052-add-crc-and-symbolic-alu-examples-and-profile-the-corpus.md) | Add CRC and symbolic ALU examples and profile the corpus | done | word-051 |
+| [word-053](tasks/053-prove-and-optimize-naryadd-local-closure.md) | Prove and optimize NaryAdd local closure | ready | word-052 |
+| [word-054](tasks/054-fold-hash-round-constants-into-n-ary-additions.md) | Fold hash round constants into n-ary additions | blocked | word-053 |
