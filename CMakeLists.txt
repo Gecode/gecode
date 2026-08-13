@@ -1472,8 +1472,42 @@ if(BUILD_TESTING)
         Set::Sequence::SeqU1
         Set::Wait)
     endif()
+    set(GECODE_REQUIRED_CHECK_TESTS)
     if(GECODE_ENABLE_WORD_VARS)
-      list(APPEND GECODE_CHECK_TESTS Word::TestFramework)
+      set(GECODE_WORD_CHECK_TESTS
+        Word::TestFramework
+        Word::Channel::Lifecycle
+        Word::Rel::Lifecycle
+        Word::Logic::Lifecycle
+        Word::Structure::Fixed
+        Word::Arithmetic::Lifecycle
+        Word::Arithmetic::DivisionLifecycle
+        Word::Element::Lifecycle
+        Word::Branch
+        Word::Trace
+        Word::MiniModel::Lifecycle)
+      list(APPEND GECODE_CHECK_TESTS ${GECODE_WORD_CHECK_TESTS})
+
+      set(GECODE_REQUIRED_WORD_CHECK_TESTS
+        Word::TestFramework
+        Word::Channel::Lifecycle
+        Word::Rel::Lifecycle
+        Word::Logic::Lifecycle
+        Word::Structure::Fixed
+        Word::Arithmetic::Lifecycle
+        Word::Arithmetic::DivisionLifecycle
+        Word::Element::Lifecycle
+        Word::Branch
+        Word::Trace
+        Word::MiniModel::Lifecycle)
+      foreach(gecode_required_word_test ${GECODE_REQUIRED_WORD_CHECK_TESTS})
+        if(NOT gecode_required_word_test IN_LIST GECODE_CHECK_TESTS)
+          message(FATAL_ERROR
+            "Required Word check test is missing: ${gecode_required_word_test}")
+        endif()
+      endforeach()
+      list(APPEND GECODE_REQUIRED_CHECK_TESTS
+        ${GECODE_REQUIRED_WORD_CHECK_TESTS})
     endif()
     if(GECODE_ENABLE_FLOAT_VARS)
       set(GECODE_FLOAT_CHECK_TESTS
@@ -1501,6 +1535,8 @@ if(BUILD_TESTING)
             "Required Float check test is missing: ${gecode_required_float_test}")
         endif()
       endforeach()
+      list(APPEND GECODE_REQUIRED_CHECK_TESTS
+        ${GECODE_REQUIRED_FLOAT_CHECK_TESTS})
     endif()
 
     set(GECODE_CHECK_ARGS -iter 2 -threads 0 -fixprob 1)
@@ -1532,11 +1568,11 @@ if(BUILD_TESTING)
         ENVIRONMENT "${GECODE_TEST_BLACKBOX_ENV}")
     endif()
     set(GECODE_CHECK_DEPENDS gecode-test)
-    if(GECODE_ENABLE_FLOAT_VARS)
+    if(GECODE_ENABLE_WORD_VARS OR GECODE_ENABLE_FLOAT_VARS)
       add_custom_target(verify-gecode-check-tests
         COMMAND ${CMAKE_COMMAND}
           "-DTEST_EXECUTABLE=$<TARGET_FILE:gecode-test>"
-          "-DREQUIRED_TESTS=${GECODE_REQUIRED_FLOAT_CHECK_TESTS}"
+          "-DREQUIRED_TESTS=${GECODE_REQUIRED_CHECK_TESTS}"
           -P ${CMAKE_CURRENT_SOURCE_DIR}/cmake/VerifyTestSelection.cmake
         DEPENDS gecode-test
         VERBATIM)

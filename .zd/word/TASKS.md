@@ -4,8 +4,8 @@
 
 - Total: 64
 - Ready: 1
-- Blocked: 2
-- Done: 61
+- Blocked: 1
+- Done: 62
 
 | ID | Task | State | Blocked by |
 | --- | --- | --- | --- |
@@ -70,6 +70,6 @@
 | [word-059](tasks/059-normalize-reified-word-equality-aliases.md) | Normalize reified Word equality aliases | done | — |
 | [word-060](tasks/060-normalize-word-self-modulus-identities.md) | Normalize Word self-modulus identities | done | — |
 | [word-061](tasks/061-fix-clean-autoconf-word-test-builds.md) | Fix clean Autoconf Word test builds | done | — |
-| [word-062](tasks/062-run-representative-word-lifecycle-tests-in-routine-ci.md) | Run representative Word lifecycle tests in routine CI | ready | word-059, word-060 |
-| [word-063](tasks/063-refresh-word-diagnostics-and-release-documentation.md) | Refresh Word diagnostics and release documentation | blocked | word-059, word-060, word-061, word-062 |
+| [word-062](tasks/062-run-representative-word-lifecycle-tests-in-routine-ci.md) | Run representative Word lifecycle tests in routine CI | done | word-059, word-060 |
+| [word-063](tasks/063-refresh-word-diagnostics-and-release-documentation.md) | Refresh Word diagnostics and release documentation | ready | word-059, word-060, word-061, word-062 |
 | [word-064](tasks/064-research-larger-natural-wordvar-profiling-instances.md) | Research larger natural WordVar profiling instances | blocked | word-063 |

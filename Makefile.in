@@ -1446,7 +1446,29 @@ BLACKBOXCHECKENV = \
 endif
 
 ifeq "@enable_word_vars@" "yes"
-CHECKTESTS += Word::TestFramework
+WORDCHECKTESTS = Word::TestFramework \
+	Word::Channel::Lifecycle \
+	Word::Rel::Lifecycle \
+	Word::Logic::Lifecycle \
+	Word::Structure::Fixed \
+	Word::Arithmetic::Lifecycle \
+	Word::Arithmetic::DivisionLifecycle \
+	Word::Element::Lifecycle \
+	Word::Branch \
+	Word::Trace \
+	Word::MiniModel::Lifecycle
+CHECKTESTS += $(WORDCHECKTESTS)
+REQUIREDWORDCHECKTESTS = Word::TestFramework \
+	Word::Channel::Lifecycle \
+	Word::Rel::Lifecycle \
+	Word::Logic::Lifecycle \
+	Word::Structure::Fixed \
+	Word::Arithmetic::Lifecycle \
+	Word::Arithmetic::DivisionLifecycle \
+	Word::Element::Lifecycle \
+	Word::Branch \
+	Word::Trace \
+	Word::MiniModel::Lifecycle
 endif
 
 ifeq "@enable_float_vars@" "yes"
@@ -1467,6 +1489,15 @@ endif
 
 # A basic integrity test
 check: test
+	@for t in $(REQUIREDWORDCHECKTESTS); do \
+		case " $(CHECKTESTS) " in *" $$t "*) ;; \
+		*) echo "Required Word check test is missing: $$t" >&2; exit 1 ;; \
+		esac; \
+		if ! $(RUNENVIRONMENT) $(TESTEXE) -list | grep -Fqx "$$t"; then \
+			echo "Required Word check test is not registered: $$t" >&2; \
+			exit 1; \
+		fi; \
+	done
 	@for t in $(REQUIREDFLOATCHECKTESTS); do \
 		case " $(CHECKTESTS) " in *" $$t "*) ;; \
 		*) echo "Required Float check test is missing: $$t" >&2; exit 1 ;; \
