@@ -3,7 +3,7 @@ schema_version = 1
 id = "word-067"
 key = "hybrid-word-integer-domain"
 area = "word"
-status = "open"
+status = "done"
 blocked_by = []
 +++
 # Investigate hybrid Word cubes with integer bounds and integer-compatible views
@@ -31,18 +31,18 @@ The current lo and hi masks are the unsigned minimum and maximum of the represen
 
 ## Done when
 
-- [ ] The candidate domain is specified as a cube intersected with numeric bounds whose endpoints are stored as WordValue values, including canonicalization to the first and last cube members admitted by the interpreted range.
-- [ ] Unsigned and signed two's-complement interpretations are both specified, including zero crossing, the sign boundary, width 1, width 64, and values outside Gecode Int limits.
-- [ ] Exhaustive small-width checking validates non-empty intersection, monotone narrowing, canonicalization, assignment, failure, signed and unsigned extrema, and clone/replay equivalence.
-- [ ] The investigation compares immutable variable signedness with signed and unsigned views and records an evidence-backed architectural choice.
-- [ ] The required Gecode integer-view protocol is audited against representative standard propagators, including value-consistent distinct, bounds-consistent distinct, order relations, linear or addition constraints, and at least one non-linear arithmetic constraint.
-- [ ] A temporary prototype demonstrates which representative Int constraints can operate directly through a Word integer view and which require channeling, adapters, new overloads, or cannot preserve their contract.
-- [ ] The investigation precisely documents the semantic distinction between mathematical integer arithmetic through the view and modular Word arithmetic.
-- [ ] The additional bytes per Word variable and clone, update and canonicalization costs, branching effects, and required modification events, deltas, and propagation conditions are measured.
-- [ ] Representative workloads include fixed-product multiplication and factor recovery, unsigned division or comparison, signed ordering, shifts as a mixed case, and hashes or CRC as overhead controls.
-- [ ] Exact solution parity and clone/recomputation equivalence are established for every prototype workload.
-- [ ] The result reports useful propagation, nodes, failures, wall time, memory, event traffic, and comparison with both the current cube and derived-on-demand extrema.
-- [ ] The Word brief records a go or no-go decision; a go result proposes separately approved kernel, view/API, branching, actor-migration, and validation tasks rather than implementing them here.
+- [x] The candidate domain is specified as a cube intersected with numeric bounds whose endpoints are stored as WordValue values, including canonicalization to the first and last cube members admitted by the interpreted range.
+- [x] Unsigned and signed two's-complement interpretations are both specified, including zero crossing, the sign boundary, width 1, width 64, and values outside Gecode Int limits.
+- [x] Exhaustive small-width checking validates non-empty intersection, monotone narrowing, canonicalization, assignment, failure, signed and unsigned extrema, and clone/replay equivalence.
+- [x] The investigation compares immutable variable signedness with signed and unsigned views and records an evidence-backed architectural choice.
+- [x] The required Gecode integer-view protocol is audited against representative standard propagators, including value-consistent distinct, bounds-consistent distinct, order relations, linear or addition constraints, and at least one non-linear arithmetic constraint.
+- [x] A temporary prototype demonstrates which representative Int constraints can operate directly through a Word integer view and which require channeling, adapters, new overloads, or cannot preserve their contract.
+- [x] The investigation precisely documents the semantic distinction between mathematical integer arithmetic through the view and modular Word arithmetic.
+- [x] The additional bytes per Word variable and clone, update and canonicalization costs, branching effects, and required modification events, deltas, and propagation conditions are measured.
+- [x] Representative workloads include fixed-product multiplication and factor recovery, unsigned division or comparison, signed ordering, shifts as a mixed case, and hashes or CRC as overhead controls.
+- [x] Exact solution parity and clone/recomputation equivalence are established for every prototype workload.
+- [x] The result reports useful propagation, nodes, failures, wall time, memory, event traffic, and comparison with both the current cube and derived-on-demand extrema.
+- [x] The Word brief records a go or no-go decision; a go result proposes separately approved kernel, view/API, branching, actor-migration, and validation tasks rather than implementing them here.
 
 ## Validation
 
@@ -51,3 +51,12 @@ The current lo and hi masks are the unsigned minimum and maximum of the represen
 - Compare value- and bounds-consistent distinct plus representative arithmetic constraints against ordinary IntVar models with exact solution parity.
 - Confirm no production, API, test, example, or build file changed.
 - Run zd check word and git diff --check.
+
+## Result
+
+Investigated hybrid cube-and-integer Word domains and integer-compatible views; rejected universal WordVar bounds due 67% state growth, event/canonicalization costs, Int-limit/protocol barriers, and little benefit outside range-heavy models.
+
+Validation:
+
+- Independent Spec and Standards verification passed after exact Int/channel and mixed-model parity, genuine c_d=1 replay, corrected successful-tell event accounting, and full provenance validation.
+- Domain oracle, view compatibility, workload controls, hashes, zd check word, and git diff --check passed; no production/API/test/example/build files changed.

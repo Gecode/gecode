@@ -1454,6 +1454,124 @@ solution output both normalize to `semantic-solution.txt`, whose hash records
 the exact solution count and factor/product tuple independently of runtime
 statistics.  No benchmark driver or instrumentation is tracked.
 
+## Hybrid cube and integer-range domain investigation
+
+Task 067 uses exact baseline `1ec7ada451` and reaches a **no-go** decision for
+changing every WordVar to a hybrid numeric domain.  The useful candidate is
+not an extrema cache: cube `lo` and `hi` already are its unsigned extrema.  It
+is the cube intersected with numeric bounds.  Supporting unsigned and signed
+clients simultaneously requires two independent intervals, stored as four
+`WordValue` endpoints.  Signed order is represented without host signed
+conversion by rank `encoded ^ sign_bit`.  A signed interval is contiguous in
+rank space; across zero its encoded set splits into negative high-bit and
+nonnegative low-bit segments.  Width one and width 64 use the same transform.
+Values outside `Int::Limits` remain valid Word values but cannot enter an Int
+actor.
+
+Canonicalization computes the first and last cube member admitted by both
+intervals, fails if none exists, and feeds newly fixed bits back into the cube.
+A production algorithm can use constrained-bit successor/predecessor over the
+at-most-two encoded signed segments.  The throwaway exhaustive oracle passed
+1,899 cases: exhaustive widths one and two, every width-three cube against 36
+unsigned/signed boundary pairs, targeted widths four/eight, and exact width-64
+sign/rank/assignment arithmetic.  It also passed 2,708 monotone tells and 1,318
+copy/replay-equivalence checks, including empty intersections, assignment,
+zero/sign boundaries, and signed/unsigned extrema.  An initially broader
+cross-product hit the 60-second hard cap and is not used as evidence.  These
+1,318 checks are plain copy equivalence, not Gecode search replay; genuine
+`c_d=1` replay is exercised by the parity and mixed-workload DFS models below.
+
+Signedness belongs in views, not immutable variable state: the same Word must
+remain usable by modular actors plus unsigned and signed relations.  But views
+alone cannot create shared persistent precision.  An interpretation-neutral
+VarImp would carry unsigned and signed-rank intervals, while signed/unsigned
+views select their order and tells.  Current `WordVarImp` is 48 bytes; four
+endpoints make it an estimated 80 bytes, adding 32 bytes or 67 percent to every
+variable and clone.  WordView and IntView are each eight bytes.  This excludes
+event-list growth and canonicalization on every tell.
+
+The Int protocol audit rejects a blanket claim that a view is merely
+`min/max`.  A temporary Word-backed adapter directly instantiated established
+`Int::Rel::Lq` and `Int::Linear::EqBin` templates and propagated two actors.
+Bounds order and bounds linear arithmetic can therefore reuse templates after
+a complete adapter supplies bound tells, aliases, update, subscription,
+`View::me`, and honest BND events.  Value-consistent distinct additionally
+needs exact `nq`; bounds-consistent distinct needs BND scheduling and array
+lifecycle.  Domain-consistent distinct requires range/value iterators and
+iterator tells; a cube intersected with two ranges cannot provide the Int DOM
+protocol without enumerating/materializing holes, so direct reuse is rejected.
+`Arithmetic::MultBnd` is hard-coded to `IntView`; ordinary posting cannot
+accept the adapter and needs a new actor/overload or channeling.  The same
+warning applies to actors assuming Int deltas, regret/size, or DOM iteration.
+Gecode's Int range is only `[-2147483646,2147483646]`, excluding many width-32
+values and nearly all width 64.
+
+Honest temporary bit-channel models compare established Int actors with
+ordinary IntVar models.  At width three, value- and bounds-consistent distinct
+both preserve 336 solutions and checksum 30,530,808; order preserves
+84/2,629,914; linear addition 36/1,706,736; and bounds multiplication
+31/1,454,300.  All searches use `c_d=1`.  Channeling costs are visible:
+distinct rises from 64/79 to 1,563/1,578 propagations and from 671 to 687
+nodes; order from 62 to 487 propagations; linear from 71 to 385; multiplication
+from 62 to 318.  This establishes exact semantic/replay parity, but not a
+zero-cost direct view.  It confirms that Val distinct needs exact interior
+exclusion supplied by Int rather than an unsound cube `nq`.
+
+Mathematical integer arithmetic through a view remains distinct from modular
+Word arithmetic.  Int-view `x+y=z` can fail on overflow and is restricted to
+Int limits; Word `add` wraps modulo the width.  Integer multiplication likewise
+is not native modular Mult.
+
+A passive four-endpoint VarImp prototype preserves exact counters on
+fixed-product u26 (one solution, 30 propagations, 29 nodes, 14 failures), ALU
+default (65,810 solutions, 18,230,041 propagations, 375,811 nodes, 122,096
+failures), CCITT default (65,536/2,993,199/131,071/0), X-25 default
+(65,536/3,145,494/131,071/0), MD5 default (16/1,364/59/14), and SHA-1 default
+(16/1,226/41/5).  Three fresh-process trials are noisy for ALU and tiny hashes;
+CRC timing suggests at most small overhead but is mostly noise: CCITT ranges
+overlap (0.139--0.145 versus 0.142--0.143 seconds), while X-25 is consistently
+0.145--0.146 versus 0.149 seconds in only three trials.  This
+prototype only copies and maintains derived endpoints; real canonicalization
+and new notifications can cost more.  Fixed-product Mult already obtains the
+useful non-wrapping range refinement locally.  Existing unsigned/signed order
+and division actors likewise derive range hulls where their contracts use
+them; variable shift mixes whole-word classes for which one interval does not
+encode the lost relation.  A separate `c_d=1` mixed DFS confirms passive-state
+exact parity: unsigned div plus comparison has 56 solutions, checksum
+961,804,019,540, 127 nodes, 8 failures, and 127 propagations; signed order has
+903/29,620,923,279,647/1,847/21/2,898; variable shift has
+4,095/93,736,674,455,328/8,191/1/3,000.  Hash/CRC controls have many Word
+variables but no integer-range consumers, making the universal clone tax pure
+overhead.
+
+Events are another kernel cost.  `ME_WORD_BITS/VAL` cannot distinguish an
+unchanged cube with tightened unsigned or signed bounds.  Correct support needs
+bound-visible scheduling and endpoint deltas, or conservative scheduling of
+all Word actors.  The former changes VarImpConf, views, branchers, trace,
+clone/replay, and subscribing actors; the latter discards hoped-for efficiency.
+Bit branching also needs canonicalization before selection and after commits.
+The oracle performed 2,708 attempted range tells.  Exactly 136 successful tells
+changed the represented set, and four of those changed numeric bounds without
+changing cube masks.  Those four prove that a bound-visible event is required:
+current `ME_WORD_BITS` cannot honestly encode the change.  This synthetic
+oracle does not estimate how often such events occur in real workloads;
+failed candidate tells are excluded from the event counts.  Best-effort
+`/usr/bin/time -l` memory was unavailable because
+sandboxed macOS cannot read `kern.clockrate`; exact object sizes and the
++32-byte clone payload are retained instead.  Adjacent width-one/two oracle
+totals are 27/927 domain cases and 60/2,708 tells.
+
+The result is no-go for an expand/migrate/contract program, so no implementation
+task split is proposed.  Range reasoning should remain local to measured
+actors.  If a future natural model needs several mathematical Int constraints
+over the same representable Word values, the smaller separately approved
+investigation is an explicit opt-in channel/adapter variable, not universal
+WordVar kernel migration.
+
+Temporary sources, builds, commands, raw statistics, and hashes are under
+`/private/tmp/word067-*` and `/private/tmp/word067-raw`.  No production, API,
+test, example, or build file is changed.
+
 ## Boundaries
 
 - This area is a full implementation spike, not a battle-hardening exercise. Each task must follow established Gecode patterns, reuse normal framework and test machinery, and avoid novel infrastructure, special-case test paths, exhaustive edge-case campaigns, or verification beyond what is proportionate to getting the implementation working.
