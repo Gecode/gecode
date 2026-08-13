@@ -987,6 +987,48 @@ generic Table staging, or global search defaults.  Raw commands, counters,
 samples, and temporary patches remain under `/private/tmp/word055-*`; no probe
 or benchmark artifact is tracked.
 
+### Structural performance measurements
+
+Continue profiling after the direct OR/XOR and delta-local bit-channel changes
+by measuring the shape of propagation and search, not only individual hot
+functions.  The objective is to expose multiplicative costs that a focused
+microbenchmark can hide: actor graph size, copied state per node, propagation
+waves per branch, notification fan-out, information gained per execution,
+recomputation amplification, and scaling with word width or model depth.
+
+Use the five checked-in examples as the primary corpus and the established
+independent Boolean CRC/MD5 comparisons where they answer a structural
+question.  Record at least:
+
+- root actor/advisor counts and estimated space-owned bytes by actor family;
+- actor copies, advisor copies, and estimated copied bytes per search node;
+- propagation calls per node, per committed input bit, and per newly fixed Word
+  bit, separated by actor family;
+- notification fan-out and useful-domain-change yield, including propagations
+  that fail, subsume, narrow, or do no visible work;
+- propagation-wave depth after a branch commit, rather than only aggregate
+  `StatusStatistics` totals;
+- scaling curves over at least three adjacent widths, unknown-bit counts, or
+  round depths, using normalized slopes rather than repeated-root timing; and
+- `c_d`/`a_d` sensitivity expressed as copied bytes versus replayed propagation,
+  without changing the examples' defaults or inferring a global policy.
+
+Compare these measurements with normal Gecode Int/Bool actor shapes and search
+restoration behavior.  Distinguish implementation overhead from limitations of
+the Word cube domain and from model topology.  A larger search tree with less
+runtime can still be a good trade; a lower actor count is not automatically a
+memory win when actors or advisors are larger.  Avoid proposing changes to the
+kernel, global search defaults, or propagation conditions unless caller-local
+and actor-local explanations have been ruled out with evidence.
+
+Instrumentation remains temporary and detached.  Prefer counters at existing
+actor/view/search seams, bounded samples, and model-side structural metrics;
+do not add a durable profiler, benchmark runner, production switch, or private
+result file.  Retained-scale runs are required only when a bounded scaling or
+structural hypothesis would otherwise remain ambiguous.  The investigation
+adds no normal tests; any later implementation task follows the established
+focused `test/word` level for the contract it changes.
+
 ## Boundaries
 
 - This area is a full implementation spike, not a battle-hardening exercise. Each task must follow established Gecode patterns, reuse normal framework and test machinery, and avoid novel infrastructure, special-case test paths, exhaustive edge-case campaigns, or verification beyond what is proportionate to getting the implementation working.

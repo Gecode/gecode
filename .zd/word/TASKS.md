@@ -2,8 +2,8 @@
 
 # Tasks: word
 
-- Total: 57
-- Ready: 0
+- Total: 58
+- Ready: 1
 - Blocked: 0
 - Done: 57
 
@@ -66,3 +66,4 @@
 | [word-055](tasks/055-audit-native-word-propagation-and-scheduling-costs.md) | Audit native Word propagation and scheduling costs | done | — |
 | [word-056](tasks/056-add-direct-native-named-word-logic-actors.md) | Add direct native named Word logic actors | done | word-055 |
 | [word-057](tasks/057-prototype-delta-local-word-bit-channeling.md) | Prototype delta-local Word bit channeling | done | word-056 |
+| [word-058](tasks/058-measure-structural-word-propagation-and-search-costs.md) | Measure structural Word propagation and search costs | ready | — |
