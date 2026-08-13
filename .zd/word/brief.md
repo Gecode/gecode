@@ -1124,6 +1124,169 @@ Commands are preserved in `/private/tmp/word058-commands.txt`, raw results in
 driver is `/private/tmp/word058-profile`.  No probe, raw result, or benchmark
 artifact is tracked.
 
+## Larger natural profiling instances
+
+Task 064 surveyed natural public families from Wang et al.'s Wombit SMT-LIB
+inventory and operation tables: BMC/software verification (`bmc-bv`,
+`bmc-bv-svcomp14`, `uclid`), software/security verification cases (`spear`),
+solver samples (`stp`), other solver/application samples (`sage`),
+LFSR/core (`bruttomesso/core`, `bruttomesso/lfsr`), arithmetic synthesis
+(`mcm`), DSP (`fft`), and packed-state puzzles (`rubik`).  The primary local
+source is
+`sources/derived/papers/2019-wang-wombit-a-portfolio-bit-vector-solver-using-word/fulltext.md`
+in the CPKB, with its Wang 2016 and Wombit 2019 source records.  Six families
+were considered: BMC/software verification, LFSR/PRNG recovery, ARX key
+recovery, multiple-constant multiplication, FFT/fixed-point DSP, and
+packed-state puzzles.  Three distinct natural families were retained as
+single-root, hard-capped Release searches.
+
+The per-family selection map is as follows, ranked by profiling value in this
+task.
+
+1. **ARX key recovery (retained).**  Public provenance is the independently
+   selected, published Speck32/64 recurrence; it is not derived from Wombit's
+   categories.  Wombit's `spear` entries are software/security verification
+   cases such as CVS, OpenLDAP, and Samba, while `stp` contains solver samples.
+   Speck exercises modular Add, rotate, XOR, equality,
+   and a many-round key/data-flow graph: a fixed chain of Add, Fixed,
+   native/fallback logic, and relation actors.  Unknown key bits and round
+   count independently tune search and topology.  It gives a natural combined
+   arithmetic/logic/structural profile with a concrete oracle.
+2. **LFSR/PRNG state recovery (retained).**  Public provenance is Marsaglia's
+   xorshift32 recurrence, corresponding to Wombit's `bruttomesso/lfsr`
+   family.  It exercises fixed shifts, XOR, Word/Bool bit channeling, and
+   observed relations in a repeated state-transition chain, including one
+   initially advised Bit actor per observation.  Unknown seed bits and
+   observation count tune search and topology.  It profiles linear bit
+   dependencies, advisors, and clone-heavy search.
+3. **Arithmetic inversion/MCM-adjacent multiplication (retained).**  Public
+   provenance is exact bounded semiprime factor recovery, selected from
+   Wombit's arithmetic and `mcm` operation mix rather than claimed as an MCM
+   synthesis instance.  One Mult actor relates two Word factors to an exact
+   product; unknown low bits tune difficulty without repeated roots.  Its
+   minimal topology isolates multiplication inverse strength and cube-domain
+   limitations, and permits a direct bounded IntVar comparison.
+4. **BMC/software verification (not retained).**  Wombit's public `bmc-bv`,
+   `bmc-bv-svcomp14`, and `uclid` families combine arithmetic, structural,
+   comparison, reification, arrays, and mixed control/data actors in wide
+   transition graphs; unwind depth and symbolic inputs tune difficulty.  This
+   is highly valuable for the missing mixed Word/Int and reified paths, but a
+   faithful instance requires a provenance-preserving SMT-LIB translator or a
+   real program trace.  A hand-written substitute would repeat the already
+   constructed ALU workload, so none was retained.
+5. **FFT/fixed-point DSP (not retained).**  Wombit's public `fft` family
+   suggests regular Add/Mult/shift/extract networks with layer/size and
+   coefficient precision as natural controls.  It would profile broad regular
+   arithmetic topology, but a faithful transform, rounding semantics, and a
+   non-enumeration oracle exceeded the bounded task.
+6. **Packed-state puzzle/Rubik (not retained).**  Wombit's public `rubik`
+   family implies extract/concat/mask/equality actors over a large permutation
+   graph, with scramble depth as the control.  It would profile structural
+   actors and symmetry-heavy search, but faithful state encoding, move
+   legality, symmetry handling, and branching would dominate the Word actor
+   study.  It was rejected rather than replaced by a toy permutation.
+
+Raw SMT-LIB import was rejected because its translator and payload provenance
+were outside scope.  Existing MD5/SHA-1, CRC, and constructed ALU examples
+were not retained as new families because tasks 051/052 already profile them.
+The retained ranking is Speck first for operation breadth, xorshift second for
+structural/advisor topology, and factor third for the cleanest isolated
+diagnosis; the non-retained ranking is BMC, FFT, then Rubik by prospective
+value versus faithful-construction cost.
+
+The retained ARX case is a faithful reduced Speck32/64 known-plaintext key
+recovery: 12 rounds, standard 16-bit recurrence and four-word key schedule,
+key `1918:1110:0908:0100`, plaintext `6574:694c`, and independently computed
+ciphertext `b97f:d091`.  With 20, 21, and 22 distributed unknown master-key
+bits, exhaustive wall/user/sys seconds are 22.16/21.89/0.10,
+43.96/43.62/0.16, and 87.47/86.89/0.35.  Propagations are 254,387,505,
+507,274,228, and 1,015,565,796; nodes 2,097,151, 4,194,303, and 8,388,607;
+failures 1,048,575, 2,097,151, and 4,194,303.  Each complete search proves
+exactly one solution and recovers the concrete key.  A 24-bit calibration
+exceeded the 120-second cap.
+The retained root has 138 actors, no advisors, and one brancher.  Its measured
+physical footprint is 1,696 KiB (1,712 KiB peak snapshot).  A bounded
+five-second sample at 1 ms intervals records Add propagation as the dominant
+top frame (2,206 samples),
+then Word narrowing (637), Space status (139), native XOR narrowing (109),
+Space cloning (106), XOR copy/propagation (55/50), Fixed narrowing/copy
+(49/34), generic Table propagation (39), and Add copy (29).  This is primarily
+native Add work; copy cost is visible but secondary.
+
+The retained PRNG case is Marsaglia xorshift32 state recovery using the exact
+`x ^= x << 13; x ^= x >> 17; x ^= x << 5` recurrence, seed `6d2b79f5`, 32
+deterministic observations at bit `(7*i+3) mod 32`, and exhaustive recovery of
+the unique seed (final state `5a7e189c`).  At 23, 24, and 25 unknown low bits,
+wall/user/sys seconds are 8.99/8.81/0.04, 17.43/17.20/0.08, and
+34.82/34.45/0.18; propagations 146,476,033, 292,951,909, and 585,903,169;
+nodes 3,145,727, 6,291,455, and 12,582,911; failures 1,572,863, 3,145,727,
+and 6,291,455.  The retained root has 224 actors and one brancher.  Its 32 Bit
+channel actors each construct one advisor, although live post-propagation
+advisor count is not exposed by Script statistics.  Physical footprint is
+1,872 KiB (1,888 KiB peak snapshot).  Top sample frames are Word narrowing
+997, XOR copy 663, Space clone 603, Fixed copy 276, XOR narrowing 256, Space
+status/copy 236/134, Fixed narrow/propagate 124/95, and XOR propagate 69.
+Exact doubling exposes lost cross-bit linear correlation in the cube domain;
+the topology is also copy-heavy.
+
+The retained arithmetic case recovers the bounded 28-bit primes
+`0x0fffffc7` (268435399) and `0x0bffffdd` (201326557) from the exact 56-bit
+product `0x00bffffb240007cb` (54043174657591243) with one native Mult actor.
+At 24, 25, and 26 unknown low bits per operand, wall/user/sys seconds are
+5.30/5.20/0.04, 10.56/10.45/0.06, and 21.38/21.14/0.09; propagations
+18,285,339, 36,570,659, and 73,141,343; nodes 16,777,217, 33,554,433, and
+67,108,865; failures 8,388,608, 16,777,216, and 33,554,432.  Each reports one
+solution.  The root is one actor, no advisors, and one brancher; physical
+footprint is 1,312 KiB (1,328 KiB peak snapshot).  Sample top frames are Mult
+propagation 2,254, search next 208, Word narrowing 155, allocator work 198,
+status 90, value selection 81, Mult copy 75, Space clone/copy 71/53, and commit
+42.  The nearly complete powers-of-two tree is a propagation/domain limit, not
+actor topology or generic scheduling overhead.
+
+Two independent formulations check semantics.  A direct Bool-array xorshift
+encoding expands every recurrence bit into Boolean XOR equations.  At 14, 16,
+and 18 unknown bits, both formulations use exactly 32 observations and recover
+the same single seed.  Word uses 224 actors,
+286,471/1,144,815/4,577,768 propagations, and 6,143/24,575/98,303 nodes;
+Bool uses 3,049/3,053/3,057 actors,
+1,354,359/5,548,201/21,493,621 propagations, and
+12,287/49,151/131,071 nodes.  Search counters differ because branching
+topology differs; bit blasting is not a free remedy.  An independent IntVar
+factorization at a host-safe adjacent scale (`p=32749`, `q=24593`) gives the
+same 1/2/2 solution counts at 12/13/14 unknown bits.  Word takes
+4,463/8,931/17,855 propagations and 4,097/8,193/16,385 nodes, whereas Int takes
+1/3/3 propagations and 1/3/3 nodes.  Interval multiplication recovers bounded
+factors immediately; the Word cube and current prefix inverse do not.
+
+The ranked diagnosis is therefore: first, a cube-domain/fixed-product inverse
+limit in Mult; second, algorithmic Add work in Speck; third, search topology
+and clone/copy cost in xorshift, under a more fundamental loss of linear
+correlation.  Generic scheduling and actor footprint are not supported as
+primary causes: measured footprints remain 1.3--1.9 MiB and samples point to
+actor algorithms or copying caused by large search trees.  Collective natural
+coverage includes Add, Mult, XOR, rotate/shift, fixed/equality relations,
+Word/Bool channeling, native/fallback logic, and DFS cloning/recomputation.
+Honest gaps are variable shifts, div/mod, element/count, mixed Word/Int actors,
+and reified Word relations.  No artificial constraint was added merely to
+claim those paths; a faithful public BMC or arithmetic-program import is the
+appropriate future corpus work.
+
+The only production-oriented follow-up justified by these measurements is a
+bounded investigation of fixed-product Mult inverse support when operands have
+known ranges or high prefixes.  Compare the smallest sound refinement with the
+current actor on this factor case, ordinary Mult tests, and representative
+multiplication workloads, requiring exact semantics/lifecycle/alias safety and
+material node or wall-time improvement.  If useful support requires relational
+state outside a Word cube, record rejection.  These samples do not independently
+justify another Add, XOR, Fixed, advisor, or generic scheduling task.
+
+Exact baseline was `b713321d61`.  Commands are preserved in
+`/private/tmp/word064-raw/commands.txt`, hashes in `SHA256SUMS`, raw curves and
+parity results in `/private/tmp/word064-raw`, samples in
+`{speck,xorshift,factor}.sample.txt`, footprint evidence in `footprints.txt`,
+and temporary sources as `/private/tmp/word064-*.cpp`.  No driver, profile, or
+third-party input is tracked.
+
 ## Boundaries
 
 - This area is a full implementation spike, not a battle-hardening exercise. Each task must follow established Gecode patterns, reuse normal framework and test machinery, and avoid novel infrastructure, special-case test paths, exhaustive edge-case campaigns, or verification beyond what is proportionate to getting the implementation working.
