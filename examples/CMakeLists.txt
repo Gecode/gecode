@@ -63,8 +63,10 @@ set(GECODE_EXAMPLE_SOURCES
   word-arithmetic.cpp
   word-benchmark.cpp
   word-bitboard.cpp
+  word-md5-preimage.cpp
   word-minimodel.cpp
   word-register-file.cpp
+  word-sha1-preimage.cpp
   word-structure.cpp
   word-square.cpp)
 
@@ -88,8 +90,10 @@ set(GECODE_WORD_EXAMPLES
   word-arithmetic
   word-benchmark
   word-bitboard
+  word-md5-preimage
   word-minimodel
   word-register-file
+  word-sha1-preimage
   word-structure)
 
 function(gecode_add_example source_file)

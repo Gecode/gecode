@@ -587,6 +587,171 @@ and `5dfe9251b0163184e0e5732072c487aa981df8fdf1432d961ba8b88162a7cf24`.
 All temporary sources, binaries, raw output, and samples remain outside the
 repository.
 
+## Reduced-hash examples and profiling follow-up
+
+Promote the calibrated MD5-16 and SHA-1-16 models into ordinary configurable
+Gecode `Script` examples. They are natural demonstrations of 32-bit WordVar
+round logic, rotations, n-ary modular addition, fixed targets, cloning,
+recomputation, and information-flow-aware search. The checked-in examples are
+models, not a benchmark harness: use standard driver options, modest defaults,
+and normal CMake/Make example inventories. The tens-of-seconds configurations
+remain explicit profiling invocations rather than slow default runs.
+
+Use the examples as the end-to-end feedback loop for detailed Release
+profiling. Separate model/search effects from implementation costs by recording
+wall time, actors, propagation calls, nodes, failures, solutions/checksum,
+clone/recomputation options, and best-effort memory. Use bounded sampling plus
+temporary targeted instrumentation to count n-ary-add invocations, local
+fixpoint passes, support checks, changed publications, and clone/copy work.
+Compare the current n-ary relation with an equivalent established Word
+decomposition where that isolates algorithm cost; do not change semantics or
+mistake a different search tree for a faster propagator.
+
+Rank three to five falsifiable performance hypotheses before optimization.
+Turn only confirmed mechanisms into narrow tasks. A retained change must keep
+the implementation native and Gecode-style: ordinary views and actors, honest
+propagation conditions and costs, normal cloning/disposal, no solver-specific
+switches, no benchmark-driven special cases, and no hidden bit blasting. Both
+algorithmic and code-level improvements are in scope, including stronger or
+cheaper propagation, reduced redundant work/publication, and smaller clone
+state, but not SAT learning, a new profiler, or a hash-specific propagator.
+
+Testing is proportionate. The examples are built and run through the existing
+example machinery and checked against their concrete hash oracle at a small
+configuration. Each retained propagator change adds or updates normal
+Gecode-style `test/word` coverage only when its behavior or lifecycle changes;
+otherwise reuse the existing arithmetic, clone/recomputation, MiniModel, and
+TestFramework suites. Temporary profiling supplements these checks and never
+becomes a new test executable or durable benchmark subsystem.
+
+The natural example corpus also includes the three calibrated models from the
+preceding realistic-workload research: CRC-16/CCITT-FALSE, the constructed
+symbolic register/ALU path, and reflected CRC-16/X-25-style recurrence. Promote
+them as ordinary configurable `Script` examples with quick defaults and
+explicit profiling scales. The two CRC examples should share conventional
+model structure where that improves readability, while remaining separate
+executables with their distinct left/right-shift recurrences. The ALU example
+must clearly identify itself as a constructed symbolic-execution-style path,
+not a copied paper instance.
+
+Profile all five examples before selecting production optimizations. This
+cross-workload check prevents a hash-only improvement from being mistaken for
+a general Word implementation improvement. Preserve exact native/decomposition
+parity for the CRC cases and compare the ALU path with a Boolean ripple
+decomposition only if the bounded run remains practical. Rank optimization
+tasks by repeatable end-to-end benefit across the relevant examples, while
+allowing an operation-specific improvement when its public propagator has a
+clear independent modeling use.
+
+### Hash-example profiling findings
+
+The checked-in MD5 and SHA-1 examples reproduce the calibrated workloads as
+ordinary `Script` runs. MD5-16/148 enumerates 1,048,576 solutions with
+34,293,028 propagations, 2,180,289 nodes, and 41,569 failures in 13.944
+seconds. SHA1-16/180 enumerates 1,048,576 solutions with 46,750,389
+propagations, 2,097,411 nodes, and 130 failures in 17.929 seconds. Their quick
+defaults use 132 and 164 unknown bits and finish in less than three
+milliseconds. These runs establish the end-to-end feedback loop; word-052 must
+cross-check any proposed optimization against CRC and the symbolic ALU before
+an implementation task is accepted.
+
+The hash-only investigation tested five ranked, falsifiable hypotheses:
+
+1. **Repeated local n-ary closure is expensive.** If this is the main cause,
+   counted local passes should substantially exceed actor calls and a
+   deliberately one-pass experimental build should reduce work without
+   changing this workload's solutions or search. Instrumented MD5 recorded
+   7,977,666 `NaryAdd` calls but 15,188,528 local passes, covering 486,032,896
+   bit-passes and 949,501,184 input-support checks, with 7,217,686 changed
+   publications. A temporary one-pass run reported identical solutions,
+   checksum, actors, propagations, nodes, failures, and publications while
+   reducing user time from 14.36 to 10.03 seconds. This is **provisional
+   evidence only**: the exact one-pass patch and command were not preserved,
+   and matching one model does not establish the actor's general fixpoint
+   contract. Word-052 may use the result to motivate a fresh reproducible
+   experiment, but no production task may simply remove the loop.
+2. **The bounded-carry support algorithm dominates each call.** If so, sampling
+   should remain in `NaryAdd` after publication reductions, and measured work
+   should scale with width times arity and local passes. A five-second MD5
+   sample placed 1,155 of 1,852 main-thread samples in `NaryAdd`, versus 384 in
+   binary `Add`; the targeted counters above confirm nearly one billion
+   input-support checks. This hypothesis is **confirmed for the hash models**.
+   The next investigation must distinguish necessary support projection from
+   avoidable recomputation while preserving soundness, aliases, and the
+   declared propagation contract.
+3. **The separate constant-add model shape is costly.** If folding the round
+   constant into the public n-ary addition is useful, it should reduce actors
+   and end-to-end work with exact solution/checksum parity. Folding removes 16
+   root actors. MD5 changes from 14.96 to 13.07 seconds and 34,521,825 to
+   31,231,517 propagations; its nodes change from 2,180,289 to 2,114,231 and
+   failures from 41,569 to 8,540. SHA-1 changes from 18.68 to 17.04 seconds and
+   46,204,439 to 45,372,000 propagations; nodes change from 2,097,411 to
+   2,097,169 and failures from 130 to 9. Solutions and checksums remain exact.
+   This is a **confirmed model/search tradeoff**, not evidence that the
+   propagator itself became faster: exposing the constant to the global changes
+   propagation and the search tree. Update the examples only after word-052
+   confirms that the clearer one-global model remains preferable across the
+   relevant corpus; no new API is needed because n-ary posting already folds
+   assigned operands.
+4. **Clone/recomputation policy contributes materially.** If true, changing
+   clone distance with the same model should preserve the tree and checksum but
+   change propagation work and time. On MD5, `c_d=1` uses 33,003,682
+   propagations and 13.95 seconds; `c_d=32` uses 35,854,340 and 15.60 seconds,
+   with identical solutions, checksum, nodes, and failures. This is
+   **confirmed but moderate** and belongs in example/search guidance, not in a
+   Word actor optimization or global policy.
+5. **Dynamic arity loops are a primary code-level cost.** If true, a small
+   compiler-visible four-way unroll should improve the same instrumented work
+   materially. It left every counter unchanged and measured 14.18 seconds
+   versus the 14.36-second instrumented baseline, within the noise of these
+   single runs. This hypothesis is **rejected**; do not add arity-specific
+   NaryAdd code on this evidence.
+
+The provisional dependency-ordered follow-up boundary is exact. First,
+word-052 adds CRC-16/CCITT, reflected CRC-16, and symbolic ALU examples and
+reruns the five-model comparison. Only after that cross-check may it create:
+
+- one **NaryAdd fixpoint-work investigation** that reconstructs an auditable
+  candidate, proves when an additional local pass can or cannot change masks,
+  preserves ordinary aliases and lifecycle, adds normal `test/word` coverage
+  only for a changed contract, and retains a native change only for exact
+  cross-workload parity plus repeatable gain; and
+- one **example addition-shape cleanup** that folds assigned constants into
+  existing n-ary addition calls where this is clearer and measured useful,
+  without adding an overload, propagator, rewrite policy, or benchmark switch.
+
+Do not create a loop-unrolling task. Treat clone-distance sensitivity as
+documented model guidance unless the five-model study exposes a distinct
+general search-engine issue. These boundaries remain provisional until
+word-052 records the cross-corpus evidence.
+
+Profiling used exact source commit
+`beaefa0e5a0a51a33cd30f0e4f47bd39b05617f4`, Release libraries, the two
+checked-in example sources, and temporary variants under
+`/private/tmp/gecode-word051-instrument`. The MD5 example source hash is
+`fb88e49d3ccf56cd15ec49f143dcae9413be9f8219bd63394345f2405bba2ed3` and
+the SHA-1 hash is
+`982e4857a1721b61acdfdc5f594236ea8bc1754f33c51992d5bdc342d61a5412`.
+Key raw-result hashes are
+`40c4c1df6915320c1ec5c34ba08d9b82bca72fe08b4d227779e5a3130f585625`
+(MD5 baseline),
+`afc95feee17b910b029fb5671df5e0c6850c9e91b6e6bc2bd7f4655b4df171c4`
+(folded MD5),
+`9f4bc9ea4345c46f8381c18ed74a8fb0918cbbc3a87e68b3f959615dda3bb00b`
+(instrumented MD5),
+`b6e799dc9f7838ea359a9ca4eb2b76b20d4639b0dcf7d0145f896f3dc3097eb0`
+(one-pass output),
+`b106da57b88275305892de340919c443133601925b4fec434e37ca8207637e86`
+(unrolled output),
+`67b9871f409d1940bdfa5e46297e45bcdb6c520bf7137a6ed93ca8261d24cbe7`
+(SHA-1 baseline), and
+`895e1ddddb64d48f7de576ca2352400a279b54023dcf9648360c810a2fbd1d88`
+(folded SHA-1). The sample `/private/tmp/word051-md5.sample.txt` hashes to
+`1c78ed86797c900d15b55844d62eed239db0dc7f0cbb7ebfb1e29dd894c9e257`.
+Best-effort live RSS was 2,352 KiB; `/usr/bin/time -l` again could not report
+RSS because macOS denied `kern.clockrate`. No temporary instrumentation or raw
+result is tracked.
+
 ## Boundaries
 
 - This area is a full implementation spike, not a battle-hardening exercise. Each task must follow established Gecode patterns, reuse normal framework and test machinery, and avoid novel infrastructure, special-case test paths, exhaustive edge-case campaigns, or verification beyond what is proportionate to getting the implementation working.

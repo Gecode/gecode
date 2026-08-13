@@ -2,10 +2,10 @@
 
 # Tasks: word
 
-- Total: 50
-- Ready: 0
+- Total: 52
+- Ready: 1
 - Blocked: 0
-- Done: 50
+- Done: 51
 
 | ID | Task | State | Blocked by |
 | --- | --- | --- | --- |
@@ -59,3 +59,5 @@
 | [word-048](tasks/048-add-a-combined-unsigned-word-divmod-propagator.md) | Add a combined unsigned Word divmod propagator | done | word-047 |
 | [word-049](tasks/049-research-realistic-wordvar-profiling-instances.md) | Research realistic WordVar profiling instances | done | word-048 |
 | [word-050](tasks/050-calibrate-faithful-reduced-md5-and-sha-1-preimages.md) | Calibrate faithful reduced MD5 and SHA-1 preimages | done | word-049 |
+| [word-051](tasks/051-add-reduced-hash-examples-and-profile-their-hot-paths.md) | Add reduced-hash examples and profile their hot paths | done | word-050 |
+| [word-052](tasks/052-add-crc-and-symbolic-alu-examples-and-profile-the-corpus.md) | Add CRC and symbolic ALU examples and profile the corpus | ready | word-051 |

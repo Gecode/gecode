@@ -1003,7 +1003,8 @@ endif
 
 WORDEXAMPLESRC0 = \
 	word-arithmetic word-arx-preimage word-benchmark word-bitboard \
-	word-minimodel word-register-file word-structure
+	word-md5-preimage word-minimodel word-register-file \
+	word-sha1-preimage word-structure
 WORDEXAMPLESRC = $(WORDEXAMPLESRC0:%=examples/%.cpp)
 ifeq "@enable_word_vars@" "yes"
 WORDEXAMPLEEXE = $(WORDEXAMPLESRC:%.cpp=%$(EXESUFFIX))
