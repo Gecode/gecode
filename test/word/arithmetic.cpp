@@ -1026,6 +1026,45 @@ namespace Test { namespace Word {
         return incompatible.status() == Gecode::SS_FAILED;
       }
 
+      static bool fixed_product_inverse(void) {
+        // A non-wrapping fixed product projects exact small factor supports.
+        MultiplicationSpace factors(3,8);
+        Gecode::dom(factors,factors.x[0],8U,15U);
+        Gecode::dom(factors,factors.x[1],8U,15U);
+        Gecode::dom(factors,factors.x[2],143U);
+        Gecode::mult(factors,factors.x[0],factors.x[1],factors.x[2]);
+        if ((factors.status() == Gecode::SS_FAILED) ||
+            ((factors.x[0].lo() & 1U) == 0) ||
+            ((factors.x[1].lo() & 1U) == 0))
+          return false;
+
+        MultiplicationSpace impossible(3,8);
+        Gecode::dom(impossible,impossible.x[0],8U,15U);
+        Gecode::dom(impossible,impossible.x[1],8U,15U);
+        Gecode::dom(impossible,impossible.x[2],127U);
+        Gecode::mult(impossible,impossible.x[0],impossible.x[1],
+                     impossible.x[2]);
+        if (impossible.status() != Gecode::SS_FAILED)
+          return false;
+
+        MultiplicationSpace square(3,4);
+        Gecode::dom(square,square.x[0],0U,3U);
+        Gecode::dom(square,square.x[2],9U);
+        Gecode::mult(square,square.x[0],square.x[0],square.x[2]);
+        if ((square.status() == Gecode::SS_FAILED) ||
+            !square.x[0].assigned() || (square.x[0].val() != 3U))
+          return false;
+
+        MultiplicationSpace wide(3,64);
+        Gecode::dom(wide,wide.x[0],8U,15U);
+        Gecode::dom(wide,wide.x[1],8U,15U);
+        Gecode::dom(wide,wide.x[2],143U);
+        Gecode::mult(wide,wide.x[0],wide.x[1],wide.x[2]);
+        return (wide.status() != Gecode::SS_FAILED) &&
+          ((wide.x[0].lo() & 1U) != 0) &&
+          ((wide.x[1].lo() & 1U) != 0);
+      }
+
       static bool lifecycle(void) {
         if (!assigned(0U,15U,0U) || !assigned(1U,15U,15U) ||
             !assigned(15U,15U,1U) || !assigned(2U,4U,8U))
@@ -1133,13 +1172,56 @@ namespace Test { namespace Word {
         return solutions == 16;
       }
 
+      static bool inverse_search_recomputation(void) {
+        using namespace Gecode;
+        class FactorSpace : public Space {
+        public:
+          WordVar x;
+          WordVar y;
+          WordVar result;
+          FactorSpace(void)
+            : x(*this,8,8U,15U), y(*this,8,8U,15U),
+              result(*this,8,143U,143U) {
+            mult(*this,x,y,result);
+            WordVarArgs decision={x,y};
+            branch(*this,decision,WORD_VAR_NONE(),WORD_VAL_LSB());
+          }
+          FactorSpace(FactorSpace& s) : Space(s) {
+            x.update(*this,s.x);
+            y.update(*this,s.y);
+            result.update(*this,s.result);
+          }
+          virtual Space* copy(void) { return new FactorSpace(*this); }
+        };
+
+        FactorSpace* root = new FactorSpace;
+        Search::Options options;
+        options.c_d = 1;
+        options.a_d = 64;
+        DFS<FactorSpace> dfs(root,options);
+        delete root;
+        unsigned int solutions = 0;
+        while (FactorSpace* solution = dfs.next()) {
+          const bool ok = solution->x.assigned() &&
+            solution->y.assigned() && solution->result.assigned() &&
+            (solution->x.val()*solution->y.val() == 143U) &&
+            (PropagatorGroup::all.size(*solution) == 0);
+          delete solution;
+          if (!ok)
+            return false;
+          solutions++;
+        }
+        return solutions == 2;
+      }
+
     public:
       MultiplicationLifecycle(void)
         : Base("Word::Arithmetic::MultLifecycle") {}
       virtual bool run(void) {
         return partial() && assigned_small() && prefix_propagation() &&
-          boolean_parity() && lifecycle() && counters() &&
-          search_recomputation();
+          fixed_product_inverse() && boolean_parity() && lifecycle() &&
+          counters() && search_recomputation() &&
+          inverse_search_recomputation();
       }
     };
 

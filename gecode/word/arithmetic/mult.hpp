@@ -111,6 +111,97 @@ namespace Gecode { namespace Word { namespace Arithmetic {
     return (lo & ~hi) == 0;
   }
 
+  forceinline void
+  mult_range_hull(unsigned int width, WordValue minimum,
+                  WordValue maximum, WordValue& lo, WordValue& hi) {
+    WordValue varying = minimum^maximum;
+    if (varying == 0) {
+      lo=hi=minimum;
+      return;
+    }
+    unsigned int bits = 0;
+    while (varying != 0) {
+      varying >>= 1;
+      bits++;
+    }
+    varying=mult_low_mask(bits);
+    lo=minimum&~varying;
+    hi=(lo|varying)&mult_low_mask(width);
+  }
+
+  forceinline bool
+  mult_in_cube(WordValue value, WordValue lo, WordValue hi) {
+    return ((value&lo) == lo) && ((value&~hi) == 0);
+  }
+
+  forceinline bool
+  mult_fixed_product_inverse(WordValue& xlo, WordValue& xhi,
+                             WordValue& ylo, WordValue& yhi,
+                             WordValue product, unsigned int width,
+                             bool xy, bool xz, bool yz) {
+    if (product == 0)
+      return true;
+    const WordValue mask = mult_low_mask(width);
+    if ((xhi == 0) || (yhi == 0))
+      return false;
+    // The division guard proves xhi*yhi fits both the word and host type.
+    if ((xhi != 0) && (yhi > mask/xhi))
+      return true;
+
+    WordValue xmin = product/yhi+(product%yhi != 0 ? 1U : 0U);
+    WordValue xmax = (ylo == 0) ? xhi : product/ylo;
+    WordValue ymin = product/xhi+(product%xhi != 0 ? 1U : 0U);
+    WordValue ymax = (xlo == 0) ? yhi : product/xlo;
+    xmin=std::max(xmin,xlo); xmax=std::min(xmax,xhi);
+    ymin=std::max(ymin,ylo); ymax=std::min(ymax,yhi);
+    if ((xmin > xmax) || (ymin > ymax))
+      return false;
+
+    WordValue lo, hi;
+    mult_range_hull(width,xmin,xmax,lo,hi);
+    if (!mult_narrow(xlo,xhi,lo,hi))
+      return false;
+    mult_range_hull(width,ymin,ymax,lo,hi);
+    if (!mult_narrow(ylo,yhi,lo,hi))
+      return false;
+
+    const WordValue xspan = xmax-xmin;
+    const WordValue yspan = ymax-ymin;
+    const bool small_x = xspan < 64U;
+    const bool small_y = yspan < 64U;
+    if (!small_x && !small_y)
+      return true;
+
+    bool any = false;
+    WordValue sxlo=0, sxhi=0, sylo=0, syhi=0;
+    const bool enumerate_x = small_x && (!small_y || (xspan <= yspan));
+    const WordValue first = enumerate_x ? xmin : ymin;
+    const WordValue last = enumerate_x ? xmax : ymax;
+    for (WordValue value=first;; value++) {
+      if ((value != 0) && (product%value == 0)) {
+        const WordValue other = product/value;
+        const WordValue xv = enumerate_x ? value : other;
+        const WordValue yv = enumerate_x ? other : value;
+        if ((xv >= xmin) && (xv <= xmax) &&
+            (yv >= ymin) && (yv <= ymax) &&
+            mult_in_cube(xv,xlo,xhi) && mult_in_cube(yv,ylo,yhi) &&
+            (!xy || (xv == yv)) && (!xz || (xv == product)) &&
+            (!yz || (yv == product))) {
+          if (!any) {
+            sxlo=sxhi=xv; sylo=syhi=yv; any=true;
+          } else {
+            sxlo &= xv; sxhi |= xv;
+            sylo &= yv; syhi |= yv;
+          }
+        }
+      }
+      if (value == last)
+        break;
+    }
+    return any && mult_narrow(xlo,xhi,sxlo,sxhi) &&
+      mult_narrow(ylo,yhi,sylo,syhi);
+  }
+
   /** Propagate c*y=z modulo 2^bits for fixed low prefixes c and z. */
   forceinline bool
   mult_inverse_prefix(WordValue clo, WordValue chi,
@@ -161,6 +252,11 @@ namespace Gecode { namespace Word { namespace Arithmetic {
       if ((lo[1] == hi[1]) && (lo[1] == 1))
         if (!mult_equal(lo[0],hi[0],lo[2],hi[2]))
           return ES_FAILED;
+
+      if ((lo[2] == hi[2]) &&
+          !mult_fixed_product_inverse(lo[0],hi[0],lo[1],hi[1],lo[2],width,
+                                      x == y,x == z,y == z))
+        return ES_FAILED;
 
       // Multiplication modulo 2^k depends only on the low k operand bits.
       const unsigned int known =

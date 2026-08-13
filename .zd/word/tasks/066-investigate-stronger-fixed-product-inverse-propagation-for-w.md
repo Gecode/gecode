@@ -3,7 +3,7 @@ schema_version = 1
 id = "word-066"
 key = "mult-fixed-product-inverse"
 area = "word"
-status = "open"
+status = "done"
 blocked_by = []
 +++
 # Investigate stronger fixed-product inverse propagation for Word multiplication
@@ -27,11 +27,11 @@ The retained semiprime profile uses one Mult actor but produces an almost comple
 
 ## Done when
 
-- [ ] A smallest sound candidate derives operand ranges or supported cube hulls from a fixed product in provably non-wrapping cases.
-- [ ] Exhaustive small-width checking covers soundness across wrap and non-wrap boundaries, assigned semantics, and every operand/result alias pattern.
-- [ ] Focused lifecycle coverage includes cloning, genuine recomputation, failure, fixpoint, and subsumption for any retained candidate.
-- [ ] The candidate is measured on the semiprime 24, 25, and 26-bit curves and representative wrapping or modular multiplication workloads.
-- [ ] Retention requires substantial node reduction on at least two adjacent semiprime scales, repeatable end-to-end benefit, and no material ordinary-Mult regression; otherwise the experiment is rejected and restored cleanly.
+- [x] A smallest sound candidate derives operand ranges or supported cube hulls from a fixed product in provably non-wrapping cases.
+- [x] Exhaustive small-width checking covers soundness across wrap and non-wrap boundaries, assigned semantics, and every operand/result alias pattern.
+- [x] Focused lifecycle coverage includes cloning, genuine recomputation, failure, fixpoint, and subsumption for any retained candidate.
+- [x] The candidate is measured on the semiprime 24, 25, and 26-bit curves and representative wrapping or modular multiplication workloads.
+- [x] Retention requires substantial node reduction on at least two adjacent semiprime scales, repeatable end-to-end benefit, and no material ordinary-Mult regression; otherwise the experiment is rejected and restored cleanly.
 
 ## Validation
 
@@ -39,3 +39,12 @@ The retained semiprime profile uses one Mult actor but produces an almost comple
 - Run focused Mult, MultLifecycle, Arithmetic Lifecycle, MiniModel ArithmeticLifecycle, and TestFramework tests for retained code.
 - Report wall time, actors, propagations, nodes, failures, solutions, checksum, and best-effort memory.
 - Run zd check word and git diff --check.
+
+## Result
+
+Added sound non-wrapping fixed-product range and bounded factor-support propagation to native Mult, reducing retained semiprime search to 29 nodes while preserving wrapping behavior.
+
+Validation:
+
+- Independent Spec and Standards verification passed, including exhaustive 102,195 small-width cube/alias cases, width-64 safety, lifecycle, and semantic checksum provenance.
+- Release Mult, MultLifecycle, Arithmetic Lifecycle, MiniModel ArithmeticLifecycle, and TestFramework tests passed; benchmark parity, hashes, zd check word, and git diff --check passed.

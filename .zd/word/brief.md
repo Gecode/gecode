@@ -1396,6 +1396,64 @@ The detailed classification and table-size estimate is preserved in
 `/private/tmp/word065-raw/commands.txt`.  No cross-propagator source change was
 made in task 065.
 
+## Fixed-product multiplication inverse propagation
+
+Task 066 starts from exact Release baseline `801107b187`.  The retained Mult
+refinement applies only when the result is fixed and the operands' numeric
+cube extrema prove `xmax*ymax <= 2^width-1`; the proof uses division before
+multiplication, so it is safe at width 64.  In that non-wrapping case, ordinary
+quotient bounds project each operand to the sound cube hull of its feasible
+numeric interval.  When either resulting interval spans at most 64 values,
+bounded exact factor-pair enumeration additionally projects the supported
+operand cubes.  Modular/wrapping cases keep the existing prefix propagation
+unchanged.  The implementation adds no actor, subscription, advisor, or
+persistent state, and contains no primality- or instance-specific rule.
+
+An exhaustive temporary oracle checked all 102,195 combinations of cube
+domains and alias mappings at widths 1--3.  It covered distinct operands,
+`x==y`, `x==z`, `y==z`, and all-equal views; 26,195 cases had concrete
+solutions and 14,277 included wrapping solutions.  No supported tuple was
+removed and no supported case failed.  Normal MultLifecycle coverage adds a
+fixed-product narrowing and failure seam, an operand alias, width 64, actor
+subsumption at solutions, cloning through the existing lifecycle, and genuine
+`c_d=1` replay.
+
+The retained semiprime curve recovers the same unique ordered factors
+`p=0x0fffffc7`, `q=0x0bffffdd` and product `0x00bffffb240007cb` in baseline and
+candidate.  At 24/25/26 unknown low bits, baseline has
+16,777,217/33,554,433/67,108,865 nodes,
+8,388,608/16,777,216/33,554,432 failures, and
+18,285,339/36,570,659/73,141,343 propagations, with driver runtimes
+5.222/10.455/21.442 seconds.  The candidate has 29 nodes, 14 failures, and 30
+propagations at every scale; five fresh-process trials per scale report
+0.083--0.133 milliseconds of driver runtime.  Both retain one Mult actor and
+one brancher at the root and the same single solution.  The improvement
+therefore clears the adjacent-scale node and repeatable end-to-end retention
+gate by a wide margin.
+
+A wrap-heavy fixed-product control preserves exactly 8 solutions, 257 nodes,
+121 failures, and 279 propagations.  A free-result general multiplication
+control preserves 65,536 solutions, 131,071 nodes, zero failures, and 142,849
+propagations.  Five trials show only process-startup noise and no material
+regression.  The checked-in symbolic ALU and MD5 examples do not post Mult, so
+they are not claimed as multiplication-path guards.  A bounded baseline u26
+sample has 2,374 Mult propagation samples out of 4,029 main samples, consistent
+with the prior diagnosis.  The candidate finishes too quickly for a meaningful
+sample.  Best-effort high-water RSS remains unavailable because macOS
+`/usr/bin/time -l` cannot read `kern.clockrate` in the sandbox; actor state is
+unchanged.
+
+Temporary sources and builds are `/private/tmp/word066-{soundness.cpp,
+mult-control.cpp}`, `/private/tmp/gecode-word066-{base,candidate}` and their
+`-build` directories.  Exact commands are in
+`/private/tmp/word066-raw/commands.txt`; raw statistics, solution output,
+timings, the full exhaustive soundness summary, and the baseline sample are in
+`/private/tmp/word066-raw`.  The exact shared-source hash and temporary source,
+binary, and output hashes are recorded in `SHA256SUMS`.  Baseline and candidate
+solution output both normalize to `semantic-solution.txt`, whose hash records
+the exact solution count and factor/product tuple independently of runtime
+statistics.  No benchmark driver or instrumentation is tracked.
+
 ## Boundaries
 
 - This area is a full implementation spike, not a battle-hardening exercise. Each task must follow established Gecode patterns, reuse normal framework and test machinery, and avoid novel infrastructure, special-case test paths, exhaustive edge-case campaigns, or verification beyond what is proportionate to getting the implementation working.

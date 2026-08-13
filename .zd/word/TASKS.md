@@ -3,9 +3,9 @@
 # Tasks: word
 
 - Total: 67
-- Ready: 2
+- Ready: 1
 - Blocked: 0
-- Done: 65
+- Done: 66
 
 | ID | Task | State | Blocked by |
 | --- | --- | --- | --- |
@@ -74,5 +74,5 @@
 | [word-063](tasks/063-refresh-word-diagnostics-and-release-documentation.md) | Refresh Word diagnostics and release documentation | done | word-059, word-060, word-061, word-062 |
 | [word-064](tasks/064-research-larger-natural-wordvar-profiling-instances.md) | Research larger natural WordVar profiling instances | done | word-063 |
 | [word-065](tasks/065-investigate-alternative-algorithms-for-bit-consistent-binary.md) | Investigate alternative algorithms for bit-consistent binary Word addition | done | — |
-| [word-066](tasks/066-investigate-stronger-fixed-product-inverse-propagation-for-w.md) | Investigate stronger fixed-product inverse propagation for Word multiplication | ready | — |
+| [word-066](tasks/066-investigate-stronger-fixed-product-inverse-propagation-for-w.md) | Investigate stronger fixed-product inverse propagation for Word multiplication | done | — |
 | [word-067](tasks/067-investigate-hybrid-word-cubes-with-integer-bounds-and-intege.md) | Investigate hybrid Word cubes with integer bounds and integer-compatible views | ready | — |
