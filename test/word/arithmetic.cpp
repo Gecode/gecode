@@ -685,9 +685,10 @@ namespace Test { namespace Word {
         };
         add(result_alias,alias_args,result_alias.x[0]);
         dom(result_alias,result_alias.x[1],1U);
-        dom(result_alias,result_alias.x[2],15U);
         dom(result_alias,result_alias.x[0],6U);
-        if (result_alias.status() == SS_FAILED)
+        if ((result_alias.status() == SS_FAILED) ||
+            !result_alias.x[2].assigned() ||
+            (result_alias.x[2].val() != 15U))
           return false;
 
         ArithmeticSpace wide(4,64);

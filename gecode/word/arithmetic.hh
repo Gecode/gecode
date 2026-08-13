@@ -75,11 +75,13 @@ namespace Gecode { namespace Word { namespace Arithmetic {
     using MixNaryOnePropagator<
       WordView,PC_WORD_BITS,WordView,PC_WORD_BITS>::y;
     WordValue constant;
+    /// Whether role-specific projections share an underlying variable
+    bool aliased;
     NaryAdd(Home home, ViewArray<WordView>& x, WordView y,
-            WordValue constant);
+            WordValue constant, bool aliased);
     NaryAdd(Space& home, NaryAdd& p);
     static ExecStatus narrow(Home home, ViewArray<WordView>& x,
-                             WordView y, WordValue constant);
+                             WordView y, WordValue constant, bool aliased);
   public:
     virtual Actor* copy(Space& home);
     virtual PropCost cost(const Space& home,

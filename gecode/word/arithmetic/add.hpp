@@ -194,16 +194,16 @@ namespace Gecode { namespace Word { namespace Arithmetic {
 
   forceinline
   NaryAdd::NaryAdd(Home home, ViewArray<WordView>& x0, WordView y0,
-                   WordValue c)
+                   WordValue c, bool a)
     : MixNaryOnePropagator<
         WordView,PC_WORD_BITS,WordView,PC_WORD_BITS>(home,x0,y0),
-      constant(c) {}
+      constant(c), aliased(a) {}
 
   forceinline
   NaryAdd::NaryAdd(Space& home, NaryAdd& p)
     : MixNaryOnePropagator<
-        WordView,PC_WORD_BITS,WordView,PC_WORD_BITS>(home,p),
-      constant(p.constant) {}
+      WordView,PC_WORD_BITS,WordView,PC_WORD_BITS>(home,p),
+      constant(p.constant), aliased(p.aliased) {}
 
   forceinline Actor*
   NaryAdd::copy(Space& home) {
@@ -239,7 +239,7 @@ namespace Gecode { namespace Word { namespace Arithmetic {
 
   forceinline ExecStatus
   NaryAdd::narrow(Home home, ViewArray<WordView>& x, WordView y,
-                  WordValue constant) {
+                  WordValue constant, bool aliased) {
     const unsigned int width=y.width();
     Region region;
     WordValue* input_lo=region.alloc<WordValue>(x.size());
@@ -353,7 +353,9 @@ namespace Gecode { namespace Word { namespace Arithmetic {
         if (input_changed)
           GECODE_ME_CHECK(x[i].narrow(home,input_lo[i],input_hi[i]));
       }
-      if (!changed)
+      // Distinct-view projection is idempotent; aliases need intersection
+      // closure after the role-specific masks have been published.
+      if (!changed || !aliased)
         break;
     }
 
@@ -366,17 +368,18 @@ namespace Gecode { namespace Word { namespace Arithmetic {
   forceinline ExecStatus
   NaryAdd::post(Home home, ViewArray<WordView>& x, WordView y,
                 WordValue constant) {
-    ExecStatus es=narrow(home,x,y,constant);
+    const bool aliased=shared(x) || shared(x,y);
+    ExecStatus es=narrow(home,x,y,constant,aliased);
     if (es == ES_FAILED)
       return ES_FAILED;
     if (es == ES_FIX)
-      (void) new (home) NaryAdd(home,x,y,constant);
+      (void) new (home) NaryAdd(home,x,y,constant,aliased);
     return ES_OK;
   }
 
   forceinline ExecStatus
   NaryAdd::propagate(Space& home, const ModEventDelta&) {
-    ExecStatus es=narrow(home,x,y,constant);
+    ExecStatus es=narrow(home,x,y,constant,aliased);
     if (es == ES_FAILED)
       return ES_FAILED;
     return (es == ES_FIX) ? ES_FIX : home.ES_SUBSUMED(*this);
