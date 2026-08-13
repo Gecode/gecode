@@ -53,6 +53,8 @@ namespace Gecode { namespace Word { namespace Rel {
   template<class View0, class View1>
   forceinline Int::RelTest
   eq_test(View0 x, View1 y) {
+    if (aliases(x,y))
+      return Int::RT_TRUE;
     if (disjoint(x,y))
       return Int::RT_FALSE;
     if (x.assigned() && y.assigned())

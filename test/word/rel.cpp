@@ -167,6 +167,101 @@ namespace Test { namespace Word {
         return (s.status() == Gecode::SS_FAILED) != allowed;
       }
 
+      static bool alias_resolution(Gecode::WordRelType wrt,
+                                   Gecode::ReifyMode rm) {
+        RelSpace s;
+        Gecode::rel(s,s.x[0],wrt,s.x[0],Gecode::Reify(s.b,rm));
+        if ((s.status() == Gecode::SS_FAILED) ||
+            (Gecode::PropagatorGroup::all.size(s) != 0U))
+          return false;
+        if (wrt == Gecode::WRT_EQ)
+          return (rm == Gecode::RM_IMP) ? !s.b.assigned() : s.b.one();
+        return (rm == Gecode::RM_PMI) ? !s.b.assigned() : s.b.zero();
+      }
+
+      static bool alias_clone(void) {
+        RelSpace eq_source;
+        Gecode::rel(eq_source,eq_source.x[0],Gecode::WRT_EQ,
+                    eq_source.x[0],
+                    Gecode::Reify(eq_source.b,Gecode::RM_IMP));
+        if ((eq_source.status() == Gecode::SS_FAILED) ||
+            eq_source.b.assigned() ||
+            (Gecode::PropagatorGroup::all.size(eq_source) != 0U))
+          return false;
+        RelSpace* eq_clone=static_cast<RelSpace*>(eq_source.clone());
+        Gecode::rel(*eq_clone,eq_clone->b,Gecode::IRT_EQ,1);
+        const bool eq_ok=(eq_clone->status() != Gecode::SS_FAILED) &&
+          eq_clone->b.one() && !eq_source.b.assigned();
+        delete eq_clone;
+        if (!eq_ok)
+          return false;
+
+        RelSpace nq_source;
+        Gecode::rel(nq_source,nq_source.x[0],Gecode::WRT_NQ,
+                    nq_source.x[0],
+                    Gecode::Reify(nq_source.b,Gecode::RM_PMI));
+        if ((nq_source.status() == Gecode::SS_FAILED) ||
+            nq_source.b.assigned() ||
+            (Gecode::PropagatorGroup::all.size(nq_source) != 0U))
+          return false;
+        RelSpace* nq_clone=static_cast<RelSpace*>(nq_source.clone());
+        Gecode::rel(*nq_clone,nq_clone->b,Gecode::IRT_EQ,0);
+        const bool nq_ok=(nq_clone->status() != Gecode::SS_FAILED) &&
+          nq_clone->b.zero() && !nq_source.b.assigned();
+        delete nq_clone;
+        return nq_ok;
+      }
+
+      static bool search_recomputation(Gecode::WordRelType wrt,
+                                       Gecode::ReifyMode rm) {
+        using namespace Gecode;
+        class SearchSpace : public Space {
+        public:
+          WordVar x;
+          BoolVar b;
+          SearchSpace(WordRelType wrt, ReifyMode rm)
+            : x(*this,2), b(*this,0,1) {
+            rel(*this,x,wrt,x,Reify(b,rm));
+            branch(*this,b,BOOL_VAL_MIN());
+            branch(*this,x,WORD_VAL_LSB());
+          }
+          SearchSpace(SearchSpace& s) : Space(s) {
+            x.update(*this,s.x);
+            b.update(*this,s.b);
+          }
+          virtual Space* copy(void) { return new SearchSpace(*this); }
+        };
+
+        SearchSpace* root=new SearchSpace(wrt,rm);
+        Search::Options options;
+        options.c_d=1;
+        options.a_d=64;
+        DFS<SearchSpace> dfs(root,options);
+        delete root;
+        unsigned int solutions=0;
+        while (SearchSpace* solution=dfs.next()) {
+          const bool relation=(wrt == WRT_EQ);
+          bool allowed=false;
+          switch (rm) {
+          case RM_EQV: allowed=(solution->b.val() == relation); break;
+          case RM_IMP: allowed=!solution->b.val() || relation; break;
+          case RM_PMI: allowed=!relation || solution->b.val(); break;
+          default: GECODE_NEVER;
+          }
+          const bool ok=allowed && solution->x.assigned() &&
+            solution->b.assigned() &&
+            (PropagatorGroup::all.size(*solution) == 0U);
+          delete solution;
+          if (!ok)
+            return false;
+          solutions++;
+        }
+        const unsigned int controls=
+          ((wrt == WRT_EQ) && (rm == RM_IMP)) ||
+          ((wrt == WRT_NQ) && (rm == RM_PMI)) ? 2U : 1U;
+        return solutions == 4U*controls;
+      }
+
     public:
       Lifecycle(void) : Base("Word::Rel::Lifecycle") {}
       virtual bool run(void) {
@@ -200,6 +295,14 @@ namespace Test { namespace Word {
             if (!alias_reified(Gecode::WRT_EQ,modes[i],b != 0) ||
                 !alias_reified(Gecode::WRT_NQ,modes[i],b != 0))
               return false;
+        for (unsigned int i=0; i<3; i++)
+          if (!alias_resolution(Gecode::WRT_EQ,modes[i]) ||
+              !alias_resolution(Gecode::WRT_NQ,modes[i]) ||
+              !search_recomputation(Gecode::WRT_EQ,modes[i]) ||
+              !search_recomputation(Gecode::WRT_NQ,modes[i]))
+            return false;
+        if (!alias_clone())
+          return false;
         for (unsigned int i=0; i<8; i++)
           for (unsigned int j=0; j<3; j++)
             for (int b=0; b<=1; b++)
