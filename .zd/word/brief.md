@@ -1644,6 +1644,148 @@ Temporary source, optimized and counter binaries, and generated assembly are
 SHA-256 hashes were recorded with the raw runs outside the repository.  No
 production, API, test, example, or build file changes in this task.
 
+## Lazy hybrid WordVar integration spike
+
+Task 069 integrates the proven one-pass normalizer into a temporary
+production-shaped Gecode kernel based exactly on `aa820e0636`.  It confirms
+that synchronization itself is not the limiting concern, but rejects replacing
+every `WordVar` with the hybrid domain unconditionally.
+
+The prototype `WordVarImp` stores the cube, one interval in unsigned or
+signed-rank order, and an explicit unclaimed/unsigned/signed owner.  It grows
+from 48 to 80 bytes.
+`WordDelta` grows from 24 to 40 bytes to carry fixed zero/one bits and old
+numeric endpoints.  Generated Word modification events distinguish bit-only,
+bound-only, combined, and assigned changes; `PC_WORD_BITS` subscribers ignore
+bound-only events while `PC_WORD_BND` subscribers observe numeric or combined
+changes.  The tested bound-only update schedules a numeric watcher exactly
+once and a bit watcher zero times.  Mult and Div/Mod actor sizes remain 64
+bytes and combined DivMod remains 72 bytes.
+
+The kernel driver covers failure, width one and 64, signed rank boundaries,
+combined cube/bound publication, clone isolation, branching, and genuine
+`c_d=1,a_d=8` replay.  It returns 57 exact solutions with checksum 2,565.
+Focused Release TestFramework, Mult/MultLifecycle, Div/DivMod and
+DivisionLifecycle, relation, branch, and trace filters remain green.
+
+Bound tells are rejected until a typed consumer claims the interval order;
+conflicting claims fail even while endpoints still equal the cube extrema.
+Cube-only tells remain order-neutral.  The kernel uses the exact task-068
+constant-operation `clz`/mask normalizer rather than a width scan.
+
+Selected arithmetic actors consume persistent bounds conventionally.  Mult
+computes cube and non-wrapping interval deductions in local arrays, resolves
+aliases locally, and calls `narrow_domain` at most once per distinct view.
+Prototype Div, Mod, and combined DivMod snapshot all logical views, close
+their cube and range rules locally, merge aliases, and publish each distinct
+view once.  Exhaustive width-three `c_d=1` searches check SMT-LIB zero-divisor
+semantics and publication maxima: Div returns 512 solutions with 127 actor
+executions and 381 publications (at most three per execution); Mod returns
+512 with 1,519/4,557 (at most three); combined DivMod returns 64 with
+351/1,044 (at most four).  `mod(x,x)=0` returns all eight inputs and the
+all-alias combined relation fails correctly.  Assigned, power-of-two
+remainder, and `q*d+r` inverse seams are covered.
+
+Production-shaped `UnsignedView` and `SignedView` wrappers carry explicit
+claim, range, subscription, update, and copy protocols.  Direct templated
+order actors consume both, while a non-wrapping mathematical sum consumes
+unsigned views.  Changing interval order after any claim fails deliberately:
+one variable has one interval ordering.  Models
+needing simultaneous signed and unsigned numeric bounds require separate
+variables and explicit channeling, while modular cube consumers remain valid.
+
+All arithmetic comparisons use exact solutions and checksums with `c_d=1`.
+The recent fixed-product Mult improvement already solves the 24/25/26-bit
+factor cases at root scale, so hybrid bounds add no benefit: the current actor
+uses 29 nodes, 14 failures, and 30 propagations, versus 31/15/26 in the hybrid
+prototype.  A Div/DivMod pipeline improves from 39 nodes, five failures, and
+62 propagations to 29, zero, and 91 for 15 solutions and checksum
+313,121,389,735.
+
+A chain in which multiplication and ordering share variables demonstrates
+the intended structural gain.  At unknown width 16 the cube model uses
+131,071 nodes, 52,134 failures, and 286,419 propagations; hybrid bounds use
+26,803 nodes, no failures, and 80,471 propagations.  Both enumerate 13,402
+solutions with checksum 254,620,704,430,857.  At width 18 the corresponding
+counts are 524,287/117,670/1,203,923 versus
+288,947/0/866,938 for 144,474 solutions and checksum
+1,005,366,672,284,425.
+
+The eager/lazy comparison isolates batching from stronger propagation.  At
+width 20, three trials give about 0.880 seconds for the cube, 0.760 seconds for
+eager hybrid synchronization, and 0.690 seconds for lazy synchronization.
+Eager and lazy have identical stronger search, while eager performs 20.37
+million domain tells versus 10.91 million for lazy.  At width 22, however,
+hybrid bounds reduce nodes from 8,388,607 to 7,434,817 but increase
+propagations from 17.86 million to 20.84 million.  The cube finishes in 3.49
+seconds, eager hybrid in 4.48, and lazy hybrid in 4.06.  Batching saves roughly
+9--10 percent of hybrid time but cannot make every stronger propagation
+profitable.
+
+At width 16 the lazy chain receives 268,167 tells, of which 107,217 actually
+change the domain: 14,318 are bound-only and 92,899 combined.  It also performs
+107,216 `WordVarImp` copies.  These counts demonstrate real persistent
+precision unavailable to a cube, while separating it from synchronization
+and clone overhead.  A signed chain has exact parity at widths four, six, and
+eight but no search reduction; at width six both variants enumerate 196,708
+solutions with checksum 13,842,174,800,919,332,000 and 393,415 nodes, so the
+hybrid representation only adds propagation and copy work.
+
+Integer compatibility remains selective.  Direct typed views establish exact
+parity with ordinary Int models for bounds order: 288 solutions, checksum
+16,639,920, 575 nodes, no failures, and 15 propagations.  Mathematical linear
+addition likewise matches at 16 solutions, checksum 315,496, 31 nodes, no
+failures, and 31 propagations.  A Word-backed view is nevertheless not a
+general drop-in `IntView`: domain-consistent actors require Int range
+iterators and domain operations, and Word values can exceed `Int::Limits`.
+A separate faithful bit-channel adapter establishes semantic parity for
+value- and bounds-consistent distinct (336 solutions, checksum 30,530,808)
+and bounds multiplication (31/1,454,300), but its extra propagation makes it
+evidence of compatibility rather than the intended architecture.
+
+Overhead controls reject universal migration.  Symbolic ALU preserves exactly
+65,810 solutions, 375,811 nodes, and 18,230,041 propagations.  Five
+interleaved trials give medians of 1.22 seconds for the cube and 1.25 for the
+lazy hybrid.  CRC-16/CCITT preserves 65,536 solutions, 131,071 nodes, and
+2,993,199 propagations, with medians of 0.14 and 0.15 seconds.  The default
+MD5 case preserves 16 solutions and 59 nodes but is too short for meaningful
+timing.  Branch commits remain
+semantically sound because equality checks the hybrid domain, but the current
+selector sees only unknown cube bits and can create avoidable branches.  Trace
+output similarly omits interval endpoints.  Best-effort RSS is unavailable:
+both macOS `/usr/bin/time -l` and process sampling are sandbox-blocked, so the
+exact object sizes and copy counts are reported instead.
+
+The decision is **no-go for an unconditional hybrid `WordVarImp`**, not no-go
+for persistent bounds.  Lazy one-pass publication works and range-heavy
+arithmetic can win materially, but unaffected models pay the larger variable,
+delta, event, and clone costs.  If concrete modeling demand justifies an
+opt-in numeric Word domain, use separately approved dependency-ordered tasks:
+
+1. add the opt-in hybrid kernel representation and event/delta contract;
+2. add explicit unsigned/signed interval views and settle order conflicts;
+3. make branching and tracing bounds-aware;
+4. migrate actors individually, beginning with non-wrapping Mult and
+   Div/DivMod, retaining each only on measured workloads; and
+5. validate arithmetic gains plus unaffected-workload footprint.
+
+Do not pursue the Bool/Int channel adapter as the main architecture and do not
+migrate every existing `WordVar` automatically.
+
+All production-shaped changes are temporary.  Source trees are
+`/private/tmp/gecode-word069-{base,eager,lazy}`, drivers are
+`/private/tmp/word069-{kernel,model}.cpp`, commands and raw results are under
+`/private/tmp/word069-raw`, and the exact current baseline is
+`aa820e063666e3f4e0dc9be9b43255974bb1a0ff`.  The final manifest is
+`/private/tmp/word069-raw/SHA256SUMS`, with SHA-256
+`7996abc6a17d539a849f1242b45b8b3c5e9fc0b29bc5a17046e83a1325f4b784`;
+`/private/tmp/word069-sha-check.out` records every entry as verified.  It
+covers the complete 11-file prototype diff for each of the eager and lazy
+variants, cleanly rebuilt libraries and binaries, drivers, commands, focused
+outputs, arithmetic parity, controls, and timestamp evidence that every
+compared artifact postdates its final source inputs.
+No production, API, test, example, or build file changes in the shared tree.
+
 ## Boundaries
 
 - This area is a full implementation spike, not a battle-hardening exercise. Each task must follow established Gecode patterns, reuse normal framework and test machinery, and avoid novel infrastructure, special-case test paths, exhaustive edge-case campaigns, or verification beyond what is proportionate to getting the implementation working.

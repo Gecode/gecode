@@ -3,9 +3,9 @@
 # Tasks: word
 
 - Total: 69
-- Ready: 1
+- Ready: 0
 - Blocked: 0
-- Done: 68
+- Done: 69
 
 | ID | Task | State | Blocked by |
 | --- | --- | --- | --- |
@@ -77,4 +77,4 @@
 | [word-066](tasks/066-investigate-stronger-fixed-product-inverse-propagation-for-w.md) | Investigate stronger fixed-product inverse propagation for Word multiplication | done | — |
 | [word-067](tasks/067-investigate-hybrid-word-cubes-with-integer-bounds-and-intege.md) | Investigate hybrid Word cubes with integer bounds and integer-compatible views | done | — |
 | [word-068](tasks/068-implement-and-validate-cheap-one-pass-hybrid-word-domain-syn.md) | Implement and validate cheap one-pass hybrid Word-domain synchronization | done | — |
-| [word-069](tasks/069-integrate-and-benchmark-a-lazy-synchronized-hybrid-wordvar-p.md) | Integrate and benchmark a lazy-synchronized hybrid WordVar prototype | ready | word-068 |
+| [word-069](tasks/069-integrate-and-benchmark-a-lazy-synchronized-hybrid-wordvar-p.md) | Integrate and benchmark a lazy-synchronized hybrid WordVar prototype | done | word-068 |
