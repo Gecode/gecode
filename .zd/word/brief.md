@@ -1572,6 +1572,78 @@ Temporary sources, builds, commands, raw statistics, and hashes are under
 `/private/tmp/word067-*` and `/private/tmp/word067-raw`.  No production, API,
 test, example, or build file is changed.
 
+## One-pass hybrid-domain synchronization spike
+
+Task 068 reopens the range-domain question with the deliberately smaller
+design selected after task 067.  A prototype domain stores the Word cube, one
+pair of `WordValue` interval endpoints, the width, and one ordering tag.  The
+ordering is either ordinary unsigned order or signed two's-complement rank
+order, where rank is `value ^ sign_bit`.  It does not store independent
+unsigned and signed intervals.  Modular Word constraints remain independent
+of the selected numeric interpretation.
+
+Propagation is batched locally and the domain is synchronized once before it
+is published.  Synchronization is a single pass:
+
+1. transform the cube into the selected order;
+2. move the lower endpoint to the least admitted cube value and the upper
+   endpoint to the greatest admitted cube value;
+3. fail if the endpoints cross;
+4. fix the common high prefix of the canonical endpoints in the cube; and
+5. transform the cube back from signed-rank order when necessary.
+
+This is idempotent without a local fixpoint loop.  Both canonical endpoints
+satisfy the common-prefix bits, so fixing that prefix cannot invalidate either
+endpoint.  The successor calculation finds the highest constrained bit where
+the bound conflicts with the cube.  A forced-one conflict is already the
+needed upward divergence; a forced-zero conflict carries to the nearest
+higher free zero bit and resets the lower suffix to its cube minimum.  The
+predecessor is the complement dual.  The implementation uses `clz`, lowest-set
+bit extraction, masks, carry/borrow, and ordinary Boolean operations; it does
+not scan the word width or enumerate represented values.
+
+The optimized code matches an independent enumerating reference for 280,782
+domains through width five: 162,062 supported intersections and 118,720 empty
+ones.  It is idempotent and preserves the exact represented set in every
+supported case.  An additional 1,169,550 exhaustive sequences through width
+three compare cube-then-bounds, bounds-then-cube, and one batched final
+synchronization.  All three results agree.  A deterministic 800,000-sequence
+width-32/64 campaign likewise matches eager and batched updates.  Seven
+targeted width-64 cases cover full masks, signed negative/nonnegative halves,
+the sign boundary, forced extrema, and successor/predecessor failure.
+
+Instrumented validation executed 3,858,172 synchronization calls.  Of
+7,599,391 successor calculations (including predecessor duals), 4,925,846
+were already direct, 1,926,202 used an existing forced-one divergence,
+513,700 carried to a higher free bit, and 233,643 proved no successor.
+Common-prefix feedback occurred 2,884,556 times and assignment 1,541,276
+times.  These are validation-path counts, not workload-frequency estimates.
+
+Seven fresh Release microbenchmark trials give stable median costs of about
+6.07 ns for a canonical no-change call, 4.93 ns for bound-to-prefix feedback,
+7.02 ns when cube holes adjust endpoints, and 7.64 ns for signed-rank order.
+Three updates synchronized eagerly cost about 48.9 ns; the same updates
+batched and synchronized once cost about 8.51 ns, with identical checksums.
+ARM64 generated code contains no width loop, value loop, allocation, or
+helper data structure.  This clears the task-069 integration gate: the
+normalizer is small enough that persistent numeric precision, not
+synchronization machinery, can be measured honestly.
+
+The production event proposal is conventional: add a bound-visible Word
+modification event below assignment and combine it with cube-bit changes into
+one notification.  A combined delta records newly fixed zero/one bits plus
+old/new canonical endpoints.  Cube subscribers observe cube or value events;
+numeric views subscribe to bound-or-value events.  No variable may remain
+dirty across propagation return, notification, cloning, branching, tracing,
+or status inspection.
+
+The exact baseline is `85bc9e3c5db7212d664d137999dc3139ae5e671f`.
+Temporary source, optimized and counter binaries, and generated assembly are
+`/private/tmp/word068-sync.cpp`, `/private/tmp/word068-sync`,
+`/private/tmp/word068-sync-count`, and `/private/tmp/word068-sync.s`; their
+SHA-256 hashes were recorded with the raw runs outside the repository.  No
+production, API, test, example, or build file changes in this task.
+
 ## Boundaries
 
 - This area is a full implementation spike, not a battle-hardening exercise. Each task must follow established Gecode patterns, reuse normal framework and test machinery, and avoid novel infrastructure, special-case test paths, exhaustive edge-case campaigns, or verification beyond what is proportionate to getting the implementation working.

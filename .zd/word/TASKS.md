@@ -2,10 +2,10 @@
 
 # Tasks: word
 
-- Total: 67
-- Ready: 0
+- Total: 69
+- Ready: 1
 - Blocked: 0
-- Done: 67
+- Done: 68
 
 | ID | Task | State | Blocked by |
 | --- | --- | --- | --- |
@@ -76,3 +76,5 @@
 | [word-065](tasks/065-investigate-alternative-algorithms-for-bit-consistent-binary.md) | Investigate alternative algorithms for bit-consistent binary Word addition | done | — |
 | [word-066](tasks/066-investigate-stronger-fixed-product-inverse-propagation-for-w.md) | Investigate stronger fixed-product inverse propagation for Word multiplication | done | — |
 | [word-067](tasks/067-investigate-hybrid-word-cubes-with-integer-bounds-and-intege.md) | Investigate hybrid Word cubes with integer bounds and integer-compatible views | done | — |
+| [word-068](tasks/068-implement-and-validate-cheap-one-pass-hybrid-word-domain-syn.md) | Implement and validate cheap one-pass hybrid Word-domain synchronization | done | — |
+| [word-069](tasks/069-integrate-and-benchmark-a-lazy-synchronized-hybrid-wordvar-p.md) | Integrate and benchmark a lazy-synchronized hybrid WordVar prototype | ready | word-068 |
