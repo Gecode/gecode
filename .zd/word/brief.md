@@ -1029,6 +1029,101 @@ structural hypothesis would otherwise remain ambiguous.  The investigation
 adds no normal tests; any later implementation task follows the established
 focused `test/word` level for the contract it changes.
 
+### Structural performance result
+
+The exact baseline is `f1016bd3cd`.  At representative bounded scales, the
+instrumented important families account for 112 of 154 root actors in MD5, 106
+of 152 in SHA-1, 105 of 128 plus 40 advisors in each CRC, and 17 of 26 in the
+ALU.  Estimated total space-owned lower bounds are approximately 14.5 KiB,
+14.0 KiB, 8.3 KiB, and 1.4 KiB respectively.  The relevant concrete sizes are
+184 bytes for Table plus its view array, 64 for native logic and Add, 80 for
+NaryAdd plus its view array, 72 for Fixed, Ite, and Bit, and 24 for a
+ViewAdvisor.  These are actor-state estimates rather than whole-Space or peak
+RSS measurements.
+
+Cumulative copy traffic is substantial even when live state is small.  The
+measured important families average 8.37 copies and roughly 978 copied bytes
+per node for MD5, 7.53/~948 for SHA-1, 12.23/~967 for CCITT, about 12.5/~990
+for X-25, and 8.50/~716 for ALU.  These are cumulative allocator/copy traffic,
+not simultaneously live bytes.  They explain why actor layout must be judged
+together with recomputation, but no individual retained actor contains an
+obviously avoidable large payload: the largest is the already-specialized
+Table, and direct named logic has removed it from the dominant CRC path.
+
+Useful-work yield is generally high.  MD5 Table is useful on 80.6 percent of
+calls, Add on 83.5 percent plus 2.2 percent failure, NaryAdd on 82.7 percent
+plus 3.6 percent failure, and native logic/Fixed on essentially every call;
+Add and NaryAdd account for all 1,703 failures.  SHA-1 Table is useful on 67.2
+percent, NaryAdd on 85.4 percent and accounts for all four failures, while
+native logic/Fixed are again nearly always useful.  CRC native logic, Fixed,
+Bit, and decided Ite are effectively fully productive; X-25 Ite alone has
+16.1 percent no-visible-work, only about seven percent of total propagation.
+ALU Table is useful on 69.0 percent, native logic on 73.3 percent, Add on 70.7
+percent plus 3.7 percent failure, and Fixed on essentially every call.  Add's
+26,675 failures and native logic's 39 account for all 26,714 ALU failures.
+
+Word narrowing no-op rates remain 21 percent for MD5, 31 percent for SHA-1,
+30 percent for each CRC, and 36 percent for ALU, but earlier caller-local
+experiments did not turn this count into repeatable runtime improvement.  Per
+newly fixed Word bit, total propagation is approximately 0.26 for MD5, 0.36
+for SHA-1, and 0.42 for each CRC and ALU.  Observable important-family calls
+per changed Word cube are approximately 0.83, 0.69, 1.02, and 0.78
+respectively.  CRC additionally receives about 0.75 advisor notifications per
+change, of which 69 percent concern unrelated bits and are now suppressed by
+the retained delta-aware Bit actor.
+
+Propagation-wave shape distinguishes the ALU from the other models.  Mean and
+maximum actor executions in one status cascade are MD5 12.4/565, SHA-1
+20.5/335, CCITT 21.0/82, X-25 22.0/70, and ALU 42.0/156.  Fifty-eight percent
+of ALU waves exceed 32 executions, versus three percent for CCITT and six
+percent for X-25.  This is a long dependency-chain effect, not evidence of
+globally stale scheduling: the actors within those waves have high useful
+yield.
+
+Three-point scaling separates topology from implementation overhead.  CRC
+message sizes 18/20/22 multiply both nodes and propagation almost exactly four
+times per two additional inputs, keeping 22.8--24.0 propagations per node.
+SHA-1 unknown-bit counts 168/172/176 similarly keep about 22.2 propagations per
+node while the tree grows sixteenfold per four bits.  MD5 is less regular due
+to failure pruning.  ALU widths 14/16/18 grow from 43.1 to 45.4 to 48.5
+propagations per node in addition to roughly 4.4-times node growth.  This is
+consistent with width-sensitive Add support work and the Word cube domain's
+loss of cross-bit correlations, rather than broad redundant wakeups.
+
+Independent CRC Word and Boolean recurrences have identical solutions,
+checksums, and nodes.  At message sizes 18/20/22, Word roots contain
+104/116/128 actors versus Boolean 285/319/353 and Word uses 40--44 percent
+fewer propagations.  At 22 bits, CCITT uses 18.41 million versus 31.16 million
+and reflected CRC 19.71 million versus 32.74 million.  Native Word topology is
+therefore a compact structural win, not hidden actor inflation.
+
+Search restoration remains workload-specific.  For CCITT-20, `c_d=1/8/32`
+gives 17.85/22.84/23.02 propagations per node and 734/967/975 measured copied
+actor bytes per node; `c_d=8,a_d=64` rises to 38.39 and 1,695 bytes.  Exact
+production timings are repeatably about 0.43, 0.55--0.56, 0.56, and 0.82
+seconds.  MD5 remains around 976--987 copied bytes per node and ALU around 716
+across settings while replay propagation rises about 12 percent for MD5 and
+eight percent for ALU.  This supports
+CRC-specific invocation guidance, not a global search default or an actor
+layout change.
+
+The structural conclusion is deliberately negative.  Delta-aware Bit already
+earns its advisor cost; important remaining actors have high useful yield;
+native Word CRC is structurally smaller than its Boolean decomposition; and
+ALU/hash scaling is dominated by search topology and cube-domain correlation
+limits.  No new production task is justified.  Long ALU waves alone do not
+establish a sound stronger propagation contract, and cumulative copy traffic
+does not identify an avoidable actor payload.  A future model-documentation
+change may record `c_d=1` as CRC-specific invocation guidance only after both
+retained CRC scales confirm it; do not alter global or example defaults from
+this investigation.
+
+Commands are preserved in `/private/tmp/word058-commands.txt`, raw results in
+`/private/tmp/word058-raw`, and the detached instrumented source/build in
+`/private/tmp/gecode-word058-instrument-{src,build}`.  The independent Boolean
+driver is `/private/tmp/word058-profile`.  No probe, raw result, or benchmark
+artifact is tracked.
+
 ## Boundaries
 
 - This area is a full implementation spike, not a battle-hardening exercise. Each task must follow established Gecode patterns, reuse normal framework and test machinery, and avoid novel infrastructure, special-case test paths, exhaustive edge-case campaigns, or verification beyond what is proportionate to getting the implementation working.
