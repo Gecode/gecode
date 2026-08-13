@@ -34,16 +34,19 @@
 namespace Gecode { namespace Word { namespace Channel {
 
   forceinline
-  Bit::Bit(Home home, WordView x, WordValue bit_mask0, Int::BoolView b)
-    : MixBinaryPropagator<
-        WordView,PC_WORD_BITS,Int::BoolView,Int::PC_BOOL_VAL>(home,x,b),
-      bit_mask(bit_mask0) {}
+  Bit::Bit(Home home, WordView x0, WordValue bit_mask0, Int::BoolView b0)
+    : Propagator(home), x(x0), b(b0), bit_mask(bit_mask0), c(home) {
+    (void) new (home) ViewAdvisor<WordView>(home,*this,c,x);
+    b.subscribe(home,*this,Int::PC_BOOL_VAL);
+  }
 
   forceinline
   Bit::Bit(Space& home, Bit& p)
-    : MixBinaryPropagator<
-        WordView,PC_WORD_BITS,Int::BoolView,Int::PC_BOOL_VAL>(home,p),
-      bit_mask(p.bit_mask) {}
+    : Propagator(home,p), bit_mask(p.bit_mask) {
+    x.update(home,p.x);
+    b.update(home,p.b);
+    c.update(home,p.c);
+  }
 
   forceinline ExecStatus
   Bit::post(Home home, WordView x, WordValue bit_mask, Int::BoolView b) {

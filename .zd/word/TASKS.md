@@ -3,9 +3,9 @@
 # Tasks: word
 
 - Total: 57
-- Ready: 1
+- Ready: 0
 - Blocked: 0
-- Done: 56
+- Done: 57
 
 | ID | Task | State | Blocked by |
 | --- | --- | --- | --- |
@@ -65,4 +65,4 @@
 | [word-054](tasks/054-fold-hash-round-constants-into-n-ary-additions.md) | Fold hash round constants into n-ary additions | done | word-053 |
 | [word-055](tasks/055-audit-native-word-propagation-and-scheduling-costs.md) | Audit native Word propagation and scheduling costs | done | — |
 | [word-056](tasks/056-add-direct-native-named-word-logic-actors.md) | Add direct native named Word logic actors | done | word-055 |
-| [word-057](tasks/057-prototype-delta-local-word-bit-channeling.md) | Prototype delta-local Word bit channeling | ready | word-056 |
+| [word-057](tasks/057-prototype-delta-local-word-bit-channeling.md) | Prototype delta-local Word bit channeling | done | word-056 |

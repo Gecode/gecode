@@ -106,6 +106,63 @@ namespace Test { namespace Word {
 
     /// Focused checks not expressed by the assignment oracle
     class Lifecycle : public Base {
+    private:
+      static bool delta_scheduling(void) {
+        ChannelSpace incremental;
+        Gecode::channel(incremental,incremental.x,2,incremental.b);
+        if (incremental.status() == Gecode::SS_FAILED)
+          return false;
+
+        Gecode::dom(incremental,incremental.x,0U,6U);
+        Gecode::StatusStatistics unrelated;
+        if ((incremental.status(unrelated) == Gecode::SS_FAILED) ||
+            (unrelated.propagate != 0U))
+          return false;
+
+        Gecode::dom(incremental,incremental.x,4U,6U);
+        Gecode::StatusStatistics relevant;
+        return (incremental.status(relevant) != Gecode::SS_FAILED) &&
+          (relevant.propagate == 1U) && incremental.b.one() &&
+          (Gecode::PropagatorGroup::all.size(incremental) == 0U);
+      }
+
+      static bool search_recomputation(void) {
+        using namespace Gecode;
+        class SearchSpace : public Space {
+        public:
+          WordVar x;
+          BoolVar b;
+          SearchSpace(void) : x(*this,10), b(*this,0,1) {
+            channel(*this,x,7,b);
+            branch(*this,x,WORD_VAL_LSB());
+          }
+          SearchSpace(SearchSpace& s) : Space(s) {
+            x.update(*this,s.x);
+            b.update(*this,s.b);
+          }
+          virtual Space* copy(void) { return new SearchSpace(*this); }
+        };
+
+        SearchSpace* root = new SearchSpace;
+        Search::Options options;
+        options.c_d = 8;
+        options.a_d = 64;
+        DFS<SearchSpace> dfs(root,options);
+        delete root;
+        unsigned int solutions = 0;
+        while (SearchSpace* solution = dfs.next()) {
+          const bool ok = solution->x.assigned() && solution->b.assigned() &&
+            (solution->b.val() ==
+             static_cast<int>((solution->x.val() >> 7) & 1U)) &&
+            (PropagatorGroup::all.size(*solution) == 0U);
+          delete solution;
+          if (!ok)
+            return false;
+          solutions++;
+        }
+        return solutions == 1024U;
+      }
+
     public:
       /// Construct and register test
       Lifecycle(void) : Base("Word::Channel::Lifecycle") {}
@@ -145,7 +202,7 @@ namespace Test { namespace Word {
           Gecode::channel(invalid,invalid.x,0,2);
           return false;
         } catch (const Gecode::Int::NotZeroOne&) {}
-        return true;
+        return delta_scheduling() && search_recomputation();
       }
     };
 

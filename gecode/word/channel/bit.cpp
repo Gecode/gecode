@@ -40,20 +40,48 @@ namespace Gecode { namespace Word { namespace Channel {
     return new (home) Bit(home,*this);
   }
 
+  PropCost
+  Bit::cost(const Space&, const ModEventDelta&) const {
+    return PropCost::binary(PropCost::LO);
+  }
+
+  void
+  Bit::reschedule(Space& home) {
+    b.reschedule(home,*this,Int::PC_BOOL_VAL);
+    if ((x.unknown() & bit_mask) == 0)
+      WordView::schedule(home,*this,ME_WORD_BITS);
+  }
+
+  ExecStatus
+  Bit::advise(Space& home, Advisor& a, const Delta& d) {
+    if (((x.zero(d) | x.one(d)) & bit_mask) == 0)
+      return ES_FIX;
+    return home.ES_NOFIX_DISPOSE(
+      c,static_cast<ViewAdvisor<WordView>&>(a));
+  }
+
   ExecStatus
   Bit::propagate(Space& home, const ModEventDelta&) {
-    if ((x0.lo() & bit_mask) != 0) {
-      GECODE_ME_CHECK(x1.one(home));
-    } else if ((x0.hi() & bit_mask) == 0) {
-      GECODE_ME_CHECK(x1.zero(home));
-    } else if (x1.one()) {
-      GECODE_ME_CHECK(x0.narrow(home,x0.lo() | bit_mask,x0.hi()));
-    } else if (x1.zero()) {
-      GECODE_ME_CHECK(x0.narrow(home,x0.lo(),x0.hi() & ~bit_mask));
+    if ((x.lo() & bit_mask) != 0) {
+      GECODE_ME_CHECK(b.one(home));
+    } else if ((x.hi() & bit_mask) == 0) {
+      GECODE_ME_CHECK(b.zero(home));
+    } else if (b.one()) {
+      GECODE_ME_CHECK(x.narrow(home,x.lo() | bit_mask,x.hi()));
+    } else if (b.zero()) {
+      GECODE_ME_CHECK(x.narrow(home,x.lo(),x.hi() & ~bit_mask));
     } else {
       return ES_FIX;
     }
     return home.ES_SUBSUMED(*this);
+  }
+
+  size_t
+  Bit::dispose(Space& home) {
+    b.cancel(home,*this,Int::PC_BOOL_VAL);
+    c.dispose(home);
+    (void) Propagator::dispose(home);
+    return sizeof(*this);
   }
 
 }}}

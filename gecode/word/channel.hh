@@ -49,15 +49,16 @@ namespace Gecode { namespace Word { namespace Channel {
    * Requires \code #include <gecode/word/channel.hh> \endcode
    * \ingroup FuncWordProp
    */
-  class Bit : public MixBinaryPropagator<
-    WordView,PC_WORD_BITS,Int::BoolView,Int::PC_BOOL_VAL> {
+  class Bit : public Propagator {
   protected:
-    using MixBinaryPropagator<
-      WordView,PC_WORD_BITS,Int::BoolView,Int::PC_BOOL_VAL>::x0;
-    using MixBinaryPropagator<
-      WordView,PC_WORD_BITS,Int::BoolView,Int::PC_BOOL_VAL>::x1;
+    /// Word view
+    WordView x;
+    /// Boolean view
+    Int::BoolView b;
     /// Mask for the channelled bit
     WordValue bit_mask;
+    /// Advisor for changes to the word view
+    Council<ViewAdvisor<WordView> > c;
     /// Constructor for cloning \a p
     Bit(Space& home, Bit& p);
     /// Constructor for creation
@@ -65,8 +66,17 @@ namespace Gecode { namespace Word { namespace Channel {
   public:
     /// Copy propagator during cloning
     virtual Actor* copy(Space& home);
+    /// Cost function
+    virtual PropCost cost(const Space& home,
+                          const ModEventDelta& med) const;
+    /// Schedule propagator after it has been enabled
+    virtual void reschedule(Space& home);
+    /// Give advice for a word-view change
+    virtual ExecStatus advise(Space& home, Advisor& a, const Delta& d);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+    /// Delete propagator
+    virtual size_t dispose(Space& home);
     /// Post propagator
     static ExecStatus post(Home home, WordView x, WordValue bit_mask,
                            Int::BoolView b);
