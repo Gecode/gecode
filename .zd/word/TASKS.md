@@ -2,10 +2,10 @@
 
 # Tasks: word
 
-- Total: 49
+- Total: 50
 - Ready: 0
 - Blocked: 0
-- Done: 49
+- Done: 50
 
 | ID | Task | State | Blocked by |
 | --- | --- | --- | --- |
@@ -58,3 +58,4 @@
 | [word-047](tasks/047-optimize-word-element-lookup-and-clone-footprint.md) | Optimize Word element lookup and clone footprint | done | word-046 |
 | [word-048](tasks/048-add-a-combined-unsigned-word-divmod-propagator.md) | Add a combined unsigned Word divmod propagator | done | word-047 |
 | [word-049](tasks/049-research-realistic-wordvar-profiling-instances.md) | Research realistic WordVar profiling instances | done | word-048 |
+| [word-050](tasks/050-calibrate-faithful-reduced-md5-and-sha-1-preimages.md) | Calibrate faithful reduced MD5 and SHA-1 preimages | done | word-049 |

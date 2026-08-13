@@ -489,6 +489,104 @@ calibrate a faithful reduced MD5 or SHA-1 instance without using a deliberately
 bad branch order, followed by an exact Boolean ripple decomposition of the ALU
 case.
 
+## Reduced-hash calibration follow-up
+
+Calibrate a faithful reduced-step MD5 preimage by scaling the inverse problem,
+not by leaving most of the digest unconstrained. Follow Zaikin's intermediate
+problem idea at the modeling level: retain 32-bit MD5 state words and authentic
+round functions, constants, message schedule, modular additions, and rotations;
+fix the initial state, most message words, and a complete computed target state;
+then expose a bounded part of one message word or weaken a controlled boundary
+between adjacent steps. Start with MD5 because its four-word state and schedule
+are smaller than SHA-1's five-word state and expanded message schedule. Attempt
+SHA-1 only after an MD5 calibration succeeds and through the same bounded
+method.
+
+The retained instance should be one deterministic DFS root and should complete
+in roughly 10--60 seconds because of its authentic inverse search, not because
+the same root is repeated, output is printed, or branching is deliberately poor.
+Use normal information-flow-aware branching and a hard timeout for every
+calibration. Record the exact construction, adjustable difficulty parameter,
+solutions/checksum, actors, propagation calls, nodes, failures, wall time,
+best-effort memory, and a bounded sample. Where it stays within the budget,
+build an independent Boolean ripple/bitwise decomposition and require exact
+semantic parity. A measured failure to calibrate SHA-1 is acceptable after the
+bounded ladder; do not turn this research into SAT learning, a new propagator,
+or permanent benchmark infrastructure.
+
+Testing is limited to temporary Release drivers and exact concrete hash oracles.
+There are no production changes and therefore no new `test/word` tests. Reuse
+ordinary Word and Boolean APIs, standard DFS ownership/cloning patterns, and
+temporary artifacts outside the repository. The durable result is only the
+calibration conclusion in this brief.
+
+### Calibration result
+
+The reduced-hash calibration retains two faithful one-block inverse workloads.
+Both use the standard padded `abc` block, standard initialization constants,
+authentic 32-bit step equations, and a complete feed-forward target produced by
+independent concrete code. Only a prefix of the actual 512-bit message block is
+left unknown; branching follows message schedule order with the ordinary MSB
+word decision. Each measurement is one DFS root and enumerates distinct
+preimages.
+
+The primary workload is **MD5-16 with 148 unknown message bits** (`M[0]` through
+`M[3]` plus 20 low bits of `M[4]`). It enumerates 1,048,576 preimages with the
+order-independent checksum 4,454,945,375,245,327,872. The Release run took
+14.33 seconds wall and 14.31 seconds user, with 170 root actors, 34,293,028
+propagation calls, 2,180,289 nodes, and 41,569 failures. The bounded ladder at
+132, 136, 140, 144, and 148 unknown bits produced 16, 256, 4,096, 65,536, and
+1,048,576 solutions in approximately 0.00, 0.01, 0.07, 0.97, and 14.59 seconds,
+respectively. This is the recommended first cryptographic profiling case.
+
+An independent MD5 Boolean model uses per-bit round logic, wired rotations, and
+ripple modular addition without Word constraints. At the adjacent 132-bit
+boundary it exactly matches the Word model's 16 solutions and checksum
+4,820,228,306,632,347,304. The Word model uses 170 actors, 1,496 propagation
+calls, 59 nodes, and 14 failures; the Boolean model uses 11,119 actors,
+2,909,918 propagation calls, 10,333 nodes, and 5,151 failures and takes 0.60
+seconds. Its search expansion makes a 148-bit decomposition run disproportionate
+under the 65-second cap, so parity is established at the neighboring boundary
+rather than claimed at the retained scale.
+
+The secondary workload is **SHA-1-16 with 180 unknown message bits**. The model
+uses the standard five-word state, Ch round function, round constant, rotations,
+five-operand modular step sum, and complete message-expansion implementation;
+the retained prefix consumes `W[0]` through `W[15]`. It enumerates 1,048,576
+preimages with checksum 1,829,032,905,292,644,352 in 18.51 seconds wall and
+18.47 seconds user, with 168 root actors, 46,750,389 propagation calls,
+2,097,411 nodes, and 130 failures. The ladder at 164, 168, 172, 176, and 180
+unknown bits produced 16, 256, 4,096, 65,536, and 1,048,576 solutions in
+approximately 0.00, 0.00, 0.07, 1.16, and 18.51 seconds. A SHA-1 Boolean model
+was not attempted after the MD5 decomposition demonstrated the likely search
+expansion; this is an explicit budget limitation.
+
+Three-second macOS samples contain 2,256 samples each. MD5 spends 1,390
+top-of-stack samples (61.6 percent) in `NaryAdd`, 479 (21.2 percent) in binary
+`Add`, and 75 (3.3 percent) in `WordView::narrow`. SHA-1 spends 1,753 (77.7
+percent) in `NaryAdd`, 109 (4.8 percent) in binary `Add`, and 91 (4.0 percent)
+in `WordView::narrow`; cloning and model copying account for roughly four
+percent in each sample. N-ary modular addition is therefore the concrete hot
+path in these models, but this research does not infer a defect or authorize a
+fix. Sample peak physical footprints are 1,424 KiB for MD5 and 1,440 KiB for
+SHA-1; independent `ps` snapshots report 2,528 KiB RSS for each. The normal
+`/usr/bin/time -l` RSS path remains unavailable because macOS denies the
+`kern.clockrate` query.
+
+The construction is derived from Zaikin's MD5/SHA-1 step definitions and his
+adjacent-step message-addend weakening method, but these 16-step CP workloads
+are not the paper's 28--29-step MD5 or 23--24-step SHA-1 SAT instances and do
+not support solver-competitiveness claims. Temporary source hashes are
+`4e6cbbe8bf3db61f9370b77c93f9bb57efc26b14aeed98636ca8b29e3ca01e34`
+(MD5), `5638dfdc8c2032cdc79664bce06c5c56fc8c4fb283facb4ddeba882c6d835508`
+(Boolean MD5), and
+`80319346087c892b68340daa90796680f02c81c914aa70ad6a813343420f12a0`
+(SHA-1). The sample hashes are
+`88c3a12556ffbdb2ae28c68261baf026cc9038a91e3fa32655bf923bfadf7472`
+and `5dfe9251b0163184e0e5732072c487aa981df8fdf1432d961ba8b88162a7cf24`.
+All temporary sources, binaries, raw output, and samples remain outside the
+repository.
+
 ## Boundaries
 
 - This area is a full implementation spike, not a battle-hardening exercise. Each task must follow established Gecode patterns, reuse normal framework and test machinery, and avoid novel infrastructure, special-case test paths, exhaustive edge-case campaigns, or verification beyond what is proportionate to getting the implementation working.
