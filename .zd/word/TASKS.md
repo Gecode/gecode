@@ -2,10 +2,10 @@
 
 # Tasks: word
 
-- Total: 69
+- Total: 70
 - Ready: 0
 - Blocked: 0
-- Done: 69
+- Done: 70
 
 | ID | Task | State | Blocked by |
 | --- | --- | --- | --- |
@@ -78,3 +78,4 @@
 | [word-067](tasks/067-investigate-hybrid-word-cubes-with-integer-bounds-and-intege.md) | Investigate hybrid Word cubes with integer bounds and integer-compatible views | done | — |
 | [word-068](tasks/068-implement-and-validate-cheap-one-pass-hybrid-word-domain-syn.md) | Implement and validate cheap one-pass hybrid Word-domain synchronization | done | — |
 | [word-069](tasks/069-integrate-and-benchmark-a-lazy-synchronized-hybrid-wordvar-p.md) | Integrate and benchmark a lazy-synchronized hybrid WordVar prototype | done | word-068 |
+| [word-070](tasks/070-design-a-unified-wordvar-with-optional-signed-or-unsigned-bo.md) | Design a unified WordVar with optional signed or unsigned bounds | done | — |

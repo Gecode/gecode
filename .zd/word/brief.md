@@ -1786,6 +1786,235 @@ outputs, arithmetic parity, controls, and timestamp evidence that every
 compared artifact postdates its final source inputs.
 No production, API, test, example, or build file changes in the shared tree.
 
+## Unified optional bounded WordVar architecture
+
+Task 070 settles the production architecture for opt-in numeric bounds without
+turning `WordVar` into several public variable types.  Keep one public
+`WordVar` handle and one generated Word variable-implementation registry.  Its
+compact implementation is a non-virtual tagged `WordVarImp`; a larger
+`BoundedWordVarImp : WordVarImp` adds one ranked interval.  The immutable tag
+selects cube, unsigned-bounded, or signed-bounded meaning.  The tag fits next
+to the width in existing padding, so the compact implementation remains 48
+bytes.  The bounded implementation is 64 bytes.  Public handles and common or
+typed views remain 8 bytes.
+
+A compiled exact-HEAD probe establishes that the two concrete implementation
+sizes can coexist in one Space and one `WordVarImpConf` registry.
+`VarImpVar::update` calls the statically known base `copy()`; that non-virtual
+method switches on the immutable tag and placement-allocates the correct
+concrete size.  Both clone constructors use the same generated
+`WordVarImpBase(home,source)`, forwarding pointer, subscription prefix, and
+Word update/recovery list.  An injected exception after one variable had been
+forwarded was recovered correctly and the next clone succeeded.  Genuine
+`c_d=1` recomputation returned four exact solutions.  No vptr, side object,
+destructor, external allocation, or `AP_DISPOSE` obligation is introduced.
+
+The measured alternatives are inferior:
+
+* an always-large tagged implementation is also 64 bytes, but charges every
+  cube variable 16 bytes and the corresponding clone traffic;
+* a sidecar makes the base 56 bytes, adds a separate 16-byte payload plus
+  allocator overhead and indirection, and complicates copy failure;
+* trailing storage can reach 48/64 bytes only through manual variable-sized
+  allocation and type recovery, with no advantage over an ordinary derived
+  object; and
+* separate public variable types give static dispatch but fragment arrays,
+  expressions, posting overloads, and mixed models, contrary to the single
+  `WordVar` requirement.
+
+Ordinary cube mask operations remain branch-free because width and masks stay
+in the compact base.  A cube variable pays one tag switch during construction
+or copying, one kind test when a bounds-capable posting chooses its actor, and
+one kind test after a common cube tell so an extended implementation can run
+the constant-operation synchronizer.  It pays no extra per-variable bytes.
+
+### Construction and invariant
+
+The proposed public selector is:
+
+```cpp
+enum WordDomainType {
+  WDT_CUBE,
+  WDT_UNSIGNED,
+  WDT_SIGNED
+};
+```
+
+Existing constructors remain source-compatible and construct `WDT_CUBE`.
+Add overloads equivalent to:
+
+```cpp
+WordVar(Space&, unsigned width, WordDomainType);
+WordVar(Space&, unsigned width, WordDomainType,
+        WordValue minimum, WordValue maximum);
+WordVar(Space&, unsigned width, WordValue lo, WordValue hi,
+        WordDomainType, WordValue minimum, WordValue maximum);
+```
+
+The first form uses the full range of the selected interpretation; arrays and
+argument arrays mirror the bounded forms.  A model option can map `cube`,
+`unsigned`, or `signed` directly to this selector, so controlled experiments
+change only variable construction.  Public `domain_type()` and `bounded()`
+expose the representation, while guarded `minimum()` and `maximum()` expose
+canonical endpoints.  Existing `lo()`, `hi()`, `in()`, `assigned()`, and
+`val()` become intersection-aware without changing their meaning.
+
+Endpoints are `WordValue`, including for signed variables.  Unsigned rank is
+the masked value; signed rank is `value ^ sign_bit`, with public endpoints
+still represented as two's-complement bit patterns.  This avoids host signed
+overflow and covers widths one and 64 and values outside `Int::Limits`.
+Invalid kinds, out-of-width values, inverted masks or ranked bounds, and an
+empty initial intersection fail through the established Word argument/domain
+checks.  `WDT_CUBE` is invalid in a constructor that supplies numeric bounds.
+
+The bounded invariant is a nonempty cube intersected with exactly one
+immutable ranked interval whose endpoints are the first and last admitted
+cube values.  Each tell builds a local candidate, runs the task-068
+constant-operation synchronizer once, and publishes atomically or fails.
+Assignment means one admitted value, not merely equal cube masks.  Actors with
+several logical roles snapshot them, close all rules and aliases locally,
+group identical VarImp pointers, and publish one combined tell per distinct
+changed variable.  The variable never changes between unsigned and signed
+meaning after construction.
+
+### Events, views, and actor selection
+
+Generate a four-event Word lattice: assigned value, bit-only, bound-only, and
+combined-domain change.  Add `PC_WORD_BND` and `PC_WORD_DOM`; bit subscribers
+receive value, bit, and combined events, bound subscribers receive value,
+bound, and combined events, and domain subscribers receive every change.
+Extend `WordDelta` with old/new ranked endpoints and the immutable kind while
+retaining exact fixed-zero/fixed-one masks.  Advisors see one combined delta.
+Cube actors remain asleep on a bound-only event.  Copy and recovery continue
+to use the single expanded generated subscription array.
+
+`WordView` remains the common 8-byte cube view over every implementation.  Add
+internal 8-byte `UnsignedWordView` and `SignedWordView` wrappers after a
+posting-time kind check.  They expose typed ranks and combined tells through
+Word propagation conditions; they are not runtime conversion views.
+
+A bounds-aware actor is selected only when every nonconstant Word operand and
+result has the interpretation that its mathematics requires.  Constants are
+neutral.  If any operand is cube, has the opposite kind, or the operation has
+no proved interval algorithm, post the existing cube actor for the entire
+relation.  This fallback is valid and intentional: a signed relation over an
+unsigned-bounded variable, or unsigned arithmetic over a signed-bounded
+variable, still has its ordinary fixed-width Word semantics.  Cube tells from
+the fallback synchronize the extended domain.
+
+### Operation migration matrix
+
+Every enhancement retains the current cube implementation as fallback.
+
+| Surface | Bounded strategy |
+| --- | --- |
+| equality, disequality, reification | numeric-neutral; intersect same-kind bounds where representable |
+| unsigned order and reified order | homogeneous unsigned actor |
+| signed order and reified order | homogeneous signed actor |
+| complement and named, derived, or n-ary logic | cube actor; no useful single-interval rule |
+| Bool- and mask-controlled ITE | cube initially; homogeneous result hull remains research |
+| extract, concat, repeat | cube initially; structural hull remains research |
+| zero/sign extension | unsigned/signed enhancement respectively |
+| left and logical-right shifts | unsigned value/result and unsigned amount enhancement |
+| arithmetic-right shift | signed value/result and unsigned amount; otherwise cube |
+| rotations | cube; the permutation makes one interval unhelpful |
+| add, sub, neg, n-ary add | unsigned or signed non-wrapping bounds with local modular fallback |
+| carry, borrow, overflow | interpretation-specific arithmetic plus Bool result/control |
+| multiplication | non-wrapping unsigned/signed refinement plus existing cube support |
+| unsigned div, mod, combined divmod | transactional unsigned actors with exact zero-divisor rows |
+| signed div, rem, mod | transactional signed actors with exact zero and min/-1 rows |
+| `product_mod` and reification | mixed Int modulus; unsigned homogeneous Word enhancement where proved |
+| popcount, CLZ, CTZ | mixed Int result; current actor initially |
+| `element` | mixed Int index; candidate hull only when table/result kinds match |
+| bit channel and reductions | mixed Bool/current cube actor; synchronize after bit tells |
+| branch and assign | add ranked value/split choices; retain existing bit choices |
+| trace and printing | report both cube and ranked interval/delta |
+| MiniModel | explicit lowering policy; never infer semantics from kind |
+
+Arithmetic implementations remain ordinary Word actors with Word events,
+even where mathematical helpers can be shared with Int.  Each uses local
+transaction domains, resolves wrap/no-wrap or SMT-LIB special rows before
+publication, and groups aliases before one tell per distinct VarImp.  N-ary
+duplicates are grouped before closure.  Existing Int propagators are not a
+general drop-in: many hard-code `int`, `Int::Limits`, `PC_INT_*`, `IntView`,
+or arbitrary-domain range iteration.  Bounds equality, order, and simple
+linear/nonlinear helpers are the realistic reuse seams behind conventional
+Word actor shells.  Domain-consistent distinct, element, extensional, and
+domain-linear actors remain separate because cube-intersection-range is
+nonconvex and cannot provide arbitrary-hole removal.  Temporary Int adapters
+are valid only when the entire ranked interval lies in `Int::Limits`.
+
+### Modeling, search, compatibility, and rollout
+
+Existing MiniModel lowering continues to create cube temporaries.  A separate
+explicit policy can request bounded temporaries: it preserves a kind only
+when all variable children share it and the operation's result interpretation
+is compatible; constants are neutral and all other nodes lower to cube.  Kind
+must never change expression semantics.
+
+Bounded search adds rank-minimum, rank-maximum, rank-median assignment and
+ranked interval split choices.  Midpoints move to the adjacent admitted cube
+value with the constant-time primitive.  Choice archives store position,
+immutable kind, split rank, and alternative.  Existing bit branchers remain
+valid but are not the bounded default.  Trace snapshots and deltas include
+kind and endpoints, and report unknown cube bits separately from interval
+span.  This makes `--word-domain cube|unsigned|signed` experiments natural and
+prevents branchers from selecting values excluded by the interval.
+
+Existing source using `WordVar` and its 8-byte handles remains compatible.
+This is nevertheless a binary ABI change: internal VarImp layout, generated
+event values and subscription arrays, exported constructors, branch choices,
+and trace formats change.  Bump the Word library ABI and require downstream
+relinking.  Update `word.vis`, generated kernel headers, Word headers and
+implementation, exceptions, exports and inventories, Doxygen, and changelog.
+There is no variable serialization format; new branch archives document the
+kind/rank convention without promising cross-ABI compatibility.
+
+Validation must exhaust widths one through eight against enumerated
+cube-intersection-range membership and canonical extrema in both ranks, plus
+width-64 boundaries.  It must cover event selectivity and deltas, aliases,
+failure/subsumption, clone isolation, injected clone failure, genuine
+recomputation, branch archive/no-good/replay, trace, all reification modes,
+mixed-kind fallback, MiniModel parity, and values outside `Int::Limits`.
+Benchmarks compare the exact cube baseline, cube variables after the new
+infrastructure, and bounded variants.  Record object and actor bytes, copied
+bytes, events, schedules, propagations, synchronization/publication counts,
+nodes, failures, solutions/checksum, wall/user/RSS, and profiles while varying
+clone distance.  Arithmetic chains, multiplication/factorization, unsigned
+division, signed arithmetic, and safe Int parity measure benefit; ALU, Speck,
+MD5, both CRCs, logic, and structural cases guard ordinary overhead.
+
+Implementation is divided into independently approvable stages:
+
+1. expand the kernel/domain with tagged base and derived implementation,
+   constructors, synchronizer, events/delta, views, and clone/fault tests;
+2. add bounded branching, trace, explicit MiniModel lowering, ABI/docs, and a
+   model option so the representation can be exercised naturally;
+3. migrate equality and unsigned/signed relations including reification and
+   mixed-kind fallback;
+4. migrate transactional add/sub/mult and overflow individually, retaining
+   each only on measured benefit, with n-ary work following binary actors;
+5. migrate unsigned div/mod/divmod and then the signed division family;
+6. measure and selectively migrate shifts/extensions, element,
+   `product_mod`, and counts; and
+7. complete the matrix tests, examples, performance gates, and publication
+   contract while keeping cube fallback supported.
+
+Only three API spellings remain for implementation review: the final enum and
+endpoint-overload order, whether endpoint queries throw or use guarded access,
+and the exact MiniModel policy object.  The representation, immutable meaning,
+fallback semantics, clone mechanism, event lattice, and migration order are
+settled.
+
+The probe uses exact baseline `854fdea63a646381132524c8bf5fb9ae76306604`.
+Source, binary, raw output, generated event prototypes, commands, and hashes
+are `/private/tmp/word070-layout.cpp`, `/private/tmp/word070-layout`,
+`/private/tmp/word070-layout.out`, `/private/tmp/word070-word.vis`,
+`/private/tmp/word070-var-imp.hpp`, `/private/tmp/word070-var-type.hpp`,
+`/private/tmp/word070-commands.txt`, and `/private/tmp/word070-SHA256SUMS`.
+The manifest verifies every entry.  No production, API, test, example, or
+build file changed in this investigation.
+
 ## Boundaries
 
 - This area is a full implementation spike, not a battle-hardening exercise. Each task must follow established Gecode patterns, reuse normal framework and test machinery, and avoid novel infrastructure, special-case test paths, exhaustive edge-case campaigns, or verification beyond what is proportionate to getting the implementation working.
