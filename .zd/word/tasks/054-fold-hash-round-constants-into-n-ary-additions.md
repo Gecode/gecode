@@ -3,7 +3,7 @@ schema_version = 1
 id = "word-054"
 key = "fold-hash-round-constants"
 area = "word"
-status = "open"
+status = "done"
 blocked_by = ["word-053"]
 +++
 # Fold hash round constants into n-ary additions
@@ -20,12 +20,21 @@ The MD5 and SHA-1 examples express each modular step as one existing n-ary addit
 
 ## Done when
 
-- [ ] Each MD5/SHA-1 step posts one existing n-ary add containing the assigned round constant and removes the redundant intermediate binary constant-add variable/actor.
-- [ ] Quick defaults retain stable correct output, and retained configurations preserve exact solutions/checksums while recording actor, propagation, node, failure, runtime, and memory changes.
-- [ ] Focused example builds/runs, ordinary Word arithmetic regression checks, zdev check, and diff check pass without new test or benchmark machinery.
+- [x] Each MD5/SHA-1 step posts one existing n-ary add containing the assigned round constant and removes the redundant intermediate binary constant-add variable/actor.
+- [x] Quick defaults retain stable correct output, and retained configurations preserve exact solutions/checksums while recording actor, propagation, node, failure, runtime, and memory changes.
+- [x] Focused example builds/runs, ordinary Word arithmetic regression checks, zdev check, and diff check pass without new test or benchmark machinery.
 
 ## Validation
 
 - Build and run only the two examples at quick defaults and bounded retained scales.
 - Run focused existing Word Arithmetic and TestFramework filters.
 - Run zd check word and git diff --check.
+
+## Result
+
+Simplified and independently verified MD5/SHA-1 examples by folding assigned round constants into existing n-ary additions.
+
+Validation:
+
+- Quick defaults and full million-solution retained streams matched exact baseline byte-for-byte; actor, propagation, search, runtime, and RSS changes were recorded.
+- Focused builds, full Word Arithmetic, TestFramework x10, zdev checks, and diff check passed.

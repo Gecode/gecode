@@ -200,9 +200,10 @@ public:
         rel(*this,b[i],WOT_OR,x,y);
         rel(*this,c[i],WOT_XOR,y,f);
       }
-      WordVar sum(*this,32), with_constant(*this,32), rotated(*this,32);
-      add(*this,WordVarArgs({a[i],f,message[message_index(i)]}),sum);
-      add(*this,sum,32,md5_constant[i],with_constant);
+      WordVar round_constant(*this,32,md5_constant[i],md5_constant[i]);
+      WordVar with_constant(*this,32), rotated(*this,32);
+      add(*this,WordVarArgs({a[i],f,message[message_index(i)],
+                             round_constant}),with_constant);
       rotate_left(*this,with_constant,md5_shift[i],rotated);
       add(*this,b[i],rotated,b[i+1]);
       rel(*this,a[i+1],WRT_EQ,d[i]);

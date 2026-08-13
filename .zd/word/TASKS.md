@@ -3,9 +3,9 @@
 # Tasks: word
 
 - Total: 54
-- Ready: 1
+- Ready: 0
 - Blocked: 0
-- Done: 53
+- Done: 54
 
 | ID | Task | State | Blocked by |
 | --- | --- | --- | --- |
@@ -62,4 +62,4 @@
 | [word-051](tasks/051-add-reduced-hash-examples-and-profile-their-hot-paths.md) | Add reduced-hash examples and profile their hot paths | done | word-050 |
 | [word-052](tasks/052-add-crc-and-symbolic-alu-examples-and-profile-the-corpus.md) | Add CRC and symbolic ALU examples and profile the corpus | done | word-051 |
 | [word-053](tasks/053-prove-and-optimize-naryadd-local-closure.md) | Prove and optimize NaryAdd local closure | done | word-052 |
-| [word-054](tasks/054-fold-hash-round-constants-into-n-ary-additions.md) | Fold hash round constants into n-ary additions | ready | word-053 |
+| [word-054](tasks/054-fold-hash-round-constants-into-n-ary-additions.md) | Fold hash round constants into n-ary additions | done | word-053 |

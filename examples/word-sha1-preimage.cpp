@@ -185,10 +185,10 @@ public:
         rel(*this,c[i],WOT_AND,d[i],z);
         rel(*this,WOT_OR,WordVarArgs({x,y,z}),f);
       }
-      WordVar rotated(*this,32), sum(*this,32);
+      WordVar round_constant(*this,32,sha1_constant(i),sha1_constant(i));
+      WordVar rotated(*this,32);
       rotate_left(*this,a[i],5,rotated);
-      add(*this,WordVarArgs({rotated,f,e[i],w[i]}),sum);
-      add(*this,sum,32,sha1_constant(i),a[i+1]);
+      add(*this,WordVarArgs({rotated,f,e[i],w[i],round_constant}),a[i+1]);
       rel(*this,b[i+1],WRT_EQ,a[i]);
       rotate_left(*this,b[i],30,c[i+1]);
       rel(*this,d[i+1],WRT_EQ,c[i]);
