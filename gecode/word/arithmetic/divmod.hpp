@@ -81,6 +81,26 @@ namespace Gecode { namespace Word { namespace Arithmetic {
   forceinline ExecStatus
   Div::narrow(Home home, WordView a, WordView b, WordView q) {
     const WordValue mask = a.mask();
+    if (a == b) {
+      if (a == q) {
+        GECODE_ME_CHECK(q.eq(home,1));
+        return ES_OK;
+      }
+      GECODE_ME_CHECK(q.narrow(home,1,mask));
+      if (a.assigned()) {
+        GECODE_ME_CHECK(q.eq(home,(a.val() == 0) ? mask : 1));
+        return ES_OK;
+      }
+      if (q.assigned()) {
+        if ((mask != 1) && (q.val() == mask)) {
+          GECODE_ME_CHECK(a.eq(home,0));
+          return ES_OK;
+        }
+        if (q.val() != 1)
+          return ES_FAILED;
+      }
+      return (mask == 1) ? ES_OK : ES_FIX;
+    }
     for (;;) {
       const WordValue alo=a.lo(), ahi=a.hi(), blo=b.lo(), bhi=b.hi();
       const WordValue qlo=q.lo(), qhi=q.hi();
@@ -215,6 +235,10 @@ namespace Gecode { namespace Word { namespace Arithmetic {
   }
   forceinline ExecStatus Mod::post(Home home, WordView a, WordView b,
                                    WordView r) {
+    if (a == b) {
+      GECODE_ME_CHECK(r.eq(home,0));
+      return ES_OK;
+    }
     ExecStatus es=narrow(home,a,b,r);
     if (es == ES_FAILED) return ES_FAILED;
     if (es == ES_FIX) (void) new (home) Mod(home,a,b,r);
@@ -362,6 +386,10 @@ namespace Gecode { namespace Word { namespace Arithmetic {
 
   forceinline ExecStatus
   DivModBoth::post(Home home, WordView a, WordView b, WordView q, WordView r) {
+    if (a == b) {
+      GECODE_ME_CHECK(r.eq(home,0));
+      return Div::post(home,a,b,q);
+    }
     ExecStatus es=narrow(home,a,b,q,r);
     if (es == ES_FAILED) return ES_FAILED;
     if (es == ES_FIX) (void) new (home) DivModBoth(home,a,b,q,r);

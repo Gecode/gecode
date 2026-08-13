@@ -1442,6 +1442,153 @@ namespace Test { namespace Word {
           (PropagatorGroup::all.size(zero_inverse) == 0U);
       }
 
+      static bool self_identities(void) {
+        using namespace Gecode;
+        const unsigned int widths[] = {1U,64U};
+        for (unsigned int width : widths) {
+          DivisionSpace self_mod(2,width);
+          mod(self_mod,self_mod.x[0],self_mod.x[0],self_mod.x[1]);
+          if ((self_mod.status() == SS_FAILED) ||
+              self_mod.x[0].assigned() || !self_mod.x[1].assigned() ||
+              (self_mod.x[1].val() != 0) ||
+              (PropagatorGroup::all.size(self_mod) != 0U))
+            return false;
+          DivisionSpace* copy =
+            static_cast<DivisionSpace*>(self_mod.clone());
+          const bool copy_ok = (copy->status() != SS_FAILED) &&
+            !copy->x[0].assigned() && copy->x[1].assigned() &&
+            (copy->x[1].val() == 0) &&
+            (PropagatorGroup::all.size(*copy) == 0U);
+          delete copy;
+          if (!copy_ok)
+            return false;
+        }
+
+        DivisionSpace mod_result_alias(1,4);
+        mod(mod_result_alias,mod_result_alias.x[0],mod_result_alias.x[0],
+            mod_result_alias.x[0]);
+        if ((mod_result_alias.status() == SS_FAILED) ||
+            !mod_result_alias.x[0].assigned() ||
+            (mod_result_alias.x[0].val() != 0U) ||
+            (PropagatorGroup::all.size(mod_result_alias) != 0U))
+          return false;
+
+        DivisionSpace width_one(3,1);
+        divmod(width_one,width_one.x[0],width_one.x[0],width_one.x[1],
+               width_one.x[2]);
+        if ((width_one.status() == SS_FAILED) ||
+            !width_one.x[1].assigned() || (width_one.x[1].val() != 1U) ||
+            !width_one.x[2].assigned() || (width_one.x[2].val() != 0U) ||
+            (PropagatorGroup::all.size(width_one) != 0U))
+          return false;
+
+        DivisionSpace combined(3,64);
+        divmod(combined,combined.x[0],combined.x[0],combined.x[1],
+               combined.x[2]);
+        if ((combined.status() == SS_FAILED) || combined.x[0].assigned() ||
+            (combined.x[1].lo() != 1U) ||
+            (combined.x[1].hi() != Gecode::Word::width_mask(64)) ||
+            !combined.x[2].assigned() || (combined.x[2].val() != 0U) ||
+            (PropagatorGroup::all.size(combined) != 1U))
+          return false;
+        DivisionSpace* combined_copy =
+          static_cast<DivisionSpace*>(combined.clone());
+        dom(*combined_copy,combined_copy->x[0],0U);
+        const bool combined_copy_ok =
+          (combined_copy->status() != SS_FAILED) &&
+          combined_copy->x[1].assigned() &&
+          (combined_copy->x[1].val() == Gecode::Word::width_mask(64)) &&
+          (PropagatorGroup::all.size(*combined_copy) == 0U) &&
+          !combined.x[0].assigned() && !combined.x[1].assigned();
+        delete combined_copy;
+        if (!combined_copy_ok)
+          return false;
+
+        DivisionSpace remainder_alias(2,4);
+        divmod(remainder_alias,remainder_alias.x[0],remainder_alias.x[0],
+               remainder_alias.x[1],remainder_alias.x[0]);
+        if ((remainder_alias.status() == SS_FAILED) ||
+            !remainder_alias.x[0].assigned() ||
+            (remainder_alias.x[0].val() != 0U) ||
+            !remainder_alias.x[1].assigned() ||
+            (remainder_alias.x[1].val() != 15U) ||
+            (PropagatorGroup::all.size(remainder_alias) != 0U))
+          return false;
+
+        DivisionSpace quotient_alias(2,4);
+        divmod(quotient_alias,quotient_alias.x[0],quotient_alias.x[0],
+               quotient_alias.x[0],quotient_alias.x[1]);
+        if ((quotient_alias.status() == SS_FAILED) ||
+            !quotient_alias.x[0].assigned() ||
+            (quotient_alias.x[0].val() != 1U) ||
+            !quotient_alias.x[1].assigned() ||
+            (quotient_alias.x[1].val() != 0U) ||
+            (PropagatorGroup::all.size(quotient_alias) != 0U))
+          return false;
+
+        DivisionSpace quotient_remainder_alias(2,4);
+        divmod(quotient_remainder_alias,quotient_remainder_alias.x[0],
+               quotient_remainder_alias.x[0],
+               quotient_remainder_alias.x[1],
+               quotient_remainder_alias.x[1]);
+        if (quotient_remainder_alias.status() != SS_FAILED)
+          return false;
+
+        DivisionSpace all_alias(1,4);
+        divmod(all_alias,all_alias.x[0],all_alias.x[0],all_alias.x[0],
+               all_alias.x[0]);
+        if (all_alias.status() != SS_FAILED)
+          return false;
+
+        DivisionSpace failed(2,4);
+        dom(failed,failed.x[1],1U);
+        mod(failed,failed.x[0],failed.x[0],failed.x[1]);
+        return failed.status() == SS_FAILED;
+      }
+
+      static bool self_search_recomputation(void) {
+        using namespace Gecode;
+        class SelfSpace : public Space {
+        public:
+          WordVar x;
+          WordVar quotient;
+          WordVar remainder;
+          SelfSpace(void)
+            : x(*this,3), quotient(*this,3), remainder(*this,3) {
+            divmod(*this,x,x,quotient,remainder);
+            branch(*this,x,WORD_VAL_LSB());
+          }
+          SelfSpace(SelfSpace& s) : Space(s) {
+            x.update(*this,s.x);
+            quotient.update(*this,s.quotient);
+            remainder.update(*this,s.remainder);
+          }
+          virtual Space* copy(void) { return new SelfSpace(*this); }
+        };
+
+        SelfSpace* root = new SelfSpace;
+        Search::Options options;
+        options.c_d = 1;
+        options.a_d = 64;
+        DFS<SelfSpace> dfs(root,options);
+        delete root;
+        unsigned int solutions = 0;
+        while (SelfSpace* solution = dfs.next()) {
+          const WordValue expected = (solution->x.val() == 0) ? 7U : 1U;
+          const bool ok = solution->x.assigned() &&
+            solution->quotient.assigned() &&
+            (solution->quotient.val() == expected) &&
+            solution->remainder.assigned() &&
+            (solution->remainder.val() == 0U) &&
+            (PropagatorGroup::all.size(*solution) == 0U);
+          delete solution;
+          if (!ok)
+            return false;
+          solutions++;
+        }
+        return solutions == 8;
+      }
+
       static bool search_recomputation(void) {
         using namespace Gecode;
         class DivSpace : public Space {
@@ -1499,6 +1646,7 @@ namespace Test { namespace Word {
       virtual bool run(void) {
         return partial(DIV) && partial(MOD) && boolean_parity() &&
           policy_constants_aliases_lifecycle() && native_propagation() &&
+          self_identities() && self_search_recomputation() &&
           search_recomputation();
       }
     };
@@ -1787,6 +1935,63 @@ namespace Test { namespace Word {
           (Gecode::PropagatorGroup::all.size(minus_one) == 1U);
       }
 
+      static bool self_identities(void) {
+        using namespace Gecode;
+        const unsigned int widths[] = {1U,64U};
+        for (unsigned int width : widths) {
+          SignedSpace self_rem(2,width);
+          signed_rem(self_rem,self_rem.x[0],self_rem.x[0],self_rem.x[1]);
+          if ((self_rem.status() == SS_FAILED) ||
+              self_rem.x[0].assigned() || !self_rem.x[1].assigned() ||
+              (self_rem.x[1].val() != 0U) ||
+              (PropagatorGroup::all.size(self_rem) != 0U))
+            return false;
+          SignedSpace* copy = static_cast<SignedSpace*>(self_rem.clone());
+          const bool copy_ok = (copy->status() != SS_FAILED) &&
+            !copy->x[0].assigned() && copy->x[1].assigned() &&
+            (copy->x[1].val() == 0U) &&
+            (PropagatorGroup::all.size(*copy) == 0U);
+          delete copy;
+          if (!copy_ok)
+            return false;
+
+          SignedSpace self_mod(2,width);
+          signed_mod(self_mod,self_mod.x[0],self_mod.x[0],self_mod.x[1]);
+          if ((self_mod.status() == SS_FAILED) ||
+              self_mod.x[0].assigned() || !self_mod.x[1].assigned() ||
+              (self_mod.x[1].val() != 0U) ||
+              (PropagatorGroup::all.size(self_mod) != 0U))
+            return false;
+        }
+
+        SignedSpace rem_alias(1,4);
+        signed_rem(rem_alias,rem_alias.x[0],rem_alias.x[0],rem_alias.x[0]);
+        if ((rem_alias.status() == SS_FAILED) ||
+            !rem_alias.x[0].assigned() || (rem_alias.x[0].val() != 0U) ||
+            (PropagatorGroup::all.size(rem_alias) != 0U))
+          return false;
+
+        SignedSpace mod_alias(1,4);
+        signed_mod(mod_alias,mod_alias.x[0],mod_alias.x[0],mod_alias.x[0]);
+        if ((mod_alias.status() == SS_FAILED) ||
+            !mod_alias.x[0].assigned() || (mod_alias.x[0].val() != 0U) ||
+            (PropagatorGroup::all.size(mod_alias) != 0U))
+          return false;
+
+        SignedSpace failed_rem(2,4);
+        dom(failed_rem,failed_rem.x[1],1U);
+        signed_rem(failed_rem,failed_rem.x[0],failed_rem.x[0],
+                   failed_rem.x[1]);
+        if (failed_rem.status() != SS_FAILED)
+          return false;
+
+        SignedSpace failed_mod(2,4);
+        dom(failed_mod,failed_mod.x[1],1U);
+        signed_mod(failed_mod,failed_mod.x[0],failed_mod.x[0],
+                   failed_mod.x[1]);
+        return failed_mod.status() == SS_FAILED;
+      }
+
       static bool search_recomputation(void) {
         using namespace Gecode;
         class SearchSpace : public Space {
@@ -1846,7 +2051,8 @@ namespace Test { namespace Word {
       virtual bool run(void) {
         return partial(SIGNED_DIV) && partial(SIGNED_REM) &&
           partial(SIGNED_MOD) && boolean_parity() && lifecycle() &&
-          native_propagation() && search_recomputation();
+          native_propagation() && self_identities() &&
+          search_recomputation();
       }
     };
 

@@ -175,6 +175,10 @@ namespace Gecode { namespace Word { namespace Arithmetic {
   template<SignedDivModOperation op>
   forceinline ExecStatus
   SignedDivMod<op>::post(Home home, WordView a, WordView b, WordView r) {
+    if ((op != SDO_DIV) && (a == b)) {
+      GECODE_ME_CHECK(r.eq(home,0));
+      return ES_OK;
+    }
     if (b.assigned() && (b.val() == a.mask()) && (op == SDO_DIV))
       return Neg::post(home,a,r);
     ExecStatus es=narrow(home,a,b,r);
