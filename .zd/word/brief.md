@@ -839,6 +839,154 @@ The cross-corpus profiling baseline is commit
 `f086f4d400eaf9bbf7914aaaec476b36c76924eddd65d6012fb0d9a4984b5c38`.
 No raw result, decomposition driver, or profiling probe is tracked.
 
+### Native-citizen performance audit
+
+Run a second profiling round over all five checked-in realistic examples after
+the retained arithmetic and example-shape changes.  The purpose is not another
+list of hot symbols: it is to distinguish unavoidable propagation work from
+rescanning, repeated mask reads, no-op publication, premature computation,
+misclassified scheduling cost, and clone/recomputation overhead.  Every
+candidate must follow an established Gecode implementation pattern from the
+Int, Bool, Set, or Float modules; the Word area must not introduce a private
+scheduler, cache protocol, event system, or benchmark-only switch.
+
+The audit starts from these ranked, falsifiable questions:
+
+1. **CRC logic scheduling and publication.**  Determine how often Table,
+   fixed-shift, channel, and conditional actors run for each event, how often
+   they narrow a view or subsume, and whether they rescan data unchanged by the
+   triggering delta.  Compare with established staged `ModEventDelta` and
+   advisor implementations.  A delta-aware or advisor candidate is warranted
+   only if the measured avoided full scans outweigh its subscription, clone,
+   disposal, and state cost.
+2. **Binary Add work in the symbolic ALU.**  Count calls, per-call bit and
+   transition scans, useful publications, assigned/constant seams, and repeated
+   executions after self-publication.  Test whether support can be computed in
+   one fused pass or staged using ordinary Gecode patterns without weakening
+   the exact carry-chain contract.  Do not revive NaryAdd work already closed
+   by word-053.
+3. **Actor scheduling cost and batching.**  Check whether current
+   `PropCost::{LO,HI}` declarations reflect measured asymptotic work and whether
+   changing an existing cost class alters queue order usefully across the five
+   models.  Retain such a change only with exact parity and cross-workload
+   benefit; cost tuning for one example alone is insufficient.
+4. **Word variable notification cost.**  Measure `WordVarImp::narrow` calls,
+   no-op calls, changed-zero/changed-one masks, and notification fan-out.  The
+   existing atomic lo/hi update and `WordDelta` are the baseline Gecode-style
+   design.  Any shared-kernel or variable-implementation change requires clear
+   evidence that callers cannot eliminate the work locally and must preserve
+   normal variable-copy and event semantics.
+5. **Search restoration and clone footprint.**  Separate actor propagation
+   time from cloning/recomputation using the examples' ordinary Script search
+   options and a bounded `c_d`/`a_d` comparison.  Record actor mix and copied
+   state.  This is model guidance unless a concrete Word actor copies avoidable
+   state; do not change global search defaults.
+
+Instrumentation stays in a detached temporary tree and uses counters or
+sampling only.  It must not affect production actor layout in the measured
+baseline, and it must be removed before retaining a candidate.  Benchmark the
+current exact commit with Release builds, stable solution/checksum parity, and
+actors, propagations, nodes, failures, wall/user time, best-effort memory, and
+bounded samples.  Use bounded adjacent configurations for rapid hypotheses and
+confirm only useful candidates at retained scales; do not multiply long runs
+without a decision they can change.
+
+Testing remains proportional and ordinary.  An investigation adds no tests.
+Any later retained propagation-contract change updates the normal registered
+`test/word` suite at the existing semantic, partial-domain, alias, clone,
+recomputation, and subsumption seams; a pure implementation refactor needs no
+new test when those paths already cover it.  Focused example builds/runs and
+the relevant Word test filters are required, followed by `zd check word` and
+`git diff --check`.  No durable benchmark runner, raw results, profiling hooks,
+or generated corpus enters the repository.
+
+### Native-citizen audit result
+
+The exact Release baseline is commit `440d88eed1`.  The retained configurations
+now measure MD5-16/148 at 8.127 seconds, 29,548,308 propagations, 2,114,231
+nodes, and 8,540 failures; SHA-1-16/180 at 10.340 seconds, 46,656,770
+propagations, 2,097,169 nodes, and 9 failures; CCITT-28 at 42.764 seconds and
+1,102,413,424 propagations; reflected X-25-28 at 45.084 seconds and
+1,144,169,916 propagations; and ALU-12/22 at 59.215 seconds, 546,624,487
+propagations, 6,081,663 nodes, and 673,557 failures.  The hashes enumerate
+1,048,576 solutions each, both CRCs enumerate 16,777,216 with identical full
+binary trees, and the ALU enumerates 2,367,275.  Sampled peak RSS is 2,816 to
+3,104 KiB; this is live polling rather than an operating-system high-water
+mark.
+
+Temporary counters at adjacent bounded scales distinguish scheduling from
+useful propagation.  In CCITT-22, Table runs 4,321,399 times and narrows on
+4,311,488 calls; fixed shift runs 3,646,154 times and changes a view on
+3,646,133.  X-25 has the same pattern.  Their scans are therefore not mostly
+stale work.  Table nevertheless performs 69,063,320 tuple visits and 8,632,915
+local passes for CCITT, and 71,708,480 visits and 8,963,560 passes for X-25.
+The existing post-time closure and changed-only publication are effective;
+generic advisor staging is not justified for Table or Fixed.
+
+Named XOR is a narrower algorithmic opportunity.  A temporary distinct-view
+XOR recognizer replaced each uniform three-view truth-table scan with one
+bit-parallel affine support calculation, retaining generic Table for aliases
+and nonuniform tables.  It preserved solutions, propagations, nodes, and
+failures exactly.  Repeated bounded runs improved CCITT and X-25 by roughly
+3--8 percent and ALU by 6--13 percent while reducing the CRC tuple-scan count
+from about 69--72 million to 4.3--4.5 million.  This evidence supports direct
+standard actors for the named public AND, OR, and XOR operations, benchmarked
+and retained independently; it does not support another Table-wide arity
+specialization or a public truth-table API.
+
+Bit channeling exposes genuine irrelevant-event scheduling.  Each bounded CRC
+runs about 6.3 million `Channel::Bit` propagations, but only 2,242,613 decide
+and subsume; roughly four million executions are caused by changes to other
+bits of the same Word view.  Exact changed-bit masks are available only to an
+Advisor, not through ordinary `ModEventDelta`.  A follow-up may compare the
+current actor with the established `Council`/`ViewAdvisor` pattern used by
+`Int::Linear::LinBoolInt` and `Extensional::Compact`, but must include advisor
+fan-out, copy, disposal, and space footprint.  A Word-specific event or
+scheduler is not warranted.
+
+Binary Add remains the ALU's dominant sampled frame: at width 18 it runs
+3,199,581 times, changes a view on 2,378,315 calls, and performs 172,777,644
+recorded bit-phase scans.  This confirms necessary support work, not a new
+removable mechanism: word-045 already introduced the local transition lookup
+and changed-only publication.  Raising Add from `LO` to `HI` cost was slower on
+ALU and slightly increased MD5 propagation; raising Table to `HI` was neutral
+or worse and changed X-25 scheduling work.  Both cost changes are rejected.
+
+Across the bounded corpus, 30--36 percent of `WordVarImp::narrow` calls are
+no-ops.  Caller-local changed-only publication for fixed shifts removed
+3.65 million no-op calls in CCITT and 3.70 million in X-25 with exact search
+parity, but alternating timings were noisy and not consistently better.  Do
+not change `WordVarImp`, whose atomic update, exact delta, and notification
+semantics are already conventional; do not create a Fixed task without a
+repeatable retained-scale benefit.
+
+Search restoration remains model guidance.  At bounded scales, changing from
+`c_d=1` to `c_d=32` preserves every solution, node, and failure count but moves
+MD5 from 1,827,472 to 2,171,200 propagations, SHA-1 from 2,609,577 to
+2,913,479, ALU from 16,853,322 to 17,262,312, and each CRC from about 12
+million to about 88--89 million.  Samples still place propagation above copy
+frames: MD5 has 1,269 `NaryAdd` and 414 Add top frames, CCITT 263 Table, 66
+Bit, and 46 Fixed frames, and ALU 1,522 Add and 131 Table frames.  No global
+clone-distance or actor-state change follows.
+
+The dependency-ordered follow-up is deliberately limited to two tasks:
+
+1. Add direct native named AND, OR, and XOR actors using bit-parallel exact
+   support formulas, with the existing Table fallback for any alias case not
+   handled exactly.  Retain each operation independently only with exact normal
+   Logic/Conditional/MiniModel parity and repeatable CRC/ALU plus general logic
+   gains; do not change generic Table.
+2. After the direct logic actors establish the remaining channel share,
+   prototype delta-local `Channel::Bit` advice using an ordinary Council and
+   ViewAdvisor lifecycle.  Retain it only if avoided scheduling pays for
+   advice fan-out, copying, disposal, and memory on both CRCs without harming
+   the other examples.
+
+No task follows for cost classes, `WordVarImp`, Fixed publication, Binary Add,
+generic Table staging, or global search defaults.  Raw commands, counters,
+samples, and temporary patches remain under `/private/tmp/word055-*`; no probe
+or benchmark artifact is tracked.
+
 ## Boundaries
 
 - This area is a full implementation spike, not a battle-hardening exercise. Each task must follow established Gecode patterns, reuse normal framework and test machinery, and avoid novel infrastructure, special-case test paths, exhaustive edge-case campaigns, or verification beyond what is proportionate to getting the implementation working.

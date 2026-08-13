@@ -2,10 +2,10 @@
 
 # Tasks: word
 
-- Total: 54
-- Ready: 0
-- Blocked: 0
-- Done: 54
+- Total: 57
+- Ready: 1
+- Blocked: 1
+- Done: 55
 
 | ID | Task | State | Blocked by |
 | --- | --- | --- | --- |
@@ -63,3 +63,6 @@
 | [word-052](tasks/052-add-crc-and-symbolic-alu-examples-and-profile-the-corpus.md) | Add CRC and symbolic ALU examples and profile the corpus | done | word-051 |
 | [word-053](tasks/053-prove-and-optimize-naryadd-local-closure.md) | Prove and optimize NaryAdd local closure | done | word-052 |
 | [word-054](tasks/054-fold-hash-round-constants-into-n-ary-additions.md) | Fold hash round constants into n-ary additions | done | word-053 |
+| [word-055](tasks/055-audit-native-word-propagation-and-scheduling-costs.md) | Audit native Word propagation and scheduling costs | done | — |
+| [word-056](tasks/056-add-direct-native-named-word-logic-actors.md) | Add direct native named Word logic actors | ready | word-055 |
+| [word-057](tasks/057-prototype-delta-local-word-bit-channeling.md) | Prototype delta-local Word bit channeling | blocked | word-056 |
