@@ -55,8 +55,8 @@ namespace Test { namespace Word {
     }
 
     /**
-     * The direct table actor performs bounded native-word work and enforces
-     * bit consistency for each independent logical bit.
+     * The named primitive actors and generic fallback enforce bit consistency
+     * for each independent logical bit.
      */
     class Binary : public Test {
     private:

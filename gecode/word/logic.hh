@@ -37,6 +37,34 @@
 
 namespace Gecode { namespace Word { namespace Logic {
 
+  /// Primitive operation for a native binary word actor
+  enum BinaryOperation {
+    BO_OR,
+    BO_XOR
+  };
+
+  /** \brief Bit-consistent native binary word logic actor
+   *
+   * The three views are pairwise distinct. AND and aliases remain handled by
+   * the generic table projection path.
+   */
+  template<BinaryOperation op>
+  class Binary : public TernaryPropagator<WordView,PC_WORD_BITS> {
+  protected:
+    using TernaryPropagator<WordView,PC_WORD_BITS>::x0;
+    using TernaryPropagator<WordView,PC_WORD_BITS>::x1;
+    using TernaryPropagator<WordView,PC_WORD_BITS>::x2;
+    Binary(Home home, WordView x, WordView y, WordView z);
+    Binary(Space& home, Binary& p);
+    static ExecStatus narrow(Home home, WordView x, WordView y, WordView z);
+  public:
+    virtual Actor* copy(Space& home);
+    virtual PropCost cost(const Space& home,
+                          const ModEventDelta& med) const;
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+    static ExecStatus post(Home home, WordView x, WordView y, WordView z);
+  };
+
   /**
    * \brief Word-level propagator for a Boolean truth table at every bit
    *
@@ -102,6 +130,7 @@ namespace Gecode { namespace Word { namespace Logic {
 }}}
 
 #include <gecode/word/logic/table.hpp>
+#include <gecode/word/logic/binary.hpp>
 #include <gecode/word/logic/nary.hpp>
 
 #endif

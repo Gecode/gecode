@@ -238,9 +238,22 @@ namespace Gecode {
       throw Word::WidthMismatch("Word::rel");
     const unsigned int table = binary_table(wot);
     GECODE_POST;
-    const Word::WordView views[] = {
-      Word::WordView(x),Word::WordView(y),Word::WordView(z)
-    };
+    const Word::WordView views[] = {Word::WordView(x),Word::WordView(y),
+                                    Word::WordView(z)};
+    if ((views[0] != views[1]) && (views[0] != views[2]) &&
+        (views[1] != views[2])) {
+      switch (wot) {
+      case WOT_OR:
+        GECODE_ES_FAIL((Word::Logic::Binary<Word::Logic::BO_OR>::post(
+          home,views[0],views[1],views[2])));
+        return;
+      case WOT_XOR:
+        GECODE_ES_FAIL((Word::Logic::Binary<Word::Logic::BO_XOR>::post(
+          home,views[0],views[1],views[2])));
+        return;
+      default: break;
+      }
+    }
     post_uniform_table(home,views,3,table);
   }
 

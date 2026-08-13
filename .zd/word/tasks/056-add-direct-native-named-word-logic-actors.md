@@ -3,7 +3,7 @@ schema_version = 1
 id = "word-056"
 key = "add-direct-native-named-word-logic"
 area = "word"
-status = "open"
+status = "done"
 blocked_by = ["word-055"]
 +++
 # Add direct native named Word logic actors
@@ -20,13 +20,21 @@ Public named binary AND, OR, and XOR operations use ordinary native bit-parallel
 
 ## Done when
 
-- [ ] Named AND, OR, and XOR posting selects direct conventional actors for supported shapes and preserves generic Table for unsupported alias or nonuniform truth-table cases.
-- [ ] Normal registered Word Logic tests proportionately cover assigned and partial support, aliases/fallback, failure, clone, recomputation, and subsumption, with Conditional and MiniModel regressions green.
-- [ ] Exact-baseline Release benchmarks record actors, propagations, nodes, failures, solutions/checksums, runtime, and best-effort memory for both CRCs, the symbolic ALU, and a general logic workload; only measured useful operations are retained.
-- [ ] No benchmark, profiling hook, special scheduler, advisor machinery, or unrelated Table change is tracked.
+- [x] Named AND, OR, and XOR posting selects direct conventional actors for supported shapes and preserves generic Table for unsupported alias or nonuniform truth-table cases.
+- [x] Normal registered Word Logic tests proportionately cover assigned and partial support, aliases/fallback, failure, clone, recomputation, and subsumption, with Conditional and MiniModel regressions green.
+- [x] Exact-baseline Release benchmarks record actors, propagations, nodes, failures, solutions/checksums, runtime, and best-effort memory for both CRCs, the symbolic ALU, and a general logic workload; only measured useful operations are retained.
+- [x] No benchmark, profiling hook, special scheduler, advisor machinery, or unrelated Table change is tracked.
 
 ## Validation
 
 - Build the Word library and monolithic test target in Release and run focused Word Logic, Conditional, MiniModel Logic, and TestFramework filters.
 - Run bounded exact-baseline CRC, ALU, and general logic comparisons with retained-scale confirmation only for useful candidates.
 - Run zd check word and git diff --check.
+
+## Result
+
+Implemented and independently verified direct native named OR and XOR actors; retained AND and alias cases on Table based on independent benchmarks.
+
+Validation:
+
+- Fresh Release Logic, Conditional, MiniModel Logic, and TestFramework suites passed; exact c00010933c general, CRC, and ALU comparisons preserved all semantic/search counters while OR/XOR improved runtime; zd and diff checks passed.
