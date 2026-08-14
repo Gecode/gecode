@@ -96,7 +96,12 @@ namespace Gecode {
    * selected bounded actor) deliberately use the ordinary cube actor for the
    * complete relation; its tells still synchronize any bounded variables. A
    * bounded domain does not change operation semantics and does not imply
-   * domain-consistent propagation.
+   * domain-consistent propagation. Bounded actors that combine inexpensive
+   * numeric rules with a width-dependent cube algorithm handle bound-only
+   * events as a low-cost stage. They batch local cube/interval synchronization
+   * and reschedule the cube stage at its linear cost only when synchronization
+   * actually fixes bits. Numeric-only and already-cheap actors remain
+   * single-stage.
    *
    * WordVar provides the variable and mask interface. WordRelType and
    * WordOpType select direct relation and logical postings. Models branch with
@@ -110,7 +115,7 @@ namespace Gecode {
    * | Public operation | Implementation | Tested property |
    * | --- | --- | --- |
    * | `dom`, WordVar queries, and bounded constructors | Native atomic cube update, optionally synchronized with one unsigned or signed interval | Exact represented-domain membership, canonical endpoints, assignment, and failure |
-   * | `channel` | Direct word-bit/BoolVar cube actor for every domain kind | Bit consistency, bounded-domain synchronization, aliases, cloning, and recomputation |
+   * | `channel` | Direct word-bit/BoolVar cube actor, plus a mixed WordVar/IntVar numeric bounds channel with explicit unsigned or signed interpretation | Bit consistency, exact assigned numeric equality, bounds consistency, bounded-domain synchronization, cloning, and recomputation |
    * | `reduce_and`, `reduce_or`, `reduce_xor` | Direct Word/Bool cube reduction actors for every domain kind | Assigned semantics, decisive bits, parity completion, and lifecycle |
    * | `element` | Direct mixed Int/Word cube array-selection actor for every domain kind | Index support pruning and supported-result cube hull |
    * | `popcount`, `count_leading_zeros`, `count_trailing_zeros` | Direct mixed Word/Int cube-count actors for every domain kind | Population bounds/extrema and zero-prefix propagation |
@@ -339,6 +344,15 @@ namespace Gecode {
   /// Channel bit \a bit of \a x to Boolean constant \a value
   GECODE_WORD_EXPORT void channel(Home home, WordVar x,
                                   unsigned int bit, int value);
+  /** \brief Bounds-channel word \a x to integer variable \a y
+   *
+   * The interpretation must be WDT_UNSIGNED or WDT_SIGNED. A cube word can
+   * be channelled with either interpretation. A bounded word must use its
+   * construction-time interpretation. The channel is exact for assigned
+   * values and bounds consistent otherwise.
+   */
+  GECODE_WORD_EXPORT void channel(Home home, WordVar x, IntVar y,
+                                  WordDomainType interpretation);
   /// Reduce all significant bits of \a x by conjunction into \a b
   GECODE_WORD_EXPORT void reduce_and(Home home, WordVar x, BoolVar b);
   /// Reduce all significant bits of \a x by disjunction into \a b

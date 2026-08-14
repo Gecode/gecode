@@ -2824,11 +2824,61 @@ namespace Test { namespace Word {
         }
         return true;
       }
+
+      static bool staged_propagation(void) {
+        using namespace Gecode;
+        class S : public Space {
+        public:
+          WordVar x,y,z;
+          S(void) : x(*this,8,WDT_UNSIGNED,8U,15U),
+            y(*this,8,WDT_UNSIGNED,9U,9U),
+            z(*this,8,WDT_UNSIGNED) {
+            mult(*this,x,y,z);
+          }
+          S(S& s) : Space(s) {
+            x.update(*this,s.x); y.update(*this,s.y); z.update(*this,s.z);
+          }
+          Space* copy(void) { return new S(*this); }
+        };
+
+        // A bound-only update that creates no new cube bits stays in the
+        // cheap numeric phase.
+        S bounds_only;
+        if (bounds_only.status() == SS_FAILED) return false;
+        Gecode::Word::UnsignedWordView bx(bounds_only.x);
+        if (bx.narrow_range(bounds_only,9U,15U) !=
+            Gecode::Word::ME_WORD_BND)
+          return false;
+        StatusStatistics bounds_statistics;
+        if ((bounds_only.status(bounds_statistics) == SS_FAILED) ||
+            (bounds_statistics.propagate != 1U) ||
+            (bounds_only.z.minimum() != 81U) ||
+            (bounds_only.z.maximum() != 135U) ||
+            (bounds_only.z.lo() != 0U) ||
+            (bounds_only.z.hi() != 255U))
+          return false;
+
+        // Here the numeric phase fixes the high result bits. It requests one
+        // separately costed cube phase through ES_NOFIX_PARTIAL.
+        S staged;
+        if (staged.status() == SS_FAILED) return false;
+        Gecode::Word::UnsignedWordView sx(staged.x);
+        if (sx.narrow_range(staged,8U,14U) !=
+            Gecode::Word::ME_WORD_BND)
+          return false;
+        StatusStatistics staged_statistics;
+        return (staged.status(staged_statistics) != SS_FAILED) &&
+          (staged_statistics.propagate == 2U) &&
+          (staged.z.minimum() == 72U) &&
+          (staged.z.maximum() == 126U) &&
+          (staged.z.lo() == 64U) && (staged.z.hi() == 127U);
+      }
     public:
       BoundedLifecycle(void) : Base("Word::Arithmetic::BoundedLifecycle") {}
       virtual bool run(void) {
         return division_truth() && division_propagation() &&
-          division_replay() && propagation() && boundaries_aliases() && replay();
+          division_replay() && propagation() && boundaries_aliases() &&
+          replay() && staged_propagation();
       }
     };
 

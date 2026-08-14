@@ -44,6 +44,8 @@ namespace Gecode { namespace Word { namespace Arithmetic {
     WordValue hi;
     WordValue minimum;
     WordValue maximum;
+    /// Whether cube/interval synchronization is batched by the current phase
+    bool deferred;
 
     bool synchronize(void) {
       return synchronize_domain(width,kind,lo,hi,minimum,maximum);
@@ -51,7 +53,7 @@ namespace Gecode { namespace Word { namespace Arithmetic {
     bool range(WordValue min, WordValue max) {
       minimum=std::max(minimum,min);
       maximum=std::min(maximum,max);
-      return (minimum <= maximum) && synchronize();
+      return (minimum <= maximum) && (deferred || synchronize());
     }
   };
 
@@ -79,7 +81,8 @@ namespace Gecode { namespace Word { namespace Arithmetic {
     ModEvent narrow(Space&, WordValue lo, WordValue hi) {
       d->lo |= lo;
       d->hi &= hi;
-      if ((d->lo & ~d->hi) != 0 || !d->synchronize())
+      if ((d->lo & ~d->hi) != 0 ||
+          (!d->deferred && !d->synchronize()))
         return ME_WORD_FAILED;
       return assigned() ? ME_WORD_VAL : ME_WORD_DOM;
     }
@@ -91,7 +94,7 @@ namespace Gecode { namespace Word { namespace Arithmetic {
   forceinline BoundLocalDomain
   bound_snapshot(View x) {
     return BoundLocalDomain{x.width(),x.domain_type(),x.lo(),x.hi(),
-                            x.minimum(),x.maximum()};
+                            x.minimum(),x.maximum(),false};
   }
 
   template<class View>
@@ -324,6 +327,13 @@ namespace Gecode { namespace Word { namespace Arithmetic {
     BA_MULT
   };
 
+  /*
+   * Bounded actors with an O(width) cube algorithm use two propagation
+   * stages. A bound-only event first runs the constant-cost numeric rules and
+   * synchronizes each local role once. If that synchronization fixes cube
+   * bits, ES_NOFIX_PARTIAL schedules the cube algorithm separately at its
+   * honest linear cost. Combined/bit events run both stages locally.
+   */
   template<class View, BoundArithmeticOperation op>
   class BoundArithmetic : public TernaryPropagator<View,PC_WORD_DOM> {
   protected:
@@ -334,30 +344,73 @@ namespace Gecode { namespace Word { namespace Arithmetic {
       : TernaryPropagator<View,PC_WORD_DOM>(home,x,y,z) {}
     BoundArithmetic(Space& home, BoundArithmetic& p)
       : TernaryPropagator<View,PC_WORD_DOM>(home,p) {}
-    static ExecStatus narrow(Home home, View x, View y, View z) {
+    static ExecStatus narrow_bounds(Home home, View x, View y, View z,
+                                    bool& bits) {
+      BoundLocalDomain d[3]; BoundLocalView v[3];
+      bound_alias_domains(x,y,z,d,v);
+      const WordValue initial_lo[3]={d[0].lo,d[1].lo,d[2].lo};
+      const WordValue initial_hi[3]={d[0].hi,d[1].hi,d[2].hi};
+      for (;;) {
+        const BoundLocalDomain old[3]={d[0],d[1],d[2]};
+        for (unsigned int i=0; i<3; i++) d[i].deferred=true;
+        BoundLocalDomain* role[3]={&d[0],&d[1],&d[2]};
+        if (x.varimp() == y.varimp()) role[1]=role[0];
+        if (x.varimp() == z.varimp()) role[2]=role[0];
+        else if (y.varimp() == z.varimp()) role[2]=role[1];
+        const bool ok = op == BA_ADD ?
+          bound_add_ranges<View>(*role[0],*role[1],*role[2]) :
+          op == BA_SUB ?
+          bound_sub_ranges<View>(*role[0],*role[1],*role[2]) :
+          bound_mult_ranges<View>(*role[0],*role[1],*role[2]);
+        if (!ok) return ES_FAILED;
+        for (unsigned int i=0; i<3; i++) {
+          d[i].deferred=false;
+          if (!d[i].synchronize()) return ES_FAILED;
+        }
+        if ((d[0] == old[0]) && (d[1] == old[1]) && (d[2] == old[2]))
+          break;
+      }
+      bits=false;
+      for (unsigned int i=0; i<3; i++)
+        bits |= (d[i].lo != initial_lo[i]) || (d[i].hi != initial_hi[i]);
+      return bound_publish_distinct(home,x,y,z,d);
+    }
+    static ExecStatus narrow(Home home, View x, View y, View z,
+                             bool cube) {
       BoundLocalDomain d[3]; BoundLocalView v[3];
       bound_alias_domains(x,y,z,d,v);
       for (;;) {
         const BoundLocalDomain old[3]={d[0],d[1],d[2]};
-        if (op == BA_ADD) {
+        for (unsigned int i=0; i<3; i++) d[i].deferred=true;
+        if (cube && (op == BA_ADD)) {
           unsigned int final;
           GECODE_ES_CHECK(add_narrow(home,v[0],v[1],v[2],3U,final));
         }
-        if (op == BA_SUB) {
+        if (cube && (op == BA_SUB)) {
           unsigned int final;
           GECODE_ES_CHECK(sub_narrow(home,v[0],v[1],v[2],3U,final));
         }
-        if (op == BA_MULT)
+        if (cube && (op == BA_MULT))
           GECODE_ES_CHECK(mult_narrow_views(home,v[0],v[1],v[2]));
         // Roles that alias share a local record; use the role mapping below.
         BoundLocalDomain* role[3]={&d[0],&d[1],&d[2]};
         if (x.varimp() == y.varimp()) role[1]=role[0];
         if (x.varimp() == z.varimp()) role[2]=role[0];
         else if (y.varimp() == z.varimp()) role[2]=role[1];
+        const WordValue before_lo[3]={d[0].lo,d[1].lo,d[2].lo};
+        const WordValue before_hi[3]={d[0].hi,d[1].hi,d[2].hi};
         bool ok = op == BA_ADD ? bound_add_ranges<View>(*role[0],*role[1],*role[2]) :
           op == BA_SUB ? bound_sub_ranges<View>(*role[0],*role[1],*role[2]) :
           bound_mult_ranges<View>(*role[0],*role[1],*role[2]);
         if (!ok) return ES_FAILED;
+        for (unsigned int i=0; i<3; i++) {
+          d[i].deferred=false;
+          if (!d[i].synchronize()) return ES_FAILED;
+        }
+        cube=false;
+        for (unsigned int i=0; i<3; i++)
+          cube |= (d[i].lo != before_lo[i]) ||
+            (d[i].hi != before_hi[i]);
         if ((d[0] == old[0]) && (d[1] == old[1]) && (d[2] == old[2]))
           break;
       }
@@ -392,16 +445,27 @@ namespace Gecode { namespace Word { namespace Arithmetic {
     virtual Actor* copy(Space& home) {
       return new (home) BoundArithmetic(home,*this);
     }
-    virtual PropCost cost(const Space&, const ModEventDelta&) const {
-      return PropCost::linear(PropCost::LO,x0.width());
+    virtual PropCost cost(const Space&, const ModEventDelta& med) const {
+      return (View::me(med) == ME_WORD_BND) ?
+        PropCost::ternary(PropCost::LO) :
+        PropCost::linear(PropCost::HI,x0.width());
     }
-    virtual ExecStatus propagate(Space& home, const ModEventDelta&) {
-      GECODE_ES_CHECK(narrow(home,x0,x1,x2));
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med) {
+      if (View::me(med) == ME_WORD_BND) {
+        bool bits;
+        GECODE_ES_CHECK(narrow_bounds(home,x0,x1,x2,bits));
+        if (x0.assigned() && x1.assigned() && x2.assigned())
+          return home.ES_SUBSUMED(*this);
+        if (bits)
+          return home.ES_NOFIX_PARTIAL(*this,View::med(ME_WORD_BITS));
+        return ES_FIX;
+      }
+      GECODE_ES_CHECK(narrow(home,x0,x1,x2,true));
       return (x0.assigned() && x1.assigned() && x2.assigned()) ?
         home.ES_SUBSUMED(*this) : ES_FIX;
     }
     static ExecStatus post(Home home, View x, View y, View z) {
-      GECODE_ES_CHECK(narrow(home,x,y,z));
+      GECODE_ES_CHECK(narrow(home,x,y,z,true));
       if (!(x.assigned() && y.assigned() && z.assigned()))
         (void) new (home) BoundArithmetic(home,x,y,z);
       return ES_OK;
@@ -417,14 +481,48 @@ namespace Gecode { namespace Word { namespace Arithmetic {
       : BinaryPropagator<View,PC_WORD_DOM>(home,x,z) {}
     BoundNeg(Space& home, BoundNeg& p)
       : BinaryPropagator<View,PC_WORD_DOM>(home,p) {}
-    static ExecStatus narrow(Home home, View x, View z) {
+    static ExecStatus narrow_bounds(Home home, View x, View z, bool& bits) {
+      BoundLocalDomain d[2]={bound_snapshot(x),bound_snapshot(z)};
+      const bool aliased=x.varimp() == z.varimp();
+      const WordValue initial_lo[2]={d[0].lo,d[1].lo};
+      const WordValue initial_hi[2]={d[0].hi,d[1].hi};
+      for (;;) {
+        const BoundLocalDomain old[2]={d[0],d[1]};
+        d[0].deferred=d[1].deferred=true;
+        BoundLocalDomain& dz=aliased ? d[0] : d[1];
+        if (!bound_neg_ranges<View>(d[0],dz)) return ES_FAILED;
+        for (unsigned int i=0; i<2; i++) {
+          d[i].deferred=false;
+          if (!d[i].synchronize()) return ES_FAILED;
+        }
+        if ((d[0] == old[0]) && (d[1] == old[1])) break;
+      }
+      bits=(d[0].lo != initial_lo[0]) || (d[0].hi != initial_hi[0]) ||
+        (!aliased && ((d[1].lo != initial_lo[1]) ||
+                      (d[1].hi != initial_hi[1])));
+      GECODE_ES_CHECK(bound_publish(home,x,d[0]));
+      if (!aliased) GECODE_ES_CHECK(bound_publish(home,z,d[1]));
+      return ES_OK;
+    }
+    static ExecStatus narrow(Home home, View x, View z, bool cube) {
       BoundLocalDomain d[2]={bound_snapshot(x),bound_snapshot(z)};
       BoundLocalView vx(d[0]), vz((x.varimp() == z.varimp()) ? d[0] : d[1]);
       for (;;) {
         const BoundLocalDomain old[2]={d[0],d[1]};
-        GECODE_ES_CHECK(neg_narrow(home,vx,vz));
+        d[0].deferred=d[1].deferred=true;
+        if (cube) GECODE_ES_CHECK(neg_narrow(home,vx,vz));
         BoundLocalDomain& dz=(x.varimp() == z.varimp()) ? d[0] : d[1];
+        const WordValue before_lo[2]={d[0].lo,d[1].lo};
+        const WordValue before_hi[2]={d[0].hi,d[1].hi};
         if (!bound_neg_ranges<View>(d[0],dz)) return ES_FAILED;
+        for (unsigned int i=0; i<2; i++) {
+          d[i].deferred=false;
+          if (!d[i].synchronize()) return ES_FAILED;
+        }
+        cube=false;
+        for (unsigned int i=0; i<2; i++)
+          cube |= (d[i].lo != before_lo[i]) ||
+            (d[i].hi != before_hi[i]);
         if ((d[0] == old[0]) && (d[1] == old[1])) break;
       }
       GECODE_ES_CHECK(bound_publish(home,x,d[0]));
@@ -435,16 +533,27 @@ namespace Gecode { namespace Word { namespace Arithmetic {
   public:
     static bool numeric_regime(View x) { return x.minimum() != 0U; }
     virtual Actor* copy(Space& home) { return new (home) BoundNeg(home,*this); }
-    virtual PropCost cost(const Space&, const ModEventDelta&) const {
-      return PropCost::linear(PropCost::LO,x0.width());
+    virtual PropCost cost(const Space&, const ModEventDelta& med) const {
+      return (View::me(med) == ME_WORD_BND) ?
+        PropCost::binary(PropCost::LO) :
+        PropCost::linear(PropCost::HI,x0.width());
     }
-    virtual ExecStatus propagate(Space& home, const ModEventDelta&) {
-      GECODE_ES_CHECK(narrow(home,x0,x1));
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med) {
+      if (View::me(med) == ME_WORD_BND) {
+        bool bits;
+        GECODE_ES_CHECK(narrow_bounds(home,x0,x1,bits));
+        if (x0.assigned() && x1.assigned())
+          return home.ES_SUBSUMED(*this);
+        if (bits)
+          return home.ES_NOFIX_PARTIAL(*this,View::med(ME_WORD_BITS));
+        return ES_FIX;
+      }
+      GECODE_ES_CHECK(narrow(home,x0,x1,true));
       return (x0.assigned() && x1.assigned()) ?
         home.ES_SUBSUMED(*this) : ES_FIX;
     }
     static ExecStatus post(Home home, View x, View z) {
-      GECODE_ES_CHECK(narrow(home,x,z));
+      GECODE_ES_CHECK(narrow(home,x,z,true));
       if (!(x.assigned() && z.assigned()))
         (void) new (home) BoundNeg(home,x,z);
       return ES_OK;
@@ -470,87 +579,140 @@ namespace Gecode { namespace Word { namespace Arithmetic {
       x0.update(home,p.x0); x1.update(home,p.x1); x2.update(home,p.x2);
       flag.update(home,p.flag);
     }
-    static ExecStatus narrow(Home home, View x, View y, View z,
-                             Int::BoolView flag) {
-      BoundLocalDomain d[3]; BoundLocalView v[3];
-      bound_alias_domains(x,y,z,d,v);
-      unsigned int terminal=flag.one() ? 2U : flag.zero() ? 1U : 3U;
-      for (;;) {
-        const BoundLocalDomain old[3]={d[0],d[1],d[2]};
-        const unsigned int old_terminal=terminal;
-        unsigned int final;
-        if (op == BA_ADD)
-          GECODE_ES_CHECK(add_narrow(home,v[0],v[1],v[2],terminal,final));
-        else
-          GECODE_ES_CHECK(sub_narrow(home,v[0],v[1],v[2],terminal,final));
-        terminal=final;
-
-        BoundLocalDomain* role[3]={&d[0],&d[1],&d[2]};
-        if (x.varimp() == y.varimp()) role[1]=role[0];
-        if (x.varimp() == z.varimp()) role[2]=role[0];
-        else if (y.varimp() == z.varimp()) role[2]=role[1];
-        const WordValue mask=width_mask(x.width());
-        bool all_nonwrapping, all_wrapping;
-        if (op == BA_ADD) {
-          all_wrapping=role[0]->minimum > mask-role[1]->minimum;
-          all_nonwrapping=role[0]->maximum <= mask-role[1]->maximum;
-          if (all_wrapping)
-            terminal &= 2U;
-          if (all_nonwrapping)
-            terminal &= 1U;
-        } else {
-          all_wrapping=role[0]->maximum < role[1]->minimum;
-          all_nonwrapping=role[0]->minimum >= role[1]->maximum;
-          if (all_wrapping)
-            terminal &= 2U;
-          if (all_nonwrapping)
-            terminal &= 1U;
-        }
-        if (terminal == 0U) return ES_FAILED;
-        if (terminal == 1U) {
-          if (op == BA_ADD) {
-            if (!role[0]->range(role[0]->minimum,
-                                std::min(role[0]->maximum,
-                                  mask-role[1]->minimum)) ||
-                !role[1]->range(role[1]->minimum,
-                                std::min(role[1]->maximum,
-                                  mask-role[0]->minimum)))
-              return ES_FAILED;
-          } else {
-            if (!role[0]->range(std::max(role[0]->minimum,
-                                        role[1]->minimum),
-                                role[0]->maximum) ||
-                !role[1]->range(role[1]->minimum,
-                                std::min(role[1]->maximum,
-                                         role[0]->maximum)))
-              return ES_FAILED;
-          }
-        }
-        bool ok=true;
-        if ((terminal == 2U) && all_wrapping) {
-          WordValue minimum, maximum;
-          if (op == BA_ADD) {
-            minimum=role[0]->minimum-(mask-role[1]->minimum)-1U;
-            maximum=role[0]->maximum-(mask-role[1]->maximum)-1U;
-          } else {
-            minimum=mask-(role[1]->maximum-role[0]->minimum)+1U;
-            maximum=mask-(role[1]->minimum-role[0]->maximum)+1U;
-          }
-          ok=role[2]->range(minimum,maximum);
-        } else if ((terminal != 2U) || all_nonwrapping) {
-          ok = op == BA_ADD ?
-            bound_add_ranges<View>(*role[0],*role[1],*role[2]) :
-            bound_sub_ranges<View>(*role[0],*role[1],*role[2]);
-        }
-        if (!ok) return ES_FAILED;
-        if ((d[0] == old[0]) && (d[1] == old[1]) &&
-            (d[2] == old[2]) && (terminal == old_terminal))
-          break;
+    static bool narrow_ranges(BoundLocalDomain* (&role)[3],
+                              unsigned int& terminal) {
+      const WordValue mask=width_mask(role[0]->width);
+      bool all_nonwrapping, all_wrapping;
+      if (op == BA_ADD) {
+        all_wrapping=role[0]->minimum > mask-role[1]->minimum;
+        all_nonwrapping=role[0]->maximum <= mask-role[1]->maximum;
+        if (all_wrapping)
+          terminal &= 2U;
+        if (all_nonwrapping)
+          terminal &= 1U;
+      } else {
+        all_wrapping=role[0]->maximum < role[1]->minimum;
+        all_nonwrapping=role[0]->minimum >= role[1]->maximum;
+        if (all_wrapping)
+          terminal &= 2U;
+        if (all_nonwrapping)
+          terminal &= 1U;
       }
+      if (terminal == 0U) return false;
+      if (terminal == 1U) {
+        if (op == BA_ADD) {
+          if (!role[0]->range(role[0]->minimum,
+                              std::min(role[0]->maximum,
+                                mask-role[1]->minimum)) ||
+              !role[1]->range(role[1]->minimum,
+                              std::min(role[1]->maximum,
+                                mask-role[0]->minimum)))
+            return false;
+        } else {
+          if (!role[0]->range(std::max(role[0]->minimum,
+                                      role[1]->minimum),
+                              role[0]->maximum) ||
+              !role[1]->range(role[1]->minimum,
+                              std::min(role[1]->maximum,
+                                       role[0]->maximum)))
+            return false;
+        }
+      }
+      bool ok=true;
+      if ((terminal == 2U) && all_wrapping) {
+        WordValue minimum, maximum;
+        if (op == BA_ADD) {
+          minimum=role[0]->minimum-(mask-role[1]->minimum)-1U;
+          maximum=role[0]->maximum-(mask-role[1]->maximum)-1U;
+        } else {
+          minimum=mask-(role[1]->maximum-role[0]->minimum)+1U;
+          maximum=mask-(role[1]->minimum-role[0]->maximum)+1U;
+        }
+        ok=role[2]->range(minimum,maximum);
+      } else if ((terminal != 2U) || all_nonwrapping) {
+        ok = op == BA_ADD ?
+          bound_add_ranges<View>(*role[0],*role[1],*role[2]) :
+          bound_sub_ranges<View>(*role[0],*role[1],*role[2]);
+      }
+      return ok;
+    }
+    static ExecStatus publish(Home home, View x, View y, View z,
+                              Int::BoolView flag,
+                              BoundLocalDomain (&d)[3],
+                              unsigned int terminal) {
       GECODE_ES_CHECK(bound_publish_distinct(home,x,y,z,d));
       if (terminal == 1U) GECODE_ME_CHECK(flag.zero(home));
       else if (terminal == 2U) GECODE_ME_CHECK(flag.one(home));
       return ES_OK;
+    }
+    static ExecStatus narrow_bounds(Home home, View x, View y, View z,
+                                    Int::BoolView flag, bool& cube) {
+      BoundLocalDomain d[3]; BoundLocalView v[3];
+      bound_alias_domains(x,y,z,d,v);
+      const WordValue initial_lo[3]={d[0].lo,d[1].lo,d[2].lo};
+      const WordValue initial_hi[3]={d[0].hi,d[1].hi,d[2].hi};
+      unsigned int terminal=flag.one() ? 2U : flag.zero() ? 1U : 3U;
+      const unsigned int initial_terminal=terminal;
+      BoundLocalDomain* role[3]={&d[0],&d[1],&d[2]};
+      if (x.varimp() == y.varimp()) role[1]=role[0];
+      if (x.varimp() == z.varimp()) role[2]=role[0];
+      else if (y.varimp() == z.varimp()) role[2]=role[1];
+      for (;;) {
+        const BoundLocalDomain old[3]={d[0],d[1],d[2]};
+        const unsigned int old_terminal=terminal;
+        for (unsigned int i=0; i<3; i++) d[i].deferred=true;
+        if (!narrow_ranges(role,terminal)) return ES_FAILED;
+        for (unsigned int i=0; i<3; i++) {
+          d[i].deferred=false;
+          if (!d[i].synchronize()) return ES_FAILED;
+        }
+        if ((d[0] == old[0]) && (d[1] == old[1]) &&
+            (d[2] == old[2]) && (terminal == old_terminal))
+          break;
+      }
+      cube=terminal != initial_terminal;
+      for (unsigned int i=0; i<3; i++)
+        cube |= (d[i].lo != initial_lo[i]) || (d[i].hi != initial_hi[i]);
+      return publish(home,x,y,z,flag,d,terminal);
+    }
+    static ExecStatus narrow(Home home, View x, View y, View z,
+                             Int::BoolView flag, bool cube) {
+      BoundLocalDomain d[3]; BoundLocalView v[3];
+      bound_alias_domains(x,y,z,d,v);
+      unsigned int terminal=flag.one() ? 2U : flag.zero() ? 1U : 3U;
+      BoundLocalDomain* role[3]={&d[0],&d[1],&d[2]};
+      if (x.varimp() == y.varimp()) role[1]=role[0];
+      if (x.varimp() == z.varimp()) role[2]=role[0];
+      else if (y.varimp() == z.varimp()) role[2]=role[1];
+      for (;;) {
+        const BoundLocalDomain old[3]={d[0],d[1],d[2]};
+        const unsigned int old_terminal=terminal;
+        for (unsigned int i=0; i<3; i++) d[i].deferred=true;
+        if (cube) {
+          unsigned int final;
+          if (op == BA_ADD)
+            GECODE_ES_CHECK(add_narrow(home,v[0],v[1],v[2],terminal,final));
+          else
+            GECODE_ES_CHECK(sub_narrow(home,v[0],v[1],v[2],terminal,final));
+          terminal=final;
+        }
+        const WordValue before_lo[3]={d[0].lo,d[1].lo,d[2].lo};
+        const WordValue before_hi[3]={d[0].hi,d[1].hi,d[2].hi};
+        const unsigned int before_terminal=terminal;
+        if (!narrow_ranges(role,terminal)) return ES_FAILED;
+        for (unsigned int i=0; i<3; i++) {
+          d[i].deferred=false;
+          if (!d[i].synchronize()) return ES_FAILED;
+        }
+        cube=terminal != before_terminal;
+        for (unsigned int i=0; i<3; i++)
+          cube |= (d[i].lo != before_lo[i]) ||
+            (d[i].hi != before_hi[i]);
+        if ((d[0] == old[0]) && (d[1] == old[1]) &&
+            (d[2] == old[2]) && (terminal == old_terminal))
+          break;
+      }
+      return publish(home,x,y,z,flag,d,terminal);
     }
   public:
     static bool numeric_regime(View x, View y, Int::BoolView flag) {
@@ -564,8 +726,10 @@ namespace Gecode { namespace Word { namespace Arithmetic {
     virtual Actor* copy(Space& home) {
       return new (home) BoundFlagArithmetic(home,*this);
     }
-    virtual PropCost cost(const Space&, const ModEventDelta&) const {
-      return PropCost::linear(PropCost::LO,x0.width());
+    virtual PropCost cost(const Space&, const ModEventDelta& med) const {
+      return (View::me(med) == ME_WORD_BND) ?
+        PropCost::ternary(PropCost::LO) :
+        PropCost::linear(PropCost::HI,x0.width());
     }
     virtual void reschedule(Space& home) {
       x0.reschedule(home,*this,PC_WORD_DOM);
@@ -581,14 +745,24 @@ namespace Gecode { namespace Word { namespace Arithmetic {
       (void) Propagator::dispose(home);
       return sizeof(*this);
     }
-    virtual ExecStatus propagate(Space& home, const ModEventDelta&) {
-      GECODE_ES_CHECK(narrow(home,x0,x1,x2,flag));
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med) {
+      if (View::me(med) == ME_WORD_BND) {
+        bool cube;
+        GECODE_ES_CHECK(narrow_bounds(home,x0,x1,x2,flag,cube));
+        if (x0.assigned() && x1.assigned() && x2.assigned() &&
+            flag.assigned())
+          return home.ES_SUBSUMED(*this);
+        if (cube)
+          return home.ES_NOFIX_PARTIAL(*this,View::med(ME_WORD_BITS));
+        return ES_FIX;
+      }
+      GECODE_ES_CHECK(narrow(home,x0,x1,x2,flag,true));
       return (x0.assigned() && x1.assigned() && x2.assigned() &&
               flag.assigned()) ? home.ES_SUBSUMED(*this) : ES_FIX;
     }
     static ExecStatus post(Home home, View x, View y, View z,
                            Int::BoolView flag) {
-      GECODE_ES_CHECK(narrow(home,x,y,z,flag));
+      GECODE_ES_CHECK(narrow(home,x,y,z,flag,true));
       if (!(x.assigned() && y.assigned() && z.assigned() && flag.assigned()))
         (void) new (home) BoundFlagArithmetic(home,x,y,z,flag);
       return ES_OK;

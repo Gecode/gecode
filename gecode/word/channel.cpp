@@ -61,6 +61,20 @@ namespace Gecode {
   }
 
   void
+  channel(Home home, WordVar x, IntVar y,
+          WordDomainType interpretation) {
+    if ((interpretation != WDT_UNSIGNED) &&
+        (interpretation != WDT_SIGNED))
+      throw Word::OutOfLimits("Word::channel");
+    if ((x.domain_type() != WDT_CUBE) &&
+        (x.domain_type() != interpretation))
+      throw Word::OutOfLimits("Word::channel");
+    GECODE_POST;
+    GECODE_ES_FAIL(Word::Channel::Numeric::post(
+      home,Word::WordView(x),Int::IntView(y),interpretation));
+  }
+
+  void
   reduce_and(Home home, WordVar x, BoolVar b) {
     GECODE_POST;
     GECODE_ES_FAIL((Word::Channel::Reduction<Word::Channel::RT_AND>

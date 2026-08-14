@@ -107,6 +107,153 @@ namespace Test { namespace Word {
     /// Focused checks not expressed by the assignment oracle
     class Lifecycle : public Base {
     private:
+      static bool numeric_bounds(void) {
+        using namespace Gecode;
+        class NumericSpace : public Space {
+        public:
+          WordVar x;
+          IntVar y;
+          NumericSpace(WordDomainType kind, int minimum, int maximum)
+            : x(*this,4), y(*this,minimum,maximum) {
+            channel(*this,x,y,kind);
+          }
+          NumericSpace(NumericSpace& s) : Space(s) {
+            x.update(*this,s.x);
+            y.update(*this,s.y);
+          }
+          virtual Space* copy(void) { return new NumericSpace(*this); }
+        };
+
+        NumericSpace u(WDT_UNSIGNED,8,11);
+        if ((u.status() == SS_FAILED) || (u.x.lo() != 8U) ||
+            (u.x.hi() != 11U) || (u.y.min() != 8) || (u.y.max() != 11))
+          return false;
+        NumericSpace* uc = static_cast<NumericSpace*>(u.clone());
+        rel(*uc,uc->y,IRT_EQ,9);
+        const bool clone_ok = (uc->status() != SS_FAILED) &&
+          uc->x.assigned() && (uc->x.val() == 9U) &&
+          !u.x.assigned();
+        delete uc;
+        if (!clone_ok)
+          return false;
+
+        NumericSpace s(WDT_SIGNED,-4,-1);
+        if ((s.status() == SS_FAILED) || (s.x.lo() != 12U) ||
+            (s.x.hi() != 15U) || (s.y.min() != -4) || (s.y.max() != -1))
+          return false;
+
+        class Wide : public Space {
+        public:
+          WordVar x;
+          IntVar y;
+          Wide(unsigned int width, WordDomainType kind, int value)
+            : x(*this,width), y(*this,value,value) {
+            channel(*this,x,y,kind);
+          }
+          Wide(Wide& s) : Space(s) {
+            x.update(*this,s.x); y.update(*this,s.y);
+          }
+          virtual Space* copy(void) { return new Wide(*this); }
+        };
+        Wide unsigned64(64,WDT_UNSIGNED,Gecode::Int::Limits::max);
+        if ((unsigned64.status() == SS_FAILED) || !unsigned64.x.assigned() ||
+            (unsigned64.x.val() !=
+             static_cast<WordValue>(Gecode::Int::Limits::max)))
+          return false;
+        Wide signed64(64,WDT_SIGNED,Gecode::Int::Limits::min);
+        const WordValue signed64_value = ~WordValue(0) -
+          static_cast<WordValue>(-static_cast<long long>(
+            Gecode::Int::Limits::min)) + 1U;
+        if ((signed64.status() == SS_FAILED) || !signed64.x.assigned() ||
+            (signed64.x.val() != signed64_value))
+          return false;
+        Wide signed1(1,WDT_SIGNED,-1);
+        if ((signed1.status() == SS_FAILED) || !signed1.x.assigned() ||
+            (signed1.x.val() != 1U))
+          return false;
+
+        class BoundedSpace : public Space {
+        public:
+          WordVar x;
+          IntVar y;
+          BoundedSpace(void)
+            : x(*this,4,WDT_UNSIGNED,2U,13U), y(*this,6,9) {
+            channel(*this,x,y,WDT_UNSIGNED);
+          }
+          BoundedSpace(BoundedSpace& s) : Space(s) {
+            x.update(*this,s.x);
+            y.update(*this,s.y);
+          }
+          virtual Space* copy(void) { return new BoundedSpace(*this); }
+        } bounded;
+        if ((bounded.status() == SS_FAILED) ||
+            (bounded.x.minimum() != 6U) || (bounded.x.maximum() != 9U))
+          return false;
+
+        try {
+          ChannelSpace invalid;
+          IntVar y(invalid,0,7);
+          channel(invalid,invalid.x,y,WDT_CUBE);
+          return false;
+        } catch (const Gecode::Word::OutOfLimits&) {}
+        try {
+          BoundedSpace invalid;
+          channel(invalid,invalid.x,invalid.y,WDT_SIGNED);
+          return false;
+        } catch (const Gecode::Word::OutOfLimits&) {}
+        return true;
+      }
+
+      static bool numeric_recomputation(void) {
+        using namespace Gecode;
+        class SearchSpace : public Space {
+        public:
+          WordVar x;
+          IntVar y;
+          explicit SearchSpace(WordDomainType kind)
+            : x(*this,4), y(*this,-8,15) {
+            channel(*this,x,y,kind);
+            branch(*this,x,WORD_VAL_LSB());
+          }
+          SearchSpace(SearchSpace& s) : Space(s) {
+            x.update(*this,s.x);
+            y.update(*this,s.y);
+          }
+          virtual Space* copy(void) { return new SearchSpace(*this); }
+        };
+
+        for (int k=0; k<2; k++) {
+          const WordDomainType kind = (k == 0) ? WDT_UNSIGNED : WDT_SIGNED;
+          SearchSpace* root = new SearchSpace(kind);
+          Search::Options options;
+          options.c_d = 1;
+          options.a_d = 8;
+          DFS<SearchSpace> dfs(root,options);
+          delete root;
+          unsigned int solutions = 0;
+          unsigned int checksum = 0;
+          while (SearchSpace* solution = dfs.next()) {
+            const int expected = (kind == WDT_UNSIGNED) ?
+              static_cast<int>(solution->x.val()) :
+              ((solution->x.val() & 8U) ?
+               static_cast<int>(solution->x.val())-16 :
+               static_cast<int>(solution->x.val()));
+            const bool ok = solution->x.assigned() &&
+              solution->y.assigned() && (solution->y.val() == expected) &&
+              (PropagatorGroup::all.size(*solution) == 0U);
+            checksum += static_cast<unsigned int>(solution->y.val()+8);
+            delete solution;
+            if (!ok)
+              return false;
+            solutions++;
+          }
+          const unsigned int expected_checksum = (k == 0) ? 248U : 120U;
+          if ((solutions != 16U) || (checksum != expected_checksum))
+            return false;
+        }
+        return true;
+      }
+
       static bool delta_scheduling(void) {
         ChannelSpace incremental;
         Gecode::channel(incremental,incremental.x,2,incremental.b);
@@ -202,7 +349,8 @@ namespace Test { namespace Word {
           Gecode::channel(invalid,invalid.x,0,2);
           return false;
         } catch (const Gecode::Int::NotZeroOne&) {}
-        return delta_scheduling() && search_recomputation();
+        return numeric_bounds() && numeric_recomputation() &&
+          delta_scheduling() && search_recomputation();
       }
     };
 

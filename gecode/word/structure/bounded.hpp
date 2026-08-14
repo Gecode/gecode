@@ -19,12 +19,14 @@ namespace Gecode { namespace Word { namespace Structure {
     unsigned int width;
     WordDomainType kind;
     WordValue lo, hi, minimum, maximum;
+    /// Whether cube/interval synchronization is batched by the current phase
+    bool deferred;
     bool synchronize(void) {
       return synchronize_domain(width,kind,lo,hi,minimum,maximum);
     }
     bool range(WordValue min, WordValue max) {
       minimum=std::max(minimum,min); maximum=std::min(maximum,max);
-      return (minimum <= maximum) && synchronize();
+      return (minimum <= maximum) && (deferred || synchronize());
     }
   };
 
@@ -49,7 +51,8 @@ namespace Gecode { namespace Word { namespace Structure {
     }
     ModEvent narrow(Space&, WordValue lo0, WordValue hi0) {
       d->lo |= lo0; d->hi &= hi0;
-      if (((d->lo & ~d->hi) != 0) || !d->synchronize())
+      if (((d->lo & ~d->hi) != 0) ||
+          (!d->deferred && !d->synchronize()))
         return ME_WORD_FAILED;
       return assigned() ? ME_WORD_VAL : ME_WORD_DOM;
     }
@@ -58,7 +61,7 @@ namespace Gecode { namespace Word { namespace Structure {
   template<class View>
   forceinline FixedLocalDomain fixed_snapshot(View x) {
     return FixedLocalDomain{x.width(),x.domain_type(),x.lo(),x.hi(),
-                            x.minimum(),x.maximum()};
+                            x.minimum(),x.maximum(),false};
   }
 
   template<class View>
@@ -84,24 +87,53 @@ namespace Gecode { namespace Word { namespace Structure {
       : MixBinaryPropagator<View,PC_WORD_DOM,View,PC_WORD_DOM>(home,p),
         amount(p.amount) {}
 
+    static bool narrow_ranges(FixedLocalDomain& dx, FixedLocalDomain& dr,
+                              unsigned int amount) {
+      if (amount >= dx.width)
+        return dr.range(0,0);
+      const WordValue factor=WordValue(1) << amount;
+      if (!dr.range(dx.minimum*factor,dx.maximum*factor))
+        return false;
+      const WordValue xmin=dr.minimum/factor+
+        ((dr.minimum%factor) != 0);
+      return dx.range(xmin,dr.maximum/factor);
+    }
+    static ExecStatus narrow_bounds(Home home, View x, View result,
+                                    unsigned int amount, bool& bits) {
+      FixedLocalDomain dx=fixed_snapshot(x), dr=fixed_snapshot(result);
+      const WordValue initial_xlo=dx.lo, initial_xhi=dx.hi;
+      const WordValue initial_rlo=dr.lo, initial_rhi=dr.hi;
+      for (;;) {
+        const FixedLocalDomain old_x=dx, old_r=dr;
+        dx.deferred=dr.deferred=true;
+        if (!narrow_ranges(dx,dr,amount)) return ES_FAILED;
+        dx.deferred=dr.deferred=false;
+        if (!dx.synchronize() || !dr.synchronize()) return ES_FAILED;
+        if ((dx == old_x) && (dr == old_r)) break;
+      }
+      bits=(dx.lo != initial_xlo) || (dx.hi != initial_xhi) ||
+        (dr.lo != initial_rlo) || (dr.hi != initial_rhi);
+      GECODE_ES_CHECK(fixed_publish(home,x,dx));
+      GECODE_ES_CHECK(fixed_publish(home,result,dr));
+      return ES_OK;
+    }
     static ExecStatus narrow(Home home, View x, View result,
-                             unsigned int amount) {
+                             unsigned int amount, bool cube) {
       FixedLocalDomain dx=fixed_snapshot(x), dr=fixed_snapshot(result);
       FixedLocalView vx(dx), vr(dr);
       for (;;) {
         const FixedLocalDomain old_x=dx, old_r=dr;
-        GECODE_ES_CHECK((Fixed<FixedLocalView,FixedLocalView>::narrow(
-          home,vx,vr,FO_SHIFT_LEFT,amount,0U)));
-        if (amount >= x.width()) {
-          if (!dr.range(0,0)) return ES_FAILED;
-        } else {
-          const WordValue factor=WordValue(1) << amount;
-          if (!dr.range(dx.minimum*factor,dx.maximum*factor))
-            return ES_FAILED;
-          const WordValue xmin=dr.minimum/factor+
-            ((dr.minimum%factor) != 0);
-          if (!dx.range(xmin,dr.maximum/factor)) return ES_FAILED;
-        }
+        dx.deferred=dr.deferred=true;
+        if (cube)
+          GECODE_ES_CHECK((Fixed<FixedLocalView,FixedLocalView>::narrow(
+            home,vx,vr,FO_SHIFT_LEFT,amount,0U)));
+        const WordValue before_xlo=dx.lo, before_xhi=dx.hi;
+        const WordValue before_rlo=dr.lo, before_rhi=dr.hi;
+        if (!narrow_ranges(dx,dr,amount)) return ES_FAILED;
+        dx.deferred=dr.deferred=false;
+        if (!dx.synchronize() || !dr.synchronize()) return ES_FAILED;
+        cube=(dx.lo != before_xlo) || (dx.hi != before_xhi) ||
+          (dr.lo != before_rlo) || (dr.hi != before_rhi);
         if ((dx == old_x) && (dr == old_r)) break;
       }
       GECODE_ES_CHECK(fixed_publish(home,x,dx));
@@ -116,14 +148,28 @@ namespace Gecode { namespace Word { namespace Structure {
     virtual Actor* copy(Space& home) {
       return new (home) BoundedShiftLeft(home,*this);
     }
-    virtual ExecStatus propagate(Space& home, const ModEventDelta&) {
-      GECODE_ES_CHECK(narrow(home,x0,x1,amount));
+    virtual PropCost cost(const Space&, const ModEventDelta& med) const {
+      return (View::me(med) == ME_WORD_BND) ?
+        PropCost::binary(PropCost::LO) :
+        PropCost::linear(PropCost::HI,x0.width());
+    }
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med) {
+      if (View::me(med) == ME_WORD_BND) {
+        bool bits;
+        GECODE_ES_CHECK(narrow_bounds(home,x0,x1,amount,bits));
+        if (x0.assigned() && x1.assigned())
+          return home.ES_SUBSUMED(*this);
+        if (bits)
+          return home.ES_NOFIX_PARTIAL(*this,View::med(ME_WORD_BITS));
+        return ES_FIX;
+      }
+      GECODE_ES_CHECK(narrow(home,x0,x1,amount,true));
       return (x0.assigned() && x1.assigned()) ?
         home.ES_SUBSUMED(*this) : ES_FIX;
     }
     static ExecStatus post(Home home, View x, View result,
                            unsigned int amount) {
-      GECODE_ES_CHECK(narrow(home,x,result,amount));
+      GECODE_ES_CHECK(narrow(home,x,result,amount,true));
       if (!(x.assigned() && result.assigned()))
         (void) new (home) BoundedShiftLeft(home,x,result,amount);
       return ES_OK;

@@ -82,6 +82,45 @@ namespace Gecode { namespace Word { namespace Channel {
                            Int::BoolView b);
   };
 
+  /**
+   * \brief Bounds-channel a word to an integer variable
+   *
+   * Requires \code #include <gecode/word/channel.hh> \endcode
+   * \ingroup FuncWordProp
+   */
+  class Numeric : public MixBinaryPropagator<
+    WordView,PC_WORD_DOM,Int::IntView,Int::PC_INT_BND> {
+  protected:
+    using MixBinaryPropagator<
+      WordView,PC_WORD_DOM,Int::IntView,Int::PC_INT_BND>::x0;
+    using MixBinaryPropagator<
+      WordView,PC_WORD_DOM,Int::IntView,Int::PC_INT_BND>::x1;
+    /// Word interpretation
+    WordDomainType interpretation;
+    /// Constructor for cloning \a p
+    Numeric(Space& home, Numeric& p);
+    /// Constructor for creation
+    Numeric(Home home, WordView x, Int::IntView y,
+            WordDomainType interpretation);
+    /// Convert an integer value to a word-order rank
+    static WordValue to_rank(int value, unsigned int width,
+                             WordDomainType interpretation);
+    /// Convert a word-order rank to an integer value
+    static int from_rank(WordValue value, unsigned int width,
+                         WordDomainType interpretation);
+    /// Narrow both views to bounds consistency
+    static ExecStatus narrow(Home home, WordView x, Int::IntView y,
+                             WordDomainType interpretation);
+  public:
+    /// Copy propagator during cloning
+    virtual Actor* copy(Space& home);
+    /// Perform propagation
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+    /// Post propagator
+    static ExecStatus post(Home home, WordView x, Int::IntView y,
+                           WordDomainType interpretation);
+  };
+
   /// Word-to-Boolean reduction operation
   enum ReductionType {
     RT_AND, ///< Conjunction of all significant bits
@@ -125,6 +164,7 @@ namespace Gecode { namespace Word { namespace Channel {
 }}}
 
 #include <gecode/word/channel/bit.hpp>
+#include <gecode/word/channel/numeric.hpp>
 #include <gecode/word/channel/reduction.hpp>
 
 #endif
