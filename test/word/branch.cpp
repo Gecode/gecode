@@ -59,6 +59,108 @@ namespace Test { namespace Word {
 
   class Branch : public Base {
   private:
+    bool bounded(void) const {
+      using namespace Gecode;
+      class BoundedSpace : public Space {
+      public:
+        WordVar x;
+        BoundedSpace(WordDomainType kind, WordValBranch values)
+          : x(*this,4,kind,(kind == WDT_SIGNED) ? 12 : 2,
+              (kind == WDT_SIGNED) ? 3 : 13) {
+          branch(*this,x,values);
+        }
+        BoundedSpace(WordDomainType kind, WordAssign values)
+          : x(*this,4,kind,(kind == WDT_SIGNED) ? 12 : 2,
+              (kind == WDT_SIGNED) ? 3 : 13) {
+          assign(*this,x,values);
+        }
+        BoundedSpace(BoundedSpace& s) : Space(s) { x.update(*this,s.x); }
+        virtual Space* copy(void) { return new BoundedSpace(*this); }
+      };
+
+      for (int k=0; k<2; k++) {
+        const WordDomainType kind = (k == 0) ? WDT_UNSIGNED : WDT_SIGNED;
+        for (int split=0; split<2; split++) {
+          BoundedSpace* root = new BoundedSpace(
+            kind,split == 0 ? WORD_VAL_SPLIT_MIN() : WORD_VAL_SPLIT_MAX());
+          Search::Options o; o.c_d=1; o.a_d=8;
+          DFS<BoundedSpace> dfs(root,o);
+          delete root;
+          int solutions=0;
+          while (BoundedSpace* s=dfs.next()) {
+            const bool ok=s->x.assigned() &&
+              ((kind == WDT_SIGNED) ||
+               ((s->x.val() >= 2) && (s->x.val() <= 13)));
+            delete s;
+            if (!ok) return false;
+            solutions++;
+          }
+          if (solutions != ((kind == WDT_UNSIGNED) ? 12 : 8)) return false;
+        }
+      }
+
+      const WordAssign assignments[3] = {
+        WORD_ASSIGN_MIN(), WORD_ASSIGN_MED(), WORD_ASSIGN_MAX()
+      };
+      const WordValue expected_unsigned[3] = {2,7,13};
+      const WordValue expected_signed[3] = {12,15,3};
+      for (int k=0; k<2; k++)
+        for (int a=0; a<3; a++) {
+          const WordDomainType kind=(k == 0) ? WDT_UNSIGNED : WDT_SIGNED;
+          BoundedSpace* root=new BoundedSpace(kind,assignments[a]);
+          DFS<BoundedSpace> dfs(root); delete root;
+          BoundedSpace* solution=dfs.next();
+          const bool ok=(solution != nullptr) && solution->x.assigned() &&
+            (solution->x.val() == ((k == 0)
+             ? expected_unsigned[a] : expected_signed[a]));
+          delete solution;
+          solution=dfs.next();
+          const bool unique=(solution == nullptr);
+          delete solution;
+          if (!ok || !unique) return false;
+        }
+
+      BoundedSpace lifecycle(WDT_UNSIGNED,WORD_VAL_SPLIT_MIN());
+      if (lifecycle.status() != SS_BRANCH) return false;
+      const Choice* choice=lifecycle.choice();
+      Archive archive; choice->archive(archive);
+      BoundedSpace* replay=static_cast<BoundedSpace*>(lifecycle.clone());
+      const Choice* restored=replay->choice(archive);
+      replay->commit(*restored,1);
+      const bool replay_ok=(replay->status() != SS_FAILED) &&
+        (replay->x.minimum() >= 8);
+      delete restored; delete replay;
+      BoundedSpace* nogood=static_cast<BoundedSpace*>(lifecycle.clone());
+      NGL* ngl=nogood->ngl(*choice,0);
+      const bool ngl_ok=(ngl != nullptr) &&
+        (ngl->status(*nogood) == NGL::NONE) &&
+        (ngl->prune(*nogood) == ES_OK) &&
+        (nogood->x.minimum() >= 8);
+      delete nogood; delete choice;
+      class Wide : public Space {
+      public:
+        WordVar x;
+        Wide(void)
+          : x(*this,64,WDT_UNSIGNED,WordValue(0x100000000ULL),
+              WordValue(0x100000010ULL)) {
+          branch(*this,x,WORD_VAL_SPLIT_MIN());
+        }
+        Wide(Wide& s) : Space(s) { x.update(*this,s.x); }
+        virtual Space* copy(void) { return new Wide(*this); }
+      };
+      Wide wide;
+      if (wide.status() != SS_BRANCH) return false;
+      const Choice* wide_choice=wide.choice();
+      Archive wide_archive; wide_choice->archive(wide_archive);
+      Wide* wide_replay=static_cast<Wide*>(wide.clone());
+      const Choice* wide_restored=wide_replay->choice(wide_archive);
+      wide_replay->commit(*wide_restored,1);
+      const bool wide_ok=(wide_replay->status() != SS_FAILED) &&
+        (wide_replay->x.minimum() > WordValue(0x100000008ULL));
+      delete wide_restored; delete wide_replay; delete wide_choice;
+      return replay_ok && ngl_ok && wide_ok;
+    }
+
     bool selectors(void) const {
       using namespace Gecode;
       class SelectorSpace : public Space {
@@ -255,7 +357,7 @@ namespace Test { namespace Word {
         search(WORD_VAL_RND(rb)) &&
         assignment(WORD_ASSIGN_LSB()) && assignment(WORD_ASSIGN_MSB()) &&
         assignment(WORD_ASSIGN_RND(ra)) && lifecycle() && random() &&
-        selectors() && mixed_recomputation();
+        selectors() && mixed_recomputation() && bounded();
     }
   };
 

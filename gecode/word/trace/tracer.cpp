@@ -52,8 +52,12 @@ namespace Gecode {
     if (t.group().in()) os << ",g:" << t.group().id();
     os << "): [" << i << "] = " << t[i]
        << " zero:0x" << std::hex << d.zero()
-       << " one:0x" << d.one() << std::dec
-       << " by " << vti << std::endl;
+       << " one:0x" << d.one();
+    if (d.bounded())
+      os << " rank:[0x" << d.old_minimum() << "..0x" << d.old_maximum()
+         << "]->[0x" << d.new_minimum() << "..0x" << d.new_maximum()
+         << ']';
+    os << std::dec << " by " << vti << std::endl;
   }
 
   static void

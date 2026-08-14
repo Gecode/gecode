@@ -218,6 +218,12 @@ namespace Gecode {
   forceinline WordValBranch WORD_VAL_RND(Rnd r) {
     return WordValBranch(WordValBranch::SEL_RND,r);
   }
+  forceinline WordValBranch WORD_VAL_SPLIT_MIN(void) {
+    return WordValBranch(WordValBranch::SEL_SPLIT_MIN);
+  }
+  forceinline WordValBranch WORD_VAL_SPLIT_MAX(void) {
+    return WordValBranch(WordValBranch::SEL_SPLIT_MAX);
+  }
 
   forceinline
   WordAssign::WordAssign(Select s0) : s(s0) {}
@@ -235,6 +241,15 @@ namespace Gecode {
   }
   forceinline WordAssign WORD_ASSIGN_RND(Rnd r) {
     return WordAssign(WordAssign::SEL_RND,r);
+  }
+  forceinline WordAssign WORD_ASSIGN_MIN(void) {
+    return WordAssign(WordAssign::SEL_MIN);
+  }
+  forceinline WordAssign WORD_ASSIGN_MED(void) {
+    return WordAssign(WordAssign::SEL_MED);
+  }
+  forceinline WordAssign WORD_ASSIGN_MAX(void) {
+    return WordAssign(WordAssign::SEL_MAX);
   }
 
 }

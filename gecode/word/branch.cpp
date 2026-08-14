@@ -145,10 +145,10 @@ namespace Gecode { namespace Word { namespace Branch {
   }
 
   ValSelLsb::ValSelLsb(Space& home, const ValBranch<Var>& vb)
-    : ValSel<WordView,unsigned int>(home,vb) {}
+    : ValSel<WordView,WordValue>(home,vb) {}
   ValSelLsb::ValSelLsb(Space& home, ValSelLsb& vs)
-    : ValSel<WordView,unsigned int>(home,vs) {}
-  unsigned int
+    : ValSel<WordView,WordValue>(home,vs) {}
+  WordValue
   ValSelLsb::val(const Space&, WordView x, int) {
     WordValue u = x.unknown();
     unsigned int bit = 0;
@@ -160,10 +160,10 @@ namespace Gecode { namespace Word { namespace Branch {
   }
 
   ValSelMsb::ValSelMsb(Space& home, const ValBranch<Var>& vb)
-    : ValSel<WordView,unsigned int>(home,vb) {}
+    : ValSel<WordView,WordValue>(home,vb) {}
   ValSelMsb::ValSelMsb(Space& home, ValSelMsb& vs)
-    : ValSel<WordView,unsigned int>(home,vs) {}
-  unsigned int
+    : ValSel<WordView,WordValue>(home,vs) {}
+  WordValue
   ValSelMsb::val(const Space&, WordView x, int) {
     WordValue u = x.unknown();
     unsigned int bit = 0;
@@ -173,10 +173,10 @@ namespace Gecode { namespace Word { namespace Branch {
   }
 
   ValSelRnd::ValSelRnd(Space& home, const ValBranch<Var>& vb)
-    : ValSel<WordView,unsigned int>(home,vb), r(vb.rnd()) {}
+    : ValSel<WordView,WordValue>(home,vb), r(vb.rnd()) {}
   ValSelRnd::ValSelRnd(Space& home, ValSelRnd& vs)
-    : ValSel<WordView,unsigned int>(home,vs), r(vs.r) {}
-  unsigned int
+    : ValSel<WordView,WordValue>(home,vs), r(vs.r) {}
+  WordValue
   ValSelRnd::val(const Space&, WordView x, int) {
     unsigned int n = r(x.unknown_size());
     WordValue u = x.unknown();
@@ -215,34 +215,168 @@ namespace Gecode { namespace Word { namespace Branch {
   }
 
   ValCommitZero::ValCommitZero(Space& home, const ValBranch<Var>& vb)
-    : ValCommit<WordView,unsigned int>(home,vb) {}
+    : ValCommit<WordView,WordValue>(home,vb) {}
   ValCommitZero::ValCommitZero(Space& home, ValCommitZero& vc)
-    : ValCommit<WordView,unsigned int>(home,vc) {}
+    : ValCommit<WordView,WordValue>(home,vc) {}
   ModEvent
   ValCommitZero::commit(Space& home, unsigned int a, WordView x, int,
-                        unsigned int bit) {
+                        WordValue bit) {
     const WordValue m = WordValue(1) << bit;
     return (a == 0) ? x.narrow(home,x.lo(),x.hi() & ~m)
                     : x.narrow(home,x.lo() | m,x.hi());
   }
   NGL*
   ValCommitZero::ngl(Space& home, unsigned int a, WordView x,
-                     unsigned int bit) const {
+                     WordValue bit) const {
     return (a == 0) ? new (home) ZeroNGL(home,x,bit) : nullptr;
   }
   void
   ValCommitZero::print(const Space&, unsigned int a, WordView, int i,
-                       unsigned int bit, std::ostream& o) const {
+                       WordValue bit, std::ostream& o) const {
     o << "var[" << i << "].bit(" << bit << ")=" << ((a == 0) ? 0 : 1);
   }
 
+  ValSelRank::ValSelRank(Space& home, const ValBranch<WordVar>& wa)
+    : ValSel<WordView,WordValue>(home,wa),
+      select(static_cast<const WordAssign&>(wa).select()) {}
+  ValSelRank::ValSelRank(Space& home, ValSelRank& vs)
+    : ValSel<WordView,WordValue>(home,vs), select(vs.select) {}
+  WordValue
+  ValSelRank::val(const Space&, WordView x, int) {
+    assert(x.bounded());
+    if (select == WordAssign::SEL_MIN)
+      return x.rank_minimum();
+    if (select == WordAssign::SEL_MAX)
+      return x.rank_maximum();
+    const WordValue minimum = x.rank_minimum();
+    const WordValue maximum = x.rank_maximum();
+    const WordValue middle = minimum + ((maximum-minimum) >> 1);
+    WordValue ordered_lo, ordered_hi, value;
+    ordered_cube(x.domain_type(),x.width(),x.lo(),x.hi(),
+                 ordered_lo,ordered_hi);
+    if (!cube_successor(ordered_lo,ordered_hi,middle,x.mask(),value) ||
+        (value > maximum)) {
+      const bool found = cube_predecessor(ordered_lo,ordered_hi,middle,
+                                          x.mask(),value);
+      (void) found;
+      assert(found && (value >= minimum));
+    }
+    return value;
+  }
+
+  ValSelSplit::ValSelSplit(Space& home, const ValBranch<WordVar>& wvb)
+    : ValSel<WordView,WordValue>(home,wvb) {}
+  ValSelSplit::ValSelSplit(Space& home, ValSelSplit& vs)
+    : ValSel<WordView,WordValue>(home,vs) {}
+  WordValue
+  ValSelSplit::val(const Space&, WordView x, int) {
+    assert(x.bounded() && !x.assigned());
+    const WordValue minimum = x.rank_minimum();
+    const WordValue maximum = x.rank_maximum();
+    const WordValue middle = minimum + ((maximum-minimum) >> 1);
+    WordValue ordered_lo, ordered_hi, value;
+    ordered_cube(x.domain_type(),x.width(),x.lo(),x.hi(),
+                 ordered_lo,ordered_hi);
+    bool found = cube_successor(ordered_lo,ordered_hi,middle,x.mask(),value);
+    if (!found || (value >= maximum))
+      found = cube_predecessor(ordered_lo,ordered_hi,middle,x.mask(),value);
+    assert(found && (value >= minimum) && (value < maximum));
+    return value;
+  }
+
+  RankLqNGL::RankLqNGL(Space& home, WordView x, WordValue rank)
+    : ViewValNGL<WordView,WordValue,PC_WORD_BND>(home,x,rank) {}
+  RankLqNGL::RankLqNGL(Space& home, RankLqNGL& ngl)
+    : ViewValNGL<WordView,WordValue,PC_WORD_BND>(home,ngl) {}
+  NGL* RankLqNGL::copy(Space& home) {
+    return new (home) RankLqNGL(home,*this);
+  }
+  NGL::Status RankLqNGL::status(const Space&) const {
+    if (x.rank_maximum() <= n)
+      return NGL::SUBSUMED;
+    return (x.rank_minimum() > n) ? NGL::FAILED : NGL::NONE;
+  }
+  ExecStatus RankLqNGL::prune(Space& home) {
+    assert(n < x.rank_maximum());
+    return me_failed(x.narrow_rank_range(home,n+1,x.rank_maximum()))
+      ? ES_FAILED : ES_OK;
+  }
+
+  RankGrNGL::RankGrNGL(Space& home, WordView x, WordValue rank)
+    : ViewValNGL<WordView,WordValue,PC_WORD_BND>(home,x,rank) {}
+  RankGrNGL::RankGrNGL(Space& home, RankGrNGL& ngl)
+    : ViewValNGL<WordView,WordValue,PC_WORD_BND>(home,ngl) {}
+  NGL* RankGrNGL::copy(Space& home) {
+    return new (home) RankGrNGL(home,*this);
+  }
+  NGL::Status RankGrNGL::status(const Space&) const {
+    if (x.rank_minimum() > n)
+      return NGL::SUBSUMED;
+    return (x.rank_maximum() <= n) ? NGL::FAILED : NGL::NONE;
+  }
+  ExecStatus RankGrNGL::prune(Space& home) {
+    return me_failed(x.narrow_rank_range(home,x.rank_minimum(),n))
+      ? ES_FAILED : ES_OK;
+  }
+
+  ValCommitSplit::ValCommitSplit(Space& home,
+                                 const ValBranch<WordVar>& wvb)
+    : ValCommit<WordView,WordValue>(home,wvb),
+      lower_first(static_cast<const WordValBranch&>(wvb).select() ==
+                  WordValBranch::SEL_SPLIT_MIN) {}
+  ValCommitSplit::ValCommitSplit(Space& home, ValCommitSplit& vc)
+    : ValCommit<WordView,WordValue>(home,vc),
+      lower_first(vc.lower_first) {}
+  ModEvent
+  ValCommitSplit::commit(Space& home, unsigned int a, WordView x, int,
+                         WordValue rank) {
+    const bool lower = (a == 0) == lower_first;
+    return lower
+      ? x.narrow_rank_range(home,x.rank_minimum(),rank)
+      : x.narrow_rank_range(home,rank+1,x.rank_maximum());
+  }
+  NGL*
+  ValCommitSplit::ngl(Space& home, unsigned int a, WordView x,
+                      WordValue rank) const {
+    if (a != 0)
+      return nullptr;
+    return lower_first
+      ? static_cast<NGL*>(new (home) RankLqNGL(home,x,rank))
+      : static_cast<NGL*>(new (home) RankGrNGL(home,x,rank));
+  }
+  void
+  ValCommitSplit::print(const Space&, unsigned int a, WordView, int i,
+                        WordValue rank, std::ostream& o) const {
+    const bool lower = (a == 0) == lower_first;
+    o << "var[" << i << "].rank" << (lower ? "<=" : ">") << rank;
+  }
+
+  ValCommitRank::ValCommitRank(Space& home, const ValBranch<WordVar>& wa)
+    : ValCommit<WordView,WordValue>(home,wa) {}
+  ValCommitRank::ValCommitRank(Space& home, ValCommitRank& vc)
+    : ValCommit<WordView,WordValue>(home,vc) {}
+  ModEvent
+  ValCommitRank::commit(Space& home, unsigned int, WordView x, int,
+                        WordValue rank) {
+    return x.eq(home,x.encode_rank(rank));
+  }
+  NGL*
+  ValCommitRank::ngl(Space&, unsigned int, WordView, WordValue) const {
+    return nullptr;
+  }
+  void
+  ValCommitRank::print(const Space&, unsigned int, WordView, int i,
+                       WordValue rank, std::ostream& o) const {
+    o << "var[" << i << "].rank=" << rank;
+  }
+
   template<class ValSel, class BranchDescription>
-  static ValSelCommitBase<WordView,unsigned int>*
+  static ValSelCommitBase<WordView,WordValue>*
   make_valselcommit(Space& home, const BranchDescription& bd) {
     return new (home) ValSelCommit<ValSel,ValCommitZero>(home,bd);
   }
 
-  ValSelCommitBase<WordView,unsigned int>*
+  ValSelCommitBase<WordView,WordValue>*
   valselcommit(Space& home, const WordValBranch& wvb) {
     switch (wvb.select()) {
     case WordValBranch::SEL_LSB:
@@ -251,12 +385,16 @@ namespace Gecode { namespace Word { namespace Branch {
       return make_valselcommit<ValSelMsb>(home,wvb);
     case WordValBranch::SEL_RND:
       return make_valselcommit<ValSelRnd>(home,wvb);
+    case WordValBranch::SEL_SPLIT_MIN:
+    case WordValBranch::SEL_SPLIT_MAX:
+      return new (home)
+        ValSelCommit<ValSelSplit,ValCommitSplit>(home,wvb);
     default:
       throw UnknownBranching("Word::branch");
     }
   }
 
-  ValSelCommitBase<WordView,unsigned int>*
+  ValSelCommitBase<WordView,WordValue>*
   valselcommit(Space& home, const WordAssign& wa) {
     switch (wa.select()) {
     case WordAssign::SEL_LSB:
@@ -265,6 +403,11 @@ namespace Gecode { namespace Word { namespace Branch {
       return make_valselcommit<ValSelMsb>(home,wa);
     case WordAssign::SEL_RND:
       return make_valselcommit<ValSelRnd>(home,wa);
+    case WordAssign::SEL_MIN:
+    case WordAssign::SEL_MED:
+    case WordAssign::SEL_MAX:
+      return new (home)
+        ValSelCommit<ValSelRank,ValCommitRank>(home,wa);
     default:
       throw UnknownBranching("Word::assign");
     }
@@ -302,8 +445,13 @@ namespace Gecode {
     if (home.failed()) return;
     vars.expand(home,x);
     ViewArray<WordView> xv(home,x);
+    if ((vals.select() == WordValBranch::SEL_SPLIT_MIN) ||
+        (vals.select() == WordValBranch::SEL_SPLIT_MAX))
+      for (int i=0; i<xv.size(); i++)
+        if (!xv[i].bounded())
+          throw UnknownBranching("Word::branch");
     ViewSel<WordView>* vs[1] = { Branch::viewsel(home,vars) };
-    postviewvalbrancher<WordView,1,unsigned int,2>
+    postviewvalbrancher<WordView,1,WordValue,2>
       (home,xv,vs,Branch::valselcommit(home,vals),bf,vvp);
   }
 
@@ -325,8 +473,14 @@ namespace Gecode {
     if (home.failed()) return;
     vars.expand(home,x);
     ViewArray<WordView> xv(home,x);
+    if ((vals.select() == WordAssign::SEL_MIN) ||
+        (vals.select() == WordAssign::SEL_MED) ||
+        (vals.select() == WordAssign::SEL_MAX))
+      for (int i=0; i<xv.size(); i++)
+        if (!xv[i].bounded())
+          throw UnknownBranching("Word::assign");
     ViewSel<WordView>* vs[1] = { Branch::viewsel(home,vars) };
-    postviewvalbrancher<WordView,1,unsigned int,1>
+    postviewvalbrancher<WordView,1,WordValue,1>
       (home,xv,vs,Branch::valselcommit(home,vals),bf,vvp);
   }
 

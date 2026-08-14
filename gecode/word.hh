@@ -744,11 +744,11 @@ namespace Gecode {
   typedef std::function<double(const Space& home, WordVar x, int i)>
     WordBranchMerit;
   /// Branch bit selection function type for word variables
-  typedef std::function<unsigned int(const Space& home, WordVar x, int i)>
+  typedef std::function<WordValue(const Space& home, WordVar x, int i)>
     WordBranchVal;
   /// Branch commit function type for word variables
   typedef std::function<void(Space& home, unsigned int a,
-                             WordVar x, int i, unsigned int bit)>
+                             WordVar x, int i, WordValue value)>
     WordBranchCommit;
 
 }
@@ -798,7 +798,7 @@ namespace Gecode {
   /// Function type for printing branching alternatives for word variables
   typedef std::function<void(const Space& home, const Brancher& b,
                              unsigned int a, WordVar x, int i,
-                             const unsigned int& bit, std::ostream& o)>
+                             const WordValue& value, std::ostream& o)>
     WordVarValPrint;
 
   /**
@@ -891,14 +891,16 @@ namespace Gecode {
   WordVarBranch WORD_VAR_CHB_SIZE_MAX(BranchTbl tbl=nullptr);
   WordVarBranch WORD_VAR_CHB_SIZE_MAX(WordCHB c, BranchTbl tbl=nullptr);
 
-  /// Which unknown bit to select for branching
+  /// Select an unknown bit or split a bounded ranked interval
   class WordValBranch : public ValBranch<WordVar> {
   public:
     /// Bit selection strategy
     enum Select {
       SEL_LSB, ///< Least-significant unknown bit
       SEL_MSB, ///< Most-significant unknown bit
-      SEL_RND  ///< Random unknown bit
+      SEL_RND, ///< Random unknown bit
+      SEL_SPLIT_MIN, ///< Ranked interval split, lower half first
+      SEL_SPLIT_MAX  ///< Ranked interval split, upper half first
     };
   protected:
     Select s;
@@ -914,15 +916,22 @@ namespace Gecode {
   WordValBranch WORD_VAL_MSB(void);
   /// Select a random unknown bit
   WordValBranch WORD_VAL_RND(Rnd r);
+  /// Split a bounded variable's ranked interval, lower half first
+  WordValBranch WORD_VAL_SPLIT_MIN(void);
+  /// Split a bounded variable's ranked interval, upper half first
+  WordValBranch WORD_VAL_SPLIT_MAX(void);
 
-  /// Which unknown bit to select for assignment to zero
+  /// Select bit-zero or admitted ranked-value assignment
   class WordAssign : public ValBranch<WordVar> {
   public:
     /// Bit selection strategy
     enum Select {
       SEL_LSB, ///< Least-significant unknown bit
       SEL_MSB, ///< Most-significant unknown bit
-      SEL_RND  ///< Random unknown bit
+      SEL_RND, ///< Random unknown bit
+      SEL_MIN, ///< Minimum admitted ranked value
+      SEL_MED, ///< Median admitted ranked value
+      SEL_MAX  ///< Maximum admitted ranked value
     };
   protected:
     Select s;
@@ -938,6 +947,12 @@ namespace Gecode {
   WordAssign WORD_ASSIGN_MSB(void);
   /// Assign unknown bits to zero in random order
   WordAssign WORD_ASSIGN_RND(Rnd r);
+  /// Assign each bounded variable to its minimum admitted ranked value
+  WordAssign WORD_ASSIGN_MIN(void);
+  /// Assign each bounded variable to an admitted median ranked value
+  WordAssign WORD_ASSIGN_MED(void);
+  /// Assign each bounded variable to its maximum admitted ranked value
+  WordAssign WORD_ASSIGN_MAX(void);
 
   /// Branch over all word variables, trying zero before one
   GECODE_WORD_EXPORT void branch(Home home, const WordVarArgs& x,
@@ -967,11 +982,34 @@ namespace Gecode {
   private:
     WordValue _zero;
     WordValue _one;
+    WordDomainType _domain_type;
+    WordValue _old_minimum;
+    WordValue _old_maximum;
+    WordValue _new_minimum;
+    WordValue _new_maximum;
   public:
     WordTraceDelta(Word::WordTraceView o, Word::WordView n,
                    const Delta& d);
+    /// Return bits newly fixed to zero
     WordValue zero(void) const;
+    /// Return bits newly fixed to one
     WordValue one(void) const;
+    /// Return the immutable domain interpretation
+    WordDomainType domain_type(void) const;
+    /// Test whether the traced variable has ranked bounds
+    bool bounded(void) const;
+    /// Return the old internal order-rank minimum
+    WordValue old_minimum(void) const;
+    /// Return the old internal order-rank maximum
+    WordValue old_maximum(void) const;
+    /// Return the new internal order-rank minimum
+    WordValue new_minimum(void) const;
+    /// Return the new internal order-rank maximum
+    WordValue new_maximum(void) const;
+    /// Test whether the trace event fixed any cube bits
+    bool bits_changed(void) const;
+    /// Test whether the trace event changed ranked bounds
+    bool bounds_changed(void) const;
   };
 
 }

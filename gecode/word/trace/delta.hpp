@@ -38,9 +38,39 @@ namespace Gecode {
   forceinline
   WordTraceDelta::WordTraceDelta(Word::WordTraceView o, Word::WordView n,
                                  const Delta&)
-    : _zero(o.hi() & ~n.hi()), _one(n.lo() & ~o.lo()) {}
+    : _zero(o.hi() & ~n.hi()), _one(n.lo() & ~o.lo()),
+      _domain_type(n.domain_type()),
+      _old_minimum(o.bounded() ? o.minimum() : 0),
+      _old_maximum(o.bounded() ? o.maximum() : 0),
+      _new_minimum(n.bounded() ? n.rank_minimum() : 0),
+      _new_maximum(n.bounded() ? n.rank_maximum() : 0) {}
   forceinline WordValue WordTraceDelta::zero(void) const { return _zero; }
   forceinline WordValue WordTraceDelta::one(void) const { return _one; }
+  forceinline WordDomainType WordTraceDelta::domain_type(void) const {
+    return _domain_type;
+  }
+  forceinline bool WordTraceDelta::bounded(void) const {
+    return _domain_type != WDT_CUBE;
+  }
+  forceinline WordValue WordTraceDelta::old_minimum(void) const {
+    return _old_minimum;
+  }
+  forceinline WordValue WordTraceDelta::old_maximum(void) const {
+    return _old_maximum;
+  }
+  forceinline WordValue WordTraceDelta::new_minimum(void) const {
+    return _new_minimum;
+  }
+  forceinline WordValue WordTraceDelta::new_maximum(void) const {
+    return _new_maximum;
+  }
+  forceinline bool WordTraceDelta::bits_changed(void) const {
+    return (_zero | _one) != 0;
+  }
+  forceinline bool WordTraceDelta::bounds_changed(void) const {
+    return bounded() && ((_old_minimum != _new_minimum) ||
+                         (_old_maximum != _new_maximum));
+  }
 
 }
 

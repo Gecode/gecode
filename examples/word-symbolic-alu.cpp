@@ -44,17 +44,32 @@ private:
   Driver::UnsignedIntOption _steps;
   /// Word width
   Driver::UnsignedIntOption _width;
+  /// Word domain representation
+  Driver::StringOption _domain;
 public:
+  enum Domain { DOMAIN_CUBE, DOMAIN_UNSIGNED, DOMAIN_SIGNED };
   /// Initialize options
   WordSymbolicALUOptions(const char* n)
     : Options(n), _steps("steps","number of constructed ALU steps",8),
-      _width("width","word width",18) {
-    add(_steps); add(_width);
+      _width("width","word width",18),
+      _domain("word-domain","word domain representation",DOMAIN_CUBE) {
+    add(_steps); add(_width); add(_domain);
+    _domain.add(DOMAIN_CUBE,"cube","independently known bits");
+    _domain.add(DOMAIN_UNSIGNED,"unsigned","unsigned ranked interval and cube");
+    _domain.add(DOMAIN_SIGNED,"signed","signed ranked interval and cube");
   }
   /// Return number of steps
   unsigned int steps(void) const { return _steps.value(); }
   /// Return word width
   unsigned int width(void) const { return _width.value(); }
+  /// Return selected Word domain representation
+  WordDomainType domain_type(void) const {
+    switch (_domain.value()) {
+    case DOMAIN_UNSIGNED: return WDT_UNSIGNED;
+    case DOMAIN_SIGNED: return WDT_SIGNED;
+    default: return WDT_CUBE;
+    }
+  }
 };
 
 /**
@@ -77,20 +92,22 @@ private:
 public:
   /// Actual model
   WordSymbolicALU(const WordSymbolicALUOptions& opt)
-    : Script(opt), input(*this,opt.width()), output(*this,opt.width()) {
+    : Script(opt), input(*this,opt.width(),opt.domain_type()),
+      output(*this,opt.width(),opt.domain_type()) {
     const WordValue mask = (opt.width() == 64) ? ~WordValue(0) :
                            (WordValue(1) << opt.width())-1;
-    WordVarArray reg(*this,opt.steps()+1,opt.width(),0,mask);
+    WordVarArray reg(*this,opt.steps()+1,opt.width(),opt.domain_type());
     dom(*this,reg[0],WordValue(0x2a55aU)&mask);
     for (unsigned int i=0; i<opt.steps(); i++) {
-      WordVar rotated(*this,opt.width()), next(*this,opt.width());
+      WordVar rotated(*this,opt.width(),opt.domain_type());
+      WordVar next(*this,opt.width(),opt.domain_type());
       rotate_left(*this,reg[i],i%(opt.width()-1)+1,rotated);
       if (i%3 == 0) {
         add(*this,rotated,input,next);
       } else if (i%3 == 1) {
         rel(*this,rotated,WOT_XOR,input,next);
       } else {
-        WordVar selected(*this,opt.width());
+        WordVar selected(*this,opt.width(),opt.domain_type());
         rel(*this,rotated,WOT_AND,input,selected);
         add(*this,selected,opt.width(),WordValue(0x12345U+i)&mask,next);
       }
@@ -98,7 +115,8 @@ public:
     }
     rel(*this,output,WRT_EQ,reg[opt.steps()]);
     dom(*this,output,0,mask & ~WordValue(3));
-    branch(*this,input,WORD_VAL_MSB());
+    branch(*this,input,(opt.domain_type() == WDT_CUBE)
+           ? WORD_VAL_MSB() : WORD_VAL_SPLIT_MIN());
   }
   /// Constructor for cloning \a s
   WordSymbolicALU(WordSymbolicALU& s) : Script(s) {

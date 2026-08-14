@@ -339,10 +339,40 @@ namespace Test { namespace Word {
         return solutions == 32;
       }
 
+      static bool domain_policy(void) {
+        using namespace Gecode;
+        class PolicySpace : public Space {
+        public:
+          WordVar x, y, unsigned_result, signed_result, fallback;
+          PolicySpace(void)
+            : x(*this,4), y(*this,4),
+              unsigned_result((WordExpr(x)+WordExpr(y)).
+                              post(*this,WDT_UNSIGNED)),
+              signed_result((-WordExpr(x)).post(*this,WDT_SIGNED)),
+              fallback((WordExpr(x)^WordExpr(y)).post(*this,WDT_UNSIGNED)) {}
+          PolicySpace(PolicySpace& s) : Space(s) {
+            x.update(*this,s.x); y.update(*this,s.y);
+            unsigned_result.update(*this,s.unsigned_result);
+            signed_result.update(*this,s.signed_result);
+            fallback.update(*this,s.fallback);
+          }
+          virtual Space* copy(void) { return new PolicySpace(*this); }
+        };
+        PolicySpace source;
+        if (source.status() == SS_FAILED) return false;
+        PolicySpace* copy=static_cast<PolicySpace*>(source.clone());
+        const bool ok=(copy->unsigned_result.domain_type() == WDT_UNSIGNED) &&
+          (copy->signed_result.domain_type() == WDT_SIGNED) &&
+          (copy->fallback.domain_type() == WDT_CUBE);
+        delete copy;
+        return ok;
+      }
+
     public:
       Lifecycle(void) : Base("Word::MiniModel::Lifecycle") {}
       virtual bool run(void) {
-        return parity() && invalid() && clone() && search_recomputation();
+        return parity() && invalid() && clone() && search_recomputation() &&
+          domain_policy();
       }
     };
 

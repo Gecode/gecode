@@ -40,16 +40,31 @@ namespace Gecode { namespace Word {
   protected:
     WordValue _lo;
     WordValue _hi;
+    WordDomainType _domain_type;
+    WordValue _minimum;
+    WordValue _maximum;
   public:
-    WordTraceView(void) : _lo(0), _hi(0) {}
-    WordTraceView(Space&, WordView x) : _lo(x.lo()), _hi(x.hi()) {}
+    WordTraceView(void)
+      : _lo(0), _hi(0), _domain_type(WDT_CUBE),
+        _minimum(0), _maximum(0) {}
+    WordTraceView(Space&, WordView x)
+      : _lo(x.lo()), _hi(x.hi()), _domain_type(x.domain_type()),
+        _minimum(x.bounded() ? x.rank_minimum() : 0),
+        _maximum(x.bounded() ? x.rank_maximum() : 0) {}
     WordValue lo(void) const { return _lo; }
     WordValue hi(void) const { return _hi; }
+    WordDomainType domain_type(void) const { return _domain_type; }
+    bool bounded(void) const { return _domain_type != WDT_CUBE; }
+    WordValue minimum(void) const { return _minimum; }
+    WordValue maximum(void) const { return _maximum; }
     void prune(Space&, WordView x, const Delta&) {
-      _lo = x.lo(); _hi = x.hi();
+      _lo = x.lo(); _hi = x.hi(); _domain_type = x.domain_type();
+      _minimum = x.bounded() ? x.rank_minimum() : 0;
+      _maximum = x.bounded() ? x.rank_maximum() : 0;
     }
     void update(Space&, WordTraceView x) {
-      _lo = x._lo; _hi = x._hi;
+      _lo = x._lo; _hi = x._hi; _domain_type = x._domain_type;
+      _minimum = x._minimum; _maximum = x._maximum;
     }
     static unsigned long long int slack(WordView x) {
       return x.unknown_size();

@@ -2115,6 +2115,50 @@ identities are recorded in `/private/tmp/word071-*`.  The 28-entry
 `/private/tmp/word071-SHA256SUMS` manifest verifies every entry.  No benchmark
 artifact is tracked.
 
+### Bounded modeling, branching, and observation
+
+Bounded domains are now usable through the ordinary modeling surfaces rather
+than only through kernel views.  `WordValBranch` adds lower-first and
+upper-first ranked interval splits.  The selected split is always an admitted
+cube value below the current maximum, so neither alternative is empty merely
+because the midpoint falls in a cube hole.  `WordAssign` adds admitted ranked
+minimum, median, and maximum assignment.  Existing LSB/MSB/random bit choices
+remain unchanged and valid for every representation.  Ranked choices use the
+ordinary generic view/value brancher, conventional range no-good literals,
+and a 64-bit Archive encoding made from two existing 32-bit archive words.
+Tests cover both signed and unsigned enumeration, first-solution assignment,
+choice printing, both alternatives, no-goods, cloning, width-64 archival, and
+genuine `c_d=1` replay.
+
+Printing retains the existing cube string and appends `[u:min..max]` or
+`[s:min..max]` for bounded variables, using encoded public endpoints.  The
+trace snapshot retains kind and ranked endpoints.  `WordTraceDelta` reports
+kind, old/new endpoints, and explicit bit-changed/bounds-changed predicates in
+addition to fixed-zero/fixed-one masks.  A bound-only trace test observes no
+bit delta and the exact endpoint transition after cloning.
+
+`WordExpr::post(Home,WordDomainType)` is the explicit MiniModel policy.  It
+recursively lowers compatible intermediate and result nodes to the requested
+representation: unsigned zero-extension, shifts and arithmetic; signed
+sign-extension, arithmetic shift and signed arithmetic.  Constants are
+neutral assigned variables and existing variable leaves keep their declared
+kind.  Logic, rotations, ITE and structural nodes whose single interval has no
+settled interpretation fall back to cube without changing expression
+semantics.  The original overload remains cube-compatible.
+
+The checked-in symbolic ALU exposes `-word-domain cube|unsigned|signed` and
+constructs all model state consistently; bounded modes use ranked splitting,
+while cube retains MSB bit branching.  At the bounded four-bit validation
+scale all three modes enumerate the same four `(input,output)` rows (identical
+normalized SHA-256 `ccea64b6...e99dea2`).  This is a usability/parity check,
+not a performance claim before bounded arithmetic actors are migrated.
+
+This stage changes the Word branching choice archive and trace ABI, as already
+anticipated by the bounded-domain rollout.  Public Doxygen and the current
+release changelog describe the optional domain, ranked search, trace, and
+MiniModel policy.  Release Branch, Trace, MiniModel lifecycle, TestFramework,
+the full Word suite, and all three example modes pass.
+
 ## Boundaries
 
 - This area is a full implementation spike, not a battle-hardening exercise. Each task must follow established Gecode patterns, reuse normal framework and test machinery, and avoid novel infrastructure, special-case test paths, exhaustive edge-case campaigns, or verification beyond what is proportionate to getting the implementation working.

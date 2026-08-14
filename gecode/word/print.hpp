@@ -40,6 +40,13 @@ namespace Gecode {
       const WordValue bit = WordValue(1) << i;
       os << ((x.lo() & bit) ? '1' : ((x.hi() & bit) ? '?' : '0'));
     }
+    if (x.bounded()) {
+      const std::ios_base::fmtflags flags=os.flags();
+      os << '[' << ((x.domain_type() == WDT_UNSIGNED) ? 'u' : 's')
+         << ":0x" << std::hex << x.minimum() << "..0x" << x.maximum()
+         << ']';
+      os.flags(flags);
+    }
     return os;
   }
 }

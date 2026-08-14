@@ -86,27 +86,27 @@ namespace Gecode { namespace Word { namespace Branch {
 
   ViewSel<WordView>* viewsel(Space& home, const WordVarBranch& wvb);
 
-  class ValSelLsb : public ValSel<WordView,unsigned int> {
+  class ValSelLsb : public ValSel<WordView,WordValue> {
   public:
     ValSelLsb(Space& home, const ValBranch<Var>& vb);
     ValSelLsb(Space& home, ValSelLsb& vs);
-    unsigned int val(const Space& home, WordView x, int i);
+    WordValue val(const Space& home, WordView x, int i);
   };
 
-  class ValSelMsb : public ValSel<WordView,unsigned int> {
+  class ValSelMsb : public ValSel<WordView,WordValue> {
   public:
     ValSelMsb(Space& home, const ValBranch<Var>& vb);
     ValSelMsb(Space& home, ValSelMsb& vs);
-    unsigned int val(const Space& home, WordView x, int i);
+    WordValue val(const Space& home, WordView x, int i);
   };
 
-  class ValSelRnd : public ValSel<WordView,unsigned int> {
+  class ValSelRnd : public ValSel<WordView,WordValue> {
   protected:
     Rnd r;
   public:
     ValSelRnd(Space& home, const ValBranch<Var>& vb);
     ValSelRnd(Space& home, ValSelRnd& vs);
-    unsigned int val(const Space& home, WordView x, int i);
+    WordValue val(const Space& home, WordView x, int i);
     bool notice(void) const;
     void dispose(Space& home);
   };
@@ -120,21 +120,87 @@ namespace Gecode { namespace Word { namespace Branch {
     virtual ExecStatus prune(Space& home);
   };
 
-  class ValCommitZero : public ValCommit<WordView,unsigned int> {
+  class ValCommitZero : public ValCommit<WordView,WordValue> {
   public:
     ValCommitZero(Space& home, const ValBranch<Var>& vb);
     ValCommitZero(Space& home, ValCommitZero& vc);
     ModEvent commit(Space& home, unsigned int a, WordView x, int i,
-                    unsigned int bit);
+                    WordValue bit);
     NGL* ngl(Space& home, unsigned int a, WordView x,
-             unsigned int bit) const;
+             WordValue bit) const;
     void print(const Space& home, unsigned int a, WordView x, int i,
-               unsigned int bit, std::ostream& o) const;
+               WordValue bit, std::ostream& o) const;
   };
 
-  ValSelCommitBase<WordView,unsigned int>*
+  /// Select an admitted endpoint or median rank
+  class ValSelRank : public ValSel<WordView,WordValue> {
+  protected:
+    WordAssign::Select select;
+  public:
+    ValSelRank(Space& home, const ValBranch<WordVar>& wa);
+    ValSelRank(Space& home, ValSelRank& vs);
+    WordValue val(const Space& home, WordView x, int i);
+  };
+
+  /// Select a ranked interval split point
+  class ValSelSplit : public ValSel<WordView,WordValue> {
+  public:
+    ValSelSplit(Space& home, const ValBranch<WordVar>& wvb);
+    ValSelSplit(Space& home, ValSelSplit& vs);
+    WordValue val(const Space& home, WordView x, int i);
+  };
+
+  /// No-good literal for a ranked upper bound
+  class RankLqNGL : public ViewValNGL<WordView,WordValue,PC_WORD_BND> {
+  public:
+    RankLqNGL(Space& home, WordView x, WordValue rank);
+    RankLqNGL(Space& home, RankLqNGL& ngl);
+    virtual NGL* copy(Space& home);
+    virtual Status status(const Space& home) const;
+    virtual ExecStatus prune(Space& home);
+  };
+
+  /// No-good literal for a ranked strict lower bound
+  class RankGrNGL : public ViewValNGL<WordView,WordValue,PC_WORD_BND> {
+  public:
+    RankGrNGL(Space& home, WordView x, WordValue rank);
+    RankGrNGL(Space& home, RankGrNGL& ngl);
+    virtual NGL* copy(Space& home);
+    virtual Status status(const Space& home) const;
+    virtual ExecStatus prune(Space& home);
+  };
+
+  /// Commit a ranked interval split
+  class ValCommitSplit : public ValCommit<WordView,WordValue> {
+  protected:
+    bool lower_first;
+  public:
+    ValCommitSplit(Space& home, const ValBranch<WordVar>& wvb);
+    ValCommitSplit(Space& home, ValCommitSplit& vc);
+    ModEvent commit(Space& home, unsigned int a, WordView x, int i,
+                    WordValue rank);
+    NGL* ngl(Space& home, unsigned int a, WordView x,
+             WordValue rank) const;
+    void print(const Space& home, unsigned int a, WordView x, int i,
+               WordValue rank, std::ostream& o) const;
+  };
+
+  /// Commit assignment to an admitted ranked value
+  class ValCommitRank : public ValCommit<WordView,WordValue> {
+  public:
+    ValCommitRank(Space& home, const ValBranch<WordVar>& wa);
+    ValCommitRank(Space& home, ValCommitRank& vc);
+    ModEvent commit(Space& home, unsigned int a, WordView x, int i,
+                    WordValue rank);
+    NGL* ngl(Space& home, unsigned int a, WordView x,
+             WordValue rank) const;
+    void print(const Space& home, unsigned int a, WordView x, int i,
+               WordValue rank, std::ostream& o) const;
+  };
+
+  ValSelCommitBase<WordView,WordValue>*
   valselcommit(Space& home, const WordValBranch& wvb);
-  ValSelCommitBase<WordView,unsigned int>*
+  ValSelCommitBase<WordView,WordValue>*
   valselcommit(Space& home, const WordAssign& wa);
 
 }}}

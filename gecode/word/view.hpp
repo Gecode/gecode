@@ -56,6 +56,21 @@ namespace Gecode { namespace Word {
     WordValue minimum(void) const { return x->minimum(); }
     /// Return the canonical endpoint encoding (two's-complement when signed)
     WordValue maximum(void) const { return x->maximum(); }
+    /// Return the canonical minimum in the variable's internal order
+    WordValue rank_minimum(void) const {
+      assert(bounded());
+      return static_cast<BoundedWordVarImp*>(x)->minimum();
+    }
+    /// Return the canonical maximum in the variable's internal order
+    WordValue rank_maximum(void) const {
+      assert(bounded());
+      return static_cast<BoundedWordVarImp*>(x)->maximum();
+    }
+    /// Convert internal order rank \a n to its encoded Word value
+    WordValue encode_rank(WordValue n) const {
+      assert(bounded());
+      return Word::rank(domain_type(),width(),n);
+    }
     WordValue unknown(void) const { return x->unknown(); }
     unsigned int unknown_size(void) const { return x->unknown_size(); }
     WordValue val(void) const { return x->val(); }
@@ -64,6 +79,13 @@ namespace Gecode { namespace Word {
       return x->narrow(home,lo,hi);
     }
     ModEvent eq(Space& home, WordValue n) { return x->eq(home,n); }
+    /// Intersect the ranked interval of a bounded view
+    ModEvent narrow_rank_range(Space& home, WordValue minimum,
+                               WordValue maximum) {
+      assert(bounded());
+      return static_cast<BoundedWordVarImp*>(x)->
+        narrow_range(home,minimum,maximum);
+    }
     WordValue zero(const Delta& d) const { return WordVarImp::zero(d); }
     WordValue one(const Delta& d) const { return WordVarImp::one(d); }
     WordDomainType domain_type(const Delta& d) const {

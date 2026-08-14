@@ -1622,6 +1622,11 @@ namespace Gecode {
     GECODE_MINIMODEL_EXPORT unsigned int width(void) const;
     /// Post and return the expression value
     GECODE_MINIMODEL_EXPORT WordVar post(Home home) const;
+    /** Post with an explicit domain policy for the materialized result.
+     *  Incompatible expression kinds retain the cube representation.
+     */
+    GECODE_MINIMODEL_EXPORT WordVar
+    post(Home home, WordDomainType domain_type) const;
     /// Assignment operator
     GECODE_MINIMODEL_EXPORT const WordExpr& operator =(const WordExpr& e);
     /// Destructor

@@ -33,6 +33,8 @@
 
 #include "test/word.hh"
 
+#include <sstream>
+
 namespace Test { namespace Word {
 
   class CaptureTracer : public Gecode::WordTracer {
@@ -40,7 +42,14 @@ namespace Test { namespace Word {
     Gecode::WordValue zero;
     Gecode::WordValue one;
     int prunes;
-    CaptureTracer(void) : zero(0), one(0), prunes(0) {}
+    Gecode::WordDomainType kind;
+    Gecode::WordValue old_minimum, old_maximum;
+    Gecode::WordValue new_minimum, new_maximum;
+    bool bits_changed, bounds_changed;
+    CaptureTracer(void)
+      : zero(0), one(0), prunes(0), kind(Gecode::WDT_CUBE),
+        old_minimum(0), old_maximum(0), new_minimum(0), new_maximum(0),
+        bits_changed(false), bounds_changed(false) {}
     virtual void init(const Gecode::Space&,
                       const Gecode::WordTraceRecorder&) {}
     virtual void prune(const Gecode::Space&,
@@ -48,6 +57,12 @@ namespace Test { namespace Word {
                        const Gecode::ViewTraceInfo&, int,
                        Gecode::WordTraceDelta& d) {
       zero |= d.zero(); one |= d.one(); prunes++;
+      kind=d.domain_type();
+      bits_changed=d.bits_changed(); bounds_changed=d.bounds_changed();
+      if (d.bounded()) {
+        old_minimum=d.old_minimum(); old_maximum=d.old_maximum();
+        new_minimum=d.new_minimum(); new_maximum=d.new_maximum();
+      }
     }
     virtual void fix(const Gecode::Space&,
                      const Gecode::WordTraceRecorder&) {}
@@ -81,7 +96,42 @@ namespace Test { namespace Word {
       const bool ok = (clone->status() != Gecode::SS_FAILED) &&
         (tracer.prunes == 1) && (tracer.zero == 9) && (tracer.one == 2);
       delete clone;
-      return ok;
+      return ok && bounded();
+    }
+
+    bool bounded(void) const {
+      using namespace Gecode;
+      CaptureTracer tracer;
+      class BoundedTraceSpace : public Space {
+      public:
+        WordVar x;
+        BoundedTraceSpace(CaptureTracer& t)
+          : x(*this,8,WDT_UNSIGNED,3,240) {
+          WordVarArgs xs(1); xs[0]=x;
+          trace(*this,xs,TraceFilter::all,TE_PRUNE,t);
+        }
+        BoundedTraceSpace(BoundedTraceSpace& s) : Space(s) {
+          x.update(*this,s.x);
+        }
+        virtual Space* copy(void) { return new BoundedTraceSpace(*this); }
+        void range(WordValue minimum, WordValue maximum) {
+          Gecode::Word::UnsignedWordView v(x);
+          (void) v.narrow_range(*this,minimum,maximum);
+        }
+      };
+      BoundedTraceSpace root(tracer);
+      if (root.status() == SS_FAILED) return false;
+      BoundedTraceSpace* clone=static_cast<BoundedTraceSpace*>(root.clone());
+      clone->range(17,200);
+      const bool ok=(clone->status() != SS_FAILED) &&
+        (tracer.prunes == 1) && (tracer.kind == WDT_UNSIGNED) &&
+        (tracer.zero == 0) && (tracer.one == 0) &&
+        !tracer.bits_changed && tracer.bounds_changed &&
+        (tracer.old_minimum == 3) && (tracer.old_maximum == 240) &&
+        (tracer.new_minimum == 17) && (tracer.new_maximum == 200);
+      std::ostringstream out; out << clone->x;
+      delete clone;
+      return ok && (out.str().find("[u:0x11..0xc8]") != std::string::npos);
     }
   };
 

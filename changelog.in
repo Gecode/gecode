@@ -84,7 +84,9 @@ Add the optional GecodeWord module with fixed-width WordVar variables,
 direct posting and MiniModel expressions, standard search and tracing, and
 word-level logical, relational, structural, counting, and modular arithmetic
 constraints. Policy-dependent arithmetic defaults to SMT-LIB total semantics,
-including zero-divisor and signed-overflow edge cases.
+including zero-divisor and signed-overflow edge cases. WordVar can optionally
+combine its bit cube with an immutable unsigned or signed interval, with
+ranked branching, tracing, and explicit MiniModel result lowering.
 
 [ENTRY]
 Module: int
