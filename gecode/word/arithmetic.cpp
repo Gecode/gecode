@@ -239,6 +239,24 @@ namespace Gecode {
 
     void post_divmod(Home home, WordVar x, WordVar y, WordVar result,
                      bool quotient) {
+      if ((x.domain_type() == WDT_UNSIGNED) &&
+          (y.domain_type() == WDT_UNSIGNED) &&
+          (result.domain_type() == WDT_UNSIGNED) &&
+          Word::Arithmetic::BoundUnsignedDivMod<
+            Word::Arithmetic::BUD_DIV>::numeric_regime(
+              Word::UnsignedWordView(y))) {
+        if (quotient)
+          GECODE_ES_FAIL((Word::Arithmetic::BoundUnsignedDivMod<
+            Word::Arithmetic::BUD_DIV>::post(
+              home,Word::UnsignedWordView(x),Word::UnsignedWordView(y),
+              Word::UnsignedWordView(result))));
+        else
+          GECODE_ES_FAIL((Word::Arithmetic::BoundUnsignedDivMod<
+            Word::Arithmetic::BUD_MOD>::post(
+              home,Word::UnsignedWordView(x),Word::UnsignedWordView(y),
+              Word::UnsignedWordView(result))));
+        return;
+      }
       if (quotient)
         GECODE_ES_FAIL(Word::Arithmetic::Div::post(
           home,Word::WordView(x),Word::WordView(y),Word::WordView(result)));
@@ -256,6 +274,24 @@ namespace Gecode {
 
     void post_signed_divmod(Home home, WordVar x, WordVar y,
                             WordVar result, bool quotient) {
+      if ((x.domain_type() == WDT_SIGNED) &&
+          (y.domain_type() == WDT_SIGNED) &&
+          (result.domain_type() == WDT_SIGNED) &&
+          Word::Arithmetic::BoundSignedDivMod<
+            Word::Arithmetic::SDO_DIV>::numeric_regime(
+              Word::SignedWordView(y))) {
+        if (quotient)
+          GECODE_ES_FAIL((Word::Arithmetic::BoundSignedDivMod<
+            Word::Arithmetic::SDO_DIV>::post(
+              home,Word::SignedWordView(x),Word::SignedWordView(y),
+              Word::SignedWordView(result))));
+        else
+          GECODE_ES_FAIL((Word::Arithmetic::BoundSignedDivMod<
+            Word::Arithmetic::SDO_REM>::post(
+              home,Word::SignedWordView(x),Word::SignedWordView(y),
+              Word::SignedWordView(result))));
+        return;
+      }
       if (quotient)
         GECODE_ES_FAIL((Word::Arithmetic::SignedDivMod<
           Word::Arithmetic::SDO_DIV>::post(
@@ -269,6 +305,18 @@ namespace Gecode {
     }
 
     void post_signed_mod(Home home, WordVar x, WordVar y, WordVar result) {
+      if ((x.domain_type() == WDT_SIGNED) &&
+          (y.domain_type() == WDT_SIGNED) &&
+          (result.domain_type() == WDT_SIGNED) &&
+          Word::Arithmetic::BoundSignedDivMod<
+            Word::Arithmetic::SDO_MOD>::numeric_regime(
+              Word::SignedWordView(y))) {
+        GECODE_ES_FAIL((Word::Arithmetic::BoundSignedDivMod<
+          Word::Arithmetic::SDO_MOD>::post(
+            home,Word::SignedWordView(x),Word::SignedWordView(y),
+            Word::SignedWordView(result))));
+        return;
+      }
       GECODE_ES_FAIL((Word::Arithmetic::SignedDivMod<
         Word::Arithmetic::SDO_MOD>::post(
           home,Word::WordView(x),Word::WordView(y),Word::WordView(result))));
@@ -546,7 +594,7 @@ namespace Gecode {
     check_semantics(semantics,"Word::div");
     value = checked_value(width,value);
     GECODE_POST;
-    WordVar y(home,width,value,value);
+    WordVar y=assigned_for(home,width,value,x,result);
     post_divmod(home,x,y,result,true);
   }
 
@@ -558,7 +606,7 @@ namespace Gecode {
     check_semantics(semantics,"Word::div");
     value = checked_value(width,value);
     GECODE_POST;
-    WordVar x(home,width,value,value);
+    WordVar x=assigned_for(home,width,value,y,result);
     post_divmod(home,x,y,result,true);
   }
 
@@ -579,7 +627,7 @@ namespace Gecode {
     check_semantics(semantics,"Word::mod");
     value = checked_value(width,value);
     GECODE_POST;
-    WordVar y(home,width,value,value);
+    WordVar y=assigned_for(home,width,value,x,result);
     post_divmod(home,x,y,result,false);
   }
 
@@ -591,7 +639,7 @@ namespace Gecode {
     check_semantics(semantics,"Word::mod");
     value = checked_value(width,value);
     GECODE_POST;
-    WordVar x(home,width,value,value);
+    WordVar x=assigned_for(home,width,value,y,result);
     post_divmod(home,x,y,result,false);
   }
 
@@ -604,6 +652,18 @@ namespace Gecode {
       throw Word::WidthMismatch("Word::divmod");
     check_semantics(semantics,"Word::divmod");
     GECODE_POST;
+    if ((dividend.domain_type() == WDT_UNSIGNED) &&
+        (divisor.domain_type() == WDT_UNSIGNED) &&
+        (quotient.domain_type() == WDT_UNSIGNED) &&
+        (remainder.domain_type() == WDT_UNSIGNED) &&
+        Word::Arithmetic::BoundUnsignedDivModBoth::numeric_regime(
+          Word::UnsignedWordView(divisor))) {
+      GECODE_ES_FAIL(Word::Arithmetic::BoundUnsignedDivModBoth::post(
+        home,Word::UnsignedWordView(dividend),
+        Word::UnsignedWordView(divisor),Word::UnsignedWordView(quotient),
+        Word::UnsignedWordView(remainder)));
+      return;
+    }
     GECODE_ES_FAIL(Word::Arithmetic::DivModBoth::post(
       home,Word::WordView(dividend),Word::WordView(divisor),
       Word::WordView(quotient),Word::WordView(remainder)));
@@ -626,7 +686,7 @@ namespace Gecode {
     check_semantics(semantics,"Word::signed_div");
     value = checked_value(width,value);
     GECODE_POST;
-    WordVar y(home,width,value,value);
+    WordVar y=assigned_for(home,width,value,x,result);
     post_signed_divmod(home,x,y,result,true);
   }
 
@@ -638,7 +698,7 @@ namespace Gecode {
     check_semantics(semantics,"Word::signed_div");
     value = checked_value(width,value);
     GECODE_POST;
-    WordVar x(home,width,value,value);
+    WordVar x=assigned_for(home,width,value,y,result);
     post_signed_divmod(home,x,y,result,true);
   }
 
@@ -659,7 +719,7 @@ namespace Gecode {
     check_semantics(semantics,"Word::signed_rem");
     value = checked_value(width,value);
     GECODE_POST;
-    WordVar y(home,width,value,value);
+    WordVar y=assigned_for(home,width,value,x,result);
     post_signed_divmod(home,x,y,result,false);
   }
 
@@ -671,7 +731,7 @@ namespace Gecode {
     check_semantics(semantics,"Word::signed_rem");
     value = checked_value(width,value);
     GECODE_POST;
-    WordVar x(home,width,value,value);
+    WordVar x=assigned_for(home,width,value,y,result);
     post_signed_divmod(home,x,y,result,false);
   }
 
@@ -692,7 +752,7 @@ namespace Gecode {
     check_semantics(semantics,"Word::signed_mod");
     value = checked_value(width,value);
     GECODE_POST;
-    WordVar y(home,width,value,value);
+    WordVar y=assigned_for(home,width,value,x,result);
     post_signed_mod(home,x,y,result);
   }
 
@@ -704,7 +764,7 @@ namespace Gecode {
     check_semantics(semantics,"Word::signed_mod");
     value = checked_value(width,value);
     GECODE_POST;
-    WordVar x(home,width,value,value);
+    WordVar x=assigned_for(home,width,value,y,result);
     post_signed_mod(home,x,y,result);
   }
 

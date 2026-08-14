@@ -2140,6 +2140,410 @@ namespace Test { namespace Word {
 
     class BoundedLifecycle : public Base {
     private:
+      static bool division_truth(void) {
+        using namespace Gecode;
+        class D : public Space {
+        public:
+          WordVar x,y,z,q,r;
+          D(unsigned int width, WordDomainType kind, WordValue xv,
+            WordValue yv, Op op)
+            : x(*this,width,kind,xv,xv), y(*this,width,kind,yv,yv),
+              z(*this,width,kind), q(*this,width,kind), r(*this,width,kind) {
+            switch (op) {
+            case DIV: div(*this,x,y,z); break;
+            case MOD: mod(*this,x,y,z); break;
+            case SIGNED_DIV: signed_div(*this,x,y,z); break;
+            case SIGNED_REM: signed_rem(*this,x,y,z); break;
+            case SIGNED_MOD: signed_mod(*this,x,y,z); break;
+            default: assert(false);
+            }
+          }
+          D(unsigned int width, WordValue xv, WordValue yv)
+            : x(*this,width,WDT_UNSIGNED,xv,xv),
+              y(*this,width,WDT_UNSIGNED,yv,yv),
+              z(*this,width,WDT_UNSIGNED), q(*this,width,WDT_UNSIGNED),
+              r(*this,width,WDT_UNSIGNED) { divmod(*this,x,y,q,r); }
+          D(D& s) : Space(s) {
+            x.update(*this,s.x); y.update(*this,s.y); z.update(*this,s.z);
+            q.update(*this,s.q); r.update(*this,s.r);
+          }
+          Space* copy(void) { return new D(*this); }
+        };
+        for (unsigned int width=1; width<=4; width++) {
+          const WordValue mask=Gecode::Word::width_mask(width);
+          for (WordValue xv=0; xv<=mask; xv++)
+            for (WordValue yv=0; yv<=mask; yv++) {
+              for (Op op : {DIV,MOD,SIGNED_DIV,SIGNED_REM,SIGNED_MOD}) {
+                const WordDomainType kind=(op == DIV || op == MOD) ?
+                  WDT_UNSIGNED : WDT_SIGNED;
+                D d(width,kind,xv,yv,op);
+                const WordValue expected=Arithmetic::evaluate(op,xv,yv,mask);
+                if ((d.status() == SS_FAILED) || !d.z.assigned() ||
+                    (d.z.val() != expected) ||
+                    (PropagatorGroup::all.size(d) != 0U))
+                  return false;
+              }
+              D both(width,xv,yv);
+              const WordValue expected_q=(yv == 0) ? mask : xv/yv;
+              const WordValue expected_r=(yv == 0) ? xv : xv%yv;
+              if ((both.status() == SS_FAILED) || !both.q.assigned() ||
+                  !both.r.assigned() || (both.q.val() != expected_q) ||
+                  (both.r.val() != expected_r) ||
+                  (PropagatorGroup::all.size(both) != 0U))
+                return false;
+            }
+        }
+        return true;
+      }
+
+      static bool division_propagation(void) {
+        using namespace Gecode;
+        class U : public Space {
+        public:
+          WordVar x,y,q,r;
+          U(void) : x(*this,6,WDT_UNSIGNED,20U,40U),
+            y(*this,6,WDT_UNSIGNED,4U,5U),
+            q(*this,6,WDT_UNSIGNED), r(*this,6,WDT_UNSIGNED) {
+            divmod(*this,x,y,q,r);
+          }
+          U(U& s) : Space(s) {
+            x.update(*this,s.x); y.update(*this,s.y);
+            q.update(*this,s.q); r.update(*this,s.r);
+          }
+          Space* copy(void) { return new U(*this); }
+        };
+        U u;
+        if ((u.status() == SS_FAILED) || (u.q.minimum() != 4U) ||
+            (u.q.maximum() != 10U) || (u.r.maximum() != 4U))
+          return false;
+        U* clone=static_cast<U*>(u.clone());
+        dom(*clone,clone->x,37U); dom(*clone,clone->y,5U);
+        const bool clone_ok=(clone->status() != SS_FAILED) &&
+          clone->q.assigned() && (clone->q.val() == 7U) &&
+          clone->r.assigned() && (clone->r.val() == 2U) &&
+          !u.q.assigned() && (PropagatorGroup::all.size(*clone) == 0U);
+        delete clone;
+        if (!clone_ok) return false;
+
+        class S : public Space {
+        public:
+          WordVar x,y,q,rem,modulus;
+          S(void) : x(*this,4,WDT_SIGNED,8U,12U),
+            y(*this,4,WDT_SIGNED,2U,2U), q(*this,4,WDT_SIGNED),
+            rem(*this,4,WDT_SIGNED), modulus(*this,4,WDT_SIGNED) {
+            signed_div(*this,x,y,q); signed_rem(*this,x,y,rem);
+            signed_mod(*this,x,y,modulus);
+          }
+          S(S& s) : Space(s) {
+            x.update(*this,s.x); y.update(*this,s.y); q.update(*this,s.q);
+            rem.update(*this,s.rem); modulus.update(*this,s.modulus);
+          }
+          Space* copy(void) { return new S(*this); }
+        };
+        S s;
+        if ((s.status() == SS_FAILED) || (s.q.minimum() != 12U) ||
+            (s.q.maximum() != 14U) || (s.rem.minimum() != 15U) ||
+            (s.rem.maximum() != 0U) || (s.modulus.minimum() != 0U) ||
+            (s.modulus.maximum() != 1U))
+          return false;
+
+        class Exceptional : public Space {
+        public:
+          WordVar x,y,q,r,m;
+          Exceptional(unsigned int width, WordValue xv, WordValue yv)
+            : x(*this,width,WDT_SIGNED,xv,xv),
+              y(*this,width,WDT_SIGNED,yv,yv), q(*this,width,WDT_SIGNED),
+              r(*this,width,WDT_SIGNED), m(*this,width,WDT_SIGNED) {
+            signed_div(*this,x,y,q); signed_rem(*this,x,y,r);
+            signed_mod(*this,x,y,m);
+          }
+          Exceptional(Exceptional& s) : Space(s) {
+            x.update(*this,s.x); y.update(*this,s.y); q.update(*this,s.q);
+            r.update(*this,s.r); m.update(*this,s.m);
+          }
+          Space* copy(void) { return new Exceptional(*this); }
+        };
+        for (unsigned int width : {1U,64U}) {
+          const WordValue minimum=WordValue(1) << (width-1);
+          const WordValue minus_one=Gecode::Word::width_mask(width);
+          Exceptional e(width,minimum,minus_one);
+          if ((e.status() == SS_FAILED) || !e.q.assigned() ||
+              (e.q.val() != minimum) || !e.r.assigned() ||
+              (e.r.val() != 0U) || !e.m.assigned() || (e.m.val() != 0U))
+            return false;
+        }
+
+        class Constant : public Space {
+        public:
+          WordVar x,q,r;
+          Constant(void) : x(*this,6,WDT_UNSIGNED,20U,40U),
+            q(*this,6,WDT_UNSIGNED), r(*this,6,WDT_UNSIGNED) {
+            div(*this,x,6,5U,q); mod(*this,x,6,5U,r);
+          }
+          Constant(Constant& s) : Space(s) {
+            x.update(*this,s.x); q.update(*this,s.q); r.update(*this,s.r);
+          }
+          Space* copy(void) { return new Constant(*this); }
+        };
+        Constant constant;
+        if ((constant.status() == SS_FAILED) ||
+            (constant.q.minimum() != 4U) || (constant.q.maximum() != 8U) ||
+            (constant.r.maximum() != 4U))
+          return false;
+
+        class Alias : public Space {
+        public:
+          WordVar x,y;
+          Alias(bool quotient) : x(*this,4,WDT_UNSIGNED,1U,7U),
+            y(*this,4,WDT_UNSIGNED,1U,7U) {
+            if (quotient) div(*this,x,y,x); else mod(*this,x,y,x);
+          }
+          Alias(Alias& s) : Space(s) {
+            x.update(*this,s.x); y.update(*this,s.y);
+          }
+          Space* copy(void) { return new Alias(*this); }
+        };
+        Alias div_alias(true); dom(div_alias,div_alias.x,2U);
+        dom(div_alias,div_alias.y,1U);
+        if ((div_alias.status() == SS_FAILED) ||
+            !div_alias.x.assigned() || (div_alias.x.val() != 2U))
+          return false;
+        Alias mod_alias(false); dom(mod_alias,mod_alias.x,2U);
+        dom(mod_alias,mod_alias.y,3U);
+        if ((mod_alias.status() == SS_FAILED) ||
+            !mod_alias.x.assigned() || (mod_alias.x.val() != 2U))
+          return false;
+
+        class Failure : public Space {
+        public:
+          WordVar x,y,q;
+          Failure(void) : x(*this,4,WDT_UNSIGNED,10U,10U),
+            y(*this,4,WDT_UNSIGNED,3U,3U),
+            q(*this,4,WDT_UNSIGNED,2U,2U) { div(*this,x,y,q); }
+          Failure(Failure& s) : Space(s) {
+            x.update(*this,s.x); y.update(*this,s.y); q.update(*this,s.q);
+          }
+          Space* copy(void) { return new Failure(*this); }
+        };
+        Failure failure;
+        if (failure.status() != SS_FAILED) return false;
+
+        class Inverse : public Space {
+        public:
+          WordVar ux,uy,uq,ua,ub,ur,sx,sy,sq,sb,sr,sm;
+          Inverse(void)
+            : ux(*this,6,WDT_UNSIGNED),
+              uy(*this,6,WDT_UNSIGNED,4U,5U),
+              uq(*this,6,WDT_UNSIGNED,8U,8U),
+              ua(*this,4,WDT_UNSIGNED), ub(*this,4,WDT_UNSIGNED,4U,4U),
+              ur(*this,4,WDT_UNSIGNED,2U,2U),
+              sx(*this,4,WDT_SIGNED), sy(*this,4,WDT_SIGNED,3U,3U),
+              sq(*this,4,WDT_SIGNED,15U,15U),
+              sb(*this,4,WDT_SIGNED,1U,7U),
+              sr(*this,4,WDT_SIGNED,3U,3U),
+              sm(*this,4,WDT_SIGNED,3U,3U) {
+            div(*this,ux,uy,uq); mod(*this,ua,ub,ur);
+            signed_div(*this,sx,sy,sq);
+            signed_rem(*this,WordVar(*this,4,WDT_SIGNED),sb,sr);
+            signed_mod(*this,WordVar(*this,4,WDT_SIGNED),sb,sm);
+          }
+          Inverse(Inverse& s) : Space(s) {
+            ux.update(*this,s.ux); uy.update(*this,s.uy);
+            uq.update(*this,s.uq); ua.update(*this,s.ua);
+            ub.update(*this,s.ub); ur.update(*this,s.ur);
+            sx.update(*this,s.sx); sy.update(*this,s.sy);
+            sq.update(*this,s.sq); sb.update(*this,s.sb);
+            sr.update(*this,s.sr); sm.update(*this,s.sm);
+          }
+          Space* copy(void) { return new Inverse(*this); }
+        };
+        Inverse inverse;
+        if ((inverse.status() == SS_FAILED) ||
+            (inverse.ux.minimum() != 32U) ||
+            (inverse.ux.maximum() != 44U) ||
+            (inverse.ua.lo() != 2U) || (inverse.ua.hi() != 14U) ||
+            (inverse.sx.minimum() != 11U) ||
+            (inverse.sx.maximum() != 13U) ||
+            (inverse.sb.minimum() != 4U))
+          return false;
+
+        class Fallback : public Space {
+        public:
+          WordVar cube,bounded,result,sx,sy,sq;
+          Fallback(void)
+            : cube(*this,3,6U,6U),
+              bounded(*this,3,WDT_UNSIGNED,2U,2U),
+              result(*this,3,WDT_UNSIGNED),
+              sx(*this,3,WDT_SIGNED), sy(*this,3,WDT_SIGNED),
+              sq(*this,3,WDT_SIGNED) {
+            div(*this,cube,bounded,result);
+            signed_div(*this,sx,sy,sq);
+          }
+          Fallback(Fallback& s) : Space(s) {
+            cube.update(*this,s.cube); bounded.update(*this,s.bounded);
+            result.update(*this,s.result); sx.update(*this,s.sx);
+            sy.update(*this,s.sy); sq.update(*this,s.sq);
+          }
+          Space* copy(void) { return new Fallback(*this); }
+        };
+        Fallback fallback;
+        if ((fallback.status() == SS_FAILED) ||
+            !fallback.result.assigned() || (fallback.result.val() != 3U))
+          return false;
+        Fallback* fallback_clone=static_cast<Fallback*>(fallback.clone());
+        dom(*fallback_clone,fallback_clone->sx,4U);
+        dom(*fallback_clone,fallback_clone->sy,7U);
+        const bool fallback_ok=(fallback_clone->status() != SS_FAILED) &&
+          fallback_clone->sq.assigned() && (fallback_clone->sq.val() == 4U);
+        delete fallback_clone;
+        if (!fallback_ok) return false;
+
+        class UnsignedSelf : public Space {
+        public:
+          WordVar x,dq,mr,bq,br;
+          UnsignedSelf(unsigned int width, WordValue minimum,
+                       WordValue maximum)
+            : x(*this,width,WDT_UNSIGNED,minimum,maximum),
+              dq(*this,width,WDT_UNSIGNED), mr(*this,width,WDT_UNSIGNED),
+              bq(*this,width,WDT_UNSIGNED), br(*this,width,WDT_UNSIGNED) {
+            div(*this,x,x,dq); mod(*this,x,x,mr);
+            divmod(*this,x,x,bq,br);
+          }
+          UnsignedSelf(UnsignedSelf& s) : Space(s) {
+            x.update(*this,s.x); dq.update(*this,s.dq);
+            mr.update(*this,s.mr); bq.update(*this,s.bq);
+            br.update(*this,s.br);
+          }
+          Space* copy(void) { return new UnsignedSelf(*this); }
+        };
+        class SignedSelf : public Space {
+        public:
+          WordVar x,q,r,m;
+          SignedSelf(unsigned int width, WordValue minimum,
+                     WordValue maximum)
+            : x(*this,width,WDT_SIGNED,minimum,maximum),
+              q(*this,width,WDT_SIGNED), r(*this,width,WDT_SIGNED),
+              m(*this,width,WDT_SIGNED) {
+            signed_div(*this,x,x,q); signed_rem(*this,x,x,r);
+            signed_mod(*this,x,x,m);
+          }
+          SignedSelf(SignedSelf& s) : Space(s) {
+            x.update(*this,s.x); q.update(*this,s.q);
+            r.update(*this,s.r); m.update(*this,s.m);
+          }
+          Space* copy(void) { return new SignedSelf(*this); }
+        };
+        for (unsigned int width : {1U,64U}) {
+          const WordValue mask=Gecode::Word::width_mask(width);
+          UnsignedSelf un(width,1U,(width == 1) ? 1U : 3U);
+          if ((un.status() == SS_FAILED) || !un.dq.assigned() ||
+              (un.dq.val() != 1U) || !un.mr.assigned() ||
+              (un.mr.val() != 0U) || !un.bq.assigned() ||
+              (un.bq.val() != 1U) || !un.br.assigned() ||
+              (un.br.val() != 0U) ||
+              (PropagatorGroup::all.size(un) != 0U))
+            return false;
+          UnsignedSelf uz(width,0U,0U);
+          if ((uz.status() == SS_FAILED) || !uz.dq.assigned() ||
+              (uz.dq.val() != mask) || !uz.mr.assigned() ||
+              (uz.mr.val() != 0U) || !uz.bq.assigned() ||
+              (uz.bq.val() != mask) || !uz.br.assigned() ||
+              (uz.br.val() != 0U) ||
+              (PropagatorGroup::all.size(uz) != 0U))
+            return false;
+          SignedSelf sn(width,mask-((width == 1) ? 0U : 2U),mask);
+          if ((sn.status() == SS_FAILED) || !sn.q.assigned() ||
+              (sn.q.val() != 1U) || !sn.r.assigned() ||
+              (sn.r.val() != 0U) || !sn.m.assigned() ||
+              (sn.m.val() != 0U) ||
+              (PropagatorGroup::all.size(sn) != 0U))
+            return false;
+          SignedSelf sz(width,0U,0U);
+          if ((sz.status() == SS_FAILED) || !sz.q.assigned() ||
+              (sz.q.val() != mask) || !sz.r.assigned() ||
+              (sz.r.val() != 0U) || !sz.m.assigned() ||
+              (sz.m.val() != 0U) ||
+              (PropagatorGroup::all.size(sz) != 0U))
+            return false;
+        }
+        UnsignedSelf possible(3,0U,7U);
+        if ((possible.status() == SS_FAILED) ||
+            !possible.mr.assigned() || (possible.mr.val() != 0U) ||
+            !possible.br.assigned() || (possible.br.val() != 0U) ||
+            (PropagatorGroup::all.size(possible) != 2U))
+          return false;
+        UnsignedSelf* possible_clone=
+          static_cast<UnsignedSelf*>(possible.clone());
+        dom(*possible_clone,possible_clone->x,0U);
+        const bool possible_ok=(possible_clone->status() != SS_FAILED) &&
+          possible_clone->dq.assigned() && (possible_clone->dq.val() == 7U) &&
+          possible_clone->bq.assigned() && (possible_clone->bq.val() == 7U) &&
+          (PropagatorGroup::all.size(*possible_clone) == 0U);
+        delete possible_clone;
+        if (!possible_ok) return false;
+        return true;
+      }
+
+      static bool division_replay(void) {
+        using namespace Gecode;
+        class R : public Space {
+        public:
+          WordVar x,y,q,r;
+          R(void) : x(*this,3,WDT_UNSIGNED),
+            y(*this,3,WDT_UNSIGNED,1U,7U), q(*this,3,WDT_UNSIGNED),
+            r(*this,3,WDT_UNSIGNED) {
+            divmod(*this,x,y,q,r);
+            WordVarArgs decision={x,y};
+            branch(*this,decision,WORD_VAR_NONE(),WORD_VAL_SPLIT_MIN());
+          }
+          R(R& s) : Space(s) {
+            x.update(*this,s.x); y.update(*this,s.y);
+            q.update(*this,s.q); r.update(*this,s.r);
+          }
+          Space* copy(void) { return new R(*this); }
+        };
+        Search::Options o; o.c_d=1;
+        R* root=new R; DFS<R> dfs(root,o); delete root;
+        unsigned int solutions=0;
+        while (R* s=dfs.next()) {
+          const bool ok=s->x.assigned() && s->y.assigned() &&
+            s->q.assigned() && s->r.assigned() &&
+            (s->q.val() == s->x.val()/s->y.val()) &&
+            (s->r.val() == s->x.val()%s->y.val()) &&
+            (PropagatorGroup::all.size(*s) == 0U);
+          delete s;
+          if (!ok) return false;
+          solutions++;
+        }
+        if (solutions != 56U) return false;
+        class SelfReplay : public Space {
+        public:
+          WordVar x,q,r;
+          SelfReplay(void) : x(*this,3,WDT_UNSIGNED,1U,7U),
+            q(*this,3,WDT_UNSIGNED), r(*this,3,WDT_UNSIGNED) {
+            divmod(*this,x,x,q,r);
+            branch(*this,x,WORD_VAL_SPLIT_MIN());
+          }
+          SelfReplay(SelfReplay& s) : Space(s) {
+            x.update(*this,s.x); q.update(*this,s.q); r.update(*this,s.r);
+          }
+          Space* copy(void) { return new SelfReplay(*this); }
+        };
+        SelfReplay* self_root=new SelfReplay;
+        DFS<SelfReplay> self_dfs(self_root,o); delete self_root;
+        unsigned int self_solutions=0;
+        while (SelfReplay* s=self_dfs.next()) {
+          const bool ok=s->x.assigned() && s->q.assigned() &&
+            (s->q.val() == 1U) && s->r.assigned() &&
+            (s->r.val() == 0U) &&
+            (PropagatorGroup::all.size(*s) == 0U);
+          delete s;
+          if (!ok) return false;
+          self_solutions++;
+        }
+        return self_solutions == 7U;
+      }
+
       static bool propagation(void) {
         using namespace Gecode;
         class UAdd : public Space {
@@ -2423,7 +2827,8 @@ namespace Test { namespace Word {
     public:
       BoundedLifecycle(void) : Base("Word::Arithmetic::BoundedLifecycle") {}
       virtual bool run(void) {
-        return propagation() && boundaries_aliases() && replay();
+        return division_truth() && division_propagation() &&
+          division_replay() && propagation() && boundaries_aliases() && replay();
       }
     };
 

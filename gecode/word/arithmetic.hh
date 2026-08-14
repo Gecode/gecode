@@ -368,6 +368,7 @@ namespace Gecode { namespace Word { namespace Arithmetic {
 #include <gecode/word/arithmetic/bounded.hpp>
 #include <gecode/word/arithmetic/divmod.hpp>
 #include <gecode/word/arithmetic/signed-divmod.hpp>
+#include <gecode/word/arithmetic/bounded-divmod.hpp>
 
 #endif
 

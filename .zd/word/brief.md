@@ -2246,6 +2246,53 @@ and TestFramework pass.  A separate Release build with `-Wall -Wextra
 oracles, linked baseline/candidate identities, and a 22-entry SHA-256 manifest
 are under `/private/tmp/word074-evidence`; no benchmark artifact is tracked.
 
+### Bounded division families
+
+Unsigned div, mod, and combined divmod now use transactional bounded actors
+when every Word operand has `WDT_UNSIGNED` and the divisor is either the
+singleton zero or excludes zero.  Signed div, rem, and mod similarly require
+matching `WDT_SIGNED` operands and a divisor whose zero and sign regime is
+settled.  Constants inherit the matching bounded kind when this preserves a
+homogeneous posting.  Cube variables, mixed kinds, and ambiguous zero-crossing
+divisors retain the established cube actors.
+
+Each bounded propagation snapshots and groups aliased roles, closes cube and
+numeric rules locally, and publishes each distinct external Word view once.
+The rules preserve the exact SMT-LIB divisor-zero row and signed
+minimum-divided-by-minus-one result.  Unsigned propagation includes quotient
+and remainder bounds, `r < divisor`, power-of-two bit information, and checked
+combined `dividend = quotient*divisor + remainder` inverses.  Signed
+propagation uses overflow-safe endpoint division, fixed-divisor inverses, and
+the required remainder/modulus sign and magnitude relationships.  Width-64
+products and endpoint operations use division-before-multiplication or
+equivalent checked arithmetic.
+
+Self-divisor aliases retain the established posting identities rather than
+relying on weaker interval hulls: nonzero `x/x` is one, all self-remainders
+are zero, and singleton zero uses the exact SMT-LIB quotient/remainder row.
+Fully reduced identities subsume without leaving a bounded actor; domains in
+which zero is still possible continue through the cube fallback.
+
+The ordinary bounded division lifecycle exhausts assigned truth through width
+four for all six public operation families, including combined divmod.  It
+also covers inverse and power-of-two propagation, constants, aliases,
+failure, immediate subsumption, width-1 and width-64 exceptional rows,
+cloning, mixed/cube/zero-crossing fallback, and genuine `c_d=1` replay.
+Existing cube division and signed-division lifecycles remain unchanged and
+green.
+
+Against exact baseline `123f73a5ec0e858d3dc556ed3c3a6599629d1564`,
+bounded contradiction pipelines for all six operations fail at posting.  The
+largest cube baselines require 3,209,381 nodes for unsigned mod, 24,466,441
+for signed div, and 5,326,661 for each signed rem/mod; representative wall
+times are 0.48, 3.02, and 0.66--0.68 seconds, while bounded runs are below the
+timer's 0.01-second resolution.  Unsigned div and combined divmod fall from
+three nodes to posting-time failure.  These are exact unsatisfiable models,
+not repeated roots.  Release Arithmetic, MiniModel arithmetic, TestFramework,
+and a `-Wall -Wextra` word-library build pass.  Commands, raw counters and
+timings, rpath identities, and source/binary SHA-256 values are recorded in
+`/private/tmp/word075-evidence.md`; no benchmark artifact is tracked.
+
 ## Boundaries
 
 - This area is a full implementation spike, not a battle-hardening exercise. Each task must follow established Gecode patterns, reuse normal framework and test machinery, and avoid novel infrastructure, special-case test paths, exhaustive edge-case campaigns, or verification beyond what is proportionate to getting the implementation working.
