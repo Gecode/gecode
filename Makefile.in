@@ -558,7 +558,7 @@ WORDSRC0 = \
 	conditional.cpp element.cpp logic.cpp rel.cpp structure.cpp trace.cpp trace/tracer.cpp \
 	var/word.cpp var-imp/word.cpp
 WORDHDR0 = \
-	arithmetic.hh arithmetic/add.hpp arithmetic/neg-sub.hpp arithmetic/mult.hpp arithmetic/product-mod.hpp arithmetic/divmod.hpp \
+	arithmetic.hh arithmetic/add.hpp arithmetic/neg-sub.hpp arithmetic/mult.hpp arithmetic/bounded.hpp arithmetic/product-mod.hpp arithmetic/divmod.hpp \
 	arithmetic/signed-divmod.hpp \
 	array.hpp array-traits.hpp branch.hh branch.hpp branch/traits.hpp \
 	channel.hh channel/bit.hpp channel/reduction.hpp element.hh element/view.hpp \

@@ -120,8 +120,9 @@ namespace Gecode { namespace Word { namespace Arithmetic {
     return tables;
   }
 
+  template<class View>
   forceinline ExecStatus
-  add_narrow(Home home, WordView x, WordView y, WordView z,
+  add_narrow(Home home, View x, View y, View z,
              unsigned int terminal, unsigned int& final) {
     const unsigned int width = x.width();
     const bool xy = x == y;

@@ -232,8 +232,9 @@ namespace Gecode { namespace Word { namespace Arithmetic {
     return mult_narrow_low(ylo,yhi,result_bits,result);
   }
 
+  template<class View>
   forceinline ExecStatus
-  Mult::narrow(Home home, WordView x, WordView y, WordView z) {
+  mult_narrow_views(Home home, View x, View y, View z) {
     const unsigned int width = x.width();
     WordValue lo[] = {x.lo(),y.lo(),z.lo()};
     WordValue hi[] = {x.hi(),y.hi(),z.hi()};
@@ -302,6 +303,11 @@ namespace Gecode { namespace Word { namespace Arithmetic {
     if ((z.lo() != lo[2]) || (z.hi() != hi[2]))
       GECODE_ME_CHECK(z.narrow(home,lo[2],hi[2]));
     return ES_OK;
+  }
+
+  forceinline ExecStatus
+  Mult::narrow(Home home, WordView x, WordView y, WordView z) {
+    return mult_narrow_views(home,x,y,z);
   }
 
   forceinline ExecStatus

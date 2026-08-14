@@ -250,6 +250,90 @@ namespace Test { namespace Word { namespace Overflow {
       return solutions == 16;
     }
 
+    static bool bounded(void) {
+      using namespace Gecode;
+      class B : public Space {
+      public:
+        WordVar x,y,sum,difference;
+        BoolVar carry,borrow,overflow_flag;
+        B(void)
+          : x(*this,4,WDT_UNSIGNED,2U,4U),
+            y(*this,4,WDT_UNSIGNED,3U,5U),
+            sum(*this,4,WDT_UNSIGNED),
+            difference(*this,4,WDT_UNSIGNED),
+            carry(*this,0,1), borrow(*this,0,1), overflow_flag(*this,0,1) {
+          add(*this,x,y,sum,carry);
+          sub(*this,y,x,difference,borrow);
+          overflow(*this,x,WOF_ADD_UNSIGNED,y,overflow_flag);
+        }
+        B(B& s) : Space(s) {
+          x.update(*this,s.x); y.update(*this,s.y);
+          sum.update(*this,s.sum); difference.update(*this,s.difference);
+          carry.update(*this,s.carry); borrow.update(*this,s.borrow);
+          overflow_flag.update(*this,s.overflow_flag);
+        }
+        Space* copy(void) { return new B(*this); }
+      };
+      B source;
+      if ((source.status() == SS_FAILED) || !source.carry.zero() ||
+          !source.overflow_flag.zero() || (source.sum.minimum() != 5U) ||
+          (source.sum.maximum() != 9U))
+        return false;
+      B* clone=static_cast<B*>(source.clone());
+      dom(*clone,clone->x,4U); dom(*clone,clone->y,3U);
+      const bool clone_ok=(clone->status() != SS_FAILED) &&
+        clone->sum.assigned() && (clone->sum.val() == 7U) &&
+        clone->difference.assigned() && (clone->difference.val() == 15U) &&
+        clone->borrow.one() && !source.sum.assigned();
+      delete clone;
+      if (!clone_ok) return false;
+
+      class Wrap : public Space {
+      public:
+        WordVar x,y,z; BoolVar carry;
+        Wrap(void) : x(*this,4,WDT_UNSIGNED,15U,15U),
+          y(*this,4,WDT_UNSIGNED,1U,2U), z(*this,4,WDT_UNSIGNED),
+          carry(*this,0,1) { add(*this,x,y,z,carry); }
+        Wrap(Wrap& s) : Space(s) {
+          x.update(*this,s.x);y.update(*this,s.y);z.update(*this,s.z);
+          carry.update(*this,s.carry);
+        }
+        Space* copy(void) { return new Wrap(*this); }
+      };
+      Wrap wrap;
+      if ((wrap.status() == SS_FAILED) || !wrap.carry.one())
+        return false;
+
+      class Replay : public Space {
+      public:
+        WordVar x,y,z; BoolVar carry;
+        Replay(void) : x(*this,2,WDT_UNSIGNED), y(*this,2,WDT_UNSIGNED),
+          z(*this,2,WDT_UNSIGNED), carry(*this,0,1) {
+          add(*this,x,y,z,carry);
+          WordVarArgs a={x,y}; branch(*this,a,WORD_VAR_NONE(),WORD_VAL_SPLIT_MIN());
+        }
+        Replay(Replay& s) : Space(s) {
+          x.update(*this,s.x);y.update(*this,s.y);z.update(*this,s.z);
+          carry.update(*this,s.carry);
+        }
+        Space* copy(void) { return new Replay(*this); }
+      };
+      Replay* root=new Replay;
+      Search::Options o; o.c_d=1;
+      DFS<Replay> dfs(root,o); delete root;
+      unsigned int solutions=0;
+      while (Replay* s=dfs.next()) {
+        const WordValue total=s->x.val()+s->y.val();
+        const bool ok=s->z.assigned() && s->carry.assigned() &&
+          (s->z.val() == (total&3U)) &&
+          (s->carry.val() == static_cast<int>(total>3U));
+        delete s;
+        if (!ok) return false;
+        solutions++;
+      }
+      return solutions == 16U;
+    }
+
     static bool minimodel(void) {
       S s;
       Gecode::BoolExpr e = Gecode::overflow(Gecode::WordExpr(s.x),
@@ -262,7 +346,7 @@ namespace Test { namespace Word { namespace Overflow {
     Lifecycle(void) : Base("Word::Overflow::Lifecycle") {}
     virtual bool run(void) {
       return backward_and_clone() && seams_alias_failure() && minimodel() &&
-        recomputation();
+        recomputation() && bounded();
     }
   };
 

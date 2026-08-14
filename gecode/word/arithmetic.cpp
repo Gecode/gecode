@@ -48,7 +48,45 @@ namespace Gecode {
       return c.val();
     }
 
+    bool matching_bounded(WordVar x, WordVar y, WordVar z,
+                          WordDomainType& kind) {
+      kind=x.domain_type();
+      return (kind != WDT_CUBE) && (y.domain_type() == kind) &&
+        (z.domain_type() == kind);
+    }
+
+    WordVar assigned_for(Home home, unsigned int width, WordValue value,
+                         WordVar x, WordVar result) {
+      const WordDomainType kind=(x.domain_type() == result.domain_type()) ?
+        x.domain_type() : WDT_CUBE;
+      return kind == WDT_CUBE ? WordVar(home,width,value,value) :
+        WordVar(home,width,kind,value,value);
+    }
+
     void post_add(Home home, WordVar x, WordVar y, WordVar result) {
+      WordDomainType kind;
+      if (matching_bounded(x,y,result,kind)) {
+        if ((kind == WDT_UNSIGNED) &&
+            Word::Arithmetic::BoundArithmetic<Word::UnsignedWordView,
+              Word::Arithmetic::BA_ADD>::numeric_regime(
+                Word::UnsignedWordView(x),Word::UnsignedWordView(y)))
+          GECODE_ES_FAIL((Word::Arithmetic::BoundArithmetic<
+            Word::UnsignedWordView,Word::Arithmetic::BA_ADD>::post(
+              home,Word::UnsignedWordView(x),Word::UnsignedWordView(y),
+              Word::UnsignedWordView(result))));
+        else if ((kind == WDT_SIGNED) &&
+                 Word::Arithmetic::BoundArithmetic<Word::SignedWordView,
+                   Word::Arithmetic::BA_ADD>::numeric_regime(
+                     Word::SignedWordView(x),Word::SignedWordView(y)))
+          GECODE_ES_FAIL((Word::Arithmetic::BoundArithmetic<
+            Word::SignedWordView,Word::Arithmetic::BA_ADD>::post(
+              home,Word::SignedWordView(x),Word::SignedWordView(y),
+              Word::SignedWordView(result))));
+        else
+          goto cube_add;
+        return;
+      }
+    cube_add:
       GECODE_ES_FAIL(Word::Arithmetic::Add::post(
                        home,Word::WordView(x),Word::WordView(y),
                        Word::WordView(result)));
@@ -82,17 +120,62 @@ namespace Gecode {
 
     void post_add_carry(Home home, WordVar x, WordVar y, WordVar result,
                         BoolVar carry) {
+      if ((x.domain_type() == WDT_UNSIGNED) &&
+          (y.domain_type() == WDT_UNSIGNED) &&
+          (result.domain_type() == WDT_UNSIGNED) &&
+          Word::Arithmetic::BoundFlagArithmetic<Word::UnsignedWordView,
+            Word::Arithmetic::BA_ADD>::numeric_regime(
+              Word::UnsignedWordView(x),Word::UnsignedWordView(y),
+              Int::BoolView(carry))) {
+        GECODE_ES_FAIL((Word::Arithmetic::BoundFlagArithmetic<
+          Word::UnsignedWordView,Word::Arithmetic::BA_ADD>::post(
+            home,Word::UnsignedWordView(x),Word::UnsignedWordView(y),
+            Word::UnsignedWordView(result),Int::BoolView(carry))));
+        return;
+      }
       GECODE_ES_FAIL(Word::Arithmetic::AddCarry::post(
                        home,Word::WordView(x),Word::WordView(y),
                        Word::WordView(result),Int::BoolView(carry)));
     }
 
     void post_neg(Home home, WordVar x, WordVar result) {
+      if ((x.domain_type() == WDT_SIGNED) &&
+          (result.domain_type() == WDT_SIGNED) &&
+          Word::Arithmetic::BoundNeg<Word::SignedWordView>::numeric_regime(
+            Word::SignedWordView(x))) {
+        GECODE_ES_FAIL((Word::Arithmetic::BoundNeg<
+          Word::SignedWordView>::post(home,Word::SignedWordView(x),
+                                     Word::SignedWordView(result))));
+        return;
+      }
       GECODE_ES_FAIL(Word::Arithmetic::Neg::post(
                        home,Word::WordView(x),Word::WordView(result)));
     }
 
     void post_sub(Home home, WordVar x, WordVar y, WordVar result) {
+      WordDomainType kind;
+      if (matching_bounded(x,y,result,kind)) {
+        if ((kind == WDT_UNSIGNED) &&
+            Word::Arithmetic::BoundArithmetic<Word::UnsignedWordView,
+              Word::Arithmetic::BA_SUB>::numeric_regime(
+                Word::UnsignedWordView(x),Word::UnsignedWordView(y)))
+          GECODE_ES_FAIL((Word::Arithmetic::BoundArithmetic<
+            Word::UnsignedWordView,Word::Arithmetic::BA_SUB>::post(
+              home,Word::UnsignedWordView(x),Word::UnsignedWordView(y),
+              Word::UnsignedWordView(result))));
+        else if ((kind == WDT_SIGNED) &&
+                 Word::Arithmetic::BoundArithmetic<Word::SignedWordView,
+                   Word::Arithmetic::BA_SUB>::numeric_regime(
+                     Word::SignedWordView(x),Word::SignedWordView(y)))
+          GECODE_ES_FAIL((Word::Arithmetic::BoundArithmetic<
+            Word::SignedWordView,Word::Arithmetic::BA_SUB>::post(
+              home,Word::SignedWordView(x),Word::SignedWordView(y),
+              Word::SignedWordView(result))));
+        else
+          goto cube_sub;
+        return;
+      }
+    cube_sub:
       GECODE_ES_FAIL(Word::Arithmetic::Sub::post(
                        home,Word::WordView(x),Word::WordView(y),
                        Word::WordView(result)));
@@ -100,12 +183,48 @@ namespace Gecode {
 
     void post_sub_borrow(Home home, WordVar x, WordVar y, WordVar result,
                          BoolVar borrow) {
+      if ((x.domain_type() == WDT_UNSIGNED) &&
+          (y.domain_type() == WDT_UNSIGNED) &&
+          (result.domain_type() == WDT_UNSIGNED) &&
+          Word::Arithmetic::BoundFlagArithmetic<Word::UnsignedWordView,
+            Word::Arithmetic::BA_SUB>::numeric_regime(
+              Word::UnsignedWordView(x),Word::UnsignedWordView(y),
+              Int::BoolView(borrow))) {
+        GECODE_ES_FAIL((Word::Arithmetic::BoundFlagArithmetic<
+          Word::UnsignedWordView,Word::Arithmetic::BA_SUB>::post(
+            home,Word::UnsignedWordView(x),Word::UnsignedWordView(y),
+            Word::UnsignedWordView(result),Int::BoolView(borrow))));
+        return;
+      }
       GECODE_ES_FAIL(Word::Arithmetic::SubBorrow::post(
                        home,Word::WordView(x),Word::WordView(y),
                        Word::WordView(result),Int::BoolView(borrow)));
     }
 
     void post_mult(Home home, WordVar x, WordVar y, WordVar result) {
+      WordDomainType kind;
+      if (matching_bounded(x,y,result,kind)) {
+        if ((kind == WDT_UNSIGNED) &&
+            Word::Arithmetic::BoundArithmetic<Word::UnsignedWordView,
+              Word::Arithmetic::BA_MULT>::numeric_regime(
+                Word::UnsignedWordView(x),Word::UnsignedWordView(y)))
+          GECODE_ES_FAIL((Word::Arithmetic::BoundArithmetic<
+            Word::UnsignedWordView,Word::Arithmetic::BA_MULT>::post(
+              home,Word::UnsignedWordView(x),Word::UnsignedWordView(y),
+              Word::UnsignedWordView(result))));
+        else if ((kind == WDT_SIGNED) &&
+                 Word::Arithmetic::BoundArithmetic<Word::SignedWordView,
+                   Word::Arithmetic::BA_MULT>::numeric_regime(
+                     Word::SignedWordView(x),Word::SignedWordView(y)))
+          GECODE_ES_FAIL((Word::Arithmetic::BoundArithmetic<
+            Word::SignedWordView,Word::Arithmetic::BA_MULT>::post(
+              home,Word::SignedWordView(x),Word::SignedWordView(y),
+              Word::SignedWordView(result))));
+        else
+          goto cube_mult;
+        return;
+      }
+    cube_mult:
       GECODE_ES_FAIL(Word::Arithmetic::Mult::post(
                        home,Word::WordView(x),Word::WordView(y),
                        Word::WordView(result)));
@@ -158,7 +277,9 @@ namespace Gecode {
     void post_signed_add_overflow(Home home, WordVar x, WordVar y,
                                   BoolVar overflow) {
       const unsigned int width = x.width();
-      WordVar result(home,width);
+      WordVar result=(x.domain_type() == WDT_SIGNED &&
+                      y.domain_type() == WDT_SIGNED) ?
+        WordVar(home,width,WDT_SIGNED) : WordVar(home,width);
       post_add(home,x,y,result);
       BoolVar x_sign(home,0,1), y_sign(home,0,1), result_sign(home,0,1);
       channel(home,x,width-1,x_sign);
@@ -173,9 +294,14 @@ namespace Gecode {
     void post_unsigned_mult_overflow(Home home, WordVar x, WordVar y,
                                      BoolVar overflow) {
       const unsigned int width = x.width();
-      WordVar maximum(home,width,Word::width_mask(width),
-                      Word::width_mask(width));
-      WordVar quotient(home,width);
+      const bool bounded=(x.domain_type() == WDT_UNSIGNED) &&
+        (y.domain_type() == WDT_UNSIGNED);
+      WordVar maximum=bounded ?
+        WordVar(home,width,WDT_UNSIGNED,Word::width_mask(width),
+                Word::width_mask(width)) :
+        WordVar(home,width,Word::width_mask(width),Word::width_mask(width));
+      WordVar quotient=bounded ? WordVar(home,width,WDT_UNSIGNED) :
+        WordVar(home,width);
       post_divmod(home,maximum,x,quotient,true);
       rel(home,y,WRT_UGR,quotient,Reify(overflow,RM_EQV));
     }
@@ -241,7 +367,7 @@ namespace Gecode {
       throw Word::WidthMismatch("Word::add");
     value = checked_value(width,value);
     GECODE_POST;
-    WordVar y(home,width,value,value);
+    WordVar y=assigned_for(home,width,value,x,result);
     post_add(home,x,y,result);
   }
 
@@ -284,7 +410,7 @@ namespace Gecode {
       throw Word::WidthMismatch("Word::sub");
     value = checked_value(width,value);
     GECODE_POST;
-    WordVar y(home,width,value,value);
+    WordVar y=assigned_for(home,width,value,x,result);
     post_sub(home,x,y,result);
   }
 
@@ -295,7 +421,7 @@ namespace Gecode {
       throw Word::WidthMismatch("Word::sub");
     value = checked_value(width,value);
     GECODE_POST;
-    WordVar x(home,width,value,value);
+    WordVar x=assigned_for(home,width,value,y,result);
     post_sub(home,x,y,result);
   }
 
@@ -313,7 +439,7 @@ namespace Gecode {
       throw Word::WidthMismatch("Word::mult");
     value = checked_value(width,value);
     GECODE_POST;
-    WordVar y(home,width,value,value);
+    WordVar y=assigned_for(home,width,value,x,result);
     post_mult(home,x,y,result);
   }
 
@@ -373,7 +499,9 @@ namespace Gecode {
     GECODE_POST;
     switch (wot) {
     case WOF_ADD_UNSIGNED: {
-      WordVar result(home,x.width());
+      WordVar result=(x.domain_type() == WDT_UNSIGNED &&
+                      y.domain_type() == WDT_UNSIGNED) ?
+        WordVar(home,x.width(),WDT_UNSIGNED) : WordVar(home,x.width());
       post_add_carry(home,x,y,result,b);
       break;
     }

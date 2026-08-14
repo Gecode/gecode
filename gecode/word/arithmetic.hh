@@ -365,6 +365,7 @@ namespace Gecode { namespace Word { namespace Arithmetic {
 #include <gecode/word/arithmetic/neg-sub.hpp>
 #include <gecode/word/arithmetic/mult.hpp>
 #include <gecode/word/arithmetic/product-mod.hpp>
+#include <gecode/word/arithmetic/bounded.hpp>
 #include <gecode/word/arithmetic/divmod.hpp>
 #include <gecode/word/arithmetic/signed-divmod.hpp>
 

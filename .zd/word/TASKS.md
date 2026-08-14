@@ -4,8 +4,8 @@
 
 - Total: 77
 - Ready: 1
-- Blocked: 3
-- Done: 73
+- Blocked: 2
+- Done: 74
 
 | ID | Task | State | Blocked by |
 | --- | --- | --- | --- |
@@ -82,7 +82,7 @@
 | [word-071](tasks/071-implement-optional-signed-and-unsigned-bounded-wordvar-domai.md) | Implement optional signed and unsigned bounded WordVar domains | done | — |
 | [word-072](tasks/072-add-bounded-word-branching-tracing-and-minimodel-policy.md) | Add bounded Word branching tracing and MiniModel policy | done | word-071 |
 | [word-073](tasks/073-migrate-word-relations-to-optional-numeric-bounds.md) | Migrate Word relations to optional numeric bounds | done | word-072 |
-| [word-074](tasks/074-migrate-core-word-arithmetic-to-optional-numeric-bounds.md) | Migrate core Word arithmetic to optional numeric bounds | ready | word-073 |
-| [word-075](tasks/075-migrate-unsigned-and-signed-word-division-families-to-bounds.md) | Migrate unsigned and signed Word division families to bounds | blocked | word-074 |
+| [word-074](tasks/074-migrate-core-word-arithmetic-to-optional-numeric-bounds.md) | Migrate core Word arithmetic to optional numeric bounds | done | word-073 |
+| [word-075](tasks/075-migrate-unsigned-and-signed-word-division-families-to-bounds.md) | Migrate unsigned and signed Word division families to bounds | ready | word-074 |
 | [word-076](tasks/076-measure-and-migrate-structural-and-mixed-word-constraints.md) | Measure and migrate structural and mixed Word constraints | blocked | word-075 |
 | [word-077](tasks/077-complete-and-publish-the-bounded-wordvar-contract.md) | Complete and publish the bounded WordVar contract | blocked | word-076 |

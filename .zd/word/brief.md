@@ -2198,6 +2198,54 @@ The temporary public-API benchmark sources and raw five-trial results are
 `/private/tmp/word073-word-cycle.out`, and
 `/private/tmp/word073-int-cycle.out`; no benchmark artifact is tracked.
 
+### Bounded core arithmetic
+
+Binary add, subtract, and multiply now select a bounded actor only when all
+Word operands have the same signed or unsigned interpretation and their
+current endpoints establish a useful non-wrapping numeric regime.  Signed
+negation uses the bounded actor when its interval excludes the signed-minimum
+modular singularity.  Otherwise, including mixed domains and unclassified
+wrapping intervals, posting deliberately retains the existing cube actor.
+Unsigned negation was rejected because modular negation has no useful general
+single-interval image beyond the zero singleton.  N-ary addition is unchanged.
+
+Each bounded actor snapshots cube masks and ranked endpoints, maps aliased
+roles to the same local domain, closes the existing exact cube rules together
+with sound numeric rules, and publishes each distinct external view once.
+Unsigned carry and borrow use the bounded path when endpoints or an assigned
+flag establish the terminal regime.  Overflow compositions preserve bounded
+intermediate variables where this makes the carry or product classification
+useful.  Boolean flag publication is deferred until the local Word transaction
+succeeds.  Public modular semantics and the number of actors posted per
+constraint do not change.
+
+The ordinary lifecycle tests cover signed and unsigned Add, Sub, Mult, signed
+Neg, carry, borrow, and overflow at non-wrapping and wrapping boundaries.
+They include aliases, signed extrema, widths 1 and 64, failure, cloning,
+subsumption, and genuine `c_d=1` replay.  Independent width-three public-API
+oracles pass 1,728 Add/Sub/Mult/Neg roots and 432 carry/borrow roots for both
+interpretations.
+
+Against exact baseline `1fe8a8e71f0d4f5bcb6f7c8c69f4eab7d159bc6c`,
+an unsatisfiable bounded multiplication-plus-order model falls from 21 search
+nodes, 11 failures, and 33 recorded propagations to a posting-time
+contradiction, with five-trial median time falling from 83.7 to 33.4
+microseconds.  A four-add bounded chain similarly falls from 329 nodes, 165
+failures, and 418 propagations to a posting-time contradiction, and from 179.3
+to 39.2 microseconds.  The unsigned symbolic ALU has identical 902
+propagations, 23 nodes, and zero failures, with medians 0.09906 and 0.09926 ms.
+Cube ALU, Speck-style ARX, and reduced MD5 controls preserve exact counters and
+show no repeatable timing regression.  An initially broader bounded-actor
+route increased ALU propagation by about 6.5 percent; the retained posting
+classification removes that variant rather than carrying speculative
+overhead.
+
+Release Arithmetic (16 groups), Overflow (18 groups), MiniModel arithmetic,
+and TestFramework pass.  A separate Release build with `-Wall -Wextra
+-Wpedantic` is clean.  Commands, interleaved raw trials, one-second profiles,
+oracles, linked baseline/candidate identities, and a 22-entry SHA-256 manifest
+are under `/private/tmp/word074-evidence`; no benchmark artifact is tracked.
+
 ## Boundaries
 
 - This area is a full implementation spike, not a battle-hardening exercise. Each task must follow established Gecode patterns, reuse normal framework and test machinery, and avoid novel infrastructure, special-case test paths, exhaustive edge-case campaigns, or verification beyond what is proportionate to getting the implementation working.

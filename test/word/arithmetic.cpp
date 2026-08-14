@@ -2138,6 +2138,295 @@ namespace Test { namespace Word {
       }
     };
 
+    class BoundedLifecycle : public Base {
+    private:
+      static bool propagation(void) {
+        using namespace Gecode;
+        class UAdd : public Space {
+        public:
+          WordVar x,y,z;
+          UAdd(void)
+            : x(*this,4,WDT_UNSIGNED,2,4),
+              y(*this,4,WDT_UNSIGNED,3,5),
+              z(*this,4,WDT_UNSIGNED) { add(*this,x,y,z); }
+          UAdd(UAdd& s) : Space(s) {
+            x.update(*this,s.x); y.update(*this,s.y); z.update(*this,s.z);
+          }
+          Space* copy(void) { return new UAdd(*this); }
+        };
+        UAdd ua;
+        if ((ua.status() == SS_FAILED) || (ua.z.minimum() != 5) ||
+            (ua.z.maximum() != 9))
+          return false;
+        UAdd* clone=static_cast<UAdd*>(ua.clone());
+        dom(*clone,clone->x,4U); dom(*clone,clone->y,5U);
+        const bool clone_ok=(clone->status() != SS_FAILED) &&
+          clone->z.assigned() && (clone->z.val() == 9U) &&
+          !ua.z.assigned() && (PropagatorGroup::all.size(*clone) == 0U);
+        delete clone;
+        if (!clone_ok) return false;
+
+        class SAdd : public Space {
+        public:
+          WordVar x,y,z;
+          SAdd(void)
+            : x(*this,4,WDT_SIGNED,13U,15U),
+              y(*this,4,WDT_SIGNED,1U,2U),
+              z(*this,4,WDT_SIGNED) { add(*this,x,y,z); }
+          SAdd(SAdd& s) : Space(s) {
+            x.update(*this,s.x); y.update(*this,s.y); z.update(*this,s.z);
+          }
+          Space* copy(void) { return new SAdd(*this); }
+        };
+        SAdd sa;
+        if ((sa.status() == SS_FAILED) || (sa.z.minimum() != 14U) ||
+            (sa.z.maximum() != 1U))
+          return false;
+
+        class Ops : public Space {
+        public:
+          WordVar sx,sy,sz,nx,nz,ux,uy,uz;
+          Ops(void)
+            : sx(*this,6,WDT_SIGNED,61U,63U),
+              sy(*this,6,WDT_SIGNED,2U,4U),
+              sz(*this,6,WDT_SIGNED),
+              nx(*this,4,WDT_SIGNED,13U,15U),
+              nz(*this,4,WDT_SIGNED),
+              ux(*this,6,WDT_UNSIGNED,2U,4U),
+              uy(*this,6,WDT_UNSIGNED,3U,5U),
+              uz(*this,6,WDT_UNSIGNED) {
+            mult(*this,sx,sy,sz); neg(*this,nx,nz); mult(*this,ux,uy,uz);
+          }
+          Ops(Ops& s) : Space(s) {
+            sx.update(*this,s.sx); sy.update(*this,s.sy);
+            sz.update(*this,s.sz); nx.update(*this,s.nx);
+            nz.update(*this,s.nz); ux.update(*this,s.ux);
+            uy.update(*this,s.uy); uz.update(*this,s.uz);
+          }
+          Space* copy(void) { return new Ops(*this); }
+        };
+        Ops ops;
+        if ((ops.status() == SS_FAILED) ||
+            (ops.sz.minimum() != 52U) || (ops.sz.maximum() != 62U) ||
+            (ops.nz.minimum() != 1U) || (ops.nz.maximum() != 3U) ||
+            (ops.uz.minimum() != 6U) || (ops.uz.maximum() != 20U))
+          return false;
+
+        class USub : public Space {
+        public:
+          WordVar x,y,z;
+          USub(void) : x(*this,4,WDT_UNSIGNED,8U,12U),
+            y(*this,4,WDT_UNSIGNED,2U,4U), z(*this,4,WDT_UNSIGNED) {
+            sub(*this,x,y,z);
+          }
+          USub(USub& s) : Space(s) {
+            x.update(*this,s.x);y.update(*this,s.y);z.update(*this,s.z);
+          }
+          Space* copy(void) { return new USub(*this); }
+        };
+        USub us;
+        if ((us.status() == SS_FAILED) || (us.z.minimum() != 4U) ||
+            (us.z.maximum() != 10U))
+          return false;
+
+        class Backward : public Space {
+        public:
+          WordVar ux,uy,uz,sx,sy,sz,dx,dy,dz,alias,twice;
+          WordVar signed_alias,signed_twice;
+          Backward(void)
+            : ux(*this,5,WDT_UNSIGNED,0U,10U),
+              uy(*this,5,WDT_UNSIGNED,0U,10U),
+              uz(*this,5,WDT_UNSIGNED,15U,15U),
+              sx(*this,5,WDT_SIGNED,0U,5U),
+              sy(*this,5,WDT_SIGNED,0U,5U),
+              sz(*this,5,WDT_SIGNED,8U,8U),
+              dx(*this,5,WDT_SIGNED,5U,10U),
+              dy(*this,5,WDT_SIGNED,0U,5U),
+              dz(*this,5,WDT_SIGNED,2U,2U),
+              alias(*this,5,WDT_UNSIGNED,0U,10U),
+              twice(*this,5,WDT_UNSIGNED,10U,10U),
+              signed_alias(*this,5,WDT_SIGNED,0U,5U),
+              signed_twice(*this,5,WDT_SIGNED,8U,8U) {
+            add(*this,ux,uy,uz);
+            add(*this,sx,sy,sz);
+            sub(*this,dx,dy,dz);
+            add(*this,alias,alias,twice);
+            add(*this,signed_alias,signed_alias,signed_twice);
+          }
+          Backward(Backward& s) : Space(s) {
+            ux.update(*this,s.ux); uy.update(*this,s.uy);
+            uz.update(*this,s.uz); sx.update(*this,s.sx);
+            sy.update(*this,s.sy); sz.update(*this,s.sz);
+            dx.update(*this,s.dx); dy.update(*this,s.dy);
+            dz.update(*this,s.dz); alias.update(*this,s.alias);
+            twice.update(*this,s.twice);
+            signed_alias.update(*this,s.signed_alias);
+            signed_twice.update(*this,s.signed_twice);
+          }
+          Space* copy(void) { return new Backward(*this); }
+        };
+        Backward backward;
+        return (backward.status() != SS_FAILED) &&
+          (backward.ux.minimum() == 5U) &&
+          (backward.uy.minimum() == 5U) &&
+          (backward.sx.minimum() == 3U) &&
+          (backward.sy.minimum() == 3U) &&
+          (backward.dx.maximum() == 7U) &&
+          (backward.dy.minimum() == 3U) &&
+          backward.alias.assigned() && (backward.alias.val() == 5U) &&
+          backward.signed_alias.assigned() &&
+          (backward.signed_alias.val() == 4U);
+      }
+
+      static bool boundaries_aliases(void) {
+        using namespace Gecode;
+        class ActiveAlias : public Space {
+        public:
+          WordVar x,z;
+          ActiveAlias(void) : x(*this,4,WDT_UNSIGNED,1U,3U),
+            z(*this,4,WDT_UNSIGNED) { add(*this,x,x,z); }
+          ActiveAlias(ActiveAlias& s) : Space(s) {
+            x.update(*this,s.x); z.update(*this,s.z);
+          }
+          Space* copy(void) { return new ActiveAlias(*this); }
+        };
+        ActiveAlias active_alias;
+        if ((active_alias.status() == SS_FAILED) ||
+            (active_alias.z.minimum() != 2U) ||
+            (active_alias.z.maximum() != 6U))
+          return false;
+
+        class ActiveResultAlias : public Space {
+        public:
+          WordVar x,y;
+          ActiveResultAlias(void) : x(*this,4,WDT_UNSIGNED,1U,7U),
+            y(*this,4,WDT_UNSIGNED,0U,0U) { sub(*this,x,y,x); }
+          ActiveResultAlias(ActiveResultAlias& s) : Space(s) {
+            x.update(*this,s.x); y.update(*this,s.y);
+          }
+          Space* copy(void) { return new ActiveResultAlias(*this); }
+        };
+        ActiveResultAlias active_result_alias;
+        if (active_result_alias.status() == SS_FAILED)
+          return false;
+
+        class ActiveWide : public Space {
+        public:
+          WordVar x,y,z;
+          ActiveWide(void)
+            : x(*this,64,WDT_UNSIGNED,WordValue(1) << 63,
+                (WordValue(1) << 63)+2U),
+              y(*this,64,WDT_UNSIGNED,1U,1U),
+              z(*this,64,WDT_UNSIGNED) { add(*this,x,y,z); }
+          ActiveWide(ActiveWide& s) : Space(s) {
+            x.update(*this,s.x); y.update(*this,s.y); z.update(*this,s.z);
+          }
+          Space* copy(void) { return new ActiveWide(*this); }
+        };
+        ActiveWide active_wide;
+        if ((active_wide.status() == SS_FAILED) ||
+            (active_wide.z.minimum() != (WordValue(1) << 63)+1U) ||
+            (active_wide.z.maximum() != (WordValue(1) << 63)+3U))
+          return false;
+
+        class SignedExtreme : public Space {
+        public:
+          WordVar x,y,z;
+          SignedExtreme(void) : x(*this,4,WDT_SIGNED,8U,8U),
+            y(*this,4,WDT_SIGNED,1U,1U), z(*this,4,WDT_SIGNED) {
+            add(*this,x,y,z);
+          }
+          SignedExtreme(SignedExtreme& s) : Space(s) {
+            x.update(*this,s.x); y.update(*this,s.y); z.update(*this,s.z);
+          }
+          Space* copy(void) { return new SignedExtreme(*this); }
+        };
+        SignedExtreme signed_extreme;
+        if ((signed_extreme.status() == SS_FAILED) ||
+            !signed_extreme.z.assigned() || (signed_extreme.z.val() != 9U))
+          return false;
+
+        class B : public Space {
+        public:
+          WordVar x,y,z;
+          B(unsigned int width, WordDomainType kind)
+            : x(*this,width,kind), y(*this,width,kind), z(*this,width,kind) {}
+          B(B& s) : Space(s) {
+            x.update(*this,s.x);y.update(*this,s.y);z.update(*this,s.z);
+          }
+          Space* copy(void) { return new B(*this); }
+        };
+        B alias(4,WDT_UNSIGNED);
+        add(alias,alias.x,alias.x,alias.z);
+        dom(alias,alias.x,3U);
+        if ((alias.status() == SS_FAILED) || !alias.z.assigned() ||
+            (alias.z.val() != 6U))
+          return false;
+        B result_alias(4,WDT_UNSIGNED);
+        sub(result_alias,result_alias.x,result_alias.y,result_alias.x);
+        dom(result_alias,result_alias.y,0U);
+        if (result_alias.status() == SS_FAILED)
+          return false;
+        B one(1,WDT_SIGNED);
+        neg(one,one.x,one.z); dom(one,one.x,1U);
+        if ((one.status() == SS_FAILED) || !one.z.assigned() ||
+            (one.z.val() != 1U))
+          return false;
+        B wide(64,WDT_UNSIGNED);
+        add(wide,wide.x,wide.y,wide.z);
+        dom(wide,wide.x,WordValue(1) << 63);
+        dom(wide,wide.y,WordValue(1));
+        if ((wide.status() == SS_FAILED) || !wide.z.assigned() ||
+            (wide.z.val() != ((WordValue(1) << 63)+1)))
+          return false;
+        B wrap(4,WDT_UNSIGNED);
+        add(wrap,wrap.x,wrap.y,wrap.z);
+        dom(wrap,wrap.x,15U); dom(wrap,wrap.y,1U);
+        return (wrap.status() != SS_FAILED) && wrap.z.assigned() &&
+          (wrap.z.val() == 0U);
+      }
+
+      static bool replay(void) {
+        using namespace Gecode;
+        class S : public Space {
+        public:
+          WordVar x,y,z;
+          S(WordDomainType kind)
+            : x(*this,3,kind), y(*this,3,kind), z(*this,3,kind) {
+            add(*this,x,y,z);
+            WordVarArgs a={x,y};
+            branch(*this,a,WORD_VAR_NONE(),WORD_VAL_SPLIT_MIN());
+          }
+          S(S& s) : Space(s) {
+            x.update(*this,s.x);y.update(*this,s.y);z.update(*this,s.z);
+          }
+          Space* copy(void) { return new S(*this); }
+        };
+        for (WordDomainType kind : {WDT_UNSIGNED,WDT_SIGNED}) {
+          Search::Options o; o.c_d=1;
+          S* root=new S(kind);
+          DFS<S> dfs(root,o);
+          delete root;
+          unsigned int solutions=0;
+          while (S* s=dfs.next()) {
+            const bool ok=s->x.assigned() && s->y.assigned() &&
+              s->z.assigned() && (s->z.val() == ((s->x.val()+s->y.val())&7U)) &&
+              (PropagatorGroup::all.size(*s) == 0U);
+            delete s;
+            if (!ok) return false;
+            solutions++;
+          }
+          if (solutions != 64U) return false;
+        }
+        return true;
+      }
+    public:
+      BoundedLifecycle(void) : Base("Word::Arithmetic::BoundedLifecycle") {}
+      virtual bool run(void) {
+        return propagation() && boundaries_aliases() && replay();
+      }
+    };
+
     Binary addition(ADD,"Add");
     NaryAddition nary_addition;
     Negation negation;
@@ -2152,6 +2441,7 @@ namespace Test { namespace Word {
     MultiplicationLifecycle multiplication_lifecycle;
     DivisionLifecycle division_lifecycle;
     SignedDivisionLifecycle signed_division_lifecycle;
+    BoundedLifecycle bounded_lifecycle;
 
   }
 

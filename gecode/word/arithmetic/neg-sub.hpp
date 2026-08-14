@@ -32,8 +32,9 @@
 
 namespace Gecode { namespace Word { namespace Arithmetic {
 
+  template<class View>
   forceinline bool
-  arithmetic_bit_in(WordView x, unsigned int bit, unsigned int value) {
+  arithmetic_bit_in(View x, unsigned int bit, unsigned int value) {
     const WordValue mask = WordValue(1) << bit;
     return value != 0 ? (x.hi() & mask) != 0 : (x.lo() & mask) == 0;
   }
@@ -56,8 +57,9 @@ namespace Gecode { namespace Word { namespace Arithmetic {
     return PropCost::linear(PropCost::LO,x0.width());
   }
 
+  template<class View>
   forceinline bool
-  neg_transition(WordView x, WordView z, bool xz, unsigned int bit,
+  neg_transition(View x, View z, bool xz, unsigned int bit,
                  unsigned int carry, unsigned int xv, unsigned int zv,
                  unsigned int& next) {
     if (!arithmetic_bit_in(x,bit,xv) || !arithmetic_bit_in(z,bit,zv) ||
@@ -70,8 +72,9 @@ namespace Gecode { namespace Word { namespace Arithmetic {
     return true;
   }
 
+  template<class View>
   forceinline ExecStatus
-  Neg::narrow(Home home, WordView x, WordView z) {
+  neg_narrow(Home home, View x, View z) {
     const unsigned int width = x.width();
     const bool xz = x == z;
     unsigned char forward[65] = {0};
@@ -140,6 +143,11 @@ namespace Gecode { namespace Word { namespace Arithmetic {
   }
 
   forceinline ExecStatus
+  Neg::narrow(Home home, WordView x, WordView z) {
+    return neg_narrow(home,x,z);
+  }
+
+  forceinline ExecStatus
   Neg::post(Home home, WordView x0, WordView x1) {
     GECODE_ES_CHECK(narrow(home,x0,x1));
     if (!(x0.assigned() && x1.assigned()))
@@ -173,8 +181,9 @@ namespace Gecode { namespace Word { namespace Arithmetic {
     return PropCost::linear(PropCost::LO,x0.width());
   }
 
+  template<class View>
   forceinline bool
-  sub_transition(WordView x, WordView y, WordView z,
+  sub_transition(View x, View y, View z,
                  bool xy, bool xz, bool yz, unsigned int bit,
                  unsigned int borrow, unsigned int xv, unsigned int yv,
                  unsigned int zv, unsigned int& next) {
@@ -191,8 +200,9 @@ namespace Gecode { namespace Word { namespace Arithmetic {
     return true;
   }
 
+  template<class View>
   forceinline ExecStatus
-  sub_narrow(Home home, WordView x, WordView y, WordView z,
+  sub_narrow(Home home, View x, View y, View z,
              unsigned int terminal, unsigned int& final) {
     const unsigned int width = x.width();
     const bool xy = x == y;
