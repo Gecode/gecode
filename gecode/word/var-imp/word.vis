@@ -42,10 +42,16 @@ Name:           FAILED=FAILED
 Name:           NONE=NONE
 [ModEvent]
 Name:           VAL=ASSIGNED
-Combine:        VAL=VAL, BITS=VAL
+Combine:        VAL=VAL, BITS=VAL, BND=VAL, DOM=VAL
 [ModEvent]
-Name:           BITS=SUBSCRIBE
-Combine:        VAL=VAL, BITS=BITS
+Name:           BITS
+Combine:        VAL=VAL, BITS=BITS, BND=DOM, DOM=DOM
+[ModEvent]
+Name:           BND
+Combine:        VAL=VAL, BITS=DOM, BND=BND, DOM=DOM
+[ModEvent]
+Name:           DOM=SUBSCRIBE
+Combine:        VAL=VAL, BITS=DOM, BND=DOM, DOM=DOM
 [ModEventFooter]
 [PropCondHeader]
 [PropCond]
@@ -55,6 +61,12 @@ Name:           VAL=ASSIGNED
 ScheduledBy:    VAL
 [PropCond]
 Name:           BITS
-ScheduledBy:    VAL, BITS
+ScheduledBy:    VAL, BITS, DOM
+[PropCond]
+Name:           BND
+ScheduledBy:    VAL, BND, DOM
+[PropCond]
+Name:           DOM
+ScheduledBy:    VAL, BITS, BND, DOM
 [PropCondFooter]
 [End]

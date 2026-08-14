@@ -36,6 +36,17 @@ namespace Gecode {
                                   WordValue lo, WordValue hi) {
     x = new (home) Word::WordVarImp(home,width,lo,hi);
   }
+  forceinline void WordVar::_init(Space& home, unsigned int width,
+                                  WordValue lo, WordValue hi,
+                                  WordDomainType domain_type,
+                                  WordValue minimum, WordValue maximum) {
+    if (domain_type == WDT_CUBE) {
+      x = new (home) Word::WordVarImp(home,width,lo,hi);
+    } else {
+      x = new (home) Word::BoundedWordVarImp(
+        home,width,lo,hi,domain_type,minimum,maximum);
+    }
+  }
   forceinline WordVar::WordVar(void) {}
   forceinline WordVar::WordVar(const WordVar& y)
     : VarImpVar<Word::WordVarImp>(y.varimp()) {}
@@ -43,6 +54,12 @@ namespace Gecode {
   forceinline WordValue WordVar::mask(void) const { return x->mask(); }
   forceinline WordValue WordVar::lo(void) const { return x->lo(); }
   forceinline WordValue WordVar::hi(void) const { return x->hi(); }
+  forceinline WordDomainType WordVar::domain_type(void) const {
+    return x->domain_type();
+  }
+  forceinline bool WordVar::bounded(void) const { return x->bounded(); }
+  forceinline WordValue WordVar::minimum(void) const { return x->minimum(); }
+  forceinline WordValue WordVar::maximum(void) const { return x->maximum(); }
   forceinline WordValue WordVar::unknown(void) const { return x->unknown(); }
   forceinline unsigned int WordVar::unknown_size(void) const { return x->unknown_size(); }
   forceinline bool WordVar::assigned(void) const { return x->assigned(); }

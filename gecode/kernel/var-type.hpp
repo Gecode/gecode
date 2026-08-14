@@ -308,9 +308,13 @@ namespace Gecode { namespace Word {
   const Gecode::ModEvent ME_WORD_NONE = Gecode::ME_GEN_NONE;
   const Gecode::ModEvent ME_WORD_VAL = Gecode::ME_GEN_ASSIGNED;
   const Gecode::ModEvent ME_WORD_BITS = Gecode::ME_GEN_ASSIGNED + 1;
+  const Gecode::ModEvent ME_WORD_BND = Gecode::ME_GEN_ASSIGNED + 2;
+  const Gecode::ModEvent ME_WORD_DOM = Gecode::ME_GEN_ASSIGNED + 3;
   const Gecode::PropCond PC_WORD_NONE = Gecode::PC_GEN_NONE;
   const Gecode::PropCond PC_WORD_VAL = Gecode::PC_GEN_ASSIGNED;
   const Gecode::PropCond PC_WORD_BITS = Gecode::PC_GEN_ASSIGNED + 1;
+  const Gecode::PropCond PC_WORD_BND = Gecode::PC_GEN_ASSIGNED + 2;
+  const Gecode::PropCond PC_WORD_DOM = Gecode::PC_GEN_ASSIGNED + 3;
 }}
 #endif
 #ifdef GECODE_HAS_INT_VARS
@@ -479,15 +483,15 @@ namespace Gecode { namespace Word {
     /// Index for disposal
     static const int idx_d = Gecode::Float::FloatVarImpConf::idx_d;
     /// Maximal propagation condition
-    static const Gecode::PropCond pc_max = PC_WORD_BITS;
+    static const Gecode::PropCond pc_max = PC_WORD_DOM;
     /// Freely available bits
     static const int free_bits = 0;
     /// Start of bits for modification event delta
     static const int med_fst = Gecode::Float::FloatVarImpConf::med_lst;
     /// End of bits for modification event delta
-    static const int med_lst = med_fst + 2;
+    static const int med_lst = med_fst + 3;
     /// Bitmask for modification event delta
-    static const int med_mask = ((1 << 2) - 1) << med_fst;
+    static const int med_mask = ((1 << 3) - 1) << med_fst;
     /// Combine modification events \a me1 and \a me2
     static Gecode::ModEvent me_combine(Gecode::ModEvent me1, Gecode::ModEvent me2);
     /// Update modification even delta \a med by \a me, return true on change
@@ -947,24 +951,44 @@ namespace Gecode { namespace Float {
 namespace Gecode { namespace Word {
   forceinline Gecode::ModEvent
   WordVarImpConf::me_combine(Gecode::ModEvent me1, Gecode::ModEvent me2) {
-    static const Gecode::ModEvent me_c = (
-      (
-        (ME_WORD_NONE <<  0) |  // [ME_WORD_NONE][ME_WORD_NONE]
-        (ME_WORD_VAL  <<  2) |  // [ME_WORD_NONE][ME_WORD_VAL ]
-        (ME_WORD_BITS <<  4)    // [ME_WORD_NONE][ME_WORD_BITS]
-      ) |
-      (
-        (ME_WORD_VAL  <<  8) |  // [ME_WORD_VAL ][ME_WORD_NONE]
-        (ME_WORD_VAL  << 10) |  // [ME_WORD_VAL ][ME_WORD_VAL ]
-        (ME_WORD_VAL  << 12)    // [ME_WORD_VAL ][ME_WORD_BITS]
-      ) |
-      (
-        (ME_WORD_BITS << 16) |  // [ME_WORD_BITS][ME_WORD_NONE]
-        (ME_WORD_VAL  << 18) |  // [ME_WORD_BITS][ME_WORD_VAL ]
-        (ME_WORD_BITS << 20)    // [ME_WORD_BITS][ME_WORD_BITS]
-      )
-    );
-    return ((me_c >> (me2 << 3)) >> (me1 << 1)) & 3;
+    static const Gecode::ModEvent me_c[ME_WORD_DOM+1][ME_WORD_DOM+1] = {
+      {
+        ME_WORD_NONE, // [ME_WORD_NONE][ME_WORD_NONE]
+        ME_WORD_VAL , // [ME_WORD_NONE][ME_WORD_VAL ]
+        ME_WORD_BITS, // [ME_WORD_NONE][ME_WORD_BITS]
+        ME_WORD_BND , // [ME_WORD_NONE][ME_WORD_BND ]
+        ME_WORD_DOM   // [ME_WORD_NONE][ME_WORD_DOM ]
+      },
+      {
+        ME_WORD_VAL , // [ME_WORD_VAL ][ME_WORD_NONE]
+        ME_WORD_VAL , // [ME_WORD_VAL ][ME_WORD_VAL ]
+        ME_WORD_VAL , // [ME_WORD_VAL ][ME_WORD_BITS]
+        ME_WORD_VAL , // [ME_WORD_VAL ][ME_WORD_BND ]
+        ME_WORD_VAL   // [ME_WORD_VAL ][ME_WORD_DOM ]
+      },
+      {
+        ME_WORD_BITS, // [ME_WORD_BITS][ME_WORD_NONE]
+        ME_WORD_VAL , // [ME_WORD_BITS][ME_WORD_VAL ]
+        ME_WORD_BITS, // [ME_WORD_BITS][ME_WORD_BITS]
+        ME_WORD_DOM , // [ME_WORD_BITS][ME_WORD_BND ]
+        ME_WORD_DOM   // [ME_WORD_BITS][ME_WORD_DOM ]
+      },
+      {
+        ME_WORD_BND , // [ME_WORD_BND ][ME_WORD_NONE]
+        ME_WORD_VAL , // [ME_WORD_BND ][ME_WORD_VAL ]
+        ME_WORD_DOM , // [ME_WORD_BND ][ME_WORD_BITS]
+        ME_WORD_BND , // [ME_WORD_BND ][ME_WORD_BND ]
+        ME_WORD_DOM   // [ME_WORD_BND ][ME_WORD_DOM ]
+      },
+      {
+        ME_WORD_DOM , // [ME_WORD_DOM ][ME_WORD_NONE]
+        ME_WORD_VAL , // [ME_WORD_DOM ][ME_WORD_VAL ]
+        ME_WORD_DOM , // [ME_WORD_DOM ][ME_WORD_BITS]
+        ME_WORD_DOM , // [ME_WORD_DOM ][ME_WORD_BND ]
+        ME_WORD_DOM   // [ME_WORD_DOM ][ME_WORD_DOM ]
+      }
+    };
+    return me_c[me1][me2];
   }
   forceinline bool
   WordVarImpConf::med_update(Gecode::ModEventDelta& med, Gecode::ModEvent me) {
@@ -982,10 +1006,50 @@ namespace Gecode { namespace Word {
       }
     case ME_WORD_BITS:
       {
-        Gecode::ModEventDelta med_word = med & med_mask;
-        if (med_word != 0)
+        static const Gecode::ModEvent me_c = (
+          ((ME_WORD_NONE ^ ME_WORD_BITS) <<  0) |
+          ((ME_WORD_VAL  ^ ME_WORD_VAL ) <<  4) |
+          ((ME_WORD_BITS ^ ME_WORD_BITS) <<  8) |
+          ((ME_WORD_BND  ^ ME_WORD_DOM ) << 12) |
+          ((ME_WORD_DOM  ^ ME_WORD_DOM ) << 16)
+        );
+        Gecode::ModEvent me_o = (med & med_mask) >> med_fst;
+        Gecode::ModEvent me_n = (me_c >> (me_o << 2)) & (med_mask >> med_fst);
+        if (me_n == 0)
           return false;
-        med |= ME_WORD_BITS << med_fst;
+        med ^= me_n << med_fst;
+        break;
+      }
+    case ME_WORD_BND:
+      {
+        static const Gecode::ModEvent me_c = (
+          ((ME_WORD_NONE ^ ME_WORD_BND ) <<  0) |
+          ((ME_WORD_VAL  ^ ME_WORD_VAL ) <<  4) |
+          ((ME_WORD_BITS ^ ME_WORD_DOM ) <<  8) |
+          ((ME_WORD_BND  ^ ME_WORD_BND ) << 12) |
+          ((ME_WORD_DOM  ^ ME_WORD_DOM ) << 16)
+        );
+        Gecode::ModEvent me_o = (med & med_mask) >> med_fst;
+        Gecode::ModEvent me_n = (me_c >> (me_o << 2)) & (med_mask >> med_fst);
+        if (me_n == 0)
+          return false;
+        med ^= me_n << med_fst;
+        break;
+      }
+    case ME_WORD_DOM:
+      {
+        static const Gecode::ModEvent me_c = (
+          ((ME_WORD_NONE ^ ME_WORD_DOM ) <<  0) |
+          ((ME_WORD_VAL  ^ ME_WORD_VAL ) <<  4) |
+          ((ME_WORD_BITS ^ ME_WORD_DOM ) <<  8) |
+          ((ME_WORD_BND  ^ ME_WORD_DOM ) << 12) |
+          ((ME_WORD_DOM  ^ ME_WORD_DOM ) << 16)
+        );
+        Gecode::ModEvent me_o = (med & med_mask) >> med_fst;
+        Gecode::ModEvent me_n = (me_c >> (me_o << 2)) & (med_mask >> med_fst);
+        if (me_n == 0)
+          return false;
+        med ^= me_n << med_fst;
         break;
       }
     default: GECODE_NEVER;

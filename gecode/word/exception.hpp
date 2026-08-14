@@ -57,6 +57,11 @@ namespace Gecode { namespace Word {
   public:
     ValOfUnassignedVar(const char* l);
   };
+  /// Numeric endpoints of a cube-only word were requested
+  class GECODE_WORD_EXPORT BoundsOfCubeVar : public Exception {
+  public:
+    BoundsOfCubeVar(const char* l);
+  };
   /// Word operands have different widths
   class GECODE_WORD_EXPORT WidthMismatch : public Exception {
   public:

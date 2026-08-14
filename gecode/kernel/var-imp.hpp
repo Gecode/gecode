@@ -547,7 +547,7 @@ namespace Gecode { namespace Word {
 
   forceinline void
   WordVarImpBase::subscribe(Gecode::Space& home, Gecode::Propagator& p, Gecode::PropCond pc, bool assigned, bool schedule) {
-    Gecode::VarImp<Gecode::Word::WordVarImpConf>::subscribe(home,p,pc,assigned,ME_WORD_BITS,schedule);
+    Gecode::VarImp<Gecode::Word::WordVarImpConf>::subscribe(home,p,pc,assigned,ME_WORD_DOM,schedule);
   }
   forceinline void
   WordVarImpBase::subscribe(Gecode::Space& home, Gecode::Advisor& a, bool assigned, bool failed) {
@@ -560,23 +560,36 @@ namespace Gecode { namespace Word {
   }
   forceinline void
   WordVarImpBase::reschedule(Gecode::Space& home, Gecode::Propagator& p, Gecode::PropCond pc, bool assigned) {
-    Gecode::VarImp<Gecode::Word::WordVarImpConf>::reschedule(home,p,pc,assigned,ME_WORD_BITS);
+    Gecode::VarImp<Gecode::Word::WordVarImpConf>::reschedule(home,p,pc,assigned,ME_WORD_DOM);
   }
 
   forceinline Gecode::ModEvent
   WordVarImpBase::notify(Gecode::Space& home, Gecode::ModEvent me, Gecode::Delta& d) {
     switch (me) {
     case ME_WORD_VAL:
-      // Conditions: VAL, BITS
-      Gecode::VarImp<Gecode::Word::WordVarImpConf>::schedule(home,PC_WORD_VAL,PC_WORD_BITS,ME_WORD_VAL);
+      // Conditions: VAL, BITS, BND, DOM
+      Gecode::VarImp<Gecode::Word::WordVarImpConf>::schedule(home,PC_WORD_VAL,PC_WORD_DOM,ME_WORD_VAL);
       if (!Gecode::VarImp<Gecode::Word::WordVarImpConf>::advise(home,ME_WORD_VAL,d))
         return ME_WORD_FAILED;
       cancel(home);
       break;
     case ME_WORD_BITS:
-      // Conditions: BITS
+      // Conditions: BITS, DOM
       Gecode::VarImp<Gecode::Word::WordVarImpConf>::schedule(home,PC_WORD_BITS,PC_WORD_BITS,ME_WORD_BITS);
+      Gecode::VarImp<Gecode::Word::WordVarImpConf>::schedule(home,PC_WORD_DOM,PC_WORD_DOM,ME_WORD_BITS);
       if (!Gecode::VarImp<Gecode::Word::WordVarImpConf>::advise(home,ME_WORD_BITS,d))
+        return ME_WORD_FAILED;
+      break;
+    case ME_WORD_BND:
+      // Conditions: BND, DOM
+      Gecode::VarImp<Gecode::Word::WordVarImpConf>::schedule(home,PC_WORD_BND,PC_WORD_DOM,ME_WORD_BND);
+      if (!Gecode::VarImp<Gecode::Word::WordVarImpConf>::advise(home,ME_WORD_BND,d))
+        return ME_WORD_FAILED;
+      break;
+    case ME_WORD_DOM:
+      // Conditions: BITS, BND, DOM
+      Gecode::VarImp<Gecode::Word::WordVarImpConf>::schedule(home,PC_WORD_BITS,PC_WORD_DOM,ME_WORD_DOM);
+      if (!Gecode::VarImp<Gecode::Word::WordVarImpConf>::advise(home,ME_WORD_DOM,d))
         return ME_WORD_FAILED;
       break;
     default: GECODE_NEVER;

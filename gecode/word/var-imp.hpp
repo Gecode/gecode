@@ -36,6 +36,7 @@
 
 namespace Gecode { namespace Word {
   class WordVarImp;
+  class BoundedWordVarImp;
 
   /// Delta recording bits newly fixed to zero and one
   class WordDelta : public Delta {
@@ -43,11 +44,28 @@ namespace Gecode { namespace Word {
   private:
     WordValue _zero;
     WordValue _one;
+    WordValue _old_minimum;
+    WordValue _old_maximum;
+    WordValue _new_minimum;
+    WordValue _new_maximum;
+    WordDomainType _domain_type;
   public:
     WordDelta(void);
-    WordDelta(WordValue zero, WordValue one);
+    WordDelta(WordValue zero, WordValue one,
+              WordDomainType domain_type=WDT_CUBE,
+              WordValue old_minimum=0, WordValue old_maximum=0,
+              WordValue new_minimum=0, WordValue new_maximum=0);
     WordValue zero(void) const;
     WordValue one(void) const;
+    WordDomainType domain_type(void) const;
+    /// Return the old internal order-rank minimum
+    WordValue old_minimum(void) const;
+    /// Return the old internal order-rank maximum
+    WordValue old_maximum(void) const;
+    /// Return the new internal order-rank minimum
+    WordValue new_minimum(void) const;
+    /// Return the new internal order-rank maximum
+    WordValue new_maximum(void) const;
   };
 }}
 
@@ -56,11 +74,15 @@ namespace Gecode { namespace Word {
 namespace Gecode { namespace Word {
   /// Word variable implementation
   class WordVarImp : public WordVarImpBase {
+    friend class BoundedWordVarImp;
   protected:
     unsigned int _width;
+    WordDomainType _domain_type;
     WordValue _lo;
     WordValue _hi;
     WordVarImp(Space& home, WordVarImp& x);
+    WordVarImp(Space& home, unsigned int width, WordValue lo, WordValue hi,
+               WordDomainType domain_type);
   public:
     WordVarImp(Space& home, unsigned int width, WordValue lo, WordValue hi);
 
@@ -68,6 +90,12 @@ namespace Gecode { namespace Word {
     WordValue mask(void) const;
     WordValue lo(void) const;
     WordValue hi(void) const;
+    WordDomainType domain_type(void) const;
+    bool bounded(void) const;
+    /// Return the canonical endpoint encoding (two's-complement when signed)
+    WordValue minimum(void) const;
+    /// Return the canonical endpoint encoding (two's-complement when signed)
+    WordValue maximum(void) const;
     WordValue unknown(void) const;
     WordValue val(void) const;
     unsigned int unknown_size(void) const;
@@ -86,11 +114,41 @@ namespace Gecode { namespace Word {
     static ModEventDelta med(ModEvent me);
     static WordValue zero(const Delta& d);
     static WordValue one(const Delta& d);
+    static WordDomainType domain_type(const Delta& d);
+    static WordValue old_minimum(const Delta& d);
+    static WordValue old_maximum(const Delta& d);
+    static WordValue new_minimum(const Delta& d);
+    static WordValue new_maximum(const Delta& d);
 
   private:
     GECODE_WORD_EXPORT WordVarImp* perform_copy(Space& home);
   public:
     WordVarImp* copy(Space& home);
+  };
+
+  /// Word implementation with one immutable ranked interval
+  class BoundedWordVarImp : public WordVarImp {
+    friend class WordVarImp;
+  protected:
+    WordValue _minimum;
+    WordValue _maximum;
+    BoundedWordVarImp(Space& home, BoundedWordVarImp& x);
+  public:
+    BoundedWordVarImp(Space& home, unsigned int width,
+                      WordValue lo, WordValue hi,
+                      WordDomainType domain_type,
+                      WordValue minimum, WordValue maximum);
+
+    /// Return the internal order-rank minimum
+    WordValue minimum(void) const;
+    /// Return the internal order-rank maximum
+    WordValue maximum(void) const;
+    WordValue rank(WordValue value) const;
+
+    ModEvent narrow_domain(Space& home, WordValue lo, WordValue hi,
+                           WordValue minimum, WordValue maximum);
+    ModEvent narrow_range(Space& home, WordValue minimum,
+                          WordValue maximum);
   };
 }}
 

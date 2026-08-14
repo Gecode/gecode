@@ -1199,7 +1199,7 @@ else
 FLOATTESTOBJ=
 endif
 
-WORDTESTSRC00 = arithmetic branch channel conditional count element logic minimodel overflow product-mod reduction rel structure trace
+WORDTESTSRC00 = arithmetic bounded branch channel conditional count element logic minimodel overflow product-mod reduction rel structure trace
 WORDTESTSRC0 = test/word.cpp $(WORDTESTSRC00:%=test/word/%.cpp)
 
 ifeq "@enable_word_vars@" "yes"

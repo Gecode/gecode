@@ -378,13 +378,20 @@ namespace Test { namespace Fault {
 #ifdef GECODE_HAS_WORD_VARS
   class WordFaultSpace : public Space {
   public:
-    WordVarArray x;
-    WordFaultSpace(void) : x(*this,3,4,0,15) {
+    WordVar x[3];
+    WordFaultSpace(void) {
+      x[0]=WordVar(*this,4);
+      x[1]=WordVar(*this,4,WDT_UNSIGNED);
+      x[2]=WordVar(*this,4,WDT_SIGNED);
       rel(*this,x[0],WOT_XOR,x[1],x[2]);
-      branch(*this,x,WORD_VAR_ACTION_MAX(),WORD_VAL_LSB());
+      WordVarArgs a; a << x[0] << x[1] << x[2];
+      branch(*this,a,WORD_VAR_ACTION_MAX(),WORD_VAL_LSB());
     }
     WordFaultSpace(WordFaultSpace& s) : Space(s) {
-      x.update(*this,s.x);
+      x[0].update(*this,s.x[0]);
+      Support::FailPoint::check(Phase::DerivedSpaceCopy);
+      x[1].update(*this,s.x[1]);
+      x[2].update(*this,s.x[2]);
     }
     virtual Space* copy(void) {
       return new WordFaultSpace(*this);
@@ -724,6 +731,26 @@ namespace Test { namespace Fault {
       }
     }
     return false;
+  }
+
+  bool word_clone_mid_update_failure_recovers_source(void) {
+    FaultScope scope;
+    WordFaultSpace s;
+    if (s.status() == SS_FAILED)
+      return false;
+    Support::FailPoint::fail_after(Phase::DerivedSpaceCopy,0);
+    try {
+      Space* clone=s.clone();
+      delete clone;
+      Support::FailPoint::reset();
+      return false;
+    } catch (const MemoryExhausted&) {
+      Support::FailPoint::reset();
+      return word_space_is_usable(s);
+    } catch (...) {
+      Support::FailPoint::reset();
+      return false;
+    }
   }
 
   bool minimodel_word_failures_are_recoverable(void) {
@@ -1228,6 +1255,15 @@ namespace Test { namespace Fault {
     }
   };
 
+  class WordCloneMidUpdateFailure : public Base {
+  public:
+    WordCloneMidUpdateFailure(void)
+      : Base("Fault::Word::CloneMidUpdateFailure") {}
+    virtual bool run(void) {
+      return word_clone_mid_update_failure_recovers_source();
+    }
+  };
+
   class MiniModelWordFailures : public Base {
   public:
     MiniModelWordFailures(void)
@@ -1323,6 +1359,7 @@ namespace Test { namespace Fault {
   MiniModelBoolMiscHeapFailure minimodel_bool_misc_heap_failure;
 #ifdef GECODE_HAS_WORD_VARS
   WordCloneHeapFailures word_clone_heap_failures;
+  WordCloneMidUpdateFailure word_clone_mid_update_failure;
   MiniModelWordFailures minimodel_word_failures;
 #endif
   MiniModelHeapFailures minimodel_heap_failures;

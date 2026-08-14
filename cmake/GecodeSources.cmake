@@ -450,6 +450,7 @@ set(GECODE_TEST_SOURCES
   test/test.cpp
   test/word.cpp
   test/word/arithmetic.cpp
+  test/word/bounded.cpp
   test/word/branch.cpp
   test/word/channel.cpp
   test/word/conditional.cpp

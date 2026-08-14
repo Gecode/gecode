@@ -2015,6 +2015,106 @@ are `/private/tmp/word070-layout.cpp`, `/private/tmp/word070-layout`,
 The manifest verifies every entry.  No production, API, test, example, or
 build file changed in this investigation.
 
+## Optional bounded WordVar kernel implementation
+
+The first implementation stage now makes the planned representation real.
+There remains one public `WordVar` handle, with an immutable construction-time
+`WordDomainType`: `WDT_CUBE`, `WDT_UNSIGNED`, or `WDT_SIGNED`.  Existing
+constructors continue to create cube variables.  New scalar and array
+constructors accept a kind and encoded minimum/maximum.  Public signed
+endpoints are two's-complement Word values; internal signed views use the
+equivalent sign-bit-XOR rank, so unsigned machinery can order them without
+host signed conversion or width-64 overflow.  Endpoint access on an ordinary
+cube variable is rejected rather than manufacturing misleading bounds.
+
+One generated Word variable registry contains both implementations.  The
+compact nonvirtual `WordVarImp` carries the cube and immutable tag; the derived
+`BoundedWordVarImp` adds only two ranked `WordValue` endpoints.  Copy dispatches
+on the tag and placement-constructs the proper implementation in the target
+Space, preserving normal Gecode forwarding and failure recovery.  On the
+recorded arm64 Release ABI, the public handle and all three views are 8 bytes,
+the compact implementation is 56 bytes, and the bounded implementation is 72
+bytes.  The earlier 80-byte spike paid for a mutable order-owner field that is
+unnecessary once signedness is immutable at construction.  Relative to the
+48-byte pre-event-lattice baseline, the common 8-byte increase is the expanded
+Word subscription/event state; the bounded representation itself adds the two
+8-byte endpoints.  There is no vtable, side allocation, or extra indirection.
+
+The domain invariant is a bit cube intersected with one ranked interval whose
+stored endpoints are admitted cube members.  Synchronization is a bounded,
+constant-operation prefix calculation.  General cube/range tells construct a
+local candidate, synchronize once, then publish atomically.  The common range
+tell has a fast path: intersect the endpoints, verify that both remain
+admitted and that their common prefix adds no cube information, then publish a
+bound event without a full resynchronization.  It falls back to the complete
+constant-operation synchronizer only when those tests fail.  This keeps the
+range-tightening loop close to the ordinary Int bound-tell path.
+
+The generated lattice now distinguishes value, bit-only, bound-only, and
+combined-domain changes, with `PC_WORD_BITS`, `PC_WORD_BND`, and
+`PC_WORD_DOM`.  Cube actors do not wake for bound-only changes.  `WordDelta`
+retains the exact newly fixed masks and adds immutable kind plus old/new ranked
+endpoints.  `WordView` remains the common cube view; checked
+`UnsignedWordView` and `SignedWordView` provide the typed range protocol for
+later bounded propagators.  The fallback path is already exercised by posting
+an ordinary XOR actor over bounded variables: its cube tell synchronizes the
+extended domain without requiring a second variable type.
+
+The ordinary registered `Word::Bounded::Kernel` test exhausts every interval
+and cube separately through width eight, crosses arbitrary cubes with partial
+intervals exhaustively through width four and by a bounded sample at width
+five, and covers unsigned and signed ranks.  It also covers width one and 64,
+values outside `Int::Limits`, mixed arrays, public/internal endpoint
+conventions, fast and fallback tells, atomic failure, event selectivity,
+emitted delta payloads, clone isolation, and genuine `c_d=1` replay.  Fault
+tests cover failure after forwarding a compact variable but before copying
+bounded variables, followed by recovery and successful recloning.  CMake and
+Autoconf inventories both compile the new ordinary test.  Generated headers
+reproduce exactly.
+
+The deliberately degenerative `x < y` and `y < x` experiment isolates the
+value of persistent bounds; global contradiction analysis is outside its
+scope.  The temporary cube formulation must branch, whereas bounded Word and
+ordinary `IntVar` both fail at the root.  Five interleaved trials give these
+medians:
+
+| width | exact baseline cube | expanded-event cube | bounded Word | IntVar |
+| ---: | ---: | ---: | ---: | ---: |
+| 20 | 189.076 ms | 192.742 ms | 20.139 ms | 18.725 ms |
+| 22 | 770.485 ms | 787.644 ms | 80.504 ms | 74.625 ms |
+| 24 | 3144.744 ms | 3198.098 ms | 321.467 ms | 298.952 ms |
+
+At width 24, both cube variants have 16,777,215 nodes, 8,388,608
+failures, and 41,943,037 propagations; the new common infrastructure costs
+1.70 percent in this control.  Bounded Word uses 8,388,609 propagations and
+Int uses 8,388,607.  Their semantics are the same root failure, but their
+counters are not compared with the searching cube model.  Bounded Word is
+7.53 percent slower than Int at width 24, or 38.32 versus 35.64 ns per
+propagation.  Instrumentation classifies 16,777,214 range tells as fast and
+only two as full synchronization, with no no-ops or failed tells.  Thus the
+remaining micro-gap is ordinary Word view/event/tell overhead, not repeated
+domain synchronization.  A single diagnostic RSS run reported 2.28 MiB for
+baseline cube, 2.26 MiB for expanded cube, 1.82 MiB for bounded Word, and 1.79
+MiB for Int; these process-level figures are not per-variable measurements.
+
+The strongest expected gains are arithmetic models whose useful information
+is naturally interval-shaped: non-wrapping multiplication and factor
+recovery, quotient/remainder pipelines, unsigned or signed order systems,
+range-limited add/sub chains, and shift/extension pipelines.  Hash and CRC
+models dominated by rotations, XOR, and independent bit information should
+normally remain cube variables.  This stage intentionally adds only the
+kernel and typed views; production relations and arithmetic still use their
+cube actors until the following migration tasks provide and independently
+gate bounded variants.
+
+Validation used exact baseline `a4461da5049da4dab76eafb85dfe01fcc7eb63a0`.
+The warning-enabled Release build (`-Wall -Wextra`), fault-injection build,
+full Word suite, focused bounded suite, Make inventory check, benchmark
+commands/raw output, linked binaries, source diff, analysis, and cache
+identities are recorded in `/private/tmp/word071-*`.  The 28-entry
+`/private/tmp/word071-SHA256SUMS` manifest verifies every entry.  No benchmark
+artifact is tracked.
+
 ## Boundaries
 
 - This area is a full implementation spike, not a battle-hardening exercise. Each task must follow established Gecode patterns, reuse normal framework and test machinery, and avoid novel infrastructure, special-case test paths, exhaustive edge-case campaigns, or verification beyond what is proportionate to getting the implementation working.

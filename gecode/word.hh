@@ -64,6 +64,13 @@ namespace Gecode {
    *  \ingroup TaskModelWordVars
    */
   typedef std::uint64_t WordValue;
+
+  /// Construction-time representation for a word domain
+  enum WordDomainType {
+    WDT_CUBE,     ///< Cube of independently known bits
+    WDT_UNSIGNED, ///< Cube intersected with an unsigned numeric interval
+    WDT_SIGNED    ///< Cube intersected with a signed numeric interval
+  };
 }
 
 #include <gecode/word/exception.hpp>
@@ -132,6 +139,9 @@ namespace Gecode {
   private:
     using VarImpVar<Word::WordVarImp>::x;
     void _init(Space& home, unsigned int width, WordValue lo, WordValue hi);
+    void _init(Space& home, unsigned int width, WordValue lo, WordValue hi,
+               WordDomainType domain_type, WordValue minimum,
+               WordValue maximum);
   public:
     /// Construct an uninitialized variable handle
     WordVar(void);
@@ -144,6 +154,28 @@ namespace Gecode {
     /// Construct a word with cube bounds \a lo and \a hi
     GECODE_WORD_EXPORT WordVar(Space& home, unsigned int width,
                               WordValue lo, WordValue hi);
+    /// Construct a word using the full range of a domain_type
+    GECODE_WORD_EXPORT WordVar(Space& home, unsigned int width,
+                              WordDomainType domain_type);
+    /**
+     * \brief Construct a bounded word with encoded endpoint bit patterns
+     *
+     * For signed words, \a minimum and \a maximum use the word's
+     * two's-complement bit patterns, not internal signed-order ranks.
+     */
+    GECODE_WORD_EXPORT WordVar(Space& home, unsigned int width,
+                              WordDomainType domain_type,
+                              WordValue minimum, WordValue maximum);
+    /**
+     * \brief Construct a bounded word with cube masks and encoded endpoints
+     *
+     * For signed words, \a minimum and \a maximum use the word's
+     * two's-complement bit patterns, not internal signed-order ranks.
+     */
+    GECODE_WORD_EXPORT WordVar(Space& home, unsigned int width,
+                              WordValue lo, WordValue hi,
+                              WordDomainType domain_type,
+                              WordValue minimum, WordValue maximum);
     /// Return the immutable width
     unsigned int width(void) const;
     /// Return the mask containing all significant bits
@@ -152,13 +184,31 @@ namespace Gecode {
     WordValue lo(void) const;
     /// Return the may-be-one upper mask
     WordValue hi(void) const;
+    /// Return the immutable domain representation
+    WordDomainType domain_type(void) const;
+    /// Test whether the word has a numeric interval
+    bool bounded(void) const;
+    /**
+     * \brief Return the canonical minimum endpoint bit pattern
+     *
+     * For signed words, the result is the two's-complement encoding of the
+     * minimum value, not its internal signed-order rank.
+     */
+    WordValue minimum(void) const;
+    /**
+     * \brief Return the canonical maximum endpoint bit pattern
+     *
+     * For signed words, the result is the two's-complement encoding of the
+     * maximum value, not its internal signed-order rank.
+     */
+    WordValue maximum(void) const;
     /// Return the mask of unknown bits
     WordValue unknown(void) const;
     /// Return the number of unknown bits
     unsigned int unknown_size(void) const;
     /// Test whether the word is assigned
     bool assigned(void) const;
-    /// Test whether concrete \a value belongs to the cube
+    /// Test whether concrete \a value belongs to the represented domain
     bool in(WordValue value) const;
     /// Return the assigned value
     WordValue val(void) const;
@@ -190,6 +240,17 @@ namespace Gecode {
     template<class InputIterator> WordVarArgs(InputIterator first, InputIterator last);
     GECODE_WORD_EXPORT WordVarArgs(Space& home, int n, unsigned int width,
                                   WordValue lo, WordValue hi);
+    GECODE_WORD_EXPORT WordVarArgs(Space& home, int n, unsigned int width,
+                                  WordDomainType domain_type);
+    /// Construct bounded words; signed endpoints are two's-complement patterns
+    GECODE_WORD_EXPORT WordVarArgs(Space& home, int n, unsigned int width,
+                                  WordDomainType domain_type,
+                                  WordValue minimum, WordValue maximum);
+    /// Construct bounded cubes; signed endpoints are two's-complement patterns
+    GECODE_WORD_EXPORT WordVarArgs(Space& home, int n, unsigned int width,
+                                  WordValue lo, WordValue hi,
+                                  WordDomainType domain_type,
+                                  WordValue minimum, WordValue maximum);
     WordVarArgs& operator=(const WordVarArgs&) = default;
   };
   /// Word variable array
@@ -201,6 +262,17 @@ namespace Gecode {
     WordVarArray(Space& home, const WordVarArgs& a);
     GECODE_WORD_EXPORT WordVarArray(Space& home, int n, unsigned int width,
                                    WordValue lo, WordValue hi);
+    GECODE_WORD_EXPORT WordVarArray(Space& home, int n, unsigned int width,
+                                   WordDomainType domain_type);
+    /// Construct bounded words; signed endpoints are two's-complement patterns
+    GECODE_WORD_EXPORT WordVarArray(Space& home, int n, unsigned int width,
+                                   WordDomainType domain_type,
+                                   WordValue minimum, WordValue maximum);
+    /// Construct bounded cubes; signed endpoints are two's-complement patterns
+    GECODE_WORD_EXPORT WordVarArray(Space& home, int n, unsigned int width,
+                                   WordValue lo, WordValue hi,
+                                   WordDomainType domain_type,
+                                   WordValue minimum, WordValue maximum);
     WordVarArray& operator=(const WordVarArray&) = default;
   };
 

@@ -33,11 +33,35 @@
 
 namespace Gecode { namespace Word {
   forceinline WordDelta::WordDelta(void)
-    : _zero(0), _one(0) {}
-  forceinline WordDelta::WordDelta(WordValue zero, WordValue one)
-    : _zero(zero), _one(one) {}
+    : _zero(0), _one(0), _old_minimum(0), _old_maximum(0),
+      _new_minimum(0), _new_maximum(0), _domain_type(WDT_CUBE) {}
+  forceinline WordDelta::WordDelta(WordValue zero, WordValue one,
+                                   WordDomainType domain_type,
+                                   WordValue old_minimum,
+                                   WordValue old_maximum,
+                                   WordValue new_minimum,
+                                   WordValue new_maximum)
+    : _zero(zero), _one(one),
+      _old_minimum(old_minimum), _old_maximum(old_maximum),
+      _new_minimum(new_minimum), _new_maximum(new_maximum),
+      _domain_type(domain_type) {}
   forceinline WordValue WordDelta::zero(void) const { return _zero; }
   forceinline WordValue WordDelta::one(void) const { return _one; }
+  forceinline WordDomainType WordDelta::domain_type(void) const {
+    return _domain_type;
+  }
+  forceinline WordValue WordDelta::old_minimum(void) const {
+    return _old_minimum;
+  }
+  forceinline WordValue WordDelta::old_maximum(void) const {
+    return _old_maximum;
+  }
+  forceinline WordValue WordDelta::new_minimum(void) const {
+    return _new_minimum;
+  }
+  forceinline WordValue WordDelta::new_maximum(void) const {
+    return _new_maximum;
+  }
 }}
 
 // STATISTICS: word-var

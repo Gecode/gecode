@@ -42,6 +42,8 @@ namespace Gecode { namespace Word {
     : Exception(l,"Attempt to create word variable with empty domain") {}
   ValOfUnassignedVar::ValOfUnassignedVar(const char* l)
     : Exception(l,"Attempt to access value of unassigned word variable") {}
+  BoundsOfCubeVar::BoundsOfCubeVar(const char* l)
+    : Exception(l,"Attempt to access bounds of cube word variable") {}
   WidthMismatch::WidthMismatch(const char* l)
     : Exception(l,"Word widths do not match") {}
   UnknownRelation::UnknownRelation(const char* l)

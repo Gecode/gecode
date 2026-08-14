@@ -50,6 +50,12 @@ namespace Gecode { namespace Word {
     WordValue mask(void) const { return x->mask(); }
     WordValue lo(void) const { return x->lo(); }
     WordValue hi(void) const { return x->hi(); }
+    WordDomainType domain_type(void) const { return x->domain_type(); }
+    bool bounded(void) const { return x->bounded(); }
+    /// Return the canonical endpoint encoding (two's-complement when signed)
+    WordValue minimum(void) const { return x->minimum(); }
+    /// Return the canonical endpoint encoding (two's-complement when signed)
+    WordValue maximum(void) const { return x->maximum(); }
     WordValue unknown(void) const { return x->unknown(); }
     unsigned int unknown_size(void) const { return x->unknown_size(); }
     WordValue val(void) const { return x->val(); }
@@ -60,7 +66,82 @@ namespace Gecode { namespace Word {
     ModEvent eq(Space& home, WordValue n) { return x->eq(home,n); }
     WordValue zero(const Delta& d) const { return WordVarImp::zero(d); }
     WordValue one(const Delta& d) const { return WordVarImp::one(d); }
+    WordDomainType domain_type(const Delta& d) const {
+      return WordVarImp::domain_type(d);
+    }
+    /// Return the old internal order-rank minimum from \a d
+    WordValue old_minimum(const Delta& d) const {
+      return WordVarImp::old_minimum(d);
+    }
+    /// Return the old internal order-rank maximum from \a d
+    WordValue old_maximum(const Delta& d) const {
+      return WordVarImp::old_maximum(d);
+    }
+    /// Return the new internal order-rank minimum from \a d
+    WordValue new_minimum(const Delta& d) const {
+      return WordVarImp::new_minimum(d);
+    }
+    /// Return the new internal order-rank maximum from \a d
+    WordValue new_maximum(const Delta& d) const {
+      return WordVarImp::new_maximum(d);
+    }
     static ModEventDelta med(ModEvent me) { return VarImpView<WordVar>::med(me); }
+  };
+
+  /// Typed view of an unsigned-bounded word
+  class UnsignedWordView : public WordView {
+  private:
+    BoundedWordVarImp* imp(void) const {
+      return static_cast<BoundedWordVarImp*>(x);
+    }
+  public:
+    UnsignedWordView(void) {}
+    UnsignedWordView(const WordVar& y) : WordView(y) {
+      assert(domain_type() == WDT_UNSIGNED);
+    }
+    UnsignedWordView(WordVarImp* y) : WordView(y) {
+      assert(domain_type() == WDT_UNSIGNED);
+    }
+    /// Return the canonical minimum unsigned rank
+    WordValue minimum(void) const { return imp()->minimum(); }
+    /// Return the canonical maximum unsigned rank
+    WordValue maximum(void) const { return imp()->maximum(); }
+    ModEvent narrow_domain(Space& home, WordValue lo, WordValue hi,
+                           WordValue minimum, WordValue maximum) {
+      return imp()->narrow_domain(home,lo,hi,minimum,maximum);
+    }
+    ModEvent narrow_range(Space& home, WordValue minimum,
+                          WordValue maximum) {
+      return imp()->narrow_range(home,minimum,maximum);
+    }
+  };
+
+  /// Typed view of a signed-bounded word
+  class SignedWordView : public WordView {
+  private:
+    BoundedWordVarImp* imp(void) const {
+      return static_cast<BoundedWordVarImp*>(x);
+    }
+  public:
+    SignedWordView(void) {}
+    SignedWordView(const WordVar& y) : WordView(y) {
+      assert(domain_type() == WDT_SIGNED);
+    }
+    SignedWordView(WordVarImp* y) : WordView(y) {
+      assert(domain_type() == WDT_SIGNED);
+    }
+    /// Return the canonical minimum signed-order rank
+    WordValue minimum(void) const { return imp()->minimum(); }
+    /// Return the canonical maximum signed-order rank
+    WordValue maximum(void) const { return imp()->maximum(); }
+    ModEvent narrow_domain(Space& home, WordValue lo, WordValue hi,
+                           WordValue minimum, WordValue maximum) {
+      return imp()->narrow_domain(home,lo,hi,minimum,maximum);
+    }
+    ModEvent narrow_range(Space& home, WordValue minimum,
+                          WordValue maximum) {
+      return imp()->narrow_range(home,minimum,maximum);
+    }
   };
 
   /**
@@ -88,6 +169,8 @@ namespace Gecode { namespace Word {
     WordValue lo(void) const { return _value; }
     /// Return may-be-one mask
     WordValue hi(void) const { return _value; }
+    WordDomainType domain_type(void) const { return WDT_CUBE; }
+    bool bounded(void) const { return false; }
     /// Return unknown mask
     WordValue unknown(void) const { return 0; }
     /// Return number of unknown bits

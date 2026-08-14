@@ -41,12 +41,104 @@ namespace Gecode {
     for (int i = size(); i--; )
       a[i]._init(home,width,lo,hi);
   }
+  WordVarArgs::WordVarArgs(Space& home, int n, unsigned int width,
+                           WordDomainType domain_type)
+    : VarArgArray<WordVar>(n) {
+    if ((width == 0U) || (width > 64U) ||
+        ((domain_type != WDT_CUBE) &&
+         (domain_type != WDT_UNSIGNED) &&
+         (domain_type != WDT_SIGNED)))
+      throw Word::OutOfLimits("WordVarArgs::WordVarArgs");
+    const WordValue mask = Word::width_mask(width);
+    WordValue lo = 0;
+    WordValue hi = mask;
+    WordValue minimum = (domain_type == WDT_SIGNED) ?
+      Word::sign_bit(width) : 0;
+    WordValue maximum = (domain_type == WDT_SIGNED) ?
+      (Word::sign_bit(width)-1) : mask;
+    if (domain_type != WDT_CUBE)
+      Word::check_bounded_domain(width,lo,hi,domain_type,minimum,maximum,
+                                 "WordVarArgs::WordVarArgs");
+    for (int i = size(); i--; ) {
+      if (domain_type == WDT_CUBE)
+        a[i]._init(home,width,lo,hi);
+      else
+        a[i]._init(home,width,lo,hi,domain_type,minimum,maximum);
+    }
+  }
+  WordVarArgs::WordVarArgs(Space& home, int n, unsigned int width,
+                           WordDomainType domain_type,
+                           WordValue minimum, WordValue maximum)
+    : VarArgArray<WordVar>(n) {
+    WordValue lo = 0;
+    WordValue hi = Word::width_mask(width);
+    Word::check_bounded_domain(width,lo,hi,domain_type,minimum,maximum,
+                               "WordVarArgs::WordVarArgs");
+    for (int i = size(); i--; )
+      a[i]._init(home,width,lo,hi,domain_type,minimum,maximum);
+  }
+  WordVarArgs::WordVarArgs(Space& home, int n, unsigned int width,
+                           WordValue lo, WordValue hi,
+                           WordDomainType domain_type,
+                           WordValue minimum, WordValue maximum)
+    : VarArgArray<WordVar>(n) {
+    Word::check_bounded_domain(width,lo,hi,domain_type,minimum,maximum,
+                               "WordVarArgs::WordVarArgs");
+    for (int i = size(); i--; )
+      a[i]._init(home,width,lo,hi,domain_type,minimum,maximum);
+  }
   WordVarArray::WordVarArray(Space& home, int n, unsigned int width,
                              WordValue lo, WordValue hi)
     : VarArray<WordVar>(home,n) {
     Word::check_domain(width,lo,hi,"WordVarArray::WordVarArray");
     for (int i = size(); i--; )
       x[i]._init(home,width,lo,hi);
+  }
+  WordVarArray::WordVarArray(Space& home, int n, unsigned int width,
+                             WordDomainType domain_type)
+    : VarArray<WordVar>(home,n) {
+    if ((width == 0U) || (width > 64U) ||
+        ((domain_type != WDT_CUBE) &&
+         (domain_type != WDT_UNSIGNED) &&
+         (domain_type != WDT_SIGNED)))
+      throw Word::OutOfLimits("WordVarArray::WordVarArray");
+    const WordValue mask = Word::width_mask(width);
+    WordValue lo = 0;
+    WordValue hi = mask;
+    WordValue minimum = (domain_type == WDT_SIGNED) ?
+      Word::sign_bit(width) : 0;
+    WordValue maximum = (domain_type == WDT_SIGNED) ?
+      (Word::sign_bit(width)-1) : mask;
+    if (domain_type != WDT_CUBE)
+      Word::check_bounded_domain(width,lo,hi,domain_type,minimum,maximum,
+                                 "WordVarArray::WordVarArray");
+    for (int i = size(); i--; ) {
+      if (domain_type == WDT_CUBE)
+        x[i]._init(home,width,lo,hi);
+      else
+        x[i]._init(home,width,lo,hi,domain_type,minimum,maximum);
+    }
+  }
+  WordVarArray::WordVarArray(Space& home, int n, unsigned int width,
+                             WordDomainType domain_type,
+                             WordValue minimum, WordValue maximum)
+    : VarArray<WordVar>(home,n) {
+    WordValue lo = 0;
+    WordValue hi = Word::width_mask(width);
+    Word::check_bounded_domain(width,lo,hi,domain_type,minimum,maximum,
+                               "WordVarArray::WordVarArray");
+    for (int i = size(); i--; )
+      x[i]._init(home,width,lo,hi,domain_type,minimum,maximum);
+  }
+  WordVarArray::WordVarArray(Space& home, int n, unsigned int width,
+                             WordValue lo, WordValue hi,
+                             WordDomainType domain_type,
+                             WordValue minimum, WordValue maximum)
+    : VarArray<WordVar>(home,n) {
+    Word::check_bounded_domain(width,lo,hi,domain_type,minimum,maximum,
+                               "WordVarArray::WordVarArray");
+    for (int i = size(); i--; )
+      x[i]._init(home,width,lo,hi,domain_type,minimum,maximum);
   }
 }
 

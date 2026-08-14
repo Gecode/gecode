@@ -46,6 +46,51 @@ namespace Gecode {
     Word::check_domain(width,lo,hi,"WordVar::WordVar");
     _init(home,width,lo,hi);
   }
+  WordVar::WordVar(Space& home, unsigned int width,
+                   WordDomainType domain_type)
+    : VarImpVar<Word::WordVarImp>(nullptr) {
+    if ((width == 0U) || (width > 64U) ||
+        ((domain_type != WDT_CUBE) &&
+         (domain_type != WDT_UNSIGNED) &&
+         (domain_type != WDT_SIGNED)))
+      throw Word::OutOfLimits("WordVar::WordVar");
+    const WordValue mask = Word::width_mask(width);
+    const WordValue minimum = (domain_type == WDT_SIGNED) ?
+      Word::sign_bit(width) : 0;
+    const WordValue maximum = (domain_type == WDT_SIGNED) ?
+      (Word::sign_bit(width)-1) : mask;
+    WordValue ranked_minimum = minimum;
+    WordValue ranked_maximum = maximum;
+    WordValue lo = 0;
+    WordValue hi = mask;
+    if (domain_type == WDT_CUBE) {
+      _init(home,width,lo,hi);
+      return;
+    }
+    Word::check_bounded_domain(width,lo,hi,domain_type,
+                               ranked_minimum,ranked_maximum,
+                               "WordVar::WordVar");
+    _init(home,width,lo,hi,domain_type,ranked_minimum,ranked_maximum);
+  }
+  WordVar::WordVar(Space& home, unsigned int width,
+                   WordDomainType domain_type,
+                   WordValue minimum, WordValue maximum)
+    : VarImpVar<Word::WordVarImp>(nullptr) {
+    WordValue lo = 0;
+    WordValue hi = Word::width_mask(width);
+    Word::check_bounded_domain(width,lo,hi,domain_type,minimum,maximum,
+                               "WordVar::WordVar");
+    _init(home,width,lo,hi,domain_type,minimum,maximum);
+  }
+  WordVar::WordVar(Space& home, unsigned int width,
+                   WordValue lo, WordValue hi,
+                   WordDomainType domain_type,
+                   WordValue minimum, WordValue maximum)
+    : VarImpVar<Word::WordVarImp>(nullptr) {
+    Word::check_bounded_domain(width,lo,hi,domain_type,minimum,maximum,
+                               "WordVar::WordVar");
+    _init(home,width,lo,hi,domain_type,minimum,maximum);
+  }
 
   void dom(Home home, WordVar x, WordValue lo, WordValue hi) {
     GECODE_POST;
