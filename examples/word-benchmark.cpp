@@ -239,8 +239,12 @@ namespace {
  */
 int
 main(int argc, char* argv[]) {
-  std::string variant;
-  Instance instance = {"",0,0,0,0,0,0,0,0};
+  // Match the redistributable word-xor-rotate-smoke fixture so that the
+  // example is useful on its own as well as through benchmark.py.
+  std::string variant = "native-word";
+  Instance instance = {
+    "word-xor-rotate-smoke",8,3,165,3,128,143,16,66
+  };
   for (int i=1; i<argc; i++) {
     const char* option = argv[i];
     if (std::strcmp(option,"--variant") == 0)

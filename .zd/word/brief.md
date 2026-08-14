@@ -2340,6 +2340,49 @@ build is clean.  Commands, raw comparisons, rpath identities, and verified
 SHA-256 values are in `/private/tmp/word076-evidence.md` and
 `/private/tmp/word076-sha256.txt`; no benchmark artifact is tracked.
 
+### Published bounded WordVar contract
+
+The public Word inventory now distinguishes the optional cube-only domain
+from unsigned and signed cube-intersection-with-interval domains, and records
+the exact dispatch boundary for every public family.  Native bounded paths are
+selective: compatible equality/order, proved numeric regimes for binary
+arithmetic and signed negation, classified carry/borrow and overflow
+compositions, settled homogeneous division families, and distinct
+non-wrapping or overshift unsigned left shifts.  N-ary add, extensions/right shifts,
+rotations, logic, ITE, Element, product_mod, counts, reductions, channels, and
+every unsupported mixed/wrapping/alias regime retain their established cube
+actors.  Cube fallback remains semantically supported and synchronizes the
+bounded representation.  The documentation makes no domain-consistency or
+industrial QF_BV competitiveness claim.
+
+The ordinary `word-arithmetic` example now accepts `-word-domain
+cube|unsigned|signed`; all three modes print the stable semantic row `input =
+0x5, result = 0x6` with one solution, one node, no failures, and one
+propagation.  The symbolic ALU's three modes enumerate the same four rows at
+its bounded validation scale.  `word-benchmark` now has a no-argument default
+using the existing redistributable smoke fixture and native-word
+configuration, while preserving every explicit CLI override.  All 12 Word
+examples build and run without arguments under the release validation cap.
+
+README and CMake build documentation now list the Word enable switches and
+the exported `word`/`gecodeword` component, with a 6.4 consumer example.  The
+bounded constructors and array symbols and the CMake package export already
+exist and require no new export machinery.  Word is new in the unreleased
+6.4.0 component, so the release-wide SOVERSION remains 51.  The changelog and
+build documentation explicitly require development-snapshot consumers to
+rebuild and relink after the bounded variable/event/branch/trace changes;
+branch archives are not a cross-ABI serialization format.
+
+Release validation built every Word example, ran all no-argument modes, and
+passed the full CMake `check` target.  The installed package and repository
+consumer smoke compile, link, and run with `COMPONENTS word`.  A clean
+Autoconf configuration with Word/examples and `-Wall -Wextra` builds and runs
+the three-domain arithmetic example after the conventional `mkcompiledirs`
+step.  CMake documentation, generated-source freshness, changelog/tidy,
+`zd check word`, and diff checks pass.  Documentation generation also found
+and added the conventional `word-prop` statistics marker to the bounded
+arithmetic header; this is metadata only and changes no algorithm.
+
 ## Boundaries
 
 - This area is a full implementation spike, not a battle-hardening exercise. Each task must follow established Gecode patterns, reuse normal framework and test machinery, and avoid novel infrastructure, special-case test paths, exhaustive edge-case campaigns, or verification beyond what is proportionate to getting the implementation working.

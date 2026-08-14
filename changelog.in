@@ -88,6 +88,17 @@ including zero-divisor and signed-overflow edge cases. WordVar can optionally
 combine its bit cube with an immutable unsigned or signed interval, with
 ranked branching, tracing, explicit MiniModel result lowering, and native
 bounded equality and ordering, including reification.
+Matching bounded domains also use selectively dispatched non-wrapping binary
+addition, subtraction, multiplication, signed negation, unsigned carry and
+borrow, unsigned and signed division families, and unsigned left-shift bounds.
+Mixed kinds, wrapping or unsettled arithmetic regimes, aliases not supported
+by a bounded actor, and the remaining logical, structural, and mixed
+constraints deliberately retain their complete cube propagation path.
+
+The Word module is new in this release and uses the release-wide ABI version.
+Its bounded-domain events, branch choices, and trace records are not compatible
+with earlier development snapshots: downstream Word consumers must rebuild
+and relink, and must not treat branch archives as cross-version storage.
 
 [ENTRY]
 Module: int

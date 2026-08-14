@@ -33,6 +33,8 @@
 #ifndef GECODE_WORD_ARITHMETIC_BOUNDED_HPP
 #define GECODE_WORD_ARITHMETIC_BOUNDED_HPP
 
+// STATISTICS: word-prop
+
 namespace Gecode { namespace Word { namespace Arithmetic {
 
   struct BoundLocalDomain {

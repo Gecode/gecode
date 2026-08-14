@@ -82,12 +82,21 @@ namespace Gecode {
   /**
    * \defgroup TaskModelWord Word-vector constraints
    *
-   * A word variable has an immutable width from 1 through 64. Its domain is
-   * a cube represented by a known-one lower mask and a may-be-one upper mask;
-   * it is not an unsigned integer interval. Constants therefore always carry
-   * an explicit width. Arithmetic is fixed-width and wraps modulo
-   * \f$2^{width}\f$. Operations with policy-dependent edge cases default to
-   * WordSemantics::WS_SMTLIB.
+   * A word variable has an immutable width from 1 through 64. Every domain
+   * contains a cube represented by a known-one lower mask and a may-be-one
+   * upper mask. WDT_UNSIGNED and WDT_SIGNED optionally intersect that cube
+   * with one immutable-interpretation numeric interval; WDT_CUBE retains the
+   * original cube alone. Constants therefore always carry an explicit width.
+   * Arithmetic is fixed-width and wraps modulo \f$2^{width}\f$. Operations
+   * with policy-dependent edge cases default to WordSemantics::WS_SMTLIB.
+   *
+   * Bounded dispatch is selective. A posting uses a numeric actor only for a
+   * proved compatible interpretation and regime. Cube, mixed-kind, wrapping,
+   * or otherwise unsupported cases (including aliases not handled by the
+   * selected bounded actor) deliberately use the ordinary cube actor for the
+   * complete relation; its tells still synchronize any bounded variables. A
+   * bounded domain does not change operation semantics and does not imply
+   * domain-consistent propagation.
    *
    * WordVar provides the variable and mask interface. WordRelType and
    * WordOpType select direct relation and logical postings. Models branch with
@@ -100,26 +109,27 @@ namespace Gecode {
    *
    * | Public operation | Implementation | Tested property |
    * | --- | --- | --- |
-   * | `dom` and WordVar mask queries | Native word-domain update | Exact atomic cube narrowing, assignment, and failure |
-   * | `channel` | Direct word-bit/BoolVar actor | Bit consistency, aliases, cloning, and recomputation |
-   * | `reduce_and`, `reduce_or`, `reduce_xor` | Direct Word/Bool reduction actors | Assigned semantics, decisive bits, parity completion, and lifecycle |
-   * | `element` | Direct mixed Int/Word array-selection actor | Index support pruning and supported-result cube hull |
-   * | `popcount`, `count_leading_zeros`, `count_trailing_zeros` | Direct mixed Word/Int count actors | Population bounds/extrema and zero-prefix propagation |
-   * | `rel` with `WRT_EQ`, `WRT_NQ` | Matching bounded variables use transactional cube-and-interval equality; other cases use the direct cube equality/disequality actors; reified disequality rewrites through equality | Equality domain consistency for the represented cube and interval; disequality sound representable exclusion; all reification modes |
+   * | `dom`, WordVar queries, and bounded constructors | Native atomic cube update, optionally synchronized with one unsigned or signed interval | Exact represented-domain membership, canonical endpoints, assignment, and failure |
+   * | `channel` | Direct word-bit/BoolVar cube actor for every domain kind | Bit consistency, bounded-domain synchronization, aliases, cloning, and recomputation |
+   * | `reduce_and`, `reduce_or`, `reduce_xor` | Direct Word/Bool cube reduction actors for every domain kind | Assigned semantics, decisive bits, parity completion, and lifecycle |
+   * | `element` | Direct mixed Int/Word cube array-selection actor for every domain kind | Index support pruning and supported-result cube hull |
+   * | `popcount`, `count_leading_zeros`, `count_trailing_zeros` | Direct mixed Word/Int cube-count actors for every domain kind | Population bounds/extrema and zero-prefix propagation |
+   * | `rel` with `WRT_EQ`, `WRT_NQ` | Compatible bounded variable and constant views use transactional cube-and-interval equality; other cases use direct cube equality/disequality; reified disequality rewrites through equality | Exact equality intersection, sound disequality exclusion, and all reification modes |
    * | `rel` with unsigned and signed order types | Matching numeric domains use direct interval actors; cube, mixed, and opposite-kind cases use the MSB-first actors; greater and reified strict relations use the established operand/control rewrites | Assigned semantics and sound numeric-bound or word-level bit pruning |
-   * | `complement`; binary and n-ary logical `rel` with all WordOpType values | Distinct-view binary OR/XOR use direct native actors; aliases and other binary forms use the generic Table actor; n-ary forms use primitive global actors and optional complement | Per-bit consistency and assigned semantics |
-   * | Boolean and word-mask `ite` | Boolean form is a direct mixed actor; mask form is a direct per-bit actor | Sound partial propagation; mask form is bit consistent |
-   * | `extract`, `concat`, `repeat`, `zero_extend`, `sign_extend` | Direct fixed masked-copy actors | Bit consistency for copied bits and groups |
-   * | Fixed `shift_left`, `logical_shift_right`, `arithmetic_shift_right`, `rotate_left`, `rotate_right` | Direct fixed masked actors | Bit consistency and boundary amounts |
-   * | Variable `shift_left`, `logical_shift_right`, `arithmetic_shift_right` | Bounded word-level cube-hull actor | Assigned semantics and partial-amount soundness |
-   * | `add`, n-ary `add`, `neg`, `sub`; carry and borrow results | Native bounded-carry actors | Assigned semantics, partial-domain soundness, aliases, and lifecycle |
-   * | `mult` | Native low-prefix, forced-zero, and fixed-prefix inverse actor | Assigned semantics, Boolean differential parity, and sound partial/inverse propagation |
-   * | `product_mod` | Direct and reified mixed Word/Int actors with overflow-safe assigned evaluation | Positive modulus, result cube hull, assigned semantics, all reification modes, and lifecycle |
-   * | Arithmetic `overflow` predicates | Compositions over native arithmetic, bit channels, and reified relations | Assigned semantics, SMT-LIB signed overflow cases, and lifecycle |
-   * | Unsigned `div`, `mod`, combined `divmod` | Compact native range-hull and low-bit actors; combined quotient/remainder uses one shared actor | SMT-LIB zero-divisor semantics, Boolean parity, and sound partial/inverse propagation |
-   * | `signed_div`, `signed_rem`, `signed_mod` | Compact native signed actors with fixed-divisor and sign-bit propagation | SMT-LIB zero-divisor and overflow semantics, Boolean parity, and partial-domain soundness |
-   * | `branch`, `assign` and their selectors | Native unknown-bit choices | Archive, no-good, clone, and recomputation lifecycle |
-   * | `trace`, WordTraceDelta and word printing | Standard variable trace/print integration | Fixed-bit deltas and trace lifecycle |
+   * | `complement`; binary and n-ary logical `rel` with all WordOpType values | Cube actors for every domain kind: distinct-view binary OR/XOR use direct native actors, aliases and other binary forms use generic Table, and n-ary forms use primitive globals plus optional complement | Per-bit consistency, bounded-domain synchronization, and assigned semantics |
+   * | Boolean and word-mask `ite` | Cube actors for every domain kind: Boolean form is a direct mixed actor and mask form is a direct per-bit actor | Sound partial propagation; mask form is bit consistent |
+   * | `extract`, `concat`, `repeat`, `zero_extend`, `sign_extend` | Direct fixed masked-copy cube actors for every domain kind | Bit consistency for copied bits and groups |
+   * | Fixed `shift_left`, `logical_shift_right`, `arithmetic_shift_right`, `rotate_left`, `rotate_right` | Distinct unsigned non-wrapping or overshift left shift can use a numeric actor; every other case uses the direct fixed cube actor | Sound interval bounds where selected; bit consistency and boundary amounts everywhere |
+   * | Variable `shift_left`, `logical_shift_right`, `arithmetic_shift_right` | Pairwise-distinct non-wrapping unsigned left shift adds a numeric actor to the exact cube-hull actor; all other forms use the cube actor alone. The amount is interpreted as unsigned | Assigned semantics, sound partial-amount cube hulls, and sound selected interval bounds |
+   * | Binary `add`, `sub`, `mult` | Same-kind signed or unsigned non-wrapping regimes use transactional numeric-plus-cube actors; mixed or wrapping regimes use the native cube actors | Assigned modular semantics and sound partial/inverse propagation |
+   * | `neg`; carry and borrow `add`/`sub` | Signed non-singular negation and classified unsigned carry/borrow can use bounded actors; all other regimes use cube actors | Assigned modular semantics, flag rows, aliases, and lifecycle |
+   * | N-ary `add` | Native cube carry-support actor; assigned constants are folded at posting | Assigned semantics and sound partial/inverse support |
+   * | `product_mod` | Direct and reified mixed Word/Int cube actors with overflow-safe assigned evaluation | Positive modulus, result cube hull, assigned semantics, all reification modes, and lifecycle |
+   * | Arithmetic `overflow` predicates | Compositions over arithmetic, bit channels, and reified relations; compatible intermediates preserve their kind | Assigned semantics, SMT-LIB signed overflow cases, and lifecycle |
+   * | Unsigned `div`, `mod`, combined `divmod` | Homogeneous unsigned operands with a settled divisor-zero regime use transactional bounded actors; other cases use the native cube actors; combined quotient/remainder uses one shared actor | Exact SMT-LIB zero-divisor rows and sound partial/inverse propagation |
+   * | `signed_div`, `signed_rem`, `signed_mod` | Homogeneous signed operands with a settled divisor sign/zero regime use transactional bounded actors; other cases use native signed cube actors | Exact SMT-LIB zero-divisor and minimum/-1 rows, plus sound sign and partial propagation |
+   * | `branch`, `assign` and their selectors | Native unknown-bit choices plus admitted ranked split/minimum/median/maximum choices for bounded domains | Archive, no-good, clone, and recomputation lifecycle |
+   * | `trace`, WordTraceDelta and word printing | Standard integration reports cube bits, immutable kind, and ranked endpoints | Bit/bound/combined deltas and trace lifecycle |
    * | WordExpr logical, relation, conditional, structural, and arithmetic expressions | Ref-counted MiniModel DAG lowered through the corresponding direct API | Direct-posting parity, width/policy rejection, copies, clones, and recomputation |
    */
   /**
