@@ -86,7 +86,8 @@ word-level logical, relational, structural, counting, and modular arithmetic
 constraints. Policy-dependent arithmetic defaults to SMT-LIB total semantics,
 including zero-divisor and signed-overflow edge cases. WordVar can optionally
 combine its bit cube with an immutable unsigned or signed interval, with
-ranked branching, tracing, and explicit MiniModel result lowering.
+ranked branching, tracing, explicit MiniModel result lowering, and native
+bounded equality and ordering, including reification.
 
 [ENTRY]
 Module: int

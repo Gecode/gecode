@@ -163,6 +163,79 @@ namespace Gecode { namespace Word { namespace Rel {
     static ExecStatus post(Home home, View0 x0, View1 x1, CtrlView b);
   };
 
+  /// Equality propagator for matching bounded word domains
+  template<class View0, class View1>
+  class BoundEq : public MixBinaryPropagator<
+    View0,PC_WORD_DOM,View1,PC_WORD_DOM> {
+  protected:
+    using MixBinaryPropagator<
+      View0,PC_WORD_DOM,View1,PC_WORD_DOM>::x0;
+    using MixBinaryPropagator<
+      View0,PC_WORD_DOM,View1,PC_WORD_DOM>::x1;
+    BoundEq(Home home, View0 x0, View1 x1);
+    BoundEq(Space& home, BoundEq& p);
+  public:
+    virtual Actor* copy(Space& home);
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+    static ExecStatus post(Home home, View0 x0, View1 x1);
+  };
+
+  /// Numeric ordering propagator for matching bounded word domains
+  template<class View0, class View1, bool strict>
+  class BoundLq : public MixBinaryPropagator<
+    View0,PC_WORD_BND,View1,PC_WORD_BND> {
+  protected:
+    using MixBinaryPropagator<
+      View0,PC_WORD_BND,View1,PC_WORD_BND>::x0;
+    using MixBinaryPropagator<
+      View0,PC_WORD_BND,View1,PC_WORD_BND>::x1;
+    BoundLq(Home home, View0 x0, View1 x1);
+    BoundLq(Space& home, BoundLq& p);
+  public:
+    virtual Actor* copy(Space& home);
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+    static ExecStatus post(Home home, View0 x0, View1 x1);
+  };
+
+  /// Reified equality propagator for matching bounded word domains
+  template<class View0, class View1, class CtrlView, ReifyMode rm>
+  class ReBoundEq : public Propagator {
+  protected:
+    View0 x0;
+    View1 x1;
+    CtrlView b;
+    ReBoundEq(Home home, View0 x0, View1 x1, CtrlView b);
+    ReBoundEq(Space& home, ReBoundEq& p);
+  public:
+    virtual Actor* copy(Space& home);
+    virtual PropCost cost(const Space& home,
+                          const ModEventDelta& med) const;
+    virtual void reschedule(Space& home);
+    virtual size_t dispose(Space& home);
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+    static ExecStatus post(Home home, View0 x0, View1 x1, CtrlView b);
+  };
+
+  /// Reified numeric ordering for matching bounded word domains
+  template<class View0, class View1, class CtrlView,
+           ReifyMode rm>
+  class ReBoundLq : public Propagator {
+  protected:
+    View0 x0;
+    View1 x1;
+    CtrlView b;
+    ReBoundLq(Home home, View0 x0, View1 x1, CtrlView b);
+    ReBoundLq(Space& home, ReBoundLq& p);
+  public:
+    virtual Actor* copy(Space& home);
+    virtual PropCost cost(const Space& home,
+                          const ModEventDelta& med) const;
+    virtual void reschedule(Space& home);
+    virtual size_t dispose(Space& home);
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+    static ExecStatus post(Home home, View0 x0, View1 x1, CtrlView b);
+  };
+
 }}}
 
 #include <gecode/word/rel/eq.hpp>
@@ -170,6 +243,7 @@ namespace Gecode { namespace Word { namespace Rel {
 #include <gecode/word/rel/re-eq.hpp>
 #include <gecode/word/rel/lq-le.hpp>
 #include <gecode/word/rel/re-lq.hpp>
+#include <gecode/word/rel/bounded.hpp>
 
 #endif
 

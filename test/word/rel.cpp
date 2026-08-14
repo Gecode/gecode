@@ -262,6 +262,164 @@ namespace Test { namespace Word {
         return solutions == 4U*controls;
       }
 
+      static bool bounded_search(Gecode::WordDomainType kind0,
+                                 Gecode::WordDomainType kind1,
+                                 Gecode::WordRelType wrt,
+                                 bool reified, Gecode::ReifyMode rm) {
+        using namespace Gecode;
+        class SearchSpace : public Space {
+        public:
+          WordVar x, y;
+          BoolVar b;
+          SearchSpace(WordDomainType kind0, WordDomainType kind1,
+                      WordRelType wrt,
+                      bool reified, ReifyMode rm)
+            : x(*this,3,kind0), y(*this,3,kind1), b(*this,0,1) {
+            if (reified) {
+              rel(*this,x,wrt,y,Reify(b,rm));
+              branch(*this,b,BOOL_VAL_MIN());
+            } else {
+              rel(*this,x,wrt,y);
+            }
+            branch(*this,x,WORD_VAL_LSB());
+            branch(*this,y,WORD_VAL_LSB());
+          }
+          SearchSpace(SearchSpace& s) : Space(s) {
+            x.update(*this,s.x); y.update(*this,s.y); b.update(*this,s.b);
+          }
+          virtual Space* copy(void) { return new SearchSpace(*this); }
+        };
+
+        SearchSpace* root=new SearchSpace(kind0,kind1,wrt,reified,rm);
+        Search::Options options;
+        options.c_d=1;
+        options.a_d=64;
+        DFS<SearchSpace> dfs(root,options);
+        delete root;
+        unsigned int solutions=0, expected=0;
+        for (WordValue xv=0; xv<8; xv++)
+          for (WordValue yv=0; yv<8; yv++) {
+            const bool relation=holds(wrt,xv,yv,3);
+            if (!reified) {
+              expected += relation ? 1U : 0U;
+            } else {
+              for (int control=0; control<=1; control++) {
+                bool allowed=false;
+                switch (rm) {
+                case RM_EQV: allowed=(control == static_cast<int>(relation));
+                  break;
+                case RM_IMP: allowed=(control == 0) || relation; break;
+                case RM_PMI: allowed=!relation || (control == 1); break;
+                default: GECODE_NEVER;
+                }
+                expected += allowed ? 1U : 0U;
+              }
+            }
+          }
+        while (SearchSpace* solution=dfs.next()) {
+          const bool relation=holds(wrt,solution->x.val(),solution->y.val(),3);
+          bool allowed=relation;
+          if (reified) {
+            switch (rm) {
+            case RM_EQV: allowed=(solution->b.val() == relation); break;
+            case RM_IMP: allowed=!solution->b.val() || relation; break;
+            case RM_PMI: allowed=!relation || solution->b.val(); break;
+            default: GECODE_NEVER;
+            }
+          }
+          const bool ok=allowed && solution->x.assigned() &&
+            solution->y.assigned() && (!reified || solution->b.assigned()) &&
+            (PropagatorGroup::all.size(*solution) == 0U);
+          delete solution;
+          if (!ok)
+            return false;
+          solutions++;
+        }
+        return solutions == expected;
+      }
+
+      static bool bounded_strength(void) {
+        using namespace Gecode;
+        class PairSpace : public Space {
+        public:
+          WordVar x, y;
+          BoolVar b;
+          PairSpace(WordDomainType kind, WordValue xmin, WordValue xmax,
+                    WordValue ymin, WordValue ymax)
+            : x(*this,4,kind,xmin,xmax), y(*this,4,kind,ymin,ymax),
+              b(*this,0,1) {}
+          PairSpace(PairSpace& s) : Space(s) {
+            x.update(*this,s.x); y.update(*this,s.y); b.update(*this,s.b);
+          }
+          virtual Space* copy(void) { return new PairSpace(*this); }
+        };
+
+        PairSpace cycle(WDT_UNSIGNED,0,15,0,15);
+        rel(cycle,cycle.x,WRT_ULE,cycle.y);
+        rel(cycle,cycle.y,WRT_ULE,cycle.x);
+        if (cycle.status() != SS_FAILED)
+          return false;
+
+        PairSpace alias(WDT_SIGNED,WordValue(8),WordValue(7),
+                        WordValue(8),WordValue(7));
+        rel(alias,alias.x,WRT_NQ,alias.x);
+        if (alias.status() != SS_FAILED)
+          return false;
+
+        PairSpace equality(WDT_UNSIGNED,2,10,6,14);
+        rel(equality,equality.x,WRT_EQ,equality.y);
+        if ((equality.status() == SS_FAILED) ||
+            (equality.x.minimum() != 6) || (equality.x.maximum() != 10) ||
+            (equality.y.minimum() != 6) || (equality.y.maximum() != 10))
+          return false;
+
+        PairSpace constant(WDT_UNSIGNED,0,15,0,15);
+        rel(constant,constant.x,WRT_ULQ,4,5);
+        if ((constant.status() == SS_FAILED) ||
+            (constant.x.maximum() != 5))
+          return false;
+
+        PairSpace re_constant(WDT_UNSIGNED,6,10,0,15);
+        rel(re_constant,re_constant.x,WRT_ULQ,4,5,
+            Reify(re_constant.b,RM_EQV));
+        if ((re_constant.status() == SS_FAILED) || !re_constant.b.zero() ||
+            (PropagatorGroup::all.size(re_constant) != 0U))
+          return false;
+
+        PairSpace eq_constant(WDT_SIGNED,WordValue(12),3,8,7);
+        rel(eq_constant,eq_constant.x,WRT_EQ,4,WordValue(15),
+            Reify(eq_constant.b,RM_EQV));
+        rel(eq_constant,eq_constant.b,IRT_EQ,1);
+        if ((eq_constant.status() == SS_FAILED) ||
+            !eq_constant.x.assigned() || (eq_constant.x.val() != 15))
+          return false;
+
+        PairSpace inference(WDT_SIGNED,8,12,0,3);
+        rel(inference,inference.x,WRT_SLE,inference.y,
+            Reify(inference.b,RM_EQV));
+        if ((inference.status() == SS_FAILED) || !inference.b.one() ||
+            (PropagatorGroup::all.size(inference) != 0U))
+          return false;
+
+        class WideSpace : public Space {
+        public:
+          WordVar x, y;
+          WideSpace(void)
+            : x(*this,64,WDT_UNSIGNED,0,~WordValue(0)),
+              y(*this,64,WDT_UNSIGNED,WordValue(1) << 63,
+                ~WordValue(0)) {
+            rel(*this,x,WRT_ULE,y);
+          }
+          WideSpace(WideSpace& s) : Space(s) {
+            x.update(*this,s.x); y.update(*this,s.y);
+          }
+          virtual Space* copy(void) { return new WideSpace(*this); }
+        };
+        WideSpace wide;
+        return (wide.status() != SS_FAILED) &&
+          (wide.x.maximum() == (~WordValue(0)-1));
+      }
+
     public:
       Lifecycle(void) : Base("Word::Rel::Lifecycle") {}
       virtual bool run(void) {
@@ -302,6 +460,43 @@ namespace Test { namespace Word {
               !search_recomputation(Gecode::WRT_NQ,modes[i]))
             return false;
         if (!alias_clone())
+          return false;
+
+        const Gecode::WordDomainType kinds[] = {
+          Gecode::WDT_UNSIGNED, Gecode::WDT_SIGNED
+        };
+        const Gecode::WordRelType bounded_relations[][3] = {
+          {Gecode::WRT_EQ,Gecode::WRT_ULQ,Gecode::WRT_ULE},
+          {Gecode::WRT_EQ,Gecode::WRT_SLQ,Gecode::WRT_SLE}
+        };
+        for (unsigned int k=0; k<2; k++)
+          for (unsigned int i=0; i<3; i++) {
+            if (!bounded_search(kinds[k],kinds[k],bounded_relations[k][i],
+                                false,Gecode::RM_EQV))
+              return false;
+            for (unsigned int j=0; j<3; j++)
+              if (!bounded_search(kinds[k],kinds[k],
+                                  bounded_relations[k][i],
+                                  true,modes[j]))
+                return false;
+          }
+        const Gecode::WordRelType all_relations[] = {
+          Gecode::WRT_EQ, Gecode::WRT_NQ,
+          Gecode::WRT_ULQ, Gecode::WRT_ULE,
+          Gecode::WRT_UGQ, Gecode::WRT_UGR,
+          Gecode::WRT_SLQ, Gecode::WRT_SLE,
+          Gecode::WRT_SGQ, Gecode::WRT_SGR
+        };
+        for (unsigned int i=0; i<10; i++) {
+          if (!bounded_search(Gecode::WDT_UNSIGNED,Gecode::WDT_SIGNED,
+                              all_relations[i],false,Gecode::RM_EQV))
+            return false;
+          for (unsigned int j=0; j<3; j++)
+            if (!bounded_search(Gecode::WDT_UNSIGNED,Gecode::WDT_SIGNED,
+                                all_relations[i],true,modes[j]))
+              return false;
+        }
+        if (!bounded_strength())
           return false;
         for (unsigned int i=0; i<8; i++)
           for (unsigned int j=0; j<3; j++)

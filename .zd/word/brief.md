@@ -2159,6 +2159,45 @@ release changelog describe the optional domain, ranked search, trace, and
 MiniModel policy.  Release Branch, Trace, MiniModel lifecycle, TestFramework,
 the full Word suite, and all three example modes pass.
 
+### Bounded equality and ordering
+
+Public `rel` now selects native bounded actors when both operands have the
+same compatible numeric meaning.  Equality intersects the two cube masks and
+ranked intervals transactionally and subscribes to `PC_WORD_DOM`.  Unsigned
+and signed ordering use the corresponding ranked endpoints, publish at most
+one range tell per distinct operand, and subscribe only to `PC_WORD_BND`.
+Greater relations still swap operands, while strict and reified relations use
+the established reversed-relation and negated-control rewrites.  Constants
+use a small immutable ranked constant view.  Cube operands, mixed domain
+kinds, and an order relation whose signedness does not match the operands
+continue through the complete MSB-first cube actors.
+
+The ordinary relation lifecycle test exhausts width-three direct semantics
+and all three reification modes for homogeneous unsigned and signed domains.
+It also exhausts every relation and reification mode with mixed unsigned and
+signed operands to verify fallback.  Focused cases cover interval equality,
+constant propagation, aliases, immediate control inference and subsumption,
+width 64, failure, cloning, and genuine `c_d=1` replay.  Existing cube
+relation tests remain unchanged and green.
+
+The deliberately degenerative public `x < y` and `y < x` model preserves the
+expected root contradiction without global cycle analysis.  Five Release
+trials at widths 20, 22, and 24 use exactly 524,287, 2,097,151, and 8,388,607
+propagations.  At width 24 the preserved five-trial median is 355.486 ms for
+bounded Word versus 300.734 ms for `IntVar`, about 18.2 percent slower per
+equivalent propagation.
+The bounded actor still removes the cube model's multi-million-node search;
+the remaining gap is the cost of the richer Word domain/event path, not weak
+ordering propagation.  The result supports native bounded relations while
+leaving global cycle analysis explicitly outside scope.
+
+Validation used exact baseline `09f1a37fd53ee6a7c17d34e46976c0f0968fbcb4`.
+The temporary public-API benchmark sources and raw five-trial results are
+`/private/tmp/word073-bound-cycle.cpp`,
+`/private/tmp/int-bound-cycle.cpp`,
+`/private/tmp/word073-word-cycle.out`, and
+`/private/tmp/word073-int-cycle.out`; no benchmark artifact is tracked.
+
 ## Boundaries
 
 - This area is a full implementation spike, not a battle-hardening exercise. Each task must follow established Gecode patterns, reuse normal framework and test machinery, and avoid novel infrastructure, special-case test paths, exhaustive edge-case campaigns, or verification beyond what is proportionate to getting the implementation working.
