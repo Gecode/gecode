@@ -42,6 +42,10 @@ namespace Gecode { namespace Word {
   protected:
     using VarImpView<WordVar>::x;
   public:
+    /// Whether this view exposes a persistent ranked interval
+    static const bool supports_bounds=false;
+    /// Whether the ranked interval uses signed two's-complement order
+    static const bool signed_order=false;
     WordView(void) {}
     WordView(const WordVar& y) : VarImpView<WordVar>(y.varimp()) {}
     WordView(WordVarImp* y) : VarImpView<WordVar>(y) {}
@@ -117,6 +121,10 @@ namespace Gecode { namespace Word {
       return static_cast<BoundedWordVarImp*>(x);
     }
   public:
+    /// Whether this view exposes a persistent ranked interval
+    static const bool supports_bounds=true;
+    /// Whether the ranked interval uses signed two's-complement order
+    static const bool signed_order=false;
     UnsignedWordView(void) {}
     UnsignedWordView(const WordVar& y) : WordView(y) {
       assert(domain_type() == WDT_UNSIGNED);
@@ -145,6 +153,10 @@ namespace Gecode { namespace Word {
       return static_cast<BoundedWordVarImp*>(x);
     }
   public:
+    /// Whether this view exposes a persistent ranked interval
+    static const bool supports_bounds=true;
+    /// Whether the ranked interval uses signed two's-complement order
+    static const bool signed_order=true;
     SignedWordView(void) {}
     SignedWordView(const WordVar& y) : WordView(y) {
       assert(domain_type() == WDT_SIGNED);
@@ -175,6 +187,10 @@ namespace Gecode { namespace Word {
     unsigned int _width;
     WordValue _value;
   public:
+    /// Whether this view exposes a persistent ranked interval
+    static const bool supports_bounds=false;
+    /// Whether the ranked interval uses signed two's-complement order
+    static const bool signed_order=false;
     /// Default constructor
     ConstWordView(void) : _width(1), _value(0) {}
     /// Construct the constant \a value with explicit \a width

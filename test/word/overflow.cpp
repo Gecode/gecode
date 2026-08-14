@@ -252,6 +252,14 @@ namespace Test { namespace Word { namespace Overflow {
 
     static bool bounded(void) {
       using namespace Gecode;
+      static_assert(!Gecode::Word::WordView::supports_bounds,
+                    "compact Word views must remain cube-only");
+      static_assert(Gecode::Word::UnsignedWordView::supports_bounds &&
+                    !Gecode::Word::UnsignedWordView::signed_order,
+                    "unsigned bounded views must expose unsigned ranks");
+      static_assert(Gecode::Word::SignedWordView::supports_bounds &&
+                    Gecode::Word::SignedWordView::signed_order,
+                    "signed bounded views must expose signed ranks");
       class B : public Space {
       public:
         WordVar x,y,sum,difference;
@@ -303,6 +311,133 @@ namespace Test { namespace Word { namespace Overflow {
       Wrap wrap;
       if ((wrap.status() == SS_FAILED) || !wrap.carry.one())
         return false;
+
+      // Assigned terminal flags use the statically specialized bounded
+      // arithmetic actor, without retaining a Bool subscription.
+      class FixedTerminal : public Space {
+      public:
+        WordVar x,y,sum,difference;
+        BoolVar carry,borrow;
+        FixedTerminal(void)
+          : x(*this,4,WDT_UNSIGNED,0U,15U),
+            y(*this,4,WDT_UNSIGNED,1U,2U),
+            sum(*this,4,WDT_UNSIGNED),
+            difference(*this,4,WDT_UNSIGNED),
+            carry(*this,0,0), borrow(*this,0,0) {
+          add(*this,x,y,sum,carry);
+          sub(*this,x,y,difference,borrow);
+        }
+        FixedTerminal(FixedTerminal& s) : Space(s) {
+          x.update(*this,s.x); y.update(*this,s.y);
+          sum.update(*this,s.sum); difference.update(*this,s.difference);
+          carry.update(*this,s.carry); borrow.update(*this,s.borrow);
+        }
+        Space* copy(void) { return new FixedTerminal(*this); }
+      };
+      FixedTerminal fixed;
+      if ((fixed.status() == SS_FAILED) || (fixed.x.minimum() != 1U) ||
+          (fixed.x.maximum() != 14U) || (fixed.sum.minimum() != 2U) ||
+          (fixed.sum.maximum() != 15U) ||
+          (fixed.difference.minimum() != 0U) ||
+          (fixed.difference.maximum() != 13U) ||
+          (PropagatorGroup::all.size(fixed) != 2U))
+        return false;
+      FixedTerminal* fixed_clone=static_cast<FixedTerminal*>(fixed.clone());
+      dom(*fixed_clone,fixed_clone->x,10U);
+      dom(*fixed_clone,fixed_clone->y,2U);
+      const bool fixed_clone_ok=
+        (fixed_clone->status() != SS_FAILED) &&
+        fixed_clone->sum.assigned() && (fixed_clone->sum.val() == 12U) &&
+        fixed_clone->difference.assigned() &&
+        (fixed_clone->difference.val() == 8U) &&
+        (PropagatorGroup::all.size(*fixed_clone) == 0U);
+      delete fixed_clone;
+      if (!fixed_clone_ok) return false;
+
+      // An initially unknown flag that becomes decided rewrites to the same
+      // static actor and remains sound across cloning and recomputation.
+      class Rewrite : public Space {
+      public:
+        WordVar x,y,z; BoolVar carry;
+        Rewrite(void) : x(*this,3,WDT_UNSIGNED,0U,3U),
+          y(*this,3,WDT_UNSIGNED,0U,3U), z(*this,3,WDT_UNSIGNED),
+          carry(*this,0,1) {
+          add(*this,x,y,z,carry);
+          WordVarArgs a={x,y};
+          branch(*this,a,WORD_VAR_NONE(),WORD_VAL_SPLIT_MIN());
+        }
+        Rewrite(Rewrite& s) : Space(s) {
+          x.update(*this,s.x); y.update(*this,s.y); z.update(*this,s.z);
+          carry.update(*this,s.carry);
+        }
+        Space* copy(void) { return new Rewrite(*this); }
+      };
+      Rewrite* rewrite_root=new Rewrite;
+      if ((rewrite_root->status() == SS_FAILED) ||
+          !rewrite_root->carry.zero() ||
+          (PropagatorGroup::all.size(*rewrite_root) != 1U)) {
+        delete rewrite_root;
+        return false;
+      }
+      Search::Options rewrite_options; rewrite_options.c_d=1;
+      DFS<Rewrite> rewrite_dfs(rewrite_root,rewrite_options);
+      delete rewrite_root;
+      unsigned int rewrite_solutions=0;
+      while (Rewrite* solution=rewrite_dfs.next()) {
+        const bool ok=solution->z.assigned() && solution->carry.zero() &&
+          (solution->z.val() == solution->x.val()+solution->y.val()) &&
+          (PropagatorGroup::all.size(*solution) == 0U);
+        delete solution;
+        if (!ok) return false;
+        rewrite_solutions++;
+      }
+      if (rewrite_solutions != 16U) return false;
+
+      class StaticSearch : public Space {
+      public:
+        WordVar x,y,z; BoolVar flag;
+        bool addition;
+        StaticSearch(bool addition0, int flag0)
+          : x(*this,3,WDT_UNSIGNED), y(*this,3,WDT_UNSIGNED),
+            z(*this,3,WDT_UNSIGNED), flag(*this,flag0,flag0),
+            addition(addition0) {
+          if (addition)
+            add(*this,x,y,z,flag);
+          else
+            sub(*this,x,y,z,flag);
+          WordVarArgs a={x,y};
+          branch(*this,a,WORD_VAR_NONE(),WORD_VAL_SPLIT_MIN());
+        }
+        StaticSearch(StaticSearch& s) : Space(s), addition(s.addition) {
+          x.update(*this,s.x); y.update(*this,s.y); z.update(*this,s.z);
+          flag.update(*this,s.flag);
+        }
+        Space* copy(void) { return new StaticSearch(*this); }
+      };
+      for (int operation=0; operation<2; operation++)
+        for (int expected=0; expected<2; expected++) {
+          StaticSearch* root=new StaticSearch(operation == 0,expected);
+          Search::Options options; options.c_d=1;
+          DFS<StaticSearch> dfs(root,options); delete root;
+          unsigned int solutions=0;
+          while (StaticSearch* solution=dfs.next()) {
+            const WordValue xv=solution->x.val(), yv=solution->y.val();
+            const WordValue result=(operation == 0) ?
+              ((xv+yv)&7U) : ((xv-yv)&7U);
+            const int terminal=(operation == 0) ?
+              static_cast<int>(xv > 7U-yv) :
+              static_cast<int>(xv < yv);
+            const bool ok=solution->z.assigned() &&
+              (solution->z.val() == result) &&
+              (terminal == expected) &&
+              (PropagatorGroup::all.size(*solution) == 0U);
+            delete solution;
+            if (!ok) return false;
+            solutions++;
+          }
+          if (solutions != static_cast<unsigned int>(expected ? 28 : 36))
+            return false;
+        }
 
       class Replay : public Space {
       public:

@@ -93,6 +93,8 @@ namespace Gecode { namespace Word { namespace Arithmetic {
   template<class View>
   forceinline BoundLocalDomain
   bound_snapshot(View x) {
+    static_assert(View::supports_bounds,
+                  "bounded arithmetic requires a bounded Word view");
     return BoundLocalDomain{x.width(),x.domain_type(),x.lo(),x.hi(),
                             x.minimum(),x.maximum(),false};
   }
@@ -135,11 +137,6 @@ namespace Gecode { namespace Word { namespace Arithmetic {
     return ES_OK;
   }
 
-  template<class View> struct BoundIsSigned { static const bool value=false; };
-  template<> struct BoundIsSigned<SignedWordView> {
-    static const bool value=true;
-  };
-
   forceinline bool
   bound_signed_add(WordValue x, WordValue y, WordValue sign,
                    WordValue mask, WordValue& result) {
@@ -176,7 +173,7 @@ namespace Gecode { namespace Word { namespace Arithmetic {
                    BoundLocalDomain& z) {
     const WordValue mask=width_mask(x.width);
     WordValue zmin, zmax, xmin, xmax, ymin, ymax;
-    if (!BoundIsSigned<View>::value) {
+    if (!View::signed_order) {
       if (x.maximum > mask-y.maximum)
         return true;
       zmin=x.minimum+y.minimum; zmax=x.maximum+y.maximum;
@@ -188,7 +185,7 @@ namespace Gecode { namespace Word { namespace Arithmetic {
     }
     if (!z.range(zmin,zmax)) return false;
     const BoundLocalDomain old_x=x, old_y=y;
-    if (!BoundIsSigned<View>::value) {
+    if (!View::signed_order) {
       xmin=(z.minimum >= old_y.maximum) ? z.minimum-old_y.maximum : 0;
       xmax=z.maximum-old_y.minimum;
       ymin=(z.minimum >= old_x.maximum) ? z.minimum-old_x.maximum : 0;
@@ -212,7 +209,7 @@ namespace Gecode { namespace Word { namespace Arithmetic {
                    BoundLocalDomain& z) {
     const WordValue mask=width_mask(x.width);
     WordValue zmin, zmax, xmin, xmax, ymin, ymax;
-    if (!BoundIsSigned<View>::value) {
+    if (!View::signed_order) {
       if (x.minimum < y.maximum)
         return true;
       zmin=x.minimum-y.maximum; zmax=x.maximum-y.minimum;
@@ -224,7 +221,7 @@ namespace Gecode { namespace Word { namespace Arithmetic {
     }
     if (!z.range(zmin,zmax)) return false;
     const BoundLocalDomain old_x=x, old_y=y;
-    if (!BoundIsSigned<View>::value) {
+    if (!View::signed_order) {
       xmin=z.minimum+old_y.minimum;
       xmax=(z.maximum > mask-old_y.maximum) ?
         mask : z.maximum+old_y.maximum;
@@ -301,14 +298,14 @@ namespace Gecode { namespace Word { namespace Arithmetic {
   forceinline bool
   bound_mult_ranges(BoundLocalDomain& x, BoundLocalDomain& y,
                     BoundLocalDomain& z) {
-    return BoundIsSigned<View>::value ? bound_mult_signed(x,y,z) :
+    return View::signed_order ? bound_mult_signed(x,y,z) :
       bound_mult_unsigned(x,y,z);
   }
 
   template<class View>
   forceinline bool
   bound_neg_ranges(BoundLocalDomain& x, BoundLocalDomain& z) {
-    if (!BoundIsSigned<View>::value)
+    if (!View::signed_order)
       return true;
     if (x.minimum == 0)
       return true;
@@ -327,6 +324,65 @@ namespace Gecode { namespace Word { namespace Arithmetic {
     BA_MULT
   };
 
+  enum BoundTerminal {
+    BT_ANY=3U,
+    BT_CLEAR=1U,
+    BT_SET=2U
+  };
+
+  template<class View, BoundArithmeticOperation op>
+  forceinline bool
+  bound_terminal_ranges(BoundLocalDomain* (&role)[3],
+                        unsigned int terminal) {
+    const WordValue mask=width_mask(role[0]->width);
+    bool all_nonwrapping, all_wrapping;
+    if (op == BA_ADD) {
+      all_wrapping=role[0]->minimum > mask-role[1]->minimum;
+      all_nonwrapping=role[0]->maximum <= mask-role[1]->maximum;
+    } else {
+      all_wrapping=role[0]->maximum < role[1]->minimum;
+      all_nonwrapping=role[0]->minimum >= role[1]->maximum;
+    }
+    if (((terminal == BT_CLEAR) && all_wrapping) ||
+        ((terminal == BT_SET) && all_nonwrapping))
+      return false;
+    if (terminal == BT_CLEAR) {
+      if (op == BA_ADD) {
+        if (!role[0]->range(role[0]->minimum,
+                            std::min(role[0]->maximum,
+                              mask-role[1]->minimum)) ||
+            !role[1]->range(role[1]->minimum,
+                            std::min(role[1]->maximum,
+                              mask-role[0]->minimum)))
+          return false;
+      } else {
+        if (!role[0]->range(std::max(role[0]->minimum,
+                                    role[1]->minimum),
+                            role[0]->maximum) ||
+            !role[1]->range(role[1]->minimum,
+                            std::min(role[1]->maximum,
+                                     role[0]->maximum)))
+          return false;
+      }
+    }
+    if ((terminal == BT_SET) && all_wrapping) {
+      WordValue minimum, maximum;
+      if (op == BA_ADD) {
+        minimum=role[0]->minimum-(mask-role[1]->minimum)-1U;
+        maximum=role[0]->maximum-(mask-role[1]->maximum)-1U;
+      } else {
+        minimum=mask-(role[1]->maximum-role[0]->minimum)+1U;
+        maximum=mask-(role[1]->minimum-role[0]->maximum)+1U;
+      }
+      return role[2]->range(minimum,maximum);
+    }
+    if ((terminal != BT_SET) || all_nonwrapping)
+      return op == BA_ADD ?
+        bound_add_ranges<View>(*role[0],*role[1],*role[2]) :
+        bound_sub_ranges<View>(*role[0],*role[1],*role[2]);
+    return true;
+  }
+
   /*
    * Bounded actors with an O(width) cube algorithm use two propagation
    * stages. A bound-only event first runs the constant-cost numeric rules and
@@ -334,7 +390,8 @@ namespace Gecode { namespace Word { namespace Arithmetic {
    * bits, ES_NOFIX_PARTIAL schedules the cube algorithm separately at its
    * honest linear cost. Combined/bit events run both stages locally.
    */
-  template<class View, BoundArithmeticOperation op>
+  template<class View, BoundArithmeticOperation op,
+           BoundTerminal terminal=BT_ANY>
   class BoundArithmetic : public TernaryPropagator<View,PC_WORD_DOM> {
   protected:
     using TernaryPropagator<View,PC_WORD_DOM>::x0;
@@ -357,7 +414,9 @@ namespace Gecode { namespace Word { namespace Arithmetic {
         if (x.varimp() == y.varimp()) role[1]=role[0];
         if (x.varimp() == z.varimp()) role[2]=role[0];
         else if (y.varimp() == z.varimp()) role[2]=role[1];
-        const bool ok = op == BA_ADD ?
+        const bool ok = (terminal != BT_ANY) ?
+          bound_terminal_ranges<View,op>(role,terminal) :
+          op == BA_ADD ?
           bound_add_ranges<View>(*role[0],*role[1],*role[2]) :
           op == BA_SUB ?
           bound_sub_ranges<View>(*role[0],*role[1],*role[2]) :
@@ -384,11 +443,11 @@ namespace Gecode { namespace Word { namespace Arithmetic {
         for (unsigned int i=0; i<3; i++) d[i].deferred=true;
         if (cube && (op == BA_ADD)) {
           unsigned int final;
-          GECODE_ES_CHECK(add_narrow(home,v[0],v[1],v[2],3U,final));
+          GECODE_ES_CHECK(add_narrow(home,v[0],v[1],v[2],terminal,final));
         }
         if (cube && (op == BA_SUB)) {
           unsigned int final;
-          GECODE_ES_CHECK(sub_narrow(home,v[0],v[1],v[2],3U,final));
+          GECODE_ES_CHECK(sub_narrow(home,v[0],v[1],v[2],terminal,final));
         }
         if (cube && (op == BA_MULT))
           GECODE_ES_CHECK(mult_narrow_views(home,v[0],v[1],v[2]));
@@ -399,7 +458,9 @@ namespace Gecode { namespace Word { namespace Arithmetic {
         else if (y.varimp() == z.varimp()) role[2]=role[1];
         const WordValue before_lo[3]={d[0].lo,d[1].lo,d[2].lo};
         const WordValue before_hi[3]={d[0].hi,d[1].hi,d[2].hi};
-        bool ok = op == BA_ADD ? bound_add_ranges<View>(*role[0],*role[1],*role[2]) :
+        bool ok = (terminal != BT_ANY) ?
+          bound_terminal_ranges<View,op>(role,terminal) :
+          op == BA_ADD ? bound_add_ranges<View>(*role[0],*role[1],*role[2]) :
           op == BA_SUB ? bound_sub_ranges<View>(*role[0],*role[1],*role[2]) :
           bound_mult_ranges<View>(*role[0],*role[1],*role[2]);
         if (!ok) return ES_FAILED;
@@ -418,22 +479,30 @@ namespace Gecode { namespace Word { namespace Arithmetic {
     }
   public:
     static bool numeric_regime(View x, View y) {
+      static_assert(View::supports_bounds,
+                    "bounded arithmetic requires a bounded Word view");
+      static_assert((terminal == BT_ANY) || !View::signed_order,
+                    "terminal carry/borrow is an unsigned Word property");
+      static_assert((terminal == BT_ANY) || (op != BA_MULT),
+                    "multiplication has no terminal carry actor");
+      if (terminal != BT_ANY)
+        return true;
       const WordValue mask=width_mask(x.width());
       if (op == BA_ADD) {
-        if (!BoundIsSigned<View>::value)
+        if (!View::signed_order)
           return x.maximum() <= mask-y.maximum();
         const WordValue sign=sign_bit(x.width()); WordValue ignored;
         return bound_signed_add(x.minimum(),y.minimum(),sign,mask,ignored) &&
           bound_signed_add(x.maximum(),y.maximum(),sign,mask,ignored);
       }
       if (op == BA_SUB) {
-        if (!BoundIsSigned<View>::value)
+        if (!View::signed_order)
           return x.minimum() >= y.maximum();
         const WordValue sign=sign_bit(x.width()); WordValue ignored;
         return bound_signed_sub(x.minimum(),y.maximum(),sign,mask,ignored) &&
           bound_signed_sub(x.maximum(),y.minimum(),sign,mask,ignored);
       }
-      if (!BoundIsSigned<View>::value)
+      if (!View::signed_order)
         return (x.maximum() == 0U) ||
           (y.maximum() <= mask/x.maximum());
       const WordValue sign=sign_bit(x.width()); WordValue ignored;
@@ -582,59 +651,17 @@ namespace Gecode { namespace Word { namespace Arithmetic {
     static bool narrow_ranges(BoundLocalDomain* (&role)[3],
                               unsigned int& terminal) {
       const WordValue mask=width_mask(role[0]->width);
-      bool all_nonwrapping, all_wrapping;
-      if (op == BA_ADD) {
-        all_wrapping=role[0]->minimum > mask-role[1]->minimum;
-        all_nonwrapping=role[0]->maximum <= mask-role[1]->maximum;
-        if (all_wrapping)
-          terminal &= 2U;
-        if (all_nonwrapping)
-          terminal &= 1U;
-      } else {
-        all_wrapping=role[0]->maximum < role[1]->minimum;
-        all_nonwrapping=role[0]->minimum >= role[1]->maximum;
-        if (all_wrapping)
-          terminal &= 2U;
-        if (all_nonwrapping)
-          terminal &= 1U;
-      }
+      const bool all_wrapping=(op == BA_ADD) ?
+        role[0]->minimum > mask-role[1]->minimum :
+        role[0]->maximum < role[1]->minimum;
+      const bool all_nonwrapping=(op == BA_ADD) ?
+        role[0]->maximum <= mask-role[1]->maximum :
+        role[0]->minimum >= role[1]->maximum;
+      if (all_wrapping) terminal &= BT_SET;
+      if (all_nonwrapping) terminal &= BT_CLEAR;
       if (terminal == 0U) return false;
-      if (terminal == 1U) {
-        if (op == BA_ADD) {
-          if (!role[0]->range(role[0]->minimum,
-                              std::min(role[0]->maximum,
-                                mask-role[1]->minimum)) ||
-              !role[1]->range(role[1]->minimum,
-                              std::min(role[1]->maximum,
-                                mask-role[0]->minimum)))
-            return false;
-        } else {
-          if (!role[0]->range(std::max(role[0]->minimum,
-                                      role[1]->minimum),
-                              role[0]->maximum) ||
-              !role[1]->range(role[1]->minimum,
-                              std::min(role[1]->maximum,
-                                       role[0]->maximum)))
-            return false;
-        }
-      }
-      bool ok=true;
-      if ((terminal == 2U) && all_wrapping) {
-        WordValue minimum, maximum;
-        if (op == BA_ADD) {
-          minimum=role[0]->minimum-(mask-role[1]->minimum)-1U;
-          maximum=role[0]->maximum-(mask-role[1]->maximum)-1U;
-        } else {
-          minimum=mask-(role[1]->maximum-role[0]->minimum)+1U;
-          maximum=mask-(role[1]->minimum-role[0]->maximum)+1U;
-        }
-        ok=role[2]->range(minimum,maximum);
-      } else if ((terminal != 2U) || all_nonwrapping) {
-        ok = op == BA_ADD ?
-          bound_add_ranges<View>(*role[0],*role[1],*role[2]) :
-          bound_sub_ranges<View>(*role[0],*role[1],*role[2]);
-      }
-      return ok;
+      return bound_terminal_ranges<View,op>(role,
+        static_cast<BoundTerminal>(terminal));
     }
     static ExecStatus publish(Home home, View x, View y, View z,
                               Int::BoolView flag,
@@ -752,13 +779,26 @@ namespace Gecode { namespace Word { namespace Arithmetic {
         if (x0.assigned() && x1.assigned() && x2.assigned() &&
             flag.assigned())
           return home.ES_SUBSUMED(*this);
+        if (flag.zero())
+          GECODE_REWRITE(*this,(BoundArithmetic<View,op,BT_CLEAR>::post(
+            home(*this),x0,x1,x2)));
+        if (flag.one())
+          GECODE_REWRITE(*this,(BoundArithmetic<View,op,BT_SET>::post(
+            home(*this),x0,x1,x2)));
         if (cube)
           return home.ES_NOFIX_PARTIAL(*this,View::med(ME_WORD_BITS));
         return ES_FIX;
       }
       GECODE_ES_CHECK(narrow(home,x0,x1,x2,flag,true));
-      return (x0.assigned() && x1.assigned() && x2.assigned() &&
-              flag.assigned()) ? home.ES_SUBSUMED(*this) : ES_FIX;
+      if (x0.assigned() && x1.assigned() && x2.assigned() && flag.assigned())
+        return home.ES_SUBSUMED(*this);
+      if (flag.zero())
+        GECODE_REWRITE(*this,(BoundArithmetic<View,op,BT_CLEAR>::post(
+          home(*this),x0,x1,x2)));
+      if (flag.one())
+        GECODE_REWRITE(*this,(BoundArithmetic<View,op,BT_SET>::post(
+          home(*this),x0,x1,x2)));
+      return ES_FIX;
     }
     static ExecStatus post(Home home, View x, View y, View z,
                            Int::BoolView flag) {

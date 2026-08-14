@@ -122,17 +122,36 @@ namespace Gecode {
                         BoolVar carry) {
       if ((x.domain_type() == WDT_UNSIGNED) &&
           (y.domain_type() == WDT_UNSIGNED) &&
-          (result.domain_type() == WDT_UNSIGNED) &&
-          Word::Arithmetic::BoundFlagArithmetic<Word::UnsignedWordView,
-            Word::Arithmetic::BA_ADD>::numeric_regime(
-              Word::UnsignedWordView(x),Word::UnsignedWordView(y),
-              Int::BoolView(carry))) {
+          (result.domain_type() == WDT_UNSIGNED)) {
+        if (carry.zero()) {
+          GECODE_ES_FAIL((Word::Arithmetic::BoundArithmetic<
+            Word::UnsignedWordView,Word::Arithmetic::BA_ADD,
+            Word::Arithmetic::BT_CLEAR>::post(
+              home,Word::UnsignedWordView(x),Word::UnsignedWordView(y),
+              Word::UnsignedWordView(result))));
+          return;
+        }
+        if (carry.one()) {
+          GECODE_ES_FAIL((Word::Arithmetic::BoundArithmetic<
+            Word::UnsignedWordView,Word::Arithmetic::BA_ADD,
+            Word::Arithmetic::BT_SET>::post(
+              home,Word::UnsignedWordView(x),Word::UnsignedWordView(y),
+              Word::UnsignedWordView(result))));
+          return;
+        }
+        if (!Word::Arithmetic::BoundFlagArithmetic<
+              Word::UnsignedWordView,
+              Word::Arithmetic::BA_ADD>::numeric_regime(
+                Word::UnsignedWordView(x),Word::UnsignedWordView(y),
+                Int::BoolView(carry)))
+          goto cube_add_carry;
         GECODE_ES_FAIL((Word::Arithmetic::BoundFlagArithmetic<
           Word::UnsignedWordView,Word::Arithmetic::BA_ADD>::post(
             home,Word::UnsignedWordView(x),Word::UnsignedWordView(y),
             Word::UnsignedWordView(result),Int::BoolView(carry))));
         return;
       }
+    cube_add_carry:
       GECODE_ES_FAIL(Word::Arithmetic::AddCarry::post(
                        home,Word::WordView(x),Word::WordView(y),
                        Word::WordView(result),Int::BoolView(carry)));
@@ -185,17 +204,36 @@ namespace Gecode {
                          BoolVar borrow) {
       if ((x.domain_type() == WDT_UNSIGNED) &&
           (y.domain_type() == WDT_UNSIGNED) &&
-          (result.domain_type() == WDT_UNSIGNED) &&
-          Word::Arithmetic::BoundFlagArithmetic<Word::UnsignedWordView,
-            Word::Arithmetic::BA_SUB>::numeric_regime(
-              Word::UnsignedWordView(x),Word::UnsignedWordView(y),
-              Int::BoolView(borrow))) {
+          (result.domain_type() == WDT_UNSIGNED)) {
+        if (borrow.zero()) {
+          GECODE_ES_FAIL((Word::Arithmetic::BoundArithmetic<
+            Word::UnsignedWordView,Word::Arithmetic::BA_SUB,
+            Word::Arithmetic::BT_CLEAR>::post(
+              home,Word::UnsignedWordView(x),Word::UnsignedWordView(y),
+              Word::UnsignedWordView(result))));
+          return;
+        }
+        if (borrow.one()) {
+          GECODE_ES_FAIL((Word::Arithmetic::BoundArithmetic<
+            Word::UnsignedWordView,Word::Arithmetic::BA_SUB,
+            Word::Arithmetic::BT_SET>::post(
+              home,Word::UnsignedWordView(x),Word::UnsignedWordView(y),
+              Word::UnsignedWordView(result))));
+          return;
+        }
+        if (!Word::Arithmetic::BoundFlagArithmetic<
+              Word::UnsignedWordView,
+              Word::Arithmetic::BA_SUB>::numeric_regime(
+                Word::UnsignedWordView(x),Word::UnsignedWordView(y),
+                Int::BoolView(borrow)))
+          goto cube_sub_borrow;
         GECODE_ES_FAIL((Word::Arithmetic::BoundFlagArithmetic<
           Word::UnsignedWordView,Word::Arithmetic::BA_SUB>::post(
             home,Word::UnsignedWordView(x),Word::UnsignedWordView(y),
             Word::UnsignedWordView(result),Int::BoolView(borrow))));
         return;
       }
+    cube_sub_borrow:
       GECODE_ES_FAIL(Word::Arithmetic::SubBorrow::post(
                        home,Word::WordView(x),Word::WordView(y),
                        Word::WordView(result),Int::BoolView(borrow)));
