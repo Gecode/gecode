@@ -84,6 +84,19 @@ namespace Gecode {
                       ::post(home,x,result,op,a,b)));
     }
 
+    template<class View>
+    bool post_bounded_shift_left(Home home, WordVar x, WordVar result,
+                                 unsigned int amount) {
+      View xv(x), rv(result);
+      if (!Word::Structure::BoundedShiftLeft<View>::numeric_regime(
+            xv,amount))
+        return false;
+      if (Word::Structure::BoundedShiftLeft<View>::post(
+            home,xv,rv,amount) == ES_FAILED)
+        home.fail();
+      return true;
+    }
+
     template<class View0, class View1, class View2>
     void post_concat(Home home, View0 high, View1 low, View2 result) {
       GECODE_ES_FAIL((Word::Structure::Concat<View0,View1,View2>
@@ -101,6 +114,13 @@ namespace Gecode {
         rel(home,temporary,WRT_EQ,result);
         return;
       }
+      if ((x.domain_type() == WDT_UNSIGNED) &&
+          (result.domain_type() == WDT_UNSIGNED) &&
+          (Word::WordView(x) != Word::WordView(result)) &&
+          (op == Word::Structure::FO_SHIFT_LEFT) &&
+          post_bounded_shift_left<Word::UnsignedWordView>(
+            home,x,result,amount))
+        return;
       post_fixed(home,xv,rv,op,amount);
     }
 
@@ -119,6 +139,22 @@ namespace Gecode {
           home,Word::WordView(x_proxy),Word::WordView(amount_proxy),
           Word::WordView(result_proxy),op)));
         return;
+      }
+      if ((op == Word::Structure::FO_SHIFT_LEFT) &&
+          (x.domain_type() == WDT_UNSIGNED) &&
+          (amount.domain_type() == WDT_UNSIGNED) &&
+          (result.domain_type() == WDT_UNSIGNED) &&
+          (Word::WordView(x) != Word::WordView(amount)) &&
+          (Word::WordView(x) != Word::WordView(result)) &&
+          (Word::WordView(amount) != Word::WordView(result))) {
+        Word::UnsignedWordView bx(x), ba(amount), br(result);
+        if (Word::Structure::VariableShiftLeftBounds::numeric_regime(bx,ba)) {
+          GECODE_ES_FAIL((Word::Structure::VariableShift::post(
+            home,xv,av,rv,op)));
+          GECODE_ES_FAIL((Word::Structure::VariableShiftLeftBounds::post(
+            home,bx,ba,br)));
+          return;
+        }
       }
       GECODE_ES_FAIL((Word::Structure::VariableShift::post(
         home,xv,av,rv,op)));

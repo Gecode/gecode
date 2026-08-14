@@ -2293,6 +2293,53 @@ and a `-Wall -Wextra` word-library build pass.  Commands, raw counters and
 timings, rpath identities, and source/binary SHA-256 values are recorded in
 `/private/tmp/word075-evidence.md`; no benchmark artifact is tracked.
 
+### Bounded structural and mixed constraints
+
+Only non-wrapping unsigned left shift clears the bounded migration gate.
+Fixed SHL posts one `PC_WORD_DOM` numeric actor for distinct homogeneous
+unsigned input/result views when the entire interval is non-wrapping (or the
+amount is an overshift).  Variable SHL retains the exact cube actor and adds a
+numeric actor only for distinct homogeneous unsigned value, amount, and
+result views when `amount.maximum < width` and the value interval cannot
+overflow at the maximum amount.  The amount is always an unsigned numeric
+shift distance; it does not inherit the value's signedness.  The numeric actor
+closes value/amount/result bounds locally and publishes each view once.
+Wrapping, aliased, cube, signed, and mixed cases retain the existing cube and
+proxy paths.
+
+At exact baseline `dbc16f966a2dd34b7488fb5141e69bfbbe753b20`, a fixed-SHL
+downstream add chain preserves 20,200 solutions while reducing 43,000 nodes
+and 1,400 failures to 40,200 nodes and no failures.  Its short wall time is
+slightly slower (about 0.0231 to 0.0241 seconds), so retention is based on the
+exact search/failure reduction, not a runtime claim.  Variable SHL preserves
+202 solutions and reduces 637 nodes/117 failures to 403/0; its result interval
+tightens from `[0,8190]` to `[2000,4400]`.  Cube fixed/variable controls retain
+identical solutions, checksums, nodes, failures, and propagations.
+
+Measured candidates for zero/sign extension and logical/arithmetic right
+shift were removed.  The extensions did not change search and were roughly
+10--12 percent slower in the downstream chain.  Both right shifts kept the
+same search tree, increased propagation from about 41,000 to 60,000, and were
+slower.  Rotations, Boolean logic, extract, concat, and repeat remain cube
+operations because their interval images are non-convex or permuted.
+
+The remaining mixed surfaces were measured but not migrated.  Element and
+Bool-controlled ITE show useful hull gaps, but require separately justified
+index/alias or control actors.  `product_mod` is the strongest future mixed
+opportunity: a bounded baseline with 121 solutions required 242,003 nodes and
+120,881 failures, but exact modular Word/Int closure is a separate propagator
+task.  Popcount and reduction gaps were only 11 nodes/4 failures and 5/1, so
+they do not justify new bounded actors.  Word-mask ITE, bit channels, counts,
+and reductions retain their established cube/Int/Bool behavior.
+
+Release Structure, Element, ProductMod, Conditional, Channel, Count,
+Reduction, MiniModel, and TestFramework suites pass.  Exhaustive small-width
+interval safety, mixed fallback, width 64, cloning, subsumption, and genuine
+`c_d=1` replay are covered.  A `-Wall -Wextra -Wpedantic` Release word-library
+build is clean.  Commands, raw comparisons, rpath identities, and verified
+SHA-256 values are in `/private/tmp/word076-evidence.md` and
+`/private/tmp/word076-sha256.txt`; no benchmark artifact is tracked.
+
 ## Boundaries
 
 - This area is a full implementation spike, not a battle-hardening exercise. Each task must follow established Gecode patterns, reuse normal framework and test machinery, and avoid novel infrastructure, special-case test paths, exhaustive edge-case campaigns, or verification beyond what is proportionate to getting the implementation working.

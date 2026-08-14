@@ -204,6 +204,90 @@ namespace Test { namespace Word {
 
     Fixed fixed;
 
+    class BoundedShiftLeft : public Base {
+    private:
+      class B : public Gecode::Space {
+      public:
+        Gecode::WordVar x,y;
+        B(unsigned int input_width, unsigned int result_width,
+          Gecode::WordDomainType kind, Gecode::WordValue minimum,
+          Gecode::WordValue maximum)
+          : x(*this,input_width,kind,minimum,maximum),
+            y(*this,result_width,kind) {}
+        B(B& s) : Gecode::Space(s) {
+          x.update(*this,s.x); y.update(*this,s.y);
+        }
+        Gecode::Space* copy(void) { return new B(*this); }
+      };
+
+      class Alias : public Gecode::Space {
+      public:
+        Gecode::WordVar x;
+        Alias(unsigned int amount)
+          : x(*this,4,Gecode::WDT_UNSIGNED,0,7) {
+          Gecode::shift_left(*this,x,amount,x);
+        }
+        Alias(Alias& s) : Gecode::Space(s) { x.update(*this,s.x); }
+        Gecode::Space* copy(void) { return new Alias(*this); }
+      };
+
+      static bool assigned(void) {
+        using namespace Gecode;
+        for (unsigned int width=1; width<=4; width++) {
+          const WordValue mask=Gecode::Word::width_mask(width);
+          for (WordValue value=0; value<=mask; value++) {
+            for (unsigned int amount : {0U,width-1,width,width+1}) {
+              B l(width,width,WDT_UNSIGNED,value,value);
+              shift_left(l,l.x,amount,l.y);
+              const WordValue lv=(amount >= width) ? 0 :
+                ((value << amount) & mask);
+              if ((l.status() == SS_FAILED) || !l.y.assigned() ||
+                  (l.y.val() != lv)) return false;
+            }
+          }
+        }
+        return true;
+      }
+
+      static bool propagation(void) {
+        using namespace Gecode;
+        B l(4,4,WDT_UNSIGNED,2U,5U); shift_left(l,l.x,1,l.y);
+        if ((l.status() == SS_FAILED) || (l.y.minimum() != 4U) ||
+            (l.y.maximum() != 10U)) return false;
+        B inverse(4,4,WDT_UNSIGNED,0U,7U);
+        dom(inverse,inverse.y,8U,10U);
+        shift_left(inverse,inverse.x,1,inverse.y);
+        if ((inverse.status() == SS_FAILED) ||
+            (inverse.x.minimum() != 4U) ||
+            (inverse.x.maximum() != 5U)) return false;
+        B failed(4,4,WDT_UNSIGNED,2U,5U); dom(failed,failed.y,3U);
+        shift_left(failed,failed.x,1,failed.y);
+        if (failed.status() != SS_FAILED) return false;
+        B wide(64,64,WDT_UNSIGNED,1U,1U);
+        shift_left(wide,wide.x,63,wide.y);
+        if ((wide.status() == SS_FAILED) || !wide.y.assigned() ||
+            (wide.y.val() != (WordValue(1) << 63))) return false;
+        Alias identity(0);
+        if (PropagatorGroup::all.size(identity) != 0) return false;
+        Alias alias(1);
+        if (PropagatorGroup::all.size(alias) != 2) return false;
+        dom(alias,alias.x,0);
+        if ((alias.status() == SS_FAILED) || !alias.x.assigned() ||
+            (PropagatorGroup::all.size(alias) != 0)) return false;
+        B* clone=static_cast<B*>(l.clone());
+        dom(*clone,clone->x,5U);
+        const bool clone_ok=(clone->status() != SS_FAILED) &&
+          clone->y.assigned() && (clone->y.val() == 10U) && !l.y.assigned();
+        delete clone;
+        return clone_ok;
+      }
+    public:
+      BoundedShiftLeft(void) : Base("Word::Structure::BoundedShiftLeft") {}
+      bool run(void) { return assigned() && propagation(); }
+    };
+
+    BoundedShiftLeft bounded_shift_left;
+
     /**
      * Constant shifts and rotations enforce bit consistency with direct
      * fixed-width masked propagation.
@@ -517,6 +601,166 @@ namespace Test { namespace Word {
         return true;
       }
 
+      class BoundedSpace : public Gecode::Space {
+      public:
+        Gecode::WordVar x,amount,result;
+        BoundedSpace(unsigned int width, Gecode::WordValue xmin,
+                     Gecode::WordValue xmax, Gecode::WordValue amin,
+                     Gecode::WordValue amax, Gecode::WordValue rmin,
+                     Gecode::WordValue rmax, bool decisions=false)
+          : x(*this,width,Gecode::WDT_UNSIGNED,xmin,xmax),
+            amount(*this,width,Gecode::WDT_UNSIGNED,amin,amax),
+            result(*this,width,Gecode::WDT_UNSIGNED,rmin,rmax) {
+          Gecode::shift_left(*this,x,amount,result);
+          if (decisions) {
+            Gecode::branch(*this,result,Gecode::WORD_VAL_SPLIT_MIN());
+            Gecode::branch(*this,amount,Gecode::WORD_VAL_SPLIT_MIN());
+            Gecode::branch(*this,x,Gecode::WORD_VAL_SPLIT_MIN());
+          }
+        }
+        BoundedSpace(BoundedSpace& s) : Gecode::Space(s) {
+          x.update(*this,s.x); amount.update(*this,s.amount);
+          result.update(*this,s.result);
+        }
+        virtual Gecode::Space* copy(void) {
+          return new BoundedSpace(*this);
+        }
+      };
+
+      class MixedSpace : public Gecode::Space {
+      public:
+        Gecode::WordVar x,amount,result;
+        MixedSpace(Gecode::WordDomainType xkind,
+                   Gecode::WordDomainType amountkind,
+                   Gecode::WordDomainType resultkind,
+                   Gecode::WordValue value, Gecode::WordValue shift)
+          : x(*this,4,xkind,value,value),
+            amount(*this,4,amountkind,shift,shift),
+            result(*this,4,resultkind) {
+          Gecode::shift_left(*this,x,amount,result);
+        }
+        MixedSpace(MixedSpace& s) : Gecode::Space(s) {
+          x.update(*this,s.x); amount.update(*this,s.amount);
+          result.update(*this,s.result);
+        }
+        virtual Gecode::Space* copy(void) {
+          return new MixedSpace(*this);
+        }
+      };
+
+      class AliasSpace : public Gecode::Space {
+      public:
+        enum AliasKind { INPUT_AMOUNT, INPUT_RESULT, AMOUNT_RESULT };
+        Gecode::WordVar x,amount,result;
+        AliasSpace(AliasKind kind)
+          : x(*this,4,Gecode::WDT_UNSIGNED,0,3),
+            amount(*this,4,Gecode::WDT_UNSIGNED,0,3),
+            result(*this,4,Gecode::WDT_UNSIGNED) {
+          if (kind == INPUT_AMOUNT)
+            Gecode::shift_left(*this,x,x,result);
+          else if (kind == INPUT_RESULT)
+            Gecode::shift_left(*this,x,amount,x);
+          else
+            Gecode::shift_left(*this,x,amount,amount);
+        }
+        AliasSpace(AliasSpace& s) : Gecode::Space(s) {
+          x.update(*this,s.x); amount.update(*this,s.amount);
+          result.update(*this,s.result);
+        }
+        virtual Gecode::Space* copy(void) {
+          return new AliasSpace(*this);
+        }
+      };
+
+      static bool bounded_oracle(void) {
+        using namespace Gecode;
+        for (unsigned int width=1; width<=3; width++) {
+          const WordValue mask=word_mask(width);
+          for (WordValue xmin=0; xmin<=mask; xmin++)
+            for (WordValue xmax=xmin; xmax<=mask; xmax++)
+              for (WordValue amin=0; amin<width; amin++)
+                for (WordValue amax=amin; amax<width; amax++) {
+                  if (xmax > (mask >> amax)) continue;
+                  for (WordValue rmin=0; rmin<=mask; rmin++)
+                    for (WordValue rmax=rmin; rmax<=mask; rmax++) {
+                      bool any=false;
+                      WordValue exmin=mask,exmax=0,eamin=mask,eamax=0;
+                      WordValue ermin=mask,ermax=0;
+                      for (WordValue x=xmin; x<=xmax; x++)
+                        for (WordValue a=amin; a<=amax; a++) {
+                          const WordValue r=x << a;
+                          if ((r < rmin) || (r > rmax)) continue;
+                          any=true;
+                          exmin=std::min(exmin,x); exmax=std::max(exmax,x);
+                          eamin=std::min(eamin,a); eamax=std::max(eamax,a);
+                          ermin=std::min(ermin,r); ermax=std::max(ermax,r);
+                        }
+                      BoundedSpace s(width,xmin,xmax,amin,amax,rmin,rmax);
+                      const SpaceStatus status=s.status();
+                      if (any && ((status == SS_FAILED) ||
+                          (s.x.minimum() > exmin) ||
+                          (s.x.maximum() < exmax) ||
+                          (s.amount.minimum() > eamin) ||
+                          (s.amount.maximum() < eamax) ||
+                          (s.result.minimum() > ermin) ||
+                          (s.result.maximum() < ermax))) {
+                        return false;
+                      }
+                    }
+                }
+        }
+        return true;
+      }
+
+      static bool bounded_recomputation(void) {
+        using namespace Gecode;
+        AliasSpace input_amount(AliasSpace::INPUT_AMOUNT);
+        if (PropagatorGroup::all.size(input_amount) != 4) return false;
+        Gecode::dom(input_amount,input_amount.x,1);
+        if ((input_amount.status() == SS_FAILED) ||
+            !input_amount.result.assigned() ||
+            (input_amount.result.val() != 2)) return false;
+        AliasSpace input_result(AliasSpace::INPUT_RESULT);
+        if (PropagatorGroup::all.size(input_result) != 4) return false;
+        Gecode::dom(input_result,input_result.x,2);
+        Gecode::dom(input_result,input_result.amount,0);
+        if (input_result.status() == SS_FAILED) return false;
+        AliasSpace amount_result(AliasSpace::AMOUNT_RESULT);
+        if (PropagatorGroup::all.size(amount_result) != 4) return false;
+        Gecode::dom(amount_result,amount_result.x,0);
+        if ((amount_result.status() == SS_FAILED) ||
+            !amount_result.amount.assigned() ||
+            (amount_result.amount.val() != 0)) return false;
+        BoundedSpace wide(64,1,1,63,63,0,~WordValue(0));
+        if ((wide.status() == SS_FAILED) || !wide.result.assigned() ||
+            (wide.result.val() != (WordValue(1) << 63))) return false;
+        BoundedSpace wrapping(4,8,8,1,1,0,15);
+        if ((wrapping.status() == SS_FAILED) ||
+            !wrapping.result.assigned() || (wrapping.result.val() != 0))
+          return false;
+        MixedSpace signed_value(WDT_SIGNED,WDT_UNSIGNED,WDT_SIGNED,2,1);
+        if ((signed_value.status() == SS_FAILED) ||
+            !signed_value.result.assigned() ||
+            (signed_value.result.val() != 4)) return false;
+        MixedSpace signed_amount(WDT_UNSIGNED,WDT_SIGNED,WDT_UNSIGNED,2,1);
+        if ((signed_amount.status() == SS_FAILED) ||
+            !signed_amount.result.assigned() ||
+            (signed_amount.result.val() != 4)) return false;
+        BoundedSpace* root=new BoundedSpace(4,1,3,1,2,0,12,true);
+        Search::Options options; options.c_d=1;
+        DFS<BoundedSpace> dfs(root,options); delete root;
+        unsigned int seen=0;
+        while (BoundedSpace* solution=dfs.next()) {
+          const WordValue expected=solution->x.val() << solution->amount.val();
+          const bool ok=(solution->result.val() == expected) &&
+            (PropagatorGroup::all.size(*solution) == 0);
+          seen++;
+          delete solution;
+          if (!ok) return false;
+        }
+        return seen == 6U;
+      }
+
       static bool search_recomputation(void) {
         using namespace Gecode;
         class ShiftSpace : public Space {
@@ -581,7 +825,8 @@ namespace Test { namespace Word {
       virtual bool run(void) {
         return Test::run() &&
           ((op != SHL) ||
-           (focused() && boolean_parity() && search_recomputation()));
+           (focused() && boolean_parity() && search_recomputation() &&
+            bounded_oracle() && bounded_recomputation()));
       }
     };
 

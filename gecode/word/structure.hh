@@ -65,8 +65,10 @@ namespace Gecode { namespace Word { namespace Structure {
     Fixed(Home home, View0 x0, View1 x1, FixedOp op,
           unsigned int a, unsigned int b);
     Fixed(Space& home, Fixed& p);
+  public:
     static ExecStatus narrow(Home home, View0 x0, View1 x1,
                              FixedOp op, unsigned int a, unsigned int b);
+  protected:
     static bool done(View0 x0, View1 x1, FixedOp op,
                      unsigned int a, unsigned int b);
   public:
@@ -135,6 +137,7 @@ namespace Gecode { namespace Word { namespace Structure {
 #include <gecode/word/structure/fixed.hpp>
 #include <gecode/word/structure/concat.hpp>
 #include <gecode/word/structure/variable-shift.hpp>
+#include <gecode/word/structure/bounded.hpp>
 
 #endif
 

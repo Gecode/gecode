@@ -4,8 +4,8 @@
 
 - Total: 77
 - Ready: 1
-- Blocked: 1
-- Done: 75
+- Blocked: 0
+- Done: 76
 
 | ID | Task | State | Blocked by |
 | --- | --- | --- | --- |
@@ -84,5 +84,5 @@
 | [word-073](tasks/073-migrate-word-relations-to-optional-numeric-bounds.md) | Migrate Word relations to optional numeric bounds | done | word-072 |
 | [word-074](tasks/074-migrate-core-word-arithmetic-to-optional-numeric-bounds.md) | Migrate core Word arithmetic to optional numeric bounds | done | word-073 |
 | [word-075](tasks/075-migrate-unsigned-and-signed-word-division-families-to-bounds.md) | Migrate unsigned and signed Word division families to bounds | done | word-074 |
-| [word-076](tasks/076-measure-and-migrate-structural-and-mixed-word-constraints.md) | Measure and migrate structural and mixed Word constraints | ready | word-075 |
-| [word-077](tasks/077-complete-and-publish-the-bounded-wordvar-contract.md) | Complete and publish the bounded WordVar contract | blocked | word-076 |
+| [word-076](tasks/076-measure-and-migrate-structural-and-mixed-word-constraints.md) | Measure and migrate structural and mixed Word constraints | done | word-075 |
+| [word-077](tasks/077-complete-and-publish-the-bounded-wordvar-contract.md) | Complete and publish the bounded WordVar contract | ready | word-076 |

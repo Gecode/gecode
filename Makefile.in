@@ -565,7 +565,7 @@ WORDHDR0 = \
 	count.hh count/popcount.hpp count/zero-count.hpp conditional.hh conditional/ite.hpp \
 	exception.hpp logic.hh logic/binary.hpp logic/table.hpp logic/nary.hpp print.hpp view.hpp \
 	rel.hh rel/bounded.hpp rel/eq.hpp rel/lq-le.hpp rel/nq.hpp rel/re-eq.hpp rel/re-lq.hpp \
-	structure.hh structure/concat.hpp structure/fixed.hpp \
+	structure.hh structure/bounded.hpp structure/concat.hpp structure/fixed.hpp \
 	structure/variable-shift.hpp \
 	trace.hpp trace/delta.hpp trace/trace-view.hpp trace/traits.hpp \
 	var/word.hpp var-imp.hpp var-imp/delta.hpp var-imp/word.hpp
