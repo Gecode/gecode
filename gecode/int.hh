@@ -3035,8 +3035,7 @@ namespace Gecode {
    *
    * The greatest common divisor is nonnegative, with
    * \f$\gcd(0,0)=0\f$. Negative operands are interpreted by absolute
-   * value. Supports domain consistency when domains are sufficiently small
-   * and sound bounds propagation otherwise.
+   * value. Supports sound bounds propagation.
    */
   GECODE_INT_EXPORT void
   gcd(Home home, IntVar x0, IntVar x1, IntVar x2,
