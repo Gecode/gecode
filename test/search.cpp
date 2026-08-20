@@ -399,7 +399,7 @@ namespace Test {
       void resize(unsigned int seed) {
         Gecode::Support::RandomGenerator rand(seed);
         while (!done.load(std::memory_order_acquire)) {
-          control.request(1U + rand(capacity));
+          control.request(rand(capacity+1U));
           std::this_thread::yield();
         }
       }
@@ -449,15 +449,12 @@ namespace Test {
         bool ok = !empty && (empty.requested() == 0U) &&
           (empty.capacity() == 0U) &&
           throws<Gecode::Search::UninitializedWorkerControl>(
-            [&] { empty.request(1U); }) &&
-          throws<Gecode::Search::InvalidWorkerRequest>(
-            [] { WorkerControl invalid(0U); });
+            [&] { empty.request(1U); });
 
         const unsigned int capacity = worker_capacity(2U);
-        WorkerControl control(capacity);
+        WorkerControl control(0U);
         WorkerControl copy(control);
-        control.request(1U);
-        ok = ok && copy && (copy.requested() == 1U);
+        ok = ok && copy && (copy.requested() == 0U);
 
         Gecode::Search::Options o;
         o.threads = 2.0;
@@ -468,7 +465,9 @@ namespace Test {
           Gecode::DFS<SolveImmediate> engine(root,o);
           delete root;
           root = nullptr;
-          ok = ok && (control.capacity() == capacity) &&
+          ok = ok && (control.capacity() == capacity);
+          control.request(1U);
+          ok = ok && (copy.requested() == 1U) &&
             throws<Gecode::Search::InvalidWorkerRequest>(
               [&] { control.request(capacity+1U); });
           delete engine.next();

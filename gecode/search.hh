@@ -728,7 +728,7 @@ namespace Gecode { namespace Search {
   public:
     /// Construct an empty handle
     WorkerControl(void) noexcept;
-    /// Construct an engaged handle with initial request \a requested
+    /// Construct an engaged handle with initial request \a requested (zero pauses)
     explicit WorkerControl(unsigned int requested);
     /// Copy constructor
     WorkerControl(const WorkerControl& control);
@@ -738,9 +738,9 @@ namespace Gecode { namespace Search {
     ~WorkerControl(void);
     /// Whether this handle is engaged
     explicit operator bool(void) const noexcept;
-    /// Return the requested number of workers, or zero for an empty handle
+    /// Return the requested number of workers (zero also denotes an empty handle)
     unsigned int requested(void) const noexcept;
-    /// Request \a workers workers
+    /// Request \a workers workers (zero pauses the engine)
     void request(unsigned int workers);
     /// Return the fixed worker capacity, or zero before attachment
     unsigned int capacity(void) const noexcept;

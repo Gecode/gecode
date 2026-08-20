@@ -20,12 +20,13 @@ Gecode::DFS<MySpace> engine(root, options);
 
 // Safe from another thread while engine.next() is running.
 control.request(6);
-control.request(1);
+control.request(0); // Pause
+control.request(1); // Resume
 ```
 
 The `threads` option is expanded once and becomes the engine's immutable
-capacity. A request must be between one and that capacity, inclusive. Zero is
-not a pause operation: at least one worker remains available to make progress.
+capacity. A request must be between zero and that capacity, inclusive. Zero
+pauses the engine without discarding its search state.
 
 ## Asynchronous semantics
 
@@ -37,7 +38,8 @@ Changes take effect cooperatively at scheduler boundaries. A grow request can
 make parked workers eligible immediately. A shrink request does not interrupt
 a worker in the middle of a search action: excess workers finish their current
 action and park before beginning another. Consequently, the old and new
-requests may overlap briefly.
+requests may overlap briefly. Once a request for zero has taken effect, a call
+to `next` remains blocked until a positive request resumes the engine.
 
 Requests affect scheduling, not search correctness. DFS still enumerates the
 same solution set and BAB still returns the same optimum. Parallel exploration
@@ -115,3 +117,9 @@ because resizing is cooperative, applications needing a strict observed
 handoff must also provide their own acknowledgement or accounting layer.
 Gecode intentionally exposes the scheduling seam without embedding a
 portfolio allocation policy.
+
+PBS completes a `next` round only after every active asset has reported. An
+asset paused while that call is running therefore must eventually be resumed;
+otherwise the whole PBS `next` call remains blocked even if another asset has
+already found a solution. A controller may still assign zero temporarily, but
+it must account for this round barrier when deciding when to resume the asset.
