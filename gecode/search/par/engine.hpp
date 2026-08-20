@@ -266,8 +266,17 @@ namespace Gecode { namespace Search { namespace Par {
       if (admitted)
         return true;
       WorkerControlAccess::wait(worker_control,worker);
+      // Re-enter the worker loop to observe a stop or command change.
+      return false;
     }
     return false;
+  }
+
+  template<class Tracer>
+  forceinline bool
+  Engine<Tracer>::scheduler_paused(void) const {
+    return scheduler_enabled &&
+      (WorkerControlAccess::requested(worker_control) == 0U);
   }
 
   template<class Tracer>

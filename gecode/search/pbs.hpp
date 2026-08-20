@@ -135,7 +135,7 @@ namespace Gecode { namespace Search { namespace Par {
 
   /// Create stop object
   GECODE_SEARCH_EXPORT Stop*
-  pbsstop(Stop* so);
+  pbsstop(Stop* so, const WorkerControl& control);
 
   /// Create parallel portfolio engine
   GECODE_SEARCH_EXPORT Engine*
@@ -273,7 +273,7 @@ namespace Gecode { namespace Search {
     Space* unowned_master = master;
     try {
       for (unsigned int i=0U; i<n_slaves; i++) {
-        opt.stop = stops[i] = Par::pbsstop(stop);
+        opt.stop = stops[i] = Par::pbsstop(stop,opt.worker_control);
         Space* slave = (i == n_slaves-1) ?
           master : master->clone();
         try {
@@ -321,7 +321,8 @@ namespace Gecode { namespace Search {
     try {
       for (int i=0; i<n_slaves; i++) {
         // Re-configure slave options
-        stops[i] = Par::pbsstop(sebs[i]->options().stop);
+        stops[i] = Par::pbsstop(sebs[i]->options().stop,
+                                sebs[i]->options().worker_control);
         sebs[i]->options().stop  = stops[i];
         sebs[i]->options().clone = false;
         Space* slave = (i == n_slaves-1) ?

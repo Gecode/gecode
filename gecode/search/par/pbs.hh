@@ -48,15 +48,19 @@ namespace Gecode { namespace Search { namespace Par {
   private:
     /// The stop object for the slaves
     Stop* so;
+    /// Worker control for waking a paused asset
+    WorkerControl worker_control;
     /// Whether search must be stopped
     std::atomic<bool>* tostop;
   public:
     /// Initialize
-    PortfolioStop(Stop* so);
+    PortfolioStop(Stop* so, const WorkerControl& control);
     /// Set pointer to shared \a tostop variable
     void share(std::atomic<bool>* ts);
     /// Return true if portfolio engine must be stopped
     virtual bool stop(const Statistics& s, const Options& o);
+    /// Wake workers so that a paused asset can observe the portfolio stop
+    void wake(void);
     /// Signal whether search must be stopped
     void stop(bool s);
     /// Whether search must be stopped
@@ -101,6 +105,8 @@ namespace Gecode { namespace Search { namespace Par {
     virtual Support::Terminator* terminator(void) const;
     /// Wait for the slave to complete its current run
     void wait(void);
+    /// Wake a paused slave so that it can observe the portfolio stop
+    void wake(void);
     /// Constrain with better solution \a b
     void constrain(const Space& b);
     /// Perform one run

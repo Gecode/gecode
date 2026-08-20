@@ -131,6 +131,8 @@ namespace Gecode { namespace Search { namespace Par {
     void scheduler_reset(bool root_owner);
     /// Admit worker \a worker for one exploration action
     bool scheduler_admit(unsigned int worker);
+    /// Whether the external worker request currently pauses the engine
+    bool scheduler_paused(void) const;
     /// Record that worker \a worker owns search
     void scheduler_owner(unsigned int worker);
     /// Record that worker \a worker is idle
