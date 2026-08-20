@@ -63,11 +63,7 @@ namespace Gecode { namespace Search {
     : state(nullptr) {}
 
   WorkerControl::WorkerControl(unsigned int requested)
-    : state(nullptr) {
-    if (requested == 0U)
-      throw InvalidWorkerRequest("WorkerControl::WorkerControl");
-    state = new State(requested);
-  }
+    : state(new State(requested)) {}
 
   WorkerControl::WorkerControl(const WorkerControl& control)
     : state(control.state) {
@@ -104,9 +100,6 @@ namespace Gecode { namespace Search {
   WorkerControl::request(unsigned int workers) {
     if (state == nullptr)
       throw UninitializedWorkerControl("WorkerControl::request");
-    if (workers == 0U)
-      throw InvalidWorkerRequest("WorkerControl::request");
-
     bool changed = false;
     {
       Support::Lock lock(state->mutex);

@@ -81,7 +81,8 @@ Rank:   major
 Add Search::WorkerControl for asynchronously adjusting how many pre-created
 workers a parallel DFS or BAB engine may execute. Controls also apply to leaf
 engines owned by RBS and PBS, allowing callers to redistribute a fixed worker
-budget among engines without rebuilding them.
+budget among engines without rebuilding them. Requesting zero pauses an engine
+without discarding its search state.
 
 [RELEASE]
 Version: 6.4.0
