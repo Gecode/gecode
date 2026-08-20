@@ -482,6 +482,45 @@ namespace Test {
 
     WorkerControlAPI worker_control_api;
 
+    /// A paused PBS asset must not hold the portfolio round open
+    class WorkerControlPBSPause : public Base {
+    public:
+      WorkerControlPBSPause(void)
+        : Base("Search::WorkerControl::PBS::Pause") {}
+      bool run(void) override {
+#ifdef GECODE_HAS_THREADS
+        Gecode::Search::WorkerControl paused(0U);
+        Gecode::Search::Options paused_options;
+        paused_options.threads = 2.0;
+        paused_options.worker_control = paused;
+
+        Gecode::Search::Options active_options;
+        active_options.threads = 2.0;
+
+        Gecode::SEBs sebs(2);
+        sebs[0] = Gecode::dfs<SolveImmediate>(paused_options);
+        sebs[1] = Gecode::dfs<SolveImmediate>(active_options);
+
+        Gecode::Search::Options portfolio_options;
+        portfolio_options.threads = 2.0;
+        SolveImmediate* root =
+          new SolveImmediate(HTB_NONE,HTB_NONE,HTB_NONE);
+        Gecode::PBS<SolveImmediate,Gecode::DFS>
+          pbs(root,sebs,portfolio_options);
+        delete root;
+
+        SolveImmediate* solution = pbs.next();
+        bool ok = (solution != nullptr) && (paused.requested() == 0U);
+        delete solution;
+        return ok;
+#else
+        return true;
+#endif
+      }
+    };
+
+    WorkerControlPBSPause worker_control_pbs_pause;
+
     /// %Test for depth-first search
     template<class Model>
     class DFS : public Test {

@@ -264,6 +264,13 @@ namespace Gecode { namespace Search { namespace Par {
       case C_WORK:
         // Perform exploration work
         {
+          if (engine().scheduler_paused()) {
+            start();
+            if (stop(engine().opt())) {
+              engine().stop();
+              break;
+            }
+          }
           if (!engine().scheduler_admit(index))
             break;
           m.acquire();
