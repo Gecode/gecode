@@ -23,9 +23,9 @@ control.request(0); // Pause
 control.request(1); // Resume
 ```
 
-The `threads` option is expanded once and becomes the engine's immutable
-capacity. A request must be between zero and that capacity, inclusive. Zero
-pauses the engine without discarding its search state.
+Gecode resolves the `threads` option when it constructs the engine. The result
+is the fixed worker capacity. A request must be between zero and that capacity,
+inclusive. Zero pauses the engine without discarding its search state.
 
 ## Asynchronous semantics
 
@@ -33,12 +33,17 @@ pauses the engine without discarding its search state.
 and wakes parked workers when necessary; it does not wait for the engine to
 reach that count.
 
-Changes take effect cooperatively at scheduler boundaries. A grow request can
-make parked workers eligible immediately. A shrink request does not interrupt
-a worker in the middle of a search action: excess workers finish their current
-action and park before beginning another. The old and new requests may overlap
-briefly. Once a request for zero has taken effect, a call to `next` remains
-blocked until a positive request resumes the engine.
+Changes take effect cooperatively at scheduler boundaries. A grow request makes
+parked workers eligible immediately. A shrink request cannot interrupt a
+worker in the middle of a search action. Excess workers finish that action and
+park before beginning another, so the engine may briefly use more workers than
+requested. Once a request for zero has taken effect, `next` remains blocked
+until a positive request resumes the engine.
+
+`TimeStop` follows the same cooperative rule. The engine checks stop objects at
+search boundaries; there is no timer thread to wake a paused engine. If a
+`TimeStop` expires while the worker request is zero, `next` remains blocked.
+After the engine resumes, it observes the expired stop at a normal stop check.
 
 Requests affect scheduling, not search correctness. DFS still enumerates the
 same solution set and BAB still returns the same optimum. Parallel exploration
@@ -47,13 +52,13 @@ request becomes visible remain nondeterministic.
 
 Shrinking parks resident operating-system threads. It does not destroy their
 thread objects or discard their engine-local search state. Growing wakes those
-threads again. Choose capacity as a real resource maximum. Parked workers
-retain stacks and other per-worker state.
+threads again. Set the capacity to the largest allocation the engine may
+receive. Parked workers retain their stacks and other per-worker state.
 
 ## Handle lifetime and ownership
 
-A control is a copyable shared-identity handle. Copies made before or after
-engine construction publish to the same request state:
+A control is a copyable handle with shared identity. Copies made before or
+after engine construction publish to the same request state:
 
 ```cpp
 Gecode::Search::WorkerControl portfolio_control(4);
@@ -70,11 +75,11 @@ An empty default-constructed handle means that worker adjustment is disabled.
 Calling `request` on an empty handle raises
 `Search::UninitializedWorkerControl`.
 
-One shared identity can bind to one logical leaf engine once. It cannot be
-shared by two simultaneously constructed DFS/BAB engines, reused for a
-replacement engine after destruction, or attached directly to an enclosing
-meta-engine. Such reuse raises `Search::WorkerControlInUse`. Construct a new
-control for each leaf-engine lifetime.
+A shared identity can be bound to only one logical leaf engine. It cannot be
+shared by two DFS/BAB engines, reused for a replacement engine after
+destruction, or attached directly to an enclosing meta-engine. These uses raise
+`Search::WorkerControlInUse`. Construct a new control for each leaf-engine
+lifetime.
 
 Destroying an engine safely detaches its state, but it does not make that
 identity reusable. A copied handle may outlive the engine; further in-range
