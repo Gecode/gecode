@@ -2355,6 +2355,194 @@ namespace Gecode {
     std::size_t hash(void) const;
   };
 
+  namespace Int {
+    class OpenSequence;
+    class OpenSequencePropagator;
+    namespace Extensional {
+      class OpenRegular;
+    }
+  }
+
+  /**
+   * \brief Space-local sequence of integer variables with an open length
+   *
+   * Variables can be appended until the sequence is closed. The length
+   * variable denotes the eventual sequence length.
+   *
+   * \ingroup TaskModelInt
+   */
+  class OpenIntVarSequence : public LocalHandle {
+  private:
+    /// Space-local sequence implementation
+    class Sequence;
+    /// Return the materialized-length variable
+    IntVar materialized(void) const;
+    friend class Int::OpenSequence;
+    friend class Int::OpenSequencePropagator;
+    friend class Int::Extensional::OpenRegular;
+    friend void extensional(Home, OpenIntVarSequence, DFA, IntPropLevel);
+  public:
+    /**
+     * \brief Function returning the domain for position \a i
+     *
+     * The function must be deterministic so that recomputation creates
+     * the same variables.
+     */
+    typedef std::function<IntSet(int i)> Domain;
+    /**
+     * \brief Function called after materializing position \a i
+     *
+     * The function object is shared between clones. It must be
+     * deterministic and must not capture space-local data; \a home and
+     * \a x refer to the current space.
+     */
+    typedef std::function<void(Space& home, OpenIntVarSequence x, int i)>
+      Transition;
+    /// Construct an uninitialized sequence
+    GECODE_INT_EXPORT
+    OpenIntVarSequence(void);
+    /// Construct a sequence with maximal length \a max and full domains
+    GECODE_INT_EXPORT
+    OpenIntVarSequence(Space& home, int max=Int::Limits::max);
+    /// Construct a sequence using domain \a d for every position
+    GECODE_INT_EXPORT
+    OpenIntVarSequence(Space& home, const IntSet& d,
+                       int max=Int::Limits::max);
+    /// Construct a sequence using domain \a d and transition function \a t
+    GECODE_INT_EXPORT
+    OpenIntVarSequence(Space& home, const IntSet& d, Transition t,
+                       int max=Int::Limits::max);
+    /// Construct a sequence using \a d to create each position
+    GECODE_INT_EXPORT
+    OpenIntVarSequence(Space& home, Domain d,
+                       int max=Int::Limits::max);
+    /// Construct a sequence using \a d and transition function \a t
+    GECODE_INT_EXPORT
+    OpenIntVarSequence(Space& home, Domain d, Transition t,
+                       int max=Int::Limits::max);
+    /// Update during cloning
+    GECODE_INT_EXPORT
+    void update(Space& home, OpenIntVarSequence& s);
+    /// Return the number of appended variables
+    GECODE_INT_EXPORT int size(void) const;
+    /// Return variable at position \a i (\a i must be a valid position)
+    GECODE_INT_EXPORT IntVar operator [](int i) const;
+    /// Return the eventual-length variable
+    GECODE_INT_EXPORT IntVar length(void) const;
+    /**
+     * \brief Append variable \a x
+     *
+     * Throws an exception of type Int::ArgumentSame if \a x is an
+     * unassigned variable already in the sequence.
+     */
+    GECODE_INT_EXPORT void append(Space& home, IntVar x);
+    /**
+     * \brief Materialize the first \a n variables
+     *
+     * The eventual length is constrained to be at least \a n.
+     */
+    GECODE_INT_EXPORT void materialize(Space& home, int n);
+    /// Return position \a i, materializing positions through \a i
+    GECODE_INT_EXPORT IntVar get(Space& home, int i);
+    /// Close the sequence at its current length
+    GECODE_INT_EXPORT void close(Space& home);
+  };
+
+}
+
+namespace Gecode {
+
+  /**
+   * \brief Constrain all materialized variables in \a x to be distinct
+   *
+   * The constraint is value consistent and applies to variables added
+   * after posting.
+   *
+   * \ingroup TaskModelIntDistinct
+   */
+  GECODE_INT_EXPORT void
+  distinct(Home home, OpenIntVarSequence x,
+           IntPropLevel ipl=IPL_DEF);
+
+  /**
+   * \brief Constrain consecutive materialized variables in \a x by \a irt
+   *
+   * The constraint applies to variables added after posting.
+   *
+   * \ingroup TaskModelIntRel
+   */
+  GECODE_INT_EXPORT void
+  rel(Home home, OpenIntVarSequence x, IntRelType irt,
+      IntPropLevel ipl=IPL_DEF);
+
+  /**
+   * \brief Post a sliding sequence constraint on \a x
+   *
+   * Each complete window of size \a q, including windows completed after
+   * posting, contains between \a l and \a u values from \a s.
+   *
+   * \ingroup TaskModelIntSequence
+   */
+  GECODE_INT_EXPORT void
+  sequence(Home home, OpenIntVarSequence x, const IntSet& s,
+           int q, int l, int u, IntPropLevel ipl=IPL_DEF);
+
+  /**
+   * \brief Constrain the sum of every complete window in \a x
+   *
+   * Each complete window of size \a q, including windows completed after
+   * posting, has a sum between \a l and \a u.
+   *
+   * \ingroup TaskModelIntSequence
+   */
+  GECODE_INT_EXPORT void
+  slidingsum(Home home, OpenIntVarSequence x,
+             int q, int l, int u, IntPropLevel ipl=IPL_DEF);
+
+  /**
+   * \brief Constrain \a y to the minimum of the eventual sequence \a x
+   *
+   * The eventual sequence must be nonempty.
+   *
+   * \ingroup TaskModelIntArith
+   */
+  GECODE_INT_EXPORT void
+  min(Home home, OpenIntVarSequence x, IntVar y,
+      IntPropLevel ipl=IPL_DEF);
+
+  /**
+   * \brief Constrain \a y to the maximum of the eventual sequence \a x
+   *
+   * The eventual sequence must be nonempty.
+   *
+   * \ingroup TaskModelIntArith
+   */
+  GECODE_INT_EXPORT void
+  max(Home home, OpenIntVarSequence x, IntVar y,
+      IntPropLevel ipl=IPL_DEF);
+
+  /**
+   * \brief Constrain \a s to precede \a t in the eventual sequence \a x
+   *
+   * The constraint applies to variables added after posting.
+   *
+   * \ingroup TaskModelIntPrecede
+   */
+  GECODE_INT_EXPORT void
+  precede(Home home, OpenIntVarSequence x, int s, int t,
+          IntPropLevel ipl=IPL_DEF);
+
+  /**
+   * \brief Constrain successive values in \a c to precede each other in \a x
+   *
+   * The constraint applies to variables added after posting.
+   *
+   * \ingroup TaskModelIntPrecede
+   */
+  GECODE_INT_EXPORT void
+  precede(Home home, OpenIntVarSequence x, const IntArgs& c,
+          IntPropLevel ipl=IPL_DEF);
+
 }
 
 #include <gecode/int/extensional/dfa.hpp>
@@ -2770,6 +2958,19 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   extensional(Home home, const BoolVarArgs& x, DFA d,
+              IntPropLevel ipl=IPL_DEF);
+
+  /**
+   * \brief Post an open regular-language constraint
+   *
+   * While \a x is open, its materialized prefix must have a continuation
+   * accepted by \a d. Once its length equals its materialized size, the
+   * complete sequence must be accepted by \a d.
+   *
+   * \ingroup TaskModelIntExt
+   */
+  GECODE_INT_EXPORT void
+  extensional(Home home, OpenIntVarSequence x, DFA d,
               IntPropLevel ipl=IPL_DEF);
 
   /** \brief Post propagator for \f$x\in t\f$.
@@ -4574,6 +4775,15 @@ namespace Gecode {
    */
 
   /**
+   * \brief Branching order for an open sequence
+   * \ingroup TaskModelIntBranch
+   */
+  enum OpenIntBranch {
+    OIB_HORIZON_FIRST, ///< Select the horizon before sequence values
+    OIB_VALUE_FIRST    ///< Select materialized values before the horizon
+  };
+
+  /**
    * \brief Branch filter function type for integer variables
    *
    * The variable \a x is considered for selection and \a i refers to the
@@ -5511,6 +5721,28 @@ namespace Gecode {
   GECODE_INT_EXPORT void
   branch(Home home, IntVar x, IntValBranch vals,
          IntVarValPrint vvp=nullptr);
+  /**
+   * \brief Branch over the eventual sequence \a x
+   *
+   * The brancher first branches between closing the sequence and adding
+   * one variable. Once the sequence is closed, it selects the first
+   * unassigned materialized variable.
+   *
+   * \ingroup TaskModelIntBranch
+   */
+  GECODE_INT_EXPORT void
+  branch(Home home, OpenIntVarSequence x);
+  /**
+   * \brief Branch over the eventual sequence \a x using order \a o
+   *
+   * \a OIB_HORIZON_FIRST selects the horizon before sequence values.
+   * \a OIB_VALUE_FIRST selects materialized values before deciding
+   * whether to close or extend the sequence.
+   *
+   * \ingroup TaskModelIntBranch
+   */
+  GECODE_INT_EXPORT void
+  branch(Home home, OpenIntVarSequence x, OpenIntBranch o);
   /**
    * \brief Branch over \a x with variable selection \a vars and value selection \a vals
    *

@@ -323,7 +323,9 @@ INTSRC0 = \
 	int-set.cpp var-imp/int.cpp var-imp/bool.cpp var/int.cpp \
 	var/bool.cpp array.cpp bool.cpp bool/eqv.cpp \
 	extensional/dfa.cpp extensional/tuple-set.cpp \
-	extensional-regular.cpp extensional-tuple-set.cpp \
+	extensional-regular.cpp extensional-open-regular.cpp \
+	extensional-tuple-set.cpp \
+	open-sequence.cpp \
 	dom.cpp rel.cpp precede.cpp element.cpp count.cpp \
 	arithmetic.cpp exec.cpp \
 	exec/when.cpp element/pair.cpp \
@@ -1116,7 +1118,7 @@ EXETARGETS = $(FLATZINCEXE) $(FLATZINCLAUNCHER)
 
 INTTESTSRC00 = \
 	channel arithmetic basic bool count dom distinct element extensional \
-	rel linear gcc sorted unshare exec sequence \
+	rel linear gcc sorted unshare exec sequence open-sequence \
 	mm-arithmetic mm-bool mm-lin mm-count mm-rel \
 	bin-packing order unary cumulative cumulatives circuit \
 	no-overlap precede nvalues member

@@ -83,7 +83,9 @@ set(GECODE_INT_SOURCES
   gecode/int/exec.cpp
   gecode/int/exec/when.cpp
   gecode/int/extensional-regular.cpp
+  gecode/int/extensional-open-regular.cpp
   gecode/int/extensional-tuple-set.cpp
+  gecode/int/open-sequence.cpp
   gecode/int/extensional/dfa.cpp
   gecode/int/extensional/tuple-set.cpp
   gecode/int/gcc.cpp
@@ -403,6 +405,7 @@ set(GECODE_TEST_SOURCES
   test/int/no-overlap.cpp
   test/int/nvalues.cpp
   test/int/order.cpp
+  test/int/open-sequence.cpp
   test/int/precede.cpp
   test/int/rel.cpp
   test/int/sequence.cpp
