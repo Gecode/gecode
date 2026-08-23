@@ -131,7 +131,78 @@ namespace Test { namespace Word {
         (tracer.new_minimum == 17) && (tracer.new_maximum == 200);
       std::ostringstream out; out << clone->x;
       delete clone;
-      return ok && (out.str().find("[u:0x11..0xc8]") != std::string::npos);
+      return ok && (out.str().find("[u:0x11..0xc8]") != std::string::npos) &&
+        slack();
+    }
+
+    bool slack(void) const {
+      using namespace Gecode;
+      class SlackSpace : public Space {
+      public:
+        WordVar x;
+        SlackSpace(unsigned int width) : x(*this,width) {}
+        SlackSpace(unsigned int width, WordDomainType kind,
+                   WordValue minimum, WordValue maximum)
+          : x(*this,width,kind,minimum,maximum) {}
+        SlackSpace(SlackSpace& s) : Space(s) { x.update(*this,s.x); }
+        virtual Space* copy(void) { return new SlackSpace(*this); }
+        unsigned long long int slack(void) const {
+          return Gecode::Word::WordTraceView::slack(Gecode::Word::WordView(x));
+        }
+      };
+
+      SlackSpace compact(8);
+      SlackSpace unsigned_one(1,WDT_UNSIGNED,0,1);
+      SlackSpace signed_one(1,WDT_SIGNED,1,0);
+      SlackSpace unsigned_wide(64,WDT_UNSIGNED,0,~WordValue(0));
+      SlackSpace signed_wide(64,WDT_SIGNED,WordValue(1) << 63,
+                             (WordValue(1) << 63)-1);
+      SlackSpace assigned(64,WDT_UNSIGNED,42,42);
+      SlackSpace unsigned_bits(8,WDT_UNSIGNED,64,192);
+      Gecode::Word::WordView unsigned_bits_view(unsigned_bits.x);
+      (void) unsigned_bits_view.narrow(unsigned_bits,64,255);
+      SlackSpace unsigned_combined(8,WDT_UNSIGNED,64,192);
+      Gecode::Word::WordView unsigned_combined_view(unsigned_combined.x);
+      (void) unsigned_combined_view.narrow(unsigned_combined,64,255);
+      (void) unsigned_combined_view.narrow_rank_range(unsigned_combined,64,127);
+      SlackSpace signed_bits(8,WDT_SIGNED,192,64);
+      Gecode::Word::WordView signed_bits_view(signed_bits.x);
+      (void) signed_bits_view.narrow(signed_bits,64,255);
+      SlackSpace signed_combined(8,WDT_SIGNED,192,64);
+      Gecode::Word::WordView signed_combined_view(signed_combined.x);
+      (void) signed_combined_view.narrow(signed_combined,64,255);
+      (void) signed_combined_view.narrow_rank_range(signed_combined,64,127);
+
+      std::ostringstream output;
+      StdWordTracer tracer(output);
+      class ProgressSpace : public Space {
+      public:
+        WordVar x;
+        ProgressSpace(WordTracer& t) : x(*this,8,WDT_UNSIGNED,3,240) {
+          WordVarArgs xs(1); xs[0]=x;
+          trace(*this,xs,TraceFilter::all,TE_INIT | TE_FIX,t);
+        }
+        ProgressSpace(ProgressSpace& s) : Space(s) { x.update(*this,s.x); }
+        virtual Space* copy(void) { return new ProgressSpace(*this); }
+        void range(WordValue minimum, WordValue maximum) {
+          Gecode::Word::UnsignedWordView v(x);
+          (void) v.narrow_range(*this,minimum,maximum);
+        }
+      } progress(tracer);
+      if (progress.status() == SS_FAILED)
+        return false;
+      progress.range(17,100);
+      if (progress.status() == SS_FAILED)
+        return false;
+
+      return (compact.slack() == 8) &&
+        (unsigned_one.slack() == 2) && (signed_one.slack() == 2) &&
+        (unsigned_wide.slack() == 128) && (signed_wide.slack() == 128) &&
+        (assigned.slack() == 0) &&
+        (unsigned_bits.slack() == 15) && (signed_bits.slack() == 15) &&
+        (unsigned_combined.slack() == 12) &&
+        (signed_combined.slack() == 12) &&
+        (output.str().find("87.50% - 12.50%") != std::string::npos);
     }
   };
 

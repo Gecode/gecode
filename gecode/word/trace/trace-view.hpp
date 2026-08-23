@@ -67,7 +67,15 @@ namespace Gecode { namespace Word {
       _minimum = x._minimum; _maximum = x._maximum;
     }
     static unsigned long long int slack(WordView x) {
-      return x.unknown_size();
+      unsigned long long int s = x.unknown_size();
+      if (!x.bounded())
+        return s;
+      WordValue span = x.rank_maximum() - x.rank_minimum();
+      while (span != 0) {
+        s++;
+        span >>= 1;
+      }
+      return s;
     }
   };
 
