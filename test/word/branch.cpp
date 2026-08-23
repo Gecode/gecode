@@ -120,6 +120,31 @@ namespace Test { namespace Word {
           if (!ok || !unique) return false;
         }
 
+      class MixedRanked : public Space {
+      public:
+        WordVarArray x;
+        MixedRanked(bool assignment) : x(*this,2) {
+          x[0] = WordVar(*this,4,5,5);
+          x[1] = WordVar(*this,4,WDT_UNSIGNED,2,13);
+          if (assignment)
+            assign(*this,x,WORD_ASSIGN_MIN());
+          else
+            branch(*this,x,WORD_VAL_SPLIT_MIN());
+        }
+        MixedRanked(MixedRanked& s) : Space(s) { x.update(*this,s.x); }
+        virtual Space* copy(void) { return new MixedRanked(*this); }
+      };
+      for (int assignment=0; assignment<2; assignment++) {
+        MixedRanked* root = new MixedRanked(assignment != 0);
+        DFS<MixedRanked> dfs(root); delete root;
+        MixedRanked* solution = dfs.next();
+        const bool ok = (solution != nullptr) && solution->x.assigned() &&
+          (solution->x[0].val() == 5) &&
+          (!assignment || (solution->x[1].val() == 2));
+        delete solution;
+        if (!ok) return false;
+      }
+
       BoundedSpace lifecycle(WDT_UNSIGNED,WORD_VAL_SPLIT_MIN());
       if (lifecycle.status() != SS_BRANCH) return false;
       const Choice* choice=lifecycle.choice();
@@ -159,6 +184,42 @@ namespace Test { namespace Word {
         (wide_replay->x.minimum() > WordValue(0x100000008ULL));
       delete wide_restored; delete wide_replay; delete wide_choice;
       return replay_ok && ngl_ok && wide_ok;
+    }
+
+    bool callbacks(void) const {
+      using namespace Gecode;
+      const WordValue payload = WordValue(0x100000000ULL) + 7;
+      bool committed = false;
+      WordBranchVal value = [payload](const Space&, WordVar, int) {
+        return payload;
+      };
+      WordBranchCommit commit = [&committed,payload]
+        (Space& home, unsigned int, WordVar x, int, WordValue value) {
+          committed = (value == payload);
+          dom(home,x,value);
+        };
+      class CallbackSpace : public Space {
+      public:
+        WordVar x;
+        CallbackSpace(WordValBranch values) : x(*this,64) {
+          branch(*this,x,values);
+        }
+        CallbackSpace(CallbackSpace& s) : Space(s) { x.update(*this,s.x); }
+        virtual Space* copy(void) { return new CallbackSpace(*this); }
+      };
+      CallbackSpace root(WORD_VAL(value,commit));
+      if (root.status() != SS_BRANCH) return false;
+      const Choice* choice = root.choice();
+      Archive archive; choice->archive(archive);
+      CallbackSpace* replay = static_cast<CallbackSpace*>(root.clone());
+      const Choice* restored = replay->choice(archive);
+      NGL* ngl = replay->ngl(*restored,0);
+      replay->commit(*restored,0);
+      const bool ok = committed && (ngl == nullptr) &&
+        (replay->status() != SS_FAILED) && replay->x.assigned() &&
+        (replay->x.val() == payload);
+      delete restored; delete replay; delete choice;
+      return ok;
     }
 
     bool selectors(void) const {
@@ -357,7 +418,7 @@ namespace Test { namespace Word {
         search(WORD_VAL_RND(rb)) &&
         assignment(WORD_ASSIGN_LSB()) && assignment(WORD_ASSIGN_MSB()) &&
         assignment(WORD_ASSIGN_RND(ra)) && lifecycle() && random() &&
-        selectors() && mixed_recomputation() && bounded();
+        selectors() && mixed_recomputation() && bounded() && callbacks();
     }
   };
 

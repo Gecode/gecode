@@ -41,7 +41,7 @@ namespace Gecode {
     typedef WordBranchFilter Filter;
     typedef WordBranchMerit Merit;
     typedef WordBranchVal Val;
-    typedef unsigned int ValType;
+    typedef WordValue ValType;
     typedef WordBranchCommit Commit;
   };
 

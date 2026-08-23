@@ -3,7 +3,7 @@ schema_version = 1
 id = "word-001"
 key = "complete-word-branching-contracts"
 area = "word"
-status = "open"
+status = "done"
 complexity = "standard"
 blocked_by = []
 +++
@@ -25,12 +25,22 @@ The ranked branch and assign posting checks in gecode/word/branch.cpp reject eve
 
 ## Done when
 
-- [ ] Rank split and ranked assignment work on arrays containing assigned compact WordVars and unassigned bounded WordVars.
-- [ ] A public Word callback selector and commit path is constructible through the normal Gecode factory pattern.
-- [ ] BranchTraits uses WordValue and a width-64 callback test proves that upper payload bits are not truncated.
-- [ ] The public branching documentation states the callback and no-good contracts.
+- [x] Rank split and ranked assignment work on arrays containing assigned compact WordVars and unassigned bounded WordVars.
+- [x] A public Word callback selector and commit path is constructible through the normal Gecode factory pattern.
+- [x] BranchTraits uses WordValue and a width-64 callback test proves that upper payload bits are not truncated.
+- [x] The public branching documentation states the callback and no-good contracts.
 
 ## Validation
 
 - Run the focused Word branching tests, including archive, no-good, clone, and recomputation cases.
 - Run TestFramework.
+
+## Result
+
+Completed and independently verified native Word callback branching and ranked mixed-array handling.
+
+Validation:
+
+- Release and Debug builds completed for the changed Word library and test binary.
+- Focused Word::Branch passed.
+- Word::TestFramework passed.

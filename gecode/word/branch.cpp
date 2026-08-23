@@ -389,6 +389,13 @@ namespace Gecode { namespace Word { namespace Branch {
     case WordValBranch::SEL_SPLIT_MAX:
       return new (home)
         ValSelCommit<ValSelSplit,ValCommitSplit>(home,wvb);
+    case WordValBranch::SEL_VAL_COMMIT:
+      if (!wvb.commit())
+        return new (home)
+          ValSelCommit<ValSelFunction<WordView>,ValCommitZero>(home,wvb);
+      return new (home)
+        ValSelCommit<ValSelFunction<WordView>,ValCommitFunction<WordView> >
+          (home,wvb);
     default:
       throw UnknownBranching("Word::branch");
     }
@@ -408,6 +415,13 @@ namespace Gecode { namespace Word { namespace Branch {
     case WordAssign::SEL_MAX:
       return new (home)
         ValSelCommit<ValSelRank,ValCommitRank>(home,wa);
+    case WordAssign::SEL_VAL_COMMIT:
+      if (!wa.commit())
+        return new (home)
+          ValSelCommit<ValSelFunction<WordView>,ValCommitZero>(home,wa);
+      return new (home)
+        ValSelCommit<ValSelFunction<WordView>,ValCommitFunction<WordView> >
+          (home,wa);
     default:
       throw UnknownBranching("Word::assign");
     }
@@ -448,7 +462,7 @@ namespace Gecode {
     if ((vals.select() == WordValBranch::SEL_SPLIT_MIN) ||
         (vals.select() == WordValBranch::SEL_SPLIT_MAX))
       for (int i=0; i<xv.size(); i++)
-        if (!xv[i].bounded())
+        if (!xv[i].assigned() && !xv[i].bounded())
           throw UnknownBranching("Word::branch");
     ViewSel<WordView>* vs[1] = { Branch::viewsel(home,vars) };
     postviewvalbrancher<WordView,1,WordValue,2>
@@ -477,7 +491,7 @@ namespace Gecode {
         (vals.select() == WordAssign::SEL_MED) ||
         (vals.select() == WordAssign::SEL_MAX))
       for (int i=0; i<xv.size(); i++)
-        if (!xv[i].bounded())
+        if (!xv[i].assigned() && !xv[i].bounded())
           throw UnknownBranching("Word::assign");
     ViewSel<WordView>* vs[1] = { Branch::viewsel(home,vars) };
     postviewvalbrancher<WordView,1,WordValue,1>

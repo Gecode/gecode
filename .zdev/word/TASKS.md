@@ -3,13 +3,13 @@
 # Tasks: word
 
 - Total: 16
-- Ready: 11
+- Ready: 10
 - Blocked: 5
-- Done: 0
+- Done: 1
 
 | ID | Task | State | Blocked by |
 | --- | --- | --- | --- |
-| [word-001](tasks/001-complete-word-branching-contracts.md) | Complete Word branching contracts | ready | — |
+| [word-001](tasks/001-complete-word-branching-contracts.md) | Complete Word branching contracts | done | — |
 | [word-002](tasks/002-add-a-partial-domain-oracle-for-bounded-arithmetic.md) | Add a partial-domain oracle for bounded arithmetic | ready | — |
 | [word-003](tasks/003-clarify-word-endpoint-and-exception-contracts.md) | Clarify Word endpoint and exception contracts | ready | — |
 | [word-004](tasks/004-add-the-mixed-dma-descriptor-model-and-comparison.md) | Add the mixed DMA descriptor model and comparison | ready | — |

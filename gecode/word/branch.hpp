@@ -206,6 +206,9 @@ namespace Gecode {
   forceinline
   WordValBranch::WordValBranch(Select s0, Rnd r)
     : ValBranch<WordVar>(r), s(s0) {}
+  forceinline
+  WordValBranch::WordValBranch(WordBranchVal v, WordBranchCommit c)
+    : ValBranch<WordVar>(v,c), s(SEL_VAL_COMMIT) {}
   forceinline WordValBranch::Select
   WordValBranch::select(void) const { return s; }
 
@@ -224,12 +227,19 @@ namespace Gecode {
   forceinline WordValBranch WORD_VAL_SPLIT_MAX(void) {
     return WordValBranch(WordValBranch::SEL_SPLIT_MAX);
   }
+  forceinline WordValBranch
+  WORD_VAL(WordBranchVal v, WordBranchCommit c) {
+    return WordValBranch(v,c);
+  }
 
   forceinline
   WordAssign::WordAssign(Select s0) : s(s0) {}
   forceinline
   WordAssign::WordAssign(Select s0, Rnd r)
     : ValBranch<WordVar>(r), s(s0) {}
+  forceinline
+  WordAssign::WordAssign(WordBranchVal v, WordBranchCommit c)
+    : ValBranch<WordVar>(v,c), s(SEL_VAL_COMMIT) {}
   forceinline WordAssign::Select
   WordAssign::select(void) const { return s; }
 
@@ -250,6 +260,10 @@ namespace Gecode {
   }
   forceinline WordAssign WORD_ASSIGN_MAX(void) {
     return WordAssign(WordAssign::SEL_MAX);
+  }
+  forceinline WordAssign
+  WORD_ASSIGN(WordBranchVal v, WordBranchCommit c) {
+    return WordAssign(v,c);
   }
 
 }

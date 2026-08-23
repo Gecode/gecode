@@ -924,13 +924,16 @@ namespace Gecode {
       SEL_MSB, ///< Most-significant unknown bit
       SEL_RND, ///< Random unknown bit
       SEL_SPLIT_MIN, ///< Ranked interval split, lower half first
-      SEL_SPLIT_MAX  ///< Ranked interval split, upper half first
+      SEL_SPLIT_MAX, ///< Ranked interval split, upper half first
+      SEL_VAL_COMMIT ///< User-defined value and commit functions
     };
   protected:
     Select s;
   public:
     WordValBranch(Select s=SEL_LSB);
     WordValBranch(Select s, Rnd r);
+    /// Initialize with value function \a v and commit function \a c
+    WordValBranch(WordBranchVal v, WordBranchCommit c);
     Select select(void) const;
   };
 
@@ -944,6 +947,14 @@ namespace Gecode {
   WordValBranch WORD_VAL_SPLIT_MIN(void);
   /// Split a bounded variable's ranked interval, upper half first
   WordValBranch WORD_VAL_SPLIT_MAX(void);
+  /**
+   * \brief Select a value with \a v and commit it with \a c
+   *
+   * With no commit callback, the value is interpreted as a bit position and
+   * the alternatives fix that bit to zero and one. A user-defined commit
+   * callback does not provide generic no-good literals.
+   */
+  WordValBranch WORD_VAL(WordBranchVal v, WordBranchCommit c=nullptr);
 
   /// Select bit-zero or admitted ranked-value assignment
   class WordAssign : public ValBranch<WordVar> {
@@ -955,13 +966,16 @@ namespace Gecode {
       SEL_RND, ///< Random unknown bit
       SEL_MIN, ///< Minimum admitted ranked value
       SEL_MED, ///< Median admitted ranked value
-      SEL_MAX  ///< Maximum admitted ranked value
+      SEL_MAX, ///< Maximum admitted ranked value
+      SEL_VAL_COMMIT ///< User-defined value and commit functions
     };
   protected:
     Select s;
   public:
     WordAssign(Select s=SEL_LSB);
     WordAssign(Select s, Rnd r);
+    /// Initialize with value function \a v and commit function \a c
+    WordAssign(WordBranchVal v, WordBranchCommit c);
     Select select(void) const;
   };
 
@@ -977,6 +991,14 @@ namespace Gecode {
   WordAssign WORD_ASSIGN_MED(void);
   /// Assign each bounded variable to its maximum admitted ranked value
   WordAssign WORD_ASSIGN_MAX(void);
+  /**
+   * \brief Assign a value selected by \a v and committed by \a c
+   *
+   * With no commit callback, the value is interpreted as a bit position and
+   * that bit is fixed to zero. A user-defined commit callback does not provide
+   * generic no-good literals.
+   */
+  WordAssign WORD_ASSIGN(WordBranchVal v, WordBranchCommit c=nullptr);
 
   /// Branch over all word variables, trying zero before one
   GECODE_WORD_EXPORT void branch(Home home, const WordVarArgs& x,
