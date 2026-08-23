@@ -620,6 +620,146 @@ namespace Test { namespace Word {
       }
     };
 
+    class BooleanPolicyLifecycle : public Base {
+    private:
+      class PolicySpace : public Gecode::Space {
+      public:
+        Gecode::WordVar x, y, compatible, fallback;
+        Gecode::BoolVar control, factory_composition, manual_composition;
+        Gecode::BoolVarArray factory, manual;
+
+        PolicySpace(Gecode::WordDomainType domain_type)
+          : x(*this,3), y(*this,3), compatible(), fallback(),
+            control(*this,0,1), factory_composition(), manual_composition(),
+            factory(*this,7,0,1), manual(*this,7,0,1) {
+          using namespace Gecode;
+          const bool signed_domain = domain_type == WDT_SIGNED;
+          WordExpr compatible_expression = signed_domain ?
+            -WordExpr(x) : WordExpr(x)+WordExpr(y);
+          compatible=compatible_expression.post(*this,domain_type);
+          WordExpr fallback_expression=WordExpr(x)^WordExpr(y);
+          fallback=fallback_expression.post(*this,domain_type);
+
+          rel(*this,compatible,signed_domain ? WRT_SLQ : WRT_ULQ,y,
+              Reify(manual[0],RM_EQV));
+          channel(*this,compatible,0,manual[1]);
+          reduce_and(*this,compatible,manual[2]);
+          reduce_or(*this,compatible,manual[3]);
+          reduce_xor(*this,compatible,manual[4]);
+          overflow(*this,compatible,WOF_NEG_SIGNED,manual[5]);
+          overflow(*this,compatible,
+                   signed_domain ? WOF_ADD_SIGNED : WOF_ADD_UNSIGNED,
+                   y,manual[6]);
+
+          factory[0]=expr(*this,word_rel(compatible_expression,
+            signed_domain ? WRT_SLQ : WRT_ULQ,WordExpr(y),domain_type));
+          factory[1]=expr(*this,bit(compatible_expression,0,domain_type));
+          factory[2]=expr(*this,reduce_and(compatible_expression,domain_type));
+          factory[3]=expr(*this,reduce_or(compatible_expression,domain_type));
+          factory[4]=expr(*this,reduce_xor(compatible_expression,domain_type));
+          factory[5]=expr(*this,overflow(compatible_expression,
+            WOF_NEG_SIGNED,domain_type));
+          factory[6]=expr(*this,overflow(compatible_expression,
+            signed_domain ? WOF_ADD_SIGNED : WOF_ADD_UNSIGNED,WordExpr(y),
+            domain_type));
+
+          BoolExpr ordinary(control);
+          factory_composition=expr(*this,
+            ((word_rel(compatible_expression,
+                       signed_domain ? WRT_SLQ : WRT_ULQ,
+                       WordExpr(y),domain_type) &&
+              ordinary) || !bit(fallback_expression,0,domain_type)) ==
+            reduce_xor(compatible_expression,domain_type));
+          manual_composition=expr(*this,
+            ((BoolExpr(manual[0]) && ordinary) ||
+             !bit(WordExpr(fallback),0)) == BoolExpr(manual[4]));
+
+          WordVarArgs decisions={x,y};
+          branch(*this,decisions,WORD_VAR_NONE(),WORD_VAL_LSB());
+          branch(*this,control,BOOL_VAL_MIN());
+        }
+        PolicySpace(PolicySpace& s) : Space(s) {
+          x.update(*this,s.x); y.update(*this,s.y);
+          compatible.update(*this,s.compatible);
+          fallback.update(*this,s.fallback);
+          control.update(*this,s.control);
+          factory_composition.update(*this,s.factory_composition);
+          manual_composition.update(*this,s.manual_composition);
+          factory.update(*this,s.factory); manual.update(*this,s.manual);
+        }
+        virtual Space* copy(void) { return new PolicySpace(*this); }
+      };
+
+      static bool parity(Gecode::WordDomainType domain_type) {
+        using namespace Gecode;
+        PolicySpace* root=new PolicySpace(domain_type);
+        if ((root->compatible.domain_type() != domain_type) ||
+            (root->fallback.domain_type() != WDT_CUBE)) {
+          delete root;
+          return false;
+        }
+        Search::Options options;
+        options.c_d=1;
+        DFS<PolicySpace> dfs(root,options);
+        delete root;
+        unsigned int solutions=0;
+        while (PolicySpace* solution=dfs.next()) {
+          bool ok=solution->factory_composition.assigned() &&
+            solution->manual_composition.assigned() &&
+            (solution->factory_composition.val() ==
+             solution->manual_composition.val());
+          for (int i=0; i<solution->factory.size(); i++)
+            ok = ok && solution->factory[i].assigned() &&
+              solution->manual[i].assigned() &&
+              (solution->factory[i].val() == solution->manual[i].val());
+          if (!ok) {
+            delete solution;
+            return false;
+          }
+          delete solution;
+          solutions++;
+        }
+        return solutions == 128U;
+      }
+
+      class DefaultSpace : public Gecode::Space {
+      public:
+        Gecode::WordVar x, y;
+        DefaultSpace(bool explicit_cube) : x(*this,3), y(*this,3) {
+          using namespace Gecode;
+          WordExpr sum=WordExpr(x)+WordExpr(y);
+          BoolExpr e=explicit_cube ?
+            (word_rel(sum,WRT_ULQ,WordExpr(y),WDT_CUBE) &&
+             reduce_or(sum,WDT_CUBE)) :
+            ((sum <= WordExpr(y)) && reduce_or(sum));
+          rel(*this,e);
+        }
+        DefaultSpace(DefaultSpace& s) : Space(s) {
+          x.update(*this,s.x); y.update(*this,s.y);
+        }
+        virtual Space* copy(void) { return new DefaultSpace(*this); }
+      };
+
+      static bool default_cube_parity(void) {
+        DefaultSpace old_api(false), explicit_cube(true);
+        Gecode::StatusStatistics old_stats, explicit_stats;
+        const Gecode::SpaceStatus old_status=old_api.status(old_stats);
+        const Gecode::SpaceStatus explicit_status=
+          explicit_cube.status(explicit_stats);
+        return (old_status == explicit_status) &&
+          (old_stats.propagate == explicit_stats.propagate) &&
+          (Gecode::PropagatorGroup::all.size(old_api) ==
+           Gecode::PropagatorGroup::all.size(explicit_cube));
+      }
+    public:
+      BooleanPolicyLifecycle(void)
+        : Base("Word::MiniModel::BooleanPolicyLifecycle") {}
+      virtual bool run(void) {
+        return parity(Gecode::WDT_UNSIGNED) && parity(Gecode::WDT_SIGNED) &&
+          default_cube_parity();
+      }
+    };
+
     class ArithmeticLifecycle : public Base {
     private:
       enum Operation {
@@ -816,6 +956,7 @@ namespace Test { namespace Word {
     Lifecycle lifecycle;
     StructuralLifecycle structural_lifecycle;
     ArithmeticLifecycle arithmetic_lifecycle;
+    BooleanPolicyLifecycle boolean_policy_lifecycle;
 
   }
 

@@ -3,7 +3,7 @@ schema_version = 1
 id = "word-008"
 key = "carry-minimodel-domain-policy"
 area = "word"
-status = "open"
+status = "done"
 complexity = "advanced"
 blocked_by = []
 +++
@@ -26,13 +26,22 @@ WordExpr::post accepts a WordDomainType, but Word-backed BoolExpr::Misc nodes ca
 
 ## Done when
 
-- [ ] The declared word_rel, bit, reduction, and overflow overloads are public, documented, and lower through the direct Word API.
-- [ ] A policy-aware Word Boolean leaf retains its domain type after conjunction, disjunction, negation, and equivalence with ordinary BoolExpr nodes.
-- [ ] Default operator and named-function expressions retain existing cube variables, actors, solutions, and propagation counters.
-- [ ] Direct posting, manual WordExpr materialization, and the new explicit factories agree on solutions and compatible bounded intermediates.
+- [x] The declared word_rel, bit, reduction, and overflow overloads are public, documented, and lower through the direct Word API.
+- [x] A policy-aware Word Boolean leaf retains its domain type after conjunction, disjunction, negation, and equivalence with ordinary BoolExpr nodes.
+- [x] Default operator and named-function expressions retain existing cube variables, actors, solutions, and propagation counters.
+- [x] Direct posting, manual WordExpr materialization, and the new explicit factories agree on solutions and compatible bounded intermediates.
 
 ## Validation
 
 - Run focused MiniModel Word tests for every new factory, Boolean composition, unsigned and signed policy, incompatible fallback, cloning, and replay.
 - Run the broader Word MiniModel suite and TestFramework.
 - Build the Word and MiniModel libraries warning-clean in Release mode.
+
+## Result
+
+Added explicit WordDomainType MiniModel Boolean factories while preserving cube-default syntax and existing Boolean composition.
+
+Validation:
+
+- Independent unsigned and signed tests covered every factory, direct/manual posting parity, bounded intermediates, cube fallback, Boolean composition, cloning, and recomputation with 128 matching solutions per policy.
+- Release Word and MiniModel builds, exported-symbol checks, complete Word MiniModel tests, TestFramework, and diff checks passed.

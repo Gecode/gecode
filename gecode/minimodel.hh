@@ -1677,26 +1677,49 @@ namespace Gecode {
   signed_greater(const WordExpr&, const WordExpr&);
   GECODE_MINIMODEL_EXPORT BoolExpr
   signed_greater_equal(const WordExpr&, const WordExpr&);
+  /// Word relation with explicit materialization domain policy
+  GECODE_MINIMODEL_EXPORT BoolExpr
+  word_rel(const WordExpr&, WordRelType, const WordExpr&, WordDomainType);
 
   /// Return the selected bit as a Boolean expression
   GECODE_MINIMODEL_EXPORT BoolExpr
   bit(const WordExpr&, unsigned int bit_index);
+  /// Return the selected bit using an explicit materialization domain policy
+  GECODE_MINIMODEL_EXPORT BoolExpr
+  bit(const WordExpr&, unsigned int bit_index, WordDomainType);
   /// Conjunction of all significant bits
   GECODE_MINIMODEL_EXPORT BoolExpr
   reduce_and(const WordExpr&);
+  /// Conjunction using an explicit materialization domain policy
+  GECODE_MINIMODEL_EXPORT BoolExpr
+  reduce_and(const WordExpr&, WordDomainType);
   /// Disjunction of all significant bits
   GECODE_MINIMODEL_EXPORT BoolExpr
   reduce_or(const WordExpr&);
+  /// Disjunction using an explicit materialization domain policy
+  GECODE_MINIMODEL_EXPORT BoolExpr
+  reduce_or(const WordExpr&, WordDomainType);
   /// Exclusive-or of all significant bits
   GECODE_MINIMODEL_EXPORT BoolExpr
   reduce_xor(const WordExpr&);
+  /// Exclusive-or using an explicit materialization domain policy
+  GECODE_MINIMODEL_EXPORT BoolExpr
+  reduce_xor(const WordExpr&, WordDomainType);
   /// Arithmetic overflow predicate for a unary word operation
   GECODE_MINIMODEL_EXPORT BoolExpr
   overflow(const WordExpr&, WordOverflowType,
            WordSemantics semantics=WS_SMTLIB);
+  /// Unary overflow using an explicit materialization domain policy
+  GECODE_MINIMODEL_EXPORT BoolExpr
+  overflow(const WordExpr&, WordOverflowType, WordDomainType,
+           WordSemantics semantics=WS_SMTLIB);
   /// Arithmetic overflow predicate for a binary word operation
   GECODE_MINIMODEL_EXPORT BoolExpr
   overflow(const WordExpr&, WordOverflowType, const WordExpr&,
+           WordSemantics semantics=WS_SMTLIB);
+  /// Binary overflow using an explicit materialization domain policy
+  GECODE_MINIMODEL_EXPORT BoolExpr
+  overflow(const WordExpr&, WordOverflowType, const WordExpr&, WordDomainType,
            WordSemantics semantics=WS_SMTLIB);
   /// Boolean-controlled word conditional
   GECODE_MINIMODEL_EXPORT WordExpr

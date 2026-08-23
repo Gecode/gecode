@@ -143,16 +143,17 @@ namespace Gecode {
       WordExpr left;
       WordExpr right;
       WordRelType wrt;
+      WordDomainType domain_type;
     public:
       WordRelation(const WordExpr& left0, WordRelType wrt0,
-                   const WordExpr& right0)
-        : left(left0), right(right0), wrt(wrt0) {
+                   const WordExpr& right0, WordDomainType domain_type0)
+        : left(left0), right(right0), wrt(wrt0), domain_type(domain_type0) {
         check_width(left.width(),right.width());
       }
       virtual void post(Home home, BoolVar b, bool neg,
                         const IntPropLevels&) {
-        WordVar x = left.post(home);
-        WordVar y = right.post(home);
+        WordVar x = left.post(home,domain_type);
+        WordVar y = right.post(home,domain_type);
         Gecode::rel(home,x,neg ? negated(wrt) : wrt,y,
                     Reify(b,RM_EQV));
       }
@@ -162,15 +163,17 @@ namespace Gecode {
     private:
       WordExpr word;
       unsigned int bit_index;
+      WordDomainType domain_type;
     public:
-      WordBit(const WordExpr& word0, unsigned int bit_index0)
-        : word(word0), bit_index(bit_index0) {
+      WordBit(const WordExpr& word0, unsigned int bit_index0,
+              WordDomainType domain_type0)
+        : word(word0), bit_index(bit_index0), domain_type(domain_type0) {
         if (bit_index >= word.width())
           throw Word::OutOfLimits("MiniModel::bit");
       }
       virtual void post(Home home, BoolVar b, bool neg,
                         const IntPropLevels&) {
-        WordVar x = word.post(home);
+        WordVar x = word.post(home,domain_type);
         if (!neg) {
           channel(home,x,bit_index,b);
         } else {
@@ -189,12 +192,14 @@ namespace Gecode {
     private:
       WordExpr word;
       WordReductionType reduction;
+      WordDomainType domain_type;
     public:
-      WordReduction(const WordExpr& word0, WordReductionType reduction0)
-        : word(word0), reduction(reduction0) {}
+      WordReduction(const WordExpr& word0, WordReductionType reduction0,
+                    WordDomainType domain_type0)
+        : word(word0), reduction(reduction0), domain_type(domain_type0) {}
       virtual void post(Home home, BoolVar b, bool neg,
                         const IntPropLevels&) {
-        WordVar x = word.post(home);
+        WordVar x = word.post(home,domain_type);
         BoolVar actual = b;
         if (neg)
           actual = BoolVar(home,0,1);
@@ -213,14 +218,16 @@ namespace Gecode {
     private:
       WordExpr word;
       WordOverflowType operation;
+      WordDomainType domain_type;
       WordSemantics semantics;
     public:
       UnaryWordOverflow(const WordExpr& word0, WordOverflowType operation0,
-                        WordSemantics semantics0)
-        : word(word0), operation(operation0), semantics(semantics0) {}
+                        WordDomainType domain_type0, WordSemantics semantics0)
+        : word(word0), operation(operation0), domain_type(domain_type0),
+          semantics(semantics0) {}
       virtual void post(Home home, BoolVar b, bool neg,
                         const IntPropLevels&) {
-        WordVar x = word.post(home);
+        WordVar x = word.post(home,domain_type);
         BoolVar actual = b;
         if (neg)
           actual = BoolVar(home,0,1);
@@ -235,18 +242,20 @@ namespace Gecode {
       WordExpr left;
       WordExpr right;
       WordOverflowType operation;
+      WordDomainType domain_type;
       WordSemantics semantics;
     public:
       BinaryWordOverflow(const WordExpr& left0, WordOverflowType operation0,
-                         const WordExpr& right0, WordSemantics semantics0)
+                         const WordExpr& right0, WordDomainType domain_type0,
+                         WordSemantics semantics0)
         : left(left0), right(right0), operation(operation0),
-          semantics(semantics0) {
+          domain_type(domain_type0), semantics(semantics0) {
         check_width(left.width(),right.width());
       }
       virtual void post(Home home, BoolVar b, bool neg,
                         const IntPropLevels&) {
-        WordVar x = left.post(home);
-        WordVar y = right.post(home);
+        WordVar x = left.post(home,domain_type);
+        WordVar y = right.post(home,domain_type);
         BoolVar actual = b;
         if (neg)
           actual = BoolVar(home,0,1);
@@ -259,7 +268,7 @@ namespace Gecode {
     BoolExpr
     relation(const WordExpr& left, WordRelType wrt,
              const WordExpr& right) {
-      return BoolExpr(new WordRelation(left,wrt,right));
+      return BoolExpr(new WordRelation(left,wrt,right,WDT_CUBE));
     }
 
     bool
@@ -650,30 +659,58 @@ namespace Gecode {
     return relation(l,WRT_SGQ,r);
   }
 
+  BoolExpr word_rel(const WordExpr& l, WordRelType wrt, const WordExpr& r,
+                    WordDomainType domain_type) {
+    return BoolExpr(new WordRelation(l,wrt,r,domain_type));
+  }
+
   BoolExpr bit(const WordExpr& e, unsigned int bit_index) {
-    return BoolExpr(new WordBit(e,bit_index));
+    return bit(e,bit_index,WDT_CUBE);
+  }
+  BoolExpr bit(const WordExpr& e, unsigned int bit_index,
+               WordDomainType domain_type) {
+    return BoolExpr(new WordBit(e,bit_index,domain_type));
   }
 
   BoolExpr reduce_and(const WordExpr& e) {
-    return BoolExpr(new WordReduction(e,WRED_AND));
+    return reduce_and(e,WDT_CUBE);
+  }
+  BoolExpr reduce_and(const WordExpr& e, WordDomainType domain_type) {
+    return BoolExpr(new WordReduction(e,WRED_AND,domain_type));
   }
 
   BoolExpr reduce_or(const WordExpr& e) {
-    return BoolExpr(new WordReduction(e,WRED_OR));
+    return reduce_or(e,WDT_CUBE);
+  }
+  BoolExpr reduce_or(const WordExpr& e, WordDomainType domain_type) {
+    return BoolExpr(new WordReduction(e,WRED_OR,domain_type));
   }
 
   BoolExpr reduce_xor(const WordExpr& e) {
-    return BoolExpr(new WordReduction(e,WRED_XOR));
+    return reduce_xor(e,WDT_CUBE);
+  }
+  BoolExpr reduce_xor(const WordExpr& e, WordDomainType domain_type) {
+    return BoolExpr(new WordReduction(e,WRED_XOR,domain_type));
   }
 
   BoolExpr overflow(const WordExpr& e, WordOverflowType operation,
                     WordSemantics semantics) {
-    return BoolExpr(new UnaryWordOverflow(e,operation,semantics));
+    return overflow(e,operation,WDT_CUBE,semantics);
+  }
+  BoolExpr overflow(const WordExpr& e, WordOverflowType operation,
+                    WordDomainType domain_type, WordSemantics semantics) {
+    return BoolExpr(new UnaryWordOverflow(e,operation,domain_type,semantics));
   }
 
   BoolExpr overflow(const WordExpr& l, WordOverflowType operation,
                     const WordExpr& r, WordSemantics semantics) {
-    return BoolExpr(new BinaryWordOverflow(l,operation,r,semantics));
+    return overflow(l,operation,r,WDT_CUBE,semantics);
+  }
+  BoolExpr overflow(const WordExpr& l, WordOverflowType operation,
+                    const WordExpr& r, WordDomainType domain_type,
+                    WordSemantics semantics) {
+    return BoolExpr(new BinaryWordOverflow(l,operation,r,domain_type,
+                                           semantics));
   }
 
   WordExpr

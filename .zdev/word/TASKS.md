@@ -3,9 +3,9 @@
 # Tasks: word
 
 - Total: 16
-- Ready: 9
+- Ready: 8
 - Blocked: 0
-- Done: 7
+- Done: 8
 
 | ID | Task | State | Blocked by |
 | --- | --- | --- | --- |
@@ -16,7 +16,7 @@
 | [word-005](tasks/005-batch-the-remaining-bounded-local-transactions.md) | Batch the remaining bounded local transactions | done | — |
 | [word-006](tasks/006-specialize-numeric-word-actors-by-view-and-event.md) | Specialize numeric Word actors by view and event | done | word-004, word-005 |
 | [word-007](tasks/007-retire-bounded-disequality-on-interval-disjointness.md) | Retire bounded disequality on interval disjointness | done | — |
-| [word-008](tasks/008-carry-explicit-bounded-policy-through-word-minimodel-boolean.md) | Carry explicit bounded policy through Word MiniModel Boolean nodes | ready | — |
+| [word-008](tasks/008-carry-explicit-bounded-policy-through-word-minimodel-boolean.md) | Carry explicit bounded policy through Word MiniModel Boolean nodes | done | — |
 | [word-009](tasks/009-report-bound-only-progress-in-word-trace-slack.md) | Report bound-only progress in Word trace slack | ready | — |
 | [word-010](tasks/010-investigate-bounded-word-size-merits.md) | Investigate bounded Word size merits | ready | word-004 |
 | [word-011](tasks/011-investigate-search-time-activation-of-bounded-add.md) | Investigate search-time activation of bounded Add | ready | word-002, word-004 |
