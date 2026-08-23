@@ -1,0 +1,38 @@
++++
+schema_version = 1
+id = "word-011"
+key = "investigate-adaptive-bounded-add"
+area = "word"
+status = "open"
+complexity = "advanced"
+blocked_by = ["word-002", "word-004"]
++++
+# Investigate search-time activation of bounded Add
+
+## Outcome
+
+A measured binary Add experiment determines whether a bounded Word actor should observe later range information and activate numeric closure after posting.
+
+## Context
+
+Use the exact 64-link chain in .zdev/word/brief.md: full-range width-12 unsigned states, constants repeating 1,2,3,4, every Add posted before x0 is restricted to [100,200] and x64 to [260,360], then lower-ranked branching over all states. The chain has 101 solutions. Controls are the exact symbolic-ALU cube and unsigned invocations, default word-arx-preimage, and two-step 12-unknown-bit word-md5-preimage invocations in the brief.
+
+## Boundaries
+
+- Keep compact Word Add unchanged.
+- While unclassified, retain the existing exact cube closure and use a cheap bounded subscription or staged dispatcher.
+- Rewrite or specialize only after the numeric regime becomes invariantly suitable.
+- Retain production code only on repeatable search or runtime value without a material regression in any named control; otherwise record the rejection and remove the prototype.
+
+## Done when
+
+- [ ] Posting the chain before versus after its endpoint restrictions demonstrates whether adaptive activation removes the posting-order propagation gap.
+- [ ] Aliases, costs, subscriptions, cloning, recomputation, exact cube behavior, 101 solutions, and a deterministic chain checksum are validated.
+- [ ] Twenty interleaved Release trials report solutions, nodes, failures, propagations, and runtime for the chain and every exact checked-in control invocation from the brief.
+- [ ] The retained result is either a justified adaptive Add implementation or a clean rejection with no prototype code left.
+
+## Validation
+
+- Run the bounded arithmetic oracle and focused Add lifecycle tests.
+- Run the exact chain and four checked-in control invocations from the brief against linked baseline and candidate binaries.
+- Run the broader Word arithmetic suite and TestFramework if code is retained.
