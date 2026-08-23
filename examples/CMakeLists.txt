@@ -68,6 +68,7 @@ set(GECODE_EXAMPLE_SOURCES
   word-dma-descriptor.cpp
   word-md5-preimage.cpp
   word-nary-add.cpp
+  word-product-mod.cpp
   word-minimodel.cpp
   word-register-file.cpp
   word-sha1-preimage.cpp
@@ -100,6 +101,7 @@ set(GECODE_WORD_EXAMPLES
   word-dma-descriptor
   word-md5-preimage
   word-nary-add
+  word-product-mod
   word-minimodel
   word-register-file
   word-sha1-preimage

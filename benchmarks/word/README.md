@@ -1,5 +1,14 @@
 # Word benchmarks
 
+The bounded product-modulo comparison uses the fixed width-nine case with
+`x,y in [10,20]`, modulus 509, and result-first ranked splitting. The compact
+control links the same bounded search variables to compact product-modulo
+operands with binary identities. Run the 20 alternating-order trials with:
+
+```sh
+uv run --script benchmarks/word/product-mod-benchmark.py --binary build/bin/word-product-mod --repetitions 20 --output /tmp/word-product-mod.json
+```
+
 The bounded n-ary Add scatter/gather comparison uses `word-nary-add` at 4,
 6, and 8 segments. Run 20 alternating-order trials without storing artifacts
 in the checkout:

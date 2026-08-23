@@ -3,9 +3,9 @@
 # Tasks: word
 
 - Total: 16
-- Ready: 4
+- Ready: 3
 - Blocked: 0
-- Done: 12
+- Done: 13
 
 | ID | Task | State | Blocked by |
 | --- | --- | --- | --- |
@@ -21,7 +21,7 @@
 | [word-010](tasks/010-investigate-bounded-word-size-merits.md) | Investigate bounded Word size merits | done | word-004 |
 | [word-011](tasks/011-investigate-search-time-activation-of-bounded-add.md) | Investigate search-time activation of bounded Add | done | word-002, word-004 |
 | [word-012](tasks/012-add-bounded-n-ary-word-addition.md) | Add bounded n-ary Word addition | done | — |
-| [word-013](tasks/013-add-bounded-propagation-for-mixed-product-mod.md) | Add bounded propagation for mixed product_mod | ready | — |
+| [word-013](tasks/013-add-bounded-propagation-for-mixed-product-mod.md) | Add bounded propagation for mixed product_mod | done | — |
 | [word-014](tasks/014-preserve-bounds-through-boolean-controlled-word-ite.md) | Preserve bounds through Boolean-controlled Word ITE | ready | word-004 |
 | [word-015](tasks/015-preserve-bounds-through-word-element.md) | Preserve bounds through Word element | ready | word-004 |
 | [word-016](tasks/016-investigate-native-bounds-consistent-word-distinct.md) | Investigate native bounds-consistent Word distinct | ready | — |

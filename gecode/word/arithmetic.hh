@@ -254,6 +254,41 @@ namespace Gecode { namespace Word { namespace Arithmetic {
                            Int::IntView modulus, WordView result);
   };
 
+  /** \brief Bounded mixed Word/Int mathematical product-modulo propagator
+   *
+   * Selected only for homogeneous unsigned bounded words whose product is
+   * representable at the word width.
+   */
+  class BoundProductMod : public Propagator {
+  protected:
+    UnsignedWordView x;
+    UnsignedWordView y;
+    Int::IntView modulus;
+    UnsignedWordView result;
+    BoundProductMod(Home home, UnsignedWordView x, UnsignedWordView y,
+                    Int::IntView modulus, UnsignedWordView result);
+    BoundProductMod(Space& home, BoundProductMod& p);
+    static ExecStatus narrow(Home home, UnsignedWordView x,
+                             UnsignedWordView y, Int::IntView modulus,
+                             UnsignedWordView result, bool cube,
+                             bool& bits, bool& subsumed);
+  public:
+    static bool numeric_regime(UnsignedWordView x, UnsignedWordView y);
+    virtual Actor* copy(Space& home);
+    virtual PropCost cost(const Space& home,
+                          const ModEventDelta& med) const;
+    virtual void reschedule(Space& home);
+    virtual size_t dispose(Space& home);
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+    static ExecStatus post(Home home, UnsignedWordView x,
+                           UnsignedWordView y, Int::IntView modulus,
+                           UnsignedWordView result);
+  };
+
+  /// Post the strongest compatible product-modulo actor.
+  ExecStatus post_product_mod(Home home, WordView x, WordView y,
+                              Int::IntView modulus, WordView result);
+
   /// Reified mixed Word/Int mathematical product-modulo propagator
   template<ReifyMode rm>
   class ReProductMod : public Propagator {
@@ -391,8 +426,9 @@ namespace Gecode { namespace Word { namespace Arithmetic {
 #include <gecode/word/arithmetic/add.hpp>
 #include <gecode/word/arithmetic/neg-sub.hpp>
 #include <gecode/word/arithmetic/mult.hpp>
-#include <gecode/word/arithmetic/product-mod.hpp>
 #include <gecode/word/arithmetic/bounded.hpp>
+#include <gecode/word/arithmetic/product-mod.hpp>
+#include <gecode/word/arithmetic/bounded-product-mod.hpp>
 #include <gecode/word/arithmetic/divmod.hpp>
 #include <gecode/word/arithmetic/signed-divmod.hpp>
 #include <gecode/word/arithmetic/bounded-divmod.hpp>

@@ -593,7 +593,7 @@ namespace Gecode {
               WordVar result) {
     check_widths(x,y,result,"Word::product_mod");
     GECODE_POST;
-    GECODE_ES_FAIL(Word::Arithmetic::ProductMod::post(
+    GECODE_ES_FAIL(Word::Arithmetic::post_product_mod(
       home,Word::WordView(x),Word::WordView(y),Int::IntView(modulus),
       Word::WordView(result)));
   }

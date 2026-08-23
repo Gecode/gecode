@@ -284,7 +284,7 @@ namespace Gecode { namespace Word { namespace Arithmetic {
     if (b.one()) {
       if (rm == RM_PMI)
         return ES_OK;
-      return ProductMod::post(home,x,y,modulus,result);
+      return post_product_mod(home,x,y,modulus,result);
     }
     if (b.zero() && (rm == RM_IMP))
       return ES_OK;
@@ -317,7 +317,7 @@ namespace Gecode { namespace Word { namespace Arithmetic {
     if (b.one()) {
       if (rm == RM_PMI)
         return home.ES_SUBSUMED(*this);
-      GECODE_REWRITE(*this,(ProductMod::post(
+      GECODE_REWRITE(*this,(post_product_mod(
         home(*this),x,y,modulus,result)));
     }
     if (b.zero() && (rm == RM_IMP))
@@ -327,13 +327,13 @@ namespace Gecode { namespace Word { namespace Arithmetic {
     case Int::RT_TRUE:
       if (b.zero())
         return ES_FAILED;
-      if (rm != RM_IMP)
+      if ((rm != RM_IMP) && !b.one())
         GECODE_ME_CHECK(b.one_none(home));
       break;
     case Int::RT_FALSE:
       if (b.one())
         return ES_FAILED;
-      if (rm != RM_PMI)
+      if ((rm != RM_PMI) && !b.zero())
         GECODE_ME_CHECK(b.zero_none(home));
       break;
     case Int::RT_MAYBE:

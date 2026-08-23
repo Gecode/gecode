@@ -86,6 +86,46 @@ namespace Test { namespace Word { namespace ProductMod {
       }
     };
 
+    class BoundedSpace : public Gecode::Space {
+    public:
+      Gecode::WordVar x;
+      Gecode::WordVar y;
+      Gecode::IntVar modulus;
+      Gecode::WordVar result;
+      BoundedSpace(unsigned int width, Gecode::WordValue xmin,
+                   Gecode::WordValue xmax, Gecode::WordValue ymin,
+                   Gecode::WordValue ymax, int mmin, int mmax,
+                   Gecode::WordValue rmin, Gecode::WordValue rmax)
+        : x(*this,width,Gecode::WDT_UNSIGNED,xmin,xmax),
+          y(*this,width,Gecode::WDT_UNSIGNED,ymin,ymax),
+          modulus(*this,mmin,mmax),
+          result(*this,width,Gecode::WDT_UNSIGNED,rmin,rmax) {}
+      BoundedSpace(BoundedSpace& s) : Gecode::Space(s) {
+        x.update(*this,s.x); y.update(*this,s.y);
+        modulus.update(*this,s.modulus); result.update(*this,s.result);
+      }
+      virtual Gecode::Space* copy(void) { return new BoundedSpace(*this); }
+      void post(void) { Gecode::product_mod(*this,x,y,modulus,result); }
+    };
+
+    class BoundedReifiedSpace : public BoundedSpace {
+    public:
+      Gecode::BoolVar b;
+      BoundedReifiedSpace(void)
+        : BoundedSpace(9,10U,20U,10U,20U,509,509,0U,511U),
+          b(*this,0,1) {}
+      BoundedReifiedSpace(BoundedReifiedSpace& s) : BoundedSpace(s) {
+        b.update(*this,s.b);
+      }
+      virtual Gecode::Space* copy(void) {
+        return new BoundedReifiedSpace(*this);
+      }
+      void post(void) {
+        Gecode::product_mod(*this,x,y,modulus,result,
+                            Gecode::Reify(b,Gecode::RM_EQV));
+      }
+    };
+
     static bool assigned(void) {
       for (Gecode::WordValue x=0; x<8; x++)
         for (Gecode::WordValue y=0; y<8; y++)
@@ -141,6 +181,113 @@ namespace Test { namespace Word { namespace ProductMod {
       return (unchanged.status() != Gecode::SS_FAILED) &&
         unchanged.result.assigned() && (unchanged.result.val() == 6U) &&
         (Gecode::PropagatorGroup::all.size(unchanged) == 0);
+    }
+
+    static bool bounded_ranges(void) {
+      BoundedSpace forward(9,10U,20U,10U,20U,509,509,0U,511U);
+      forward.post();
+      if ((forward.status() == Gecode::SS_FAILED) ||
+          (forward.result.minimum() != 100U) ||
+          (forward.result.maximum() != 400U))
+        return false;
+
+      BoundedSpace inverse(9,10U,20U,12U,12U,509,509,144U,144U);
+      inverse.post();
+      if ((inverse.status() == Gecode::SS_FAILED) ||
+          !inverse.x.assigned() || (inverse.x.val() != 12U))
+        return false;
+
+      BoundedSpace refreshed(4,3U,4U,2U,2U,5,6,2U,2U);
+      refreshed.post();
+      if ((refreshed.status() == Gecode::SS_FAILED) ||
+          !refreshed.x.assigned() || (refreshed.x.val() != 4U) ||
+          (refreshed.modulus.min() != 5) || (refreshed.modulus.max() != 6))
+        return false;
+
+      BoundedSpace variable(9,20U,20U,20U,20U,1,509,1U,1U);
+      variable.post();
+      if ((variable.status() == Gecode::SS_FAILED) ||
+          (variable.modulus.min() != 2) || (variable.modulus.max() != 399))
+        return false;
+
+      BoundedSpace zero(9,0U,0U,10U,20U,2,509,0U,511U);
+      zero.post();
+      if ((zero.status() == Gecode::SS_FAILED) ||
+          !zero.result.assigned() || (zero.result.val() != 0U) ||
+          (Gecode::PropagatorGroup::all.size(zero) != 0))
+        return false;
+
+      BoundedSpace boundary(9,10U,20U,10U,20U,20,20,20U,30U);
+      boundary.post();
+      if (boundary.status() != Gecode::SS_FAILED)
+        return false;
+
+      BoundedSpace invalid(9,10U,20U,10U,20U,-2,0,0U,511U);
+      invalid.post();
+      if (invalid.status() != Gecode::SS_FAILED)
+        return false;
+
+      const Gecode::WordValue maximum=~Gecode::WordValue(0);
+      BoundedSpace wide(64,maximum,maximum,1U,1U,
+                        2147483646,2147483646,0U,maximum);
+      wide.post();
+      return (wide.status() != Gecode::SS_FAILED) &&
+        wide.result.assigned() && (wide.result.val() == 15U);
+    }
+
+    static bool bounded_alias_and_reification(void) {
+      BoundedSpace alias(9,10U,20U,1U,1U,509,509,10U,20U);
+      Gecode::product_mod(alias,alias.x,alias.y,alias.modulus,alias.x);
+      if (alias.status() == Gecode::SS_FAILED)
+        return false;
+
+      BoundedReifiedSpace reified;
+      reified.post();
+      if ((reified.status() == Gecode::SS_FAILED) ||
+          (reified.result.minimum() != 0U) ||
+          (reified.result.maximum() != 511U))
+        return false;
+      Gecode::rel(reified,reified.b,Gecode::IRT_EQ,1);
+      return (reified.status() != Gecode::SS_FAILED) &&
+        (reified.result.minimum() == 100U) &&
+        (reified.result.maximum() == 400U);
+    }
+
+    static bool bounded_oracle(void) {
+      using namespace Gecode;
+      class SearchSpace : public Space {
+      public:
+        WordVar x, y, result;
+        IntVar modulus;
+        SearchSpace(void)
+          : x(*this,4,WDT_UNSIGNED,0U,3U),
+            y(*this,4,WDT_UNSIGNED,0U,3U),
+            result(*this,4,WDT_UNSIGNED,0U,15U), modulus(*this,1,7) {
+          product_mod(*this,x,y,modulus,result);
+          branch(*this,result,WORD_VAL_SPLIT_MIN());
+          WordVarArgs operands={x,y};
+          branch(*this,operands,WORD_VAR_NONE(),WORD_VAL_SPLIT_MIN());
+          branch(*this,modulus,INT_VAL_MIN());
+        }
+        SearchSpace(SearchSpace& s) : Space(s) {
+          x.update(*this,s.x); y.update(*this,s.y);
+          result.update(*this,s.result); modulus.update(*this,s.modulus);
+        }
+        virtual Space* copy(void) { return new SearchSpace(*this); }
+      };
+      SearchSpace* root=new SearchSpace;
+      Search::Options options; options.c_d=2; options.a_d=3;
+      DFS<SearchSpace> dfs(root,options); delete root;
+      unsigned int solutions=0;
+      while (SearchSpace* solution=dfs.next()) {
+        const WordValue expected=(solution->x.val()*solution->y.val()) %
+          static_cast<WordValue>(solution->modulus.val());
+        const bool ok=solution->result.val() == expected;
+        delete solution;
+        if (!ok) return false;
+        solutions++;
+      }
+      return solutions == 112U;
     }
 
     static bool contracts_and_aliases(void) {
@@ -420,7 +567,8 @@ namespace Test { namespace Word { namespace ProductMod {
     Lifecycle(void) : Base("Word::ProductMod::Lifecycle") {}
     virtual bool run(void) {
       return assigned() && partial() && contracts_and_aliases() &&
-        reified_truth_rows() && reified_rewrites() &&
+        bounded_ranges() && bounded_alias_and_reification() &&
+        bounded_oracle() && reified_truth_rows() && reified_rewrites() &&
         clone_and_recomputation() && reified_recomputation();
     }
   };
