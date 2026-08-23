@@ -69,6 +69,7 @@ namespace Gecode { namespace Word { namespace Arithmetic {
    */
   class NaryAdd : public MixNaryOnePropagator<
     WordView,PC_WORD_BITS,WordView,PC_WORD_BITS> {
+    template<class> friend class BoundNaryAdd;
   protected:
     using MixNaryOnePropagator<
       WordView,PC_WORD_BITS,WordView,PC_WORD_BITS>::x;
@@ -80,14 +81,40 @@ namespace Gecode { namespace Word { namespace Arithmetic {
     NaryAdd(Home home, ViewArray<WordView>& x, WordView y,
             WordValue constant, bool aliased);
     NaryAdd(Space& home, NaryAdd& p);
-    static ExecStatus narrow(Home home, ViewArray<WordView>& x,
-                             WordView y, WordValue constant, bool aliased);
+    template<class View>
+    static ExecStatus narrow(Home home, ViewArray<View>& x,
+                             View y, WordValue constant, bool aliased);
   public:
     virtual Actor* copy(Space& home);
     virtual PropCost cost(const Space& home,
                           const ModEventDelta& med) const;
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     static ExecStatus post(Home home, ViewArray<WordView>& x, WordView y,
+                           WordValue constant);
+  };
+
+  /** \brief Staged bounded propagator for non-wrapping n-ary addition */
+  template<class View>
+  class BoundNaryAdd : public MixNaryOnePropagator<
+    View,PC_WORD_DOM,View,PC_WORD_DOM> {
+  protected:
+    using MixNaryOnePropagator<View,PC_WORD_DOM,View,PC_WORD_DOM>::x;
+    using MixNaryOnePropagator<View,PC_WORD_DOM,View,PC_WORD_DOM>::y;
+    WordValue constant;
+    bool aliased;
+    BoundNaryAdd(Home home, ViewArray<View>& x, View y,
+                 WordValue constant, bool aliased);
+    BoundNaryAdd(Space& home, BoundNaryAdd& p);
+    static ExecStatus narrow_bounds(Home home, ViewArray<View>& x, View y,
+                                    WordValue constant, bool& bits);
+    static ExecStatus narrow(Home home, ViewArray<View>& x, View y,
+                             WordValue constant, bool cube);
+  public:
+    virtual Actor* copy(Space& home);
+    virtual PropCost cost(const Space& home,
+                          const ModEventDelta& med) const;
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+    static ExecStatus post(Home home, ViewArray<View>& x, View y,
                            WordValue constant);
   };
 

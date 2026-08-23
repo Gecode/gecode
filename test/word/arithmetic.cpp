@@ -3154,12 +3154,86 @@ namespace Test { namespace Word {
           (staged.z.maximum() == 126U) &&
           (staged.z.lo() == 64U) && (staged.z.hi() == 127U);
       }
+
+      static bool nary_propagation(void) {
+        using namespace Gecode;
+        class Nary : public Space {
+        public:
+          WordVarArray x;
+          WordVar z;
+          Nary(WordDomainType kind, bool alias=false)
+            : x(*this,alias ? 2 : 3,5,kind,0U,10U),
+              z(*this,5,kind,alias ? 10U : 15U,alias ? 10U : 15U) {
+            WordVarArgs a;
+            if (alias) a << x[0] << x[0];
+            else a << x[0] << x[1] << x[2];
+            add(*this,a,z);
+          }
+          Nary(Nary& s) : Space(s) { x.update(*this,s.x); z.update(*this,s.z); }
+          Space* copy(void) { return new Nary(*this); }
+        };
+        Nary u(WDT_UNSIGNED);
+        if ((u.status() == SS_FAILED) || (u.x[0].minimum() != 0U) ||
+            (u.x[0].maximum() != 10U)) return false;
+        dom(u,u.x[1],10U); dom(u,u.x[2],0U);
+        if ((u.status() == SS_FAILED) || (u.x[0].minimum() != 5U) ||
+            (u.x[0].maximum() != 5U)) return false;
+        Nary a(WDT_UNSIGNED,true);
+        if (a.status() == SS_FAILED) return false;
+        class Signed : public Space {
+        public:
+          WordVarArray x; WordVar z;
+          Signed(void) : x(*this,3,5,WDT_SIGNED,30U,2U),
+            z(*this,5,WDT_SIGNED,29U,3U) {
+            WordVarArgs a={x[0],x[1],x[2]}; add(*this,a,z);
+          }
+          Signed(Signed& s) : Space(s) { x.update(*this,s.x); z.update(*this,s.z); }
+          Space* copy(void) { return new Signed(*this); }
+        };
+        Signed s;
+        if (s.status() == SS_FAILED) return false;
+        class Fallback : public Space {
+        public:
+          WordVarArray x; WordVar z;
+          Fallback(void) : x(*this,3,3,WDT_UNSIGNED,4U,7U),
+            z(*this,3,WDT_UNSIGNED) {
+            WordVarArgs a={x[0],x[1],x[2]}; add(*this,a,z);
+            for (int i=0; i<3; i++) dom(*this,x[i],7U);
+          }
+          Fallback(Fallback& s) : Space(s) {
+            x.update(*this,s.x); z.update(*this,s.z);
+          }
+          Space* copy(void) { return new Fallback(*this); }
+        };
+        Fallback fallback;
+        if ((fallback.status() == SS_FAILED) || !fallback.z.assigned() ||
+            (fallback.z.val() != 5U)) return false;
+        class Wide : public Space {
+        public:
+          WordVar x,c,z;
+          Wide(void)
+            : x(*this,64,WDT_UNSIGNED,WordValue(1)<<63,
+                (WordValue(1)<<63)+1U),
+              c(*this,64,WDT_UNSIGNED,1U,1U),
+              z(*this,64,WDT_UNSIGNED) {
+            WordVarArgs a={x,c}; add(*this,a,z);
+          }
+          Wide(Wide& s) : Space(s) {
+            x.update(*this,s.x); c.update(*this,s.c); z.update(*this,s.z);
+          }
+          Space* copy(void) { return new Wide(*this); }
+        };
+        Wide w;
+        return (w.status() != SS_FAILED) &&
+          (w.z.minimum() == (WordValue(1)<<63)+1U) &&
+          (w.z.maximum() == (WordValue(1)<<63)+2U);
+      }
     public:
       BoundedLifecycle(void) : Base("Word::Arithmetic::BoundedLifecycle") {}
       virtual bool run(void) {
         return partial_domain_oracle() && division_truth() && division_propagation() &&
           division_replay() && propagation() && boundaries_aliases() &&
-          replay() && staged_propagation();
+          replay() && staged_propagation() && nary_propagation();
       }
     };
 

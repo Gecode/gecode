@@ -90,6 +90,13 @@ namespace Gecode { namespace Word { namespace Arithmetic {
     bool operator !=(const BoundLocalView& y) const { return d != y.d; }
   };
 
+  forceinline bool
+  bound_signed_add(WordValue x, WordValue y, WordValue sign,
+                   WordValue mask, WordValue& result);
+  forceinline bool
+  bound_signed_sub(WordValue x, WordValue y, WordValue sign,
+                   WordValue mask, WordValue& result);
+
   template<class View>
   forceinline BoundLocalDomain
   bound_snapshot(View x) {
@@ -135,6 +142,86 @@ namespace Gecode { namespace Word { namespace Arithmetic {
         (x2.varimp() != x1.varimp()))
       GECODE_ES_CHECK(bound_publish(home,x2,d[2]));
     return ES_OK;
+  }
+
+  template<class View>
+  forceinline bool
+  bound_nary_add_ranges(BoundLocalDomain** input, int n,
+                        BoundLocalDomain& result, WordValue constant) {
+    Region region;
+    WordValue* prefix_min=region.alloc<WordValue>(n+1);
+    WordValue* prefix_max=region.alloc<WordValue>(n+1);
+    WordValue* suffix_min=region.alloc<WordValue>(n+1);
+    WordValue* suffix_max=region.alloc<WordValue>(n+1);
+    const WordValue mask=width_mask(result.width);
+    const WordValue identity=View::signed_order ? sign_bit(result.width) : 0;
+    prefix_min[0]=prefix_max[0]=
+      Word::rank(result.kind,result.width,constant);
+    suffix_min[n]=suffix_max[n]=identity;
+    for (int i=0; i<n; i++) {
+      if (!View::signed_order) {
+        if ((input[i]->minimum > mask-prefix_min[i]) ||
+            (input[i]->maximum > mask-prefix_max[i]))
+          return false;
+        prefix_min[i+1]=prefix_min[i]+input[i]->minimum;
+        prefix_max[i+1]=prefix_max[i]+input[i]->maximum;
+      } else {
+        const WordValue sign=sign_bit(result.width);
+        if (!bound_signed_add(prefix_min[i],input[i]->minimum,sign,mask,
+                              prefix_min[i+1]) ||
+            !bound_signed_add(prefix_max[i],input[i]->maximum,sign,mask,
+                              prefix_max[i+1]))
+          return false;
+      }
+    }
+    if (!result.range(prefix_min[n],prefix_max[n]))
+      return false;
+    for (int i=n; i-- > 0;) {
+      if (!View::signed_order) {
+        if ((input[i]->minimum > mask-suffix_min[i+1]) ||
+            (input[i]->maximum > mask-suffix_max[i+1]))
+          return false;
+        suffix_min[i]=input[i]->minimum+suffix_min[i+1];
+        suffix_max[i]=input[i]->maximum+suffix_max[i+1];
+      } else {
+        const WordValue sign=sign_bit(result.width);
+        if (!bound_signed_add(input[i]->minimum,suffix_min[i+1],sign,mask,
+                              suffix_min[i]) ||
+            !bound_signed_add(input[i]->maximum,suffix_max[i+1],sign,mask,
+                              suffix_max[i]))
+          return false;
+      }
+    }
+    for (int i=0; i<n; i++) {
+      WordValue other_min, other_max, minimum, maximum;
+      if (!View::signed_order) {
+        if ((suffix_min[i+1] > mask-prefix_min[i]) ||
+            (suffix_max[i+1] > mask-prefix_max[i]))
+          return false;
+        other_min=prefix_min[i]+suffix_min[i+1];
+        other_max=prefix_max[i]+suffix_max[i+1];
+        if (result.maximum < other_min)
+          return false;
+        minimum=(result.minimum >= other_max) ?
+          result.minimum-other_max : 0;
+        maximum=result.maximum-other_min;
+      } else {
+        const WordValue sign=sign_bit(result.width);
+        if (!bound_signed_add(prefix_min[i],suffix_min[i+1],sign,mask,
+                              other_min) ||
+            !bound_signed_add(prefix_max[i],suffix_max[i+1],sign,mask,
+                              other_max))
+          return false;
+        if (!bound_signed_sub(result.minimum,other_max,sign,mask,minimum))
+          minimum=0;
+        if (!bound_signed_sub(result.maximum,other_min,sign,mask,maximum))
+          maximum=mask;
+      }
+      if (!input[i]->range(std::max(input[i]->minimum,minimum),
+                           std::min(input[i]->maximum,maximum)))
+        return false;
+    }
+    return true;
   }
 
   forceinline bool
@@ -381,6 +468,145 @@ namespace Gecode { namespace Word { namespace Arithmetic {
         bound_add_ranges<View>(*role[0],*role[1],*role[2]) :
         bound_sub_ranges<View>(*role[0],*role[1],*role[2]);
     return true;
+  }
+
+  template<class View>
+  forceinline
+  BoundNaryAdd<View>::BoundNaryAdd(Home home, ViewArray<View>& x0, View y0,
+                                   WordValue c, bool a)
+    : MixNaryOnePropagator<View,PC_WORD_DOM,View,PC_WORD_DOM>(home,x0,y0),
+      constant(c), aliased(a) {}
+
+  template<class View>
+  forceinline
+  BoundNaryAdd<View>::BoundNaryAdd(Space& home, BoundNaryAdd& p)
+    : MixNaryOnePropagator<View,PC_WORD_DOM,View,PC_WORD_DOM>(home,p),
+      constant(p.constant), aliased(p.aliased) {}
+
+  template<class View>
+  Actor*
+  BoundNaryAdd<View>::copy(Space& home) {
+    return new (home) BoundNaryAdd(home,*this);
+  }
+
+  template<class View>
+  PropCost
+  BoundNaryAdd<View>::cost(const Space&, const ModEventDelta& med) const {
+    if (View::me(med) == ME_WORD_BND)
+      return aliased ? PropCost::quadratic(PropCost::LO,x.size()+1) :
+        PropCost::linear(PropCost::LO,static_cast<unsigned int>(x.size()+1));
+    return PropCost::linear(PropCost::HI,
+                            static_cast<unsigned int>(x.size())*y.width());
+  }
+
+  template<class View>
+  ExecStatus
+  BoundNaryAdd<View>::narrow(Home home, ViewArray<View>& input, View result,
+                             WordValue c, bool cube) {
+    Region region;
+    const int n=input.size();
+    BoundLocalDomain* d=region.alloc<BoundLocalDomain>(n+1);
+    int* representative=region.alloc<int>(n+1);
+    ViewArray<BoundLocalView> local(region,n);
+    for (int i=0; i<n+1; i++) {
+      View current=(i<n) ? input[i] : result;
+      representative[i]=i;
+      for (int j=0; j<i; j++) {
+        View previous=(j<n) ? input[j] : result;
+        if (current.varimp() == previous.varimp()) {
+          representative[i]=representative[j];
+          break;
+        }
+      }
+      if (representative[i] == i)
+        d[i]=bound_snapshot(current);
+      if (i<n)
+        local[i]=BoundLocalView(d[representative[i]]);
+    }
+    BoundLocalView local_result(d[representative[n]]);
+    BoundLocalDomain** roles=region.alloc<BoundLocalDomain*>(n);
+    BoundLocalDomain* old=region.alloc<BoundLocalDomain>(n+1);
+    for (int i=0; i<n; i++)
+      roles[i]=&d[representative[i]];
+
+    for (;;) {
+      for (int i=0; i<n+1; i++)
+        if (representative[i] == i) {
+          old[i]=d[i];
+          d[i].deferred=true;
+        }
+      if (cube)
+        GECODE_ES_CHECK(NaryAdd::narrow(
+          home,local,local_result,c,true));
+      if (!bound_nary_add_ranges<View>(roles,n,d[representative[n]],c))
+        return ES_FAILED;
+      for (int i=0; i<n+1; i++)
+        if (representative[i] == i) {
+          d[i].deferred=false;
+          if (!d[i].synchronize()) return ES_FAILED;
+        }
+      bool changed=false;
+      for (int i=0; i<n+1; i++)
+        if ((representative[i] == i) && !(d[i] == old[i]))
+          changed=true;
+      cube=false;
+      if (!changed) break;
+    }
+    for (int i=0; i<n; i++)
+      if (representative[i] == i)
+        GECODE_ES_CHECK(bound_publish(home,input[i],d[i]));
+    if (representative[n] == n)
+      GECODE_ES_CHECK(bound_publish(home,result,d[n]));
+    return ES_OK;
+  }
+
+  template<class View>
+  ExecStatus
+  BoundNaryAdd<View>::narrow_bounds(Home home, ViewArray<View>& input,
+                                    View result, WordValue c, bool& bits) {
+    WordValue before_lo=result.lo(), before_hi=result.hi();
+    Region region;
+    WordValue* lo=region.alloc<WordValue>(input.size());
+    WordValue* hi=region.alloc<WordValue>(input.size());
+    for (int i=0; i<input.size(); i++) {
+      lo[i]=input[i].lo(); hi[i]=input[i].hi();
+    }
+    GECODE_ES_CHECK(narrow(home,input,result,c,false));
+    bits=(before_lo != result.lo()) || (before_hi != result.hi());
+    for (int i=0; i<input.size(); i++)
+      bits |= (lo[i] != input[i].lo()) || (hi[i] != input[i].hi());
+    return ES_OK;
+  }
+
+  template<class View>
+  ExecStatus
+  BoundNaryAdd<View>::propagate(Space& home, const ModEventDelta& med) {
+    if (View::me(med) == ME_WORD_BND) {
+      bool bits;
+      GECODE_ES_CHECK(narrow_bounds(home,x,y,constant,bits));
+      bool assigned=y.assigned();
+      for (int i=0; i<x.size(); i++) assigned &= x[i].assigned();
+      if (assigned) return home.ES_SUBSUMED(*this);
+      return bits ? home.ES_NOFIX_PARTIAL(*this,View::med(ME_WORD_BITS)) :
+        ES_FIX;
+    }
+    GECODE_ES_CHECK(narrow(home,x,y,constant,true));
+    bool assigned=y.assigned();
+    for (int i=0; i<x.size(); i++) assigned &= x[i].assigned();
+    return assigned ? home.ES_SUBSUMED(*this) : ES_FIX;
+  }
+
+  template<class View>
+  ExecStatus
+  BoundNaryAdd<View>::post(Home home, ViewArray<View>& input, View result,
+                           WordValue c) {
+    const bool a=shared(input) || shared(input,result);
+    GECODE_ES_CHECK(narrow(home,input,result,c,true));
+    bool assigned=result.assigned();
+    for (int i=0; i<input.size(); i++) assigned &= input[i].assigned();
+    if (!assigned)
+      (void) new (home) BoundNaryAdd(home,input,result,c,a);
+    return ES_OK;
   }
 
   /*

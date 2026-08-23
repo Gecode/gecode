@@ -1,5 +1,13 @@
 # Word benchmarks
 
+The bounded n-ary Add scatter/gather comparison uses `word-nary-add` at 4,
+6, and 8 segments. Run 20 alternating-order trials without storing artifacts
+in the checkout:
+
+```sh
+uv run --script benchmarks/word/nary-add-benchmark.py --binary build/bin/word-nary-add --repetitions 20 --output /tmp/word-nary-add.json
+```
+
 The runner supports two benchmark kinds without duplicating campaign machinery.
 The original XOR/rotate differential compares native Word with a Boolean
 decomposition. The DMA descriptor benchmark compares compact Word,

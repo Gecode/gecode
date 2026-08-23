@@ -113,6 +113,65 @@ namespace Gecode {
           Word::WordView,Word::WordView>::post(
             home,x[0],Word::WordView(result))));
       } else {
+        const WordDomainType kind=result.domain_type();
+        bool bounded=(kind != WDT_CUBE);
+        for (int i=0; bounded && (i<input.size()); i++)
+          bounded = input[i].domain_type() == kind;
+        if (bounded && (kind == WDT_UNSIGNED)) {
+          WordValue maximum=0;
+          for (int i=0; bounded && (i<input.size()); i++)
+            if (input[i].assigned()) {
+              Word::UnsignedWordView v(input[i]);
+              bounded = v.val() <= result.mask()-maximum;
+              if (bounded) maximum += v.val();
+            }
+          for (int i=0; bounded && (i<x.size()); i++) {
+            Word::UnsignedWordView v(x[i].varimp());
+            bounded = v.rank_maximum() <= result.mask()-maximum;
+            if (bounded) maximum += v.rank_maximum();
+          }
+          if (bounded) {
+            ViewArray<Word::UnsignedWordView> bx(home,x.size());
+            for (int i=0; i<x.size(); i++)
+              bx[i]=Word::UnsignedWordView(x[i].varimp());
+            GECODE_ES_FAIL((Word::Arithmetic::BoundNaryAdd<
+              Word::UnsignedWordView>::post(
+                home,bx,Word::UnsignedWordView(result),constant)));
+            return;
+          }
+        } else if (bounded && (kind == WDT_SIGNED)) {
+          const WordValue sign=Word::sign_bit(result.width());
+          WordValue minimum=sign, maximum=sign;
+          for (int i=0; bounded && (i<input.size()); i++)
+            if (input[i].assigned()) {
+              Word::SignedWordView v(input[i]);
+              WordValue next;
+              bounded = Word::Arithmetic::bound_signed_add(
+                minimum,Word::rank(kind,result.width(),v.val()),sign,
+                result.mask(),next);
+              if (bounded) minimum=maximum=next;
+            }
+          for (int i=0; bounded && (i<x.size()); i++) {
+            Word::SignedWordView v(x[i].varimp());
+            WordValue next_minimum, next_maximum;
+            bounded = Word::Arithmetic::bound_signed_add(
+              minimum,v.rank_minimum(),sign,result.mask(),next_minimum) &&
+              Word::Arithmetic::bound_signed_add(
+                maximum,v.rank_maximum(),sign,result.mask(),next_maximum);
+            if (bounded) {
+              minimum=next_minimum; maximum=next_maximum;
+            }
+          }
+          if (bounded) {
+            ViewArray<Word::SignedWordView> bx(home,x.size());
+            for (int i=0; i<x.size(); i++)
+              bx[i]=Word::SignedWordView(x[i].varimp());
+            GECODE_ES_FAIL((Word::Arithmetic::BoundNaryAdd<
+              Word::SignedWordView>::post(
+                home,bx,Word::SignedWordView(result),constant)));
+            return;
+          }
+        }
         GECODE_ES_FAIL(Word::Arithmetic::NaryAdd::post(
           home,x,Word::WordView(result),constant));
       }

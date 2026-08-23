@@ -236,8 +236,9 @@ namespace Gecode { namespace Word { namespace Arithmetic {
                             static_cast<unsigned int>(x.size())*y.width());
   }
 
+  template<class View>
   forceinline bool
-  nary_add_bit(WordView x, unsigned int bit, unsigned int value) {
+  nary_add_bit(View x, unsigned int bit, unsigned int value) {
     const WordValue mask=WordValue(1) << bit;
     return value != 0 ? (x.hi()&mask) != 0 : (x.lo()&mask) == 0;
   }
@@ -257,8 +258,9 @@ namespace Gecode { namespace Word { namespace Arithmetic {
     return lo <= hi;
   }
 
+  template<class View>
   forceinline ExecStatus
-  NaryAdd::narrow(Home home, ViewArray<WordView>& x, WordView y,
+  NaryAdd::narrow(Home home, ViewArray<View>& x, View y,
                   WordValue constant, bool aliased) {
     const unsigned int width=y.width();
     Region region;
