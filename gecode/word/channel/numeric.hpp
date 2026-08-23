@@ -32,22 +32,21 @@
 
 namespace Gecode { namespace Word { namespace Channel {
 
+  template<class View, PropCond pc, WordDomainType interpretation>
   forceinline
-  Numeric::Numeric(Home home, WordView x, Int::IntView y,
-                   WordDomainType interpretation0)
+  Numeric<View,pc,interpretation>::Numeric(Home home, View x, Int::IntView y)
     : MixBinaryPropagator<
-        WordView,PC_WORD_DOM,Int::IntView,Int::PC_INT_BND>(home,x,y),
-      interpretation(interpretation0) {}
+        View,pc,Int::IntView,Int::PC_INT_BND>(home,x,y) {}
 
+  template<class View, PropCond pc, WordDomainType interpretation>
   forceinline
-  Numeric::Numeric(Space& home, Numeric& p)
+  Numeric<View,pc,interpretation>::Numeric(Space& home, Numeric& p)
     : MixBinaryPropagator<
-        WordView,PC_WORD_DOM,Int::IntView,Int::PC_INT_BND>(home,p),
-      interpretation(p.interpretation) {}
+        View,pc,Int::IntView,Int::PC_INT_BND>(home,p) {}
 
+  template<class View, PropCond pc, WordDomainType interpretation>
   forceinline WordValue
-  Numeric::to_rank(int value, unsigned int width,
-                   WordDomainType interpretation) {
+  Numeric<View,pc,interpretation>::to_rank(int value, unsigned int width) {
     if (interpretation == WDT_UNSIGNED)
       return static_cast<WordValue>(value);
     const WordValue mask = width_mask(width);
@@ -57,9 +56,10 @@ namespace Gecode { namespace Word { namespace Channel {
     return encoded ^ sign_bit(width);
   }
 
+  template<class View, PropCond pc, WordDomainType interpretation>
   forceinline int
-  Numeric::from_rank(WordValue value, unsigned int width,
-                     WordDomainType interpretation) {
+  Numeric<View,pc,interpretation>::from_rank(WordValue value,
+                                             unsigned int width) {
     if (interpretation == WDT_UNSIGNED)
       return static_cast<int>(value);
     const WordValue sign = sign_bit(width);
@@ -68,9 +68,9 @@ namespace Gecode { namespace Word { namespace Channel {
     return -static_cast<int>(sign-value);
   }
 
+  template<class View, PropCond pc, WordDomainType interpretation>
   forceinline ExecStatus
-  Numeric::narrow(Home home, WordView x, Int::IntView y,
-                  WordDomainType interpretation) {
+  Numeric<View,pc,interpretation>::narrow(Home home, View x, Int::IntView y) {
     const unsigned int width = x.width();
     long long int representable_min;
     long long int representable_max;
@@ -91,57 +91,59 @@ namespace Gecode { namespace Word { namespace Channel {
 
     WordValue lo = x.lo();
     WordValue hi = x.hi();
-    WordValue minimum = to_rank(y.min(),width,interpretation);
-    WordValue maximum = to_rank(y.max(),width,interpretation);
-    if (x.bounded()) {
+    WordValue minimum = to_rank(y.min(),width);
+    WordValue maximum = to_rank(y.max(),width);
+    if (View::supports_bounds) {
       minimum = std::max(minimum,x.rank_minimum());
       maximum = std::min(maximum,x.rank_maximum());
-    }
-    if ((minimum > maximum) ||
-        !synchronize_domain(width,interpretation,lo,hi,minimum,maximum))
-      return ES_FAILED;
-
-    if (x.bounded()) {
-      GECODE_ME_CHECK(static_cast<BoundedWordVarImp*>(x.varimp())->
-                      narrow_domain(home,lo,hi,minimum,maximum));
+      if (minimum > maximum)
+        return ES_FAILED;
+      GECODE_ME_CHECK(x.narrow_rank_range(home,minimum,maximum));
+      minimum=x.rank_minimum();
+      maximum=x.rank_maximum();
     } else {
+      if ((minimum > maximum) ||
+          !synchronize_domain(width,interpretation,lo,hi,minimum,maximum))
+        return ES_FAILED;
       GECODE_ME_CHECK(x.narrow(home,lo,hi));
     }
-    GECODE_ME_CHECK(y.gq(home,from_rank(minimum,width,interpretation)));
-    GECODE_ME_CHECK(y.lq(home,from_rank(maximum,width,interpretation)));
+    GECODE_ME_CHECK(y.gq(home,from_rank(minimum,width)));
+    GECODE_ME_CHECK(y.lq(home,from_rank(maximum,width)));
     return ES_OK;
   }
 
+  template<class View, PropCond pc, WordDomainType interpretation>
   forceinline ExecStatus
-  Numeric::post(Home home, WordView x, Int::IntView y,
-                WordDomainType interpretation) {
-    GECODE_ES_CHECK(narrow(home,x,y,interpretation));
+  Numeric<View,pc,interpretation>::post(Home home, View x, Int::IntView y) {
+    GECODE_ES_CHECK(narrow(home,x,y));
     if (x.assigned()) {
       GECODE_ME_CHECK(y.eq(home,from_rank(
-        rank(interpretation,x.width(),x.val()),x.width(),interpretation)));
+        rank(interpretation,x.width(),x.val()),x.width())));
     } else if (y.assigned()) {
       const WordValue value = rank(interpretation,x.width(),
-                                   to_rank(y.val(),x.width(),interpretation));
+                                   to_rank(y.val(),x.width()));
       GECODE_ME_CHECK(x.eq(home,value));
     }
     if (!x.assigned() || !y.assigned())
-      (void) new (home) Numeric(home,x,y,interpretation);
+      (void) new (home) Numeric(home,x,y);
     return ES_OK;
   }
 
+  template<class View, PropCond pc, WordDomainType interpretation>
   forceinline Actor*
-  Numeric::copy(Space& home) {
+  Numeric<View,pc,interpretation>::copy(Space& home) {
     return new (home) Numeric(home,*this);
   }
 
+  template<class View, PropCond pc, WordDomainType interpretation>
   forceinline ExecStatus
-  Numeric::propagate(Space& home, const ModEventDelta&) {
-    GECODE_ES_CHECK(narrow(home,x0,x1,interpretation));
+  Numeric<View,pc,interpretation>::propagate(Space& home, const ModEventDelta&) {
+    GECODE_ES_CHECK(narrow(home,x0,x1));
     if (x0.assigned()) {
       const WordValue r = rank(interpretation,x0.width(),x0.val());
-      GECODE_ME_CHECK(x1.eq(home,from_rank(r,x0.width(),interpretation)));
+      GECODE_ME_CHECK(x1.eq(home,from_rank(r,x0.width())));
     } else if (x1.assigned()) {
-      const WordValue r = to_rank(x1.val(),x0.width(),interpretation);
+      const WordValue r = to_rank(x1.val(),x0.width());
       GECODE_ME_CHECK(x0.eq(home,rank(interpretation,x0.width(),r)));
     }
     return (x0.assigned() && x1.assigned()) ?

@@ -176,29 +176,23 @@ namespace Gecode { namespace Word { namespace Structure {
     }
   };
 
-  class VariableShiftLeftBounds : public MixTernaryPropagator<
-    UnsignedWordView,PC_WORD_DOM,UnsignedWordView,PC_WORD_DOM,
-    UnsignedWordView,PC_WORD_DOM> {
+  class VariableShiftLeftBounds : public Propagator {
   protected:
-    using MixTernaryPropagator<
-      UnsignedWordView,PC_WORD_DOM,UnsignedWordView,PC_WORD_DOM,
-      UnsignedWordView,PC_WORD_DOM>::x0;
-    using MixTernaryPropagator<
-      UnsignedWordView,PC_WORD_DOM,UnsignedWordView,PC_WORD_DOM,
-      UnsignedWordView,PC_WORD_DOM>::x1;
-    using MixTernaryPropagator<
-      UnsignedWordView,PC_WORD_DOM,UnsignedWordView,PC_WORD_DOM,
-      UnsignedWordView,PC_WORD_DOM>::x2;
+    UnsignedWordView x0, x1, x2;
     VariableShiftLeftBounds(Home home, UnsignedWordView x,
                             UnsignedWordView amount,
                             UnsignedWordView result)
-      : MixTernaryPropagator<
-          UnsignedWordView,PC_WORD_DOM,UnsignedWordView,PC_WORD_DOM,
-          UnsignedWordView,PC_WORD_DOM>(home,x,amount,result) {}
+      : Propagator(home), x0(x), x1(amount), x2(result) {
+      x0.subscribe(home,*this,PC_WORD_BND);
+      x1.subscribe(home,*this,PC_WORD_DOM);
+      x2.subscribe(home,*this,PC_WORD_BND);
+    }
     VariableShiftLeftBounds(Space& home, VariableShiftLeftBounds& p)
-      : MixTernaryPropagator<
-          UnsignedWordView,PC_WORD_DOM,UnsignedWordView,PC_WORD_DOM,
-          UnsignedWordView,PC_WORD_DOM>(home,p) {}
+      : Propagator(home,p) {
+      x0.update(home,p.x0);
+      x1.update(home,p.x1);
+      x2.update(home,p.x2);
+    }
 
     static ExecStatus narrow(Home home, UnsignedWordView x,
                              UnsignedWordView amount,
@@ -264,6 +258,18 @@ namespace Gecode { namespace Word { namespace Structure {
     }
     virtual PropCost cost(const Space&, const ModEventDelta&) const {
       return PropCost::linear(PropCost::LO,x0.width());
+    }
+    virtual void reschedule(Space& home) {
+      x0.reschedule(home,*this,PC_WORD_BND);
+      x1.reschedule(home,*this,PC_WORD_DOM);
+      x2.reschedule(home,*this,PC_WORD_BND);
+    }
+    virtual size_t dispose(Space& home) {
+      x0.cancel(home,*this,PC_WORD_BND);
+      x1.cancel(home,*this,PC_WORD_DOM);
+      x2.cancel(home,*this,PC_WORD_BND);
+      (void) Propagator::dispose(home);
+      return sizeof(*this);
     }
     virtual ExecStatus propagate(Space& home, const ModEventDelta&) {
       GECODE_ES_CHECK(narrow(home,x0,x1,x2));

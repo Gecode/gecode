@@ -70,8 +70,24 @@ namespace Gecode {
         (x.domain_type() != interpretation))
       throw Word::OutOfLimits("Word::channel");
     GECODE_POST;
-    GECODE_ES_FAIL(Word::Channel::Numeric::post(
-      home,Word::WordView(x),Int::IntView(y),interpretation));
+    if (x.domain_type() == WDT_CUBE) {
+      if (interpretation == WDT_UNSIGNED)
+        GECODE_ES_FAIL((Word::Channel::Numeric<
+          Word::WordView,Word::PC_WORD_BITS,WDT_UNSIGNED>::post(
+            home,Word::WordView(x),Int::IntView(y))));
+      else
+        GECODE_ES_FAIL((Word::Channel::Numeric<
+          Word::WordView,Word::PC_WORD_BITS,WDT_SIGNED>::post(
+            home,Word::WordView(x),Int::IntView(y))));
+    } else if (interpretation == WDT_UNSIGNED) {
+      GECODE_ES_FAIL((Word::Channel::Numeric<
+        Word::UnsignedWordView,Word::PC_WORD_BND,WDT_UNSIGNED>::post(
+          home,Word::UnsignedWordView(x),Int::IntView(y))));
+    } else {
+      GECODE_ES_FAIL((Word::Channel::Numeric<
+        Word::SignedWordView,Word::PC_WORD_BND,WDT_SIGNED>::post(
+          home,Word::SignedWordView(x),Int::IntView(y))));
+    }
   }
 
   void

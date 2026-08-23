@@ -3,7 +3,7 @@ schema_version = 1
 id = "word-006"
 key = "specialize-numeric-word-actors"
 area = "word"
-status = "open"
+status = "done"
 complexity = "advanced"
 blocked_by = ["word-004", "word-005"]
 +++
@@ -26,13 +26,23 @@ Channel::Numeric is runtime-tagged, subscribes to PC_WORD_DOM, and can synchroni
 
 ## Done when
 
-- [ ] Cube, unsigned, and signed channel paths select static interpretation and sound propagation conditions.
-- [ ] The bounded channel no longer performs duplicate full synchronization when a range tell suffices.
-- [ ] Variable left shift does not wake numeric-only value or result roles on endpoint-neutral bit changes.
-- [ ] The exact 4,096-pair control and DMA model show event, actor-execution, and synchronization reductions without changed solutions or compact regression.
+- [x] Cube, unsigned, and signed channel paths select static interpretation and sound propagation conditions.
+- [x] The bounded channel no longer performs duplicate full synchronization when a range tell suffices.
+- [x] Variable left shift does not wake numeric-only value or result roles on endpoint-neutral bit changes.
+- [x] The exact 4,096-pair control and DMA model show event, actor-execution, and synchronization reductions without changed solutions or compact regression.
 
 ## Validation
 
 - Run focused Word channel and structure tests, including endpoint-neutral bit events, signed values, Int limits, aliases, cloning, and replay.
 - Run 20 interleaved Release trials of the exact channel control with 100 retained clones and the DMA comparison.
 - Run TestFramework.
+
+## Result
+
+Specialized numeric Word-Int channels and bounded variable-shift subscriptions by static view and event properties.
+
+Validation:
+
+- Independent warning-clean Release, focused Channel/Structure, TestFramework, aliases, clone/replay, width, signed, and Int-limit checks passed.
+- The exact 4,096-pair control eliminated all 4,096 endpoint-neutral bounded channel executions with identical actor counts and domain hashes and no compact regression.
+- Twenty-trial DMA campaigns preserved solutions and search while reducing channel propagations at sizes 3, 6, and 9; compact propagation counts were unchanged.

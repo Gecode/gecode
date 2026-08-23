@@ -190,6 +190,59 @@ namespace Test { namespace Word {
             (bounded.x.minimum() != 6U) || (bounded.x.maximum() != 9U))
           return false;
 
+        class BoundedSignedSpace : public Space {
+        public:
+          WordVar x;
+          IntVar y;
+          BoundedSignedSpace(void)
+            : x(*this,12,WDT_SIGNED,3096U,1000U), y(*this,-1000,1000) {
+            channel(*this,x,y,WDT_SIGNED);
+          }
+          BoundedSignedSpace(BoundedSignedSpace& s) : Space(s) {
+            x.update(*this,s.x); y.update(*this,s.y);
+          }
+          virtual Space* copy(void) { return new BoundedSignedSpace(*this); }
+        } signed_bounded;
+        if (signed_bounded.status() == SS_FAILED)
+          return false;
+        rel(signed_bounded,signed_bounded.y,IRT_GQ,-900);
+        rel(signed_bounded,signed_bounded.y,IRT_LQ,900);
+        if ((signed_bounded.status() == SS_FAILED) ||
+            (signed_bounded.x.minimum() != 3196U) ||
+            (signed_bounded.x.maximum() != 900U))
+          return false;
+
+        class BoundedEventSpace : public Space {
+        public:
+          WordVar x;
+          IntVar y;
+          BoundedEventSpace(void)
+            : x(*this,12,WDT_UNSIGNED,1000,2000), y(*this,1000,2000) {
+            channel(*this,x,y,WDT_UNSIGNED);
+          }
+          BoundedEventSpace(BoundedEventSpace& s) : Space(s) {
+            x.update(*this,s.x); y.update(*this,s.y);
+          }
+          virtual Space* copy(void) { return new BoundedEventSpace(*this); }
+        } event;
+        if (event.status() == SS_FAILED)
+          return false;
+        channel(event,event.x,0,0);
+        StatusStatistics neutral;
+        if ((event.status(neutral) == SS_FAILED) ||
+            (neutral.propagate != 0U) ||
+            (event.x.minimum() != 1000U) ||
+            (event.x.maximum() != 2000U))
+          return false;
+        rel(event,event.y,IRT_GQ,1100);
+        rel(event,event.y,IRT_LQ,1900);
+        StatusStatistics bounds;
+        if ((event.status(bounds) == SS_FAILED) ||
+            (bounds.propagate != 1U) ||
+            (event.x.minimum() != 1100U) ||
+            (event.x.maximum() != 1900U))
+          return false;
+
         try {
           ChannelSpace invalid;
           IntVar y(invalid,0,7);

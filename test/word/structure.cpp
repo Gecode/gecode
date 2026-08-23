@@ -758,7 +758,15 @@ namespace Test { namespace Word {
           delete solution;
           if (!ok) return false;
         }
-        return seen == 6U;
+        if (seen != 6U) return false;
+
+        BoundedSpace event(13,250,550,2,3,2000,4400);
+        if (event.status() == SS_FAILED) return false;
+        channel(event,event.x,0,0);
+        StatusStatistics neutral;
+        return (event.status(neutral) != SS_FAILED) &&
+          (neutral.propagate == 1U) &&
+          (event.x.minimum() == 250U) && (event.x.maximum() == 550U);
       }
 
       static bool search_recomputation(void) {

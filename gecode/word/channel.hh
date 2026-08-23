@@ -88,37 +88,31 @@ namespace Gecode { namespace Word { namespace Channel {
    * Requires \code #include <gecode/word/channel.hh> \endcode
    * \ingroup FuncWordProp
    */
+  template<class View, PropCond pc, WordDomainType interpretation>
   class Numeric : public MixBinaryPropagator<
-    WordView,PC_WORD_DOM,Int::IntView,Int::PC_INT_BND> {
+    View,pc,Int::IntView,Int::PC_INT_BND> {
   protected:
     using MixBinaryPropagator<
-      WordView,PC_WORD_DOM,Int::IntView,Int::PC_INT_BND>::x0;
+      View,pc,Int::IntView,Int::PC_INT_BND>::x0;
     using MixBinaryPropagator<
-      WordView,PC_WORD_DOM,Int::IntView,Int::PC_INT_BND>::x1;
-    /// Word interpretation
-    WordDomainType interpretation;
+      View,pc,Int::IntView,Int::PC_INT_BND>::x1;
     /// Constructor for cloning \a p
     Numeric(Space& home, Numeric& p);
     /// Constructor for creation
-    Numeric(Home home, WordView x, Int::IntView y,
-            WordDomainType interpretation);
+    Numeric(Home home, View x, Int::IntView y);
     /// Convert an integer value to a word-order rank
-    static WordValue to_rank(int value, unsigned int width,
-                             WordDomainType interpretation);
+    static WordValue to_rank(int value, unsigned int width);
     /// Convert a word-order rank to an integer value
-    static int from_rank(WordValue value, unsigned int width,
-                         WordDomainType interpretation);
+    static int from_rank(WordValue value, unsigned int width);
     /// Narrow both views to bounds consistency
-    static ExecStatus narrow(Home home, WordView x, Int::IntView y,
-                             WordDomainType interpretation);
+    static ExecStatus narrow(Home home, View x, Int::IntView y);
   public:
     /// Copy propagator during cloning
     virtual Actor* copy(Space& home);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator
-    static ExecStatus post(Home home, WordView x, Int::IntView y,
-                           WordDomainType interpretation);
+    static ExecStatus post(Home home, View x, Int::IntView y);
   };
 
   /// Word-to-Boolean reduction operation
