@@ -3,9 +3,9 @@
 # Tasks: word
 
 - Total: 16
-- Ready: 7
+- Ready: 6
 - Blocked: 0
-- Done: 9
+- Done: 10
 
 | ID | Task | State | Blocked by |
 | --- | --- | --- | --- |
@@ -18,7 +18,7 @@
 | [word-007](tasks/007-retire-bounded-disequality-on-interval-disjointness.md) | Retire bounded disequality on interval disjointness | done | — |
 | [word-008](tasks/008-carry-explicit-bounded-policy-through-word-minimodel-boolean.md) | Carry explicit bounded policy through Word MiniModel Boolean nodes | done | — |
 | [word-009](tasks/009-report-bound-only-progress-in-word-trace-slack.md) | Report bound-only progress in Word trace slack | done | — |
-| [word-010](tasks/010-investigate-bounded-word-size-merits.md) | Investigate bounded Word size merits | ready | word-004 |
+| [word-010](tasks/010-investigate-bounded-word-size-merits.md) | Investigate bounded Word size merits | done | word-004 |
 | [word-011](tasks/011-investigate-search-time-activation-of-bounded-add.md) | Investigate search-time activation of bounded Add | ready | word-002, word-004 |
 | [word-012](tasks/012-add-bounded-n-ary-word-addition.md) | Add bounded n-ary Word addition | ready | — |
 | [word-013](tasks/013-add-bounded-propagation-for-mixed-product-mod.md) | Add bounded propagation for mixed product_mod | ready | — |
