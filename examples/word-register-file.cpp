@@ -33,47 +33,101 @@
 #include <gecode/driver.hh>
 #include <gecode/word.hh>
 
+#include <cstdint>
+
 using namespace Gecode;
+
+namespace {
+
+  class RegisterOptions : public Options {
+  private:
+    Driver::StringOption _formulation;
+  public:
+    enum Formulation { COMPACT_WORD, BOUNDED_WORD };
+
+    RegisterOptions(const char* name)
+      : Options(name),
+        _formulation("formulation","model formulation",COMPACT_WORD) {
+      solutions(0);
+      add(_formulation);
+      _formulation.add(COMPACT_WORD,"compact-word","compact Word variables");
+      _formulation.add(BOUNDED_WORD,"bounded-word",
+                       "unsigned-bounded Word variables");
+    }
+    Formulation formulation(void) const {
+      return static_cast<Formulation>(_formulation.value());
+    }
+    const char* formulation_name(void) const {
+      return formulation() == COMPACT_WORD ? "compact-word" : "bounded-word";
+    }
+  };
+
+}
 
 /**
  * \brief %Example: Select and accumulate a small Word register file
  *
- * The index is the information-flow control point and is branched before the
- * selected data. Larger register files can make Script copy and recomputation
- * settings worth comparing.
+ * Four numeric register windows feed one selected value. The outer windows
+ * are disjoint from the selected range but have overlapping cube hulls, so
+ * bounded Element can reject them before branching. The compact formulation
+ * posts the same numeric ranges through ordinary Word relations.
  *
  * \ingroup Example
  */
 class WordRegisterFile : public Script {
 private:
-  /// Register file, selected value, addends, and total
+  RegisterOptions::Formulation formulation;
   WordVarArray registers;
   IntVar index;
   WordVar selected;
   WordVar increment0;
   WordVar increment1;
   WordVar total;
+
+  static WordVar numeric_word(Space& home,
+                              RegisterOptions::Formulation formulation,
+                              WordValue minimum, WordValue maximum) {
+    return formulation == RegisterOptions::BOUNDED_WORD ?
+      WordVar(home,4,WDT_UNSIGNED,minimum,maximum) : WordVar(home,4);
+  }
+
+  void range(WordVar x, WordValue minimum, WordValue maximum) {
+    if (formulation == RegisterOptions::COMPACT_WORD) {
+      rel(*this,x,WRT_UGQ,4,minimum);
+      rel(*this,x,WRT_ULQ,4,maximum);
+    }
+  }
 public:
   /// Actual model
-  WordRegisterFile(const Options& opt)
-    : Script(opt), registers(*this,4,8,0,0xffU), index(*this,0,3),
-      selected(*this,8), increment0(*this,8,0x05U,0x05U),
-      increment1(*this,8,0x07U,0x07U), total(*this,8) {
-    const WordValue value[] = {0x11U,0x22U,0x33U,0x44U};
-    for (int i=0; i<registers.size(); i++)
-      dom(*this,registers[i],value[i]);
+  WordRegisterFile(const RegisterOptions& opt)
+    : Script(opt), formulation(opt.formulation()), registers(*this,4),
+      index(*this,0,3),
+      selected(numeric_word(*this,formulation,5U,6U)),
+      increment0(numeric_word(*this,formulation,1U,1U)),
+      increment1(numeric_word(*this,formulation,2U,2U)),
+      total(numeric_word(*this,formulation,8U,9U)) {
+    const WordValue minimum[] = {3U,4U,6U,7U};
+    const WordValue maximum[] = {4U,5U,7U,8U};
+    for (int i=0; i<registers.size(); i++) {
+      registers[i]=numeric_word(*this,formulation,minimum[i],maximum[i]);
+      range(registers[i],minimum[i],maximum[i]);
+    }
+    range(selected,5U,6U);
+    range(increment0,1U,1U);
+    range(increment1,2U,2U);
+    range(total,8U,9U);
     element(*this,registers,index,selected);
     WordVarArgs addend={selected,increment0,increment1};
     add(*this,addend,total);
-    dom(*this,total,0x3fU);
 
     branch(*this,index,INT_VAL_MIN());
-    WordVarArgs data={selected,total};
-    branch(*this,data,WORD_VAR_NONE(),WORD_VAL_MSB());
-    branch(*this,registers,WORD_VAR_NONE(),WORD_VAL_MSB());
+    branch(*this,registers,WORD_VAR_NONE(),WORD_VAL_LSB());
+    WordVarArgs derived={selected,total};
+    branch(*this,derived,WORD_VAR_NONE(),WORD_VAL_LSB());
   }
   /// Constructor for cloning \a s
-  WordRegisterFile(WordRegisterFile& s) : Script(s) {
+  WordRegisterFile(WordRegisterFile& s)
+    : Script(s), formulation(s.formulation) {
     registers.update(*this,s.registers);
     index.update(*this,s.index);
     selected.update(*this,s.selected);
@@ -85,11 +139,16 @@ public:
   virtual Space* copy(void) {
     return new WordRegisterFile(*this);
   }
-  /// Print solution
-  virtual void print(std::ostream& os) const {
-    os << "\tindex = " << index.val()
-       << ", selected = 0x" << std::hex << selected.val()
-       << ", total = 0x" << total.val() << std::dec << std::endl;
+  /// Whether only the two numerically supported windows remain selectable
+  bool index_pruned(void) const {
+    return !index.in(0) && index.in(1) && index.in(2) && !index.in(3);
+  }
+  /// Stable contribution for semantic comparison
+  std::uint64_t solution_value(void) const {
+    return static_cast<std::uint64_t>(index.val()+1) +
+      3U*selected.val()+5U*total.val()+
+      registers[0].val()+2U*registers[1].val()+
+      3U*registers[2].val()+4U*registers[3].val();
   }
 };
 
@@ -98,9 +157,38 @@ public:
  */
 int
 main(int argc, char* argv[]) {
-  Options opt("WordRegisterFile");
+  RegisterOptions opt("WordRegisterFile");
   opt.parse(argc,argv);
-  Script::run<WordRegisterFile,DFS,Options>(opt);
+  WordRegisterFile* root=new WordRegisterFile(opt);
+  StatusStatistics root_statistics;
+  if (root->status(root_statistics) == SS_FAILED) {
+    delete root;
+    std::cerr << "register-file model failed during initial propagation\n";
+    return 1;
+  }
+  const bool index_pruned=root->index_pruned();
+  const unsigned int root_propagators=PropagatorGroup::all.size(*root);
+  const unsigned int root_branchers=BrancherGroup::all.size(*root);
+  DFS<WordRegisterFile> search(root);
+  delete root;
+  std::uint64_t solutions=0, checksum=0;
+  while (WordRegisterFile* solution=search.next()) {
+    ++solutions;
+    checksum += solution->solution_value();
+    delete solution;
+  }
+  const Search::Statistics statistics=search.statistics();
+  std::cout << "{\"schema_version\":1,\"status\":\"ok\""
+            << ",\"formulation\":\"" << opt.formulation_name() << "\""
+            << ",\"solutions\":" << solutions
+            << ",\"checksum\":" << checksum
+            << ",\"index_pruned\":" << (index_pruned ? "true" : "false")
+            << ",\"nodes\":" << statistics.node
+            << ",\"failures\":" << statistics.fail
+            << ",\"propagations\":"
+            << root_statistics.propagate+statistics.propagate
+            << ",\"root_propagators\":" << root_propagators
+            << ",\"root_branchers\":" << root_branchers << "}\n";
   return 0;
 }
 

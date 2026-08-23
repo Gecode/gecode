@@ -43,6 +43,16 @@ namespace Gecode { namespace Int {
   public:
     typedef WordVarArgs argtype;
   };
+  template<>
+  class ViewToVarArg<Word::UnsignedWordView> {
+  public:
+    typedef WordVarArgs argtype;
+  };
+  template<>
+  class ViewToVarArg<Word::SignedWordView> {
+  public:
+    typedef WordVarArgs argtype;
+  };
 }}
 
 namespace Gecode { namespace Word { namespace Element {
@@ -61,6 +71,32 @@ namespace Gecode { namespace Word { namespace Element {
     View(Home home, Int::IdxViewArray<WordView>& x,
          Int::IntView i, WordView y);
     View(Space& home, View& p);
+  public:
+    virtual Actor* copy(Space& home);
+    virtual PropCost cost(const Space& home,
+                          const ModEventDelta& med) const;
+    virtual void reschedule(Space& home);
+    virtual size_t dispose(Space& home);
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+    static ExecStatus post(Home home, Int::IdxViewArray<WordView>& x,
+                           Int::IntView i, WordView y);
+  };
+
+  /**
+   * \brief Bounded Word-array element propagator
+   *
+   * Prunes unsupported indices using both cube and ranked interval
+   * disjointness and computes their hulls for the result.
+   */
+  template<class WordView>
+  class BoundView : public Propagator {
+  protected:
+    Int::IdxViewArray<WordView> x;
+    Int::IntView i;
+    WordView y;
+    BoundView(Home home, Int::IdxViewArray<WordView>& x,
+              Int::IntView i, WordView y);
+    BoundView(Space& home, BoundView& p);
   public:
     virtual Actor* copy(Space& home);
     virtual PropCost cost(const Space& home,

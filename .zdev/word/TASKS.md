@@ -3,9 +3,9 @@
 # Tasks: word
 
 - Total: 16
-- Ready: 2
+- Ready: 1
 - Blocked: 0
-- Done: 14
+- Done: 15
 
 | ID | Task | State | Blocked by |
 | --- | --- | --- | --- |
@@ -23,5 +23,5 @@
 | [word-012](tasks/012-add-bounded-n-ary-word-addition.md) | Add bounded n-ary Word addition | done | — |
 | [word-013](tasks/013-add-bounded-propagation-for-mixed-product-mod.md) | Add bounded propagation for mixed product_mod | done | — |
 | [word-014](tasks/014-preserve-bounds-through-boolean-controlled-word-ite.md) | Preserve bounds through Boolean-controlled Word ITE | done | word-004 |
-| [word-015](tasks/015-preserve-bounds-through-word-element.md) | Preserve bounds through Word element | ready | word-004 |
+| [word-015](tasks/015-preserve-bounds-through-word-element.md) | Preserve bounds through Word element | done | word-004 |
 | [word-016](tasks/016-investigate-native-bounds-consistent-word-distinct.md) | Investigate native bounds-consistent Word distinct | ready | — |

@@ -3,7 +3,7 @@ schema_version = 1
 id = "word-015"
 key = "add-bounded-word-element"
 area = "word"
-status = "open"
+status = "done"
 complexity = "advanced"
 blocked_by = ["word-004"]
 +++
@@ -26,13 +26,23 @@ Word element currently lowers candidates and result to WordView, subscribes only
 
 ## Done when
 
-- [ ] Interval disjointness removes unsupported indices and remaining candidates publish sound cube and ranked hulls to the result.
-- [ ] Result narrowing removes candidates using cube-plus-range disjointness without losing supported values.
-- [ ] Small-width oracle coverage includes duplicates, aliases, sparse indices, signed and unsigned kinds, cloning, and replay.
-- [ ] A lookup or register-file portion of the realistic model demonstrates useful propagation or search value.
+- [x] Interval disjointness removes unsupported indices and remaining candidates publish sound cube and ranked hulls to the result.
+- [x] Result narrowing removes candidates using cube-plus-range disjointness without losing supported values.
+- [x] Small-width oracle coverage includes duplicates, aliases, sparse indices, signed and unsigned kinds, cloning, and replay.
+- [x] A lookup or register-file portion of the realistic model demonstrates useful propagation or search value.
 
 ## Validation
 
 - Run focused Word Element tests and the small-width oracle.
 - Run interleaved Release comparisons on the realistic mixed lookup model and compact controls.
 - Run TestFramework.
+
+## Result
+
+Preserve unsigned and signed bounded domains through Word Element using one scan for index support and cube/ranked hulls.
+
+Validation:
+
+- Independent verifier passed exhaustive bounded Element oracle, lifecycle/alias/fallback audit, focused Element, and anchored Word::TestFramework.
+- Natural register-file comparison preserved 16 solutions/checksum 1972 while bounded pruned two root indices and reduced 35 nodes/2 failures/127 propagations to 31/0/12; exact-parent compact counters matched.
+- Twenty rotated/reversed Release trials, README/runner review, diff checks, artifact hygiene, and immutable context comparison passed.

@@ -32,6 +32,7 @@
 
 namespace Gecode { namespace Word { namespace Element {
 
+  template<class WordView>
   class IndexValues {
   protected:
     const Int::IdxView<WordView>* cur;
@@ -114,7 +115,7 @@ namespace Gecode { namespace Word { namespace Element {
       return ES_FAILED;
     if (n < x.size()) {
       x.size(n);
-      IndexValues values(&x[0],&x[0]+x.size());
+      IndexValues<WordView> values(&x[0],&x[0]+x.size());
       GECODE_ME_CHECK(i.narrow_v(home,values,false));
     }
     if (x.size() == 1)
@@ -129,6 +130,111 @@ namespace Gecode { namespace Word { namespace Element {
     }
     GECODE_ME_CHECK(y.narrow(home,lo,hi));
     if (y.assigned() && (lo == hi))
+      return home.ES_SUBSUMED(*this);
+    return ES_FIX;
+  }
+
+  template<class WordView>
+  forceinline
+  BoundView<WordView>::BoundView(Home home,
+                                 Int::IdxViewArray<WordView>& x0,
+                                 Int::IntView i0, WordView y0)
+    : Propagator(home), x(x0), i(i0), y(y0) {
+    x.subscribe(home,*this,PC_WORD_DOM);
+    i.subscribe(home,*this,Int::PC_INT_DOM);
+    y.subscribe(home,*this,PC_WORD_DOM);
+  }
+
+  template<class WordView>
+  forceinline
+  BoundView<WordView>::BoundView(Space& home, BoundView& p)
+    : Propagator(home,p) {
+    x.update(home,p.x);
+    i.update(home,p.i);
+    y.update(home,p.y);
+  }
+
+  template<class WordView>
+  forceinline Actor*
+  BoundView<WordView>::copy(Space& home) {
+    return new (home) BoundView<WordView>(home,*this);
+  }
+
+  template<class WordView>
+  forceinline PropCost
+  BoundView<WordView>::cost(const Space&, const ModEventDelta&) const {
+    return PropCost::linear(PropCost::LO,x.size()+2);
+  }
+
+  template<class WordView>
+  forceinline void
+  BoundView<WordView>::reschedule(Space& home) {
+    x.reschedule(home,*this,PC_WORD_DOM);
+    i.reschedule(home,*this,Int::PC_INT_DOM);
+    y.reschedule(home,*this,PC_WORD_DOM);
+  }
+
+  template<class WordView>
+  forceinline size_t
+  BoundView<WordView>::dispose(Space& home) {
+    x.cancel(home,*this,PC_WORD_DOM);
+    i.cancel(home,*this,Int::PC_INT_DOM);
+    y.cancel(home,*this,PC_WORD_DOM);
+    (void) Propagator::dispose(home);
+    return sizeof(*this);
+  }
+
+  template<class WordView>
+  forceinline ExecStatus
+  BoundView<WordView>::post(Home home, Int::IdxViewArray<WordView>& x,
+                            Int::IntView i, WordView y) {
+    GECODE_ME_CHECK(i.gq(home,0));
+    GECODE_ME_CHECK(i.lq(home,x.size()-1));
+    if (i.assigned())
+      return Rel::BoundEq<WordView,WordView>::post(home,x[i.val()].view,y);
+    (void) new (home) BoundView<WordView>(home,x,i,y);
+    return ES_OK;
+  }
+
+  template<class WordView>
+  ExecStatus
+  BoundView<WordView>::propagate(Space& home, const ModEventDelta&) {
+    int n=0;
+    WordValue lo=0, hi=0, minimum=0, maximum=0;
+    for (int j=0; j<x.size(); j++) {
+      const bool cube_disjoint=((x[j].view.lo() & ~y.hi()) != 0) ||
+        ((y.lo() & ~x[j].view.hi()) != 0);
+      const bool range_disjoint=
+        (x[j].view.rank_maximum() < y.rank_minimum()) ||
+        (y.rank_maximum() < x[j].view.rank_minimum());
+      if (!i.in(x[j].idx) || cube_disjoint || range_disjoint) {
+        x[j].view.cancel(home,*this,PC_WORD_DOM);
+      } else {
+        if (n == 0) {
+          lo=x[j].view.lo(); hi=x[j].view.hi();
+          minimum=x[j].view.rank_minimum();
+          maximum=x[j].view.rank_maximum();
+        } else {
+          lo &= x[j].view.lo(); hi |= x[j].view.hi();
+          minimum=std::min(minimum,x[j].view.rank_minimum());
+          maximum=std::max(maximum,x[j].view.rank_maximum());
+        }
+        x[n++]=x[j];
+      }
+    }
+    if (n == 0)
+      return ES_FAILED;
+    if (n < x.size()) {
+      x.size(n);
+      IndexValues<WordView> values(&x[0],&x[0]+x.size());
+      GECODE_ME_CHECK(i.narrow_v(home,values,false));
+    }
+    if (x.size() == 1)
+      GECODE_REWRITE(*this,(Rel::BoundEq<WordView,WordView>::post(
+        home(*this),x[0].view,y)));
+
+    GECODE_ME_CHECK(y.narrow_domain(home,lo,hi,minimum,maximum));
+    if (y.assigned() && (lo == hi) && (minimum == maximum))
       return home.ES_SUBSUMED(*this);
     return ES_FIX;
   }

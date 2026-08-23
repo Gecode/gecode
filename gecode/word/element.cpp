@@ -43,6 +43,36 @@ namespace Gecode {
       if (x[j].width() != width)
         throw Word::WidthMismatch("Word::element");
     GECODE_POST;
+    const WordDomainType kind=y.domain_type();
+    bool homogeneous=(kind != WDT_CUBE);
+    bool result_alias=false;
+    for (int j=0; homogeneous && (j<x.size()); j++) {
+      homogeneous=x[j].domain_type() == kind;
+      result_alias = result_alias ||
+        (Word::WordView(x[j]) == Word::WordView(y));
+    }
+    if (homogeneous && !result_alias && (kind == WDT_UNSIGNED)) {
+      Int::IdxViewArray<Word::UnsignedWordView> views(home,x.size());
+      for (int j=0; j<x.size(); j++) {
+        views[j].idx=j;
+        views[j].view=Word::UnsignedWordView(x[j]);
+      }
+      GECODE_ES_FAIL((Word::Element::BoundView<
+        Word::UnsignedWordView>::post(
+          home,views,Int::IntView(i),Word::UnsignedWordView(y))));
+      return;
+    }
+    if (homogeneous && !result_alias && (kind == WDT_SIGNED)) {
+      Int::IdxViewArray<Word::SignedWordView> views(home,x.size());
+      for (int j=0; j<x.size(); j++) {
+        views[j].idx=j;
+        views[j].view=Word::SignedWordView(x[j]);
+      }
+      GECODE_ES_FAIL((Word::Element::BoundView<
+        Word::SignedWordView>::post(
+          home,views,Int::IntView(i),Word::SignedWordView(y))));
+      return;
+    }
     Int::IdxViewArray<Word::WordView> views(home,x.size());
     for (int j=0; j<x.size(); j++) {
       views[j].idx = j;

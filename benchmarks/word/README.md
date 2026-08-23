@@ -1,5 +1,21 @@
 # Word benchmarks
 
+The register-file Element comparison uses four overlapping cube windows whose
+numeric ranges leave only two supported indices. Build the current
+`word-register-file` example and the same example source against the exact
+parent libraries, then run the compact control and bounded candidate in
+alternating order:
+
+```sh
+python3 benchmarks/word/register-file-benchmark.py \
+  --parent-binary /tmp/gecode-word015-parent-release/bin/word-register-file \
+  --candidate-binary /tmp/gecode-word015-candidate-release/bin/word-register-file \
+  --repetitions 20 --output /tmp/word-register-file.json
+```
+
+The runner requires exact solution/checksum parity, unchanged parent/candidate
+compact counters, and stable counters across all repetitions.
+
 The bounded product-modulo comparison uses the fixed width-nine case with
 `x,y in [10,20]`, modulus 509, and result-first ranked splitting. The compact
 control links the same bounded search variables to compact product-modulo
