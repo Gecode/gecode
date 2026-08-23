@@ -450,6 +450,30 @@ namespace Test { namespace Int {
        }
      };
 
+     /// %Test compacting sparse external DFA state identifiers
+     class RegSparseStateNumbering : public Test {
+     public:
+       /// Create and register test
+       RegSparseStateNumbering(void)
+         : Test("Extensional::Reg::Sparse::StateNumbering",
+                2,0,1,false,Gecode::IPL_DOM) {}
+       /// %Test whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         return (x[0] == 0) && (x[1] == 1);
+       }
+       /// Post constraint on \a x
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
+         using namespace Gecode;
+         DFA d(1000000,
+               {
+                 {1000000,0,2000000},
+                 {2000000,1,3000000}
+               },
+               {3000000},false);
+         extensional(home,x,d);
+       }
+     };
+
      /// %Test the Boolean-view regular posting route
      class RegBoolCyclicFrontier : public Test {
      public:
@@ -2893,6 +2917,7 @@ namespace Test { namespace Int {
 
      RegAcyclicReconvergence reg_sparse_acyclic_reconvergence;
      RegCyclicFrontier reg_sparse_cyclic_frontier;
+     RegSparseStateNumbering reg_sparse_state_numbering;
      RegBoolCyclicFrontier reg_sparse_bool_cyclic_frontier;
      RegRandomDifferential reg_sparse_random_differential_1(1);
      RegRandomDifferential reg_sparse_random_differential_2(2);
