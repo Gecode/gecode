@@ -3,7 +3,7 @@ schema_version = 1
 id = "word-016"
 key = "investigate-bounded-word-distinct"
 area = "word"
-status = "open"
+status = "done"
 complexity = "advanced"
 blocked_by = []
 +++
@@ -26,12 +26,22 @@ Use the exact model in .zdev/word/brief.md. Two banks each contain 2, 3, or 4 lo
 
 ## Done when
 
-- [ ] The investigation states public semantics, propagation level, width behavior, alias policy, signed-policy decision, and event conditions for native distinct.
-- [ ] All three formulations produce equal solution counts and weighted-address checksums at 2, 3, and 4 registers per bank.
-- [ ] Twenty interleaved Release trials report nodes, failures, propagations, actor topology, runtime, and retained-clone RSS slope using the same 2,000, 8,000, and 32,000 populations and measurement cap as the DMA model.
-- [ ] The result is either a justified production bounds-consistent distinct with focused tests or a clean rejection with no prototype code left.
+- [x] The investigation states public semantics, propagation level, width behavior, alias policy, signed-policy decision, and event conditions for native distinct.
+- [x] All three formulations produce equal solution counts and weighted-address checksums at 2, 3, and 4 registers per bank.
+- [x] Twenty interleaved Release trials report nodes, failures, propagations, actor topology, runtime, and retained-clone RSS slope using the same 2,000, 8,000, and 32,000 populations and measurement cap as the DMA model.
+- [x] The result is either a justified production bounds-consistent distinct with focused tests or a clean rejection with no prototype code left.
 
 ## Validation
 
 - Run the exact register-allocation comparison from the brief with linked Release binaries, 20 interleaved trials, and the shared retained-clone memory procedure.
 - If code is retained, run focused small-width semantic, alias, clone, and replay tests plus TestFramework.
+
+## Result
+
+Investigated native bounds-consistent Word distinct and rejected the production actor after exact semantic, runtime, topology, profiling, and clone-memory measurements; full evidence is linked from the area brief.
+
+Validation:
+
+- Independent verifier confirmed all nine native/pairwise/channel cases match expected counts/checksums and both 20-trial campaigns are stable.
+- Startup-free batches measured native at 2.058x pairwise for k=3 and 1.461x for k=4; sampling attributed 1805/3715 samples to Hall propagation while clone slopes stayed within 0.05 percent.
+- Clean rejection verified: no API, actor, tests, runner, or prototype artifacts remain; documentation, raw evidence, diff checks, and immutable context comparison passed.

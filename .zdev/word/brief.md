@@ -13,6 +13,10 @@ follow-up work found by the August 2026 review: current API defects, avoidable
 domain work, missing Gecode integration, and bounded propagator families with
 concrete modeling or benchmark value.
 
+## Background
+
+- [Bounds-consistent Word distinct investigation](background/word-016-distinct-investigation.md)
+
 ## Settled decisions
 
 - Keep one public `WordVar` type with compact cube, unsigned-bounded, and

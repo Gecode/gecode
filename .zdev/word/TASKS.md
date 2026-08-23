@@ -3,9 +3,9 @@
 # Tasks: word
 
 - Total: 16
-- Ready: 1
+- Ready: 0
 - Blocked: 0
-- Done: 15
+- Done: 16
 
 | ID | Task | State | Blocked by |
 | --- | --- | --- | --- |
@@ -24,4 +24,4 @@
 | [word-013](tasks/013-add-bounded-propagation-for-mixed-product-mod.md) | Add bounded propagation for mixed product_mod | done | — |
 | [word-014](tasks/014-preserve-bounds-through-boolean-controlled-word-ite.md) | Preserve bounds through Boolean-controlled Word ITE | done | word-004 |
 | [word-015](tasks/015-preserve-bounds-through-word-element.md) | Preserve bounds through Word element | done | word-004 |
-| [word-016](tasks/016-investigate-native-bounds-consistent-word-distinct.md) | Investigate native bounds-consistent Word distinct | ready | — |
+| [word-016](tasks/016-investigate-native-bounds-consistent-word-distinct.md) | Investigate native bounds-consistent Word distinct | done | — |
