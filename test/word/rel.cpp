@@ -366,6 +366,24 @@ namespace Test { namespace Word {
         if (alias.status() != SS_FAILED)
           return false;
 
+        PairSpace disjoint_nq(WDT_UNSIGNED,0,3,8,12);
+        rel(disjoint_nq,disjoint_nq.x,WRT_NQ,disjoint_nq.y);
+        if ((disjoint_nq.status() == SS_FAILED) ||
+            (PropagatorGroup::all.size(disjoint_nq) != 0U))
+          return false;
+
+        PairSpace retiring_nq(WDT_UNSIGNED,0,10,5,15);
+        rel(retiring_nq,retiring_nq.x,WRT_NQ,retiring_nq.y);
+        if ((retiring_nq.status() == SS_FAILED) ||
+            (PropagatorGroup::all.size(retiring_nq) != 1U))
+          return false;
+        Gecode::Word::UnsignedWordView retiring_view(retiring_nq.x);
+        if (me_failed(retiring_view.narrow_range(retiring_nq,0,3)))
+          return false;
+        if ((retiring_nq.status() == SS_FAILED) ||
+            (PropagatorGroup::all.size(retiring_nq) != 0U))
+          return false;
+
         PairSpace equality(WDT_UNSIGNED,2,10,6,14);
         rel(equality,equality.x,WRT_EQ,equality.y);
         if ((equality.status() == SS_FAILED) ||

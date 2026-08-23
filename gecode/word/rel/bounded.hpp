@@ -92,13 +92,18 @@ namespace Gecode { namespace Word { namespace Rel {
   }
   forceinline ExecStatus bound_nq_post(
     Home home, UnsignedWordView x0, UnsignedWordView x1) {
-    return (x0.varimp() == x1.varimp()) ? ES_FAILED :
-      Nq<UnsignedWordView,UnsignedWordView>::post(home,x0,x1);
+    return BoundNq<UnsignedWordView>::post(home,x0,x1);
   }
   forceinline ExecStatus bound_nq_post(
     Home home, SignedWordView x0, SignedWordView x1) {
-    return (x0.varimp() == x1.varimp()) ? ES_FAILED :
-      Nq<SignedWordView,SignedWordView>::post(home,x0,x1);
+    return BoundNq<SignedWordView>::post(home,x0,x1);
+  }
+
+  template<class View>
+  forceinline bool bound_disjoint(View x0, View x1) {
+    return disjoint(x0,x1) ||
+      (x0.rank_maximum() < x1.rank_minimum()) ||
+      (x1.rank_maximum() < x0.rank_minimum());
   }
 
   template<class View0, class View1>
@@ -184,6 +189,56 @@ namespace Gecode { namespace Word { namespace Rel {
     GECODE_ES_CHECK(narrow_bound_eq(home,x0,x1));
     return (x0.assigned() && x1.assigned()) ?
       home.ES_SUBSUMED(*this) : ES_FIX;
+  }
+
+  template<class View>
+  forceinline BoundNq<View>::BoundNq(Home home, View y0, View y1)
+    : MixBinaryPropagator<
+        View,PC_WORD_DOM,View,PC_WORD_DOM>(home,y0,y1) {}
+
+  template<class View>
+  forceinline BoundNq<View>::BoundNq(Space& home, BoundNq& p)
+    : MixBinaryPropagator<
+        View,PC_WORD_DOM,View,PC_WORD_DOM>(home,p) {}
+
+  template<class View>
+  ExecStatus BoundNq<View>::post(Home home, View x0, View x1) {
+    if (x0.varimp() == x1.varimp())
+      return ES_FAILED;
+    if (bound_disjoint(x0,x1))
+      return ES_OK;
+    if (x0.assigned()) {
+      GECODE_ES_CHECK(exclude(home,x1,x0.val()));
+      if (!x1.in(x0.val()))
+        return ES_OK;
+    } else if (x1.assigned()) {
+      GECODE_ES_CHECK(exclude(home,x0,x1.val()));
+      if (!x0.in(x1.val()))
+        return ES_OK;
+    }
+    (void) new (home) BoundNq(home,x0,x1);
+    return ES_OK;
+  }
+
+  template<class View>
+  Actor* BoundNq<View>::copy(Space& home) {
+    return new (home) BoundNq(home,*this);
+  }
+
+  template<class View>
+  ExecStatus BoundNq<View>::propagate(Space& home,
+                                      const ModEventDelta&) {
+    if (bound_disjoint(x0,x1))
+      return home.ES_SUBSUMED(*this);
+    if (x0.assigned()) {
+      GECODE_ES_CHECK(exclude(home,x1,x0.val()));
+      return x1.in(x0.val()) ? ES_FIX : home.ES_SUBSUMED(*this);
+    }
+    if (x1.assigned()) {
+      GECODE_ES_CHECK(exclude(home,x0,x1.val()));
+      return x0.in(x1.val()) ? ES_FIX : home.ES_SUBSUMED(*this);
+    }
+    return ES_FIX;
   }
 
   template<class View0, class View1, bool strict>

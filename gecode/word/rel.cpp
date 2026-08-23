@@ -138,7 +138,7 @@ namespace Gecode {
         GECODE_ES_FAIL((Word::Rel::BoundEq<View0,View1>::post(home,x,y)));
         break;
       case WRT_NQ:
-        GECODE_ES_FAIL((Word::Rel::Nq<View0,View1>::post(home,x,y)));
+        GECODE_ES_FAIL(Word::Rel::bound_nq_post(home,x,y));
         break;
       case WRT_ULQ: case WRT_SLQ:
         GECODE_ES_FAIL((Word::Rel::BoundLq<

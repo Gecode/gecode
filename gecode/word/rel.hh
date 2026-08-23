@@ -180,6 +180,23 @@ namespace Gecode { namespace Word { namespace Rel {
     static ExecStatus post(Home home, View0 x0, View1 x1);
   };
 
+  /// Disequality propagator for matching bounded word domains
+  template<class View>
+  class BoundNq : public MixBinaryPropagator<
+    View,PC_WORD_DOM,View,PC_WORD_DOM> {
+  protected:
+    using MixBinaryPropagator<
+      View,PC_WORD_DOM,View,PC_WORD_DOM>::x0;
+    using MixBinaryPropagator<
+      View,PC_WORD_DOM,View,PC_WORD_DOM>::x1;
+    BoundNq(Home home, View x0, View x1);
+    BoundNq(Space& home, BoundNq& p);
+  public:
+    virtual Actor* copy(Space& home);
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+    static ExecStatus post(Home home, View x0, View x1);
+  };
+
   /// Numeric ordering propagator for matching bounded word domains
   template<class View0, class View1, bool strict>
   class BoundLq : public MixBinaryPropagator<
