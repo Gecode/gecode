@@ -3,7 +3,7 @@ schema_version = 1
 id = "word-011"
 key = "investigate-adaptive-bounded-add"
 area = "word"
-status = "open"
+status = "done"
 complexity = "advanced"
 blocked_by = ["word-002", "word-004"]
 +++
@@ -26,13 +26,22 @@ Use the exact 64-link chain in .zdev/word/brief.md: full-range width-12 unsigned
 
 ## Done when
 
-- [ ] Posting the chain before versus after its endpoint restrictions demonstrates whether adaptive activation removes the posting-order propagation gap.
-- [ ] Aliases, costs, subscriptions, cloning, recomputation, exact cube behavior, 101 solutions, and a deterministic chain checksum are validated.
-- [ ] Twenty interleaved Release trials report solutions, nodes, failures, propagations, and runtime for the chain and every exact checked-in control invocation from the brief.
-- [ ] The retained result is either a justified adaptive Add implementation or a clean rejection with no prototype code left.
+- [x] Posting the chain before versus after its endpoint restrictions demonstrates whether adaptive activation removes the posting-order propagation gap.
+- [x] Aliases, costs, subscriptions, cloning, recomputation, exact cube behavior, 101 solutions, and a deterministic chain checksum are validated.
+- [x] Twenty interleaved Release trials report solutions, nodes, failures, propagations, and runtime for the chain and every exact checked-in control invocation from the brief.
+- [x] The retained result is either a justified adaptive Add implementation or a clean rejection with no prototype code left.
 
 ## Validation
 
 - Run the bounded arithmetic oracle and focused Add lifecycle tests.
 - Run the exact chain and four checked-in control invocations from the brief against linked baseline and candidate binaries.
 - Run the broader Word arithmetic suite and TestFramework if code is retained.
+
+## Result
+
+Rejected adaptive bounded Add: it closed the posting-order propagation gap but increased target-chain work and materially regressed unsigned symbolic ALU, so no prototype code was retained.
+
+Validation:
+
+- Independent isolated reconstruction passed focused arithmetic oracle/lifecycle, aliases, cloning, recomputation, replay, and preserved the exact chain's 101 solutions and checksum 55338910.
+- Twenty interleaved controls showed no chain search benefit, propagations rising from 6,927 to 15,817, and a material unsigned-ALU node/failure/propagation/runtime regression; cube ALU, ARX, and MD5 stayed stable and the source tree remained clean.
