@@ -3,15 +3,15 @@
 # Tasks: word
 
 - Total: 16
-- Ready: 9
+- Ready: 8
 - Blocked: 5
-- Done: 2
+- Done: 3
 
 | ID | Task | State | Blocked by |
 | --- | --- | --- | --- |
 | [word-001](tasks/001-complete-word-branching-contracts.md) | Complete Word branching contracts | done | — |
 | [word-002](tasks/002-add-a-partial-domain-oracle-for-bounded-arithmetic.md) | Add a partial-domain oracle for bounded arithmetic | done | — |
-| [word-003](tasks/003-clarify-word-endpoint-and-exception-contracts.md) | Clarify Word endpoint and exception contracts | ready | — |
+| [word-003](tasks/003-clarify-word-endpoint-and-exception-contracts.md) | Clarify Word endpoint and exception contracts | done | — |
 | [word-004](tasks/004-add-the-mixed-dma-descriptor-model-and-comparison.md) | Add the mixed DMA descriptor model and comparison | ready | — |
 | [word-005](tasks/005-batch-the-remaining-bounded-local-transactions.md) | Batch the remaining bounded local transactions | ready | — |
 | [word-006](tasks/006-specialize-numeric-word-actors-by-view-and-event.md) | Specialize numeric Word actors by view and event | blocked | word-004, word-005 |

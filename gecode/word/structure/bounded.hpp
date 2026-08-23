@@ -61,7 +61,7 @@ namespace Gecode { namespace Word { namespace Structure {
   template<class View>
   forceinline FixedLocalDomain fixed_snapshot(View x) {
     return FixedLocalDomain{x.width(),x.domain_type(),x.lo(),x.hi(),
-                            x.minimum(),x.maximum(),false};
+                            x.rank_minimum(),x.rank_maximum(),false};
   }
 
   template<class View>
@@ -143,7 +143,7 @@ namespace Gecode { namespace Word { namespace Structure {
   public:
     static bool numeric_regime(View x, unsigned int amount) {
       return (amount >= x.width()) ||
-        (x.maximum() <= (x.mask() >> amount));
+        (x.rank_maximum() <= (x.mask() >> amount));
     }
     virtual Actor* copy(Space& home) {
       return new (home) BoundedShiftLeft(home,*this);
@@ -237,8 +237,8 @@ namespace Gecode { namespace Word { namespace Structure {
   public:
     static bool numeric_regime(UnsignedWordView x,
                                UnsignedWordView amount) {
-      return (amount.maximum() < x.width()) &&
-        (x.maximum() <= (x.mask() >> amount.maximum()));
+      return (amount.rank_maximum() < x.width()) &&
+        (x.rank_maximum() <= (x.mask() >> amount.rank_maximum()));
     }
     virtual Actor* copy(Space& home) {
       return new (home) VariableShiftLeftBounds(home,*this);

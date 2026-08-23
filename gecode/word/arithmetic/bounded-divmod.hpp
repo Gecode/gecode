@@ -141,7 +141,7 @@ namespace Gecode { namespace Word { namespace Arithmetic {
     }
   public:
     static bool numeric_regime(UnsignedWordView b) {
-      return (b.maximum() == 0) || (b.minimum() != 0);
+      return (b.rank_maximum() == 0) || (b.rank_minimum() != 0);
     }
     virtual Actor* copy(Space& home) {
       return new (home) BoundUnsignedDivMod(home,*this);
@@ -258,7 +258,7 @@ namespace Gecode { namespace Word { namespace Arithmetic {
     }
   public:
     static bool numeric_regime(UnsignedWordView b) {
-      return (b.maximum() == 0) || (b.minimum() != 0);
+      return (b.rank_maximum() == 0) || (b.rank_minimum() != 0);
     }
     virtual Actor* copy(Space& home) {
       return new (home) BoundUnsignedDivModBoth(home,*this);
@@ -438,8 +438,9 @@ namespace Gecode { namespace Word { namespace Arithmetic {
   public:
     static bool numeric_regime(SignedWordView b) {
       const WordValue sign=sign_bit(b.width());
-      return ((b.minimum() == sign) && (b.maximum() == sign)) ||
-        (b.maximum() < sign) || (b.minimum() > sign);
+      return ((b.rank_minimum() == sign) &&
+              (b.rank_maximum() == sign)) ||
+        (b.rank_maximum() < sign) || (b.rank_minimum() > sign);
     }
     virtual Actor* copy(Space& home) {
       return new (home) BoundSignedDivMod(home,*this);

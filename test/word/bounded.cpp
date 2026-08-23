@@ -376,7 +376,8 @@ namespace Test { namespace Word { namespace Bounded {
         (s.x[2].maximum() != WordValue(0x7f)))
       return false;
     Gecode::Word::SignedWordView signed_view(s.x[2]);
-    if ((signed_view.minimum() != 0) || (signed_view.maximum() != 255))
+    if ((signed_view.rank_minimum() != 0) ||
+        (signed_view.rank_maximum() != 255))
       return false;
     WordVarArgs unsigned_args(s,2,4,WDT_UNSIGNED,2,11);
     WordVarArray signed_array(s,2,4,WDT_SIGNED,WordValue(8),WordValue(7));
@@ -526,8 +527,8 @@ namespace Test { namespace Word { namespace Bounded {
     if (signed_view.narrow_range(signed_space,3,12) !=
         Gecode::Word::ME_WORD_BND)
       return false;
-    return (signed_view.minimum() == 3) &&
-      (signed_view.maximum() == 12) &&
+    return (signed_view.rank_minimum() == 3) &&
+      (signed_view.rank_maximum() == 12) &&
       (signed_space.x.minimum() == 11) &&
       (signed_space.x.maximum() == 4) &&
       !signed_space.x.in(10) && signed_space.x.in(11) &&

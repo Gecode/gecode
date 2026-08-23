@@ -55,8 +55,8 @@ namespace Gecode { namespace Word {
     WordValue hi(void) const { return _hi; }
     WordDomainType domain_type(void) const { return _domain_type; }
     bool bounded(void) const { return _domain_type != WDT_CUBE; }
-    WordValue minimum(void) const { return _minimum; }
-    WordValue maximum(void) const { return _maximum; }
+    WordValue rank_minimum(void) const { return _minimum; }
+    WordValue rank_maximum(void) const { return _maximum; }
     void prune(Space&, WordView x, const Delta&) {
       _lo = x.lo(); _hi = x.hi(); _domain_type = x.domain_type();
       _minimum = x.bounded() ? x.rank_minimum() : 0;

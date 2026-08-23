@@ -133,9 +133,9 @@ namespace Gecode { namespace Word {
       assert(domain_type() == WDT_UNSIGNED);
     }
     /// Return the canonical minimum unsigned rank
-    WordValue minimum(void) const { return imp()->minimum(); }
+    WordValue rank_minimum(void) const { return imp()->minimum(); }
     /// Return the canonical maximum unsigned rank
-    WordValue maximum(void) const { return imp()->maximum(); }
+    WordValue rank_maximum(void) const { return imp()->maximum(); }
     ModEvent narrow_domain(Space& home, WordValue lo, WordValue hi,
                            WordValue minimum, WordValue maximum) {
       return imp()->narrow_domain(home,lo,hi,minimum,maximum);
@@ -165,9 +165,9 @@ namespace Gecode { namespace Word {
       assert(domain_type() == WDT_SIGNED);
     }
     /// Return the canonical minimum signed-order rank
-    WordValue minimum(void) const { return imp()->minimum(); }
+    WordValue rank_minimum(void) const { return imp()->minimum(); }
     /// Return the canonical maximum signed-order rank
-    WordValue maximum(void) const { return imp()->maximum(); }
+    WordValue rank_maximum(void) const { return imp()->maximum(); }
     ModEvent narrow_domain(Space& home, WordValue lo, WordValue hi,
                            WordValue minimum, WordValue maximum) {
       return imp()->narrow_domain(home,lo,hi,minimum,maximum);

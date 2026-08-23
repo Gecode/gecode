@@ -96,7 +96,7 @@ namespace Gecode { namespace Word { namespace Arithmetic {
     static_assert(View::supports_bounds,
                   "bounded arithmetic requires a bounded Word view");
     return BoundLocalDomain{x.width(),x.domain_type(),x.lo(),x.hi(),
-                            x.minimum(),x.maximum(),false};
+                            x.rank_minimum(),x.rank_maximum(),false};
   }
 
   template<class View>
@@ -490,26 +490,34 @@ namespace Gecode { namespace Word { namespace Arithmetic {
       const WordValue mask=width_mask(x.width());
       if (op == BA_ADD) {
         if (!View::signed_order)
-          return x.maximum() <= mask-y.maximum();
+          return x.rank_maximum() <= mask-y.rank_maximum();
         const WordValue sign=sign_bit(x.width()); WordValue ignored;
-        return bound_signed_add(x.minimum(),y.minimum(),sign,mask,ignored) &&
-          bound_signed_add(x.maximum(),y.maximum(),sign,mask,ignored);
+        return bound_signed_add(x.rank_minimum(),y.rank_minimum(),sign,mask,
+                                ignored) &&
+          bound_signed_add(x.rank_maximum(),y.rank_maximum(),sign,mask,
+                           ignored);
       }
       if (op == BA_SUB) {
         if (!View::signed_order)
-          return x.minimum() >= y.maximum();
+          return x.rank_minimum() >= y.rank_maximum();
         const WordValue sign=sign_bit(x.width()); WordValue ignored;
-        return bound_signed_sub(x.minimum(),y.maximum(),sign,mask,ignored) &&
-          bound_signed_sub(x.maximum(),y.minimum(),sign,mask,ignored);
+        return bound_signed_sub(x.rank_minimum(),y.rank_maximum(),sign,mask,
+                                ignored) &&
+          bound_signed_sub(x.rank_maximum(),y.rank_minimum(),sign,mask,
+                           ignored);
       }
       if (!View::signed_order)
-        return (x.maximum() == 0U) ||
-          (y.maximum() <= mask/x.maximum());
+        return (x.rank_maximum() == 0U) ||
+          (y.rank_maximum() <= mask/x.rank_maximum());
       const WordValue sign=sign_bit(x.width()); WordValue ignored;
-      return bound_signed_product(x.minimum(),y.minimum(),sign,mask,ignored) &&
-        bound_signed_product(x.minimum(),y.maximum(),sign,mask,ignored) &&
-        bound_signed_product(x.maximum(),y.minimum(),sign,mask,ignored) &&
-        bound_signed_product(x.maximum(),y.maximum(),sign,mask,ignored);
+      return bound_signed_product(x.rank_minimum(),y.rank_minimum(),sign,mask,
+                                  ignored) &&
+        bound_signed_product(x.rank_minimum(),y.rank_maximum(),sign,mask,
+                             ignored) &&
+        bound_signed_product(x.rank_maximum(),y.rank_minimum(),sign,mask,
+                             ignored) &&
+        bound_signed_product(x.rank_maximum(),y.rank_maximum(),sign,mask,
+                             ignored);
     }
     virtual Actor* copy(Space& home) {
       return new (home) BoundArithmetic(home,*this);
@@ -600,7 +608,7 @@ namespace Gecode { namespace Word { namespace Arithmetic {
       return ES_OK;
     }
   public:
-    static bool numeric_regime(View x) { return x.minimum() != 0U; }
+    static bool numeric_regime(View x) { return x.rank_minimum() != 0U; }
     virtual Actor* copy(Space& home) { return new (home) BoundNeg(home,*this); }
     virtual PropCost cost(const Space&, const ModEventDelta& med) const {
       return (View::me(med) == ME_WORD_BND) ?
@@ -746,9 +754,10 @@ namespace Gecode { namespace Word { namespace Arithmetic {
       if (flag.assigned()) return true;
       const WordValue mask=width_mask(x.width());
       return (op == BA_ADD) ?
-        ((x.minimum() > mask-y.minimum()) ||
-         (x.maximum() <= mask-y.maximum())) :
-        ((x.maximum() < y.minimum()) || (x.minimum() >= y.maximum()));
+        ((x.rank_minimum() > mask-y.rank_minimum()) ||
+         (x.rank_maximum() <= mask-y.rank_maximum())) :
+        ((x.rank_maximum() < y.rank_minimum()) ||
+         (x.rank_minimum() >= y.rank_maximum()));
     }
     virtual Actor* copy(Space& home) {
       return new (home) BoundFlagArithmetic(home,*this);

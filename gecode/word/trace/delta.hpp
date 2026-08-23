@@ -40,8 +40,8 @@ namespace Gecode {
                                  const Delta&)
     : _zero(o.hi() & ~n.hi()), _one(n.lo() & ~o.lo()),
       _domain_type(n.domain_type()),
-      _old_minimum(o.bounded() ? o.minimum() : 0),
-      _old_maximum(o.bounded() ? o.maximum() : 0),
+      _old_minimum(o.bounded() ? o.rank_minimum() : 0),
+      _old_maximum(o.bounded() ? o.rank_maximum() : 0),
       _new_minimum(n.bounded() ? n.rank_minimum() : 0),
       _new_maximum(n.bounded() ? n.rank_maximum() : 0) {}
   forceinline WordValue WordTraceDelta::zero(void) const { return _zero; }

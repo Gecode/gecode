@@ -3,7 +3,7 @@ schema_version = 1
 id = "word-003"
 key = "clarify-word-endpoint-contracts"
 area = "word"
-status = "open"
+status = "done"
 complexity = "standard"
 blocked_by = []
 +++
@@ -26,12 +26,22 @@ WordView::minimum and maximum expose encoded values, while UnsignedWordView and 
 
 ## Done when
 
-- [ ] Internal bounded propagation no longer depends on minimum or maximum names whose meaning changes with static view type.
-- [ ] Direct-posting, MiniModel, tracing, and bounded propagator callers use explicit rank names where they consume internal order.
-- [ ] WordVar, WordVarArgs, and WordVarArray document width, mask, domain-kind, empty-intersection, cube-endpoint, and unassigned-value exceptions.
-- [ ] The mechanical migration compiles warning-clean without representation or runtime changes.
+- [x] Internal bounded propagation no longer depends on minimum or maximum names whose meaning changes with static view type.
+- [x] Direct-posting, MiniModel, tracing, and bounded propagator callers use explicit rank names where they consume internal order.
+- [x] WordVar, WordVarArgs, and WordVarArray document width, mask, domain-kind, empty-intersection, cube-endpoint, and unassigned-value exceptions.
+- [x] The mechanical migration compiles warning-clean without representation or runtime changes.
 
 ## Validation
 
 - Run the broader Word suite and TestFramework.
 - Build the Word library in Release mode with the established warning flags.
+
+## Result
+
+Clarified ranked endpoint APIs and documented Word variable exception contracts without changing representation or runtime behavior.
+
+Validation:
+
+- Release Word library build passed with -Wall -Wextra -Werror.
+- The broader Word suite passed except the known unrelated Word::Overflow::Lifecycle failure.
+- Word::TestFramework passed.

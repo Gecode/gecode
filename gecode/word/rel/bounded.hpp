@@ -45,8 +45,8 @@ namespace Gecode { namespace Word { namespace Rel {
     RankConstView(unsigned int width, WordValue value)
       : ConstWordView(width,value),
         _rank(Word::rank(sign ? WDT_SIGNED : WDT_UNSIGNED,width,value)) {}
-    WordValue minimum(void) const { return _rank; }
-    WordValue maximum(void) const { return _rank; }
+    WordValue rank_minimum(void) const { return _rank; }
+    WordValue rank_maximum(void) const { return _rank; }
     ModEvent narrow_domain(Space& home, WordValue lo, WordValue hi,
                            WordValue minimum, WordValue maximum) {
       ModEvent me = narrow(home,lo,hi);
@@ -105,8 +105,9 @@ namespace Gecode { namespace Word { namespace Rel {
   forceinline Int::RelTest bound_eq_test(View0 x0, View1 x1) {
     if (bound_aliases(x0,x1))
       return Int::RT_TRUE;
-    if (disjoint(x0,x1) || (x0.maximum() < x1.minimum()) ||
-        (x1.maximum() < x0.minimum()))
+    if (disjoint(x0,x1) ||
+        (x0.rank_maximum() < x1.rank_minimum()) ||
+        (x1.rank_maximum() < x0.rank_minimum()))
       return Int::RT_FALSE;
     if (x0.assigned() && x1.assigned())
       return Int::RT_TRUE;
@@ -117,8 +118,10 @@ namespace Gecode { namespace Word { namespace Rel {
   ExecStatus narrow_bound_eq(Home home, View0 x0, View1 x1) {
     const WordValue lo = x0.lo() | x1.lo();
     const WordValue hi = x0.hi() & x1.hi();
-    const WordValue minimum = std::max(x0.minimum(),x1.minimum());
-    const WordValue maximum = std::min(x0.maximum(),x1.maximum());
+    const WordValue minimum =
+      std::max(x0.rank_minimum(),x1.rank_minimum());
+    const WordValue maximum =
+      std::min(x0.rank_maximum(),x1.rank_maximum());
     if ((lo & ~hi) != 0 || minimum > maximum)
       return ES_FAILED;
     GECODE_ME_CHECK(x0.narrow_domain(home,lo,hi,minimum,maximum));
@@ -128,19 +131,19 @@ namespace Gecode { namespace Word { namespace Rel {
 
   template<class View0, class View1, bool strict>
   forceinline Int::RelTest bound_lq_test(View0 x0, View1 x1) {
-    if (strict ? (x0.maximum() < x1.minimum()) :
-                 (x0.maximum() <= x1.minimum()))
+    if (strict ? (x0.rank_maximum() < x1.rank_minimum()) :
+                 (x0.rank_maximum() <= x1.rank_minimum()))
       return Int::RT_TRUE;
-    if (strict ? (x0.minimum() >= x1.maximum()) :
-                 (x0.minimum() > x1.maximum()))
+    if (strict ? (x0.rank_minimum() >= x1.rank_maximum()) :
+                 (x0.rank_minimum() > x1.rank_maximum()))
       return Int::RT_FALSE;
     return Int::RT_MAYBE;
   }
 
   template<class View0, class View1, bool strict>
   ExecStatus narrow_bound_lq(Home home, View0 x0, View1 x1) {
-    const WordValue min0 = x0.minimum();
-    const WordValue max1 = x1.maximum();
+    const WordValue min0 = x0.rank_minimum();
+    const WordValue max1 = x1.rank_maximum();
     if (strict ? (min0 >= max1) : (min0 > max1))
       return ES_FAILED;
     const WordValue new_max0 = strict ? max1-1 : max1;

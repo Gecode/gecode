@@ -164,12 +164,24 @@ namespace Gecode {
     WordVar(const WordVar& y);
     /// Construct a variable handle from view \a y
     WordVar(const Word::WordView& y);
-    /// Construct an unconstrained word of the given \a width
+    /** \brief Construct an unconstrained word of the given \a width
+     *
+     * Throws Word::OutOfLimits if \a width is not between 1 and 64.
+     */
     GECODE_WORD_EXPORT WordVar(Space& home, unsigned int width);
-    /// Construct a word with cube bounds \a lo and \a hi
+    /** \brief Construct a word with cube bounds \a lo and \a hi
+     *
+     * Throws Word::OutOfLimits if \a width is not between 1 and 64 or a
+     * mask has bits outside \a width. Throws Word::VariableEmptyDomain if
+     * the masks have no common value.
+     */
     GECODE_WORD_EXPORT WordVar(Space& home, unsigned int width,
                               WordValue lo, WordValue hi);
-    /// Construct a word using the full range of a domain_type
+    /** \brief Construct a word using the full range of \a domain_type
+     *
+     * Throws Word::OutOfLimits if \a width is not between 1 and 64 or
+     * \a domain_type is not WDT_CUBE, WDT_UNSIGNED, or WDT_SIGNED.
+     */
     GECODE_WORD_EXPORT WordVar(Space& home, unsigned int width,
                               WordDomainType domain_type);
     /**
@@ -177,6 +189,9 @@ namespace Gecode {
      *
      * For signed words, \a minimum and \a maximum use the word's
      * two's-complement bit patterns, not internal signed-order ranks.
+     * Throws Word::OutOfLimits if \a width, \a domain_type, or an endpoint
+     * encoding is invalid. Throws Word::VariableEmptyDomain if the encoded
+     * interval is empty.
      */
     GECODE_WORD_EXPORT WordVar(Space& home, unsigned int width,
                               WordDomainType domain_type,
@@ -186,6 +201,9 @@ namespace Gecode {
      *
      * For signed words, \a minimum and \a maximum use the word's
      * two's-complement bit patterns, not internal signed-order ranks.
+     * Throws Word::OutOfLimits if \a width, \a domain_type, a mask, or an
+     * endpoint encoding is invalid. Throws Word::VariableEmptyDomain if the
+     * cube and encoded interval have an empty intersection.
      */
     GECODE_WORD_EXPORT WordVar(Space& home, unsigned int width,
                               WordValue lo, WordValue hi,
@@ -208,6 +226,7 @@ namespace Gecode {
      *
      * For signed words, the result is the two's-complement encoding of the
      * minimum value, not its internal signed-order rank.
+     * Throws Word::BoundsOfCubeVar if this is a cube-only word.
      */
     WordValue minimum(void) const;
     /**
@@ -215,6 +234,7 @@ namespace Gecode {
      *
      * For signed words, the result is the two's-complement encoding of the
      * maximum value, not its internal signed-order rank.
+     * Throws Word::BoundsOfCubeVar if this is a cube-only word.
      */
     WordValue maximum(void) const;
     /// Return the mask of unknown bits
@@ -225,7 +245,7 @@ namespace Gecode {
     bool assigned(void) const;
     /// Test whether concrete \a value belongs to the represented domain
     bool in(WordValue value) const;
-    /// Return the assigned value
+    /// Return the assigned value; throws Word::ValOfUnassignedVar otherwise
     WordValue val(void) const;
     WordVar& operator=(const WordVar&) = default;
   };
@@ -253,15 +273,35 @@ namespace Gecode {
     WordVarArgs(const std::vector<WordVar>& a);
     WordVarArgs(std::initializer_list<WordVar> a);
     template<class InputIterator> WordVarArgs(InputIterator first, InputIterator last);
+    /** \brief Construct \a n cube words
+     *
+     * Throws Word::OutOfLimits for an invalid width or mask, and
+     * Word::VariableEmptyDomain if the masks have no common value.
+     */
     GECODE_WORD_EXPORT WordVarArgs(Space& home, int n, unsigned int width,
                                   WordValue lo, WordValue hi);
+    /** \brief Construct \a n full-domain words
+     *
+     * Throws Word::OutOfLimits for an invalid width or domain kind.
+     */
     GECODE_WORD_EXPORT WordVarArgs(Space& home, int n, unsigned int width,
                                   WordDomainType domain_type);
-    /// Construct bounded words; signed endpoints are two's-complement patterns
+    /** \brief Construct bounded words with encoded endpoints
+     *
+     * Signed endpoints are two's-complement patterns. Throws
+     * Word::OutOfLimits for an invalid width, domain kind, or endpoint
+     * encoding, and Word::VariableEmptyDomain for an empty interval.
+     */
     GECODE_WORD_EXPORT WordVarArgs(Space& home, int n, unsigned int width,
                                   WordDomainType domain_type,
                                   WordValue minimum, WordValue maximum);
-    /// Construct bounded cubes; signed endpoints are two's-complement patterns
+    /** \brief Construct bounded cubes with encoded endpoints
+     *
+     * Signed endpoints are two's-complement patterns. Throws
+     * Word::OutOfLimits for an invalid width, mask, domain kind, or endpoint
+     * encoding, and Word::VariableEmptyDomain if the cube and interval have
+     * an empty intersection.
+     */
     GECODE_WORD_EXPORT WordVarArgs(Space& home, int n, unsigned int width,
                                   WordValue lo, WordValue hi,
                                   WordDomainType domain_type,
@@ -275,15 +315,35 @@ namespace Gecode {
     WordVarArray(Space& home, int n);
     WordVarArray(const WordVarArray& a);
     WordVarArray(Space& home, const WordVarArgs& a);
+    /** \brief Construct \a n cube words
+     *
+     * Throws Word::OutOfLimits for an invalid width or mask, and
+     * Word::VariableEmptyDomain if the masks have no common value.
+     */
     GECODE_WORD_EXPORT WordVarArray(Space& home, int n, unsigned int width,
                                    WordValue lo, WordValue hi);
+    /** \brief Construct \a n full-domain words
+     *
+     * Throws Word::OutOfLimits for an invalid width or domain kind.
+     */
     GECODE_WORD_EXPORT WordVarArray(Space& home, int n, unsigned int width,
                                    WordDomainType domain_type);
-    /// Construct bounded words; signed endpoints are two's-complement patterns
+    /** \brief Construct bounded words with encoded endpoints
+     *
+     * Signed endpoints are two's-complement patterns. Throws
+     * Word::OutOfLimits for an invalid width, domain kind, or endpoint
+     * encoding, and Word::VariableEmptyDomain for an empty interval.
+     */
     GECODE_WORD_EXPORT WordVarArray(Space& home, int n, unsigned int width,
                                    WordDomainType domain_type,
                                    WordValue minimum, WordValue maximum);
-    /// Construct bounded cubes; signed endpoints are two's-complement patterns
+    /** \brief Construct bounded cubes with encoded endpoints
+     *
+     * Signed endpoints are two's-complement patterns. Throws
+     * Word::OutOfLimits for an invalid width, mask, domain kind, or endpoint
+     * encoding, and Word::VariableEmptyDomain if the cube and interval have
+     * an empty intersection.
+     */
     GECODE_WORD_EXPORT WordVarArray(Space& home, int n, unsigned int width,
                                    WordValue lo, WordValue hi,
                                    WordDomainType domain_type,
