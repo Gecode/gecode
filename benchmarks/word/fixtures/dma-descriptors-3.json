@@ -1,0 +1,8 @@
+{
+  "schema_version": 1,
+  "id": "dma-descriptors-3",
+  "kind": "dma",
+  "descriptor_count": 3,
+  "license": "MIT",
+  "redistributable": true
+}

@@ -1,51 +1,57 @@
-# Word differential benchmark
+# Word benchmarks
 
-This development benchmark compares the native Gecode Word model with an
-equivalent Gecode Boolean decomposition of the same XOR-and-rotate problem.
-It does not compare against an SMT solver and must not be cited as SMT parity.
+The runner supports two benchmark kinds without duplicating campaign machinery.
+The original XOR/rotate differential compares native Word with a Boolean
+decomposition. The DMA descriptor benchmark compares compact Word,
+unsigned-bounded Word, compact Word with one unsigned Int channel per numeric
+Word, and equivalent Int/Bool formulations at 3, 6, and 9 descriptors.
 
-The checked-in public manifest contains one small redistributable smoke
-instance. A private corpus remains outside the repository and has this layout:
+The DMA model uses 12-bit aligned bases, fixed repeated lengths, ordered
+non-overlap, sorted read/write/execute flags, Element selection, and a
+write-controlled limit ITE. All four formulations must have the same solution
+count and wrapping checksum. This instance does not predict every Word workload.
 
-```text
-private-root/
-  manifest.json
-  instances/
-    instance-name.json
-```
-
-`manifest.json` uses the same shape as `public-manifest.json`, with
-`"corpus": "private"`, `"redistributable": false`, and relative paths to its
-instances. The required fields are recorded in `private-layout.json`. Missing
-roots, manifests, and referenced files are reported as discovery issues; the
-script neither recursively discovers nor copies private payloads.
-
-Run the benchmark from the repository root after building the
-`word-benchmark` example:
+Build and run a DMA-only Release campaign:
 
 ```sh
-uv run --script benchmarks/word/benchmark.py run --name smoke \
-  --binary build/bin/word-benchmark --repetitions 3
-uv run --script benchmarks/word/benchmark.py analyze --name smoke
-uv run --script benchmarks/word/benchmark.py report --name smoke
+cmake -S . -B build-word-004 -DCMAKE_BUILD_TYPE=Release -DGECODE_ENABLE_WORD_VARS=ON -DGECODE_ENABLE_EXAMPLES=ON
+cmake --build build-word-004 --target word-dma-descriptor
+uv run --script benchmarks/word/benchmark.py run --name word-004-release --kind dma --binary build-word-004/bin/word-dma-descriptor --repetitions 20
+uv run --script benchmarks/word/benchmark.py analyze --name word-004-release
+uv run --script benchmarks/word/benchmark.py report --name word-004-release
 ```
 
-Pass `--private-corpus-root /absolute/external/path` to `run` to add private
-instances. Results default to `results/<name>/` and contain stable per-run
-JSON, stdout, and stderr as flat `<run-id>.json`, `<run-id>.stdout`, and
-`<run-id>.stderr` files beneath `runs/`, aggregate JSON beneath `analysis/`,
-and a concise engineering report beneath `reports/`. The empty `plots/`
-directory is reserved by the artifact layout; this focused benchmark has no
-plot command.
+The default DMA discovery target is `build/bin/word-dma-descriptor`. Build
+configuration is read from the executable's CMake cache when available;
+otherwise it is recorded as `unverified`. Callers are responsible for supplying
+a Release binary for performance comparisons.
 
-Runtime and peak resident memory are measured by the Python process wrapper.
-Peak memory is best effort and is `null` when the platform timing tool does
-not expose it. `allocations` counts model variable implementations, while
-`clone_footprint` counts those implementations plus propagators and branchers
-in one stabilized clone. Both are structural counters, not kernel allocation
-counts or byte measurements.
+The prior XOR route remains available:
 
-Pass `--package-output PATH` one or more times to inspect an existing package
-directory, tar archive, or zip archive by name listing. The report distinguishes
-no supplied package, unavailable output, scan error, and successful scans. This
-check reads package contents but does not create or modify packages.
+```sh
+cmake --build build --target word-benchmark
+uv run --script benchmarks/word/benchmark.py run --name xor-smoke --kind xor --word-benchmark-binary build/bin/word-benchmark --repetitions 3
+```
+
+Use `--kind all` with both binary options to run the public kinds together.
+Runs are interleaved by repetition, instance, and variant. Analysis requires
+the exact planned matrix: each expected run once, successful, with no missing,
+duplicate, unexpected, or stale extra result.
+`--limit` is accepted only when it ends on a complete formulation group; cuts
+that would make parity analysis unusable are rejected before artifacts are written.
+
+DMA memory evidence reports current handle, implementation, and model layout
+sizes plus RSS slopes from fresh subprocesses retaining stabilized root clones
+at 2,000, 8,000, and 32,000. Populations grow by four when the RSS range is
+below 16 MiB, capped at 256,000; resource-limited or unresolved measurements
+are explicitly `unmeasured`. Structural entity formulas are not byte evidence.
+
+Private XOR corpora retain the established external layout: `manifest.json`
+with `"corpus": "private"`, `"redistributable": false`, and relative paths to
+instances matching `private-layout.json`. Pass `--private-corpus-root` to load
+one. Pass `--package-output PATH` one or more times to inspect a package
+directory, tar archive, or zip by name listing for private/result payloads.
+Missing private roots and package outputs remain reported rather than copied.
+
+Raw run JSON/stdout/stderr, analysis, and reports live under
+`results/<name>/`; completed records resume without being overwritten.

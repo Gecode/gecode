@@ -65,6 +65,7 @@ set(GECODE_EXAMPLE_SOURCES
   word-bitboard.cpp
   word-crc16-ccitt.cpp
   word-crc16-x25.cpp
+  word-dma-descriptor.cpp
   word-md5-preimage.cpp
   word-minimodel.cpp
   word-register-file.cpp
@@ -95,6 +96,7 @@ set(GECODE_WORD_EXAMPLES
   word-bitboard
   word-crc16-ccitt
   word-crc16-x25
+  word-dma-descriptor
   word-md5-preimage
   word-minimodel
   word-register-file

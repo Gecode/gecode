@@ -3,25 +3,25 @@
 # Tasks: word
 
 - Total: 16
-- Ready: 8
-- Blocked: 5
-- Done: 3
+- Ready: 11
+- Blocked: 1
+- Done: 4
 
 | ID | Task | State | Blocked by |
 | --- | --- | --- | --- |
 | [word-001](tasks/001-complete-word-branching-contracts.md) | Complete Word branching contracts | done | — |
 | [word-002](tasks/002-add-a-partial-domain-oracle-for-bounded-arithmetic.md) | Add a partial-domain oracle for bounded arithmetic | done | — |
 | [word-003](tasks/003-clarify-word-endpoint-and-exception-contracts.md) | Clarify Word endpoint and exception contracts | done | — |
-| [word-004](tasks/004-add-the-mixed-dma-descriptor-model-and-comparison.md) | Add the mixed DMA descriptor model and comparison | ready | — |
+| [word-004](tasks/004-add-the-mixed-dma-descriptor-model-and-comparison.md) | Add the mixed DMA descriptor model and comparison | done | — |
 | [word-005](tasks/005-batch-the-remaining-bounded-local-transactions.md) | Batch the remaining bounded local transactions | ready | — |
 | [word-006](tasks/006-specialize-numeric-word-actors-by-view-and-event.md) | Specialize numeric Word actors by view and event | blocked | word-004, word-005 |
 | [word-007](tasks/007-retire-bounded-disequality-on-interval-disjointness.md) | Retire bounded disequality on interval disjointness | ready | — |
 | [word-008](tasks/008-carry-explicit-bounded-policy-through-word-minimodel-boolean.md) | Carry explicit bounded policy through Word MiniModel Boolean nodes | ready | — |
 | [word-009](tasks/009-report-bound-only-progress-in-word-trace-slack.md) | Report bound-only progress in Word trace slack | ready | — |
-| [word-010](tasks/010-investigate-bounded-word-size-merits.md) | Investigate bounded Word size merits | blocked | word-004 |
-| [word-011](tasks/011-investigate-search-time-activation-of-bounded-add.md) | Investigate search-time activation of bounded Add | blocked | word-002, word-004 |
+| [word-010](tasks/010-investigate-bounded-word-size-merits.md) | Investigate bounded Word size merits | ready | word-004 |
+| [word-011](tasks/011-investigate-search-time-activation-of-bounded-add.md) | Investigate search-time activation of bounded Add | ready | word-002, word-004 |
 | [word-012](tasks/012-add-bounded-n-ary-word-addition.md) | Add bounded n-ary Word addition | ready | — |
 | [word-013](tasks/013-add-bounded-propagation-for-mixed-product-mod.md) | Add bounded propagation for mixed product_mod | ready | — |
-| [word-014](tasks/014-preserve-bounds-through-boolean-controlled-word-ite.md) | Preserve bounds through Boolean-controlled Word ITE | blocked | word-004 |
-| [word-015](tasks/015-preserve-bounds-through-word-element.md) | Preserve bounds through Word element | blocked | word-004 |
+| [word-014](tasks/014-preserve-bounds-through-boolean-controlled-word-ite.md) | Preserve bounds through Boolean-controlled Word ITE | ready | word-004 |
+| [word-015](tasks/015-preserve-bounds-through-word-element.md) | Preserve bounds through Word element | ready | word-004 |
 | [word-016](tasks/016-investigate-native-bounds-consistent-word-distinct.md) | Investigate native bounds-consistent Word distinct | ready | — |

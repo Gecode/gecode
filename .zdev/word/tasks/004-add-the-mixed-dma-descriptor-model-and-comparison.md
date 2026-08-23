@@ -3,7 +3,7 @@ schema_version = 1
 id = "word-004"
 key = "add-realistic-mixed-bounded-model"
 area = "word"
-status = "open"
+status = "done"
 complexity = "advanced"
 blocked_by = []
 +++
@@ -26,13 +26,23 @@ Implement the exact shared model in .zdev/word/brief.md for descriptor counts 3,
 
 ## Done when
 
-- [ ] All four formulations produce the same solution count and checksum for descriptor counts 3, 6, and 9.
-- [ ] The model uses actual Word mask/channel constraints for alignment and flags, bounds-sensitive arithmetic and ordering, Element selection, and Boolean ITE control.
-- [ ] The benchmark reports nodes, failures, propagations, runtime, current object-layout sizes, and the prescribed retained-clone RSS slope; if the slope remains unmeasurable at the specified cap, it is reported explicitly rather than replaced by entity formulas.
-- [ ] The example explains the modeling tradeoffs and does not claim that one public instance predicts all Word workloads.
+- [x] All four formulations produce the same solution count and checksum for descriptor counts 3, 6, and 9.
+- [x] The model uses actual Word mask/channel constraints for alignment and flags, bounds-sensitive arithmetic and ordering, Element selection, and Boolean ITE control.
+- [x] The benchmark reports nodes, failures, propagations, runtime, current object-layout sizes, and the prescribed retained-clone RSS slope; if the slope remains unmeasurable at the specified cap, it is reported explicitly rather than replaced by entity formulas.
+- [x] The example explains the modeling tradeoffs and does not claim that one public instance predicts all Word workloads.
 
 ## Validation
 
 - Build and exhaustively run every formulation at descriptor counts 3, 6, and 9 and compare solution counts and checksums.
 - Run interleaved Release trials with linked binary identities and the retained-clone memory procedure from the brief.
 - Run the affected example and benchmark checks.
+
+## Result
+
+Added the mixed DMA descriptor model and four-formulation benchmark comparison while preserving the existing XOR workflow.
+
+Validation:
+
+- Independent Release verification matched solution counts and checksums for all four formulations at descriptor counts 3, 6, and 9.
+- Independent campaign verification covered interleaved timing, object layouts, retained-clone RSS slopes, exact record validation, and limited campaigns.
+- Legacy XOR/private/package compatibility, Word::TestFramework, Python compilation, and git diff checks passed.

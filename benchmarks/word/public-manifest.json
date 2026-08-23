@@ -8,6 +8,24 @@
       "path": "fixtures/word-xor-rotate-smoke.json",
       "license": "MIT",
       "redistributable": true
+    },
+    {
+      "id": "dma-descriptors-3",
+      "path": "fixtures/dma-descriptors-3.json",
+      "license": "MIT",
+      "redistributable": true
+    },
+    {
+      "id": "dma-descriptors-6",
+      "path": "fixtures/dma-descriptors-6.json",
+      "license": "MIT",
+      "redistributable": true
+    },
+    {
+      "id": "dma-descriptors-9",
+      "path": "fixtures/dma-descriptors-9.json",
+      "license": "MIT",
+      "redistributable": true
     }
   ]
 }

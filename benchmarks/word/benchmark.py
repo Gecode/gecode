@@ -7,6 +7,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import os
 import re
@@ -27,20 +28,11 @@ except ImportError:  # Not available on every Python platform.
 
 
 SCHEMA_VERSION = 1
-VARIANTS = ("native-word", "bool-decomposition")
+DMA_VARIANTS = ("compact-word", "bounded-word", "word-int-channel", "int-bool")
+XOR_VARIANTS = ("native-word", "bool-decomposition")
 TERMINAL_STATUSES = frozenset(("ok", "failed", "timeout", "error"))
-INSTANCE_FIELDS = (
-    "schema_version",
-    "id",
-    "width",
-    "rounds",
-    "key",
-    "shift",
-    "target_lo",
-    "target_hi",
-    "expected_solutions",
-    "expected_input",
-)
+XOR_FIELDS = ("schema_version", "id", "width", "rounds", "key", "shift",
+              "target_lo", "target_hi", "expected_solutions", "expected_input")
 SAFE_NAME = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]*$")
 
 
@@ -102,30 +94,39 @@ def load_json(path: Path) -> dict[str, Any]:
 
 
 def validate_instance(value: dict[str, Any], path: Path) -> dict[str, Any]:
-    missing = [field for field in INSTANCE_FIELDS if field not in value]
+    kind = value.get("kind", "dma" if "descriptor_count" in value else "xor-rotate")
+    fields = ("schema_version", "id", "descriptor_count") if kind == "dma" else XOR_FIELDS
+    if kind not in ("dma", "xor-rotate"):
+        raise ValueError(f"{path}: unsupported benchmark kind {kind!r}")
+    missing = [field for field in fields if field not in value]
     if missing:
         raise ValueError(f"{path}: missing fields: {', '.join(missing)}")
     if value["schema_version"] != SCHEMA_VERSION:
         raise ValueError(f"{path}: unsupported schema_version")
     if not isinstance(value["id"], str) or not SAFE_NAME.fullmatch(value["id"]):
         raise ValueError(f"{path}: id must be a safe artifact name")
-    numeric = INSTANCE_FIELDS[2:]
+    numeric = fields[2:]
     if any(not isinstance(value[field], int) or isinstance(value[field], bool)
            for field in numeric):
         raise ValueError(f"{path}: instance numeric fields must be integers")
-    width = value["width"]
-    mask = (1 << width) - 1 if 0 < width <= 64 else 0
-    if not 0 < width <= 64 or value["rounds"] <= 0:
-        raise ValueError(f"{path}: width must be 1..64 and rounds positive")
-    if not 0 <= value["shift"] < width:
-        raise ValueError(f"{path}: shift must be smaller than width")
-    for field in ("key", "target_lo", "target_hi", "expected_input"):
-        if not 0 <= value[field] <= mask:
-            raise ValueError(f"{path}: {field} does not fit width")
-    if value["target_lo"] & ~value["target_hi"]:
-        raise ValueError(f"{path}: target_lo is not a subset of target_hi")
-    if value["expected_solutions"] < 0:
-        raise ValueError(f"{path}: expected_solutions must be nonnegative")
+    if kind == "dma":
+        if value["descriptor_count"] not in (3, 6, 9):
+            raise ValueError(f"{path}: descriptor_count must be 3, 6, or 9")
+    else:
+        width = value["width"]
+        mask = (1 << width)-1 if 0 < width <= 64 else 0
+        if not 0 < width <= 64 or value["rounds"] <= 0:
+            raise ValueError(f"{path}: width must be 1..64 and rounds positive")
+        if not 0 <= value["shift"] < width:
+            raise ValueError(f"{path}: shift must be smaller than width")
+        for field in ("key", "target_lo", "target_hi", "expected_input"):
+            if not 0 <= value[field] <= mask:
+                raise ValueError(f"{path}: {field} does not fit width")
+        if value["target_lo"] & ~value["target_hi"]:
+            raise ValueError(f"{path}: target_lo is not a subset of target_hi")
+        if value["expected_solutions"] < 0:
+            raise ValueError(f"{path}: expected_solutions must be nonnegative")
+    value["kind"] = kind
     return value
 
 
@@ -311,25 +312,112 @@ def package_scan(paths: list[Path]) -> dict[str, Any]:
     }
 
 
-def resolve_binary(repo_root: Path, requested: Path | None) -> Path:
+def variants_for(instance: dict[str, Any]) -> tuple[str, ...]:
+    return DMA_VARIANTS if instance["kind"] == "dma" else XOR_VARIANTS
+
+
+def resolve_binary(repo_root: Path, requested: Path | None, kind: str) -> Path:
+    executable = "word-dma-descriptor" if kind == "dma" else "word-benchmark"
     candidates = [requested] if requested else [
-        repo_root / "build" / "bin" / "word-benchmark",
-        repo_root / "examples" / "word-benchmark",
+        repo_root / "build" / "bin" / executable,
+        repo_root / "examples" / executable,
     ]
     for candidate in candidates:
         if candidate is not None and candidate.is_file() and \
                 os.access(candidate, os.X_OK):
             return candidate.resolve()
-    raise ValueError("word-benchmark executable not found; pass --binary")
+    option = "--binary" if kind == "dma" else "--word-benchmark-binary"
+    raise ValueError(f"{executable} executable not found; pass {option}")
+
+
+def build_configuration(binary: Path) -> dict[str, Any]:
+    cache = binary.parent.parent / "CMakeCache.txt"
+    if cache.is_file():
+        match = re.search(r"^CMAKE_BUILD_TYPE:STRING=(.*)$", cache.read_text(), re.MULTILINE)
+        if match and match.group(1):
+            return {"status": "verified", "value": match.group(1), "evidence": str(cache)}
+    return {"status": "unverified", "value": None,
+            "evidence": "no CMakeCache.txt tied to the executable"}
+
+
+def binary_identity(repo_root: Path, binary: Path) -> dict[str, Any]:
+    digest = hashlib.sha256(binary.read_bytes()).hexdigest()
+    head = subprocess.run(
+        ["git", "rev-parse", "HEAD"], cwd=repo_root, text=True,
+        stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=False,
+    )
+    linker = ["otool", "-L", str(binary)] if sys.platform == "darwin" \
+        else ["ldd", str(binary)]
+    linked = subprocess.run(
+        linker, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+        check=False,
+    )
+    return {
+        "resolved_path": str(binary), "sha256": digest,
+        "repository_head": head.stdout.strip() if head.returncode == 0 else None,
+        "configuration": build_configuration(binary),
+        "linked_libraries_command": linker,
+        "linked_libraries": linked.stdout.splitlines() if linked.returncode == 0 else [],
+        "linked_libraries_error": linked.stderr.strip() if linked.returncode else None,
+    }
+
+
+def json_command(command: list[str], timeout: float) -> dict[str, Any]:
+    completed = subprocess.run(command, text=True, stdout=subprocess.PIPE,
+                               stderr=subprocess.PIPE, timeout=timeout, check=False)
+    if completed.returncode != 0:
+        raise ValueError(f"command failed ({completed.returncode}): {' '.join(command)}: {completed.stderr.strip()}")
+    return parse_fixture_output(completed.stdout)
+
+
+def memory_measurements(binary: Path, timeout: float) -> dict[str, Any]:
+    layout = json_command([str(binary), "-measurement", "layout"], timeout)
+    variants: dict[str, Any] = {}
+    for variant in DMA_VARIANTS:
+        populations = [2000, 8000, 32000]
+        while True:
+            points = []
+            error = None
+            try:
+                for population in populations:
+                    points.append(json_command([
+                        str(binary), "-measurement", "retain-clones",
+                        "-formulation", variant, "-size", "6",
+                        "-retain-clones", str(population),
+                    ], timeout))
+            except (ValueError, subprocess.TimeoutExpired, OSError) as exception:
+                error = str(exception)
+            if error:
+                variants[variant] = {"status": "unmeasured", "populations": populations,
+                                     "error": error}
+                break
+            rss_delta = max(p["rss_bytes"] for p in points)-min(p["rss_bytes"] for p in points)
+            if rss_delta >= 16*1024*1024:
+                first, last = points[0], points[-1]
+                variants[variant] = {
+                    "status": "measured", "points": points,
+                    "bytes_per_clone_slope":
+                        (last["rss_bytes"]-first["rss_bytes"])/
+                        (last["retained_clones"]-first["retained_clones"]),
+                }
+                break
+            if populations[-1]*4 > 256000:
+                variants[variant] = {"status": "unmeasured", "points": points,
+                                     "error": "RSS delta remained below 16 MiB at the 256,000-clone cap"}
+                break
+            populations = [min(population*4, 256000) for population in populations]
+    return {"object_layout": layout, "retained_clone_rss": variants}
 
 
 def command_for(binary: Path, case: Case) -> list[str]:
     instance = case.instance
+    if instance["kind"] == "dma":
+        return [str(binary), "-formulation", case.variant,
+                "-size", str(instance["descriptor_count"]), "-solutions", "0"]
     arguments = [str(binary), "--variant", case.variant,
                  "--instance-id", instance["id"]]
-    for field in ("width", "rounds", "key", "shift", "target_lo",
-                  "target_hi", "expected_solutions", "expected_input"):
-        arguments.extend(["--" + field.replace("_", "-"), str(instance[field])])
+    for field in XOR_FIELDS[2:]:
+        arguments.extend(["--"+field.replace("_", "-"), str(instance[field])])
     return arguments
 
 
@@ -376,7 +464,8 @@ def parse_fixture_output(stdout: str) -> dict[str, Any]:
 
 
 def run_case(
-    layout: Layout, binary: Path, case: Case, timeout: float, force: bool
+    layout: Layout, binary: Path, binary_sha256: str, case: Case,
+    timeout: float, force: bool
 ) -> str:
     result_path = layout.runs / f"{case.run_id}.json"
     stdout_path = layout.runs / f"{case.run_id}.stdout"
@@ -428,10 +517,12 @@ def run_case(
         "run_id": case.run_id,
         "status": status,
         "corpus": case.corpus,
+        "benchmark_kind": case.instance["kind"],
         "instance_id": case.instance["id"],
         "solver_variant": case.variant,
         "repetition": case.repetition,
         "command": command,
+        "binary_sha256": binary_sha256,
         "returncode": completed.returncode if completed else None,
         "runtime_seconds": elapsed,
         "peak_memory_kib": peak_kib,
@@ -466,12 +557,27 @@ def run_command(args: argparse.Namespace) -> int:
     layout = layout_from(args)
     private_root = args.private_corpus_root.resolve() if args.private_corpus_root else None
     discovered, private_status = discover_corpora(repo_root, private_root)
-    cases = [Case(corpus, instance, variant, repetition)
-             for corpus, instance in discovered
-             for variant in VARIANTS
-             for repetition in range(1, args.repetitions + 1)]
+    if args.kind != "all":
+        requested_kind = "xor-rotate" if args.kind == "xor" else "dma"
+        discovered = [(corpus, instance) for corpus, instance in discovered
+                      if instance["kind"] == requested_kind]
+    all_cases = [Case(corpus, instance, variant, repetition)
+                 for repetition in range(1,args.repetitions+1)
+                 for corpus,instance in discovered
+                 for variant in variants_for(instance)]
+    cases = all_cases
     if args.limit is not None:
         cases = cases[:args.limit]
+        groups: dict[tuple[str,str,int],set[str]] = {}
+        group_instances: dict[tuple[str,str,int],dict[str,Any]] = {}
+        for case in cases:
+            key = (case.corpus,case.instance["id"],case.repetition)
+            groups.setdefault(key,set()).add(case.variant)
+            group_instances[key] = case.instance
+        incomplete = [key for key,seen in groups.items()
+                      if seen != set(variants_for(group_instances[key]))]
+        if incomplete:
+            raise ValueError(f"--limit cuts an incomplete formulation group: {incomplete}")
     scan = boundary_scan(repo_root)
     packages = package_scan(args.package_output)
     plan = {
@@ -486,11 +592,42 @@ def run_command(args: argparse.Namespace) -> int:
     if args.dry_run:
         print(json.dumps(plan, indent=2, sort_keys=True))
         return 0
-    binary = resolve_binary(repo_root, args.binary.resolve() if args.binary else None)
     layout.create()
-    plan["binary"] = str(binary)
+    binaries: dict[str, Path] = {}
+    if any(case.instance["kind"] == "dma" for case in cases):
+        binaries["dma"] = resolve_binary(repo_root,
+            args.binary.resolve() if args.binary else None,"dma")
+    if any(case.instance["kind"] == "xor-rotate" for case in cases):
+        binaries["xor-rotate"] = resolve_binary(repo_root,
+            args.word_benchmark_binary.resolve() if args.word_benchmark_binary else None,
+            "xor-rotate")
+    plan["binary_identities"] = {
+        kind: binary_identity(repo_root,binary) for kind,binary in binaries.items()
+    }
+    plan["expected_records"] = {
+        case.run_id: {
+            "corpus": case.corpus,
+            "benchmark_kind": case.instance["kind"],
+            "instance_id": case.instance["id"],
+            "solver_variant": case.variant,
+            "repetition": case.repetition,
+            "command": command_for(binaries[case.instance["kind"]],case),
+            "binary_sha256": plan["binary_identities"][case.instance["kind"]]["sha256"],
+            "solver_identity": (
+                {"formulation": case.variant, "size": case.instance["descriptor_count"]}
+                if case.instance["kind"] == "dma" else
+                {"solver_variant": case.variant, "instance_id": case.instance["id"]}
+            ),
+        } for case in cases
+    }
+    plan["case_order"] = "round-robin repetition, instance, variant"
     atomic_json(layout.root / "run-plan.json", plan)
-    states = [run_case(layout, binary, case, args.timeout, args.force) for case in cases]
+    states = [run_case(layout,binaries[case.instance["kind"]],
+                       plan["binary_identities"][case.instance["kind"]]["sha256"],
+                       case,args.timeout,args.force) for case in cases]
+    if "dma" in binaries:
+        atomic_json(layout.root / "memory.json",
+                    memory_measurements(binaries["dma"],args.memory_timeout))
     print(json.dumps({"result_root": str(layout.root), "states": states,
                       "private_corpus": private_status}, sort_keys=True))
     return 1 if any(state in ("failed", "timeout") for state in states) else 0
@@ -504,15 +641,48 @@ def load_runs(layout: Layout) -> list[dict[str, Any]]:
 
 def analyze_command(args: argparse.Namespace) -> int:
     layout = layout_from(args)
-    runs = load_runs(layout)
     plan_path = layout.root / "run-plan.json"
-    plan = load_json(plan_path) if plan_path.is_file() else {}
-    grouped: dict[tuple[str, str, str], list[dict[str, Any]]] = {}
+    if not plan_path.is_file():
+        raise ValueError("run-plan.json is required for exact matrix validation")
+    plan = load_json(plan_path)
+    planned = plan.get("run_ids")
+    if not isinstance(planned,list) or not all(isinstance(value,str) for value in planned):
+        raise ValueError("run plan lacks a valid run_ids matrix")
+    if len(planned) != len(set(planned)) or plan.get("case_count") != len(planned):
+        raise ValueError("run plan contains duplicate or inconsistent planned cases")
+    expected_records = plan.get("expected_records")
+    if not isinstance(expected_records,dict) or set(expected_records) != set(planned):
+        raise ValueError("run plan lacks exact metadata for every planned run")
+    paths = sorted(layout.runs.glob("*.json")) if layout.runs.is_dir() else []
+    actual_names = [path.stem for path in paths]
+    missing = sorted(set(planned)-set(actual_names))
+    unexpected = sorted(set(actual_names)-set(planned))
+    if missing or unexpected or len(paths) != len(planned):
+        raise ValueError(f"run matrix mismatch: missing={missing}, unexpected={unexpected}")
+    runs = [load_json(path) for path in paths]
+    for path,run in zip(paths,runs):
+        if run.get("run_id") != path.stem:
+            raise ValueError(f"{path}: embedded run_id does not match filename")
+        if run.get("status") != "ok" or not isinstance(run.get("solver_metrics"),dict):
+            raise ValueError(f"{path}: planned run is not successful")
+        expected = expected_records[path.stem]
+        for field in ("corpus","benchmark_kind","instance_id","solver_variant",
+                      "repetition","command","binary_sha256"):
+            if run.get(field) != expected.get(field):
+                raise ValueError(f"{path}: {field} does not match the run plan")
+        metrics = run["solver_metrics"]
+        if metrics.get("status") != "ok":
+            raise ValueError(f"{path}: solver output status is not ok")
+        for field,value in expected.get("solver_identity",{}).items():
+            if metrics.get(field) != value:
+                raise ValueError(f"{path}: solver output {field} does not match the run plan")
+    grouped: dict[tuple[str, str, str, str], list[dict[str, Any]]] = {}
     for run in runs:
-        key = (run["corpus"], run["instance_id"], run["solver_variant"])
+        key = (run.get("benchmark_kind","xor-rotate"),run["corpus"],
+               run["instance_id"],run["solver_variant"])
         grouped.setdefault(key, []).append(run)
     groups = []
-    for (corpus, instance_id, variant), values in sorted(grouped.items()):
+    for (kind, corpus, instance_id, variant), values in sorted(grouped.items()):
         successful = [value for value in values if value["status"] == "ok"]
         runtimes = [value["runtime_seconds"] for value in successful]
         memories = [value["peak_memory_kib"] for value in successful
@@ -522,7 +692,7 @@ def analyze_command(args: argparse.Namespace) -> int:
             observed = [row[field] for row in metric_rows if field in row]
             return statistics.fmean(observed) if observed else None
         groups.append({
-            "corpus": corpus,
+            "benchmark_kind": kind, "corpus": corpus,
             "instance_id": instance_id,
             "solver_variant": variant,
             "runs": len(values),
@@ -530,14 +700,21 @@ def analyze_command(args: argparse.Namespace) -> int:
             "runtime_seconds_mean": statistics.fmean(runtimes) if runtimes else None,
             "runtime_seconds_median": statistics.median(runtimes) if runtimes else None,
             "peak_memory_kib_mean": statistics.fmean(memories) if memories else None,
-            "allocations_mean": average("allocations"),
-            "allocation_metric": "model-variable-implementations",
-            "propagation_calls_mean": average("propagation_calls"),
-            "clone_footprint_mean": average("clone_footprint"),
-            "clone_footprint_metric": "model-variable-implementations-plus-stable-clone-actors",
+            "propagations_mean": average("propagations") or average("propagation_calls"),
             "nodes_mean": average("nodes"),
             "failures_mean": average("failures"),
+            "solutions": metric_rows[0].get("solutions") if metric_rows else None,
+            "checksum": metric_rows[0].get("checksum") if metric_rows else None,
         })
+    parity = []
+    dma_runs = [run for run in runs if run.get("benchmark_kind") == "dma"]
+    for instance_id in sorted({run["instance_id"] for run in dma_runs}):
+        observed = {(run["solver_metrics"].get("solutions"), run["solver_metrics"].get("checksum"))
+                    for run in dma_runs if run["instance_id"] == instance_id}
+        parity.append({"instance_id": instance_id, "status": "ok" if len(observed) == 1 else "mismatch",
+                       "observed": [list(value) for value in sorted(observed)]})
+    if any(row["status"] != "ok" for row in parity):
+        raise ValueError("cross-formulation solution count/checksum mismatch")
     summary = {
         "schema_version": SCHEMA_VERSION,
         "name": args.name,
@@ -546,6 +723,10 @@ def analyze_command(args: argparse.Namespace) -> int:
         "private_corpus": plan.get("private_corpus", {}),
         "repository_boundary": plan.get("repository_boundary", {}),
         "package_scan": plan.get("package_scan", {}),
+        "binary_identities": plan.get("binary_identities", {}),
+        "case_order": plan.get("case_order"),
+        "parity": parity,
+        "memory": load_json(layout.root / "memory.json") if (layout.root / "memory.json").is_file() else {},
         "groups": groups,
     }
     layout.analysis.mkdir(parents=True, exist_ok=True)
@@ -572,30 +753,35 @@ def report_command(args: argparse.Namespace) -> int:
         (f"Successful runs: {summary['successful_run_count']} / "
          f"{summary['run_count']}."),
         "",
-        "| corpus | instance | solver variant | runs | runtime mean (s) | peak RSS mean (KiB) | allocations | propagation calls | clone footprint | nodes | failures |",
-        "|---|---|---|---:|---:|---:|---:|---:|---:|---:|---:|",
+        "| corpus | instance | formulation | runs | runtime mean (s) | solutions | checksum | propagations | nodes | failures |",
+        "|---|---|---|---:|---:|---:|---:|---:|---:|---:|",
     ]
     for group in summary["groups"]:
         lines.append("| " + " | ".join((
             group["corpus"], group["instance_id"], group["solver_variant"],
             str(group["successful_runs"]),
             format_metric(group["runtime_seconds_mean"], 6),
-            format_metric(group["peak_memory_kib_mean"], 1),
-            format_metric(group["allocations_mean"], 1),
-            format_metric(group["propagation_calls_mean"], 1),
-            format_metric(group["clone_footprint_mean"], 1),
+            format_metric(group["solutions"]),
+            format_metric(group["checksum"]),
+            format_metric(group["propagations_mean"], 1),
             format_metric(group["nodes_mean"], 1),
             format_metric(group["failures_mean"], 1),
         )) + " |")
     private_status = summary.get("private_corpus", {})
     package_status = summary.get("package_scan", {})
+    kinds = {group.get("benchmark_kind") for group in summary["groups"]}
+    interpretation = []
+    if "dma" in kinds:
+        interpretation.append("The four DMA formulations solve the same descriptor-window problem; this instance does not predict all Word workloads.")
+    if "xor-rotate" in kinds:
+        interpretation.append("The XOR/rotate comparison is native Word versus an equivalent Boolean decomposition, not an SMT comparison.")
     lines.extend([
         "",
         "## Interpretation boundaries",
         "",
-        "This compares native Gecode Word constraints with an equivalent Gecode Boolean decomposition. It is not an SMT comparison.",
+        " ".join(interpretation),
         "",
-        "Allocation and clone-footprint values are structural model counters, not kernel allocation counts or byte measurements. Peak RSS is best effort.",
+        "Memory evidence uses current object sizes and observed RSS slopes from retained stabilized clones; no structural entity formulas are used as byte evidence.",
         "",
         f"Private corpus discovery: `{private_status.get('status', 'not-recorded')}` with {private_status.get('loaded_instances', 0)} loaded instances.",
         "",
@@ -619,10 +805,13 @@ def parser() -> argparse.ArgumentParser:
     run = subparsers.add_parser("run", help="run or resume benchmark cases")
     common_parser(run)
     run.add_argument("--binary", type=Path)
+    run.add_argument("--word-benchmark-binary", type=Path)
+    run.add_argument("--kind", choices=("all","dma","xor"), default="all")
     run.add_argument("--private-corpus-root", type=Path)
     run.add_argument("--package-output", type=Path, action="append", default=[])
     run.add_argument("--repetitions", type=int, default=1)
     run.add_argument("--timeout", type=float, default=60.0)
+    run.add_argument("--memory-timeout", type=float, default=300.0)
     run.add_argument("--limit", type=int)
     run.add_argument("--force", action="store_true")
     run.add_argument("--dry-run", action="store_true")
