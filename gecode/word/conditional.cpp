@@ -88,16 +88,43 @@ namespace Gecode {
       WordVar result) {
     check_widths(then_word,else_word,result);
     GECODE_POST;
-    if (Word::WordView(then_word) == Word::WordView(else_word)) {
-      GECODE_ES_FAIL((Word::Rel::Eq<Word::WordView,Word::WordView>
-                      ::post(home,Word::WordView(then_word),
-                             Word::WordView(result))));
+    const Word::WordView t(then_word), e(else_word), r(result);
+    const WordDomainType kind=then_word.domain_type();
+    const bool homogeneous=(else_word.domain_type() == kind) &&
+      (result.domain_type() == kind);
+    if (t == e) {
+      if (homogeneous && (kind == WDT_UNSIGNED))
+        GECODE_ES_FAIL((Word::Rel::BoundEq<
+          Word::UnsignedWordView,Word::UnsignedWordView>::post(
+            home,Word::UnsignedWordView(then_word),
+            Word::UnsignedWordView(result))));
+      else if (homogeneous && (kind == WDT_SIGNED))
+        GECODE_ES_FAIL((Word::Rel::BoundEq<
+          Word::SignedWordView,Word::SignedWordView>::post(
+            home,Word::SignedWordView(then_word),
+            Word::SignedWordView(result))));
+      else
+        GECODE_ES_FAIL((Word::Rel::Eq<Word::WordView,Word::WordView>
+                        ::post(home,t,r)));
+      return;
+    }
+    if ((t != r) && (e != r) && homogeneous && (kind == WDT_UNSIGNED)) {
+      GECODE_ES_FAIL((Word::Conditional::BoundIte<
+        Word::UnsignedWordView>::post(
+          home,Int::BoolView(control),Word::UnsignedWordView(then_word),
+          Word::UnsignedWordView(else_word),Word::UnsignedWordView(result))));
+      return;
+    }
+    if ((t != r) && (e != r) && homogeneous && (kind == WDT_SIGNED)) {
+      GECODE_ES_FAIL((Word::Conditional::BoundIte<
+        Word::SignedWordView>::post(
+          home,Int::BoolView(control),Word::SignedWordView(then_word),
+          Word::SignedWordView(else_word),Word::SignedWordView(result))));
       return;
     }
     GECODE_ES_FAIL((Word::Conditional::Ite<
       Word::WordView,Word::WordView,Word::WordView>::post(
-        home,Int::BoolView(control),Word::WordView(then_word),
-        Word::WordView(else_word),Word::WordView(result))));
+        home,Int::BoolView(control),t,e,r)));
   }
 
   void

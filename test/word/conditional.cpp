@@ -297,9 +297,265 @@ namespace Test { namespace Word {
       }
     };
 
+    class Bounded : public Base {
+    private:
+      using WordValue = Gecode::WordValue;
+
+      static WordValue encode(Gecode::WordDomainType kind,
+                              unsigned int width, WordValue rank) {
+        return rank ^ ((kind == Gecode::WDT_SIGNED) ?
+                       (WordValue(1) << (width-1)) : 0U);
+      }
+
+      class BoundedSpace : public Gecode::Space {
+      public:
+        Gecode::BoolVar control;
+        Gecode::WordVar then_word, else_word, result;
+        BoundedSpace(unsigned int width, Gecode::WordDomainType kind,
+                     WordValue tmin, WordValue tmax,
+                     WordValue emin, WordValue emax,
+                     WordValue rmin, WordValue rmax)
+          : control(*this,0,1),
+            then_word(*this,width,kind,encode(kind,width,tmin),
+                      encode(kind,width,tmax)),
+            else_word(*this,width,kind,encode(kind,width,emin),
+                      encode(kind,width,emax)),
+            result(*this,width,kind,encode(kind,width,rmin),
+                   encode(kind,width,rmax)) {
+          Gecode::ite(*this,control,then_word,else_word,result);
+        }
+        BoundedSpace(BoundedSpace& s) : Gecode::Space(s) {
+          control.update(*this,s.control);
+          then_word.update(*this,s.then_word);
+          else_word.update(*this,s.else_word);
+          result.update(*this,s.result);
+        }
+        Gecode::Space* copy(void) { return new BoundedSpace(*this); }
+      };
+
+      static WordValue minimum_rank(const Gecode::WordVar& x,
+                                    Gecode::WordDomainType kind,
+                                    unsigned int width) {
+        return Gecode::Word::rank(kind,width,x.minimum());
+      }
+
+      static WordValue maximum_rank(const Gecode::WordVar& x,
+                                    Gecode::WordDomainType kind,
+                                    unsigned int width) {
+        return Gecode::Word::rank(kind,width,x.maximum());
+      }
+
+      static bool exhaustive_intervals(void) {
+        using namespace Gecode;
+        for (WordDomainType kind : {WDT_UNSIGNED,WDT_SIGNED})
+          for (unsigned int width=1; width<=3; width++) {
+            const WordValue n=WordValue(1) << width;
+            for (WordValue tmin=0; tmin<n; tmin++)
+              for (WordValue tmax=tmin; tmax<n; tmax++)
+                for (WordValue emin=0; emin<n; emin++)
+                  for (WordValue emax=emin; emax<n; emax++)
+                    for (WordValue rmin=0; rmin<n; rmin++)
+                      for (WordValue rmax=rmin; rmax<n; rmax++) {
+                        const bool then_support =
+                          (tmin <= rmax) && (rmin <= tmax);
+                        const bool else_support =
+                          (emin <= rmax) && (rmin <= emax);
+                        BoundedSpace s(width,kind,tmin,tmax,emin,emax,
+                                       rmin,rmax);
+                        const bool failed=s.status() == SS_FAILED;
+                        if (failed == (then_support || else_support)) {
+                          ::Test::olog << "bounded ITE oracle failure width="
+                            << width << " kind=" << kind << " intervals="
+                            << tmin << ',' << tmax << ';'
+                            << emin << ',' << emax << ';'
+                            << rmin << ',' << rmax << std::endl;
+                          return false;
+                        }
+                        if (failed)
+                          continue;
+                        if (s.control.assigned() &&
+                            (s.control.val() ? !then_support : !else_support))
+                          return false;
+                        if (then_support != else_support &&
+                            (!s.control.assigned() ||
+                             (s.control.val() != (then_support ? 1 : 0))))
+                          return false;
+                        if (then_support && else_support &&
+                            s.control.assigned())
+                          return false;
+
+                        WordValue expected_min, expected_max;
+                        if (!then_support) {
+                          expected_min=std::max(emin,rmin);
+                          expected_max=std::min(emax,rmax);
+                        } else if (!else_support) {
+                          expected_min=std::max(tmin,rmin);
+                          expected_max=std::min(tmax,rmax);
+                        } else {
+                          expected_min=std::max(rmin,std::min(tmin,emin));
+                          expected_max=std::min(rmax,std::max(tmax,emax));
+                        }
+                        if ((minimum_rank(s.result,kind,width) != expected_min) ||
+                            (maximum_rank(s.result,kind,width) != expected_max))
+                          return false;
+
+                        for (WordValue value=0; value<n; value++) {
+                          const WordValue rank=
+                            Gecode::Word::rank(kind,width,value);
+                          const bool t_supported = then_support ?
+                            ((rank >= std::max(tmin,rmin)) &&
+                             (rank <= std::min(tmax,rmax))) : false;
+                          const bool e_supported = else_support ?
+                            ((rank >= std::max(emin,rmin)) &&
+                             (rank <= std::min(emax,rmax))) : false;
+                          if ((t_supported && !s.then_word.in(value)) ||
+                              (e_supported && !s.else_word.in(value)) ||
+                              ((t_supported || e_supported) &&
+                               !s.result.in(value)))
+                            return false;
+                        }
+                      }
+          }
+        return true;
+      }
+
+      static bool focused_lifecycle(void) {
+        using namespace Gecode;
+        for (WordDomainType kind : {WDT_UNSIGNED,WDT_SIGNED}) {
+          BoundedSpace hull(3,kind,1,2,5,6,0,7);
+          if ((hull.status() == SS_FAILED) || hull.control.assigned() ||
+              (minimum_rank(hull.result,kind,3) != 1U) ||
+              (maximum_rank(hull.result,kind,3) != 6U))
+            return false;
+
+          // [3,4] and [1,2] have overlapping cubes, so this decision needs
+          // ranked interval disjointness in addition to the cube test.
+          BoundedSpace disjoint(3,kind,3,4,1,2,1,2);
+          if ((disjoint.status() == SS_FAILED) || !disjoint.control.zero() ||
+              (minimum_rank(disjoint.result,kind,3) != 1U) ||
+              (maximum_rank(disjoint.result,kind,3) != 2U))
+            return false;
+
+          BoundedSpace selected_then(3,kind,1,4,5,6,3,7);
+          rel(selected_then,selected_then.control,IRT_EQ,1);
+          if ((selected_then.status() == SS_FAILED) ||
+              (minimum_rank(selected_then.then_word,kind,3) != 3U) ||
+              (maximum_rank(selected_then.result,kind,3) != 4U))
+            return false;
+          BoundedSpace selected_else(3,kind,1,2,4,7,0,5);
+          rel(selected_else,selected_else.control,IRT_EQ,0);
+          if ((selected_else.status() == SS_FAILED) ||
+              (minimum_rank(selected_else.result,kind,3) != 4U) ||
+              (maximum_rank(selected_else.else_word,kind,3) != 5U))
+            return false;
+        }
+
+        class Duplicate : public Space {
+        public:
+          BoolVar control;
+          WordVar branch, result;
+          Duplicate(void)
+            : control(*this,0,1), branch(*this,4,WDT_UNSIGNED,2U,9U),
+              result(*this,4,WDT_UNSIGNED,5U,12U) {
+            ite(*this,control,branch,branch,result);
+          }
+          Duplicate(Duplicate& s) : Space(s) {
+            control.update(*this,s.control); branch.update(*this,s.branch);
+            result.update(*this,s.result);
+          }
+          Space* copy(void) { return new Duplicate(*this); }
+        } duplicate;
+        if ((duplicate.status() == SS_FAILED) || duplicate.control.assigned() ||
+            (duplicate.branch.minimum() != 5U) ||
+            (duplicate.result.maximum() != 9U))
+          return false;
+
+        class ResultAlias : public Space {
+        public:
+          BoolVar control;
+          WordVar branch, other;
+          ResultAlias(void)
+            : control(*this,0,1), branch(*this,3,WDT_UNSIGNED,1U,4U),
+              other(*this,3,WDT_UNSIGNED,5U,6U) {
+            ite(*this,control,branch,other,branch);
+          }
+          ResultAlias(ResultAlias& s) : Space(s) {
+            control.update(*this,s.control); branch.update(*this,s.branch);
+            other.update(*this,s.other);
+          }
+          Space* copy(void) { return new ResultAlias(*this); }
+        } alias;
+        if (alias.status() == SS_FAILED)
+          return false;
+
+        BoundedSpace source(3,WDT_UNSIGNED,1,3,5,7,0,7);
+        if ((source.status() == SS_FAILED) || source.control.assigned())
+          return false;
+        BoundedSpace* clone=static_cast<BoundedSpace*>(source.clone());
+        dom(*clone,clone->result,6U);
+        const bool clone_ok=(clone->status() != SS_FAILED) &&
+          clone->control.zero() && clone->else_word.assigned() &&
+          (clone->else_word.val() == 6U) && !source.control.assigned();
+        delete clone;
+        return clone_ok;
+      }
+
+      static bool replay(void) {
+        using namespace Gecode;
+        class ReplaySpace : public Space {
+        public:
+          BoolVar control;
+          WordVar then_word, else_word, result;
+          ReplaySpace(void)
+            : control(*this,0,1),
+              then_word(*this,2,WDT_UNSIGNED,0U,1U),
+              else_word(*this,2,WDT_UNSIGNED,2U,3U),
+              result(*this,2,WDT_UNSIGNED) {
+            ite(*this,control,then_word,else_word,result);
+            WordVarArgs words={then_word,else_word};
+            branch(*this,words,WORD_VAR_SIZE_MIN(),WORD_VAL_SPLIT_MIN());
+            branch(*this,control,BOOL_VAL_MIN());
+          }
+          ReplaySpace(ReplaySpace& s) : Space(s) {
+            control.update(*this,s.control);
+            then_word.update(*this,s.then_word);
+            else_word.update(*this,s.else_word);
+            result.update(*this,s.result);
+          }
+          Space* copy(void) { return new ReplaySpace(*this); }
+        };
+        ReplaySpace* root=new ReplaySpace;
+        Search::Options options;
+        options.c_d=64;
+        options.a_d=64;
+        DFS<ReplaySpace> dfs(root,options);
+        delete root;
+        unsigned int solutions=0;
+        while (ReplaySpace* solution=dfs.next()) {
+          const WordValue expected=solution->control.val() ?
+            solution->then_word.val() : solution->else_word.val();
+          const bool ok=solution->result.assigned() &&
+            (solution->result.val() == expected) &&
+            (PropagatorGroup::all.size(*solution) == 0U);
+          delete solution;
+          if (!ok)
+            return false;
+          solutions++;
+        }
+        return solutions == 8U;
+      }
+
+    public:
+      Bounded(void) : Base("Word::Conditional::Bounded") {}
+      bool run(void) {
+        return exhaustive_intervals() && focused_lifecycle() && replay();
+      }
+    };
+
     Mask mask;
     Boolean boolean;
     Lifecycle lifecycle;
+    Bounded bounded;
 
   }
 

@@ -62,6 +62,32 @@ namespace Gecode { namespace Word { namespace Conditional {
                            V0 x0, V1 x1, V2 x2);
   };
 
+  /** \brief Boolean-controlled bounded word if-then-else propagator
+   *
+   * With an unknown control, the result is narrowed to the cube hull and
+   * ranked interval hull of both branches. A branch whose cube and ranked
+   * interval are disjoint from the result is rejected.
+   */
+  template<class View>
+  class BoundIte : public Propagator {
+  protected:
+    Int::BoolView b;
+    View x0;
+    View x1;
+    View x2;
+    BoundIte(Home home, Int::BoolView b, View x0, View x1, View x2);
+    BoundIte(Space& home, BoundIte& p);
+  public:
+    virtual Actor* copy(Space& home);
+    virtual PropCost cost(const Space& home,
+                          const ModEventDelta& med) const;
+    virtual void reschedule(Space& home);
+    virtual size_t dispose(Space& home);
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+    static ExecStatus post(Home home, Int::BoolView b,
+                           View x0, View x1, View x2);
+  };
+
 }}}
 
 #include <gecode/word/conditional/ite.hpp>

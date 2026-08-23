@@ -141,6 +141,125 @@ namespace Gecode { namespace Word { namespace Conditional {
     return ES_FIX;
   }
 
+  template<class View>
+  forceinline
+  BoundIte<View>::BoundIte(Home home, Int::BoolView b0,
+                          View y0, View y1, View y2)
+    : Propagator(home), b(b0), x0(y0), x1(y1), x2(y2) {
+    b.subscribe(home,*this,Int::PC_BOOL_VAL);
+    x0.subscribe(home,*this,PC_WORD_DOM);
+    x1.subscribe(home,*this,PC_WORD_DOM);
+    x2.subscribe(home,*this,PC_WORD_DOM);
+  }
+
+  template<class View>
+  forceinline
+  BoundIte<View>::BoundIte(Space& home, BoundIte<View>& p)
+    : Propagator(home,p) {
+    b.update(home,p.b);
+    x0.update(home,p.x0);
+    x1.update(home,p.x1);
+    x2.update(home,p.x2);
+  }
+
+  template<class View>
+  forceinline Actor*
+  BoundIte<View>::copy(Space& home) {
+    return new (home) BoundIte<View>(home,*this);
+  }
+
+  template<class View>
+  forceinline PropCost
+  BoundIte<View>::cost(const Space&, const ModEventDelta&) const {
+    return PropCost::ternary(PropCost::LO);
+  }
+
+  template<class View>
+  forceinline void
+  BoundIte<View>::reschedule(Space& home) {
+    b.reschedule(home,*this,Int::PC_BOOL_VAL);
+    x0.reschedule(home,*this,PC_WORD_DOM);
+    x1.reschedule(home,*this,PC_WORD_DOM);
+    x2.reschedule(home,*this,PC_WORD_DOM);
+  }
+
+  template<class View>
+  forceinline size_t
+  BoundIte<View>::dispose(Space& home) {
+    b.cancel(home,*this,Int::PC_BOOL_VAL);
+    x0.cancel(home,*this,PC_WORD_DOM);
+    x1.cancel(home,*this,PC_WORD_DOM);
+    x2.cancel(home,*this,PC_WORD_DOM);
+    (void) Propagator::dispose(home);
+    return sizeof(*this);
+  }
+
+  template<class View>
+  forceinline ExecStatus
+  BoundIte<View>::post(Home home, Int::BoolView b,
+                       View x0, View x1, View x2) {
+    if (b.one())
+      return Rel::BoundEq<View,View>::post(home,x2,x0);
+    if (b.zero())
+      return Rel::BoundEq<View,View>::post(home,x2,x1);
+    if (Rel::bound_aliases(x0,x1))
+      return Rel::BoundEq<View,View>::post(home,x2,x0);
+
+    GECODE_ME_CHECK(x2.narrow_domain(
+      home,x0.lo()&x1.lo(),x0.hi()|x1.hi(),
+      std::min(x0.rank_minimum(),x1.rank_minimum()),
+      std::max(x0.rank_maximum(),x1.rank_maximum())));
+    const Int::RelTest eq20=Rel::bound_eq_test(x2,x0);
+    const Int::RelTest eq21=Rel::bound_eq_test(x2,x1);
+    if ((eq20 == Int::RT_FALSE) && (eq21 == Int::RT_FALSE))
+      return ES_FAILED;
+    if (eq20 == Int::RT_FALSE) {
+      GECODE_ME_CHECK(b.zero(home));
+      return Rel::BoundEq<View,View>::post(home,x2,x1);
+    }
+    if (eq21 == Int::RT_FALSE) {
+      GECODE_ME_CHECK(b.one(home));
+      return Rel::BoundEq<View,View>::post(home,x2,x0);
+    }
+    if ((eq20 == Int::RT_TRUE) && (eq21 == Int::RT_TRUE))
+      return ES_OK;
+    (void) new (home) BoundIte<View>(home,b,x0,x1,x2);
+    return ES_OK;
+  }
+
+  template<class View>
+  ExecStatus
+  BoundIte<View>::propagate(Space& home, const ModEventDelta&) {
+    if (b.one())
+      GECODE_REWRITE(*this,(Rel::BoundEq<View,View>::post(
+        home(*this),x2,x0)));
+    if (b.zero())
+      GECODE_REWRITE(*this,(Rel::BoundEq<View,View>::post(
+        home(*this),x2,x1)));
+
+    GECODE_ME_CHECK(x2.narrow_domain(
+      home,x0.lo()&x1.lo(),x0.hi()|x1.hi(),
+      std::min(x0.rank_minimum(),x1.rank_minimum()),
+      std::max(x0.rank_maximum(),x1.rank_maximum())));
+    const Int::RelTest eq20=Rel::bound_eq_test(x2,x0);
+    const Int::RelTest eq21=Rel::bound_eq_test(x2,x1);
+    if ((eq20 == Int::RT_FALSE) && (eq21 == Int::RT_FALSE))
+      return ES_FAILED;
+    if (eq20 == Int::RT_FALSE) {
+      GECODE_ME_CHECK(b.zero_none(home));
+      GECODE_REWRITE(*this,(Rel::BoundEq<View,View>::post(
+        home(*this),x2,x1)));
+    }
+    if (eq21 == Int::RT_FALSE) {
+      GECODE_ME_CHECK(b.one_none(home));
+      GECODE_REWRITE(*this,(Rel::BoundEq<View,View>::post(
+        home(*this),x2,x0)));
+    }
+    if ((eq20 == Int::RT_TRUE) && (eq21 == Int::RT_TRUE))
+      return home.ES_SUBSUMED(*this);
+    return ES_FIX;
+  }
+
 }}}
 
 // STATISTICS: word-prop

@@ -3,7 +3,7 @@ schema_version = 1
 id = "word-014"
 key = "add-bounded-bool-ite"
 area = "word"
-status = "open"
+status = "done"
 complexity = "advanced"
 blocked_by = ["word-004"]
 +++
@@ -26,13 +26,23 @@ Bool-controlled ITE always instantiates the bit-only WordView actor. With an und
 
 ## Done when
 
-- [ ] An undecided bounded ITE publishes both the cube hull and sound ranked interval hull.
-- [ ] Cube-plus-range disjointness can eliminate a branch and decide the Boolean control.
-- [ ] Small-width oracles cover signed and unsigned intervals, aliases, duplicate branches, selected controls, cloning, and replay.
-- [ ] The realistic mixed model demonstrates useful retained bounds or search value without compact regression.
+- [x] An undecided bounded ITE publishes both the cube hull and sound ranked interval hull.
+- [x] Cube-plus-range disjointness can eliminate a branch and decide the Boolean control.
+- [x] Small-width oracles cover signed and unsigned intervals, aliases, duplicate branches, selected controls, cloning, and replay.
+- [x] The realistic mixed model demonstrates useful retained bounds or search value without compact regression.
 
 ## Validation
 
 - Run focused Word Conditional tests and the small-width oracle.
 - Run interleaved Release comparisons on the realistic mixed model and compact controls.
 - Run TestFramework.
+
+## Result
+
+Preserve unsigned and signed bounded Word domains through Boolean-controlled ITE with range-aware branch elimination.
+
+Validation:
+
+- Independent verifier passed exhaustive bounded Conditional oracle, full Conditional group, anchored Word::TestFramework, lifecycle and fallback audit.
+- Twenty alternating exact-parent/candidate DMA trials preserved semantics and compact counters; bounded selected-result ranges tightened materially.
+- Diff checks, out-of-tree integration builds, and immutable context comparison passed.
