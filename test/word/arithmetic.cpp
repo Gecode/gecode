@@ -33,6 +33,7 @@
 #include "test/word.hh"
 
 #include <gecode/search.hh>
+#include <gecode/word/arithmetic.hh>
 
 namespace Test { namespace Word {
 
@@ -2140,6 +2141,286 @@ namespace Test { namespace Word {
 
     class BoundedLifecycle : public Base {
     private:
+      struct OracleDomain {
+        Gecode::WordValue lo, hi, minimum, maximum;
+      };
+
+      static std::vector<OracleDomain>
+      oracle_domains(unsigned int width, Gecode::WordDomainType kind) {
+        using namespace Gecode;
+        const WordValue mask=Gecode::Word::width_mask(width);
+        const WordValue middle=WordValue(1) << (width-1);
+        std::vector<OracleDomain> candidates = {
+          {0U,mask,0U,mask},
+          {0U,mask,0U,middle-1U}, {0U,mask,middle,mask},
+          {0U,mask,1U,mask-1U},
+          {0U,mask,0U,0U}, {0U,mask,1U,1U},
+          {0U,mask,mask,mask},
+          {0U,mask & ~WordValue(1),0U,mask},
+          {1U,mask,0U,mask},
+          {0U,mask & ~middle,0U,mask},
+          {middle,mask,0U,mask},
+          {WordValue(0x5) & mask,WordValue(0x5) & mask,0U,mask}
+        };
+        std::vector<OracleDomain> rows;
+        for (OracleDomain d : candidates) {
+          if (!Gecode::Word::synchronize_domain(width,kind,d.lo,d.hi,
+                                        d.minimum,d.maximum))
+            continue;
+          bool duplicate=false;
+          for (const OracleDomain& old : rows)
+            duplicate |= (d.lo == old.lo) && (d.hi == old.hi) &&
+              (d.minimum == old.minimum) && (d.maximum == old.maximum);
+          if (!duplicate)
+            rows.push_back(d);
+        }
+        return rows;
+      }
+
+      static bool oracle_in(const OracleDomain& d,
+                            Gecode::WordDomainType kind,
+                            unsigned int width, Gecode::WordValue value) {
+        const Gecode::WordValue rank=Gecode::Word::rank(kind,width,value);
+        return ((value & d.lo) == d.lo) && ((value & ~d.hi) == 0U) &&
+          (rank >= d.minimum) && (rank <= d.maximum);
+      }
+
+      class OracleSpace : public Gecode::Space {
+      public:
+        Gecode::WordVarArray x;
+        int role[3];
+        OracleSpace(unsigned int width, Gecode::WordDomainType kind,
+                    const OracleDomain (&d)[3], const int (&map)[3])
+          : x(*this,3,width,kind) {
+          for (int i=0; i<3; i++) role[i]=map[i];
+          for (int i=0; i<3; i++) {
+            Gecode::Word::WordView v(x[role[i]]);
+            if (Gecode::me_failed(v.narrow_rank_range(
+                                  *this,d[i].minimum,d[i].maximum)) ||
+                Gecode::me_failed(v.narrow(*this,d[i].lo,d[i].hi)))
+              fail();
+          }
+        }
+        OracleSpace(OracleSpace& s) : Gecode::Space(s) {
+          x.update(*this,s.x);
+          for (int i=0; i<3; i++) role[i]=s.role[i];
+        }
+        Gecode::WordVar at(int i) const { return x[role[i]]; }
+        Gecode::Space* copy(void) { return new OracleSpace(*this); }
+      };
+
+      static bool oracle_selected(OracleSpace& s, Op op,
+                                  Gecode::WordDomainType kind) {
+        using namespace Gecode;
+        if (s.failed()) return false;
+        if (op == NEG)
+          return (kind == WDT_SIGNED) &&
+            Gecode::Word::Arithmetic::BoundNeg<
+              Gecode::Word::SignedWordView>::numeric_regime(
+                Gecode::Word::SignedWordView(s.at(0)));
+        if (kind == WDT_UNSIGNED) {
+          Gecode::Word::UnsignedWordView x(s.at(0)), y(s.at(1));
+          if (op == ADD)
+            return Gecode::Word::Arithmetic::BoundArithmetic<
+              Gecode::Word::UnsignedWordView,
+              Gecode::Word::Arithmetic::BA_ADD>::numeric_regime(x,y);
+          if (op == SUB)
+            return Gecode::Word::Arithmetic::BoundArithmetic<
+              Gecode::Word::UnsignedWordView,
+              Gecode::Word::Arithmetic::BA_SUB>::numeric_regime(x,y);
+          return Gecode::Word::Arithmetic::BoundArithmetic<
+            Gecode::Word::UnsignedWordView,
+            Gecode::Word::Arithmetic::BA_MULT>::numeric_regime(x,y);
+        }
+        Gecode::Word::SignedWordView x(s.at(0)), y(s.at(1));
+        if (op == ADD)
+          return Gecode::Word::Arithmetic::BoundArithmetic<
+            Gecode::Word::SignedWordView,
+            Gecode::Word::Arithmetic::BA_ADD>::numeric_regime(x,y);
+        if (op == SUB)
+          return Gecode::Word::Arithmetic::BoundArithmetic<
+            Gecode::Word::SignedWordView,
+            Gecode::Word::Arithmetic::BA_SUB>::numeric_regime(x,y);
+        return Gecode::Word::Arithmetic::BoundArithmetic<
+          Gecode::Word::SignedWordView,
+          Gecode::Word::Arithmetic::BA_MULT>::numeric_regime(x,y);
+      }
+
+      static bool oracle_terminal_selected(OracleSpace& s,
+                                           Op op,
+                                           Gecode::WordDomainType kind,
+                                           int terminal) {
+        using namespace Gecode;
+        if (s.failed() || (kind != WDT_UNSIGNED) ||
+            ((terminal != 0) && (terminal != 1)))
+          return false;
+        Gecode::Word::UnsignedWordView x(s.at(0)), y(s.at(1));
+        if ((op == ADD) && (terminal == 0))
+          return Gecode::Word::Arithmetic::BoundArithmetic<
+            Gecode::Word::UnsignedWordView,
+            Gecode::Word::Arithmetic::BA_ADD,
+            Gecode::Word::Arithmetic::BT_CLEAR>::numeric_regime(x,y);
+        if (op == ADD)
+          return Gecode::Word::Arithmetic::BoundArithmetic<
+            Gecode::Word::UnsignedWordView,
+            Gecode::Word::Arithmetic::BA_ADD,
+            Gecode::Word::Arithmetic::BT_SET>::numeric_regime(x,y);
+        if (terminal == 0)
+          return Gecode::Word::Arithmetic::BoundArithmetic<
+            Gecode::Word::UnsignedWordView,
+            Gecode::Word::Arithmetic::BA_SUB,
+            Gecode::Word::Arithmetic::BT_CLEAR>::numeric_regime(x,y);
+        return Gecode::Word::Arithmetic::BoundArithmetic<
+          Gecode::Word::UnsignedWordView,
+          Gecode::Word::Arithmetic::BA_SUB,
+          Gecode::Word::Arithmetic::BT_SET>::numeric_regime(x,y);
+      }
+
+      static bool oracle_case(Op op, unsigned int width,
+                              Gecode::WordDomainType kind,
+                              const OracleDomain (&d)[3],
+                              const int (&map)[3], int terminal,
+                              unsigned long& cases) {
+        using namespace Gecode;
+        OracleSpace s(width,kind,d,map);
+        if (terminal < 0) {
+          if (!oracle_selected(s,op,kind))
+            return true;
+          if (op == NEG) neg(s,s.at(0),s.at(2));
+          else if (op == ADD) add(s,s.at(0),s.at(1),s.at(2));
+          else if (op == SUB) sub(s,s.at(0),s.at(1),s.at(2));
+          else mult(s,s.at(0),s.at(1),s.at(2));
+        } else {
+          if (!oracle_terminal_selected(s,op,kind,terminal))
+            return false;
+          BoolVar flag(s,terminal,terminal);
+          if (op == ADD) add(s,s.at(0),s.at(1),s.at(2),flag);
+          else sub(s,s.at(0),s.at(1),s.at(2),flag);
+        }
+        cases++;
+        const bool failed=s.status() == SS_FAILED;
+        const WordValue mask=Gecode::Word::width_mask(width);
+        bool supported=false;
+        if (op == NEG) {
+          for (WordValue xv=0; xv<=mask; xv++) {
+            const WordValue zv=evaluate(NEG,xv,0U,mask);
+            if (!oracle_in(d[0],kind,width,xv) ||
+                !oracle_in(d[2],kind,width,zv) ||
+                ((map[0] == map[2]) && (xv != zv)))
+              continue;
+            supported=true;
+            if (failed || !s.at(0).in(xv) || !s.at(2).in(zv)) {
+              ::Test::olog << "oracle pruned negation support width="
+                           << width << " kind=" << kind << " tuple="
+                           << xv << ',' << zv << std::endl;
+              return false;
+            }
+          }
+          return !failed || !supported;
+        }
+        for (WordValue xv=0; xv<=mask; xv++)
+          for (WordValue yv=0; yv<=mask; yv++) {
+              const WordValue zv=evaluate(op,xv,yv,mask);
+              const bool terminal_ok = terminal < 0 ? true : op == ADD ?
+                terminal == static_cast<int>(xv > mask-yv) :
+                terminal == static_cast<int>(xv < yv);
+              if (!terminal_ok ||
+                  !oracle_in(d[0],kind,width,xv) ||
+                  !oracle_in(d[1],kind,width,yv) ||
+                  !oracle_in(d[2],kind,width,zv) ||
+                  ((map[0] == map[1]) && (xv != yv)) ||
+                  ((map[0] == map[2]) && (xv != zv)) ||
+                  ((map[1] == map[2]) && (yv != zv)))
+                continue;
+              supported=true;
+              if (failed || !s.at(0).in(xv) || !s.at(1).in(yv) ||
+                  !s.at(2).in(zv)) {
+                ::Test::olog << "oracle pruned support op=" << op
+                             << " width=" << width << " kind=" << kind
+                             << " tuple=" << xv << ',' << yv << ',' << zv
+                             << std::endl;
+                return false;
+              }
+          }
+        return !failed || !supported;
+      }
+
+      static bool negation_oracle(unsigned int width,
+                                  Gecode::WordDomainType kind,
+                                  const std::vector<OracleDomain>& rows,
+                                  unsigned long& cases) {
+        using namespace Gecode;
+        const int distinct[3]={0,1,2};
+        const int aliased[3]={0,1,0};
+        for (const OracleDomain& x : rows)
+          for (const OracleDomain& z : rows) {
+            const OracleDomain d[3]={x,rows[0],z};
+            if (kind == WDT_UNSIGNED) {
+              OracleSpace s(width,kind,d,distinct);
+              if (oracle_selected(s,NEG,kind))
+                return false;
+            } else if (!oracle_case(NEG,width,kind,d,distinct,-1,cases)) {
+              return false;
+            }
+          }
+        if (kind == WDT_SIGNED)
+          for (const OracleDomain& row : rows) {
+            const OracleDomain d[3]={row,rows[0],row};
+            if (!oracle_case(NEG,width,kind,d,aliased,-1,cases))
+              return false;
+          }
+        return true;
+      }
+
+      static bool partial_domain_oracle(void) {
+        using namespace Gecode;
+        unsigned long cases=0;
+        const int distinct[3]={0,1,2};
+        const int aliases[4][3]={{0,0,2},{0,1,0},{0,1,1},{0,0,0}};
+        for (unsigned int width : {2U,3U,4U})
+          for (WordDomainType kind : {WDT_UNSIGNED,WDT_SIGNED}) {
+            const std::vector<OracleDomain> rows=oracle_domains(width,kind);
+            for (Op op : {ADD,SUB,MULT}) {
+              for (const OracleDomain& x : rows)
+                for (const OracleDomain& y : rows)
+                  for (const OracleDomain& z : rows) {
+                    const OracleDomain d[3]={x,y,z};
+                    if (!oracle_case(op,width,kind,d,distinct,-1,cases))
+                      return false;
+                  }
+              for (const auto& map : aliases)
+                for (const OracleDomain& row : rows)
+                  for (unsigned int other=0;
+                       other<((map[0] == map[1]) &&
+                              (map[1] == map[2]) ? 1U : 3U); other++) {
+                    const OracleDomain d[3]={
+                      map[0] == map[1] || map[0] == map[2] ? row : rows[other],
+                      map[1] == map[0] || map[1] == map[2] ? row : rows[other],
+                      map[2] == map[0] || map[2] == map[1] ? row : rows[other]
+                    };
+                    if (!oracle_case(op,width,kind,d,map,-1,cases))
+                      return false;
+                  }
+            }
+            if (!negation_oracle(width,kind,rows,cases))
+              return false;
+            if (kind == WDT_UNSIGNED) {
+              const unsigned int terminal_rows[6]={0U,1U,2U,4U,5U,6U};
+              for (Op op : {ADD,SUB})
+                for (int terminal : {0,1})
+                  for (unsigned int i : terminal_rows)
+                    for (unsigned int j : terminal_rows)
+                      for (unsigned int k : terminal_rows) {
+                        const OracleDomain d[3]={rows[i],rows[j],rows[k]};
+                        if (!oracle_case(op,width,kind,d,distinct,terminal,cases))
+                          return false;
+                      }
+            }
+          }
+        // Keep changes to row normalization or actor selection intentional.
+        return cases == 7463U;
+      }
+
       static bool division_truth(void) {
         using namespace Gecode;
         class D : public Space {
@@ -2876,7 +3157,7 @@ namespace Test { namespace Word {
     public:
       BoundedLifecycle(void) : Base("Word::Arithmetic::BoundedLifecycle") {}
       virtual bool run(void) {
-        return division_truth() && division_propagation() &&
+        return partial_domain_oracle() && division_truth() && division_propagation() &&
           division_replay() && propagation() && boundaries_aliases() &&
           replay() && staged_propagation();
       }

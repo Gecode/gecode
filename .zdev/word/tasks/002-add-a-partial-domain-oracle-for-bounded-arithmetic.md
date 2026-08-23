@@ -3,7 +3,7 @@ schema_version = 1
 id = "word-002"
 key = "add-bounded-arithmetic-soundness-oracle"
 area = "word"
-status = "open"
+status = "done"
 complexity = "standard"
 blocked_by = []
 +++
@@ -26,12 +26,22 @@ test/word/arithmetic.cpp has selected bounded scenarios and exhaustive assigned 
 
 ## Done when
 
-- [ ] Every retained row proves that bounded propagation preserves all supported concrete tuples and fails only when none remain.
-- [ ] The corpus exercises forward and inverse interval deductions, cube-to-interval feedback, all four alias mappings, terminal carry, and terminal borrow.
-- [ ] The test asserts that each intended case selected a bounded actor rather than silently falling back to cube propagation.
-- [ ] The coverage is integrated into the existing Word arithmetic test structure without a new reusable harness abstraction.
+- [x] Every retained row proves that bounded propagation preserves all supported concrete tuples and fails only when none remain.
+- [x] The corpus exercises forward and inverse interval deductions, cube-to-interval feedback, all four alias mappings, terminal carry, and terminal borrow.
+- [x] The test asserts that each intended case selected a bounded actor rather than silently falling back to cube propagation.
+- [x] The coverage is integrated into the existing Word arithmetic test structure without a new reusable harness abstraction.
 
 ## Validation
 
 - Run the focused Word arithmetic tests and record the corpus case count.
 - Run TestFramework.
+
+## Result
+
+Added and independently verified the bounded arithmetic partial-domain soundness oracle.
+
+Validation:
+
+- The deterministic corpus retained 7,463 meaningful bounded cases across widths 2, 3, and 4.
+- Focused Word arithmetic tests passed.
+- Word::TestFramework passed.
