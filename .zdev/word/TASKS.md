@@ -4,8 +4,8 @@
 
 - Total: 16
 - Ready: 11
-- Blocked: 1
-- Done: 4
+- Blocked: 0
+- Done: 5
 
 | ID | Task | State | Blocked by |
 | --- | --- | --- | --- |
@@ -13,8 +13,8 @@
 | [word-002](tasks/002-add-a-partial-domain-oracle-for-bounded-arithmetic.md) | Add a partial-domain oracle for bounded arithmetic | done | — |
 | [word-003](tasks/003-clarify-word-endpoint-and-exception-contracts.md) | Clarify Word endpoint and exception contracts | done | — |
 | [word-004](tasks/004-add-the-mixed-dma-descriptor-model-and-comparison.md) | Add the mixed DMA descriptor model and comparison | done | — |
-| [word-005](tasks/005-batch-the-remaining-bounded-local-transactions.md) | Batch the remaining bounded local transactions | ready | — |
-| [word-006](tasks/006-specialize-numeric-word-actors-by-view-and-event.md) | Specialize numeric Word actors by view and event | blocked | word-004, word-005 |
+| [word-005](tasks/005-batch-the-remaining-bounded-local-transactions.md) | Batch the remaining bounded local transactions | done | — |
+| [word-006](tasks/006-specialize-numeric-word-actors-by-view-and-event.md) | Specialize numeric Word actors by view and event | ready | word-004, word-005 |
 | [word-007](tasks/007-retire-bounded-disequality-on-interval-disjointness.md) | Retire bounded disequality on interval disjointness | ready | — |
 | [word-008](tasks/008-carry-explicit-bounded-policy-through-word-minimodel-boolean.md) | Carry explicit bounded policy through Word MiniModel Boolean nodes | ready | — |
 | [word-009](tasks/009-report-bound-only-progress-in-word-trace-slack.md) | Report bound-only progress in Word trace slack | ready | — |

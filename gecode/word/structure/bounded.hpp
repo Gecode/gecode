@@ -205,33 +205,52 @@ namespace Gecode { namespace Word { namespace Structure {
                              UnsignedWordView result) {
       FixedLocalDomain dx=fixed_snapshot(x), da=fixed_snapshot(amount);
       FixedLocalDomain dr=fixed_snapshot(result);
+      FixedLocalDomain* role[3]={&dx,&da,&dr};
+      if (amount.varimp() == x.varimp()) role[1]=role[0];
+      if (result.varimp() == x.varimp()) role[2]=role[0];
+      else if (result.varimp() == amount.varimp()) role[2]=role[1];
+      const FixedLocalDomain initial[3]={dx,da,dr};
       for (;;) {
         const FixedLocalDomain old_x=dx, old_a=da, old_r=dr;
-        const WordValue low_factor=WordValue(1) << da.minimum;
-        const WordValue high_factor=WordValue(1) << da.maximum;
-        if (!dr.range(dx.minimum*low_factor,dx.maximum*high_factor))
+        dx.deferred=da.deferred=dr.deferred=true;
+        const WordValue low_factor=WordValue(1) << role[1]->minimum;
+        const WordValue high_factor=WordValue(1) << role[1]->maximum;
+        if (!role[2]->range(role[0]->minimum*low_factor,
+                            role[0]->maximum*high_factor))
           return ES_FAILED;
-        const WordValue xmin=dr.minimum/high_factor+
-          ((dr.minimum%high_factor) != 0);
-        if (!dx.range(xmin,dr.maximum/low_factor)) return ES_FAILED;
+        const WordValue xmin=role[2]->minimum/high_factor+
+          ((role[2]->minimum%high_factor) != 0);
+        if (!role[0]->range(xmin,role[2]->maximum/low_factor))
+          return ES_FAILED;
 
         bool supported=false;
         WordValue amin=0, amax=0;
-        for (WordValue a=da.minimum; a<=da.maximum; a++) {
-          if (!amount.in(a)) continue;
+        for (WordValue a=role[1]->minimum; a<=role[1]->maximum; a++) {
+          if (((role[1]->lo & ~a) != 0) || ((a & ~role[1]->hi) != 0))
+            continue;
           const WordValue factor=WordValue(1) << a;
-          if ((dx.minimum*factor > dr.maximum) ||
-              (dx.maximum*factor < dr.minimum))
+          if ((role[0]->minimum*factor > role[2]->maximum) ||
+              (role[0]->maximum*factor < role[2]->minimum))
             continue;
           if (!supported) amin=a;
           amax=a; supported=true;
         }
-        if (!supported || !da.range(amin,amax)) return ES_FAILED;
+        if (!supported || !role[1]->range(amin,amax)) return ES_FAILED;
+        dx.deferred=da.deferred=dr.deferred=false;
+        for (unsigned int i=0; i<3; i++) {
+          bool distinct=true;
+          for (unsigned int j=0; j<i; j++)
+            if (role[i] == role[j]) { distinct=false; break; }
+          if (distinct && !role[i]->synchronize()) return ES_FAILED;
+        }
         if ((dx == old_x) && (da == old_a) && (dr == old_r)) break;
       }
-      GECODE_ES_CHECK(fixed_publish(home,x,dx));
-      GECODE_ES_CHECK(fixed_publish(home,amount,da));
-      GECODE_ES_CHECK(fixed_publish(home,result,dr));
+      if (!(dx == initial[0])) GECODE_ES_CHECK(fixed_publish(home,x,dx));
+      if ((amount.varimp() != x.varimp()) && !(da == initial[1]))
+        GECODE_ES_CHECK(fixed_publish(home,amount,da));
+      if ((result.varimp() != x.varimp()) &&
+          (result.varimp() != amount.varimp()) && !(dr == initial[2]))
+        GECODE_ES_CHECK(fixed_publish(home,result,dr));
       return ES_OK;
     }
   public:

@@ -87,8 +87,10 @@ namespace Gecode { namespace Word { namespace Arithmetic {
       if (a.varimp() == result.varimp()) role[2]=role[0];
       else if (b.varimp() == result.varimp()) role[2]=role[1];
       const WordValue mask=a.mask();
+      const BoundLocalDomain initial[3]={d[0],d[1],d[2]};
       for (;;) {
         const BoundLocalDomain old[3]={d[0],d[1],d[2]};
+        for (unsigned int i=0; i<3; i++) d[i].deferred=true;
         if (v[0] == v[1]) {
           const WordValue expected=(op == BUD_MOD) ? 0 :
             ((role[0]->maximum == 0) ? mask : 1);
@@ -134,10 +136,23 @@ namespace Gecode { namespace Word { namespace Arithmetic {
             return ES_FAILED;
           if (!role[2]->range(expected,expected)) return ES_FAILED;
         }
+        for (unsigned int i=0; i<3; i++) d[i].deferred=false;
+        for (unsigned int i=0; i<3; i++) {
+          bool distinct=true;
+          for (unsigned int j=0; j<i; j++)
+            if (role[i] == role[j]) { distinct=false; break; }
+          if (distinct && !role[i]->synchronize()) return ES_FAILED;
+        }
         if ((d[0] == old[0]) && (d[1] == old[1]) && (d[2] == old[2]))
           break;
       }
-      return bound_publish_distinct(home,a,b,result,d);
+      if (!(d[0] == initial[0])) GECODE_ES_CHECK(bound_publish(home,a,d[0]));
+      if ((b.varimp() != a.varimp()) && !(d[1] == initial[1]))
+        GECODE_ES_CHECK(bound_publish(home,b,d[1]));
+      if ((result.varimp() != a.varimp()) &&
+          (result.varimp() != b.varimp()) && !(d[2] == initial[2]))
+        GECODE_ES_CHECK(bound_publish(home,result,d[2]));
+      return ES_OK;
     }
   public:
     static bool numeric_regime(UnsignedWordView b) {
@@ -193,8 +208,10 @@ namespace Gecode { namespace Word { namespace Arithmetic {
         v[i]=BoundLocalView(*role[i]);
       }
       const WordValue mask=a.mask();
+      const BoundLocalDomain initial[4]={d[0],d[1],d[2],d[3]};
       for (;;) {
         const BoundLocalDomain old[4]={d[0],d[1],d[2],d[3]};
+        for (unsigned int i=0; i<4; i++) d[i].deferred=true;
         if (v[0] == v[1]) {
           const WordValue qv=(role[0]->maximum == 0) ? mask : 1;
           if (me_failed(v[2].narrow(home,qv,qv)) ||
@@ -245,6 +262,13 @@ namespace Gecode { namespace Word { namespace Arithmetic {
               !role[2]->range(qv,qv) || !role[3]->range(rv,rv))
             return ES_FAILED;
         }
+        for (unsigned int i=0; i<4; i++) d[i].deferred=false;
+        for (unsigned int i=0; i<4; i++) {
+          bool distinct=true;
+          for (unsigned int j=0; j<i; j++)
+            if (role[i] == role[j]) { distinct=false; break; }
+          if (distinct && !role[i]->synchronize()) return ES_FAILED;
+        }
         if ((d[0] == old[0]) && (d[1] == old[1]) &&
             (d[2] == old[2]) && (d[3] == old[3])) break;
       }
@@ -252,7 +276,8 @@ namespace Gecode { namespace Word { namespace Arithmetic {
         bool distinct=true;
         for (unsigned int j=0; j<i; j++)
           if (x[i].varimp() == x[j].varimp()) { distinct=false; break; }
-        if (distinct) GECODE_ES_CHECK(bound_publish(home,x[i],d[i]));
+        if (distinct && !(d[i] == initial[i]))
+          GECODE_ES_CHECK(bound_publish(home,x[i],d[i]));
       }
       return ES_OK;
     }
@@ -312,8 +337,10 @@ namespace Gecode { namespace Word { namespace Arithmetic {
       if (a.varimp() == result.varimp()) role[2]=role[0];
       else if (b.varimp() == result.varimp()) role[2]=role[1];
       const WordValue mask=a.mask(), sign=sign_bit(a.width());
+      const BoundLocalDomain initial[3]={d[0],d[1],d[2]};
       for (;;) {
         const BoundLocalDomain old[3]={d[0],d[1],d[2]};
+        for (unsigned int i=0; i<3; i++) d[i].deferred=true;
         if (v[0] == v[1]) {
           const WordValue expected=(op == SDO_DIV) ?
             ((role[0]->minimum == sign && role[0]->maximum == sign) ?
@@ -430,10 +457,23 @@ namespace Gecode { namespace Word { namespace Arithmetic {
               !role[2]->range(expected^sign,expected^sign))
             return ES_FAILED;
         }
+        for (unsigned int i=0; i<3; i++) d[i].deferred=false;
+        for (unsigned int i=0; i<3; i++) {
+          bool distinct=true;
+          for (unsigned int j=0; j<i; j++)
+            if (role[i] == role[j]) { distinct=false; break; }
+          if (distinct && !role[i]->synchronize()) return ES_FAILED;
+        }
         if ((d[0] == old[0]) && (d[1] == old[1]) && (d[2] == old[2]))
           break;
       }
-      return bound_publish_distinct(home,a,b,result,d);
+      if (!(d[0] == initial[0])) GECODE_ES_CHECK(bound_publish(home,a,d[0]));
+      if ((b.varimp() != a.varimp()) && !(d[1] == initial[1]))
+        GECODE_ES_CHECK(bound_publish(home,b,d[1]));
+      if ((result.varimp() != a.varimp()) &&
+          (result.varimp() != b.varimp()) && !(d[2] == initial[2]))
+        GECODE_ES_CHECK(bound_publish(home,result,d[2]));
+      return ES_OK;
     }
   public:
     static bool numeric_regime(SignedWordView b) {

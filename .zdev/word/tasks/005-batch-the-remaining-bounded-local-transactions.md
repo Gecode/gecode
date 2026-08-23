@@ -3,7 +3,7 @@ schema_version = 1
 id = "word-005"
 key = "batch-bounded-local-transactions"
 area = "word"
-status = "open"
+status = "done"
 complexity = "standard"
 blocked_by = []
 +++
@@ -25,13 +25,23 @@ Bounded Add, Subtract, Multiply, Negate, and fixed left shift use deferred local
 
 ## Done when
 
-- [ ] All named actors defer deductions, synchronize each distinct aliased role once per local pass, and iterate when synchronization exposes new information.
-- [ ] Unchanged local snapshots do not enter narrow_domain.
-- [ ] The two exact controls show fewer synchronization calls with identical root domains, actors, solutions where searched, and propagation outcomes.
-- [ ] Twenty interleaved Release trials of the bounded and compact controls show no repeatable compact regression.
+- [x] All named actors defer deductions, synchronize each distinct aliased role once per local pass, and iterate when synchronization exposes new information.
+- [x] Unchanged local snapshots do not enter narrow_domain.
+- [x] The two exact controls show fewer synchronization calls with identical root domains, actors, solutions where searched, and propagation outcomes.
+- [x] Twenty interleaved Release trials of the bounded and compact controls show no repeatable compact regression.
 
 ## Validation
 
 - Run focused Word arithmetic and structure tests, including aliases, width one, width 64, exceptional division, cloning, and replay.
 - Run the exact 512-constraint, 100-clone, 20-trial controls from the brief against the parent commit.
 - Run TestFramework.
+
+## Result
+
+Batched bounded div/mod and variable-shift local transactions with alias-aware synchronization and unchanged-publication guards.
+
+Validation:
+
+- Independent focused arithmetic and structure lifecycle, alias, exception, clone, replay, width-one, and width-64 tests passed.
+- Exact parent/current controls preserved statuses, actor counts, and domain hashes while reducing bounded synchronization calls from 18,999 to 10,807 for divmod and 9,784 to 6,711 for variable shift.
+- Twenty interleaved Release trials showed no repeatable compact regression; TestFramework and diff checks passed.
