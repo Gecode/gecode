@@ -52,16 +52,93 @@ namespace Gecode { namespace Int { namespace Arithmetic {
                     (x.max() < 0) ? -x.max() : x.max());
   }
 
+  forceinline bool
+  gcd_excludes_zero_bnd(const IntView& x) {
+    return (x.min() > 0) || (x.max() < 0);
+  }
+
+  /// Upper bound on a gcd from the operand bounds.
+  forceinline int
+  gcd_upper(const IntView& x0, const IntView& x1) {
+    const int a0=gcd_max_abs(x0);
+    const int a1=gcd_max_abs(x1);
+    int u=std::max(a0,a1);
+    if (gcd_excludes_zero_bnd(x0)) u=std::min(u,a0);
+    if (gcd_excludes_zero_bnd(x1)) u=std::min(u,a1);
+    return u;
+  }
+
+  /// Tighten an operand to the extreme multiples of a positive gcd.
+  inline ExecStatus
+  gcd_multiple_bounds(Home home, IntView x, int g) {
+    assert(g > 0);
+    const long long int l =
+      ceil_div_xx(static_cast<long long int>(x.min()),
+                  static_cast<long long int>(g)) * g;
+    const long long int u =
+      floor_div_xx(static_cast<long long int>(x.max()),
+                   static_cast<long long int>(g)) * g;
+    if (l > u)
+      return ES_FAILED;
+    GECODE_ME_CHECK(x.gq(home,static_cast<int>(l)));
+    GECODE_ME_CHECK(x.lq(home,static_cast<int>(u)));
+    return ES_OK;
+  }
+
+  /// Status of abs(x0)=x1 using assignments and interval bounds only.
+  inline RelTest
+  gcd_abs_status(const IntView& x0, const IntView& x1) {
+    if (x1.max() < 0)
+      return RT_FALSE;
+    const int l = ((x0.min() <= 0) && (x0.max() >= 0)) ? 0 :
+      std::min((x0.min() < 0) ? -x0.min() : x0.min(),
+               (x0.max() < 0) ? -x0.max() : x0.max());
+    const int u=gcd_max_abs(x0);
+    if ((x1.max() < l) || (x1.min() > u))
+      return RT_FALSE;
+    if (x0 == x1) {
+      if (x0.min() >= 0)
+        return RT_TRUE;
+      if (x0.max() < 0)
+        return RT_FALSE;
+    }
+    if (x0.assigned()) {
+      const int a=(x0.val() < 0) ? -x0.val() : x0.val();
+      if (!x1.in(a))
+        return RT_FALSE;
+      return x1.assigned() ? RT_TRUE : RT_MAYBE;
+    }
+    if (x1.assigned() && (x1.val() == 0) && !x0.in(0))
+      return RT_FALSE;
+    return RT_MAYBE;
+  }
+
   inline RelTest
   gcd_status(const IntView& x0, const IntView& x1, const IntView& x2) {
     if (x2.max() < 0)
       return RT_FALSE;
-    if (x2.min() > std::max(gcd_max_abs(x0),gcd_max_abs(x1)))
+    if (x2.min() > gcd_upper(x0,x1))
       return RT_FALSE;
-    if (x0 == x1) {
-      if (x0.assigned() && x2.assigned())
-        return gcd_value(x0.val(),x0.val()) == x2.val() ? RT_TRUE : RT_FALSE;
-      return RT_MAYBE;
+    if (x0 == x1)
+      return gcd_abs_status(x0,x2);
+    if (x0.assigned() && (x0.val() == 0))
+      return gcd_abs_status(x1,x2);
+    if (x1.assigned() && (x1.val() == 0))
+      return gcd_abs_status(x0,x2);
+    if ((x0.assigned() && ((x0.val() == 1) || (x0.val() == -1))) ||
+        (x1.assigned() && ((x1.val() == 1) || (x1.val() == -1)))) {
+      if (!x2.in(1)) return RT_FALSE;
+      return x2.assigned() ? RT_TRUE : RT_MAYBE;
+    }
+    if (x2.assigned()) {
+      const int g=x2.val();
+      if (g == 0) {
+        if (!x0.in(0) || !x1.in(0)) return RT_FALSE;
+      } else if (g > 0) {
+        if ((x0.assigned() && ((x0.val() % g) != 0)) ||
+            (x1.assigned() && ((x1.val() % g) != 0)))
+          return RT_FALSE;
+      }
     }
     if (x0.assigned() && x1.assigned()) {
       const int g=gcd_value(x0.val(),x1.val());
@@ -77,8 +154,35 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   inline ExecStatus
   Gcd::post(Home home, IntView x0, IntView x1, IntView x2) {
+    if (x0 == x1)
+      return AbsBnd<IntView>::post(home,x0,x2);
+    if (x0.assigned() && (x0.val() == 0))
+      return AbsBnd<IntView>::post(home,x1,x2);
+    if (x1.assigned() && (x1.val() == 0))
+      return AbsBnd<IntView>::post(home,x0,x2);
+    if ((x0.assigned() && ((x0.val() == 1) || (x0.val() == -1))) ||
+        (x1.assigned() && ((x1.val() == 1) || (x1.val() == -1)))) {
+      GECODE_ME_CHECK(x2.eq(home,1));
+      return ES_OK;
+    }
     GECODE_ME_CHECK(x2.gq(home,0));
-    GECODE_ME_CHECK(x2.lq(home,std::max(gcd_max_abs(x0),gcd_max_abs(x1))));
+    if (gcd_excludes_zero_bnd(x0) || gcd_excludes_zero_bnd(x1))
+      GECODE_ME_CHECK(x2.gq(home,1));
+    GECODE_ME_CHECK(x2.lq(home,gcd_upper(x0,x1)));
+    if (x2.assigned()) {
+      const int g=x2.val();
+      if (g == 0) {
+        GECODE_ME_CHECK(x0.eq(home,0));
+        GECODE_ME_CHECK(x1.eq(home,0));
+        return ES_OK;
+      }
+      GECODE_ES_CHECK(gcd_multiple_bounds(home,x0,g));
+      GECODE_ES_CHECK(gcd_multiple_bounds(home,x1,g));
+      if (x0.assigned() && (x0.val() == 0))
+        return AbsBnd<IntView>::post(home,x1,x2);
+      if (x1.assigned() && (x1.val() == 0))
+        return AbsBnd<IntView>::post(home,x0,x2);
+    }
     if (x0.assigned() && x1.assigned()) {
       GECODE_ME_CHECK(x2.eq(home,gcd_value(x0.val(),x1.val())));
       return ES_OK;
@@ -103,8 +207,35 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   inline ExecStatus
   Gcd::propagate(Space& home, const ModEventDelta&) {
+    if (x0 == x1)
+      GECODE_REWRITE(*this,AbsBnd<IntView>::post(home(*this),x0,x2));
+    if (x0.assigned() && (x0.val() == 0))
+      GECODE_REWRITE(*this,AbsBnd<IntView>::post(home(*this),x1,x2));
+    if (x1.assigned() && (x1.val() == 0))
+      GECODE_REWRITE(*this,AbsBnd<IntView>::post(home(*this),x0,x2));
+    if ((x0.assigned() && ((x0.val() == 1) || (x0.val() == -1))) ||
+        (x1.assigned() && ((x1.val() == 1) || (x1.val() == -1)))) {
+      GECODE_ME_CHECK(x2.eq(home,1));
+      return home.ES_SUBSUMED(*this);
+    }
     GECODE_ME_CHECK(x2.gq(home,0));
-    GECODE_ME_CHECK(x2.lq(home,std::max(gcd_max_abs(x0),gcd_max_abs(x1))));
+    if (gcd_excludes_zero_bnd(x0) || gcd_excludes_zero_bnd(x1))
+      GECODE_ME_CHECK(x2.gq(home,1));
+    GECODE_ME_CHECK(x2.lq(home,gcd_upper(x0,x1)));
+    if (x2.assigned()) {
+      const int g=x2.val();
+      if (g == 0) {
+        GECODE_ME_CHECK(x0.eq(home,0));
+        GECODE_ME_CHECK(x1.eq(home,0));
+        return home.ES_SUBSUMED(*this);
+      }
+      GECODE_ES_CHECK(gcd_multiple_bounds(home,x0,g));
+      GECODE_ES_CHECK(gcd_multiple_bounds(home,x1,g));
+      if (x0.assigned() && (x0.val() == 0))
+        GECODE_REWRITE(*this,AbsBnd<IntView>::post(home(*this),x1,x2));
+      if (x1.assigned() && (x1.val() == 0))
+        GECODE_REWRITE(*this,AbsBnd<IntView>::post(home(*this),x0,x2));
+    }
     if (x0.assigned() && x1.assigned()) {
       GECODE_ME_CHECK(x2.eq(home,gcd_value(x0.val(),x1.val())));
       return home.ES_SUBSUMED(*this);

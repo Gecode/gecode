@@ -348,36 +348,42 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     return true;
   }
 
-  /// Find the extreme divisor bounds for a nonzero difference.
+  /// Tighten divisor bounds for a nonzero difference without enumeration.
   inline bool
   product_mod_var_divisor_bounds(int lower, int upper, long long int d,
                                  int& least, int& greatest) {
     const unsigned long long int ad = d < 0
       ? static_cast<unsigned long long int>(-(d+1))+1ULL
       : static_cast<unsigned long long int>(d);
-    bool found=false;
-    for (unsigned long long int q=1; q <= ad/q; q++)
-      if ((ad % q) == 0) {
-        const unsigned long long int r=ad/q;
-        if ((q <= static_cast<unsigned long long int>(Limits::max)) &&
-            (q >= static_cast<unsigned long long int>(lower)) &&
-            (q <= static_cast<unsigned long long int>(upper))) {
-          const int v=static_cast<int>(q);
-          if (!found) least=greatest=v;
-          else { least=std::min(least,v); greatest=std::max(greatest,v); }
-          found=true;
-        }
-        if ((r != q) &&
-            (r <= static_cast<unsigned long long int>(Limits::max)) &&
-            (r >= static_cast<unsigned long long int>(lower)) &&
-            (r <= static_cast<unsigned long long int>(upper))) {
-          const int v=static_cast<int>(r);
-          if (!found) least=greatest=v;
-          else { least=std::min(least,v); greatest=std::max(greatest,v); }
-          found=true;
-        }
-      }
-    return found;
+    assert(ad > 0);
+
+    least=lower;
+    greatest=upper;
+
+    // A positive divisor cannot exceed the absolute difference.
+    if (ad <= static_cast<unsigned long long int>(Limits::max))
+      greatest=std::min(greatest,static_cast<int>(ad));
+    if (least > greatest)
+      return false;
+
+    // If floor(ad/m) is fixed throughout the remaining interval, there is
+    // at most one possible divisor. This is constant-time quotient reasoning;
+    // it does not inspect the values in the modulus domain.
+    const unsigned long long int q0 =
+      ad / static_cast<unsigned long long int>(greatest);
+    const unsigned long long int q1 =
+      ad / static_cast<unsigned long long int>(least);
+    if (q0 == q1) {
+      if ((q0 == 0) || ((ad % q0) != 0))
+        return false;
+      const unsigned long long int candidate=ad/q0;
+      if ((candidate < static_cast<unsigned long long int>(least)) ||
+          (candidate > static_cast<unsigned long long int>(greatest)) ||
+          (candidate > static_cast<unsigned long long int>(Limits::max)))
+        return false;
+      least=greatest=static_cast<int>(candidate);
+    }
+    return true;
   }
 
   /// Determine algebraic status; evaluate the residue only when fully assigned.
@@ -415,6 +421,8 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         int least, greatest;
         if (!product_mod_var_divisor_bounds
             (std::max(m.min(),y.val()+1),m.max(),d,least,greatest))
+          return RT_FALSE;
+        if ((least == greatest) && !m.in(least))
           return RT_FALSE;
       }
     }
