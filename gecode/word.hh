@@ -477,6 +477,17 @@ namespace Gecode {
   /// Post the relation \a wrt between \a x and \a y
   GECODE_WORD_EXPORT void rel(Home home, WordVar x, WordRelType wrt,
                               WordVar y);
+  /** \brief Post distinctness of all words in \a x
+   *
+   * Value consistency is the default and is implemented by native pairwise
+   * Word disequalities. IPL_BND uses Hall-interval bounds propagation when
+   * all variables have the same bounded interpretation; other cases fall
+   * back to value consistency. IPL_DOM currently uses value consistency.
+   * Throws Word::ArgumentSame for duplicate variables and
+   * Word::WidthMismatch if the widths differ.
+   */
+  GECODE_WORD_EXPORT void distinct(Home home, const WordVarArgs& x,
+                                   IntPropLevel ipl=IPL_VAL);
   /// Post the relation \a wrt between \a x and \a y, reified by \a r
   GECODE_WORD_EXPORT void rel(Home home, WordVar x, WordRelType wrt,
                               WordVar y, Reify r);

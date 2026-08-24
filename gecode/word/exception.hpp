@@ -42,6 +42,11 @@ namespace Gecode { namespace Word {
   public:
     TooFewArguments(const char* l);
   };
+  /// A word argument array contains the same variable more than once
+  class GECODE_WORD_EXPORT ArgumentSame : public Exception {
+  public:
+    ArgumentSame(const char* l);
+  };
   /// A word constraint argument is outside its supported limits
   class GECODE_WORD_EXPORT OutOfLimits : public Exception {
   public:

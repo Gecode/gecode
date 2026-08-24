@@ -28,34 +28,35 @@
  *  LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
  *  OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- *
  */
+
+#ifndef GECODE_WORD_DISTINCT_HH
+#define GECODE_WORD_DISTINCT_HH
 
 #include <gecode/word.hh>
 
-namespace Gecode { namespace Word {
-  TooFewArguments::TooFewArguments(const char* l)
-    : Exception(l,"Too few arguments") {}
-  ArgumentSame::ArgumentSame(const char* l)
-    : Exception(l,"Argument array contains same variable multiply") {}
-  OutOfLimits::OutOfLimits(const char* l)
-    : Exception(l,"Word argument out of limits") {}
-  VariableEmptyDomain::VariableEmptyDomain(const char* l)
-    : Exception(l,"Attempt to create word variable with empty domain") {}
-  ValOfUnassignedVar::ValOfUnassignedVar(const char* l)
-    : Exception(l,"Attempt to access value of unassigned word variable") {}
-  BoundsOfCubeVar::BoundsOfCubeVar(const char* l)
-    : Exception(l,"Attempt to access bounds of cube word variable") {}
-  WidthMismatch::WidthMismatch(const char* l)
-    : Exception(l,"Word widths do not match") {}
-  UnknownRelation::UnknownRelation(const char* l)
-    : Exception(l,"Unknown word relation") {}
-  UnknownOperation::UnknownOperation(const char* l)
-    : Exception(l,"Unknown word operation") {}
-  UnknownReifyMode::UnknownReifyMode(const char* l)
-    : Exception(l,"Unknown reification mode") {}
-  UnknownBranching::UnknownBranching(const char* l)
-    : Exception(l,"Unknown word branching") {}
-}}
+namespace Gecode { namespace Word { namespace Distinct {
 
-// STATISTICS: word-other
+  /// Hall-interval bounds propagator for bounded words
+  template<class View>
+  class Bnd : public NaryPropagator<View,PC_WORD_BND> {
+  protected:
+    using NaryPropagator<View,PC_WORD_BND>::x;
+    Bnd(Home home, ViewArray<View>& x);
+    Bnd(Space& home, Bnd& p);
+    static ExecStatus narrow(Home home, ViewArray<View>& x);
+  public:
+    virtual Actor* copy(Space& home);
+    virtual PropCost cost(const Space& home,
+                          const ModEventDelta& med) const;
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+    static ExecStatus post(Home home, ViewArray<View>& x);
+  };
+
+}}}
+
+#include <gecode/word/distinct/bnd.hpp>
+
+#endif
+
+// STATISTICS: word-prop

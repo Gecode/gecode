@@ -555,13 +555,14 @@ FLOATBUILDDIRS	= \
 
 WORDSRC0 = \
 	arithmetic.cpp array.cpp branch.cpp channel.cpp channel/bit.cpp count.cpp exception.cpp \
-	conditional.cpp element.cpp logic.cpp rel.cpp structure.cpp trace.cpp trace/tracer.cpp \
+	conditional.cpp distinct.cpp element.cpp logic.cpp rel.cpp structure.cpp trace.cpp trace/tracer.cpp \
 	var/word.cpp var-imp/word.cpp
 WORDHDR0 = \
 	arithmetic.hh arithmetic/add.hpp arithmetic/neg-sub.hpp arithmetic/mult.hpp arithmetic/bounded.hpp arithmetic/product-mod.hpp arithmetic/divmod.hpp \
 	arithmetic/signed-divmod.hpp arithmetic/bounded-divmod.hpp \
 	array.hpp array-traits.hpp branch.hh branch.hpp branch/traits.hpp \
-	channel.hh channel/bit.hpp channel/numeric.hpp channel/reduction.hpp element.hh element/view.hpp \
+	channel.hh channel/bit.hpp channel/numeric.hpp channel/reduction.hpp \
+	distinct.hh distinct/bnd.hpp element.hh element/view.hpp \
 	count.hh count/popcount.hpp count/zero-count.hpp conditional.hh conditional/ite.hpp \
 	exception.hpp logic.hh logic/binary.hpp logic/table.hpp logic/nary.hpp print.hpp view.hpp \
 	rel.hh rel/bounded.hpp rel/eq.hpp rel/lq-le.hpp rel/nq.hpp rel/re-eq.hpp rel/re-lq.hpp \
@@ -598,7 +599,7 @@ export LINKWORD      =
 export WORDRC        =
 export WORDRES       =
 endif
-WORDBUILDDIRS = word word/arithmetic word/branch word/channel word/count word/element word/logic word/rel \
+WORDBUILDDIRS = word word/arithmetic word/branch word/channel word/count word/distinct word/element word/logic word/rel \
 	word/structure word/trace \
 	word/var word/var-imp
 
@@ -1199,7 +1200,7 @@ else
 FLOATTESTOBJ=
 endif
 
-WORDTESTSRC00 = arithmetic bounded branch channel conditional count element logic minimodel overflow product-mod reduction rel structure trace
+WORDTESTSRC00 = arithmetic bounded branch channel conditional count distinct element logic minimodel overflow product-mod reduction rel structure trace
 WORDTESTSRC0 = test/word.cpp $(WORDTESTSRC00:%=test/word/%.cpp)
 
 ifeq "@enable_word_vars@" "yes"

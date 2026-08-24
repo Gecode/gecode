@@ -41,9 +41,10 @@ concrete modeling or benchmark value.
 - Add bounded variants only where a realistic model or retained measurement
   shows useful interval propagation. `product_mod`, n-ary Add,
   Boolean-controlled ITE, and Element are the current candidates.
-- Evaluate one native bounds-consistent Word `distinct` before considering any
-  broader integer-compatible view. Do not promise general Int propagator reuse
-  across 64-bit Word values or cube holes.
+- Keep Word `distinct` value-consistent by default through native pairwise
+  disequalities. Offer Hall-interval propagation explicitly through `IPL_BND`
+  for homogeneous signed or unsigned bounded Words. Do not promise general Int
+  propagator reuse across 64-bit Word values or cube holes.
 - Do not split compact and bounded words into separate public variable types,
   redesign `WordDelta` without profile evidence, revive the rejected
   incremental Element scan, or add FlatZinc, arbitrary precision, SAT

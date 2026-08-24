@@ -200,6 +200,7 @@ set(GECODE_WORD_SOURCES
   gecode/word/channel/bit.cpp
   gecode/word/conditional.cpp
   gecode/word/count.cpp
+  gecode/word/distinct.cpp
   gecode/word/element.cpp
   gecode/word/exception.cpp
   gecode/word/logic.cpp
@@ -455,6 +456,7 @@ set(GECODE_TEST_SOURCES
   test/word/channel.cpp
   test/word/conditional.cpp
   test/word/count.cpp
+  test/word/distinct.cpp
   test/word/element.cpp
   test/word/logic.cpp
   test/word/minimodel.cpp

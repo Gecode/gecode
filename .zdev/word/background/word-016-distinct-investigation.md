@@ -88,7 +88,7 @@ Raw evidence remains outside the checkout:
 - `/tmp/gecode-word016/batch-results-quicksort.json`
 - `/tmp/gecode-word016/native-k4.sample.txt`
 
-## Decision
+## Initial benchmark decision
 
 Reject the production actor. Native propagation reduced the k=3 and k=4 search
 trees sharply and kept clone RSS flat, but internal repeated-search timing was
@@ -100,3 +100,16 @@ This result applies to the exact unsigned register-allocation model on the
 measured host. It does not settle a future larger-workload global, value
 consistency for small domains, signed ranked intervals, or domain consistency
 over cube holes.
+
+## Subsequent API decision
+
+The production constraint was subsequently restored because the measured
+register model is not representative of every workload. The public overload
+defaults to `IPL_VAL`, implemented as native pairwise Word disequalities.
+Callers can explicitly request `IPL_BND` to use one Hall-interval actor for a
+homogeneous array of unsigned-bounded or signed-bounded Words. Compact and
+mixed arrays fall back to value consistency, as does `IPL_DOM`; no domain
+consistency over cube holes is claimed.
+
+The measurements above remain the reason that bounds propagation is opt-in
+rather than the default.
