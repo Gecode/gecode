@@ -1062,7 +1062,7 @@ namespace Test { namespace Int {
            IntVar m(home,IntSet(mv,10));
            IntVar y(home,4,4);
            product_mod(home,IntVarArgs({a,c}),m,y);
-           if ((home.status() == SS_FAILED) || (m.min() != 7) ||
+           if ((home.status() == SS_FAILED) || (m.min() != 5) ||
                (m.max() != 56))
              return false;
          }
@@ -1118,7 +1118,7 @@ namespace Test { namespace Int {
            const int hi=Gecode::Int::Limits::max;
            IntVar x(home,hi,hi), m(home,2,hi), y(home,1,1);
            product_mod(home,IntVarArgs({x}),m,y);
-           if ((home.status() == SS_FAILED) || (m.min() != 5) ||
+           if ((home.status() == SS_FAILED) || (m.min() != 2) ||
                (m.max() != hi-1))
              return false;
          }

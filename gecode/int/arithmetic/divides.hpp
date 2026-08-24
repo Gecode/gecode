@@ -40,6 +40,66 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     return (divisor == 0) ? (dividend == 0) : (dividend % divisor == 0);
   }
 
+  /// Tighten a dividend to the extreme multiples of a nonzero divisor.
+  inline ExecStatus
+  divides_multiple_bounds(Home home, IntView dividend, int divisor) {
+    const int a=(divisor < 0) ? -divisor : divisor;
+    assert(a > 0);
+    const long long int l =
+      ceil_div_xx(static_cast<long long int>(dividend.min()),
+                  static_cast<long long int>(a)) * a;
+    const long long int u =
+      floor_div_xx(static_cast<long long int>(dividend.max()),
+                   static_cast<long long int>(a)) * a;
+    if (l > u)
+      return ES_FAILED;
+    GECODE_ME_CHECK(dividend.gq(home,static_cast<int>(l)));
+    GECODE_ME_CHECK(dividend.lq(home,static_cast<int>(u)));
+    return ES_OK;
+  }
+
+  /// Enforce divisibility with bounds reasoning only.
+  inline ExecStatus
+  divides_bnd(Space& home, IntView divisor, IntView dividend) {
+    if (divisor == dividend)
+      return ES_OK;
+    if (dividend.assigned() && (dividend.val() == 0))
+      return ES_OK;
+    if (divisor.assigned()) {
+      const int d=divisor.val();
+      if (d == 0) {
+        GECODE_ME_CHECK(dividend.eq(home,0));
+        return ES_OK;
+      }
+      if ((d == 1) || (d == -1))
+        return ES_OK;
+      GECODE_ES_CHECK(divides_multiple_bounds(home,dividend,d));
+    }
+
+    // A nonzero dividend excludes a bounds-visible zero divisor.
+    if ((dividend.min() > 0) || (dividend.max() < 0)) {
+      if ((divisor.min() == 0) && (divisor.max() > 0))
+        GECODE_ME_CHECK(divisor.gq(home,1));
+      else if ((divisor.max() == 0) && (divisor.min() < 0))
+        GECODE_ME_CHECK(divisor.lq(home,-1));
+    }
+
+    // A divisor of an assigned nonzero value has no greater magnitude.
+    if (dividend.assigned() && (dividend.val() != 0)) {
+      const int a=(dividend.val() < 0) ? -dividend.val() : dividend.val();
+      GECODE_ME_CHECK(divisor.gq(home,-a));
+      GECODE_ME_CHECK(divisor.lq(home,a));
+      if ((divisor.min() == 0) && (divisor.max() > 0))
+        GECODE_ME_CHECK(divisor.gq(home,1));
+      else if ((divisor.max() == 0) && (divisor.min() < 0))
+        GECODE_ME_CHECK(divisor.lq(home,-1));
+    }
+
+    if (divisor.assigned() && dividend.assigned())
+      return divides_value(divisor.val(),dividend.val()) ? ES_OK : ES_FAILED;
+    return ES_FIX;
+  }
+
   inline RelTest
   divides_status(const IntView& x0, const IntView& x1) {
     if (x0 == x1)
@@ -50,6 +110,22 @@ namespace Gecode { namespace Int { namespace Arithmetic {
       return RT_TRUE;
     if (x0.assigned() && (x0.val() == 0) && !x1.in(0))
       return RT_FALSE;
+    if (x0.assigned() && (x0.val() != 0)) {
+      const int a=(x0.val() < 0) ? -x0.val() : x0.val();
+      const long long int l =
+        ceil_div_xx(static_cast<long long int>(x1.min()),
+                    static_cast<long long int>(a)) * a;
+      const long long int u =
+        floor_div_xx(static_cast<long long int>(x1.max()),
+                     static_cast<long long int>(a)) * a;
+      if (l > u)
+        return RT_FALSE;
+    }
+    if (x1.assigned() && (x1.val() != 0)) {
+      const int a=(x1.val() < 0) ? -x1.val() : x1.val();
+      if ((x0.min() > a) || (x0.max() < -a))
+        return RT_FALSE;
+    }
     if (x0.assigned() && x1.assigned())
       return divides_value(x0.val(),x1.val()) ? RT_TRUE : RT_FALSE;
     return RT_MAYBE;
@@ -107,8 +183,10 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     if (b.one()) {
       if (rm == RM_PMI)
         return home.ES_SUBSUMED(*this);
+      GECODE_ES_CHECK(divides_bnd(home,x0,x1));
       const RelTest rt=divides_status(x0,x1);
-      if (rt == RT_FALSE) return ES_FAILED;
+      if (rt == RT_FALSE)
+        return ES_FAILED;
       if (rt == RT_TRUE)
         return home.ES_SUBSUMED(*this);
       return ES_FIX;
