@@ -421,6 +421,129 @@ namespace Gecode { namespace Word { namespace Arithmetic {
                            WordView x2);
   };
 
+  /// Native compact Word GCD propagator
+  template<bool sign>
+  class Gcd : public TernaryPropagator<WordView,PC_WORD_BITS> {
+  protected:
+    using TernaryPropagator<WordView,PC_WORD_BITS>::x0;
+    using TernaryPropagator<WordView,PC_WORD_BITS>::x1;
+    using TernaryPropagator<WordView,PC_WORD_BITS>::x2;
+    Gcd(Home home, WordView x, WordView y, WordView result);
+    Gcd(Space& home, Gcd& p);
+  public:
+    virtual Actor* copy(Space& home);
+    virtual PropCost cost(const Space& home,
+                          const ModEventDelta& med) const;
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+    static ExecStatus post(Home home, WordView x, WordView y,
+                           WordView result);
+  };
+
+  /// Native bounded Word GCD propagator
+  template<class View, bool sign>
+  class BoundGcd : public Propagator {
+  protected:
+    View x;
+    View y;
+    UnsignedWordView result;
+    BoundGcd(Home home, View x, View y, UnsignedWordView result);
+    BoundGcd(Space& home, BoundGcd& p);
+    static ExecStatus narrow(Home home, View x, View y,
+                             UnsignedWordView result, bool& bits,
+                             bool& subsumed);
+  public:
+    virtual Actor* copy(Space& home);
+    virtual PropCost cost(const Space& home,
+                          const ModEventDelta& med) const;
+    virtual void reschedule(Space& home);
+    virtual size_t dispose(Space& home);
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+    static ExecStatus post(Home home, View x, View y,
+                           UnsignedWordView result);
+  };
+
+  /// Reified compact Word GCD relation
+  template<ReifyMode rm, bool sign>
+  class ReGcd : public Propagator {
+  protected:
+    WordView x;
+    WordView y;
+    WordView result;
+    Int::BoolView b;
+    ReGcd(Home home, WordView x, WordView y, WordView result,
+          Int::BoolView b);
+    ReGcd(Space& home, ReGcd& p);
+  public:
+    virtual Actor* copy(Space& home);
+    virtual PropCost cost(const Space& home,
+                          const ModEventDelta& med) const;
+    virtual void reschedule(Space& home);
+    virtual size_t dispose(Space& home);
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+    static ExecStatus post(Home home, WordView x, WordView y,
+                           WordView result, Int::BoolView b);
+  };
+
+  /// Native bounded enforcement actor for Word divisibility
+  template<class View, bool sign>
+  class Divides : public BinaryPropagator<View,PC_WORD_DOM> {
+  protected:
+    using BinaryPropagator<View,PC_WORD_DOM>::x0;
+    using BinaryPropagator<View,PC_WORD_DOM>::x1;
+    Divides(Home home, View divisor, View dividend);
+    Divides(Space& home, Divides& p);
+    static ExecStatus narrow(Home home, View divisor, View dividend,
+                             bool& bits, bool& subsumed);
+  public:
+    virtual Actor* copy(Space& home);
+    virtual PropCost cost(const Space& home,
+                          const ModEventDelta& med) const;
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+    static ExecStatus post(Home home, View divisor, View dividend);
+  };
+
+  /// Native compact enforcement actor for Word divisibility
+  template<bool sign>
+  class CubeDivides : public BinaryPropagator<WordView,PC_WORD_BITS> {
+  protected:
+    using BinaryPropagator<WordView,PC_WORD_BITS>::x0;
+    using BinaryPropagator<WordView,PC_WORD_BITS>::x1;
+    CubeDivides(Home home, WordView divisor, WordView dividend);
+    CubeDivides(Space& home, CubeDivides& p);
+  public:
+    virtual Actor* copy(Space& home);
+    virtual PropCost cost(const Space& home,
+                          const ModEventDelta& med) const;
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+    static ExecStatus post(Home home, WordView divisor, WordView dividend);
+  };
+
+  /// Reified Word divisibility relation
+  template<ReifyMode rm, bool sign>
+  class ReDivides : public Propagator {
+  protected:
+    WordView divisor;
+    WordView dividend;
+    Int::BoolView b;
+    ReDivides(Home home, WordView divisor, WordView dividend,
+              Int::BoolView b);
+    ReDivides(Space& home, ReDivides& p);
+  public:
+    virtual Actor* copy(Space& home);
+    virtual PropCost cost(const Space& home,
+                          const ModEventDelta& med) const;
+    virtual void reschedule(Space& home);
+    virtual size_t dispose(Space& home);
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+    static ExecStatus post(Home home, WordView divisor, WordView dividend,
+                           Int::BoolView b);
+  };
+
+  template<bool sign>
+  ExecStatus post_gcd(Home home, WordView x, WordView y, WordView result);
+  template<bool sign>
+  ExecStatus post_divides(Home home, WordView divisor, WordView dividend);
+
 }}}
 
 #include <gecode/word/arithmetic/add.hpp>
@@ -432,6 +555,7 @@ namespace Gecode { namespace Word { namespace Arithmetic {
 #include <gecode/word/arithmetic/divmod.hpp>
 #include <gecode/word/arithmetic/signed-divmod.hpp>
 #include <gecode/word/arithmetic/bounded-divmod.hpp>
+#include <gecode/word/arithmetic/number.hpp>
 
 #endif
 

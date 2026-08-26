@@ -751,6 +751,43 @@ namespace Gecode {
   GECODE_WORD_EXPORT void product_mod(Home home, WordVar x, WordVar y,
                                       IntVar modulus, WordVar result,
                                       Reify r);
+  /** \brief Constrain \a result to the unsigned mathematical GCD
+   *
+   * All words must have the same width. The relation uses unsigned Word
+   * values and defines gcd(0,0)=0.
+   */
+  GECODE_WORD_EXPORT void gcd(Home home, WordVar x, WordVar y,
+                              WordVar result,
+                              IntPropLevel ipl=IPL_DEF);
+  /// Reify the unsigned mathematical GCD relation
+  GECODE_WORD_EXPORT void gcd(Home home, WordVar x, WordVar y,
+                              WordVar result, Reify r,
+                              IntPropLevel ipl=IPL_DEF);
+  /** \brief Constrain \a result to the signed mathematical GCD magnitude
+   *
+   * Inputs use two's-complement signed values. The same-width result stores
+   * the nonnegative magnitude as an unsigned bit pattern; an unsigned-bounded
+   * result enables numeric bounds propagation.
+   */
+  GECODE_WORD_EXPORT void signed_gcd(Home home, WordVar x, WordVar y,
+                                     WordVar result,
+                                     IntPropLevel ipl=IPL_DEF);
+  /// Reify the signed mathematical GCD relation
+  GECODE_WORD_EXPORT void signed_gcd(Home home, WordVar x, WordVar y,
+                                     WordVar result, Reify r,
+                                     IntPropLevel ipl=IPL_DEF);
+  /** \brief Reify unsigned mathematical divisibility
+   *
+   * Zero divides zero and no nonzero value. This is mathematical integer
+   * divisibility, not multiplication modulo the Word width.
+   */
+  GECODE_WORD_EXPORT void divides(Home home, WordVar divisor,
+                                  WordVar dividend, Reify r,
+                                  IntPropLevel ipl=IPL_DEF);
+  /// Reify signed mathematical divisibility
+  GECODE_WORD_EXPORT void signed_divides(Home home, WordVar divisor,
+                                         WordVar dividend, Reify r,
+                                         IntPropLevel ipl=IPL_DEF);
   /// Post unary arithmetic overflow predicate \a wot for \a x
   GECODE_WORD_EXPORT void overflow(Home home, WordVar x,
                                    WordOverflowType wot, BoolVar b,

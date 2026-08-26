@@ -625,6 +625,107 @@ namespace Gecode {
   }
 
   void
+  gcd(Home home, WordVar x, WordVar y, WordVar result, IntPropLevel) {
+    check_widths(x,y,result,"Word::gcd");
+    GECODE_POST;
+    GECODE_ES_FAIL((Word::Arithmetic::post_gcd<false>(
+      home,Word::WordView(x),Word::WordView(y),Word::WordView(result))));
+  }
+
+  void
+  gcd(Home home, WordVar x, WordVar y, WordVar result, Reify r,
+      IntPropLevel) {
+    check_widths(x,y,result,"Word::gcd");
+    GECODE_POST;
+    Word::WordView xv(x), yv(y), rv(result);
+    Int::BoolView b(r.var());
+    switch (r.mode()) {
+    case RM_EQV:
+      GECODE_ES_FAIL((Word::Arithmetic::ReGcd<RM_EQV,false>::post(
+        home,xv,yv,rv,b))); break;
+    case RM_IMP:
+      GECODE_ES_FAIL((Word::Arithmetic::ReGcd<RM_IMP,false>::post(
+        home,xv,yv,rv,b))); break;
+    case RM_PMI:
+      GECODE_ES_FAIL((Word::Arithmetic::ReGcd<RM_PMI,false>::post(
+        home,xv,yv,rv,b))); break;
+    default: throw Word::UnknownReifyMode("Word::gcd");
+    }
+  }
+
+  void
+  signed_gcd(Home home, WordVar x, WordVar y, WordVar result,
+             IntPropLevel) {
+    check_widths(x,y,result,"Word::signed_gcd");
+    GECODE_POST;
+    GECODE_ES_FAIL((Word::Arithmetic::post_gcd<true>(
+      home,Word::WordView(x),Word::WordView(y),Word::WordView(result))));
+  }
+
+  void
+  signed_gcd(Home home, WordVar x, WordVar y, WordVar result, Reify r,
+             IntPropLevel) {
+    check_widths(x,y,result,"Word::signed_gcd");
+    GECODE_POST;
+    Word::WordView xv(x), yv(y), rv(result);
+    Int::BoolView b(r.var());
+    switch (r.mode()) {
+    case RM_EQV:
+      GECODE_ES_FAIL((Word::Arithmetic::ReGcd<RM_EQV,true>::post(
+        home,xv,yv,rv,b))); break;
+    case RM_IMP:
+      GECODE_ES_FAIL((Word::Arithmetic::ReGcd<RM_IMP,true>::post(
+        home,xv,yv,rv,b))); break;
+    case RM_PMI:
+      GECODE_ES_FAIL((Word::Arithmetic::ReGcd<RM_PMI,true>::post(
+        home,xv,yv,rv,b))); break;
+    default: throw Word::UnknownReifyMode("Word::signed_gcd");
+    }
+  }
+
+  void
+  divides(Home home, WordVar divisor, WordVar dividend, Reify r,
+          IntPropLevel) {
+    if (divisor.width() != dividend.width())
+      throw Word::WidthMismatch("Word::divides");
+    GECODE_POST;
+    Word::WordView dv(divisor), nv(dividend); Int::BoolView b(r.var());
+    switch (r.mode()) {
+    case RM_EQV:
+      GECODE_ES_FAIL((Word::Arithmetic::ReDivides<RM_EQV,false>::post(
+        home,dv,nv,b))); break;
+    case RM_IMP:
+      GECODE_ES_FAIL((Word::Arithmetic::ReDivides<RM_IMP,false>::post(
+        home,dv,nv,b))); break;
+    case RM_PMI:
+      GECODE_ES_FAIL((Word::Arithmetic::ReDivides<RM_PMI,false>::post(
+        home,dv,nv,b))); break;
+    default: throw Word::UnknownReifyMode("Word::divides");
+    }
+  }
+
+  void
+  signed_divides(Home home, WordVar divisor, WordVar dividend, Reify r,
+                 IntPropLevel) {
+    if (divisor.width() != dividend.width())
+      throw Word::WidthMismatch("Word::signed_divides");
+    GECODE_POST;
+    Word::WordView dv(divisor), nv(dividend); Int::BoolView b(r.var());
+    switch (r.mode()) {
+    case RM_EQV:
+      GECODE_ES_FAIL((Word::Arithmetic::ReDivides<RM_EQV,true>::post(
+        home,dv,nv,b))); break;
+    case RM_IMP:
+      GECODE_ES_FAIL((Word::Arithmetic::ReDivides<RM_IMP,true>::post(
+        home,dv,nv,b))); break;
+    case RM_PMI:
+      GECODE_ES_FAIL((Word::Arithmetic::ReDivides<RM_PMI,true>::post(
+        home,dv,nv,b))); break;
+    default: throw Word::UnknownReifyMode("Word::signed_divides");
+    }
+  }
+
+  void
   overflow(Home home, WordVar x, WordOverflowType wot, BoolVar b,
            WordSemantics semantics) {
     check_semantics(semantics,"Word::overflow");
