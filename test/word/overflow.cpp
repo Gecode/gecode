@@ -354,6 +354,32 @@ namespace Test { namespace Word { namespace Overflow {
       delete fixed_clone;
       if (!fixed_clone_ok) return false;
 
+      class WideTerminal : public Space {
+      public:
+        WordVar x,y,z; BoolVar carry;
+        WideTerminal(int terminal)
+          : x(*this,64,WDT_UNSIGNED,~WordValue(2),~WordValue(0)),
+            y(*this,64,WDT_UNSIGNED,1U,2U),
+            z(*this,64,WDT_UNSIGNED), carry(*this,terminal,terminal) {
+          add(*this,x,y,z,carry);
+        }
+        WideTerminal(WideTerminal& s) : Space(s) {
+          x.update(*this,s.x); y.update(*this,s.y); z.update(*this,s.z);
+          carry.update(*this,s.carry);
+        }
+        Space* copy(void) { return new WideTerminal(*this); }
+      };
+      WideTerminal wide_clear(0), wide_set(1);
+      if ((wide_clear.status() == SS_FAILED) ||
+          (wide_clear.x.maximum() != ~WordValue(0)-1U) ||
+          (wide_clear.z.minimum() != ~WordValue(0)-1U) ||
+          (wide_clear.z.maximum() != ~WordValue(0)) ||
+          (wide_set.status() == SS_FAILED) ||
+          (wide_set.x.minimum() != ~WordValue(0)-1U) ||
+          (wide_set.z.minimum() != 0U) ||
+          (wide_set.z.maximum() != 1U))
+        return false;
+
       // An initially unknown flag that becomes decided rewrites to the same
       // static actor and remains sound across cloning and recomputation.
       class Rewrite : public Space {

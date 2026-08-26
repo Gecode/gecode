@@ -417,57 +417,123 @@ namespace Gecode { namespace Word { namespace Arithmetic {
     BT_SET=2U
   };
 
+  forceinline WordValue
+  bound_terminal_add_sat(WordValue x, WordValue y, WordValue mask) {
+    return (x > mask-y) ? mask : x+y;
+  }
+
+  forceinline bool
+  bound_add_clear(BoundLocalDomain& x, BoundLocalDomain& y,
+                  BoundLocalDomain& z, WordValue mask) {
+    if (!x.range(x.minimum,std::min(x.maximum,mask-y.minimum)) ||
+        !y.range(y.minimum,std::min(y.maximum,mask-x.minimum)))
+      return false;
+    const BoundLocalDomain old_x=x, old_y=y;
+    if (!z.range(old_x.minimum+old_y.minimum,
+                 bound_terminal_add_sat(old_x.maximum,old_y.maximum,mask)))
+      return false;
+    if ((z.maximum < old_y.minimum) || (z.maximum < old_x.minimum))
+      return false;
+    const WordValue xmin=(z.minimum > old_y.maximum) ?
+      z.minimum-old_y.maximum : 0U;
+    const WordValue ymin=(z.minimum > old_x.maximum) ?
+      z.minimum-old_x.maximum : 0U;
+    return x.range(std::max(old_x.minimum,xmin),
+                   std::min(old_x.maximum,z.maximum-old_y.minimum)) &&
+      y.range(std::max(old_y.minimum,ymin),
+              std::min(old_y.maximum,z.maximum-old_x.minimum));
+  }
+
+  forceinline bool
+  bound_add_set(BoundLocalDomain& x, BoundLocalDomain& y,
+                BoundLocalDomain& z, WordValue mask) {
+    if ((x.maximum <= mask-y.maximum) ||
+        !x.range(std::max(x.minimum,mask-y.maximum+1U),x.maximum) ||
+        !y.range(std::max(y.minimum,mask-x.maximum+1U),y.maximum))
+      return false;
+    const BoundLocalDomain old_x=x, old_y=y;
+    const WordValue zmin=(old_x.minimum > mask-old_y.minimum) ?
+      old_x.minimum-(mask-old_y.minimum)-1U : 0U;
+    const WordValue zmax=old_x.maximum-(mask-old_y.maximum)-1U;
+    if (!z.range(zmin,zmax)) return false;
+    const WordValue xbase=mask-old_y.maximum+1U;
+    const WordValue ybase=mask-old_x.maximum+1U;
+    if ((z.minimum > mask-xbase) || (z.minimum > mask-ybase))
+      return false;
+    const WordValue xmin=xbase+z.minimum;
+    const WordValue ymin=ybase+z.minimum;
+    const WordValue xmax=bound_terminal_add_sat(
+      mask-old_y.minimum+1U,z.maximum,mask);
+    const WordValue ymax=bound_terminal_add_sat(
+      mask-old_x.minimum+1U,z.maximum,mask);
+    return x.range(std::max(old_x.minimum,xmin),
+                   std::min(old_x.maximum,xmax)) &&
+      y.range(std::max(old_y.minimum,ymin),
+              std::min(old_y.maximum,ymax));
+  }
+
+  forceinline bool
+  bound_sub_clear(BoundLocalDomain& x, BoundLocalDomain& y,
+                  BoundLocalDomain& z, WordValue mask) {
+    if (!x.range(std::max(x.minimum,y.minimum),x.maximum) ||
+        !y.range(y.minimum,std::min(y.maximum,x.maximum)))
+      return false;
+    const BoundLocalDomain old_x=x, old_y=y;
+    const WordValue zmin=(old_x.minimum > old_y.maximum) ?
+      old_x.minimum-old_y.maximum : 0U;
+    if (!z.range(zmin,old_x.maximum-old_y.minimum)) return false;
+    const WordValue xmin=bound_terminal_add_sat(
+      z.minimum,old_y.minimum,mask);
+    const WordValue xmax=bound_terminal_add_sat(
+      z.maximum,old_y.maximum,mask);
+    const WordValue ymin=(old_x.minimum > z.maximum) ?
+      old_x.minimum-z.maximum : 0U;
+    return x.range(std::max(old_x.minimum,xmin),
+                   std::min(old_x.maximum,xmax)) &&
+      y.range(std::max(old_y.minimum,ymin),
+              std::min(old_y.maximum,old_x.maximum-z.minimum));
+  }
+
+  forceinline bool
+  bound_sub_set(BoundLocalDomain& x, BoundLocalDomain& y,
+                BoundLocalDomain& z, WordValue mask) {
+    if ((x.minimum >= y.maximum) ||
+        !x.range(x.minimum,std::min(x.maximum,y.maximum-1U)) ||
+        !y.range(std::max(y.minimum,x.minimum+1U),y.maximum))
+      return false;
+    const BoundLocalDomain old_x=x, old_y=y;
+    const WordValue zmin=mask-(old_y.maximum-old_x.minimum)+1U;
+    const WordValue zmax=(old_x.maximum < old_y.minimum) ?
+      mask-(old_y.minimum-old_x.maximum)+1U : mask;
+    if (!z.range(zmin,zmax)) return false;
+    const WordValue gap_min=mask-z.maximum+1U;
+    const WordValue gap_max=mask-z.minimum+1U;
+    if ((old_y.maximum < gap_min) ||
+        (old_x.minimum > mask-gap_min)) return false;
+    const WordValue xmin=(old_y.minimum > gap_max) ?
+      old_y.minimum-gap_max : 0U;
+    const WordValue xmax=old_y.maximum-gap_min;
+    const WordValue ymin=old_x.minimum+gap_min;
+    const WordValue ymax=bound_terminal_add_sat(
+      old_x.maximum,gap_max,mask);
+    return x.range(std::max(old_x.minimum,xmin),
+                   std::min(old_x.maximum,xmax)) &&
+      y.range(std::max(old_y.minimum,ymin),
+              std::min(old_y.maximum,ymax));
+  }
+
   template<class View, BoundArithmeticOperation op>
   forceinline bool
   bound_terminal_ranges(BoundLocalDomain* (&role)[3],
                         unsigned int terminal) {
     const WordValue mask=width_mask(role[0]->width);
-    bool all_nonwrapping, all_wrapping;
-    if (op == BA_ADD) {
-      all_wrapping=role[0]->minimum > mask-role[1]->minimum;
-      all_nonwrapping=role[0]->maximum <= mask-role[1]->maximum;
-    } else {
-      all_wrapping=role[0]->maximum < role[1]->minimum;
-      all_nonwrapping=role[0]->minimum >= role[1]->maximum;
-    }
-    if (((terminal == BT_CLEAR) && all_wrapping) ||
-        ((terminal == BT_SET) && all_nonwrapping))
-      return false;
-    if (terminal == BT_CLEAR) {
-      if (op == BA_ADD) {
-        if (!role[0]->range(role[0]->minimum,
-                            std::min(role[0]->maximum,
-                              mask-role[1]->minimum)) ||
-            !role[1]->range(role[1]->minimum,
-                            std::min(role[1]->maximum,
-                              mask-role[0]->minimum)))
-          return false;
-      } else {
-        if (!role[0]->range(std::max(role[0]->minimum,
-                                    role[1]->minimum),
-                            role[0]->maximum) ||
-            !role[1]->range(role[1]->minimum,
-                            std::min(role[1]->maximum,
-                                     role[0]->maximum)))
-          return false;
-      }
-    }
-    if ((terminal == BT_SET) && all_wrapping) {
-      WordValue minimum, maximum;
-      if (op == BA_ADD) {
-        minimum=role[0]->minimum-(mask-role[1]->minimum)-1U;
-        maximum=role[0]->maximum-(mask-role[1]->maximum)-1U;
-      } else {
-        minimum=mask-(role[1]->maximum-role[0]->minimum)+1U;
-        maximum=mask-(role[1]->minimum-role[0]->maximum)+1U;
-      }
-      return role[2]->range(minimum,maximum);
-    }
-    if ((terminal != BT_SET) || all_nonwrapping)
-      return op == BA_ADD ?
-        bound_add_ranges<View>(*role[0],*role[1],*role[2]) :
-        bound_sub_ranges<View>(*role[0],*role[1],*role[2]);
-    return true;
+    if (op == BA_ADD)
+      return (terminal == BT_CLEAR) ?
+        bound_add_clear(*role[0],*role[1],*role[2],mask) :
+        bound_add_set(*role[0],*role[1],*role[2],mask);
+    return (terminal == BT_CLEAR) ?
+      bound_sub_clear(*role[0],*role[1],*role[2],mask) :
+      bound_sub_set(*role[0],*role[1],*role[2],mask);
   }
 
   template<class View>
