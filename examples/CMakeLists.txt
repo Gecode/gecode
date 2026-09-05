@@ -63,6 +63,7 @@ set(GECODE_EXAMPLE_SOURCES
   word-arithmetic.cpp
   word-benchmark.cpp
   word-bitboard.cpp
+  word-bit-network-comparison.cpp
   word-crc16-ccitt.cpp
   word-crc16-x25.cpp
   word-dma-descriptor.cpp
@@ -97,6 +98,7 @@ set(GECODE_WORD_EXAMPLES
   word-arithmetic
   word-benchmark
   word-bitboard
+  word-bit-network-comparison
   word-crc16-ccitt
   word-crc16-x25
   word-dma-descriptor

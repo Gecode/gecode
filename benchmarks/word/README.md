@@ -1,5 +1,53 @@
 # Word benchmarks
 
+## CRC, xorshift, and reduced-Speck comparisons
+
+`word-bit-network-comparison.py` checks 15 small cases: five each for
+CRC-16, xorshift32, and reduced Speck32/64.  Each family has a base
+enumeration plus independent unknown-bit, output-observation, and round-count
+axes.  Its UNSAT case first has a unique public projection under the concrete
+evaluator and then excludes that exact projection; it does not assume that a
+changed output bit is impossible.  The public projections are `[message]`,
+`[state]`, and `[key0,key1,key2,key3]`, respectively.  Every fixture records
+explicit output mask/value observations and the three scale fields
+`unknown_bits`, `observation_bits`, and `rounds`.
+
+The CRC recurrence follows the MSB-first catalogue convention with the
+repository example's deliberately non-catalogue initial state `0x1d0f` and
+polynomial `0x1021`: feedback is the current top bit XOR the next message bit,
+then the state shifts left and conditionally XORs the polynomial.  The CRC
+parameter terminology comes from the
+[CRC catalogue](https://reveng.sourceforge.io/crc-catalogue/16.htm).
+xorshift32 is Marsaglia's `x ^= x << 13; x ^= x >> 17; x ^= x << 5`
+recurrence ([paper](https://www.jstatsoft.org/article/view/v008i14)).
+Speck uses 16-bit words, alpha 7, beta 2, and the published key schedule and
+round orientation.  Before any cases run, the evaluator checks the official
+Speck32/64 vector: key words `[0100,0908,1110,1918]`, plaintext
+`6574:694c`, and ciphertext `a868:42f2`, as documented in the
+[NSA implementation guide](https://nsacyber.github.io/simon-speck/implementations/ImplementationGuide1.1.pdf).
+
+The linear families additionally use a small evaluator-side GF(2) Gaussian
+elimination.  Results include rank, nullity, and consistency and compare them
+with the number of public bits fixed at the Gecode root.  A full-rank system
+whose public Word still has unknown root bits is reported as correlation loss;
+this is evidence about the fixture, not a production affine-domain feature.
+Speck is intentionally excluded from this linear control.
+
+The external encodings are direct QF_BV recurrences.  Enumeration adds an
+exact blocking clause over only the public projection after each model.  Z3 is
+invoked with `-smt2 -in`; Bitwuzla is invoked with `--lang smt2
+--produce-models`.  Executable, version, and options are retained in the
+artifact.  A missing Bitwuzla, timeout, or process error remains an explicit
+incomplete cell.  The ten-second cap is per solver/case, and these smoke runs
+make no timing or cryptanalytic claim.
+
+```sh
+cmake --build build --target word-bit-network-comparison
+uv run --script benchmarks/word/word-bit-network-comparison.py \
+  --binary build/bin/word-bit-network-comparison --timeout 10 \
+  --output /tmp/word-bit-network-comparison.json
+```
+
 The focused mixed-model comparison checks DMA descriptor windows, register
 lookup, and register allocation against direct QF_BV formulations for Z3 and
 Bitwuzla. Its checked-in case table varies descriptor count, window slack,

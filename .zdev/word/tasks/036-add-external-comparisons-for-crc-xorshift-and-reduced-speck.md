@@ -3,7 +3,7 @@ schema_version = 1
 id = "word-036"
 key = "compare-word-bit-networks"
 area = "word"
-status = "open"
+status = "done"
 complexity = "advanced"
 afk = true
 priority = "normal"
@@ -27,12 +27,22 @@ The historical natural-case sources under word064 no longer survive; recreate fr
 
 ## Done when
 
-- [ ] CRC/xorshift and reduced Speck cases have known valid witnesses and independently established SAT/UNSAT companions.
-- [ ] Unknown bits, observations and rounds are separate scaling controls.
-- [ ] Gecode, Z3 and Bitwuzla use the same decision goal; uniqueness and enumeration are separately labelled.
-- [ ] The GF(2) control establishes when local propagation loses linear correlations without altering WordVar.
+- [x] CRC/xorshift and reduced Speck cases have known valid witnesses and independently established SAT/UNSAT companions.
+- [x] Unknown bits, observations and rounds are separate scaling controls.
+- [x] Gecode, Z3 and Bitwuzla use the same decision goal; uniqueness and enumeration are separately labelled.
+- [x] The GF(2) control establishes when local propagation loses linear correlations without altering WordVar.
 
 ## Validation
 
 - Run reference known vectors, exact small projected checks and capped decision smoke tests.
 - Record each recurrence source and actual solver options without adding private payloads.
+
+## Result
+
+Added exact CRC, xorshift, reduced Speck, and GF(2) comparison controls
+
+Validation:
+
+- Independent verifier PASS for snapshot Wce8c2701a4d945fa
+- All 15 native Gecode and 15 Z3 exact projection cases passed under the per-cell cap
+- Scale-axis validation, known vector, GF(2) correlation-loss, build, syntax, and diff checks passed
