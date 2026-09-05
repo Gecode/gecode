@@ -3,7 +3,7 @@ schema_version = 1
 id = "word-022"
 key = "repair-signed-gcd-magnitude"
 area = "word"
-status = "open"
+status = "done"
 complexity = "advanced"
 afk = true
 priority = "high"
@@ -26,10 +26,20 @@ number_local_min_abs in arithmetic/number.hpp:199 returns the smaller endpoint m
 
 ## Done when
 
-- [ ] The odd-domain alias example retains exactly its supported assigned results {1,3,5,7} under complete small search.
-- [ ] All users of the minimum-magnitude helper receive sound bounds.
-- [ ] Focused tests cover zero-present/absent crossings, single-sign ranges and aliases.
+- [x] The odd-domain alias example retains exactly its supported assigned results {1,3,5,7} under complete small search.
+- [x] All users of the minimum-magnitude helper receive sound bounds.
+- [x] Focused tests cover zero-present/absent crossings, single-sign ranges and aliases.
 
 ## Validation
 
 - Run Word number/GCD/divisibility tests and TestFramework.
+
+## Result
+
+Compute signed GCD minimum magnitude from nearest admitted values
+
+Validation:
+
+- Word::Number passed with 5 iterations
+- Word::TestFramework passed with 5 iterations
+- git diff --check passed

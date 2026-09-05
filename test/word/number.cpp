@@ -257,8 +257,60 @@ namespace Test { namespace Word { namespace Number {
     virtual Gecode::Space* copy(void) { return new SignedBoundSpace(*this); }
   };
 
+  class SignedAliasGcdSpace : public Gecode::Space {
+  public:
+    Gecode::WordVar x, result;
+    SignedAliasGcdSpace(WordValue lo, WordValue hi,
+                        WordValue minimum, WordValue maximum)
+      : x(*this,4,lo,hi,Gecode::WDT_SIGNED,minimum,maximum),
+        result(*this,4,Gecode::WDT_UNSIGNED) {
+      Gecode::signed_gcd(*this,x,x,result);
+      Gecode::WordVarArgs words={x,result};
+      Gecode::branch(*this,words,Gecode::WORD_VAR_SIZE_MIN(),
+                     Gecode::WORD_VAL_LSB());
+    }
+    SignedAliasGcdSpace(SignedAliasGcdSpace& s) : Gecode::Space(s) {
+      x.update(*this,s.x); result.update(*this,s.result);
+    }
+    virtual Gecode::Space* copy(void) {
+      return new SignedAliasGcdSpace(*this);
+    }
+  };
+
+  static bool
+  signed_alias_results(WordValue lo, WordValue hi,
+                       WordValue minimum, WordValue maximum,
+                       WordValue expected) {
+    SignedAliasGcdSpace* root=
+      new SignedAliasGcdSpace(lo,hi,minimum,maximum);
+    Gecode::DFS<SignedAliasGcdSpace> search(root);
+    delete root;
+    WordValue actual=0U;
+    while (SignedAliasGcdSpace* s=search.next()) {
+      if (!s->result.assigned() || (s->result.val() >= 16U)) {
+        delete s;
+        return false;
+      }
+      actual |= WordValue(1) << s->result.val();
+      delete s;
+    }
+    return actual == expected;
+  }
+
   static bool
   bounded(void) {
+    const WordValue odd_magnitudes=(WordValue(1) << 1) |
+      (WordValue(1) << 3) | (WordValue(1) << 5) |
+      (WordValue(1) << 7);
+    const WordValue zero_through_four=(WordValue(1) << 0) |
+      (WordValue(1) << 1) | (WordValue(1) << 2) |
+      (WordValue(1) << 3) | (WordValue(1) << 4);
+    if (!signed_alias_results(1U,15U,9U,7U,odd_magnitudes) ||
+        !signed_alias_results(0U,15U,13U,4U,zero_through_four) ||
+        !signed_alias_results(1U,15U,9U,15U,odd_magnitudes) ||
+        !signed_alias_results(1U,15U,1U,7U,odd_magnitudes))
+      return false;
+
     BoundSpace gcd;
     Gecode::gcd(gcd,gcd.x,gcd.y,gcd.result);
     if ((gcd.status() == Gecode::SS_FAILED) ||

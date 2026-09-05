@@ -197,9 +197,29 @@ namespace Gecode { namespace Word { namespace Arithmetic {
 
   forceinline WordValue
   number_local_min_abs(const BoundLocalDomain& d) {
+    if (d.kind != WDT_SIGNED)
+      return number_local_magnitude(d,d.minimum);
     if (number_local_contains(d,0U)) return 0U;
-    return std::min(number_local_magnitude(d,d.minimum),
-                    number_local_magnitude(d,d.maximum));
+    const WordValue m=width_mask(d.width);
+    const WordValue sign=sign_bit(d.width);
+    WordValue ordered_lo, ordered_hi;
+    ordered_cube(d.kind,d.width,d.lo,d.hi,ordered_lo,ordered_hi);
+    WordValue minimum=m;
+    if (d.minimum < sign) {
+      WordValue candidate;
+      const WordValue bound=std::min(d.maximum,sign-1U);
+      if (cube_predecessor(ordered_lo,ordered_hi,bound,m,candidate) &&
+          (candidate >= d.minimum))
+        minimum=number_local_magnitude(d,candidate);
+    }
+    if (d.maximum >= sign) {
+      WordValue candidate;
+      const WordValue bound=std::max(d.minimum,sign);
+      if (cube_successor(ordered_lo,ordered_hi,bound,m,candidate) &&
+          (candidate <= d.maximum))
+        minimum=std::min(minimum,number_local_magnitude(d,candidate));
+    }
+    return minimum;
   }
 
   forceinline bool

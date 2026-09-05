@@ -3,9 +3,9 @@
 # Tasks: word
 
 - Total: 41
-- Ready: 8
-- Blocked: 12
-- Done: 21
+- Ready: 9
+- Blocked: 10
+- Done: 22
 
 | ID | Task | State | Blocked by |
 | --- | --- | --- | --- |
@@ -30,16 +30,16 @@
 | [word-019](tasks/019-repair-synchronized-cube-arithmetic-and-posting-shortcuts.md) | Repair synchronized cube arithmetic and posting shortcuts | done | word-018 |
 | [word-020](tasks/020-handle-min-divided-by-minus-one-in-bounded-signed-division.md) | Handle MIN divided by minus one in bounded signed division | done | — |
 | [word-021](tasks/021-make-signed-n-ary-bounds-safe-for-overflowing-intermediate-s.md) | Make signed n-ary bounds safe for overflowing intermediate sums | done | — |
-| [word-022](tasks/022-fix-signed-gcd-magnitude-bounds-across-zero.md) | Fix signed GCD magnitude bounds across zero | ready | — |
+| [word-022](tasks/022-fix-signed-gcd-magnitude-bounds-across-zero.md) | Fix signed GCD magnitude bounds across zero | done | — |
 | [word-023](tasks/023-allow-split-no-good-pruning-to-fail-normally.md) | Allow split no-good pruning to fail normally | ready | — |
 | [word-024](tasks/024-install-the-missing-bounded-product-modulo-header-with-autoc.md) | Install the missing bounded product-modulo header with Autoconf | ready | — |
 | [word-025](tasks/025-make-word-benchmark-timing-and-memory-records-reliable.md) | Make Word benchmark timing and memory records reliable | ready | — |
-| [word-026](tasks/026-control-arithmetic-progression-closure-in-gcd-divisibility-a.md) | Control arithmetic-progression closure in GCD divisibility and product-modulo | blocked | word-022 |
+| [word-026](tasks/026-control-arithmetic-progression-closure-in-gcd-divisibility-a.md) | Control arithmetic-progression closure in GCD divisibility and product-modulo | ready | word-022 |
 | [word-027](tasks/027-replace-cubic-bounds-distinct-scans-and-measure-the-shipped.md) | Replace cubic bounds-distinct scans and measure the shipped actor | ready | — |
 | [word-028](tasks/028-avoid-repeated-lowering-of-shared-word-expressions.md) | Avoid repeated lowering of shared Word expressions | ready | — |
 | [word-029](tasks/029-skip-repeated-alias-discovery-for-distinct-bounded-sum-opera.md) | Skip repeated alias discovery for distinct bounded sum operands | ready | word-021 |
 | [word-030](tasks/030-carry-explicit-bounded-policy-through-wordexpr-boolean-ite.md) | Carry explicit bounded policy through WordExpr Boolean ITE | ready | word-018 |
-| [word-031](tasks/031-extend-partial-domain-coverage-to-fallback-publication-and-r.md) | Extend partial-domain coverage to fallback publication and rewrites | blocked | word-017, word-018, word-019, word-020, word-021, word-022 |
+| [word-031](tasks/031-extend-partial-domain-coverage-to-fallback-publication-and-r.md) | Extend partial-domain coverage to fallback publication and rewrites | ready | word-017, word-018, word-019, word-020, word-021, word-022 |
 | [word-032](tasks/032-refresh-word-operation-coverage-and-historical-performance-c.md) | Refresh Word operation coverage and historical performance claims | blocked | word-030, word-027, word-019 |
 | [word-033](tasks/033-add-semantically-checked-word-benchmark-controls.md) | Add semantically checked Word benchmark controls | blocked | word-025, word-031, word-026 |
 | [word-034](tasks/034-add-z3-and-bitwuzla-comparisons-for-dma-and-register-models.md) | Add Z3 and Bitwuzla comparisons for DMA and register models | blocked | word-033, word-027 |
