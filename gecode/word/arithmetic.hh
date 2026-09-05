@@ -106,9 +106,10 @@ namespace Gecode { namespace Word { namespace Arithmetic {
                  WordValue constant, bool aliased);
     BoundNaryAdd(Space& home, BoundNaryAdd& p);
     static ExecStatus narrow_bounds(Home home, ViewArray<View>& x, View y,
-                                    WordValue constant, bool& bits);
+                                    WordValue constant, bool aliased,
+                                    bool& bits);
     static ExecStatus narrow(Home home, ViewArray<View>& x, View y,
-                             WordValue constant, bool cube);
+                             WordValue constant, bool cube, bool aliased);
   public:
     virtual Actor* copy(Space& home);
     virtual PropCost cost(const Space& home,

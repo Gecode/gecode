@@ -3,7 +3,7 @@ schema_version = 1
 id = "word-029"
 key = "remove-nary-alias-rescans"
 area = "word"
-status = "open"
+status = "done"
 complexity = "standard"
 afk = true
 priority = "normal"
@@ -26,11 +26,19 @@ BoundNaryAdd::narrow at bounded.hpp:577 scans each role against every earlier ro
 
 ## Done when
 
-- [ ] Non-aliased bound-only propagation has no quadratic alias-discovery setup.
-- [ ] Aliased inputs/result remain correct and clone-safe.
-- [ ] Release scaling for n=8,32,128,512 distinguishes bound-only and cube events.
+- [x] Non-aliased bound-only propagation has no quadratic alias-discovery setup.
+- [x] Aliased inputs/result remain correct and clone-safe.
+- [x] Release scaling for n=8,32,128,512 distinguishes bound-only and cube events.
 
 ## Validation
 
 - Run existing n-ary alias tests and TestFramework; add no tests that only assert implementation shape.
 - Compare solution parity and bound-only work/runtime with the exact parent.
+
+## Result
+
+Use BoundNaryAdd's correctly established alias fact to avoid repeated quadratic role discovery for distinct operands while preserving alias semantics and honest scheduling costs.
+
+Validation:
+
+- Independent verification passed focused arithmetic/TestFramework, 18,496 exact-parent alias cases, clone and result-alias checks, Release n=8/32/128/512 bound/cube scaling with stable counters, full build and diff checks.

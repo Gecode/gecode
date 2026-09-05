@@ -655,6 +655,8 @@ namespace Gecode { namespace Word { namespace Arithmetic {
     if (View::me(med) == ME_WORD_BND)
       return aliased ? PropCost::quadratic(PropCost::LO,x.size()+1) :
         PropCost::linear(PropCost::LO,static_cast<unsigned int>(x.size()+1));
+    if (aliased)
+      return PropCost::quadratic(PropCost::HI,x.size()+1);
     return PropCost::linear(PropCost::HI,
                             static_cast<unsigned int>(x.size())*y.width());
   }
@@ -662,7 +664,7 @@ namespace Gecode { namespace Word { namespace Arithmetic {
   template<class View>
   ExecStatus
   BoundNaryAdd<View>::narrow(Home home, ViewArray<View>& input, View result,
-                             WordValue c, bool cube) {
+                             WordValue c, bool cube, bool aliased) {
     Region region;
     const int n=input.size();
     BoundLocalDomain* d=region.alloc<BoundLocalDomain>(n+1);
@@ -671,11 +673,13 @@ namespace Gecode { namespace Word { namespace Arithmetic {
     for (int i=0; i<n+1; i++) {
       View current=(i<n) ? input[i] : result;
       representative[i]=i;
-      for (int j=0; j<i; j++) {
-        View previous=(j<n) ? input[j] : result;
-        if (current.varimp() == previous.varimp()) {
-          representative[i]=representative[j];
-          break;
+      if (aliased) {
+        for (int j=0; j<i; j++) {
+          View previous=(j<n) ? input[j] : result;
+          if (current.varimp() == previous.varimp()) {
+            representative[i]=representative[j];
+            break;
+          }
         }
       }
       if (representative[i] == i)
@@ -723,7 +727,8 @@ namespace Gecode { namespace Word { namespace Arithmetic {
   template<class View>
   ExecStatus
   BoundNaryAdd<View>::narrow_bounds(Home home, ViewArray<View>& input,
-                                    View result, WordValue c, bool& bits) {
+                                    View result, WordValue c, bool aliased,
+                                    bool& bits) {
     WordValue before_lo=result.lo(), before_hi=result.hi();
     Region region;
     WordValue* lo=region.alloc<WordValue>(input.size());
@@ -731,7 +736,7 @@ namespace Gecode { namespace Word { namespace Arithmetic {
     for (int i=0; i<input.size(); i++) {
       lo[i]=input[i].lo(); hi[i]=input[i].hi();
     }
-    GECODE_ES_CHECK(narrow(home,input,result,c,false));
+    GECODE_ES_CHECK(narrow(home,input,result,c,false,aliased));
     bits=(before_lo != result.lo()) || (before_hi != result.hi());
     for (int i=0; i<input.size(); i++)
       bits |= (lo[i] != input[i].lo()) || (hi[i] != input[i].hi());
@@ -743,14 +748,14 @@ namespace Gecode { namespace Word { namespace Arithmetic {
   BoundNaryAdd<View>::propagate(Space& home, const ModEventDelta& med) {
     if (View::me(med) == ME_WORD_BND) {
       bool bits;
-      GECODE_ES_CHECK(narrow_bounds(home,x,y,constant,bits));
+      GECODE_ES_CHECK(narrow_bounds(home,x,y,constant,aliased,bits));
       bool assigned=y.assigned();
       for (int i=0; i<x.size(); i++) assigned &= x[i].assigned();
       if (assigned) return home.ES_SUBSUMED(*this);
       return bits ? home.ES_NOFIX_PARTIAL(*this,View::med(ME_WORD_BITS)) :
         ES_FIX;
     }
-    GECODE_ES_CHECK(narrow(home,x,y,constant,true));
+    GECODE_ES_CHECK(narrow(home,x,y,constant,true,aliased));
     bool assigned=y.assigned();
     for (int i=0; i<x.size(); i++) assigned &= x[i].assigned();
     return assigned ? home.ES_SUBSUMED(*this) : ES_FIX;
@@ -760,8 +765,10 @@ namespace Gecode { namespace Word { namespace Arithmetic {
   ExecStatus
   BoundNaryAdd<View>::post(Home home, ViewArray<View>& input, View result,
                            WordValue c) {
-    const bool a=shared(input) || shared(input,result);
-    GECODE_ES_CHECK(narrow(home,input,result,c,true));
+    const bool a=shared(input) ||
+      ((input.size() == 2) && shared(input[0],input[1])) ||
+      shared(input,result);
+    GECODE_ES_CHECK(narrow(home,input,result,c,true,a));
     bool assigned=result.assigned();
     for (int i=0; i<input.size(); i++) assigned &= input[i].assigned();
     if (!assigned)
