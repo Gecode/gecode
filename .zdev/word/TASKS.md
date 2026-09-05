@@ -3,9 +3,9 @@
 # Tasks: word
 
 - Total: 41
-- Ready: 9
+- Ready: 8
 - Blocked: 10
-- Done: 22
+- Done: 23
 
 | ID | Task | State | Blocked by |
 | --- | --- | --- | --- |
@@ -31,7 +31,7 @@
 | [word-020](tasks/020-handle-min-divided-by-minus-one-in-bounded-signed-division.md) | Handle MIN divided by minus one in bounded signed division | done | — |
 | [word-021](tasks/021-make-signed-n-ary-bounds-safe-for-overflowing-intermediate-s.md) | Make signed n-ary bounds safe for overflowing intermediate sums | done | — |
 | [word-022](tasks/022-fix-signed-gcd-magnitude-bounds-across-zero.md) | Fix signed GCD magnitude bounds across zero | done | — |
-| [word-023](tasks/023-allow-split-no-good-pruning-to-fail-normally.md) | Allow split no-good pruning to fail normally | ready | — |
+| [word-023](tasks/023-allow-split-no-good-pruning-to-fail-normally.md) | Allow split no-good pruning to fail normally | done | — |
 | [word-024](tasks/024-install-the-missing-bounded-product-modulo-header-with-autoc.md) | Install the missing bounded product-modulo header with Autoconf | ready | — |
 | [word-025](tasks/025-make-word-benchmark-timing-and-memory-records-reliable.md) | Make Word benchmark timing and memory records reliable | ready | — |
 | [word-026](tasks/026-control-arithmetic-progression-closure-in-gcd-divisibility-a.md) | Control arithmetic-progression closure in GCD divisibility and product-modulo | ready | word-022 |

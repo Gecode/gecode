@@ -3,7 +3,7 @@ schema_version = 1
 id = "word-023"
 key = "repair-split-ngl-assertion"
 area = "word"
-status = "open"
+status = "done"
 complexity = "standard"
 afk = true
 priority = "high"
@@ -25,9 +25,19 @@ RankLqNGL::prune at word/branch.cpp:300 asserts n < rank_maximum. search/nogoods
 
 ## Done when
 
-- [ ] The concrete no-good returns SS_FAILED with and without assertions.
-- [ ] Focused signed/unsigned split no-good regression covers a true leaf and normal pruning.
+- [x] The concrete no-good returns SS_FAILED with and without assertions.
+- [x] Focused signed/unsigned split no-good regression covers a true leaf and normal pruning.
 
 ## Validation
 
 - Run assertion-enabled Word branching/replay tests and TestFramework; check the same regression in Release.
+
+## Result
+
+Allow true bounded split no-goods to fail without assertion
+
+Validation:
+
+- Assertion-enabled Debug Word::Branch and TestFramework passed
+- Release Word::Branch and TestFramework passed
+- git diff --check passed

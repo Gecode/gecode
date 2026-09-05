@@ -297,7 +297,6 @@ namespace Gecode { namespace Word { namespace Branch {
     return (x.rank_minimum() > n) ? NGL::FAILED : NGL::NONE;
   }
   ExecStatus RankLqNGL::prune(Space& home) {
-    assert(n < x.rank_maximum());
     return me_failed(x.narrow_rank_range(home,n+1,x.rank_maximum()))
       ? ES_FAILED : ES_OK;
   }

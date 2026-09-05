@@ -186,6 +186,83 @@ namespace Test { namespace Word {
       return replay_ok && ngl_ok && wide_ok;
     }
 
+    bool split_nogoods(void) const {
+      using namespace Gecode;
+      class SplitSpace : public Space {
+      public:
+        WordVarArray x;
+        SplitSpace(WordDomainType kind, bool two_values=false)
+          : x(*this,2) {
+          if (kind == WDT_UNSIGNED) {
+            const WordValue minimum = two_values ? 7 : 0;
+            const WordValue maximum = two_values ? 8 : 15;
+            x[0] = WordVar(*this,4,kind,minimum,maximum);
+            x[1] = WordVar(*this,4,kind,minimum,maximum);
+          } else {
+            const WordValue minimum = two_values ? 15 : 8;
+            const WordValue maximum = two_values ? 0 : 7;
+            x[0] = WordVar(*this,4,kind,minimum,maximum);
+            x[1] = WordVar(*this,4,kind,minimum,maximum);
+          }
+          branch(*this,x,WORD_VAL_SPLIT_MIN());
+        }
+        SplitSpace(SplitSpace& s) : Space(s) { x.update(*this,s.x); }
+        virtual Space* copy(void) { return new SplitSpace(*this); }
+      };
+
+      for (int k=0; k<2; k++) {
+        const WordDomainType kind = (k == 0) ? WDT_UNSIGNED : WDT_SIGNED;
+        SplitSpace root(kind);
+        if (root.status() != SS_BRANCH)
+          return false;
+        const Choice* choice = root.choice();
+
+        SplitSpace* normal = static_cast<SplitSpace*>(root.clone());
+        NGL* normal_ngl = normal->ngl(*choice,0);
+        const bool normal_ok = (normal_ngl != nullptr) &&
+          (normal_ngl->status(*normal) == NGL::NONE) &&
+          (normal_ngl->prune(*normal) == ES_OK) &&
+          (normal->status() != SS_FAILED);
+        delete normal;
+
+        SplitSpace* true_leaf = static_cast<SplitSpace*>(root.clone());
+        const WordValue value = (kind == WDT_UNSIGNED) ? 3 : 13;
+        dom(*true_leaf,true_leaf->x[0],value);
+        dom(*true_leaf,true_leaf->x[1],value);
+        NGL* true_ngl = true_leaf->ngl(*choice,0);
+        const bool failed = (true_ngl != nullptr) &&
+          (true_ngl->status(*true_leaf) == NGL::SUBSUMED) &&
+          (true_ngl->prune(*true_leaf) == ES_FAILED) &&
+          (true_leaf->status() == SS_FAILED);
+        delete true_leaf;
+
+        SplitSpace* posted = new SplitSpace(kind);
+        SplitSpace* search_root = new SplitSpace(kind,true);
+        Search::Options options;
+        options.nogoods_limit = 2;
+        Search::Engine* engine = Search::dfsengine(search_root,options);
+        Space* solution = engine->next();
+        const WordValue lower = (kind == WDT_UNSIGNED) ? 7 : 15;
+        const SplitSpace* split_solution =
+          static_cast<const SplitSpace*>(solution);
+        const bool lower_solution = (split_solution != nullptr) &&
+          (split_solution->x[0].val() == lower) &&
+          (split_solution->x[1].val() == lower);
+        delete solution;
+        dom(*posted,posted->x[0],value);
+        dom(*posted,posted->x[1],value);
+        engine->nogoods().post(*posted);
+        const bool posted_failed = posted->status() == SS_FAILED;
+        delete engine;
+        delete search_root;
+        delete posted;
+        delete choice;
+        if (!normal_ok || !failed || !lower_solution || !posted_failed)
+          return false;
+      }
+      return true;
+    }
+
     bool callbacks(void) const {
       using namespace Gecode;
       const WordValue payload = WordValue(0x100000000ULL) + 7;
@@ -418,7 +495,8 @@ namespace Test { namespace Word {
         search(WORD_VAL_RND(rb)) &&
         assignment(WORD_ASSIGN_LSB()) && assignment(WORD_ASSIGN_MSB()) &&
         assignment(WORD_ASSIGN_RND(ra)) && lifecycle() && random() &&
-        selectors() && mixed_recomputation() && bounded() && callbacks();
+        selectors() && mixed_recomputation() && bounded() && split_nogoods() &&
+        callbacks();
     }
   };
 
