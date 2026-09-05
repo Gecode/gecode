@@ -31,11 +31,4 @@
  *
  */
 
-namespace Gecode { namespace Search {
-
-  forceinline
-  Engine::~Engine(void) {}
-
-}}
-
 // STATISTICS: search-other

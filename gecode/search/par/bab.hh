@@ -80,9 +80,11 @@ namespace Gecode { namespace Search { namespace Par {
       int mark;
       /// Best solution found so far
       Space* best;
+      /// Fixed worker index
+      unsigned int index;
     public:
       /// Initialize for space \a s with engine \a e
-      Worker(Space* s, BAB& e);
+      Worker(Space* s, BAB& e, unsigned int index);
       /// Provide access to engine
       BAB& engine(void) const;
       /// Start execution of worker
@@ -90,9 +92,11 @@ namespace Gecode { namespace Search { namespace Par {
       /// Accept better solution \a b
       void better(Space* b);
       /// Try to find some work
-      void find(void);
+      bool find(void);
       /// Reset engine to restart at space \a s
       void reset(Space* s, unsigned int ngdl);
+      /// Whether this worker currently owns local search
+      bool owns_work(void) const;
       /// Destructor
       virtual ~Worker(void);
     };

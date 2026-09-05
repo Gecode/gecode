@@ -48,6 +48,7 @@ set(GECODE_SEARCH_SOURCES
   gecode/search/seq/rbs.cpp
   gecode/search/stop.cpp
   gecode/search/tracer.cpp
+  gecode/search/worker-control.cpp
 )
 
 set(GECODE_INT_SOURCES

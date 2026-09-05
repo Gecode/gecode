@@ -79,7 +79,7 @@ namespace Gecode { namespace Search { namespace Seq {
      */
     start();
     while (true) {
-      if (stop(opt))
+      if (stop_seq(opt))
         return nullptr;
       // Recompute and add constraint if necessary
       while (cur == nullptr) {

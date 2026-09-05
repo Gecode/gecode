@@ -58,8 +58,8 @@ namespace Gecode { namespace Search { namespace Seq {
 namespace Gecode { namespace Search { namespace Par {
 
   Stop*
-  pbsstop(Stop* so) {
-    return new PortfolioStop(so);
+  pbsstop(Stop* so, const WorkerControl& control) {
+    return new PortfolioStop(so,control);
   }
 
   Engine*

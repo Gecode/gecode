@@ -266,10 +266,10 @@ SEARCHSRC0 = \
 	dfs bab lds \
 	seq/rbs seq/dead seq/pbs par/pbs \
 	rbs pbs nogoods exception tracer \
-	cpprofiler/tracer
+	cpprofiler/tracer worker-control
 SEARCHHDR0 = \
 	statistics.hpp stop.hpp options.hpp cutoff.hpp \
-	support.hh worker.hh exception.hpp engine.hpp base.hpp \
+	support.hh worker.hh worker-control.hh exception.hpp engine.hpp base.hpp \
 	nogoods.hh nogoods.hpp build.hpp traits.hpp sebs.hpp \
 	seq/path.hh seq/path.hpp seq/dfs.hh seq/dfs.hpp \
 	seq/bab.hh seq/bab.hpp seq/lds.hh seq/lds.hpp \
@@ -1356,6 +1356,8 @@ CHECKTESTS = Branch::Int::Dense::3 \
 	Int::Linear::Bool::Int::Lq \
 	Int::MiniModel::LinExpr::Bool::352 \
 	NoGoods::Queens \
+	Search::PBS::ConstructionFailure \
+	Search::WorkerControl:: \
 	Search::DFS::Sol::Binary::Nary::Binary::1::1::1 \
 	Set::Dom::Dom::Gr \
 	Set::RelOp::ConstSSI::Union \

@@ -89,7 +89,7 @@ namespace Gecode { namespace Search { namespace Seq {
      */
     start();
     while (true) {
-      if (stop(opt))
+      if (stop_seq(opt))
         return nullptr;
       while (cur == nullptr) {
         if (path.empty())

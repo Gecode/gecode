@@ -709,6 +709,45 @@ namespace Gecode { namespace Search {
 
 namespace Gecode { namespace Search {
 
+  class WorkerControlAccess;
+
+  /**
+   * \brief External control for the requested number of search workers
+   *
+   * A worker control is a copyable handle. Copies share the same request
+   * and can be used concurrently. The worker capacity is fixed when the
+   * handle is first attached to a search engine.
+   * Without thread support, concurrent use and pausing are unsupported:
+   * attaching a zero request or calling request(0) raises InvalidWorkerRequest.
+   *
+   * \ingroup TaskModelSearch
+   */
+  class GECODE_SEARCH_EXPORT WorkerControl {
+  private:
+    class State;
+    State* state;
+    friend class WorkerControlAccess;
+  public:
+    /// Construct an empty handle
+    WorkerControl(void) noexcept;
+    /// Construct an engaged handle with initial request \a requested (zero pauses)
+    explicit WorkerControl(unsigned int requested);
+    /// Copy constructor
+    WorkerControl(const WorkerControl& control);
+    /// Assignment operator
+    WorkerControl& operator =(const WorkerControl& control);
+    /// Destructor
+    ~WorkerControl(void);
+    /// Whether this handle is engaged
+    explicit operator bool(void) const noexcept;
+    /// Return the requested number of workers (zero also denotes an empty handle)
+    unsigned int requested(void) const noexcept;
+    /// Request \a workers workers (zero pauses the engine)
+    void request(unsigned int workers);
+    /// Return the fixed worker capacity, or zero before attachment
+    unsigned int capacity(void) const noexcept;
+  };
+
     class Stop;
 
     /**
@@ -754,6 +793,13 @@ namespace Gecode { namespace Search {
       bool clone;
       /// Number of threads to use
       double threads;
+      /**
+       * External worker control
+       *
+       * After option expansion, \a threads is the immutable worker capacity.
+       * Requests through this handle never change \a threads.
+       */
+      WorkerControl worker_control;
       /// Create a clone after every \a c_d commits (commit distance)
       unsigned int c_d;
       /// Create a clone during recomputation if distance is greater than \a a_d (adaptive distance)
@@ -782,6 +828,8 @@ namespace Gecode { namespace Search {
     };
 
 }}
+
+#include <gecode/search/worker-control.hh>
 
 #include <gecode/search/options.hpp>
 
@@ -941,6 +989,13 @@ namespace Gecode { namespace Search {
    * \brief %Search engine implementation interface
    */
   class GECODE_SEARCH_EXPORT Engine : public HeapAllocated {
+  protected:
+    /// Control retained for the lifetime of a leaf engine
+    WorkerControl worker_control;
+    /// Construct a meta engine without worker control
+    Engine(void);
+    /// Construct a leaf engine and bind worker control to \a capacity
+    Engine(const Options& o, unsigned int capacity);
   public:
     /// Return next solution (nullptr, if none exists or search has been stopped)
     virtual Space* next(void) = 0;
@@ -1265,6 +1320,10 @@ namespace Gecode {
    * The engine will run a portfolio with a number of assets as defined
    * by the options \a o. The engine supports parallel execution of
    * assets by using the number of threads as defined by the options.
+   * An external worker control in \a o is supported only for a single
+   * homogeneous asset. Multiple controlled assets require explicit engine
+   * builders, each with its own control and immutable worker capacity.
+   * PBS does not allocate workers or adjust those controls.
    *
    * The class \a T can implement member functions
    * \code virtual bool master(const MetaInfo& mi) \endcode
@@ -1285,8 +1344,15 @@ namespace Gecode {
   public:
     /// Initialize with engines running copies of \a s with options \a o
     PBS(T* s, const Search::Options& o=Search::Options::def);
-    /// Initialize with engine builders \a sebs
+    /**
+     * Initialize with engine builders \a sebs
+     *
+     * The outer options must not contain a worker control. Each builder can
+     * instead supply a distinct control for its underlying engine.
+     */
     PBS(T* s, SEBs& sebs, const Search::Options& o=Search::Options::def);
+    /// Constrain future portfolio solutions to be better than \a b
+    void constrain(const T& b);
     /// Whether engine does best solution search
     static const bool best = E<T>::best;
   };
@@ -1297,6 +1363,8 @@ namespace Gecode {
    * The engine will run a portfolio with a number of assets as defined
    * by the options \a o. The engine supports parallel execution of
    * assets by using the number of threads as defined by the options.
+   * An external worker control is supported only when \a o selects one
+   * asset. PBS does not implement worker-allocation policy.
    *
    * The class \a T can implement member functions
    * \code virtual bool master(const MetaInfo& mi) \endcode
