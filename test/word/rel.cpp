@@ -438,11 +438,90 @@ namespace Test { namespace Word {
           (wide.x.maximum() == (~WordValue(0)-1));
       }
 
+      static bool mixed_equality_lifecycle(void) {
+        using namespace Gecode;
+        class MixedSpace : public Space {
+        public:
+          WordVar bounded, compact;
+          MixedSpace(bool reversed, bool wider=false)
+            : bounded(*this,3,WDT_UNSIGNED,wider ? 2U : 3U,
+                      wider ? 5U : 4U),
+              compact(*this,3,0U,wider ? 7U : 3U) {
+            if (reversed)
+              rel(*this,compact,WRT_EQ,bounded);
+            else
+              rel(*this,bounded,WRT_EQ,compact);
+          }
+          MixedSpace(MixedSpace& s) : Space(s) {
+            bounded.update(*this,s.bounded);
+            compact.update(*this,s.compact);
+          }
+          Space* copy(void) { return new MixedSpace(*this); }
+        };
+
+        for (bool reversed : {false,true}) {
+          MixedSpace rejected(reversed);
+          if ((rejected.status() == SS_FAILED) ||
+              !rejected.bounded.assigned() ||
+              !rejected.compact.assigned() ||
+              (rejected.compact.val() != 3U) ||
+              (PropagatorGroup::all.size(rejected) != 0U))
+            return false;
+          dom(rejected,rejected.compact,0U);
+          if (rejected.status() != SS_FAILED)
+            return false;
+
+          MixedSpace source(reversed,true);
+          if ((source.status() == SS_FAILED) ||
+              (PropagatorGroup::all.size(source) != 1U))
+            return false;
+          MixedSpace* clone=static_cast<MixedSpace*>(source.clone());
+          dom(*clone,clone->compact,3U);
+          const bool clone_ok=(clone->status() != SS_FAILED) &&
+            clone->bounded.assigned() && (clone->bounded.val() == 3U) &&
+            (PropagatorGroup::all.size(*clone) == 0U) &&
+            !source.compact.assigned();
+          delete clone;
+          if (!clone_ok)
+            return false;
+
+          class SearchSpace : public MixedSpace {
+          public:
+            SearchSpace(bool reversed) : MixedSpace(reversed) {
+              branch(*this,compact,WORD_VAL_LSB());
+            }
+            SearchSpace(SearchSpace& s) : MixedSpace(s) {}
+            Space* copy(void) { return new SearchSpace(*this); }
+          };
+          SearchSpace* root=new SearchSpace(reversed);
+          Search::Options options;
+          options.c_d=1;
+          options.a_d=64;
+          DFS<SearchSpace> dfs(root,options);
+          delete root;
+          unsigned int solutions=0;
+          while (SearchSpace* solution=dfs.next()) {
+            const bool ok=solution->bounded.assigned() &&
+              solution->compact.assigned() &&
+              (solution->bounded.val() == solution->compact.val()) &&
+              (PropagatorGroup::all.size(*solution) == 0U);
+            delete solution;
+            if (!ok)
+              return false;
+            solutions++;
+          }
+          if (solutions != 1U)
+            return false;
+        }
+        return true;
+      }
+
     public:
       Lifecycle(void) : Base("Word::Rel::Lifecycle") {}
       virtual bool run(void) {
-        if (!partial_sound(Gecode::WRT_EQ) ||
-            !partial_sound(Gecode::WRT_NQ))
+        if (!partial_sound(Gecode::WRT_EQ))
+          return false;
+        if (!partial_sound(Gecode::WRT_NQ))
           return false;
         const Gecode::WordRelType order[] = {
           Gecode::WRT_ULQ, Gecode::WRT_ULE,
@@ -515,6 +594,8 @@ namespace Test { namespace Word {
               return false;
         }
         if (!bounded_strength())
+          return false;
+        if (!mixed_equality_lifecycle())
           return false;
         for (unsigned int i=0; i<8; i++)
           for (unsigned int j=0; j<3; j++)

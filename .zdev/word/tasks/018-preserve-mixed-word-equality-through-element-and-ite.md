@@ -3,7 +3,7 @@ schema_version = 1
 id = "word-018"
 key = "repair-selected-equality"
 area = "word"
-status = "open"
+status = "done"
 complexity = "advanced"
 afk = true
 priority = "high"
@@ -26,11 +26,22 @@ In rel/eq.hpp:82 and :100, a shared cube is published to both roles, then assign
 
 ## Done when
 
-- [ ] Element and ITE reject unequal selected/result values for initial and delayed control/index/domain tells.
-- [ ] Both operand orders and aliases preserve supported values and only subsume when equality is entailed.
-- [ ] Existing equality, conditional and element tests include focused regressions.
+- [x] Element and ITE reject unequal selected/result values for initial and delayed control/index/domain tells.
+- [x] Both operand orders and aliases preserve supported values and only subsume when equality is entailed.
+- [x] Existing equality, conditional and element tests include focused regressions.
 
 ## Validation
 
 - Run Word relations, Element, conditional and TestFramework tests.
 - Exercise clone/recomputation on the repaired rewrite path.
+
+## Result
+
+Keep mixed Word equality active through Element and ITE synchronization
+
+Validation:
+
+- Word::Rel passed with 5 iterations
+- Word::Element passed with 5 iterations
+- Word::Conditional passed with 5 iterations
+- Word::TestFramework passed with 5 iterations

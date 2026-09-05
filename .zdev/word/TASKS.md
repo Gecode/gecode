@@ -3,9 +3,9 @@
 # Tasks: word
 
 - Total: 41
-- Ready: 9
-- Blocked: 15
-- Done: 17
+- Ready: 10
+- Blocked: 13
+- Done: 18
 
 | ID | Task | State | Blocked by |
 | --- | --- | --- | --- |
@@ -26,8 +26,8 @@
 | [word-015](tasks/015-preserve-bounds-through-word-element.md) | Preserve bounds through Word element | done | word-004 |
 | [word-016](tasks/016-investigate-native-bounds-consistent-word-distinct.md) | Investigate native bounds-consistent Word distinct | done | — |
 | [word-017](tasks/017-repair-bounded-publication-in-binary-and-n-ary-word-logic.md) | Repair bounded publication in binary and n-ary Word logic | done | — |
-| [word-018](tasks/018-preserve-mixed-word-equality-through-element-and-ite.md) | Preserve mixed Word equality through Element and ITE | ready | — |
-| [word-019](tasks/019-repair-synchronized-cube-arithmetic-and-posting-shortcuts.md) | Repair synchronized cube arithmetic and posting shortcuts | blocked | word-018 |
+| [word-018](tasks/018-preserve-mixed-word-equality-through-element-and-ite.md) | Preserve mixed Word equality through Element and ITE | done | — |
+| [word-019](tasks/019-repair-synchronized-cube-arithmetic-and-posting-shortcuts.md) | Repair synchronized cube arithmetic and posting shortcuts | ready | word-018 |
 | [word-020](tasks/020-handle-min-divided-by-minus-one-in-bounded-signed-division.md) | Handle MIN divided by minus one in bounded signed division | ready | — |
 | [word-021](tasks/021-make-signed-n-ary-bounds-safe-for-overflowing-intermediate-s.md) | Make signed n-ary bounds safe for overflowing intermediate sums | ready | — |
 | [word-022](tasks/022-fix-signed-gcd-magnitude-bounds-across-zero.md) | Fix signed GCD magnitude bounds across zero | ready | — |
@@ -38,7 +38,7 @@
 | [word-027](tasks/027-replace-cubic-bounds-distinct-scans-and-measure-the-shipped.md) | Replace cubic bounds-distinct scans and measure the shipped actor | ready | — |
 | [word-028](tasks/028-avoid-repeated-lowering-of-shared-word-expressions.md) | Avoid repeated lowering of shared Word expressions | ready | — |
 | [word-029](tasks/029-skip-repeated-alias-discovery-for-distinct-bounded-sum-opera.md) | Skip repeated alias discovery for distinct bounded sum operands | blocked | word-021 |
-| [word-030](tasks/030-carry-explicit-bounded-policy-through-wordexpr-boolean-ite.md) | Carry explicit bounded policy through WordExpr Boolean ITE | blocked | word-018 |
+| [word-030](tasks/030-carry-explicit-bounded-policy-through-wordexpr-boolean-ite.md) | Carry explicit bounded policy through WordExpr Boolean ITE | ready | word-018 |
 | [word-031](tasks/031-extend-partial-domain-coverage-to-fallback-publication-and-r.md) | Extend partial-domain coverage to fallback publication and rewrites | blocked | word-017, word-018, word-019, word-020, word-021, word-022 |
 | [word-032](tasks/032-refresh-word-operation-coverage-and-historical-performance-c.md) | Refresh Word operation coverage and historical performance claims | blocked | word-030, word-027, word-019 |
 | [word-033](tasks/033-add-semantically-checked-word-benchmark-controls.md) | Add semantically checked Word benchmark controls | blocked | word-025, word-031, word-026 |

@@ -83,7 +83,7 @@ namespace Gecode { namespace Word { namespace Rel {
     const WordValue hi = x0.hi() & x1.hi();
     GECODE_ME_CHECK(x0.narrow(home,lo,hi));
     GECODE_ME_CHECK(x1.narrow(home,lo,hi));
-    if (!x0.assigned())
+    if (!x0.assigned() || !x1.assigned())
       (void) new (home) Eq(home,x0,x1);
     return ES_OK;
   }
@@ -101,7 +101,8 @@ namespace Gecode { namespace Word { namespace Rel {
     const WordValue hi = x0.hi() & x1.hi();
     GECODE_ME_CHECK(x0.narrow(home,lo,hi));
     GECODE_ME_CHECK(x1.narrow(home,lo,hi));
-    return x0.assigned() ? home.ES_SUBSUMED(*this) : ES_FIX;
+    return (x0.assigned() && x1.assigned()) ?
+      home.ES_SUBSUMED(*this) : ES_FIX;
   }
 
 }}}

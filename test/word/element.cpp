@@ -159,6 +159,47 @@ namespace Test { namespace Word {
         return ok;
       }
 
+      static bool mixed_selected_equality(void) {
+        using namespace Gecode;
+        class MixedSpace : public Space {
+        public:
+          WordVar selected, other, result;
+          IntVar index;
+          MixedSpace(bool delayed_index)
+            : selected(*this,3,WDT_UNSIGNED,3U,4U),
+              other(*this,3), result(*this,3,0U,3U),
+              index(*this,0,delayed_index ? 1 : 0) {
+            WordVarArgs words={selected,other};
+            element(*this,words,index,result);
+          }
+          MixedSpace(MixedSpace& s) : Space(s) {
+            selected.update(*this,s.selected);
+            other.update(*this,s.other);
+            result.update(*this,s.result);
+            index.update(*this,s.index);
+          }
+          Space* copy(void) { return new MixedSpace(*this); }
+        };
+
+        MixedSpace initial(false);
+        if ((initial.status() == SS_FAILED) ||
+            !initial.selected.assigned() ||
+            (initial.selected.val() != 3U))
+          return false;
+        dom(initial,initial.result,0U);
+        if (initial.status() != SS_FAILED)
+          return false;
+
+        MixedSpace delayed(true);
+        if (delayed.status() == SS_FAILED)
+          return false;
+        rel(delayed,delayed.index,IRT_EQ,0);
+        if ((delayed.status() == SS_FAILED) || !delayed.selected.assigned())
+          return false;
+        dom(delayed,delayed.result,0U);
+        return delayed.status() == SS_FAILED;
+      }
+
       static bool search_recomputation(void) {
         using namespace Gecode;
         class SearchSpace : public ElementSpace {
@@ -195,7 +236,8 @@ namespace Test { namespace Word {
     public:
       Lifecycle(void) : Base("Word::Element::Lifecycle") {}
       virtual bool run(void) {
-        return focused() && aliases_and_clone() && search_recomputation();
+        return focused() && aliases_and_clone() &&
+          mixed_selected_equality() && search_recomputation();
       }
     };
 

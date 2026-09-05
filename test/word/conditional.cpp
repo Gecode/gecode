@@ -218,6 +218,46 @@ namespace Test { namespace Word {
         return solutions == 8U;
       }
 
+      static bool mixed_selected_equality(void) {
+        using namespace Gecode;
+        class MixedSpace : public Space {
+        public:
+          BoolVar control;
+          WordVar then_word, else_word, result;
+          MixedSpace(bool selected_then, bool delayed_control)
+            : control(*this,delayed_control ? 0 : (selected_then ? 1 : 0),
+                      delayed_control ? 1 : (selected_then ? 1 : 0)),
+              then_word(*this,3,0U,selected_then ? 3U : 7U),
+              else_word(*this,3,0U,selected_then ? 7U : 3U),
+              result(*this,3,WDT_UNSIGNED,3U,4U) {
+            ite(*this,control,then_word,else_word,result);
+          }
+          MixedSpace(MixedSpace& s) : Space(s) {
+            control.update(*this,s.control);
+            then_word.update(*this,s.then_word);
+            else_word.update(*this,s.else_word);
+            result.update(*this,s.result);
+          }
+          Space* copy(void) { return new MixedSpace(*this); }
+        };
+
+        for (bool selected_then : {false,true})
+          for (bool delayed_control : {false,true}) {
+            MixedSpace s(selected_then,delayed_control);
+            if (s.status() == SS_FAILED)
+              return false;
+            if (delayed_control)
+              rel(s,s.control,IRT_EQ,selected_then ? 1 : 0);
+            if ((s.status() == SS_FAILED) || !s.result.assigned() ||
+                (s.result.val() != 3U))
+              return false;
+            dom(s,selected_then ? s.then_word : s.else_word,0U);
+            if (s.status() != SS_FAILED)
+              return false;
+          }
+        return true;
+      }
+
     public:
       Lifecycle(void) : Base("Word::Conditional::Lifecycle") {}
       virtual bool run(void) {
@@ -293,7 +333,8 @@ namespace Test { namespace Word {
                       mismatch.x[0],other,mismatch.x[2]);
           return false;
         } catch (const Gecode::Word::WidthMismatch&) {}
-        return native_propagation() && search_recomputation();
+        return native_propagation() && mixed_selected_equality() &&
+          search_recomputation();
       }
     };
 
