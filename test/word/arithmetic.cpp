@@ -3404,9 +3404,100 @@ namespace Test { namespace Word {
           Space* copy(void) { return new Wide(*this); }
         };
         Wide w;
-        return (w.status() != SS_FAILED) &&
-          (w.z.minimum() == (WordValue(1)<<63)+1U) &&
-          (w.z.maximum() == (WordValue(1)<<63)+2U);
+        if ((w.status() == SS_FAILED) ||
+            (w.z.minimum() != (WordValue(1)<<63)+1U) ||
+            (w.z.maximum() != (WordValue(1)<<63)+2U))
+          return false;
+
+        // Auxiliary signed sums may leave the representable interval even
+        // though cancellation makes the complete equation satisfiable.
+        class Cancellation : public Space {
+        public:
+          WordVarArray x; WordVar z;
+          Cancellation(int negative_position)
+            : x(*this,3,4,WDT_SIGNED), z(*this,4,WDT_SIGNED,4U,7U) {
+            for (int i=0; i<3; i++)
+              if (i == negative_position)
+                dom(*this,x[i],8U,9U);
+              else
+                dom(*this,x[i],6U,7U);
+            WordVarArgs a={x[0],x[1],x[2]}; add(*this,a,z);
+            branch(*this,x,WORD_VAR_SIZE_MIN(),WORD_VAL_LSB());
+          }
+          Cancellation(Cancellation& s) : Space(s) {
+            x.update(*this,s.x); z.update(*this,s.z);
+          }
+          Space* copy(void) { return new Cancellation(*this); }
+        };
+        for (int i=0; i<3; i++) {
+          Cancellation* root=new Cancellation(i);
+          DFS<Cancellation> dfs(root);
+          delete root;
+          unsigned int solutions=0;
+          while (Cancellation* solution=dfs.next()) {
+            const WordValue expected=(solution->x[0].val()+
+              solution->x[1].val()+solution->x[2].val()) & 15U;
+            const bool ok=solution->z.assigned() &&
+              (solution->z.val() == expected);
+            delete solution;
+            if (!ok) return false;
+            solutions++;
+          }
+          if (solutions != 8U) return false;
+        }
+
+        class FoldedConstant : public Space {
+        public:
+          WordVarArray x; WordVar z;
+          FoldedConstant(void)
+            : x(*this,3,4,WDT_SIGNED), z(*this,4,WDT_SIGNED,4U,7U) {
+            dom(*this,x[0],8U);
+            dom(*this,x[1],6U,7U); dom(*this,x[2],6U,7U);
+            WordVarArgs a={x[0],x[1],x[2]}; add(*this,a,z);
+          }
+          FoldedConstant(FoldedConstant& s) : Space(s) {
+            x.update(*this,s.x); z.update(*this,s.z);
+          }
+          Space* copy(void) { return new FoldedConstant(*this); }
+        };
+        FoldedConstant folded;
+        if (folded.status() == SS_FAILED) return false;
+
+        class ResultAlias : public Space {
+        public:
+          WordVar z, positive, negative;
+          ResultAlias(void)
+            : z(*this,4,WDT_SIGNED,8U,9U),
+              positive(*this,4,WDT_SIGNED,6U,6U),
+              negative(*this,4,WDT_SIGNED,10U,10U) {
+            WordVarArgs a={z,positive,negative}; add(*this,a,z);
+          }
+          ResultAlias(ResultAlias& s) : Space(s) {
+            z.update(*this,s.z); positive.update(*this,s.positive);
+            negative.update(*this,s.negative);
+          }
+          Space* copy(void) { return new ResultAlias(*this); }
+        };
+        ResultAlias alias;
+        if (alias.status() == SS_FAILED) return false;
+
+        class SignedWideCancellation : public Space {
+        public:
+          WordVarArray x; WordVar z;
+          SignedWideCancellation(void)
+            : x(*this,3,64,WDT_SIGNED), z(*this,64,WDT_SIGNED) {
+            const WordValue sign=WordValue(1)<<63;
+            dom(*this,x[0],sign-1U); dom(*this,x[1],sign-1U);
+            dom(*this,x[2],sign); dom(*this,z,sign-2U);
+            WordVarArgs a={x[0],x[1],x[2]}; add(*this,a,z);
+          }
+          SignedWideCancellation(SignedWideCancellation& s) : Space(s) {
+            x.update(*this,s.x); z.update(*this,s.z);
+          }
+          Space* copy(void) { return new SignedWideCancellation(*this); }
+        };
+        SignedWideCancellation signed_wide;
+        return signed_wide.status() != SS_FAILED;
       }
     public:
       BoundedLifecycle(void) : Base("Word::Arithmetic::BoundedLifecycle") {}

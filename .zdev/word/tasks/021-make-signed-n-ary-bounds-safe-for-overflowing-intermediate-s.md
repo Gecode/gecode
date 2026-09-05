@@ -3,7 +3,7 @@ schema_version = 1
 id = "word-021"
 key = "repair-nary-signed-sums"
 area = "word"
-status = "open"
+status = "done"
 complexity = "advanced"
 afk = true
 priority = "high"
@@ -26,11 +26,22 @@ arithmetic/bounded.hpp:187 and :210 compute suffix/leave-one-out sums in narrow 
 
 ## Done when
 
-- [ ] The witness and every supported small-width total survive the named example and operand permutations.
-- [ ] Prefix, suffix and leave-one-out overflow cannot be confused with inconsistency.
-- [ ] Focused tests cover cancellation, constants, result aliases and relevant width-64 behavior.
+- [x] The witness and every supported small-width total survive the named example and operand permutations.
+- [x] Prefix, suffix and leave-one-out overflow cannot be confused with inconsistency.
+- [x] Focused tests cover cancellation, constants, result aliases and relevant width-64 behavior.
 
 ## Validation
 
 - Run n-ary Add and bounded arithmetic tests plus TestFramework.
 - Check existing scatter/gather solution parity.
+
+## Result
+
+Make signed n-ary bounds conservative under auxiliary overflow
+
+Validation:
+
+- Word::Arithmetic n-ary and bounded groups passed
+- Word::TestFramework passed
+- Scatter-gather parity passed for 4 6 and 8 segments
+- Compilation and diff checks passed

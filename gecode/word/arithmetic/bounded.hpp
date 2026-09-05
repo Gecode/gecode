@@ -153,11 +153,17 @@ namespace Gecode { namespace Word { namespace Arithmetic {
     WordValue* prefix_max=region.alloc<WordValue>(n+1);
     WordValue* suffix_min=region.alloc<WordValue>(n+1);
     WordValue* suffix_max=region.alloc<WordValue>(n+1);
+    bool* prefix_min_valid=region.alloc<bool>(n+1);
+    bool* prefix_max_valid=region.alloc<bool>(n+1);
+    bool* suffix_min_valid=region.alloc<bool>(n+1);
+    bool* suffix_max_valid=region.alloc<bool>(n+1);
     const WordValue mask=width_mask(result.width);
     const WordValue identity=View::signed_order ? sign_bit(result.width) : 0;
     prefix_min[0]=prefix_max[0]=
       Word::rank(result.kind,result.width,constant);
     suffix_min[n]=suffix_max[n]=identity;
+    prefix_min_valid[0]=prefix_max_valid[0]=true;
+    suffix_min_valid[n]=suffix_max_valid[n]=true;
     for (int i=0; i<n; i++) {
       if (!View::signed_order) {
         if ((input[i]->minimum > mask-prefix_min[i]) ||
@@ -167,14 +173,17 @@ namespace Gecode { namespace Word { namespace Arithmetic {
         prefix_max[i+1]=prefix_max[i]+input[i]->maximum;
       } else {
         const WordValue sign=sign_bit(result.width);
-        if (!bound_signed_add(prefix_min[i],input[i]->minimum,sign,mask,
-                              prefix_min[i+1]) ||
-            !bound_signed_add(prefix_max[i],input[i]->maximum,sign,mask,
-                              prefix_max[i+1]))
-          return false;
+        prefix_min_valid[i+1]=prefix_min_valid[i] &&
+          bound_signed_add(prefix_min[i],input[i]->minimum,sign,mask,
+                           prefix_min[i+1]);
+        prefix_max_valid[i+1]=prefix_max_valid[i] &&
+          bound_signed_add(prefix_max[i],input[i]->maximum,sign,mask,
+                           prefix_max[i+1]);
       }
     }
-    if (!result.range(prefix_min[n],prefix_max[n]))
+    if ((!View::signed_order ||
+         (prefix_min_valid[n] && prefix_max_valid[n])) &&
+        !result.range(prefix_min[n],prefix_max[n]))
       return false;
     for (int i=n; i-- > 0;) {
       if (!View::signed_order) {
@@ -185,11 +194,12 @@ namespace Gecode { namespace Word { namespace Arithmetic {
         suffix_max[i]=input[i]->maximum+suffix_max[i+1];
       } else {
         const WordValue sign=sign_bit(result.width);
-        if (!bound_signed_add(input[i]->minimum,suffix_min[i+1],sign,mask,
-                              suffix_min[i]) ||
-            !bound_signed_add(input[i]->maximum,suffix_max[i+1],sign,mask,
-                              suffix_max[i]))
-          return false;
+        suffix_min_valid[i]=suffix_min_valid[i+1] &&
+          bound_signed_add(input[i]->minimum,suffix_min[i+1],sign,mask,
+                           suffix_min[i]);
+        suffix_max_valid[i]=suffix_max_valid[i+1] &&
+          bound_signed_add(input[i]->maximum,suffix_max[i+1],sign,mask,
+                           suffix_max[i]);
       }
     }
     for (int i=0; i<n; i++) {
@@ -207,11 +217,14 @@ namespace Gecode { namespace Word { namespace Arithmetic {
         maximum=result.maximum-other_min;
       } else {
         const WordValue sign=sign_bit(result.width);
-        if (!bound_signed_add(prefix_min[i],suffix_min[i+1],sign,mask,
-                              other_min) ||
-            !bound_signed_add(prefix_max[i],suffix_max[i+1],sign,mask,
-                              other_max))
-          return false;
+        const bool other_min_valid=prefix_min_valid[i] &&
+          suffix_min_valid[i+1] &&
+          bound_signed_add(prefix_min[i],suffix_min[i+1],sign,mask,other_min);
+        const bool other_max_valid=prefix_max_valid[i] &&
+          suffix_max_valid[i+1] &&
+          bound_signed_add(prefix_max[i],suffix_max[i+1],sign,mask,other_max);
+        if (!other_min_valid || !other_max_valid)
+          continue;
         if (!bound_signed_sub(result.minimum,other_max,sign,mask,minimum))
           minimum=0;
         if (!bound_signed_sub(result.maximum,other_min,sign,mask,maximum))
