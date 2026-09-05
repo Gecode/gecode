@@ -382,15 +382,22 @@ namespace Gecode { namespace Word { namespace Arithmetic {
           const WordValue bv[2]={role[1]->minimum^sign,
                                  role[1]->maximum^sign};
           if (op == SDO_DIV) {
-            WordValue minimum=mask, maximum=0;
-            for (unsigned int i=0; i<2; i++)
-              for (unsigned int j=0; j<2; j++) {
-                const WordValue rank=SignedDivModSupport::evaluate<SDO_DIV>(
-                  av[i],bv[j],sign,mask)^sign;
-                minimum=std::min(minimum,rank);
-                maximum=std::max(maximum,rank);
-              }
-            if (!role[2]->range(minimum,maximum)) return ES_FAILED;
+            const WordValue minus_one_rank=mask^sign;
+            const bool wraps_at_minimum=
+              (role[0]->minimum == 0) && (role[0]->maximum != 0) &&
+              (role[1]->minimum <= minus_one_rank) &&
+              (role[1]->maximum >= minus_one_rank);
+            if (!wraps_at_minimum) {
+              WordValue minimum=mask, maximum=0;
+              for (unsigned int i=0; i<2; i++)
+                for (unsigned int j=0; j<2; j++) {
+                  const WordValue rank=SignedDivModSupport::evaluate<SDO_DIV>(
+                    av[i],bv[j],sign,mask)^sign;
+                  minimum=std::min(minimum,rank);
+                  maximum=std::max(maximum,rank);
+                }
+              if (!role[2]->range(minimum,maximum)) return ES_FAILED;
+            }
             if (v[1].assigned()) {
               const WordValue divisor_rank=v[1].val()^sign;
               WordValue p0, p1;

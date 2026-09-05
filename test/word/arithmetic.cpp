@@ -2596,6 +2596,67 @@ namespace Test { namespace Word {
         return true;
       }
 
+      static bool signed_division_interval_oracle(void) {
+        using namespace Gecode;
+        class D : public Space {
+        public:
+          WordVar x,y,q;
+          D(unsigned int width, WordValue xmin, WordValue xmax,
+            WordValue ymin, WordValue ymax)
+            : x(*this,width,WDT_SIGNED,xmin,xmax),
+              y(*this,width,WDT_SIGNED,ymin,ymax),
+              q(*this,width,WDT_SIGNED) {
+            signed_div(*this,x,y,q);
+          }
+          D(D& s) : Space(s) {
+            x.update(*this,s.x); y.update(*this,s.y); q.update(*this,s.q);
+          }
+          Space* copy(void) { return new D(*this); }
+        };
+
+        for (unsigned int width : {2U,3U,4U}) {
+          const WordValue mask=Gecode::Word::width_mask(width);
+          const WordValue minimum=WordValue(1) << (width-1);
+          const WordValue dividend_rows[][2]={
+            {minimum,mask}, {minimum,minimum+1U}, {minimum+1U,mask}
+          };
+          const WordValue divisor_rows[][2]={
+            {mask,mask}, {mask-1U,mask}
+          };
+          for (const auto& dividend : dividend_rows)
+            for (const auto& divisor : divisor_rows) {
+              D d(width,dividend[0],dividend[1],divisor[0],divisor[1]);
+              const bool failed=d.status() == SS_FAILED;
+              for (WordValue xv=dividend[0]; xv<=dividend[1]; xv++)
+                for (WordValue yv=divisor[0]; yv<=divisor[1]; yv++) {
+                  const WordValue qv=Arithmetic::evaluate(
+                    SIGNED_DIV,xv,yv,mask);
+                  if (failed || !d.x.in(xv) || !d.y.in(yv) || !d.q.in(qv)) {
+                    ::Test::olog << "signed division interval oracle pruned "
+                                 << "support width=" << width << " tuple="
+                                 << xv << ',' << yv << ',' << qv << std::endl;
+                    return false;
+                  }
+                }
+            }
+        }
+
+        D regression(4U,8U,15U,15U,15U);
+        if ((regression.status() == SS_FAILED) || !regression.q.in(7U))
+          return false;
+
+        for (unsigned int width : {1U,64U}) {
+          const WordValue mask=Gecode::Word::width_mask(width);
+          const WordValue minimum=WordValue(1) << (width-1);
+          const WordValue following=(width == 1U) ? 0U : minimum+1U;
+          D boundary(width,minimum,following,mask,mask);
+          if ((boundary.status() == SS_FAILED) ||
+              !boundary.q.in(minimum) || !boundary.q.in(minimum-1U))
+            return false;
+        }
+        return true;
+      }
+
       static bool division_propagation(void) {
         using namespace Gecode;
         class U : public Space {
@@ -3350,9 +3411,10 @@ namespace Test { namespace Word {
     public:
       BoundedLifecycle(void) : Base("Word::Arithmetic::BoundedLifecycle") {}
       virtual bool run(void) {
-        return partial_domain_oracle() && division_truth() && division_propagation() &&
-          division_replay() && propagation() && boundaries_aliases() &&
-          replay() && staged_propagation() && nary_propagation();
+        return partial_domain_oracle() && division_truth() &&
+          signed_division_interval_oracle() && division_propagation() &&
+          division_replay() && propagation() && boundaries_aliases() && replay() &&
+          staged_propagation() && nary_propagation();
       }
     };
 

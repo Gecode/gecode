@@ -3,9 +3,9 @@
 # Tasks: word
 
 - Total: 41
-- Ready: 9
+- Ready: 8
 - Blocked: 13
-- Done: 19
+- Done: 20
 
 | ID | Task | State | Blocked by |
 | --- | --- | --- | --- |
@@ -28,7 +28,7 @@
 | [word-017](tasks/017-repair-bounded-publication-in-binary-and-n-ary-word-logic.md) | Repair bounded publication in binary and n-ary Word logic | done | — |
 | [word-018](tasks/018-preserve-mixed-word-equality-through-element-and-ite.md) | Preserve mixed Word equality through Element and ITE | done | — |
 | [word-019](tasks/019-repair-synchronized-cube-arithmetic-and-posting-shortcuts.md) | Repair synchronized cube arithmetic and posting shortcuts | done | word-018 |
-| [word-020](tasks/020-handle-min-divided-by-minus-one-in-bounded-signed-division.md) | Handle MIN divided by minus one in bounded signed division | ready | — |
+| [word-020](tasks/020-handle-min-divided-by-minus-one-in-bounded-signed-division.md) | Handle MIN divided by minus one in bounded signed division | done | — |
 | [word-021](tasks/021-make-signed-n-ary-bounds-safe-for-overflowing-intermediate-s.md) | Make signed n-ary bounds safe for overflowing intermediate sums | ready | — |
 | [word-022](tasks/022-fix-signed-gcd-magnitude-bounds-across-zero.md) | Fix signed GCD magnitude bounds across zero | ready | — |
 | [word-023](tasks/023-allow-split-no-good-pruning-to-fail-normally.md) | Allow split no-good pruning to fail normally | ready | — |
