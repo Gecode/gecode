@@ -941,6 +941,123 @@ namespace Test { namespace Word {
       }
     };
 
+    class SharedLoweringLifecycle : public Base {
+    private:
+      class SharedSpace : public Gecode::Space {
+      public:
+        Gecode::WordVar x, result;
+        SharedSpace(unsigned int depth)
+          : x(*this,4), result() {
+          Gecode::WordExpr expression = ~Gecode::WordExpr(x);
+          for (unsigned int i=0; i<depth; i++)
+            expression = expression | expression;
+          result = expression.post(*this);
+        }
+        SharedSpace(SharedSpace& s) : Gecode::Space(s) {
+          x.update(*this,s.x);
+          result.update(*this,s.result);
+        }
+        virtual Gecode::Space* copy(void) {
+          return new SharedSpace(*this);
+        }
+      };
+
+      class FanOutSpace : public Gecode::Space {
+      public:
+        Gecode::WordVar x, y, result;
+        FanOutSpace(void) : x(*this,3), y(*this,3), result() {
+          Gecode::WordExpr shared = Gecode::WordExpr(x)+Gecode::WordExpr(y);
+          Gecode::WordExpr expression =
+            (shared ^ Gecode::WordExpr(x)) + (shared | Gecode::WordExpr(y));
+          result = expression.post(*this);
+          Gecode::WordVarArgs decision = {x,y};
+          Gecode::branch(*this,decision,Gecode::WORD_VAR_SIZE_MIN(),
+                         Gecode::WORD_VAL_LSB());
+        }
+        FanOutSpace(FanOutSpace& s) : Gecode::Space(s) {
+          x.update(*this,s.x);
+          y.update(*this,s.y);
+          result.update(*this,s.result);
+        }
+        virtual Gecode::Space* copy(void) {
+          return new FanOutSpace(*this);
+        }
+      };
+
+      static bool linear_actor_growth(void) {
+        const unsigned int depths[] = {4,8,12};
+        for (unsigned int i=0; i<3; i++) {
+          SharedSpace s(depths[i]);
+          if (Gecode::PropagatorGroup::all.size(s) != depths[i]+1)
+            return false;
+        }
+        return true;
+      }
+
+      static bool posting_independence(void) {
+        using namespace Gecode;
+        class PolicySpace : public Space {
+        public:
+          WordVar x, first, second, bounded, cube;
+          PolicySpace(void) : x(*this,4) {
+            WordExpr expression = WordExpr(x)+WordExpr(4,1U);
+            first = expression.post(*this);
+            second = expression.post(*this);
+            bounded = expression.post(*this,WDT_UNSIGNED);
+            cube = expression.post(*this,WDT_CUBE);
+          }
+          PolicySpace(PolicySpace& s) : Space(s) {
+            x.update(*this,s.x);
+            first.update(*this,s.first);
+            second.update(*this,s.second);
+            bounded.update(*this,s.bounded);
+            cube.update(*this,s.cube);
+          }
+          virtual Space* copy(void) { return new PolicySpace(*this); }
+        };
+
+        PolicySpace first_space;
+        PolicySpace second_space;
+        return (PropagatorGroup::all.size(first_space) == 4) &&
+          (PropagatorGroup::all.size(second_space) == 4) &&
+          (first_space.bounded.domain_type() == WDT_UNSIGNED) &&
+          (first_space.cube.domain_type() == WDT_CUBE);
+      }
+
+      static bool fan_out_semantics_and_recomputation(void) {
+        using namespace Gecode;
+        FanOutSpace* root = new FanOutSpace;
+        Search::Options options;
+        options.c_d = 2;
+        options.a_d = 64;
+        DFS<FanOutSpace> dfs(root,options);
+        delete root;
+        unsigned int solutions = 0;
+        while (FanOutSpace* solution = dfs.next()) {
+          const WordValue shared =
+            (solution->x.val()+solution->y.val()) & 7U;
+          const WordValue expected =
+            ((shared ^ solution->x.val()) +
+             (shared | solution->y.val())) & 7U;
+          const bool ok = solution->result.assigned() &&
+            (solution->result.val() == expected);
+          delete solution;
+          if (!ok)
+            return false;
+          solutions++;
+        }
+        return solutions == 64;
+      }
+
+    public:
+      SharedLoweringLifecycle(void)
+        : Base("Word::MiniModel::SharedLoweringLifecycle") {}
+      virtual bool run(void) {
+        return linear_actor_growth() && posting_independence() &&
+          fan_out_semantics_and_recomputation();
+      }
+    };
+
     Logic logic;
     NamedLogic named_logic;
     BooleanConditional boolean_conditional;
@@ -957,6 +1074,7 @@ namespace Test { namespace Word {
     StructuralLifecycle structural_lifecycle;
     ArithmeticLifecycle arithmetic_lifecycle;
     BooleanPolicyLifecycle boolean_policy_lifecycle;
+    SharedLoweringLifecycle shared_lowering_lifecycle;
 
   }
 

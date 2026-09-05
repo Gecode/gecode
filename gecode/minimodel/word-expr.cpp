@@ -32,12 +32,31 @@
 
 #include <gecode/minimodel.hh>
 
+#include <unordered_map>
+
 #ifdef GECODE_HAS_WORD_VARS
 
 namespace Gecode {
 
   class WordExpr::Node {
   public:
+    struct LoweringKey {
+      const Node* node;
+      WordDomainType domain_type;
+
+      bool operator ==(const LoweringKey& other) const {
+        return (node == other.node) && (domain_type == other.domain_type);
+      }
+    };
+    struct LoweringKeyHash {
+      size_t operator ()(const LoweringKey& key) const {
+        return std::hash<const Node*>()(key.node) ^
+          static_cast<size_t>(key.domain_type);
+      }
+    };
+    typedef std::unordered_map<LoweringKey,WordVar,LoweringKeyHash>
+      LoweringCache;
+
     unsigned int use;
     NodeType t;
     Node *l, *r, *c;
@@ -53,6 +72,8 @@ namespace Gecode {
     ~Node(void);
     bool decrement(void);
     WordVar post(Home home, WordDomainType domain_type=WDT_CUBE) const;
+    WordVar post(Home home, WordDomainType domain_type,
+                 LoweringCache& cache) const;
     static void* operator new(size_t size);
     static void operator delete(void* p, size_t size);
   };
@@ -320,76 +341,92 @@ namespace Gecode {
 
   WordVar
   WordExpr::Node::post(Home home, WordDomainType domain_type) const {
+    LoweringCache cache;
+    return post(home,domain_type,cache);
+  }
+
+  WordVar
+  WordExpr::Node::post(Home home, WordDomainType domain_type,
+                       LoweringCache& cache) const {
+    const LoweringKey key = {this,domain_type};
+    LoweringCache::const_iterator found = cache.find(key);
+    if (found != cache.end())
+      return found->second;
+
+    WordVar result;
     switch (t) {
     case NT_VAR:
-      return x;
+      result=x;
+      break;
     case NT_CONST:
       if (domain_type == WDT_CUBE)
-        return WordVar(home,width,value,value);
-      return WordVar(home,width,value,value,domain_type,value,value);
+        result=WordVar(home,width,value,value);
+      else
+        result=WordVar(home,width,value,value,domain_type,value,value);
+      break;
     case NT_COMPL: {
-      WordVar operand = l->post(home,domain_type);
-      WordVar result=temporary(home,width,node_domain(t,domain_type));
+      WordVar operand = l->post(home,domain_type,cache);
+      result=temporary(home,width,node_domain(t,domain_type));
       complement(home,operand,result);
-      return result;
+      break;
     }
     case NT_AND: case NT_OR: case NT_XOR:
     case NT_NAND: case NT_NOR: case NT_XNOR: {
-      WordVar left = l->post(home,domain_type);
-      WordVar right = r->post(home,domain_type);
-      WordVar result=temporary(home,width,node_domain(t,domain_type));
+      WordVar left = l->post(home,domain_type,cache);
+      WordVar right = r->post(home,domain_type,cache);
+      result=temporary(home,width,node_domain(t,domain_type));
       rel(home,left,operation(t),right,result);
-      return result;
+      break;
     }
     case NT_BOOL_ITE: {
       BoolVar control = expr(home,*bool_control);
-      WordVar then_word = l->post(home,domain_type);
-      WordVar else_word = r->post(home,domain_type);
-      WordVar result=temporary(home,width,node_domain(t,domain_type));
+      WordVar then_word = l->post(home,domain_type,cache);
+      WordVar else_word = r->post(home,domain_type,cache);
+      result=temporary(home,width,node_domain(t,domain_type));
       ite(home,control,then_word,else_word,result);
-      return result;
+      break;
     }
     case NT_WORD_ITE: {
-      WordVar control = c->post(home,domain_type);
-      WordVar then_word = l->post(home,domain_type);
-      WordVar else_word = r->post(home,domain_type);
-      WordVar result=temporary(home,width,node_domain(t,domain_type));
+      WordVar control = c->post(home,domain_type,cache);
+      WordVar then_word = l->post(home,domain_type,cache);
+      WordVar else_word = r->post(home,domain_type,cache);
+      result=temporary(home,width,node_domain(t,domain_type));
       ite(home,control,then_word,else_word,result);
-      return result;
+      break;
     }
     case NT_EXTRACT: {
-      WordVar operand = l->post(home,domain_type);
-      WordVar result=temporary(home,width,node_domain(t,domain_type));
+      WordVar operand = l->post(home,domain_type,cache);
+      result=temporary(home,width,node_domain(t,domain_type));
       Gecode::extract(home,operand,parameter,extent,result);
-      return result;
+      break;
     }
     case NT_CONCAT: {
-      WordVar high = l->post(home,domain_type);
-      WordVar low = r->post(home,domain_type);
-      WordVar result=temporary(home,width,node_domain(t,domain_type));
+      WordVar high = l->post(home,domain_type,cache);
+      WordVar low = r->post(home,domain_type,cache);
+      result=temporary(home,width,node_domain(t,domain_type));
       Gecode::concat(home,high,low,result);
-      return result;
+      break;
     }
     case NT_REPEAT: {
-      WordVar operand = l->post(home,domain_type);
-      WordVar result=temporary(home,width,node_domain(t,domain_type));
+      WordVar operand = l->post(home,domain_type,cache);
+      result=temporary(home,width,node_domain(t,domain_type));
       Gecode::repeat(home,operand,parameter,result);
-      return result;
+      break;
     }
     case NT_ZERO_EXTEND: case NT_SIGN_EXTEND: {
-      WordVar operand = l->post(home,domain_type);
-      WordVar result=temporary(home,width,node_domain(t,domain_type));
+      WordVar operand = l->post(home,domain_type,cache);
+      result=temporary(home,width,node_domain(t,domain_type));
       if (t == NT_ZERO_EXTEND)
         Gecode::zero_extend(home,operand,width,result);
       else
         Gecode::sign_extend(home,operand,width,result);
-      return result;
+      break;
     }
     case NT_SHIFT_LEFT: case NT_LOGICAL_SHIFT_RIGHT:
     case NT_ARITHMETIC_SHIFT_RIGHT: case NT_ROTATE_LEFT:
     case NT_ROTATE_RIGHT: {
-      WordVar operand = l->post(home,domain_type);
-      WordVar result=temporary(home,width,node_domain(t,domain_type));
+      WordVar operand = l->post(home,domain_type,cache);
+      result=temporary(home,width,node_domain(t,domain_type));
       switch (t) {
       case NT_SHIFT_LEFT:
         Gecode::shift_left(home,operand,parameter,result); break;
@@ -402,13 +439,13 @@ namespace Gecode {
       default:
         Gecode::rotate_right(home,operand,parameter,result); break;
       }
-      return result;
+      break;
     }
     case NT_VAR_SHIFT_LEFT: case NT_VAR_LOGICAL_SHIFT_RIGHT:
     case NT_VAR_ARITHMETIC_SHIFT_RIGHT: {
-      WordVar operand = l->post(home,domain_type);
-      WordVar amount = r->post(home,domain_type);
-      WordVar result=temporary(home,width,node_domain(t,domain_type));
+      WordVar operand = l->post(home,domain_type,cache);
+      WordVar amount = r->post(home,domain_type,cache);
+      result=temporary(home,width,node_domain(t,domain_type));
       switch (t) {
       case NT_VAR_SHIFT_LEFT:
         Gecode::shift_left(home,operand,amount,result); break;
@@ -417,20 +454,20 @@ namespace Gecode {
       default:
         Gecode::arithmetic_shift_right(home,operand,amount,result); break;
       }
-      return result;
+      break;
     }
     case NT_NEG: {
-      WordVar operand = l->post(home,domain_type);
-      WordVar result=temporary(home,width,node_domain(t,domain_type));
+      WordVar operand = l->post(home,domain_type,cache);
+      result=temporary(home,width,node_domain(t,domain_type));
       Gecode::neg(home,operand,result);
-      return result;
+      break;
     }
     case NT_ADD: case NT_SUB: case NT_MULT:
     case NT_DIV: case NT_MOD: case NT_SIGNED_DIV:
     case NT_SIGNED_REM: case NT_SIGNED_MOD: {
-      WordVar left = l->post(home,domain_type);
-      WordVar right = r->post(home,domain_type);
-      WordVar result=temporary(home,width,node_domain(t,domain_type));
+      WordVar left = l->post(home,domain_type,cache);
+      WordVar right = r->post(home,domain_type,cache);
+      result=temporary(home,width,node_domain(t,domain_type));
       switch (t) {
       case NT_ADD:
         Gecode::add(home,left,right,result); break;
@@ -449,11 +486,13 @@ namespace Gecode {
       default:
         Gecode::signed_mod(home,left,right,result,semantics); break;
       }
-      return result;
+      break;
     }
     default:
       throw Word::UnknownOperation("MiniModel::WordExpr");
     }
+    cache.insert(std::make_pair(key,result));
+    return result;
   }
 
   WordExpr::WordExpr(const WordExpr& e) : n(e.n) {
