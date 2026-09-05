@@ -3,6 +3,13 @@
   "id": "dma-descriptors-3",
   "kind": "dma",
   "descriptor_count": 3,
+  "goal": "enumerate",
+  "expected_status": "sat",
+  "decision_variables": [
+    "index", "base[0]", "base[1]", "base[2]",
+    "flag[0]", "flag[1]", "flag[2]"
+  ],
+  "parameters": {"descriptor_count": 3},
   "license": "MIT",
   "redistributable": true
 }

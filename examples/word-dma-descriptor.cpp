@@ -36,6 +36,7 @@
 #include <gecode/word.hh>
 
 #include <cstdint>
+#include <chrono>
 #include <cstdlib>
 #include <fstream>
 #include <iostream>
@@ -70,16 +71,25 @@ namespace {
     Driver::UnsignedIntOption _size;
     Driver::StringOption _formulation;
     Driver::UnsignedIntOption _retain_clones;
+    Driver::UnsignedIntOption _batch;
     Driver::StringOption _measurement;
+    Driver::StringOption _search_control;
+    Driver::StringOption _projection;
   public:
     enum Formulation { COMPACT_WORD, BOUNDED_WORD, WORD_INT_CHANNEL, INT_BOOL };
-    enum Measurement { SOLVE, LAYOUT, RETAIN_CLONES };
+    enum Measurement { SOLVE, LAYOUT, RETAIN_CLONES, BATCH };
+    enum SearchControl { NATIVE, PUBLIC_MIN };
+    enum Projection { PROJECTION_NONE, PROJECTION_FIRST, PROJECTION_ALL };
 
     DMAOptions(const char* name)
       : Options(name), _size("size","descriptor count",6),
         _formulation("formulation","model formulation",COMPACT_WORD),
         _retain_clones("retain-clones","number of stabilized root clones",0),
-        _measurement("measurement","solve, layout, or retained clones",SOLVE) {
+        _batch("batch","in-process searches for tiny cases",1),
+        _measurement("measurement","solve, layout, retained clones, or batch",SOLVE),
+        _search_control("search-control","native or aligned public decisions",NATIVE),
+        _projection("projection","none, first, or all public projections",
+                    PROJECTION_NONE) {
       solutions(0);
       add(_size);
       add(_formulation);
@@ -88,10 +98,19 @@ namespace {
       _formulation.add(WORD_INT_CHANNEL,"word-int-channel","compact Word variables with numeric Int channels");
       _formulation.add(INT_BOOL,"int-bool","integer and Boolean variables");
       add(_retain_clones);
+      add(_batch);
+      add(_search_control);
+      _search_control.add(NATIVE,"native","formulation-native value choice");
+      _search_control.add(PUBLIC_MIN,"public-min","aligned public decision order and minimum values");
+      add(_projection);
+      _projection.add(PROJECTION_NONE,"none","do not emit public projections");
+      _projection.add(PROJECTION_FIRST,"first","emit the first public projection");
+      _projection.add(PROJECTION_ALL,"all","emit every public projection");
       add(_measurement);
       _measurement.add(SOLVE,"solve","exhaustively solve the model");
       _measurement.add(LAYOUT,"layout","report object layout sizes");
       _measurement.add(RETAIN_CLONES,"retain-clones","retain stabilized root clones and report RSS");
+      _measurement.add(BATCH,"batch","repeat search in-process without startup timing");
     }
     Formulation formulation(void) const {
       return static_cast<Formulation>(_formulation.value());
@@ -100,6 +119,16 @@ namespace {
       return static_cast<Measurement>(_measurement.value());
     }
     unsigned int retain_clones(void) const { return _retain_clones.value(); }
+    unsigned int batch(void) const { return _batch.value(); }
+    SearchControl search_control(void) const {
+      return static_cast<SearchControl>(_search_control.value());
+    }
+    const char* search_control_name(void) const {
+      return search_control() == NATIVE ? "native" : "public-min";
+    }
+    Projection projection(void) const {
+      return static_cast<Projection>(_projection.value());
+    }
     unsigned int size(void) const { return _size.value(); }
     const char* formulation_name(void) const {
       switch (formulation()) {
@@ -288,14 +317,20 @@ namespace {
       branch(*this,execute,BOOL_VAR_NONE(),BOOL_VAL_MIN());
       if (formulation == DMAOptions::INT_BOOL) {
         branch(*this,base_int,INT_VAR_NONE(),INT_VAL_MIN());
+        if (opt.search_control() == DMAOptions::PUBLIC_MIN)
+          return;
         IntVarArgs rest(end_int);
         rest << flag_int << selected_base_int << selected_end_int
              << selected_limit_int << _selected_flag_int << _selected_plus_int;
         branch(*this,rest,INT_VAR_NONE(),INT_VAL_MIN());
       } else {
         const WordValBranch values = (formulation == DMAOptions::BOUNDED_WORD) ?
-          WORD_VAL_SPLIT_MIN() : WORD_VAL_LSB();
+          WORD_VAL_SPLIT_MIN() :
+          (opt.search_control() == DMAOptions::PUBLIC_MIN ?
+           WORD_VAL_MSB() : WORD_VAL_LSB());
         branch(*this,base_word,WORD_VAR_NONE(),values);
+        if (opt.search_control() == DMAOptions::PUBLIC_MIN)
+          return;
         WordVarArgs rest(end_word);
         rest << selected_base_word << selected_end_word
              << selected_plus_word << selected_limit_word;
@@ -357,6 +392,24 @@ namespace {
       }
       return value;
     }
+
+    std::vector<unsigned int> public_projection(void) const {
+      std::vector<unsigned int> values;
+      values.reserve(1+2*descriptor_count);
+      values.push_back(static_cast<unsigned int>(index.val()));
+      if (formulation == DMAOptions::INT_BOOL) {
+        for (unsigned int i=0; i<descriptor_count; i++)
+          values.push_back(static_cast<unsigned int>(base_int[i].val()));
+        for (unsigned int i=0; i<descriptor_count; i++)
+          values.push_back(static_cast<unsigned int>(flag_int[i].val()));
+      } else {
+        for (unsigned int i=0; i<descriptor_count; i++)
+          values.push_back(static_cast<unsigned int>(base_word[i].val()));
+        for (unsigned int i=0; i<descriptor_count; i++)
+          values.push_back(static_cast<unsigned int>(flag_word[i].val()));
+      }
+      return values;
+    }
   };
 
   unsigned long long rss_bytes(void) {
@@ -402,13 +455,17 @@ main(int argc, char* argv[]) {
               << ",\"model_bytes\":" << sizeof(DMADescriptor) << "}\n";
     return 0;
   }
+  const auto construction_start = std::chrono::steady_clock::now();
   DMADescriptor* root = new DMADescriptor(opt);
+  const auto construction_end = std::chrono::steady_clock::now();
   StatusStatistics root_statistics;
+  const auto root_start = std::chrono::steady_clock::now();
   if (root->status(root_statistics) == SS_FAILED) {
     delete root;
     std::cerr << "DMA model failed during initial propagation\n";
     return 1;
   }
+  const auto root_end = std::chrono::steady_clock::now();
   if (opt.measurement() == DMAOptions::RETAIN_CLONES) {
     std::vector<Space*> clones;
     try {
@@ -432,18 +489,71 @@ main(int argc, char* argv[]) {
   }
   const unsigned int root_propagators = PropagatorGroup::all.size(*root);
   const unsigned int root_branchers = BrancherGroup::all.size(*root);
-  DFS<DMADescriptor> search(root);
-  delete root;
+  const unsigned int batch = opt.measurement() == DMAOptions::BATCH ?
+    opt.batch() : 1U;
   std::uint64_t solutions = 0, checksum = 0;
-  while (DMADescriptor* solution = search.next()) {
-    ++solutions;
-    checksum += solution->solution_value();
-    delete solution;
+  std::vector<std::vector<unsigned int> > projections;
+  Search::Statistics statistics;
+  const auto search_start = std::chrono::steady_clock::now();
+  for (unsigned int iteration=0; iteration<batch; iteration++) {
+    DFS<DMADescriptor> search(static_cast<DMADescriptor*>(root->clone()));
+    std::uint64_t iteration_solutions = 0, iteration_checksum = 0;
+    while (DMADescriptor* solution = search.next()) {
+      ++iteration_solutions;
+      iteration_checksum += solution->solution_value();
+      if ((iteration == 0) &&
+          ((opt.projection() == DMAOptions::PROJECTION_ALL) ||
+           ((opt.projection() == DMAOptions::PROJECTION_FIRST) &&
+            projections.empty())))
+        projections.push_back(solution->public_projection());
+      delete solution;
+    }
+    if (iteration == 0) {
+      solutions = iteration_solutions;
+      checksum = iteration_checksum;
+    } else if ((solutions != iteration_solutions) ||
+               (checksum != iteration_checksum)) {
+      delete root;
+      std::cerr << "inconsistent in-process batch result\n";
+      return 4;
+    }
+    const Search::Statistics current = search.statistics();
+    statistics.propagate += current.propagate;
+    statistics.node += current.node;
+    statistics.fail += current.fail;
   }
-  const Search::Statistics statistics = search.statistics();
+  const auto search_end = std::chrono::steady_clock::now();
+  delete root;
+  const std::chrono::duration<double> construction_seconds =
+    construction_end-construction_start;
+  const std::chrono::duration<double> root_seconds = root_end-root_start;
+  const std::chrono::duration<double> search_seconds = search_end-search_start;
   std::cout << "{\"schema_version\":1,\"status\":\"ok\""
             << ",\"formulation\":\"" << opt.formulation_name() << "\""
+            << ",\"search_control\":\"" << opt.search_control_name() << "\""
             << ",\"size\":" << opt.size()
+            << ",\"batch_iterations\":" << batch
+            << ",\"construction_seconds\":" << construction_seconds.count()
+            << ",\"root_seconds\":" << root_seconds.count()
+            << ",\"search_seconds\":" << search_seconds.count()
+            << ",\"semantic_status\":\""
+            << (solutions == 0 ? "unsat" : "sat") << "\""
+            << ",\"decision_variables\":[\"index\"";
+  for (unsigned int i=0; i<opt.size(); i++)
+    std::cout << ",\"base[" << i << "]\"";
+  for (unsigned int i=0; i<opt.size(); i++)
+    std::cout << ",\"flag[" << i << "]\"";
+  std::cout << "]" << ",\"projections\":[";
+  for (std::size_t i=0; i<projections.size(); i++) {
+    if (i != 0) std::cout << ',';
+    std::cout << '[';
+    for (std::size_t j=0; j<projections[i].size(); j++) {
+      if (j != 0) std::cout << ',';
+      std::cout << projections[i][j];
+    }
+    std::cout << ']';
+  }
+  std::cout << "]"
             << ",\"solutions\":" << solutions
             << ",\"checksum\":" << checksum
             << ",\"nodes\":" << statistics.node

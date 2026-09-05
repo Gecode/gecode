@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "id": "word-xor-rotate-unsat",
+  "kind": "xor-rotate",
+  "description": "A unique full target whose sole preimage is excluded.",
+  "width": 8,
+  "rounds": 3,
+  "key": 165,
+  "shift": 3,
+  "target_lo": 0,
+  "target_hi": 0,
+  "expected_solutions": 0,
+  "expected_input": 0,
+  "excluded_input": 135,
+  "goal": "unsat",
+  "expected_status": "unsat",
+  "decision_variables": ["input"],
+  "parameters": {
+    "width": 8,
+    "rounds": 3,
+    "key": 165,
+    "shift": 3,
+    "target_lo": 0,
+    "target_hi": 0,
+    "excluded_input": 135
+  },
+  "redistributable": true,
+  "license": "MIT"
+}

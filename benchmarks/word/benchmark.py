@@ -21,8 +21,14 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
+from semantics import validate_contract
+
 SCHEMA_VERSION = 1
-DMA_VARIANTS = ("compact-word", "bounded-word", "word-int-channel", "int-bool")
+DMA_FORMULATIONS = ("compact-word", "bounded-word", "word-int-channel", "int-bool")
+DMA_CONTROLS = ("native", "public-min")
+DMA_VARIANTS = tuple(f"{formulation}@{control}"
+                     for control in DMA_CONTROLS
+                     for formulation in DMA_FORMULATIONS)
 XOR_VARIANTS = ("native-word", "bool-decomposition")
 TERMINAL_STATUSES = frozenset(("ok", "failed", "timeout", "error"))
 XOR_FIELDS = ("schema_version", "id", "width", "rounds", "key", "shift",
@@ -112,6 +118,9 @@ def validate_instance(value: dict[str, Any], path: Path) -> dict[str, Any]:
     if kind == "dma":
         if value["descriptor_count"] not in (3, 6, 9):
             raise ValueError(f"{path}: descriptor_count must be 3, 6, or 9")
+        if value.get("parameters") != {
+                "descriptor_count": value["descriptor_count"]}:
+            raise ValueError(f"{path}: parameters do not match solver arguments")
     else:
         width = value["width"]
         mask = (1 << width)-1 if 0 < width <= 64 else 0
@@ -126,6 +135,21 @@ def validate_instance(value: dict[str, Any], path: Path) -> dict[str, Any]:
             raise ValueError(f"{path}: target_lo is not a subset of target_hi")
         if value["expected_solutions"] < 0:
             raise ValueError(f"{path}: expected_solutions must be nonnegative")
+        contract_parameters = value.get("parameters")
+        expected_parameters = {field: value[field] for field in
+                               ("width","rounds","key","shift","target_lo","target_hi")}
+        if "excluded_input" in value:
+            expected_parameters["excluded_input"] = value["excluded_input"]
+        if contract_parameters is None:
+            # Preserve schema-1 private corpora while giving them the same
+            # exact small XOR semantics as the checked-in fixtures.
+            value.update(goal="enumerate",
+                         expected_status="sat" if value["expected_solutions"] else "unsat",
+                         decision_variables=["input"],
+                         parameters=expected_parameters)
+            contract_parameters = expected_parameters
+        if contract_parameters != expected_parameters:
+            raise ValueError(f"{path}: parameters do not match solver arguments")
     value["kind"] = kind
     return value
 
@@ -316,6 +340,11 @@ def variants_for(instance: dict[str, Any]) -> tuple[str, ...]:
     return DMA_VARIANTS if instance["kind"] == "dma" else XOR_VARIANTS
 
 
+def dma_variant(value: str) -> tuple[str, str]:
+    formulation, control = value.split("@", 1)
+    return formulation, control
+
+
 def resolve_binary(repo_root: Path, requested: Path | None, kind: str) -> Path:
     executable = "word-dma-descriptor" if kind == "dma" else "word-benchmark"
     candidates = [requested] if requested else [
@@ -373,7 +402,7 @@ def json_command(command: list[str], timeout: float) -> dict[str, Any]:
 def memory_measurements(binary: Path, timeout: float) -> dict[str, Any]:
     layout = json_command([str(binary), "-measurement", "layout"], timeout)
     variants: dict[str, Any] = {}
-    for variant in DMA_VARIANTS:
+    for variant in DMA_FORMULATIONS:
         populations = [2000, 8000, 32000]
         while True:
             points = []
@@ -412,12 +441,20 @@ def memory_measurements(binary: Path, timeout: float) -> dict[str, Any]:
 def command_for(binary: Path, case: Case) -> list[str]:
     instance = case.instance
     if instance["kind"] == "dma":
-        return [str(binary), "-formulation", case.variant,
-                "-size", str(instance["descriptor_count"]), "-solutions", "0"]
+        formulation, control = dma_variant(case.variant)
+        projection = "all" if instance["goal"] == "enumerate" else "first"
+        command = [str(binary), "-formulation", formulation,
+                   "-search-control", control, "-projection", projection,
+                   "-size", str(instance["descriptor_count"]), "-solutions", "0"]
+        if instance["descriptor_count"] == 3:
+            command.extend(["-measurement", "batch", "-batch", "5"])
+        return command
     arguments = [str(binary), "--variant", case.variant,
                  "--instance-id", instance["id"]]
     for field in XOR_FIELDS[2:]:
         arguments.extend(["--"+field.replace("_", "-"), str(instance[field])])
+    if "excluded_input" in instance:
+        arguments.extend(["--excluded-input", str(instance["excluded_input"])])
     return arguments
 
 
@@ -625,6 +662,17 @@ def run_command(args: argparse.Namespace) -> int:
     plan["binary_identities"] = {
         kind: binary_identity(repo_root,binary) for kind,binary in binaries.items()
     }
+    semantic_preflight = []
+    for corpus, instance in discovered:
+        for variant in variants_for(instance):
+            case = Case(corpus, instance, variant, 0)
+            result = json_command(command_for(binaries[instance["kind"]], case),
+                                  args.timeout)
+            validate_contract(instance, result)
+            semantic_preflight.append({"instance_id": instance["id"],
+                                       "solver_variant": variant,
+                                       "semantic_status": result["semantic_status"]})
+    plan["semantic_preflight"] = semantic_preflight
     plan["expected_records"] = {
         case.run_id: {
             "corpus": case.corpus,
@@ -635,10 +683,13 @@ def run_command(args: argparse.Namespace) -> int:
             "command": command_for(binaries[case.instance["kind"]],case),
             "binary_sha256": plan["binary_identities"][case.instance["kind"]]["sha256"],
             "solver_identity": (
-                {"formulation": case.variant, "size": case.instance["descriptor_count"]}
+                {"formulation": dma_variant(case.variant)[0],
+                 "search_control": dma_variant(case.variant)[1],
+                 "size": case.instance["descriptor_count"]}
                 if case.instance["kind"] == "dma" else
                 {"solver_variant": case.variant, "instance_id": case.instance["id"]}
             ),
+            "semantic_instance": case.instance,
         } for case in cases
     }
     plan["case_order"] = "interleaved by repetition and instance; variants rotate each repetition"
@@ -698,6 +749,15 @@ def analyze_command(args: argparse.Namespace) -> int:
             for field,value in expected.get("solver_identity",{}).items():
                 if metrics.get(field) != value:
                     raise ValueError(f"{path}: solver output {field} does not match the run plan")
+            if run["benchmark_kind"] == "dma" and any(
+                    not isinstance(metrics.get(field), (int, float))
+                    for field in ("construction_seconds", "root_seconds",
+                                  "search_seconds")):
+                raise ValueError(f"{path}: DMA output lacks phase timing")
+            try:
+                validate_contract(expected["semantic_instance"], metrics)
+            except ValueError as error:
+                raise ValueError(f"{path}: semantic validation failed: {error}") from error
     grouped: dict[tuple[str, str, str, str], list[dict[str, Any]]] = {}
     for run in runs:
         key = (run.get("benchmark_kind","xor-rotate"),run["corpus"],
@@ -716,7 +776,8 @@ def analyze_command(args: argparse.Namespace) -> int:
                     if value["peak_memory_kib"] is not None]
         metric_rows = [value["solver_metrics"] for value in successful]
         identity_fields = {"schema_version", "solver_variant", "formulation",
-                           "instance_id", "size"}
+                           "instance_id", "size", "construction_seconds",
+                           "root_seconds", "search_seconds"}
         stable_fields = sorted(set().union(*(row.keys() for row in metric_rows))
                                - identity_fields)
         for field in stable_fields:
@@ -746,6 +807,18 @@ def analyze_command(args: argparse.Namespace) -> int:
             "propagations_mean": average("propagations") or average("propagation_calls"),
             "nodes_mean": average("nodes"),
             "failures_mean": average("failures"),
+            "construction_seconds_median": statistics.median(
+                [row["construction_seconds"] for row in metric_rows
+                 if "construction_seconds" in row]) if any(
+                     "construction_seconds" in row for row in metric_rows) else None,
+            "root_seconds_median": statistics.median(
+                [row["root_seconds"] for row in metric_rows
+                 if "root_seconds" in row]) if any(
+                     "root_seconds" in row for row in metric_rows) else None,
+            "search_seconds_median": statistics.median(
+                [row["search_seconds"] for row in metric_rows
+                 if "search_seconds" in row]) if any(
+                     "search_seconds" in row for row in metric_rows) else None,
             "solutions": metric_rows[0].get("solutions") if metric_rows else None,
             "checksum": metric_rows[0].get("checksum") if metric_rows else None,
         })
@@ -797,8 +870,8 @@ def report_command(args: argparse.Namespace) -> int:
         (f"Successful runs: {summary['successful_run_count']} / "
          f"{summary['run_count']}."),
         "",
-        "| corpus | instance | formulation | ok/timeout/error/failed | runtime median (s) | runtime range (s) | solutions | checksum | propagations | nodes | failures |",
-        "|---|---|---|---:|---:|---:|---:|---:|---:|---:|---:|",
+        "| corpus | instance | formulation/control | ok/timeout/error/failed | wall median (s) | wall range (s) | construct/root/search median (s) | solutions | checksum | propagations | nodes | failures |",
+        "|---|---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|",
     ]
     for group in summary["groups"]:
         lines.append("| " + " | ".join((
@@ -808,6 +881,9 @@ def report_command(args: argparse.Namespace) -> int:
             format_metric(group["runtime_seconds_median"], 6),
             (f"{format_metric(group['runtime_seconds_min'], 6)}–"
              f"{format_metric(group['runtime_seconds_max'], 6)}"),
+            "/".join(format_metric(group[field], 6) for field in
+                     ("construction_seconds_median", "root_seconds_median",
+                      "search_seconds_median")),
             format_metric(group["solutions"]),
             format_metric(group["checksum"]),
             format_metric(group["propagations_mean"], 1),

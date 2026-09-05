@@ -10,6 +10,12 @@
       "redistributable": true
     },
     {
+      "id": "word-xor-rotate-unsat",
+      "path": "fixtures/word-xor-rotate-unsat.json",
+      "license": "MIT",
+      "redistributable": true
+    },
+    {
       "id": "dma-descriptors-3",
       "path": "fixtures/dma-descriptors-3.json",
       "license": "MIT",

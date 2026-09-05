@@ -3,13 +3,27 @@
 from __future__ import annotations
 import argparse, json, statistics, subprocess, time
 from pathlib import Path
+from semantics import validate_contract
 EXPECTED={4:(86,156576),6:(676,2627648),8:(3788,25471040)}
-COUNTERS=("status","solutions","checksum","nodes","failures","propagations")
+CASES=tuple({"schema_version":1,"id":f"segments-{n}","kind":"nary-add",
+             "goal":"first","expected_status":"sat",
+             "decision_variables":[f"length[{i}]" for i in range(n)],
+             "parameters":{"segments":n,"total":160*n},
+             "expected":EXPECTED[n]} for n in EXPECTED) + (
+       {"schema_version":1,"id":"segments-4-unsat","kind":"nary-add",
+        "goal":"unsat","expected_status":"unsat",
+        "decision_variables":[f"length[{i}]" for i in range(4)],
+        "parameters":{"segments":4,"total":1},"expected":(0,0)},)
+COUNTERS=("status","semantic_status","solutions","checksum","nodes","failures",
+          "propagations","decision_variables","projections")
 def captured(value:bytes|str|None)->str:
     return value.decode(errors="replace") if isinstance(value,bytes) else value or ""
-def run(binary:Path,n:int,variant:str,timeout:float)->dict:
+def run(binary:Path,case:dict,variant:str,timeout:float)->dict:
+    n=case["parameters"]["segments"]
+    total=case["parameters"]["total"]
     start=time.perf_counter()
-    command=[str(binary),"--segments",str(n),"--variant",variant]
+    command=[str(binary),"--segments",str(n),"--variant",variant,
+             "--total",str(total)]
     try:
         p=subprocess.run(command,text=True,capture_output=True,check=False,
                          timeout=timeout)
@@ -29,14 +43,15 @@ def run(binary:Path,n:int,variant:str,timeout:float)->dict:
             raise ValueError(f"exit status {p.returncode}")
         if not isinstance(value,dict):
             raise ValueError("solver output must be a JSON object")
-        if value.get("status", "ok") != "ok" or \
-                (value.get("solutions"),value.get("checksum")) != EXPECTED[n]:
+        if value.get("status") != "ok" or \
+                (value.get("solutions"),value.get("checksum")) != case["expected"]:
             raise ValueError(f"incorrect result: {value}")
+        validate_contract(case,value)
     except (json.JSONDecodeError, ValueError) as error:
         return {"segments":n,"variant":variant,"status":"error",
                 "seconds":seconds,"command":command,"returncode":p.returncode,
                 "stdout":p.stdout,"stderr":p.stderr,"error":str(error)}
-    value.update(status="ok",seconds=seconds,command=command,returncode=p.returncode,
+    value.update(case_id=case["id"],status="ok",seconds=seconds,command=command,returncode=p.returncode,
                  stdout=p.stdout,stderr=p.stderr,error=None)
     return value
 def main()->int:
@@ -46,26 +61,28 @@ def main()->int:
     ap.add_argument("--output",type=Path); args=ap.parse_args(); rows=[]
     for rep in range(args.repetitions):
         order=("bounded","compact") if rep%2==0 else ("compact","bounded")
-        for n in EXPECTED:
+        for case in CASES:
             for variant in order:
-                row=run(args.binary,n,variant,args.timeout); row["repetition"]=rep; rows.append(row)
+                row=run(args.binary,case,variant,args.timeout)
+                row.update(case_id=case["id"],repetition=rep); rows.append(row)
     summary={}; issues=[]
-    for n in EXPECTED:
-        summary[str(n)]={}
+    for case in CASES:
+        key=case["id"]
+        summary[key]={}
         for variant in ("bounded","compact"):
-            selected=[r for r in rows if r["segments"]==n and r["variant"]==variant]
+            selected=[r for r in rows if r["case_id"]==key and r["variant"]==variant]
             statuses={row["status"] for row in selected}
             successful=[row for row in selected if row["status"]=="ok"]
             if statuses != {"ok"}:
-                issues.append(f"{n}/{variant}: statuses={sorted(statuses)}")
+                issues.append(f"{key}/{variant}: statuses={sorted(statuses)}")
             if successful:
                 first=successful[0]
                 if any(any((field in row) != (field in first) or
                            row.get(field) != first.get(field) for field in COUNTERS)
                        for row in successful[1:]):
-                    issues.append(f"{n}/{variant}: unstable status/counters")
+                    issues.append(f"{key}/{variant}: unstable status/counters")
             seconds=[row["seconds"] for row in successful]
-            summary[str(n)][variant]={
+            summary[key][variant]={
               "statuses":{status:sum(row["status"]==status for row in selected)
                           for status in ("ok","timeout","error")},
               "median_seconds":statistics.median(seconds) if seconds else None,

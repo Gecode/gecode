@@ -3,6 +3,13 @@
   "id": "dma-descriptors-9",
   "kind": "dma",
   "descriptor_count": 9,
+  "goal": "first",
+  "expected_status": "sat",
+  "decision_variables": [
+    "index", "base[0]", "base[1]", "base[2]", "base[3]", "base[4]", "base[5]", "base[6]", "base[7]", "base[8]",
+    "flag[0]", "flag[1]", "flag[2]", "flag[3]", "flag[4]", "flag[5]", "flag[6]", "flag[7]", "flag[8]"
+  ],
+  "parameters": {"descriptor_count": 9},
   "license": "MIT",
   "redistributable": true
 }

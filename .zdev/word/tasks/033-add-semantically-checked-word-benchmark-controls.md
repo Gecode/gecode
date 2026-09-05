@@ -3,7 +3,7 @@ schema_version = 1
 id = "word-033"
 key = "strengthen-word-benchmark-controls"
 area = "word"
-status = "open"
+status = "done"
 complexity = "advanced"
 afk = true
 priority = "normal"
@@ -27,13 +27,23 @@ Current public corpus is one XOR/rotate fixture plus DMA sizes 3/6/9. XOR succes
 
 ## Done when
 
-- [ ] Small independent concrete evaluators validate witnesses and exact small projected solution sets.
-- [ ] DMA controls isolate comparable branching where feasible; root/construction/search timing and startup-free batches are available for informative tiny cases.
-- [ ] Arithmetic fixtures include genuine modulus reduction, multiple quotient regions, wrapping/non-wrapping and signed cases including widths 32/33 and 63/64 where applicable.
-- [ ] XOR and specialty runners accept valid UNSAT outcomes, validate repetition consistency and remove obsolete hardcoded actor counts.
-- [ ] The format is documented sufficiently for the three external-family tasks to use it.
+- [x] Small independent concrete evaluators validate witnesses and exact small projected solution sets.
+- [x] DMA controls isolate comparable branching where feasible; root/construction/search timing and startup-free batches are available for informative tiny cases.
+- [x] Arithmetic fixtures include genuine modulus reduction, multiple quotient regions, wrapping/non-wrapping and signed cases including widths 32/33 and 63/64 where applicable.
+- [x] XOR and specialty runners accept valid UNSAT outcomes, validate repetition consistency and remove obsolete hardcoded actor counts.
+- [x] The format is documented sufficiently for the three external-family tasks to use it.
 
 ## Validation
 
 - Run small public smoke/control sets plus deliberate bad-witness, UNSAT and timeout diagnostics.
 - Record semantic parity before any timed campaign; use existing regression seams only where they check substantive behavior.
+
+## Result
+
+Added semantically checked Word benchmark controls for XOR, DMA, product modulo, and n-ary Add
+
+Validation:
+
+- Independent verifier PASS for snapshot Wad81155aa5fc0bf7
+- Repeated semantic campaigns passed for XOR, DMA, product modulo, and n-ary Add
+- Word::TestFramework, target rebuilds, Python compilation, diff check, and tidy check passed

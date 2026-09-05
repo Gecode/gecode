@@ -39,6 +39,7 @@
 #include <cstring>
 #include <iostream>
 #include <string>
+#include <vector>
 
 using namespace Gecode;
 
@@ -54,6 +55,8 @@ namespace {
     WordValue target_hi;
     unsigned long long int expected_solutions;
     WordValue expected_input;
+    bool has_excluded_input;
+    WordValue excluded_input;
   };
 
   class NativeWordModel : public Space {
@@ -71,6 +74,8 @@ namespace {
         rotate_left(*this,mixed[r],i.shift,state[r+1]);
       }
       dom(*this,state[i.rounds],i.target_lo,i.target_hi);
+      if (i.has_excluded_input)
+        rel(*this,state[0],WRT_NQ,i.width,i.excluded_input);
       branch(*this,state[0],WORD_VAL_LSB());
     }
 
@@ -115,6 +120,16 @@ namespace {
         if (((i.target_lo >> b) & 1U) == ((i.target_hi >> b) & 1U))
           rel(*this,bit[state_index(rounds,b)],IRT_EQ,
               static_cast<int>((i.target_lo >> b) & 1U));
+      if (i.has_excluded_input) {
+        BoolVarArgs differs(static_cast<int>(width));
+        for (unsigned int b=0; b<width; b++) {
+          differs[b] = BoolVar(*this,0,1);
+          rel(*this,bit[state_index(0,b)],
+              ((i.excluded_input >> b) & 1U) ? IRT_NQ : IRT_EQ,
+              differs[b]);
+        }
+        linear(*this,differs,IRT_GQ,1);
+      }
 
       BoolVarArgs decision(static_cast<int>(width));
       for (unsigned int b=0; b<width; b++)
@@ -141,14 +156,12 @@ namespace {
 
   struct Metrics {
     unsigned long long int solutions;
-    bool expected_input_found;
+    std::vector<WordValue> inputs;
     unsigned long long int propagation_calls;
     unsigned long long int nodes;
     unsigned long long int failures;
     unsigned int root_propagators;
     unsigned int root_branchers;
-    unsigned long long int allocation_count;
-    unsigned long long int clone_footprint;
   };
 
   WordValue input_value(const NativeWordModel& model) {
@@ -160,29 +173,16 @@ namespace {
   }
 
   template<class Model>
-  Metrics run(const Instance& instance, bool native_word) {
+  Metrics run(const Instance& instance) {
     Model* root = new Model(instance);
     StatusStatistics root_statistics;
     if (root->status(root_statistics) == SS_FAILED) {
       delete root;
-      std::cerr << "benchmark model failed during initial propagation\n";
-      std::exit(EXIT_FAILURE);
+      return Metrics {0, {}, root_statistics.propagate, 0, 0, 0, 0};
     }
     const unsigned int root_propagators =
       PropagatorGroup::all.size(*root);
     const unsigned int root_branchers = BrancherGroup::all.size(*root);
-    Space* clone = root->clone();
-    const unsigned int clone_propagators =
-      PropagatorGroup::all.size(*clone);
-    const unsigned int clone_branchers = BrancherGroup::all.size(*clone);
-    delete clone;
-
-    const unsigned long long int allocation_count = native_word ?
-      2ULL*instance.rounds+1ULL :
-      (2ULL*instance.rounds+1ULL)*instance.width;
-    const unsigned long long int clone_footprint = allocation_count+
-      clone_propagators+clone_branchers;
-
     Search::Options options;
     options.c_d = 64;
     options.a_d = 64;
@@ -190,19 +190,18 @@ namespace {
     delete root;
 
     unsigned long long int solutions = 0;
-    bool expected_input_found = false;
+    std::vector<WordValue> inputs;
     while (Model* solution = dfs.next()) {
       const WordValue input = input_value(*solution);
-      expected_input_found |= (input == instance.expected_input);
+      inputs.push_back(input);
       solutions++;
       delete solution;
     }
     const Search::Statistics statistics = dfs.statistics();
     Metrics metrics = {
-      solutions, expected_input_found,
+      solutions, inputs,
       root_statistics.propagate+statistics.propagate,
-      statistics.node, statistics.fail, root_propagators, root_branchers,
-      allocation_count, clone_footprint
+      statistics.node, statistics.fail, root_propagators, root_branchers
     };
     return metrics;
   }
@@ -243,7 +242,7 @@ main(int argc, char* argv[]) {
   // example is useful on its own as well as through benchmark.py.
   std::string variant = "native-word";
   Instance instance = {
-    "word-xor-rotate-smoke",8,3,165,3,128,143,16,66
+    "word-xor-rotate-smoke",8,3,165,3,128,143,16,66,false,0
   };
   for (int i=1; i<argc; i++) {
     const char* option = argv[i];
@@ -272,6 +271,11 @@ main(int argc, char* argv[]) {
     else if (std::strcmp(option,"--expected-input") == 0)
       instance.expected_input =
         parse_unsigned(option,require_value(i,argc,argv));
+    else if (std::strcmp(option,"--excluded-input") == 0) {
+      instance.has_excluded_input = true;
+      instance.excluded_input =
+        parse_unsigned(option,require_value(i,argc,argv));
+    }
     else {
       std::cerr << "unknown option: " << option << "\n";
       return EXIT_FAILURE;
@@ -286,7 +290,8 @@ main(int argc, char* argv[]) {
       (instance.width > 8*sizeof(WordValue)) || (instance.rounds == 0) ||
       (instance.shift >= instance.width) ||
       ((instance.target_lo & ~instance.target_hi) != 0) ||
-      (((instance.key | instance.target_hi | instance.expected_input) &
+      (((instance.key | instance.target_hi | instance.expected_input |
+         instance.excluded_input) &
         ~Word::width_mask(instance.width)) != 0)) {
     std::cerr << "invalid benchmark instance\n";
     return EXIT_FAILURE;
@@ -294,22 +299,23 @@ main(int argc, char* argv[]) {
 
   const bool native_word = (variant == "native-word");
   const Metrics metrics = native_word ?
-    run<NativeWordModel>(instance,true) : run<BooleanModel>(instance,false);
-  const bool ok = (metrics.solutions == instance.expected_solutions) &&
-    metrics.expected_input_found;
+    run<NativeWordModel>(instance) : run<BooleanModel>(instance);
+  const bool ok = (metrics.solutions == instance.expected_solutions);
   std::cout << "{\"schema_version\":1,\"status\":\""
             << (ok ? "ok" : "mismatch") << "\",\"solver_variant\":\""
             << variant << "\",\"instance_id\":\"" << instance.id
             << "\",\"solutions\":" << metrics.solutions
             << ",\"expected_solutions\":" << instance.expected_solutions
-            << ",\"expected_input_found\":"
-            << (metrics.expected_input_found ? "true" : "false")
+            << ",\"semantic_status\":\""
+            << (metrics.solutions == 0 ? "unsat" : "sat") << "\""
+            << ",\"decision_variables\":[\"input\"]"
+            << ",\"projections\":[";
+  for (std::size_t i=0; i<metrics.inputs.size(); i++) {
+    if (i != 0) std::cout << ',';
+    std::cout << '[' << metrics.inputs[i] << ']';
+  }
+  std::cout << "]"
             << ",\"propagation_calls\":" << metrics.propagation_calls
-            << ",\"allocations\":" << metrics.allocation_count
-            << ",\"allocation_metric\":\"model-variable-implementations\""
-            << ",\"clone_footprint\":" << metrics.clone_footprint
-            << ",\"clone_footprint_metric\":"
-               "\"model-variable-implementations-plus-stable-clone-actors\""
             << ",\"root_propagators\":" << metrics.root_propagators
             << ",\"root_branchers\":" << metrics.root_branchers
             << ",\"nodes\":" << metrics.nodes

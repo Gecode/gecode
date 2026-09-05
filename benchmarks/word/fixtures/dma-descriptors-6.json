@@ -3,6 +3,13 @@
   "id": "dma-descriptors-6",
   "kind": "dma",
   "descriptor_count": 6,
+  "goal": "first",
+  "expected_status": "sat",
+  "decision_variables": [
+    "index", "base[0]", "base[1]", "base[2]", "base[3]", "base[4]", "base[5]",
+    "flag[0]", "flag[1]", "flag[2]", "flag[3]", "flag[4]", "flag[5]"
+  ],
+  "parameters": {"descriptor_count": 6},
   "license": "MIT",
   "redistributable": true
 }

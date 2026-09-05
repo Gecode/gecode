@@ -1,6 +1,7 @@
 {
   "schema_version": 1,
   "id": "word-xor-rotate-smoke",
+  "kind": "xor-rotate",
   "description": "Three invertible XOR and rotate rounds with a four-bit target cube.",
   "width": 8,
   "rounds": 3,
@@ -10,6 +11,17 @@
   "target_hi": 143,
   "expected_solutions": 16,
   "expected_input": 66,
+  "goal": "enumerate",
+  "expected_status": "sat",
+  "decision_variables": ["input"],
+  "parameters": {
+    "width": 8,
+    "rounds": 3,
+    "key": 165,
+    "shift": 3,
+    "target_lo": 128,
+    "target_hi": 143
+  },
   "redistributable": true,
   "license": "MIT"
 }

@@ -53,18 +53,24 @@ minimum/maximum spread. Their one-solve subprocess timings are unsuitable for
 tiny solves; batch tiny solves in-process before using them for performance
 conclusions.
 
-The bounded product-modulo comparison uses the fixed width-nine case with
-`x,y in [10,20]`, modulus 509, and result-first ranked splitting. The compact
-control links the same bounded search variables to compact product-modulo
-operands with binary identities. Run the 20 alternating-order trials with:
+The product-modulo runner checks the mathematical product before modulus
+reduction. Its small exact case uses `x,y in [10,30]` and modulus 17, so it
+crosses several quotient regions. Singleton controls cover unsigned and signed
+domains at widths 32, 33, 63, and 64, both wrapping and non-wrapping products,
+and an expected UNSAT result. Signed inputs use their two's-complement Word
+encodings in the multiplication. The native bounded actor applies only when
+all three Word variables are unsigned; signed controls exercise the documented
+cube fallback. Run the interleaved controls with:
 
 ```sh
 uv run --script benchmarks/word/product-mod-benchmark.py --binary build/bin/word-product-mod --repetitions 20 --output /tmp/word-product-mod.json
 ```
 
 The bounded n-ary Add scatter/gather comparison uses `word-nary-add` at 4,
-6, and 8 segments. Run 20 alternating-order trials without storing artifacts
-in the checkout:
+6, and 8 segments. Each normal case emits one independently checked public
+length-vector witness while retaining the full solution/count controls. A
+four-segment total of one is an expected UNSAT control, not a runner error.
+Run 20 alternating-order trials without storing artifacts in the checkout:
 
 ```sh
 uv run --script benchmarks/word/nary-add-benchmark.py --binary build/bin/word-nary-add --repetitions 20 --output /tmp/word-nary-add.json
@@ -78,8 +84,19 @@ Word, and equivalent Int/Bool formulations at 3, 6, and 9 descriptors.
 
 The DMA model uses 12-bit aligned bases, fixed repeated lengths, ordered
 non-overlap, sorted read/write/execute flags, Element selection, and a
-write-controlled limit ITE. All four formulations must have the same solution
-count and wrapping checksum. This instance does not predict every Word workload.
+write-controlled limit ITE. All four formulations must have the same public
+projection set. The three-descriptor case is independently enumerated; larger
+cases validate a concrete first witness. Native search retains each
+formulation's normal value choice. The `public-min` control aligns public
+decision order and minimum-first values where the native APIs permit it, and
+never branches derived channel variables. Compact Word uses MSB-first bit
+branching, while bounded Word uses ranked interval splitting. The control makes
+branching closer, not identical. This instance does not predict every Word
+workload.
+
+For the three-descriptor case, the runner uses an in-process batch and records
+construction, explicit root propagation, and search time separately. Outer
+wall time remains useful for end-to-end runs but includes process startup.
 
 Build and run a DMA-only Release campaign:
 
@@ -131,3 +148,26 @@ Timeout, error, and failed records remain explicit in raw results and reports.
 Peak RSS is measured for the individual child with the platform's
 `/usr/bin/time` (`-l` on macOS, `-v` on Linux); unsupported platforms report
 the measurement as unavailable.
+
+## Semantic result contract
+
+`semantics.py` defines the small contract shared by these runners and intended
+for later external-solver adapters. A fixture declares:
+
+- `goal`: `first`, `unique`, `enumerate`, or `unsat`;
+- `expected_status`: semantic `sat` or `unsat`;
+- `parameters`: the complete public instance parameters; and
+- `decision_variables`: the ordered public projection, excluding auxiliaries.
+
+A successful solver row reports the same ordered names, its semantic status,
+and `projections`. `first` and `unique` return one concrete witness;
+`enumerate` returns the exact small projected set; `unsat` returns no witness.
+The Python evaluator checks every witness and independently enumerates only the
+small controls. Solver counters and timings remain benchmark metadata.
+
+An external adapter must map its status to `sat` or `unsat`, emit only the
+declared public variables in the declared order, use unsigned Word encodings
+for bit-vector values, and apply signed interpretation only where the fixture
+declares it. It must keep timeout/error distinct from UNSAT and validate
+semantic parity before timed comparison. Exact enumeration counts projected
+public tuples, never auxiliary assignments.
