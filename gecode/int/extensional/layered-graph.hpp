@@ -783,11 +783,12 @@ namespace Gecode { namespace Int { namespace Extensional {
   template<class View, class Val, class Degree, class StateIdx>
   Actor*
   LayeredGraph<View,Val,Degree,StateIdx>::copy(Space& home) {
-    // Eliminate an assigned prefix
+    // Eliminate an assigned prefix with a single path. Keep branching
+    // NFA layers so their reachable states and edge counts remain intact.
     {
       int k=0;
-      while (layers[k].size == 1) {
-        assert(layers[k].support[0].n_edges == 1);
+      while ((layers[k].size == 1) &&
+             (layers[k].support[0].n_edges == 1)) {
         n_states -= layers[k].n_states;
         k++;
       }

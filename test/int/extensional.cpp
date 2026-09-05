@@ -623,12 +623,51 @@ namespace Test { namespace Int {
                    DFA::Transition(state,symbol,output);
          transitions[n_transitions].i_state = -1;
          int final_states[] = {3,-1};
-         DFA d(0,transitions,final_states,false);
+         DFA d = DFA::nfa(0,transitions,final_states);
          for (int i=0; i<x.size(); i++)
            for (int symbol=0; symbol<n_symbols; symbol++)
              if ((allowed[i] & (1U << symbol)) == 0U)
                rel(home,x[i],IRT_NQ,symbol);
          extensional(home,x,d);
+       }
+     };
+
+     /// %Test cloning an assigned NFA prefix with branching and reconvergence
+     class RegNFAPrefix : public Test {
+     protected:
+       /// Whether to post through Boolean views
+       bool boolean;
+     public:
+       /// Create and register test
+       RegNFAPrefix(bool b)
+         : Test("Extensional::Reg::Sparse::NFAPrefix::" +
+                std::string(b ? "Bool" : "Int"),
+                5,0,1,false,Gecode::IPL_DOM), boolean(b) {}
+       /// %Test whether \a x is a solution
+       virtual bool solution(const Assignment& x) const {
+         return (x[0] == 0) && (x[1] == 0) && (x[2] == x[3]);
+       }
+       /// Post constraint on \a x
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
+         using namespace Gecode;
+         // The first assigned layer has one edge and can be discarded on
+         // cloning. The second has two edges and must be retained. Two
+         // paths read the prefix 0,0,0,0, while only one reads 0,0,1,1.
+         DFA d = DFA::nfa(0,
+                         {
+                           {0,0,1}, {1,0,2}, {1,0,3},
+                           {2,0,4}, {3,0,4}, {3,1,5},
+                           {4,0,6}, {5,1,6}, {6,0,7}, {6,1,7}
+                         },
+                         {7});
+         if (boolean) {
+           BoolVarArgs b(x.size());
+           for (int i=0; i<x.size(); i++)
+             b[i] = channel(home,x[i]);
+           extensional(home,b,d);
+         } else {
+           extensional(home,x,d);
+         }
        }
      };
 
@@ -2535,6 +2574,8 @@ namespace Test { namespace Int {
      RegRandomNFADifferential reg_sparse_random_nfa_differential_2(2);
      RegRandomNFADifferential reg_sparse_random_nfa_differential_3(3);
      RegRandomNFADifferential reg_sparse_random_nfa_differential_4(4);
+     RegNFAPrefix reg_sparse_nfa_prefix_int(false);
+     RegNFAPrefix reg_sparse_nfa_prefix_bool(true);
      RegPositionDomainPruning reg_sparse_position_domain_pruning;
      RegNoAcceptingPath reg_sparse_no_accepting_path;
      RegTerminalMerged reg_sparse_terminal_merged;

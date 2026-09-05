@@ -497,6 +497,17 @@ namespace Gecode {
     init(start,ts,fs,minimize);
   }
 
+  DFA
+  DFA::nfa(int start, Transition t[], int f[]) {
+    return DFA(start,t,f,false);
+  }
+
+  DFA
+  DFA::nfa(int start, std::initializer_list<Transition> t,
+           std::initializer_list<int> f) {
+    return DFA(start,t,f,false);
+  }
+
   bool
   DFA::equal(const DFA& d) const {
     assert(n_states() == d.n_states());
