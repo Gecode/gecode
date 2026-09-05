@@ -3,7 +3,7 @@ schema_version = 1
 id = "word-034"
 key = "compare-word-mixed-models"
 area = "word"
-status = "open"
+status = "done"
 complexity = "advanced"
 afk = true
 priority = "normal"
@@ -27,12 +27,22 @@ Use the shared contract from the benchmark-controls task and ordinary examples/w
 
 ## Done when
 
-- [ ] DMA and register lookup/allocation each have SAT and justified UNSAT small cases with independently checked witnesses/projection parity.
-- [ ] Descriptors/window slack, lookup size/index density and allocation Hall structure vary independently.
-- [ ] Z3 and Bitwuzla invocations report versions/options and unsupported or missing solver status honestly.
-- [ ] Smoke results distinguish solver comparison from controlled Gecode branching experiments.
+- [x] DMA and register lookup/allocation each have SAT and justified UNSAT small cases with independently checked witnesses/projection parity.
+- [x] Descriptors/window slack, lookup size/index density and allocation Hall structure vary independently.
+- [x] Z3 and Bitwuzla invocations report versions/options and unsupported or missing solver status honestly.
+- [x] Smoke results distinguish solver comparison from controlled Gecode branching experiments.
 
 ## Validation
 
 - Run exact small-model equivalence checks and a bounded one-core smoke, at most 10 seconds per case.
 - No broad performance claim until the final campaign.
+
+## Result
+
+Added exact Gecode, Z3, and Bitwuzla-ready comparisons for DMA and register models
+
+Validation:
+
+- Independent verifier PASS for snapshot W08ab583f00cd266f
+- All 12 cases matched exact projections across Z3 and 36 Gecode formulation cells
+- Target builds, legacy benchmark smokes, invalid-input, timeout, unsupported-solver, syntax, diff, and tidy checks passed

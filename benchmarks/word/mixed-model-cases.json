@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "cases": [
+    {"id":"dma-sat","family":"dma","goal":"enumerate","expected_status":"sat","decision_variables":["index","base[0]","base[1]","base[2]","flag[0]","flag[1]","flag[2]"],"parameters":{"descriptor_count":3,"window_slack":32,"selected_cap":768}},
+    {"id":"dma-unsat","family":"dma","goal":"unsat","expected_status":"unsat","decision_variables":["index","base[0]","base[1]","base[2]","flag[0]","flag[1]","flag[2]"],"parameters":{"descriptor_count":3,"window_slack":32,"selected_cap":287}},
+    {"id":"dma-tight-window","family":"dma","goal":"enumerate","expected_status":"sat","decision_variables":["index","base[0]","base[1]","base[2]","flag[0]","flag[1]","flag[2]"],"parameters":{"descriptor_count":3,"window_slack":16,"selected_cap":768}},
+    {"id":"dma-four","family":"dma","goal":"enumerate","expected_status":"sat","decision_variables":["index","base[0]","base[1]","base[2]","base[3]","flag[0]","flag[1]","flag[2]","flag[3]"],"parameters":{"descriptor_count":4,"window_slack":32,"selected_cap":768}},
+    {"id":"lookup-four","family":"lookup","goal":"enumerate","expected_status":"sat","decision_variables":["index","register[0]","register[1]","register[2]","register[3]"],"parameters":{"size":4,"allowed_indices":[1,2]}},
+    {"id":"lookup-unsat","family":"lookup","goal":"unsat","expected_status":"unsat","decision_variables":["index","register[0]","register[1]","register[2]","register[3]"],"parameters":{"size":4,"allowed_indices":[0,3]}},
+    {"id":"lookup-six","family":"lookup","goal":"enumerate","expected_status":"sat","decision_variables":["index","register[0]","register[1]","register[2]","register[3]","register[4]","register[5]"],"parameters":{"size":6,"allowed_indices":[1,2]}},
+    {"id":"lookup-sparse","family":"lookup","goal":"enumerate","expected_status":"sat","decision_variables":["index","register[0]","register[1]","register[2]","register[3]"],"parameters":{"size":4,"allowed_indices":[1]}},
+    {"id":"allocation-sat","family":"allocation","goal":"enumerate","expected_status":"sat","decision_variables":["address[0]","address[1]","address[2]","address[3]","address[4]","address[5]"],"parameters":{"banks":2,"registers_per_bank":3,"slots_per_bank":4}},
+    {"id":"allocation-hall-unsat","family":"allocation","goal":"unsat","expected_status":"unsat","decision_variables":["address[0]","address[1]","address[2]","address[3]","address[4]","address[5]","address[6]","address[7]","address[8]","address[9]"],"parameters":{"banks":2,"registers_per_bank":5,"slots_per_bank":4}},
+    {"id":"allocation-tight","family":"allocation","goal":"enumerate","expected_status":"sat","decision_variables":["address[0]","address[1]","address[2]","address[3]","address[4]","address[5]"],"parameters":{"banks":2,"registers_per_bank":3,"slots_per_bank":3}},
+    {"id":"allocation-tight-unsat","family":"allocation","goal":"unsat","expected_status":"unsat","decision_variables":["address[0]","address[1]","address[2]","address[3]","address[4]","address[5]","address[6]","address[7]"],"parameters":{"banks":2,"registers_per_bank":4,"slots_per_bank":3}}
+  ]
+}

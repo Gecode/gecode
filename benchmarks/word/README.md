@@ -1,5 +1,36 @@
 # Word benchmarks
 
+The focused mixed-model comparison checks DMA descriptor windows, register
+lookup, and register allocation against direct QF_BV formulations for Z3 and
+Bitwuzla. Its checked-in case table varies descriptor count, window slack,
+selected cap, lookup size and selector density, and allocation Hall structure
+independently. Every small case is enumerated by a separate concrete Python
+evaluator; SMT models are enumerated through public-decision blocking clauses.
+The same case parameters and exact public projection sets are checked through
+all applicable Gecode formulations, including the deliberately UNSAT cases.
+
+The result keeps aligned semantic rows separate from the Gecode native-search
+controls. The latter include compact/bounded DMA and lookup examples plus
+`IPL_VAL`/`IPL_BND` allocation controls. This avoids presenting differences in
+native branching as solver-comparison results. Each solver row records its
+executable, version and options. A missing or unsupported solver, timeout, or
+process error is an explicit status and is never reported as UNSAT.
+
+```sh
+cmake --build build --target word-dma-descriptor word-register-file word-distinct-benchmark
+python3 benchmarks/word/mixed-model-comparison.py \
+  --dma-binary build/bin/word-dma-descriptor \
+  --lookup-binary build/bin/word-register-file \
+  --allocation-binary build/bin/word-distinct-benchmark \
+  --timeout 10 --output /tmp/word-mixed-smoke.json
+```
+
+The cases run sequentially in one solver process apiece and use the solver
+defaults (one solving thread for these command-line configurations). A missing
+Bitwuzla installation is a valid incomplete matrix, not a successful Bitwuzla
+comparison. Available-solver semantic mismatches make the command fail. These
+small smoke timings support no broad performance claim.
+
 The distinct benchmark measures the shipped opt-in `IPL_BND` actor against
 the default pairwise `IPL_VAL` formulation and compact Word variables with
 exact unsigned Int channels. It checks the three formulations at two, three,

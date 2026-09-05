@@ -34,6 +34,8 @@
 #include <gecode/word.hh>
 
 #include <cstdint>
+#include <iostream>
+#include <vector>
 
 using namespace Gecode;
 
@@ -42,23 +44,38 @@ namespace {
   class RegisterOptions : public Options {
   private:
     Driver::StringOption _formulation;
+    Driver::UnsignedIntOption _size;
+    Driver::UnsignedIntOption _allowed_mask;
+    Driver::StringOption _projection;
   public:
     enum Formulation { COMPACT_WORD, BOUNDED_WORD };
+    enum Projection { PROJECTION_NONE, PROJECTION_ALL };
 
     RegisterOptions(const char* name)
       : Options(name),
-        _formulation("formulation","model formulation",COMPACT_WORD) {
+        _formulation("formulation","model formulation",COMPACT_WORD),
+        _size("size","register count",4),
+        _allowed_mask("allowed-mask","bit mask of selectable indices",0xffffffffU),
+        _projection("projection","none or all public projections",PROJECTION_NONE) {
       solutions(0);
       add(_formulation);
       _formulation.add(COMPACT_WORD,"compact-word","compact Word variables");
       _formulation.add(BOUNDED_WORD,"bounded-word",
                        "unsigned-bounded Word variables");
+      add(_size); add(_allowed_mask); add(_projection);
+      _projection.add(PROJECTION_NONE,"none","do not emit projections");
+      _projection.add(PROJECTION_ALL,"all","emit all public projections");
     }
     Formulation formulation(void) const {
       return static_cast<Formulation>(_formulation.value());
     }
     const char* formulation_name(void) const {
       return formulation() == COMPACT_WORD ? "compact-word" : "bounded-word";
+    }
+    unsigned int size(void) const { return _size.value(); }
+    unsigned int allowed_mask(void) const { return _allowed_mask.value(); }
+    Projection projection(void) const {
+      return static_cast<Projection>(_projection.value());
     }
   };
 
@@ -100,17 +117,19 @@ private:
 public:
   /// Actual model
   WordRegisterFile(const RegisterOptions& opt)
-    : Script(opt), formulation(opt.formulation()), registers(*this,4),
-      index(*this,0,3),
+    : Script(opt), formulation(opt.formulation()), registers(*this,opt.size()),
+      index(*this,0,static_cast<int>(opt.size()-1)),
       selected(numeric_word(*this,formulation,5U,6U)),
       increment0(numeric_word(*this,formulation,1U,1U)),
       increment1(numeric_word(*this,formulation,2U,2U)),
       total(numeric_word(*this,formulation,8U,9U)) {
     const WordValue minimum[] = {3U,4U,6U,7U};
-    const WordValue maximum[] = {4U,5U,7U,8U};
     for (int i=0; i<registers.size(); i++) {
-      registers[i]=numeric_word(*this,formulation,minimum[i],maximum[i]);
-      range(registers[i],minimum[i],maximum[i]);
+      const WordValue lo=minimum[i % 4], hi=lo+1U;
+      registers[i]=numeric_word(*this,formulation,lo,hi);
+      range(registers[i],lo,hi);
+      if ((opt.allowed_mask() & (1U << i)) == 0U)
+        rel(*this,index,IRT_NQ,i);
     }
     range(selected,5U,6U);
     range(increment0,1U,1U);
@@ -147,8 +166,20 @@ public:
   std::uint64_t solution_value(void) const {
     return static_cast<std::uint64_t>(index.val()+1) +
       3U*selected.val()+5U*total.val()+
-      registers[0].val()+2U*registers[1].val()+
-      3U*registers[2].val()+4U*registers[3].val();
+      register_value();
+  }
+  std::uint64_t register_value(void) const {
+    std::uint64_t value=0;
+    for (int i=0; i<registers.size(); i++)
+      value += static_cast<std::uint64_t>(i+1)*registers[i].val();
+    return value;
+  }
+  std::vector<unsigned int> public_projection(void) const {
+    std::vector<unsigned int> values;
+    values.push_back(static_cast<unsigned int>(index.val()));
+    for (int i=0; i<registers.size(); i++)
+      values.push_back(static_cast<unsigned int>(registers[i].val()));
+    return values;
   }
 };
 
@@ -159,22 +190,25 @@ int
 main(int argc, char* argv[]) {
   RegisterOptions opt("WordRegisterFile");
   opt.parse(argc,argv);
+  if ((opt.size() == 0U) || (opt.size() > 8U)) {
+    std::cerr << "register count must be between 1 and 8\n";
+    return 2;
+  }
   WordRegisterFile* root=new WordRegisterFile(opt);
   StatusStatistics root_statistics;
-  if (root->status(root_statistics) == SS_FAILED) {
-    delete root;
-    std::cerr << "register-file model failed during initial propagation\n";
-    return 1;
-  }
+  const SpaceStatus root_status=root->status(root_statistics);
   const bool index_pruned=root->index_pruned();
   const unsigned int root_propagators=PropagatorGroup::all.size(*root);
   const unsigned int root_branchers=BrancherGroup::all.size(*root);
-  DFS<WordRegisterFile> search(root);
+  DFS<WordRegisterFile> search(root_status == SS_FAILED ? nullptr : root);
   delete root;
   std::uint64_t solutions=0, checksum=0;
+  std::vector<std::vector<unsigned int> > projections;
   while (WordRegisterFile* solution=search.next()) {
     ++solutions;
     checksum += solution->solution_value();
+    if (opt.projection() == RegisterOptions::PROJECTION_ALL)
+      projections.push_back(solution->public_projection());
     delete solution;
   }
   const Search::Statistics statistics=search.statistics();
@@ -182,6 +216,21 @@ main(int argc, char* argv[]) {
             << ",\"formulation\":\"" << opt.formulation_name() << "\""
             << ",\"solutions\":" << solutions
             << ",\"checksum\":" << checksum
+            << ",\"semantic_status\":\"" << (solutions ? "sat" : "unsat") << "\""
+            << ",\"decision_variables\":[\"index\"";
+  for (unsigned int i=0; i<opt.size(); i++)
+    std::cout << ",\"register[" << i << "]\"";
+  std::cout << "],\"projections\":[";
+  for (std::size_t i=0; i<projections.size(); i++) {
+    if (i) std::cout << ',';
+    std::cout << '[';
+    for (std::size_t j=0; j<projections[i].size(); j++) {
+      if (j) std::cout << ',';
+      std::cout << projections[i][j];
+    }
+    std::cout << ']';
+  }
+  std::cout << ']'
             << ",\"index_pruned\":" << (index_pruned ? "true" : "false")
             << ",\"nodes\":" << statistics.node
             << ",\"failures\":" << statistics.fail

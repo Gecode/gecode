@@ -59,8 +59,8 @@ namespace {
     return lengths[i % (sizeof(lengths)/sizeof(lengths[0]))];
   }
 
-  unsigned int window_end(unsigned int n) {
-    unsigned int end = window_start+0x20;
+  unsigned int window_end(unsigned int n, unsigned int slack) {
+    unsigned int end = window_start+slack;
     for (unsigned int i=0; i<n; i++)
       end += length(i);
     return end;
@@ -75,6 +75,8 @@ namespace {
     Driver::StringOption _measurement;
     Driver::StringOption _search_control;
     Driver::StringOption _projection;
+    Driver::UnsignedIntOption _window_slack;
+    Driver::UnsignedIntOption _selected_cap;
   public:
     enum Formulation { COMPACT_WORD, BOUNDED_WORD, WORD_INT_CHANNEL, INT_BOOL };
     enum Measurement { SOLVE, LAYOUT, RETAIN_CLONES, BATCH };
@@ -89,7 +91,9 @@ namespace {
         _measurement("measurement","solve, layout, retained clones, or batch",SOLVE),
         _search_control("search-control","native or aligned public decisions",NATIVE),
         _projection("projection","none, first, or all public projections",
-                    PROJECTION_NONE) {
+                    PROJECTION_NONE),
+        _window_slack("window-slack","bytes of descriptor-window slack",0x20),
+        _selected_cap("selected-cap","maximum selected limit",0x300) {
       solutions(0);
       add(_size);
       add(_formulation);
@@ -106,6 +110,8 @@ namespace {
       _projection.add(PROJECTION_NONE,"none","do not emit public projections");
       _projection.add(PROJECTION_FIRST,"first","emit the first public projection");
       _projection.add(PROJECTION_ALL,"all","emit every public projection");
+      add(_window_slack);
+      add(_selected_cap);
       add(_measurement);
       _measurement.add(SOLVE,"solve","exhaustively solve the model");
       _measurement.add(LAYOUT,"layout","report object layout sizes");
@@ -130,6 +136,8 @@ namespace {
       return static_cast<Projection>(_projection.value());
     }
     unsigned int size(void) const { return _size.value(); }
+    unsigned int window_slack(void) const { return _window_slack.value(); }
+    unsigned int selected_cap(void) const { return _selected_cap.value(); }
     const char* formulation_name(void) const {
       switch (formulation()) {
       case COMPACT_WORD: return "compact-word";
@@ -144,6 +152,8 @@ namespace {
   private:
     DMAOptions::Formulation formulation;
     unsigned int descriptor_count;
+    unsigned int descriptor_window_end;
+    unsigned int selected_cap;
     WordVarArray base_word, end_word, flag_word;
     WordVar selected_base_word, selected_end_word, selected_plus_word,
       selected_limit_word;
@@ -175,7 +185,7 @@ namespace {
     }
 
     void post_word_model(bool numeric_channels) {
-      const unsigned int limit = window_end(descriptor_count);
+      const unsigned int limit = descriptor_window_end;
       for (unsigned int i=0; i<descriptor_count; i++) {
         rel(*this,base_word[i],WRT_UGQ,address_width,window_start);
         rel(*this,base_word[i],WRT_ULQ,address_width,limit-0x20);
@@ -218,10 +228,10 @@ namespace {
         channel(*this,selected_end_word,selected_end_int,WDT_UNSIGNED);
         channel(*this,selected_plus_word,_selected_plus_int,WDT_UNSIGNED);
         channel(*this,selected_limit_word,selected_limit_int,WDT_UNSIGNED);
-        rel(*this,selected_limit_int,IRT_LQ,0x300);
+        rel(*this,selected_limit_int,IRT_LQ,static_cast<int>(selected_cap));
         rel(*this,selected_limit_int,IRT_LQ,static_cast<int>(limit));
       } else {
-        rel(*this,selected_limit_word,WRT_ULQ,address_width,0x300);
+        rel(*this,selected_limit_word,WRT_ULQ,address_width,selected_cap);
         rel(*this,selected_limit_word,WRT_ULQ,address_width,limit);
       }
     }
@@ -231,7 +241,7 @@ namespace {
     WordVar _selected_flag_word;
 
     void post_int_model(void) {
-      const int limit = static_cast<int>(window_end(descriptor_count));
+      const int limit = static_cast<int>(descriptor_window_end);
       for (unsigned int i=0; i<descriptor_count; i++) {
         rel(*this,base_int[i] % 16 == 0);
         rel(*this,end_int[i] == base_int[i]+static_cast<int>(length(i)));
@@ -252,7 +262,7 @@ namespace {
       ite(*this,selected_write,_selected_plus_int,selected_end_int,
           selected_limit_int);
       rel(*this,_selected_plus_int == selected_end_int+0x10);
-      rel(*this,selected_limit_int,IRT_LQ,0x300);
+      rel(*this,selected_limit_int,IRT_LQ,static_cast<int>(selected_cap));
       rel(*this,selected_limit_int,IRT_LQ,limit);
     }
 
@@ -262,19 +272,21 @@ namespace {
   public:
     DMADescriptor(const DMAOptions& opt)
       : Script(opt), formulation(opt.formulation()), descriptor_count(opt.size()),
+        descriptor_window_end(window_end(opt.size(),opt.window_slack())),
+        selected_cap(opt.selected_cap()),
         base_word(numeric_words(*this,formulation == DMAOptions::INT_BOOL ? 0 : opt.size(),
-                                formulation,window_start,window_end(opt.size())-0x20)),
+                                formulation,window_start,descriptor_window_end-0x20)),
         end_word(numeric_words(*this,formulation == DMAOptions::INT_BOOL ? 0 : opt.size(),
-                               formulation,window_start+0x20,window_end(opt.size()))),
+                               formulation,window_start+0x20,descriptor_window_end)),
         flag_word(*this,formulation == DMAOptions::INT_BOOL ? 0 : opt.size(),4,1,7),
         selected_base_word(), selected_end_word(), selected_plus_word(),
         selected_limit_word(),
         base_int(*this,(formulation == DMAOptions::INT_BOOL ||
                        formulation == DMAOptions::WORD_INT_CHANNEL) ? opt.size() : 0,
-                 window_start,static_cast<int>(window_end(opt.size())-0x20)),
+                 window_start,static_cast<int>(descriptor_window_end-0x20)),
         end_int(*this,(formulation == DMAOptions::INT_BOOL ||
                       formulation == DMAOptions::WORD_INT_CHANNEL) ? opt.size() : 0,
-                window_start+0x20,static_cast<int>(window_end(opt.size()))),
+                window_start+0x20,static_cast<int>(descriptor_window_end)),
         flag_int(*this,formulation == DMAOptions::INT_BOOL ? opt.size() : 0,1,5),
         selected_base_int(), selected_end_int(), selected_limit_int(),
         index(*this,0,static_cast<int>(opt.size()-1)),
@@ -285,7 +297,7 @@ namespace {
         std::cerr << "descriptor count must be between 3 and 9\n";
         std::exit(EXIT_FAILURE);
       }
-      const unsigned int limit = window_end(descriptor_count);
+      const unsigned int limit = descriptor_window_end;
       if (formulation != DMAOptions::INT_BOOL) {
         selected_base_word = numeric_word(*this,formulation,window_start,limit-0x20);
         selected_end_word = numeric_word(*this,formulation,window_start+0x20,limit);
@@ -347,7 +359,8 @@ namespace {
     }
 
     DMADescriptor(DMADescriptor& s)
-      : Script(s), formulation(s.formulation), descriptor_count(s.descriptor_count) {
+      : Script(s), formulation(s.formulation), descriptor_count(s.descriptor_count),
+        descriptor_window_end(s.descriptor_window_end), selected_cap(s.selected_cap) {
       index.update(*this,s.index); write.update(*this,s.write);
       execute.update(*this,s.execute); selected_write.update(*this,s.selected_write);
       if (formulation != DMAOptions::INT_BOOL) {
@@ -442,6 +455,13 @@ int
 main(int argc, char* argv[]) {
   DMAOptions opt("WordDMADescriptor");
   opt.parse(argc,argv);
+  if ((opt.size() < 3U) || (opt.size() > 9U) ||
+      (window_end(opt.size(),opt.window_slack()) >
+       Word::width_mask(address_width)) ||
+      (opt.selected_cap() > Word::width_mask(address_width))) {
+    std::cerr << "invalid descriptor count, window slack, or selected cap\n";
+    return 2;
+  }
   if (opt.measurement() == DMAOptions::LAYOUT) {
     std::cout << "{\"schema_version\":1,\"measurement\":\"layout\""
               << ",\"word_var_bytes\":" << sizeof(WordVar)
@@ -460,11 +480,7 @@ main(int argc, char* argv[]) {
   const auto construction_end = std::chrono::steady_clock::now();
   StatusStatistics root_statistics;
   const auto root_start = std::chrono::steady_clock::now();
-  if (root->status(root_statistics) == SS_FAILED) {
-    delete root;
-    std::cerr << "DMA model failed during initial propagation\n";
-    return 1;
-  }
+  const bool root_failed = root->status(root_statistics) == SS_FAILED;
   const auto root_end = std::chrono::steady_clock::now();
   if (opt.measurement() == DMAOptions::RETAIN_CLONES) {
     std::vector<Space*> clones;
@@ -496,6 +512,8 @@ main(int argc, char* argv[]) {
   Search::Statistics statistics;
   const auto search_start = std::chrono::steady_clock::now();
   for (unsigned int iteration=0; iteration<batch; iteration++) {
+    if (root_failed)
+      break;
     DFS<DMADescriptor> search(static_cast<DMADescriptor*>(root->clone()));
     std::uint64_t iteration_solutions = 0, iteration_checksum = 0;
     while (DMADescriptor* solution = search.next()) {
@@ -532,6 +550,8 @@ main(int argc, char* argv[]) {
             << ",\"formulation\":\"" << opt.formulation_name() << "\""
             << ",\"search_control\":\"" << opt.search_control_name() << "\""
             << ",\"size\":" << opt.size()
+            << ",\"window_slack\":" << opt.window_slack()
+            << ",\"selected_cap\":" << opt.selected_cap()
             << ",\"batch_iterations\":" << batch
             << ",\"construction_seconds\":" << construction_seconds.count()
             << ",\"root_seconds\":" << root_seconds.count()

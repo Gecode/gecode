@@ -4,6 +4,7 @@
 #include <chrono>
 #include <cstring>
 #include <iostream>
+#include <vector>
 
 using namespace Gecode;
 
@@ -15,20 +16,22 @@ public:
   WordVarArray words;
   IntVarArray integers;
 
-  RegisterAllocation(unsigned int per_bank, Formulation f)
+  RegisterAllocation(unsigned int per_bank, unsigned int slots, Formulation f)
     : formulation(f), words(*this,2*per_bank),
       integers(*this,(f == F_INT) ? 2*per_bank : 0,0,127) {
     for (unsigned int i=0; i<2*per_bank; i++) {
       const bool upper=i >= per_bank;
       const WordValue lo=upper ? 0x40U : 0U;
-      const WordValue hi=upper ? 0x70U : 0x30U;
+      const WordValue hi=lo+0x10U*(slots-1U);
+      const WordValue cube_hi=lo | 0x30U;
       if (f == F_INT) {
-        words[i]=WordVar(*this,8,lo,hi);
+        words[i]=WordVar(*this,8,lo,cube_hi);
         integers[i]=IntVar(*this,static_cast<int>(lo),static_cast<int>(hi));
         channel(*this,words[i],integers[i],WDT_UNSIGNED);
       } else {
-        words[i]=WordVar(*this,8,lo,hi,WDT_UNSIGNED,lo,hi | 0x0fU);
+        words[i]=WordVar(*this,8,lo,cube_hi,WDT_UNSIGNED,lo,cube_hi | 0x0fU);
       }
+      rel(*this,words[i],WRT_ULQ,8,hi);
     }
     if (f == F_INT) {
       distinct(*this,integers,IPL_BND);
@@ -48,6 +51,12 @@ public:
     for (int i=0; i<words.size(); i++)
       sum += static_cast<std::uint64_t>(i+1)*words[i].val();
     return sum;
+  }
+  std::vector<unsigned int> projection(void) const {
+    std::vector<unsigned int> values;
+    for (int i=0; i<words.size(); i++)
+      values.push_back(static_cast<unsigned int>(words[i].val()));
+    return values;
   }
 };
 
@@ -77,7 +86,7 @@ public:
 };
 
 int main(int argc, char* argv[]) {
-  if (argc != 5) return 2;
+  if ((argc < 5) || (argc > 7)) return 2;
   Formulation formulation;
   if (!std::strcmp(argv[2],"value")) formulation=F_VAL;
   else if (!std::strcmp(argv[2],"bounds")) formulation=F_BND;
@@ -85,21 +94,55 @@ int main(int argc, char* argv[]) {
   else return 2;
   const unsigned int size=static_cast<unsigned int>(std::strtoul(argv[3],nullptr,10));
   const unsigned int iterations=static_cast<unsigned int>(std::strtoul(argv[4],nullptr,10));
-  if ((size == 0U) || (iterations == 0U)) return 2;
+  const unsigned int slots=(argc >= 6) ?
+    static_cast<unsigned int>(std::strtoul(argv[5],nullptr,10)) : 4U;
+  const bool projections=(argc == 7) && !std::strcmp(argv[6],"projections");
+  if ((size == 0U) || (iterations == 0U) ||
+      (slots == 0U) || (slots > 4U) ||
+      ((argc == 7) && !projections)) return 2;
 
   std::uint64_t solutions=0, checksum=0, nodes=0, failures=0, propagations=0;
   auto start=std::chrono::steady_clock::now();
   if (!std::strcmp(argv[1],"register")) {
+    std::vector<std::vector<unsigned int> > rows;
     for (unsigned int trial=0; trial<iterations; trial++) {
-      RegisterAllocation* root=new RegisterAllocation(size,formulation);
-      StatusStatistics rs; if (root->status(rs) == SS_FAILED) return 1;
-      DFS<RegisterAllocation> search(root); delete root;
+      RegisterAllocation* root=new RegisterAllocation(size,slots,formulation);
+      StatusStatistics rs;
+      const SpaceStatus root_status=root->status(rs);
+      DFS<RegisterAllocation> search(root_status == SS_FAILED ? nullptr : root);
+      delete root;
       while (RegisterAllocation* solution=search.next()) {
-        solutions++; checksum += solution->checksum(); delete solution;
+        solutions++; checksum += solution->checksum();
+        if (projections && (trial == 0U)) rows.push_back(solution->projection());
+        delete solution;
       }
       Search::Statistics s=search.statistics();
       nodes += s.node; failures += s.fail; propagations += rs.propagate+s.propagate;
     }
+    std::cout << "{\"status\":\"ok\",\"semantic_status\":\""
+              << (solutions ? "sat" : "unsat") << "\",\"solutions\":" << solutions
+              << ",\"decision_variables\":[";
+    for (unsigned int i=0; i<2U*size; i++) {
+      if (i) std::cout << ',';
+      std::cout << "\"address[" << i << "]\"";
+    }
+    std::cout << "],\"projections\":[";
+    for (std::size_t i=0; i<rows.size(); i++) {
+      if (i) std::cout << ',';
+      std::cout << '[';
+      for (std::size_t j=0; j<rows[i].size(); j++) {
+        if (j) std::cout << ',';
+        std::cout << rows[i][j];
+      }
+      std::cout << ']';
+    }
+    double seconds=std::chrono::duration<double>(
+      std::chrono::steady_clock::now()-start).count();
+    std::cout << "],\"seconds\":" << seconds << ",\"checksum\":" << checksum
+              << ",\"nodes\":" << nodes << ",\"failures\":" << failures
+              << ",\"propagations\":" << propagations
+              << ",\"iterations\":" << iterations << "}\n";
+    return 0;
   } else if (!std::strcmp(argv[1],"wide")) {
     const unsigned int width=(size > 64U) ? 30U : 16U;
     for (unsigned int trial=0; trial<iterations; trial++) {

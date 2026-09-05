@@ -3,9 +3,9 @@
 # Tasks: word
 
 - Total: 41
-- Ready: 6
+- Ready: 5
 - Blocked: 2
-- Done: 33
+- Done: 34
 
 | ID | Task | State | Blocked by |
 | --- | --- | --- | --- |
@@ -42,7 +42,7 @@
 | [word-031](tasks/031-extend-partial-domain-coverage-to-fallback-publication-and-r.md) | Extend partial-domain coverage to fallback publication and rewrites | done | word-017, word-018, word-019, word-020, word-021, word-022 |
 | [word-032](tasks/032-refresh-word-operation-coverage-and-historical-performance-c.md) | Refresh Word operation coverage and historical performance claims | done | word-030, word-027, word-019 |
 | [word-033](tasks/033-add-semantically-checked-word-benchmark-controls.md) | Add semantically checked Word benchmark controls | done | word-025, word-031, word-026 |
-| [word-034](tasks/034-add-z3-and-bitwuzla-comparisons-for-dma-and-register-models.md) | Add Z3 and Bitwuzla comparisons for DMA and register models | ready | word-033, word-027 |
+| [word-034](tasks/034-add-z3-and-bitwuzla-comparisons-for-dma-and-register-models.md) | Add Z3 and Bitwuzla comparisons for DMA and register models | done | word-033, word-027 |
 | [word-035](tasks/035-add-external-comparisons-for-inverse-arithmetic-and-an-alu-p.md) | Add external comparisons for inverse arithmetic and an ALU path | ready | word-033 |
 | [word-036](tasks/036-add-external-comparisons-for-crc-xorshift-and-reduced-speck.md) | Add external comparisons for CRC xorshift and reduced Speck | ready | word-033 |
 | [word-037](tasks/037-run-a-focused-repaired-word-comparison-campaign.md) | Run a focused repaired-Word comparison campaign | blocked | word-034, word-035, word-036, word-028, word-029 |
