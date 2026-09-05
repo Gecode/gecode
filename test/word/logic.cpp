@@ -131,6 +131,105 @@ namespace Test { namespace Word {
         virtual Gecode::Space* copy(void) { return new LogicSpace(*this); }
       };
 
+      class BoundedLogicSpace : public Gecode::Space {
+      public:
+        Gecode::WordVar a, b, c;
+        BoundedLogicSpace(void)
+          : a(*this,4,Gecode::WDT_UNSIGNED),
+            b(*this,4,Gecode::WDT_UNSIGNED),
+            c(*this,4,Gecode::WDT_UNSIGNED) {}
+        BoundedLogicSpace(BoundedLogicSpace& s) : Gecode::Space(s) {
+          a.update(*this,s.a);
+          b.update(*this,s.b);
+          c.update(*this,s.c);
+        }
+        virtual Gecode::Space* copy(void) {
+          return new BoundedLogicSpace(*this);
+        }
+      };
+
+      static void unsigned_bounds(Gecode::Space& home, Gecode::WordVar x,
+                                  Gecode::WordValue minimum,
+                                  Gecode::WordValue maximum) {
+        Gecode::rel(home,x,Gecode::WRT_UGQ,4,minimum);
+        Gecode::rel(home,x,Gecode::WRT_ULQ,4,maximum);
+      }
+
+      static bool bounded_binary_publication(Gecode::WordOpType wot,
+                                             bool delayed) {
+        BoundedLogicSpace s;
+        if (!delayed) {
+          if (wot == Gecode::WOT_AND) {
+            unsigned_bounds(s,s.a,11U,13U);
+            unsigned_bounds(s,s.b,7U,7U);
+            unsigned_bounds(s,s.c,0U,2U);
+          } else {
+            unsigned_bounds(s,s.a,10U,11U);
+            unsigned_bounds(s,s.b,3U,7U);
+            unsigned_bounds(s,s.c,6U,10U);
+          }
+        }
+        Gecode::rel(s,s.a,wot,s.b,s.c);
+        if (delayed) {
+          if (wot == Gecode::WOT_AND) {
+            unsigned_bounds(s,s.a,11U,13U);
+            unsigned_bounds(s,s.b,7U,7U);
+            unsigned_bounds(s,s.c,0U,2U);
+          } else {
+            unsigned_bounds(s,s.a,10U,11U);
+            unsigned_bounds(s,s.b,3U,7U);
+            unsigned_bounds(s,s.c,6U,10U);
+          }
+        }
+        return s.status() == Gecode::SS_FAILED;
+      }
+
+      static bool bounded_nary_publication(Gecode::WordOpType wot,
+                                           bool delayed) {
+        BoundedLogicSpace s;
+        Gecode::WordVar mixed(s,4,
+          (wot == Gecode::WOT_AND) ? 7U : 0U,
+          (wot == Gecode::WOT_AND) ? 15U : 8U);
+        Gecode::WordVarArgs args = {s.a,s.b,mixed};
+        if (!delayed) {
+          if (wot == Gecode::WOT_AND) {
+            unsigned_bounds(s,s.a,11U,13U);
+            unsigned_bounds(s,s.b,7U,7U);
+            unsigned_bounds(s,s.c,0U,2U);
+          } else {
+            unsigned_bounds(s,s.a,10U,11U);
+            unsigned_bounds(s,s.b,3U,7U);
+            unsigned_bounds(s,s.c,6U,10U);
+          }
+        }
+        Gecode::rel(s,wot,args,s.c);
+        if (delayed) {
+          if (wot == Gecode::WOT_AND) {
+            unsigned_bounds(s,s.a,11U,13U);
+            unsigned_bounds(s,s.b,7U,7U);
+            unsigned_bounds(s,s.c,0U,2U);
+          } else {
+            unsigned_bounds(s,s.a,10U,11U);
+            unsigned_bounds(s,s.b,3U,7U);
+            unsigned_bounds(s,s.c,6U,10U);
+          }
+        }
+        return s.status() == Gecode::SS_FAILED;
+      }
+
+      static bool bounded_supported_alias(void) {
+        BoundedLogicSpace s;
+        Gecode::WordVar mixed(s,4,7U,15U);
+        unsigned_bounds(s,s.a,8U,11U);
+        unsigned_bounds(s,s.b,10U,15U);
+        Gecode::WordVarArgs args = {s.a,s.b,mixed};
+        Gecode::rel(s,Gecode::WOT_AND,args,s.a);
+        Gecode::dom(s,s.a,10U);
+        Gecode::dom(s,s.b,11U);
+        Gecode::dom(s,mixed,15U);
+        return s.status() != Gecode::SS_FAILED;
+      }
+
       static bool partial_binary(Gecode::WordOpType wot) {
         for (PartialAssignment p(3,1); p.has_more(); p.next()) {
           TestSpace s(3,Domain(1,0,1));
@@ -353,6 +452,16 @@ namespace Test { namespace Word {
           Gecode::WOT_NAND, Gecode::WOT_NOR, Gecode::WOT_XNOR
         };
         if (!partial_complement())
+          return false;
+        if (!bounded_binary_publication(Gecode::WOT_AND,false) ||
+            !bounded_binary_publication(Gecode::WOT_AND,true) ||
+            !bounded_binary_publication(Gecode::WOT_OR,false) ||
+            !bounded_binary_publication(Gecode::WOT_OR,true) ||
+            !bounded_nary_publication(Gecode::WOT_AND,false) ||
+            !bounded_nary_publication(Gecode::WOT_AND,true) ||
+            !bounded_nary_publication(Gecode::WOT_OR,false) ||
+            !bounded_nary_publication(Gecode::WOT_OR,true) ||
+            !bounded_supported_alias())
           return false;
         for (unsigned int i=0; i<6; i++) {
           if (!partial_binary(ops[i]))

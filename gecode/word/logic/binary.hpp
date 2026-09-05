@@ -46,38 +46,44 @@ namespace Gecode { namespace Word { namespace Logic {
   ExecStatus
   Binary<op>::narrow(Home home, WordView x, WordView y, WordView z) {
     const WordValue mask=x.mask();
-    WordValue xlo=x.lo(), xhi=x.hi();
-    WordValue ylo=y.lo(), yhi=y.hi();
-    WordValue zlo=z.lo(), zhi=z.hi();
-    if (op == BO_OR) {
-      zlo |= xlo|ylo;
-      zhi &= xhi|yhi;
-      xhi &= zhi;
-      yhi &= zhi;
-      xlo |= zlo&~yhi&mask;
-      ylo |= zlo&~xhi&mask;
-    } else {
-      const WordValue known_yz=~((yhi^ylo)|(zhi^zlo))&mask;
-      const WordValue known_xz=~((xhi^xlo)|(zhi^zlo))&mask;
-      const WordValue known_xy=~((xhi^xlo)|(yhi^ylo))&mask;
-      const WordValue value_x=(ylo^zlo)&known_yz;
-      const WordValue value_y=(xlo^zlo)&known_xz;
-      const WordValue value_z=(xlo^ylo)&known_xy;
-      xlo |= value_x; xhi &= value_x|~known_yz;
-      ylo |= value_y; yhi &= value_y|~known_xz;
-      zlo |= value_z; zhi &= value_z|~known_xy;
-    }
-    if (((xlo&~xhi) != 0) || ((ylo&~yhi) != 0) ||
-        ((zlo&~zhi) != 0))
-      return ES_FAILED;
+    const bool bounded=x.bounded() || y.bounded() || z.bounded();
+    for (;;) {
+      WordValue xlo=x.lo(), xhi=x.hi();
+      WordValue ylo=y.lo(), yhi=y.hi();
+      WordValue zlo=z.lo(), zhi=z.hi();
+      if (op == BO_OR) {
+        zlo |= xlo|ylo;
+        zhi &= xhi|yhi;
+        xhi &= zhi;
+        yhi &= zhi;
+        xlo |= zlo&~yhi&mask;
+        ylo |= zlo&~xhi&mask;
+      } else {
+        const WordValue known_yz=~((yhi^ylo)|(zhi^zlo))&mask;
+        const WordValue known_xz=~((xhi^xlo)|(zhi^zlo))&mask;
+        const WordValue known_xy=~((xhi^xlo)|(yhi^ylo))&mask;
+        const WordValue value_x=(ylo^zlo)&known_yz;
+        const WordValue value_y=(xlo^zlo)&known_xz;
+        const WordValue value_z=(xlo^ylo)&known_xy;
+        xlo |= value_x; xhi &= value_x|~known_yz;
+        ylo |= value_y; yhi &= value_y|~known_xz;
+        zlo |= value_z; zhi &= value_z|~known_xy;
+      }
+      if (((xlo&~xhi) != 0) || ((ylo&~yhi) != 0) ||
+          ((zlo&~zhi) != 0))
+        return ES_FAILED;
 
-    if ((xlo != x.lo()) || (xhi != x.hi()))
-      GECODE_ME_CHECK(x.narrow(home,xlo,xhi));
-    if ((ylo != y.lo()) || (yhi != y.hi()))
-      GECODE_ME_CHECK(y.narrow(home,ylo,yhi));
-    if ((zlo != z.lo()) || (zhi != z.hi()))
-      GECODE_ME_CHECK(z.narrow(home,zlo,zhi));
-    return ES_OK;
+      if ((xlo != x.lo()) || (xhi != x.hi()))
+        GECODE_ME_CHECK(x.narrow(home,xlo,xhi));
+      if ((ylo != y.lo()) || (yhi != y.hi()))
+        GECODE_ME_CHECK(y.narrow(home,ylo,yhi));
+      if ((zlo != z.lo()) || (zhi != z.hi()))
+        GECODE_ME_CHECK(z.narrow(home,zlo,zhi));
+      if (!bounded || (((xlo == x.lo()) && (xhi == x.hi())) &&
+                       ((ylo == y.lo()) && (yhi == y.hi())) &&
+                       ((zlo == z.lo()) && (zhi == z.hi()))))
+        return ES_OK;
+    }
   }
 
   template<BinaryOperation op>

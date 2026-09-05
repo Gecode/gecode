@@ -135,94 +135,105 @@ namespace Gecode { namespace Word { namespace Logic {
     WordValue* xlo = x.size() <= stack_size ? stack :
       region.alloc<WordValue>(2*x.size());
     WordValue* xhi=xlo+x.size();
-    for (int i=0; i<x.size(); i++) {
-      xlo[i]=x[i].lo();
-      xhi[i]=x[i].hi();
-    }
-    WordValue ylo=y.lo(), yhi=y.hi();
+    bool bounded=y.bounded();
+    for (int i=0; i<x.size(); i++)
+      bounded |= x[i].bounded();
 
     for (;;) {
-      bool changed=false;
+      for (int i=0; i<x.size(); i++) {
+        xlo[i]=x[i].lo();
+        xhi[i]=x[i].hi();
+      }
+      WordValue ylo=y.lo(), yhi=y.hi();
 
-      if (op == NO_AND) {
-        WordValue all_lo=constant, all_hi=constant;
-        WordValue once=~constant&mask, twice=0;
-        for (int i=0; i<x.size(); i++) {
-          all_lo &= xlo[i];
-          all_hi &= xhi[i];
-          const WordValue not_one=~xlo[i]&mask;
-          twice |= once&not_one;
-          once |= not_one;
-        }
-        const WordValue next_ylo=ylo|all_lo;
-        const WordValue next_yhi=yhi&all_hi;
-        if ((next_ylo&~next_yhi) != 0)
-          return ES_FAILED;
-        changed |= (next_ylo != ylo) || (next_yhi != yhi);
-        ylo=next_ylo; yhi=next_yhi;
-        const WordValue exact_one=once&~twice&mask;
-        const WordValue known_zero=~yhi&mask;
-        for (int i=0; i<x.size(); i++) {
-          const WordValue lo=xlo[i]|ylo;
-          const WordValue hi=xhi[i]&~(known_zero&exact_one&~xlo[i]);
-          if ((lo&~hi) != 0)
+      for (;;) {
+        bool changed=false;
+
+        if (op == NO_AND) {
+          WordValue all_lo=constant, all_hi=constant;
+          WordValue once=~constant&mask, twice=0;
+          for (int i=0; i<x.size(); i++) {
+            all_lo &= xlo[i];
+            all_hi &= xhi[i];
+            const WordValue not_one=~xlo[i]&mask;
+            twice |= once&not_one;
+            once |= not_one;
+          }
+          const WordValue next_ylo=ylo|all_lo;
+          const WordValue next_yhi=yhi&all_hi;
+          if ((next_ylo&~next_yhi) != 0)
             return ES_FAILED;
-          changed |= (lo != xlo[i]) || (hi != xhi[i]);
-          xlo[i]=lo; xhi[i]=hi;
-        }
-      } else {
-        WordValue all_lo=constant, all_hi=constant;
-        WordValue once=constant, twice=0;
-        for (int i=0; i<x.size(); i++) {
-          all_lo |= xlo[i];
-          all_hi |= xhi[i];
-          const WordValue may_one=xhi[i];
-          twice |= once&may_one;
-          once |= may_one;
-        }
-        const WordValue next_ylo=ylo|all_lo;
-        const WordValue next_yhi=yhi&all_hi;
-        if ((next_ylo&~next_yhi) != 0)
-          return ES_FAILED;
-        changed |= (next_ylo != ylo) || (next_yhi != yhi);
-        ylo=next_ylo; yhi=next_yhi;
-        const WordValue exact_one=once&~twice&mask;
-        for (int i=0; i<x.size(); i++) {
-          const WordValue lo=xlo[i]|(ylo&exact_one&xhi[i]);
-          const WordValue hi=xhi[i]&yhi;
-          if ((lo&~hi) != 0)
+          changed |= (next_ylo != ylo) || (next_yhi != yhi);
+          ylo=next_ylo; yhi=next_yhi;
+          const WordValue exact_one=once&~twice&mask;
+          const WordValue known_zero=~yhi&mask;
+          for (int i=0; i<x.size(); i++) {
+            const WordValue lo=xlo[i]|ylo;
+            const WordValue hi=xhi[i]&~(known_zero&exact_one&~xlo[i]);
+            if ((lo&~hi) != 0)
+              return ES_FAILED;
+            changed |= (lo != xlo[i]) || (hi != xhi[i]);
+            xlo[i]=lo; xhi[i]=hi;
+          }
+        } else {
+          WordValue all_lo=constant, all_hi=constant;
+          WordValue once=constant, twice=0;
+          for (int i=0; i<x.size(); i++) {
+            all_lo |= xlo[i];
+            all_hi |= xhi[i];
+            const WordValue may_one=xhi[i];
+            twice |= once&may_one;
+            once |= may_one;
+          }
+          const WordValue next_ylo=ylo|all_lo;
+          const WordValue next_yhi=yhi&all_hi;
+          if ((next_ylo&~next_yhi) != 0)
             return ES_FAILED;
-          changed |= (lo != xlo[i]) || (hi != xhi[i]);
-          xlo[i]=lo; xhi[i]=hi;
+          changed |= (next_ylo != ylo) || (next_yhi != yhi);
+          ylo=next_ylo; yhi=next_yhi;
+          const WordValue exact_one=once&~twice&mask;
+          for (int i=0; i<x.size(); i++) {
+            const WordValue lo=xlo[i]|(ylo&exact_one&xhi[i]);
+            const WordValue hi=xhi[i]&yhi;
+            if ((lo&~hi) != 0)
+              return ES_FAILED;
+            changed |= (lo != xlo[i]) || (hi != xhi[i]);
+            xlo[i]=lo; xhi[i]=hi;
+          }
         }
+
+        for (int i=0; i<x.size(); i++)
+          if (NarySupport::aliases(x[i],y)) {
+            const WordValue lo=xlo[i]|ylo;
+            const WordValue hi=xhi[i]&yhi;
+            if ((lo&~hi) != 0)
+              return ES_FAILED;
+            changed |= (lo != xlo[i]) || (hi != xhi[i]) ||
+              (lo != ylo) || (hi != yhi);
+            xlo[i]=ylo=lo;
+            xhi[i]=yhi=hi;
+          }
+
+        if (!changed)
+          break;
       }
 
+      if (NarySupport::changed(y,ylo,yhi))
+        GECODE_ME_CHECK(y.narrow(home,ylo,yhi));
       for (int i=0; i<x.size(); i++)
-        if (NarySupport::aliases(x[i],y)) {
-          const WordValue lo=xlo[i]|ylo;
-          const WordValue hi=xhi[i]&yhi;
-          if ((lo&~hi) != 0)
-            return ES_FAILED;
-          changed |= (lo != xlo[i]) || (hi != xhi[i]) ||
-            (lo != ylo) || (hi != yhi);
-          xlo[i]=ylo=lo;
-          xhi[i]=yhi=hi;
-        }
+        if (NarySupport::changed(x[i],xlo[i],xhi[i]))
+          GECODE_ME_CHECK(x[i].narrow(home,xlo[i],xhi[i]));
 
-      if (!changed)
-        break;
+      bool synchronized=(ylo == y.lo()) && (yhi == y.hi());
+      for (int i=0; i<x.size(); i++)
+        synchronized &= (xlo[i] == x[i].lo()) && (xhi[i] == x[i].hi());
+      if (!bounded || synchronized) {
+        bool assigned=y.assigned();
+        for (int i=0; i<x.size(); i++)
+          assigned &= x[i].assigned();
+        return assigned ? ES_OK : ES_FIX;
+      }
     }
-
-    if (NarySupport::changed(y,ylo,yhi))
-      GECODE_ME_CHECK(y.narrow(home,ylo,yhi));
-    for (int i=0; i<x.size(); i++)
-      if (NarySupport::changed(x[i],xlo[i],xhi[i]))
-        GECODE_ME_CHECK(x[i].narrow(home,xlo[i],xhi[i]));
-
-    bool assigned=ylo == yhi;
-    for (int i=0; i<x.size(); i++)
-      assigned &= xlo[i] == xhi[i];
-    return assigned ? ES_OK : ES_FIX;
   }
 
   template<NaryOperation op, class VY>

@@ -3,7 +3,7 @@ schema_version = 1
 id = "word-017"
 key = "repair-logic-publication"
 area = "word"
-status = "open"
+status = "done"
 complexity = "advanced"
 afk = true
 priority = "high"
@@ -26,11 +26,21 @@ Review of cced251d26 reproduced unsatisfiable four-bit unsigned AND domains a={1
 
 ## Done when
 
-- [ ] Binary table/native and n-ary AND/OR reject the concrete invalid tuples at posting and after delayed tells.
-- [ ] Publication, ES_FIX and subsumption reflect actual synchronized domains; supported tuples are preserved.
-- [ ] Focused small-width mixed-domain and alias regressions exercise this mechanism in the existing test suite.
+- [x] Binary table/native and n-ary AND/OR reject the concrete invalid tuples at posting and after delayed tells.
+- [x] Publication, ES_FIX and subsumption reflect actual synchronized domains; supported tuples are preserved.
+- [x] Focused small-width mixed-domain and alias regressions exercise this mechanism in the existing test suite.
 
 ## Validation
 
 - Run Word logic and TestFramework; run broader Word tests if shared synchronization or view code changes.
 - Compare a compact logical control in Release if the compact hot path changes.
+
+## Result
+
+Repair bounded Word logic publication to reach synchronized fixpoints before retirement
+
+Validation:
+
+- build/bin/gecode-test -test Word::Logic passed
+- build/bin/gecode-test -iter 5 -test Word::TestFramework passed
+- git diff --check passed

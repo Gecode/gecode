@@ -3,9 +3,9 @@
 # Tasks: word
 
 - Total: 41
-- Ready: 10
+- Ready: 9
 - Blocked: 15
-- Done: 16
+- Done: 17
 
 | ID | Task | State | Blocked by |
 | --- | --- | --- | --- |
@@ -25,7 +25,7 @@
 | [word-014](tasks/014-preserve-bounds-through-boolean-controlled-word-ite.md) | Preserve bounds through Boolean-controlled Word ITE | done | word-004 |
 | [word-015](tasks/015-preserve-bounds-through-word-element.md) | Preserve bounds through Word element | done | word-004 |
 | [word-016](tasks/016-investigate-native-bounds-consistent-word-distinct.md) | Investigate native bounds-consistent Word distinct | done | — |
-| [word-017](tasks/017-repair-bounded-publication-in-binary-and-n-ary-word-logic.md) | Repair bounded publication in binary and n-ary Word logic | ready | — |
+| [word-017](tasks/017-repair-bounded-publication-in-binary-and-n-ary-word-logic.md) | Repair bounded publication in binary and n-ary Word logic | done | — |
 | [word-018](tasks/018-preserve-mixed-word-equality-through-element-and-ite.md) | Preserve mixed Word equality through Element and ITE | ready | — |
 | [word-019](tasks/019-repair-synchronized-cube-arithmetic-and-posting-shortcuts.md) | Repair synchronized cube arithmetic and posting shortcuts | blocked | word-018 |
 | [word-020](tasks/020-handle-min-divided-by-minus-one-in-bounded-signed-division.md) | Handle MIN divided by minus one in bounded signed division | ready | — |

@@ -64,39 +64,51 @@ namespace Gecode { namespace Word { namespace Logic {
                const WordValue* allowed) {
     const WordValue mask = x[0].mask();
     WordValue lo[n], hi[n];
-    for (int i=0; i<n; i++) {
-      lo[i] = x[i].lo();
-      hi[i] = x[i].hi();
-    }
-    bool changed;
-    do {
-      WordValue support[n][2] = {};
-      const unsigned int tuples = 1U << n;
-      for (unsigned int t=0; t<tuples; t++) {
-        if (allowed[t] == 0)
-          continue;
-        WordValue tuple_support = allowed[t];
-        for (int i=0; i<n; i++)
-          tuple_support &= ((t & (1U << i)) != 0)
-            ? hi[i] : (~lo[i] & mask);
-        for (int i=0; i<n; i++)
-          support[i][(t >> i) & 1U] |= tuple_support;
-      }
-      changed = false;
-      for (int i=0; i<n; i++) {
-        const WordValue next_lo = lo[i] | (~support[i][0] & mask);
-        const WordValue next_hi = hi[i] & support[i][1];
-        if ((next_lo & ~next_hi) != 0)
-          return ES_FAILED;
-        changed |= (next_lo != lo[i]) || (next_hi != hi[i]);
-        lo[i] = next_lo;
-        hi[i] = next_hi;
-      }
-    } while (changed);
+    bool bounded=false;
     for (int i=0; i<n; i++)
-      if ((lo[i] != x[i].lo()) || (hi[i] != x[i].hi()))
-        GECODE_ME_CHECK(x[i].narrow(home,lo[i],hi[i]));
-    return ES_OK;
+      bounded |= x[i].bounded();
+    for (;;) {
+      for (int i=0; i<n; i++) {
+        lo[i] = x[i].lo();
+        hi[i] = x[i].hi();
+      }
+      bool changed;
+      do {
+        WordValue support[n][2] = {};
+        const unsigned int tuples = 1U << n;
+        for (unsigned int t=0; t<tuples; t++) {
+          if (allowed[t] == 0)
+            continue;
+          WordValue tuple_support = allowed[t];
+          for (int i=0; i<n; i++)
+            tuple_support &= ((t & (1U << i)) != 0)
+              ? hi[i] : (~lo[i] & mask);
+          for (int i=0; i<n; i++)
+            support[i][(t >> i) & 1U] |= tuple_support;
+        }
+        changed = false;
+        for (int i=0; i<n; i++) {
+          const WordValue next_lo = lo[i] | (~support[i][0] & mask);
+          const WordValue next_hi = hi[i] & support[i][1];
+          if ((next_lo & ~next_hi) != 0)
+            return ES_FAILED;
+          changed |= (next_lo != lo[i]) || (next_hi != hi[i]);
+          lo[i] = next_lo;
+          hi[i] = next_hi;
+        }
+      } while (changed);
+      for (int i=0; i<n; i++) {
+        if ((lo[i] != x[i].lo()) || (hi[i] != x[i].hi()))
+          GECODE_ME_CHECK(x[i].narrow(home,lo[i],hi[i]));
+      }
+      if (!bounded)
+        return ES_OK;
+      bool synchronized=true;
+      for (int i=0; i<n; i++)
+        synchronized &= (lo[i] == x[i].lo()) && (hi[i] == x[i].hi());
+      if (synchronized)
+        return ES_OK;
+    }
   }
 
   forceinline ExecStatus
