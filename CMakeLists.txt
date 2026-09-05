@@ -1424,6 +1424,8 @@ if(BUILD_TESTING)
       Int::Arithmetic::Max::Nary
       Int::Cumulative::Man::Fix::0::4
       Int::Distinct::Random
+      Int::Extensional::Reg::Sparse::NFAPrefix
+      Int::Extensional::Reg::Sparse::RandomNFADifferential
       Int::Extensional::TupleSet::Sparse::IncrementalDelta
       Int::Extensional::TupleSet::Auto::DefaultDispatch
       Int::Linear::Bool::Int::Lq
