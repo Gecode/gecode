@@ -3,7 +3,7 @@ schema_version = 1
 id = "word-026"
 key = "bound-progression-closure"
 area = "word"
-status = "open"
+status = "done"
 complexity = "advanced"
 afk = true
 priority = "high"
@@ -27,11 +27,19 @@ For w=2k, d=2^k-1 and unsigned n with low k bits zero and interval [2^k,d*2^k], 
 
 ## Done when
 
-- [ ] The named family no longer requires 2^(w/2)-1 effective local steps to finish useful propagation.
-- [ ] Divisibility, GCD and product_mod all have controlled closure and honest statuses/costs.
-- [ ] Small-width supported tuples are preserved and concrete completion still checks the relation.
+- [x] The named family no longer requires 2^(w/2)-1 effective local steps to finish useful propagation.
+- [x] Divisibility, GCD and product_mod all have controlled closure and honest statuses/costs.
+- [x] Small-width supported tuples are preserved and concrete completion still checks the relation.
 
 ## Validation
 
 - Run deterministic iteration/work measurements at widths 16,24,32,40 and one larger safe scale with a wall cap.
 - Run Word number/product_mod tests and TestFramework; measure a normal bounded numeric control in Release.
+
+## Result
+
+Replace span-dependent Word progression endpoint walking with overflow-safe CRT closure and add focused structural validation.
+
+Validation:
+
+- Independent verification passed: Release builds; Word::Number::Lifecycle, Word::ProductMod::Lifecycle, and Word::TestFramework; Divides/GCD/ProductMod widths 16-64 termination benchmark; normal bounded product_mod control; git diff --check.

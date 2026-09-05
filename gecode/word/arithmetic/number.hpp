@@ -224,13 +224,7 @@ namespace Gecode { namespace Word { namespace Arithmetic {
 
   forceinline bool
   number_unsigned_multiples(BoundLocalDomain& d, WordValue g) {
-    const WordValue rem=d.minimum%g;
-    const WordValue add=(rem == 0U) ? 0U : g-rem;
-    if (d.minimum > width_mask(d.width)-add)
-      return false;
-    const WordValue first=d.minimum+add;
-    const WordValue last=d.maximum-(d.maximum%g);
-    return (first <= last) && d.range(first,last);
+    return bound_progression(d,0U,g);
   }
 
   forceinline WordValue
@@ -241,33 +235,7 @@ namespace Gecode { namespace Word { namespace Arithmetic {
 
   forceinline bool
   number_signed_multiples(BoundLocalDomain& d, WordValue g) {
-    const WordValue sign=sign_bit(d.width);
-    WordValue first, last;
-    if (d.maximum < sign) {
-      const WordValue a=number_local_magnitude(d,d.minimum);
-      const WordValue b=number_local_magnitude(d,d.maximum);
-      const WordValue fm=(a/g)*g;
-      const WordValue lm=b/g + ((b%g) != 0U);
-      if ((fm == 0U) || (lm > (~WordValue(0))/g)) return false;
-      const WordValue last_m=lm*g;
-      if (fm < last_m) return false;
-      first=number_negative_rank(fm,d.width);
-      last=number_negative_rank(last_m,d.width);
-    } else if (d.minimum >= sign) {
-      const WordValue a=number_local_magnitude(d,d.minimum);
-      const WordValue b=number_local_magnitude(d,d.maximum);
-      const WordValue rem=a%g, add=(rem == 0U) ? 0U : g-rem;
-      if ((add > sign-1U) || (a > (sign-1U)-add)) return false;
-      first=Word::rank(WDT_SIGNED,d.width,a+add);
-      last=Word::rank(WDT_SIGNED,d.width,b-(b%g));
-    } else {
-      const WordValue a=number_local_magnitude(d,d.minimum);
-      const WordValue b=number_local_magnitude(d,d.maximum);
-      const WordValue fm=(a/g)*g;
-      first=(fm == 0U) ? sign : number_negative_rank(fm,d.width);
-      last=Word::rank(WDT_SIGNED,d.width,(b/g)*g);
-    }
-    return (first <= last) && d.range(first,last);
+    return bound_progression(d,sign_bit(d.width)%g,g);
   }
 
   template<bool sign>
@@ -548,10 +516,8 @@ namespace Gecode { namespace Word { namespace Arithmetic {
 
   template<class View, bool sign>
   PropCost
-  BoundGcd<View,sign>::cost(const Space&, const ModEventDelta& med) const {
-    return (View::me(med) == ME_WORD_BND) ?
-      PropCost::ternary(PropCost::LO) :
-      PropCost::linear(PropCost::LO,x.width());
+  BoundGcd<View,sign>::cost(const Space&, const ModEventDelta&) const {
+    return PropCost::linear(PropCost::HI,x.width());
   }
 
   template<class View, bool sign>
@@ -783,10 +749,8 @@ namespace Gecode { namespace Word { namespace Arithmetic {
 
   template<class View, bool sign>
   PropCost
-  Divides<View,sign>::cost(const Space&, const ModEventDelta& med) const {
-    return (View::me(med) == ME_WORD_BND) ?
-      PropCost::binary(PropCost::LO) :
-      PropCost::linear(PropCost::LO,x0.width());
+  Divides<View,sign>::cost(const Space&, const ModEventDelta&) const {
+    return PropCost::linear(PropCost::HI,x0.width());
   }
 
   template<class View, bool sign>

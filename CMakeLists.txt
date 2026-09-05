@@ -1668,6 +1668,11 @@ endif()
 
 if(GECODE_ENABLE_EXAMPLES)
   add_subdirectory(examples)
+  if(GECODE_ENABLE_WORD_VARS)
+    add_executable(word-progression-closure
+      benchmarks/word/progression-closure.cpp)
+    target_link_libraries(word-progression-closure PRIVATE gecodeminimodel)
+  endif()
 endif()
 
 # ---------------------------------------------------------------------------

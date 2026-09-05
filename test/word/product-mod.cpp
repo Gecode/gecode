@@ -126,6 +126,24 @@ namespace Test { namespace Word { namespace ProductMod {
       }
     };
 
+    class ProgressionSpace : public Gecode::Space {
+    public:
+      Gecode::WordVar x, one, result;
+      Gecode::IntVar modulus;
+      ProgressionSpace(void)
+        : x(*this,8,0U,240U,Gecode::WDT_UNSIGNED,16U,240U),
+          one(*this,8,Gecode::WDT_UNSIGNED,1U,1U),
+          result(*this,8,Gecode::WDT_UNSIGNED,0U,0U),
+          modulus(*this,15,15) {
+        Gecode::product_mod(*this,one,x,modulus,result);
+      }
+      ProgressionSpace(ProgressionSpace& s) : Gecode::Space(s) {
+        x.update(*this,s.x); one.update(*this,s.one);
+        result.update(*this,s.result); modulus.update(*this,s.modulus);
+      }
+      virtual Gecode::Space* copy(void) { return new ProgressionSpace(*this); }
+    };
+
     static bool assigned(void) {
       for (Gecode::WordValue x=0; x<8; x++)
         for (Gecode::WordValue y=0; y<8; y++)
@@ -184,6 +202,12 @@ namespace Test { namespace Word { namespace ProductMod {
     }
 
     static bool bounded_ranges(void) {
+      ProgressionSpace progression;
+      if ((progression.status() == Gecode::SS_FAILED) ||
+          !progression.x.assigned() || (progression.x.val() != 240U) ||
+          (Gecode::PropagatorGroup::all.size(progression) != 0))
+        return false;
+
       BoundedSpace forward(9,10U,20U,10U,20U,509,509,0U,511U);
       forward.post();
       if ((forward.status() == Gecode::SS_FAILED) ||

@@ -12,6 +12,8 @@
  */
 
 #include "test/word.hh"
+#include <gecode/word/arithmetic.hh>
+#include <gecode/word/arithmetic/bounded.hpp>
 
 #include <gecode/search.hh>
 
@@ -33,6 +35,106 @@ namespace Test { namespace Word { namespace Number {
       const WordValue r=x%y; x=y; y=r;
     }
     return x;
+  }
+
+  static bool
+  progression_oracle(void) {
+    using namespace Gecode;
+    using namespace Gecode::Word::Arithmetic;
+    for (unsigned int width=1; width<=5; width++) {
+      const WordValue mask=(WordValue(1)<<width)-1U;
+      for (unsigned int signed_order=0; signed_order<2; signed_order++) {
+        const WordDomainType kind=signed_order ? WDT_SIGNED : WDT_UNSIGNED;
+        for (WordValue hi=0U; hi<=mask; hi++) {
+          for (WordValue lo=hi;; lo=(lo-1U)&hi) {
+            BoundLocalDomain base={width,kind,lo,hi,0U,mask,false};
+            if (!base.synchronize()) return false;
+            const WordValue span=base.maximum-base.minimum;
+            const WordValue interval_min[4]={
+              base.minimum,base.minimum,base.minimum+span/2U,
+              base.minimum+span/3U};
+            const WordValue interval_max[4]={
+              base.maximum,base.minimum+span/2U,base.maximum,
+              base.maximum-span/3U};
+            for (unsigned int interval=0; interval<4; interval++) {
+              BoundLocalDomain narrowed=base;
+              narrowed.minimum=interval_min[interval];
+              narrowed.maximum=interval_max[interval];
+              if (!narrowed.synchronize()) continue;
+              WordValue ordered_lo, ordered_hi;
+              Gecode::Word::ordered_cube(kind,width,narrowed.lo,narrowed.hi,
+                                         ordered_lo,ordered_hi);
+              for (WordValue step=1U; step<=mask; step++) {
+                for (WordValue residue=0U; residue<step; residue++) {
+                  bool found=false; WordValue first=0U, last=0U;
+                  for (WordValue rank=narrowed.minimum;
+                       rank<=narrowed.maximum; rank++) {
+                    if (Gecode::Word::cube_contains(
+                          ordered_lo,ordered_hi,rank,mask) &&
+                        ((rank%step) == residue)) {
+                      if (!found) first=rank;
+                      last=rank; found=true;
+                    }
+                  }
+                  BoundLocalDomain actual=narrowed;
+                  bool success=true;
+                  for (;;) {
+                    const BoundLocalDomain old=actual;
+                    actual.deferred=true;
+                    success=bound_progression(actual,residue,step);
+                    actual.deferred=false;
+                    if (success) success=actual.synchronize();
+                    if (!success || (actual == old)) break;
+                  }
+                  if (success != found) return false;
+                  if (success && ((actual.minimum != first) ||
+                                  (actual.maximum != last)))
+                    return false;
+                }
+              }
+            }
+            if (lo == 0U) break;
+          }
+        }
+      }
+    }
+    const WordValue maximum=~WordValue(0);
+    BoundLocalDomain assigned={64,WDT_UNSIGNED,maximum,maximum,
+                               maximum,maximum,true};
+    if (!bound_progression(assigned,1U,maximum-1U) ||
+        (assigned.minimum != maximum) || (assigned.maximum != maximum))
+      return false;
+    BoundLocalDomain incompatible={64,WDT_UNSIGNED,maximum,maximum,
+                                   maximum,maximum,true};
+    if (bound_progression(incompatible,0U,maximum-1U))
+      return false;
+    BoundLocalDomain overflow={64,WDT_UNSIGNED,0U,WordValue(1)<<63,
+                               0U,maximum,true};
+    if (!bound_progression(overflow,0U,maximum) ||
+        (overflow.minimum != 0U) || (overflow.maximum != 0U))
+      return false;
+
+    const WordValue sign=WordValue(1)<<63;
+    const WordValue negative_one_rank=sign-1U;
+    const WordValue large_odd=(WordValue(1)<<62)-1U;
+    BoundLocalDomain signed_odd={64,WDT_SIGNED,maximum,maximum,
+                                 negative_one_rank,negative_one_rank,true};
+    if (!bound_progression(
+          signed_odd,negative_one_rank%large_odd,large_odd))
+      return false;
+    BoundLocalDomain signed_odd_bad={64,WDT_SIGNED,maximum,maximum,
+                                     negative_one_rank,negative_one_rank,true};
+    if (bound_progression(
+          signed_odd_bad,(negative_one_rank%large_odd)+1U,large_odd))
+      return false;
+
+    const WordValue large_even=WordValue(1)<<62;
+    BoundLocalDomain signed_even={64,WDT_SIGNED,0U,0U,sign,sign,true};
+    if (!bound_progression(signed_even,0U,large_even))
+      return false;
+    BoundLocalDomain signed_even_bad={64,WDT_SIGNED,0U,0U,
+                                      sign,sign,true};
+    return !bound_progression(signed_even_bad,2U,large_even);
   }
 
   class GcdSpace : public Gecode::Space {
@@ -277,6 +379,53 @@ namespace Test { namespace Word { namespace Number {
     }
   };
 
+  class AlignedProgressionSpace : public Gecode::Space {
+  public:
+    Gecode::WordVar divisor, dividend, result, one, remainder;
+    Gecode::IntVar modulus;
+    Gecode::BoolVar divisible;
+    AlignedProgressionSpace(void)
+      : divisor(*this,8,Gecode::WDT_UNSIGNED,15U,15U),
+        dividend(*this,8,0U,240U,Gecode::WDT_UNSIGNED,16U,240U),
+        result(*this,8,Gecode::WDT_UNSIGNED,15U,15U),
+        one(*this,8,Gecode::WDT_UNSIGNED,1U,1U),
+        remainder(*this,8,Gecode::WDT_UNSIGNED,0U,0U),
+        modulus(*this,15,15), divisible(*this,1,1) {
+      Gecode::divides(*this,divisor,dividend,Gecode::Reify(divisible));
+      Gecode::gcd(*this,divisor,dividend,result);
+      Gecode::product_mod(*this,one,dividend,modulus,remainder);
+    }
+    AlignedProgressionSpace(AlignedProgressionSpace& s) : Gecode::Space(s) {
+      divisor.update(*this,s.divisor); dividend.update(*this,s.dividend);
+      result.update(*this,s.result); one.update(*this,s.one);
+      remainder.update(*this,s.remainder); modulus.update(*this,s.modulus);
+      divisible.update(*this,s.divisible);
+    }
+    virtual Gecode::Space* copy(void) {
+      return new AlignedProgressionSpace(*this);
+    }
+  };
+
+  class IncompatibleProgressionSpace : public Gecode::Space {
+  public:
+    Gecode::WordVar divisor, dividend;
+    Gecode::BoolVar divisible;
+    IncompatibleProgressionSpace(void)
+      : divisor(*this,8,Gecode::WDT_UNSIGNED,6U,6U),
+        dividend(*this,8,1U,255U,Gecode::WDT_UNSIGNED,1U,255U),
+        divisible(*this,1,1) {
+      Gecode::divides(*this,divisor,dividend,Gecode::Reify(divisible));
+    }
+    IncompatibleProgressionSpace(IncompatibleProgressionSpace& s)
+      : Gecode::Space(s) {
+      divisor.update(*this,s.divisor); dividend.update(*this,s.dividend);
+      divisible.update(*this,s.divisible);
+    }
+    virtual Gecode::Space* copy(void) {
+      return new IncompatibleProgressionSpace(*this);
+    }
+  };
+
   static bool
   signed_alias_results(WordValue lo, WordValue hi,
                        WordValue minimum, WordValue maximum,
@@ -299,6 +448,7 @@ namespace Test { namespace Word { namespace Number {
 
   static bool
   bounded(void) {
+    if (!progression_oracle()) return false;
     const WordValue odd_magnitudes=(WordValue(1) << 1) |
       (WordValue(1) << 3) | (WordValue(1) << 5) |
       (WordValue(1) << 7);
@@ -309,6 +459,15 @@ namespace Test { namespace Word { namespace Number {
         !signed_alias_results(0U,15U,13U,4U,zero_through_four) ||
         !signed_alias_results(1U,15U,9U,15U,odd_magnitudes) ||
         !signed_alias_results(1U,15U,1U,7U,odd_magnitudes))
+      return false;
+
+    AlignedProgressionSpace aligned;
+    if ((aligned.status() == Gecode::SS_FAILED) ||
+        !aligned.dividend.assigned() || (aligned.dividend.val() != 240U) ||
+        (Gecode::PropagatorGroup::all.size(aligned) != 0))
+      return false;
+    IncompatibleProgressionSpace incompatible;
+    if (incompatible.status() != Gecode::SS_FAILED)
       return false;
 
     BoundSpace gcd;

@@ -61,22 +61,7 @@ namespace Gecode { namespace Word { namespace Arithmetic {
   forceinline bool
   bound_product_mod_progression(BoundLocalDomain& x, WordValue residue,
                                 WordValue step) {
-    if (step == 1U)
-      return true;
-    WordValue lower;
-    if (x.minimum <= residue) {
-      lower=residue;
-    } else {
-      const WordValue rem=(x.minimum-residue)%step;
-      const WordValue add=(rem == 0U) ? 0U : step-rem;
-      if (x.minimum > (~WordValue(0))-add)
-        return false;
-      lower=x.minimum+add;
-    }
-    if ((x.maximum < residue) || (lower > x.maximum))
-      return false;
-    const WordValue upper=x.maximum-(x.maximum-residue)%step;
-    return x.range(lower,upper);
+    return bound_progression(x,residue,step);
   }
 
   forceinline bool
@@ -267,10 +252,8 @@ namespace Gecode { namespace Word { namespace Arithmetic {
   }
 
   forceinline PropCost
-  BoundProductMod::cost(const Space&, const ModEventDelta& med) const {
-    return (UnsignedWordView::me(med) == ME_WORD_BND) ?
-      PropCost::ternary(PropCost::LO) :
-      PropCost::linear(PropCost::HI,x.width());
+  BoundProductMod::cost(const Space&, const ModEventDelta&) const {
+    return PropCost::linear(PropCost::HI,x.width());
   }
 
   forceinline void

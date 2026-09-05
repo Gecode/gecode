@@ -1,5 +1,19 @@
 # Word benchmarks
 
+The arithmetic-progression closure check covers the aligned divisibility, GCD,
+and fixed-result product-modulo family at widths 16, 24, 32, 40, and 64. Each
+actor runs in its own subprocess with a wall timeout and must reach the exact
+singleton with no remaining propagator at every width. The exhaustive internal
+Word lifecycle test checks the helper directly without exposing instrumentation
+through the production API. The runner also records a deterministic work proxy
+from the helper's fixed-prefix checks, inverse refinements, and two endpoint
+roundings; it is bounded by the Word width and independent of the domain span:
+
+```sh
+uv run --script benchmarks/word/progression-closure-benchmark.py \
+  --binary build/bin/word-progression-closure --timeout 5
+```
+
 The register-file Element comparison uses four overlapping cube windows whose
 numeric ranges leave only two supported indices. Build the current
 `word-register-file` example and the same example source against the exact

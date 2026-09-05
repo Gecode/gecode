@@ -63,6 +63,87 @@ namespace Gecode { namespace Word { namespace Arithmetic {
       (x.minimum == y.minimum) && (x.maximum == y.maximum);
   }
 
+  forceinline WordValue
+  bound_gcd(WordValue x, WordValue y) {
+    while (y != 0U) {
+      const WordValue r=x%y; x=y; y=r;
+    }
+    return x;
+  }
+
+  /** Intersect a ranked domain with rank == residue (mod step).
+   *
+   * The fixed low-bit prefix of the ordered cube is a second congruence.
+   * Combining both congruences here avoids repeatedly walking progression
+   * endpoints through cube synchronization.
+   */
+  forceinline bool
+  bound_progression(BoundLocalDomain& d, WordValue residue,
+                    WordValue step) {
+    assert(step != 0U);
+    residue %= step;
+    WordValue ordered_lo, ordered_hi;
+    ordered_cube(d.kind,d.width,d.lo,d.hi,ordered_lo,ordered_hi);
+    const WordValue mask=width_mask(d.width);
+    const WordValue unknown=(ordered_lo^ordered_hi)&mask;
+    unsigned int fixed=0;
+    while ((fixed < d.width) && ((unknown&(WordValue(1)<<fixed)) == 0U))
+      fixed++;
+
+    WordValue combined=residue, combined_step=step;
+    if (fixed == d.width) {
+      combined=ordered_lo&mask;
+      if ((combined%step) != residue)
+        return false;
+      combined_step=0U;
+    } else if (fixed != 0U) {
+      const WordValue prefix_modulus=WordValue(1)<<fixed;
+      const WordValue prefix_mask=prefix_modulus-1U;
+      const WordValue prefix=ordered_lo&prefix_mask;
+      const WordValue g=bound_gcd(step,prefix_modulus);
+      const WordValue difference=(prefix-(residue&prefix_mask))&prefix_mask;
+      if ((difference&(g-1U)) != 0U)
+        return false;
+      const WordValue reduced_modulus=prefix_modulus/g;
+      WordValue t=0U;
+      if (reduced_modulus != 1U) {
+        const WordValue reduced_mask=reduced_modulus-1U;
+        const WordValue a=(step/g)&reduced_mask;
+        WordValue inverse=a;
+        for (unsigned int bits=1; bits<fixed; bits <<= 1)
+          inverse *= 2U-a*inverse;
+        t=((difference/g)*inverse)&reduced_mask;
+      }
+      if ((t != 0U) && (step > mask/t))
+        return false;
+      combined=residue+step*t;
+      if (combined < residue)
+        return false;
+      if (step > mask/reduced_modulus)
+        combined_step=0U;
+      else
+        combined_step=step*reduced_modulus;
+    }
+
+    WordValue first=combined;
+    if (first < d.minimum) {
+      if (combined_step == 0U)
+        return false;
+      const WordValue delta=d.minimum-first;
+      const WordValue count=delta/combined_step +
+        ((delta%combined_step) != 0U);
+      if ((count != 0U) && (combined_step > (mask-first)/count))
+        return false;
+      first += count*combined_step;
+    }
+    if ((first < d.minimum) || (first > d.maximum))
+      return false;
+    WordValue last=first;
+    if (combined_step != 0U)
+      last += ((d.maximum-first)/combined_step)*combined_step;
+    return d.range(first,last);
+  }
+
   class BoundLocalView {
   private:
     BoundLocalDomain* d;
