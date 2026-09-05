@@ -9,7 +9,7 @@ Complete and harden native bounded WordVar integration from the reviewed correct
 The fixed-width WordVar subsystem and its optional signed or unsigned bounds
 are implemented. The retained design history, measurements, and completed task
 record remain in `.zd/word/brief.md` and `.zd/word/tasks/`. This area owns the
-follow-up work found by the August 2026 review: current API defects, avoidable
+follow-up work found by the August and September 2026 reviews: current API defects, avoidable
 domain work, missing Gecode integration, and bounded propagator families with
 concrete modeling or benchmark value.
 
@@ -169,6 +169,58 @@ Word disequality, and compact Word plus channel-equal IntVars with Int
 distinct. Scales use two, three, and four logical registers per bank, retaining
 the four aligned slots in each bank. Compare solution count and the wrapping
 sum of `sum((i+1)*address[i])`.
+
+## September 2026 branch review
+
+The review of `cced251d26` found unsound publication of cube deductions into
+bounded domains, premature selected-equality retirement, and independent
+signed division, n-ary sum, and GCD bound errors. Repair these before collecting
+new performance evidence. The completed word-002 oracle deliberately selected
+bounded actors, so the follow-up must also cover cube fallback actors used with
+bounded and mixed operands. New fix tasks own their concrete regressions; the
+later publication audit checks the remaining families without duplicating them.
+
+The review also found a debug split-no-good assertion, an omitted Autoconf
+header, cumulative macOS child-memory reporting, arithmetic-progression closure
+with exponential iteration counts, cubic production bounds-distinct, repeated
+MiniModel DAG expansion, and quadratic n-ary alias discovery. The new tasks
+record concrete triggers and source seams rather than depending on temporary
+review files. Completed tasks and historical measurements remain historical.
+
+Current bounds-distinct differs from the sorted prototype described in the
+background investigation. New measurements must identify the actual actor and
+revision. Public operation documentation and explicit Boolean ITE expression
+lowering must catch up with the implemented bounded actors.
+
+The external comparison target is Z3 (the working interpretation of the
+review request's “SetFree”), with Bitwuzla as a specialist baseline and native
+Gecode formulations as controls. The campaign uses six families: DMA, register
+lookup/allocation, inverse arithmetic, CRC/xorshift, reduced Speck, and a bounded
+ALU/program fragment. Calibrate separately, then aim for three levels with four
+instances per family/level. The campaign task has a six aggregate CPU-hour
+budget, 30-second screening caps, and selected repeats capped at 300 seconds.
+Report any deferred matrix cells explicitly; do not claim an incomplete repeat
+matrix is complete. Timing begins only after semantic checks on a frozen
+repaired revision. Preserve raw results outside tracked project content.
+
+Counts and weighted checksums remain useful historical regression measures,
+but do not prove solution-set equivalence. New small cases compare exact public
+decision projections; accepted SAT witnesses use an independent concrete
+evaluator. First solution, UNSAT, uniqueness, enumeration, and optimization are
+distinct goals. product_mod encodings must reduce the mathematical product,
+not a prematurely wrapped product, and retain positive modulus under reification.
+
+Follow-up investigations may evaluate bounded structural rules, lookup and
+variable-rotation decompositions, fused/high-half arithmetic, and new application
+models with small temporary prototypes. A GF(2) reference algorithm is allowed
+as an external linear-network comparison; research may recommend a model-level
+global. The existing exclusions on production affine domains, solver-wide
+learning, arbitrary widths, full SMT/FlatZinc integration, and global
+contradiction analysis remain. These are research questions, not instructions
+to implement every proposed feature. Use the CPKB Wombit and Alt-Ergo papers,
+the Lagoon/Metodi multiplication-circuit paper, and primary sources for current
+solver and public-corpus facts. Retain only useful concise research as directed
+by the investigation workflow.
 
 ## Testing
 
