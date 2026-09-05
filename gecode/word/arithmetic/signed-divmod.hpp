@@ -66,9 +66,14 @@ namespace Gecode { namespace Word { namespace Arithmetic {
       return (x.lo() != lo) || (x.hi() != hi);
     }
     forceinline ExecStatus equal(Home home, WordView x, WordView y) {
-      const WordValue lo=x.lo()|y.lo(), hi=x.hi()&y.hi();
-      GECODE_ME_CHECK(x.narrow(home,lo,hi));
-      GECODE_ME_CHECK(y.narrow(home,lo,hi));
+      for (;;) {
+        const WordValue lo=x.lo()|y.lo(), hi=x.hi()&y.hi();
+        GECODE_ME_CHECK(x.narrow(home,lo,hi));
+        GECODE_ME_CHECK(y.narrow(home,lo,hi));
+        if ((x.lo() == lo) && (x.hi() == hi) &&
+            (y.lo() == lo) && (y.hi() == hi))
+          break;
+      }
       return (x.assigned() && y.assigned()) ? ES_OK : ES_FIX;
     }
   }

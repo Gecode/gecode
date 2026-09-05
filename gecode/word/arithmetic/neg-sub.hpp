@@ -139,6 +139,9 @@ namespace Gecode { namespace Word { namespace Arithmetic {
     }
     GECODE_ME_CHECK(x.narrow(home,lo[0],hi[0]));
     GECODE_ME_CHECK(z.narrow(home,lo[1],hi[1]));
+    if ((x.lo() != lo[0]) || (x.hi() != hi[0]) ||
+        (z.lo() != lo[1]) || (z.hi() != hi[1]))
+      return neg_narrow(home,x,z);
     return ES_OK;
   }
 
@@ -280,6 +283,10 @@ namespace Gecode { namespace Word { namespace Arithmetic {
     GECODE_ME_CHECK(x.narrow(home,lo[0],hi[0]));
     GECODE_ME_CHECK(y.narrow(home,lo[1],hi[1]));
     GECODE_ME_CHECK(z.narrow(home,lo[2],hi[2]));
+    if ((x.lo() != lo[0]) || (x.hi() != hi[0]) ||
+        (y.lo() != lo[1]) || (y.hi() != hi[1]) ||
+        (z.lo() != lo[2]) || (z.hi() != hi[2]))
+      return sub_narrow(home,x,y,z,terminal,final);
     return ES_OK;
   }
 

@@ -187,6 +187,10 @@ namespace Gecode { namespace Word { namespace Arithmetic {
       GECODE_ME_CHECK(y.narrow(home,lo[1],hi[1]));
     if ((z.lo() != lo[2]) || (z.hi() != hi[2]))
       GECODE_ME_CHECK(z.narrow(home,lo[2],hi[2]));
+    if ((x.lo() != lo[0]) || (x.hi() != hi[0]) ||
+        (y.lo() != lo[1]) || (y.hi() != hi[1]) ||
+        (z.lo() != lo[2]) || (z.hi() != hi[2]))
+      return add_narrow(home,x,y,z,terminal,final);
     return ES_OK;
   }
 
@@ -261,7 +265,7 @@ namespace Gecode { namespace Word { namespace Arithmetic {
   template<class View>
   forceinline ExecStatus
   NaryAdd::narrow(Home home, ViewArray<View>& x, View y,
-                  WordValue constant, bool aliased) {
+                  WordValue constant, bool) {
     const unsigned int width=y.width();
     Region region;
     WordValue* input_lo=region.alloc<WordValue>(x.size());
@@ -365,19 +369,23 @@ namespace Gecode { namespace Word { namespace Arithmetic {
         }
       }
 
-      bool changed=(y.lo() != result_lo) || (y.hi() != result_hi);
-      if (changed)
+      const bool result_changed=(y.lo() != result_lo) ||
+        (y.hi() != result_hi);
+      if (result_changed)
         GECODE_ME_CHECK(y.narrow(home,result_lo,result_hi));
       for (int i=0; i<x.size(); i++) {
         const bool input_changed=(x[i].lo() != input_lo[i]) ||
           (x[i].hi() != input_hi[i]);
-        changed |= input_changed;
         if (input_changed)
           GECODE_ME_CHECK(x[i].narrow(home,input_lo[i],input_hi[i]));
       }
-      // Distinct-view projection is idempotent; aliases need intersection
-      // closure after the role-specific masks have been published.
-      if (!changed || !aliased)
+      bool repeat=(y.lo() != result_lo) || (y.hi() != result_hi);
+      for (int i=0; i<x.size(); i++)
+        repeat |= (x[i].lo() != input_lo[i]) ||
+          (x[i].hi() != input_hi[i]);
+      // Publication can intersect aliases or synchronize bounded domains,
+      // making the actual cube stricter than this pass's projection.
+      if (!repeat)
         break;
     }
 

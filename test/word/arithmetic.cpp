@@ -239,6 +239,123 @@ namespace Test { namespace Word {
         return true;
       }
 
+      class PostingSpace : public Gecode::Space {
+      public:
+        PostingSpace(void) {}
+        PostingSpace(PostingSpace& s) : Gecode::Space(s) {}
+        virtual Gecode::Space* copy(void) {
+          return new PostingSpace(*this);
+        }
+      };
+
+      static bool fallback_publication(void) {
+        using namespace Gecode;
+        {
+          PostingSpace s;
+          WordVar a(s,4,4,14,WDT_SIGNED,12,4);
+          WordVar b(s,4,WDT_SIGNED,10,10);
+          WordVar r(s,4,0,10,WDT_SIGNED,10,2);
+          add(s,a,b,r);
+          if (s.status() != SS_FAILED)
+            return false;
+        }
+        {
+          PostingSpace s;
+          WordVar a(s,4,0,7,WDT_UNSIGNED,3,7);
+          WordVar b(s,4,WDT_UNSIGNED,5,5);
+          WordVar r(s,4,3,15,WDT_UNSIGNED,7,11);
+          sub(s,a,b,r);
+          if (s.status() != SS_FAILED)
+            return false;
+        }
+        {
+          PostingSpace s;
+          WordVar a(s,4,10,15,WDT_SIGNED,10,14);
+          WordVar b(s,4,9,15,WDT_SIGNED,11,15);
+          WordVar r(s,4,WDT_SIGNED,11,11);
+          mult(s,a,b,r);
+          if (s.status() != SS_FAILED)
+            return false;
+        }
+        {
+          PostingSpace s;
+          WordVar a(s,4,12,15,WDT_UNSIGNED,13,14);
+          WordVar b(s,4,WDT_UNSIGNED,1,1);
+          WordVar r(s,4,0,13,WDT_UNSIGNED,5,12);
+          signed_div(s,a,b,r);
+          if (s.status() != SS_FAILED)
+            return false;
+        }
+        // Nearby exact tuples exercise the same mixed-domain fallback paths.
+        for (Op op : {ADD,SUB,MULT,SIGNED_DIV}) {
+          PostingSpace s;
+          const WordValue av = (op == ADD) ? 14U :
+            (op == SUB) ? 4U : (op == MULT) ? 11U : 13U;
+          const WordValue bv = (op == ADD) ? 10U :
+            (op == SUB) ? 5U : (op == MULT) ? 13U : 1U;
+          const WordValue rv=evaluate(op,av,bv,15U);
+          WordVar a(s,4,WDT_SIGNED,av,av);
+          WordVar b(s,4,bv,bv);
+          WordVar r(s,4,WDT_UNSIGNED,rv,rv);
+          Arithmetic::post(op,s,a,b,r);
+          if (s.status() == SS_FAILED)
+            return false;
+        }
+        return true;
+      }
+
+      static bool fallback_scheduled_publication(void) {
+        using namespace Gecode;
+        {
+          PostingSpace s;
+          WordVar a(s,4,4,14,WDT_SIGNED,12,4);
+          WordVar r(s,4,0,15,WDT_UNSIGNED,0,15);
+          neg(s,a,r);
+          dom(s,a,3U); dom(s,r,12U);
+          if (s.status() != SS_FAILED)
+            return false;
+        }
+        {
+          PostingSpace s;
+          WordVar a(s,4,4,14,WDT_SIGNED,12,4), b(s,4,10,10);
+          WordVar r(s,4,WDT_UNSIGNED,0,15);
+          BoolVar carry(s,0,0);
+          add(s,a,b,r,carry);
+          dom(s,a,14U); dom(s,r,8U);
+          if (s.status() != SS_FAILED)
+            return false;
+        }
+        {
+          PostingSpace s;
+          WordVar a(s,4,WDT_UNSIGNED,0,7), b(s,4,5,5);
+          WordVar r(s,4,0,15,WDT_SIGNED,8,7);
+          BoolVar borrow(s,0,0);
+          sub(s,a,b,r,borrow);
+          dom(s,a,4U); dom(s,r,15U);
+          if (s.status() != SS_FAILED)
+            return false;
+        }
+        {
+          PostingSpace s;
+          WordVar a(s,4,4,14,WDT_SIGNED,12,4), b(s,4,10,10);
+          WordVar c(s,4,WDT_UNSIGNED,1,1), r(s,4,0,15);
+          WordVarArgs input = {a,b,c};
+          add(s,input,r);
+          dom(s,a,14U); dom(s,r,8U);
+          if (s.status() != SS_FAILED)
+            return false;
+        }
+        {
+          PostingSpace s;
+          WordVar a(s,4,4,14,WDT_SIGNED,12,4), b(s,4,0,15);
+          add(s,a,b,a);
+          dom(s,b,1U);
+          if (s.status() != SS_FAILED)
+            return false;
+        }
+        return true;
+      }
+
       /** Exhaustive width-two support hull for the native carry actor. */
       static bool add_bit_consistency(void) {
         const unsigned int width = 2;
@@ -825,6 +942,8 @@ namespace Test { namespace Word {
       Lifecycle(void) : Base("Word::Arithmetic::Lifecycle") {}
       virtual bool run(void) {
         return partial(ADD) && add_bit_consistency() && nary_add_partial() &&
+          fallback_publication() &&
+          fallback_scheduled_publication() &&
           partial(NEG) && neg_bit_consistency() &&
           partial(SUB) && sub_bit_consistency() &&
           boolean_parity() && constants_aliases_lifecycle() &&

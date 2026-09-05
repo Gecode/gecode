@@ -3,7 +3,7 @@ schema_version = 1
 id = "word-019"
 key = "repair-arithmetic-publication"
 area = "word"
-status = "open"
+status = "done"
 complexity = "advanced"
 afk = true
 priority = "high"
@@ -26,11 +26,23 @@ At cced251d26, four-bit encoded tuples 14+10=0, 4-5=11, 11*13=11 and signed_div(
 
 ## Done when
 
-- [ ] Focused partial-domain regressions reject all named invalid tuples and retain all supported tuples.
-- [ ] Negation, carry/borrow and n-ary fallback publication obey the same contract.
-- [ ] Posting shortcuts and later propagation are checked with mixed kinds and relevant aliases.
+- [x] Focused partial-domain regressions reject all named invalid tuples and retain all supported tuples.
+- [x] Negation, carry/borrow and n-ary fallback publication obey the same contract.
+- [x] Posting shortcuts and later propagation are checked with mixed kinds and relevant aliases.
 
 ## Validation
 
 - Run affected Word arithmetic groups and TestFramework; run all Word tests if shared helpers change.
 - Run a compact Add/ARX control before and after any hot-path change.
+
+## Result
+
+Close synchronized cube arithmetic fallbacks before retirement
+
+Validation:
+
+- Word::Arithmetic focused groups passed with 5 iterations
+- Word::TestFramework passed with 5 iterations
+- Complete Word suite passed with 1 iteration
+- Compact ARX and symbolic ALU controls completed successfully
+- git diff --check passed
