@@ -83,6 +83,16 @@ graph from sparse forward frontiers and retaining only backward co-reachable
 states. This avoids allocating one temporary state for every automaton state
 at every sequence position while preserving the persistent graph.
 
+[ENTRY]
+Module: int
+What:   new
+Rank:   major
+[DESCRIPTION]
+Add DFA::nfa factories for finite automata with nondeterministic transitions.
+The factories retain nondeterminism without determinization or minimization;
+epsilon transitions are not supported. Regular propagation now preserves
+branching assigned prefixes when cloning such automata.
+
 [RELEASE]
 Version: 6.4.0
 Date: 2026-07-15

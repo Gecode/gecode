@@ -2192,7 +2192,12 @@ namespace Gecode {
    */
 
   /**
-   * \brief Deterministic finite automaton (%DFA)
+   * \brief Finite automaton with deterministic construction by default
+   *
+   * The constructors and init() require deterministic transitions.
+   * Use nfa() to retain nondeterministic transitions without determinization
+   * or minimization. Every transition consumes one symbol; epsilon
+   * transitions are not supported.
    *
    * After initialization, the start state is always zero.
    * The final states are contiguous ranging from the first to the
@@ -2301,6 +2306,28 @@ namespace Gecode {
     GECODE_INT_EXPORT
     DFA(int s, std::initializer_list<Transition> t,
         std::initializer_list<int> f, bool minimize=true);
+    /**
+     * \brief Construct a nondeterministic finite automaton
+     *
+     * Start state is \a s. The last transition in \a t must have -1 as
+     * its input state, and the last final state in \a f must be -1.
+     * Multiple transitions may share an input state and symbol.
+     * Every transition consumes one symbol; epsilon transitions are not
+     * supported. Unreachable states are removed, but the automaton is
+     * neither determinized nor minimized.
+     */
+    GECODE_INT_EXPORT
+    static DFA nfa(int s, Transition t[], int f[]);
+    /**
+     * \brief Construct a nondeterministic finite automaton from lists
+     *
+     * Start state is \a s, transitions are \a t, and final states are
+     * \a f. No sentinel elements are needed. As for the array overload,
+     * nondeterminism is retained and epsilon transitions are not supported.
+     */
+    GECODE_INT_EXPORT
+    static DFA nfa(int s, std::initializer_list<Transition> t,
+                   std::initializer_list<int> f);
     /// Initialize by DFA \a d (DFA is shared)
     DFA(const DFA& d);
     /// Test whether DFA is equal to \a d
@@ -2717,7 +2744,7 @@ namespace Gecode {
    * \brief Post domain consistent propagator for extensional constraint described by a DFA
    *
    * The elements of \a x must be a word of the language described by
-   * the DFA \a d.
+   * the automaton \a d, which may be constructed with DFA::nfa().
    *
    * Throws an exception of type Int::ArgumentSame, if \a x contains
    * the same unassigned variable multiply. If shared occurrences of variables
@@ -2733,7 +2760,7 @@ namespace Gecode {
    * \brief Post domain consistent propagator for extensional constraint described by a DFA
    *
    * The elements of \a x must be a word of the language described by
-   * the DFA \a d.
+   * the automaton \a d, which may be constructed with DFA::nfa().
    *
    * Throws an exception of type Int::ArgumentSame, if \a x contains
    * the same unassigned variable multiply. If shared occurrences of variables
