@@ -74,7 +74,7 @@ namespace Gecode { namespace Search {
     /// Initialize with location \a l
     UninitializedWorkerControl(const char* l);
   };
-  /// %Exception: Worker control is already bound to a search engine
+  /// %Exception: Worker control is already bound or used in an unsupported engine
   class GECODE_SEARCH_EXPORT WorkerControlInUse : public Exception {
   public:
     /// Initialize with location \a l
