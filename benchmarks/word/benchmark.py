@@ -21,12 +21,6 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-try:
-    import resource
-except ImportError:  # Not available on every Python platform.
-    resource = None  # type: ignore[assignment]
-
-
 SCHEMA_VERSION = 1
 DMA_VARIANTS = ("compact-word", "bounded-word", "word-int-channel", "int-bool")
 XOR_VARIANTS = ("native-word", "bool-decomposition")
@@ -34,6 +28,12 @@ TERMINAL_STATUSES = frozenset(("ok", "failed", "timeout", "error"))
 XOR_FIELDS = ("schema_version", "id", "width", "rounds", "key", "shift",
               "target_lo", "target_hi", "expected_solutions", "expected_input")
 SAFE_NAME = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]*$")
+RSS_PATTERNS = (
+    (r"Maximum resident set size \(kbytes\):\s*(\d+)", 1),
+    (r"(\d+)\s+maximum resident set size", 1 / 1024),
+)
+_TIME_WRAPPER_UNSET = object()
+_time_wrapper_cache: object | list[str] | None = _TIME_WRAPPER_UNSET
 
 
 @dataclass(frozen=True)
@@ -421,15 +421,37 @@ def command_for(binary: Path, case: Case) -> list[str]:
     return arguments
 
 
+def time_wrapper() -> list[str] | None:
+    global _time_wrapper_cache
+    if _time_wrapper_cache is _TIME_WRAPPER_UNSET:
+        candidate = None
+        if Path("/usr/bin/time").is_file() and sys.platform == "darwin":
+            candidate = ["/usr/bin/time", "-l"]
+        elif Path("/usr/bin/time").is_file() and sys.platform.startswith("linux"):
+            candidate = ["/usr/bin/time", "-v"]
+        if candidate:
+            try:
+                probe = subprocess.run(candidate + ["/usr/bin/true"], text=True,
+                    stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                    timeout=5, check=False)
+                supported = probe.returncode == 0 and any(
+                    re.search(pattern, probe.stderr, re.IGNORECASE)
+                    for pattern, _ in RSS_PATTERNS)
+                _time_wrapper_cache = candidate if supported else None
+            except (OSError, subprocess.TimeoutExpired):
+                _time_wrapper_cache = None
+        else:
+            _time_wrapper_cache = None
+    return _time_wrapper_cache if isinstance(_time_wrapper_cache, list) else None
+
+
 def timed_command(
     command: list[str], timeout: float
 ) -> tuple[subprocess.CompletedProcess[str], float, int | None, str]:
-    if sys.platform != "darwin" and Path("/usr/bin/time").is_file():
-        wrapped = ["/usr/bin/time", "-v"] + command
-        source = "usr-bin-time"
-    else:
-        wrapped = command
-        source = "python-resource-children-max" if resource else "unavailable"
+    wrapper = time_wrapper()
+    wrapped = (wrapper or []) + command
+    source = ("usr-bin-time-darwin" if sys.platform == "darwin" else
+              "usr-bin-time-linux") if wrapper else "unavailable"
     started = time.perf_counter()
     completed = subprocess.run(
         wrapped, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
@@ -437,19 +459,13 @@ def timed_command(
     )
     elapsed = time.perf_counter() - started
     peak_kib: int | None = None
-    patterns = (
-        (r"Maximum resident set size \(kbytes\):\s*(\d+)", 1),
-        (r"(\d+)\s+maximum resident set size", 1 / 1024),
-    )
-    for pattern, factor in patterns:
+    for pattern, factor in RSS_PATTERNS:
         match = re.search(pattern, completed.stderr, re.IGNORECASE)
         if match:
             peak_kib = int(int(match.group(1)) * factor)
             break
-    if peak_kib is None and source == "python-resource-children-max" and resource:
-        child_max = resource.getrusage(resource.RUSAGE_CHILDREN).ru_maxrss
-        # ru_maxrss is bytes on macOS and KiB on other supported platforms.
-        peak_kib = int(child_max / 1024) if sys.platform == "darwin" else int(child_max)
+    if peak_kib is None:
+        source = "unavailable"
     return completed, elapsed, peak_kib, source
 
 
@@ -474,7 +490,7 @@ def run_case(
         try:
             previous = load_json(result_path)
             if previous.get("status") in TERMINAL_STATUSES:
-                return "resumed"
+                return previous["status"]
         except ValueError:
             pass
     layout.runs.mkdir(parents=True, exist_ok=True)
@@ -489,7 +505,8 @@ def run_case(
             else "failed"
         )
         error = None
-    except (subprocess.TimeoutExpired, ValueError, json.JSONDecodeError) as exception:
+    except (subprocess.TimeoutExpired, ValueError, json.JSONDecodeError,
+            OSError) as exception:
         elapsed = timeout if isinstance(exception, subprocess.TimeoutExpired) else 0.0
         peak_kib = None
         memory_source = "unavailable"
@@ -506,7 +523,7 @@ def run_case(
         fixture = None
         status = (
             "timeout" if isinstance(exception, subprocess.TimeoutExpired)
-            else "failed"
+            else "error"
         )
         error = str(exception)
         completed = None
@@ -561,10 +578,14 @@ def run_command(args: argparse.Namespace) -> int:
         requested_kind = "xor-rotate" if args.kind == "xor" else "dma"
         discovered = [(corpus, instance) for corpus, instance in discovered
                       if instance["kind"] == requested_kind]
-    all_cases = [Case(corpus, instance, variant, repetition)
-                 for repetition in range(1,args.repetitions+1)
-                 for corpus,instance in discovered
-                 for variant in variants_for(instance)]
+    all_cases = []
+    for repetition in range(1,args.repetitions+1):
+        for corpus,instance in discovered:
+            variants = variants_for(instance)
+            offset = (repetition-1) % len(variants)
+            order = variants[offset:]+variants[:offset]
+            all_cases.extend(Case(corpus,instance,variant,repetition)
+                             for variant in order)
     cases = all_cases
     if args.limit is not None:
         cases = cases[:args.limit]
@@ -620,7 +641,7 @@ def run_command(args: argparse.Namespace) -> int:
             ),
         } for case in cases
     }
-    plan["case_order"] = "round-robin repetition, instance, variant"
+    plan["case_order"] = "interleaved by repetition and instance; variants rotate each repetition"
     atomic_json(layout.root / "run-plan.json", plan)
     states = [run_case(layout,binaries[case.instance["kind"]],
                        plan["binary_identities"][case.instance["kind"]]["sha256"],
@@ -630,7 +651,7 @@ def run_command(args: argparse.Namespace) -> int:
                     memory_measurements(binaries["dma"],args.memory_timeout))
     print(json.dumps({"result_root": str(layout.root), "states": states,
                       "private_corpus": private_status}, sort_keys=True))
-    return 1 if any(state in ("failed", "timeout") for state in states) else 0
+    return 1 if any(state in ("failed", "timeout", "error") for state in states) else 0
 
 
 def load_runs(layout: Layout) -> list[dict[str, Any]]:
@@ -663,19 +684,20 @@ def analyze_command(args: argparse.Namespace) -> int:
     for path,run in zip(paths,runs):
         if run.get("run_id") != path.stem:
             raise ValueError(f"{path}: embedded run_id does not match filename")
-        if run.get("status") != "ok" or not isinstance(run.get("solver_metrics"),dict):
-            raise ValueError(f"{path}: planned run is not successful")
+        if run.get("status") not in TERMINAL_STATUSES:
+            raise ValueError(f"{path}: planned run has a non-terminal status")
         expected = expected_records[path.stem]
         for field in ("corpus","benchmark_kind","instance_id","solver_variant",
                       "repetition","command","binary_sha256"):
             if run.get(field) != expected.get(field):
                 raise ValueError(f"{path}: {field} does not match the run plan")
-        metrics = run["solver_metrics"]
-        if metrics.get("status") != "ok":
-            raise ValueError(f"{path}: solver output status is not ok")
-        for field,value in expected.get("solver_identity",{}).items():
-            if metrics.get(field) != value:
-                raise ValueError(f"{path}: solver output {field} does not match the run plan")
+        metrics = run.get("solver_metrics")
+        if run["status"] == "ok":
+            if not isinstance(metrics,dict) or metrics.get("status") != "ok":
+                raise ValueError(f"{path}: successful run lacks successful solver output")
+            for field,value in expected.get("solver_identity",{}).items():
+                if metrics.get(field) != value:
+                    raise ValueError(f"{path}: solver output {field} does not match the run plan")
     grouped: dict[tuple[str, str, str, str], list[dict[str, Any]]] = {}
     for run in runs:
         key = (run.get("benchmark_kind","xor-rotate"),run["corpus"],
@@ -683,11 +705,28 @@ def analyze_command(args: argparse.Namespace) -> int:
         grouped.setdefault(key, []).append(run)
     groups = []
     for (kind, corpus, instance_id, variant), values in sorted(grouped.items()):
+        observed_statuses = {value["status"] for value in values}
+        if len(observed_statuses) != 1:
+            raise ValueError(
+                f"unstable status for {corpus}/{instance_id}/{variant}: "
+                f"{sorted(observed_statuses)}")
         successful = [value for value in values if value["status"] == "ok"]
         runtimes = [value["runtime_seconds"] for value in successful]
         memories = [value["peak_memory_kib"] for value in successful
                     if value["peak_memory_kib"] is not None]
         metric_rows = [value["solver_metrics"] for value in successful]
+        identity_fields = {"schema_version", "solver_variant", "formulation",
+                           "instance_id", "size"}
+        stable_fields = sorted(set().union(*(row.keys() for row in metric_rows))
+                               - identity_fields)
+        for field in stable_fields:
+            present = [field in row for row in metric_rows]
+            observed = [row.get(field) for row in metric_rows]
+            if present and (any(value != present[0] for value in present[1:]) or
+                            (present[0] and
+                             any(value != observed[0] for value in observed[1:]))):
+                raise ValueError(
+                    f"unstable solver metric {field} for {corpus}/{instance_id}/{variant}")
         def average(field: str) -> float | None:
             observed = [row[field] for row in metric_rows if field in row]
             return statistics.fmean(observed) if observed else None
@@ -697,8 +736,12 @@ def analyze_command(args: argparse.Namespace) -> int:
             "solver_variant": variant,
             "runs": len(values),
             "successful_runs": len(successful),
+            "statuses": {status: sum(value["status"] == status for value in values)
+                         for status in sorted(TERMINAL_STATUSES)},
             "runtime_seconds_mean": statistics.fmean(runtimes) if runtimes else None,
             "runtime_seconds_median": statistics.median(runtimes) if runtimes else None,
+            "runtime_seconds_min": min(runtimes) if runtimes else None,
+            "runtime_seconds_max": max(runtimes) if runtimes else None,
             "peak_memory_kib_mean": statistics.fmean(memories) if memories else None,
             "propagations_mean": average("propagations") or average("propagation_calls"),
             "nodes_mean": average("nodes"),
@@ -707,7 +750,8 @@ def analyze_command(args: argparse.Namespace) -> int:
             "checksum": metric_rows[0].get("checksum") if metric_rows else None,
         })
     parity = []
-    dma_runs = [run for run in runs if run.get("benchmark_kind") == "dma"]
+    dma_runs = [run for run in runs if run.get("benchmark_kind") == "dma"
+                and run["status"] == "ok"]
     for instance_id in sorted({run["instance_id"] for run in dma_runs}):
         observed = {(run["solver_metrics"].get("solutions"), run["solver_metrics"].get("checksum"))
                     for run in dma_runs if run["instance_id"] == instance_id}
@@ -753,14 +797,17 @@ def report_command(args: argparse.Namespace) -> int:
         (f"Successful runs: {summary['successful_run_count']} / "
          f"{summary['run_count']}."),
         "",
-        "| corpus | instance | formulation | runs | runtime mean (s) | solutions | checksum | propagations | nodes | failures |",
-        "|---|---|---|---:|---:|---:|---:|---:|---:|---:|",
+        "| corpus | instance | formulation | ok/timeout/error/failed | runtime median (s) | runtime range (s) | solutions | checksum | propagations | nodes | failures |",
+        "|---|---|---|---:|---:|---:|---:|---:|---:|---:|---:|",
     ]
     for group in summary["groups"]:
         lines.append("| " + " | ".join((
             group["corpus"], group["instance_id"], group["solver_variant"],
-            str(group["successful_runs"]),
-            format_metric(group["runtime_seconds_mean"], 6),
+            "/".join(str(group["statuses"][status]) for status in
+                     ("ok", "timeout", "error", "failed")),
+            format_metric(group["runtime_seconds_median"], 6),
+            (f"{format_metric(group['runtime_seconds_min'], 6)}–"
+             f"{format_metric(group['runtime_seconds_max'], 6)}"),
             format_metric(group["solutions"]),
             format_metric(group["checksum"]),
             format_metric(group["propagations_mean"], 1),

@@ -28,7 +28,12 @@ python3 benchmarks/word/register-file-benchmark.py \
 ```
 
 The runner requires exact solution/checksum parity, unchanged parent/candidate
-compact counters, and stable counters across all repetitions.
+compact counters, and stable status/counters across all repetitions. All
+specialty timing runners accept `--timeout`, retain individual samples when an
+output artifact is requested, and report median plus the observed
+minimum/maximum spread. Their one-solve subprocess timings are unsuitable for
+tiny solves; batch tiny solves in-process before using them for performance
+conclusions.
 
 The bounded product-modulo comparison uses the fixed width-nine case with
 `x,y in [10,20]`, modulus 509, and result-first ranked splitting. The compact
@@ -81,9 +86,11 @@ uv run --script benchmarks/word/benchmark.py run --name xor-smoke --kind xor --w
 ```
 
 Use `--kind all` with both binary options to run the public kinds together.
-Runs are interleaved by repetition, instance, and variant. Analysis requires
-the exact planned matrix: each expected run once, successful, with no missing,
-duplicate, unexpected, or stale extra result.
+Runs are interleaved by repetition and instance, with variant order rotated
+between repetitions. Analysis requires the exact planned matrix: each expected
+run once with a terminal status, with no missing, duplicate, unexpected, or
+stale extra result. Status and solver counters must be stable across
+repetitions; a uniformly timed-out or failed group remains reportable.
 `--limit` is accepted only when it ends on a complete formulation group; cuts
 that would make parity analysis unusable are rejected before artifacts are written.
 
@@ -102,3 +109,7 @@ Missing private roots and package outputs remain reported rather than copied.
 
 Raw run JSON/stdout/stderr, analysis, and reports live under
 `results/<name>/`; completed records resume without being overwritten.
+Timeout, error, and failed records remain explicit in raw results and reports.
+Peak RSS is measured for the individual child with the platform's
+`/usr/bin/time` (`-l` on macOS, `-v` on Linux); unsupported platforms report
+the measurement as unavailable.

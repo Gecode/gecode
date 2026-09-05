@@ -3,7 +3,7 @@ schema_version = 1
 id = "word-025"
 key = "repair-benchmark-measurement"
 area = "word"
-status = "open"
+status = "done"
 complexity = "standard"
 afk = true
 priority = "normal"
@@ -27,12 +27,20 @@ benchmark.py:449 uses cumulative RUSAGE_CHILDREN.ru_maxrss on macOS, contaminati
 
 ## Done when
 
-- [ ] macOS per-run memory uses a genuine individual-child measurement, and unsupported platforms report unavailable.
-- [ ] All runners have timeouts and stable-status/counter validation across repetitions.
-- [ ] Summaries report median and spread; tiny solves use or clearly require in-process batching; timeout/error rows remain explicit.
-- [ ] Existing matrix/resume behavior and no-private-payload rules are preserved.
+- [x] macOS per-run memory uses a genuine individual-child measurement, and unsupported platforms report unavailable.
+- [x] All runners have timeouts and stable-status/counter validation across repetitions.
+- [x] Summaries report median and spread; tiny solves use or clearly require in-process batching; timeout/error rows remain explicit.
+- [x] Existing matrix/resume behavior and no-private-payload rules are preserved.
 
 ## Validation
 
 - Use a high-memory child followed by a low-memory child to validate isolation where supported.
 - Run a tiny public smoke with interleaved variants, a forced timeout and an intentionally inconsistent result; no permanent tests beyond useful runner regression coverage.
+
+## Result
+
+Make Word benchmark runners report trustworthy per-run time, memory, stable outcomes, and explicit terminal failures while preserving raw/resumable campaigns.
+
+Validation:
+
+- Independent verification passed bounded success, forced timeout and resumed timeout, malformed/error rows, inconsistent and missing metrics, specialty runner exits, macOS RSS unavailable fallback and isolated per-child measurement, exact-matrix/no-private-payload, syntax and diff checks.
