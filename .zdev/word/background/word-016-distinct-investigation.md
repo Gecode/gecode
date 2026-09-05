@@ -113,3 +113,11 @@ consistency over cube holes is claimed.
 
 The measurements above remain the reason that bounds propagation is opt-in
 rather than the default.
+
+The benchmark and prototype sections describe the discarded implementation at
+commit `214d83f4b7b22dbdde2eff1cd893082899e251e2`. The shipped `IPL_BND` path is a
+separate native Word actor, supports homogeneous signed as well as unsigned
+bounded arrays, and uses the current Word event, endpoint, cloning, and
+fallback machinery. It still sorts ranked endpoints as part of Hall-interval
+propagation, but the prototype's actor counts, timings, search tree, and object
+sizes are historical measurements, not measurements of the shipped actor.

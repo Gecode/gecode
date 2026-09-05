@@ -3,9 +3,9 @@
 # Tasks: word
 
 - Total: 41
-- Ready: 5
+- Ready: 4
 - Blocked: 5
-- Done: 31
+- Done: 32
 
 | ID | Task | State | Blocked by |
 | --- | --- | --- | --- |
@@ -40,7 +40,7 @@
 | [word-029](tasks/029-skip-repeated-alias-discovery-for-distinct-bounded-sum-opera.md) | Skip repeated alias discovery for distinct bounded sum operands | done | word-021 |
 | [word-030](tasks/030-carry-explicit-bounded-policy-through-wordexpr-boolean-ite.md) | Carry explicit bounded policy through WordExpr Boolean ITE | done | word-018 |
 | [word-031](tasks/031-extend-partial-domain-coverage-to-fallback-publication-and-r.md) | Extend partial-domain coverage to fallback publication and rewrites | done | word-017, word-018, word-019, word-020, word-021, word-022 |
-| [word-032](tasks/032-refresh-word-operation-coverage-and-historical-performance-c.md) | Refresh Word operation coverage and historical performance claims | ready | word-030, word-027, word-019 |
+| [word-032](tasks/032-refresh-word-operation-coverage-and-historical-performance-c.md) | Refresh Word operation coverage and historical performance claims | done | word-030, word-027, word-019 |
 | [word-033](tasks/033-add-semantically-checked-word-benchmark-controls.md) | Add semantically checked Word benchmark controls | ready | word-025, word-031, word-026 |
 | [word-034](tasks/034-add-z3-and-bitwuzla-comparisons-for-dma-and-register-models.md) | Add Z3 and Bitwuzla comparisons for DMA and register models | blocked | word-033, word-027 |
 | [word-035](tasks/035-add-external-comparisons-for-inverse-arithmetic-and-an-alu-p.md) | Add external comparisons for inverse arithmetic and an ALU path | blocked | word-033 |

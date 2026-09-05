@@ -2373,6 +2373,40 @@ build documentation explicitly require development-snapshot consumers to
 rebuild and relink after the bounded variable/event/branch/trace changes;
 branch archives are not a cross-ABI serialization format.
 
+### Current operation and performance context
+
+The published-contract paragraph above records the state at task 077. Later
+work added selective bounded paths for non-wrapping n-ary Add, non-wrapping
+unsigned `product_mod`, homogeneous Boolean-controlled ITE and Element,
+mathematical GCD and divisibility, and explicit `IPL_BND` Word `distinct`.
+Each path still operates on the represented cube intersected with one ranked
+interval. Cube, mixed-kind, wrapping, or otherwise unsupported regimes follow
+each operation's documented fallback. Operations that require distinct views
+also fall back for unsupported aliases, while `distinct` rejects duplicate
+handles. None of these paths promises domain consistency over arbitrary holes
+or general bit consistency. Word widths remain limited to 1 through 64.
+Reified `product_mod` constrains its Int modulus to be positive even when the
+control does not assert the relation, and its semantics reduce the mathematical
+product rather than a Word-width-wrapped product.
+
+MiniModel operator syntax remains cube-default. Models request bounded
+temporaries explicitly with `WordExpr::post(Home, WordDomainType)` and request
+bounded Boolean lowering with `word_rel`, `bit`, the reduction overloads, or
+`overflow` overloads that take `WordDomainType`. Compatible nodes preserve the
+requested kind; incompatible nodes use cube temporaries and the ordinary
+direct-posting fallback.
+
+Performance results in this brief belong to the named commits, models,
+branchers, and drivers. In particular, the task 064 factor-recovery curve used
+the older multiplication inverse behavior and its nearly complete binary
+search tree; task 066 added fixed-product inverse propagation and reduced that
+same retained curve to 29 nodes while keeping one Mult actor and one brancher.
+Actor-count formulas from older decomposed multiplication drivers likewise do
+not describe the current native Mult actor. These measurements justify the
+specific retained changes on their recorded controls; they neither establish
+external solver competitiveness nor transfer across different search orders,
+actor graphs, or revisions.
+
 Release validation built every Word example, ran all no-argument modes, and
 passed the full CMake `check` target.  The installed package and repository
 consumer smoke compile, link, and run with `COMPONENTS word`.  A clean

@@ -117,25 +117,28 @@ namespace Gecode {
    * | `dom`, WordVar queries, and bounded constructors | Native atomic cube update, optionally synchronized with one unsigned or signed interval | Exact represented-domain membership, canonical endpoints, assignment, and failure |
    * | `channel` | Direct word-bit/BoolVar cube actor, plus a mixed WordVar/IntVar numeric bounds channel with explicit unsigned or signed interpretation | Bit consistency, exact assigned numeric equality, bounds consistency, bounded-domain synchronization, cloning, and recomputation |
    * | `reduce_and`, `reduce_or`, `reduce_xor` | Direct Word/Bool cube reduction actors for every domain kind | Assigned semantics, decisive bits, parity completion, and lifecycle |
-   * | `element` | Direct mixed Int/Word cube array-selection actor for every domain kind | Index support pruning and supported-result cube hull |
+   * | `element` | Homogeneous bounded table/result views without result aliases use an unsigned or signed interval actor; cube, mixed-kind, and aliased-result cases use the direct mixed Int/Word cube actor | Index support pruning, supported-result cube hull, and sound selected interval bounds |
    * | `popcount`, `count_leading_zeros`, `count_trailing_zeros` | Direct mixed Word/Int cube-count actors for every domain kind | Population bounds/extrema and zero-prefix propagation |
    * | `rel` with `WRT_EQ`, `WRT_NQ` | Compatible bounded variable and constant views use transactional cube-and-interval equality; other cases use direct cube equality/disequality; reified disequality rewrites through equality | Exact equality intersection, sound disequality exclusion, and all reification modes |
    * | `rel` with unsigned and signed order types | Matching numeric domains use direct interval actors; cube, mixed, and opposite-kind cases use the MSB-first actors; greater and reified strict relations use the established operand/control rewrites | Assigned semantics and sound numeric-bound or word-level bit pruning |
    * | `complement`; binary and n-ary logical `rel` with all WordOpType values | Cube actors for every domain kind: distinct-view binary OR/XOR use direct native actors, aliases and other binary forms use generic Table, and n-ary forms use primitive globals plus optional complement | Per-bit consistency, bounded-domain synchronization, and assigned semantics |
-   * | Boolean and word-mask `ite` | Cube actors for every domain kind: Boolean form is a direct mixed actor and mask form is a direct per-bit actor | Sound partial propagation; mask form is bit consistent |
+   * | Boolean and word-mask `ite` | Pairwise-distinct homogeneous bounded Boolean branches/result use an unsigned or signed interval actor; aliases, mixed kinds, and the per-bit word-mask form use cube actors | Sound partial propagation and selected interval hulls; mask form is bit consistent |
    * | `extract`, `concat`, `repeat`, `zero_extend`, `sign_extend` | Direct fixed masked-copy cube actors for every domain kind | Bit consistency for copied bits and groups |
    * | Fixed `shift_left`, `logical_shift_right`, `arithmetic_shift_right`, `rotate_left`, `rotate_right` | Distinct unsigned non-wrapping or overshift left shift can use a numeric actor; every other case uses the direct fixed cube actor | Sound interval bounds where selected; bit consistency and boundary amounts everywhere |
    * | Variable `shift_left`, `logical_shift_right`, `arithmetic_shift_right` | Pairwise-distinct non-wrapping unsigned left shift adds a numeric actor to the exact cube-hull actor; all other forms use the cube actor alone. The amount is interpreted as unsigned | Assigned semantics, sound partial-amount cube hulls, and sound selected interval bounds |
    * | Binary `add`, `sub`, `mult` | Same-kind signed or unsigned non-wrapping regimes use transactional numeric-plus-cube actors; mixed or wrapping regimes use the native cube actors | Assigned modular semantics and sound partial/inverse propagation |
    * | `neg`; carry and borrow `add`/`sub` | Signed non-singular negation and classified unsigned carry/borrow can use bounded actors; all other regimes use cube actors | Assigned modular semantics, flag rows, aliases, and lifecycle |
-   * | N-ary `add` | Native cube carry-support actor; assigned constants are folded at posting | Assigned semantics and sound partial/inverse support |
-   * | `product_mod` | Direct and reified mixed Word/Int cube actors with overflow-safe assigned evaluation | Positive modulus, result cube hull, assigned semantics, all reification modes, and lifecycle |
+   * | N-ary `add` | Same-kind unsigned or signed inputs/result use a bounded actor when their complete interval sum cannot wrap; other regimes use the native cube carry-support actor. Assigned constants are folded at posting | Assigned modular semantics and sound partial/inverse cube and interval support |
+   * | `product_mod` | Homogeneous unsigned inputs/result use a bounded actor when the input intervals prove that the mathematical product fits the Word width; other regimes use the direct mixed Word/Int cube actor. Reification uses the cube control actor and dispatches the asserted relation through the same path | Unconditionally positive modulus, mathematical product before modulus reduction, sound result cube/interval pruning, all reification modes, and lifecycle |
+   * | `gcd`, `signed_gcd` | Compatible unsigned inputs/result, or signed inputs with an unsigned result, use bounded mathematical-GCD actors; other direct cases use cube actors. Reified forms use cube control actors and dispatch an asserted relation through the corresponding direct path | `gcd(0,0)=0`, signed magnitude, sound cube/interval pruning, all reification modes, and lifecycle |
+   * | `divides`, `signed_divides` | Homogeneous unsigned or signed operands use bounded mathematical-divisibility actors; mixed-kind and cube operands use cube actors. The public relation is reified through a cube control actor | Zero-divisor semantics, sound cube/interval pruning, all reification modes, and lifecycle |
    * | Arithmetic `overflow` predicates | Compositions over arithmetic, bit channels, and reified relations; compatible intermediates preserve their kind | Assigned semantics, SMT-LIB signed overflow cases, and lifecycle |
    * | Unsigned `div`, `mod`, combined `divmod` | Homogeneous unsigned operands with a settled divisor-zero regime use transactional bounded actors; other cases use the native cube actors; combined quotient/remainder uses one shared actor | Exact SMT-LIB zero-divisor rows and sound partial/inverse propagation |
    * | `signed_div`, `signed_rem`, `signed_mod` | Homogeneous signed operands with a settled divisor sign/zero regime use transactional bounded actors; other cases use native signed cube actors | Exact SMT-LIB zero-divisor and minimum/-1 rows, plus sound sign and partial propagation |
    * | `branch`, `assign` and their selectors | Native unknown-bit choices plus admitted ranked split/minimum/median/maximum choices for bounded domains | Archive, no-good, clone, and recomputation lifecycle |
    * | `trace`, WordTraceDelta and word printing | Standard integration reports cube bits, immutable kind, and ranked endpoints | Bit/bound/combined deltas and trace lifecycle |
-   * | WordExpr logical, relation, conditional, structural, and arithmetic expressions | Ref-counted MiniModel DAG lowered through the corresponding direct API | Direct-posting parity, width/policy rejection, copies, clones, and recomputation |
+   * | `distinct` | `IPL_VAL` (the default) and `IPL_DOM` post native pairwise Word disequalities; explicit `IPL_BND` uses one Hall-interval actor for homogeneous unsigned or signed bounded arrays and otherwise falls back to value consistency | Value exclusion, optional bounds consistency over one ranked interval, width-64 endpoints, aliases, cloning, and recomputation |
+   * | WordExpr logical, relation, conditional, structural, and arithmetic expressions | Ref-counted MiniModel DAG lowered through the corresponding direct API. Ordinary syntax is cube-default; `WordExpr::post`, `word_rel`, `bit`, reductions, and overflow accept an explicit WordDomainType policy, and incompatible intermediate operations fall back to cube temporaries | Direct-posting parity, explicit-policy preservation, width/policy rejection, copies, clones, and recomputation |
    */
   /**
    * \defgroup TaskModelWordVars Word-vector variables and arrays
@@ -738,8 +741,10 @@ namespace Gecode {
                                WordValue value, WordVar result);
   /** \brief Post mathematical product modulo a positive integer modulus
    *
-   * All word operands have the same width. The product is evaluated without
-   * host-word overflow and \a modulus is constrained to positive values.
+   * All word operands have the same width. The mathematical product of the
+   * two unsigned Word values is reduced modulo \a modulus before conversion
+   * to the result Word; it is not first reduced modulo the Word width.
+   * \a modulus is constrained to positive values.
    */
   GECODE_WORD_EXPORT void product_mod(Home home, WordVar x, WordVar y,
                                       IntVar modulus, WordVar result);

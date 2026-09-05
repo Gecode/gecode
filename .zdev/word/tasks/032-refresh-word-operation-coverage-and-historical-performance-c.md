@@ -3,7 +3,7 @@ schema_version = 1
 id = "word-032"
 key = "refresh-word-operation-docs"
 area = "word"
-status = "open"
+status = "done"
 complexity = "standard"
 afk = true
 priority = "normal"
@@ -27,11 +27,19 @@ gecode/word.hh's operation inventory still calls newer bounded n-ary Add/product
 
 ## Done when
 
-- [ ] Inventory covers current bounded and fallback paths, GCD/divides/distinct and explicit MiniModel policy.
-- [ ] Historical prototype/current implementation and historical/current benchmark evidence are clearly separated.
-- [ ] Documented caveats include 1-64 widths, single-interval/cube limitations, reified positive modulus and mathematical product_mod before reduction.
+- [x] Inventory covers current bounded and fallback paths, GCD/divides/distinct and explicit MiniModel policy.
+- [x] Historical prototype/current implementation and historical/current benchmark evidence are clearly separated.
+- [x] Documented caveats include 1-64 widths, single-interval/cube limitations, reified positive modulus and mathematical product_mod before reduction.
 
 ## Validation
 
 - Cross-check entries against dispatch source and examples; run relevant documentation/build checks.
 - No new tests expected.
+
+## Result
+
+Refresh the public Word operation inventory and distinguish current bounded dispatch and benchmarks from retained historical prototype evidence.
+
+Validation:
+
+- Independent source-to-doc audit passed current dispatch, alias/fallback, width/domain/reification/product_mod caveats, historical preservation, concise prose, build/generated/zdev/diff checks; pre-existing word-nary-add statistics-marker docs failure classified unrelated.
