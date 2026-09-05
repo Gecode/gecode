@@ -1672,6 +1672,8 @@ if(GECODE_ENABLE_EXAMPLES)
     add_executable(word-progression-closure
       benchmarks/word/progression-closure.cpp)
     target_link_libraries(word-progression-closure PRIVATE gecodeminimodel)
+    add_executable(word-distinct-benchmark benchmarks/word/distinct.cpp)
+    target_link_libraries(word-distinct-benchmark PRIVATE gecodeminimodel)
   endif()
 endif()
 

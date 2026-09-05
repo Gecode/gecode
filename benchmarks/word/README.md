@@ -1,5 +1,23 @@
 # Word benchmarks
 
+The distinct benchmark measures the shipped opt-in `IPL_BND` actor against
+the default pairwise `IPL_VAL` formulation and compact Word variables with
+exact unsigned Int channels. It checks the three formulations at two, three,
+and four registers per bank, exercises no-pruning arrays at
+8, 16, 32, and 64 variables, and adds a bounds-only 4,096-variable scale
+case. Timings are batched inside the process and trials are interleaved; the
+artifact records stable solver counters and median/minimum/maximum time. It
+identifies the source revision explicitly because the word-016 measurements
+describe a historical prototype, not this production actor. It makes no
+memory claim.
+
+```sh
+cmake --build build-release --target word-distinct-benchmark
+uv run --script benchmarks/word/distinct-benchmark.py \
+  --binary build-release/bin/word-distinct-benchmark \
+  --revision "$(git rev-parse HEAD)" --output /tmp/word-distinct.json
+```
+
 The arithmetic-progression closure check covers the aligned divisibility, GCD,
 and fixed-result product-modulo family at widths 16, 24, 32, 40, and 64. Each
 actor runs in its own subprocess with a wall timeout and must reach the exact

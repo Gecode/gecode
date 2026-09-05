@@ -34,6 +34,7 @@
 #define GECODE_WORD_DISTINCT_HH
 
 #include <gecode/word.hh>
+#include <gecode/word/rel.hh>
 
 namespace Gecode { namespace Word { namespace Distinct {
 
