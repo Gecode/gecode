@@ -66,6 +66,7 @@ set(GECODE_EXAMPLE_SOURCES
   word-crc16-ccitt.cpp
   word-crc16-x25.cpp
   word-dma-descriptor.cpp
+  word-inverse-arithmetic.cpp
   word-md5-preimage.cpp
   word-nary-add.cpp
   word-product-mod.cpp
@@ -99,6 +100,7 @@ set(GECODE_WORD_EXAMPLES
   word-crc16-ccitt
   word-crc16-x25
   word-dma-descriptor
+  word-inverse-arithmetic
   word-md5-preimage
   word-nary-add
   word-product-mod

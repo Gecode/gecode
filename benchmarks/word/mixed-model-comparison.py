@@ -60,7 +60,91 @@ def allocation_rows(p: dict[str, Any]) -> list[list[int]]:
         *(itertools.permutations(choice, regs) for choice in choices))]
 
 
+def signed(value: int, width: int) -> int:
+    return value - (1 << width) if value & (1 << (width - 1)) else value
+
+
+def domain(p: dict[str, Any], name: str) -> range:
+    return range(p[f"{name}_min"], p[f"{name}_max"] + 1)
+
+
+def overflow_matches(p: dict[str, Any], x: int, y: int) -> bool:
+    kind = p.get("overflow")
+    if kind is None: return True
+    width = p["width"]
+    if kind == "unsigned_mult": actual = x*y > (1 << width)-1
+    elif kind == "signed_mult":
+        value=signed(x,width)*signed(y,width)
+        actual=not -(1 << (width-1)) <= value < (1 << (width-1))
+    elif kind == "signed_div":
+        actual=signed(x,width) == -(1 << (width-1)) and signed(y,width) == -1
+    else: raise ValueError(f"unknown overflow kind {kind!r}")
+    return actual == p["overflow_expected"]
+
+
+def arithmetic_rows(case: dict[str, Any]) -> list[list[int]]:
+    p, family = case["parameters"], case["family"]
+    width, mask = p["width"], (1 << p["width"]) - 1
+    rows: list[list[int]] = []
+    if family == "mult":
+        for x in domain(p, "x"):
+            for y in domain(p, "y"):
+                result = (x * y) & mask
+                if p["result_min"] <= result <= p["result_max"] and overflow_matches(p,x,y):
+                    rows.append([x, y, result])
+    elif family == "divmod":
+        for x in domain(p, "x"):
+            for y in domain(p, "y"):
+                if p.get("signed", False):
+                    sx, sy = signed(x, width), signed(y, width)
+                    if sy == 0:
+                        q, r = (1 if sx < 0 else mask), x
+                    elif sx == -(1 << (width-1)) and sy == -1:
+                        q, r = x, 0
+                    else:
+                        quotient = abs(sx) // abs(sy)
+                        if (sx < 0) != (sy < 0): quotient = -quotient
+                        q, r = quotient & mask, (sx - quotient * sy) & mask
+                else:
+                    q, r = ((mask, x) if y == 0 else (x // y, x % y))
+                if p["q_min"] <= q <= p["q_max"] and p["r_min"] <= r <= p["r_max"] and overflow_matches(p,x,y):
+                    rows.append([x, y, q, r])
+    elif family == "product_mod":
+        modulus = p["modulus"]
+        if modulus <= 0: return []
+        if not p.get("guard", 1):
+            return [[x,y,z] for x in domain(p,"x") for y in domain(p,"y")
+                    for z in domain(p,"result")]
+        for x in domain(p, "x"):
+            for y in domain(p, "y"):
+                result = (x * y) % modulus
+                if p["result_min"] <= result <= p["result_max"]:
+                    rows.append([x, y, result])
+    return rows
+
+
+def alu(value: int, width: int) -> int:
+    mask = (1 << width) - 1
+    amount = value & 3
+    s1 = (value << amount) & mask
+    total = s1 + 0x1d
+    s2, carry = total & mask, total > mask
+    negative = bool(s2 & (1 << (width - 1)))
+    signed_s2 = signed(s2, width)
+    shifted = (signed_s2 >> amount) & mask
+    s3 = (s2 ^ (0x15 & mask)) if carry else shifted
+    return ((s3 + 1) & mask) if negative else s3
+
+
+def alu_rows(p: dict[str, Any]) -> list[list[int]]:
+    return [[value, alu(value, p["width"])] for value in domain(p, "input")
+            if p["output_min"] <= alu(value, p["width"]) <= p["output_max"]]
+
+
 def expected(case: dict[str, Any]) -> list[list[int]]:
+    if case["family"] in ("mult", "divmod", "product_mod"):
+        return arithmetic_rows(case)
+    if case["family"] == "alu": return alu_rows(case["parameters"])
     return {"dma": dma_rows, "lookup": lookup_rows,
             "allocation": allocation_rows}[case["family"]](case["parameters"])
 
@@ -73,6 +157,9 @@ def expected_names(case: dict[str, Any]) -> list[str]:
                 *(f"flag[{i}]" for i in range(n))]
     if case["family"] == "lookup":
         return ["index", *(f"register[{i}]" for i in range(p["size"]))]
+    if case["family"] in ("mult", "product_mod"): return ["x", "y", "result"]
+    if case["family"] == "divmod": return ["x", "y", "quotient", "remainder"]
+    if case["family"] == "alu": return ["input", "output"]
     count = p["banks"] * p["registers_per_bank"]
     return [f"address[{i}]" for i in range(count)]
 
@@ -128,7 +215,7 @@ def smt_case(case: dict[str, Any]) -> tuple[list[str], list[str]]:
             assertions.append(f"(assert (or (= register{i} {bv(minimum,8)}) (= register{i} {bv(minimum+1,8)})))")
             assertions.append(f"(assert (=> (= index {bv(i,8)}) (or (= register{i} {bv(5,8)}) (= register{i} {bv(6,8)}))))")
             names.append(f"register{i}")
-    else:
+    elif family == "allocation":
         banks, regs, slots = p["banks"], p["registers_per_bank"], p["slots_per_bank"]
         for bank in range(banks):
             bank_names = []
@@ -140,6 +227,50 @@ def smt_case(case: dict[str, Any]) -> tuple[list[str], list[str]]:
                 assertions.append(f"(assert (or {values}))")
             if len(bank_names) > 1:
                 assertions.append(f"(assert (distinct {' '.join(bank_names)}))")
+    elif family in ("mult", "divmod", "product_mod", "alu"):
+        width = p["width"]
+        public = expected_names(case)
+        symbols = {"quotient": "q", "remainder": "r"}
+        names = [symbols.get(name, name) for name in public]
+        for name in names:
+            declarations.append(f"(declare-fun {name} () (_ BitVec {width}))")
+        ranges = {"x": (p.get("x_min"), p.get("x_max")),
+                  "y": (p.get("y_min"), p.get("y_max")),
+                  "result": (p.get("result_min"), p.get("result_max")),
+                  "q": (p.get("q_min"), p.get("q_max")),
+                  "r": (p.get("r_min"), p.get("r_max")),
+                  "input": (p.get("input_min"), p.get("input_max")),
+                  "output": (p.get("output_min"), p.get("output_max"))}
+        for name in names:
+            lo, hi = ranges[name]
+            assertions += [f"(assert (bvuge {name} {bv(lo,width)}))",
+                           f"(assert (bvule {name} {bv(hi,width)}))"]
+        if family == "mult": assertions.append("(assert (= result (bvmul x y)))")
+        elif family == "divmod":
+            opq, opr = ("bvsdiv", "bvsrem") if p.get("signed") else ("bvudiv", "bvurem")
+            assertions += [f"(assert (= q ({opq} x y)))", f"(assert (= r ({opr} x y)))"]
+        elif family == "product_mod":
+            guard, modulus = p.get("guard", 1), p["modulus"]
+            assertions.append(f"(assert (bvugt {bv(modulus,width)} {bv(0,width)}))")
+            if guard: assertions.append(
+                f"(assert (= result ((_ extract {width-1} 0) (bvurem (bvmul ((_ zero_extend {width}) x) ((_ zero_extend {width}) y)) {bv(modulus,2*width)}))))")
+        else:
+            declarations += [f"(define-fun amount () (_ BitVec {width}) (bvand input {bv(3,width)}))",
+                f"(define-fun s1 () (_ BitVec {width}) (bvshl input amount))",
+                f"(define-fun s2 () (_ BitVec {width}) (bvadd s1 {bv(0x1d,width)}))",
+                f"(define-fun carry () Bool (bvult s2 s1))",
+                f"(define-fun negative () Bool (= ((_ extract {width-1} {width-1}) s2) #b1))",
+                f"(define-fun s3 () (_ BitVec {width}) (ite carry (bvxor s2 {bv(0x15 & ((1<<width)-1),width)}) (bvashr s2 amount)))"]
+            assertions.append(f"(assert (= output (ite negative (bvadd s3 {bv(1,width)}) s3)))")
+        overflow = p.get("overflow")
+        if overflow:
+            if overflow == "unsigned_mult":
+                condition=f"(not (= ((_ extract {2*width-1} {width}) (bvmul ((_ zero_extend {width}) x) ((_ zero_extend {width}) y))) {bv(0,width)}))"
+            elif overflow == "signed_mult":
+                condition=f"(not (= ((_ sign_extend {width}) (bvmul x y)) (bvmul ((_ sign_extend {width}) x) ((_ sign_extend {width}) y))))"
+            else:
+                condition=f"(and (= x {bv(1 << (width-1),width)}) (= y {bv((1 << width)-1,width)}))"
+            assertions.append(f"(assert {' ' if p['overflow_expected'] else '(not '}{condition}{'' if p['overflow_expected'] else ')'})")
     return declarations + assertions, names
 
 
@@ -154,6 +285,8 @@ def parse_values(line: str) -> list[int]:
 
 
 def symbol_width(case: dict[str, Any], name: str) -> int:
+    if case["family"] in ("mult", "divmod", "product_mod", "alu"):
+        return case["parameters"]["width"]
     if case["family"] == "dma":
         if name == "index" or name.startswith("flag"):
             return 4
@@ -296,6 +429,8 @@ def main() -> int:
     parser.add_argument("--dma-binary", type=Path)
     parser.add_argument("--lookup-binary", type=Path)
     parser.add_argument("--allocation-binary", type=Path)
+    parser.add_argument("--inverse-binary", type=Path)
+    parser.add_argument("--alu-binary", type=Path)
     parser.add_argument("--timeout", type=float, default=10.0)
     parser.add_argument("--output", type=Path)
     args = parser.parse_args()
@@ -312,7 +447,8 @@ def main() -> int:
             raise ValueError(f"{case['id']}: incorrect public decision variables")
         status = "sat" if rows else "unsat"
         if case.get("expected_status") != status or \
-                (case.get("goal") == "unsat") != (status == "unsat"):
+                (case.get("goal") == "unsat") != (status == "unsat") or \
+                (case.get("goal") == "unique" and len(rows) != 1):
             raise ValueError(f"{case['id']}: goal/status contradict evaluator")
         independent[case["id"]] = {"semantic_status": "sat" if rows else "unsat",
                                    "decision_variables": case["decision_variables"],
@@ -339,7 +475,7 @@ def main() -> int:
                                      args.timeout)
                 exact.update(case=case["id"], formulation=formulation)
                 gecode_results.append(exact)
-        else:
+        elif case["family"] == "allocation":
             for formulation in ("value", "bounds", "int-channel"):
                 command = ["register", formulation, str(p["registers_per_bank"]),
                            "1", str(p["slots_per_bank"]), "projections"]
@@ -347,6 +483,21 @@ def main() -> int:
                                      args.timeout)
                 exact.update(case=case["id"], formulation=formulation)
                 gecode_results.append(exact)
+        elif case["family"] in ("mult", "divmod", "product_mod"):
+            exact = gecode_exact(args.inverse_binary, ["--case",case["id"]],
+                                 case, rows, args.timeout)
+            exact.update(case=case["id"], formulation="native-word")
+            gecode_results.append(exact)
+        else:
+            command = ["--comparison-width",str(p["width"]),
+                       "--input-min",str(p["input_min"]),
+                       "--input-max",str(p["input_max"]),
+                       "--output-min",str(p["output_min"]),
+                       "--output-max",str(p["output_max"])]
+            exact = gecode_exact(args.alu_binary, command, case, rows,
+                                 args.timeout)
+            exact.update(case=case["id"], formulation="native-word")
+            gecode_results.append(exact)
     # Native-search smoke is intentionally separate from the aligned SMT rows.
     controls = {
         **{f"dma-{formulation}": gecode_smoke(args.dma_binary,
@@ -364,7 +515,8 @@ def main() -> int:
         "allocation-int-channel": gecode_smoke(args.allocation_binary,
             ["register","int-channel","3","1"], 576, args.timeout),
     }
-    failures = [r for r in results if r.get("status") in ("wrong-result", "error")]
+    failures = [r for r in results
+                if r.get("status") in ("wrong-result", "error", "timeout")]
     failures += [r for r in gecode_results if r.get("status") not in ("ok", "missing")]
     failures += [r for r in controls.values()
                  if r.get("status") not in ("ok", "missing")]

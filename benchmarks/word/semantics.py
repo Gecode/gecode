@@ -39,6 +39,44 @@ def product_mod(x: int, y: int, modulus: int) -> int:
     return (x * y) % modulus
 
 
+def signed_value(value: int, width: int) -> int:
+    """Interpret an unsigned width-bit encoding as two's complement."""
+    value &= (1 << width)-1
+    return value-(1 << width) if value & (1 << (width-1)) else value
+
+
+def smt_divrem(x: int, y: int, *, width: int,
+               signed: bool = False) -> tuple[int, int]:
+    """SMT-LIB bv[u|s]div and bv[u|s]rem, including total edge cases."""
+    mask=(1 << width)-1
+    x, y = x & mask, y & mask
+    if not signed:
+        return (mask, x) if y == 0 else (x//y, x%y)
+    sx, sy = signed_value(x,width), signed_value(y,width)
+    if sy == 0: return (1 if sx < 0 else mask), x
+    if sx == -(1 << (width-1)) and sy == -1: return x, 0
+    q=abs(sx)//abs(sy)
+    if (sx < 0) != (sy < 0): q=-q
+    return q & mask, (sx-q*sy) & mask
+
+
+def alu_trace(value: int, width: int) -> dict[str, int]:
+    """Concrete short-ALU semantics; amount is deliberately input & 3."""
+    mask=(1 << width)-1
+    value &= mask
+    amount=value & 3
+    s1=(value << amount) & mask
+    total=s1+0x1d
+    s2=total & mask
+    carry=int(total > mask)
+    negative=int(bool(s2 & (1 << (width-1))))
+    shifted=(signed_value(s2,width) >> amount) & mask
+    s3=(s2 ^ (0x15 & mask)) if carry else shifted
+    output=((s3+1)&mask) if negative else s3
+    return {"input":value,"amount":amount,"s1":s1,"s2":s2,
+            "carry":carry,"negative":negative,"s3":s3,"output":output}
+
+
 def dma_decision_variables(count: int) -> list[str]:
     return (["index"] + [f"base[{i}]" for i in range(count)] +
             [f"flag[{i}]" for i in range(count)])

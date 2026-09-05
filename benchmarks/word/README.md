@@ -97,6 +97,35 @@ cube fallback. Run the interleaved controls with:
 uv run --script benchmarks/word/product-mod-benchmark.py --binary build/bin/word-product-mod --repetitions 20 --output /tmp/word-product-mod.json
 ```
 
+## Inverse arithmetic and short ALU comparisons
+
+`mixed-model-comparison.py` also compares native Word constraints with Z3 and
+Bitwuzla for modular multiplication, SMT-total unsigned and signed division,
+and mathematical `product_mod`.  Values in the case file are unsigned
+width-bit encodings; multiplication wraps with the explicit `(1<<width)-1`
+mask.  `product_mod` widens both operands to `2*width` before remainder.  Its
+positive-modulus condition is unconditional under reification: disabling the
+relation permits an arbitrary result but does not permit a zero modulus.
+
+The `alu` family publishes only `[input,output]`.  Its internal trace computes
+`amount=input&3`, `s1=input<<amount`, adds `0x1d` with unsigned carry, records
+the sign bit of that sum, then selects either `sum xor 0x15` on carry or an
+arithmetic right shift by `amount`; a negative sum increments the selected
+value.  All operations use SMT overshift and width wrapping semantics.  For
+the documented width-five input 19 the internal values are `amount=3`,
+`s1=24`, `s2=21`, `carry=1`, `negative=1`, `s3=0`, and public output `1`.
+
+The exact supported subset is intentionally small: full enumeration at width
+3--5, tight or fixed cases at width 8, and fixed single-witness cases at width
+64.  Campaign scale is the case's width plus operand interval sizes; do not
+extrapolate free enumeration to width 64.  Run the aligned checks with:
+
+```
+uv run --script benchmarks/word/mixed-model-comparison.py \
+  --inverse-binary build/bin/word-inverse-arithmetic \
+  --alu-binary build/bin/word-symbolic-alu --timeout 10
+```
+
 The bounded n-ary Add scatter/gather comparison uses `word-nary-add` at 4,
 6, and 8 segments. Each normal case emits one independently checked public
 length-vector witness while retaining the full solution/count controls. A

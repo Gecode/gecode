@@ -33,9 +33,68 @@
 #include <gecode/driver.hh>
 #include <gecode/word.hh>
 
+#include <cstdlib>
+#include <cstring>
 #include <iomanip>
+#include <vector>
 
 using namespace Gecode;
+
+namespace {
+  class ComparisonALU : public Space {
+  public:
+    WordVar input, output;
+    ComparisonALU(unsigned int width, WordValue input_min,
+                  WordValue input_max, WordValue output_min,
+                  WordValue output_max)
+      : input(*this,width,WDT_UNSIGNED,input_min,input_max),
+        output(*this,width,WDT_UNSIGNED,output_min,output_max) {
+      const WordValue mask=Word::width_mask(width);
+      WordVar amount(*this,width,WDT_UNSIGNED,0U,3U);
+      WordVar s1(*this,width,WDT_UNSIGNED), addend(*this,width,
+        WDT_UNSIGNED,WordValue(0x1d)&mask,WordValue(0x1d)&mask);
+      WordVar s2(*this,width,WDT_UNSIGNED), shifted(*this,width,WDT_UNSIGNED),
+        xored(*this,width,WDT_UNSIGNED), s3(*this,width,WDT_UNSIGNED),
+        incremented(*this,width,WDT_UNSIGNED);
+      BoolVar carry(*this,0,1), negative(*this,0,1);
+      rel(*this,input,WOT_AND,width,3U,amount);
+      shift_left(*this,input,amount,s1);
+      add(*this,s1,addend,s2,carry);
+      channel(*this,s2,width-1,negative);
+      arithmetic_shift_right(*this,s2,amount,shifted);
+      rel(*this,s2,WOT_XOR,width,WordValue(0x15)&mask,xored);
+      ite(*this,carry,xored,shifted,s3);
+      add(*this,s3,width,1U,incremented);
+      ite(*this,negative,incremented,s3,output);
+      branch(*this,input,WORD_VAL_SPLIT_MIN());
+      branch(*this,output,WORD_VAL_SPLIT_MIN());
+    }
+    ComparisonALU(ComparisonALU& s) : Space(s) {
+      input.update(*this,s.input); output.update(*this,s.output);
+    }
+    Space* copy(void) { return new ComparisonALU(*this); }
+  };
+
+  int comparison_main(int argc, char* argv[]) {
+    if (argc != 11) return 2;
+    unsigned int width=static_cast<unsigned int>(std::strtoul(argv[2],nullptr,10));
+    WordValue imin=std::strtoull(argv[4],nullptr,10), imax=std::strtoull(argv[6],nullptr,10);
+    WordValue omin=std::strtoull(argv[8],nullptr,10), omax=std::strtoull(argv[10],nullptr,10);
+    ComparisonALU* root=new ComparisonALU(width,imin,imax,omin,omax);
+    DFS<ComparisonALU> search(root); delete root;
+    std::vector<std::pair<WordValue,WordValue> > rows;
+    while (ComparisonALU* solution=search.next()) {
+      rows.emplace_back(solution->input.val(),solution->output.val()); delete solution;
+    }
+    std::cout << "{\"schema_version\":1,\"semantic_status\":\""
+              << (rows.empty() ? "unsat" : "sat") << "\",\"solutions\":" << rows.size()
+              << ",\"decision_variables\":[\"input\",\"output\"],\"projections\":[";
+    for (std::size_t i=0; i<rows.size(); i++) {
+      if (i) std::cout << ','; std::cout << '[' << rows[i].first << ',' << rows[i].second << ']';
+    }
+    std::cout << "]}\n"; return 0;
+  }
+}
 
 /** \brief Options for the constructed symbolic ALU example */
 class WordSymbolicALUOptions : public Options {
@@ -139,6 +198,8 @@ public:
  */
 int
 main(int argc, char* argv[]) {
+  if ((argc > 1) && (std::strcmp(argv[1],"--comparison-width") == 0))
+    return comparison_main(argc,argv);
   WordSymbolicALUOptions opt("WordSymbolicALU");
   opt.parse(argc,argv);
   if ((opt.steps() == 0) || (opt.steps() > 64)) {

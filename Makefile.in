@@ -1003,7 +1003,7 @@ SETEXAMPLEEXE  =
 endif
 
 WORDEXAMPLESRC0 = \
-	word-arithmetic word-arx-preimage word-benchmark word-bitboard word-nary-add word-product-mod \
+	word-arithmetic word-arx-preimage word-benchmark word-bitboard word-inverse-arithmetic word-nary-add word-product-mod \
 	word-crc16-ccitt word-crc16-x25 word-md5-preimage word-minimodel \
 	word-register-file word-sha1-preimage word-structure word-symbolic-alu
 WORDEXAMPLESRC = $(WORDEXAMPLESRC0:%=examples/%.cpp)
