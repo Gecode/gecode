@@ -29,12 +29,13 @@ test -f "$install_prefix/include/gecode/support/config.hpp"
 if grep -q '^#define GECODE_HAS_WORD_VARS' \
     "$install_prefix/include/gecode/support/config.hpp"; then
   test -f "$install_prefix/include/gecode/word.hh"
+  test -f "$install_prefix/include/gecode/word/arithmetic/bounded-product-mod.hpp"
   find "$install_prefix/lib" -maxdepth 1 -name '*gecodeword*' -print -quit | \
     grep -q .
   consumer_dir="$destdir/word-consumer"
   mkdir -p "$consumer_dir"
   cat > "$consumer_dir/main.cpp" <<'EOF'
-#include <gecode/word.hh>
+#include <gecode/word/arithmetic.hh>
 class WordInstallModel : public Gecode::Space {
 public:
   Gecode::WordVar x;

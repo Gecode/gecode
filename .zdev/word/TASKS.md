@@ -3,9 +3,9 @@
 # Tasks: word
 
 - Total: 41
-- Ready: 6
+- Ready: 5
 - Blocked: 10
-- Done: 25
+- Done: 26
 
 | ID | Task | State | Blocked by |
 | --- | --- | --- | --- |
@@ -32,7 +32,7 @@
 | [word-021](tasks/021-make-signed-n-ary-bounds-safe-for-overflowing-intermediate-s.md) | Make signed n-ary bounds safe for overflowing intermediate sums | done | — |
 | [word-022](tasks/022-fix-signed-gcd-magnitude-bounds-across-zero.md) | Fix signed GCD magnitude bounds across zero | done | — |
 | [word-023](tasks/023-allow-split-no-good-pruning-to-fail-normally.md) | Allow split no-good pruning to fail normally | done | — |
-| [word-024](tasks/024-install-the-missing-bounded-product-modulo-header-with-autoc.md) | Install the missing bounded product-modulo header with Autoconf | ready | — |
+| [word-024](tasks/024-install-the-missing-bounded-product-modulo-header-with-autoc.md) | Install the missing bounded product-modulo header with Autoconf | done | — |
 | [word-025](tasks/025-make-word-benchmark-timing-and-memory-records-reliable.md) | Make Word benchmark timing and memory records reliable | ready | — |
 | [word-026](tasks/026-control-arithmetic-progression-closure-in-gcd-divisibility-a.md) | Control arithmetic-progression closure in GCD divisibility and product-modulo | done | word-022 |
 | [word-027](tasks/027-replace-cubic-bounds-distinct-scans-and-measure-the-shipped.md) | Replace cubic bounds-distinct scans and measure the shipped actor | ready | — |

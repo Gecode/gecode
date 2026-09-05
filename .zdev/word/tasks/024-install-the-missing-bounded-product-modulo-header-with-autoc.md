@@ -3,7 +3,7 @@ schema_version = 1
 id = "word-024"
 key = "repair-word-install-manifest"
 area = "word"
-status = "open"
+status = "done"
 complexity = "routine"
 afk = true
 priority = "normal"
@@ -25,11 +25,19 @@ Makefile.in WORDHDR0 at :561 omits arithmetic/bounded-product-mod.hpp, while ins
 
 ## Done when
 
-- [ ] The missing header is listed and installed by Autoconf.
-- [ ] A consumer using only the installed include prefix compiles arithmetic.hh.
-- [ ] The Word header inventory is checked for other omissions using the existing build conventions.
+- [x] The missing header is listed and installed by Autoconf.
+- [x] A consumer using only the installed include prefix compiles arithmetic.hh.
+- [x] The Word header inventory is checked for other omissions using the existing build conventions.
 
 ## Validation
 
 - Run a temporary-prefix Autoconf install smoke and installed-header compile.
 - Run relevant generated-source/install checks; do not rely on source-tree include fallback.
+
+## Result
+
+Install bounded-product-mod.hpp through the Autoconf Word manifest and make arithmetic.hh an installed-prefix-safe consumer.
+
+Validation:
+
+- Independent temporary-prefix Autoconf install and installed-only arithmetic.hh consumer compile passed; all 56 Word headers match the manifest; generated-source freshness and git diff checks passed.
