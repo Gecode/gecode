@@ -55,7 +55,7 @@ namespace Gecode { namespace Search {
     : Exception(l,"Worker control is not initialized") {}
 
   WorkerControlInUse::WorkerControlInUse(const char* l)
-    : Exception(l,"Worker control has already been bound") {}
+    : Exception(l,"Worker control is already bound or has unsupported engine placement") {}
 
 }}
 

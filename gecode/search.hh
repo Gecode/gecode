@@ -717,6 +717,8 @@ namespace Gecode { namespace Search {
    * A worker control is a copyable handle. Copies share the same request
    * and can be used concurrently. The worker capacity is fixed when the
    * handle is first attached to a search engine.
+   * Without thread support, concurrent use and pausing are unsupported:
+   * attaching a zero request or calling request(0) raises InvalidWorkerRequest.
    *
    * \ingroup TaskModelSearch
    */

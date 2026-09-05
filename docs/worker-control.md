@@ -26,6 +26,11 @@ control.request(1); // Resume
 Gecode resolves the `threads` option when it constructs the engine. The result
 is the fixed worker capacity. A request must be between zero and that capacity,
 inclusive. Zero pauses the engine without discarding its search state.
+This also applies when the resolved capacity is one: sequential DFS and BAB
+wait at search boundaries until the control resumes them.
+Pausing requires a build with thread support. Without thread support, attaching
+an initially paused control or calling `request(0)` raises
+`Search::InvalidWorkerRequest`; controls must be used from one thread.
 
 ## Asynchronous semantics
 
@@ -91,7 +96,13 @@ Restart-based search keeps one leaf control through construction and reset.
 The same DFS or BAB leaf engine remains the adjustment target across restarts.
 
 Portfolio-based search does not divide a global thread budget. Give each PBS
-asset its own control in the corresponding sequential-engine builder options:
+asset its own control in the corresponding sequential-engine builder options.
+Controlled assets require a parallel outer PBS (`threads` resolving above one).
+Sequential PBS rejects them with `Search::WorkerControlInUse`, since a paused
+asset would prevent it from advancing to another asset. This check occurs before
+PBS consumes the root or builders.
+
+For example, configure the leaf builders as follows:
 
 ```cpp
 constexpr unsigned int budget = 8;

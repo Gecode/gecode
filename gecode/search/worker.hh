@@ -54,6 +54,8 @@ namespace Gecode { namespace Search {
     void start(void);
     /// Check whether engine must be stopped
     bool stop(const Options& o);
+    /// Check stop and wait for admission of a sequential worker
+    bool stop_seq(Options& o);
     /// Check whether engine has been stopped
     bool stopped(void) const;
     /// Reset statistics with root depth \a d
@@ -81,6 +83,18 @@ namespace Gecode { namespace Search {
       return false;
     _stopped |= o.stop->stop(*this,o);
     return _stopped;
+  }
+
+  forceinline bool
+  Worker::stop_seq(Options& o) {
+    // A paused portfolio asset must still observe the round's stop signal.
+    while (!stop(o)) {
+      if (!WorkerControlAccess::engaged(o.worker_control) ||
+          (WorkerControlAccess::requested(o.worker_control) != 0U))
+        return false;
+      WorkerControlAccess::wait(o.worker_control,0U);
+    }
+    return true;
   }
 
   forceinline bool

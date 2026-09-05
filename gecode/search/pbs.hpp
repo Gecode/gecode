@@ -33,6 +33,7 @@
 
 #include <cmath>
 #include <algorithm>
+#include <memory>
 #include <gecode/search/worker-control.hh>
 
 namespace Gecode { namespace Search {
@@ -83,6 +84,11 @@ namespace Gecode { namespace Search {
       const WorkerControl& x = sebs[i]->options().worker_control;
       if (!WorkerControlAccess::engaged(x))
         continue;
+      // Sequential PBS cannot move past an asset blocked by a pause request.
+#ifdef GECODE_HAS_THREADS
+      if (opt.threads <= 1.0)
+#endif
+        throw WorkerControlInUse("PBS::PBS");
       for (int j=0; j<i; j++) {
         const WorkerControl& y = sebs[j]->options().worker_control;
         if (WorkerControlAccess::engaged(y) &&
@@ -150,6 +156,8 @@ namespace Gecode { namespace Search {
   Engine*
   pbsseq(T* master, const Search::Statistics& stat, Options& opt) {
     Stop* stop = opt.stop;
+    // Retain each seed: a throwing nested builder may consume its own clone.
+    opt.clone = true;
     Region r;
 
     // In case there are more threads than assets requested
@@ -171,19 +179,12 @@ namespace Gecode { namespace Search {
     try {
       for (unsigned int i=0U; i<n_slaves; i++) {
         opt.stop = stops[i] = Seq::pbsstop(stop);
-        Space* slave = (i == n_slaves-1) ?
-          master : master->clone();
-        try {
-          (void) slave->slave(i);
-          slaves[i] = build<T,E>(slave,opt);
-        } catch (...) {
-          delete slave;
-          if (slave == master)
-            unowned_master = nullptr;
-          throw;
-        }
-        if (slave == master)
+        std::unique_ptr<Space> slave((i == n_slaves-1) ?
+                                     master : master->clone());
+        if (slave.get() == master)
           unowned_master = nullptr;
+        (void) slave->slave(i);
+        slaves[i] = build<T,E>(slave.get(),opt);
       }
       return Seq::pbsengine(
         slaves,stops,n_slaves,stat,opt,E<T>::best);
@@ -218,20 +219,13 @@ namespace Gecode { namespace Search {
         // Re-configure slave options
         stops[i] = Seq::pbsstop(sebs[i]->options().stop);
         sebs[i]->options().stop  = stops[i];
-        sebs[i]->options().clone = false;
-        Space* slave = (i == n_slaves-1) ?
-          master : master->clone();
-        try {
-          (void) slave->slave(static_cast<unsigned int>(i));
-          slaves[i] = (*sebs[i])(slave);
-        } catch (...) {
-          delete slave;
-          if (slave == master)
-            unowned_master = nullptr;
-          throw;
-        }
-        if (slave == master)
+        sebs[i]->options().clone = true;
+        std::unique_ptr<Space> slave((i == n_slaves-1) ?
+                                     master : master->clone());
+        if (slave.get() == master)
           unowned_master = nullptr;
+        (void) slave->slave(static_cast<unsigned int>(i));
+        slaves[i] = (*sebs[i])(slave.get());
       }
       pbscleanup(sebs);
       builders_owned = false;
@@ -252,6 +246,8 @@ namespace Gecode { namespace Search {
   Engine*
   pbspar(T* master, const Search::Statistics& stat, Options& opt) {
     Stop* stop = opt.stop;
+    // Retain each seed: a throwing nested builder may consume its own clone.
+    opt.clone = true;
     Region r;
 
     // Limit the number of slaves to the number of threads
@@ -274,19 +270,12 @@ namespace Gecode { namespace Search {
     try {
       for (unsigned int i=0U; i<n_slaves; i++) {
         opt.stop = stops[i] = Par::pbsstop(stop,opt.worker_control);
-        Space* slave = (i == n_slaves-1) ?
-          master : master->clone();
-        try {
-          (void) slave->slave(static_cast<unsigned int>(i));
-          slaves[i] = build<T,E>(slave,opt);
-        } catch (...) {
-          delete slave;
-          if (slave == master)
-            unowned_master = nullptr;
-          throw;
-        }
-        if (slave == master)
+        std::unique_ptr<Space> slave((i == n_slaves-1) ?
+                                     master : master->clone());
+        if (slave.get() == master)
           unowned_master = nullptr;
+        (void) slave->slave(static_cast<unsigned int>(i));
+        slaves[i] = build<T,E>(slave.get(),opt);
       }
       return Par::pbsengine(slaves,stops,n_slaves,stat,E<T>::best);
     } catch (...) {
@@ -324,20 +313,13 @@ namespace Gecode { namespace Search {
         stops[i] = Par::pbsstop(sebs[i]->options().stop,
                                 sebs[i]->options().worker_control);
         sebs[i]->options().stop  = stops[i];
-        sebs[i]->options().clone = false;
-        Space* slave = (i == n_slaves-1) ?
-          master : master->clone();
-        try {
-          (void) slave->slave(static_cast<unsigned int>(i));
-          slaves[i] = (*sebs[i])(slave);
-        } catch (...) {
-          delete slave;
-          if (slave == master)
-            unowned_master = nullptr;
-          throw;
-        }
-        if (slave == master)
+        sebs[i]->options().clone = true;
+        std::unique_ptr<Space> slave((i == n_slaves-1) ?
+                                     master : master->clone());
+        if (slave.get() == master)
           unowned_master = nullptr;
+        (void) slave->slave(static_cast<unsigned int>(i));
+        slaves[i] = (*sebs[i])(slave.get());
       }
       pbscleanup(sebs);
       builders_owned = false;

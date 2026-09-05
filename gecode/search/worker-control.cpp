@@ -100,6 +100,10 @@ namespace Gecode { namespace Search {
   WorkerControl::request(unsigned int workers) {
     if (state == nullptr)
       throw UninitializedWorkerControl("WorkerControl::request");
+#ifndef GECODE_HAS_THREADS
+    if (workers == 0U)
+      throw InvalidWorkerRequest("WorkerControl::request");
+#endif
     bool changed = false;
     {
       Support::Lock lock(state->mutex);
@@ -135,6 +139,10 @@ namespace Gecode { namespace Search {
     Support::Lock lock(state->mutex);
     if (state->lifecycle != WorkerControl::State::NEVER_BOUND)
       throw WorkerControlInUse("WorkerControlAccess::attach");
+#ifndef GECODE_HAS_THREADS
+    if (state->requested.load(std::memory_order_relaxed) == 0U)
+      throw InvalidWorkerRequest("WorkerControlAccess::attach");
+#endif
     if ((capacity == 0U) ||
         (state->requested.load(std::memory_order_relaxed) > capacity))
       throw InvalidWorkerRequest("WorkerControlAccess::attach");

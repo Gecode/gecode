@@ -1356,6 +1356,8 @@ CHECKTESTS = Branch::Int::Dense::3 \
 	Int::Linear::Bool::Int::Lq \
 	Int::MiniModel::LinExpr::Bool::352 \
 	NoGoods::Queens \
+	Search::PBS::ConstructionFailure \
+	Search::WorkerControl:: \
 	Search::DFS::Sol::Binary::Nary::Binary::1::1::1 \
 	Set::Dom::Dom::Gr \
 	Set::RelOp::ConstSSI::Union \
