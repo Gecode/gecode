@@ -644,6 +644,216 @@ namespace Test { namespace Word { namespace Bounded {
     }
   } kernel;
 
+  /**
+   * Cross-family audit for publication into compact and bounded words.
+   *
+   * The deliberately small table complements the exhaustive arithmetic
+   * oracle: every concrete tuple admitted before posting is checked after
+   * propagation, and every complete tuple still admitted by the published
+   * domains is checked against the independent relation.  Thus a passing
+   * assigned-value check cannot hide either false failure or lost support.
+   * There are eight cases in six families; this is not an exhaustive actor
+   * matrix (signed domains, wide words, and family-specific corner cases stay
+   * with their focused tests).
+   */
+  class PublicationAudit : public Test::Base {
+  private:
+    enum Family { SHIFT, COUNT, CHANNEL, REIFIED, CONDITIONAL, EQUALITY };
+    struct Case {
+      Family family;
+      bool delayed;
+      bool mixed;
+      bool alias;
+      Gecode::ReifyMode mode;
+    };
+
+    class AuditSpace : public Gecode::Space {
+    public:
+      Gecode::WordVar x, y, z;
+      Gecode::BoolVar control;
+      Gecode::IntVar count;
+
+      AuditSpace(const Case& c, bool actor)
+        : x(*this,3,c.mixed ? Gecode::WDT_CUBE : Gecode::WDT_UNSIGNED),
+          y(*this,3,Gecode::WDT_UNSIGNED),
+          z(*this,3,Gecode::WDT_UNSIGNED), control(*this,0,1),
+          count(*this,0,3) {
+        if (c.alias)
+          y=x;
+        if (!c.delayed)
+          tells(c);
+        if (actor)
+          post(c);
+        if (c.delayed)
+          tells(c);
+      }
+      AuditSpace(AuditSpace& s) : Gecode::Space(s) {
+        x.update(*this,s.x); y.update(*this,s.y); z.update(*this,s.z);
+        control.update(*this,s.control); count.update(*this,s.count);
+      }
+      virtual Gecode::Space* copy(void) { return new AuditSpace(*this); }
+
+      void tells(const Case& c) {
+        using namespace Gecode;
+        Gecode::Word::WordView xv(x), yv(y), zv(z);
+        if (((x.domain_type() != WDT_CUBE) &&
+             me_failed(xv.narrow_rank_range(*this,1U,6U))) ||
+            me_failed(xv.narrow(*this,0U,6U)) ||
+            ((Gecode::Word::WordView(x) != yv) &&
+             (y.domain_type() != WDT_CUBE) &&
+             me_failed(yv.narrow_rank_range(*this,0U,5U))) ||
+            ((Gecode::Word::WordView(x) != yv) &&
+             me_failed(yv.narrow(*this,1U,7U))) ||
+            me_failed(zv.narrow_rank_range(*this,1U,6U)))
+          fail();
+        if (c.delayed && (c.family == CONDITIONAL))
+          rel(*this,control,IRT_EQ,1);
+      }
+      void post(const Case& c) {
+        using namespace Gecode;
+        switch (c.family) {
+        case SHIFT: shift_left(*this,x,1U,z); break;
+        case COUNT: popcount(*this,x,count); break;
+        case CHANNEL: channel(*this,x,1,control); break;
+        case REIFIED:
+          if (c.mode == RM_IMP)
+            rel(*this,y,WRT_UGQ,x,Reify(control,c.mode));
+          else
+            rel(*this,x,WRT_ULE,y,Reify(control,c.mode));
+          break;
+        case CONDITIONAL: ite(*this,control,x,y,z); break;
+        case EQUALITY: rel(*this,x,WRT_EQ,y); break;
+        }
+      }
+    };
+
+    static bool truth(const Case& c, WordValue x, WordValue y,
+                      WordValue z, int auxiliary) {
+      switch (c.family) {
+      case SHIFT: return z == ((x << 1U) & 7U);
+      case COUNT: {
+        unsigned int n=0;
+        for (WordValue v=x; v != 0U; v &= v-1U) n++;
+        return auxiliary == static_cast<int>(n);
+      }
+      case CHANNEL: return auxiliary == static_cast<int>((x >> 1) & 1U);
+      case REIFIED: {
+        const bool relation=x <= y;
+        if (c.mode == Gecode::RM_EQV) return auxiliary == relation;
+        if (c.mode == Gecode::RM_IMP) return !auxiliary || relation;
+        return relation || auxiliary;
+      }
+      case CONDITIONAL: return z == (auxiliary ? x : y);
+      case EQUALITY: return x == y;
+      }
+      return false;
+    }
+
+    static bool check(const Case& c, unsigned int& supported,
+                      unsigned int& rejected) {
+      using namespace Gecode;
+      AuditSpace initial(c,false);
+      AuditSpace actor(c,true);
+      const bool initial_failed=initial.status() == SS_FAILED;
+      const bool actor_failed=actor.status() == SS_FAILED;
+      if (initial_failed || actor_failed) {
+        ::Test::olog << "root failure initial=" << initial_failed
+                     << " actor=" << actor_failed << std::endl;
+        return false;
+      }
+      // Exercise cloning before the complete-assignment probes.  With a
+      // recomputation distance of one in the focused family tests, these same
+      // actors also cover archive/replay; this audit owns only publication.
+      AuditSpace* published=static_cast<AuditSpace*>(actor.clone());
+      if (published->status() == SS_FAILED) {
+        ::Test::olog << "clone failure" << std::endl;
+        delete published; return false;
+      }
+
+      const bool uses_y=(c.family == REIFIED) ||
+        (c.family == CONDITIONAL) || (c.family == EQUALITY);
+      const bool uses_z=(c.family == SHIFT) || (c.family == CONDITIONAL);
+      const bool uses_aux=(c.family == COUNT) || (c.family == CHANNEL) ||
+        (c.family == REIFIED) || (c.family == CONDITIONAL);
+      const int aux_max=(c.family == COUNT) ? 3 : 1;
+      for (WordValue xv=0; xv<8U; xv++)
+        for (WordValue yv=0; yv<(uses_y ? 8U : 1U); yv++)
+          for (WordValue zv=0; zv<(uses_z ? 8U : 1U); zv++)
+            for (int av=0; av<=(uses_aux ? aux_max : 0); av++) {
+              const bool admitted=initial.x.in(xv) &&
+                (!uses_y || initial.y.in(yv)) &&
+                (!uses_z || initial.z.in(zv)) &&
+                (!uses_aux || ((c.family == COUNT) ? initial.count.in(av) :
+                               initial.control.in(av)));
+              if (!admitted) continue;
+              const bool valid=truth(c,xv,yv,zv,av);
+              if (valid) {
+                supported++;
+                if (!published->x.in(xv) ||
+                    (uses_y && !published->y.in(yv)) ||
+                    (uses_z && !published->z.in(zv)) ||
+                    (uses_aux && ((c.family == COUNT) ?
+                     !published->count.in(av) : !published->control.in(av)))) {
+                  ::Test::olog << "lost support " << xv << ' ' << yv << ' '
+                               << zv << ' ' << av << std::endl;
+                  delete published;
+                  return false;
+                }
+              }
+              AuditSpace* assigned=static_cast<AuditSpace*>(published->clone());
+              dom(*assigned,assigned->x,xv);
+              if (uses_y) dom(*assigned,assigned->y,yv);
+              if (uses_z) dom(*assigned,assigned->z,zv);
+              if (uses_aux) {
+                if (c.family == COUNT) rel(*assigned,assigned->count,IRT_EQ,av);
+                else rel(*assigned,assigned->control,IRT_EQ,av);
+              }
+              const bool survives=assigned->status() != SS_FAILED;
+              delete assigned;
+              if (survives != valid) {
+                ::Test::olog << "assignment mismatch " << xv << ' ' << yv
+                             << ' ' << zv << ' ' << av << " survives="
+                             << survives << " valid=" << valid << std::endl;
+                delete published; return false;
+              }
+              if (!valid) rejected++;
+            }
+      delete published;
+      return true;
+    }
+
+  public:
+    PublicationAudit(void) : Test::Base("Word::Bounded::PublicationAudit") {}
+    virtual bool run(void) {
+      const Case cases[] = {
+        {SHIFT,false,false,false,Gecode::RM_EQV},
+        {SHIFT,true,true,false,Gecode::RM_EQV},
+        {COUNT,true,false,false,Gecode::RM_EQV},
+        {CHANNEL,false,false,false,Gecode::RM_EQV},
+        {REIFIED,true,true,false,Gecode::RM_EQV},
+        {REIFIED,false,false,false,Gecode::RM_IMP},
+        {CONDITIONAL,true,true,false,Gecode::RM_EQV},
+        {EQUALITY,false,true,true,Gecode::RM_EQV}
+      };
+      unsigned int supported=0, rejected=0;
+      unsigned int index=0;
+      for (const Case& c : cases) {
+        if (!check(c,supported,rejected)) {
+          ::Test::olog << "publication audit case " << index << std::endl;
+          return false;
+        }
+        index++;
+      }
+      // Freeze the table and its concrete coverage, not implementation detail.
+      if ((supported != 47U) || (rejected != 143U)) {
+        ::Test::olog << "publication audit counts " << supported << ' '
+                     << rejected << std::endl;
+        return false;
+      }
+      return true;
+    }
+  } publication_audit;
+
 }}}
 
 // STATISTICS: test-word

@@ -3,7 +3,7 @@ schema_version = 1
 id = "word-031"
 key = "audit-word-publication-contract"
 area = "word"
-status = "open"
+status = "done"
 complexity = "advanced"
 afk = true
 priority = "high"
@@ -27,12 +27,20 @@ All 134 existing Word tests passed at cced251d26 despite invalid and lost soluti
 
 ## Done when
 
-- [ ] A deterministic small-width set checks preservation of supported tuples, false failure and invalid surviving assignments for cube, bounded and mixed fallback paths.
-- [ ] Initial posting and delayed tells, operand order, aliases and selected rewrites are covered in the affected families.
-- [ ] Relevant clone/replay checks pass; any unrelated new defect is described as explicit follow-up rather than silently expanding scope.
-- [ ] A concise result records actual cases/families and remaining limitations.
+- [x] A deterministic small-width set checks preservation of supported tuples, false failure and invalid surviving assignments for cube, bounded and mixed fallback paths.
+- [x] Initial posting and delayed tells, operand order, aliases and selected rewrites are covered in the affected families.
+- [x] Relevant clone/replay checks pass; any unrelated new defect is described as explicit follow-up rather than silently expanding scope.
+- [x] A concise result records actual cases/families and remaining limitations.
 
 ## Validation
 
 - Run the focused support oracle, all Word tests and TestFramework on a frozen repaired revision.
 - Use assertion-enabled verification for relevant lifecycle paths and warning-clean Release compilation; record actual counts.
+
+## Result
+
+Add a compact cross-family publication audit covering fallback paths, delayed tells, aliases, operand order, reification, rewrites, cloning, and invalid complete assignments; no additional production defect was reproduced.
+
+Validation:
+
+- Independent verification passed: 8 cases across 6 families, 47 supported and 143 rejected tuples; Release and assertion-enabled Debug focused audits and TestFramework; warning-clean Release build; 134 non-Branch Word tests. Follow-up: Word::Branch has a pre-existing seed/order-sensitive failure independent of this audit and requires separate investigation.
