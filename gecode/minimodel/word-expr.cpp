@@ -304,6 +304,7 @@ namespace Gecode {
         case WordExpr::NT_MULT:
         case WordExpr::NT_DIV:
         case WordExpr::NT_MOD:
+        case WordExpr::NT_BOOL_ITE:
           return true;
         default:
           return false;
@@ -320,6 +321,7 @@ namespace Gecode {
         case WordExpr::NT_SIGNED_DIV:
         case WordExpr::NT_SIGNED_REM:
         case WordExpr::NT_SIGNED_MOD:
+        case WordExpr::NT_BOOL_ITE:
           return true;
         default:
           return false;

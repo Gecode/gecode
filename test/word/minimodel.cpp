@@ -1058,6 +1058,94 @@ namespace Test { namespace Word {
       }
     };
 
+    class BoundedBooleanConditionalLifecycle : public Base {
+    private:
+      class PolicySpace : public Gecode::Space {
+      public:
+        Gecode::BoolVar outer, inner;
+        Gecode::WordVar then_word, else_word, direct, expression, fallback;
+        PolicySpace(Gecode::WordDomainType kind)
+          : outer(*this,0,1), inner(*this,0,1),
+            then_word(*this,4,kind,
+                      kind == Gecode::WDT_SIGNED ? 12U : 2U,
+                      kind == Gecode::WDT_SIGNED ? 14U : 4U),
+            else_word(*this,4,kind,
+                      kind == Gecode::WDT_SIGNED ? 1U : 9U,
+                      kind == Gecode::WDT_SIGNED ? 3U : 11U),
+            direct(*this,4,kind), expression(), fallback() {
+          using namespace Gecode;
+          BoolExpr control=BoolExpr(outer) && BoolExpr(inner);
+          ite(*this,expr(*this,control),then_word,else_word,direct);
+          WordExpr conditional=ite(control,WordExpr(then_word),
+                                   WordExpr(else_word));
+          expression=conditional.post(*this,kind);
+          fallback=conditional.post(*this);
+        }
+        PolicySpace(PolicySpace& s) : Space(s) {
+          outer.update(*this,s.outer); inner.update(*this,s.inner);
+          then_word.update(*this,s.then_word); else_word.update(*this,s.else_word);
+          direct.update(*this,s.direct); expression.update(*this,s.expression);
+          fallback.update(*this,s.fallback);
+        }
+        virtual Space* copy(void) { return new PolicySpace(*this); }
+      };
+
+      static bool policy(Gecode::WordDomainType kind) {
+        using namespace Gecode;
+        PolicySpace s(kind);
+        const WordValue expected_min = kind == WDT_SIGNED ? 12U : 2U;
+        const WordValue expected_max = kind == WDT_SIGNED ? 3U : 11U;
+        if ((s.status() == SS_FAILED) ||
+            (s.expression.domain_type() != kind) ||
+            (s.fallback.domain_type() != WDT_CUBE) ||
+            (s.expression.minimum() != expected_min) ||
+            (s.expression.maximum() != expected_max) ||
+            (s.direct.minimum() != s.expression.minimum()) ||
+            (s.direct.maximum() != s.expression.maximum()))
+          return false;
+        rel(s,s.outer,IRT_EQ,1);
+        rel(s,s.inner,IRT_EQ,1);
+        return (s.status() != SS_FAILED) &&
+          (s.direct.minimum() == s.then_word.minimum()) &&
+          (s.direct.maximum() == s.then_word.maximum()) &&
+          (s.expression.minimum() == s.then_word.minimum()) &&
+          (s.expression.maximum() == s.then_word.maximum());
+      }
+
+      static bool alias(void) {
+        using namespace Gecode;
+        class AliasSpace : public Space {
+        public:
+          BoolVar outer, inner;
+          WordVar cube, bounded, result;
+          AliasSpace(void)
+            : outer(*this,1,1), inner(*this,1,1), cube(*this,4,3U,3U),
+              bounded(*this,4,WDT_SIGNED,13U,13U), result() {
+            WordExpr shared=WordExpr(cube)+WordExpr(bounded);
+            result=ite(BoolExpr(outer) && BoolExpr(inner),shared,shared)
+              .post(*this,WDT_UNSIGNED);
+          }
+          AliasSpace(AliasSpace& s) : Space(s) {
+            outer.update(*this,s.outer); inner.update(*this,s.inner);
+            cube.update(*this,s.cube); bounded.update(*this,s.bounded);
+            result.update(*this,s.result);
+          }
+          Space* copy(void) { return new AliasSpace(*this); }
+        } s;
+        return (s.status() != SS_FAILED) &&
+          (s.result.domain_type() == WDT_UNSIGNED) &&
+          s.result.assigned() && (s.result.val() == 0U);
+      }
+
+    public:
+      BoundedBooleanConditionalLifecycle(void)
+        : Base("Word::MiniModel::BoundedBooleanConditionalLifecycle") {}
+      virtual bool run(void) {
+        return policy(Gecode::WDT_UNSIGNED) && policy(Gecode::WDT_SIGNED) &&
+          alias();
+      }
+    };
+
     Logic logic;
     NamedLogic named_logic;
     BooleanConditional boolean_conditional;
@@ -1075,6 +1163,7 @@ namespace Test { namespace Word {
     ArithmeticLifecycle arithmetic_lifecycle;
     BooleanPolicyLifecycle boolean_policy_lifecycle;
     SharedLoweringLifecycle shared_lowering_lifecycle;
+    BoundedBooleanConditionalLifecycle bounded_boolean_conditional_lifecycle;
 
   }
 
