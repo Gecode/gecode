@@ -45,6 +45,7 @@
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <vector>
 
 /// General test support
 namespace Test {
@@ -111,7 +112,7 @@ namespace Test {
     void parse(int argc, char* argv[]);
 
     /// True iff a test name should be executed according to the patterns. With no patterns, always true.
-    bool is_test_name_matching(const std::string& test_name);
+    bool is_test_name_matching(const std::string& test_name) const;
   };
 
   /// The options
@@ -163,15 +164,15 @@ namespace Test {
     /// Random number generator
     mutable Gecode::Support::RandomGenerator _rand;
   };
+
+  /**
+   * \brief Run all currently registered tests through the shared runner
+   * \relates Test::Base
+   */
+  int run_registered_tests(int argc, char* argv[]);
   //@}
 
 }
-
-/**
- * \brief Main function
- * \relates Test::Base
- */
-int main(int argc, char* argv[]);
 
 /**
  * \brief Print indentation

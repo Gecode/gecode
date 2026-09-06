@@ -1354,8 +1354,49 @@ if(GECODE_ENABLE_FLATZINC)
 endif()
 
 if(BUILD_TESTING)
-  set(GECODE_CAN_BUILD_TESTS TRUE)
-  foreach(required search int minimodel driver)
+  set(GECODE_CAN_BUILD_TEST_HARNESS TRUE)
+  foreach(required search int)
+    if(NOT TARGET gecode${required})
+      set(GECODE_CAN_BUILD_TEST_HARNESS FALSE)
+    endif()
+  endforeach()
+
+  if(GECODE_CAN_BUILD_TEST_HARNESS)
+    add_library(gecodetest STATIC ${GECODE_TEST_CORE_SOURCES})
+    target_compile_features(gecodetest PUBLIC cxx_std_17)
+    target_include_directories(gecodetest
+      PUBLIC
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>)
+    if(GECODE_VISIBILITY_COMPILE_OPTION)
+      target_compile_options(gecodetest PRIVATE ${GECODE_VISIBILITY_COMPILE_OPTION})
+    endif()
+    target_link_libraries(gecodetest PUBLIC gecodesearch gecodeint)
+
+    add_library(gecodetestint STATIC ${GECODE_TEST_INT_SOURCES})
+    target_compile_features(gecodetestint PUBLIC cxx_std_17)
+    target_include_directories(gecodetestint
+      PUBLIC
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>)
+    if(GECODE_VISIBILITY_COMPILE_OPTION)
+      target_compile_options(gecodetestint PRIVATE ${GECODE_VISIBILITY_COMPILE_OPTION})
+    endif()
+    target_link_libraries(gecodetestint PUBLIC gecodetest)
+
+    add_executable(public-runner-smoke EXCLUDE_FROM_ALL ${GECODE_TEST_PUBLIC_RUNNER_SMOKE_SOURCE})
+    target_link_libraries(public-runner-smoke PRIVATE gecodetest)
+    add_test(NAME public-runner-smoke COMMAND public-runner-smoke)
+
+    add_executable(public-int-smoke EXCLUDE_FROM_ALL ${GECODE_TEST_PUBLIC_INT_SMOKE_SOURCE})
+    target_link_libraries(public-int-smoke PRIVATE gecodetestint)
+    add_test(NAME public-int-smoke COMMAND public-int-smoke)
+  else()
+    message(WARNING "Skipping public test harness targets because required modules are disabled")
+  endif()
+
+  set(GECODE_CAN_BUILD_TESTS ${GECODE_CAN_BUILD_TEST_HARNESS})
+  foreach(required minimodel driver)
     if(NOT TARGET gecode${required})
       set(GECODE_CAN_BUILD_TESTS FALSE)
     endif()
@@ -1393,8 +1434,8 @@ if(BUILD_TESTING)
   endif()
 
   if(GECODE_CAN_BUILD_TESTS)
-    add_executable(gecode-test EXCLUDE_FROM_ALL ${GECODE_TEST_SOURCES_SELECTED})
-    set(GECODE_TEST_LINK_LIBS gecodeminimodel)
+    add_executable(gecode-test EXCLUDE_FROM_ALL ${GECODE_TEST_MAIN_SOURCE} ${GECODE_TEST_SOURCES_SELECTED})
+    set(GECODE_TEST_LINK_LIBS gecodetestint gecodeminimodel)
     if(GECODE_ENABLE_FLATZINC)
       list(APPEND GECODE_TEST_LINK_LIBS gecodeflatzinc)
     endif()
