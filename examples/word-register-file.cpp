@@ -47,24 +47,31 @@ namespace {
     Driver::UnsignedIntOption _size;
     Driver::UnsignedIntOption _allowed_mask;
     Driver::StringOption _projection;
+    Driver::StringOption _search_control;
+    Driver::UnsignedIntOption _batch;
   public:
     enum Formulation { COMPACT_WORD, BOUNDED_WORD };
     enum Projection { PROJECTION_NONE, PROJECTION_ALL };
+    enum SearchControl { SEARCH_LSB, SEARCH_SPLIT_MIN };
 
     RegisterOptions(const char* name)
       : Options(name),
         _formulation("formulation","model formulation",COMPACT_WORD),
         _size("size","register count",4),
         _allowed_mask("allowed-mask","bit mask of selectable indices",0xffffffffU),
-        _projection("projection","none or all public projections",PROJECTION_NONE) {
+        _projection("projection","none or all public projections",PROJECTION_NONE),
+        _search_control("search-control","Word value selector",SEARCH_LSB),
+        _batch("batch","complete in-process repetitions",1U) {
       solutions(0);
       add(_formulation);
       _formulation.add(COMPACT_WORD,"compact-word","compact Word variables");
       _formulation.add(BOUNDED_WORD,"bounded-word",
                        "unsigned-bounded Word variables");
-      add(_size); add(_allowed_mask); add(_projection);
+      add(_size); add(_allowed_mask); add(_projection); add(_search_control); add(_batch);
       _projection.add(PROJECTION_NONE,"none","do not emit projections");
       _projection.add(PROJECTION_ALL,"all","emit all public projections");
+      _search_control.add(SEARCH_LSB,"lsb","least-significant-bit first");
+      _search_control.add(SEARCH_SPLIT_MIN,"split-min","lower ranked split");
     }
     Formulation formulation(void) const {
       return static_cast<Formulation>(_formulation.value());
@@ -77,6 +84,10 @@ namespace {
     Projection projection(void) const {
       return static_cast<Projection>(_projection.value());
     }
+    SearchControl search_control(void) const {
+      return static_cast<SearchControl>(_search_control.value());
+    }
+    unsigned int batch(void) const { return _batch.value(); }
   };
 
 }
@@ -140,9 +151,15 @@ public:
     add(*this,addend,total);
 
     branch(*this,index,INT_VAL_MIN());
-    branch(*this,registers,WORD_VAR_NONE(),WORD_VAL_LSB());
+    if (opt.search_control() == RegisterOptions::SEARCH_SPLIT_MIN)
+      branch(*this,registers,WORD_VAR_NONE(),WORD_VAL_SPLIT_MIN());
+    else
+      branch(*this,registers,WORD_VAR_NONE(),WORD_VAL_LSB());
     WordVarArgs derived={selected,total};
-    branch(*this,derived,WORD_VAR_NONE(),WORD_VAL_LSB());
+    if (opt.search_control() == RegisterOptions::SEARCH_SPLIT_MIN)
+      branch(*this,derived,WORD_VAR_NONE(),WORD_VAL_SPLIT_MIN());
+    else
+      branch(*this,derived,WORD_VAR_NONE(),WORD_VAL_LSB());
   }
   /// Constructor for cloning \a s
   WordRegisterFile(WordRegisterFile& s)
@@ -194,27 +211,30 @@ main(int argc, char* argv[]) {
     std::cerr << "register count must be between 1 and 8\n";
     return 2;
   }
-  WordRegisterFile* root=new WordRegisterFile(opt);
-  StatusStatistics root_statistics;
-  const SpaceStatus root_status=root->status(root_statistics);
-  const bool index_pruned=root->index_pruned();
-  const unsigned int root_propagators=PropagatorGroup::all.size(*root);
-  const unsigned int root_branchers=BrancherGroup::all.size(*root);
-  DFS<WordRegisterFile> search(root_status == SS_FAILED ? nullptr : root);
-  delete root;
+  if (opt.batch() == 0U) return 2;
+  bool index_pruned=false; unsigned int root_propagators=0, root_branchers=0;
   std::uint64_t solutions=0, checksum=0;
+  std::uint64_t first_solutions=0, nodes=0, failures=0, propagations=0;
   std::vector<std::vector<unsigned int> > projections;
-  while (WordRegisterFile* solution=search.next()) {
-    ++solutions;
-    checksum += solution->solution_value();
-    if (opt.projection() == RegisterOptions::PROJECTION_ALL)
-      projections.push_back(solution->public_projection());
-    delete solution;
+  for (unsigned int trial=0; trial<opt.batch(); trial++) {
+    WordRegisterFile* root=new WordRegisterFile(opt); StatusStatistics root_statistics;
+    const SpaceStatus root_status=root->status(root_statistics);
+    if (trial == 0U) { index_pruned=root->index_pruned(); root_propagators=PropagatorGroup::all.size(*root); root_branchers=BrancherGroup::all.size(*root); }
+    DFS<WordRegisterFile> search(root_status == SS_FAILED ? nullptr : root); delete root;
+    while (WordRegisterFile* solution=search.next()) {
+      ++solutions; if (trial == 0U) ++first_solutions;
+      checksum += solution->solution_value();
+      if (trial == 0U && opt.projection() == RegisterOptions::PROJECTION_ALL) projections.push_back(solution->public_projection());
+      delete solution;
+    }
+    const Search::Statistics statistics=search.statistics();
+    nodes+=statistics.node; failures+=statistics.fail;
+    propagations+=root_statistics.propagate+statistics.propagate;
   }
-  const Search::Statistics statistics=search.statistics();
   std::cout << "{\"schema_version\":1,\"status\":\"ok\""
             << ",\"formulation\":\"" << opt.formulation_name() << "\""
-            << ",\"solutions\":" << solutions
+            << ",\"solutions\":" << first_solutions
+            << ",\"batch\":" << opt.batch() << ",\"batch_solutions\":" << solutions
             << ",\"checksum\":" << checksum
             << ",\"semantic_status\":\"" << (solutions ? "sat" : "unsat") << "\""
             << ",\"decision_variables\":[\"index\"";
@@ -232,10 +252,9 @@ main(int argc, char* argv[]) {
   }
   std::cout << ']'
             << ",\"index_pruned\":" << (index_pruned ? "true" : "false")
-            << ",\"nodes\":" << statistics.node
-            << ",\"failures\":" << statistics.fail
-            << ",\"propagations\":"
-            << root_statistics.propagate+statistics.propagate
+            << ",\"nodes\":" << nodes
+            << ",\"failures\":" << failures
+            << ",\"propagations\":" << propagations
             << ",\"root_propagators\":" << root_propagators
             << ",\"root_branchers\":" << root_branchers << "}\n";
   return 0;

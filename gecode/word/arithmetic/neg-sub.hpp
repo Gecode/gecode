@@ -77,72 +77,74 @@ namespace Gecode { namespace Word { namespace Arithmetic {
   neg_narrow(Home home, View x, View z) {
     const unsigned int width = x.width();
     const bool xz = x == z;
-    unsigned char forward[65] = {0};
-    unsigned char backward[65] = {0};
-    forward[0] = 2U;
-    for (unsigned int bit=0; bit<width; bit++) {
-      unsigned int states = 0;
-      for (unsigned int carry=0; carry<2; carry++) {
-        if ((forward[bit] & (1U << carry)) == 0)
-          continue;
-        for (unsigned int xv=0; xv<2; xv++)
-          for (unsigned int zv=0; zv<2; zv++) {
-            unsigned int next;
-            if (neg_transition(x,z,xz,bit,carry,xv,zv,next))
-              states |= 1U << next;
-          }
-      }
-      forward[bit+1] = static_cast<unsigned char>(states);
-      if (states == 0)
-        return ES_FAILED;
-    }
-
-    backward[width] = 3U;
-    for (unsigned int bit=width; bit-- > 0;) {
-      unsigned int states = 0;
-      for (unsigned int carry=0; carry<2; carry++)
-        for (unsigned int xv=0; xv<2; xv++)
-          for (unsigned int zv=0; zv<2; zv++) {
-            unsigned int next;
-            if (neg_transition(x,z,xz,bit,carry,xv,zv,next) &&
-                ((backward[bit+1] & (1U << next)) != 0))
-              states |= 1U << carry;
-          }
-      backward[bit] = static_cast<unsigned char>(states);
-    }
-    if ((backward[0] & 2U) == 0)
-      return ES_FAILED;
-
-    WordValue lo[2] = {0,0};
-    WordValue hi[2] = {0,0};
-    for (unsigned int bit=0; bit<width; bit++) {
-      unsigned int support[2][2] = {{0,0},{0,0}};
-      for (unsigned int carry=0; carry<2; carry++) {
-        if ((forward[bit] & (1U << carry)) == 0)
-          continue;
-        for (unsigned int xv=0; xv<2; xv++)
-          for (unsigned int zv=0; zv<2; zv++) {
-            unsigned int next;
-            if (neg_transition(x,z,xz,bit,carry,xv,zv,next) &&
-                ((backward[bit+1] & (1U << next)) != 0)) {
-              support[0][xv] = support[1][zv] = 1U;
+    for (;;) {
+      unsigned char forward[65] = {0};
+      unsigned char backward[65] = {0};
+      forward[0] = 2U;
+      for (unsigned int bit=0; bit<width; bit++) {
+        unsigned int states = 0;
+        for (unsigned int carry=0; carry<2; carry++) {
+          if ((forward[bit] & (1U << carry)) == 0)
+            continue;
+          for (unsigned int xv=0; xv<2; xv++)
+            for (unsigned int zv=0; zv<2; zv++) {
+              unsigned int next;
+              if (neg_transition(x,z,xz,bit,carry,xv,zv,next))
+                states |= 1U << next;
             }
-          }
+        }
+        forward[bit+1] = static_cast<unsigned char>(states);
+        if (states == 0)
+          return ES_FAILED;
       }
-      const WordValue mask = WordValue(1) << bit;
-      for (int i=0; i<2; i++) {
-        if (support[i][1] != 0)
-          hi[i] |= mask;
-        if (support[i][0] == 0)
-          lo[i] |= mask;
+
+      backward[width] = 3U;
+      for (unsigned int bit=width; bit-- > 0;) {
+        unsigned int states = 0;
+        for (unsigned int carry=0; carry<2; carry++)
+          for (unsigned int xv=0; xv<2; xv++)
+            for (unsigned int zv=0; zv<2; zv++) {
+              unsigned int next;
+              if (neg_transition(x,z,xz,bit,carry,xv,zv,next) &&
+                  ((backward[bit+1] & (1U << next)) != 0))
+                states |= 1U << carry;
+            }
+        backward[bit] = static_cast<unsigned char>(states);
       }
+      if ((backward[0] & 2U) == 0)
+        return ES_FAILED;
+
+      WordValue lo[2] = {0,0};
+      WordValue hi[2] = {0,0};
+      for (unsigned int bit=0; bit<width; bit++) {
+        unsigned int support[2][2] = {{0,0},{0,0}};
+        for (unsigned int carry=0; carry<2; carry++) {
+          if ((forward[bit] & (1U << carry)) == 0)
+            continue;
+          for (unsigned int xv=0; xv<2; xv++)
+            for (unsigned int zv=0; zv<2; zv++) {
+              unsigned int next;
+              if (neg_transition(x,z,xz,bit,carry,xv,zv,next) &&
+                  ((backward[bit+1] & (1U << next)) != 0)) {
+                support[0][xv] = support[1][zv] = 1U;
+              }
+            }
+        }
+        const WordValue mask = WordValue(1) << bit;
+        for (int i=0; i<2; i++) {
+          if (support[i][1] != 0)
+            hi[i] |= mask;
+          if (support[i][0] == 0)
+            lo[i] |= mask;
+        }
+      }
+      GECODE_ME_CHECK(x.narrow(home,lo[0],hi[0]));
+      GECODE_ME_CHECK(z.narrow(home,lo[1],hi[1]));
+      if ((x.lo() != lo[0]) || (x.hi() != hi[0]) ||
+          (z.lo() != lo[1]) || (z.hi() != hi[1]))
+        continue;
+      return ES_OK;
     }
-    GECODE_ME_CHECK(x.narrow(home,lo[0],hi[0]));
-    GECODE_ME_CHECK(z.narrow(home,lo[1],hi[1]));
-    if ((x.lo() != lo[0]) || (x.hi() != hi[0]) ||
-        (z.lo() != lo[1]) || (z.hi() != hi[1]))
-      return neg_narrow(home,x,z);
-    return ES_OK;
   }
 
   forceinline ExecStatus
@@ -211,83 +213,85 @@ namespace Gecode { namespace Word { namespace Arithmetic {
     const bool xy = x == y;
     const bool xz = x == z;
     const bool yz = y == z;
-    unsigned char forward[65] = {0};
-    unsigned char backward[65] = {0};
-    forward[0] = 1U;
-    for (unsigned int bit=0; bit<width; bit++) {
-      unsigned int states = 0;
-      for (unsigned int borrow=0; borrow<2; borrow++) {
-        if ((forward[bit] & (1U << borrow)) == 0)
-          continue;
-        for (unsigned int xv=0; xv<2; xv++)
-          for (unsigned int yv=0; yv<2; yv++)
-            for (unsigned int zv=0; zv<2; zv++) {
-              unsigned int next;
-              if (sub_transition(x,y,z,xy,xz,yz,bit,borrow,
-                                 xv,yv,zv,next))
-                states |= 1U << next;
-            }
-      }
-      forward[bit+1] = static_cast<unsigned char>(states);
-      if (states == 0)
-        return ES_FAILED;
-    }
-
-    final = forward[width] & terminal;
-    if (final == 0)
-      return ES_FAILED;
-    backward[width] = static_cast<unsigned char>(terminal);
-    for (unsigned int bit=width; bit-- > 0;) {
-      unsigned int states = 0;
-      for (unsigned int borrow=0; borrow<2; borrow++)
-        for (unsigned int xv=0; xv<2; xv++)
-          for (unsigned int yv=0; yv<2; yv++)
-            for (unsigned int zv=0; zv<2; zv++) {
-              unsigned int next;
-              if (sub_transition(x,y,z,xy,xz,yz,bit,borrow,
-                                 xv,yv,zv,next) &&
-                  ((backward[bit+1] & (1U << next)) != 0))
-                states |= 1U << borrow;
-            }
-      backward[bit] = static_cast<unsigned char>(states);
-    }
-    if ((backward[0] & 1U) == 0)
-      return ES_FAILED;
-
-    WordValue lo[3] = {0,0,0};
-    WordValue hi[3] = {0,0,0};
-    for (unsigned int bit=0; bit<width; bit++) {
-      unsigned int support[3][2] = {{0,0},{0,0},{0,0}};
-      for (unsigned int borrow=0; borrow<2; borrow++) {
-        if ((forward[bit] & (1U << borrow)) == 0)
-          continue;
-        for (unsigned int xv=0; xv<2; xv++)
-          for (unsigned int yv=0; yv<2; yv++)
-            for (unsigned int zv=0; zv<2; zv++) {
-              unsigned int next;
-              if (sub_transition(x,y,z,xy,xz,yz,bit,borrow,
-                                 xv,yv,zv,next) &&
-                  ((backward[bit+1] & (1U << next)) != 0)) {
-                support[0][xv] = support[1][yv] = support[2][zv] = 1U;
+    for (;;) {
+      unsigned char forward[65] = {0};
+      unsigned char backward[65] = {0};
+      forward[0] = 1U;
+      for (unsigned int bit=0; bit<width; bit++) {
+        unsigned int states = 0;
+        for (unsigned int borrow=0; borrow<2; borrow++) {
+          if ((forward[bit] & (1U << borrow)) == 0)
+            continue;
+          for (unsigned int xv=0; xv<2; xv++)
+            for (unsigned int yv=0; yv<2; yv++)
+              for (unsigned int zv=0; zv<2; zv++) {
+                unsigned int next;
+                if (sub_transition(x,y,z,xy,xz,yz,bit,borrow,
+                                   xv,yv,zv,next))
+                  states |= 1U << next;
               }
-            }
+        }
+        forward[bit+1] = static_cast<unsigned char>(states);
+        if (states == 0)
+          return ES_FAILED;
       }
-      const WordValue mask = WordValue(1) << bit;
-      for (int i=0; i<3; i++) {
-        if (support[i][1] != 0)
-          hi[i] |= mask;
-        if (support[i][0] == 0)
-          lo[i] |= mask;
+
+      final = forward[width] & terminal;
+      if (final == 0)
+        return ES_FAILED;
+      backward[width] = static_cast<unsigned char>(terminal);
+      for (unsigned int bit=width; bit-- > 0;) {
+        unsigned int states = 0;
+        for (unsigned int borrow=0; borrow<2; borrow++)
+          for (unsigned int xv=0; xv<2; xv++)
+            for (unsigned int yv=0; yv<2; yv++)
+              for (unsigned int zv=0; zv<2; zv++) {
+                unsigned int next;
+                if (sub_transition(x,y,z,xy,xz,yz,bit,borrow,
+                                   xv,yv,zv,next) &&
+                    ((backward[bit+1] & (1U << next)) != 0))
+                  states |= 1U << borrow;
+              }
+        backward[bit] = static_cast<unsigned char>(states);
       }
+      if ((backward[0] & 1U) == 0)
+        return ES_FAILED;
+
+      WordValue lo[3] = {0,0,0};
+      WordValue hi[3] = {0,0,0};
+      for (unsigned int bit=0; bit<width; bit++) {
+        unsigned int support[3][2] = {{0,0},{0,0},{0,0}};
+        for (unsigned int borrow=0; borrow<2; borrow++) {
+          if ((forward[bit] & (1U << borrow)) == 0)
+            continue;
+          for (unsigned int xv=0; xv<2; xv++)
+            for (unsigned int yv=0; yv<2; yv++)
+              for (unsigned int zv=0; zv<2; zv++) {
+                unsigned int next;
+                if (sub_transition(x,y,z,xy,xz,yz,bit,borrow,
+                                   xv,yv,zv,next) &&
+                    ((backward[bit+1] & (1U << next)) != 0)) {
+                  support[0][xv] = support[1][yv] = support[2][zv] = 1U;
+                }
+              }
+        }
+        const WordValue mask = WordValue(1) << bit;
+        for (int i=0; i<3; i++) {
+          if (support[i][1] != 0)
+            hi[i] |= mask;
+          if (support[i][0] == 0)
+            lo[i] |= mask;
+        }
+      }
+      GECODE_ME_CHECK(x.narrow(home,lo[0],hi[0]));
+      GECODE_ME_CHECK(y.narrow(home,lo[1],hi[1]));
+      GECODE_ME_CHECK(z.narrow(home,lo[2],hi[2]));
+      if ((x.lo() != lo[0]) || (x.hi() != hi[0]) ||
+          (y.lo() != lo[1]) || (y.hi() != hi[1]) ||
+          (z.lo() != lo[2]) || (z.hi() != hi[2]))
+        continue;
+      return ES_OK;
     }
-    GECODE_ME_CHECK(x.narrow(home,lo[0],hi[0]));
-    GECODE_ME_CHECK(y.narrow(home,lo[1],hi[1]));
-    GECODE_ME_CHECK(z.narrow(home,lo[2],hi[2]));
-    if ((x.lo() != lo[0]) || (x.hi() != hi[0]) ||
-        (y.lo() != lo[1]) || (y.hi() != hi[1]) ||
-        (z.lo() != lo[2]) || (z.hi() != hi[2]))
-      return sub_narrow(home,x,y,z,terminal,final);
-    return ES_OK;
   }
 
   forceinline ExecStatus

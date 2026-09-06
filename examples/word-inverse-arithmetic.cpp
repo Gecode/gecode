@@ -36,7 +36,7 @@ namespace {
   class Model : public Space {
   public:
     WordVar x, y, z, r;
-    Model(const Case& c)
+    Model(const Case& c, bool lsb)
       : x(*this,c.width,c.is_signed ? WDT_SIGNED : WDT_UNSIGNED,c.xmin,c.xmax),
         y(*this,c.width,c.is_signed ? WDT_SIGNED : WDT_UNSIGNED,c.ymin,c.ymax),
         z(*this,c.width,c.is_signed ? WDT_SIGNED : WDT_UNSIGNED,c.zmin,c.zmax),
@@ -58,7 +58,10 @@ namespace {
       }
       WordVarArgs variables = std::string(c.operation) == "divmod" ?
         WordVarArgs({x,y,z,r}) : WordVarArgs({x,y,z});
-      branch(*this,variables,WORD_VAR_NONE(),WORD_VAL_SPLIT_MIN());
+      if (lsb)
+        branch(*this,variables,WORD_VAR_NONE(),WORD_VAL_LSB());
+      else
+        branch(*this,variables,WORD_VAR_NONE(),WORD_VAL_SPLIT_MIN());
     }
     Model(Model& s) : Space(s) {
       x.update(*this,s.x); y.update(*this,s.y); z.update(*this,s.z); r.update(*this,s.r);
@@ -68,19 +71,39 @@ namespace {
 }
 
 int main(int argc, char* argv[]) {
-  if (argc != 3 || std::string(argv[1]) != "--case") return 2;
+  if ((argc != 3 && argc != 5 && argc != 7) || std::string(argv[1]) != "--case") return 2;
+  unsigned int batch=1U;
+  std::string search="split-min";
+  for (int i=3; i<argc; i+=2) {
+    if (i+1 == argc) return 2;
+    if (std::string(argv[i]) == "--search" &&
+        (std::string(argv[i+1]) == "lsb" || std::string(argv[i+1]) == "split-min"))
+      search=argv[i+1];
+    else if (std::string(argv[i]) == "--batch")
+      batch=static_cast<unsigned int>(std::strtoul(argv[i+1],nullptr,10));
+    else return 2;
+  }
+  if (batch == 0U) return 2;
   const Case* selected=nullptr;
   for (const Case& c : cases) if (c.id == std::string(argv[2])) selected=&c;
   if (selected == nullptr) return 2;
-  Model* root=new Model(*selected); DFS<Model> search(root); delete root;
   std::vector<std::vector<WordValue> > rows;
-  while (Model* solution=search.next()) {
-    std::vector<WordValue> row={solution->x.val(),solution->y.val(),solution->z.val()};
-    if (std::string(selected->operation) == "divmod") row.push_back(solution->r.val());
-    rows.push_back(row); delete solution;
+  std::uint64_t total_solutions=0;
+  for (unsigned int trial=0; trial<batch; trial++) {
+    Model* root=new Model(*selected,search == "lsb"); DFS<Model> engine(root); delete root;
+    while (Model* solution=engine.next()) {
+      total_solutions++;
+      if (trial == 0U) {
+        std::vector<WordValue> row={solution->x.val(),solution->y.val(),solution->z.val()};
+        if (std::string(selected->operation) == "divmod") row.push_back(solution->r.val());
+        rows.push_back(row);
+      }
+      delete solution;
+    }
   }
   std::cout << "{\"schema_version\":1,\"semantic_status\":\""
             << (rows.empty() ? "unsat" : "sat") << "\",\"solutions\":" << rows.size()
+            << ",\"batch\":" << batch << ",\"batch_solutions\":" << total_solutions
             << ",\"decision_variables\":[\"x\",\"y\",\""
             << (std::string(selected->operation) == "divmod" ? "quotient\",\"remainder" : "result")
             << "\"],\"projections\":[";

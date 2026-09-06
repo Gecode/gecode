@@ -48,7 +48,8 @@ namespace {
   public:
     WordVarArray public_words;
     const Case* spec;
-    Model(const Case& c) : public_words(*this,c.family==SPECK32_64 ? 4 : 1,
+    Model(const Case& c, bool msb, const WordValue* excluded=nullptr)
+      : public_words(*this,c.family==SPECK32_64 ? 4 : 1,
         c.family==CRC16 ? 8 : (c.family==XORSHIFT32 ? 32 : 16),0,
         c.family==CRC16 ? 255 : (c.family==XORSHIFT32 ? 0xffffffffU : 65535)), spec(&c) {
       for (int i=0; i<public_words.size(); i++)
@@ -104,12 +105,16 @@ namespace {
         BoolVarArgs equalities;
         for (int i=0; i<public_words.size(); i++) {
           BoolVar equal(*this,0,1); rel(*this,public_words[i],WRT_EQ,
-            public_words[i].width(),c.known_value[i],Reify(equal,RM_EQV));
+            public_words[i].width(),excluded == nullptr ? c.known_value[i] : excluded[i],
+            Reify(equal,RM_EQV));
           equalities << equal;
         }
         linear(*this,equalities,IRT_LQ,public_words.size()-1);
       }
-      branch(*this,WordVarArgs(public_words),WORD_VAR_NONE(),WORD_VAL_LSB());
+      if (msb)
+        branch(*this,WordVarArgs(public_words),WORD_VAR_NONE(),WORD_VAL_MSB());
+      else
+        branch(*this,WordVarArgs(public_words),WORD_VAR_NONE(),WORD_VAL_LSB());
     }
     Model(Model& s) : Space(s), spec(s.spec) { public_words.update(*this,s.public_words); }
     Space* copy(void) { return new Model(*this); }
@@ -117,23 +122,81 @@ namespace {
 }
 
 int main(int argc, char* argv[]) {
-  if (argc != 3 || std::strcmp(argv[1],"--case") != 0) return 2;
+  const bool parameter_mode=(argc >= 21) && !std::strcmp(argv[1],"--parameters");
+  const int option_start=parameter_mode ? 19 : 3;
+  if ((!parameter_mode && std::strcmp(argv[1],"--case")) || argc < option_start ||
+      ((argc-option_start)%2 != 0)) return 2;
+  const char* search="lsb";
+  unsigned int batch=1U;
+  for (int i=option_start; i<argc; i+=2) {
+    if (!std::strcmp(argv[i],"--search") &&
+        (!std::strcmp(argv[i+1],"lsb") || !std::strcmp(argv[i+1],"msb"))) search=argv[i+1];
+    else if (!std::strcmp(argv[i],"--batch"))
+      batch=static_cast<unsigned int>(std::strtoul(argv[i+1],nullptr,0));
+    else return 2;
+  }
+  if (batch == 0U) return 2;
+  Case dynamic={"dynamic",CRC16,0,{0,0,0,0},{0,0,0,0},0,0,false};
+  WordValue dynamic_excluded[4]={0,0,0,0};
   const Case* selected=nullptr;
-  for (const Case& c : cases) if (std::strcmp(c.id,argv[2]) == 0) selected=&c;
+  if (parameter_mode) {
+    if (!std::strcmp(argv[2],"crc16")) dynamic.family=CRC16;
+    else if (!std::strcmp(argv[2],"xorshift32")) dynamic.family=XORSHIFT32;
+    else if (!std::strcmp(argv[2],"speck32_64")) dynamic.family=SPECK32_64;
+    else return 2;
+    dynamic.rounds=static_cast<unsigned int>(std::strtoul(argv[3],nullptr,0));
+    for (int i=0; i<4; i++) {
+      dynamic.known_mask[i]=std::strtoull(argv[4+2*i],nullptr,0);
+      dynamic.known_value[i]=std::strtoull(argv[5+2*i],nullptr,0);
+    }
+    dynamic.output_mask=std::strtoull(argv[12],nullptr,0);
+    dynamic.output_value=std::strtoull(argv[13],nullptr,0);
+    const unsigned long exclude=std::strtoul(argv[14],nullptr,0);
+    dynamic.exclude=exclude != 0U;
+    for (int i=0; i<4; i++)
+      dynamic_excluded[i]=std::strtoull(argv[15+i],nullptr,0);
+    if (dynamic.rounds == 0U || exclude > 1U) return 2;
+    const WordValue input_mask=dynamic.family == CRC16 ? 0xffU :
+      (dynamic.family == XORSHIFT32 ? 0xffffffffU : 0xffffU);
+    const int public_count=dynamic.family == SPECK32_64 ? 4 : 1;
+    for (int i=0; i<public_count; i++)
+      if ((dynamic.known_mask[i] & ~input_mask) ||
+          (dynamic.known_value[i] & ~input_mask) ||
+          (dynamic_excluded[i] & ~input_mask)) return 2;
+    for (int i=public_count; i<4; i++)
+      if (dynamic_excluded[i] != 0U) return 2;
+    const WordValue result_mask=dynamic.family == CRC16 ? 0xffffU : 0xffffffffU;
+    if ((dynamic.output_mask & ~result_mask) ||
+        (dynamic.output_value & ~result_mask)) return 2;
+    selected=&dynamic;
+  } else {
+    for (const Case& c : cases) if (std::strcmp(c.id,argv[2]) == 0) selected=&c;
+  }
   if (selected == nullptr) return 2;
-  Model* root=new Model(*selected); SpaceStatus root_status=root->status();
+  const bool msb=!std::strcmp(search,"msb");
+  const WordValue* excluded=parameter_mode ? dynamic_excluded : nullptr;
+  Model* root=new Model(*selected,msb,excluded); SpaceStatus root_status=root->status();
   std::vector<unsigned int> root_fixed;
   for (int i=0; i<root->public_words.size(); i++)
     root_fixed.push_back(root->public_words[i].width()-root->public_words[i].unknown_size());
-  DFS<Model> search(root); delete root; std::vector<std::vector<WordValue> > rows;
-  while (Model* solution=search.next()) {
-    std::vector<WordValue> row;
-    for (int i=0; i<solution->public_words.size(); i++) row.push_back(solution->public_words[i].val());
-    rows.push_back(row); delete solution;
+  delete root; std::vector<std::vector<WordValue> > rows;
+  std::uint64_t total_solutions=0;
+  for (unsigned int trial=0; trial<batch; trial++) {
+    Model* trial_root=new Model(*selected,msb,excluded); DFS<Model> engine(trial_root); delete trial_root;
+    while (Model* solution=engine.next()) {
+      total_solutions++;
+      if (trial == 0U) {
+        std::vector<WordValue> row;
+        for (int i=0; i<solution->public_words.size(); i++) row.push_back(solution->public_words[i].val());
+        rows.push_back(row);
+      }
+      delete solution;
+    }
   }
   std::cout << "{\"schema_version\":1,\"case\":\"" << selected->id
             << "\",\"semantic_status\":\"" << (rows.empty()?"unsat":"sat")
-            << "\",\"solutions\":" << rows.size() << ",\"decision_variables\":[";
+            << "\",\"solutions\":" << rows.size() << ",\"batch\":" << batch
+            << ",\"batch_solutions\":" << total_solutions << ",\"decision_variables\":[";
   if (selected->family==CRC16) std::cout << "\"message\"";
   else if (selected->family==XORSHIFT32) std::cout << "\"state\"";
   else std::cout << "\"key0\",\"key1\",\"key2\",\"key3\"";

@@ -46,7 +46,7 @@ namespace {
     WordVar input, output;
     ComparisonALU(unsigned int width, WordValue input_min,
                   WordValue input_max, WordValue output_min,
-                  WordValue output_max)
+                  WordValue output_max, bool lsb)
       : input(*this,width,WDT_UNSIGNED,input_min,input_max),
         output(*this,width,WDT_UNSIGNED,output_min,output_max) {
       const WordValue mask=Word::width_mask(width);
@@ -66,8 +66,11 @@ namespace {
       ite(*this,carry,xored,shifted,s3);
       add(*this,s3,width,1U,incremented);
       ite(*this,negative,incremented,s3,output);
-      branch(*this,input,WORD_VAL_SPLIT_MIN());
-      branch(*this,output,WORD_VAL_SPLIT_MIN());
+      if (lsb) {
+        branch(*this,input,WORD_VAL_LSB()); branch(*this,output,WORD_VAL_LSB());
+      } else {
+        branch(*this,input,WORD_VAL_SPLIT_MIN()); branch(*this,output,WORD_VAL_SPLIT_MIN());
+      }
     }
     ComparisonALU(ComparisonALU& s) : Space(s) {
       input.update(*this,s.input); output.update(*this,s.output);
@@ -76,18 +79,33 @@ namespace {
   };
 
   int comparison_main(int argc, char* argv[]) {
-    if (argc != 11) return 2;
+    if (argc < 11 || ((argc-11)%2 != 0)) return 2;
+    const char* search="split-min"; unsigned int batch=1U;
+    for (int i=11; i<argc; i+=2) {
+      if (!std::strcmp(argv[i],"--search") &&
+          (!std::strcmp(argv[i+1],"lsb") || !std::strcmp(argv[i+1],"split-min"))) search=argv[i+1];
+      else if (!std::strcmp(argv[i],"--batch"))
+        batch=static_cast<unsigned int>(std::strtoul(argv[i+1],nullptr,10));
+      else return 2;
+    }
+    if (batch == 0U) return 2;
     unsigned int width=static_cast<unsigned int>(std::strtoul(argv[2],nullptr,10));
     WordValue imin=std::strtoull(argv[4],nullptr,10), imax=std::strtoull(argv[6],nullptr,10);
     WordValue omin=std::strtoull(argv[8],nullptr,10), omax=std::strtoull(argv[10],nullptr,10);
-    ComparisonALU* root=new ComparisonALU(width,imin,imax,omin,omax);
-    DFS<ComparisonALU> search(root); delete root;
     std::vector<std::pair<WordValue,WordValue> > rows;
-    while (ComparisonALU* solution=search.next()) {
-      rows.emplace_back(solution->input.val(),solution->output.val()); delete solution;
+    std::uint64_t total_solutions=0;
+    for (unsigned int trial=0; trial<batch; trial++) {
+      ComparisonALU* root=new ComparisonALU(width,imin,imax,omin,omax,!std::strcmp(search,"lsb"));
+      DFS<ComparisonALU> engine(root); delete root;
+      while (ComparisonALU* solution=engine.next()) {
+        total_solutions++;
+        if (trial == 0U) rows.emplace_back(solution->input.val(),solution->output.val());
+        delete solution;
+      }
     }
     std::cout << "{\"schema_version\":1,\"semantic_status\":\""
               << (rows.empty() ? "unsat" : "sat") << "\",\"solutions\":" << rows.size()
+              << ",\"batch\":" << batch << ",\"batch_solutions\":" << total_solutions
               << ",\"decision_variables\":[\"input\",\"output\"],\"projections\":[";
     for (std::size_t i=0; i<rows.size(); i++) {
       if (i) std::cout << ','; std::cout << '[' << rows[i].first << ',' << rows[i].second << ']';

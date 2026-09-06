@@ -236,77 +236,79 @@ namespace Gecode { namespace Word { namespace Arithmetic {
   forceinline ExecStatus
   mult_narrow_views(Home home, View x, View y, View z) {
     const unsigned int width = x.width();
-    WordValue lo[] = {x.lo(),y.lo(),z.lo()};
-    WordValue hi[] = {x.hi(),y.hi(),z.hi()};
-    bool changed;
-    do {
-      const WordValue old_lo[] = {lo[0],lo[1],lo[2]};
-      const WordValue old_hi[] = {hi[0],hi[1],hi[2]};
+    for (;;) {
+      WordValue lo[] = {x.lo(),y.lo(),z.lo()};
+      WordValue hi[] = {x.hi(),y.hi(),z.hi()};
+      bool changed;
+      do {
+        const WordValue old_lo[] = {lo[0],lo[1],lo[2]};
+        const WordValue old_hi[] = {hi[0],hi[1],hi[2]};
 
-      if (((lo[0] == hi[0]) && (lo[0] == 0)) ||
-          ((lo[1] == hi[1]) && (lo[1] == 0)))
-        if (!mult_narrow(lo[2],hi[2],0,0))
-          return ES_FAILED;
-      if ((lo[0] == hi[0]) && (lo[0] == 1))
-        if (!mult_equal(lo[1],hi[1],lo[2],hi[2]))
-          return ES_FAILED;
-      if ((lo[1] == hi[1]) && (lo[1] == 1))
-        if (!mult_equal(lo[0],hi[0],lo[2],hi[2]))
-          return ES_FAILED;
+        if (((lo[0] == hi[0]) && (lo[0] == 0)) ||
+            ((lo[1] == hi[1]) && (lo[1] == 0)))
+          if (!mult_narrow(lo[2],hi[2],0,0))
+            return ES_FAILED;
+        if ((lo[0] == hi[0]) && (lo[0] == 1))
+          if (!mult_equal(lo[1],hi[1],lo[2],hi[2]))
+            return ES_FAILED;
+        if ((lo[1] == hi[1]) && (lo[1] == 1))
+          if (!mult_equal(lo[0],hi[0],lo[2],hi[2]))
+            return ES_FAILED;
 
-      if ((lo[2] == hi[2]) &&
-          !mult_fixed_product_inverse(lo[0],hi[0],lo[1],hi[1],lo[2],width,
-                                      x == y,x == z,y == z))
-        return ES_FAILED;
-
-      // Multiplication modulo 2^k depends only on the low k operand bits.
-      const unsigned int known =
-        std::min(mult_known_low(lo[0],hi[0],width),
-                 mult_known_low(lo[1],hi[1],width));
-      if (known != 0)
-        if (!mult_narrow_low(lo[2],hi[2],known,lo[0]*lo[1]))
+        if ((lo[2] == hi[2]) &&
+            !mult_fixed_product_inverse(lo[0],hi[0],lo[1],hi[1],lo[2],width,
+                                        x == y,x == z,y == z))
           return ES_FAILED;
 
-      // Guaranteed powers of two in both operands force low product zeros.
-      const unsigned int xz = mult_trailing_zeros(hi[0],width);
-      const unsigned int yz = mult_trailing_zeros(hi[1],width);
-      const unsigned int zeros = (xz > width-yz) ? width : xz+yz;
-      if (zeros != 0)
-        if (!mult_narrow_low(lo[2],hi[2],zeros,0))
+        // Multiplication modulo 2^k depends only on the low k operand bits.
+        const unsigned int known =
+          std::min(mult_known_low(lo[0],hi[0],width),
+                   mult_known_low(lo[1],hi[1],width));
+        if (known != 0)
+          if (!mult_narrow_low(lo[2],hi[2],known,lo[0]*lo[1]))
+            return ES_FAILED;
+
+        // Guaranteed powers of two in both operands force low product zeros.
+        const unsigned int xz = mult_trailing_zeros(hi[0],width);
+        const unsigned int yz = mult_trailing_zeros(hi[1],width);
+        const unsigned int zeros = (xz > width-yz) ? width : xz+yz;
+        if (zeros != 0)
+          if (!mult_narrow_low(lo[2],hi[2],zeros,0))
+            return ES_FAILED;
+
+        // A fixed result prefix and multiplicand prefix determine the other
+        // operand prefix after stripping powers of two and inverting the odd
+        // factor in the corresponding modular ring.
+        if (!mult_inverse_prefix(lo[0],hi[0],lo[1],hi[1],
+                                 lo[2],hi[2],width) ||
+            !mult_inverse_prefix(lo[1],hi[1],lo[0],hi[0],
+                                 lo[2],hi[2],width))
           return ES_FAILED;
 
-      // A fixed result prefix and multiplicand prefix determine the other
-      // operand prefix after stripping powers of two and inverting the odd
-      // factor in the corresponding modular ring.
-      if (!mult_inverse_prefix(lo[0],hi[0],lo[1],hi[1],
-                               lo[2],hi[2],width) ||
-          !mult_inverse_prefix(lo[1],hi[1],lo[0],hi[0],
-                               lo[2],hi[2],width))
-        return ES_FAILED;
+        if ((x == y) && !mult_equal(lo[0],hi[0],lo[1],hi[1]))
+          return ES_FAILED;
+        if ((x == z) && !mult_equal(lo[0],hi[0],lo[2],hi[2]))
+          return ES_FAILED;
+        if ((y == z) && !mult_equal(lo[1],hi[1],lo[2],hi[2]))
+          return ES_FAILED;
 
-      if ((x == y) && !mult_equal(lo[0],hi[0],lo[1],hi[1]))
-        return ES_FAILED;
-      if ((x == z) && !mult_equal(lo[0],hi[0],lo[2],hi[2]))
-        return ES_FAILED;
-      if ((y == z) && !mult_equal(lo[1],hi[1],lo[2],hi[2]))
-        return ES_FAILED;
+        changed = (old_lo[0] != lo[0]) || (old_hi[0] != hi[0]) ||
+          (old_lo[1] != lo[1]) || (old_hi[1] != hi[1]) ||
+          (old_lo[2] != lo[2]) || (old_hi[2] != hi[2]);
+      } while (changed);
 
-      changed = (old_lo[0] != lo[0]) || (old_hi[0] != hi[0]) ||
-        (old_lo[1] != lo[1]) || (old_hi[1] != hi[1]) ||
-        (old_lo[2] != lo[2]) || (old_hi[2] != hi[2]);
-    } while (changed);
-
-    if ((x.lo() != lo[0]) || (x.hi() != hi[0]))
-      GECODE_ME_CHECK(x.narrow(home,lo[0],hi[0]));
-    if ((y.lo() != lo[1]) || (y.hi() != hi[1]))
-      GECODE_ME_CHECK(y.narrow(home,lo[1],hi[1]));
-    if ((z.lo() != lo[2]) || (z.hi() != hi[2]))
-      GECODE_ME_CHECK(z.narrow(home,lo[2],hi[2]));
-    if ((x.lo() != lo[0]) || (x.hi() != hi[0]) ||
-        (y.lo() != lo[1]) || (y.hi() != hi[1]) ||
-        (z.lo() != lo[2]) || (z.hi() != hi[2]))
-      return mult_narrow_views(home,x,y,z);
-    return ES_OK;
+      if ((x.lo() != lo[0]) || (x.hi() != hi[0]))
+        GECODE_ME_CHECK(x.narrow(home,lo[0],hi[0]));
+      if ((y.lo() != lo[1]) || (y.hi() != hi[1]))
+        GECODE_ME_CHECK(y.narrow(home,lo[1],hi[1]));
+      if ((z.lo() != lo[2]) || (z.hi() != hi[2]))
+        GECODE_ME_CHECK(z.narrow(home,lo[2],hi[2]));
+      if ((x.lo() != lo[0]) || (x.hi() != hi[0]) ||
+          (y.lo() != lo[1]) || (y.hi() != hi[1]) ||
+          (z.lo() != lo[2]) || (z.hi() != hi[2]))
+        continue;
+      return ES_OK;
+    }
   }
 
   forceinline ExecStatus

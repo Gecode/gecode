@@ -1,5 +1,63 @@
 # Word benchmarks
 
+## Focused word-037 campaign
+
+`comparison-campaign.py` validates the exact 72-instance preflight matrix before
+collection. The checked-in manifest contains six families, three levels, and
+four explicit, parameter-distinct instances (two SAT and two UNSAT) per
+family/level. Validation derives every expected public projection with the
+existing concrete evaluators and derives the exact baseline, candidate, and Z3
+commands and SMT input with the existing encoding helpers.
+Each case stores its expected solution count and explicit scale metadata. The
+preflight checks that the maximum workload scale increases from small through
+large in every family, rejects fixed-input bit-network cases, and executes one
+representative Z3 semantic check per family. The calibration-candidate list is
+explicit and contains only SAT cases.
+
+```sh
+python3 benchmarks/word/comparison-campaign.py validate
+python3 benchmarks/word/comparison-campaign.py validate \
+  --output /private/tmp/word-037-preflight.json
+python3 benchmarks/word/comparison-campaign.py smoke \
+  --bit-binary build/bin/word-bit-network-comparison \
+  --dma-binary build/bin/word-dma-descriptor \
+  --lookup-binary build/bin/word-register-file \
+  --allocation-binary build/bin/word-distinct-benchmark \
+  --inverse-binary build/bin/word-inverse-arithmetic \
+  --alu-binary build/bin/word-symbolic-alu --z3 z3
+```
+
+The smoke command runs two complete in-process repetitions of one small SAT
+instance from each family through native
+baseline and candidate search, and through Z3. Compact CRC/xorshift/Speck uses
+LSB versus MSB branching; bounded families use LSB versus lower-ranked split.
+Bitwuzla is reported as unsupported because this campaign has no validated
+adapter for it.
+
+Collection requires an explicitly frozen image and a new result root. It first
+calibrates search using only the manifest's calibration cases, then screens all
+288 instance/configuration cells. Each Podman run has no network, one CPU, and
+a 4 GiB memory-and-swap cap; the runner verifies those settings before start.
+It resumes terminal records and refuses a changed manifest, image, revision,
+script, options, or CPU budget at an existing root.
+
+```sh
+ROOT=/private/tmp/gecode-word-037-campaign-v2
+IMAGE=localhost/gecode-word037-runtime:<frozen-tag>
+python3 benchmarks/word/comparison-campaign.py calibrate --image "$IMAGE" --root "$ROOT"
+python3 benchmarks/word/comparison-campaign.py screen --image "$IMAGE" --root "$ROOT"
+python3 benchmarks/word/comparison-campaign.py followup --image "$IMAGE" --root "$ROOT" \
+  --case <selected-case> --case <selected-case>
+python3 benchmarks/word/comparison-campaign.py analyze --root "$ROOT"
+```
+
+Screen runs have a 30-second cap. Follow-ups interleave five repeats with a
+300-second cap. All phases share a hard 21,600 CPU-second ledger; a run is
+deferred unless its whole timeout can be preauthorized. Tiny cases are batched
+to at least 0.25 seconds, with Z3 repeating reset, declarations, assertions,
+and `check-sat` inside one process. Raw records, frozen metadata,
+`analysis.json`, and `result.md` stay under the external root.
+
 ## CRC, xorshift, and reduced-Speck comparisons
 
 `word-bit-network-comparison.py` checks 15 small cases: five each for

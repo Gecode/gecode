@@ -128,70 +128,72 @@ namespace Gecode { namespace Word { namespace Arithmetic {
     const bool xy = x == y;
     const bool xz = x == z;
     const bool yz = y == z;
-    unsigned char allowed[64];
-    unsigned char forward[65] = {0};
-    unsigned char backward[65] = {0};
-    const AddSupportTables& tables=add_support_tables();
-    forward[0] = 1U;
-    for (unsigned int bit=0; bit<width; bit++) {
-      const WordValue mask=WordValue(1) << bit;
-      const unsigned int x_values=add_bit_values(x.lo(),x.hi(),mask);
-      const unsigned int y_values=add_bit_values(y.lo(),y.hi(),mask);
-      const unsigned int z_values=add_bit_values(z.lo(),z.hi(),mask);
-      unsigned int tuples=0;
-      for (unsigned int tuple=0; tuple<8; tuple++) {
-        const unsigned int xv=(tuple >> 2) & 1U;
-        const unsigned int yv=(tuple >> 1) & 1U;
-        const unsigned int zv=tuple & 1U;
-        if (((x_values & (1U << xv)) != 0) &&
-            ((y_values & (1U << yv)) != 0) &&
-            ((z_values & (1U << zv)) != 0) &&
-            (!xy || (xv == yv)) && (!xz || (xv == zv)) &&
-            (!yz || (yv == zv)))
-          tuples |= 1U << tuple;
+    for (;;) {
+      unsigned char allowed[64];
+      unsigned char forward[65] = {0};
+      unsigned char backward[65] = {0};
+      const AddSupportTables& tables=add_support_tables();
+      forward[0] = 1U;
+      for (unsigned int bit=0; bit<width; bit++) {
+        const WordValue mask=WordValue(1) << bit;
+        const unsigned int x_values=add_bit_values(x.lo(),x.hi(),mask);
+        const unsigned int y_values=add_bit_values(y.lo(),y.hi(),mask);
+        const unsigned int z_values=add_bit_values(z.lo(),z.hi(),mask);
+        unsigned int tuples=0;
+        for (unsigned int tuple=0; tuple<8; tuple++) {
+          const unsigned int xv=(tuple >> 2) & 1U;
+          const unsigned int yv=(tuple >> 1) & 1U;
+          const unsigned int zv=tuple & 1U;
+          if (((x_values & (1U << xv)) != 0) &&
+              ((y_values & (1U << yv)) != 0) &&
+              ((z_values & (1U << zv)) != 0) &&
+              (!xy || (xv == yv)) && (!xz || (xv == zv)) &&
+              (!yz || (yv == zv)))
+            tuples |= 1U << tuple;
+        }
+        allowed[bit]=static_cast<unsigned char>(tuples);
+        if (tuples == 0)
+          return ES_FAILED;
+        const unsigned int states=tables.forward[tuples][forward[bit]];
+        forward[bit+1] = static_cast<unsigned char>(states);
+        if (states == 0)
+          return ES_FAILED;
       }
-      allowed[bit]=static_cast<unsigned char>(tuples);
-      if (tuples == 0)
-        return ES_FAILED;
-      const unsigned int states=tables.forward[tuples][forward[bit]];
-      forward[bit+1] = static_cast<unsigned char>(states);
-      if (states == 0)
-        return ES_FAILED;
-    }
 
-    final = forward[width] & terminal;
-    if (final == 0)
-      return ES_FAILED;
-    backward[width] = static_cast<unsigned char>(terminal);
-    WordValue lo[3] = {0,0,0};
-    WordValue hi[3] = {0,0,0};
-    for (unsigned int bit=width; bit-- > 0;) {
-      const unsigned int states=
-        tables.backward[allowed[bit]][backward[bit+1]];
-      const unsigned int support=
-        tables.support[allowed[bit]][forward[bit]][backward[bit+1]];
-      backward[bit] = static_cast<unsigned char>(states);
-      const WordValue mask = WordValue(1) << bit;
-      for (int i=0; i<3; i++) {
-        if ((support & (1U << (2*i+1))) != 0)
-          hi[i] |= mask;
-        if ((support & (1U << (2*i))) == 0)
-          lo[i] |= mask;
+      final = forward[width] & terminal;
+      if (final == 0)
+        return ES_FAILED;
+      backward[width] = static_cast<unsigned char>(terminal);
+      WordValue lo[3] = {0,0,0};
+      WordValue hi[3] = {0,0,0};
+      for (unsigned int bit=width; bit-- > 0;) {
+        const unsigned int states=
+          tables.backward[allowed[bit]][backward[bit+1]];
+        const unsigned int support=
+          tables.support[allowed[bit]][forward[bit]][backward[bit+1]];
+        backward[bit] = static_cast<unsigned char>(states);
+        const WordValue mask = WordValue(1) << bit;
+        for (int i=0; i<3; i++) {
+          if ((support & (1U << (2*i+1))) != 0)
+            hi[i] |= mask;
+          if ((support & (1U << (2*i))) == 0)
+            lo[i] |= mask;
+        }
       }
+      if ((backward[0] & 1U) == 0)
+        return ES_FAILED;
+      if ((x.lo() != lo[0]) || (x.hi() != hi[0]))
+        GECODE_ME_CHECK(x.narrow(home,lo[0],hi[0]));
+      if ((y.lo() != lo[1]) || (y.hi() != hi[1]))
+        GECODE_ME_CHECK(y.narrow(home,lo[1],hi[1]));
+      if ((z.lo() != lo[2]) || (z.hi() != hi[2]))
+        GECODE_ME_CHECK(z.narrow(home,lo[2],hi[2]));
+      if ((x.lo() != lo[0]) || (x.hi() != hi[0]) ||
+          (y.lo() != lo[1]) || (y.hi() != hi[1]) ||
+          (z.lo() != lo[2]) || (z.hi() != hi[2]))
+        continue;
+      return ES_OK;
     }
-    if ((backward[0] & 1U) == 0)
-      return ES_FAILED;
-    if ((x.lo() != lo[0]) || (x.hi() != hi[0]))
-      GECODE_ME_CHECK(x.narrow(home,lo[0],hi[0]));
-    if ((y.lo() != lo[1]) || (y.hi() != hi[1]))
-      GECODE_ME_CHECK(y.narrow(home,lo[1],hi[1]));
-    if ((z.lo() != lo[2]) || (z.hi() != hi[2]))
-      GECODE_ME_CHECK(z.narrow(home,lo[2],hi[2]));
-    if ((x.lo() != lo[0]) || (x.hi() != hi[0]) ||
-        (y.lo() != lo[1]) || (y.hi() != hi[1]) ||
-        (z.lo() != lo[2]) || (z.hi() != hi[2]))
-      return add_narrow(home,x,y,z,terminal,final);
-    return ES_OK;
   }
 
   forceinline ExecStatus

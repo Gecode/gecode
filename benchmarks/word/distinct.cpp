@@ -16,7 +16,8 @@ public:
   WordVarArray words;
   IntVarArray integers;
 
-  RegisterAllocation(unsigned int per_bank, unsigned int slots, Formulation f)
+  RegisterAllocation(unsigned int per_bank, unsigned int slots, Formulation f,
+                     bool split)
     : formulation(f), words(*this,2*per_bank),
       integers(*this,(f == F_INT) ? 2*per_bank : 0,0,127) {
     for (unsigned int i=0; i<2*per_bank; i++) {
@@ -38,7 +39,8 @@ public:
       branch(*this,integers,INT_VAR_SIZE_MIN(),INT_VAL_MIN());
     } else {
       distinct(*this,words,(f == F_BND) ? IPL_BND : IPL_VAL);
-      branch(*this,words,WORD_VAR_SIZE_MIN(),WORD_VAL_LSB());
+      branch(*this,words,WORD_VAR_SIZE_MIN(),
+             split ? WORD_VAL_SPLIT_MIN() : WORD_VAL_LSB());
     }
   }
   RegisterAllocation(RegisterAllocation& s)
@@ -86,7 +88,7 @@ public:
 };
 
 int main(int argc, char* argv[]) {
-  if ((argc < 5) || (argc > 7)) return 2;
+  if ((argc < 5) || (argc > 9)) return 2;
   Formulation formulation;
   if (!std::strcmp(argv[2],"value")) formulation=F_VAL;
   else if (!std::strcmp(argv[2],"bounds")) formulation=F_BND;
@@ -96,17 +98,20 @@ int main(int argc, char* argv[]) {
   const unsigned int iterations=static_cast<unsigned int>(std::strtoul(argv[4],nullptr,10));
   const unsigned int slots=(argc >= 6) ?
     static_cast<unsigned int>(std::strtoul(argv[5],nullptr,10)) : 4U;
-  const bool projections=(argc == 7) && !std::strcmp(argv[6],"projections");
+  const bool projections=(argc >= 7) && !std::strcmp(argv[6],"projections");
+  const bool has_search=argc == 9 && !std::strcmp(argv[7],"--search") &&
+    (!std::strcmp(argv[8],"lsb") || !std::strcmp(argv[8],"split-min"));
+  const bool split=has_search && !std::strcmp(argv[8],"split-min");
   if ((size == 0U) || (iterations == 0U) ||
       (slots == 0U) || (slots > 4U) ||
-      ((argc == 7) && !projections)) return 2;
+      ((argc >= 7) && !projections) || (argc == 8) || (argc == 9 && !has_search)) return 2;
 
   std::uint64_t solutions=0, checksum=0, nodes=0, failures=0, propagations=0;
   auto start=std::chrono::steady_clock::now();
   if (!std::strcmp(argv[1],"register")) {
     std::vector<std::vector<unsigned int> > rows;
     for (unsigned int trial=0; trial<iterations; trial++) {
-      RegisterAllocation* root=new RegisterAllocation(size,slots,formulation);
+      RegisterAllocation* root=new RegisterAllocation(size,slots,formulation,split);
       StatusStatistics rs;
       const SpaceStatus root_status=root->status(rs);
       DFS<RegisterAllocation> search(root_status == SS_FAILED ? nullptr : root);
