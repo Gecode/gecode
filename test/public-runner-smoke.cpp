@@ -51,7 +51,7 @@ namespace {
   class PassingSmokeTest : public Test::Base {
   public:
     PassingSmokeTest(void)
-      : Test::Base("Int::Linear::Int::Smoke::A-Pass") {}
+      : Test::Base("Smoke::A-Pass") {}
 
     bool run(void) override {
       passing_runs++;
@@ -102,7 +102,7 @@ main(void) {
                "-list should succeed")) {
     return EXIT_FAILURE;
   }
-  const std::string pass_name = "Int::Linear::Int::Smoke::A-Pass";
+  const std::string pass_name = "Smoke::A-Pass";
   const std::string fail_name = "Smoke::B-Fail";
   const std::size_t pass_pos = list_output.find(pass_name);
   const std::size_t fail_pos = list_output.find(fail_name);
@@ -153,7 +153,7 @@ main(void) {
   }
 
   std::string pass_output;
-  if (!require(run_and_capture({"public-runner-smoke", "-test", "Int::Linear::Int::Smoke::A-Pass", "-iter", "1", "-stop", "true"},
+  if (!require(run_and_capture({"public-runner-smoke", "-test", "Smoke::A-Pass", "-iter", "1", "-stop", "true"},
                                pass_output) == EXIT_SUCCESS,
                "filtered passing run should succeed")) {
     return EXIT_FAILURE;

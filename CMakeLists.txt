@@ -814,9 +814,7 @@ ${CONFIG_OUT}")
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/GecodeSources.cmake)
 if(GECODE_ENABLE_FAULT_INJECTION)
   list(APPEND GECODE_SUPPORT_SOURCES gecode/support/failpoint.cpp)
-  set(GECODE_FAULT_TEST_SOURCES
-    test/test-main.cpp
-    test/fault.cpp)
+  set(GECODE_FAULT_TEST_SOURCES ${GECODE_TEST_MAIN_SOURCE} test/fault.cpp)
 endif()
 
 # ---------------------------------------------------------------------------
@@ -1467,7 +1465,7 @@ if(BUILD_TESTING)
   endif()
 
   if(GECODE_CAN_BUILD_TESTS)
-    add_executable(gecode-test EXCLUDE_FROM_ALL ${GECODE_TEST_MAIN_SOURCES} ${GECODE_TEST_SOURCES_SELECTED})
+    add_executable(gecode-test EXCLUDE_FROM_ALL ${GECODE_TEST_MAIN_SOURCE} ${GECODE_TEST_SOURCES_SELECTED})
     set(GECODE_TEST_LINK_LIBS gecodetestint gecodeminimodel)
     if(GECODE_ENABLE_FLATZINC)
       list(APPEND GECODE_TEST_LINK_LIBS gecodeflatzinc)
