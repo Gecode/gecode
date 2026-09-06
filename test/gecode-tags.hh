@@ -1,16 +1,14 @@
 /* -*- mode: c++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
- *     Christian Schulte <schulte@gecode.dev>
- *     Mikael Zayenz Lagerkvist <lagerkvist@gecode.dev>
+ *     Mikael Lagerkvist <lagerkvist@gecode.org>
  *
  *  Copyright:
- *     Christian Schulte, 2004
- *     Mikael Zayenz Lagerkvist, 2005, 2026
+ *     Mikael Lagerkvist, 2026
  *
  *  This file is part of Gecode, the generic constraint
  *  development environment:
- *     http://www.gecode.dev
+ *     http://www.gecode.org
  *
  *  Permission is hereby granted, free of charge, to any person obtaining
  *  a copy of this software and associated documentation files (the
@@ -33,20 +31,16 @@
  *
  */
 
-#include "test/test.hh"
-#include "test/gecode-tags.hh"
+#ifndef GECODE_TEST_GECODE_TAGS_HH
+#define GECODE_TEST_GECODE_TAGS_HH
 
-#ifdef GECODE_HAS_MTRACE
-#include <mcheck.h>
-#endif
+namespace Test {
 
-int
-main(int argc, char* argv[]) {
-#ifdef GECODE_HAS_MTRACE
-  mtrace();
-#endif
-  Test::apply_gecode_test_tags();
-  return Test::run_registered_tests(argc, argv);
+  /// Apply Gecode's suite classification to its registered tests
+  void apply_gecode_test_tags(void);
+
 }
+
+#endif
 
 // STATISTICS: test-core
