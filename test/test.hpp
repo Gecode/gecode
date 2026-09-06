@@ -34,13 +34,48 @@
 namespace Test {
 
   /*
+   * Test tags
+   *
+   */
+  inline
+  TestTags::TestTags(unsigned int m)
+    : _mask(m) {}
+  inline
+  TestTags::TestTags(void)
+    : _mask(0) {}
+  inline
+  TestTags::TestTags(TestTag t)
+    : _mask(static_cast<unsigned int>(t)) {}
+  inline
+  TestTags::TestTags(TestTag t0, TestTag t1)
+    : _mask(static_cast<unsigned int>(t0) |
+            static_cast<unsigned int>(t1)) {}
+  inline bool
+  TestTags::empty(void) const {
+    return _mask == 0;
+  }
+  inline bool
+  TestTags::overlaps(TestTags t) const {
+    return (_mask & t._mask) != 0;
+  }
+  inline void
+  TestTags::add(TestTags t) {
+    _mask |= t._mask;
+  }
+  inline void
+  TestTags::remove(TestTags t) {
+    _mask &= ~t._mask;
+  }
+
+  /*
    * Commandline options
    *
    */
   inline
   Options::Options(void)
     : threads(1), seed(0), iter(defiter), fixprob(deffixprob),
-      stop(true), log(false), testpat(), start_from(nullptr), list(false)
+      stop(true), log(false), testpat(), testtags(), use_testtags(false),
+      start_from(nullptr), list(false), list_tags(false), list_with_tags(false)
   {}
 
   /*
@@ -50,6 +85,10 @@ namespace Test {
   inline const std::string&
   Base::name(void) const {
     return _name;
+  }
+  inline TestTags
+  Base::tags(void) const {
+    return _tags;
   }
   inline Base*
   Base::tests(void) {

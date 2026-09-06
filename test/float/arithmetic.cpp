@@ -134,7 +134,8 @@ namespace Test { namespace Float {
      public:
        /// Create and register test
        PositiveNRootBounds(void)
-         : Base("Float::Arithmetic::PositiveNRootBounds") {}
+         : Base("Float::Arithmetic::PositiveNRootBounds",
+                TestTags(TestTag::normal,TestTag::check)) {}
        /// Run test under every supported IEEE-754 rounding mode
        virtual bool run(void) {
          const int oldMode = std::fegetround();
@@ -364,7 +365,9 @@ namespace Test { namespace Float {
        }
      public:
        /// Create and register test
-       PowConsistency(void) : Base("Float::Arithmetic::PowConsistency") {}
+       PowConsistency(void)
+         : Base("Float::Arithmetic::PowConsistency",
+                TestTags(TestTag::normal,TestTag::check)) {}
        /// Run zero and fixpoint regressions
        virtual bool run(void) {
          bool result = true;
@@ -486,7 +489,8 @@ namespace Test { namespace Float {
      public:
        /// Create and register test
        MultZeroEndpoint(void)
-         : Base("Float::Arithmetic::MultZeroEndpoint") {}
+         : Base("Float::Arithmetic::MultZeroEndpoint",
+                TestTags(TestTag::normal,TestTag::check)) {}
        /// Run sign, symmetry, signed-zero, and zero-product cases
        virtual bool run(void) {
          bool result = true;
@@ -525,7 +529,7 @@ namespace Test { namespace Float {
      public:
        /// Create and register test
        MultXYZ(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
-         : Test("Arithmetic::Mult::XYZ::"+s,3,d,st,CPLT_ASSIGNMENT,false) {}
+         : Test(TestTag::sweep,"Arithmetic::Mult::XYZ::"+s,3,d,st,CPLT_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
          return eq(x[0] * x[1], x[2]);
@@ -543,8 +547,10 @@ namespace Test { namespace Float {
      class MultXYZSol : public Test {
      public:
        /// Create and register test
-       MultXYZSol(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
-         : Test("Arithmetic::Mult::XYZ::Sol::"+s,3,d,st,EXTEND_ASSIGNMENT,false) {}
+       MultXYZSol(TestTags tags, const std::string& s,
+                  const Gecode::FloatVal& d, Gecode::FloatNum st)
+         : Test(tags,"Arithmetic::Mult::XYZ::Sol::"+s,
+                3,d,st,EXTEND_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
          return eq(x[0] * x[1], x[2]);
@@ -570,7 +576,7 @@ namespace Test { namespace Float {
      public:
        /// Create and register test
        MultXXY(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
-         : Test("Arithmetic::Mult::XXY::"+s,2,d,st,CPLT_ASSIGNMENT,false) {}
+         : Test(TestTag::sweep,"Arithmetic::Mult::XXY::"+s,2,d,st,CPLT_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
          return eq(x[0] * x[0], x[1]);
@@ -586,7 +592,7 @@ namespace Test { namespace Float {
      public:
        /// Create and register test
        MultXXYSol(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
-       : Test("Arithmetic::Mult::XXY::Sol::"+s,2,d,st,EXTEND_ASSIGNMENT,false) {}
+       : Test(TestTag::sweep,"Arithmetic::Mult::XXY::Sol::"+s,2,d,st,EXTEND_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
          return eq(x[0] * x[0], x[1]);
@@ -612,7 +618,7 @@ namespace Test { namespace Float {
      public:
        /// Create and register test
        MultXYX(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
-         : Test("Arithmetic::Mult::XYX::"+s,2,d,st,CPLT_ASSIGNMENT,false) {}
+         : Test(TestTag::sweep,"Arithmetic::Mult::XYX::"+s,2,d,st,CPLT_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
          return eq(x[0] * x[1], x[0]);
@@ -628,7 +634,7 @@ namespace Test { namespace Float {
      public:
        /// Create and register test
        MultXYY(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
-         : Test("Arithmetic::Mult::XYY::"+s,2,d,st,CPLT_ASSIGNMENT,false) {}
+         : Test(TestTag::sweep,"Arithmetic::Mult::XYY::"+s,2,d,st,CPLT_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
          return eq(x[0] * x[1], x[1]);
@@ -644,7 +650,7 @@ namespace Test { namespace Float {
      public:
        /// Create and register test
        MultXXX(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
-         : Test("Arithmetic::Mult::XXX::"+s,1,d,st,CPLT_ASSIGNMENT,false) {}
+         : Test(TestTag::sweep,"Arithmetic::Mult::XXX::"+s,1,d,st,CPLT_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
          return eq(x[0] * x[0], x[0]);
@@ -659,8 +665,10 @@ namespace Test { namespace Float {
      class Div : public Test {
      public:
        /// Create and register test
-       Div(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
-       : Test("Arithmetic::Div::"+s,3,d,st,CPLT_ASSIGNMENT,false) {}
+       Div(TestTags tags, const std::string& s,
+           const Gecode::FloatVal& d, Gecode::FloatNum st)
+       : Test(tags,"Arithmetic::Div::"+s,
+              3,d,st,CPLT_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
          return eq(x[0] / x[1], x[2]);
@@ -679,7 +687,7 @@ namespace Test { namespace Float {
      public:
        /// Create and register test
        DivSol(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
-       : Test("Arithmetic::Div::Sol::"+s,3,d,st,EXTEND_ASSIGNMENT,false) {}
+       : Test(TestTag::sweep,"Arithmetic::Div::Sol::"+s,3,d,st,EXTEND_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
          return eq(x[0] / x[1], x[2]);
@@ -705,7 +713,7 @@ namespace Test { namespace Float {
      public:
        /// Create and register test
        SqrXY(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
-         : Test("Arithmetic::Sqr::XY::"+s,2,d,st,CPLT_ASSIGNMENT,false) {}
+         : Test(TestTag::sweep,"Arithmetic::Sqr::XY::"+s,2,d,st,CPLT_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
          return eq(x[0] * x[0], x[1]);
@@ -724,7 +732,7 @@ namespace Test { namespace Float {
      public:
        /// Create and register test
        SqrXYSol(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
-       : Test("Arithmetic::Sqr::XY::Sol::"+s,2,d,st,EXTEND_ASSIGNMENT,false) {}
+       : Test(TestTag::sweep,"Arithmetic::Sqr::XY::Sol::"+s,2,d,st,EXTEND_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
          return eq(x[0] * x[0], x[1]);
@@ -749,8 +757,10 @@ namespace Test { namespace Float {
      class SqrXX : public Test {
      public:
        /// Create and register test
-       SqrXX(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
-         : Test("Arithmetic::Sqr::XX::"+s,1,d,st,CPLT_ASSIGNMENT,false) {}
+       SqrXX(TestTags tags, const std::string& s,
+             const Gecode::FloatVal& d, Gecode::FloatNum st)
+         : Test(tags,"Arithmetic::Sqr::XX::"+s,
+                1,d,st,CPLT_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
          return eq(x[0] * x[0], x[0]);
@@ -766,7 +776,7 @@ namespace Test { namespace Float {
      public:
        /// Create and register test
        SqrtXY(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
-         : Test("Arithmetic::Sqrt::XY::"+s,2,d,st,CPLT_ASSIGNMENT,false) {}
+         : Test(TestTag::sweep,"Arithmetic::Sqrt::XY::"+s,2,d,st,CPLT_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
          switch (cmp(x[0], Gecode::FRT_GQ, 0.0)) {
@@ -790,7 +800,7 @@ namespace Test { namespace Float {
      public:
        /// Create and register test
        SqrtXYSol(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
-       : Test("Arithmetic::Sqrt::XY::Sol::"+s,2,d,st,EXTEND_ASSIGNMENT,false) {}
+       : Test(TestTag::sweep,"Arithmetic::Sqrt::XY::Sol::"+s,2,d,st,EXTEND_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
          switch (cmp(x[0], Gecode::FRT_GQ, 0.0)) {
@@ -820,8 +830,10 @@ namespace Test { namespace Float {
      class SqrtXX : public Test {
      public:
        /// Create and register test
-       SqrtXX(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
-         : Test("Arithmetic::Sqrt::XX::"+s,1,d,st,CPLT_ASSIGNMENT,false) {}
+       SqrtXX(TestTags tags, const std::string& s,
+              const Gecode::FloatVal& d, Gecode::FloatNum st)
+         : Test(tags,"Arithmetic::Sqrt::XX::"+s,
+                1,d,st,CPLT_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
          switch (cmp(x[0], Gecode::FRT_GQ, 0.0)) {
@@ -843,7 +855,7 @@ namespace Test { namespace Float {
      public:
        /// Create and register test
        PowXY(const std::string& s, const Gecode::FloatVal& d, unsigned int _n, Gecode::FloatNum st)
-       : Test("Arithmetic::Pow::N::"+str(_n)+"::XY::"+s,2,d,st,CPLT_ASSIGNMENT,false), n(_n) {}
+       : Test(TestTag::sweep,"Arithmetic::Pow::N::"+str(_n)+"::XY::"+s,2,d,st,CPLT_ASSIGNMENT,false), n(_n) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
          return eq(pow(x[0],n), x[1]);
@@ -862,8 +874,11 @@ namespace Test { namespace Float {
        unsigned int n;
      public:
        /// Create and register test
-       PowXYSol(const std::string& s, const Gecode::FloatVal& d, unsigned int _n, Gecode::FloatNum st)
-       : Test("Arithmetic::Pow::N::"+str(_n)+"::XY::Sol::"+s,2,d,st,EXTEND_ASSIGNMENT,false), n(_n) {}
+       PowXYSol(TestTags tags, const std::string& s,
+                const Gecode::FloatVal& d, unsigned int _n,
+                Gecode::FloatNum st)
+       : Test(tags,"Arithmetic::Pow::N::"+str(_n)+"::XY::Sol::"+s,
+              2,d,st,EXTEND_ASSIGNMENT,false), n(_n) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
          return eq(pow(x[0],n), x[1]);
@@ -890,7 +905,7 @@ namespace Test { namespace Float {
      public:
        /// Create and register test
        PowXX(const std::string& s, const Gecode::FloatVal& d, unsigned int _n, Gecode::FloatNum st)
-       : Test("Arithmetic::Pow::N::"+str(_n)+"::XX::"+s,1,d,st,CPLT_ASSIGNMENT,false), n(_n) {}
+       : Test(TestTag::sweep,"Arithmetic::Pow::N::"+str(_n)+"::XX::"+s,1,d,st,CPLT_ASSIGNMENT,false), n(_n) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
          return eq(pow(x[0],n), x[0]);
@@ -907,7 +922,7 @@ namespace Test { namespace Float {
      public:
        /// Create and register test
        NRootXY(const std::string& s, const Gecode::FloatVal& d, unsigned int _n, Gecode::FloatNum st)
-       : Test("Arithmetic::NRoot::N::"+str(_n)+"::XY::"+s,2,d,st,CPLT_ASSIGNMENT,false), n(_n) {}
+       : Test(TestTag::sweep,"Arithmetic::NRoot::N::"+str(_n)+"::XY::"+s,2,d,st,CPLT_ASSIGNMENT,false), n(_n) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
          if ((n == 0) || (x[0].min() < 0.0))
@@ -928,8 +943,11 @@ namespace Test { namespace Float {
        unsigned int n;
      public:
        /// Create and register test
-       NRootXYSol(const std::string& s, const Gecode::FloatVal& d, unsigned int _n, Gecode::FloatNum st)
-       : Test("Arithmetic::NRoot::N::"+str(_n)+"::XY::Sol::"+s,2,d,st,EXTEND_ASSIGNMENT,false), n(_n) {}
+       NRootXYSol(TestTags tags, const std::string& s,
+                  const Gecode::FloatVal& d, unsigned int _n,
+                  Gecode::FloatNum st)
+       : Test(tags,"Arithmetic::NRoot::N::"+str(_n)+"::XY::Sol::"+s,
+              2,d,st,EXTEND_ASSIGNMENT,false), n(_n) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
          if ((n == 0) || (x[0].min() < 0.0))
@@ -960,7 +978,7 @@ namespace Test { namespace Float {
      public:
        /// Create and register test
        NRootXX(const std::string& s, const Gecode::FloatVal& d, unsigned int _n, Gecode::FloatNum st)
-       : Test("Arithmetic::NRoot::N::"+str(_n)+"::XX::"+s,1,d,st,CPLT_ASSIGNMENT,false), n(_n) {}
+       : Test(TestTag::sweep,"Arithmetic::NRoot::N::"+str(_n)+"::XX::"+s,1,d,st,CPLT_ASSIGNMENT,false), n(_n) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
          if ((n == 0) || (x[0].min() < 0))
@@ -978,7 +996,7 @@ namespace Test { namespace Float {
      public:
        /// Create and register test
        AbsXY(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
-         : Test("Arithmetic::Abs::XY::"+s,2,d,st,CPLT_ASSIGNMENT,false) {}
+         : Test(TestTag::sweep,"Arithmetic::Abs::XY::"+s,2,d,st,CPLT_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
          return eq(abs(x[0]), x[1]);
@@ -996,8 +1014,10 @@ namespace Test { namespace Float {
      class AbsXX : public Test {
      public:
        /// Create and register test
-       AbsXX(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
-         : Test("Arithmetic::Abs::XX::"+s,1,d,st,CPLT_ASSIGNMENT,false) {}
+       AbsXX(TestTags tags, const std::string& s,
+             const Gecode::FloatVal& d, Gecode::FloatNum st)
+         : Test(tags,"Arithmetic::Abs::XX::"+s,
+                1,d,st,CPLT_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
          return eq(abs(x[0]), x[0]);
@@ -1013,7 +1033,7 @@ namespace Test { namespace Float {
      public:
        /// Create and register test
        MinXYZ(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
-         : Test("Arithmetic::Min::Bin::XYZ::"+s,3,d,st,CPLT_ASSIGNMENT,false) {}
+         : Test(TestTag::sweep,"Arithmetic::Min::Bin::XYZ::"+s,3,d,st,CPLT_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
          return eq(min(x[0],x[1]), x[2]);
@@ -1032,7 +1052,7 @@ namespace Test { namespace Float {
      public:
        /// Create and register test
        MinXXY(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
-       : Test("Arithmetic::Min::Bin::XXY::"+s,2,d,st,CPLT_ASSIGNMENT,false) {}
+       : Test(TestTag::sweep,"Arithmetic::Min::Bin::XXY::"+s,2,d,st,CPLT_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
          return eq(min(x[0],x[0]), x[1]);
@@ -1048,7 +1068,7 @@ namespace Test { namespace Float {
      public:
        /// Create and register test
        MinXYX(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
-       : Test("Arithmetic::Min::Bin::XYX::"+s,2,d,st,CPLT_ASSIGNMENT,false) {}
+       : Test(TestTag::sweep,"Arithmetic::Min::Bin::XYX::"+s,2,d,st,CPLT_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
          return eq(min(x[0],x[1]), x[0]);
@@ -1064,7 +1084,7 @@ namespace Test { namespace Float {
      public:
        /// Create and register test
        MinXYY(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
-       : Test("Arithmetic::Min::Bin::XYY::"+s,2,d,st,CPLT_ASSIGNMENT,false) {}
+       : Test(TestTag::sweep,"Arithmetic::Min::Bin::XYY::"+s,2,d,st,CPLT_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
          return eq(min(x[0],x[1]), x[1]);
@@ -1079,8 +1099,10 @@ namespace Test { namespace Float {
      class MinXXX : public Test {
      public:
        /// Create and register test
-       MinXXX(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
-       : Test("Arithmetic::Min::Bin::XXX::"+s,1,d,st,CPLT_ASSIGNMENT,false) {}
+       MinXXX(TestTags tags, const std::string& s,
+              const Gecode::FloatVal& d, Gecode::FloatNum st)
+       : Test(tags,"Arithmetic::Min::Bin::XXX::"+s,
+              1,d,st,CPLT_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
          return eq(min(x[0],x[0]), x[0]);
@@ -1096,7 +1118,7 @@ namespace Test { namespace Float {
      public:
        /// Create and register test
        MaxXYZ(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
-         : Test("Arithmetic::Max::Bin::XYZ::"+s,3,d,st,CPLT_ASSIGNMENT,false) {}
+         : Test(TestTag::sweep,"Arithmetic::Max::Bin::XYZ::"+s,3,d,st,CPLT_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
          return eq(max(x[0],x[1]), x[2]);
@@ -1115,7 +1137,7 @@ namespace Test { namespace Float {
      public:
        /// Create and register test
        MaxXXY(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
-       : Test("Arithmetic::Max::Bin::XXY::"+s,2,d,st,CPLT_ASSIGNMENT,false) {}
+       : Test(TestTag::sweep,"Arithmetic::Max::Bin::XXY::"+s,2,d,st,CPLT_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
          return eq(max(x[0],x[0]), x[1]);
@@ -1131,7 +1153,7 @@ namespace Test { namespace Float {
      public:
        /// Create and register test
        MaxXYX(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
-       : Test("Arithmetic::Max::Bin::XYX::"+s,2,d,st,CPLT_ASSIGNMENT,false) {}
+       : Test(TestTag::sweep,"Arithmetic::Max::Bin::XYX::"+s,2,d,st,CPLT_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
          return eq(max(x[0],x[1]), x[0]);
@@ -1147,7 +1169,7 @@ namespace Test { namespace Float {
      public:
        /// Create and register test
        MaxXYY(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
-       : Test("Arithmetic::Max::Bin::XYY::"+s,2,d,st,CPLT_ASSIGNMENT,false) {}
+       : Test(TestTag::sweep,"Arithmetic::Max::Bin::XYY::"+s,2,d,st,CPLT_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
          return eq(max(x[0],x[1]), x[1]);
@@ -1162,8 +1184,10 @@ namespace Test { namespace Float {
      class MaxXXX : public Test {
      public:
        /// Create and register test
-       MaxXXX(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
-       : Test("Arithmetic::Max::Bin::XXX::"+s,1,d,st,CPLT_ASSIGNMENT,false) {}
+       MaxXXX(TestTags tags, const std::string& s,
+              const Gecode::FloatVal& d, Gecode::FloatNum st)
+       : Test(tags,"Arithmetic::Max::Bin::XXX::"+s,
+              1,d,st,CPLT_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
          return eq(max(x[0],x[0]), x[0]);
@@ -1179,7 +1203,7 @@ namespace Test { namespace Float {
      public:
        /// Create and register test
        MinNary(void)
-         : Test("Arithmetic::Min::Nary",4,-4,4,0.5,CPLT_ASSIGNMENT,false) {}
+         : Test(TestTag::sweep,"Arithmetic::Min::Nary",4,-4,4,0.5,CPLT_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
          return eq(min(min(x[0],x[1]),x[2]), x[3]);
@@ -1200,7 +1224,7 @@ namespace Test { namespace Float {
      public:
        /// Create and register test
        MinNaryShared(void)
-          : Test("Arithmetic::Min::Nary::Shared",3,-4,4,0.5,CPLT_ASSIGNMENT,false) {}
+          : Test(TestTag::sweep,"Arithmetic::Min::Nary::Shared",3,-4,4,0.5,CPLT_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
          return eq(min(min(x[0],x[1]),x[2]), x[1]);
@@ -1218,7 +1242,7 @@ namespace Test { namespace Float {
      public:
        /// Create and register test
        MaxNary(void)
-          : Test("Arithmetic::Max::Nary",4,-4,4,0.5,CPLT_ASSIGNMENT,false) {}
+          : Test(TestTag::sweep,"Arithmetic::Max::Nary",4,-4,4,0.5,CPLT_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
          return eq(max(max(x[0],x[1]),x[2]), x[3]);
@@ -1239,7 +1263,7 @@ namespace Test { namespace Float {
      public:
        /// Create and register test
        MaxNaryShared(void)
-          : Test("Arithmetic::Max::Nary::Shared",3,-4,4,0.5,CPLT_ASSIGNMENT,false) {}
+          : Test(TestTag::sweep,"Arithmetic::Max::Nary::Shared",3,-4,4,0.5,CPLT_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
          return eq(max(max(x[0],x[1]),x[2]), x[1]);
@@ -1281,13 +1305,14 @@ namespace Test { namespace Float {
      MultXYZ mult_xyz_b("B",b,step);
      MultXYZ mult_xyz_c("C",c,step);
 
-     MultXYZSol mult_xyz_sol_a("A",a,step);
-     MultXYZSol mult_xyz_sol_b("B",b,step);
-     MultXYZSol mult_xyz_sol_c("C",c,step);
+     MultXYZSol mult_xyz_sol_a(TestTag::sweep,"A",a,step);
+     MultXYZSol mult_xyz_sol_b(TestTag::sweep,"B",b,step);
+     MultXYZSol mult_xyz_sol_c(
+       TestTags(TestTag::normal,TestTag::check),"C",c,step);
 
-     Div div_a("A",a,step);
-     Div div_b("B",b,step);
-     Div div_c("C",c,step);
+     Div div_a(TestTag::normal,"A",a,step);
+     Div div_b(TestTag::sweep,"B",b,step);
+     Div div_c(TestTag::sweep,"C",c,step);
 
      DivSol div_sol_a("A",a,step);
      DivSol div_sol_b("B",b,step);
@@ -1301,9 +1326,9 @@ namespace Test { namespace Float {
      SqrXYSol sqr_xy_sol_b("B",b,step);
      SqrXYSol sqr_xy_sol_c("C",c,step);
 
-     SqrXX sqr_xx_a("A",a,step);
-     SqrXX sqr_xx_b("B",b,step);
-     SqrXX sqr_xx_c("C",c,step);
+     SqrXX sqr_xx_a(TestTag::normal,"A",a,step);
+     SqrXX sqr_xx_b(TestTag::sweep,"B",b,step);
+     SqrXX sqr_xx_c(TestTag::sweep,"C",c,step);
 
      SqrtXY sqrt_xy_a("A",a,step);
      SqrtXY sqrt_xy_b("B",b,step);
@@ -1313,17 +1338,18 @@ namespace Test { namespace Float {
      SqrtXYSol sqrt_xy_sol_b("B",b,step);
      SqrtXYSol sqrt_xy_sol_c("C",c,step);
 
-     SqrtXX sqrt_xx_a("A",a,step);
-     SqrtXX sqrt_xx_b("B",b,step);
-     SqrtXX sqrt_xx_c("C",c,step);
+     SqrtXX sqrt_xx_a(TestTag::normal,"A",a,step);
+     SqrtXX sqrt_xx_b(TestTag::sweep,"B",b,step);
+     SqrtXX sqrt_xx_c(TestTag::sweep,"C",c,step);
 
      PowXY pow_xy_a_1("A",a,2,step);
      PowXY pow_xy_b_1("B",b,2,step);
      PowXY pow_xy_c_1("C",c,2,step);
 
-     PowXYSol pow_xy_sol_a_1("A",a,2,step);
-     PowXYSol pow_xy_sol_b_1("B",b,2,step);
-     PowXYSol pow_xy_sol_c_1("C",c,2,step);
+     PowXYSol pow_xy_sol_a_1(TestTag::sweep,"A",a,2,step);
+     PowXYSol pow_xy_sol_b_1(TestTag::sweep,"B",b,2,step);
+     PowXYSol pow_xy_sol_c_1(
+       TestTags(TestTag::normal,TestTag::check),"C",c,2,step);
 
      PowXX pow_xx_a_1("A",a,2,step);
      PowXX pow_xx_b_1("B",b,2,step);
@@ -1333,9 +1359,9 @@ namespace Test { namespace Float {
      PowXY pow_xy_b_2("B",b,3,step);
      PowXY pow_xy_c_2("C",c,3,step);
 
-     PowXYSol pow_xy_sol_a_2("A",a,3,step);
-     PowXYSol pow_xy_sol_b_2("B",b,3,step);
-     PowXYSol pow_xy_sol_c_2("C",c,3,step);
+     PowXYSol pow_xy_sol_a_2(TestTag::sweep,"A",a,3,step);
+     PowXYSol pow_xy_sol_b_2(TestTag::sweep,"B",b,3,step);
+     PowXYSol pow_xy_sol_c_2(TestTag::sweep,"C",c,3,step);
 
      PowXX pow_xx_a_2("A",a,3,step);
      PowXX pow_xx_b_2("B",b,3,step);
@@ -1345,9 +1371,9 @@ namespace Test { namespace Float {
      PowXY pow_xy_b_3("B",b,0,step);
      PowXY pow_xy_c_3("C",c,0,step);
 
-     PowXYSol pow_xy_sol_a_3("A",a,0,step);
-     PowXYSol pow_xy_sol_b_3("B",b,0,step);
-     PowXYSol pow_xy_sol_c_3("C",c,0,step);
+     PowXYSol pow_xy_sol_a_3(TestTag::sweep,"A",a,0,step);
+     PowXYSol pow_xy_sol_b_3(TestTag::sweep,"B",b,0,step);
+     PowXYSol pow_xy_sol_c_3(TestTag::sweep,"C",c,0,step);
 
      PowXX pow_xx_a_3("A",a,0,step);
      PowXX pow_xx_b_3("B",b,0,step);
@@ -1357,9 +1383,10 @@ namespace Test { namespace Float {
      NRootXY nroot_xy_b_1("B",b,2,step);
      NRootXY nroot_xy_c_1("C",c,2,step);
 
-     NRootXYSol nroot_xy_sol_a_1("A",a,2,step);
-     NRootXYSol nroot_xy_sol_b_1("B",b,2,step);
-     NRootXYSol nroot_xy_sol_c_1("C",c,2,step);
+     NRootXYSol nroot_xy_sol_a_1(TestTag::sweep,"A",a,2,step);
+     NRootXYSol nroot_xy_sol_b_1(TestTag::sweep,"B",b,2,step);
+     NRootXYSol nroot_xy_sol_c_1(
+       TestTags(TestTag::normal,TestTag::check),"C",c,2,step);
 
      NRootXX nroot_xx_a_1("A",a,2,step);
      NRootXX nroot_xx_b_1("B",b,2,step);
@@ -1369,9 +1396,9 @@ namespace Test { namespace Float {
      NRootXY nroot_xy_b_2("B",b,3,step);
      NRootXY nroot_xy_c_2("C",c,3,step);
 
-     NRootXYSol nroot_xy_sol_a_2("A",a,3,step);
-     NRootXYSol nroot_xy_sol_b_2("B",b,3,step);
-     NRootXYSol nroot_xy_sol_c_2("C",c,3,step);
+     NRootXYSol nroot_xy_sol_a_2(TestTag::sweep,"A",a,3,step);
+     NRootXYSol nroot_xy_sol_b_2(TestTag::sweep,"B",b,3,step);
+     NRootXYSol nroot_xy_sol_c_2(TestTag::sweep,"C",c,3,step);
 
      NRootXX nroot_xx_a_2("A",a,3,step);
      NRootXX nroot_xx_b_2("B",b,3,step);
@@ -1381,9 +1408,9 @@ namespace Test { namespace Float {
      NRootXY nroot_xy_b_3("B",b,0,step);
      NRootXY nroot_xy_c_3("C",c,0,step);
 
-     NRootXYSol nroot_xy_sol_a_3("A",a,0,step);
-     NRootXYSol nroot_xy_sol_b_3("B",b,0,step);
-     NRootXYSol nroot_xy_sol_c_3("C",c,0,step);
+     NRootXYSol nroot_xy_sol_a_3(TestTag::sweep,"A",a,0,step);
+     NRootXYSol nroot_xy_sol_b_3(TestTag::sweep,"B",b,0,step);
+     NRootXYSol nroot_xy_sol_c_3(TestTag::sweep,"C",c,0,step);
 
      NRootXX nroot_xx_a_3("A",a,0,step);
      NRootXX nroot_xx_b_3("B",b,0,step);
@@ -1393,9 +1420,9 @@ namespace Test { namespace Float {
      AbsXY abs_xy_b("B",b,step);
      AbsXY abs_xy_c("C",c,step);
 
-     AbsXX abs_xx_a("A",a,step);
-     AbsXX abs_xx_b("B",b,step);
-     AbsXX abs_xx_c("C",c,step);
+     AbsXX abs_xx_a(TestTag::normal,"A",a,step);
+     AbsXX abs_xx_b(TestTag::sweep,"B",b,step);
+     AbsXX abs_xx_c(TestTag::sweep,"C",c,step);
 
      MinXYZ min_xyz_a("A",a,step);
      MinXYZ min_xyz_b("B",b,step);
@@ -1413,9 +1440,9 @@ namespace Test { namespace Float {
      MinXYY min_xyy_b("B",b,step);
      MinXYY min_xyy_c("C",c,step);
 
-     MinXXX min_xxx_a("A",a,step);
-     MinXXX min_xxx_b("B",b,step);
-     MinXXX min_xxx_c("C",c,step);
+     MinXXX min_xxx_a(TestTag::normal,"A",a,step);
+     MinXXX min_xxx_b(TestTag::sweep,"B",b,step);
+     MinXXX min_xxx_c(TestTag::sweep,"C",c,step);
 
      MaxXYZ max_xyz_a("A",a,step);
      MaxXYZ max_xyz_b("B",b,step);
@@ -1433,9 +1460,9 @@ namespace Test { namespace Float {
      MaxXYY max_xyy_b("B",b,step);
      MaxXYY max_xyy_c("C",c,step);
 
-     MaxXXX max_xxx_a("A",a,step);
-     MaxXXX max_xxx_b("B",b,step);
-     MaxXXX max_xxx_c("C",c,step);
+     MaxXXX max_xxx_a(TestTag::normal,"A",a,step);
+     MaxXXX max_xxx_b(TestTag::sweep,"B",b,step);
+     MaxXXX max_xxx_c(TestTag::sweep,"C",c,step);
 
      MinNary       min_nary;
      MinNaryShared min_s_nary;

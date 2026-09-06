@@ -232,7 +232,8 @@ def run_list_phase(consumer_binary: Path) -> None:
 def run_filtered_phase(consumer_binary: Path) -> None:
     result = run_phase(
         "filtered-run",
-        [str(consumer_binary), "-test", EXPECTED_TEST_NAME, "-iter", "1", "-stop", "true"],
+        [str(consumer_binary), "-tag", "normal", "-test", EXPECTED_TEST_NAME,
+         "-iter", "1", "-stop", "true"],
     )
     assert_phase(EXPECTED_TEST_NAME in result.stdout, "filtered-run", "filtered run did not print the selected downstream test")
     assert_phase("+" in result.stdout, "filtered-run", "filtered run did not report success")

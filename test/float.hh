@@ -282,6 +282,10 @@ namespace Test {
       Test(const std::string& s, int a, const Gecode::FloatVal& d,
            Gecode::FloatNum st, AssignmentType at,
            bool r);
+      /// Construct and register a test with explicitly assigned tags
+      Test(TestTags tags, const std::string& s, int a,
+           const Gecode::FloatVal& d, Gecode::FloatNum st,
+           AssignmentType at, bool r);
       /**
        * \brief Constructor
        *
@@ -293,6 +297,10 @@ namespace Test {
            Gecode::FloatNum min, Gecode::FloatNum max,
            Gecode::FloatNum st, AssignmentType at,
            bool r);
+      /// Construct and register a test with explicitly assigned tags
+      Test(TestTags tags, const std::string& s, int a,
+           Gecode::FloatNum min, Gecode::FloatNum max,
+           Gecode::FloatNum st, AssignmentType at, bool r);
       /// Create assignment
       virtual Assignment* assignment(void) const;
       /// Complete the current assignment to get a feasible one (which satisfies all constraint).
@@ -370,4 +378,3 @@ std::ostream& operator<<(std::ostream& os, const Test::Float::Assignment& a);
 #endif
 
 // STATISTICS: test-float
-

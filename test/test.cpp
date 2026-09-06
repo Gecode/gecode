@@ -52,12 +52,80 @@ namespace Test {
   // Log stream
   std::ostringstream olog;
 
+  /// A command-line name and its corresponding test tag
+  struct TestTagDescription {
+    const char* name;
+    TestTag tag;
+  };
+
+  /// Tags supported by the test runner
+  static const TestTagDescription test_tag_descriptions[] = {
+    {"check",  TestTag::check},
+    {"normal", TestTag::normal},
+    {"sweep",  TestTag::sweep}
+  };
+
+  TestTags
+  TestTags::all(void) {
+    TestTags tags;
+    for (const TestTagDescription& description : test_tag_descriptions)
+      tags.add(description.tag);
+    return tags;
+  }
+
+  /// Return the tag set for \a name, or an empty set if not known
+  static TestTags
+  tag_set(const char* name) {
+    for (const TestTagDescription& description : test_tag_descriptions)
+      if (!strcmp(name, description.name))
+        return TestTags(description.tag);
+    if (!strcmp(name, "all"))
+      return TestTags::all();
+    return TestTags();
+  }
+
+  /// Print all tag names
+  static void
+  print_tags(std::ostream& os) {
+    for (const TestTagDescription& description : test_tag_descriptions)
+      os << description.name << std::endl;
+  }
+
+  /// Convert the known tag names to a command-line choice list
+  static std::string
+  tag_choices(void) {
+    std::string choices;
+    for (const TestTagDescription& description : test_tag_descriptions) {
+      if (!choices.empty())
+        choices += "|";
+      choices += description.name;
+    }
+    return choices + "|all";
+  }
+
+  /// Convert \a tags to a comma-separated string
+  static std::string
+  tags_to_string(TestTags tags) {
+    std::string s;
+    for (const TestTagDescription& description : test_tag_descriptions) {
+      if (tags.overlaps(TestTags(description.tag))) {
+        if (!s.empty())
+          s += ",";
+        s += description.name;
+      }
+    }
+    return s;
+  }
+
   /*
    * Base class for tests
    *
    */
-  Base::Base(std::string  s)
-    : _name(std::move(s)), _next(_tests), _rand(Gecode::Support::RandomGenerator()) {
+  Base::Base(std::string s)
+    : Base(s, TestTag::normal) {}
+
+  Base::Base(std::string s, TestTags t)
+    : _name(std::move(s)), _tags(t), _next(_tests), _rand(Gecode::Support::RandomGenerator()) {
     _tests = this; _n_tests++;
   }
 
@@ -130,6 +198,10 @@ namespace Test {
                   << "\t\tprefixing with \"^\" requires a match at the beginning" << std::endl
                   << "\t\tmultiple pattern-options may be given"
                   << std::endl
+                  << "\t-tag (" << tag_choices() << ") default: (none)" << std::endl
+                  << "\t\ttag for the tests to run" << std::endl
+                  << "\t\tmultiple tag-options may be given"
+                  << std::endl
                   << "\t-start (string) default: (none)" << std::endl
                   << "\t\tsimple pattern for the first test to run" << std::endl
                   << "\t-log"
@@ -145,6 +217,10 @@ namespace Test {
                   << "\t\tstop on first error or continue" << std::endl
                   << "\t-list" << std::endl
                   << "\t\toutput list of all test cases and exit" << std::endl
+                  << "\t-list-tags" << std::endl
+                  << "\t\toutput list of known test tags and exit" << std::endl
+                  << "\t-list-with-tags" << std::endl
+                  << "\t\toutput list of all test cases with tags and exit" << std::endl
           ;
         exit(EXIT_SUCCESS);
       } else if (!strcmp(argv[i],"-threads")) {
@@ -176,6 +252,16 @@ namespace Test {
           testpat.emplace_back(MT_NOT, argv[i] + 1);
         else
           testpat.emplace_back(MT_ANY, argv[i]);
+      } else if (!strcmp(argv[i],"-tag")) {
+        if (++i == argc) goto missing;
+        TestTags tag = tag_set(argv[i]);
+        if (tag.empty()) {
+          std::cerr << "Erroneous argument (-tag)" << std::endl
+                    << "  unknown tag: " << argv[i] << std::endl;
+          exit(EXIT_FAILURE);
+        }
+        testtags.add(tag);
+        use_testtags = true;
       } else if (!strcmp(argv[i],"-start")) {
         if (++i == argc) goto missing;
         start_from = argv[i];
@@ -190,6 +276,10 @@ namespace Test {
         }
       } else if (!strcmp(argv[i],"-list")) {
         list = true;
+      } else if (!strcmp(argv[i],"-list-tags")) {
+        list_tags = true;
+      } else if (!strcmp(argv[i],"-list-with-tags")) {
+        list_with_tags = true;
       }
       i++;
     }
@@ -244,6 +334,10 @@ namespace Test {
       // With no test-patterns, all tests should run.
       return true;
     }
+  }
+
+  bool Options::is_test_tags_matching(TestTags tags) const {
+    return !use_testtags || tags.overlaps(testtags);
   }
 
   /// Run a single test, returning true iff the test succeeded
@@ -464,7 +558,8 @@ namespace Test {
           continue;
         }
       }
-      if (options.is_test_name_matching(t->name())) {
+      if (options.is_test_name_matching(t->name()) &&
+          options.is_test_tags_matching(t->tags())) {
         tests.emplace_back(t);
       }
     }
@@ -475,11 +570,19 @@ namespace Test {
     opt = Options();
     opt.parse(argc, argv);
 
+    if (opt.list_tags) {
+      print_tags(std::cout);
+      return EXIT_SUCCESS;
+    }
+
     Base::sort();
 
-    if (opt.list) {
+    if (opt.list || opt.list_with_tags) {
       for (Base* t = Base::tests(); t != nullptr; t = t->next()) {
-        std::cout << t->name() << std::endl;
+        std::cout << t->name();
+        if (opt.list_with_tags)
+          std::cout << " [" << tags_to_string(t->tags()) << "]";
+        std::cout << std::endl;
       }
       return EXIT_SUCCESS;
     }

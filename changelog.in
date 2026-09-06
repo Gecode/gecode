@@ -78,6 +78,15 @@ Module: test
 What:   new
 Rank:   major
 [DESCRIPTION]
+Add self-declared check, normal, and sweep tags to the public test harness.
+The standard check targets use a focused integrity selection, while normal
+testing retains broad coverage without the exhaustive multi-hour sweeps.
+
+[ENTRY]
+Module: test
+What:   new
+Rank:   major
+[DESCRIPTION]
 Install reusable core and integer test-harness libraries and headers for CMake
 and Autoconf builds, allowing downstream propagator projects to register and
 run Gecode-style tests.

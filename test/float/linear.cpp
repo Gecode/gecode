@@ -66,10 +66,11 @@ namespace Test { namespace Float {
        Gecode::FloatNum c;
      public:
        /// Create and register test
-       FloatFloat(const std::string& s, const Gecode::FloatVal& d,
+       FloatFloat(TestTags tags, const std::string& s,
+                  const Gecode::FloatVal& d,
                   const Gecode::FloatValArgs& a0, Gecode::FloatRelType frt0,
                   Gecode::FloatNum c0, Gecode::FloatNum st)
-         : Test("Linear::Float::"+
+         : Test(tags,"Linear::Float::"+
                 str(frt0)+"::"+s+"::"+str(c0)+"::"
                 +str(a0.size()),
                 a0.size(),d,st,CPLT_ASSIGNMENT,true),
@@ -128,9 +129,10 @@ namespace Test { namespace Float {
        Gecode::FloatRelType frt;
      public:
        /// Create and register test
-       FloatVar(const std::string& s, const Gecode::FloatVal& d,
+       FloatVar(TestTags tags, const std::string& s,
+                const Gecode::FloatVal& d,
                 const Gecode::FloatValArgs& a0, Gecode::FloatRelType frt0, Gecode::FloatNum st)
-         : Test("Linear::Var::"+
+         : Test(tags,"Linear::Var::"+
                 str(frt0)+"::"+s+"::"+str(a0.size()),
                 a0.size()+1,d,st,CPLT_ASSIGNMENT,true),
            a(a0), frt(frt0) {
@@ -203,11 +205,13 @@ namespace Test { namespace Float {
            a1[0] = 0.0;
 
            for (FloatRelTypes frts; frts(); ++frts) {
-             (void) new FloatFloat("11",f1,a1,frts.frt(),0.0,step);
-             (void) new FloatVar("11",f1,a1,frts.frt(),step);
-             (void) new FloatFloat("21",f2,a1,frts.frt(),0.0,step);
-             (void) new FloatVar("21",f2,a1,frts.frt(),step);
-             (void) new FloatFloat("31",f3,a1,frts.frt(),1.0,step);
+             TestTags tags = frts.frt() == Gecode::FRT_EQ
+               ? TestTag::normal : TestTag::sweep;
+             (void) new FloatFloat(tags,"11",f1,a1,frts.frt(),0.0,step);
+             (void) new FloatVar(tags,"11",f1,a1,frts.frt(),step);
+             (void) new FloatFloat(TestTag::sweep,"21",f2,a1,frts.frt(),0.0,step);
+             (void) new FloatVar(TestTag::sweep,"21",f2,a1,frts.frt(),step);
+             (void) new FloatFloat(TestTag::sweep,"31",f3,a1,frts.frt(),1.0,step);
            }
 
            const FloatVal av2[4] = {1.0,1.0,1.0,1.0};
@@ -221,24 +225,24 @@ namespace Test { namespace Float {
              FloatValArgs a4(i, av4);
              FloatValArgs a5(i, av5);
              for (FloatRelTypes frts; frts(); ++frts) {
-               (void) new FloatFloat("12",f1,a2,frts.frt(),0.0,step);
-               (void) new FloatFloat("13",f1,a3,frts.frt(),0.0,step);
-               (void) new FloatFloat("14",f1,a4,frts.frt(),0.0,step);
-               (void) new FloatFloat("15",f1,a5,frts.frt(),0.0,step);
-               (void) new FloatFloat("22",f2,a2,frts.frt(),0.0,step);
-               (void) new FloatFloat("23",f2,a3,frts.frt(),0.0,step);
-               (void) new FloatFloat("24",f2,a4,frts.frt(),0.0,step);
-               (void) new FloatFloat("25",f2,a5,frts.frt(),0.0,step);
-               (void) new FloatFloat("32",f3,a2,frts.frt(),1.0,step);
+               (void) new FloatFloat(TestTag::sweep,"12",f1,a2,frts.frt(),0.0,step);
+               (void) new FloatFloat(TestTag::sweep,"13",f1,a3,frts.frt(),0.0,step);
+               (void) new FloatFloat(TestTag::sweep,"14",f1,a4,frts.frt(),0.0,step);
+               (void) new FloatFloat(TestTag::sweep,"15",f1,a5,frts.frt(),0.0,step);
+               (void) new FloatFloat(TestTag::sweep,"22",f2,a2,frts.frt(),0.0,step);
+               (void) new FloatFloat(TestTag::sweep,"23",f2,a3,frts.frt(),0.0,step);
+               (void) new FloatFloat(TestTag::sweep,"24",f2,a4,frts.frt(),0.0,step);
+               (void) new FloatFloat(TestTag::sweep,"25",f2,a5,frts.frt(),0.0,step);
+               (void) new FloatFloat(TestTag::sweep,"32",f3,a2,frts.frt(),1.0,step);
                if (i < 4) {
-                 (void) new FloatVar("12",f1,a2,frts.frt(),step);
-                 (void) new FloatVar("13",f1,a3,frts.frt(),step);
-                 (void) new FloatVar("14",f1,a4,frts.frt(),step);
-                 (void) new FloatVar("15",f1,a5,frts.frt(),step);
-                 (void) new FloatVar("22",f2,a2,frts.frt(),step);
-                 (void) new FloatVar("23",f2,a3,frts.frt(),step);
-                 (void) new FloatVar("24",f2,a4,frts.frt(),step);
-                 (void) new FloatVar("25",f2,a5,frts.frt(),step);
+                 (void) new FloatVar(TestTag::sweep,"12",f1,a2,frts.frt(),step);
+                 (void) new FloatVar(TestTag::sweep,"13",f1,a3,frts.frt(),step);
+                 (void) new FloatVar(TestTag::sweep,"14",f1,a4,frts.frt(),step);
+                 (void) new FloatVar(TestTag::sweep,"15",f1,a5,frts.frt(),step);
+                 (void) new FloatVar(TestTag::sweep,"22",f2,a2,frts.frt(),step);
+                 (void) new FloatVar(TestTag::sweep,"23",f2,a3,frts.frt(),step);
+                 (void) new FloatVar(TestTag::sweep,"24",f2,a4,frts.frt(),step);
+                 (void) new FloatVar(TestTag::sweep,"25",f2,a5,frts.frt(),step);
                }
              }
            }

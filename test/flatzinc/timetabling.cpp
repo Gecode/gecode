@@ -42,7 +42,7 @@ namespace Test { namespace FlatZinc {
 
       /// Perform creation and registration
       Create(void) {
-        (void) new FlatZincTest("timetabling",
+        (void) new FlatZincTest(TestTag::sweep,"timetabling",
 std::string("predicate all_different_int(array [int] of var int: x);\n\
 predicate all_equal_int(array [int] of var int: x);\n\
 predicate among(var int: n, array [int] of var int: x, set of int: v);\n\

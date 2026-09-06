@@ -1489,64 +1489,7 @@ if(BUILD_TESTING)
         "${GECODE_TEST_BLACKBOX_LOG}.dll_parallel")
     endif()
 
-    set(GECODE_CHECK_TESTS
-      Branch::Int::Dense::3
-      Int::Arithmetic::Abs
-      Int::Arithmetic::ArgMax
-      Int::Arithmetic::Max::Nary
-      Int::Cumulative::Man::Fix::0::4
-      Int::Distinct::Random
-      Int::Extensional::TupleSet::Sparse::IncrementalDelta
-      Int::Extensional::TupleSet::Auto::DefaultDispatch
-      Int::Linear::Bool::Int::Lq
-      Int::MiniModel::LinExpr::Bool::352
-      NoGoods::Queens
-      Search::DFS::Sol::Binary::Nary::Binary::1::1::1)
-    if(GECODE_ENABLE_FLATZINC)
-      list(INSERT GECODE_CHECK_TESTS 1
-        FlatZinc::Options
-        FlatZinc::magic_square
-        FlatZinc::blackbox)
-    endif()
-    if(GECODE_ENABLE_SET_VARS)
-      list(APPEND GECODE_CHECK_TESTS
-        Set::Dom::Dom::Gr
-        Set::RelOp::ConstSSI::Union
-        Set::Sequence::SeqU1
-        Set::Wait)
-    endif()
-    if(GECODE_ENABLE_FLOAT_VARS)
-      set(GECODE_FLOAT_CHECK_TESTS
-        Float::Arithmetic::PositiveNRootBounds
-        Float::Arithmetic::PowConsistency
-        Float::Arithmetic::MultZeroEndpoint
-        Float::Arithmetic::Pow::N::2::XY::Sol::C
-        Float::Arithmetic::NRoot::N::2::XY::Sol::C
-        Float::Arithmetic::Mult::XYZ::Sol::C)
-      list(APPEND GECODE_CHECK_TESTS ${GECODE_FLOAT_CHECK_TESTS})
-
-      # Keep the fast CI selection honest when Float regressions are added or
-      # the list above is edited.  These names must remain registered in the
-      # ordinary check target rather than living only in ad-hoc test commands.
-      set(GECODE_REQUIRED_FLOAT_CHECK_TESTS
-        Float::Arithmetic::PositiveNRootBounds
-        Float::Arithmetic::PowConsistency
-        Float::Arithmetic::MultZeroEndpoint
-        Float::Arithmetic::Pow::N::2::XY::Sol::C
-        Float::Arithmetic::NRoot::N::2::XY::Sol::C
-        Float::Arithmetic::Mult::XYZ::Sol::C)
-      foreach(gecode_required_float_test ${GECODE_REQUIRED_FLOAT_CHECK_TESTS})
-        if(NOT gecode_required_float_test IN_LIST GECODE_CHECK_TESTS)
-          message(FATAL_ERROR
-            "Required Float check test is missing: ${gecode_required_float_test}")
-        endif()
-      endforeach()
-    endif()
-
-    set(GECODE_CHECK_ARGS -iter 2 -threads 0 -fixprob 1)
-    foreach(gecode_check_test ${GECODE_CHECK_TESTS})
-      list(APPEND GECODE_CHECK_ARGS -test ${gecode_check_test})
-    endforeach()
+    set(GECODE_CHECK_ARGS -iter 2 -threads 0 -fixprob 1 -tag check)
 
     # Keep ctest robust while leaving the large test binaries out of the default build.
     set(GECODE_TEST_BUILD_TARGETS gecode-test)
@@ -1573,16 +1516,6 @@ if(BUILD_TESTING)
         ENVIRONMENT "${GECODE_TEST_BLACKBOX_ENV}")
     endif()
     set(GECODE_CHECK_DEPENDS gecode-test)
-    if(GECODE_ENABLE_FLOAT_VARS)
-      add_custom_target(verify-gecode-check-tests
-        COMMAND ${CMAKE_COMMAND}
-          "-DTEST_EXECUTABLE=$<TARGET_FILE:gecode-test>"
-          "-DREQUIRED_TESTS=${GECODE_REQUIRED_FLOAT_CHECK_TESTS}"
-          -P ${CMAKE_CURRENT_SOURCE_DIR}/cmake/VerifyTestSelection.cmake
-        DEPENDS gecode-test
-        VERBATIM)
-      list(APPEND GECODE_CHECK_DEPENDS verify-gecode-check-tests)
-    endif()
     if(GECODE_ENABLE_FLATZINC)
       list(APPEND GECODE_CHECK_DEPENDS
         gecode-test-blackbox-exec
@@ -1595,10 +1528,34 @@ if(BUILD_TESTING)
                 $<TARGET_FILE:gecode-test> ${GECODE_CHECK_ARGS}
         DEPENDS ${GECODE_CHECK_DEPENDS}
         USES_TERMINAL)
+      add_custom_target(check-normal
+        COMMAND ${CMAKE_COMMAND} -E env
+                GECODE_TEST_BLACKBOX_EXEC=$<TARGET_FILE:gecode-test-blackbox-exec>
+                GECODE_TEST_BLACKBOX_DLL=$<TARGET_FILE:gecode-test-blackbox-dll>
+                GECODE_TEST_BLACKBOX_LOG=${GECODE_TEST_BLACKBOX_LOG}
+                $<TARGET_FILE:gecode-test> -tag normal
+        DEPENDS ${GECODE_CHECK_DEPENDS}
+        USES_TERMINAL)
+      add_custom_target(check-sweep
+        COMMAND ${CMAKE_COMMAND} -E env
+                GECODE_TEST_BLACKBOX_EXEC=$<TARGET_FILE:gecode-test-blackbox-exec>
+                GECODE_TEST_BLACKBOX_DLL=$<TARGET_FILE:gecode-test-blackbox-dll>
+                GECODE_TEST_BLACKBOX_LOG=${GECODE_TEST_BLACKBOX_LOG}
+                $<TARGET_FILE:gecode-test> -tag sweep
+        DEPENDS ${GECODE_CHECK_DEPENDS}
+        USES_TERMINAL)
     else()
       add_custom_target(check
         COMMAND $<TARGET_FILE:gecode-test> ${GECODE_CHECK_ARGS}
         DEPENDS ${GECODE_CHECK_DEPENDS}
+        USES_TERMINAL)
+      add_custom_target(check-normal
+        COMMAND $<TARGET_FILE:gecode-test> -tag normal
+        DEPENDS gecode-test
+        USES_TERMINAL)
+      add_custom_target(check-sweep
+        COMMAND $<TARGET_FILE:gecode-test> -tag sweep
+        DEPENDS gecode-test
         USES_TERMINAL)
     endif()
     if(GECODE_ENABLE_FAULT_INJECTION)
@@ -1617,10 +1574,18 @@ if(BUILD_TESTING)
     message(WARNING "Skipping gecode-test/check targets because required modules are disabled")
     add_custom_target(check
       COMMAND ${CMAKE_COMMAND} -E echo "Skipping check target because required modules are disabled")
+    add_custom_target(check-normal
+      COMMAND ${CMAKE_COMMAND} -E echo "Skipping check-normal target because required modules are disabled")
+    add_custom_target(check-sweep
+      COMMAND ${CMAKE_COMMAND} -E echo "Skipping check-sweep target because required modules are disabled")
   endif()
 else()
   add_custom_target(check
     COMMAND ${CMAKE_COMMAND} -E echo "Skipping check target because BUILD_TESTING is OFF")
+  add_custom_target(check-normal
+    COMMAND ${CMAKE_COMMAND} -E echo "Skipping check-normal target because BUILD_TESTING is OFF")
+  add_custom_target(check-sweep
+    COMMAND ${CMAKE_COMMAND} -E echo "Skipping check-sweep target because BUILD_TESTING is OFF")
 endif()
 
 # ---------------------------------------------------------------------------

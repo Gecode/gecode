@@ -170,25 +170,37 @@ namespace Test { namespace Float {
     return reified && ((rms & (1 << Gecode::RM_PMI)) != 0);
   }
   inline
-  Test::Test(const std::string& s, int a, const Gecode::FloatVal& d,
-             Gecode::FloatNum st, AssignmentType at,
-             bool r)
-    : Base("Float::"+s), arity(a), dom(d), step(st), assignmentType(at),
+  Test::Test(TestTags tags, const std::string& s, int a,
+             const Gecode::FloatVal& d, Gecode::FloatNum st,
+             AssignmentType at, bool r)
+    : Base("Float::"+s, tags), arity(a), dom(d), step(st), assignmentType(at),
       reified(r), rms((1 << Gecode::RM_EQV) |
                       (1 << Gecode::RM_IMP) |
                       (1 << Gecode::RM_PMI)),
       testsearch(true), testfix(true), testsubsumed(true) {}
 
   inline
+  Test::Test(const std::string& s, int a, const Gecode::FloatVal& d,
+             Gecode::FloatNum st, AssignmentType at,
+             bool r)
+    : Test(TestTag::normal,s,a,d,st,at,r) {}
+
+  inline
+  Test::Test(TestTags tags, const std::string& s, int a,
+             Gecode::FloatNum min, Gecode::FloatNum max,
+             Gecode::FloatNum st, AssignmentType at, bool r)
+    : Base("Float::"+s, tags), arity(a), dom(min,max), step(st),
+      assignmentType(at), reified(r),
+      rms((1 << Gecode::RM_EQV) |
+          (1 << Gecode::RM_IMP) |
+          (1 << Gecode::RM_PMI)),
+      testsearch(true), testfix(true), testsubsumed(true) {}
+
+  inline
   Test::Test(const std::string& s, int a, Gecode::FloatNum min,
              Gecode::FloatNum max, Gecode::FloatNum st, AssignmentType at,
              bool r)
-      : Base("Float::"+s), arity(a), dom(min,max), step(st),
-        assignmentType(at), reified(r),
-        rms((1 << Gecode::RM_EQV) |
-            (1 << Gecode::RM_IMP) |
-            (1 << Gecode::RM_PMI)),
-        testsearch(true), testfix(true), testsubsumed(true) {}
+    : Test(TestTag::normal,s,a,min,max,st,at,r) {}
 
   inline
   std::string
@@ -309,4 +321,3 @@ namespace Test { namespace Float {
 }}
 
 // STATISTICS: test-float
-

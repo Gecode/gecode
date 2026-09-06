@@ -140,7 +140,8 @@ namespace Test { namespace Int {
      public:
        /// Create and register test
        LinExprInt(const LinInstr* lis0, const std::string& s)
-         : Test("MiniModel::LinExpr::Int::"+s,4,-3,3), lis(lis0) {
+         : Test(TestTag::sweep,"MiniModel::LinExpr::Int::"+s,4,-3,3),
+           lis(lis0) {
          testfix = false;
        }
        /// %Test whether \a x is solution
@@ -163,8 +164,9 @@ namespace Test { namespace Int {
        const LinInstr* lis;
      public:
        /// Create and register test
-       LinExprBool(const LinInstr* lis0, const std::string& s)
-         : Test("MiniModel::LinExpr::Bool::"+s,4,-3,3), lis(lis0) {
+       LinExprBool(TestTags tags, const LinInstr* lis0,
+                   const std::string& s)
+         : Test(tags,"MiniModel::LinExpr::Bool::"+s,4,-3,3), lis(lis0) {
          testfix = false;
        }
        /// %Test whether \a x is solution
@@ -193,7 +195,8 @@ namespace Test { namespace Int {
      public:
        /// Create and register test
        LinExprMixed(const LinInstr* lis0, const std::string& s)
-         : Test("MiniModel::LinExpr::Mixed::"+s,4,-3,3), lis(lis0) {
+         : Test(TestTag::sweep,"MiniModel::LinExpr::Mixed::"+s,4,-3,3),
+           lis(lis0) {
          testfix = false;
        }
        /// %Test whether \a x is solution
@@ -2193,7 +2196,10 @@ namespace Test { namespace Int {
              s = "0" + s;
            }
            (void) new LinExprInt(li[i],s);
-           (void) new LinExprBool(li[i],s);
+           TestTags bool_tags = (i == 352)
+             ? TestTags(TestTag::normal,TestTag::check)
+             : TestTags(TestTag::sweep);
+           (void) new LinExprBool(bool_tags,li[i],s);
            (void) new LinExprMixed(li[i],s);
          }
          IntRelTypes irts;

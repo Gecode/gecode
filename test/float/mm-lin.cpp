@@ -98,8 +98,8 @@ namespace Test { namespace Float {
        const LinInstr* lis;
      public:
        /// Create and register test
-       LinExpr(const LinInstr* lis0, const std::string& s)
-         : Test("Float::","MiniModel::LinExpr::"+s,4,-3,3),
+       LinExpr(TestTags tags, const LinInstr* lis0, const std::string& s)
+         : Test(tags,"Float::","MiniModel::LinExpr::"+s,4,-3,3),
            lis(lis0) {
          testfix = false;
        }
@@ -1874,7 +1874,8 @@ namespace Test { namespace Float {
            } else if (i < 100) {
              s = "0" + s;
            }
-           (void) new LinExpr(li[i],s);
+           (void) new LinExpr(i == 0 ? TestTag::normal : TestTag::sweep,
+                              li[i],s);
          }
          FloatRelTypes frts;
          for (int i=0; i<n/2; i++) {

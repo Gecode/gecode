@@ -221,9 +221,10 @@ namespace Test {
         return s.str();
       }
       /// Initialize test
-      NoGoods(ValBranch vb0, unsigned int t0, bool a0, bool n0)
+      NoGoods(TestTags tags, ValBranch vb0,
+              unsigned int t0, bool a0, bool n0)
         : Base("NoGoods::"+Model::name()+"::"+Model::val(vb0)+"::"+str(t0)+
-               "::"+(a0 ? "+" : "-")+"::"+(n0 ? "+" : "-")),
+               "::"+(a0 ? "+" : "-")+"::"+(n0 ? "+" : "-"),tags),
           vb(vb0), t(t0), a(a0), n(n0) {}
       /// Run test
       virtual bool run(void) {
@@ -274,17 +275,18 @@ namespace Test {
           bool n = false;
           do {
             for (unsigned int t = 1; t<=4; t++) {
-              (void) new NoGoods<Queens,IntValBranch>(INT_VAL_MIN(),t,a,n);
-              (void) new NoGoods<Queens,IntValBranch>(INT_VAL_MAX(),t,a,n);
-              (void) new NoGoods<Queens,IntValBranch>(INT_VAL_SPLIT_MIN(),t,a,n);
-              (void) new NoGoods<Queens,IntValBranch>(INT_VAL_SPLIT_MAX(),t,a,n);
-              (void) new NoGoods<Queens,IntValBranch>(INT_VALUES_MIN(),t,a,n);
-              (void) new NoGoods<Queens,IntValBranch>(INT_VALUES_MAX(),t,a,n);
+              TestTags queens(TestTag::normal,TestTag::check);
+              (void) new NoGoods<Queens,IntValBranch>(queens,INT_VAL_MIN(),t,a,n);
+              (void) new NoGoods<Queens,IntValBranch>(queens,INT_VAL_MAX(),t,a,n);
+              (void) new NoGoods<Queens,IntValBranch>(queens,INT_VAL_SPLIT_MIN(),t,a,n);
+              (void) new NoGoods<Queens,IntValBranch>(queens,INT_VAL_SPLIT_MAX(),t,a,n);
+              (void) new NoGoods<Queens,IntValBranch>(queens,INT_VALUES_MIN(),t,a,n);
+              (void) new NoGoods<Queens,IntValBranch>(queens,INT_VALUES_MAX(),t,a,n);
 #ifdef GECODE_HAS_SET_VARS
-              (void) new NoGoods<Hamming,SetValBranch>(SET_VAL_MIN_INC(),t,a,n);
-              (void) new NoGoods<Hamming,SetValBranch>(SET_VAL_MIN_EXC(),t,a,n);
-              (void) new NoGoods<Hamming,SetValBranch>(SET_VAL_MAX_INC(),t,a,n);
-              (void) new NoGoods<Hamming,SetValBranch>(SET_VAL_MAX_EXC(),t,a,n);
+              (void) new NoGoods<Hamming,SetValBranch>(TestTag::normal,SET_VAL_MIN_INC(),t,a,n);
+              (void) new NoGoods<Hamming,SetValBranch>(TestTag::normal,SET_VAL_MIN_EXC(),t,a,n);
+              (void) new NoGoods<Hamming,SetValBranch>(TestTag::normal,SET_VAL_MAX_INC(),t,a,n);
+              (void) new NoGoods<Hamming,SetValBranch>(TestTag::normal,SET_VAL_MAX_EXC(),t,a,n);
 #endif
             }
             n = !n;

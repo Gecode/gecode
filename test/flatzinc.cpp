@@ -81,7 +81,8 @@ namespace Test { namespace FlatZinc {
       }
     public:
       GistStatisticsMode(void)
-        : Base("FlatZinc::Options::GistStatisticsMode") {}
+        : Base("FlatZinc::Options::GistStatisticsMode",
+               TestTags(TestTag::normal,TestTag::check)) {}
 
       virtual bool run(void) {
         return
@@ -96,6 +97,7 @@ namespace Test { namespace FlatZinc {
 #ifndef GECODE_HAS_GIST
     /// Verify that unavailable Gist mode is rejected instead of running search.
     FlatZincErrorTest gist_unavailable(
+      TestTags(TestTag::normal,TestTag::check),
       "Options::GistUnavailable",
       "var 1..1: x :: output_var;\nsolve satisfy;\n",
       {"-mode", "gist", "-s"},
@@ -108,7 +110,16 @@ namespace Test { namespace FlatZinc {
                              const std::string& expected, bool allSolutions,
                              std::vector<std::string> cmdlineOpt,
                              OutputCheck check, BeforeRun before)
-    : Base("FlatZinc::"+name), _name(name), _source(source), _expected(expected),
+    : FlatZincTest(TestTag::normal, name, source, expected, allSolutions,
+                   cmdlineOpt, check, before) {}
+
+  FlatZincTest::FlatZincTest(TestTags tags, const std::string& name,
+                             const std::string& source,
+                             const std::string& expected, bool allSolutions,
+                             std::vector<std::string> cmdlineOpt,
+                             OutputCheck check, BeforeRun before)
+    : Base("FlatZinc::"+name, tags), _name(name), _source(source),
+      _expected(expected),
       _allSolutions(allSolutions), _cmdlineOpt(cmdlineOpt),
       _check(check), _before(before) {}
 
@@ -116,7 +127,14 @@ namespace Test { namespace FlatZinc {
                                        const std::string& source,
                                        std::vector<std::string> cmdlineOpt,
                                        std::string expectedMessage)
-    : FlatZincTest(name, source, "", false, cmdlineOpt),
+    : FlatZincErrorTest(TestTag::normal, name, source, cmdlineOpt,
+                        expectedMessage) {}
+
+  FlatZincErrorTest::FlatZincErrorTest(TestTags tags, const std::string& name,
+                                       const std::string& source,
+                                       std::vector<std::string> cmdlineOpt,
+                                       std::string expectedMessage)
+    : FlatZincTest(tags, name, source, "", false, cmdlineOpt),
       _expectedMessage(expectedMessage) {}
 
   bool

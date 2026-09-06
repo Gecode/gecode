@@ -80,6 +80,39 @@ namespace Test {
     MT_FIRST //< Positive match at beginning
   };
 
+  /// Tags for test selection
+  enum class TestTag : unsigned int {
+    check  = 1U << 0, ///< Basic integrity tests
+    normal = 1U << 1, ///< Normal test suite
+    sweep  = 1U << 2  ///< Really heavy sweep tests
+  };
+
+  /// Set of test tags
+  class TestTags {
+  private:
+    /// Bit mask for tags
+    unsigned int _mask;
+    /// Initialize from raw bit mask \a m
+    explicit TestTags(unsigned int m);
+  public:
+    /// Initialize with no tags
+    TestTags(void);
+    /// Initialize with tag \a t
+    TestTags(TestTag t);
+    /// Initialize with tags \a t0 and \a t1
+    TestTags(TestTag t0, TestTag t1);
+    /// Return set with all known tags
+    static TestTags all(void);
+    /// Whether no tags are set
+    bool empty(void) const;
+    /// Whether this set contains any tag from \a t
+    bool overlaps(TestTags t) const;
+    /// Add tags \a t
+    void add(TestTags t);
+    /// Remove tags \a t
+    void remove(TestTags t);
+  };
+
   /// Commandline options
   class Options {
   public:
@@ -101,10 +134,18 @@ namespace Test {
     bool log;
     /// Patterns to test against
     std::vector<std::pair<MatchType, const char*> > testpat;
+    /// Tags to test against
+    TestTags testtags;
+    /// Whether test tags have been requested
+    bool use_testtags;
     /// Name of first test to start with
     const char* start_from;
     /// Whether to list all tests
     bool list;
+    /// Whether to list known tags
+    bool list_tags;
+    /// Whether to include tags when listing tests
+    bool list_with_tags;
 
     /// Initialize options with defaults
     Options(void);
@@ -113,6 +154,8 @@ namespace Test {
 
     /// True iff a test name should be executed according to the patterns. With no patterns, always true.
     bool is_test_name_matching(const std::string& test_name) const;
+    /// True iff test tags should be executed according to the requested tags. With no tag request, always true.
+    bool is_test_tags_matching(TestTags tags) const;
   };
 
   /// The options
@@ -123,6 +166,8 @@ namespace Test {
   private:
     /// Name of the test
     std::string _name;
+    /// Tags assigned to the test
+    TestTags _tags;
     /// Next test
     Base* _next;
     /// All tests
@@ -130,12 +175,16 @@ namespace Test {
     /// How many tests
     static unsigned int _n_tests;
   public:
-    /// Create and register test with name \a s
+    /// Create and register a normal test with name \a s
     Base(std::string  s);
+    /// Create and register test with name \a s and tags \a t
+    Base(std::string s, TestTags t);
     /// Sort tests alphabetically
     static void sort(void);
     /// Return name of test
     const std::string& name(void) const;
+    /// Return tags for test
+    TestTags tags(void) const;
     /// Return all tests
     static Base* tests(void);
     /// Return next test

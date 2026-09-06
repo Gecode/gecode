@@ -53,11 +53,15 @@ namespace Test { namespace Int {
        /// Create and register test
        Distinct(const Gecode::IntSet& d0, Gecode::IntPropLevel ipl,
                 int n=6)
-         : Test(std::string(useCount ? "Count::Distinct::" : "Distinct::")+
+         : Test((useCount || (ipl != Gecode::IPL_VAL))
+                ? TestTag::sweep : TestTag::normal,
+                std::string(useCount ? "Count::Distinct::" : "Distinct::")+
                 str(ipl)+"::Sparse::"+str(n),n,d0,false,ipl) {}
        /// Create and register test
        Distinct(int min, int max, Gecode::IntPropLevel ipl)
-         : Test(std::string(useCount ? "Count::Distinct::" : "Distinct::")+
+         : Test((!useCount || (ipl == Gecode::IPL_BND))
+                ? TestTag::normal : TestTag::sweep,
+                std::string(useCount ? "Count::Distinct::" : "Distinct::")+
                 str(ipl)+"::Dense",6,min,max,false,ipl) {}
        /// Check whether \a x is solution
        virtual bool solution(const Assignment& x) const {
@@ -87,10 +91,12 @@ namespace Test { namespace Int {
      public:
        /// Create and register test
        Offset(const Gecode::IntSet& d, Gecode::IntPropLevel ipl)
-         : Test("Distinct::Offset::Sparse::"+str(ipl),6,d,false,ipl) {}
+         : Test(TestTag::sweep,
+                "Distinct::Offset::Sparse::"+str(ipl),6,d,false,ipl) {}
        /// Create and register test
        Offset(int min, int max, Gecode::IntPropLevel ipl)
-         : Test("Distinct::Offset::Dense::"+str(ipl),6,min,max,false,ipl) {}
+         : Test(ipl == Gecode::IPL_BND ? TestTag::normal : TestTag::sweep,
+                "Distinct::Offset::Dense::"+str(ipl),6,min,max,false,ipl) {}
        /// Check whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          for (int i=0; i<x.size(); i++)
@@ -168,7 +174,8 @@ namespace Test { namespace Int {
      public:
        /// Create and register test
        Random(int n, int min, int max, Gecode::IntPropLevel ipl)
-         : Test("Distinct::Random::"+str(ipl),n,min,max,false,ipl) {
+         : Test(TestTags(TestTag::normal,TestTag::check),
+                "Distinct::Random::"+str(ipl),n,min,max,false,ipl) {
          testsearch = false;
        }
        /// Create and register initial assignment
@@ -213,7 +220,8 @@ namespace Test { namespace Int {
        /// Create and register test
        Pathological(int n0, Gecode::IntPropLevel ipl0)
          : Base("Int::Distinct::Pathological::"+
-                Test::str(n0)+"::"+Test::str(ipl0)), n(n0), ipl(ipl0) {}
+                Test::str(n0)+"::"+Test::str(ipl0), TestTag::sweep),
+           n(n0), ipl(ipl0) {}
        /// Perform test
        virtual bool run(void) {
          using namespace Gecode;

@@ -55,8 +55,10 @@ namespace Test { namespace Int {
       Gecode::IntArgs h;
     public:
       /// Create and register test with maximal coordinate value \a m
-      Int2(int m, const Gecode::IntArgs& w0, const Gecode::IntArgs& h0)
-        : Test("NoOverlap::Int::2::"+str(m)+"::"+str(w0)+"::"+str(h0),
+      Int2(TestTags tags, int m,
+           const Gecode::IntArgs& w0, const Gecode::IntArgs& h0)
+        : Test(tags,
+               "NoOverlap::Int::2::"+str(m)+"::"+str(w0)+"::"+str(h0),
                2*w0.size(), 0, m-1),
           w(w0), h(h0) {
       }
@@ -95,7 +97,7 @@ namespace Test { namespace Int {
     public:
       /// Create and register test with maximal value \a m and \a n rectangles
       IntOpt2(int m, const Gecode::IntArgs& w0, const Gecode::IntArgs& h0)
-        : Test("NoOverlap::Int::Opt::2::"+str(m)+"::"+str(w0)+"::"+str(h0),
+        : Test(TestTag::sweep,"NoOverlap::Int::Opt::2::"+str(m)+"::"+str(w0)+"::"+str(h0),
                3*w0.size(), 0, m-1), w(w0), h(h0) {}
       /// %Test whether \a xyo is solution
       virtual bool solution(const Assignment& xyo) const {
@@ -133,7 +135,7 @@ namespace Test { namespace Int {
     public:
       /// Create and register test with maximal value \a m and \a n rectangles
       Var2(int m, int n)
-        : Test("NoOverlap::Var::2::"+str(m)+"::"+str(n), 4*n, 0, m) {}
+        : Test(TestTag::sweep,"NoOverlap::Var::2::"+str(m)+"::"+str(n), 4*n, 0, m) {}
       /// %Test whether \a xwyh is solution
       virtual bool solution(const Assignment& xwyh) const {
         int n = xwyh.size() / 4;
@@ -170,7 +172,7 @@ namespace Test { namespace Int {
     public:
       /// Create and register test with maximal value \a m and \a n rectangles
       VarOpt2(int m, int n)
-        : Test("NoOverlap::Var::Opt::2::"+str(m)+"::"+str(n), 5*n, 0, m) {
+        : Test(TestTag::sweep,"NoOverlap::Var::Opt::2::"+str(m)+"::"+str(n), 5*n, 0, m) {
         testfix = false;
       }
       /// %Test whether \a xwyho is solution
@@ -214,7 +216,7 @@ namespace Test { namespace Int {
     public:
       /// Create and register test with maximal value \a m and \a n rectangles
       VarOptShared2(int m, int n)
-        : Test("NoOverlap::Var::Opt::Shared::2::"+
+        : Test(TestTag::sweep,"NoOverlap::Var::Opt::Shared::2::"+
                str(m)+"::"+str(n), 2*n+2, 0, m) {
         testfix = false;
       }
@@ -268,12 +270,12 @@ namespace Test { namespace Int {
         IntArgs s4({1,1,1,1});
 
         for (int m=2; m<3; m++) {
-          (void) new Int2(m, s1, s1);
-          (void) new Int2(m, s2, s2);
-          (void) new Int2(m, s3, s3);
-          (void) new Int2(m, s2, s3);
-          (void) new Int2(m, s4, s4);
-          (void) new Int2(m, s4, s2);
+          (void) new Int2(TestTag::sweep,m,s1,s1);
+          (void) new Int2(TestTag::sweep,m,s2,s2);
+          (void) new Int2(TestTag::sweep,m,s3,s3);
+          (void) new Int2(TestTag::sweep,m,s2,s3);
+          (void) new Int2(TestTag::normal,m,s4,s4);
+          (void) new Int2(TestTag::sweep,m,s4,s2);
           (void) new IntOpt2(m, s2, s3);
           (void) new IntOpt2(m, s4, s3);
         }
@@ -300,4 +302,3 @@ namespace Test { namespace Int {
 
 
 // STATISTICS: test-int
-

@@ -732,8 +732,13 @@ namespace Test { namespace Branch {
   }
 
 #ifdef GECODE_HAS_SET_VARS
+  SetTest::SetTest(TestTags tags, const std::string& s, int a,
+                   const Gecode::IntSet& d)
+    : Base("Set::Branch::"+s,tags), arity(a), dom(d) {
+  }
+
   SetTest::SetTest(const std::string& s, int a, const Gecode::IntSet& d)
-    : Base("Set::Branch::"+s), arity(a), dom(d) {
+    : SetTest(TestTag::normal,s,a,d) {
   }
 
   bool

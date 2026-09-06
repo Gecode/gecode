@@ -1441,67 +1441,27 @@ test: mkcompiledirs $(BLACKBOXFIXTURES)
 	@$(MAKE) $(VARIMP) $(TESTEXE) \
 		$(TESTPUBLICRUNNERSMOKEEXE) $(TESTPUBLICINTSMOKEEXE)
 
-CHECKTESTS = Branch::Int::Dense::3 \
-	Int::Arithmetic::Abs \
-	Int::Arithmetic::ArgMax \
-	Int::Arithmetic::Max::Nary \
-	Int::Cumulative::Man::Fix::0::4 \
-	Int::Distinct::Random \
-	Int::Extensional::TupleSet::Sparse::IncrementalDelta \
-	Int::Extensional::TupleSet::Auto::DefaultDispatch \
-	Int::Linear::Bool::Int::Lq \
-	Int::MiniModel::LinExpr::Bool::352 \
-	NoGoods::Queens \
-	Search::DFS::Sol::Binary::Nary::Binary::1::1::1
-
-ifeq "@enable_set_vars@" "yes"
-CHECKTESTS += \
-	Set::Dom::Dom::Gr \
-	Set::RelOp::ConstSSI::Union \
-	Set::Sequence::SeqU1 \
-	Set::Wait
-endif
-
 ifeq "@enable_flatzinc@" "yes"
-CHECKTESTS += FlatZinc::magic_square FlatZinc::Options FlatZinc::blackbox
 BLACKBOXCHECKENV = \
 	GECODE_TEST_BLACKBOX_EXEC=$(abspath $(BLACKBOXEXEC)) \
 	GECODE_TEST_BLACKBOX_DLL=$(abspath $(BLACKBOXDLL)) \
 	GECODE_TEST_BLACKBOX_LOG=$(BLACKBOXLOG)
 endif
 
-ifeq "@enable_float_vars@" "yes"
-FLOATCHECKTESTS = Float::Arithmetic::PositiveNRootBounds \
-	Float::Arithmetic::PowConsistency \
-	Float::Arithmetic::MultZeroEndpoint \
-	Float::Arithmetic::Pow::N::2::XY::Sol::C \
-	Float::Arithmetic::NRoot::N::2::XY::Sol::C \
-	Float::Arithmetic::Mult::XYZ::Sol::C
-CHECKTESTS += $(FLOATCHECKTESTS)
-REQUIREDFLOATCHECKTESTS = Float::Arithmetic::PositiveNRootBounds \
-	Float::Arithmetic::PowConsistency \
-	Float::Arithmetic::MultZeroEndpoint \
-	Float::Arithmetic::Pow::N::2::XY::Sol::C \
-	Float::Arithmetic::NRoot::N::2::XY::Sol::C \
-	Float::Arithmetic::Mult::XYZ::Sol::C
-endif
-
 # A basic integrity test
 check: test
 	$(RUNENVIRONMENT) $(TESTPUBLICRUNNERSMOKEEXE)
 	$(RUNENVIRONMENT) $(TESTPUBLICINTSMOKEEXE)
-	@for t in $(REQUIREDFLOATCHECKTESTS); do \
-		case " $(CHECKTESTS) " in *" $$t "*) ;; \
-		*) echo "Required Float check test is missing: $$t" >&2; exit 1 ;; \
-		esac; \
-		if ! $(RUNENVIRONMENT) $(TESTEXE) -list | grep -Fqx "$$t"; then \
-			echo "Required Float check test is not registered: $$t" >&2; \
-			exit 1; \
-		fi; \
-	done
 	$(BLACKBOXCHECKENV) $(RUNENVIRONMENT) \
-		$(TESTEXE) -iter 2 -threads 0 -fixprob 1 \
-		$(CHECKTESTS:%=-test %)
+		$(TESTEXE) -iter 2 -threads 0 -fixprob 1 -tag check
+
+# The normal test suite without sweep tests
+check-normal: test
+	$(BLACKBOXCHECKENV) $(RUNENVIRONMENT) $(TESTEXE) -tag normal
+
+# Really heavy sweep tests
+check-sweep: test
+	$(BLACKBOXCHECKENV) $(RUNENVIRONMENT) $(TESTEXE) -tag sweep
 
 .PHONY: regenerate
 regenerate:

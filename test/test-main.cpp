@@ -1,4 +1,4 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
+/* -*- mode: c++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>

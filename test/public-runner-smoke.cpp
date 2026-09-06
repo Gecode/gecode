@@ -62,7 +62,7 @@ namespace {
   class FailingSmokeTest : public Test::Base {
   public:
     FailingSmokeTest(void)
-      : Test::Base("Smoke::B-Fail") {}
+      : Test::Base("Smoke::B-Fail", Test::TestTag::sweep) {}
 
     bool run(void) override {
       failing_runs++;
@@ -120,6 +120,38 @@ main(void) {
     return EXIT_FAILURE;
   }
 
+  std::string tagged_list_output;
+  if (!require(run_and_capture({"public-runner-smoke", "-list-with-tags"},
+                               tagged_list_output) == EXIT_SUCCESS,
+               "-list-with-tags should succeed")) {
+    return EXIT_FAILURE;
+  }
+  if (!require(tagged_list_output.find(pass_name + " [normal]") != std::string::npos,
+               "default test should have the normal tag")) {
+    return EXIT_FAILURE;
+  }
+  if (!require(tagged_list_output.find("Smoke::B-Fail [sweep]") != std::string::npos,
+               "explicit test tag should be listed")) {
+    return EXIT_FAILURE;
+  }
+
+  std::string normal_output;
+  if (!require(run_and_capture({"public-runner-smoke", "-tag", "normal",
+                                "-iter", "1", "-stop", "true"},
+                               normal_output) == EXIT_SUCCESS,
+               "normal tag selection should succeed")) {
+    return EXIT_FAILURE;
+  }
+  if (!require(normal_output.find(pass_name) != std::string::npos &&
+               normal_output.find(fail_name) == std::string::npos,
+               "normal tag selection chose the wrong tests")) {
+    return EXIT_FAILURE;
+  }
+  if (!require(passing_runs == 1 && failing_runs == 0,
+               "normal tag selection run counts are wrong")) {
+    return EXIT_FAILURE;
+  }
+
   std::string pass_output;
   if (!require(run_and_capture({"public-runner-smoke", "-test", "Smoke::A-Pass", "-iter", "1", "-stop", "true"},
                                pass_output) == EXIT_SUCCESS,
@@ -138,7 +170,7 @@ main(void) {
                "filtered passing run did not report success")) {
     return EXIT_FAILURE;
   }
-  if (!require(passing_runs == 1 && failing_runs == 0,
+  if (!require(passing_runs == 2 && failing_runs == 0,
                "filtered passing run counts are wrong")) {
     return EXIT_FAILURE;
   }
@@ -161,8 +193,25 @@ main(void) {
                "filtered failing run did not preserve test diagnostics")) {
     return EXIT_FAILURE;
   }
-  if (!require(passing_runs == 1 && failing_runs == 1,
+  if (!require(passing_runs == 2 && failing_runs == 1,
                "filtered failing run counts are wrong")) {
+    return EXIT_FAILURE;
+  }
+
+  std::string combined_output;
+  if (!require(run_and_capture({"public-runner-smoke", "-tag", "normal",
+                                "-tag", "sweep", "-iter", "1", "-stop", "true"},
+                               combined_output) == EXIT_FAILURE,
+               "multiple tags should select their union")) {
+    return EXIT_FAILURE;
+  }
+  if (!require(combined_output.find(pass_name) != std::string::npos &&
+               combined_output.find(fail_name) != std::string::npos,
+               "multiple tag selection did not run both tags")) {
+    return EXIT_FAILURE;
+  }
+  if (!require(passing_runs == 3 && failing_runs == 2,
+               "multiple tag selection run counts are wrong")) {
     return EXIT_FAILURE;
   }
 
