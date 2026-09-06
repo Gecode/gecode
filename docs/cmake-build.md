@@ -169,7 +169,7 @@ target_link_libraries(app PRIVATE Gecode::gecode)
 Canonical component names:
 
 - `support`, `kernel`, `search`, `int`, `set`, `float`, `minimodel`, `driver`,
-  `flatzinc`, `gist`
+  `flatzinc`, `gist`, `test`
 
 Example:
 
@@ -178,6 +178,22 @@ find_package(Gecode CONFIG REQUIRED COMPONENTS driver)
 add_executable(app main.cpp)
 target_link_libraries(app PRIVATE Gecode::gecodedriver)
 ```
+
+### Installed test component for downstream custom tests
+
+If the installed Gecode package was built with `BUILD_TESTING=ON`, it also exports a
+`test` component for downstream consumers that want to register and run custom tests
+through the public harness.
+
+Quick reference:
+
+- Imported targets: `Gecode::gecodetest`, `Gecode::gecodetestint`
+- Installed public headers: `test/test.hh`, `test/test.hpp`, `test/int.hh`, `test/int.hpp`
+- Public runner entrypoint: `Test::run_registered_tests(argc, argv)`
+- Canonical proof path: `python test/package/verify-installed-test-component.py ...`
+
+For the full downstream contract, minimal consumer example, verifier workflow,
+and support boundaries, see [`docs/public-test-harness.md`](./public-test-harness.md).
 
 Legacy component spellings are also accepted in `COMPONENTS`:
 
@@ -234,6 +250,7 @@ Deprecation horizon:
 - `find_package(Gecode COMPONENTS ...)` fails:
   - Verify requested component is enabled in the installed build.
   - For optional modules (`flatzinc`, `gist`, `float` with MPFR), ensure dependencies were available.
+  - The `test` component is only exported when the installed package was built with `BUILD_TESTING=ON`.
 - Qt/Gist issues:
   - `GECODE_ENABLE_QT=ON` and `GECODE_ENABLE_GIST=ON` are requirement modes;
     use `AUTO` when dependency discovery should be best-effort.
