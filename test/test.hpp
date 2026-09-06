@@ -46,6 +46,10 @@ namespace Test {
   inline
   TestTags::TestTags(TestTag t)
     : _mask(static_cast<unsigned int>(t)) {}
+  inline
+  TestTags::TestTags(TestTag t0, TestTag t1)
+    : _mask(static_cast<unsigned int>(t0) |
+            static_cast<unsigned int>(t1)) {}
   inline bool
   TestTags::empty(void) const {
     return _mask == 0;
@@ -85,6 +89,10 @@ namespace Test {
   inline TestTags
   Base::tags(void) const {
     return _tags;
+  }
+  inline void
+  Base::tags(TestTags t) {
+    _tags = t;
   }
   inline void
   Base::add_tags(TestTags t) {

@@ -254,7 +254,6 @@ set(GECODE_TEST_INT_SOURCES
 
 set(GECODE_TEST_MAIN_SOURCES
   test/test-main.cpp
-  test/gecode-tags.cpp
 )
 set(GECODE_TEST_PUBLIC_RUNNER_SMOKE_SOURCE test/public-runner-smoke.cpp)
 set(GECODE_TEST_PUBLIC_INT_SMOKE_SOURCE test/public-int-smoke.cpp)

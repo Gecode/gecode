@@ -53,7 +53,9 @@ namespace Test { namespace Set {
        Wait(int n, bool sf0)
          : SetTest("Wait::"+str(n)+"::"+
                    (sf0 ? "std::function" : "funptr"),n,
-                   Gecode::IntSet(0,n),false), sf(sf0) {}
+                   Gecode::IntSet(0,n),false), sf(sf0) {
+         add_tags(TestTag::check);
+       }
        /// Check whether \a x is solution
        virtual bool solution(const SetAssignment& x) const {
          (void) x;

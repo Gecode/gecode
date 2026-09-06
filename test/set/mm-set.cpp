@@ -126,7 +126,9 @@ namespace Test { namespace Int {
       /// Create and register test
       SetExprConst(const SetInstr* bis0, const std::string& s,
                    Gecode::SetRelType srt0, int c0)
-        : Test("MiniModel::SetExpr::Const::"+s+"::"+str(srt0)+"::"+str(c0),
+        : Test((s == "000") && (srt0 == Gecode::SRT_EQ) && (c0 == 0)
+               ? TestTag::normal : TestTag::sweep,
+               "MiniModel::SetExpr::Const::"+s+"::"+str(srt0)+"::"+str(c0),
                4,0,1,simpleReifiedSemantics(bis0)),
           bis(bis0), c(c0), srt(srt0) {}
       /// %Test whether \a x is solution
@@ -212,7 +214,9 @@ namespace Test { namespace Int {
       /// Create and register test
       SetExprExpr(const SetInstr* bis00, const SetInstr* bis10,
                   const std::string& s, Gecode::SetRelType srt0)
-        : Test("MiniModel::SetExpr::Expr::"+s+"::"+str(srt0),
+        : Test((s == "000::000") && (srt0 == Gecode::SRT_EQ)
+               ? TestTag::normal : TestTag::sweep,
+               "MiniModel::SetExpr::Expr::"+s+"::"+str(srt0),
                8,0,1,
                simpleReifiedSemantics(bis00) &&
                simpleReifiedSemantics(bis10)),

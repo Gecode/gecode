@@ -99,6 +99,8 @@ namespace Test {
     TestTags(void);
     /// Initialize with tag \a t
     TestTags(TestTag t);
+    /// Initialize with tags \a t0 and \a t1
+    TestTags(TestTag t0, TestTag t1);
     /// Return set with all known tags
     static TestTags all(void);
     /// Whether no tags are set
@@ -183,6 +185,8 @@ namespace Test {
     const std::string& name(void) const;
     /// Return tags for test
     TestTags tags(void) const;
+    /// Replace tags assigned to test with \a t
+    void tags(TestTags t);
     /// Add tags \a t to test
     void add_tags(TestTags t);
     /// Remove tags \a t from test

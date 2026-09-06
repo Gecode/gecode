@@ -51,7 +51,7 @@ namespace Test { namespace Float {
      public:
        /// Create and register test
        SinXY(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
-         : Test("Trigonometric::Sin::XY::"+s,2,d,st,CPLT_ASSIGNMENT,false) {}
+         : Test(TestTag::sweep,"Trigonometric::Sin::XY::"+s,2,d,st,CPLT_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
          return eq(sin(x[0]), x[1]);
@@ -70,7 +70,7 @@ namespace Test { namespace Float {
      public:
        /// Create and register test
        SinXYSol(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
-       : Test("Trigonometric::Sin::XY::Sol::"+s,2,d,st,EXTEND_ASSIGNMENT,false) {}
+       : Test(TestTag::sweep,"Trigonometric::Sin::XY::Sol::"+s,2,d,st,EXTEND_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
          return eq(sin(x[0]), x[1]);
@@ -96,7 +96,8 @@ namespace Test { namespace Float {
      public:
        /// Create and register test
        SinXX(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
-         : Test("Trigonometric::Sin::XX::"+s,1,d,st,CPLT_ASSIGNMENT,false) {}
+         : Test(s == "A" ? TestTag::normal : TestTag::sweep,
+                "Trigonometric::Sin::XX::"+s,1,d,st,CPLT_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
          return eq(sin(x[0]), x[0]);
@@ -112,7 +113,7 @@ namespace Test { namespace Float {
      public:
        /// Create and register test
        CosXY(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
-       : Test("Trigonometric::Cos::XY::"+s,2,d,st,CPLT_ASSIGNMENT,false) {}
+       : Test(TestTag::sweep,"Trigonometric::Cos::XY::"+s,2,d,st,CPLT_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
          return eq(cos(x[0]), x[1]);
@@ -131,7 +132,7 @@ namespace Test { namespace Float {
      public:
        /// Create and register test
        CosXYSol(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
-       : Test("Trigonometric::Cos::XY::Sol::"+s,2,d,st,EXTEND_ASSIGNMENT,false) {}
+       : Test(TestTag::sweep,"Trigonometric::Cos::XY::Sol::"+s,2,d,st,EXTEND_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
          return eq(cos(x[0]), x[1]);
@@ -157,7 +158,8 @@ namespace Test { namespace Float {
      public:
        /// Create and register test
        CosXX(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
-       : Test("Trigonometric::Cos::XX::"+s,1,d,st,CPLT_ASSIGNMENT,false) {}
+       : Test(s == "A" ? TestTag::normal : TestTag::sweep,
+              "Trigonometric::Cos::XX::"+s,1,d,st,CPLT_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
          return eq(cos(x[0]), x[0]);
@@ -173,7 +175,7 @@ namespace Test { namespace Float {
      public:
        /// Create and register test
        TanXY(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
-       : Test("Trigonometric::Tan::XY::"+s,2,d,st,CPLT_ASSIGNMENT,false) {}
+       : Test(TestTag::sweep,"Trigonometric::Tan::XY::"+s,2,d,st,CPLT_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
          return eq(tan(x[0]), x[1]);
@@ -192,7 +194,7 @@ namespace Test { namespace Float {
      public:
        /// Create and register test
        TanXYSol(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
-       : Test("Trigonometric::Tan::XY::Sol::"+s,2,d,st,EXTEND_ASSIGNMENT,false) {}
+       : Test(TestTag::sweep,"Trigonometric::Tan::XY::Sol::"+s,2,d,st,EXTEND_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
          return eq(tan(x[0]), x[1]);
@@ -218,7 +220,8 @@ namespace Test { namespace Float {
      public:
        /// Create and register test
        TanXX(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
-       : Test("Trigonometric::Tan::XX::"+s,1,d,st,CPLT_ASSIGNMENT,false) {}
+       : Test(s == "A" ? TestTag::normal : TestTag::sweep,
+              "Trigonometric::Tan::XX::"+s,1,d,st,CPLT_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
          return eq(tan(x[0]), x[0]);
@@ -234,7 +237,7 @@ namespace Test { namespace Float {
      public:
        /// Create and register test
        ASinXY(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
-       : Test("Trigonometric::ASin::XY::"+s,2,d,st,CPLT_ASSIGNMENT,false) {}
+       : Test(TestTag::sweep,"Trigonometric::ASin::XY::"+s,2,d,st,CPLT_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
          if ((x[0].min() > 1.0) || (x[0].max() < -1.0))
@@ -255,7 +258,7 @@ namespace Test { namespace Float {
      public:
        /// Create and register test
        ASinXYSol(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
-       : Test("Trigonometric::ASin::XY::Sol::"+s,2,d,st,EXTEND_ASSIGNMENT,false) {}
+       : Test(TestTag::sweep,"Trigonometric::ASin::XY::Sol::"+s,2,d,st,EXTEND_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
          if ((x[0].min() > 1.0) || (x[0].max() < -1.0))
@@ -285,7 +288,8 @@ namespace Test { namespace Float {
      public:
        /// Create and register test
        ASinXX(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
-       : Test("Trigonometric::ASin::XX::"+s,1,d,st,CPLT_ASSIGNMENT,false) {}
+       : Test(s == "A" ? TestTag::normal : TestTag::sweep,
+              "Trigonometric::ASin::XX::"+s,1,d,st,CPLT_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
          if ((x[0].min() > 1.0) || (x[0].max() < -1.0))
@@ -303,7 +307,7 @@ namespace Test { namespace Float {
      public:
        /// Create and register test
        ACosXY(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
-       : Test("Trigonometric::ACos::XY::"+s,2,d,st,CPLT_ASSIGNMENT,false) {}
+       : Test(TestTag::sweep,"Trigonometric::ACos::XY::"+s,2,d,st,CPLT_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
          if ((x[0].min() > 1.0) || (x[0].max() < -1.0))
@@ -324,7 +328,7 @@ namespace Test { namespace Float {
      public:
        /// Create and register test
        ACosXYSol(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
-       : Test("Trigonometric::ACos::XY::Sol::"+s,2,d,st,EXTEND_ASSIGNMENT,false) {}
+       : Test(TestTag::sweep,"Trigonometric::ACos::XY::Sol::"+s,2,d,st,EXTEND_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
          if ((x[0].min() > 1.0) || (x[0].max() < -1.0))
@@ -354,7 +358,8 @@ namespace Test { namespace Float {
      public:
        /// Create and register test
        ACosXX(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
-       : Test("Trigonometric::ACos::XX::"+s,1,d,st,CPLT_ASSIGNMENT,false) {}
+       : Test(s == "A" ? TestTag::normal : TestTag::sweep,
+              "Trigonometric::ACos::XX::"+s,1,d,st,CPLT_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
          if ((x[0].min() > 1.0) || (x[0].max() < -1.0))
@@ -372,7 +377,7 @@ namespace Test { namespace Float {
      public:
        /// Create and register test
        ATanXY(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
-       : Test("Trigonometric::ATan::XY::"+s,2,d,st,CPLT_ASSIGNMENT,false) {}
+       : Test(TestTag::sweep,"Trigonometric::ATan::XY::"+s,2,d,st,CPLT_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
          return eq(atan(x[0]), x[1]);
@@ -391,7 +396,7 @@ namespace Test { namespace Float {
      public:
        /// Create and register test
        ATanXYSol(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
-       : Test("Trigonometric::ATan::XY::Sol::"+s,2,d,st,EXTEND_ASSIGNMENT,false) {}
+       : Test(TestTag::sweep,"Trigonometric::ATan::XY::Sol::"+s,2,d,st,EXTEND_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
          return eq(atan(x[0]), x[1]);
@@ -417,7 +422,8 @@ namespace Test { namespace Float {
      public:
        /// Create and register test
        ATanXX(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
-       : Test("Trigonometric::ATan::XX::"+s,1,d,st,CPLT_ASSIGNMENT,false) {}
+       : Test(s == "A" ? TestTag::normal : TestTag::sweep,
+              "Trigonometric::ATan::XX::"+s,1,d,st,CPLT_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
          return eq(atan(x[0]), x[0]);

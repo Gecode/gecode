@@ -1279,7 +1279,7 @@ BLACKBOXSRC = $(BLACKBOXEXECSRC) $(BLACKBOXDLLSRC)
 
 TESTCORESRC = test/test.cpp
 TESTCOREOBJ = $(TESTCORESRC:%.cpp=%$(OBJSUFFIX))
-TESTMAINSRC = test/test-main.cpp test/gecode-tags.cpp
+TESTMAINSRC = test/test-main.cpp
 TESTMAINOBJ = $(TESTMAINSRC:%.cpp=%$(OBJSUFFIX))
 TESTINTSEAMSRC = test/int.cpp
 TESTINTSEAMOBJ = $(TESTINTSEAMSRC:%.cpp=%$(OBJSUFFIX))
@@ -1299,7 +1299,7 @@ TESTSRC = \
 	$(ARRAYTESTSRC0) $(FLATZINCTESTSRC0) $(BLACKBOXSRC)
 
 TESTHDR0 = \
-	test.hh test.hpp gecode-tags.hh int.hh int.hpp set.hh set.hpp float.hh float.hpp \
+	test.hh test.hpp int.hh int.hpp set.hh set.hpp float.hh float.hpp \
 	branch.hh assign.hh flatzinc.hh
 TESTHDR = $(TESTHDR0:%=test/%)
 

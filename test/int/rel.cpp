@@ -53,7 +53,7 @@ namespace Test { namespace Int {
      public:
        /// Create and register test
        IntVarXY(Gecode::IntRelType irt0, int n, Gecode::IntPropLevel ipl)
-         : Test("Rel::Int::Var::XY::"+str(irt0)+"::"+str(ipl)+"::"+str(n),
+         : Test(TestTag::sweep,"Rel::Int::Var::XY::"+str(irt0)+"::"+str(ipl)+"::"+str(n),
                 n+1,-3,3,n==1,ipl),
            irt(irt0) {}
        /// %Test whether \a x is solution
@@ -91,7 +91,7 @@ namespace Test { namespace Int {
      public:
        /// Create and register test
        IntVarXX(Gecode::IntRelType irt0, Gecode::IntPropLevel ipl)
-         : Test("Rel::Int::Var::XX::"+str(irt0)+"::"+str(ipl),
+         : Test(TestTag::sweep,"Rel::Int::Var::XX::"+str(irt0)+"::"+str(ipl),
                 1,-3,3,true,ipl),
            irt(irt0) {
          contest = ((irt != Gecode::IRT_LE) &&
@@ -191,7 +191,7 @@ namespace Test { namespace Int {
      public:
        /// Create and register test
        IntInt(Gecode::IntRelType irt0, int n, int c0)
-         : Test("Rel::Int::Int::"+str(irt0)+"::"+str(n)+"::"+str(c0),
+         : Test(TestTag::sweep,"Rel::Int::Int::"+str(irt0)+"::"+str(n)+"::"+str(c0),
                 n,-3,3,n==1),
            irt(irt0), c(c0) {}
        /// %Test whether \a x is solution
@@ -265,7 +265,7 @@ namespace Test { namespace Int {
      public:
        /// Create and register test
        IntSeq(int n, Gecode::IntRelType irt0, Gecode::IntPropLevel ipl)
-         : Test("Rel::Int::Seq::"+str(n)+"::"+str(irt0)+"::"+str(ipl),
+         : Test(TestTag::sweep,"Rel::Int::Seq::"+str(n)+"::"+str(irt0)+"::"+str(ipl),
                 n,-3,3,false,ipl),
            irt(irt0) {}
        /// %Test whether \a x is solution
@@ -298,7 +298,7 @@ namespace Test { namespace Int {
      public:
        /// Create and register test
        IntSharedSeq(int n, Gecode::IntRelType irt0, Gecode::IntPropLevel ipl)
-         : Test("Rel::Int::Seq::Shared::"+str(n)+"::"+str(irt0)+"::"+str(ipl),
+         : Test(TestTag::sweep,"Rel::Int::Seq::Shared::"+str(n)+"::"+str(irt0)+"::"+str(ipl),
                 n,-3,3,false,ipl),
            irt(irt0) {}
        /// %Test whether \a x is solution
@@ -411,7 +411,7 @@ namespace Test { namespace Int {
      public:
        /// Create and register test
        IntArrayVar(Gecode::IntRelType irt0)
-         : Test("Rel::Int::Array::Var::"+str(irt0),6,-2,2), irt(irt0) {}
+         : Test(TestTag::sweep,"Rel::Int::Array::Var::"+str(irt0),6,-2,2), irt(irt0) {}
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          int n=x.size() >> 1;
@@ -443,7 +443,7 @@ namespace Test { namespace Int {
      public:
        /// Create and register test
        IntArrayInt(Gecode::IntRelType irt0)
-         : Test("Rel::Int::Array::Int::"+str(irt0),3,-2,2), irt(irt0) {}
+         : Test(TestTag::sweep,"Rel::Int::Array::Int::"+str(irt0),3,-2,2), irt(irt0) {}
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          Gecode::IntArgs y({0,0,0});
@@ -476,7 +476,9 @@ namespace Test { namespace Int {
      public:
        /// Create and register test
        IntArrayDiff(Gecode::IntRelType irt0, int m)
-         : Test("Rel::Int::Array::"+str(irt0)+"::"+str(m)+"::"+str(n-m),
+         : Test((irt0 == Gecode::IRT_EQ) && (m == 0)
+                ? TestTag::normal : TestTag::sweep,
+                "Rel::Int::Array::"+str(irt0)+"::"+str(m)+"::"+str(n-m),
                 n,-2,2),
            irt(irt0), n_fst(m) {
          assert(n_fst <= n);

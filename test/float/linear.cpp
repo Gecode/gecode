@@ -69,7 +69,9 @@ namespace Test { namespace Float {
        FloatFloat(const std::string& s, const Gecode::FloatVal& d,
                   const Gecode::FloatValArgs& a0, Gecode::FloatRelType frt0,
                   Gecode::FloatNum c0, Gecode::FloatNum st)
-         : Test("Linear::Float::"+
+         : Test((s == "11") && (frt0 == Gecode::FRT_EQ) &&
+                (c0 == 0.0) && (a0.size() == 1)
+                ? TestTag::normal : TestTag::sweep,"Linear::Float::"+
                 str(frt0)+"::"+s+"::"+str(c0)+"::"
                 +str(a0.size()),
                 a0.size(),d,st,CPLT_ASSIGNMENT,true),
@@ -130,7 +132,9 @@ namespace Test { namespace Float {
        /// Create and register test
        FloatVar(const std::string& s, const Gecode::FloatVal& d,
                 const Gecode::FloatValArgs& a0, Gecode::FloatRelType frt0, Gecode::FloatNum st)
-         : Test("Linear::Var::"+
+         : Test((s == "11") && (frt0 == Gecode::FRT_EQ) &&
+                (a0.size() == 1) ? TestTag::normal : TestTag::sweep,
+                "Linear::Var::"+
                 str(frt0)+"::"+s+"::"+str(a0.size()),
                 a0.size()+1,d,st,CPLT_ASSIGNMENT,true),
            a(a0), frt(frt0) {

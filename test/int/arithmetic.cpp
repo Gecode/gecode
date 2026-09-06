@@ -231,7 +231,8 @@ namespace Test { namespace Int {
        /// Create and register test
        PowXY(const std::string& s, int n0, const Gecode::IntSet& d,
              Gecode::IntPropLevel ipl)
-         : Test("Arithmetic::Pow::XY::"+str(n0)+"::"+str(ipl)+"::"+s,
+         : Test(TestTag::sweep,
+                "Arithmetic::Pow::XY::"+str(n0)+"::"+str(ipl)+"::"+s,
                 2,d,false,ipl), n(n0) {}
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
@@ -263,7 +264,9 @@ namespace Test { namespace Int {
        /// Create and register test
        PowXX(const std::string& s, int n0, const Gecode::IntSet& d,
              Gecode::IntPropLevel ipl)
-         : Test("Arithmetic::Pow::XX::"+str(n0)+"::"+str(ipl)+"::"+s,
+         : Test((n0 == 0) && (ipl == Gecode::IPL_BND) && (s == "A")
+                ? TestTag::normal : TestTag::sweep,
+                "Arithmetic::Pow::XX::"+str(n0)+"::"+str(ipl)+"::"+s,
                 1,d,false,ipl), n(n0) {}
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
@@ -347,7 +350,8 @@ namespace Test { namespace Int {
        /// Create and register test
        NrootXY(const std::string& s, int n0, const Gecode::IntSet& d,
              Gecode::IntPropLevel ipl)
-         : Test("Arithmetic::Nroot::XY::"+str(n0)+"::"+str(ipl)+"::"+s,
+         : Test(TestTag::sweep,
+                "Arithmetic::Nroot::XY::"+str(n0)+"::"+str(ipl)+"::"+s,
                 2,d,false,ipl), n(n0) {}
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
@@ -377,7 +381,9 @@ namespace Test { namespace Int {
        /// Create and register test
        NrootXX(const std::string& s, int n0, const Gecode::IntSet& d,
                Gecode::IntPropLevel ipl)
-         : Test("Arithmetic::Nroot::XX::"+str(n0)+"::"+str(ipl)+"::"+s,
+         : Test((n0 == 1) && (ipl == Gecode::IPL_BND) && (s == "A")
+                ? TestTag::normal : TestTag::sweep,
+                "Arithmetic::Nroot::XX::"+str(n0)+"::"+str(ipl)+"::"+s,
                 1,d,false,ipl), n(n0) {}
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
@@ -470,7 +476,9 @@ namespace Test { namespace Int {
        /// Create and register test
        AbsXY(const std::string& s, const Gecode::IntSet& d,
              Gecode::IntPropLevel ipl)
-         : Test("Arithmetic::Abs::XY::"+str(ipl)+"::"+s,2,d,false,ipl) {}
+         : Test("Arithmetic::Abs::XY::"+str(ipl)+"::"+s,2,d,false,ipl) {
+         add_tags(TestTag::check);
+       }
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          double d0 = static_cast<double>(x[0]);
@@ -489,7 +497,9 @@ namespace Test { namespace Int {
        /// Create and register test
        AbsXX(const std::string& s, const Gecode::IntSet& d,
              Gecode::IntPropLevel ipl)
-         : Test("Arithmetic::Abs::XX::"+str(ipl)+"::"+s,1,d,false,ipl) {}
+         : Test("Arithmetic::Abs::XX::"+str(ipl)+"::"+s,1,d,false,ipl) {
+         add_tags(TestTag::check);
+       }
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          double d0 = static_cast<double>(x[0]);
@@ -715,7 +725,9 @@ namespace Test { namespace Int {
      public:
        /// Create and register test
        MaxNary(Gecode::IntPropLevel ipl)
-         : Test("Arithmetic::Max::Nary::"+str(ipl),4,-4,4,false,ipl) {}
+         : Test("Arithmetic::Max::Nary::"+str(ipl),4,-4,4,false,ipl) {
+         add_tags(TestTag::check);
+       }
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          return std::max(std::max(x[0],x[1]), x[2]) == x[3];
@@ -733,7 +745,9 @@ namespace Test { namespace Int {
      public:
        /// Create and register test
        MaxNaryShared(Gecode::IntPropLevel ipl)
-         : Test("Arithmetic::Max::Nary::Shared::"+str(ipl),3,-4,4,false,ipl) {}
+         : Test("Arithmetic::Max::Nary::Shared::"+str(ipl),3,-4,4,false,ipl) {
+         add_tags(TestTag::check);
+       }
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          return std::max(std::max(x[0],x[1]), x[2]) == x[1];
@@ -759,7 +773,9 @@ namespace Test { namespace Int {
          : Test("Arithmetic::ArgMax::"+str(o)+"::"+str(tb)+"::"+str(n),
                 n+1,0,n+1,
                 false,tb ? Gecode::IPL_DEF : Gecode::IPL_DOM),
-           offset(o), tiebreak(tb) {}
+           offset(o), tiebreak(tb) {
+         add_tags(TestTag::check);
+       }
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          int n=x.size()-1;
@@ -793,6 +809,7 @@ namespace Test { namespace Int {
          : Test("Arithmetic::ArgMax::Shared::"+str(tb)+"::"+str(n),n+1,0,n+1,
                 false),
            tiebreak(tb)  {
+         add_tags(TestTag::check);
          testfix=false;
        }
        /// %Test whether \a x is solution
@@ -907,7 +924,9 @@ namespace Test { namespace Int {
          : Test("Arithmetic::ArgMaxBool::"+str(o)+"::"+str(tb)+"::"+str(n),
                 n+1,0,n+1,
                 false,tb ? Gecode::IPL_DEF : Gecode::IPL_DOM),
-           offset(o), tiebreak(tb) {}
+           offset(o), tiebreak(tb) {
+         add_tags(TestTag::check);
+       }
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          int n=x.size()-1;
@@ -946,6 +965,7 @@ namespace Test { namespace Int {
          : Test("Arithmetic::ArgMaxBool::Shared::"+str(tb)+"::"+str(n),n+1,0,n+1,
                 false),
            tiebreak(tb)  {
+         add_tags(TestTag::check);
          testfix=false;
        }
        /// %Test whether \a x is solution

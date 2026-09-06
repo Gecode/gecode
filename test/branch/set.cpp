@@ -42,7 +42,9 @@ namespace Test { namespace Branch {
   public:
     /// Create and register test
     Set(const std::string& s, const Gecode::IntSet& d, int n)
-      : SetTest(s,n,d) {}
+      : SetTest(s,n,d) {
+      tags(s == "Dense::3" ? TestTag::normal : TestTag::sweep);
+    }
     /// Post propagators on variables \a x
     virtual void post(Gecode::Space& home, Gecode::SetVarArray& x) {
       Gecode::SetVarArgs xx(x.size()-1);

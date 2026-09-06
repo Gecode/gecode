@@ -82,7 +82,7 @@ namespace Test { namespace Set {
     public:
       /// Create and register test
       Rel(Gecode::SetOpType sot0, Gecode::SetRelType srt0, int share0=0)
-        : SetTest("RelOp::"+str(sot0)+"::"+str(srt0)+"::S"+str(share0),
+        : SetTest(TestTag::sweep,"RelOp::"+str(sot0)+"::"+str(srt0)+"::S"+str(share0),
                   share0 == 0 ? 3 : 2,ds_22,false)
         , sot(sot0), srt(srt0), share(share0) {}
       /// %Test whether \a x is solution
@@ -179,7 +179,7 @@ namespace Test { namespace Set {
     public:
       /// Create and register test
       RelN(Gecode::SetOpType sot0, int n0, int shared0, bool withConst0)
-        : SetTest("RelOp::N::"+str(sot0)+"::"+str(n0)+"::S"+str(shared0)+
+        : SetTest(TestTag::sweep,"RelOp::N::"+str(sot0)+"::"+str(n0)+"::S"+str(shared0)+
                   "::C"+str(withConst0 ? 1 : 0),
                   shared0 == 0 ? n0+1 : (shared0 <= 2 ? 3 : 2),ds_12,false)
         , sot(sot0), n(n0), shared(shared0), withConst(withConst0)
@@ -366,7 +366,7 @@ namespace Test { namespace Set {
     public:
       /// Create and register test
       RelIntN(Gecode::SetOpType sot0, int n0, bool withConst0)
-        : SetTest("RelOp::IntN::"+str(sot0)+"::"+str(n0)+
+        : SetTest(TestTag::sweep,"RelOp::IntN::"+str(sot0)+"::"+str(n0)+
                   "::C"+str(withConst0 ? 1 : 0),
                   1,ds_12,false,n0)
         , sot(sot0), n(n0), withConst(withConst0)

@@ -224,7 +224,10 @@ namespace Test {
       NoGoods(ValBranch vb0, unsigned int t0, bool a0, bool n0)
         : Base("NoGoods::"+Model::name()+"::"+Model::val(vb0)+"::"+str(t0)+
                "::"+(a0 ? "+" : "-")+"::"+(n0 ? "+" : "-")),
-          vb(vb0), t(t0), a(a0), n(n0) {}
+          vb(vb0), t(t0), a(a0), n(n0) {
+        if (Model::name() == "Queens")
+          add_tags(TestTag::check);
+      }
       /// Run test
       virtual bool run(void) {
         Model* m = new Model(vb,a,n);

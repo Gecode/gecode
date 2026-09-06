@@ -816,7 +816,6 @@ if(GECODE_ENABLE_FAULT_INJECTION)
   list(APPEND GECODE_SUPPORT_SOURCES gecode/support/failpoint.cpp)
   set(GECODE_FAULT_TEST_SOURCES
     test/test-main.cpp
-    test/gecode-tags.cpp
     test/fault.cpp)
 endif()
 

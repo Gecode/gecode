@@ -52,7 +52,7 @@ namespace Test { namespace Int {
      public:
        /// Create and register test
        IntAllMinMax(Gecode::IntPropLevel ipl)
-         : Test("GCC::Int::All::MinMax::"+str(ipl),4,-1,3,false,ipl) {}
+         : Test(TestTag::sweep,"GCC::Int::All::MinMax::"+str(ipl),4,-1,3,false,ipl) {}
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          int n[5];
@@ -86,7 +86,7 @@ namespace Test { namespace Int {
      public:
        /// Create and register test
        IntAllMinMaxDef(Gecode::IntPropLevel ipl)
-         : Test("GCC::Int::All::MinMaxDef::"+str(ipl),4,0,3,false,ipl) {}
+         : Test(TestTag::sweep,"GCC::Int::All::MinMaxDef::"+str(ipl),4,0,3,false,ipl) {}
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          int n[4];
@@ -119,7 +119,8 @@ namespace Test { namespace Int {
      public:
        /// Create and register test
        IntAllMax(Gecode::IntPropLevel ipl)
-         : Test("GCC::Int::All::Max::"+str(ipl), 4, 1,2, false, ipl) {}
+         : Test(ipl == Gecode::IPL_BND ? TestTag::normal : TestTag::sweep,
+                "GCC::Int::All::Max::"+str(ipl), 4, 1,2, false, ipl) {}
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          int n[2];
@@ -145,7 +146,7 @@ namespace Test { namespace Int {
      public:
        /// Create and register test
        IntSome(Gecode::IntPropLevel ipl)
-         : Test(std::string("GCC::Int::Some::")+
+         : Test(TestTag::sweep,std::string("GCC::Int::Some::")+
                 (hole ? "::Hole" : "::Full")+str(ipl),4,1,4,false,ipl) {}
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
@@ -183,7 +184,7 @@ namespace Test { namespace Int {
      public:
        /// Create and register test
        VarAll(Gecode::IntPropLevel ipl)
-         : Test("GCC::Var::All::"+str(ipl),7,0,2,false,ipl) {}
+         : Test(TestTag::sweep,"GCC::Var::All::"+str(ipl),7,0,2,false,ipl) {}
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          // Number of cardinality variables
@@ -235,7 +236,7 @@ namespace Test { namespace Int {
        /// Create and register test
        VarSome(std::string s, int n0, int min, int max,
                Gecode::IntPropLevel ipl)
-         : Test("GCC::Var::Some::"+s+"::"+str(ipl),
+         : Test(TestTag::sweep,"GCC::Var::Some::"+s+"::"+str(ipl),
                 n0+(max-min)+1,min,max,false,ipl)
          , n(n0)
         {

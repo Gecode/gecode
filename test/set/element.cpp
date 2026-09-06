@@ -56,7 +56,7 @@ namespace Test { namespace Set {
     public:
       /// Create and register test
       ElementUnion(const char* t)
-        : SetTest(t,5,ds_12,false) {}
+        : SetTest(TestTag::sweep,t,5,ds_12,false) {}
       /// %Test whether \a x is solution
       virtual bool solution(const SetAssignment& x) const {
         int selected = 0;
@@ -105,7 +105,7 @@ namespace Test { namespace Set {
     public:
       /// Create and register test
       ElementUnionConst(const char* t)
-        : SetTest(t,2,ds_13,false), i0(-3,-3), i1(-1,1), i2(0,2) {}
+        : SetTest(TestTag::sweep,t,2,ds_13,false), i0(-3,-3), i1(-1,1), i2(0,2) {}
       /// %Test whether \a x is solution
       virtual bool solution(const SetAssignment& x) const {
         int selected = 0;
@@ -150,7 +150,7 @@ namespace Test { namespace Set {
     public:
       /// Create and register test
       ElementInter(const char* t)
-        : SetTest(t,5,ds_12,false) {}
+        : SetTest(TestTag::sweep,t,5,ds_12,false) {}
       /// %Test whether \a x is solution
       virtual bool solution(const SetAssignment& x) const {
         int selected = 0;
@@ -194,7 +194,7 @@ namespace Test { namespace Set {
     public:
       /// Create and register test
       ElementInterIn(const char* t)
-        : SetTest(t,5,ds_12,false) {}
+        : SetTest(TestTag::sweep,t,5,ds_12,false) {}
       /// %Test whether \a x is solution
       virtual bool solution(const SetAssignment& x) const {
         int selected = 0;
@@ -239,7 +239,7 @@ namespace Test { namespace Set {
     public:
       /// Create and register test
       ElementDisjoint(const char* t)
-        : SetTest(t,5,ds_12,false) {}
+        : SetTest(TestTag::normal,t,5,ds_12,false) {}
       /// %Test whether \a x is solution
       virtual bool solution(const SetAssignment& x) const {
         int selected = 0;
@@ -291,7 +291,7 @@ namespace Test { namespace Set {
     public:
       /// Create and register test
       ElementSet(const char* t)
-        : SetTest(t,4,ds_12,false,true) {}
+        : SetTest(TestTag::sweep,t,4,ds_12,false,true) {}
       /// %Test whether \a x is solution
       virtual bool solution(const SetAssignment& x) const {
         if (x.intval() < 0 || x.intval() > 2)
@@ -319,7 +319,7 @@ namespace Test { namespace Set {
     public:
       /// Create and register test
       ElementSetConst(const char* t)
-        : SetTest(t,1,ds_13,false,true), i0(-3,-3), i1(-1,1), i2(0,2) {}
+        : SetTest(TestTag::sweep,t,1,ds_13,false,true), i0(-3,-3), i1(-1,1), i2(0,2) {}
       /// %Test whether \a x is solution
       virtual bool solution(const SetAssignment& x) const {
         if (x.intval() < 0 || x.intval() > 2)
@@ -346,7 +346,7 @@ namespace Test { namespace Set {
      public:
        /// Create and register test
        MatrixIntSet(void)
-         : SetTest("Element::Matrix::IntSet",1,IntSet(0,3),false,2),
+         : SetTest(TestTag::sweep,"Element::Matrix::IntSet",1,IntSet(0,3),false,2),
            tm(4) {
          tm[0]=IntSet(0,0); tm[1]=IntSet(1,1);
          tm[2]=IntSet(2,2); tm[3]=IntSet(3,3);

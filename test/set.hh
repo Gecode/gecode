@@ -303,7 +303,11 @@ namespace Test {
        */
       SetTest(const std::string& s,
               int a, const Gecode::IntSet& d, bool r=false, int w=0)
-        : Base("Set::"+s), arity(a), lub(d), reified(r), withInt(w),
+        : SetTest(TestTag::normal,s,a,d,r,w) {}
+      /// Construct and register a test with explicitly assigned tags
+      SetTest(TestTags tags, const std::string& s,
+              int a, const Gecode::IntSet& d, bool r=false, int w=0)
+        : Base("Set::"+s, tags), arity(a), lub(d), reified(r), withInt(w),
           disabled(true), testsubsumed(true) {}
       /// Check for solution
       virtual bool solution(const SetAssignment&) const = 0;

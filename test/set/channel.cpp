@@ -63,7 +63,7 @@ namespace Test { namespace Set {
     public:
       /// Create and register test
       ChannelSorted(const char* t)
-        : SetTest(t,1,ds_33,false,3) {}
+        : SetTest(TestTag::sweep,t,1,ds_33,false,3) {}
       /// %Test whether \a x is solution
       virtual bool solution(const SetAssignment& x) const {
         if (x.ints()[0]>=x.ints()[1] ||
@@ -103,7 +103,7 @@ namespace Test { namespace Set {
     public:
       /// Create and register test
       ChannelInt(const char* t, const IntSet& d, int _ssize, int _isize)
-        : SetTest(t,_ssize,d,false,_isize), ssize(_ssize), isize(_isize) {}
+        : SetTest(TestTag::sweep,t,_ssize,d,false,_isize), ssize(_ssize), isize(_isize) {}
       /// %Test whether \a x is solution
       virtual bool solution(const SetAssignment& x) const {
         for (int i=0; i<isize; i++) {
@@ -138,7 +138,9 @@ namespace Test { namespace Set {
     public:
       /// Create and register test
       ChannelBool(const char* t, const IntSet& d, int _isize)
-        : SetTest(t,1,d,false,_isize), isize(_isize) {}
+        : SetTest(std::string(t) == "Channel::Bool::1"
+                  ? TestTag::normal : TestTag::sweep,
+                  t,1,d,false,_isize), isize(_isize) {}
       /// %Test whether \a x is solution
       virtual bool solution(const SetAssignment& x) const {
         for (int i=0; i<isize; i++) {
@@ -177,7 +179,7 @@ namespace Test { namespace Set {
     public:
       /// Create and register test
       ChannelSet(const char* t, const IntSet& d, int x0size, int x1size)
-        : SetTest(t,x0size+x1size,d,false), _x0size(x0size), _x1size(x1size) {}
+        : SetTest(TestTag::sweep,t,x0size+x1size,d,false), _x0size(x0size), _x1size(x1size) {}
       /// %Test whether \a x is solution
       virtual bool solution(const SetAssignment& x) const {
         for (int i=0; i<_x0size; i++) {
