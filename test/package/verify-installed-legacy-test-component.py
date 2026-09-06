@@ -12,10 +12,18 @@ import tempfile
 from pathlib import Path
 
 VERIFIER_PREFIX = "[verify-installed-legacy-test-component]"
-EXPECTED_TEST_NAME = "Package::Equality"
+EXPECTED_TEST_NAMES = [
+    "Float::Package::Equality",
+    "Int::Package::Equality",
+    "Set::Package::Singleton",
+]
 LIBRARIES = [
+    "gecodetestfloat",
+    "gecodetestset",
     "gecodetestint",
     "gecodetest",
+    "gecodefloat",
+    "gecodeset",
     "gecodesearch",
     "gecodeint",
     "gecodekernel",
@@ -109,7 +117,12 @@ def run_phase(
 
 def resolve_library_dir(prefix: Path) -> Path:
     phase = "inputs"
-    required = ["libgecodetest.a", "libgecodetestint.a"]
+    required = [
+        "libgecodetest.a",
+        "libgecodetestint.a",
+        "libgecodetestset.a",
+        "libgecodetestfloat.a",
+    ]
     candidates: dict[str, list[Path]] = {}
     for filename in required:
         matches = sorted(path.resolve() for path in prefix.rglob(filename) if path.is_file())
@@ -312,8 +325,9 @@ def run_list_phase(consumer_binary: Path, workspace: Path, runtime_env: dict[str
         env=runtime_env,
         env_summary=env_summary,
     )
-    assert_phase(EXPECTED_TEST_NAME in result.stdout, "list", f"-list output missing {EXPECTED_TEST_NAME!r}")
-    sys.stdout.write(f"{VERIFIER_PREFIX} list: discovered={EXPECTED_TEST_NAME}\n")
+    for test_name in EXPECTED_TEST_NAMES:
+        assert_phase(test_name in result.stdout, "list", f"-list output missing {test_name!r}")
+    sys.stdout.write(f"{VERIFIER_PREFIX} list: discovered={EXPECTED_TEST_NAMES}\n")
 
 
 
@@ -325,21 +339,22 @@ def run_filtered_phase(
 ) -> None:
     result = run_phase(
         "filtered-run",
-        [str(consumer_binary), "-test", EXPECTED_TEST_NAME, "-iter", "1", "-stop", "true"],
+        [str(consumer_binary), "-test", "Package", "-iter", "1", "-stop", "true"],
         cwd=workspace,
         env=runtime_env,
         env_summary=env_summary,
     )
-    assert_phase(EXPECTED_TEST_NAME in result.stdout, "filtered-run", "filtered run did not print the selected downstream test")
+    for test_name in EXPECTED_TEST_NAMES:
+        assert_phase(test_name in result.stdout, "filtered-run", f"filtered run did not print {test_name!r}")
     assert_phase("+" in result.stdout, "filtered-run", "filtered run did not report success")
-    sys.stdout.write(f"{VERIFIER_PREFIX} filtered-run: executed={EXPECTED_TEST_NAME}\n")
+    sys.stdout.write(f"{VERIFIER_PREFIX} filtered-run: executed={EXPECTED_TEST_NAMES}\n")
 
 
 
 def write_unsupported_consumer(workspace: Path) -> Path:
     source = workspace / "unsupported-header.cpp"
     source.write_text(
-        "#include <test/set.hh>\n\n"
+        "#include <test/branch.hh>\n\n"
         "int main() {\n"
         "  return 0;\n"
         "}\n"
@@ -351,13 +366,13 @@ def write_unsupported_consumer(workspace: Path) -> Path:
 def assert_missing_header_diagnostic(result: subprocess.CompletedProcess[str]) -> None:
     phase = "unsupported-header"
     combined_output = f"{result.stdout}\n{result.stderr}"
-    assert_phase("test/set.hh" in combined_output, phase, "missing expected unsupported-header diagnostic target")
+    assert_phase("test/branch.hh" in combined_output, phase, "missing expected unsupported-header diagnostic target")
     assert_phase(
         "file not found" in combined_output or "No such file or directory" in combined_output,
         phase,
         "missing missing-header diagnostic wording",
     )
-    sys.stdout.write(f"{VERIFIER_PREFIX} {phase}: diagnostic=test/set.hh missing\n")
+    sys.stdout.write(f"{VERIFIER_PREFIX} {phase}: diagnostic=test/branch.hh missing\n")
 
 
 

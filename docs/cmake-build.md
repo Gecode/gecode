@@ -182,11 +182,14 @@ target_link_libraries(app PRIVATE Gecode::gecodedriver)
 ### Test component for custom propagators
 
 A Gecode installation configured with `BUILD_TESTING=ON` exports the `test`
-component. It lets downstream projects check custom integer propagators with
-Gecode's test runner.
+component. It lets downstream projects check custom integer, Boolean, set, and
+float propagators with Gecode's test runner.
 
-- Imported targets: `Gecode::gecodetest`, `Gecode::gecodetestint`
-- Installed public headers: `test/test.hh`, `test/test.hpp`, `test/int.hh`, `test/int.hpp`
+- Always available targets: `Gecode::gecodetest`, `Gecode::gecodetestint`
+- Set target when configured: `Gecode::gecodetestset`
+- Float target when configured: `Gecode::gecodetestfloat`
+- Installed headers follow the same configuration: `test/test.*`, `test/int.*`,
+  `test/set.*`, and `test/float.*`
 - Public runner entrypoint: `Test::run_registered_tests(argc, argv)`
 - Package check: `python test/package/verify-installed-test-component.py ...`
 

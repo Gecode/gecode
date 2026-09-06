@@ -10,7 +10,7 @@ import sys
 from pathlib import Path
 
 
-EXPECTED_HEADERS = [
+CORE_HEADERS = [
     "test/int.hh",
     "test/int.hpp",
     "test/test.hh",
@@ -20,7 +20,7 @@ EXPECTED_METADATA = [
     "cmake/Gecode/GecodeConfig.cmake",
     "cmake/Gecode/GecodeTargets.cmake",
 ]
-EXPECTED_TEST_NAME = "Int::Package::Equality"
+CORE_TEST_NAMES = ["Int::Package::Equality"]
 VERIFIER_PREFIX = "[verify-installed-test-component]"
 
 
@@ -81,9 +81,23 @@ def assert_phase(condition: bool, phase: str, message: str) -> None:
         fail_phase(phase, message)
 
 
-def assert_prefix_surface(include_dir: Path, lib_dir: Path) -> None:
+def assert_prefix_surface(include_dir: Path, lib_dir: Path) -> list[str]:
     phase = "prefix-surface"
-    for rel in EXPECTED_HEADERS:
+    targets = (lib_dir / "cmake/Gecode/GecodeTargets.cmake").read_text()
+    has_set = "Gecode::gecodetestset" in targets
+    has_float = "Gecode::gecodetestfloat" in targets
+    expected_headers = list(CORE_HEADERS)
+    expected_test_names = list(CORE_TEST_NAMES)
+    if has_set:
+        expected_headers.extend(["test/set.hh", "test/set.hpp"])
+        expected_test_names.append("Set::Package::Singleton")
+    if has_float:
+        expected_headers.extend(["test/float.hh", "test/float.hpp"])
+        expected_test_names.append("Float::Package::Equality")
+    expected_headers.sort()
+    expected_test_names.sort()
+
+    for rel in expected_headers:
         path = include_dir / rel
         assert_phase(path.exists(), phase, f"missing installed path: {path}")
     for rel in EXPECTED_METADATA:
@@ -95,13 +109,13 @@ def assert_prefix_surface(include_dir: Path, lib_dir: Path) -> None:
         for path in (include_dir / "test").glob("*")
         if path.is_file()
     )
-    assert_phase(installed_test_headers == EXPECTED_HEADERS, phase, f"unexpected installed test headers: {installed_test_headers}")
+    assert_phase(installed_test_headers == expected_headers, phase, f"unexpected installed test headers: {installed_test_headers}")
 
-    targets = (lib_dir / "cmake/Gecode/GecodeTargets.cmake").read_text()
     assert_phase("Gecode::gecodetest" in targets, phase, "missing Gecode::gecodetest export")
     assert_phase("Gecode::gecodetestint" in targets, phase, "missing Gecode::gecodetestint export")
 
     sys.stdout.write(f"{VERIFIER_PREFIX} {phase}: ok\n")
+    return expected_test_names
 
 
 def iter_include_dirs(entry: dict[str, object]) -> list[Path]:
@@ -223,20 +237,22 @@ def build_consumer(consumer_build: Path) -> Path:
     return consumer_binary
 
 
-def run_list_phase(consumer_binary: Path) -> None:
+def run_list_phase(consumer_binary: Path, expected_test_names: list[str]) -> None:
     result = run_phase("list", [str(consumer_binary), "-list"])
-    assert_phase(EXPECTED_TEST_NAME in result.stdout, "list", f"-list output missing {EXPECTED_TEST_NAME!r}")
-    sys.stdout.write(f"{VERIFIER_PREFIX} list: discovered={EXPECTED_TEST_NAME}\n")
+    for test_name in expected_test_names:
+        assert_phase(test_name in result.stdout, "list", f"-list output missing {test_name!r}")
+    sys.stdout.write(f"{VERIFIER_PREFIX} list: discovered={expected_test_names}\n")
 
 
-def run_filtered_phase(consumer_binary: Path) -> None:
+def run_filtered_phase(consumer_binary: Path, expected_test_names: list[str]) -> None:
     result = run_phase(
         "filtered-run",
-        [str(consumer_binary), "-test", EXPECTED_TEST_NAME, "-iter", "1", "-stop", "true"],
+        [str(consumer_binary), "-test", "Package", "-iter", "1", "-stop", "true"],
     )
-    assert_phase(EXPECTED_TEST_NAME in result.stdout, "filtered-run", "filtered run did not print the selected downstream test")
+    for test_name in expected_test_names:
+        assert_phase(test_name in result.stdout, "filtered-run", f"filtered run did not print {test_name!r}")
     assert_phase("+" in result.stdout, "filtered-run", "filtered run did not report success")
-    sys.stdout.write(f"{VERIFIER_PREFIX} filtered-run: executed={EXPECTED_TEST_NAME}\n")
+    sys.stdout.write(f"{VERIFIER_PREFIX} filtered-run: executed={expected_test_names}\n")
 
 
 def parse_args() -> argparse.Namespace:
@@ -258,7 +274,7 @@ def main() -> int:
     include_dir = Path(args.include_dir).resolve() if args.include_dir else prefix / "include"
     lib_dir = Path(args.lib_dir).resolve() if args.lib_dir else prefix / "lib"
 
-    assert_prefix_surface(include_dir, lib_dir)
+    expected_test_names = assert_prefix_surface(include_dir, lib_dir)
 
     _, consumer_build, configure_result = configure_consumer(
         source,
@@ -274,8 +290,8 @@ def main() -> int:
 
     assert_no_source_tree_include_leakage(source, consumer_build, prefix, include_dir)
     consumer_binary = build_consumer(consumer_build)
-    run_list_phase(consumer_binary)
-    run_filtered_phase(consumer_binary)
+    run_list_phase(consumer_binary, expected_test_names)
+    run_filtered_phase(consumer_binary, expected_test_names)
     return 0
 
 

@@ -6,15 +6,11 @@ import sys
 from pathlib import Path
 
 VERIFIER_PREFIX = "[verify-legacy-install-surface]"
-EXPECTED_HEADERS = ["int.hh", "int.hpp", "test.hh", "test.hpp"]
+CORE_HEADERS = ["int.hh", "int.hpp", "test.hh", "test.hpp"]
 UNSUPPORTED_HEADERS = [
     "assign.hh",
     "branch.hh",
-    "float.hh",
-    "float.hpp",
     "flatzinc.hh",
-    "set.hh",
-    "set.hpp",
 ]
 UNSUPPORTED_BINARIES = [
     "gecode-test",
@@ -43,14 +39,28 @@ def is_installed_library_path(prefix: Path, path: Path) -> bool:
 
 
 
-def verify_prefix_surface(prefix: Path) -> None:
+def configured_types(prefix: Path) -> set[str]:
+    library_names = {path.name for path in prefix.rglob("*") if path.is_file()}
+    result = {"int"}
+    if any(name.startswith("libgecodeset.") for name in library_names):
+        result.add("set")
+    if any(name.startswith("libgecodefloat.") for name in library_names):
+        result.add("float")
+    return result
+
+
+def verify_prefix_surface(prefix: Path, types: set[str]) -> None:
     phase = "prefix-surface"
     include_test_dir = prefix / "include" / "test"
     assert_phase(include_test_dir.is_dir(), phase, f"missing installed test include dir: {include_test_dir}")
 
     installed_headers = sorted(path.name for path in include_test_dir.iterdir() if path.is_file())
-    missing_headers = [name for name in EXPECTED_HEADERS if name not in installed_headers]
-    unexpected_headers = [name for name in installed_headers if name not in EXPECTED_HEADERS]
+    expected_headers = list(CORE_HEADERS)
+    for variable_type in ("set", "float"):
+        if variable_type in types:
+            expected_headers.extend([f"{variable_type}.hh", f"{variable_type}.hpp"])
+    missing_headers = [name for name in expected_headers if name not in installed_headers]
+    unexpected_headers = [name for name in installed_headers if name not in expected_headers]
     assert_phase(
         not missing_headers and not unexpected_headers,
         phase,
@@ -60,11 +70,16 @@ def verify_prefix_surface(prefix: Path) -> None:
 
 
 
-def verify_harness_libs(prefix: Path) -> None:
+def verify_harness_libs(prefix: Path, types: set[str]) -> None:
     phase = "harness-libs"
     expected_locations: list[str] = []
 
-    for library_name, expected_filename in EXPECTED_STATIC_LIBS.items():
+    expected_static_libs = dict(EXPECTED_STATIC_LIBS)
+    for variable_type in ("set", "float"):
+        if variable_type in types:
+            expected_static_libs[f"gecodetest{variable_type}"] = f"libgecodetest{variable_type}.a"
+
+    for library_name, expected_filename in expected_static_libs.items():
         matches = sorted(
             path.relative_to(prefix).as_posix()
             for path in prefix.rglob(expected_filename)
@@ -83,8 +98,8 @@ def verify_harness_libs(prefix: Path) -> None:
         for path in prefix.rglob("*")
         if path.is_file()
         and is_installed_library_path(prefix, path)
-        and path.name.startswith(("libgecodetest", "libgecodetestint"))
-        and path.name not in EXPECTED_STATIC_LIBS.values()
+        and path.name.startswith("libgecodetest")
+        and path.name not in expected_static_libs.values()
     )
     assert_phase(
         not unexpected_harness_artifacts,
@@ -95,10 +110,14 @@ def verify_harness_libs(prefix: Path) -> None:
 
 
 
-def verify_unsupported_surface(prefix: Path) -> None:
+def verify_unsupported_surface(prefix: Path, types: set[str]) -> None:
     phase = "unsupported-surface"
     include_test_dir = prefix / "include" / "test"
-    unexpected_headers = [name for name in UNSUPPORTED_HEADERS if (include_test_dir / name).exists()]
+    unsupported_headers = list(UNSUPPORTED_HEADERS)
+    for variable_type in ("set", "float"):
+        if variable_type not in types:
+            unsupported_headers.extend([f"{variable_type}.hh", f"{variable_type}.hpp"])
+    unexpected_headers = [name for name in unsupported_headers if (include_test_dir / name).exists()]
     assert_phase(not unexpected_headers, phase, f"unexpected public helper headers installed: {unexpected_headers}")
 
     unexpected_binaries = sorted(
@@ -124,9 +143,10 @@ def main() -> int:
 
     assert_phase(prefix.is_dir(), "inputs", f"missing installed prefix: {prefix}")
 
-    verify_prefix_surface(prefix)
-    verify_harness_libs(prefix)
-    verify_unsupported_surface(prefix)
+    types = configured_types(prefix)
+    verify_prefix_surface(prefix, types)
+    verify_harness_libs(prefix, types)
+    verify_unsupported_surface(prefix, types)
     return 0
 
 
