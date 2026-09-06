@@ -64,7 +64,7 @@ namespace Test { namespace Set {
      public:
        /// Create and register test
        Single(int s0, int t0)
-         : SetTest("Precede::Single::"+str(s0)+"<"+str(t0),4,ds,false),
+         : SetTest(TestTag::sweep,"Precede::Single::"+str(s0)+"<"+str(t0),4,ds,false),
            s(s0), t(t0) {}
        /// %Test whether \a x is solution
        virtual bool solution(const SetAssignment& x) const {
@@ -99,7 +99,9 @@ namespace Test { namespace Set {
      public:
        /// Create and register test
        Multi(const Gecode::IntArgs& c0)
-         : SetTest("Precede::Multi::"+str(c0),4,ds,false), c(c0) {}
+         : SetTest(str(c0) == "[1,2,3]"
+                   ? TestTag::normal : TestTag::sweep,
+                   "Precede::Multi::"+str(c0),4,ds,false), c(c0) {}
        /// %Test whether \a x is solution
        virtual bool solution(const SetAssignment& x) const {
          for (int j=0; j<c.size()-1; j++)

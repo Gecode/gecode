@@ -140,7 +140,8 @@ namespace Test { namespace Int {
      public:
        /// Create and register test
        LinExprInt(const LinInstr* lis0, const std::string& s)
-         : Test("MiniModel::LinExpr::Int::"+s,4,-3,3), lis(lis0) {
+         : Test(TestTag::sweep,"MiniModel::LinExpr::Int::"+s,4,-3,3),
+           lis(lis0) {
          testfix = false;
        }
        /// %Test whether \a x is solution
@@ -164,7 +165,10 @@ namespace Test { namespace Int {
      public:
        /// Create and register test
        LinExprBool(const LinInstr* lis0, const std::string& s)
-         : Test("MiniModel::LinExpr::Bool::"+s,4,-3,3), lis(lis0) {
+         : Test(s == "352" ? TestTag::normal : TestTag::sweep,
+                "MiniModel::LinExpr::Bool::"+s,4,-3,3), lis(lis0) {
+         if (s == "352")
+           add_tags(TestTag::check);
          testfix = false;
        }
        /// %Test whether \a x is solution
@@ -193,7 +197,8 @@ namespace Test { namespace Int {
      public:
        /// Create and register test
        LinExprMixed(const LinInstr* lis0, const std::string& s)
-         : Test("MiniModel::LinExpr::Mixed::"+s,4,-3,3), lis(lis0) {
+         : Test(TestTag::sweep,"MiniModel::LinExpr::Mixed::"+s,4,-3,3),
+           lis(lis0) {
          testfix = false;
        }
        /// %Test whether \a x is solution

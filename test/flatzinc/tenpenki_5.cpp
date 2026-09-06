@@ -42,7 +42,7 @@ namespace Test { namespace FlatZinc {
 
       /// Perform creation and registration
       Create(void) {
-        (void) new FlatZincTest("tenpenki::5",
+        (void) new FlatZincTest(TestTag::sweep,"tenpenki::5",
 std::string("predicate bool_lin_ge(array [int] of int: a, array [int] of var bool: x, var int: c);\n\
 predicate bool_lin_gt(array [int] of int: a, array [int] of var bool: x, var int: c);\n\
 predicate bool_lin_lt(array [int] of int: a, array [int] of var bool: x, var int: c);\n\

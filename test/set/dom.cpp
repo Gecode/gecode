@@ -97,7 +97,8 @@ namespace Test { namespace Set {
     public:
       /// Create and register test
       DomRange(SetRelType srt0, int n) :
-        SetTest("Dom::Range::"+str(srt0)+"::"+str(n),n,ds_33,(n == 1)),
+        SetTest(TestTag::sweep,"Dom::Range::"+str(srt0)+"::"+str(n),
+                n,ds_33,(n == 1)),
         srt(srt0), is(srt == Gecode::SRT_CMPL ? ds_33c: ds_33) {}
       /// %Test whether \a x is solution
       virtual bool solution(const SetAssignment& x) const {
@@ -190,7 +191,7 @@ namespace Test { namespace Set {
     public:
       /// Create and register test
       DomIntRange(Gecode::SetRelType srt0, int n)
-        : SetTest("Dom::IntRange::"+str(srt0)+"::"+str(n),1,ds_33,n==1),
+        : SetTest(TestTag::sweep,"Dom::IntRange::"+str(srt0)+"::"+str(n),1,ds_33,n==1),
           srt(srt0) {}
       /// %Test whether \a x is solution
       virtual bool solution(const SetAssignment& x) const {
@@ -284,7 +285,8 @@ namespace Test { namespace Set {
     public:
       /// Create and register test
       DomInt(Gecode::SetRelType srt0, int n) :
-        SetTest("Dom::Int::"+str(srt0)+"::"+str(n),n,ds_33,n==1),
+        SetTest(TestTag::sweep,"Dom::Int::"+str(srt0)+"::"+str(n),
+                n,ds_33,n==1),
         srt(srt0) {}
       /// %Test whether \a x is solution
       virtual bool solution(const SetAssignment& x) const {
@@ -381,8 +383,12 @@ namespace Test { namespace Set {
     public:
       /// Create and register test
       DomDom(Gecode::SetRelType srt0, int n) :
-        SetTest("Dom::Dom::"+str(srt0)+"::"+str(n),n,d1,(n == 1)),
-        srt(srt0), is(srt == Gecode::SRT_CMPL ? d1c: d1) {}
+        SetTest(srt0 == Gecode::SRT_GR ? TestTag::normal : TestTag::sweep,
+                "Dom::Dom::"+str(srt0)+"::"+str(n),n,d1,(n == 1)),
+        srt(srt0), is(srt == Gecode::SRT_CMPL ? d1c: d1) {
+        if (srt0 == Gecode::SRT_GR)
+          add_tags(TestTag::check);
+      }
       /// %Test whether \a x is solution
       virtual bool solution(const SetAssignment& x) const {
         for (int i=x.size(); i--; ) {
@@ -460,7 +466,7 @@ namespace Test { namespace Set {
     public:
       /// Create and register test
       CardRange(int n)
-        : SetTest("Dom::CardRange::"+str(n),n,d1,false) {}
+        : SetTest(TestTag::sweep,"Dom::CardRange::"+str(n),n,d1,false) {}
       /// %Test whether \a x is solution
       virtual bool solution(const SetAssignment& x) const {
         for (int i=x.size(); i--; ) {

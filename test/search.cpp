@@ -398,7 +398,17 @@ namespace Test {
         : Test("DFS::"+Model::name()+"::"+
                str(htb1)+"::"+str(htb2)+"::"+str(htb3)+"::"+
                str(c_d0)+"::"+str(a_d0)+"::"+str(t0),
-               htb1,htb2,htb3), c_d(c_d0), a_d(a_d0), t(t0) {}
+               htb1,htb2,htb3), c_d(c_d0), a_d(a_d0), t(t0) {
+        if (Model::name().compare(0,3,"Sol") == 0)
+          tags(TestTag::sweep);
+        if ((Model::name() == "Sol") &&
+            (htb1 == HTB_BINARY) && (htb2 == HTB_NARY) &&
+            (htb3 == HTB_BINARY) && (c_d0 == 1) &&
+            (a_d0 == 1) && (t0 == 1)) {
+          tags(TestTag::normal);
+          add_tags(TestTag::check);
+        }
+      }
       /// Run test
       virtual bool run(void) {
         Model* m = new Model(htb1,htb2,htb3);
@@ -479,7 +489,15 @@ namespace Test {
         : Test("BAB::"+Model::name()+"::"+str(htc)+"::"+
                str(htb1)+"::"+str(htb2)+"::"+str(htb3)+"::"+
                str(c_d0)+"::"+str(a_d0)+"::"+str(t0),
-               htb1,htb2,htb3,htc), c_d(c_d0), a_d(a_d0), t(t0) {}
+               htb1,htb2,htb3,htc), c_d(c_d0), a_d(a_d0), t(t0) {
+        if (Model::name().compare(0,3,"Sol") == 0)
+          tags(TestTag::sweep);
+        if ((Model::name() == "Sol") && (htc == HTC_BAL_GR) &&
+            (htb1 == HTB_BINARY) && (htb2 == HTB_BINARY) &&
+            (htb3 == HTB_BINARY) && (c_d0 == 1) &&
+            (a_d0 == 1) && (t0 == 1))
+          tags(TestTag::normal);
+      }
       /// Run test
       virtual bool run(void) {
         Model* m = new Model(htb1,htb2,htb3,htc);

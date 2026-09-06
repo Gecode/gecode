@@ -35,7 +35,6 @@
  */
 
 #include "test/test.hh"
-#include "test/gecode-tags.hh"
 
 #ifdef GECODE_HAS_MTRACE
 #include <mcheck.h>
@@ -46,7 +45,6 @@ main(int argc, char* argv[]) {
 #ifdef GECODE_HAS_MTRACE
   mtrace();
 #endif
-  Test::apply_gecode_test_tags();
   return Test::run_registered_tests(argc, argv);
 }
 

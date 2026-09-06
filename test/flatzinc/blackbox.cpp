@@ -256,7 +256,9 @@ namespace Test { namespace FlatZinc {
   namespace Blackbox {
     class NativeProtocol : public Base {
     public:
-      NativeProtocol(void) : Base("FlatZinc::blackbox::native_protocol") {}
+      NativeProtocol(void) : Base("FlatZinc::blackbox::native_protocol") {
+        add_tags(TestTag::check);
+      }
       virtual bool run(void) {
         std::vector<int64_t> int_input{-2};
         std::vector<double> float_input{1.25};
@@ -372,7 +374,7 @@ namespace Test { namespace FlatZinc {
       /// Perform creation and registration
       Create(void) {
         (void) new NativeProtocol;
-        (void) new FlatZincErrorTest("blackbox::malformed_annotation",
+        (void) new FlatZincErrorTest(TestTags(TestTag::normal,TestTag::check),"blackbox::malformed_annotation",
           std::string(blackbox_decl) +
           "var 0..1: y;\n"
           "constraint gecode_blackbox([], [], [y], []) :: "
@@ -384,7 +386,7 @@ namespace Test { namespace FlatZinc {
         const char* exec = std::getenv("GECODE_TEST_BLACKBOX_EXEC");
         if (exec != nullptr) {
           const std::string executable(exec);
-          (void) new FlatZincTest("blackbox::constant_value",
+          (void) new FlatZincTest(TestTags(TestTag::normal,TestTag::check),"blackbox::constant_value",
             std::string(blackbox_decl) +
             "var 7..7: y :: output_var;\n"
             "constraint gecode_blackbox([], [], [y], []) :: " +
@@ -392,7 +394,7 @@ namespace Test { namespace FlatZinc {
             "solve satisfy;\n",
             "y = 7;\n----------\n");
 
-          (void) new FlatZincTest("blackbox::constant_value_unsat",
+          (void) new FlatZincTest(TestTags(TestTag::normal,TestTag::check),"blackbox::constant_value_unsat",
             std::string(blackbox_decl) +
             "var 8..8: y;\n"
             "constraint gecode_blackbox([], [], [y], []) :: " +
@@ -400,7 +402,7 @@ namespace Test { namespace FlatZinc {
             "solve satisfy;\n",
             "=====UNSATISFIABLE=====\n");
 
-          (void) new FlatZincTest("blackbox::reason_independent_bounds",
+          (void) new FlatZincTest(TestTags(TestTag::normal,TestTag::check),"blackbox::reason_independent_bounds",
             std::string(blackbox_bounds_decl) +
             "var 5..5: x :: output_var;\n"
             "constraint gecode_blackbox_bounds([x], [], [1,0,0]) :: " +
@@ -408,7 +410,7 @@ namespace Test { namespace FlatZinc {
             "solve satisfy;\n",
             "x = 5;\n----------\n");
 
-          (void) new FlatZincTest("blackbox::reason_independent_bounds_unsat",
+          (void) new FlatZincTest(TestTags(TestTag::normal,TestTag::check),"blackbox::reason_independent_bounds_unsat",
             std::string(blackbox_bounds_decl) +
             "var 6..6: x;\n"
             "constraint gecode_blackbox_bounds([x], [], [1,0,0]) :: " +
@@ -416,7 +418,7 @@ namespace Test { namespace FlatZinc {
             "solve satisfy;\n",
             "=====UNSATISFIABLE=====\n");
 
-          (void) new FlatZincTest("blackbox::reason_dependent_bounds",
+          (void) new FlatZincTest(TestTags(TestTag::normal,TestTag::check),"blackbox::reason_dependent_bounds",
             std::string(blackbox_bounds_decl) +
             "var 5..5: x :: output_var;\n"
             "constraint gecode_blackbox_bounds([x], [], [1,1,1,1,0]) :: " +
@@ -424,7 +426,7 @@ namespace Test { namespace FlatZinc {
             "solve satisfy;\n",
             "x = 5;\n----------\n");
 
-          (void) new FlatZincTest("blackbox::bounds_rescheduled_after_branch",
+          (void) new FlatZincTest(TestTags(TestTag::normal,TestTag::check),"blackbox::bounds_rescheduled_after_branch",
             std::string(blackbox_bounds_decl) +
             "var 0..1: x :: output_var;\n"
             "var 0..5: y :: output_var;\n"
@@ -438,7 +440,7 @@ namespace Test { namespace FlatZinc {
             false, {"-a"});
 
 #ifdef GECODE_HAS_FLOAT_VARS
-          (void) new FlatZincErrorTest("blackbox::missing_bounds_reason_entry",
+          (void) new FlatZincErrorTest(TestTags(TestTag::normal,TestTag::check),"blackbox::missing_bounds_reason_entry",
             std::string(blackbox_bounds_decl) +
             "var 0..10: x;\n"
             "var 0.0..10.0: y;\n"
@@ -447,7 +449,7 @@ namespace Test { namespace FlatZinc {
             "solve satisfy;\n", {}, "missing explained variable entry");
 #endif
 
-          (void) new FlatZincErrorTest("blackbox::duplicate_bounds_reason_entry",
+          (void) new FlatZincErrorTest(TestTags(TestTag::normal,TestTag::check),"blackbox::duplicate_bounds_reason_entry",
             std::string(blackbox_bounds_decl) +
             "var 0..10: x;\n"
             "var 0..10: y;\n"
@@ -455,7 +457,7 @@ namespace Test { namespace FlatZinc {
             fixture_annotation("exec", executable, {"bounds4"}) + ";\n"
             "solve satisfy;\n", {}, "duplicate explained variable index");
 
-          (void) new FlatZincErrorTest("blackbox::invalid_bounds_reason_code",
+          (void) new FlatZincErrorTest(TestTags(TestTag::normal,TestTag::check),"blackbox::invalid_bounds_reason_code",
             std::string(blackbox_bounds_decl) +
             "var 0..10: x;\n"
             "constraint gecode_blackbox_bounds([x], [], [1,1,1,0,0]) :: " +
@@ -463,7 +465,7 @@ namespace Test { namespace FlatZinc {
             "solve satisfy;\n", {}, "dependency bound code is out of range");
 
 #ifdef GECODE_HAS_FLOAT_VARS
-          (void) new FlatZincErrorTest("blackbox::invalid_float_output",
+          (void) new FlatZincErrorTest(TestTags(TestTag::normal,TestTag::check),"blackbox::invalid_float_output",
             std::string(blackbox_decl) +
             "var 0.0..10.0: y;\n"
             "constraint gecode_blackbox([], [], [], [y]) :: " +
@@ -471,13 +473,13 @@ namespace Test { namespace FlatZinc {
             "solve satisfy;\n", {}, "Failed to read output float 0");
 #endif
 
-          (void) new FlatZincErrorTest("blackbox::nul_output",
+          (void) new FlatZincErrorTest(TestTags(TestTag::normal,TestTag::check),"blackbox::nul_output",
             std::string(blackbox_decl) +
             "constraint gecode_blackbox([], [], [], []) :: " +
             fixture_annotation("exec", executable, {"nul"}) + ";\n"
             "solve satisfy;\n", {}, "response contains NUL data");
 
-          (void) new FlatZincErrorTest("blackbox::malformed_exec_parallel",
+          (void) new FlatZincErrorTest(TestTags(TestTag::normal,TestTag::check),"blackbox::malformed_exec_parallel",
             std::string(blackbox_decl) +
             "var 0..1: x :: output_var;\n"
             "var 0..1: y :: output_var;\n"
@@ -506,7 +508,7 @@ namespace Test { namespace FlatZinc {
               expected = "integer 0 is outside Gecode's integer range";
               break;
             }
-            (void) new FlatZincErrorTest(
+            (void) new FlatZincErrorTest(TestTags(TestTag::normal,TestTag::check),
               "blackbox::native_exec_fault_" + std::to_string(kind),
               std::string(blackbox_decl) +
               "var " + std::to_string(kind) + ".." + std::to_string(kind) +
@@ -526,7 +528,7 @@ namespace Test { namespace FlatZinc {
 #if defined(GECODE_HAS_POSIX_BLACKBOX_EXEC)
           const std::string descendant_log = fixture_log("exec_descendant");
           if (!descendant_log.empty()) {
-            (void) new FlatZincTest("blackbox::native_exec_descendant_cleanup",
+            (void) new FlatZincTest(TestTags(TestTag::normal,TestTag::check),"blackbox::native_exec_descendant_cleanup",
               std::string(blackbox_decl) +
               "var 1..1: y :: output_var;\n"
               "constraint gecode_blackbox([], [], [y], []) :: " +
@@ -542,7 +544,7 @@ namespace Test { namespace FlatZinc {
 #endif
         }
 
-        (void) new FlatZincErrorTest("blackbox::missing_exec_parallel",
+        (void) new FlatZincErrorTest(TestTags(TestTag::normal,TestTag::check),"blackbox::missing_exec_parallel",
           std::string(blackbox_decl) +
           "var 0..1: x :: output_var;\n"
           "var 0..1: y :: output_var;\n"
@@ -552,7 +554,7 @@ namespace Test { namespace FlatZinc {
           "satisfy;\n",
           {"-p", "2"}, "starting blackbox process failed");
 
-        (void) new FlatZincErrorTest("blackbox::missing_exec_root_status",
+        (void) new FlatZincErrorTest(TestTags(TestTag::normal,TestTag::check),"blackbox::missing_exec_root_status",
           std::string(blackbox_decl) +
           "var 0..0: x :: output_var;\n"
           "var 0..1: y :: output_var;\n"
@@ -567,7 +569,7 @@ namespace Test { namespace FlatZinc {
           const std::string library(dll);
           const std::string dll_model_log = fixture_log("dll_model");
           if (!dll_model_log.empty()) {
-            (void) new FlatZincTest("blackbox::native_dll_per_constraint",
+            (void) new FlatZincTest(TestTags(TestTag::normal,TestTag::check),"blackbox::native_dll_per_constraint",
               std::string(blackbox_decl) +
               "var 1..1: a :: output_var;\n"
               "var 1..1: b :: output_var;\n"
@@ -594,7 +596,7 @@ namespace Test { namespace FlatZinc {
 #endif
 
 #ifdef GECODE_HAS_FLOAT_VARS
-          (void) new FlatZincErrorTest("blackbox::native_dll_nonfinite",
+          (void) new FlatZincErrorTest(TestTags(TestTag::normal,TestTag::check),"blackbox::native_dll_nonfinite",
             std::string(blackbox_decl) +
             "var 0.0..1.0: y;\n"
             "constraint gecode_blackbox([], [], [], [y]) :: " +

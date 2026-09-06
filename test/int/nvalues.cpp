@@ -54,7 +54,9 @@ namespace Test { namespace Int {
      public:
        /// Create and register test
        IntInt(int n, int m0, Gecode::IntRelType irt0)
-         : Test("NValues::Int::Int::"+str(irt0)+"::"+str(n)+"::"+str(m0),
+         : Test((n == 1) && (m0 == 0) && (irt0 == Gecode::IRT_EQ)
+                ? TestTag::normal : TestTag::sweep,
+                "NValues::Int::Int::"+str(irt0)+"::"+str(n)+"::"+str(m0),
                 n,0,n),
            irt(irt0), m(m0) {
          testfix = false;
@@ -97,7 +99,8 @@ namespace Test { namespace Int {
      public:
        /// Create and register test
        IntVar(int n, Gecode::IntRelType irt0)
-         : Test("NValues::Int::Var::"+str(irt0)+"::"+str(n),n+1,0,n),
+         : Test(TestTag::sweep,
+                "NValues::Int::Var::"+str(irt0)+"::"+str(n),n+1,0,n),
            irt(irt0) {
          testfix = false;
        }
@@ -234,4 +237,3 @@ namespace Test { namespace Int {
 }}
 
 // STATISTICS: test-int
-
