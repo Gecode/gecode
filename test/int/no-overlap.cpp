@@ -55,10 +55,9 @@ namespace Test { namespace Int {
       Gecode::IntArgs h;
     public:
       /// Create and register test with maximal coordinate value \a m
-      Int2(int m, const Gecode::IntArgs& w0, const Gecode::IntArgs& h0)
-        : Test((m == 2) && (str(w0) == "[1,1,1,1]") &&
-               (str(h0) == "[1,1,1,1]")
-               ? TestTag::normal : TestTag::sweep,
+      Int2(TestTags tags, int m,
+           const Gecode::IntArgs& w0, const Gecode::IntArgs& h0)
+        : Test(tags,
                "NoOverlap::Int::2::"+str(m)+"::"+str(w0)+"::"+str(h0),
                2*w0.size(), 0, m-1),
           w(w0), h(h0) {
@@ -271,12 +270,12 @@ namespace Test { namespace Int {
         IntArgs s4({1,1,1,1});
 
         for (int m=2; m<3; m++) {
-          (void) new Int2(m, s1, s1);
-          (void) new Int2(m, s2, s2);
-          (void) new Int2(m, s3, s3);
-          (void) new Int2(m, s2, s3);
-          (void) new Int2(m, s4, s4);
-          (void) new Int2(m, s4, s2);
+          (void) new Int2(TestTag::sweep,m,s1,s1);
+          (void) new Int2(TestTag::sweep,m,s2,s2);
+          (void) new Int2(TestTag::sweep,m,s3,s3);
+          (void) new Int2(TestTag::sweep,m,s2,s3);
+          (void) new Int2(TestTag::normal,m,s4,s4);
+          (void) new Int2(TestTag::sweep,m,s4,s2);
           (void) new IntOpt2(m, s2, s3);
           (void) new IntOpt2(m, s4, s3);
         }

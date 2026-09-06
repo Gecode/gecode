@@ -137,10 +137,9 @@ namespace Test { namespace Set {
       int isize;
     public:
       /// Create and register test
-      ChannelBool(const char* t, const IntSet& d, int _isize)
-        : SetTest(std::string(t) == "Channel::Bool::1"
-                  ? TestTag::normal : TestTag::sweep,
-                  t,1,d,false,_isize), isize(_isize) {}
+      ChannelBool(TestTags tags, const char* t,
+                  const IntSet& d, int _isize)
+        : SetTest(tags,t,1,d,false,_isize), isize(_isize) {}
       /// %Test whether \a x is solution
       virtual bool solution(const SetAssignment& x) const {
         for (int i=0; i<isize; i++) {
@@ -168,9 +167,9 @@ namespace Test { namespace Set {
       }
     };
 
-    ChannelBool _channelbool1("Channel::Bool::1", d2, 3);
-    ChannelBool _channelbool2("Channel::Bool::2", d3, 3);
-    ChannelBool _channelbool3("Channel::Bool::3", d4, 5);
+    ChannelBool _channelbool1(TestTag::normal,"Channel::Bool::1", d2, 3);
+    ChannelBool _channelbool2(TestTag::sweep,"Channel::Bool::2", d3, 3);
+    ChannelBool _channelbool3(TestTag::sweep,"Channel::Bool::3", d4, 5);
 
     /// %Test for set channel constraint
     class ChannelSet : public SetTest {

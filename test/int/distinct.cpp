@@ -174,8 +174,8 @@ namespace Test { namespace Int {
      public:
        /// Create and register test
        Random(int n, int min, int max, Gecode::IntPropLevel ipl)
-         : Test("Distinct::Random::"+str(ipl),n,min,max,false,ipl) {
-         add_tags(TestTag::check);
+         : Test(TestTags(TestTag::normal,TestTag::check),
+                "Distinct::Random::"+str(ipl),n,min,max,false,ipl) {
          testsearch = false;
        }
        /// Create and register initial assignment

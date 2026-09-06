@@ -168,9 +168,9 @@ namespace Test { namespace Int {
        int o;
      public:
        /// Construct and register test
-       ChannelLinkMulti(const std::string& s, int min, int max, int o0)
-         : Test(s == "A" ? TestTag::normal : TestTag::sweep,
-                "Channel::Bool::Multi::"+s,7,min,max), o(o0) {
+       ChannelLinkMulti(TestTags tags, const std::string& s,
+                        int min, int max, int o0)
+         : Test(tags,"Channel::Bool::Multi::"+s,7,min,max), o(o0) {
        }
        /// Check whether \a x is solution
        virtual bool solution(const Assignment& x) const {
@@ -219,9 +219,9 @@ namespace Test { namespace Int {
 
      ChannelLinkSingle cls;
 
-     ChannelLinkMulti clma("A", 0, 5, 0);
-     ChannelLinkMulti clmb("B", 1, 6, 1);
-     ChannelLinkMulti clmc("C",-1, 4,-1);
+     ChannelLinkMulti clma(TestTag::normal,"A", 0, 5, 0);
+     ChannelLinkMulti clmb(TestTag::sweep,"B", 1, 6, 1);
+     ChannelLinkMulti clmc(TestTag::sweep,"C",-1, 4,-1);
      //@}
 
    }
