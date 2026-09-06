@@ -814,7 +814,7 @@ ${CONFIG_OUT}")
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/GecodeSources.cmake)
 if(GECODE_ENABLE_FAULT_INJECTION)
   list(APPEND GECODE_SUPPORT_SOURCES gecode/support/failpoint.cpp)
-  set(GECODE_FAULT_TEST_SOURCES test/test.cpp test/fault.cpp)
+  set(GECODE_FAULT_TEST_SOURCES ${GECODE_TEST_MAIN_SOURCE} test/fault.cpp)
 endif()
 
 # ---------------------------------------------------------------------------
@@ -1372,7 +1372,10 @@ if(BUILD_TESTING)
     if(GECODE_VISIBILITY_COMPILE_OPTION)
       target_compile_options(gecodetest PRIVATE ${GECODE_VISIBILITY_COMPILE_OPTION})
     endif()
+    set_target_properties(gecodetest PROPERTIES
+      OUTPUT_NAME "${GECODE_LIB_PREFIX}gecodetest${GECODE_LIB_SUFFIX}")
     target_link_libraries(gecodetest PUBLIC gecodesearch gecodeint)
+    add_library(Gecode::gecodetest ALIAS gecodetest)
     list(APPEND GECODE_INSTALL_TARGETS gecodetest)
     list(APPEND GECODE_EXPORT_TARGETS gecodetest)
 
@@ -1386,7 +1389,10 @@ if(BUILD_TESTING)
     if(GECODE_VISIBILITY_COMPILE_OPTION)
       target_compile_options(gecodetestint PRIVATE ${GECODE_VISIBILITY_COMPILE_OPTION})
     endif()
+    set_target_properties(gecodetestint PROPERTIES
+      OUTPUT_NAME "${GECODE_LIB_PREFIX}gecodetestint${GECODE_LIB_SUFFIX}")
     target_link_libraries(gecodetestint PUBLIC gecodetest)
+    add_library(Gecode::gecodetestint ALIAS gecodetestint)
     list(APPEND GECODE_INSTALL_TARGETS gecodetestint)
     list(APPEND GECODE_EXPORT_TARGETS gecodetestint)
     if(GECODE_INSTALL)
@@ -1411,6 +1417,7 @@ if(BUILD_TESTING)
     )
     set_tests_properties(build-public-test-smokes PROPERTIES
       FIXTURES_SETUP public-test-smokes-built
+      RESOURCE_LOCK gecode-test-build
     )
     set_tests_properties(public-runner-smoke public-int-smoke PROPERTIES
       FIXTURES_REQUIRED public-test-smokes-built
@@ -1552,7 +1559,8 @@ if(BUILD_TESTING)
       COMMAND ${CMAKE_COMMAND} --build "${CMAKE_BINARY_DIR}"
               --target ${GECODE_TEST_BUILD_TARGETS} --config $<CONFIG>)
     set_tests_properties(build-gecode-test PROPERTIES
-      FIXTURES_SETUP "${GECODE_TEST_BUILD_FIXTURES}")
+      FIXTURES_SETUP "${GECODE_TEST_BUILD_FIXTURES}"
+      RESOURCE_LOCK gecode-test-build)
     add_test(NAME test COMMAND gecode-test ${GECODE_CHECK_ARGS})
     set_tests_properties(test PROPERTIES
       FIXTURES_REQUIRED gecode-test-built)
@@ -1736,6 +1744,10 @@ if(GECODE_INSTALL)
   set(GECODE_PACKAGE_NEEDS_MPFR OFF)
   if(GECODE_ENABLE_FLOAT_VARS AND GECODE_ENABLE_MPFR AND MPFR_FOUND)
     set(GECODE_PACKAGE_NEEDS_MPFR ON)
+  endif()
+  set(GECODE_PACKAGE_HAS_TEST_COMPONENT OFF)
+  if(TARGET gecodetest AND TARGET gecodetestint)
+    set(GECODE_PACKAGE_HAS_TEST_COMPONENT ON)
   endif()
   set(GECODE_PACKAGE_QT_MAJOR "")
   set(GECODE_PACKAGE_QT_COMPONENTS "")

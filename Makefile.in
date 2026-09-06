@@ -1438,7 +1438,8 @@ compilelib: mkcompiledirs
 compileexamples: $(EXAMPLEEXE)
 
 test: mkcompiledirs $(BLACKBOXFIXTURES)
-	@$(MAKE) $(VARIMP) $(TESTEXE)
+	@$(MAKE) $(VARIMP) $(TESTEXE) \
+		$(TESTPUBLICRUNNERSMOKEEXE) $(TESTPUBLICINTSMOKEEXE)
 
 CHECKTESTS = Branch::Int::Dense::3 \
 	Int::Arithmetic::Abs \
@@ -1487,6 +1488,8 @@ endif
 
 # A basic integrity test
 check: test
+	$(RUNENVIRONMENT) $(TESTPUBLICRUNNERSMOKEEXE)
+	$(RUNENVIRONMENT) $(TESTPUBLICINTSMOKEEXE)
 	@for t in $(REQUIREDFLOATCHECKTESTS); do \
 		case " $(CHECKTESTS) " in *" $$t "*) ;; \
 		*) echo "Required Float check test is missing: $$t" >&2; exit 1 ;; \

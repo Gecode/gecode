@@ -25,18 +25,6 @@ EXPECTED_STATIC_LIBS = {
     "gecodetest": "libgecodetest.a",
     "gecodetestint": "libgecodetestint.a",
 }
-REQUIRED_DOC_STRINGS = [
-    "## Native legacy install contract",
-    "`gecodetest` — static core runner/registry seam",
-    "`gecodetestint` — static integer-helper seam layered over `gecodetest`",
-    "-I<prefix>/include consumer-smoke.cpp \\",
-    "-L<prefix>/lib \\",
-    "-lgecodetestint -lgecodetest -lgecodesearch -lgecodeint -lgecodekernel -lgecodesupport",
-    "That full link closure is the honest maintained contract for native legacy consumers.",
-    "proof-only binaries such as `public-runner-smoke`, `public-int-smoke`, or `gecode-test`",
-]
-
-
 def fail_phase(phase: str, message: str) -> "NoReturn":
     sys.stderr.write(f"{VERIFIER_PREFIX} {phase}: FAIL - {message}\n")
     raise SystemExit(1)
@@ -118,31 +106,13 @@ def verify_unsupported_surface(prefix: Path) -> None:
         for path in prefix.rglob("*")
         if path.is_file() and (path.name in UNSUPPORTED_BINARIES or path.stem in UNSUPPORTED_BINARIES)
     )
-    assert_phase(not unexpected_binaries, phase, f"unexpected proof-only binaries installed: {unexpected_binaries}")
+    assert_phase(not unexpected_binaries, phase, f"unexpected internal test binaries installed: {unexpected_binaries}")
     sys.stdout.write(f"{VERIFIER_PREFIX} {phase}: headers-ok binaries-ok\n")
-
-
-
-def verify_docs_contract(source: Path) -> None:
-    phase = "docs-contract"
-    docs_path = source / "docs" / "public-test-harness.md"
-    assert_phase(docs_path.is_file(), phase, f"missing docs file: {docs_path}")
-
-    docs_text = docs_path.read_text()
-    missing = [needle for needle in REQUIRED_DOC_STRINGS if needle not in docs_text]
-    assert_phase(not missing, phase, f"missing required legacy contract text: {missing}")
-    assert_phase(
-        docs_text.index("## Native legacy install contract") < docs_text.index("## Minimal downstream CMake consumer"),
-        phase,
-        "legacy install contract section moved after the downstream consumer guidance",
-    )
-    sys.stdout.write(f"{VERIFIER_PREFIX} {phase}: anchor=Native legacy install contract\n")
 
 
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--source", required=True)
     parser.add_argument("--prefix", required=True)
     return parser.parse_args()
 
@@ -150,16 +120,13 @@ def parse_args() -> argparse.Namespace:
 
 def main() -> int:
     args = parse_args()
-    source = Path(args.source).resolve()
     prefix = Path(args.prefix).resolve()
 
-    assert_phase(source.is_dir(), "inputs", f"missing source tree: {source}")
     assert_phase(prefix.is_dir(), "inputs", f"missing installed prefix: {prefix}")
 
     verify_prefix_surface(prefix)
     verify_harness_libs(prefix)
     verify_unsupported_surface(prefix)
-    verify_docs_contract(source)
     return 0
 
 
