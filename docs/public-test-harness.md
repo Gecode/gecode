@@ -194,6 +194,32 @@ select checks that match the propagator's contract. Set tests expose `disabled`
 for checks with disabled propagators and `testsubsumed` for subsumption checks.
 A reified set test checks all three reification modes; it has no mode mask.
 
+## Select tests by tag
+
+Tests created with the one-argument `Test::Base` constructor have the `normal`
+tag. A test can instead provide an explicit tag:
+
+```c++
+ConsumerSmoke()
+  : Test::Base("Package::ConsumerSmoke", Test::TestTag::sweep) {}
+```
+
+The runner recognizes the `check`, `normal`, and `sweep` tags. Repeating
+`-tag` selects their union:
+
+```bash
+./consumer-smoke -tag normal
+./consumer-smoke -tag normal -tag sweep
+```
+
+Use `-list-tags` to list the recognized tags and `-list-with-tags` to show the
+tags assigned to every registered test. Gecode's tests declare their tags at
+registration, just like downstream tests; test names do not trigger implicit
+classification.
+
+The runner uses the same option model as Gecode's own `gecode-test` binary.
+The supported public seam is the runner function, not a separate alternate CLI.
+
 ## Run and reproduce tests
 
 List the registered tests:

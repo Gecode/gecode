@@ -249,7 +249,8 @@ def run_list_phase(consumer_binary: Path, expected_test_names: list[str]) -> Non
 def run_filtered_phase(consumer_binary: Path, expected_test_names: list[str]) -> None:
     result = run_phase(
         "filtered-run",
-        [str(consumer_binary), "-test", "Package", "-iter", "1", "-stop", "true"],
+        [str(consumer_binary), "-tag", "normal", "-test", "Package",
+         "-iter", "1", "-stop", "true"],
     )
     for test_name in expected_test_names:
         assert_phase(test_name in result.stdout, "filtered-run", f"filtered run did not print {test_name!r}")
