@@ -68,6 +68,12 @@
 #
 
 [RELEASE]
+Version: 6.5.0
+Date: unreleased
+[DESCRIPTION]
+This is the development changelog for the next Gecode release.
+
+[RELEASE]
 Version: 6.4.0
 Date: 2026-07-15
 [DESCRIPTION]
