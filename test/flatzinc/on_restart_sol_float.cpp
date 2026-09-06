@@ -47,7 +47,7 @@ R"FZN(predicate gecode_on_restart_sol_float(var float: input,var float: out);
 predicate gecode_on_restart_status(var int: s);
 predicate int_eq_imp(var int: a,var int: b,var bool: r);
 var 1..3: x:: output_var;
-var float: y:: output_var;
+var 1.0..3.0: y:: output_var;
 var 1.0..3.0: X_INTRODUCED_2_ ::var_is_introduced :: is_defined_var;
 var 1.0..3.0: X_INTRODUCED_3_ ::var_is_introduced ;
 var bool: X_INTRODUCED_4_ ::var_is_introduced :: is_defined_var;
