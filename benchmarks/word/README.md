@@ -321,6 +321,10 @@ Peak RSS is measured for the individual child with the platform's
 `/usr/bin/time` (`-l` on macOS, `-v` on Linux); unsupported platforms report
 the measurement as unavailable.
 
+The lookup and variable-rotation investigation, including exact projection
+checks and separate implement/defer decisions, is recorded in
+[`word-039-result.md`](word-039-result.md).
+
 ## Semantic result contract
 
 `semantics.py` defines the small contract shared by these runners and intended

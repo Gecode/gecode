@@ -3,7 +3,7 @@ schema_version = 1
 id = "word-039"
 key = "investigate-word-lookup-rotations"
 area = "word"
-status = "open"
+status = "done"
 complexity = "advanced"
 afk = true
 priority = "low"
@@ -27,10 +27,20 @@ Word has Int-indexed Element and constant rotations, but no variable-amount rota
 
 ## Done when
 
-- [ ] Each case has a precise domain/API proposal, current formulation and semantic oracle.
-- [ ] Measure propagation/search/construction costs against current decomposition at useful small scales.
-- [ ] Record separate implement/defer decisions with concrete evidence and bounded follow-up scope.
+- [x] Each case has a precise domain/API proposal, current formulation and semantic oracle.
+- [x] Measure propagation/search/construction costs against current decomposition at useful small scales.
+- [x] Record separate implement/defer decisions with concrete evidence and bounded follow-up scope.
 
 ## Validation
 
 - Run exact small input/amount checks and capped Release comparisons; no permanent tests for discarded prototypes.
+
+## Result
+
+Measured constant lookup and modulo-width variable rotation against current decompositions; recommended a bounded lookup follow-up and deferred exhaustive native rotation.
+
+Validation:
+
+- Independent lookup and rotation oracles reproduced every recorded projection count and checksum.
+- Capped interleaved Release measurements and actor/search statistics were independently reviewed.
+- Snapshot W213467a7d247f46a passed independent verification and compared equal before completion.

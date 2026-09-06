@@ -3,9 +3,9 @@
 # Tasks: word
 
 - Total: 41
-- Ready: 2
+- Ready: 1
 - Blocked: 1
-- Done: 38
+- Done: 39
 
 | ID | Task | State | Blocked by |
 | --- | --- | --- | --- |
@@ -47,6 +47,6 @@
 | [word-036](tasks/036-add-external-comparisons-for-crc-xorshift-and-reduced-speck.md) | Add external comparisons for CRC xorshift and reduced Speck | done | word-033 |
 | [word-037](tasks/037-run-a-focused-repaired-word-comparison-campaign.md) | Run a focused repaired-Word comparison campaign | done | word-034, word-035, word-036, word-028, word-029 |
 | [word-038](tasks/038-investigate-missing-bounded-propagation-through-packed-field.md) | Investigate missing bounded propagation through packed-field operations | done | word-031, word-025 |
-| [word-039](tasks/039-evaluate-word-lookup-relations-and-variable-rotations.md) | Evaluate Word lookup relations and variable rotations | ready | word-031, word-025 |
+| [word-039](tasks/039-evaluate-word-lookup-relations-and-variable-rotations.md) | Evaluate Word lookup relations and variable rotations | done | word-031, word-025 |
 | [word-040](tasks/040-evaluate-fused-sums-multiply-add-and-high-half-products.md) | Evaluate fused sums multiply-add and high-half products | ready | word-031, word-025, word-026 |
 | [word-041](tasks/041-assess-word-application-coverage-and-the-next-public-corpus.md) | Assess Word application coverage and the next public corpus | blocked | word-037, word-038, word-039, word-040 |
