@@ -98,10 +98,8 @@ namespace Test { namespace Set {
        }
      public:
        /// Create and register test
-       Multi(const Gecode::IntArgs& c0)
-         : SetTest(str(c0) == "[1,2,3]"
-                   ? TestTag::normal : TestTag::sweep,
-                   "Precede::Multi::"+str(c0),4,ds,false), c(c0) {}
+       Multi(TestTags tags, const Gecode::IntArgs& c0)
+         : SetTest(tags,"Precede::Multi::"+str(c0),4,ds,false), c(c0) {}
        /// %Test whether \a x is solution
        virtual bool solution(const SetAssignment& x) const {
          for (int j=0; j<c.size()-1; j++)
@@ -123,9 +121,9 @@ namespace Test { namespace Set {
      Single _a(2, 3);
      Single _b(0, 3);
 
-     Multi _c(Gecode::IntArgs({1,2,3}));
-     Multi _d(Gecode::IntArgs({3,2,1}));
-     Multi _e(Gecode::IntArgs({4,2,3,1}));
+     Multi _c(TestTag::normal,Gecode::IntArgs({1,2,3}));
+     Multi _d(TestTag::sweep,Gecode::IntArgs({3,2,1}));
+     Multi _e(TestTag::sweep,Gecode::IntArgs({4,2,3,1}));
 
    }
 

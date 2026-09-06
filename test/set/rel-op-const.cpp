@@ -185,13 +185,11 @@ namespace Test { namespace Set {
       RelSSI(Gecode::SetOpType sot0, Gecode::SetRelType srt0,
              int intSet)
        : SetTest(sot0 == Gecode::SOT_UNION
-                 ? TestTag::normal : TestTag::sweep,
+                 ? TestTags(TestTag::normal,TestTag::check)
+                 : TestTags(TestTag::sweep),
                  "RelOp::ConstSSI::"+str(sot0)+"::"+str(srt0)+"::"+
                  str(intSet),2,ds_22,false)
-      , is(iss[intSet]), sot(sot0), srt(srt0) {
-        if (sot0 == Gecode::SOT_UNION)
-          add_tags(TestTag::check);
-      }
+      , is(iss[intSet]), sot(sot0), srt(srt0) {}
       /// %Test whether \a x is solution
       bool solution(const SetAssignment& x) const {
         CountableSetRanges xr0(x.lub, x[0]);

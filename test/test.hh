@@ -185,12 +185,6 @@ namespace Test {
     const std::string& name(void) const;
     /// Return tags for test
     TestTags tags(void) const;
-    /// Replace tags assigned to test with \a t
-    void tags(TestTags t);
-    /// Add tags \a t to test
-    void add_tags(TestTags t);
-    /// Remove tags \a t from test
-    void remove_tags(TestTags t);
     /// Return all tests
     static Base* tests(void);
     /// Return next test

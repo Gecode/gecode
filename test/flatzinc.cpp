@@ -81,9 +81,8 @@ namespace Test { namespace FlatZinc {
       }
     public:
       GistStatisticsMode(void)
-        : Base("FlatZinc::Options::GistStatisticsMode") {
-        add_tags(TestTag::check);
-      }
+        : Base("FlatZinc::Options::GistStatisticsMode",
+               TestTags(TestTag::normal,TestTag::check)) {}
 
       virtual bool run(void) {
         return

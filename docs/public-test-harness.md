@@ -157,7 +157,7 @@ where those checks do not apply.
 ## Select tests by tag
 
 Tests created with the one-argument `Test::Base` constructor have the `normal`
-tag. A test can instead provide an explicit tag:
+tag. Any other membership is assigned explicitly when the test is constructed:
 
 ```c++
 ConsumerSmoke()
@@ -165,17 +165,23 @@ ConsumerSmoke()
 ```
 
 The runner recognizes the `check`, `normal`, and `sweep` tags. Repeating
-`-tag` selects their union:
+`-tag` selects their union. Without `-tag`, the runner does not restrict tests
+by tag; `-tag all` is the explicit equivalent:
 
 ```bash
 ./consumer-smoke -tag normal
 ./consumer-smoke -tag normal -tag sweep
+./consumer-smoke -tag all
 ```
+
+Name and tag filters intersect: a test must match both when both `-test` and
+`-tag` are present.
 
 Use `-list-tags` to list the recognized tags and `-list-with-tags` to show the
 tags assigned to every registered test. Gecode's tests declare their tags at
 registration, just like downstream tests; test names do not trigger implicit
-classification.
+classification. The listing commands always show all registered tests; they do
+not apply `-test`, `-tag`, or `-start` filters.
 
 The runner uses the same option model as Gecode's own `gecode-test` binary.
 The supported public seam is the runner function, not a separate alternate CLI.

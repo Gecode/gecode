@@ -107,6 +107,9 @@ namespace Test {
       /// Domain of variables
       Gecode::IntSet dom;
     public:
+      /// Construct and register test with explicitly assigned tags
+      SetTest(TestTags tags, const std::string& s, int a,
+              const Gecode::IntSet& d);
       /// Construct and register test
       SetTest(const std::string& s, int a, const Gecode::IntSet& d);
       /// Perform test

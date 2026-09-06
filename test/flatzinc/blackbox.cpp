@@ -256,9 +256,9 @@ namespace Test { namespace FlatZinc {
   namespace Blackbox {
     class NativeProtocol : public Base {
     public:
-      NativeProtocol(void) : Base("FlatZinc::blackbox::native_protocol") {
-        add_tags(TestTag::check);
-      }
+      NativeProtocol(void)
+        : Base("FlatZinc::blackbox::native_protocol",
+               TestTags(TestTag::normal,TestTag::check)) {}
       virtual bool run(void) {
         std::vector<int64_t> int_input{-2};
         std::vector<double> float_input{1.25};

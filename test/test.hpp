@@ -90,18 +90,6 @@ namespace Test {
   Base::tags(void) const {
     return _tags;
   }
-  inline void
-  Base::tags(TestTags t) {
-    _tags = t;
-  }
-  inline void
-  Base::add_tags(TestTags t) {
-    _tags.add(t);
-  }
-  inline void
-  Base::remove_tags(TestTags t) {
-    _tags.remove(t);
-  }
   inline Base*
   Base::tests(void) {
     return _tests;

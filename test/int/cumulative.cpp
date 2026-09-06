@@ -71,14 +71,13 @@ namespace Test { namespace Int {
                         const Gecode::IntArgs& u0,
                         int o0,
                         Gecode::IntPropLevel ipl0)
-        : Test(TestTag::sweep,"Cumulative::Man::Fix::"+str(o0)+"::"+
+        : Test((o0 == 0) && (c0 == 4)
+               ? TestTags(TestTag::normal,TestTag::check)
+               : TestTags(TestTag::sweep),
+               "Cumulative::Man::Fix::"+str(o0)+"::"+
                str(c0)+"::"+str(p0)+"::"+str(u0)+"::"+str(ipl0),
                (c0 >= 0) ? p0.size():p0.size()+1,0,st(c0,p0,u0),false,ipl0),
           c(c0), p(p0), u(u0), o(o0) {
-        if ((o0 == 0) && (c0 == 4)) {
-          tags(TestTag::normal);
-          add_tags(TestTag::check);
-        }
         testsearch = false;
         testfix = false;
         contest = CTL_NONE;
@@ -178,13 +177,13 @@ namespace Test { namespace Int {
                         const Gecode::IntArgs& u0,
                         int o0,
                         Gecode::IntPropLevel ipl0)
-        : Test(TestTag::sweep,"Cumulative::Opt::Fix::"+str(o0)+"::"+
+        : Test((o0 == Gecode::Int::Limits::min) && (c0 == -1)
+               ? TestTags(TestTag::normal) : TestTags(TestTag::sweep),
+               "Cumulative::Opt::Fix::"+str(o0)+"::"+
                str(c0)+"::"+str(p0)+"::"+str(u0)+"::"+str(ipl0),
                (c0 >= 0) ? 2*p0.size() : 2*p0.size()+1,0,st(c0,p0,u0),
                false,ipl0),
           c(c0), p(p0), u(u0), l(st(c,p,u)/2), o(o0) {
-        if ((o0 == Gecode::Int::Limits::min) && (c0 == -1))
-          tags(TestTag::normal);
         testsearch = false;
         testfix = false;
         contest = CTL_NONE;
@@ -399,16 +398,16 @@ namespace Test { namespace Int {
                         const Gecode::IntArgs& u0,
                         int o0,
                         Gecode::IntPropLevel ipl0)
-        : Test(TestTag::sweep,"Cumulative::Opt::Flex::"+str(o0)+"::"+
+        : Test((o0 == Gecode::Int::Limits::min) && (c0 == 4) &&
+               (minP == 0) && (maxP == 2)
+               ? TestTags(TestTag::normal) : TestTags(TestTag::sweep),
+               "Cumulative::Opt::Flex::"+str(o0)+"::"+
                str(c0)+"::"+str(minP)+"::"+str(maxP)+"::"+str(u0)+
                "::"+str(ipl0),
                (c0 >= 0) ? 3*u0.size() : 3*u0.size()+1,
                0,std::max(maxP,st(c0,maxP,u0)), false,ipl0),
           c(c0), _minP(minP), _maxP(maxP), u(u0),
           l(std::max(maxP,st(c0,maxP,u0))/2), o(o0) {
-        if ((o0 == Gecode::Int::Limits::min) && (c0 == 4) &&
-            (minP == 0) && (maxP == 2))
-          tags(TestTag::normal);
         testsearch = false;
         testfix = false;
         contest = CTL_NONE;

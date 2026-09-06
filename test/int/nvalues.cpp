@@ -53,9 +53,8 @@ namespace Test { namespace Int {
        int m;
      public:
        /// Create and register test
-       IntInt(int n, int m0, Gecode::IntRelType irt0)
-         : Test((n == 1) && (m0 == 0) && (irt0 == Gecode::IRT_EQ)
-                ? TestTag::normal : TestTag::sweep,
+       IntInt(TestTags tags, int n, int m0, Gecode::IntRelType irt0)
+         : Test(tags,
                 "NValues::Int::Int::"+str(irt0)+"::"+str(n)+"::"+str(m0),
                 n,0,n),
            irt(irt0), m(m0) {
@@ -98,8 +97,8 @@ namespace Test { namespace Int {
        Gecode::IntRelType irt;
      public:
        /// Create and register test
-       IntVar(int n, Gecode::IntRelType irt0)
-         : Test(TestTag::sweep,
+       IntVar(TestTags tags, int n, Gecode::IntRelType irt0)
+         : Test(tags,
                 "NValues::Int::Var::"+str(irt0)+"::"+str(n),n+1,0,n),
            irt(irt0) {
          testfix = false;
@@ -221,10 +220,18 @@ namespace Test { namespace Int {
              (void) new BoolVar(i, irts.irt());
            }
            for (int i=1; i<=7; i += 2) {
-             for (int m=0; m<=i+1; m++)
-               (void) new IntInt(i, m, irts.irt());
-             if (i <= 5)
-               (void) new IntVar(i, irts.irt());
+             for (int m=0; m<=i+1; m++) {
+               TestTags tags = ((i == 3) && (m == 2) &&
+                                (irts.irt() == Gecode::IRT_EQ))
+                 ? TestTag::normal : TestTag::sweep;
+               (void) new IntInt(tags,i,m,irts.irt());
+             }
+             if (i <= 5) {
+               TestTags tags = ((i == 3) &&
+                                (irts.irt() == Gecode::IRT_EQ))
+                 ? TestTag::normal : TestTag::sweep;
+               (void) new IntVar(tags,i,irts.irt());
+             }
            }
          }
        }

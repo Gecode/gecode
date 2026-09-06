@@ -41,10 +41,8 @@ namespace Test { namespace Branch {
   class Set : public SetTest {
   public:
     /// Create and register test
-    Set(const std::string& s, const Gecode::IntSet& d, int n)
-      : SetTest(s,n,d) {
-      tags(s == "Dense::3" ? TestTag::normal : TestTag::sweep);
-    }
+    Set(TestTags tags, const std::string& s, const Gecode::IntSet& d, int n)
+      : SetTest(tags,s,n,d) {}
     /// Post propagators on variables \a x
     virtual void post(Gecode::Space& home, Gecode::SetVarArray& x) {
       Gecode::SetVarArgs xx(x.size()-1);
@@ -59,8 +57,8 @@ namespace Test { namespace Branch {
     const int v_sparse[6] = {-100,-10,0,10,100,1000};
     Gecode::IntSet d_sparse(v_sparse,6);
 
-    Set d_3("Dense::3",d_dense,3);
-    Set s_3("Sparse::3",d_sparse,3);
+    Set d_3(TestTag::normal,"Dense::3",d_dense,3);
+    Set s_3(TestTag::sweep,"Sparse::3",d_sparse,3);
   }
 
 }}
