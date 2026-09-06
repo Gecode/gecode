@@ -173,7 +173,7 @@ namespace Test {
     /// How many tests
     static unsigned int _n_tests;
   public:
-    /// Create and register test with name \a s
+    /// Create and register a normal test with name \a s
     Base(std::string  s);
     /// Create and register test with name \a s and tags \a t
     Base(std::string s, TestTags t);
@@ -187,8 +187,6 @@ namespace Test {
     void add_tags(TestTags t);
     /// Remove tags \a t from test
     void remove_tags(TestTags t);
-    /// Return default tags for test named \a s
-    static TestTags default_tags(const std::string& s);
     /// Return all tests
     static Base* tests(void);
     /// Return next test

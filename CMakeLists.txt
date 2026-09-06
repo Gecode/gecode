@@ -814,7 +814,10 @@ ${CONFIG_OUT}")
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/GecodeSources.cmake)
 if(GECODE_ENABLE_FAULT_INJECTION)
   list(APPEND GECODE_SUPPORT_SOURCES gecode/support/failpoint.cpp)
-  set(GECODE_FAULT_TEST_SOURCES ${GECODE_TEST_MAIN_SOURCE} test/fault.cpp)
+  set(GECODE_FAULT_TEST_SOURCES
+    test/test-main.cpp
+    test/gecode-tags.cpp
+    test/fault.cpp)
 endif()
 
 # ---------------------------------------------------------------------------
@@ -1465,7 +1468,7 @@ if(BUILD_TESTING)
   endif()
 
   if(GECODE_CAN_BUILD_TESTS)
-    add_executable(gecode-test EXCLUDE_FROM_ALL ${GECODE_TEST_MAIN_SOURCE} ${GECODE_TEST_SOURCES_SELECTED})
+    add_executable(gecode-test EXCLUDE_FROM_ALL ${GECODE_TEST_MAIN_SOURCES} ${GECODE_TEST_SOURCES_SELECTED})
     set(GECODE_TEST_LINK_LIBS gecodetestint gecodeminimodel)
     if(GECODE_ENABLE_FLATZINC)
       list(APPEND GECODE_TEST_LINK_LIBS gecodeflatzinc)
@@ -1536,6 +1539,14 @@ if(BUILD_TESTING)
                 $<TARGET_FILE:gecode-test> -tag normal
         DEPENDS ${GECODE_CHECK_DEPENDS}
         USES_TERMINAL)
+      add_custom_target(check-sweep
+        COMMAND ${CMAKE_COMMAND} -E env
+                GECODE_TEST_BLACKBOX_EXEC=$<TARGET_FILE:gecode-test-blackbox-exec>
+                GECODE_TEST_BLACKBOX_DLL=$<TARGET_FILE:gecode-test-blackbox-dll>
+                GECODE_TEST_BLACKBOX_LOG=${GECODE_TEST_BLACKBOX_LOG}
+                $<TARGET_FILE:gecode-test> -tag sweep
+        DEPENDS ${GECODE_CHECK_DEPENDS}
+        USES_TERMINAL)
     else()
       add_custom_target(check
         COMMAND $<TARGET_FILE:gecode-test> ${GECODE_CHECK_ARGS}
@@ -1545,11 +1556,11 @@ if(BUILD_TESTING)
         COMMAND $<TARGET_FILE:gecode-test> -tag normal
         DEPENDS gecode-test
         USES_TERMINAL)
+      add_custom_target(check-sweep
+        COMMAND $<TARGET_FILE:gecode-test> -tag sweep
+        DEPENDS gecode-test
+        USES_TERMINAL)
     endif()
-    add_custom_target(check-sweep
-      COMMAND $<TARGET_FILE:gecode-test> -tag sweep
-      DEPENDS gecode-test
-      USES_TERMINAL)
     if(GECODE_ENABLE_FAULT_INJECTION)
       set(GECODE_FAULT_CHECK_ARGS -iter 1 -threads 1 -test "^Fault::")
       add_test(NAME fault COMMAND gecode-fault-test ${GECODE_FAULT_CHECK_ARGS})

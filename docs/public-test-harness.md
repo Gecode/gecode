@@ -154,6 +154,32 @@ or `RM_PMI` when the propagator supports only part of the reification API.
 `testsearch` and `testfix` can disable the corresponding checks for constraints
 where those checks do not apply.
 
+## Select tests by tag
+
+Tests created with the one-argument `Test::Base` constructor have the `normal`
+tag. A test can instead provide an explicit tag:
+
+```c++
+ConsumerSmoke()
+  : Test::Base("Package::ConsumerSmoke", Test::TestTag::sweep) {}
+```
+
+The runner recognizes the `check`, `normal`, and `sweep` tags. Repeating
+`-tag` selects their union:
+
+```bash
+./consumer-smoke -tag normal
+./consumer-smoke -tag normal -tag sweep
+```
+
+Use `-list-tags` to list the recognized tags and `-list-with-tags` to show the
+tags assigned to every registered test. Gecode's tests declare their tags at
+registration, just like downstream tests; test names do not trigger implicit
+classification.
+
+The runner uses the same option model as Gecode's own `gecode-test` binary.
+The supported public seam is the runner function, not a separate alternate CLI.
+
 ## Run and reproduce tests
 
 List the registered tests:

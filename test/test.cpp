@@ -52,168 +52,33 @@ namespace Test {
   // Log stream
   std::ostringstream olog;
 
-  /// Names of tags supported by the test runner
-  static const char* tag_names[] = {
-    "check",
-    "normal",
-    "sweep",
-    nullptr
+  /// A command-line name and its corresponding test tag
+  struct TestTagDescription {
+    const char* name;
+    TestTag tag;
   };
 
-  /// Masks of tags supported by the test runner
-  static const TestTag tag_values[] = {
-    TestTag::check,
-    TestTag::normal,
-    TestTag::sweep
+  /// Tags supported by the test runner
+  static const TestTagDescription test_tag_descriptions[] = {
+    {"check",  TestTag::check},
+    {"normal", TestTag::normal},
+    {"sweep",  TestTag::sweep}
   };
 
-  /// Patterns that reproduce the historic make check selection
-  static const char* check_patterns[] = {
-    "Branch::Int::Dense::3",
-    "FlatZinc::Options",
-    "FlatZinc::magic_square",
-    "FlatZinc::blackbox",
-    "Float::Arithmetic::PositiveNRootBounds",
-    "Float::Arithmetic::PowConsistency",
-    "Float::Arithmetic::MultZeroEndpoint",
-    "Float::Arithmetic::Pow::N::2::XY::Sol::C",
-    "Float::Arithmetic::NRoot::N::2::XY::Sol::C",
-    "Float::Arithmetic::Mult::XYZ::Sol::C",
-    "Int::Arithmetic::Abs",
-    "Int::Arithmetic::ArgMax",
-    "Int::Arithmetic::Max::Nary",
-    "Int::Cumulative::Man::Fix::0::4",
-    "Int::Distinct::Random",
-    "Int::Extensional::TupleSet::Sparse::IncrementalDelta",
-    "Int::Extensional::TupleSet::Auto::DefaultDispatch",
-    "Int::Linear::Bool::Int::Lq",
-    "Int::MiniModel::LinExpr::Bool::352",
-    "NoGoods::Queens",
-    "Search::DFS::Sol::Binary::Nary::Binary::1::1::1",
-    "Set::Dom::Dom::Gr",
-    "Set::RelOp::ConstSSI::Union",
-    "Set::Sequence::SeqU1",
-    "Set::Wait",
-    nullptr
-  };
-
-  /// Representative cases retained from otherwise exhaustive sweep families
-  static const char* normal_patterns[] = {
-    "Float::Arithmetic::Abs::XX::A",
-    "Float::Arithmetic::Div::A",
-    "Float::Arithmetic::Max::Bin::XXX::A",
-    "Float::Arithmetic::Min::Bin::XXX::A",
-    "Float::Arithmetic::Sqr::XX::A",
-    "Float::Arithmetic::Sqrt::XX::A",
-    "Float::Linear::Float::Eq::11::0::1",
-    "Float::Linear::Var::Eq::11::1",
-    "Float::MiniModel::LinExpr::000",
-    "Float::Transcendental::Exp::XX::A",
-    "Float::Transcendental::Log::XX::A",
-    "Float::Transcendental::Pow::N::1.5::XX::A",
-    "Float::Trigonometric::ACos::XX::A",
-    "Float::Trigonometric::ASin::XX::A",
-    "Float::Trigonometric::ATan::XX::A",
-    "Float::Trigonometric::Cos::XX::A",
-    "Float::Trigonometric::Sin::XX::A",
-    "Float::Trigonometric::Tan::XX::A",
-    "Int::Arithmetic::Nroot::XX::1::Bnd::A",
-    "Int::Arithmetic::Pow::XX::0::Bnd::A",
-    "Int::Channel::Bool::Multi::A",
-    "Int::Circuit::Cost::Dom::4::0",
-    "Int::Count::Distinct::Bnd::Dense",
-    "Int::Cumulative::Opt::Fix::-2147483646::-1",
-    "Int::Cumulative::Opt::Flex::-2147483646::4::0::2",
-    "Int::Distinct::Bnd::Dense",
-    "Int::Distinct::Dom::Dense",
-    "Int::Distinct::Offset::Dense::Bnd",
-    "Int::GCC::Int::All::Max::Bnd",
-    "Int::Linear::Int::Int::Eq::Bnd::11::0::1",
-    "Int::MiniModel::SetExpr::Const::000::0::0",
-    "Int::MiniModel::SetExpr::Expr::000::000::0",
-    "Int::NValues::Int::Int::Eq::1::0",
-    "Int::NoOverlap::Int::2::2::[1,1,1,1]::[1,1,1,1]",
-    "Int::Path::Cost::Dom::3::0",
-    "Int::Rel::Int::Array::Eq::0::4",
-    "Int::Unary::Man::Fix::-2147483646::[2,2,0,2,2]::Def+A",
-    "Int::Unary::Man::Flex::-2147483646::4::0::2::Def+A",
-    "Int::Unary::Opt::Fix::-2147483646::[2,2,0,2,2]::Def+A",
-    "Int::Unary::Opt::Flex::-2147483646::4::0::2::Def+A",
-    "Search::BAB::Sol::BalGr::Binary::Binary::Binary::1::1::1",
-    "Set::Branch::Dense::3",
-    "Set::Channel::Bool::1",
-    "Set::Element::Disjoint",
-    "Set::Precede::Multi::[1,2,3]",
-    "Set::Rel::Bin::Cmpl::S0",
-    "Set::RelOp::ConstISI::DUnion::Cmpl::0::0",
-    nullptr
-  };
-
-  /// Patterns for tests that are too heavy for the normal suite
-  static const char* sweep_patterns[] = {
-    "FlatZinc::oss",
-    "FlatZinc::packing",
-    "FlatZinc::radiation",
-    "FlatZinc::steiner_triples",
-    "FlatZinc::template_design",
-    "FlatZinc::tenpenki",
-    "FlatZinc::timetabling",
-    "FlatZinc::trucking",
-    "Float::Arithmetic",
-    "Float::Linear::Float",
-    "Float::Linear::Var",
-    "Float::MiniModel::LinExpr",
-    "Float::Transcendental",
-    "Float::Trigonometric",
-    "Int::Arithmetic::Nroot",
-    "Int::Arithmetic::Pow",
-    "Int::Channel",
-    "Int::Circuit",
-    "Int::Count::Distinct",
-    "Int::Cumulative::Man",
-    "Int::Cumulative::Opt",
-    "Int::Distinct::Bnd",
-    "Int::Distinct::Dom",
-    "Int::Distinct::Offset",
-    "Int::Distinct::Pathological",
-    "Int::Extensional::TupleSet",
-    "Int::GCC",
-    "Int::Linear::Bool",
-    "Int::Linear::Int",
-    "Int::MiniModel::LinExpr",
-    "Int::MiniModel::SetExpr",
-    "Int::NValues::Int",
-    "Int::NoOverlap",
-    "Int::Path",
-    "Int::Rel::Int",
-    "Int::Unary",
-    "Search::BAB::Sol",
-    "Search::DFS::Sol",
-    "Set::Branch",
-    "Set::Channel",
-    "Set::Dom",
-    "Set::Element",
-    "Set::Precede",
-    "Set::Rel",
-    "Set::RelOp",
-    nullptr
-  };
-
-  /// Test whether \a s matches one of \a patterns as a substring
-  static bool
-  matches_any_pattern(const std::string& s, const char* patterns[]) {
-    for (int i=0; patterns[i] != nullptr; i++)
-      if (s.find(patterns[i]) != std::string::npos)
-        return true;
-    return false;
+  TestTags
+  TestTags::all(void) {
+    TestTags tags;
+    for (const TestTagDescription& description : test_tag_descriptions)
+      tags.add(description.tag);
+    return tags;
   }
 
   /// Return the tag set for \a name, or an empty set if not known
   static TestTags
   tag_set(const char* name) {
-    for (int i=0; tag_names[i] != nullptr; i++)
-      if (!strcmp(name, tag_names[i]))
-        return TestTags(tag_values[i]);
+    for (const TestTagDescription& description : test_tag_descriptions)
+      if (!strcmp(name, description.name))
+        return TestTags(description.tag);
     if (!strcmp(name, "all"))
       return TestTags::all();
     return TestTags();
@@ -222,19 +87,31 @@ namespace Test {
   /// Print all tag names
   static void
   print_tags(std::ostream& os) {
-    for (int i=0; tag_names[i] != nullptr; i++)
-      os << tag_names[i] << std::endl;
+    for (const TestTagDescription& description : test_tag_descriptions)
+      os << description.name << std::endl;
+  }
+
+  /// Convert the known tag names to a command-line choice list
+  static std::string
+  tag_choices(void) {
+    std::string choices;
+    for (const TestTagDescription& description : test_tag_descriptions) {
+      if (!choices.empty())
+        choices += "|";
+      choices += description.name;
+    }
+    return choices + "|all";
   }
 
   /// Convert \a tags to a comma-separated string
   static std::string
   tags_to_string(TestTags tags) {
     std::string s;
-    for (int i=0; tag_names[i] != nullptr; i++) {
-      if (tags.overlaps(TestTags(tag_values[i]))) {
+    for (const TestTagDescription& description : test_tag_descriptions) {
+      if (tags.overlaps(TestTags(description.tag))) {
         if (!s.empty())
           s += ",";
-        s += tag_names[i];
+        s += description.name;
       }
     }
     return s;
@@ -245,7 +122,7 @@ namespace Test {
    *
    */
   Base::Base(std::string s)
-    : Base(s, default_tags(s)) {}
+    : Base(s, TestTag::normal) {}
 
   Base::Base(std::string s, TestTags t)
     : _name(std::move(s)), _tags(t), _next(_tests), _rand(Gecode::Support::RandomGenerator()) {
@@ -281,18 +158,6 @@ namespace Test {
   }
 
   Base::~Base() = default;
-
-  TestTags
-  Base::default_tags(const std::string& s) {
-    const bool check = matches_any_pattern(s, check_patterns);
-    const bool normal = matches_any_pattern(s, normal_patterns);
-    TestTags tags(TestTag::normal);
-    if (!check && !normal && matches_any_pattern(s, sweep_patterns))
-      tags = TestTags(TestTag::sweep);
-    if (check)
-      tags.add(TestTag::check);
-    return tags;
-  }
 
   Options opt;
 
@@ -333,7 +198,7 @@ namespace Test {
                   << "\t\tprefixing with \"^\" requires a match at the beginning" << std::endl
                   << "\t\tmultiple pattern-options may be given"
                   << std::endl
-                  << "\t-tag (check|normal|sweep|all) default: (none)" << std::endl
+                  << "\t-tag (" << tag_choices() << ") default: (none)" << std::endl
                   << "\t\ttag for the tests to run" << std::endl
                   << "\t\tmultiple tag-options may be given"
                   << std::endl
