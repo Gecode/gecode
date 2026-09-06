@@ -67,7 +67,10 @@ namespace Test { namespace Int {
        IntInt(const std::string& s, const Gecode::IntSet& d,
               const Gecode::IntArgs& a0, Gecode::IntRelType irt0,
               int c0, Gecode::IntPropLevel ipl=Gecode::IPL_BND)
-         : Test("Linear::Int::Int::"+
+         : Test((s == "11") && (irt0 == Gecode::IRT_EQ) &&
+                (ipl == Gecode::IPL_BND) && (c0 == 0) &&
+                (a0.size() == 1) ? TestTag::normal : TestTag::sweep,
+                "Linear::Int::Int::"+
                 str(irt0)+"::"+str(ipl)+"::"+s+"::"+str(c0)+"::"
                 +str(a0.size()),
                 a0.size(),d,ipl != Gecode::IPL_DOM,ipl),
@@ -110,7 +113,7 @@ namespace Test { namespace Int {
        IntVar(const std::string& s, const Gecode::IntSet& d,
               const Gecode::IntArgs& a0, Gecode::IntRelType irt0,
               Gecode::IntPropLevel ipl=Gecode::IPL_BND)
-         : Test("Linear::Int::Var::"+
+         : Test(TestTag::sweep,"Linear::Int::Var::"+
                 str(irt0)+"::"+str(ipl)+"::"+s+"::"+str(a0.size()),
                 a0.size()+1,d,ipl != Gecode::IPL_DOM,ipl),
            a(a0), irt(irt0) {
@@ -161,10 +164,14 @@ namespace Test { namespace Int {
        /// Create and register test
        BoolInt(const std::string& s, const Gecode::IntArgs& a0,
                Gecode::IntRelType irt0, int c0)
-         : Test("Linear::Bool::Int::"+
+         : Test(TestTag::sweep,"Linear::Bool::Int::"+
                 str(irt0)+"::"+s+"::"+str(a0.size())+"::"+str(c0),
                 a0.size(),0,1,true,Gecode::IPL_DEF),
            a(a0), irt(irt0), c(c0) {
+         if (irt0 == Gecode::IRT_LQ) {
+           tags(TestTag::normal);
+           add_tags(TestTag::check);
+         }
          testfix=false;
        }
        /// %Test whether \a x is solution
@@ -209,7 +216,7 @@ namespace Test { namespace Int {
        BoolVar(const std::string& s,
                int min, int max, const Gecode::IntArgs& a0,
                Gecode::IntRelType irt0)
-         : Test("Linear::Bool::Var::"+str(irt0)+"::"+s,a0.size()+1,
+         : Test(TestTag::sweep,"Linear::Bool::Var::"+str(irt0)+"::"+s,a0.size()+1,
                 min,max,true),
            a(a0), irt(irt0) {
          testfix=false;

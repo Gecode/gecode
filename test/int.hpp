@@ -161,10 +161,27 @@ namespace Test { namespace Int {
     return reified && ((rms & (1 << Gecode::RM_PMI)) != 0);
   }
   inline
+  Test::Test(TestTags tags, const std::string& p, const std::string& s,
+             int a, const Gecode::IntSet& d, bool r,
+             Gecode::IntPropLevel i)
+    : Base(p+s, tags), arity(a), dom(d),
+      reified(r), rms((1 << Gecode::RM_EQV) |
+                      (1 << Gecode::RM_IMP) |
+                      (1 << Gecode::RM_PMI)),
+      ipl(i), contest(ipl == Gecode::IPL_DOM ? CTL_DOMAIN : CTL_NONE),
+      testsearch(true), testfix(true) {}
+
+  inline
   Test::Test(const std::string& p, const std::string& s,
              int a, const Gecode::IntSet& d, bool r,
              Gecode::IntPropLevel i)
-    : Base(p+s), arity(a), dom(d),
+    : Test(TestTag::normal,p,s,a,d,r,i) {}
+
+  inline
+  Test::Test(TestTags tags, const std::string& s,
+             int a, const Gecode::IntSet& d, bool r,
+             Gecode::IntPropLevel i)
+    : Base("Int::"+s, tags), arity(a), dom(d),
       reified(r), rms((1 << Gecode::RM_EQV) |
                       (1 << Gecode::RM_IMP) |
                       (1 << Gecode::RM_PMI)),
@@ -175,7 +192,13 @@ namespace Test { namespace Int {
   Test::Test(const std::string& s,
              int a, const Gecode::IntSet& d, bool r,
              Gecode::IntPropLevel i)
-    : Base("Int::"+s), arity(a), dom(d),
+    : Test(TestTag::normal,s,a,d,r,i) {}
+
+  inline
+  Test::Test(TestTags tags, const std::string& p, const std::string& s,
+             int a, int min, int max, bool r,
+             Gecode::IntPropLevel i)
+    : Base(p+s, tags), arity(a), dom(min,max),
       reified(r), rms((1 << Gecode::RM_EQV) |
                       (1 << Gecode::RM_IMP) |
                       (1 << Gecode::RM_PMI)),
@@ -186,7 +209,12 @@ namespace Test { namespace Int {
   Test::Test(const std::string& p, const std::string& s,
              int a, int min, int max, bool r,
              Gecode::IntPropLevel i)
-    : Base(p+s), arity(a), dom(min,max),
+    : Test(TestTag::normal,p,s,a,min,max,r,i) {}
+
+  inline
+  Test::Test(TestTags tags, const std::string& s,
+             int a, int min, int max, bool r, Gecode::IntPropLevel i)
+    : Base("Int::"+s, tags), arity(a), dom(min,max),
       reified(r), rms((1 << Gecode::RM_EQV) |
                       (1 << Gecode::RM_IMP) |
                       (1 << Gecode::RM_PMI)),
@@ -196,12 +224,7 @@ namespace Test { namespace Int {
   inline
   Test::Test(const std::string& s,
              int a, int min, int max, bool r, Gecode::IntPropLevel i)
-    : Base("Int::"+s), arity(a), dom(min,max),
-      reified(r), rms((1 << Gecode::RM_EQV) |
-                      (1 << Gecode::RM_IMP) |
-                      (1 << Gecode::RM_PMI)),
-      ipl(i), contest(ipl == Gecode::IPL_DOM ? CTL_DOMAIN : CTL_NONE),
-      testsearch(true), testfix(true) {}
+    : Test(TestTag::normal,s,a,min,max,r,i) {}
 
   inline
   std::string
@@ -359,4 +382,3 @@ namespace Test { namespace Int {
 }}
 
 // STATISTICS: test-int
-

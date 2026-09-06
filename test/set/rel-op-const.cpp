@@ -87,7 +87,7 @@ namespace Test { namespace Set {
       /// Create and register test
       RelSIS(Gecode::SetOpType sot0, Gecode::SetRelType srt0,
              int intSet, bool inverse0)
-       : SetTest("RelOp::ConstSIS::"+str(sot0)+"::"+str(srt0)+"::"+
+       : SetTest(TestTag::sweep,"RelOp::ConstSIS::"+str(sot0)+"::"+str(srt0)+"::"+
                  str(intSet)+(inverse0 ? "i" :""),2,ds_22,false)
        , is(iss[intSet]), sot(sot0), srt(srt0), inverse(inverse0) {}
       /// %Test whether \a x is solution
@@ -184,9 +184,14 @@ namespace Test { namespace Set {
       /// Create and register test
       RelSSI(Gecode::SetOpType sot0, Gecode::SetRelType srt0,
              int intSet)
-       : SetTest("RelOp::ConstSSI::"+str(sot0)+"::"+str(srt0)+"::"+
+       : SetTest(sot0 == Gecode::SOT_UNION
+                 ? TestTag::normal : TestTag::sweep,
+                 "RelOp::ConstSSI::"+str(sot0)+"::"+str(srt0)+"::"+
                  str(intSet),2,ds_22,false)
-       , is(iss[intSet]), sot(sot0), srt(srt0) {}
+      , is(iss[intSet]), sot(sot0), srt(srt0) {
+        if (sot0 == Gecode::SOT_UNION)
+          add_tags(TestTag::check);
+      }
       /// %Test whether \a x is solution
       bool solution(const SetAssignment& x) const {
         CountableSetRanges xr0(x.lub, x[0]);
@@ -273,7 +278,11 @@ namespace Test { namespace Set {
       /// Create and register test
       RelISI(Gecode::SetOpType sot0, Gecode::SetRelType srt0,
              int intSet0, int intSet1, bool inverse0)
-       : SetTest("RelOp::ConstISI::"+str(sot0)+"::"+str(srt0)+"::"+
+       : SetTest((sot0 == Gecode::SOT_DUNION) &&
+                 (srt0 == Gecode::SRT_CMPL) &&
+                 (intSet0 == 0) && (intSet1 == 0)
+                 ? TestTag::normal : TestTag::sweep,
+                 "RelOp::ConstISI::"+str(sot0)+"::"+str(srt0)+"::"+
                  str(intSet0)+"::"+str(intSet1)+
                  (inverse0 ? "i" : ""),1,ds_33,false)
        , is0(iss[intSet0]), is1(iss[intSet1]), sot(sot0), srt(srt0)

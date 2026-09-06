@@ -62,9 +62,13 @@ namespace Test { namespace Int { namespace Unary {
   public:
     /// Create and register test
     ManFixPUnary(const Gecode::IntArgs& p0, int o, Gecode::IntPropLevel ipl0)
-      : Test("Unary::Man::Fix::"+str(o)+"::"+str(p0)+"::"+str(ipl0),
+      : Test(TestTag::sweep,"Unary::Man::Fix::"+str(o)+"::"+str(p0)+"::"+str(ipl0),
              p0.size(),o,o+st(p0),false,ipl0),
         p(p0) {
+      if ((o == Gecode::Int::Limits::min) &&
+          (str(p0) == "[2,2,0,2,2]") &&
+          (ipl0 == Gecode::IPL_ADVANCED))
+        tags(TestTag::normal);
       testsearch = false;
       contest = CTL_NONE;
     }
@@ -103,8 +107,12 @@ namespace Test { namespace Int { namespace Unary {
   public:
     /// Create and register test
     OptFixPUnary(const Gecode::IntArgs& p0, int o, Gecode::IntPropLevel ipl0)
-      : Test("Unary::Opt::Fix::"+str(o)+"::"+str(p0)+"::"+str(ipl0),
+      : Test(TestTag::sweep,"Unary::Opt::Fix::"+str(o)+"::"+str(p0)+"::"+str(ipl0),
              2*p0.size(),o,o+st(p0),false,ipl0), p(p0), l(o+st(p)/2) {
+      if ((o == Gecode::Int::Limits::min) &&
+          (str(p0) == "[2,2,0,2,2]") &&
+          (ipl0 == Gecode::IPL_ADVANCED))
+        tags(TestTag::normal);
       testsearch = false;
       contest = CTL_NONE;
     }
@@ -148,9 +156,12 @@ namespace Test { namespace Int { namespace Unary {
   public:
     /// Create and register test
     ManFlexUnary(int n, int minP, int maxP, int o, Gecode::IntPropLevel ipl0)
-      : Test("Unary::Man::Flex::"+str(o)+"::"+str(n)+"::"
+      : Test(TestTag::sweep,"Unary::Man::Flex::"+str(o)+"::"+str(n)+"::"
              +str(minP)+"::"+str(maxP)+"::"+str(ipl0),
              2*n,0,n*maxP,false,ipl0), _minP(minP), _maxP(maxP), off(o) {
+      if ((o == Gecode::Int::Limits::min) && (n == 4) &&
+          (minP == 0) && (maxP == 2) && (ipl0 == Gecode::IPL_ADVANCED))
+        tags(TestTag::normal);
       testsearch = false;
       testfix = false;
       contest = CTL_NONE;
@@ -207,10 +218,13 @@ namespace Test { namespace Int { namespace Unary {
   public:
     /// Create and register test
     OptFlexUnary(int n, int minP, int maxP, int o, Gecode::IntPropLevel ipl0)
-      : Test("Unary::Opt::Flex::"+str(o)+"::"+str(n)+"::"
+      : Test(TestTag::sweep,"Unary::Opt::Flex::"+str(o)+"::"+str(n)+"::"
              +str(minP)+"::"+str(maxP)+"::"+str(ipl0),
              3*n,0,n*maxP,false,ipl0), _minP(minP), _maxP(maxP), off(o),
         l(n*maxP/2) {
+      if ((o == Gecode::Int::Limits::min) && (n == 4) &&
+          (minP == 0) && (maxP == 2) && (ipl0 == Gecode::IPL_ADVANCED))
+        tags(TestTag::normal);
       testsearch = false;
       testfix = false;
       contest = CTL_NONE;

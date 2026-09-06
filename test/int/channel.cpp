@@ -53,7 +53,7 @@ namespace Test { namespace Int {
      public:
        /// Construct and register test
        ChannelFull(int xoff0, int yoff0, Gecode::IntPropLevel ipl)
-         : Test("Channel::Full::"+str(xoff0)+"::"+str(yoff0)+"::"+str(ipl),
+         : Test(TestTag::sweep,"Channel::Full::"+str(xoff0)+"::"+str(yoff0)+"::"+str(ipl),
                 8,0,3,false,ipl),
            xoff(xoff0), yoff(yoff0) {
          contest = CTL_NONE;
@@ -94,7 +94,7 @@ namespace Test { namespace Int {
      public:
        /// Construct and register test
        ChannelHalf(Gecode::IntPropLevel ipl)
-         : Test("Channel::Half::"+str(ipl),6,0,5,false,ipl) {
+         : Test(TestTag::sweep,"Channel::Half::"+str(ipl),6,0,5,false,ipl) {
          contest = CTL_NONE;
        }
        /// Check whether \a x is solution
@@ -124,7 +124,7 @@ namespace Test { namespace Int {
      public:
        /// Construct and register test
        ChannelShared(Gecode::IntPropLevel ipl)
-         : Test("Channel::Shared::"+str(ipl),6,0,5,false,ipl) {
+         : Test(TestTag::sweep,"Channel::Shared::"+str(ipl),6,0,5,false,ipl) {
          contest = CTL_NONE;
        }
        /// Check whether \a x is solution
@@ -146,7 +146,7 @@ namespace Test { namespace Int {
      public:
        /// Construct and register test
        ChannelLinkSingle(void)
-         : Test("Channel::Bool::Single",2,-1,2) {
+         : Test(TestTag::sweep,"Channel::Bool::Single",2,-1,2) {
          contest = CTL_NONE;
        }
        /// Check whether \a x is solution
@@ -169,7 +169,8 @@ namespace Test { namespace Int {
      public:
        /// Construct and register test
        ChannelLinkMulti(const std::string& s, int min, int max, int o0)
-         : Test("Channel::Bool::Multi::"+s,7,min,max), o(o0) {
+         : Test(s == "A" ? TestTag::normal : TestTag::sweep,
+                "Channel::Bool::Multi::"+s,7,min,max), o(o0) {
        }
        /// Check whether \a x is solution
        virtual bool solution(const Assignment& x) const {
@@ -227,4 +228,3 @@ namespace Test { namespace Int {
 }}
 
 // STATISTICS: test-int
-

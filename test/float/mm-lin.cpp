@@ -99,7 +99,8 @@ namespace Test { namespace Float {
      public:
        /// Create and register test
        LinExpr(const LinInstr* lis0, const std::string& s)
-         : Test("Float::","MiniModel::LinExpr::"+s,4,-3,3),
+         : Test(s == "000" ? TestTag::normal : TestTag::sweep,
+                "Float::","MiniModel::LinExpr::"+s,4,-3,3),
            lis(lis0) {
          testfix = false;
        }
