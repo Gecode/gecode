@@ -1404,6 +1404,17 @@ if(BUILD_TESTING)
     add_executable(public-int-smoke EXCLUDE_FROM_ALL ${GECODE_TEST_PUBLIC_INT_SMOKE_SOURCE})
     target_link_libraries(public-int-smoke PRIVATE gecodetestint)
     add_test(NAME public-int-smoke COMMAND public-int-smoke)
+
+    add_test(NAME build-public-test-smokes
+      COMMAND ${CMAKE_COMMAND} --build "${CMAKE_BINARY_DIR}"
+              --target public-runner-smoke public-int-smoke --config $<CONFIG>
+    )
+    set_tests_properties(build-public-test-smokes PROPERTIES
+      FIXTURES_SETUP public-test-smokes-built
+    )
+    set_tests_properties(public-runner-smoke public-int-smoke PROPERTIES
+      FIXTURES_REQUIRED public-test-smokes-built
+    )
   else()
     message(WARNING "Skipping public test harness targets because required modules are disabled")
   endif()
