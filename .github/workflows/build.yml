@@ -178,11 +178,11 @@ jobs:
         set -euxo pipefail
         cmake --build . --config $BUILD_TYPE --target check
 
-    - name: Build installed test component targets
+    - name: Run public test harness smokes
       if: matrix.os == 'ubuntu-latest'
       working-directory: ${{github.workspace}}/build
       shell: bash
-      run: cmake --build . --config $BUILD_TYPE --target gecodetest gecodetestint
+      run: ctest --build-config "$BUILD_TYPE" --output-on-failure -R '^public-(runner|int)-smoke$'
 
     - name: Install CMake package
       working-directory: ${{github.workspace}}/build
