@@ -3,7 +3,7 @@ schema_version = 1
 id = "word-041"
 key = "assess-word-next-applications"
 area = "word"
-status = "open"
+status = "done"
 complexity = "advanced"
 afk = true
 priority = "low"
@@ -28,12 +28,22 @@ Reconcile campaign evidence with constrained device/packet configuration, short-
 
 ## Done when
 
-- [ ] Rank applications by observed fit and missing capability, with one concrete next model and acceptance criteria.
-- [ ] State whether a native GF(2) global merits an implementation task based on linear-network evidence.
-- [ ] Define a small stratified public SAT/UNSAT corpus subset and the minimum adapter needed, or explain why current model comparisons should remain the priority.
-- [ ] Document learning/backjumping, arrays, multiword values and tooling as distinct strategic decisions with evidence; no implicit implementation commitment.
+- [x] Rank applications by observed fit and missing capability, with one concrete next model and acceptance criteria.
+- [x] State whether a native GF(2) global merits an implementation task based on linear-network evidence.
+- [x] Define a small stratified public SAT/UNSAT corpus subset and the minimum adapter needed, or explain why current model comparisons should remain the priority.
+- [x] Document learning/backjumping, arrays, multiword values and tooling as distinct strategic decisions with evidence; no implicit implementation commitment.
 
 ## Validation
 
 - Check recommendations against campaign outcomes and primary papers; distinguish demonstrated results from hypotheses.
 - No new unit tests or production code expected.
+
+## Result
+
+Produced a source-backed Word application roadmap selecting a bounded occupancy experiment, deferring GF(2), and defining a deterministic 24-case QF_BV compatibility corpus and benchmark-only adapter.
+
+Validation:
+
+- Recommendations were independently checked against word-036 through word-040 and the named primary papers and official solver/corpus sources.
+- The timetable experiment has exact semantic controls and quantitative runtime, search, actor, and clone-memory acceptance criteria.
+- The QF_BV corpus, adapter rejection rules, conversion semantics, and distinct strategic exclusions passed independent review at snapshot Wd201711fe9fad38c.

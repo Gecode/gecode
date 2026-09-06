@@ -1,5 +1,12 @@
 # Word benchmarks
 
+## Application and public-corpus roadmap
+
+The [word-041 roadmap](word-041-roadmap.md) ranks demonstrated and proposed
+Word applications, defines the acceptance gate for a one-word occupancy model,
+records the current no-go decision for a GF(2) global, and specifies a
+deterministic 24-file QF_BV compatibility corpus and benchmark-only adapter.
+
 ## High/low multiplication investigation
 
 The [word-040 result](word-040-result.md) compares one temporary unsigned
