@@ -46,7 +46,6 @@
 #include <ctime>
 #include <utility>
 #include <vector>
-#include <utility>
 
 namespace Test {
 
@@ -94,7 +93,7 @@ namespace Test {
 
   Options opt;
 
-  void report_error(const std::string& name, unsigned int seed, Options& options, std::ostream& ostream) {
+  void report_error(const std::string& name, unsigned int seed, const Options& options, std::ostream& ostream) {
     ostream << "Options: -seed " << seed;
     if (options.fixprob != Test::Options::deffixprob)
       ostream << " -fixprob " << options.fixprob;
@@ -207,7 +206,7 @@ namespace Test {
     exit(EXIT_FAILURE);
   }
 
-  bool Options::is_test_name_matching(const std::string& test_name) {
+  bool Options::is_test_name_matching(const std::string& test_name) const {
     if (!testpat.empty()) {
       bool positive_patterns = false;
       bool match_found = false;
@@ -260,7 +259,7 @@ namespace Test {
           ostream.flush();
         } else {
           ostream << "-" << std::endl;
-          report_error(test->name(), seed, opt, ostream);
+          report_error(test->name(), seed, options, ostream);
           return false;
         }
       }
@@ -268,9 +267,9 @@ namespace Test {
       return true;
     } catch (Gecode::Exception& e) {
       ostream << "Exception in \"Gecode::" << e.what()
-                << "." << std::endl
-                << "Stopping..." << std::endl;
-      report_error(test->name(), options.seed, opt, ostream);
+              << "." << std::endl
+              << "Stopping..." << std::endl;
+      report_error(test->name(), options.seed, options, ostream);
       return false;
     }
   }
@@ -282,7 +281,7 @@ namespace Test {
     for (auto test : tests) {
       unsigned int test_seed = seed_sequence.next();
       if (!run_test(test, test_seed, options, std::cout)) {
-        if (opt.stop) {
+        if (options.stop) {
           return EXIT_FAILURE;
         } else {
           result = EXIT_FAILURE;
@@ -439,59 +438,56 @@ namespace Test {
     }
   };
 
-  /// Run all the tests with the supplied options i parallel.
+  /// Run all the tests with the supplied options in parallel.
   int run_tests_parallel(const std::vector<Base*>& tests, const Options& options) {
     using namespace Gecode::Support;
     RandomGenerator seed_sequence(options.seed);
 
-    TestExecutionControl tec(tests, options, opt.threads);
+    TestExecutionControl tec(tests, options, options.threads);
 
-    for (unsigned int i = 0; i < opt.threads; ++i) {
+    for (unsigned int i = 0; i < options.threads; ++i) {
       Thread::run(new TestExecutor(tec, seed_sequence.next()));
     }
     tec.await_test_runners_completed();
 
     return tec.get_result();
   }
-}
 
-
-int
-main(int argc, char* argv[]) {
-  using namespace Test;
-#ifdef GECODE_HAS_MTRACE
-  mtrace();
-#endif
-
-  opt.parse(argc, argv);
-
-  Base::sort();
-
-  if (opt.list) {
-    for (Base* t = Base::tests() ; t != nullptr; t = t->next() ) {
-      std::cout << t->name() << std::endl;
-    }
-    exit(EXIT_SUCCESS);
-  }
-
-  std::vector<Base*> tests;
-  bool started = opt.start_from == nullptr ? true : false;
-  for (Base* t = Base::tests() ; t != nullptr; t = t->next() ) {
-    if (!started) {
-      if (t->name().find(opt.start_from) != std::string::npos) {
-        started = true;
-      } else {
-        continue;
+  std::vector<Base*> select_tests(const Options& options) {
+    std::vector<Base*> tests;
+    bool started = options.start_from == nullptr;
+    for (Base* t = Base::tests(); t != nullptr; t = t->next()) {
+      if (!started) {
+        if (t->name().find(options.start_from) != std::string::npos) {
+          started = true;
+        } else {
+          continue;
+        }
+      }
+      if (options.is_test_name_matching(t->name())) {
+        tests.emplace_back(t);
       }
     }
-    if (opt.is_test_name_matching(t->name())) {
-      tests.emplace_back(t);
-    }
+    return tests;
   }
 
-  if (opt.threads > 1) {
-    return run_tests_parallel(tests, opt);
-  } else {
+  int run_registered_tests(int argc, char* argv[]) {
+    opt = Options();
+    opt.parse(argc, argv);
+
+    Base::sort();
+
+    if (opt.list) {
+      for (Base* t = Base::tests(); t != nullptr; t = t->next()) {
+        std::cout << t->name() << std::endl;
+      }
+      return EXIT_SUCCESS;
+    }
+
+    const std::vector<Base*> tests = select_tests(opt);
+    if (opt.threads > 1) {
+      return run_tests_parallel(tests, opt);
+    }
     return run_tests(tests, opt);
   }
 }

@@ -244,6 +244,18 @@ set(GECODE_FLATZINC_SOURCES
   gecode/flatzinc/registry.cpp
 )
 
+set(GECODE_TEST_CORE_SOURCES
+  test/test.cpp
+)
+
+set(GECODE_TEST_INT_SOURCES
+  test/int.cpp
+)
+
+set(GECODE_TEST_MAIN_SOURCE test/test-main.cpp)
+set(GECODE_TEST_PUBLIC_RUNNER_SMOKE_SOURCE test/public-runner-smoke.cpp)
+set(GECODE_TEST_PUBLIC_INT_SMOKE_SOURCE test/public-int-smoke.cpp)
+
 set(GECODE_TEST_SOURCES
   test/afc.cpp
   test/array.cpp
@@ -376,7 +388,6 @@ set(GECODE_TEST_SOURCES
   test/float/transcendental.cpp
   test/float/trigonometric.cpp
   test/groups.cpp
-  test/int.cpp
   test/int/arithmetic.cpp
   test/int/basic.cpp
   test/int/bin-packing.cpp
@@ -427,7 +438,6 @@ set(GECODE_TEST_SOURCES
   test/set/rel-op.cpp
   test/set/rel.cpp
   test/set/sequence.cpp
-  test/test.cpp
 )
 
 set(GECODE_TEST_BLACKBOX_EXEC_SOURCE test/flatzinc/blackbox-exec.cpp)
