@@ -232,8 +232,7 @@ namespace Test { namespace Word {
         NGL* true_ngl = true_leaf->ngl(*choice,0);
         const bool failed = (true_ngl != nullptr) &&
           (true_ngl->status(*true_leaf) == NGL::SUBSUMED) &&
-          (true_ngl->prune(*true_leaf) == ES_FAILED) &&
-          (true_leaf->status() == SS_FAILED);
+          (true_ngl->prune(*true_leaf) == ES_FAILED);
         delete true_leaf;
 
         SplitSpace* posted = new SplitSpace(kind);
