@@ -12,7 +12,7 @@ import tempfile
 from pathlib import Path
 
 VERIFIER_PREFIX = "[verify-installed-legacy-test-component]"
-EXPECTED_TEST_NAME = "Package::ConsumerSmoke"
+EXPECTED_TEST_NAME = "Package::Equality"
 LIBRARIES = [
     "gecodetestint",
     "gecodetest",
@@ -244,8 +244,6 @@ def run_prefix_surface(source: Path, prefix: Path) -> None:
     command = [
         sys.executable,
         str((source / "test/verify-legacy-install-surface.py").resolve()),
-        "--source",
-        str(source),
         "--prefix",
         str(prefix),
     ]

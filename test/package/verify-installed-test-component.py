@@ -11,16 +11,16 @@ from pathlib import Path
 
 
 EXPECTED_HEADERS = [
-    "include/test/int.hh",
-    "include/test/int.hpp",
-    "include/test/test.hh",
-    "include/test/test.hpp",
+    "test/int.hh",
+    "test/int.hpp",
+    "test/test.hh",
+    "test/test.hpp",
 ]
 EXPECTED_METADATA = [
-    "lib/cmake/Gecode/GecodeConfig.cmake",
-    "lib/cmake/Gecode/GecodeTargets.cmake",
+    "cmake/Gecode/GecodeConfig.cmake",
+    "cmake/Gecode/GecodeTargets.cmake",
 ]
-EXPECTED_TEST_NAME = "Int::Package::ConsumerSmoke"
+EXPECTED_TEST_NAME = "Int::Package::Equality"
 VERIFIER_PREFIX = "[verify-installed-test-component]"
 
 
@@ -81,20 +81,23 @@ def assert_phase(condition: bool, phase: str, message: str) -> None:
         fail_phase(phase, message)
 
 
-def assert_prefix_surface(prefix: Path) -> None:
+def assert_prefix_surface(include_dir: Path, lib_dir: Path) -> None:
     phase = "prefix-surface"
-    for rel in [*EXPECTED_HEADERS, *EXPECTED_METADATA]:
-        path = prefix / rel
+    for rel in EXPECTED_HEADERS:
+        path = include_dir / rel
+        assert_phase(path.exists(), phase, f"missing installed path: {path}")
+    for rel in EXPECTED_METADATA:
+        path = lib_dir / rel
         assert_phase(path.exists(), phase, f"missing installed path: {path}")
 
     installed_test_headers = sorted(
-        path.relative_to(prefix).as_posix()
-        for path in (prefix / "include" / "test").glob("*")
+        path.relative_to(include_dir).as_posix()
+        for path in (include_dir / "test").glob("*")
         if path.is_file()
     )
     assert_phase(installed_test_headers == EXPECTED_HEADERS, phase, f"unexpected installed test headers: {installed_test_headers}")
 
-    targets = (prefix / "lib/cmake/Gecode/GecodeTargets.cmake").read_text()
+    targets = (lib_dir / "cmake/Gecode/GecodeTargets.cmake").read_text()
     assert_phase("Gecode::gecodetest" in targets, phase, "missing Gecode::gecodetest export")
     assert_phase("Gecode::gecodetestint" in targets, phase, "missing Gecode::gecodetestint export")
 
@@ -128,7 +131,12 @@ def iter_include_dirs(entry: dict[str, object]) -> list[Path]:
     return include_dirs
 
 
-def assert_no_source_tree_include_leakage(source: Path, consumer_build: Path, prefix: Path) -> None:
+def assert_no_source_tree_include_leakage(
+    source: Path,
+    consumer_build: Path,
+    prefix: Path,
+    include_dir: Path,
+) -> None:
     phase = "include-leakage"
     compile_commands_path = consumer_build / "compile_commands.json"
     assert_phase(compile_commands_path.exists(), phase, f"missing compile commands: {compile_commands_path}")
@@ -139,13 +147,13 @@ def assert_no_source_tree_include_leakage(source: Path, consumer_build: Path, pr
     source_root = source.resolve()
     consumer_build = consumer_build.resolve()
     prefix = prefix.resolve()
-    prefix_include = (prefix / "include").resolve()
+    installed_include = include_dir.resolve()
 
     leaked_include_dirs: set[str] = set()
     saw_prefix_include = False
     for entry in compile_commands:
         for include_dir in iter_include_dirs(entry):
-            if include_dir == prefix_include or include_dir.is_relative_to(prefix_include):
+            if include_dir == installed_include or include_dir.is_relative_to(installed_include):
                 saw_prefix_include = True
             if (
                 include_dir.is_relative_to(source_root)
@@ -160,11 +168,16 @@ def assert_no_source_tree_include_leakage(source: Path, consumer_build: Path, pr
     sys.stdout.write(f"{VERIFIER_PREFIX} {phase}: ok\n")
 
 
-def configure_consumer(source: Path, build_root: Path, prefix: Path, *, require_unknown_component: bool) -> tuple[Path, Path, subprocess.CompletedProcess[str]]:
+def configure_consumer(
+    source: Path,
+    build_root: Path,
+    prefix: Path,
+    cmake_dir: Path,
+    *,
+    require_unknown_component: bool,
+) -> tuple[Path, Path, subprocess.CompletedProcess[str]]:
     consumer_source = source / "test/package/public-test-component"
     consumer_build = build_root / "consumer"
-    cmake_dir = prefix / "lib/cmake/Gecode"
-
     shutil.rmtree(build_root, ignore_errors=True)
     consumer_build.mkdir(parents=True, exist_ok=True)
 
@@ -231,6 +244,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--source", required=True)
     parser.add_argument("--build-root", required=True)
     parser.add_argument("--prefix", required=True)
+    parser.add_argument("--include-dir")
+    parser.add_argument("--lib-dir")
     parser.add_argument("--expect-missing-component-failure", action="store_true")
     return parser.parse_args()
 
@@ -240,13 +255,16 @@ def main() -> int:
     source = Path(args.source).resolve()
     build_root = Path(args.build_root).resolve()
     prefix = Path(args.prefix).resolve()
+    include_dir = Path(args.include_dir).resolve() if args.include_dir else prefix / "include"
+    lib_dir = Path(args.lib_dir).resolve() if args.lib_dir else prefix / "lib"
 
-    assert_prefix_surface(prefix)
+    assert_prefix_surface(include_dir, lib_dir)
 
     _, consumer_build, configure_result = configure_consumer(
         source,
         build_root,
         prefix,
+        lib_dir / "cmake/Gecode",
         require_unknown_component=args.expect_missing_component_failure,
     )
 
@@ -254,7 +272,7 @@ def main() -> int:
         assert_missing_component_failure(configure_result)
         return 0
 
-    assert_no_source_tree_include_leakage(source, consumer_build, prefix)
+    assert_no_source_tree_include_leakage(source, consumer_build, prefix, include_dir)
     consumer_binary = build_consumer(consumer_build)
     run_list_phase(consumer_binary)
     run_filtered_phase(consumer_binary)

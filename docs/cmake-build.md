@@ -179,21 +179,20 @@ add_executable(app main.cpp)
 target_link_libraries(app PRIVATE Gecode::gecodedriver)
 ```
 
-### Installed test component for downstream custom tests
+### Test component for custom propagators
 
-If the installed Gecode package was built with `BUILD_TESTING=ON`, it also exports a
-`test` component for downstream consumers that want to register and run custom tests
-through the public harness.
-
-Quick reference:
+A Gecode installation configured with `BUILD_TESTING=ON` exports the `test`
+component. It lets downstream projects check custom integer propagators with
+Gecode's test runner.
 
 - Imported targets: `Gecode::gecodetest`, `Gecode::gecodetestint`
 - Installed public headers: `test/test.hh`, `test/test.hpp`, `test/int.hh`, `test/int.hpp`
 - Public runner entrypoint: `Test::run_registered_tests(argc, argv)`
-- Canonical proof path: `python test/package/verify-installed-test-component.py ...`
+- Package check: `python test/package/verify-installed-test-component.py ...`
 
-For the full downstream contract, minimal consumer example, verifier workflow,
-and support boundaries, see [`docs/public-test-harness.md`](./public-test-harness.md).
+See [Testing custom propagators](./public-test-harness.md) for a complete test,
+consistency and reification controls, failure reproduction, and direct linking
+without CMake package metadata.
 
 Legacy component spellings are also accepted in `COMPONENTS`:
 
@@ -250,7 +249,7 @@ Deprecation horizon:
 - `find_package(Gecode COMPONENTS ...)` fails:
   - Verify requested component is enabled in the installed build.
   - For optional modules (`flatzinc`, `gist`, `float` with MPFR), ensure dependencies were available.
-  - The `test` component is only exported when the installed package was built with `BUILD_TESTING=ON`.
+  - The `test` component requires `BUILD_TESTING` to be true in the installed package's configuration.
 - Qt/Gist issues:
   - `GECODE_ENABLE_QT=ON` and `GECODE_ENABLE_GIST=ON` are requirement modes;
     use `AUTO` when dependency discovery should be best-effort.

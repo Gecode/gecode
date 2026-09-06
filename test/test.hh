@@ -166,7 +166,12 @@ namespace Test {
   };
 
   /**
-   * \brief Run all currently registered tests through the shared runner
+   * \brief Run the tests in the process-wide registry
+   *
+   * Tests register during construction. They must remain alive until every
+   * runner call has returned; destruction does not remove a test from the
+   * process-wide registry. Runner calls must not overlap. Option parsing exits
+   * the process after printing help or reporting a malformed option.
    * \relates Test::Base
    */
   int run_registered_tests(int argc, char* argv[]);

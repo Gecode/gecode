@@ -84,7 +84,7 @@ jobs:
       shell: bash
       run: |
         set -euxo pipefail
-        build_root="$RUNNER_TEMP/legacy-test-component-proof"
+        build_root="$RUNNER_TEMP/legacy-test-component-check"
         prefix="$build_root/prefix"
         rm -rf "$build_root"
         mkdir -p "$prefix"
@@ -95,7 +95,7 @@ jobs:
       shell: bash
       run: |
         set -euxo pipefail
-        build_root="$RUNNER_TEMP/legacy-test-component-proof"
+        build_root="$RUNNER_TEMP/legacy-test-component-check"
         prefix="$build_root/prefix"
 
         python test/package/verify-installed-legacy-test-component.py \
@@ -212,13 +212,17 @@ jobs:
         set -euxo pipefail
         python test/package/verify-installed-test-component.py \
           --source "$GITHUB_WORKSPACE" \
-          --build-root "$RUNNER_TEMP/s03-package-proof" \
-          --prefix "$GITHUB_WORKSPACE/install"
+          --build-root "$RUNNER_TEMP/test-component-check" \
+          --prefix "$GITHUB_WORKSPACE/install" \
+          --include-dir "/tmp/gecode-install-abs-include" \
+          --lib-dir "$GITHUB_WORKSPACE/install/lib"
 
         python test/package/verify-installed-test-component.py \
           --source "$GITHUB_WORKSPACE" \
-          --build-root "$RUNNER_TEMP/s03-package-proof-missing-component" \
+          --build-root "$RUNNER_TEMP/test-component-check-missing-component" \
           --prefix "$GITHUB_WORKSPACE/install" \
+          --include-dir "/tmp/gecode-install-abs-include" \
+          --lib-dir "$GITHUB_WORKSPACE/install/lib" \
           --expect-missing-component-failure
 
     - name: Package version checks

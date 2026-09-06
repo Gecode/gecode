@@ -4,19 +4,23 @@
 
 namespace {
 
-class ConsumerSmoke final : public ::Test::Int::Test {
+void post_equal(Gecode::Space& home, Gecode::IntVar x, Gecode::IntVar y) {
+  Gecode::rel(home, x, Gecode::IRT_EQ, y);
+}
+
+class EqualityTest final : public ::Test::Int::Test {
 public:
-  ConsumerSmoke()
-    : ::Test::Int::Test("Package::ConsumerSmoke", 1, 0, 1) {}
+  EqualityTest()
+    : ::Test::Int::Test("Package::Equality", 2, 0, 1) {}
 
   bool solution(const ::Test::Int::Assignment& assignment) const override {
-    return assignment[0] >= 0;
+    return assignment[0] == assignment[1];
   }
 
   void post(Gecode::Space& home, Gecode::IntVarArray& x) override {
-    Gecode::rel(home, x[0], Gecode::IRT_GQ, 0);
+    post_equal(home, x[0], x[1]);
   }
-} consumer_smoke;
+} equality_test;
 
 } // namespace
 
