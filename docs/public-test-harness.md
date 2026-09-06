@@ -1,0 +1,215 @@
+# Public Test Harness Guide
+
+This document describes Gecode's supported public testing surface.
+It is for downstream users who want to write Gecode-style tests for custom propagators
+without developing inside the Gecode source tree.
+
+For general build, install, and package-consumption setup, see
+[`docs/cmake-build.md`](./cmake-build.md).
+
+## What this gives you
+
+If Gecode was built and installed with `BUILD_TESTING=ON`, the installed CMake package
+exports a `test` component with:
+
+- `Gecode::gecodetest` — core test registration and runner support
+- `Gecode::gecodetestint` — integer-test helpers layered over the core runner
+
+The supported installed header surface is intentionally narrow:
+
+- `test/test.hh`
+- `test/test.hpp`
+- `test/int.hh`
+- `test/int.hpp`
+
+The public runner entrypoint is:
+
+```c++
+int Test::run_registered_tests(int argc, char* argv[]);
+```
+
+This is the same runner seam used by Gecode's own `gecode-test` executable.
+
+## Supported first-release scope
+
+The first public release is intentionally focused.
+
+Supported:
+
+- The core process-global test registry and runner from `test/test.hh`
+- Integer-test helpers based on `Test::Int::Test`
+- Installed CMake consumption through `find_package(Gecode CONFIG REQUIRED COMPONENTS test)`
+- A downstream executable that registers tests and forwards `main(...)` into
+  `Test::run_registered_tests(argc, argv)`
+
+Not yet part of the supported installed surface:
+
+- Public installation of the wider helper families under `test/` such as `set`, `float`,
+  `assign`, `branch`, or `flatzinc`
+- Non-CMake downstream consumption paths
+- A separate replacement framework or a redesigned runner model
+
+## Prerequisite: install Gecode with the test component enabled
+
+The `test` component is only exported when the installed package was built with
+`BUILD_TESTING=ON` and the required harness dependencies were available.
+
+Typical flow:
+
+```bash
+cmake -S . -B build -DBUILD_TESTING=ON
+cmake --build build --target gecodetest gecodetestint gecode-test
+cmake --install build --prefix /path/to/install
+```
+
+For full build/install details, platform notes, and package-location hints, see
+[`docs/cmake-build.md`](./cmake-build.md).
+
+## Minimal downstream CMake consumer
+
+```cmake
+cmake_minimum_required(VERSION 3.21)
+project(gecode_public_test_consumer LANGUAGES CXX)
+
+find_package(Gecode CONFIG REQUIRED COMPONENTS test)
+
+add_executable(consumer-smoke consumer-smoke.cpp)
+target_compile_features(consumer-smoke PRIVATE cxx_std_17)
+target_link_libraries(consumer-smoke PRIVATE Gecode::gecodetestint)
+```
+
+If CMake does not find the package automatically, point it at the install prefix:
+
+- `-DCMAKE_PREFIX_PATH=/path/to/install`
+- or `-DGecode_ROOT=/path/to/install`
+- or `-DGecode_DIR=/path/to/install/lib/cmake/Gecode`
+
+## Minimal downstream test
+
+```c++
+#include <test/int.hh>
+
+#include <gecode/int.hh>
+
+namespace {
+
+class ConsumerSmoke final : public ::Test::Int::Test {
+public:
+  ConsumerSmoke()
+    : ::Test::Int::Test("Package::ConsumerSmoke", 1, 0, 1) {}
+
+  bool solution(const ::Test::Int::Assignment& assignment) const override {
+    return assignment[0] >= 0;
+  }
+
+  void post(Gecode::Space& home, Gecode::IntVarArray& x) override {
+    Gecode::rel(home, x[0], Gecode::IRT_GQ, 0);
+  }
+} consumer_smoke;
+
+} // namespace
+
+int main(int argc, char* argv[]) {
+  return Test::run_registered_tests(argc, argv);
+}
+```
+
+This mirrors the maintained sample consumer at
+`test/package/public-test-component/consumer-smoke.cpp`.
+
+## Running the downstream test executable
+
+List registered tests:
+
+```bash
+./consumer-smoke -list
+```
+
+Run just one test:
+
+```bash
+./consumer-smoke -test Package::ConsumerSmoke -iter 1 -stop true
+```
+
+The runner uses the same option model as Gecode's own `gecode-test` binary.
+The supported public seam is the runner function, not a separate alternate CLI.
+
+## Package component behavior
+
+The installed `GecodeConfig.cmake` recognizes `test` as a supported component.
+The package treats the component as available only when both of these imported
+targets are present:
+
+- `Gecode::gecodetest`
+- `Gecode::gecodetestint`
+
+If a consumer requests an unsupported component, the package emits an explicit
+configure-time diagnostic rather than failing later at link time.
+
+## Supported proof path
+
+The canonical downstream verifier is:
+
+```bash
+python test/package/verify-installed-test-component.py \
+  --source . \
+  --build-root build/package-proof \
+  --prefix /path/to/install
+```
+
+What it checks:
+
+- the installed `test/` headers are present and limited to the supported public set
+- the package exports `Gecode::gecodetest` and `Gecode::gecodetestint`
+- the downstream consumer configures through the installed package metadata
+- consumer compile flags use the installed prefix instead of source-tree include leakage
+- the consumer binary builds successfully
+- `-list` discovers the registered downstream test
+- a filtered run executes the selected test successfully
+
+There is also a negative-path mode that confirms unsupported-component diagnostics:
+
+```bash
+python test/package/verify-installed-test-component.py \
+  --source . \
+  --build-root build/package-proof-missing \
+  --prefix /path/to/install \
+  --expect-missing-component-failure
+```
+
+## How this relates to Gecode's own tests
+
+Inside the repo, `gecode-test` now links through the same public harness seam:
+
+- `gecodetest`
+- `gecodetestint`
+
+That means the supported downstream path is not a sidecar proof-only API. The
+same runner/library boundary is used both for in-tree testing and installed
+package consumption.
+
+## Troubleshooting
+
+### `find_package(Gecode CONFIG REQUIRED COMPONENTS test)` fails
+
+Check:
+
+- the installation was built with `BUILD_TESTING=ON`
+- the package lookup points at the intended install prefix
+- the install tree actually contains `lib/cmake/Gecode/GecodeConfig.cmake`
+
+### `Gecode::gecodetestint` is missing
+
+The `test` component is only considered available when both `Gecode::gecodetest`
+and `Gecode::gecodetestint` are exported. Treat a missing companion target as an
+installation/configuration issue, not as something to patch around in the consumer.
+
+### The consumer builds but seems to use source-tree headers
+
+Run the verifier. It checks `compile_commands.json` for include-leakage and is the
+maintained proof path used by CI as well.
+
+### I need non-integer helper families
+
+That is outside the supported first-release installed surface. The installed public
+contract currently stops at the core runner plus integer-test helpers.

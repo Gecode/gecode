@@ -1367,22 +1367,35 @@ if(BUILD_TESTING)
     target_include_directories(gecodetest
       PUBLIC
         $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>)
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+        $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
     if(GECODE_VISIBILITY_COMPILE_OPTION)
       target_compile_options(gecodetest PRIVATE ${GECODE_VISIBILITY_COMPILE_OPTION})
     endif()
     target_link_libraries(gecodetest PUBLIC gecodesearch gecodeint)
+    list(APPEND GECODE_INSTALL_TARGETS gecodetest)
+    list(APPEND GECODE_EXPORT_TARGETS gecodetest)
 
     add_library(gecodetestint STATIC ${GECODE_TEST_INT_SOURCES})
     target_compile_features(gecodetestint PUBLIC cxx_std_17)
     target_include_directories(gecodetestint
       PUBLIC
         $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>)
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+        $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
     if(GECODE_VISIBILITY_COMPILE_OPTION)
       target_compile_options(gecodetestint PRIVATE ${GECODE_VISIBILITY_COMPILE_OPTION})
     endif()
     target_link_libraries(gecodetestint PUBLIC gecodetest)
+    list(APPEND GECODE_INSTALL_TARGETS gecodetestint)
+    list(APPEND GECODE_EXPORT_TARGETS gecodetestint)
+    if(GECODE_INSTALL)
+      foreach(gecode_install_component IN LISTS GECODE_LIBRARY_COMPONENTS)
+        if(TARGET gecode${gecode_install_component}_${GECODE_DEFAULT_LINK_VARIANT})
+          add_dependencies(gecodetest gecode${gecode_install_component}_${GECODE_DEFAULT_LINK_VARIANT})
+        endif()
+      endforeach()
+    endif()
 
     add_executable(public-runner-smoke EXCLUDE_FROM_ALL ${GECODE_TEST_PUBLIC_RUNNER_SMOKE_SOURCE})
     target_link_libraries(public-runner-smoke PRIVATE gecodetest)
@@ -1683,6 +1696,14 @@ if(GECODE_INSTALL)
   if(GECODE_REGENERATE_VARIMP)
     install(FILES ${GECODE_VAR_TYPE_HPP} ${GECODE_VAR_IMP_HPP}
       DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/gecode/kernel/)
+  endif()
+  if(TARGET gecodetest AND TARGET gecodetestint)
+    install(FILES
+      ${CMAKE_CURRENT_SOURCE_DIR}/test/test.hh
+      ${CMAKE_CURRENT_SOURCE_DIR}/test/test.hpp
+      ${CMAKE_CURRENT_SOURCE_DIR}/test/int.hh
+      ${CMAKE_CURRENT_SOURCE_DIR}/test/int.hpp
+      DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/test)
   endif()
 
   if(GECODE_ENABLE_FLATZINC)

@@ -148,6 +148,12 @@ jobs:
         set -euxo pipefail
         cmake --build . --config $BUILD_TYPE --target check
 
+    - name: Build installed test component targets
+      if: matrix.os == 'ubuntu-latest'
+      working-directory: ${{github.workspace}}/build
+      shell: bash
+      run: cmake --build . --config $BUILD_TYPE --target gecodetest gecodetestint
+
     - name: Install CMake package
       working-directory: ${{github.workspace}}/build
       shell: bash
@@ -168,6 +174,22 @@ jobs:
             "$GITHUB_WORKSPACE/install/include" \
             core
         fi
+
+    - name: Verify installed test component
+      if: matrix.os == 'ubuntu-latest'
+      shell: bash
+      run: |
+        set -euxo pipefail
+        python test/package/verify-installed-test-component.py \
+          --source "$GITHUB_WORKSPACE" \
+          --build-root "$RUNNER_TEMP/s03-package-proof" \
+          --prefix "$GITHUB_WORKSPACE/install"
+
+        python test/package/verify-installed-test-component.py \
+          --source "$GITHUB_WORKSPACE" \
+          --build-root "$RUNNER_TEMP/s03-package-proof-missing-component" \
+          --prefix "$GITHUB_WORKSPACE/install" \
+          --expect-missing-component-failure
 
     - name: Package version checks
       shell: bash
