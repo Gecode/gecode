@@ -54,28 +54,29 @@ LSB versus MSB branching; bounded families use LSB versus lower-ranked split.
 Bitwuzla is reported as unsupported because this campaign has no validated
 adapter for it.
 
-Collection requires an explicitly frozen image and a new result root. It first
+Collection runs the benchmark binaries and Z3 directly on the host. It first
 calibrates search using only the manifest's calibration cases, then screens all
-288 instance/configuration cells. Each Podman run has no network, one CPU, and
-a 4 GiB memory-and-swap cap; the runner verifies those settings before start.
-It resumes terminal records and refuses a changed manifest, image, revision,
-script, options, or CPU budget at an existing root.
+288 instance/configuration cells. CPU affinity and memory remain at the host
+defaults. The runner records subprocess wall time; per-process RSS is
+explicitly unavailable in this direct local mode.
+The runner resumes terminal records and refuses a changed manifest, revision,
+script, executable hash, host identity, options, or CPU budget at an existing
+root.
 
 ```sh
-ROOT=/private/tmp/gecode-word-037-campaign-v2
-IMAGE=localhost/gecode-word037-runtime:<frozen-tag>
-python3 benchmarks/word/comparison-campaign.py calibrate --image "$IMAGE" --root "$ROOT"
-python3 benchmarks/word/comparison-campaign.py screen --image "$IMAGE" --root "$ROOT"
-python3 benchmarks/word/comparison-campaign.py followup --image "$IMAGE" --root "$ROOT" \
+ROOT=/private/tmp/gecode-word-037-campaign-local
+python3 benchmarks/word/comparison-campaign.py calibrate --root "$ROOT"
+python3 benchmarks/word/comparison-campaign.py screen --root "$ROOT"
+python3 benchmarks/word/comparison-campaign.py followup --root "$ROOT" \
   --case <selected-case> --case <selected-case>
 python3 benchmarks/word/comparison-campaign.py analyze --root "$ROOT"
 ```
 
 Screen runs have a 30-second cap. Follow-ups interleave five repeats with a
-300-second cap. All phases share a hard 21,600 CPU-second ledger; a run is
+300-second cap. All phases share a 21,600 wall-second ledger; a run is
 deferred unless its whole timeout can be preauthorized. Tiny cases are batched
 to at least 0.25 seconds, with Z3 repeating reset, declarations, assertions,
-and `check-sat` inside one process. Raw records, frozen metadata,
+and `check-sat` inside one process. Raw records, host-local metadata,
 `analysis.json`, and `result.md` stay under the external root.
 
 ## CRC, xorshift, and reduced-Speck comparisons

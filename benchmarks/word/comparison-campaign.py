@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Resumable, resource-bounded word-037 comparison campaign."""
 from __future__ import annotations
-import argparse, hashlib, importlib.util, json, math, random, re, shutil, statistics, subprocess, uuid
+import argparse, hashlib, importlib.util, json, math, os, platform, random, shutil, signal, statistics, subprocess, time
 from collections import Counter, defaultdict
 from pathlib import Path
 
@@ -10,7 +10,6 @@ FAMILIES=("dma","register","inverse","crc-xorshift","reduced-speck","bounded-alu
 CONFIGS=("gecode-baseline","gecode-candidate","z3","bitwuzla")
 SEARCHES={"gecode-baseline":"lsb","gecode-candidate":"split-min"}
 FINAL={"measured","timeout","unknown","error","memory-limit","unsupported","deferred"}
-TIME_RE=re.compile(r"__WORD037_TIME__ user=([0-9.]+) system=([0-9.]+) rss=(\d+)")
 
 def imported(name,path):
     spec=importlib.util.spec_from_file_location(name,path)
@@ -107,18 +106,26 @@ def smoke(args):
     ok=all(all(row[c]["status"] in ("pass","unsupported") for c in CONFIGS) for row in output)
     print(json.dumps({"status":"pass" if ok else "fail","results":output},indent=2)); return 0 if ok else 1
 
-def image_identity(image):
-    done=subprocess.run(["podman","image","inspect",image],text=True,capture_output=True,check=True); value=json.loads(done.stdout)[0]
-    return {"reference":image,"id":value["Id"],"digest":value.get("Digest") or (value.get("RepoDigests") or [None])[0]}
 def binary_hashes(args):
-    paths=[str(getattr(args,name+"_binary")) for name in ("bit","dma","lookup","allocation","inverse","alu")]+[args.z3]
-    done=subprocess.run(["podman","run","--rm","--network=none",args.image,"sha256sum",*paths],text=True,capture_output=True,check=True)
-    return {line.split()[1]:line.split()[0] for line in done.stdout.splitlines()}
+    paths=[Path(getattr(args,name+"_binary")) for name in ("bit","dma","lookup","allocation","inverse","alu")]+[Path(args.z3)]
+    missing=[str(path) for path in paths if not path.is_file()]
+    if missing: raise ValueError("missing benchmark executable(s): "+", ".join(missing))
+    return {str(path.resolve()):sha(path) for path in paths}
+def command_output(command):
+    done=subprocess.run(command,text=True,capture_output=True,timeout=10)
+    return {"command":command,"returncode":done.returncode,"stdout":done.stdout.strip(),"stderr":done.stderr.strip()}
+def host_identity():
+    identity={"system":platform.system(),"release":platform.release(),"machine":platform.machine(),"python":platform.python_version(),"logical_cpus":os.cpu_count()}
+    if platform.system()=="Darwin":
+        for key in ("machdep.cpu.brand_string","hw.model"):
+            done=subprocess.run(["sysctl","-n",key],text=True,capture_output=True)
+            if done.returncode==0 and done.stdout.strip(): identity[key]=done.stdout.strip()
+    return identity
 def frozen(args,manifest):
     head=subprocess.run(["git","rev-parse","HEAD"],text=True,capture_output=True,check=True).stdout.strip()
     root=HERE.parent.parent
     sources=[HERE/"comparison-campaign.py",HERE/"word-037-cases.json",HERE/"mixed-model-comparison.py",HERE/"word-bit-network-comparison.py",root/"benchmarks/word/distinct.cpp",root/"examples/word-bit-network-comparison.cpp",root/"examples/word-inverse-arithmetic.cpp",root/"examples/word-register-file.cpp",root/"examples/word-symbolic-alu.cpp",root/"gecode/word/arithmetic/add.hpp",root/"gecode/word/arithmetic/mult.hpp",root/"gecode/word/arithmetic/neg-sub.hpp"]
-    return {"schema_version":1,"campaign":"word-037","git_head":head,"source_hashes":{str(p.relative_to(root)):sha(p) for p in sources},"image":image_identity(args.image),"binary_hashes":binary_hashes(args),"binary_paths":{n:str(getattr(args,n+"_binary")) for n in ("bit","dma","lookup","allocation","inverse","alu")}|{"z3":args.z3},"limits":{"network":"none","memory":4294967296,"memory_swap":4294967296,"cpus":1,"cpu_seconds":args.cpu_budget},"options":{"screen_timeout":30,"followup_timeout":300,"repeats":5,"tiny_min_seconds":0.25},"matrix":{"instances":72,"configurations":list(CONFIGS),"cells":288}}
+    return {"schema_version":1,"campaign":"word-037-local","git_head":head,"source_hashes":{str(p.relative_to(root)):sha(p) for p in sources},"runner":"native subprocess","host":host_identity(),"binary_hashes":binary_hashes(args),"binary_paths":{n:str(Path(getattr(args,n+"_binary")).resolve()) for n in ("bit","dma","lookup","allocation","inverse","alu")}|{"z3":str(Path(args.z3).resolve())},"solver_probes":{"z3":command_output([args.z3,"--version"])},"limits":{"wall_seconds":{"screen":30,"followup":300},"campaign_budget_seconds":args.cpu_budget,"cpu_affinity":"host default","memory":"host default; RSS not sampled"},"options":{"repeats":5,"tiny_min_seconds":0.25},"matrix":{"instances":72,"configurations":list(CONFIGS),"cells":288}}
 def ensure_root(args,manifest):
     args.root.mkdir(parents=True,exist_ok=True); path=args.root/"metadata.json"; now=frozen(args,manifest)
     if path.exists() and load(path)!=now: raise ValueError("result root has a different frozen identity/options")
@@ -134,40 +141,19 @@ def records(args):
         except (OSError,json.JSONDecodeError): pass
     return out
 def ledger(args):
-    total=sum(float(x.get("cpu_seconds") or 0) for x in records(args))
-    for name in ("limiter-self-test.json","limiter-oom-test.json"):
-        path=args.root/name
-        if path.exists(): total+=float(load(path).get("cpu_seconds") or 0)
-    return total
-def require_idle_host():
-    done=subprocess.run(["podman","ps","--format","{{.Names}}"],text=True,capture_output=True,check=True)
-    active=[x for x in done.stdout.splitlines() if x]
-    if active: raise ValueError("competing containers are running: "+", ".join(active))
-
-def container_run(args,command,stdin,timeout,identity):
-    name="word037-"+hashlib.sha256((identity+str(uuid.uuid4())).encode()).hexdigest()[:18]
-    timed=["/usr/bin/time","-f","__WORD037_TIME__ user=%U system=%S rss=%M",*command]
-    made=subprocess.run(["podman","create","--name",name,"--network=none","--memory=4g","--memory-swap=4g","--cpus=1","--interactive",args.image,*timed],text=True,capture_output=True)
-    if made.returncode: return {"status":"error","detail":made.stderr.strip(),"container":name,"command":command,"cpu_seconds":0}
+    return sum(float(x.get("cpu_seconds") or 0) for x in records(args))
+def local_run(args,command,stdin,timeout,identity):
+    del identity
+    started=time.perf_counter()
+    process=subprocess.Popen(command,stdin=subprocess.PIPE if stdin is not None else None,stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True,start_new_session=True)
     try:
-        inspected=json.loads(subprocess.run(["podman","inspect",name],text=True,capture_output=True,check=True).stdout)[0]; host=inspected["HostConfig"]
-        limiter={"network":host.get("NetworkMode"),"memory":host.get("Memory"),"memory_swap":host.get("MemorySwap"),"nano_cpus":host.get("NanoCpus"),"cpu_quota":host.get("CpuQuota"),"cpu_period":host.get("CpuPeriod")}
-        one_cpu=limiter["nano_cpus"]==1000000000 or (limiter["cpu_period"] and limiter["cpu_quota"]==limiter["cpu_period"])
-        if limiter["network"]!="none" or limiter["memory"]!=4294967296 or limiter["memory_swap"]!=4294967296 or not one_cpu: return {"status":"unsupported","detail":f"limiter mismatch: {limiter}","limiter":limiter,"container":name,"command":command,"cpu_seconds":0}
-        try:
-            done=subprocess.run(["podman","start","--attach","--interactive",name],input=stdin,text=True,capture_output=True,timeout=timeout); timeout_hit=False
-        except subprocess.TimeoutExpired as expired:
-            done=expired; timeout_hit=True; subprocess.run(["podman","stop","--time","1",name],capture_output=True,text=True)
-        state=json.loads(subprocess.run(["podman","inspect",name],text=True,capture_output=True,check=True).stdout)[0]["State"]
-        stdout=done.stdout or ""; stderr=done.stderr or ""
-        if isinstance(stdout,bytes): stdout=stdout.decode(errors="replace")
-        if isinstance(stderr,bytes): stderr=stderr.decode(errors="replace")
-        match=TIME_RE.search(stderr)
-        status="timeout" if timeout_hit else ("error" if getattr(done,"returncode",1) else "measured")
-        if state.get("OOMKilled"): status="memory-limit"
-        charged=sum(float(match.group(i)) for i in (1,2)) if match else (timeout if status!="measured" else 0)
-        return {"status":status,"returncode":getattr(done,"returncode",None),"stdout":stdout,"stderr":stderr,"cpu_seconds":charged,"cpu_charge":"GNU time user+system" if match else ("timeout cap" if timeout_hit else "unavailable"),"max_rss_kib":int(match.group(3)) if match else None,"oom_killed":bool(state.get("OOMKilled")),"limiter":limiter,"container":name,"command":command}
-    finally: subprocess.run(["podman","rm","--force",name],capture_output=True,text=True)
+        stdout,stderr=process.communicate(stdin,timeout=timeout); timeout_hit=False
+    except subprocess.TimeoutExpired:
+        timeout_hit=True; os.killpg(process.pid,signal.SIGKILL); stdout,stderr=process.communicate()
+    wall=time.perf_counter()-started
+    status="timeout" if timeout_hit else ("error" if process.returncode else "measured")
+    charged=timeout if timeout_hit else wall
+    return {"status":status,"returncode":process.returncode,"stdout":stdout,"stderr":stderr,"wall_seconds":wall,"cpu_seconds":charged,"cpu_charge":"wall-clock campaign ledger","max_rss_kib":None,"runner":"native subprocess","command":command}
 
 def execute(args,case,config,expect,phase,repeat,timeout,batch):
     path=record_path(args,phase,case["id"],config,repeat)
@@ -180,7 +166,7 @@ def execute(args,case,config,expect,phase,repeat,timeout,batch):
     if config.startswith("gecode"):
         search="lsb" if config=="gecode-baseline" else args.selection[case["campaign_family"]]; command=native(case,search,args,batch); stdin=None
     else: command=[args.z3,"-smt2","-in"]; stdin=smt_batch(case,batch)
-    value=container_run(args,command,stdin,timeout,f"{phase}-{case['id']}-{config}-{repeat}"); value.update(common)
+    value=local_run(args,command,stdin,timeout,f"{phase}-{case['id']}-{config}-{repeat}"); value.update(common)
     if value["status"]=="measured":
         ok,detail,parsed=semantic_native(value["stdout"],expect) if config.startswith("gecode") else semantic_smt(value["stdout"],expect,batch)
         value["semantic_validation"]=detail; value["parsed"]=parsed
@@ -193,13 +179,7 @@ def load_selection(args):
     if not path.exists(): raise ValueError("run calibrate first")
     return load(path)["selection"]
 def calibrate(args):
-    require_idle_host(); manifest=load(args.manifest); ensure_root(args,manifest); expect=derive(manifest); args.selection={x:("msb" if x in ("crc-xorshift","reduced-speck") else "split-min") for x in FAMILIES}; samples=[]
-    probe=container_run(args,["/bin/sh","-c","test \"$(cat /sys/fs/cgroup/memory.max)\" = 4294967296 && test \"$(cat /sys/fs/cgroup/cpu.max)\" = '100000 100000'"],None,10,"limiter-self-test")
-    if probe["status"]!="measured": raise ValueError("resource limiter self-test failed: "+probe.get("detail",probe["status"]))
-    dump(args.root/"limiter-self-test.json",probe)
-    oom=container_run(args,["/usr/bin/python3","-c","x=bytearray(5*1024*1024*1024); print(len(x))"],None,30,"limiter-oom-test")
-    if oom["status"]!="memory-limit": raise ValueError("actual memory-limit self-test did not report OOMKilled")
-    dump(args.root/"limiter-oom-test.json",oom)
+    manifest=load(args.manifest); ensure_root(args,manifest); expect=derive(manifest); args.selection={x:("msb" if x in ("crc-xorshift","reduced-speck") else "split-min") for x in FAMILIES}; samples=[]
     for case in manifest["calibration_cases"]:
         for config in SEARCHES: samples.append(execute(args,case,config,expect[case["id"]],"calibration",0,30,1))
     selection={}
@@ -221,13 +201,13 @@ def batch_for(args,case,config,expect):
         batch*=2
     return batch
 def screen(args):
-    require_idle_host(); manifest=load(args.manifest); ensure_root(args,manifest); args.selection=load_selection(args); expect=derive(manifest); result=[]
+    manifest=load(args.manifest); ensure_root(args,manifest); args.selection=load_selection(args); expect=derive(manifest); result=[]
     for case in manifest["cases"]:
         for config in CONFIGS:
             batch=1 if config=="bitwuzla" else batch_for(args,case,config,expect[case["id"]]); result.append(execute(args,case,config,expect[case["id"]],"screen",0,30,batch))
     print(json.dumps({"cells":len(result),"status_counts":dict(Counter(x["status"] for x in result)),"cpu_seconds":ledger(args)},indent=2)); return 0
 def followup(args):
-    require_idle_host(); manifest=load(args.manifest); ensure_root(args,manifest); args.selection=load_selection(args); expect=derive(manifest); wanted=set(args.case); chosen=[c for c in manifest["cases"] if c["id"] in wanted]
+    manifest=load(args.manifest); ensure_root(args,manifest); args.selection=load_selection(args); expect=derive(manifest); wanted=set(args.case); chosen=[c for c in manifest["cases"] if c["id"] in wanted]
     if len(chosen)!=len(wanted) or not chosen: raise ValueError("--case must name known selected cases")
     jobs=[]
     for repeat in range(1,6):
@@ -279,16 +259,16 @@ def analyze(args):
     stable.sort(key=lambda x:abs(math.log(x["median"])),reverse=True)
     priorities=[f"{x['case']}: candidate is a stable {x['result']} versus baseline ({x['median']:.3g}× baseline/candidate, {x['range'][0]:.3g}–{x['range'][1]:.3g})" for x in stable[:2]]
     metadata=load(args.root/"metadata.json"); calibration=load(args.root/"calibration.json")
-    frozen={"git_head":metadata["git_head"],"image":metadata["image"],"limits":metadata["limits"],"options":metadata["options"],"calibration_selection":calibration["selection"],"external_root":str(args.root.resolve())}
-    result={"schema_version":1,"frozen":frozen,"screen_accounting":{"expected_cells":288,"recorded_cells":len(cells),"status_counts":dict(status_counts),"sat_unsat":{k:dict(v) for k,v in by_sat.items()},"by_config":{k:dict(v) for k,v in by_config.items()}},"screen_timing_groups":timings,"screen_paired_ratios":screen_ratios,"screen_family_conclusions":conclusions,"followup_cases":followups,"priorities":priorities,"rss":{"method":"GNU time maximum resident set (KiB)","maximum_by_config":{c:max((r.get("max_rss_kib") or 0 for r in selected if r["config"]==c),default=0) for c in CONFIGS}},"timeout_aware":{c:{s:sum(r["config"]==c and r["status"]==s for r in screen_rows) for s in ("measured","timeout","memory-limit","unknown","error","unsupported","deferred")} for c in CONFIGS},"counters":{"note":"Gecode nodes/failures/propagations and SMT statuses are separate measures, not identical work","gecode":[{"case":r["case"],"config":r["config"],**{x:r.get("parsed",{}).get(x) for x in ("nodes","failures","propagations")}} for r in selected if r["config"].startswith("gecode") and r["status"]=="measured"],"smt":[{"case":r["case"],"config":r["config"],"statuses":r.get("parsed",{}).get("statuses")} for r in selected if r["config"]=="z3" and r["status"]=="measured"]},"cpu_seconds":ledger(args),"external_root":str(args.root.resolve())}
+    frozen={"git_head":metadata["git_head"],"runner":metadata["runner"],"host":metadata["host"],"limits":metadata["limits"],"options":metadata["options"],"calibration_selection":calibration["selection"],"external_root":str(args.root.resolve())}
+    result={"schema_version":1,"frozen":frozen,"screen_accounting":{"expected_cells":288,"recorded_cells":len(cells),"status_counts":dict(status_counts),"sat_unsat":{k:dict(v) for k,v in by_sat.items()},"by_config":{k:dict(v) for k,v in by_config.items()}},"screen_timing_groups":timings,"screen_paired_ratios":screen_ratios,"screen_family_conclusions":conclusions,"followup_cases":followups,"priorities":priorities,"rss":{"method":"unavailable in direct local mode","maximum_by_config":{c:None for c in CONFIGS}},"timeout_aware":{c:{s:sum(r["config"]==c and r["status"]==s for r in screen_rows) for s in ("measured","timeout","memory-limit","unknown","error","unsupported","deferred")} for c in CONFIGS},"counters":{"note":"Gecode nodes/failures/propagations and SMT statuses are separate measures, not identical work","gecode":[{"case":r["case"],"config":r["config"],**{x:r.get("parsed",{}).get(x) for x in ("nodes","failures","propagations")}} for r in selected if r["config"].startswith("gecode") and r["status"]=="measured"],"smt":[{"case":r["case"],"config":r["config"],"statuses":r.get("parsed",{}).get("statuses")} for r in selected if r["config"]=="z3" and r["status"]=="measured"]},"cpu_seconds":ledger(args),"external_root":str(args.root.resolve())}
     dump(args.root/"analysis.json",result); counts=result["screen_accounting"]["status_counts"]
-    lines=["# Word-037 comparison campaign","",f"External result root: `{args.root.resolve()}`",f"Git revision: `{frozen['git_head']}`",f"Image: `{frozen['image']['reference']}` (`{frozen['image']['id']}`)",f"Limits: `{json.dumps(frozen['limits'],sort_keys=True)}`",f"Options: `{json.dumps(frozen['options'],sort_keys=True)}`",f"Calibration selection: `{json.dumps(frozen['calibration_selection'],sort_keys=True)}`","",f"Screen accounting: {len(cells)}/288 cells; "+", ".join(f"{k}={v}" for k,v in sorted(counts.items()))+f". CPU ledger: {result['cpu_seconds']:.2f}/21600 seconds.","","Gecode search counters and SMT statuses are retained separately; they are not treated as the same work metric.","","## Screen timing groups","","These groups use only the single screen run for each measured matrix cell.","","| Family | Status | Configuration | n | Median s | Range s |","|---|---|---|---:|---:|---:|"]
+    lines=["# Word-037 comparison campaign","",f"External result root: `{args.root.resolve()}`",f"Git revision: `{frozen['git_head']}`",f"Runner: `{frozen['runner']}` on `{frozen['host']['system']} {frozen['host']['release']} {frozen['host']['machine']}`",f"Limits: `{json.dumps(frozen['limits'],sort_keys=True)}`",f"Options: `{json.dumps(frozen['options'],sort_keys=True)}`",f"Calibration selection: `{json.dumps(frozen['calibration_selection'],sort_keys=True)}`","",f"Screen accounting: {len(cells)}/288 cells; "+", ".join(f"{k}={v}" for k,v in sorted(counts.items()))+f". Wall-time ledger: {result['cpu_seconds']:.2f}/{metadata['limits']['campaign_budget_seconds']:.0f} seconds.","","All solver processes ran directly on the host. CPU affinity and memory were left at the macOS defaults; wall caps bound individual runs. Per-process RSS is unavailable in this mode.","","Gecode search counters and SMT statuses are retained separately; they are not treated as the same work metric.","","## Screen timing groups","","These groups use only the single screen run for each measured matrix cell.","","| Family | Status | Configuration | n | Median s | Range s |","|---|---|---|---:|---:|---:|"]
     for s in timings: lines.append(f"| {s['family']} | {s['expected_status']} | {s['config']} | {s['n']} | {s['median_seconds']:.6g} | {s['minimum_seconds']:.6g}–{s['maximum_seconds']:.6g} |")
     lines += ["","## Broad screen ranges",""]
     lines += ([f"- {c['family']}: {c['contender']} paired median {c['paired_median']:.3g}× (range {c['range'][0]:.3g}–{c['range'][1]:.3g}); {c['result']} versus baseline." for c in conclusions] or ["- No paired measurements are available; all absent screen cells are accounted for as deferred."])
-    lines += ["","## Resource and completion metrics","","Peak RSS uses GNU time's per-process maximum resident set in KiB.","","| Configuration | Maximum RSS KiB |","|---|---:|"]
+    lines += ["","## Resource and completion metrics","","Per-process peak RSS is unavailable in direct local mode.","","| Configuration | Maximum RSS KiB |","|---|---:|"]
     for config in CONFIGS:
-        rss=result["rss"]["maximum_by_config"][config] if result["timeout_aware"][config]["measured"] else "unavailable"
+        rss=result["rss"]["maximum_by_config"][config] if result["rss"]["maximum_by_config"][config] is not None else "unavailable"
         lines.append(f"| {config} | {rss} |")
     lines += ["","Timeout-aware counts use screen rows only.","","| Configuration | Measured | Timeout | Memory limit | Unknown | Error | Unsupported | Deferred |","|---|---:|---:|---:|---:|---:|---:|---:|"]
     for config in CONFIGS:
@@ -307,11 +287,11 @@ def analyze(args):
     print(json.dumps(result["screen_accounting"],indent=2)); return 0
 
 def main():
-    p=argparse.ArgumentParser(); p.add_argument("command",choices=("validate","smoke","calibrate","screen","followup","analyze")); p.add_argument("--manifest",type=Path,default=HERE/"word-037-cases.json"); p.add_argument("--output",type=Path); p.add_argument("--timeout",type=float,default=30); p.add_argument("--z3",default="/usr/bin/z3"); p.add_argument("--image"); p.add_argument("--root",type=Path,default=Path("/private/tmp/gecode-word-037-campaign-v2")); p.add_argument("--cpu-budget",type=float,default=21600); p.add_argument("--case",action="append",default=[])
-    root=Path("/usr/local/bin")
+    p=argparse.ArgumentParser(); p.add_argument("command",choices=("validate","smoke","calibrate","screen","followup","analyze")); p.add_argument("--manifest",type=Path,default=HERE/"word-037-cases.json"); p.add_argument("--output",type=Path); p.add_argument("--timeout",type=float,default=30); p.add_argument("--z3",default=shutil.which("z3")); p.add_argument("--root",type=Path,default=Path("/private/tmp/gecode-word-037-campaign-local")); p.add_argument("--cpu-budget",type=float,default=21600); p.add_argument("--case",action="append",default=[])
+    root=Path("build/bin")
     for name,file in (("bit","word-bit-network-comparison"),("dma","word-dma-descriptor"),("lookup","word-register-file"),("allocation","word-distinct-benchmark"),("inverse","word-inverse-arithmetic"),("alu","word-symbolic-alu")): p.add_argument(f"--{name}-binary",type=Path,default=root/file)
     args=p.parse_args()
-    if args.command in ("calibrate","screen","followup") and not args.image: p.error("--image is required for frozen collection")
+    if not args.z3: p.error("z3 was not found; pass --z3")
     try: return {"validate":validate,"smoke":smoke,"calibrate":calibrate,"screen":screen,"followup":followup,"analyze":analyze}[args.command](args)
     except (KeyError,OSError,ValueError,subprocess.CalledProcessError,subprocess.TimeoutExpired) as error: p.error(str(error))
 if __name__=="__main__": raise SystemExit(main())
