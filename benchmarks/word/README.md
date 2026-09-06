@@ -1,5 +1,12 @@
 # Word benchmarks
 
+## High/low multiplication investigation
+
+The [word-040 result](word-040-result.md) compares one temporary unsigned
+high/low product actor with a faithful Boolean schoolbook network. Exhaustive
+small-width and bounded width-64 checks support deferring a scalable production
+constraint while rejecting the Boolean network as the intended decomposition.
+
 ## Bounded packed-field investigation
 
 The [word-038 result](word-038-result.md) evaluates guarded unsigned bounds
