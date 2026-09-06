@@ -95,9 +95,10 @@ namespace Test { namespace Float {
      class ExpXX : public Test {
      public:
        /// Create and register test
-       ExpXX(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
-         : Test(s == "A" ? TestTag::normal : TestTag::sweep,
-                "Transcendental::Exp::XX::"+s,1,d,st,CPLT_ASSIGNMENT,false) {}
+       ExpXX(TestTags tags, const std::string& s,
+             const Gecode::FloatVal& d, Gecode::FloatNum st)
+         : Test(tags,"Transcendental::Exp::XX::"+s,
+                1,d,st,CPLT_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
          return eq(exp(x[0]), x[0]);
@@ -162,9 +163,10 @@ namespace Test { namespace Float {
      class LogXX : public Test {
      public:
        /// Create and register test
-       LogXX(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
-       : Test(s == "A" ? TestTag::normal : TestTag::sweep,
-              "Transcendental::Log::XX::"+s,1,d,st,CPLT_ASSIGNMENT,false) {}
+       LogXX(TestTags tags, const std::string& s,
+             const Gecode::FloatVal& d, Gecode::FloatNum st)
+       : Test(tags,"Transcendental::Log::XX::"+s,
+              1,d,st,CPLT_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
          if (x[0].max() < 0.0)
@@ -300,9 +302,10 @@ namespace Test { namespace Float {
        Gecode::FloatNum base;
      public:
        /// Create and register test
-       PowXX(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum _base, Gecode::FloatNum st)
-       : Test((_base == 1.5) && (s == "A")
-              ? TestTag::normal : TestTag::sweep,
+       PowXX(TestTags tags, const std::string& s,
+             const Gecode::FloatVal& d, Gecode::FloatNum _base,
+             Gecode::FloatNum st)
+       : Test(tags,
               "Transcendental::Pow::N::"+str(_base)+"::XX::"+s,
               1,d,st,CPLT_ASSIGNMENT,false), base(_base) {}
        /// %Test whether \a x is solution
@@ -331,9 +334,9 @@ namespace Test { namespace Float {
      ExpXYSol exp_xy_sol_b("B",b,step);
      ExpXYSol exp_xy_sol_c("C",c,step);
 
-     ExpXX exp_xx_a("A",a,step);
-     ExpXX exp_xx_b("B",b,step);
-     ExpXX exp_xx_c("C",c,step);
+     ExpXX exp_xx_a(TestTag::normal,"A",a,step);
+     ExpXX exp_xx_b(TestTag::sweep,"B",b,step);
+     ExpXX exp_xx_c(TestTag::sweep,"C",c,step);
 
      LogXY log_xy_a("A",a,step);
      LogXY log_xy_b("B",b,step);
@@ -343,9 +346,9 @@ namespace Test { namespace Float {
      LogXYSol log_xy_sol_b("B",b,step);
      LogXYSol log_xy_sol_c("C",c,step);
 
-     LogXX log_xx_a("A",a,step);
-     LogXX log_xx_b("B",b,step);
-     LogXX log_xx_c("C",c,step);
+     LogXX log_xx_a(TestTag::normal,"A",a,step);
+     LogXX log_xx_b(TestTag::sweep,"B",b,step);
+     LogXX log_xx_c(TestTag::sweep,"C",c,step);
 
      LogNXY logn_xy_a_1("A",a,-1.5,step);
      LogNXY logn_xy_b_1("B",b,-1.5,step);
@@ -391,9 +394,9 @@ namespace Test { namespace Float {
      PowXYSol pow_xy_sol_b_1("B",b,-1.5,step);
      PowXYSol pow_xy_sol_c_1("C",c,-1.5,step);
 
-     PowXX pow_xx_a_1("A",a,-1.5,step);
-     PowXX pow_xx_b_1("B",b,-1.5,step);
-     PowXX pow_xx_c_1("C",c,-1.5,step);
+     PowXX pow_xx_a_1(TestTag::sweep,"A",a,-1.5,step);
+     PowXX pow_xx_b_1(TestTag::sweep,"B",b,-1.5,step);
+     PowXX pow_xx_c_1(TestTag::sweep,"C",c,-1.5,step);
 
      PowXY pow_xy_a_2("A",a,1.5,step);
      PowXY pow_xy_b_2("B",b,1.5,step);
@@ -403,9 +406,9 @@ namespace Test { namespace Float {
      PowXYSol pow_xy_sol_b_2("B",b,1.5,step);
      PowXYSol pow_xy_sol_c_2("C",c,1.5,step);
 
-     PowXX pow_xx_a_2("A",a,1.5,step);
-     PowXX pow_xx_b_2("B",b,1.5,step);
-     PowXX pow_xx_c_2("C",c,1.5,step);
+     PowXX pow_xx_a_2(TestTag::normal,"A",a,1.5,step);
+     PowXX pow_xx_b_2(TestTag::sweep,"B",b,1.5,step);
+     PowXX pow_xx_c_2(TestTag::sweep,"C",c,1.5,step);
 
      PowXY pow_xy_a_3("A",a,0,step);
      PowXY pow_xy_b_3("B",b,0,step);
@@ -415,9 +418,9 @@ namespace Test { namespace Float {
      PowXYSol pow_xy_sol_b_3("B",b,0,step);
      PowXYSol pow_xy_sol_c_3("C",c,0,step);
 
-     PowXX pow_xx_a_3("A",a,0,step);
-     PowXX pow_xx_b_3("B",b,0,step);
-     PowXX pow_xx_c_3("C",c,0,step);
+     PowXX pow_xx_a_3(TestTag::sweep,"A",a,0,step);
+     PowXX pow_xx_b_3(TestTag::sweep,"B",b,0,step);
+     PowXX pow_xx_c_3(TestTag::sweep,"C",c,0,step);
 
      //@}
 

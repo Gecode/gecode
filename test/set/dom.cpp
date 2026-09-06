@@ -383,12 +383,11 @@ namespace Test { namespace Set {
     public:
       /// Create and register test
       DomDom(Gecode::SetRelType srt0, int n) :
-        SetTest(srt0 == Gecode::SRT_GR ? TestTag::normal : TestTag::sweep,
+        SetTest(srt0 == Gecode::SRT_GR
+                ? TestTags(TestTag::normal,TestTag::check)
+                : TestTags(TestTag::sweep),
                 "Dom::Dom::"+str(srt0)+"::"+str(n),n,d1,(n == 1)),
-        srt(srt0), is(srt == Gecode::SRT_CMPL ? d1c: d1) {
-        if (srt0 == Gecode::SRT_GR)
-          add_tags(TestTag::check);
-      }
+        srt(srt0), is(srt == Gecode::SRT_CMPL ? d1c: d1) {}
       /// %Test whether \a x is solution
       virtual bool solution(const SetAssignment& x) const {
         for (int i=x.size(); i--; ) {

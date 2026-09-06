@@ -164,11 +164,9 @@ namespace Test { namespace Int {
        const LinInstr* lis;
      public:
        /// Create and register test
-       LinExprBool(const LinInstr* lis0, const std::string& s)
-         : Test(s == "352" ? TestTag::normal : TestTag::sweep,
-                "MiniModel::LinExpr::Bool::"+s,4,-3,3), lis(lis0) {
-         if (s == "352")
-           add_tags(TestTag::check);
+       LinExprBool(TestTags tags, const LinInstr* lis0,
+                   const std::string& s)
+         : Test(tags,"MiniModel::LinExpr::Bool::"+s,4,-3,3), lis(lis0) {
          testfix = false;
        }
        /// %Test whether \a x is solution
@@ -2198,7 +2196,10 @@ namespace Test { namespace Int {
              s = "0" + s;
            }
            (void) new LinExprInt(li[i],s);
-           (void) new LinExprBool(li[i],s);
+           TestTags bool_tags = (i == 352)
+             ? TestTags(TestTag::normal,TestTag::check)
+             : TestTags(TestTag::sweep);
+           (void) new LinExprBool(bool_tags,li[i],s);
            (void) new LinExprMixed(li[i],s);
          }
          IntRelTypes irts;

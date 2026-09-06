@@ -51,11 +51,10 @@ namespace Test { namespace Set {
      public:
        /// Create and register test
        Wait(int n, bool sf0)
-         : SetTest("Wait::"+str(n)+"::"+
+         : SetTest(TestTags(TestTag::normal,TestTag::check),
+                   "Wait::"+str(n)+"::"+
                    (sf0 ? "std::function" : "funptr"),n,
-                   Gecode::IntSet(0,n),false), sf(sf0) {
-         add_tags(TestTag::check);
-       }
+                   Gecode::IntSet(0,n),false), sf(sf0) {}
        /// Check whether \a x is solution
        virtual bool solution(const SetAssignment& x) const {
          (void) x;

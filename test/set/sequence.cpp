@@ -83,10 +83,9 @@ namespace Test { namespace Set {
     public:
       /// Create and register test
       SeqU(int n0)
-        : SetTest("Sequence::SeqU"+str(n0),n0+1,ds_33,false), n(n0) {
-        if (n0 == 1)
-          add_tags(TestTag::check);
-      }
+        : SetTest(n0 == 1 ? TestTags(TestTag::normal,TestTag::check)
+                          : TestTags(TestTag::normal),
+                  "Sequence::SeqU"+str(n0),n0+1,ds_33,false), n(n0) {}
       /// %Test whether \a x is solution
       virtual bool solution(const SetAssignment& x) const {
         int max = Gecode::Set::Limits::min - 1;

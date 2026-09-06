@@ -945,7 +945,7 @@ namespace Test { namespace Int {
      class SparseTupleSetUnary : public ::Test::Base {
      public:
        SparseTupleSetUnary(void)
-         : ::Test::Base("Int::Extensional::TupleSet::Sparse::Unary", TestTag::sweep) {}
+         : ::Test::Base("Int::Extensional::TupleSet::Sparse::Unary") {}
 
        virtual bool run(void) {
          using namespace Gecode;
@@ -997,7 +997,7 @@ namespace Test { namespace Int {
      class SparseTupleSetTernary : public ::Test::Base {
      public:
        SparseTupleSetTernary(void)
-         : ::Test::Base("Int::Extensional::TupleSet::Sparse::Ternary", TestTag::sweep) {}
+         : ::Test::Base("Int::Extensional::TupleSet::Sparse::Ternary") {}
 
        virtual bool run(void) {
          using namespace Gecode;
@@ -1051,7 +1051,7 @@ namespace Test { namespace Int {
      class SparseTupleSetHighArity : public ::Test::Base {
      public:
        SparseTupleSetHighArity(void)
-         : ::Test::Base("Int::Extensional::TupleSet::Sparse::HighArity", TestTag::sweep) {}
+         : ::Test::Base("Int::Extensional::TupleSet::Sparse::HighArity") {}
 
        virtual bool run(void) {
          using namespace Gecode;
@@ -1113,7 +1113,7 @@ namespace Test { namespace Int {
      class SparseTupleSetNullary : public ::Test::Base {
      public:
        SparseTupleSetNullary(void)
-         : ::Test::Base("Int::Extensional::TupleSet::Sparse::Nullary", TestTag::sweep) {}
+         : ::Test::Base("Int::Extensional::TupleSet::Sparse::Nullary") {}
 
        virtual bool run(void) {
          using namespace Gecode;
@@ -1172,9 +1172,9 @@ namespace Test { namespace Int {
      class SparseTupleSetIncrementalDelta : public ::Test::Base {
      public:
        SparseTupleSetIncrementalDelta(void)
-         : ::Test::Base("Int::Extensional::TupleSet::Sparse::IncrementalDelta") {
-         add_tags(TestTag::check);
-       }
+         : ::Test::Base(
+             "Int::Extensional::TupleSet::Sparse::IncrementalDelta",
+             TestTags(TestTag::normal,TestTag::check)) {}
 
        virtual bool run(void) {
          using namespace Gecode;
@@ -1228,7 +1228,7 @@ namespace Test { namespace Int {
      class SparseTupleSetIncrementalAssign : public ::Test::Base {
      public:
        SparseTupleSetIncrementalAssign(void)
-         : ::Test::Base("Int::Extensional::TupleSet::Sparse::IncrementalAssign", TestTag::sweep) {}
+         : ::Test::Base("Int::Extensional::TupleSet::Sparse::IncrementalAssign") {}
 
        virtual bool run(void) {
          using namespace Gecode;
@@ -1274,7 +1274,7 @@ namespace Test { namespace Int {
      class SparseTupleSetIncrementalBool : public ::Test::Base {
      public:
        SparseTupleSetIncrementalBool(void)
-         : ::Test::Base("Int::Extensional::TupleSet::Sparse::IncrementalBool", TestTag::sweep) {}
+         : ::Test::Base("Int::Extensional::TupleSet::Sparse::IncrementalBool") {}
 
        virtual bool run(void) {
          using namespace Gecode;
@@ -1325,7 +1325,7 @@ namespace Test { namespace Int {
      class SparseTupleSetDisabledFailure : public ::Test::Base {
      public:
        SparseTupleSetDisabledFailure(void)
-         : ::Test::Base("Int::Extensional::TupleSet::Sparse::DisabledFailure", TestTag::sweep) {}
+         : ::Test::Base("Int::Extensional::TupleSet::Sparse::DisabledFailure") {}
 
        virtual bool run(void) {
          using namespace Gecode;
@@ -1374,7 +1374,7 @@ namespace Test { namespace Int {
      class SparseTupleSetWideDelta : public ::Test::Base {
      public:
        SparseTupleSetWideDelta(void)
-         : ::Test::Base("Int::Extensional::TupleSet::Sparse::WideDelta", TestTag::sweep) {}
+         : ::Test::Base("Int::Extensional::TupleSet::Sparse::WideDelta") {}
 
        virtual bool run(void) {
          using namespace Gecode;
@@ -1443,7 +1443,7 @@ namespace Test { namespace Int {
      class SparseTupleSetNegative : public ::Test::Base {
      public:
        SparseTupleSetNegative(void)
-         : ::Test::Base("Int::Extensional::TupleSet::Sparse::Negative", TestTag::sweep) {}
+         : ::Test::Base("Int::Extensional::TupleSet::Sparse::Negative") {}
 
        virtual bool run(void) {
          using namespace Gecode;
@@ -1491,7 +1491,7 @@ namespace Test { namespace Int {
      class SparseTupleSetReified : public ::Test::Base {
      public:
        SparseTupleSetReified(void)
-         : ::Test::Base("Int::Extensional::TupleSet::Sparse::Reified", TestTag::sweep) {}
+         : ::Test::Base("Int::Extensional::TupleSet::Sparse::Reified") {}
 
        virtual bool run(void) {
          using namespace Gecode;
@@ -1542,7 +1542,8 @@ namespace Test { namespace Int {
      class TupleSetSingleRepresentation : public ::Test::Base {
      public:
        TupleSetSingleRepresentation(void)
-         : ::Test::Base("Int::Extensional::TupleSet::Support::SingleRepresentation", TestTag::sweep) {}
+         : ::Test::Base(
+             "Int::Extensional::TupleSet::Support::SingleRepresentation") {}
 
        virtual bool run(void) {
          using namespace Gecode;
@@ -1611,8 +1612,7 @@ namespace Test { namespace Int {
      public:
        TupleSetSupportOffsetBoundary(void)
          : ::Test::Base(
-             "Int::Extensional::TupleSet::Support::OffsetBoundary",
-             TestTag::sweep) {}
+             "Int::Extensional::TupleSet::Support::OffsetBoundary") {}
 
        virtual bool run(void) {
          using Gecode::Int::Extensional::support_offsets_size;
@@ -1634,8 +1634,7 @@ namespace Test { namespace Int {
      public:
        TupleSetTerminalFinalizationFailure(void)
          : ::Test::Base(
-             "Int::Extensional::TupleSet::Support::TerminalFailure",
-             TestTag::sweep) {}
+             "Int::Extensional::TupleSet::Support::TerminalFailure") {}
 
        virtual bool run(void) {
          using namespace Gecode;
@@ -1703,8 +1702,7 @@ namespace Test { namespace Int {
      public:
        TupleSetDFARepresentation(void)
          : ::Test::Base(
-             "Int::Extensional::TupleSet::Support::DFARepresentation",
-             TestTag::sweep) {}
+             "Int::Extensional::TupleSet::Support::DFARepresentation") {}
 
        virtual bool run(void) {
          using namespace Gecode;
@@ -1735,8 +1733,7 @@ namespace Test { namespace Int {
      public:
        TupleSetDisabledClone(void)
          : ::Test::Base(
-             "Int::Extensional::TupleSet::Support::DisabledClone",
-             TestTag::sweep) {}
+             "Int::Extensional::TupleSet::Support::DisabledClone") {}
 
        virtual bool run(void) {
          using namespace Gecode;
@@ -1860,9 +1857,9 @@ namespace Test { namespace Int {
      class TupleSetAutoDefaultDispatch : public ::Test::Base {
      public:
        TupleSetAutoDefaultDispatch(void)
-         : ::Test::Base("Int::Extensional::TupleSet::Auto::DefaultDispatch") {
-         add_tags(TestTag::check);
-       }
+         : ::Test::Base(
+             "Int::Extensional::TupleSet::Auto::DefaultDispatch",
+             TestTags(TestTag::normal,TestTag::check)) {}
 
        virtual bool run(void) {
          using namespace Gecode;
@@ -1958,7 +1955,8 @@ namespace Test { namespace Int {
      class DenseCompressedTupleSetWideGap : public ::Test::Base {
      public:
        DenseCompressedTupleSetWideGap(void)
-         : ::Test::Base("Int::Extensional::TupleSet::DenseCompressed::WideGap", TestTag::sweep) {}
+         : ::Test::Base(
+             "Int::Extensional::TupleSet::DenseCompressed::WideGap") {}
 
        virtual bool run(void) {
          using namespace Gecode;
@@ -2070,7 +2068,8 @@ namespace Test { namespace Int {
      class SparseTupleSetNegativeFail : public ::Test::Base {
      public:
        SparseTupleSetNegativeFail(void)
-         : ::Test::Base("Int::Extensional::TupleSet::Sparse::NegativeFail", TestTag::sweep) {}
+         : ::Test::Base(
+             "Int::Extensional::TupleSet::Sparse::NegativeFail") {}
 
        virtual bool run(void) {
          using namespace Gecode;
@@ -2110,7 +2109,8 @@ namespace Test { namespace Int {
      class SparseTupleSetNegativePrune : public ::Test::Base {
      public:
        SparseTupleSetNegativePrune(void)
-         : ::Test::Base("Int::Extensional::TupleSet::Sparse::NegativePrune", TestTag::sweep) {}
+         : ::Test::Base(
+             "Int::Extensional::TupleSet::Sparse::NegativePrune") {}
 
        virtual bool run(void) {
          using namespace Gecode;
@@ -2156,7 +2156,8 @@ namespace Test { namespace Int {
      class SparseTupleSetReifiedModes : public ::Test::Base {
      public:
        SparseTupleSetReifiedModes(void)
-         : ::Test::Base("Int::Extensional::TupleSet::Sparse::ReifiedModes", TestTag::sweep) {}
+         : ::Test::Base(
+             "Int::Extensional::TupleSet::Sparse::ReifiedModes") {}
 
        virtual bool run(void) {
          using namespace Gecode;

@@ -2215,10 +2215,10 @@ namespace Test { namespace Int {
        int n;
      public:
        /// Create and register test
-       PowXX(const std::string& s, int n0, const Gecode::IntSet& d,
+       PowXX(TestTags tags, const std::string& s,
+             int n0, const Gecode::IntSet& d,
              Gecode::IntPropLevel ipl)
-         : Test((n0 == 0) && (ipl == Gecode::IPL_BND) && (s == "A")
-                ? TestTag::normal : TestTag::sweep,
+         : Test(tags,
                 "Arithmetic::Pow::XX::"+str(n0)+"::"+str(ipl)+"::"+s,
                 1,d,false,ipl), n(n0) {}
        /// %Test whether \a x is solution
@@ -2332,10 +2332,10 @@ namespace Test { namespace Int {
        int n;
      public:
        /// Create and register test
-       NrootXX(const std::string& s, int n0, const Gecode::IntSet& d,
+       NrootXX(TestTags tags, const std::string& s,
+               int n0, const Gecode::IntSet& d,
                Gecode::IntPropLevel ipl)
-         : Test((n0 == 1) && (ipl == Gecode::IPL_BND) && (s == "A")
-                ? TestTag::normal : TestTag::sweep,
+         : Test(tags,
                 "Arithmetic::Nroot::XX::"+str(n0)+"::"+str(ipl)+"::"+s,
                 1,d,false,ipl), n(n0) {}
        /// %Test whether \a x is solution
@@ -2429,9 +2429,8 @@ namespace Test { namespace Int {
        /// Create and register test
        AbsXY(const std::string& s, const Gecode::IntSet& d,
              Gecode::IntPropLevel ipl)
-         : Test("Arithmetic::Abs::XY::"+str(ipl)+"::"+s,2,d,false,ipl) {
-         add_tags(TestTag::check);
-       }
+         : Test(TestTags(TestTag::normal,TestTag::check),
+                "Arithmetic::Abs::XY::"+str(ipl)+"::"+s,2,d,false,ipl) {}
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          double d0 = static_cast<double>(x[0]);
@@ -2450,9 +2449,8 @@ namespace Test { namespace Int {
        /// Create and register test
        AbsXX(const std::string& s, const Gecode::IntSet& d,
              Gecode::IntPropLevel ipl)
-         : Test("Arithmetic::Abs::XX::"+str(ipl)+"::"+s,1,d,false,ipl) {
-         add_tags(TestTag::check);
-       }
+         : Test(TestTags(TestTag::normal,TestTag::check),
+                "Arithmetic::Abs::XX::"+str(ipl)+"::"+s,1,d,false,ipl) {}
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          double d0 = static_cast<double>(x[0]);
@@ -2678,9 +2676,8 @@ namespace Test { namespace Int {
      public:
        /// Create and register test
        MaxNary(Gecode::IntPropLevel ipl)
-         : Test("Arithmetic::Max::Nary::"+str(ipl),4,-4,4,false,ipl) {
-         add_tags(TestTag::check);
-       }
+         : Test(TestTags(TestTag::normal,TestTag::check),
+                "Arithmetic::Max::Nary::"+str(ipl),4,-4,4,false,ipl) {}
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          return std::max(std::max(x[0],x[1]), x[2]) == x[3];
@@ -2698,9 +2695,9 @@ namespace Test { namespace Int {
      public:
        /// Create and register test
        MaxNaryShared(Gecode::IntPropLevel ipl)
-         : Test("Arithmetic::Max::Nary::Shared::"+str(ipl),3,-4,4,false,ipl) {
-         add_tags(TestTag::check);
-       }
+         : Test(TestTags(TestTag::normal,TestTag::check),
+                "Arithmetic::Max::Nary::Shared::"+str(ipl),
+                3,-4,4,false,ipl) {}
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          return std::max(std::max(x[0],x[1]), x[2]) == x[1];
@@ -2723,12 +2720,11 @@ namespace Test { namespace Int {
      public:
        /// Create and register test
        ArgMax(int n, int o, bool tb)
-         : Test("Arithmetic::ArgMax::"+str(o)+"::"+str(tb)+"::"+str(n),
+         : Test(TestTags(TestTag::normal,TestTag::check),
+                "Arithmetic::ArgMax::"+str(o)+"::"+str(tb)+"::"+str(n),
                 n+1,0,n+1,
                 false,tb ? Gecode::IPL_DEF : Gecode::IPL_DOM),
-           offset(o), tiebreak(tb) {
-         add_tags(TestTag::check);
-       }
+           offset(o), tiebreak(tb) {}
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          int n=x.size()-1;
@@ -2759,10 +2755,10 @@ namespace Test { namespace Int {
      public:
        /// Create and register test
        ArgMaxShared(int n, bool tb)
-         : Test("Arithmetic::ArgMax::Shared::"+str(tb)+"::"+str(n),n+1,0,n+1,
+         : Test(TestTags(TestTag::normal,TestTag::check),
+                "Arithmetic::ArgMax::Shared::"+str(tb)+"::"+str(n),n+1,0,n+1,
                 false),
            tiebreak(tb)  {
-         add_tags(TestTag::check);
          testfix=false;
        }
        /// %Test whether \a x is solution
@@ -2874,12 +2870,11 @@ namespace Test { namespace Int {
      public:
        /// Create and register test
        ArgMaxBool(int n, int o, bool tb)
-         : Test("Arithmetic::ArgMaxBool::"+str(o)+"::"+str(tb)+"::"+str(n),
+         : Test(TestTags(TestTag::normal,TestTag::check),
+                "Arithmetic::ArgMaxBool::"+str(o)+"::"+str(tb)+"::"+str(n),
                 n+1,0,n+1,
                 false,tb ? Gecode::IPL_DEF : Gecode::IPL_DOM),
-           offset(o), tiebreak(tb) {
-         add_tags(TestTag::check);
-       }
+           offset(o), tiebreak(tb) {}
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          int n=x.size()-1;
@@ -2915,10 +2910,10 @@ namespace Test { namespace Int {
      public:
        /// Create and register test
        ArgMaxBoolShared(int n, bool tb)
-         : Test("Arithmetic::ArgMaxBool::Shared::"+str(tb)+"::"+str(n),n+1,0,n+1,
+         : Test(TestTags(TestTag::normal,TestTag::check),
+                "Arithmetic::ArgMaxBool::Shared::"+str(tb)+"::"+str(n),n+1,0,n+1,
                 false),
            tiebreak(tb)  {
-         add_tags(TestTag::check);
          testfix=false;
        }
        /// %Test whether \a x is solution
@@ -3171,10 +3166,12 @@ namespace Test { namespace Int {
                (void) new PowXY("C",n,c,ipls.ipl());
                (void) new PowXY("D",n,d,ipls.ipl());
 
-               (void) new PowXX("A",n,a,ipls.ipl());
-               (void) new PowXX("B",n,b,ipls.ipl());
-               (void) new PowXX("C",n,c,ipls.ipl());
-               (void) new PowXX("D",n,d,ipls.ipl());
+               TestTags tags = (n == 0) && (ipls.ipl() == Gecode::IPL_BND)
+                 ? TestTag::normal : TestTag::sweep;
+               (void) new PowXX(tags,"A",n,a,ipls.ipl());
+               (void) new PowXX(TestTag::sweep,"B",n,b,ipls.ipl());
+               (void) new PowXX(TestTag::sweep,"C",n,c,ipls.ipl());
+               (void) new PowXX(TestTag::sweep,"D",n,d,ipls.ipl());
              }
 
              for (int n=1; n<=6; n++) {
@@ -3183,17 +3180,19 @@ namespace Test { namespace Int {
                (void) new NrootXY("C",n,c,ipls.ipl());
                (void) new NrootXY("D",n,d,ipls.ipl());
 
-               (void) new NrootXX("A",n,a,ipls.ipl());
-               (void) new NrootXX("B",n,b,ipls.ipl());
-               (void) new NrootXX("C",n,c,ipls.ipl());
-               (void) new NrootXX("D",n,d,ipls.ipl());
+               TestTags tags = (n == 1) && (ipls.ipl() == Gecode::IPL_BND)
+                 ? TestTag::normal : TestTag::sweep;
+               (void) new NrootXX(tags,"A",n,a,ipls.ipl());
+               (void) new NrootXX(TestTag::sweep,"B",n,b,ipls.ipl());
+               (void) new NrootXX(TestTag::sweep,"C",n,c,ipls.ipl());
+               (void) new NrootXX(TestTag::sweep,"D",n,d,ipls.ipl());
              }
 
              for (int n=30; n<=34; n++) {
                (void) new PowXY("C",n,c,ipls.ipl());
-               (void) new PowXX("C",n,c,ipls.ipl());
+               (void) new PowXX(TestTag::sweep,"C",n,c,ipls.ipl());
                (void) new NrootXY("C",n,c,ipls.ipl());
-               (void) new NrootXX("C",n,c,ipls.ipl());
+               (void) new NrootXX(TestTag::sweep,"C",n,c,ipls.ipl());
              }
 
              (void) new SqrtXY("A",a,ipls.ipl());
