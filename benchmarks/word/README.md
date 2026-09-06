@@ -1,5 +1,11 @@
 # Word benchmarks
 
+## Bounded packed-field investigation
+
+The [word-038 result](word-038-result.md) evaluates guarded unsigned bounds
+propagation for concatenation and fixed extraction with an exhaustive
+small-width oracle and an interleaved Release packed-header comparison.
+
 ## Focused word-037 campaign
 
 `comparison-campaign.py` validates the exact 72-instance preflight matrix before
