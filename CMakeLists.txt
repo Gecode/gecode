@@ -1489,7 +1489,7 @@ if(BUILD_TESTING)
         "${GECODE_TEST_BLACKBOX_LOG}.dll_parallel")
     endif()
 
-    set(GECODE_CHECK_ARGS -iter 2 -threads 0 -tag check)
+    set(GECODE_CHECK_ARGS -iter 2 -threads 0 -fixprob 1 -tag check)
 
     # Keep ctest robust while leaving the large test binaries out of the default build.
     set(GECODE_TEST_BUILD_TARGETS gecode-test)
@@ -1528,16 +1528,24 @@ if(BUILD_TESTING)
                 $<TARGET_FILE:gecode-test> ${GECODE_CHECK_ARGS}
         DEPENDS ${GECODE_CHECK_DEPENDS}
         USES_TERMINAL)
+      add_custom_target(check-normal
+        COMMAND ${CMAKE_COMMAND} -E env
+                GECODE_TEST_BLACKBOX_EXEC=$<TARGET_FILE:gecode-test-blackbox-exec>
+                GECODE_TEST_BLACKBOX_DLL=$<TARGET_FILE:gecode-test-blackbox-dll>
+                GECODE_TEST_BLACKBOX_LOG=${GECODE_TEST_BLACKBOX_LOG}
+                $<TARGET_FILE:gecode-test> -tag normal
+        DEPENDS ${GECODE_CHECK_DEPENDS}
+        USES_TERMINAL)
     else()
       add_custom_target(check
         COMMAND $<TARGET_FILE:gecode-test> ${GECODE_CHECK_ARGS}
         DEPENDS ${GECODE_CHECK_DEPENDS}
         USES_TERMINAL)
+      add_custom_target(check-normal
+        COMMAND $<TARGET_FILE:gecode-test> -tag normal
+        DEPENDS gecode-test
+        USES_TERMINAL)
     endif()
-    add_custom_target(check-normal
-      COMMAND $<TARGET_FILE:gecode-test> -tag normal
-      DEPENDS gecode-test
-      USES_TERMINAL)
     add_custom_target(check-sweep
       COMMAND $<TARGET_FILE:gecode-test> -tag sweep
       DEPENDS gecode-test

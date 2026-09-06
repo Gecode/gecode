@@ -1453,7 +1453,7 @@ check: test
 	$(RUNENVIRONMENT) $(TESTPUBLICRUNNERSMOKEEXE)
 	$(RUNENVIRONMENT) $(TESTPUBLICINTSMOKEEXE)
 	$(BLACKBOXCHECKENV) $(RUNENVIRONMENT) \
-		$(TESTEXE) -iter 2 -threads 0 -tag check
+		$(TESTEXE) -iter 2 -threads 0 -fixprob 1 -tag check
 
 # The normal test suite without sweep tests
 check-normal: test
