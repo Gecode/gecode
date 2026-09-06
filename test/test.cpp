@@ -97,6 +97,58 @@ namespace Test {
     nullptr
   };
 
+  /// Representative cases retained from otherwise exhaustive sweep families
+  static const char* normal_patterns[] = {
+    "Float::Arithmetic::Abs::XX::A",
+    "Float::Arithmetic::Div::A",
+    "Float::Arithmetic::Max::Bin::XXX::A",
+    "Float::Arithmetic::Min::Bin::XXX::A",
+    "Float::Arithmetic::Sqr::XX::A",
+    "Float::Arithmetic::Sqrt::XX::A",
+    "Float::Linear::Float::Eq::11::0::1",
+    "Float::Linear::Var::Eq::11::1",
+    "Float::MiniModel::LinExpr::000",
+    "Float::Transcendental::Exp::XX::A",
+    "Float::Transcendental::Log::XX::A",
+    "Float::Transcendental::Pow::N::1.5::XX::A",
+    "Float::Trigonometric::ACos::XX::A",
+    "Float::Trigonometric::ASin::XX::A",
+    "Float::Trigonometric::ATan::XX::A",
+    "Float::Trigonometric::Cos::XX::A",
+    "Float::Trigonometric::Sin::XX::A",
+    "Float::Trigonometric::Tan::XX::A",
+    "Int::Arithmetic::Nroot::XX::1::Bnd::A",
+    "Int::Arithmetic::Pow::XX::0::Bnd::A",
+    "Int::Channel::Bool::Multi::A",
+    "Int::Circuit::Cost::Dom::4::0",
+    "Int::Count::Distinct::Bnd::Dense",
+    "Int::Cumulative::Opt::Fix::-2147483646::-1",
+    "Int::Cumulative::Opt::Flex::-2147483646::4::0::2",
+    "Int::Distinct::Bnd::Dense",
+    "Int::Distinct::Dom::Dense",
+    "Int::Distinct::Offset::Dense::Bnd",
+    "Int::GCC::Int::All::Max::Bnd",
+    "Int::Linear::Int::Int::Eq::Bnd::11::0::1",
+    "Int::MiniModel::SetExpr::Const::000::0::0",
+    "Int::MiniModel::SetExpr::Expr::000::000::0",
+    "Int::NValues::Int::Int::Eq::1::0",
+    "Int::NoOverlap::Int::2::2::[1,1,1,1]::[1,1,1,1]",
+    "Int::Path::Cost::Dom::3::0",
+    "Int::Rel::Int::Array::Eq::0::4",
+    "Int::Unary::Man::Fix::-2147483646::[2,2,0,2,2]::Def+A",
+    "Int::Unary::Man::Flex::-2147483646::4::0::2::Def+A",
+    "Int::Unary::Opt::Fix::-2147483646::[2,2,0,2,2]::Def+A",
+    "Int::Unary::Opt::Flex::-2147483646::4::0::2::Def+A",
+    "Search::BAB::Sol::BalGr::Binary::Binary::Binary::1::1::1",
+    "Set::Branch::Dense::3",
+    "Set::Channel::Bool::1",
+    "Set::Element::Disjoint",
+    "Set::Precede::Multi::[1,2,3]",
+    "Set::Rel::Bin::Cmpl::S0",
+    "Set::RelOp::ConstISI::DUnion::Cmpl::0::0",
+    nullptr
+  };
+
   /// Patterns for tests that are too heavy for the normal suite
   static const char* sweep_patterns[] = {
     "FlatZinc::oss",
@@ -107,7 +159,43 @@ namespace Test {
     "FlatZinc::tenpenki",
     "FlatZinc::timetabling",
     "FlatZinc::trucking",
+    "Float::Arithmetic",
+    "Float::Linear::Float",
+    "Float::Linear::Var",
+    "Float::MiniModel::LinExpr",
+    "Float::Transcendental",
+    "Float::Trigonometric",
+    "Int::Arithmetic::Nroot",
+    "Int::Arithmetic::Pow",
+    "Int::Channel",
+    "Int::Circuit",
+    "Int::Count::Distinct",
+    "Int::Cumulative::Man",
+    "Int::Cumulative::Opt",
+    "Int::Distinct::Bnd",
+    "Int::Distinct::Dom",
+    "Int::Distinct::Offset",
     "Int::Distinct::Pathological",
+    "Int::Extensional::TupleSet",
+    "Int::GCC",
+    "Int::Linear::Bool",
+    "Int::Linear::Int",
+    "Int::MiniModel::LinExpr",
+    "Int::MiniModel::SetExpr",
+    "Int::NValues::Int",
+    "Int::NoOverlap",
+    "Int::Path",
+    "Int::Rel::Int",
+    "Int::Unary",
+    "Search::BAB::Sol",
+    "Search::DFS::Sol",
+    "Set::Branch",
+    "Set::Channel",
+    "Set::Dom",
+    "Set::Element",
+    "Set::Precede",
+    "Set::Rel",
+    "Set::RelOp",
     nullptr
   };
 
@@ -196,10 +284,12 @@ namespace Test {
 
   TestTags
   Base::default_tags(const std::string& s) {
+    const bool check = matches_any_pattern(s, check_patterns);
+    const bool normal = matches_any_pattern(s, normal_patterns);
     TestTags tags(TestTag::normal);
-    if (matches_any_pattern(s, sweep_patterns))
+    if (!check && !normal && matches_any_pattern(s, sweep_patterns))
       tags = TestTags(TestTag::sweep);
-    if (matches_any_pattern(s, check_patterns))
+    if (check)
       tags.add(TestTag::check);
     return tags;
   }
