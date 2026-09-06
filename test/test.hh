@@ -45,6 +45,7 @@
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <vector>
 
 /// General test support
 namespace Test {
@@ -111,7 +112,7 @@ namespace Test {
     void parse(int argc, char* argv[]);
 
     /// True iff a test name should be executed according to the patterns. With no patterns, always true.
-    bool is_test_name_matching(const std::string& test_name);
+    bool is_test_name_matching(const std::string& test_name) const;
   };
 
   /// The options
@@ -163,15 +164,20 @@ namespace Test {
     /// Random number generator
     mutable Gecode::Support::RandomGenerator _rand;
   };
+
+  /**
+   * \brief Run the tests in the process-wide registry
+   *
+   * Tests register during construction. They must remain alive until every
+   * runner call has returned; destruction does not remove a test from the
+   * process-wide registry. Runner calls must not overlap. Option parsing exits
+   * the process after printing help or reporting a malformed option.
+   * \relates Test::Base
+   */
+  int run_registered_tests(int argc, char* argv[]);
   //@}
 
 }
-
-/**
- * \brief Main function
- * \relates Test::Base
- */
-int main(int argc, char* argv[]);
 
 /**
  * \brief Print indentation

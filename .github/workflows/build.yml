@@ -79,6 +79,36 @@ jobs:
       shell: bash
       run: make check
 
+    - name: Install Autoconf test-library prefix
+      if: runner.os == 'Linux'
+      shell: bash
+      run: |
+        set -euxo pipefail
+        build_root="$RUNNER_TEMP/legacy-test-component-check"
+        prefix="$build_root/prefix"
+        rm -rf "$build_root"
+        mkdir -p "$prefix"
+        make install prefix="$prefix"
+
+    - name: Verify installed legacy test consumer
+      if: runner.os == 'Linux'
+      shell: bash
+      run: |
+        set -euxo pipefail
+        build_root="$RUNNER_TEMP/legacy-test-component-check"
+        prefix="$build_root/prefix"
+
+        python test/package/verify-installed-legacy-test-component.py \
+          --source "$GITHUB_WORKSPACE" \
+          --build-root "$build_root" \
+          --prefix "$prefix"
+
+        python test/package/verify-installed-legacy-test-component.py \
+          --source "$GITHUB_WORKSPACE" \
+          --build-root "$build_root" \
+          --prefix "$prefix" \
+          --mode unsupported-header
+
     - name: Autoconf install smoke
       shell: bash
       run: bash .github/ci/autoconf-install-smoke.sh "$RUNNER_TEMP/gecode-autoconf-install"
@@ -148,6 +178,12 @@ jobs:
         set -euxo pipefail
         cmake --build . --config $BUILD_TYPE --target check
 
+    - name: Run public test harness smokes
+      if: matrix.os == 'ubuntu-latest'
+      working-directory: ${{github.workspace}}/build
+      shell: bash
+      run: ctest --build-config "$BUILD_TYPE" --output-on-failure -R '^public-(runner|int)-smoke$'
+
     - name: Install CMake package
       working-directory: ${{github.workspace}}/build
       shell: bash
@@ -168,6 +204,26 @@ jobs:
             "$GITHUB_WORKSPACE/install/include" \
             core
         fi
+
+    - name: Verify installed test component
+      if: matrix.os == 'ubuntu-latest'
+      shell: bash
+      run: |
+        set -euxo pipefail
+        python test/package/verify-installed-test-component.py \
+          --source "$GITHUB_WORKSPACE" \
+          --build-root "$RUNNER_TEMP/test-component-check" \
+          --prefix "$GITHUB_WORKSPACE/install" \
+          --include-dir "/tmp/gecode-install-abs-include" \
+          --lib-dir "$GITHUB_WORKSPACE/install/lib"
+
+        python test/package/verify-installed-test-component.py \
+          --source "$GITHUB_WORKSPACE" \
+          --build-root "$RUNNER_TEMP/test-component-check-missing-component" \
+          --prefix "$GITHUB_WORKSPACE/install" \
+          --include-dir "/tmp/gecode-install-abs-include" \
+          --lib-dir "$GITHUB_WORKSPACE/install/lib" \
+          --expect-missing-component-failure
 
     - name: Package version checks
       shell: bash
