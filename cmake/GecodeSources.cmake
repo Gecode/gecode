@@ -252,9 +252,19 @@ set(GECODE_TEST_INT_SOURCES
   test/int.cpp
 )
 
+set(GECODE_TEST_SET_SOURCES
+  test/set.cpp
+)
+
+set(GECODE_TEST_FLOAT_SOURCES
+  test/float.cpp
+)
+
 set(GECODE_TEST_MAIN_SOURCE test/test-main.cpp)
 set(GECODE_TEST_PUBLIC_RUNNER_SMOKE_SOURCE test/public-runner-smoke.cpp)
 set(GECODE_TEST_PUBLIC_INT_SMOKE_SOURCE test/public-int-smoke.cpp)
+set(GECODE_TEST_PUBLIC_SET_SMOKE_SOURCE test/public-set-smoke.cpp)
+set(GECODE_TEST_PUBLIC_FLOAT_SMOKE_SOURCE test/public-float-smoke.cpp)
 
 set(GECODE_TEST_SOURCES
   test/afc.cpp

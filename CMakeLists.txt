@@ -1395,6 +1395,44 @@ if(BUILD_TESTING)
     add_library(Gecode::gecodetestint ALIAS gecodetestint)
     list(APPEND GECODE_INSTALL_TARGETS gecodetestint)
     list(APPEND GECODE_EXPORT_TARGETS gecodetestint)
+
+    if(TARGET gecodeset)
+      add_library(gecodetestset STATIC ${GECODE_TEST_SET_SOURCES})
+      target_compile_features(gecodetestset PUBLIC cxx_std_17)
+      target_include_directories(gecodetestset
+        PUBLIC
+          $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
+          $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+          $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
+      if(GECODE_VISIBILITY_COMPILE_OPTION)
+        target_compile_options(gecodetestset PRIVATE ${GECODE_VISIBILITY_COMPILE_OPTION})
+      endif()
+      set_target_properties(gecodetestset PROPERTIES
+        OUTPUT_NAME "${GECODE_LIB_PREFIX}gecodetestset${GECODE_LIB_SUFFIX}")
+      target_link_libraries(gecodetestset PUBLIC gecodetestint gecodeset)
+      add_library(Gecode::gecodetestset ALIAS gecodetestset)
+      list(APPEND GECODE_INSTALL_TARGETS gecodetestset)
+      list(APPEND GECODE_EXPORT_TARGETS gecodetestset)
+    endif()
+
+    if(TARGET gecodefloat)
+      add_library(gecodetestfloat STATIC ${GECODE_TEST_FLOAT_SOURCES})
+      target_compile_features(gecodetestfloat PUBLIC cxx_std_17)
+      target_include_directories(gecodetestfloat
+        PUBLIC
+          $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
+          $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+          $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
+      if(GECODE_VISIBILITY_COMPILE_OPTION)
+        target_compile_options(gecodetestfloat PRIVATE ${GECODE_VISIBILITY_COMPILE_OPTION})
+      endif()
+      set_target_properties(gecodetestfloat PROPERTIES
+        OUTPUT_NAME "${GECODE_LIB_PREFIX}gecodetestfloat${GECODE_LIB_SUFFIX}")
+      target_link_libraries(gecodetestfloat PUBLIC gecodetest gecodefloat)
+      add_library(Gecode::gecodetestfloat ALIAS gecodetestfloat)
+      list(APPEND GECODE_INSTALL_TARGETS gecodetestfloat)
+      list(APPEND GECODE_EXPORT_TARGETS gecodetestfloat)
+    endif()
     if(GECODE_INSTALL)
       foreach(gecode_install_component IN LISTS GECODE_LIBRARY_COMPONENTS)
         if(TARGET gecode${gecode_install_component}_${GECODE_DEFAULT_LINK_VARIANT})
@@ -1411,15 +1449,29 @@ if(BUILD_TESTING)
     target_link_libraries(public-int-smoke PRIVATE gecodetestint)
     add_test(NAME public-int-smoke COMMAND public-int-smoke)
 
+    set(GECODE_PUBLIC_TEST_SMOKE_TARGETS public-runner-smoke public-int-smoke)
+    if(TARGET gecodetestset)
+      add_executable(public-set-smoke EXCLUDE_FROM_ALL ${GECODE_TEST_PUBLIC_SET_SMOKE_SOURCE})
+      target_link_libraries(public-set-smoke PRIVATE gecodetestset)
+      add_test(NAME public-set-smoke COMMAND public-set-smoke)
+      list(APPEND GECODE_PUBLIC_TEST_SMOKE_TARGETS public-set-smoke)
+    endif()
+    if(TARGET gecodetestfloat)
+      add_executable(public-float-smoke EXCLUDE_FROM_ALL ${GECODE_TEST_PUBLIC_FLOAT_SMOKE_SOURCE})
+      target_link_libraries(public-float-smoke PRIVATE gecodetestfloat)
+      add_test(NAME public-float-smoke COMMAND public-float-smoke)
+      list(APPEND GECODE_PUBLIC_TEST_SMOKE_TARGETS public-float-smoke)
+    endif()
+
     add_test(NAME build-public-test-smokes
       COMMAND ${CMAKE_COMMAND} --build "${CMAKE_BINARY_DIR}"
-              --target public-runner-smoke public-int-smoke --config $<CONFIG>
+              --target ${GECODE_PUBLIC_TEST_SMOKE_TARGETS} --config $<CONFIG>
     )
     set_tests_properties(build-public-test-smokes PROPERTIES
       FIXTURES_SETUP public-test-smokes-built
       RESOURCE_LOCK gecode-test-build
     )
-    set_tests_properties(public-runner-smoke public-int-smoke PROPERTIES
+    set_tests_properties(${GECODE_PUBLIC_TEST_SMOKE_TARGETS} PROPERTIES
       FIXTURES_REQUIRED public-test-smokes-built
     )
   else()
@@ -1454,6 +1506,12 @@ if(BUILD_TESTING)
   endif()
 
   set(GECODE_TEST_SOURCES_SELECTED ${GECODE_TEST_SOURCES})
+  if(TARGET gecodetestset)
+    list(REMOVE_ITEM GECODE_TEST_SOURCES_SELECTED test/set.cpp)
+  endif()
+  if(TARGET gecodetestfloat)
+    list(REMOVE_ITEM GECODE_TEST_SOURCES_SELECTED test/float.cpp)
+  endif()
   if(NOT GECODE_ENABLE_SET_VARS)
     list(FILTER GECODE_TEST_SOURCES_SELECTED EXCLUDE REGEX "^test/set(/|\\.cpp)")
   endif()
@@ -1466,7 +1524,15 @@ if(BUILD_TESTING)
 
   if(GECODE_CAN_BUILD_TESTS)
     add_executable(gecode-test EXCLUDE_FROM_ALL ${GECODE_TEST_MAIN_SOURCE} ${GECODE_TEST_SOURCES_SELECTED})
-    set(GECODE_TEST_LINK_LIBS gecodetestint gecodeminimodel)
+    set(GECODE_TEST_LINK_LIBS gecodeminimodel)
+    if(TARGET gecodetestset)
+      list(APPEND GECODE_TEST_LINK_LIBS gecodetestset)
+    else()
+      list(APPEND GECODE_TEST_LINK_LIBS gecodetestint)
+    endif()
+    if(TARGET gecodetestfloat)
+      list(APPEND GECODE_TEST_LINK_LIBS gecodetestfloat)
+    endif()
     if(GECODE_ENABLE_FLATZINC)
       list(APPEND GECODE_TEST_LINK_LIBS gecodeflatzinc)
     endif()
@@ -1723,6 +1789,18 @@ if(GECODE_INSTALL)
       ${CMAKE_CURRENT_SOURCE_DIR}/test/int.hh
       ${CMAKE_CURRENT_SOURCE_DIR}/test/int.hpp
       DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/test)
+    if(TARGET gecodetestset)
+      install(FILES
+        ${CMAKE_CURRENT_SOURCE_DIR}/test/set.hh
+        ${CMAKE_CURRENT_SOURCE_DIR}/test/set.hpp
+        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/test)
+    endif()
+    if(TARGET gecodetestfloat)
+      install(FILES
+        ${CMAKE_CURRENT_SOURCE_DIR}/test/float.hh
+        ${CMAKE_CURRENT_SOURCE_DIR}/test/float.hpp
+        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/test)
+    endif()
   endif()
 
   if(GECODE_ENABLE_FLATZINC)
@@ -1746,8 +1824,16 @@ if(GECODE_INSTALL)
     set(GECODE_PACKAGE_NEEDS_MPFR ON)
   endif()
   set(GECODE_PACKAGE_HAS_TEST_COMPONENT OFF)
+  set(GECODE_PACKAGE_TEST_TYPES "")
   if(TARGET gecodetest AND TARGET gecodetestint)
     set(GECODE_PACKAGE_HAS_TEST_COMPONENT ON)
+    set(GECODE_PACKAGE_TEST_TYPES int)
+    if(TARGET gecodetestset)
+      list(APPEND GECODE_PACKAGE_TEST_TYPES set)
+    endif()
+    if(TARGET gecodetestfloat)
+      list(APPEND GECODE_PACKAGE_TEST_TYPES float)
+    endif()
   endif()
   set(GECODE_PACKAGE_QT_MAJOR "")
   set(GECODE_PACKAGE_QT_COMPONENTS "")

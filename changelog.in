@@ -78,9 +78,9 @@ Module: test
 What:   new
 Rank:   major
 [DESCRIPTION]
-Install reusable core and integer test-harness libraries and headers for CMake
-and Autoconf builds, allowing downstream propagator projects to register and
-run Gecode-style tests.
+Install reusable core, integer, set, and float test-harness libraries and
+headers for CMake and Autoconf builds, allowing downstream propagator projects
+to register and run Gecode-style tests for every configured variable family.
 
 [RELEASE]
 Version: 6.4.0
