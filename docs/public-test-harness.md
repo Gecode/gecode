@@ -39,6 +39,7 @@ Supported:
 - The core process-global test registry and runner from `test/test.hh`
 - Integer-test helpers based on `Test::Int::Test`
 - Installed CMake consumption through `find_package(Gecode CONFIG REQUIRED COMPONENTS test)`
+- Installed native legacy consumption through the maintained `-I`, `-L`, and `-l...` contract below
 - A downstream executable that registers tests and forwards `main(...)` into
   `Test::run_registered_tests(argc, argv)`
 
@@ -46,13 +47,19 @@ Not yet part of the supported installed surface:
 
 - Public installation of the wider helper families under `test/` such as `set`, `float`,
   `assign`, `branch`, or `flatzinc`
-- Non-CMake downstream consumption paths
+- Smoke executables such as `public-runner-smoke`, `public-int-smoke`, or `gecode-test`
+  as install artifacts
 - A separate replacement framework or a redesigned runner model
 
-## Prerequisite: install Gecode with the test component enabled
+## Prerequisite: install Gecode with the public harness enabled
 
-The `test` component is only exported when the installed package was built with
-`BUILD_TESTING=ON` and the required harness dependencies were available.
+The public harness is only installable when the required search and integer modules are
+available.
+
+### CMake install path
+
+The installed CMake package exports the `test` component when the build was configured
+with `BUILD_TESTING=ON` and the required harness dependencies were available.
 
 Typical flow:
 
@@ -64,6 +71,92 @@ cmake --install build --prefix /path/to/install
 
 For full build/install details, platform notes, and package-location hints, see
 [`docs/cmake-build.md`](./cmake-build.md).
+
+### Legacy Autoconf/Make install path
+
+The legacy install path builds and installs the same narrow public harness boundary when
+search and integer support remain enabled.
+
+Typical flow:
+
+```bash
+mkdir -p build/legacy && cd build/legacy
+../../configure --disable-qt --disable-gist --disable-doc-search --disable-examples
+make -j4
+make install prefix="$PWD/prefix"
+```
+
+## Native legacy install contract
+
+This section is the maintained native contract for downstream consumers using the
+Autoconf/Make install path.
+
+Installed public headers:
+
+- `<prefix>/include/test/test.hh`
+- `<prefix>/include/test/test.hpp`
+- `<prefix>/include/test/int.hh`
+- `<prefix>/include/test/int.hpp`
+
+Installed reusable harness libraries:
+
+- `gecodetest` — static core runner/registry seam
+- `gecodetestint` — static integer-helper seam layered over `gecodetest`
+
+Use the installed include directory and the normal installed library directory from the
+legacy build (`<prefix>/include` and typically `<prefix>/lib`; if you configured a
+custom `libdir`/`sharedlibdir`, use that installed path instead).
+
+Supported native compile/link shape:
+
+```bash
+c++ -std=c++17 -I<prefix>/include consumer-smoke.cpp \
+  -L<prefix>/lib \
+  -lgecodetestint -lgecodetest -lgecodesearch -lgecodeint -lgecodekernel -lgecodesupport
+```
+
+That full link closure is the honest maintained contract for native legacy consumers.
+Some shared-library linkers may accept a shorter command line, but downstream proofs and
+support assume the explicit closure above rather than implicit transitive behavior.
+
+What the native legacy contract still does **not** install or support:
+
+- `test/set.hh`, `test/set.hpp`, `test/float.hh`, `test/float.hpp`, `test/assign.hh`,
+  `test/branch.hh`, or `test/flatzinc.hh`
+- proof-only binaries such as `public-runner-smoke`, `public-int-smoke`, or `gecode-test`
+- a second discovery layer such as pkg-config
+
+### Maintained installed-proof entrypoint
+
+The canonical installed-proof entrypoint for the native legacy path is:
+
+```bash
+python test/package/verify-installed-legacy-test-component.py \
+  --source . \
+  --build-root build/legacy-test-component-proof \
+  --prefix build/legacy-test-component-proof/prefix
+```
+
+This is the maintained anti-drift path used by the docs and the Ubuntu Autoconf CI
+job. It first re-checks the installed prefix surface, then builds the downstream
+consumer in a temp workspace outside the source tree, and finally launches
+separate `-list` and filtered-run executions against the installed prefix.
+
+The verifier owns runtime library-path setup for launched processes. It injects
+the resolved installed library directory into `LD_LIBRARY_PATH` and
+`DYLD_LIBRARY_PATH`, so the proof stays bound to the selected install prefix
+instead of ambient system state.
+
+There is also a supported negative mode that proves unsupported helper headers
+remain outside the installed legacy surface:
+
+```bash
+python test/package/verify-installed-legacy-test-component.py \
+  --source . \
+  --build-root build/legacy-test-component-proof \
+  --prefix build/legacy-test-component-proof/prefix \
+  --mode unsupported-header
+```
 
 ## Minimal downstream CMake consumer
 
@@ -146,7 +239,7 @@ targets are present:
 If a consumer requests an unsupported component, the package emits an explicit
 configure-time diagnostic rather than failing later at link time.
 
-## Supported proof path
+## Installed CMake proof path
 
 The canonical downstream verifier is:
 

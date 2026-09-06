@@ -79,6 +79,36 @@ jobs:
       shell: bash
       run: make check
 
+    - name: Install Autoconf test-library prefix
+      if: runner.os == 'Linux'
+      shell: bash
+      run: |
+        set -euxo pipefail
+        build_root="$RUNNER_TEMP/legacy-test-component-proof"
+        prefix="$build_root/prefix"
+        rm -rf "$build_root"
+        mkdir -p "$prefix"
+        make install prefix="$prefix"
+
+    - name: Verify installed legacy test consumer
+      if: runner.os == 'Linux'
+      shell: bash
+      run: |
+        set -euxo pipefail
+        build_root="$RUNNER_TEMP/legacy-test-component-proof"
+        prefix="$build_root/prefix"
+
+        python test/package/verify-installed-legacy-test-component.py \
+          --source "$GITHUB_WORKSPACE" \
+          --build-root "$build_root" \
+          --prefix "$prefix"
+
+        python test/package/verify-installed-legacy-test-component.py \
+          --source "$GITHUB_WORKSPACE" \
+          --build-root "$build_root" \
+          --prefix "$prefix" \
+          --mode unsupported-header
+
     - name: Autoconf install smoke
       shell: bash
       run: bash .github/ci/autoconf-install-smoke.sh "$RUNNER_TEMP/gecode-autoconf-install"
