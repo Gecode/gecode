@@ -1,0 +1,5 @@
+% Exactly the words [1,2] and [2,1] are accepted; min x is unique.
+var 0..3: x :: output_var;
+var 0..3: y :: output_var;
+constraint gecode_regular([x,y],3,2,[2,3,0,3,3,0],1,{3});
+solve minimize x;

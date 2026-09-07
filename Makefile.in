@@ -1957,6 +1957,7 @@ DOXYGEN_MIN_VERSION = 1.17.0
 .PHONY: doc
 
 DOCSRC_NOTGENERATED = \
+	doxygen/optimize.hh \
 	misc/doxygen/back.png misc/doxygen/footer.html \
 	misc/doxygen/gecode-logo-100.png \
 	misc/doxygen/stylesheet.css \

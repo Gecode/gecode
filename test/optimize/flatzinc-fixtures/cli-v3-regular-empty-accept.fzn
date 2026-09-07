@@ -1,0 +1,4 @@
+% No transitions are needed when the empty word starts in a final state.
+array [1..0] of var 1..2: word :: output_array([1..0]) = [];
+constraint gecode_regular(word,2,2,[0,0,0,0],2,{2});
+solve satisfy;

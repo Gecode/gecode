@@ -97,6 +97,7 @@ namespace Gecode { namespace Search { namespace Seq {
         ei.init(tracer.wid(), top.nid(), top.truealt(), *cur, *top.choice());
       }
       unsigned int nid = tracer.nid();
+      const unsigned long int propagate_before = propagate;
       switch (cur->status(*this)) {
       case SS_FAILED:
         if (tracer) {
@@ -128,7 +129,9 @@ namespace Gecode { namespace Search { namespace Seq {
       case SS_BRANCH:
         {
           Space* c;
-          if ((d == 0) || (d >= opt.c_d)) {
+          if ((d == 0) || (d >= opt.c_d) ||
+              ((opt.c_p != 0) &&
+               (propagate - propagate_before >= opt.c_p))) {
             c = cur->clone();
             d = 1;
           } else {

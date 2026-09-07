@@ -1,0 +1,4 @@
+% CLI fixture v1: x=y cannot satisfy the disjoint declaration domains.
+var 0..1: x :: output_var;
+var 2..3: y :: output_var = x;
+solve satisfy;

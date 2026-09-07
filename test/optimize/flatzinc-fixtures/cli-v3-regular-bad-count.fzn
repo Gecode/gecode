@@ -1,0 +1,3 @@
+% No initial state can belong to a zero-state automaton.
+constraint gecode_regular([],0,1,[],1,{});
+solve satisfy;

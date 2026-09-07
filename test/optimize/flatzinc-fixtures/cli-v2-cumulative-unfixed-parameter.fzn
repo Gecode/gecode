@@ -1,0 +1,7 @@
+% A normal equality does not establish an original singleton declaration/domain.
+% The compiler must not substitute the lower bound or run propagation to fix d.
+var 0..1: s;
+var 1..2: d;
+constraint int_eq(d,1);
+constraint gecode_cumulatives([s],[d],[1],1);
+solve satisfy;

@@ -129,7 +129,7 @@ namespace Gecode {
     // Initialize propagator and brancher links
     pl.init();
     bl.init();
-    b_status = b_commit = Brancher::cast(&bl);
+    b_status = b_commit = &bl;
     // Initialize array for forced deletion to be empty
     d_fst = d_cur = d_lst = nullptr;
     // Initialize space as stable but not failed
@@ -526,13 +526,13 @@ namespace Gecode {
      * can be used for commit an exhausted brancher can actually be deleted.
      * This becomes known when choice is called.
      */
-    while (b_status != Brancher::cast(&bl))
-      if (b_status->status(*this)) {
+    while (b_status != &bl)
+      if (Brancher::cast(b_status)->status(*this)) {
         // Brancher still has choices to generate
         return SS_BRANCH;
       } else {
         // Brancher is exhausted
-        b_status = Brancher::cast(b_status->next());
+        b_status = b_status->next();
       }
     // No brancher with alternatives left, space is solved
     return SS_SOLVED;
@@ -568,43 +568,44 @@ namespace Gecode {
   Space::choice(void) {
     if (!stable())
       throw SpaceNotStable("Space::choice");
-    if (failed() || (b_status == Brancher::cast(&bl))) {
+    if (failed() || (b_status == &bl)) {
       // There are no more choices to be generated
       // Delete all branchers
-      Brancher* b = Brancher::cast(bl.next());
-      while (b != Brancher::cast(&bl)) {
-        Brancher* d = b;
-        b = Brancher::cast(b->next());
+      ActorLink* b = bl.next();
+      while (b != &bl) {
+        Brancher* d = Brancher::cast(b);
+        b = b->next();
         rfree(d,d->dispose(*this));
       }
       bl.init();
-      b_status = b_commit = Brancher::cast(&bl);
+      b_status = b_commit = &bl;
       return nullptr;
     }
     /*
      * The call to choice() says that no older choices
      * can be used. Hence, all branchers that are exhausted can be deleted.
      */
-    Brancher* b = Brancher::cast(bl.next());
+    ActorLink* b = bl.next();
     while (b != b_status) {
-      Brancher* d = b;
-      b = Brancher::cast(b->next());
+      Brancher* d = Brancher::cast(b);
+      b = b->next();
       d->unlink();
       rfree(d,d->dispose(*this));
     }
     // Make sure that b_commit does not point to a deleted brancher!
     b_commit = b_status;
-    return b_status->choice(*this);
+    return Brancher::cast(b_status)->choice(*this);
   }
 
   const Choice*
   Space::choice(Archive& e) const {
     unsigned int id; e >> id;
-    Brancher* b_cur = Brancher::cast(bl.next());
-    while (b_cur != Brancher::cast(&bl)) {
-      if (id == b_cur->id())
-        return b_cur->choice(*this,e);
-      b_cur = Brancher::cast(b_cur->next());
+    ActorLink* b_cur = bl.next();
+    while (b_cur != &bl) {
+      Brancher* b = Brancher::cast(b_cur);
+      if (id == b->id())
+        return b->choice(*this,e);
+      b_cur = b_cur->next();
     }
     throw SpaceNoBrancher("Space::choice");
   }
@@ -701,12 +702,13 @@ namespace Gecode {
   Space::kill_brancher(unsigned int id) {
     if (failed())
       return;
-    for (Brancher* b = Brancher::cast(bl.next());
-         b != Brancher::cast(&bl); b = Brancher::cast(b->next()))
+    for (ActorLink* link = bl.next(); link != &bl; link = link->next()) {
+      Brancher* b = Brancher::cast(link);
       if (b->id() == id) {
         kill(*b);
         return;
       }
+    }
   }
 
 
@@ -740,7 +742,7 @@ namespace Gecode {
       pc.c.source = &s;
       pl.init();
       bl.init();
-      b_status = b_commit = Brancher::cast(&bl);
+      b_status = b_commit = &bl;
       // Copy all propagators
       {
         ActorLink* p = &pl;
@@ -773,14 +775,14 @@ namespace Gecode {
       }
       // Setup brancher pointers
       if (s.b_status == &s.bl) {
-        b_status = Brancher::cast(&bl);
+        b_status = &bl;
       } else {
-        b_status = Brancher::cast(s.b_status->prev());
+        b_status = s.b_status->prev();
       }
       if (s.b_commit == &s.bl) {
-        b_commit = Brancher::cast(&bl);
+        b_commit = &bl;
       } else {
-        b_commit = Brancher::cast(s.b_commit->prev());
+        b_commit = s.b_commit->prev();
       }
     } catch (...) {
       recover(s);

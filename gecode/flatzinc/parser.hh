@@ -35,6 +35,7 @@
 #define FLATZINC_PARSER_HH
 
 #include <gecode/flatzinc.hh>
+#include <gecode/flatzinc/capture.hh>
 
 // This is a workaround for a bug in flex that only shows up
 // with the Microsoft C++ compiler
@@ -181,19 +182,45 @@ namespace Gecode { namespace FlatZinc {
     return SymbolEntry(ST_FLOATVALARRAY, i);
   }
 
+  class ParserState;
+  /** Private parser bridge; absent for every legacy parse entry point. */
+  class CaptureParser {
+  public:
+    Capture::Options options;
+    Capture::Records records;
+    Capture::Status status = Capture::Status::Complete;
+    std::vector<Capture::Diagnostic> diagnostics;
+    std::array<std::size_t,4> namespace_counts{};
+    bool declarations_recorded = false;
+    bool solve_recorded = false;
+    explicit CaptureParser(const Capture::Options& value) : options(value) {}
+    void fail(ParserState&, Capture::Status, const std::string&);
+    bool array_size(ParserState&, int);
+    bool variable_count(ParserState&, int, bool initialized_array=false);
+    bool annotations(ParserState&, AST::Array*);
+    void declaration(ParserState&, const std::string&, AST::Array*, int output_length=-1);
+    void begin(ParserState&);
+    void constraint(ParserState&, const std::string&, AST::Array*, AST::Array*);
+    void objective(ParserState&, AST::Node*);
+    void solve(ParserState&, Capture::Method, AST::Array*);
+    void finish(ParserState&);
+    static void cleanup(ParserState&) noexcept;
+  };
+
   /// %State of the %FlatZinc parser
   class ParserState {
   public:
     ParserState(const std::string& b, std::ostream& err0,
                 Gecode::FlatZinc::FlatZincSpace* fg0)
-    : buf(b.c_str()), pos(0), length(b.size()), fg(fg0),
+    : yyscanner(nullptr), buf(b.c_str()), pos(0), length(b.size()), fg(fg0),
       hadError(false), err(err0) {}
 
     ParserState(char* buf0, int length0, std::ostream& err0,
                 Gecode::FlatZinc::FlatZincSpace* fg0)
-    : buf(buf0), pos(0), length(length0), fg(fg0),
+    : yyscanner(nullptr), buf(buf0), pos(0), length(length0), fg(fg0),
       hadError(false), err(err0) {}
 
+    CaptureParser* capture = nullptr; // nonowning; lifetime is the capture call
     void* yyscanner;
     const char* buf;
     unsigned int pos, length;

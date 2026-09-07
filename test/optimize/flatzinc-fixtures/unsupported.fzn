@@ -1,0 +1,3 @@
+var 0..2: x :: output_var;
+constraint int_times(x,x,x);
+solve minimize x;

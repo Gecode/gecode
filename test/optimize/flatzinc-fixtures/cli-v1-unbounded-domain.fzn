@@ -1,0 +1,4 @@
+% CLI fixture v1: missing integer bounds are outside this finite-domain compiler.
+% A frontend rejection must never be reported as a mathematical UNSAT proof.
+var int: x :: output_var;
+solve minimize x;

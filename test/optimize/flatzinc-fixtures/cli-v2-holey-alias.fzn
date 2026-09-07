@@ -1,0 +1,7 @@
+% Alias membership intersection leaves {-1,1}; the row excludes -1.
+% Replacing this domain with its hull would incorrectly admit the optimum 0.
+var {-3,-1,1,4}: x :: output_var;
+var int: y :: output_var = x;
+constraint int_in(y,{-1,1,3});
+constraint int_le(0,y);
+solve minimize x;

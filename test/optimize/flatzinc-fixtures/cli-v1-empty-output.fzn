@@ -1,0 +1,3 @@
+% CLI fixture v1: the sole array has no elements and there are no variable slots.
+array [1..0] of var 0..1: a :: output_array([1..0]);
+solve satisfy;

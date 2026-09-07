@@ -1,0 +1,4 @@
+% Repeated positions are the same decision, so the only tuple cannot match.
+var 0..1: x :: output_var;
+constraint gecode_table_int([x,x],[0,1]);
+solve satisfy;

@@ -1,0 +1,3 @@
+% A singleton full circuit returns to its sole explicit label.
+constraint gecode_circuit(5,[5]);
+solve satisfy;

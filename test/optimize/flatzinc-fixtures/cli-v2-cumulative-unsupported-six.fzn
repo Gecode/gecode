@@ -1,0 +1,4 @@
+% Machine assignments, per-machine bounds and polarity must never be truncated.
+var 0..1: s;
+constraint gecode_cumulatives([s],[1],[1],[0],[1],true);
+solve satisfy;

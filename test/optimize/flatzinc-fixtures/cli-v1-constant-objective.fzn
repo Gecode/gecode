@@ -1,0 +1,3 @@
+% CLI fixture v1: the only assignment is w=5; every feasible point has objective -3.
+var 5..5: w :: output_var;
+solve maximize -3;

@@ -1,0 +1,3 @@
+% Source target 0 is always failing, not the typed API's ordinary state 0.
+constraint gecode_regular([1],1,1,[0],1,{1});
+solve satisfy;

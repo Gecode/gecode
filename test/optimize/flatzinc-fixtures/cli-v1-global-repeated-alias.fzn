@@ -1,0 +1,6 @@
+% CLI fixture v1: an AllDifferent occurrence list [x,x] is infeasible.
+% A backend without native globals must reject the complete model, not drop it.
+var 0..2: x :: output_var;
+array [1..2] of var 0..2: a = [x,x];
+constraint all_different_int(a);
+solve satisfy;

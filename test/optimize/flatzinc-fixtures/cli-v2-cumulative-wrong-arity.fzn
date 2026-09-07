@@ -1,0 +1,4 @@
+% The admitted legacy spelling still requires exactly four arguments.
+var 0..1: s;
+constraint cumulatives([s],[1],[1]);
+solve satisfy;

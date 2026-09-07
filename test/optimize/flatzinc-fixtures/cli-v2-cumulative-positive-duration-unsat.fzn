@@ -1,0 +1,4 @@
+% Positive duration makes the same excess demand impossible at every start.
+var -2..2: s :: output_var;
+constraint gecode_cumulatives([s],[1],[2],1);
+solve minimize s;

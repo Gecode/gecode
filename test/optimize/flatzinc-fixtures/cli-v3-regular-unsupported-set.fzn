@@ -1,0 +1,3 @@
+% Seven-argument set-alphabet spelling is a separate unsupported interface.
+constraint gecode_regular_set([1],1,1,1,[1],1,{1});
+solve satisfy;

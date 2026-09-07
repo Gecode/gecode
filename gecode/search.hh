@@ -117,6 +117,8 @@ namespace Gecode { namespace Search {
     const unsigned int c_d = 8;
     /// Create a clone during recomputation if distance is greater than \a a_d (adaptive distance)
     const unsigned int a_d = 2;
+    /// Additional propagation-count checkpoint threshold (zero disables)
+    const unsigned long int c_p = 0;
 
     /// Minimal number of open nodes for stealing
     const unsigned int steal_limit = 3;
@@ -758,6 +760,17 @@ namespace Gecode { namespace Search {
       unsigned int c_d;
       /// Create a clone during recomputation if distance is greater than \a a_d (adaptive distance)
       unsigned int a_d;
+      /**
+       * \brief Additional propagation-count checkpoint threshold
+       *
+       * Sequential DFS and BAB also clone a branching space when its
+       * most recent status call performs at least \a c_p propagator
+       * executions. This can avoid replaying expensive propagation,
+       * at the cost of retaining more spaces. Zero disables this policy.
+       * The existing commit and adaptive distances still apply.
+       * Parallel engines and LDS currently ignore this option.
+       */
+      unsigned long int c_p;
       /// Discrepancy limit (for LDS)
       unsigned int d_l;
       /// Number of assets (engines) in a portfolio

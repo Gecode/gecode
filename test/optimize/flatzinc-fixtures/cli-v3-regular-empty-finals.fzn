@@ -1,0 +1,3 @@
+% An empty final set rejects even an empty word.
+constraint gecode_regular([],1,1,[1],1,{});
+solve satisfy;

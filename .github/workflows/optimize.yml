@@ -1,0 +1,344 @@
+name: Optimization component
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - 'release/**'
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  core:
+    name: Core / ${{ matrix.os }} / shared=${{ matrix.shared }}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      matrix:
+        os: [ubuntu-24.04, macos-15, windows-2022]
+        shared: ['OFF', 'ON']
+        include:
+          - os: windows-2022
+            generator: Visual Studio 17 2022
+          - os: ubuntu-24.04
+            generator: Unix Makefiles
+          - os: macos-15
+            generator: Unix Makefiles
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+        with:
+          persist-credentials: false
+      - name: Configure standalone core
+        run: >-
+          cmake -S gecode/optimize -B build -G "${{ matrix.generator }}"
+          -DCMAKE_BUILD_TYPE=Release
+          -DBUILD_SHARED_LIBS=${{ matrix.shared }}
+          -DGECODE_OPTIMIZE_WITH_HIGHS=OFF
+          -DGECODE_OPTIMIZE_BUILD_TESTS=ON
+          -DBUILD_TESTING=ON
+      - name: Build
+        run: cmake --build build --config Release --parallel 2
+      - name: Run core conformance tests
+        run: |
+          export PATH="$(pwd)/build/Release:$(pwd)/build/Release/bin:$(pwd)/build/bin/Release:$(pwd)/build/highs/bin/Release:$(pwd)/build/highs/bin:$(pwd)/build/bin:$(pwd)/build:$PATH"
+          ctest --test-dir build -C Release --output-on-failure \
+            --no-tests=error --timeout 120 --parallel 2 -R '^optimize-'
+      - name: Install
+        run: cmake --install build --config Release --prefix "$(pwd)/install"
+      - name: Configure installed consumer
+        run: >-
+          cmake -S test/optimize/consumer -B consumer -G "${{ matrix.generator }}"
+          -DCMAKE_BUILD_TYPE=Release
+          -DCMAKE_PREFIX_PATH="$(pwd)/install"
+          -DPACKAGE_MODE=standalone
+          -DEXPECT_BACKEND_DISABLED=ON
+      - name: Build installed consumer
+        run: cmake --build consumer --config Release --parallel 2
+      - name: Run installed consumer, including Windows DLL loading
+        run: |
+          export PATH="$(pwd)/install/bin:$PATH"
+          ctest --test-dir consumer -C Release --output-on-failure \
+            --no-tests=error --timeout 60
+
+  native:
+    name: Native combined / ${{ matrix.os }} / shared=${{ matrix.shared }}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      matrix:
+        include:
+          - os: ubuntu-24.04
+            generator: Unix Makefiles
+            shared: 'OFF'
+            static: 'ON'
+            python: python3
+          - os: windows-2022
+            generator: Visual Studio 17 2022
+            shared: 'ON'
+            static: 'OFF'
+            python: python
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+        with:
+          persist-credentials: false
+      - name: Check package ownership and standalone native boundary
+        run: >-
+          ${{ matrix.python }} test/optimize/package_origin/run.py
+          --generator "${{ matrix.generator }}"
+          --check-native-boundary
+      - name: Configure combined native bridge without HiGHS
+        # The bridge must compile against this checkout's native int/search
+        # components. Standalone native configuration is explicitly unsupported.
+        run: >-
+          cmake -S . -B build-native -G "${{ matrix.generator }}"
+          -DCMAKE_BUILD_TYPE=Release
+          -DGECODE_BUILD_SHARED=${{ matrix.shared }}
+          -DGECODE_BUILD_STATIC=${{ matrix.static }}
+          -DGECODE_ENABLE_OPTIMIZE=ON
+          -DGECODE_OPTIMIZE_WITH_NATIVE=ON
+          -DGECODE_OPTIMIZE_WITH_HIGHS=OFF
+          -DGECODE_OPTIMIZE_BUILD_TESTS=ON
+          -DBUILD_TESTING=ON
+          -DGECODE_ENABLE_QT=OFF
+          -DGECODE_ENABLE_GIST=OFF
+          -DGECODE_ENABLE_MPFR=OFF
+          -DGECODE_ENABLE_SET_VARS=ON
+          -DGECODE_ENABLE_FLOAT_VARS=ON
+          -DGECODE_ENABLE_MINIMODEL=ON
+          -DGECODE_ENABLE_DRIVER=ON
+          -DGECODE_ENABLE_FLATZINC=ON
+          -DGECODE_ENABLE_EXAMPLES=OFF
+      - name: Build native bridge and conformance tests
+        run: cmake --build build-native --config Release --parallel 2
+      - name: Exercise enabled native bridge and core conformance
+        run: |
+          export PATH="$(pwd)/build-native/gecode/optimize/Release:$(pwd)/build-native/gecode/optimize:$(pwd)/build-native/bin/Release:$(pwd)/build-native/bin:$(pwd)/build-native/Release:$(pwd)/build-native:$PATH"
+          ctest --test-dir build-native -C Release --output-on-failure \
+            --no-tests=error --timeout 120 --parallel 2 -R '^(optimize-|gecode-flatzinc-capture$)'
+      - name: Install combined native package
+        run: cmake --install build-native --config Release --prefix "$(pwd)/install-native"
+      - name: Configure installed combined bridge consumer
+        # CHECK_NATIVE in this consumer explicitly requests Backend::Native
+        # and Guarantee::Exact, independently of the absent HiGHS/Auto backend.
+        run: >-
+          cmake -S test/optimize/consumer -B consumer-native -G "${{ matrix.generator }}"
+          -DCMAKE_BUILD_TYPE=Release
+          -DCMAKE_PREFIX_PATH="$(pwd)/install-native"
+          -DPACKAGE_MODE=combined
+          -DEXPECT_BACKEND_DISABLED=ON
+      - name: Build and run installed bridge consumer
+        run: |
+          cmake --build consumer-native --config Release --parallel 2
+          export PATH="$(pwd)/install-native/bin:$PATH"
+          ctest --test-dir consumer-native -C Release --output-on-failure \
+            --no-tests=error --timeout 60
+      - name: Configure independent native-only consumer
+        run: >-
+          cmake -S test/optimize/consumer -B consumer-native-only -G "${{ matrix.generator }}"
+          -DCMAKE_BUILD_TYPE=Release
+          -DCMAKE_PREFIX_PATH="$(pwd)/install-native"
+          -DPACKAGE_MODE=native-only
+      - name: Build and run native-only consumer without HiGHS discovery
+        run: |
+          cmake --build consumer-native-only --config Release --parallel 2
+          export PATH="$(pwd)/install-native/bin:$PATH"
+          ctest --test-dir consumer-native-only -C Release --output-on-failure \
+            --no-tests=error --timeout 60
+
+  numerical:
+    name: HiGHS / ${{ matrix.os }} / shared=${{ matrix.shared }}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      matrix:
+        include:
+          - os: ubuntu-24.04
+            generator: Unix Makefiles
+            shared: 'OFF'
+          - os: macos-15
+            generator: Unix Makefiles
+            shared: 'OFF'
+          - os: windows-2022
+            generator: Visual Studio 17 2022
+            shared: 'ON'
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+        with:
+          persist-credentials: false
+      - name: Check out pinned HiGHS source
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+        with:
+          repository: ERGO-Code/HiGHS
+          ref: 04024d701f79feb8e2f18bc3df0dffc04ef05088
+          path: dependencies/highs
+          persist-credentials: false
+      - name: Configure standalone numerical component
+        # CMake receives local source explicitly; it never fetches dependencies.
+        run: >-
+          cmake -S gecode/optimize -B build -G "${{ matrix.generator }}"
+          -DCMAKE_BUILD_TYPE=Release
+          -DBUILD_SHARED_LIBS=${{ matrix.shared }}
+          -DGECODE_OPTIMIZE_WITH_HIGHS=ON
+          -DGECODE_OPTIMIZE_HIGHS_SOURCE="$(pwd)/dependencies/highs"
+          -DGECODE_OPTIMIZE_BUILD_TESTS=ON
+          -DBUILD_TESTING=ON
+          -DBUILD_SHARED_EXTRAS_LIB=OFF
+          -DBUILD_CXX_EXE=OFF
+          -DZLIB=OFF
+      - name: Build component and pinned backend
+        run: cmake --build build --config Release --parallel 2
+      - name: Run numerical and original-model/parser conformance tests
+        run: |
+          export PATH="$(pwd)/build/Release:$(pwd)/build/Release/bin:$(pwd)/build/bin/Release:$(pwd)/build/highs/bin/Release:$(pwd)/build/highs/bin:$(pwd)/build/bin:$(pwd)/build:$PATH"
+          ctest --test-dir build -C Release --output-on-failure \
+            --no-tests=error --timeout 120 --parallel 2 -R '^optimize-'
+      - name: Install component and backend
+        run: cmake --install build --config Release --prefix "$(pwd)/install"
+      - name: Configure installed numerical consumer
+        run: >-
+          cmake -S test/optimize/consumer -B consumer -G "${{ matrix.generator }}"
+          -DCMAKE_BUILD_TYPE=Release
+          -DCMAKE_PREFIX_PATH="$(pwd)/install"
+          -DPACKAGE_MODE=standalone
+          -DEXPECT_BACKEND_DISABLED=OFF
+      - name: Build installed numerical consumer
+        run: cmake --build consumer --config Release --parallel 2
+      - name: Run installed numerical consumer, including Windows DLL loading
+        run: |
+          export PATH="$(pwd)/install/bin:$PATH"
+          ctest --test-dir consumer -C Release --output-on-failure \
+            --no-tests=error --timeout 60
+
+  sanitizers:
+    name: Full-source ASan and UBSan
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    env:
+      CC: clang
+      CXX: clang++
+      ASAN_OPTIONS: detect_leaks=1:halt_on_error=1
+      UBSAN_OPTIONS: print_stacktrace=1:halt_on_error=1
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+        with:
+          persist-credentials: false
+      - name: Check out pinned HiGHS source
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+        with:
+          repository: ERGO-Code/HiGHS
+          ref: 04024d701f79feb8e2f18bc3df0dffc04ef05088
+          path: dependencies/highs
+          persist-credentials: false
+      - name: Configure all source with one sanitizer toolchain
+        # Instrument C and C++ in both the adapter and HiGHS. Linking an
+        # uninstrumented installed backend can mix incompatible vector annotations.
+        run: >-
+          cmake -S gecode/optimize -B build -G "Unix Makefiles"
+          -DCMAKE_BUILD_TYPE=Debug
+          -DBUILD_SHARED_LIBS=OFF
+          -DGECODE_OPTIMIZE_WITH_HIGHS=ON
+          -DGECODE_OPTIMIZE_HIGHS_SOURCE="$(pwd)/dependencies/highs"
+          -DGECODE_OPTIMIZE_BUILD_TESTS=ON
+          -DBUILD_TESTING=ON
+          -DBUILD_SHARED_EXTRAS_LIB=OFF
+          -DBUILD_CXX_EXE=OFF
+          -DZLIB=OFF
+          -DCMAKE_C_FLAGS="-fsanitize=address,undefined -fno-omit-frame-pointer"
+          -DGECODE_OPTIMIZE_TEST_PYTHON=OFF
+          -DCMAKE_CXX_FLAGS="-fsanitize=address,undefined -fno-omit-frame-pointer"
+          -DCMAKE_EXE_LINKER_FLAGS="-fsanitize=address,undefined"
+          -DCMAKE_SHARED_LINKER_FLAGS="-fsanitize=address,undefined"
+      - name: Build instrumented component and backend
+        run: cmake --build build --config Debug --parallel 2
+      - name: Run instrumented conformance tests
+        run: >-
+          ctest --test-dir build -C Debug --output-on-failure
+          --no-tests=error --timeout 120 --parallel 2 -R '^optimize-'
+
+  native-sanitizers:
+    name: Full native and HiGHS hybrid ASan and UBSan
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    env:
+      CC: clang
+      CXX: clang++
+      ASAN_OPTIONS: detect_leaks=1:halt_on_error=1
+      UBSAN_OPTIONS: print_stacktrace=1:halt_on_error=1
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+        with:
+          persist-credentials: false
+      - name: Check out pinned HiGHS source for the hybrid
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+        with:
+          repository: ERGO-Code/HiGHS
+          ref: 04024d701f79feb8e2f18bc3df0dffc04ef05088
+          path: dependencies/highs
+          persist-credentials: false
+      - name: Configure fully instrumented native kernel, HiGHS and optimization facade
+        run: >-
+          cmake -S . -B build-native-sanitizers -G "Unix Makefiles"
+          -DCMAKE_BUILD_TYPE=Debug
+          -DGECODE_BUILD_SHARED=OFF -DGECODE_BUILD_STATIC=ON
+          -DGECODE_ENABLE_OPTIMIZE=ON -DGECODE_OPTIMIZE_WITH_NATIVE=ON
+          -DGECODE_OPTIMIZE_WITH_HIGHS=ON -DGECODE_OPTIMIZE_BUILD_TESTS=ON
+          -DGECODE_OPTIMIZE_HIGHS_SOURCE="$(pwd)/dependencies/highs"
+          -DBUILD_SHARED_EXTRAS_LIB=OFF -DBUILD_CXX_EXE=OFF -DZLIB=OFF
+          -DGECODE_OPTIMIZE_TEST_PYTHON=OFF -DBUILD_TESTING=ON
+          -DGECODE_ENABLE_QT=OFF -DGECODE_ENABLE_GIST=OFF
+          -DGECODE_ENABLE_MPFR=OFF -DGECODE_ENABLE_SET_VARS=ON
+          -DGECODE_ENABLE_FLOAT_VARS=ON -DGECODE_ENABLE_MINIMODEL=ON
+          -DGECODE_ENABLE_DRIVER=ON -DGECODE_ENABLE_FLATZINC=ON
+          -DGECODE_ENABLE_EXAMPLES=OFF
+          -DCMAKE_C_FLAGS="-fsanitize=address,undefined -fno-omit-frame-pointer"
+          -DCMAKE_CXX_FLAGS="-fsanitize=address,undefined -fno-omit-frame-pointer"
+          -DCMAKE_EXE_LINKER_FLAGS="-fsanitize=address,undefined"
+          -DCMAKE_SHARED_LINKER_FLAGS="-fsanitize=address,undefined"
+      - name: Build native lifecycle and boundary tests
+        run: >-
+          cmake --build build-native-sanitizers --parallel 2 --target
+          optimize-brancher-lifecycle-test optimize-native-test
+          optimize-search-checkpoint-test
+          optimize-lp-certificate-test optimize-lp-integer-certificate-test
+          optimize-lp-sparse-certificate-test optimize-lp-strengthening-test
+          optimize-lp-backend-test optimize-lp-integer-backend-test
+          optimize-lp-propagator-test optimize-lp-integer-propagator-test
+          optimize-lp-sparse-storage-test optimize-lp-reduced-cost-test
+          optimize-native_auto-test optimize-native_race-test
+          optimize-native_knapsack-test optimize-native_presolve-test
+          optimize-native_components-test optimize-native_symmetry-test
+          optimize-native_lp-test optimize-pool-test optimize-pool-coordinator-test
+          optimize-native_search-test optimize-native-search-coordinator-test optimize-native-lp-coordinator-test
+          optimize-native_branching-test optimize-native-branching-coordinator-test
+          optimize-native_starts-test optimize-native-start-coordinator-test
+          optimize-native_neighborhoods-test optimize-native-neighborhood-coordinator-test
+          optimize-lp_observations-test optimize-lp_observations_checks-test optimize-lp-observations-c-test
+          optimize-lp_basis-test optimize-lp-basis-failure-test optimize-lp-basis-c-api-test
+          optimize-regular-test optimize-regular-c-api-test
+          optimize-scenarios-test optimize-scenarios-coordinator-test
+          optimize-scenarios-c-test optimize-lp_evidence-test optimize-lp-evidence-coordinator-test
+          optimize-lp-evidence-c-test optimize-lp-evidence-binding-cleanup-test
+          optimize-lp_sensitivity-test optimize-lp-sensitivity-coordinator-test optimize-lp-sensitivity-factor-test
+          optimize-lp-sensitivity-c-test optimize-lp-sensitivity-binding-cleanup-test
+          optimize-quadratic-test optimize-quadratic_bound-test
+          optimize-quadratic-coordinator-test optimize-quadratic-arithmetic-rejection-test
+          gecode-flatzinc-capture-test fzn-gecode-optimize optimize-flatzinc-driver-test optimize-flatzinc-test
+          optimize-presolve-test optimize-presolve_solve-test optimize-cut-proofs-test optimize-cut-loop-test
+          optimize-globals-test optimize-c-api-test
+      - name: Check native engine, checked LP, pools and C ownership with sanitizers
+        run: >-
+          ctest --test-dir build-native-sanitizers --output-on-failure
+          --no-tests=error --timeout 120
+          -R '^(gecode-flatzinc-capture|optimize-(flatzinc|flatzinc-driver|flatzinc-driver-cli|minizinc-configure|brancher-lifecycle|search-checkpoint|lp-certificate|lp-integer-certificate|lp-sparse-certificate|lp-strengthening|lp-backend|lp-integer-backend|lp-propagator|lp-integer-propagator|lp-sparse-storage|lp-reduced-cost|native|native_auto|native_race|native_knapsack|native_presolve|native_components|native_symmetry|native_lp|native_search|native_branching|native_starts|native-start-coordinator|native_neighborhoods|native-neighborhood-coordinator|lp_observations|lp_observations_checks|lp-observations-c|lp_basis|lp-basis-failure|lp-basis-c-api|lp_evidence|lp-evidence-coordinator|lp-evidence-c|lp-evidence-binding-cleanup|lp_sensitivity|lp-sensitivity-coordinator|lp-sensitivity-factor|lp-sensitivity-c|lp-sensitivity-binding-cleanup|regular|regular-c-api|scenarios|scenarios-coordinator|scenarios-c|native-search-coordinator|native-lp-coordinator|native-branching-coordinator|quadratic|quadratic_bound|quadratic-coordinator|quadratic-arithmetic-rejection|pool|pool-coordinator|presolve|presolve_solve|cut-proofs|cut-loop|globals|c-api))$'

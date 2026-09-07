@@ -10,6 +10,8 @@ set(_gecode_supported_components
   set
   float
   minimodel
+  lp
+  optimize
   driver
   flatzinc
   gist)
@@ -72,6 +74,10 @@ while(_gecode_dependency_queue)
     set(_gecode_component_dependencies int kernel)
   elseif(_gecode_dependency_component STREQUAL minimodel)
     set(_gecode_component_dependencies int set search float)
+  elseif(_gecode_dependency_component STREQUAL lp)
+    set(_gecode_component_dependencies minimodel)
+  elseif(_gecode_dependency_component STREQUAL optimize AND "@GECODE_OPTIMIZE_WITH_NATIVE@")
+    set(_gecode_component_dependencies int search)
   elseif(_gecode_dependency_component STREQUAL gist)
     set(_gecode_component_dependencies search int set float)
   elseif(_gecode_dependency_component STREQUAL driver)
@@ -87,8 +93,22 @@ while(_gecode_dependency_queue)
 endwhile()
 
 include(CMakeFindDependencyMacro)
-if(support IN_LIST _gecode_component_closure AND
-   "@GECODE_PACKAGE_NEEDS_THREADS@" STREQUAL "ON")
+if(optimize IN_LIST _gecode_component_closure AND "@GECODE_OPTIMIZE_WITH_HIGHS@")
+  find_dependency(highs 1.15 CONFIG)
+elseif(lp IN_LIST _gecode_component_closure)
+  find_dependency(highs CONFIG)
+endif()
+if(lp IN_LIST _gecode_component_closure OR
+   (optimize IN_LIST _gecode_component_closure AND "@GECODE_OPTIMIZE_WITH_HIGHS@"))
+  if(NOT TARGET highs::highs)
+    set(Gecode_FOUND FALSE)
+    set(Gecode_NOT_FOUND_MESSAGE "Requested Gecode optimization component requires highs::highs")
+    return()
+  endif()
+endif()
+if((support IN_LIST _gecode_component_closure AND
+    "@GECODE_PACKAGE_NEEDS_THREADS@" STREQUAL "ON") OR
+   optimize IN_LIST _gecode_component_closure)
   find_dependency(Threads)
 endif()
 if(float IN_LIST _gecode_component_closure AND
@@ -171,6 +191,16 @@ unset(_gecode_qt_version)
 set(PACKAGE_PREFIX_DIR "${_gecode_package_prefix_dir}")
 
 include("${CMAKE_CURRENT_LIST_DIR}/GecodeTargets.cmake")
+if(TARGET Gecode::gecodeoptimize AND NOT TARGET Gecode::optimize)
+  add_library(Gecode::optimize INTERFACE IMPORTED)
+  set_target_properties(Gecode::optimize PROPERTIES
+    INTERFACE_LINK_LIBRARIES Gecode::gecodeoptimize)
+endif()
+if(TARGET Gecode::gecodeoptimize_c AND NOT TARGET Gecode::optimize_c)
+  add_library(Gecode::optimize_c INTERFACE IMPORTED)
+  set_target_properties(Gecode::optimize_c PROPERTIES
+    INTERFACE_LINK_LIBRARIES Gecode::gecodeoptimize_c)
+endif()
 
 set(Gecode_VERSION "@GECODE_PROJECT_VERSION@")
 set_and_check(Gecode_INCLUDE_DIRS "@PACKAGE_CMAKE_INSTALL_INCLUDEDIR@")

@@ -1,0 +1,3 @@
+% Source alphabet is 1..S; input zero must never become a valid symbol.
+constraint gecode_regular([0],1,1,[1],1,{1});
+solve satisfy;

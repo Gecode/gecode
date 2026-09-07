@@ -1,0 +1,4 @@
+% The seven-argument MiniZinc wrapper is distinct from the four-argument poster.
+var 0..1: s;
+constraint fzn_cumulatives([s],[1],[1],[0],[1],true,0);
+solve satisfy;

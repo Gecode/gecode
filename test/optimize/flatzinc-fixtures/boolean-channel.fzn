@@ -1,0 +1,5 @@
+var 0..1: x :: output_var;
+var bool: b :: output_var;
+constraint bool2int(b,x);
+constraint bool_eq(b,true);
+solve minimize x;

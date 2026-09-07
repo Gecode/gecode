@@ -1,0 +1,4 @@
+% Both destinations are final after expanding the parameter interval.
+var 0..3: x :: output_var;
+constraint gecode_regular([x],3,2,[2,3,0,0,0,0],1,2..3);
+solve minimize x;

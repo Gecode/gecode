@@ -1,0 +1,5 @@
+% Half-open semantics: a zero-duration task consumes no capacity.
+% The legacy p_cumulatives singleton shortcut incorrectly rejects height 2 > 1.
+var -2..2: s :: output_var;
+constraint gecode_cumulatives([s],[0],[2],1);
+solve minimize s;

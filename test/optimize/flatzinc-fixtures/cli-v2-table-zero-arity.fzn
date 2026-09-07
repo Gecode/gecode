@@ -1,0 +1,3 @@
+% Flattening lost whether this meant zero tuples or one empty tuple.
+constraint gecode_table_int([],[]);
+solve satisfy;

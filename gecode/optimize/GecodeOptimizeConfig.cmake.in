@@ -1,0 +1,44 @@
+@PACKAGE_INIT@
+
+# A generated export silently returns when its targets already
+# exists. Distinguish repeated finds of this package from an optimization
+# target imported by a combined Gecode package or another install prefix.
+get_filename_component(_gecode_optimize_origin "${CMAKE_CURRENT_LIST_DIR}" REALPATH)
+foreach(_gecode_optimize_target IN ITEMS Gecode::gecodeoptimize Gecode::optimize Gecode::gecodeoptimize_c Gecode::optimize_c)
+  if(TARGET "${_gecode_optimize_target}")
+    get_target_property(_gecode_optimize_existing_origin "${_gecode_optimize_target}"
+      GECODE_OPTIMIZE_PACKAGE_ORIGIN)
+    if(NOT "${_gecode_optimize_existing_origin}" STREQUAL "${_gecode_optimize_origin}")
+      set(GecodeOptimize_FOUND FALSE)
+      set(GecodeOptimize_NOT_FOUND_MESSAGE
+        "Target ${_gecode_optimize_target} already belongs to a different optimization package. Use either the combined Gecode optimization component or one standalone GecodeOptimize installation in a CMake target scope.")
+      unset(_gecode_optimize_existing_origin)
+      unset(_gecode_optimize_target)
+      unset(_gecode_optimize_origin)
+      return()
+    endif()
+  endif()
+endforeach()
+unset(_gecode_optimize_existing_origin)
+unset(_gecode_optimize_target)
+
+include(CMakeFindDependencyMacro)
+find_dependency(Threads)
+if("@GECODE_OPTIMIZE_WITH_HIGHS@" STREQUAL "ON")
+  find_dependency(highs 1.15 CONFIG)
+endif()
+include("${CMAKE_CURRENT_LIST_DIR}/GecodeOptimizeTargets.cmake")
+set_property(TARGET Gecode::gecodeoptimize PROPERTY GECODE_OPTIMIZE_PACKAGE_ORIGIN
+  "${_gecode_optimize_origin}")
+if(NOT TARGET Gecode::optimize)
+  add_library(Gecode::optimize ALIAS Gecode::gecodeoptimize)
+endif()
+if(TARGET Gecode::gecodeoptimize_c)
+  set_property(TARGET Gecode::gecodeoptimize_c PROPERTY GECODE_OPTIMIZE_PACKAGE_ORIGIN
+    "${_gecode_optimize_origin}")
+  if(NOT TARGET Gecode::optimize_c)
+    add_library(Gecode::optimize_c ALIAS Gecode::gecodeoptimize_c)
+  endif()
+endif()
+unset(_gecode_optimize_origin)
+check_required_components(GecodeOptimize)
