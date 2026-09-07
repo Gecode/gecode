@@ -1,0 +1,3 @@
+% Six arguments are required; a missing final set is malformed.
+constraint gecode_regular([1],1,1,[1],1);
+solve satisfy;

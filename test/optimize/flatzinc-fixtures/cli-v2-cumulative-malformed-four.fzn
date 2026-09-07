@@ -1,0 +1,4 @@
+% Four arguments with mismatched task-array lengths are invalid input.
+var 0..1: s;
+constraint gecode_cumulatives([s],[1,1],[1],1);
+solve satisfy;

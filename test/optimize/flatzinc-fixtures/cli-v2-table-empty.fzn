@@ -1,0 +1,4 @@
+% A positive-arity relation with no tuples is false.
+var 0..1: x :: output_var;
+constraint gecode_table_int([x],[]);
+solve satisfy;

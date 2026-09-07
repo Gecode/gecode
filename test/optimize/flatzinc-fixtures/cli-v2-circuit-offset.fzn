@@ -1,0 +1,6 @@
+% Exactly one cycle on labels 3,4,5. Minimizing the first successor is unique.
+var 3..5: x :: output_var;
+var 3..5: y :: output_var;
+var 3..5: z :: output_var;
+constraint gecode_circuit(3,[x,y,z]);
+solve minimize x;

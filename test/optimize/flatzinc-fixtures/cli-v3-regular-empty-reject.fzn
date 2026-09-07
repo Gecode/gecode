@@ -1,0 +1,3 @@
+% Empty word does not visit another final state.
+constraint gecode_regular([],2,2,[0,0,0,0],2,{1});
+solve satisfy;

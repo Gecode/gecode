@@ -351,10 +351,14 @@
  * You may also want to have a look at our \ref PageNotation as well as
  * our \ref Example.
  *
+ * The optional \ref PageOptimize "Optimize model and solver API" provides
+ * sparse models with numerical and bounded integer backends.
+ *
  * \section SecByTask Programming tasks
  *
  * Documentation is available for the following tasks:
  *  - \ref TaskModel
+ *  - \ref TaskOptimize
  *  - \ref TaskSearch
  *  - \ref TaskActor "Programming propagators and branchers"
  *  - \ref TaskVar

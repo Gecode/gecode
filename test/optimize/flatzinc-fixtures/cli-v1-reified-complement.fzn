@@ -1,0 +1,7 @@
+% CLI fixture v1: false <-> (x<=1) means x>=2, so the minimum is x=2.
+% Testing the false branch distinguishes equivalence from one-way implication.
+var -2..3: x :: output_var;
+var bool: b :: output_var;
+constraint int_le_reif(x,1,b);
+constraint bool_eq(b,false);
+solve minimize x;

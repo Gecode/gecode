@@ -19,6 +19,14 @@ In particular,
 Gecode comes with
 [extensive tutorial and reference documentation](https://gecode.github.io/documentation.html).
 
+## Optional Optimization API
+
+`Gecode::Optimize` provides sparse optimization models, numerical solving with
+HiGHS, and bounded integer search with Gecode. Enable it with
+`-DGECODE_ENABLE_OPTIMIZE=ON`. See the
+[optimization build and test guide](docs/optimize.md) and the
+[reference documentation](doxygen/optimize.hh) for the supported interfaces.
+
 ## CMake Build Options
 
 CMake exposes options aligned with the Autoconf build switches.
@@ -44,6 +52,7 @@ Version metadata shared by autoconf and CMake lives in `gecode-version.m4`.
 | `--enable-set-vars` | `GECODE_ENABLE_SET_VARS` | Supported directly | Default `ON` |
 | `--enable-float-vars` | `GECODE_ENABLE_FLOAT_VARS` | Supported directly | Default `ON` |
 | `--enable-minimodel` | `GECODE_ENABLE_MINIMODEL` | Supported directly | Default `ON` |
+| None | `GECODE_ENABLE_OPTIMIZE` | CMake-only | Optional optimization component; default `OFF` |
 | `--enable-driver` | `GECODE_ENABLE_DRIVER` | Supported directly | Default `ON` |
 | `--enable-flatzinc` | `GECODE_ENABLE_FLATZINC` | Supported directly | Default `ON` |
 | `--enable-mpfr` | `GECODE_ENABLE_MPFR` | Supported directly | Default `ON`; uses `find_package(MPFR)` |

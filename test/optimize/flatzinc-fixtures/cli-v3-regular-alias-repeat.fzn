@@ -1,0 +1,5 @@
+% Three source positions share one variable; repeated 2 is accepted.
+var 1..2: x :: output_var;
+var 1..2: y :: output_var = x;
+constraint gecode_regular([x,y,x],2,2,[1,2,2,1],1,{2});
+solve minimize x;

@@ -1,0 +1,6 @@
+% CLI fixture v1: 1-based source indexing selects the unique minimum at i=2,v=-4.
+var 1..3: i :: output_var;
+var -4..9: v :: output_var;
+array [1..3] of int: a = [7,-4,2];
+constraint array_int_element(i,a,v);
+solve minimize v;

@@ -1,0 +1,8 @@
+% CLI fixture v1: false <-> (-2*x+y-x<=-1) means y>=3*x.
+% Enumerating x in -1..2 and y in -2..2 gives the unique minimum (x,y)=(-1,-2).
+var -1..2: x :: output_var;
+var -2..2: y :: output_var;
+var bool: b :: output_var;
+constraint int_lin_le_reif([-2,1,-1],[x,y,x],-1,b);
+constraint bool_eq(b,false);
+solve minimize y;

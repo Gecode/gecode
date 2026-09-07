@@ -1,0 +1,5 @@
+% Row-major relation and a declared finite set both preserve original values.
+var {-3,1,3}: x :: output_var;
+var -2..2: y :: output_var;
+constraint gecode_table_int([x,y],[-3,2,1,-2,3,1]);
+solve minimize y;

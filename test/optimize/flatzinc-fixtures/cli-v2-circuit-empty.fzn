@@ -1,0 +1,3 @@
+% This low-level predicate requires a nonempty successor array.
+constraint gecode_circuit(0,[]);
+solve satisfy;

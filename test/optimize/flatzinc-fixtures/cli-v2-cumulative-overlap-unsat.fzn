@@ -1,0 +1,4 @@
+% The legacy four-argument spelling denotes the same single resource.
+% Two tasks overlap on [-1,0), where demand 3 exceeds capacity 2.
+constraint cumulatives([-1,-1],[2,1],[2,1],2);
+solve satisfy;

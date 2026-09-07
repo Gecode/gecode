@@ -1,0 +1,3 @@
+% Every target must be in 0..Q, including unreachable transitions.
+constraint gecode_regular([],2,2,[1,2,3,1],1,{1});
+solve satisfy;

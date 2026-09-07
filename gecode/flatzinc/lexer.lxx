@@ -50,6 +50,8 @@ void yyerror(void*, const char*);
 
 #include <errno.h>
 #include <stdlib.h>
+#include <cmath>
+#include <locale>
 
 #include <gecode/flatzinc/parser.hh>
 
@@ -67,6 +69,34 @@ bool parseInt(const char* text, int& value) {
   return true;
 }
 
+bool parseCaptureInt(const char* text, int& value) {
+  bool negative=*text=='-';if(negative)++text;
+  unsigned radix=10;
+  if(text[0]=='0'&&text[1]=='x'){radix=16;text+=2;}
+  else if(text[0]=='0'&&text[1]=='o'){radix=8;text+=2;}
+  const std::uint64_t maximum=negative?static_cast<std::uint64_t>(-static_cast<std::int64_t>(Gecode::Int::Limits::min)):
+    static_cast<std::uint64_t>(Gecode::Int::Limits::max);
+  std::uint64_t result=0;if(!*text)return false;
+  for(;*text;++text){
+    const unsigned char c=static_cast<unsigned char>(*text);
+    unsigned digit=c>='0'&&c<='9'?c-'0':c>='a'&&c<='f'?c-'a'+10:c>='A'&&c<='F'?c-'A'+10:99;
+    if(digit>=radix||result>(maximum-digit)/radix)return false;
+    result=result*radix+digit;
+  }
+  value=static_cast<int>(negative?-static_cast<std::int64_t>(result):static_cast<std::int64_t>(result));return true;
+}
+
+bool parseCaptureFloat(const char* text,double& value) {
+  std::istringstream input(text);input.imbue(std::locale::classic());
+  input >> std::noskipws >> value;
+  if(input.fail() || !input.eof() || !std::isfinite(value)) return false;
+  if(value==0) {
+    for(const char* p=text;*p && *p!='e' && *p!='E';++p)
+      if(*p>='1' && *p<='9')return false; // nonzero literal underflowed to zero
+  }
+  return true;
+}
+
 int yy_input_proc(char* buf, int size, yyscan_t yyscanner);
 #define YY_INPUT(buf, result, max_size) \
   result = yy_input_proc(buf, max_size, yyscanner);
@@ -80,7 +110,7 @@ int yy_input_proc(char* buf, int size, yyscan_t yyscanner);
 
 "true"            { yylval->iValue = 1; return FZ_BOOL_LIT; }
 "false"           { yylval->iValue = 0; return FZ_BOOL_LIT; }
--?[0-9]+          { if (parseInt(yytext,yylval->iValue))
+-?[0-9]+          { if (static_cast<Gecode::FlatZinc::ParserState*>(yyextra)->capture ? parseCaptureInt(yytext,yylval->iValue) : parseInt(yytext,yylval->iValue))
                       return FZ_INT_LIT;
                     else
                       yyerror(("The literal '" + std::string(yytext)
@@ -89,7 +119,7 @@ int yy_input_proc(char* buf, int size, yyscan_t yyscanner);
                       + ".." + std::to_string(Gecode::Int::Limits::max)
                       + ")").c_str());
                   }
--?0x[0-9A-Fa-f]+  {  if (parseInt(yytext,yylval->iValue))
+-?0x[0-9A-Fa-f]+  {  if (static_cast<Gecode::FlatZinc::ParserState*>(yyextra)->capture ? parseCaptureInt(yytext,yylval->iValue) : parseInt(yytext,yylval->iValue))
                       return FZ_INT_LIT;
                     else
                       yyerror(("The literal '" + std::string(yytext)
@@ -98,7 +128,7 @@ int yy_input_proc(char* buf, int size, yyscan_t yyscanner);
                       + ".." + std::to_string(Gecode::Int::Limits::max)
                       + ")").c_str());
                   }
--?0o[0-7]+        { if (parseInt(yytext,yylval->iValue))
+-?0o[0-7]+        { if (static_cast<Gecode::FlatZinc::ParserState*>(yyextra)->capture ? parseCaptureInt(yytext,yylval->iValue) : parseInt(yytext,yylval->iValue))
                       return FZ_INT_LIT;
                     else
                       yyerror(("The literal '" + std::string(yytext)
@@ -107,11 +137,17 @@ int yy_input_proc(char* buf, int size, yyscan_t yyscanner);
                       + ".." + std::to_string(Gecode::Int::Limits::max)
                       + ")").c_str());
                   }
--?[0-9]+\.[0-9]+  { yylval->dValue = strtod(yytext,NULL);
+-?[0-9]+\.[0-9]+  { if(static_cast<Gecode::FlatZinc::ParserState*>(yyextra)->capture) {
+                      if(!parseCaptureFloat(yytext,yylval->dValue)) yyerror("Float literal is nonfinite or outside representable range");
+                    } else yylval->dValue = strtod(yytext,NULL);
                     return FZ_FLOAT_LIT; }
--?[0-9]+\.[0-9]+[Ee][+-]?[0-9]+  { yylval->dValue = strtod(yytext,NULL);
+-?[0-9]+\.[0-9]+[Ee][+-]?[0-9]+  { if(static_cast<Gecode::FlatZinc::ParserState*>(yyextra)->capture) {
+                      if(!parseCaptureFloat(yytext,yylval->dValue)) yyerror("Float literal is nonfinite or outside representable range");
+                    } else yylval->dValue = strtod(yytext,NULL);
                                    return FZ_FLOAT_LIT; }
--?[0-9]+[Ee][+-]?[0-9]+  { yylval->dValue = strtod(yytext,NULL);
+-?[0-9]+[Ee][+-]?[0-9]+  { if(static_cast<Gecode::FlatZinc::ParserState*>(yyextra)->capture) {
+                      if(!parseCaptureFloat(yytext,yylval->dValue)) yyerror("Float literal is nonfinite or outside representable range");
+                    } else yylval->dValue = strtod(yytext,NULL);
                            return FZ_FLOAT_LIT; }
 [=:;{}(),\[\]\.]    { return *yytext; }
 \.\.              { return FZ_DOTDOT; }
@@ -155,6 +191,15 @@ int yy_input_proc(char* buf, int size, yyscan_t yyscanner);
 "where"           { return FZ_WHERE; }
 [A-Za-z][A-Za-z0-9_]* { yylval->sValue = strdup(yytext); return FZ_ID; }
 _[_]*[A-Za-z][A-Za-z0-9_]* { yylval->sValue = strdup(yytext); return FZ_U_ID; }
+\"([^"\\\n]|\\[^\n])*\" {
+                    if(!static_cast<Gecode::FlatZinc::ParserState*>(yyextra)->capture) {
+                      // Preserve the legacy scanner's first-quote behavior.
+                      const char* close=strchr(yytext+1,'"');
+                      yyless(static_cast<int>(close-yytext+1));
+                    }
+                    yylval->sValue = strdup(yytext+1);
+                    yylval->sValue[strlen(yytext)-2] = 0;
+                    return FZ_STRING_LIT; }
 \"[^"\n]*\"       {
                     yylval->sValue = strdup(yytext+1);
                     yylval->sValue[strlen(yytext)-2] = 0;

@@ -1,0 +1,4 @@
+% CLI fixture v1: an intentionally unknown predicate must be rejected completely.
+var 0..2: x :: output_var;
+constraint cli_v1_unknown_predicate(x);
+solve minimize x;

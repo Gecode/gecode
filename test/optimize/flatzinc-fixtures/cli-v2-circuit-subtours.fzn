@@ -1,0 +1,3 @@
+% Two disjoint two-cycles are not a full circuit.
+constraint gecode_circuit(0,[1,0,3,2]);
+solve satisfy;

@@ -1,0 +1,6 @@
+% CLI fixture v1: hidden=2 and hidden+x=3 imply x=1; hidden must not be printed.
+var 0..2: hidden;
+var 0..2: x :: output_var;
+constraint int_plus(hidden,x,3);
+constraint int_eq(hidden,2);
+solve satisfy;

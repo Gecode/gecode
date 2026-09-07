@@ -1,0 +1,5 @@
+% Q is a var reference even though its original domain is singleton.
+% The explicit literal-parameter schema rejects it without propagation.
+var 1..1: q;
+constraint gecode_regular([1],q,1,[1],1,{1});
+solve satisfy;

@@ -238,6 +238,7 @@ set(GECODE_FLATZINC_SOURCES
   gecode/flatzinc/blackbox-process-windows.cpp
   gecode/flatzinc/blackbox-propagator.cpp
   gecode/flatzinc/branch.cpp
+  gecode/flatzinc/capture.cpp
   gecode/flatzinc/flatzinc.cpp
   gecode/flatzinc/lexer.yy.cpp
   gecode/flatzinc/parser.tab.cpp

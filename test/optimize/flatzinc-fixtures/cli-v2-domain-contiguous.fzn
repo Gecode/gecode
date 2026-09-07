@@ -1,0 +1,4 @@
+% Intersecting finite sets proves the exact interval [0,1], with no global left.
+var {0,1,3}: x :: output_var;
+constraint int_in(x,{0,1,2});
+solve minimize x;

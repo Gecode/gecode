@@ -1,0 +1,4 @@
+% CLI fixture v1: int_eq needs two arguments; no partial output may escape.
+var 0..2: x :: output_var;
+constraint int_eq(x);
+solve minimize x;

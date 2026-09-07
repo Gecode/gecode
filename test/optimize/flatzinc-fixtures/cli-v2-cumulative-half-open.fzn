@@ -1,0 +1,5 @@
+% a occupies [-1,0); b may start exactly at 0, which is its unique optimum.
+var -1..-1: a :: output_var;
+var -1..2: b :: output_var;
+constraint gecode_cumulatives([a,b],[1,2],[2,2],2);
+solve minimize b;
