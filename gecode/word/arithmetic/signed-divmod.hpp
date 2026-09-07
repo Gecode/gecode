@@ -76,6 +76,17 @@ namespace Gecode { namespace Word { namespace Arithmetic {
       }
       return (x.assigned() && y.assigned()) ? ES_OK : ES_FIX;
     }
+    template<class A, class R>
+    forceinline ExecStatus positive_power_mod(Home home, A a,
+                                              WordValue divisor, R r) {
+      const WordValue low=divisor-1U;
+      const WordValue common_lo=(a.lo()|r.lo())&low;
+      const WordValue common_hi=(a.hi()&r.hi())&low;
+      GECODE_ME_CHECK(r.narrow(home,common_lo,common_hi));
+      GECODE_ME_CHECK(a.narrow(home,(a.lo()&~low)|common_lo,
+                               (a.hi()&~low)|common_hi));
+      return ES_OK;
+    }
   }
 
   template<SignedDivModOperation op>
@@ -140,6 +151,11 @@ namespace Gecode { namespace Word { namespace Arithmetic {
           GECODE_ME_CHECK(r.eq(home,0));
           return ES_OK;
         }
+        if ((op == SDO_MOD) && (b.val() != 0U) &&
+            ((b.val()&sign) == 0U) &&
+            ((b.val()&(b.val()-1U)) == 0U))
+          GECODE_ES_CHECK(SignedDivModSupport::positive_power_mod(
+            home,a,b.val(),r));
       }
 
       if (a.assigned() && b.assigned()) {

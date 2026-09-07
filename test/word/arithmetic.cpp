@@ -1858,8 +1858,9 @@ namespace Test { namespace Word {
       class SignedSpace : public Gecode::Space {
       public:
         Gecode::WordVarArray x;
-        SignedSpace(int n=5, unsigned int width=4)
-          : x(*this,n,width,0,Gecode::Word::width_mask(width)) {}
+        SignedSpace(int n=5, unsigned int width=4,
+                    Gecode::WordDomainType kind=Gecode::WDT_CUBE)
+          : x(*this,n,width,kind) {}
         SignedSpace(SignedSpace& s) : Gecode::Space(s) {
           x.update(*this,s.x);
         }
@@ -2133,8 +2134,22 @@ namespace Test { namespace Word {
         Gecode::dom(minus_one,minus_one.x[1],15U);
         Gecode::signed_div(minus_one,minus_one.x[0],minus_one.x[1],
                            minus_one.x[2]);
-        return (minus_one.status() != Gecode::SS_FAILED) &&
-          (Gecode::PropagatorGroup::all.size(minus_one) == 1U);
+        if ((minus_one.status() == Gecode::SS_FAILED) ||
+            (Gecode::PropagatorGroup::all.size(minus_one) != 1U))
+          return false;
+
+        for (Gecode::WordDomainType kind :
+               {Gecode::WDT_CUBE,Gecode::WDT_SIGNED}) {
+          SignedSpace power_of_two(3,8,kind);
+          Gecode::dom(power_of_two,power_of_two.x[1],16U);
+          Gecode::dom(power_of_two,power_of_two.x[2],0U);
+          Gecode::signed_mod(power_of_two,power_of_two.x[0],
+                             power_of_two.x[1],power_of_two.x[2]);
+          if ((power_of_two.status() == Gecode::SS_FAILED) ||
+              ((power_of_two.x[0].hi() & 15U) != 0U))
+            return false;
+        }
+        return true;
       }
 
       static bool self_identities(void) {

@@ -1674,6 +1674,8 @@ if(GECODE_ENABLE_EXAMPLES)
     target_link_libraries(word-progression-closure PRIVATE gecodeminimodel)
     add_executable(word-distinct-benchmark benchmarks/word/distinct.cpp)
     target_link_libraries(word-distinct-benchmark PRIVATE gecodeminimodel)
+    add_executable(word-smt2-reader benchmarks/word/smt2-reader.cpp)
+    target_link_libraries(word-smt2-reader PRIVATE gecodeminimodel)
   endif()
 endif()
 

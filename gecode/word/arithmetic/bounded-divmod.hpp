@@ -457,6 +457,13 @@ namespace Gecode { namespace Word { namespace Arithmetic {
             }
           }
         }
+        if ((op == SDO_MOD) && v[1].assigned() && (v[1].val() != 0U) &&
+            ((v[1].val()&sign) == 0U) &&
+            ((v[1].val()&(v[1].val()-1U)) == 0U)) {
+          ExecStatus es=SignedDivModSupport::positive_power_mod(
+            home,v[0],v[1].val(),v[2]);
+          if (es == ES_FAILED) return ES_FAILED;
+        }
         if (v[0].assigned() && v[1].assigned()) {
           const WordValue expected=SignedDivModSupport::evaluate<op>(
             v[0].val(),v[1].val(),sign,mask);
