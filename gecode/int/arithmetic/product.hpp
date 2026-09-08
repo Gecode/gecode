@@ -300,15 +300,15 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     if (alias >= 0) {
       if (y.assigned() && (y.val() == 0))
         return home.ES_SUBSUMED(*this);
-      ViewArray<IntView> z(home,x.size()-1);
-      for (int i=0, j=0; i<x.size(); i++)
-        if (i != alias) z[j++]=x[i];
       const int unit=neg ? -1 : 1;
       if (!y.in(0)) {
+        ViewArray<IntView> z(home,x.size()-1);
+        for (int i=0, j=0; i<x.size(); i++)
+          if (i != alias) z[j++]=x[i];
         IntVar u(home,unit,unit);
         GECODE_REWRITE(*this,Product::post(home(*this),z,IntView(u)));
       }
-      ProductInterval q=product_interval(z);
+      ProductInterval q=product_interval(x,alias);
       if ((unit < q.min) || (unit > q.max)) {
         GECODE_ME_CHECK(y.eq(home,0));
         return home.ES_SUBSUMED(*this);
