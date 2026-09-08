@@ -1346,6 +1346,8 @@ test: mkcompiledirs $(BLACKBOXFIXTURES)
 	@$(MAKE) $(VARIMP) $(TESTEXE)
 
 CHECKTESTS = Branch::Int::Dense::3 \
+	Int::Arithmetic::Gcd Int::Arithmetic::Divides \
+	Int::Arithmetic::Product Int::Arithmetic::NumberTheory \
 	FlatZinc::magic_square \
 	Int::Arithmetic::Abs \
 	Int::Arithmetic::ArgMax \

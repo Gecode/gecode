@@ -33,7 +33,10 @@ remain a release-wide responsibility.
   Positivity remains part of the proposition; the tests check that distinction.
 - Audited UBSan testing exposed pre-existing overflow in the `DivMod` and
   `Mod` test oracles. Their arithmetic now uses signed 64-bit intermediates.
-- The existing Debug audit CI job now executes its arithmetic tests.
+- CMake and Autoconf smoke selections now execute the new arithmetic families.
+  The Debug audit CI job explicitly builds the excluded-from-all test target
+  before executing its arithmetic tests. The initial CI attempt caught this
+  missing build target (exit 127); no arithmetic test had run in that step.
 - Added a [modeling example](integer-number-theory.md) covering signs,
   Euclidean residues, divisibility, and implication semantics.
 

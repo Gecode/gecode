@@ -249,7 +249,7 @@ jobs:
 
     - name: Build Debug audit smoke
       shell: bash
-      run: cmake --build "$GITHUB_WORKSPACE/build-ninja-debug"
+      run: cmake --build "$GITHUB_WORKSPACE/build-ninja-debug" --target gecode-test
 
     - name: Run Debug audit arithmetic tests
       shell: bash
