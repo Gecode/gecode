@@ -297,6 +297,79 @@ namespace Test { namespace Int {
        }
      };
 
+     /// Known identities at the integer limits, independent of the oracles.
+     class NumberTheoryLimits : public ::Test::Base {
+       class TestSpace : public Gecode::Space {
+       public:
+         virtual Gecode::Space* copy(void) { return nullptr; }
+       };
+     public:
+       NumberTheoryLimits(void)
+         : ::Test::Base("Int::Arithmetic::NumberTheoryLimits") {}
+       virtual bool run(void) {
+         using namespace Gecode;
+         const int hi=Gecode::Int::Limits::max;
+         const int lo=Gecode::Int::Limits::min;
+         const int cases[][4] = {
+           {lo,hi,hi,1}, {hi,lo,hi,1}, {lo,0,hi,1},
+           {0,lo,hi,0}, {0,0,0,1}, {lo,1,1,0}
+         };
+         for (const auto& c : cases) {
+           TestSpace home;
+           IntVar x(home,c[0],c[0]), y(home,c[1],c[1]), g(home,0,hi);
+           BoolVar b(home,0,1), correct(home,0,1), wrong(home,0,1);
+           gcd(home,x,y,g);
+           divides(home,x,y,Reify(b));
+           IntVar expected(home,c[2],c[2]);
+           IntVar other(home,c[2] == 0 ? 1 : 0,c[2] == 0 ? 1 : 0);
+           gcd(home,x,y,expected,Reify(correct));
+           gcd(home,x,y,other,Reify(wrong));
+           if ((home.status() == SS_FAILED) || !g.assigned() ||
+               (g.val() != c[2]) || !b.assigned() || (b.val() != c[3]) ||
+               !correct.assigned() || (correct.val() != 1) ||
+               !wrong.assigned() || (wrong.val() != 0))
+             return false;
+         }
+         // hi-1 is -1 modulo hi. Its square is 1 and its cube is -1;
+         // negating one factor reverses these residues. The cube exceeds
+         // signed 64-bit range, but its residue remains exactly known.
+         for (int n=2; n<=3; n++)
+           for (int negative=0; negative<=1; negative++)
+             for (int variable=0; variable<=1; variable++) {
+               const int expected=((n+negative)%2 == 0) ? 1 : hi-1;
+               {
+                 TestSpace home;
+                 IntVarArgs x(home,n,hi-1,hi-1);
+                 if (negative) x[0]=IntVar(home,1-hi,1-hi);
+                 IntVar m(home,hi-1,hi), y(home,0,hi-1);
+                 if (variable) product_mod(home,x,m,y);
+                 else product_mod(home,x,hi,y);
+                 if (home.status() == SS_FAILED) return false;
+                 // Force variable-modulus rewriting after initial propagation.
+                 rel(home,m,IRT_EQ,hi);
+                 if ((home.status() == SS_FAILED) || !y.assigned() ||
+                     (y.val() != expected)) return false;
+               }
+               for (ReifyMode rm : {RM_EQV,RM_IMP,RM_PMI})
+                 for (int truth=0; truth<=1; truth++)
+                   for (int control=0; control<=1; control++) {
+                     TestSpace home;
+                     IntVarArgs x(home,n,hi-1,hi-1);
+                     if (negative) x[0]=IntVar(home,1-hi,1-hi);
+                     IntVar m(home,hi,hi);
+                     IntVar y(home,truth ? expected : 0,truth ? expected : 0);
+                     BoolVar b(home,control,control);
+                     if (variable) product_mod(home,x,m,y,Reify(b,rm));
+                     else product_mod(home,x,hi,y,Reify(b,rm));
+                     const bool holds=(rm == RM_EQV) ? (control == truth) :
+                       ((rm == RM_IMP) ? (!control || truth) : (!truth || control));
+                     if ((home.status() != SS_FAILED) != holds) return false;
+                   }
+             }
+         return true;
+       }
+     };
+
      /// Evaluate an exact product for testing without overflowing.
      bool product_value(const Assignment& x, int n, int& product) {
        for (int i=0; i<n; i++)
@@ -2633,6 +2706,7 @@ namespace Test { namespace Int {
          }
          (void) new NumberTheorySparseBounds;
          (void) new NumberTheoryLifecycle;
+         (void) new NumberTheoryLimits;
          (void) new ProductModInvalidModulus;
          (void) new ProductModAlgebraic;
          (void) new ProductModVarBounds;
