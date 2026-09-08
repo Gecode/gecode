@@ -207,6 +207,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   inline ExecStatus
   Gcd::propagate(Space& home, const ModEventDelta&) {
+    const unsigned int s0=x0.size(), s1=x1.size(), s2=x2.size();
     if (x0 == x1)
       GECODE_REWRITE(*this,AbsBnd<IntView>::post(home(*this),x0,x2));
     if (x0.assigned() && (x0.val() == 0))
@@ -240,7 +241,9 @@ namespace Gecode { namespace Int { namespace Arithmetic {
       GECODE_ME_CHECK(x2.eq(home,gcd_value(x0.val(),x1.val())));
       return home.ES_SUBSUMED(*this);
     }
-    return ES_FIX;
+    // A bounds update can jump over a hole to another non-multiple.
+    return ((s0 != x0.size()) || (s1 != x1.size()) || (s2 != x2.size()))
+      ? ES_NOFIX : ES_FIX;
   }
 
   template<ReifyMode rm>

@@ -2144,6 +2144,8 @@ gecode/int/count$(OBJSUFFIX) gecode/int/count$(SBJSUFFIX): \
 	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp ./gecode/support/thread.hpp \
 	./gecode/support/thread/thread.hpp ./gecode/support/timer.hpp
 gecode/int/arithmetic$(OBJSUFFIX) gecode/int/arithmetic$(SBJSUFFIX): \
+	./gecode/int/arithmetic/gcd.hpp ./gecode/int/arithmetic/divides.hpp \
+	./gecode/int/arithmetic/product.hpp ./gecode/int/arithmetic/product-mod.hpp \
 	./gecode/int.hh ./gecode/int/arithmetic.hh ./gecode/int/arithmetic/abs.hpp \
 	./gecode/int/arithmetic/argmax.hpp ./gecode/int/arithmetic/divmod.hpp ./gecode/int/arithmetic/max.hpp \
 	./gecode/int/arithmetic/mult.hpp ./gecode/int/arithmetic/nroot.hpp ./gecode/int/arithmetic/pow-ops.hpp \
@@ -4441,6 +4443,8 @@ gecode/int/branch/chb$(OBJSUFFIX) gecode/int/branch/chb$(SBJSUFFIX): \
 	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp ./gecode/support/thread.hpp \
 	./gecode/support/thread/thread.hpp ./gecode/support/timer.hpp
 gecode/int/arithmetic/mult$(OBJSUFFIX) gecode/int/arithmetic/mult$(SBJSUFFIX): \
+	./gecode/int/arithmetic/gcd.hpp ./gecode/int/arithmetic/divides.hpp \
+	./gecode/int/arithmetic/product.hpp ./gecode/int/arithmetic/product-mod.hpp \
 	./gecode/int.hh ./gecode/int/arithmetic.hh ./gecode/int/arithmetic/abs.hpp \
 	./gecode/int/arithmetic/argmax.hpp ./gecode/int/arithmetic/divmod.hpp ./gecode/int/arithmetic/max.hpp \
 	./gecode/int/arithmetic/mult.hpp ./gecode/int/arithmetic/nroot.hpp ./gecode/int/arithmetic/pow-ops.hpp \

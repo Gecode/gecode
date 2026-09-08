@@ -183,13 +183,15 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     if (b.one()) {
       if (rm == RM_PMI)
         return home.ES_SUBSUMED(*this);
+      const unsigned int s0=x0.size(), s1=x1.size();
       GECODE_ES_CHECK(divides_bnd(home,x0,x1));
       const RelTest rt=divides_status(x0,x1);
       if (rt == RT_FALSE)
         return ES_FAILED;
       if (rt == RT_TRUE)
         return home.ES_SUBSUMED(*this);
-      return ES_FIX;
+      // Revisit sparse endpoints and divisors assigned by this call.
+      return ((s0 != x0.size()) || (s1 != x1.size())) ? ES_NOFIX : ES_FIX;
     }
     if (b.zero()) {
       if (rm == RM_IMP)

@@ -203,6 +203,35 @@ namespace Test { namespace Int {
        }
      };
 
+     /// Sparse endpoints must reach a fixpoint after a divisor is assigned.
+     class NumberTheorySparseBounds : public ::Test::Base {
+       class TestSpace : public Gecode::Space {
+       public:
+         virtual Gecode::Space* copy(void) { return nullptr; }
+       };
+     public:
+       NumberTheorySparseBounds(void)
+         : ::Test::Base("Int::Arithmetic::NumberTheorySparseBounds") {}
+       virtual bool run(void) {
+         using namespace Gecode;
+         for (int division=0; division<2; division++) {
+           TestSpace home;
+           IntVar x(home,IntSet({1,3,5,6})), y(home,10,10), g(home,1,2);
+           BoolVar b(home,1,1);
+           if (division)
+             divides(home,g,x,Reify(b));
+           else
+             gcd(home,x,y,g);
+           if (home.status() == SS_FAILED)
+             return false;
+           rel(home,g,IRT_EQ,2);
+           if ((home.status() == SS_FAILED) || !x.assigned() || (x.val()!=6))
+             return false;
+         }
+         return true;
+       }
+     };
+
      /// Evaluate an exact product for testing without overflowing.
      bool product_value(const Assignment& x, int n, int& product) {
        for (int i=0; i<n; i++)
@@ -2527,6 +2556,7 @@ namespace Test { namespace Int {
            (void) new ArgMinBool(i,1,false);
            (void) new ArgMinBoolShared(i,false);
          }
+         (void) new NumberTheorySparseBounds;
          (void) new ProductModInvalidModulus;
          (void) new ProductModAlgebraic;
          (void) new ProductModVarBounds;
