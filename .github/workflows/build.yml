@@ -251,6 +251,12 @@ jobs:
       shell: bash
       run: cmake --build "$GITHUB_WORKSPACE/build-ninja-debug"
 
+    - name: Run Debug audit arithmetic tests
+      shell: bash
+      run: >
+        "$GITHUB_WORKSPACE/build-ninja-debug/bin/gecode-test"
+        -test '^Int::Arithmetic::' -iter 1 -seed 650 -threads 2
+
     - name: Install and smoke test FlatZinc tools
       shell: bash
       run: |
