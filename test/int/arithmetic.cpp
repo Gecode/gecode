@@ -297,6 +297,41 @@ namespace Test { namespace Int {
        }
      };
 
+     /// Reified identities do not require the remaining factors to be fixed.
+     class NumberTheoryIdentities : public ::Test::Base {
+       class TestSpace : public Gecode::Space {
+       public:
+         virtual Gecode::Space* copy(void) { return nullptr; }
+       };
+     public:
+       NumberTheoryIdentities(void)
+         : ::Test::Base("Int::Arithmetic::NumberTheoryIdentities") {}
+       virtual bool run(void) {
+         using namespace Gecode;
+         for (ReifyMode rm : {RM_EQV,RM_IMP,RM_PMI})
+           for (int kind=0; kind<4; kind++) {
+             TestSpace home;
+             IntVar x(home,-7,7), zero(home,0,0), m(home,0,7), one(home,1,1);
+             BoolVar b(home,0,1);
+             if (kind == 0) product(home,IntVarArgs({zero,x}),zero,Reify(b,rm));
+             if (kind == 1) product(home,IntVarArgs({x}),x,Reify(b,rm));
+             if (kind == 2) product_mod(home,IntVarArgs({zero,x}),m,zero,Reify(b,rm));
+             if (kind == 3) product_mod(home,IntVarArgs({x}),one,zero,Reify(b,rm));
+             if (home.status() == SS_FAILED) return false;
+             if (kind == 2) {
+               // Zero residue alone does not establish a positive modulus.
+               if (b.assigned() || (m.min() != 0)) return false;
+               rel(home,m,IRT_GQ,1);
+               if (home.status() == SS_FAILED) return false;
+             }
+             if ((rm == RM_IMP) ? b.assigned() :
+                 (!b.assigned() || (b.val() != 1))) return false;
+             if ((x.min() != -7) || (x.max() != 7)) return false;
+           }
+         return true;
+       }
+     };
+
      /// Known identities at the integer limits, independent of the oracles.
      class NumberTheoryLimits : public ::Test::Base {
        class TestSpace : public Gecode::Space {
@@ -1823,7 +1858,7 @@ namespace Test { namespace Int {
          : Test("Arithmetic::DivMod::"+s,4,d) {}
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
-         return x[0] == x[1]*x[2]+x[3] &&
+         return x[0] == static_cast<long long int>(x[1])*x[2]+x[3] &&
                 abs(x[3]) < abs(x[1]) &&
                 (x[3] == 0 || sgn(x[3]) == sgn(x[0]));
        }
@@ -1871,7 +1906,7 @@ namespace Test { namespace Int {
            divsign *
            static_cast<int>(floor(static_cast<double>(std::abs(x[0]))/
                                   static_cast<double>(std::abs(x[1]))));
-         return x[0] == x[1]*divresult+x[2];
+         return x[0] == static_cast<long long int>(x[1])*divresult+x[2];
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
@@ -2707,6 +2742,7 @@ namespace Test { namespace Int {
          (void) new NumberTheorySparseBounds;
          (void) new NumberTheoryLifecycle;
          (void) new NumberTheoryLimits;
+         (void) new NumberTheoryIdentities;
          (void) new ProductModInvalidModulus;
          (void) new ProductModAlgebraic;
          (void) new ProductModVarBounds;
