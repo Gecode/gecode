@@ -1,172 +1,131 @@
-# Integer arithmetic PR readiness for Gecode 6.5.0
+# Integer arithmetic readiness for Gecode 6.5.0
 
-Reviewed on 2026-09-08: `feature/gcd` at `06a6851d54`, plus the local
-review fixes described below. The feature delta is measured from merge base
-`e1ec3da365` with local `main` (`6b7de57b04`, also the locally cached
-`origin/main`). Remote refs and CI results were not refreshed.
+## Assessment
 
-## Recommendation
+The local implementation and verification work is complete. The remaining
+release gate is the supported-platform CI for [draft PR #240](https://github.com/Gecode/gecode/pull/240).
+This is not yet a claim that the complete release matrix is green.
 
-Implementation follow-up: the initial fixes are committed as `788879564e`.
-Targeted lifecycle tests now cover delayed Boolean activation, disabled actor
-rescheduling, cloning before and after activation, and the variable-to-fixed
-modulus rewrite. The GCD-all-aliased and divides-self tests now retain the
-generic fixpoint comparisons. Other exceptions have family-specific comments
-explaining the interior membership observations missed by bounds events.
-For example, enabling the empty-product comparison reproduces that legitimate
-exception (seed 1576866552, fixprob 1). All 95 focused Release tests pass with
-three iterations, seed 650, and fixprob 1. The workflow now executes its Debug
-audit arithmetic binary; local audit/UBSan validation is in progress.
+Reviewed initially at `06a6851d54`; fixes and follow-up work are integrated
+with `origin/main` at `6b7de57b04` in merge commit `00d8d061ae`.
+The changelog contains one unreleased 6.5.0 section. Version/SOVERSION changes
+remain a release-wide responsibility.
 
-Independent limit checks now cover GCD/divides at signed endpoints, positive
-and negative modular squares/cubes, delayed modulus assignment, and all
-reification truth/control combinations. These cases pass with auditing and
-UBSan (`halt_on_error=1`). A broader UBSan run exposed pre-existing signed
-overflow in the `DivMod` test oracle; it is being corrected separately.
+## Completed work
 
-Close, but I would not yet give an unconditional release-readiness sign-off.
-The implementation is a credible addition to 6.5.0: it has a small public API,
-explicit mathematical semantics, dedicated propagators, and substantial
-solution coverage. This review found no incorrect accepted solutions or lost
-solutions, but did reproduce two incorrect fixpoint claims, now fixed.
+- Fixed premature fixpoint returns in GCD and positive reified divisibility.
+  A delayed divisor/GCD assignment to 2 previously left `x={3,5,6}` after
+  propagation, although reposting reduced it to `{6}`. Domain changes now
+  request another propagation pass. A focused regression covers both cases.
+- Removed repeated space allocation for temporary result-alias product arrays.
+  The existing omit-index interval helper now handles that case; allocation
+  remains only when a rewrite retains the new array.
+- Updated Autoconf dependencies for all four headers, public API propagation
+  and exception documentation, and the 6.5.0 release note.
+- Added activation, disable/enable rescheduling, cloning, and variable-to-fixed
+  modulus rewrite checks. Restored generic fixpoint comparisons for
+  `gcd(x,x,x)` and `divides(x,x)`.
+- Added independent endpoint and modular square/cube identities, including
+  products beyond signed 64-bit range, delayed modulus assignment, negative
+  factors, and all reification truth/control combinations.
+- Recognize zero products and singleton result aliases in reified exact
+  products, and zero-factor/modulus-one identities with variable moduli.
+  Positivity remains part of the proposition; the tests check that distinction.
+- Audited UBSan testing exposed pre-existing overflow in the `DivMod` and
+  `Mod` test oracles. Their arithmetic now uses signed 64-bit intermediates.
+- The existing Debug audit CI job now executes its arithmetic tests.
+- Added a [modeling example](integer-number-theory.md) covering signs,
+  Euclidean residues, divisibility, and implication semantics.
 
-Before merging, close the lifecycle-coverage gap below and obtain validation
-on the intended integration revision. Add a few independent arithmetic
-boundary checks before release. Performance measurements and stronger
-propagation are improvements, not reasons by themselves to reject the feature.
-No general rewrite or new test framework is warranted.
+The Gecode skill informed the lifecycle and memory review. No new propagation
+framework, persistent cache, or support enumeration was introduced.
 
-## Fixed during this review
+## Lifecycle exceptions
 
-- **GCD and positive reified divisibility claimed a premature fixpoint.** With
-  `x={1,3,5,6}`, an initially variable divisor/GCD in `1..2`, and then assignment
-  to 2, both left `x={3,5,6}` after `status()`. For GCD the other operand was 10.
-  Reposting reduced the domain to `{6}`. Bounds updates had jumped over holes
-  to another non-multiple, while `propagate()` returned `ES_FIX`. Both now
-  return `ES_NOFIX` when their own filtering changed a domain. The new
-  `NumberTheorySparseBounds` regression checks both delayed-assignment cases.
-- **Result-aliased products allocated scratch arrays in the space on every
-  propagation call.** When zero remained possible, the temporary `ViewArray`
-  was used only to compute an omitted-factor interval and was not retained.
-  The code now uses the existing omit-index helper, allocating a persistent
-  array only for an actual rewrite. Existing alias tests cover this path.
-- **Autoconf incremental dependencies omitted the four new headers.** Added
-  them to both affected rules in `Makefile.dep`; checked their inclusion with
-  `misc/makedepend.py` from the configured build directory. Header installation
-  was already covered by `Makefile.in` and CMake's directory installation.
-- **Public documentation did not explain ignored propagation levels or fixed
-  modulus exceptions.** The overloads now state the actual propagation
-  contract, including conservative reified reasoning, ignored `ipl`, and
-  `Int::OutOfLimits` for invalid fixed moduli even with inactive implications.
-  The difference from the signed remainder returned by `mod()` is explicit.
-- **Release notes omitted the feature.** Added a 6.5.0 entry using the same
-  unreleased section heading already present on `main`.
+`contest=CTL_NONE` remains appropriate: these propagators do not promise
+bounds or domain consistency. Most generic reposting comparisons still use
+`testfix=false` for a different, documented reason:
 
-## Remaining work before sign-off
+| Family | Interior membership that can strengthen reposting without a bounds event |
+| --- | --- |
+| Reified GCD | Zero or the GCD computed from assigned operands |
+| Reified divides | Zero in the dividend when the divisor is zero |
+| Exact product | Zero in factors/result, or an assigned product in the result |
+| Fixed modular product | The computed residue, including the empty-product identity |
+| Variable modular product | Zero/one in the result or a derived divisor in the modulus |
 
-### 1. Restore targeted lifecycle checks — before merge
+These are intentional weak-monotonicity cases, not a license to stop before
+finishing a propagator's own updates. Family-specific test comments explain
+them. Enabling the empty-product comparison reproduced the distinction with
+seed 1576866552 and fixprob 1. `NumberTheorySparseBounds` and
+`NumberTheoryLifecycle` check own-update completion and actor transitions
+separately; applicable alias identity comparisons are enabled.
 
-The new generic tests in [test/int/arithmetic.cpp](../test/int/arithmetic.cpp)
-all set `testfix=false` and `contest=CTL_NONE`. Disabling consistency checks is
-appropriate when bounds/domain consistency is not promised. Disabling every
-fixpoint comparison is a separate decision: it helped hide the two defects
-found here.
+## Local validation
 
-Several propagators deliberately use `AP_WEAKLY`, so blindly enabling every
-reposting comparison would also be wrong. Separate legitimate strengthening
-after an interior domain change from failure to finish the propagator's own
-bounds updates. Re-enable applicable existing checks and document the specific
-reason for each remaining exception. Add only focused regressions for delayed
-Boolean activation, sparse endpoints, and clone/reschedule behavior through
-rewrites where the existing tests do not establish the invariant.
+- All **591 integer arithmetic tests** passed in Release.
+- The same **591 tests** passed in Debug with runtime auditing and UBSan,
+  with `UBSAN_OPTIONS=halt_on_error=1`.
+- The earlier focused lifecycle selection passed three iterations with
+  seed 650 and fixprob 1; the completed full-suite runs used one iteration,
+  seed 650, and four threads.
+- A CMake installation and a separate `find_package(Gecode CONFIG)`
+  consumer compiled, linked, and executed all nine public overloads.
+  Including the installed `gecode/int/arithmetic.hh` also checked the new
+  implementation headers. Results were GCD 6, product -216, residue 1.
+- Text changelog generation, repository tidy checks, and
+  `git diff --check` passed.
 
-Acceptance: own-update fixpoints are tested, weakly monotonic exceptions have
-an explicit rationale, and the selected tests run with runtime auditing.
-The existing workflow's Debug audit smoke configures and builds an audit
-binary but does not execute that binary; extend that validation as part of
-this task. See [.github/workflows/build.yml](../.github/workflows/build.yml).
+The local host was an Apple M1 Max with Apple Clang 21.0.0. No local Linux,
+Windows, or 32-bit execution is implied by these results. Platform coverage
+comes from the PR's existing CI matrix, including Autoconf and package checks.
 
-### 2. Add independent limit-value checks — before release
+## Scaling sample
 
-Coverage is good for small signed domains, aliases, empty arrays, and all
-reification modes. There are also some large-product tests. However, the
-product and modular-product test oracles closely follow the implementation's
-checked multiplication and modular accumulation. That leaves common mistakes
-less likely to be detected independently.
+This small experiment measures model construction, posting, initial
+propagation, and destruction together; it is not an isolated propagation
+microbenchmark. Factors have domain `0..1`, so the multiplication-chain
+baseline has representable intermediates. Twenty warmup constructions precede
+500 measured constructions per sample; results are medians of three samples,
+in microseconds. Search is measured separately and exhaustively only at
+arities 4 and 12, with the same branching order and solution count checks.
 
-Use a small set of mathematically known answers, not another general oracle:
+| Arity | Factor pattern | Product (us) | Chain (us) |
+| --- | --- | ---: | ---: |
+| 4 | distinct | 0.446 | 0.371 |
+| 4 | repeated | 0.379 | 0.435 |
+| 4 | result alias | 0.475 | 0.362 |
+| 12 | distinct | 0.934 | 0.888 |
+| 12 | repeated | 0.662 | 0.958 |
+| 12 | result alias | 1.136 | 0.838 |
+| 64 | distinct | 8.496 | 3.901 |
+| 64 | repeated | 6.669 | 4.291 |
+| 64 | result alias | 13.094 | 3.921 |
+| 256 | distinct | 93.891 | 13.239 |
+| 256 | repeated | 76.150 | 14.271 |
+| 256 | result alias | 166.132 | 13.393 |
 
-- GCD and divisibility at both `Int::Limits` endpoints, including zero and
-  negative operands.
-- With `M=Int::Limits::max`, `(M-1)^2 mod M = 1`, including a negated factor
-  and an assigned variable-modulus version.
-- A product too large for signed 64-bit arithmetic whose modular residue is
-  known, followed by assigning the modulus to exercise the fixed-modulus
-  rewrite. Check the result, not only that propagation has not failed.
-- The corresponding false/equivalent and inactive implication cases, so
-  arithmetic overflow is not confused with a false modular proposition.
+At arity 12, distinct factors took 8,189 search nodes for both implementations.
+Repeated factors took 1 versus 3 nodes; result aliases took 4,097 versus 4,117.
+All paired exhaustive runs returned the same solution counts.
 
-Acceptance: expected values are justified independently, and the cases pass
-under an undefined-behavior sanitizer on a supported compiler.
+The quadratic scans are visible at larger arities. A future optimization
+should group repeated views once per filtering pass and reuse prefix/suffix
+intervals before considering persistent caches. This sample does not measure
+modular-product scaling, general signed domains, or application-level speed,
+and does not establish a statistically robust performance guarantee.
+No optimization was made on the basis of these timings alone.
 
-### 3. Validate the integration revision — before merge/release
+The small [C++ driver](../misc/bench-number-theory.cpp) and
+[Python runner](../misc/bench-number-theory.py) preserve the experiment.
+Compile the driver against a Release Gecode build using C++17 and optimization,
+then run `python3 misc/bench-number-theory.py /path/to/driver`.
+The CSV's zero node/solution fields at arities above 12 mean search was skipped.
 
-The checks below are local macOS CMake checks, not the release build matrix.
-Run the existing supported-platform CI on the revision to be merged, including
-Autoconf and installed-header/library consumption. This review did not run
-Linux, Windows, 32-bit, sanitizers, an installed consumer, or runtime auditing.
-These are unverified areas, not observed platform defects.
+## Scope deliberately left out
 
-Local `main` has five commits absent from the branch. A read-only merge-tree
-check of the committed tips found no conflict markers; it does not validate
-the uncommitted fixes or a future remote tip. Integrate the review changes
-with current `main`, preserving a single 6.5.0 changelog section, then use the
-resulting CI evidence. Canonical version metadata still says 6.4.0 on this
-branch; updating release version/SOVERSION is a release-wide decision, not a
-reason to change the feature API in this review.
-
-## Useful improvements that need not block the PR
-
-- **Measure n-ary scaling before optimizing it.**
-  [product.hpp](../gecode/int/arithmetic/product.hpp) scans for repeated views
-  in `product_interval`, then groups them again during inverse propagation.
-  Both modular propagators recompute omitted-factor intervals in loops. This
-  gives quadratic work per filtering pass; multiple passes can add more.
-  Compare a few arities with distinct factors, repeated factors, and result
-  aliases, recording propagation time and search nodes. For exact products,
-  use a multiplication decomposition only where intermediate values fit.
-  Prefix/suffix reuse or grouping once may help, but add no persistent cache
-  without a measured need.
-- **Recognize cheap reified identities earlier.** `product_status` cannot
-  establish `product([0,x])=0` until all factors are assigned, and a variable
-  modulus misses some analogous zero-factor entailments. These are safe but
-  weak cases. Algebraic zero/unit/identity checks could determine the Boolean
-  or subsume earlier. Preserve the full positivity proposition for a variable
-  modulus and the inactive implication semantics.
-- **Document a short modeling example.** Show Euclidean residues for negative
-  factors and how to assert divisibility using a true reification variable.
-  A non-reified `divides` overload would improve symmetry but is not required
-  for correctness. MiniModel expressions and FlatZinc/MiniZinc exposure were
-  explicitly excluded by the feature brief and are not missing PR deliverables.
-
-## Verification performed
-
-- Release CMake rebuild of `gecode-test`, with no compiler warnings reported.
-- All 588 `Int::Arithmetic::` tests passed after the fixes, one iteration,
-  seed 650, four threads. The original branch also passed this selection.
-- Debug CMake rebuild and all 94 selected GCD/divides/product/sparse-bounds
-  tests passed, three iterations, seed 650, four threads. Runtime audit and
-  sanitizers were disabled in this existing configuration.
-- The delayed sparse-domain probe reproduced the defect against the old
-  Debug library and reached `{6}` immediately against the fixed Release library.
-- Text changelog generation succeeded; `git diff --check` passed.
-
-Commands for repeating the test selections from the feature worktree:
-
-```sh
-.build-gcd-release/bin/gecode-test -test '^Int::Arithmetic::' -iter 1 -seed 650 -threads 4
-.build-gcd/bin/gecode-test -test '^Int::Arithmetic::Gcd' -test '^Int::Arithmetic::Divides' -test '^Int::Arithmetic::Product' -test '^Int::Arithmetic::NumberTheorySparseBounds' -iter 3 -seed 650 -threads 4
-```
-
-The Gecode propagator guidance informed the lifecycle and allocation review;
-the findings above are based on this branch's code and reproduced behavior.
+MiniModel expressions, FlatZinc/MiniZinc exposure, and a non-reified
+`divides` overload were excluded by the feature brief. They are possible
+future API work, not incomplete deliverables for this PR. Likewise, broad
+performance optimization is a follow-up, not a prerequisite for the documented
+semantics of these additive constraints.
