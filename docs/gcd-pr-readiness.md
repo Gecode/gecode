@@ -33,7 +33,11 @@ remain a release-wide responsibility.
   Positivity remains part of the proposition; the tests check that distinction.
 - Audited UBSan testing exposed pre-existing overflow in the `DivMod` and
   `Mod` test oracles. Their arithmetic now uses signed 64-bit intermediates.
-- CMake and Autoconf smoke selections now execute the new arithmetic families.
+- All propagator tests live in Gecode's testing framework in
+  `test/int/arithmetic.cpp`. CI invokes `gecode-test` directly for the new
+  arithmetic families; Autoconf's `make check` also calls that executable.
+  No propagator tests or selectors are added to CTest. The Ninja check step
+  now uses the existing direct `check` build target instead of CTest.
   The Debug audit CI job explicitly builds the excluded-from-all test target
   before executing its arithmetic tests. The initial CI attempt caught this
   missing build target (exit 127); no arithmetic test had run in that step.

@@ -148,6 +148,14 @@ jobs:
         set -euxo pipefail
         cmake --build . --config $BUILD_TYPE --target check
 
+    - name: Run number theory tests
+      shell: bash
+      run: >
+        "$GITHUB_WORKSPACE/build/bin/gecode-test"
+        -test '^Int::Arithmetic::Gcd' -test '^Int::Arithmetic::Divides'
+        -test '^Int::Arithmetic::Product' -test '^Int::Arithmetic::NumberTheory'
+        -iter 2 -fixprob 1 -threads 2
+
     - name: Install CMake package
       working-directory: ${{github.workspace}}/build
       shell: bash
@@ -231,8 +239,7 @@ jobs:
     - name: Check
       shell: bash
       run: >
-        ctest --test-dir "$GITHUB_WORKSPACE/build-ninja"
-        --output-on-failure -R '^(build-gecode-test|test)$'
+        cmake --build "$GITHUB_WORKSPACE/build-ninja" --target check
 
     - name: Configure CMake Debug audit smoke
       shell: bash
@@ -411,6 +418,14 @@ jobs:
       shell: pwsh
       run: cmake --build "${{ github.workspace }}\\build" --config ${{ env.BUILD_TYPE }} --target check
 
+    - name: Run number theory tests
+      shell: pwsh
+      run: >
+        & "$env:GITHUB_WORKSPACE\build\bin\$env:BUILD_TYPE\gecode-test.exe"
+        -test '^Int::Arithmetic::Gcd' -test '^Int::Arithmetic::Divides'
+        -test '^Int::Arithmetic::Product' -test '^Int::Arithmetic::NumberTheory'
+        -iter 2 -fixprob 1 -threads 2
+
     - name: Install CMake package
       shell: pwsh
       run: cmake --install "${{ github.workspace }}\\build" --config ${{ env.BUILD_TYPE }} --prefix "${{ github.workspace }}\\install"
@@ -461,6 +476,14 @@ jobs:
     - name: Check
       shell: pwsh
       run: cmake --build --preset vs2022-vcpkg-check
+
+    - name: Run number theory tests
+      shell: pwsh
+      run: >
+        & "$env:GITHUB_WORKSPACE\build\vs2022-vcpkg\bin\$env:BUILD_TYPE\gecode-test.exe"
+        -test '^Int::Arithmetic::Gcd' -test '^Int::Arithmetic::Divides'
+        -test '^Int::Arithmetic::Product' -test '^Int::Arithmetic::NumberTheory'
+        -iter 2 -fixprob 1 -threads 2
 
     - name: Install CMake package
       shell: pwsh
