@@ -1003,6 +1003,26 @@ namespace Test { namespace Int {
            if (home.status() == SS_FAILED)
              return false;
          }
+         {
+           TestSpace home;
+           IntVar x(home,3,5), c(home,2,2), m(home,5,6), y(home,2,2);
+           product_mod(home,IntVarArgs({x,c}),m,y);
+           if (home.status() == SS_FAILED)
+             return false;
+           rel(home,x,IRT_LQ,4);
+           if ((home.status() == SS_FAILED) || !x.assigned() ||
+               (x.val() != 4))
+             return false;
+         }
+         {
+           TestSpace home;
+           IntVar x(home,10,20), c(home,10,20), m(home,401,509);
+           IntVar y(home,0,600);
+           product_mod(home,IntVarArgs({x,c}),m,y);
+           if ((home.status() == SS_FAILED) || (y.min() != 100) ||
+               (y.max() != 400))
+             return false;
+         }
          return true;
        }
      };
