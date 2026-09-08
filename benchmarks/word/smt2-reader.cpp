@@ -264,10 +264,13 @@ namespace {
   };
 
   struct Script {
+    enum Objective { SATISFY, MAXIMIZE, MINIMIZE };
     std::vector<Decl> declarations;
     std::vector<std::pair<std::string,SExpr> > definitions;
     std::vector<SExpr> assertions;
     std::unordered_map<std::string,Sort> globals;
+    Objective objective=SATISFY;
+    std::unique_ptr<SExpr> objective_term;
   };
 
   bool is_atom(const SExpr& e, const char* value) {
@@ -299,6 +302,40 @@ namespace {
   }
 
   WordValue word_literal(const std::string& token);
+
+  bool integer_magnitude(const SExpr& e, WordValue& value) {
+    if (!e.atom || (e.token != SExpr::SIMPLE) || e.text.empty())
+      return false;
+    value=0;
+    const WordValue maximum=WordValue(1) << 63;
+    for (char c : e.text) {
+      if ((c < '0') || (c > '9'))
+        return false;
+      const unsigned int digit=static_cast<unsigned int>(c-'0');
+      if (value > (maximum-digit)/10U)
+        throw Error("integer literal is outside the supported 64-bit range on "
+                    "line " + std::to_string(e.line));
+      value=value*10U+digit;
+    }
+    return true;
+  }
+
+  bool integer_literal(const SExpr& e, WordValue& value) {
+    if (!integer_magnitude(e,value)) return false;
+    if (value >= (WordValue(1) << 63))
+      throw Error("nonnegative integer literal is outside signed 64-bit range "
+                  "on line " + std::to_string(e.line));
+    return true;
+  }
+
+  bool signed_integer_literal(const SExpr& e, WordValue& value) {
+    if (e.atom) return integer_literal(e,value);
+    if ((e.items.size() != 2) || !is_atom(e.items[0],"-")) return false;
+    WordValue magnitude;
+    if (!integer_magnitude(e.items[1],magnitude)) return false;
+    value=WordValue(0)-magnitude;
+    return true;
+  }
 
   bool decimal_literal(const SExpr& e, Sort& sort, WordValue& value) {
     if (e.atom || e.items.empty() || !is_atom(e.items[0],"_"))
@@ -362,6 +399,8 @@ namespace {
   }
 
   Sort infer_term(const SExpr& e, const TypeEnv& env) {
+    WordValue integer;
+    if (signed_integer_literal(e,integer)) return Sort(SORT_INT);
     if (e.atom) {
       if (e.token == SExpr::STRING)
         throw Error("string is not a Bool or bit-vector term");
@@ -460,9 +499,6 @@ namespace {
         if (!same_sort(first,infer(e.items[i],env)))
           throw Error(op + " has operands of different sorts on line " +
                       std::to_string(e.line));
-      if (first.kind == SORT_INT)
-        throw Error("integer relations are outside this WordVar reader on "
-                    "line " + std::to_string(e.line));
       return Sort(SORT_BOOL);
     }
     if (op == "ite") {
@@ -471,10 +507,18 @@ namespace {
         throw Error("ite condition is not Bool on line " +
                     std::to_string(e.line));
       Sort then_sort=infer(e.items[2],env), else_sort=infer(e.items[3],env);
-      if (!same_sort(then_sort,else_sort) || (then_sort.kind == SORT_INT))
+      if (!same_sort(then_sort,else_sort))
         throw Error("ite branches have unsupported or different sorts on "
                     "line " + std::to_string(e.line));
       return then_sort;
+    }
+    if ((op == "<") || (op == "<=") || (op == ">") || (op == ">=")) {
+      require_arity(e,2);
+      Sort a=infer(e.items[1],env), b=infer(e.items[2],env);
+      if ((a.kind != SORT_INT) || !same_sort(a,b))
+        throw Error(op + " expects integer operands on line " +
+                    std::to_string(e.line));
+      return Sort(SORT_BOOL);
     }
     if ((op == "bvule") || (op == "bvult") || (op == "bvuge") ||
         (op == "bvugt") || (op == "bvsle") || (op == "bvslt") ||
@@ -497,6 +541,34 @@ namespace {
           (a.width+b.width > 64U))
         throw Error("concat expects words with total width at most 64");
       return Sort(SORT_WORD,a.width+b.width);
+    }
+    if ((op == "+") || (op == "*")) {
+      if (e.items.size() < 3)
+        throw Error(op + " expects at least two arguments on line " +
+                    std::to_string(e.line));
+      for (std::size_t i=1; i<e.items.size(); i++)
+        if (infer(e.items[i],env).kind != SORT_INT)
+          throw Error(op + " expects integer operands on line " +
+                      std::to_string(e.line));
+      return Sort(SORT_INT);
+    }
+    if (op == "-") {
+      if ((e.items.size() != 2) && (e.items.size() != 3))
+        throw Error("- expects one or two arguments on line " +
+                    std::to_string(e.line));
+      for (std::size_t i=1; i<e.items.size(); i++)
+        if (infer(e.items[i],env).kind != SORT_INT)
+          throw Error("- expects integer operands on line " +
+                      std::to_string(e.line));
+      return Sort(SORT_INT);
+    }
+    if ((op == "div") || (op == "mod")) {
+      require_arity(e,2);
+      Sort a=infer(e.items[1],env), b=infer(e.items[2],env);
+      if ((a.kind != SORT_INT) || !same_sort(a,b))
+        throw Error(op + " expects integer operands on line " +
+                    std::to_string(e.line));
+      return Sort(SORT_INT);
     }
     if ((op == "bvadd") || (op == "bvmul") || (op == "bvand") ||
         (op == "bvor") || (op == "bvxor")) {
@@ -560,7 +632,7 @@ namespace {
         // Check before extending the environment: no forward references or
         // recursion. All global names remain unique for the entire script.
         Sort actual=infer(form.items[4],env);
-        if ((declared.kind == SORT_INT) || !same_sort(declared,actual))
+        if (!same_sort(declared,actual))
           throw Error("define-fun body has an unsupported or different sort");
         if (!script.globals.emplace(name,declared).second)
           throw Error("duplicate declaration '" + name + "'");
@@ -573,6 +645,17 @@ namespace {
           throw Error("assert expects Bool on line " +
                       std::to_string(form.line));
         script.assertions.push_back(form.items[1]);
+      } else if ((command == "maximize") || (command == "minimize")) {
+        require_arity(form,1);
+        if (checked) throw Error("objective after check-sat is unsupported");
+        if (script.objective != Script::SATISFY)
+          throw Error("multiple optimization objectives are unsupported");
+        if (infer(form.items[1],env).kind != SORT_INT)
+          throw Error("optimization objective must have sort Int on line " +
+                      std::to_string(form.line));
+        script.objective=(command == "maximize") ?
+          Script::MAXIMIZE : Script::MINIMIZE;
+        script.objective_term.reset(new SExpr(form.items[1]));
       } else if (command == "push") {
         if (pushed || checked || (form.items.size() > 2) ||
             ((form.items.size() == 2) && !is_atom(form.items[1],"1")))
@@ -582,8 +665,12 @@ namespace {
         require_arity(form,0);
         if (checked) throw Error("multiple check-sat commands are unsupported");
         checked=true;
+      } else if (command == "get-objectives") {
+        require_arity(form,0);
+        if (!checked)
+          throw Error("get-objectives before check-sat is unsupported");
       } else if ((command == "set-logic") || (command == "set-info")) {
-        // Metadata does not change the asserted QF_BV formula.
+        // Metadata does not change the asserted formula.
       } else if (command == "exit") {
         require_arity(form,0);
         break;
@@ -643,6 +730,8 @@ namespace {
   class SMT2Space : public Space {
   private:
     WordDomainType policy;
+    Script::Objective objective_kind;
+    WordVar objective_word;
     bool tables;
     unsigned int table_count=0;
     std::unordered_map<std::string,WordTupleSet> tuple_cache;
@@ -684,8 +773,68 @@ namespace {
       ~EvalGuard(void) { depth--; }
     };
 
+    WordDomainType expression_policy(const Sort& sort) const {
+      // Signedness is the interpretation of SMT Int operations, not a reason
+      // to change a classic cube WordVar into a bounds-enabled variable.
+      return sort.kind == SORT_INT && policy != WDT_CUBE ? WDT_SIGNED : policy;
+    }
+
+    WordExpr integer_div(const WordExpr& a, const WordExpr& b,
+                         const SExpr& divisor) {
+      const WordExpr zero(64,0), one(64,1);
+      const WordDomainType integer_domain=expression_policy(Sort(SORT_INT));
+      WordValue constant;
+      if (integer_literal(divisor,constant)) {
+        if (constant == 0) return zero;
+        if (constant == 1) return a;
+        const WordExpr quotient=signed_div(a,b,WS_SMTLIB);
+        const WordExpr remainder=signed_rem(a,b,WS_SMTLIB);
+        const BoolExpr remainder_negative=
+          word_rel(remainder,WRT_SLE,zero,integer_domain);
+        return Gecode::ite(remainder_negative,quotient-one,quotient);
+      }
+      const BoolExpr b_zero=word_rel(b,WRT_EQ,zero,integer_domain);
+      const BoolExpr b_negative=word_rel(b,WRT_SLE,zero,integer_domain);
+      const WordExpr quotient=signed_div(a,b,WS_SMTLIB);
+      const WordExpr remainder=signed_rem(a,b,WS_SMTLIB);
+      const BoolExpr remainder_negative=
+        word_rel(remainder,WRT_SLE,zero,integer_domain);
+      const WordExpr adjusted=Gecode::ite(
+        remainder_negative,
+        Gecode::ite(b_negative,quotient+one,quotient-one),quotient);
+      // SMT-LIB leaves division by zero underspecified. Zero matches the
+      // conventional concrete interpretation used by this reader.
+      return Gecode::ite(b_zero,zero,adjusted);
+    }
+
+    WordExpr integer_mod(const WordExpr& a, const WordExpr& b,
+                         const SExpr& divisor) {
+      const WordExpr zero(64,0);
+      const WordDomainType integer_domain=expression_policy(Sort(SORT_INT));
+      WordValue constant;
+      if (integer_literal(divisor,constant)) {
+        if (constant == 0) return zero;
+        if (constant == 1) return zero;
+        // SMT Int mod has a nonnegative result. With a positive divisor this
+        // is exactly the native signed-mod operation, including its optimized
+        // constant and power-of-two propagators.
+        return signed_mod(a,b,WS_SMTLIB);
+      }
+      const BoolExpr b_zero=word_rel(b,WRT_EQ,zero,integer_domain);
+      const BoolExpr b_negative=word_rel(b,WRT_SLE,zero,integer_domain);
+      const WordExpr magnitude=Gecode::ite(b_negative,-b,b);
+      const WordExpr remainder=signed_rem(a,magnitude,WS_SMTLIB);
+      const BoolExpr remainder_negative=
+        word_rel(remainder,WRT_SLE,zero,integer_domain);
+      const WordExpr adjusted=Gecode::ite(
+        remainder_negative,remainder+magnitude,remainder);
+      return Gecode::ite(b_zero,zero,adjusted);
+    }
+
     WordExpr eval_word(const SExpr& e, const EvalEnv& env) {
       EvalGuard guard(evaluation_depth);
+      WordValue integer;
+      if (signed_integer_literal(e,integer)) return WordExpr(64,integer);
       if (e.atom) {
         Sort literal;
         if ((e.token == SExpr::SIMPLE) && literal_sort(e.text,literal))
@@ -695,7 +844,8 @@ namespace {
           // repost its DAG at every Boolean relation that uses it.
           if (!value->word)
             value->word.reset(new WordExpr(
-              eval_word(*value->term,*value->outer).post(*this,policy)));
+              eval_word(*value->term,*value->outer).post(
+                *this,expression_policy(value->term->sort))));
           return *value->word;
         }
         auto i=word_index.find(e.text);
@@ -735,6 +885,14 @@ namespace {
       if (op == "bvneg") return -eval_word(e.items[1],env);
       if (op == "bvnot") return ~eval_word(e.items[1],env);
       WordExpr a=eval_word(e.items[1],env);
+      if ((op == "+") || (op == "*")) {
+        for (std::size_t i=2; i<e.items.size(); i++)
+          a=(op == "+") ? a+eval_word(e.items[i],env) :
+            a*eval_word(e.items[i],env);
+        return a;
+      }
+      if (op == "-")
+        return e.items.size() == 2 ? -a : a-eval_word(e.items[2],env);
       if ((op == "bvadd") || (op == "bvmul") || (op == "bvand") ||
           (op == "bvor") || (op == "bvxor")) {
         for (std::size_t i=2; i<e.items.size(); i++) {
@@ -750,6 +908,8 @@ namespace {
         return a;
       }
       WordExpr b=eval_word(e.items[2],env);
+      if (op == "div") return integer_div(a,b,e.items[2]);
+      if (op == "mod") return integer_mod(a,b,e.items[2]);
       if (op == "concat") return Gecode::concat(a,b);
       if (op == "bvudiv") return Gecode::div(a,b,WS_SMTLIB);
       if (op == "bvurem") return Gecode::mod(a,b,WS_SMTLIB);
@@ -825,20 +985,21 @@ namespace {
       }
       if ((op == "=") || (op == "distinct")) {
         Sort s=e.items[1].sort;
+        const WordDomainType relation_policy=expression_policy(s);
         BoolExpr result;
         if (op == "=") {
           for (std::size_t i=2; i<e.items.size(); i++)
             result = result && (s.kind == SORT_BOOL ?
               eval_bool(e.items[i-1],env) == eval_bool(e.items[i],env) :
               word_rel(eval_word(e.items[i-1],env),WRT_EQ,
-                       eval_word(e.items[i],env),policy));
+                       eval_word(e.items[i],env),relation_policy));
         } else {
           for (std::size_t i=1; i<e.items.size(); i++)
             for (std::size_t j=i+1; j<e.items.size(); j++)
               result = result && (s.kind == SORT_BOOL ?
                 eval_bool(e.items[i],env) != eval_bool(e.items[j],env) :
                 word_rel(eval_word(e.items[i],env),WRT_NQ,
-                         eval_word(e.items[j],env),policy));
+                         eval_word(e.items[j],env),relation_policy));
         }
         return result;
       }
@@ -852,7 +1013,21 @@ namespace {
           ((op == "bvugt") && zero_literal(e.items[1])))
         return constant_bool(false);
       WordRelType relation;
-      if (op == "bvule") relation=WRT_ULQ;
+      WordDomainType relation_policy=policy;
+      if (op == "<") {
+        relation=WRT_SLE;
+        relation_policy=expression_policy(e.items[1].sort);
+      } else if (op == "<=") {
+        relation=WRT_SLQ;
+        relation_policy=expression_policy(e.items[1].sort);
+      } else if (op == ">") {
+        relation=WRT_SGR;
+        relation_policy=expression_policy(e.items[1].sort);
+      } else if (op == ">=") {
+        relation=WRT_SGQ;
+        relation_policy=expression_policy(e.items[1].sort);
+      }
+      else if (op == "bvule") relation=WRT_ULQ;
       else if (op == "bvult") relation=WRT_ULE;
       else if (op == "bvuge") relation=WRT_UGQ;
       else if (op == "bvugt") relation=WRT_UGR;
@@ -862,22 +1037,27 @@ namespace {
       else if (op == "bvsgt") relation=WRT_SGR;
       else throw Error("unsupported Boolean operator '" + op + "'");
       return word_rel(eval_word(e.items[1],env),relation,
-                      eval_word(e.items[2],env),policy);
+                      eval_word(e.items[2],env),relation_policy);
     }
 
   public:
     SMT2Space(const Script& script, WordDomainType policy0, bool tables0=false)
-      : policy(policy0), tables(tables0), words(*this,static_cast<int>(
+      : policy(policy0), objective_kind(script.objective), tables(tables0),
+        words(*this,static_cast<int>(
           [&script](){ std::size_t n=0; for (const Decl& d:script.declarations)
-            if (d.sort.kind==SORT_WORD) n++; return n; }())),
+            if (d.sort.kind!=SORT_BOOL) n++; return n; }())),
         bools(*this,static_cast<int>(
           [&script](){ std::size_t n=0; for (const Decl& d:script.declarations)
             if (d.sort.kind==SORT_BOOL) n++; return n; }())) {
       int wi=0, bi=0;
       for (const Decl& d : script.declarations) {
-        if (d.sort.kind == SORT_WORD) {
-          words[wi]=(policy == WDT_CUBE) ? WordVar(*this,d.sort.width) :
-            WordVar(*this,d.sort.width,policy);
+        if (d.sort.kind != SORT_BOOL) {
+          if (d.sort.kind == SORT_INT)
+            words[wi]=(policy == WDT_CUBE) ? WordVar(*this,64) :
+              WordVar(*this,64,WDT_SIGNED);
+          else
+            words[wi]=(policy == WDT_CUBE) ? WordVar(*this,d.sort.width) :
+              WordVar(*this,d.sort.width,policy);
           word_index.emplace(d.name,wi++);
         } else if (d.sort.kind == SORT_BOOL) {
           bools[bi]=BoolVar(*this,0,1);
@@ -892,13 +1072,38 @@ namespace {
           EvalEnv::Binding(&definition.second,&env));
       for (const SExpr& assertion : script.assertions)
         Gecode::rel(*this,eval_bool(assertion,env));
-      WordVarArgs active_words;
+      if (objective_kind != Script::SATISFY)
+        objective_word=eval_word(*script.objective_term,env).post(
+          *this,expression_policy(script.objective_term->sort));
+      WordVarArgs active_cube, active_bounded;
       for (int i=0; i<words.size(); i++)
-        if (words[i].degree() != 0)
-          active_words << words[i];
-      if (active_words.size() != 0)
-        branch(*this,active_words,WORD_VAR_SIZE_MIN(),
-               policy == WDT_CUBE ? WORD_VAL_MSB() : WORD_VAL_SPLIT_MIN());
+        if (words[i].degree() != 0) {
+          if (words[i].domain_type() == WDT_CUBE)
+            active_cube << words[i];
+          else
+            active_bounded << words[i];
+        }
+      if ((objective_kind != Script::SATISFY) && !objective_word.assigned()) {
+        int objective_declaration=-1;
+        for (int i=0; i<words.size(); i++)
+          if (words[i].varimp() == objective_word.varimp()) {
+            objective_declaration=i;
+            break;
+          }
+        if ((objective_declaration >= 0) &&
+            (words[objective_declaration].degree() == 0)) {
+          if (objective_word.domain_type() == WDT_CUBE)
+            active_cube << objective_word;
+          else
+            active_bounded << objective_word;
+        }
+      }
+      if (active_bounded.size() != 0)
+        branch(*this,active_bounded,WORD_VAR_SIZE_MIN(),
+               objective_kind == Script::MAXIMIZE ?
+               WORD_VAL_SPLIT_MAX() : WORD_VAL_SPLIT_MIN());
+      if (active_cube.size() != 0)
+        branch(*this,active_cube,WORD_VAR_SIZE_MIN(),WORD_VAL_MSB());
       BoolVarArgs active_bools;
       for (int i=0; i<bools.size(); i++)
         if (bools[i].degree() != 0)
@@ -908,11 +1113,22 @@ namespace {
     }
 
     SMT2Space(SMT2Space& other)
-      : Space(other), policy(other.policy), tables(other.tables),
+      : Space(other), policy(other.policy),
+        objective_kind(other.objective_kind), tables(other.tables),
         table_count(other.table_count) {
       words.update(*this,other.words);
       bools.update(*this,other.bools);
+      if (objective_kind != Script::SATISFY)
+        objective_word.update(*this,other.objective_word);
     }
+    virtual void constrain(const Space& best0) {
+      const SMT2Space& best=static_cast<const SMT2Space&>(best0);
+      const WordRelType relation=(objective_kind == Script::MAXIMIZE) ?
+        WRT_SGR : WRT_SLE;
+      rel(*this,objective_word,relation,64,best.objective_word.val());
+    }
+    bool optimizing(void) const { return objective_kind != Script::SATISFY; }
+    WordValue objective(void) const { return objective_word.val(); }
     unsigned int replacements(void) const { return table_count; }
     virtual Space* copy(void) { return new SMT2Space(*this); }
   };
@@ -927,6 +1143,14 @@ namespace {
       else out << c;
     }
     return out.str();
+  }
+
+  std::string integer_text(WordValue value) {
+    const WordValue sign=WordValue(1) << 63;
+    if ((value&sign) == 0)
+      return std::to_string(value);
+    const WordValue magnitude=(~value)+1U;
+    return "-"+std::to_string(magnitude);
   }
 
   WordDomainType policy(const std::string& name) {
@@ -993,12 +1217,26 @@ int main(int argc, char* argv[]) {
     const unsigned int replacements=root->replacements();
     StatusStatistics root_stats;
     SpaceStatus root_status=root->status(root_stats);
-    DFS<SMT2Space> search(root_status == SS_FAILED ? nullptr : root.get());
-    root.reset();
-    std::unique_ptr<SMT2Space> solution(search.next());
-    const bool sat=solution != nullptr;
-    solution.reset();
-    Search::Statistics stats=search.statistics();
+    const bool optimizing=root->optimizing();
+    bool sat=false;
+    WordValue objective_value=0;
+    Search::Statistics stats;
+    if (optimizing) {
+      BAB<SMT2Space> search(root_status == SS_FAILED ? nullptr : root.get());
+      root.reset();
+      while (std::unique_ptr<SMT2Space> solution=std::unique_ptr<SMT2Space>(
+               search.next())) {
+        sat=true;
+        objective_value=solution->objective();
+      }
+      stats=search.statistics();
+    } else {
+      DFS<SMT2Space> search(root_status == SS_FAILED ? nullptr : root.get());
+      root.reset();
+      std::unique_ptr<SMT2Space> solution(search.next());
+      sat=solution != nullptr;
+      stats=search.statistics();
+    }
     const auto finished=std::chrono::steady_clock::now();
     const auto elapsed=std::chrono::duration_cast<std::chrono::microseconds>(
       finished-start).count();
@@ -1010,6 +1248,8 @@ int main(int argc, char* argv[]) {
               << ",\"parse_us\":" << parse_us << ",\"model_us\":" << model_us
               << ",\"table_replacements\":" << replacements
               << ",\"solve_us\":" << solve_us
+              << (optimizing && sat ? ",\"objective\":"+
+                  integer_text(objective_value)+",\"optimal\":true" : "")
               << ",\"nodes\":" << stats.node << ",\"failures\":"
               << stats.fail << ",\"propagations\":"
               << (root_stats.propagate+stats.propagate) << "}\n";

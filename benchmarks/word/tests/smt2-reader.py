@@ -83,6 +83,24 @@ def main():
         ('definition-recursive', '(define-fun x () Bool x)(check-sat)', 'error'),
         ('definition-sort', '(define-fun x () Bool #b0)(check-sat)', 'error'),
         ('definition-parameters', '(define-fun f ((x Bool)) Bool x)(check-sat)', 'error'),
+        ('integer-euclidean',
+         '(assert (= (div (- 3) 2) (- 2)))'
+         '(assert (= (mod (- 3) 2) 1))'
+         '(assert (= (div 3 (- 2)) (- 1)))'
+         '(assert (= (mod 3 (- 2)) 1))'
+         '(assert (= (div (- 3) (- 2)) 2))'
+         '(assert (= (mod (- 3) (- 2)) 1))(check-sat)', 'sat'),
+        ('integer-operators', '(declare-const x Int)(define-fun y () Int (+ x 3))'
+         '(assert (>= x (- 4)))(assert (< x 9))(assert (= y (* x (- 2))))'
+         '(assert (distinct x 0))(check-sat)', 'sat'),
+        ('integer-sort-mismatch', '(assert (= 1 #b1))(check-sat)', 'error'),
+        ('integer-minimum', '(assert (= (- 9223372036854775808)'
+         ' (- 9223372036854775808)))(check-sat)', 'sat'),
+        ('integer-literal-overflow', '(assert (= 9223372036854775808 0))'
+         '(check-sat)', 'error'),
+        ('multiple-objectives', '(maximize 1)(minimize 0)(check-sat)', 'error'),
+        ('objective-sort', '(maximize #b1)(check-sat)', 'error'),
+        ('early-get-objectives', '(get-objectives)(check-sat)', 'error'),
     ])
     for width in (4, 64):
         mask = (1 << width) - 1
@@ -153,6 +171,28 @@ def main():
                             if name == "shared-word":
                                 assert result["nodes"] <= 1, context
                     checks += 1
+        objectives = [
+            ('maximize-int',
+             '(declare-const x Int)(assert (>= x (- 3)))(assert (<= x 5))'
+             '(maximize x)(check-sat)(get-objectives)', 5),
+            ('minimize-int',
+             '(declare-const x Int)(assert (>= x (- 3)))(assert (<= x 5))'
+             '(minimize x)(check-sat)(get-objectives)', -3),
+            ('maximize-expression',
+             '(declare-const x Int)(assert (>= x 0))(assert (<= x 4))'
+             '(maximize (- (* x 3) 2))(check-sat)', 10),
+        ]
+        for name, source, expected in objectives:
+            path = Path(directory) / (name + '.smt2')
+            path.write_text(source + '\n')
+            for variant in ('cube', 'unsigned', 'signed'):
+                run = subprocess.run([binary, variant, str(path)],
+                                     capture_output=True, text=True, timeout=10)
+                result = json.loads(run.stdout)
+                context = (name, variant, result, run.stderr)
+                assert run.returncode == 0 and result['result'] == 'sat', context
+                assert result['objective'] == expected and result['optimal'], context
+                checks += 1
         # Resource limits are parser-wide, so one policy is sufficient here.
         limits = [
             ('nesting', '(assert ' + '(not '*100000 + 'true' + ')'*100000 + ')(check-sat)'),

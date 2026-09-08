@@ -1,6 +1,6 @@
 # Word benchmarks
 
-## SMT2 decision reader
+## SMT2 reader
 
 Build and run the benchmark reader with:
 
@@ -12,14 +12,22 @@ build/bin/word-smt2-reader unsigned input.smt2 --model-only
 ctest --test-dir build -R 'word-smt2-reader|word-benchmark-runners' --output-on-failure
 ```
 
-The domain policy is `cube`, `unsigned`, or `signed`. The reader accepts Bool
-and 1–64-bit words, nullary declarations and definitions, simultaneous `let`,
-Boolean connectives, comparisons, conditionals, arithmetic, bitwise operations,
-shifts, concatenation, extraction, extensions, and constant rotations.
+The domain policy is `cube`, `unsigned`, or `signed`; `cube` selects the classic
+WordVar without interval bounds. The reader accepts Bool, Int, and 1–64-bit
+words, nullary declarations and definitions, simultaneous `let`, Boolean
+connectives, comparisons, conditionals, arithmetic, bitwise operations, shifts,
+concatenation, extraction, extensions, and constant rotations. It supports one
+integer `maximize` or `minimize` objective.
 Quoted identifiers and metadata strings are supported. Decimal literals must
 fit their width, as required by the [QF_BV specification](https://smt-lib.org/logics-all.shtml).
 
-This is a single-decision benchmark adapter, not a complete SMT-LIB solver.
+The reader represents SMT Int as a full-domain 64-bit WordVar and interprets
+its relations and arithmetic as signed. Under the `cube` policy this remains a
+cube-only WordVar; the two bounded policies use signed bounds because SMT Int
+contains negative values. This finite encoding is exact only when integer
+literals and intermediate results stay within the signed 64-bit range.
+
+This is a single-query benchmark adapter, not a complete SMT-LIB solver.
 Arrays, parameterized functions, incremental solving, and words or intermediate
 results wider than 64 bits are unsupported. Input-size and expression-depth
 limits reject oversized inputs. JSON output separates `parse_us`, `model_us`,
