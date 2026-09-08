@@ -18,6 +18,12 @@ exception (seed 1576866552, fixprob 1). All 95 focused Release tests pass with
 three iterations, seed 650, and fixprob 1. The workflow now executes its Debug
 audit arithmetic binary; local audit/UBSan validation is in progress.
 
+Independent limit checks now cover GCD/divides at signed endpoints, positive
+and negative modular squares/cubes, delayed modulus assignment, and all
+reification truth/control combinations. These cases pass with auditing and
+UBSan (`halt_on_error=1`). A broader UBSan run exposed pre-existing signed
+overflow in the `DivMod` test oracle; it is being corrected separately.
+
 Close, but I would not yet give an unconditional release-readiness sign-off.
 The implementation is a credible addition to 6.5.0: it has a small public API,
 explicit mathematical semantics, dedicated propagators, and substantial
