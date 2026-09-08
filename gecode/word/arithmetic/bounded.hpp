@@ -74,8 +74,9 @@ namespace Gecode { namespace Word { namespace Arithmetic {
   /** Intersect a ranked domain with rank == residue (mod step).
    *
    * The fixed low-bit prefix of the ordered cube is a second congruence.
-   * Combining both congruences here avoids repeatedly walking progression
-   * endpoints through cube synchronization.
+   * Combining both congruences handles a fixed low-bit prefix exactly.
+   * Other cube restrictions can require an expensive endpoint search; decline
+   * each unsupported endpoint instead of walking it through synchronization.
    */
   forceinline bool
   bound_progression(BoundLocalDomain& d, WordValue residue,
@@ -141,6 +142,12 @@ namespace Gecode { namespace Word { namespace Arithmetic {
     WordValue last=first;
     if (combined_step != 0U)
       last += ((d.maximum-first)/combined_step)*combined_step;
+    const bool first_supported=cube_contains(ordered_lo,ordered_hi,first,mask);
+    const bool last_supported=cube_contains(ordered_lo,ordered_hi,last,mask);
+    if ((first == last) && !first_supported)
+      return false;
+    if (!first_supported) first=d.minimum;
+    if (!last_supported) last=d.maximum;
     return d.range(first,last);
   }
 

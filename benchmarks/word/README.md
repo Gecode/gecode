@@ -1,5 +1,34 @@
 # Word benchmarks
 
+## SMT2 decision reader
+
+Build and run the benchmark reader with:
+
+```sh
+cmake --build build --target word-smt2-reader
+build/bin/word-smt2-reader unsigned input.smt2
+build/bin/word-smt2-reader unsigned input.smt2 --parse-only
+build/bin/word-smt2-reader unsigned input.smt2 --model-only
+ctest --test-dir build -R 'word-smt2-reader|word-benchmark-runners' --output-on-failure
+```
+
+The domain policy is `cube`, `unsigned`, or `signed`. The reader accepts Bool
+and 1–64-bit words, nullary declarations and definitions, simultaneous `let`,
+Boolean connectives, comparisons, conditionals, arithmetic, bitwise operations,
+shifts, concatenation, extraction, extensions, and constant rotations.
+Quoted identifiers and metadata strings are supported. Decimal literals must
+fit their width, as required by the [QF_BV specification](https://smt-lib.org/logics-all.shtml).
+
+This is a single-decision benchmark adapter, not a complete SMT-LIB solver.
+Arrays, parameterized functions, incremental solving, and words or intermediate
+results wider than 64 bits are unsupported. Input-size and expression-depth
+limits reject oversized inputs. JSON output separates `parse_us`, `model_us`,
+and `solve_us`; use external wall time for end-to-end solver comparisons.
+Shared definitions and bindings are lowered once when used.
+
+The [performance review](performance-review-2026-09.md) records the fixes,
+targeted measurements, and final regression checks.
+
 ## Application and public-corpus roadmap
 
 The [word-041 roadmap](word-041-roadmap.md) ranks demonstrated and proposed
@@ -21,6 +50,14 @@ propagation for concatenation and fixed extraction with an exhaustive
 small-width oracle and an interleaved Release packed-header comparison.
 
 ## Focused word-037 campaign
+
+The native drivers enumerate every public solution; the Z3 timing path performs
+one `check-sat`. DMA also reuses its propagated root between repetitions, whereas
+Z3 resets and reconstructs the formula. These are different workloads, not
+matched solver-speed comparisons. Analysis retains the raw timings but reports
+paired speedups only between the two native Gecode configurations. For an
+external decision comparison, use the SMT2 reader and the same input file and
+decision goal in each solver.
 
 `comparison-campaign.py` validates the exact 72-instance preflight matrix before
 collection. The checked-in manifest contains six families, three levels, and
@@ -78,6 +115,10 @@ deferred unless its whole timeout can be preauthorized. Tiny cases are batched
 to at least 0.25 seconds, with Z3 repeating reset, declarations, assertions,
 and `check-sat` inside one process. Raw records, host-local metadata,
 `analysis.json`, and `result.md` stay under the external root.
+Analysis never overwrites the checked-in historical report. Native batch
+validation checks the declared repetition count and total solutions, as well as
+the first repetition's exact projection set; it is not a per-repetition witness
+trace.
 
 ## CRC, xorshift, and reduced-Speck comparisons
 

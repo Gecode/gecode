@@ -86,9 +86,11 @@ namespace Test { namespace Word { namespace Number {
                     if (success) success=actual.synchronize();
                     if (!success || (actual == old)) break;
                   }
-                  if (success != found) return false;
-                  if (success && ((actual.minimum != first) ||
-                                  (actual.maximum != last)))
+                  if (found && (!success || (actual.minimum > first) ||
+                                (actual.maximum < last)))
+                    return false;
+                  if (success && (actual.minimum == actual.maximum) &&
+                      (!found || (actual.minimum != first)))
                     return false;
                 }
               }
@@ -96,6 +98,21 @@ namespace Test { namespace Word { namespace Number {
             if (lo == 0U) break;
           }
         }
+      }
+    }
+    // An unsupported progression endpoint must not walk through cube closure.
+    for (unsigned int width : {12U,16U,20U,24U,32U,40U}) {
+      const WordValue block=WordValue(1) << (width/2U);
+      const WordValue mask=Gecode::Word::width_mask(width);
+      BoundLocalDomain d={width,WDT_UNSIGNED,0U,(mask&~(block-1U))|1U,
+                           block,mask&~(block-1U),false};
+      if (!d.synchronize()) return false;
+      const BoundLocalDomain initial=d;
+      for (unsigned int pass=0; pass<2U; pass++) {
+        d.deferred=true;
+        if (!bound_progression(d,0U,block-1U)) return false;
+        d.deferred=false;
+        if (!d.synchronize() || !(d == initial)) return false;
       }
     }
     const WordValue maximum=~WordValue(0);
@@ -111,7 +128,7 @@ namespace Test { namespace Word { namespace Number {
     BoundLocalDomain overflow={64,WDT_UNSIGNED,0U,WordValue(1)<<63,
                                0U,maximum,true};
     if (!bound_progression(overflow,0U,maximum) ||
-        (overflow.minimum != 0U) || (overflow.maximum != 0U))
+        (overflow.minimum != 0U))
       return false;
 
     const WordValue sign=WordValue(1)<<63;
@@ -384,16 +401,26 @@ namespace Test { namespace Word { namespace Number {
     Gecode::WordVar divisor, dividend, result, one, remainder;
     Gecode::IntVar modulus;
     Gecode::BoolVar divisible;
-    AlignedProgressionSpace(void)
-      : divisor(*this,8,Gecode::WDT_UNSIGNED,15U,15U),
-        dividend(*this,8,0U,240U,Gecode::WDT_UNSIGNED,16U,240U),
-        result(*this,8,Gecode::WDT_UNSIGNED,15U,15U),
-        one(*this,8,Gecode::WDT_UNSIGNED,1U,1U),
-        remainder(*this,8,Gecode::WDT_UNSIGNED,0U,0U),
-        modulus(*this,15,15), divisible(*this,1,1) {
-      Gecode::divides(*this,divisor,dividend,Gecode::Reify(divisible));
-      Gecode::gcd(*this,divisor,dividend,result);
-      Gecode::product_mod(*this,one,dividend,modulus,remainder);
+    AlignedProgressionSpace(unsigned int width=8U, bool free_low=false,
+                            int operation=-1)
+      : divisor(*this,width,Gecode::WDT_UNSIGNED,
+                  (WordValue(1)<<(width/2U))-1U,
+                  (WordValue(1)<<(width/2U))-1U),
+        dividend(*this,width,0U,
+                   (divisor.val()<<(width/2U)) | WordValue(free_low),
+                   Gecode::WDT_UNSIGNED,WordValue(1)<<(width/2U),
+                   divisor.val()<<(width/2U)),
+        result(*this,width,Gecode::WDT_UNSIGNED,divisor.val(),divisor.val()),
+        one(*this,width,Gecode::WDT_UNSIGNED,1U,1U),
+        remainder(*this,width,Gecode::WDT_UNSIGNED,0U,0U),
+        modulus(*this,static_cast<int>(divisor.val()),
+                static_cast<int>(divisor.val())), divisible(*this,1,1) {
+      if ((operation == -1) || (operation == 0))
+        Gecode::divides(*this,divisor,dividend,Gecode::Reify(divisible));
+      if ((operation == -1) || (operation == 1))
+        Gecode::gcd(*this,divisor,dividend,result);
+      if ((operation == -1) || (operation == 2))
+        Gecode::product_mod(*this,one,dividend,modulus,remainder);
     }
     AlignedProgressionSpace(AlignedProgressionSpace& s) : Gecode::Space(s) {
       divisor.update(*this,s.divisor); dividend.update(*this,s.dividend);
@@ -466,6 +493,20 @@ namespace Test { namespace Word { namespace Number {
         !aligned.dividend.assigned() || (aligned.dividend.val() != 240U) ||
         (Gecode::PropagatorGroup::all.size(aligned) != 0))
       return false;
+    for (unsigned int width : {12U,16U,20U,24U,32U,40U})
+      for (int operation=0; operation<3; operation++) {
+        AlignedProgressionSpace free_low(width,true,operation);
+        if (free_low.status() == Gecode::SS_FAILED) return false;
+        AlignedProgressionSpace* valid=
+          static_cast<AlignedProgressionSpace*>(free_low.clone());
+        Gecode::dom(*valid,valid->dividend,
+                      valid->divisor.val()<<(width/2U));
+        const bool accepted=valid->status() != Gecode::SS_FAILED;
+        delete valid;
+        if (!accepted) return false;
+        Gecode::dom(free_low,free_low.dividend,WordValue(1)<<(width/2U));
+        if (free_low.status() != Gecode::SS_FAILED) return false;
+      }
     IncompatibleProgressionSpace incompatible;
     if (incompatible.status() != Gecode::SS_FAILED)
       return false;

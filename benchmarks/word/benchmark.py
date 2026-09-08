@@ -11,6 +11,7 @@ import hashlib
 import json
 import os
 import re
+import signal
 import statistics
 import subprocess
 import sys
@@ -490,10 +491,26 @@ def timed_command(
     source = ("usr-bin-time-darwin" if sys.platform == "darwin" else
               "usr-bin-time-linux") if wrapper else "unavailable"
     started = time.perf_counter()
-    completed = subprocess.run(
+    process = subprocess.Popen(
         wrapped, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-        timeout=timeout, check=False,
+        start_new_session=(os.name == "posix"),
     )
+    try:
+        stdout, stderr = process.communicate(timeout=timeout)
+    except subprocess.TimeoutExpired:
+        # Killing only /usr/bin/time leaves its solver child running and can
+        # contaminate later measurements. The wrapper and child share our group.
+        if os.name == "posix":
+            try:
+                os.killpg(process.pid, signal.SIGKILL)
+            except ProcessLookupError:
+                pass
+        else:
+            process.kill()
+        stdout, stderr = process.communicate()
+        raise subprocess.TimeoutExpired(command, timeout, stdout, stderr)
+    completed = subprocess.CompletedProcess(command, process.returncode,
+                                            stdout, stderr)
     elapsed = time.perf_counter() - started
     peak_kib: int | None = None
     for pattern, factor in RSS_PATTERNS:

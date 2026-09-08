@@ -347,7 +347,8 @@ namespace Test { namespace Word {
 
         LogicSpace duplicates(3,4);
         Gecode::WordVarArgs duplicate_args = {
-          duplicates.x[0],duplicates.x[0],duplicates.x[1]
+          duplicates.x[0],duplicates.x[1],duplicates.x[0],
+          duplicates.x[1],duplicates.x[1]
         };
         Gecode::rel(duplicates,Gecode::WOT_XOR,duplicate_args,
                     duplicates.x[2]);

@@ -361,6 +361,41 @@ namespace Gecode {
   GECODE_WORD_EXPORT void dom(Home home, WordVar x, WordValue value);
 
   /**
+   * \brief Immutable tuple set of encoded word values
+   *
+   * Each column has its own width (1..64). Rows are deduplicated and
+   * indexed once; copies and posted constraints share the immutable indexes.
+   * An empty row set denotes false, including for zero columns.
+   */
+  class GECODE_WORD_EXPORT WordTupleSet : public SharedHandle {
+  public:
+    class Data;
+    WordTupleSet(const std::vector<unsigned int>& widths,
+                 const std::vector<std::vector<WordValue>>& rows);
+    int arity(void) const;
+    int tuples(void) const;
+    unsigned int width(int column) const;
+    WordValue value(int row, int column) const;
+    /// Internal immutable support indexes
+    const Data& data(void) const;
+  };
+
+  /**
+   * \brief Constrain words to a row of \a tuples
+   *
+   * Maintains the exact cube hull and, for bounded domains, the exact
+   * signed or unsigned interval hull of compatible tuples. Supports mixed
+   * widths, mixed domain types, and repeated variables. Interior values
+   * that cannot be removed by the domain representation may remain.
+   * Throws Word::OutOfLimits for arity mismatch and Word::WidthMismatch
+   * for column width mismatch.
+   */
+  GECODE_WORD_EXPORT void extensional(Home home, const WordVarArgs& x,
+                                      const WordTupleSet& tuples);
+
+
+
+  /**
    * \defgroup TaskModelWordElement Element constraints
    * \ingroup TaskModelWord
    */

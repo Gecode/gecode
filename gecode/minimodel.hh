@@ -1351,6 +1351,8 @@ namespace Gecode {
   //@}
 #endif
 
+  namespace MiniModel { class WordPostContext; }
+
   /// Boolean expressions
   class BoolExpr {
   public:
@@ -1435,6 +1437,10 @@ namespace Gecode {
     /// Post propagators for expression
     GECODE_MINIMODEL_EXPORT
     BoolVar expr(Home home, const IntPropLevels& ipls) const;
+    /// Internal posting with a shared word lowering context
+    GECODE_MINIMODEL_EXPORT
+    BoolVar expr(Home home, const IntPropLevels& ipls,
+                 MiniModel::WordPostContext* context) const;
     /// Post propagators for relation
     GECODE_MINIMODEL_EXPORT
     void rel(Home home, const IntPropLevels& ipls) const;
@@ -1627,6 +1633,10 @@ namespace Gecode {
      */
     GECODE_MINIMODEL_EXPORT WordVar
     post(Home home, WordDomainType domain_type) const;
+    /// Internal posting with a shared mixed-expression context
+    GECODE_MINIMODEL_EXPORT WordVar
+    post(Home home, WordDomainType domain_type,
+         MiniModel::WordPostContext* context) const;
     /// Assignment operator
     GECODE_MINIMODEL_EXPORT const WordExpr& operator =(const WordExpr& e);
     /// Destructor

@@ -516,9 +516,42 @@ namespace Test { namespace Word {
         return true;
       }
 
+      static bool mixed_order_equality(void) {
+        using namespace Gecode;
+        for (int mode=0; mode<3; mode++)
+          for (bool reversed : {false,true}) {
+            RelSpace s;
+            s.x[0]=WordVar(s,3,WDT_UNSIGNED);
+            s.x[1]=WordVar(s,3,WDT_SIGNED);
+            const WordVar left=s.x[reversed ? 1 : 0];
+            const WordVar right=s.x[reversed ? 0 : 1];
+            if (mode == 1)
+              rel(s,left,WRT_EQ,right);
+            if (mode == 2)
+              rel(s,left,WRT_EQ,right,Reify(s.b));
+            if (s.status() == SS_FAILED)
+              return false;
+            // Disjoint numeric domains whose masks overlap. Intersecting
+            // their masks once assigns different values, 1 and 0.
+            rel(s,s.x[0],WRT_UGQ,3,1U);
+            rel(s,s.x[0],WRT_ULQ,3,2U);
+            rel(s,s.x[1],WRT_SLQ,3,0U);
+            dom(s,s.x[1],0U,5U);
+            if (mode == 0)
+              rel(s,left,WRT_EQ,right);
+            if (mode == 2)
+              rel(s,s.b,IRT_EQ,1);
+            if (s.status() != SS_FAILED)
+              return false;
+          }
+        return true;
+      }
+
     public:
       Lifecycle(void) : Base("Word::Rel::Lifecycle") {}
       virtual bool run(void) {
+        if (!mixed_order_equality())
+          return false;
         if (!partial_sound(Gecode::WRT_EQ))
           return false;
         if (!partial_sound(Gecode::WRT_NQ))

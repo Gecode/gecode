@@ -34,6 +34,7 @@
 
 #include <gecode/minimodel.hh>
 #include <gecode/search.hh>
+#include <stdexcept>
 
 namespace Test { namespace Word {
 
@@ -943,6 +944,89 @@ namespace Test { namespace Word {
 
     class SharedLoweringLifecycle : public Base {
     private:
+      static Gecode::WordExpr mixed_dag(Gecode::WordExpr e,
+                                        unsigned int depth) {
+        using namespace Gecode;
+        for (unsigned int i=0; i<depth; i++)
+          e=ite(bit(e,0),e+WordExpr(3,3U),e^WordExpr(3,6U));
+        return e;
+      }
+
+      class MixedDagSpace : public Gecode::Space {
+      public:
+        Gecode::WordVar x, result;
+        MixedDagSpace(unsigned int depth, Gecode::WordDomainType kind)
+          : x(*this,3) {
+          result=mixed_dag(Gecode::WordExpr(x),depth).post(*this,kind);
+          Gecode::branch(*this,x,Gecode::WORD_VAL_LSB());
+        }
+        MixedDagSpace(MixedDagSpace& s) : Gecode::Space(s) {
+          x.update(*this,s.x); result.update(*this,s.result);
+        }
+        Gecode::Space* copy(void) { return new MixedDagSpace(*this); }
+      };
+
+      static bool mixed_sharing(void) {
+        using namespace Gecode;
+        for (WordDomainType kind : {WDT_CUBE,WDT_UNSIGNED,WDT_SIGNED}) {
+          for (unsigned int depth : {4U,8U,12U}) {
+            MixedDagSpace s(depth,kind);
+            if (PropagatorGroup::all.size(s) > 12U*depth+4U)
+              return false;
+          }
+          MixedDagSpace root(5,kind);
+          Search::Options options; options.c_d=2; options.a_d=64;
+          DFS<MixedDagSpace> dfs(&root,options);
+          unsigned int count=0;
+          while (MixedDagSpace* s=dfs.next()) {
+            WordValue expected=s->x.val();
+            for (unsigned int i=0; i<5; i++)
+              expected=(expected&1U) ? (expected+3U)&7U : expected^6U;
+            const bool ok=s->result.assigned() && s->result.val()==expected;
+            delete s;
+            if (!ok) return false;
+            count++;
+          }
+          if (count != 8U) return false;
+        }
+        MixedDagSpace first(1,WDT_CUBE), second(1,WDT_CUBE);
+        WordExpr e=mixed_dag(WordExpr(first.x),3);
+        WordVar a=e.post(first), b=e.post(first);
+        WordVar u=e.post(first,WDT_UNSIGNED), s=e.post(first,WDT_SIGNED);
+        if ((Gecode::Word::WordView(a)==Gecode::Word::WordView(b)) ||
+            (Gecode::Word::WordView(first.result)==
+             Gecode::Word::WordView(second.result)) ||
+            u.domain_type()!=WDT_UNSIGNED || s.domain_type()!=WDT_SIGNED)
+          return false;
+        dom(first,first.x,1U);
+        return first.status()!=SS_FAILED && second.status()!=SS_FAILED &&
+          !second.x.assigned() && !second.result.assigned();
+      }
+
+      static bool mixed_exception(void) {
+        using namespace Gecode;
+        class ThrowOnce : public BoolExpr::Misc {
+          bool first=true;
+        public:
+          void post(Home home, BoolVar b, bool neg, const IntPropLevels&) {
+            if (first) {
+              first=false;
+              throw std::runtime_error("mixed posting test");
+            }
+            rel(home,b,IRT_EQ,neg ? 0 : 1);
+          }
+        };
+        MixedDagSpace home(1,WDT_CUBE);
+        WordExpr shared=mixed_dag(WordExpr(home.x),3);
+        WordExpr e=ite(bit(shared,0) && BoolExpr(new ThrowOnce),shared,~shared);
+        bool caught=false;
+        try { e.post(home); }
+        catch (const std::runtime_error&) { caught=true; }
+        WordVar result=e.post(home);
+        dom(home,home.x,1U);
+        return caught && home.status()!=SS_FAILED && result.assigned();
+      }
+
       class SharedSpace : public Gecode::Space {
       public:
         Gecode::WordVar x, result;
@@ -1053,6 +1137,8 @@ namespace Test { namespace Word {
       SharedLoweringLifecycle(void)
         : Base("Word::MiniModel::SharedLoweringLifecycle") {}
       virtual bool run(void) {
+        if (!mixed_sharing() || !mixed_exception())
+          return false;
         return linear_actor_growth() && posting_independence() &&
           fan_out_semantics_and_recomputation();
       }

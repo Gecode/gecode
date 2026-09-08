@@ -497,6 +497,7 @@ namespace Gecode { namespace Word { namespace Arithmetic {
                              bool& bits, bool& subsumed);
   public:
     virtual Actor* copy(Space& home);
+    virtual size_t dispose(Space& home);
     virtual PropCost cost(const Space& home,
                           const ModEventDelta& med) const;
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);

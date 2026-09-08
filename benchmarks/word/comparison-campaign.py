@@ -69,14 +69,28 @@ def derive(manifest):
         result[case["id"]]={"status":"sat","solutions":len(rows),"projections":rows}
     return result
 
-def semantic_native(stdout,expect):
+def semantic_native(stdout,expect,batch=1):
     try: value=json.loads(stdout)
     except json.JSONDecodeError: return False,"native output is not JSON",{}
-    ok=value.get("semantic_status")==expect["status"] and sorted(value.get("projections",[]))==sorted(expect["projections"])
+    if not isinstance(value,dict): return False,"native output is not an object",{}
+    rows=value.get("projections")
+    if not isinstance(rows,list) or any(not isinstance(row,list) or any(type(v) is not int for v in row) for row in rows):
+        return False,"native projections are not integer rows",value
+    ok=value.get("semantic_status")==expect["status"] and sorted(rows)==sorted(expect["projections"])
+    if "batch" in value:
+        ok=ok and value["batch"]==batch and value.get("solutions")==expect["solutions"] and value.get("batch_solutions")==batch*expect["solutions"]
+    elif "batch_iterations" in value:
+        # DMA checks each iteration's count/checksum inside the executable.
+        ok=ok and value["batch_iterations"]==batch and value.get("solutions")==expect["solutions"]
+    elif "iterations" in value:
+        # The distinct driver reports the sum over all repetitions.
+        ok=ok and value["iterations"]==batch and value.get("solutions")==batch*expect["solutions"]
+    else:
+        ok=False
     return ok,"ok" if ok else "native status/witness mismatch",value
 def semantic_smt(stdout,expect,batch):
     statuses=[x.strip() for x in stdout.splitlines() if x.strip() in ("sat","unsat","unknown")]
-    ok=len(statuses)==batch and all(x==expect["status"] for x in statuses)
+    ok="(error" not in stdout and len(statuses)==batch and all(x==expect["status"] for x in statuses)
     return ok,"ok" if ok else f"SMT statuses {statuses}",{"statuses":statuses}
 
 def validate(args):
@@ -98,7 +112,7 @@ def smoke(args):
         case=next(c for c in manifest["cases"] if c["campaign_family"]==family and c["level"]=="small" and c["expected_status"]=="sat"); row={"case":case["id"]}
         for config,search in SEARCHES.items():
             if config=="gecode-candidate" and family in ("crc-xorshift","reduced-speck"): search="msb"
-            command=native(case,search,args,2); done=subprocess.run(command,text=True,capture_output=True,timeout=args.timeout); ok,detail,_=semantic_native(done.stdout,expect[case["id"]]); row[config]={"status":"pass" if not done.returncode and ok else "fail","detail":detail,"command":command}
+            command=native(case,search,args,2); done=subprocess.run(command,text=True,capture_output=True,timeout=args.timeout); ok,detail,_=semantic_native(done.stdout,expect[case["id"]],2); row[config]={"status":"pass" if not done.returncode and ok else "fail","detail":detail,"command":command}
         if shutil.which(args.z3):
             done=subprocess.run([args.z3,"-smt2","-in"],input=smt_batch(case,2),text=True,capture_output=True,timeout=args.timeout); ok,detail,_=semantic_smt(done.stdout,expect[case["id"]],2); row["z3"]={"status":"pass" if not done.returncode and ok else "fail","detail":detail}
         else: row["z3"]={"status":"unsupported","detail":"z3 absent"}
@@ -122,10 +136,10 @@ def host_identity():
             if done.returncode==0 and done.stdout.strip(): identity[key]=done.stdout.strip()
     return identity
 def frozen(args,manifest):
-    head=subprocess.run(["git","rev-parse","HEAD"],text=True,capture_output=True,check=True).stdout.strip()
     root=HERE.parent.parent
+    head=subprocess.run(["git","-C",str(root),"rev-parse","HEAD"],text=True,capture_output=True,check=True).stdout.strip()
     sources=[HERE/"comparison-campaign.py",HERE/"word-037-cases.json",HERE/"mixed-model-comparison.py",HERE/"word-bit-network-comparison.py",root/"benchmarks/word/distinct.cpp",root/"examples/word-bit-network-comparison.cpp",root/"examples/word-inverse-arithmetic.cpp",root/"examples/word-register-file.cpp",root/"examples/word-symbolic-alu.cpp",root/"gecode/word/arithmetic/add.hpp",root/"gecode/word/arithmetic/mult.hpp",root/"gecode/word/arithmetic/neg-sub.hpp"]
-    return {"schema_version":1,"campaign":"word-037-local","git_head":head,"source_hashes":{str(p.relative_to(root)):sha(p) for p in sources},"runner":"native subprocess","host":host_identity(),"binary_hashes":binary_hashes(args),"binary_paths":{n:str(Path(getattr(args,n+"_binary")).resolve()) for n in ("bit","dma","lookup","allocation","inverse","alu")}|{"z3":str(Path(args.z3).resolve())},"solver_probes":{"z3":command_output([args.z3,"--version"])},"limits":{"wall_seconds":{"screen":30,"followup":300},"campaign_budget_seconds":args.cpu_budget,"cpu_affinity":"host default","memory":"host default; RSS not sampled"},"options":{"repeats":5,"tiny_min_seconds":0.25},"matrix":{"instances":72,"configurations":list(CONFIGS),"cells":288}}
+    return {"schema_version":1,"campaign":"word-037-local","git_head":head,"manifest_sha256":sha(args.manifest),"source_hashes":{str(p.relative_to(root)):sha(p) for p in sources},"runner":"native subprocess","host":host_identity(),"binary_hashes":binary_hashes(args),"binary_paths":{n:str(Path(getattr(args,n+"_binary")).resolve()) for n in ("bit","dma","lookup","allocation","inverse","alu")}|{"z3":str(Path(args.z3).resolve())},"solver_probes":{"z3":command_output([args.z3,"--version"])},"limits":{"wall_seconds":{"screen":30,"followup":300},"campaign_budget_seconds":args.cpu_budget,"cpu_affinity":"host default","memory":"host default; RSS not sampled"},"options":{"repeats":5,"tiny_min_seconds":0.25},"matrix":{"instances":72,"configurations":list(CONFIGS),"cells":288}}
 def ensure_root(args,manifest):
     args.root.mkdir(parents=True,exist_ok=True); path=args.root/"metadata.json"; now=frozen(args,manifest)
     if path.exists() and load(path)!=now: raise ValueError("result root has a different frozen identity/options")
@@ -158,7 +172,7 @@ def local_run(args,command,stdin,timeout,identity):
 def execute(args,case,config,expect,phase,repeat,timeout,batch):
     path=record_path(args,phase,case["id"],config,repeat)
     if path.exists() and load(path).get("status") in FINAL: return load(path)
-    common={"phase":phase,"case":case["id"],"family":case["campaign_family"],"level":case["level"],"expected_status":expect["status"],"config":config,"repeat":repeat,"batch":batch}
+    common={"phase":phase,"case":case["id"],"family":case["campaign_family"],"level":case["level"],"expected_status":expect["status"],"config":config,"repeat":repeat,"batch":batch,"goal":"enumerate" if config.startswith("gecode") else "check-sat"}
     if config=="bitwuzla":
         value={**common,"status":"unsupported","detail":"no validated word-037 adapter","cpu_seconds":0}; dump(path,value); return value
     if ledger(args)+timeout>args.cpu_budget:
@@ -168,7 +182,7 @@ def execute(args,case,config,expect,phase,repeat,timeout,batch):
     else: command=[args.z3,"-smt2","-in"]; stdin=smt_batch(case,batch)
     value=local_run(args,command,stdin,timeout,f"{phase}-{case['id']}-{config}-{repeat}"); value.update(common)
     if value["status"]=="measured":
-        ok,detail,parsed=semantic_native(value["stdout"],expect) if config.startswith("gecode") else semantic_smt(value["stdout"],expect,batch)
+        ok,detail,parsed=semantic_native(value["stdout"],expect,batch) if config.startswith("gecode") else semantic_smt(value["stdout"],expect,batch)
         value["semantic_validation"]=detail; value["parsed"]=parsed
         if not ok: value["status"]="unknown" if config=="z3" and "unknown" in value["stdout"].splitlines() else "error"
         else: value["seconds_per_problem"]=value["cpu_seconds"]/batch
@@ -231,7 +245,9 @@ def analyze(args):
         if r["status"]=="measured": runs[(r["phase"],r["case"],r["repeat"])][r["config"]]=r
     screen_ratios=[]
     for run in runs.values():
-        for contender in ("gecode-candidate","z3"):
+        # Native drivers enumerate; Z3 performs one check-sat. Keep the raw
+        # external timings, but do not derive speedups from different goals.
+        for contender in ("gecode-candidate",):
             if "gecode-baseline" in run and contender in run:
                 baseline=run["gecode-baseline"].get("seconds_per_problem")
                 other=run[contender].get("seconds_per_problem")
@@ -251,7 +267,7 @@ def analyze(args):
         for row in case_rows:
             if row["status"]=="measured": pairs[row["repeat"]][row["config"]]=row["seconds_per_problem"]
         pair_summaries=[]
-        for contender in ("gecode-candidate","z3"):
+        for contender in ("gecode-candidate",):
             values=[run["gecode-baseline"]/run[contender] for run in pairs.values() if run.get("gecode-baseline",0)>0 and run.get(contender,0)>0]
             if values: pair_summaries.append({"contender":contender,"n":len(values),"median":statistics.median(values),"range":[min(values),max(values)],"result":classification(statistics.median(values)),"stable":all(v>1 for v in values) or all(v<1 for v in values) or all(v==1 for v in values)})
         followups.append({"case":case,"family":case_rows[0]["family"],"expected_status":case_rows[0]["expected_status"],"timings":{k:{"n":len(v),"median_seconds":statistics.median(v),"range_seconds":[min(v),max(v)]} for k,v in measured.items() if v},"paired":pair_summaries})
@@ -261,10 +277,11 @@ def analyze(args):
     metadata=load(args.root/"metadata.json"); calibration=load(args.root/"calibration.json")
     frozen={"git_head":metadata["git_head"],"runner":metadata["runner"],"host":metadata["host"],"limits":metadata["limits"],"options":metadata["options"],"calibration_selection":calibration["selection"],"external_root":str(args.root.resolve())}
     result={"schema_version":1,"frozen":frozen,"screen_accounting":{"expected_cells":288,"recorded_cells":len(cells),"status_counts":dict(status_counts),"sat_unsat":{k:dict(v) for k,v in by_sat.items()},"by_config":{k:dict(v) for k,v in by_config.items()}},"screen_timing_groups":timings,"screen_paired_ratios":screen_ratios,"screen_family_conclusions":conclusions,"followup_cases":followups,"priorities":priorities,"rss":{"method":"unavailable in direct local mode","maximum_by_config":{c:None for c in CONFIGS}},"timeout_aware":{c:{s:sum(r["config"]==c and r["status"]==s for r in screen_rows) for s in ("measured","timeout","memory-limit","unknown","error","unsupported","deferred")} for c in CONFIGS},"counters":{"note":"Gecode nodes/failures/propagations and SMT statuses are separate measures, not identical work","gecode":[{"case":r["case"],"config":r["config"],**{x:r.get("parsed",{}).get(x) for x in ("nodes","failures","propagations")}} for r in selected if r["config"].startswith("gecode") and r["status"]=="measured"],"smt":[{"case":r["case"],"config":r["config"],"statuses":r.get("parsed",{}).get("statuses")} for r in selected if r["config"]=="z3" and r["status"]=="measured"]},"cpu_seconds":ledger(args),"external_root":str(args.root.resolve())}
+    result["workloads"]={"gecode":"complete projected enumeration (DMA reuses a propagated root)", "z3":"parse and check-sat after reset", "comparability":"external timings are descriptive, not matched-goal speedups"}
     dump(args.root/"analysis.json",result); counts=result["screen_accounting"]["status_counts"]
     lines=["# Word-037 comparison campaign","",f"External result root: `{args.root.resolve()}`",f"Git revision: `{frozen['git_head']}`",f"Runner: `{frozen['runner']}` on `{frozen['host']['system']} {frozen['host']['release']} {frozen['host']['machine']}`",f"Limits: `{json.dumps(frozen['limits'],sort_keys=True)}`",f"Options: `{json.dumps(frozen['options'],sort_keys=True)}`",f"Calibration selection: `{json.dumps(frozen['calibration_selection'],sort_keys=True)}`","",f"Screen accounting: {len(cells)}/288 cells; "+", ".join(f"{k}={v}" for k,v in sorted(counts.items()))+f". Wall-time ledger: {result['cpu_seconds']:.2f}/{metadata['limits']['campaign_budget_seconds']:.0f} seconds.","","All solver processes ran directly on the host. CPU affinity and memory were left at the macOS defaults; wall caps bound individual runs. Per-process RSS is unavailable in this mode.","","Gecode search counters and SMT statuses are retained separately; they are not treated as the same work metric.","","## Screen timing groups","","These groups use only the single screen run for each measured matrix cell.","","| Family | Status | Configuration | n | Median s | Range s |","|---|---|---|---:|---:|---:|"]
     for s in timings: lines.append(f"| {s['family']} | {s['expected_status']} | {s['config']} | {s['n']} | {s['median_seconds']:.6g} | {s['minimum_seconds']:.6g}–{s['maximum_seconds']:.6g} |")
-    lines += ["","## Broad screen ranges",""]
+    lines += ["","Native drivers enumerate all solutions; Z3 performs one check-sat. DMA also amortizes construction and root propagation over its batch. External timings therefore describe different workloads and do not establish solver speedups.","","## Broad screen ranges",""]
     lines += ([f"- {c['family']}: {c['contender']} paired median {c['paired_median']:.3g}× (range {c['range'][0]:.3g}–{c['range'][1]:.3g}); {c['result']} versus baseline." for c in conclusions] or ["- No paired measurements are available; all absent screen cells are accounted for as deferred."])
     lines += ["","## Resource and completion metrics","","Per-process peak RSS is unavailable in direct local mode.","","| Configuration | Maximum RSS KiB |","|---|---:|"]
     for config in CONFIGS:
@@ -283,7 +300,7 @@ def analyze(args):
     lines += ["## Data-derived priorities",""]+( [f"- {p}" for p in priorities] if priorities else ["- No stable non-parity follow-up comparison warrants a priority."] )+[""]
     report="\n".join(lines)
     (args.root/"result.md").write_text(report)
-    (HERE/"word-037-result.md").write_text(report)
+    # Analysis is derived output; publishing a tracked report is a separate act.
     print(json.dumps(result["screen_accounting"],indent=2)); return 0
 
 def main():
@@ -292,6 +309,7 @@ def main():
     for name,file in (("bit","word-bit-network-comparison"),("dma","word-dma-descriptor"),("lookup","word-register-file"),("allocation","word-distinct-benchmark"),("inverse","word-inverse-arithmetic"),("alu","word-symbolic-alu")): p.add_argument(f"--{name}-binary",type=Path,default=root/file)
     args=p.parse_args()
     if not args.z3: p.error("z3 was not found; pass --z3")
+    args.z3=shutil.which(args.z3) or args.z3
     try: return {"validate":validate,"smoke":smoke,"calibrate":calibrate,"screen":screen,"followup":followup,"analyze":analyze}[args.command](args)
     except (KeyError,OSError,ValueError,subprocess.CalledProcessError,subprocess.TimeoutExpired) as error: p.error(str(error))
 if __name__=="__main__": raise SystemExit(main())

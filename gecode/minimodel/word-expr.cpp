@@ -32,30 +32,14 @@
 
 #include <gecode/minimodel.hh>
 
-#include <unordered_map>
-
 #ifdef GECODE_HAS_WORD_VARS
+#include <gecode/minimodel/word-post.hh>
 
 namespace Gecode {
 
   class WordExpr::Node {
   public:
-    struct LoweringKey {
-      const Node* node;
-      WordDomainType domain_type;
-
-      bool operator ==(const LoweringKey& other) const {
-        return (node == other.node) && (domain_type == other.domain_type);
-      }
-    };
-    struct LoweringKeyHash {
-      size_t operator ()(const LoweringKey& key) const {
-        return std::hash<const Node*>()(key.node) ^
-          static_cast<size_t>(key.domain_type);
-      }
-    };
-    typedef std::unordered_map<LoweringKey,WordVar,LoweringKeyHash>
-      LoweringCache;
+    typedef MiniModel::WordPostContext LoweringCache;
 
     unsigned int use;
     NodeType t;
@@ -85,6 +69,14 @@ namespace Gecode {
 
   WordExpr::Node::~Node(void) {
     delete bool_control;
+  }
+
+  MiniModel::WordPostContext::~WordPostContext(void) {
+    for (const auto& entry : cache) {
+      WordExpr::Node* node=const_cast<WordExpr::Node*>(entry.first.node);
+      if (node->decrement())
+        delete node;
+    }
   }
 
   void*
@@ -159,7 +151,9 @@ namespace Gecode {
       }
     }
 
-    class WordRelation : public BoolExpr::Misc {
+    using MiniModel::WordMisc;
+
+    class WordRelation : public WordMisc {
     private:
       WordExpr left;
       WordExpr right;
@@ -172,15 +166,16 @@ namespace Gecode {
         check_width(left.width(),right.width());
       }
       virtual void post(Home home, BoolVar b, bool neg,
-                        const IntPropLevels&) {
-        WordVar x = left.post(home,domain_type);
-        WordVar y = right.post(home,domain_type);
+                        const IntPropLevels&,
+                        MiniModel::WordPostContext* context) {
+        WordVar x = left.post(home,domain_type,context);
+        WordVar y = right.post(home,domain_type,context);
         Gecode::rel(home,x,neg ? negated(wrt) : wrt,y,
                     Reify(b,RM_EQV));
       }
     };
 
-    class WordBit : public BoolExpr::Misc {
+    class WordBit : public WordMisc {
     private:
       WordExpr word;
       unsigned int bit_index;
@@ -193,8 +188,9 @@ namespace Gecode {
           throw Word::OutOfLimits("MiniModel::bit");
       }
       virtual void post(Home home, BoolVar b, bool neg,
-                        const IntPropLevels&) {
-        WordVar x = word.post(home,domain_type);
+                        const IntPropLevels&,
+                        MiniModel::WordPostContext* context) {
+        WordVar x = word.post(home,domain_type,context);
         if (!neg) {
           channel(home,x,bit_index,b);
         } else {
@@ -209,7 +205,7 @@ namespace Gecode {
       WRED_AND, WRED_OR, WRED_XOR
     };
 
-    class WordReduction : public BoolExpr::Misc {
+    class WordReduction : public WordMisc {
     private:
       WordExpr word;
       WordReductionType reduction;
@@ -219,8 +215,9 @@ namespace Gecode {
                     WordDomainType domain_type0)
         : word(word0), reduction(reduction0), domain_type(domain_type0) {}
       virtual void post(Home home, BoolVar b, bool neg,
-                        const IntPropLevels&) {
-        WordVar x = word.post(home,domain_type);
+                        const IntPropLevels&,
+                        MiniModel::WordPostContext* context) {
+        WordVar x = word.post(home,domain_type,context);
         BoolVar actual = b;
         if (neg)
           actual = BoolVar(home,0,1);
@@ -235,7 +232,7 @@ namespace Gecode {
       }
     };
 
-    class UnaryWordOverflow : public BoolExpr::Misc {
+    class UnaryWordOverflow : public WordMisc {
     private:
       WordExpr word;
       WordOverflowType operation;
@@ -247,8 +244,9 @@ namespace Gecode {
         : word(word0), operation(operation0), domain_type(domain_type0),
           semantics(semantics0) {}
       virtual void post(Home home, BoolVar b, bool neg,
-                        const IntPropLevels&) {
-        WordVar x = word.post(home,domain_type);
+                        const IntPropLevels&,
+                        MiniModel::WordPostContext* context) {
+        WordVar x = word.post(home,domain_type,context);
         BoolVar actual = b;
         if (neg)
           actual = BoolVar(home,0,1);
@@ -258,7 +256,7 @@ namespace Gecode {
       }
     };
 
-    class BinaryWordOverflow : public BoolExpr::Misc {
+    class BinaryWordOverflow : public WordMisc {
     private:
       WordExpr left;
       WordExpr right;
@@ -274,9 +272,10 @@ namespace Gecode {
         check_width(left.width(),right.width());
       }
       virtual void post(Home home, BoolVar b, bool neg,
-                        const IntPropLevels&) {
-        WordVar x = left.post(home,domain_type);
-        WordVar y = right.post(home,domain_type);
+                        const IntPropLevels&,
+                        MiniModel::WordPostContext* context) {
+        WordVar x = left.post(home,domain_type,context);
+        WordVar y = right.post(home,domain_type,context);
         BoolVar actual = b;
         if (neg)
           actual = BoolVar(home,0,1);
@@ -343,16 +342,16 @@ namespace Gecode {
 
   WordVar
   WordExpr::Node::post(Home home, WordDomainType domain_type) const {
-    LoweringCache cache;
+    LoweringCache cache(home);
     return post(home,domain_type,cache);
   }
 
   WordVar
   WordExpr::Node::post(Home home, WordDomainType domain_type,
                        LoweringCache& cache) const {
-    const LoweringKey key = {this,domain_type};
-    LoweringCache::const_iterator found = cache.find(key);
-    if (found != cache.end())
+    const LoweringCache::Key key = {this,domain_type};
+    auto found = cache.cache.find(key);
+    if (found != cache.cache.end())
       return found->second;
 
     WordVar result;
@@ -381,7 +380,12 @@ namespace Gecode {
       break;
     }
     case NT_BOOL_ITE: {
-      BoolVar control = expr(home,*bool_control);
+      BoolVar control;
+      {
+        PostInfo pi(home);
+        control=home.failed() ? BoolVar(home,0,1) :
+          bool_control->expr(home,IntPropLevels::def,&cache);
+      }
       WordVar then_word = l->post(home,domain_type,cache);
       WordVar else_word = r->post(home,domain_type,cache);
       result=temporary(home,width,node_domain(t,domain_type));
@@ -493,7 +497,8 @@ namespace Gecode {
     default:
       throw Word::UnknownOperation("MiniModel::WordExpr");
     }
-    cache.insert(std::make_pair(key,result));
+    if (cache.cache.insert(std::make_pair(key,result)).second)
+      const_cast<Node*>(this)->use++;
     return result;
   }
 
@@ -625,9 +630,17 @@ namespace Gecode {
 
   WordVar
   WordExpr::post(Home home, WordDomainType domain_type) const {
+    return post(home,domain_type,nullptr);
+  }
+
+  WordVar
+  WordExpr::post(Home home, WordDomainType domain_type,
+                 MiniModel::WordPostContext* context) const {
     if ((domain_type != WDT_CUBE) && (domain_type != WDT_UNSIGNED) &&
         (domain_type != WDT_SIGNED))
       throw Word::OutOfLimits("MiniModel::WordExpr::post");
+    if ((context != nullptr) && context->matches(home))
+      return n->post(home,domain_type,*context);
     return n->post(home,domain_type);
   }
 

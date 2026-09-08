@@ -447,6 +447,7 @@ namespace Gecode { namespace Word { namespace Arithmetic {
   BoundGcd<View,sign>::BoundGcd(Home home, View x0, View y0,
                                 UnsignedWordView result0)
     : Propagator(home), x(x0), y(y0), result(result0) {
+    home.notice(*this,AP_WEAKLY);
     x.subscribe(home,*this,PC_WORD_DOM);
     y.subscribe(home,*this,PC_WORD_DOM);
     result.subscribe(home,*this,PC_WORD_DOM);
@@ -531,6 +532,7 @@ namespace Gecode { namespace Word { namespace Arithmetic {
   template<class View, bool sign>
   size_t
   BoundGcd<View,sign>::dispose(Space& home) {
+    home.ignore(*this,AP_WEAKLY);
     x.cancel(home,*this,PC_WORD_DOM);
     y.cancel(home,*this,PC_WORD_DOM);
     result.cancel(home,*this,PC_WORD_DOM);
@@ -699,7 +701,9 @@ namespace Gecode { namespace Word { namespace Arithmetic {
   template<class View, bool sign>
   forceinline
   Divides<View,sign>::Divides(Home home, View divisor, View dividend)
-    : BinaryPropagator<View,PC_WORD_DOM>(home,divisor,dividend) {}
+    : BinaryPropagator<View,PC_WORD_DOM>(home,divisor,dividend) {
+    home.notice(*this,AP_WEAKLY);
+  }
 
   template<class View, bool sign>
   forceinline
@@ -745,6 +749,14 @@ namespace Gecode { namespace Word { namespace Arithmetic {
   Actor*
   Divides<View,sign>::copy(Space& home) {
     return new (home) Divides(home,*this);
+  }
+
+  template<class View, bool sign>
+  size_t
+  Divides<View,sign>::dispose(Space& home) {
+    home.ignore(*this,AP_WEAKLY);
+    (void) BinaryPropagator<View,PC_WORD_DOM>::dispose(home);
+    return sizeof(*this);
   }
 
   template<class View, bool sign>

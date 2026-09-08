@@ -121,17 +121,21 @@ namespace Gecode {
           constant=combine(wot,constant,next.val());
           continue;
         }
-        int duplicate=0;
-        while ((duplicate < n) && !(x[duplicate] == next))
-          duplicate++;
-        if (duplicate == n) {
-          x[n++]=next;
-        } else if (wot == WOT_XOR) {
-          n--;
-          x[duplicate]=x[n];
-        }
+        x[n++]=next;
       }
-      x.size(n);
+      // Group duplicates once instead of scanning all previous operands.
+      if (n > 1)
+        Support::quicksort<Word::WordView>(&x[0],n);
+      int unique=0;
+      for (int i=0; i<n;) {
+        int end=i+1;
+        while ((end < n) && (x[end] == x[i]))
+          end++;
+        if ((wot != WOT_XOR) || ((end-i) % 2 != 0))
+          x[unique++]=x[i];
+        i=end;
+      }
+      x.size(unique);
 
       if (wot == WOT_XOR) {
         int alias=0;

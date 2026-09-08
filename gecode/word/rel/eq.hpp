@@ -75,14 +75,24 @@ namespace Gecode { namespace Word { namespace Rel {
         View0,PC_WORD_BITS,View1,PC_WORD_BITS>(home,p) {}
 
   template<class View0, class View1>
+  forceinline ExecStatus
+  narrow_eq(Home home, View0 x0, View1 x1) {
+    do {
+      const WordValue lo = x0.lo() | x1.lo();
+      const WordValue hi = x0.hi() & x1.hi();
+      GECODE_ME_CHECK(x0.narrow(home,lo,hi));
+      GECODE_ME_CHECK(x1.narrow(home,lo,hi));
+      // Numeric bounds can fix additional bits when publishing the masks.
+    } while ((x0.lo() != x1.lo()) || (x0.hi() != x1.hi()));
+    return ES_OK;
+  }
+
+  template<class View0, class View1>
   ExecStatus
   Eq<View0,View1>::post(Home home, View0 x0, View1 x1) {
     if (aliases(x0,x1))
       return ES_OK;
-    const WordValue lo = x0.lo() | x1.lo();
-    const WordValue hi = x0.hi() & x1.hi();
-    GECODE_ME_CHECK(x0.narrow(home,lo,hi));
-    GECODE_ME_CHECK(x1.narrow(home,lo,hi));
+    GECODE_ES_CHECK(narrow_eq(home,x0,x1));
     if (!x0.assigned() || !x1.assigned())
       (void) new (home) Eq(home,x0,x1);
     return ES_OK;
@@ -97,10 +107,7 @@ namespace Gecode { namespace Word { namespace Rel {
   template<class View0, class View1>
   ExecStatus
   Eq<View0,View1>::propagate(Space& home, const ModEventDelta&) {
-    const WordValue lo = x0.lo() | x1.lo();
-    const WordValue hi = x0.hi() & x1.hi();
-    GECODE_ME_CHECK(x0.narrow(home,lo,hi));
-    GECODE_ME_CHECK(x1.narrow(home,lo,hi));
+    GECODE_ES_CHECK(narrow_eq(home,x0,x1));
     return (x0.assigned() && x1.assigned()) ?
       home.ES_SUBSUMED(*this) : ES_FIX;
   }

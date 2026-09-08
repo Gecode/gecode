@@ -40,6 +40,7 @@
 #include <cstdlib>
 #include <fstream>
 #include <iostream>
+#include <limits>
 #include <memory>
 #include <sstream>
 #include <stdexcept>
@@ -52,20 +53,42 @@ using namespace Gecode;
 
 namespace {
 
+  // This benchmark reader uses recursive parsing, typing, and MiniModel
+  // lowering. Bound both source nesting and the chains produced by n-ary
+  // operators (distinct lowers to a conjunction of all operand pairs).
+  const std::size_t max_input_bytes=16U*1024U*1024U;
+  const unsigned int max_nesting=128;
+  const unsigned int max_expansion_depth=1024;
+  const unsigned int max_syntax_nodes=100000;
+
   struct Error : public std::runtime_error {
     explicit Error(const std::string& message) : std::runtime_error(message) {}
   };
 
+  enum SortKind { SORT_BOOL, SORT_WORD, SORT_INT };
+
+  struct Sort {
+    SortKind kind;
+    unsigned int width;
+    Sort(SortKind kind0=SORT_INT, unsigned int width0=0)
+      : kind(kind0), width(width0) {}
+  };
+
   struct SExpr {
+    enum Token { SIMPLE, QUOTED, STRING };
     bool atom;
+    Token token;
     std::string text;
     std::vector<SExpr> items;
     unsigned int line;
+    unsigned int expansion_depth=0;
+    // Filled once during type checking; lexical scope is fixed per occurrence.
+    mutable Sort sort;
 
-    SExpr(std::string text0, unsigned int line0)
-      : atom(true), text(std::move(text0)), line(line0) {}
+    SExpr(std::string text0, unsigned int line0, Token token0=SIMPLE)
+      : atom(true), token(token0), text(std::move(text0)), line(line0) {}
     SExpr(std::vector<SExpr> items0, unsigned int line0)
-      : atom(false), items(std::move(items0)), line(line0) {}
+      : atom(false), token(SIMPLE), items(std::move(items0)), line(line0) {}
   };
 
   class Parser {
@@ -73,6 +96,7 @@ namespace {
     const std::string& input;
     std::size_t position;
     unsigned int line;
+    unsigned int nodes=0;
 
     void whitespace(void) {
       while (position < input.size()) {
@@ -88,14 +112,20 @@ namespace {
       }
     }
 
-    SExpr expression(void) {
+    SExpr expression(unsigned int depth=0) {
       whitespace();
+      if (depth > max_nesting)
+        throw Error("reader nesting limit is 128 on line " +
+                    std::to_string(line));
+      if (++nodes > max_syntax_nodes)
+        throw Error("reader syntax-node limit is 100000");
       if (position == input.size())
         throw Error("unexpected end of input");
       const unsigned int start_line=line;
       if (input[position] == '(') {
         position++;
         std::vector<SExpr> items;
+        unsigned int child_depth=0;
         for (;;) {
           whitespace();
           if (position == input.size())
@@ -103,23 +133,55 @@ namespace {
                         std::to_string(start_line));
           if (input[position] == ')') {
             position++;
-            return SExpr(std::move(items),start_line);
+            const std::size_t n=items.empty() ? 0 : items.size()-1;
+            const bool distinct=!items.empty() && items[0].atom &&
+              (items[0].text == "distinct");
+            const std::size_t expansion=child_depth+
+              (distinct && (n > 1) ? n*(n-1)/2 : items.size());
+            if (expansion > max_expansion_depth)
+              throw Error("reader expression expansion-depth limit is 1024 "
+                          "on line " + std::to_string(start_line));
+            SExpr result(std::move(items),start_line);
+            result.expansion_depth=static_cast<unsigned int>(expansion);
+            return result;
           }
-          items.push_back(expression());
+          if (items.size() >= max_expansion_depth)
+            throw Error("reader list-length limit is 1024 on line " +
+                        std::to_string(start_line));
+          items.push_back(expression(depth+1));
+          if (items.back().expansion_depth > child_depth)
+            child_depth=items.back().expansion_depth;
         }
       }
       if (input[position] == ')')
         throw Error("unexpected ')' on line " + std::to_string(line));
       std::string token;
-      if (input[position] == '|') {
+      SExpr::Token kind=SExpr::SIMPLE;
+      if (input[position] == '"') {
+        kind=SExpr::STRING;
+        token += input[position++];
+        bool closed=false;
+        while (position < input.size()) {
+          char c=input[position++];
+          token += c;
+          if (c == '\n') line++;
+          if (c == '"') {
+            if ((position < input.size()) && (input[position] == '"'))
+              token += input[position++]; // SMT-LIB escapes quotes by doubling.
+            else { closed=true; break; }
+          }
+        }
+        if (!closed)
+          throw Error("unterminated string on line " +
+                      std::to_string(start_line));
+      } else if (input[position] == '|') {
+        kind=SExpr::QUOTED;
         position++;
         while ((position < input.size()) && (input[position] != '|')) {
-          if (input[position] == '\\') {
-            position++;
-            if (position == input.size())
-              throw Error("unterminated quoted symbol on line " +
-                          std::to_string(start_line));
-          }
+          if (input[position] == '\\')
+            throw Error("backslash in quoted symbol on line " +
+                        std::to_string(line));
+          if (input[position] == '\n') line++;
           token += input[position++];
         }
         if (position == input.size())
@@ -133,9 +195,9 @@ namespace {
                (input[position] != ';'))
           token += input[position++];
       }
-      if (token.empty())
+      if (token.empty() && (kind != SExpr::QUOTED))
         throw Error("empty token on line " + std::to_string(start_line));
-      return SExpr(std::move(token),start_line);
+      return SExpr(std::move(token),start_line,kind);
     }
 
   public:
@@ -152,31 +214,25 @@ namespace {
     }
   };
 
-  enum SortKind { SORT_BOOL, SORT_WORD, SORT_INT };
-
-  struct Sort {
-    SortKind kind;
-    unsigned int width;
-    Sort(SortKind kind0=SORT_INT, unsigned int width0=0)
-      : kind(kind0), width(width0) {}
-  };
-
   bool same_sort(const Sort& a, const Sort& b) {
     return (a.kind == b.kind) &&
       ((a.kind != SORT_WORD) || (a.width == b.width));
   }
 
   unsigned int unsigned_atom(const SExpr& e, const char* context) {
-    if (!e.atom || e.text.empty())
+    if (!e.atom || (e.token != SExpr::SIMPLE) || e.text.empty())
       throw Error(std::string(context) +
                   " expects an unsigned integer on line " +
                   std::to_string(e.line));
-    char* end=nullptr;
-    unsigned long value=std::strtoul(e.text.c_str(),&end,10);
-    if ((*end != '\0') || (value > 0xffffffffUL))
-      throw Error(std::string(context) + " has an invalid integer on line " +
-                  std::to_string(e.line));
-    return static_cast<unsigned int>(value);
+    unsigned int value=0;
+    for (char c : e.text) {
+      if ((c < '0') || (c > '9') ||
+          (value > (std::numeric_limits<unsigned int>::max() - (c-'0'))/10U))
+        throw Error(std::string(context) + " has an invalid integer on line " +
+                    std::to_string(e.line));
+      value=value*10U+static_cast<unsigned int>(c-'0');
+    }
+    return value;
   }
 
   std::string head(const SExpr& e) {
@@ -209,12 +265,25 @@ namespace {
 
   struct Script {
     std::vector<Decl> declarations;
+    std::vector<std::pair<std::string,SExpr> > definitions;
     std::vector<SExpr> assertions;
     std::unordered_map<std::string,Sort> globals;
   };
 
   bool is_atom(const SExpr& e, const char* value) {
     return e.atom && (e.text == value);
+  }
+
+  unsigned int rotation_amount(const SExpr& e, unsigned int width) {
+    if (!e.atom || (e.token != SExpr::SIMPLE) || e.text.empty())
+      throw Error("rotation expects an unsigned numeral");
+    unsigned int value=0;
+    for (char c : e.text) {
+      if ((c < '0') || (c > '9'))
+        throw Error("rotation expects an unsigned numeral");
+      value=(value*10U+static_cast<unsigned int>(c-'0'))%width;
+    }
+    return value;
   }
 
   bool literal_sort(const std::string& token, Sort& sort) {
@@ -227,6 +296,34 @@ namespace {
       return true;
     }
     return false;
+  }
+
+  WordValue word_literal(const std::string& token);
+
+  bool decimal_literal(const SExpr& e, Sort& sort, WordValue& value) {
+    if (e.atom || e.items.empty() || !is_atom(e.items[0],"_"))
+      return false;
+    if ((e.items.size() != 3) || !e.items[1].atom ||
+        (e.items[1].text.size() <= 2) ||
+        (e.items[1].text.compare(0,2,"bv") != 0))
+      throw Error("malformed decimal bit-vector literal");
+    unsigned int width=unsigned_atom(e.items[2],"bit-vector literal width");
+    if ((width == 0) || (width > 64))
+      throw Error("bit-vector literal width is outside 1..64");
+    const WordValue maximum=(width == 64) ?
+      std::numeric_limits<WordValue>::max() : (WordValue(1) << width)-1;
+    value=0;
+    for (std::size_t i=2; i<e.items[1].text.size(); i++) {
+      char c=e.items[1].text[i];
+      if ((c < '0') || (c > '9'))
+        throw Error("invalid decimal bit-vector literal");
+      const unsigned int digit=static_cast<unsigned int>(c-'0');
+      if ((digit > maximum) || (value > (maximum-digit)/10U))
+        throw Error("decimal bit-vector literal exceeds its width");
+      value=value*10U+digit;
+    }
+    sort=Sort(SORT_WORD,width);
+    return true;
   }
 
   struct TypeEnv {
@@ -264,14 +361,17 @@ namespace {
                   " arguments on line " + std::to_string(e.line));
   }
 
-  Sort infer(const SExpr& e, const TypeEnv& env) {
+  Sort infer_term(const SExpr& e, const TypeEnv& env) {
     if (e.atom) {
+      if (e.token == SExpr::STRING)
+        throw Error("string is not a Bool or bit-vector term");
       if ((e.text == "true") || (e.text == "false")) return Sort(SORT_BOOL);
       Sort result;
-      if (literal_sort(e.text,result)) {
+      if ((e.token == SExpr::SIMPLE) && literal_sort(e.text,result)) {
         if ((result.width == 0U) || (result.width > 64U))
           throw Error("bit-vector literal width is outside 1..64 on line " +
                       std::to_string(e.line));
+        word_literal(e.text);
         return result;
       }
       if (env.find(e.text,result)) return result;
@@ -280,6 +380,9 @@ namespace {
     }
     if (e.items.empty())
       throw Error("empty application on line " + std::to_string(e.line));
+    Sort literal;
+    WordValue value;
+    if (decimal_literal(e,literal,value)) return literal;
 
     if (!e.items[0].atom) {
       const SExpr& indexed=e.items[0];
@@ -292,6 +395,13 @@ namespace {
       if (source.kind != SORT_WORD)
         throw Error("indexed word operator has a non-word operand on line " +
                     std::to_string(e.line));
+      if ((indexed.items[1].text == "rotate_left") ||
+          (indexed.items[1].text == "rotate_right")) {
+        if (indexed.items.size() != 3)
+          throw Error("rotation expects one index");
+        rotation_amount(indexed.items[2],source.width);
+        return source;
+      }
       if (indexed.items[1].text == "extract") {
         if (indexed.items.size() != 4)
           throw Error("extract expects high and low indices on line " +
@@ -303,13 +413,15 @@ namespace {
                       std::to_string(e.line));
         return Sort(SORT_WORD,high-low+1U);
       }
-      if (indexed.items[1].text == "zero_extend") {
+      if ((indexed.items[1].text == "zero_extend") ||
+          (indexed.items[1].text == "sign_extend")) {
+        const std::string& op=indexed.items[1].text;
         if (indexed.items.size() != 3)
-          throw Error("zero_extend expects one index on line " +
+          throw Error(op + " expects one index on line " +
                       std::to_string(e.line));
-        unsigned int extra=unsigned_atom(indexed.items[2],"zero_extend");
+        unsigned int extra=unsigned_atom(indexed.items[2],op.c_str());
         if ((extra > 64U) || (source.width+extra > 64U))
-          throw Error("zero_extend result exceeds 64 bits on line " +
+          throw Error(op + " result exceeds 64 bits on line " +
                       std::to_string(e.line));
         return Sort(SORT_WORD,source.width+extra);
       }
@@ -330,7 +442,9 @@ namespace {
     }
     if (op == "not") { require_arity(e,1); Sort s=infer(e.items[1],env);
       if (s.kind != SORT_BOOL) throw Error("not expects Bool"); return s; }
-    if ((op == "and") || (op == "or")) {
+    if ((op == "and") || (op == "or") || (op == "xor") || (op == "=>")) {
+      if (((op == "xor") || (op == "=>")) && (e.items.size() < 3))
+        throw Error(op + " expects at least two arguments");
       for (std::size_t i=1; i<e.items.size(); i++)
         if (infer(e.items[i],env).kind != SORT_BOOL)
           throw Error(op + " expects Bool arguments on line " +
@@ -372,11 +486,20 @@ namespace {
                     std::to_string(e.line));
       return Sort(SORT_BOOL);
     }
-    if (op == "bvneg") {
+    if ((op == "bvneg") || (op == "bvnot")) {
       require_arity(e,1); Sort s=infer(e.items[1],env);
-      if (s.kind != SORT_WORD) throw Error("bvneg expects a word"); return s;
+      if (s.kind != SORT_WORD) throw Error(op + " expects a word"); return s;
     }
-    if ((op == "bvadd") || (op == "bvmul")) {
+    if (op == "concat") {
+      require_arity(e,2);
+      Sort a=infer(e.items[1],env), b=infer(e.items[2],env);
+      if ((a.kind != SORT_WORD) || (b.kind != SORT_WORD) ||
+          (a.width+b.width > 64U))
+        throw Error("concat expects words with total width at most 64");
+      return Sort(SORT_WORD,a.width+b.width);
+    }
+    if ((op == "bvadd") || (op == "bvmul") || (op == "bvand") ||
+        (op == "bvor") || (op == "bvxor")) {
       if (e.items.size() < 3)
         throw Error(op + " expects at least two arguments on line " +
                     std::to_string(e.line));
@@ -389,7 +512,8 @@ namespace {
       return first;
     }
     if ((op == "bvsub") || (op == "bvsdiv") || (op == "bvsmod") ||
-        (op == "bvsmod_i")) {
+        (op == "bvsmod_i") || (op == "bvudiv") || (op == "bvurem") ||
+        (op == "bvshl") || (op == "bvlshr") || (op == "bvashr")) {
       require_arity(e,2);
       Sort a=infer(e.items[1],env), b=infer(e.items[2],env);
       if ((a.kind != SORT_WORD) || !same_sort(a,b))
@@ -401,24 +525,53 @@ namespace {
                 std::to_string(e.line));
   }
 
+  Sort infer(const SExpr& e, const TypeEnv& env) {
+    e.sort=infer_term(e,env);
+    return e.sort;
+  }
+
   Script read_script(const std::vector<SExpr>& forms) {
     Script script;
+    TypeEnv env;
     bool checked=false;
     bool pushed=false;
     for (const SExpr& form : forms) {
       const std::string command=head(form);
-      if (command == "declare-fun") {
-        if ((form.items.size() != 4) || !form.items[1].atom ||
-            form.items[2].atom || !form.items[2].items.empty())
+      if ((command == "declare-fun") || (command == "declare-const")) {
+        const bool constant=(command == "declare-const");
+        if ((form.items.size() != (constant ? 3U : 4U)) ||
+            !form.items[1].atom || (!constant &&
+            (form.items[2].atom || !form.items[2].items.empty())))
           throw Error("only nullary declare-fun is supported on line " +
                       std::to_string(form.line));
-        Decl d={form.items[1].text,parse_sort(form.items[3])};
+        if (checked) throw Error("declaration after check-sat is unsupported");
+        Decl d={form.items[1].text,parse_sort(form.items[constant ? 2 : 3])};
         if (!script.globals.emplace(d.name,d.sort).second)
           throw Error("duplicate declaration '" + d.name + "'");
         script.declarations.push_back(d);
+        env.local.emplace(d.name,d.sort);
+      } else if (command == "define-fun") {
+        if ((form.items.size() != 5) || !form.items[1].atom ||
+            form.items[2].atom || !form.items[2].items.empty())
+          throw Error("only nullary define-fun is supported");
+        if (checked) throw Error("definition after check-sat is unsupported");
+        const std::string& name=form.items[1].text;
+        Sort declared=parse_sort(form.items[3]);
+        // Check before extending the environment: no forward references or
+        // recursion. All global names remain unique for the entire script.
+        Sort actual=infer(form.items[4],env);
+        if ((declared.kind == SORT_INT) || !same_sort(declared,actual))
+          throw Error("define-fun body has an unsupported or different sort");
+        if (!script.globals.emplace(name,declared).second)
+          throw Error("duplicate declaration '" + name + "'");
+        env.local.emplace(name,declared);
+        script.definitions.emplace_back(name,form.items[4]);
       } else if (command == "assert") {
         require_arity(form,1);
         if (checked) throw Error("assert after check-sat is unsupported");
+        if (infer(form.items[1],env).kind != SORT_BOOL)
+          throw Error("assert expects Bool on line " +
+                      std::to_string(form.line));
         script.assertions.push_back(form.items[1]);
       } else if (command == "push") {
         if (pushed || checked || (form.items.size() > 2) ||
@@ -433,18 +586,13 @@ namespace {
         // Metadata does not change the asserted QF_BV formula.
       } else if (command == "exit") {
         require_arity(form,0);
+        break;
       } else {
         throw Error("unsupported command '" + command + "' on line " +
                     std::to_string(form.line));
       }
     }
     if (!checked) throw Error("script has no check-sat command");
-    TypeEnv env;
-    env.local=script.globals;
-    for (const SExpr& assertion : script.assertions)
-      if (infer(assertion,env).kind != SORT_BOOL)
-        throw Error("assert expects Bool on line " +
-                    std::to_string(assertion.line));
     return script;
   }
 
@@ -470,80 +618,144 @@ namespace {
   }
 
   struct EvalEnv {
+    struct Binding {
+      const SExpr* term;
+      const EvalEnv* outer;
+      mutable std::unique_ptr<WordExpr> word;
+      mutable std::unique_ptr<BoolExpr> boolean;
+      Binding(const SExpr* term0, const EvalEnv* outer0)
+        : term(term0), outer(outer0) {}
+    };
     const EvalEnv* parent;
-    std::unordered_map<std::string,std::unique_ptr<WordExpr> > words;
-    std::unordered_map<std::string,std::unique_ptr<BoolExpr> > bools;
-    std::unordered_map<std::string,Sort> sorts;
+    std::unordered_map<std::string,Binding> bindings;
     explicit EvalEnv(const EvalEnv* parent0=nullptr) : parent(parent0) {}
-    const WordExpr* word(const std::string& name) const {
-      auto i=words.find(name);
-      if (i != words.end()) return i->second.get();
-      return parent == nullptr ? nullptr : parent->word(name);
+    EvalEnv(const SExpr& e, const EvalEnv& outer) : parent(&outer) {
+      for (const auto& binding : let_bindings(e))
+        bindings.emplace(binding.first,Binding(binding.second,&outer));
     }
-    const BoolExpr* boolean(const std::string& name) const {
-      auto i=bools.find(name);
-      if (i != bools.end()) return i->second.get();
-      return parent == nullptr ? nullptr : parent->boolean(name);
+    const Binding* find(const std::string& name) const {
+      auto i=bindings.find(name);
+      if (i != bindings.end()) return &i->second;
+      return parent == nullptr ? nullptr : parent->find(name);
     }
   };
 
   class SMT2Space : public Space {
   private:
     WordDomainType policy;
+    bool tables;
+    unsigned int table_count=0;
+    std::unordered_map<std::string,WordTupleSet> tuple_cache;
+
+    WordExpr table_binary(const std::string& op, const WordExpr& a,
+                          const WordExpr& b) {
+      unsigned int width=a.width();
+      std::string key=op+std::to_string(width);
+      auto t=tuple_cache.find(key);
+      if (t==tuple_cache.end()) {
+        std::vector<std::vector<WordValue>> rows;
+        WordValue size=WordValue(1)<<width;
+        rows.reserve(size*size);
+        for (WordValue x=0; x<size; x++)
+          for (WordValue y=0; y<size; y++)
+            rows.push_back({x,y,(op=="bvmul" ? x*y : x+y)&(size-1)});
+        t=tuple_cache.emplace(key,WordTupleSet({width,width,width},rows)).first;
+      }
+      WordVar x=a.post(*this,policy), y=b.post(*this,policy);
+      WordVar z(*this,width,policy);
+      extensional(*this,WordVarArgs({x,y,z}),t->second);
+      table_count++;
+      return WordExpr(z);
+    }
+
     WordVarArray words;
     BoolVarArray bools;
     std::unordered_map<std::string,int> word_index;
     std::unordered_map<std::string,int> bool_index;
+    unsigned int evaluation_depth=0;
+
+    struct EvalGuard {
+      unsigned int& depth;
+      explicit EvalGuard(unsigned int& depth0) : depth(depth0) {
+        if (depth >= max_nesting)
+          throw Error("reader evaluation nesting limit is 128");
+        depth++;
+      }
+      ~EvalGuard(void) { depth--; }
+    };
 
     WordExpr eval_word(const SExpr& e, const EvalEnv& env) {
+      EvalGuard guard(evaluation_depth);
       if (e.atom) {
         Sort literal;
-        if (literal_sort(e.text,literal))
+        if ((e.token == SExpr::SIMPLE) && literal_sort(e.text,literal))
           return WordExpr(literal.width,word_literal(e.text));
-        if (const WordExpr* value=env.word(e.text)) return *value;
+        if (const EvalEnv::Binding* value=env.find(e.text)) {
+          // Lower a demanded binding once. Keeping only an expression would
+          // repost its DAG at every Boolean relation that uses it.
+          if (!value->word)
+            value->word.reset(new WordExpr(
+              eval_word(*value->term,*value->outer).post(*this,policy)));
+          return *value->word;
+        }
         auto i=word_index.find(e.text);
         if (i != word_index.end()) return WordExpr(words[i->second]);
         throw Error("word symbol '" + e.text + "' is unavailable");
       }
+      Sort literal;
+      WordValue value;
+      if (decimal_literal(e,literal,value)) return WordExpr(literal.width,value);
       if (!e.items[0].atom) {
         const SExpr& indexed=e.items[0];
         WordExpr source=eval_word(e.items[1],env);
+        if ((indexed.items[1].text == "rotate_left") ||
+            (indexed.items[1].text == "rotate_right")) {
+          const unsigned int amount=rotation_amount(indexed.items[2],source.width());
+          return (indexed.items[1].text == "rotate_left") ?
+            Gecode::rotate_left(source,amount) : Gecode::rotate_right(source,amount);
+        }
         if (indexed.items[1].text == "extract") {
           unsigned int high=unsigned_atom(indexed.items[2],"extract");
           unsigned int low=unsigned_atom(indexed.items[3],"extract");
           return Gecode::extract(source,low,high-low+1U);
         }
-        unsigned int extra=unsigned_atom(indexed.items[2],"zero_extend");
-        return Gecode::zero_extend(source,source.width()+extra);
+        unsigned int extra=unsigned_atom(indexed.items[2],"extension");
+        return (indexed.items[1].text == "sign_extend") ?
+          Gecode::sign_extend(source,source.width()+extra) :
+          Gecode::zero_extend(source,source.width()+extra);
       }
       const std::string op=e.items[0].text;
       if (op == "let") {
-        EvalEnv nested(&env);
-        // Binding sorts were checked before Space construction.
-        for (const auto& binding : let_bindings(e)) {
-          Sort s=infer(*binding.second,types_for(env));
-          nested.sorts.emplace(binding.first,s);
-          if (s.kind == SORT_WORD)
-            nested.words.emplace(binding.first,std::unique_ptr<WordExpr>(
-              new WordExpr(eval_word(*binding.second,env))));
-          else if (s.kind == SORT_BOOL)
-            nested.bools.emplace(binding.first,std::unique_ptr<BoolExpr>(
-              new BoolExpr(eval_bool(*binding.second,env))));
-        }
+        EvalEnv nested(e,env);
         return eval_word(e.items[2],nested);
       }
       if (op == "ite")
         return Gecode::ite(eval_bool(e.items[1],env),
                            eval_word(e.items[2],env),eval_word(e.items[3],env));
       if (op == "bvneg") return -eval_word(e.items[1],env);
+      if (op == "bvnot") return ~eval_word(e.items[1],env);
       WordExpr a=eval_word(e.items[1],env);
-      if ((op == "bvadd") || (op == "bvmul")) {
-        for (std::size_t i=2; i<e.items.size(); i++)
-          a=(op == "bvadd") ? a+eval_word(e.items[i],env) :
-            a*eval_word(e.items[i],env);
+      if ((op == "bvadd") || (op == "bvmul") || (op == "bvand") ||
+          (op == "bvor") || (op == "bvxor")) {
+        for (std::size_t i=2; i<e.items.size(); i++) {
+          WordExpr b=eval_word(e.items[i],env);
+          if (tables && a.width()<=6 && ((op=="bvadd") || (op=="bvmul")))
+            a=table_binary(op,a,b);
+          else if (op == "bvadd") a=a+b;
+          else if (op == "bvmul") a=a*b;
+          else if (op == "bvand") a=a&b;
+          else if (op == "bvor") a=a|b;
+          else a=a^b;
+        }
         return a;
       }
       WordExpr b=eval_word(e.items[2],env);
+      if (op == "concat") return Gecode::concat(a,b);
+      if (op == "bvudiv") return Gecode::div(a,b,WS_SMTLIB);
+      if (op == "bvurem") return Gecode::mod(a,b,WS_SMTLIB);
+      if (op == "bvshl") return a << b;
+      if (op == "bvlshr") return logical_shift_right(a,b);
+      if (op == "bvashr") return arithmetic_shift_right(a,b);
       if (op == "bvsub") return a-b;
       if (op == "bvsdiv") return signed_div(a,b,WS_SMTLIB);
       if ((op == "bvsmod") || (op == "bvsmod_i"))
@@ -557,36 +769,47 @@ namespace {
 
     bool zero_literal(const SExpr& e) {
       Sort sort;
-      return e.atom && literal_sort(e.text,sort) &&
+      return e.atom && (e.token == SExpr::SIMPLE) && literal_sort(e.text,sort) &&
         (word_literal(e.text) == 0);
     }
 
     BoolExpr eval_bool(const SExpr& e, const EvalEnv& env) {
+      EvalGuard guard(evaluation_depth);
       if (e.atom) {
         if (e.text == "true") return constant_bool(true);
         if (e.text == "false") return constant_bool(false);
-        if (const BoolExpr* value=env.boolean(e.text)) return *value;
+        if (const EvalEnv::Binding* value=env.find(e.text)) {
+          // NNF conversion expands shared BoolExpr trees: materialize each
+          // demanded binding to preserve the input DAG through lowering.
+          if (!value->boolean)
+            value->boolean.reset(new BoolExpr(
+              Gecode::expr(*this,eval_bool(*value->term,*value->outer))));
+          return *value->boolean;
+        }
         auto i=bool_index.find(e.text);
         if (i != bool_index.end()) return BoolExpr(bools[i->second]);
         throw Error("Boolean symbol '" + e.text + "' is unavailable");
       }
       const std::string op=head(e);
       if (op == "let") {
-        EvalEnv nested(&env);
-        TypeEnv tenv=types_for(env);
-        for (const auto& binding : let_bindings(e)) {
-          Sort s=infer(*binding.second,tenv);
-          nested.sorts.emplace(binding.first,s);
-          if (s.kind == SORT_WORD)
-            nested.words.emplace(binding.first,std::unique_ptr<WordExpr>(
-              new WordExpr(eval_word(*binding.second,env))));
-          else if (s.kind == SORT_BOOL)
-            nested.bools.emplace(binding.first,std::unique_ptr<BoolExpr>(
-              new BoolExpr(eval_bool(*binding.second,env))));
-        }
+        EvalEnv nested(e,env);
         return eval_bool(e.items[2],nested);
       }
       if (op == "not") return !eval_bool(e.items[1],env);
+      if (op == "=>") {
+        // SMT-LIB implication is right associative.
+        BoolExpr result=eval_bool(e.items.back(),env);
+        for (std::size_t i=e.items.size()-2; i>0; i--)
+          result=!eval_bool(e.items[i],env) || result;
+        return result;
+      }
+      if (op == "xor") {
+        BoolExpr result=eval_bool(e.items[1],env);
+        for (std::size_t i=2; i<e.items.size(); i++)
+          // Materialize parity steps to avoid exponential NNF expansion.
+          result=BoolExpr(Gecode::expr(*this,result != eval_bool(e.items[i],env)));
+        return result;
+      }
       if ((op == "and") || (op == "or")) {
         if (e.items.size() == 1) return constant_bool(op == "and");
         BoolExpr result=eval_bool(e.items[1],env);
@@ -601,8 +824,7 @@ namespace {
           (!c && eval_bool(e.items[3],env));
       }
       if ((op == "=") || (op == "distinct")) {
-        TypeEnv tenv=types_for(env);
-        Sort s=infer(e.items[1],tenv);
+        Sort s=e.items[1].sort;
         BoolExpr result;
         if (op == "=") {
           for (std::size_t i=2; i<e.items.size(); i++)
@@ -643,25 +865,9 @@ namespace {
                       eval_word(e.items[2],env),policy);
     }
 
-    std::unordered_map<std::string,Sort> global_sorts;
-
-    void add_types(const EvalEnv* env, TypeEnv& result) const {
-      if (env == nullptr) return;
-      add_types(env->parent,result);
-      for (const auto& entry : env->sorts)
-        result.local[entry.first]=entry.second;
-    }
-
-    TypeEnv types_for(const EvalEnv& env) const {
-      TypeEnv result;
-      result.local=global_sorts;
-      add_types(&env,result);
-      return result;
-    }
-
   public:
-    SMT2Space(const Script& script, WordDomainType policy0)
-      : policy(policy0), words(*this,static_cast<int>(
+    SMT2Space(const Script& script, WordDomainType policy0, bool tables0=false)
+      : policy(policy0), tables(tables0), words(*this,static_cast<int>(
           [&script](){ std::size_t n=0; for (const Decl& d:script.declarations)
             if (d.sort.kind==SORT_WORD) n++; return n; }())),
         bools(*this,static_cast<int>(
@@ -669,7 +875,6 @@ namespace {
             if (d.sort.kind==SORT_BOOL) n++; return n; }())) {
       int wi=0, bi=0;
       for (const Decl& d : script.declarations) {
-        global_sorts.emplace(d.name,d.sort);
         if (d.sort.kind == SORT_WORD) {
           words[wi]=(policy == WDT_CUBE) ? WordVar(*this,d.sort.width) :
             WordVar(*this,d.sort.width,policy);
@@ -680,6 +885,11 @@ namespace {
         }
       }
       EvalEnv env;
+      // Bodies were checked at their declaration site. Evaluate them against
+      // the global environment, never a let environment at the use site.
+      for (const auto& definition : script.definitions)
+        env.bindings.emplace(definition.first,
+          EvalEnv::Binding(&definition.second,&env));
       for (const SExpr& assertion : script.assertions)
         Gecode::rel(*this,eval_bool(assertion,env));
       WordVarArgs active_words;
@@ -698,10 +908,12 @@ namespace {
     }
 
     SMT2Space(SMT2Space& other)
-      : Space(other), policy(other.policy) {
+      : Space(other), policy(other.policy), tables(other.tables),
+        table_count(other.table_count) {
       words.update(*this,other.words);
       bools.update(*this,other.bools);
     }
+    unsigned int replacements(void) const { return table_count; }
     virtual Space* copy(void) { return new SMT2Space(*this); }
   };
 
@@ -727,50 +939,77 @@ namespace {
 }
 
 int main(int argc, char* argv[]) {
-  if ((argc != 3) && (argc != 4)) {
+  if ((argc < 3) || (argc > 5)) {
     std::cerr << "usage: word-smt2-reader VARIANT FILE "
-                 "[--parse-only|--model-only]\n";
+                 "[--parse-only|--model-only] [--tables]\n";
     return 2;
   }
-  const bool parse_only=(argc == 4) && (std::string(argv[3]) == "--parse-only");
-  const bool model_only=(argc == 4) && (std::string(argv[3]) == "--model-only");
-  if ((argc == 4) && !parse_only && !model_only) return 2;
+  bool parse_only=false, model_only=false, tables=false;
+  for (int i=3; i<argc; i++) {
+    std::string flag=argv[i];
+    if (flag=="--parse-only") parse_only=true;
+    else if (flag=="--model-only") model_only=true;
+    else if (flag=="--tables") tables=true;
+    else return 2;
+  }
+  if (parse_only && model_only) return 2;
   try {
+    const WordDomainType domain_policy=policy(argv[1]);
     std::ifstream stream(argv[2]);
     if (!stream) throw Error("cannot open input file");
-    std::ostringstream buffer;
-    buffer << stream.rdbuf();
+    std::string source;
+    char chunk[8192];
+    while (stream.read(chunk,sizeof(chunk)) || stream.gcount() != 0) {
+      if (source.size()+static_cast<std::size_t>(stream.gcount()) > max_input_bytes)
+        throw Error("reader input-size limit is 16 MiB");
+      source.append(chunk,static_cast<std::size_t>(stream.gcount()));
+    }
+    if (stream.bad()) throw Error("cannot read input file");
     auto start=std::chrono::steady_clock::now();
-    const std::string source=buffer.str();
     Parser parser(source);
     Script script=read_script(parser.parse());
+    const auto parsed=std::chrono::steady_clock::now();
+    const auto parse_us=std::chrono::duration_cast<std::chrono::microseconds>(
+      parsed-start).count();
     if (parse_only) {
       std::cout << "{\"status\":\"ok\",\"declarations\":"
                 << script.declarations.size() << ",\"assertions\":"
-                << script.assertions.size() << "}\n";
+                << script.assertions.size() << ",\"parse_us\":" << parse_us
+                << "}\n";
       return 0;
     }
-    SMT2Space* root=new SMT2Space(script,policy(argv[1]));
+    std::unique_ptr<SMT2Space> root(new SMT2Space(script,domain_policy,tables));
+    const auto modeled=std::chrono::steady_clock::now();
+    const auto model_us=std::chrono::duration_cast<std::chrono::microseconds>(
+      modeled-parsed).count();
     if (model_only) {
-      delete root;
+      root.reset();
       std::cout << "{\"status\":\"ok\",\"declarations\":"
                 << script.declarations.size() << ",\"assertions\":"
-                << script.assertions.size() << "}\n";
+                << script.assertions.size() << ",\"parse_us\":" << parse_us
+                << ",\"model_us\":" << model_us << "}\n";
       return 0;
     }
+    const unsigned int replacements=root->replacements();
     StatusStatistics root_stats;
     SpaceStatus root_status=root->status(root_stats);
-    DFS<SMT2Space> search(root_status == SS_FAILED ? nullptr : root);
-    delete root;
-    SMT2Space* solution=search.next();
+    DFS<SMT2Space> search(root_status == SS_FAILED ? nullptr : root.get());
+    root.reset();
+    std::unique_ptr<SMT2Space> solution(search.next());
     const bool sat=solution != nullptr;
-    delete solution;
+    solution.reset();
     Search::Statistics stats=search.statistics();
-    auto elapsed=std::chrono::duration_cast<std::chrono::microseconds>(
-      std::chrono::steady_clock::now()-start).count();
+    const auto finished=std::chrono::steady_clock::now();
+    const auto elapsed=std::chrono::duration_cast<std::chrono::microseconds>(
+      finished-start).count();
+    const auto solve_us=std::chrono::duration_cast<std::chrono::microseconds>(
+      finished-modeled).count();
     std::cout << "{\"status\":\"ok\",\"result\":\""
               << (sat ? "sat" : "unsat") << "\",\"variant\":\""
               << argv[1] << "\",\"elapsed_us\":" << elapsed
+              << ",\"parse_us\":" << parse_us << ",\"model_us\":" << model_us
+              << ",\"table_replacements\":" << replacements
+              << ",\"solve_us\":" << solve_us
               << ",\"nodes\":" << stats.node << ",\"failures\":"
               << stats.fail << ",\"propagations\":"
               << (root_stats.propagate+stats.propagate) << "}\n";

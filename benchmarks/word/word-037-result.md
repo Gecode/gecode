@@ -1,5 +1,11 @@
 # Word-037 comparison campaign
 
+Review correction (2026-09-07): these historical Z3 ratios compare one
+satisfiability check against complete Gecode enumeration. DMA additionally
+amortizes root construction across its batch. The external win/loss labels below
+do not establish matched-workload solver speedups. Raw historical results are
+retained; the current analyzer omits those ratios.
+
 External result root: `/private/tmp/gecode-word-037-local.Z23NJu`
 Git revision: `f29ee69530f5230d507c2605823919afdafd7165`
 Runner: `native subprocess` on `Darwin 25.6.0 arm64`

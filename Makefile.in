@@ -555,7 +555,7 @@ FLOATBUILDDIRS	= \
 
 WORDSRC0 = \
 	arithmetic.cpp array.cpp branch.cpp channel.cpp channel/bit.cpp count.cpp exception.cpp \
-	conditional.cpp distinct.cpp element.cpp logic.cpp rel.cpp structure.cpp trace.cpp trace/tracer.cpp \
+	conditional.cpp distinct.cpp element.cpp extensional.cpp logic.cpp rel.cpp structure.cpp trace.cpp trace/tracer.cpp \
 	var/word.cpp var-imp/word.cpp
 WORDHDR0 = \
 	arithmetic.hh arithmetic/add.hpp arithmetic/neg-sub.hpp arithmetic/mult.hpp arithmetic/bounded.hpp arithmetic/product-mod.hpp arithmetic/bounded-product-mod.hpp arithmetic/divmod.hpp arithmetic/number.hpp \
@@ -710,7 +710,7 @@ MMSRC0 = \
 	word-expr.cpp reg.cpp optimize.cpp exception.cpp ipl.cpp
 MMHDR0 = \
 	int-expr.hpp int-rel.hpp float-expr.hpp float-rel.hpp \
-	bool-expr.hpp set-expr.hpp set-rel.hpp \
+	bool-expr.hpp word-post.hh set-expr.hpp set-rel.hpp \
 	exception.hpp matrix.hpp \
 	optimize.hpp reg.hpp ldsb.hpp channel.hpp aliases.hpp \
 	ipl.hpp
@@ -1200,7 +1200,7 @@ else
 FLOATTESTOBJ=
 endif
 
-WORDTESTSRC00 = arithmetic bounded branch channel conditional count distinct element logic minimodel number overflow product-mod reduction rel structure trace
+WORDTESTSRC00 = arithmetic bounded branch channel conditional count distinct element extensional logic minimodel number overflow product-mod reduction rel structure trace
 WORDTESTSRC0 = test/word.cpp $(WORDTESTSRC00:%=test/word/%.cpp)
 
 ifeq "@enable_word_vars@" "yes"

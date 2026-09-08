@@ -2633,10 +2633,11 @@ namespace Test { namespace Word {
           const WordValue mask=Gecode::Word::width_mask(width);
           const WordValue minimum=WordValue(1) << (width-1);
           const WordValue dividend_rows[][2]={
-            {minimum,mask}, {minimum,minimum+1U}, {minimum+1U,mask}
+            {minimum,mask}, {minimum,minimum+1U}, {minimum+1U,mask},
+            {minimum,minimum}
           };
           const WordValue divisor_rows[][2]={
-            {mask,mask}, {mask-1U,mask}
+            {mask,mask}, {mask-1U,mask}, {minimum,mask}
           };
           for (const auto& dividend : dividend_rows)
             for (const auto& divisor : divisor_rows) {
@@ -2668,6 +2669,13 @@ namespace Test { namespace Word {
           if ((boundary.status() == SS_FAILED) ||
               !boundary.q.in(minimum) || !boundary.q.in(minimum-1U))
             return false;
+          if (width > 1U) {
+            D fixed_minimum(width,minimum,minimum,minimum,mask);
+            if ((fixed_minimum.status() == SS_FAILED) ||
+                !fixed_minimum.q.in(minimum) ||
+                !fixed_minimum.q.in(minimum/2U))
+              return false;
+          }
         }
         return true;
       }

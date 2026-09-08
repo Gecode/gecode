@@ -384,7 +384,7 @@ namespace Gecode { namespace Word { namespace Arithmetic {
           if (op == SDO_DIV) {
             const WordValue minus_one_rank=mask^sign;
             const bool wraps_at_minimum=
-              (role[0]->minimum == 0) && (role[0]->maximum != 0) &&
+              (role[0]->minimum == 0) &&
               (role[1]->minimum <= minus_one_rank) &&
               (role[1]->maximum >= minus_one_rank);
             if (!wraps_at_minimum) {
