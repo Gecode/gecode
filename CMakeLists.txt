@@ -1422,10 +1422,6 @@ if(BUILD_TESTING)
       Int::Arithmetic::Abs
       Int::Arithmetic::ArgMax
       Int::Arithmetic::Max::Nary
-      Int::Arithmetic::Gcd
-      Int::Arithmetic::Divides
-      Int::Arithmetic::Product
-      Int::Arithmetic::NumberTheory
       Int::Cumulative::Man::Fix::0::4
       Int::Distinct::Random
       Int::Extensional::TupleSet::Sparse::IncrementalDelta
