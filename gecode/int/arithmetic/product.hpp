@@ -199,6 +199,13 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   /// Determine the relation when bounds or assignments prove it.
   inline RelTest
   product_status(const ViewArray<IntView>& x, const IntView& y) {
+    if ((x.size() == 1) && (x[0] == y))
+      return RT_TRUE;
+    for (int i=0; i<x.size(); i++)
+      if (x[i].assigned() && (x[i].val() == 0)) {
+        if (!y.in(0)) return RT_FALSE;
+        return y.assigned() ? RT_TRUE : RT_MAYBE;
+      }
     ProductInterval p = product_interval(x);
     if ((p.max < y.min()) || (p.min > y.max()))
       return RT_FALSE;

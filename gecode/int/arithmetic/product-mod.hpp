@@ -475,8 +475,11 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     if ((m == y) || (m.max() <= 0) || (y.max() < 0) ||
         (y.min() >= m.max()))
       return RT_FALSE;
-    const bool mf=product_mod_var_mod_factor(x,m);
-    if (mf) {
+    bool zero=product_mod_var_mod_factor(x,m) ||
+      (m.assigned() && (m.val() == 1));
+    for (int i=0; !zero && (i<x.size()); i++)
+      zero=x[i].assigned() && (x[i].val() == 0);
+    if (zero) {
       if (!y.in(0)) return RT_FALSE;
       if ((m.min() > 0) && y.assigned()) return RT_TRUE;
       return RT_MAYBE;
