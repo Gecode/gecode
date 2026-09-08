@@ -7,6 +7,17 @@ review fixes described below. The feature delta is measured from merge base
 
 ## Recommendation
 
+Implementation follow-up: the initial fixes are committed as `788879564e`.
+Targeted lifecycle tests now cover delayed Boolean activation, disabled actor
+rescheduling, cloning before and after activation, and the variable-to-fixed
+modulus rewrite. The GCD-all-aliased and divides-self tests now retain the
+generic fixpoint comparisons. Other exceptions have family-specific comments
+explaining the interior membership observations missed by bounds events.
+For example, enabling the empty-product comparison reproduces that legitimate
+exception (seed 1576866552, fixprob 1). All 95 focused Release tests pass with
+three iterations, seed 650, and fixprob 1. The workflow now executes its Debug
+audit arithmetic binary; local audit/UBSan validation is in progress.
+
 Close, but I would not yet give an unconditional release-readiness sign-off.
 The implementation is a credible addition to 6.5.0: it has a small public API,
 explicit mathematical semantics, dedicated propagators, and substantial

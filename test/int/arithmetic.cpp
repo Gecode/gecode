@@ -35,6 +35,7 @@
 
 #include <cmath>
 #include <algorithm>
+#include <memory>
 
 #include <gecode/minimodel.hh>
 
@@ -60,6 +61,10 @@ namespace Test { namespace Int {
      }
 
      /// %Test for the ternary greatest-common-divisor constraint
+     // Reposting comparisons below are disabled where bounds subscriptions
+     // deliberately miss interior removals used by algebraic status tests.
+     // NumberTheoryLifecycle checks activation, cloning, and rescheduling
+     // separately; NumberTheorySparseBounds checks own-update fixpoints.
      class GcdXYZ : public Test {
      public:
        /// Create and register test
@@ -138,7 +143,7 @@ namespace Test { namespace Int {
        GcdXXX(const std::string& s, const Gecode::IntSet& d,
               Gecode::IntPropLevel ipl)
          : Test("Arithmetic::Gcd::XXX::"+str(ipl)+"::"+s,1,d,true,ipl) {
-         contest=CTL_NONE; testfix=false;
+         contest=CTL_NONE;
        }
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
@@ -156,6 +161,8 @@ namespace Test { namespace Int {
      };
 
      /// %Test for the reified divisibility constraint
+     // With divisor zero, removing interior zero from the dividend can
+     // strengthen a reposted status test without a bounds wakeup.
      class DividesXY : public Test {
      public:
        /// Create and register test
@@ -186,7 +193,7 @@ namespace Test { namespace Int {
        DividesXX(const std::string& s, const Gecode::IntSet& d,
                  Gecode::IntPropLevel ipl)
          : Test("Arithmetic::Divides::XX::"+str(ipl)+"::"+s,
-                1,d,true,ipl) { contest=CTL_NONE; testfix=false; }
+                1,d,true,ipl) { contest=CTL_NONE; }
        /// Every integer divides itself, including zero
        virtual bool solution(const Assignment&) const {
          return true;
@@ -232,6 +239,64 @@ namespace Test { namespace Int {
        }
      };
 
+     /// Activation and rescheduling survive cloning and arithmetic rewrites.
+     class NumberTheoryLifecycle : public ::Test::Base {
+       class TestSpace : public Gecode::Space {
+       public:
+         Gecode::IntVar x, c, y, m;
+         Gecode::BoolVar b;
+         TestSpace(int kind)
+           : x(*this,Gecode::IntSet({1,3,5,6})),
+             c(*this,kind == 0 ? 10 : 2,kind == 0 ? 10 : 2),
+             y(*this,kind == 0 ? 2 : (kind == 4 ? 1 : 12),
+               kind == 0 ? 2 : (kind == 4 ? 1 : 12)),
+             m(*this,kind == 4 ? 5 : 13,kind == 4 ? 7 : 17), b(*this,0,1) {
+           using namespace Gecode;
+           switch (kind) {
+           case 0: gcd(*this,x,c,y,Reify(b)); break;
+           case 1: divides(*this,c,x,Reify(b)); break;
+           case 2: product(*this,IntVarArgs({x,c}),y,Reify(b)); break;
+           case 3: product_mod(*this,IntVarArgs({x,c}),13,y,Reify(b)); break;
+           case 4: product_mod(*this,IntVarArgs({x,c}),m,y,Reify(b)); break;
+           default: GECODE_NEVER;
+           }
+         }
+         TestSpace(TestSpace& s) : Gecode::Space(s) {
+           x.update(*this,s.x); c.update(*this,s.c); y.update(*this,s.y);
+           m.update(*this,s.m); b.update(*this,s.b);
+         }
+         virtual Gecode::Space* copy(void) { return new TestSpace(*this); }
+       };
+     public:
+       NumberTheoryLifecycle(void)
+         : ::Test::Base("Int::Arithmetic::NumberTheoryLifecycle") {}
+       virtual bool run(void) {
+         using namespace Gecode;
+         for (int kind=0; kind<5; kind++) {
+           TestSpace home(kind);
+           if (home.status() == SS_FAILED)
+             return false;
+           std::unique_ptr<TestSpace> clone
+             (static_cast<TestSpace*>(home.clone()));
+           PropagatorGroup::all.disable(*clone);
+           rel(*clone,clone->b,IRT_EQ,1);
+           PropagatorGroup::all.enable(*clone);
+           if ((clone->status() == SS_FAILED) ||
+               ((kind != 4) && (!clone->x.assigned() || (clone->x.val() != 6))))
+             return false;
+           // Clone the activated actor before fixing a variable modulus.
+           std::unique_ptr<TestSpace> child
+             (static_cast<TestSpace*>(clone->clone()));
+           rel(*child,child->m,IRT_EQ,kind == 4 ? 5 : 13);
+           if ((child->status() == SS_FAILED) || !child->x.assigned() ||
+               (child->x.val() != (kind == 4 ? 3 : 6)) ||
+               home.b.assigned() || (home.x.size() != 4) || clone->m.assigned())
+             return false;
+         }
+         return true;
+       }
+     };
+
      /// Evaluate an exact product for testing without overflowing.
      bool product_value(const Assignment& x, int n, int& product) {
        for (int i=0; i<n; i++)
@@ -253,6 +318,8 @@ namespace Test { namespace Int {
      }
 
      /// %Test for an ordinary and reified three-factor product
+     // Zero membership and assigned-product membership can change without
+     // a bounds event, including when factors or the result are aliased.
      class ProductXYZR : public Test {
      public:
        ProductXYZR(const std::string& s, const Gecode::IntSet& d,
@@ -280,7 +347,10 @@ namespace Test { namespace Int {
        ProductEmpty(const std::string& s, const Gecode::IntSet& d,
                     Gecode::IntPropLevel ipl)
          : Test("Arithmetic::Product::Empty::"+str(ipl)+"::"+s,
-                1,d,true,ipl) { contest = CTL_NONE; testfix=false; }
+                1,d,true,ipl) {
+         // Reified y=1 can miss an interior removal of 1 on PC_INT_BND.
+         contest = CTL_NONE; testfix=false;
+       }
        virtual bool solution(const Assignment& x) const {
          return x[0] == 1;
        }
@@ -652,6 +722,8 @@ namespace Test { namespace Int {
      }
 
      /// %Test for an ordinary and reified three-factor modular product
+     // Reified status tests observe interior residue membership, including
+     // the empty-product residue, but subscribe only to bounds changes.
      class ProductModXYZR : public Test {
      protected:
        int m;
@@ -842,6 +914,9 @@ namespace Test { namespace Int {
      };
 
      /// %Test for an ordinary two-factor product with a variable modulus
+     // Empty-product status observes membership of 0/1 in the result, and
+     // divisor status observes interior modulus membership. Reposting can
+     // therefore strengthen propagation without a subscribed bounds event.
      class ProductModVarXYMR : public Test {
      public:
        ProductModVarXYMR(const std::string& s, const Gecode::IntSet& d,
@@ -2557,6 +2632,7 @@ namespace Test { namespace Int {
            (void) new ArgMinBoolShared(i,false);
          }
          (void) new NumberTheorySparseBounds;
+         (void) new NumberTheoryLifecycle;
          (void) new ProductModInvalidModulus;
          (void) new ProductModAlgebraic;
          (void) new ProductModVarBounds;
