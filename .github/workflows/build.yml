@@ -148,14 +148,6 @@ jobs:
         set -euxo pipefail
         cmake --build . --config $BUILD_TYPE --target check
 
-    - name: Run number theory tests
-      shell: bash
-      run: >
-        "$GITHUB_WORKSPACE/build/bin/gecode-test"
-        -test '^Int::Arithmetic::Gcd' -test '^Int::Arithmetic::Divides'
-        -test '^Int::Arithmetic::Product' -test '^Int::Arithmetic::NumberTheory'
-        -iter 2 -fixprob 1 -threads 2
-
     - name: Install CMake package
       working-directory: ${{github.workspace}}/build
       shell: bash
@@ -239,7 +231,8 @@ jobs:
     - name: Check
       shell: bash
       run: >
-        cmake --build "$GITHUB_WORKSPACE/build-ninja" --target check
+        ctest --test-dir "$GITHUB_WORKSPACE/build-ninja"
+        --output-on-failure -R '^(build-gecode-test|test)$'
 
     - name: Configure CMake Debug audit smoke
       shell: bash
@@ -256,13 +249,7 @@ jobs:
 
     - name: Build Debug audit smoke
       shell: bash
-      run: cmake --build "$GITHUB_WORKSPACE/build-ninja-debug" --target gecode-test
-
-    - name: Run Debug audit arithmetic tests
-      shell: bash
-      run: >
-        "$GITHUB_WORKSPACE/build-ninja-debug/bin/gecode-test"
-        -test '^Int::Arithmetic::' -iter 1 -seed 650 -threads 2
+      run: cmake --build "$GITHUB_WORKSPACE/build-ninja-debug"
 
     - name: Install and smoke test FlatZinc tools
       shell: bash
@@ -418,14 +405,6 @@ jobs:
       shell: pwsh
       run: cmake --build "${{ github.workspace }}\\build" --config ${{ env.BUILD_TYPE }} --target check
 
-    - name: Run number theory tests
-      shell: pwsh
-      run: >
-        & "$env:GITHUB_WORKSPACE\build\bin\$env:BUILD_TYPE\gecode-test.exe"
-        -test '^Int::Arithmetic::Gcd' -test '^Int::Arithmetic::Divides'
-        -test '^Int::Arithmetic::Product' -test '^Int::Arithmetic::NumberTheory'
-        -iter 2 -fixprob 1 -threads 2
-
     - name: Install CMake package
       shell: pwsh
       run: cmake --install "${{ github.workspace }}\\build" --config ${{ env.BUILD_TYPE }} --prefix "${{ github.workspace }}\\install"
@@ -476,14 +455,6 @@ jobs:
     - name: Check
       shell: pwsh
       run: cmake --build --preset vs2022-vcpkg-check
-
-    - name: Run number theory tests
-      shell: pwsh
-      run: >
-        & "$env:GITHUB_WORKSPACE\build\vs2022-vcpkg\bin\$env:BUILD_TYPE\gecode-test.exe"
-        -test '^Int::Arithmetic::Gcd' -test '^Int::Arithmetic::Divides'
-        -test '^Int::Arithmetic::Product' -test '^Int::Arithmetic::NumberTheory'
-        -iter 2 -fixprob 1 -threads 2
 
     - name: Install CMake package
       shell: pwsh
