@@ -16,8 +16,9 @@ before squash merge.
 This brief is a design proposal. The requested exploration creates the area
 and records the recommendations; it does not authorize implementation tasks.
 Gecode 7 may impose new comparison requirements on optimization spaces; a
-legacy arbitration fallback is not required. Objective readiness, float behavior,
-and partial-order handling below remain proposals pending discussion.
+legacy arbitration fallback is not required. Each space defines when it has
+enough information to compare. How to report insufficient information, float
+behavior, and partial-order handling remain proposals pending discussion.
 
 ## Boundaries
 
@@ -28,25 +29,27 @@ the existing Gist display-comparison overload visible.
 
 Retain `constrain()` for pruning, recomputation, and restarts. Do not replace it
 with a comparison of domain bounds. Preserve the existing search ownership,
-synchronization, stopping, and
-restart protocols except where comparison outcomes must reach the caller.
+synchronization, stopping, and restart protocols except where comparison
+outcomes must reach the caller.
 
-Exclude diverse-solution search, Pareto-front enumeration, a new search engine,
+Exclude implementation of diverse-solution search, Pareto-front enumeration,
+a new search engine,
 objective extraction or serialization, a comparator registry,
 heterogeneous-model conversion, changing
 the C++ language requirement, and a performance benchmark campaign. No slices
 or tasks are needed for this exploration.
 
-Diverse-solution search needs restrictions with respect to all previous
-solutions, rather than comparison with one incumbent. It is a separate search
-contract and does not justify weakening the optimization comparison requirement.
+Include limited advance planning for diverse-solution and Pareto search so this
+interface leaves those uses possible. Their implementation and concrete APIs
+remain separate work; see Future search below.
 
 ## Terms and proposed interface
 
 An **incumbent** is a feasible solution retained as the reference for future
 search. **Better** is relative to the model's objective, so a larger integer is
-better for maximization. **Equivalent** means equal objective quality and an
-interchangeable future improvement restriction, not equal assignments.
+better for maximization. **Equivalent** means equivalent quality according to
+the model, not equal assignments. Interchangeable improvement restrictions are
+an additional requirement of the current single-incumbent optimization engines.
 **Incomparable** is a known result under a partial ordering; it does not mean
 that an objective is unassigned or comparison has not been implemented.
 
@@ -64,7 +67,7 @@ virtual SpaceComparison compare(const Space& other) const;
 ```
 
 Recommend keeping the result restricted to ordering outcomes. Missing comparison
-support and undetermined objective data are errors, not ordering results. The
+support and insufficient information to compare are errors, not ordering results. The
 readiness decision is still open; this is the recommended interface if the
 precondition is adopted. The exact enum spelling is provisional. This uses the
 current C++17 baseline and needs neither an additional capability virtual nor a
@@ -78,28 +81,34 @@ model state. Small temporary allocations, such as existing `IntVarArgs` cost
 accessors, need not be prohibited. The public method need not be `noexcept`;
 normal valid comparisons must not throw.
 
-Operands must be stable, non-failed spaces with compatible objective meaning.
-Comparison can work on an otherwise unfinished space when its objective is
-already determined. Scalar and lexicographic integer helpers require assigned
-objective variables on both operands; unrelated variables may remain unassigned.
-Recommend treating missing objective values as a precondition violation, using
-the existing unassigned-value error convention without propagation. Do not require
-every model variable to be fixed, and do not use `SS_SOLVED` as proof that the
-objective is assigned. A caller passing an external incumbent to a search engine
-must additionally supply a feasible solution, not merely a promising bound.
+The generic contract is that the operands contain enough information for the
+individual space to establish the comparison it reports. There is no generic
+assignment test, requirement that every objective component have a value, or
+requirement to call `status()`. Comparability can depend on the pair: a space
+may know how it relates to one operand but lack information for another.
+Reported relations must remain sound under the model's interpretation.
 
-`a.constrain(b)` requires determined objective data in `b` while pruning the
-unfinished receiver `a`; `a.compare(b)` requires determined data in both.
-For integer lexicographic convenience classes, require every cost component
-to be assigned, rather than making readiness depend on where the first
-difference happens to occur. Custom objectives define which data determines
-their quality; that need not be a stored objective variable.
+For example, scalar integer convenience classes naturally compare assigned
+cost values using `val()`. A lexicographic model can establish a strict relation
+from a decisive prefix without knowing later components. A custom model may
+compare a derived property or prove a relation from domains. These are model
+contracts, not restrictions imposed by `Space` or a generic search preflight.
+Do not conflate lack of enough information with genuine Pareto incomparability.
 
-The alternative is a distinct `SC_UNDETERMINED` outcome for callers deliberately
-comparing partial objectives. It would not mean Pareto incomparability, and
-search would still have to report an error when given an undetermined incumbent.
-No current search consumer needs a recoverable partial-objective result, so
-recommend the precondition instead of adding this state speculatively.
+Search invokes comparison on its stable solution spaces. Direct callers must
+respect the individual space's documented comparison domain; the generic
+interface does not require a completed search or fully assigned space. A space
+being comparable does not by itself make it a valid incumbent: external
+incumbents must also satisfy the engine's solution contract. Likewise,
+`constrain()` retains its own model-defined requirements on its argument.
+
+Recommend treating insufficient information for the requested comparison as
+a precondition violation, reported using the appropriate model error convention.
+For scalar integer helpers, the existing unassigned-value exception fits.
+The alternative is a distinct `SC_UNDETERMINED` result, allowing a caller to
+recover when the model cannot establish the relation. The current arbitration
+sites would still need an error policy for this result. The reporting choice
+is open; model ownership of comparability is settled.
 
 All participating assets must use the same objective direction, component
 interpretation, and pruning policy. Built-in comparisons should diagnose
@@ -119,6 +128,37 @@ by the new improvement restriction must be a subset of those admitted by the
 old one. Equivalent incumbents must admit the same future improvements. This
 is what makes accumulated cuts, local incumbents, and portfolio exhaustion
 compatible. A pairwise ranking alone cannot establish this property.
+
+## Future search
+
+Keep pairwise comparison separate from the policy for retaining solutions and
+restricting future search. The comparison method must not assume that its
+argument is the sole incumbent, consult an engine-owned solution history, or
+encode whether a solution should be retained in a particular archive.
+
+For diverse-solution search, a future engine needs restrictions against all
+previous accepted solutions. Repeated calls to a model-specific restriction may
+suffice when they accumulate conjunctively; recomputed nodes and portfolio assets
+must receive every relevant restriction, not just the latest one. Concurrent
+candidates also need to be checked against the accepted history, including
+each other, before both are returned. The archive and its acceptance policy
+belong to that search design. Pairwise objective ordering does not answer
+whether a point is sufficiently different from another, and equal objective
+quality does not mean duplicate solutions.
+
+For Pareto search, a future engine can compare a candidate with each retained
+frontier member, discard dominated candidates, and remove members dominated by
+the candidate. Its pruning must preserve the rest of the frontier. Equivalent
+quality need not imply keeping only one assignment; that is an engine policy.
+These uses motivate retaining the distinction between equivalence and
+incomparability, without adding history arguments, distance results, or an
+archive abstraction to this PR.
+
+The nested-cut and equivalent-cut requirements above apply to the present
+single-incumbent engines, not to every future consumer of comparison. Before
+finalizing the interface, check that direct pairwise calls can support these
+uses and that no global assignment or single-incumbent assumption has entered
+the Space contract. Do not implement either future engine here.
 
 ## Search behavior
 
@@ -210,10 +250,11 @@ test. Float behavior is a material open decision, not an implementation detail.
 
 ## Open questions
 
-1. Require determined objectives on both operands and report violations using
-   the existing error convention, or return a separate undetermined result?
-   Recommend the precondition: the search consumers cannot recover from an
-   undetermined incumbent, and unrelated variables may remain unassigned.
+1. When a space lacks enough information for a requested comparison, should it
+   report a precondition violation or return a separate undetermined result?
+   Recommend the precondition for the present search consumers. In either case,
+   the individual space decides what information suffices; assignment is not
+   a generic requirement.
 2. Adopt float bound ranking with step-based pruning, allowing improvements
    smaller than the step among concurrent results, or preserve the reporting
    step through an additional policy? Recommend the former, subject to focused
@@ -222,7 +263,8 @@ test. Float behavior is a material open decision, not an implementation detail.
    A Pareto-front engine is separate work; if it is required here, reshape the
    area before splitting implementation tasks.
 
-The Gecode 7 requirement and exclusion of diverse-solution search are settled.
+The Gecode 7 requirement, model-defined comparability, and advance planning
+without implementation of diverse-solution search are settled.
 The choices listed here remain recommendations, not settled user decisions.
 
 ## Testing
@@ -234,8 +276,9 @@ For implementation: focused coverage in the existing search test suite, then
 the existing search regressions. The observable risks justify these cases:
 
 - Direct scalar, lexicographic, and custom-objective comparisons: direction,
-  equal quality, unassigned objective data, and unchanged input domains/state.
-  Include an objective fixed in an otherwise unfinished space.
+  equal quality, model-defined insufficient information, and unchanged inputs.
+  Include a valid model comparison with unassigned variables, such as a
+  decisive lexicographic prefix, to guard against generic assignment checks.
 - Better/equal/worse external incumbent updates, including an older incumbent
   arriving late and pending parallel results. Returned results must not regress.
 - A small custom non-scalar objective through BAB, PBS, and a portfolio with an
