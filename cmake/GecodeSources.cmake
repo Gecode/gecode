@@ -411,6 +411,7 @@ set(GECODE_TEST_SOURCES
   test/ldsb.cpp
   test/nogoods.cpp
   test/region.cpp
+  test/random.cpp
   test/search.cpp
   test/set.cpp
   test/set/channel.cpp

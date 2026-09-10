@@ -50,11 +50,11 @@ namespace Gecode {
       Support::RandomGenerator rg;
     public:
       /// Initialize generator with seed \a s
-      IMP(unsigned int s);
-      /// Return seed
-      unsigned int seed(void) const;
+      IMP(uint64_t s);
+      /// Return complete state
+      Support::RandomGenerator::State state(void) const;
       /// Set seed to \a s
-      void seed(unsigned int s);
+      void seed(uint64_t s);
       /// Returns a random integer from the interval \f$[0\ldots n)\f$
       unsigned int operator ()(unsigned int n);
       /// Returns a random integer from the interval \f$[0\ldots n)\f$
@@ -67,7 +67,7 @@ namespace Gecode {
       virtual ~IMP(void);
     };
     /// Set the current seed to \a s (initializes if needed)
-    void _seed(unsigned int s);
+    void _seed(uint64_t s);
   public:
     /// Default constructor that does not initialize the generator
     GECODE_KERNEL_EXPORT
@@ -83,18 +83,18 @@ namespace Gecode {
     ~Rnd(void);
     /// Initialize with seed \a s
     GECODE_KERNEL_EXPORT
-    Rnd(unsigned int s);
+    Rnd(uint64_t s);
     /// Set the current seed to \a s (initializes if needed)
     GECODE_KERNEL_EXPORT
-    void seed(unsigned int s);
+    void seed(uint64_t s);
     /// Set current seed based on time (initializes if needed)
     GECODE_KERNEL_EXPORT
     void time(void);
     /// Set current seed to hardware-based random number (initializes if needed)
     GECODE_KERNEL_EXPORT
     void hw(void);
-    /// Return current seed
-    unsigned int seed(void) const;
+    /// Return complete current state
+    Support::RandomGenerator::State state(void) const;
     /// Returns a random integer from the interval \f$[0\ldots n)\f$
     unsigned int operator ()(unsigned int n);
     /// Returns a random integer from the interval \f$[0\ldots n)\f$
@@ -105,16 +105,16 @@ namespace Gecode {
     long long int operator ()(long long int n);
   };
 
-  forceinline unsigned int
-  Rnd::IMP::seed(void) const {
-    unsigned int s;
+  forceinline Support::RandomGenerator::State
+  Rnd::IMP::state(void) const {
+    Support::RandomGenerator::State s;
     const_cast<Rnd::IMP&>(*this).m.acquire();
-    s = rg.seed();
+    s = rg.state();
     const_cast<Rnd::IMP&>(*this).m.release();
     return s;
   }
   forceinline void
-  Rnd::IMP::seed(unsigned int s) {
+  Rnd::IMP::seed(uint64_t s) {
     m.acquire();
     rg.seed(s);
     m.release();
@@ -152,10 +152,10 @@ namespace Gecode {
     return r;
   }
 
-  forceinline unsigned int
-  Rnd::seed(void) const {
+  forceinline Support::RandomGenerator::State
+  Rnd::state(void) const {
     const IMP* i = static_cast<const IMP*>(object());
-    return i->seed();
+    return i->state();
   }
   forceinline unsigned int
   Rnd::operator ()(unsigned int n) {

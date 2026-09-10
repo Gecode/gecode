@@ -1,0 +1,23 @@
+# Copyright (c) 2026 Mikael Zayenz Lagerkvist. MIT license; see LICENSE.
+foreach(kind Failure Exception)
+  execute_process(COMMAND "${REPLAY}" -seed 1 -iter 100 -test-exact "Random::Replay::${kind}"
+    RESULT_VARIABLE first_result OUTPUT_VARIABLE first ERROR_VARIABLE first_error)
+  if(NOT first_result EQUAL 1)
+    message(FATAL_ERROR "Fixture did not fail: ${first} ${first_error}")
+  endif()
+  string(REGEX MATCH "Options: ([^\n]+)" command "${first}")
+  set(arguments "${CMAKE_MATCH_1}")
+  string(REGEX MATCH "Replay draw: [0-9]+" draw "${first}")
+  if(NOT command OR NOT draw)
+    message(FATAL_ERROR "Missing replay report: ${first}")
+  endif()
+  separate_arguments(arguments UNIX_COMMAND "${arguments}")
+  execute_process(COMMAND "${REPLAY}" ${arguments}
+    RESULT_VARIABLE replay_result OUTPUT_VARIABLE replay ERROR_VARIABLE replay_error)
+  string(REGEX MATCH "Replay draw: [0-9]+" replay_draw "${replay}")
+  string(REGEX MATCH "Options: [^\n]+" replay_command "${replay}")
+  if(NOT replay_result EQUAL 1 OR NOT draw STREQUAL replay_draw OR NOT command STREQUAL replay_command)
+    message(FATAL_ERROR "Replay differs:\n${first}\n${replay}\n${replay_error}")
+  endif()
+endforeach()
+message(STATUS "Failure and exception state replay agree")
