@@ -794,11 +794,17 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
   };
 
-  /** \brief Reified bounds propagator for \f$\gcd(x_0,x_1)=x_2\f$ */
+  /** \brief Reified bounds propagator for \f$\gcd(x_0,x_1)=x_2\f$
+   *
+   * Requires \code #include <gecode/int/arithmetic.hh> \endcode
+   * \ingroup FuncIntProp
+   */
   template<ReifyMode rm>
   class ReGcd : public Propagator {
   protected:
+    /// Operands and greatest common divisor
     IntView x0, x1, x2;
+    /// Reification control
     BoolView b;
     /// Constructor for posting
     ReGcd(Home home, IntView x0, IntView x1, IntView x2, BoolView b);
@@ -864,42 +870,65 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 namespace Gecode { namespace Int { namespace Arithmetic {
 
   /** \brief Bounds propagator for an exact n-ary product
+   *
+   * Requires \code #include <gecode/int/arithmetic.hh> \endcode
    * \ingroup FuncIntProp
    */
   class Product : public NaryOnePropagator<IntView,PC_INT_BND> {
   protected:
     using NaryOnePropagator<IntView,PC_INT_BND>::x;
     using NaryOnePropagator<IntView,PC_INT_BND>::y;
+    /// Whether the remaining product is negated
     bool neg;
+    /// Constructor for posting
     Product(Home home, ViewArray<IntView>& x, IntView y, bool neg);
+    /// Constructor for cloning \a p
     Product(Space& home, Product& p);
   public:
+    /// Post propagator
     static ExecStatus post(Home home, ViewArray<IntView>& x, IntView y,
                            bool neg=false);
+    /// Copy propagator during cloning
     virtual Actor* copy(Space& home);
+    /// Cost function
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+    /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
   };
 
   /** \brief Reified bounds propagator for an exact n-ary product
+   *
+   * Requires \code #include <gecode/int/arithmetic.hh> \endcode
    * \ingroup FuncIntProp
    */
   template<ReifyMode rm>
   class ReProduct : public Propagator {
   protected:
+    /// Factors
     ViewArray<IntView> x;
+    /// Exact product
     IntView y;
+    /// Reification control
     BoolView b;
+    /// Constructor for posting
     ReProduct(Home home, ViewArray<IntView>& x, IntView y, BoolView b);
+    /// Constructor for cloning \a p
     ReProduct(Space& home, ReProduct<rm>& p);
   public:
+    /// Post propagator
     static ExecStatus post(Home home, ViewArray<IntView>& x, IntView y,
                            BoolView b);
+    /// Copy propagator during cloning
     virtual Actor* copy(Space& home);
+    /// Cost function
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    /// Reschedule propagator
     virtual void reschedule(Space& home);
+    /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+    /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
   };
 
@@ -910,85 +939,135 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 namespace Gecode { namespace Int { namespace Arithmetic {
 
   /** \brief Bounds propagator for a fixed-modulus n-ary product
+   *
+   * Requires \code #include <gecode/int/arithmetic.hh> \endcode
    * \ingroup FuncIntProp
    */
   class ProductMod : public NaryOnePropagator<IntView,PC_INT_BND> {
   protected:
     using NaryOnePropagator<IntView,PC_INT_BND>::x;
     using NaryOnePropagator<IntView,PC_INT_BND>::y;
+    /// Positive modulus
     int m;
+    /// Constructor for posting
     ProductMod(Home home, ViewArray<IntView>& x, int m, IntView y);
+    /// Constructor for cloning \a p
     ProductMod(Space& home, ProductMod& p);
   public:
+    /// Post propagator
     static ExecStatus post(Home home, ViewArray<IntView>& x, int m, IntView y);
+    /// Copy propagator during cloning
     virtual Actor* copy(Space& home);
+    /// Cost function
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
   };
 
   /** \brief Bounds propagator for a variable-modulus n-ary product
+   *
+   * Requires \code #include <gecode/int/arithmetic.hh> \endcode
    * \ingroup FuncIntProp
    */
   class ProductModVar : public Propagator {
   protected:
+    /// Factors
     ViewArray<IntView> x;
+    /// Positive modulus
     IntView m;
+    /// Canonical residue
     IntView y;
+    /// Constructor for posting
     ProductModVar(Home home, ViewArray<IntView>& x, IntView m, IntView y);
+    /// Constructor for cloning \a p
     ProductModVar(Space& home, ProductModVar& p);
   public:
+    /// Post propagator
     static ExecStatus post(Home home, ViewArray<IntView>& x,
                            IntView m, IntView y);
+    /// Copy propagator during cloning
     virtual Actor* copy(Space& home);
+    /// Cost function
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    /// Reschedule propagator
     virtual void reschedule(Space& home);
+    /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+    /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
   };
 
   /** \brief Reified bounds propagator for a variable-modulus product
+   *
+   * Requires \code #include <gecode/int/arithmetic.hh> \endcode
    * \ingroup FuncIntProp
    */
   template<ReifyMode rm>
   class ReProductModVar : public Propagator {
   protected:
+    /// Factors
     ViewArray<IntView> x;
+    /// Modulus (positivity is part of the reified proposition)
     IntView m;
+    /// Canonical residue
     IntView y;
+    /// Reification control
     BoolView b;
+    /// Constructor for posting
     ReProductModVar(Home home, ViewArray<IntView>& x, IntView m, IntView y,
                     BoolView b);
+    /// Constructor for cloning \a p
     ReProductModVar(Space& home, ReProductModVar<rm>& p);
   public:
+    /// Post propagator
     static ExecStatus post(Home home, ViewArray<IntView>& x, IntView m,
                            IntView y, BoolView b);
+    /// Copy propagator during cloning
     virtual Actor* copy(Space& home);
+    /// Cost function
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    /// Reschedule propagator
     virtual void reschedule(Space& home);
+    /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+    /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
   };
 
   /** \brief Reified bounds propagator for a fixed-modulus n-ary product
+   *
+   * Requires \code #include <gecode/int/arithmetic.hh> \endcode
    * \ingroup FuncIntProp
    */
   template<ReifyMode rm>
   class ReProductMod : public Propagator {
   protected:
+    /// Factors
     ViewArray<IntView> x;
+    /// Canonical residue
     IntView y;
+    /// Reification control
     BoolView b;
+    /// Positive modulus
     int m;
+    /// Constructor for posting
     ReProductMod(Home home, ViewArray<IntView>& x, int m, IntView y,
                  BoolView b);
+    /// Constructor for cloning \a p
     ReProductMod(Space& home, ReProductMod<rm>& p);
   public:
+    /// Post propagator
     static ExecStatus post(Home home, ViewArray<IntView>& x, int m, IntView y,
                            BoolView b);
+    /// Copy propagator during cloning
     virtual Actor* copy(Space& home);
+    /// Cost function
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    /// Reschedule propagator
     virtual void reschedule(Space& home);
+    /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+    /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
   };
 
