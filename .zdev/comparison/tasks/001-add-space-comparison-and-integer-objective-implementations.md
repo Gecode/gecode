@@ -3,7 +3,7 @@ schema_version = 1
 id = "comparison-001"
 key = "integer-comparison"
 area = "comparison"
-status = "open"
+status = "done"
 complexity = "standard"
 afk = true
 priority = "high"
@@ -25,10 +25,20 @@ The approved [brief](../brief.md) defines four ordering outcomes and model-defin
 
 ## Done when
 
-- [ ] Space::compare(const Space&) const returns the four SpaceComparison outcomes; its default reports unsupported use through a Gecode exception. No unavailable result is added.
-- [ ] Scalar min/max and lexicographic min/max, plus FlatZinc integer optimization, compare in the agreed direction without mutation. Lexicographic comparison accepts a decisive assigned prefix without requiring later components; insufficient information for the requested comparison raises the appropriate error.
-- [ ] Focused tests cover direction, equivalence, a decisive prefix with an unassigned suffix, insufficient scalar data, and incompatible objective families/dimensions. The ordering and Gist display overloads remain callable, including through a custom script.
+- [x] Space::compare(const Space&) const returns the four SpaceComparison outcomes; its default reports unsupported use through a Gecode exception. No unavailable result is added.
+- [x] Scalar min/max and lexicographic min/max, plus FlatZinc integer optimization, compare in the agreed direction without mutation. Lexicographic comparison accepts a decisive assigned prefix without requiring later components; insufficient information for the requested comparison raises the appropriate error.
+- [x] Focused tests cover direction, equivalence, a decisive prefix with an unassigned suffix, insufficient scalar data, and incompatible objective families/dimensions. The ordering and Gist display overloads remain callable, including through a custom script.
 
 ## Validation
 
 - Build gecode-test and run the new comparison tests plus relevant existing integer/FlatZinc tests. Compile a representative custom script using both compare overloads; no new test harness.
+
+## Result
+
+Added and independently verified non-mutating Space comparison with integer objective implementations and overload compatibility.
+
+Validation:
+
+- Clean external CMake build of gecode-test passed.
+- Search::Comparison and FlatZinc::IntegerObjectiveComparison passed.
+- Complete existing FlatZinc suite and representative custom-script overload compilation passed.
