@@ -1,0 +1,7 @@
+schema_version = 1
+tag = "comparison"
+title = "Non-mutating solution comparison"
+objective = "Define and integrate a non-mutating solution comparison contract for Gecode best-solution search."
+branch = "feature/comparison"
+lifecycle = "open"
+base_commit = "6b7de57b0414fe2f8af3513743c9835840a3c019"
