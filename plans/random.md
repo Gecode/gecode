@@ -1,7 +1,7 @@
 # Plan: Compact, splittable random generators for Gecode 7
 
 > Source: the feature/random design discussion, 2026-09-10.
-> Status: Phases 1–3 complete; Phase 4 next.
+> Status: All four phases complete and reviewed.
 > Workflow: review, update this plan, and commit after each phase.
 
 ## Goal
@@ -398,20 +398,85 @@ ownership rules, replay contract, and compatibility changes for Gecode 7.
 
 ### Acceptance criteria
 
-- [ ] Drivers accept full 64-bit seeds without signed narrowing or truncation
+- [x] Drivers accept full 64-bit seeds without signed narrowing or truncation
       and use the same initialization/state conventions as the test runner.
-- [ ] Complete state is accepted and reproduced for the configured engine;
+- [x] Complete state is accepted and reproduced for the configured engine;
       malformed, incompatible, and conflicting options are rejected clearly.
-- [ ] Time/hardware initialization can report the concrete initialized state
+- [x] Time/hardware initialization can report the concrete initialized state
       needed for a later replay.
-- [ ] A runnable custom-engine example works through built-in branching; custom
+- [x] A runnable custom-engine example works through built-in branching; custom
       brancher documentation explains choice snapshots and replay obligations.
-- [ ] FlatZinc restart sampling no longer relies on the old generator's restricted
+- [x] FlatZinc restart sampling no longer relies on the old generator's restricted
       range or sequence-preservation workaround where the new contract replaces it.
-- [ ] Release notes describe changed seeded sequences, state replay, and copying
+- [x] Release notes describe changed seeded sequences, state replay, and copying
       versus sharing semantics. No legacy sequence mode is required.
-- [ ] Supported build configurations and relevant regression suites pass; the
+- [x] Supported build configurations and relevant regression suites pass; the
       default choice and measured memory/performance tradeoffs are documented.
+
+### Phase 4 review
+
+The example driver and FlatZinc share `Driver::RandomOption`: checked 64-bit
+decimal/hex seeds, full-state input, and mutually exclusive seed/state arguments.
+The existing seed flag names remain `-seed` and `-r`, respectively. `time` and
+`hw` initialize once and print the resulting state. Hardware-source failures now
+throw rather than return uninitialized data. `opt.rnd()` produces an independent
+generator at the configured initial state; all in-tree numeric seed consumers
+were migrated. The numeric accessor rejects state-only initialization rather
+than silently ignoring it.
+
+Both CMake (`GECODE_RANDOM_ENGINE`) and Autoconf (`--with-random-engine`) select
+SplitMix or xorshift64*. The generated, installed configuration header carries
+that selection to clients. SplitMix remains the default for the measured splitting
+cost; xorshift64* remains the 8-byte alternative. Both concrete engine types and
+the public custom-engine interface are available in either build.
+
+`examples/random-engine.cpp` uses a three-word user engine with built-in random
+selectors. It delegates generation/splitting to SplitMix and adds a path-local
+draw counter, demonstrating full-state extension without another algorithm.
+Seeded and full-state runs enumerate the same 24 permutations and solution states.
+The output also agrees across both default configurations and the no-thread and
+static builds. The old unused FlatZinc restart sampler and its chunk-specific test
+are removed. The range-validation and restart integration tests remain. Review
+also corrected the FlatZinc test harness to pass its configured generator into
+parsing, and replaced an unsupported test `--seed` flag with `-r`.
+
+Validation on arm64 macOS with Apple Clang 21:
+
+- Full CMake `check`, including fault-injection tests, passes with both defaults.
+  All enabled example targets also build with the default configuration.
+- `random-options` and `random-state-replay` CTests pass with both defaults.
+  CLI checks cover maximum-width decimal/hex seeds, arbitrary full states
+  (including a non-default SplitMix increment), incompatible identifiers,
+  malformed/conflicting input, and replay of reported time/hardware state.
+- Boolean, set, and float branching selections, filtered random ties, and all
+  FlatZinc restart tests pass with both defaults. A direct FlatZinc run enumerates
+  the same 27 assignments from a maximum-width seed and its complete state.
+- A reduced static CMake build with threads, set, float, and FlatZinc disabled
+  passes the random contract/branch replay/commit tests and both replay/CLI CTests.
+- Autoconf builds all libraries and the custom example with xorshift64* and
+  threading disabled. Out-of-tree direct example building requires the existing
+  `make mkcompiledirs` preparation target. Its output matches the CMake builds.
+
+Logs and comparison outputs are under `build/random/phase4-*`; configurations are
+in `build/random`, `build/random-xorshift`, `build/random-static`, and
+`build/random-autoconf`. These are local configuration checks, not a claim of
+having run every platform's CI. `docs/random.md` and the Gecode 7 changelog section
+describe the API, compatibility changes, and measured costs. Release version and
+ABI-number changes remain release preparation, outside this feature plan.
+
+### Completion audit
+
+Requirements 1 and 5 are exercised by both configured defaults, the CLI fixture,
+and the separately defined custom engine. Requirement 2 is exercised by commands
+replayed from actual failure and exception reports, plus driver full-state replay.
+Requirements 3 and 4 are exercised by immutable choice snapshots, reverse sibling
+exploration, archived replay on pre-selection clones with perturbed state,
+multiway and callback handover, and equivalent solution/state sets under cloning,
+recomputation, and parallel search. Review confirms that all variable/value
+selectors bind and remap local streams and that commit installs them before
+callbacks. Requirement 6 is covered by the retained Phase 3 measurements and
+explicit description, space, choice, snapshot, archive, and splitting costs.
+The final review found no uncompleted acceptance criterion in this plan.
 
 ## Validation boundaries
 

@@ -142,8 +142,9 @@ namespace Test { namespace FlatZinc {
         _before();
       }
       std::stringstream ss(_source);
+      Rnd random = fznopt.rnd();
       std::unique_ptr<Gecode::FlatZinc::FlatZincSpace> fg(
-        Gecode::FlatZinc::parse(ss, p, olog));
+        Gecode::FlatZinc::parse(ss, p, olog, nullptr, random));
 
       if (fg) {
         fg->createBranchers(p, fg->solveAnnotations(), fznopt,

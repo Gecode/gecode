@@ -61,7 +61,7 @@ namespace Test {
       Contract() : Base("Random::Contract") {}
       bool run() override {
         // SplitMix64 reference sequence, seed zero and golden-ratio increment.
-        RandomGenerator r(0);
+        Gecode::Support::Random<SplitMix> r(0);
         for (uint64_t expected : {UINT64_C(0xe220a8397b1dcdaf),
                                   UINT64_C(0x6e789e6aa1b965f4),
                                   UINT64_C(0x06c45d188009454f)})
@@ -81,7 +81,7 @@ namespace Test {
           return false;
         auto parent = r.state();
         // Indexing skips pairs of parent words, exactly as sequential splits.
-        RandomGenerator sequential = r;
+        Gecode::Support::Random<SplitMix> sequential = r;
         for (uint32_t a=0; a<100; ++a) {
           auto child = r.split(a);
           if (child.state()[0] != sequential.next())
