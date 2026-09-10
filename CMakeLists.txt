@@ -1426,6 +1426,7 @@ if(BUILD_TESTING)
 
     set(GECODE_CHECK_TESTS
       Random::Contract
+      Random::BranchReplay
       Branch::Int::Dense::3
       Int::Arithmetic::Abs
       Int::Arithmetic::ArgMax

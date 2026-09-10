@@ -1,7 +1,7 @@
 # Plan: Compact, splittable random generators for Gecode 7
 
 > Source: the feature/random design discussion, 2026-09-10.
-> Status: implementation authorized; Phase 1 complete, Phase 2 next.
+> Status: Phases 1 and 2 complete; Phase 3 next.
 > Workflow: review, update this plan, and commit after each phase.
 
 ## Goal
@@ -247,18 +247,59 @@ the same path with a user-supplied engine to prove that extension reaches search
 
 ### Acceptance criteria
 
-- [ ] All alternatives of a recorded choice have distinct successor states.
-- [ ] Committing an alternative directly, after intervening sibling exploration,
+- [x] All alternatives of a recorded choice have distinct successor states.
+- [x] Committing an alternative directly, after intervening sibling exploration,
       or after restoring an archived choice produces identical successor state
       and subsequent draws on equivalent spaces.
-- [ ] The same recorded path yields the same state with frequent cloning and
+- [x] The same recorded path yields the same state with frequent cloning and
       substantial recomputation, including last-alternative optimization.
-- [ ] A deterministic choice followed by random branching, and a transition
+- [x] A deterministic choice followed by random branching, and a transition
       between randomized branchers, both retain the alternative-specific stream.
-- [ ] Shared and separate variable/value generators follow the documented
+- [x] Shared and separate variable/value generators follow the documented
       ownership policy; cloning does not mutate the source's generators.
-- [ ] Choice payload growth is independent of the number of alternatives.
-- [ ] Measure description, brancher, choice, and archive sizes against baseline.
+- [x] Choice payload growth is independent of the number of alternatives.
+- [x] Measure description, brancher, choice, and archive sizes against baseline.
+
+### Phase 2 review
+
+Implemented the space-local collection and common choice/commit integration.
+`Rnd` accepts a user engine through `Support::Random<Engine>` and keeps its
+8-byte handle representation. Each space binds initialization handles to local
+streams and clones those streams independently. Selector and model handles are
+mapped back to the corresponding local stream during copying. Standalone handles
+retain handle-style sharing; `copy()` makes an independent exact copy.
+
+All bound state words are captured after choice selection and restored/split
+before the brancher's commit. Archives include the complete packed payload.
+This works for custom choices that use the standard space choice/commit and base
+choice archive interfaces, without per-brancher snapshot code. Binary and multiway
+choices have the same random payload for the same registered streams. The small
+selector binding change was applied to set and float selectors in this phase too,
+because the ownership contract is common; their wider verification is Phase 3.
+
+The global draw mutex is removed: mutable streams are space-local, and standalone
+handles are documented as requiring caller synchronization if shared by threads.
+Making numeric construction explicit also exposed a FlatZinc decay constructor
+that accidentally converted a double to a random seed. It now selects the actual
+decay constructor explicitly.
+
+Validation: `Random::BranchReplay` checks reverse-order alternative exploration,
+archived choices replayed on pre-selection clones, intentionally perturbed
+destination state, shared/separate streams, deterministic-to-random handover,
+and a user engine with three state words. For each configuration, all 81 solution
+values and final states agree between commit distances 1 and 100. Both random
+tests and filtered tie selection pass twice, state-report replay still passes,
+and the full existing `check` target (including fault tests) passes.
+
+Arm64 sizes: Rnd 8, IntVarBranch 112, IntValBranch 80, and selectors remain
+unchanged. Space grows 288 -> 296 bytes; Choice 16 -> 24 and integer PosValChoice
+24 -> 32 bytes. One default stream adds a separately allocated 24-byte snapshot
+(8-byte length + 16-byte state), making the logical integer choice footprint
+56 bytes before allocator overhead. Its archive grows from 3 to 8 unsigned words.
+Two default streams use a 40-byte snapshot; the custom engine uses 8 additional
+bytes per stream. Nonrandom choices have no snapshot allocation but pay the
+8-byte optional pointer and one archive count word. These costs are explicit
+inputs to Phase 3 performance review, not yet a performance acceptance claim.
 
 ## Phase 3: Complete branching and search integration
 

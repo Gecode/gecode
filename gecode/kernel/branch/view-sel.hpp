@@ -482,11 +482,11 @@ namespace Gecode {
   template<class View>
   forceinline
   ViewSelRnd<View>::ViewSelRnd(Space& home, const VarBranch<Var>& vb)
-      : ViewSel<View>(home,vb), r(vb.rnd()) {}
+      : ViewSel<View>(home,vb), r(home,vb.rnd()) {}
   template<class View>
   forceinline
   ViewSelRnd<View>::ViewSelRnd(Space& home, ViewSelRnd<View>& vs)
-      : ViewSel<View>(home,vs), r(vs.r) {}
+      : ViewSel<View>(home,vs), r(home,vs.r) {}
   template<class View>
   int
   ViewSelRnd<View>::select(Space&, ViewArray<View>& x, int s) {

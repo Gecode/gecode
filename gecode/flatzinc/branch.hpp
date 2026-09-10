@@ -35,7 +35,7 @@ namespace Gecode { namespace FlatZinc {
 
   forceinline
   IntBoolVarBranch::IntBoolVarBranch(Select s0, double d)
-    : VarBranch<IntVar>(d), s(s0) {}
+    : VarBranch<IntVar>(d,nullptr), s(s0) {}
 
   forceinline
   IntBoolVarBranch::IntBoolVarBranch(Select s0, IntAFC i, BoolAFC b)
@@ -442,4 +442,3 @@ namespace Gecode { namespace FlatZinc {
 }}
 
 // STATISTICS: flatzinc-branch
-
