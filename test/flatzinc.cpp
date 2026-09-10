@@ -34,6 +34,9 @@
 #include "test/flatzinc.hh"
 
 #include <memory>
+#include <cmath>
+#include <iomanip>
+#include <limits>
 
 namespace Test { namespace FlatZinc {
 
@@ -104,6 +107,117 @@ namespace Test { namespace FlatZinc {
     };
 
     IntegerObjectiveComparison integer_objective_comparison;
+
+#ifdef GECODE_HAS_FLOAT_VARS
+    /// Verify float objective comparison and its interval-valued cuts.
+    class FloatObjectiveComparison : public Base {
+    private:
+      static std::unique_ptr<Gecode::FlatZinc::FlatZincSpace>
+      model(Gecode::FloatVal v, bool minimize, Gecode::FloatNum step=0.0) {
+        std::stringstream source;
+        source << std::showpoint
+               << std::setprecision(std::numeric_limits<double>::max_digits10)
+               << "var float: x = " << v.min() << "; solve "
+               << (minimize ? "minimize" : "maximize")
+               << " x;\n";
+        Gecode::FlatZinc::Printer p;
+        std::unique_ptr<Gecode::FlatZinc::FlatZincSpace> result
+          (Gecode::FlatZinc::parse(source,p,olog));
+        if (result) {
+          result->fv[result->optVar()] =
+            Gecode::FloatVar(*result,v.min(),v.max());
+          result->step = step;
+        }
+        return result;
+      }
+
+      static bool admitted(Gecode::FloatVal candidate,
+                           const Gecode::FlatZinc::FlatZincSpace& incumbent,
+                           bool minimize, Gecode::FloatNum step) {
+        std::unique_ptr<Gecode::FlatZinc::FlatZincSpace> c =
+          model(candidate,minimize,step);
+        c->constrain(incumbent);
+        return c->status() != Gecode::SS_FAILED;
+      }
+    public:
+      FloatObjectiveComparison(void)
+        : Base("FlatZinc::FloatObjectiveComparison") {}
+
+      virtual bool run(void) {
+        using namespace Gecode;
+        using Gecode::FlatZinc::FlatZincSpace;
+        const FloatNum next = std::nextafter(1.0,2.0);
+        std::unique_ptr<FlatZincSpace> m9=model(9.5,true,1.0);
+        std::unique_ptr<FlatZincSpace> m10=model(10.0,true,1.0);
+        std::unique_ptr<FlatZincSpace> m10b=model(10.0,true,1.0);
+        std::unique_ptr<FlatZincSpace> x11=model(10.5,false,1.0);
+        std::unique_ptr<FlatZincSpace> x10=model(10.0,false,1.0);
+        std::unique_ptr<FlatZincSpace> x10b=model(10.0,false,1.0);
+        std::unique_ptr<FlatZincSpace> adjacent=model(FloatVal(1.0,next),true);
+        std::unique_ptr<FlatZincSpace> adjacent_key=model(1.0,true);
+        std::unique_ptr<FlatZincSpace> adjacent_max=
+          model(FloatVal(1.0,next),false);
+        std::unique_ptr<FlatZincSpace> adjacent_max_key=model(next,false);
+        if (!m9 || !m10 || !m10b || !x11 || !x10 || !x10b || !adjacent ||
+            !adjacent_key ||
+            !adjacent_max || !adjacent_max_key ||
+            (m9->compare(*m10) != SC_BETTER) ||
+            (m10->compare(*m9) != SC_WORSE) ||
+            (m10->compare(*m10b) != SC_EQUIVALENT) ||
+            (x11->compare(*x10) != SC_BETTER) ||
+            (x10->compare(*x11) != SC_WORSE) ||
+            (x10->compare(*x10b) != SC_EQUIVALENT) ||
+            (adjacent->compare(*adjacent_key) != SC_EQUIVALENT) ||
+            (adjacent_max->compare(*adjacent_max_key) != SC_EQUIVALENT))
+          return false;
+
+        const FloatVal probes[] = {FloatVal(8.4), FloatVal(8.5),
+                                   FloatVal(8.9), FloatVal(9.0)};
+        for (unsigned int i=0; i<sizeof(probes)/sizeof(probes[0]); i++) {
+          if (admitted(probes[i],*m10,true,1.0) !=
+              admitted(probes[i],*m10b,true,1.0))
+            return false;
+          if (admitted(probes[i],*m9,true,1.0) &&
+              !admitted(probes[i],*m10,true,1.0))
+            return false;
+        }
+        const FloatVal max_probes[] = {FloatVal(11.0), FloatVal(11.1),
+                                       FloatVal(11.5), FloatVal(11.6)};
+        for (unsigned int i=0;
+             i<sizeof(max_probes)/sizeof(max_probes[0]); i++) {
+          if (admitted(max_probes[i],*x10,false,1.0) !=
+              admitted(max_probes[i],*x10b,false,1.0))
+            return false;
+          if (admitted(max_probes[i],*x11,false,1.0) &&
+              !admitted(max_probes[i],*x10,false,1.0))
+            return false;
+        }
+        std::unique_ptr<FlatZincSpace> zero=model(10.0,true);
+        if (admitted(FloatVal(10.0),*zero,true,0.0) ||
+            !admitted(FloatVal(9.0),*zero,true,0.0) ||
+            admitted(FloatVal(11.0),*x10,false,1.0) ||
+            !admitted(FloatVal(11.1),*x10,false,1.0))
+          return false;
+
+        FloatVal before=m9->fv[m9->optVar()].val();
+        FloatVal before_other=m10->fv[m10->optVar()].val();
+        (void) m9->compare(*m10);
+        if ((m9->fv[m9->optVar()].val().min() != before.min()) ||
+            (m9->fv[m9->optVar()].val().max() != before.max()) ||
+            (m10->fv[m10->optVar()].val().min() != before_other.min()) ||
+            (m10->fv[m10->optVar()].val().max() != before_other.max()))
+          return false;
+        std::unique_ptr<FlatZincSpace> different_step=model(10.0,true,0.0);
+        try { (void) m10->compare(*different_step); return false; }
+        catch (const DynamicCastFailed&) {}
+        try { (void) m10->compare(*x10); return false; }
+        catch (const DynamicCastFailed&) {}
+        return true;
+      }
+    };
+
+    FloatObjectiveComparison float_objective_comparison;
+#endif
 
     /// Verify that statistics do not override an explicit Gist mode.
     class GistStatisticsMode : public Base {

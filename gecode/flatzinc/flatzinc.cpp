@@ -865,7 +865,11 @@ namespace Gecode { namespace FlatZinc {
     intVarCount(-1), boolVarCount(-1), floatVarCount(-1), setVarCount(-1),
     _optVar(-1), _optVarIsInt(true), _lns(0), _lnsInitialSolution(0),
     _random(random),
-    _solveAnnotations(nullptr), needAuxVars(true) {
+    _solveAnnotations(nullptr),
+#ifdef GECODE_HAS_FLOAT_VARS
+    step(0.0),
+#endif
+    needAuxVars(true) {
     branchInfo.init();
   }
 
@@ -2081,14 +2085,28 @@ namespace Gecode { namespace FlatZinc {
     const FlatZincSpace* other = dynamic_cast<const FlatZincSpace*>(&s);
     if (other == nullptr)
       throw DynamicCastFailed("FlatZincSpace::compare");
-    if (!_optVarIsInt || !other->_optVarIsInt ||
+    if ((_optVarIsInt != other->_optVarIsInt) ||
         (_method != other->_method) ||
         ((_method != MIN) && (_method != MAX)))
       throw DynamicCastFailed("FlatZincSpace::compare");
-    int a=iv[_optVar].val(), b=other->iv[other->_optVar].val();
-    if (a == b)
+    if (_optVarIsInt) {
+      int a=iv[_optVar].val(), b=other->iv[other->_optVar].val();
+      if (a == b)
+        return SC_EQUIVALENT;
+      return ((a < b) == (_method == MIN)) ? SC_BETTER : SC_WORSE;
+    }
+#ifdef GECODE_HAS_FLOAT_VARS
+    if (step != other->step)
+      throw DynamicCastFailed("FlatZincSpace::compare");
+    FloatVal a=fv[_optVar].val(), b=other->fv[other->_optVar].val();
+    FloatNum ak=(_method == MIN) ? a.min() : a.max();
+    FloatNum bk=(_method == MIN) ? b.min() : b.max();
+    if (ak == bk)
       return SC_EQUIVALENT;
-    return ((a < b) == (_method == MIN)) ? SC_BETTER : SC_WORSE;
+    return ((ak < bk) == (_method == MIN)) ? SC_BETTER : SC_WORSE;
+#else
+    throw DynamicCastFailed("FlatZincSpace::compare");
+#endif
   }
 
   bool

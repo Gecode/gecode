@@ -41,6 +41,7 @@
 #include "test/test.hh"
 
 #include <type_traits>
+#include <cmath>
 
 static_assert(std::is_copy_constructible<Gecode::NoGoods>::value,
               "NoGoods must remain copy constructible");
@@ -405,6 +406,34 @@ namespace Test {
       virtual IntVar cost(void) const { return x; }
     };
 
+#ifdef GECODE_HAS_FLOAT_VARS
+    /// Scalar float minimization objective used for comparison and cut tests
+    class FloatMinObjective : public FloatMinimizeSpace {
+    public:
+      FloatVar x;
+      FloatMinObjective(FloatVal v, FloatNum s=0.0)
+        : FloatMinimizeSpace(s), x(*this,v.min(),v.max()) {}
+      FloatMinObjective(FloatMinObjective& s) : FloatMinimizeSpace(s) {
+        x.update(*this,s.x);
+      }
+      virtual Space* copy(void) { return new FloatMinObjective(*this); }
+      virtual FloatVar cost(void) const { return x; }
+    };
+
+    /// Scalar float maximization objective used for comparison and cut tests
+    class FloatMaxObjective : public FloatMaximizeSpace {
+    public:
+      FloatVar x;
+      FloatMaxObjective(FloatVal v, FloatNum s=0.0)
+        : FloatMaximizeSpace(s), x(*this,v.min(),v.max()) {}
+      FloatMaxObjective(FloatMaxObjective& s) : FloatMaximizeSpace(s) {
+        x.update(*this,s.x);
+      }
+      virtual Space* copy(void) { return new FloatMaxObjective(*this); }
+      virtual FloatVar cost(void) const { return x; }
+    };
+#endif
+
     /// Lexicographic integer objective used for comparison tests
     class LexObjective : public IntLexMinimizeSpace {
     public:
@@ -419,6 +448,76 @@ namespace Test {
       virtual Space* copy(void) { return new LexObjective(*this); }
       virtual IntVarArgs cost(void) const { return x; }
     };
+
+#ifdef GECODE_HAS_FLOAT_VARS
+    /// Test float objective ranking and compatibility with stepped cuts
+    class FloatObjectiveComparison : public Base {
+    private:
+      template<class Objective>
+      static bool admitted(FloatVal candidate, FloatNum step,
+                           const Objective& incumbent) {
+        Objective c(candidate,step);
+        c.constrain(incumbent);
+        return c.status() != SS_FAILED;
+      }
+    public:
+      FloatObjectiveComparison(void)
+        : Base("Search::FloatObjectiveComparison") {}
+      virtual bool run(void) {
+        const FloatNum next = std::nextafter(1.0,2.0);
+        FloatMinObjective m9(9.5,1.0), m10(10.0,1.0),
+          m10b(10.0,1.0), mzero(10.0), madj(FloatVal(1.0,next));
+        FloatMaxObjective x11(10.5,1.0), x10(10.0,1.0),
+          x10b(10.0,1.0), xadj(FloatVal(1.0,next));
+        if ((m9.compare(m10) != SC_BETTER) ||
+            (m10.compare(m9) != SC_WORSE) ||
+            (m10.compare(m10b) != SC_EQUIVALENT) ||
+            (x11.compare(x10) != SC_BETTER) ||
+            (x10.compare(x11) != SC_WORSE) ||
+            (x10.compare(x10b) != SC_EQUIVALENT) ||
+            (madj.compare(FloatMinObjective(next)) != SC_EQUIVALENT) ||
+            (xadj.compare(FloatMaxObjective(1.0)) != SC_EQUIVALENT))
+          return false;
+
+        // Equal keys give identical cuts; better keys only tighten them.
+        const FloatVal probes[] = {FloatVal(8.4), FloatVal(8.5),
+                                   FloatVal(8.9), FloatVal(9.0)};
+        for (unsigned int i=0; i<sizeof(probes)/sizeof(probes[0]); i++) {
+          if (admitted<FloatMinObjective>(probes[i],1.0,m10) !=
+              admitted<FloatMinObjective>(probes[i],1.0,m10b))
+            return false;
+          if (admitted<FloatMinObjective>(probes[i],1.0,m9) &&
+              !admitted<FloatMinObjective>(probes[i],1.0,m10))
+            return false;
+        }
+        if (admitted<FloatMinObjective>(FloatVal(10.0),0.0,mzero) ||
+            !admitted<FloatMinObjective>(FloatVal(9.0),0.0,mzero) ||
+            admitted<FloatMaxObjective>(FloatVal(11.0),1.0,x10) ||
+            !admitted<FloatMaxObjective>(FloatVal(11.1),1.0,x10))
+          return false;
+
+        FloatVal before_m=m9.cost().val(), before_m_other=m10.cost().val(),
+          before_x=x11.cost().val(), before_x_other=x10.cost().val();
+        (void) m9.compare(m10); (void) x11.compare(x10);
+        if ((m9.cost().val().min() != before_m.min()) ||
+            (m9.cost().val().max() != before_m.max()) ||
+            (m10.cost().val().min() != before_m_other.min()) ||
+            (m10.cost().val().max() != before_m_other.max()) ||
+            (x11.cost().val().min() != before_x.min()) ||
+            (x11.cost().val().max() != before_x.max()) ||
+            (x10.cost().val().min() != before_x_other.min()) ||
+            (x10.cost().val().max() != before_x_other.max()))
+          return false;
+        try { (void) mzero.compare(m10); return false; }
+        catch (const DynamicCastFailed&) {}
+        try { (void) m10.compare(x10); return false; }
+        catch (const DynamicCastFailed&) {}
+        return true;
+      }
+    };
+
+    FloatObjectiveComparison float_objective_comparison;
+#endif
 
     /// Lexicographic maximization objective used for comparison tests
     class LexMaxObjective : public IntLexMaximizeSpace {

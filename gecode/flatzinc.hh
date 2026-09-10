@@ -576,7 +576,7 @@ namespace Gecode { namespace FlatZinc {
     Gecode::FloatVarArray fv_aux;
     /// Indicates whether a float variable is introduced by mzn2fzn
     std::vector<bool> fv_introduced;
-    /// Step by which a next solution has to have lower cost
+    /// Step used by float optimization cuts and comparison compatibility
     Gecode::FloatNum step;
 #endif
     /// Whether the introduced variables still need to be copied
@@ -626,7 +626,14 @@ namespace Gecode { namespace FlatZinc {
     /// Compare this space with space \a s and print the differences on
     /// \a out
     void compare(const Space& s, std::ostream& out) const;
-    /// Compare integer optimization objectives
+    /**
+     * \brief Compare compatible optimization objectives
+     *
+     * Integer objectives compare assigned values. Float objectives require
+     * the same direction and step, and assigned (possibly adjacent-endpoint)
+     * intervals. Float minimization ranks lower endpoints and maximization
+     * ranks upper endpoints, independently of the step used by constrain().
+     */
     virtual SpaceComparison compare(const Space& s) const;
     /// Compare this space with space \a s and print the differences on
     /// \a out using \a p

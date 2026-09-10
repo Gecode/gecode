@@ -149,6 +149,18 @@ namespace Gecode {
     rel(*this, cost(), FRT_LE, best->cost().max()-step);
   }
 
+  SpaceComparison
+  FloatMinimizeSpace::compare(const Space& other) const {
+    const FloatMinimizeSpace* s =
+      dynamic_cast<const FloatMinimizeSpace*>(&other);
+    if ((s == nullptr) || (step != s->step))
+      throw DynamicCastFailed("FloatMinimizeSpace::compare");
+    FloatNum a=cost().val().max(), b=s->cost().val().max();
+    if (a == b)
+      return SC_EQUIVALENT;
+    return (a < b) ? SC_BETTER : SC_WORSE;
+  }
+
 
   void
   FloatMaximizeSpace::constrain(const Space& _best) {
@@ -157,6 +169,18 @@ namespace Gecode {
     if (best == nullptr)
       throw DynamicCastFailed("FloatMaximizeSpace::constrain");
     rel(*this, cost(), FRT_GR, best->cost().min()+step);
+  }
+
+  SpaceComparison
+  FloatMaximizeSpace::compare(const Space& other) const {
+    const FloatMaximizeSpace* s =
+      dynamic_cast<const FloatMaximizeSpace*>(&other);
+    if ((s == nullptr) || (step != s->step))
+      throw DynamicCastFailed("FloatMaximizeSpace::compare");
+    FloatNum a=cost().val().min(), b=s->cost().val().min();
+    if (a == b)
+      return SC_EQUIVALENT;
+    return (a > b) ? SC_BETTER : SC_WORSE;
   }
 
 #endif
