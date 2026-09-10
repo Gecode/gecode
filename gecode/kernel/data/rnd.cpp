@@ -36,48 +36,46 @@
 #include <gecode/kernel.hh>
 
 namespace Gecode {
+  Rnd::Rnd(Space& home, const Rnd& source)
+    : SharedHandle(home.random(source)) {}
 
-  Support::Mutex Rnd::IMP::m;
+  void Rnd::seed(uint64_t value) {
+    if (!object())
+      *this = Rnd(value);
+    else
+      imp().seed(value);
+  }
 
-  forceinline
-  Rnd::IMP::IMP(uint64_t s)
-    : rg(s) {}
-
-  Rnd::IMP::~IMP(void) {}
-
-  forceinline void
-  Rnd::_seed(uint64_t s) {
-    if (object() == nullptr) {
-      object(new IMP(s));
+  void Rnd::state(const std::string& text) {
+    if (!object()) {
+      Rnd candidate(1);
+      candidate.state(text);
+      *this = candidate;
     } else {
-      static_cast<IMP*>(object())->seed(s);
+      imp().state(text);
     }
   }
 
-  Rnd::Rnd(void) {}
-  Rnd::Rnd(uint64_t s) {
-    object(new IMP(s));
+  void Rnd::time(void) {
+    seed(static_cast<uint64_t>(::time(nullptr)));
   }
-  Rnd::Rnd(const Rnd& r)
-    : SharedHandle(r) {}
-  Rnd&
-  Rnd::operator =(const Rnd& r) {
-    (void) SharedHandle::operator =(r);
-    return *this;
-  }
-  Rnd::~Rnd(void) {}
 
-  void
-  Rnd::seed(uint64_t s) {
-    _seed(s);
+  void Rnd::hw(void) {
+    seed((uint64_t(Support::hwrnd()) << 32) | Support::hwrnd());
   }
-  void
-  Rnd::time(void) {
-    _seed(static_cast<unsigned int>(::time(nullptr)));
-  }
-  void
-  Rnd::hw(void) {
-    _seed(Support::hwrnd());
+
+  Rnd Space::random(const Rnd& source) {
+    if (!source)
+      throw UninitializedRnd("Space::random");
+    // During actor/model copying, map source-local handles by their position.
+    if (is_partial_clone() && pc.c.source && pc.c.source->randoms) {
+      size_t i = pc.c.source->randoms->find(source);
+      if (i < pc.c.source->randoms->size())
+        return randoms->at(i);
+    }
+    if (!randoms)
+      randoms = new RandomContext;
+    return randoms->bind(source);
   }
 }
 

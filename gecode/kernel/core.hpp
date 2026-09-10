@@ -144,6 +144,8 @@ namespace Gecode {
   class Advisor;
   class AFC;
   class Choice;
+  class Rnd;
+  class RandomContext;
   class Brancher;
   class Group;
   class PropagatorGroup;
@@ -1432,6 +1434,10 @@ namespace Gecode {
   private:
     unsigned int bid; ///< Identity to match creating brancher
     unsigned int alt; ///< Number of alternatives
+    /// Optional packed random-state snapshot (independent of alternative count)
+    uint64_t* random_state;
+    Choice(const Choice&) = delete;
+    Choice& operator =(const Choice&) = delete;
 
     /// Return id of the creating brancher
     unsigned int id(void) const;
@@ -1804,6 +1810,8 @@ namespace Gecode {
     Kernel::SharedSpaceData ssd;
     /// Performs memory management for space
     Kernel::MemoryManager mm;
+    /// Lazily allocated random streams, owned by this space
+    RandomContext* randoms = nullptr;
 #ifdef GECODE_HAS_CBS
     /// Global counter for variable ids
     unsigned int var_id_counter;
@@ -2048,6 +2056,8 @@ namespace Gecode {
     GECODE_KERNEL_EXPORT
     void ap_ignore_dispose(Actor* a, bool d);
   public:
+    /// Bind a random handle to this space, mapping local handles during cloning
+    GECODE_KERNEL_EXPORT Rnd random(const Rnd& source);
     /**
      * \brief Suppress global propagator information during scoped posting
      * \ingroup TaskModelScript
@@ -3983,7 +3993,7 @@ namespace Gecode {
    */
   forceinline
   Choice::Choice(const Brancher& b, const unsigned int a)
-    : bid(b.id()), alt(a) {}
+    : bid(b.id()), alt(a), random_state(nullptr) {}
 
   forceinline unsigned int
   Choice::alternatives(void) const {
@@ -3996,7 +4006,7 @@ namespace Gecode {
   }
 
   forceinline
-  Choice::~Choice(void) {}
+  Choice::~Choice(void) { delete[] random_state; }
 
 
 
