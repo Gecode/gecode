@@ -31,6 +31,8 @@
  *
  */
 
+#include <memory>
+
 namespace Gecode {
 
   /**
@@ -64,8 +66,44 @@ namespace Gecode {
     PosChoice(const Brancher& b, unsigned int a, const Pos& p);
     /// Return position in array
     const Pos& pos(void) const;
+    /// Random selector state, present only in randomized brancher choices.
+    virtual const uint64_t* random_data(void) const { return nullptr; }
     /// Archive into \a e
     virtual void archive(Archive& e) const;
+  };
+
+  /// Randomized brancher choice with state words in the same allocation.
+  /// Nonrandom branchers use the original choice type without this payload.
+  template<class Base>
+  class alignas(uint64_t) RndChoice : public Base {
+    unsigned int count;
+  public:
+    template<class... Args>
+    RndChoice(unsigned int words, Args&&... args)
+      : Base(std::forward<Args>(args)...), count(words) {
+      std::uninitialized_default_construct_n(data(),count);
+    }
+    RndChoice(const RndChoice&) = delete;
+    static void* operator new(size_t size, unsigned int words) {
+      return ::operator new(size+size_t(words)*sizeof(uint64_t));
+    }
+    static void operator delete(void* p) { ::operator delete(p); }
+    static void operator delete(void* p, unsigned int) { ::operator delete(p); }
+    uint64_t* data(void) { return reinterpret_cast<uint64_t*>(this+1); }
+    const uint64_t* data(void) const { return reinterpret_cast<const uint64_t*>(this+1); }
+    const uint64_t* random_data(void) const override { return data(); }
+    void read(Archive& e) {
+      for (unsigned int i=0; i<count; ++i) {
+        unsigned int lo,hi; e >> lo >> hi;
+        data()[i] = uint64_t(lo) | (uint64_t(hi)<<32);
+      }
+    }
+    void archive(Archive& e) const override {
+      Base::archive(e);
+      for (unsigned int i=0; i<count; ++i)
+        e << static_cast<unsigned int>(data()[i])
+          << static_cast<unsigned int>(data()[i]>>32);
+    }
   };
 
   /**
@@ -85,6 +123,20 @@ namespace Gecode {
     mutable int start;
     /// View selection objects
     ViewSel<View>* vs[n];
+    /// Compact state of this brancher's variable selectors only.
+    unsigned int random_words(void) const {
+      unsigned int words=0;
+      for (int i=0; i<n; ++i) words += vs[i]->random_words();
+      return words;
+    }
+    uint64_t* random_save(uint64_t* out) const {
+      for (int i=0; i<n; ++i) out=vs[i]->random_save(out);
+      return out;
+    }
+    const uint64_t* random_commit(const uint64_t* in, unsigned int a) {
+      for (int i=0; i<n; ++i) in=vs[i]->random_commit(in,a);
+      return in;
+    }
     /// Filter function
     Filter f;
     /// Return position information

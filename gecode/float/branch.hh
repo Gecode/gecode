@@ -259,6 +259,9 @@ namespace Gecode { namespace Float { namespace Branch {
     /// The used random number generator
     Rnd r;
   public:
+    unsigned int random_words(void) const { return r.words(); }
+    uint64_t* random_save(uint64_t* out) const { return r.save(out); }
+    const uint64_t* random_commit(const uint64_t* in, unsigned int a) { return r.restore_split(in,a); }
     /// Constructor for initialization
     ValSelRnd(Space& home, const ValBranch<Var>& vb);
     /// Constructor for cloning

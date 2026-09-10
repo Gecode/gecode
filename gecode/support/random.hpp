@@ -353,6 +353,7 @@ namespace Gecode { namespace Support {
   private:
     Engine e;
   public:
+    using EngineType = Engine;
     using State = typename Engine::State;
     using result_type = uint64_t;
     static_assert(Engine::max() == UINT64_MAX && Engine::min() <= 1,

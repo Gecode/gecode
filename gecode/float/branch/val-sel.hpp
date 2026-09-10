@@ -77,10 +77,10 @@ namespace Gecode { namespace Float { namespace Branch {
 
   forceinline
   ValSelRnd::ValSelRnd(Space& home, const ValBranch<Var>& vb)
-    : ValSel<FloatView,FloatNumBranch>(home,vb), r(home,vb.rnd()) {}
+    : ValSel<FloatView,FloatNumBranch>(home,vb), r(vb.rnd()) {}
   forceinline
   ValSelRnd::ValSelRnd(Space& home, ValSelRnd& vs)
-    : ValSel<FloatView,FloatNumBranch>(home,vs), r(home,vs.r) {
+    : ValSel<FloatView,FloatNumBranch>(home,vs), r(vs.r) {
   }
   forceinline FloatNumBranch
   ValSelRnd::val(const Space&, FloatView x, int) {
@@ -90,7 +90,7 @@ namespace Gecode { namespace Float { namespace Branch {
   }
   forceinline bool
   ValSelRnd::notice(void) const {
-    return true;
+    return false;
   }
   forceinline void
   ValSelRnd::dispose(Space&) {

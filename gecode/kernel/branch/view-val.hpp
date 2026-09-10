@@ -271,7 +271,14 @@ namespace Gecode {
   ViewValBrancher<View,n,Val,a,Filter,Print>::choice(Space& home) {
     Pos p = ViewBrancher<View,Filter,n>::pos(home);
     View v = ViewBrancher<View,Filter,n>::view(p);
-    return new PosValChoice<Val>(*this,a,p,vsc->val(home,v,p.pos));
+    Val value = vsc->val(home,v,p.pos);
+    unsigned int words = this->random_words()+vsc->random_words();
+    if (!words)
+      return new PosValChoice<Val>(*this,a,p,value);
+    std::unique_ptr<RndChoice<PosValChoice<Val>>> c(
+      new (words) RndChoice<PosValChoice<Val>>(words,*this,a,p,value));
+    vsc->random_save(this->random_save(c->data()));
+    return c.release();
   }
 
   template<class View, int n, class Val, unsigned int a,
@@ -282,7 +289,13 @@ namespace Gecode {
     (void) home;
     int p; e >> p;
     Val v; e >> v;
-    return new PosValChoice<Val>(*this,a,p,v);
+    unsigned int words = this->random_words()+vsc->random_words();
+    if (!words)
+      return new PosValChoice<Val>(*this,a,p,v);
+    std::unique_ptr<RndChoice<PosValChoice<Val>>> c(
+      new (words) RndChoice<PosValChoice<Val>>(words,*this,a,p,v));
+    c->read(e);
+    return c.release();
   }
 
   template<class View, int n, class Val, unsigned int a,
@@ -292,6 +305,10 @@ namespace Gecode {
   ::commit(Space& home, const Choice& c, unsigned int b) {
     const PosValChoice<Val>& pvc
       = static_cast<const PosValChoice<Val>&>(c);
+    if (this->random_words()+vsc->random_words()) {
+      assert(pvc.random_data() != nullptr);
+      vsc->random_commit(this->random_commit(pvc.random_data(),b),b);
+    }
     return me_failed(vsc->commit(home,b,
                                  ViewBrancher<View,Filter,n>::view(pvc.pos()),
                                  pvc.pos().pos,
