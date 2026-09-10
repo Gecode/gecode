@@ -38,6 +38,23 @@
 
 namespace Gecode { namespace Search {
 
+  /// Whether incoming solution \a s should replace incumbent \a b
+  forceinline bool
+  better(const Space& s, const Space& b, const char* l) {
+    switch (s.compare(b)) {
+    case SC_BETTER:
+      return true;
+    case SC_EQUIVALENT:
+    case SC_WORSE:
+      return false;
+    case SC_INCOMPARABLE:
+      throw Incomparable(l);
+    default:
+      GECODE_NEVER;
+    }
+    return false;
+  }
+
   /// Clone space \a s depending on options \a o
   forceinline Space*
   snapshot(Space* s, const Options& o);
