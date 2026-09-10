@@ -97,11 +97,11 @@ namespace Gecode { namespace Int { namespace Branch {
   forceinline
   ValSelRnd<View>::ValSelRnd
   (Space& home, const ValBranch<typename ValSelRnd<View>::Var>& vb)
-    : ValSel<View,int>(home,vb), r(vb.rnd()) {}
+    : ValSel<View,int>(home,vb), r(home,vb.rnd()) {}
   template<class View>
   forceinline
   ValSelRnd<View>::ValSelRnd(Space& home, ValSelRnd& vs)
-    : ValSel<View,int>(home,vs), r(vs.r) {
+    : ValSel<View,int>(home,vs), r(home,vs.r) {
   }
   template<class View>
   forceinline int
@@ -166,4 +166,3 @@ namespace Gecode { namespace Int { namespace Branch {
 }}}
 
 // STATISTICS: int-branch
-

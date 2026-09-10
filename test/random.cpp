@@ -114,5 +114,129 @@ namespace Test {
         return true;
       }
     } contract;
+
+    class ReplaySpace : public Gecode::Space {
+    public:
+      Gecode::IntVarArray x;
+      Gecode::Rnd variable, value;
+      ReplaySpace(const Gecode::Rnd& source, bool separate, bool multi=false)
+        : x(*this,4,0,2), variable(*this,source),
+          value(*this,separate ? source.copy() : source) {
+        using namespace Gecode;
+        // The first branch is deterministic, but later streams must split.
+        branch(*this,x[0],multi ? INT_VALUES_MIN() : INT_VAL_MIN());
+        IntVarArgs first(2);
+        first[0]=x[1]; first[1]=x[2];
+        branch(*this,first,INT_VAR_RND(variable),INT_VAL_RND(value));
+        branch(*this,x[3],INT_VAL_RND(value));
+      }
+      ReplaySpace(ReplaySpace& s)
+        : Space(s), variable(*this,s.variable), value(*this,s.value) {
+        x.update(*this,s.x);
+      }
+      Space* copy() override { return new ReplaySpace(*this); }
+    };
+
+    bool same_archive(const Gecode::Choice& a, const Gecode::Choice& b) {
+      Gecode::Archive x,y;
+      a.archive(x); b.archive(y);
+      if (x.size()!=y.size())
+        return false;
+      for (int i=0; i<x.size(); ++i)
+        if (x[i]!=y[i])
+          return false;
+      return true;
+    }
+
+    bool choice_replay(const Gecode::Rnd& source, bool separate, bool multi) {
+      using namespace Gecode;
+      std::unique_ptr<ReplaySpace> root(new ReplaySpace(source,separate,multi));
+      while (root->status()==SS_BRANCH) {
+        std::unique_ptr<ReplaySpace> before(static_cast<ReplaySpace*>(root->clone()));
+        const auto source_state = source.state();
+        std::unique_ptr<const Choice> choice(root->choice());
+        Archive packed;
+        choice->archive(packed);
+        if (packed[1] != source.words()*(separate ? 2 : 1))
+          return false;
+        const auto variable = root->variable.copy();
+        const auto value = root->value.copy();
+        std::vector<std::string> siblings;
+        // Explore backwards, exercising late alternatives without earlier draws.
+        for (unsigned int a=choice->alternatives(); a--;) {
+          std::unique_ptr<ReplaySpace> direct(static_cast<ReplaySpace*>(root->clone()));
+          std::unique_ptr<ReplaySpace> replay(static_cast<ReplaySpace*>(before->clone()));
+          Archive archive;
+          choice->archive(archive);
+          std::unique_ptr<const Choice> restored(replay->choice(archive));
+          direct->commit(*choice,a);
+          // State on the recomputed space is intentionally different before commit.
+          (void) replay->variable(13);
+          replay->commit(*restored,a);
+          if (direct->variable.state()!=variable.split(a).state() ||
+              direct->value.state()!=value.split(a).state() ||
+              replay->variable.state()!=direct->variable.state() ||
+              replay->value.state()!=direct->value.state())
+            return false;
+          for (const auto& previous : siblings)
+            if (previous==direct->variable.state())
+              return false;
+          siblings.push_back(direct->variable.state());
+          auto status = direct->status();
+          if (status!=replay->status())
+            return false;
+          if (status==SS_BRANCH) {
+            std::unique_ptr<const Choice> next(direct->choice());
+            std::unique_ptr<const Choice> next_replay(replay->choice());
+            if (!same_archive(*next,*next_replay))
+              return false;
+          }
+        }
+        if (source.state()!=source_state || root->variable.state()!=variable.state())
+          return false;
+        root->commit(*choice,0);
+      }
+      return true;
+    }
+
+    std::vector<std::string> solutions(const Gecode::Rnd& source,
+                                       unsigned int distance, bool separate,
+                                       bool multi) {
+      using namespace Gecode;
+      ReplaySpace root(source,separate,multi);
+      Search::Options options;
+      options.c_d=distance;
+      options.a_d=distance;
+      DFS<ReplaySpace> search(&root,options);
+      std::vector<std::string> result;
+      while (std::unique_ptr<ReplaySpace> s{search.next()}) {
+        std::ostringstream item;
+        item << s->x << ':' << s->variable.state() << ':' << s->value.state();
+        result.push_back(item.str());
+      }
+      return result;
+    }
+
+    class BranchReplay : public Base {
+    public:
+      BranchReplay() : Base("Random::BranchReplay") {}
+      bool run() override {
+        Gecode::Rnd engines[] = {
+          Gecode::Rnd(42),
+          Gecode::Rnd(Gecode::Support::Random<CountedSplitMix>(42))
+        };
+        for (const auto& engine : engines)
+          for (bool separate : {false,true})
+            for (bool multi : {false,true}) {
+              if (!choice_replay(engine,separate,multi))
+                return false;
+              auto cloned = solutions(engine,1,separate,multi);
+              auto recomputed = solutions(engine,100,separate,multi);
+              if (cloned.size()!=81 || cloned!=recomputed)
+                return false;
+            }
+        return true;
+      }
+    } branch_replay;
   }
 }
