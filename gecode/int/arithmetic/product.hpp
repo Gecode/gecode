@@ -164,14 +164,18 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     for (int i=0; i<x.size(); i++) {
       if (i == omit) continue;
       bool first=true;
-      int n=0;
-      for (int j=0; j<x.size(); j++)
+      for (int j=0; j<i; j++)
         if ((j != omit) && (x[j] == x[i])) {
-          if (j < i) first=false;
-          n++;
+          first=false;
+          break;
         }
-      if (first)
-        r = product_interval_mul(r,product_power_interval(x[i],n));
+      if (!first)
+        continue;
+      int n=1;
+      for (int j=i+1; j<x.size(); j++)
+        if ((j != omit) && (x[j] == x[i]))
+          n++;
+      r = product_interval_mul(r,product_power_interval(x[i],n));
     }
     return r;
   }
@@ -366,11 +370,33 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         GECODE_ME_CHECK(y.gq(home,strict ? 1 : 0));
     }
 
+    // View identities do not change during propagation. Group once, then
+    // reuse the powers for forward and inverse bounds in each iteration.
+    Region r;
+    int* representative=r.alloc<int>(x.size());
+    int* exponent=r.alloc<int>(x.size());
+    int groups=0;
+    for (int i=0; i<x.size(); i++) {
+      int g=0;
+      while ((g < groups) && !(x[representative[g]] == x[i])) g++;
+      if (g == groups) {
+        representative[groups]=i; exponent[groups]=1; groups++;
+      } else {
+        exponent[g]++;
+      }
+    }
+    ProductInterval* power=r.alloc<ProductInterval>(groups);
+    ProductInterval* prefix=r.alloc<ProductInterval>(groups+1);
+    ProductInterval* suffix=r.alloc<ProductInterval>(groups+1);
     bool modified;
     do {
       modified = false;
-
-      ProductInterval p = product_interval(x);
+      prefix[0] = ProductInterval{1,1};
+      for (int g=0; g<groups; g++) {
+        power[g]=product_power_interval(x[representative[g]],exponent[g]);
+        prefix[g+1]=product_interval_mul(prefix[g],power[g]);
+      }
+      const ProductInterval p=prefix[groups];
       {
         ModEvent me = neg ? y.lq(home,-p.min) : y.gq(home,p.min);
         if (me_failed(me)) return ES_FAILED;
@@ -380,30 +406,6 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         ModEvent me = neg ? y.gq(home,-p.max) : y.lq(home,p.max);
         if (me_failed(me)) return ES_FAILED;
         modified |= me_modified(me);
-      }
-
-      // Group equal views as powers. Prefix and suffix products provide every
-      // omitted group interval in linear time after grouping.
-      Region r;
-      int* representative=r.alloc<int>(x.size());
-      int* exponent=r.alloc<int>(x.size());
-      int groups=0;
-      for (int i=0; i<x.size(); i++) {
-        int g=0;
-        while ((g < groups) && !(x[representative[g]] == x[i])) g++;
-        if (g == groups) {
-          representative[groups]=i; exponent[groups]=1; groups++;
-        } else {
-          exponent[g]++;
-        }
-      }
-      ProductInterval* power=r.alloc<ProductInterval>(groups);
-      ProductInterval* prefix = r.alloc<ProductInterval>(groups+1);
-      ProductInterval* suffix = r.alloc<ProductInterval>(groups+1);
-      prefix[0] = ProductInterval{1,1};
-      for (int g=0; g<groups; g++) {
-        power[g]=product_power_interval(x[representative[g]],exponent[g]);
-        prefix[g+1]=product_interval_mul(prefix[g],power[g]);
       }
       suffix[groups] = ProductInterval{1,1};
       for (int g=groups; g--;)
