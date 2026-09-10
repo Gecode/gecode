@@ -73,6 +73,18 @@ Date: unreleased
 [DESCRIPTION]
 This is the development changelog for the next Gecode release.
 
+[ENTRY]
+Module: search
+What:   change
+Rank:   major
+[DESCRIPTION]
+Best-solution search now uses Space::compare() when choosing between an
+external incumbent and the solution already retained by sequential BAB or
+restart-based search. Optimization spaces with a custom objective must
+override compare() as well as constrain(). Incomparable objectives are
+reported as unsupported by the current best-solution engines. Adding the
+virtual comparison function changes the C++ ABI of Space.
+
 [RELEASE]
 Version: 6.4.0
 Date: 2026-07-15

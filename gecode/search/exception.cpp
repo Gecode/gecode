@@ -48,6 +48,9 @@ namespace Gecode { namespace Search {
   NoBest::NoBest(const char* l)
     : Exception(l,"Best solution search is not supported") {}
 
+  Incomparable::Incomparable(const char* l)
+    : Exception(l,"Incomparable objectives are not supported by best solution search") {}
+
 }}
 
 // STATISTICS: search-other

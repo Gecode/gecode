@@ -269,6 +269,40 @@ namespace Test {
           }
         }
       }
+      /// Compare objectives used by best solution search
+      virtual SpaceComparison compare(const Space& _s) const {
+        const HasSolutions& s = dynamic_cast<const HasSolutions&>(_s);
+        if (htc != s.htc)
+          throw DynamicCastFailed("HasSolutions::compare");
+        int c=0, sc=0;
+        switch (htc) {
+        case HTC_LEX_LE:
+        case HTC_LEX_GR:
+          for (int i=0; i<x.size(); i++) {
+            if (x[i].val() == s.x[i].val())
+              continue;
+            bool better = (htc == HTC_LEX_LE) ?
+              (x[i].val() < s.x[i].val()) : (x[i].val() > s.x[i].val());
+            return better ? SC_BETTER : SC_WORSE;
+          }
+          return SC_EQUIVALENT;
+        case HTC_BAL_LE:
+        case HTC_BAL_GR:
+          c = std::abs(x[0].val()+x[1].val()+x[2].val()-
+                       x[3].val()-x[4].val()-x[5].val());
+          sc = std::abs(s.x[0].val()+s.x[1].val()+s.x[2].val()-
+                        s.x[3].val()-s.x[4].val()-s.x[5].val());
+          if (c == sc)
+            return SC_EQUIVALENT;
+          return ((htc == HTC_BAL_LE) ? (c < sc) : (c > sc)) ?
+            SC_BETTER : SC_WORSE;
+        case HTC_NONE:
+          return SC_EQUIVALENT;
+        default:
+          GECODE_NEVER;
+        }
+        return SC_INCOMPARABLE;
+      }
       /// Return number of solutions
       virtual int solutions(void) const {
         if (htb1 == HTB_NONE) {
@@ -405,6 +439,109 @@ namespace Test {
       virtual Space* copy(void) { return new MaxObjective(*this); }
       virtual IntVar cost(void) const { return x; }
     };
+
+    /// Objective used to test external incumbent updates
+    class ExternalObjective : public IntMinimizeSpace {
+    public:
+      static int constraints;
+      IntVar x;
+      ExternalObjective(void) : x(*this,0,10) {
+        Gecode::branch(*this,x,INT_VAL_MIN());
+      }
+      ExternalObjective(int v) : x(*this,v,v) {}
+      ExternalObjective(ExternalObjective& s) : IntMinimizeSpace(s) {
+        x.update(*this,s.x);
+      }
+      virtual Space* copy(void) { return new ExternalObjective(*this); }
+      virtual IntVar cost(void) const { return x; }
+      virtual void constrain(const Space& s) {
+        constraints++;
+        IntMinimizeSpace::constrain(s);
+      }
+    };
+
+    int ExternalObjective::constraints = 0;
+
+    /// Objective with a genuine partial-order result
+    class IncomparableObjective : public ExternalObjective {
+    public:
+      IncomparableObjective(int v) : ExternalObjective(v) {}
+      IncomparableObjective(IncomparableObjective& s) : ExternalObjective(s) {}
+      virtual Space* copy(void) { return new IncomparableObjective(*this); }
+      virtual SpaceComparison compare(const Space&) const {
+        return SC_INCOMPARABLE;
+      }
+    };
+
+    /// Test sequential BAB and RBS external incumbent arbitration
+    class ExternalIncumbent : public Base {
+    private:
+      template<class Engine>
+      static bool updates(Engine& e) {
+        ExternalObjective five(5), equal(5), worse(7), better(3);
+        int n = ExternalObjective::constraints;
+        e.constrain(five);
+        int installed = ExternalObjective::constraints;
+        e.constrain(equal);
+        e.constrain(worse);
+        if ((installed <= n) || (ExternalObjective::constraints != installed))
+          return false;
+        e.constrain(better);
+        return ExternalObjective::constraints > installed;
+      }
+    public:
+      ExternalIncumbent(void) : Base("Search::ExternalIncumbent") {}
+      virtual bool run(void) {
+        Gecode::Search::Options o;
+        ExternalObjective* bm = new ExternalObjective;
+        Gecode::Search::Engine* bab = Gecode::Search::babengine(bm,o);
+        delete bm;
+        if (!updates(*bab)) {
+          delete bab;
+          return false;
+        }
+        delete bab;
+
+        o.cutoff = Gecode::Search::Cutoff::constant(10);
+        ExternalObjective* rm = new ExternalObjective;
+        Gecode::Search::Engine* rbs =
+          Gecode::Search::build<ExternalObjective,
+            Gecode::RBS<ExternalObjective,Gecode::BAB> >(rm,o);
+        delete rm;
+        if (!updates(*rbs)) {
+          delete rbs;
+          return false;
+        }
+        delete rbs;
+
+        IncomparableObjective incomparable(4), incumbent(5);
+        ExternalObjective* im = new ExternalObjective;
+        Gecode::Search::Engine* rejecting = Gecode::Search::babengine(
+          im,Gecode::Search::Options());
+        delete im;
+        rejecting->constrain(incumbent);
+        try {
+          rejecting->constrain(incomparable);
+          delete rejecting;
+          return false;
+        } catch (const Gecode::Search::Incomparable&) {}
+        delete rejecting;
+
+        SolveImmediate unsupported(HTB_NONE,HTB_NONE,HTB_NONE);
+        Gecode::Search::Engine* missing = Gecode::Search::babengine(
+          unsupported.clone(),Gecode::Search::Options());
+        missing->constrain(unsupported);
+        try {
+          missing->constrain(unsupported);
+          delete missing;
+          return false;
+        } catch (const SpaceNoComparison&) {}
+        delete missing;
+        return true;
+      }
+    };
+
+    ExternalIncumbent external_incumbent;
 
 #ifdef GECODE_HAS_FLOAT_VARS
     /// Scalar float minimization objective used for comparison and cut tests
