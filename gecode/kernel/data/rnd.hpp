@@ -51,8 +51,18 @@ namespace Gecode {
   class Rnd : public SharedHandle {
     friend class RandomContext;
   private:
+    class Origin : public SharedHandle {
+    public:
+      Origin(void) = default;
+      explicit Origin(Object* value) : SharedHandle(value) {}
+      const Object* get(void) const { return object(); }
+    };
     class IMP : public SharedHandle::Object {
     public:
+      Origin origin;
+      const Object* identity(void) const {
+        return origin ? origin.get() : this;
+      }
       virtual IMP* copy(void) const = 0;
       virtual IMP* split(uint32_t a) const = 0;
       virtual void seed(uint64_t value) = 0;
@@ -99,6 +109,11 @@ namespace Gecode {
       return *static_cast<IMP*>(object());
     }
     Rnd(IMP* value, bool) : SharedHandle(value) {}
+    Rnd local_copy(void) const {
+      Rnd result(imp().copy(),true);
+      result.imp().origin = imp().origin ? imp().origin : Origin(&imp());
+      return result;
+    }
   public:
     /// Uninitialized handle
     Rnd(void) = default;
@@ -115,6 +130,8 @@ namespace Gecode {
       : SharedHandle(new Implementation<Engine>(r)) {}
     /// Bind a source stream to a space, or update its handle during cloning
     GECODE_KERNEL_EXPORT Rnd(Space& home, const Rnd& source);
+    /// Access an already bound stream through a const space
+    GECODE_KERNEL_EXPORT Rnd(const Space& home, const Rnd& source);
     /// Create and bind a default stream to a space
     Rnd(Space& home, uint64_t seed) : Rnd(home,Rnd(seed)) {}
     /// Make an independent exact copy; does not split or advance the source
@@ -143,47 +160,42 @@ namespace Gecode {
     }
   };
 
-  /// Internal space-local stream storage. Entries keep initialization handles alive.
+  /// Internal space-local stream storage. Local handles retain their stream origin.
   class RandomContext {
-    struct Entry {
-      Rnd source;
-      Rnd local;
-    };
-    std::vector<Entry> streams;
+    std::vector<Rnd> streams;
   public:
     RandomContext(void) = default;
     RandomContext(const RandomContext& other) {
       streams.reserve(other.streams.size());
       for (const auto& entry : other.streams)
-        streams.push_back({entry.source,entry.local.copy()});
+        streams.push_back(entry.local_copy());
     }
     size_t find(const Rnd& source) const {
       for (size_t i=0; i<streams.size(); ++i)
-        if ((streams[i].source.object()==source.object()) ||
-            (streams[i].local.object()==source.object()))
+        if (streams[i].imp().identity()==source.imp().identity())
           return i;
       return streams.size();
     }
-    Rnd at(size_t i) const { return streams[i].local; }
+    Rnd at(size_t i) const { return streams[i]; }
     size_t size(void) const { return streams.size(); }
     Rnd bind(const Rnd& source) {
       size_t i = find(source);
       if (i<streams.size())
-        return streams[i].local;
-      streams.push_back({source,source.copy()});
-      return streams.back().local;
+        return streams[i];
+      streams.push_back(source.local_copy());
+      return streams.back();
     }
     /// Allocate one packed snapshot: word count followed by all engine states.
     uint64_t* snapshot(void) const {
       size_t n=0;
       for (const auto& entry : streams)
-        n += entry.local.words();
+        n += entry.words();
       auto data = std::make_unique<uint64_t[]>(n+1);
       data[0]=n;
       size_t pos=1;
       for (const auto& entry : streams) {
-        entry.local.imp().save(data.get()+pos);
-        pos += entry.local.words();
+        entry.imp().save(data.get()+pos);
+        pos += entry.words();
       }
       return data.release();
     }
@@ -191,13 +203,13 @@ namespace Gecode {
     void commit(const uint64_t* data, uint32_t a) {
       size_t n=0;
       for (const auto& entry : streams)
-        n += entry.local.words();
+        n += entry.words();
       if (data[0] != n)
         throw std::invalid_argument("Random choice does not match space streams");
       size_t pos=1;
       for (auto& entry : streams) {
-        entry.local.imp().commit(data+pos,a);
-        pos += entry.local.words();
+        entry.imp().commit(data+pos,a);
+        pos += entry.words();
       }
     }
   };

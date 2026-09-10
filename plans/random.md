@@ -1,7 +1,7 @@
 # Plan: Compact, splittable random generators for Gecode 7
 
 > Source: the feature/random design discussion, 2026-09-10.
-> Status: Phases 1 and 2 complete; Phase 3 next.
+> Status: Phases 1–3 complete; Phase 4 next.
 > Workflow: review, update this plan, and commit after each phase.
 
 ## Goal
@@ -315,21 +315,75 @@ callbacks that use randomness outside ordinary choice selection.
 
 ### Acceptance criteria
 
-- [ ] Focused integration cases cover binary, multiway, and one-alternative
+- [x] Focused integration cases cover binary, multiway, and one-alternative
       branching, plus handover to later branchers and custom-engine use.
-- [ ] Alternative identity follows the public choice index, including when a
+- [x] Alternative identity follows the public choice index, including when a
       brancher reverses the mapping from alternative index to selected value.
-- [ ] Clone, archive, disposal, failure, traced commit, and conditional commit
+- [x] Clone, archive, disposal, failure, traced commit, and conditional commit
       paths preserve the contract without shared mutable state between spaces.
-- [ ] Sequential and parallel replay of the same recorded path agree on random
+- [x] Sequential and parallel replay of the same recorded path agree on random
       state; checks do not require identical parallel solution order.
-- [ ] Restart and portfolio initialization policies are documented and do not
+- [x] Restart and portfolio initialization policies are documented and do not
       accidentally introduce worker-scheduling-dependent shared streams.
-- [ ] Existing relevant branching and search correctness tests pass. Add tests
+- [x] Existing relevant branching and search correctness tests pass. Add tests
       for the new semantic guarantees rather than duplicating each API wrapper.
-- [ ] Random generation, bounded draws, splitting, clone cost, and retained-path
+- [x] Random generation, bounded draws, splitting, clone cost, and retained-path
       memory are measured in representative Gecode workloads. Use controlled
       paths to separate overhead from changes in the randomized search tree.
+
+### Phase 3 review
+
+Added const-space stream lookup for callbacks and retained stream identity across
+ancestor handles. Review showed that mapping only the immediate source space
+was insufficient for a callback capturing an already bound ancestor handle.
+The collection now holds one handle per stream; each local implementation keeps
+its initialization origin alive. Mutable states remain independent across spaces.
+The net per-stream collection/implementation storage is unchanged from Phase 2;
+the default standalone implementation gains an 8-byte origin handle.
+
+FlatZinc binds its restart/relaxation handle to the space and derives meta-engine
+streams from fixed restart/portfolio indices. The shared relaxation helper and
+the Photo and JobShop examples now use local handles. Generic cloning still does
+not split; models have an explicit `random_split()` operation for their own
+meta-engine policy. Callback, registration, and replay boundaries are documented
+in `docs/random.md`.
+
+Xorshift64* is now also a search-capable alternative: indexed splitting jumps
+`(a+1)*2^32` native recurrence steps using shared transition matrices. This keeps
+8-byte engine state, costs a shared 16 KiB table, and preserves the original
+generator rather than inventing a new seeding construction. Composition and
+period-wrap checks supplement its raw vector and full-state replay checks.
+Its sibling-state distinction follows from coprimality with the native period.
+
+Validation passes for three engines (SplitMix, xorshift64*, and an external
+three-word engine), shared/separate streams, binary/multiway choices, dynamic
+posting through a one-alternative custom brancher, const callbacks, and sequential
+versus two-worker search. Complete solution/state sets agree in the parallel
+fixture without assuming solution order. Traced and conditional commits, failed
+spaces, and illegal alternatives are checked explicitly. A dedicated fault test
+counts live engine instances across allocation and brancher-copy failures and
+checks that source states survive. Existing Boolean, set, float, FlatZinc restart,
+and the full `check` selections also pass.
+
+Release measurements use Apple Clang 21, arm64 macOS 26.6.2, baseline commit
+6b7de57b04, one warmup, five repetitions for seed 42, and three repetitions each
+for seeds 1 and 1337. Raw records are in `build/random/phase3-benchmark*.json`;
+the reusable harness and summary are documented in `docs/random.md`.
+Representative seed-42 medians: bounded Rnd draws 14.85 -> 2.96 ns; random-space
+clones 178.70 -> 345.95 ns; controlled random binary-tree nodes 153.07 -> 254.32 ns
+with frequent cloning and 226.76 -> 368.53 ns with recomputation. Nonrandom tree
+overhead was 1–3%. Queens wall time rose about 4–5% across the three seeds, with
+similar but not identical node counts. These are local measurements, not a
+cross-platform performance guarantee.
+
+The cost of independent streams and recorded state is real: the smallest random
+tree is about 1.6x slower, despite much faster individual draws. We retain the
+simple optional packed snapshot representation rather than add a second compact
+choice hierarchy to hide that cost. SplitMix is the preferred default: binary
+split-plus-draw measured about 15.7 ns, versus 237 ns for xorshift's jump-plus-draw.
+The latter remains the 8-byte-state alternative. The popcount implementation was
+improved after measurement without changing its bit sequence. Phase 4 will make
+the executable's default configurable and verify both configurations.
 
 ## Phase 4: Configured command lines and Gecode 7 migration
 

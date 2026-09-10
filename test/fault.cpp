@@ -1174,6 +1174,72 @@ namespace Test { namespace Fault {
     }
   };
 
+  // Count engine instances so failed clones cannot hide leaked stream handles.
+  class LiveRandom : public Support::SplitMix {
+  public:
+    static int live;
+    explicit LiveRandom(uint64_t seed=1) : SplitMix(seed) { ++live; }
+    LiveRandom(const LiveRandom& r) : SplitMix(r) { ++live; }
+    explicit LiveRandom(const SplitMix& r) : SplitMix(r) { ++live; }
+    ~LiveRandom() { --live; }
+    LiveRandom split(uint32_t a) const { return LiveRandom(SplitMix::split(a)); }
+  };
+  int LiveRandom::live=0;
+
+  class RandomSpace : public Space {
+  public:
+    IntVarArray x;
+    Rnd r;
+    RandomSpace() : x(*this,3,0,2),
+      r(*this,Rnd(Support::Random<LiveRandom>(7))) {
+      branch(*this,x,INT_VAR_RND(r),INT_VAL_RND(r));
+      ThrowingBrancher::post(*this);
+    }
+    RandomSpace(RandomSpace& s) : Space(s), r(*this,s.r) {
+      x.update(*this,s.x);
+    }
+    Space* copy() override { return new RandomSpace(*this); }
+  };
+
+  class RandomCloneFailures : public Base {
+  public:
+    RandomCloneFailures() : Base("Fault::Random::CloneFailures") {}
+    bool run() override {
+      FaultScope scope;
+      {
+        RandomSpace root;
+        if (root.status()!=SS_BRANCH)
+          return false;
+        const auto state=root.r.state();
+        const int live=LiveRandom::live;
+        bool succeeded=false;
+        for (unsigned int n=0; n<128 && !succeeded; ++n) {
+          Support::FailPoint::fail_after(Phase::Heap,n);
+          try {
+            std::unique_ptr<Space> copy(root.clone());
+            succeeded=true;
+          } catch (const MemoryExhausted&) {}
+          Support::FailPoint::reset();
+          if (LiveRandom::live!=live || root.r.state()!=state)
+            return false;
+        }
+        if (!succeeded)
+          return false;
+        // Fail after a random brancher and its stream handles have been copied.
+        Support::FailPoint::fail_after(Phase::BrancherCopy,0);
+        try {
+          std::unique_ptr<Space> copy(root.clone());
+          return false;
+        } catch (const MemoryExhausted&) {}
+        Support::FailPoint::reset();
+        if (LiveRandom::live!=live || root.r.state()!=state)
+          return false;
+        std::unique_ptr<Space> copy(root.clone());
+      }
+      return LiveRandom::live==0;
+    }
+  } random_clone_failures;
+
   BranchActionHeapFailures branch_action_heap_failures;
   BranchChbHeapFailures branch_chb_heap_failures;
   CloneDisposalArray clone_disposal_array;

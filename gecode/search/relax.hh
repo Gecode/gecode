@@ -52,6 +52,7 @@ namespace Gecode { namespace Search {
         double p, Post& post) {
     if (home.failed())
       return;
+    r = Rnd(static_cast<Space&>(home),r);
     Region reg;
     // Which variables to assign
     Support::BitSet<Region> ax(reg, static_cast<unsigned int>(x.size()));

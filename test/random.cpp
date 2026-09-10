@@ -70,7 +70,14 @@ namespace Test {
         Xorshift64Star xs(1);
         if (xs.next() != UINT64_C(0x47e4ce4b896cdd1d))
           return false;
-        if (!replay<SplitMix>() || !replay<CountedSplitMix>())
+        if (!replay<SplitMix>() || !replay<Xorshift64Star>() ||
+            !replay<CountedSplitMix>())
+          return false;
+        if (xs.split(0).split(0).state()!=xs.split(1).state())
+          return false;
+        auto one_step=xs;
+        (void) one_step.next();
+        if (xs.split(UINT32_MAX).state()!=one_step.state())
           return false;
         auto parent = r.state();
         // Indexing skips pairs of parent words, exactly as sequential splits.
@@ -119,7 +126,8 @@ namespace Test {
     public:
       Gecode::IntVarArray x;
       Gecode::Rnd variable, value;
-      ReplaySpace(const Gecode::Rnd& source, bool separate, bool multi=false)
+      ReplaySpace(const Gecode::Rnd& source, bool separate, bool multi=false,
+                  bool callback=false)
         : x(*this,4,0,2), variable(*this,source),
           value(*this,separate ? source.copy() : source) {
         using namespace Gecode;
@@ -128,7 +136,22 @@ namespace Test {
         IntVarArgs first(2);
         first[0]=x[1]; first[1]=x[2];
         branch(*this,first,INT_VAR_RND(variable),INT_VAL_RND(value));
-        branch(*this,x[3],INT_VAL_RND(value));
+        if (callback) {
+          // A custom one-alternative branch posts a later random brancher.
+          // The callback resolves the stream through its own space each time.
+          branch(*this,[source=variable](Space& home) {
+            auto& self = static_cast<ReplaySpace&>(home);
+            branch(home,self.x[3],INT_VAL([source](const Space& h, IntVar v, int) {
+              Rnd local(h,source);
+              unsigned int p=local(v.size());
+              IntVarValues values(v);
+              while (p--) ++values;
+              return values.val();
+            }));
+          });
+        } else {
+          branch(*this,x[3],INT_VAL_RND(value));
+        }
       }
       ReplaySpace(ReplaySpace& s)
         : Space(s), variable(*this,s.variable), value(*this,s.value) {
@@ -148,9 +171,10 @@ namespace Test {
       return true;
     }
 
-    bool choice_replay(const Gecode::Rnd& source, bool separate, bool multi) {
+    bool choice_replay(const Gecode::Rnd& source, bool separate, bool multi,
+                       bool callback) {
       using namespace Gecode;
-      std::unique_ptr<ReplaySpace> root(new ReplaySpace(source,separate,multi));
+      std::unique_ptr<ReplaySpace> root(new ReplaySpace(source,separate,multi,callback));
       while (root->status()==SS_BRANCH) {
         std::unique_ptr<ReplaySpace> before(static_cast<ReplaySpace*>(root->clone()));
         const auto source_state = source.state();
@@ -201,12 +225,14 @@ namespace Test {
 
     std::vector<std::string> solutions(const Gecode::Rnd& source,
                                        unsigned int distance, bool separate,
-                                       bool multi) {
+                                       bool multi, bool callback,
+                                       unsigned int threads=1) {
       using namespace Gecode;
-      ReplaySpace root(source,separate,multi);
+      ReplaySpace root(source,separate,multi,callback);
       Search::Options options;
       options.c_d=distance;
       options.a_d=distance;
+      options.threads=threads;
       DFS<ReplaySpace> search(&root,options);
       std::vector<std::string> result;
       while (std::unique_ptr<ReplaySpace> s{search.next()}) {
@@ -223,20 +249,69 @@ namespace Test {
       bool run() override {
         Gecode::Rnd engines[] = {
           Gecode::Rnd(42),
+          Gecode::Rnd(Gecode::Support::Random<Xorshift64Star>(42)),
           Gecode::Rnd(Gecode::Support::Random<CountedSplitMix>(42))
         };
         for (const auto& engine : engines)
           for (bool separate : {false,true})
             for (bool multi : {false,true}) {
-              if (!choice_replay(engine,separate,multi))
-                return false;
-              auto cloned = solutions(engine,1,separate,multi);
-              auto recomputed = solutions(engine,100,separate,multi);
-              if (cloned.size()!=81 || cloned!=recomputed)
-                return false;
+              for (bool callback : {false,true}) {
+                if (!choice_replay(engine,separate,multi,callback))
+                  return false;
+                auto cloned = solutions(engine,1,separate,multi,callback);
+                auto recomputed = solutions(engine,100,separate,multi,callback);
+                if (cloned.size()!=81 || cloned!=recomputed)
+                  return false;
+                auto parallel = solutions(engine,100,separate,multi,callback,2);
+                std::sort(cloned.begin(),cloned.end());
+                std::sort(parallel.begin(),parallel.end());
+                if (cloned!=parallel)
+                  return false;
+              }
             }
         return true;
       }
     } branch_replay;
+
+    class StateTracer : public Gecode::Tracer {
+    public:
+      std::string observed;
+      void propagate(const Gecode::Space&, const Gecode::PropagateTraceInfo&) override {}
+      void post(const Gecode::Space&, const Gecode::PostTraceInfo&) override {}
+      void commit(const Gecode::Space& home, const Gecode::CommitTraceInfo&) override {
+        observed=static_cast<const ReplaySpace&>(home).variable.state();
+      }
+    };
+
+    class CommitBoundary : public Base {
+    public:
+      CommitBoundary() : Base("Random::CommitBoundary") {}
+      bool run() override {
+        using namespace Gecode;
+        StateTracer tracer;
+        ReplaySpace root(Rnd(7),false);
+        trace(root,TE_COMMIT,tracer);
+        root.status();
+        std::unique_ptr<const Choice> choice(root.choice());
+        auto expected=root.variable.split(1).state();
+        std::unique_ptr<ReplaySpace> copy(static_cast<ReplaySpace*>(root.clone()));
+        copy->trycommit(*choice,1);
+        if (copy->variable.state()!=expected || tracer.observed!=expected)
+          return false;
+        std::unique_ptr<ReplaySpace> skipped(static_cast<ReplaySpace*>(root.clone()));
+        BrancherGroup::all.kill(*skipped);
+        auto before=skipped->variable.state();
+        skipped->trycommit(*choice,1);
+        if (skipped->variable.state()!=before)
+          return false;
+        skipped->fail();
+        skipped->commit(*choice,1);
+        if (skipped->variable.state()!=before)
+          return false;
+        try { root.commit(*choice,choice->alternatives()); return false; }
+        catch (const SpaceIllegalAlternative&) {}
+        return root.variable.state()==before;
+      }
+    } commit_boundary;
   }
 }
