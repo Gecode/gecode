@@ -2105,9 +2105,13 @@ namespace Gecode {
      * The comparison is read-only and receiver-relative. Implementations may
      * require objective information sufficient for the relation they report.
      * The default implementation throws SpaceNoComparison.
+     * SC_INCOMPARABLE is a model-defined ordering result, not missing
+     * information. Current exact best-solution engines reject it.
      *
      * Optimization models overriding constrain with a different objective
      * must also override compare.
+     * constrain remains responsible for posting improvement restrictions;
+     * search does not use it to rank two solutions.
      */
     GECODE_KERNEL_EXPORT virtual SpaceComparison
     compare(const Space& other) const;

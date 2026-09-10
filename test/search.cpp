@@ -177,6 +177,10 @@ namespace Test {
       virtual void constrain(const Space&) {
         fail();
       }
+      /// Treat the single solution as equivalent across best-search assets
+      virtual SpaceComparison compare(const Space&) const {
+        return SC_EQUIVALENT;
+      }
       /// Return number of solutions
       virtual int solutions(void) const {
         return 1;
@@ -716,6 +720,102 @@ namespace Test {
     };
 
     ParallelBABComparison parallel_bab_comparison;
+
+    /// Test portfolio comparison, external bounds, and nested failures
+    class PortfolioComparison : public Base {
+    private:
+      static Gecode::Search::Options options(void) {
+        Gecode::Search::Options o;
+        o.assets = 2;
+        o.threads = 2;
+        return o;
+      }
+      static bool failure(FailingParallelObjective::Failure f) {
+        FailingParallelObjective* m = new FailingParallelObjective(f);
+        Gecode::PBS<FailingParallelObjective,Gecode::BAB> pbs(m,options());
+        delete m;
+        try {
+          while (Space* s = pbs.next()) delete s;
+        } catch (const SpaceNoComparison&) {
+          if (f != FailingParallelObjective::MISSING)
+            return false;
+          try { (void) pbs.next(); }
+          catch (const SpaceNoComparison&) { return true; }
+        } catch (const ComparisonError&) {
+          return f == FailingParallelObjective::THROWN;
+        } catch (const Gecode::Search::Incomparable&) {
+          return f == FailingParallelObjective::INCOMPARABLE;
+        }
+        return false;
+      }
+    public:
+      PortfolioComparison(void) : Base("Search::PortfolioComparison") {}
+      virtual bool run(void) {
+        Gecode::Search::Options o = options();
+        ParallelObjective* m = new ParallelObjective;
+        Gecode::PBS<ParallelObjective,Gecode::BAB> pbs(m,o);
+        delete m;
+        int previous = 11;
+        ParallelObjective* s;
+        while ((s = pbs.next()) != nullptr) {
+          int value = s->x.val();
+          delete s;
+          if (value >= previous)
+            return false;
+          previous = value;
+        }
+        if (previous != 0)
+          return false;
+
+        ExternalObjective* em = new ExternalObjective;
+        Gecode::Search::Engine* external =
+          Gecode::Search::build<ExternalObjective,
+            Gecode::PBS<ExternalObjective,Gecode::BAB> >(em,o);
+        delete em;
+        ExternalObjective five(5), equal(5), worse(7), better(3);
+        int n = ExternalObjective::constraints;
+        external->constrain(five);
+        int installed = ExternalObjective::constraints;
+        external->constrain(equal);
+        external->constrain(worse);
+        if ((installed <= n) ||
+            (ExternalObjective::constraints != installed)) {
+          delete external;
+          return false;
+        }
+        external->constrain(better);
+        if (ExternalObjective::constraints <= installed) {
+          delete external;
+          return false;
+        }
+        delete external;
+
+        using namespace Gecode;
+        Gecode::Search::Options so;
+        so.threads = 1;
+        so.cutoff = Gecode::Search::Cutoff::constant(1000000);
+        SEBs sebs(2);
+        sebs[0] = bab<ParallelObjective>(so);
+        sebs[1] = rbs<ParallelObjective,Gecode::BAB>(so);
+        m = new ParallelObjective;
+        Gecode::PBS<ParallelObjective,Gecode::BAB> mixed(m,sebs,o);
+        delete m;
+        previous = 11;
+        while ((s = mixed.next()) != nullptr) {
+          int value = s->x.val();
+          delete s;
+          if (value >= previous)
+            return false;
+          previous = value;
+        }
+        return (previous == 0) &&
+          failure(FailingParallelObjective::MISSING) &&
+          failure(FailingParallelObjective::THROWN) &&
+          failure(FailingParallelObjective::INCOMPARABLE);
+      }
+    };
+
+    PortfolioComparison portfolio_comparison;
 
 #ifdef GECODE_HAS_FLOAT_VARS
     /// Stepped float objective for parallel BAB admission

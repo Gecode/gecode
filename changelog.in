@@ -78,12 +78,18 @@ Module: search
 What:   change
 Rank:   major
 [DESCRIPTION]
-Best-solution search now uses Space::compare() when choosing between an
-external incumbent and the solution already retained by sequential BAB or
-restart-based search. Optimization spaces with a custom objective must
-override compare() as well as constrain(). Incomparable objectives are
-reported as unsupported by the current best-solution engines. Adding the
-virtual comparison function changes the C++ ABI of Space.
+Best-solution search now uses Space::compare() when choosing between
+independently produced solutions, including external incumbents and portfolio
+assets. Optimization spaces with a custom objective must override compare() as
+well as constrain(). compare() ranks solutions without changing them;
+constrain() still posts improvement restrictions. Comparability is defined by
+the model. The built-in floating-point models compare their documented
+objective bounds, independently of the improvement step. Current exact engines
+reject incomparable incoming solutions. A future best-effort policy could
+instead make an incomparable incoming solution current best, without changing
+the comparison interface, but that would not by itself guarantee completeness
+or maximality. Adding the virtual comparison function changes the C++ ABI of
+Space.
 
 [RELEASE]
 Version: 6.4.0
