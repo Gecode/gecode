@@ -381,6 +381,112 @@ namespace Test {
           htb1(_htb1), htb2(_htb2), htb3(_htb3), htc(_htc) {}
     };
 
+    /// Scalar integer objective used for comparison tests
+    class MinObjective : public IntMinimizeSpace {
+    public:
+      IntVar x;
+      MinObjective(int l, int u) : x(*this,l,u) {}
+      MinObjective(MinObjective& s) : IntMinimizeSpace(s) {
+        x.update(*this,s.x);
+      }
+      virtual Space* copy(void) { return new MinObjective(*this); }
+      virtual IntVar cost(void) const { return x; }
+    };
+
+    /// Scalar maximization objective used to check objective families
+    class MaxObjective : public IntMaximizeSpace {
+    public:
+      IntVar x;
+      MaxObjective(int v) : x(*this,v,v) {}
+      MaxObjective(MaxObjective& s) : IntMaximizeSpace(s) {
+        x.update(*this,s.x);
+      }
+      virtual Space* copy(void) { return new MaxObjective(*this); }
+      virtual IntVar cost(void) const { return x; }
+    };
+
+    /// Lexicographic integer objective used for comparison tests
+    class LexObjective : public IntLexMinimizeSpace {
+    public:
+      IntVarArray x;
+      LexObjective(int a, int l, int u, int n=2) : x(*this,n,l,u) {
+        rel(*this,x[0],IRT_EQ,a);
+        (void) status();
+      }
+      LexObjective(LexObjective& s) : IntLexMinimizeSpace(s) {
+        x.update(*this,s.x);
+      }
+      virtual Space* copy(void) { return new LexObjective(*this); }
+      virtual IntVarArgs cost(void) const { return x; }
+    };
+
+    /// Lexicographic maximization objective used for comparison tests
+    class LexMaxObjective : public IntLexMaximizeSpace {
+    public:
+      IntVarArray x;
+      LexMaxObjective(int a) : x(*this,2,0,2) {
+        rel(*this,x[0],IRT_EQ,a);
+        (void) status();
+      }
+      LexMaxObjective(LexMaxObjective& s) : IntLexMaximizeSpace(s) {
+        x.update(*this,s.x);
+      }
+      virtual Space* copy(void) { return new LexMaxObjective(*this); }
+      virtual IntVarArgs cost(void) const { return x; }
+    };
+
+    /// Space without objective comparison support
+    class PlainSpace : public Space {
+    public:
+      PlainSpace(void) {}
+      PlainSpace(PlainSpace& s) : Space(s) {}
+      virtual Space* copy(void) { return new PlainSpace(*this); }
+    };
+
+    /// Test objective comparison independently of search arbitration
+    class Comparison : public Base {
+    public:
+      Comparison(void) : Base("Search::Comparison") {}
+      virtual bool run(void) {
+        MinObjective one(1,1), two(2,2), one_again(1,1), open(0,2);
+        if ((one.compare(two) != SC_BETTER) ||
+            (two.compare(one) != SC_WORSE) ||
+            (one.compare(one_again) != SC_EQUIVALENT))
+          return false;
+        MaxObjective high(2), low(1);
+        if ((high.compare(low) != SC_BETTER) ||
+            (low.compare(high) != SC_WORSE))
+          return false;
+        LexObjective lp(1,0,2), lq(2,0,2);
+        if ((lp.compare(lq) != SC_BETTER) ||
+            (lq.compare(lp) != SC_WORSE))
+          return false;
+        LexMaxObjective lmp(2), lmq(1);
+        if ((lmp.compare(lmq) != SC_BETTER) ||
+            (lmq.compare(lmp) != SC_WORSE))
+          return false;
+        try {
+          (void) open.compare(one);
+          return false;
+        } catch (const Int::ValOfUnassignedVar&) {}
+        try {
+          (void) one.compare(high);
+          return false;
+        } catch (const DynamicCastFailed&) {}
+        LexObjective short_cost(1,0,2,1);
+        try {
+          (void) lp.compare(short_cost);
+          return false;
+        } catch (const MiniModel::ArgumentSizeMismatch&) {}
+        PlainSpace plain;
+        try {
+          (void) plain.compare(plain);
+          return false;
+        } catch (const SpaceNoComparison&) {}
+        return true;
+      }
+    };
+
     /// %Test for depth-first search
     template<class Model>
     class DFS : public Test {
@@ -733,6 +839,7 @@ namespace Test {
     public:
       /// Perform creation and registration
       Create(void) {
+        (void) new Comparison;
         // Depth-first search
         for (unsigned int t = 1; t<=4; t++)
           for (unsigned int c_d = 1; c_d<10; c_d++)

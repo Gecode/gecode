@@ -65,6 +65,46 @@ namespace Test { namespace FlatZinc {
 
     TupleSetAutoRepresentation tuple_set_auto_representation;
 
+    /// Verify integer objective comparison for FlatZinc spaces.
+    class IntegerObjectiveComparison : public Base {
+    private:
+      static std::unique_ptr<Gecode::FlatZinc::FlatZincSpace>
+      model(const char* source) {
+        Gecode::FlatZinc::Printer p;
+        std::stringstream ss(source);
+        return std::unique_ptr<Gecode::FlatZinc::FlatZincSpace>
+          (Gecode::FlatZinc::parse(ss,p,olog));
+      }
+    public:
+      IntegerObjectiveComparison(void)
+        : Base("FlatZinc::IntegerObjectiveComparison") {}
+
+      virtual bool run(void) {
+        using namespace Gecode;
+        std::unique_ptr<Gecode::FlatZinc::FlatZincSpace> one =
+          model("var 1..1: x; solve minimize x;\n");
+        std::unique_ptr<Gecode::FlatZinc::FlatZincSpace> two =
+          model("var 2..2: x; solve minimize x;\n");
+        std::unique_ptr<Gecode::FlatZinc::FlatZincSpace> high =
+          model("var 2..2: x; solve maximize x;\n");
+        std::unique_ptr<Gecode::FlatZinc::FlatZincSpace> low =
+          model("var 1..1: x; solve maximize x;\n");
+        if (!one || !two || !high || !low ||
+            (one->compare(*two) != SC_BETTER) ||
+            (two->compare(*one) != SC_WORSE) ||
+            (one->compare(*one) != SC_EQUIVALENT) ||
+            (high->compare(*low) != SC_BETTER))
+          return false;
+        try {
+          (void) one->compare(*high);
+          return false;
+        } catch (const DynamicCastFailed&) {}
+        return true;
+      }
+    };
+
+    IntegerObjectiveComparison integer_objective_comparison;
+
     /// Verify that statistics do not override an explicit Gist mode.
     class GistStatisticsMode : public Base {
     private:
