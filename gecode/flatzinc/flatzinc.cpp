@@ -2076,6 +2076,21 @@ namespace Gecode { namespace FlatZinc {
     }
   }
 
+  SpaceComparison
+  FlatZincSpace::compare(const Space& s) const {
+    const FlatZincSpace* other = dynamic_cast<const FlatZincSpace*>(&s);
+    if (other == nullptr)
+      throw DynamicCastFailed("FlatZincSpace::compare");
+    if (!_optVarIsInt || !other->_optVarIsInt ||
+        (_method != other->_method) ||
+        ((_method != MIN) && (_method != MAX)))
+      throw DynamicCastFailed("FlatZincSpace::compare");
+    int a=iv[_optVar].val(), b=other->iv[other->_optVar].val();
+    if (a == b)
+      return SC_EQUIVALENT;
+    return ((a < b) == (_method == MIN)) ? SC_BETTER : SC_WORSE;
+  }
+
   bool
   FlatZincSpace::slave(const MetaInfo& mi) {
     if (mi.type() == MetaInfo::RESTART) {
