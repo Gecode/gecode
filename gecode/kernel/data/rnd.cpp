@@ -40,13 +40,13 @@ namespace Gecode {
   Support::Mutex Rnd::IMP::m;
 
   forceinline
-  Rnd::IMP::IMP(unsigned int s)
+  Rnd::IMP::IMP(uint64_t s)
     : rg(s) {}
 
   Rnd::IMP::~IMP(void) {}
 
   forceinline void
-  Rnd::_seed(unsigned int s) {
+  Rnd::_seed(uint64_t s) {
     if (object() == nullptr) {
       object(new IMP(s));
     } else {
@@ -55,7 +55,7 @@ namespace Gecode {
   }
 
   Rnd::Rnd(void) {}
-  Rnd::Rnd(unsigned int s) {
+  Rnd::Rnd(uint64_t s) {
     object(new IMP(s));
   }
   Rnd::Rnd(const Rnd& r)
@@ -68,7 +68,7 @@ namespace Gecode {
   Rnd::~Rnd(void) {}
 
   void
-  Rnd::seed(unsigned int s) {
+  Rnd::seed(uint64_t s) {
     _seed(s);
   }
   void

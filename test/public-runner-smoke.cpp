@@ -67,19 +67,17 @@ namespace {
     }
   } failing_smoke_test;
 
-  unsigned int observed_seed = 0;
+  std::string observed_state;
   int replay_runs = 0;
   class ReplaySmokeTest : public Test::Base {
   public:
     ReplaySmokeTest(void) : Test::Base("Smoke::Replay", Test::TestTags()) {}
     bool run(void) override {
       if (++replay_runs == 1) {
-        // Leave a state above the seed setter's modulus for the next iteration.
-        _rand.seed(44488);
         (void) _rand.next();
         return true;
       }
-      observed_seed = _rand.seed();
+      observed_state = _rand.state_string();
       (void) _rand(10);
       return false;
     }
@@ -200,7 +198,7 @@ main(void) {
                "filtered failing run did not preserve seed diagnostics")) {
     return EXIT_FAILURE;
   }
-  if (!require(fail_output.find("-test Smoke::B-Fail") != std::string::npos,
+  if (!require(fail_output.find("-test 'Smoke::B-Fail'") != std::string::npos,
                "filtered failing run did not preserve test diagnostics")) {
     return EXIT_FAILURE;
   }
@@ -215,13 +213,13 @@ main(void) {
                                replay_output) == EXIT_FAILURE && replay_runs == 2,
                "seed-sensitive test should fail on its second iteration"))
     return EXIT_FAILURE;
-  const std::string seed = std::to_string(observed_seed);
-  if (!require(replay_output.find("Options: -replay " + seed) != std::string::npos,
+  const std::string state = observed_state;
+  if (!require(replay_output.find("Options: -replay " + state) != std::string::npos,
                "failure should report the iteration's initial random state"))
     return EXIT_FAILURE;
   if (!require(run_and_capture({"public-runner-smoke", "-test", "Smoke::Replay",
-                                "-replay", seed.c_str()}, replay_output) == EXIT_FAILURE &&
-               std::to_string(observed_seed) == seed,
+                                "-replay", state.c_str()}, replay_output) == EXIT_FAILURE &&
+               observed_state == state,
                "replay should restore the reported random state"))
     return EXIT_FAILURE;
 

@@ -1378,7 +1378,7 @@ TESTAUXOBJ = $(TESTMAINOBJ) $(TESTPUBLICRUNNERSMOKEOBJ) \
 	$(TESTPUBLICINTSMOKEOBJ) $(TESTPUBLICSETSMOKEOBJ) \
 	$(TESTPUBLICFLOATSMOKEOBJ)
 
-TESTSRC0 = $(TESTCORESRC) test/afc.cpp test/ldsb.cpp test/region.cpp \
+TESTSRC0 = $(TESTCORESRC) test/afc.cpp test/ldsb.cpp test/region.cpp test/random.cpp \
 	test/groups.cpp
 # FailPoint is CMake-only; keep the Autoconf test executable fault-free.
 

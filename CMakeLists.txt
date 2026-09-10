@@ -1541,6 +1541,13 @@ if(BUILD_TESTING)
       list(APPEND GECODE_TEST_LINK_LIBS gecodeflatzinc)
     endif()
     target_link_libraries(gecode-test PRIVATE ${GECODE_TEST_LINK_LIBS})
+    add_executable(gecode-random-replay EXCLUDE_FROM_ALL
+      ${GECODE_TEST_MAIN_SOURCE} test/random-replay.cpp)
+    target_link_libraries(gecode-random-replay PRIVATE gecodetest)
+    add_dependencies(gecode-test gecode-random-replay)
+    add_test(NAME random-state-replay
+      COMMAND ${CMAKE_COMMAND} -DREPLAY=$<TARGET_FILE:gecode-random-replay>
+        -P ${CMAKE_CURRENT_SOURCE_DIR}/test/random-replay.cmake)
     if(GECODE_ENABLE_FAULT_INJECTION)
       add_executable(gecode-fault-test EXCLUDE_FROM_ALL
         ${GECODE_FAULT_TEST_SOURCES})
