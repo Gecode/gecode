@@ -189,7 +189,14 @@ namespace Gecode { namespace Int { namespace LDSB {
       ++it;
     }
 
-    return new LDSBChoice<Val>(*this,a,choicePos,choiceVal, literals, nliterals);
+    unsigned int words = this->random_words()+this->vsc->random_words();
+    if (!words)
+      return new LDSBChoice<Val>(*this,a,choicePos,choiceVal,literals,nliterals);
+    std::unique_ptr<RndChoice<LDSBChoice<Val>>> result(
+      new (words) RndChoice<LDSBChoice<Val>>
+      (words,*this,a,choicePos,choiceVal,literals,nliterals));
+    this->vsc->random_save(this->random_save(result->data()));
+    return result.release();
   }
 
 
@@ -207,7 +214,13 @@ namespace Gecode { namespace Int { namespace LDSB {
       e >> literals[i]._variable;
       e >> literals[i]._value;
     }
-    return new LDSBChoice<Val>(*this,a,p,v, literals, nliterals);
+    unsigned int words = this->random_words()+this->vsc->random_words();
+    if (!words)
+      return new LDSBChoice<Val>(*this,a,p,v,literals,nliterals);
+    std::unique_ptr<RndChoice<LDSBChoice<Val>>> result(
+      new (words) RndChoice<LDSBChoice<Val>>(words,*this,a,p,v,literals,nliterals));
+    result->read(e);
+    return result.release();
   }
 
   template <>

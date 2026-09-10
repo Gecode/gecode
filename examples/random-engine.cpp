@@ -32,6 +32,7 @@
  */
 
 #include <gecode/minimodel.hh>
+#include <gecode/int/branch.hh>
 #include <gecode/search.hh>
 #include <iostream>
 #include <memory>
@@ -64,22 +65,30 @@ public:
   }
 };
 
-/// Enumerate permutations using one user stream for both random selectors.
+/// Enumerate permutations with independent values of a user-defined engine.
 class Permutations : public Gecode::Space {
   Gecode::IntVarArray x;
-  Gecode::Rnd random;
 public:
-  explicit Permutations(const Gecode::Rnd& source)
-    : x(*this,4,0,3), random(*this,source) {
-    Gecode::distinct(*this,x);
-    Gecode::branch(*this,x,Gecode::INT_VAR_RND(random),
-                   Gecode::INT_VAL_RND(random));
+  using Random = Gecode::RndGenerator<CountedSplitMix>;
+  explicit Permutations(const Random& source) : x(*this,4,0,3) {
+    using namespace Gecode;
+    using namespace Gecode::Int;
+    distinct(*this,x);
+    IntVarArgs variables(x);
+    ViewArray<IntView> views(*this,variables);
+    ViewSel<IntView>* selectors[] = {
+      new (*this) ViewSelRnd<IntView,Random>(*this,source)
+    };
+    using Values = ValSelCommit<Branch::ValSelRnd<IntView,Random>,
+                                Branch::ValCommitEq<IntView>>;
+    auto* values = new (*this) Values(*this,INT_VAL_MIN(),source.split(0));
+    postviewvalbrancher<IntView,1,int,2>(*this,views,selectors,values,nullptr,nullptr);
   }
   Permutations(Permutations& s)
-    : Space(s), random(*this,s.random) { x.update(*this,s.x); }
+    : Space(s) { x.update(*this,s.x); }
   Gecode::Space* copy(void) override { return new Permutations(*this); }
   void print(void) const {
-    std::cout << x << "  " << random.state() << '\n';
+    std::cout << x << '\n';
   }
 };
 
@@ -91,7 +100,7 @@ int main(int argc, char* argv[]) {
     if (argc == 2)
       engine.state(std::string(argv[1]));
     std::cout << "Initial state: " << engine.state_string() << '\n';
-    Gecode::Rnd source(engine);
+    Permutations::Random source(engine);
     auto root = std::make_unique<Permutations>(source);
     Gecode::DFS<Permutations> search(root.get());
     root.reset();

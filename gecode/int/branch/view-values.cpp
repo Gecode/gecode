@@ -48,6 +48,7 @@ namespace Gecode { namespace Int { namespace Branch {
       w += r.width(); i++;
     }
     pm[i].pos = w;
+    pm[i].min = 0;
   }
 
   PosValuesChoice::PosValuesChoice(const Brancher& b, unsigned int a, Pos p,
@@ -65,7 +66,7 @@ namespace Gecode { namespace Int { namespace Branch {
     heap.free<PosMin>(pm,n+1);
   }
 
-  forceinline void
+  void
   PosValuesChoice::archive(Archive& e) const {
     PosChoice::archive(e);
     e << this->alternatives() << n;

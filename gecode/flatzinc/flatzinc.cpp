@@ -780,7 +780,7 @@ namespace Gecode { namespace FlatZinc {
 
   FlatZincSpace::FlatZincSpace(FlatZincSpace& f)
     : Space(f),
-      _initData(nullptr), _random(*this,f._random),
+      _initData(nullptr), _random(f._random),
       _solveAnnotations(nullptr),
       restart_data(f.restart_data),
       iv_boolalias(nullptr),
@@ -864,7 +864,7 @@ namespace Gecode { namespace FlatZinc {
   :  _initData(new FlatZincSpaceInitData),
     intVarCount(-1), boolVarCount(-1), floatVarCount(-1), setVarCount(-1),
     _optVar(-1), _optVarIsInt(true), _lns(0), _lnsInitialSolution(0),
-    _random(*this,random),
+    _random(random),
     _solveAnnotations(nullptr), needAuxVars(true) {
     branchInfo.init();
   }
@@ -2080,9 +2080,9 @@ namespace Gecode { namespace FlatZinc {
     // Meta-engine clones start from the master's state. Derive their streams
     // from logical restart/asset indices, never from worker scheduling.
     uint64_t index = mi.type()==MetaInfo::RESTART ? mi.restart() : mi.asset();
-    random_split(mi.type()==MetaInfo::RESTART ? 0 : 1);
-    random_split(static_cast<uint32_t>(index>>32));
-    random_split(static_cast<uint32_t>(index));
+    _random = _random.split(mi.type()==MetaInfo::RESTART ? 0 : 1);
+    _random = _random.split(static_cast<uint32_t>(index>>32));
+    _random = _random.split(static_cast<uint32_t>(index));
     if (mi.type() == MetaInfo::RESTART) {
       if (restart_data.initialized() && restart_data().mark_complete) {
         // Fail the space

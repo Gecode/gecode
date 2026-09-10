@@ -235,7 +235,6 @@ namespace Gecode {
       if (_vars_d[i] != nullptr)
         vd[i]->dispose(*this, _vars_d[i]);
 #endif
-    delete randoms;
     // Release memory from memory manager
     mm.release(ssd.data().sm);
   }
@@ -595,35 +594,16 @@ namespace Gecode {
     }
     // Make sure that b_commit does not point to a deleted brancher!
     b_commit = b_status;
-    std::unique_ptr<const Choice> c(b_status->choice(*this));
-    if (randoms)
-      const_cast<Choice*>(c.get())->random_state = randoms->snapshot();
-    return c.release();
+    return b_status->choice(*this);
   }
 
   const Choice*
   Space::choice(Archive& e) const {
     unsigned int id; e >> id;
-    unsigned int n; e >> n;
-    std::unique_ptr<uint64_t[]> data;
-    if (n) {
-      if (n > static_cast<unsigned int>((e.size()-2)/2))
-        throw std::invalid_argument("Invalid random choice archive size");
-      data = std::make_unique<uint64_t[]>(size_t(n)+1);
-      data[0]=n;
-      for (unsigned int i=0; i<n; ++i) {
-        unsigned int lo,hi;
-        e >> lo >> hi;
-        data[i+1] = uint64_t(lo) | (uint64_t(hi)<<32);
-      }
-    }
     Brancher* b_cur = Brancher::cast(bl.next());
     while (b_cur != Brancher::cast(&bl)) {
-      if (id == b_cur->id()) {
-        const Choice* c = b_cur->choice(*this,e);
-        const_cast<Choice*>(c)->random_state = data.release();
-        return c;
-      }
+      if (id == b_cur->id())
+        return b_cur->choice(*this,e);
       b_cur = Brancher::cast(b_cur->next());
     }
     throw SpaceNoBrancher("Space::choice");
@@ -636,11 +616,6 @@ namespace Gecode {
     if (failed())
       return;
     if (Brancher* b = brancher(c.bid)) {
-      if (c.random_state) {
-        if (!randoms)
-          throw std::invalid_argument("Random choice requires space streams");
-        randoms->commit(c.random_state,a);
-      }
       // There is a matching brancher
       if (pc.p.bid_sc & sc_trace) {
         TraceRecorder* tr = findtracerecorder();
@@ -672,11 +647,6 @@ namespace Gecode {
     if (failed())
       return;
     if (Brancher* b = brancher(c.bid)) {
-      if (c.random_state) {
-        if (!randoms)
-          throw std::invalid_argument("Random choice requires space streams");
-        randoms->commit(c.random_state,a);
-      }
       // There is a matching brancher
       if (pc.p.bid_sc & sc_trace) {
         TraceRecorder* tr = findtracerecorder();
@@ -771,8 +741,6 @@ namespace Gecode {
       pl.init();
       bl.init();
       b_status = b_commit = Brancher::cast(&bl);
-      if (s.randoms)
-        randoms = new RandomContext(*s.randoms);
       // Copy all propagators
       {
         ActorLink* p = &pl;
@@ -817,7 +785,6 @@ namespace Gecode {
     } catch (...) {
       recover(s);
       pc.c.source = nullptr;
-      delete randoms;
       mm.release(ssd.data().sm);
       throw;
     }
@@ -978,11 +945,6 @@ namespace Gecode {
   void
   Choice::archive(Archive& e) const {
     e << id();
-    unsigned int n = random_state ? static_cast<unsigned int>(random_state[0]) : 0;
-    e << n;
-    for (unsigned int i=0; i<n; ++i)
-      e << static_cast<unsigned int>(random_state[i+1])
-        << static_cast<unsigned int>(random_state[i+1]>>32);
   }
 
   bool

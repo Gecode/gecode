@@ -123,8 +123,14 @@ namespace Gecode { namespace Int { namespace Branch {
   const Choice*
   ViewValuesBrancher<n,min,Filter,Print>::choice(Space& home) {
     Pos p = ViewBrancher<IntView,Filter,n>::pos(home);
-    return new PosValuesChoice(*this,p,
-                               ViewBrancher<IntView,Filter,n>::view(p));
+    unsigned int words = this->random_words();
+    auto view = ViewBrancher<IntView,Filter,n>::view(p);
+    if (!words)
+      return new PosValuesChoice(*this,p,view);
+    std::unique_ptr<RndChoice<PosValuesChoice>> c(
+      new (words) RndChoice<PosValuesChoice>(words,*this,p,view));
+    this->random_save(c->data());
+    return c.release();
   }
 
   template<int n, bool min, class Filter, class Print>
@@ -135,7 +141,13 @@ namespace Gecode { namespace Int { namespace Branch {
     int p;
     unsigned int a;
     e >> p >> a;
-    return new PosValuesChoice(*this,a,p,e);
+    unsigned int words = this->random_words();
+    if (!words)
+      return new PosValuesChoice(*this,a,p,e);
+    std::unique_ptr<RndChoice<PosValuesChoice>> c(
+      new (words) RndChoice<PosValuesChoice>(words,*this,a,p,e));
+    c->read(e);
+    return c.release();
   }
 
   template<int n, bool min, class Filter, class Print>
@@ -144,6 +156,8 @@ namespace Gecode { namespace Int { namespace Branch {
                                                  unsigned int a) {
     const PosValuesChoice& pvc
       = static_cast<const PosValuesChoice&>(c);
+    if (this->random_words())
+      this->random_commit(pvc.random_data(),a);
     IntView x(ViewBrancher<IntView,Filter,n>::view(pvc.pos()));
     unsigned int b = min ? a : (pvc.alternatives() - 1 - a);
     return me_failed(x.eq(home,pvc.val(b))) ? ES_FAILED : ES_OK;

@@ -60,7 +60,7 @@ namespace Gecode {
 
   void
   relax(Home home, const SetVarArgs& x, const SetVarArgs& sx,
-        Rnd r, double p) {
+        Rnd& r, double p) {
     if (x.size() != sx.size())
       throw Set::ArgumentSizeMismatch("Set::relax");
     if ((p < 0.0) || (p > 1.0))
@@ -72,4 +72,3 @@ namespace Gecode {
 }
 
 // STATISTICS: set-other
-

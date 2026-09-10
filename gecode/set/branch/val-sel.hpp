@@ -91,10 +91,10 @@ namespace Gecode { namespace Set { namespace Branch {
 
   forceinline
   ValSelRnd::ValSelRnd(Space& home, const ValBranch<Var>& vb)
-    : ValSel<SetView,int>(home,vb), r(home,vb.rnd()) {}
+    : ValSel<SetView,int>(home,vb), r(vb.rnd()) {}
   forceinline
   ValSelRnd::ValSelRnd(Space& home, ValSelRnd& vs)
-    : ValSel<SetView,int>(home,vs), r(home,vs.r) {
+    : ValSel<SetView,int>(home,vs), r(vs.r) {
   }
   forceinline int
   ValSelRnd::val(const Space&, SetView x, int) {
@@ -110,7 +110,7 @@ namespace Gecode { namespace Set { namespace Branch {
   }
   forceinline bool
   ValSelRnd::notice(void) const {
-    return true;
+    return false;
   }
   forceinline void
   ValSelRnd::dispose(Space&) {

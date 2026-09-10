@@ -33,6 +33,7 @@
 
 // Compile against main without RANDOM_NEW, or against feature/random with it.
 #include <gecode/int.hh>
+#include <gecode/int/branch.hh>
 #include <gecode/search.hh>
 #include <chrono>
 #include <iostream>
@@ -72,6 +73,11 @@ int main(int argc, char** argv) {
   const unsigned int seed=argc>2 ? std::stoul(argv[2]) : 42;
   if (!draws) return 1;
   std::cout << "size.engine\t" << sizeof(Support::RandomGenerator) << "\tbytes\t0\n"
+            << "size.rnd\t" << sizeof(Rnd) << "\tbytes\t0\n"
+            << "size.var_selector\t" << sizeof(ViewSelRnd<Int::IntView>) << "\tbytes\t0\n"
+            << "size.val_selector\t" << sizeof(Int::Branch::ValSelRnd<Int::IntView>) << "\tbytes\t0\n"
+            << "size.var_description\t" << sizeof(IntVarBranch) << "\tbytes\t0\n"
+            << "size.val_description\t" << sizeof(IntValBranch) << "\tbytes\t0\n"
             << "size.space\t" << sizeof(Space) << "\tbytes\t0\n"
             << "size.choice\t" << sizeof(PosValChoice<int>) << "\tbytes\t0\n";
   Support::RandomGenerator raw(seed);
@@ -128,8 +134,11 @@ int main(int argc, char** argv) {
               << '\t' << archive.size()*sizeof(unsigned int) << "\tbytes\t0\n";
 #ifdef RANDOM_NEW
     std::cout << (random ? "size.random_snapshot" : "size.plain_snapshot")
-              << '\t' << (archive[1] ? (archive[1]+1)*sizeof(uint64_t) : 0)
+              << '\t' << (random ? sizeof(Support::RandomGenerator) : 0)
               << "\tbytes\t0\n";
+    std::cout << (random ? "size.random_choice" : "size.plain_choice")
+              << '\t' << (random ? sizeof(RndChoice<PosValChoice<int>>)+sizeof(Support::RandomGenerator)
+                                   : sizeof(PosValChoice<int>)) << "\tbytes\t0\n";
 #endif
     measure(random ? "clone.random" : "clone.plain",10000,[&] {
       uint64_t sum=0;
