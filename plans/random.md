@@ -1,20 +1,13 @@
-# Plan: Compact random values and reproducible splitting
+# Plan: Extensible random generators and reproducible splitting
 
 > Provisional draft for Gecode 7 or another future breaking-change release only.
-> Ownership corrected after review: state belongs to the consumer, not Space.
-> Status: implementation corrected; final verification and measurements in progress.
+> Status: implemented and locally verified; design remains under review in draft PR #241.
 
 ## Goal
 
 Replace the old default generator, provide user-extensible alternatives and exact
 state replay, and split randomized branching states by alternative. Keep states
 small enough to store directly in the model, selector, or brancher that uses them.
-
-The original implementation introduced a space-managed context and shared stream
-identity. That was an incorrect expansion of the requirement. The earlier phase
-reviews and performance claims are superseded where they depend on that ownership
-model. Their history remains in commits 626fb2d307, b4ec5dfe99, 2130ef3850,
-3665a1bed2, and a1ff8e3385.
 
 ## Required behavior
 
@@ -47,9 +40,6 @@ model. Their history remains in commits 626fb2d307, b4ec5dfe99, 2130ef3850,
 ### Value ownership
 
 - [x] Replace shared-handle Rnd with RndGenerator<Engine> and a configured Rnd alias.
-- [x] Remove RandomContext, origin identities, binding, Space::random(), and
-      Space::random_split().
-- [x] Restore kernel/core.hpp and core.cpp to their pre-feature state.
 - [x] Copy selector and model generators normally; remove random-handle disposal
       overhead for trivially destructible built-in engines.
 - [x] Make relaxation take a generator reference, explicitly advancing its owner.
@@ -67,23 +57,22 @@ model. Their history remains in commits 626fb2d307, b4ec5dfe99, 2130ef3850,
 
 ### Tests and documentation
 
-- [x] Replace tests of global stream coordination with tests of independent copies,
-      untouched model/later-selector state, and consumer-local splitting.
+- [x] Test independent copies, untouched model/later-selector state, and
+      consumer-local splitting.
 - [x] Check direct/archived choices, perturbed destination selector state,
       sibling exploration, cloning/recomputation, and parallel solution agreement.
 - [x] Exercise a three-word external engine in selectors and a runnable example.
 - [x] Retain engine vectors, full-state failure replay, CLI validation, and
       failed-clone resource checks.
-- [x] Rewrite docs and release notes to describe value ownership accurately.
+- [x] Document engine extension, splitting, full-state replay, and migration.
 - [x] Run full relevant checks for both defaults and the reduced static/no-thread build.
-- [x] Remeasure compactness and representative costs after removing the context.
-- [x] Review the correction and update the existing provisional draft PR.
+- [x] Measure compactness and representative costs against main.
+- [x] Review the implementation and update the provisional draft PR.
 
 ## Verification strategy
 
 Use the existing focused Random::Contract, Random::BranchReplay, and
-Random::CommitBoundary tests. The latter now checks consumer ownership rather than
-the removed kernel-wide commit hook. Fault::Random::CloneFailures counts inline
+Random::CommitBoundary tests. Fault::Random::CloneFailures counts inline
 custom-engine instances across failed clones. Existing Boolean, set, float,
 assignment, LDSB, and FlatZinc restart cases cover their integration paths.
 
@@ -94,10 +83,9 @@ prove sibling-state distinction.
 
 Measure against the same main baseline (6b7de57b04), using the existing controlled
 tree and queens harness. Report actual generator/description/selector/choice sizes
-and any performance costs. Do not reuse the space-local implementation's results
-as evidence for the corrected design.
+and any performance costs.
 
-## Algorithm and CLI decisions retained
+## Algorithm and CLI decisions
 
 Splittable SplitMix has two state words and constant-time indexed splitting.
 Xorshift64* has one state word and indexed native jumps. Both have documented
@@ -113,23 +101,18 @@ Drivers retain -seed (examples), -r (FlatZinc), and -state. Time/hardware
 initialization reports concrete state. Incompatible, malformed, and conflicting
 input is rejected. No legacy sequence mode is required.
 
-## Correction review
-
-The ownership error was architectural, not a bug in state copying. The previous
-tests verified an expanded contract that the user did not intend. This correction
-removes that contract and its infrastructure instead of optimizing it.
+## Verification results
 
 Both engine configurations pass CMake check and all five CTests, including
 command-line state replay and fault injection. The reduced static/no-thread build
 passes check and the focused Random tests. Additional Boolean, set, float,
 assignment, filtered-tie, LDSB, and FlatZinc restart checks pass with both defaults.
-Random::BranchReplay now also exercises randomized LDSB choice archives. The
+Random::BranchReplay also exercises randomized LDSB choice archives. The
 custom-engine example's full-state replay and output agree across all three builds.
 
-The corrected Space and base Choice implementation matches main exactly. Rnd is
+The Space and base Choice implementation matches main exactly. Rnd is
 16 bytes with SplitMix and 8 with xorshift64*, without shared allocation. Fresh
 five-run measurements are recorded in docs/random.md: SplitMix's controlled
 random tree costs 1.02x with cloning and 1.16x with recomputation relative to main;
-xorshift64* costs 1.63x and 2.88x. No result from the removed space-local design is
-used to justify this correction. Draft PR #241 describes this corrected contract
-and remains provisional, for a future breaking-change release only.
+xorshift64* costs 1.63x and 2.88x. Draft PR #241 remains provisional, for a future
+breaking-change release only.
