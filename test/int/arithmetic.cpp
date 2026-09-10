@@ -69,9 +69,9 @@ namespace Test { namespace Int {
      public:
        /// Create and register test
        GcdXYZ(const std::string& s, const Gecode::IntSet& d,
-              Gecode::IntPropLevel ipl)
-         : Test("Arithmetic::Gcd::XYZ::"+str(ipl)+"::"+s,3,d,true,ipl) {
-         contest=CTL_NONE; testfix=false;
+              Gecode::IntPropLevel ipl, bool r=true)
+         : Test("Arithmetic::Gcd::XYZ::"+str(ipl)+"::"+s+(r ? "" : "::Plain"),3,d,r,ipl) {
+         contest=CTL_NONE; testfix=!r;
        }
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
@@ -93,9 +93,9 @@ namespace Test { namespace Int {
      public:
        /// Create and register test
        GcdXXY(const std::string& s, const Gecode::IntSet& d,
-              Gecode::IntPropLevel ipl)
-         : Test("Arithmetic::Gcd::XXY::"+str(ipl)+"::"+s,2,d,true,ipl) {
-         contest=CTL_NONE; testfix=false;
+              Gecode::IntPropLevel ipl, bool r=true)
+         : Test("Arithmetic::Gcd::XXY::"+str(ipl)+"::"+s+(r ? "" : "::Plain"),2,d,r,ipl) {
+         contest=CTL_NONE; testfix=!r;
        }
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
@@ -117,9 +117,9 @@ namespace Test { namespace Int {
      public:
        /// Create and register test
        GcdXYX(const std::string& s, const Gecode::IntSet& d,
-              Gecode::IntPropLevel ipl)
-         : Test("Arithmetic::Gcd::XYX::"+str(ipl)+"::"+s,2,d,true,ipl) {
-         contest=CTL_NONE; testfix=false;
+              Gecode::IntPropLevel ipl, bool r=true)
+         : Test("Arithmetic::Gcd::XYX::"+str(ipl)+"::"+s+(r ? "" : "::Plain"),2,d,r,ipl) {
+         contest=CTL_NONE; testfix=!r;
        }
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
@@ -843,9 +843,9 @@ namespace Test { namespace Int {
        int m;
      public:
        ProductModXYZR(const std::string& s, const Gecode::IntSet& d,
-                      int m0, Gecode::IntPropLevel ipl)
-         : Test("Arithmetic::ProductMod::XYZR::"+str(ipl)+"::"+s,
-                4,d,true,ipl), m(m0) { contest=CTL_NONE; testfix=false; }
+                      int m0, Gecode::IntPropLevel ipl, bool r=true)
+         : Test("Arithmetic::ProductMod::XYZR::"+str(ipl)+"::"+s+(r ? "" : "::Plain"),
+                4,d,r,ipl), m(m0) { contest=CTL_NONE; testfix=!r; }
        virtual bool solution(const Assignment& x) const {
          return product_mod_value(x,3,m) == x[3];
        }
@@ -887,9 +887,9 @@ namespace Test { namespace Int {
        int m;
      public:
        ProductModSingleton(const std::string& s, const Gecode::IntSet& d,
-                           int m0, Gecode::IntPropLevel ipl)
-         : Test("Arithmetic::ProductMod::Singleton::"+str(ipl)+"::"+s,
-                2,d,true,ipl), m(m0) { contest=CTL_NONE; testfix=false; }
+                           int m0, Gecode::IntPropLevel ipl, bool r=true)
+         : Test("Arithmetic::ProductMod::Singleton::"+str(ipl)+"::"+s+(r ? "" : "::Plain"),
+                2,d,r,ipl), m(m0) { contest=CTL_NONE; testfix=!r; }
        virtual bool solution(const Assignment& x) const {
          int r = x[0] % m;
          if (r < 0)
@@ -911,9 +911,9 @@ namespace Test { namespace Int {
        int m;
      public:
        ProductModXXYAlias(const std::string& s, const Gecode::IntSet& d,
-                          int m0, Gecode::IntPropLevel ipl)
-         : Test("Arithmetic::ProductMod::XXYAlias::"+str(ipl)+"::"+s,
-                2,d,true,ipl), m(m0) { contest=CTL_NONE; testfix=false; }
+                          int m0, Gecode::IntPropLevel ipl, bool r=true)
+         : Test("Arithmetic::ProductMod::XXYAlias::"+str(ipl)+"::"+s+(r ? "" : "::Plain"),
+                2,d,r,ipl), m(m0) { contest=CTL_NONE; testfix=!r; }
        virtual bool solution(const Assignment& x) const {
          long long int a = x[0] % m;
          long long int b = x[1] % m;
@@ -2564,9 +2564,13 @@ namespace Test { namespace Int {
 
          for (IntPropLevels ipls; ipls(); ++ipls) {
            (void) new GcdXYZ("C",c,ipls.ipl());
+           (void) new GcdXYZ("C",c,ipls.ipl(),false);
            (void) new GcdXYZ("Sparse",g,ipls.ipl());
+           (void) new GcdXYZ("Sparse",g,ipls.ipl(),false);
            (void) new GcdXXY("C",c,ipls.ipl());
+           (void) new GcdXXY("C",c,ipls.ipl(),false);
            (void) new GcdXYX("C",c,ipls.ipl());
+           (void) new GcdXYX("C",c,ipls.ipl(),false);
            (void) new GcdXXX("C",c,ipls.ipl());
 
            (void) new DividesXY("C",c,ipls.ipl());
@@ -2581,11 +2585,15 @@ namespace Test { namespace Int {
            (void) new ProductXXYAlias("C",q,ipls.ipl());
 
            (void) new ProductModXYZR("C",q,5,ipls.ipl());
+           (void) new ProductModXYZR("C",q,5,ipls.ipl(),false);
            (void) new ProductModXYZR("Sparse",g,7,ipls.ipl());
+           (void) new ProductModXYZR("Sparse",g,7,ipls.ipl(),false);
            (void) new ProductModEmpty("C",q,5,ipls.ipl());
            (void) new ProductModEmpty("ModulusOne",q,1,ipls.ipl());
            (void) new ProductModSingleton("C",g,5,ipls.ipl());
+           (void) new ProductModSingleton("C",g,5,ipls.ipl(),false);
            (void) new ProductModXXYAlias("C",q,5,ipls.ipl());
+           (void) new ProductModXXYAlias("C",q,5,ipls.ipl(),false);
 
            (void) new ProductModVarXYMR("C",q,ipls.ipl());
            (void) new ProductModVarXYMR("Sparse",g,ipls.ipl());
