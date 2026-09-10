@@ -1413,6 +1413,8 @@ if(BUILD_TESTING)
     add_test(NAME random-state-replay
       COMMAND ${CMAKE_COMMAND} -DREPLAY=$<TARGET_FILE:gecode-random-replay>
         -P ${CMAKE_CURRENT_SOURCE_DIR}/test/random-replay.cmake)
+    set_tests_properties(random-state-replay PROPERTIES
+      FIXTURES_REQUIRED gecode-test-built)
     if(GECODE_ENABLE_DRIVER)
       add_executable(gecode-random-options EXCLUDE_FROM_ALL test/random-options.cpp)
       target_link_libraries(gecode-random-options PRIVATE gecodedriver ${GECODE_TEST_LINK_LIBS})
@@ -1424,6 +1426,8 @@ if(BUILD_TESTING)
         COMMAND ${CMAKE_COMMAND} -DOPTIONS=$<TARGET_FILE:gecode-random-options>
           -DFLATZINC=${GECODE_ENABLE_FLATZINC}
           -P ${CMAKE_CURRENT_SOURCE_DIR}/test/random-options.cmake)
+      set_tests_properties(random-options PROPERTIES
+        FIXTURES_REQUIRED gecode-test-built)
     endif()
     if(GECODE_ENABLE_FAULT_INJECTION)
       add_executable(gecode-fault-test EXCLUDE_FROM_ALL

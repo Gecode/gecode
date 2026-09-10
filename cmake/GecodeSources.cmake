@@ -19,7 +19,6 @@ set(GECODE_KERNEL_SOURCES
   gecode/kernel/branch/function.cpp
   gecode/kernel/core.cpp
   gecode/kernel/data/array.cpp
-  gecode/kernel/data/rnd.cpp
   gecode/kernel/exception.cpp
   gecode/kernel/gpi.cpp
   gecode/kernel/memory/manager.cpp

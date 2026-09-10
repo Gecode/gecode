@@ -1,7 +1,17 @@
-# Random generators for a future Gecode release
+# Extensible random generators and stream splitting
 
 This is a provisional Gecode 7 design. It changes APIs, seeded sequences, and
 randomized choice archives and is intended only for a breaking-change release.
+
+Gecode provides splittable SplitMix and xorshift64* generators, together with an
+engine interface for user-defined alternatives. The build selects one default
+for the modeling API and command-line drivers; generic selectors can use other
+engines. SplitMix is the provisional default because its indexed splitting is
+cheaper, while xorshift64* uses half the state storage.
+
+Randomized branching splits streams by alternative and reproduces their states
+during recomputation. Complete-state save/restore supports replay independently
+of seed expansion, including engines with more than 64 bits of state.
 
 ## State belongs to the consumer
 
@@ -207,8 +217,8 @@ controlled tree always has 32767 nodes and 16384 solutions. Queens also reports
 node count because changes in its tree can affect timing. Avoid concurrent
 compilation while measuring.
 
-Measurements after the ownership correction, on arm64 macOS with Apple Clang 21
-in Release mode, use five measured repetitions, one warmup, seed 42, and main
+Measurements on arm64 macOS with Apple Clang 21 in Release mode use five
+measured repetitions, one warmup, seed 42, and main
 at `6b7de57b04` as the baseline. Sizes are bytes:
 
 | Object | Main | SplitMix | Xorshift64* |
@@ -234,5 +244,5 @@ The plain tree was 1.03x and 1.05x in both builds. Indexed binary split-plus-dra
 cost about 15.7 ns for SplitMix and 237 ns for xorshift64*. Queens took 20.1 ms
 with SplitMix (approximately main's time) and 21.2 ms with xorshift64* (1.06x).
 Its node counts were 9333 on main, 9325 with SplitMix, and 9323 with xorshift64*.
-These are local measurements, not general performance guarantees. They replace
-the earlier space-local results and leave the default-engine decision provisional.
+These are local measurements, not general performance guarantees. The
+default-engine decision remains provisional.
