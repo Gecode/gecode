@@ -94,29 +94,22 @@ namespace Gecode { namespace Search { namespace Par {
     : b(nullptr), reporter(nullptr) {}
   forceinline bool
   CollectBest::add(Space* s, Slave<CollectBest>* r) {
-    if (b != nullptr) {
-      b->constrain(*s);
-      if (b->status() == SS_FAILED) {
-        delete b;
-      } else {
-        delete s;
-        return false;
-      }
+    if ((b != nullptr) &&
+        !Search::better(*s,*b,"PBS::CollectBest::add")) {
+      delete s;
+      return false;
     }
+    delete b;
     b = s;
     reporter = r;
     return true;
   }
   forceinline bool
   CollectBest::constrain(const Space& s) {
-    if (b != nullptr) {
-      b->constrain(s);
-      if (b->status() == SS_FAILED) {
-        delete b;
-      } else {
-        return false;
-      }
-    }
+    if ((b != nullptr) &&
+        !Search::better(s,*b,"PBS::CollectBest::constrain"))
+      return false;
+    delete b;
     b = s.clone();
     reporter = nullptr;
     return true;
@@ -139,8 +132,8 @@ namespace Gecode { namespace Search { namespace Par {
 
 
   forceinline
-  PortfolioStop::PortfolioStop(Stop* so0, const WorkerControl& control)
-    : so(so0), worker_control(control), tostop(nullptr) {}
+  PortfolioStop::PortfolioStop(Stop* so0)
+    : so(so0), tostop(nullptr) {}
 
   forceinline void
   PortfolioStop::share(std::atomic<bool>* ts) {
@@ -171,11 +164,6 @@ namespace Gecode { namespace Search { namespace Par {
   forceinline void
   Slave<Collect>::wait(void) {
     completion.wait();
-  }
-  template<class Collect>
-  forceinline void
-  Slave<Collect>::wake(void) {
-    static_cast<PortfolioStop*>(stop)->wake();
   }
   template<class Collect>
   forceinline void
@@ -210,20 +198,21 @@ namespace Gecode { namespace Search { namespace Par {
   PBS<Collect>::report(Slave<Collect>* slave, Space* s) {
     // If b is false the report should be repeated (solution was worse)
     bool b = true;
-    bool wake = false;
     m.acquire();
     if (s != nullptr) {
-      b = solutions.add(s,slave);
-      if (b) {
+      try {
+        b = solutions.add(s,slave);
+        if (b)
+          tostop.store(true, std::memory_order_release);
+      } catch (...) {
+        delete s;
+        if (failure == nullptr)
+          failure = std::current_exception();
         tostop.store(true, std::memory_order_release);
-        wake = true;
       }
     } else if (slave->stopped()) {
-      if (!tostop.load(std::memory_order_acquire)) {
+      if (!tostop.load(std::memory_order_acquire))
         slave_stop.store(true, std::memory_order_release);
-        tostop.store(true, std::memory_order_release);
-        wake = true;
-      }
     } else {
       // Move slave to inactive, as it has exhausted its engine
       unsigned int i=0;
@@ -233,11 +222,7 @@ namespace Gecode { namespace Search { namespace Par {
       assert(n_active > 0);
       std::swap(slaves[i],slaves[--n_active]);
       tostop.store(true, std::memory_order_release);
-      wake = true;
     }
-    if (wake)
-      for (unsigned int i=0U; i<n_active; i++)
-        slaves[i]->wake();
     if (b) {
       if (--n_busy == 0)
         idle.signal();
@@ -247,41 +232,62 @@ namespace Gecode { namespace Search { namespace Par {
   }
 
   template<class Collect>
+  forceinline void
+  PBS<Collect>::fail(void) {
+    m.acquire();
+    if (failure == nullptr)
+      failure = std::current_exception();
+    tostop.store(true, std::memory_order_release);
+    if (--n_busy == 0)
+      idle.signal();
+    m.release();
+  }
+
+  template<class Collect>
   void
   Slave<Collect>::run(void) {
-    Space* s;
-    do {
-      s = slave->next();
-    } while (!master->report(this,s));
+    try {
+      Space* s;
+      do {
+        s = slave->next();
+      } while (!master->report(this,s));
+    } catch (...) {
+      master->fail();
+    }
   }
 
   template<class Collect>
   Space*
   PBS<Collect>::next(void) {
     m.acquire();
-    if (solutions.empty())
-      slave_stop.store(false, std::memory_order_release);
-    while (solutions.empty() && (n_active > 0) &&
-           !slave_stop.load(std::memory_order_acquire)) {
-      // Clear the internal stop used to interrupt sibling slaves
+    if (failure != nullptr) {
+      std::exception_ptr f = failure;
+      m.release();
+      std::rethrow_exception(f);
+    }
+    if (solutions.empty()) {
+      // Clear all
       tostop.store(false, std::memory_order_release);
+      slave_stop.store(false, std::memory_order_release);
 
       // Invariant: all slaves are idle!
       assert(n_busy == 0);
       assert(!tostop.load(std::memory_order_acquire));
 
-      // Run all active slaves
-      n_busy = n_active;
-      for (unsigned int i=0U; i<n_active; i++) {
-        // Consume the previous completion before reusing this slave.  The
-        // initial signal handles the first submission.
-        slaves[i]->wait();
-        Support::Thread::run(slaves[i]);
+      if (n_active > 0) {
+        // Run all active slaves
+        n_busy = n_active;
+        for (unsigned int i=0U; i<n_active; i++) {
+          // Consume the previous completion before reusing this slave.  The
+          // initial signal handles the first submission.
+          slaves[i]->wait();
+          Support::Thread::run(slaves[i]);
+        }
+        m.release();
+        // Wait for all slaves to become idle
+        idle.wait();
+        m.acquire();
       }
-      m.release();
-      // Wait for all slaves to become idle
-      idle.wait();
-      m.acquire();
     }
 
     // Invariant all slaves are idle!
@@ -295,10 +301,26 @@ namespace Gecode { namespace Search { namespace Par {
     } else {
       Slave<Collect>* r;
       s = solutions.get(r);
-      if (Collect::best)
-        for (unsigned int i=0U; i<n_active; i++)
-          if (slaves[i] != r)
-            slaves[i]->constrain(*s);
+      if (Collect::best) {
+        try {
+          for (unsigned int i=0U; i<n_active; i++)
+            if (slaves[i] != r)
+              slaves[i]->constrain(*s);
+        } catch (...) {
+          delete s;
+          failure = std::current_exception();
+          std::exception_ptr f = failure;
+          m.release();
+          std::rethrow_exception(f);
+        }
+      }
+    }
+
+    if (failure != nullptr) {
+      delete s;
+      std::exception_ptr f = failure;
+      m.release();
+      std::rethrow_exception(f);
     }
 
     m.release();
@@ -327,10 +349,15 @@ namespace Gecode { namespace Search { namespace Par {
     assert(n_busy == 0);
     if (!Collect::best)
       throw NoBest("PBS::constrain");
-    if (solutions.constrain(b)) {
-      // The solution is better
-      for (unsigned int i=0U; i<n_active; i++)
-        slaves[i]->constrain(b);
+    try {
+      if (solutions.constrain(b)) {
+        // The solution is better
+        for (unsigned int i=0U; i<n_active; i++)
+          slaves[i]->constrain(b);
+      }
+    } catch (...) {
+      failure = std::current_exception();
+      std::rethrow_exception(failure);
     }
   }
 

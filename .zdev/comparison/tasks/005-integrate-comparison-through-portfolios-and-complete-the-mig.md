@@ -3,7 +3,7 @@ schema_version = 1
 id = "comparison-005"
 key = "portfolio-comparison"
 area = "comparison"
-status = "open"
+status = "done"
 complexity = "advanced"
 afk = true
 priority = "normal"
@@ -25,11 +25,22 @@ Par::PBS::CollectBest::add/constrain mutate the retained solution; reporter cont
 
 ## Done when
 
-- [ ] CollectBest accepts only better candidates initially, preserves reporter on rejection, and never mutates a solution merely to rank it. External updates and pending results use the same policy as BAB/RBS.
-- [ ] Comparison and policy failures from the collector or nested asset calls stop/wake and complete safely, reaching the outer caller; deletion after failure does not hang or race worker completion.
-- [ ] Focused direct and mixed PBS/RBS/BAB tests establish expected objective improvement/optimum, sub-step float ranking, equivalent-candidate handling, and safe incomparable/error reporting. Existing satisfaction paths remain functional.
-- [ ] API/search documentation and the Gecode 7 changelog explain migration, model-defined comparability, float ranking, and current rejection policy. They explicitly preserve the possible future best-effort rule 'incomparable incoming solution becomes current best' without claiming completeness or requiring a changed comparison interface.
+- [x] CollectBest accepts only better candidates initially, preserves reporter on rejection, and never mutates a solution merely to rank it. External updates and pending results use the same policy as BAB/RBS.
+- [x] Comparison and policy failures from the collector or nested asset calls stop/wake and complete safely, reaching the outer caller; deletion after failure does not hang or race worker completion.
+- [x] Focused direct and mixed PBS/RBS/BAB tests establish expected objective improvement/optimum, sub-step float ranking, equivalent-candidate handling, and safe incomparable/error reporting. Existing satisfaction paths remain functional.
+- [x] API/search documentation and the Gecode 7 changelog explain migration, model-defined comparability, float ranking, and current rejection policy. They explicitly preserve the possible future best-effort rule 'incomparable incoming solution becomes current best' without claiming completeness or requiring a changed comparison interface.
 
 ## Validation
 
 - Run focused portfolio and nested-failure tests, then the existing Search:: suite and relevant FlatZinc checks. Audit remaining constrain/status calls to confirm they are pruning rather than arbitration. Run the existing no-thread build/check path for touched conditional code; no new configuration matrix.
+
+## Result
+
+PBS now applies non-mutating comparison consistently, safely returns nested comparison failures, and documents the Gecode 7 migration and future incomparability policy option.
+
+Validation:
+
+- Threaded and no-thread gecode-test builds passed.
+- The complete Search::PBS:: matrix and focused mixed PBS/RBS/BAB, nested-failure, float, external-incumbent, and FlatZinc checks passed.
+- Independent verification confirmed ownership, reporter retention, failure quiescence, satisfaction behavior, and remaining constrain/status pruning uses.
+- git diff --check and immutable snapshot comparison passed.

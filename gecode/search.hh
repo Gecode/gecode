@@ -1320,6 +1320,10 @@ namespace Gecode {
    * The engine will run a portfolio with a number of assets as defined
    * by the options \a o. The engine supports parallel execution of
    * assets by using the number of threads as defined by the options.
+   * For best-solution assets, incoming solutions replace the retained
+   * incumbent only when Space::compare reports SC_BETTER. Equivalent and
+   * worse solutions are discarded; incomparable solutions are currently
+   * reported as unsupported.
    * An external worker control in \a o is supported only for a single
    * homogeneous asset. Multiple controlled assets require explicit engine
    * builders, each with its own control and immutable worker capacity.
