@@ -40,6 +40,7 @@
 
 #include <gecode/search.hh>
 #include <atomic>
+#include <exception>
 
 namespace Gecode { namespace Search { namespace Par {
 
@@ -180,8 +181,12 @@ namespace Gecode { namespace Search { namespace Par {
     unsigned int n_busy;
     /// Signal that number of busy slaves becomes zero
     Support::Event idle;
+    /// Failure raised while running or updating a portfolio asset
+    std::exception_ptr failure;
     /// Process report from slave, return false if solution was ignored
     bool report(Slave<Collect>* slave, Space* s);
+    /// Process failure from slave
+    void fail(void);
     /**
      * The key invariant of the engine is as follows:
      *  - n_busy is always zero outside the next() function.

@@ -896,6 +896,11 @@ namespace Gecode {
   Space::constrain(const Space&) {
   }
 
+  SpaceComparison
+  Space::compare(const Space&) const {
+    throw SpaceNoComparison("Space::compare");
+  }
+
   bool
   Space::master(const MetaInfo& mi) {
     switch (mi.type()) {

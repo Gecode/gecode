@@ -62,6 +62,12 @@ namespace Gecode { namespace Search {
     /// Initialize with location \a l
     NoBest(const char* l);
   };
+  /// %Exception: Incomparable objectives are unsupported by best search
+  class GECODE_SEARCH_EXPORT Incomparable : public Exception {
+  public:
+    /// Initialize with location \a l
+    Incomparable(const char* l);
+  };
   //@}
 }}
 

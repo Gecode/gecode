@@ -53,6 +53,19 @@
 
 namespace Gecode {
 
+  /**
+   * \brief Result of comparing two spaces according to their objectives
+   *
+   * Adding Space::compare changes the ordinary C++ ABI of Space by extending
+   * its virtual function table.
+   */
+  enum SpaceComparison {
+    SC_BETTER,     ///< The receiver has a better objective
+    SC_EQUIVALENT, ///< Both objectives are equivalent
+    SC_WORSE,      ///< The receiver has a worse objective
+    SC_INCOMPARABLE ///< Neither objective dominates the other
+  };
+
   class Space;
 
   /**
@@ -2086,6 +2099,22 @@ namespace Gecode {
      * \ingroup TaskModelScript
      */
     GECODE_KERNEL_EXPORT virtual void constrain(const Space& best);
+    /**
+     * \brief Compare this space's objective with \a other
+     *
+     * The comparison is read-only and receiver-relative. Implementations may
+     * require objective information sufficient for the relation they report.
+     * The default implementation throws SpaceNoComparison.
+     * SC_INCOMPARABLE is a model-defined ordering result, not missing
+     * information. Current exact best-solution engines reject it.
+     *
+     * Optimization models overriding constrain with a different objective
+     * must also override compare.
+     * constrain remains responsible for posting improvement restrictions;
+     * search does not use it to rank two solutions.
+     */
+    GECODE_KERNEL_EXPORT virtual SpaceComparison
+    compare(const Space& other) const;
     /**
      * \brief Master configuration function for meta search engines
      *
