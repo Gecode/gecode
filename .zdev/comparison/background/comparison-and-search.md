@@ -70,33 +70,74 @@ no brancher has alternatives left. It does not inspect every variable for
 assignment. This is why a generic solved-space check cannot validate cost data.
 Calling it inside a const comparison would also introduce propagation.
 
-For integer helpers, requiring assigned objective values is sufficient; requiring
-all variables to be assigned is unnecessary and can reject valid models. A stable
-space with an assigned cost and unfinished auxiliary search has a determinate
-objective key, although it is not necessarily a feasible incumbent to give search.
-The distinction belongs in the public documentation.
+The individual space defines what information suffices to establish a relation.
+Even requiring all objective components to be assigned would be too strong as
+a generic rule: a lexicographic model can establish a strict ordering from a
+decisive prefix, regardless of the remaining components. A derived model property
+can likewise be comparable without a stored, assigned objective variable.
+Comparability may depend on the pair, not on a unary readiness flag.
 
-The recommended readiness contract follows the existing value accessor:
+For scalar integer convenience classes, the existing value accessor is a natural
+implementation:
 [`IntVar::val()`](../../../gecode/int/var/int.hpp) explicitly throws
 `Int::ValOfUnassignedVar` when its variable is unassigned. Integer convenience
-`constrain()` methods use `val()` on the incumbent objective. Comparison would
-require determined objective data on both operands and use the same error
-convention. It would not require unrelated variables to be assigned.
+`constrain()` methods use `val()` on the incumbent objective. Scalar comparison
+can use it on both costs. This is that class's contract, not an assignment
+requirement on all implementations of `Space::compare()`.
 
 An explicit undetermined result is a viable alternative for a caller intending
 to inspect partial objectives and recover without an exception. In the existing
-search consumers, however, an undetermined incumbent is still an error:
+search consumers, however, inability to establish a required comparison is
+still an error:
 discarding it may lose a valid improvement, accepting it cannot establish
 betterness, and calling `status()` to resolve it violates the comparison
 contract. Without such a caller, this extra result adds no useful search
-behavior. Readiness remains an open decision in the brief; a precondition is
-the recommendation.
+behavior. How to report insufficient information remains an open decision;
+a model-defined precondition is the recommendation. A generic assignment or
+`SS_SOLVED` test must not stand in for the model's judgment.
 
 Comparing arbitrary domains asks a different question. For example, minimization
 domains `[1,4]` and `[3,6]` overlap: comparing minima ranks bounds, not the eventual
-solutions. Some disjoint domains admit a guaranteed relation, but adding a generic
-domain comparison would need to distinguish unknown from true incomparability
-and would not replace propagation-based pruning. Defer that interface.
+solutions. Some disjoint domains admit a guaranteed relation, and an individual
+model may report that relation when sound under its contract. No generic domain
+comparison machinery is needed. Distinguish insufficient information from true
+incomparability and leave propagation-based pruning in `constrain()`.
+
+## Advance planning for other search policies
+
+The compatibility check for this PR is whether the pairwise interface remains
+usable when the engine retains more than one solution. It should: `compare(a,b)`
+describes a model-defined relation, not whether either argument is the one
+global incumbent. The current single-incumbent engines impose additional cut
+nesting requirements; those must not be presented as requirements of all future
+search policies.
+
+In diverse-solution search, each accepted solution can contribute a restriction
+against accepting similar future solutions. If these restrictions accumulate
+conjunctively, repeated model-specific calls can express them without a batch
+interface. What changes is engine state: an archive of relevant solutions or
+restrictions, replay during recomputation, and delivery of all restrictions to
+assets. A worker that has seen only the latest accepted point is not generally
+up to date. Two concurrently produced points may each differ from the old archive
+but fail the diversity requirement with respect to each other, so acceptance
+also needs coordination against the current archive.
+
+Ordering cannot substitute for a diversity relation: two spaces with equivalent
+cost can be very different solutions. Conversely, adding distance or history to
+the ordering return type would force unrelated policies together. Leave a future
+diversity admission/restriction contract separate; no new methods are justified
+in this PR merely to reserve names.
+
+A Pareto engine can reuse pairwise comparison against its frontier, with its own
+rules for dominated, incomparable, and equivalent candidates. It also needs
+frontier-preserving pruning and explicit output semantics when a later solution
+dominates an earlier one. Objective equivalence does not itself choose whether
+to retain one or many assignments. This is why the comparison result and the
+engine's retention policy should remain distinct.
+
+These are design checks, not implementation commitments. They justify keeping
+comparison pairwise, model-defined, and independent of solution-history storage;
+they do not require a new archive class or engine now.
 
 ## Ordering and nested improvement restrictions
 
@@ -223,7 +264,7 @@ model-defined comparison method.
 | `bool better(const Space&) const` | Enough for one total-objective acceptance decision, but cannot distinguish equivalent from incomparable without more calls or methods. |
 | Three ordering values only | The smallest total-objective interface, but cannot report the partial-order distinction raised in the proposal. |
 | Four ordering values plus an undetermined result | Useful only if callers deliberately compare partial objectives and need a recoverable outcome; existing search would still have to reject such incumbents. |
-| Four ordering values with objective readiness as a precondition | Recommended: comparison results describe valid comparisons; missing support and unassigned objectives follow error conventions. A non-pure throwing default can leave satisfaction models unaffected. |
+| Four ordering values with model-defined comparability as a precondition | Recommended: results describe valid comparisons; missing support or insufficient information follows error conventions. A non-pure throwing default can leave satisfaction models unaffected. |
 | A separate capability virtual or optimization base | Adds a second piece of model configuration, or moves a Space-level search operation behind another abstraction. Not needed solely for this change. |
 | Extract a serialized or type-erased objective key | Useful for distributed search, but unnecessary machinery for two in-process spaces. |
 | Infer comparison by clone/constrain/status | Potentially expensive and undecided; no compatibility requirement justifies it for this Gecode 7 change. |
