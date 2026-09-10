@@ -411,7 +411,7 @@ namespace Gecode { namespace FlatZinc {
     BranchInformation& operator =(const BranchInformation&) = default;
   };
 
-  /// Uninitialized default random number generator
+  /// Default random number generator, initialized with seed 0
   GECODE_FLATZINC_EXPORT
   extern Rnd defrnd;
 
