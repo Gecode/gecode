@@ -53,6 +53,7 @@ set(GECODE_EXAMPLE_SOURCES
   queen-armies.cpp
   queens.cpp
   radiotherapy.cpp
+  random-engine.cpp
   sat.cpp
   schurs-lemma.cpp
   sports-league.cpp

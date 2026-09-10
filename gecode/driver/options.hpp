@@ -273,12 +273,17 @@ namespace Gecode {
   }
 
   inline void
-  Options::seed(unsigned int s) {
+  Options::seed(uint64_t s) {
     _seed.value(s);
   }
-  inline unsigned int
+  inline uint64_t
   Options::seed(void) const {
     return _seed.value();
+  }
+
+  inline Rnd
+  Options::rnd(void) const {
+    return _seed.rnd();
   }
 
   inline void
