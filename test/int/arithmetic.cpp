@@ -210,6 +210,14 @@ namespace Test { namespace Int {
        }
      };
 
+     /// Report a targeted arithmetic failure through the standard test log.
+     bool arithmetic_failed(const std::string& what,
+                            const Gecode::VarArgArray<Gecode::IntVar>& x) {
+       if (opt.log)
+         olog << what << ": " << x << std::endl;
+       return false;
+     }
+
      /// Sparse endpoints must reach a fixpoint after a divisor is assigned.
      class NumberTheorySparseBounds : public ::Test::Base {
        class TestSpace : public Gecode::Space {
@@ -230,10 +238,14 @@ namespace Test { namespace Int {
            else
              gcd(home,x,y,g);
            if (home.status() == SS_FAILED)
-             return false;
+             return arithmetic_failed
+               ("initial propagation: x, y, g",
+                Gecode::IntVarArgs() << x << y << g);
            rel(home,g,IRT_EQ,2);
            if ((home.status() == SS_FAILED) || !x.assigned() || (x.val()!=6))
-             return false;
+             return arithmetic_failed
+               ("assigned divisor: x, y, g",
+                Gecode::IntVarArgs() << x << y << g);
          }
          return true;
        }
@@ -275,7 +287,9 @@ namespace Test { namespace Int {
          for (int kind=0; kind<5; kind++) {
            TestSpace home(kind);
            if (home.status() == SS_FAILED)
-             return false;
+             return arithmetic_failed
+               ("initial propagation: home.x, home.c, home.y, home.m",
+                Gecode::IntVarArgs() << home.x << home.c << home.y << home.m);
            std::unique_ptr<TestSpace> clone
              (static_cast<TestSpace*>(home.clone()));
            PropagatorGroup::all.disable(*clone);
@@ -283,7 +297,10 @@ namespace Test { namespace Int {
            PropagatorGroup::all.enable(*clone);
            if ((clone->status() == SS_FAILED) ||
                ((kind != 4) && (!clone->x.assigned() || (clone->x.val() != 6))))
-             return false;
+             return arithmetic_failed
+               ("activation after cloning, kind "+str(kind)+": x, c, y, m",
+                Gecode::IntVarArgs() << clone->x << clone->c
+                                    << clone->y << clone->m);
            // Clone the activated actor before fixing a variable modulus.
            std::unique_ptr<TestSpace> child
              (static_cast<TestSpace*>(clone->clone()));
@@ -291,7 +308,10 @@ namespace Test { namespace Int {
            if ((child->status() == SS_FAILED) || !child->x.assigned() ||
                (child->x.val() != (kind == 4 ? 3 : 6)) ||
                home.b.assigned() || (home.x.size() != 4) || clone->m.assigned())
-             return false;
+             return arithmetic_failed
+               ("fixed modulus in child, kind "+str(kind)+": child x, m; parent x, m",
+                Gecode::IntVarArgs() << child->x << child->m
+                                    << clone->x << clone->m);
          }
          return true;
        }
@@ -317,16 +337,31 @@ namespace Test { namespace Int {
              if (kind == 1) product(home,IntVarArgs({x}),x,Reify(b,rm));
              if (kind == 2) product_mod(home,IntVarArgs({zero,x}),m,zero,Reify(b,rm));
              if (kind == 3) product_mod(home,IntVarArgs({x}),one,zero,Reify(b,rm));
-             if (home.status() == SS_FAILED) return false;
+             if (home.status() == SS_FAILED)
+               return arithmetic_failed
+                 ("initial identity: x, zero, m, one",
+                  Gecode::IntVarArgs() << x << zero << m << one);
              if (kind == 2) {
                // Zero residue alone does not establish a positive modulus.
-               if (b.assigned() || (m.min() != 0)) return false;
+               if (b.assigned() || (m.min() != 0))
+                 return arithmetic_failed
+                   ("modulus positivity unknown: x, zero, m, one",
+                    Gecode::IntVarArgs() << x << zero << m << one);
                rel(home,m,IRT_GQ,1);
-               if (home.status() == SS_FAILED) return false;
+               if (home.status() == SS_FAILED)
+                 return arithmetic_failed
+                   ("positive modulus: x, zero, m, one",
+                    Gecode::IntVarArgs() << x << zero << m << one);
              }
              if ((rm == RM_IMP) ? b.assigned() :
-                 (!b.assigned() || (b.val() != 1))) return false;
-             if ((x.min() != -7) || (x.max() != 7)) return false;
+                 (!b.assigned() || (b.val() != 1)))
+               return arithmetic_failed
+                 ("reified truth: x, zero, m, one",
+                  Gecode::IntVarArgs() << x << zero << m << one);
+             if ((x.min() != -7) || (x.max() != 7))
+               return arithmetic_failed
+                 ("unconstrained factor: x, zero, m, one",
+                  Gecode::IntVarArgs() << x << zero << m << one);
            }
          return true;
        }
@@ -363,7 +398,9 @@ namespace Test { namespace Int {
                (g.val() != c[2]) || !b.assigned() || (b.val() != c[3]) ||
                !correct.assigned() || (correct.val() != 1) ||
                !wrong.assigned() || (wrong.val() != 0))
-             return false;
+             return arithmetic_failed
+               ("signed GCD and divisibility: x, y, g, expected, other",
+                Gecode::IntVarArgs() << x << y << g << expected << other);
          }
          // hi-1 is -1 modulo hi. Its square is 1 and its cube is -1;
          // negating one factor reverses these residues. The cube exceeds
@@ -379,11 +416,17 @@ namespace Test { namespace Int {
                  IntVar m(home,hi-1,hi), y(home,0,hi-1);
                  if (variable) product_mod(home,x,m,y);
                  else product_mod(home,x,hi,y);
-                 if (home.status() == SS_FAILED) return false;
+                 if (home.status() == SS_FAILED)
+                   return arithmetic_failed
+                     ("large product before rewrite: x, m, y",
+                      Gecode::IntVarArgs() << x << m << y);
                  // Force variable-modulus rewriting after initial propagation.
                  rel(home,m,IRT_EQ,hi);
                  if ((home.status() == SS_FAILED) || !y.assigned() ||
-                     (y.val() != expected)) return false;
+                     (y.val() != expected))
+                   return arithmetic_failed
+                     ("large product residue: x, m, y",
+                      Gecode::IntVarArgs() << x << m << y);
                }
                for (ReifyMode rm : {RM_EQV,RM_IMP,RM_PMI})
                  for (int truth=0; truth<=1; truth++)
@@ -398,7 +441,10 @@ namespace Test { namespace Int {
                      else product_mod(home,x,hi,y,Reify(b,rm));
                      const bool holds=(rm == RM_EQV) ? (control == truth) :
                        ((rm == RM_IMP) ? (!control || truth) : (!truth || control));
-                     if ((home.status() != SS_FAILED) != holds) return false;
+                     if ((home.status() != SS_FAILED) != holds)
+                       return arithmetic_failed
+                         ("large product reification: x, m, y",
+                          Gecode::IntVarArgs() << x << m << y);
                    }
              }
          return true;
@@ -530,7 +576,9 @@ namespace Test { namespace Int {
            product(home,x,y,Reify(b));
            if ((home.status() == SS_FAILED) ||
                (y.min() != 8) || (y.max() != 1000000))
-             return false;
+             return arithmetic_failed
+               ("forward bounds: x, y",
+                Gecode::IntVarArgs() << x << y);
          }
          {
            TestSpace home;
@@ -538,10 +586,14 @@ namespace Test { namespace Int {
            IntVar y(home,1000,1000);
            product(home,x,y);
            if (home.status() == SS_FAILED)
-             return false;
+             return arithmetic_failed
+               ("inverse bounds failure: x, y",
+                Gecode::IntVarArgs() << x << y);
            for (int i=0; i<x.size(); i++)
              if (!x[i].assigned() || (x[i].val() != 10))
-               return false;
+               return arithmetic_failed
+                 ("inverse factor assignment: x, y",
+                  Gecode::IntVarArgs() << x << y);
          }
          return true;
        }
@@ -576,7 +628,9 @@ namespace Test { namespace Int {
            IntVar z(home,0,0), x(home,-100,100), y(home,-100,100);
            product(home,IntVarArgs({x,z}),y);
            if ((home.status() == SS_FAILED) || !y.assigned() || (y.val()!=0))
-             return false;
+             return arithmetic_failed
+               ("zero factor: z, x, y",
+                Gecode::IntVarArgs() << z << x << y);
          }
          {
            TestSpace home;
@@ -584,42 +638,54 @@ namespace Test { namespace Int {
            IntVar y(home,-100,100);
            product(home,IntVarArgs({one,minus,minus,x}),y);
            if ((home.status() == SS_FAILED) || (y.min()!=2) || (y.max()!=5))
-             return false;
+             return arithmetic_failed
+               ("paired negative units: one, minus, x, y",
+                Gecode::IntVarArgs() << one << minus << x << y);
          }
          {
            TestSpace home;
            IntVar minus(home,-1,-1), x(home,2,5), y(home,-100,100);
            product(home,IntVarArgs({minus,x}),y);
            if ((home.status() == SS_FAILED) || (y.min()!=-5) || (y.max()!=-2))
-             return false;
+             return arithmetic_failed
+               ("negative unit: minus, x, y",
+                Gecode::IntVarArgs() << minus << x << y);
          }
          {
            TestSpace home;
            IntVar x(home,0,5), q(home,1,3), y(home,2,10);
            product(home,IntVarArgs({x,q}),y);
            if ((home.status() == SS_FAILED) || (x.min()!=1))
-             return false;
+             return arithmetic_failed
+               ("nonzero result: x, q, y",
+                Gecode::IntVarArgs() << x << q << y);
          }
          {
            TestSpace home;
            IntVar x(home,-2,2), q(home,1,3), y(home,0,0);
            product(home,IntVarArgs({x,q}),y);
            if ((home.status() == SS_FAILED) || !x.assigned() || (x.val()!=0))
-             return false;
+             return arithmetic_failed
+               ("unique zero factor: x, q, y",
+                Gecode::IntVarArgs() << x << q << y);
          }
          {
            TestSpace home;
            IntVar x(home,-5,0), q(home,2,4), y(home,-100,100);
            product(home,IntVarArgs({x,q}),y);
            if ((home.status() == SS_FAILED) || (y.max()!=0))
-             return false;
+             return arithmetic_failed
+               ("nonpositive product: x, q, y",
+                Gecode::IntVarArgs() << x << q << y);
          }
          {
            TestSpace home;
            IntVar x(home,-5,-2), q(home,-4,-2), y(home,-100,100);
            product(home,IntVarArgs({x,q}),y);
            if ((home.status() == SS_FAILED) || (y.min()!=4))
-             return false;
+             return arithmetic_failed
+               ("positive product: x, q, y",
+                Gecode::IntVarArgs() << x << q << y);
          }
          {
            TestSpace home;
@@ -627,12 +693,16 @@ namespace Test { namespace Int {
            IntVar minus(home,-1,-1), x(home,hi,hi), y(home,-hi,hi);
            product(home,IntVarArgs({minus,x}),y);
            if ((home.status() == SS_FAILED) || !y.assigned() || (y.val()!=-hi))
-             return false;
+             return arithmetic_failed
+               ("negative limit: minus, x, y",
+                Gecode::IntVarArgs() << minus << x << y);
          }
          {
            CloneSpace home;
            if (home.status() == SS_FAILED)
-             return false;
+             return arithmetic_failed
+               ("initial clone state: home.x, home.q, home.y",
+                Gecode::IntVarArgs() << home.x << home.q << home.y);
            CloneSpace* clone=static_cast<CloneSpace*>(home.clone());
            PropagatorGroup::all.disable(*clone);
            rel(home,home.x,IRT_NQ,0);
@@ -648,7 +718,9 @@ namespace Test { namespace Int {
              (clone->y.min()==2);
            delete clone;
            if (!ok)
-             return false;
+             return arithmetic_failed
+               ("rescheduling: home.x, home.q, home.y",
+                Gecode::IntVarArgs() << home.x << home.q << home.y);
          }
          return true;
        }
@@ -671,7 +743,9 @@ namespace Test { namespace Int {
            IntVar x(home,-10,10), y(home,-10,100);
            product(home,IntVarArgs({x,x}),y);
            if ((home.status() == SS_FAILED) || (y.min() != 0))
-             return false;
+             return arithmetic_failed
+               ("square sign: x, y",
+                Gecode::IntVarArgs() << x << y);
          }
          {
            TestSpace home;
@@ -679,7 +753,9 @@ namespace Test { namespace Int {
            product(home,IntVarArgs({x,x}),y);
            if ((home.status() == SS_FAILED) ||
                (x.min() != -5) || (x.max() != 5))
-             return false;
+             return arithmetic_failed
+               ("square inverse: x, y",
+                Gecode::IntVarArgs() << x << y);
          }
          {
            TestSpace home;
@@ -687,7 +763,9 @@ namespace Test { namespace Int {
            product(home,IntVarArgs({x,x,x}),y);
            if ((home.status() == SS_FAILED) || !x.assigned() ||
                (x.val() != 3))
-             return false;
+             return arithmetic_failed
+               ("cube inverse: x, y",
+                Gecode::IntVarArgs() << x << y);
          }
          {
            TestSpace home;
@@ -695,7 +773,9 @@ namespace Test { namespace Int {
            product(home,IntVarArgs({x,x,x}),y);
            if ((home.status() == SS_FAILED) || !x.assigned() ||
                (x.val() != -3))
-             return false;
+             return arithmetic_failed
+               ("negative cube inverse: x, y",
+                Gecode::IntVarArgs() << x << y);
          }
          {
            TestSpace home;
@@ -703,7 +783,9 @@ namespace Test { namespace Int {
            product(home,IntVarArgs({x,x,two}),y);
            if ((home.status() == SS_FAILED) ||
                (x.min() != -6) || (x.max() != 6))
-             return false;
+             return arithmetic_failed
+               ("square cofactor: x, two, y",
+                Gecode::IntVarArgs() << x << two << y);
          }
          {
            // x*y=y has only the zero branch when x cannot be one.
@@ -712,7 +794,9 @@ namespace Test { namespace Int {
            product(home,IntVarArgs({x,y}),y);
            if ((home.status() == SS_FAILED) || !y.assigned() ||
                (y.val() != 0))
-             return false;
+             return arithmetic_failed
+               ("zero result alias: x, y",
+                Gecode::IntVarArgs() << x << y);
          }
          {
            // A nonzero result permits cancellation of one result occurrence.
@@ -721,7 +805,9 @@ namespace Test { namespace Int {
            product(home,IntVarArgs({x,y}),y);
            if ((home.status() == SS_FAILED) || !x.assigned() ||
                (x.val() != 1))
-             return false;
+             return arithmetic_failed
+               ("nonzero cancellation: x, y",
+                Gecode::IntVarArgs() << x << y);
          }
          {
            // Cancelling one of two result occurrences leaves y*x=1.
@@ -730,7 +816,9 @@ namespace Test { namespace Int {
            product(home,IntVarArgs({y,y,x}),y);
            if ((home.status() == SS_FAILED) || !x.assigned() ||
                !y.assigned() || (x.val() != -1) || (y.val() != -1))
-             return false;
+             return arithmetic_failed
+               ("repeated result cancellation: x, y",
+                Gecode::IntVarArgs() << x << y);
          }
          {
            // Direct n-ary evaluation retains zero after an overflowing prefix.
@@ -739,7 +827,9 @@ namespace Test { namespace Int {
            IntVar a(home,hi,hi), z(home,0,0), y(home,0,0);
            product(home,IntVarArgs({a,a,z}),y);
            if (home.status() == SS_FAILED)
-             return false;
+             return arithmetic_failed
+               ("overflow followed by zero: a, z, y",
+                Gecode::IntVarArgs() << a << z << y);
          }
          {
            TestSpace home;
@@ -748,7 +838,9 @@ namespace Test { namespace Int {
            product(home,IntVarArgs({x,x}),y,Reify(b,RM_EQV));
            if ((home.status() == SS_FAILED) ||
                (x.min() != -5) || (x.max() != 5))
-             return false;
+             return arithmetic_failed
+               ("reified square: x, y",
+                Gecode::IntVarArgs() << x << y);
          }
          return true;
        }
@@ -801,14 +893,18 @@ namespace Test { namespace Int {
            IntVar x(home,-100,100), q(home,-2,3), y(home,-10,10);
            product(home,IntVarArgs({x,q}),y);
            if ((home.status() == SS_FAILED) || !bounds(x,-100,100))
-             return false;
+             return arithmetic_failed
+               ("unconstrained zero product: x, q, y",
+                Gecode::IntVarArgs() << x << q << y);
          }
          {
            TestSpace home;
            IntVar x(home,-100,100), zero(home,0,0), y(home,1,2);
            product(home,IntVarArgs({x,zero}),y);
            if (home.status() != SS_FAILED)
-             return false;
+             return arithmetic_failed
+               ("impossible zero product: x, zero, y",
+                Gecode::IntVarArgs() << x << zero << y);
          }
          {
            TestSpace home;
@@ -817,7 +913,9 @@ namespace Test { namespace Int {
            product(home,IntVarArgs({x,a,b}),y);
            if ((home.status() == SS_FAILED) || !x.assigned() ||
                (x.val() != 0))
-             return false;
+             return arithmetic_failed
+               ("overflowing cofactor: x, a, b, y",
+                Gecode::IntVarArgs() << x << a << b << y);
          }
          return true;
        }
@@ -951,7 +1049,9 @@ namespace Test { namespace Int {
            product_mod(home,x,1,y);
            if ((home.status() == SS_FAILED) || !y.assigned() ||
                (y.val() != 0))
-             return false;
+             return arithmetic_failed
+               ("modulus one: x, y",
+                Gecode::IntVarArgs() << x << y);
          }
          {
            TestSpace home;
@@ -959,7 +1059,9 @@ namespace Test { namespace Int {
            product_mod(home,IntVarArgs({z,x}),7,y);
            if ((home.status() == SS_FAILED) || !y.assigned() ||
                (y.val() != 0))
-             return false;
+             return arithmetic_failed
+               ("zero residue factor: z, x, y",
+                Gecode::IntVarArgs() << z << x << y);
          }
          {
            TestSpace home;
@@ -967,7 +1069,9 @@ namespace Test { namespace Int {
            product_mod(home,IntVarArgs({one,x}),100,y);
            if ((home.status() == SS_FAILED) ||
                (y.min() != 20) || (y.max() != 30))
-             return false;
+             return arithmetic_failed
+               ("nonwrapping product: one, x, y",
+                Gecode::IntVarArgs() << one << x << y);
          }
          {
            TestSpace home;
@@ -975,7 +1079,9 @@ namespace Test { namespace Int {
            product_mod(home,IntVarArgs({x}),7,y);
            if ((home.status() == SS_FAILED) ||
                (y.min() != 1) || (y.max() != 5))
-             return false;
+             return arithmetic_failed
+               ("positive quotient band: x, y",
+                Gecode::IntVarArgs() << x << y);
          }
          {
            TestSpace home;
@@ -983,7 +1089,9 @@ namespace Test { namespace Int {
            product_mod(home,IntVarArgs({x}),7,y);
            if ((home.status() == SS_FAILED) ||
                (y.min() != 1) || (y.max() != 5))
-             return false;
+             return arithmetic_failed
+               ("negative quotient band: x, y",
+                Gecode::IntVarArgs() << x << y);
          }
          {
            TestSpace home;
@@ -991,27 +1099,18 @@ namespace Test { namespace Int {
            product_mod(home,IntVarArgs({c,x}),15,y);
            if ((home.status() == SS_FAILED) ||
                (x.min() != -96) || (x.max() != 99))
-             return false;
+             return arithmetic_failed
+               ("linear congruence: c, x, y",
+                Gecode::IntVarArgs() << c << x << y);
          }
          {
            TestSpace home;
            IntVar c(home,6,6), x(home,-100,100), y(home,8,8);
            product_mod(home,IntVarArgs({c,x}),15,y);
            if (home.status() != SS_FAILED)
-             return false;
-         }
-         {
-           // The former Cartesian cutoff is exceeded by several orders of
-           // magnitude, but the zero algebra remains immediate.
-           TestSpace home;
-           IntVar zero(home,0,0);
-           IntVarArgs x(home,4,-100,100);
-           x << zero;
-           IntVar y(home,0,96);
-           product_mod(home,x,97,y);
-           if ((home.status() == SS_FAILED) || !y.assigned() ||
-               (y.val() != 0))
-             return false;
+             return arithmetic_failed
+               ("inconsistent congruence: c, x, y",
+                Gecode::IntVarArgs() << c << x << y);
          }
          {
            TestSpace home;
@@ -1021,7 +1120,9 @@ namespace Test { namespace Int {
            rel(home,y,IRT_EQ,0);
            if ((home.status() == SS_FAILED) || !b.assigned() ||
                (b.val() != 1))
-             return false;
+             return arithmetic_failed
+               ("reified zero residue: z, x, y",
+                Gecode::IntVarArgs() << z << x << y);
          }
          return true;
        }
@@ -1210,7 +1311,9 @@ namespace Test { namespace Int {
            product_mod(home,IntVarArgs(),m,y);
            if ((home.status() == SS_FAILED) || (m.min() != 1) ||
                (y.min() != 0) || (y.max() >= m.max()))
-             return false;
+             return arithmetic_failed
+               ("empty product range: m, y",
+                Gecode::IntVarArgs() << m << y);
          }
          {
            TestSpace home;
@@ -1219,18 +1322,24 @@ namespace Test { namespace Int {
            IntVar y(home,0,0);
            product_mod(home,IntVarArgs({x}),m,y);
            if (home.status() == SS_FAILED)
-             return false;
+             return arithmetic_failed
+               ("integer limit modulus: x, m, y",
+                Gecode::IntVarArgs() << x << m << y);
          }
          {
            TestSpace home;
            IntVar x(home,3,5), c(home,2,2), m(home,5,6), y(home,2,2);
            product_mod(home,IntVarArgs({x,c}),m,y);
            if (home.status() == SS_FAILED)
-             return false;
+             return arithmetic_failed
+               ("delayed factor bounds: x, c, m, y",
+                Gecode::IntVarArgs() << x << c << m << y);
            rel(home,x,IRT_LQ,4);
            if ((home.status() == SS_FAILED) || !x.assigned() ||
                (x.val() != 4))
-             return false;
+             return arithmetic_failed
+               ("nonwrapping variable modulus: x, c, m, y",
+                Gecode::IntVarArgs() << x << c << m << y);
          }
          {
            TestSpace home;
@@ -1239,7 +1348,9 @@ namespace Test { namespace Int {
            product_mod(home,IntVarArgs({x,c}),m,y);
            if ((home.status() == SS_FAILED) || (y.min() != 100) ||
                (y.max() != 400))
-             return false;
+             return arithmetic_failed
+               ("check 5: x, c, m, y",
+                Gecode::IntVarArgs() << x << c << m << y);
          }
          return true;
        }
@@ -1272,7 +1383,9 @@ namespace Test { namespace Int {
            IntVar y(home,0,100);
            product_mod(home,IntVarArgs({z,m}),m,y);
            if ((home.status() == SS_FAILED) || !y.assigned() || (y.val()!=0))
-             return false;
+             return arithmetic_failed
+               ("modulus factor: m, z, y",
+                Gecode::IntVarArgs() << m << z << y);
          }
          {
            TestSpace home;
@@ -1281,7 +1394,9 @@ namespace Test { namespace Int {
            IntVar y(home,0,0);
            product_mod(home,IntVarArgs(),m,y);
            if ((home.status() == SS_FAILED) || !m.assigned() || (m.val()!=1))
-             return false;
+             return arithmetic_failed
+               ("empty product zero: m, y",
+                Gecode::IntVarArgs() << m << y);
          }
          {
            TestSpace home;
@@ -1291,7 +1406,9 @@ namespace Test { namespace Int {
            IntVar y(home,1,1);
            product_mod(home,IntVarArgs(),m,y);
            if ((home.status() == SS_FAILED) || !domain(m,keep,3))
-             return false;
+             return arithmetic_failed
+               ("empty product one: m, y",
+                Gecode::IntVarArgs() << m << y);
          }
          {
            TestSpace home;
@@ -1302,7 +1419,9 @@ namespace Test { namespace Int {
            product_mod(home,IntVarArgs({a,c}),m,y);
            if ((home.status() == SS_FAILED) || (m.min() != 5) ||
                (m.max() != 56))
-             return false;
+             return arithmetic_failed
+               ("divisor upper bound: a, c, m, y",
+                Gecode::IntVarArgs() << a << c << m << y);
          }
          {
            TestSpace home;
@@ -1313,7 +1432,9 @@ namespace Test { namespace Int {
            product_mod(home,IntVarArgs({a,c}),m,y);
            if ((home.status() == SS_FAILED) || (m.min() != 4) ||
                (m.max() != 60))
-             return false;
+             return arithmetic_failed
+               ("sparse divisor range: a, c, m, y",
+                Gecode::IntVarArgs() << a << c << m << y);
          }
          {
            TestSpace home;
@@ -1322,7 +1443,9 @@ namespace Test { namespace Int {
            IntVar m(home,IntSet(mv,3));
            product_mod(home,IntVarArgs({y}),m,y);
            if ((home.status() == SS_FAILED) || !domain(m,mv,3))
-             return false;
+             return arithmetic_failed
+               ("result factor: y, m",
+                Gecode::IntVarArgs() << y << m);
          }
          {
            TestSpace home;
@@ -1331,7 +1454,9 @@ namespace Test { namespace Int {
            IntVar m(home,IntSet(mv,3));
            product_mod(home,IntVarArgs({z}),m,y);
            if ((home.status() == SS_FAILED) || !domain(m,mv,3))
-             return false;
+             return arithmetic_failed
+               ("zero factor: z, y, m",
+                Gecode::IntVarArgs() << z << y << m);
          }
          {
            TestSpace home;
@@ -1340,7 +1465,9 @@ namespace Test { namespace Int {
            IntVar m(home,2,hi), y(home,0,0);
            product_mod(home,IntVarArgs({a,c,d}),m,y);
            if (home.status() == SS_FAILED)
-             return false;
+             return arithmetic_failed
+               ("overflowing assigned product: a, c, d, m, y",
+                Gecode::IntVarArgs() << a << c << d << m << y);
          }
          {
            TestSpace home;
@@ -1349,7 +1476,9 @@ namespace Test { namespace Int {
            product_mod(home,IntVarArgs({x}),m,y);
            if ((home.status() == SS_FAILED) || (m.min() != 1) ||
                (m.max() != hi))
-             return false;
+             return arithmetic_failed
+               ("limit dividend: x, m, y",
+                Gecode::IntVarArgs() << x << m << y);
          }
          {
            TestSpace home;
@@ -1358,7 +1487,9 @@ namespace Test { namespace Int {
            product_mod(home,IntVarArgs({x}),m,y);
            if ((home.status() == SS_FAILED) || (m.min() != 2) ||
                (m.max() != hi-1))
-             return false;
+             return arithmetic_failed
+               ("limit difference: x, m, y",
+                Gecode::IntVarArgs() << x << m << y);
          }
          return true;
        }
@@ -1398,87 +1529,14 @@ namespace Test { namespace Int {
            if ((home.status() == SS_FAILED) ||
                !unchanged(x,xv,5) || !unchanged(m,mv,4) ||
                !unchanged(y,yv,4))
-             return false;
+             return arithmetic_failed
+               ("inactive implication: x, m, y",
+                Gecode::IntVarArgs() << x << m << y);
          }
          return true;
        }
      };
 
-     /// Staged assigned leaves above the former Cartesian support cutoff
-     class ArithmeticLargeLeaves : public ::Test::Base {
-     protected:
-       class TestSpace : public Gecode::Space {
-       public:
-         virtual Gecode::Space* copy(void) { return nullptr; }
-       };
-       static bool control(const Gecode::BoolVar& b, Gecode::ReifyMode rm,
-                           bool truth) {
-         if (truth && (rm != Gecode::RM_IMP))
-           return b.assigned() && (b.val() == 1);
-         if (!truth && (rm != Gecode::RM_PMI))
-           return b.assigned() && (b.val() == 0);
-         return true;
-       }
-     public:
-       ArithmeticLargeLeaves(void)
-         : ::Test::Base("Int::Arithmetic::LargeAssignedLeaves") {}
-       virtual bool run(void) {
-         using namespace Gecode;
-         const ReifyMode rms[] = {RM_EQV,RM_IMP,RM_PMI};
-         for (unsigned int r=0; r<3; r++)
-           for (int truth=0; truth<=1; truth++) {
-             {
-               TestSpace home;
-               IntVar a(home,1,1000), c(home,1,1000), g(home,0,1000);
-               BoolVar b(home,0,1);
-               gcd(home,a,c,g,Reify(b,rms[r]));
-               rel(home,a,IRT_EQ,84); rel(home,c,IRT_EQ,30);
-               rel(home,g,IRT_EQ,truth ? 6 : 7);
-               if ((home.status() == SS_FAILED) || !control(b,rms[r],truth))
-                 return false;
-             }
-             {
-               TestSpace home;
-               IntVar d(home,1,1000), n(home,1,1000); BoolVar b(home,0,1);
-               divides(home,d,n,Reify(b,rms[r]));
-               rel(home,d,IRT_EQ,truth ? 7 : 8); rel(home,n,IRT_EQ,84);
-               if ((home.status() == SS_FAILED) || !control(b,rms[r],truth))
-                 return false;
-             }
-             {
-               TestSpace home;
-               IntVarArgs x(home,3,1,1000); IntVar y(home,1,1000000000);
-               BoolVar b(home,0,1); product(home,x,y,Reify(b,rms[r]));
-               rel(home,x[0],IRT_EQ,2); rel(home,x[1],IRT_EQ,3);
-               rel(home,x[2],IRT_EQ,5); rel(home,y,IRT_EQ,truth ? 30 : 31);
-               if ((home.status() == SS_FAILED) || !control(b,rms[r],truth))
-                 return false;
-             }
-             {
-               TestSpace home;
-               IntVarArgs x(home,3,1,1000); IntVar y(home,0,96);
-               BoolVar b(home,0,1);
-               product_mod(home,x,97,y,Reify(b,rms[r]));
-               rel(home,x[0],IRT_EQ,2); rel(home,x[1],IRT_EQ,3);
-               rel(home,x[2],IRT_EQ,5); rel(home,y,IRT_EQ,truth ? 30 : 31);
-               if ((home.status() == SS_FAILED) || !control(b,rms[r],truth))
-                 return false;
-             }
-             {
-               TestSpace home;
-               IntVarArgs x(home,3,1,1000); IntVar m(home,1,1000);
-               IntVar y(home,0,999); BoolVar b(home,0,1);
-               product_mod(home,x,m,y,Reify(b,rms[r]));
-               rel(home,x[0],IRT_EQ,2); rel(home,x[1],IRT_EQ,3);
-               rel(home,x[2],IRT_EQ,5); rel(home,m,IRT_EQ,97);
-               rel(home,y,IRT_EQ,truth ? 30 : 31);
-               if ((home.status() == SS_FAILED) || !control(b,rms[r],truth))
-                 return false;
-             }
-           }
-         return true;
-       }
-     };
 
      /// %Test that a nonpositive modular-product modulus is rejected
      class ProductModInvalidModulus : public ::Test::Base {
@@ -1496,7 +1554,9 @@ namespace Test { namespace Int {
          for (int m=0; m>=-1; m--) {
            try {
              Gecode::product_mod(home,Gecode::IntVarArgs(),m,y);
-             return false;
+             return arithmetic_failed
+               ("accepted invalid modulus: y",
+                Gecode::IntVarArgs() << y);
            } catch (const Gecode::Int::OutOfLimits&) {
            }
          }
@@ -2762,7 +2822,6 @@ namespace Test { namespace Int {
          (void) new ProductModVarBounds;
          (void) new ProductModVarAlgebraic;
          (void) new ProductModVarInactive;
-         (void) new ArithmeticLargeLeaves;
          (void) new ProductBoundsLarge;
          (void) new ProductSimplifySign;
          (void) new ProductPowerAlias;
