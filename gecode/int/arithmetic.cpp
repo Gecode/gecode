@@ -322,6 +322,156 @@ namespace Gecode {
     }
   }
 
+  void
+  gcd(Home home, IntVar x0, IntVar x1, IntVar x2, IntPropLevel) {
+    using namespace Int;
+    GECODE_POST;
+    GECODE_ES_FAIL(Arithmetic::Gcd::post(home,x0,x1,x2));
+  }
+
+  void
+  gcd(Home home, IntVar x0, IntVar x1, IntVar x2, Reify r,
+      IntPropLevel) {
+    using namespace Int;
+    GECODE_POST;
+    switch (r.mode()) {
+    case RM_EQV:
+      GECODE_ES_FAIL((Arithmetic::ReGcd<RM_EQV>
+                      ::post(home,x0,x1,x2,r.var())));
+      break;
+    case RM_IMP:
+      GECODE_ES_FAIL((Arithmetic::ReGcd<RM_IMP>
+                      ::post(home,x0,x1,x2,r.var())));
+      break;
+    case RM_PMI:
+      GECODE_ES_FAIL((Arithmetic::ReGcd<RM_PMI>
+                      ::post(home,x0,x1,x2,r.var())));
+      break;
+    default: GECODE_NEVER;
+    }
+  }
+
+  void
+  divides(Home home, IntVar divisor, IntVar dividend, Reify r,
+          IntPropLevel) {
+    using namespace Int;
+    GECODE_POST;
+    switch (r.mode()) {
+    case RM_EQV:
+      GECODE_ES_FAIL((Arithmetic::ReDivides<RM_EQV>
+                      ::post(home,divisor,dividend,r.var())));
+      break;
+    case RM_IMP:
+      GECODE_ES_FAIL((Arithmetic::ReDivides<RM_IMP>
+                      ::post(home,divisor,dividend,r.var())));
+      break;
+    case RM_PMI:
+      GECODE_ES_FAIL((Arithmetic::ReDivides<RM_PMI>
+                      ::post(home,divisor,dividend,r.var())));
+      break;
+    default: GECODE_NEVER;
+    }
+  }
+
+  void
+  product(Home home, const IntVarArgs& x, IntVar y, IntPropLevel) {
+    using namespace Int;
+    GECODE_POST;
+    ViewArray<IntView> xv(home,x);
+    GECODE_ES_FAIL(Arithmetic::Product::post(home,xv,y));
+  }
+
+  void
+  product(Home home, const IntVarArgs& x, IntVar y, Reify r,
+          IntPropLevel) {
+    using namespace Int;
+    GECODE_POST;
+    ViewArray<IntView> xv(home,x);
+    switch (r.mode()) {
+    case RM_EQV:
+      GECODE_ES_FAIL((Arithmetic::ReProduct<RM_EQV>
+                      ::post(home,xv,y,r.var())));
+      break;
+    case RM_IMP:
+      GECODE_ES_FAIL((Arithmetic::ReProduct<RM_IMP>
+                      ::post(home,xv,y,r.var())));
+      break;
+    case RM_PMI:
+      GECODE_ES_FAIL((Arithmetic::ReProduct<RM_PMI>
+                      ::post(home,xv,y,r.var())));
+      break;
+    default: GECODE_NEVER;
+    }
+  }
+
+  void
+  product_mod(Home home, const IntVarArgs& x, int m, IntVar y,
+              IntPropLevel) {
+    using namespace Int;
+    Limits::positive(m,"Int::product_mod");
+    GECODE_POST;
+    IntView yv(y);
+    ViewArray<IntView> xv(home,x);
+    GECODE_ES_FAIL(Arithmetic::ProductMod::post(home,xv,m,yv));
+  }
+
+  void
+  product_mod(Home home, const IntVarArgs& x, int m, IntVar y, Reify r,
+              IntPropLevel) {
+    using namespace Int;
+    Limits::positive(m,"Int::product_mod");
+    GECODE_POST;
+    IntView yv(y);
+    ViewArray<IntView> xv(home,x);
+    switch (r.mode()) {
+    case RM_EQV:
+      GECODE_ES_FAIL((Arithmetic::ReProductMod<RM_EQV>
+                      ::post(home,xv,m,yv,r.var())));
+      break;
+    case RM_IMP:
+      GECODE_ES_FAIL((Arithmetic::ReProductMod<RM_IMP>
+                      ::post(home,xv,m,yv,r.var())));
+      break;
+    case RM_PMI:
+      GECODE_ES_FAIL((Arithmetic::ReProductMod<RM_PMI>
+                      ::post(home,xv,m,yv,r.var())));
+      break;
+    default: GECODE_NEVER;
+    }
+  }
+
+  void
+  product_mod(Home home, const IntVarArgs& x, IntVar m, IntVar y,
+              IntPropLevel) {
+    using namespace Int;
+    GECODE_POST;
+    ViewArray<IntView> xv(home,x);
+    GECODE_ES_FAIL(Arithmetic::ProductModVar::post(home,xv,m,y));
+  }
+
+  void
+  product_mod(Home home, const IntVarArgs& x, IntVar m, IntVar y, Reify r,
+              IntPropLevel) {
+    using namespace Int;
+    GECODE_POST;
+    ViewArray<IntView> xv(home,x);
+    switch (r.mode()) {
+    case RM_EQV:
+      GECODE_ES_FAIL((Arithmetic::ReProductModVar<RM_EQV>
+                      ::post(home,xv,m,y,r.var())));
+      break;
+    case RM_IMP:
+      GECODE_ES_FAIL((Arithmetic::ReProductModVar<RM_IMP>
+                      ::post(home,xv,m,y,r.var())));
+      break;
+    case RM_PMI:
+      GECODE_ES_FAIL((Arithmetic::ReProductModVar<RM_PMI>
+                      ::post(home,xv,m,y,r.var())));
+      break;
+    default: GECODE_NEVER;
+    }
+  }
+
 
   void
   divmod(Home home, IntVar x0, IntVar x1, IntVar x2, IntVar x3,

@@ -3031,6 +3031,118 @@ namespace Gecode {
   mult(Home home, IntVar x0, IntVar x1, IntVar x2,
        IntPropLevel ipl=IPL_DEF);
 
+  /** \brief Post propagator for \f$\gcd(x_0,x_1)=x_2\f$
+   *
+   * The greatest common divisor is nonnegative, with
+   * \f$\gcd(0,0)=0\f$. Negative operands are interpreted by absolute
+   * value. Uses sound bounds and algebraic propagation; bounds consistency
+   * is not guaranteed. The propagation level \a ipl is currently ignored.
+   */
+  GECODE_INT_EXPORT void
+  gcd(Home home, IntVar x0, IntVar x1, IntVar x2,
+      IntPropLevel ipl=IPL_DEF);
+
+  /** \brief Post propagator for
+   * \f$(\gcd(x_0,x_1)=x_2)\leftrightarrow r\f$
+   *
+   * Supports all reification modes. The greatest common divisor is
+   * nonnegative, with \f$\gcd(0,0)=0\f$. Uses conservative algebraic
+   * entailment and disentailment tests. The propagation level \a ipl is
+   * currently ignored.
+   */
+  GECODE_INT_EXPORT void
+  gcd(Home home, IntVar x0, IntVar x1, IntVar x2, Reify r,
+      IntPropLevel ipl=IPL_DEF);
+
+  /** \brief Reify whether \a divisor divides \a dividend
+   *
+   * Divisibility means that an integer \f$k\f$ exists such that
+   * \f$dividend=divisor\cdot k\f$. Consequently, zero divides zero, but
+   * zero does not divide a nonzero integer. Supports all reification modes.
+   * Uses bounds and conservative algebraic propagation. The propagation
+   * level \a ipl is currently ignored.
+   */
+  GECODE_INT_EXPORT void
+  divides(Home home, IntVar divisor, IntVar dividend, Reify r,
+          IntPropLevel ipl=IPL_DEF);
+
+  /** \brief Constrain \a y to the exact product of the variables in \a x
+   *
+   * The product of an empty array is one.
+   * Uses bounds and algebraic propagation, without guaranteeing bounds
+   * consistency. The propagation level \a ipl is currently ignored.
+   * \ingroup TaskModelInt
+   */
+  GECODE_INT_EXPORT void
+  product(Home home, const IntVarArgs& x, IntVar y,
+          IntPropLevel ipl=IPL_DEF);
+
+  /** \brief Reify whether \a y is the exact product of the variables in \a x
+   *
+   * The product of an empty array is one.
+   * Supports all reification modes using conservative algebraic tests.
+   * The propagation level \a ipl is currently ignored.
+   * \ingroup TaskModelInt
+   */
+  GECODE_INT_EXPORT void
+  product(Home home, const IntVarArgs& x, IntVar y, Reify r,
+          IntPropLevel ipl=IPL_DEF);
+
+  /** \brief Constrain \a y to the product of \a x modulo \a m
+   *
+   * The modulus \a m must be positive. The result uses the canonical
+   * Euclidean residue in the range zero through \a m minus one. The product
+   * of an empty array is one.
+   * Unlike mod(), a negative product still has a nonnegative residue.
+   * Uses bounds and algebraic propagation; \a ipl is currently ignored.
+   * Throws Int::OutOfLimits if \a m is nonpositive or exceeds Int::Limits::max.
+   * \ingroup TaskModelInt
+   */
+  GECODE_INT_EXPORT void
+  product_mod(Home home, const IntVarArgs& x, int m, IntVar y,
+              IntPropLevel ipl=IPL_DEF);
+
+  /** \brief Reify whether \a y is the product of \a x modulo \a m
+   *
+   * The modulus \a m must be positive. The result uses the canonical
+   * Euclidean residue in the range zero through \a m minus one. The product
+   * of an empty array is one.
+   * Supports all reification modes using conservative algebraic tests;
+   * \a ipl is currently ignored.
+   * Throws Int::OutOfLimits if \a m is nonpositive or exceeds Int::Limits::max,
+   * even for an inactive implication.
+   * \ingroup TaskModelInt
+   */
+  GECODE_INT_EXPORT void
+  product_mod(Home home, const IntVarArgs& x, int m, IntVar y, Reify r,
+              IntPropLevel ipl=IPL_DEF);
+
+  /** \brief Constrain \a y to the product of \a x modulo \a m
+   *
+   * The variable modulus \a m is constrained to be positive and \a y uses
+   * the canonical Euclidean residue, so that \f$0\leq y<m\f$. The product
+   * of an empty array is one.
+   * Uses bounds and algebraic propagation; \a ipl is currently ignored.
+   * \ingroup TaskModelInt
+   */
+  GECODE_INT_EXPORT void
+  product_mod(Home home, const IntVarArgs& x, IntVar m, IntVar y,
+              IntPropLevel ipl=IPL_DEF);
+
+  /** \brief Reify whether \a y is the product of \a x modulo \a m
+   *
+   * The reified proposition includes \f$m>0\f$, the canonical range
+   * \f$0\leq y<m\f$, and congruence with the product. The product of an
+   * empty array is one.
+   * Supports all reification modes using conservative algebraic tests;
+   * \a ipl is currently ignored. An inactive implication does not constrain
+   * the modulus or result.
+   * \ingroup TaskModelInt
+   */
+  GECODE_INT_EXPORT void
+  product_mod(Home home, const IntVarArgs& x, IntVar m, IntVar y, Reify r,
+              IntPropLevel ipl=IPL_DEF);
+
   /** \brief Post propagator for \f$x_0\ \mathrm{div}\ x_1=x_2 \land x_0\ \mathrm{mod}\ x_1 = x_3\f$
    *
    * Supports bounds consistency (\a ipl = IPL_BND, default).

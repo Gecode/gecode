@@ -35,6 +35,7 @@
 
 #include <cmath>
 #include <algorithm>
+#include <memory>
 
 #include <gecode/minimodel.hh>
 
@@ -48,6 +49,1521 @@ namespace Test { namespace Int {
       * \ingroup TaskTestInt
       */
      //@{
+     /// Compute the mathematical greatest common divisor for testing.
+     int gcd_value(int a, int b) {
+       a = (a < 0) ? -a : a;
+       b = (b < 0) ? -b : b;
+       while (b != 0) {
+         int t = a % b;
+         a = b; b = t;
+       }
+       return a;
+     }
+
+     /// %Test for the ternary greatest-common-divisor constraint
+     // Reposting comparisons below are disabled where bounds subscriptions
+     // deliberately miss interior removals used by algebraic status tests.
+     // NumberTheoryLifecycle checks activation, cloning, and rescheduling
+     // separately; NumberTheorySparseBounds checks own-update fixpoints.
+     class GcdXYZ : public Test {
+     public:
+       /// Create and register test
+       GcdXYZ(const std::string& s, const Gecode::IntSet& d,
+              Gecode::IntPropLevel ipl, bool r=true)
+         : Test("Arithmetic::Gcd::XYZ::"+str(ipl)+"::"+s+(r ? "" : "::Plain"),3,d,r,ipl) {
+         contest=CTL_NONE; testfix=!r;
+       }
+       /// %Test whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         return gcd_value(x[0],x[1]) == x[2];
+       }
+       /// Post constraint on \a x
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
+         Gecode::gcd(home,x[0],x[1],x[2],ipl);
+       }
+       /// Post reified constraint on \a x
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x,
+                         Gecode::Reify r) {
+         Gecode::gcd(home,x[0],x[1],x[2],r,ipl);
+       }
+     };
+
+     /// %Test for gcd with identical operands
+     class GcdXXY : public Test {
+     public:
+       /// Create and register test
+       GcdXXY(const std::string& s, const Gecode::IntSet& d,
+              Gecode::IntPropLevel ipl, bool r=true)
+         : Test("Arithmetic::Gcd::XXY::"+str(ipl)+"::"+s+(r ? "" : "::Plain"),2,d,r,ipl) {
+         contest=CTL_NONE; testfix=!r;
+       }
+       /// %Test whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         return gcd_value(x[0],x[0]) == x[1];
+       }
+       /// Post constraint on \a x
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
+         Gecode::gcd(home,x[0],x[0],x[1],ipl);
+       }
+       /// Post reified constraint on \a x
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x,
+                         Gecode::Reify r) {
+         Gecode::gcd(home,x[0],x[0],x[1],r,ipl);
+       }
+     };
+
+     /// %Test for gcd with result aliased to the first operand
+     class GcdXYX : public Test {
+     public:
+       /// Create and register test
+       GcdXYX(const std::string& s, const Gecode::IntSet& d,
+              Gecode::IntPropLevel ipl, bool r=true)
+         : Test("Arithmetic::Gcd::XYX::"+str(ipl)+"::"+s+(r ? "" : "::Plain"),2,d,r,ipl) {
+         contest=CTL_NONE; testfix=!r;
+       }
+       /// %Test whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         return gcd_value(x[0],x[1]) == x[0];
+       }
+       /// Post constraint on \a x
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
+         Gecode::gcd(home,x[0],x[1],x[0],ipl);
+       }
+       /// Post reified constraint on \a x
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x,
+                         Gecode::Reify r) {
+         Gecode::gcd(home,x[0],x[1],x[0],r,ipl);
+       }
+     };
+
+     /// %Test for gcd with all variables aliased
+     class GcdXXX : public Test {
+     public:
+       /// Create and register test
+       GcdXXX(const std::string& s, const Gecode::IntSet& d,
+              Gecode::IntPropLevel ipl)
+         : Test("Arithmetic::Gcd::XXX::"+str(ipl)+"::"+s,1,d,true,ipl) {
+         contest=CTL_NONE;
+       }
+       /// %Test whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         return gcd_value(x[0],x[0]) == x[0];
+       }
+       /// Post constraint on \a x
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
+         Gecode::gcd(home,x[0],x[0],x[0],ipl);
+       }
+       /// Post reified constraint on \a x
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x,
+                         Gecode::Reify r) {
+         Gecode::gcd(home,x[0],x[0],x[0],r,ipl);
+       }
+     };
+
+     /// %Test for the reified divisibility constraint
+     // With divisor zero, removing interior zero from the dividend can
+     // strengthen a reposted status test without a bounds wakeup.
+     class DividesXY : public Test {
+     public:
+       /// Create and register test
+       DividesXY(const std::string& s, const Gecode::IntSet& d,
+                 Gecode::IntPropLevel ipl)
+         : Test("Arithmetic::Divides::XY::"+str(ipl)+"::"+s,
+                2,d,true,ipl) { contest=CTL_NONE; testfix=false; }
+       /// %Test whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         return (x[0] == 0) ? (x[1] == 0) : (x[1] % x[0] == 0);
+       }
+       /// The constraint is deliberately exposed only as reified
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
+         Gecode::BoolVar b(home,1,1);
+         Gecode::divides(home,x[0],x[1],Gecode::Reify(b),ipl);
+       }
+       /// Post reified constraint on \a x
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x,
+                         Gecode::Reify r) {
+         Gecode::divides(home,x[0],x[1],r,ipl);
+       }
+     };
+
+     /// %Test divisibility with aliased operands
+     class DividesXX : public Test {
+     public:
+       /// Create and register test
+       DividesXX(const std::string& s, const Gecode::IntSet& d,
+                 Gecode::IntPropLevel ipl)
+         : Test("Arithmetic::Divides::XX::"+str(ipl)+"::"+s,
+                1,d,true,ipl) { contest=CTL_NONE; }
+       /// Every integer divides itself, including zero
+       virtual bool solution(const Assignment&) const {
+         return true;
+       }
+       /// The constraint is deliberately exposed only as reified
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
+         Gecode::BoolVar b(home,1,1);
+         Gecode::divides(home,x[0],x[0],Gecode::Reify(b),ipl);
+       }
+       /// Post reified constraint on \a x
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x,
+                         Gecode::Reify r) {
+         Gecode::divides(home,x[0],x[0],r,ipl);
+       }
+     };
+
+     /// Report a targeted arithmetic failure through the standard test log.
+     bool arithmetic_failed(const std::string& what,
+                            const Gecode::VarArgArray<Gecode::IntVar>& x) {
+       if (opt.log)
+         olog << what << ": " << x << std::endl;
+       return false;
+     }
+
+     /// Sparse endpoints must reach a fixpoint after a divisor is assigned.
+     class NumberTheorySparseBounds : public ::Test::Base {
+       class TestSpace : public Gecode::Space {
+       public:
+         virtual Gecode::Space* copy(void) { return nullptr; }
+       };
+     public:
+       NumberTheorySparseBounds(void)
+         : ::Test::Base("Int::Arithmetic::NumberTheorySparseBounds") {}
+       virtual bool run(void) {
+         using namespace Gecode;
+         for (int division=0; division<2; division++) {
+           TestSpace home;
+           IntVar x(home,IntSet({1,3,5,6})), y(home,10,10), g(home,1,2);
+           BoolVar b(home,1,1);
+           if (division)
+             divides(home,g,x,Reify(b));
+           else
+             gcd(home,x,y,g);
+           if (home.status() == SS_FAILED)
+             return arithmetic_failed
+               ("initial propagation: x, y, g",
+                Gecode::IntVarArgs() << x << y << g);
+           rel(home,g,IRT_EQ,2);
+           if ((home.status() == SS_FAILED) || !x.assigned() || (x.val()!=6))
+             return arithmetic_failed
+               ("assigned divisor: x, y, g",
+                Gecode::IntVarArgs() << x << y << g);
+         }
+         return true;
+       }
+     };
+
+     /// Activation and rescheduling survive cloning and arithmetic rewrites.
+     class NumberTheoryLifecycle : public ::Test::Base {
+       class TestSpace : public Gecode::Space {
+       public:
+         Gecode::IntVar x, c, y, m;
+         Gecode::BoolVar b;
+         TestSpace(int kind)
+           : x(*this,Gecode::IntSet({1,3,5,6})),
+             c(*this,kind == 0 ? 10 : 2,kind == 0 ? 10 : 2),
+             y(*this,kind == 0 ? 2 : (kind == 4 ? 1 : 12),
+               kind == 0 ? 2 : (kind == 4 ? 1 : 12)),
+             m(*this,kind == 4 ? 5 : 13,kind == 4 ? 7 : 17), b(*this,0,1) {
+           using namespace Gecode;
+           switch (kind) {
+           case 0: gcd(*this,x,c,y,Reify(b)); break;
+           case 1: divides(*this,c,x,Reify(b)); break;
+           case 2: product(*this,IntVarArgs({x,c}),y,Reify(b)); break;
+           case 3: product_mod(*this,IntVarArgs({x,c}),13,y,Reify(b)); break;
+           case 4: product_mod(*this,IntVarArgs({x,c}),m,y,Reify(b)); break;
+           default: GECODE_NEVER;
+           }
+         }
+         TestSpace(TestSpace& s) : Gecode::Space(s) {
+           x.update(*this,s.x); c.update(*this,s.c); y.update(*this,s.y);
+           m.update(*this,s.m); b.update(*this,s.b);
+         }
+         virtual Gecode::Space* copy(void) { return new TestSpace(*this); }
+       };
+     public:
+       NumberTheoryLifecycle(void)
+         : ::Test::Base("Int::Arithmetic::NumberTheoryLifecycle") {}
+       virtual bool run(void) {
+         using namespace Gecode;
+         for (int kind=0; kind<5; kind++) {
+           TestSpace home(kind);
+           if (home.status() == SS_FAILED)
+             return arithmetic_failed
+               ("initial propagation: home.x, home.c, home.y, home.m",
+                Gecode::IntVarArgs() << home.x << home.c << home.y << home.m);
+           std::unique_ptr<TestSpace> clone
+             (static_cast<TestSpace*>(home.clone()));
+           PropagatorGroup::all.disable(*clone);
+           rel(*clone,clone->b,IRT_EQ,1);
+           PropagatorGroup::all.enable(*clone);
+           if ((clone->status() == SS_FAILED) ||
+               ((kind != 4) && (!clone->x.assigned() || (clone->x.val() != 6))))
+             return arithmetic_failed
+               ("activation after cloning, kind "+str(kind)+": x, c, y, m",
+                Gecode::IntVarArgs() << clone->x << clone->c
+                                    << clone->y << clone->m);
+           // Clone the activated actor before fixing a variable modulus.
+           std::unique_ptr<TestSpace> child
+             (static_cast<TestSpace*>(clone->clone()));
+           rel(*child,child->m,IRT_EQ,kind == 4 ? 5 : 13);
+           if ((child->status() == SS_FAILED) || !child->x.assigned() ||
+               (child->x.val() != (kind == 4 ? 3 : 6)) ||
+               home.b.assigned() || (home.x.size() != 4) || clone->m.assigned())
+             return arithmetic_failed
+               ("fixed modulus in child, kind "+str(kind)+": child x, m; parent x, m",
+                Gecode::IntVarArgs() << child->x << child->m
+                                    << clone->x << clone->m);
+         }
+         return true;
+       }
+     };
+
+     /// Reified identities do not require the remaining factors to be fixed.
+     class NumberTheoryIdentities : public ::Test::Base {
+       class TestSpace : public Gecode::Space {
+       public:
+         virtual Gecode::Space* copy(void) { return nullptr; }
+       };
+     public:
+       NumberTheoryIdentities(void)
+         : ::Test::Base("Int::Arithmetic::NumberTheoryIdentities") {}
+       virtual bool run(void) {
+         using namespace Gecode;
+         for (ReifyMode rm : {RM_EQV,RM_IMP,RM_PMI})
+           for (int kind=0; kind<4; kind++) {
+             TestSpace home;
+             IntVar x(home,-7,7), zero(home,0,0), m(home,0,7), one(home,1,1);
+             BoolVar b(home,0,1);
+             if (kind == 0) product(home,IntVarArgs({zero,x}),zero,Reify(b,rm));
+             if (kind == 1) product(home,IntVarArgs({x}),x,Reify(b,rm));
+             if (kind == 2) product_mod(home,IntVarArgs({zero,x}),m,zero,Reify(b,rm));
+             if (kind == 3) product_mod(home,IntVarArgs({x}),one,zero,Reify(b,rm));
+             if (home.status() == SS_FAILED)
+               return arithmetic_failed
+                 ("initial identity: x, zero, m, one",
+                  Gecode::IntVarArgs() << x << zero << m << one);
+             if (kind == 2) {
+               // Zero residue alone does not establish a positive modulus.
+               if (b.assigned() || (m.min() != 0))
+                 return arithmetic_failed
+                   ("modulus positivity unknown: x, zero, m, one",
+                    Gecode::IntVarArgs() << x << zero << m << one);
+               rel(home,m,IRT_GQ,1);
+               if (home.status() == SS_FAILED)
+                 return arithmetic_failed
+                   ("positive modulus: x, zero, m, one",
+                    Gecode::IntVarArgs() << x << zero << m << one);
+             }
+             if ((rm == RM_IMP) ? b.assigned() :
+                 (!b.assigned() || (b.val() != 1)))
+               return arithmetic_failed
+                 ("reified truth: x, zero, m, one",
+                  Gecode::IntVarArgs() << x << zero << m << one);
+             if ((x.min() != -7) || (x.max() != 7))
+               return arithmetic_failed
+                 ("unconstrained factor: x, zero, m, one",
+                  Gecode::IntVarArgs() << x << zero << m << one);
+           }
+         return true;
+       }
+     };
+
+     /// Known identities at the integer limits, independent of the oracles.
+     class NumberTheoryLimits : public ::Test::Base {
+       class TestSpace : public Gecode::Space {
+       public:
+         virtual Gecode::Space* copy(void) { return nullptr; }
+       };
+     public:
+       NumberTheoryLimits(void)
+         : ::Test::Base("Int::Arithmetic::NumberTheoryLimits") {}
+       virtual bool run(void) {
+         using namespace Gecode;
+         const int hi=Gecode::Int::Limits::max;
+         const int lo=Gecode::Int::Limits::min;
+         const int cases[][4] = {
+           {lo,hi,hi,1}, {hi,lo,hi,1}, {lo,0,hi,1},
+           {0,lo,hi,0}, {0,0,0,1}, {lo,1,1,0}
+         };
+         for (const auto& c : cases) {
+           TestSpace home;
+           IntVar x(home,c[0],c[0]), y(home,c[1],c[1]), g(home,0,hi);
+           BoolVar b(home,0,1), correct(home,0,1), wrong(home,0,1);
+           gcd(home,x,y,g);
+           divides(home,x,y,Reify(b));
+           IntVar expected(home,c[2],c[2]);
+           IntVar other(home,c[2] == 0 ? 1 : 0,c[2] == 0 ? 1 : 0);
+           gcd(home,x,y,expected,Reify(correct));
+           gcd(home,x,y,other,Reify(wrong));
+           if ((home.status() == SS_FAILED) || !g.assigned() ||
+               (g.val() != c[2]) || !b.assigned() || (b.val() != c[3]) ||
+               !correct.assigned() || (correct.val() != 1) ||
+               !wrong.assigned() || (wrong.val() != 0))
+             return arithmetic_failed
+               ("signed GCD and divisibility: x, y, g, expected, other",
+                Gecode::IntVarArgs() << x << y << g << expected << other);
+         }
+         // hi-1 is -1 modulo hi. Its square is 1 and its cube is -1;
+         // negating one factor reverses these residues. The cube exceeds
+         // signed 64-bit range, but its residue remains exactly known.
+         for (int n=2; n<=3; n++)
+           for (int negative=0; negative<=1; negative++)
+             for (int variable=0; variable<=1; variable++) {
+               const int expected=((n+negative)%2 == 0) ? 1 : hi-1;
+               {
+                 TestSpace home;
+                 IntVarArgs x(home,n,hi-1,hi-1);
+                 if (negative) x[0]=IntVar(home,1-hi,1-hi);
+                 IntVar m(home,hi-1,hi), y(home,0,hi-1);
+                 if (variable) product_mod(home,x,m,y);
+                 else product_mod(home,x,hi,y);
+                 if (home.status() == SS_FAILED)
+                   return arithmetic_failed
+                     ("large product before rewrite: x, m, y",
+                      Gecode::IntVarArgs() << x << m << y);
+                 // Force variable-modulus rewriting after initial propagation.
+                 rel(home,m,IRT_EQ,hi);
+                 if ((home.status() == SS_FAILED) || !y.assigned() ||
+                     (y.val() != expected))
+                   return arithmetic_failed
+                     ("large product residue: x, m, y",
+                      Gecode::IntVarArgs() << x << m << y);
+               }
+               for (ReifyMode rm : {RM_EQV,RM_IMP,RM_PMI})
+                 for (int truth=0; truth<=1; truth++)
+                   for (int control=0; control<=1; control++) {
+                     TestSpace home;
+                     IntVarArgs x(home,n,hi-1,hi-1);
+                     if (negative) x[0]=IntVar(home,1-hi,1-hi);
+                     IntVar m(home,hi,hi);
+                     IntVar y(home,truth ? expected : 0,truth ? expected : 0);
+                     BoolVar b(home,control,control);
+                     if (variable) product_mod(home,x,m,y,Reify(b,rm));
+                     else product_mod(home,x,hi,y,Reify(b,rm));
+                     const bool holds=(rm == RM_EQV) ? (control == truth) :
+                       ((rm == RM_IMP) ? (!control || truth) : (!truth || control));
+                     if ((home.status() != SS_FAILED) != holds)
+                       return arithmetic_failed
+                         ("large product reification: x, m, y",
+                          Gecode::IntVarArgs() << x << m << y);
+                   }
+             }
+         return true;
+       }
+     };
+
+     /// Evaluate an exact product for testing without overflowing.
+     bool product_value(const Assignment& x, int n, int& product) {
+       for (int i=0; i<n; i++)
+         if (x[i] == 0) {
+           product = 0;
+           return true;
+         }
+       long long int p = 1;
+       for (int i=0; i<n; i++) {
+         if (Gecode::Int::Limits::overflow_mul
+             (p,static_cast<long long int>(x[i])))
+           return false;
+         p *= static_cast<long long int>(x[i]);
+       }
+       if (!Gecode::Int::Limits::valid(p))
+         return false;
+       product = static_cast<int>(p);
+       return true;
+     }
+
+     /// %Test for an ordinary and reified three-factor product
+     // Zero membership and assigned-product membership can change without
+     // a bounds event, including when factors or the result are aliased.
+     class ProductXYZR : public Test {
+     public:
+       ProductXYZR(const std::string& s, const Gecode::IntSet& d,
+                   Gecode::IntPropLevel ipl)
+         : Test("Arithmetic::Product::XYZR::"+str(ipl)+"::"+s,
+                4,d,true,ipl) { contest = CTL_NONE; testfix=false; }
+       virtual bool solution(const Assignment& x) const {
+         int p;
+         return product_value(x,3,p) && (p == x[3]);
+       }
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
+         Gecode::IntVarArgs f({x[0],x[1],x[2]});
+         Gecode::product(home,f,x[3],ipl);
+       }
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x,
+                         Gecode::Reify r) {
+         Gecode::IntVarArgs f({x[0],x[1],x[2]});
+         Gecode::product(home,f,x[3],r,ipl);
+       }
+     };
+
+     /// %Test for the empty product
+     class ProductEmpty : public Test {
+     public:
+       ProductEmpty(const std::string& s, const Gecode::IntSet& d,
+                    Gecode::IntPropLevel ipl)
+         : Test("Arithmetic::Product::Empty::"+str(ipl)+"::"+s,
+                1,d,true,ipl) {
+         contest = CTL_NONE;
+       }
+       virtual bool solution(const Assignment& x) const {
+         return x[0] == 1;
+       }
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
+         Gecode::product(home,Gecode::IntVarArgs(),x[0],ipl);
+       }
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x,
+                         Gecode::Reify r) {
+         Gecode::product(home,Gecode::IntVarArgs(),x[0],r,ipl);
+       }
+     };
+
+     /// %Test for the singleton product
+     class ProductSingleton : public Test {
+     public:
+       ProductSingleton(const std::string& s, const Gecode::IntSet& d,
+                        Gecode::IntPropLevel ipl)
+         : Test("Arithmetic::Product::Singleton::"+str(ipl)+"::"+s,
+                2,d,true,ipl) { contest = CTL_NONE;  }
+       virtual bool solution(const Assignment& x) const {
+         return x[0] == x[1];
+       }
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
+         Gecode::product(home,Gecode::IntVarArgs({x[0]}),x[1],ipl);
+       }
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x,
+                         Gecode::Reify r) {
+         Gecode::product(home,Gecode::IntVarArgs({x[0]}),x[1],r,ipl);
+       }
+     };
+
+     /// %Test repeated factors and result aliasing
+     class ProductXXYAlias : public Test {
+     public:
+       ProductXXYAlias(const std::string& s, const Gecode::IntSet& d,
+                       Gecode::IntPropLevel ipl)
+         : Test("Arithmetic::Product::XXYAlias::"+str(ipl)+"::"+s,
+                2,d,true,ipl) { contest = CTL_NONE; testfix=false; }
+       virtual bool solution(const Assignment& x) const {
+         long long int p = static_cast<long long int>(x[0]) * x[0] * x[1];
+         return (p >= Gecode::Int::Limits::min) &&
+           (p <= Gecode::Int::Limits::max) && (p == x[1]);
+       }
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
+         Gecode::product(home,Gecode::IntVarArgs({x[0],x[0],x[1]}),x[1],ipl);
+       }
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x,
+                         Gecode::Reify r) {
+         Gecode::product(home,Gecode::IntVarArgs({x[0],x[0],x[1]}),x[1],r,ipl);
+       }
+     };
+
+     /// %Test product bounds propagation beyond the support-enumeration cap
+     class ProductBoundsLarge : public ::Test::Base {
+     protected:
+       class TestSpace : public Gecode::Space {
+       public:
+         virtual Gecode::Space* copy(void) { return nullptr; }
+       };
+     public:
+       ProductBoundsLarge(void)
+         : ::Test::Base("Int::Arithmetic::Product::BoundsLarge") {}
+       virtual bool run(void) {
+         using namespace Gecode;
+         {
+           TestSpace home;
+           IntVarArgs x(home,3,2,100);
+           IntVar y(home,0,Gecode::Int::Limits::max);
+           BoolVar b(home,1,1);
+           product(home,x,y,Reify(b));
+           if ((home.status() == SS_FAILED) ||
+               (y.min() != 8) || (y.max() != 1000000))
+             return arithmetic_failed
+               ("forward bounds: x, y",
+                Gecode::IntVarArgs() << x << y);
+         }
+         {
+           TestSpace home;
+           IntVarArgs x(home,3,10,100);
+           IntVar y(home,1000,1000);
+           product(home,x,y);
+           if (home.status() == SS_FAILED)
+             return arithmetic_failed
+               ("inverse bounds failure: x, y",
+                Gecode::IntVarArgs() << x << y);
+           for (int i=0; i<x.size(); i++)
+             if (!x[i].assigned() || (x[i].val() != 10))
+               return arithmetic_failed
+                 ("inverse factor assignment: x, y",
+                  Gecode::IntVarArgs() << x << y);
+         }
+         return true;
+       }
+     };
+
+     /// Test zero, unit, and aggregate-sign product simplifications
+     class ProductSimplifySign : public ::Test::Base {
+     protected:
+       class TestSpace : public Gecode::Space {
+       public:
+         virtual Gecode::Space* copy(void) { return nullptr; }
+       };
+       class CloneSpace : public Gecode::Space {
+       public:
+         Gecode::IntVar x, q, y;
+         CloneSpace(void)
+           : x(*this,-2,2), q(*this,2,2), y(*this,-10,10) {
+           Gecode::product(*this,Gecode::IntVarArgs({x,q}),y);
+         }
+         CloneSpace(CloneSpace& s) : Gecode::Space(s) {
+           x.update(*this,s.x); q.update(*this,s.q); y.update(*this,s.y);
+         }
+         virtual Gecode::Space* copy(void) { return new CloneSpace(*this); }
+       };
+     public:
+       ProductSimplifySign(void)
+         : ::Test::Base("Int::Arithmetic::Product::SimplifySign") {}
+       virtual bool run(void) {
+         using namespace Gecode;
+         {
+           TestSpace home;
+           IntVar z(home,0,0), x(home,-100,100), y(home,-100,100);
+           product(home,IntVarArgs({x,z}),y);
+           if ((home.status() == SS_FAILED) || !y.assigned() || (y.val()!=0))
+             return arithmetic_failed
+               ("zero factor: z, x, y",
+                Gecode::IntVarArgs() << z << x << y);
+         }
+         {
+           TestSpace home;
+           IntVar one(home,1,1), minus(home,-1,-1), x(home,2,5);
+           IntVar y(home,-100,100);
+           product(home,IntVarArgs({one,minus,minus,x}),y);
+           if ((home.status() == SS_FAILED) || (y.min()!=2) || (y.max()!=5))
+             return arithmetic_failed
+               ("paired negative units: one, minus, x, y",
+                Gecode::IntVarArgs() << one << minus << x << y);
+         }
+         {
+           TestSpace home;
+           IntVar minus(home,-1,-1), x(home,2,5), y(home,-100,100);
+           product(home,IntVarArgs({minus,x}),y);
+           if ((home.status() == SS_FAILED) || (y.min()!=-5) || (y.max()!=-2))
+             return arithmetic_failed
+               ("negative unit: minus, x, y",
+                Gecode::IntVarArgs() << minus << x << y);
+         }
+         {
+           TestSpace home;
+           IntVar x(home,0,5), q(home,1,3), y(home,2,10);
+           product(home,IntVarArgs({x,q}),y);
+           if ((home.status() == SS_FAILED) || (x.min()!=1))
+             return arithmetic_failed
+               ("nonzero result: x, q, y",
+                Gecode::IntVarArgs() << x << q << y);
+         }
+         {
+           TestSpace home;
+           IntVar x(home,-2,2), q(home,1,3), y(home,0,0);
+           product(home,IntVarArgs({x,q}),y);
+           if ((home.status() == SS_FAILED) || !x.assigned() || (x.val()!=0))
+             return arithmetic_failed
+               ("unique zero factor: x, q, y",
+                Gecode::IntVarArgs() << x << q << y);
+         }
+         {
+           TestSpace home;
+           IntVar x(home,-5,0), q(home,2,4), y(home,-100,100);
+           product(home,IntVarArgs({x,q}),y);
+           if ((home.status() == SS_FAILED) || (y.max()!=0))
+             return arithmetic_failed
+               ("nonpositive product: x, q, y",
+                Gecode::IntVarArgs() << x << q << y);
+         }
+         {
+           TestSpace home;
+           IntVar x(home,-5,-2), q(home,-4,-2), y(home,-100,100);
+           product(home,IntVarArgs({x,q}),y);
+           if ((home.status() == SS_FAILED) || (y.min()!=4))
+             return arithmetic_failed
+               ("positive product: x, q, y",
+                Gecode::IntVarArgs() << x << q << y);
+         }
+         {
+           TestSpace home;
+           const int hi=Gecode::Int::Limits::max;
+           IntVar minus(home,-1,-1), x(home,hi,hi), y(home,-hi,hi);
+           product(home,IntVarArgs({minus,x}),y);
+           if ((home.status() == SS_FAILED) || !y.assigned() || (y.val()!=-hi))
+             return arithmetic_failed
+               ("negative limit: minus, x, y",
+                Gecode::IntVarArgs() << minus << x << y);
+         }
+         {
+           CloneSpace home;
+           if (home.status() == SS_FAILED)
+             return arithmetic_failed
+               ("initial clone state: home.x, home.q, home.y",
+                Gecode::IntVarArgs() << home.x << home.q << home.y);
+           CloneSpace* clone=static_cast<CloneSpace*>(home.clone());
+           PropagatorGroup::all.disable(*clone);
+           rel(home,home.x,IRT_NQ,0);
+           rel(*clone,clone->x,IRT_NQ,0);
+           (void) home.status();
+           (void) clone->status();
+           rel(home,home.y,IRT_GQ,2);
+           rel(*clone,clone->y,IRT_GQ,2);
+           PropagatorGroup::all.enable(*clone);
+           const bool ok=(home.status()!=SS_FAILED) &&
+             (clone->status()!=SS_FAILED) && (home.x.min()==1) &&
+             (clone->x.min()==1) && (home.y.min()==2) &&
+             (clone->y.min()==2);
+           delete clone;
+           if (!ok)
+             return arithmetic_failed
+               ("rescheduling: home.x, home.q, home.y",
+                Gecode::IntVarArgs() << home.x << home.q << home.y);
+         }
+         return true;
+       }
+     };
+
+     /// Test repeated powers and result-alias cancellation
+     class ProductPowerAlias : public ::Test::Base {
+     protected:
+       class TestSpace : public Gecode::Space {
+       public:
+         virtual Gecode::Space* copy(void) { return nullptr; }
+       };
+     public:
+       ProductPowerAlias(void)
+         : ::Test::Base("Int::Arithmetic::Product::PowerAlias") {}
+       virtual bool run(void) {
+         using namespace Gecode;
+         {
+           TestSpace home;
+           IntVar x(home,-10,10), y(home,-10,100);
+           product(home,IntVarArgs({x,x}),y);
+           if ((home.status() == SS_FAILED) || (y.min() != 0))
+             return arithmetic_failed
+               ("square sign: x, y",
+                Gecode::IntVarArgs() << x << y);
+         }
+         {
+           TestSpace home;
+           IntVar x(home,-10,10), y(home,20,30);
+           product(home,IntVarArgs({x,x}),y);
+           if ((home.status() == SS_FAILED) ||
+               (x.min() != -5) || (x.max() != 5))
+             return arithmetic_failed
+               ("square inverse: x, y",
+                Gecode::IntVarArgs() << x << y);
+         }
+         {
+           TestSpace home;
+           IntVar x(home,-10,10), y(home,20,30);
+           product(home,IntVarArgs({x,x,x}),y);
+           if ((home.status() == SS_FAILED) || !x.assigned() ||
+               (x.val() != 3))
+             return arithmetic_failed
+               ("cube inverse: x, y",
+                Gecode::IntVarArgs() << x << y);
+         }
+         {
+           TestSpace home;
+           IntVar x(home,-10,10), y(home,-30,-20);
+           product(home,IntVarArgs({x,x,x}),y);
+           if ((home.status() == SS_FAILED) || !x.assigned() ||
+               (x.val() != -3))
+             return arithmetic_failed
+               ("negative cube inverse: x, y",
+                Gecode::IntVarArgs() << x << y);
+         }
+         {
+           TestSpace home;
+           IntVar x(home,-10,10), two(home,2,2), y(home,50,72);
+           product(home,IntVarArgs({x,x,two}),y);
+           if ((home.status() == SS_FAILED) ||
+               (x.min() != -6) || (x.max() != 6))
+             return arithmetic_failed
+               ("square cofactor: x, two, y",
+                Gecode::IntVarArgs() << x << two << y);
+         }
+         {
+           // x*y=y has only the zero branch when x cannot be one.
+           TestSpace home;
+           IntVar x(home,2,4), y(home,-10,10);
+           product(home,IntVarArgs({x,y}),y);
+           if ((home.status() == SS_FAILED) || !y.assigned() ||
+               (y.val() != 0))
+             return arithmetic_failed
+               ("zero result alias: x, y",
+                Gecode::IntVarArgs() << x << y);
+         }
+         {
+           // A nonzero result permits cancellation of one result occurrence.
+           TestSpace home;
+           IntVar x(home,0,2), y(home,2,10);
+           product(home,IntVarArgs({x,y}),y);
+           if ((home.status() == SS_FAILED) || !x.assigned() ||
+               (x.val() != 1))
+             return arithmetic_failed
+               ("nonzero cancellation: x, y",
+                Gecode::IntVarArgs() << x << y);
+         }
+         {
+           // Cancelling one of two result occurrences leaves y*x=1.
+           TestSpace home;
+           IntVar x(home,-1,0), y(home,-2,-1);
+           product(home,IntVarArgs({y,y,x}),y);
+           if ((home.status() == SS_FAILED) || !x.assigned() ||
+               !y.assigned() || (x.val() != -1) || (y.val() != -1))
+             return arithmetic_failed
+               ("repeated result cancellation: x, y",
+                Gecode::IntVarArgs() << x << y);
+         }
+         {
+           // Direct n-ary evaluation retains zero after an overflowing prefix.
+           TestSpace home;
+           const int hi=Gecode::Int::Limits::max;
+           IntVar a(home,hi,hi), z(home,0,0), y(home,0,0);
+           product(home,IntVarArgs({a,a,z}),y);
+           if (home.status() == SS_FAILED)
+             return arithmetic_failed
+               ("overflow followed by zero: a, z, y",
+                Gecode::IntVarArgs() << a << z << y);
+         }
+         {
+           TestSpace home;
+           IntVar x(home,-10,10), y(home,20,30);
+           BoolVar b(home,1,1);
+           product(home,IntVarArgs({x,x}),y,Reify(b,RM_EQV));
+           if ((home.status() == SS_FAILED) ||
+               (x.min() != -5) || (x.max() != 5))
+             return arithmetic_failed
+               ("reified square: x, y",
+                Gecode::IntVarArgs() << x << y);
+         }
+         return true;
+       }
+     };
+
+     /// Test zero-aware inverse bounds for every cofactor sign class
+     class ProductInverseBounds : public ::Test::Base {
+     protected:
+       class TestSpace : public Gecode::Space {
+       public:
+         virtual Gecode::Space* copy(void) { return nullptr; }
+       };
+       static bool bounds(const Gecode::IntVar& x, int min, int max) {
+         return (x.min() == min) && (x.max() == max);
+       }
+     public:
+       ProductInverseBounds(void)
+         : ::Test::Base("Int::Arithmetic::Product::InverseBounds") {}
+       virtual bool run(void) {
+         using namespace Gecode;
+         struct Case { int qmin; int qmax; int xmin; int xmax; };
+         const Case cases[] = {
+           { 2, 4,   5, 12}, // Positive
+           { 0, 4,   5, 24}, // Nonnegative
+           {-4,-2, -12, -5}, // Negative
+           {-4, 0, -24, -5}, // Nonpositive
+           {-4, 3, -24, 24}  // Mixed across zero
+         };
+         for (unsigned int i=0; i<sizeof(cases)/sizeof(Case); i++) {
+           TestSpace home;
+           IntVar x(home,-100,100);
+           IntVar q(home,cases[i].qmin,cases[i].qmax);
+           IntVar y(home,20,24);
+           product(home,IntVarArgs({x,q}),y);
+           if ((home.status() == SS_FAILED) ||
+               !bounds(x,cases[i].xmin,cases[i].xmax)) {
+             if (opt.log)
+               olog << "Inverse bounds, cofactor [" << cases[i].qmin
+                    << "," << cases[i].qmax << "]: x=" << x
+                    << ", q=" << q << ", y=" << y << "; expected x=["
+                    << cases[i].xmin << "," << cases[i].xmax << "]"
+                    << std::endl;
+             return false;
+           }
+         }
+         {
+           // When both the cofactor and result can be zero, no inverse
+           // pruning of the other factor is sound.
+           TestSpace home;
+           IntVar x(home,-100,100), q(home,-2,3), y(home,-10,10);
+           product(home,IntVarArgs({x,q}),y);
+           if ((home.status() == SS_FAILED) || !bounds(x,-100,100))
+             return arithmetic_failed
+               ("unconstrained zero product: x, q, y",
+                Gecode::IntVarArgs() << x << q << y);
+         }
+         {
+           TestSpace home;
+           IntVar x(home,-100,100), zero(home,0,0), y(home,1,2);
+           product(home,IntVarArgs({x,zero}),y);
+           if (home.status() != SS_FAILED)
+             return arithmetic_failed
+               ("impossible zero product: x, zero, y",
+                Gecode::IntVarArgs() << x << zero << y);
+         }
+         {
+           TestSpace home;
+           const int hi=Gecode::Int::Limits::max;
+           IntVar x(home,-1,1), a(home,hi,hi), b(home,hi,hi), y(home,0,0);
+           product(home,IntVarArgs({x,a,b}),y);
+           if ((home.status() == SS_FAILED) || !x.assigned() ||
+               (x.val() != 0))
+             return arithmetic_failed
+               ("overflowing cofactor: x, a, b, y",
+                Gecode::IntVarArgs() << x << a << b << y);
+         }
+         return true;
+       }
+     };
+
+     /// Compute a canonical modular product for testing.
+     int product_mod_value(const Assignment& x, int n, int m) {
+       long long int p = 1 % m;
+       for (int i=0; i<n; i++) {
+         long long int q = static_cast<long long int>(x[i]) % m;
+         if (q < 0)
+           q += m;
+         p = (p*q) % m;
+       }
+       return static_cast<int>(p);
+     }
+
+     /// %Test for an ordinary and reified three-factor modular product
+     // Reified status tests observe interior residue membership, including
+     // the empty-product residue, but subscribe only to bounds changes.
+     class ProductModXYZR : public Test {
+     protected:
+       int m;
+     public:
+       ProductModXYZR(const std::string& s, const Gecode::IntSet& d,
+                      int m0, Gecode::IntPropLevel ipl, bool r=true)
+         : Test("Arithmetic::ProductMod::XYZR::"+str(ipl)+"::"+s+(r ? "" : "::Plain"),
+                4,d,r,ipl), m(m0) { contest=CTL_NONE; testfix=!r; }
+       virtual bool solution(const Assignment& x) const {
+         return product_mod_value(x,3,m) == x[3];
+       }
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
+         Gecode::product_mod(home,Gecode::IntVarArgs({x[0],x[1],x[2]}),
+                             m,x[3],ipl);
+       }
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x,
+                         Gecode::Reify r) {
+         Gecode::product_mod(home,Gecode::IntVarArgs({x[0],x[1],x[2]}),
+                             m,x[3],r,ipl);
+       }
+     };
+
+     /// %Test for the empty modular product, including modulus one
+     class ProductModEmpty : public Test {
+     protected:
+       int m;
+     public:
+       ProductModEmpty(const std::string& s, const Gecode::IntSet& d,
+                       int m0, Gecode::IntPropLevel ipl)
+         : Test("Arithmetic::ProductMod::Empty::"+str(ipl)+"::"+s,
+                1,d,true,ipl), m(m0) { contest=CTL_NONE;  }
+       virtual bool solution(const Assignment& x) const {
+         return x[0] == (1 % m);
+       }
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
+         Gecode::product_mod(home,Gecode::IntVarArgs(),m,x[0],ipl);
+       }
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x,
+                         Gecode::Reify r) {
+         Gecode::product_mod(home,Gecode::IntVarArgs(),m,x[0],r,ipl);
+       }
+     };
+
+     /// %Test for a singleton modular product
+     class ProductModSingleton : public Test {
+     protected:
+       int m;
+     public:
+       ProductModSingleton(const std::string& s, const Gecode::IntSet& d,
+                           int m0, Gecode::IntPropLevel ipl, bool r=true)
+         : Test("Arithmetic::ProductMod::Singleton::"+str(ipl)+"::"+s+(r ? "" : "::Plain"),
+                2,d,r,ipl), m(m0) { contest=CTL_NONE; testfix=!r; }
+       virtual bool solution(const Assignment& x) const {
+         int r = x[0] % m;
+         if (r < 0)
+           r += m;
+         return r == x[1];
+       }
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
+         Gecode::product_mod(home,Gecode::IntVarArgs({x[0]}),m,x[1],ipl);
+       }
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x,
+                         Gecode::Reify r) {
+         Gecode::product_mod(home,Gecode::IntVarArgs({x[0]}),m,x[1],r,ipl);
+       }
+     };
+
+     /// %Test repeated factors with the result aliased to a factor
+     class ProductModXXYAlias : public Test {
+     protected:
+       int m;
+     public:
+       ProductModXXYAlias(const std::string& s, const Gecode::IntSet& d,
+                          int m0, Gecode::IntPropLevel ipl, bool r=true)
+         : Test("Arithmetic::ProductMod::XXYAlias::"+str(ipl)+"::"+s+(r ? "" : "::Plain"),
+                2,d,r,ipl), m(m0) { contest=CTL_NONE; testfix=!r; }
+       virtual bool solution(const Assignment& x) const {
+         long long int a = x[0] % m;
+         long long int b = x[1] % m;
+         if (a < 0) a += m;
+         if (b < 0) b += m;
+         return (((a*a) % m)*b) % m == x[1];
+       }
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
+         Gecode::product_mod(home,Gecode::IntVarArgs({x[0],x[0],x[1]}),
+                             m,x[1],ipl);
+       }
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x,
+                         Gecode::Reify r) {
+         Gecode::product_mod(home,Gecode::IntVarArgs({x[0],x[0],x[1]}),
+                             m,x[1],r,ipl);
+       }
+     };
+
+     /// Targeted algebraic and quotient-band propagation for fixed modulus
+     class ProductModAlgebraic : public ::Test::Base {
+     protected:
+       class TestSpace : public Gecode::Space {
+       public:
+         virtual Gecode::Space* copy(void) { return nullptr; }
+       };
+     public:
+       ProductModAlgebraic(void)
+         : ::Test::Base("Int::Arithmetic::ProductMod::Algebraic") {}
+       virtual bool run(void) {
+         using namespace Gecode;
+         {
+           TestSpace home;
+           IntVarArgs x(home,3,-100,100);
+           IntVar y(home,-10,10);
+           product_mod(home,x,1,y);
+           if ((home.status() == SS_FAILED) || !y.assigned() ||
+               (y.val() != 0))
+             return arithmetic_failed
+               ("modulus one: x, y",
+                Gecode::IntVarArgs() << x << y);
+         }
+         {
+           TestSpace home;
+           IntVar z(home,14,14), x(home,-1000,1000), y(home,0,6);
+           product_mod(home,IntVarArgs({z,x}),7,y);
+           if ((home.status() == SS_FAILED) || !y.assigned() ||
+               (y.val() != 0))
+             return arithmetic_failed
+               ("zero residue factor: z, x, y",
+                Gecode::IntVarArgs() << z << x << y);
+         }
+         {
+           TestSpace home;
+           IntVar one(home,1,1), x(home,20,30), y(home,0,99);
+           product_mod(home,IntVarArgs({one,x}),100,y);
+           if ((home.status() == SS_FAILED) ||
+               (y.min() != 20) || (y.max() != 30))
+             return arithmetic_failed
+               ("nonwrapping product: one, x, y",
+                Gecode::IntVarArgs() << one << x << y);
+         }
+         {
+           TestSpace home;
+           IntVar x(home,15,19), y(home,0,6);
+           product_mod(home,IntVarArgs({x}),7,y);
+           if ((home.status() == SS_FAILED) ||
+               (y.min() != 1) || (y.max() != 5))
+             return arithmetic_failed
+               ("positive quotient band: x, y",
+                Gecode::IntVarArgs() << x << y);
+         }
+         {
+           TestSpace home;
+           IntVar x(home,-20,-16), y(home,0,6);
+           product_mod(home,IntVarArgs({x}),7,y);
+           if ((home.status() == SS_FAILED) ||
+               (y.min() != 1) || (y.max() != 5))
+             return arithmetic_failed
+               ("negative quotient band: x, y",
+                Gecode::IntVarArgs() << x << y);
+         }
+         {
+           TestSpace home;
+           IntVar c(home,6,6), x(home,-100,100), y(home,9,9);
+           product_mod(home,IntVarArgs({c,x}),15,y);
+           if ((home.status() == SS_FAILED) ||
+               (x.min() != -96) || (x.max() != 99))
+             return arithmetic_failed
+               ("linear congruence: c, x, y",
+                Gecode::IntVarArgs() << c << x << y);
+         }
+         {
+           TestSpace home;
+           IntVar c(home,6,6), x(home,-100,100), y(home,8,8);
+           product_mod(home,IntVarArgs({c,x}),15,y);
+           if (home.status() != SS_FAILED)
+             return arithmetic_failed
+               ("inconsistent congruence: c, x, y",
+                Gecode::IntVarArgs() << c << x << y);
+         }
+         {
+           TestSpace home;
+           IntVar z(home,0,0), x(home,-100,100), y(home,0,1);
+           BoolVar b(home,0,1);
+           product_mod(home,IntVarArgs({z,x}),7,y,Reify(b));
+           rel(home,y,IRT_EQ,0);
+           if ((home.status() == SS_FAILED) || !b.assigned() ||
+               (b.val() != 1))
+             return arithmetic_failed
+               ("reified zero residue: z, x, y",
+                Gecode::IntVarArgs() << z << x << y);
+         }
+         return true;
+       }
+     };
+
+     /// %Test for an ordinary two-factor product with a variable modulus
+     // Empty-product status observes membership of 0/1 in the result, and
+     // divisor status observes interior modulus membership. Reposting can
+     // therefore strengthen propagation without a subscribed bounds event.
+     class ProductModVarXYMR : public Test {
+     public:
+       ProductModVarXYMR(const std::string& s, const Gecode::IntSet& d,
+                         Gecode::IntPropLevel ipl)
+         : Test("Arithmetic::ProductModVar::XYMR::"+str(ipl)+"::"+s,
+                4,d,true,ipl) { contest=CTL_NONE; testfix=false; }
+       virtual bool solution(const Assignment& x) const {
+         return (x[2] > 0) &&
+           (product_mod_value(x,2,x[2]) == x[3]);
+       }
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
+         Gecode::product_mod(home,Gecode::IntVarArgs({x[0],x[1]}),
+                             x[2],x[3],ipl);
+       }
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x,
+                         Gecode::Reify r) {
+         Gecode::product_mod(home,Gecode::IntVarArgs({x[0],x[1]}),
+                             x[2],x[3],r,ipl);
+       }
+     };
+
+     /// %Test for the empty product with a variable modulus
+     class ProductModVarEmpty : public Test {
+     public:
+       ProductModVarEmpty(const std::string& s, const Gecode::IntSet& d,
+                          Gecode::IntPropLevel ipl)
+         : Test("Arithmetic::ProductModVar::Empty::"+str(ipl)+"::"+s,
+                2,d,true,ipl) { contest=CTL_NONE; testfix=false; }
+       virtual bool solution(const Assignment& x) const {
+         return (x[0] > 0) && (x[1] == (1 % x[0]));
+       }
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
+         Gecode::product_mod(home,Gecode::IntVarArgs(),x[0],x[1],ipl);
+       }
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x,
+                         Gecode::Reify r) {
+         Gecode::product_mod(home,Gecode::IntVarArgs(),x[0],x[1],r,ipl);
+       }
+     };
+
+     /// %Test for a singleton product with a variable modulus
+     class ProductModVarSingleton : public Test {
+     public:
+       ProductModVarSingleton(const std::string& s, const Gecode::IntSet& d,
+                              Gecode::IntPropLevel ipl)
+         : Test("Arithmetic::ProductModVar::Singleton::"+str(ipl)+"::"+s,
+                3,d,true,ipl) { contest=CTL_NONE; testfix=false; }
+       virtual bool solution(const Assignment& x) const {
+         if (x[1] <= 0)
+           return false;
+         int r = x[0] % x[1];
+         if (r < 0)
+           r += x[1];
+         return r == x[2];
+       }
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
+         Gecode::product_mod(home,Gecode::IntVarArgs({x[0]}),
+                             x[1],x[2],ipl);
+       }
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x,
+                         Gecode::Reify r) {
+         Gecode::product_mod(home,Gecode::IntVarArgs({x[0]}),
+                             x[1],x[2],r,ipl);
+       }
+     };
+
+     /// %Test repeated factors with a variable modulus
+     class ProductModVarRepeated : public Test {
+     public:
+       ProductModVarRepeated(const std::string& s, const Gecode::IntSet& d,
+                             Gecode::IntPropLevel ipl)
+         : Test("Arithmetic::ProductModVar::Repeated::"+str(ipl)+"::"+s,
+                3,d,true,ipl) { contest=CTL_NONE; testfix=false; }
+       virtual bool solution(const Assignment& x) const {
+         if (x[1] <= 0)
+           return false;
+         long long int a = x[0] % x[1];
+         if (a < 0) a += x[1];
+         return (a*a) % x[1] == x[2];
+       }
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
+         Gecode::product_mod(home,Gecode::IntVarArgs({x[0],x[0]}),
+                             x[1],x[2],ipl);
+       }
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x,
+                         Gecode::Reify r) {
+         Gecode::product_mod(home,Gecode::IntVarArgs({x[0],x[0]}),
+                             x[1],x[2],r,ipl);
+       }
+     };
+
+     /// %Test modulus/factor aliasing
+     class ProductModVarModFactorAlias : public Test {
+     public:
+       ProductModVarModFactorAlias(const std::string& s,
+                                   const Gecode::IntSet& d,
+                                   Gecode::IntPropLevel ipl)
+         : Test("Arithmetic::ProductModVar::ModFactorAlias::"+
+                str(ipl)+"::"+s,2,d,true,ipl) { contest=CTL_NONE; testfix=false; }
+       virtual bool solution(const Assignment& x) const {
+         return (x[0] > 0) && (x[1] == 0);
+       }
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
+         Gecode::product_mod(home,Gecode::IntVarArgs({x[0]}),
+                             x[0],x[1],ipl);
+       }
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x,
+                         Gecode::Reify r) {
+         Gecode::product_mod(home,Gecode::IntVarArgs({x[0]}),
+                             x[0],x[1],r,ipl);
+       }
+     };
+
+     /// %Test factor/result aliasing
+     class ProductModVarFactorResultAlias : public Test {
+     public:
+       ProductModVarFactorResultAlias(const std::string& s,
+                                      const Gecode::IntSet& d,
+                                      Gecode::IntPropLevel ipl)
+         : Test("Arithmetic::ProductModVar::FactorResultAlias::"+
+                str(ipl)+"::"+s,2,d,true,ipl) { contest=CTL_NONE; testfix=false; }
+       virtual bool solution(const Assignment& x) const {
+         if (x[1] <= 0)
+           return false;
+         int r = x[0] % x[1];
+         if (r < 0) r += x[1];
+         return r == x[0];
+       }
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
+         Gecode::product_mod(home,Gecode::IntVarArgs({x[0]}),
+                             x[1],x[0],ipl);
+       }
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x,
+                         Gecode::Reify r) {
+         Gecode::product_mod(home,Gecode::IntVarArgs({x[0]}),
+                             x[1],x[0],r,ipl);
+       }
+     };
+
+     /// %Test modulus/result aliasing, which is necessarily inconsistent
+     class ProductModVarModResultAlias : public Test {
+     public:
+       ProductModVarModResultAlias(const std::string& s,
+                                   const Gecode::IntSet& d,
+                                   Gecode::IntPropLevel ipl)
+         : Test("Arithmetic::ProductModVar::ModResultAlias::"+
+                str(ipl)+"::"+s,2,d,true,ipl) { contest=CTL_NONE;  }
+       virtual bool solution(const Assignment&) const { return false; }
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
+         Gecode::product_mod(home,Gecode::IntVarArgs({x[0]}),
+                             x[1],x[1],ipl);
+       }
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x,
+                         Gecode::Reify r) {
+         Gecode::product_mod(home,Gecode::IntVarArgs({x[0]}),
+                             x[1],x[1],r,ipl);
+       }
+     };
+
+     /// Targeted bounds and arithmetic checks for a variable modulus
+     class ProductModVarBounds : public ::Test::Base {
+     protected:
+       class TestSpace : public Gecode::Space {
+       public:
+         virtual Gecode::Space* copy(void) { return nullptr; }
+       };
+     public:
+       ProductModVarBounds(void)
+         : ::Test::Base("Int::Arithmetic::ProductModVar::Bounds") {}
+       virtual bool run(void) {
+         using namespace Gecode;
+         {
+           TestSpace home;
+           const int vm[5] = {-7,0,1,4,9};
+           IntVar m(home,IntSet(vm,5));
+           IntVar y(home,-5,12);
+           product_mod(home,IntVarArgs(),m,y);
+           if ((home.status() == SS_FAILED) || (m.min() != 1) ||
+               (y.min() != 0) || (y.max() >= m.max()))
+             return arithmetic_failed
+               ("empty product range: m, y",
+                Gecode::IntVarArgs() << m << y);
+         }
+         {
+           TestSpace home;
+           IntVar x(home,Gecode::Int::Limits::max,Gecode::Int::Limits::max);
+           IntVar m(home,Gecode::Int::Limits::max,Gecode::Int::Limits::max);
+           IntVar y(home,0,0);
+           product_mod(home,IntVarArgs({x}),m,y);
+           if (home.status() == SS_FAILED)
+             return arithmetic_failed
+               ("integer limit modulus: x, m, y",
+                Gecode::IntVarArgs() << x << m << y);
+         }
+         {
+           TestSpace home;
+           IntVar x(home,3,5), c(home,2,2), m(home,5,6), y(home,2,2);
+           product_mod(home,IntVarArgs({x,c}),m,y);
+           if (home.status() == SS_FAILED)
+             return arithmetic_failed
+               ("delayed factor bounds: x, c, m, y",
+                Gecode::IntVarArgs() << x << c << m << y);
+           rel(home,x,IRT_LQ,4);
+           if ((home.status() == SS_FAILED) || !x.assigned() ||
+               (x.val() != 4))
+             return arithmetic_failed
+               ("nonwrapping variable modulus: x, c, m, y",
+                Gecode::IntVarArgs() << x << c << m << y);
+         }
+         {
+           TestSpace home;
+           IntVar x(home,10,20), c(home,10,20), m(home,401,509);
+           IntVar y(home,0,600);
+           product_mod(home,IntVarArgs({x,c}),m,y);
+           if ((home.status() == SS_FAILED) || (y.min() != 100) ||
+               (y.max() != 400))
+             return arithmetic_failed
+               ("check 5: x, c, m, y",
+                Gecode::IntVarArgs() << x << c << m << y);
+         }
+         return true;
+       }
+     };
+
+     /// Targeted algebraic propagation for a variable modulus
+     class ProductModVarAlgebraic : public ::Test::Base {
+     protected:
+       class TestSpace : public Gecode::Space {
+       public:
+         virtual Gecode::Space* copy(void) { return nullptr; }
+       };
+       static bool domain(const Gecode::IntVar& x, const int* v, int n) {
+         if (x.size() != static_cast<unsigned int>(n))
+           return false;
+         for (int i=0; i<n; i++)
+           if (!x.in(v[i]))
+             return false;
+         return true;
+       }
+     public:
+       ProductModVarAlgebraic(void)
+         : ::Test::Base("Int::Arithmetic::ProductModVar::Algebraic") {}
+       virtual bool run(void) {
+         using namespace Gecode;
+         {
+           TestSpace home;
+           IntVar m(home,2,Gecode::Int::Limits::max);
+           IntVar z(home,-100,100);
+           IntVar y(home,0,100);
+           product_mod(home,IntVarArgs({z,m}),m,y);
+           if ((home.status() == SS_FAILED) || !y.assigned() || (y.val()!=0))
+             return arithmetic_failed
+               ("modulus factor: m, z, y",
+                Gecode::IntVarArgs() << m << z << y);
+         }
+         {
+           TestSpace home;
+           const int mv[5] = {-3,0,1,7,1000000};
+           IntVar m(home,IntSet(mv,5));
+           IntVar y(home,0,0);
+           product_mod(home,IntVarArgs(),m,y);
+           if ((home.status() == SS_FAILED) || !m.assigned() || (m.val()!=1))
+             return arithmetic_failed
+               ("empty product zero: m, y",
+                Gecode::IntVarArgs() << m << y);
+         }
+         {
+           TestSpace home;
+           const int mv[4] = {1,2,17,1000000};
+           const int keep[3] = {2,17,1000000};
+           IntVar m(home,IntSet(mv,4));
+           IntVar y(home,1,1);
+           product_mod(home,IntVarArgs(),m,y);
+           if ((home.status() == SS_FAILED) || !domain(m,keep,3))
+             return arithmetic_failed
+               ("empty product one: m, y",
+                Gecode::IntVarArgs() << m << y);
+         }
+         {
+           TestSpace home;
+           const int mv[10] = {5,7,8,9,14,16,28,55,56,1000000};
+           IntVar a(home,6,6), c(home,10,10);
+           IntVar m(home,IntSet(mv,10));
+           IntVar y(home,4,4);
+           product_mod(home,IntVarArgs({a,c}),m,y);
+           if ((home.status() == SS_FAILED) || (m.min() != 5) ||
+               (m.max() != 56))
+             return arithmetic_failed
+               ("divisor upper bound: a, c, m, y",
+                Gecode::IntVarArgs() << a << c << m << y);
+         }
+         {
+           TestSpace home;
+           const int mv[7] = {4,5,6,7,10,11,60};
+           IntVar a(home,6,6), c(home,10,10);
+           IntVar m(home,IntSet(mv,7));
+           IntVar y(home,0,0);
+           product_mod(home,IntVarArgs({a,c}),m,y);
+           if ((home.status() == SS_FAILED) || (m.min() != 4) ||
+               (m.max() != 60))
+             return arithmetic_failed
+               ("sparse divisor range: a, c, m, y",
+                Gecode::IntVarArgs() << a << c << m << y);
+         }
+         {
+           TestSpace home;
+           const int mv[3] = {13,101,1000000};
+           IntVar y(home,12,12);
+           IntVar m(home,IntSet(mv,3));
+           product_mod(home,IntVarArgs({y}),m,y);
+           if ((home.status() == SS_FAILED) || !domain(m,mv,3))
+             return arithmetic_failed
+               ("result factor: y, m",
+                Gecode::IntVarArgs() << y << m);
+         }
+         {
+           TestSpace home;
+           const int mv[3] = {2,17,1000000};
+           IntVar z(home,0,0), y(home,0,0);
+           IntVar m(home,IntSet(mv,3));
+           product_mod(home,IntVarArgs({z}),m,y);
+           if ((home.status() == SS_FAILED) || !domain(m,mv,3))
+             return arithmetic_failed
+               ("zero factor: z, y, m",
+                Gecode::IntVarArgs() << z << y << m);
+         }
+         {
+           TestSpace home;
+           const int hi=Gecode::Int::Limits::max;
+           IntVar a(home,hi,hi), c(home,hi,hi), d(home,hi,hi);
+           IntVar m(home,2,hi), y(home,0,0);
+           product_mod(home,IntVarArgs({a,c,d}),m,y);
+           if (home.status() == SS_FAILED)
+             return arithmetic_failed
+               ("overflowing assigned product: a, c, d, m, y",
+                Gecode::IntVarArgs() << a << c << d << m << y);
+         }
+         {
+           TestSpace home;
+           const int hi=Gecode::Int::Limits::max;
+           IntVar x(home,hi,hi), m(home,1,hi), y(home,0,0);
+           product_mod(home,IntVarArgs({x}),m,y);
+           if ((home.status() == SS_FAILED) || (m.min() != 1) ||
+               (m.max() != hi))
+             return arithmetic_failed
+               ("limit dividend: x, m, y",
+                Gecode::IntVarArgs() << x << m << y);
+         }
+         {
+           TestSpace home;
+           const int hi=Gecode::Int::Limits::max;
+           IntVar x(home,hi,hi), m(home,2,hi), y(home,1,1);
+           product_mod(home,IntVarArgs({x}),m,y);
+           if ((home.status() == SS_FAILED) || (m.min() != 2) ||
+               (m.max() != hi-1))
+             return arithmetic_failed
+               ("limit difference: x, m, y",
+                Gecode::IntVarArgs() << x << m << y);
+         }
+         return true;
+       }
+     };
+
+     /// Verify that inactive implication modes leave all integer views alone
+     class ProductModVarInactive : public ::Test::Base {
+     protected:
+       class TestSpace : public Gecode::Space {
+       public:
+         virtual Gecode::Space* copy(void) { return nullptr; }
+       };
+       static bool unchanged(const Gecode::IntVar& x, const int* v, int n) {
+         if (x.size() != static_cast<unsigned int>(n))
+           return false;
+         for (int i=0; i<n; i++)
+           if (!x.in(v[i]))
+             return false;
+         return true;
+       }
+     public:
+       ProductModVarInactive(void)
+         : ::Test::Base("Int::Arithmetic::ProductModVar::Inactive") {}
+       virtual bool run(void) {
+         using namespace Gecode;
+         const int xv[5] = {-3,-1,0,2,5};
+         const int mv[4] = {-2,0,1,4};
+         const int yv[4] = {-4,0,3,7};
+         for (int mode=0; mode<2; mode++) {
+           TestSpace home;
+           IntVar x(home,IntSet(xv,5));
+           IntVar m(home,IntSet(mv,4));
+           IntVar y(home,IntSet(yv,4));
+           BoolVar b(home,mode,mode);
+           Reify r(b,mode == 0 ? RM_IMP : RM_PMI);
+           product_mod(home,IntVarArgs({x,x}),m,y,r);
+           if ((home.status() == SS_FAILED) ||
+               !unchanged(x,xv,5) || !unchanged(m,mv,4) ||
+               !unchanged(y,yv,4))
+             return arithmetic_failed
+               ("inactive implication: x, m, y",
+                Gecode::IntVarArgs() << x << m << y);
+         }
+         return true;
+       }
+     };
+
+
+     /// %Test that a nonpositive modular-product modulus is rejected
+     class ProductModInvalidModulus : public ::Test::Base {
+     protected:
+       class TestSpace : public Gecode::Space {
+       public:
+         virtual Gecode::Space* copy(void) { return nullptr; }
+       };
+     public:
+       ProductModInvalidModulus(void)
+         : ::Test::Base("Int::Arithmetic::ProductMod::InvalidModulus") {}
+       virtual bool run(void) {
+         TestSpace home;
+         Gecode::IntVar y(home,0,1);
+         for (int m=0; m>=-1; m--) {
+           try {
+             Gecode::product_mod(home,Gecode::IntVarArgs(),m,y);
+             return arithmetic_failed
+               ("accepted invalid modulus: y",
+                Gecode::IntVarArgs() << y);
+           } catch (const Gecode::Int::OutOfLimits&) {
+           }
+         }
+         return true;
+       }
+     };
+
      /// %Test for multiplication constraint
      class MultXYZ : public Test {
      public:
@@ -408,7 +1924,7 @@ namespace Test { namespace Int {
          : Test("Arithmetic::DivMod::"+s,4,d) {}
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
-         return x[0] == x[1]*x[2]+x[3] &&
+         return x[0] == static_cast<long long int>(x[1])*x[2]+x[3] &&
                 abs(x[3]) < abs(x[1]) &&
                 (x[3] == 0 || sgn(x[3]) == sgn(x[0]));
        }
@@ -456,7 +1972,7 @@ namespace Test { namespace Int {
            divsign *
            static_cast<int>(floor(static_cast<double>(std::abs(x[0]))/
                                   static_cast<double>(std::abs(x[1]))));
-         return x[0] == x[1]*divresult+x[2];
+         return x[0] == static_cast<long long int>(x[1])*divresult+x[2];
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
@@ -1085,6 +2601,13 @@ namespace Test { namespace Int {
          Gecode::IntSet b(vb,9);
          Gecode::IntSet c(-8,8);
          Gecode::IntSet d(-70,70);
+         const int vg[7] = {-12,-6,-1,0,4,9,12};
+         Gecode::IntSet g(vg,7);
+         const int vp[5] = {
+           Gecode::Int::Limits::min,-1,0,1,Gecode::Int::Limits::max
+         };
+         Gecode::IntSet p(vp,5);
+         Gecode::IntSet q(-2,2);
 
          (void) new DivMod("A",a);
          (void) new DivMod("B",b);
@@ -1100,6 +2623,47 @@ namespace Test { namespace Int {
 
 
          for (IntPropLevels ipls; ipls(); ++ipls) {
+           (void) new GcdXYZ("C",c,ipls.ipl());
+           (void) new GcdXYZ("C",c,ipls.ipl(),false);
+           (void) new GcdXYZ("Sparse",g,ipls.ipl());
+           (void) new GcdXYZ("Sparse",g,ipls.ipl(),false);
+           (void) new GcdXXY("C",c,ipls.ipl());
+           (void) new GcdXXY("C",c,ipls.ipl(),false);
+           (void) new GcdXYX("C",c,ipls.ipl());
+           (void) new GcdXYX("C",c,ipls.ipl(),false);
+           (void) new GcdXXX("C",c,ipls.ipl());
+
+           (void) new DividesXY("C",c,ipls.ipl());
+           (void) new DividesXY("Sparse",g,ipls.ipl());
+           (void) new DividesXX("C",c,ipls.ipl());
+
+           (void) new ProductXYZR("C",q,ipls.ipl());
+           (void) new ProductXYZR("Sparse",g,ipls.ipl());
+           (void) new ProductXYZR("Limits",p,ipls.ipl());
+           (void) new ProductEmpty("C",q,ipls.ipl());
+           (void) new ProductSingleton("C",q,ipls.ipl());
+           (void) new ProductXXYAlias("C",q,ipls.ipl());
+
+           (void) new ProductModXYZR("C",q,5,ipls.ipl());
+           (void) new ProductModXYZR("C",q,5,ipls.ipl(),false);
+           (void) new ProductModXYZR("Sparse",g,7,ipls.ipl());
+           (void) new ProductModXYZR("Sparse",g,7,ipls.ipl(),false);
+           (void) new ProductModEmpty("C",q,5,ipls.ipl());
+           (void) new ProductModEmpty("ModulusOne",q,1,ipls.ipl());
+           (void) new ProductModSingleton("C",g,5,ipls.ipl());
+           (void) new ProductModSingleton("C",g,5,ipls.ipl(),false);
+           (void) new ProductModXXYAlias("C",q,5,ipls.ipl());
+           (void) new ProductModXXYAlias("C",q,5,ipls.ipl(),false);
+
+           (void) new ProductModVarXYMR("C",q,ipls.ipl());
+           (void) new ProductModVarXYMR("Sparse",g,ipls.ipl());
+           (void) new ProductModVarEmpty("C",q,ipls.ipl());
+           (void) new ProductModVarSingleton("C",q,ipls.ipl());
+           (void) new ProductModVarRepeated("C",q,ipls.ipl());
+           (void) new ProductModVarModFactorAlias("C",q,ipls.ipl());
+           (void) new ProductModVarFactorResultAlias("C",q,ipls.ipl());
+           (void) new ProductModVarModResultAlias("C",q,ipls.ipl());
+
            (void) new AbsXY("A",a,ipls.ipl());
            (void) new AbsXY("B",b,ipls.ipl());
            (void) new AbsXY("C",c,ipls.ipl());
@@ -1249,6 +2813,19 @@ namespace Test { namespace Int {
            (void) new ArgMinBool(i,1,false);
            (void) new ArgMinBoolShared(i,false);
          }
+         (void) new NumberTheorySparseBounds;
+         (void) new NumberTheoryLifecycle;
+         (void) new NumberTheoryLimits;
+         (void) new NumberTheoryIdentities;
+         (void) new ProductModInvalidModulus;
+         (void) new ProductModAlgebraic;
+         (void) new ProductModVarBounds;
+         (void) new ProductModVarAlgebraic;
+         (void) new ProductModVarInactive;
+         (void) new ProductBoundsLarge;
+         (void) new ProductSimplifySign;
+         (void) new ProductPowerAlias;
+         (void) new ProductInverseBounds;
        }
      };
 
