@@ -15,8 +15,9 @@ before squash merge.
 
 This brief is a design proposal. The requested exploration creates the area
 and records the recommendations; it does not authorize implementation tasks.
-The compatibility and float choices below remain recommendations pending
-discussion.
+Gecode 7 may impose new comparison requirements on optimization spaces; a
+legacy arbitration fallback is not required. Objective readiness, float behavior,
+and partial-order handling below remain proposals pending discussion.
 
 ## Boundaries
 
@@ -25,15 +26,20 @@ classes, FlatZinc optimization, incumbent arbitration in BAB/PBS/RBS, documentat
 and focused regression coverage. Include the small driver change needed to keep
 the existing Gist display-comparison overload visible.
 
-Retain `constrain()` for pruning, recomputation, restarts, and model-defined
-sequential solution progression. Do not replace it with a comparison of domain
-bounds. Preserve the existing search ownership, synchronization, stopping, and
+Retain `constrain()` for pruning, recomputation, and restarts. Do not replace it
+with a comparison of domain bounds. Preserve the existing search ownership,
+synchronization, stopping, and
 restart protocols except where comparison outcomes must reach the caller.
 
-Exclude Pareto-front enumeration, a new search engine, objective extraction or
-serialization, a comparator registry, heterogeneous-model conversion, changing
+Exclude diverse-solution search, Pareto-front enumeration, a new search engine,
+objective extraction or serialization, a comparator registry,
+heterogeneous-model conversion, changing
 the C++ language requirement, and a performance benchmark campaign. No slices
 or tasks are needed for this exploration.
+
+Diverse-solution search needs restrictions with respect to all previous
+solutions, rather than comparison with one incumbent. It is a separate search
+contract and does not justify weakening the optimization comparison requirement.
 
 ## Terms and proposed interface
 
@@ -51,19 +57,20 @@ enum SpaceComparison {
   SC_BETTER,
   SC_EQUIVALENT,
   SC_WORSE,
-  SC_INCOMPARABLE,
-  SC_UNAVAILABLE
+  SC_INCOMPARABLE
 };
 
 virtual SpaceComparison compare(const Space& other) const;
 ```
 
-The first four values describe the ordering. `SC_UNAVAILABLE` is explicitly
-outside that ordering: no comparison was supplied, or the objective data is not
-ready for the model's documented comparison. The default returns this value.
-The exact enum spelling is provisional. This uses the current C++17 baseline
-and needs neither an additional capability virtual nor a new objective base
-class. Do not assign a useful ordering to `SC_UNAVAILABLE`.
+Recommend keeping the result restricted to ordering outcomes. Missing comparison
+support and undetermined objective data are errors, not ordering results. The
+readiness decision is still open; this is the recommended interface if the
+precondition is adopted. The exact enum spelling is provisional. This uses the
+current C++17 baseline and needs neither an additional capability virtual nor a
+new objective base class. A non-pure default that reports unsupported use can
+leave satisfaction-only spaces unaffected; optimization spaces must provide
+the comparison, usually through a convenience base.
 
 The method reads objective data only. It must not call `status()`, post a
 constraint, clone either argument, alter domains or branchers, or change shared
@@ -74,11 +81,25 @@ normal valid comparisons must not throw.
 Operands must be stable, non-failed spaces with compatible objective meaning.
 Comparison can work on an otherwise unfinished space when its objective is
 already determined. Scalar and lexicographic integer helpers require assigned
-objective variables; unrelated variables may remain unassigned. Missing
-objective values return `SC_UNAVAILABLE`, without propagation. Do not require
+objective variables on both operands; unrelated variables may remain unassigned.
+Recommend treating missing objective values as a precondition violation, using
+the existing unassigned-value error convention without propagation. Do not require
 every model variable to be fixed, and do not use `SS_SOLVED` as proof that the
 objective is assigned. A caller passing an external incumbent to a search engine
 must additionally supply a feasible solution, not merely a promising bound.
+
+`a.constrain(b)` requires determined objective data in `b` while pruning the
+unfinished receiver `a`; `a.compare(b)` requires determined data in both.
+For integer lexicographic convenience classes, require every cost component
+to be assigned, rather than making readiness depend on where the first
+difference happens to occur. Custom objectives define which data determines
+their quality; that need not be a stored objective variable.
+
+The alternative is a distinct `SC_UNDETERMINED` outcome for callers deliberately
+comparing partial objectives. It would not mean Pareto incomparability, and
+search would still have to report an error when given an undetermined incumbent.
+No current search consumer needs a recoverable partial-objective result, so
+recommend the precondition instead of adding this state speculatively.
 
 All participating assets must use the same objective direction, component
 interpretation, and pruning policy. Built-in comparisons should diagnose
@@ -129,9 +150,9 @@ designed dominance-chain search, but that is not the current PBS asset protocol.
 
 Missing or unsupported comparison must produce a caller-visible diagnostic,
 not normal exhaustion, a hang, or termination of a detached worker thread.
-Check the first incumbent's self-comparison where needed to expose unavailable
-support even before a second solution arrives. No propagation is allowed for
-this check. Parallel reporting must stop/wake safely and deliver the error at
+Do not add a capability protocol or routine self-comparison merely to discover
+whether a required override exists. Parallel reporting must stop/wake safely
+and deliver the error at
 the controlling call after workers are quiescent. Nested PBS/RBS/BAB composition
 must carry it through worker boundaries. Limit this work to comparison failures;
 do not turn it into general exception-safety refactoring.
@@ -146,19 +167,19 @@ compatible dimensions rather than accidentally comparing different objectives.
 Models overriding an inherited `constrain()` with a different objective must
 also override its inherited comparison.
 
-Recommended Gecode 7 compatibility policy: require comparison for incumbent
-arbitration. Preserve constrain-only standalone sequential BAB/RBS operation,
-including non-ordering uses such as `cartesian-heart`. Existing models still
-compile because the new virtual is not pure, but a model used in a portfolio,
-parallel BAB, or external-incumbent arbitration must supply comparison. DFS and
-other satisfaction-only paths do not require it. Document the runtime migration
+Settled Gecode 7 direction: optimization spaces may be required to supply
+comparison; no legacy clone/constrain arbitration fallback is needed. The
+ordinary integer minimization and maximization cases inherit it from the existing
+convenience classes. Custom optimization models implement the same contract.
+DFS and other satisfaction-only paths do not require it. Document the migration
 and ordinary ABI impact of adding a virtual function.
 
-The alternative is an explicitly documented legacy path for `SC_UNAVAILABLE`.
-It preserves more existing executions but retains propagation-dependent
-arbitration and needs a clearly stated limit on the new guarantee. Do not put
-clone/constrain probing inside `Space::compare()` or call such a fallback a
-general comparison algorithm. The choice is still open.
+The ordinary sequential BAB loop need not call comparison merely to enforce
+this requirement: it already searches under the incumbent cut. Preserving old
+non-ordering BAB uses is not a design constraint. Treat `cartesian-heart` as
+evidence of a separate diverse-solution use, not a reason for an unavailable
+comparison result or a compatibility path. Its all-previous-solutions search
+semantics are outside this PR.
 
 ### Floating-point recommendation
 
@@ -189,8 +210,10 @@ test. Float behavior is a material open decision, not an implementation detail.
 
 ## Open questions
 
-1. Adopt the proposed Gecode 7 comparison requirement, or retain an explicit
-   legacy arbitration fallback for constrain-only models?
+1. Require determined objectives on both operands and report violations using
+   the existing error convention, or return a separate undetermined result?
+   Recommend the precondition: the search consumers cannot recover from an
+   undetermined incumbent, and unrelated variables may remain unassigned.
 2. Adopt float bound ranking with step-based pruning, allowing improvements
    smaller than the step among concurrent results, or preserve the reporting
    step through an additional policy? Recommend the former, subject to focused
@@ -199,9 +222,8 @@ test. Float behavior is a material open decision, not an implementation detail.
    A Pareto-front engine is separate work; if it is required here, reshape the
    area before splitting implementation tasks.
 
-The optional questions in the shaping conversation have not yet been answered.
-These recommendations are concrete enough to review, but are not settled user
-decisions.
+The Gecode 7 requirement and exclusion of diverse-solution search are settled.
+The choices listed here remain recommendations, not settled user decisions.
 
 ## Testing
 
@@ -228,8 +250,8 @@ the existing search regressions. The observable risks justify these cases:
 - Compile the ordering and Gist display overloads together in a representative
   script; a model overriding one overload must not hide the other from Gist.
 
-Keep constrain-only sequential behavior covered by existing tests and one
-relevant example smoke check. Do not multiply all new cases across the existing
+Keep ordinary sequential optimization covered by existing tests. Do not
+multiply all new cases across the existing
 large recomputation/thread matrix. Do not add a harness, general property-testing
 layer, timing assertions, or benchmarks merely to justify cheap comparison.
 
