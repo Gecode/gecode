@@ -785,26 +785,8 @@ namespace Gecode { namespace Int { namespace Arithmetic {
       return ES_OK;
     if (b.zero() && (rm == RM_IMP))
       return ES_OK;
-    if (x.size() == 0) {
-      const int identity = 1 % m;
-      const bool t = y.assigned() ? (y.val() == identity) : false;
-      if (b.one() && (rm != RM_PMI)) {
-        GECODE_ME_CHECK(y.eq(home,identity)); return ES_OK;
-      }
-      if (b.zero() && (rm != RM_IMP)) {
-        GECODE_ME_CHECK(y.nq(home,identity)); return ES_OK;
-      }
-      if (!y.in(identity)) {
-        if (rm != RM_PMI)
-          GECODE_ME_CHECK(b.zero(home));
-        return ES_OK;
-      }
-      if (t) {
-        if (rm != RM_IMP)
-          GECODE_ME_CHECK(b.one(home));
-        return ES_OK;
-      }
-    }
+    if (x.size() == 0)
+      return Rel::ReEqDomInt<IntView,BoolView,rm>::post(home,y,1 % m,b);
     switch (product_mod_status(x,y,m)) {
     case RT_TRUE:
       if (rm != RM_IMP) GECODE_ME_CHECK(b.one(home));

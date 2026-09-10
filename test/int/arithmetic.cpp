@@ -456,8 +456,7 @@ namespace Test { namespace Int {
                     Gecode::IntPropLevel ipl)
          : Test("Arithmetic::Product::Empty::"+str(ipl)+"::"+s,
                 1,d,true,ipl) {
-         // Reified y=1 can miss an interior removal of 1 on PC_INT_BND.
-         contest = CTL_NONE; testfix=false;
+         contest = CTL_NONE;
        }
        virtual bool solution(const Assignment& x) const {
          return x[0] == 1;
@@ -477,7 +476,7 @@ namespace Test { namespace Int {
        ProductSingleton(const std::string& s, const Gecode::IntSet& d,
                         Gecode::IntPropLevel ipl)
          : Test("Arithmetic::Product::Singleton::"+str(ipl)+"::"+s,
-                2,d,true,ipl) { contest = CTL_NONE; testfix=false; }
+                2,d,true,ipl) { contest = CTL_NONE;  }
        virtual bool solution(const Assignment& x) const {
          return x[0] == x[1];
        }
@@ -785,8 +784,15 @@ namespace Test { namespace Int {
            IntVar y(home,20,24);
            product(home,IntVarArgs({x,q}),y);
            if ((home.status() == SS_FAILED) ||
-               !bounds(x,cases[i].xmin,cases[i].xmax))
+               !bounds(x,cases[i].xmin,cases[i].xmax)) {
+             if (opt.log)
+               olog << "Inverse bounds, cofactor [" << cases[i].qmin
+                    << "," << cases[i].qmax << "]: x=" << x
+                    << ", q=" << q << ", y=" << y << "; expected x=["
+                    << cases[i].xmin << "," << cases[i].xmax << "]"
+                    << std::endl;
              return false;
+           }
          }
          {
            // When both the cofactor and result can be zero, no inverse
@@ -862,7 +868,7 @@ namespace Test { namespace Int {
        ProductModEmpty(const std::string& s, const Gecode::IntSet& d,
                        int m0, Gecode::IntPropLevel ipl)
          : Test("Arithmetic::ProductMod::Empty::"+str(ipl)+"::"+s,
-                1,d,true,ipl), m(m0) { contest=CTL_NONE; testfix=false; }
+                1,d,true,ipl), m(m0) { contest=CTL_NONE;  }
        virtual bool solution(const Assignment& x) const {
          return x[0] == (1 % m);
        }
@@ -1171,7 +1177,7 @@ namespace Test { namespace Int {
                                    const Gecode::IntSet& d,
                                    Gecode::IntPropLevel ipl)
          : Test("Arithmetic::ProductModVar::ModResultAlias::"+
-                str(ipl)+"::"+s,2,d,true,ipl) { contest=CTL_NONE; testfix=false; }
+                str(ipl)+"::"+s,2,d,true,ipl) { contest=CTL_NONE;  }
        virtual bool solution(const Assignment&) const { return false; }
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          Gecode::product_mod(home,Gecode::IntVarArgs({x[0]}),

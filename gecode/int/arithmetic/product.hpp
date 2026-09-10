@@ -251,6 +251,17 @@ namespace Gecode { namespace Int { namespace Arithmetic {
       GECODE_ME_CHECK(y.eq(home,neg ? -1 : 1));
       return ES_OK;
     }
+    if (x.size() == 1) {
+      if (neg)
+        return Rel::EqBnd<IntView,MinusView>::post(home,x[0],MinusView(y));
+      return Rel::EqBnd<IntView,IntView>::post(home,x[0],y);
+    }
+    // Keep zero-aware inverse bounds when both intervals contain zero;
+    // binary multiplication does less pruning in that case.
+    if ((x.size() == 2) && !neg &&
+        ((x[0] == x[1]) || (x[0].min() > 0) || (x[0].max() < 0) ||
+         (x[1].min() > 0) || (x[1].max() < 0)))
+      return MultBnd::post(home,x[0],x[1],y);
     (void) new (home) Product(home,x,y,neg);
     return ES_OK;
   }
@@ -538,23 +549,10 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   ReProduct<rm>::post(Home home, ViewArray<IntView>& x, IntView y, BoolView b) {
     if (b.one() && (rm == RM_PMI)) return ES_OK;
     if (b.zero() && (rm == RM_IMP)) return ES_OK;
-    if (x.size() == 0) {
-      bool t = y.assigned() ? (y.val() == 1) : false;
-      if (b.one() && (rm != RM_PMI)) {
-        GECODE_ME_CHECK(y.eq(home,1)); return ES_OK;
-      }
-      if (b.zero() && (rm != RM_IMP)) {
-        GECODE_ME_CHECK(y.nq(home,1)); return ES_OK;
-      }
-      if (!y.in(1)) {
-        if (rm != RM_PMI) GECODE_ME_CHECK(b.zero(home));
-        return ES_OK;
-      }
-      if (t) {
-        if (rm != RM_IMP) GECODE_ME_CHECK(b.one(home));
-        return ES_OK;
-      }
-    }
+    if (x.size() == 0)
+      return Rel::ReEqDomInt<IntView,BoolView,rm>::post(home,y,1,b);
+    if (x.size() == 1)
+      return Rel::ReEqBnd<IntView,BoolView,rm>::post(home,x[0],y,b);
     (void) new (home) ReProduct<rm>(home,x,y,b);
     return ES_OK;
   }
