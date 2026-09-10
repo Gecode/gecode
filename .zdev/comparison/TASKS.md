@@ -4,13 +4,13 @@
 
 - Total: 5
 - Ready: 1
-- Blocked: 1
-- Done: 3
+- Blocked: 0
+- Done: 4
 
 | ID | Task | State | Blocked by |
 | --- | --- | --- | --- |
 | [comparison-001](tasks/001-add-space-comparison-and-integer-objective-implementations.md) | Add Space comparison and integer objective implementations | done | — |
 | [comparison-002](tasks/002-compare-float-quality-independently-of-the-improvement-step.md) | Compare float quality independently of the improvement step | done | comparison-001 |
 | [comparison-003](tasks/003-use-comparison-for-sequential-bab-and-restart-incumbent-upda.md) | Use comparison for sequential BAB and restart incumbent updates | done | comparison-001 |
-| [comparison-004](tasks/004-use-comparison-for-parallel-bab-and-safely-report-comparison.md) | Use comparison for parallel BAB and safely report comparison failures | ready | comparison-002, comparison-003 |
-| [comparison-005](tasks/005-integrate-comparison-through-portfolios-and-complete-the-mig.md) | Integrate comparison through portfolios and complete the migration | blocked | comparison-004 |
+| [comparison-004](tasks/004-use-comparison-for-parallel-bab-and-safely-report-comparison.md) | Use comparison for parallel BAB and safely report comparison failures | done | comparison-002, comparison-003 |
+| [comparison-005](tasks/005-integrate-comparison-through-portfolios-and-complete-the-mig.md) | Integrate comparison through portfolios and complete the migration | ready | comparison-004 |
