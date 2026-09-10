@@ -626,6 +626,8 @@ namespace Gecode { namespace FlatZinc {
     /// Compare this space with space \a s and print the differences on
     /// \a out
     void compare(const Space& s, std::ostream& out) const;
+    /// Compare integer optimization objectives
+    virtual SpaceComparison compare(const Space& s) const;
     /// Compare this space with space \a s and print the differences on
     /// \a out using \a p
     void compare(const FlatZincSpace& s, std::ostream& out,
