@@ -42,6 +42,20 @@
 
 #include <gecode/float.hh>
 
+/* Configure linking, as for the Gecode variable libraries. */
+#if !defined(GECODE_STATIC_LIBS) && \
+    (defined(__CYGWIN__) || defined(__MINGW32__) || defined(_MSC_VER))
+#ifdef GECODE_BUILD_TESTFLOAT
+#define GECODE_TESTFLOAT_EXPORT __declspec( dllexport )
+#else
+#define GECODE_TESTFLOAT_EXPORT __declspec( dllimport )
+#endif
+#elif defined(GECODE_GCC_HAS_CLASS_VISIBILITY)
+#define GECODE_TESTFLOAT_EXPORT __attribute__ ((visibility("default")))
+#else
+#define GECODE_TESTFLOAT_EXPORT
+#endif
+
 namespace Test {
 
   /// Testing domain floats
@@ -64,7 +78,7 @@ namespace Test {
       EXTEND_ASSIGNMENT
     };
 
-    class Test;
+    class GECODE_TESTFLOAT_EXPORT Test;
 
     /**
      * \defgroup TaskTestFloat Testing domain floats
@@ -77,7 +91,7 @@ namespace Test {
      */
     //@{
     /// %Base class for assignments
-    class Assignment {
+    class GECODE_TESTFLOAT_EXPORT Assignment {
     protected:
       int n;              ///< Number of variables
       Gecode::FloatVal d; ///< Domain for each variable
@@ -99,7 +113,7 @@ namespace Test {
     };
 
     /// Generate all assignments
-    class CpltAssignment : public Assignment {
+    class GECODE_TESTFLOAT_EXPORT CpltAssignment : public Assignment {
     protected:
       Gecode::FloatVal* dsv; ///< Iterator for each variable
       Gecode::FloatNum step; ///< Step for next assignment
@@ -119,7 +133,7 @@ namespace Test {
     };
 
     /// Generate all assignments except the last variable and complete it to get a solution
-    class ExtAssignment : public Assignment {
+    class GECODE_TESTFLOAT_EXPORT ExtAssignment : public Assignment {
     protected:
       const Test* curPb;     ///< Current problem used to complete assignment
       Gecode::FloatVal* dsv; ///< Iterator for each variable
@@ -142,7 +156,7 @@ namespace Test {
 
 
     /// Generate random selection of assignments
-    class RandomAssignment : public Assignment {
+    class GECODE_TESTFLOAT_EXPORT RandomAssignment : public Assignment {
     protected:
       Gecode::FloatVal* vals; ///< The current values for the variables
       int  a;                 ///< How many assignments still to be generated
@@ -164,7 +178,7 @@ namespace Test {
     };
 
     /// Space for executing tests
-    class TestSpace : public Gecode::Space {
+    class GECODE_TESTFLOAT_EXPORT TestSpace : public Gecode::Space {
     public:
       /// Initial domain
       Gecode::FloatVal d;
@@ -242,7 +256,7 @@ namespace Test {
      * \brief %Base class for tests with float constraints
      *
      */
-    class Test : public Base {
+    class GECODE_TESTFLOAT_EXPORT Test : public Base {
     protected:
       /// Number of variables
       int arity;
@@ -337,7 +351,7 @@ namespace Test {
     //@}
 
     /// Iterator for float relation types
-    class FloatRelTypes {
+    class GECODE_TESTFLOAT_EXPORT FloatRelTypes {
     private:
       /// Array of relation types
       static const Gecode::FloatRelType frts[6];
@@ -363,11 +377,10 @@ namespace Test {
  * \brief Print assignment \a
  * \relates Assignment
  */
-std::ostream& operator<<(std::ostream& os, const Test::Float::Assignment& a);
+GECODE_TESTFLOAT_EXPORT std::ostream& operator<<(std::ostream& os, const Test::Float::Assignment& a);
 
 #include "test/float.hpp"
 
 #endif
 
 // STATISTICS: test-float
-
