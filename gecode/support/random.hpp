@@ -422,8 +422,12 @@ namespace Gecode { namespace Support {
     }
   };
 
-  /// Default generator; full state consists of two 64-bit words.
+  /// Build-configured default generator, also used by command-line clients.
+#ifdef GECODE_RANDOM_XORSHIFT64STAR
+  using RandomGenerator = Random<Xorshift64Star>;
+#else
   using RandomGenerator = Random<SplitMix>;
+#endif
 
 }}
 

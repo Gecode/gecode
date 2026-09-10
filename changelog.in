@@ -68,6 +68,28 @@
 #
 
 [RELEASE]
+Version: 7.0.0
+Date: unreleased
+[DESCRIPTION]
+Development changes for Gecode 7; source, binary, and seeded-sequence
+compatibility with Gecode 6 is not preserved.
+
+[ENTRY]
+Module: kernel
+What:   new
+Rank:   major
+[DESCRIPTION]
+Random branching uses space-local streams and records complete splitting state
+in choices. Every alternative derives a distinct successor state that is stable
+when the same recorded path is recomputed. Splittable SplitMix is the default;
+xorshift64* is a configurable smaller-state alternative. Users can supply engines
+through the existing branching APIs. Standalone Rnd copies share a stream;
+copy() makes an independent exact copy, while space cloning copies local state.
+Drivers accept checked 64-bit seeds and complete state for replay. Test failures
+report the exact iteration state. Seeded sequences and choice archives change;
+no legacy sequence mode is provided. See docs/random.md for migration and costs.
+
+[RELEASE]
 Version: 6.5.0
 Date: unreleased
 [DESCRIPTION]

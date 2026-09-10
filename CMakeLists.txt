@@ -98,6 +98,13 @@ option(GECODE_BUILD_SHARED "Build shared libraries" ${GECODE_BUILD_SHARED_DEFAUL
 option(GECODE_BUILD_STATIC "Build static libraries" ${GECODE_BUILD_STATIC_DEFAULT})
 
 option(GECODE_ENABLE_THREAD "Enable thread support" ON)
+set(GECODE_RANDOM_ENGINE "splitmix" CACHE STRING "Default random engine (splitmix or xorshift64star)")
+set_property(CACHE GECODE_RANDOM_ENGINE PROPERTY STRINGS splitmix xorshift64star)
+if(GECODE_RANDOM_ENGINE STREQUAL "xorshift64star")
+  set(GECODE_RANDOM_XORSHIFT64STAR 1)
+elseif(NOT GECODE_RANDOM_ENGINE STREQUAL "splitmix")
+  message(FATAL_ERROR "GECODE_RANDOM_ENGINE must be splitmix or xorshift64star")
+endif()
 set(GECODE_ENABLE_QT "AUTO" CACHE STRING "Enable Qt support (AUTO, ON, or OFF)")
 set_property(CACHE GECODE_ENABLE_QT PROPERTY STRINGS AUTO ON OFF)
 set(GECODE_ENABLE_GIST_DEFAULT AUTO)
@@ -1406,6 +1413,18 @@ if(BUILD_TESTING)
     add_test(NAME random-state-replay
       COMMAND ${CMAKE_COMMAND} -DREPLAY=$<TARGET_FILE:gecode-random-replay>
         -P ${CMAKE_CURRENT_SOURCE_DIR}/test/random-replay.cmake)
+    if(GECODE_ENABLE_DRIVER)
+      add_executable(gecode-random-options EXCLUDE_FROM_ALL test/random-options.cpp)
+      target_link_libraries(gecode-random-options PRIVATE gecodedriver ${GECODE_TEST_LINK_LIBS})
+      if(GECODE_ENABLE_FLATZINC)
+        target_compile_definitions(gecode-random-options PRIVATE TEST_RANDOM_FLATZINC)
+      endif()
+      add_dependencies(gecode-test gecode-random-options)
+      add_test(NAME random-options
+        COMMAND ${CMAKE_COMMAND} -DOPTIONS=$<TARGET_FILE:gecode-random-options>
+          -DFLATZINC=${GECODE_ENABLE_FLATZINC}
+          -P ${CMAKE_CURRENT_SOURCE_DIR}/test/random-options.cmake)
+    endif()
     if(GECODE_ENABLE_FAULT_INJECTION)
       add_executable(gecode-fault-test EXCLUDE_FROM_ALL
         ${GECODE_FAULT_TEST_SOURCES})

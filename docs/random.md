@@ -71,6 +71,23 @@ not a substitute for a complete snapshot.
 
 ## Handles, binding, and callbacks
 
+The runnable `examples/random-engine.cpp` defines an engine outside Gecode and
+uses it with built-in random variable and value selection. Its three-word state
+contains SplitMix's two words and a raw-draw counter. The counter follows the
+path, including across splits, and wraps modulo 2^64. This demonstrates extending
+state without introducing another generator algorithm or changing Gecode's
+engine-selection code. Build and run it with:
+
+```sh
+cmake --build build/random --target random-engine
+build/random/bin/random-engine
+build/random/bin/random-engine counted-splitmix-v1:000000000000002a:9e3779b97f4a7c15:0000000000000000
+```
+
+Both commands enumerate the same 24 permutations and print the same solution
+states. The optional argument restores this example's custom engine, independently
+of the library's configured default.
+
 `Rnd(seed)` creates a standalone default stream. `Rnd(Support::Random<MyEngine>(seed))`
 creates a user-defined one. Copying a standalone `Rnd` shares its stream;
 `r.copy()` creates an independent exact copy, and `r.split(a)` creates a child.
@@ -145,6 +162,63 @@ failure or exception it prints arguments using `-state`, `-iter 1`, and
 `-test-exact`. Run the same test executable with those arguments. This restores
 the iteration directly, bypassing suite seed derivation. A state replay requires
 one thread and rejects an accompanying `-seed` or an incompatible state format.
+
+## Build configuration and command lines
+
+The default is splittable SplitMix. Select xorshift64* with CMake
+`-DGECODE_RANDOM_ENGINE=xorshift64star` or Autoconf
+`--with-random-engine=xorshift64star`. Both accept `splitmix` to select the default
+explicitly and reject other names. The installed configuration header carries
+the choice to clients; build libraries and clients with matching headers. There
+is no runtime engine registry. Both engines remain available as C++ types in
+either configuration.
+
+The example driver accepts `-seed`; FlatZinc accepts `-r`. Values are unsigned
+64-bit decimal or `0x` hexadecimal integers, or `time` and `hw`. SplitMix seeds
+set its state word directly and use the fixed initial increment
+`9e3779b97f4a7c15`. Xorshift seeds set its state directly, except that zero maps
+to one. A 64-bit seed suffices to initialize either engine; it need not enumerate
+all possible full states.
+
+Both drivers accept `-state` with complete state for their configured engine.
+Seed and state options are mutually exclusive, in either order. Invalid words,
+invalid engine states, and incompatible identifiers are errors. Double-hyphen
+spellings are also accepted. For example, with a SplitMix build:
+
+```sh
+build/random/bin/photo -seed 0xffffffffffffffff
+build/random/bin/photo -state splitmix-v1:ffffffffffffffff:9e3779b97f4a7c15
+build/random/bin/fzn-gecode -r 42 model.fzn
+build/random/bin/fzn-gecode -state splitmix-v1:000000000000002a:9e3779b97f4a7c15 model.fzn
+```
+
+Time and hardware initialization happen once during option parsing and print
+`% Random state: -state ...` to standard error. Reuse those state arguments with
+the same model and search options. Help also prints the configured initial state.
+For complete-state test replay, use the test runner's reported command instead
+of a driver command.
+
+## Migrating from Gecode 6
+
+Seeded sequences, bounded-draw consumption, random search trees, and choice
+archives change. There is no legacy sequence mode. `Rnd` numeric construction is
+explicit and accepts 64 bits. `seed(value)` initializes. Replace the old
+zero-argument `seed()` snapshot accessor with `state()`, which returns complete
+state text, and use `state(text)` to restore it.
+Use `copy()` for an independent generator and ordinary handle copying for shared
+standalone use. Binding and space cloning follow the ownership rules above.
+
+Models using driver options should replace `Rnd(opt.seed())` with `opt.rnd()`.
+Each call creates an independent generator at the configured initial state;
+retain and reuse that handle when selectors should share a stream. This honors
+both seed and state input. The numeric `opt.seed()` accessor remains available
+for numeric initialization, but throws when full state, time, or hardware input
+was used. This prevents silently ignoring a requested state.
+
+FlatZinc's restart sampler now uses the common bounded generator directly; its
+old 31-bit chunk workaround is removed. These are Gecode 7 compatibility changes.
+The feature branch does not change the library's release version or ABI number;
+release preparation must apply those changes before shipping.
 
 ## Measurements
 

@@ -99,7 +99,7 @@ public:
     spec(opt.size()),
     pos(*this,spec.people(), 0, spec.people()-1),
     violations(*this,0,spec.preferences()),
-    rnd(*this,opt.seed()), p(opt.relax())
+    rnd(*this,opt.rnd()), p(opt.relax())
   {
     // Map preferences to violation
     BoolVarArgs viol(spec.preferences());
