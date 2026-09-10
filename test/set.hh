@@ -40,6 +40,20 @@
 #include "test/test.hh"
 #include "test/int.hh"
 
+/* Configure linking, as for the Gecode variable libraries. */
+#if !defined(GECODE_STATIC_LIBS) && \
+    (defined(__CYGWIN__) || defined(__MINGW32__) || defined(_MSC_VER))
+#ifdef GECODE_BUILD_TESTSET
+#define GECODE_TESTSET_EXPORT __declspec( dllexport )
+#else
+#define GECODE_TESTSET_EXPORT __declspec( dllimport )
+#endif
+#elif defined(GECODE_GCC_HAS_CLASS_VISIBILITY)
+#define GECODE_TESTSET_EXPORT __attribute__ ((visibility("default")))
+#else
+#define GECODE_TESTSET_EXPORT
+#endif
+
 namespace Test {
 
   /// Testing finite sets
@@ -57,7 +71,7 @@ namespace Test {
     //@{
 
     /// Value iterator producing subsets of an IntSet
-    class CountableSetValues {
+    class GECODE_TESTSET_EXPORT CountableSetValues {
     private:
       Gecode::IntSetValues dv;
       int cur;
@@ -95,7 +109,7 @@ namespace Test {
     };
 
     /// Range iterator producing subsets of an IntSet
-    class CountableSetRanges
+    class GECODE_TESTSET_EXPORT CountableSetRanges
     : public Gecode::Iter::Values::ToRanges<CountableSetValues> {
     private:
       /// The corresponding value iterator
@@ -115,7 +129,7 @@ namespace Test {
     };
 
     /// Iterate all subsets of a given set
-    class CountableSet {
+    class GECODE_TESTSET_EXPORT CountableSet {
     private:
       /// The superset
       Gecode::IntSet d;
@@ -139,7 +153,7 @@ namespace Test {
     };
 
     /// Generate all set assignments
-    class SetAssignment {
+    class GECODE_TESTSET_EXPORT SetAssignment {
     private:
       /// Arity
       int n;
@@ -176,10 +190,10 @@ namespace Test {
     };
 
 
-    class SetTest;
+    class GECODE_TESTSET_EXPORT SetTest;
 
     /// Space for executing set tests
-    class SetTestSpace : public Gecode::Space {
+    class GECODE_TESTSET_EXPORT SetTestSpace : public Gecode::Space {
     public:
       /// Initial domain
       Gecode::IntSet d;
@@ -270,7 +284,7 @@ namespace Test {
      * \brief %Base class for tests with set constraints
      *
      */
-    class SetTest : public Base {
+    class GECODE_TESTSET_EXPORT SetTest : public Base {
     private:
       /// Number of variables
       int     arity;
@@ -281,13 +295,6 @@ namespace Test {
       /// Number of additional integer variables
       int withInt;
 
-      /// Remove \a v values from the least upper bound of \a x, but not those in \f$\mathrm{a}_i\f$
-      void removeFromLub(int v, Gecode::SetVar& x, int i,
-                         const Gecode::IntSet& a);
-      /// Add \a v values to the greatest lower bound of \a x, but not those in \f$\mathrm{a}_i\f$
-      void addToGlb(int v, Gecode::SetVar& x, int i, const Gecode::IntSet& a);
-      /// Generate a set assignment
-      SetAssignment* make_assignment(void);
     protected:
       /// Whether to perform full tests for disabled propagators
       bool disabled;
@@ -331,7 +338,7 @@ namespace Test {
     //@}
 
     /// Iterator for set relation types
-    class SetRelTypes {
+    class GECODE_TESTSET_EXPORT SetRelTypes {
     private:
       /// Array of relation types
       static const Gecode::SetRelType srts[6];
@@ -349,7 +356,7 @@ namespace Test {
     };
 
     /// Iterator for Boolean operation types
-    class SetOpTypes {
+    class GECODE_TESTSET_EXPORT SetOpTypes {
     private:
       /// Array of operation types
       static const Gecode::SetOpType sots[4];
@@ -372,7 +379,7 @@ namespace Test {
  * \brief Print assignment \a
  * \relates SetAssignment
  */
-std::ostream&
+GECODE_TESTSET_EXPORT std::ostream&
 operator<<(std::ostream&, const Test::Set::SetAssignment& a);
 
 #include "test/set.hpp"

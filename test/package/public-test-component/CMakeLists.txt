@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.21)
 
 project(gecode_public_test_component_consumer LANGUAGES CXX)
 
+enable_testing()
+
 option(REQUIRE_UNKNOWN_COMPONENT "Request an unsupported Gecode component to verify diagnostics" OFF)
 
 set(CMAKE_FIND_PACKAGE_NO_PACKAGE_REGISTRY ON)
@@ -25,3 +27,6 @@ if(TARGET Gecode::gecodetestfloat)
   target_compile_definitions(consumer-smoke PRIVATE GECODE_PACKAGE_HAS_FLOAT)
   target_link_libraries(consumer-smoke PRIVATE Gecode::gecodetestfloat)
 endif()
+
+add_test(NAME public-test-component
+  COMMAND consumer-smoke -test Package -iter 1 -stop true)

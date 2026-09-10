@@ -93,9 +93,11 @@ namespace Test {
   Base::~Base() = default;
 
   Options opt;
+  const int Options::defiter;
+  const unsigned int Options::deffixprob;
 
   void report_error(const std::string& name, unsigned int seed, const Options& options, std::ostream& ostream) {
-    ostream << "Options: -seed " << seed;
+    ostream << "Options: -replay " << seed;
     if (options.fixprob != Test::Options::deffixprob)
       ostream << " -fixprob " << options.fixprob;
     ostream << " -test " << name << std::endl;
@@ -119,6 +121,8 @@ namespace Test {
                   << std::endl
                   << "\t\tor \"time\" for a random seed based on "
                   << "current time" << std::endl
+                  << "\t-replay (unsigned int)\n"
+                  << "\t\treplay the exact -test name once, on one thread\n"
                   << "\t-fixprob (unsigned int) default: "
                   << fixprob << std::endl
                   << "\t\t1/fixprob is the probability of computing a fixpoint"
@@ -156,7 +160,8 @@ namespace Test {
         } else {
           threads = argument;
         }
-      } else if (!strcmp(argv[i],"-seed")) {
+      } else if (!strcmp(argv[i],"-seed") || !strcmp(argv[i],"-replay")) {
+        replay = !strcmp(argv[i],"-replay");
         if (++i == argc) goto missing;
         if (!strcmp(argv[i],"time")) {
           seed = static_cast<unsigned int>(time(nullptr));
@@ -195,6 +200,16 @@ namespace Test {
       i++;
     }
 
+    if (replay) {
+      if (testpat.size() != 1 || testpat[0].first != MT_ANY ||
+          start_from != nullptr) {
+        std::cerr << "-replay requires one exact -test name." << std::endl;
+        exit(EXIT_FAILURE);
+      }
+      threads = 1;
+      iter = 1;
+    }
+
     if (threads > 1 && log) {
       std::cerr << "Logging and multi threading can not be used jointly." << std::endl;
       exit(EXIT_FAILURE);
@@ -208,6 +223,8 @@ namespace Test {
   }
 
   bool Options::is_test_name_matching(const std::string& test_name) const {
+    if (replay)
+      return testpat.size() == 1 && test_name == testpat[0].second;
     if (!testpat.empty()) {
       bool positive_patterns = false;
       bool match_found = false;
@@ -249,12 +266,13 @@ namespace Test {
 
   /// Run a single test, returning true iff the test succeeded
   bool run_test(Base* test, unsigned int test_seed, const Options& options, std::ostream& ostream) {
+    unsigned int seed = options.replay ? options.seed : test_seed;
     try {
       ostream << test->name() << " ";
       ostream.flush();
-      test->_rand.seed(test_seed);
+      test->_rand.seed(seed);
       for (unsigned int i = options.iter; i--;) {
-        unsigned int seed = test->_rand.seed();
+        seed = test->_rand.seed();
         if (test->run()) {
           ostream << '+';
           ostream.flush();
@@ -270,7 +288,7 @@ namespace Test {
       ostream << "Exception in \"Gecode::" << e.what()
               << "." << std::endl
               << "Stopping..." << std::endl;
-      report_error(test->name(), options.seed, options, ostream);
+      report_error(test->name(), seed, options, ostream);
       return false;
     }
   }
@@ -500,6 +518,10 @@ namespace Test {
     }
 
     const std::vector<Base*> tests = select_tests(opt);
+    if (opt.replay && tests.size() != 1) {
+      std::cerr << "-replay requires exactly one registered test." << std::endl;
+      return EXIT_FAILURE;
+    }
     Gecode::Support::Timer timer;
     timer.start();
     const int result = opt.threads > 1 ?

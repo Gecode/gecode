@@ -4,6 +4,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import re
 import shlex
 import shutil
 import subprocess
@@ -12,23 +13,26 @@ import tempfile
 from pathlib import Path
 
 VERIFIER_PREFIX = "[verify-installed-legacy-test-component]"
-EXPECTED_TEST_NAMES = [
-    "Float::Package::Equality",
-    "Int::Package::Equality",
-    "Set::Package::Singleton",
-]
-LIBRARIES = [
-    "gecodetestfloat",
-    "gecodetestset",
-    "gecodetestint",
-    "gecodetest",
-    "gecodefloat",
-    "gecodeset",
-    "gecodesearch",
-    "gecodeint",
-    "gecodekernel",
-    "gecodesupport",
-]
+
+
+def configured_types(prefix: Path) -> list[str]:
+    config = (prefix / "include/gecode/support/config.hpp").read_text()
+    return [family for family in ("int", "set", "float")
+            if re.search(r"^#define GECODE_HAS_" + family.upper() + r"_VARS\b",
+                         config, re.MULTILINE)]
+
+
+def expected_test_names(types: list[str]) -> list[str]:
+    names = {"int": "Int::Package::Equality", "set": "Set::Package::Singleton",
+             "float": "Float::Package::Equality"}
+    return [names[family] for family in types]
+
+
+def libraries(types: list[str]) -> list[str]:
+    return ([f"gecodetest{family}" for family in reversed(types)] +
+            ["gecodetest"] +
+            [f"gecode{family}" for family in reversed(types) if family != "int"] +
+            ["gecodesearch", "gecodeint", "gecodekernel", "gecodesupport"])
 
 
 def format_command(command: list[str]) -> str:
@@ -115,17 +119,12 @@ def run_phase(
 
 
 
-def resolve_library_dir(prefix: Path) -> Path:
+def resolve_library_dir(prefix: Path, types: list[str]) -> Path:
     phase = "inputs"
-    required = [
-        "libgecodetest.a",
-        "libgecodetestint.a",
-        "libgecodetestset.a",
-        "libgecodetestfloat.a",
-    ]
+    required = ["libgecodetest"] + [f"libgecodetest{family}" for family in types]
     candidates: dict[str, list[Path]] = {}
     for filename in required:
-        matches = sorted(path.resolve() for path in prefix.rglob(filename) if path.is_file())
+        matches = sorted(path.resolve() for path in prefix.rglob(filename + ".*") if path.is_file())
         assert_phase(matches, phase, f"missing installed library: {prefix / filename}")
         candidates[filename] = matches
 
@@ -287,15 +286,17 @@ def build_positive_consumer(
     prefix_lib: Path,
     artifact_dir: Path,
 ) -> Path:
+    types = configured_types(prefix)
     consumer_source = write_positive_consumer(source, workspace)
     consumer_binary = workspace / "consumer-smoke"
     command = [
         *compiler_command_prefix(),
         "-std=c++17",
+        *[f"-DGECODE_PACKAGE_HAS_{family.upper()}" for family in types],
         f"-I{prefix / 'include'}",
         str(consumer_source),
         f"-L{prefix_lib}",
-        *[f"-l{name}" for name in LIBRARIES],
+        *[f"-l{name}" for name in libraries(types)],
         "-o",
         str(consumer_binary),
     ]
@@ -317,7 +318,7 @@ def build_positive_consumer(
 
 
 
-def run_list_phase(consumer_binary: Path, workspace: Path, runtime_env: dict[str, str], env_summary: dict[str, str]) -> None:
+def run_list_phase(consumer_binary: Path, workspace: Path, runtime_env: dict[str, str], env_summary: dict[str, str], names: list[str]) -> None:
     result = run_phase(
         "list",
         [str(consumer_binary), "-list"],
@@ -325,9 +326,9 @@ def run_list_phase(consumer_binary: Path, workspace: Path, runtime_env: dict[str
         env=runtime_env,
         env_summary=env_summary,
     )
-    for test_name in EXPECTED_TEST_NAMES:
+    for test_name in names:
         assert_phase(test_name in result.stdout, "list", f"-list output missing {test_name!r}")
-    sys.stdout.write(f"{VERIFIER_PREFIX} list: discovered={EXPECTED_TEST_NAMES}\n")
+    sys.stdout.write(f"{VERIFIER_PREFIX} list: discovered={names}\n")
 
 
 
@@ -336,6 +337,7 @@ def run_filtered_phase(
     workspace: Path,
     runtime_env: dict[str, str],
     env_summary: dict[str, str],
+    names: list[str],
 ) -> None:
     result = run_phase(
         "filtered-run",
@@ -344,10 +346,10 @@ def run_filtered_phase(
         env=runtime_env,
         env_summary=env_summary,
     )
-    for test_name in EXPECTED_TEST_NAMES:
+    for test_name in names:
         assert_phase(test_name in result.stdout, "filtered-run", f"filtered run did not print {test_name!r}")
     assert_phase("+" in result.stdout, "filtered-run", "filtered run did not report success")
-    sys.stdout.write(f"{VERIFIER_PREFIX} filtered-run: executed={EXPECTED_TEST_NAMES}\n")
+    sys.stdout.write(f"{VERIFIER_PREFIX} filtered-run: executed={names}\n")
 
 
 
@@ -428,7 +430,9 @@ def main() -> int:
     assert_phase(prefix.is_dir(), "inputs", f"missing installed prefix: {prefix}")
     build_root.mkdir(parents=True, exist_ok=True)
 
-    prefix_lib = resolve_library_dir(prefix)
+    types = configured_types(prefix)
+    names = expected_test_names(types)
+    prefix_lib = resolve_library_dir(prefix, types)
     run_prefix_surface(source, prefix)
 
     temp_dir, workspace, artifact_dir = create_workspace(build_root, source, mode=args.mode)
@@ -443,8 +447,8 @@ def main() -> int:
         sys.stdout.write(
             f"{VERIFIER_PREFIX} runtime-env: {json.dumps(env_summary, sort_keys=True)}\n"
         )
-        run_list_phase(consumer_binary, workspace, runtime_env, env_summary)
-        run_filtered_phase(consumer_binary, workspace, runtime_env, env_summary)
+        run_list_phase(consumer_binary, workspace, runtime_env, env_summary, names)
+        run_filtered_phase(consumer_binary, workspace, runtime_env, env_summary, names)
         return 0
 
 

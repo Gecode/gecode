@@ -31,6 +31,14 @@ cmake --build build
 cmake --install build --prefix /path/to/gecode
 ```
 
+The harness follows `GECODE_BUILD_SHARED` and `GECODE_BUILD_STATIC`, like the
+other Gecode libraries. The unsuffixed targets select the default variant.
+When both variants are installed, use targets such as
+`Gecode::gecodetestint_shared` or `Gecode::gecodetestint_static` to select one
+explicitly. Each variant links to the matching variants of its dependencies.
+Use one variant throughout a test executable so registration and execution
+share the same core registry.
+
 The Autoconf build installs the same configured helper families when search and
 integer variables are enabled:
 
@@ -119,8 +127,11 @@ For a complicated constraint, a direct calculation over the assigned values is
 usually a better oracle than calling another version of the same propagator.
 
 The constructor arguments give the test its name, arity, and common variable
-domain. Override `assignment()` when the variables need different domains or a
-custom assignment generator.
+domain. Every test variable starts with that domain. Override `assignment()`
+to supply a custom assignment generator; this changes the assignments checked,
+not the domains in the test space. For different per-variable restrictions,
+post those restrictions with the constraint and include them in `solution()`.
+Keep the default complete assignment generator when checking the full relation.
 
 `post()` receives fresh variables in a test space. It should call the same
 posting function that users of the propagator call. The harness checks the
@@ -178,8 +189,10 @@ interval assignments. The static `cmp()` helper implements the same
 three-valued interpretation for Gecode float relations.
 
 Both families use `run_registered_tests()` and the command-line controls shown
-below. Their protected `rms`, `testsearch`, `testfix`, and `testsubsumed` members
-select checks that match the propagator's contract.
+below. Float tests expose `rms`, `testsearch`, `testfix`, and `testsubsumed` to
+select checks that match the propagator's contract. Set tests expose `disabled`
+for checks with disabled propagators and `testsubsumed` for subsumption checks.
+A reified set test checks all three reification modes; it has no mode mask.
 
 ## Run and reproduce tests
 
@@ -195,15 +208,13 @@ Run the equality test once and stop on its first error:
 ./custom-propagator-test -test Package::Equality -iter 1 -stop true
 ```
 
-A failure reports the random seed and test name. Use both values to reproduce
-the run:
+A failure prints a `-replay` state and the full test name. Replay runs that exact
+test once on one thread, starting from the failing iteration's random state:
 
 ```bash
 ./custom-propagator-test \
-  -test Package::Equality \
-  -seed 12345 \
-  -iter 1 \
-  -threads 1 \
+  -test Int::Package::Equality \
+  -replay 12345 \
   -log \
   -stop true
 ```
@@ -215,9 +226,9 @@ rather than an embedding library.
 
 ## Link without CMake package metadata
 
-The Autoconf installation provides one static library for each configured
-helper family. A direct compiler invocation using integer, set, and float tests
-must name their dependency closure:
+The Autoconf installation follows `--enable-shared` and `--enable-static` for
+each configured helper family. A direct compiler invocation using integer,
+set, and float tests must name their dependency closure:
 
 ```bash
 c++ -std=c++17 -I<prefix>/include custom-propagator-test.cpp \

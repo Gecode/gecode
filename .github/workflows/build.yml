@@ -182,7 +182,7 @@ jobs:
       if: matrix.os == 'ubuntu-latest'
       working-directory: ${{github.workspace}}/build
       shell: bash
-      run: ctest --build-config "$BUILD_TYPE" --output-on-failure -R '^public-(runner|int)-smoke$'
+      run: ctest --build-config "$BUILD_TYPE" --output-on-failure -R '^public-.*-smoke$'
 
     - name: Install CMake package
       working-directory: ${{github.workspace}}/build
@@ -461,6 +461,10 @@ jobs:
       shell: pwsh
       run: cmake --build "${{ github.workspace }}\\build" --config ${{ env.BUILD_TYPE }} --target check
 
+    - name: Run public test harness smokes
+      shell: pwsh
+      run: ctest --test-dir "${{ github.workspace }}\\build" -C ${{ env.BUILD_TYPE }} --output-on-failure -R '^public-.*-smoke$'
+
     - name: Install CMake package
       shell: pwsh
       run: cmake --install "${{ github.workspace }}\\build" --config ${{ env.BUILD_TYPE }} --prefix "${{ github.workspace }}\\install"
@@ -468,6 +472,18 @@ jobs:
     - name: Consumer smoke tests
       shell: pwsh
       run: .\.github\ci\cmake-consumer-smoke.ps1 "${{ github.workspace }}\install"
+
+    - name: Installed test-library consumer
+      shell: pwsh
+      run: |
+        $prefix = "${{ github.workspace }}\install"
+        $build = "$env:RUNNER_TEMP\test-library-consumer"
+        cmake -S test/package/public-test-component -B $build "-DCMAKE_PREFIX_PATH=$prefix"
+        if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+        cmake --build $build --config $env:BUILD_TYPE
+        if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+        $env:PATH = "$prefix\bin;$env:PATH"
+        ctest --test-dir $build -C $env:BUILD_TYPE --output-on-failure
 
   build-cmake-windows-vcpkg:
     runs-on: windows-2022

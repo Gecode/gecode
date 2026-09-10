@@ -47,6 +47,20 @@
 #include <string>
 #include <vector>
 
+/* Configure linking, as for the Gecode variable libraries. */
+#if !defined(GECODE_STATIC_LIBS) && \
+    (defined(__CYGWIN__) || defined(__MINGW32__) || defined(_MSC_VER))
+#ifdef GECODE_BUILD_TEST
+#define GECODE_TEST_EXPORT __declspec( dllexport )
+#else
+#define GECODE_TEST_EXPORT __declspec( dllimport )
+#endif
+#elif defined(GECODE_GCC_HAS_CLASS_VISIBILITY)
+#define GECODE_TEST_EXPORT __attribute__ ((visibility("default")))
+#else
+#define GECODE_TEST_EXPORT
+#endif
+
 /// General test support
 namespace Test {
 
@@ -62,10 +76,10 @@ namespace Test {
    * The olog is buffered and printed only if an error has
    * occurred.
    */
-  extern std::ostringstream olog;
+  extern GECODE_TEST_EXPORT std::ostringstream olog;
 
   /// Simple class for describing indentation
-  class ind {
+  class GECODE_TEST_EXPORT ind {
   public:
     /// Which indentation level
     int l;
@@ -81,12 +95,14 @@ namespace Test {
   };
 
   /// Commandline options
-  class Options {
+  class GECODE_TEST_EXPORT Options {
   public:
     /// Number of threads to use
     unsigned int threads;
     /// The random seed to be used
     unsigned int seed;
+    /// Replay one named test from its reported random state
+    bool replay;
     /// Number of iterations for each test
     unsigned int iter;
     /// Default number of iterations
@@ -116,10 +132,10 @@ namespace Test {
   };
 
   /// The options
-  extern Options opt;
+  extern GECODE_TEST_EXPORT Options opt;
 
   /// %Base class for all tests to be run
-  class Base {
+  class GECODE_TEST_EXPORT Base {
   private:
     /// Name of the test
     std::string _name;
@@ -174,7 +190,7 @@ namespace Test {
    * the process after printing help or reporting a malformed option.
    * \relates Test::Base
    */
-  int run_registered_tests(int argc, char* argv[]);
+  GECODE_TEST_EXPORT int run_registered_tests(int argc, char* argv[]);
   //@}
 
 }
@@ -183,7 +199,7 @@ namespace Test {
  * \brief Print indentation
  * \relates Test::ind
  */
-std::ostream&
+GECODE_TEST_EXPORT std::ostream&
 operator<<(std::ostream& os, const Test::ind& i);
 
 #include "test/test.hpp"
