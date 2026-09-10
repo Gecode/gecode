@@ -53,8 +53,10 @@ representation.
 directions. Its disjunction allows either direction of movement in the second
 coordinate; sufficiently separated points can satisfy both directed tests.
 This is not an asymmetric improvement order, yet the example uses sequential BAB.
-Changing `Space` to require a meaningful order for all BAB uses would lose an
-existing useful model pattern.
+It represents a different search contract: diversity must account for all
+previous solutions, not merely the latest incumbent. Gecode 7 may impose new
+requirements on optimization spaces, so preserving this use through an
+unavailable comparison result or legacy arbitration path is not required.
 
 Other limits follow from the same distinction: diversity enumeration, an
 incumbent-dependent neighborhood, changing objective weights, or a policy that
@@ -73,6 +75,22 @@ all variables to be assigned is unnecessary and can reject valid models. A stabl
 space with an assigned cost and unfinished auxiliary search has a determinate
 objective key, although it is not necessarily a feasible incumbent to give search.
 The distinction belongs in the public documentation.
+
+The recommended readiness contract follows the existing value accessor:
+[`IntVar::val()`](../../../gecode/int/var/int.hpp) explicitly throws
+`Int::ValOfUnassignedVar` when its variable is unassigned. Integer convenience
+`constrain()` methods use `val()` on the incumbent objective. Comparison would
+require determined objective data on both operands and use the same error
+convention. It would not require unrelated variables to be assigned.
+
+An explicit undetermined result is a viable alternative for a caller intending
+to inspect partial objectives and recover without an exception. In the existing
+search consumers, however, an undetermined incumbent is still an error:
+discarding it may lose a valid improvement, accepting it cannot establish
+betterness, and calling `status()` to resolve it violates the comparison
+contract. Without such a caller, this extra result adds no useful search
+behavior. Readiness remains an open decision in the brief; a precondition is
+the recommendation.
 
 Comparing arbitrary domains asks a different question. For example, minimization
 domains `[1,4]` and `[3,6]` overlap: comparing minima ranks bounds, not the eventual
@@ -106,8 +124,9 @@ less, equivalent, greater, and unordered in the
 Gecode's direction should be objective-relative (`BETTER` / `WORSE`) rather than
 numeric. The project's CMake library targets currently require `cxx_std_17`, so
 using `std::partial_ordering` would unnecessarily couple this change to a language
-upgrade. A small enum is adequate. The fifth proposed value is unavailable
-comparison, not a fifth relation.
+upgrade. A small enum is adequate. Undetermined objective data and an absent
+comparison implementation are outside this ordering; the current recommendation
+reports them as errors rather than adding a fifth relation.
 
 ## Why incomparability is more than a collector policy
 
@@ -203,19 +222,19 @@ model-defined comparison method.
 | --- | --- |
 | `bool better(const Space&) const` | Enough for one total-objective acceptance decision, but cannot distinguish equivalent from incomparable without more calls or methods. |
 | Three ordering values only | The smallest total-objective interface, but cannot report the partial-order distinction raised in the proposal. |
-| Four ordering values plus `UNAVAILABLE` | Recommended: one virtual, explicit direction and incomparability, no pure virtual requirement on satisfaction spaces. |
-| Four ordering values plus a throwing default | Plausible, but missing support first encountered on a worker must be forwarded safely; the current thread runner cannot do that. |
+| Four ordering values plus an undetermined result | Useful only if callers deliberately compare partial objectives and need a recoverable outcome; existing search would still have to reject such incumbents. |
+| Four ordering values with objective readiness as a precondition | Recommended: comparison results describe valid comparisons; missing support and unassigned objectives follow error conventions. A non-pure throwing default can leave satisfaction models unaffected. |
 | A separate capability virtual or optimization base | Adds a second piece of model configuration, or moves a Space-level search operation behind another abstraction. Not needed solely for this change. |
 | Extract a serialized or type-erased objective key | Useful for distributed search, but unnecessary machinery for two in-process spaces. |
-| Infer comparison by clone/constrain/status | Potentially expensive and undecided; keep only as a clearly limited legacy behavior if compatibility requires it. |
+| Infer comparison by clone/constrain/status | Potentially expensive and undecided; no compatibility requirement justifies it for this Gecode 7 change. |
 
 A virtual added to `Space` changes the ABI. A non-pure default avoids source
 breakage in every satisfaction model, but cannot magically provide a meaningful
-comparison for old custom optimization models. The brief recommends a Gecode 7
-runtime requirement at incumbent-arbitration boundaries and preserves standalone
-sequential progression. Whether to keep a legacy concurrent path is a user
-choice, not something the implementation should decide by catching arbitrary
-exceptions or interpreting incomparability as missing support.
+comparison for old custom optimization models. The settled Gecode 7 direction
+permits requiring comparison on optimization spaces. Most models inherit scalar
+integer comparison from the existing convenience classes; custom objectives
+must implement it. No legacy concurrent fallback is needed. This leaves the
+readiness contract as a separate choice rather than conflating it with migration.
 
 An inherited comparison also deserves attention: an application may derive from
 `IntMinimizeSpace` but override `constrain()` to optimize a different criterion.
@@ -227,8 +246,8 @@ a sound improvement restriction.
 
 - [`seq/bab.hpp`](../../../gecode/search/seq/bab.hpp), `BAB::next`, already
   obtains solutions under the incumbent restriction. Adding comparison to every
-  sequential solution is unnecessary for ordinary execution and would disrupt
-  constrain-only progression.
+  sequential solution is unnecessary for ordinary execution. Not calling it
+  there does not require a separate compatibility policy for optimization models.
 - [`seq/path.hpp`](../../../gecode/search/seq/path.hpp) and
   [`par/path.hpp`](../../../gecode/search/par/path.hpp) apply the incumbent at
   the recomputation mark. Those calls must remain constraints.
