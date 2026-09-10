@@ -1128,7 +1128,11 @@ endif()
 
 function(add_gecode_component_library lib)
   string(TOUPPER ${lib} libupper)
-  set(sources ${GECODE_${libupper}_SOURCES})
+  if(ARGN)
+    set(sources ${ARGN})
+  else()
+    set(sources ${GECODE_${libupper}_SOURCES})
+  endif()
   set(component_output_name "${GECODE_LIB_PREFIX}gecode${lib}${GECODE_LIB_SUFFIX}")
   if(lib STREQUAL "float" AND NOT (GECODE_ENABLE_MPFR AND MPFR_FOUND))
     # Keep in sync with Make behavior: skip empty MPFR-only source when MPFR is absent.
@@ -1362,83 +1366,17 @@ if(BUILD_TESTING)
   endforeach()
 
   if(GECODE_CAN_BUILD_TEST_HARNESS)
-    add_library(gecodetest STATIC ${GECODE_TEST_CORE_SOURCES})
-    target_compile_features(gecodetest PUBLIC cxx_std_17)
-    target_include_directories(gecodetest
-      PUBLIC
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
-        $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
-    if(GECODE_VISIBILITY_COMPILE_OPTION)
-      target_compile_options(gecodetest PRIVATE ${GECODE_VISIBILITY_COMPILE_OPTION})
-    endif()
-    set_target_properties(gecodetest PROPERTIES
-      OUTPUT_NAME "${GECODE_LIB_PREFIX}gecodetest${GECODE_LIB_SUFFIX}")
-    target_link_libraries(gecodetest PUBLIC gecodesearch gecodeint)
-    add_library(Gecode::gecodetest ALIAS gecodetest)
-    list(APPEND GECODE_INSTALL_TARGETS gecodetest)
-    list(APPEND GECODE_EXPORT_TARGETS gecodetest)
-
-    add_library(gecodetestint STATIC ${GECODE_TEST_INT_SOURCES})
-    target_compile_features(gecodetestint PUBLIC cxx_std_17)
-    target_include_directories(gecodetestint
-      PUBLIC
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
-        $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
-    if(GECODE_VISIBILITY_COMPILE_OPTION)
-      target_compile_options(gecodetestint PRIVATE ${GECODE_VISIBILITY_COMPILE_OPTION})
-    endif()
-    set_target_properties(gecodetestint PROPERTIES
-      OUTPUT_NAME "${GECODE_LIB_PREFIX}gecodetestint${GECODE_LIB_SUFFIX}")
-    target_link_libraries(gecodetestint PUBLIC gecodetest)
-    add_library(Gecode::gecodetestint ALIAS gecodetestint)
-    list(APPEND GECODE_INSTALL_TARGETS gecodetestint)
-    list(APPEND GECODE_EXPORT_TARGETS gecodetestint)
-
+    add_gecode_component_library(test ${GECODE_TEST_CORE_SOURCES})
+    gecode_link_component(test search int)
+    add_gecode_component_library(testint ${GECODE_TEST_INT_SOURCES})
+    gecode_link_component(testint test)
     if(TARGET gecodeset)
-      add_library(gecodetestset STATIC ${GECODE_TEST_SET_SOURCES})
-      target_compile_features(gecodetestset PUBLIC cxx_std_17)
-      target_include_directories(gecodetestset
-        PUBLIC
-          $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
-          $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
-          $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
-      if(GECODE_VISIBILITY_COMPILE_OPTION)
-        target_compile_options(gecodetestset PRIVATE ${GECODE_VISIBILITY_COMPILE_OPTION})
-      endif()
-      set_target_properties(gecodetestset PROPERTIES
-        OUTPUT_NAME "${GECODE_LIB_PREFIX}gecodetestset${GECODE_LIB_SUFFIX}")
-      target_link_libraries(gecodetestset PUBLIC gecodetestint gecodeset)
-      add_library(Gecode::gecodetestset ALIAS gecodetestset)
-      list(APPEND GECODE_INSTALL_TARGETS gecodetestset)
-      list(APPEND GECODE_EXPORT_TARGETS gecodetestset)
+      add_gecode_component_library(testset ${GECODE_TEST_SET_SOURCES})
+      gecode_link_component(testset testint set)
     endif()
-
     if(TARGET gecodefloat)
-      add_library(gecodetestfloat STATIC ${GECODE_TEST_FLOAT_SOURCES})
-      target_compile_features(gecodetestfloat PUBLIC cxx_std_17)
-      target_include_directories(gecodetestfloat
-        PUBLIC
-          $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
-          $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
-          $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
-      if(GECODE_VISIBILITY_COMPILE_OPTION)
-        target_compile_options(gecodetestfloat PRIVATE ${GECODE_VISIBILITY_COMPILE_OPTION})
-      endif()
-      set_target_properties(gecodetestfloat PROPERTIES
-        OUTPUT_NAME "${GECODE_LIB_PREFIX}gecodetestfloat${GECODE_LIB_SUFFIX}")
-      target_link_libraries(gecodetestfloat PUBLIC gecodetest gecodefloat)
-      add_library(Gecode::gecodetestfloat ALIAS gecodetestfloat)
-      list(APPEND GECODE_INSTALL_TARGETS gecodetestfloat)
-      list(APPEND GECODE_EXPORT_TARGETS gecodetestfloat)
-    endif()
-    if(GECODE_INSTALL)
-      foreach(gecode_install_component IN LISTS GECODE_LIBRARY_COMPONENTS)
-        if(TARGET gecode${gecode_install_component}_${GECODE_DEFAULT_LINK_VARIANT})
-          add_dependencies(gecodetest gecode${gecode_install_component}_${GECODE_DEFAULT_LINK_VARIANT})
-        endif()
-      endforeach()
+      add_gecode_component_library(testfloat ${GECODE_TEST_FLOAT_SOURCES})
+      gecode_link_component(testfloat test float)
     endif()
 
     add_executable(public-runner-smoke EXCLUDE_FROM_ALL ${GECODE_TEST_PUBLIC_RUNNER_SMOKE_SOURCE})

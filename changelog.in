@@ -81,6 +81,8 @@ Rank:   major
 Install reusable core, integer, set, and float test-harness libraries and
 headers for CMake and Autoconf builds, allowing downstream propagator projects
 to register and run Gecode-style tests for every configured variable family.
+Support shared and static harness libraries using the configured Gecode
+library variants. Add exact replay of a failed test iteration with `-replay`.
 
 [RELEASE]
 Version: 6.4.0

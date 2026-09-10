@@ -70,6 +70,17 @@ namespace {
     }
   } failing_smoke_test;
 
+  unsigned int observed_seed = 0;
+  class ReplaySmokeTest : public Test::Base {
+  public:
+    ReplaySmokeTest(void) : Test::Base("Smoke::Replay") {}
+    bool run(void) override {
+      observed_seed = _rand.seed();
+      (void) _rand(10);
+      return false;
+    }
+  } replay_smoke_test;
+
   bool require(bool condition, const std::string& message) {
     if (!condition) {
       std::cerr << "public-runner-smoke: " << message << std::endl;
@@ -153,7 +164,7 @@ main(void) {
                "filtered failing run did not print the selected test")) {
     return EXIT_FAILURE;
   }
-  if (!require(fail_output.find("Options: -seed ") != std::string::npos,
+  if (!require(fail_output.find("Options: -replay ") != std::string::npos,
                "filtered failing run did not preserve seed diagnostics")) {
     return EXIT_FAILURE;
   }
@@ -165,6 +176,22 @@ main(void) {
                "filtered failing run counts are wrong")) {
     return EXIT_FAILURE;
   }
+
+  std::string replay_output;
+  if (!require(run_and_capture({"public-runner-smoke", "-test", "Smoke::Replay",
+                                "-seed", "12345", "-iter", "1"},
+                               replay_output) == EXIT_FAILURE,
+               "seed-sensitive test should fail"))
+    return EXIT_FAILURE;
+  const std::string seed = std::to_string(observed_seed);
+  if (!require(replay_output.find("Options: -replay " + seed) != std::string::npos,
+               "failure should report the iteration's initial random state"))
+    return EXIT_FAILURE;
+  if (!require(run_and_capture({"public-runner-smoke", "-test", "Smoke::Replay",
+                                "-replay", seed.c_str()}, replay_output) == EXIT_FAILURE &&
+               std::to_string(observed_seed) == seed,
+               "replay should restore the reported random state"))
+    return EXIT_FAILURE;
 
   return EXIT_SUCCESS;
 }

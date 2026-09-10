@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import argparse
+import re
 import sys
 from pathlib import Path
 
@@ -17,10 +18,6 @@ UNSUPPORTED_BINARIES = [
     "public-int-smoke",
     "public-runner-smoke",
 ]
-EXPECTED_STATIC_LIBS = {
-    "gecodetest": "libgecodetest.a",
-    "gecodetestint": "libgecodetestint.a",
-}
 def fail_phase(phase: str, message: str) -> "NoReturn":
     sys.stderr.write(f"{VERIFIER_PREFIX} {phase}: FAIL - {message}\n")
     raise SystemExit(1)
@@ -40,13 +37,10 @@ def is_installed_library_path(prefix: Path, path: Path) -> bool:
 
 
 def configured_types(prefix: Path) -> set[str]:
-    library_names = {path.name for path in prefix.rglob("*") if path.is_file()}
-    result = {"int"}
-    if any(name.startswith("libgecodeset.") for name in library_names):
-        result.add("set")
-    if any(name.startswith("libgecodefloat.") for name in library_names):
-        result.add("float")
-    return result
+    config = (prefix / "include/gecode/support/config.hpp").read_text()
+    return {family for family in ("int", "set", "float")
+            if re.search(r"^#define GECODE_HAS_" + family.upper() + r"_VARS\b",
+                         config, re.MULTILINE)}
 
 
 def verify_prefix_surface(prefix: Path, types: set[str]) -> None:
@@ -74,39 +68,14 @@ def verify_harness_libs(prefix: Path, types: set[str]) -> None:
     phase = "harness-libs"
     expected_locations: list[str] = []
 
-    expected_static_libs = dict(EXPECTED_STATIC_LIBS)
-    for variable_type in ("set", "float"):
-        if variable_type in types:
-            expected_static_libs[f"gecodetest{variable_type}"] = f"libgecodetest{variable_type}.a"
-
-    for library_name, expected_filename in expected_static_libs.items():
-        matches = sorted(
-            path.relative_to(prefix).as_posix()
-            for path in prefix.rglob(expected_filename)
-            if path.is_file() and is_installed_library_path(prefix, path)
-        )
-        assert_phase(matches, phase, f"missing installed {library_name} static library: {expected_filename}")
-        assert_phase(
-            len(matches) == 1,
-            phase,
-            f"expected exactly one installed {library_name} static library, found: {matches}",
-        )
+    libraries = ["gecodetest"] + [f"gecodetest{family}" for family in sorted(types)]
+    for library in libraries:
+        matches = sorted(path.relative_to(prefix).as_posix()
+                         for path in prefix.rglob(f"lib{library}.*")
+                         if path.is_file() and is_installed_library_path(prefix, path))
+        assert_phase(matches, phase, f"missing installed {library} library")
         expected_locations.extend(matches)
-
-    unexpected_harness_artifacts = sorted(
-        path.relative_to(prefix).as_posix()
-        for path in prefix.rglob("*")
-        if path.is_file()
-        and is_installed_library_path(prefix, path)
-        and path.name.startswith("libgecodetest")
-        and path.name not in expected_static_libs.values()
-    )
-    assert_phase(
-        not unexpected_harness_artifacts,
-        phase,
-        f"unexpected installed harness artifacts: {unexpected_harness_artifacts}",
-    )
-    sys.stdout.write(f"{VERIFIER_PREFIX} {phase}: artifacts={sorted(expected_locations)}\n")
+    sys.stdout.write(f"{VERIFIER_PREFIX} {phase}: artifacts={expected_locations}\n")
 
 
 
