@@ -5827,7 +5827,7 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   relax(Home home, const IntVarArgs& x, const IntVarArgs& sx,
-        Rnd r, double p);
+        Rnd& r, double p);
 
   /*
    * \brief Relaxed assignment of variables in \a x from values in \a sx
@@ -5852,7 +5852,7 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   relax(Home home, const BoolVarArgs& x, const BoolVarArgs& sx,
-        Rnd r, double p);
+        Rnd& r, double p);
 
 }
 

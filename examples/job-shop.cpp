@@ -465,7 +465,7 @@ public:
   JobShopSolve(const JobShopOptions& o)
     : JobShopBase(o),
       sorder(*this, spec.machines()*spec.jobs()*(spec.jobs()-1)/2, 0, 1),
-      rnd(*this,o.rnd()) {
+      rnd(o.rnd()) {
     if (opt.propagation() == PROP_UNARY)
       nooverload();
 
@@ -565,7 +565,7 @@ public:
   JobShopSolve(JobShopSolve& s)
     : JobShopBase(s), sorder(s.sorder), fst(s.fst), snd(s.snd),
       iafc(s.iafc), iaction(s.iaction), baction(s.baction),
-      ichb(s.ichb), bchb(s.bchb), rnd(*this,s.rnd) {}
+      ichb(s.ichb), bchb(s.bchb), rnd(s.rnd) {}
   /// Copy during cloning
   virtual Space*
   copy(void) {

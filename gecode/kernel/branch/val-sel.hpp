@@ -43,6 +43,9 @@ namespace Gecode {
   template<class View_, class Val_>
   class ValSel {
   public:
+    unsigned int random_words(void) const { return 0; }
+    uint64_t* random_save(uint64_t* out) const { return out; }
+    const uint64_t* random_commit(const uint64_t* in, unsigned int) { return in; }
     /// View type
     typedef View_ View;
     /// Corresponding variable type

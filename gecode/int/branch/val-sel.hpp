@@ -93,19 +93,19 @@ namespace Gecode { namespace Int { namespace Branch {
     return (x.width() == 2U) ? x.min() : ((x.min()+x.max()) / 2);
   }
 
-  template<class View>
+  template<class View, class Random>
   forceinline
-  ValSelRnd<View>::ValSelRnd
-  (Space& home, const ValBranch<typename ValSelRnd<View>::Var>& vb)
-    : ValSel<View,int>(home,vb), r(home,vb.rnd()) {}
-  template<class View>
+  ValSelRnd<View,Random>::ValSelRnd
+  (Space& home, const ValBranch<typename ValSelRnd<View,Random>::Var>& vb)
+    : ValSel<View,int>(home,vb), r(vb.rnd()) {}
+  template<class View, class Random>
   forceinline
-  ValSelRnd<View>::ValSelRnd(Space& home, ValSelRnd& vs)
-    : ValSel<View,int>(home,vs), r(home,vs.r) {
+  ValSelRnd<View,Random>::ValSelRnd(Space& home, ValSelRnd& vs)
+    : ValSel<View,int>(home,vs), r(vs.r) {
   }
-  template<class View>
+  template<class View, class Random>
   forceinline int
-  ValSelRnd<View>::val(const Space&, View x, int) {
+  ValSelRnd<View,Random>::val(const Space&, View x, int) {
     unsigned int p = r(x.size());
     for (ViewRanges<View> i(x); i(); ++i) {
       if (i.width() > p)
@@ -115,15 +115,15 @@ namespace Gecode { namespace Int { namespace Branch {
     GECODE_NEVER;
     return 0;
   }
-  template<class View>
+  template<class View, class Random>
   forceinline bool
-  ValSelRnd<View>::notice(void) const {
-    return true;
+  ValSelRnd<View,Random>::notice(void) const {
+    return !std::is_trivially_destructible<Random>::value;
   }
-  template<class View>
+  template<class View, class Random>
   forceinline void
-  ValSelRnd<View>::dispose(Space&) {
-    r.~Rnd();
+  ValSelRnd<View,Random>::dispose(Space&) {
+    r.~Random();
   }
 
   forceinline

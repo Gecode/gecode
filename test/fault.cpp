@@ -32,6 +32,7 @@
  */
 
 #include <gecode/minimodel.hh>
+#include <gecode/int/branch.hh>
 #include <gecode/search.hh>
 
 #include "test/test.hh"
@@ -1174,7 +1175,7 @@ namespace Test { namespace Fault {
     }
   };
 
-  // Count engine instances so failed clones cannot hide leaked stream handles.
+  // Count inline engine instances across selector cloning and failed clones.
   class LiveRandom : public Support::SplitMix {
   public:
     static int live;
@@ -1189,13 +1190,18 @@ namespace Test { namespace Fault {
   class RandomSpace : public Space {
   public:
     IntVarArray x;
-    Rnd r;
-    RandomSpace() : x(*this,3,0,2),
-      r(*this,Rnd(Support::Random<LiveRandom>(7))) {
-      branch(*this,x,INT_VAR_RND(r),INT_VAL_RND(r));
+    RndGenerator<LiveRandom> r;
+    RandomSpace() : x(*this,3,0,2), r(7) {
+      IntVarArgs vars(x);
+      ViewArray<Int::IntView> views(*this,vars);
+      ViewSel<Int::IntView>* selectors[] = {
+        new (*this) ViewSelRnd<Int::IntView,RndGenerator<LiveRandom>>(*this,r)
+      };
+      auto* values = Int::Branch::valselcommit(*this,INT_VAL_RND(Rnd(7)));
+      postviewvalbrancher<Int::IntView,1,int,2>(*this,views,selectors,values,nullptr,nullptr);
       ThrowingBrancher::post(*this);
     }
-    RandomSpace(RandomSpace& s) : Space(s), r(*this,s.r) {
+    RandomSpace(RandomSpace& s) : Space(s), r(s.r) {
       x.update(*this,s.x);
     }
     Space* copy() override { return new RandomSpace(*this); }
@@ -1225,7 +1231,7 @@ namespace Test { namespace Fault {
         }
         if (!succeeded)
           return false;
-        // Fail after a random brancher and its stream handles have been copied.
+        // Fail after a random brancher and its inline engines have been copied.
         Support::FailPoint::fail_after(Phase::BrancherCopy,0);
         try {
           std::unique_ptr<Space> copy(root.clone());
