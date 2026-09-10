@@ -68,6 +68,34 @@
 #
 
 [RELEASE]
+Version: 7.0.0
+Date: unreleased
+[DESCRIPTION]
+Development changes for Gecode 7; source, binary, and seeded-sequence
+compatibility with Gecode 6 is not preserved.
+
+[ENTRY]
+Module: kernel
+What:   new
+Rank:   major
+[DESCRIPTION]
+Added modern, user-extensible random number generators with reproducible
+stream splitting. Splittable SplitMix replaces the old default generator;
+xorshift64* is available as a smaller-state alternative. The default is
+configurable at build time, and users can supply their own engines.
+Randomized branching splits the recorded generator state by alternative,
+giving distinct successor states that are reproduced during recomputation.
+Complete-state save/restore and command-line state input support exact replay,
+including test failures.
+[MORE]
+Generators store their compact state directly in their consumers, and copying
+a generator produces independent state. Drivers accept checked 64-bit seeds
+as well as complete state. APIs, seeded sequences, and randomized choice
+archives change; no legacy sequence mode is provided. This design remains
+provisional for a future breaking-change release. See docs/random.md for
+engine contracts, migration, and measured costs.
+
+[RELEASE]
 Version: 6.5.0
 Date: unreleased
 [DESCRIPTION]

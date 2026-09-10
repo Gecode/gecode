@@ -201,7 +201,6 @@ VARIMP = $(VARIMPHDR)
 
 KERNELSRC0 = \
 	archive core exception gpi \
-	data/rnd \
 	branch/action branch/afc branch/chb branch/function \
 	memory/manager memory/region \
 	trace/recorder trace/filter trace/tracer trace/general \
@@ -896,7 +895,7 @@ INTEXAMPLEHDR0 =						\
 INTEXAMPLESRC0 =						\
 	alpha bacp bibd donald efpa eq20 golomb-ruler		\
 	graph-color grocery ind-set magic-sequence magic-square	\
-	money ortho-latin partition photo queens sudoku sudoku-advanced kakuro  \
+	money ortho-latin partition photo queens random-engine sudoku sudoku-advanced kakuro  \
 	nonogram pentominoes crowded-chess black-hole		\
 	minesweeper domino steel-mill sports-league		\
 	all-interval langford-number warehouses	radiotherapy    \
@@ -1276,7 +1275,7 @@ BLACKBOXEXECSRC = test/flatzinc/blackbox-exec.cpp
 BLACKBOXDLLSRC = test/flatzinc/blackbox-dll.cpp
 BLACKBOXSRC = $(BLACKBOXEXECSRC) $(BLACKBOXDLLSRC)
 
-TESTSRC0 = test/test.cpp test/afc.cpp test/ldsb.cpp test/region.cpp \
+TESTSRC0 = test/test.cpp test/afc.cpp test/ldsb.cpp test/region.cpp test/random.cpp \
 	test/groups.cpp
 # FailPoint is CMake-only; keep the Autoconf test executable fault-free.
 
@@ -1345,6 +1344,7 @@ test: mkcompiledirs $(BLACKBOXFIXTURES)
 	@$(MAKE) $(VARIMP) $(TESTEXE)
 
 CHECKTESTS = Branch::Int::Dense::3 \
+	Random::Contract Random::BranchReplay Random::CommitBoundary \
 	FlatZinc::magic_square \
 	Int::Arithmetic::Abs \
 	Int::Arithmetic::ArgMax \

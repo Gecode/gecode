@@ -465,7 +465,7 @@ public:
   JobShopSolve(const JobShopOptions& o)
     : JobShopBase(o),
       sorder(*this, spec.machines()*spec.jobs()*(spec.jobs()-1)/2, 0, 1),
-      rnd(o.seed()) {
+      rnd(o.rnd()) {
     if (opt.propagation() == PROP_UNARY)
       nooverload();
 
@@ -616,7 +616,7 @@ print(const Search::Statistics& stat, bool restart) {
 /// Solver
 void
 solve(const JobShopOptions& opt) {
-  Rnd rnd(opt.seed());
+  Rnd rnd = opt.rnd();
 
   /*
    * Invariant:
@@ -828,4 +828,3 @@ main(int argc, char* argv[]) {
 #include "examples/job-shop-instances.hpp"
 
 // STATISTICS: example-any
-

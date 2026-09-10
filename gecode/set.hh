@@ -1741,7 +1741,7 @@ namespace Gecode {
    */
   GECODE_SET_EXPORT void
   relax(Home home, const SetVarArgs& x, const SetVarArgs& sx,
-        Rnd r, double p);
+        Rnd& r, double p);
 
 }
 

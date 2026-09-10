@@ -143,6 +143,24 @@ namespace Gecode {
       static void strdel(const char* s);
     };
 
+    /// Checked seed or complete state for the build-configured random engine.
+    class GECODE_DRIVER_EXPORT RandomOption : public BaseOption {
+      uint64_t cur;
+      std::string initial;
+      bool seed_given = false;
+      bool state_given = false;
+      bool state_only = false;
+    public:
+      RandomOption(const char* o, const char* e, uint64_t v);
+      void value(uint64_t v);
+      /// Return the seed; throws if initialization used complete state.
+      uint64_t value(void) const;
+      /// Construct an independent generator at the configured initial state.
+      Rnd rnd(void) const;
+      virtual int parse(int argc, char* argv[]);
+      virtual void help(void);
+    };
+
     /**
      * \brief String-valued option
      *
@@ -417,7 +435,7 @@ namespace Gecode {
     Driver::IplOption         _ipl;         ///< Integer propagation level
     Driver::StringOption      _branching;   ///< Branching options
     Driver::DoubleOption      _decay;       ///< Decay option
-    Driver::UnsignedIntOption _seed;        ///< Seed option
+    Driver::RandomOption      _seed;        ///< Seed or complete random state
     Driver::DoubleOption      _step;        ///< Step option
     //@}
 
@@ -509,9 +527,11 @@ namespace Gecode {
     double decay(void) const;
 
     /// Set default seed value
-    void seed(unsigned int s);
+    void seed(uint64_t s);
     /// Return seed value
-    unsigned int seed(void) const;
+    uint64_t seed(void) const;
+    /// Independent generator initialized from the seed or full-state option
+    Rnd rnd(void) const;
 
     /// Set default step value
     void step(double s);

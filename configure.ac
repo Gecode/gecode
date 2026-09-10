@@ -41,6 +41,16 @@ AC_INIT([GECODE], GECODE_M4_VERSION, [users@gecode.dev])
 AC_CONFIG_HEADERS([gecode/support/config.hpp])
 AC_CONFIG_SRCDIR(gecode/kernel.hh)
 
+AC_ARG_WITH([random-engine],
+  [AS_HELP_STRING([--with-random-engine=ENGINE],
+    [default random engine: splitmix (default) or xorshift64star])],
+  [], [with_random_engine=splitmix])
+AS_CASE([$with_random_engine],
+  [splitmix], [],
+  [xorshift64star], [AC_DEFINE([GECODE_RANDOM_XORSHIFT64STAR], [1],
+    [Use xorshift64* instead of splittable SplitMix as the default random engine.])],
+  [AC_MSG_ERROR([random engine must be splitmix or xorshift64star])])
+
 ac_gecode_soversion=GECODE_M4_SOVERSION
 AC_SUBST(GECODE_SOVERSION, ${ac_gecode_soversion})
 

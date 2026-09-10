@@ -238,7 +238,7 @@ namespace Gecode { namespace FlatZinc {
       Gecode::Driver::UnsignedLongLongIntOption _fail;      ///< Cutoff for number of failures
       Gecode::Driver::DoubleOption _time;      ///< Cutoff for time
       Gecode::Driver::DoubleOption _time_limit;  ///< Cutoff for time (for compatibility with flatzinc command line)
-      Gecode::Driver::IntOption         _seed;      ///< Random seed
+      Gecode::Driver::RandomOption      _seed;      ///< Random seed or state
       Gecode::Driver::StringOption      _restart;   ///< Restart method option
       Gecode::Driver::DoubleOption      _r_base;    ///< Restart base
       Gecode::Driver::UnsignedIntOption _r_scale;   ///< Restart scale factor
@@ -349,7 +349,8 @@ namespace Gecode { namespace FlatZinc {
     unsigned long long int node(void) const { return _node.value(); }
     unsigned long long int fail(void) const { return _fail.value(); }
     double time(void) const { return _time.value(); }
-    int seed(void) const { return _seed.value(); }
+    uint64_t seed(void) const { return _seed.value(); }
+    Rnd rnd(void) const { return _seed.rnd(); }
     double step(void) const { return _step.value(); }
     const char* output(void) const { return _output.value(); }
 
@@ -410,7 +411,7 @@ namespace Gecode { namespace FlatZinc {
     BranchInformation& operator =(const BranchInformation&) = default;
   };
 
-  /// Uninitialized default random number generator
+  /// Default random number generator, initialized with seed 0
   GECODE_FLATZINC_EXPORT
   extern Rnd defrnd;
 
@@ -655,7 +656,7 @@ namespace Gecode { namespace FlatZinc {
      * If \a ignoreUnknown is true, unknown solve item annotations will be
      * ignored, otherwise a warning is written to \a err.
      *
-     * The seed for random branchers is given by the \a seed parameter.
+     * Random branchers use the seed or complete state configured in \a opt.
      *
      */
     void createBranchers(Printer& p, AST::Node* ann,

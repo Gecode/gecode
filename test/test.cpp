@@ -94,11 +94,18 @@ namespace Test {
 
   Options opt;
 
-  void report_error(const std::string& name, unsigned int seed, Options& options, std::ostream& ostream) {
-    ostream << "Options: -seed " << seed;
+  void report_error(const std::string& name, const std::string& state,
+                    const Options& options, std::ostream& ostream) {
+    ostream << "Options: -state " << state << " -iter 1";
     if (options.fixprob != Test::Options::deffixprob)
       ostream << " -fixprob " << options.fixprob;
-    ostream << " -test " << name << std::endl;
+    ostream << " -test-exact '";
+    for (char c : name)
+      if (c == '\'')
+        ostream << "'\\''";
+      else
+        ostream << c;
+    ostream << "'" << std::endl;
     if (options.log)
       ostream << olog.str();
   }
@@ -106,6 +113,7 @@ namespace Test {
   void
   Options::parse(int argc, char* argv[]) {
     int i = 1;
+    bool seed_given = false;
     while (i < argc) {
       if (!strcmp(argv[i],"-help") || !strcmp(argv[i],"--help")) {
         std::cerr << "Options for testing:" << std::endl
@@ -113,12 +121,16 @@ namespace Test {
                   << "\t\tnumber of threads to use. If 0, as many threads as there are cores are used.\n"
                   << "\t\tThreaded execution and logging can not be used at the same time."
                   << std::endl
-                  << "\t-seed (unsigned int or \"time\") default: "
+                  << "\t-seed (64-bit unsigned integer or \"time\") default: "
                   << seed << std::endl
-                  << "\t\tseed for random number generator (unsigned int),"
+                  << "\t\tseed for random number generator (decimal or hexadecimal),"
                   << std::endl
                   << "\t\tor \"time\" for a random seed based on "
                   << "current time" << std::endl
+                  << "\t-state (complete random state)" << std::endl
+                  << "\t\treplay one test directly; requires -test-exact" << std::endl
+                  << "\t-test-exact (string)" << std::endl
+                  << "\t\texact name of the test to run" << std::endl
                   << "\t-fixprob (unsigned int) default: "
                   << fixprob << std::endl
                   << "\t\t1/fixprob is the probability of computing a fixpoint"
@@ -158,11 +170,30 @@ namespace Test {
         }
       } else if (!strcmp(argv[i],"-seed")) {
         if (++i == argc) goto missing;
+        seed_given = true;
         if (!strcmp(argv[i],"time")) {
-          seed = static_cast<unsigned int>(time(nullptr));
+          seed = static_cast<uint64_t>(time(nullptr));
         } else {
-          seed = static_cast<unsigned int>(atoi(argv[i]));
+          try {
+            seed = Gecode::Support::random_seed(argv[i]);
+          } catch (const std::invalid_argument& e) {
+            std::cerr << e.what() << std::endl;
+            exit(EXIT_FAILURE);
+          }
         }
+      } else if (!strcmp(argv[i],"-state")) {
+        if (++i == argc) goto missing;
+        random_state = argv[i];
+        try {
+          Gecode::Support::RandomGenerator check;
+          check.state(random_state);
+        } catch (const std::invalid_argument& e) {
+          std::cerr << e.what() << std::endl;
+          exit(EXIT_FAILURE);
+        }
+      } else if (!strcmp(argv[i],"-test-exact")) {
+        if (++i == argc) goto missing;
+        exact_test = argv[i];
       } else if (!strcmp(argv[i],"-iter")) {
         if (++i == argc) goto missing;
         iter = static_cast<unsigned int>(atoi(argv[i]));
@@ -195,6 +226,12 @@ namespace Test {
       i++;
     }
 
+    if (!random_state.empty() &&
+        (seed_given || exact_test.empty() || threads != 1)) {
+      std::cerr << "State replay requires -test-exact, one thread, and no -seed."
+                << std::endl;
+      exit(EXIT_FAILURE);
+    }
     if (threads > 1 && log) {
       std::cerr << "Logging and multi threading can not be used jointly." << std::endl;
       exit(EXIT_FAILURE);
@@ -208,6 +245,8 @@ namespace Test {
   }
 
   bool Options::is_test_name_matching(const std::string& test_name) {
+    if (!exact_test.empty())
+      return test_name == exact_test;
     if (!testpat.empty()) {
       bool positive_patterns = false;
       bool match_found = false;
@@ -248,19 +287,22 @@ namespace Test {
   }
 
   /// Run a single test, returning true iff the test succeeded
-  bool run_test(Base* test, unsigned int test_seed, const Options& options, std::ostream& ostream) {
+  bool run_test(Base* test, uint64_t test_seed, const Options& options, std::ostream& ostream) {
+    test->_rand.seed(test_seed);
+    if (!options.random_state.empty())
+      test->_rand.state(options.random_state);
+    std::string iteration_state = test->_rand.state_string();
     try {
       ostream << test->name() << " ";
       ostream.flush();
-      test->_rand.seed(test_seed);
       for (unsigned int i = options.iter; i--;) {
-        unsigned int seed = test->_rand.seed();
+        iteration_state = test->_rand.state_string();
         if (test->run()) {
           ostream << '+';
           ostream.flush();
         } else {
           ostream << "-" << std::endl;
-          report_error(test->name(), seed, opt, ostream);
+          report_error(test->name(), iteration_state, options, ostream);
           return false;
         }
       }
@@ -270,7 +312,11 @@ namespace Test {
       ostream << "Exception in \"Gecode::" << e.what()
                 << "." << std::endl
                 << "Stopping..." << std::endl;
-      report_error(test->name(), options.seed, opt, ostream);
+      report_error(test->name(), iteration_state, options, ostream);
+      return false;
+    } catch (const std::exception& e) {
+      ostream << "Exception: " << e.what() << std::endl;
+      report_error(test->name(), iteration_state, options, ostream);
       return false;
     }
   }
@@ -280,7 +326,7 @@ namespace Test {
     Gecode::Support::RandomGenerator seed_sequence(options.seed);
     int result = EXIT_SUCCESS;
     for (auto test : tests) {
-      unsigned int test_seed = seed_sequence.next();
+      uint64_t test_seed = seed_sequence.next();
       if (!run_test(test, test_seed, options, std::cout)) {
         if (opt.stop) {
           return EXIT_FAILURE;
@@ -396,10 +442,10 @@ namespace Test {
     /// The common controller for running tests
     TestExecutionControl& tec;
     /// The initial seed to start with
-    const int initial_seed;
+    const uint64_t initial_seed;
   public:
 
-    TestExecutor(TestExecutionControl& tec, const int initialSeed)
+    TestExecutor(TestExecutionControl& tec, uint64_t initialSeed)
       : tec(tec), initial_seed(initialSeed) {}
 
     void run(void) override {
@@ -422,7 +468,7 @@ namespace Test {
             break;
           }
           auto test = tec.tests[i];
-          unsigned int test_seed = seed_sequence.next();
+          uint64_t test_seed = seed_sequence.next();
           std::ostringstream test_output;
           if (!run_test(test, test_seed, tec.options, test_output)) {
             tec.set_failure();
@@ -489,6 +535,10 @@ main(int argc, char* argv[]) {
     }
   }
 
+  if (!opt.exact_test.empty() && tests.size() != 1) {
+    std::cerr << "Exact test name did not select a test." << std::endl;
+    return EXIT_FAILURE;
+  }
   if (opt.threads > 1) {
     return run_tests_parallel(tests, opt);
   } else {
