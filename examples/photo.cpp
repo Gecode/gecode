@@ -99,7 +99,7 @@ public:
     spec(opt.size()),
     pos(*this,spec.people(), 0, spec.people()-1),
     violations(*this,0,spec.preferences()),
-    rnd(opt.seed()), p(opt.relax())
+    rnd(*this,opt.seed()), p(opt.relax())
   {
     // Map preferences to violation
     BoolVarArgs viol(spec.preferences());
@@ -132,6 +132,8 @@ public:
   bool slave(const MetaInfo& mi) {
     if ((mi.type() == MetaInfo::RESTART) &&
         (mi.restart() > 0) && (p > 0.0)) {
+      random_split(static_cast<uint32_t>(uint64_t(mi.restart())>>32));
+      random_split(static_cast<uint32_t>(mi.restart()));
       const Photo& l = static_cast<const Photo&>(*mi.last());
       relax(*this, pos, l.pos, rnd, p);
       return false;
@@ -141,7 +143,7 @@ public:
   }
   /// Constructor for cloning \a s
   Photo(Photo& s) :
-    IntMinimizeScript(s), spec(s.spec), rnd(s.rnd), p(s.p) {
+    IntMinimizeScript(s), spec(s.spec), rnd(*this,s.rnd), p(s.p) {
     pos.update(*this, s.pos);
     violations.update(*this, s.violations);
   }

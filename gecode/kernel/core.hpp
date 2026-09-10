@@ -2047,6 +2047,10 @@ namespace Gecode {
   public:
     /// Bind a random handle to this space, mapping local handles during cloning
     GECODE_KERNEL_EXPORT Rnd random(const Rnd& source);
+    /// Access an already bound stream, for callbacks receiving a const space
+    GECODE_KERNEL_EXPORT Rnd random(const Rnd& source) const;
+    /// Explicitly split all bound streams, for restart/portfolio initialization
+    GECODE_KERNEL_EXPORT void random_split(uint32_t alternative);
     /**
      * \brief Default constructor
      * \ingroup TaskModelScript

@@ -38,6 +38,8 @@
 namespace Gecode {
   Rnd::Rnd(Space& home, const Rnd& source)
     : SharedHandle(home.random(source)) {}
+  Rnd::Rnd(const Space& home, const Rnd& source)
+    : SharedHandle(home.random(source)) {}
 
   void Rnd::seed(uint64_t value) {
     if (!object())
@@ -67,15 +69,25 @@ namespace Gecode {
   Rnd Space::random(const Rnd& source) {
     if (!source)
       throw UninitializedRnd("Space::random");
-    // During actor/model copying, map source-local handles by their position.
-    if (is_partial_clone() && pc.c.source && pc.c.source->randoms) {
-      size_t i = pc.c.source->randoms->find(source);
-      if (i < pc.c.source->randoms->size())
-        return randoms->at(i);
-    }
     if (!randoms)
       randoms = new RandomContext;
     return randoms->bind(source);
+  }
+
+  Rnd Space::random(const Rnd& source) const {
+    if (randoms) {
+      size_t i = randoms->find(source);
+      if (i < randoms->size())
+        return randoms->at(i);
+    }
+    throw UninitializedRnd("Space::random: stream is not bound");
+  }
+
+  void Space::random_split(uint32_t alternative) {
+    if (randoms) {
+      std::unique_ptr<uint64_t[]> snapshot(randoms->snapshot());
+      randoms->commit(snapshot.get(),alternative);
+    }
   }
 }
 

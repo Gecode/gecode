@@ -232,9 +232,17 @@ namespace Gecode { namespace Support {
       z = (z ^ (z >> 33)) * UINT64_C(0xff51afd7ed558ccd);
       z = (z ^ (z >> 33)) * UINT64_C(0xc4ceb9fe1a85ec53);
       z = (z ^ (z >> 33)) | 1;
-      unsigned int n = 0;
-      for (uint64_t bits = z ^ (z >> 1); bits; bits &= bits-1)
-        ++n;
+      uint64_t bits = z ^ (z >> 1);
+#ifdef GECODE_HAS_BUILTIN_POPCOUNTLL
+      unsigned int n = __builtin_popcountll(bits);
+#else
+      bits -= (bits >> 1) & UINT64_C(0x5555555555555555);
+      bits = (bits & UINT64_C(0x3333333333333333)) +
+             ((bits >> 2) & UINT64_C(0x3333333333333333));
+      bits = (bits + (bits >> 4)) & UINT64_C(0x0f0f0f0f0f0f0f0f);
+      unsigned int n = static_cast<unsigned int>
+        ((bits * UINT64_C(0x0101010101010101)) >> 56);
+#endif
       return (n < 24) ? z ^ UINT64_C(0xaaaaaaaaaaaaaaaa) : z;
     }
   public:
@@ -260,10 +268,12 @@ namespace Gecode { namespace Support {
     }
   };
 
-  /** \brief One-word xorshift64* engine for standalone use
+  /** \brief One-word xorshift64* engine with indexed jump splitting
    *
    * Uses shifts 12, 25, 27 and Vigna's multiplier. Zero seeds map to one;
-   * restoring zero state is an error. This engine does not provide splitting.
+   * restoring zero state is an error. Alternative a jumps (a+1)*2^32 steps
+   * along the native recurrence. Sibling states are distinct since 2^32 is
+   * coprime to the period 2^64-1. Jump matrices are shared, not per-stream state.
    * \ingroup FuncSupport
    */
   class Xorshift64Star {
@@ -271,6 +281,24 @@ namespace Gecode { namespace Support {
     using State = std::array<uint64_t,1>;
   private:
     uint64_t s;
+    using Matrix = std::array<uint64_t,64>;
+    static uint64_t transition(uint64_t x) {
+      x ^= x >> 12;
+      x ^= x << 25;
+      return x ^ (x >> 27);
+    }
+    static uint64_t apply(const Matrix& m, uint64_t x) {
+      uint64_t result=0;
+      for (unsigned int i=0; x; ++i,x>>=1)
+        if (x & 1) result ^= m[i];
+      return result;
+    }
+    static Matrix square(const Matrix& m) {
+      Matrix result;
+      for (unsigned int i=0; i<64; ++i)
+        result[i]=apply(m,m[i]);
+      return result;
+    }
   public:
     explicit Xorshift64Star(uint64_t value=1) { seed(value); }
     static const char* name(void) { return "xorshift64star-v1"; }
@@ -284,10 +312,31 @@ namespace Gecode { namespace Support {
       s = value[0];
     }
     uint64_t next(void) {
-      s ^= s >> 12;
-      s ^= s << 25;
-      s ^= s >> 27;
+      s = transition(s);
       return s * UINT64_C(2685821657736338717);
+    }
+    Xorshift64Star split(uint32_t alternative) const {
+      // Binary powers of the linear transition, starting at T^(2^32).
+      static const std::array<Matrix,32> powers = [] {
+        Matrix m;
+        for (unsigned int i=0; i<64; ++i)
+          m[i]=transition(uint64_t(1)<<i);
+        for (unsigned int i=0; i<32; ++i) m=square(m);
+        std::array<Matrix,32> p;
+        p[0]=m;
+        for (unsigned int i=1; i<32; ++i) p[i]=square(p[i-1]);
+        return p;
+      }();
+      Xorshift64Star child=*this;
+      if (alternative==UINT32_MAX) {
+        // 2^64 steps equal one step modulo the period 2^64-1.
+        child.s=transition(s);
+      } else {
+        uint32_t steps=alternative+1;
+        for (unsigned int i=0; steps; ++i,steps>>=1)
+          if (steps & 1) child.s=apply(powers[i],child.s);
+      }
+      return child;
     }
   };
 
