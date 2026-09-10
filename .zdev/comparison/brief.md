@@ -13,12 +13,10 @@ This area is isolated on `feature/comparison`, based on `main` at
 ownership: review them on the branch and remove them with `zdev cleanup squash`
 before squash merge.
 
-This brief is a design proposal. The requested exploration creates the area
-and records the recommendations; it does not authorize implementation tasks.
-Gecode 7 may impose new comparison requirements on optimization spaces; a
-legacy arbitration fallback is not required. Each space defines when it has
-enough information to compare. How to report insufficient information, float
-behavior, and partial-order handling remain proposals pending discussion.
+The design decisions below are approved for task drafting. Import of the exact
+task bundle and implementation remain separate steps. Gecode 7 may impose new
+comparison requirements on optimization spaces; no legacy arbitration fallback
+is required. Each space defines when it has enough information to compare.
 
 ## Boundaries
 
@@ -35,9 +33,8 @@ outcomes must reach the caller.
 Exclude implementation of diverse-solution search, Pareto-front enumeration,
 a new search engine,
 objective extraction or serialization, a comparator registry,
-heterogeneous-model conversion, changing
-the C++ language requirement, and a performance benchmark campaign. No slices
-or tasks are needed for this exploration.
+heterogeneous-model conversion, changing the C++ language requirement, and a
+performance benchmark campaign. Keep this area unsliced.
 
 Include limited advance planning for diverse-solution and Pareto search so this
 interface leaves those uses possible. Their implementation and concrete APIs
@@ -53,7 +50,7 @@ an additional requirement of the current single-incumbent optimization engines.
 **Incomparable** is a known result under a partial ordering; it does not mean
 that an objective is unassigned or comparison has not been implemented.
 
-Recommend one virtual member of `Space`, with receiver-relative results:
+Add one virtual member of `Space`, with receiver-relative results:
 
 ```cpp
 enum SpaceComparison {
@@ -66,14 +63,14 @@ enum SpaceComparison {
 virtual SpaceComparison compare(const Space& other) const;
 ```
 
-Recommend keeping the result restricted to ordering outcomes. Missing comparison
-support and insufficient information to compare are errors, not ordering results. The
-readiness decision is still open; this is the recommended interface if the
-precondition is adopted. The exact enum spelling is provisional. This uses the
-current C++17 baseline and needs neither an additional capability virtual nor a
-new objective base class. A non-pure default that reports unsupported use can
-leave satisfaction-only spaces unaffected; optimization spaces must provide
-the comparison, usually through a convenience base.
+Keep the result restricted to ordering outcomes. Missing comparison support and
+insufficient information to compare are errors, not ordering results. Use the
+names above unless an existing repository conflict requires a local naming
+adjustment. This uses the current C++17 baseline and needs neither an additional
+capability virtual nor a new objective base class. The non-pure default reports
+unsupported use through a Gecode exception; satisfaction-only spaces need not
+override it. Optimization spaces provide comparison, usually through a
+convenience base.
 
 The method reads objective data only. It must not call `status()`, post a
 constraint, clone either argument, alter domains or branchers, or change shared
@@ -102,13 +99,11 @@ being comparable does not by itself make it a valid incumbent: external
 incumbents must also satisfy the engine's solution contract. Likewise,
 `constrain()` retains its own model-defined requirements on its argument.
 
-Recommend treating insufficient information for the requested comparison as
+Treat insufficient information for the requested comparison as
 a precondition violation, reported using the appropriate model error convention.
 For scalar integer helpers, the existing unassigned-value exception fits.
-The alternative is a distinct `SC_UNDETERMINED` result, allowing a caller to
-recover when the model cannot establish the relation. The current arbitration
-sites would still need an error policy for this result. The reporting choice
-is open; model ownership of comparability is settled.
+Do not add an undetermined or unavailable result. This reporting choice and
+model ownership of comparability are settled.
 
 All participating assets must use the same objective direction, component
 interpretation, and pruning policy. Built-in comparisons should diagnose
@@ -120,8 +115,10 @@ shared objective interface, but automatic conversion is outside this PR.
 For exact optimization, define `better(a,b)` by `a.compare(b) == SC_BETTER`.
 It must be irreflexive and transitive, reverse to `SC_WORSE`, and agree with
 `constrain(b)` on objective-complete feasible solutions. Equivalence must be
-transitive and preserve comparisons with every third solution. For the existing
-single-incumbent engines, every pair must be better, worse, or equivalent.
+transitive and preserve comparisons with every third solution. For the initial
+exact single-incumbent engine policy, every pair encountered must be better,
+worse, or equivalent. This does not restrict the Space interface or a future
+best-effort engine policy.
 
 There is also a search requirement: if `a` replaces `b`, the solutions admitted
 by the new improvement restriction must be a subset of those admitted by the
@@ -160,6 +157,17 @@ finalizing the interface, check that direct pairwise calls can support these
 uses and that no global assignment or single-incumbent assumption has entered
 the Space contract. Do not implement either future engine here.
 
+A likely future BAB/PBS best-effort policy is: an incoming solution incomparable
+with the current incumbent becomes the new incumbent. Keep this possibility
+explicit. Comparison still reports `SC_INCOMPARABLE`; acceptance and restrictions
+are engine decisions. Such replacement need not yield a monotonically improving
+sequence or nested cuts. Existing local cuts, recomputation, and asset exhaustion
+can then prevent completeness or even maximality guarantees. A later experiment
+should test precisely that replacement rule and describe the resulting search
+guarantees. Initial rejection in this PR is a policy choice, not a claim that
+best-effort support is impossible. No public policy option, experiment framework,
+or best-effort implementation is required now.
+
 ## Search behavior
 
 Use the same orientation everywhere: compare the incoming solution against the
@@ -182,11 +190,13 @@ solutions when accepting an external incumbent: no queued result returned after
 the update may violate the new incumbent contract. Filtering those pending
 solutions is in scope if required; changing queue policy otherwise is not.
 
-`SC_INCOMPARABLE` is expressible for direct model use and a future Pareto engine,
-but existing best-solution engines must report unsupported use. Do not silently
-treat it as a tie, choose an arbitrary winner, or claim Pareto completeness.
-Partial orders can support finding a single maximal solution in a deliberately
-designed dominance-chain search, but that is not the current PBS asset protocol.
+Handle `SC_INCOMPARABLE` explicitly at the search acceptance boundary. The initial
+policy reports unsupported use. Do not fold it into equality, worse, or a
+comparison-precondition error. Keep the treatment consistent across BAB, PBS,
+RBS external updates, and pending results, using a small internal helper if
+that avoids repetition. Do not build a policy framework. Documentation and
+tests must describe rejection as the current engine policy, leaving the
+best-effort replacement rule above possible without changing SpaceComparison.
 
 Missing or unsupported comparison must produce a caller-visible diagnostic,
 not normal exhaustion, a hang, or termination of a detached worker thread.
@@ -221,11 +231,11 @@ evidence of a separate diverse-solution use, not a reason for an unavailable
 comparison result or a compatibility path. Its all-previous-solutions search
 semantics are outside this PR.
 
-### Floating-point recommendation
+### Floating-point policy
 
-Separate objective ranking from the improvement step. For the existing float
-bases, propose ranking the upper cost bound for minimization and the lower cost
-bound for maximization, matching the incumbent endpoint used in their cuts.
+Separate objective ranking from the improvement step. For the MiniModel float
+bases, rank the upper cost bound for minimization and the lower cost bound for
+maximization, matching the incumbent endpoint used in their cuts.
 Keep the step in `constrain()`, with a common step policy across assets. Compare
 assigned float variables using Gecode's meaning of assigned, which can include
 an interval between adjacent representable values.
@@ -237,42 +247,32 @@ ranking keys; being within a step is not equivalence. The latter would be
 non-transitive. Approximate pruning needs the subset property above, but need
 not admit every solution ranked better.
 
-Before implementing this choice, reconcile it explicitly with FlatZinc's
-interval-valued float threshold, strict relations, rounding, and exact threshold
-boundaries. In particular, equal upper bounds do not necessarily give equivalent
-FlatZinc minimization cuts when the lower bounds differ. Its comparator needs a
-cut-compatible key; do not copy the MiniModel endpoint rule without resolving
-this difference. Preserve the posted improvement constraints unless the user
-approves a change. If the step must instead hold between reported solutions, this
-ordering alone is insufficient: a separate admission policy or a bounded legacy
-float path must be chosen. Do not quietly redefine comparison as a tolerance
-test. Float behavior is a material open decision, not an implementation detail.
+Preserve FlatZinc's existing interval-valued float constraints. Their strict
+disequality rejects overlap with the threshold interval, so use the lower cost
+bound for FlatZinc minimization and the upper cost bound for maximization.
+These keys differ from MiniModel's scalar-threshold keys by design. Validate
+that common-step rounding preserves nesting and that equal keys yield equivalent
+cuts on comparable solutions, including adjacent-endpoint intervals. Do not
+silently align the two families by changing their constraints. If focused checks
+disprove these properties, report the specific counterexample before changing
+the agreed ranking/pruning behavior. No separate reporting-step policy or legacy
+float arbitration path is part of the approved work.
 
-## Open questions
+## Remaining implementation checks
 
-1. When a space lacks enough information for a requested comparison, should it
-   report a precondition violation or return a separate undetermined result?
-   Recommend the precondition for the present search consumers. In either case,
-   the individual space decides what information suffices; assignment is not
-   a generic requirement.
-2. Adopt float bound ranking with step-based pruning, allowing improvements
-   smaller than the step among concurrent results, or preserve the reporting
-   step through an additional policy? Recommend the former, subject to focused
-   interval-boundary checks.
-3. Confirm the proposed partial-order result with rejection in existing engines.
-   A Pareto-front engine is separate work; if it is required here, reshape the
-   area before splitting implementation tasks.
-
-The Gecode 7 requirement, model-defined comparability, and advance planning
-without implementation of diverse-solution search are settled.
-The choices listed here remain recommendations, not settled user decisions.
+No product decision remains before task drafting. Confirm float cut compatibility
+with focused boundary checks and preserve safe error delivery through nested
+engines. These are implementation proof obligations, not authority to change
+the approved behavior. Best-effort incomparable replacement is a future
+experiment, not an unresolved choice for the initial engine policy.
 
 ## Testing
 
 For this exploration: existing structural checks only. No production code or
 tests change, and no build is needed to validate a planning artifact.
 
-For implementation: focused coverage in the existing search test suite, then
+Agreed implementation testing level: focused coverage in the existing search
+suite, then
 the existing search regressions. The observable risks justify these cases:
 
 - Direct scalar, lexicographic, and custom-objective comparisons: direction,
@@ -287,7 +287,7 @@ the existing search regressions. The observable risks justify these cases:
 - Missing comparison and an incomparable result must fail cleanly in a direct
   and a nested parallel path. A focused termination check is necessary because
   the current thread runner has no exception forwarding.
-- If float ranking is accepted: zero/nonzero step, improvement smaller than the
+- For float ranking: zero/nonzero step, improvement smaller than the
   step, the strict threshold, and tight non-singleton intervals in MiniModel
   and FlatZinc. Check the agreed ranking/pruning distinction explicitly.
 - Compile the ordering and Gist display overloads together in a representative
@@ -300,8 +300,9 @@ layer, timing assertions, or benchmarks merely to justify cheap comparison.
 
 ## Validation and completion
 
-The shaping deliverable is this brief, its indexed research note, and a passing
-`zdev check comparison --format json`. No tasks are imported during exploration.
+The planning deliverable is this brief, its indexed research note, and an
+independently challenged task bundle. Run `zdev check comparison --format json`
+and present the exact bundle for approval before importing it.
 
 Implementation is complete when every incumbent arbitration site above uses
 the agreed contract, standard objectives and migration behavior are covered,
