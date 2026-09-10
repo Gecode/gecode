@@ -83,7 +83,7 @@ namespace Gecode { namespace Search { namespace Par {
   template<class Tracer>
   forceinline
   BAB<Tracer>::BAB(Space* s, const Options& o)
-    : Engine<Tracer>(o), best(nullptr) {
+    : Engine<Tracer>(o), best(nullptr), failure(nullptr) {
     WrapTraceRecorder::engine(o.tracer, SearchTracer::EngineType::DFS,
                               workers());
     // Create workers
@@ -119,17 +119,33 @@ namespace Gecode { namespace Search { namespace Par {
   template<class Tracer>
   forceinline void
   BAB<Tracer>::solution(Space* s) {
-    m_search.acquire();
-    if (best != nullptr) {
-      s->constrain(*best);
-      if (s->status() == SS_FAILED) {
+    Support::Lock lock(m_search);
+    if (failure != nullptr) {
+      delete s;
+      return;
+    }
+    try {
+      if ((best != nullptr) &&
+          !Search::better(*s,*best,"BAB::solution")) {
         delete s;
-        m_search.release();
         return;
-      } else {
-        delete best;
-        best = s->clone();
       }
+    } catch (...) {
+      delete s;
+      while (!solutions.empty())
+        delete solutions.pop();
+      failure = std::current_exception();
+      // A null entry is private to BAB and only wakes Engine::next.  That
+      // call blocks the workers before BAB::next rethrows the failure.
+      bool bs = signal();
+      solutions.push(nullptr);
+      if (bs)
+        e_search.signal();
+      return;
+    }
+    if (best != nullptr) {
+      delete best;
+      best = s->clone();
     } else {
       best = s->clone();
     }
@@ -140,7 +156,6 @@ namespace Gecode { namespace Search { namespace Par {
     solutions.push(s);
     if (bs)
       e_search.signal();
-    m_search.release();
   }
 
 
@@ -189,20 +204,45 @@ namespace Gecode { namespace Search { namespace Par {
   template<class Tracer>
   void
   BAB<Tracer>::constrain(const Space& b) {
-    m_search.acquire();
+    Support::Lock lock(m_search);
+    if ((best != nullptr) &&
+        !Search::better(b,*best,"BAB::constrain"))
+      return;
+    while (!solutions.empty())
+      delete solutions.pop();
     if (best != nullptr) {
-      best->constrain(b);
-      if (best->status() != SS_FAILED) {
-        m_search.release();
-        return;
-      }
       delete best;
     }
     best = b.clone();
     // Announce better solutions
     for (unsigned int i=0U; i<workers(); i++)
       worker(i)->better(best);
-    m_search.release();
+  }
+
+  template<class Tracer>
+  Space*
+  BAB<Tracer>::next(void) {
+    std::exception_ptr f;
+    {
+      Support::Lock lock(m_search);
+      f = failure;
+    }
+    if (f != nullptr)
+      std::rethrow_exception(f);
+    Space* s = Engine<Tracer>::next();
+    {
+      Support::Lock lock(m_search);
+      f = failure;
+    }
+    if (f != nullptr) {
+      // Engine::next can consume the failure marker through its initial
+      // nonempty-queue path.  Unlike its event-wait path, that path does not
+      // block workers, so finish the normal lifecycle before reporting.
+      if (cmd() != C_WAIT)
+        block();
+      std::rethrow_exception(f);
+    }
+    return s;
   }
 
   /*
@@ -369,9 +409,15 @@ namespace Gecode { namespace Search { namespace Par {
     // Wait for reset cycle started
     e_reset_ack_start.wait();
     // All workers are marked as busy again
-    delete best;
-    best = nullptr;
-    n_busy = workers();
+    {
+      Support::Lock lock(m_search);
+      while (!solutions.empty())
+        delete solutions.pop();
+      failure = nullptr;
+      delete best;
+      best = nullptr;
+      n_busy = workers();
+    }
     for (unsigned int i=1U; i<workers(); i++)
       worker(i)->reset(nullptr,0);
     worker(0)->reset(s,opt().nogoods_limit);

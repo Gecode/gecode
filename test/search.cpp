@@ -37,6 +37,7 @@
 
 #include <gecode/minimodel.hh>
 #include <gecode/search.hh>
+#include <gecode/search/par/bab.hh>
 
 #include "test/test.hh"
 
@@ -462,6 +463,53 @@ namespace Test {
 
     int ExternalObjective::constraints = 0;
 
+    /// Small objective whose solutions arrive from worst to best
+    class ParallelObjective : public IntMinimizeSpace {
+    public:
+      IntVar x;
+      ParallelObjective(void) : x(*this,0,10) {
+        Gecode::branch(*this,x,INT_VAL_MAX());
+      }
+      ParallelObjective(int v) : x(*this,v,v) {}
+      ParallelObjective(ParallelObjective& s) : IntMinimizeSpace(s) {
+        x.update(*this,s.x);
+      }
+      virtual Space* copy(void) { return new ParallelObjective(*this); }
+      virtual IntVar cost(void) const { return x; }
+    };
+
+    /// Comparison error raised by a model
+    class ComparisonError : public Exception {
+    public:
+      ComparisonError(void) : Exception("ParallelObjective::compare",
+                                        "model comparison failed") {}
+    };
+
+    /// Objective used to exercise asynchronous comparison failures
+    class FailingParallelObjective : public Space {
+    public:
+      enum Failure { MISSING, THROWN, INCOMPARABLE };
+      IntVar x;
+      Failure failure;
+      FailingParallelObjective(Failure f) : x(*this,0,10), failure(f) {
+        Gecode::branch(*this,x,INT_VAL_MAX());
+      }
+      FailingParallelObjective(FailingParallelObjective& s)
+        : Space(s), failure(s.failure) {
+        x.update(*this,s.x);
+      }
+      virtual Space* copy(void) {
+        return new FailingParallelObjective(*this);
+      }
+      virtual SpaceComparison compare(const Space& s) const {
+        if (failure == MISSING)
+          return Space::compare(s);
+        if (failure == THROWN)
+          throw ComparisonError();
+        return SC_INCOMPARABLE;
+      }
+    };
+
     /// Objective with a genuine partial-order result
     class IncomparableObjective : public ExternalObjective {
     public:
@@ -543,7 +591,151 @@ namespace Test {
 
     ExternalIncumbent external_incumbent;
 
+    /// Test parallel BAB solution arbitration and failure delivery
+    class ParallelBABComparison : public Base {
+    private:
+      static Gecode::Search::Options options(void) {
+        Gecode::Search::Options o;
+        o.threads = 2;
+        return o;
+      }
+      static bool resetSearch(Gecode::Search::Engine* e) {
+        e->reset(new ParallelObjective);
+        int previous = 11;
+        ParallelObjective* s;
+        while ((s = static_cast<ParallelObjective*>(e->next())) != nullptr) {
+          int value = s->x.val();
+          delete s;
+          if (value >= previous)
+            return false;
+          previous = value;
+        }
+        return previous == 0;
+      }
+      static bool missingFailure(void) {
+        Gecode::Search::TimeStop stop(5000);
+        Gecode::Search::Options o = options();
+        o.stop = &stop;
+        FailingParallelObjective* m =
+          new FailingParallelObjective(FailingParallelObjective::MISSING);
+        Gecode::Search::Engine* e = Gecode::Search::babengine(m,o);
+        delete m;
+        bool repeated = false;
+        try {
+          while (Space* s = e->next()) delete s;
+        } catch (const SpaceNoComparison&) {
+          try { (void) e->next(); }
+          catch (const SpaceNoComparison&) { repeated = true; }
+        }
+        if (!repeated) {
+          delete e;
+          return false;
+        }
+        bool recovered = resetSearch(e);
+        delete e;
+        return recovered;
+      }
+      static bool thrownFailure(void) {
+        Gecode::Search::TimeStop stop(5000);
+        Gecode::Search::Options o = options();
+        o.stop = &stop;
+        FailingParallelObjective* m =
+          new FailingParallelObjective(FailingParallelObjective::THROWN);
+        Gecode::Search::Engine* e = Gecode::Search::babengine(m,o);
+        delete m;
+        try {
+          while (Space* s = e->next()) delete s;
+        } catch (const ComparisonError&) {
+          bool recovered = resetSearch(e);
+          delete e;
+          return recovered;
+        }
+        delete e;
+        return false;
+      }
+      static bool incomparableFailure(void) {
+        Gecode::Search::TimeStop stop(5000);
+        Gecode::Search::Options o = options();
+        o.stop = &stop;
+        FailingParallelObjective* m = new FailingParallelObjective(
+          FailingParallelObjective::INCOMPARABLE);
+        Gecode::Search::Engine* e = Gecode::Search::babengine(m,o);
+        delete m;
+        try {
+          while (Space* s = e->next()) delete s;
+        } catch (const Gecode::Search::Incomparable&) {
+          bool recovered = resetSearch(e);
+          delete e;
+          return recovered;
+        }
+        delete e;
+        return false;
+      }
+    public:
+      ParallelBABComparison(void) : Base("Search::ParallelBABComparison") {}
+      virtual bool run(void) {
+        Gecode::Search::TimeStop stop(5000);
+        Gecode::Search::Options o = options();
+        o.stop = &stop;
+        ParallelObjective* m = new ParallelObjective;
+        Gecode::BAB<ParallelObjective> bab(m,o);
+        delete m;
+        int previous = 11;
+        ParallelObjective* s;
+        while ((s = bab.next()) != nullptr) {
+          int value = s->x.val();
+          delete s;
+          if (value >= previous)
+            return false;
+          previous = value;
+        }
+        if (previous != 0)
+          return false;
+
+        m = new ParallelObjective;
+        Gecode::Search::Engine* bounded = Gecode::Search::babengine(m,o);
+        delete m;
+        if (Space* first = bounded->next())
+          delete first;
+        // This is stronger than every solution in the model, so it also
+        // supersedes any results queued while the first result was returned.
+        ParallelObjective bound(-1);
+        bounded->constrain(bound);
+        while ((s = static_cast<ParallelObjective*>(bounded->next())) !=
+               nullptr) {
+          int value = s->x.val();
+          delete s;
+          if (value >= -1) {
+            delete bounded;
+            return false;
+          }
+        }
+        delete bounded;
+        return missingFailure() && thrownFailure() && incomparableFailure();
+      }
+    };
+
+    ParallelBABComparison parallel_bab_comparison;
+
 #ifdef GECODE_HAS_FLOAT_VARS
+    /// Stepped float objective for parallel BAB admission
+    class ParallelFloatObjective : public FloatMinimizeSpace {
+    public:
+      FloatVar x;
+      ParallelFloatObjective(void)
+        : FloatMinimizeSpace(1.0), x(*this,9.5,10.0) {
+        Gecode::branch(*this,x,FLOAT_VAL_SPLIT_MAX());
+      }
+      ParallelFloatObjective(FloatNum v)
+        : FloatMinimizeSpace(1.0), x(*this,v,v) {}
+      ParallelFloatObjective(ParallelFloatObjective& s)
+        : FloatMinimizeSpace(s) {
+        x.update(*this,s.x);
+      }
+      virtual Space* copy(void) { return new ParallelFloatObjective(*this); }
+      virtual FloatVar cost(void) const { return x; }
+    };
+
     /// Scalar float minimization objective used for comparison and cut tests
     class FloatMinObjective : public FloatMinimizeSpace {
     public:
@@ -649,6 +841,25 @@ namespace Test {
         catch (const DynamicCastFailed&) {}
         try { (void) m10.compare(x10); return false; }
         catch (const DynamicCastFailed&) {}
+
+        Gecode::Search::TimeStop stop(5000);
+        Gecode::Search::Options o;
+        o.threads = 2;
+        o.stop = &stop;
+        Gecode::Search::Par::BAB<Gecode::Search::NoTraceRecorder>
+          bab(nullptr,o);
+        bab.solution(new ParallelFloatObjective(10.0));
+        bab.solution(new ParallelFloatObjective(9.5));
+        ParallelFloatObjective* p10 =
+          static_cast<ParallelFloatObjective*>(bab.next());
+        ParallelFloatObjective* p95 =
+          static_cast<ParallelFloatObjective*>(bab.next());
+        bool substep = (p10 != nullptr) && (p95 != nullptr) &&
+          (p10->x.val().max() == 10.0) && (p95->x.val().max() == 9.5);
+        delete p10;
+        delete p95;
+        if (!substep)
+          return false;
         return true;
       }
     };
