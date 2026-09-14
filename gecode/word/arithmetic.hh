@@ -1,0 +1,567 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
+/*
+ *  Main authors:
+ *     Mikael Zayenz Lagerkvist <lagerkvist@gecode.dev>
+ *
+ *  Copyright:
+ *     Mikael Zayenz Lagerkvist, 2026
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.dev
+ *
+ *  Permission is hereby granted, free of charge, to any person obtaining
+ *  a copy of this software and associated documentation files (the
+ *  "Software"), to deal in the Software without restriction, including
+ *  without limitation the rights to use, copy, modify, merge, publish,
+ *  distribute, sublicense, and/or sell copies of the Software, and to
+ *  permit persons to whom the Software is furnished to do so, subject to
+ *  the following conditions:
+ *
+ *  The above copyright notice and this permission notice shall be
+ *  included in all copies or substantial portions of the Software.
+ *
+ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ *  EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ *  MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ *  NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ *  LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ *  OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
+
+#ifndef GECODE_WORD_ARITHMETIC_HH
+#define GECODE_WORD_ARITHMETIC_HH
+
+#include <gecode/word.hh>
+
+namespace Gecode { namespace Word { namespace Arithmetic {
+
+  /**
+   * \brief Bit-consistent propagator for fixed-width modular addition
+   *
+   * Carries are represented by a temporary two-state chain during
+   * propagation. No carry variables or carry state are stored in the space.
+   */
+  class Add : public TernaryPropagator<WordView,PC_WORD_BITS> {
+  protected:
+    using TernaryPropagator<WordView,PC_WORD_BITS>::x0;
+    using TernaryPropagator<WordView,PC_WORD_BITS>::x1;
+    using TernaryPropagator<WordView,PC_WORD_BITS>::x2;
+    Add(Home home, WordView x0, WordView x1, WordView x2);
+    Add(Space& home, Add& p);
+    static ExecStatus narrow(Home home, WordView x0, WordView x1,
+                             WordView x2);
+  public:
+    virtual Actor* copy(Space& home);
+    virtual PropCost cost(const Space& home,
+                          const ModEventDelta& med) const;
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+    static ExecStatus post(Home home, WordView x0, WordView x1,
+                           WordView x2);
+  };
+
+  /** \brief Bounded-carry propagator for n-ary modular addition
+   *
+   * The propagator is exact on assigned operands and uses forward and
+   * backward carry bounds for sound cube narrowing. It does not claim bit or
+   * domain consistency for arbitrary n-ary cubes.
+   */
+  class NaryAdd : public MixNaryOnePropagator<
+    WordView,PC_WORD_BITS,WordView,PC_WORD_BITS> {
+    template<class> friend class BoundNaryAdd;
+  protected:
+    using MixNaryOnePropagator<
+      WordView,PC_WORD_BITS,WordView,PC_WORD_BITS>::x;
+    using MixNaryOnePropagator<
+      WordView,PC_WORD_BITS,WordView,PC_WORD_BITS>::y;
+    WordValue constant;
+    /// Whether role-specific projections share an underlying variable
+    bool aliased;
+    NaryAdd(Home home, ViewArray<WordView>& x, WordView y,
+            WordValue constant, bool aliased);
+    NaryAdd(Space& home, NaryAdd& p);
+    template<class View>
+    static ExecStatus narrow(Home home, ViewArray<View>& x,
+                             View y, WordValue constant, bool aliased);
+  public:
+    virtual Actor* copy(Space& home);
+    virtual size_t dispose(Space& home);
+    virtual PropCost cost(const Space& home,
+                          const ModEventDelta& med) const;
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+    static ExecStatus post(Home home, ViewArray<WordView>& x, WordView y,
+                           WordValue constant);
+  };
+
+  /** \brief Staged bounded propagator for non-wrapping n-ary addition */
+  template<class View>
+  class BoundNaryAdd : public MixNaryOnePropagator<
+    View,PC_WORD_DOM,View,PC_WORD_DOM> {
+  protected:
+    using MixNaryOnePropagator<View,PC_WORD_DOM,View,PC_WORD_DOM>::x;
+    using MixNaryOnePropagator<View,PC_WORD_DOM,View,PC_WORD_DOM>::y;
+    WordValue constant;
+    bool aliased;
+    BoundNaryAdd(Home home, ViewArray<View>& x, View y,
+                 WordValue constant, bool aliased);
+    BoundNaryAdd(Space& home, BoundNaryAdd& p);
+    static ExecStatus narrow_bounds(Home home, ViewArray<View>& x, View y,
+                                    WordValue constant, bool aliased,
+                                    bool& bits);
+    static ExecStatus narrow(Home home, ViewArray<View>& x, View y,
+                             WordValue constant, bool cube, bool aliased);
+  public:
+    virtual Actor* copy(Space& home);
+    virtual size_t dispose(Space& home);
+    virtual PropCost cost(const Space& home,
+                          const ModEventDelta& med) const;
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+    static ExecStatus post(Home home, ViewArray<View>& x, View y,
+                           WordValue constant);
+  };
+
+  /// Bit-consistent addition with an exposed final carry
+  class AddCarry : public MixNaryOnePropagator<
+    WordView,PC_WORD_BITS,Int::BoolView,Int::PC_BOOL_VAL> {
+  protected:
+    using MixNaryOnePropagator<
+      WordView,PC_WORD_BITS,Int::BoolView,Int::PC_BOOL_VAL>::x;
+    using MixNaryOnePropagator<
+      WordView,PC_WORD_BITS,Int::BoolView,Int::PC_BOOL_VAL>::y;
+    AddCarry(Home home, ViewArray<WordView>& x, Int::BoolView carry);
+    AddCarry(Space& home, AddCarry& p);
+  public:
+    virtual Actor* copy(Space& home);
+    virtual PropCost cost(const Space& home,
+                          const ModEventDelta& med) const;
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+    static ExecStatus post(Home home, WordView x0, WordView x1,
+                           WordView x2, Int::BoolView carry);
+  };
+
+  /**
+   * \brief Bit-consistent propagator for fixed-width modular negation
+   *
+   * Carries for two's-complement negation are represented by a temporary
+   * two-state chain during propagation.
+   */
+  class Neg : public BinaryPropagator<WordView,PC_WORD_BITS> {
+  protected:
+    using BinaryPropagator<WordView,PC_WORD_BITS>::x0;
+    using BinaryPropagator<WordView,PC_WORD_BITS>::x1;
+    Neg(Home home, WordView x0, WordView x1);
+    Neg(Space& home, Neg& p);
+    static ExecStatus narrow(Home home, WordView x0, WordView x1);
+  public:
+    virtual Actor* copy(Space& home);
+    virtual PropCost cost(const Space& home,
+                          const ModEventDelta& med) const;
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+    static ExecStatus post(Home home, WordView x0, WordView x1);
+  };
+
+  /**
+   * \brief Bit-consistent propagator for fixed-width modular subtraction
+   *
+   * Borrows are represented by a temporary two-state chain during
+   * propagation. No borrow variables or borrow state are stored in the space.
+   */
+  class Sub : public TernaryPropagator<WordView,PC_WORD_BITS> {
+  protected:
+    using TernaryPropagator<WordView,PC_WORD_BITS>::x0;
+    using TernaryPropagator<WordView,PC_WORD_BITS>::x1;
+    using TernaryPropagator<WordView,PC_WORD_BITS>::x2;
+    Sub(Home home, WordView x0, WordView x1, WordView x2);
+    Sub(Space& home, Sub& p);
+    static ExecStatus narrow(Home home, WordView x0, WordView x1,
+                             WordView x2);
+  public:
+    virtual Actor* copy(Space& home);
+    virtual PropCost cost(const Space& home,
+                          const ModEventDelta& med) const;
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+    static ExecStatus post(Home home, WordView x0, WordView x1,
+                           WordView x2);
+  };
+
+  /// Bit-consistent subtraction with an exposed final borrow
+  class SubBorrow : public MixNaryOnePropagator<
+    WordView,PC_WORD_BITS,Int::BoolView,Int::PC_BOOL_VAL> {
+  protected:
+    using MixNaryOnePropagator<
+      WordView,PC_WORD_BITS,Int::BoolView,Int::PC_BOOL_VAL>::x;
+    using MixNaryOnePropagator<
+      WordView,PC_WORD_BITS,Int::BoolView,Int::PC_BOOL_VAL>::y;
+    SubBorrow(Home home, ViewArray<WordView>& x, Int::BoolView borrow);
+    SubBorrow(Space& home, SubBorrow& p);
+  public:
+    virtual Actor* copy(Space& home);
+    virtual PropCost cost(const Space& home,
+                          const ModEventDelta& med) const;
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+    static ExecStatus post(Home home, WordView x0, WordView x1,
+                           WordView x2, Int::BoolView borrow);
+  };
+
+  /**
+   * \brief Low-prefix propagator for fixed-width modular multiplication
+   *
+   * The propagator is exact for assigned operands and propagates fixed low
+   * prefixes in both directions, including modular inversion of odd factors.
+   * This is deliberately weaker than bit consistency for multiplication.
+   */
+  class Mult : public TernaryPropagator<WordView,PC_WORD_BITS> {
+  protected:
+    using TernaryPropagator<WordView,PC_WORD_BITS>::x0;
+    using TernaryPropagator<WordView,PC_WORD_BITS>::x1;
+    using TernaryPropagator<WordView,PC_WORD_BITS>::x2;
+    Mult(Home home, WordView x0, WordView x1, WordView x2);
+    Mult(Space& home, Mult& p);
+    static ExecStatus narrow(Home home, WordView x0, WordView x1,
+                             WordView x2);
+  public:
+    virtual Actor* copy(Space& home);
+    virtual PropCost cost(const Space& home,
+                          const ModEventDelta& med) const;
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+    static ExecStatus post(Home home, WordView x0, WordView x1,
+                           WordView x2);
+  };
+
+  /** \brief Mixed Word/Int mathematical product-modulo propagator
+   *
+   * Relates three same-width words and a positive integer modulus by
+   * \f$r=(x\cdot y)\bmod m\f$. Assigned products are evaluated without
+   * forming the potentially overflowing host-word product.
+   */
+  class ProductMod : public Propagator {
+    friend class RewritingProductMod;
+  protected:
+    WordView x;
+    WordView y;
+    Int::IntView modulus;
+    WordView result;
+    ProductMod(Home home, WordView x, WordView y,
+               Int::IntView modulus, WordView result);
+    ProductMod(Space& home, ProductMod& p);
+    static ExecStatus prune(Home home, WordView x, WordView y,
+                            Int::IntView modulus, WordView result);
+  public:
+    virtual Actor* copy(Space& home);
+    virtual PropCost cost(const Space& home,
+                          const ModEventDelta& med) const;
+    virtual void reschedule(Space& home);
+    virtual size_t dispose(Space& home);
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+    static ExecStatus post(Home home, WordView x, WordView y,
+                           Int::IntView modulus, WordView result);
+  };
+
+  /** \brief Bounded mixed Word/Int mathematical product-modulo propagator
+   *
+   * Selected only for homogeneous unsigned bounded words whose product is
+   * representable at the word width.
+   */
+  class BoundProductMod : public Propagator {
+  protected:
+    UnsignedWordView x;
+    UnsignedWordView y;
+    Int::IntView modulus;
+    UnsignedWordView result;
+    BoundProductMod(Home home, UnsignedWordView x, UnsignedWordView y,
+                    Int::IntView modulus, UnsignedWordView result);
+    BoundProductMod(Space& home, BoundProductMod& p);
+    static ExecStatus narrow(Home home, UnsignedWordView x,
+                             UnsignedWordView y, Int::IntView modulus,
+                             UnsignedWordView result, bool cube,
+                             bool& bits, bool& subsumed);
+  public:
+    static bool numeric_regime(UnsignedWordView x, UnsignedWordView y);
+    virtual Actor* copy(Space& home);
+    virtual PropCost cost(const Space& home,
+                          const ModEventDelta& med) const;
+    virtual void reschedule(Space& home);
+    virtual size_t dispose(Space& home);
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+    static ExecStatus post(Home home, UnsignedWordView x,
+                           UnsignedWordView y, Int::IntView modulus,
+                           UnsignedWordView result);
+  };
+
+  /// Post the strongest compatible product-modulo actor.
+  ExecStatus post_product_mod(Home home, WordView x, WordView y,
+                              Int::IntView modulus, WordView result);
+
+  /// Reified mixed Word/Int mathematical product-modulo propagator
+  template<ReifyMode rm>
+  class ReProductMod : public Propagator {
+  protected:
+    WordView x;
+    WordView y;
+    Int::IntView modulus;
+    WordView result;
+    Int::BoolView b;
+    ReProductMod(Home home, WordView x, WordView y,
+                 Int::IntView modulus, WordView result, Int::BoolView b);
+    ReProductMod(Space& home, ReProductMod& p);
+  public:
+    virtual Actor* copy(Space& home);
+    virtual PropCost cost(const Space& home,
+                          const ModEventDelta& med) const;
+    virtual void reschedule(Space& home);
+    virtual size_t dispose(Space& home);
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+    static ExecStatus post(Home home, WordView x, WordView y,
+                           Int::IntView modulus, WordView result,
+                           Int::BoolView b);
+  };
+
+  /** \brief Native unsigned division propagator
+   *
+   * Exact on assigned words, with sound unsigned range-hull propagation and
+   * inverse pruning for assigned quotient or divisor. It does not claim
+   * domain consistency for cube domains.
+   */
+  class Div : public TernaryPropagator<WordView,PC_WORD_BITS> {
+  protected:
+    using TernaryPropagator<WordView,PC_WORD_BITS>::x0;
+    using TernaryPropagator<WordView,PC_WORD_BITS>::x1;
+    using TernaryPropagator<WordView,PC_WORD_BITS>::x2;
+    Div(Home home, WordView x0, WordView x1, WordView x2);
+    Div(Space& home, Div& p);
+    static ExecStatus narrow(Home home, WordView x0, WordView x1,
+                             WordView x2);
+  public:
+    virtual Actor* copy(Space& home);
+    virtual PropCost cost(const Space& home,
+                          const ModEventDelta& med) const;
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+    static ExecStatus post(Home home, WordView x0, WordView x1,
+                           WordView x2);
+  };
+
+  /** \brief Native unsigned remainder propagator
+   *
+   * Exact on assigned words, with sound unsigned range-hull propagation and
+   * bidirectional low-bit propagation for power-of-two divisors. It does not
+   * claim domain consistency for cube domains.
+   */
+  class Mod : public TernaryPropagator<WordView,PC_WORD_BITS> {
+  protected:
+    using TernaryPropagator<WordView,PC_WORD_BITS>::x0;
+    using TernaryPropagator<WordView,PC_WORD_BITS>::x1;
+    using TernaryPropagator<WordView,PC_WORD_BITS>::x2;
+    Mod(Home home, WordView x0, WordView x1, WordView x2);
+    Mod(Space& home, Mod& p);
+    static ExecStatus narrow(Home home, WordView x0, WordView x1,
+                             WordView x2);
+  public:
+    virtual Actor* copy(Space& home);
+    virtual PropCost cost(const Space& home,
+                          const ModEventDelta& med) const;
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+    static ExecStatus post(Home home, WordView x0, WordView x1,
+                           WordView x2);
+  };
+
+  /** \brief Native combined unsigned division and remainder propagator
+   *
+   * Exact on assigned words, with shared sound unsigned range-hull and
+   * inverse propagation for quotient and remainder. It does not claim
+   * domain consistency for cube domains.
+   */
+  class DivModBoth : public Propagator {
+  protected:
+    WordView dividend;
+    WordView divisor;
+    WordView quotient;
+    WordView remainder;
+    DivModBoth(Home home, WordView dividend, WordView divisor,
+               WordView quotient, WordView remainder);
+    DivModBoth(Space& home, DivModBoth& p);
+    static ExecStatus narrow(Home home, WordView dividend, WordView divisor,
+                             WordView quotient, WordView remainder);
+  public:
+    virtual Actor* copy(Space& home);
+    virtual PropCost cost(const Space& home,
+                          const ModEventDelta& med) const;
+    virtual void reschedule(Space& home);
+    virtual size_t dispose(Space& home);
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+    static ExecStatus post(Home home, WordView dividend, WordView divisor,
+                           WordView quotient, WordView remainder);
+  };
+
+  /// Operations supported by the native signed division actor
+  enum SignedDivModOperation {
+    SDO_DIV,
+    SDO_REM,
+    SDO_MOD
+  };
+
+  /** \brief Native signed division, remainder, and modulus propagator
+   *
+   * Exact on assigned words, with sound fixed-divisor and sign-bit
+   * propagation. It deliberately does not claim domain consistency for
+   * cube domains.
+   */
+  template<SignedDivModOperation op>
+  class SignedDivMod : public TernaryPropagator<WordView,PC_WORD_BITS> {
+  protected:
+    using TernaryPropagator<WordView,PC_WORD_BITS>::x0;
+    using TernaryPropagator<WordView,PC_WORD_BITS>::x1;
+    using TernaryPropagator<WordView,PC_WORD_BITS>::x2;
+    SignedDivMod(Home home, WordView x0, WordView x1, WordView x2);
+    SignedDivMod(Space& home, SignedDivMod& p);
+    static ExecStatus narrow(Home home, WordView x0, WordView x1,
+                             WordView x2);
+  public:
+    virtual Actor* copy(Space& home);
+    virtual PropCost cost(const Space& home,
+                          const ModEventDelta& med) const;
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+    static ExecStatus post(Home home, WordView x0, WordView x1,
+                           WordView x2);
+  };
+
+  /// Native compact Word GCD propagator
+  template<bool sign>
+  class Gcd : public TernaryPropagator<WordView,PC_WORD_BITS> {
+  protected:
+    using TernaryPropagator<WordView,PC_WORD_BITS>::x0;
+    using TernaryPropagator<WordView,PC_WORD_BITS>::x1;
+    using TernaryPropagator<WordView,PC_WORD_BITS>::x2;
+    Gcd(Home home, WordView x, WordView y, WordView result);
+    Gcd(Space& home, Gcd& p);
+  public:
+    virtual Actor* copy(Space& home);
+    virtual PropCost cost(const Space& home,
+                          const ModEventDelta& med) const;
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+    static ExecStatus post(Home home, WordView x, WordView y,
+                           WordView result);
+  };
+
+  /// Native bounded Word GCD propagator
+  template<class View, bool sign>
+  class BoundGcd : public Propagator {
+  protected:
+    View x;
+    View y;
+    UnsignedWordView result;
+    BoundGcd(Home home, View x, View y, UnsignedWordView result);
+    BoundGcd(Space& home, BoundGcd& p);
+    static ExecStatus narrow(Home home, View x, View y,
+                             UnsignedWordView result, bool& bits,
+                             bool& subsumed);
+  public:
+    virtual Actor* copy(Space& home);
+    virtual PropCost cost(const Space& home,
+                          const ModEventDelta& med) const;
+    virtual void reschedule(Space& home);
+    virtual size_t dispose(Space& home);
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+    static ExecStatus post(Home home, View x, View y,
+                           UnsignedWordView result);
+  };
+
+  /// Reified compact Word GCD relation
+  template<ReifyMode rm, bool sign>
+  class ReGcd : public Propagator {
+  protected:
+    WordView x;
+    WordView y;
+    WordView result;
+    Int::BoolView b;
+    ReGcd(Home home, WordView x, WordView y, WordView result,
+          Int::BoolView b);
+    ReGcd(Space& home, ReGcd& p);
+  public:
+    virtual Actor* copy(Space& home);
+    virtual PropCost cost(const Space& home,
+                          const ModEventDelta& med) const;
+    virtual void reschedule(Space& home);
+    virtual size_t dispose(Space& home);
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+    static ExecStatus post(Home home, WordView x, WordView y,
+                           WordView result, Int::BoolView b);
+  };
+
+  /// Native bounded enforcement actor for Word divisibility
+  template<class View, bool sign>
+  class Divides : public BinaryPropagator<View,PC_WORD_DOM> {
+  protected:
+    using BinaryPropagator<View,PC_WORD_DOM>::x0;
+    using BinaryPropagator<View,PC_WORD_DOM>::x1;
+    Divides(Home home, View divisor, View dividend);
+    Divides(Space& home, Divides& p);
+    static ExecStatus narrow(Home home, View divisor, View dividend,
+                             bool& bits, bool& subsumed);
+  public:
+    virtual Actor* copy(Space& home);
+    virtual size_t dispose(Space& home);
+    virtual PropCost cost(const Space& home,
+                          const ModEventDelta& med) const;
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+    static ExecStatus post(Home home, View divisor, View dividend);
+  };
+
+  /// Native compact enforcement actor for Word divisibility
+  template<bool sign>
+  class CubeDivides : public BinaryPropagator<WordView,PC_WORD_BITS> {
+  protected:
+    using BinaryPropagator<WordView,PC_WORD_BITS>::x0;
+    using BinaryPropagator<WordView,PC_WORD_BITS>::x1;
+    CubeDivides(Home home, WordView divisor, WordView dividend);
+    CubeDivides(Space& home, CubeDivides& p);
+  public:
+    virtual Actor* copy(Space& home);
+    virtual PropCost cost(const Space& home,
+                          const ModEventDelta& med) const;
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+    static ExecStatus post(Home home, WordView divisor, WordView dividend);
+  };
+
+  /// Reified Word divisibility relation
+  template<ReifyMode rm, bool sign>
+  class ReDivides : public Propagator {
+  protected:
+    WordView divisor;
+    WordView dividend;
+    Int::BoolView b;
+    ReDivides(Home home, WordView divisor, WordView dividend,
+              Int::BoolView b);
+    ReDivides(Space& home, ReDivides& p);
+  public:
+    virtual Actor* copy(Space& home);
+    virtual PropCost cost(const Space& home,
+                          const ModEventDelta& med) const;
+    virtual void reschedule(Space& home);
+    virtual size_t dispose(Space& home);
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+    static ExecStatus post(Home home, WordView divisor, WordView dividend,
+                           Int::BoolView b);
+  };
+
+  template<bool sign>
+  ExecStatus post_gcd(Home home, WordView x, WordView y, WordView result);
+  template<bool sign>
+  ExecStatus post_divides(Home home, WordView divisor, WordView dividend);
+
+}}}
+
+#include <gecode/word/arithmetic/add.hpp>
+#include <gecode/word/arithmetic/neg-sub.hpp>
+#include <gecode/word/arithmetic/mult.hpp>
+#include <gecode/word/arithmetic/bounded.hpp>
+#include <gecode/word/arithmetic/product-mod.hpp>
+#include <gecode/word/arithmetic/bounded-product-mod.hpp>
+#include <gecode/word/arithmetic/divmod.hpp>
+#include <gecode/word/arithmetic/signed-divmod.hpp>
+#include <gecode/word/arithmetic/bounded-divmod.hpp>
+#include <gecode/word/arithmetic/number.hpp>
+
+#endif
+
+// STATISTICS: word-prop

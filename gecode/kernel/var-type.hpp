@@ -6,6 +6,7 @@
  *     - ./gecode/int/var-imp/bool.vis
  *     - ./gecode/set/var-imp/set.vis
  *     - ./gecode/float/var-imp/float.vis
+ *     - ./gecode/word/var-imp/word.vis
  *
  *  This file contains generated code fragments which are
  *  copyrighted as follows:
@@ -301,6 +302,21 @@ namespace Gecode { namespace Float {
   //@}
 }}
 #endif
+#ifdef GECODE_HAS_WORD_VARS
+namespace Gecode { namespace Word {
+  const Gecode::ModEvent ME_WORD_FAILED = Gecode::ME_GEN_FAILED;
+  const Gecode::ModEvent ME_WORD_NONE = Gecode::ME_GEN_NONE;
+  const Gecode::ModEvent ME_WORD_VAL = Gecode::ME_GEN_ASSIGNED;
+  const Gecode::ModEvent ME_WORD_BITS = Gecode::ME_GEN_ASSIGNED + 1;
+  const Gecode::ModEvent ME_WORD_BND = Gecode::ME_GEN_ASSIGNED + 2;
+  const Gecode::ModEvent ME_WORD_DOM = Gecode::ME_GEN_ASSIGNED + 3;
+  const Gecode::PropCond PC_WORD_NONE = Gecode::PC_GEN_NONE;
+  const Gecode::PropCond PC_WORD_VAL = Gecode::PC_GEN_ASSIGNED;
+  const Gecode::PropCond PC_WORD_BITS = Gecode::PC_GEN_ASSIGNED + 1;
+  const Gecode::PropCond PC_WORD_BND = Gecode::PC_GEN_ASSIGNED + 2;
+  const Gecode::PropCond PC_WORD_DOM = Gecode::PC_GEN_ASSIGNED + 3;
+}}
+#endif
 #ifdef GECODE_HAS_INT_VARS
 namespace Gecode { namespace Int {
   /// Configuration for Int-variable implementations
@@ -457,6 +473,45 @@ namespace Gecode { namespace Float {
   };
 }}
 #endif
+#ifdef GECODE_HAS_WORD_VARS
+namespace Gecode { namespace Word {
+  /// Configuration for Word-variable implementations
+  class WordVarImpConf {
+  public:
+    /// Index for cloning
+    static const int idx_c = Gecode::Float::FloatVarImpConf::idx_c+1;
+    /// Index for disposal
+    static const int idx_d = Gecode::Float::FloatVarImpConf::idx_d;
+    /// Maximal propagation condition
+    static const Gecode::PropCond pc_max = PC_WORD_DOM;
+    /// Freely available bits
+    static const int free_bits = 0;
+    /// Start of bits for modification event delta
+    static const int med_fst = Gecode::Float::FloatVarImpConf::med_lst;
+    /// End of bits for modification event delta
+    static const int med_lst = med_fst + 3;
+    /// Bitmask for modification event delta
+    static const int med_mask = ((1 << 3) - 1) << med_fst;
+    /// Combine modification events \a me1 and \a me2
+    static Gecode::ModEvent me_combine(Gecode::ModEvent me1, Gecode::ModEvent me2);
+    /// Update modification even delta \a med by \a me, return true on change
+    static bool med_update(Gecode::ModEventDelta& med, Gecode::ModEvent me);
+  };
+}}
+#else
+namespace Gecode { namespace Word {
+  /// Dummy configuration for Word-variable implementations
+  class WordVarImpConf {
+  public:
+    /// Index for cloning
+    static const int idx_c = Gecode::Float::FloatVarImpConf::idx_c;
+    /// Index for disposal
+    static const int idx_d = Gecode::Float::FloatVarImpConf::idx_d;
+    /// End of bits for modification event delta
+    static const int med_lst = Gecode::Float::FloatVarImpConf::med_lst;
+  };
+}}
+#endif
 
 namespace Gecode {
 
@@ -464,9 +519,9 @@ namespace Gecode {
   class AllVarConf {
   public:
     /// Index for cloning
-    static const int idx_c = Gecode::Float::FloatVarImpConf::idx_c+1;
+    static const int idx_c = Gecode::Word::WordVarImpConf::idx_c+1;
     /// Index for dispose
-    static const int idx_d = Gecode::Float::FloatVarImpConf::idx_d+1;
+    static const int idx_d = Gecode::Word::WordVarImpConf::idx_d+1;
     /// Combine modification event delta \a med1 with \a med2
     static ModEventDelta med_combine(ModEventDelta med1, ModEventDelta med2);
   };
@@ -892,6 +947,118 @@ namespace Gecode { namespace Float {
 
 }}
 #endif
+#ifdef GECODE_HAS_WORD_VARS
+namespace Gecode { namespace Word {
+  forceinline Gecode::ModEvent
+  WordVarImpConf::me_combine(Gecode::ModEvent me1, Gecode::ModEvent me2) {
+    static const Gecode::ModEvent me_c[ME_WORD_DOM+1][ME_WORD_DOM+1] = {
+      {
+        ME_WORD_NONE, // [ME_WORD_NONE][ME_WORD_NONE]
+        ME_WORD_VAL , // [ME_WORD_NONE][ME_WORD_VAL ]
+        ME_WORD_BITS, // [ME_WORD_NONE][ME_WORD_BITS]
+        ME_WORD_BND , // [ME_WORD_NONE][ME_WORD_BND ]
+        ME_WORD_DOM   // [ME_WORD_NONE][ME_WORD_DOM ]
+      },
+      {
+        ME_WORD_VAL , // [ME_WORD_VAL ][ME_WORD_NONE]
+        ME_WORD_VAL , // [ME_WORD_VAL ][ME_WORD_VAL ]
+        ME_WORD_VAL , // [ME_WORD_VAL ][ME_WORD_BITS]
+        ME_WORD_VAL , // [ME_WORD_VAL ][ME_WORD_BND ]
+        ME_WORD_VAL   // [ME_WORD_VAL ][ME_WORD_DOM ]
+      },
+      {
+        ME_WORD_BITS, // [ME_WORD_BITS][ME_WORD_NONE]
+        ME_WORD_VAL , // [ME_WORD_BITS][ME_WORD_VAL ]
+        ME_WORD_BITS, // [ME_WORD_BITS][ME_WORD_BITS]
+        ME_WORD_DOM , // [ME_WORD_BITS][ME_WORD_BND ]
+        ME_WORD_DOM   // [ME_WORD_BITS][ME_WORD_DOM ]
+      },
+      {
+        ME_WORD_BND , // [ME_WORD_BND ][ME_WORD_NONE]
+        ME_WORD_VAL , // [ME_WORD_BND ][ME_WORD_VAL ]
+        ME_WORD_DOM , // [ME_WORD_BND ][ME_WORD_BITS]
+        ME_WORD_BND , // [ME_WORD_BND ][ME_WORD_BND ]
+        ME_WORD_DOM   // [ME_WORD_BND ][ME_WORD_DOM ]
+      },
+      {
+        ME_WORD_DOM , // [ME_WORD_DOM ][ME_WORD_NONE]
+        ME_WORD_VAL , // [ME_WORD_DOM ][ME_WORD_VAL ]
+        ME_WORD_DOM , // [ME_WORD_DOM ][ME_WORD_BITS]
+        ME_WORD_DOM , // [ME_WORD_DOM ][ME_WORD_BND ]
+        ME_WORD_DOM   // [ME_WORD_DOM ][ME_WORD_DOM ]
+      }
+    };
+    return me_c[me1][me2];
+  }
+  forceinline bool
+  WordVarImpConf::med_update(Gecode::ModEventDelta& med, Gecode::ModEvent me) {
+    switch (me) {
+    case ME_WORD_NONE:
+      return false;
+    case ME_WORD_VAL:
+      {
+        Gecode::ModEventDelta med_word = med & med_mask;
+        if (med_word == (ME_WORD_VAL << med_fst))
+          return false;
+        med ^= med_word;
+        med ^= ME_WORD_VAL << med_fst;
+        break;
+      }
+    case ME_WORD_BITS:
+      {
+        static const Gecode::ModEvent me_c = (
+          ((ME_WORD_NONE ^ ME_WORD_BITS) <<  0) |
+          ((ME_WORD_VAL  ^ ME_WORD_VAL ) <<  4) |
+          ((ME_WORD_BITS ^ ME_WORD_BITS) <<  8) |
+          ((ME_WORD_BND  ^ ME_WORD_DOM ) << 12) |
+          ((ME_WORD_DOM  ^ ME_WORD_DOM ) << 16)
+        );
+        Gecode::ModEvent me_o = (med & med_mask) >> med_fst;
+        Gecode::ModEvent me_n = (me_c >> (me_o << 2)) & (med_mask >> med_fst);
+        if (me_n == 0)
+          return false;
+        med ^= me_n << med_fst;
+        break;
+      }
+    case ME_WORD_BND:
+      {
+        static const Gecode::ModEvent me_c = (
+          ((ME_WORD_NONE ^ ME_WORD_BND ) <<  0) |
+          ((ME_WORD_VAL  ^ ME_WORD_VAL ) <<  4) |
+          ((ME_WORD_BITS ^ ME_WORD_DOM ) <<  8) |
+          ((ME_WORD_BND  ^ ME_WORD_BND ) << 12) |
+          ((ME_WORD_DOM  ^ ME_WORD_DOM ) << 16)
+        );
+        Gecode::ModEvent me_o = (med & med_mask) >> med_fst;
+        Gecode::ModEvent me_n = (me_c >> (me_o << 2)) & (med_mask >> med_fst);
+        if (me_n == 0)
+          return false;
+        med ^= me_n << med_fst;
+        break;
+      }
+    case ME_WORD_DOM:
+      {
+        static const Gecode::ModEvent me_c = (
+          ((ME_WORD_NONE ^ ME_WORD_DOM ) <<  0) |
+          ((ME_WORD_VAL  ^ ME_WORD_VAL ) <<  4) |
+          ((ME_WORD_BITS ^ ME_WORD_DOM ) <<  8) |
+          ((ME_WORD_BND  ^ ME_WORD_DOM ) << 12) |
+          ((ME_WORD_DOM  ^ ME_WORD_DOM ) << 16)
+        );
+        Gecode::ModEvent me_o = (med & med_mask) >> med_fst;
+        Gecode::ModEvent me_n = (me_c >> (me_o << 2)) & (med_mask >> med_fst);
+        if (me_n == 0)
+          return false;
+        med ^= me_n << med_fst;
+        break;
+      }
+    default: GECODE_NEVER;
+    }
+    return true;
+  }
+
+}}
+#endif
 namespace Gecode {
   forceinline ModEventDelta
   AllVarConf::med_combine(ModEventDelta med1, ModEventDelta med2) {
@@ -906,6 +1073,9 @@ namespace Gecode {
 #endif
 #ifdef GECODE_HAS_FLOAT_VARS
     (void) Gecode::Float::FloatVarImpConf::med_update(med1,(med2 & Gecode::Float::FloatVarImpConf::med_mask) >> Gecode::Float::FloatVarImpConf::med_fst);
+#endif
+#ifdef GECODE_HAS_WORD_VARS
+    (void) Gecode::Word::WordVarImpConf::med_update(med1,(med2 & Gecode::Word::WordVarImpConf::med_mask) >> Gecode::Word::WordVarImpConf::med_fst);
 #endif
     return med1;
   }

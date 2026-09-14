@@ -1,0 +1,312 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
+/*
+ *  Main authors:
+ *     Mikael Zayenz Lagerkvist <lagerkvist@gecode.dev>
+ *
+ *  Copyright:
+ *     Mikael Zayenz Lagerkvist, 2026
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.dev
+ *
+ *  Permission is hereby granted, free of charge, to any person obtaining
+ *  a copy of this software and associated documentation files (the
+ *  "Software"), to deal in the Software without restriction, including
+ *  without limitation the rights to use, copy, modify, merge, publish,
+ *  distribute, sublicense, and/or sell copies of the Software, and to
+ *  permit persons to whom the Software is furnished to do so, subject to
+ *  the following conditions:
+ *
+ *  The above copyright notice and this permission notice shall be
+ *  included in all copies or substantial portions of the Software.
+ *
+ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ *  EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ *  MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ *  NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ *  LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ *  OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
+
+namespace Gecode { namespace Word { namespace Arithmetic {
+
+  namespace SignedDivModSupport {
+    forceinline bool negative(WordValue value, WordValue sign) {
+      return (value & sign) != 0;
+    }
+    forceinline WordValue negate(WordValue value, WordValue mask) {
+      return (~value+1) & mask;
+    }
+    forceinline WordValue magnitude(WordValue value, WordValue sign,
+                                    WordValue mask) {
+      return negative(value,sign) ? negate(value,mask) : value;
+    }
+    template<SignedDivModOperation op>
+    forceinline WordValue evaluate(WordValue a, WordValue b,
+                                   WordValue sign, WordValue mask) {
+      if (b == 0)
+        return (op == SDO_DIV) ? (negative(a,sign) ? 1 : mask) : a;
+      const bool an=negative(a,sign), bn=negative(b,sign);
+      const WordValue am=magnitude(a,sign,mask);
+      const WordValue bm=magnitude(b,sign,mask);
+      if (op == SDO_DIV) {
+        const WordValue q=am/bm;
+        return (an != bn) ? negate(q,mask) : q;
+      }
+      WordValue r=am%bm;
+      if (an)
+        r=negate(r,mask);
+      if ((op == SDO_MOD) && (r != 0) && (an != bn))
+        r=(r+b) & mask;
+      return r;
+    }
+    forceinline bool changed(WordView x, WordValue lo, WordValue hi) {
+      return (x.lo() != lo) || (x.hi() != hi);
+    }
+    forceinline ExecStatus equal(Home home, WordView x, WordView y) {
+      for (;;) {
+        const WordValue lo=x.lo()|y.lo(), hi=x.hi()&y.hi();
+        GECODE_ME_CHECK(x.narrow(home,lo,hi));
+        GECODE_ME_CHECK(y.narrow(home,lo,hi));
+        if ((x.lo() == lo) && (x.hi() == hi) &&
+            (y.lo() == lo) && (y.hi() == hi))
+          break;
+      }
+      return (x.assigned() && y.assigned()) ? ES_OK : ES_FIX;
+    }
+    template<class A, class R>
+    forceinline ExecStatus common_residue(Home home, A a,
+                                          WordValue divisor, R r) {
+      // Both signed remainder conventions differ from a by a multiple of b.
+      // Its power-of-two factor therefore equates these low bits, even for
+      // negative operands and divisors. Unsigned negation also handles MIN.
+      assert(divisor != 0U);
+      const WordValue low=(divisor & (WordValue(0)-divisor))-1U;
+      if (low == 0U)
+        return ES_OK;
+      const WordValue lo=(a.lo()|r.lo())&low;
+      const WordValue hi=(a.hi()&r.hi())&low;
+      GECODE_ME_CHECK(a.narrow(home,(a.lo()&~low)|lo,
+                               (a.hi()&~low)|hi));
+      GECODE_ME_CHECK(r.narrow(home,(r.lo()&~low)|lo,
+                               (r.hi()&~low)|hi));
+      return ES_OK;
+    }
+
+    forceinline bool dividend_interval(WordView a, WordValue minimum,
+                                       WordValue maximum,
+                                       WordValue& lo, WordValue& hi) {
+      lo=a.lo(); hi=a.hi();
+      return synchronize_domain(a.width(),WDT_UNSIGNED,lo,hi,
+                                 minimum,maximum);
+    }
+
+    forceinline ExecStatus inverse_dividend(Home home, WordView a,
+                                            WordValue divisor,
+                                            WordValue quotient) {
+      const WordValue mask=a.mask(), sign=sign_bit(a.width());
+      assert((divisor != 0U) && (divisor != mask));
+      const WordValue d=magnitude(divisor,sign,mask);
+      const WordValue q=magnitude(quotient,sign,mask);
+      WordValue lo, hi;
+      if (q == 0U) {
+        // Zero quotient admits either sign with |a| < |b|. Keep both
+        // intervals until intersection with the existing cube excludes one.
+        WordValue negative_lo, negative_hi;
+        const bool positive=dividend_interval(a,0,d-1U,lo,hi);
+        const bool negative=(d > 1U) && dividend_interval(
+          a,negate(d-1U,mask),mask,negative_lo,negative_hi);
+        if (!positive && !negative)
+          return ES_FAILED;
+        if (!positive) {
+          lo=negative_lo; hi=negative_hi;
+        } else if (negative) {
+          lo &= negative_lo; hi |= negative_hi;
+        }
+      } else {
+        const bool negative_result=negative(quotient,sign) !=
+          negative(divisor,sign);
+        const WordValue limit=negative_result ? sign : sign-1U;
+        if (q > limit/d)
+          return ES_FAILED;
+        const WordValue minimum=q*d;
+        const WordValue maximum=minimum+std::min(d-1U,limit-minimum);
+        if (!dividend_interval(a,
+              negative_result ? negate(maximum,mask) : minimum,
+              negative_result ? negate(minimum,mask) : maximum,lo,hi))
+          return ES_FAILED;
+      }
+      GECODE_ME_CHECK(a.narrow(home,lo,hi));
+      return ES_OK;
+    }
+
+    template<class A, class R>
+    forceinline ExecStatus positive_power_mod(Home home, A a,
+                                              WordValue divisor, R r) {
+      const WordValue low=divisor-1U;
+      const WordValue common_lo=(a.lo()|r.lo())&low;
+      const WordValue common_hi=(a.hi()&r.hi())&low;
+      GECODE_ME_CHECK(r.narrow(home,common_lo,common_hi));
+      GECODE_ME_CHECK(a.narrow(home,(a.lo()&~low)|common_lo,
+                               (a.hi()&~low)|common_hi));
+      return ES_OK;
+    }
+  }
+
+  template<SignedDivModOperation op>
+  forceinline
+  SignedDivMod<op>::SignedDivMod(Home home, WordView a, WordView b,
+                                 WordView r)
+    : TernaryPropagator<WordView,PC_WORD_BITS>(home,a,b,r) {}
+
+  template<SignedDivModOperation op>
+  forceinline
+  SignedDivMod<op>::SignedDivMod(Space& home, SignedDivMod<op>& p)
+    : TernaryPropagator<WordView,PC_WORD_BITS>(home,p) {}
+
+  template<SignedDivModOperation op>
+  forceinline ExecStatus
+  SignedDivMod<op>::narrow(Home home, WordView a, WordView b, WordView r) {
+    const WordValue mask=a.mask();
+    const WordValue sign=WordValue(1) << (a.width()-1);
+    for (;;) {
+      const WordValue alo=a.lo(), ahi=a.hi(), blo=b.lo(), bhi=b.hi();
+      const WordValue rlo=r.lo(), rhi=r.hi();
+
+      if (b.assigned()) {
+        if (b.val() == 0) {
+          if (op == SDO_DIV) {
+            if ((a.lo()&sign) != 0) {
+              GECODE_ME_CHECK(r.eq(home,1));
+              return ES_OK;
+            }
+            if ((a.hi()&sign) == 0) {
+              GECODE_ME_CHECK(r.eq(home,mask));
+              return ES_OK;
+            }
+            GECODE_ME_CHECK(r.narrow(home,1,mask));
+            if (mask == 1)
+              return ES_OK;
+            if (r.assigned()) {
+              if (r.val() == 1)
+                GECODE_ME_CHECK(a.narrow(home,a.lo()|sign,a.hi()));
+              else if (r.val() == mask)
+                GECODE_ME_CHECK(a.narrow(home,a.lo(),a.hi()&~sign));
+              else
+                return ES_FAILED;
+            }
+          }
+          else {
+            if (a == r)
+              return ES_OK;
+            return SignedDivModSupport::equal(home,a,r);
+          }
+        }
+        if (b.val() == 1) {
+          if (op == SDO_DIV) {
+            if (a == r)
+              return ES_OK;
+            return SignedDivModSupport::equal(home,a,r);
+          }
+          GECODE_ME_CHECK(r.eq(home,0));
+          return ES_OK;
+        }
+        if ((b.val() == mask) && (op != SDO_DIV)) {
+          GECODE_ME_CHECK(r.eq(home,0));
+          return ES_OK;
+        }
+        if ((op != SDO_DIV) && (b.val() != 0U))
+          GECODE_ES_CHECK(SignedDivModSupport::common_residue(
+            home,a,b.val(),r));
+        if ((op == SDO_DIV) && (b.val() != 0U) &&
+            (b.val() != mask) && r.assigned())
+          GECODE_ES_CHECK(SignedDivModSupport::inverse_dividend(
+            home,a,b.val(),r.val()));
+        if ((op == SDO_MOD) && (b.val() != 0U) &&
+            ((b.val()&sign) == 0U) &&
+            ((b.val()&(b.val()-1U)) == 0U))
+          GECODE_ES_CHECK(SignedDivModSupport::positive_power_mod(
+            home,a,b.val(),r));
+      }
+
+      if (a.assigned() && b.assigned()) {
+        GECODE_ME_CHECK(r.eq(home,SignedDivModSupport::evaluate<op>(
+          a.val(),b.val(),sign,mask)));
+        return ES_OK;
+      }
+
+      if (a.assigned() && (a.val() == 0) &&
+          ((op != SDO_DIV) || (b.lo() != 0))) {
+        GECODE_ME_CHECK(r.eq(home,0));
+        return ES_OK;
+      }
+
+      if (op == SDO_DIV) {
+        const bool an=(a.lo()&sign) != 0, ap=(a.hi()&sign) == 0;
+        const bool bn=(b.lo()&sign) != 0, bp=(b.hi()&sign) == 0;
+        if ((b.lo() != 0) && ((an && bp) || (ap && bn)) &&
+            (r.lo() != 0))
+          GECODE_ME_CHECK(r.narrow(home,r.lo()|sign,r.hi()));
+      } else {
+        WordView s = (op == SDO_REM) ? a : b;
+        const bool nonzero_source=(op == SDO_REM) || (b.lo() != 0);
+        if (nonzero_source && ((s.hi()&sign) == 0))
+          GECODE_ME_CHECK(r.narrow(home,r.lo(),r.hi()&~sign));
+        else if (((s.lo()&sign) != 0) && (r.lo() != 0))
+          GECODE_ME_CHECK(r.narrow(home,r.lo()|sign,r.hi()));
+      }
+
+      if (!SignedDivModSupport::changed(a,alo,ahi) &&
+          !SignedDivModSupport::changed(b,blo,bhi) &&
+          !SignedDivModSupport::changed(r,rlo,rhi))
+        break;
+    }
+    return ES_FIX;
+  }
+
+  template<SignedDivModOperation op>
+  forceinline ExecStatus
+  SignedDivMod<op>::post(Home home, WordView a, WordView b, WordView r) {
+    if ((op != SDO_DIV) && (a == b)) {
+      GECODE_ME_CHECK(r.eq(home,0));
+      return ES_OK;
+    }
+    if (b.assigned() && (b.val() == a.mask()) && (op == SDO_DIV))
+      return Neg::post(home,a,r);
+    ExecStatus es=narrow(home,a,b,r);
+    if (es == ES_FAILED)
+      return ES_FAILED;
+    if (es == ES_FIX)
+      (void) new (home) SignedDivMod<op>(home,a,b,r);
+    return ES_OK;
+  }
+
+  template<SignedDivModOperation op>
+  forceinline Actor*
+  SignedDivMod<op>::copy(Space& home) {
+    return new (home) SignedDivMod<op>(home,*this);
+  }
+
+  template<SignedDivModOperation op>
+  forceinline PropCost
+  SignedDivMod<op>::cost(const Space&, const ModEventDelta&) const {
+    return PropCost::linear(PropCost::LO,x0.width());
+  }
+
+  template<SignedDivModOperation op>
+  forceinline ExecStatus
+  SignedDivMod<op>::propagate(Space& home, const ModEventDelta&) {
+    if (x1.assigned() && (x1.val() == x0.mask()) && (op == SDO_DIV)) {
+      GECODE_REWRITE(*this,(Neg::post(home(*this),x0,x2)));
+    }
+    ExecStatus es=narrow(home,x0,x1,x2);
+    if (es == ES_FAILED)
+      return ES_FAILED;
+    return (es == ES_FIX) ? ES_FIX : home.ES_SUBSUMED(*this);
+  }
+
+}}}
+
+// STATISTICS: word-prop
