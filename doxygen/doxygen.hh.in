@@ -299,6 +299,53 @@
  */
 
 /**
+ * \defgroup FuncWordProp Word propagators
+ *
+ * This module contains a description of all predefined word
+ * propagators. They can be reused, for example, for rewriting
+ * newly defined word propagators into already available propagators.
+ * Public contracts are documented in \ref TaskModelWord.
+ *
+ * \par Bounded propagation
+ *
+ * Posting selects numeric actors only when domain interpretations, arithmetic
+ * regimes, and aliases permit their deductions. Other cases retain cube
+ * propagation. Cube updates still synchronize the intervals of bounded
+ * variables, so this fallback preserves their represented domains.
+ *
+ * Actors that combine cheap numeric rules with a width-dependent cube
+ * algorithm stage bound-only events separately. They batch local cube/interval
+ * synchronization and schedule the cube stage only when synchronization fixes
+ * bits. See Gecode::Word::Arithmetic::BoundNaryAdd for one such actor.
+ * Numeric-only and already-cheap actors need no separate stage.
+ *
+ * \par Mathematical arithmetic
+ *
+ * Gecode::Word::Arithmetic::ProductMod and
+ * Gecode::Word::Arithmetic::BoundProductMod reduce the mathematical product
+ * before truncation. With a fixed modulus and an assigned factor, coefficient
+ * and divisibility deductions do not require a representable product. The
+ * bounded actor also projects into intervals; its non-wrapping product stage
+ * requires a representable product. Unsupported masked endpoints may remain.
+ * Assigned operands and result can constrain a variable modulus by divisibility
+ * of product minus result. This optional rule requires the product to fit
+ * WordValue and uses fixed-quotient bounds without factoring the difference.
+ *
+ * Gecode::Word::Arithmetic::BoundGcd uses fixed operands to restrict result
+ * divisors and an assigned positive result to filter coprime-quotient endpoints.
+ * Its optional filtering shares 64 work units across candidate checks, closure
+ * passes, and distinct-domain synchronizations. Exhaustion discards optional
+ * changes and publishes only the mandatory fixpoint. Signed inputs use unsigned
+ * magnitudes, including the signed minimum. Masks can prevent endpoint pruning.
+ *
+ * Gecode::Word::Arithmetic::Divides bounds divisor magnitude when the dividend
+ * excludes zero. Gecode::Word::Arithmetic::ReDivides rewrites a negated relation
+ * with a zero divisor to disequality, whose exclusion can remain unrepresentable
+ * until the dividend narrows further.
+ * \ingroup Other
+ */
+
+/**
  * \defgroup Example Example scripts (models)
  *
  * All scripts are compiled into simple standalone programs. All

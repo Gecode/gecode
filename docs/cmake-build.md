@@ -90,7 +90,7 @@ Visual Studio is a multi-config generator, so use `--config Release` (or
   - If set directly, these override `BUILD_SHARED_LIBS`-based defaults.
 - `GECODE_INSTALL`: enables install/export/package rules
   - Defaults to `ON` when Gecode is top-level; defaults to `OFF` as subproject.
-- `GECODE_ENABLE_*`: module toggles (search/int/set/float/minimodel/driver/flatzinc/gist, etc.)
+- `GECODE_ENABLE_*`: module toggles (search/int/set/float/word/minimodel/driver/flatzinc/gist, etc.)
   - Higher-level modules force their required lower-level modules on. For
     example, examples and FlatZinc require the core modeling modules, and
     minimodel requires int, set, and search support.
@@ -168,7 +168,7 @@ target_link_libraries(app PRIVATE Gecode::gecode)
 
 Canonical component names:
 
-- `support`, `kernel`, `search`, `int`, `set`, `float`, `minimodel`, `driver`,
+- `support`, `kernel`, `search`, `int`, `set`, `float`, `word`, `minimodel`, `driver`,
   `flatzinc`, `gist`
 
 Example:
@@ -182,8 +182,20 @@ target_link_libraries(app PRIVATE Gecode::gecodedriver)
 Legacy component spellings are also accepted in `COMPONENTS`:
 
 - `gecodesupport`, `gecodekernel`, `gecodesearch`, `gecodeint`, `gecodeset`,
-  `gecodefloat`, `gecodeminimodel`, `gecodedriver`, `gecodeflatzinc`,
+  `gecodefloat`, `gecodeword`, `gecodeminimodel`, `gecodedriver`, `gecodeflatzinc`,
   `gecodegist`
+
+The Word component is available in Gecode 6.4.0 and later. A consumer that
+uses Word variables can request it directly:
+
+```cmake
+find_package(Gecode 6.4 CONFIG REQUIRED COMPONENTS word)
+target_link_libraries(app PRIVATE Gecode::gecodeword)
+```
+
+Word branch archives and trace/event layouts are implementation ABI, not a
+cross-version serialization format. Rebuild and relink Word consumers when
+upgrading the Gecode libraries; use `Gecode_VERSION` for the package check.
 
 ### Package location hints
 

@@ -995,6 +995,7 @@ INCLUDE_FILE_PATTERNS  =
 PREDEFINED             = "GECODE_SET_EXPORT=" \
                          "GECODE_INT_EXPORT=" \
                          "GECODE_FLOAT_EXPORT=" \
+                         "GECODE_WORD_EXPORT=" \
                          "GECODE_KERNEL_EXPORT=" \
                          "GECODE_SEARCH_EXPORT=" \
                          "GECODE_MINIMODEL_EXPORT=" \
@@ -1005,6 +1006,7 @@ PREDEFINED             = "GECODE_SET_EXPORT=" \
                          "GECODE_HAS_INT_VARS=1" \
                          "GECODE_HAS_SET_VARS=1" \
                          "GECODE_HAS_FLOAT_VARS=1" \
+                         "GECODE_HAS_WORD_VARS=1" \
                          "GECODE_HAS_GIST=1" \
                          "GECODE_HAS_CPPROFILER=1" \
                          "GECODE_THREADS_PTHREADS=1" \
