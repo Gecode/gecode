@@ -42,6 +42,9 @@
  */
 
 #include <gecode/minimodel.hh>
+#ifdef GECODE_HAS_WORD_VARS
+#include <gecode/minimodel/word-post.hh>
+#endif
 
 namespace Gecode {
 
@@ -252,6 +255,20 @@ namespace Gecode {
   }
 
   namespace {
+    void post_misc(Home home, BoolExpr::Misc* misc, BoolVar b, bool neg,
+                   const IntPropLevels& ipls,
+                   MiniModel::WordPostContext* context) {
+#ifdef GECODE_HAS_WORD_VARS
+      if (MiniModel::WordMisc* word=dynamic_cast<MiniModel::WordMisc*>(misc)) {
+        word->post(home,b,neg,ipls,context);
+        return;
+      }
+#else
+      (void) context;
+#endif
+      misc->post(home,b,neg,ipls);
+    }
+
     /// %Node for negation normalform (%NNF)
     class NNF {
     public:
@@ -287,13 +304,16 @@ namespace Gecode {
       void post(Home home, NodeType t,
                 BoolVarArgs& bp, BoolVarArgs& bn,
                 int& ip, int& in,
-                const IntPropLevels& ipls) const;
+                const IntPropLevels& ipls,
+                MiniModel::WordPostContext* context) const;
       /// Post propagators for expression
       GECODE_MINIMODEL_EXPORT
-      BoolVar expr(Home home, const IntPropLevels& ipls) const;
+      BoolVar expr(Home home, const IntPropLevels& ipls,
+                   MiniModel::WordPostContext* context) const;
       /// Post propagators for relation
       GECODE_MINIMODEL_EXPORT
-      void rel(Home home, const IntPropLevels& ipls) const;
+      void rel(Home home, const IntPropLevels& ipls,
+               MiniModel::WordPostContext* context) const;
       /// Allocate memory from region
       static void* operator new(size_t s, Region& r);
       /// No-op (for exceptions)
@@ -318,7 +338,8 @@ namespace Gecode {
     }
 
     BoolVar
-    NNF::expr(Home home, const IntPropLevels& ipls) const {
+    NNF::expr(Home home, const IntPropLevels& ipls,
+              MiniModel::WordPostContext* context) const {
       if ((t == BoolExpr::NT_VAR) && !u.a.neg)
         return u.a.x->x;
       BoolVar b(home,0,1);
@@ -341,13 +362,13 @@ namespace Gecode {
         break;
 #endif
       case BoolExpr::NT_MISC:
-        u.a.x->m->post(home, b, u.a.neg, ipls);
+        post_misc(home,u.a.x->m,b,u.a.neg,ipls,context);
         break;
       case BoolExpr::NT_AND:
         {
           BoolVarArgs bp(p), bn(n);
           int ip=0, in=0;
-          post(home, BoolExpr::NT_AND, bp, bn, ip, in, ipls);
+          post(home, BoolExpr::NT_AND, bp, bn, ip, in, ipls,context);
           clause(home, BOT_AND, bp, bn, b);
         }
         break;
@@ -355,7 +376,7 @@ namespace Gecode {
         {
           BoolVarArgs bp(p), bn(n);
           int ip=0, in=0;
-          post(home, BoolExpr::NT_OR, bp, bn, ip, in, ipls);
+          post(home, BoolExpr::NT_OR, bp, bn, ip, in, ipls,context);
           clause(home, BOT_OR, bp, bn, b);
         }
         break;
@@ -367,14 +388,14 @@ namespace Gecode {
             l = u.b.l->u.a.x->x;
             if (u.b.l->u.a.neg) n = !n;
           } else {
-            l = u.b.l->expr(home,ipls);
+            l = u.b.l->expr(home,ipls,context);
           }
           BoolVar r;
           if (u.b.r->t == BoolExpr::NT_VAR) {
             r = u.b.r->u.a.x->x;
             if (u.b.r->u.a.neg) n = !n;
           } else {
-            r = u.b.r->expr(home,ipls);
+            r = u.b.r->expr(home,ipls,context);
           }
           Gecode::rel(home, l, n ? BOT_XOR : BOT_EQV, r, b);
         }
@@ -389,7 +410,8 @@ namespace Gecode {
     NNF::post(Home home, NodeType t,
               BoolVarArgs& bp, BoolVarArgs& bn,
               int& ip, int& in,
-              const IntPropLevels& ipls) const {
+              const IntPropLevels& ipls,
+              MiniModel::WordPostContext* context) const {
       if (this->t != t) {
         switch (this->t) {
         case BoolExpr::NT_VAR:
@@ -427,22 +449,23 @@ namespace Gecode {
         case BoolExpr::NT_MISC:
           {
             BoolVar b(home,0,1);
-            u.a.x->m->post(home, b, u.a.neg, ipls);
+            post_misc(home,u.a.x->m,b,u.a.neg,ipls,context);
             bp[ip++]=b;
           }
           break;
         default:
-          bp[ip++] = expr(home, ipls);
+          bp[ip++] = expr(home, ipls,context);
           break;
         }
       } else {
-        u.b.l->post(home, t, bp, bn, ip, in, ipls);
-        u.b.r->post(home, t, bp, bn, ip, in, ipls);
+        u.b.l->post(home, t, bp, bn, ip, in, ipls,context);
+        u.b.r->post(home, t, bp, bn, ip, in, ipls,context);
       }
     }
 
     void
-    NNF::rel(Home home, const IntPropLevels& ipls) const {
+    NNF::rel(Home home, const IntPropLevels& ipls,
+             MiniModel::WordPostContext* context) const {
       switch (t) {
       case BoolExpr::NT_VAR:
         Gecode::rel(home, u.a.x->x, IRT_EQ, u.a.neg ? 0 : 1);
@@ -463,18 +486,18 @@ namespace Gecode {
       case BoolExpr::NT_MISC:
         {
           BoolVar b(home,!u.a.neg,!u.a.neg);
-          u.a.x->m->post(home, b, false, ipls);
+          post_misc(home,u.a.x->m,b,false,ipls,context);
         }
         break;
       case BoolExpr::NT_AND:
-        u.b.l->rel(home, ipls);
-        u.b.r->rel(home, ipls);
+        u.b.l->rel(home, ipls,context);
+        u.b.r->rel(home, ipls,context);
         break;
       case BoolExpr::NT_OR:
         {
           BoolVarArgs bp(p), bn(n);
           int ip=0, in=0;
-          post(home, BoolExpr::NT_OR, bp, bn, ip, in, ipls);
+          post(home, BoolExpr::NT_OR, bp, bn, ip, in, ipls,context);
           clause(home, BOT_OR, bp, bn, 1);
         }
         break;
@@ -488,10 +511,10 @@ namespace Gecode {
           u.b.l->u.a.x->rl.post(home, u.b.r->u.a.x->x,
                                 u.b.l->u.a.neg==u.b.r->u.a.neg, ipls);
         } else if (u.b.l->t==BoolExpr::NT_RLIN) {
-          u.b.l->u.a.x->rl.post(home, u.b.r->expr(home,ipls),
+          u.b.l->u.a.x->rl.post(home, u.b.r->expr(home,ipls,context),
                                 !u.b.l->u.a.neg,ipls);
         } else if (u.b.r->t==BoolExpr::NT_RLIN) {
-          u.b.r->u.a.x->rl.post(home, u.b.l->expr(home,ipls),
+          u.b.r->u.a.x->rl.post(home, u.b.l->expr(home,ipls,context),
                                 !u.b.r->u.a.neg,ipls);
 #ifdef GECODE_HAS_FLOAT_VARS
         } else if (u.b.l->t==BoolExpr::NT_VAR &&
@@ -503,10 +526,10 @@ namespace Gecode {
           u.b.l->u.a.x->rfl.post(home, u.b.r->u.a.x->x,
                                  u.b.l->u.a.neg==u.b.r->u.a.neg);
         } else if (u.b.l->t==BoolExpr::NT_RLINFLOAT) {
-          u.b.l->u.a.x->rfl.post(home, u.b.r->expr(home,ipls),
+          u.b.l->u.a.x->rfl.post(home, u.b.r->expr(home,ipls,context),
                                  !u.b.l->u.a.neg);
         } else if (u.b.r->t==BoolExpr::NT_RLINFLOAT) {
-          u.b.r->u.a.x->rfl.post(home, u.b.l->expr(home,ipls),
+          u.b.r->u.a.x->rfl.post(home, u.b.l->expr(home,ipls,context),
                                  !u.b.r->u.a.neg);
 #endif
 #ifdef GECODE_HAS_SET_VARS
@@ -519,14 +542,14 @@ namespace Gecode {
           u.b.l->u.a.x->rs.post(home, u.b.r->u.a.x->x,
                                 u.b.l->u.a.neg==u.b.r->u.a.neg);
         } else if (u.b.l->t==BoolExpr::NT_RSET) {
-          u.b.l->u.a.x->rs.post(home, u.b.r->expr(home,ipls),
+          u.b.l->u.a.x->rs.post(home, u.b.r->expr(home,ipls,context),
                                 !u.b.l->u.a.neg);
         } else if (u.b.r->t==BoolExpr::NT_RSET) {
-          u.b.r->u.a.x->rs.post(home, u.b.l->expr(home,ipls),
+          u.b.r->u.a.x->rs.post(home, u.b.l->expr(home,ipls,context),
                                 !u.b.r->u.a.neg);
 #endif
         } else {
-          Gecode::rel(home, expr(home, ipls), IRT_EQ, 1);
+          Gecode::rel(home, expr(home, ipls,context), IRT_EQ, 1);
         }
         break;
       default:
@@ -605,14 +628,30 @@ namespace Gecode {
 
   BoolVar
   BoolExpr::expr(Home home, const IntPropLevels& ipls) const {
+#ifdef GECODE_HAS_WORD_VARS
+    MiniModel::WordPostContext context(home);
+    return expr(home,ipls,&context);
+#else
+    return expr(home,ipls,nullptr);
+#endif
+  }
+
+  BoolVar
+  BoolExpr::expr(Home home, const IntPropLevels& ipls,
+                 MiniModel::WordPostContext* context) const {
     Region r;
-    return NNF::nnf(r,n,false)->expr(home,ipls);
+    return NNF::nnf(r,n,false)->expr(home,ipls,context);
   }
 
   void
   BoolExpr::rel(Home home, const IntPropLevels& ipls) const {
     Region r;
-    return NNF::nnf(r,n,false)->rel(home,ipls);
+#ifdef GECODE_HAS_WORD_VARS
+    MiniModel::WordPostContext context(home);
+    return NNF::nnf(r,n,false)->rel(home,ipls,&context);
+#else
+    return NNF::nnf(r,n,false)->rel(home,ipls,nullptr);
+#endif
   }
 
 
