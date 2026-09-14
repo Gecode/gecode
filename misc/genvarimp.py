@@ -295,6 +295,12 @@ def parse_vis_file(path: str) -> Dict:
                 data["pcftr"] += l
             continue
 
+    return data
+
+
+def prepare_spec(parsed: Dict) -> Dict:
+    """Derive event numbering and C++ names from the parsed declarations."""
+    data = dict(parsed)
     data["maxpc"] = f"PC_{data['vti']}_{data['pcn'][-1]}"
     data["class"] = f"{data['name']}VarImpBase"
     data["conf"] = f"{data['name']}VarImpConf"
@@ -963,7 +969,7 @@ def main() -> int:
         out.append(f" *     - {f}\n")
     out.append(COPYRIGHT_TEXT)
 
-    parsed = [parse_vis_file(f) for f in files]
+    parsed = [prepare_spec(parse_vis_file(f)) for f in files]
 
     if gen_typehpp:
         generate_typehpp(parsed, out)

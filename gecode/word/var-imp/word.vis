@@ -1,0 +1,84 @@
+#
+#  Main author:
+#     Mikael Zayenz Lagerkvist <lagerkvist@gecode.dev>
+#
+#  Copyright:
+#     Mikael Zayenz Lagerkvist, 2026
+#
+#  This file is part of Gecode, the generic constraint
+#  development environment:
+#     http://www.gecode.dev
+#
+#  Permission is hereby granted, free of charge, to any person obtaining
+#  a copy of this software and associated documentation files (the
+#  "Software"), to deal in the Software without restriction, including
+#  without limitation the rights to use, copy, modify, merge, publish,
+#  distribute, sublicense, and/or sell copies of the Software, and to
+#  permit persons to whom the Software is furnished to do so, subject to
+#  the following conditions:
+#
+#  The above copyright notice and this permission notice shall be
+#  included in all copies or substantial portions of the Software.
+#
+#  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+#  EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+#  MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+#  NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+#  LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+#  OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+#  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+#
+
+[General]
+Name:           Word
+Namespace:      Gecode::Word
+Ifdef:          GECODE_HAS_WORD_VARS
+Bits:           0
+Dispose:        false
+[ModEventHeader]
+[ModEvent]
+Name:           FAILED=FAILED
+  /// Propagation failed.
+[ModEvent]
+Name:           NONE=NONE
+  /// No domain change.
+[ModEvent]
+Name:           VAL=ASSIGNED
+  /// The word became assigned; assignment dominates every other event.
+Combine:        VAL=VAL, BITS=VAL, BND=VAL, DOM=VAL
+[ModEvent]
+Name:           BITS
+  /// Cube bits changed. Together with a ranked-bound change this yields DOM.
+Combine:        VAL=VAL, BITS=BITS, BND=DOM, DOM=DOM
+[ModEvent]
+Name:           BND
+  /// Ranked bounds changed. Together with a cube-bit change this yields DOM.
+Combine:        VAL=VAL, BITS=DOM, BND=BND, DOM=DOM
+[ModEvent]
+Name:           DOM=SUBSCRIBE
+  /// Cube bits and ranked bounds changed, or BITS and BND were combined.
+  /// Initial subscriptions use this event for the BITS, BND, and DOM conditions.
+Combine:        VAL=VAL, BITS=DOM, BND=DOM, DOM=DOM
+[ModEventFooter]
+[PropCondHeader]
+[PropCond]
+Name:           NONE=NONE
+  /// Never schedule for domain changes.
+[PropCond]
+Name:           VAL=ASSIGNED
+  /// Schedule on assignment.
+ScheduledBy:    VAL
+[PropCond]
+Name:           BITS
+  /// Schedule on cube-bit changes, combined domain changes, or assignment.
+ScheduledBy:    VAL, BITS, DOM
+[PropCond]
+Name:           BND
+  /// Schedule on ranked-bound changes, combined domain changes, or assignment.
+ScheduledBy:    VAL, BND, DOM
+[PropCond]
+Name:           DOM
+  /// Schedule on any domain change.
+ScheduledBy:    VAL, BITS, BND, DOM
+[PropCondFooter]
+[End]
