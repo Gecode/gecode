@@ -550,6 +550,60 @@ FLOATBUILDDIRS	= \
 	float/trace float/channel
 
 #
+# WORD COMPONENTS
+#
+
+WORDSRC0 = \
+	arithmetic.cpp array.cpp branch.cpp channel.cpp channel/bit.cpp count.cpp exception.cpp \
+	conditional.cpp distinct.cpp element.cpp extensional.cpp logic.cpp rel.cpp structure.cpp trace.cpp trace/tracer.cpp \
+	var/word.cpp var-imp/word.cpp
+WORDHDR0 = \
+	arithmetic.hh arithmetic/add.hpp arithmetic/neg-sub.hpp arithmetic/mult.hpp arithmetic/bounded.hpp arithmetic/product-mod.hpp arithmetic/bounded-product-mod.hpp arithmetic/divmod.hpp arithmetic/number.hpp \
+	arithmetic/signed-divmod.hpp arithmetic/bounded-divmod.hpp arithmetic/rewriting.hpp \
+	array.hpp array-traits.hpp branch.hh branch.hpp branch/traits.hpp \
+	channel.hh channel/bit.hpp channel/numeric.hpp channel/reduction.hpp \
+	distinct.hh distinct/bnd.hpp element.hh element/view.hpp \
+	count.hh count/popcount.hpp count/zero-count.hpp conditional.hh conditional/ite.hpp \
+	exception.hpp logic.hh logic/binary.hpp logic/table.hpp logic/nary.hpp print.hpp view.hpp \
+	rel.hh rel/bounded.hpp rel/eq.hpp rel/lq-le.hpp rel/nq.hpp rel/re-eq.hpp rel/re-lq.hpp \
+	structure.hh structure/bounded.hpp structure/concat.hpp structure/fixed.hpp \
+	structure/variable-shift.hpp structure/adaptive.hpp \
+	trace.hpp trace/delta.hpp trace/trace-view.hpp trace/traits.hpp \
+	var/word.hpp var-imp.hpp var-imp/delta.hpp var-imp/word.hpp
+WORDSRC = $(WORDSRC0:%=gecode/word/%)
+WORDHDR = gecode/word.hh $(WORDHDR0:%=gecode/word/%)
+WORDOBJ = $(WORDSRC:%.cpp=%$(OBJSUFFIX))
+
+ifeq "@enable_word_vars@" "yes"
+export WORDDLL       = $(LIBPREFIX)@WORD@$(DLLSUFFIX)
+export WORDSTATICLIB = $(LIBPREFIX)@WORD@$(STATICLIBSUFFIX)
+export WORDLIB       = $(LIBPREFIX)@WORD@$(LIBSUFFIX)
+export LINKWORD      = $(LINKPREFIX)@WORD@$(LINKSUFFIX)
+ifeq "@need_soname@" "yes"
+export WORDSONAME    = @WLSONAME@$(LIBPREFIX)@WORD@$(SOSUFFIX)
+else
+export WORDSONAME    =
+endif
+ifeq "@enable_resource@" "yes"
+export WORDRC        = $(LIBPREFIX)@WORD@$(RCSUFFIX)
+export WORDRES       = $(LIBPREFIX)@WORD@$(RESSUFFIX)
+else
+export WORDRC        =
+export WORDRES       =
+endif
+else
+export WORDDLL       =
+export WORDSTATICLIB =
+export WORDLIB       =
+export LINKWORD      =
+export WORDRC        =
+export WORDRES       =
+endif
+WORDBUILDDIRS = word word/arithmetic word/branch word/channel word/count word/distinct word/element word/logic word/rel \
+	word/structure word/trace \
+	word/var word/var-imp
+
+#
 # SET COMPONENTS
 #
 
@@ -653,10 +707,10 @@ MMSRC0 = \
 	int-expr.cpp int-rel.cpp int-arith.cpp bool-expr.cpp \
 	set-expr.cpp set-rel.cpp dom.cpp \
 	float-expr.cpp float-rel.cpp float-arith.cpp \
-	reg.cpp optimize.cpp exception.cpp ipl.cpp
+	word-expr.cpp reg.cpp optimize.cpp exception.cpp ipl.cpp
 MMHDR0 = \
 	int-expr.hpp int-rel.hpp float-expr.hpp float-rel.hpp \
-	bool-expr.hpp set-expr.hpp set-rel.hpp \
+	bool-expr.hpp word-post.hh set-expr.hpp set-rel.hpp \
 	exception.hpp matrix.hpp \
 	optimize.hpp reg.hpp ldsb.hpp channel.hpp aliases.hpp \
 	ipl.hpp
@@ -948,10 +1002,22 @@ else
 SETEXAMPLEEXE  =
 endif
 
+WORDEXAMPLESRC0 = \
+	word-arithmetic word-arx-preimage word-benchmark word-bitboard word-bit-network-comparison word-inverse-arithmetic word-nary-add word-product-mod \
+	word-crc16-ccitt word-crc16-x25 word-md5-preimage word-minimodel \
+	word-register-file word-sha1-preimage word-structure word-symbolic-alu
+WORDEXAMPLESRC = $(WORDEXAMPLESRC0:%=examples/%.cpp)
+ifeq "@enable_word_vars@" "yes"
+WORDEXAMPLEEXE = $(WORDEXAMPLESRC:%.cpp=%$(EXESUFFIX))
+else
+WORDEXAMPLEEXE =
+endif
+
 EXAMPLEBUILDDIRS = examples
 
 EXAMPLEEXE = \
-	$(INTEXAMPLEEXE) $(SETEXAMPLEEXE) $(FLOATEXAMPLEEXE) $(MPFRFLOATEXAMPLEEXE)
+	$(INTEXAMPLEEXE) $(SETEXAMPLEEXE) $(FLOATEXAMPLEEXE) \
+	$(MPFRFLOATEXAMPLEEXE) $(WORDEXAMPLEEXE)
 
 
 #
@@ -1034,19 +1100,20 @@ THIRDHDR = \
 
 ALLSRC = \
 	$(SUPPORTSRC) $(KERNELSRC) $(SEARCHSRC) \
-        $(INTSRC) $(FLOATSRC) $(SETSRC) $(MMSRC) $(DRIVERSRC) \
-	$(INTEXAMPLESRC) $(SETEXAMPLESRC) $(FLOATEXAMPLESRC)  $(MPFRFLOATEXAMPLESRC) \
+        $(INTSRC) $(FLOATSRC) $(WORDSRC) $(SETSRC) $(MMSRC) $(DRIVERSRC) \
+	$(INTEXAMPLESRC) $(SETEXAMPLESRC) $(FLOATEXAMPLESRC) \
+	$(MPFRFLOATEXAMPLESRC) $(WORDEXAMPLESRC) \
 	$(GISTSRC) $(FLATZINCALLSRC)
 ALLGECODEHDR = \
 	$(SUPPORTHDR) $(KERNELHDR) $(SEARCHHDR) \
-        $(INTHDR) $(FLOATHDR) $(SETHDR) $(MMHDR) \
+        $(INTHDR) $(FLOATHDR) $(WORDHDR) $(SETHDR) $(MMHDR) \
 	$(DRIVERHDR) $(ITERHDR) $(GISTHDR) $(FLATZINCHDR) \
 	$(INTEXAMPLEHDR)
 ALLHDR = \
 	$(ALLGECODEHDR) $(THIRDHDR)
 INSTALLGECODEHDR = \
 	$(SUPPORTHDR) $(KERNELHDR) $(SEARCHHDR) \
-        $(INTHDR) $(FLOATHDR) $(SETHDR) $(MMHDR) \
+        $(INTHDR) $(FLOATHDR) $(WORDHDR) $(SETHDR) $(MMHDR) \
 	$(DRIVERHDR) $(ITERHDR) $(GISTHDR) $(FLATZINCHDR) \
 	$(INSTALLEXAMPLEHDR)
 INSTALLHDR = \
@@ -1061,10 +1128,10 @@ ALLSBJ  = $(ALLSBJ0:%.c=%$(SBJSUFFIX))
 
 ifeq "@BUILDDLL@" "yes"
 DLLTARGETS= \
-	$(SUPPORTDLL) $(KERNELDLL) $(SEARCHDLL) $(INTDLL) $(FLOATDLL) $(SETDLL) \
+	$(SUPPORTDLL) $(KERNELDLL) $(SEARCHDLL) $(INTDLL) $(FLOATDLL) $(WORDDLL) $(SETDLL) \
 	$(MMDLL) $(DRIVERDLL) $(GISTDLL) $(FLATZINCDLL)
 export ALLLIB = \
-	$(SUPPORTLIB) $(KERNELLIB) $(SEARCHLIB) $(INTLIB) $(FLOATLIB) $(SETLIB) \
+	$(SUPPORTLIB) $(KERNELLIB) $(SEARCHLIB) $(INTLIB) $(FLOATLIB) $(WORDLIB) $(SETLIB) \
 	$(MMLIB) $(DRIVERLIB) $(GISTLIB) $(FLATZINCLIB)
 else
 DLLTARGETS=
@@ -1073,7 +1140,7 @@ export ALLLIB = gecode.framework/Versions/@GECODE_SOVERSION@/gecode
 else
 export ALLLIB = \
 	$(SUPPORTSTATICLIB) $(KERNELSTATICLIB) $(SEARCHSTATICLIB) \
-	$(INTSTATICLIB) $(FLOATSTATICLIB) $(SETSTATICLIB) $(MMSTATICLIB) \
+	$(INTSTATICLIB) $(FLOATSTATICLIB) $(WORDSTATICLIB) $(SETSTATICLIB) $(MMSTATICLIB) \
 	$(DRIVERSTATICLIB) $(GISTSTATICLIB) $(FLATZINCSTATICLIB)
 endif
 endif
@@ -1081,7 +1148,7 @@ endif
 ifeq "@BUILDSTATIC@" "yes"
 STATICTARGETS = \
 	$(SUPPORTSTATICLIB) $(KERNELSTATICLIB) $(SEARCHSTATICLIB) \
-	$(INTSTATICLIB) $(FLOATSTATICLIB) $(SETSTATICLIB) $(MMSTATICLIB) \
+	$(INTSTATICLIB) $(FLOATSTATICLIB) $(WORDSTATICLIB) $(SETSTATICLIB) $(MMSTATICLIB) \
 	$(DRIVERSTATICLIB) $(GISTSTATICLIB) $(FLATZINCSTATICLIB)
 else
 STATICTARGETS=
@@ -1131,6 +1198,15 @@ ifeq "@enable_float_vars@" "yes"
 FLOATTESTOBJ = $(FLOATTESTSRC0:%.cpp=%$(OBJSUFFIX))
 else
 FLOATTESTOBJ=
+endif
+
+WORDTESTSRC00 = arithmetic bounded branch channel conditional count distinct element extensional logic minimodel number overflow product-mod reduction rel rewriting smt2-cardinality smt2-normalize sparse-wide structure structure-rewriting trace
+WORDTESTSRC0 = test/word.cpp $(WORDTESTSRC00:%=test/word/%.cpp)
+
+ifeq "@enable_word_vars@" "yes"
+WORDTESTOBJ = $(WORDTESTSRC0:%.cpp=%$(OBJSUFFIX))
+else
+WORDTESTOBJ=
 endif
 
 SETTESTSRC00 = \
@@ -1281,15 +1357,15 @@ TESTSRC0 = test/test.cpp test/afc.cpp test/ldsb.cpp test/region.cpp \
 # FailPoint is CMake-only; keep the Autoconf test executable fault-free.
 
 TESTSRC = \
-	$(TESTSRC0) $(INTTESTSRC0) $(SETTESTSRC0) $(FLOATTESTSRC0) \
+	$(TESTSRC0) $(INTTESTSRC0) $(SETTESTSRC0) $(FLOATTESTSRC0) $(WORDTESTSRC0) \
 	$(BRANCHTESTSRC0) $(SEARCHTESTSRC0) \
 	$(ARRAYTESTSRC0) $(FLATZINCTESTSRC0) $(BLACKBOXSRC)
 
 TESTHDR0 = \
 	test.hh test.hpp int.hh int.hpp set.hh set.hpp float.hh float.hpp \
-	branch.hh assign.hh flatzinc.hh
+	word.hh word.hpp branch.hh assign.hh flatzinc.hh
 TESTHDR = $(TESTHDR0:%=test/%)
-TESTOBJ	= $(INTTESTOBJ) $(SETTESTOBJ) $(FLOATTESTOBJ) \
+TESTOBJ	= $(INTTESTOBJ) $(SETTESTOBJ) $(FLOATTESTOBJ) $(WORDTESTOBJ) \
 	$(FLATZINCTESTOBJ:%.cpp=%$(OBJSUFFIX)) \
 	$(BRANCHTESTSRC0:%.cpp=%$(OBJSUFFIX)) \
 	$(SEARCHTESTSRC0:%.cpp=%$(OBJSUFFIX)) \
@@ -1310,7 +1386,7 @@ BLACKBOXFIXTURES =
 endif
 
 TESTBUILDDIRS = \
-	test test/int test/set test/float \
+	test test/int test/set test/float test/word \
 	test/branch test/assign \
 	test/flatzinc
 
@@ -1318,7 +1394,7 @@ BUILDDIRS = \
 	tools \
 	$(SUPPORTBUILDDIRS:%=gecode/%) \
 	$(KERNELBUILDDIRS:%=gecode/%) $(SEARCHBUILDDIRS:%=gecode/%) \
-	$(INTBUILDDIRS:%=gecode/%) $(FLOATBUILDDIRS:%=gecode/%) $(SETBUILDDIRS:%=gecode/%) \
+	$(INTBUILDDIRS:%=gecode/%) $(FLOATBUILDDIRS:%=gecode/%) $(WORDBUILDDIRS:%=gecode/%) $(SETBUILDDIRS:%=gecode/%) \
 	$(MMBUILDDIRS:%=gecode/%)  \
 	$(DRIVERBUILDDIRS:%=gecode/%)  \
 	$(GISTBUILDDIRS:%=gecode/%) \
@@ -1370,6 +1446,32 @@ BLACKBOXCHECKENV = \
 	GECODE_TEST_BLACKBOX_LOG=$(BLACKBOXLOG)
 endif
 
+ifeq "@enable_word_vars@" "yes"
+WORDCHECKTESTS = Word::TestFramework \
+	Word::Channel::Lifecycle \
+	Word::Rel::Lifecycle \
+	Word::Logic::Lifecycle \
+	Word::Structure::Fixed \
+	Word::Arithmetic::Lifecycle \
+	Word::Arithmetic::DivisionLifecycle \
+	Word::Element::Lifecycle \
+	Word::Branch \
+	Word::Trace \
+	Word::MiniModel::Lifecycle
+CHECKTESTS += $(WORDCHECKTESTS)
+REQUIREDWORDCHECKTESTS = Word::TestFramework \
+	Word::Channel::Lifecycle \
+	Word::Rel::Lifecycle \
+	Word::Logic::Lifecycle \
+	Word::Structure::Fixed \
+	Word::Arithmetic::Lifecycle \
+	Word::Arithmetic::DivisionLifecycle \
+	Word::Element::Lifecycle \
+	Word::Branch \
+	Word::Trace \
+	Word::MiniModel::Lifecycle
+endif
+
 ifeq "@enable_float_vars@" "yes"
 FLOATCHECKTESTS = Float::Arithmetic::PositiveNRootBounds \
 	Float::Arithmetic::PowConsistency \
@@ -1388,6 +1490,15 @@ endif
 
 # A basic integrity test
 check: test
+	@for t in $(REQUIREDWORDCHECKTESTS); do \
+		case " $(CHECKTESTS) " in *" $$t "*) ;; \
+		*) echo "Required Word check test is missing: $$t" >&2; exit 1 ;; \
+		esac; \
+		if ! $(RUNENVIRONMENT) $(TESTEXE) -list | grep -Fqx "$$t"; then \
+			echo "Required Word check test is not registered: $$t" >&2; \
+			exit 1; \
+		fi; \
+	done
 	@for t in $(REQUIREDFLOATCHECKTESTS); do \
 		case " $(CHECKTESTS) " in *" $$t "*) ;; \
 		*) echo "Required Float check test is missing: $$t" >&2; exit 1 ;; \
@@ -1488,6 +1599,13 @@ gecode/float/%$(OBJSUFFIX): $(top_srcdir)/gecode/float/%.cpp
 	@COMPILEOBJ@$@ @CXXIN@$<
 gecode/float/%$(SBJSUFFIX): $(top_srcdir)/gecode/float/%.cpp
 	$(CXX) $(CXXFLAGS) $(MPFR_CPPFLAGS) @GECODE_BUILD_FLOAT_FLAG@ \
+	@COMPILESBJ@$@ @CXXIN@$<
+
+gecode/word/%$(OBJSUFFIX): $(top_srcdir)/gecode/word/%.cpp
+	$(CXX) $(CXXFLAGS) @GECODE_BUILD_WORD_FLAG@ \
+	@COMPILEOBJ@$@ @CXXIN@$<
+gecode/word/%$(SBJSUFFIX): $(top_srcdir)/gecode/word/%.cpp
+	$(CXX) $(CXXFLAGS) @GECODE_BUILD_WORD_FLAG@ \
 	@COMPILESBJ@$@ @CXXIN@$<
 
 gecode/set/%$(OBJSUFFIX): $(top_srcdir)/gecode/set/%.cpp
@@ -1615,7 +1733,7 @@ export LINKALL = -F. -framework gecode
 else
 export LINKALL = \
 	$(LINKFLATZINC) $(LINKDRIVER) $(LINKGIST) \
-	$(LINKSEARCH) $(LINKMM) $(LINKSET) $(LINKFLOAT) $(LINKMPFR) $(LINKINT) \
+	$(LINKSEARCH) $(LINKMM) $(LINKSET) $(LINKFLOAT) $(LINKWORD) $(LINKMPFR) $(LINKINT) \
 	$(LINKKERNEL) $(LINKSUPPORT) $(LINKATOMIC) $(LINKDL)
 endif
 
@@ -1648,15 +1766,21 @@ $(FLOATDLL): $(FLOATOBJ) $(SUPPORTDLL) $(KERNELDLL) $(INTDLL)
 		@LINKOUTPUT@$(FLOATDLL)
 	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOLINKSUFFIX))
 	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOSUFFIX))
+$(WORDDLL): $(WORDOBJ) $(SUPPORTDLL) $(KERNELDLL) $(INTDLL)
+	$(CXX) $(DLLFLAGS) $(WORDOBJ) $(WORDSONAME) \
+		@DLLPATH@ $(LINKSUPPORT) $(LINKKERNEL) $(LINKINT) \
+		@LINKOUTPUT@$(WORDDLL)
+	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOLINKSUFFIX))
+	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOSUFFIX))
 $(SETDLL): $(SETOBJ) $(SUPPORTDLL) $(KERNELDLL) $(INTDLL)
 	$(CXX) $(DLLFLAGS) $(SETOBJ) $(SETSONAME) \
 		@DLLPATH@ $(LINKSUPPORT) $(LINKKERNEL) $(LINKINT) \
 		@LINKOUTPUT@$(SETDLL)
 	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOLINKSUFFIX))
 	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOSUFFIX))
-$(MMDLL): $(MMOBJ) $(SUPPORTDLL) $(KERNELDLL) $(INTDLL) $(SETDLL) $(FLOATDLL)
+$(MMDLL): $(MMOBJ) $(SUPPORTDLL) $(KERNELDLL) $(INTDLL) $(SETDLL) $(FLOATDLL) $(WORDDLL)
 	$(CXX) $(DLLFLAGS) $(MMOBJ) $(MMSONAME) \
-		@DLLPATH@ $(LINKSUPPORT) $(LINKKERNEL) $(LINKINT) $(LINKFLOAT) $(LINKSET) \
+		@DLLPATH@ $(LINKSUPPORT) $(LINKKERNEL) $(LINKINT) $(LINKFLOAT) $(LINKSET) $(LINKWORD) \
 		@LINKOUTPUT@$(MMDLL)
 	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOLINKSUFFIX))
 	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOSUFFIX))
@@ -1734,6 +1858,16 @@ $(FLOATDLL) $(FLOATLIB): $(FLOATOBJ) $(FLOATRES) $(SUPPORTDLL) $(KERNELDLL) $(IN
 	$(MANIFEST) -manifest $(FLOATDLL).manifest \
 		    -outputresource:$(FLOATDLL)\;2
 ifeq "@enable_resource@" "yes"
+$(WORDRC):
+	$(RCGEN) $(WORDDLL) $(WORDHDR) $(WORDSRC) > $@
+endif
+$(WORDDLL) $(WORDLIB): $(WORDOBJ) $(WORDRES) $(SUPPORTDLL) $(KERNELDLL) $(INTDLL)
+	$(CXX) $(DLLFLAGS) $(WORDOBJ) $(WORDRES) \
+		@DLLPATH@ @LINKOUTPUT@$(WORDDLL) $(GLDFLAGS)
+	$(FIXMANIFEST) $(WORDDLL).manifest
+	$(MANIFEST) -manifest $(WORDDLL).manifest \
+		    -outputresource:$(WORDDLL)\;2
+ifeq "@enable_resource@" "yes"
 $(SETRC):
 	$(RCGEN) $(SETDLL) $(SETHDR) $(SETSRC) > $@
 endif
@@ -1748,9 +1882,9 @@ $(MMRC):
 	$(RCGEN) $(MMDLL) $(MMHDR) $(MMSRC) > $@
 endif
 $(MMDLL) $(MMLIB): $(MMOBJ) $(MMRES) \
-	$(SUPPORTDLL) $(KERNELDLL) $(INTDLL) $(FLOATDLL) $(SETDLL)
+	$(SUPPORTDLL) $(KERNELDLL) $(INTDLL) $(FLOATDLL) $(SETDLL) $(WORDDLL)
 	$(CXX) $(DLLFLAGS) $(MMOBJ) $(MMRES) \
-		@DLLPATH@ @LINKOUTPUT@$(MMDLL) $(GLDFLAGS)
+		@DLLPATH@ @LINKOUTPUT@$(MMDLL) $(GLDFLAGS) $(LINKWORD)
 	$(FIXMANIFEST) $(MMDLL).manifest
 	$(MANIFEST) -manifest $(MMDLL).manifest \
 		    -outputresource:$(MMDLL)\;2
@@ -1809,6 +1943,9 @@ $(INTSTATICLIB): $(INTOBJ)
 	$(RANLIB) $@
 $(FLOATSTATICLIB): $(FLOATOBJ)
 	$(AR) $(ARFLAGS) $@ $(FLOATOBJ)
+	$(RANLIB) $@
+$(WORDSTATICLIB): $(WORDOBJ)
+	$(AR) $(ARFLAGS) $@ $(WORDOBJ)
 	$(RANLIB) $@
 $(SETSTATICLIB): $(SETOBJ)
 	$(AR) $(ARFLAGS) $@ $(SETOBJ)

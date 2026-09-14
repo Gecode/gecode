@@ -43,6 +43,7 @@ Version metadata shared by autoconf and CMake lives in `gecode-version.m4`.
 | `--enable-int-vars` | `GECODE_ENABLE_INT_VARS` | Supported directly | Default `ON` |
 | `--enable-set-vars` | `GECODE_ENABLE_SET_VARS` | Supported directly | Default `ON` |
 | `--enable-float-vars` | `GECODE_ENABLE_FLOAT_VARS` | Supported directly | Default `ON` |
+| `--enable-word-vars` | `GECODE_ENABLE_WORD_VARS` | Supported directly | Default `ON`; implies integer variables |
 | `--enable-minimodel` | `GECODE_ENABLE_MINIMODEL` | Supported directly | Default `ON` |
 | `--enable-driver` | `GECODE_ENABLE_DRIVER` | Supported directly | Default `ON` |
 | `--enable-flatzinc` | `GECODE_ENABLE_FLATZINC` | Supported directly | Default `ON` |

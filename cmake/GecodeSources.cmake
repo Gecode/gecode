@@ -192,6 +192,27 @@ set(GECODE_FLOAT_SOURCES
   gecode/float/var/float.cpp
 )
 
+set(GECODE_WORD_SOURCES
+  gecode/word/arithmetic.cpp
+  gecode/word/array.cpp
+  gecode/word/branch.cpp
+  gecode/word/channel.cpp
+  gecode/word/channel/bit.cpp
+  gecode/word/conditional.cpp
+  gecode/word/count.cpp
+  gecode/word/distinct.cpp
+  gecode/word/extensional.cpp
+  gecode/word/element.cpp
+  gecode/word/exception.cpp
+  gecode/word/logic.cpp
+  gecode/word/rel.cpp
+  gecode/word/structure.cpp
+  gecode/word/trace.cpp
+  gecode/word/trace/tracer.cpp
+  gecode/word/var-imp/word.cpp
+  gecode/word/var/word.cpp
+)
+
 set(GECODE_MINIMODEL_SOURCES
   gecode/minimodel/bool-expr.cpp
   gecode/minimodel/dom.cpp
@@ -207,6 +228,7 @@ set(GECODE_MINIMODEL_SOURCES
   gecode/minimodel/reg.cpp
   gecode/minimodel/set-expr.cpp
   gecode/minimodel/set-rel.cpp
+  gecode/minimodel/word-expr.cpp
 )
 
 set(GECODE_DRIVER_SOURCES
@@ -428,6 +450,30 @@ set(GECODE_TEST_SOURCES
   test/set/rel.cpp
   test/set/sequence.cpp
   test/test.cpp
+  test/word.cpp
+  test/word/arithmetic.cpp
+  test/word/rewriting.cpp
+  test/word/bounded.cpp
+  test/word/sparse-wide.cpp
+  test/word/smt2-cardinality.cpp
+  test/word/smt2-normalize.cpp
+  test/word/branch.cpp
+  test/word/channel.cpp
+  test/word/conditional.cpp
+  test/word/count.cpp
+  test/word/distinct.cpp
+  test/word/extensional.cpp
+  test/word/element.cpp
+  test/word/logic.cpp
+  test/word/minimodel.cpp
+  test/word/number.cpp
+  test/word/overflow.cpp
+  test/word/product-mod.cpp
+  test/word/rel.cpp
+  test/word/reduction.cpp
+  test/word/structure.cpp
+  test/word/structure-rewriting.cpp
+  test/word/trace.cpp
 )
 
 set(GECODE_TEST_BLACKBOX_EXEC_SOURCE test/flatzinc/blackbox-exec.cpp)

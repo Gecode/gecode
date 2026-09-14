@@ -196,6 +196,7 @@ vis_files=(
   ./gecode/int/var-imp/bool.vis
   ./gecode/set/var-imp/set.vis
   ./gecode/float/var-imp/float.vis
+  ./gecode/word/var-imp/word.vis
 )
 
 normalize_generated_whitespace() {

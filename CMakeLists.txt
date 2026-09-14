@@ -117,6 +117,7 @@ option(GECODE_ENABLE_SEARCH "Build search module" ON)
 option(GECODE_ENABLE_INT_VARS "Build int variables module" ON)
 option(GECODE_ENABLE_SET_VARS "Build set variables module" ON)
 option(GECODE_ENABLE_FLOAT_VARS "Build float variables module" ON)
+option(GECODE_ENABLE_WORD_VARS "Build word variables module" ON)
 option(GECODE_ENABLE_MINIMODEL "Build minimodel module" ON)
 option(GECODE_ENABLE_DRIVER "Build driver module" ON)
 option(GECODE_ENABLE_FLATZINC "Build FlatZinc module" ON)
@@ -246,6 +247,9 @@ if(GECODE_ENABLE_SET_VARS)
 endif()
 if(GECODE_ENABLE_FLOAT_VARS)
   gecode_force_option_on(GECODE_ENABLE_INT_VARS "Float variables require int variables")
+endif()
+if(GECODE_ENABLE_WORD_VARS)
+  gecode_force_option_on(GECODE_ENABLE_INT_VARS "Word variables require int variables")
 endif()
 if(GECODE_ENABLE_MINIMODEL)
   gecode_force_option_on(GECODE_ENABLE_SEARCH "Minimodel requires search")
@@ -676,6 +680,9 @@ endif()
 if(GECODE_ENABLE_FLOAT_VARS)
   set(GECODE_HAS_FLOAT_VARS "/**/")
 endif()
+if(GECODE_ENABLE_WORD_VARS)
+  set(GECODE_HAS_WORD_VARS "/**/")
+endif()
 if(GECODE_BUILD_STATIC)
   set(GECODE_STATIC_LIBS 1)
 endif()
@@ -834,6 +841,10 @@ if(GECODE_ENABLE_FLOAT_VARS)
   list(APPEND GECODE_VIS_FILES
     gecode/float/var-imp/float.vis)
 endif()
+if(GECODE_ENABLE_WORD_VARS)
+  list(APPEND GECODE_VIS_FILES
+    gecode/word/var-imp/word.vis)
+endif()
 if(GECODE_WITH_VIS)
   string(REPLACE "," ";" _extra_vis "${GECODE_WITH_VIS}")
   foreach(vis IN LISTS _extra_vis)
@@ -965,7 +976,7 @@ HAVE_DOT = ${GECODE_DOXYGEN_DOT}
 ")
 
 set(GECODE_DOC_SOURCE_INPUTS)
-foreach(component SUPPORT KERNEL SEARCH INT SET FLOAT MINIMODEL DRIVER GIST FLATZINC TEST)
+foreach(component SUPPORT KERNEL SEARCH INT SET FLOAT WORD MINIMODEL DRIVER GIST FLATZINC TEST)
   list(APPEND GECODE_DOC_SOURCE_INPUTS ${GECODE_${component}_SOURCES})
 endforeach()
 list(APPEND GECODE_DOC_SOURCE_INPUTS ${GECODE_FLATZINC_EXE_SOURCE})
@@ -1105,6 +1116,9 @@ if(GECODE_ENABLE_SET_VARS)
 endif()
 if(GECODE_ENABLE_FLOAT_VARS)
   list(APPEND GECODE_LIBRARY_COMPONENTS float)
+endif()
+if(GECODE_ENABLE_WORD_VARS)
+  list(APPEND GECODE_LIBRARY_COMPONENTS word)
 endif()
 if(GECODE_ENABLE_MINIMODEL)
   list(APPEND GECODE_LIBRARY_COMPONENTS minimodel)
@@ -1267,6 +1281,9 @@ if(GECODE_ENABLE_FLOAT_VARS)
     endforeach()
   endif()
 endif()
+if(GECODE_ENABLE_WORD_VARS)
+  gecode_link_component(word int kernel)
+endif()
 if(GECODE_ENABLE_MINIMODEL)
   set(mm_deps int search)
   if(GECODE_ENABLE_SET_VARS)
@@ -1274,6 +1291,9 @@ if(GECODE_ENABLE_MINIMODEL)
   endif()
   if(GECODE_ENABLE_FLOAT_VARS)
     list(APPEND mm_deps float)
+  endif()
+  if(GECODE_ENABLE_WORD_VARS)
+    list(APPEND mm_deps word)
   endif()
   gecode_link_component(minimodel ${mm_deps})
 endif()
@@ -1328,7 +1348,7 @@ endif()
 
 # Compatibility aggregate target for downstream projects expecting Gecode::gecode.
 add_library(gecode INTERFACE)
-foreach(component IN ITEMS support kernel search int set float minimodel driver flatzinc gist)
+foreach(component IN ITEMS support kernel search int set float word minimodel driver flatzinc gist)
   if(TARGET gecode${component})
     target_link_libraries(gecode INTERFACE gecode${component})
   endif()
@@ -1367,6 +1387,9 @@ if(BUILD_TESTING)
   if(GECODE_ENABLE_FLOAT_VARS AND NOT TARGET gecodefloat)
     set(GECODE_CAN_BUILD_TESTS FALSE)
   endif()
+  if(GECODE_ENABLE_WORD_VARS AND NOT TARGET gecodeword)
+    set(GECODE_CAN_BUILD_TESTS FALSE)
+  endif()
   if(GECODE_ENABLE_FLATZINC AND NOT TARGET gecodeflatzinc)
     set(GECODE_CAN_BUILD_TESTS FALSE)
   endif()
@@ -1388,6 +1411,9 @@ if(BUILD_TESTING)
   if(NOT GECODE_ENABLE_FLOAT_VARS)
     list(FILTER GECODE_TEST_SOURCES_SELECTED EXCLUDE REGEX "^test/float(/|\\.cpp)")
   endif()
+  if(NOT GECODE_ENABLE_WORD_VARS)
+    list(FILTER GECODE_TEST_SOURCES_SELECTED EXCLUDE REGEX "^test/word(/|\\.cpp)")
+  endif()
   if(NOT GECODE_ENABLE_FLATZINC)
     list(FILTER GECODE_TEST_SOURCES_SELECTED EXCLUDE REGEX "^test/flatzinc(/|\\.cpp)")
   endif()
@@ -1397,6 +1423,9 @@ if(BUILD_TESTING)
     set(GECODE_TEST_LINK_LIBS gecodeminimodel)
     if(GECODE_ENABLE_FLATZINC)
       list(APPEND GECODE_TEST_LINK_LIBS gecodeflatzinc)
+    endif()
+    if(GECODE_ENABLE_WORD_VARS)
+      list(APPEND GECODE_TEST_LINK_LIBS gecodeword)
     endif()
     target_link_libraries(gecode-test PRIVATE ${GECODE_TEST_LINK_LIBS})
     if(GECODE_ENABLE_FAULT_INJECTION)
@@ -1443,6 +1472,43 @@ if(BUILD_TESTING)
         Set::Sequence::SeqU1
         Set::Wait)
     endif()
+    set(GECODE_REQUIRED_CHECK_TESTS)
+    if(GECODE_ENABLE_WORD_VARS)
+      set(GECODE_WORD_CHECK_TESTS
+        Word::TestFramework
+        Word::Channel::Lifecycle
+        Word::Rel::Lifecycle
+        Word::Logic::Lifecycle
+        Word::Structure::Fixed
+        Word::Arithmetic::Lifecycle
+        Word::Arithmetic::DivisionLifecycle
+        Word::Element::Lifecycle
+        Word::Branch
+        Word::Trace
+        Word::MiniModel::Lifecycle)
+      list(APPEND GECODE_CHECK_TESTS ${GECODE_WORD_CHECK_TESTS})
+
+      set(GECODE_REQUIRED_WORD_CHECK_TESTS
+        Word::TestFramework
+        Word::Channel::Lifecycle
+        Word::Rel::Lifecycle
+        Word::Logic::Lifecycle
+        Word::Structure::Fixed
+        Word::Arithmetic::Lifecycle
+        Word::Arithmetic::DivisionLifecycle
+        Word::Element::Lifecycle
+        Word::Branch
+        Word::Trace
+        Word::MiniModel::Lifecycle)
+      foreach(gecode_required_word_test ${GECODE_REQUIRED_WORD_CHECK_TESTS})
+        if(NOT gecode_required_word_test IN_LIST GECODE_CHECK_TESTS)
+          message(FATAL_ERROR
+            "Required Word check test is missing: ${gecode_required_word_test}")
+        endif()
+      endforeach()
+      list(APPEND GECODE_REQUIRED_CHECK_TESTS
+        ${GECODE_REQUIRED_WORD_CHECK_TESTS})
+    endif()
     if(GECODE_ENABLE_FLOAT_VARS)
       set(GECODE_FLOAT_CHECK_TESTS
         Float::Arithmetic::PositiveNRootBounds
@@ -1469,6 +1535,8 @@ if(BUILD_TESTING)
             "Required Float check test is missing: ${gecode_required_float_test}")
         endif()
       endforeach()
+      list(APPEND GECODE_REQUIRED_CHECK_TESTS
+        ${GECODE_REQUIRED_FLOAT_CHECK_TESTS})
     endif()
 
     set(GECODE_CHECK_ARGS -iter 2 -threads 0 -fixprob 1)
@@ -1500,11 +1568,11 @@ if(BUILD_TESTING)
         ENVIRONMENT "${GECODE_TEST_BLACKBOX_ENV}")
     endif()
     set(GECODE_CHECK_DEPENDS gecode-test)
-    if(GECODE_ENABLE_FLOAT_VARS)
+    if(GECODE_ENABLE_WORD_VARS OR GECODE_ENABLE_FLOAT_VARS)
       add_custom_target(verify-gecode-check-tests
         COMMAND ${CMAKE_COMMAND}
           "-DTEST_EXECUTABLE=$<TARGET_FILE:gecode-test>"
-          "-DREQUIRED_TESTS=${GECODE_REQUIRED_FLOAT_CHECK_TESTS}"
+          "-DREQUIRED_TESTS=${GECODE_REQUIRED_CHECK_TESTS}"
           -P ${CMAKE_CURRENT_SOURCE_DIR}/cmake/VerifyTestSelection.cmake
         DEPENDS gecode-test
         VERBATIM)
@@ -1600,6 +1668,37 @@ endif()
 
 if(GECODE_ENABLE_EXAMPLES)
   add_subdirectory(examples)
+  if(GECODE_ENABLE_WORD_VARS)
+    add_executable(word-progression-closure
+      benchmarks/word/progression-closure.cpp)
+    target_link_libraries(word-progression-closure PRIVATE gecodeminimodel)
+    add_executable(word-distinct-benchmark benchmarks/word/distinct.cpp)
+    target_link_libraries(word-distinct-benchmark PRIVATE gecodeminimodel)
+    add_executable(word-extensional-benchmark benchmarks/word/extensional.cpp)
+    target_link_libraries(word-extensional-benchmark PRIVATE gecodeword)
+    add_executable(word-smt2-reader benchmarks/word/smt2-reader.cpp)
+    target_link_libraries(word-smt2-reader PRIVATE gecodeminimodel)
+    if(BUILD_TESTING)
+      find_package(Python3 3.11 QUIET COMPONENTS Interpreter)
+      if(Python3_Interpreter_FOUND)
+        add_test(NAME build-word-smt2-reader
+          COMMAND ${CMAKE_COMMAND} --build "${CMAKE_BINARY_DIR}"
+                  --target word-smt2-reader --config $<CONFIG>)
+        set_tests_properties(build-word-smt2-reader PROPERTIES
+          FIXTURES_SETUP word-smt2-reader-built)
+        add_test(NAME word-smt2-reader
+          COMMAND ${Python3_EXECUTABLE}
+                  ${PROJECT_SOURCE_DIR}/benchmarks/word/tests/smt2-reader.py
+                  $<TARGET_FILE:word-smt2-reader>)
+        set_tests_properties(word-smt2-reader PROPERTIES
+          FIXTURES_REQUIRED word-smt2-reader-built TIMEOUT 180)
+        add_test(NAME word-benchmark-runners
+          COMMAND ${Python3_EXECUTABLE}
+                  ${PROJECT_SOURCE_DIR}/benchmarks/word/test-runners.py)
+        set_tests_properties(word-benchmark-runners PROPERTIES TIMEOUT 30)
+      endif()
+    endif()
+  endif()
 endif()
 
 # ---------------------------------------------------------------------------
