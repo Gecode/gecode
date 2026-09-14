@@ -54,6 +54,9 @@
 #ifdef GECODE_HAS_FLOAT_VARS
 #include <gecode/float.hh>
 #endif
+#ifdef GECODE_HAS_WORD_VARS
+#include <gecode/word.hh>
+#endif
 
 #ifdef GECODE_HAS_FAULT_INJECTION
 #include <atomic>
@@ -1349,6 +1352,11 @@ namespace Gecode {
   //@}
 #endif
 
+  namespace MiniModel {
+    class WordPostContext;
+    class WordPostAccess;
+  }
+
   /// Boolean expressions
   class BoolExpr {
   public:
@@ -1390,6 +1398,11 @@ namespace Gecode {
     /// Construct an expression, optionally treating an empty operand as an accumulator
     BoolExpr(const BoolExpr& l, NodeType t, const BoolExpr& r,
              bool accumulator);
+    /// Post propagators sharing word lowering through \a context
+    GECODE_MINIMODEL_EXPORT
+    BoolVar expr(Home home, const IntPropLevels& ipls,
+                 MiniModel::WordPostContext* context) const;
+    friend class MiniModel::WordPostAccess;
     friend GECODE_MINIMODEL_EXPORT
     BoolExpr operator &&(const BoolExpr&, const BoolExpr&);
     friend GECODE_MINIMODEL_EXPORT
@@ -1505,6 +1518,429 @@ namespace Gecode {
   operator <<(const BoolExpr&, const BoolExpr&);
 
   //@}
+
+#ifdef GECODE_HAS_WORD_VARS
+  /** \brief Fixed-width word expressions
+   *
+   * Expressions form a reference-counted DAG. Construction preserves result
+   * width and rejects incompatible operands before posting. Calling expr or
+   * post lowers every node through the corresponding direct word posting API.
+   * \ingroup TaskModelMiniModelWord
+   */
+  class WordExpr {
+  public:
+    /// Type of word expression
+    enum class NodeType {
+      NT_VAR,       ///< Variable
+      NT_CONST,     ///< Explicitly-sized constant
+      NT_COMPL,     ///< Bitwise complement
+      NT_AND,       ///< Bitwise conjunction
+      NT_OR,        ///< Bitwise disjunction
+      NT_XOR,       ///< Bitwise exclusive disjunction
+      NT_NAND,      ///< Bitwise nand
+      NT_NOR,       ///< Bitwise nor
+      NT_XNOR,      ///< Bitwise equivalence
+      NT_BOOL_ITE,  ///< Boolean-controlled conditional
+      NT_WORD_ITE,  ///< Word-mask conditional
+      NT_EXTRACT,   ///< Bit extraction
+      NT_CONCAT,    ///< Concatenation
+      NT_REPEAT,    ///< Repetition
+      NT_ZERO_EXTEND, ///< Zero extension
+      NT_SIGN_EXTEND, ///< Sign extension
+      NT_SHIFT_LEFT,  ///< Constant left shift
+      NT_VAR_SHIFT_LEFT, ///< Variable left shift
+      NT_LOGICAL_SHIFT_RIGHT, ///< Constant logical right shift
+      NT_VAR_LOGICAL_SHIFT_RIGHT, ///< Variable logical right shift
+      NT_ARITHMETIC_SHIFT_RIGHT, ///< Constant arithmetic right shift
+      NT_VAR_ARITHMETIC_SHIFT_RIGHT, ///< Variable arithmetic right shift
+      NT_ROTATE_LEFT, ///< Constant left rotation
+      NT_ROTATE_RIGHT, ///< Constant right rotation
+      NT_ADD,        ///< Modular addition
+      NT_NEG,        ///< Modular negation
+      NT_SUB,        ///< Modular subtraction
+      NT_MULT,       ///< Modular multiplication
+      NT_DIV,        ///< Unsigned division
+      NT_MOD,        ///< Unsigned remainder
+      NT_SIGNED_DIV, ///< Signed division
+      NT_SIGNED_REM, ///< Signed remainder
+      NT_SIGNED_MOD, ///< Signed modulus
+      NT_VAR_ROTATE_LEFT, ///< Variable left rotation
+      NT_VAR_ROTATE_RIGHT ///< Variable right rotation
+    };
+    /// Variable
+    static constexpr NodeType NT_VAR = NodeType::NT_VAR;
+    /// Explicitly-sized constant
+    static constexpr NodeType NT_CONST = NodeType::NT_CONST;
+    /// Bitwise complement
+    static constexpr NodeType NT_COMPL = NodeType::NT_COMPL;
+    /// Bitwise conjunction
+    static constexpr NodeType NT_AND = NodeType::NT_AND;
+    /// Bitwise disjunction
+    static constexpr NodeType NT_OR = NodeType::NT_OR;
+    /// Bitwise exclusive disjunction
+    static constexpr NodeType NT_XOR = NodeType::NT_XOR;
+    /// Bitwise nand
+    static constexpr NodeType NT_NAND = NodeType::NT_NAND;
+    /// Bitwise nor
+    static constexpr NodeType NT_NOR = NodeType::NT_NOR;
+    /// Bitwise equivalence
+    static constexpr NodeType NT_XNOR = NodeType::NT_XNOR;
+    /// Boolean-controlled conditional
+    static constexpr NodeType NT_BOOL_ITE = NodeType::NT_BOOL_ITE;
+    /// Word-mask conditional
+    static constexpr NodeType NT_WORD_ITE = NodeType::NT_WORD_ITE;
+    /// Bit extraction
+    static constexpr NodeType NT_EXTRACT = NodeType::NT_EXTRACT;
+    /// Concatenation
+    static constexpr NodeType NT_CONCAT = NodeType::NT_CONCAT;
+    /// Repetition
+    static constexpr NodeType NT_REPEAT = NodeType::NT_REPEAT;
+    /// Zero extension
+    static constexpr NodeType NT_ZERO_EXTEND = NodeType::NT_ZERO_EXTEND;
+    /// Sign extension
+    static constexpr NodeType NT_SIGN_EXTEND = NodeType::NT_SIGN_EXTEND;
+    /// Constant left shift
+    static constexpr NodeType NT_SHIFT_LEFT = NodeType::NT_SHIFT_LEFT;
+    /// Variable left shift
+    static constexpr NodeType NT_VAR_SHIFT_LEFT = NodeType::NT_VAR_SHIFT_LEFT;
+    /// Constant logical right shift
+    static constexpr NodeType NT_LOGICAL_SHIFT_RIGHT =
+      NodeType::NT_LOGICAL_SHIFT_RIGHT;
+    /// Variable logical right shift
+    static constexpr NodeType NT_VAR_LOGICAL_SHIFT_RIGHT =
+      NodeType::NT_VAR_LOGICAL_SHIFT_RIGHT;
+    /// Constant arithmetic right shift
+    static constexpr NodeType NT_ARITHMETIC_SHIFT_RIGHT =
+      NodeType::NT_ARITHMETIC_SHIFT_RIGHT;
+    /// Variable arithmetic right shift
+    static constexpr NodeType NT_VAR_ARITHMETIC_SHIFT_RIGHT =
+      NodeType::NT_VAR_ARITHMETIC_SHIFT_RIGHT;
+    /// Constant left rotation
+    static constexpr NodeType NT_ROTATE_LEFT = NodeType::NT_ROTATE_LEFT;
+    /// Constant right rotation
+    static constexpr NodeType NT_ROTATE_RIGHT = NodeType::NT_ROTATE_RIGHT;
+    /// Modular addition
+    static constexpr NodeType NT_ADD = NodeType::NT_ADD;
+    /// Modular negation
+    static constexpr NodeType NT_NEG = NodeType::NT_NEG;
+    /// Modular subtraction
+    static constexpr NodeType NT_SUB = NodeType::NT_SUB;
+    /// Modular multiplication
+    static constexpr NodeType NT_MULT = NodeType::NT_MULT;
+    /// Unsigned division
+    static constexpr NodeType NT_DIV = NodeType::NT_DIV;
+    /// Unsigned remainder
+    static constexpr NodeType NT_MOD = NodeType::NT_MOD;
+    /// Signed division
+    static constexpr NodeType NT_SIGNED_DIV = NodeType::NT_SIGNED_DIV;
+    /// Signed remainder
+    static constexpr NodeType NT_SIGNED_REM = NodeType::NT_SIGNED_REM;
+    /// Signed modulus
+    static constexpr NodeType NT_SIGNED_MOD = NodeType::NT_SIGNED_MOD;
+    /// Variable left rotation
+    static constexpr NodeType NT_VAR_ROTATE_LEFT = NodeType::NT_VAR_ROTATE_LEFT;
+    /// Variable right rotation
+    static constexpr NodeType NT_VAR_ROTATE_RIGHT =
+      NodeType::NT_VAR_ROTATE_RIGHT;
+    /// Node for word expression
+    class Node;
+    /// Copy constructor
+    GECODE_MINIMODEL_EXPORT WordExpr(const WordExpr& e);
+    /** \brief Construct a binary bitwise expression
+     *
+     * \a t must be NT_AND, NT_OR, NT_XOR, NT_NAND, NT_NOR, or NT_XNOR.
+     * Throws Word::WidthMismatch if operand widths differ, before checking
+     * \a t. Throws Word::UnknownOperation for any other kind.
+     * Use the corresponding operators or named factories for other operations.
+     */
+    GECODE_MINIMODEL_EXPORT
+    WordExpr(const WordExpr& l, NodeType t, const WordExpr& r);
+    /// Construct an expression for a variable
+    GECODE_MINIMODEL_EXPORT WordExpr(const WordVar& x);
+    /// Construct an explicitly-sized constant expression
+    GECODE_MINIMODEL_EXPORT
+    WordExpr(unsigned int width, WordValue value);
+    /** \brief Construct a bitwise complement expression
+     *
+     * \a t must be NT_COMPL; otherwise throws Word::UnknownOperation.
+     * Use the corresponding operators or named factories for other operations.
+     */
+    GECODE_MINIMODEL_EXPORT WordExpr(const WordExpr& e, NodeType t);
+    /// Return expression width
+    GECODE_MINIMODEL_EXPORT unsigned int width(void) const;
+    /** \brief Post and return the expression value with WDT_CUBE temporaries
+     *
+     * Existing variable leaves retain their identity and representation.
+     */
+    GECODE_MINIMODEL_EXPORT WordVar post(Home home) const;
+    /** \brief Post with an explicit domain policy for materialized word nodes
+     *
+     * Existing variable leaves retain their identity and representation.
+     * The policy does not change signed or modular operation semantics.
+     * Boolean subexpressions retain the policy chosen by their factories.
+     * Operations without compatible numeric propagation retain bit propagation
+     * on the selected representation. Throws Word::OutOfLimits unless
+     * \a domain_type is WDT_CUBE, WDT_UNSIGNED, or WDT_SIGNED.
+     */
+    GECODE_MINIMODEL_EXPORT WordVar
+    post(Home home, WordDomainType domain_type) const;
+    /// Assignment operator
+    GECODE_MINIMODEL_EXPORT const WordExpr& operator =(const WordExpr& e);
+    /// Destructor
+    GECODE_MINIMODEL_EXPORT ~WordExpr(void);
+  private:
+    Node* n;
+    /// Post sharing lowered subexpressions through \a context
+    GECODE_MINIMODEL_EXPORT WordVar
+    post(Home home, WordDomainType domain_type,
+         MiniModel::WordPostContext* context) const;
+    friend class MiniModel::WordPostAccess;
+    WordExpr(const BoolExpr& control, const WordExpr& then_word,
+             const WordExpr& else_word);
+    WordExpr(const WordExpr& control, const WordExpr& then_word,
+             const WordExpr& else_word);
+    WordExpr(const WordExpr& e, NodeType t, unsigned int parameter,
+             unsigned int extent, unsigned int result_width);
+    WordExpr(const WordExpr& l, NodeType t, const WordExpr& r,
+             unsigned int result_width);
+    friend GECODE_MINIMODEL_EXPORT WordExpr
+    ite(const BoolExpr&, const WordExpr&, const WordExpr&);
+    friend GECODE_MINIMODEL_EXPORT WordExpr
+    ite(const WordExpr&, const WordExpr&, const WordExpr&);
+    friend GECODE_MINIMODEL_EXPORT WordExpr
+    extract(const WordExpr&, unsigned int, unsigned int);
+    friend GECODE_MINIMODEL_EXPORT WordExpr
+    concat(const WordExpr&, const WordExpr&);
+    friend GECODE_MINIMODEL_EXPORT WordExpr
+    repeat(const WordExpr&, unsigned int);
+    friend GECODE_MINIMODEL_EXPORT WordExpr
+    zero_extend(const WordExpr&, unsigned int);
+    friend GECODE_MINIMODEL_EXPORT WordExpr
+    sign_extend(const WordExpr&, unsigned int);
+    friend GECODE_MINIMODEL_EXPORT WordExpr
+    operator <<(const WordExpr&, unsigned int);
+    friend GECODE_MINIMODEL_EXPORT WordExpr
+    operator <<(const WordExpr&, const WordExpr&);
+    friend GECODE_MINIMODEL_EXPORT WordExpr
+    logical_shift_right(const WordExpr&, unsigned int);
+    friend GECODE_MINIMODEL_EXPORT WordExpr
+    logical_shift_right(const WordExpr&, const WordExpr&);
+    friend GECODE_MINIMODEL_EXPORT WordExpr
+    arithmetic_shift_right(const WordExpr&, unsigned int);
+    friend GECODE_MINIMODEL_EXPORT WordExpr
+    arithmetic_shift_right(const WordExpr&, const WordExpr&);
+    friend GECODE_MINIMODEL_EXPORT WordExpr
+    rotate_left(const WordExpr&, unsigned int);
+    friend GECODE_MINIMODEL_EXPORT WordExpr
+    rotate_left(const WordExpr&, const WordExpr&);
+    friend GECODE_MINIMODEL_EXPORT WordExpr
+    rotate_right(const WordExpr&, unsigned int);
+    friend GECODE_MINIMODEL_EXPORT WordExpr
+    rotate_right(const WordExpr&, const WordExpr&);
+    friend GECODE_MINIMODEL_EXPORT WordExpr
+    operator +(const WordExpr&, const WordExpr&);
+    friend GECODE_MINIMODEL_EXPORT WordExpr
+    operator -(const WordExpr&);
+    friend GECODE_MINIMODEL_EXPORT WordExpr
+    operator -(const WordExpr&, const WordExpr&);
+    friend GECODE_MINIMODEL_EXPORT WordExpr
+    operator *(const WordExpr&, const WordExpr&);
+    friend GECODE_MINIMODEL_EXPORT WordExpr
+    div(const WordExpr&, const WordExpr&);
+    friend GECODE_MINIMODEL_EXPORT WordExpr
+    mod(const WordExpr&, const WordExpr&);
+    friend GECODE_MINIMODEL_EXPORT WordExpr
+    signed_div(const WordExpr&, const WordExpr&);
+    friend GECODE_MINIMODEL_EXPORT WordExpr
+    signed_rem(const WordExpr&, const WordExpr&);
+    friend GECODE_MINIMODEL_EXPORT WordExpr
+    signed_mod(const WordExpr&, const WordExpr&);
+  };
+
+  /** \defgroup TaskModelMiniModelWord Word expressions
+   *
+   * Word expressions provide operator syntax where fixed-width meaning is
+   * unambiguous and named snake_case functions where signedness, shift kind,
+   * or arithmetic policy must remain visible. Explicitly-sized constants are
+   * constructed with WordExpr::WordExpr(unsigned int, WordValue).
+   *
+   * Ordinary Word comparisons and Boolean factories without a domain policy
+   * use WDT_CUBE for temporaries. An explicit WordDomainType belongs to its
+   * Boolean node and remains in effect through Boolean composition. Posting
+   * a surrounding Word expression with another policy does not replace it.
+   * Existing variable leaves retain their identity and representation.
+   *
+   *  \ingroup TaskModelMiniModel
+   */
+  /** @{ */
+  GECODE_MINIMODEL_EXPORT WordExpr operator ~(const WordExpr&);
+  GECODE_MINIMODEL_EXPORT WordExpr
+  operator &(const WordExpr&, const WordExpr&);
+  GECODE_MINIMODEL_EXPORT WordExpr
+  operator |(const WordExpr&, const WordExpr&);
+  GECODE_MINIMODEL_EXPORT WordExpr
+  operator ^(const WordExpr&, const WordExpr&);
+  GECODE_MINIMODEL_EXPORT WordExpr
+  nand(const WordExpr&, const WordExpr&);
+  GECODE_MINIMODEL_EXPORT WordExpr
+  nor(const WordExpr&, const WordExpr&);
+  GECODE_MINIMODEL_EXPORT WordExpr
+  xnor(const WordExpr&, const WordExpr&);
+
+  GECODE_MINIMODEL_EXPORT BoolExpr
+  operator ==(const WordExpr&, const WordExpr&);
+  GECODE_MINIMODEL_EXPORT BoolExpr
+  operator !=(const WordExpr&, const WordExpr&);
+  GECODE_MINIMODEL_EXPORT BoolExpr
+  operator <(const WordExpr&, const WordExpr&);
+  GECODE_MINIMODEL_EXPORT BoolExpr
+  operator <=(const WordExpr&, const WordExpr&);
+  GECODE_MINIMODEL_EXPORT BoolExpr
+  operator >(const WordExpr&, const WordExpr&);
+  GECODE_MINIMODEL_EXPORT BoolExpr
+  operator >=(const WordExpr&, const WordExpr&);
+  GECODE_MINIMODEL_EXPORT BoolExpr
+  signed_less(const WordExpr&, const WordExpr&);
+  GECODE_MINIMODEL_EXPORT BoolExpr
+  signed_less_equal(const WordExpr&, const WordExpr&);
+  GECODE_MINIMODEL_EXPORT BoolExpr
+  signed_greater(const WordExpr&, const WordExpr&);
+  GECODE_MINIMODEL_EXPORT BoolExpr
+  signed_greater_equal(const WordExpr&, const WordExpr&);
+  /// Word relation with explicit materialization domain policy
+  GECODE_MINIMODEL_EXPORT BoolExpr
+  word_rel(const WordExpr&, WordRelType, const WordExpr&, WordDomainType);
+
+  /// Return the selected bit as a Boolean expression
+  GECODE_MINIMODEL_EXPORT BoolExpr
+  bit(const WordExpr&, unsigned int bit_index);
+  /// Return the selected bit using an explicit materialization domain policy
+  GECODE_MINIMODEL_EXPORT BoolExpr
+  bit(const WordExpr&, unsigned int bit_index, WordDomainType);
+  /// Conjunction of all significant bits
+  GECODE_MINIMODEL_EXPORT BoolExpr
+  reduce_and(const WordExpr&);
+  /// Conjunction using an explicit materialization domain policy
+  GECODE_MINIMODEL_EXPORT BoolExpr
+  reduce_and(const WordExpr&, WordDomainType);
+  /// Disjunction of all significant bits
+  GECODE_MINIMODEL_EXPORT BoolExpr
+  reduce_or(const WordExpr&);
+  /// Disjunction using an explicit materialization domain policy
+  GECODE_MINIMODEL_EXPORT BoolExpr
+  reduce_or(const WordExpr&, WordDomainType);
+  /// Exclusive-or of all significant bits
+  GECODE_MINIMODEL_EXPORT BoolExpr
+  reduce_xor(const WordExpr&);
+  /// Exclusive-or using an explicit materialization domain policy
+  GECODE_MINIMODEL_EXPORT BoolExpr
+  reduce_xor(const WordExpr&, WordDomainType);
+  /// Arithmetic overflow predicate for a unary word operation
+  GECODE_MINIMODEL_EXPORT BoolExpr
+  overflow(const WordExpr&, WordOverflowType);
+  /// Unary overflow using an explicit materialization domain policy
+  GECODE_MINIMODEL_EXPORT BoolExpr
+  overflow(const WordExpr&, WordOverflowType, WordDomainType);
+  /// Arithmetic overflow predicate for a binary word operation
+  GECODE_MINIMODEL_EXPORT BoolExpr
+  overflow(const WordExpr&, WordOverflowType, const WordExpr&);
+  /// Binary overflow using an explicit materialization domain policy
+  GECODE_MINIMODEL_EXPORT BoolExpr
+  overflow(const WordExpr&, WordOverflowType, const WordExpr&, WordDomainType);
+  /// Boolean-controlled word conditional
+  GECODE_MINIMODEL_EXPORT WordExpr
+  ite(const BoolExpr&, const WordExpr&, const WordExpr&);
+  /// Word-mask conditional
+  GECODE_MINIMODEL_EXPORT WordExpr
+  ite(const WordExpr&, const WordExpr&, const WordExpr&);
+
+  /// Extract \a width bits starting at least-significant index \a first
+  GECODE_MINIMODEL_EXPORT WordExpr
+  extract(const WordExpr&, unsigned int first, unsigned int width);
+  /// Concatenate \a high above \a low
+  GECODE_MINIMODEL_EXPORT WordExpr
+  concat(const WordExpr& high, const WordExpr& low);
+  /// Repeat the expression in \a count blocks
+  GECODE_MINIMODEL_EXPORT WordExpr
+  repeat(const WordExpr&, unsigned int count);
+  /// Zero-extend the expression to \a result_width
+  GECODE_MINIMODEL_EXPORT WordExpr
+  zero_extend(const WordExpr&, unsigned int result_width);
+  /// Sign-extend the expression to \a result_width
+  GECODE_MINIMODEL_EXPORT WordExpr
+  sign_extend(const WordExpr&, unsigned int result_width);
+  /// Logically shift the expression left by constant \a amount
+  GECODE_MINIMODEL_EXPORT WordExpr
+  operator <<(const WordExpr&, unsigned int amount);
+  /// Logically shift the expression left by word \a amount
+  GECODE_MINIMODEL_EXPORT WordExpr
+  operator <<(const WordExpr&, const WordExpr& amount);
+  /// Logically shift the expression right by constant \a amount
+  GECODE_MINIMODEL_EXPORT WordExpr
+  logical_shift_right(const WordExpr&, unsigned int amount);
+  /// Logically shift the expression right by word \a amount
+  GECODE_MINIMODEL_EXPORT WordExpr
+  logical_shift_right(const WordExpr&, const WordExpr& amount);
+  /// Arithmetically shift the expression right by constant \a amount
+  GECODE_MINIMODEL_EXPORT WordExpr
+  arithmetic_shift_right(const WordExpr&, unsigned int amount);
+  /// Arithmetically shift the expression right by word \a amount
+  GECODE_MINIMODEL_EXPORT WordExpr
+  arithmetic_shift_right(const WordExpr&, const WordExpr& amount);
+  /// Rotate the expression left by constant \a amount
+  GECODE_MINIMODEL_EXPORT WordExpr
+  rotate_left(const WordExpr&, unsigned int amount);
+  /** \brief Rotate left by the unsigned encoded word count modulo width
+   *
+   * Expression widths range from 1 through 64. Unequal input/count widths
+   * throw Word::WidthMismatch. Signed count domains still use the unsigned
+   * encoded pattern. Lowering uses the native rotation's conservative bit-mask
+   * propagation and the requested temporary-domain policy.
+   */
+  GECODE_MINIMODEL_EXPORT WordExpr
+  rotate_left(const WordExpr&, const WordExpr& count);
+  /// Rotate the expression right by constant \a amount
+  GECODE_MINIMODEL_EXPORT WordExpr
+  rotate_right(const WordExpr&, unsigned int amount);
+  /** \brief Rotate right by the unsigned encoded word count modulo width
+   *
+   * Expression widths range from 1 through 64. Unequal input/count widths
+   * throw Word::WidthMismatch. Signed count domains still use the unsigned
+   * encoded pattern. Lowering uses the native rotation's conservative bit-mask
+   * propagation and the requested temporary-domain policy.
+   */
+  GECODE_MINIMODEL_EXPORT WordExpr
+  rotate_right(const WordExpr&, const WordExpr& count);
+
+  /// Modular addition
+  GECODE_MINIMODEL_EXPORT WordExpr
+  operator +(const WordExpr&, const WordExpr&);
+  /// Two's-complement modular negation
+  GECODE_MINIMODEL_EXPORT WordExpr
+  operator -(const WordExpr&);
+  /// Modular subtraction
+  GECODE_MINIMODEL_EXPORT WordExpr
+  operator -(const WordExpr&, const WordExpr&);
+  /// Modular multiplication
+  GECODE_MINIMODEL_EXPORT WordExpr
+  operator *(const WordExpr&, const WordExpr&);
+  /// Unsigned division
+  GECODE_MINIMODEL_EXPORT WordExpr
+  div(const WordExpr&, const WordExpr&);
+  /// Unsigned remainder
+  GECODE_MINIMODEL_EXPORT WordExpr
+  mod(const WordExpr&, const WordExpr&);
+  /// Signed division
+  GECODE_MINIMODEL_EXPORT WordExpr
+  signed_div(const WordExpr&, const WordExpr&);
+  /// Signed remainder
+  GECODE_MINIMODEL_EXPORT WordExpr
+  signed_rem(const WordExpr&, const WordExpr&);
+  /// Signed modulus
+  GECODE_MINIMODEL_EXPORT WordExpr
+  signed_mod(const WordExpr&, const WordExpr&);
+  /** @} */
+#endif
 
   /**
    * \defgroup TaskModelMiniModelReified Reified expressions
@@ -1652,6 +2088,11 @@ namespace Gecode {
   /// Post set expression and return its value
   GECODE_MINIMODEL_EXPORT SetVar
   expr(Home home, const SetExpr& e);
+#endif
+#ifdef GECODE_HAS_WORD_VARS
+  /// Post word expression and return its value
+  GECODE_MINIMODEL_EXPORT WordVar
+  expr(Home home, const WordExpr& e);
 #endif
   /// Post Boolean expression and return its value
   GECODE_MINIMODEL_EXPORT BoolVar
