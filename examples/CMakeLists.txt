@@ -59,6 +59,23 @@ set(GECODE_EXAMPLE_SOURCES
   sudoku.cpp
   tsp.cpp
   warehouses.cpp
+  word-arx-preimage.cpp
+  word-arithmetic.cpp
+  word-benchmark.cpp
+  word-bitboard.cpp
+  word-bit-network-comparison.cpp
+  word-crc16-ccitt.cpp
+  word-crc16-x25.cpp
+  word-dma-descriptor.cpp
+  word-inverse-arithmetic.cpp
+  word-md5-preimage.cpp
+  word-nary-add.cpp
+  word-product-mod.cpp
+  word-minimodel.cpp
+  word-register-file.cpp
+  word-sha1-preimage.cpp
+  word-structure.cpp
+  word-symbolic-alu.cpp
   word-square.cpp)
 
 set(GECODE_SET_EXAMPLES
@@ -76,6 +93,25 @@ set(GECODE_MPFR_FLOAT_EXAMPLES
   archimedean-spiral
   golden-spiral)
 
+set(GECODE_WORD_EXAMPLES
+  word-arx-preimage
+  word-arithmetic
+  word-benchmark
+  word-bitboard
+  word-bit-network-comparison
+  word-crc16-ccitt
+  word-crc16-x25
+  word-dma-descriptor
+  word-inverse-arithmetic
+  word-md5-preimage
+  word-nary-add
+  word-product-mod
+  word-minimodel
+  word-register-file
+  word-sha1-preimage
+  word-structure
+  word-symbolic-alu)
+
 function(gecode_add_example source_file)
   get_filename_component(example_name "${source_file}" NAME_WE)
 
@@ -92,6 +128,11 @@ function(gecode_add_example source_file)
   if(example_name IN_LIST GECODE_MPFR_FLOAT_EXAMPLES AND
      (NOT GECODE_ENABLE_FLOAT_VARS OR NOT GECODE_ENABLE_MPFR OR NOT MPFR_FOUND))
     message(STATUS "Skipping example: ${example_name} (requires MPFR float support)")
+    return()
+  endif()
+
+  if(example_name IN_LIST GECODE_WORD_EXAMPLES AND NOT GECODE_ENABLE_WORD_VARS)
+    message(STATUS "Skipping example: ${example_name} (requires word variables)")
     return()
   endif()
 
