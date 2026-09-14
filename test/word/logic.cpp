@@ -470,7 +470,7 @@ namespace Test { namespace Word {
       }
 
     public:
-      Lifecycle(void) : Base("Word::Logic::Lifecycle") {}
+      Lifecycle(void) : Base("Word::Logic::Lifecycle",TestTags::check()) {}
       virtual bool run(void) {
         const Gecode::WordOpType ops[] = {
           Gecode::WOT_AND, Gecode::WOT_OR, Gecode::WOT_XOR,

@@ -576,7 +576,7 @@ namespace Test { namespace Word {
     }
 
   public:
-    Branch(void) : Base("Word::Branch") {}
+    Branch(void) : Base("Word::Branch",TestTags::check()) {}
     virtual bool run(void) {
       using namespace Gecode;
       Rnd rb(11), ra(11);

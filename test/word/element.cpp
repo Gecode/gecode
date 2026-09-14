@@ -234,7 +234,7 @@ namespace Test { namespace Word {
       }
 
     public:
-      Lifecycle(void) : Base("Word::Element::Lifecycle") {}
+      Lifecycle(void) : Base("Word::Element::Lifecycle",TestTags::check()) {}
       virtual bool run(void) {
         return focused() && aliases_and_clone() &&
           mixed_selected_equality() && search_recomputation();

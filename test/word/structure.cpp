@@ -279,7 +279,7 @@ namespace Test { namespace Word {
       }
 
     public:
-      Fixed(void) : Base("Word::Structure::Fixed") {}
+      Fixed(void) : Base("Word::Structure::Fixed",TestTags::check()) {}
       virtual bool run(void) {
         return assigned_values() && partial_masks() && lifecycle() &&
           invalid_and_failure();

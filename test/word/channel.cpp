@@ -359,7 +359,7 @@ namespace Test { namespace Word {
 
     public:
       /// Construct and register test
-      Lifecycle(void) : Base("Word::Channel::Lifecycle") {}
+      Lifecycle(void) : Base("Word::Channel::Lifecycle",TestTags::check()) {}
       /// Run focused checks
       virtual bool run(void) {
         ChannelSpace source;

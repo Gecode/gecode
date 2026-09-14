@@ -372,7 +372,7 @@ namespace Test { namespace Word {
       }
 
     public:
-      Lifecycle(void) : Base("Word::MiniModel::Lifecycle") {}
+      Lifecycle(void) : Base("Word::MiniModel::Lifecycle",TestTags::check()) {}
       virtual bool run(void) {
         return parity() && invalid() && clone() && search_recomputation() &&
           domain_policy();

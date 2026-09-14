@@ -572,7 +572,7 @@ namespace Test { namespace Word {
       }
 
     public:
-      Lifecycle(void) : Base("Word::Rel::Lifecycle") {}
+      Lifecycle(void) : Base("Word::Rel::Lifecycle",TestTags::check()) {}
       virtual bool run(void) {
         if (!mixed_order_equality())
           return false;

@@ -86,7 +86,7 @@ namespace Test { namespace Word {
 
   class Trace : public Base {
   public:
-    Trace(void) : Base("Word::Trace") {}
+    Trace(void) : Base("Word::Trace",TestTags::check()) {}
     virtual bool run(void) {
       CaptureTracer tracer;
       TraceSpace root(tracer);

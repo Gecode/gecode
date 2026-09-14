@@ -1018,7 +1018,7 @@ namespace Test { namespace Word {
       }
 
     public:
-      Lifecycle(void) : Base("Word::Arithmetic::Lifecycle") {}
+      Lifecycle(void) : Base("Word::Arithmetic::Lifecycle",TestTags::check()) {}
       virtual bool run(void) {
         return partial(Op::ADD) && add_bit_consistency() && wide_bit_consistency() &&
           nary_add_partial() &&
@@ -1923,7 +1923,7 @@ namespace Test { namespace Word {
 
     public:
       DivisionLifecycle(void)
-        : Base("Word::Arithmetic::DivisionLifecycle") {}
+        : Base("Word::Arithmetic::DivisionLifecycle",TestTags::check()) {}
       virtual bool run(void) {
         return partial(Op::DIV) && partial(Op::MOD) && boolean_parity() &&
           edge_constants_aliases_lifecycle() && native_propagation() &&

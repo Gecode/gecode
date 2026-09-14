@@ -423,7 +423,7 @@ namespace Test { namespace Word {
   /// Self-test for the word testing framework
   class Framework : public Base {
   public:
-    Framework(void) : Base("Word::TestFramework") {}
+    Framework(void) : Base("Word::TestFramework",TestTags::check()) {}
     virtual bool run(void) {
       Domain d(3,1,7);
       const std::vector<Gecode::WordValue> expected = {1,3,5,7};
