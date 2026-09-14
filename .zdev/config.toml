@@ -1,0 +1,6 @@
+schema_version = 1
+
+[project]
+name = "gecode"
+record = "pull-request"
+trunk = "feature/word-vectors"

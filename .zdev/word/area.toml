@@ -1,0 +1,7 @@
+schema_version = 1
+tag = "word"
+title = "WordVar follow-up"
+objective = "Complete and harden native bounded WordVar integration from the reviewed correctness, performance, search, and modeling findings."
+branch = "feature/word-vectors"
+lifecycle = "open"
+base_commit = "e9de4ece333e4c1a862e26885d84de5b1956886e"
