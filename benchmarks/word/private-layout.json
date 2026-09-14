@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "corpus": "private",
+  "redistributable": false,
+  "layout": {
+    "manifest": "manifest.json",
+    "instances": "instances/*.json"
+  },
+  "manifest_required_fields": [
+    "schema_version",
+    "corpus",
+    "redistributable",
+    "instances"
+  ],
+  "manifest_entry_required_fields": ["id", "path"],
+  "instance_required_fields": [
+    "schema_version",
+    "id",
+    "width",
+    "rounds",
+    "key",
+    "shift",
+    "target_lo",
+    "target_hi",
+    "expected_solutions",
+    "expected_input"
+  ]
+}

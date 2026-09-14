@@ -1,0 +1,2504 @@
+{
+  "schema_version": 2,
+  "campaign": "word-037",
+  "description": "72 explicit instances: six families, three levels, two SAT and two UNSAT per level.",
+  "configurations": [
+    "gecode-baseline",
+    "gecode-candidate",
+    "z3",
+    "bitwuzla"
+  ],
+  "cases": [
+    {
+      "id": "dma-small-sat-a",
+      "campaign_family": "dma",
+      "level": "small",
+      "harness": "mixed",
+      "family": "dma",
+      "native_kind": "dma",
+      "expected_status": "sat",
+      "decision_variables": [
+        "index",
+        "base[0]",
+        "base[1]",
+        "base[2]",
+        "flag[0]",
+        "flag[1]",
+        "flag[2]"
+      ],
+      "parameters": {
+        "descriptor_count": 3,
+        "window_slack": 16,
+        "selected_cap": 768
+      },
+      "scale": {
+        "axis": "descriptor_count",
+        "value": 3,
+        "window_slack": 16
+      },
+      "expected_solutions": 12
+    },
+    {
+      "id": "dma-small-sat-b",
+      "campaign_family": "dma",
+      "level": "small",
+      "harness": "mixed",
+      "family": "dma",
+      "native_kind": "dma",
+      "expected_status": "sat",
+      "decision_variables": [
+        "index",
+        "base[0]",
+        "base[1]",
+        "base[2]",
+        "flag[0]",
+        "flag[1]",
+        "flag[2]"
+      ],
+      "parameters": {
+        "descriptor_count": 3,
+        "window_slack": 32,
+        "selected_cap": 700
+      },
+      "scale": {
+        "axis": "descriptor_count",
+        "value": 3,
+        "window_slack": 32
+      },
+      "expected_solutions": 30
+    },
+    {
+      "id": "dma-small-unsat-a",
+      "campaign_family": "dma",
+      "level": "small",
+      "harness": "mixed",
+      "family": "dma",
+      "native_kind": "dma",
+      "expected_status": "unsat",
+      "decision_variables": [
+        "index",
+        "base[0]",
+        "base[1]",
+        "base[2]",
+        "flag[0]",
+        "flag[1]",
+        "flag[2]"
+      ],
+      "parameters": {
+        "descriptor_count": 3,
+        "window_slack": 16,
+        "selected_cap": 255
+      },
+      "scale": {
+        "axis": "descriptor_count",
+        "value": 3,
+        "window_slack": 16
+      },
+      "expected_solutions": 0
+    },
+    {
+      "id": "dma-small-unsat-b",
+      "campaign_family": "dma",
+      "level": "small",
+      "harness": "mixed",
+      "family": "dma",
+      "native_kind": "dma",
+      "expected_status": "unsat",
+      "decision_variables": [
+        "index",
+        "base[0]",
+        "base[1]",
+        "base[2]",
+        "flag[0]",
+        "flag[1]",
+        "flag[2]"
+      ],
+      "parameters": {
+        "descriptor_count": 3,
+        "window_slack": 32,
+        "selected_cap": 252
+      },
+      "scale": {
+        "axis": "descriptor_count",
+        "value": 3,
+        "window_slack": 32
+      },
+      "expected_solutions": 0
+    },
+    {
+      "id": "register-small-lookup-sat",
+      "campaign_family": "register",
+      "level": "small",
+      "harness": "mixed",
+      "family": "lookup",
+      "native_kind": "lookup",
+      "expected_status": "sat",
+      "decision_variables": [
+        "index",
+        "register[0]",
+        "register[1]",
+        "register[2]",
+        "register[3]"
+      ],
+      "parameters": {
+        "size": 4,
+        "allowed_indices": [
+          1,
+          2
+        ]
+      },
+      "scale": {
+        "axis": "register_count",
+        "value": 4,
+        "domain_slots": null
+      },
+      "expected_solutions": 16
+    },
+    {
+      "id": "register-small-allocation-sat",
+      "campaign_family": "register",
+      "level": "small",
+      "harness": "mixed",
+      "family": "allocation",
+      "native_kind": "allocation",
+      "expected_status": "sat",
+      "decision_variables": [
+        "address[0]",
+        "address[1]",
+        "address[2]",
+        "address[3]"
+      ],
+      "parameters": {
+        "banks": 2,
+        "registers_per_bank": 2,
+        "slots_per_bank": 4
+      },
+      "scale": {
+        "axis": "allocated_registers",
+        "value": 4,
+        "domain_slots": 4
+      },
+      "expected_solutions": 144
+    },
+    {
+      "id": "register-small-lookup-unsat",
+      "campaign_family": "register",
+      "level": "small",
+      "harness": "mixed",
+      "family": "lookup",
+      "native_kind": "lookup",
+      "expected_status": "unsat",
+      "decision_variables": [
+        "index",
+        "register[0]",
+        "register[1]",
+        "register[2]",
+        "register[3]"
+      ],
+      "parameters": {
+        "size": 4,
+        "allowed_indices": [
+          0,
+          3
+        ]
+      },
+      "scale": {
+        "axis": "register_count",
+        "value": 4,
+        "domain_slots": null
+      },
+      "expected_solutions": 0
+    },
+    {
+      "id": "register-small-allocation-unsat",
+      "campaign_family": "register",
+      "level": "small",
+      "harness": "mixed",
+      "family": "allocation",
+      "native_kind": "allocation",
+      "expected_status": "unsat",
+      "decision_variables": [
+        "address[0]",
+        "address[1]",
+        "address[2]",
+        "address[3]",
+        "address[4]",
+        "address[5]",
+        "address[6]",
+        "address[7]",
+        "address[8]",
+        "address[9]"
+      ],
+      "parameters": {
+        "banks": 2,
+        "registers_per_bank": 5,
+        "slots_per_bank": 4
+      },
+      "scale": {
+        "axis": "allocated_registers",
+        "value": 10,
+        "domain_slots": 4
+      },
+      "expected_solutions": 0
+    },
+    {
+      "id": "dma-medium-sat-a",
+      "campaign_family": "dma",
+      "level": "medium",
+      "harness": "mixed",
+      "family": "dma",
+      "native_kind": "dma",
+      "expected_status": "sat",
+      "decision_variables": [
+        "index",
+        "base[0]",
+        "base[1]",
+        "base[2]",
+        "base[3]",
+        "flag[0]",
+        "flag[1]",
+        "flag[2]",
+        "flag[3]"
+      ],
+      "parameters": {
+        "descriptor_count": 4,
+        "window_slack": 32,
+        "selected_cap": 768
+      },
+      "scale": {
+        "axis": "descriptor_count",
+        "value": 4,
+        "window_slack": 32
+      },
+      "expected_solutions": 60
+    },
+    {
+      "id": "dma-medium-sat-b",
+      "campaign_family": "dma",
+      "level": "medium",
+      "harness": "mixed",
+      "family": "dma",
+      "native_kind": "dma",
+      "expected_status": "sat",
+      "decision_variables": [
+        "index",
+        "base[0]",
+        "base[1]",
+        "base[2]",
+        "base[3]",
+        "flag[0]",
+        "flag[1]",
+        "flag[2]",
+        "flag[3]"
+      ],
+      "parameters": {
+        "descriptor_count": 4,
+        "window_slack": 48,
+        "selected_cap": 699
+      },
+      "scale": {
+        "axis": "descriptor_count",
+        "value": 4,
+        "window_slack": 48
+      },
+      "expected_solutions": 140
+    },
+    {
+      "id": "dma-medium-unsat-a",
+      "campaign_family": "dma",
+      "level": "medium",
+      "harness": "mixed",
+      "family": "dma",
+      "native_kind": "dma",
+      "expected_status": "unsat",
+      "decision_variables": [
+        "index",
+        "base[0]",
+        "base[1]",
+        "base[2]",
+        "base[3]",
+        "flag[0]",
+        "flag[1]",
+        "flag[2]",
+        "flag[3]"
+      ],
+      "parameters": {
+        "descriptor_count": 4,
+        "window_slack": 32,
+        "selected_cap": 254
+      },
+      "scale": {
+        "axis": "descriptor_count",
+        "value": 4,
+        "window_slack": 32
+      },
+      "expected_solutions": 0
+    },
+    {
+      "id": "dma-medium-unsat-b",
+      "campaign_family": "dma",
+      "level": "medium",
+      "harness": "mixed",
+      "family": "dma",
+      "native_kind": "dma",
+      "expected_status": "unsat",
+      "decision_variables": [
+        "index",
+        "base[0]",
+        "base[1]",
+        "base[2]",
+        "base[3]",
+        "flag[0]",
+        "flag[1]",
+        "flag[2]",
+        "flag[3]"
+      ],
+      "parameters": {
+        "descriptor_count": 4,
+        "window_slack": 48,
+        "selected_cap": 251
+      },
+      "scale": {
+        "axis": "descriptor_count",
+        "value": 4,
+        "window_slack": 48
+      },
+      "expected_solutions": 0
+    },
+    {
+      "id": "register-medium-lookup-sat",
+      "campaign_family": "register",
+      "level": "medium",
+      "harness": "mixed",
+      "family": "lookup",
+      "native_kind": "lookup",
+      "expected_status": "sat",
+      "decision_variables": [
+        "index",
+        "register[0]",
+        "register[1]",
+        "register[2]",
+        "register[3]",
+        "register[4]",
+        "register[5]"
+      ],
+      "parameters": {
+        "size": 6,
+        "allowed_indices": [
+          1,
+          2
+        ]
+      },
+      "scale": {
+        "axis": "register_count",
+        "value": 6,
+        "domain_slots": null
+      },
+      "expected_solutions": 64
+    },
+    {
+      "id": "register-medium-allocation-sat",
+      "campaign_family": "register",
+      "level": "medium",
+      "harness": "mixed",
+      "family": "allocation",
+      "native_kind": "allocation",
+      "expected_status": "sat",
+      "decision_variables": [
+        "address[0]",
+        "address[1]",
+        "address[2]",
+        "address[3]",
+        "address[4]",
+        "address[5]"
+      ],
+      "parameters": {
+        "banks": 2,
+        "registers_per_bank": 3,
+        "slots_per_bank": 4
+      },
+      "scale": {
+        "axis": "allocated_registers",
+        "value": 6,
+        "domain_slots": 4
+      },
+      "expected_solutions": 576
+    },
+    {
+      "id": "register-medium-lookup-unsat",
+      "campaign_family": "register",
+      "level": "medium",
+      "harness": "mixed",
+      "family": "lookup",
+      "native_kind": "lookup",
+      "expected_status": "unsat",
+      "decision_variables": [
+        "index",
+        "register[0]",
+        "register[1]",
+        "register[2]",
+        "register[3]",
+        "register[4]",
+        "register[5]"
+      ],
+      "parameters": {
+        "size": 6,
+        "allowed_indices": [
+          0,
+          3
+        ]
+      },
+      "scale": {
+        "axis": "register_count",
+        "value": 6,
+        "domain_slots": null
+      },
+      "expected_solutions": 0
+    },
+    {
+      "id": "register-medium-allocation-unsat",
+      "campaign_family": "register",
+      "level": "medium",
+      "harness": "mixed",
+      "family": "allocation",
+      "native_kind": "allocation",
+      "expected_status": "unsat",
+      "decision_variables": [
+        "address[0]",
+        "address[1]",
+        "address[2]",
+        "address[3]",
+        "address[4]",
+        "address[5]",
+        "address[6]",
+        "address[7]",
+        "address[8]",
+        "address[9]",
+        "address[10]",
+        "address[11]"
+      ],
+      "parameters": {
+        "banks": 2,
+        "registers_per_bank": 6,
+        "slots_per_bank": 4
+      },
+      "scale": {
+        "axis": "allocated_registers",
+        "value": 12,
+        "domain_slots": 4
+      },
+      "expected_solutions": 0
+    },
+    {
+      "id": "dma-large-sat-a",
+      "campaign_family": "dma",
+      "level": "large",
+      "harness": "mixed",
+      "family": "dma",
+      "native_kind": "dma",
+      "expected_status": "sat",
+      "decision_variables": [
+        "index",
+        "base[0]",
+        "base[1]",
+        "base[2]",
+        "base[3]",
+        "base[4]",
+        "flag[0]",
+        "flag[1]",
+        "flag[2]",
+        "flag[3]",
+        "flag[4]"
+      ],
+      "parameters": {
+        "descriptor_count": 5,
+        "window_slack": 48,
+        "selected_cap": 768
+      },
+      "scale": {
+        "axis": "descriptor_count",
+        "value": 5,
+        "window_slack": 48
+      },
+      "expected_solutions": 280
+    },
+    {
+      "id": "dma-large-sat-b",
+      "campaign_family": "dma",
+      "level": "large",
+      "harness": "mixed",
+      "family": "dma",
+      "native_kind": "dma",
+      "expected_status": "sat",
+      "decision_variables": [
+        "index",
+        "base[0]",
+        "base[1]",
+        "base[2]",
+        "base[3]",
+        "base[4]",
+        "flag[0]",
+        "flag[1]",
+        "flag[2]",
+        "flag[3]",
+        "flag[4]"
+      ],
+      "parameters": {
+        "descriptor_count": 5,
+        "window_slack": 64,
+        "selected_cap": 698
+      },
+      "scale": {
+        "axis": "descriptor_count",
+        "value": 5,
+        "window_slack": 64
+      },
+      "expected_solutions": 630
+    },
+    {
+      "id": "dma-large-unsat-a",
+      "campaign_family": "dma",
+      "level": "large",
+      "harness": "mixed",
+      "family": "dma",
+      "native_kind": "dma",
+      "expected_status": "unsat",
+      "decision_variables": [
+        "index",
+        "base[0]",
+        "base[1]",
+        "base[2]",
+        "base[3]",
+        "base[4]",
+        "flag[0]",
+        "flag[1]",
+        "flag[2]",
+        "flag[3]",
+        "flag[4]"
+      ],
+      "parameters": {
+        "descriptor_count": 5,
+        "window_slack": 48,
+        "selected_cap": 253
+      },
+      "scale": {
+        "axis": "descriptor_count",
+        "value": 5,
+        "window_slack": 48
+      },
+      "expected_solutions": 0
+    },
+    {
+      "id": "dma-large-unsat-b",
+      "campaign_family": "dma",
+      "level": "large",
+      "harness": "mixed",
+      "family": "dma",
+      "native_kind": "dma",
+      "expected_status": "unsat",
+      "decision_variables": [
+        "index",
+        "base[0]",
+        "base[1]",
+        "base[2]",
+        "base[3]",
+        "base[4]",
+        "flag[0]",
+        "flag[1]",
+        "flag[2]",
+        "flag[3]",
+        "flag[4]"
+      ],
+      "parameters": {
+        "descriptor_count": 5,
+        "window_slack": 64,
+        "selected_cap": 250
+      },
+      "scale": {
+        "axis": "descriptor_count",
+        "value": 5,
+        "window_slack": 64
+      },
+      "expected_solutions": 0
+    },
+    {
+      "id": "register-large-lookup-sat",
+      "campaign_family": "register",
+      "level": "large",
+      "harness": "mixed",
+      "family": "lookup",
+      "native_kind": "lookup",
+      "expected_status": "sat",
+      "decision_variables": [
+        "index",
+        "register[0]",
+        "register[1]",
+        "register[2]",
+        "register[3]",
+        "register[4]",
+        "register[5]",
+        "register[6]",
+        "register[7]"
+      ],
+      "parameters": {
+        "size": 8,
+        "allowed_indices": [
+          1,
+          2
+        ]
+      },
+      "scale": {
+        "axis": "register_count",
+        "value": 8,
+        "domain_slots": null
+      },
+      "expected_solutions": 256
+    },
+    {
+      "id": "register-large-allocation-sat",
+      "campaign_family": "register",
+      "level": "large",
+      "harness": "mixed",
+      "family": "allocation",
+      "native_kind": "allocation",
+      "expected_status": "sat",
+      "decision_variables": [
+        "address[0]",
+        "address[1]",
+        "address[2]",
+        "address[3]",
+        "address[4]",
+        "address[5]",
+        "address[6]",
+        "address[7]"
+      ],
+      "parameters": {
+        "banks": 2,
+        "registers_per_bank": 4,
+        "slots_per_bank": 4
+      },
+      "scale": {
+        "axis": "allocated_registers",
+        "value": 8,
+        "domain_slots": 4
+      },
+      "expected_solutions": 576
+    },
+    {
+      "id": "register-large-lookup-unsat",
+      "campaign_family": "register",
+      "level": "large",
+      "harness": "mixed",
+      "family": "lookup",
+      "native_kind": "lookup",
+      "expected_status": "unsat",
+      "decision_variables": [
+        "index",
+        "register[0]",
+        "register[1]",
+        "register[2]",
+        "register[3]",
+        "register[4]",
+        "register[5]",
+        "register[6]",
+        "register[7]"
+      ],
+      "parameters": {
+        "size": 8,
+        "allowed_indices": [
+          0,
+          3
+        ]
+      },
+      "scale": {
+        "axis": "register_count",
+        "value": 8,
+        "domain_slots": null
+      },
+      "expected_solutions": 0
+    },
+    {
+      "id": "register-large-allocation-unsat",
+      "campaign_family": "register",
+      "level": "large",
+      "harness": "mixed",
+      "family": "allocation",
+      "native_kind": "allocation",
+      "expected_status": "unsat",
+      "decision_variables": [
+        "address[0]",
+        "address[1]",
+        "address[2]",
+        "address[3]",
+        "address[4]",
+        "address[5]",
+        "address[6]",
+        "address[7]",
+        "address[8]",
+        "address[9]",
+        "address[10]",
+        "address[11]",
+        "address[12]",
+        "address[13]"
+      ],
+      "parameters": {
+        "banks": 2,
+        "registers_per_bank": 7,
+        "slots_per_bank": 4
+      },
+      "scale": {
+        "axis": "allocated_registers",
+        "value": 14,
+        "domain_slots": 4
+      },
+      "expected_solutions": 0
+    },
+    {
+      "id": "inverse-small-sat-1",
+      "campaign_family": "inverse",
+      "level": "small",
+      "harness": "mixed",
+      "family": "mult",
+      "native_kind": "inverse",
+      "native_case": "mult-tight-w8",
+      "expected_status": "sat",
+      "decision_variables": [
+        "x",
+        "y",
+        "result"
+      ],
+      "parameters": {
+        "width": 8,
+        "x_min": 0,
+        "x_max": 31,
+        "y_min": 13,
+        "y_max": 13,
+        "result_min": 143,
+        "result_max": 143
+      },
+      "scale": {
+        "axis": "expected_projection_count",
+        "value": 1,
+        "width": 8,
+        "operand_domain_product": 32
+      },
+      "expected_solutions": 1
+    },
+    {
+      "id": "inverse-small-sat-2",
+      "campaign_family": "inverse",
+      "level": "small",
+      "harness": "mixed",
+      "family": "divmod",
+      "native_kind": "inverse",
+      "native_case": "divmod-tight-w8",
+      "expected_status": "sat",
+      "decision_variables": [
+        "x",
+        "y",
+        "quotient",
+        "remainder"
+      ],
+      "parameters": {
+        "width": 8,
+        "x_min": 100,
+        "x_max": 140,
+        "y_min": 7,
+        "y_max": 9,
+        "q_min": 15,
+        "q_max": 15,
+        "r_min": 1,
+        "r_max": 1
+      },
+      "scale": {
+        "axis": "expected_projection_count",
+        "value": 3,
+        "width": 8,
+        "operand_domain_product": 123
+      },
+      "expected_solutions": 3
+    },
+    {
+      "id": "inverse-small-unsat-1",
+      "campaign_family": "inverse",
+      "level": "small",
+      "harness": "mixed",
+      "family": "product_mod",
+      "native_kind": "inverse",
+      "native_case": "product-mod-wrong-w8",
+      "expected_status": "unsat",
+      "decision_variables": [
+        "x",
+        "y",
+        "result"
+      ],
+      "parameters": {
+        "width": 8,
+        "x_min": 7,
+        "x_max": 7,
+        "y_min": 7,
+        "y_max": 7,
+        "result_min": 5,
+        "result_max": 5,
+        "modulus": 13,
+        "guard": 1
+      },
+      "scale": {
+        "axis": "operand_domain_product",
+        "value": 1,
+        "width": 8,
+        "result_range_size": 1
+      },
+      "expected_solutions": 0
+    },
+    {
+      "id": "inverse-small-unsat-2",
+      "campaign_family": "inverse",
+      "level": "small",
+      "harness": "mixed",
+      "family": "product_mod",
+      "native_kind": "inverse",
+      "native_case": "product-mod-disabled-zero",
+      "expected_status": "unsat",
+      "decision_variables": [
+        "x",
+        "y",
+        "result"
+      ],
+      "parameters": {
+        "width": 8,
+        "x_min": 2,
+        "x_max": 2,
+        "y_min": 3,
+        "y_max": 3,
+        "result_min": 4,
+        "result_max": 4,
+        "modulus": 0,
+        "guard": 0
+      },
+      "scale": {
+        "axis": "operand_domain_product",
+        "value": 1,
+        "width": 8,
+        "result_range_size": 1
+      },
+      "expected_solutions": 0
+    },
+    {
+      "id": "inverse-medium-sat-1",
+      "campaign_family": "inverse",
+      "level": "medium",
+      "harness": "mixed",
+      "family": "mult",
+      "native_kind": "inverse",
+      "native_case": "mult-free-w4",
+      "expected_status": "sat",
+      "decision_variables": [
+        "x",
+        "y",
+        "result"
+      ],
+      "parameters": {
+        "width": 4,
+        "x_min": 0,
+        "x_max": 15,
+        "y_min": 0,
+        "y_max": 15,
+        "result_min": 6,
+        "result_max": 6
+      },
+      "scale": {
+        "axis": "expected_projection_count",
+        "value": 16,
+        "width": 4,
+        "operand_domain_product": 256
+      },
+      "expected_solutions": 16
+    },
+    {
+      "id": "inverse-medium-sat-2",
+      "campaign_family": "inverse",
+      "level": "medium",
+      "harness": "mixed",
+      "family": "product_mod",
+      "native_kind": "inverse",
+      "native_case": "product-mod-tight-w5",
+      "expected_status": "sat",
+      "decision_variables": [
+        "x",
+        "y",
+        "result"
+      ],
+      "parameters": {
+        "width": 5,
+        "x_min": 0,
+        "x_max": 31,
+        "y_min": 7,
+        "y_max": 7,
+        "result_min": 4,
+        "result_max": 4,
+        "modulus": 13,
+        "guard": 1
+      },
+      "scale": {
+        "axis": "expected_projection_count",
+        "value": 2,
+        "width": 5,
+        "operand_domain_product": 32
+      },
+      "expected_solutions": 2
+    },
+    {
+      "id": "inverse-medium-unsat-1",
+      "campaign_family": "inverse",
+      "level": "medium",
+      "harness": "mixed",
+      "family": "product_mod",
+      "native_kind": "inverse",
+      "native_case": "product-mod-wrong-w8",
+      "expected_status": "unsat",
+      "decision_variables": [
+        "x",
+        "y",
+        "result"
+      ],
+      "parameters": {
+        "width": 8,
+        "x_min": 8,
+        "x_max": 8,
+        "y_min": 7,
+        "y_max": 7,
+        "result_min": 6,
+        "result_max": 6,
+        "modulus": 13,
+        "guard": 1
+      },
+      "scale": {
+        "axis": "operand_domain_product",
+        "value": 1,
+        "width": 8,
+        "result_range_size": 1
+      },
+      "expected_solutions": 0
+    },
+    {
+      "id": "inverse-medium-unsat-2",
+      "campaign_family": "inverse",
+      "level": "medium",
+      "harness": "mixed",
+      "family": "product_mod",
+      "native_kind": "inverse",
+      "native_case": "product-mod-disabled-zero",
+      "expected_status": "unsat",
+      "decision_variables": [
+        "x",
+        "y",
+        "result"
+      ],
+      "parameters": {
+        "width": 8,
+        "x_min": 3,
+        "x_max": 3,
+        "y_min": 3,
+        "y_max": 3,
+        "result_min": 5,
+        "result_max": 5,
+        "modulus": 0,
+        "guard": 0
+      },
+      "scale": {
+        "axis": "operand_domain_product",
+        "value": 1,
+        "width": 8,
+        "result_range_size": 1
+      },
+      "expected_solutions": 0
+    },
+    {
+      "id": "inverse-large-sat-1",
+      "campaign_family": "inverse",
+      "level": "large",
+      "harness": "mixed",
+      "family": "divmod",
+      "native_kind": "inverse",
+      "native_case": "divmod-free-w3",
+      "expected_status": "sat",
+      "decision_variables": [
+        "x",
+        "y",
+        "quotient",
+        "remainder"
+      ],
+      "parameters": {
+        "width": 3,
+        "x_min": 0,
+        "x_max": 7,
+        "y_min": 0,
+        "y_max": 7,
+        "q_min": 0,
+        "q_max": 7,
+        "r_min": 0,
+        "r_max": 7
+      },
+      "scale": {
+        "axis": "expected_projection_count",
+        "value": 64,
+        "width": 3,
+        "operand_domain_product": 64
+      },
+      "expected_solutions": 64
+    },
+    {
+      "id": "inverse-large-sat-2",
+      "campaign_family": "inverse",
+      "level": "large",
+      "harness": "mixed",
+      "family": "product_mod",
+      "native_kind": "inverse",
+      "native_case": "product-mod-free-w5",
+      "expected_status": "sat",
+      "decision_variables": [
+        "x",
+        "y",
+        "result"
+      ],
+      "parameters": {
+        "width": 5,
+        "x_min": 0,
+        "x_max": 31,
+        "y_min": 0,
+        "y_max": 7,
+        "result_min": 0,
+        "result_max": 0,
+        "modulus": 5,
+        "guard": 1
+      },
+      "scale": {
+        "axis": "expected_projection_count",
+        "value": 106,
+        "width": 5,
+        "operand_domain_product": 256
+      },
+      "expected_solutions": 106
+    },
+    {
+      "id": "inverse-large-unsat-1",
+      "campaign_family": "inverse",
+      "level": "large",
+      "harness": "mixed",
+      "family": "product_mod",
+      "native_kind": "inverse",
+      "native_case": "product-mod-wrong-w8",
+      "expected_status": "unsat",
+      "decision_variables": [
+        "x",
+        "y",
+        "result"
+      ],
+      "parameters": {
+        "width": 8,
+        "x_min": 9,
+        "x_max": 9,
+        "y_min": 7,
+        "y_max": 7,
+        "result_min": 7,
+        "result_max": 7,
+        "modulus": 13,
+        "guard": 1
+      },
+      "scale": {
+        "axis": "operand_domain_product",
+        "value": 1,
+        "width": 8,
+        "result_range_size": 1
+      },
+      "expected_solutions": 0
+    },
+    {
+      "id": "inverse-large-unsat-2",
+      "campaign_family": "inverse",
+      "level": "large",
+      "harness": "mixed",
+      "family": "product_mod",
+      "native_kind": "inverse",
+      "native_case": "product-mod-disabled-zero",
+      "expected_status": "unsat",
+      "decision_variables": [
+        "x",
+        "y",
+        "result"
+      ],
+      "parameters": {
+        "width": 8,
+        "x_min": 4,
+        "x_max": 4,
+        "y_min": 3,
+        "y_max": 3,
+        "result_min": 6,
+        "result_max": 6,
+        "modulus": 0,
+        "guard": 0
+      },
+      "scale": {
+        "axis": "operand_domain_product",
+        "value": 1,
+        "width": 8,
+        "result_range_size": 1
+      },
+      "expected_solutions": 0
+    },
+    {
+      "id": "crc-xorshift-small-crc-sat",
+      "campaign_family": "crc-xorshift",
+      "level": "small",
+      "harness": "bit-network",
+      "family": "crc16",
+      "native_kind": "bit-network",
+      "expected_status": "sat",
+      "decision_variables": [
+        "message"
+      ],
+      "parameters": {
+        "width": 8,
+        "rounds": 8,
+        "known_mask": 252,
+        "known_value": 80,
+        "output_mask": 65535,
+        "output_value": 34376,
+        "exclude_projection": null
+      },
+      "scale": {
+        "axis": "unknown_input_bits",
+        "value": 2,
+        "rounds": 8,
+        "observation_bits": 16
+      },
+      "expected_solutions": 1
+    },
+    {
+      "id": "crc-xorshift-small-xor-sat",
+      "campaign_family": "crc-xorshift",
+      "level": "small",
+      "harness": "bit-network",
+      "family": "xorshift32",
+      "native_kind": "bit-network",
+      "expected_status": "sat",
+      "decision_variables": [
+        "state"
+      ],
+      "parameters": {
+        "rounds": 1,
+        "known_mask": 4294967292,
+        "known_value": 305419888,
+        "output_mask": 4294967295,
+        "output_value": 2277071789,
+        "exclude_projection": null
+      },
+      "scale": {
+        "axis": "unknown_input_bits",
+        "value": 2,
+        "rounds": 1,
+        "observation_bits": 32
+      },
+      "expected_solutions": 1
+    },
+    {
+      "id": "crc-xorshift-small-crc-unsat",
+      "campaign_family": "crc-xorshift",
+      "level": "small",
+      "harness": "bit-network",
+      "family": "crc16",
+      "native_kind": "bit-network",
+      "expected_status": "unsat",
+      "decision_variables": [
+        "message"
+      ],
+      "parameters": {
+        "width": 8,
+        "rounds": 8,
+        "known_mask": 252,
+        "known_value": 88,
+        "output_mask": 65535,
+        "output_value": 5985,
+        "exclude_projection": [
+          88
+        ]
+      },
+      "scale": {
+        "axis": "unknown_input_bits",
+        "value": 2,
+        "rounds": 8,
+        "observation_bits": 16
+      },
+      "expected_solutions": 0
+    },
+    {
+      "id": "crc-xorshift-small-xor-unsat",
+      "campaign_family": "crc-xorshift",
+      "level": "small",
+      "harness": "bit-network",
+      "family": "xorshift32",
+      "native_kind": "bit-network",
+      "expected_status": "unsat",
+      "decision_variables": [
+        "state"
+      ],
+      "parameters": {
+        "rounds": 1,
+        "known_mask": 4294967292,
+        "known_value": 305419896,
+        "output_mask": 4294967295,
+        "output_value": 2274908837,
+        "exclude_projection": [
+          305419896
+        ]
+      },
+      "scale": {
+        "axis": "unknown_input_bits",
+        "value": 2,
+        "rounds": 1,
+        "observation_bits": 32
+      },
+      "expected_solutions": 0
+    },
+    {
+      "id": "speck-small-sat-a",
+      "campaign_family": "reduced-speck",
+      "level": "small",
+      "harness": "bit-network",
+      "family": "speck32_64",
+      "native_kind": "bit-network",
+      "expected_status": "sat",
+      "decision_variables": [
+        "key0",
+        "key1",
+        "key2",
+        "key3"
+      ],
+      "parameters": {
+        "rounds": 2,
+        "known_masks": [
+          65532,
+          65535,
+          65535,
+          65535
+        ],
+        "known_values": [
+          256,
+          2312,
+          4368,
+          6424
+        ],
+        "output_mask": 4294967295,
+        "output_value": 937422656,
+        "exclude_projection": null
+      },
+      "scale": {
+        "axis": "unknown_key_bits",
+        "value": 2,
+        "rounds": 2,
+        "observation_bits": 32
+      },
+      "expected_solutions": 1
+    },
+    {
+      "id": "speck-small-sat-b",
+      "campaign_family": "reduced-speck",
+      "level": "small",
+      "harness": "bit-network",
+      "family": "speck32_64",
+      "native_kind": "bit-network",
+      "expected_status": "sat",
+      "decision_variables": [
+        "key0",
+        "key1",
+        "key2",
+        "key3"
+      ],
+      "parameters": {
+        "rounds": 2,
+        "known_masks": [
+          65532,
+          65535,
+          65535,
+          65535
+        ],
+        "known_values": [
+          288,
+          2312,
+          4368,
+          6424
+        ],
+        "output_mask": 4294967295,
+        "output_value": 1998565120,
+        "exclude_projection": null
+      },
+      "scale": {
+        "axis": "unknown_key_bits",
+        "value": 2,
+        "rounds": 2,
+        "observation_bits": 32
+      },
+      "expected_solutions": 1
+    },
+    {
+      "id": "speck-small-unsat-a",
+      "campaign_family": "reduced-speck",
+      "level": "small",
+      "harness": "bit-network",
+      "family": "speck32_64",
+      "native_kind": "bit-network",
+      "expected_status": "unsat",
+      "decision_variables": [
+        "key0",
+        "key1",
+        "key2",
+        "key3"
+      ],
+      "parameters": {
+        "rounds": 2,
+        "known_masks": [
+          65532,
+          65535,
+          65535,
+          65535
+        ],
+        "known_values": [
+          272,
+          2312,
+          4368,
+          6424
+        ],
+        "output_mask": 4294967295,
+        "output_value": 398446432,
+        "exclude_projection": [
+          272,
+          2312,
+          4368,
+          6424
+        ]
+      },
+      "scale": {
+        "axis": "unknown_key_bits",
+        "value": 2,
+        "rounds": 2,
+        "observation_bits": 32
+      },
+      "expected_solutions": 0
+    },
+    {
+      "id": "speck-small-unsat-b",
+      "campaign_family": "reduced-speck",
+      "level": "small",
+      "harness": "bit-network",
+      "family": "speck32_64",
+      "native_kind": "bit-network",
+      "expected_status": "unsat",
+      "decision_variables": [
+        "key0",
+        "key1",
+        "key2",
+        "key3"
+      ],
+      "parameters": {
+        "rounds": 2,
+        "known_masks": [
+          65532,
+          65535,
+          65535,
+          65535
+        ],
+        "known_values": [
+          304,
+          2312,
+          4368,
+          6424
+        ],
+        "output_mask": 4294967295,
+        "output_value": 1463783264,
+        "exclude_projection": [
+          304,
+          2312,
+          4368,
+          6424
+        ]
+      },
+      "scale": {
+        "axis": "unknown_key_bits",
+        "value": 2,
+        "rounds": 2,
+        "observation_bits": 32
+      },
+      "expected_solutions": 0
+    },
+    {
+      "id": "crc-xorshift-medium-crc-sat",
+      "campaign_family": "crc-xorshift",
+      "level": "medium",
+      "harness": "bit-network",
+      "family": "crc16",
+      "native_kind": "bit-network",
+      "expected_status": "sat",
+      "decision_variables": [
+        "message"
+      ],
+      "parameters": {
+        "width": 8,
+        "rounds": 8,
+        "known_mask": 240,
+        "known_value": 80,
+        "output_mask": 65535,
+        "output_value": 34376,
+        "exclude_projection": null
+      },
+      "scale": {
+        "axis": "unknown_input_bits",
+        "value": 4,
+        "rounds": 8,
+        "observation_bits": 16
+      },
+      "expected_solutions": 1
+    },
+    {
+      "id": "crc-xorshift-medium-xor-sat",
+      "campaign_family": "crc-xorshift",
+      "level": "medium",
+      "harness": "bit-network",
+      "family": "xorshift32",
+      "native_kind": "bit-network",
+      "expected_status": "sat",
+      "decision_variables": [
+        "state"
+      ],
+      "parameters": {
+        "rounds": 2,
+        "known_mask": 4294967280,
+        "known_value": 305419888,
+        "output_mask": 4294967295,
+        "output_value": 827396778,
+        "exclude_projection": null
+      },
+      "scale": {
+        "axis": "unknown_input_bits",
+        "value": 4,
+        "rounds": 2,
+        "observation_bits": 32
+      },
+      "expected_solutions": 1
+    },
+    {
+      "id": "crc-xorshift-medium-crc-unsat",
+      "campaign_family": "crc-xorshift",
+      "level": "medium",
+      "harness": "bit-network",
+      "family": "crc16",
+      "native_kind": "bit-network",
+      "expected_status": "unsat",
+      "decision_variables": [
+        "message"
+      ],
+      "parameters": {
+        "width": 8,
+        "rounds": 8,
+        "known_mask": 240,
+        "known_value": 80,
+        "output_mask": 65535,
+        "output_value": 1856,
+        "exclude_projection": [
+          89
+        ]
+      },
+      "scale": {
+        "axis": "unknown_input_bits",
+        "value": 4,
+        "rounds": 8,
+        "observation_bits": 16
+      },
+      "expected_solutions": 0
+    },
+    {
+      "id": "crc-xorshift-medium-xor-unsat",
+      "campaign_family": "crc-xorshift",
+      "level": "medium",
+      "harness": "bit-network",
+      "family": "xorshift32",
+      "native_kind": "bit-network",
+      "expected_status": "unsat",
+      "decision_variables": [
+        "state"
+      ],
+      "parameters": {
+        "rounds": 2,
+        "known_mask": 4294967280,
+        "known_value": 305419888,
+        "output_mask": 4294967295,
+        "output_value": 290661026,
+        "exclude_projection": [
+          305419897
+        ]
+      },
+      "scale": {
+        "axis": "unknown_input_bits",
+        "value": 4,
+        "rounds": 2,
+        "observation_bits": 32
+      },
+      "expected_solutions": 0
+    },
+    {
+      "id": "speck-medium-sat-a",
+      "campaign_family": "reduced-speck",
+      "level": "medium",
+      "harness": "bit-network",
+      "family": "speck32_64",
+      "native_kind": "bit-network",
+      "expected_status": "sat",
+      "decision_variables": [
+        "key0",
+        "key1",
+        "key2",
+        "key3"
+      ],
+      "parameters": {
+        "rounds": 3,
+        "known_masks": [
+          65520,
+          65535,
+          65535,
+          65535
+        ],
+        "known_values": [
+          256,
+          2312,
+          4368,
+          6424
+        ],
+        "output_mask": 4294967295,
+        "output_value": 4274478020,
+        "exclude_projection": null
+      },
+      "scale": {
+        "axis": "unknown_key_bits",
+        "value": 4,
+        "rounds": 3,
+        "observation_bits": 32
+      },
+      "expected_solutions": 1
+    },
+    {
+      "id": "speck-medium-sat-b",
+      "campaign_family": "reduced-speck",
+      "level": "medium",
+      "harness": "bit-network",
+      "family": "speck32_64",
+      "native_kind": "bit-network",
+      "expected_status": "sat",
+      "decision_variables": [
+        "key0",
+        "key1",
+        "key2",
+        "key3"
+      ],
+      "parameters": {
+        "rounds": 3,
+        "known_masks": [
+          65520,
+          65535,
+          65535,
+          65535
+        ],
+        "known_values": [
+          288,
+          2312,
+          4368,
+          6424
+        ],
+        "output_mask": 4294967295,
+        "output_value": 3169196260,
+        "exclude_projection": null
+      },
+      "scale": {
+        "axis": "unknown_key_bits",
+        "value": 4,
+        "rounds": 3,
+        "observation_bits": 32
+      },
+      "expected_solutions": 1
+    },
+    {
+      "id": "speck-medium-unsat-a",
+      "campaign_family": "reduced-speck",
+      "level": "medium",
+      "harness": "bit-network",
+      "family": "speck32_64",
+      "native_kind": "bit-network",
+      "expected_status": "unsat",
+      "decision_variables": [
+        "key0",
+        "key1",
+        "key2",
+        "key3"
+      ],
+      "parameters": {
+        "rounds": 3,
+        "known_masks": [
+          65520,
+          65535,
+          65535,
+          65535
+        ],
+        "known_values": [
+          272,
+          2312,
+          4368,
+          6424
+        ],
+        "output_mask": 4294967295,
+        "output_value": 1603762708,
+        "exclude_projection": [
+          273,
+          2312,
+          4368,
+          6424
+        ]
+      },
+      "scale": {
+        "axis": "unknown_key_bits",
+        "value": 4,
+        "rounds": 3,
+        "observation_bits": 32
+      },
+      "expected_solutions": 0
+    },
+    {
+      "id": "speck-medium-unsat-b",
+      "campaign_family": "reduced-speck",
+      "level": "medium",
+      "harness": "bit-network",
+      "family": "speck32_64",
+      "native_kind": "bit-network",
+      "expected_status": "unsat",
+      "decision_variables": [
+        "key0",
+        "key1",
+        "key2",
+        "key3"
+      ],
+      "parameters": {
+        "rounds": 3,
+        "known_masks": [
+          65520,
+          65535,
+          65535,
+          65535
+        ],
+        "known_values": [
+          304,
+          2312,
+          4368,
+          6424
+        ],
+        "output_mask": 4294967295,
+        "output_value": 1672889908,
+        "exclude_projection": [
+          305,
+          2312,
+          4368,
+          6424
+        ]
+      },
+      "scale": {
+        "axis": "unknown_key_bits",
+        "value": 4,
+        "rounds": 3,
+        "observation_bits": 32
+      },
+      "expected_solutions": 0
+    },
+    {
+      "id": "crc-xorshift-large-crc-sat",
+      "campaign_family": "crc-xorshift",
+      "level": "large",
+      "harness": "bit-network",
+      "family": "crc16",
+      "native_kind": "bit-network",
+      "expected_status": "sat",
+      "decision_variables": [
+        "message"
+      ],
+      "parameters": {
+        "width": 8,
+        "rounds": 8,
+        "known_mask": 192,
+        "known_value": 64,
+        "output_mask": 65535,
+        "output_value": 38009,
+        "exclude_projection": null
+      },
+      "scale": {
+        "axis": "unknown_input_bits",
+        "value": 6,
+        "rounds": 8,
+        "observation_bits": 16
+      },
+      "expected_solutions": 1
+    },
+    {
+      "id": "crc-xorshift-large-xor-sat",
+      "campaign_family": "crc-xorshift",
+      "level": "large",
+      "harness": "bit-network",
+      "family": "xorshift32",
+      "native_kind": "bit-network",
+      "expected_status": "sat",
+      "decision_variables": [
+        "state"
+      ],
+      "parameters": {
+        "rounds": 3,
+        "known_mask": 4294967232,
+        "known_value": 305419840,
+        "output_mask": 4294967295,
+        "output_value": 3353038447,
+        "exclude_projection": null
+      },
+      "scale": {
+        "axis": "unknown_input_bits",
+        "value": 6,
+        "rounds": 3,
+        "observation_bits": 32
+      },
+      "expected_solutions": 1
+    },
+    {
+      "id": "crc-xorshift-large-crc-unsat",
+      "campaign_family": "crc-xorshift",
+      "level": "large",
+      "harness": "bit-network",
+      "family": "crc16",
+      "native_kind": "bit-network",
+      "expected_status": "unsat",
+      "decision_variables": [
+        "message"
+      ],
+      "parameters": {
+        "width": 8,
+        "rounds": 8,
+        "known_mask": 192,
+        "known_value": 64,
+        "output_mask": 65535,
+        "output_value": 14115,
+        "exclude_projection": [
+          90
+        ]
+      },
+      "scale": {
+        "axis": "unknown_input_bits",
+        "value": 6,
+        "rounds": 8,
+        "observation_bits": 16
+      },
+      "expected_solutions": 0
+    },
+    {
+      "id": "crc-xorshift-large-xor-unsat",
+      "campaign_family": "crc-xorshift",
+      "level": "large",
+      "harness": "bit-network",
+      "family": "xorshift32",
+      "native_kind": "bit-network",
+      "expected_status": "unsat",
+      "decision_variables": [
+        "state"
+      ],
+      "parameters": {
+        "rounds": 3,
+        "known_mask": 4294967232,
+        "known_value": 305419840,
+        "output_mask": 4294967295,
+        "output_value": 1639459910,
+        "exclude_projection": [
+          305419898
+        ]
+      },
+      "scale": {
+        "axis": "unknown_input_bits",
+        "value": 6,
+        "rounds": 3,
+        "observation_bits": 32
+      },
+      "expected_solutions": 0
+    },
+    {
+      "id": "speck-large-sat-a",
+      "campaign_family": "reduced-speck",
+      "level": "large",
+      "harness": "bit-network",
+      "family": "speck32_64",
+      "native_kind": "bit-network",
+      "expected_status": "sat",
+      "decision_variables": [
+        "key0",
+        "key1",
+        "key2",
+        "key3"
+      ],
+      "parameters": {
+        "rounds": 4,
+        "known_masks": [
+          65472,
+          65535,
+          65535,
+          65535
+        ],
+        "known_values": [
+          256,
+          2312,
+          4368,
+          6424
+        ],
+        "output_mask": 4294967295,
+        "output_value": 3395649035,
+        "exclude_projection": null
+      },
+      "scale": {
+        "axis": "unknown_key_bits",
+        "value": 6,
+        "rounds": 4,
+        "observation_bits": 32
+      },
+      "expected_solutions": 1
+    },
+    {
+      "id": "speck-large-sat-b",
+      "campaign_family": "reduced-speck",
+      "level": "large",
+      "harness": "bit-network",
+      "family": "speck32_64",
+      "native_kind": "bit-network",
+      "expected_status": "sat",
+      "decision_variables": [
+        "key0",
+        "key1",
+        "key2",
+        "key3"
+      ],
+      "parameters": {
+        "rounds": 4,
+        "known_masks": [
+          65472,
+          65535,
+          65535,
+          65535
+        ],
+        "known_values": [
+          256,
+          2312,
+          4368,
+          6424
+        ],
+        "output_mask": 4294967295,
+        "output_value": 2111751985,
+        "exclude_projection": null
+      },
+      "scale": {
+        "axis": "unknown_key_bits",
+        "value": 6,
+        "rounds": 4,
+        "observation_bits": 32
+      },
+      "expected_solutions": 1
+    },
+    {
+      "id": "speck-large-unsat-a",
+      "campaign_family": "reduced-speck",
+      "level": "large",
+      "harness": "bit-network",
+      "family": "speck32_64",
+      "native_kind": "bit-network",
+      "expected_status": "unsat",
+      "decision_variables": [
+        "key0",
+        "key1",
+        "key2",
+        "key3"
+      ],
+      "parameters": {
+        "rounds": 4,
+        "known_masks": [
+          65472,
+          65535,
+          65535,
+          65535
+        ],
+        "known_values": [
+          256,
+          2312,
+          4368,
+          6424
+        ],
+        "output_mask": 4294967295,
+        "output_value": 813697696,
+        "exclude_projection": [
+          274,
+          2312,
+          4368,
+          6424
+        ]
+      },
+      "scale": {
+        "axis": "unknown_key_bits",
+        "value": 6,
+        "rounds": 4,
+        "observation_bits": 32
+      },
+      "expected_solutions": 0
+    },
+    {
+      "id": "speck-large-unsat-b",
+      "campaign_family": "reduced-speck",
+      "level": "large",
+      "harness": "bit-network",
+      "family": "speck32_64",
+      "native_kind": "bit-network",
+      "expected_status": "unsat",
+      "decision_variables": [
+        "key0",
+        "key1",
+        "key2",
+        "key3"
+      ],
+      "parameters": {
+        "rounds": 4,
+        "known_masks": [
+          65472,
+          65535,
+          65535,
+          65535
+        ],
+        "known_values": [
+          256,
+          2312,
+          4368,
+          6424
+        ],
+        "output_mask": 4294967295,
+        "output_value": 1006633643,
+        "exclude_projection": [
+          306,
+          2312,
+          4368,
+          6424
+        ]
+      },
+      "scale": {
+        "axis": "unknown_key_bits",
+        "value": 6,
+        "rounds": 4,
+        "observation_bits": 32
+      },
+      "expected_solutions": 0
+    },
+    {
+      "id": "alu-small-sat-a",
+      "campaign_family": "bounded-alu",
+      "level": "small",
+      "harness": "mixed",
+      "family": "alu",
+      "native_kind": "alu",
+      "expected_status": "sat",
+      "decision_variables": [
+        "input",
+        "output"
+      ],
+      "parameters": {
+        "width": 5,
+        "input_min": 0,
+        "input_max": 7,
+        "output_min": 1,
+        "output_max": 1
+      },
+      "scale": {
+        "axis": "input_range_size",
+        "value": 8,
+        "width": 5,
+        "output_range_size": 1
+      },
+      "expected_solutions": 3
+    },
+    {
+      "id": "alu-small-sat-b",
+      "campaign_family": "bounded-alu",
+      "level": "small",
+      "harness": "mixed",
+      "family": "alu",
+      "native_kind": "alu",
+      "expected_status": "sat",
+      "decision_variables": [
+        "input",
+        "output"
+      ],
+      "parameters": {
+        "width": 5,
+        "input_min": 0,
+        "input_max": 7,
+        "output_min": 20,
+        "output_max": 20
+      },
+      "scale": {
+        "axis": "input_range_size",
+        "value": 8,
+        "width": 5,
+        "output_range_size": 1
+      },
+      "expected_solutions": 1
+    },
+    {
+      "id": "alu-small-unsat-a",
+      "campaign_family": "bounded-alu",
+      "level": "small",
+      "harness": "mixed",
+      "family": "alu",
+      "native_kind": "alu",
+      "expected_status": "unsat",
+      "decision_variables": [
+        "input",
+        "output"
+      ],
+      "parameters": {
+        "width": 5,
+        "input_min": 0,
+        "input_max": 7,
+        "output_min": 2,
+        "output_max": 2
+      },
+      "scale": {
+        "axis": "input_range_size",
+        "value": 8,
+        "width": 5,
+        "output_range_size": 1
+      },
+      "expected_solutions": 0
+    },
+    {
+      "id": "alu-small-unsat-b",
+      "campaign_family": "bounded-alu",
+      "level": "small",
+      "harness": "mixed",
+      "family": "alu",
+      "native_kind": "alu",
+      "expected_status": "unsat",
+      "decision_variables": [
+        "input",
+        "output"
+      ],
+      "parameters": {
+        "width": 5,
+        "input_min": 1,
+        "input_max": 8,
+        "output_min": 2,
+        "output_max": 2
+      },
+      "scale": {
+        "axis": "input_range_size",
+        "value": 8,
+        "width": 5,
+        "output_range_size": 1
+      },
+      "expected_solutions": 0
+    },
+    {
+      "id": "alu-medium-sat-a",
+      "campaign_family": "bounded-alu",
+      "level": "medium",
+      "harness": "mixed",
+      "family": "alu",
+      "native_kind": "alu",
+      "expected_status": "sat",
+      "decision_variables": [
+        "input",
+        "output"
+      ],
+      "parameters": {
+        "width": 6,
+        "input_min": 0,
+        "input_max": 15,
+        "output_min": 38,
+        "output_max": 38
+      },
+      "scale": {
+        "axis": "input_range_size",
+        "value": 16,
+        "width": 6,
+        "output_range_size": 1
+      },
+      "expected_solutions": 1
+    },
+    {
+      "id": "alu-medium-sat-b",
+      "campaign_family": "bounded-alu",
+      "level": "medium",
+      "harness": "mixed",
+      "family": "alu",
+      "native_kind": "alu",
+      "expected_status": "sat",
+      "decision_variables": [
+        "input",
+        "output"
+      ],
+      "parameters": {
+        "width": 6,
+        "input_min": 1,
+        "input_max": 16,
+        "output_min": 56,
+        "output_max": 56
+      },
+      "scale": {
+        "axis": "input_range_size",
+        "value": 16,
+        "width": 6,
+        "output_range_size": 1
+      },
+      "expected_solutions": 1
+    },
+    {
+      "id": "alu-medium-unsat-a",
+      "campaign_family": "bounded-alu",
+      "level": "medium",
+      "harness": "mixed",
+      "family": "alu",
+      "native_kind": "alu",
+      "expected_status": "unsat",
+      "decision_variables": [
+        "input",
+        "output"
+      ],
+      "parameters": {
+        "width": 6,
+        "input_min": 0,
+        "input_max": 15,
+        "output_min": 1,
+        "output_max": 1
+      },
+      "scale": {
+        "axis": "input_range_size",
+        "value": 16,
+        "width": 6,
+        "output_range_size": 1
+      },
+      "expected_solutions": 0
+    },
+    {
+      "id": "alu-medium-unsat-b",
+      "campaign_family": "bounded-alu",
+      "level": "medium",
+      "harness": "mixed",
+      "family": "alu",
+      "native_kind": "alu",
+      "expected_status": "unsat",
+      "decision_variables": [
+        "input",
+        "output"
+      ],
+      "parameters": {
+        "width": 6,
+        "input_min": 2,
+        "input_max": 17,
+        "output_min": 1,
+        "output_max": 1
+      },
+      "scale": {
+        "axis": "input_range_size",
+        "value": 16,
+        "width": 6,
+        "output_range_size": 1
+      },
+      "expected_solutions": 0
+    },
+    {
+      "id": "alu-large-sat-a",
+      "campaign_family": "bounded-alu",
+      "level": "large",
+      "harness": "mixed",
+      "family": "alu",
+      "native_kind": "alu",
+      "expected_status": "sat",
+      "decision_variables": [
+        "input",
+        "output"
+      ],
+      "parameters": {
+        "width": 7,
+        "input_min": 1,
+        "input_max": 24,
+        "output_min": 27,
+        "output_max": 27
+      },
+      "scale": {
+        "axis": "input_range_size",
+        "value": 24,
+        "width": 7,
+        "output_range_size": 1
+      },
+      "expected_solutions": 1
+    },
+    {
+      "id": "alu-large-sat-b",
+      "campaign_family": "bounded-alu",
+      "level": "large",
+      "harness": "mixed",
+      "family": "alu",
+      "native_kind": "alu",
+      "expected_status": "sat",
+      "decision_variables": [
+        "input",
+        "output"
+      ],
+      "parameters": {
+        "width": 7,
+        "input_min": 2,
+        "input_max": 25,
+        "output_min": 118,
+        "output_max": 118
+      },
+      "scale": {
+        "axis": "input_range_size",
+        "value": 24,
+        "width": 7,
+        "output_range_size": 1
+      },
+      "expected_solutions": 1
+    },
+    {
+      "id": "alu-large-unsat-a",
+      "campaign_family": "bounded-alu",
+      "level": "large",
+      "harness": "mixed",
+      "family": "alu",
+      "native_kind": "alu",
+      "expected_status": "unsat",
+      "decision_variables": [
+        "input",
+        "output"
+      ],
+      "parameters": {
+        "width": 7,
+        "input_min": 1,
+        "input_max": 24,
+        "output_min": 1,
+        "output_max": 1
+      },
+      "scale": {
+        "axis": "input_range_size",
+        "value": 24,
+        "width": 7,
+        "output_range_size": 1
+      },
+      "expected_solutions": 0
+    },
+    {
+      "id": "alu-large-unsat-b",
+      "campaign_family": "bounded-alu",
+      "level": "large",
+      "harness": "mixed",
+      "family": "alu",
+      "native_kind": "alu",
+      "expected_status": "unsat",
+      "decision_variables": [
+        "input",
+        "output"
+      ],
+      "parameters": {
+        "width": 7,
+        "input_min": 3,
+        "input_max": 26,
+        "output_min": 1,
+        "output_max": 1
+      },
+      "scale": {
+        "axis": "input_range_size",
+        "value": 24,
+        "width": 7,
+        "output_range_size": 1
+      },
+      "expected_solutions": 0
+    }
+  ],
+  "calibration_cases": [
+    {
+      "id": "calibration-dma",
+      "campaign_family": "dma",
+      "level": "calibration",
+      "harness": "mixed",
+      "family": "dma",
+      "native_kind": "dma",
+      "expected_status": "sat",
+      "decision_variables": [
+        "index",
+        "base[0]",
+        "base[1]",
+        "base[2]",
+        "flag[0]",
+        "flag[1]",
+        "flag[2]"
+      ],
+      "parameters": {
+        "descriptor_count": 3,
+        "window_slack": 16,
+        "selected_cap": 769
+      },
+      "scale": {
+        "axis": "calibration-only",
+        "value": 1
+      },
+      "expected_solutions": 12
+    },
+    {
+      "id": "calibration-register",
+      "campaign_family": "register",
+      "level": "calibration",
+      "harness": "mixed",
+      "family": "lookup",
+      "native_kind": "lookup",
+      "expected_status": "sat",
+      "decision_variables": [
+        "index",
+        "register[0]",
+        "register[1]",
+        "register[2]",
+        "register[3]"
+      ],
+      "parameters": {
+        "size": 4,
+        "allowed_indices": [
+          1
+        ]
+      },
+      "scale": {
+        "axis": "calibration-only",
+        "value": 1
+      },
+      "expected_solutions": 8
+    },
+    {
+      "id": "calibration-inverse",
+      "campaign_family": "inverse",
+      "level": "calibration",
+      "harness": "mixed",
+      "family": "mult",
+      "native_kind": "inverse",
+      "native_case": "mult-signed-min-neg1-w8",
+      "expected_status": "sat",
+      "decision_variables": [
+        "x",
+        "y",
+        "result"
+      ],
+      "parameters": {
+        "width": 8,
+        "x_min": 128,
+        "x_max": 128,
+        "y_min": 255,
+        "y_max": 255,
+        "result_min": 128,
+        "result_max": 128,
+        "signed": true,
+        "operation": "mult"
+      },
+      "scale": {
+        "axis": "calibration-only",
+        "value": 1
+      },
+      "expected_solutions": 1
+    },
+    {
+      "id": "calibration-crc-xorshift",
+      "campaign_family": "crc-xorshift",
+      "level": "calibration",
+      "harness": "bit-network",
+      "family": "crc16",
+      "native_kind": "bit-network",
+      "expected_status": "sat",
+      "decision_variables": [
+        "message"
+      ],
+      "parameters": {
+        "width": 8,
+        "rounds": 8,
+        "known_mask": 248,
+        "known_value": 80,
+        "output_mask": 65535,
+        "output_value": 34376,
+        "exclude_projection": null
+      },
+      "scale": {
+        "axis": "calibration-only",
+        "value": 1
+      },
+      "expected_solutions": 1
+    },
+    {
+      "id": "calibration-speck",
+      "campaign_family": "reduced-speck",
+      "level": "calibration",
+      "harness": "bit-network",
+      "family": "speck32_64",
+      "native_kind": "bit-network",
+      "expected_status": "sat",
+      "decision_variables": [
+        "key0",
+        "key1",
+        "key2",
+        "key3"
+      ],
+      "parameters": {
+        "rounds": 2,
+        "known_masks": [
+          65528,
+          65535,
+          65535,
+          65535
+        ],
+        "known_values": [
+          256,
+          2312,
+          4368,
+          6424
+        ],
+        "output_mask": 4294967295,
+        "output_value": 937422656,
+        "exclude_projection": null
+      },
+      "scale": {
+        "axis": "calibration-only",
+        "value": 1
+      },
+      "expected_solutions": 1
+    },
+    {
+      "id": "calibration-alu",
+      "campaign_family": "bounded-alu",
+      "level": "calibration",
+      "harness": "mixed",
+      "family": "alu",
+      "native_kind": "alu",
+      "expected_status": "sat",
+      "decision_variables": [
+        "input",
+        "output"
+      ],
+      "parameters": {
+        "width": 5,
+        "input_min": 0,
+        "input_max": 6,
+        "output_min": 1,
+        "output_max": 1
+      },
+      "scale": {
+        "axis": "calibration-only",
+        "value": 1
+      },
+      "expected_solutions": 2
+    }
+  ]
+}
