@@ -6,6 +6,7 @@
  *     - ./gecode/int/var-imp/bool.vis
  *     - ./gecode/set/var-imp/set.vis
  *     - ./gecode/float/var-imp/float.vis
+ *     - ./gecode/word/var-imp/word.vis
  *
  *  This file contains generated code fragments which are
  *  copyrighted as follows:
@@ -72,7 +73,7 @@ namespace Gecode { namespace Int {
      * In case the variable is assigned (that is, \a assigned is
      * true), the subscribing propagator is scheduled for execution.
      * Otherwise, the propagator subscribes and is scheduled for execution
-     * with modification event \a me provided that \a pc is different
+     * with modification event \a ME_INT_BND provided that \a pc is different
      * from \a PC_INT_VAL.
      */
     void subscribe(Gecode::Space& home, Gecode::Propagator& p, Gecode::PropCond pc, bool assigned, bool schedule);
@@ -87,7 +88,7 @@ namespace Gecode { namespace Int {
      * In case the variable is assigned (that is, \a assigned is
      * true), the propagator is scheduled for execution.
      * Otherwise, the propagator is scheduled for execution
-     * with modification event \a me provided that \a pc is different
+     * with modification event \a ME_INT_BND provided that \a pc is different
      * from \a PC_INT_VAL.
      */
     void reschedule(Gecode::Space& home, Gecode::Propagator& p, Gecode::PropCond pc, bool assigned);
@@ -118,7 +119,7 @@ namespace Gecode { namespace Int {
      * In case the variable is assigned (that is, \a assigned is
      * true), the subscribing propagator is scheduled for execution.
      * Otherwise, the propagator subscribes and is scheduled for execution
-     * with modification event \a me provided that \a pc is different
+     * with modification event \a ME_BOOL_VAL provided that \a pc is different
      * from \a PC_BOOL_VAL.
      */
     void subscribe(Gecode::Space& home, Gecode::Propagator& p, Gecode::PropCond pc, bool assigned, bool schedule);
@@ -133,7 +134,7 @@ namespace Gecode { namespace Int {
      * In case the variable is assigned (that is, \a assigned is
      * true), the propagator is scheduled for execution.
      * Otherwise, the propagator is scheduled for execution
-     * with modification event \a me provided that \a pc is different
+     * with modification event \a ME_BOOL_VAL provided that \a pc is different
      * from \a PC_BOOL_VAL.
      */
     void reschedule(Gecode::Space& home, Gecode::Propagator& p, Gecode::PropCond pc, bool assigned);
@@ -164,7 +165,7 @@ namespace Gecode { namespace Set {
      * In case the variable is assigned (that is, \a assigned is
      * true), the subscribing propagator is scheduled for execution.
      * Otherwise, the propagator subscribes and is scheduled for execution
-     * with modification event \a me provided that \a pc is different
+     * with modification event \a ME_SET_CBB provided that \a pc is different
      * from \a PC_SET_VAL.
      */
     void subscribe(Gecode::Space& home, Gecode::Propagator& p, Gecode::PropCond pc, bool assigned, bool schedule);
@@ -179,7 +180,7 @@ namespace Gecode { namespace Set {
      * In case the variable is assigned (that is, \a assigned is
      * true), the propagator is scheduled for execution.
      * Otherwise, the propagator is scheduled for execution
-     * with modification event \a me provided that \a pc is different
+     * with modification event \a ME_SET_CBB provided that \a pc is different
      * from \a PC_SET_VAL.
      */
     void reschedule(Gecode::Space& home, Gecode::Propagator& p, Gecode::PropCond pc, bool assigned);
@@ -210,7 +211,7 @@ namespace Gecode { namespace Float {
      * In case the variable is assigned (that is, \a assigned is
      * true), the subscribing propagator is scheduled for execution.
      * Otherwise, the propagator subscribes and is scheduled for execution
-     * with modification event \a me provided that \a pc is different
+     * with modification event \a ME_FLOAT_BND provided that \a pc is different
      * from \a PC_FLOAT_VAL.
      */
     void subscribe(Gecode::Space& home, Gecode::Propagator& p, Gecode::PropCond pc, bool assigned, bool schedule);
@@ -225,8 +226,54 @@ namespace Gecode { namespace Float {
      * In case the variable is assigned (that is, \a assigned is
      * true), the propagator is scheduled for execution.
      * Otherwise, the propagator is scheduled for execution
-     * with modification event \a me provided that \a pc is different
+     * with modification event \a ME_FLOAT_BND provided that \a pc is different
      * from \a PC_FLOAT_VAL.
+     */
+    void reschedule(Gecode::Space& home, Gecode::Propagator& p, Gecode::PropCond pc, bool assigned);
+    //@}
+  };
+}}
+#endif
+#ifdef GECODE_HAS_WORD_VARS
+namespace Gecode { namespace Word {
+  /// Base-class for Word-variable implementations
+  class WordVarImpBase : public Gecode::VarImp<Gecode::Word::WordVarImpConf> {
+  protected:
+    /// Constructor for cloning \a x
+    WordVarImpBase(Gecode::Space& home, WordVarImpBase& x);
+  public:
+    /// Constructor for creating static instance of variable
+    WordVarImpBase(void);
+    /// Constructor for creating variable
+    WordVarImpBase(Gecode::Space& home);
+    /// \name Dependencies
+    //@{
+    /** \brief Subscribe propagator \a p with propagation condition \a pc
+     *
+     * In case \a schedule is false, the propagator is just subscribed but
+     * not scheduled for execution (this must be used when creating
+     * subscriptions during propagation).
+     *
+     * In case the variable is assigned (that is, \a assigned is
+     * true), the subscribing propagator is scheduled for execution.
+     * Otherwise, the propagator subscribes and is scheduled for execution
+     * with modification event \a ME_WORD_DOM provided that \a pc is different
+     * from \a PC_WORD_VAL.
+     */
+    void subscribe(Gecode::Space& home, Gecode::Propagator& p, Gecode::PropCond pc, bool assigned, bool schedule);
+    /// Subscribe advisor \a a if \a assigned is false.
+    void subscribe(Gecode::Space& home, Gecode::Advisor& a, bool assigned, bool failed);
+    /// Notify that variable implementation has been modified with modification event \a me and delta information \a d
+    Gecode::ModEvent notify(Gecode::Space& home, Gecode::ModEvent me, Gecode::Delta& d);
+    /// \brief Schedule propagator \a p
+    static void schedule(Gecode::Space& home, Gecode::Propagator& p, Gecode::ModEvent me);
+    /** \brief Re-schedule propagator \a p
+     *
+     * In case the variable is assigned (that is, \a assigned is
+     * true), the propagator is scheduled for execution.
+     * Otherwise, the propagator is scheduled for execution
+     * with modification event \a ME_WORD_DOM provided that \a pc is different
+     * from \a PC_WORD_VAL.
      */
     void reschedule(Gecode::Space& home, Gecode::Propagator& p, Gecode::PropCond pc, bool assigned);
     //@}
@@ -484,6 +531,74 @@ namespace Gecode { namespace Float {
 
 }}
 #endif
+#ifdef GECODE_HAS_WORD_VARS
+namespace Gecode { namespace Word {
+
+  forceinline
+  WordVarImpBase::WordVarImpBase(void) {}
+
+  forceinline
+  WordVarImpBase::WordVarImpBase(Gecode::Space& home)
+    : Gecode::VarImp<Gecode::Word::WordVarImpConf>(home) {}
+
+  forceinline
+  WordVarImpBase::WordVarImpBase(Gecode::Space& home, WordVarImpBase& x)
+    : Gecode::VarImp<Gecode::Word::WordVarImpConf>(home,x) {}
+
+  forceinline void
+  WordVarImpBase::subscribe(Gecode::Space& home, Gecode::Propagator& p, Gecode::PropCond pc, bool assigned, bool schedule) {
+    Gecode::VarImp<Gecode::Word::WordVarImpConf>::subscribe(home,p,pc,assigned,ME_WORD_DOM,schedule);
+  }
+  forceinline void
+  WordVarImpBase::subscribe(Gecode::Space& home, Gecode::Advisor& a, bool assigned, bool failed) {
+    Gecode::VarImp<Gecode::Word::WordVarImpConf>::subscribe(home,a,assigned,failed);
+  }
+
+  forceinline void
+  WordVarImpBase::schedule(Gecode::Space& home, Gecode::Propagator& p, Gecode::ModEvent me) {
+    Gecode::VarImp<Gecode::Word::WordVarImpConf>::schedule(home,p,me);
+  }
+  forceinline void
+  WordVarImpBase::reschedule(Gecode::Space& home, Gecode::Propagator& p, Gecode::PropCond pc, bool assigned) {
+    Gecode::VarImp<Gecode::Word::WordVarImpConf>::reschedule(home,p,pc,assigned,ME_WORD_DOM);
+  }
+
+  forceinline Gecode::ModEvent
+  WordVarImpBase::notify(Gecode::Space& home, Gecode::ModEvent me, Gecode::Delta& d) {
+    switch (me) {
+    case ME_WORD_VAL:
+      // Conditions: VAL, BITS, BND, DOM
+      Gecode::VarImp<Gecode::Word::WordVarImpConf>::schedule(home,PC_WORD_VAL,PC_WORD_DOM,ME_WORD_VAL);
+      if (!Gecode::VarImp<Gecode::Word::WordVarImpConf>::advise(home,ME_WORD_VAL,d))
+        return ME_WORD_FAILED;
+      cancel(home);
+      break;
+    case ME_WORD_BITS:
+      // Conditions: BITS, DOM
+      Gecode::VarImp<Gecode::Word::WordVarImpConf>::schedule(home,PC_WORD_BITS,PC_WORD_BITS,ME_WORD_BITS);
+      Gecode::VarImp<Gecode::Word::WordVarImpConf>::schedule(home,PC_WORD_DOM,PC_WORD_DOM,ME_WORD_BITS);
+      if (!Gecode::VarImp<Gecode::Word::WordVarImpConf>::advise(home,ME_WORD_BITS,d))
+        return ME_WORD_FAILED;
+      break;
+    case ME_WORD_BND:
+      // Conditions: BND, DOM
+      Gecode::VarImp<Gecode::Word::WordVarImpConf>::schedule(home,PC_WORD_BND,PC_WORD_DOM,ME_WORD_BND);
+      if (!Gecode::VarImp<Gecode::Word::WordVarImpConf>::advise(home,ME_WORD_BND,d))
+        return ME_WORD_FAILED;
+      break;
+    case ME_WORD_DOM:
+      // Conditions: BITS, BND, DOM
+      Gecode::VarImp<Gecode::Word::WordVarImpConf>::schedule(home,PC_WORD_BITS,PC_WORD_DOM,ME_WORD_DOM);
+      if (!Gecode::VarImp<Gecode::Word::WordVarImpConf>::advise(home,ME_WORD_DOM,d))
+        return ME_WORD_FAILED;
+      break;
+    default: GECODE_NEVER;
+    }
+    return me;
+  }
+
+}}
+#endif
 namespace Gecode {
 
   forceinline void
@@ -512,6 +627,9 @@ namespace Gecode {
 #endif
 #ifdef GECODE_HAS_FLOAT_VARS
     Gecode::VarImp<Gecode::Float::FloatVarImpConf>::update(*this,sub);
+#endif
+#ifdef GECODE_HAS_WORD_VARS
+    Gecode::VarImp<Gecode::Word::WordVarImpConf>::update(*this,sub);
 #endif
   }
 
@@ -576,6 +694,9 @@ namespace Gecode {
 #endif
 #ifdef GECODE_HAS_FLOAT_VARS
     Gecode::VarImp<Gecode::Float::FloatVarImpConf>::recover(*this,sub);
+#endif
+#ifdef GECODE_HAS_WORD_VARS
+    Gecode::VarImp<Gecode::Word::WordVarImpConf>::recover(*this,sub);
 #endif
   }
 }

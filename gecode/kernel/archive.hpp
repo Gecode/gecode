@@ -75,6 +75,11 @@ namespace Gecode {
    */
   Archive&
   operator <<(Archive& e, unsigned int i);
+  /** Add the 64-bit value \a i to the end of \a e as two archive words
+   * \relates Archive
+   */
+  Archive&
+  operator <<(Archive& e, std::uint64_t i);
   /** Add \a i to the end of \a e
    * \relates Archive
    */
@@ -121,6 +126,11 @@ namespace Gecode {
    */
   Archive&
   operator >>(Archive& e, unsigned int& i);
+  /** Read the next two archive words from \a e into the 64-bit value \a i
+   * \relates Archive
+   */
+  Archive&
+  operator >>(Archive& e, std::uint64_t& i);
   /** Read next element from \a e into \a i
    * \relates Archive
    */
@@ -198,6 +208,12 @@ namespace Gecode {
     return e;
   }
   forceinline Archive&
+  operator <<(Archive& e, std::uint64_t i) {
+    e.put(static_cast<unsigned int>(i >> 32));
+    e.put(static_cast<unsigned int>(i));
+    return e;
+  }
+  forceinline Archive&
   operator <<(Archive& e, int i) {
     e.put(static_cast<unsigned int>(i));
     return e;
@@ -243,6 +259,12 @@ namespace Gecode {
   forceinline Archive&
   operator >>(Archive& e, unsigned int& i) {
     i = e.get();
+    return e;
+  }
+  forceinline Archive&
+  operator >>(Archive& e, std::uint64_t& i) {
+    const std::uint64_t high=e.get();
+    i = (high << 32) | e.get();
     return e;
   }
   forceinline Archive&

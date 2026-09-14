@@ -375,6 +375,44 @@ namespace Test { namespace Fault {
     }
   };
 
+#ifdef GECODE_HAS_WORD_VARS
+  class WordFaultSpace : public Space {
+  public:
+    WordVar x[3];
+    WordFaultSpace(void) {
+      x[0]=WordVar(*this,4);
+      x[1]=WordVar(*this,4,WDT_UNSIGNED);
+      x[2]=WordVar(*this,4,WDT_SIGNED);
+      rel(*this,x[0],WOT_XOR,x[1],x[2]);
+      WordVarArgs a; a << x[0] << x[1] << x[2];
+      branch(*this,a,WORD_VAR_ACTION_MAX(),WORD_VAL_LSB());
+    }
+    WordFaultSpace(WordFaultSpace& s) : Space(s) {
+      x[0].update(*this,s.x[0]);
+      Support::FailPoint::check(Phase::DerivedSpaceCopy);
+      x[1].update(*this,s.x[1]);
+      x[2].update(*this,s.x[2]);
+    }
+    virtual Space* copy(void) {
+      return new WordFaultSpace(*this);
+    }
+  };
+
+  class WordMiniModelSpace : public Space {
+  public:
+    WordVar x;
+    BoolVar control;
+    WordMiniModelSpace(void) : x(*this,4), control(*this,0,1) {}
+    WordMiniModelSpace(WordMiniModelSpace& s) : Space(s) {
+      x.update(*this,s.x);
+      control.update(*this,s.control);
+    }
+    virtual Space* copy(void) {
+      return new WordMiniModelSpace(*this);
+    }
+  };
+#endif
+
   bool clone_after_failed_copy(Phase p, unsigned long long n) {
     FaultScope scope;
     CloneCopySpace s;
@@ -650,6 +688,108 @@ namespace Test { namespace Fault {
     }
     return false;
   }
+
+#ifdef GECODE_HAS_WORD_VARS
+  bool word_space_is_usable(WordFaultSpace& s) {
+    Space* clone = s.clone();
+    delete clone;
+    WordFaultSpace* root = static_cast<WordFaultSpace*>(s.clone());
+    DFS<WordFaultSpace> engine(root);
+    delete root;
+    WordFaultSpace* solution = engine.next();
+    const bool ok = (solution != nullptr) && solution->x[0].assigned() &&
+      solution->x[1].assigned() && solution->x[2].assigned() &&
+      (solution->x[2].val() ==
+       (solution->x[0].val() ^ solution->x[1].val()));
+    delete solution;
+    return ok;
+  }
+
+  bool word_clone_heap_failures_recover_source(void) {
+    FaultScope scope;
+    WordFaultSpace s;
+    if (s.status() == SS_FAILED)
+      return false;
+    bool saw_failure = false;
+    for (unsigned long long budget = 0; budget < 64; budget++) {
+      Support::FailPoint::reset();
+      Support::FailPoint::fail_after(Phase::Heap,budget);
+      try {
+        Space* clone = s.clone();
+        const unsigned long long checks = Support::FailPoint::count();
+        Support::FailPoint::reset();
+        delete clone;
+        return saw_failure && (checks > 0) && word_space_is_usable(s);
+      } catch (const MemoryExhausted&) {
+        Support::FailPoint::reset();
+        saw_failure = true;
+        if (!word_space_is_usable(s))
+          return false;
+      } catch (...) {
+        Support::FailPoint::reset();
+        return false;
+      }
+    }
+    return false;
+  }
+
+  bool word_clone_mid_update_failure_recovers_source(void) {
+    FaultScope scope;
+    WordFaultSpace s;
+    if (s.status() == SS_FAILED)
+      return false;
+    Support::FailPoint::fail_after(Phase::DerivedSpaceCopy,0);
+    try {
+      Space* clone=s.clone();
+      delete clone;
+      Support::FailPoint::reset();
+      return false;
+    } catch (const MemoryExhausted&) {
+      Support::FailPoint::reset();
+      return word_space_is_usable(s);
+    } catch (...) {
+      Support::FailPoint::reset();
+      return false;
+    }
+  }
+
+  bool minimodel_word_failures_are_recoverable(void) {
+    FaultScope scope;
+    bool saw_failure = false;
+    for (unsigned long long budget = 0; budget < 16; budget++) {
+      WordMiniModelSpace home;
+      WordExpr source(home.x);
+      BoolExpr control(home.control);
+      Support::FailPoint::reset();
+      Support::FailPoint::fail_after(Phase::MiniModel,budget);
+      try {
+        {
+          WordExpr mixed = source ^ WordExpr(4,3U);
+          WordExpr rotated = rotate_left(mixed,1);
+          WordExpr expression = ite(control,rotated,source);
+          (void) expression;
+        }
+        const unsigned long long checks = Support::FailPoint::count();
+        Support::FailPoint::reset();
+        WordVar recovered = source.post(home);
+        dom(home,recovered,5U);
+        return saw_failure && (checks > 0) &&
+          (home.status() != SS_FAILED);
+      } catch (const MemoryExhausted&) {
+        Support::FailPoint::reset();
+        saw_failure = true;
+        WordVar recovered = source.post(home);
+        dom(home,recovered,5U);
+        if (home.status() == SS_FAILED)
+          return false;
+      } catch (...) {
+        Support::FailPoint::reset();
+        return false;
+      }
+    }
+    return false;
+  }
+#endif
 
   bool int_set_heap_failures_release_object(void) {
     FaultScope scope;
@@ -1105,6 +1245,35 @@ namespace Test { namespace Fault {
     }
   };
 
+#ifdef GECODE_HAS_WORD_VARS
+  class WordCloneHeapFailures : public Base {
+  public:
+    WordCloneHeapFailures(void)
+      : Base("Fault::Word::CloneHeapFailures") {}
+    virtual bool run(void) {
+      return word_clone_heap_failures_recover_source();
+    }
+  };
+
+  class WordCloneMidUpdateFailure : public Base {
+  public:
+    WordCloneMidUpdateFailure(void)
+      : Base("Fault::Word::CloneMidUpdateFailure") {}
+    virtual bool run(void) {
+      return word_clone_mid_update_failure_recovers_source();
+    }
+  };
+
+  class MiniModelWordFailures : public Base {
+  public:
+    MiniModelWordFailures(void)
+      : Base("Fault::Word::MiniModelFailures") {}
+    virtual bool run(void) {
+      return minimodel_word_failures_are_recoverable();
+    }
+  };
+#endif
+
 #ifdef GECODE_HAS_FLOAT_VARS
   class MiniModelFloatHeapFailures : public Base {
   public:
@@ -1188,6 +1357,11 @@ namespace Test { namespace Fault {
   MiniModelDefaultNodes minimodel_default_nodes;
   MiniModelBoolMisc minimodel_bool_misc;
   MiniModelBoolMiscHeapFailure minimodel_bool_misc_heap_failure;
+#ifdef GECODE_HAS_WORD_VARS
+  WordCloneHeapFailures word_clone_heap_failures;
+  WordCloneMidUpdateFailure word_clone_mid_update_failure;
+  MiniModelWordFailures minimodel_word_failures;
+#endif
   MiniModelHeapFailures minimodel_heap_failures;
 #ifdef GECODE_HAS_FLOAT_VARS
   MiniModelFloatHeapFailures minimodel_float_heap_failures;

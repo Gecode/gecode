@@ -33,7 +33,101 @@
 
 #include <climits>
 
+#if defined(_MSC_VER) && !defined(__clang__)
+#include <intrin.h>
+#if defined(_M_X64) || defined(_M_ARM64)
+#pragma intrinsic(_BitScanReverse64)
+#pragma intrinsic(_BitScanForward64)
+#elif defined(_M_IX86) || defined(_M_ARM)
+#pragma intrinsic(_BitScanReverse)
+#pragma intrinsic(_BitScanForward)
+#endif
+#endif
+
+namespace Gecode { namespace Support { namespace Detail {
+
+  /// Portable count of leading zeros in a 64-bit value, including zero
+  forceinline unsigned int
+  count_leading_zeros_64_fallback(unsigned long long int value) {
+    if (value == 0)
+      return 64;
+    unsigned int count=0;
+    if ((value >> 32) == 0) { count+=32; value <<= 32; }
+    if ((value >> 48) == 0) { count+=16; value <<= 16; }
+    if ((value >> 56) == 0) { count+=8; value <<= 8; }
+    if ((value >> 60) == 0) { count+=4; value <<= 4; }
+    if ((value >> 62) == 0) { count+=2; value <<= 2; }
+    return count+static_cast<unsigned int>((value >> 63) == 0);
+  }
+
+  /// Portable count of trailing zeros in a 64-bit value, including zero
+  forceinline unsigned int
+  count_trailing_zeros_64_fallback(unsigned long long int value) {
+    if (value == 0)
+      return 64;
+    unsigned int count=0;
+    if ((value & 0xffffffffULL) == 0) { count+=32; value >>= 32; }
+    if ((value & 0xffffULL) == 0) { count+=16; value >>= 16; }
+    if ((value & 0xffULL) == 0) { count+=8; value >>= 8; }
+    if ((value & 0xfULL) == 0) { count+=4; value >>= 4; }
+    if ((value & 0x3ULL) == 0) { count+=2; value >>= 2; }
+    return count+static_cast<unsigned int>((value & 1ULL) == 0);
+  }
+
+}}}
+
 namespace Gecode { namespace Support {
+
+  /// Count leading zeros in a 64-bit value, returning 64 for zero
+  forceinline unsigned int
+  count_leading_zeros_64(unsigned long long int value) {
+    // GNU builtins and the MSVC output index are undefined for zero.
+    if (value == 0)
+      return 64;
+#if defined(__clang__) || defined(__GNUC__)
+    return static_cast<unsigned int>(__builtin_clzll(value));
+#elif defined(_MSC_VER) && (defined(_M_X64) || defined(_M_ARM64))
+    unsigned long int index;
+    _BitScanReverse64(&index,value);
+    return 63U-static_cast<unsigned int>(index);
+#elif defined(_MSC_VER) && (defined(_M_IX86) || defined(_M_ARM))
+    unsigned long int index;
+    const unsigned long int upper=static_cast<unsigned long int>(value >> 32);
+    if (upper != 0) {
+      _BitScanReverse(&index,upper);
+      return 31U-static_cast<unsigned int>(index);
+    }
+    _BitScanReverse(&index,static_cast<unsigned long int>(value));
+    return 63U-static_cast<unsigned int>(index);
+#else
+    return Detail::count_leading_zeros_64_fallback(value);
+#endif
+  }
+
+  /// Count trailing zeros in a 64-bit value, returning 64 for zero
+  forceinline unsigned int
+  count_trailing_zeros_64(unsigned long long int value) {
+    if (value == 0)
+      return 64;
+#if defined(__clang__) || defined(__GNUC__)
+    return static_cast<unsigned int>(__builtin_ctzll(value));
+#elif defined(_MSC_VER) && (defined(_M_X64) || defined(_M_ARM64))
+    unsigned long int index;
+    _BitScanForward64(&index,value);
+    return static_cast<unsigned int>(index);
+#elif defined(_MSC_VER) && (defined(_M_IX86) || defined(_M_ARM))
+    unsigned long int index;
+    const unsigned long int lower=static_cast<unsigned long int>(value);
+    if (lower != 0) {
+      _BitScanForward(&index,lower);
+      return static_cast<unsigned int>(index);
+    }
+    _BitScanForward(&index,static_cast<unsigned long int>(value >> 32));
+    return 32U+static_cast<unsigned int>(index);
+#else
+    return Detail::count_trailing_zeros_64_fallback(value);
+#endif
+  }
 
   /// Description of integer types
   enum IntType {
