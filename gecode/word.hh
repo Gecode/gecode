@@ -135,6 +135,7 @@ namespace Gecode {
    * | Arithmetic `overflow` predicates | Compositions over arithmetic, bit channels, and reified relations; compatible intermediates preserve their kind | Assigned semantics, SMT-LIB signed overflow cases, and lifecycle |
    * | Unsigned `div`, `mod`, combined `divmod` | Homogeneous unsigned operands with a settled divisor-zero regime use transactional bounded actors; other cases use the native cube actors; combined quotient/remainder uses one shared actor | Exact SMT-LIB zero-divisor rows and sound partial/inverse propagation |
    * | `signed_div`, `signed_rem`, `signed_mod` | Homogeneous signed operands with a settled divisor sign/zero regime use transactional bounded actors; other cases use native signed cube actors | Exact SMT-LIB zero-divisor and minimum/-1 rows, plus sound sign and partial propagation |
+   * | `product_balance`, `product_divmod`, `linear_divmod`, `linear_system`, `quantize_up`, `mixed_radix`, `bounded_image` | Native exact-integer Word actors; variable interpretation is fixed by WordDomainType, aliases are folded before filtering, and advanced propagation is staged at its higher cost | Exhaustive assigned-tuple checking for cube, unsigned, and signed domains; sound interval/bit pruning, aliases, cloning, and recomputation |
    * | `branch`, `assign` and their selectors | Native unknown-bit choices plus admitted ranked split/minimum/median/maximum choices for bounded domains | Archive, no-good, clone, and recomputation lifecycle |
    * | `trace`, WordTraceDelta and word printing | Standard integration reports cube bits, immutable kind, and ranked endpoints | Bit/bound/combined deltas and trace lifecycle |
    * | `distinct` | `IPL_VAL` (the default) and `IPL_DOM` post native pairwise Word disequalities; explicit `IPL_BND` uses one Hall-interval actor for homogeneous unsigned or signed bounded arrays and otherwise falls back to value consistency | Value exclusion, optional bounds consistency over one ranked interval, width-64 endpoints, aliases, cloning, and recomputation |
@@ -266,6 +267,20 @@ namespace Gecode {
 #include <gecode/word/array-traits.hpp>
 
 namespace Gecode {
+  /// Passing fixed word values
+  class WordValArgs : public ArgArray<WordValue> {
+  public:
+    WordValArgs(void);
+    explicit WordValArgs(int n);
+    WordValArgs(const SharedArray<WordValue>& x);
+    WordValArgs(const std::vector<WordValue>& x);
+    WordValArgs(std::initializer_list<WordValue> x);
+    template<class InputIterator>
+    WordValArgs(InputIterator first, InputIterator last);
+    WordValArgs(int n, const WordValue* e);
+    WordValArgs(const ArgArray<WordValue>& a);
+  };
+
   /// Passing word variables
   class WordVarArgs : public VarArgArray<WordVar> {
   public:
@@ -907,6 +922,91 @@ namespace Gecode {
                                      WordValue value, WordVar y,
                                      WordVar result,
                                      WordSemantics semantics=WS_SMTLIB);
+
+  /// One row in a joint exact-integer linear Word relation
+  class WordLinearRow {
+  public:
+    /// Kind of linear relation represented by the row
+    enum Type { EQUAL, RANGE, CONGRUENCE };
+  private:
+    Type _type;
+    IntArgs _coefficients;
+    int _lower, _upper;
+    WordValue _modulus;
+    WordLinearRow(Type type, const IntArgs& a, int lower, int upper,
+                  WordValue modulus);
+  public:
+    /// Construct the tautology 0=0
+    WordLinearRow(void);
+    /// Construct sum(a[i]*x[i])=b
+    static WordLinearRow equal(const IntArgs& a, int b);
+    /// Construct l<=sum(a[i]*x[i])<=u
+    static WordLinearRow range(const IntArgs& a, int l, int u);
+    /// Construct sum(a[i]*x[i])=r (mod modulus)
+    static WordLinearRow congruence(const IntArgs& a, int r,
+                                    WordValue modulus);
+    /// Return the relation kind
+    Type type(void) const;
+    /// Return the coefficients
+    const IntArgs& coefficients(void) const;
+    /// Return the lower bound, equality value, or congruence residue
+    int lower(void) const;
+    /// Return the upper bound (equal to lower except for a range)
+    int upper(void) const;
+    /// Return the modulus for a congruence and zero otherwise
+    WordValue modulus(void) const;
+  };
+
+  /// Passing rows for a joint exact-integer linear Word relation
+  class WordLinearRowArgs : public ArgArray<WordLinearRow> {
+  public:
+    using ArgArray<WordLinearRow>::ArgArray;
+    WordLinearRowArgs(void) : ArgArray<WordLinearRow>(0) {}
+  };
+
+  /** \brief Exact integer product balance
+   *
+   * Enforces \f$c\prod x=d\prod y\f$ without intermediate wrapping.
+   * WDT_SIGNED operands use two's-complement signed values; all other operands
+   * use unsigned values. Assigned tuples are checked exactly.
+   */
+  GECODE_WORD_EXPORT void
+  product_balance(Home home, const WordVarArgs& x, WordValue c,
+                  const WordVarArgs& y, WordValue d,
+                  IntPropLevel ipl=IPL_DEF);
+  /// Enforce product(x)=d*q+r, d>0 and 0<=r<d, without intermediate wrapping
+  GECODE_WORD_EXPORT void
+  product_divmod(Home home, const WordVarArgs& x, WordVar d, WordVar q,
+                 WordVar r, IntPropLevel ipl=IPL_DEF);
+  /// Enforce c+sum(a[i]*x[i])=d*q+r, d>0 and 0<=r<d
+  GECODE_WORD_EXPORT void
+  linear_divmod(Home home, const IntArgs& a, const WordVarArgs& x, int c,
+                WordVar d, WordVar q, WordVar r,
+                IntPropLevel ipl=IPL_DEF);
+  /// Constrain y to the least value not below x congruent to phase modulo spacing
+  GECODE_WORD_EXPORT void
+  quantize_up(Home home, WordVar x, WordValue spacing, WordValue phase,
+              WordVar y, IntPropLevel ipl=IPL_DEF);
+  /// Enforce a joint system of exact integer equalities, ranges, and congruences
+  GECODE_WORD_EXPORT void
+  linear_system(Home home, const WordVarArgs& x,
+                const WordLinearRowArgs& rows,
+                IntPropLevel ipl=IPL_DEF);
+  /// Relate fixed-radix digits, last digit fastest, to their exact integer rank
+  GECODE_WORD_EXPORT void
+  mixed_radix(Home home, const WordVarArgs& digits,
+              const WordValArgs& radices, WordVar rank,
+              IntPropLevel ipl=IPL_DEF);
+  /** \brief Enforce outputs=A*coordinates+offset with explicit coordinates
+   *
+   * Matrix \a a is row-major with one row per output and one column per
+   * coordinate.
+   */
+  GECODE_WORD_EXPORT void
+  bounded_image(Home home, const WordVarArgs& coordinates,
+                const IntArgs& a, const IntArgs& offset,
+                const WordVarArgs& outputs,
+                IntPropLevel ipl=IPL_DEF);
   //@}
 
   /// Branch filter function type for word variables
