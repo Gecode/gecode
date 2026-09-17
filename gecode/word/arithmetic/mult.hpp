@@ -60,21 +60,13 @@ namespace Gecode { namespace Word { namespace Arithmetic {
   }
 
   forceinline unsigned int
-  mult_known_low(WordValue lo, WordValue hi, unsigned int width) {
-    const WordValue unknown = hi & ~lo;
-    unsigned int bits = 0;
-    while ((bits < width) &&
-           ((unknown & (WordValue(1) << bits)) == 0))
-      bits++;
-    return bits;
+  mult_trailing_zeros(WordValue value, unsigned int limit) {
+    return std::min(limit,Support::count_trailing_zeros_64(value));
   }
 
   forceinline unsigned int
-  mult_trailing_zeros(WordValue value, unsigned int limit) {
-    unsigned int bits = 0;
-    while ((bits < limit) && ((value & (WordValue(1) << bits)) == 0))
-      bits++;
-    return bits;
+  mult_known_low(WordValue lo, WordValue hi, unsigned int width) {
+    return mult_trailing_zeros(hi & ~lo,width);
   }
 
   forceinline WordValue
@@ -114,17 +106,7 @@ namespace Gecode { namespace Word { namespace Arithmetic {
   forceinline void
   mult_range_hull(unsigned int width, WordValue minimum,
                   WordValue maximum, WordValue& lo, WordValue& hi) {
-    WordValue varying = minimum^maximum;
-    if (varying == 0) {
-      lo=hi=minimum;
-      return;
-    }
-    unsigned int bits = 0;
-    while (varying != 0) {
-      varying >>= 1;
-      bits++;
-    }
-    varying=mult_low_mask(bits);
+    const WordValue varying = low_through_highest(minimum^maximum);
     lo=minimum&~varying;
     hi=(lo|varying)&mult_low_mask(width);
   }

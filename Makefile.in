@@ -1353,7 +1353,7 @@ BLACKBOXDLLSRC = test/flatzinc/blackbox-dll.cpp
 BLACKBOXSRC = $(BLACKBOXEXECSRC) $(BLACKBOXDLLSRC)
 
 TESTSRC0 = test/test.cpp test/afc.cpp test/ldsb.cpp test/region.cpp \
-	test/groups.cpp
+	test/groups.cpp test/support.cpp
 # FailPoint is CMake-only; keep the Autoconf test executable fault-free.
 
 TESTSRC = \

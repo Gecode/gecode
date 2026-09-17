@@ -449,6 +449,7 @@ set(GECODE_TEST_SOURCES
   test/set/rel-op.cpp
   test/set/rel.cpp
   test/set/sequence.cpp
+  test/support.cpp
   test/test.cpp
   test/word.cpp
   test/word/arithmetic.cpp

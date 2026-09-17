@@ -50,89 +50,84 @@ namespace Gecode { namespace Word { namespace Arithmetic {
     return PropCost::linear(PropCost::LO,x0.width());
   }
 
-  forceinline unsigned int
-  add_bit_values(WordValue lo, WordValue hi, WordValue mask) {
-    return ((lo&mask) == 0 ? 1U : 0U) |
-      ((hi&mask) != 0 ? 2U : 0U);
-  }
-
-  // Tuple bits encode x, y, and z respectively; 2 denotes no transition.
-  //                              xyz: 000 001 010 011 100 101 110 111
-  inline constexpr unsigned char add_transitions[2][8] = {
-    {0,2,2,0,2,0,1,2},
-    {2,0,1,2,1,2,2,1}
-  };
-
-  constexpr unsigned int
-  add_transition(unsigned int carry, unsigned int tuple) {
-    return add_transitions[carry][tuple];
-  }
-
-  class AddSupportTables {
+  /** Carry transitions for every bit position, stored in four bit masks.
+   * Bit i of c01 means carry 0 can become carry 1 at position i.
+   * Boolean matrix composition joins adjacent groups of positions, so a
+   * parallel prefix or suffix scan needs at most six steps for a word.
+   */
+  class AddCarryRelation {
   public:
-    unsigned char forward[256][4];
-    unsigned char backward[256][4];
-    unsigned char support[256][4][4];
-    constexpr AddSupportTables(void) : forward{}, backward{}, support{} {
-      for (unsigned int allowed=0; allowed<256; allowed++)
-        for (unsigned int states=0; states<4; states++) {
-          unsigned int next_states=0;
-          unsigned int previous_states=0;
-          for (unsigned int carry=0; carry<2; carry++)
-            for (unsigned int tuple=0; tuple<8; tuple++)
-              if ((allowed & (1U << tuple)) != 0) {
-                const unsigned int next=add_transition(carry,tuple);
-                if ((next < 2) && ((states & (1U << carry)) != 0))
-                  next_states |= 1U << next;
-                if ((next < 2) && ((states & (1U << next)) != 0))
-                  previous_states |= 1U << carry;
-              }
-          forward[allowed][states]=
-            static_cast<unsigned char>(next_states);
-          backward[allowed][states]=
-            static_cast<unsigned char>(previous_states);
-          for (unsigned int next_states_mask=0;
-               next_states_mask<4; next_states_mask++) {
-            unsigned int values=0;
-            for (unsigned int carry=0; carry<2; carry++) {
-              if ((states & (1U << carry)) == 0)
-                continue;
-              for (unsigned int tuple=0; tuple<8; tuple++)
-                if ((allowed & (1U << tuple)) != 0) {
-                  const unsigned int next=add_transition(carry,tuple);
-                  if ((next < 2) &&
-                      ((next_states_mask & (1U << next)) != 0)) {
-                    values |= 1U << (((tuple >> 2) & 1U) + 0);
-                    values |= 1U << (((tuple >> 1) & 1U) + 2);
-                    values |= 1U << ((tuple & 1U) + 4);
-                  }
-                }
-            }
-            support[allowed][states][next_states_mask]=
-              static_cast<unsigned char>(values);
-          }
-        }
+    WordValue c00, c01, c10, c11;
+    forceinline AddCarryRelation(WordValue a, WordValue b,
+                                 WordValue c, WordValue d)
+      : c00(a), c01(b), c10(c), c11(d) {}
+    forceinline AddCarryRelation then(const AddCarryRelation& r) const {
+      return AddCarryRelation((c00&r.c00)|(c01&r.c10),
+                              (c00&r.c01)|(c01&r.c11),
+                              (c10&r.c00)|(c11&r.c10),
+                              (c10&r.c01)|(c11&r.c11));
+    }
+    forceinline AddCarryRelation lower(unsigned int n) const {
+      const WordValue identity=(WordValue(1)<<n)-1;
+      return AddCarryRelation((c00<<n)|identity,c01<<n,c10<<n,
+                              (c11<<n)|identity);
+    }
+    forceinline AddCarryRelation upper(unsigned int n) const {
+      const WordValue identity=~(~WordValue(0)>>n);
+      return AddCarryRelation((c00>>n)|identity,c01>>n,c10>>n,
+                              (c11>>n)|identity);
     }
   };
 
-  forceinline const AddSupportTables&
-  add_support_tables(void) {
-    // Constant-initialize when the compiler's constexpr budget permits it;
-    // retain valid runtime initialization on more restrictive compilers.
-    static const AddSupportTables tables;
-    return tables;
-  }
-
-  /** Allowed x/y/z bit tuples, intersected with the operand aliases.
-   * Tuple bit positions are 4*x+2*y+z, matching AddSupportTables.
-   */
-  forceinline unsigned int
-  add_allowed(unsigned int x, unsigned int y, unsigned int z,
-              unsigned int aliases) {
-    static const unsigned char x_mask[4]={0x00,0x0f,0xf0,0xff};
-    static const unsigned char y_mask[4]={0x00,0x33,0xcc,0xff};
-    static const unsigned char z_mask[4]={0x00,0x55,0xaa,0xff};
-    return x_mask[x] & y_mask[y] & z_mask[z] & aliases;
+  forceinline bool
+  add_word_support(unsigned int width, const WordValue* lo,
+                   const WordValue* hi, unsigned int aliases,
+                   unsigned int terminal, unsigned int& final,
+                   WordValue* next_lo, WordValue* next_hi) {
+    const WordValue mask=width_mask(width);
+    // Tuple index is 4*x+2*y+z. Each mask contains all positions at which
+    // that tuple is allowed, including equality of aliased operands.
+    WordValue t[8];
+    for (unsigned int i=0; i<8; i++)
+      t[i]=(aliases & (1U<<i)) ?
+        ((i&4U) ? hi[0] : ~lo[0]) &
+        ((i&2U) ? hi[1] : ~lo[1]) &
+        ((i&1U) ? hi[2] : ~lo[2]) & mask : 0;
+    const AddCarryRelation step(t[0]|t[3]|t[5],t[6],t[1],
+                                t[2]|t[4]|t[7]);
+    AddCarryRelation prefix=step;
+    // Positions outside the word are identity transitions for the suffix.
+    AddCarryRelation suffix(step.c00|~mask,step.c01,step.c10,
+                             step.c11|~mask);
+    for (unsigned int n=1; n<width; n <<= 1) {
+      prefix=prefix.lower(n).then(prefix);
+      suffix=suffix.then(suffix.upper(n));
+    }
+    final=static_cast<unsigned int>(
+      ((prefix.c00>>(width-1))&1U) |
+      (((prefix.c01>>(width-1))&1U)<<1)) & terminal;
+    if (final == 0)
+      return false;
+    // Reachable carries immediately before each bit, starting with zero.
+    const WordValue f0=(prefix.c00<<1)|1U;
+    const WordValue f1=prefix.c01<<1;
+    const WordValue end0=WordValue(0)-WordValue((terminal&1U)!=0);
+    const WordValue end1=WordValue(0)-WordValue((terminal&2U)!=0);
+    // Carries immediately after each bit that can reach an allowed end.
+    const WordValue b0=(((suffix.c00&end0)|(suffix.c01&end1))>>1) |
+      (end0 & (WordValue(1)<<(width-1)));
+    const WordValue b1=(((suffix.c10&end0)|(suffix.c11&end1))>>1) |
+      (end1 & (WordValue(1)<<(width-1)));
+    const WordValue s00=f0&b0, s01=f0&b1, s10=f1&b0, s11=f1&b1;
+    t[0]&=s00; t[1]&=s10; t[2]&=s11; t[3]&=s00;
+    t[4]&=s11; t[5]&=s00; t[6]&=s01; t[7]&=s11;
+    next_lo[0]=mask & ~(t[0]|t[1]|t[2]|t[3]);
+    next_lo[1]=mask & ~(t[0]|t[1]|t[4]|t[5]);
+    next_lo[2]=mask & ~(t[0]|t[2]|t[4]|t[6]);
+    next_hi[0]=t[4]|t[5]|t[6]|t[7];
+    next_hi[1]=t[2]|t[3]|t[6]|t[7];
+    next_hi[2]=t[1]|t[3]|t[5]|t[7];
+    return true;
   }
 
   template<class View>
@@ -143,48 +138,11 @@ namespace Gecode { namespace Word { namespace Arithmetic {
     const unsigned int aliases=((x == y) ? 0xc3U : 0xffU) &
       ((x == z) ? 0xa5U : 0xffU) & ((y == z) ? 0x99U : 0xffU);
     for (;;) {
-      unsigned char allowed[64];
-      unsigned char forward[65] = {0};
-      unsigned char backward[65] = {0};
-      const AddSupportTables& tables=add_support_tables();
-      forward[0] = 1U;
-      for (unsigned int bit=0; bit<width; bit++) {
-        const WordValue mask=WordValue(1) << bit;
-        const unsigned int x_values=add_bit_values(x.lo(),x.hi(),mask);
-        const unsigned int y_values=add_bit_values(y.lo(),y.hi(),mask);
-        const unsigned int z_values=add_bit_values(z.lo(),z.hi(),mask);
-        const unsigned int tuples=add_allowed(
-          x_values,y_values,z_values,aliases);
-        allowed[bit]=static_cast<unsigned char>(tuples);
-        if (tuples == 0)
-          return ES_FAILED;
-        const unsigned int states=tables.forward[tuples][forward[bit]];
-        forward[bit+1] = static_cast<unsigned char>(states);
-        if (states == 0)
-          return ES_FAILED;
-      }
-
-      final = forward[width] & terminal;
-      if (final == 0)
-        return ES_FAILED;
-      backward[width] = static_cast<unsigned char>(terminal);
-      WordValue lo[3] = {0,0,0};
-      WordValue hi[3] = {0,0,0};
-      for (unsigned int bit=width; bit-- > 0;) {
-        const unsigned int states=
-          tables.backward[allowed[bit]][backward[bit+1]];
-        const unsigned int support=
-          tables.support[allowed[bit]][forward[bit]][backward[bit+1]];
-        backward[bit] = static_cast<unsigned char>(states);
-        const WordValue mask = WordValue(1) << bit;
-        for (int i=0; i<3; i++) {
-          if ((support & (1U << (2*i+1))) != 0)
-            hi[i] |= mask;
-          if ((support & (1U << (2*i))) == 0)
-            lo[i] |= mask;
-        }
-      }
-      if ((backward[0] & 1U) == 0)
+      const WordValue input_lo[3]={x.lo(),y.lo(),z.lo()};
+      const WordValue input_hi[3]={x.hi(),y.hi(),z.hi()};
+      WordValue lo[3], hi[3];
+      if (!add_word_support(width,input_lo,input_hi,aliases,terminal,final,
+                            lo,hi))
         return ES_FAILED;
       if ((x.lo() != lo[0]) || (x.hi() != hi[0]))
         GECODE_ME_CHECK(x.narrow(home,lo[0],hi[0]));

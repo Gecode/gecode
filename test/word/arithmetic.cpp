@@ -485,6 +485,84 @@ namespace Test { namespace Word {
         return true;
       }
 
+      /** Check carry and borrow support across every native word width.
+       * Sparse domains allow an exhaustive value oracle even at width 64.
+       */
+      static bool wide_bit_consistency(void) {
+        using namespace Gecode;
+        const int aliases[5][3]={{0,1,2},{0,0,2},{0,1,0},
+                                 {0,1,1},{0,0,0}};
+        for (unsigned int width=1; width<=64; width++) {
+          const WordValue mask=Gecode::Word::width_mask(width);
+          const WordValue high=WordValue(1)<<(width-1);
+          const WordValue patterns[4]={mask,high-1,
+                                      WordValue(0x5555555555555555ULL)&mask,0};
+          for (Op op : {ADD,SUB})
+            for (const auto& map : aliases)
+              for (unsigned int pattern=0; pattern<4; pattern++)
+                for (int terminal=-1; terminal<=1; terminal++) {
+                  WordValue a=patterns[pattern], b=1;
+                  if (map[0] == map[1]) b=a;
+                  if (map[0] == map[2]) b=0;
+                  if (map[1] == map[2]) a=(op == ADD) ? 0 : (2*b)&mask;
+                  if (map[0] == map[1] && map[1] == map[2]) a=b=0;
+                  const WordValue witness[3]={a,b,
+                    (op == ADD ? a+b : a-b)&mask};
+                  std::vector<Domain> domains;
+                  ArithmeticSpace s(3,width);
+                  for (int i=0; i<3; i++) {
+                    const WordValue free=high |
+                      (WordValue(1)<<((pattern+3*i)%width));
+                    domains.push_back(map[i] == i ?
+                      Domain(width,witness[i]&~free,witness[i]|free) :
+                      domains[map[i]]);
+                    s.x[i]=s.x[map[i]];
+                    dom(s,s.x[i],domains[i].lo(),domains[i].hi());
+                  }
+                  BoolVar flag(s,terminal < 0 ? 0 : terminal,
+                                terminal < 0 ? 1 : terminal);
+                  if (op == ADD) add(s,s.x[0],s.x[1],s.x[2],flag);
+                  else sub(s,s.x[0],s.x[1],s.x[2],flag);
+                  const bool failed=s.status() == SS_FAILED;
+                  bool supported=false;
+                  WordValue lo[3]={mask,mask,mask}, hi[3]={0,0,0};
+                  bool flag_lo=true, flag_hi=false;
+                  for (Values x(domains[0]); x(); ++x)
+                    for (Values y(domains[1]); y(); ++y) {
+                      const WordValue xv=x.val(), yv=y.val();
+                      const WordValue zv=(op == ADD ? xv+yv : xv-yv)&mask;
+                      const bool f=(op == ADD) ? xv > mask-yv : xv < yv;
+                      if (!domains[2].in(zv) ||
+                          (terminal >= 0 && f != (terminal != 0)) ||
+                          (map[0] == map[1] && xv != yv) ||
+                          (map[0] == map[2] && xv != zv) ||
+                          (map[1] == map[2] && yv != zv))
+                        continue;
+                      supported=true;
+                      const WordValue tuple[3]={xv,yv,zv};
+                      for (int i=0; i<3; i++) {
+                        lo[i]&=tuple[i]; hi[i]|=tuple[i];
+                      }
+                      flag_lo &= f; flag_hi |= f;
+                    }
+                  bool ok=failed != supported;
+                  if (supported && !failed) {
+                    for (int i=0; i<3; i++)
+                      ok &= s.x[i].lo() == lo[i] && s.x[i].hi() == hi[i];
+                    ok &= flag.min() == flag_lo && flag.max() == flag_hi;
+                  }
+                  if (!ok) {
+                    ::Test::olog << "wide arithmetic support width=" << width
+                      << " op=" << op << " aliases=" << map[0] << map[1]
+                      << map[2] << " pattern=" << pattern
+                      << " terminal=" << terminal << std::endl;
+                    return false;
+                  }
+                }
+        }
+        return true;
+      }
+
       /** A tiny ordinary Boolean full-adder decomposition for comparison. */
       class DifferentialSpace : public Gecode::Space {
       public:
@@ -941,7 +1019,8 @@ namespace Test { namespace Word {
     public:
       Lifecycle(void) : Base("Word::Arithmetic::Lifecycle") {}
       virtual bool run(void) {
-        return partial(ADD) && add_bit_consistency() && nary_add_partial() &&
+        return partial(ADD) && add_bit_consistency() && wide_bit_consistency() &&
+          nary_add_partial() &&
           fallback_publication() &&
           fallback_scheduled_publication() &&
           partial(NEG) && neg_bit_consistency() &&
@@ -3592,6 +3671,24 @@ namespace Test { namespace Word {
             if ((s.status() == SS_FAILED) ||
                 ((s.x[0].lo()&1U) == 0U) || ((s.x[1].lo()&1U) == 0U))
               return false;
+            // 2^bit * y = 2^bit fixes exactly the low width-bit bits of y
+            // to the encoding of one, including the top bit at width 64.
+            for (unsigned int bit=0; bit<width; bit++) {
+              S prefix(width,kind);
+              const WordValue factor=WordValue(1)<<bit;
+              const WordValue low=Gecode::Word::width_mask(width-bit);
+              dom(prefix,prefix.x[0],factor);
+              dom(prefix,prefix.x[2],factor);
+              mult(prefix,prefix.x[0],prefix.x[1],prefix.x[2]);
+              if ((prefix.status() == SS_FAILED) ||
+                  ((prefix.x[1].lo()&low) != 1U) ||
+                  ((prefix.x[1].hi()&low) != 1U) ||
+                  !prefix.x[1].in(1U))
+                return false;
+              if ((bit != 0) &&
+                  !prefix.x[1].in(1U+(WordValue(1)<<(width-bit))))
+                return false;
+            }
           }
           for (Op op : {SIGNED_REM,SIGNED_MOD})
             for (WordValue divisor : {WordValue(768),WordValue(0)-768U}) {

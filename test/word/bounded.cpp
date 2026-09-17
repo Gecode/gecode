@@ -619,6 +619,14 @@ namespace Test { namespace Word { namespace Bounded {
         (delta_capture.new_minimum != 2) ||
         (delta_capture.new_maximum != 14))
       return false;
+    // Repeating the current intersection, or supplying a wider one, must
+    // leave the synchronized domain and its advisors unchanged.
+    if ((x.narrow_domain(s,x.lo(),x.hi(),2,14) !=
+         Gecode::Word::ME_WORD_NONE) ||
+        (x.narrow_domain(s,0,15,0,15) != Gecode::Word::ME_WORD_NONE) ||
+        (delta_capture.count != 2) || (x.lo() != 0) || (x.hi() != 14) ||
+        (x.rank_minimum() != 2) || (x.rank_maximum() != 14))
+      return false;
     if (x.narrow_domain(s,4,4,4,4) != Gecode::Word::ME_WORD_VAL)
       return false;
     return (delta_capture.count == 3) &&

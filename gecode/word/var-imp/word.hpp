@@ -49,18 +49,9 @@ namespace Gecode { namespace Word {
   }
 
   forceinline WordValue low_through_highest(WordValue value) {
-#if defined(__GNUC__) || defined(__clang__)
-    // Guard zero: clz(0) and a shift by the word width are undefined.
-    return value ? (~WordValue(0) >> __builtin_clzll(value)) : 0;
-#else
-    value |= value >> 1;
-    value |= value >> 2;
-    value |= value >> 4;
-    value |= value >> 8;
-    value |= value >> 16;
-    value |= value >> 32;
-    return value;
-#endif
+    // The zero count is 64 for zero; do not shift by the word width.
+    return value ?
+      (~WordValue(0) >> Support::count_leading_zeros_64(value)) : 0;
   }
 
   forceinline bool cube_successor(WordValue lo, WordValue hi,
@@ -298,6 +289,11 @@ namespace Gecode { namespace Word {
     WordValue new_hi = _hi & hi;
     WordValue new_minimum = std::max(_minimum,minimum);
     WordValue new_maximum = std::min(_maximum,maximum);
+    // The current domain is synchronized already. A redundant intersection
+    // cannot change its closure or require subscriber notification.
+    if ((new_lo == _lo) && (new_hi == _hi) &&
+        (new_minimum == _minimum) && (new_maximum == _maximum))
+      return ME_WORD_NONE;
     if (((new_lo & ~new_hi) != 0) || (new_minimum > new_maximum) ||
         !synchronize_domain(_width,_domain_type,new_lo,new_hi,
                             new_minimum,new_maximum))
