@@ -60,6 +60,36 @@ namespace Gecode {
   forceinline WordValArgs::WordValArgs(const ArgArray<WordValue>& a)
     : ArgArray<WordValue>(a) {}
 
+  forceinline
+  WordLinearRow::WordLinearRow(void)
+    : _type(EQUAL), _lower(0), _upper(0), _modulus(0) {}
+  forceinline
+  WordLinearRow::WordLinearRow(Type type, const IntArgs& a, int lower,
+                               int upper, WordValue modulus)
+    : _type(type), _coefficients(a), _lower(lower), _upper(upper),
+      _modulus(modulus) {}
+  forceinline WordLinearRow
+  WordLinearRow::equal(const IntArgs& a, int b) {
+    return WordLinearRow(EQUAL,a,b,b,0);
+  }
+  forceinline WordLinearRow
+  WordLinearRow::range(const IntArgs& a, int l, int u) {
+    return WordLinearRow(RANGE,a,l,u,0);
+  }
+  forceinline WordLinearRow
+  WordLinearRow::congruence(const IntArgs& a, int r, WordValue modulus) {
+    return WordLinearRow(CONGRUENCE,a,r,r,modulus);
+  }
+  forceinline WordLinearRow::Type WordLinearRow::type(void) const {
+    return _type;
+  }
+  forceinline const IntArgs& WordLinearRow::coefficients(void) const {
+    return _coefficients;
+  }
+  forceinline int WordLinearRow::lower(void) const { return _lower; }
+  forceinline int WordLinearRow::upper(void) const { return _upper; }
+  forceinline WordValue WordLinearRow::modulus(void) const { return _modulus; }
+
   forceinline WordVarArgs::WordVarArgs(void) {}
   forceinline WordVarArgs::WordVarArgs(int n)
     : VarArgArray<WordVar>(

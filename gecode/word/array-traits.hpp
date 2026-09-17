@@ -35,6 +35,8 @@ namespace Gecode {
   class WordVarArgs;
   class WordVarArray;
   class WordValArgs;
+  class WordLinearRow;
+  class WordLinearRowArgs;
   template<> class ArrayTraits<ArgArray<WordValue>> {
   public:
     typedef WordValArgs StorageType;
@@ -62,6 +64,18 @@ namespace Gecode {
     typedef WordValArgs StorageType;
     typedef WordValue ValueType;
     typedef WordValArgs ArgsType;
+  };
+  template<> class ArrayTraits<ArgArray<WordLinearRow>> {
+  public:
+    typedef WordLinearRowArgs StorageType;
+    typedef WordLinearRow ValueType;
+    typedef WordLinearRowArgs ArgsType;
+  };
+  template<> class ArrayTraits<WordLinearRowArgs> {
+  public:
+    typedef WordLinearRowArgs StorageType;
+    typedef WordLinearRow ValueType;
+    typedef WordLinearRowArgs ArgsType;
   };
 }
 
