@@ -189,6 +189,12 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     return PropCost::quadratic(PropCost::LO,x.size()+1);
   }
 
+  forceinline size_t
+  ProductMod::dispose(Space& home) {
+    (void) NaryOnePropagator<IntView,PC_INT_BND>::dispose(home);
+    return sizeof(*this);
+  }
+
   inline ExecStatus
   ProductMod::propagate(Space& home, const ModEventDelta&) {
     GECODE_ME_CHECK(y.gq(home,0));
@@ -631,6 +637,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
       GECODE_REWRITE(*this,ProductMod::post(home(*this),x,m.val(),y));
 
     // With an assigned product and result, m must divide product-result.
+    const unsigned int modulus_size=m.size();
     long long int p;
     if (y.assigned() && product_mod_var_exact(x,p)) {
       if (!Limits::overflow_sub(p,static_cast<long long int>(y.val()))) {
@@ -647,12 +654,8 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     }
     if (m.assigned())
       GECODE_REWRITE(*this,ProductMod::post(home(*this),x,m.val(),y));
-    bool assigned = m.assigned() && y.assigned();
-    for (int i=0; assigned && (i<x.size()); i++)
-      assigned = x[i].assigned();
-    if (assigned)
-      return home.ES_SUBSUMED(*this);
-    return ES_FIX;
+    // A sparse-domain update can expose a new fixed quotient band.
+    return (modulus_size != m.size()) ? ES_NOFIX : ES_FIX;
   }
 
   forceinline size_t

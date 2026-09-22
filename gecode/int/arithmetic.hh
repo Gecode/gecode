@@ -962,6 +962,8 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+    /// Delete propagator and return its size
+    virtual size_t dispose(Space& home);
   };
 
   /** \brief Bounds propagator for a variable-modulus n-ary product
