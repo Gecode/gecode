@@ -85,6 +85,56 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     return ES_OK;
   }
 
+  /// Probe at most 64 multiples for a coprime quotient at an endpoint.
+  template<class View>
+  inline bool
+  gcd_support_min(View x, int a, int g, int& bound) {
+    bound=x.min();
+    long long int v=ceil_div_xx(static_cast<long long int>(x.min()),
+                               static_cast<long long int>(g))*g;
+    // Use the interval hull: interior holes must not affect a BND actor's
+    // fixpoint. The candidates are isolated arithmetic supports, not a
+    // domain enumeration. On exhaustion retain the original endpoint.
+    for (int budget=64; (budget > 0) && (v <= x.max()); --budget, v+=g)
+      if (gcd_value(a,static_cast<int>(v)) == g) {
+        bound=static_cast<int>(v);
+        return true;
+      }
+    return v <= x.max();
+  }
+
+  /// With an assigned operand, exclude endpoints lacking a coprime quotient.
+  inline ExecStatus
+  gcd_coprime_bounds(Home home, IntView x, int a, int g) {
+    if ((a % g) != 0)
+      return ES_FAILED;
+    int l, negative_u;
+    if (!gcd_support_min(x,a,g,l) ||
+        !gcd_support_min(MinusView(x),a,g,negative_u))
+      return ES_FAILED;
+    // On budget exhaustion retain the original endpoint: never advance a
+    // partially checked bound, which could cause an unbounded closure walk.
+    GECODE_ME_CHECK(x.gq(home,l));
+    GECODE_ME_CHECK(x.lq(home,-negative_u));
+    return ES_OK;
+  }
+
+  /// A fixed quotient of an assigned operand admits at most one GCD divisor.
+  inline ExecStatus
+  gcd_divisor_bounds(Home home, IntView g, int a) {
+    a=(a < 0) ? -a : a;
+    assert(a > 0);
+    GECODE_ME_CHECK(g.gq(home,1));
+    GECODE_ME_CHECK(g.lq(home,a));
+    const int q0=a/g.max(), q1=a/g.min();
+    if (q0 == q1) {
+      if ((a % q0) != 0)
+        return ES_FAILED;
+      GECODE_ME_CHECK(g.eq(home,a/q0));
+    }
+    return ES_OK;
+  }
+
   /// Status of abs(x0)=x1 using assignments and interval bounds only.
   inline RelTest
   gcd_abs_status(const IntView& x0, const IntView& x1) {
@@ -169,6 +219,11 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     if (gcd_excludes_zero_bnd(x0) || gcd_excludes_zero_bnd(x1))
       GECODE_ME_CHECK(x2.gq(home,1));
     GECODE_ME_CHECK(x2.lq(home,gcd_upper(x0,x1)));
+    // Result narrowing can assign an aliased operand to zero.
+    if (x0.assigned() && (x0.val() != 0))
+      GECODE_ES_CHECK(gcd_divisor_bounds(home,x2,x0.val()));
+    if (x1.assigned() && (x1.val() != 0))
+      GECODE_ES_CHECK(gcd_divisor_bounds(home,x2,x1.val()));
     if (x2.assigned()) {
       const int g=x2.val();
       if (g == 0) {
@@ -178,6 +233,10 @@ namespace Gecode { namespace Int { namespace Arithmetic {
       }
       GECODE_ES_CHECK(gcd_multiple_bounds(home,x0,g));
       GECODE_ES_CHECK(gcd_multiple_bounds(home,x1,g));
+      if (x0.assigned())
+        GECODE_ES_CHECK(gcd_coprime_bounds(home,x1,x0.val(),g));
+      if (x1.assigned())
+        GECODE_ES_CHECK(gcd_coprime_bounds(home,x0,x1.val(),g));
       if (x0.assigned() && (x0.val() == 0))
         return AbsBnd<IntView>::post(home,x1,x2);
       if (x1.assigned() && (x1.val() == 0))
@@ -223,6 +282,11 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     if (gcd_excludes_zero_bnd(x0) || gcd_excludes_zero_bnd(x1))
       GECODE_ME_CHECK(x2.gq(home,1));
     GECODE_ME_CHECK(x2.lq(home,gcd_upper(x0,x1)));
+    // Result narrowing can assign an aliased operand to zero.
+    if (x0.assigned() && (x0.val() != 0))
+      GECODE_ES_CHECK(gcd_divisor_bounds(home,x2,x0.val()));
+    if (x1.assigned() && (x1.val() != 0))
+      GECODE_ES_CHECK(gcd_divisor_bounds(home,x2,x1.val()));
     if (x2.assigned()) {
       const int g=x2.val();
       if (g == 0) {
@@ -232,6 +296,10 @@ namespace Gecode { namespace Int { namespace Arithmetic {
       }
       GECODE_ES_CHECK(gcd_multiple_bounds(home,x0,g));
       GECODE_ES_CHECK(gcd_multiple_bounds(home,x1,g));
+      if (x0.assigned())
+        GECODE_ES_CHECK(gcd_coprime_bounds(home,x1,x0.val(),g));
+      if (x1.assigned())
+        GECODE_ES_CHECK(gcd_coprime_bounds(home,x0,x1.val(),g));
       if (x0.assigned() && (x0.val() == 0))
         GECODE_REWRITE(*this,AbsBnd<IntView>::post(home(*this),x1,x2));
       if (x1.assigned() && (x1.val() == 0))
