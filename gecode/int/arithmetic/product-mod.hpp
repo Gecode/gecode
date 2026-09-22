@@ -34,63 +34,111 @@
 
 namespace Gecode { namespace Int { namespace Arithmetic {
 
-  /// Compute the canonical residue without signed overflow.
+  /// Multiply intervals exactly, rejecting overflow rather than clipping.
+  inline bool
+  product_mod_interval_mul(ProductInterval a, ProductInterval b,
+                           ProductInterval& p) {
+    long long int q[4] = {
+      static_cast<long long int>(a.min)*b.min,
+      static_cast<long long int>(a.min)*b.max,
+      static_cast<long long int>(a.max)*b.min,
+      static_cast<long long int>(a.max)*b.max
+    };
+    const long long int l=*std::min_element(q,q+4);
+    const long long int u=*std::max_element(q,q+4);
+    if (!Limits::valid(l) || !Limits::valid(u))
+      return false;
+    p.min=static_cast<int>(l); p.max=static_cast<int>(u);
+    return true;
+  }
+
+  /// Return exact representable product bounds, or false on overflow.
+  inline bool
+  product_mod_interval(const ViewArray<IntView>& x, ProductInterval& p,
+                       int a=1) {
+    p.min=a; p.max=a;
+    for (int i=0; i<x.size(); i++) {
+      ProductInterval q={x[i].min(),x[i].max()};
+      if (!product_mod_interval_mul(p,q,p))
+        return false;
+    }
+    return true;
+  }
+
+  /// Build all cofactor bounds in linear time, without modular saturation.
+  inline bool
+  product_mod_intervals(const ViewArray<IntView>& x,
+                        ProductInterval* prefix, ProductInterval* suffix,
+                        int a=1) {
+    prefix[0]=ProductInterval{a,a};
+    suffix[x.size()]=ProductInterval{1,1};
+    for (int i=0; i<x.size(); i++) {
+      ProductInterval q={x[i].min(),x[i].max()};
+      if (!product_mod_interval_mul(prefix[i],q,prefix[i+1]))
+        return false;
+    }
+    for (int i=x.size(); i--;) {
+      ProductInterval q={x[i].min(),x[i].max()};
+      if (!product_mod_interval_mul(q,suffix[i+1],suffix[i]))
+        return false;
+    }
+    return true;
+  }
+
+  /// Reduce assigned factors and count the remaining factor occurrences.
   inline int
-  product_mod_value(const int* v, int n, int m) {
-    long long int p = 1 % m;
-    for (int i=0; i<n; i++) {
-      long long int q = static_cast<long long int>(v[i]) % m;
-      if (q < 0)
-        q += m;
-      // Both factors are smaller than Limits::max, so this fits in int64.
-      p = (p*q) % m;
+  product_mod_coefficient(const ViewArray<IntView>& x, int m,
+                          int& free_count) {
+    long long int p=1 % m;
+    free_count=0;
+    for (int i=0; i<x.size(); i++) {
+      if (!x[i].assigned()) {
+        free_count++;
+      } else {
+        long long int q=static_cast<long long int>(x[i].val()) % m;
+        if (q < 0) q+=m;
+        p=(p*q) % m;
+      }
     }
     return static_cast<int>(p);
   }
 
-  /// Return exact representable product bounds, or false on saturation.
-  inline bool
-  product_mod_interval(const ViewArray<IntView>& x, ProductInterval& p,
-                       int omit=-1) {
-    p.min=1; p.max=1;
-    for (int i=0; i<x.size(); i++)
-      if (i != omit) {
-        long long int q[4] = {
-          static_cast<long long int>(p.min) * x[i].min(),
-          static_cast<long long int>(p.min) * x[i].max(),
-          static_cast<long long int>(p.max) * x[i].min(),
-          static_cast<long long int>(p.max) * x[i].max()
-        };
-        const long long int l = *std::min_element(q,q+4);
-        const long long int u = *std::max_element(q,q+4);
-        if (!Limits::valid(l) || !Limits::valid(u))
-          return false;
-        p.min=static_cast<int>(l); p.max=static_cast<int>(u);
+  /// Fold assigned occurrences into modular and representable exact coefficients.
+  inline void
+  product_mod_fold(ViewArray<IntView>& x, int m, int& c, int& a) {
+    for (int i=x.size(); i--;)
+      if (x[i].assigned()) {
+        const int v=x[i].val();
+        c=static_cast<int>((static_cast<long long int>(c)*v) % m);
+        if (c < 0) c+=m;
+        const long long int p=static_cast<long long int>(a)*v;
+        // Zero marks an unavailable exact coefficient; c remains exact modulo m.
+        a=Limits::valid(p) ? static_cast<int>(p) : 0;
+        x.move_lst(i);
       }
-    return true;
   }
 
-  /// Return whether an assigned factor makes the residue identically zero.
-  inline bool
-  product_mod_zero(const ViewArray<IntView>& x, int m) {
-    for (int i=0; i<x.size(); i++)
-      if (x[i].assigned() && ((x[i].val() % m) == 0))
-        return true;
-    return false;
+  /// Drop assigned units without changing a product with an unknown modulus.
+  inline void
+  product_mod_units(ViewArray<IntView>& x) {
+    for (int i=x.size(); i--;)
+      if (x[i].assigned() && (x[i].val() == 1))
+        x.move_lst(i);
   }
 
-  /// Return whether all factors are assigned and compute their residue.
-  inline bool
-  product_mod_assigned(const ViewArray<IntView>& x, int m, int& residue) {
-    Region r;
-    int* v = r.alloc<int>(x.size());
+  /// A nonzero residue excludes bounds-visible zero factors.
+  inline ExecStatus
+  product_mod_nonzero(Space& home, ViewArray<IntView>& x, bool& modified) {
     for (int i=0; i<x.size(); i++) {
-      if (!x[i].assigned())
-        return false;
-      v[i]=x[i].val();
+      ModEvent me=ME_INT_NONE;
+      if (x[i].min() == 0)
+        me=x[i].gq(home,1);
+      else if (x[i].max() == 0)
+        me=x[i].lq(home,-1);
+      if (me_failed(me)) return ES_FAILED;
+      modified |= me_modified(me);
     }
-    residue=product_mod_value(v,x.size(),m);
-    return true;
+    return ES_OK;
   }
 
   /// Determine the fixed-modulus relation algebraically.
@@ -98,16 +146,18 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   product_mod_status(const ViewArray<IntView>& x, const IntView& y, int m) {
     if ((y.max() < 0) || (y.min() >= m))
       return RT_FALSE;
-    const bool zero = (m == 1) || product_mod_zero(x,m);
-    if (zero) {
-      if (!y.in(0)) return RT_FALSE;
+    int free_count;
+    const int c=product_mod_coefficient(x,m,free_count);
+    if ((c == 0) || (free_count == 0)) {
+      if (!y.in(c)) return RT_FALSE;
       return y.assigned() ? RT_TRUE : RT_MAYBE;
     }
-    int residue;
-    if (product_mod_assigned(x,m,residue)) {
-      if (!y.in(residue)) return RT_FALSE;
-      return y.assigned() ? RT_TRUE : RT_MAYBE;
-    }
+    const int g=gcd_value(c,m);
+    const long long int l=ceil_div_xx
+      (static_cast<long long int>(std::max(0,y.min())),
+       static_cast<long long int>(g))*g;
+    if (l > std::min(m-1,y.max()))
+      return RT_FALSE;
     ProductInterval p;
     if (product_mod_interval(x,p)) {
       const long long int kl = floor_div_xx
@@ -137,18 +187,34 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     return old_s < 0 ? old_s+m : old_s;
   }
 
-  inline long long int
-  product_mod_gcd(long long int a, long long int b) {
-    while (b != 0) {
-      const long long int r=a%b; a=b; b=r;
+  /// Extreme solutions to c*x = y modulo m, or an empty interval.
+  inline ProductInterval
+  product_mod_congruence(ProductInterval x, int c, int m, int y) {
+    const int g=gcd_value(c,m);
+    if ((y % g) != 0)
+      return ProductInterval{1,0};
+    const long long int step=m/g;
+    long long int r=0;
+    if (step > 1) {
+      const long long int a=c/g, b=y/g;
+      r=(product_mod_inverse(a % step,step)*b) % step;
+      if (r < 0) r+=step;
     }
-    return a < 0 ? -a : a;
+    const long long int l=r + ceil_div_xx
+      (static_cast<long long int>(x.min)-r,step)*step;
+    const long long int u=r + floor_div_xx
+      (static_cast<long long int>(x.max)-r,step)*step;
+    if (l > u)
+      return ProductInterval{1,0};
+    // Nonempty bounds lie inside x, so narrowing to int is safe.
+    return ProductInterval{static_cast<int>(l),static_cast<int>(u)};
   }
 
   forceinline
   ProductMod::ProductMod(Home home, ViewArray<IntView>& z, int modulus,
-                         IntView w)
-    : NaryOnePropagator<IntView,PC_INT_BND>(home,z,w), m(modulus) {}
+                         IntView w, int c0, int a0)
+    : NaryOnePropagator<IntView,PC_INT_BND>(home,z,w),
+      m(modulus), c(c0), a(a0) {}
 
   inline ExecStatus
   ProductMod::post(Home home, ViewArray<IntView>& x, int m, IntView y) {
@@ -162,22 +228,20 @@ namespace Gecode { namespace Int { namespace Arithmetic {
       GECODE_ME_CHECK(y.eq(home,1 % m));
       return ES_OK;
     }
-    if (product_mod_zero(x,m)) {
-      GECODE_ME_CHECK(y.eq(home,0));
+    int c=1, a=1;
+    product_mod_fold(x,m,c,a);
+    if ((c == 0) || (x.size() == 0)) {
+      GECODE_ME_CHECK(y.eq(home,c));
       return ES_OK;
     }
-    int residue;
-    if (product_mod_assigned(x,m,residue)) {
-      GECODE_ME_CHECK(y.eq(home,residue));
-      return ES_OK;
-    }
-    (void) new (home) ProductMod(home,x,m,y);
+    (void) new (home) ProductMod(home,x,m,y,c,a);
     return ES_OK;
   }
 
   forceinline
   ProductMod::ProductMod(Space& home, ProductMod& p)
-    : NaryOnePropagator<IntView,PC_INT_BND>(home,p), m(p.m) {}
+    : NaryOnePropagator<IntView,PC_INT_BND>(home,p),
+      m(p.m), c(p.c), a(p.a) {}
 
   forceinline Actor*
   ProductMod::copy(Space& home) {
@@ -186,7 +250,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   forceinline PropCost
   ProductMod::cost(const Space&, const ModEventDelta&) const {
-    return PropCost::quadratic(PropCost::LO,x.size()+1);
+    return PropCost::linear(PropCost::HI,x.size()+1);
   }
 
   forceinline size_t
@@ -200,22 +264,39 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     GECODE_ME_CHECK(y.gq(home,0));
     GECODE_ME_CHECK(y.lq(home,m-1));
 
-    if (product_mod_zero(x,m)) {
-      GECODE_ME_CHECK(y.eq(home,0));
-      return home.ES_SUBSUMED(*this);
-    }
-
-    int residue;
-    if (product_mod_assigned(x,m,residue)) {
-      GECODE_ME_CHECK(y.eq(home,residue));
-      return home.ES_SUBSUMED(*this);
-    }
-
+    Region region;
+    ProductInterval* prefix=NULL;
+    ProductInterval* suffix=NULL;
     bool modified;
     do {
       modified=false;
+      product_mod_fold(x,m,c,a);
+      if ((c == 0) || (x.size() == 0)) {
+        GECODE_ME_CHECK(y.eq(home,c));
+        return home.ES_SUBSUMED(*this);
+      }
+      const unsigned int old_size=y.size();
+      GECODE_ES_CHECK(gcd_multiple_bounds(home,y,gcd_value(c,m)));
+      modified |= old_size != y.size();
+      if (y.min() > 0)
+        GECODE_ES_CHECK(product_mod_nonzero(home,x,modified));
+
+      // One remaining occurrence gives a linear congruence.
+      if ((x.size() == 1) && y.assigned()) {
+        const ProductInterval bounds={x[0].min(),x[0].max()};
+        const ProductInterval solutions=
+          product_mod_congruence(bounds,c,m,y.val());
+        if (solutions.min > solutions.max)
+          return ES_FAILED;
+        ModEvent me=x[0].gq(home,solutions.min);
+        if (me_failed(me)) return ES_FAILED;
+        modified |= me_modified(me);
+        me=x[0].lq(home,solutions.max);
+        if (me_failed(me)) return ES_FAILED;
+        modified |= me_modified(me);
+      }
       ProductInterval p;
-      if (product_mod_interval(x,p)) {
+      if ((a != 0) && product_mod_interval(x,p,a)) {
         const long long int kl = floor_div_xx
           (static_cast<long long int>(p.min),static_cast<long long int>(m));
         const long long int ku = floor_div_xx
@@ -235,29 +316,27 @@ namespace Gecode { namespace Int { namespace Arithmetic {
             modified |= me_modified(me);
           }
 
+          // Allocate cofactors only when interval inversion can contribute.
+          if (prefix == NULL) {
+            prefix=region.alloc<ProductInterval>(x.size()+1);
+            suffix=region.alloc<ProductInterval>(x.size()+1);
+          }
+          if (!product_mod_intervals(x,prefix,suffix,a))
+            continue;
+
           // Within one quotient band, invert the exact-product interval.
           const long long int tmin=static_cast<long long int>(y.min())+shift;
           const long long int tmax=static_cast<long long int>(y.max())+shift;
           for (int i=0; i<x.size(); i++) {
             ProductInterval q;
-            if (product_mod_interval(x,q,i) &&
+            if (product_mod_interval_mul(prefix[i],suffix[i+1],q) &&
                 ((q.min > 0) || (q.max < 0))) {
-              long long int c[4] = {
-                ceil_div_xx(tmin,static_cast<long long int>(q.min)),
-                ceil_div_xx(tmin,static_cast<long long int>(q.max)),
-                ceil_div_xx(tmax,static_cast<long long int>(q.min)),
-                ceil_div_xx(tmax,static_cast<long long int>(q.max))
-              };
-              long long int f[4] = {
-                floor_div_xx(tmin,static_cast<long long int>(q.min)),
-                floor_div_xx(tmin,static_cast<long long int>(q.max)),
-                floor_div_xx(tmax,static_cast<long long int>(q.min)),
-                floor_div_xx(tmax,static_cast<long long int>(q.max))
-              };
-              long long int l=*std::min_element(c,c+4);
-              long long int u=*std::max_element(f,f+4);
-              l=std::max(l,static_cast<long long int>(Limits::min));
-              u=std::min(u,static_cast<long long int>(Limits::max));
+              const ProductWideInterval d=
+                product_quotient_bounds(tmin,tmax,q.min,q.max);
+              const long long int l=std::max
+                (d.min,static_cast<long long int>(Limits::min));
+              const long long int u=std::min
+                (d.max,static_cast<long long int>(Limits::max));
               if (l > u) return ES_FAILED;
               {
                 ModEvent me=x[i].gq(home,static_cast<int>(l));
@@ -275,58 +354,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
       }
     } while (modified);
 
-    // If only one factor is free and the result is assigned, solve the
-    // resulting linear congruence and tighten to its extreme solutions.
-    bool congruence_modified=false;
-    if (y.assigned()) {
-      int free=-1;
-      long long int cofactor=1 % m;
-      for (int i=0; i<x.size(); i++) {
-        if (x[i].assigned()) {
-          long long int r=static_cast<long long int>(x[i].val()) % m;
-          if (r < 0) r += m;
-          cofactor=(cofactor*r) % m;
-        } else if (free < 0) {
-          free=i;
-        } else {
-          free=-2; break;
-        }
-      }
-      if (free >= 0) {
-        const long long int g=product_mod_gcd(cofactor,m);
-        if ((y.val() % g) != 0)
-          return ES_FAILED;
-        const long long int step=m/g;
-        long long int r=0;
-        if (step > 1) {
-          const long long int a=cofactor/g;
-          const long long int b=y.val()/g;
-          r=(product_mod_inverse(a % step,step) * b) % step;
-          if (r < 0) r += step;
-        }
-        const long long int l=r + ceil_div_xx
-          (static_cast<long long int>(x[free].min())-r,step)*step;
-        const long long int u=r + floor_div_xx
-          (static_cast<long long int>(x[free].max())-r,step)*step;
-        if (l > u) return ES_FAILED;
-        {
-          ModEvent me=x[free].gq(home,static_cast<int>(l));
-          if (me_failed(me)) return ES_FAILED;
-          congruence_modified |= me_modified(me);
-        }
-        {
-          ModEvent me=x[free].lq(home,static_cast<int>(u));
-          if (me_failed(me)) return ES_FAILED;
-          congruence_modified |= me_modified(me);
-        }
-      }
-    }
-
-    if (product_mod_assigned(x,m,residue)) {
-      GECODE_ME_CHECK(y.eq(home,residue));
-      return home.ES_SUBSUMED(*this);
-    }
-    return congruence_modified ? ES_NOFIX : ES_FIX;
+    return ES_FIX;
   }
 
   /// Whether the modulus occurs among the factors.
@@ -395,82 +423,96 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   /// Propagate a nonnegative representable product with a variable modulus.
   inline ExecStatus
   product_mod_var_ranges(Home home, ViewArray<IntView>& x, IntView m,
-                         IntView y, bool& modified) {
-    modified=false;
-    for (int i=0; i<x.size(); i++)
-      if (x[i].min() < 0)
+                         IntView y) {
+    Region region;
+    ProductInterval* prefix=NULL;
+    ProductInterval* suffix=NULL;
+    bool modified;
+    do {
+      modified=false;
+      if (y.min() > 0)
+        GECODE_ES_CHECK(product_mod_nonzero(home,x,modified));
+      for (int i=0; i<x.size(); i++)
+        if (x[i].min() < 0)
+          return ES_OK;
+      ProductInterval p;
+      if (!product_mod_interval(x,p))
         return ES_OK;
 
-    ProductInterval p;
-    if (!product_mod_interval(x,p))
-      return ES_OK;
+      {
+        ModEvent me=y.lq(home,std::min(p.max,m.max()-1));
+        if (me_failed(me)) return ES_FAILED;
+        modified |= me_modified(me);
+      }
 
-    {
-      ModEvent me=y.lq(home,std::min(p.max,m.max()-1));
-      if (me_failed(me)) return ES_FAILED;
-      modified |= me_modified(me);
-    }
-
-    const long long int kmin =
-      static_cast<long long int>(p.min) / m.max();
-    const long long int kmax =
-      static_cast<long long int>(p.max) / m.min();
-    if (kmin != kmax)
-      return ES_OK;
-
-    const long long int k=kmin;
-    const long long int rmin =
-      static_cast<long long int>(p.min)-k*m.max();
-    const long long int rmax =
-      static_cast<long long int>(p.max)-k*m.min();
-    {
-      ModEvent me=y.gq(home,static_cast<int>(rmin));
-      if (me_failed(me)) return ES_FAILED;
-      modified |= me_modified(me);
-    }
-    {
-      ModEvent me=y.lq(home,static_cast<int>(rmax));
-      if (me_failed(me)) return ES_FAILED;
-      modified |= me_modified(me);
-    }
-    {
-      ModEvent me=m.gq(home,y.min()+1);
-      if (me_failed(me)) return ES_FAILED;
-      modified |= me_modified(me);
-    }
-
-    const long long int tmin=k*m.min()+y.min();
-    const long long int tmax=k*m.max()+y.max();
-    for (int i=0; i<x.size(); i++) {
-      ProductInterval q;
-      if (!product_mod_interval(x,q,i))
+      const long long int kmin =
+        static_cast<long long int>(p.min) / m.max();
+      const long long int kmax =
+        static_cast<long long int>(p.max) / m.min();
+      if (kmin != kmax)
         continue;
-      if (q.max == 0) {
-        if (tmin > 0)
+
+      const long long int k=kmin;
+      const long long int rmin =
+        static_cast<long long int>(p.min)-k*m.max();
+      const long long int rmax =
+        static_cast<long long int>(p.max)-k*m.min();
+      {
+        ModEvent me=y.gq(home,static_cast<int>(rmin));
+        if (me_failed(me)) return ES_FAILED;
+        modified |= me_modified(me);
+      }
+      {
+        ModEvent me=y.lq(home,static_cast<int>(rmax));
+        if (me_failed(me)) return ES_FAILED;
+        modified |= me_modified(me);
+      }
+      {
+        ModEvent me=m.gq(home,y.min()+1);
+        if (me_failed(me)) return ES_FAILED;
+        modified |= me_modified(me);
+      }
+
+      if (prefix == NULL) {
+        prefix=region.alloc<ProductInterval>(x.size()+1);
+        suffix=region.alloc<ProductInterval>(x.size()+1);
+      }
+      if (!product_mod_intervals(x,prefix,suffix))
+        continue;
+
+      const long long int tmin=k*m.min()+y.min();
+      const long long int tmax=k*m.max()+y.max();
+      for (int i=0; i<x.size(); i++) {
+        ProductInterval q;
+        if (!product_mod_interval_mul(prefix[i],suffix[i+1],q))
+          continue;
+        if (q.max == 0) {
+          if (tmin > 0)
+            return ES_FAILED;
+          continue;
+        }
+        const long long int candidate_min=ceil_div_xx(tmin,
+          static_cast<long long int>(q.max));
+        const long long int candidate_max=(q.min == 0) ? x[i].max() :
+          floor_div_xx(tmax,static_cast<long long int>(q.min));
+        const long long int l=std::max(
+          candidate_min,static_cast<long long int>(x[i].min()));
+        const long long int u=std::min(
+          candidate_max,static_cast<long long int>(x[i].max()));
+        if (l > u)
           return ES_FAILED;
-        continue;
+        {
+          ModEvent me=x[i].gq(home,static_cast<int>(l));
+          if (me_failed(me)) return ES_FAILED;
+          modified |= me_modified(me);
+        }
+        {
+          ModEvent me=x[i].lq(home,static_cast<int>(u));
+          if (me_failed(me)) return ES_FAILED;
+          modified |= me_modified(me);
+        }
       }
-      const long long int candidate_min=ceil_div_xx(tmin,
-        static_cast<long long int>(q.max));
-      const long long int candidate_max=(q.min == 0) ? x[i].max() :
-        floor_div_xx(tmax,static_cast<long long int>(q.min));
-      const long long int l=std::max(
-        candidate_min,static_cast<long long int>(x[i].min()));
-      const long long int u=std::min(
-        candidate_max,static_cast<long long int>(x[i].max()));
-      if (l > u)
-        return ES_FAILED;
-      {
-        ModEvent me=x[i].gq(home,static_cast<int>(l));
-        if (me_failed(me)) return ES_FAILED;
-        modified |= me_modified(me);
-      }
-      {
-        ModEvent me=x[i].lq(home,static_cast<int>(u));
-        if (me_failed(me)) return ES_FAILED;
-        modified |= me_modified(me);
-      }
-    }
+    } while (modified);
     return ES_OK;
   }
 
@@ -481,8 +523,9 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     if ((m == y) || (m.max() <= 0) || (y.max() < 0) ||
         (y.min() >= m.max()))
       return RT_FALSE;
-    bool zero=product_mod_var_mod_factor(x,m) ||
-      (m.assigned() && (m.val() == 1));
+    if (m.assigned())
+      return product_mod_status(x,y,m.val());
+    bool zero=product_mod_var_mod_factor(x,m);
     for (int i=0; !zero && (i<x.size()); i++)
       zero=x[i].assigned() && (x[i].val() == 0);
     if (zero) {
@@ -494,10 +537,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
       const bool zero=m.in(1) && y.in(0);
       const bool one=(m.max() >= 2) && y.in(1);
       if (!zero && !one) return RT_FALSE;
-      if ((m.min() > 0) &&
-          ((m.assigned() && (m.val() == 1) && y.assigned() &&
-            (y.val() == 0)) ||
-           ((m.min() >= 2) && y.assigned() && (y.val() == 1))))
+      if ((m.min() >= 2) && y.assigned() && (y.val() == 1))
         return RT_TRUE;
       return RT_MAYBE;
     }
@@ -517,16 +557,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
           return RT_FALSE;
       }
     }
-    bool assigned=m.assigned() && y.assigned();
-    for (int i=0; assigned && (i<x.size()); i++)
-      assigned=x[i].assigned();
-    if (!assigned)
-      return RT_MAYBE;
-    if ((m.val() <= 0) || (y.val() < 0) || (y.val() >= m.val()))
-      return RT_FALSE;
-    int residue;
-    (void) product_mod_assigned(x,m.val(),residue);
-    return residue == y.val() ? RT_TRUE : RT_FALSE;
+    return RT_MAYBE;
   }
 
   forceinline
@@ -547,6 +578,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     GECODE_ME_CHECK(y.gq(home,0));
     GECODE_ME_CHECK(y.lq(home,m.max()-1));
     GECODE_ME_CHECK(m.gq(home,y.min()+1));
+    product_mod_units(x);
     if (product_mod_var_mod_factor(x,m)) {
       GECODE_ME_CHECK(y.eq(home,0));
       return ES_OK;
@@ -580,7 +612,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   forceinline PropCost
   ProductModVar::cost(const Space&, const ModEventDelta&) const {
-    return PropCost::quadratic(PropCost::HI,x.size()+2);
+    return PropCost::linear(PropCost::HI,x.size()+2);
   }
 
   forceinline void
@@ -596,6 +628,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     GECODE_ME_CHECK(y.gq(home,0));
     GECODE_ME_CHECK(y.lq(home,m.max()-1));
     GECODE_ME_CHECK(m.gq(home,y.min()+1));
+    product_mod_units(x);
     if (product_mod_var_mod_factor(x,m)) {
       GECODE_ME_CHECK(y.eq(home,0));
       return home.ES_SUBSUMED(*this);
@@ -629,10 +662,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     if (m.assigned())
       GECODE_REWRITE(*this,ProductMod::post(home(*this),x,m.val(),y));
 
-    bool modified;
-    do {
-      GECODE_ES_CHECK(product_mod_var_ranges(home,x,m,y,modified));
-    } while (modified);
+    GECODE_ES_CHECK(product_mod_var_ranges(home,x,m,y));
     if (m.assigned())
       GECODE_REWRITE(*this,ProductMod::post(home(*this),x,m.val(),y));
 
@@ -674,7 +704,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
                                        IntView modulus, IntView w, BoolView c)
     : Propagator(home), x(z), m(modulus), y(w), b(c) {
     home.notice(*this,AP_WEAKLY);
-    x.subscribe(home,*this,PC_INT_VAL);
+    x.subscribe(home,*this,PC_INT_BND);
     m.subscribe(home,*this,PC_INT_BND);
     y.subscribe(home,*this,PC_INT_BND);
     b.subscribe(home,*this,PC_BOOL_VAL);
@@ -718,7 +748,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   template<ReifyMode rm>
   forceinline void
   ReProductModVar<rm>::reschedule(Space& home) {
-    x.reschedule(home,*this,PC_INT_VAL);
+    x.reschedule(home,*this,PC_INT_BND);
     m.reschedule(home,*this,PC_INT_BND);
     y.reschedule(home,*this,PC_INT_BND);
     b.reschedule(home,*this,PC_BOOL_VAL);
@@ -760,7 +790,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   template<ReifyMode rm>
   forceinline size_t
   ReProductModVar<rm>::dispose(Space& home) {
-    x.cancel(home,*this,PC_INT_VAL);
+    x.cancel(home,*this,PC_INT_BND);
     m.cancel(home,*this,PC_INT_BND);
     y.cancel(home,*this,PC_INT_BND);
     b.cancel(home,*this,PC_BOOL_VAL);

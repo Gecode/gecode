@@ -949,8 +949,13 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     using NaryOnePropagator<IntView,PC_INT_BND>::y;
     /// Positive modulus
     int m;
+    /// Canonical residue of removed factors
+    int c;
+    /// Exact product of removed factors, or zero when not representable
+    int a;
     /// Constructor for posting
-    ProductMod(Home home, ViewArray<IntView>& x, int m, IntView y);
+    ProductMod(Home home, ViewArray<IntView>& x, int m, IntView y,
+               int c, int a);
     /// Constructor for cloning \a p
     ProductMod(Space& home, ProductMod& p);
   public:
