@@ -3,7 +3,7 @@ schema_version = 1
 id = "comparison-006"
 key = "review-corrections"
 area = "comparison"
-status = "open"
+status = "done"
 complexity = "standard"
 blocked_by = []
 +++
@@ -24,11 +24,11 @@ User approved the five findings of the branch review. Par::BAB::next loses its p
 
 ## Done when
 
-- [ ] Parallel BAB releases any popped solution before rethrowing a comparison failure, and sequential PBS releases its candidate when incumbent broadcasting throws.
-- [ ] Focused regression tests check space lifetime after comparison failure and engine destruction; portfolio models preserve/reinstall branchers and unsupported-comparison tests use a genuinely unsupported model.
-- [ ] Public documentation states ordering laws, exact-search compatibility with constrain, nested/equivalent cut requirements, compatible asset semantics, float bound ranking, and model-owned readiness.
-- [ ] Document conservative, accurate post-exception use/reset/destruction guarantees without promising unimplemented recovery.
-- [ ] Rebuilt focused comparison, external-incumbent, BAB/PBS failure, float and FlatZinc checks pass; run existing PBS coverage and applicable no-thread focused checks.
+- [x] Parallel BAB releases any popped solution before rethrowing a comparison failure, and sequential PBS releases its candidate when incumbent broadcasting throws.
+- [x] Focused regression tests check space lifetime after comparison failure and engine destruction; portfolio models preserve/reinstall branchers and unsupported-comparison tests use a genuinely unsupported model.
+- [x] Public documentation states ordering laws, exact-search compatibility with constrain, nested/equivalent cut requirements, compatible asset semantics, float bound ranking, and model-owned readiness.
+- [x] Document conservative, accurate post-exception use/reset/destruction guarantees without promising unimplemented recovery.
+- [x] Rebuilt focused comparison, external-incumbent, BAB/PBS failure, float and FlatZinc checks pass; run existing PBS coverage and applicable no-thread focused checks.
 
 ## Validation
 
@@ -36,3 +36,14 @@ User approved the five findings of the branch review. Par::BAB::next loses its p
 - Run focused Search::Comparison, Search::ExternalIncumbent, Search::ParallelBABComparison, Search::PortfolioComparison, Search::FloatObjectiveComparison and FlatZinc objective comparison tests with confirmed matches and process deadlines.
 - Run the existing Search::PBS:: matrix at one iteration and focused no-thread comparison/portfolio checks. Validate owned-space cleanup for both reported leaks.
 - Run git diff --check and zdev check comparison.
+
+## Result
+
+Fixed solution ownership on comparison failures, repaired regression fixtures, and published ordering, pruning, readiness, float-ranking, and recovery contracts; independently verified.
+
+Validation:
+
+- Threaded and no-thread gecode-test builds passed; every applicable focused comparison and FlatZinc test matched and passed.
+- All 276 Search::PBS:: cases passed at one iteration.
+- Sequential PBS and parallel BAB probes each caught 100 failures with zero surviving spaces after destruction.
+- Independent verifier passed immutable snapshot W9a4b02f606b0b537; git diff --check and zdev check comparison passed.
