@@ -3,9 +3,9 @@
 # Tasks: comparison
 
 - Total: 6
-- Ready: 1
+- Ready: 0
 - Blocked: 0
-- Done: 5
+- Done: 6
 
 | ID | Task | State | Blocked by |
 | --- | --- | --- | --- |
@@ -14,4 +14,4 @@
 | [comparison-003](tasks/003-use-comparison-for-sequential-bab-and-restart-incumbent-upda.md) | Use comparison for sequential BAB and restart incumbent updates | done | comparison-001 |
 | [comparison-004](tasks/004-use-comparison-for-parallel-bab-and-safely-report-comparison.md) | Use comparison for parallel BAB and safely report comparison failures | done | comparison-002, comparison-003 |
 | [comparison-005](tasks/005-integrate-comparison-through-portfolios-and-complete-the-mig.md) | Integrate comparison through portfolios and complete the migration | done | comparison-004 |
-| [comparison-006](tasks/006-fix-review-findings-in-comparison-ownership-tests-and-public.md) | Fix review findings in comparison ownership, tests, and public contract | ready | — |
+| [comparison-006](tasks/006-fix-review-findings-in-comparison-ownership-tests-and-public.md) | Fix review findings in comparison ownership, tests, and public contract | done | — |
