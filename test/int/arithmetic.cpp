@@ -38,6 +38,7 @@
 #include <memory>
 
 #include <gecode/minimodel.hh>
+#include <gecode/int/arithmetic.hh>
 
 namespace Test { namespace Int {
 
@@ -958,6 +959,46 @@ namespace Test { namespace Int {
        }
      };
 
+     class ProductModDispose : public ::Test::Base {
+       class TestSpace : public Gecode::Space {
+       public:
+         virtual Gecode::Space* copy(void) { return nullptr; }
+       };
+       class DisposeProbe : public Gecode::Int::Arithmetic::ProductMod {
+         size_t& disposed;
+       public:
+         DisposeProbe(Gecode::Home home,
+                      Gecode::ViewArray<Gecode::Int::IntView>& x,
+                      Gecode::Int::IntView y, size_t& d)
+           : ProductMod(home,x,7,y), disposed(d) {}
+         virtual size_t dispose(Gecode::Space& home) {
+           disposed=ProductMod::dispose(home);
+           // The probe has its own field, beyond the actor being checked.
+           return sizeof(*this);
+         }
+       };
+     public:
+       ProductModDispose(void)
+         : ::Test::Base("Int::Arithmetic::ProductMod::Dispose") {}
+       virtual bool run(void) {
+         using namespace Gecode;
+         size_t disposed=0;
+         TestSpace home;
+         IntVarArgs factors(home,2,1,3);
+         IntVar y(home,0,6);
+         ViewArray<Gecode::Int::IntView> x(home,factors);
+         (void) new (home) DisposeProbe(home,x,y,disposed);
+         PropagatorGroup::all.kill(home);
+         if (disposed != sizeof(Gecode::Int::Arithmetic::ProductMod)) {
+           if (opt.log)
+             olog << "disposed " << disposed << " bytes, expected "
+                  << sizeof(Gecode::Int::Arithmetic::ProductMod) << std::endl;
+           return false;
+         }
+         return true;
+       }
+     };
+
      /// %Test for the empty modular product, including modulus one
      class ProductModEmpty : public Test {
      protected:
@@ -1351,6 +1392,42 @@ namespace Test { namespace Int {
              return arithmetic_failed
                ("check 5: x, c, m, y",
                 Gecode::IntVarArgs() << x << c << m << y);
+         }
+         return true;
+       }
+     };
+
+     class ProductModVarSparseModulus : public ::Test::Base {
+       class TestSpace : public Gecode::Space {
+       public:
+         virtual Gecode::Space* copy(void) { return nullptr; }
+       };
+       /// Whether the remaining modulus domain contains a solution
+       bool supported;
+     public:
+       ProductModVarSparseModulus(bool s)
+         : ::Test::Base("Int::Arithmetic::ProductModVar::SparseModulus::"+
+                        std::string(s ? "Assignment" : "Failure")),
+           supported(s) {}
+       virtual bool run(void) {
+         using namespace Gecode;
+         TestSpace home;
+         IntVar p(home,60,60), y(home,4,4);
+         IntVar m(home,IntSet({20,supported ? 28 : 25,100}));
+         product_mod(home,IntVarArgs({p}),m,y);
+         branch(home,m,INT_VAL_MIN());
+         const SpaceStatus status=home.status();
+         // m must divide 60-4=56. Dropping 100 exposes a single quotient
+         // band, which must be reconsidered without an external wakeup.
+         if (supported) {
+           if ((status == SS_FAILED) || !m.assigned() || (m.val() != 28))
+             return arithmetic_failed
+               ("sparse modulus must become 28: p, m, y",
+                IntVarArgs() << p << m << y);
+         } else if (status != SS_FAILED) {
+           return arithmetic_failed
+             ("sparse modulus has no divisor of 56: p, m, y",
+              IntVarArgs() << p << m << y);
          }
          return true;
        }
@@ -2818,6 +2895,9 @@ namespace Test { namespace Int {
          (void) new NumberTheoryLimits;
          (void) new NumberTheoryIdentities;
          (void) new ProductModInvalidModulus;
+         (void) new ProductModDispose;
+         (void) new ProductModVarSparseModulus(false);
+         (void) new ProductModVarSparseModulus(true);
          (void) new ProductModAlgebraic;
          (void) new ProductModVarBounds;
          (void) new ProductModVarAlgebraic;
