@@ -94,29 +94,22 @@ namespace Gecode { namespace Search { namespace Par {
     : b(nullptr), reporter(nullptr) {}
   forceinline bool
   CollectBest::add(Space* s, Slave<CollectBest>* r) {
-    if (b != nullptr) {
-      b->constrain(*s);
-      if (b->status() == SS_FAILED) {
-        delete b;
-      } else {
-        delete s;
-        return false;
-      }
+    if ((b != nullptr) &&
+        !Search::better(*s,*b,"PBS::CollectBest::add")) {
+      delete s;
+      return false;
     }
+    delete b;
     b = s;
     reporter = r;
     return true;
   }
   forceinline bool
   CollectBest::constrain(const Space& s) {
-    if (b != nullptr) {
-      b->constrain(s);
-      if (b->status() == SS_FAILED) {
-        delete b;
-      } else {
-        return false;
-      }
-    }
+    if ((b != nullptr) &&
+        !Search::better(s,*b,"PBS::CollectBest::constrain"))
+      return false;
+    delete b;
     b = s.clone();
     reporter = nullptr;
     return true;
@@ -207,9 +200,16 @@ namespace Gecode { namespace Search { namespace Par {
     bool b = true;
     m.acquire();
     if (s != nullptr) {
-      b = solutions.add(s,slave);
-      if (b)
+      try {
+        b = solutions.add(s,slave);
+        if (b)
+          tostop.store(true, std::memory_order_release);
+      } catch (...) {
+        delete s;
+        if (failure == nullptr)
+          failure = std::current_exception();
         tostop.store(true, std::memory_order_release);
+      }
     } else if (slave->stopped()) {
       if (!tostop.load(std::memory_order_acquire))
         slave_stop.store(true, std::memory_order_release);
@@ -232,18 +232,39 @@ namespace Gecode { namespace Search { namespace Par {
   }
 
   template<class Collect>
+  forceinline void
+  PBS<Collect>::fail(void) {
+    m.acquire();
+    if (failure == nullptr)
+      failure = std::current_exception();
+    tostop.store(true, std::memory_order_release);
+    if (--n_busy == 0)
+      idle.signal();
+    m.release();
+  }
+
+  template<class Collect>
   void
   Slave<Collect>::run(void) {
-    Space* s;
-    do {
-      s = slave->next();
-    } while (!master->report(this,s));
+    try {
+      Space* s;
+      do {
+        s = slave->next();
+      } while (!master->report(this,s));
+    } catch (...) {
+      master->fail();
+    }
   }
 
   template<class Collect>
   Space*
   PBS<Collect>::next(void) {
     m.acquire();
+    if (failure != nullptr) {
+      std::exception_ptr f = failure;
+      m.release();
+      std::rethrow_exception(f);
+    }
     if (solutions.empty()) {
       // Clear all
       tostop.store(false, std::memory_order_release);
@@ -280,10 +301,26 @@ namespace Gecode { namespace Search { namespace Par {
     } else {
       Slave<Collect>* r;
       s = solutions.get(r);
-      if (Collect::best)
-        for (unsigned int i=0U; i<n_active; i++)
-          if (slaves[i] != r)
-            slaves[i]->constrain(*s);
+      if (Collect::best) {
+        try {
+          for (unsigned int i=0U; i<n_active; i++)
+            if (slaves[i] != r)
+              slaves[i]->constrain(*s);
+        } catch (...) {
+          delete s;
+          failure = std::current_exception();
+          std::exception_ptr f = failure;
+          m.release();
+          std::rethrow_exception(f);
+        }
+      }
+    }
+
+    if (failure != nullptr) {
+      delete s;
+      std::exception_ptr f = failure;
+      m.release();
+      std::rethrow_exception(f);
     }
 
     m.release();
@@ -312,10 +349,15 @@ namespace Gecode { namespace Search { namespace Par {
     assert(n_busy == 0);
     if (!Collect::best)
       throw NoBest("PBS::constrain");
-    if (solutions.constrain(b)) {
-      // The solution is better
-      for (unsigned int i=0U; i<n_active; i++)
-        slaves[i]->constrain(b);
+    try {
+      if (solutions.constrain(b)) {
+        // The solution is better
+        for (unsigned int i=0U; i<n_active; i++)
+          slaves[i]->constrain(b);
+      }
+    } catch (...) {
+      failure = std::current_exception();
+      std::rethrow_exception(failure);
     }
   }
 

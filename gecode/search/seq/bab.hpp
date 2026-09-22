@@ -161,14 +161,9 @@ namespace Gecode { namespace Search { namespace Seq {
   template<class Tracer>
   forceinline void
   BAB<Tracer>::constrain(const Space& b) {
-    if (best != nullptr) {
-      // Check whether b is in fact better than best
-      best->constrain(b);
-      if (best->status(*this) != SS_FAILED)
-        return;
-      else
-        delete best;
-    }
+    if ((best != nullptr) && !Search::better(b,*best,"BAB::constrain"))
+      return;
+    delete best;
     best = b.clone();
     if (cur != nullptr)
       cur->constrain(b);

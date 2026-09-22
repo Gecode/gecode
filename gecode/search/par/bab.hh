@@ -35,6 +35,7 @@
 #define GECODE_SEARCH_PAR_BAB_HH
 
 #include <gecode/search/par/engine.hh>
+#include <exception>
 
 namespace Gecode { namespace Search { namespace Par {
 
@@ -46,6 +47,7 @@ namespace Gecode { namespace Search { namespace Par {
     using Engine<Tracer>::busy;
     using Engine<Tracer>::stop;
     using Engine<Tracer>::block;
+    using Engine<Tracer>::cmd;
     using Engine<Tracer>::e_search;
     using Engine<Tracer>::e_reset_ack_start;
     using Engine<Tracer>::e_reset_ack_stop;
@@ -100,6 +102,8 @@ namespace Gecode { namespace Search { namespace Par {
     Worker** _worker;
     /// Best solution so far
     Space* best;
+    /// Failure raised while accepting a solution in a worker thread
+    std::exception_ptr failure;
   public:
     /// Provide access to worker \a i
     Worker* worker(unsigned int i) const;
@@ -114,6 +118,8 @@ namespace Gecode { namespace Search { namespace Par {
     //@{
     /// Initialize for space \a s with options \a o
     BAB(Space* s, const Options& o);
+    /// Return next solution
+    virtual Space* next(void);
     /// Return statistics
     virtual Statistics statistics(void) const;
     /// Reset engine to restart at space \a s
