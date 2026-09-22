@@ -240,6 +240,7 @@ namespace Gecode { namespace Search { namespace Par {
       // block workers, so finish the normal lifecycle before reporting.
       if (cmd() != C_WAIT)
         block();
+      delete s;
       std::rethrow_exception(f);
     }
     return s;

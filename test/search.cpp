@@ -480,6 +480,11 @@ namespace Test {
       }
       virtual Space* copy(void) { return new ParallelObjective(*this); }
       virtual IntVar cost(void) const { return x; }
+      virtual bool master(const MetaInfo& mi) {
+        if (mi.type() == MetaInfo::PORTFOLIO)
+          return false;
+        return Space::master(mi);
+      }
     };
 
     /// Comparison error raised by a model
@@ -492,16 +497,20 @@ namespace Test {
     /// Objective used to exercise asynchronous comparison failures
     class FailingParallelObjective : public Space {
     public:
+      static std::atomic<int> live;
       enum Failure { MISSING, THROWN, INCOMPARABLE };
       IntVar x;
       Failure failure;
       FailingParallelObjective(Failure f) : x(*this,0,10), failure(f) {
+        live++;
         Gecode::branch(*this,x,INT_VAL_MAX());
       }
       FailingParallelObjective(FailingParallelObjective& s)
         : Space(s), failure(s.failure) {
+        live++;
         x.update(*this,s.x);
       }
+      virtual ~FailingParallelObjective(void) { live--; }
       virtual Space* copy(void) {
         return new FailingParallelObjective(*this);
       }
@@ -512,7 +521,14 @@ namespace Test {
           throw ComparisonError();
         return SC_INCOMPARABLE;
       }
+      virtual bool master(const MetaInfo& mi) {
+        if (mi.type() == MetaInfo::PORTFOLIO)
+          return false;
+        return Space::master(mi);
+      }
     };
+
+    std::atomic<int> FailingParallelObjective::live(0);
 
     /// Objective with a genuine partial-order result
     class IncomparableObjective : public ExternalObjective {
@@ -523,6 +539,14 @@ namespace Test {
       virtual SpaceComparison compare(const Space&) const {
         return SC_INCOMPARABLE;
       }
+    };
+
+    /// Search model without objective comparison support
+    class UnsupportedObjective : public Space {
+    public:
+      UnsupportedObjective(void) {}
+      UnsupportedObjective(UnsupportedObjective& s) : Space(s) {}
+      virtual Space* copy(void) { return new UnsupportedObjective(*this); }
     };
 
     /// Test sequential BAB and RBS external incumbent arbitration
@@ -579,9 +603,12 @@ namespace Test {
         } catch (const Gecode::Search::Incomparable&) {}
         delete rejecting;
 
-        SolveImmediate unsupported(HTB_NONE,HTB_NONE,HTB_NONE);
+        UnsupportedObjective unsupported;
+        UnsupportedObjective* um =
+          static_cast<UnsupportedObjective*>(unsupported.clone());
         Gecode::Search::Engine* missing = Gecode::Search::babengine(
-          unsupported.clone(),Gecode::Search::Options());
+          um,Gecode::Search::Options());
+        delete um;
         missing->constrain(unsupported);
         try {
           missing->constrain(unsupported);
@@ -595,6 +622,7 @@ namespace Test {
 
     ExternalIncumbent external_incumbent;
 
+#ifdef GECODE_HAS_THREADS
     /// Test parallel BAB solution arbitration and failure delivery
     class ParallelBABComparison : public Base {
     private:
@@ -617,6 +645,7 @@ namespace Test {
         return previous == 0;
       }
       static bool missingFailure(void) {
+        int live = FailingParallelObjective::live;
         Gecode::Search::TimeStop stop(5000);
         Gecode::Search::Options o = options();
         o.stop = &stop;
@@ -637,9 +666,10 @@ namespace Test {
         }
         bool recovered = resetSearch(e);
         delete e;
-        return recovered;
+        return recovered && (FailingParallelObjective::live == live);
       }
       static bool thrownFailure(void) {
+        int live = FailingParallelObjective::live;
         Gecode::Search::TimeStop stop(5000);
         Gecode::Search::Options o = options();
         o.stop = &stop;
@@ -652,12 +682,13 @@ namespace Test {
         } catch (const ComparisonError&) {
           bool recovered = resetSearch(e);
           delete e;
-          return recovered;
+          return recovered && (FailingParallelObjective::live == live);
         }
         delete e;
         return false;
       }
       static bool incomparableFailure(void) {
+        int live = FailingParallelObjective::live;
         Gecode::Search::TimeStop stop(5000);
         Gecode::Search::Options o = options();
         o.stop = &stop;
@@ -670,7 +701,7 @@ namespace Test {
         } catch (const Gecode::Search::Incomparable&) {
           bool recovered = resetSearch(e);
           delete e;
-          return recovered;
+          return recovered && (FailingParallelObjective::live == live);
         }
         delete e;
         return false;
@@ -720,6 +751,7 @@ namespace Test {
     };
 
     ParallelBABComparison parallel_bab_comparison;
+#endif
 
     /// Test portfolio comparison, external bounds, and nested failures
     class PortfolioComparison : public Base {
@@ -730,23 +762,29 @@ namespace Test {
         o.threads = 2;
         return o;
       }
-      static bool failure(FailingParallelObjective::Failure f) {
-        FailingParallelObjective* m = new FailingParallelObjective(f);
-        Gecode::PBS<FailingParallelObjective,Gecode::BAB> pbs(m,options());
-        delete m;
-        try {
-          while (Space* s = pbs.next()) delete s;
-        } catch (const SpaceNoComparison&) {
-          if (f != FailingParallelObjective::MISSING)
-            return false;
-          try { (void) pbs.next(); }
-          catch (const SpaceNoComparison&) { return true; }
-        } catch (const ComparisonError&) {
-          return f == FailingParallelObjective::THROWN;
-        } catch (const Gecode::Search::Incomparable&) {
-          return f == FailingParallelObjective::INCOMPARABLE;
+      static bool failure(FailingParallelObjective::Failure f,
+                          double threads=2.0) {
+        int live = FailingParallelObjective::live;
+        bool caught = false;
+        {
+          FailingParallelObjective* m = new FailingParallelObjective(f);
+          Gecode::Search::Options o = options();
+          o.threads = threads;
+          Gecode::PBS<FailingParallelObjective,Gecode::BAB> pbs(m,o);
+          delete m;
+          try {
+            while (Space* s = pbs.next()) delete s;
+          } catch (const SpaceNoComparison&) {
+            if (f != FailingParallelObjective::MISSING)
+              return false;
+            caught = true;
+          } catch (const ComparisonError&) {
+            caught = (f == FailingParallelObjective::THROWN);
+          } catch (const Gecode::Search::Incomparable&) {
+            caught = (f == FailingParallelObjective::INCOMPARABLE);
+          }
         }
-        return false;
+        return caught && (FailingParallelObjective::live == live);
       }
     public:
       PortfolioComparison(void) : Base("Search::PortfolioComparison") {}
@@ -809,6 +847,7 @@ namespace Test {
           previous = value;
         }
         return (previous == 0) &&
+          failure(FailingParallelObjective::MISSING,1) &&
           failure(FailingParallelObjective::MISSING) &&
           failure(FailingParallelObjective::THROWN) &&
           failure(FailingParallelObjective::INCOMPARABLE);
@@ -942,6 +981,7 @@ namespace Test {
         try { (void) m10.compare(x10); return false; }
         catch (const DynamicCastFailed&) {}
 
+#ifdef GECODE_HAS_THREADS
         Gecode::Search::TimeStop stop(5000);
         Gecode::Search::Options o;
         o.threads = 2;
@@ -960,6 +1000,7 @@ namespace Test {
         delete p95;
         if (!substep)
           return false;
+#endif
         return true;
       }
     };

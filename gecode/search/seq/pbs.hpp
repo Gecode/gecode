@@ -101,10 +101,15 @@ namespace Gecode { namespace Search { namespace Seq {
       if (Space* s = slaves[cur].next()) {
         // Constrain other slaves
         if (best) {
-          for (unsigned int i=0U; i<cur; i++)
-            slaves[i].constrain(*s);
-          for (unsigned int i=cur+1; i<n_slaves; i++)
-            slaves[i].constrain(*s);
+          try {
+            for (unsigned int i=0U; i<cur; i++)
+              slaves[i].constrain(*s);
+            for (unsigned int i=cur+1; i<n_slaves; i++)
+              slaves[i].constrain(*s);
+          } catch (...) {
+            delete s;
+            throw;
+          }
         }
         return s;
       }
