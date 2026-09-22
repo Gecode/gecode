@@ -73,6 +73,19 @@ Date: unreleased
 [DESCRIPTION]
 This is the development changelog for the next Gecode release.
 
+[ENTRY]
+Module: int
+What:   new
+Rank:   major
+[DESCRIPTION]
+Add ordinary and reified gcd, n-ary product, and n-ary product_mod
+constraints, and reified divides. GCD uses nonnegative results and
+gcd(0,0)=0; zero divides zero. Modular products accept a fixed positive
+modulus or a variable modulus and use nonnegative Euclidean residues,
+including for negative products. All reification modes are supported.
+Propagation uses bounds and algebraic reasoning; the propagation-level
+argument does not select different consistency strengths.
+
 [RELEASE]
 Version: 6.4.0
 Date: 2026-07-15
