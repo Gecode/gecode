@@ -124,9 +124,10 @@ namespace Test { namespace Int {
       Gecode::SetRelType srt;
     public:
       /// Create and register test
-      SetExprConst(const SetInstr* bis0, const std::string& s,
-                   Gecode::SetRelType srt0, int c0)
-        : Test("MiniModel::SetExpr::Const::"+s+"::"+str(srt0)+"::"+str(c0),
+      SetExprConst(TestTags tags, const SetInstr* bis0,
+                   const std::string& s, Gecode::SetRelType srt0, int c0)
+        : Test(tags,
+               "MiniModel::SetExpr::Const::"+s+"::"+str(srt0)+"::"+str(c0),
                4,0,1,simpleReifiedSemantics(bis0)),
           bis(bis0), c(c0), srt(srt0) {}
       /// %Test whether \a x is solution
@@ -210,9 +211,11 @@ namespace Test { namespace Int {
       Gecode::SetRelType srt;
     public:
       /// Create and register test
-      SetExprExpr(const SetInstr* bis00, const SetInstr* bis10,
-                  const std::string& s, Gecode::SetRelType srt0)
-        : Test("MiniModel::SetExpr::Expr::"+s+"::"+str(srt0),
+      SetExprExpr(TestTags tags, const SetInstr* bis00,
+                  const SetInstr* bis10, const std::string& s,
+                  Gecode::SetRelType srt0)
+        : Test(tags,
+               "MiniModel::SetExpr::Expr::"+s+"::"+str(srt0),
                8,0,1,
                simpleReifiedSemantics(bis00) &&
                simpleReifiedSemantics(bis10)),
@@ -4502,16 +4505,18 @@ namespace Test { namespace Int {
           } else if (i < 100) {
             s = "0" + s;
           }
-          (void) new SetExprConst(si[i],s,Gecode::SRT_EQ,0);
-          (void) new SetExprConst(si[i],s,Gecode::SRT_EQ,1);
-          (void) new SetExprConst(si[i],s,Gecode::SRT_NQ,0);
-          (void) new SetExprConst(si[i],s,Gecode::SRT_NQ,1);
-          (void) new SetExprConst(si[i],s,Gecode::SRT_SUB,0);
-          (void) new SetExprConst(si[i],s,Gecode::SRT_SUB,1);
-          (void) new SetExprConst(si[i],s,Gecode::SRT_SUP,0);
-          (void) new SetExprConst(si[i],s,Gecode::SRT_SUP,1);
-          (void) new SetExprConst(si[i],s,Gecode::SRT_DISJ,0);
-          (void) new SetExprConst(si[i],s,Gecode::SRT_DISJ,1);
+          TestTags eq_zero_tags = i == 0
+            ? TestTags(TestTag::normal) : TestTags(TestTag::sweep);
+          (void) new SetExprConst(eq_zero_tags,si[i],s,Gecode::SRT_EQ,0);
+          (void) new SetExprConst(TestTag::sweep,si[i],s,Gecode::SRT_EQ,1);
+          (void) new SetExprConst(TestTag::sweep,si[i],s,Gecode::SRT_NQ,0);
+          (void) new SetExprConst(TestTag::sweep,si[i],s,Gecode::SRT_NQ,1);
+          (void) new SetExprConst(TestTag::sweep,si[i],s,Gecode::SRT_SUB,0);
+          (void) new SetExprConst(TestTag::sweep,si[i],s,Gecode::SRT_SUB,1);
+          (void) new SetExprConst(TestTag::sweep,si[i],s,Gecode::SRT_SUP,0);
+          (void) new SetExprConst(TestTag::sweep,si[i],s,Gecode::SRT_SUP,1);
+          (void) new SetExprConst(TestTag::sweep,si[i],s,Gecode::SRT_DISJ,0);
+          (void) new SetExprConst(TestTag::sweep,si[i],s,Gecode::SRT_DISJ,1);
 
           if ( (i % 31) == 0) {
 
@@ -4524,11 +4529,18 @@ namespace Test { namespace Int {
                   ss = "0" + ss;
                 }
                 ss=s+"::"+ss;
-                (void) new SetExprExpr(si[i],si[j],ss,Gecode::SRT_EQ);
-                (void) new SetExprExpr(si[i],si[j],ss,Gecode::SRT_NQ);
-                (void) new SetExprExpr(si[i],si[j],ss,Gecode::SRT_SUB);
-                (void) new SetExprExpr(si[i],si[j],ss,Gecode::SRT_SUP);
-                (void) new SetExprExpr(si[i],si[j],ss,Gecode::SRT_DISJ);
+                TestTags eq_tags = (i == 0) && (j == 0)
+                  ? TestTags(TestTag::normal) : TestTags(TestTag::sweep);
+                (void) new SetExprExpr(eq_tags,si[i],si[j],ss,
+                                       Gecode::SRT_EQ);
+                (void) new SetExprExpr(TestTag::sweep,si[i],si[j],ss,
+                                       Gecode::SRT_NQ);
+                (void) new SetExprExpr(TestTag::sweep,si[i],si[j],ss,
+                                       Gecode::SRT_SUB);
+                (void) new SetExprExpr(TestTag::sweep,si[i],si[j],ss,
+                                       Gecode::SRT_SUP);
+                (void) new SetExprExpr(TestTag::sweep,si[i],si[j],ss,
+                                       Gecode::SRT_DISJ);
               }
             }
           }

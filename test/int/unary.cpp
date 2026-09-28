@@ -61,8 +61,9 @@ namespace Test { namespace Int { namespace Unary {
     }
   public:
     /// Create and register test
-    ManFixPUnary(const Gecode::IntArgs& p0, int o, Gecode::IntPropLevel ipl0)
-      : Test("Unary::Man::Fix::"+str(o)+"::"+str(p0)+"::"+str(ipl0),
+    ManFixPUnary(TestTags tags, const Gecode::IntArgs& p0,
+                 int o, Gecode::IntPropLevel ipl0)
+      : Test(tags,"Unary::Man::Fix::"+str(o)+"::"+str(p0)+"::"+str(ipl0),
              p0.size(),o,o+st(p0),false,ipl0),
         p(p0) {
       testsearch = false;
@@ -102,8 +103,9 @@ namespace Test { namespace Int { namespace Unary {
     }
   public:
     /// Create and register test
-    OptFixPUnary(const Gecode::IntArgs& p0, int o, Gecode::IntPropLevel ipl0)
-      : Test("Unary::Opt::Fix::"+str(o)+"::"+str(p0)+"::"+str(ipl0),
+    OptFixPUnary(TestTags tags, const Gecode::IntArgs& p0,
+                 int o, Gecode::IntPropLevel ipl0)
+      : Test(tags,"Unary::Opt::Fix::"+str(o)+"::"+str(p0)+"::"+str(ipl0),
              2*p0.size(),o,o+st(p0),false,ipl0), p(p0), l(o+st(p)/2) {
       testsearch = false;
       contest = CTL_NONE;
@@ -147,8 +149,9 @@ namespace Test { namespace Int { namespace Unary {
     int off;
   public:
     /// Create and register test
-    ManFlexUnary(int n, int minP, int maxP, int o, Gecode::IntPropLevel ipl0)
-      : Test("Unary::Man::Flex::"+str(o)+"::"+str(n)+"::"
+    ManFlexUnary(TestTags tags, int n, int minP, int maxP,
+                 int o, Gecode::IntPropLevel ipl0)
+      : Test(tags,"Unary::Man::Flex::"+str(o)+"::"+str(n)+"::"
              +str(minP)+"::"+str(maxP)+"::"+str(ipl0),
              2*n,0,n*maxP,false,ipl0), _minP(minP), _maxP(maxP), off(o) {
       testsearch = false;
@@ -206,8 +209,9 @@ namespace Test { namespace Int { namespace Unary {
     }
   public:
     /// Create and register test
-    OptFlexUnary(int n, int minP, int maxP, int o, Gecode::IntPropLevel ipl0)
-      : Test("Unary::Opt::Flex::"+str(o)+"::"+str(n)+"::"
+    OptFlexUnary(TestTags tags, int n, int minP, int maxP,
+                 int o, Gecode::IntPropLevel ipl0)
+      : Test(tags,"Unary::Opt::Flex::"+str(o)+"::"+str(n)+"::"
              +str(minP)+"::"+str(maxP)+"::"+str(ipl0),
              3*n,0,n*maxP,false,ipl0), _minP(minP), _maxP(maxP), off(o),
         l(n*maxP/2) {
@@ -268,61 +272,63 @@ namespace Test { namespace Int { namespace Unary {
       IntArgs p30({4,0,2,9,3,7,5,0});
 
       for (IntPropBasicAdvanced ipba; ipba(); ++ipba) {
-        (void) new ManFixPUnary(p1,0,ipba.ipl());
-        (void) new ManFixPUnary(p1,Gecode::Int::Limits::min,ipba.ipl());
-        (void) new OptFixPUnary(p1,0,ipba.ipl());
-        (void) new OptFixPUnary(p1,Gecode::Int::Limits::min,ipba.ipl());
-        (void) new ManFlexUnary(4,0,2,0,ipba.ipl());
-        (void) new ManFlexUnary(4,0,2,Gecode::Int::Limits::min,ipba.ipl());
-        (void) new ManFlexUnary(4,1,3,0,ipba.ipl());
-        (void) new ManFlexUnary(4,1,3,Gecode::Int::Limits::min,ipba.ipl());
-        (void) new OptFlexUnary(4,0,2,0,ipba.ipl());
-        (void) new OptFlexUnary(4,0,2,Gecode::Int::Limits::min,ipba.ipl());
+        TestTags representative = ipba.ipl() == Gecode::IPL_ADVANCED
+          ? TestTag::normal : TestTag::sweep;
+        (void) new ManFixPUnary(TestTag::sweep,p1,0,ipba.ipl());
+        (void) new ManFixPUnary(TestTag::sweep,p1,Gecode::Int::Limits::min,ipba.ipl());
+        (void) new OptFixPUnary(TestTag::sweep,p1,0,ipba.ipl());
+        (void) new OptFixPUnary(TestTag::sweep,p1,Gecode::Int::Limits::min,ipba.ipl());
+        (void) new ManFlexUnary(TestTag::sweep,4,0,2,0,ipba.ipl());
+        (void) new ManFlexUnary(representative,4,0,2,Gecode::Int::Limits::min,ipba.ipl());
+        (void) new ManFlexUnary(TestTag::sweep,4,1,3,0,ipba.ipl());
+        (void) new ManFlexUnary(TestTag::sweep,4,1,3,Gecode::Int::Limits::min,ipba.ipl());
+        (void) new OptFlexUnary(TestTag::sweep,4,0,2,0,ipba.ipl());
+        (void) new OptFlexUnary(representative,4,0,2,Gecode::Int::Limits::min,ipba.ipl());
 
-        (void) new ManFixPUnary(p10,0,ipba.ipl());
-        (void) new ManFixPUnary(p10,Gecode::Int::Limits::min,ipba.ipl());
-        (void) new OptFixPUnary(p10,0,ipba.ipl());
-        (void) new OptFixPUnary(p10,Gecode::Int::Limits::min,ipba.ipl());
-        (void) new ManFlexUnary(5,0,2,0,ipba.ipl());
-        (void) new ManFlexUnary(5,0,2,Gecode::Int::Limits::min,ipba.ipl());
-        (void) new OptFlexUnary(5,0,2,0,ipba.ipl());
-        (void) new OptFlexUnary(5,0,2,Gecode::Int::Limits::min,ipba.ipl());
+        (void) new ManFixPUnary(TestTag::sweep,p10,0,ipba.ipl());
+        (void) new ManFixPUnary(representative,p10,Gecode::Int::Limits::min,ipba.ipl());
+        (void) new OptFixPUnary(TestTag::sweep,p10,0,ipba.ipl());
+        (void) new OptFixPUnary(representative,p10,Gecode::Int::Limits::min,ipba.ipl());
+        (void) new ManFlexUnary(TestTag::sweep,5,0,2,0,ipba.ipl());
+        (void) new ManFlexUnary(TestTag::sweep,5,0,2,Gecode::Int::Limits::min,ipba.ipl());
+        (void) new OptFlexUnary(TestTag::sweep,5,0,2,0,ipba.ipl());
+        (void) new OptFlexUnary(TestTag::sweep,5,0,2,Gecode::Int::Limits::min,ipba.ipl());
 
-        (void) new ManFixPUnary(p2,0,ipba.ipl());
-        (void) new ManFixPUnary(p2,Gecode::Int::Limits::min,ipba.ipl());
-        (void) new OptFixPUnary(p2,0,ipba.ipl());
-        (void) new OptFixPUnary(p2,Gecode::Int::Limits::min,ipba.ipl());
-        (void) new ManFlexUnary(4,3,5,0,ipba.ipl());
-        (void) new ManFlexUnary(4,3,5,Gecode::Int::Limits::min,ipba.ipl());
-        (void) new OptFlexUnary(4,3,5,0,ipba.ipl());
-        (void) new OptFlexUnary(4,3,5,Gecode::Int::Limits::min,ipba.ipl());
+        (void) new ManFixPUnary(TestTag::sweep,p2,0,ipba.ipl());
+        (void) new ManFixPUnary(TestTag::sweep,p2,Gecode::Int::Limits::min,ipba.ipl());
+        (void) new OptFixPUnary(TestTag::sweep,p2,0,ipba.ipl());
+        (void) new OptFixPUnary(TestTag::sweep,p2,Gecode::Int::Limits::min,ipba.ipl());
+        (void) new ManFlexUnary(TestTag::sweep,4,3,5,0,ipba.ipl());
+        (void) new ManFlexUnary(TestTag::sweep,4,3,5,Gecode::Int::Limits::min,ipba.ipl());
+        (void) new OptFlexUnary(TestTag::sweep,4,3,5,0,ipba.ipl());
+        (void) new OptFlexUnary(TestTag::sweep,4,3,5,Gecode::Int::Limits::min,ipba.ipl());
 
-        (void) new ManFixPUnary(p20,0,ipba.ipl());
-        (void) new ManFixPUnary(p20,Gecode::Int::Limits::min,ipba.ipl());
-        (void) new OptFixPUnary(p20,0,ipba.ipl());
-        (void) new OptFixPUnary(p20,Gecode::Int::Limits::min,ipba.ipl());
-        (void) new ManFlexUnary(6,0,5,0,ipba.ipl());
-        (void) new ManFlexUnary(6,0,5,Gecode::Int::Limits::min,ipba.ipl());
-        (void) new OptFlexUnary(6,0,5,0,ipba.ipl());
-        (void) new OptFlexUnary(6,0,5,Gecode::Int::Limits::min,ipba.ipl());
+        (void) new ManFixPUnary(TestTag::sweep,p20,0,ipba.ipl());
+        (void) new ManFixPUnary(TestTag::sweep,p20,Gecode::Int::Limits::min,ipba.ipl());
+        (void) new OptFixPUnary(TestTag::sweep,p20,0,ipba.ipl());
+        (void) new OptFixPUnary(TestTag::sweep,p20,Gecode::Int::Limits::min,ipba.ipl());
+        (void) new ManFlexUnary(TestTag::sweep,6,0,5,0,ipba.ipl());
+        (void) new ManFlexUnary(TestTag::sweep,6,0,5,Gecode::Int::Limits::min,ipba.ipl());
+        (void) new OptFlexUnary(TestTag::sweep,6,0,5,0,ipba.ipl());
+        (void) new OptFlexUnary(TestTag::sweep,6,0,5,Gecode::Int::Limits::min,ipba.ipl());
 
-        (void) new ManFixPUnary(p3,0,ipba.ipl());
-        (void) new ManFixPUnary(p3,Gecode::Int::Limits::min,ipba.ipl());
-        (void) new OptFixPUnary(p3,0,ipba.ipl());
-        (void) new OptFixPUnary(p3,Gecode::Int::Limits::min,ipba.ipl());
-        (void) new ManFlexUnary(6,2,7,0,ipba.ipl());
-        (void) new ManFlexUnary(6,2,7,Gecode::Int::Limits::min,ipba.ipl());
-        (void) new OptFlexUnary(6,2,7,0,ipba.ipl());
-        (void) new OptFlexUnary(6,2,7,Gecode::Int::Limits::min,ipba.ipl());
+        (void) new ManFixPUnary(TestTag::sweep,p3,0,ipba.ipl());
+        (void) new ManFixPUnary(TestTag::sweep,p3,Gecode::Int::Limits::min,ipba.ipl());
+        (void) new OptFixPUnary(TestTag::sweep,p3,0,ipba.ipl());
+        (void) new OptFixPUnary(TestTag::sweep,p3,Gecode::Int::Limits::min,ipba.ipl());
+        (void) new ManFlexUnary(TestTag::sweep,6,2,7,0,ipba.ipl());
+        (void) new ManFlexUnary(TestTag::sweep,6,2,7,Gecode::Int::Limits::min,ipba.ipl());
+        (void) new OptFlexUnary(TestTag::sweep,6,2,7,0,ipba.ipl());
+        (void) new OptFlexUnary(TestTag::sweep,6,2,7,Gecode::Int::Limits::min,ipba.ipl());
 
-        (void) new ManFixPUnary(p30,0,ipba.ipl());
-        (void) new ManFixPUnary(p30,Gecode::Int::Limits::min,ipba.ipl());
-        (void) new OptFixPUnary(p30,0,ipba.ipl());
-        (void) new OptFixPUnary(p30,Gecode::Int::Limits::min,ipba.ipl());
-        (void) new ManFlexUnary(8,0,9,0,ipba.ipl());
-        (void) new ManFlexUnary(8,0,9,Gecode::Int::Limits::min,ipba.ipl());
-        (void) new OptFlexUnary(8,0,9,0,ipba.ipl());
-        (void) new OptFlexUnary(8,0,9,Gecode::Int::Limits::min,ipba.ipl());
+        (void) new ManFixPUnary(TestTag::sweep,p30,0,ipba.ipl());
+        (void) new ManFixPUnary(TestTag::sweep,p30,Gecode::Int::Limits::min,ipba.ipl());
+        (void) new OptFixPUnary(TestTag::sweep,p30,0,ipba.ipl());
+        (void) new OptFixPUnary(TestTag::sweep,p30,Gecode::Int::Limits::min,ipba.ipl());
+        (void) new ManFlexUnary(TestTag::sweep,8,0,9,0,ipba.ipl());
+        (void) new ManFlexUnary(TestTag::sweep,8,0,9,Gecode::Int::Limits::min,ipba.ipl());
+        (void) new OptFlexUnary(TestTag::sweep,8,0,9,0,ipba.ipl());
+        (void) new OptFlexUnary(TestTag::sweep,8,0,9,Gecode::Int::Limits::min,ipba.ipl());
       }
     }
   };

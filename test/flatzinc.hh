@@ -70,6 +70,13 @@ namespace Test {
                    std::vector<std::string> cmdlineOpt = {},
                    OutputCheck check = OutputCheck(),
                    BeforeRun before = BeforeRun());
+      /// Construct and register a test with explicitly assigned tags
+      FlatZincTest(TestTags tags, const std::string& name,
+                   const std::string& source, const std::string& expected,
+                   bool allSolutions = false,
+                   std::vector<std::string> cmdlineOpt = {},
+                   OutputCheck check = OutputCheck(),
+                   BeforeRun before = BeforeRun());
       /// Perform test
       virtual bool run(void);
     };
@@ -80,6 +87,11 @@ namespace Test {
     public:
       /// Construct and register test
       FlatZincErrorTest(const std::string& name, const std::string& source,
+                        std::vector<std::string> cmdlineOpt = {},
+                        std::string expectedMessage = "");
+      /// Construct and register an error test with explicitly assigned tags
+      FlatZincErrorTest(TestTags tags, const std::string& name,
+                        const std::string& source,
                         std::vector<std::string> cmdlineOpt = {},
                         std::string expectedMessage = "");
       /// Perform test

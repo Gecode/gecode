@@ -64,10 +64,10 @@ namespace Test { namespace Int {
        int c;
      public:
        /// Create and register test
-       IntInt(const std::string& s, const Gecode::IntSet& d,
+       IntInt(TestTags tags, const std::string& s, const Gecode::IntSet& d,
               const Gecode::IntArgs& a0, Gecode::IntRelType irt0,
               int c0, Gecode::IntPropLevel ipl=Gecode::IPL_BND)
-         : Test("Linear::Int::Int::"+
+         : Test(tags,"Linear::Int::Int::"+
                 str(irt0)+"::"+str(ipl)+"::"+s+"::"+str(c0)+"::"
                 +str(a0.size()),
                 a0.size(),d,ipl != Gecode::IPL_DOM,ipl),
@@ -110,7 +110,7 @@ namespace Test { namespace Int {
        IntVar(const std::string& s, const Gecode::IntSet& d,
               const Gecode::IntArgs& a0, Gecode::IntRelType irt0,
               Gecode::IntPropLevel ipl=Gecode::IPL_BND)
-         : Test("Linear::Int::Var::"+
+         : Test(TestTag::sweep,"Linear::Int::Var::"+
                 str(irt0)+"::"+str(ipl)+"::"+s+"::"+str(a0.size()),
                 a0.size()+1,d,ipl != Gecode::IPL_DOM,ipl),
            a(a0), irt(irt0) {
@@ -161,7 +161,9 @@ namespace Test { namespace Int {
        /// Create and register test
        BoolInt(const std::string& s, const Gecode::IntArgs& a0,
                Gecode::IntRelType irt0, int c0)
-         : Test("Linear::Bool::Int::"+
+         : Test(irt0 == Gecode::IRT_LQ
+                ? TestTags(TestTag::normal,TestTag::check)
+                : TestTags(TestTag::sweep),"Linear::Bool::Int::"+
                 str(irt0)+"::"+s+"::"+str(a0.size())+"::"+str(c0),
                 a0.size(),0,1,true,Gecode::IPL_DEF),
            a(a0), irt(irt0), c(c0) {
@@ -209,7 +211,7 @@ namespace Test { namespace Int {
        BoolVar(const std::string& s,
                int min, int max, const Gecode::IntArgs& a0,
                Gecode::IntRelType irt0)
-         : Test("Linear::Bool::Var::"+str(irt0)+"::"+s,a0.size()+1,
+         : Test(TestTag::sweep,"Linear::Bool::Var::"+str(irt0)+"::"+s,a0.size()+1,
                 min,max,true),
            a(a0), irt(irt0) {
          testfix=false;
@@ -274,15 +276,17 @@ namespace Test { namespace Int {
            IntArgs a1({0});
 
            for (IntRelTypes irts; irts(); ++irts) {
-             (void) new IntInt("11",d1,a1,irts.irt(),0);
+             TestTags tags = irts.irt() == Gecode::IRT_EQ
+               ? TestTag::normal : TestTag::sweep;
+             (void) new IntInt(tags,"11",d1,a1,irts.irt(),0);
              (void) new IntVar("11",d1,a1,irts.irt());
-             (void) new IntInt("21",d2,a1,irts.irt(),0);
+             (void) new IntInt(TestTag::sweep,"21",d2,a1,irts.irt(),0);
              (void) new IntVar("21",d2,a1,irts.irt());
-             (void) new IntInt("31",d3,a1,irts.irt(),150000000);
+             (void) new IntInt(TestTag::sweep,"31",d3,a1,irts.irt(),150000000);
            }
-           (void) new IntInt("11",d1,a1,IRT_EQ,0,IPL_DOM);
+           (void) new IntInt(TestTag::sweep,"11",d1,a1,IRT_EQ,0,IPL_DOM);
            (void) new IntVar("11",d1,a1,IRT_EQ,IPL_DOM);
-           (void) new IntInt("21",d2,a1,IRT_EQ,0,IPL_DOM);
+           (void) new IntInt(TestTag::sweep,"21",d2,a1,IRT_EQ,0,IPL_DOM);
            (void) new IntVar("21",d2,a1,IRT_EQ,IPL_DOM);
 
            const int av2[5] = {1,1,1,1,1};
@@ -297,15 +301,15 @@ namespace Test { namespace Int {
              IntArgs a4(i, av4);
              IntArgs a5(i, av5);
              for (IntRelTypes irts; irts(); ++irts) {
-               (void) new IntInt("12",d1,a2,irts.irt(),0);
-               (void) new IntInt("13",d1,a3,irts.irt(),0);
-               (void) new IntInt("14",d1,a4,irts.irt(),0);
-               (void) new IntInt("15",d1,a5,irts.irt(),0);
-               (void) new IntInt("22",d2,a2,irts.irt(),0);
-               (void) new IntInt("23",d2,a3,irts.irt(),0);
-               (void) new IntInt("24",d2,a4,irts.irt(),0);
-               (void) new IntInt("25",d2,a5,irts.irt(),0);
-               (void) new IntInt("32",d3,a2,irts.irt(),1500000000);
+               (void) new IntInt(TestTag::sweep,"12",d1,a2,irts.irt(),0);
+               (void) new IntInt(TestTag::sweep,"13",d1,a3,irts.irt(),0);
+               (void) new IntInt(TestTag::sweep,"14",d1,a4,irts.irt(),0);
+               (void) new IntInt(TestTag::sweep,"15",d1,a5,irts.irt(),0);
+               (void) new IntInt(TestTag::sweep,"22",d2,a2,irts.irt(),0);
+               (void) new IntInt(TestTag::sweep,"23",d2,a3,irts.irt(),0);
+               (void) new IntInt(TestTag::sweep,"24",d2,a4,irts.irt(),0);
+               (void) new IntInt(TestTag::sweep,"25",d2,a5,irts.irt(),0);
+               (void) new IntInt(TestTag::sweep,"32",d3,a2,irts.irt(),1500000000);
                if (i < 5) {
                  (void) new IntVar("12",d1,a2,irts.irt());
                  (void) new IntVar("13",d1,a3,irts.irt());
@@ -317,14 +321,14 @@ namespace Test { namespace Int {
                  (void) new IntVar("25",d2,a5,irts.irt());
                }
              }
-             (void) new IntInt("12",d1,a2,IRT_EQ,0,IPL_DOM);
-             (void) new IntInt("13",d1,a3,IRT_EQ,0,IPL_DOM);
-             (void) new IntInt("14",d1,a4,IRT_EQ,0,IPL_DOM);
-             (void) new IntInt("15",d1,a5,IRT_EQ,0,IPL_DOM);
-             (void) new IntInt("22",d2,a2,IRT_EQ,0,IPL_DOM);
-             (void) new IntInt("23",d2,a3,IRT_EQ,0,IPL_DOM);
-             (void) new IntInt("24",d2,a4,IRT_EQ,0,IPL_DOM);
-             (void) new IntInt("25",d2,a5,IRT_EQ,0,IPL_DOM);
+             (void) new IntInt(TestTag::sweep,"12",d1,a2,IRT_EQ,0,IPL_DOM);
+             (void) new IntInt(TestTag::sweep,"13",d1,a3,IRT_EQ,0,IPL_DOM);
+             (void) new IntInt(TestTag::sweep,"14",d1,a4,IRT_EQ,0,IPL_DOM);
+             (void) new IntInt(TestTag::sweep,"15",d1,a5,IRT_EQ,0,IPL_DOM);
+             (void) new IntInt(TestTag::sweep,"22",d2,a2,IRT_EQ,0,IPL_DOM);
+             (void) new IntInt(TestTag::sweep,"23",d2,a3,IRT_EQ,0,IPL_DOM);
+             (void) new IntInt(TestTag::sweep,"24",d2,a4,IRT_EQ,0,IPL_DOM);
+             (void) new IntInt(TestTag::sweep,"25",d2,a5,IRT_EQ,0,IPL_DOM);
              if (i < 4) {
                (void) new IntVar("12",d1,a2,IRT_EQ,IPL_DOM);
                (void) new IntVar("13",d1,a3,IRT_EQ,IPL_DOM);
