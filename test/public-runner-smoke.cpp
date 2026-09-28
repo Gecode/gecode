@@ -73,7 +73,7 @@ namespace {
   unsigned int observed_seed = 0;
   class ReplaySmokeTest : public Test::Base {
   public:
-    ReplaySmokeTest(void) : Test::Base("Smoke::Replay") {}
+    ReplaySmokeTest(void) : Test::Base("Smoke::Replay", Test::TestTags()) {}
     bool run(void) override {
       observed_seed = _rand.seed();
       (void) _rand(10);

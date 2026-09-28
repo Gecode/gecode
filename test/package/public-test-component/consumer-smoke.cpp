@@ -72,5 +72,7 @@ public:
 } // namespace
 
 int main(int argc, char* argv[]) {
+  if (Test::TestTags::all().empty())
+    return 1;
   return Test::run_registered_tests(argc, argv);
 }
