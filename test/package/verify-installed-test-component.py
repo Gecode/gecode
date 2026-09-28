@@ -189,6 +189,7 @@ def configure_consumer(
     cmake_dir: Path,
     *,
     require_unknown_component: bool,
+    test_component: str = "test",
 ) -> tuple[Path, Path, subprocess.CompletedProcess[str]]:
     consumer_source = source / "test/package/public-test-component"
     consumer_build = build_root / "consumer"
@@ -204,6 +205,7 @@ def configure_consumer(
         "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON",
         f"-DGecode_DIR={cmake_dir}",
         f"-DCMAKE_PREFIX_PATH={prefix}",
+        f"-DGECODE_TEST_COMPONENT={test_component}",
     ]
     if require_unknown_component:
         configure_command.append("-DREQUIRE_UNKNOWN_COMPONENT=ON")
@@ -292,6 +294,15 @@ def main() -> int:
     consumer_binary = build_consumer(consumer_build)
     run_list_phase(consumer_binary, expected_test_names)
     run_filtered_phase(consumer_binary, expected_test_names)
+
+    configure_consumer(
+        source,
+        build_root / "typed-component",
+        prefix,
+        lib_dir / "cmake/Gecode",
+        require_unknown_component=False,
+        test_component="testint",
+    )
     return 0
 
 
