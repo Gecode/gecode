@@ -169,7 +169,7 @@ target_link_libraries(app PRIVATE Gecode::gecode)
 Canonical component names:
 
 - `support`, `kernel`, `search`, `int`, `set`, `float`, `minimodel`, `driver`,
-  `flatzinc`, `gist`
+  `flatzinc`, `gist`, `test`
 
 Example:
 
@@ -178,6 +178,24 @@ find_package(Gecode CONFIG REQUIRED COMPONENTS driver)
 add_executable(app main.cpp)
 target_link_libraries(app PRIVATE Gecode::gecodedriver)
 ```
+
+### Test component for custom propagators
+
+A Gecode installation configured with `BUILD_TESTING=ON` exports the `test`
+component. It lets downstream projects check custom integer, Boolean, set, and
+float propagators with Gecode's test runner.
+
+- Always available targets: `Gecode::gecodetest`, `Gecode::gecodetestint`
+- Set target when configured: `Gecode::gecodetestset`
+- Float target when configured: `Gecode::gecodetestfloat`
+- Installed headers follow the same configuration: `test/test.*`, `test/int.*`,
+  `test/set.*`, and `test/float.*`
+- Public runner entrypoint: `Test::run_registered_tests(argc, argv)`
+- Package check: `python test/package/verify-installed-test-component.py ...`
+
+See [Testing custom propagators](./public-test-harness.md) for a complete test,
+consistency and reification controls, failure reproduction, and direct linking
+without CMake package metadata.
 
 Legacy component spellings are also accepted in `COMPONENTS`:
 
@@ -234,6 +252,7 @@ Deprecation horizon:
 - `find_package(Gecode COMPONENTS ...)` fails:
   - Verify requested component is enabled in the installed build.
   - For optional modules (`flatzinc`, `gist`, `float` with MPFR), ensure dependencies were available.
+  - The `test` component requires `BUILD_TESTING` to be true in the installed package's configuration.
 - Qt/Gist issues:
   - `GECODE_ENABLE_QT=ON` and `GECODE_ENABLE_GIST=ON` are requirement modes;
     use `AUTO` when dependency discovery should be best-effort.

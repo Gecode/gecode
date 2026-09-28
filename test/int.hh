@@ -40,6 +40,20 @@
 
 #include <gecode/int.hh>
 
+/* Configure linking, as for the Gecode variable libraries. */
+#if !defined(GECODE_STATIC_LIBS) && \
+    (defined(__CYGWIN__) || defined(__MINGW32__) || defined(_MSC_VER))
+#ifdef GECODE_BUILD_TESTINT
+#define GECODE_TESTINT_EXPORT __declspec( dllexport )
+#else
+#define GECODE_TESTINT_EXPORT __declspec( dllimport )
+#endif
+#elif defined(GECODE_GCC_HAS_CLASS_VISIBILITY)
+#define GECODE_TESTINT_EXPORT __attribute__ ((visibility("default")))
+#else
+#define GECODE_TESTINT_EXPORT
+#endif
+
 namespace Test {
 
   /// Testing finite domain integers
@@ -56,7 +70,7 @@ namespace Test {
      */
     //@{
     /// %Base class for assignments
-    class Assignment {
+    class GECODE_TESTINT_EXPORT Assignment {
     protected:
       int n;            ///< Number of variables
       Gecode::IntSet d; ///< Domain for each variable
@@ -76,7 +90,7 @@ namespace Test {
     };
 
     /// Generate all assignments
-    class CpltAssignment : public Assignment {
+    class GECODE_TESTINT_EXPORT CpltAssignment : public Assignment {
     protected:
       Gecode::IntSetValues* dsv; ///< Iterator for each variable
     public:
@@ -93,7 +107,7 @@ namespace Test {
     };
 
     /// Generate random selection of assignments
-    class RandomAssignment : public Assignment {
+    class GECODE_TESTINT_EXPORT RandomAssignment : public Assignment {
     protected:
       int* vals; ///< The current values for the variables
       int  a;    ///< How many assignments still to be generated
@@ -113,7 +127,7 @@ namespace Test {
     };
 
     /// Generate random selection of assignments
-    class RandomMixAssignment : public Assignment {
+    class GECODE_TESTINT_EXPORT RandomMixAssignment : public Assignment {
     protected:
       int* vals; ///< The current values for the variables
       int  a;    ///< How many assignments still to be generated
@@ -143,10 +157,10 @@ namespace Test {
       CTL_BOUNDS_Z, ///< Test for bounds(z)-consistency
     };
 
-    class Test;
+    class GECODE_TESTINT_EXPORT Test;
 
     /// Space for executing tests
-    class TestSpace : public Gecode::Space {
+    class GECODE_TESTINT_EXPORT TestSpace : public Gecode::Space {
     public:
       /// Initial domain
       Gecode::IntSet d;
@@ -220,7 +234,7 @@ namespace Test {
      * \brief %Base class for tests with integer constraints
      *
      */
-    class Test : public Base {
+    class GECODE_TESTINT_EXPORT Test : public Base {
     protected:
       /// Number of variables
       int arity;
@@ -329,7 +343,7 @@ namespace Test {
     //@}
 
     /// Iterator for simple integer propagation levels
-    class IntPropLevels {
+    class GECODE_TESTINT_EXPORT IntPropLevels {
     private:
       /// Array of propagation levels
       static const Gecode::IntPropLevel ipls[3];
@@ -347,7 +361,7 @@ namespace Test {
     };
 
     /// Iterator for basic and advanced integer propagation levels
-    class IntPropBasicAdvanced {
+    class GECODE_TESTINT_EXPORT IntPropBasicAdvanced {
     private:
       /// Array of propagation levels
       static const Gecode::IntPropLevel ipls[3];
@@ -365,7 +379,7 @@ namespace Test {
     };
 
     /// Iterator for integer relation types
-    class IntRelTypes {
+    class GECODE_TESTINT_EXPORT IntRelTypes {
     private:
       /// Array of relation types
       static const Gecode::IntRelType irts[6];
@@ -385,7 +399,7 @@ namespace Test {
     };
 
     /// Iterator for Boolean operation types
-    class BoolOpTypes {
+    class GECODE_TESTINT_EXPORT BoolOpTypes {
     private:
       /// Array of operation types
       static const Gecode::BoolOpType bots[5];
@@ -409,11 +423,10 @@ namespace Test {
  * \brief Print assignment \a
  * \relates Assignment
  */
-std::ostream& operator<<(std::ostream& os, const Test::Int::Assignment& a);
+GECODE_TESTINT_EXPORT std::ostream& operator<<(std::ostream& os, const Test::Int::Assignment& a);
 
 #include "test/int.hpp"
 
 #endif
 
 // STATISTICS: test-int
-
