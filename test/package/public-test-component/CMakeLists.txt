@@ -5,11 +5,12 @@ project(gecode_public_test_component_consumer LANGUAGES CXX)
 enable_testing()
 
 option(REQUIRE_UNKNOWN_COMPONENT "Request an unsupported Gecode component to verify diagnostics" OFF)
+set(GECODE_TEST_COMPONENT test CACHE STRING "Gecode test component to request")
 
 set(CMAKE_FIND_PACKAGE_NO_PACKAGE_REGISTRY ON)
 set(CMAKE_FIND_USE_PACKAGE_REGISTRY OFF)
 
-set(_gecode_components test)
+set(_gecode_components ${GECODE_TEST_COMPONENT})
 if(REQUIRE_UNKNOWN_COMPONENT)
   list(APPEND _gecode_components unsupported_component)
 endif()
