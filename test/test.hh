@@ -102,7 +102,7 @@ namespace Test {
   };
 
   /// Set of test tags
-  class TestTags {
+  class GECODE_TEST_EXPORT TestTags {
   private:
     /// Bit mask for tags
     unsigned int _mask;

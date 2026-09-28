@@ -71,7 +71,7 @@ namespace {
   int replay_runs = 0;
   class ReplaySmokeTest : public Test::Base {
   public:
-    ReplaySmokeTest(void) : Test::Base("Smoke::Replay") {}
+    ReplaySmokeTest(void) : Test::Base("Smoke::Replay", Test::TestTags()) {}
     bool run(void) override {
       if (++replay_runs == 1) {
         // Leave a state above the seed setter's modulus for the next iteration.
