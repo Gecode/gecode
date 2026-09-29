@@ -566,7 +566,7 @@ namespace Test {
       bool run(void) override {
         using Gecode::Search::WorkerControl;
         WorkerControl empty;
-        bool ok = !empty && (empty.requested() == 0U) &&
+        bool ok = !empty.engaged() && (empty.requested() == 0U) &&
           (empty.capacity() == 0U) &&
           throws<Gecode::Search::UninitializedWorkerControl>(
             [&] { empty.request(1U); });
@@ -574,7 +574,7 @@ namespace Test {
         const unsigned int capacity = worker_capacity(2U);
         WorkerControl control(0U);
         WorkerControl copy(control);
-        ok = ok && copy && (copy.requested() == 0U);
+        ok = ok && copy.engaged() && (copy.requested() == 0U);
 
         Gecode::Search::Options o;
         o.threads = 2.0;
@@ -980,7 +980,7 @@ namespace Test {
           Model* b = nullptr;
           while (true) {
             for (unsigned int i=0U; i<3U; i++)
-              if (controls[i])
+              if (controls[i].engaged())
                 controls[i].request(1U + _rand(capacity));
             Model* s = pbs.next();
             if (s != nullptr) {
@@ -1004,9 +1004,9 @@ namespace Test {
           delete m;
 
           while (true) {
-            if (controls[0])
+            if (controls[0].engaged())
               controls[0].request(1U + _rand(capacity));
-            if (controls[2])
+            if (controls[2].engaged())
               controls[2].request(1U + _rand(capacity));
             Model* s = pbs.next();
             if (s != nullptr) {

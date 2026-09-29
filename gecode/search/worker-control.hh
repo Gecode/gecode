@@ -44,8 +44,6 @@ namespace Gecode { namespace Search {
     static void detach(WorkerControl& control);
     /// Return the request generation
     static unsigned long long int generation(const WorkerControl& control);
-    /// Return whether \a control has state
-    static bool engaged(const WorkerControl& control);
     /// Return the unchanged-capacity fast-admission flag
     static const std::atomic<bool>*
     fast_admission(const WorkerControl& control);

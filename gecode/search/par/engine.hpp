@@ -180,7 +180,7 @@ namespace Gecode { namespace Search { namespace Par {
   template<class Tracer>
   void
   Engine<Tracer>::scheduler_enable(bool root_owner) {
-    if (!WorkerControlAccess::engaged(worker_control))
+    if (!worker_control.engaged())
       return;
     scheduler_fast_admit =
       WorkerControlAccess::fast_admission(worker_control);

@@ -739,7 +739,7 @@ namespace Gecode { namespace Search {
     /// Destructor
     ~WorkerControl(void);
     /// Whether this handle is engaged
-    explicit operator bool(void) const noexcept;
+    bool engaged(void) const noexcept;
     /// Return the requested number of workers (zero also denotes an empty handle)
     unsigned int requested(void) const noexcept;
     /// Request \a workers workers (zero pauses the engine)

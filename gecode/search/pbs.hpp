@@ -60,7 +60,7 @@ namespace Gecode { namespace Search {
   forceinline void
   pbscontrol(const Options& opt) {
     if ((opt.assets > 1U) &&
-        WorkerControlAccess::engaged(opt.worker_control))
+        opt.worker_control.engaged())
       throw WorkerControlInUse("PBS::PBS");
   }
 
@@ -77,7 +77,7 @@ namespace Gecode { namespace Search {
   /// Validate worker-control placement for an explicit portfolio
   forceinline void
   pbscontrol(const SEBs& sebs, const Options& opt) {
-    if (WorkerControlAccess::engaged(opt.worker_control))
+    if (opt.worker_control.engaged())
       throw WorkerControlInUse("PBS::PBS");
 #ifdef GECODE_HAS_THREADS
     const bool parallel = opt.threads > 1.0;
@@ -87,14 +87,14 @@ namespace Gecode { namespace Search {
     int admitted = pbsadmitted(sebs,opt);
     for (int i=0; i<admitted; i++) {
       const WorkerControl& x = sebs[i]->options().worker_control;
-      if (!WorkerControlAccess::engaged(x))
+      if (!x.engaged())
         continue;
       // Sequential PBS cannot move past an asset blocked by a pause request.
       if (!parallel)
         throw WorkerControlInUse("PBS::PBS");
       for (int j=0; j<i; j++) {
         const WorkerControl& y = sebs[j]->options().worker_control;
-        if (WorkerControlAccess::engaged(y) &&
+        if (y.engaged() &&
             WorkerControlAccess::same_identity(x,y))
           throw WorkerControlInUse("PBS::PBS");
       }

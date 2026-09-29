@@ -89,7 +89,7 @@ namespace Gecode { namespace Search {
   Worker::stop_seq(Options& o) {
     // A paused portfolio asset must still observe the round's stop signal.
     while (!stop(o)) {
-      if (!WorkerControlAccess::engaged(o.worker_control) ||
+      if (!o.worker_control.engaged() ||
           (WorkerControlAccess::requested(o.worker_control) != 0U))
         return false;
       WorkerControlAccess::wait(o.worker_control,0U);

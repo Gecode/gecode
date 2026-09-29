@@ -86,7 +86,8 @@ namespace Gecode { namespace Search {
       delete state;
   }
 
-  WorkerControl::operator bool(void) const noexcept {
+  bool
+  WorkerControl::engaged(void) const noexcept {
     return state != nullptr;
   }
 
@@ -171,11 +172,6 @@ namespace Gecode { namespace Search {
   WorkerControlAccess::generation(const WorkerControl& control) {
     return (control.state == nullptr) ? 0U :
       control.state->generation.load(std::memory_order_acquire);
-  }
-
-  bool
-  WorkerControlAccess::engaged(const WorkerControl& control) {
-    return control.state != nullptr;
   }
 
   const std::atomic<bool>*
