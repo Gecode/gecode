@@ -79,15 +79,18 @@ namespace Gecode { namespace Search {
   pbscontrol(const SEBs& sebs, const Options& opt) {
     if (WorkerControlAccess::engaged(opt.worker_control))
       throw WorkerControlInUse("PBS::PBS");
+#ifdef GECODE_HAS_THREADS
+    const bool parallel = opt.threads > 1.0;
+#else
+    const bool parallel = false;
+#endif
     int admitted = pbsadmitted(sebs,opt);
     for (int i=0; i<admitted; i++) {
       const WorkerControl& x = sebs[i]->options().worker_control;
       if (!WorkerControlAccess::engaged(x))
         continue;
       // Sequential PBS cannot move past an asset blocked by a pause request.
-#ifdef GECODE_HAS_THREADS
-      if (opt.threads <= 1.0)
-#endif
+      if (!parallel)
         throw WorkerControlInUse("PBS::PBS");
       for (int j=0; j<i; j++) {
         const WorkerControl& y = sebs[j]->options().worker_control;
