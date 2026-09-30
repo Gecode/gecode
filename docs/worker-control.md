@@ -80,15 +80,22 @@ An empty default-constructed handle means that worker adjustment is disabled.
 Calling `request` on an empty handle raises
 `Search::UninitializedWorkerControl`.
 
-A shared identity can be bound to only one logical leaf engine. It cannot be
-shared by two DFS/BAB engines, reused for a replacement engine after
-destruction, or attached directly to an enclosing meta-engine. These uses raise
-`Search::WorkerControlInUse`. Construct a new control for each leaf-engine
-lifetime.
+A shared identity can be bound to only one leaf engine at a time. It cannot be
+shared by two DFS/BAB engines or attached directly to an enclosing meta-engine.
+Ordinary reuse for a replacement engine after destruction is also rejected.
+These uses raise `Search::WorkerControlInUse`.
 
 Destroying an engine safely detaches its state, but it does not make that
 identity reusable. A copied handle may outlive the engine; further in-range
 requests are harmless and cannot access destroyed scheduler state.
+
+An internal engine owner that constructs successive leaf engines can call
+`WorkerControlAccess::prepare_reuse` after destroying the previous engine and
+joining its workers. The replacement must have the same resolved capacity.
+The control retains its shared identity, latest request (including pause),
+request generation, and event storage. Preparing an attached control raises
+`Search::WorkerControlInUse`; attaching with a different capacity raises
+`Search::InvalidWorkerRequest`. No public reuse operation is provided.
 
 ## Meta-search
 

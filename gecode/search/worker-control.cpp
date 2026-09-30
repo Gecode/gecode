@@ -37,8 +37,8 @@ namespace Gecode { namespace Search {
 
   class WorkerControl::State : public Support::RefCount {
   public:
-    enum Lifecycle {
-      NEVER_BOUND,
+    enum class Lifecycle {
+      READY_TO_BIND,
       ATTACHED,
       DETACHED
     };
@@ -53,7 +53,7 @@ namespace Gecode { namespace Search {
 
     State(unsigned int workers)
       : RefCount(1U), requested(workers), capacity(0U), generation(0U),
-        fast_admit(false), lifecycle(NEVER_BOUND), events(nullptr) {}
+        fast_admit(false), lifecycle(Lifecycle::READY_TO_BIND), events(nullptr) {}
     ~State(void) {
       delete [] events;
     }
@@ -138,21 +138,25 @@ namespace Gecode { namespace Search {
       return;
     WorkerControl::State* state = control.state;
     Support::Lock lock(state->mutex);
-    if (state->lifecycle != WorkerControl::State::NEVER_BOUND)
+    if (state->lifecycle != WorkerControl::State::Lifecycle::READY_TO_BIND)
       throw WorkerControlInUse("WorkerControlAccess::attach");
+    const unsigned int retained_capacity =
+      state->capacity.load(std::memory_order_relaxed);
 #ifndef GECODE_HAS_THREADS
     if (state->requested.load(std::memory_order_relaxed) == 0U)
       throw InvalidWorkerRequest("WorkerControlAccess::attach");
 #endif
     if ((capacity == 0U) ||
+        ((retained_capacity != 0U) && (retained_capacity != capacity)) ||
         (state->requested.load(std::memory_order_relaxed) > capacity))
       throw InvalidWorkerRequest("WorkerControlAccess::attach");
-    state->events = new Support::Event[capacity];
+    if (state->events == nullptr)
+      state->events = new Support::Event[capacity];
     state->capacity.store(capacity,std::memory_order_release);
     state->fast_admit.store(
       state->requested.load(std::memory_order_relaxed) == capacity,
       std::memory_order_release);
-    state->lifecycle = WorkerControl::State::ATTACHED;
+    state->lifecycle = WorkerControl::State::Lifecycle::ATTACHED;
   }
 
   void
@@ -162,10 +166,21 @@ namespace Gecode { namespace Search {
     WorkerControl::State* state = control.state;
     {
       Support::Lock lock(state->mutex);
-      if (state->lifecycle == WorkerControl::State::ATTACHED)
-        state->lifecycle = WorkerControl::State::DETACHED;
+      if (state->lifecycle == WorkerControl::State::Lifecycle::ATTACHED)
+        state->lifecycle = WorkerControl::State::Lifecycle::DETACHED;
     }
     signal_all(control);
+  }
+
+  void
+  WorkerControlAccess::prepare_reuse(WorkerControl& control) {
+    if (control.state == nullptr)
+      return;
+    WorkerControl::State* state = control.state;
+    Support::Lock lock(state->mutex);
+    if (state->lifecycle == WorkerControl::State::Lifecycle::ATTACHED)
+      throw WorkerControlInUse("WorkerControlAccess::prepare_reuse");
+    state->lifecycle = WorkerControl::State::Lifecycle::READY_TO_BIND;
   }
 
   unsigned long long int

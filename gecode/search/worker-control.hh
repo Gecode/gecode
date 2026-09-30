@@ -42,6 +42,14 @@ namespace Gecode { namespace Search {
     static void attach(WorkerControl& control, unsigned int capacity);
     /// Detach \a control from its leaf engine
     static void detach(WorkerControl& control);
+    /**
+     * \brief Prepare \a control for another engine with the same capacity
+     *
+     * The owner must have destroyed the previous engine and joined its
+     * workers. Requests and event storage survive the transition. Preparing
+     * an attached control fails; otherwise this operation is idempotent.
+     */
+    static void prepare_reuse(WorkerControl& control);
     /// Return the request generation
     static unsigned long long int generation(const WorkerControl& control);
     /// Return the unchanged-capacity fast-admission flag

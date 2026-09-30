@@ -37,6 +37,7 @@
 
 #include <gecode/minimodel.hh>
 #include <gecode/search.hh>
+#include <gecode/search/worker-control.hh>
 
 #include "test/test.hh"
 
@@ -574,6 +575,7 @@ namespace Test {
         const unsigned int capacity = worker_capacity(2U);
         WorkerControl control(0U);
         WorkerControl copy(control);
+        Gecode::Search::WorkerControlAccess::prepare_reuse(control);
         ok = ok && copy.engaged() && (copy.requested() == 0U);
 
         Gecode::Search::Options o;
@@ -593,6 +595,9 @@ namespace Test {
           delete root;
           root = nullptr;
           ok = ok && (control.capacity() == capacity);
+          ok = ok && throws<Gecode::Search::WorkerControlInUse>([&] {
+            Gecode::Search::WorkerControlAccess::prepare_reuse(control);
+          });
           control.request(1U);
           ok = ok && (copy.requested() == 1U) &&
             throws<Gecode::Search::InvalidWorkerRequest>(
@@ -603,6 +608,23 @@ namespace Test {
         ok = ok && throws<Gecode::Search::WorkerControlInUse>(
           [&] { Gecode::DFS<SolveImmediate> engine(root,o); });
         delete root;
+        Gecode::Search::WorkerControlAccess::prepare_reuse(control);
+        Gecode::Search::WorkerControlAccess::prepare_reuse(copy);
+#ifdef GECODE_HAS_THREADS
+        copy.request(0U);
+        ok = ok && (control.requested() == 0U);
+#endif
+        ok = ok && (control.capacity() == capacity) &&
+          throws<Gecode::Search::InvalidWorkerRequest>([&] {
+            Gecode::Search::WorkerControlAccess::attach(control,capacity+1U);
+          });
+        root = new SolveImmediate(HTB_NONE,HTB_NONE,HTB_NONE);
+        {
+          Gecode::DFS<SolveImmediate> engine(root,o);
+          delete root;
+          copy.request(1U);
+          delete engine.next();
+        }
         return ok;
       }
     };
