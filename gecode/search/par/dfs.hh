@@ -76,16 +76,20 @@ namespace Gecode { namespace Search { namespace Par {
       using Engine<Tracer>::Worker::start;
       using Engine<Tracer>::Worker::tracer;
       using Engine<Tracer>::Worker::stop;
+      /// Fixed worker index
+      unsigned int index;
       /// Initialize for space \a s with engine \a e
-      Worker(Space* s, DFS& e);
+      Worker(Space* s, DFS& e, unsigned int index);
       /// Provide access to engine
       DFS& engine(void) const;
       /// Start execution of worker
       virtual void run(void);
       /// Try to find some work
-      void find(void);
+      bool find(void);
       /// Reset worker to restart at space \a s
       void reset(Space* s, unsigned int ngdl);
+      /// Whether this worker currently owns local search
+      bool owns_work(void) const;
     };
     /// Array of worker references
     Worker** _worker;
