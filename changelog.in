@@ -73,6 +73,16 @@ Date: unreleased
 [DESCRIPTION]
 This is the development changelog for the next Gecode release.
 
+[ENTRY]
+Module: int
+What:   performance
+Rank:   major
+[DESCRIPTION]
+Advanced cumulative propagation uses knapsack-augmented overload checking
+to detect conflicts missed by ordinary overload checking. The bounded checker
+handles 4 to 64 currently mandatory fixed-processing tasks with positive
+demands and resource capacities from 2 to 127.
+
 [RELEASE]
 Version: 6.4.0
 Date: 2026-07-15

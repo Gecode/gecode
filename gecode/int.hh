@@ -3848,6 +3848,13 @@ namespace Gecode {
    *  - If both flags are combined, all the above listed propagation is
    *    performed.
    *
+   * For fixed-processing tasks, advanced propagation also performs
+   * knapsack-augmented overload checking (Cloutier and Quimper, CP 2026,
+   * https://doi.org/10.4230/LIPIcs.CP.2026.13). This check handles 4 to 64
+   * currently mandatory tasks, capacities from 2 to 127, and positive demands
+   * with at least one non-unit demand. It detects overloads without pruning
+   * bounds; other task shapes retain the existing propagation.
+   *
    * The propagator uses algorithms taken from:
    *
    * Petr Vilím, Max Energy Filtering Algorithm for Discrete Cumulative
@@ -3907,6 +3914,13 @@ namespace Gecode {
    *  - If both flags are combined, all the above listed propagation is
    *    performed.
    *
+   * For fixed-processing tasks, advanced propagation also performs
+   * knapsack-augmented overload checking (Cloutier and Quimper, CP 2026,
+   * https://doi.org/10.4230/LIPIcs.CP.2026.13). This check handles 4 to 64
+   * currently mandatory tasks, capacities from 2 to 127, and positive demands
+   * with at least one non-unit demand. It detects overloads without pruning
+   * bounds; other task shapes retain the existing propagation.
+   *
    * The propagator uses algorithms taken from:
    *
    * Petr Vilím, Max Energy Filtering Algorithm for Discrete Cumulative
@@ -3952,6 +3966,13 @@ namespace Gecode {
    *  - If both flags are combined, all the above listed propagation is
    *    performed.
    *
+   * For fixed-processing tasks, advanced propagation also performs
+   * knapsack-augmented overload checking (Cloutier and Quimper, CP 2026,
+   * https://doi.org/10.4230/LIPIcs.CP.2026.13). This check handles 4 to 64
+   * currently mandatory tasks, capacities from 2 to 127, and positive demands
+   * with at least one non-unit demand. It detects overloads without pruning
+   * bounds; other task shapes retain the existing propagation.
+   *
    * The propagator uses algorithms taken from:
    *
    * Petr Vilím, Max Energy Filtering Algorithm for Discrete Cumulative
@@ -3996,6 +4017,13 @@ namespace Gecode {
    *    and edge finding.
    *  - If both flags are combined, all the above listed propagation is
    *    performed.
+   *
+   * For fixed-processing tasks, advanced propagation also performs
+   * knapsack-augmented overload checking (Cloutier and Quimper, CP 2026,
+   * https://doi.org/10.4230/LIPIcs.CP.2026.13). This check handles 4 to 64
+   * currently mandatory tasks, capacities from 2 to 127, and positive demands
+   * with at least one non-unit demand. It detects overloads without pruning
+   * bounds; other task shapes retain the existing propagation.
    *
    * The propagator uses algorithms taken from:
    *
