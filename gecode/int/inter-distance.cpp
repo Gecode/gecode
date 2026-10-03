@@ -48,13 +48,16 @@ namespace Gecode { namespace Int { namespace InterDistance {
 
     /// Task bounds and ranks in their sorted orders
     struct Task {
-      Time min, max;
-      int minRank, maxRank;
+      Time min;
+      Time max;
+      int minRank;
+      int maxRank;
     };
 
     /// Forbidden starting times (inclusive)
     struct Forbidden {
-      Time min, max;
+      Time min;
+      Time max;
     };
 
     /**
@@ -238,8 +241,10 @@ namespace Gecode { namespace Int { namespace InterDistance {
 
     /// Adjustment interval in a doubly linked list sorted by minimum
     struct Adjustment {
-      Time min, max;
-      RegionIndex previous, next;
+      Time min;
+      Time max;
+      RegionIndex previous;
+      RegionIndex next;
     };
 
     /**
@@ -702,6 +707,10 @@ namespace Gecode { namespace Int { namespace InterDistance {
     // an interval support for x or the distance. Restart the basic stage.
     return nofix ? ES_NOFIX : ES_FIX;
   }
+
+  // Export the compiled view specializations for propagator reuse.
+  template class GECODE_INT_EXPORT Bnd<IntView>;
+  template class GECODE_INT_EXPORT Bnd<ConstIntView>;
 
 }}}
 

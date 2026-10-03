@@ -62,6 +62,7 @@ namespace Gecode { namespace Int { namespace InterDistance {
    * by binary search (Quimper et al., 2008, Section 5).
    * The advanced stage performs quadratic bounds filtering.
    * Only views and the algorithm flag are copied on cloning.
+   * The compiled distance views are IntView and ConstIntView.
    *
    * Requires \code #include <gecode/int/inter-distance.hh> \endcode
    * \ingroup FuncIntProp
@@ -87,6 +88,7 @@ namespace Gecode { namespace Int { namespace InterDistance {
     /// Cancel subscriptions and dispose
     virtual size_t dispose(Space& home);
     /// Post propagator
+    GECODE_INT_EXPORT
     static ExecStatus post(Home home, ViewArray<IntView>& x, PView p,
                            bool advanced);
   };
