@@ -73,6 +73,16 @@ Date: unreleased
 [DESCRIPTION]
 This is the development changelog for the next Gecode release.
 
+[ENTRY]
+Module: int
+What:   new
+Rank:   major
+Thanks: Claude-Guy Quimper
+[DESCRIPTION]
+Add the inter-distance constraint with quadratic bounds filtering, adopting
+Claude-Guy Quimper's 2006 submission and the algorithm of Quimper,
+Lopez-Ortiz, and Pesant (AAAI 2006).
+
 [RELEASE]
 Version: 6.4.0
 Date: 2026-07-15
