@@ -80,9 +80,9 @@ Rank:   major
 [DESCRIPTION]
 Advanced cumulative propagation uses knapsack-augmented overload checking
 for fixed-processing tasks to detect conflicts missed by ordinary overload
-checking. The algorithm is from Samuel Cloutier and Claude-Guy Quimper,
-Augmenting the Cumulative Overload Check with Integral Resource Usage
-Reasoning, CP 2026 (https://doi.org/10.4230/LIPIcs.CP.2026.13).
+checking. The algorithm is described in:
+S. Cloutier, C.-G. Quimper, Augmenting the Cumulative Overload Check
+with Integral Resource Usage Reasoning, CP 2026.
 
 [RELEASE]
 Version: 6.4.0
