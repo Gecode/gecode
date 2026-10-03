@@ -88,6 +88,7 @@ set(GECODE_INT_SOURCES
   gecode/int/extensional/tuple-set.cpp
   gecode/int/gcc.cpp
   gecode/int/int-set.cpp
+  gecode/int/inter-distance.cpp
   gecode/int/ldsb.cpp
   gecode/int/ldsb/sym-imp.cpp
   gecode/int/ldsb/sym-obj.cpp
@@ -415,6 +416,7 @@ set(GECODE_TEST_SOURCES
   test/int/exec.cpp
   test/int/extensional.cpp
   test/int/gcc.cpp
+  test/int/inter-distance.cpp
   test/int/linear.cpp
   test/int/member.cpp
   test/int/min-distance.cpp

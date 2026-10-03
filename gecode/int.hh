@@ -1749,6 +1749,31 @@ namespace Gecode {
 
 
   /**
+   * \defgroup TaskModelIntInterDistance Inter-distance constraint
+   * \ingroup TaskModelInt
+   */
+  //@{
+  /** \brief Post bounds-consistent propagator for \f$|x_i-x_j|\geq p\f$ for all \f$0\leq i\neq j<|x|\f$
+   *
+   * Uses the quadratic algorithm of Quimper, Lopez-Ortiz, and Pesant
+   * (AAAI 2006). Supports bounds(Z) consistency (all values of \a ipl).
+   * Domains with holes are treated as intervals between their bounds.
+   * Each filtering pass uses quadratic time and temporary space.
+   *
+   * A zero distance, or fewer than two variables, imposes no restriction.
+   * A distance of one is propagated as a bounds-consistent distinct constraint.
+   *
+   * Throws Int::OutOfLimits if \a p is negative or exceeds Int::Limits::max.
+   * Throws Int::ArgumentSame if \a p is positive and \a x contains the same
+   * unassigned variable multiply.
+   */
+  GECODE_INT_EXPORT void
+  inter_distance(Home home, const IntVarArgs& x, int p,
+                 IntPropLevel ipl=IPL_DEF);
+  //@}
+
+
+  /**
    * \defgroup TaskModelIntDistinct Distinct constraints
    * \ingroup TaskModelInt
    */
