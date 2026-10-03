@@ -1,9 +1,7 @@
 /* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
- *     Claude-Guy Quimper
- *
- *  Contributing authors:
+ *     Claude-Guy Quimper <claude-guy.quimper@ift.ulaval.ca>
  *     Mikael Zayenz Lagerkvist <lagerkvist@gecode.dev>
  *
  *  Copyright:
@@ -371,8 +369,8 @@ namespace Gecode { namespace Int { namespace InterDistance {
         Time* times = r.alloc<Time>(dc);
         int* cursor = r.alloc<int>(dc);
         Forbidden* buffer = r.alloc<Forbidden>(n);
-        // Indices avoid both the one-past-end write and the before-begin
-        // pointer formed by the original 2006 implementation.
+        // Indices keep cursor movement within the allocated forbidden-region
+        // buffer, including its empty-prefix boundary.
         int last = n-1;
         for (int i=0; i<dc; i++) {
           times[i] = deadlines[i];

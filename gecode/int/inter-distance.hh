@@ -1,9 +1,7 @@
 /* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
- *     Claude-Guy Quimper
- *
- *  Contributing authors:
+ *     Claude-Guy Quimper <claude-guy.quimper@ift.ulaval.ca>
  *     Mikael Zayenz Lagerkvist <lagerkvist@gecode.dev>
  *
  *  Copyright:
@@ -58,8 +56,6 @@ namespace Gecode { namespace Int { namespace InterDistance {
 
   /**
    * \brief Bounds-consistent inter-distance propagator
-   *
-   * Adopts Claude-Guy Quimper's 2006 implementation.
    *
    * The basic stage uses Garey et al.'s O(n log n) feasibility algorithm.
    * With a variable distance it also finds the largest feasible distance
