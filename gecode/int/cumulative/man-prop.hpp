@@ -75,6 +75,17 @@ namespace Gecode { namespace Int { namespace Cumulative {
   }
 
   template<class ManTask, class Cap, class PL>
+  PropCost
+  ManProp<ManTask,Cap,PL>::cost(const Space& home,
+                               const ModEventDelta& med) const {
+    if (PL::advanced && SupportsKnapsackOverload<ManTask>::value &&
+        (t.size() >= 4) && (t.size() <= 64) &&
+        (c.max() >= 2) && (c.max() <= 127))
+      return PropCost::quadratic(PropCost::HI,t.size());
+    return TaskProp<ManTask,PL>::cost(home,med);
+  }
+
+  template<class ManTask, class Cap, class PL>
   Actor*
   ManProp<ManTask,Cap,PL>::copy(Space& home) {
     return new (home) ManProp<ManTask,Cap,PL>(home,*this);
@@ -92,8 +103,11 @@ namespace Gecode { namespace Int { namespace Cumulative {
   ExecStatus
   ManProp<ManTask,Cap,PL>::propagate(Space& home, const ModEventDelta& med) {
     // Only bounds changes?
-    if (IntView::me(med) != ME_INT_DOM)
+    if (IntView::me(med) != ME_INT_DOM) {
       GECODE_ES_CHECK(overload(home,c.max(),t));
+      if (PL::advanced)
+        GECODE_ES_CHECK(knapsack_overload(home,c.max(),t));
+    }
 
     if (PL::advanced)
       GECODE_ES_CHECK(edgefinding(home,c.max(),t));
