@@ -168,9 +168,11 @@ What:   new
 Rank:   major
 Thanks: Claude-Guy Quimper
 [DESCRIPTION]
-Add the inter-distance constraint with quadratic bounds filtering, adopting
+Add the inter-distance constraint for fixed and variable separation, adopting
 Claude-Guy Quimper's 2006 submission and the algorithm of Quimper,
-Lopez-Ortiz, and Pesant (AAAI 2006).
+Lopez-Ortiz, and Pesant (AAAI 2006, CPL 2008). A staged propagator combines
+the logarithmic-time-per-task feasibility check of Garey et al. (1981) with
+quadratic bounds filtering, selected through IPL_BASIC and IPL_ADVANCED.
 
 [RELEASE]
 Version: 6.4.0

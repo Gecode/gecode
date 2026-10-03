@@ -53,31 +53,39 @@ namespace Gecode { namespace Int { namespace InterDistance {
    * A Quadratic Propagator for the Inter-Distance Constraint,
    * AAAI 2006, 123--128, and Quimper's 2006 implementation.
    *
-   * Only the views and distance are kept across invocations. Quadratic
-   * scratch storage is allocated in a region and is not copied on cloning.
+   * The basic stage uses the O(n log n) feasibility algorithm of Garey,
+   * Johnson, Simons, and Tarjan, SIAM Journal on Computing 10 (1981),
+   * 256--269. With a variable distance it also finds the largest feasible
+   * distance by binary search (Quimper et al., CPL 3 (2008), 21--35).
+   * The advanced stage performs quadratic bounds filtering.
+   * Only views and the algorithm flag are copied on cloning.
    *
    * Requires \code #include <gecode/int/inter-distance.hh> \endcode
    * \ingroup FuncIntProp
    */
-  class Bnd : public NaryPropagator<IntView,PC_INT_BND> {
+  template<class PView>
+  class Bnd : public MixNaryOnePropagator<IntView,PC_INT_BND,PView,PC_INT_BND> {
   protected:
-    /// Minimum distance
-    int p;
+    using MixNaryOnePropagator<IntView,PC_INT_BND,PView,PC_INT_BND>::x;
+    using MixNaryOnePropagator<IntView,PC_INT_BND,PView,PC_INT_BND>::y;
+    /// Whether to run quadratic filtering after the basic stage
+    bool advanced;
     /// Constructor for posting
-    Bnd(Home home, ViewArray<IntView>& x, int p);
+    Bnd(Home home, ViewArray<IntView>& x, PView p, bool advanced);
     /// Constructor for cloning
     Bnd(Space& home, Bnd& b);
   public:
     /// Copy during cloning
     virtual Propagator* copy(Space& home);
-    /// Quadratic propagation cost
+    /// Cost of the current stage
     virtual PropCost cost(const Space&, const ModEventDelta&) const;
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta&);
     /// Cancel subscriptions and dispose
     virtual size_t dispose(Space& home);
     /// Post propagator
-    static ExecStatus post(Home home, ViewArray<IntView>& x, int p);
+    static ExecStatus post(Home home, ViewArray<IntView>& x, PView p,
+                           bool advanced);
   };
 
 }}}
