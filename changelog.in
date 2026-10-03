@@ -169,10 +169,15 @@ Rank:   major
 Thanks: Claude-Guy Quimper
 [DESCRIPTION]
 Add the inter-distance constraint for fixed and variable separation, adopting
-Claude-Guy Quimper's 2006 submission and the algorithm of Quimper,
-Lopez-Ortiz, and Pesant (AAAI 2006, CPL 2008). A staged propagator combines
-the logarithmic-time-per-task feasibility check of Garey et al. (1981) with
-quadratic bounds filtering, selected through IPL_BASIC and IPL_ADVANCED.
+Claude-Guy Quimper's 2006 submission. Basic propagation checks feasibility
+and bounds the distance; advanced propagation adds staged quadratic bounds
+filtering. The algorithms are described in:
+C.-G. Quimper, A. Lopez-Ortiz, G. Pesant, A Quadratic Propagator for the
+Inter-Distance Constraint, AAAI 2006, and Constraint Programming Letters 3
+(2008), 21-35.
+M. R. Garey, D. S. Johnson, B. B. Simons, R. E. Tarjan, Scheduling Unit-Time
+Tasks with Arbitrary Release Times and Deadlines, SIAM Journal on Computing
+10(2) (1981), 256-269.
 
 [RELEASE]
 Version: 6.4.0
