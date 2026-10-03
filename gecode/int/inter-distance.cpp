@@ -40,6 +40,7 @@
 
 #include <algorithm>
 #include <limits>
+#include <map>
 
 namespace Gecode { namespace Int { namespace InterDistance {
 
@@ -56,6 +57,183 @@ namespace Gecode { namespace Int { namespace InterDistance {
     /// Forbidden starting times (inclusive)
     struct Forbidden {
       Time min, max;
+    };
+
+    /**
+     * \brief Linear-space feasibility checker of Garey et al. (1981)
+     *
+     * Algorithm B represents each deadline's critical time as its deadline
+     * minus its task load and pseudo-offset. A Fenwick tree maintains loads.
+     * A weighted union-find merges deadlines with the same residue modulo p;
+     * an ordered map locates residues affected by a forbidden region. Each
+     * deadline is inserted once and each merge removes a residue, giving
+     * O(n log n) time. Relevant deadlines are kept in deadline order, with
+     * dominated predecessors removed permanently (Lemmas 5 and 6).
+     */
+    class Feasibility {
+      const int n;
+      int dc;
+      Task* tasks;
+      Task** release;
+      Time* deadlines;
+      int* loads;
+      int* successor;
+      int* previous;
+      int* parent;
+      int* size;
+      Time* offset;
+      /// First remaining relevant deadline at or after i
+      int find(int i) {
+        int root = i;
+        while (successor[root] != root)
+          root = successor[root];
+        while (successor[i] != i) {
+          int next = successor[i];
+          successor[i] = root;
+          i = next;
+        }
+        return root;
+      }
+      /// Number of processed tasks with a deadline at or before i
+      int load(int i) const {
+        int count = 0;
+        for (size_t j=static_cast<size_t>(i)+1; j; j-=j & -j)
+          count += loads[j];
+        return count;
+      }
+      /// Sum weighted links, including the root's shared offset
+      Time displacement(int i) const {
+        if (parent[i] == -1)
+          return 0;
+        Time d = offset[i];
+        while (parent[i] != i) {
+          i = parent[i];
+          d += offset[i];
+        }
+        return d;
+      }
+      /// Merge roots while preserving each deadline's displacement
+      int merge(int a, int b) {
+        if (size[a] < size[b])
+          std::swap(a,b);
+        parent[b] = a;
+        offset[b] -= offset[a];
+        size[a] += size[b];
+        return a;
+      }
+      /// Nonnegative remainder, including for negative deadlines
+      static Time residue(Time t, Time p) {
+        Time q = t % p;
+        return (q < 0) ? q+p : q;
+      }
+      /// Pseudo-critical time for deadline i
+      Time critical(int i, Time p) const {
+        return deadlines[i]+p-static_cast<Time>(load(i))*p-displacement(i);
+      }
+    public:
+      Feasibility(Region& r, const ViewArray<IntView>& x)
+        : n(x.size()), dc(0) {
+        tasks = r.alloc<Task>(n);
+        release = r.alloc<Task*>(n);
+        Task** finish = r.alloc<Task*>(n);
+        deadlines = r.alloc<Time>(n);
+        for (int i=0; i<n; i++) {
+          tasks[i].min = x[i].min();
+          tasks[i].max = x[i].max();
+          release[i] = finish[i] = tasks+i;
+        }
+        std::sort(release,release+n,[](const Task* a, const Task* b) {
+          return (a->min < b->min) ||
+            ((a->min == b->min) && (a->max < b->max));
+        });
+        std::sort(finish,finish+n,[](const Task* a, const Task* b) {
+          return a->max < b->max;
+        });
+        for (int i=0; i<n; i++) {
+          if ((i == 0) || (finish[i]->max != deadlines[dc-1]))
+            deadlines[dc++] = finish[i]->max;
+          finish[i]->maxRank = dc-1;
+        }
+        const size_t count = static_cast<size_t>(dc)+1;
+        loads = r.alloc<int>(count);
+        successor = r.alloc<int>(count);
+        previous = r.alloc<int>(dc);
+        parent = r.alloc<int>(dc);
+        size = r.alloc<int>(dc);
+        offset = r.alloc<Time>(dc);
+      }
+      /// Test interval feasibility, reusing the sorted bounds and scratch
+      bool check(int p) {
+        if (p == 0)
+          return true;
+        std::fill(loads,loads+dc+1,0);
+        for (int i=0; i<dc; i++) {
+          successor[i] = i;
+          previous[i] = i-1;
+          parent[i] = -1;
+        }
+        successor[dc] = dc;
+        std::map<Time,int> fractions;
+        int active = dc, pending = dc-1;
+        for (int i=n; i--;) {
+          int rank = release[i]->maxRank;
+          for (size_t j=static_cast<size_t>(rank)+1;
+               j<=static_cast<size_t>(dc); j+=j & -j)
+            loads[j]++;
+          int d = find(rank);
+          active = std::min(active,d);
+          Time c = critical(d,p);
+          while ((previous[d] >= 0) && (critical(previous[d],p) > c)) {
+            int obsolete = previous[d];
+            successor[obsolete] = d;
+            previous[d] = previous[obsolete];
+            if (active == obsolete)
+              active = d;
+          }
+          if ((i > 0) && (release[i-1]->min == release[i]->min))
+            continue;
+          c = critical(active,p);
+          Time r = release[i]->min;
+          if (c < r)
+            return false;
+          if (c-p+1 >= r)
+            continue;
+          // Only deadlines whose back-schedule can reach this region
+          // are activated. Earlier deadlines must retain zero offsets.
+          while ((pending >= 0) && (deadlines[pending]+p >= c)) {
+            parent[pending] = pending;
+            size[pending] = 1;
+            offset[pending] = 0;
+            Time q = residue(deadlines[pending]+p,p);
+            auto entry = fractions.emplace(q,pending);
+            if (!entry.second)
+              entry.first->second = merge(entry.first->second,pending);
+            pending--;
+          }
+          Time a = residue(c-p,p), b = residue(r,p);
+          auto target = fractions.find(a);
+          int root = (target == fractions.end()) ? -1 : target->second;
+          // The forbidden region is open: (c-p,r). At a wraparound,
+          // residue zero is included precisely when it is below b.
+          auto consume = [&](std::map<Time,int>::iterator it, Time end) {
+            while ((it != fractions.end()) && (it->first < end)) {
+              int group = it->second;
+              offset[group] += residue(it->first-a,p);
+              root = (root < 0) ? group : merge(root,group);
+              it = fractions.erase(it);
+            }
+          };
+          if (a < b) {
+            consume(fractions.upper_bound(a),b);
+          } else {
+            consume(fractions.upper_bound(a),p);
+            consume(fractions.begin(),b);
+          }
+          if (root >= 0)
+            fractions[a] = root;
+        }
+        return true;
+      }
     };
 
     /// Adjustment interval in a doubly linked list sorted by minimum
@@ -216,7 +394,9 @@ namespace Gecode { namespace Int { namespace InterDistance {
             return false;
           if (min-p+1 < minSorted[i]->min) {
             if ((forbiddenCount > 0) &&
-                (minSorted[i]->min > buffer[last+1].min)) {
+                (minSorted[i]->min >= buffer[last+1].min)) {
+              // Adjacent integer regions must also be merged: skipping one
+              // region must not land on a forbidden start in its neighbour.
               buffer[last+1].min = min-p+1;
             } else {
               assert(last >= 0);
@@ -377,66 +557,114 @@ namespace Gecode { namespace Int { namespace InterDistance {
       }
     };
 
-    /// Check the defining inequality once every view is assigned
-    bool valid_assignment(const ViewArray<IntView>& x, int p) {
+    /// Minimum separation in an assigned tuple, without quadratic tables
+    Time assigned_distance(Region& r, const ViewArray<IntView>& x) {
+      Time* values = r.alloc<Time>(x.size());
       for (int i=0; i<x.size(); i++)
-        for (int j=0; j<i; j++) {
-          Time d = static_cast<Time>(x[i].val())-x[j].val();
-          if ((-p < d) && (d < p))
-            return false;
-        }
-      return true;
+        values[i] = x[i].val();
+      std::sort(values,values+x.size());
+      Time gap = std::numeric_limits<Time>::max();
+      for (int i=1; i<x.size(); i++)
+        gap = std::min(gap,values[i]-values[i-1]);
+      return gap;
     }
   }
 
-  Bnd::Bnd(Home home, ViewArray<IntView>& x0, int p0)
-    : NaryPropagator<IntView,PC_INT_BND>(home,x0), p(p0) {}
+  template<class PView>
+  Bnd<PView>::Bnd(Home home, ViewArray<IntView>& x0, PView p0, bool a)
+    : MixNaryOnePropagator<IntView,PC_INT_BND,PView,PC_INT_BND>(home,x0,p0),
+      advanced(a) {}
 
-  Bnd::Bnd(Space& home, Bnd& b)
-    : NaryPropagator<IntView,PC_INT_BND>(home,b), p(b.p) {}
+  template<class PView>
+  Bnd<PView>::Bnd(Space& home, Bnd& b)
+    : MixNaryOnePropagator<IntView,PC_INT_BND,PView,PC_INT_BND>(home,b),
+      advanced(b.advanced) {}
 
+  template<class PView>
   Propagator*
-  Bnd::copy(Space& home) {
+  Bnd<PView>::copy(Space& home) {
     return new (home) Bnd(home,*this);
   }
 
+  template<class PView>
   PropCost
-  Bnd::cost(const Space&, const ModEventDelta&) const {
-    return PropCost::quadratic(PropCost::HI,x.size());
+  Bnd<PView>::cost(const Space&, const ModEventDelta& med) const {
+    // ME_INT_DOM is a synthetic event: subscriptions only generate bound
+    // or assignment events. It schedules the quadratic stage separately.
+    if (IntView::me(med) == ME_INT_DOM)
+      return PropCost::quadratic(PropCost::HI,x.size());
+    return PropCost::linear(PropCost::HI,x.size());
   }
 
+  template<class PView>
   size_t
-  Bnd::dispose(Space& home) {
-    (void) NaryPropagator<IntView,PC_INT_BND>::dispose(home);
+  Bnd<PView>::dispose(Space& home) {
+    (void) MixNaryOnePropagator<IntView,PC_INT_BND,PView,PC_INT_BND>::dispose(home);
     return sizeof(*this);
   }
 
+  template<class PView>
   ExecStatus
-  Bnd::post(Home home, ViewArray<IntView>& x, int p) {
+  Bnd<PView>::post(Home home, ViewArray<IntView>& x, PView p, bool advanced) {
     if (x.size() > 1)
-      (void) new (home) Bnd(home,x,p);
+      (void) new (home) Bnd(home,x,p,advanced);
     return ES_OK;
   }
 
+  template<class PView>
   ExecStatus
-  Bnd::propagate(Space& home, const ModEventDelta&) {
-    int min = x[0].min(), max = x[0].max();
+  Bnd<PView>::propagate(Space& home, const ModEventDelta& med) {
+    Region region;
     bool assigned = true;
+    int min = x[0].min(), max = x[0].max();
     for (int i=0; i<x.size(); i++) {
       min = std::min(min,x[i].min());
       max = std::max(max,x[i].max());
       assigned &= x[i].assigned();
     }
     if (assigned) {
-      // In particular, check assignments obtained by jumping across holes
-      // in the previous invocation. No filtering tables are needed here.
-      if (!valid_assignment(x,p))
-        return ES_FAILED;
+      GECODE_ME_CHECK(y.lq(home,assigned_distance(region,x)));
       return home.ES_SUBSUMED(*this);
     }
-    if (static_cast<Time>(max)-min < static_cast<Time>(x.size()-1)*p)
-      return ES_FAILED;
-    Region region;
+    if (y.max() == 0)
+      return home.ES_SUBSUMED(*this);
+    if (y.assigned() && (y.val() == 1))
+      GECODE_REWRITE(*this,Distinct::Bnd<IntView>::post(home(*this),x));
+    const int p = y.min();
+    if (IntView::me(med) != ME_INT_DOM) {
+      Time limit = (static_cast<Time>(max)-min)/(x.size()-1);
+      int upper = static_cast<int>(std::min(limit,static_cast<Time>(y.max())));
+      if (upper < p)
+        return ES_FAILED;
+      Feasibility f(region,x);
+      if (!f.check(p))
+        return ES_FAILED;
+      if ((upper > p) && !f.check(upper)) {
+        // Feasibility is monotone in p. Keep the lower endpoint feasible
+        // and the upper endpoint infeasible, without enumerating distances.
+        int lower = p;
+        while (upper-lower > 1) {
+          int middle = lower+(upper-lower)/2;
+          if (f.check(middle))
+            lower = middle;
+          else
+            upper = middle;
+        }
+        upper = lower;
+      }
+      GECODE_ME_CHECK(y.lq(home,upper));
+      if (y.max() == 0)
+        return home.ES_SUBSUMED(*this);
+      if (y.assigned() && (y.val() == 1))
+        GECODE_REWRITE(*this,Distinct::Bnd<IntView>::post(home(*this),x));
+      if (!advanced || (p == 0))
+        return ES_FIX;
+      return home.ES_FIX_PARTIAL(*this,IntView::med(ME_INT_DOM));
+    }
+    // A zero minimum gives every x bound a support; only the basic stage
+    // needs to filter the distance. A later increase wakes that stage again.
+    if (p == 0)
+      return ES_FIX;
     Filter f(region,x.size(),p);
     bool nofix = false;
     for (int direction=0; direction<2; direction++) {
@@ -452,7 +680,6 @@ namespace Gecode { namespace Int { namespace InterDistance {
       f.prune();
       for (int i=0; i<x.size(); i++) {
         Time bound = direction ? -f.tasks[i].min-p : f.tasks[i].min;
-        // Check in wide arithmetic before converting to the view's type.
         if (direction ? (bound < x[i].min()) : (bound > x[i].max()))
           return ES_FAILED;
         ModEvent me = direction ? x[i].lq(home,static_cast<int>(bound)) :
@@ -465,12 +692,11 @@ namespace Gecode { namespace Int { namespace InterDistance {
     for (int i=0; i<x.size(); i++)
       assigned &= x[i].assigned();
     if (assigned) {
-      if (!valid_assignment(x,p))
-        return ES_FAILED;
+      GECODE_ME_CHECK(y.lq(home,assigned_distance(region,x)));
       return home.ES_SUBSUMED(*this);
     }
-    // The interval algorithm reaches a fixpoint in one pair of sweeps.
-    // Actual bounds can jump across holes; only those jumps need a rerun.
+    // Holes can move actual bounds beyond the computed bounds, invalidating
+    // an interval support for x or the distance. Restart the basic stage.
     return nofix ? ES_NOFIX : ES_FIX;
   }
 
@@ -479,7 +705,7 @@ namespace Gecode { namespace Int { namespace InterDistance {
 namespace Gecode {
 
   void
-  inter_distance(Home home, const IntVarArgs& x, int p, IntPropLevel) {
+  inter_distance(Home home, const IntVarArgs& x, int p, IntPropLevel ipl) {
     using namespace Int;
     Limits::nonnegative(p,"Int::inter_distance");
     if ((p > 0) && same(x))
@@ -491,8 +717,29 @@ namespace Gecode {
     if (p == 1) {
       GECODE_ES_FAIL(Distinct::Bnd<IntView>::post(home,xv));
     } else {
-      GECODE_ES_FAIL(InterDistance::Bnd::post(home,xv,p));
+      GECODE_ES_FAIL(InterDistance::Bnd<ConstIntView>::post(
+        home,xv,ConstIntView(p),ba(ipl) != IPL_BASIC));
     }
+  }
+
+  void
+  inter_distance(Home home, const IntVarArgs& x, IntVar p, IntPropLevel ipl) {
+    using namespace Int;
+    if ((x.size() > 1) &&
+        (same(x,p) || ((p.max() > 0) && same(x))))
+      throw ArgumentSame("Int::inter_distance");
+    GECODE_POST;
+    IntView pv(p);
+    GECODE_ME_FAIL(pv.gq(home,0));
+    if ((pv.max() == 0) || (x.size() < 2))
+      return;
+    if (pv.assigned()) {
+      inter_distance(home,x,pv.val(),ipl);
+      return;
+    }
+    ViewArray<IntView> xv(home,x);
+    GECODE_ES_FAIL(InterDistance::Bnd<IntView>::post(
+      home,xv,pv,ba(ipl) != IPL_BASIC));
   }
 
 }
