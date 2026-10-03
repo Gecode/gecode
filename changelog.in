@@ -79,9 +79,10 @@ What:   performance
 Rank:   major
 [DESCRIPTION]
 Advanced cumulative propagation uses knapsack-augmented overload checking
-to detect conflicts missed by ordinary overload checking. The bounded checker
-handles 4 to 64 currently mandatory fixed-processing tasks with positive
-demands and resource capacities from 2 to 127.
+for fixed-processing tasks to detect conflicts missed by ordinary overload
+checking. The algorithm is from Samuel Cloutier and Claude-Guy Quimper,
+Augmenting the Cumulative Overload Check with Integral Resource Usage
+Reasoning, CP 2026 (https://doi.org/10.4230/LIPIcs.CP.2026.13).
 
 [RELEASE]
 Version: 6.4.0
