@@ -1426,6 +1426,7 @@ if(BUILD_TESTING)
       Int::Distinct::Random
       Int::Extensional::TupleSet::Sparse::IncrementalDelta
       Int::Extensional::TupleSet::Auto::DefaultDispatch
+      Int::InterDistance
       Int::Linear::Bool::Int::Lq
       Int::MiniModel::LinExpr::Bool::352
       NoGoods::Queens

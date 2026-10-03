@@ -73,6 +73,21 @@ Date: unreleased
 [DESCRIPTION]
 This is the development changelog for the next Gecode release.
 
+[ENTRY]
+Module: int
+What:   new
+Rank:   major
+[DESCRIPTION]
+Add the inter-distance constraint for fixed and variable separation. Basic
+propagation checks feasibility and bounds the distance; advanced propagation
+adds staged quadratic bounds filtering. The algorithms are described in:
+C.-G. Quimper, A. Lopez-Ortiz, G. Pesant, A Quadratic Propagator for the
+Inter-Distance Constraint, AAAI 2006, and Constraint Programming Letters 3
+(2008), 21-35.
+M. R. Garey, D. S. Johnson, B. B. Simons, R. E. Tarjan, Scheduling Unit-Time
+Tasks with Arbitrary Release Times and Deadlines, SIAM Journal on Computing
+10(2) (1981), 256-269.
+
 [RELEASE]
 Version: 6.4.0
 Date: 2026-07-15
