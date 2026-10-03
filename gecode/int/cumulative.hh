@@ -48,6 +48,8 @@
  *   Cumulative Resources, CP-AI-OR, 2009.
  *   Petr Vilím, Edge Finding Filtering Algorithm for Discrete
  *   Cumulative Resources in O(kn log n), CP, 2009.
+ *   Samuel Cloutier and Claude-Guy Quimper, Augmenting the Cumulative
+ *   Overload Check with Integral Resource Usage Reasoning, CP, 2026.
  *
  * \brief %Scheduling for cumulative resources
  */
@@ -683,7 +685,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
   template<class ManTask>
   ExecStatus overload(Space& home, int c, TaskArray<ManTask>& t);
 
-  /// Bounded knapsack-augmented overload check (unsupported views are no-op)
+  /// Perform knapsack-augmented overload checking
   template<class Task>
   forceinline ExecStatus
   knapsack_overload(Space&, int, TaskArray<Task>&) {
@@ -739,7 +741,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
     /// Constructor for cloning \a p
     ManProp(Space& home, ManProp& p);
   public:
-    /// Return propagation cost, including bounded quadratic KAOC work
+    /// Return propagation cost
     virtual PropCost cost(const Space& home,
                           const ModEventDelta& med) const;
     /// Perform copying during cloning
@@ -769,7 +771,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
     /// Constructor for cloning \a p
     OptProp(Space& home, OptProp& p);
   public:
-    /// Return propagation cost, including bounded quadratic KAOC work
+    /// Return propagation cost
     virtual PropCost cost(const Space& home,
                           const ModEventDelta& med) const;
     /// Perform copying during cloning

@@ -3843,17 +3843,11 @@ namespace Gecode {
    * propagation level \a ipl as follows:
    *  - If \a IPL_BASIC is set, the propagator performs overload checking
    *    and time-tabling propagation.
-   *  - If \a IPL_ADVANCED is set, the propagator performs overload checking
-   *    and edge finding.
+   *  - If \a IPL_ADVANCED is set, the propagator performs overload checking,
+   *    edge finding, and knapsack-augmented overload checking for
+   *    fixed-processing tasks.
    *  - If both flags are combined, all the above listed propagation is
    *    performed.
-   *
-   * For fixed-processing tasks, advanced propagation also performs
-   * knapsack-augmented overload checking (Cloutier and Quimper, CP 2026,
-   * https://doi.org/10.4230/LIPIcs.CP.2026.13). This check handles 4 to 64
-   * currently mandatory tasks, capacities from 2 to 127, and positive demands
-   * with at least one non-unit demand. It detects overloads without pruning
-   * bounds; other task shapes retain the existing propagation.
    *
    * The propagator uses algorithms taken from:
    *
@@ -3866,6 +3860,11 @@ namespace Gecode {
    * Petr Vilím, Edge finding filtering algorithm for discrete cumulative
    * resources in O(kn log n). In I. P. Gent, editor, CP, volume 5732 of LNCS,
    * pages 802-816. Springer, 2009.
+   *
+   * and
+   *
+   * Samuel Cloutier and Claude-Guy Quimper, Augmenting the Cumulative
+   * Overload Check with Integral Resource Usage Reasoning, CP, 2026.
    *
    *  - Throws an exception of type Int::ArgumentSizeMismatch, if \a t, \a s
    *    \a p, or \a u are of different size.
@@ -3909,17 +3908,11 @@ namespace Gecode {
    * propagation level \a ipl as follows:
    *  - If \a IPL_BASIC is set, the propagator performs overload checking
    *    and time-tabling propagation.
-   *  - If \a IPL_ADVANCED is set, the propagator performs overload checking
-   *    and edge finding.
+   *  - If \a IPL_ADVANCED is set, the propagator performs overload checking,
+   *    edge finding, and knapsack-augmented overload checking for
+   *    fixed-processing tasks.
    *  - If both flags are combined, all the above listed propagation is
    *    performed.
-   *
-   * For fixed-processing tasks, advanced propagation also performs
-   * knapsack-augmented overload checking (Cloutier and Quimper, CP 2026,
-   * https://doi.org/10.4230/LIPIcs.CP.2026.13). This check handles 4 to 64
-   * currently mandatory tasks, capacities from 2 to 127, and positive demands
-   * with at least one non-unit demand. It detects overloads without pruning
-   * bounds; other task shapes retain the existing propagation.
    *
    * The propagator uses algorithms taken from:
    *
@@ -3932,6 +3925,11 @@ namespace Gecode {
    * Petr Vilím, Edge finding filtering algorithm for discrete cumulative
    * resources in O(kn log n). In I. P. Gent, editor, CP, volume 5732 of LNCS,
    * pages 802-816. Springer, 2009.
+   *
+   * and
+   *
+   * Samuel Cloutier and Claude-Guy Quimper, Augmenting the Cumulative
+   * Overload Check with Integral Resource Usage Reasoning, CP, 2026.
    *
    *  - Throws an exception of type Int::ArgumentSizeMismatch, if \a t, \a s
    *    \a p, or \a u are of different size.
@@ -3961,17 +3959,11 @@ namespace Gecode {
    * propagation level \a ipl as follows:
    *  - If \a IPL_BASIC is set, the propagator performs overload checking
    *    and time-tabling propagation.
-   *  - If \a IPL_ADVANCED is set, the propagator performs overload checking
-   *    and edge finding.
+   *  - If \a IPL_ADVANCED is set, the propagator performs overload checking,
+   *    edge finding, and knapsack-augmented overload checking for
+   *    fixed-processing tasks.
    *  - If both flags are combined, all the above listed propagation is
    *    performed.
-   *
-   * For fixed-processing tasks, advanced propagation also performs
-   * knapsack-augmented overload checking (Cloutier and Quimper, CP 2026,
-   * https://doi.org/10.4230/LIPIcs.CP.2026.13). This check handles 4 to 64
-   * currently mandatory tasks, capacities from 2 to 127, and positive demands
-   * with at least one non-unit demand. It detects overloads without pruning
-   * bounds; other task shapes retain the existing propagation.
    *
    * The propagator uses algorithms taken from:
    *
@@ -3984,6 +3976,11 @@ namespace Gecode {
    * Petr Vilím, Edge finding filtering algorithm for discrete cumulative
    * resources in O(kn log n). In I. P. Gent, editor, CP, volume 5732 of LNCS,
    * pages 802-816. Springer, 2009.
+   *
+   * and
+   *
+   * Samuel Cloutier and Claude-Guy Quimper, Augmenting the Cumulative
+   * Overload Check with Integral Resource Usage Reasoning, CP, 2026.
    *
    *  - Throws an exception of type Int::ArgumentSizeMismatch, if \a s
    *    \a p, or \a u are of different size.
@@ -4013,17 +4010,11 @@ namespace Gecode {
    * propagation level \a ipl as follows:
    *  - If \a IPL_BASIC is set, the propagator performs overload checking
    *    and time-tabling propagation.
-   *  - If \a IPL_ADVANCED is set, the propagator performs overload checking
-   *    and edge finding.
+   *  - If \a IPL_ADVANCED is set, the propagator performs overload checking,
+   *    edge finding, and knapsack-augmented overload checking for
+   *    fixed-processing tasks.
    *  - If both flags are combined, all the above listed propagation is
    *    performed.
-   *
-   * For fixed-processing tasks, advanced propagation also performs
-   * knapsack-augmented overload checking (Cloutier and Quimper, CP 2026,
-   * https://doi.org/10.4230/LIPIcs.CP.2026.13). This check handles 4 to 64
-   * currently mandatory tasks, capacities from 2 to 127, and positive demands
-   * with at least one non-unit demand. It detects overloads without pruning
-   * bounds; other task shapes retain the existing propagation.
    *
    * The propagator uses algorithms taken from:
    *
@@ -4036,6 +4027,11 @@ namespace Gecode {
    * Petr Vilím, Edge finding filtering algorithm for discrete cumulative
    * resources in O(kn log n). In I. P. Gent, editor, CP, volume 5732 of LNCS,
    * pages 802-816. Springer, 2009.
+   *
+   * and
+   *
+   * Samuel Cloutier and Claude-Guy Quimper, Augmenting the Cumulative
+   * Overload Check with Integral Resource Usage Reasoning, CP, 2026.
    *
    *  - Throws an exception of type Int::ArgumentSizeMismatch, if \a s,
    *    \a p, \a u, or \a m are of different size.

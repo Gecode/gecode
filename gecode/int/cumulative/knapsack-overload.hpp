@@ -31,14 +31,9 @@
  *
  */
 
-// Knapsack-augmented overload checking from Cloutier and Quimper,
-// "Augmenting the Cumulative Overload Check with Integral Resource Usage
-// Reasoning", CP 2026, https://doi.org/10.4230/LIPIcs.CP.2026.13.
-// Task-count and two-word capacity limits bound the quadratic work and
-// transient Region storage; unsupported shapes retain existing propagation.
-
 namespace Gecode { namespace Int { namespace Cumulative {
 
+  // Knapsack-augmented overload checking
   namespace Kaoc {
 
     struct Bits {
