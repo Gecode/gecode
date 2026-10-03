@@ -42,6 +42,16 @@
 
 /**
  * \namespace Gecode::Int::InterDistance
+ *
+ * The feasibility and bounds-filtering algorithms follow:
+ *   M. R. Garey, D. S. Johnson, B. B. Simons, and R. E. Tarjan,
+ *   Scheduling Unit-Time Tasks with Arbitrary Release Times and Deadlines,
+ *   SIAM Journal on Computing 10(2), pages 256-269, 1981.
+ *   Claude-Guy Quimper, Alejandro Lopez-Ortiz, and Gilles Pesant,
+ *   A Quadratic Propagator for the Inter-Distance Constraint,
+ *   AAAI, pages 123-128, 2006, and Constraint Programming Letters 3,
+ *   pages 21-35, 2008.
+ *
  * \brief Inter-distance propagator
  */
 namespace Gecode { namespace Int { namespace InterDistance {
@@ -49,14 +59,11 @@ namespace Gecode { namespace Int { namespace InterDistance {
   /**
    * \brief Bounds-consistent inter-distance propagator
    *
-   * Based on Claude-Guy Quimper, Alejandro Lopez-Ortiz, and Gilles Pesant,
-   * A Quadratic Propagator for the Inter-Distance Constraint,
-   * AAAI 2006, 123--128, and Quimper's 2006 implementation.
+   * Adopts Claude-Guy Quimper's 2006 implementation.
    *
-   * The basic stage uses the O(n log n) feasibility algorithm of Garey,
-   * Johnson, Simons, and Tarjan, SIAM Journal on Computing 10 (1981),
-   * 256--269. With a variable distance it also finds the largest feasible
-   * distance by binary search (Quimper et al., CPL 3 (2008), 21--35).
+   * The basic stage uses Garey et al.'s O(n log n) feasibility algorithm.
+   * With a variable distance it also finds the largest feasible distance
+   * by binary search (Quimper et al., 2008, Section 5).
    * The advanced stage performs quadratic bounds filtering.
    * Only views and the algorithm flag are copied on cloning.
    *

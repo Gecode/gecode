@@ -48,7 +48,7 @@ namespace Gecode { namespace Int { namespace InterDistance {
     typedef long long int Time;
     typedef std::ptrdiff_t RegionIndex;
 
-    /// Release time, deadline, and position in release-time order
+    /// Task bounds and ranks in their sorted orders
     struct Task {
       Time min, max;
       int minRank, maxRank;
@@ -75,6 +75,7 @@ namespace Gecode { namespace Int { namespace InterDistance {
       int dc;
       Task* tasks;
       Task** release;
+      /// Distinct latest start times; critical() adds p to obtain deadlines
       Time* deadlines;
       int* loads;
       int* successor;
@@ -190,6 +191,7 @@ namespace Gecode { namespace Int { namespace InterDistance {
             if (active == obsolete)
               active = d;
           }
+          // Construct regions after processing all tasks at this release time.
           if ((i > 0) && (release[i-1]->min == release[i]->min))
             continue;
           c = critical(active,p);
@@ -250,6 +252,8 @@ namespace Gecode { namespace Int { namespace InterDistance {
      * vector allow the dominance sweep to generate only quadratically many
      * adjustment intervals. The linked list and union-find propagate changes
      * to bounds without rescanning all variables for each interval.
+     * This implements Algorithm 2 and the adjustment data structure in
+     * Sections 4.1 and 4.2 of Quimper et al. (2008).
      */
     class Filter {
     public:
@@ -640,8 +644,9 @@ namespace Gecode { namespace Int { namespace InterDistance {
       if (!f.check(p))
         return ES_FAILED;
       if ((upper > p) && !f.check(upper)) {
-        // Feasibility is monotone in p. Keep the lower endpoint feasible
-        // and the upper endpoint infeasible, without enumerating distances.
+        // Quimper et al. (2008), Section 5: feasibility is monotone in p.
+        // Keep the lower endpoint feasible and the upper endpoint infeasible,
+        // without enumerating distances.
         int lower = p;
         while (upper-lower > 1) {
           int middle = lower+(upper-lower)/2;
