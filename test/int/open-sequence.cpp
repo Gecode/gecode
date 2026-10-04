@@ -35,6 +35,8 @@
 
 #include <gecode/search.hh>
 
+#include <memory>
+
 namespace Test { namespace Int {
 
   namespace OpenSequence {
@@ -498,6 +500,99 @@ namespace Test { namespace Int {
         return valid && (source.sequence.size() == 1);
       }
     };
+
+    class CallbackSpace : public Gecode::Space {
+    public:
+      Gecode::OpenIntVarSequence sequence;
+
+      CallbackSpace(Gecode::OpenIntVarSequence::Domain domain,
+                    Gecode::OpenIntVarSequence::Transition transition)
+        : sequence(*this,domain,transition,8) {}
+
+      CallbackSpace(CallbackSpace& s) : Gecode::Space(s) {
+        sequence.update(*this,s.sequence);
+      }
+
+      virtual Gecode::Space*
+      copy(void) {
+        return new CallbackSpace(*this);
+      }
+    };
+
+    class Dispose : public ::Test::Base {
+    public:
+      Dispose(void)
+        : ::Test::Base("Int::OpenSequence::Dispose") {}
+
+      virtual bool
+      run(void) {
+        using namespace Gecode;
+        std::shared_ptr<int> domain(new int(0));
+        std::shared_ptr<int> transition(new int(0));
+        CallbackSpace* source = new CallbackSpace(
+          [domain](int) { return IntSet(0,1); },
+          [transition](Space&, OpenIntVarSequence, int) {});
+        source->sequence.materialize(*source,2);
+        DFA dfa(0,{{0,0,0},{0,1,0}},{0});
+        extensional(*source,source->sequence,dfa);
+        if (source->status() == SS_FAILED) {
+          delete source;
+          return false;
+        }
+        CallbackSpace* clone = static_cast<CallbackSpace*>(source->clone());
+        delete source;
+        const bool retained = (domain.use_count() > 1) &&
+                              (transition.use_count() > 1);
+        delete clone;
+        return retained && (domain.use_count() == 1) &&
+                           (transition.use_count() == 1);
+      }
+    };
+
+    class CallbackLength : public ::Test::Base {
+    public:
+      CallbackLength(void)
+        : ::Test::Base("Int::OpenSequence::CallbackLength") {}
+
+      virtual bool
+      run(void) {
+        using namespace Gecode;
+        for (int assign=0; assign<2; assign++)
+          for (int close=0; close<2; close++) {
+            CallbackSpace source([](int) { return IntSet(0,1); },
+              [assign](Space& home, OpenIntVarSequence sequence, int i) {
+                if (i == 0)
+                  rel(home,sequence.length(),assign ? IRT_EQ : IRT_GQ,3);
+              });
+            rel(source,source.sequence.length(),IRT_GQ,1);
+            if (close)
+              source.sequence.close(source);
+            if ((source.status() == SS_FAILED) ||
+                (source.sequence.size() != 3))
+              return false;
+          }
+        return true;
+      }
+    };
+
+    class FailedGet : public ::Test::Base {
+    public:
+      FailedGet(void)
+        : ::Test::Base("Int::OpenSequence::FailedGet") {}
+
+      virtual bool
+      run(void) {
+        using namespace Gecode;
+        CallbackSpace source([](int) { return IntSet(0,1); },
+          [](Space& home, OpenIntVarSequence, int) { home.fail(); });
+        IntVar x = source.sequence.get(source,4);
+        return source.failed() && (x.varimp() == nullptr);
+      }
+    };
+
+    Dispose disposal;
+    CallbackLength callback_length;
+    FailedGet failed_get;
 
     Branch branch;
     BranchOrder branch_order;

@@ -2356,7 +2356,7 @@ namespace Gecode {
   };
 
   namespace Int {
-    class OpenSequence;
+    class OpenMaterialize;
     class OpenSequencePropagator;
     namespace Extensional {
       class OpenRegular;
@@ -2367,7 +2367,27 @@ namespace Gecode {
    * \brief Space-local sequence of integer variables with an open length
    *
    * Variables can be appended until the sequence is closed. The length
-   * variable denotes the eventual sequence length.
+   * variable denotes the eventual sequence length. Propagation materializes
+   * positions required by its minimum.
+   *
+   * A sequence can be used in an ordinary Space:
+   * \code
+   * class Model : public Space {
+   * public:
+   *   OpenIntVarSequence x;
+   *   Model(void) : x(*this,IntSet(0,1),3) {
+   *     rel(*this,x.length(),IRT_EQ,2);
+   *     distinct(*this,x);
+   *     branch(*this,x);
+   *   }
+   *   Model(Model& s) : Space(s) {
+   *     x.update(*this,s.x);
+   *   }
+   *   virtual Space* copy(void) {
+   *     return new Model(*this);
+   *   }
+   * };
+   * \endcode
    *
    * \ingroup TaskModelInt
    */
@@ -2377,7 +2397,7 @@ namespace Gecode {
     class Sequence;
     /// Return the materialized-length variable
     IntVar materialized(void) const;
-    friend class Int::OpenSequence;
+    friend class Int::OpenMaterialize;
     friend class Int::OpenSequencePropagator;
     friend class Int::Extensional::OpenRegular;
     friend void extensional(Home, OpenIntVarSequence, DFA, IntPropLevel);
@@ -2385,8 +2405,9 @@ namespace Gecode {
     /**
      * \brief Function returning the domain for position \a i
      *
-     * The function must be deterministic so that recomputation creates
-     * the same variables.
+     * The function object is shared between clones. It must be
+     * deterministic so that recomputation creates the same variables,
+     * and must not capture space-local data.
      */
     typedef std::function<IntSet(int i)> Domain;
     /**
@@ -2439,12 +2460,24 @@ namespace Gecode {
     /**
      * \brief Materialize the first \a n variables
      *
-     * The eventual length is constrained to be at least \a n.
+     * The eventual length is constrained to be at least \a n. Positions
+     * required by its minimum are materialized, including any increase
+     * imposed by the transition function.
      */
     GECODE_INT_EXPORT void materialize(Space& home, int n);
-    /// Return position \a i, materializing positions through \a i
+    /**
+     * \brief Return position \a i, materializing positions through \a i
+     *
+     * Returns an uninitialized IntVar if \a home is failed or
+     * materialization fails.
+     */
     GECODE_INT_EXPORT IntVar get(Space& home, int i);
-    /// Close the sequence at its current length
+    /**
+     * \brief Close the sequence at its materialized length
+     *
+     * First materializes any positions required by the minimum eventual
+     * length, then assigns the eventual length to the number of positions.
+     */
     GECODE_INT_EXPORT void close(Space& home);
   };
 
