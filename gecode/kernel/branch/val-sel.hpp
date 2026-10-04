@@ -43,8 +43,11 @@ namespace Gecode {
   template<class View_, class Val_>
   class ValSel {
   public:
+    /// \copydoc Gecode::ViewSel::random_words
     unsigned int random_words(void) const { return 0; }
+    /// \copydoc Gecode::ViewSel::random_save
     uint64_t* random_save(uint64_t* out) const { return out; }
+    /// \copydoc Gecode::ViewSel::random_commit
     const uint64_t* random_commit(const uint64_t* in, unsigned int) { return in; }
     /// View type
     typedef View_ View;

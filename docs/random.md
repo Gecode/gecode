@@ -107,7 +107,19 @@ build/random/bin/random-engine counted-splitmix-v1:000000000000002a:9e3779b97f4a
 Both runs print the same initial state and enumerate the same 24 permutations.
 
 Custom selectors participate through `random_words()`, `random_save()`, and
-`random_commit()`. State size and layout must be stable across clones.
+`random_commit()`. `random_words()` reports the number of 64-bit words, with
+size and layout fixed for the selector and its clones. After position and value
+selection, `random_save(out)` writes that many words and returns the pointer
+past them. It does not advance the generator.
+
+`random_commit(in,a)` reads the same number of words, restores the recorded
+parent state, and replaces the selector's state with its `split(a)` state. It
+returns the pointer past the words read. The input is the choice's snapshot;
+the destination's current state does not affect the split. A selector with no
+random state reports zero words and leaves both pointers and state unchanged.
+Branchers chain these pointers in variable-selector order, then value-selector
+order.
+
 Custom branchers can instead store their generator and its choice snapshot as
 ordinary typed members and implement the same capture/restore/split rule directly.
 

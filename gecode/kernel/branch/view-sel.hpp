@@ -43,9 +43,26 @@ namespace Gecode {
   template<class View_>
   class ViewSel {
   public:
-    /// State owned by this selector, recorded only by its brancher.
+    /** \brief Number of 64-bit words needed to record this selector's random state
+     *
+     * Count and layout must remain fixed for the selector and its clones.
+     * Selectors without random state return zero.
+     */
     virtual unsigned int random_words(void) const { return 0; }
+    /** \brief Save random state after position and value selection
+     *
+     * Write exactly random_words() words to \a out without advancing the
+     * generator, and return the pointer past them. The caller supplies that
+     * many writable words. A zero-word selector returns \a out unchanged.
+     */
     virtual uint64_t* random_save(uint64_t* out) const { return out; }
+    /** \brief Restore recorded random state and split for the given alternative
+     *
+     * Read exactly random_words() words from \a in and return the pointer
+     * past them. Replace the selector's state with the recorded parent's
+     * split for the public alternative index, independently of its current
+     * state. A zero-word selector leaves its state and \a in unchanged.
+     */
     virtual const uint64_t* random_commit(const uint64_t* in, unsigned int) { return in; }
     /// Define the view type
     typedef View_ View;
@@ -174,30 +191,30 @@ namespace Gecode {
     /// \name View selection and tie breaking
     //@{
     /// Select a view from \a x starting from \a s and return its position
-    virtual int select(Space& home, ViewArray<View>& x, int s);
+    virtual int select(Space& home, ViewArray<View>& x, int s) override;
     /// Select a view from \a x starting from \a s and return its position
     virtual int select(Space& home, ViewArray<View>& x, int s,
-                       BrancherFilter<View>& f);
+                       BrancherFilter<View>& f) override;
     /// Select ties from \a x starting from \a s
     virtual void ties(Space& home, ViewArray<View>& x, int s,
-                      int* ties, int& n);
+                      int* ties, int& n) override;
     /// Select ties from \a x starting from \a s
     virtual void ties(Space& home, ViewArray<View>& x, int s,
                       int* ties, int& n,
-                      BrancherFilter<View>& f);
+                      BrancherFilter<View>& f) override;
     /// Break ties in \a x and update to new ties
-    virtual void brk(Space& home, ViewArray<View>& x, int* ties, int& n);
+    virtual void brk(Space& home, ViewArray<View>& x, int* ties, int& n) override;
     /// Select a view from \a x considering view with positions in \a ties
-    virtual int select(Space& home, ViewArray<View>& x, int* ties, int n);
+    virtual int select(Space& home, ViewArray<View>& x, int* ties, int n) override;
     //@}
     /// \name Resource management and cloning
     //@{
     /// Create copy during cloning
-    virtual ViewSel<View>* copy(Space& home);
+    virtual ViewSel<View>* copy(Space& home) override;
     /// Whether dispose must always be called (that is, notice is needed)
-    virtual bool notice(void) const;
+    virtual bool notice(void) const override;
     /// Delete view selection
-    virtual void dispose(Space& home);
+    virtual void dispose(Space& home) override;
     //@}
   };
 
