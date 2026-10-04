@@ -369,6 +369,7 @@ public:
     rel(*this, nstall, IRT_LE, best.nstall.val());
   }
 
+  using Script::compare;
   /// Compare objective values
   virtual SpaceComparison compare(const Space& _other) const {
     const CarSequencing& other =
