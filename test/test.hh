@@ -106,8 +106,6 @@ namespace Test {
   private:
     /// Bit mask for tags
     unsigned int _mask;
-    /// Initialize from raw bit mask \a m
-    explicit TestTags(unsigned int m);
   public:
     /// Initialize with no tags
     TestTags(void);

@@ -38,9 +38,6 @@ namespace Test {
    *
    */
   inline
-  TestTags::TestTags(unsigned int m)
-    : _mask(m) {}
-  inline
   TestTags::TestTags(void)
     : _mask(0) {}
   inline
