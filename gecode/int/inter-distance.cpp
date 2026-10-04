@@ -385,8 +385,12 @@ namespace Gecode { namespace Int { namespace InterDistance {
       Adjustment* regions;
       RegionIndex regionCount;
       RegionIndex* firstRegion;
+      /// Adjustment-list cursor for each live bound-group representative
       RegionIndex* nextRegion;
       Time* bounds;
+      // links[i] > i forwards to a merged group's representative; otherwise
+      // i is a live representative and links[i] < i is its predecessor (-1
+      // for the first group). Merging preserves this predecessor at the root.
       int* links;
       bool* processed;
       int* leader;
@@ -721,20 +725,16 @@ namespace Gecode { namespace Int { namespace InterDistance {
         }
       }
     public:
-      /// Prepare bounds filtering, detecting interval infeasibility
-      bool initialize(Region& r) {
+      /// Filter bounds, returning false on interval infeasibility
+      bool filter(Region& r) {
         sort_tasks();
         if (!compute_forbidden_regions(r))
           return false;
         compute_earliest_completions();
-        return true;
-      }
-
-      /// Apply internal adjustments, then external adjustments by deadline
-      void prune(void) {
         initialize_adjustments();
         apply_internal_adjustments();
         apply_external_adjustments();
+        return true;
       }
     };
 
@@ -773,9 +773,8 @@ namespace Gecode { namespace Int { namespace InterDistance {
           f.tasks[i].max = direction ? -static_cast<Time>(x[i].min()) :
             static_cast<Time>(x[i].max())+p;
         }
-        if (!f.initialize(region))
+        if (!f.filter(region))
           return ES_FAILED;
-        f.prune();
         for (int i=0; i<x.size(); i++) {
           Time bound = direction ? -f.tasks[i].min-p : f.tasks[i].min;
           if (direction ? (bound < x[i].min()) : (bound > x[i].max()))
