@@ -146,7 +146,7 @@ namespace Gecode {
     /// Checked seed or complete state for the build-configured random engine.
     class GECODE_DRIVER_EXPORT RandomOption : public BaseOption {
       uint64_t cur;
-      std::string initial;
+      Rnd initial;
       bool seed_given = false;
       bool state_given = false;
       bool state_only = false;

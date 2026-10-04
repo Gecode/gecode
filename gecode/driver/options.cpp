@@ -114,7 +114,7 @@ namespace Gecode {
     }
     void RandomOption::value(uint64_t v) {
       cur = v;
-      initial = Support::RandomGenerator(v).state_string();
+      initial.seed(v);
       seed_given = state_given = state_only = false;
     }
     uint64_t RandomOption::value(void) const {
@@ -123,9 +123,7 @@ namespace Gecode {
       return cur;
     }
     Rnd RandomOption::rnd(void) const {
-      Rnd r;
-      r.state(initial);
-      return r;
+      return initial;
     }
     int RandomOption::parse(int argc, char* argv[]) {
       bool full = argc >= 2 &&
@@ -146,20 +144,16 @@ namespace Gecode {
         if ((full && seed_given) || (!full && state_given))
           throw std::invalid_argument("Seed and state options cannot be combined");
         if (full) {
-          Support::RandomGenerator r;
-          r.state(std::string(arg));
-          initial = r.state_string();
+          initial.state(std::string(arg));
           state_given = state_only = true;
         } else {
           if (!strcmp(arg,"time") || !strcmp(arg,"hw")) {
-            Rnd r;
-            if (!strcmp(arg,"time")) r.time(); else r.hw();
-            initial = r.state();
+            if (!strcmp(arg,"time")) initial.time(); else initial.hw();
             state_only = true;
-            std::cerr << "% Random state: -state " << initial << std::endl;
+            std::cerr << "% Random state: -state " << initial.state() << std::endl;
           } else {
             cur = Support::random_seed(arg);
-            initial = Support::RandomGenerator(cur).state_string();
+            initial.seed(cur);
             state_only = false;
           }
           seed_given = true;
@@ -175,7 +169,7 @@ namespace Gecode {
                 << "\t\t" << exp << "\n"
                 << "\t-state (complete " << Support::RandomGenerator::name()
                 << " state; mutually exclusive with " << iopt << ")\n"
-                << "\t\tCurrent initial state: " << initial << std::endl;
+                << "\t\tCurrent initial state: " << initial.state() << std::endl;
     }
 
     StringValueOption::StringValueOption(const char* o, const char* e,
