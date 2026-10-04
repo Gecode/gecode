@@ -68,7 +68,8 @@ namespace Gecode { namespace Int { namespace InterDistance {
    * \ingroup FuncIntProp
    */
   template<class PView>
-  class Bnd : public MixNaryOnePropagator<IntView,PC_INT_BND,PView,PC_INT_BND> {
+  class GECODE_INT_EXPORT Bnd
+    : public MixNaryOnePropagator<IntView,PC_INT_BND,PView,PC_INT_BND> {
   protected:
     using MixNaryOnePropagator<IntView,PC_INT_BND,PView,PC_INT_BND>::x;
     using MixNaryOnePropagator<IntView,PC_INT_BND,PView,PC_INT_BND>::y;
@@ -88,7 +89,6 @@ namespace Gecode { namespace Int { namespace InterDistance {
     /// Cancel subscriptions and dispose
     virtual size_t dispose(Space& home);
     /// Post propagator
-    GECODE_INT_EXPORT
     static ExecStatus post(Home home, ViewArray<IntView>& x, PView p,
                            bool advanced);
   };
