@@ -156,7 +156,9 @@ namespace Gecode { namespace Int { namespace InterDistance {
             deadlines[dc++] = finish[i]->max;
           finish[i]->maxRank = dc-1;
         }
-        const size_t count = static_cast<size_t>(dc)+1;
+        // Include the successor sentinel without overflowing signed int.
+        // Region::alloc has an unsigned-int overload on every platform.
+        const unsigned int count = static_cast<unsigned int>(dc)+1;
         loads = r.alloc<int>(count);
         successor = r.alloc<int>(count);
         previous = r.alloc<int>(dc);
@@ -709,8 +711,8 @@ namespace Gecode { namespace Int { namespace InterDistance {
   }
 
   // Export the compiled view specializations for propagator reuse.
-  template class GECODE_INT_EXPORT Bnd<IntView>;
-  template class GECODE_INT_EXPORT Bnd<ConstIntView>;
+  template class Bnd<IntView>;
+  template class Bnd<ConstIntView>;
 
 }}}
 
