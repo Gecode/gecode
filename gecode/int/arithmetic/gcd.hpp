@@ -68,16 +68,16 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     return u;
   }
 
-  /// Tighten an operand to the extreme multiples of a positive gcd.
+  /// Tighten a view to the extreme multiples of a positive divisor.
   inline ExecStatus
-  gcd_multiple_bounds(Home home, IntView x, int g) {
-    assert(g > 0);
+  multiple_bounds(Home home, IntView x, int d) {
+    assert(d > 0);
     const long long int l =
       ceil_div_xx(static_cast<long long int>(x.min()),
-                  static_cast<long long int>(g)) * g;
+                  static_cast<long long int>(d)) * d;
     const long long int u =
       floor_div_xx(static_cast<long long int>(x.max()),
-                   static_cast<long long int>(g)) * g;
+                   static_cast<long long int>(d)) * d;
     if (l > u)
       return ES_FAILED;
     GECODE_ME_CHECK(x.gq(home,static_cast<int>(l)));
@@ -135,7 +135,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     return ES_OK;
   }
 
-  /// Status of abs(x0)=x1 using assignments and interval bounds only.
+  /// Status of abs(x0)=x1 using bounds, assignments, and domain membership.
   inline RelTest
   gcd_abs_status(const IntView& x0, const IntView& x1) {
     if (x1.max() < 0)
@@ -231,8 +231,8 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         GECODE_ME_CHECK(x1.eq(home,0));
         return ES_OK;
       }
-      GECODE_ES_CHECK(gcd_multiple_bounds(home,x0,g));
-      GECODE_ES_CHECK(gcd_multiple_bounds(home,x1,g));
+      GECODE_ES_CHECK(multiple_bounds(home,x0,g));
+      GECODE_ES_CHECK(multiple_bounds(home,x1,g));
       if (x0.assigned())
         GECODE_ES_CHECK(gcd_coprime_bounds(home,x1,x0.val(),g));
       if (x1.assigned())
@@ -294,8 +294,8 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         GECODE_ME_CHECK(x1.eq(home,0));
         return home.ES_SUBSUMED(*this);
       }
-      GECODE_ES_CHECK(gcd_multiple_bounds(home,x0,g));
-      GECODE_ES_CHECK(gcd_multiple_bounds(home,x1,g));
+      GECODE_ES_CHECK(multiple_bounds(home,x0,g));
+      GECODE_ES_CHECK(multiple_bounds(home,x1,g));
       if (x0.assigned())
         GECODE_ES_CHECK(gcd_coprime_bounds(home,x1,x0.val(),g));
       if (x1.assigned())

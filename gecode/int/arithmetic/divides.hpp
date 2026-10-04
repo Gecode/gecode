@@ -40,24 +40,6 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     return (divisor == 0) ? (dividend == 0) : (dividend % divisor == 0);
   }
 
-  /// Tighten a dividend to the extreme multiples of a nonzero divisor.
-  inline ExecStatus
-  divides_multiple_bounds(Home home, IntView dividend, int divisor) {
-    const int a=(divisor < 0) ? -divisor : divisor;
-    assert(a > 0);
-    const long long int l =
-      ceil_div_xx(static_cast<long long int>(dividend.min()),
-                  static_cast<long long int>(a)) * a;
-    const long long int u =
-      floor_div_xx(static_cast<long long int>(dividend.max()),
-                   static_cast<long long int>(a)) * a;
-    if (l > u)
-      return ES_FAILED;
-    GECODE_ME_CHECK(dividend.gq(home,static_cast<int>(l)));
-    GECODE_ME_CHECK(dividend.lq(home,static_cast<int>(u)));
-    return ES_OK;
-  }
-
   /// Enforce divisibility with bounds reasoning only.
   inline ExecStatus
   divides_bnd(Space& home, IntView divisor, IntView dividend) {
@@ -73,7 +55,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
       }
       if ((d == 1) || (d == -1))
         return ES_OK;
-      GECODE_ES_CHECK(divides_multiple_bounds(home,dividend,d));
+      GECODE_ES_CHECK(multiple_bounds(home,dividend,(d < 0) ? -d : d));
     }
 
     // Every divisor of a nonzero dividend has no greater magnitude.

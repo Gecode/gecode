@@ -276,7 +276,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         return home.ES_SUBSUMED(*this);
       }
       const unsigned int old_size=y.size();
-      GECODE_ES_CHECK(gcd_multiple_bounds(home,y,gcd_value(c,m)));
+      GECODE_ES_CHECK(multiple_bounds(home,y,gcd_value(c,m)));
       modified |= old_size != y.size();
       if (y.min() > 0)
         GECODE_ES_CHECK(product_mod_nonzero(home,x,modified));
