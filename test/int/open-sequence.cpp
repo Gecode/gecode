@@ -590,6 +590,70 @@ namespace Test { namespace Int {
       }
     };
 
+    class ValueCommit : public ::Test::Base {
+    public:
+      ValueCommit(void)
+        : ::Test::Base("Int::OpenSequence::ValueCommit") {}
+
+      virtual bool
+      run(void) {
+        using namespace Gecode;
+        CallbackSpace source([](int) { return IntSet(0,1); },
+          [](Space& home, OpenIntVarSequence, int i) {
+            if (i == 1)
+              home.fail();
+          });
+        source.sequence.materialize(source,1);
+        branch(source,source.sequence,OIB_VALUE_FIRST);
+        if (source.status() != SS_BRANCH)
+          return false;
+        const Choice* choice = source.choice();
+        bool valid = true;
+        for (unsigned int alternative=0; alternative<2; alternative++) {
+          CallbackSpace* clone = static_cast<CallbackSpace*>(source.clone());
+          rel(*clone,clone->sequence.length(),IRT_GQ,2);
+          clone->commit(*choice,alternative);
+          valid &= !clone->failed() && (clone->sequence.size() == 1) &&
+            clone->sequence[0].assigned() &&
+            (clone->sequence[0].val() == static_cast<int>(alternative));
+          valid &= clone->status() == SS_FAILED;
+          delete clone;
+        }
+        delete choice;
+        return valid;
+      }
+    };
+
+    class ImpossibleWindow : public ::Test::Base {
+    public:
+      ImpossibleWindow(void)
+        : ::Test::Base("Int::OpenSequence::ImpossibleWindow") {}
+
+      virtual bool
+      run(void) {
+        using namespace Gecode;
+        for (int sum=0; sum<2; sum++)
+          for (int size=0; size<3; size++) {
+            CallbackSpace source([](int) { return IntSet(0,1); },
+              [](Space&, OpenIntVarSequence, int) {});
+            if (sum)
+              slidingsum(source,source.sequence,2,2,1);
+            else
+              Gecode::sequence(source,source.sequence,IntSet(0,1),2,3,3);
+            rel(source,source.sequence.length(),IRT_EQ,size);
+            const bool failed = source.status() == SS_FAILED;
+            if (failed != (size == 2))
+              return false;
+            if (!failed && (source.sequence.size() != size))
+              return false;
+          }
+        return true;
+      }
+    };
+
+    ValueCommit value_commit;
+    ImpossibleWindow impossible_window;
+
     Dispose disposal;
     CallbackLength callback_length;
     FailedGet failed_get;

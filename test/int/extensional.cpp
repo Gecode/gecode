@@ -474,6 +474,30 @@ namespace Test { namespace Int {
        }
      };
 
+     /// %Test repeated final states in a sparse DFA specification
+     class RegDuplicateFinals : public Test {
+     protected:
+       bool minimize;
+     public:
+       RegDuplicateFinals(bool minimize0)
+         : Test(std::string("Extensional::Reg::DuplicateFinals::")+
+                (minimize0 ? "Minimize" : "Keep"),
+                1,0,1,false,Gecode::IPL_DOM), minimize(minimize0) {}
+
+       virtual bool
+       solution(const Assignment& x) const {
+         return x[0] == 0;
+       }
+
+       virtual void
+       post(Gecode::Space& home, Gecode::IntVarArray& x) {
+         using namespace Gecode;
+         DFA d(100,{{100,0,200}},
+               {200,200,200,200,200,200,200,200},minimize);
+         extensional(home,x,d);
+       }
+     };
+
      /// %Test the Boolean-view regular posting route
      class RegBoolCyclicFrontier : public Test {
      public:
@@ -2918,6 +2942,8 @@ namespace Test { namespace Int {
      RegAcyclicReconvergence reg_sparse_acyclic_reconvergence;
      RegCyclicFrontier reg_sparse_cyclic_frontier;
      RegSparseStateNumbering reg_sparse_state_numbering;
+     RegDuplicateFinals reg_duplicate_finals_minimize(true);
+     RegDuplicateFinals reg_duplicate_finals_keep(false);
      RegBoolCyclicFrontier reg_sparse_bool_cyclic_frontier;
      RegRandomDifferential reg_sparse_random_differential_1(1);
      RegRandomDifferential reg_sparse_random_differential_2(2);

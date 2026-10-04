@@ -194,8 +194,10 @@ namespace Gecode {
       is_final[i] = false;
     for (int* f = &f_spec[0]; *f != -1; f++) {
       const int state = compact(*f);
-      is_final[state]      = true;
-      final[n_finals++] = state;
+      if (!is_final[state]) {
+        is_final[state] = true;
+        final[n_finals++] = state;
+      }
     }
 
     if (minimize) {
