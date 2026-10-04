@@ -2400,7 +2400,8 @@ namespace Gecode {
     friend class Int::OpenMaterialize;
     friend class Int::OpenSequencePropagator;
     friend class Int::Extensional::OpenRegular;
-    friend void extensional(Home, OpenIntVarSequence, DFA, IntPropLevel);
+    friend GECODE_INT_EXPORT
+    void extensional(Home, OpenIntVarSequence, DFA, IntPropLevel);
   public:
     /**
      * \brief Function returning the domain for position \a i

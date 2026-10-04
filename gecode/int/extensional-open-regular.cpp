@@ -115,11 +115,11 @@ namespace Gecode { namespace Int { namespace Extensional {
         static_cast<unsigned long long>(k);
       if (cells >
           static_cast<unsigned long long>
-          ((std::numeric_limits<size_t>::max)()))
+          ((std::numeric_limits<unsigned long>::max)()))
         throw OutOfLimits("Int::extensional");
 
       unsigned char* backward =
-        r.alloc<unsigned char>(static_cast<size_t>(cells));
+        r.alloc<unsigned char>(static_cast<unsigned long>(cells));
       for (size_t i=0; i<static_cast<size_t>(cells); i++)
         backward[i] = 0;
 
