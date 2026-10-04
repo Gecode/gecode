@@ -232,30 +232,33 @@ namespace Gecode { namespace Int { namespace InterDistance {
         return deadlines[i]+p-static_cast<Time>(load(i))*p-displacement(i);
       }
 
+      /// Shift and merge active residues from first up to end into target
+      void merge_residue_range(int first, Time end, int target, int p) {
+        Time a = residues.key(target);
+        int root = residues.group(target);
+        int i = first;
+        while (!residues.at_end(i) && (residues.key(i) < end)) {
+          Time key = residues.key(i);
+          int group = residues.group(i);
+          offset[group] += residue(key-a,p);
+          root = merge(root,group);
+          residues.remove(i);
+          i = residues.active_after(key);
+        }
+        residues.set_group(target,root);
+      }
+
       /// Move groups in the open residue arc (a,b) into the group at a
       void forbid(Time a, Time b, int p) {
         int target = residues.rank(a);
-        int root = residues.group(target);
         // The active deadline's group has residue critical(active,p) % p,
         // so activation has already supplied the target key.
-        assert(root >= 0);
-
-        auto consume = [&](int i, Time end) {
-          while (!residues.at_end(i) && (residues.key(i) < end)) {
-            Time key = residues.key(i);
-            int group = residues.group(i);
-            offset[group] += residue(key-a,p);
-            root = merge(root,group);
-            residues.remove(i);
-            i = residues.active_after(key);
-          }
-        };
+        assert(residues.group(target) >= 0);
 
         // At a wraparound, zero is included precisely when it is below b.
-        consume(residues.active_after(a),(a < b) ? b : p);
+        merge_residue_range(residues.active_after(a),(a < b) ? b : p,target,p);
         if (a >= b)
-          consume(residues.first_active(),b);
-        residues.set_group(target,root);
+          merge_residue_range(residues.first_active(),b,target,p);
       }
     public:
       Feasibility(Region& r, const ViewArray<IntView>& x)
