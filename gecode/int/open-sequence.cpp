@@ -33,6 +33,310 @@
 
 #include <gecode/int.hh>
 
+namespace Gecode {
+
+  class OpenIntVarSequence::Sequence : public LocalObject {
+  public:
+    class Factory {
+    public:
+      Domain domain;
+      Transition transition;
+
+      Factory(Domain domain0, Transition transition0)
+        : domain(domain0), transition(transition0) {}
+    };
+
+    IntVar length;
+    IntVar materialized;
+    IntVar* x;
+    int n;
+    int capacity;
+    SharedData<Factory> factory;
+
+    static int
+    maximum(int max) {
+      Int::Limits::check(max,"OpenIntVarSequence");
+      if (max < 0)
+        throw Int::VariableEmptyDomain("OpenIntVarSequence");
+      return max;
+    }
+
+    static Domain
+    valid(Domain d) {
+      if (!d)
+        throw InvalidFunction("OpenIntVarSequence");
+      return d;
+    }
+
+    static Transition
+    valid(Transition t) {
+      if (!t)
+        throw InvalidFunction("OpenIntVarSequence");
+      return t;
+    }
+
+    Sequence(Home home, Domain d, int max)
+      : LocalObject(home),
+        length(home,0,maximum(max)),
+        materialized(home,0,max),
+        x(nullptr), n(0), capacity(0),
+        factory(Factory(valid(d),Transition())) {
+      home.notice(*this,AP_DISPOSE);
+    }
+
+    Sequence(Home home, Domain d, Transition t, int max)
+      : LocalObject(home),
+        length(home,0,maximum(max)),
+        materialized(home,0,max),
+        x(nullptr), n(0), capacity(0),
+        factory(Factory(valid(d),valid(t))) {
+      home.notice(*this,AP_DISPOSE);
+    }
+
+    Sequence(Space& home, Sequence& s)
+      : LocalObject(home,s), x(nullptr), n(s.n), capacity(s.n),
+        factory(s.factory) {
+      length.update(home,s.length);
+      materialized.update(home,s.materialized);
+      if (capacity > 0) {
+        x = heap.alloc<IntVar>(capacity);
+        try {
+          for (int i=0; i<n; i++)
+            x[i].update(home,s.x[i]);
+        } catch (...) {
+          heap.free<IntVar>(x,capacity);
+          throw;
+        }
+      }
+    }
+
+    virtual Actor*
+    copy(Space& home) {
+      return new (home) Sequence(home,*this);
+    }
+
+    virtual size_t
+    dispose(Space& home) {
+      home.ignore(*this,AP_DISPOSE);
+      if (capacity > 0)
+        heap.free<IntVar>(x,capacity);
+      factory.~SharedData<Factory>();
+      return sizeof(*this);
+    }
+
+    void
+    reserve(void) {
+      if (n == capacity) {
+        int next = (capacity < 4) ? 4 : capacity + capacity / 2;
+        x = heap.realloc<IntVar>(x,capacity,next);
+        capacity = next;
+      }
+    }
+
+    void
+    append(IntVar y) {
+      x[n++] = y;
+    }
+  };
+
+}
+
+namespace Gecode { namespace Int {
+
+  /// Materialize positions required by the minimum eventual length
+  class OpenMaterialize : public Propagator {
+  protected:
+    OpenIntVarSequence sequence;
+    IntView length;
+
+    OpenMaterialize(Home home, OpenIntVarSequence sequence0)
+      : Propagator(home), sequence(sequence0), length(sequence0.length()) {
+      length.subscribe(home,*this,PC_INT_BND);
+    }
+
+    OpenMaterialize(Space& home, OpenMaterialize& p)
+      : Propagator(home,p) {
+      sequence.update(home,p.sequence);
+      length.update(home,p.length);
+    }
+
+  public:
+    virtual Actor*
+    copy(Space& home) {
+      return new (home) OpenMaterialize(home,*this);
+    }
+
+    virtual PropCost
+    cost(const Space&, const ModEventDelta&) const {
+      const int n = length.min()-sequence.size();
+      return (n <= 1) ? PropCost::unary(PropCost::LO) :
+                        PropCost::linear(PropCost::LO,n);
+    }
+
+    virtual void
+    reschedule(Space& home) {
+      length.reschedule(home,*this,PC_INT_BND);
+    }
+
+    virtual ExecStatus
+    propagate(Space& home, const ModEventDelta&) {
+      sequence.materialize(home,length.min());
+      if (home.failed())
+        return ES_FAILED;
+      if (length.assigned())
+        return home.ES_SUBSUMED(*this);
+      return ES_FIX;
+    }
+
+    virtual size_t
+    dispose(Space& home) {
+      length.cancel(home,*this,PC_INT_BND);
+      sequence.~OpenIntVarSequence();
+      (void) Propagator::dispose(home);
+      return sizeof(*this);
+    }
+
+    static void
+    post(Home home, OpenIntVarSequence sequence) {
+      if (!sequence.length().assigned())
+        (void) new (home) OpenMaterialize(home,sequence);
+    }
+  };
+
+}}
+
+namespace Gecode {
+
+  OpenIntVarSequence::OpenIntVarSequence(void) {}
+
+  OpenIntVarSequence::OpenIntVarSequence(Space& home, int max)
+    : OpenIntVarSequence(home,
+        IntSet(Int::Limits::min,Int::Limits::max),max) {}
+
+  OpenIntVarSequence::OpenIntVarSequence(Space& home, const IntSet& d,
+                                         int max)
+    : OpenIntVarSequence(home,[d](int) { return d; },max) {}
+
+  OpenIntVarSequence::OpenIntVarSequence(Space& home, const IntSet& d,
+                                         Transition t, int max)
+    : OpenIntVarSequence(home,[d](int) { return d; },t,max) {}
+
+  OpenIntVarSequence::OpenIntVarSequence(Space& home, Domain d, int max)
+    : LocalHandle(new (home) Sequence(home,d,max)) {
+    Int::OpenMaterialize::post(home,*this);
+  }
+
+  OpenIntVarSequence::OpenIntVarSequence(Space& home, Domain d,
+                                         Transition t, int max)
+    : LocalHandle(new (home) Sequence(home,d,t,max)) {
+    Int::OpenMaterialize::post(home,*this);
+  }
+
+  void
+  OpenIntVarSequence::update(Space& home, OpenIntVarSequence& s) {
+    LocalHandle::update(home,s);
+  }
+
+  int
+  OpenIntVarSequence::size(void) const {
+    return static_cast<Sequence*>(object())->n;
+  }
+
+  IntVar
+  OpenIntVarSequence::operator [](int i) const {
+    Sequence* s = static_cast<Sequence*>(object());
+    assert((i >= 0) && (i < s->n));
+    return s->x[i];
+  }
+
+  IntVar
+  OpenIntVarSequence::length(void) const {
+    return static_cast<Sequence*>(object())->length;
+  }
+
+  IntVar
+  OpenIntVarSequence::materialized(void) const {
+    return static_cast<Sequence*>(object())->materialized;
+  }
+
+  void
+  OpenIntVarSequence::append(Space& home, IntVar y) {
+    if (home.failed())
+      return;
+    Sequence* s = static_cast<Sequence*>(object());
+    if (s->n == Int::Limits::max) {
+      home.fail();
+      return;
+    }
+    for (int i=0; i<s->n; i++)
+      if (!y.assigned() && !s->x[i].assigned() &&
+          (y.varimp() == s->x[i].varimp()))
+        throw Int::ArgumentSame("OpenIntVarSequence::append");
+    s->reserve();
+    const int next = s->n + 1;
+    Int::IntView l(s->length);
+    Int::IntView m(s->materialized);
+    if (me_failed(l.gq(home,next)) || me_failed(m.gq(home,next))) {
+      home.fail();
+      return;
+    }
+    s->append(y);
+    const Transition& transition = s->factory().transition;
+    if (transition) {
+      GECODE_VALID_FUNCTION(transition);
+      transition(home,*this,next-1);
+    }
+  }
+
+  void
+  OpenIntVarSequence::materialize(Space& home, int n) {
+    if (home.failed())
+      return;
+    Int::Limits::nonnegative(n,"OpenIntVarSequence::materialize");
+    Sequence* s = static_cast<Sequence*>(object());
+    Int::IntView l(s->length);
+    if (me_failed(l.gq(home,n))) {
+      home.fail();
+      return;
+    }
+    while (s->n < l.min()) {
+      const int i = s->n;
+      GECODE_VALID_FUNCTION(s->factory().domain);
+      IntVar y(home,s->factory().domain(i));
+      append(home,y);
+      if (home.failed())
+        return;
+    }
+  }
+
+  IntVar
+  OpenIntVarSequence::get(Space& home, int i) {
+    Int::Limits::nonnegative(i,"OpenIntVarSequence::get");
+    if (home.failed())
+      return IntVar();
+    Sequence* s = static_cast<Sequence*>(object());
+    if (i >= s->length.max())
+      throw Int::OutOfLimits("OpenIntVarSequence::get");
+    materialize(home,i+1);
+    if (home.failed())
+      return IntVar();
+    return static_cast<Sequence*>(object())->x[i];
+  }
+
+  void
+  OpenIntVarSequence::close(Space& home) {
+    if (home.failed())
+      return;
+    materialize(home,length().min());
+    if (home.failed())
+      return;
+    Sequence* s = static_cast<Sequence*>(object());
+    if (me_failed(Int::IntView(s->length).eq(home,s->n)))
+      home.fail();
+  }
+
+}
+
 namespace Gecode { namespace Int {
 
   class OpenSequencePropagator : public Propagator {
