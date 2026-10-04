@@ -104,6 +104,47 @@ namespace Gecode { namespace Int { namespace Extensional {
       return false;
     }
 
+  private:
+    /// Compute backward state support in region-owned storage
+    const unsigned char*
+    compute_backward_support(Region& r, bool closed) const {
+      const int n = sequence.size()-offset;
+      const int k = dfa.n_states();
+      const unsigned long long cells =
+        static_cast<unsigned long long>(n+1) *
+        static_cast<unsigned long long>(k);
+      if (cells >
+          static_cast<unsigned long long>
+          ((std::numeric_limits<size_t>::max)()))
+        throw OutOfLimits("Int::extensional");
+
+      unsigned char* backward =
+        r.alloc<unsigned char>(static_cast<size_t>(cells));
+      for (size_t i=0; i<static_cast<size_t>(cells); i++)
+        backward[i] = 0;
+
+      unsigned char* last = backward + static_cast<size_t>(n)*k;
+      if (closed) {
+        for (int s=0; s<k; s++)
+          if (final(s))
+            last[s] = 1;
+      } else if (viable()) {
+        for (int s=0; s<k; s++)
+          last[s] = 1;
+      }
+
+      for (int i=n; i--; ) {
+        unsigned char* in = backward + static_cast<size_t>(i)*k;
+        unsigned char* out = in+k;
+        IntView x(sequence[offset+i]);
+        for (ViewValues<IntView> v(x); v(); ++v)
+          for (DFA::Transitions t(dfa,v.val()); t(); ++t)
+            if (out[t.o_state()] != 0)
+              in[t.i_state()] = 1;
+      }
+      return backward;
+    }
+
   public:
     virtual Actor*
     copy(Space& home) {
@@ -148,39 +189,8 @@ namespace Gecode { namespace Int { namespace Extensional {
         return closed ? home.ES_SUBSUMED(*this) : ES_FIX;
       }
 
-      const unsigned long long cells =
-        static_cast<unsigned long long>(n+1) *
-        static_cast<unsigned long long>(k);
-      if (cells >
-          static_cast<unsigned long long>
-          ((std::numeric_limits<size_t>::max)()))
-        throw OutOfLimits("Int::extensional");
-
       Region r;
-      unsigned char* backward =
-        r.alloc<unsigned char>(static_cast<size_t>(cells));
-      for (size_t i=0; i<static_cast<size_t>(cells); i++)
-        backward[i] = 0;
-
-      unsigned char* last = backward + static_cast<size_t>(n)*k;
-      if (closed) {
-        for (int s=0; s<k; s++)
-          if (final(s))
-            last[s] = 1;
-      } else if (viable()) {
-        for (int s=0; s<k; s++)
-          last[s] = 1;
-      }
-
-      for (int i=n; i--; ) {
-        unsigned char* in = backward + static_cast<size_t>(i)*k;
-        unsigned char* out = in+k;
-        IntView x(sequence[offset+i]);
-        for (ViewValues<IntView> v(x); v(); ++v)
-          for (DFA::Transitions t(dfa,v.val()); t(); ++t)
-            if (out[t.o_state()] != 0)
-              in[t.i_state()] = 1;
-      }
+      const unsigned char* backward = compute_backward_support(r,closed);
 
       bool any = false;
       for (int s=0; s<k; s++)
@@ -197,7 +207,7 @@ namespace Gecode { namespace Int { namespace Extensional {
         Region values;
         int* supported = values.alloc<int>(dfa.n_symbols());
         int n_supported = 0;
-        unsigned char* out = backward + static_cast<size_t>(i+1)*k;
+        const unsigned char* out = backward + static_cast<size_t>(i+1)*k;
         for (ViewValues<IntView> v(x); v(); ++v) {
           bool support = false;
           for (DFA::Transitions t(dfa,v.val()); t() && !support; ++t)
@@ -225,7 +235,7 @@ namespace Gecode { namespace Int { namespace Extensional {
 
       int consumed = 0;
       while ((consumed < n) && sequence[offset+consumed].assigned()) {
-        unsigned char* live =
+        const unsigned char* live =
           backward + static_cast<size_t>(consumed+1)*k;
         unsigned char* next = r.alloc<unsigned char>(k);
         for (int s=0; s<k; s++)
