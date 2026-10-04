@@ -3844,10 +3844,16 @@ namespace Gecode {
    *  - If \a IPL_BASIC is set, the propagator performs overload checking
    *    and time-tabling propagation.
    *  - If \a IPL_ADVANCED is set, the propagator performs overload checking,
-   *    edge finding, and knapsack-augmented overload checking for
+   *    edge finding, and bounded knapsack-augmented overload checking for
    *    fixed-processing tasks.
    *  - If both flags are combined, all the above listed propagation is
    *    performed.
+   *
+   * The knapsack check runs for 4 to 64 participating tasks when the
+   * current capacity upper bound is between 2 and 127. Each task must have
+   * a fixed processing time. Each demand must be positive and at most that
+   * bound, with at least one demand above 1.
+   * Outside these limits, only the knapsack check is skipped.
    *
    * The propagator uses algorithms taken from:
    *
@@ -3909,10 +3915,16 @@ namespace Gecode {
    *  - If \a IPL_BASIC is set, the propagator performs overload checking
    *    and time-tabling propagation.
    *  - If \a IPL_ADVANCED is set, the propagator performs overload checking,
-   *    edge finding, and knapsack-augmented overload checking for
+   *    edge finding, and bounded knapsack-augmented overload checking for
    *    fixed-processing tasks.
    *  - If both flags are combined, all the above listed propagation is
    *    performed.
+   *
+   * The knapsack check considers only currently mandatory tasks. It runs
+   * for 4 to 64 such tasks when the current capacity upper bound is between
+   * 2 and 127. Each task must have a fixed processing time. Each demand must
+   * be positive and at most that bound, with at least one demand above 1.
+   * Outside these limits, only the knapsack check is skipped.
    *
    * The propagator uses algorithms taken from:
    *
@@ -3960,10 +3972,16 @@ namespace Gecode {
    *  - If \a IPL_BASIC is set, the propagator performs overload checking
    *    and time-tabling propagation.
    *  - If \a IPL_ADVANCED is set, the propagator performs overload checking,
-   *    edge finding, and knapsack-augmented overload checking for
+   *    edge finding, and bounded knapsack-augmented overload checking for
    *    fixed-processing tasks.
    *  - If both flags are combined, all the above listed propagation is
    *    performed.
+   *
+   * The knapsack check runs for 4 to 64 participating tasks when the
+   * current capacity upper bound is between 2 and 127. Each task must have
+   * a fixed processing time. Each demand must be positive and at most that
+   * bound, with at least one demand above 1.
+   * Outside these limits, only the knapsack check is skipped.
    *
    * The propagator uses algorithms taken from:
    *
@@ -4011,10 +4029,16 @@ namespace Gecode {
    *  - If \a IPL_BASIC is set, the propagator performs overload checking
    *    and time-tabling propagation.
    *  - If \a IPL_ADVANCED is set, the propagator performs overload checking,
-   *    edge finding, and knapsack-augmented overload checking for
+   *    edge finding, and bounded knapsack-augmented overload checking for
    *    fixed-processing tasks.
    *  - If both flags are combined, all the above listed propagation is
    *    performed.
+   *
+   * The knapsack check considers only currently mandatory tasks. It runs
+   * for 4 to 64 such tasks when the current capacity upper bound is between
+   * 2 and 127. Each task must have a fixed processing time. Each demand must
+   * be positive and at most that bound, with at least one demand above 1.
+   * Outside these limits, only the knapsack check is skipped.
    *
    * The propagator uses algorithms taken from:
    *

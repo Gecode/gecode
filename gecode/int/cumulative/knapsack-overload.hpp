@@ -83,8 +83,9 @@ namespace Gecode { namespace Int { namespace Cumulative {
       return bit == 63 ? ~0ULL : (1ULL << (bit+1))-1ULL;
     }
 
+    /// Return the greatest reachable subset demand at most \a residual
     forceinline int
-    available(const Bits& bits, int residual) {
+    max_reachable(const Bits& bits, int residual) {
       if (residual <= 0)
         return 0;
       residual = (std::min)(residual,127);
@@ -108,6 +109,10 @@ namespace Gecode { namespace Int { namespace Cumulative {
         return false;
       bool non_unit = false;
       for (int i=0; i<n; i++) {
+        // The earliest-start profile assumes a fixed processing time.
+        if ((static_cast<long long>(tasks[i].ect())-tasks[i].est()) !=
+            (static_cast<long long>(tasks[i].lct())-tasks[i].lst()))
+          return false;
         if ((tasks[i].c() <= 0) || (tasks[i].c() > capacity))
           return false;
         non_unit = non_unit || (tasks[i].c() != 1);
@@ -138,6 +143,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
       if (events < 2)
         return false;
 
+      // Compulsory demand from all tasks, independent of the current prefix.
       int* fixed = region.alloc<int>(events);
       int* required = region.alloc<int>(events);
       Bits* bits = region.alloc<Bits>(events);
@@ -154,6 +160,9 @@ namespace Gecode { namespace Int { namespace Cumulative {
           return true;
       }
 
+      // Extend the prefix in deadline order. At each event, bits contains
+      // reachable demands of prefix tasks outside their compulsory parts;
+      // required records their earliest-start demand outside those parts.
       int earliest = tasks[order[0]].est();
       for (int prefix=0; prefix<n; prefix++) {
         const int task = order[prefix];
@@ -171,13 +180,15 @@ namespace Gecode { namespace Int { namespace Cumulative {
         }
 
         const int finish = tasks[task].lct();
+        // Carry unserved energy forward to the deadline. Clipping at zero
+        // prevents earlier unused capacity from serving later demand.
         long long overflow = 0;
         for (int point=0; point+1<events; point++) {
           const int left = times[point];
           if ((left < earliest) || (left >= finish))
             continue;
           const int right = (std::min)(times[point+1],finish);
-          const int usable = available(bits[point],capacity-fixed[point]);
+          const int usable = max_reachable(bits[point],capacity-fixed[point]);
           overflow = (std::max)(0LL,overflow+
             (static_cast<long long>(right)-left) *
             static_cast<long long>(required[point]-usable));

@@ -662,10 +662,41 @@ namespace Test { namespace Int {
         return clone->status() == Gecode::SS_FAILED;
       }
 
+      static bool fixed_end_feasible(void) {
+        class FixedEndFixture : public Gecode::Space {
+        public:
+          Gecode::IntVarArray starts;
+          FixedEndFixture(void) : starts(*this,4) {
+            Gecode::IntArgs ends({10,20,30,40});
+            Gecode::TaskTypeArgs types(4);
+            for (int i=0; i<4; i++) {
+              starts[i] = Gecode::IntVar(*this,0,ends[i]-1);
+              types[i] = Gecode::TT_FIXE;
+            }
+            Gecode::cumulative(*this,4,types,starts,ends,
+              Gecode::IntArgs({2,2,2,2}),Gecode::IPL_ADVANCED);
+          }
+          FixedEndFixture(FixedEndFixture& fixture) : Gecode::Space(fixture) {
+            starts.update(*this,fixture.starts);
+          }
+          virtual Gecode::Space* copy(void) {
+            return new FixedEndFixture(*this);
+          }
+        };
+
+        FixedEndFixture fixture;
+        if (fixture.status() == Gecode::SS_FAILED)
+          return false;
+        // Each task can run for one unit immediately before its fixed end.
+        for (int i=0; i<4; i++)
+          Gecode::rel(fixture,fixture.starts[i],Gecode::IRT_EQ,10*(i+1)-1);
+        return fixture.status() != Gecode::SS_FAILED;
+      }
+
       static bool bit_boundaries(void) {
         using Gecode::Int::Cumulative::Kaoc::Bits;
         using Gecode::Int::Cumulative::Kaoc::add;
-        using Gecode::Int::Cumulative::Kaoc::available;
+        using Gecode::Int::Cumulative::Kaoc::max_reachable;
         const int capacities[] = {63,64,65,127};
         for (int capacity : capacities) {
           for (int first=1; first<=capacity; first+=7) {
@@ -675,7 +706,7 @@ namespace Test { namespace Int {
               add(bits,demand,capacity);
               demands.push_back(demand);
               for (int residual=0; residual<=capacity; residual++)
-                if (available(bits,residual) !=
+                if (max_reachable(bits,residual) !=
                     scalar_available(demands,residual))
                   return false;
             }
@@ -684,7 +715,7 @@ namespace Test { namespace Int {
         Bits gap = {1ULL,0ULL};
         add(gap,4,9);
         add(gap,6,9);
-        return available(gap,9) == 6;
+        return max_reachable(gap,9) == 6;
       }
 
       static bool gates_and_optional_subset(void) {
@@ -752,17 +783,19 @@ namespace Test { namespace Int {
         const bool boundaries = bit_boundaries();
         const bool parity = reference_parity();
         const bool variable = variable_capacity_rechecks();
+        const bool fixed_end = fixed_end_feasible();
         const bool gates = gates_and_optional_subset();
         const bool basic_ok = basic.status() != Gecode::SS_FAILED;
         const bool advanced_ok = advanced.status() == Gecode::SS_FAILED;
-        if (!(boundaries && parity && variable && gates &&
+        if (!(boundaries && parity && variable && fixed_end && gates &&
               basic_ok && advanced_ok))
           std::cerr << "kaoc boundaries=" << boundaries
                     << " parity=" << parity << " variable=" << variable
+                    << " fixed_end=" << fixed_end
                     << " gates=" << gates
                     << " basic=" << basic_ok
                     << " advanced=" << advanced_ok << "\n";
-        return boundaries && parity && variable && gates &&
+        return boundaries && parity && variable && fixed_end && gates &&
           basic_ok && advanced_ok;
       }
     };
