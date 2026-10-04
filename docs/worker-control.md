@@ -132,11 +132,12 @@ asset_a.request(2);
 asset_b.request(6);
 ```
 
-The portfolio controller must enforce its own active-worker budget. Make the
-decrease before the increase if even a brief oversubscription is unacceptable;
-resizing is cooperative, so a controller that must measure the handoff needs
-its own acknowledgement or accounting. Gecode does not choose an allocation
-policy.
+The portfolio controller must enforce its own active-worker budget. Making the
+decrease before the increase keeps the requested counts within the budget, but
+does not prevent temporary oversubscription while workers finish their current
+actions. A strict active-worker limit requires independent confirmation that
+the decrease has taken effect before increasing another asset's request.
+Gecode does not provide that acknowledgement or choose an allocation policy.
 
 PBS completes a `next` round only after every active asset has reported. An
 asset at zero still observes the internal stop used to close the round. It

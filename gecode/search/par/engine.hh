@@ -87,15 +87,25 @@ namespace Gecode { namespace Search { namespace Par {
     };
     /// Search options
     Options _opt;
-    /// Logical worker state used by adjustable parallel admission
+    /**
+     * \brief Logical worker state used by adjustable parallel admission
+     *
+     * Construction and reset count every worker in n_busy. A pending worker
+     * must receive a lease and report idle even if it starts without a tree.
+     */
     enum class SchedulerLogical {
+      /// Owns local search or has not yet reported its exhaustion
       OWNER,
+      /// Has not yet reported its initial idle state
       PENDING,
+      /// Has reported idle and owns no local search
       IDLE
     };
     /// Per-worker adjustable parallel admission state
     struct SchedulerWorker {
+      /// Permission to execute exploration actions
       bool lease;
+      /// Waiting or due to wait for admission
       bool parked;
       SchedulerLogical logical;
     };
@@ -103,7 +113,13 @@ namespace Gecode { namespace Search { namespace Par {
     bool scheduler_enabled;
     /// Unchanged-capacity admission fast path
     const std::atomic<bool>* scheduler_fast_admit;
-    /// Mutex for adjustable parallel admission
+    /**
+     * \brief Mutex for adjustable parallel admission
+     *
+     * Protects scheduler_worker, scheduler_requested, scheduler_leases, and
+     * scheduler_cursor. Initial setup runs before worker threads start;
+     * scheduler_enabled and scheduler_fast_admit remain fixed after setup.
+     */
     Support::Mutex scheduler_mutex;
     /// Per-worker adjustable parallel admission state
     SchedulerWorker* scheduler_worker;
@@ -115,10 +131,10 @@ namespace Gecode { namespace Search { namespace Par {
     unsigned int scheduler_cursor;
     /// Last request generation reconciled by the scheduler
     std::atomic<unsigned long long int> scheduler_generation;
-    /// Select a no-lease worker by logical state
+    /// Select a no-lease worker by logical state (scheduler_mutex held)
     unsigned int scheduler_select(SchedulerLogical logical,
                                   unsigned int exclude) const;
-    /// Grant leases up to the current request
+    /// Grant leases up to the current request (scheduler_mutex held)
     bool scheduler_grow(void);
   public:
     /// Provide access to search options

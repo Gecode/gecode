@@ -231,7 +231,7 @@ namespace Gecode { namespace Search { namespace Par {
       return true;
     if (scheduler_fast_admit->load(std::memory_order_acquire))
       return true;
-    while (cmd() == C_WORK) {
+    if (cmd() == C_WORK) {
       unsigned long long int generation =
         WorkerControlAccess::generation(worker_control);
       if ((generation ==
