@@ -833,7 +833,7 @@ namespace Gecode { namespace Int {
       const Description& choice =
         static_cast<const Description&>(choice0);
       if (choice.kind == Description::VALUE) {
-        IntView x(sequence.get(home,choice.position));
+        IntView x(sequence[choice.position]);
         ModEvent me = (alternative == 0)
           ? x.eq(home,choice.value)
           : x.nq(home,choice.value);
@@ -923,7 +923,7 @@ namespace Gecode {
     lower = std::max(0,lower);
     upper = std::min(width,upper);
     if (upper < lower) {
-      home.fail();
+      rel(home,x.length(),IRT_LE,width);
       return;
     }
     if ((lower == 0) && (upper == width))
@@ -941,7 +941,7 @@ namespace Gecode {
       throw Int::OutOfLimits("Int::slidingsum");
     GECODE_POST;
     if (upper < lower) {
-      home.fail();
+      rel(home,sequence.length(),IRT_LE,width);
       return;
     }
     Int::OpenSlidingSum::post(home,sequence,width,lower,upper,ipl);
