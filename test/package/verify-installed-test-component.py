@@ -193,7 +193,7 @@ def configure_consumer(
 ) -> tuple[Path, Path, subprocess.CompletedProcess[str]]:
     consumer_source = source / "test/package/public-test-component"
     consumer_build = build_root / "consumer"
-    shutil.rmtree(build_root, ignore_errors=True)
+    shutil.rmtree(consumer_build, ignore_errors=True)
     consumer_build.mkdir(parents=True, exist_ok=True)
 
     configure_command = [
@@ -211,15 +211,15 @@ def configure_consumer(
         configure_command.append("-DREQUIRE_UNKNOWN_COMPONENT=ON")
 
     result = run_phase(
-        "configure-missing-component" if require_unknown_component else "configure",
+        "configure-unsupported-component" if require_unknown_component else "configure",
         configure_command,
         expect_success=not require_unknown_component,
     )
     return consumer_source, consumer_build, result
 
 
-def assert_missing_component_failure(result: subprocess.CompletedProcess[str]) -> None:
-    phase = "configure-missing-component"
+def assert_unsupported_component_failure(result: subprocess.CompletedProcess[str]) -> None:
+    phase = "configure-unsupported-component"
     combined_output = f"{result.stdout}\n{result.stderr}"
     assert_phase(
         "Unsupported Gecode components requested: unsupported_component" in combined_output,
@@ -264,7 +264,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--prefix", required=True)
     parser.add_argument("--include-dir")
     parser.add_argument("--lib-dir")
-    parser.add_argument("--expect-missing-component-failure", action="store_true")
+    parser.add_argument("--expect-unsupported-component-failure", action="store_true")
     return parser.parse_args()
 
 
@@ -283,11 +283,11 @@ def main() -> int:
         build_root,
         prefix,
         lib_dir / "cmake/Gecode",
-        require_unknown_component=args.expect_missing_component_failure,
+        require_unknown_component=args.expect_unsupported_component_failure,
     )
 
-    if args.expect_missing_component_failure:
-        assert_missing_component_failure(configure_result)
+    if args.expect_unsupported_component_failure:
+        assert_unsupported_component_failure(configure_result)
         return 0
 
     assert_no_source_tree_include_leakage(source, consumer_build, prefix, include_dir)

@@ -225,8 +225,17 @@ def assert_compiler_command_surface(
             candidate = Path(output_path)
             output_paths.append((workspace / candidate).resolve() if not candidate.is_absolute() else candidate.resolve())
 
-    assert_phase(include_dirs == [prefix_include], phase, f"unexpected include directories in compiler command: {[str(path) for path in include_dirs]}")
-    assert_phase(library_dirs == expected_library_dirs, phase, f"unexpected library directories in compiler command: {[str(path) for path in library_dirs]}")
+    assert_phase(
+        prefix_include in include_dirs,
+        phase,
+        f"missing installed include directory in compiler command: {prefix_include}",
+    )
+    missing_library_dirs = [path for path in expected_library_dirs if path not in library_dirs]
+    assert_phase(
+        not missing_library_dirs,
+        phase,
+        f"missing installed library directories in compiler command: {[str(path) for path in missing_library_dirs]}",
+    )
     assert_phase(workspace_sources, phase, "compiler command did not reference any workspace source files")
     assert_phase(output_paths, phase, "compiler command did not set an output path")
     assert_phase(

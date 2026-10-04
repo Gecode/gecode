@@ -219,11 +219,11 @@ jobs:
 
         python test/package/verify-installed-test-component.py \
           --source "$GITHUB_WORKSPACE" \
-          --build-root "$RUNNER_TEMP/test-component-check-missing-component" \
+          --build-root "$RUNNER_TEMP/test-component-check-unsupported-component" \
           --prefix "$GITHUB_WORKSPACE/install" \
           --include-dir "/tmp/gecode-install-abs-include" \
           --lib-dir "$GITHUB_WORKSPACE/install/lib" \
-          --expect-missing-component-failure
+          --expect-unsupported-component-failure
 
     - name: Package version checks
       shell: bash

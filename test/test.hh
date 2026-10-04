@@ -127,7 +127,12 @@ namespace Test {
     /// Parse commandline arguments
     void parse(int argc, char* argv[]);
 
-    /// True iff a test name should be executed according to the patterns. With no patterns, always true.
+    /**
+     * \brief Test whether a test name should be executed
+     *
+     * Replay requires one exact test name. Otherwise, match the configured
+     * patterns; with no patterns, every test name matches.
+     */
     bool is_test_name_matching(const std::string& test_name) const;
   };
 
