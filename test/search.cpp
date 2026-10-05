@@ -450,6 +450,45 @@ namespace Test {
 
     /// Nested failures must preserve the exception and dispose owned spaces
     class PBSConstructionFailure : public Base {
+      bool worker_control_failure(unsigned int threads, bool clone,
+                                  bool restart, bool in_use) {
+        Gecode::Search::WorkerControl control(in_use ? 1U :
+                                              worker_capacity(threads)+1U);
+        SolveImmediate binding_root(HTB_NONE,HTB_NONE,HTB_NONE);
+        std::unique_ptr<Gecode::DFS<SolveImmediate>> binding;
+        if (in_use) {
+          Gecode::Search::Options bound;
+          bound.worker_control = control;
+          binding.reset(new Gecode::DFS<SolveImmediate>(&binding_root,bound));
+        }
+        int live = 0;
+        std::unique_ptr<PortfolioSeed> root(new PortfolioSeed(live));
+        PortfolioSeed* seed = root.get();
+        if (!clone)
+          root.release();
+        Gecode::Search::Options o;
+        o.assets = 1;
+        o.threads = threads;
+        o.clone = clone;
+        o.worker_control = control;
+        std::unique_ptr<Gecode::Search::Cutoff>
+          cutoff(Gecode::Search::Cutoff::constant(10));
+        o.cutoff = cutoff.get();
+        bool caught = false;
+        try {
+          if (restart) {
+            Gecode::RBS<PortfolioSeed> engine(seed,o);
+            cutoff.release();
+          } else {
+            Gecode::PBS<PortfolioSeed> engine(seed,o);
+          }
+        } catch (const Gecode::Search::WorkerControlInUse&) {
+          caught = in_use;
+        } catch (const Gecode::Search::InvalidWorkerRequest&) {
+          caught = !in_use;
+        }
+        return caught && (live == (clone ? 1 : 0));
+      }
     public:
       PBSConstructionFailure(void) : Base("Search::PBS::ConstructionFailure") {}
       bool run(void) override {
@@ -481,6 +520,12 @@ namespace Test {
               if (!caught || (live != (clone ? 1 : 0)))
                 return false;
             }
+        for (unsigned int threads : {1U,4U})
+          for (bool clone : {false,true})
+            for (bool restart : {false,true})
+              for (bool in_use : {false,true})
+                if (!worker_control_failure(threads,clone,restart,in_use))
+                  return false;
         return true;
       }
     };

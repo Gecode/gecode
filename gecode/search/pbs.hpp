@@ -371,8 +371,11 @@ namespace Gecode {
 
     // No need to create a portfolio engine but must run slave function
     if (o.assets == 1) {
+      std::unique_ptr<T> seed(master);
       (void) master->slave(0);
-      e = Search::build<T,E>(master,opt);
+      // Retain the seed if a nested builder rejects its worker control.
+      opt.clone = true;
+      e = Search::build<T,E>(seed.get(),opt);
       return;
     }
 
