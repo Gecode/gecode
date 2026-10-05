@@ -244,7 +244,8 @@ namespace Test { namespace Int {
          using namespace Gecode;
          TestSpace home;
          if (kind <= 2) {
-           IntVar a(home,6,6), g(home,3,3);
+           IntVar a(home,6,6);
+           IntVar g(home,3,3);
            IntVar x(home,kind == 1 ? -12 : 6,kind == 1 ? -6 : 12);
            if (kind == 2) dom(home,x,IntSet({6,9,12}));
            gcd(home,a,x,g);
@@ -253,7 +254,9 @@ namespace Test { namespace Int {
              return arithmetic_failed("coprime quotient: a, x, g",
                                       IntVarArgs() << a << x << g);
          } else if (kind == 3) {
-           IntVar a(home,12,12), x(home,1,24), g(home,7,12);
+           IntVar a(home,12,12);
+           IntVar x(home,1,24);
+           IntVar g(home,7,12);
            gcd(home,a,x,g);
            if ((home.status() == SS_FAILED) || !g.assigned() || (g.val()!=12))
              return arithmetic_failed("divisor quotient band: a, x, g",
@@ -266,32 +269,44 @@ namespace Test { namespace Int {
              return arithmetic_failed("divisor magnitude: d, x",
                                       IntVarArgs() << d << x);
          } else if (kind == 6) {
-           IntVar d(home,0,0), x(home,-5,5); BoolVar b(home,0,0);
+           IntVar d(home,0,0);
+           IntVar x(home,-5,5);
+           BoolVar b(home,0,0);
            divides(home,d,x,Reify(b));
            if ((home.status() == SS_FAILED) || x.in(0))
              return arithmetic_failed("negated zero divisor: d, x",
                                       IntVarArgs() << d << x);
          } else if (kind == 7) {
-           IntVar c(home,6,6), x(home,1,100), z(home,1,100), y(home,1,1);
+           IntVar c(home,6,6);
+           IntVar x(home,1,100);
+           IntVar z(home,1,100);
+           IntVar y(home,1,1);
            product_mod(home,IntVarArgs({c,x,z}),12,y);
            if (home.status() != SS_FAILED)
              return arithmetic_failed("coefficient gcd failure: c, x, z, y",
                                       IntVarArgs() << c << x << z << y);
          } else if (kind == 8) {
-           IntVar c(home,-6,-6), x(home,-100,100), z(home,-100,100);
+           IntVar c(home,-6,-6);
+           IntVar x(home,-100,100);
+           IntVar z(home,-100,100);
            IntVar y(home,4,9);
            product_mod(home,IntVarArgs({c,x,z}),12,y);
            if ((home.status() == SS_FAILED) || !y.assigned() || (y.val()!=6))
              return arithmetic_failed("coefficient result bounds: y",
                                       IntVarArgs() << y);
          } else if (kind == 9) {
-           IntVar a(home,2,2), b(home,3,3), x(home,-100,100), y(home,0,5);
+           IntVar a(home,2,2);
+           IntVar b(home,3,3);
+           IntVar x(home,-100,100);
+           IntVar y(home,0,5);
            product_mod(home,IntVarArgs({a,x,b}),6,y);
            if ((home.status() == SS_FAILED) || !y.assigned() || (y.val()!=0))
              return arithmetic_failed("collective zero coefficient: y",
                                       IntVarArgs() << y);
          } else if (kind == 10) {
-           IntVar c(home,6,6), x(home,1,100), z(home,1,100);
+           IntVar c(home,6,6);
+           IntVar x(home,1,100);
+           IntVar z(home,1,100);
            IntVar y(home,IntSet({1,5,7,11}));
            product_mod(home,IntVarArgs({c,x,z}),12,y);
            if (home.status() != SS_FAILED)
@@ -299,14 +314,19 @@ namespace Test { namespace Int {
                                       IntVarArgs() << y);
          } else if (kind == 11) {
            const int hi=Gecode::Int::Limits::max;
-           IntVar c(home,6,6), x(home,1,hi), z(home,1,hi), y(home,1,1);
+           IntVar c(home,6,6);
+           IntVar x(home,1,hi);
+           IntVar z(home,1,hi);
+           IntVar y(home,1,1);
            product_mod(home,IntVarArgs({c,x,z}),hi,y);
            if (home.status() != SS_FAILED)
              return arithmetic_failed("large coefficient gcd failure: y",
                                       IntVarArgs() << y);
          } else {
            const int hi=Gecode::Int::Limits::max;
-           IntVar a(home,-hi,-hi), x(home,hi-1,hi), g(home,1,1);
+           IntVar a(home,-hi,-hi);
+           IntVar x(home,hi-1,hi);
+           IntVar g(home,1,1);
            gcd(home,a,x,g);
            if ((home.status() == SS_FAILED) || !x.assigned() || (x.val()!=hi-1))
              return arithmetic_failed("limit coprimality: a, x, g",
@@ -329,7 +349,9 @@ namespace Test { namespace Int {
          using namespace Gecode;
          for (int division=0; division<2; division++) {
            TestSpace home;
-           IntVar x(home,IntSet({1,3,5,6})), y(home,10,10), g(home,1,2);
+           IntVar x(home,IntSet({1,3,5,6}));
+           IntVar y(home,10,10);
+           IntVar g(home,1,2);
            BoolVar b(home,1,1);
            if (division)
              divides(home,g,x,Reify(b));
@@ -353,7 +375,10 @@ namespace Test { namespace Int {
      class NumberTheoryLifecycle : public ::Test::Base {
        class TestSpace : public Gecode::Space {
        public:
-         Gecode::IntVar x, c, y, m;
+         Gecode::IntVar x;
+         Gecode::IntVar c;
+         Gecode::IntVar y;
+         Gecode::IntVar m;
          Gecode::BoolVar b;
          TestSpace(int kind)
            : x(*this,Gecode::IntSet({1,3,5,6})),
@@ -429,7 +454,10 @@ namespace Test { namespace Int {
          for (ReifyMode rm : {RM_EQV,RM_IMP,RM_PMI})
            for (int kind=0; kind<4; kind++) {
              TestSpace home;
-             IntVar x(home,-7,7), zero(home,0,0), m(home,0,7), one(home,1,1);
+             IntVar x(home,-7,7);
+             IntVar zero(home,0,0);
+             IntVar m(home,0,7);
+             IntVar one(home,1,1);
              BoolVar b(home,0,1);
              if (kind == 0) product(home,IntVarArgs({zero,x}),zero,Reify(b,rm));
              if (kind == 1) product(home,IntVarArgs({x}),x,Reify(b,rm));
@@ -484,8 +512,12 @@ namespace Test { namespace Int {
          };
          for (const auto& c : cases) {
            TestSpace home;
-           IntVar x(home,c[0],c[0]), y(home,c[1],c[1]), g(home,0,hi);
-           BoolVar b(home,0,1), correct(home,0,1), wrong(home,0,1);
+           IntVar x(home,c[0],c[0]);
+           IntVar y(home,c[1],c[1]);
+           IntVar g(home,0,hi);
+           BoolVar b(home,0,1);
+           BoolVar correct(home,0,1);
+           BoolVar wrong(home,0,1);
            gcd(home,x,y,g);
            divides(home,x,y,Reify(b));
            IntVar expected(home,c[2],c[2]);
@@ -511,7 +543,8 @@ namespace Test { namespace Int {
                  TestSpace home;
                  IntVarArgs x(home,n,hi-1,hi-1);
                  if (negative) x[0]=IntVar(home,1-hi,1-hi);
-                 IntVar m(home,hi-1,hi), y(home,0,hi-1);
+                 IntVar m(home,hi-1,hi);
+                 IntVar y(home,0,hi-1);
                  if (variable) product_mod(home,x,m,y);
                  else product_mod(home,x,hi,y);
                  if (home.status() == SS_FAILED)
@@ -739,7 +772,9 @@ namespace Test { namespace Int {
        };
        class CloneSpace : public Gecode::Space {
        public:
-         Gecode::IntVar x, q, y;
+         Gecode::IntVar x;
+         Gecode::IntVar q;
+         Gecode::IntVar y;
          CloneSpace(void)
            : x(*this,-2,2), q(*this,2,2), y(*this,-10,10) {
            Gecode::product(*this,Gecode::IntVarArgs({x,q}),y);
@@ -756,7 +791,9 @@ namespace Test { namespace Int {
          using namespace Gecode;
          {
            TestSpace home;
-           IntVar z(home,0,0), x(home,-100,100), y(home,-100,100);
+           IntVar z(home,0,0);
+           IntVar x(home,-100,100);
+           IntVar y(home,-100,100);
            product(home,IntVarArgs({x,z}),y);
            if ((home.status() == SS_FAILED) || !y.assigned() || (y.val()!=0))
              return arithmetic_failed
@@ -765,7 +802,9 @@ namespace Test { namespace Int {
          }
          {
            TestSpace home;
-           IntVar one(home,1,1), minus(home,-1,-1), x(home,2,5);
+           IntVar one(home,1,1);
+           IntVar minus(home,-1,-1);
+           IntVar x(home,2,5);
            IntVar y(home,-100,100);
            product(home,IntVarArgs({one,minus,minus,x}),y);
            if ((home.status() == SS_FAILED) || (y.min()!=2) || (y.max()!=5))
@@ -775,7 +814,9 @@ namespace Test { namespace Int {
          }
          {
            TestSpace home;
-           IntVar minus(home,-1,-1), x(home,2,5), y(home,-100,100);
+           IntVar minus(home,-1,-1);
+           IntVar x(home,2,5);
+           IntVar y(home,-100,100);
            product(home,IntVarArgs({minus,x}),y);
            if ((home.status() == SS_FAILED) || (y.min()!=-5) || (y.max()!=-2))
              return arithmetic_failed
@@ -784,7 +825,9 @@ namespace Test { namespace Int {
          }
          {
            TestSpace home;
-           IntVar x(home,0,5), q(home,1,3), y(home,2,10);
+           IntVar x(home,0,5);
+           IntVar q(home,1,3);
+           IntVar y(home,2,10);
            product(home,IntVarArgs({x,q}),y);
            if ((home.status() == SS_FAILED) || (x.min()!=1))
              return arithmetic_failed
@@ -793,7 +836,9 @@ namespace Test { namespace Int {
          }
          {
            TestSpace home;
-           IntVar x(home,-2,2), q(home,1,3), y(home,0,0);
+           IntVar x(home,-2,2);
+           IntVar q(home,1,3);
+           IntVar y(home,0,0);
            product(home,IntVarArgs({x,q}),y);
            if ((home.status() == SS_FAILED) || !x.assigned() || (x.val()!=0))
              return arithmetic_failed
@@ -802,7 +847,9 @@ namespace Test { namespace Int {
          }
          {
            TestSpace home;
-           IntVar x(home,-5,0), q(home,2,4), y(home,-100,100);
+           IntVar x(home,-5,0);
+           IntVar q(home,2,4);
+           IntVar y(home,-100,100);
            product(home,IntVarArgs({x,q}),y);
            if ((home.status() == SS_FAILED) || (y.max()!=0))
              return arithmetic_failed
@@ -811,7 +858,9 @@ namespace Test { namespace Int {
          }
          {
            TestSpace home;
-           IntVar x(home,-5,-2), q(home,-4,-2), y(home,-100,100);
+           IntVar x(home,-5,-2);
+           IntVar q(home,-4,-2);
+           IntVar y(home,-100,100);
            product(home,IntVarArgs({x,q}),y);
            if ((home.status() == SS_FAILED) || (y.min()!=4))
              return arithmetic_failed
@@ -821,7 +870,9 @@ namespace Test { namespace Int {
          {
            TestSpace home;
            const int hi=Gecode::Int::Limits::max;
-           IntVar minus(home,-1,-1), x(home,hi,hi), y(home,-hi,hi);
+           IntVar minus(home,-1,-1);
+           IntVar x(home,hi,hi);
+           IntVar y(home,-hi,hi);
            product(home,IntVarArgs({minus,x}),y);
            if ((home.status() == SS_FAILED) || !y.assigned() || (y.val()!=-hi))
              return arithmetic_failed
@@ -871,7 +922,8 @@ namespace Test { namespace Int {
          using namespace Gecode;
          {
            TestSpace home;
-           IntVar x(home,-10,10), y(home,-10,100);
+           IntVar x(home,-10,10);
+           IntVar y(home,-10,100);
            product(home,IntVarArgs({x,x}),y);
            if ((home.status() == SS_FAILED) || (y.min() != 0))
              return arithmetic_failed
@@ -880,7 +932,8 @@ namespace Test { namespace Int {
          }
          {
            TestSpace home;
-           IntVar x(home,-10,10), y(home,20,30);
+           IntVar x(home,-10,10);
+           IntVar y(home,20,30);
            product(home,IntVarArgs({x,x}),y);
            if ((home.status() == SS_FAILED) ||
                (x.min() != -5) || (x.max() != 5))
@@ -890,7 +943,8 @@ namespace Test { namespace Int {
          }
          {
            TestSpace home;
-           IntVar x(home,-10,10), y(home,20,30);
+           IntVar x(home,-10,10);
+           IntVar y(home,20,30);
            product(home,IntVarArgs({x,x,x}),y);
            if ((home.status() == SS_FAILED) || !x.assigned() ||
                (x.val() != 3))
@@ -900,7 +954,8 @@ namespace Test { namespace Int {
          }
          {
            TestSpace home;
-           IntVar x(home,-10,10), y(home,-30,-20);
+           IntVar x(home,-10,10);
+           IntVar y(home,-30,-20);
            product(home,IntVarArgs({x,x,x}),y);
            if ((home.status() == SS_FAILED) || !x.assigned() ||
                (x.val() != -3))
@@ -910,7 +965,9 @@ namespace Test { namespace Int {
          }
          {
            TestSpace home;
-           IntVar x(home,-10,10), two(home,2,2), y(home,50,72);
+           IntVar x(home,-10,10);
+           IntVar two(home,2,2);
+           IntVar y(home,50,72);
            product(home,IntVarArgs({x,x,two}),y);
            if ((home.status() == SS_FAILED) ||
                (x.min() != -6) || (x.max() != 6))
@@ -921,7 +978,8 @@ namespace Test { namespace Int {
          {
            // x*y=y has only the zero branch when x cannot be one.
            TestSpace home;
-           IntVar x(home,2,4), y(home,-10,10);
+           IntVar x(home,2,4);
+           IntVar y(home,-10,10);
            product(home,IntVarArgs({x,y}),y);
            if ((home.status() == SS_FAILED) || !y.assigned() ||
                (y.val() != 0))
@@ -932,7 +990,8 @@ namespace Test { namespace Int {
          {
            // A nonzero result permits cancellation of one result occurrence.
            TestSpace home;
-           IntVar x(home,0,2), y(home,2,10);
+           IntVar x(home,0,2);
+           IntVar y(home,2,10);
            product(home,IntVarArgs({x,y}),y);
            if ((home.status() == SS_FAILED) || !x.assigned() ||
                (x.val() != 1))
@@ -943,7 +1002,8 @@ namespace Test { namespace Int {
          {
            // Cancelling one of two result occurrences leaves y*x=1.
            TestSpace home;
-           IntVar x(home,-1,0), y(home,-2,-1);
+           IntVar x(home,-1,0);
+           IntVar y(home,-2,-1);
            product(home,IntVarArgs({y,y,x}),y);
            if ((home.status() == SS_FAILED) || !x.assigned() ||
                !y.assigned() || (x.val() != -1) || (y.val() != -1))
@@ -955,7 +1015,9 @@ namespace Test { namespace Int {
            // Direct n-ary evaluation retains zero after an overflowing prefix.
            TestSpace home;
            const int hi=Gecode::Int::Limits::max;
-           IntVar a(home,hi,hi), z(home,0,0), y(home,0,0);
+           IntVar a(home,hi,hi);
+           IntVar z(home,0,0);
+           IntVar y(home,0,0);
            product(home,IntVarArgs({a,a,z}),y);
            if (home.status() == SS_FAILED)
              return arithmetic_failed
@@ -964,7 +1026,8 @@ namespace Test { namespace Int {
          }
          {
            TestSpace home;
-           IntVar x(home,-10,10), y(home,20,30);
+           IntVar x(home,-10,10);
+           IntVar y(home,20,30);
            BoolVar b(home,1,1);
            product(home,IntVarArgs({x,x}),y,Reify(b,RM_EQV));
            if ((home.status() == SS_FAILED) ||
@@ -1021,7 +1084,9 @@ namespace Test { namespace Int {
            // When both the cofactor and result can be zero, no inverse
            // pruning of the other factor is sound.
            TestSpace home;
-           IntVar x(home,-100,100), q(home,-2,3), y(home,-10,10);
+           IntVar x(home,-100,100);
+           IntVar q(home,-2,3);
+           IntVar y(home,-10,10);
            product(home,IntVarArgs({x,q}),y);
            if ((home.status() == SS_FAILED) || !bounds(x,-100,100))
              return arithmetic_failed
@@ -1030,7 +1095,9 @@ namespace Test { namespace Int {
          }
          {
            TestSpace home;
-           IntVar x(home,-100,100), zero(home,0,0), y(home,1,2);
+           IntVar x(home,-100,100);
+           IntVar zero(home,0,0);
+           IntVar y(home,1,2);
            product(home,IntVarArgs({x,zero}),y);
            if (home.status() != SS_FAILED)
              return arithmetic_failed
@@ -1040,7 +1107,10 @@ namespace Test { namespace Int {
          {
            TestSpace home;
            const int hi=Gecode::Int::Limits::max;
-           IntVar x(home,-1,1), a(home,hi,hi), b(home,hi,hi), y(home,0,0);
+           IntVar x(home,-1,1);
+           IntVar a(home,hi,hi);
+           IntVar b(home,hi,hi);
+           IntVar y(home,0,0);
            product(home,IntVarArgs({x,a,b}),y);
            if ((home.status() == SS_FAILED) || !x.assigned() ||
                (x.val() != 0))
@@ -1154,7 +1224,8 @@ namespace Test { namespace Int {
 
      /// Folded coefficients, repeated factors, and products beyond machine range.
      class ProductModFolded : public Test {
-       int c, m;
+       int c;
+       int m;
      public:
        ProductModFolded(int c0, int m0, bool r)
          : Test("Arithmetic::ProductMod::Folded::"+str(c0)+"::"+str(m0)+
@@ -1199,7 +1270,8 @@ namespace Test { namespace Int {
            for (int variable=0; variable<2; variable++) {
              TestSpace home;
              IntVarArgs x(home,4,negative ? -1 : 0,negative ? 0 : 1);
-             IntVar y(home,0,6), m(home,7,11);
+             IntVar y(home,0,6);
+             IntVar m(home,7,11);
              if (variable)
                product_mod(home,x,m,y);
              else
@@ -1355,7 +1427,9 @@ namespace Test { namespace Int {
          }
          {
            TestSpace home;
-           IntVar z(home,14,14), x(home,-1000,1000), y(home,0,6);
+           IntVar z(home,14,14);
+           IntVar x(home,-1000,1000);
+           IntVar y(home,0,6);
            product_mod(home,IntVarArgs({z,x}),7,y);
            if ((home.status() == SS_FAILED) || !y.assigned() ||
                (y.val() != 0))
@@ -1365,7 +1439,9 @@ namespace Test { namespace Int {
          }
          {
            TestSpace home;
-           IntVar one(home,1,1), x(home,20,30), y(home,0,99);
+           IntVar one(home,1,1);
+           IntVar x(home,20,30);
+           IntVar y(home,0,99);
            product_mod(home,IntVarArgs({one,x}),100,y);
            if ((home.status() == SS_FAILED) ||
                (y.min() != 20) || (y.max() != 30))
@@ -1375,7 +1451,8 @@ namespace Test { namespace Int {
          }
          {
            TestSpace home;
-           IntVar x(home,15,19), y(home,0,6);
+           IntVar x(home,15,19);
+           IntVar y(home,0,6);
            product_mod(home,IntVarArgs({x}),7,y);
            if ((home.status() == SS_FAILED) ||
                (y.min() != 1) || (y.max() != 5))
@@ -1385,7 +1462,8 @@ namespace Test { namespace Int {
          }
          {
            TestSpace home;
-           IntVar x(home,-20,-16), y(home,0,6);
+           IntVar x(home,-20,-16);
+           IntVar y(home,0,6);
            product_mod(home,IntVarArgs({x}),7,y);
            if ((home.status() == SS_FAILED) ||
                (y.min() != 1) || (y.max() != 5))
@@ -1395,7 +1473,9 @@ namespace Test { namespace Int {
          }
          {
            TestSpace home;
-           IntVar c(home,6,6), x(home,-100,100), y(home,9,9);
+           IntVar c(home,6,6);
+           IntVar x(home,-100,100);
+           IntVar y(home,9,9);
            product_mod(home,IntVarArgs({c,x}),15,y);
            if ((home.status() == SS_FAILED) ||
                (x.min() != -96) || (x.max() != 99))
@@ -1405,7 +1485,9 @@ namespace Test { namespace Int {
          }
          {
            TestSpace home;
-           IntVar c(home,6,6), x(home,-100,100), y(home,8,8);
+           IntVar c(home,6,6);
+           IntVar x(home,-100,100);
+           IntVar y(home,8,8);
            product_mod(home,IntVarArgs({c,x}),15,y);
            if (home.status() != SS_FAILED)
              return arithmetic_failed
@@ -1414,7 +1496,9 @@ namespace Test { namespace Int {
          }
          {
            TestSpace home;
-           IntVar z(home,0,0), x(home,-100,100), y(home,0,1);
+           IntVar z(home,0,0);
+           IntVar x(home,-100,100);
+           IntVar y(home,0,1);
            BoolVar b(home,0,1);
            product_mod(home,IntVarArgs({z,x}),7,y,Reify(b));
            rel(home,y,IRT_EQ,0);
@@ -1628,7 +1712,10 @@ namespace Test { namespace Int {
          }
          {
            TestSpace home;
-           IntVar x(home,3,5), c(home,2,2), m(home,5,6), y(home,2,2);
+           IntVar x(home,3,5);
+           IntVar c(home,2,2);
+           IntVar m(home,5,6);
+           IntVar y(home,2,2);
            product_mod(home,IntVarArgs({x,c}),m,y);
            if (home.status() == SS_FAILED)
              return arithmetic_failed
@@ -1643,7 +1730,9 @@ namespace Test { namespace Int {
          }
          {
            TestSpace home;
-           IntVar x(home,10,20), c(home,10,20), m(home,401,509);
+           IntVar x(home,10,20);
+           IntVar c(home,10,20);
+           IntVar m(home,401,509);
            IntVar y(home,0,600);
            product_mod(home,IntVarArgs({x,c}),m,y);
            if ((home.status() == SS_FAILED) || (y.min() != 100) ||
@@ -1672,7 +1761,8 @@ namespace Test { namespace Int {
        virtual bool run(void) {
          using namespace Gecode;
          TestSpace home;
-         IntVar p(home,60,60), y(home,4,4);
+         IntVar p(home,60,60);
+         IntVar y(home,4,4);
          IntVar m(home,IntSet({20,supported ? 28 : 25,100}));
          product_mod(home,IntVarArgs({p}),m,y);
          branch(home,m,INT_VAL_MIN());
@@ -1750,7 +1840,8 @@ namespace Test { namespace Int {
          {
            TestSpace home;
            const int mv[10] = {5,7,8,9,14,16,28,55,56,1000000};
-           IntVar a(home,6,6), c(home,10,10);
+           IntVar a(home,6,6);
+           IntVar c(home,10,10);
            IntVar m(home,IntSet(mv,10));
            IntVar y(home,4,4);
            product_mod(home,IntVarArgs({a,c}),m,y);
@@ -1763,7 +1854,8 @@ namespace Test { namespace Int {
          {
            TestSpace home;
            const int mv[7] = {4,5,6,7,10,11,60};
-           IntVar a(home,6,6), c(home,10,10);
+           IntVar a(home,6,6);
+           IntVar c(home,10,10);
            IntVar m(home,IntSet(mv,7));
            IntVar y(home,0,0);
            product_mod(home,IntVarArgs({a,c}),m,y);
@@ -1787,7 +1879,8 @@ namespace Test { namespace Int {
          {
            TestSpace home;
            const int mv[3] = {2,17,1000000};
-           IntVar z(home,0,0), y(home,0,0);
+           IntVar z(home,0,0);
+           IntVar y(home,0,0);
            IntVar m(home,IntSet(mv,3));
            product_mod(home,IntVarArgs({z}),m,y);
            if ((home.status() == SS_FAILED) || !domain(m,mv,3))
@@ -1798,8 +1891,11 @@ namespace Test { namespace Int {
          {
            TestSpace home;
            const int hi=Gecode::Int::Limits::max;
-           IntVar a(home,hi,hi), c(home,hi,hi), d(home,hi,hi);
-           IntVar m(home,2,hi), y(home,0,0);
+           IntVar a(home,hi,hi);
+           IntVar c(home,hi,hi);
+           IntVar d(home,hi,hi);
+           IntVar m(home,2,hi);
+           IntVar y(home,0,0);
            product_mod(home,IntVarArgs({a,c,d}),m,y);
            if (home.status() == SS_FAILED)
              return arithmetic_failed
@@ -1809,7 +1905,9 @@ namespace Test { namespace Int {
          {
            TestSpace home;
            const int hi=Gecode::Int::Limits::max;
-           IntVar x(home,hi,hi), m(home,1,hi), y(home,0,0);
+           IntVar x(home,hi,hi);
+           IntVar m(home,1,hi);
+           IntVar y(home,0,0);
            product_mod(home,IntVarArgs({x}),m,y);
            if ((home.status() == SS_FAILED) || (m.min() != 1) ||
                (m.max() != hi))
@@ -1820,7 +1918,9 @@ namespace Test { namespace Int {
          {
            TestSpace home;
            const int hi=Gecode::Int::Limits::max;
-           IntVar x(home,hi,hi), m(home,2,hi), y(home,1,1);
+           IntVar x(home,hi,hi);
+           IntVar m(home,2,hi);
+           IntVar y(home,1,1);
            product_mod(home,IntVarArgs({x}),m,y);
            if ((home.status() == SS_FAILED) || (m.min() != 2) ||
                (m.max() != hi-1))

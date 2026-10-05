@@ -803,7 +803,9 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   class ReGcd : public Propagator {
   protected:
     /// Operands and greatest common divisor
-    IntView x0, x1, x2;
+    IntView x0;
+    IntView x1;
+    IntView x2;
     /// Reification control
     BoolView b;
     /// Constructor for posting

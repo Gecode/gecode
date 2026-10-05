@@ -177,7 +177,10 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   /// Extended Euclid for a modular inverse (arguments are coprime).
   inline long long int
   product_mod_inverse(long long int a, long long int m) {
-    long long int old_r=a, r=m, old_s=1, s=0;
+    long long int old_r=a;
+    long long int r=m;
+    long long int old_s=1;
+    long long int s=0;
     while (r != 0) {
       const long long int q=old_r/r;
       const long long int nr=old_r-q*r; old_r=r; r=nr;
@@ -196,7 +199,8 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     const long long int step=m/g;
     long long int r=0;
     if (step > 1) {
-      const long long int a=c/g, b=y/g;
+      const long long int a=c/g;
+      const long long int b=y/g;
       r=(product_mod_inverse(a % step,step)*b) % step;
       if (r < 0) r+=step;
     }
@@ -228,7 +232,8 @@ namespace Gecode { namespace Int { namespace Arithmetic {
       GECODE_ME_CHECK(y.eq(home,1 % m));
       return ES_OK;
     }
-    int c=1, a=1;
+    int c=1;
+    int a=1;
     product_mod_fold(x,m,c,a);
     if ((c == 0) || (x.size() == 0)) {
       GECODE_ME_CHECK(y.eq(home,c));
@@ -549,7 +554,8 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         if (d == 0)
           return (y.val() >= 0) && (m.min() > y.val())
             ? RT_TRUE : RT_MAYBE;
-        int least, greatest;
+        int least;
+        int greatest;
         if (!product_mod_var_divisor_bounds
             (std::max(m.min(),y.val()+1),m.max(),d,least,greatest))
           return RT_FALSE;
@@ -674,7 +680,8 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         const long long int d=p-y.val();
         if (d == 0)
           return home.ES_SUBSUMED(*this);
-        int least, greatest;
+        int least;
+        int greatest;
         if (!product_mod_var_divisor_bounds
             (m.min(),m.max(),d,least,greatest))
           return ES_FAILED;

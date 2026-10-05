@@ -109,7 +109,8 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   /// Floor and ceiling of a nonnegative integer root.
   inline int
   product_floor_root(int x, int n) {
-    int l=0, u=x;
+    int l=0;
+    int u=x;
     while (l < u) {
       const int m=l+(u-l+1)/2;
       if (product_power_le(m,n,x)) l=m; else u=m-1;
@@ -380,7 +381,8 @@ namespace Gecode { namespace Int { namespace Arithmetic {
       const int unit=neg ? -1 : 1;
       if (!y.in(0)) {
         ViewArray<IntView> z(home,x.size()-1);
-        for (int i=0, j=0; i<x.size(); i++)
+        int j=0;
+        for (int i=0; i<x.size(); i++)
           if (i != alias) z[j++]=x[i];
         IntVar u(home,unit,unit);
         GECODE_REWRITE(*this,Product::post(home(*this),z,IntView(u)));
@@ -418,7 +420,9 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     }
 
     // Stable one-sided signs determine aggregate parity and zero possibility.
-    bool stable=true, strict=true, negative=neg;
+    bool stable=true;
+    bool strict=true;
+    bool negative=neg;
     for (int i=0; i<x.size(); i++) {
       if (x[i].max() <= 0) {
         negative=!negative;

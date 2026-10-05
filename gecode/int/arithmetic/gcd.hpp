@@ -108,7 +108,8 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   gcd_coprime_bounds(Home home, IntView x, int a, int g) {
     if ((a % g) != 0)
       return ES_FAILED;
-    int l, negative_u;
+    int l;
+    int negative_u;
     if (!gcd_support_min(x,a,g,l) ||
         !gcd_support_min(MinusView(x),a,g,negative_u))
       return ES_FAILED;
@@ -126,7 +127,8 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     assert(a > 0);
     GECODE_ME_CHECK(g.gq(home,1));
     GECODE_ME_CHECK(g.lq(home,a));
-    const int q0=a/g.max(), q1=a/g.min();
+    const int q0=a/g.max();
+    const int q1=a/g.min();
     if (q0 == q1) {
       if ((a % q0) != 0)
         return ES_FAILED;
@@ -266,7 +268,9 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   inline ExecStatus
   Gcd::propagate(Space& home, const ModEventDelta&) {
-    const unsigned int s0=x0.size(), s1=x1.size(), s2=x2.size();
+    const unsigned int s0=x0.size();
+    const unsigned int s1=x1.size();
+    const unsigned int s2=x2.size();
     if (x0 == x1)
       GECODE_REWRITE(*this,AbsBnd<IntView>::post(home(*this),x0,x2));
     if (x0.assigned() && (x0.val() == 0))

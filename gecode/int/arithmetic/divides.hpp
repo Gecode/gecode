@@ -154,7 +154,8 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     if (b.one()) {
       if (rm == RM_PMI)
         return home.ES_SUBSUMED(*this);
-      const unsigned int s0=x0.size(), s1=x1.size();
+      const unsigned int s0=x0.size();
+      const unsigned int s1=x1.size();
       GECODE_ES_CHECK(divides_bnd(home,x0,x1));
       const RelTest rt=divides_status(x0,x1);
       if (rt == RT_FALSE)
