@@ -492,7 +492,10 @@ namespace Test { namespace Int {
     class KnapsackAugmentedOverload : public Test::Base {
     private:
       struct Task {
-        int e, l, p, d;
+        int e;
+        int l;
+        int p;
+        int d;
         int est(void) const { return e; }
         int lst(void) const { return l; }
         int ect(void) const { return e+p; }
