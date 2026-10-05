@@ -891,6 +891,87 @@ namespace Test { namespace Int {
       }
     };
 
+    class GroupSpace : public Gecode::Space {
+    public:
+      enum Kind { REL, SUM, PRECEDE };
+      Gecode::OpenIntVarSequence sequence;
+      Gecode::PropagatorGroup group;
+
+      GroupSpace(Kind kind, bool close)
+        : sequence(*this,Gecode::IntSet(0,2),3) {
+        using namespace Gecode;
+        switch (kind) {
+        case REL:
+          rel((*this)(group),sequence,IRT_NQ);
+          break;
+        case SUM:
+          slidingsum((*this)(group),sequence,2,2,2);
+          break;
+        case PRECEDE:
+          precede((*this)(group),sequence,0,1);
+          break;
+        }
+        sequence.materialize(*this,2);
+        if (close)
+          sequence.close(*this);
+      }
+
+      GroupSpace(GroupSpace& s) : Gecode::Space(s), group(s.group) {
+        sequence.update(*this,s.sequence);
+      }
+
+      virtual Gecode::Space*
+      copy(void) {
+        return new GroupSpace(*this);
+      }
+    };
+
+    /// Test group control after an open constraint has posted its children
+    class Group : public ::Test::Base {
+    protected:
+      GroupSpace::Kind kind;
+      bool kill;
+    public:
+      Group(const std::string& name, GroupSpace::Kind kind0, bool kill0)
+        : ::Test::Base("Int::OpenSequence::Group::"+name+
+                       (kill0 ? "::Kill" : "::Disable")),
+          kind(kind0), kill(kill0) {}
+
+      virtual bool
+      run(void) {
+        using namespace Gecode;
+        for (int close=0; close<2; close++) {
+          GroupSpace source(kind,close != 0);
+          if (source.status() == SS_FAILED)
+            return false;
+          if (kill)
+            source.group.kill(source);
+          else
+            source.group.disable(source);
+          // These values remain in the domains but violate each constraint.
+          rel(source,source.sequence[0],IRT_EQ,
+              kind == GroupSpace::PRECEDE ? 2 : 0);
+          rel(source,source.sequence[1],IRT_EQ,
+              kind == GroupSpace::PRECEDE ? 1 : 0);
+          if (source.status() == SS_FAILED)
+            return false;
+          if (!kill) {
+            source.group.enable(source);
+            if (source.status() != SS_FAILED)
+              return false;
+          }
+        }
+        return true;
+      }
+    };
+
+    Group group_rel_kill("Rel",GroupSpace::REL,true);
+    Group group_rel_disable("Rel",GroupSpace::REL,false);
+    Group group_sum_kill("Sum",GroupSpace::SUM,true);
+    Group group_sum_disable("Sum",GroupSpace::SUM,false);
+    Group group_precede_kill("Precede",GroupSpace::PRECEDE,true);
+    Group group_precede_disable("Precede",GroupSpace::PRECEDE,false);
+
     class Dispose : public ::Test::Base {
     public:
       Dispose(void)
