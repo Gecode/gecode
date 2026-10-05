@@ -68,7 +68,8 @@ namespace Test {
 
     template<class Engine>
     bool replay() {
-      Gecode::Support::Random<Engine> original(UINT64_MAX), restored;
+      Gecode::Support::Random<Engine> original(UINT64_MAX);
+      Gecode::Support::Random<Engine> restored;
       for (unsigned int i=0; i<17; ++i)
         (void) original(13);
       original = original.split(37);
@@ -197,7 +198,8 @@ namespace Test {
     };
 
     bool same_archive(const Gecode::Choice& a, const Gecode::Choice& b) {
-      Gecode::Archive x,y;
+      Gecode::Archive x;
+      Gecode::Archive y;
       a.archive(x); b.archive(y);
       if (x.size()!=y.size()) return false;
       for (int i=0; i<x.size(); ++i)
@@ -294,7 +296,8 @@ namespace Test {
         std::unique_ptr<Space> before(root.clone());
         std::unique_ptr<const Choice> choice(root.choice());
         for (unsigned int a=choice->alternatives(); a--;) {
-          std::unique_ptr<Space> direct(root.clone()), replay(before->clone());
+          std::unique_ptr<Space> direct(root.clone());
+          std::unique_ptr<Space> replay(before->clone());
           Archive archive; choice->archive(archive);
           std::unique_ptr<const Choice> restored(replay->choice(archive));
           if (!same_archive(*choice,*restored)) return false;
@@ -373,7 +376,8 @@ namespace Test {
         using namespace Gecode;
         static_assert(sizeof(Rnd)==sizeof(Support::RandomGenerator),
                       "Rnd must contain only inline engine state");
-        Rnd r(7), copy=r;
+        Rnd r(7);
+        Rnd copy=r;
         auto state=r.state();
         (void) copy(UINT64_MAX);
         if (r.state()!=state || copy.state()==state) return false;

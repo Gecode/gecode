@@ -57,7 +57,8 @@ public:
     : x(*this,n,0,queens ? n-1 : 1) {
     if (queens) {
       distinct(*this,x,IPL_DOM);
-      IntArgs up(n),down(n);
+      IntArgs up(n);
+      IntArgs down(n);
       for (unsigned int i=0; i<n; ++i) { up[i]=i; down[i]=-int(i); }
       distinct(*this,up,x,IPL_DOM);
       distinct(*this,down,x,IPL_DOM);

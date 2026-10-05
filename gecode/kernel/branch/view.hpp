@@ -94,7 +94,9 @@ namespace Gecode {
     const uint64_t* random_data(void) const override { return data(); }
     void read(Archive& e) {
       for (unsigned int i=0; i<count; ++i) {
-        unsigned int lo,hi; e >> lo >> hi;
+        unsigned int lo;
+        unsigned int hi;
+        e >> lo >> hi;
         data()[i] = uint64_t(lo) | (uint64_t(hi)<<32);
       }
     }
