@@ -233,6 +233,47 @@ namespace Test { namespace Int {
       }
     };
 
+    class NoGoods : public ::Test::Base {
+    public:
+      NoGoods(void) : ::Test::Base("Int::OpenSequence::NoGoods") {}
+
+      virtual bool
+      run(void) {
+        using namespace Gecode;
+        SelectorSpace root(INT_VAL_MIN(),OVB_VALUE_FIRST);
+        root.sequence.materialize(root,1);
+        Search::NodeStop stop(6);
+        Search::Options options;
+        options.stop = &stop;
+        options.threads = 1;
+        options.nogoods_limit = 100;
+        std::unique_ptr<Search::Engine> engine
+          (Search::dfsengine(&root,options));
+        bool found[16] = {};
+        const auto record = [&found](SelectorSpace* solution) {
+          int code = 1;
+          for (int i=0; i<solution->sequence.size(); i++)
+            code = 2*code + solution->sequence[i].val()-i;
+          found[code] = true;
+          delete solution;
+        };
+        while (Space* solution = engine->next())
+          record(static_cast<SelectorSpace*>(solution));
+        if (!engine->stopped())
+          return false;
+        // Deeper choices refer to positions absent from the restart root.
+        engine->nogoods().post(root);
+        DFS<SelectorSpace> restarted(&root);
+        while (SelectorSpace* solution = restarted.next())
+          record(solution);
+        // Extraction may omit literals, but must retain every unvisited word.
+        for (int code=2; code<16; code++)
+          if (!found[code])
+            return false;
+        return true;
+      }
+    };
+
     class SelectorChoiceSpace : public Gecode::Space {
     public:
       Gecode::OpenIntVarSequence sequence;
@@ -490,6 +531,7 @@ namespace Test { namespace Int {
     Factory factory;
     FixedStatistics fixed_statistics;
     Selectors selectors;
+    NoGoods no_goods;
     SelectorChoice selector_choice;
     BoolSequence bool_sequence;
 
