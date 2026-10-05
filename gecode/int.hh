@@ -2900,6 +2900,122 @@ namespace Gecode {
 
 namespace Gecode {
 
+
+  /**
+   * \defgroup TaskModelIntMinDistance Minimum distance constraints
+   * \ingroup TaskModelInt
+   */
+  //@{
+  /** \brief Shared distances between indexed sites
+   *
+   * Distances are nonnegative, symmetric, and zero on the diagonal.
+   * No triangle inequality is required. Site indices range from zero to
+   * size()-1. Matrix entries or a callable are shared across propagators,
+   * clones, and search threads.
+   */
+  class IntDistance : public SharedHandle {
+  protected:
+    /// Shared matrix or callable
+    class Data : public SharedHandle::Object {
+    public:
+      const int n; ///< Number of sites
+      const IntSharedArray matrix; ///< Row-major matrix, empty for a callable
+      const std::function<int(int,int)> function; ///< Computed distance
+      Data(int n, const IntArgs& matrix);
+      Data(int n, std::function<int(int,int)> function);
+      virtual ~Data(void);
+    };
+  public:
+    /** \brief Copy and validate an \a n by \a n row-major distance matrix
+     *
+     * Throws Int::OutOfLimits for invalid sizes or distances,
+     * Int::ArgumentSizeMismatch for a wrong number of entries, and
+     * Int::IllegalOperation for asymmetry or a nonzero diagonal.
+     */
+    GECODE_INT_EXPORT IntDistance(int n, const IntArgs& matrix);
+    /** \brief Compute distances on demand for \a n sites
+     *
+     * The callable must return a stable, symmetric, nonnegative distance
+     * within Int::Limits, and zero for equal indices. It must own or share
+     * its captured data, be safe for concurrent calls, and not depend on a
+     * Space. Construction does not evaluate it or materialize a matrix.
+     * Results are checked for range and a zero diagonal when evaluated;
+     * symmetry is the caller's responsibility.
+     * Throws Int::OutOfLimits for an invalid site count and InvalidFunction
+     * for an empty callable.
+     */
+    GECODE_INT_EXPORT IntDistance(int n, std::function<int(int,int)> function);
+    /// Number of sites
+    int size(void) const;
+    /// Distance between valid indices \a a and \a b
+    int operator ()(int a, int b) const;
+  };
+
+  /// Organization of forward-bound minimum-distance propagation
+  enum class MinDistancePropKind {
+    MDP_DECOMPOSED,    ///< One propagator per selected-position pair
+    MDP_SINGLE         ///< One propagator with advisors and cached pair maxima
+  };
+  /// One propagator per selected-position pair
+  static constexpr MinDistancePropKind MDP_DECOMPOSED =
+    MinDistancePropKind::MDP_DECOMPOSED;
+  /// One propagator with advisors and cached pair maxima
+  static constexpr MinDistancePropKind MDP_SINGLE =
+    MinDistancePropKind::MDP_SINGLE;
+
+  /** \brief Post \f$z=\min_{i<j}d(x_i,x_j)\f$
+   *
+   * The default organization is MDP_SINGLE.
+   * Uses forward pruning from assigned endpoints and pairwise upper bounds
+   * on \a z. Both organizations implement the same filtering. MDP_DECOMPOSED
+   * retains separate actors and failure counts; MDP_SINGLE retains one
+   * actor, linear advisor state, and a quadratic array of pair witnesses.
+   * This is incomplete propagation, not full bounds or domain consistency.
+   *
+   * The forward-bound and conflict-matching algorithms follow
+   * M. Z. Lagerkvist, Propagation Algorithms for the Minimum-Distance
+   * Constraint over Selected Points, ModRef 2026.
+   *
+   * A separate greedy conflict-matching upper bound is enabled by default.
+   * IPL_BASIC disables it; IPL_ADVANCED and IPL_BASIC_ADVANCED enable it
+   * together with forward propagation. The matching certificate is weakly
+   * monotonic and may miss pruning. It uses integer thresholds and O(d.size())
+   * temporary storage, without constructing a graph or distance-level array.
+   *
+   * Domains in \a x are restricted to valid site indices; repeated sites
+   * and repeated variables are permitted. Post distinctness separately when
+   * needed. Throws Int::TooFewArguments if fewer than two positions are
+   * given, and Int::IllegalOperation for an unknown organization.
+   */
+  GECODE_INT_EXPORT void
+  minimum_distance(Home home, const IntVarArgs& x, IntVar z,
+                   const IntDistance& d, IntPropLevel ipl=IPL_DEF,
+                   MinDistancePropKind kind=MDP_SINGLE);
+  /** \brief Post the minimum-distance relation with pair requirements
+   *
+   * In addition, requires \f$d(x_i,x_j)\geq r_{ij}\f$. The \a r matrix is
+   * row-major, symmetric, nonnegative, zero on its diagonal, and has
+   * x.size() squared entries. Requirements are inclusive. Positions are
+   * labelled: ordering them is only a valid symmetry break if requirements
+   * are invariant under the corresponding permutations.
+   *
+   * Has the same propagation and argument requirements as the other
+   * overload. Throws Int::ArgumentSizeMismatch for a wrong matrix size,
+   * Int::OutOfLimits for invalid requirements, and Int::IllegalOperation
+   * for asymmetry or a nonzero diagonal.
+   */
+  GECODE_INT_EXPORT void
+  minimum_distance(Home home, const IntVarArgs& x, IntVar z,
+                   const IntDistance& d, const IntArgs& r,
+                   IntPropLevel ipl=IPL_DEF, MinDistancePropKind kind=MDP_SINGLE);
+  //@}
+
+}
+
+#include <gecode/int/min-distance.hpp>
+
+namespace Gecode {
+
   /**
    * \defgroup TaskModelIntArith Arithmetic constraints
    * \ingroup TaskModelInt

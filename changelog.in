@@ -149,6 +149,19 @@ to register and run Gecode-style tests for every configured variable family.
 Support shared and static harness libraries using the configured Gecode
 library variants. Add exact replay of a failed test iteration with `-replay`.
 
+[ENTRY]
+Module: int
+What:   new
+Rank:   major
+[DESCRIPTION]
+Add exact minimum-distance constraints over indexed sites, with decomposed
+and single-propagator forward-bound propagation, optional conflict-matching
+upper bounds, and inclusive requirements for selected-position pairs.
+Distances can use a shared matrix or a shared callable evaluated on demand.
+The propagation algorithms follow:
+M. Z. Lagerkvist, Propagation Algorithms for the Minimum-Distance Constraint
+over Selected Points, ModRef 2026.
+
 [RELEASE]
 Version: 6.4.0
 Date: 2026-07-15

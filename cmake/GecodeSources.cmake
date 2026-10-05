@@ -96,6 +96,7 @@ set(GECODE_INT_SOURCES
   gecode/int/linear/bool-post.cpp
   gecode/int/linear/int-post.cpp
   gecode/int/member.cpp
+  gecode/int/min-distance.cpp
   gecode/int/no-overlap.cpp
   gecode/int/nvalues.cpp
   gecode/int/order.cpp
@@ -416,6 +417,7 @@ set(GECODE_TEST_SOURCES
   test/int/gcc.cpp
   test/int/linear.cpp
   test/int/member.cpp
+  test/int/min-distance.cpp
   test/int/mm-arithmetic.cpp
   test/int/mm-bool.cpp
   test/int/mm-count.cpp
