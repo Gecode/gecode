@@ -109,7 +109,9 @@ namespace Gecode { namespace Int { namespace MinDistance {
 
   /// Pair maximum and its witness
   struct PairCache {
-    int a, b, upper;
+    int a;
+    int b;
+    int upper;
   };
 
   /// Recompute the maximum distance between current domains
@@ -145,7 +147,9 @@ namespace Gecode { namespace Int { namespace MinDistance {
   ExecStatus
   zero(Space& home, const ViewArray<IntView>& x, const IntDistance& d,
        const IntSharedArray& r, bool& changed, bool& realized) {
-    int count = 0, first = -1, second = -1;
+    int count = 0;
+    int first = -1;
+    int second = -1;
     for (int i=0; i<x.size(); i++)
       for (int j=i+1; j<x.size(); j++) {
         if (requirement(r,x.size(),i,j) != 0)
@@ -200,7 +204,9 @@ namespace Gecode { namespace Int { namespace MinDistance {
   /// Forward-bound actor for one selected-position pair
   class Pair : public Propagator {
   protected:
-    IntView x, y, z;
+    IntView x;
+    IntView y;
+    IntView z;
     IntDistance d;
     int r;
     Pair(Home home, IntView x0, IntView y0, IntView z0,
@@ -304,7 +310,8 @@ namespace Gecode { namespace Int { namespace MinDistance {
       }
       if (y.max() != 0)
         return ES_FIX;
-      bool changed = false, realized = false;
+      bool changed = false;
+      bool realized = false;
       GECODE_ES_CHECK(zero(home,x,d,r,changed,realized));
       if (realized)
         return home.ES_SUBSUMED(*this);
@@ -518,7 +525,8 @@ namespace Gecode { namespace Int { namespace MinDistance {
         if (present[i])
           sites[n++] = i;
       bool* matched = region.alloc<bool>(n);
-      int lo = y.min(), hi = y.max();
+      int lo = y.min();
+      int hi = y.max();
       if (refuted(sites,n,matched,lo))
         return ES_FAILED;
       // A failed certificate at t excludes every objective >= t. Greedy

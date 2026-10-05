@@ -48,7 +48,8 @@ namespace Test { namespace Int { namespace MinDistance {
   class Minimum : public Test {
   protected:
     int positions;
-    bool computed, requirements;
+    bool computed;
+    bool requirements;
     int alias;
     Gecode::MinDistancePropKind kind;
   public:
