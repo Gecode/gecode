@@ -652,7 +652,7 @@ solve(const JobShopOptions& opt) {
 
     for (unsigned int p=0; p<opt.probes(); p++) {
       JobShopProbe* jsp = static_cast<JobShopProbe*>(master->clone());
-      jsp->branch(p,rnd);
+      jsp->branch(p,rnd.split(p));
       DFS<JobShopProbe> dfs(jsp,so);
       JobShopProbe* s = dfs.next();
       Search::Statistics statj = dfs.statistics();
