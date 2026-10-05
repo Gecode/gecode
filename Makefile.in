@@ -350,6 +350,7 @@ INTSRC0 = \
 	exception.cpp
 
 INTHDR0 = \
+	open-sequence.hpp \
 	limits.hpp support-values.hh support-values.hpp \
 	idx-view.hh idx-view.hpp div.hh div.hpp \
 	exec.hh exec/when.hpp \

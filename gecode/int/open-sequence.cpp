@@ -31,183 +31,18 @@
  *
  */
 
-#include <gecode/int.hh>
-
-namespace Gecode {
-
-  class OpenIntVarSequence::Sequence : public LocalObject {
-  public:
-    class Factory {
-    public:
-      Domain domain;
-      Transition transition;
-
-      Factory(Domain domain0, Transition transition0)
-        : domain(domain0), transition(transition0) {}
-    };
-
-    IntVar length;
-    IntVar materialized;
-    IntVar* x;
-    int n;
-    int capacity;
-    SharedData<Factory> factory;
-
-    static int
-    maximum(int max) {
-      Int::Limits::check(max,"OpenIntVarSequence");
-      if (max < 0)
-        throw Int::VariableEmptyDomain("OpenIntVarSequence");
-      return max;
-    }
-
-    static Domain
-    valid(Domain d) {
-      if (!d)
-        throw InvalidFunction("OpenIntVarSequence");
-      return d;
-    }
-
-    static Transition
-    valid(Transition t) {
-      if (!t)
-        throw InvalidFunction("OpenIntVarSequence");
-      return t;
-    }
-
-    Sequence(Home home, Domain d, int max)
-      : LocalObject(home),
-        length(home,0,maximum(max)),
-        materialized(home,0,max),
-        x(nullptr), n(0), capacity(0),
-        factory(Factory(valid(d),Transition())) {
-      home.notice(*this,AP_DISPOSE);
-    }
-
-    Sequence(Home home, Domain d, Transition t, int max)
-      : LocalObject(home),
-        length(home,0,maximum(max)),
-        materialized(home,0,max),
-        x(nullptr), n(0), capacity(0),
-        factory(Factory(valid(d),valid(t))) {
-      home.notice(*this,AP_DISPOSE);
-    }
-
-    Sequence(Space& home, Sequence& s)
-      : LocalObject(home,s), x(nullptr), n(s.n), capacity(s.n),
-        factory(s.factory) {
-      length.update(home,s.length);
-      materialized.update(home,s.materialized);
-      if (capacity > 0) {
-        x = heap.alloc<IntVar>(capacity);
-        try {
-          for (int i=0; i<n; i++)
-            x[i].update(home,s.x[i]);
-        } catch (...) {
-          heap.free<IntVar>(x,capacity);
-          throw;
-        }
-      }
-    }
-
-    virtual Actor*
-    copy(Space& home) {
-      return new (home) Sequence(home,*this);
-    }
-
-    virtual size_t
-    dispose(Space& home) {
-      home.ignore(*this,AP_DISPOSE);
-      if (capacity > 0)
-        heap.free<IntVar>(x,capacity);
-      factory.~SharedData<Factory>();
-      return sizeof(*this);
-    }
-
-    void
-    reserve(void) {
-      if (n == capacity) {
-        int next = (capacity < 4) ? 4 : capacity + capacity / 2;
-        x = heap.realloc<IntVar>(x,capacity,next);
-        capacity = next;
-      }
-    }
-
-    void
-    append(IntVar y) {
-      x[n++] = y;
-    }
-  };
-
-}
-
-namespace Gecode { namespace Int {
-
-  /// Materialize positions required by the minimum eventual length
-  class OpenMaterialize : public Propagator {
-  protected:
-    OpenIntVarSequence sequence;
-    IntView length;
-
-    OpenMaterialize(Home home, OpenIntVarSequence sequence0)
-      : Propagator(home), sequence(sequence0), length(sequence0.length()) {
-      length.subscribe(home,*this,PC_INT_BND);
-    }
-
-    OpenMaterialize(Space& home, OpenMaterialize& p)
-      : Propagator(home,p) {
-      sequence.update(home,p.sequence);
-      length.update(home,p.length);
-    }
-
-  public:
-    virtual Actor*
-    copy(Space& home) {
-      return new (home) OpenMaterialize(home,*this);
-    }
-
-    virtual PropCost
-    cost(const Space&, const ModEventDelta&) const {
-      const int n = length.min()-sequence.size();
-      return (n <= 1) ? PropCost::unary(PropCost::LO) :
-                        PropCost::linear(PropCost::LO,n);
-    }
-
-    virtual void
-    reschedule(Space& home) {
-      length.reschedule(home,*this,PC_INT_BND);
-    }
-
-    virtual ExecStatus
-    propagate(Space& home, const ModEventDelta&) {
-      sequence.materialize(home,length.min());
-      if (home.failed())
-        return ES_FAILED;
-      if (length.assigned())
-        return home.ES_SUBSUMED(*this);
-      return ES_FIX;
-    }
-
-    virtual size_t
-    dispose(Space& home) {
-      length.cancel(home,*this,PC_INT_BND);
-      sequence.~OpenIntVarSequence();
-      (void) Propagator::dispose(home);
-      return sizeof(*this);
-    }
-
-    static void
-    post(Home home, OpenIntVarSequence sequence) {
-      if (!sequence.length().assigned())
-        (void) new (home) OpenMaterialize(home,sequence);
-    }
-  };
-
-}}
+#include <gecode/int/branch.hh>
 
 namespace Gecode {
 
   OpenIntVarSequence::OpenIntVarSequence(void) {}
+
+  OpenIntVarSequence::Factory
+  OpenIntVarSequence::factory(Domain d) {
+    if (!d)
+      throw InvalidFunction("OpenIntVarSequence");
+    return [d](Space& home, int i) { return IntVar(home,d(i)); };
+  }
 
   OpenIntVarSequence::OpenIntVarSequence(Space& home, int max)
     : OpenIntVarSequence(home,
@@ -222,118 +57,22 @@ namespace Gecode {
     : OpenIntVarSequence(home,[d](int) { return d; },t,max) {}
 
   OpenIntVarSequence::OpenIntVarSequence(Space& home, Domain d, int max)
-    : LocalHandle(new (home) Sequence(home,d,max)) {
-    Int::OpenMaterialize::post(home,*this);
-  }
+    : OpenVarSequence<IntVar>(home,factory(d),max) {}
 
   OpenIntVarSequence::OpenIntVarSequence(Space& home, Domain d,
                                          Transition t, int max)
-    : LocalHandle(new (home) Sequence(home,d,t,max)) {
-    Int::OpenMaterialize::post(home,*this);
-  }
+    : OpenVarSequence<IntVar>(home,factory(d),t,max) {}
 
-  void
-  OpenIntVarSequence::update(Space& home, OpenIntVarSequence& s) {
-    LocalHandle::update(home,s);
-  }
+  OpenBoolVarSequence::OpenBoolVarSequence(void) {}
 
-  int
-  OpenIntVarSequence::size(void) const {
-    return static_cast<Sequence*>(object())->n;
-  }
+  OpenBoolVarSequence::OpenBoolVarSequence(Space& home, int max)
+    : OpenVarSequence<BoolVar>(home,
+        [](Space& home, int) { return BoolVar(home,0,1); },max) {}
 
-  IntVar
-  OpenIntVarSequence::operator [](int i) const {
-    Sequence* s = static_cast<Sequence*>(object());
-    assert((i >= 0) && (i < s->n));
-    return s->x[i];
-  }
-
-  IntVar
-  OpenIntVarSequence::length(void) const {
-    return static_cast<Sequence*>(object())->length;
-  }
-
-  IntVar
-  OpenIntVarSequence::materialized(void) const {
-    return static_cast<Sequence*>(object())->materialized;
-  }
-
-  void
-  OpenIntVarSequence::append(Space& home, IntVar y) {
-    if (home.failed())
-      return;
-    Sequence* s = static_cast<Sequence*>(object());
-    if (s->n == Int::Limits::max) {
-      home.fail();
-      return;
-    }
-    for (int i=0; i<s->n; i++)
-      if (!y.assigned() && !s->x[i].assigned() &&
-          (y.varimp() == s->x[i].varimp()))
-        throw Int::ArgumentSame("OpenIntVarSequence::append");
-    s->reserve();
-    const int next = s->n + 1;
-    Int::IntView l(s->length);
-    Int::IntView m(s->materialized);
-    if (me_failed(l.gq(home,next)) || me_failed(m.gq(home,next))) {
-      home.fail();
-      return;
-    }
-    s->append(y);
-    const Transition& transition = s->factory().transition;
-    if (transition) {
-      GECODE_VALID_FUNCTION(transition);
-      transition(home,*this,next-1);
-    }
-  }
-
-  void
-  OpenIntVarSequence::materialize(Space& home, int n) {
-    if (home.failed())
-      return;
-    Int::Limits::nonnegative(n,"OpenIntVarSequence::materialize");
-    Sequence* s = static_cast<Sequence*>(object());
-    Int::IntView l(s->length);
-    if (me_failed(l.gq(home,n))) {
-      home.fail();
-      return;
-    }
-    while (s->n < l.min()) {
-      const int i = s->n;
-      GECODE_VALID_FUNCTION(s->factory().domain);
-      IntVar y(home,s->factory().domain(i));
-      append(home,y);
-      if (home.failed())
-        return;
-    }
-  }
-
-  IntVar
-  OpenIntVarSequence::get(Space& home, int i) {
-    Int::Limits::nonnegative(i,"OpenIntVarSequence::get");
-    if (home.failed())
-      return IntVar();
-    Sequence* s = static_cast<Sequence*>(object());
-    if (i >= s->length.max())
-      throw Int::OutOfLimits("OpenIntVarSequence::get");
-    materialize(home,i+1);
-    if (home.failed())
-      return IntVar();
-    return static_cast<Sequence*>(object())->x[i];
-  }
-
-  void
-  OpenIntVarSequence::close(Space& home) {
-    if (home.failed())
-      return;
-    materialize(home,length().min());
-    if (home.failed())
-      return;
-    Sequence* s = static_cast<Sequence*>(object());
-    if (me_failed(Int::IntView(s->length).eq(home,s->n)))
-      home.fail();
-  }
+  OpenBoolVarSequence::OpenBoolVarSequence(Space& home, Transition t,
+                                           int max)
+    : OpenVarSequence<BoolVar>(home,
+        [](Space& home, int) { return BoolVar(home,0,1); },t,max) {}
 
 }
 
@@ -343,22 +82,20 @@ namespace Gecode { namespace Int {
   protected:
     OpenIntVarSequence sequence;
     IntView length;
-    IntView materialized;
     int posted;
 
     OpenSequencePropagator(Home home, OpenIntVarSequence sequence0)
       : Propagator(home), sequence(sequence0),
         length(sequence0.length()),
-        materialized(sequence0.materialized()), posted(0) {
+        posted(0) {
       length.subscribe(home,*this,PC_INT_BND);
-      materialized.subscribe(home,*this,PC_INT_BND);
+      sequence.subscribe(home,*this);
     }
 
     OpenSequencePropagator(Space& home, OpenSequencePropagator& p)
       : Propagator(home,p), posted(p.posted) {
       sequence.update(home,p.sequence);
       length.update(home,p.length);
-      materialized.update(home,p.materialized);
     }
 
     bool
@@ -369,7 +106,7 @@ namespace Gecode { namespace Int {
     void
     dispose_base(Space& home) {
       length.cancel(home,*this,PC_INT_BND);
-      materialized.cancel(home,*this,PC_INT_BND);
+      sequence.cancel(home,*this);
       sequence.~OpenIntVarSequence();
       (void) Propagator::dispose(home);
     }
@@ -383,7 +120,7 @@ namespace Gecode { namespace Int {
     virtual void
     reschedule(Space& home) {
       length.reschedule(home,*this,PC_INT_BND);
-      materialized.reschedule(home,*this,PC_INT_BND);
+      sequence.reschedule(home,*this);
     }
   };
 
@@ -756,130 +493,290 @@ namespace Gecode { namespace Int {
   };
 
 
-  template<bool horizon_first>
+  /// Standard view/value selectors over the materialized prefix
+  template<class View, int n>
   class OpenSequenceBrancher : public Brancher {
   protected:
-    class Description : public Choice {
-    public:
-      enum Kind {
-        VALUE,
-        HORIZON
-      };
+    typedef typename View::VarType Var;
+    OpenVarSequence<Var> sequence;
+    ViewSel<View>* vs[n];
+    ValSelCommitBase<View,int>* vsc;
+    BrancherFilter<View> filter;
+    SharedData<VarValPrint<Var,int>> printer;
+    OpenVarBranch order;
+    IntValBranch::Select values;
+    mutable int start;
 
-      const Kind kind;
-      const int position;
-      const int value;
-
-      Description(const Brancher& b, Kind kind0, int position0, int value0)
-        : Choice(b,2), kind(kind0),
-          position(position0), value(value0) {}
-
-      virtual void
-      archive(Archive& e) const {
-        Choice::archive(e);
-        e << static_cast<unsigned int>(kind) << position << value;
-      }
-    };
-
-    OpenIntVarSequence sequence;
-
-    OpenSequenceBrancher(Home home, OpenIntVarSequence sequence0)
-      : Brancher(home), sequence(sequence0) {}
+    OpenSequenceBrancher(Home home, OpenVarSequence<Var> sequence0,
+                         ViewSel<View>* vs0[n],
+                         ValSelCommitBase<View,int>* vsc0,
+                         OpenVarBranch order0, IntValBranch::Select values0,
+                         BranchFilter<Var> bf, VarValPrint<Var,int> vvp)
+      : Brancher(home), sequence(sequence0), vsc(vsc0),
+        filter(bf ? bf : [](const Space&, Var, int) { return true; }),
+        printer(vvp), order(order0), values(values0), start(0) {
+      for (int i=0; i<n; i++)
+        vs[i] = vs0[i];
+      home.notice(*this,AP_DISPOSE,true);
+    }
 
     OpenSequenceBrancher(Space& home, OpenSequenceBrancher& b)
-      : Brancher(home,b) {
+      : Brancher(home,b), vsc(b.vsc ? b.vsc->copy(home) : nullptr),
+        filter(b.filter), printer(b.printer), order(b.order),
+        values(b.values), start(b.start) {
       sequence.update(home,b.sequence);
+      for (int i=0; i<n; i++)
+        vs[i] = b.vs[i]->copy(home);
+    }
+
+    /// Select from a temporary array, keeping positions stable across growth
+    int
+    position(Space& home) {
+      Region r;
+      ViewArray<View> x(r,sequence.size());
+      for (int i=0; i<x.size(); i++)
+        x[i] = View(sequence[i]);
+      if (n == 1)
+        return vs[0]->select(home,x,start,filter);
+      int* ties = r.alloc<int>(x.size()-start);
+      int n_ties;
+      vs[0]->ties(home,x,start,ties,n_ties,filter);
+      for (int i=1; (i<n-1) && (n_ties>1); i++)
+        vs[i]->brk(home,x,ties,n_ties);
+      return (n_ties > 1) ? vs[n-1]->select(home,x,ties,n_ties) : ties[0];
+    }
+
+    static const Choice*
+    value_choice(const Brancher& b, int i, IntView x) {
+      return new Branch::PosValuesChoice(b,Pos(i),x);
+    }
+
+    static const Choice*
+    value_choice(const Brancher&, int, BoolView) {
+      GECODE_NEVER;
+      return nullptr;
+    }
+
+    int
+    value(const Choice& c, unsigned int a) const {
+      const Branch::PosValuesChoice& pvc =
+        static_cast<const Branch::PosValuesChoice&>(c);
+      return pvc.val(values == IntValBranch::SEL_VALUES_MIN
+                     ? a : pvc.alternatives()-1-a);
     }
 
   public:
     virtual bool
-    status(const Space&) const {
-      if (horizon_first &&
+    status(const Space& home) const {
+      if ((order == OVB_HORIZON_FIRST) &&
           (sequence.length().max() > sequence.size()))
         return true;
-      for (int i=0; i<sequence.size(); i++)
-        if (!sequence[i].assigned())
+      for (int i=start; i<sequence.size(); i++)
+        if (!sequence[i].assigned() && filter(home,View(sequence[i]),i)) {
+          start = i;
           return true;
+        }
       return sequence.length().max() > sequence.size();
     }
 
     virtual const Choice*
-    choice(Space&) {
-      if (horizon_first &&
+    choice(Space& home) {
+      if ((order == OVB_HORIZON_FIRST) &&
           (sequence.length().max() > sequence.size()))
-        return new Description(*this,Description::HORIZON,
-                               sequence.size(),0);
-      for (int i=0; i<sequence.size(); i++)
-        if (!sequence[i].assigned())
-          return new Description(*this,Description::VALUE,
-                                 i,sequence[i].min());
-      assert(sequence.length().max() > sequence.size());
-      return new Description(*this,Description::HORIZON,
-                             sequence.size(),0);
+        return new PosValChoice<int>(*this,2,Pos(-1),sequence.size());
+      for (int i=start; i<sequence.size(); i++)
+        if (!sequence[i].assigned() && filter(home,View(sequence[i]),i)) {
+          start = i;
+          const int p = position(home);
+          View x(sequence[p]);
+          return vsc ? new PosValChoice<int>(*this,2,Pos(p),vsc->val(home,x,p))
+                     : value_choice(*this,p,x);
+        }
+      return new PosValChoice<int>(*this,2,Pos(-1),sequence.size());
     }
 
     virtual const Choice*
     choice(const Space&, Archive& e) {
-      unsigned int kind;
-      int position, value;
-      e >> kind >> position >> value;
-      return new Description(*this,
-                             static_cast<typename Description::Kind>(kind),
-                             position,value);
+      int p;
+      e >> p;
+      if ((p < 0) || vsc) {
+        int v;
+        e >> v;
+        return new PosValChoice<int>(*this,2,Pos(p),v);
+      }
+      unsigned int a;
+      e >> a;
+      return new Branch::PosValuesChoice(*this,a,Pos(p),e);
     }
 
     virtual ExecStatus
-    commit(Space& home, const Choice& choice0, unsigned int alternative) {
-      const Description& choice =
-        static_cast<const Description&>(choice0);
-      if (choice.kind == Description::VALUE) {
-        IntView x(sequence[choice.position]);
-        ModEvent me = (alternative == 0)
-          ? x.eq(home,choice.value)
-          : x.nq(home,choice.value);
+    commit(Space& home, const Choice& c, unsigned int a) {
+      const int p = static_cast<const PosChoice&>(c).pos().pos;
+      if (p >= 0) {
+        View x(sequence[p]);
+        const ModEvent me = vsc
+          ? vsc->commit(home,a,x,p,static_cast<const PosValChoice<int>&>(c).val())
+          : x.eq(home,value(c,a));
         return me_failed(me) ? ES_FAILED : ES_OK;
       }
-      if (alternative == 0) {
-        IntView length(sequence.length());
-        return me_failed(length.eq(home,choice.position))
+      const int size = static_cast<const PosValChoice<int>&>(c).val();
+      if (a == 0)
+        return me_failed(IntView(sequence.length()).eq(home,size))
           ? ES_FAILED : ES_OK;
-      }
-      sequence.materialize(home,choice.position+1);
+      sequence.materialize(home,size+1);
       return home.failed() ? ES_FAILED : ES_OK;
     }
 
+    virtual NGL*
+    ngl(Space& home, const Choice& c, unsigned int a) const {
+      const int p = static_cast<const PosChoice&>(c).pos().pos;
+      if (p < 0)
+        return (a == 0) ? new (home) Branch::EqNGL<IntView>
+          (home,IntView(sequence.length()),
+           static_cast<const PosValChoice<int>&>(c).val()) : nullptr;
+      View x(sequence[p]);
+      return vsc
+        ? vsc->ngl(home,a,x,static_cast<const PosValChoice<int>&>(c).val())
+        : new (home) Branch::EqNGL<View>(home,x,value(c,a));
+    }
+
     virtual void
-    print(const Space&, const Choice& choice0, unsigned int alternative,
+    print(const Space& home, const Choice& c, unsigned int a,
           std::ostream& o) const {
-      const Description& choice =
-        static_cast<const Description&>(choice0);
-      if (choice.kind == Description::VALUE) {
-        o << "sequence[" << choice.position << "] "
-          << ((alternative == 0) ? "=" : "!=") << " " << choice.value;
-      } else if (alternative == 0) {
-        o << "sequence length = " << choice.position;
+      const int p = static_cast<const PosChoice&>(c).pos().pos;
+      if (p < 0) {
+        o << "sequence length " << ((a == 0) ? "=" : ">") << " "
+          << static_cast<const PosValChoice<int>&>(c).val();
       } else {
-        o << "sequence length > " << choice.position;
+        View x(sequence[p]);
+        const int v = vsc ? static_cast<const PosValChoice<int>&>(c).val()
+                          : value(c,a);
+        if (printer())
+          printer()(home,*this,a,sequence[p],p,v,o);
+        else if (vsc)
+          vsc->print(home,a,x,p,v,o);
+        else
+          o << "sequence[" << p << "] = " << v;
       }
     }
 
     virtual Actor*
     copy(Space& home) {
-      return new (home) OpenSequenceBrancher<horizon_first>(home,*this);
+      return new (home) OpenSequenceBrancher(home,*this);
     }
 
     virtual size_t
     dispose(Space& home) {
-      sequence.~OpenIntVarSequence();
+      home.ignore(*this,AP_DISPOSE,true);
+      for (int i=0; i<n; i++)
+        vs[i]->dispose(home);
+      if (vsc)
+        vsc->dispose(home);
+      filter.dispose(home);
+      printer.~SharedData<VarValPrint<Var,int>>();
+      sequence.~OpenVarSequence();
       (void) Brancher::dispose(home);
       return sizeof(*this);
     }
 
+    template<class VarBranch>
     static void
-    post(Home home, OpenIntVarSequence sequence) {
-      (void) new (home) OpenSequenceBrancher<horizon_first>(home,sequence);
+    post(Home home, OpenVarSequence<Var> sequence, VarBranch vars[n],
+         ValSelCommitBase<View,int>* vsc,
+         OpenVarBranch order, IntValBranch::Select values,
+         BranchFilter<Var> bf, VarValPrint<Var,int> vvp) {
+      ViewSel<View>* vs[n];
+      for (int i=0; i<n; i++)
+        vs[i] = Branch::viewsel(home,vars[i]);
+      (void) new (home)
+        OpenSequenceBrancher(home,sequence,vs,vsc,order,values,bf,vvp);
     }
   };
+
+  /// Reject fixed-position statistics while new variables can still appear
+  void
+  check_open_selector(IntVarBranch vars, bool open) {
+    switch (vars.select()) {
+    case IntVarBranch::SEL_ACTION_MIN: case IntVarBranch::SEL_ACTION_MAX:
+    case IntVarBranch::SEL_ACTION_SIZE_MIN: case IntVarBranch::SEL_ACTION_SIZE_MAX:
+    case IntVarBranch::SEL_CHB_MIN: case IntVarBranch::SEL_CHB_MAX:
+    case IntVarBranch::SEL_CHB_SIZE_MIN: case IntVarBranch::SEL_CHB_SIZE_MAX:
+      if (open)
+        throw UnknownBranching("Int::branch");
+      break;
+    default: break;
+    }
+  }
+
+  void
+  check_open_selector(BoolVarBranch vars, bool open) {
+    switch (vars.select()) {
+    case BoolVarBranch::SEL_ACTION_MIN: case BoolVarBranch::SEL_ACTION_MAX:
+    case BoolVarBranch::SEL_CHB_MIN: case BoolVarBranch::SEL_CHB_MAX:
+      if (open)
+        throw UnknownBranching("Int::branch");
+      break;
+    default: break;
+    }
+  }
+
+  ValSelCommitBase<IntView,int>*
+  open_valselcommit(Home home, IntValBranch vals) {
+    return ((vals.select() == IntValBranch::SEL_VALUES_MIN) ||
+            (vals.select() == IntValBranch::SEL_VALUES_MAX))
+      ? nullptr : Branch::valselcommit(home,vals);
+  }
+
+  ValSelCommitBase<BoolView,int>*
+  open_valselcommit(Home home, BoolValBranch vals) {
+    return Branch::valselcommit(home,vals);
+  }
+
+  template<class View, class VarBranch, class ValBranch>
+  void
+  post_open_brancher(Home home, OpenVarSequence<typename View::VarType> sequence,
+                     TieBreak<VarBranch> vars, ValBranch vals,
+                     OpenVarBranch order,
+                     BranchFilter<typename View::VarType> bf,
+                     VarValPrint<typename View::VarType,int> vvp) {
+    if ((order != OVB_HORIZON_FIRST) && (order != OVB_VALUE_FIRST))
+      throw UnknownBranching("Int::branch");
+    VarBranch selectors[4] = {vars.a,vars.b,vars.c,vars.d};
+    int n = 1;
+    while ((n < 4) && (selectors[n-1].select() != VarBranch::SEL_NONE) &&
+           (selectors[n-1].select() != VarBranch::SEL_RND) &&
+           (selectors[n].select() != VarBranch::SEL_NONE))
+      n++;
+    typedef typename View::VarType Var;
+    typename ArrayTraits<VarArgArray<Var>>::ArgsType x(sequence.size());
+    for (int i=0; i<x.size(); i++)
+      x[i] = sequence[i];
+    for (int i=0; i<n; i++) {
+      check_open_selector(selectors[i],sequence.length().max() > sequence.size());
+      selectors[i].expand(home,x);
+    }
+    const IntValBranch::Select values =
+      static_cast<IntValBranch::Select>(vals.select());
+    ValSelCommitBase<View,int>* vsc = open_valselcommit(home,vals);
+    switch (n) {
+    case 1:
+      OpenSequenceBrancher<View,1>::post
+        (home,sequence,selectors,vsc,order,values,bf,vvp);
+      break;
+    case 2:
+      OpenSequenceBrancher<View,2>::post
+        (home,sequence,selectors,vsc,order,values,bf,vvp);
+      break;
+    case 3:
+      OpenSequenceBrancher<View,3>::post
+        (home,sequence,selectors,vsc,order,values,bf,vvp);
+      break;
+    case 4:
+      OpenSequenceBrancher<View,4>::post
+        (home,sequence,selectors,vsc,order,values,bf,vvp);
+      break;
+    }
+  }
 
 }}
 
@@ -984,23 +881,43 @@ namespace Gecode {
   }
 
   void
-  branch(Home home, OpenIntVarSequence sequence) {
-    branch(home,sequence,OIB_HORIZON_FIRST);
+  branch(Home home, OpenIntVarSequence sequence, OpenVarBranch order) {
+    branch(home,sequence,INT_VAR_NONE(),INT_VAL_MIN(),order);
   }
 
   void
-  branch(Home home, OpenIntVarSequence sequence, OpenIntBranch order) {
+  branch(Home home, OpenBoolVarSequence sequence, OpenVarBranch order) {
+    branch(home,sequence,BOOL_VAR_NONE(),BOOL_VAL_MIN(),order);
+  }
+
+  void
+  branch(Home home, OpenIntVarSequence sequence,
+         IntVarBranch vars, IntValBranch vals, OpenVarBranch order,
+         IntBranchFilter bf, IntVarValPrint vvp) {
+    branch(home,sequence,TieBreak<IntVarBranch>(vars),vals,order,bf,vvp);
+  }
+
+  void
+  branch(Home home, OpenIntVarSequence sequence,
+         TieBreak<IntVarBranch> vars, IntValBranch vals, OpenVarBranch order,
+         IntBranchFilter bf, IntVarValPrint vvp) {
     GECODE_POST;
-    switch (order) {
-    case OIB_HORIZON_FIRST:
-      Int::OpenSequenceBrancher<true>::post(home,sequence);
-      break;
-    case OIB_VALUE_FIRST:
-      Int::OpenSequenceBrancher<false>::post(home,sequence);
-      break;
-    default:
-      throw Int::UnknownBranching("Int::branch");
-    }
+    Int::post_open_brancher<Int::IntView>(home,sequence,vars,vals,order,bf,vvp);
+  }
+
+  void
+  branch(Home home, OpenBoolVarSequence sequence,
+         BoolVarBranch vars, BoolValBranch vals, OpenVarBranch order,
+         BoolBranchFilter bf, BoolVarValPrint vvp) {
+    branch(home,sequence,TieBreak<BoolVarBranch>(vars),vals,order,bf,vvp);
+  }
+
+  void
+  branch(Home home, OpenBoolVarSequence sequence,
+         TieBreak<BoolVarBranch> vars, BoolValBranch vals, OpenVarBranch order,
+         BoolBranchFilter bf, BoolVarValPrint vvp) {
+    GECODE_POST;
+    Int::post_open_brancher<Int::BoolView>(home,sequence,vars,vals,order,bf,vvp);
   }
 
 }
