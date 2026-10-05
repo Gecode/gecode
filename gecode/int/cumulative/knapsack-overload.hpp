@@ -31,6 +31,8 @@
  *
  */
 
+#include <utility>
+
 namespace Gecode { namespace Int { namespace Cumulative {
 
   // Knapsack-augmented overload checking
@@ -131,9 +133,8 @@ namespace Gecode { namespace Int { namespace Cumulative {
         times[4*i+3] = tasks[i].lct();
       }
       std::sort(order,order+n,[&](int left, int right) {
-        if (tasks[left].lct() != tasks[right].lct())
-          return tasks[left].lct() < tasks[right].lct();
-        return left < right;
+        return std::make_pair(tasks[left].lct(),left) <
+          std::make_pair(tasks[right].lct(),right);
       });
       std::sort(times,times+4*n);
       int events = 0;

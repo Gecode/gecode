@@ -37,6 +37,7 @@
 #include <gecode/int/cumulative.hh>
 
 #include <memory>
+#include <utility>
 #include <vector>
 
 namespace Test { namespace Int {
@@ -531,10 +532,8 @@ namespace Test { namespace Int {
           times.push_back(tasks[i].lct());
         }
         std::sort(order.begin(),order.end(),[&](int a, int b) {
-          return tasks[static_cast<std::size_t>(a)].lct() !=
-                 tasks[static_cast<std::size_t>(b)].lct() ?
-            tasks[static_cast<std::size_t>(a)].lct() <
-              tasks[static_cast<std::size_t>(b)].lct() : a < b;
+          return std::make_pair(tasks[static_cast<std::size_t>(a)].lct(),a) <
+            std::make_pair(tasks[static_cast<std::size_t>(b)].lct(),b);
         });
         std::sort(times.begin(),times.end());
         times.erase(std::unique(times.begin(),times.end()),times.end());
