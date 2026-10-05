@@ -7,8 +7,11 @@ They do not promise bounds or domain consistency.
 Inside a `Space` constructor, this model has `g=6`, `p=-216`, and `r=1`:
 
 ```cpp
-IntVar x(*this,-12,-12), y(*this,18,18);
-IntVar g(*this,0,18), p(*this,-300,300), r(*this,0,6);
+IntVar x(*this,-12,-12);
+IntVar y(*this,18,18);
+IntVar g(*this,0,18);
+IntVar p(*this,-300,300);
+IntVar r(*this,0,6);
 gcd(*this,x,y,g);
 product(*this,IntVarArgs({x,y}),p);
 product_mod(*this,IntVarArgs({x,y}),7,r);
@@ -22,7 +25,8 @@ To require divisibility, pass a true reification variable:
 
 ```cpp
 BoolVar yes(*this,1,1);
-IntVar divisor(*this,6,6), dividend(*this,-30,30);
+IntVar divisor(*this,6,6);
+IntVar dividend(*this,-30,30);
 divides(*this,divisor,dividend,Reify(yes));
 ```
 
