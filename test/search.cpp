@@ -992,6 +992,61 @@ namespace Test {
         o.threads = 2;
         return o;
       }
+      static bool pendingBound(int bound) {
+        Gecode::Search::Par::BAB<Gecode::Search::NoTraceRecorder>
+          bab(nullptr,options());
+        for (int v=10; v>=8; v--)
+          bab.solution(new ParallelObjective(v));
+        ParallelObjective incumbent(bound);
+        bab.constrain(incumbent);
+        for (int v=10; v>=8; v--) {
+          if (v >= bound)
+            continue;
+          ParallelObjective* s =
+            static_cast<ParallelObjective*>(bab.next());
+          bool correct = (s != nullptr) && (s->x.val() == v);
+          delete s;
+          if (!correct) {
+            olog << "Pending solution violates bound " << bound
+                 << "; expected " << v << std::endl;
+            return false;
+          }
+        }
+        Space* s = bab.next();
+        bool exhausted = (s == nullptr);
+        delete s;
+        if (!exhausted)
+          olog << "Unexpected pending solution after bound " << bound
+               << std::endl;
+        return exhausted;
+      }
+      static bool pendingFailure(void) {
+        int live = FailingParallelObjective::live;
+        bool reported = false;
+        bool preserved = false;
+        {
+          Gecode::Search::Par::BAB<Gecode::Search::NoTraceRecorder>
+            bab(nullptr,options());
+          bab.solution(new FailingParallelObjective(
+            FailingParallelObjective::THROWN));
+          delete bab.next();
+          bab.solution(new FailingParallelObjective(
+            FailingParallelObjective::THROWN));
+          try { (void) bab.nogoods(); }
+          catch (const ComparisonError&) { reported = true; }
+          // An external update must report the original worker failure
+          // before invoking this incompatible incumbent's comparison.
+          UnsupportedObjective incumbent;
+          try { bab.constrain(incumbent); }
+          catch (const ComparisonError&) { preserved = true; }
+          catch (const SpaceNoComparison&) {}
+        }
+        if (!reported || !preserved)
+          olog << "Pending failure: nogoods reported=" << reported
+               << ", constrain preserved=" << preserved << std::endl;
+        return reported && preserved &&
+          (FailingParallelObjective::live == live);
+      }
       static bool resetSearch(Gecode::Search::Engine* e) {
         e->reset(new ParallelObjective);
         int previous = 11;
@@ -1070,6 +1125,12 @@ namespace Test {
     public:
       ParallelBABComparison(void) : Base("Search::ParallelBABComparison") {}
       virtual bool run(void) {
+        bool pending = true;
+        for (int bound=11; bound>=7; bound--)
+          if (!pendingBound(bound))
+            pending = false;
+        if (!pendingFailure() || !pending)
+          return false;
         Gecode::Search::TimeStop stop(5000);
         Gecode::Search::Options o = options();
         o.stop = &stop;
