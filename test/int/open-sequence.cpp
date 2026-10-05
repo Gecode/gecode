@@ -35,6 +35,13 @@
 
 #include <gecode/search.hh>
 
+#ifdef GECODE_HAS_SET_VARS
+#include <gecode/set.hh>
+#endif
+#ifdef GECODE_HAS_FLOAT_VARS
+#include <gecode/float.hh>
+#endif
+
 #include <memory>
 
 namespace Test { namespace Int {
@@ -112,7 +119,7 @@ namespace Test { namespace Int {
         if (order < 0)
           branch(*this,sequence);
         else
-          branch(*this,sequence,static_cast<OpenIntBranch>(order));
+          branch(*this,sequence,static_cast<OpenVarBranch>(order));
       }
 
       BranchOrderSpace(BranchOrderSpace& s)
@@ -158,10 +165,333 @@ namespace Test { namespace Int {
       run(void) {
         using namespace Gecode;
         return check(-1,1) &&
-          check(OIB_HORIZON_FIRST,1) &&
-          check(OIB_VALUE_FIRST,3);
+          check(OVB_HORIZON_FIRST,1) &&
+          check(OVB_VALUE_FIRST,3);
       }
     };
+
+    class SelectorSpace : public Gecode::Space {
+    public:
+      Gecode::OpenIntVarSequence sequence;
+
+      SelectorSpace(Gecode::IntValBranch vals, Gecode::OpenVarBranch order)
+        : sequence(*this,[](int i) { return Gecode::IntSet(i,i+1); },3) {
+        using namespace Gecode;
+        branch(*this,sequence,tiebreak(INT_VAR_SIZE_MIN(),INT_VAR_MAX_MAX()),
+               vals,order);
+      }
+
+      SelectorSpace(SelectorSpace& s) : Gecode::Space(s) {
+        sequence.update(*this,s.sequence);
+      }
+
+      virtual Gecode::Space*
+      copy(void) {
+        return new SelectorSpace(*this);
+      }
+    };
+
+    class Selectors : public ::Test::Base {
+    public:
+      Selectors(void) : ::Test::Base("Int::OpenSequence::Selectors") {}
+
+      virtual bool
+      run(void) {
+        using namespace Gecode;
+        const IntValBranch values[] = {
+          INT_VAL_MIN(), INT_VAL_MAX(), INT_VAL_MED(), INT_VAL_RND(Rnd(1)),
+          INT_VAL_SPLIT_MIN(), INT_VAL_SPLIT_MAX(),
+          INT_VAL_RANGE_MIN(), INT_VAL_RANGE_MAX(),
+          INT_VALUES_MIN(), INT_VALUES_MAX(),
+          INT_VAL([](const Space&, IntVar x, int) { return x.max(); })
+        };
+        for (const IntValBranch& vals : values)
+          for (int order=0; order<2; order++) {
+            SelectorSpace root(vals,static_cast<OpenVarBranch>(order));
+            Search::Options options;
+            options.threads = 1;
+            options.c_d = 1000;
+            options.a_d = 1000;
+            DFS<SelectorSpace> engine(&root,options);
+            int solutions = 0;
+            while (SelectorSpace* solution = engine.next()) {
+              bool valid = solution->sequence.length().assigned() &&
+                (solution->sequence.length().val() == solution->sequence.size());
+              for (int i=0; i<solution->sequence.size(); i++)
+                valid &= solution->sequence[i].assigned() &&
+                  (solution->sequence[i].val() >= i) &&
+                  (solution->sequence[i].val() <= i+1);
+              delete solution;
+              if (!valid)
+                return false;
+              solutions++;
+            }
+            if (solutions != 15)
+              return false;
+          }
+        return true;
+      }
+    };
+
+    class SelectorChoiceSpace : public Gecode::Space {
+    public:
+      Gecode::OpenIntVarSequence sequence;
+
+      SelectorChoiceSpace(Gecode::IntValBranch vals)
+        : sequence(*this,Gecode::IntSet({0,2,5}),3) {
+        using namespace Gecode;
+        sequence.materialize(*this,3);
+        branch(*this,sequence,
+               tiebreak(INT_VAR_SIZE_MIN(),
+                        INT_VAR_MERIT_MAX([](const Space&, IntVar, int i) {
+                          return i;
+                        })),vals,OVB_VALUE_FIRST,
+               [](const Space&, IntVar, int i) { return i != 1; },
+               [](const Space&, const Brancher&, unsigned int, IntVar,
+                  int i, const int& value, std::ostream& out) {
+                 out << i << ":" << value;
+               });
+      }
+
+      SelectorChoiceSpace(SelectorChoiceSpace& s) : Gecode::Space(s) {
+        sequence.update(*this,s.sequence);
+      }
+
+      virtual Gecode::Space*
+      copy(void) {
+        return new SelectorChoiceSpace(*this);
+      }
+    };
+
+    class SelectorChoice : public ::Test::Base {
+    public:
+      SelectorChoice(void) : ::Test::Base("Int::OpenSequence::SelectorChoice") {}
+
+      virtual bool
+      run(void) {
+        using namespace Gecode;
+        for (int multi=0; multi<2; multi++) {
+          SelectorChoiceSpace source(multi ? INT_VALUES_MAX() : INT_VAL_MAX());
+          if (source.status() != SS_BRANCH)
+            return false;
+          const Choice* original = source.choice();
+          Archive archive;
+          original->archive(archive);
+          const Choice* restored = source.choice(archive);
+          bool valid = restored->alternatives() == (multi ? 3U : 2U);
+          for (unsigned int a=0; a<restored->alternatives(); a++) {
+            SelectorChoiceSpace* clone =
+              static_cast<SelectorChoiceSpace*>(source.clone());
+            clone->commit(*restored,a);
+            const int expected[] = {5,2,0};
+            valid &= !clone->failed() && !clone->sequence[0].assigned() &&
+              !clone->sequence[1].assigned();
+            if (multi || (a == 0))
+              valid &= clone->sequence[2].assigned() &&
+                (clone->sequence[2].val() == expected[a]);
+            else
+              valid &= !clone->sequence[2].in(5);
+            delete clone;
+          }
+          SelectorChoiceSpace* excluded =
+            static_cast<SelectorChoiceSpace*>(source.clone());
+          NGL* literal = excluded->ngl(*restored,0);
+          valid &= (literal != nullptr) && (literal->status(*excluded) == NGL::NONE);
+          if (literal)
+            valid &= (literal->prune(*excluded) != ES_FAILED) &&
+              !excluded->sequence[2].in(5);
+          delete excluded;
+          std::ostringstream printed;
+          source.print(*restored,0,printed);
+          valid &= printed.str() == "2:5";
+          delete restored;
+          delete original;
+          if (!valid)
+            return false;
+        }
+        return true;
+      }
+    };
+
+    class BoolSpace : public Gecode::Space {
+    public:
+      Gecode::OpenBoolVarSequence sequence;
+
+      BoolSpace(Gecode::OpenVarBranch order)
+        : sequence(*this,3) {
+        using namespace Gecode;
+        DFA accepts_one(0,{{0,0,0},{0,1,1},{1,0,1},{1,1,1}},{1});
+        extensional(*this,sequence,accepts_one);
+        branch(*this,sequence,
+               BOOL_VAR_MERIT_MAX([](const Space&, BoolVar, int i) { return i; }),
+               BOOL_VAL_MAX(),order);
+      }
+
+      BoolSpace(BoolSpace& s) : Gecode::Space(s) {
+        sequence.update(*this,s.sequence);
+      }
+
+      virtual Gecode::Space*
+      copy(void) {
+        return new BoolSpace(*this);
+      }
+    };
+
+    class BoolSequence : public ::Test::Base {
+    public:
+      BoolSequence(void) : ::Test::Base("Int::OpenSequence::Bool") {}
+
+      virtual bool
+      run(void) {
+        using namespace Gecode;
+        for (int order=0; order<2; order++)
+          for (int recompute=0; recompute<2; recompute++) {
+            BoolSpace root(static_cast<OpenVarBranch>(order));
+            Search::Options options;
+            options.threads = 1;
+            options.c_d = recompute ? 1000 : 1;
+            options.a_d = options.c_d;
+            DFS<BoolSpace> engine(&root,options);
+            int solutions = 0;
+            while (BoolSpace* solution = engine.next()) {
+              bool valid = solution->sequence.length().assigned() &&
+                (solution->sequence.length().val() == solution->sequence.size());
+              int ones = 0;
+              for (int i=0; i<solution->sequence.size(); i++) {
+                valid &= solution->sequence[i].assigned();
+                ones += solution->sequence[i].val();
+              }
+              delete solution;
+              if (!valid || (ones == 0))
+                return false;
+              solutions++;
+            }
+            if (solutions != 11)
+              return false;
+          }
+        return true;
+      }
+    };
+
+    class FactorySpace : public Gecode::Space {
+    public:
+#ifdef GECODE_HAS_SET_VARS
+      Gecode::OpenVarSequence<Gecode::SetVar> sets;
+#endif
+#ifdef GECODE_HAS_FLOAT_VARS
+      Gecode::OpenVarSequence<Gecode::FloatVar> floats;
+#endif
+
+      FactorySpace(void) {
+        using namespace Gecode;
+#ifdef GECODE_HAS_SET_VARS
+        sets = OpenVarSequence<SetVar>(*this,
+          [](Space& home, int i) {
+            return SetVar(home,IntSet(i,i),IntSet(i,i));
+          },3);
+        sets.materialize(*this,1);
+#endif
+#ifdef GECODE_HAS_FLOAT_VARS
+        floats = OpenVarSequence<FloatVar>(*this,
+          [](Space& home, int i) { return FloatVar(home,i,i); },3);
+        floats.materialize(*this,1);
+#endif
+      }
+
+      FactorySpace(FactorySpace& s) : Gecode::Space(s) {
+#ifdef GECODE_HAS_SET_VARS
+        sets.update(*this,s.sets);
+#endif
+#ifdef GECODE_HAS_FLOAT_VARS
+        floats.update(*this,s.floats);
+#endif
+      }
+
+      virtual Gecode::Space*
+      copy(void) {
+        return new FactorySpace(*this);
+      }
+    };
+
+    class Factory : public ::Test::Base {
+    public:
+      Factory(void) : ::Test::Base("Int::OpenSequence::Factory") {}
+
+      virtual bool
+      run(void) {
+        using namespace Gecode;
+        FactorySpace source;
+        if (source.status() == SS_FAILED)
+          return false;
+        FactorySpace* clone = static_cast<FactorySpace*>(source.clone());
+#ifdef GECODE_HAS_SET_VARS
+        clone->sets.materialize(*clone,3);
+        clone->sets.close(*clone);
+        source.sets.close(source);
+#endif
+#ifdef GECODE_HAS_FLOAT_VARS
+        clone->floats.materialize(*clone,3);
+        clone->floats.close(*clone);
+        source.floats.close(source);
+#endif
+        bool valid = (clone->status() != SS_FAILED) &&
+                     (source.status() != SS_FAILED);
+#ifdef GECODE_HAS_SET_VARS
+        valid &= (source.sets.size() == 1) && (clone->sets.size() == 3) &&
+          (clone->sets.length().val() == 3) &&
+          clone->sets[2].assigned() && (clone->sets[2].glbMin() == 2);
+#endif
+#ifdef GECODE_HAS_FLOAT_VARS
+        valid &= (source.floats.size() == 1) && (clone->floats.size() == 3) &&
+          (clone->floats.length().val() == 3) &&
+          clone->floats[2].assigned() && (clone->floats[2].min() == 2);
+#endif
+        delete clone;
+        return valid;
+      }
+    };
+
+    class FixedStatistics : public ::Test::Base {
+    public:
+      FixedStatistics(void) : ::Test::Base("Int::OpenSequence::FixedStatistics") {}
+
+      virtual bool
+      run(void) {
+        using namespace Gecode;
+        for (int chb=0; chb<2; chb++) {
+          SelectorSpace open(INT_VAL_MIN(),OVB_VALUE_FIRST);
+          bool rejected = false;
+          try {
+            branch(open,open.sequence,
+                   chb ? INT_VAR_CHB_MIN() : INT_VAR_ACTION_MIN(1.0),
+                   INT_VAL_MIN());
+          } catch (const Gecode::Int::UnknownBranching&) {
+            rejected = true;
+          }
+          if (!rejected)
+            return false;
+          SelectorChoiceSpace fixed(INT_VAL_MIN());
+          branch(fixed,fixed.sequence,
+                 chb ? INT_VAR_CHB_MIN() : INT_VAR_ACTION_MIN(1.0),
+                 INT_VAL_MIN());
+          DFS<SelectorChoiceSpace> engine(&fixed);
+          int solutions = 0;
+          while (SelectorChoiceSpace* solution = engine.next()) {
+            solutions++;
+            delete solution;
+          }
+          if (solutions != 27)
+            return false;
+        }
+        return true;
+      }
+    };
+
+    Factory factory;
+    FixedStatistics fixed_statistics;
+    Selectors selectors;
+    SelectorChoice selector_choice;
+    BoolSequence bool_sequence;
 
     class TransitionSpace : public Gecode::Space {
     public:
@@ -604,7 +934,7 @@ namespace Test { namespace Int {
               home.fail();
           });
         source.sequence.materialize(source,1);
-        branch(source,source.sequence,OIB_VALUE_FIRST);
+        branch(source,source.sequence,OVB_VALUE_FIRST);
         if (source.status() != SS_BRANCH)
           return false;
         const Choice* choice = source.choice();
