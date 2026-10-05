@@ -38,6 +38,7 @@
 
 #include <algorithm>
 #include <limits>
+#include <tuple>
 
 namespace Gecode { namespace Int { namespace InterDistance {
 
@@ -273,8 +274,7 @@ namespace Gecode { namespace Int { namespace InterDistance {
           release[i] = finish[i] = tasks+i;
         }
         std::sort(release,release+n,[](const Task* a, const Task* b) {
-          return (a->min < b->min) ||
-            ((a->min == b->min) && (a->max < b->max));
+          return std::tie(a->min,a->max) < std::tie(b->min,b->max);
         });
         std::sort(finish,finish+n,[](const Task* a, const Task* b) {
           return a->max < b->max;
@@ -477,12 +477,10 @@ namespace Gecode { namespace Int { namespace InterDistance {
         for (int i=0; i<n; i++)
           minSorted[i] = maxSorted[i] = tasks+i;
         std::sort(minSorted,minSorted+n,[](const Task* a, const Task* b) {
-          return (a->min < b->min) ||
-            ((a->min == b->min) && (a->max < b->max));
+          return std::tie(a->min,a->max) < std::tie(b->min,b->max);
         });
         std::sort(maxSorted,maxSorted+n,[](const Task* a, const Task* b) {
-          return (a->max < b->max) ||
-            ((a->max == b->max) && (a->min < b->min));
+          return std::tie(a->max,a->min) < std::tie(b->max,b->min);
         });
         for (int i=0; i<n; i++)
           minSorted[i]->minRank = i;
