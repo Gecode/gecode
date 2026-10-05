@@ -2182,9 +2182,9 @@ namespace Test { namespace Int {
        int n;
      public:
        /// Create and register test
-       PowXY(const std::string& s, int n0, const Gecode::IntSet& d,
-             Gecode::IntPropLevel ipl)
-         : Test(TestTag::sweep,
+       PowXY(TestTags tags, const std::string& s, int n0,
+             const Gecode::IntSet& d, Gecode::IntPropLevel ipl)
+         : Test(tags,
                 "Arithmetic::Pow::XY::"+str(n0)+"::"+str(ipl)+"::"+s,
                 2,d,false,ipl), n(n0) {}
        /// %Test whether \a x is solution
@@ -2301,9 +2301,9 @@ namespace Test { namespace Int {
        /// Floor
      public:
        /// Create and register test
-       NrootXY(const std::string& s, int n0, const Gecode::IntSet& d,
-             Gecode::IntPropLevel ipl)
-         : Test(TestTag::sweep,
+       NrootXY(TestTags tags, const std::string& s, int n0,
+               const Gecode::IntSet& d, Gecode::IntPropLevel ipl)
+         : Test(tags,
                 "Arithmetic::Nroot::XY::"+str(n0)+"::"+str(ipl)+"::"+s,
                 2,d,false,ipl), n(n0) {}
        /// %Test whether \a x is solution
@@ -3161,10 +3161,13 @@ namespace Test { namespace Int {
              (void) new SqrXX("C",c,ipls.ipl());
 
              for (int n=0; n<=6; n++) {
-               (void) new PowXY("A",n,a,ipls.ipl());
-               (void) new PowXY("B",n,b,ipls.ipl());
-               (void) new PowXY("C",n,c,ipls.ipl());
-               (void) new PowXY("D",n,d,ipls.ipl());
+               TestTags distinct_tags = (n == 3) &&
+                 (ipls.ipl() == Gecode::IPL_BND)
+                 ? TestTag::normal : TestTag::sweep;
+               (void) new PowXY(TestTag::sweep,"A",n,a,ipls.ipl());
+               (void) new PowXY(TestTag::sweep,"B",n,b,ipls.ipl());
+               (void) new PowXY(distinct_tags,"C",n,c,ipls.ipl());
+               (void) new PowXY(TestTag::sweep,"D",n,d,ipls.ipl());
 
                TestTags tags = (n == 0) && (ipls.ipl() == Gecode::IPL_BND)
                  ? TestTag::normal : TestTag::sweep;
@@ -3175,10 +3178,13 @@ namespace Test { namespace Int {
              }
 
              for (int n=1; n<=6; n++) {
-               (void) new NrootXY("A",n,a,ipls.ipl());
-               (void) new NrootXY("B",n,b,ipls.ipl());
-               (void) new NrootXY("C",n,c,ipls.ipl());
-               (void) new NrootXY("D",n,d,ipls.ipl());
+               TestTags distinct_tags = (n == 3) &&
+                 (ipls.ipl() == Gecode::IPL_BND)
+                 ? TestTag::normal : TestTag::sweep;
+               (void) new NrootXY(TestTag::sweep,"A",n,a,ipls.ipl());
+               (void) new NrootXY(TestTag::sweep,"B",n,b,ipls.ipl());
+               (void) new NrootXY(distinct_tags,"C",n,c,ipls.ipl());
+               (void) new NrootXY(TestTag::sweep,"D",n,d,ipls.ipl());
 
                TestTags tags = (n == 1) && (ipls.ipl() == Gecode::IPL_BND)
                  ? TestTag::normal : TestTag::sweep;
@@ -3189,9 +3195,9 @@ namespace Test { namespace Int {
              }
 
              for (int n=30; n<=34; n++) {
-               (void) new PowXY("C",n,c,ipls.ipl());
+               (void) new PowXY(TestTag::sweep,"C",n,c,ipls.ipl());
                (void) new PowXX(TestTag::sweep,"C",n,c,ipls.ipl());
-               (void) new NrootXY("C",n,c,ipls.ipl());
+               (void) new NrootXY(TestTag::sweep,"C",n,c,ipls.ipl());
                (void) new NrootXX(TestTag::sweep,"C",n,c,ipls.ipl());
              }
 

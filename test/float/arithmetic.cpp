@@ -1032,8 +1032,10 @@ namespace Test { namespace Float {
      class MinXYZ : public Test {
      public:
        /// Create and register test
-       MinXYZ(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
-         : Test(TestTag::sweep,"Arithmetic::Min::Bin::XYZ::"+s,3,d,st,CPLT_ASSIGNMENT,false) {}
+       MinXYZ(TestTags tags, const std::string& s,
+              const Gecode::FloatVal& d, Gecode::FloatNum st)
+         : Test(tags,"Arithmetic::Min::Bin::XYZ::"+s,
+                3,d,st,CPLT_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
          return eq(min(x[0],x[1]), x[2]);
@@ -1117,8 +1119,10 @@ namespace Test { namespace Float {
      class MaxXYZ : public Test {
      public:
        /// Create and register test
-       MaxXYZ(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
-         : Test(TestTag::sweep,"Arithmetic::Max::Bin::XYZ::"+s,3,d,st,CPLT_ASSIGNMENT,false) {}
+       MaxXYZ(TestTags tags, const std::string& s,
+              const Gecode::FloatVal& d, Gecode::FloatNum st)
+         : Test(tags,"Arithmetic::Max::Bin::XYZ::"+s,
+                3,d,st,CPLT_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
          return eq(max(x[0],x[1]), x[2]);
@@ -1424,9 +1428,12 @@ namespace Test { namespace Float {
      AbsXX abs_xx_b(TestTag::sweep,"B",b,step);
      AbsXX abs_xx_c(TestTag::sweep,"C",c,step);
 
-     MinXYZ min_xyz_a("A",a,step);
-     MinXYZ min_xyz_b("B",b,step);
-     MinXYZ min_xyz_c("C",c,step);
+     MinXYZ min_xyz_normal(
+       TestTag::normal,"Normal",Gecode::FloatVal(-1,1),1.0);
+
+     MinXYZ min_xyz_a(TestTag::sweep,"A",a,step);
+     MinXYZ min_xyz_b(TestTag::sweep,"B",b,step);
+     MinXYZ min_xyz_c(TestTag::sweep,"C",c,step);
 
      MinXXY min_xxy_a("A",a,step);
      MinXXY min_xxy_b("B",b,step);
@@ -1444,9 +1451,12 @@ namespace Test { namespace Float {
      MinXXX min_xxx_b(TestTag::sweep,"B",b,step);
      MinXXX min_xxx_c(TestTag::sweep,"C",c,step);
 
-     MaxXYZ max_xyz_a("A",a,step);
-     MaxXYZ max_xyz_b("B",b,step);
-     MaxXYZ max_xyz_c("C",c,step);
+     MaxXYZ max_xyz_normal(
+       TestTag::normal,"Normal",Gecode::FloatVal(-1,1),1.0);
+
+     MaxXYZ max_xyz_a(TestTag::sweep,"A",a,step);
+     MaxXYZ max_xyz_b(TestTag::sweep,"B",b,step);
+     MaxXYZ max_xyz_c(TestTag::sweep,"C",c,step);
 
      MaxXXY max_xxy_a("A",a,step);
      MaxXXY max_xxy_b("B",b,step);
