@@ -229,7 +229,7 @@ namespace Gecode { namespace Int {
       const int size = sequence.size();
       const int first = std::max(1,posted);
       for (int i=first; i<size; i++)
-        Gecode::rel(home,sequence[i-1],irt,sequence[i],ipl);
+        Gecode::rel(home(*this),sequence[i-1],irt,sequence[i],ipl);
       posted = size;
       if (home.failed())
         return ES_FAILED;
@@ -283,7 +283,7 @@ namespace Gecode { namespace Int {
         IntVarArgs window(width);
         for (int i=0; i<width; i++)
           window[i] = sequence[end-width+i];
-        Gecode::sequence(home,window,values,width,lower,upper,ipl);
+        Gecode::sequence(home(*this),window,values,width,lower,upper,ipl);
       }
       posted = size;
       if (home.failed())
@@ -338,10 +338,10 @@ namespace Gecode { namespace Int {
         for (int i=0; i<width; i++)
           window[i] = sequence[end-width+i];
         if (lower == upper) {
-          Gecode::linear(home,window,IRT_EQ,lower,ipl);
+          Gecode::linear(home(*this),window,IRT_EQ,lower,ipl);
         } else {
-          Gecode::linear(home,window,IRT_GQ,lower,ipl);
-          Gecode::linear(home,window,IRT_LQ,upper,ipl);
+          Gecode::linear(home(*this),window,IRT_GQ,lower,ipl);
+          Gecode::linear(home(*this),window,IRT_LQ,upper,ipl);
         }
       }
       posted = size;
@@ -392,9 +392,11 @@ namespace Gecode { namespace Int {
       const int size = sequence.size();
       for (int i=posted; i<size; i++)
         if (min)
-          Gecode::rel(home,sequence[i],IRT_GQ,IntVar(result.varimp()),ipl);
+          Gecode::rel(home(*this),sequence[i],IRT_GQ,
+                      IntVar(result.varimp()),ipl);
         else
-          Gecode::rel(home,sequence[i],IRT_LQ,IntVar(result.varimp()),ipl);
+          Gecode::rel(home(*this),sequence[i],IRT_LQ,
+                      IntVar(result.varimp()),ipl);
       posted = size;
       if (home.failed())
         return ES_FAILED;
@@ -406,9 +408,9 @@ namespace Gecode { namespace Int {
       for (int i=0; i<size; i++)
         variables[i] = sequence[i];
       if (min)
-        Gecode::min(home,variables,IntVar(result.varimp()),ipl);
+        Gecode::min(home(*this),variables,IntVar(result.varimp()),ipl);
       else
-        Gecode::max(home,variables,IntVar(result.varimp()),ipl);
+        Gecode::max(home(*this),variables,IntVar(result.varimp()),ipl);
       if (home.failed())
         return ES_FAILED;
       return home.ES_SUBSUMED(*this);
@@ -459,18 +461,18 @@ namespace Gecode { namespace Int {
       const int size = sequence.size();
       for (int i=posted; i<size; i++) {
         BoolVar is_before(home,0,1);
-        Gecode::rel(home,sequence[i],IRT_EQ,before,
+        Gecode::rel(home(*this),sequence[i],IRT_EQ,before,
                     Reify(is_before,RM_EQV));
         if (i == 0) {
-          Gecode::rel(home,sequence[i],IRT_NQ,after);
+          Gecode::rel(home(*this),sequence[i],IRT_NQ,after);
           seen = BoolView(is_before);
         } else {
           BoolVar is_after(home,0,1);
-          Gecode::rel(home,sequence[i],IRT_EQ,after,
+          Gecode::rel(home(*this),sequence[i],IRT_EQ,after,
                       Reify(is_after,RM_EQV));
-          Gecode::rel(home,is_after,IRT_LQ,BoolVar(seen.varimp()));
+          Gecode::rel(home(*this),is_after,IRT_LQ,BoolVar(seen.varimp()));
           BoolVar next(home,0,1);
-          Gecode::rel(home,BoolVar(seen.varimp()),BOT_OR,is_before,next);
+          Gecode::rel(home(*this),BoolVar(seen.varimp()),BOT_OR,is_before,next);
           seen = BoolView(next);
         }
       }
