@@ -291,7 +291,8 @@ namespace Test {
         const HasSolutions& s = dynamic_cast<const HasSolutions&>(_s);
         if (htc != s.htc)
           throw DynamicCastFailed("HasSolutions::compare");
-        int c=0, sc=0;
+        int c=0;
+        int sc=0;
         switch (htc) {
         case HTC_LEX_LE:
         case HTC_LEX_GR:
@@ -915,7 +916,10 @@ namespace Test {
     private:
       template<class Engine>
       static bool updates(Engine& e) {
-        ExternalObjective five(5), equal(5), worse(7), better(3);
+        ExternalObjective five(5);
+        ExternalObjective equal(5);
+        ExternalObjective worse(7);
+        ExternalObjective better(3);
         int n = ExternalObjective::constraints;
         e.constrain(five);
         int installed = ExternalObjective::constraints;
@@ -951,7 +955,8 @@ namespace Test {
         }
         delete rbs;
 
-        IncomparableObjective incomparable(4), incumbent(5);
+        IncomparableObjective incomparable(4);
+        IncomparableObjective incumbent(5);
         ExternalObjective* im = new ExternalObjective;
         Gecode::Search::Engine* rejecting = Gecode::Search::babengine(
           im,Gecode::Search::Options());
@@ -1232,7 +1237,10 @@ namespace Test {
           Gecode::Search::build<ExternalObjective,
             Gecode::PBS<ExternalObjective,Gecode::BAB> >(em,o);
         delete em;
-        ExternalObjective five(5), equal(5), worse(7), better(3);
+        ExternalObjective five(5);
+        ExternalObjective equal(5);
+        ExternalObjective worse(7);
+        ExternalObjective better(3);
         int n = ExternalObjective::constraints;
         external->constrain(five);
         int installed = ExternalObjective::constraints;
@@ -1355,10 +1363,15 @@ namespace Test {
         : Base("Search::FloatObjectiveComparison") {}
       virtual bool run(void) {
         const FloatNum next = std::nextafter(1.0,2.0);
-        FloatMinObjective m9(9.5,1.0), m10(10.0,1.0),
-          m10b(10.0,1.0), mzero(10.0), madj(FloatVal(1.0,next));
-        FloatMaxObjective x11(10.5,1.0), x10(10.0,1.0),
-          x10b(10.0,1.0), xadj(FloatVal(1.0,next));
+        FloatMinObjective m9(9.5,1.0);
+        FloatMinObjective m10(10.0,1.0);
+        FloatMinObjective m10b(10.0,1.0);
+        FloatMinObjective mzero(10.0);
+        FloatMinObjective madj(FloatVal(1.0,next));
+        FloatMaxObjective x11(10.5,1.0);
+        FloatMaxObjective x10(10.0,1.0);
+        FloatMaxObjective x10b(10.0,1.0);
+        FloatMaxObjective xadj(FloatVal(1.0,next));
         if ((m9.compare(m10) != SC_BETTER) ||
             (m10.compare(m9) != SC_WORSE) ||
             (m10.compare(m10b) != SC_EQUIVALENT) ||
@@ -1386,8 +1399,10 @@ namespace Test {
             !admitted<FloatMaxObjective>(FloatVal(11.1),1.0,x10))
           return false;
 
-        FloatVal before_m=m9.cost().val(), before_m_other=m10.cost().val(),
-          before_x=x11.cost().val(), before_x_other=x10.cost().val();
+        FloatVal before_m=m9.cost().val();
+        FloatVal before_m_other=m10.cost().val();
+        FloatVal before_x=x11.cost().val();
+        FloatVal before_x_other=x10.cost().val();
         (void) m9.compare(m10); (void) x11.compare(x10);
         if ((m9.cost().val().min() != before_m.min()) ||
             (m9.cost().val().max() != before_m.max()) ||
@@ -1458,20 +1473,26 @@ namespace Test {
     public:
       Comparison(void) : Base("Search::Comparison") {}
       virtual bool run(void) {
-        MinObjective one(1,1), two(2,2), one_again(1,1), open(0,2);
+        MinObjective one(1,1);
+        MinObjective two(2,2);
+        MinObjective one_again(1,1);
+        MinObjective open(0,2);
         if ((one.compare(two) != SC_BETTER) ||
             (two.compare(one) != SC_WORSE) ||
             (one.compare(one_again) != SC_EQUIVALENT))
           return false;
-        MaxObjective high(2), low(1);
+        MaxObjective high(2);
+        MaxObjective low(1);
         if ((high.compare(low) != SC_BETTER) ||
             (low.compare(high) != SC_WORSE))
           return false;
-        LexObjective lp(1,0,2), lq(2,0,2);
+        LexObjective lp(1,0,2);
+        LexObjective lq(2,0,2);
         if ((lp.compare(lq) != SC_BETTER) ||
             (lq.compare(lp) != SC_WORSE))
           return false;
-        LexMaxObjective lmp(2), lmq(1);
+        LexMaxObjective lmp(2);
+        LexMaxObjective lmq(1);
         if ((lmp.compare(lmq) != SC_BETTER) ||
             (lmq.compare(lmp) != SC_WORSE))
           return false;

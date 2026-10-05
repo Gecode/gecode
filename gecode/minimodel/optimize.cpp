@@ -97,11 +97,13 @@ namespace Gecode {
       dynamic_cast<const IntLexMinimizeSpace*>(&other);
     if (s == nullptr)
       throw DynamicCastFailed("IntLexMinimizeSpace::compare");
-    IntVarArgs a(cost()), b(s->cost());
+    IntVarArgs a(cost());
+    IntVarArgs b(s->cost());
     if (a.size() != b.size())
       throw MiniModel::ArgumentSizeMismatch("IntLexMinimizeSpace::compare");
     for (int i=0; i<a.size(); i++) {
-      int av=a[i].val(), bv=b[i].val();
+      int av=a[i].val();
+      int bv=b[i].val();
       if (av != bv)
         return compare_int(av,bv,true);
     }
@@ -127,11 +129,13 @@ namespace Gecode {
       dynamic_cast<const IntLexMaximizeSpace*>(&other);
     if (s == nullptr)
       throw DynamicCastFailed("IntLexMaximizeSpace::compare");
-    IntVarArgs a(cost()), b(s->cost());
+    IntVarArgs a(cost());
+    IntVarArgs b(s->cost());
     if (a.size() != b.size())
       throw MiniModel::ArgumentSizeMismatch("IntLexMaximizeSpace::compare");
     for (int i=0; i<a.size(); i++) {
-      int av=a[i].val(), bv=b[i].val();
+      int av=a[i].val();
+      int bv=b[i].val();
       if (av != bv)
         return compare_int(av,bv,false);
     }
@@ -155,7 +159,8 @@ namespace Gecode {
       dynamic_cast<const FloatMinimizeSpace*>(&other);
     if ((s == nullptr) || (step != s->step))
       throw DynamicCastFailed("FloatMinimizeSpace::compare");
-    FloatNum a=cost().val().max(), b=s->cost().val().max();
+    FloatNum a=cost().val().max();
+    FloatNum b=s->cost().val().max();
     if (a == b)
       return SC_EQUIVALENT;
     return (a < b) ? SC_BETTER : SC_WORSE;
@@ -177,7 +182,8 @@ namespace Gecode {
       dynamic_cast<const FloatMaximizeSpace*>(&other);
     if ((s == nullptr) || (step != s->step))
       throw DynamicCastFailed("FloatMaximizeSpace::compare");
-    FloatNum a=cost().val().min(), b=s->cost().val().min();
+    FloatNum a=cost().val().min();
+    FloatNum b=s->cost().val().min();
     if (a == b)
       return SC_EQUIVALENT;
     return (a > b) ? SC_BETTER : SC_WORSE;
