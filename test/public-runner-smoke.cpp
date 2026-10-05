@@ -71,10 +71,17 @@ namespace {
   } failing_smoke_test;
 
   unsigned int observed_seed = 0;
+  int replay_runs = 0;
   class ReplaySmokeTest : public Test::Base {
   public:
     ReplaySmokeTest(void) : Test::Base("Smoke::Replay") {}
     bool run(void) override {
+      if (++replay_runs == 1) {
+        // Leave a state above the seed setter's modulus for the next iteration.
+        _rand.seed(44488);
+        (void) _rand.next();
+        return true;
+      }
       observed_seed = _rand.seed();
       (void) _rand(10);
       return false;
@@ -179,9 +186,9 @@ main(void) {
 
   std::string replay_output;
   if (!require(run_and_capture({"public-runner-smoke", "-test", "Smoke::Replay",
-                                "-seed", "12345", "-iter", "1"},
-                               replay_output) == EXIT_FAILURE,
-               "seed-sensitive test should fail"))
+                                "-seed", "12345", "-iter", "2"},
+                               replay_output) == EXIT_FAILURE && replay_runs == 2,
+               "seed-sensitive test should fail on its second iteration"))
     return EXIT_FAILURE;
   const std::string seed = std::to_string(observed_seed);
   if (!require(replay_output.find("Options: -replay " + seed) != std::string::npos,

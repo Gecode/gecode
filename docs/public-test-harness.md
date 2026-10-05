@@ -219,6 +219,9 @@ test once on one thread, starting from the failing iteration's random state:
   -stop true
 ```
 
+The runner normalizes the random state before each iteration so that the
+reported seed restores that iteration, including failures after earlier passes.
+
 `-log` prints the buffered test log on failure and cannot be combined with a
 multi-threaded run. `-help` prints the complete option list. Help and malformed
 options terminate the process, so the runner belongs in a test executable

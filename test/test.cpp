@@ -272,6 +272,8 @@ namespace Test {
       ostream.flush();
       test->_rand.seed(seed);
       for (unsigned int i = options.iter; i--;) {
+        // Normalize evolved states so the reported seed restores this iteration.
+        test->_rand.seed(test->_rand.seed());
         seed = test->_rand.seed();
         if (test->run()) {
           ostream << '+';
