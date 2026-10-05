@@ -521,12 +521,23 @@ namespace Gecode { namespace Int {
     }
 
     OpenSequenceBrancher(Space& home, OpenSequenceBrancher& b)
-      : Brancher(home,b), vsc(b.vsc ? b.vsc->copy(home) : nullptr),
+      : Brancher(home,b), vsc(nullptr),
         filter(b.filter), printer(b.printer), order(b.order),
         values(b.values), start(b.start) {
       sequence.update(home,b.sequence);
-      for (int i=0; i<n; i++)
-        vs[i] = b.vs[i]->copy(home);
+      int copied = 0;
+      try {
+        if (b.vsc)
+          vsc = b.vsc->copy(home);
+        for (; copied<n; copied++)
+          vs[copied] = b.vs[copied]->copy(home);
+      } catch (...) {
+        for (int i=0; i<copied; i++)
+          vs[i]->dispose(home);
+        if (vsc)
+          vsc->dispose(home);
+        throw;
+      }
     }
 
     /// Select from a temporary array, keeping positions stable across growth
@@ -634,6 +645,9 @@ namespace Gecode { namespace Int {
         return (a == 0) ? new (home) Branch::EqNGL<IntView>
           (home,IntView(sequence.length()),
            static_cast<const PosValChoice<int>&>(c).val()) : nullptr;
+      // No-good extraction can run in an ancestor with a shorter prefix.
+      if (p >= sequence.size())
+        return nullptr;
       View x(sequence[p]);
       return vsc
         ? vsc->ngl(home,a,x,static_cast<const PosValChoice<int>&>(c).val())
