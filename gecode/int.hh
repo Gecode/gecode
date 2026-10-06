@@ -3843,10 +3843,17 @@ namespace Gecode {
    * propagation level \a ipl as follows:
    *  - If \a IPL_BASIC is set, the propagator performs overload checking
    *    and time-tabling propagation.
-   *  - If \a IPL_ADVANCED is set, the propagator performs overload checking
-   *    and edge finding.
+   *  - If \a IPL_ADVANCED is set, the propagator performs overload checking,
+   *    edge finding, and bounded knapsack-augmented overload checking for
+   *    fixed-processing tasks.
    *  - If both flags are combined, all the above listed propagation is
    *    performed.
+   *
+   * The knapsack check runs for 4 to 64 participating tasks when the
+   * current capacity upper bound is between 2 and 127. Each task must have
+   * a fixed processing time. Each demand must be positive and at most that
+   * bound, with at least one demand above 1.
+   * Outside these limits, only the knapsack check is skipped.
    *
    * The propagator uses algorithms taken from:
    *
@@ -3859,6 +3866,11 @@ namespace Gecode {
    * Petr Vilím, Edge finding filtering algorithm for discrete cumulative
    * resources in O(kn log n). In I. P. Gent, editor, CP, volume 5732 of LNCS,
    * pages 802-816. Springer, 2009.
+   *
+   * and
+   *
+   * Samuel Cloutier and Claude-Guy Quimper, Augmenting the Cumulative
+   * Overload Check with Integral Resource Usage Reasoning, CP, 2026.
    *
    *  - Throws an exception of type Int::ArgumentSizeMismatch, if \a t, \a s
    *    \a p, or \a u are of different size.
@@ -3902,10 +3914,17 @@ namespace Gecode {
    * propagation level \a ipl as follows:
    *  - If \a IPL_BASIC is set, the propagator performs overload checking
    *    and time-tabling propagation.
-   *  - If \a IPL_ADVANCED is set, the propagator performs overload checking
-   *    and edge finding.
+   *  - If \a IPL_ADVANCED is set, the propagator performs overload checking,
+   *    edge finding, and bounded knapsack-augmented overload checking for
+   *    fixed-processing tasks.
    *  - If both flags are combined, all the above listed propagation is
    *    performed.
+   *
+   * The knapsack check considers only currently mandatory tasks. It runs
+   * for 4 to 64 such tasks when the current capacity upper bound is between
+   * 2 and 127. Each task must have a fixed processing time. Each demand must
+   * be positive and at most that bound, with at least one demand above 1.
+   * Outside these limits, only the knapsack check is skipped.
    *
    * The propagator uses algorithms taken from:
    *
@@ -3918,6 +3937,11 @@ namespace Gecode {
    * Petr Vilím, Edge finding filtering algorithm for discrete cumulative
    * resources in O(kn log n). In I. P. Gent, editor, CP, volume 5732 of LNCS,
    * pages 802-816. Springer, 2009.
+   *
+   * and
+   *
+   * Samuel Cloutier and Claude-Guy Quimper, Augmenting the Cumulative
+   * Overload Check with Integral Resource Usage Reasoning, CP, 2026.
    *
    *  - Throws an exception of type Int::ArgumentSizeMismatch, if \a t, \a s
    *    \a p, or \a u are of different size.
@@ -3947,10 +3971,17 @@ namespace Gecode {
    * propagation level \a ipl as follows:
    *  - If \a IPL_BASIC is set, the propagator performs overload checking
    *    and time-tabling propagation.
-   *  - If \a IPL_ADVANCED is set, the propagator performs overload checking
-   *    and edge finding.
+   *  - If \a IPL_ADVANCED is set, the propagator performs overload checking,
+   *    edge finding, and bounded knapsack-augmented overload checking for
+   *    fixed-processing tasks.
    *  - If both flags are combined, all the above listed propagation is
    *    performed.
+   *
+   * The knapsack check runs for 4 to 64 participating tasks when the
+   * current capacity upper bound is between 2 and 127. Each task must have
+   * a fixed processing time. Each demand must be positive and at most that
+   * bound, with at least one demand above 1.
+   * Outside these limits, only the knapsack check is skipped.
    *
    * The propagator uses algorithms taken from:
    *
@@ -3963,6 +3994,11 @@ namespace Gecode {
    * Petr Vilím, Edge finding filtering algorithm for discrete cumulative
    * resources in O(kn log n). In I. P. Gent, editor, CP, volume 5732 of LNCS,
    * pages 802-816. Springer, 2009.
+   *
+   * and
+   *
+   * Samuel Cloutier and Claude-Guy Quimper, Augmenting the Cumulative
+   * Overload Check with Integral Resource Usage Reasoning, CP, 2026.
    *
    *  - Throws an exception of type Int::ArgumentSizeMismatch, if \a s
    *    \a p, or \a u are of different size.
@@ -3992,10 +4028,17 @@ namespace Gecode {
    * propagation level \a ipl as follows:
    *  - If \a IPL_BASIC is set, the propagator performs overload checking
    *    and time-tabling propagation.
-   *  - If \a IPL_ADVANCED is set, the propagator performs overload checking
-   *    and edge finding.
+   *  - If \a IPL_ADVANCED is set, the propagator performs overload checking,
+   *    edge finding, and bounded knapsack-augmented overload checking for
+   *    fixed-processing tasks.
    *  - If both flags are combined, all the above listed propagation is
    *    performed.
+   *
+   * The knapsack check considers only currently mandatory tasks. It runs
+   * for 4 to 64 such tasks when the current capacity upper bound is between
+   * 2 and 127. Each task must have a fixed processing time. Each demand must
+   * be positive and at most that bound, with at least one demand above 1.
+   * Outside these limits, only the knapsack check is skipped.
    *
    * The propagator uses algorithms taken from:
    *
@@ -4008,6 +4051,11 @@ namespace Gecode {
    * Petr Vilím, Edge finding filtering algorithm for discrete cumulative
    * resources in O(kn log n). In I. P. Gent, editor, CP, volume 5732 of LNCS,
    * pages 802-816. Springer, 2009.
+   *
+   * and
+   *
+   * Samuel Cloutier and Claude-Guy Quimper, Augmenting the Cumulative
+   * Overload Check with Integral Resource Usage Reasoning, CP, 2026.
    *
    *  - Throws an exception of type Int::ArgumentSizeMismatch, if \a s,
    *    \a p, \a u, or \a m are of different size.

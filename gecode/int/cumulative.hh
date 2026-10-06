@@ -48,6 +48,8 @@
  *   Cumulative Resources, CP-AI-OR, 2009.
  *   Petr Vilím, Edge Finding Filtering Algorithm for Discrete
  *   Cumulative Resources in O(kn log n), CP, 2009.
+ *   Samuel Cloutier and Claude-Guy Quimper, Augmenting the Cumulative
+ *   Overload Check with Integral Resource Usage Reasoning, CP, 2026.
  *
  * \brief %Scheduling for cumulative resources
  */
@@ -683,6 +685,36 @@ namespace Gecode { namespace Int { namespace Cumulative {
   template<class ManTask>
   ExecStatus overload(Space& home, int c, TaskArray<ManTask>& t);
 
+  /// Perform knapsack-augmented overload checking
+  template<class Task>
+  forceinline ExecStatus
+  knapsack_overload(Space&, int, TaskArray<Task>&) {
+    return ES_OK;
+  }
+  template<class Task> struct SupportsKnapsackOverload {
+    static const bool value = false;
+  };
+  template<> struct SupportsKnapsackOverload<ManFixPTask> {
+    static const bool value = true;
+  };
+  template<> struct SupportsKnapsackOverload<ManFixPSETask> {
+    static const bool value = true;
+  };
+  template<> struct SupportsKnapsackOverload<OptFixPTask> {
+    static const bool value = true;
+  };
+  template<> struct SupportsKnapsackOverload<OptFixPSETask> {
+    static const bool value = true;
+  };
+  ExecStatus knapsack_overload(Space& home, int c,
+                               TaskArray<ManFixPTask>& t);
+  ExecStatus knapsack_overload(Space& home, int c,
+                               TaskArray<ManFixPSETask>& t);
+  ExecStatus knapsack_overload(Space& home, int c,
+                               TaskArray<OptFixPTask>& t);
+  ExecStatus knapsack_overload(Space& home, int c,
+                               TaskArray<OptFixPSETask>& t);
+
   /// Perform time-tabling propagation
   template<class Task, class Cap>
   ExecStatus timetabling(Space& home, Propagator& p, Cap c,
@@ -709,6 +741,9 @@ namespace Gecode { namespace Int { namespace Cumulative {
     /// Constructor for cloning \a p
     ManProp(Space& home, ManProp& p);
   public:
+    /// Return propagation cost
+    virtual PropCost cost(const Space& home,
+                          const ModEventDelta& med) const;
     /// Perform copying during cloning
     virtual Actor* copy(Space& home);
     /// Perform propagation
@@ -736,6 +771,9 @@ namespace Gecode { namespace Int { namespace Cumulative {
     /// Constructor for cloning \a p
     OptProp(Space& home, OptProp& p);
   public:
+    /// Return propagation cost
+    virtual PropCost cost(const Space& home,
+                          const ModEventDelta& med) const;
     /// Perform copying during cloning
     virtual Actor* copy(Space& home);
     /// Perform propagation
@@ -761,6 +799,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
 #include <gecode/int/cumulative/time-tabling.hpp>
 #include <gecode/int/cumulative/subsumption.hpp>
 #include <gecode/int/cumulative/overload.hpp>
+#include <gecode/int/cumulative/knapsack-overload.hpp>
 #include <gecode/int/cumulative/edge-finding.hpp>
 #include <gecode/int/cumulative/man-prop.hpp>
 #include <gecode/int/cumulative/opt-prop.hpp>

@@ -417,6 +417,7 @@ INTHDR0 = \
 	unary/man-prop.hpp unary/opt-prop.hpp unary/post.hpp \
 	cumulative.hh cumulative/man-prop.hpp cumulative/opt-prop.hpp \
 	cumulative/task-view.hpp cumulative/overload.hpp \
+	cumulative/knapsack-overload.hpp \
 	cumulative/time-tabling.hpp cumulative/task.hpp \
 	cumulative/edge-finding.hpp cumulative/post.hpp \
 	cumulative/tree.hpp cumulative/limits.hpp \

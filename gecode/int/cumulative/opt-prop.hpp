@@ -98,6 +98,21 @@ namespace Gecode { namespace Int { namespace Cumulative {
   }
 
   template<class OptTask, class Cap, class PL>
+  PropCost
+  OptProp<OptTask,Cap,PL>::cost(const Space& home,
+                               const ModEventDelta& med) const {
+    if (PL::advanced && SupportsKnapsackOverload<OptTask>::value &&
+        (c.max() >= 2) && (c.max() <= 127)) {
+      int mandatory = 0;
+      for (int i=0; i<t.size(); i++)
+        mandatory += t[i].mandatory();
+      if ((mandatory >= 4) && (mandatory <= 64))
+        return PropCost::quadratic(PropCost::HI,mandatory);
+    }
+    return TaskProp<OptTask,PL>::cost(home,med);
+  }
+
+  template<class OptTask, class Cap, class PL>
   Actor*
   OptProp<OptTask,Cap,PL>::copy(Space& home) {
     return new (home) OptProp<OptTask,Cap,PL>(home,*this);
@@ -139,6 +154,8 @@ namespace Gecode { namespace Int { namespace Cumulative {
       if (i > 1) {
         // Truncate array to only contain mandatory tasks
         t.size(i);
+        if (IntView::me(med) != ME_INT_DOM)
+          GECODE_ES_CHECK(knapsack_overload(home,c.max(),t));
         GECODE_ES_CHECK(edgefinding(home,c.max(),t));
         // Restore to also include optional tasks
         t.size(n);
