@@ -34,7 +34,7 @@
 namespace Gecode {
 
   template<class Var>
-  class OpenVarSequence<Var>::Sequence : public LocalObject {
+  class OpenVarList<Var>::Object : public LocalObject {
   public:
     class Functions {
     public:
@@ -54,27 +54,27 @@ namespace Gecode {
 
     static int
     maximum(int max) {
-      Int::Limits::check(max,"OpenVarSequence");
+      Int::Limits::check(max,"OpenVarList");
       if (max < 0)
-        throw Int::VariableEmptyDomain("OpenVarSequence");
+        throw Int::VariableEmptyDomain("OpenVarList");
       return max;
     }
 
     static Factory
     valid(Factory create) {
       if (!create)
-        throw InvalidFunction("OpenVarSequence");
+        throw InvalidFunction("OpenVarList");
       return create;
     }
 
     static Transition
     valid(Transition t) {
       if (!t)
-        throw InvalidFunction("OpenVarSequence");
+        throw InvalidFunction("OpenVarList");
       return t;
     }
 
-    Sequence(Home home, Factory create, int max)
+    Object(Home home, Factory create, int max)
       : LocalObject(home),
         length(home,0,maximum(max)),
         materialized(home,0,max),
@@ -83,7 +83,7 @@ namespace Gecode {
       home.notice(*this,AP_DISPOSE);
     }
 
-    Sequence(Home home, Factory create, Transition t, int max)
+    Object(Home home, Factory create, Transition t, int max)
       : LocalObject(home),
         length(home,0,maximum(max)),
         materialized(home,0,max),
@@ -92,7 +92,7 @@ namespace Gecode {
       home.notice(*this,AP_DISPOSE);
     }
 
-    Sequence(Space& home, Sequence& s)
+    Object(Space& home, Object& s)
       : LocalObject(home,s), x(nullptr), n(s.n), capacity(s.n),
         functions(s.functions) {
       length.update(home,s.length);
@@ -111,7 +111,7 @@ namespace Gecode {
 
     virtual Actor*
     copy(Space& home) {
-      return new (home) Sequence(home,*this);
+      return new (home) Object(home,*this);
     }
 
     virtual size_t
@@ -147,17 +147,17 @@ namespace Gecode { namespace Int {
   template<class Var>
   class OpenMaterialize : public Propagator {
   protected:
-    OpenVarSequence<Var> sequence;
+    OpenVarList<Var> list;
     IntView length;
 
-    OpenMaterialize(Home home, OpenVarSequence<Var> sequence0)
-      : Propagator(home), sequence(sequence0), length(sequence0.length()) {
+    OpenMaterialize(Home home, OpenVarList<Var> list0)
+      : Propagator(home), list(list0), length(list0.length()) {
       length.subscribe(home,*this,PC_INT_BND);
     }
 
     OpenMaterialize(Space& home, OpenMaterialize& p)
       : Propagator(home,p) {
-      sequence.update(home,p.sequence);
+      list.update(home,p.list);
       length.update(home,p.length);
     }
 
@@ -169,7 +169,7 @@ namespace Gecode { namespace Int {
 
     virtual PropCost
     cost(const Space&, const ModEventDelta&) const {
-      const int n = length.min()-sequence.size();
+      const int n = length.min()-list.prefix_size();
       return (n <= 1) ? PropCost::unary(PropCost::LO) :
                         PropCost::linear(PropCost::LO,n);
     }
@@ -181,7 +181,7 @@ namespace Gecode { namespace Int {
 
     virtual ExecStatus
     propagate(Space& home, const ModEventDelta&) {
-      sequence.materialize(home,length.min());
+      list.materialize(home,length.min());
       if (home.failed())
         return ES_FAILED;
       if (length.assigned())
@@ -192,15 +192,15 @@ namespace Gecode { namespace Int {
     virtual size_t
     dispose(Space& home) {
       length.cancel(home,*this,PC_INT_BND);
-      sequence.~OpenVarSequence();
+      list.~OpenVarList();
       (void) Propagator::dispose(home);
       return sizeof(*this);
     }
 
     static void
-    post(Home home, OpenVarSequence<Var> sequence) {
-      if (!sequence.length().assigned())
-        (void) new (home) OpenMaterialize(home,sequence);
+    post(Home home, OpenVarList<Var> list) {
+      if (!list.length().assigned())
+        (void) new (home) OpenMaterialize(home,list);
     }
   };
 
@@ -209,61 +209,61 @@ namespace Gecode { namespace Int {
 namespace Gecode {
 
   template<class Var>
-  OpenVarSequence<Var>::OpenVarSequence(void) {}
+  OpenVarList<Var>::OpenVarList(void) {}
 
   template<class Var>
-  OpenVarSequence<Var>::OpenVarSequence(Space& home, Factory create, int max)
-    : LocalHandle(new (home) Sequence(home,create,max)) {
+  OpenVarList<Var>::OpenVarList(Space& home, Factory create, int max)
+    : LocalHandle(new (home) Object(home,create,max)) {
     Int::OpenMaterialize<Var>::post(home,*this);
   }
 
   template<class Var>
-  OpenVarSequence<Var>::OpenVarSequence(Space& home, Factory create,
-                                      Transition t, int max)
-    : LocalHandle(new (home) Sequence(home,create,t,max)) {
+  OpenVarList<Var>::OpenVarList(Space& home, Factory create,
+                                  Transition t, int max)
+    : LocalHandle(new (home) Object(home,create,t,max)) {
     Int::OpenMaterialize<Var>::post(home,*this);
   }
 
   forceinline
-  OpenIntVarSequence::OpenIntVarSequence(const OpenVarSequence<IntVar>& x)
-    : OpenVarSequence<IntVar>(x) {}
+  OpenIntVarList::OpenIntVarList(const OpenVarList<IntVar>& x)
+    : OpenVarList<IntVar>(x) {}
 
   forceinline
-  OpenBoolVarSequence::OpenBoolVarSequence(const OpenVarSequence<BoolVar>& x)
-    : OpenVarSequence<BoolVar>(x) {}
+  OpenBoolVarList::OpenBoolVarList(const OpenVarList<BoolVar>& x)
+    : OpenVarList<BoolVar>(x) {}
 
   template<class Var>
   void
-  OpenVarSequence<Var>::update(Space& home, OpenVarSequence<Var>& s) {
+  OpenVarList<Var>::update(Space& home, OpenVarList<Var>& s) {
     LocalHandle::update(home,s);
   }
 
   template<class Var>
   int
-  OpenVarSequence<Var>::size(void) const {
-    return static_cast<Sequence*>(object())->n;
+  OpenVarList<Var>::prefix_size(void) const {
+    return static_cast<Object*>(object())->n;
   }
 
   template<class Var>
   Var
-  OpenVarSequence<Var>::operator [](int i) const {
-    Sequence* s = static_cast<Sequence*>(object());
+  OpenVarList<Var>::operator [](int i) const {
+    Object* s = static_cast<Object*>(object());
     assert((i >= 0) && (i < s->n));
     return s->x[i];
   }
 
   template<class Var>
   IntVar
-  OpenVarSequence<Var>::length(void) const {
-    return static_cast<Sequence*>(object())->length;
+  OpenVarList<Var>::length(void) const {
+    return static_cast<Object*>(object())->length;
   }
 
   template<class Var>
   void
-  OpenVarSequence<Var>::append(Space& home, Var y) {
+  OpenVarList<Var>::append(Space& home, Var y) {
     if (home.failed())
       return;
-    Sequence* s = static_cast<Sequence*>(object());
+    Object* s = static_cast<Object*>(object());
     if (s->n == Int::Limits::max) {
       home.fail();
       return;
@@ -271,7 +271,7 @@ namespace Gecode {
     for (int i=0; i<s->n; i++)
       if (!y.assigned() && !s->x[i].assigned() &&
           (y.varimp() == s->x[i].varimp()))
-        throw Int::ArgumentSame("OpenVarSequence::append");
+        throw Int::ArgumentSame("OpenVarList::append");
     s->reserve();
     const int next = s->n + 1;
     Int::IntView l(s->length);
@@ -290,11 +290,11 @@ namespace Gecode {
 
   template<class Var>
   void
-  OpenVarSequence<Var>::materialize(Space& home, int n) {
+  OpenVarList<Var>::materialize(Space& home, int n) {
     if (home.failed())
       return;
-    Int::Limits::nonnegative(n,"OpenVarSequence::materialize");
-    Sequence* s = static_cast<Sequence*>(object());
+    Int::Limits::nonnegative(n,"OpenVarList::materialize");
+    Object* s = static_cast<Object*>(object());
     Int::IntView l(s->length);
     if (me_failed(l.gq(home,n))) {
       home.fail();
@@ -312,50 +312,50 @@ namespace Gecode {
 
   template<class Var>
   Var
-  OpenVarSequence<Var>::get(Space& home, int i) {
-    Int::Limits::nonnegative(i,"OpenVarSequence::get");
+  OpenVarList<Var>::get(Space& home, int i) {
+    Int::Limits::nonnegative(i,"OpenVarList::get");
     if (home.failed())
       return Var();
-    Sequence* s = static_cast<Sequence*>(object());
+    Object* s = static_cast<Object*>(object());
     if (i >= s->length.max())
-      throw Int::OutOfLimits("OpenVarSequence::get");
+      throw Int::OutOfLimits("OpenVarList::get");
     materialize(home,i+1);
     if (home.failed())
       return Var();
-    return static_cast<Sequence*>(object())->x[i];
+    return static_cast<Object*>(object())->x[i];
   }
 
   template<class Var>
   void
-  OpenVarSequence<Var>::close(Space& home) {
+  OpenVarList<Var>::close(Space& home) {
     if (home.failed())
       return;
     materialize(home,length().min());
     if (home.failed())
       return;
-    Sequence* s = static_cast<Sequence*>(object());
+    Object* s = static_cast<Object*>(object());
     if (me_failed(Int::IntView(s->length).eq(home,s->n)))
       home.fail();
   }
 
   template<class Var>
   void
-  OpenVarSequence<Var>::subscribe(Space& home, Propagator& p) {
-    Sequence* s = static_cast<Sequence*>(object());
+  OpenVarList<Var>::subscribe(Space& home, Propagator& p) {
+    Object* s = static_cast<Object*>(object());
     Int::IntView(s->materialized).subscribe(home,p,Int::PC_INT_BND);
   }
 
   template<class Var>
   void
-  OpenVarSequence<Var>::cancel(Space& home, Propagator& p) {
-    Sequence* s = static_cast<Sequence*>(object());
+  OpenVarList<Var>::cancel(Space& home, Propagator& p) {
+    Object* s = static_cast<Object*>(object());
     Int::IntView(s->materialized).cancel(home,p,Int::PC_INT_BND);
   }
 
   template<class Var>
   void
-  OpenVarSequence<Var>::reschedule(Space& home, Propagator& p) {
-    Sequence* s = static_cast<Sequence*>(object());
+  OpenVarList<Var>::reschedule(Space& home, Propagator& p) {
+    Object* s = static_cast<Object*>(object());
     Int::IntView(s->materialized).reschedule(home,p,Int::PC_INT_BND);
   }
 

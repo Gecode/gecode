@@ -46,23 +46,23 @@
 
 namespace Test { namespace Int {
 
-  namespace OpenSequence {
+  namespace OpenList {
 
     class BranchSpace : public Gecode::Space {
     public:
-      Gecode::OpenIntVarSequence sequence;
+      Gecode::OpenIntVarList list;
 
       BranchSpace(void)
-        : sequence(*this,
+        : list(*this,
             [](int i) {
               return Gecode::IntSet(i,i+1);
             },3) {
-        Gecode::branch(*this,sequence);
+        Gecode::branch(*this,list);
       }
 
       BranchSpace(BranchSpace& s)
         : Gecode::Space(s) {
-        sequence.update(*this,s.sequence);
+        list.update(*this,s.list);
       }
 
       virtual Gecode::Space*
@@ -74,7 +74,7 @@ namespace Test { namespace Int {
     class Branch : public ::Test::Base {
     public:
       Branch(void)
-        : ::Test::Base("Int::OpenSequence::Branch") {}
+        : ::Test::Base("Int::OpenList::Branch") {}
 
       virtual bool
       run(void) {
@@ -89,12 +89,12 @@ namespace Test { namespace Int {
 
         int solutions = 0;
         while (BranchSpace* solution = engine.next()) {
-          const int size = solution->sequence.size();
+          const int size = solution->list.prefix_size();
           bool valid =
-            solution->sequence.length().assigned() &&
-            (solution->sequence.length().val() == size);
+            solution->list.length().assigned() &&
+            (solution->list.length().val() == size);
           for (int i=0; i<size; i++)
-            valid &= solution->sequence[i].assigned();
+            valid &= solution->list[i].assigned();
           delete solution;
           if (!valid)
             return false;
@@ -106,25 +106,25 @@ namespace Test { namespace Int {
 
     class BranchOrderSpace : public Gecode::Space {
     public:
-      Gecode::OpenIntVarSequence sequence;
+      Gecode::OpenIntVarList list;
 
       BranchOrderSpace(int order)
-        : sequence(*this,Gecode::IntSet(0,1),3) {
+        : list(*this,Gecode::IntSet(0,1),3) {
         using namespace Gecode;
         DFA accepts_one(0,{
             {0,0,0}, {0,1,1},
             {1,0,1}, {1,1,1}
           },{1});
-        extensional(*this,sequence,accepts_one);
+        extensional(*this,list,accepts_one);
         if (order < 0)
-          branch(*this,sequence);
+          branch(*this,list);
         else
-          branch(*this,sequence,static_cast<OpenVarBranch>(order));
+          branch(*this,list,static_cast<OpenVarBranch>(order));
       }
 
       BranchOrderSpace(BranchOrderSpace& s)
         : Gecode::Space(s) {
-        sequence.update(*this,s.sequence);
+        list.update(*this,s.list);
       }
 
       virtual Gecode::Space*
@@ -150,7 +150,7 @@ namespace Test { namespace Int {
         int first = -1;
         while (BranchOrderSpace* solution = engine.next()) {
           if (solutions == 0)
-            first = solution->sequence.size();
+            first = solution->list.prefix_size();
           solutions++;
           delete solution;
         }
@@ -159,7 +159,7 @@ namespace Test { namespace Int {
 
     public:
       BranchOrder(void)
-        : ::Test::Base("Int::OpenSequence::BranchOrder") {}
+        : ::Test::Base("Int::OpenList::BranchOrder") {}
 
       virtual bool
       run(void) {
@@ -172,17 +172,17 @@ namespace Test { namespace Int {
 
     class SelectorSpace : public Gecode::Space {
     public:
-      Gecode::OpenIntVarSequence sequence;
+      Gecode::OpenIntVarList list;
 
       SelectorSpace(Gecode::IntValBranch vals, Gecode::OpenVarBranch order)
-        : sequence(*this,[](int i) { return Gecode::IntSet(i,i+1); },3) {
+        : list(*this,[](int i) { return Gecode::IntSet(i,i+1); },3) {
         using namespace Gecode;
-        branch(*this,sequence,tiebreak(INT_VAR_SIZE_MIN(),INT_VAR_MAX_MAX()),
+        branch(*this,list,tiebreak(INT_VAR_SIZE_MIN(),INT_VAR_MAX_MAX()),
                vals,order);
       }
 
       SelectorSpace(SelectorSpace& s) : Gecode::Space(s) {
-        sequence.update(*this,s.sequence);
+        list.update(*this,s.list);
       }
 
       virtual Gecode::Space*
@@ -193,7 +193,7 @@ namespace Test { namespace Int {
 
     class Selectors : public ::Test::Base {
     public:
-      Selectors(void) : ::Test::Base("Int::OpenSequence::Selectors") {}
+      Selectors(void) : ::Test::Base("Int::OpenList::Selectors") {}
 
       virtual bool
       run(void) {
@@ -215,12 +215,12 @@ namespace Test { namespace Int {
             DFS<SelectorSpace> engine(&root,options);
             int solutions = 0;
             while (SelectorSpace* solution = engine.next()) {
-              bool valid = solution->sequence.length().assigned() &&
-                (solution->sequence.length().val() == solution->sequence.size());
-              for (int i=0; i<solution->sequence.size(); i++)
-                valid &= solution->sequence[i].assigned() &&
-                  (solution->sequence[i].val() >= i) &&
-                  (solution->sequence[i].val() <= i+1);
+              bool valid = solution->list.length().assigned() &&
+                (solution->list.length().val() == solution->list.prefix_size());
+              for (int i=0; i<solution->list.prefix_size(); i++)
+                valid &= solution->list[i].assigned() &&
+                  (solution->list[i].val() >= i) &&
+                  (solution->list[i].val() <= i+1);
               delete solution;
               if (!valid)
                 return false;
@@ -235,13 +235,13 @@ namespace Test { namespace Int {
 
     class NoGoods : public ::Test::Base {
     public:
-      NoGoods(void) : ::Test::Base("Int::OpenSequence::NoGoods") {}
+      NoGoods(void) : ::Test::Base("Int::OpenList::NoGoods") {}
 
       virtual bool
       run(void) {
         using namespace Gecode;
         SelectorSpace root(INT_VAL_MIN(),OVB_VALUE_FIRST);
-        root.sequence.materialize(root,1);
+        root.list.materialize(root,1);
         Search::NodeStop stop(6);
         Search::Options options;
         options.stop = &stop;
@@ -252,8 +252,8 @@ namespace Test { namespace Int {
         bool found[16] = {};
         const auto record = [&found](SelectorSpace* solution) {
           int code = 1;
-          for (int i=0; i<solution->sequence.size(); i++)
-            code = 2*code + solution->sequence[i].val()-i;
+          for (int i=0; i<solution->list.prefix_size(); i++)
+            code = 2*code + solution->list[i].val()-i;
           found[code] = true;
           delete solution;
         };
@@ -276,13 +276,13 @@ namespace Test { namespace Int {
 
     class SelectorChoiceSpace : public Gecode::Space {
     public:
-      Gecode::OpenIntVarSequence sequence;
+      Gecode::OpenIntVarList list;
 
       SelectorChoiceSpace(Gecode::IntValBranch vals)
-        : sequence(*this,Gecode::IntSet({0,2,5}),3) {
+        : list(*this,Gecode::IntSet({0,2,5}),3) {
         using namespace Gecode;
-        sequence.materialize(*this,3);
-        branch(*this,sequence,
+        list.materialize(*this,3);
+        branch(*this,list,
                tiebreak(INT_VAR_SIZE_MIN(),
                         INT_VAR_MERIT_MAX([](const Space&, IntVar, int i) {
                           return i;
@@ -295,7 +295,7 @@ namespace Test { namespace Int {
       }
 
       SelectorChoiceSpace(SelectorChoiceSpace& s) : Gecode::Space(s) {
-        sequence.update(*this,s.sequence);
+        list.update(*this,s.list);
       }
 
       virtual Gecode::Space*
@@ -306,7 +306,7 @@ namespace Test { namespace Int {
 
     class SelectorChoice : public ::Test::Base {
     public:
-      SelectorChoice(void) : ::Test::Base("Int::OpenSequence::SelectorChoice") {}
+      SelectorChoice(void) : ::Test::Base("Int::OpenList::SelectorChoice") {}
 
       virtual bool
       run(void) {
@@ -325,13 +325,13 @@ namespace Test { namespace Int {
               static_cast<SelectorChoiceSpace*>(source.clone());
             clone->commit(*restored,a);
             const int expected[] = {5,2,0};
-            valid &= !clone->failed() && !clone->sequence[0].assigned() &&
-              !clone->sequence[1].assigned();
+            valid &= !clone->failed() && !clone->list[0].assigned() &&
+              !clone->list[1].assigned();
             if (multi || (a == 0))
-              valid &= clone->sequence[2].assigned() &&
-                (clone->sequence[2].val() == expected[a]);
+              valid &= clone->list[2].assigned() &&
+                (clone->list[2].val() == expected[a]);
             else
-              valid &= !clone->sequence[2].in(5);
+              valid &= !clone->list[2].in(5);
             delete clone;
           }
           SelectorChoiceSpace* excluded =
@@ -340,7 +340,7 @@ namespace Test { namespace Int {
           valid &= (literal != nullptr) && (literal->status(*excluded) == NGL::NONE);
           if (literal)
             valid &= (literal->prune(*excluded) != ES_FAILED) &&
-              !excluded->sequence[2].in(5);
+              !excluded->list[2].in(5);
           delete excluded;
           std::ostringstream printed;
           source.print(*restored,0,printed);
@@ -356,20 +356,20 @@ namespace Test { namespace Int {
 
     class BoolSpace : public Gecode::Space {
     public:
-      Gecode::OpenBoolVarSequence sequence;
+      Gecode::OpenBoolVarList list;
 
       BoolSpace(Gecode::OpenVarBranch order)
-        : sequence(*this,3) {
+        : list(*this,3) {
         using namespace Gecode;
         DFA accepts_one(0,{{0,0,0},{0,1,1},{1,0,1},{1,1,1}},{1});
-        extensional(*this,sequence,accepts_one);
-        branch(*this,sequence,
+        extensional(*this,list,accepts_one);
+        branch(*this,list,
                BOOL_VAR_MERIT_MAX([](const Space&, BoolVar, int i) { return i; }),
                BOOL_VAL_MAX(),order);
       }
 
       BoolSpace(BoolSpace& s) : Gecode::Space(s) {
-        sequence.update(*this,s.sequence);
+        list.update(*this,s.list);
       }
 
       virtual Gecode::Space*
@@ -378,9 +378,9 @@ namespace Test { namespace Int {
       }
     };
 
-    class BoolSequence : public ::Test::Base {
+    class BoolList : public ::Test::Base {
     public:
-      BoolSequence(void) : ::Test::Base("Int::OpenSequence::Bool") {}
+      BoolList(void) : ::Test::Base("Int::OpenList::Bool") {}
 
       virtual bool
       run(void) {
@@ -395,12 +395,12 @@ namespace Test { namespace Int {
             DFS<BoolSpace> engine(&root,options);
             int solutions = 0;
             while (BoolSpace* solution = engine.next()) {
-              bool valid = solution->sequence.length().assigned() &&
-                (solution->sequence.length().val() == solution->sequence.size());
+              bool valid = solution->list.length().assigned() &&
+                (solution->list.length().val() == solution->list.prefix_size());
               int ones = 0;
-              for (int i=0; i<solution->sequence.size(); i++) {
-                valid &= solution->sequence[i].assigned();
-                ones += solution->sequence[i].val();
+              for (int i=0; i<solution->list.prefix_size(); i++) {
+                valid &= solution->list[i].assigned();
+                ones += solution->list[i].val();
               }
               delete solution;
               if (!valid || (ones == 0))
@@ -417,23 +417,23 @@ namespace Test { namespace Int {
     class FactorySpace : public Gecode::Space {
     public:
 #ifdef GECODE_HAS_SET_VARS
-      Gecode::OpenVarSequence<Gecode::SetVar> sets;
+      Gecode::OpenVarList<Gecode::SetVar> sets;
 #endif
 #ifdef GECODE_HAS_FLOAT_VARS
-      Gecode::OpenVarSequence<Gecode::FloatVar> floats;
+      Gecode::OpenVarList<Gecode::FloatVar> floats;
 #endif
 
       FactorySpace(void) {
         using namespace Gecode;
 #ifdef GECODE_HAS_SET_VARS
-        sets = OpenVarSequence<SetVar>(*this,
+        sets = OpenVarList<SetVar>(*this,
           [](Space& home, int i) {
             return SetVar(home,IntSet(i,i),IntSet(i,i));
           },3);
         sets.materialize(*this,1);
 #endif
 #ifdef GECODE_HAS_FLOAT_VARS
-        floats = OpenVarSequence<FloatVar>(*this,
+        floats = OpenVarList<FloatVar>(*this,
           [](Space& home, int i) { return FloatVar(home,i,i); },3);
         floats.materialize(*this,1);
 #endif
@@ -456,7 +456,7 @@ namespace Test { namespace Int {
 
     class Factory : public ::Test::Base {
     public:
-      Factory(void) : ::Test::Base("Int::OpenSequence::Factory") {}
+      Factory(void) : ::Test::Base("Int::OpenList::Factory") {}
 
       virtual bool
       run(void) {
@@ -478,12 +478,14 @@ namespace Test { namespace Int {
         bool valid = (clone->status() != SS_FAILED) &&
                      (source.status() != SS_FAILED);
 #ifdef GECODE_HAS_SET_VARS
-        valid &= (source.sets.size() == 1) && (clone->sets.size() == 3) &&
+        valid &= (source.sets.prefix_size() == 1) &&
+          (clone->sets.prefix_size() == 3) &&
           (clone->sets.length().val() == 3) &&
           clone->sets[2].assigned() && (clone->sets[2].glbMin() == 2);
 #endif
 #ifdef GECODE_HAS_FLOAT_VARS
-        valid &= (source.floats.size() == 1) && (clone->floats.size() == 3) &&
+        valid &= (source.floats.prefix_size() == 1) &&
+          (clone->floats.prefix_size() == 3) &&
           (clone->floats.length().val() == 3) &&
           clone->floats[2].assigned() && (clone->floats[2].min() == 2);
 #endif
@@ -494,7 +496,7 @@ namespace Test { namespace Int {
 
     class FixedStatistics : public ::Test::Base {
     public:
-      FixedStatistics(void) : ::Test::Base("Int::OpenSequence::FixedStatistics") {}
+      FixedStatistics(void) : ::Test::Base("Int::OpenList::FixedStatistics") {}
 
       virtual bool
       run(void) {
@@ -503,7 +505,7 @@ namespace Test { namespace Int {
           SelectorSpace open(INT_VAL_MIN(),OVB_VALUE_FIRST);
           bool rejected = false;
           try {
-            branch(open,open.sequence,
+            branch(open,open.list,
                    chb ? INT_VAR_CHB_MIN() : INT_VAR_ACTION_MIN(1.0),
                    INT_VAL_MIN());
           } catch (const Gecode::Int::UnknownBranching&) {
@@ -512,7 +514,7 @@ namespace Test { namespace Int {
           if (!rejected)
             return false;
           SelectorChoiceSpace fixed(INT_VAL_MIN());
-          branch(fixed,fixed.sequence,
+          branch(fixed,fixed.list,
                  chb ? INT_VAR_CHB_MIN() : INT_VAR_ACTION_MIN(1.0),
                  INT_VAL_MIN());
           DFS<SelectorChoiceSpace> engine(&fixed);
@@ -533,15 +535,15 @@ namespace Test { namespace Int {
     Selectors selectors;
     NoGoods no_goods;
     SelectorChoice selector_choice;
-    BoolSequence bool_sequence;
+    BoolList bool_list;
 
     class TransitionSpace : public Gecode::Space {
     public:
-      Gecode::OpenIntVarSequence sequence;
+      Gecode::OpenIntVarList list;
 
       TransitionSpace(void)
-        : sequence(*this,Gecode::IntSet(0,4),
-            [](Gecode::Space& home, Gecode::OpenIntVarSequence x, int i) {
+        : list(*this,Gecode::IntSet(0,4),
+            [](Gecode::Space& home, Gecode::OpenIntVarList x, int i) {
               using namespace Gecode;
               if (i == 0) {
                 rel(home,x[i],IRT_EQ,0);
@@ -550,12 +552,12 @@ namespace Test { namespace Int {
                        IntVarArgs({x[i-1],x[i]}),IRT_EQ,1);
               }
             },4) {
-        Gecode::branch(*this,sequence);
+        Gecode::branch(*this,list);
       }
 
       TransitionSpace(TransitionSpace& s)
         : Gecode::Space(s) {
-        sequence.update(*this,s.sequence);
+        list.update(*this,s.list);
       }
 
       virtual Gecode::Space*
@@ -567,7 +569,7 @@ namespace Test { namespace Int {
     class Transition : public ::Test::Base {
     public:
       Transition(void)
-        : ::Test::Base("Int::OpenSequence::Transition") {}
+        : ::Test::Base("Int::OpenList::Transition") {}
 
       virtual bool
       run(void) {
@@ -583,12 +585,12 @@ namespace Test { namespace Int {
         int solutions = 0;
         while (TransitionSpace* solution = engine.next()) {
           bool valid =
-            solution->sequence.length().assigned() &&
-            (solution->sequence.length().val() ==
-             solution->sequence.size());
-          for (int i=0; i<solution->sequence.size(); i++)
-            valid &= solution->sequence[i].assigned() &&
-              (solution->sequence[i].val() == i);
+            solution->list.length().assigned() &&
+            (solution->list.length().val() ==
+             solution->list.prefix_size());
+          for (int i=0; i<solution->list.prefix_size(); i++)
+            valid &= solution->list[i].assigned() &&
+              (solution->list[i].val() == i);
           delete solution;
           if (!valid)
             return false;
@@ -610,44 +612,44 @@ namespace Test { namespace Int {
         PRECEDE
       };
 
-      Gecode::OpenIntVarSequence sequence;
+      Gecode::OpenIntVarList list;
       Gecode::IntVar minimum;
       Gecode::IntVar maximum;
 
       ConstraintSpace(Kind kind, int size)
-        : sequence(*this,Gecode::IntSet(0,2),size),
+        : list(*this,Gecode::IntSet(0,2),size),
           minimum(*this,0,2), maximum(*this,0,2) {
         using namespace Gecode;
         switch (kind) {
         case DISTINCT:
-          distinct(*this,sequence);
+          distinct(*this,list);
           break;
         case REL:
-          rel(*this,sequence,IRT_LE);
+          rel(*this,list,IRT_LE);
           break;
         case SLIDING:
-          Gecode::sequence(*this,sequence,IntSet(1,1),2,1,1);
+          Gecode::sequence(*this,list,IntSet(1,1),2,1,1);
           break;
         case SLIDING_SUM:
-          slidingsum(*this,sequence,2,2,2);
+          slidingsum(*this,list,2,2,2);
           break;
         case MIN_MAX:
-          min(*this,sequence,minimum);
-          max(*this,sequence,maximum);
+          min(*this,list,minimum);
+          max(*this,list,maximum);
           rel(*this,minimum,IRT_EQ,0);
           rel(*this,maximum,IRT_EQ,2);
           break;
         case PRECEDE:
-          precede(*this,sequence,0,1);
+          precede(*this,list,0,1);
           break;
         }
-        rel(*this,sequence.length(),IRT_EQ,size);
-        branch(*this,sequence);
+        rel(*this,list.length(),IRT_EQ,size);
+        branch(*this,list);
       }
 
       ConstraintSpace(ConstraintSpace& s)
         : Gecode::Space(s) {
-        sequence.update(*this,s.sequence);
+        list.update(*this,s.list);
         minimum.update(*this,s.minimum);
         maximum.update(*this,s.maximum);
       }
@@ -678,26 +680,26 @@ namespace Test { namespace Int {
 
     bool
     distinct_solution(const ConstraintSpace& s) {
-      for (int i=0; i<s.sequence.size(); i++)
+      for (int i=0; i<s.list.prefix_size(); i++)
         for (int j=0; j<i; j++)
-          if (s.sequence[i].val() == s.sequence[j].val())
+          if (s.list[i].val() == s.list[j].val())
             return false;
       return true;
     }
 
     bool
     rel_solution(const ConstraintSpace& s) {
-      for (int i=1; i<s.sequence.size(); i++)
-        if (s.sequence[i-1].val() >= s.sequence[i].val())
+      for (int i=1; i<s.list.prefix_size(); i++)
+        if (s.list[i-1].val() >= s.list[i].val())
           return false;
       return true;
     }
 
     bool
     sliding_solution(const ConstraintSpace& s) {
-      for (int i=1; i<s.sequence.size(); i++) {
+      for (int i=1; i<s.list.prefix_size(); i++) {
         const int count =
-          (s.sequence[i-1].val() == 1) + (s.sequence[i].val() == 1);
+          (s.list[i-1].val() == 1) + (s.list[i].val() == 1);
         if (count != 1)
           return false;
       }
@@ -706,19 +708,19 @@ namespace Test { namespace Int {
 
     bool
     min_max_solution(const ConstraintSpace& s) {
-      int lower = s.sequence[0].val();
+      int lower = s.list[0].val();
       int upper = lower;
-      for (int i=1; i<s.sequence.size(); i++) {
-        lower = std::min(lower,s.sequence[i].val());
-        upper = std::max(upper,s.sequence[i].val());
+      for (int i=1; i<s.list.prefix_size(); i++) {
+        lower = std::min(lower,s.list[i].val());
+        upper = std::max(upper,s.list[i].val());
       }
       return (lower == s.minimum.val()) && (upper == s.maximum.val());
     }
 
     bool
     sliding_sum_solution(const ConstraintSpace& s) {
-      for (int i=1; i<s.sequence.size(); i++)
-        if (s.sequence[i-1].val() + s.sequence[i].val() != 2)
+      for (int i=1; i<s.list.prefix_size(); i++)
+        if (s.list[i-1].val() + s.list[i].val() != 2)
           return false;
       return true;
     }
@@ -726,10 +728,10 @@ namespace Test { namespace Int {
     bool
     precede_solution(const ConstraintSpace& s) {
       bool seen = false;
-      for (int i=0; i<s.sequence.size(); i++) {
-        if ((s.sequence[i].val() == 1) && !seen)
+      for (int i=0; i<s.list.prefix_size(); i++) {
+        if ((s.list[i].val() == 1) && !seen)
           return false;
-        seen |= s.sequence[i].val() == 0;
+        seen |= s.list[i].val() == 0;
       }
       return true;
     }
@@ -744,7 +746,7 @@ namespace Test { namespace Int {
       Constraint(const std::string& name, ConstraintSpace::Kind kind0,
                  int size0, int expected0,
                  bool (*valid0)(const ConstraintSpace&))
-        : ::Test::Base("Int::OpenSequence::"+name),
+        : ::Test::Base("Int::OpenList::"+name),
           kind(kind0), size(size0), expected(expected0), valid(valid0) {}
 
       virtual bool
@@ -756,7 +758,7 @@ namespace Test { namespace Int {
     class Precede : public ::Test::Base {
     public:
       Precede(void)
-        : ::Test::Base("Int::OpenSequence::Precede") {}
+        : ::Test::Base("Int::OpenList::Precede") {}
 
       virtual bool
       run(void) {
@@ -782,25 +784,25 @@ namespace Test { namespace Int {
     class EmptyMinimum : public ::Test::Base {
     public:
       EmptyMinimum(void)
-        : ::Test::Base("Int::OpenSequence::EmptyMinimum") {}
+        : ::Test::Base("Int::OpenList::EmptyMinimum") {}
 
       virtual bool
       run(void) {
         using namespace Gecode;
         class MinimumSpace : public Space {
         public:
-          OpenIntVarSequence sequence;
+          OpenIntVarList list;
           IntVar result;
 
           MinimumSpace(void)
-            : sequence(*this,0), result(*this,0,1) {
-            min(*this,sequence,result);
-            sequence.close(*this);
+            : list(*this,0), result(*this,0,1) {
+            min(*this,list,result);
+            list.close(*this);
           }
 
           MinimumSpace(MinimumSpace& s)
             : Space(s) {
-            sequence.update(*this,s.sequence);
+            list.update(*this,s.list);
             result.update(*this,s.result);
           }
 
@@ -816,32 +818,32 @@ namespace Test { namespace Int {
     class IncrementalConstraints : public ::Test::Base {
     public:
       IncrementalConstraints(void)
-        : ::Test::Base("Int::OpenSequence::IncrementalConstraints") {}
+        : ::Test::Base("Int::OpenList::IncrementalConstraints") {}
 
       virtual bool
       run(void) {
         using namespace Gecode;
         class IncrementalSpace : public Space {
         public:
-          OpenIntVarSequence sequence;
+          OpenIntVarList list;
           IntVar minimum;
           IntVar maximum;
 
           IncrementalSpace(void)
-            : sequence(*this,IntSet(0,2),2),
+            : list(*this,IntSet(0,2),2),
               minimum(*this,0,2), maximum(*this,0,2) {
-            distinct(*this,sequence);
-            rel(*this,sequence,IRT_LE);
-            Gecode::sequence(*this,sequence,IntSet(2,2),2,1,1);
-            slidingsum(*this,sequence,2,2,2);
-            min(*this,sequence,minimum);
-            max(*this,sequence,maximum);
-            precede(*this,sequence,0,2);
+            distinct(*this,list);
+            rel(*this,list,IRT_LE);
+            Gecode::sequence(*this,list,IntSet(2,2),2,1,1);
+            slidingsum(*this,list,2,2,2);
+            min(*this,list,minimum);
+            max(*this,list,maximum);
+            precede(*this,list,0,2);
           }
 
           IncrementalSpace(IncrementalSpace& s)
             : Space(s) {
-            sequence.update(*this,s.sequence);
+            list.update(*this,s.list);
             minimum.update(*this,s.minimum);
             maximum.update(*this,s.maximum);
           }
@@ -852,37 +854,37 @@ namespace Test { namespace Int {
           }
         } source;
 
-        source.sequence.materialize(source,1);
-        rel(source,source.sequence[0],IRT_EQ,0);
+        source.list.materialize(source,1);
+        rel(source,source.list[0],IRT_EQ,0);
         if ((source.status() == SS_FAILED) ||
-            !source.sequence[0].assigned())
+            !source.list[0].assigned())
           return false;
 
         IncrementalSpace* clone =
           static_cast<IncrementalSpace*>(source.clone());
-        clone->sequence.materialize(*clone,2);
-        clone->sequence.close(*clone);
+        clone->list.materialize(*clone,2);
+        clone->list.close(*clone);
         const bool valid =
           (clone->status() != SS_FAILED) &&
-          clone->sequence[1].assigned() &&
-          (clone->sequence[1].val() == 2) &&
+          clone->list[1].assigned() &&
+          (clone->list[1].val() == 2) &&
           clone->minimum.assigned() && (clone->minimum.val() == 0) &&
           clone->maximum.assigned() && (clone->maximum.val() == 2);
         delete clone;
-        return valid && (source.sequence.size() == 1);
+        return valid && (source.list.prefix_size() == 1);
       }
     };
 
     class CallbackSpace : public Gecode::Space {
     public:
-      Gecode::OpenIntVarSequence sequence;
+      Gecode::OpenIntVarList list;
 
-      CallbackSpace(Gecode::OpenIntVarSequence::Domain domain,
-                    Gecode::OpenIntVarSequence::Transition transition)
-        : sequence(*this,domain,transition,8) {}
+      CallbackSpace(Gecode::OpenIntVarList::Domain domain,
+                    Gecode::OpenIntVarList::Transition transition)
+        : list(*this,domain,transition,8) {}
 
       CallbackSpace(CallbackSpace& s) : Gecode::Space(s) {
-        sequence.update(*this,s.sequence);
+        list.update(*this,s.list);
       }
 
       virtual Gecode::Space*
@@ -894,30 +896,30 @@ namespace Test { namespace Int {
     class GroupSpace : public Gecode::Space {
     public:
       enum Kind { REL, SUM, PRECEDE };
-      Gecode::OpenIntVarSequence sequence;
+      Gecode::OpenIntVarList list;
       Gecode::PropagatorGroup group;
 
       GroupSpace(Kind kind, bool close)
-        : sequence(*this,Gecode::IntSet(0,2),3) {
+        : list(*this,Gecode::IntSet(0,2),3) {
         using namespace Gecode;
         switch (kind) {
         case REL:
-          rel((*this)(group),sequence,IRT_NQ);
+          rel((*this)(group),list,IRT_NQ);
           break;
         case SUM:
-          slidingsum((*this)(group),sequence,2,2,2);
+          slidingsum((*this)(group),list,2,2,2);
           break;
         case PRECEDE:
-          precede((*this)(group),sequence,0,1);
+          precede((*this)(group),list,0,1);
           break;
         }
-        sequence.materialize(*this,2);
+        list.materialize(*this,2);
         if (close)
-          sequence.close(*this);
+          list.close(*this);
       }
 
       GroupSpace(GroupSpace& s) : Gecode::Space(s), group(s.group) {
-        sequence.update(*this,s.sequence);
+        list.update(*this,s.list);
       }
 
       virtual Gecode::Space*
@@ -933,7 +935,7 @@ namespace Test { namespace Int {
       bool kill;
     public:
       Group(const std::string& name, GroupSpace::Kind kind0, bool kill0)
-        : ::Test::Base("Int::OpenSequence::Group::"+name+
+        : ::Test::Base("Int::OpenList::Group::"+name+
                        (kill0 ? "::Kill" : "::Disable")),
           kind(kind0), kill(kill0) {}
 
@@ -949,9 +951,9 @@ namespace Test { namespace Int {
           else
             source.group.disable(source);
           // These values remain in the domains but violate each constraint.
-          rel(source,source.sequence[0],IRT_EQ,
+          rel(source,source.list[0],IRT_EQ,
               kind == GroupSpace::PRECEDE ? 2 : 0);
-          rel(source,source.sequence[1],IRT_EQ,
+          rel(source,source.list[1],IRT_EQ,
               kind == GroupSpace::PRECEDE ? 1 : 0);
           if (source.status() == SS_FAILED)
             return false;
@@ -975,7 +977,7 @@ namespace Test { namespace Int {
     class Dispose : public ::Test::Base {
     public:
       Dispose(void)
-        : ::Test::Base("Int::OpenSequence::Dispose") {}
+        : ::Test::Base("Int::OpenList::Dispose") {}
 
       virtual bool
       run(void) {
@@ -984,10 +986,10 @@ namespace Test { namespace Int {
         std::shared_ptr<int> transition(new int(0));
         CallbackSpace* source = new CallbackSpace(
           [domain](int) { return IntSet(0,1); },
-          [transition](Space&, OpenIntVarSequence, int) {});
-        source->sequence.materialize(*source,2);
+          [transition](Space&, OpenIntVarList, int) {});
+        source->list.materialize(*source,2);
         DFA dfa(0,{{0,0,0},{0,1,0}},{0});
-        extensional(*source,source->sequence,dfa);
+        extensional(*source,source->list,dfa);
         if (source->status() == SS_FAILED) {
           delete source;
           return false;
@@ -1005,7 +1007,7 @@ namespace Test { namespace Int {
     class CallbackLength : public ::Test::Base {
     public:
       CallbackLength(void)
-        : ::Test::Base("Int::OpenSequence::CallbackLength") {}
+        : ::Test::Base("Int::OpenList::CallbackLength") {}
 
       virtual bool
       run(void) {
@@ -1013,15 +1015,15 @@ namespace Test { namespace Int {
         for (int assign=0; assign<2; assign++)
           for (int close=0; close<2; close++) {
             CallbackSpace source([](int) { return IntSet(0,1); },
-              [assign](Space& home, OpenIntVarSequence sequence, int i) {
+              [assign](Space& home, OpenIntVarList list, int i) {
                 if (i == 0)
-                  rel(home,sequence.length(),assign ? IRT_EQ : IRT_GQ,3);
+                  rel(home,list.length(),assign ? IRT_EQ : IRT_GQ,3);
               });
-            rel(source,source.sequence.length(),IRT_GQ,1);
+            rel(source,source.list.length(),IRT_GQ,1);
             if (close)
-              source.sequence.close(source);
+              source.list.close(source);
             if ((source.status() == SS_FAILED) ||
-                (source.sequence.size() != 3))
+                (source.list.prefix_size() != 3))
               return false;
           }
         return true;
@@ -1031,14 +1033,14 @@ namespace Test { namespace Int {
     class FailedGet : public ::Test::Base {
     public:
       FailedGet(void)
-        : ::Test::Base("Int::OpenSequence::FailedGet") {}
+        : ::Test::Base("Int::OpenList::FailedGet") {}
 
       virtual bool
       run(void) {
         using namespace Gecode;
         CallbackSpace source([](int) { return IntSet(0,1); },
-          [](Space& home, OpenIntVarSequence, int) { home.fail(); });
-        IntVar x = source.sequence.get(source,4);
+          [](Space& home, OpenIntVarList, int) { home.fail(); });
+        IntVar x = source.list.get(source,4);
         return source.failed() && (x.varimp() == nullptr);
       }
     };
@@ -1046,29 +1048,29 @@ namespace Test { namespace Int {
     class ValueCommit : public ::Test::Base {
     public:
       ValueCommit(void)
-        : ::Test::Base("Int::OpenSequence::ValueCommit") {}
+        : ::Test::Base("Int::OpenList::ValueCommit") {}
 
       virtual bool
       run(void) {
         using namespace Gecode;
         CallbackSpace source([](int) { return IntSet(0,1); },
-          [](Space& home, OpenIntVarSequence, int i) {
+          [](Space& home, OpenIntVarList, int i) {
             if (i == 1)
               home.fail();
           });
-        source.sequence.materialize(source,1);
-        branch(source,source.sequence,OVB_VALUE_FIRST);
+        source.list.materialize(source,1);
+        branch(source,source.list,OVB_VALUE_FIRST);
         if (source.status() != SS_BRANCH)
           return false;
         const Choice* choice = source.choice();
         bool valid = true;
         for (unsigned int alternative=0; alternative<2; alternative++) {
           CallbackSpace* clone = static_cast<CallbackSpace*>(source.clone());
-          rel(*clone,clone->sequence.length(),IRT_GQ,2);
+          rel(*clone,clone->list.length(),IRT_GQ,2);
           clone->commit(*choice,alternative);
-          valid &= !clone->failed() && (clone->sequence.size() == 1) &&
-            clone->sequence[0].assigned() &&
-            (clone->sequence[0].val() == static_cast<int>(alternative));
+          valid &= !clone->failed() && (clone->list.prefix_size() == 1) &&
+            clone->list[0].assigned() &&
+            (clone->list[0].val() == static_cast<int>(alternative));
           valid &= clone->status() == SS_FAILED;
           delete clone;
         }
@@ -1080,7 +1082,7 @@ namespace Test { namespace Int {
     class ImpossibleWindow : public ::Test::Base {
     public:
       ImpossibleWindow(void)
-        : ::Test::Base("Int::OpenSequence::ImpossibleWindow") {}
+        : ::Test::Base("Int::OpenList::ImpossibleWindow") {}
 
       virtual bool
       run(void) {
@@ -1088,16 +1090,16 @@ namespace Test { namespace Int {
         for (int sum=0; sum<2; sum++)
           for (int size=0; size<3; size++) {
             CallbackSpace source([](int) { return IntSet(0,1); },
-              [](Space&, OpenIntVarSequence, int) {});
+              [](Space&, OpenIntVarList, int) {});
             if (sum)
-              slidingsum(source,source.sequence,2,2,1);
+              slidingsum(source,source.list,2,2,1);
             else
-              Gecode::sequence(source,source.sequence,IntSet(0,1),2,3,3);
-            rel(source,source.sequence.length(),IRT_EQ,size);
+              Gecode::sequence(source,source.list,IntSet(0,1),2,3,3);
+            rel(source,source.list.length(),IRT_EQ,size);
             const bool failed = source.status() == SS_FAILED;
             if (failed != (size == 2))
               return false;
-            if (!failed && (source.sequence.size() != size))
+            if (!failed && (source.list.prefix_size() != size))
               return false;
           }
         return true;
