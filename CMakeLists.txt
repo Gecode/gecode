@@ -1706,3 +1706,34 @@ if(GECODE_INSTALL)
 endif()
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+
+# Report resolved options after dependency checks and target creation.
+include(FeatureSummary)
+foreach(gecode_option IN ITEMS
+    GECODE_BUILD_SHARED GECODE_BUILD_STATIC
+    GECODE_ENABLE_THREAD GECODE_ENABLE_CPPROFILER GECODE_ENABLE_CBS
+    GECODE_ENABLE_EXAMPLES GECODE_INSTALL
+    GECODE_ENABLE_SEARCH GECODE_ENABLE_INT_VARS GECODE_ENABLE_SET_VARS
+    GECODE_ENABLE_FLOAT_VARS GECODE_ENABLE_MINIMODEL GECODE_ENABLE_DRIVER
+    GECODE_ENABLE_FLATZINC GECODE_ENABLE_ALLOCATOR GECODE_ENABLE_AUDIT
+    GECODE_ENABLE_FAULT_INJECTION GECODE_REGENERATE_VARIMP
+    GECODE_DOC_SEARCH GECODE_DOC_TAGFILE)
+  get_property(gecode_option_description CACHE ${gecode_option} PROPERTY HELPSTRING)
+  add_feature_info(${gecode_option} ${gecode_option} "${gecode_option_description}")
+endforeach()
+add_feature_info(GECODE_ENABLE_QT GECODE_HAS_QT_RUNTIME
+  "Qt support (requested: ${GECODE_ENABLE_QT})")
+add_feature_info(GECODE_ENABLE_GIST GECODE_BUILD_GIST_TARGET
+  "Gist (requested: ${GECODE_ENABLE_GIST})")
+add_feature_info(GECODE_ENABLE_MPFR GECODE_HAS_MPFR
+  "MPFR support (requested: ${GECODE_ENABLE_MPFR})")
+add_feature_info(GECODE_ENABLE_GCC_VISIBILITY GECODE_GCC_HAS_CLASS_VISIBILITY
+  "GCC visibility attributes (requested: ${GECODE_ENABLE_GCC_VISIBILITY})")
+add_feature_info(GECODE_ENABLE_OSX_UNFAIR_MUTEX GECODE_USE_OSX_UNFAIR_MUTEX
+  "macOS unfair mutexes (requested: ${GECODE_ENABLE_OSX_UNFAIR_MUTEX})")
+add_feature_info(GECODE_DOC_DOT GECODE_DOXYGEN_DOT
+  "Graphviz dot graphs (requested: ${GECODE_DOC_DOT})")
+add_feature_info(BUILD_TESTING "BUILD_TESTING;GECODE_CAN_BUILD_TESTS"
+  "Test targets (requested: ${BUILD_TESTING})")
+feature_summary(WHAT ENABLED_FEATURES DISABLED_FEATURES
+  DESCRIPTION "Gecode ${GECODE_PROJECT_VERSION} configuration:")

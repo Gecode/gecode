@@ -31,6 +31,11 @@ from it.
 Version metadata shared by autoconf and CMake lives in `gecode-version.m4`.
 `build/` is reserved for generated build outputs.
 
+Configuration ends with a summary of enabled and disabled features after
+dependency checks. Qt, Gist, MPFR, compiler visibility, macOS mutexes, Graphviz
+graphs, and test targets show their requested settings alongside the resolved
+state.
+
 | Autoconf switch | CMake option / mechanism | Status | Notes |
 |---|---|---|---|
 | `--enable-shared` | `GECODE_BUILD_SHARED` | Supported directly | Default `ON` |
@@ -88,6 +93,11 @@ for generated-script paths such as `-DGECODE_REGENERATE_VARIMP=ON` and the
 Autoconf `make check` deliberately does not build or run the CMake-only
 failpoint sources. Its ordinary test executable therefore never mixes
 process-global fault cases into the multi-threaded check run.
+
+The test runner reports selected, run, passed, failed, and not-run test cases.
+Each case counts once regardless of `-iter`. Cases left after stopping on a
+failure count as not run; cases excluded by `-test` or `-start` are outside the
+selection. `-list` prints only test names.
 
 When changing generated-source inputs, run `make regenerate` after configuring
 the project. This uses the same version-checked workflow as CI and caches the

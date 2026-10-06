@@ -275,21 +275,32 @@ namespace Test {
     }
   }
 
+  /// Report test cases; iterations of a test count as one case.
+  void print_test_summary(size_t selected, size_t passed, size_t failed) {
+    const size_t ran = passed + failed;
+    std::cout << "\nTest summary: " << selected << " selected, "
+              << ran << " ran, " << passed << " passed, "
+              << failed << " failed, " << selected - ran << " not run."
+              << std::endl;
+  }
+
   /// Run all the tests with the supplied options.
   int run_tests(const std::vector<Base*>& tests, const Options& options) {
     Gecode::Support::RandomGenerator seed_sequence(options.seed);
-    int result = EXIT_SUCCESS;
+    size_t passed = 0;
+    size_t failed = 0;
     for (auto test : tests) {
       unsigned int test_seed = seed_sequence.next();
-      if (!run_test(test, test_seed, options, std::cout)) {
-        if (opt.stop) {
-          return EXIT_FAILURE;
-        } else {
-          result = EXIT_FAILURE;
-        }
+      if (run_test(test, test_seed, options, std::cout)) {
+        ++passed;
+      } else {
+        ++failed;
+        if (options.stop)
+          break;
       }
     }
-    return result;
+    print_test_summary(tests.size(), passed, failed);
+    return failed == 0 ? EXIT_SUCCESS : EXIT_FAILURE;
   }
 
   class TestExecutor;
@@ -306,8 +317,9 @@ namespace Test {
     Gecode::Support::Mutex output_mutex;
     /// The next starting index among the tests.
     std::atomic<size_t> next_tests;
-    /// The result
-    std::atomic<int> result;
+    /// Completed test cases
+    std::atomic<size_t> passed;
+    std::atomic<size_t> failed;
     /// The number of test runners that are to be set up.
     std::atomic<int> running_threads;
     /// Flag indicating some thread is waiting on the execution to be done.
@@ -332,13 +344,14 @@ namespace Test {
   public:
     TestExecutionControl(const std::vector<Base*>& tests0, const Options& options0, int thread_count)
       : tests(tests0), options(options0), output_mutex(),
-        next_tests(0), result(EXIT_SUCCESS), running_threads(thread_count),
+        next_tests(0), passed(0), failed(0), running_threads(thread_count),
         execution_done_wait_started(false), execution_done_event() {}
 
-    /// Get the current result (either \a EXIT_SUCCESS or \a EXIT_FAILURE). Requires all threads to be done first.
-    int get_result() {
+    /// Report the results after all threads have finished and return the exit status.
+    int report_result() {
       assert(running_threads.load() == 0);
-      return result.load();
+      print_test_summary(tests.size(), passed.load(), failed.load());
+      return failed.load() == 0 ? EXIT_SUCCESS : EXIT_FAILURE;
     }
 
     /** Wait for test-runners to be completed.
@@ -354,9 +367,12 @@ namespace Test {
       execution_done_event.wait();
     }
   private:
-    /// Set flag that failure has occurred.
-    void set_failure() {
-      result.store(EXIT_FAILURE);
+    /// Record a completed test case.
+    void record_result(bool success) {
+      if (success)
+        ++passed;
+      else
+        ++failed;
     }
 
     /// Indicate that a thread is done executing.
@@ -378,7 +394,7 @@ namespace Test {
     /// True iff the runners should continue running tests
     bool continue_testing() {
       // Note: implementation should be cheap to call form multiple threads often
-      return !options.stop || result.load() == EXIT_SUCCESS;
+      return !options.stop || failed.load() == 0;
     }
 
     /// Write a string to standard output, synchronized across all test runners
@@ -424,9 +440,7 @@ namespace Test {
           auto test = tec.tests[i];
           unsigned int test_seed = seed_sequence.next();
           std::ostringstream test_output;
-          if (!run_test(test, test_seed, tec.options, test_output)) {
-            tec.set_failure();
-          }
+          tec.record_result(run_test(test, test_seed, tec.options, test_output));
           tec.write_output(test_output.str());
         }
         if (!tec.continue_testing()) {
@@ -451,7 +465,7 @@ namespace Test {
     }
     tec.await_test_runners_completed();
 
-    return tec.get_result();
+    return tec.report_result();
   }
 }
 
