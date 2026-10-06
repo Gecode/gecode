@@ -92,8 +92,10 @@ Generators store their compact state directly in their consumers, and copying
 a generator produces independent state. Drivers accept checked 64-bit seeds
 as well as complete state. APIs, seeded sequences, and randomized choice
 archives change; no legacy sequence mode is provided. This design remains
-provisional for a future breaking-change release. See docs/random.md for
-engine contracts, migration, and measured costs.
+provisional for a future breaking-change release. Replace the old seed()
+snapshot accessor with state() and restore with state(text). Use opt.rnd()
+instead of Rnd(opt.seed()) to honor complete-state command-line input.
+Engine contracts are documented on Support::Random and RndGenerator.
 
 [RELEASE]
 Version: 6.5.0

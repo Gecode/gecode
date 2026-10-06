@@ -349,6 +349,11 @@ namespace Gecode { namespace FlatZinc {
     unsigned long long int node(void) const { return _node.value(); }
     unsigned long long int fail(void) const { return _fail.value(); }
     double time(void) const { return _time.value(); }
+    /** \brief Return the numeric seed
+     *
+     * Throws std::logic_error after complete-state, time, or hw input.
+     * Use rnd() to honor all initialization forms.
+     */
     uint64_t seed(void) const { return _seed.value(); }
     Rnd rnd(void) const { return _seed.rnd(); }
     double step(void) const { return _step.value(); }
