@@ -289,3 +289,5 @@ namespace Gecode { namespace Search {
   }
 
 }}
+
+// STATISTICS: search-other
