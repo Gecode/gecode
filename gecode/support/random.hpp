@@ -342,10 +342,19 @@ namespace Gecode { namespace Support {
 
   /** \brief Value-type generator with reproducible bounded draws and state
    *
-   * Engine supplies a State array of 64-bit words, name(), seed(), state()
-   * getter/setter, and next() over [0,UINT64_MAX] or [1,UINT64_MAX]. Search
-   * engines additionally supply split(uint32_t) const. No state-size limit
-   * is imposed. Copying a generator preserves its exact state.
+   * Engine supplies a nonempty State = std::array<uint64_t,N> containing
+   * all mutable state and stream parameters. It accepts a uint64_t seed in
+   * its constructor and seed(), with a defined rule for every seed. Its
+   * next(), min(), and max() describe raw output in [0,UINT64_MAX] or
+   * [1,UINT64_MAX]. name() identifies the algorithm and state format.
+   *
+   * state() captures complete state. state(const State&) must validate
+   * before mutation and restore subsequent draws and splits exactly,
+   * without seed expansion. Copying preserves state independently.
+   * Search engines additionally supply split(uint32_t) const, returning
+   * a child without changing the parent. Different sibling indices must
+   * produce distinct states, not merely different first outputs. This
+   * does not require non-overlapping streams across an unbounded tree.
    * \ingroup FuncSupport
    */
   template<class Engine>

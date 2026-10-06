@@ -31,11 +31,19 @@
 #  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 
-"""Compare compiled random-benchmark executables with bounded repeated runs.
+r"""Compare compiled random-benchmark executables with bounded repeated runs.
 
 Example: python3 tools/random-benchmark.py build/random/random-benchmark \
   --baseline /tmp/baseline/random-benchmark --repeat 5 --output results.json
-Build instructions and the controls are recorded in docs/random.md.
+Compile the candidate against the configured build:
+  clang++ -O3 -DNDEBUG -std=c++17 -DRANDOM_NEW -Ibuild/random -I. \
+    tools/random-benchmark.cpp -Lbuild/random -lgecodeint -lgecodesearch \
+    -lgecodekernel -lgecodesupport -Wl,-rpath,build/random \
+    -o build/random/random-benchmark
+Compile the same source against baseline headers/libraries without -DRANDOM_NEW.
+Runs alternate order, discard one warmup, and report medians. The controlled tree
+has 32767 nodes and 16384 solutions; queens node counts can vary with the engine.
+Avoid concurrent compilation while measuring.
 """
 import argparse
 import json
@@ -46,7 +54,8 @@ from pathlib import Path
 
 
 def main():
-    parser = argparse.ArgumentParser(description=__doc__)
+    parser = argparse.ArgumentParser(
+        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("candidate", type=Path)
     parser.add_argument("--baseline", type=Path)
     parser.add_argument("--repeat", type=int, default=5)

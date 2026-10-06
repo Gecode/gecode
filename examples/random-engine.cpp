@@ -37,8 +37,13 @@
 #include <iostream>
 #include <memory>
 
-/// A user engine that counts raw draws along each path.
-/// Generation and indexed splitting retain SplitMix's algorithms and guarantees.
+/** \brief A user engine that counts raw draws along each path
+ *
+ * Build the random-engine target and run it with an optional complete state,
+ * for example counted-splitmix-v1:000000000000002a:9e3779b97f4a7c15:0000000000000000.
+ * The program prints its initial state, then enumerates all 24 permutations.
+ * Generation and indexed splitting retain SplitMix's algorithms and guarantees.
+ */
 class CountedSplitMix {
   Gecode::Support::SplitMix engine;
   uint64_t draws = 0;
@@ -112,3 +117,5 @@ int main(int argc, char* argv[]) {
     return 1;
   }
 }
+
+// STATISTICS: example-any

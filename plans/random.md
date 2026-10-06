@@ -89,8 +89,8 @@ and any performance costs.
 
 Splittable SplitMix has two state words and constant-time indexed splitting.
 Xorshift64* has one state word and indexed native jumps. Both have documented
-sibling-state arguments in docs/random.md. The default remains provisional
-SplitMix; xorshift64* remains configurable through CMake and Autoconf.
+sibling-state arguments in gecode/support/random.hpp. The default remains
+provisional SplitMix; xorshift64* remains configurable through CMake and Autoconf.
 
 Support::Random<Engine> defines bounded integer conversion and canonical full-state
 encoding. RndGenerator<Engine> provides the modeling value interface. Full state
@@ -112,7 +112,7 @@ custom-engine example's full-state replay and output agree across all three buil
 
 The Space and base Choice implementation matches main exactly. Rnd is
 16 bytes with SplitMix and 8 with xorshift64*, without shared allocation. Fresh
-five-run measurements are recorded in docs/random.md: SplitMix's controlled
+five-run measurements are recorded in the PR description: SplitMix's controlled
 random tree costs 1.02x with cloning and 1.16x with recomputation relative to main;
 xorshift64* costs 1.63x and 2.88x. Draft PR #241 remains provisional, for a future
 breaking-change release only.

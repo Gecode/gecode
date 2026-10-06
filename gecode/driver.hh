@@ -156,7 +156,11 @@ namespace Gecode {
     public:
       RandomOption(const char* o, const char* e, uint64_t v);
       void value(uint64_t v);
-      /// Return the seed; throws if initialization used complete state.
+      /** \brief Return the numeric seed
+       *
+       * Throws std::logic_error after complete-state, time, or hw input.
+       * Use rnd() to honor all initialization forms.
+       */
       uint64_t value(void) const;
       /// Construct an independent generator at the configured initial state.
       Rnd rnd(void) const;
@@ -548,7 +552,11 @@ namespace Gecode {
 
     /// Set default seed value
     void seed(uint64_t s);
-    /// Return seed value
+    /** \brief Return the numeric seed
+     *
+     * Throws std::logic_error after complete-state, time, or hw input.
+     * Use rnd() to honor all initialization forms.
+     */
     uint64_t seed(void) const;
     /// Independent generator initialized from the seed or full-state option
     Rnd rnd(void) const;

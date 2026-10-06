@@ -388,3 +388,5 @@ namespace Test {
     } commit_boundary;
   }
 }
+
+// STATISTICS: test-core
