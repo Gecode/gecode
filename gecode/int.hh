@@ -2356,23 +2356,29 @@ namespace Gecode {
   };
 
   /**
-   * \brief Space-local sequence of variables with an open length
+   * \brief Space-local list of variables with an open length
    *
-   * Variables can be appended until the sequence is closed. The length
-   * variable denotes the eventual sequence length. Propagation materializes
-   * positions required by its minimum.
+   * Variables can be appended until the list is closed. The length
+   * variable denotes the eventual list length. Propagation materializes
+   * positions required by its minimum. The prefix_size() query counts the
+   * positions already constructed. Indexed access is limited to this prefix;
+   * get() creates positions and requires enough eventual length to include
+   * the requested position.
    *
-   * OpenIntVarSequence and OpenBoolVarSequence provide standard factories.
-   * Other variable types use a factory passed to OpenVarSequence<Var>, for
+   * Handles in one Space share the same list. Updating during cloning
+   * preserves that sharing in the clone with separate mutable state.
+   *
+   * OpenIntVarList and OpenBoolVarList provide standard factories.
+   * Other variable types use a factory passed to OpenVarList<Var>, for
    * example a function returning SetVar or FloatVar. Storage, cloning, and
    * materialization are shared; constraint and branching overloads remain
    * specific to the variable type.
    *
-   * A sequence can be used in an ordinary Space:
+   * A list can be used in an ordinary Space:
    * \code
    * class Model : public Space {
    * public:
-   *   OpenIntVarSequence x;
+   *   OpenIntVarList x;
    *   Model(void) : x(*this,IntSet(0,1),3) {
    *     rel(*this,x.length(),IRT_EQ,2);
    *     distinct(*this,x);
@@ -2390,10 +2396,10 @@ namespace Gecode {
    * \ingroup TaskModelInt
    */
   template<class Var>
-  class OpenVarSequence : public LocalHandle {
+  class OpenVarList : public LocalHandle {
   private:
-    /// Space-local sequence implementation
-    class Sequence;
+    /// Space-local list implementation
+    class Object;
   public:
     /**
      * \brief Function creating the variable at position \a i in \a home
@@ -2410,20 +2416,20 @@ namespace Gecode {
      * deterministic and must not capture space-local data; \a home and
      * \a x refer to the current space.
      */
-    typedef std::function<void(Space& home, OpenVarSequence<Var> x, int i)>
+    typedef std::function<void(Space& home, OpenVarList<Var> x, int i)>
       Transition;
-    /// Construct an uninitialized sequence
-    OpenVarSequence(void);
-    /// Construct a sequence using \a create for each position
-    OpenVarSequence(Space& home, Factory create,
-                    int max=Int::Limits::max);
-    /// Construct a sequence using \a create and transition function \a t
-    OpenVarSequence(Space& home, Factory create, Transition t,
-                    int max=Int::Limits::max);
+    /// Construct an uninitialized list
+    OpenVarList(void);
+    /// Construct a list using \a create for each position
+    OpenVarList(Space& home, Factory create,
+                int max=Int::Limits::max);
+    /// Construct a list using \a create and transition function \a t
+    OpenVarList(Space& home, Factory create, Transition t,
+                int max=Int::Limits::max);
     /// Update during cloning
-    void update(Space& home, OpenVarSequence<Var>& s);
-    /// Return the number of appended variables
-    int size(void) const;
+    void update(Space& home, OpenVarList<Var>& s);
+    /// Return the number of materialized positions
+    int prefix_size(void) const;
     /// Return variable at position \a i (\a i must be a valid position)
     Var operator [](int i) const;
     /// Return the eventual-length variable
@@ -2431,8 +2437,11 @@ namespace Gecode {
     /**
      * \brief Append variable \a x
      *
+     * Constrains the eventual length to include the new position and calls
+     * the transition function, if supplied.
+     *
      * Throws an exception of type Int::ArgumentSame if \a x is an
-     * unassigned variable already in the sequence.
+     * unassigned variable already in the list.
      */
     void append(Space& home, Var x);
     /**
@@ -2444,17 +2453,21 @@ namespace Gecode {
      */
     void materialize(Space& home, int n);
     /**
-     * \brief Return position \a i, materializing positions through \a i
+     * \brief Require and return the variable at position \a i
+     *
+     * Constrains the eventual length to be at least \a i+1 and materializes
+     * positions through \a i.
      *
      * Returns an uninitialized variable if \a home is failed or
      * materialization fails.
      */
     Var get(Space& home, int i);
     /**
-     * \brief Close the sequence at its materialized length
+     * \brief Close the list at its materialized length
      *
      * First materializes any positions required by the minimum eventual
      * length, then assigns the eventual length to the number of positions.
+     * The contained variables can remain unassigned.
      */
     void close(Space& home);
     /// Subscribe \a p to the addition of positions
@@ -2467,10 +2480,10 @@ namespace Gecode {
 
 
   /**
-   * \brief Open sequence of integer variables
+   * \brief Open list of integer variables
    * \ingroup TaskModelInt
    */
-  class OpenIntVarSequence : public OpenVarSequence<IntVar> {
+  class OpenIntVarList : public OpenVarList<IntVar> {
   public:
     /**
      * \brief Function returning the domain for position \a i
@@ -2479,53 +2492,53 @@ namespace Gecode {
      * data. The function object is shared between clones.
      */
     typedef std::function<IntSet(int i)> Domain;
-    using OpenVarSequence<IntVar>::OpenVarSequence;
-    /// Construct an uninitialized sequence
-    GECODE_INT_EXPORT OpenIntVarSequence(void);
-    /// Share an integer sequence constructed through a variable factory
-    OpenIntVarSequence(const OpenVarSequence<IntVar>& x);
-    /// Construct a sequence with maximal length \a max and full domains
+    using OpenVarList<IntVar>::OpenVarList;
+    /// Construct an uninitialized list
+    GECODE_INT_EXPORT OpenIntVarList(void);
+    /// Share an integer list constructed through a variable factory
+    OpenIntVarList(const OpenVarList<IntVar>& x);
+    /// Construct a list with maximal length \a max and full domains
     GECODE_INT_EXPORT
-    OpenIntVarSequence(Space& home, int max=Int::Limits::max);
-    /// Construct a sequence using domain \a d for every position
+    OpenIntVarList(Space& home, int max=Int::Limits::max);
+    /// Construct a list using domain \a d for every position
     GECODE_INT_EXPORT
-    OpenIntVarSequence(Space& home, const IntSet& d,
-                       int max=Int::Limits::max);
-    /// Construct a sequence using domain \a d and transition function \a t
+    OpenIntVarList(Space& home, const IntSet& d,
+                   int max=Int::Limits::max);
+    /// Construct a list using domain \a d and transition function \a t
     GECODE_INT_EXPORT
-    OpenIntVarSequence(Space& home, const IntSet& d, Transition t,
-                       int max=Int::Limits::max);
-    /// Construct a sequence using \a d to create each position
+    OpenIntVarList(Space& home, const IntSet& d, Transition t,
+                   int max=Int::Limits::max);
+    /// Construct a list using \a d to create each position
     GECODE_INT_EXPORT
-    OpenIntVarSequence(Space& home, Domain d,
-                       int max=Int::Limits::max);
-    /// Construct a sequence using \a d and transition function \a t
+    OpenIntVarList(Space& home, Domain d,
+                   int max=Int::Limits::max);
+    /// Construct a list using \a d and transition function \a t
     GECODE_INT_EXPORT
-    OpenIntVarSequence(Space& home, Domain d, Transition t,
-                       int max=Int::Limits::max);
+    OpenIntVarList(Space& home, Domain d, Transition t,
+                   int max=Int::Limits::max);
   private:
     /// Convert a position-dependent domain to a variable factory
     static Factory factory(Domain d);
   };
 
   /**
-   * \brief Open sequence of Boolean variables
+   * \brief Open list of Boolean variables
    * \ingroup TaskModelInt
    */
-  class OpenBoolVarSequence : public OpenVarSequence<BoolVar> {
+  class OpenBoolVarList : public OpenVarList<BoolVar> {
   public:
-    using OpenVarSequence<BoolVar>::OpenVarSequence;
-    /// Construct an uninitialized sequence
-    GECODE_INT_EXPORT OpenBoolVarSequence(void);
-    /// Share a Boolean sequence constructed through a variable factory
-    OpenBoolVarSequence(const OpenVarSequence<BoolVar>& x);
-    /// Construct a sequence with maximal length \a max and domains 0..1
+    using OpenVarList<BoolVar>::OpenVarList;
+    /// Construct an uninitialized list
+    GECODE_INT_EXPORT OpenBoolVarList(void);
+    /// Share a Boolean list constructed through a variable factory
+    OpenBoolVarList(const OpenVarList<BoolVar>& x);
+    /// Construct a list with maximal length \a max and domains 0..1
     GECODE_INT_EXPORT
-    OpenBoolVarSequence(Space& home, int max=Int::Limits::max);
-    /// Construct a sequence with domains 0..1 and transition function \a t
+    OpenBoolVarList(Space& home, int max=Int::Limits::max);
+    /// Construct a list with domains 0..1 and transition function \a t
     GECODE_INT_EXPORT
-    OpenBoolVarSequence(Space& home, Transition t,
-                        int max=Int::Limits::max);
+    OpenBoolVarList(Space& home, Transition t,
+                    int max=Int::Limits::max);
   };
 
 }
@@ -2541,7 +2554,7 @@ namespace Gecode {
    * \ingroup TaskModelIntDistinct
    */
   GECODE_INT_EXPORT void
-  distinct(Home home, OpenIntVarSequence x,
+  distinct(Home home, OpenIntVarList x,
            IntPropLevel ipl=IPL_DEF);
 
   /**
@@ -2552,7 +2565,7 @@ namespace Gecode {
    * \ingroup TaskModelIntRel
    */
   GECODE_INT_EXPORT void
-  rel(Home home, OpenIntVarSequence x, IntRelType irt,
+  rel(Home home, OpenIntVarList x, IntRelType irt,
       IntPropLevel ipl=IPL_DEF);
 
   /**
@@ -2564,7 +2577,7 @@ namespace Gecode {
    * \ingroup TaskModelIntSequence
    */
   GECODE_INT_EXPORT void
-  sequence(Home home, OpenIntVarSequence x, const IntSet& s,
+  sequence(Home home, OpenIntVarList x, const IntSet& s,
            int q, int l, int u, IntPropLevel ipl=IPL_DEF);
 
   /**
@@ -2576,7 +2589,7 @@ namespace Gecode {
    * \ingroup TaskModelIntSequence
    */
   GECODE_INT_EXPORT void
-  slidingsum(Home home, OpenIntVarSequence x,
+  slidingsum(Home home, OpenIntVarList x,
              int q, int l, int u, IntPropLevel ipl=IPL_DEF);
 
   /**
@@ -2587,7 +2600,7 @@ namespace Gecode {
    * \ingroup TaskModelIntArith
    */
   GECODE_INT_EXPORT void
-  min(Home home, OpenIntVarSequence x, IntVar y,
+  min(Home home, OpenIntVarList x, IntVar y,
       IntPropLevel ipl=IPL_DEF);
 
   /**
@@ -2598,7 +2611,7 @@ namespace Gecode {
    * \ingroup TaskModelIntArith
    */
   GECODE_INT_EXPORT void
-  max(Home home, OpenIntVarSequence x, IntVar y,
+  max(Home home, OpenIntVarList x, IntVar y,
       IntPropLevel ipl=IPL_DEF);
 
   /**
@@ -2609,7 +2622,7 @@ namespace Gecode {
    * \ingroup TaskModelIntPrecede
    */
   GECODE_INT_EXPORT void
-  precede(Home home, OpenIntVarSequence x, int s, int t,
+  precede(Home home, OpenIntVarList x, int s, int t,
           IntPropLevel ipl=IPL_DEF);
 
   /**
@@ -2620,12 +2633,12 @@ namespace Gecode {
    * \ingroup TaskModelIntPrecede
    */
   GECODE_INT_EXPORT void
-  precede(Home home, OpenIntVarSequence x, const IntArgs& c,
+  precede(Home home, OpenIntVarList x, const IntArgs& c,
           IntPropLevel ipl=IPL_DEF);
 
 }
 
-#include <gecode/int/open-sequence.hpp>
+#include <gecode/int/open-var-list.hpp>
 
 #include <gecode/int/extensional/dfa.hpp>
 
@@ -3047,12 +3060,12 @@ namespace Gecode {
    *
    * While \a x is open, its materialized prefix must have a continuation
    * accepted by \a d. Once its length equals its materialized size, the
-   * complete sequence must be accepted by \a d.
+   * complete list must be accepted by \a d.
    *
    * \ingroup TaskModelIntExt
    */
   GECODE_INT_EXPORT void
-  extensional(Home home, OpenIntVarSequence x, DFA d,
+  extensional(Home home, OpenIntVarList x, DFA d,
               IntPropLevel ipl=IPL_DEF);
 
   /**
@@ -3060,7 +3073,7 @@ namespace Gecode {
    * \ingroup TaskModelIntExt
    */
   GECODE_INT_EXPORT void
-  extensional(Home home, OpenBoolVarSequence x, DFA d,
+  extensional(Home home, OpenBoolVarList x, DFA d,
               IntPropLevel ipl=IPL_DEF);
 
   /** \brief Post propagator for \f$x\in t\f$.
@@ -4865,11 +4878,11 @@ namespace Gecode {
    */
 
   /**
-   * \brief Branching order for an open sequence
+   * \brief Branching order for an open list
    * \ingroup TaskModelIntBranch
    */
   enum OpenVarBranch {
-    OVB_HORIZON_FIRST, ///< Select the horizon before sequence values
+    OVB_HORIZON_FIRST, ///< Select the horizon before list values
     OVB_VALUE_FIRST    ///< Select materialized values before the horizon
   };
 
@@ -5812,59 +5825,59 @@ namespace Gecode {
   branch(Home home, IntVar x, IntValBranch vals,
          IntVarValPrint vvp=nullptr);
   /**
-   * \brief Branch over the eventual integer sequence \a x
+   * \brief Branch over the eventual integer list \a x
    *
    * The default selects the horizon first, then the first unassigned
    * variable and its minimum value.
    * \ingroup TaskModelIntBranch
    */
   GECODE_INT_EXPORT void
-  branch(Home home, OpenIntVarSequence x,
+  branch(Home home, OpenIntVarList x,
          OpenVarBranch o=OVB_HORIZON_FIRST);
   /**
-   * \brief Branch over the eventual Boolean sequence \a x
+   * \brief Branch over the eventual Boolean list \a x
    * \ingroup TaskModelIntBranch
    */
   GECODE_INT_EXPORT void
-  branch(Home home, OpenBoolVarSequence x,
+  branch(Home home, OpenBoolVarList x,
          OpenVarBranch o=OVB_HORIZON_FIRST);
   /**
-   * \brief Branch over an open integer sequence with standard selectors
+   * \brief Branch over an open integer list with standard selectors
    *
    * Selectors consider all materialized positions. \a OVB_HORIZON_FIRST
    * decides the length before values; \a OVB_VALUE_FIRST selects values
-   * before closing or extending the sequence. Filters and callbacks receive
-   * the position in the sequence.
+   * before closing or extending the list. Filters and callbacks receive
+   * the position in the list.
    *
-   * Action and CHB selection require the complete sequence to be materialized
+   * Action and CHB selection require the complete list to be materialized
    * when posting; otherwise Int::UnknownBranching is thrown.
    * \ingroup TaskModelIntBranch
    */
   GECODE_INT_EXPORT void
-  branch(Home home, OpenIntVarSequence x,
+  branch(Home home, OpenIntVarList x,
          IntVarBranch vars, IntValBranch vals,
          OpenVarBranch o=OVB_HORIZON_FIRST,
          IntBranchFilter bf=nullptr, IntVarValPrint vvp=nullptr);
-  /// Branch over an open integer sequence with tie-breaking selectors
+  /// Branch over an open integer list with tie-breaking selectors
   GECODE_INT_EXPORT void
-  branch(Home home, OpenIntVarSequence x,
+  branch(Home home, OpenIntVarList x,
          TieBreak<IntVarBranch> vars, IntValBranch vals,
          OpenVarBranch o=OVB_HORIZON_FIRST,
          IntBranchFilter bf=nullptr, IntVarValPrint vvp=nullptr);
   /**
-   * \brief Branch over an open Boolean sequence with standard selectors
+   * \brief Branch over an open Boolean list with standard selectors
    *
    * The order, filter, and Action/CHB restrictions are as for integers.
    * \ingroup TaskModelIntBranch
    */
   GECODE_INT_EXPORT void
-  branch(Home home, OpenBoolVarSequence x,
+  branch(Home home, OpenBoolVarList x,
          BoolVarBranch vars, BoolValBranch vals,
          OpenVarBranch o=OVB_HORIZON_FIRST,
          BoolBranchFilter bf=nullptr, BoolVarValPrint vvp=nullptr);
-  /// Branch over an open Boolean sequence with tie-breaking selectors
+  /// Branch over an open Boolean list with tie-breaking selectors
   GECODE_INT_EXPORT void
-  branch(Home home, OpenBoolVarSequence x,
+  branch(Home home, OpenBoolVarList x,
          TieBreak<BoolVarBranch> vars, BoolValBranch vals,
          OpenVarBranch o=OVB_HORIZON_FIRST,
          BoolBranchFilter bf=nullptr, BoolVarValPrint vvp=nullptr);

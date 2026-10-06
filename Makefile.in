@@ -325,7 +325,7 @@ INTSRC0 = \
 	extensional/dfa.cpp extensional/tuple-set.cpp \
 	extensional-regular.cpp extensional-open-regular.cpp \
 	extensional-tuple-set.cpp \
-	open-sequence.cpp \
+	open-var-list.cpp \
 	dom.cpp rel.cpp precede.cpp element.cpp count.cpp \
 	arithmetic.cpp exec.cpp \
 	exec/when.cpp element/pair.cpp \
@@ -350,7 +350,7 @@ INTSRC0 = \
 	exception.cpp
 
 INTHDR0 = \
-	open-sequence.hpp \
+	open-var-list.hpp \
 	limits.hpp support-values.hh support-values.hpp \
 	idx-view.hh idx-view.hpp div.hh div.hpp \
 	exec.hh exec/when.hpp \
@@ -1119,7 +1119,7 @@ EXETARGETS = $(FLATZINCEXE) $(FLATZINCLAUNCHER)
 
 INTTESTSRC00 = \
 	channel arithmetic basic bool count dom distinct element extensional \
-	rel linear gcc sorted unshare exec sequence open-sequence \
+	rel linear gcc sorted unshare exec sequence open-var-list \
 	mm-arithmetic mm-bool mm-lin mm-count mm-rel \
 	bin-packing order unary cumulative cumulatives circuit \
 	no-overlap precede nvalues member

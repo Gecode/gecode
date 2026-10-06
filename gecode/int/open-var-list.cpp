@@ -35,108 +35,108 @@
 
 namespace Gecode {
 
-  OpenIntVarSequence::OpenIntVarSequence(void) {}
+  OpenIntVarList::OpenIntVarList(void) {}
 
-  OpenIntVarSequence::Factory
-  OpenIntVarSequence::factory(Domain d) {
+  OpenIntVarList::Factory
+  OpenIntVarList::factory(Domain d) {
     if (!d)
-      throw InvalidFunction("OpenIntVarSequence");
+      throw InvalidFunction("OpenIntVarList");
     return [d](Space& home, int i) { return IntVar(home,d(i)); };
   }
 
-  OpenIntVarSequence::OpenIntVarSequence(Space& home, int max)
-    : OpenIntVarSequence(home,
+  OpenIntVarList::OpenIntVarList(Space& home, int max)
+    : OpenIntVarList(home,
         IntSet(Int::Limits::min,Int::Limits::max),max) {}
 
-  OpenIntVarSequence::OpenIntVarSequence(Space& home, const IntSet& d,
-                                         int max)
-    : OpenIntVarSequence(home,[d](int) { return d; },max) {}
+  OpenIntVarList::OpenIntVarList(Space& home, const IntSet& d,
+                                 int max)
+    : OpenIntVarList(home,[d](int) { return d; },max) {}
 
-  OpenIntVarSequence::OpenIntVarSequence(Space& home, const IntSet& d,
-                                         Transition t, int max)
-    : OpenIntVarSequence(home,[d](int) { return d; },t,max) {}
+  OpenIntVarList::OpenIntVarList(Space& home, const IntSet& d,
+                                 Transition t, int max)
+    : OpenIntVarList(home,[d](int) { return d; },t,max) {}
 
-  OpenIntVarSequence::OpenIntVarSequence(Space& home, Domain d, int max)
-    : OpenVarSequence<IntVar>(home,factory(d),max) {}
+  OpenIntVarList::OpenIntVarList(Space& home, Domain d, int max)
+    : OpenVarList<IntVar>(home,factory(d),max) {}
 
-  OpenIntVarSequence::OpenIntVarSequence(Space& home, Domain d,
-                                         Transition t, int max)
-    : OpenVarSequence<IntVar>(home,factory(d),t,max) {}
+  OpenIntVarList::OpenIntVarList(Space& home, Domain d,
+                                 Transition t, int max)
+    : OpenVarList<IntVar>(home,factory(d),t,max) {}
 
-  OpenBoolVarSequence::OpenBoolVarSequence(void) {}
+  OpenBoolVarList::OpenBoolVarList(void) {}
 
-  OpenBoolVarSequence::OpenBoolVarSequence(Space& home, int max)
-    : OpenVarSequence<BoolVar>(home,
+  OpenBoolVarList::OpenBoolVarList(Space& home, int max)
+    : OpenVarList<BoolVar>(home,
         [](Space& home, int) { return BoolVar(home,0,1); },max) {}
 
-  OpenBoolVarSequence::OpenBoolVarSequence(Space& home, Transition t,
-                                           int max)
-    : OpenVarSequence<BoolVar>(home,
+  OpenBoolVarList::OpenBoolVarList(Space& home, Transition t,
+                                   int max)
+    : OpenVarList<BoolVar>(home,
         [](Space& home, int) { return BoolVar(home,0,1); },t,max) {}
 
 }
 
 namespace Gecode { namespace Int {
 
-  class OpenSequencePropagator : public Propagator {
+  class OpenListPropagator : public Propagator {
   protected:
-    OpenIntVarSequence sequence;
+    OpenIntVarList list;
     IntView length;
     int posted;
 
-    OpenSequencePropagator(Home home, OpenIntVarSequence sequence0)
-      : Propagator(home), sequence(sequence0),
-        length(sequence0.length()),
+    OpenListPropagator(Home home, OpenIntVarList list0)
+      : Propagator(home), list(list0),
+        length(list0.length()),
         posted(0) {
       length.subscribe(home,*this,PC_INT_BND);
-      sequence.subscribe(home,*this);
+      list.subscribe(home,*this);
     }
 
-    OpenSequencePropagator(Space& home, OpenSequencePropagator& p)
+    OpenListPropagator(Space& home, OpenListPropagator& p)
       : Propagator(home,p), posted(p.posted) {
-      sequence.update(home,p.sequence);
+      list.update(home,p.list);
       length.update(home,p.length);
     }
 
     bool
     closed(void) const {
-      return length.max() == sequence.size();
+      return length.max() == list.prefix_size();
     }
 
     void
     dispose_base(Space& home) {
       length.cancel(home,*this,PC_INT_BND);
-      sequence.cancel(home,*this);
-      sequence.~OpenIntVarSequence();
+      list.cancel(home,*this);
+      list.~OpenIntVarList();
       (void) Propagator::dispose(home);
     }
 
   public:
     virtual PropCost
     cost(const Space&, const ModEventDelta&) const {
-      return PropCost::linear(PropCost::LO,sequence.size()-posted);
+      return PropCost::linear(PropCost::LO,list.prefix_size()-posted);
     }
 
     virtual void
     reschedule(Space& home) {
       length.reschedule(home,*this,PC_INT_BND);
-      sequence.reschedule(home,*this);
+      list.reschedule(home,*this);
     }
   };
 
 
-  class OpenDistinct : public OpenSequencePropagator {
+  class OpenDistinct : public OpenListPropagator {
   protected:
-    OpenDistinct(Home home, OpenIntVarSequence sequence)
-      : OpenSequencePropagator(home,sequence) {}
+    OpenDistinct(Home home, OpenIntVarList list)
+      : OpenListPropagator(home,list) {}
 
     OpenDistinct(Space& home, OpenDistinct& p)
-      : OpenSequencePropagator(home,p) {}
+      : OpenListPropagator(home,p) {}
 
   public:
     virtual PropCost
     cost(const Space&, const ModEventDelta&) const {
-      return PropCost::linear(PropCost::LO,sequence.size());
+      return PropCost::linear(PropCost::LO,list.prefix_size());
     }
 
     virtual Actor*
@@ -146,10 +146,10 @@ namespace Gecode { namespace Int {
 
     virtual ExecStatus
     propagate(Space& home, const ModEventDelta&) {
-      const int size = sequence.size();
+      const int size = list.prefix_size();
       for (int i=posted; i<size; i++)
-        if (!sequence[i].assigned())
-          IntView(sequence[i]).subscribe(home,*this,PC_INT_VAL,false);
+        if (!list[i].assigned())
+          IntView(list[i]).subscribe(home,*this,PC_INT_VAL,false);
       posted = size;
 
       bool assigned;
@@ -159,8 +159,8 @@ namespace Gecode { namespace Int {
         int* values = region.alloc<int>(size);
         int n = 0;
         for (int i=0; i<size; i++)
-          if (sequence[i].assigned())
-            values[n++] = sequence[i].val();
+          if (list[i].assigned())
+            values[n++] = list[i].val();
         if (n > 1) {
           std::sort(values,values+n);
           for (int i=1; i<n; i++)
@@ -168,8 +168,8 @@ namespace Gecode { namespace Int {
               return ES_FAILED;
         }
         for (int i=0; i<size; i++)
-          if (!sequence[i].assigned()) {
-            IntView x(sequence[i]);
+          if (!list[i].assigned()) {
+            IntView x(list[i]);
             for (int j=0; j<n; j++)
               GECODE_ME_CHECK(x.nq(home,values[j]));
             assigned |= x.assigned();
@@ -178,45 +178,45 @@ namespace Gecode { namespace Int {
 
       bool complete = closed();
       for (int i=0; complete && (i<size); i++)
-        complete = sequence[i].assigned();
+        complete = list[i].assigned();
       return complete ? home.ES_SUBSUMED(*this) : ES_FIX;
     }
 
     virtual void
     reschedule(Space& home) {
-      OpenSequencePropagator::reschedule(home);
+      OpenListPropagator::reschedule(home);
       for (int i=0; i<posted; i++)
-        if (!sequence[i].assigned())
-          IntView(sequence[i]).reschedule(home,*this,PC_INT_VAL);
+        if (!list[i].assigned())
+          IntView(list[i]).reschedule(home,*this,PC_INT_VAL);
     }
 
     virtual size_t
     dispose(Space& home) {
       for (int i=0; i<posted; i++)
-        if (!sequence[i].assigned())
-          IntView(sequence[i]).cancel(home,*this,PC_INT_VAL);
-      OpenSequencePropagator::dispose_base(home);
+        if (!list[i].assigned())
+          IntView(list[i]).cancel(home,*this,PC_INT_VAL);
+      OpenListPropagator::dispose_base(home);
       return sizeof(*this);
     }
 
     static void
-    post(Home home, OpenIntVarSequence sequence) {
-      (void) new (home) OpenDistinct(home,sequence);
+    post(Home home, OpenIntVarList list) {
+      (void) new (home) OpenDistinct(home,list);
     }
   };
 
 
-  class OpenRel : public OpenSequencePropagator {
+  class OpenRel : public OpenListPropagator {
   protected:
     IntRelType irt;
     IntPropLevel ipl;
 
-    OpenRel(Home home, OpenIntVarSequence sequence,
+    OpenRel(Home home, OpenIntVarList list,
             IntRelType irt0, IntPropLevel ipl0)
-      : OpenSequencePropagator(home,sequence), irt(irt0), ipl(ipl0) {}
+      : OpenListPropagator(home,list), irt(irt0), ipl(ipl0) {}
 
     OpenRel(Space& home, OpenRel& p)
-      : OpenSequencePropagator(home,p), irt(p.irt), ipl(p.ipl) {}
+      : OpenListPropagator(home,p), irt(p.irt), ipl(p.ipl) {}
 
   public:
     virtual Actor*
@@ -226,10 +226,10 @@ namespace Gecode { namespace Int {
 
     virtual ExecStatus
     propagate(Space& home, const ModEventDelta&) {
-      const int size = sequence.size();
+      const int size = list.prefix_size();
       const int first = std::max(1,posted);
       for (int i=first; i<size; i++)
-        Gecode::rel(home(*this),sequence[i-1],irt,sequence[i],ipl);
+        Gecode::rel(home(*this),list[i-1],irt,list[i],ipl);
       posted = size;
       if (home.failed())
         return ES_FAILED;
@@ -238,19 +238,19 @@ namespace Gecode { namespace Int {
 
     virtual size_t
     dispose(Space& home) {
-      OpenSequencePropagator::dispose_base(home);
+      OpenListPropagator::dispose_base(home);
       return sizeof(*this);
     }
 
     static void
-    post(Home home, OpenIntVarSequence sequence,
+    post(Home home, OpenIntVarList list,
          IntRelType irt, IntPropLevel ipl) {
-      (void) new (home) OpenRel(home,sequence,irt,ipl);
+      (void) new (home) OpenRel(home,list,irt,ipl);
     }
   };
 
 
-  class OpenSliding : public OpenSequencePropagator {
+  class OpenSliding : public OpenListPropagator {
   protected:
     IntSet values;
     int width;
@@ -258,16 +258,16 @@ namespace Gecode { namespace Int {
     int upper;
     IntPropLevel ipl;
 
-    OpenSliding(Home home, OpenIntVarSequence sequence,
+    OpenSliding(Home home, OpenIntVarList list,
                 const IntSet& values0, int width0,
                 int lower0, int upper0, IntPropLevel ipl0)
-      : OpenSequencePropagator(home,sequence), values(values0),
+      : OpenListPropagator(home,list), values(values0),
         width(width0), lower(lower0), upper(upper0), ipl(ipl0) {
       home.notice(*this,AP_DISPOSE);
     }
 
     OpenSliding(Space& home, OpenSliding& p)
-      : OpenSequencePropagator(home,p), values(p.values),
+      : OpenListPropagator(home,p), values(p.values),
         width(p.width), lower(p.lower), upper(p.upper), ipl(p.ipl) {}
 
   public:
@@ -278,11 +278,11 @@ namespace Gecode { namespace Int {
 
     virtual ExecStatus
     propagate(Space& home, const ModEventDelta&) {
-      const int size = sequence.size();
+      const int size = list.prefix_size();
       for (int end=std::max(width,posted+1); end<=size; end++) {
         IntVarArgs window(width);
         for (int i=0; i<width; i++)
-          window[i] = sequence[end-width+i];
+          window[i] = list[end-width+i];
         Gecode::sequence(home(*this),window,values,width,lower,upper,ipl);
       }
       posted = size;
@@ -295,33 +295,33 @@ namespace Gecode { namespace Int {
     dispose(Space& home) {
       home.ignore(*this,AP_DISPOSE);
       values.~IntSet();
-      OpenSequencePropagator::dispose_base(home);
+      OpenListPropagator::dispose_base(home);
       return sizeof(*this);
     }
 
     static void
-    post(Home home, OpenIntVarSequence sequence, const IntSet& values,
+    post(Home home, OpenIntVarList list, const IntSet& values,
          int width, int lower, int upper, IntPropLevel ipl) {
       (void) new (home)
-        OpenSliding(home,sequence,values,width,lower,upper,ipl);
+        OpenSliding(home,list,values,width,lower,upper,ipl);
     }
   };
 
 
-  class OpenSlidingSum : public OpenSequencePropagator {
+  class OpenSlidingSum : public OpenListPropagator {
   protected:
     int width;
     int lower;
     int upper;
     IntPropLevel ipl;
 
-    OpenSlidingSum(Home home, OpenIntVarSequence sequence,
+    OpenSlidingSum(Home home, OpenIntVarList list,
                    int width0, int lower0, int upper0, IntPropLevel ipl0)
-      : OpenSequencePropagator(home,sequence),
+      : OpenListPropagator(home,list),
         width(width0), lower(lower0), upper(upper0), ipl(ipl0) {}
 
     OpenSlidingSum(Space& home, OpenSlidingSum& p)
-      : OpenSequencePropagator(home,p),
+      : OpenListPropagator(home,p),
         width(p.width), lower(p.lower), upper(p.upper), ipl(p.ipl) {}
 
   public:
@@ -332,11 +332,11 @@ namespace Gecode { namespace Int {
 
     virtual ExecStatus
     propagate(Space& home, const ModEventDelta&) {
-      const int size = sequence.size();
+      const int size = list.prefix_size();
       for (int end=std::max(width,posted+1); end<=size; end++) {
         IntVarArgs window(width);
         for (int i=0; i<width; i++)
-          window[i] = sequence[end-width+i];
+          window[i] = list[end-width+i];
         if (lower == upper) {
           Gecode::linear(home(*this),window,IRT_EQ,lower,ipl);
         } else {
@@ -352,32 +352,32 @@ namespace Gecode { namespace Int {
 
     virtual size_t
     dispose(Space& home) {
-      OpenSequencePropagator::dispose_base(home);
+      OpenListPropagator::dispose_base(home);
       return sizeof(*this);
     }
 
     static void
-    post(Home home, OpenIntVarSequence sequence,
+    post(Home home, OpenIntVarList list,
          int width, int lower, int upper, IntPropLevel ipl) {
       (void) new (home)
-        OpenSlidingSum(home,sequence,width,lower,upper,ipl);
+        OpenSlidingSum(home,list,width,lower,upper,ipl);
     }
   };
 
 
   template<bool min>
-  class OpenMinMax : public OpenSequencePropagator {
+  class OpenMinMax : public OpenListPropagator {
   protected:
     IntView result;
     IntPropLevel ipl;
 
-    OpenMinMax(Home home, OpenIntVarSequence sequence,
+    OpenMinMax(Home home, OpenIntVarList list,
                IntView result0, IntPropLevel ipl0)
-      : OpenSequencePropagator(home,sequence),
+      : OpenListPropagator(home,list),
         result(result0), ipl(ipl0) {}
 
     OpenMinMax(Space& home, OpenMinMax& p)
-      : OpenSequencePropagator(home,p), ipl(p.ipl) {
+      : OpenListPropagator(home,p), ipl(p.ipl) {
       result.update(home,p.result);
     }
 
@@ -389,13 +389,13 @@ namespace Gecode { namespace Int {
 
     virtual ExecStatus
     propagate(Space& home, const ModEventDelta&) {
-      const int size = sequence.size();
+      const int size = list.prefix_size();
       for (int i=posted; i<size; i++)
         if (min)
-          Gecode::rel(home(*this),sequence[i],IRT_GQ,
+          Gecode::rel(home(*this),list[i],IRT_GQ,
                       IntVar(result.varimp()),ipl);
         else
-          Gecode::rel(home(*this),sequence[i],IRT_LQ,
+          Gecode::rel(home(*this),list[i],IRT_LQ,
                       IntVar(result.varimp()),ipl);
       posted = size;
       if (home.failed())
@@ -406,7 +406,7 @@ namespace Gecode { namespace Int {
         return ES_FAILED;
       IntVarArgs variables(size);
       for (int i=0; i<size; i++)
-        variables[i] = sequence[i];
+        variables[i] = list[i];
       if (min)
         Gecode::min(home(*this),variables,IntVar(result.varimp()),ipl);
       else
@@ -418,31 +418,31 @@ namespace Gecode { namespace Int {
 
     virtual size_t
     dispose(Space& home) {
-      OpenSequencePropagator::dispose_base(home);
+      OpenListPropagator::dispose_base(home);
       return sizeof(*this);
     }
 
     static void
-    post(Home home, OpenIntVarSequence sequence,
+    post(Home home, OpenIntVarList list,
          IntView result, IntPropLevel ipl) {
-      (void) new (home) OpenMinMax(home,sequence,result,ipl);
+      (void) new (home) OpenMinMax(home,list,result,ipl);
     }
   };
 
 
-  class OpenPrecede : public OpenSequencePropagator {
+  class OpenPrecede : public OpenListPropagator {
   protected:
     int before;
     int after;
     BoolView seen;
 
-    OpenPrecede(Home home, OpenIntVarSequence sequence,
+    OpenPrecede(Home home, OpenIntVarList list,
                 int before0, int after0)
-      : OpenSequencePropagator(home,sequence),
+      : OpenListPropagator(home,list),
         before(before0), after(after0) {}
 
     OpenPrecede(Space& home, OpenPrecede& p)
-      : OpenSequencePropagator(home,p),
+      : OpenListPropagator(home,p),
         before(p.before), after(p.after) {
       if (posted > 0)
         seen.update(home,p.seen);
@@ -458,17 +458,17 @@ namespace Gecode { namespace Int {
     propagate(Space& home, const ModEventDelta&) {
       if ((posted > 0) && seen.one())
         return home.ES_SUBSUMED(*this);
-      const int size = sequence.size();
+      const int size = list.prefix_size();
       for (int i=posted; i<size; i++) {
         BoolVar is_before(home,0,1);
-        Gecode::rel(home(*this),sequence[i],IRT_EQ,before,
+        Gecode::rel(home(*this),list[i],IRT_EQ,before,
                     Reify(is_before,RM_EQV));
         if (i == 0) {
-          Gecode::rel(home(*this),sequence[i],IRT_NQ,after);
+          Gecode::rel(home(*this),list[i],IRT_NQ,after);
           seen = BoolView(is_before);
         } else {
           BoolVar is_after(home,0,1);
-          Gecode::rel(home(*this),sequence[i],IRT_EQ,after,
+          Gecode::rel(home(*this),list[i],IRT_EQ,after,
                       Reify(is_after,RM_EQV));
           Gecode::rel(home(*this),is_after,IRT_LQ,BoolVar(seen.varimp()));
           BoolVar next(home,0,1);
@@ -484,23 +484,23 @@ namespace Gecode { namespace Int {
 
     virtual size_t
     dispose(Space& home) {
-      OpenSequencePropagator::dispose_base(home);
+      OpenListPropagator::dispose_base(home);
       return sizeof(*this);
     }
 
     static void
-    post(Home home, OpenIntVarSequence sequence, int before, int after) {
-      (void) new (home) OpenPrecede(home,sequence,before,after);
+    post(Home home, OpenIntVarList list, int before, int after) {
+      (void) new (home) OpenPrecede(home,list,before,after);
     }
   };
 
 
   /// Standard view/value selectors over the materialized prefix
   template<class View, int n>
-  class OpenSequenceBrancher : public Brancher {
+  class OpenListBrancher : public Brancher {
   protected:
     typedef typename View::VarType Var;
-    OpenVarSequence<Var> sequence;
+    OpenVarList<Var> list;
     ViewSel<View>* vs[n];
     ValSelCommitBase<View,int>* vsc;
     BrancherFilter<View> filter;
@@ -509,12 +509,12 @@ namespace Gecode { namespace Int {
     IntValBranch::Select values;
     mutable int start;
 
-    OpenSequenceBrancher(Home home, OpenVarSequence<Var> sequence0,
-                         ViewSel<View>* vs0[n],
-                         ValSelCommitBase<View,int>* vsc0,
-                         OpenVarBranch order0, IntValBranch::Select values0,
-                         BranchFilter<Var> bf, VarValPrint<Var,int> vvp)
-      : Brancher(home), sequence(sequence0), vsc(vsc0),
+    OpenListBrancher(Home home, OpenVarList<Var> list0,
+                     ViewSel<View>* vs0[n],
+                     ValSelCommitBase<View,int>* vsc0,
+                     OpenVarBranch order0, IntValBranch::Select values0,
+                     BranchFilter<Var> bf, VarValPrint<Var,int> vvp)
+      : Brancher(home), list(list0), vsc(vsc0),
         filter(bf ? bf : [](const Space&, Var, int) { return true; }),
         printer(vvp), order(order0), values(values0), start(0) {
       for (int i=0; i<n; i++)
@@ -522,11 +522,11 @@ namespace Gecode { namespace Int {
       home.notice(*this,AP_DISPOSE,true);
     }
 
-    OpenSequenceBrancher(Space& home, OpenSequenceBrancher& b)
+    OpenListBrancher(Space& home, OpenListBrancher& b)
       : Brancher(home,b), vsc(nullptr),
         filter(b.filter), printer(b.printer), order(b.order),
         values(b.values), start(b.start) {
-      sequence.update(home,b.sequence);
+      list.update(home,b.list);
       int copied = 0;
       try {
         if (b.vsc)
@@ -546,9 +546,9 @@ namespace Gecode { namespace Int {
     int
     position(Space& home) {
       Region r;
-      ViewArray<View> x(r,sequence.size());
+      ViewArray<View> x(r,list.prefix_size());
       for (int i=0; i<x.size(); i++)
-        x[i] = View(sequence[i]);
+        x[i] = View(list[i]);
       if (n == 1)
         return vs[0]->select(home,x,start,filter);
       int* ties = r.alloc<int>(x.size()-start);
@@ -582,30 +582,30 @@ namespace Gecode { namespace Int {
     virtual bool
     status(const Space& home) const {
       if ((order == OVB_HORIZON_FIRST) &&
-          (sequence.length().max() > sequence.size()))
+          (list.length().max() > list.prefix_size()))
         return true;
-      for (int i=start; i<sequence.size(); i++)
-        if (!sequence[i].assigned() && filter(home,View(sequence[i]),i)) {
+      for (int i=start; i<list.prefix_size(); i++)
+        if (!list[i].assigned() && filter(home,View(list[i]),i)) {
           start = i;
           return true;
         }
-      return sequence.length().max() > sequence.size();
+      return list.length().max() > list.prefix_size();
     }
 
     virtual const Choice*
     choice(Space& home) {
       if ((order == OVB_HORIZON_FIRST) &&
-          (sequence.length().max() > sequence.size()))
-        return new PosValChoice<int>(*this,2,Pos(-1),sequence.size());
-      for (int i=start; i<sequence.size(); i++)
-        if (!sequence[i].assigned() && filter(home,View(sequence[i]),i)) {
+          (list.length().max() > list.prefix_size()))
+        return new PosValChoice<int>(*this,2,Pos(-1),list.prefix_size());
+      for (int i=start; i<list.prefix_size(); i++)
+        if (!list[i].assigned() && filter(home,View(list[i]),i)) {
           start = i;
           const int p = position(home);
-          View x(sequence[p]);
+          View x(list[p]);
           return vsc ? new PosValChoice<int>(*this,2,Pos(p),vsc->val(home,x,p))
                      : value_choice(*this,p,x);
         }
-      return new PosValChoice<int>(*this,2,Pos(-1),sequence.size());
+      return new PosValChoice<int>(*this,2,Pos(-1),list.prefix_size());
     }
 
     virtual const Choice*
@@ -626,7 +626,7 @@ namespace Gecode { namespace Int {
     commit(Space& home, const Choice& c, unsigned int a) {
       const int p = static_cast<const PosChoice&>(c).pos().pos;
       if (p >= 0) {
-        View x(sequence[p]);
+        View x(list[p]);
         const ModEvent me = vsc
           ? vsc->commit(home,a,x,p,static_cast<const PosValChoice<int>&>(c).val())
           : x.eq(home,value(c,a));
@@ -634,9 +634,9 @@ namespace Gecode { namespace Int {
       }
       const int size = static_cast<const PosValChoice<int>&>(c).val();
       if (a == 0)
-        return me_failed(IntView(sequence.length()).eq(home,size))
+        return me_failed(IntView(list.length()).eq(home,size))
           ? ES_FAILED : ES_OK;
-      sequence.materialize(home,size+1);
+      list.materialize(home,size+1);
       return home.failed() ? ES_FAILED : ES_OK;
     }
 
@@ -645,12 +645,12 @@ namespace Gecode { namespace Int {
       const int p = static_cast<const PosChoice&>(c).pos().pos;
       if (p < 0)
         return (a == 0) ? new (home) Branch::EqNGL<IntView>
-          (home,IntView(sequence.length()),
+          (home,IntView(list.length()),
            static_cast<const PosValChoice<int>&>(c).val()) : nullptr;
       // No-good extraction can run in an ancestor with a shorter prefix.
-      if (p >= sequence.size())
+      if (p >= list.prefix_size())
         return nullptr;
-      View x(sequence[p]);
+      View x(list[p]);
       return vsc
         ? vsc->ngl(home,a,x,static_cast<const PosValChoice<int>&>(c).val())
         : new (home) Branch::EqNGL<View>(home,x,value(c,a));
@@ -661,24 +661,24 @@ namespace Gecode { namespace Int {
           std::ostream& o) const {
       const int p = static_cast<const PosChoice&>(c).pos().pos;
       if (p < 0) {
-        o << "sequence length " << ((a == 0) ? "=" : ">") << " "
+        o << "list length " << ((a == 0) ? "=" : ">") << " "
           << static_cast<const PosValChoice<int>&>(c).val();
       } else {
-        View x(sequence[p]);
+        View x(list[p]);
         const int v = vsc ? static_cast<const PosValChoice<int>&>(c).val()
                           : value(c,a);
         if (printer())
-          printer()(home,*this,a,sequence[p],p,v,o);
+          printer()(home,*this,a,list[p],p,v,o);
         else if (vsc)
           vsc->print(home,a,x,p,v,o);
         else
-          o << "sequence[" << p << "] = " << v;
+          o << "list[" << p << "] = " << v;
       }
     }
 
     virtual Actor*
     copy(Space& home) {
-      return new (home) OpenSequenceBrancher(home,*this);
+      return new (home) OpenListBrancher(home,*this);
     }
 
     virtual size_t
@@ -690,14 +690,14 @@ namespace Gecode { namespace Int {
         vsc->dispose(home);
       filter.dispose(home);
       printer.~SharedData<VarValPrint<Var,int>>();
-      sequence.~OpenVarSequence();
+      list.~OpenVarList();
       (void) Brancher::dispose(home);
       return sizeof(*this);
     }
 
     template<class VarBranch>
     static void
-    post(Home home, OpenVarSequence<Var> sequence, VarBranch vars[n],
+    post(Home home, OpenVarList<Var> list, VarBranch vars[n],
          ValSelCommitBase<View,int>* vsc,
          OpenVarBranch order, IntValBranch::Select values,
          BranchFilter<Var> bf, VarValPrint<Var,int> vvp) {
@@ -705,7 +705,7 @@ namespace Gecode { namespace Int {
       for (int i=0; i<n; i++)
         vs[i] = Branch::viewsel(home,vars[i]);
       (void) new (home)
-        OpenSequenceBrancher(home,sequence,vs,vsc,order,values,bf,vvp);
+        OpenListBrancher(home,list,vs,vsc,order,values,bf,vvp);
     }
   };
 
@@ -750,7 +750,7 @@ namespace Gecode { namespace Int {
 
   template<class View, class VarBranch, class ValBranch>
   void
-  post_open_brancher(Home home, OpenVarSequence<typename View::VarType> sequence,
+  post_open_brancher(Home home, OpenVarList<typename View::VarType> list,
                      TieBreak<VarBranch> vars, ValBranch vals,
                      OpenVarBranch order,
                      BranchFilter<typename View::VarType> bf,
@@ -764,11 +764,11 @@ namespace Gecode { namespace Int {
            (selectors[n].select() != VarBranch::SEL_NONE))
       n++;
     typedef typename View::VarType Var;
-    typename ArrayTraits<VarArgArray<Var>>::ArgsType x(sequence.size());
+    typename ArrayTraits<VarArgArray<Var>>::ArgsType x(list.prefix_size());
     for (int i=0; i<x.size(); i++)
-      x[i] = sequence[i];
+      x[i] = list[i];
     for (int i=0; i<n; i++) {
-      check_open_selector(selectors[i],sequence.length().max() > sequence.size());
+      check_open_selector(selectors[i],list.length().max() > list.prefix_size());
       selectors[i].expand(home,x);
     }
     const IntValBranch::Select values =
@@ -776,20 +776,20 @@ namespace Gecode { namespace Int {
     ValSelCommitBase<View,int>* vsc = open_valselcommit(home,vals);
     switch (n) {
     case 1:
-      OpenSequenceBrancher<View,1>::post
-        (home,sequence,selectors,vsc,order,values,bf,vvp);
+      OpenListBrancher<View,1>::post
+        (home,list,selectors,vsc,order,values,bf,vvp);
       break;
     case 2:
-      OpenSequenceBrancher<View,2>::post
-        (home,sequence,selectors,vsc,order,values,bf,vvp);
+      OpenListBrancher<View,2>::post
+        (home,list,selectors,vsc,order,values,bf,vvp);
       break;
     case 3:
-      OpenSequenceBrancher<View,3>::post
-        (home,sequence,selectors,vsc,order,values,bf,vvp);
+      OpenListBrancher<View,3>::post
+        (home,list,selectors,vsc,order,values,bf,vvp);
       break;
     case 4:
-      OpenSequenceBrancher<View,4>::post
-        (home,sequence,selectors,vsc,order,values,bf,vvp);
+      OpenListBrancher<View,4>::post
+        (home,list,selectors,vsc,order,values,bf,vvp);
       break;
     }
   }
@@ -799,13 +799,13 @@ namespace Gecode { namespace Int {
 namespace Gecode {
 
   void
-  distinct(Home home, OpenIntVarSequence sequence, IntPropLevel) {
+  distinct(Home home, OpenIntVarList list, IntPropLevel) {
     GECODE_POST;
-    Int::OpenDistinct::post(home,sequence);
+    Int::OpenDistinct::post(home,list);
   }
 
   void
-  rel(Home home, OpenIntVarSequence sequence,
+  rel(Home home, OpenIntVarList list,
       IntRelType irt, IntPropLevel ipl) {
     switch (irt) {
     case IRT_EQ:
@@ -819,19 +819,19 @@ namespace Gecode {
       throw Int::UnknownRelation("Int::rel");
     }
     GECODE_POST;
-    Int::OpenRel::post(home,sequence,irt,ipl);
+    Int::OpenRel::post(home,list,irt,ipl);
   }
 
   void
-  sequence(Home home, OpenIntVarSequence x, const IntSet& values,
+  sequence(Home home, OpenIntVarList x, const IntSet& values,
            int width, int lower, int upper, IntPropLevel ipl) {
-    Int::Limits::check(values.min(),"Int::sequence");
-    Int::Limits::check(values.max(),"Int::sequence");
-    Int::Limits::check(width,"Int::sequence");
-    Int::Limits::check(lower,"Int::sequence");
-    Int::Limits::check(upper,"Int::sequence");
+    Int::Limits::check(values.min(),"Int::list");
+    Int::Limits::check(values.max(),"Int::list");
+    Int::Limits::check(width,"Int::list");
+    Int::Limits::check(lower,"Int::list");
+    Int::Limits::check(upper,"Int::list");
     if (width < 1)
-      throw Int::OutOfLimits("Int::sequence");
+      throw Int::OutOfLimits("Int::list");
     GECODE_POST;
     lower = std::max(0,lower);
     upper = std::min(width,upper);
@@ -845,7 +845,7 @@ namespace Gecode {
   }
 
   void
-  slidingsum(Home home, OpenIntVarSequence sequence,
+  slidingsum(Home home, OpenIntVarList list,
              int width, int lower, int upper, IntPropLevel ipl) {
     Int::Limits::check(width,"Int::slidingsum");
     Int::Limits::check(lower,"Int::slidingsum");
@@ -854,37 +854,37 @@ namespace Gecode {
       throw Int::OutOfLimits("Int::slidingsum");
     GECODE_POST;
     if (upper < lower) {
-      rel(home,sequence.length(),IRT_LE,width);
+      rel(home,list.length(),IRT_LE,width);
       return;
     }
-    Int::OpenSlidingSum::post(home,sequence,width,lower,upper,ipl);
+    Int::OpenSlidingSum::post(home,list,width,lower,upper,ipl);
   }
 
   void
-  min(Home home, OpenIntVarSequence sequence,
+  min(Home home, OpenIntVarList list,
       IntVar result, IntPropLevel ipl) {
     GECODE_POST;
-    Int::OpenMinMax<true>::post(home,sequence,Int::IntView(result),ipl);
+    Int::OpenMinMax<true>::post(home,list,Int::IntView(result),ipl);
   }
 
   void
-  max(Home home, OpenIntVarSequence sequence,
+  max(Home home, OpenIntVarList list,
       IntVar result, IntPropLevel ipl) {
     GECODE_POST;
-    Int::OpenMinMax<false>::post(home,sequence,Int::IntView(result),ipl);
+    Int::OpenMinMax<false>::post(home,list,Int::IntView(result),ipl);
   }
 
   void
-  precede(Home home, OpenIntVarSequence sequence,
+  precede(Home home, OpenIntVarList list,
           int before, int after, IntPropLevel) {
     Int::Limits::check(before,"Int::precede");
     Int::Limits::check(after,"Int::precede");
     GECODE_POST;
-    Int::OpenPrecede::post(home,sequence,before,after);
+    Int::OpenPrecede::post(home,list,before,after);
   }
 
   void
-  precede(Home home, OpenIntVarSequence sequence,
+  precede(Home home, OpenIntVarList list,
           const IntArgs& values, IntPropLevel ipl) {
     if (values.size() < 2)
       return;
@@ -892,48 +892,48 @@ namespace Gecode {
       Int::Limits::check(values[i],"Int::precede");
     GECODE_POST;
     for (int i=values.size()-1; i--; )
-      Int::OpenPrecede::post(home,sequence,values[i],values[i+1]);
+      Int::OpenPrecede::post(home,list,values[i],values[i+1]);
     (void) ipl;
   }
 
   void
-  branch(Home home, OpenIntVarSequence sequence, OpenVarBranch order) {
-    branch(home,sequence,INT_VAR_NONE(),INT_VAL_MIN(),order);
+  branch(Home home, OpenIntVarList list, OpenVarBranch order) {
+    branch(home,list,INT_VAR_NONE(),INT_VAL_MIN(),order);
   }
 
   void
-  branch(Home home, OpenBoolVarSequence sequence, OpenVarBranch order) {
-    branch(home,sequence,BOOL_VAR_NONE(),BOOL_VAL_MIN(),order);
+  branch(Home home, OpenBoolVarList list, OpenVarBranch order) {
+    branch(home,list,BOOL_VAR_NONE(),BOOL_VAL_MIN(),order);
   }
 
   void
-  branch(Home home, OpenIntVarSequence sequence,
+  branch(Home home, OpenIntVarList list,
          IntVarBranch vars, IntValBranch vals, OpenVarBranch order,
          IntBranchFilter bf, IntVarValPrint vvp) {
-    branch(home,sequence,TieBreak<IntVarBranch>(vars),vals,order,bf,vvp);
+    branch(home,list,TieBreak<IntVarBranch>(vars),vals,order,bf,vvp);
   }
 
   void
-  branch(Home home, OpenIntVarSequence sequence,
+  branch(Home home, OpenIntVarList list,
          TieBreak<IntVarBranch> vars, IntValBranch vals, OpenVarBranch order,
          IntBranchFilter bf, IntVarValPrint vvp) {
     GECODE_POST;
-    Int::post_open_brancher<Int::IntView>(home,sequence,vars,vals,order,bf,vvp);
+    Int::post_open_brancher<Int::IntView>(home,list,vars,vals,order,bf,vvp);
   }
 
   void
-  branch(Home home, OpenBoolVarSequence sequence,
+  branch(Home home, OpenBoolVarList list,
          BoolVarBranch vars, BoolValBranch vals, OpenVarBranch order,
          BoolBranchFilter bf, BoolVarValPrint vvp) {
-    branch(home,sequence,TieBreak<BoolVarBranch>(vars),vals,order,bf,vvp);
+    branch(home,list,TieBreak<BoolVarBranch>(vars),vals,order,bf,vvp);
   }
 
   void
-  branch(Home home, OpenBoolVarSequence sequence,
+  branch(Home home, OpenBoolVarList list,
          TieBreak<BoolVarBranch> vars, BoolValBranch vals, OpenVarBranch order,
          BoolBranchFilter bf, BoolVarValPrint vvp) {
     GECODE_POST;
-    Int::post_open_brancher<Int::BoolView>(home,sequence,vars,vals,order,bf,vvp);
+    Int::post_open_brancher<Int::BoolView>(home,list,vars,vals,order,bf,vvp);
   }
 
 }

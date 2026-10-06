@@ -852,17 +852,17 @@ namespace Test { namespace Int {
      class OpenRegularSpace : public Gecode::Space {
      public:
        Gecode::IntVarArray x;
-       Gecode::OpenIntVarSequence sequence;
+       Gecode::OpenIntVarList list;
 
        OpenRegularSpace(Gecode::DFA d, int max=8)
-         : x(*this,3,0,2), sequence(*this,max) {
-         Gecode::extensional(*this,sequence,d);
+         : x(*this,3,0,2), list(*this,max) {
+         Gecode::extensional(*this,list,d);
        }
 
        OpenRegularSpace(OpenRegularSpace& s)
          : Gecode::Space(s) {
          x.update(*this,s.x);
-         sequence.update(*this,s.sequence);
+         list.update(*this,s.list);
        }
 
        virtual Gecode::Space*
@@ -871,69 +871,69 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Space used by open sequence materialization tests
-     class OpenSequenceSpace : public Gecode::Space {
+     /// Space used by open list materialization tests
+     class OpenListSpace : public Gecode::Space {
      public:
-       Gecode::OpenIntVarSequence sequence;
+       Gecode::OpenIntVarList list;
 
-       OpenSequenceSpace(void)
-         : sequence(*this,
+       OpenListSpace(void)
+         : list(*this,
              [](int i) {
                return Gecode::IntSet(i,i);
              },6) {}
 
-       OpenSequenceSpace(OpenSequenceSpace& s)
+       OpenListSpace(OpenListSpace& s)
          : Gecode::Space(s) {
-         sequence.update(*this,s.sequence);
+         list.update(*this,s.list);
        }
 
        virtual Gecode::Space*
        copy(void) {
-         return new OpenSequenceSpace(*this);
+         return new OpenListSpace(*this);
        }
      };
 
-     /// Test automatic and explicit sequence materialization
-     class OpenSequenceMaterialize : public ::Test::Base {
+     /// Test automatic and explicit list materialization
+     class OpenListMaterialize : public ::Test::Base {
      public:
-       OpenSequenceMaterialize(void)
-         : ::Test::Base("Int::OpenSequence::Materialize") {}
+       OpenListMaterialize(void)
+         : ::Test::Base("Int::OpenList::Materialize") {}
 
        virtual bool
        run(void) {
          using namespace Gecode;
-         OpenSequenceSpace source;
-         rel(source,source.sequence.length(),IRT_GQ,3);
+         OpenListSpace source;
+         rel(source,source.list.length(),IRT_GQ,3);
          if ((source.status() == SS_FAILED) ||
-             (source.sequence.size() != 3))
+             (source.list.prefix_size() != 3))
            return false;
          for (int i=0; i<3; i++)
-           if (!source.sequence[i].assigned() ||
-               (source.sequence[i].val() != i))
+           if (!source.list[i].assigned() ||
+               (source.list[i].val() != i))
              return false;
 
-         OpenSequenceSpace* clone =
-           static_cast<OpenSequenceSpace*>(source.clone());
-         rel(*clone,clone->sequence.length(),IRT_GQ,5);
+         OpenListSpace* clone =
+           static_cast<OpenListSpace*>(source.clone());
+         rel(*clone,clone->list.length(),IRT_GQ,5);
          const bool clone_ok =
            (clone->status() != SS_FAILED) &&
-           (clone->sequence.size() == 5) &&
-           clone->sequence[4].assigned() &&
-           (clone->sequence[4].val() == 4);
+           (clone->list.prefix_size() == 5) &&
+           clone->list[4].assigned() &&
+           (clone->list[4].val() == 4);
          delete clone;
-         if (!clone_ok || (source.sequence.size() != 3))
+         if (!clone_ok || (source.list.prefix_size() != 3))
            return false;
 
-         OpenSequenceSpace direct;
-         IntVar x = direct.sequence.get(direct,3);
-         return (direct.sequence.size() == 4) &&
-                (direct.sequence.length().min() == 4) &&
+         OpenListSpace direct;
+         IntVar x = direct.list.get(direct,3);
+         return (direct.list.prefix_size() == 4) &&
+                (direct.list.length().min() == 4) &&
                 x.assigned() && (x.val() == 3) &&
                 (direct.status() != SS_FAILED);
        }
      };
 
-     /// Test appending and closing an open regular sequence
+     /// Test appending and closing an open regular list
      class OpenRegularIncremental : public ::Test::Base {
      public:
        OpenRegularIncremental(void)
@@ -947,18 +947,18 @@ namespace Test { namespace Int {
 
          if (s.status() == SS_FAILED)
            return false;
-         s.sequence.append(s,s.x[0]);
+         s.list.append(s,s.x[0]);
          if ((s.status() == SS_FAILED) ||
              !s.x[0].assigned() || (s.x[0].val() != 0))
            return false;
-         s.sequence.append(s,s.x[1]);
+         s.list.append(s,s.x[1]);
          if ((s.status() == SS_FAILED) ||
              !s.x[1].assigned() || (s.x[1].val() != 1))
            return false;
-         s.sequence.close(s);
+         s.list.close(s);
          return (s.status() != SS_FAILED) &&
-                s.sequence.length().assigned() &&
-                (s.sequence.length().val() == 2);
+                s.list.length().assigned() &&
+                (s.list.length().val() == 2);
        }
      };
 
@@ -973,14 +973,14 @@ namespace Test { namespace Int {
          using namespace Gecode;
          DFA d(0,{{0,0,1},{1,1,2}},{2},false);
          OpenRegularSpace s(d,3);
-         rel(s,s.sequence.length(),IRT_GQ,2);
+         rel(s,s.list.length(),IRT_GQ,2);
          if (s.status() == SS_FAILED)
            return false;
-         return (s.sequence.size() == 2) &&
-                s.sequence[0].assigned() &&
-                (s.sequence[0].val() == 0) &&
-                s.sequence[1].assigned() &&
-                (s.sequence[1].val() == 1);
+         return (s.list.prefix_size() == 2) &&
+                s.list[0].assigned() &&
+                (s.list[0].val() == 0) &&
+                s.list[1].assigned() &&
+                (s.list[1].val() == 1);
        }
      };
 
@@ -1002,11 +1002,11 @@ namespace Test { namespace Int {
                {5},false);
          OpenRegularSpace s(d);
          rel(s,s.x[1],IRT_EQ,0);
-         s.sequence.append(s,s.x[0]);
+         s.list.append(s,s.x[0]);
          if ((s.status() == SS_FAILED) ||
              (s.x[0].min() != 0) || (s.x[0].max() != 1))
            return false;
-         s.sequence.append(s,s.x[1]);
+         s.list.append(s,s.x[1]);
          return (s.status() != SS_FAILED) &&
                 s.x[0].assigned() && (s.x[0].val() == 0);
        }
@@ -1029,8 +1029,8 @@ namespace Test { namespace Int {
                },
                {5},false);
          OpenRegularSpace s(d);
-         s.sequence.append(s,s.x[0]);
-         s.sequence.append(s,s.x[1]);
+         s.list.append(s,s.x[0]);
+         s.list.append(s,s.x[1]);
          if ((s.status() == SS_FAILED) || s.x[0].assigned())
            return false;
          rel(s,s.x[1],IRT_EQ,0);
@@ -1050,27 +1050,27 @@ namespace Test { namespace Int {
          using namespace Gecode;
          DFA d(0,{{0,0,1},{1,1,2}},{2},false);
          OpenRegularSpace source(d);
-         source.sequence.append(source,source.x[0]);
+         source.list.append(source,source.x[0]);
          if (source.status() == SS_FAILED)
            return false;
 
          OpenRegularSpace* clone =
            static_cast<OpenRegularSpace*>(source.clone());
-         clone->sequence.append(*clone,clone->x[1]);
-         clone->sequence.close(*clone);
+         clone->list.append(*clone,clone->x[1]);
+         clone->list.close(*clone);
          const bool clone_ok =
            (clone->status() != SS_FAILED) &&
-           (clone->sequence.size() == 2);
+           (clone->list.prefix_size() == 2);
          delete clone;
 
-         source.sequence.close(source);
+         source.list.close(source);
          const bool source_failed = source.status() == SS_FAILED;
          return clone_ok && source_failed &&
-                (source.sequence.size() == 1);
+                (source.list.prefix_size() == 1);
        }
      };
 
-     /// Test closing an empty sequence
+     /// Test closing an empty list
      class OpenRegularEmpty : public ::Test::Base {
      public:
        OpenRegularEmpty(void)
@@ -1080,13 +1080,13 @@ namespace Test { namespace Int {
        run(void) {
          using namespace Gecode;
          OpenRegularSpace accepts{DFA()};
-         accepts.sequence.close(accepts);
+         accepts.list.close(accepts);
          if (accepts.status() == SS_FAILED)
            return false;
 
          DFA d(0,{{0,0,1}},{1},false);
          OpenRegularSpace rejects(d);
-         rejects.sequence.close(rejects);
+         rejects.list.close(rejects);
          if (rejects.status() != SS_FAILED)
            return false;
 
@@ -1100,17 +1100,17 @@ namespace Test { namespace Int {
      class OpenRegularComparisonSpace : public Gecode::Space {
      public:
        Gecode::IntVarArray x;
-       Gecode::OpenIntVarSequence sequence;
+       Gecode::OpenIntVarList list;
 
        OpenRegularComparisonSpace(Gecode::DFA d, bool open,
                                   int m0, int m1, int m2)
-         : x(*this,3,0,2), sequence(*this,3) {
+         : x(*this,3,0,2), list(*this,3) {
          using namespace Gecode;
          if (open) {
            for (int i=0; i<x.size(); i++)
-             sequence.append(*this,x[i]);
-           sequence.close(*this);
-           extensional(*this,sequence,d);
+             list.append(*this,x[i]);
+           list.close(*this);
+           extensional(*this,list,d);
          } else {
            extensional(*this,x,d);
          }
@@ -1124,7 +1124,7 @@ namespace Test { namespace Int {
        OpenRegularComparisonSpace(OpenRegularComparisonSpace& s)
          : Gecode::Space(s) {
          x.update(*this,s.x);
-         sequence.update(*this,s.sequence);
+         list.update(*this,s.list);
        }
 
        virtual Gecode::Space*
@@ -2959,7 +2959,7 @@ namespace Test { namespace Int {
      RegNoAcceptingPath reg_sparse_no_accepting_path;
      RegTerminalMerged reg_sparse_terminal_merged;
      RegTerminalUnmerged reg_sparse_terminal_unmerged;
-     OpenSequenceMaterialize open_sequence_materialize;
+     OpenListMaterialize open_list_materialize;
      OpenRegularIncremental open_regular_incremental;
      OpenRegularLengthWake open_regular_length_wake;
      OpenRegularBackward open_regular_backward;
