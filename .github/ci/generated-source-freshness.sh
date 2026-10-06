@@ -139,9 +139,13 @@ ensure_autoconf() {
   mkdir -p "$tools_root"
   autoconf_build_root=$(mktemp -d "$temp_root/gecode-autoconf-build.XXXXXX")
   archive="$autoconf_build_root/autoconf-$autoconf_version.tar.gz"
-  curl --fail --silent --show-error --location --retry 3 \
-    --output "$archive" \
-    "https://ftp.gnu.org/gnu/autoconf/autoconf-$autoconf_version.tar.gz"
+  if ! curl --fail --silent --show-error --location --retry 3 \
+      --connect-timeout 15 --max-time 120 --output "$archive" \
+      "https://mirrors.kernel.org/gnu/autoconf/autoconf-$autoconf_version.tar.gz"; then
+    curl --fail --silent --show-error --location --retry 3 \
+      --connect-timeout 15 --max-time 120 --output "$archive" \
+      "https://ftp.gnu.org/gnu/autoconf/autoconf-$autoconf_version.tar.gz"
+  fi
   if command -v shasum >/dev/null 2>&1; then
     printf '%s  %s\n' "$autoconf_sha256" "$archive" | shasum -a 256 -c -
   else
