@@ -75,7 +75,7 @@ namespace Gecode { namespace Search {
 
   template<class Worker>
   WorkerToEngine<Worker>::WorkerToEngine(Space* s, const Options& o)
-    : w(s,o) {}
+    : Engine(o,1U), w(s,o) {}
   template<class Worker>
   Space*
   WorkerToEngine<Worker>::next(void) {

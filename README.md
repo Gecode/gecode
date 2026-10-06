@@ -19,6 +19,9 @@ In particular,
 Gecode comes with
 [extensive tutorial and reference documentation](https://gecode.github.io/documentation.html).
 
+The [adjustable-worker guide](docs/worker-control.md) describes external,
+asynchronous control of parallel-search worker allocation.
+
 ## CMake Build Options
 
 CMake exposes options aligned with the Autoconf build switches.

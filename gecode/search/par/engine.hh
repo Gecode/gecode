@@ -41,6 +41,7 @@
 #include <gecode/search.hh>
 #include <gecode/search/support.hh>
 #include <gecode/search/worker.hh>
+#include <gecode/search/worker-control.hh>
 #include <gecode/search/par/path.hh>
 #include <atomic>
 
@@ -86,11 +87,74 @@ namespace Gecode { namespace Search { namespace Par {
     };
     /// Search options
     Options _opt;
+    /**
+     * \brief Logical worker state used by adjustable parallel admission
+     *
+     * Construction and reset count every worker in n_busy. A pending worker
+     * must receive a lease and report idle even if it starts without a tree.
+     */
+    enum class SchedulerLogical {
+      /// Owns local search or has not yet reported its exhaustion
+      OWNER,
+      /// Has not yet reported its initial idle state
+      PENDING,
+      /// Has reported idle and owns no local search
+      IDLE
+    };
+    /// Per-worker adjustable parallel admission state
+    struct SchedulerWorker {
+      /// Permission to execute exploration actions
+      bool lease;
+      /// Waiting or due to wait for admission
+      bool parked;
+      SchedulerLogical logical;
+    };
+    /// Whether adjustable parallel admission is enabled
+    bool scheduler_enabled;
+    /// Unchanged-capacity admission fast path
+    const std::atomic<bool>* scheduler_fast_admit;
+    /**
+     * \brief Mutex for adjustable parallel admission
+     *
+     * Protects scheduler_worker, scheduler_requested, scheduler_leases, and
+     * scheduler_cursor. Initial setup runs before worker threads start;
+     * scheduler_enabled and scheduler_fast_admit remain fixed after setup.
+     */
+    Support::Mutex scheduler_mutex;
+    /// Per-worker adjustable parallel admission state
+    SchedulerWorker* scheduler_worker;
+    /// Current requested lease count
+    unsigned int scheduler_requested;
+    /// Current lease count
+    unsigned int scheduler_leases;
+    /// Round-robin cursor for lease handoff
+    unsigned int scheduler_cursor;
+    /// Last request generation reconciled by the scheduler
+    std::atomic<unsigned long long int> scheduler_generation;
+    /// Select a no-lease worker by logical state (scheduler_mutex held)
+    unsigned int scheduler_select(SchedulerLogical logical,
+                                  unsigned int exclude) const;
+    /// Grant leases up to the current request (scheduler_mutex held)
+    bool scheduler_grow(void);
   public:
     /// Provide access to search options
     const Options& opt(void) const;
     /// Return number of workers
     unsigned int workers(void) const;
+    /// Enable adjustable parallel admission
+    void scheduler_enable(bool root_owner);
+    /// Reset adjustable parallel state while all workers are blocked
+    void scheduler_reset(bool root_owner);
+    /// Admit worker \a worker for one exploration action
+    bool scheduler_admit(unsigned int worker);
+    /// Whether the external worker request currently pauses the engine
+    bool scheduler_paused(void) const;
+    /// Record that worker \a worker owns search
+    void scheduler_owner(unsigned int worker);
+    /// Record that worker \a worker is idle
+    void scheduler_idle(unsigned int worker);
+    /// Hand worker \a worker's lease to a parked logical worker
+    void scheduler_handoff(unsigned int worker, bool work_remains);
 
     /// \name Commands from engine to workers and wait management
     //@{
@@ -187,6 +251,8 @@ namespace Gecode { namespace Search { namespace Par {
     void busy(void);
     /// Report that worker has been stopped
     void stop(void);
+    /// Whether logical search work remains
+    bool work_remains(void);
     //@}
 
     /// \name Engine interface

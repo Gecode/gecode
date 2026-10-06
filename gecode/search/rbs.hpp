@@ -35,6 +35,7 @@
 
 #include <gecode/search/support.hh>
 #include <gecode/search/seq/dead.hh>
+#include <memory>
 
 namespace Gecode { namespace Search { namespace Seq {
 
@@ -85,8 +86,10 @@ namespace Gecode {
       throw Search::UninitializedCutoff("RBS::RBS");
     Search::Options e_opt(m_opt.expand());
     Search::Statistics stat;
-    e_opt.clone = false;
-    e_opt.stop  = Search::Seq::rbsstop(m_opt.stop);
+    std::unique_ptr<Search::Stop> stop(Search::Seq::rbsstop(m_opt.stop));
+    e_opt.stop = stop.get();
+    // Retain the seed while a potentially nested builder owns its clone.
+    e_opt.clone = true;
     Search::WrapTraceRecorder::engine(e_opt.tracer,
                                       SearchTracer::EngineType::RBS, 1U);
     if (s->status(stat) == SS_FAILED) {
@@ -95,13 +98,17 @@ namespace Gecode {
         delete s;
       e = Search::Seq::dead(e_opt, stat);
     } else {
-      Space* master = m_opt.clone ? s->clone() : s;
-      Space* slave  = master->clone();
+      std::unique_ptr<Space> master(m_opt.clone ? s->clone() : s);
+      std::unique_ptr<Space> slave(master->clone());
       MetaInfo mi(0,MetaInfo::RR_INIT,0,0,nullptr,NoGoods::eng);
       slave->slave(mi);
-      e = Search::Seq::rbsengine(master,e_opt.stop,
-                                 Search::build<T,E>(slave,e_opt),
-                                 stat,m_opt,E<T>::best);
+      std::unique_ptr<Search::Engine> leaf(
+        Search::build<T,E>(slave.get(),e_opt));
+      e = Search::Seq::rbsengine(master.get(),stop.get(),leaf.get(),
+                                stat,m_opt,E<T>::best);
+      master.release();
+      stop.release();
+      leaf.release();
     }
   }
 
