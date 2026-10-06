@@ -417,3 +417,5 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   }
 
 }}}
+
+// STATISTICS: int-prop

@@ -34,7 +34,7 @@
 
 namespace Gecode { namespace Int { namespace Arithmetic {
 
-  /// Multiply intervals exactly, rejecting overflow rather than clipping.
+  /// Multiply intervals exactly; saturation would make modular deductions unsound.
   inline bool
   product_mod_interval_mul(ProductInterval a, ProductInterval b,
                            ProductInterval& p) {
@@ -912,3 +912,5 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   }
 
 }}}
+
+// STATISTICS: int-prop

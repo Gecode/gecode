@@ -3059,8 +3059,8 @@ namespace Gecode {
    * Divisibility means that an integer \f$k\f$ exists such that
    * \f$dividend=divisor\cdot k\f$. Consequently, zero divides zero, but
    * zero does not divide a nonzero integer. Supports all reification modes.
-   * Uses bounds and conservative algebraic propagation. The propagation
-   * level \a ipl is currently ignored.
+   * Uses bounds and conservative algebraic propagation; bounds consistency
+   * is not guaranteed. The propagation level \a ipl is currently ignored.
    */
   GECODE_INT_EXPORT void
   divides(Home home, IntVar divisor, IntVar dividend, Reify r,
@@ -3094,7 +3094,8 @@ namespace Gecode {
    * Euclidean residue in the range zero through \a m minus one. The product
    * of an empty array is one.
    * Unlike mod(), a negative product still has a nonnegative residue.
-   * Uses bounds and algebraic propagation; \a ipl is currently ignored.
+   * Uses bounds and algebraic propagation, without guaranteeing bounds
+   * consistency. The propagation level \a ipl is currently ignored.
    * Throws Int::OutOfLimits if \a m is nonpositive or exceeds Int::Limits::max.
    * \ingroup TaskModelInt
    */
@@ -3107,8 +3108,8 @@ namespace Gecode {
    * The modulus \a m must be positive. The result uses the canonical
    * Euclidean residue in the range zero through \a m minus one. The product
    * of an empty array is one.
-   * Supports all reification modes using conservative algebraic tests;
-   * \a ipl is currently ignored.
+   * Supports all reification modes using conservative algebraic tests,
+   * without guaranteeing bounds consistency; \a ipl is currently ignored.
    * Throws Int::OutOfLimits if \a m is nonpositive or exceeds Int::Limits::max,
    * even for an inactive implication.
    * \ingroup TaskModelInt
@@ -3122,7 +3123,8 @@ namespace Gecode {
    * The variable modulus \a m is constrained to be positive and \a y uses
    * the canonical Euclidean residue, so that \f$0\leq y<m\f$. The product
    * of an empty array is one.
-   * Uses bounds and algebraic propagation; \a ipl is currently ignored.
+   * Uses bounds and algebraic propagation, without guaranteeing bounds
+   * consistency. The propagation level \a ipl is currently ignored.
    * \ingroup TaskModelInt
    */
   GECODE_INT_EXPORT void
@@ -3134,9 +3136,9 @@ namespace Gecode {
    * The reified proposition includes \f$m>0\f$, the canonical range
    * \f$0\leq y<m\f$, and congruence with the product. The product of an
    * empty array is one.
-   * Supports all reification modes using conservative algebraic tests;
-   * \a ipl is currently ignored. An inactive implication does not constrain
-   * the modulus or result.
+   * Supports all reification modes using conservative algebraic tests,
+   * without guaranteeing bounds consistency; \a ipl is currently ignored.
+   * An inactive implication does not constrain the modulus or result.
    * \ingroup TaskModelInt
    */
   GECODE_INT_EXPORT void
