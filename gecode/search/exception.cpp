@@ -48,6 +48,15 @@ namespace Gecode { namespace Search {
   NoBest::NoBest(const char* l)
     : Exception(l,"Best solution search is not supported") {}
 
+  InvalidWorkerRequest::InvalidWorkerRequest(const char* l)
+    : Exception(l,"Invalid number of requested search workers") {}
+
+  UninitializedWorkerControl::UninitializedWorkerControl(const char* l)
+    : Exception(l,"Worker control is not initialized") {}
+
+  WorkerControlInUse::WorkerControlInUse(const char* l)
+    : Exception(l,"Worker control is already bound or has unsupported engine placement") {}
+
 }}
 
 // STATISTICS: search-other

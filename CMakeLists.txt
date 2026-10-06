@@ -1429,6 +1429,8 @@ if(BUILD_TESTING)
       Int::Linear::Bool::Int::Lq
       Int::MiniModel::LinExpr::Bool::352
       NoGoods::Queens
+      Search::PBS::ConstructionFailure
+      Search::WorkerControl::
       Search::DFS::Sol::Binary::Nary::Binary::1::1::1)
     if(GECODE_ENABLE_FLATZINC)
       list(INSERT GECODE_CHECK_TESTS 1

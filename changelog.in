@@ -74,6 +74,7 @@ Date: unreleased
 This is the development changelog for the next Gecode release.
 
 [ENTRY]
+
 Module: int
 What:   performance
 Rank:   major
@@ -83,6 +84,16 @@ checking for fixed-processing tasks to detect conflicts missed by ordinary
 overload checking. The algorithm is described in:
 S. Cloutier, C.-G. Quimper, Augmenting the Cumulative Overload Check
 with Integral Resource Usage Reasoning, CP 2026.
+
+Module: search
+What:   new
+Rank:   major
+[DESCRIPTION]
+Add Search::WorkerControl for asynchronously adjusting how many pre-created
+workers a parallel DFS or BAB engine may execute. Controls also apply to leaf
+engines owned by RBS and PBS. Callers can redistribute a fixed worker budget
+without rebuilding the engines. Requesting zero pauses an engine without
+discarding its search state or holding a PBS round open.
 
 [RELEASE]
 Version: 6.4.0

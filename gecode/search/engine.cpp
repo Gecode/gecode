@@ -32,8 +32,17 @@
  */
 
 #include <gecode/search.hh>
+#include <gecode/search/worker-control.hh>
 
 namespace Gecode { namespace Search {
+
+  Engine::Engine(void)
+    : worker_control() {}
+
+  Engine::Engine(const Options& o, unsigned int capacity)
+    : worker_control(o.worker_control) {
+    WorkerControlAccess::attach(worker_control,capacity);
+  }
 
   void
   Engine::constrain(const Space& b) {
@@ -47,6 +56,10 @@ namespace Gecode { namespace Search {
   NoGoods&
   Engine::nogoods(void) {
     return NoGoods::eng;
+  }
+
+  Engine::~Engine(void) {
+    WorkerControlAccess::detach(worker_control);
   }
 
 }}

@@ -37,9 +37,15 @@
 
 #include <gecode/minimodel.hh>
 #include <gecode/search.hh>
+#include <gecode/search/worker-control.hh>
 
 #include "test/test.hh"
 
+#include <atomic>
+#include <chrono>
+#include <future>
+#include <memory>
+#include <thread>
 #include <type_traits>
 
 static_assert(std::is_copy_constructible<Gecode::NoGoods>::value,
@@ -62,6 +68,12 @@ static_assert(std::is_copy_constructible<Gecode::Search::RestartStop>::value,
               "RestartStop must remain copy constructible");
 static_assert(std::is_copy_assignable<Gecode::Search::RestartStop>::value,
               "RestartStop must remain copy assignable");
+static_assert(
+  std::is_copy_constructible<Gecode::Search::WorkerControl>::value,
+  "WorkerControl must remain copy constructible");
+static_assert(
+  std::is_copy_assignable<Gecode::Search::WorkerControl>::value,
+  "WorkerControl must remain copy assignable");
 
 namespace Test {
 
@@ -381,6 +393,355 @@ namespace Test {
           htb1(_htb1), htb2(_htb2), htb3(_htb3), htc(_htc) {}
     };
 
+    /// Randomly resize a live leaf engine from another thread
+    class WorkerResizer {
+    private:
+      Gecode::Search::WorkerControl control;
+      unsigned int capacity;
+      std::atomic<bool> done;
+      std::thread worker;
+      void resize(unsigned int seed) {
+        Gecode::Support::RandomGenerator rand(seed);
+        while (!done.load(std::memory_order_acquire)) {
+          control.request(rand(capacity+1U));
+          std::this_thread::yield();
+        }
+      }
+    public:
+      WorkerResizer(const Gecode::Search::WorkerControl& control0,
+                    unsigned int capacity0, unsigned int seed, bool enabled)
+        : control(control0), capacity(capacity0), done(false) {
+        if (enabled)
+          worker = std::thread(&WorkerResizer::resize,this,seed);
+      }
+      ~WorkerResizer(void) {
+        done.store(true,std::memory_order_release);
+        if (worker.joinable())
+          worker.join();
+      }
+    };
+
+    /// Return the effective leaf capacity for this build
+    static unsigned int
+    worker_capacity(unsigned int threads) {
+#ifdef GECODE_HAS_THREADS
+      return threads;
+#else
+      (void) threads;
+      return 1U;
+#endif
+    }
+
+    /// Track seeds and engine clones through nested construction failures
+    class PortfolioSeed : public SolveImmediate {
+      int& live;
+    public:
+      PortfolioSeed(int& count)
+        : SolveImmediate(HTB_NONE,HTB_NONE,HTB_NONE), live(count) { ++live; }
+      PortfolioSeed(PortfolioSeed& s) : SolveImmediate(s), live(s.live) {
+        ++live;
+      }
+      Space* copy(void) override { return new PortfolioSeed(*this); }
+      ~PortfolioSeed(void) override { --live; }
+    };
+
+    template<class T>
+    using RestartPortfolio = Gecode::PBS<T,Gecode::RBS>;
+
+    /// Nested failures must preserve the exception and dispose owned spaces
+    class PBSConstructionFailure : public Base {
+      bool worker_control_failure(unsigned int threads, bool clone,
+                                  bool restart, bool in_use) {
+        Gecode::Search::WorkerControl control(in_use ? 1U :
+                                              worker_capacity(threads)+1U);
+        SolveImmediate binding_root(HTB_NONE,HTB_NONE,HTB_NONE);
+        std::unique_ptr<Gecode::DFS<SolveImmediate>> binding;
+        if (in_use) {
+          Gecode::Search::Options bound;
+          bound.worker_control = control;
+          binding.reset(new Gecode::DFS<SolveImmediate>(&binding_root,bound));
+        }
+        int live = 0;
+        std::unique_ptr<PortfolioSeed> root(new PortfolioSeed(live));
+        PortfolioSeed* seed = root.get();
+        if (!clone)
+          root.release();
+        Gecode::Search::Options o;
+        o.assets = 1;
+        o.threads = threads;
+        o.clone = clone;
+        o.worker_control = control;
+        std::unique_ptr<Gecode::Search::Cutoff>
+          cutoff(Gecode::Search::Cutoff::constant(10));
+        o.cutoff = cutoff.get();
+        bool caught = false;
+        try {
+          if (restart) {
+            Gecode::RBS<PortfolioSeed> engine(seed,o);
+            cutoff.release();
+          } else {
+            Gecode::PBS<PortfolioSeed> engine(seed,o);
+          }
+        } catch (const Gecode::Search::WorkerControlInUse&) {
+          caught = in_use;
+        } catch (const Gecode::Search::InvalidWorkerRequest&) {
+          caught = !in_use;
+        }
+        return caught && (live == (clone ? 1 : 0));
+      }
+    public:
+      PBSConstructionFailure(void) : Base("Search::PBS::ConstructionFailure") {}
+      bool run(void) override {
+        for (unsigned int threads : {1U,4U})
+          for (bool clone : {false,true})
+            for (int failing : {-1,0,1}) {
+              int live = 0;
+              std::unique_ptr<PortfolioSeed> root(new PortfolioSeed(live));
+              PortfolioSeed* seed = root.get();
+              if (!clone)
+                root.release();
+              Gecode::Search::Options o;
+              o.assets = 2;
+              o.threads = threads;
+              o.clone = clone;
+              bool caught = false;
+              try {
+                if (failing == -1) {
+                  Gecode::PBS<PortfolioSeed,RestartPortfolio> engine(seed,o);
+                } else {
+                  Gecode::SEBs sebs(2);
+                  sebs[failing] = Gecode::pbs<PortfolioSeed,Gecode::RBS>(o);
+                  sebs[1-failing] = Gecode::dfs<PortfolioSeed>();
+                  Gecode::PBS<PortfolioSeed> engine(seed,sebs,o);
+                }
+              } catch (const Gecode::Search::UninitializedCutoff&) {
+                caught = true;
+              }
+              if (!caught || (live != (clone ? 1 : 0)))
+                return false;
+            }
+        for (unsigned int threads : {1U,4U})
+          for (bool clone : {false,true})
+            for (bool restart : {false,true})
+              for (bool in_use : {false,true})
+                if (!worker_control_failure(threads,clone,restart,in_use))
+                  return false;
+        return true;
+      }
+    };
+
+    PBSConstructionFailure pbs_construction_failure;
+
+    /// Pause before search or after its first node, then resume enumeration
+    class WorkerControlSequentialPause : public Base {
+      class Pause : public Gecode::Search::Stop {
+        Gecode::Search::WorkerControl control;
+        unsigned int node;
+        bool paused;
+      public:
+        std::promise<void> reached;
+        Pause(const Gecode::Search::WorkerControl& c, unsigned int n)
+          : control(c), node(n), paused(false) {}
+        bool stop(const Gecode::Search::Statistics& s,
+                  const Gecode::Search::Options&) override {
+          if (!paused && (s.node >= node)) {
+            paused = true;
+            control.request(0U);
+            reached.set_value();
+          }
+          return false;
+        }
+      };
+      template<template<class> class E>
+      bool check(unsigned int node) {
+        Gecode::Search::WorkerControl control(node == 0U ? 0U : 1U);
+        Pause pause(control,node);
+        Gecode::Search::Options o;
+        o.threads = 1.0;
+        o.worker_control = control;
+        o.stop = &pause;
+        HasSolutions root(HTB_BINARY,HTB_BINARY,HTB_BINARY);
+        E<HasSolutions> engine(&root,o);
+        auto result = std::async(std::launch::async,[&] { return engine.next(); });
+        auto reached = pause.reached.get_future();
+        reached.wait();
+        bool ok = result.wait_for(std::chrono::milliseconds(20)) ==
+          std::future_status::timeout;
+        control.request(1U);
+        int solutions = 0;
+        if (HasSolutions* solution = result.get()) {
+          ++solutions;
+          delete solution;
+        }
+        while (HasSolutions* solution = engine.next()) {
+          ++solutions;
+          delete solution;
+        }
+        return ok && !engine.stopped() && (solutions == root.solutions());
+      }
+    public:
+      WorkerControlSequentialPause(void)
+        : Base("Search::WorkerControl::SequentialPause") {}
+      bool run(void) override {
+#ifdef GECODE_HAS_THREADS
+        return check<Gecode::DFS>(0U) && check<Gecode::DFS>(1U) &&
+          check<Gecode::BAB>(0U) && check<Gecode::BAB>(1U);
+#else
+        return true;
+#endif
+      }
+    };
+
+    WorkerControlSequentialPause worker_control_sequential_pause;
+
+    /// Focused API and binding checks not covered by randomized search
+    class WorkerControlAPI : public Base {
+    private:
+      template<class Exception, class Function>
+      static bool throws(Function function) {
+        try {
+          function();
+        } catch (const Exception&) {
+          return true;
+        } catch (...) {
+        }
+        return false;
+      }
+    public:
+      WorkerControlAPI(void) : Base("Search::WorkerControl::API") {}
+      bool run(void) override {
+        using Gecode::Search::WorkerControl;
+        WorkerControl empty;
+        bool ok = !empty.engaged() && (empty.requested() == 0U) &&
+          (empty.capacity() == 0U) &&
+          throws<Gecode::Search::UninitializedWorkerControl>(
+            [&] { empty.request(1U); });
+
+        const unsigned int capacity = worker_capacity(2U);
+        WorkerControl control(0U);
+        WorkerControl copy(control);
+        Gecode::Search::WorkerControlAccess::prepare_reuse(control);
+        ok = ok && copy.engaged() && (copy.requested() == 0U);
+
+        Gecode::Search::Options o;
+        o.threads = 2.0;
+        o.worker_control = control;
+        SolveImmediate* root =
+          new SolveImmediate(HTB_NONE,HTB_NONE,HTB_NONE);
+#ifndef GECODE_HAS_THREADS
+        ok = ok && throws<Gecode::Search::InvalidWorkerRequest>(
+          [&] { Gecode::DFS<SolveImmediate> engine(root,o); });
+        control.request(1U);
+        ok = ok && throws<Gecode::Search::InvalidWorkerRequest>(
+          [&] { control.request(0U); });
+#endif
+        {
+          Gecode::DFS<SolveImmediate> engine(root,o);
+          delete root;
+          root = nullptr;
+          ok = ok && (control.capacity() == capacity);
+          ok = ok && throws<Gecode::Search::WorkerControlInUse>([&] {
+            Gecode::Search::WorkerControlAccess::prepare_reuse(control);
+          });
+          control.request(1U);
+          ok = ok && (copy.requested() == 1U) &&
+            throws<Gecode::Search::InvalidWorkerRequest>(
+              [&] { control.request(capacity+1U); });
+          delete engine.next();
+        }
+        root = new SolveImmediate(HTB_NONE,HTB_NONE,HTB_NONE);
+        ok = ok && throws<Gecode::Search::WorkerControlInUse>(
+          [&] { Gecode::DFS<SolveImmediate> engine(root,o); });
+        delete root;
+        Gecode::Search::WorkerControlAccess::prepare_reuse(control);
+        Gecode::Search::WorkerControlAccess::prepare_reuse(copy);
+#ifdef GECODE_HAS_THREADS
+        copy.request(0U);
+        ok = ok && (control.requested() == 0U);
+#endif
+        ok = ok && (control.capacity() == capacity) &&
+          throws<Gecode::Search::InvalidWorkerRequest>([&] {
+            Gecode::Search::WorkerControlAccess::attach(control,capacity+1U);
+          });
+        root = new SolveImmediate(HTB_NONE,HTB_NONE,HTB_NONE);
+        {
+          Gecode::DFS<SolveImmediate> engine(root,o);
+          delete root;
+          copy.request(1U);
+          delete engine.next();
+        }
+        return ok;
+      }
+    };
+
+    WorkerControlAPI worker_control_api;
+
+    /// A paused PBS asset must not hold the portfolio round open
+    class WorkerControlPBSPause : public Base {
+    public:
+      WorkerControlPBSPause(void)
+        : Base("Search::WorkerControl::PBS::Pause") {}
+      bool run(void) override {
+        bool ok = true;
+        // A sequential portfolio must reject assets that could block its round.
+        for (unsigned int requested : {0U,1U}) {
+          Gecode::Search::Options leaf;
+          leaf.worker_control = Gecode::Search::WorkerControl(requested);
+          Gecode::SEBs sebs(2);
+          sebs[0] = Gecode::dfs<SolveImmediate>(leaf);
+          sebs[1] = Gecode::dfs<SolveImmediate>();
+          SolveImmediate root(HTB_NONE,HTB_NONE,HTB_NONE);
+          Gecode::Search::Options o;
+          o.threads = 1.0;
+          bool rejected = false;
+          try {
+            Gecode::PBS<SolveImmediate> pbs(&root,sebs,o);
+          } catch (const Gecode::Search::WorkerControlInUse&) {
+            rejected = true;
+            delete sebs[0];
+            delete sebs[1];
+          }
+          ok = ok && rejected;
+        }
+#ifdef GECODE_HAS_THREADS
+        for (unsigned int threads : {1U,2U})
+          for (bool restart : {false,true}) {
+            Gecode::Search::WorkerControl paused(0U);
+            Gecode::Search::Options paused_options;
+            paused_options.threads = threads;
+            paused_options.worker_control = paused;
+
+            Gecode::Search::Options active_options;
+            active_options.threads = 2.0;
+
+            Gecode::SEBs sebs(2);
+            if (restart) {
+              paused_options.cutoff = Gecode::Search::Cutoff::constant(1000);
+              sebs[0] = Gecode::rbs<SolveImmediate,Gecode::DFS>(paused_options);
+            } else {
+              sebs[0] = Gecode::dfs<SolveImmediate>(paused_options);
+            }
+            sebs[1] = Gecode::dfs<SolveImmediate>(active_options);
+
+            Gecode::Search::Options portfolio_options;
+            portfolio_options.threads = 2.0;
+            SolveImmediate* root =
+              new SolveImmediate(HTB_NONE,HTB_NONE,HTB_NONE);
+            Gecode::PBS<SolveImmediate,Gecode::DFS>
+              pbs(root,sebs,portfolio_options);
+            delete root;
+
+            SolveImmediate* solution = pbs.next();
+            ok = ok && (solution != nullptr) && (paused.requested() == 0U);
+            delete solution;
+          }
+#endif
+        return ok;
+      }
+    };
+
+    WorkerControlPBSPause worker_control_pbs_pause;
+
     /// %Test for depth-first search
     template<class Model>
     class DFS : public Test {
@@ -408,7 +769,17 @@ namespace Test {
         o.a_d = a_d;
         o.threads = t;
         o.stop = &f;
+        const unsigned int capacity = worker_capacity(t);
+        const bool adjustable = _rand(2U) != 0U;
+        Gecode::Search::WorkerControl control;
+        if (adjustable) {
+          control = Gecode::Search::WorkerControl(1U + _rand(capacity));
+          o.worker_control = control;
+        }
         Gecode::DFS<Model> dfs(m,o);
+        WorkerResizer resize(control,capacity,_rand.next(),
+                             adjustable && (capacity > 1U) &&
+                             (_rand(64U) == 0U));
         int n = m->solutions();
         delete m;
         while (true) {
@@ -489,7 +860,17 @@ namespace Test {
         o.a_d = a_d;
         o.threads = t;
         o.stop = &f;
+        const unsigned int capacity = worker_capacity(t);
+        const bool adjustable = _rand(2U) != 0U;
+        Gecode::Search::WorkerControl control;
+        if (adjustable) {
+          control = Gecode::Search::WorkerControl(1U + _rand(capacity));
+          o.worker_control = control;
+        }
         Gecode::BAB<Model> bab(m,o);
+        WorkerResizer resize(control,capacity,_rand.next(),
+                             adjustable && (capacity > 1U) &&
+                             (_rand(64U) == 0U));
         delete m;
         Model* b = nullptr;
         while (true) {
@@ -527,7 +908,16 @@ namespace Test {
         o.stop = &f;
         o.d_l = 100;
         o.cutoff = Gecode::Search::Cutoff::geometric(1,2);
+        const unsigned int capacity = worker_capacity(t);
+        const bool adjustable = _rand(2U) != 0U;
+        Gecode::Search::WorkerControl control;
+        if (adjustable) {
+          control = Gecode::Search::WorkerControl(1U + _rand(capacity));
+          o.worker_control = control;
+        }
         Gecode::RBS<Model,Engine> rbs(m,o);
+        WorkerResizer resize(control,capacity,_rand.next(),
+                             adjustable && (capacity > 1U));
         int n = m->solutions();
         delete m;
         while (true) {
@@ -567,7 +957,15 @@ namespace Test {
         o.threads = t;
         o.d_l = 100;
         o.stop = &f;
+        Gecode::Search::WorkerControl control;
+        if (a == 1U) {
+          const unsigned int capacity = worker_capacity(t);
+          control = Gecode::Search::WorkerControl(1U + _rand(capacity));
+          o.worker_control = control;
+        }
         Gecode::PBS<Model,Engine> pbs(m,o);
+        WorkerResizer resize(control,worker_capacity(t),_rand.next(),
+                             (a == 1U) && (worker_capacity(t) > 1U));
         if (best) {
           Model* b = nullptr;
           while (true) {
@@ -629,16 +1027,28 @@ namespace Test {
         so.threads = st;
         so.d_l = 100;
         so.cutoff = Gecode::Search::Cutoff::constant(1000000);
+        const unsigned int capacity = worker_capacity(st);
+        Gecode::Search::WorkerControl controls[3];
+        Gecode::Search::Options leaf[3] = {so,so,so};
+        for (unsigned int i=0U; i<3U; i++)
+          if ((worker_capacity(mt) > 1U) && (best || (i != 1U))) {
+            controls[i] =
+              Gecode::Search::WorkerControl(1U + _rand(capacity));
+            leaf[i].worker_control = controls[i];
+          }
         if (best) {
           SEBs sebs(3);
-          sebs[0] = bab<Model>(so);
-          sebs[1] = bab<Model>(so);
-          sebs[2] = rbs<Model,Gecode::BAB>(so);
+          sebs[0] = bab<Model>(leaf[0]);
+          sebs[1] = bab<Model>(leaf[1]);
+          sebs[2] = rbs<Model,Gecode::BAB>(leaf[2]);
           Gecode::PBS<Model,Gecode::BAB> pbs(m, sebs, mo);
           delete m;
 
           Model* b = nullptr;
           while (true) {
+            for (unsigned int i=0U; i<3U; i++)
+              if (controls[i].engaged())
+                controls[i].request(1U + _rand(capacity));
             Model* s = pbs.next();
             if (s != nullptr) {
               delete b; b=s;
@@ -652,15 +1062,19 @@ namespace Test {
           return ok;
         } else {
           SEBs sebs(3);
-          sebs[0] = dfs<Model>(so);
-          sebs[1] = lds<Model>(so);
-          sebs[2] = rbs<Model,Gecode::DFS>(so);
+          sebs[0] = dfs<Model>(leaf[0]);
+          sebs[1] = lds<Model>(leaf[1]);
+          sebs[2] = rbs<Model,Gecode::DFS>(leaf[2]);
           Gecode::PBS<Model,Gecode::DFS> pbs(m, sebs, mo);
 
           int n = 3 * m->solutions();
           delete m;
 
           while (true) {
+            if (controls[0].engaged())
+              controls[0].request(1U + _rand(capacity));
+            if (controls[2].engaged())
+              controls[2].request(1U + _rand(capacity));
             Model* s = pbs.next();
             if (s != nullptr) {
               n--; delete s;
