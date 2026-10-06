@@ -193,6 +193,11 @@ namespace Test {
    * runner call has returned; destruction does not remove a test from the
    * process-wide registry. Runner calls must not overlap. Option parsing exits
    * the process after printing help or reporting a malformed option.
+   *
+   * Use -help to list options and -list to list registered tests. Failure
+   * reports provide a -replay state and exact -test name. Replay runs that
+   * test once on one thread, starting from the failing iteration's state.
+   * -log prints the buffered log on failure and requires one thread.
    * \relates Test::Base
    */
   GECODE_TEST_EXPORT int run_registered_tests(int argc, char* argv[]);

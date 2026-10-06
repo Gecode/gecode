@@ -190,12 +190,37 @@ float propagators with Gecode's test runner.
 - Float target when configured: `Gecode::gecodetestfloat`
 - Installed headers follow the same configuration: `test/test.*`, `test/int.*`,
   `test/set.*`, and `test/float.*`
-- Public runner entrypoint: `Test::run_registered_tests(argc, argv)`
-- Package check: `python test/package/verify-installed-test-component.py ...`
 
-See [Testing custom propagators](./public-test-harness.md) for a complete test,
-consistency and reification controls, failure reproduction, and direct linking
-without CMake package metadata.
+```cmake
+find_package(Gecode CONFIG REQUIRED COMPONENTS test)
+add_executable(custom-propagator-test custom-propagator-test.cpp)
+target_link_libraries(custom-propagator-test PRIVATE Gecode::gecodetestint)
+```
+
+Use `Gecode::gecodetestset` or `Gecode::gecodetestfloat` for those variable
+families. The targets supply the runner and their Gecode dependencies. With
+`add_subdirectory` or `FetchContent`, enable `BUILD_TESTING` before adding Gecode.
+When both library variants are installed, targets ending in `_shared` or
+`_static` select a variant explicitly. Use one variant throughout the test
+executable so registration and execution share the same registry.
+
+See the test API in [`test/int.hh`](../test/int.hh) and
+[`test/test.hh`](../test/test.hh) for an example, consistency controls, and
+`Test::run_registered_tests`. The runner's `-help` lists execution and replay
+options.
+
+Autoconf also installs the configured test helpers when search and integer
+variables are enabled. For direct linking, list the used helpers before their
+Gecode dependencies, for example:
+
+```bash
+c++ -std=c++17 -I<prefix>/include custom-propagator-test.cpp \
+  -L<prefix>/lib -lgecodetestint -lgecodetest -lgecodesearch \
+  -lgecodeint -lgecodekernel -lgecodesupport
+```
+
+Use the installation's configured library directory. Set and float helpers
+also require their corresponding Gecode libraries.
 
 Legacy component spellings are also accepted in `COMPONENTS`:
 

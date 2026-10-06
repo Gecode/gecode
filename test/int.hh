@@ -233,6 +233,39 @@ namespace Test {
     /**
      * \brief %Base class for tests with integer constraints
      *
+     * Override solution() with an independent predicate over complete
+     * assignments and post() with the propagator's public posting function.
+     * The harness compares them while exercising propagation, cloning,
+     * pruning, and search. Register a test with static lifetime:
+     * \code
+     * #include <test/int.hh>
+     *
+     * class EqualityTest : public ::Test::Int::Test {
+     * public:
+     *   EqualityTest() : ::Test::Int::Test("Package::Equality", 2, 0, 1) {}
+     *   bool solution(const ::Test::Int::Assignment& a) const override {
+     *     return a[0] == a[1];
+     *   }
+     *   void post(Gecode::Space& home, Gecode::IntVarArray& x) override {
+     *     Gecode::rel(home, x[0], Gecode::IRT_EQ, x[1]);
+     *   }
+     * } equality_test;
+     *
+     * int main(int argc, char* argv[]) {
+     *   return Test::run_registered_tests(argc, argv);
+     * }
+     * \endcode
+     *
+     * All test variables start with the constructor's common domain.
+     * For per-variable restrictions, post them with the constraint and
+     * include them in solution(). Use the complete assignment generator
+     * when checking the full relation.
+     *
+     * IPL_DOM initializes contest to CTL_DOMAIN; other levels initialize
+     * it to CTL_NONE. Set contest to CTL_BOUNDS_D or CTL_BOUNDS_Z only when
+     * the propagator promises that consistency. For reified constraints,
+     * enable reification in the constructor and override the reified post().
+     * \see Test::run_registered_tests
      */
     class GECODE_TESTINT_EXPORT Test : public Base {
     protected:
@@ -242,7 +275,7 @@ namespace Test {
       Gecode::IntSet dom;
       /// Does the constraint also exist as reified constraint
       bool reified;
-      /// Which reification modes are supported
+      /// Supported reification modes, encoded as a bit mask of 1 << Gecode::RM_*
       int rms;
       /// Propagation level
       Gecode::IntPropLevel ipl;
@@ -267,8 +300,8 @@ namespace Test {
        *
        * Constructs a test with prefix \a p, name \a s, arity \a a,
        * and variable domain \a d. Also tests for a reified
-       * constraint, if \a r is true. The propagation level is
-       * maintained for convenience.
+       * constraint, if \a r is true. The propagation level
+       * also selects the initial consistency check (see class documentation).
        */
       Test(const std::string& p, const std::string& s,
            int a, const Gecode::IntSet& d, bool r=false,
@@ -278,8 +311,8 @@ namespace Test {
        *
        * Constructs a test with name \a s, arity \a a, and variable
        * domain \a d. Also tests for a reified constraint,
-       * if \a r is true. The propagation level is
-       * maintained for convenience.
+       * if \a r is true. The propagation level
+       * also selects the initial consistency check (see class documentation).
        */
       Test(const std::string& s,
            int a, const Gecode::IntSet& d, bool r=false,
@@ -290,7 +323,7 @@ namespace Test {
        * Constructs a test with prefix \a p, name \a s, arity \a a,
        * and variable domain \a min ... \a max. Also tests for
        * a reified constraint, if \a r is true. The propagation
-       * level is maintained for convenience.
+       * level also selects the initial consistency check (see class documentation).
        */
       Test(const std::string& p, const std::string& s,
            int a, int min, int max, bool r=false,
@@ -300,13 +333,17 @@ namespace Test {
        *
        * Constructs a test with name \a s, arity \a a, variable
        * domain \a min ... \a max. Also tests for a reified constraint,
-       * if \a r is true. The propagation level is
-       * maintained for convenience.
+       * if \a r is true. The propagation level
+       * also selects the initial consistency check (see class documentation).
        */
       Test(const std::string& s,
            int a, int min, int max, bool r=false,
            Gecode::IntPropLevel i=Gecode::IPL_DEF);
-      /// Create assignment
+      /** \brief Create the assignment generator (complete by default)
+       *
+       * An override changes the assignments checked, not the variable
+       * domains in the test space.
+       */
       virtual Assignment* assignment(void) const;
       /// Check for solution
       virtual bool solution(const Assignment&) const = 0;
@@ -423,7 +460,7 @@ namespace Test {
  * \brief Print assignment \a
  * \relates Assignment
  */
-GECODE_TESTINT_EXPORT std::ostream& operator<<(std::ostream& os, const Test::Int::Assignment& a);
+GECODE_TESTINT_EXPORT std::ostream& operator<<(std::ostream& os, const ::Test::Int::Assignment& a);
 
 #include "test/int.hpp"
 

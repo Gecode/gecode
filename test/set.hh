@@ -174,7 +174,7 @@ namespace Test {
       bool operator()(void) const { return !done; }
       /// Move to next assignment
       void next(Gecode::Support::RandomGenerator& rand);
-      /// Return value for variable \a i
+      /// Return the set at \a i as a bit pattern over lub; see CountableSetRanges
       int operator[](int i) const {
         assert((i>=0) && (i<n));
         return dsv[i].val();
@@ -306,7 +306,8 @@ namespace Test {
        *
        * Constructs a test with name \a s and arity \a a and variable
        * domain \a d. Also tests for a reified constraint,
-       * if \a r is true. In addition, \a w integer variables are provided.
+       * if \a r is true, checking all three reification modes.
+       * In addition, \a w integer variables are provided.
        */
       SetTest(const std::string& s,
               int a, const Gecode::IntSet& d, bool r=false, int w=0)

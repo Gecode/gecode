@@ -268,7 +268,7 @@ namespace Test {
       AssignmentType assignmentType;
       /// Does the constraint also exist as reified constraint
       bool reified;
-      /// Which reification modes are supported
+      /// Supported reification modes, encoded as a bit mask of 1 << Gecode::RM_*
       int rms;
       /// Whether to perform search test
       bool testsearch;
@@ -312,7 +312,7 @@ namespace Test {
       /// Complete the current assignment to get a feasible one (which satisfies all constraint).
       /// If such an assignment is computed, it returns true, false otherwise
       virtual bool extendAssignment(Assignment& a) const;
-      /// Check for solution
+      /// Check an interval assignment using MT_TRUE, MT_FALSE, or MT_MAYBE; see cmp()
       virtual MaybeType solution(const Assignment&) const = 0;
       /// Test if \a ts is subsumed or not (i.e. if there is no more propagator unless
       /// the assignment is an extended assignment.

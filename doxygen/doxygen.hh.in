@@ -161,6 +161,9 @@
 
 /**
  * \defgroup TaskTest Testing
+ *
+ * See Test::Int::Test for writing an integer or Boolean propagator test and
+ * Test::run_registered_tests for registration, execution, and failure replay.
  * \ingroup Task
  */
 
