@@ -40,6 +40,7 @@
 #endif
 
 #include <iostream>
+#include <iomanip>
 
 #include <cstdlib>
 #include <cstring>
@@ -503,11 +504,14 @@ main(int argc, char* argv[]) {
     }
   }
 
-  if (opt.threads > 1) {
-    return run_tests_parallel(tests, opt);
-  } else {
-    return run_tests(tests, opt);
-  }
+  Gecode::Support::Timer timer;
+  timer.start();
+  const int result = opt.threads > 1 ?
+    run_tests_parallel(tests, opt) : run_tests(tests, opt);
+  std::ostringstream elapsed;
+  elapsed << std::fixed << std::setprecision(3) << timer.stop() / 1000.0;
+  std::cout << "Elapsed time: " << elapsed.str() << " s." << std::endl;
+  return result;
 }
 
 std::ostream&
