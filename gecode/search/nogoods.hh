@@ -39,7 +39,7 @@
 namespace Gecode { namespace Search {
 
   /// Class for a sentinel no-good literal
-  class GECODE_VTABLE_EXPORT NoNGL : public NGL {
+  class GECODE_SEARCH_EXPORT NoNGL : public NGL {
   public:
     /// Constructor for creation
     NoNGL(void);

@@ -85,6 +85,7 @@ overload checking. The algorithm is described in:
 S. Cloutier, C.-G. Quimper, Augmenting the Cumulative Overload Check
 with Integral Resource Usage Reasoning, CP 2026.
 
+[ENTRY]
 Module: search
 What:   new
 Rank:   major
@@ -94,6 +95,24 @@ workers a parallel DFS or BAB engine may execute. Controls also apply to leaf
 engines owned by RBS and PBS. Callers can redistribute a fixed worker budget
 without rebuilding the engines. Requesting zero pauses an engine without
 discarding its search state or holding a PBS round open.
+
+[ENTRY]
+Module: search
+What:   change
+Rank:   major
+[DESCRIPTION]
+Best-solution search now uses Space::compare() when choosing between
+independently produced solutions, including external incumbents and portfolio
+assets. Optimization spaces with a custom objective must override compare() as
+well as constrain(). compare() ranks solutions without changing them;
+constrain() still posts improvement restrictions. Comparability is defined by
+the model. The built-in floating-point models compare their documented
+objective bounds, independently of the improvement step. Current exact engines
+reject incomparable incoming solutions. A future best-effort policy could
+instead make an incomparable incoming solution current best, without changing
+the comparison interface, but that would not by itself guarantee completeness
+or maximality. Adding the virtual comparison function changes the C++ ABI of
+Space.
 
 [RELEASE]
 Version: 6.4.0

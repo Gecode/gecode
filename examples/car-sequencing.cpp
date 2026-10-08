@@ -369,6 +369,18 @@ public:
     rel(*this, nstall, IRT_LE, best.nstall.val());
   }
 
+  using Script::compare;
+  /// Compare objective values
+  virtual SpaceComparison compare(const Space& _other) const {
+    const CarSequencing& other =
+      dynamic_cast<const CarSequencing&>(_other);
+    if (nstall.val() < other.nstall.val())
+      return SC_BETTER;
+    if (nstall.val() > other.nstall.val())
+      return SC_WORSE;
+    return SC_EQUIVALENT;
+  }
+
   /// Print solution
   virtual void
   print(std::ostream& os) const {
@@ -634,4 +646,3 @@ namespace {
 };
 
 // STATISTICS: example-any
-

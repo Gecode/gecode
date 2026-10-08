@@ -69,6 +69,8 @@ namespace Gecode { namespace Support {
 
     /// Pop element added first from queue and return it
     T pop(void);
+    /// Return first element (queue must be nonempty)
+    T front(void) const;
     /// Push element \a x to queue
     void push(const T& x);
 
@@ -136,6 +138,13 @@ namespace Gecode { namespace Support {
     T t = q[fst];
     move(fst);
     return t;
+  }
+
+  template<class T, class A>
+  forceinline T
+  DynamicQueue<T,A>::front(void) const {
+    assert(!empty());
+    return q[fst];
   }
 
   template<class T, class A>

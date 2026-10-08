@@ -57,6 +57,9 @@ namespace Gecode { namespace Search {
   WorkerControlInUse::WorkerControlInUse(const char* l)
     : Exception(l,"Worker control is already bound or has unsupported engine placement") {}
 
+  Incomparable::Incomparable(const char* l)
+    : Exception(l,"Incomparable objectives are not supported by best solution search") {}
+
 }}
 
 // STATISTICS: search-other
