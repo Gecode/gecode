@@ -94,12 +94,6 @@ Autoconf `make check` deliberately does not build or run the CMake-only
 failpoint sources. Its ordinary test executable therefore never mixes
 process-global fault cases into the multi-threaded check run.
 
-The test runner reports selected, run, passed, failed, and not-run test cases,
-followed by elapsed wall time in seconds.
-Each case counts once regardless of `-iter`. Cases left after stopping on a
-failure count as not run; cases excluded by `-test` or `-start` are outside the
-selection. `-list` prints only test names.
-
 When changing generated-source inputs, run `make regenerate` after configuring
 the project. This uses the same version-checked workflow as CI and caches the
 Autoconf 2.72 bootstrap locally; Bison 3.8.2, Flex 2.6.4, and `uv` must be
