@@ -2144,6 +2144,8 @@ gecode/int/count$(OBJSUFFIX) gecode/int/count$(SBJSUFFIX): \
 	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp ./gecode/support/thread.hpp \
 	./gecode/support/thread/thread.hpp ./gecode/support/timer.hpp
 gecode/int/arithmetic$(OBJSUFFIX) gecode/int/arithmetic$(SBJSUFFIX): \
+	./gecode/int/arithmetic/gcd.hpp ./gecode/int/arithmetic/divides.hpp \
+	./gecode/int/arithmetic/product.hpp ./gecode/int/arithmetic/product-mod.hpp \
 	./gecode/int.hh ./gecode/int/arithmetic.hh ./gecode/int/arithmetic/abs.hpp \
 	./gecode/int/arithmetic/argmax.hpp ./gecode/int/arithmetic/divmod.hpp ./gecode/int/arithmetic/max.hpp \
 	./gecode/int/arithmetic/mult.hpp ./gecode/int/arithmetic/nroot.hpp ./gecode/int/arithmetic/pow-ops.hpp \
@@ -4441,6 +4443,8 @@ gecode/int/branch/chb$(OBJSUFFIX) gecode/int/branch/chb$(SBJSUFFIX): \
 	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp ./gecode/support/thread.hpp \
 	./gecode/support/thread/thread.hpp ./gecode/support/timer.hpp
 gecode/int/arithmetic/mult$(OBJSUFFIX) gecode/int/arithmetic/mult$(SBJSUFFIX): \
+	./gecode/int/arithmetic/gcd.hpp ./gecode/int/arithmetic/divides.hpp \
+	./gecode/int/arithmetic/product.hpp ./gecode/int/arithmetic/product-mod.hpp \
 	./gecode/int.hh ./gecode/int/arithmetic.hh ./gecode/int/arithmetic/abs.hpp \
 	./gecode/int/arithmetic/argmax.hpp ./gecode/int/arithmetic/divmod.hpp ./gecode/int/arithmetic/max.hpp \
 	./gecode/int/arithmetic/mult.hpp ./gecode/int/arithmetic/nroot.hpp ./gecode/int/arithmetic/pow-ops.hpp \
@@ -19260,6 +19264,20 @@ test/int/channel$(OBJSUFFIX) test/int/channel$(SBJSUFFIX): \
 	./test/int.hh ./test/int.hpp ./test/test.hh \
 	./test/test.hpp
 test/int/arithmetic$(OBJSUFFIX) test/int/arithmetic$(SBJSUFFIX): \
+	./gecode/int/arithmetic.hh ./gecode/int/arithmetic/abs.hpp ./gecode/int/arithmetic/argmax.hpp \
+	./gecode/int/arithmetic/divides.hpp ./gecode/int/arithmetic/divmod.hpp ./gecode/int/arithmetic/gcd.hpp \
+	./gecode/int/arithmetic/max.hpp ./gecode/int/arithmetic/mult.hpp ./gecode/int/arithmetic/nroot.hpp \
+	./gecode/int/arithmetic/pow-ops.hpp ./gecode/int/arithmetic/pow.hpp ./gecode/int/arithmetic/product-mod.hpp \
+	./gecode/int/arithmetic/product.hpp ./gecode/int/bool.hh ./gecode/int/bool/base.hpp \
+	./gecode/int/bool/clause.hpp ./gecode/int/bool/eq.hpp ./gecode/int/bool/eqv.hpp \
+	./gecode/int/bool/ite.hpp ./gecode/int/bool/lq.hpp ./gecode/int/bool/or.hpp \
+	./gecode/int/idx-view.hh ./gecode/int/idx-view.hpp ./gecode/int/linear.hh \
+	./gecode/int/linear/bool-int.hpp ./gecode/int/linear/bool-scale.hpp ./gecode/int/linear/bool-view.hpp \
+	./gecode/int/linear/int-bin.hpp ./gecode/int/linear/int-dom.hpp ./gecode/int/linear/int-nary.hpp \
+	./gecode/int/linear/int-noview.hpp ./gecode/int/linear/int-ter.hpp ./gecode/int/linear/post.hpp \
+	./gecode/int/rel.hh ./gecode/int/rel/eq.hpp ./gecode/int/rel/lex.hpp \
+	./gecode/int/rel/lq-le.hpp ./gecode/int/rel/nq.hpp ./gecode/int/support-values.hh \
+	./gecode/int/support-values.hpp \
 	./gecode/float.hh ./gecode/float/array-traits.hpp ./gecode/float/array.hpp \
 	./gecode/float/branch.hpp ./gecode/float/branch/action.hpp ./gecode/float/branch/afc.hpp \
 	./gecode/float/branch/assign.hpp ./gecode/float/branch/chb.hpp ./gecode/float/branch/traits.hpp \
