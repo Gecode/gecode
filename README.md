@@ -31,6 +31,11 @@ from it.
 Version metadata shared by autoconf and CMake lives in `gecode-version.m4`.
 `build/` is reserved for generated build outputs.
 
+Configuration ends with a summary of enabled and disabled features after
+dependency checks. Qt, Gist, MPFR, compiler visibility, macOS mutexes, Graphviz
+graphs, and test targets show their requested settings alongside the resolved
+state.
+
 | Autoconf switch | CMake option / mechanism | Status | Notes |
 |---|---|---|---|
 | `--enable-shared` | `GECODE_BUILD_SHARED` | Supported directly | Default `ON` |
