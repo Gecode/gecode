@@ -196,7 +196,10 @@ namespace Test {
   public:
     /// Create and register a normal test with name \a s
     Base(std::string  s);
-    /// Create and register test with name \a s and tags \a t
+    /** \brief Create and register test with name \a s and tags \a t
+     *
+     * The supplied tags determine membership independently of the name.
+     */
     Base(std::string s, TestTags t);
     /// Sort tests alphabetically
     static void sort(void);
@@ -245,6 +248,12 @@ namespace Test {
    * reports provide a -replay state and exact -test name. Replay runs that
    * test once on one thread, starting from the failing iteration's state.
    * -log prints the buffered log on failure and requires one thread.
+   *
+   * Repeated -tag options select the union of their tags. With no -tag,
+   * all tests are eligible, including tests without tags; -tag all selects
+   * tests with at least one known tag. Name and tag filters must both match.
+   * -list and -list-with-tags list every registered test, ignoring -test,
+   * -tag, and -start.
    * \relates Test::Base
    */
   GECODE_TEST_EXPORT int run_registered_tests(int argc, char* argv[]);

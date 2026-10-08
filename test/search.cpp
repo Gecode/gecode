@@ -495,7 +495,7 @@ namespace Test {
         return caught && (live == (clone ? 1 : 0));
       }
     public:
-      PBSConstructionFailure(void) : Base("Search::PBS::ConstructionFailure") {}
+      PBSConstructionFailure(void) : Base("Search::PBS::ConstructionFailure", TestTags(TestTag::normal,TestTag::check)) {}
       bool run(void) override {
         for (unsigned int threads : {1U,4U})
           for (bool clone : {false,true})
@@ -586,7 +586,7 @@ namespace Test {
       }
     public:
       WorkerControlSequentialPause(void)
-        : Base("Search::WorkerControl::SequentialPause") {}
+        : Base("Search::WorkerControl::SequentialPause", TestTags(TestTag::normal,TestTag::check)) {}
       bool run(void) override {
 #ifdef GECODE_HAS_THREADS
         return check<Gecode::DFS>(0U) && check<Gecode::DFS>(1U) &&
@@ -613,7 +613,7 @@ namespace Test {
         return false;
       }
     public:
-      WorkerControlAPI(void) : Base("Search::WorkerControl::API") {}
+      WorkerControlAPI(void) : Base("Search::WorkerControl::API", TestTags(TestTag::normal,TestTag::check)) {}
       bool run(void) override {
         using Gecode::Search::WorkerControl;
         WorkerControl empty;
@@ -685,7 +685,7 @@ namespace Test {
     class WorkerControlPBSPause : public Base {
     public:
       WorkerControlPBSPause(void)
-        : Base("Search::WorkerControl::PBS::Pause") {}
+        : Base("Search::WorkerControl::PBS::Pause", TestTags(TestTag::normal,TestTag::check)) {}
       bool run(void) override {
         bool ok = true;
         // A sequential portfolio must reject assets that could block its round.
