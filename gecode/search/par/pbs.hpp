@@ -295,20 +295,18 @@ namespace Gecode { namespace Search { namespace Par {
       assert(n_busy == 0);
       assert(!tostop.load(std::memory_order_acquire));
 
-      if (n_active > 0) {
-        // Run all active slaves
-        n_busy = n_active;
-        for (unsigned int i=0U; i<n_active; i++) {
-          // Consume the previous completion before reusing this slave.  The
-          // initial signal handles the first submission.
-          slaves[i]->wait();
-          Support::Thread::run(slaves[i]);
-        }
-        m.release();
-        // Wait for all slaves to become idle
-        idle.wait();
-        m.acquire();
+      // Run all active slaves
+      n_busy = n_active;
+      for (unsigned int i=0U; i<n_active; i++) {
+        // Consume the previous completion before reusing this slave.  The
+        // initial signal handles the first submission.
+        slaves[i]->wait();
+        Support::Thread::run(slaves[i]);
       }
+      m.release();
+      // Wait for all slaves to become idle
+      idle.wait();
+      m.acquire();
     }
 
     // Invariant all slaves are idle!

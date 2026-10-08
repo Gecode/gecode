@@ -77,3 +77,5 @@ namespace Gecode { namespace Search {
 }}
 
 #endif
+
+// STATISTICS: search-other

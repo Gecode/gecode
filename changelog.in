@@ -85,6 +85,7 @@ overload checking. The algorithm is described in:
 S. Cloutier, C.-G. Quimper, Augmenting the Cumulative Overload Check
 with Integral Resource Usage Reasoning, CP 2026.
 
+[ENTRY]
 Module: search
 What:   new
 Rank:   major
