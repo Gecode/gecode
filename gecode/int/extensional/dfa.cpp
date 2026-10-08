@@ -33,6 +33,9 @@
 
 #include <gecode/int.hh>
 
+#include <algorithm>
+#include <vector>
+
 namespace Gecode { namespace Int { namespace Extensional {
 
   /**
@@ -154,22 +157,35 @@ namespace Gecode {
     using namespace Extensional;
     Region region;
 
-    // Compute number of states and transitions
-    int n_states = start;
+    // Collect the state identifiers before allocating state-indexed storage.
+    // DFA specifications may use sparse external identifiers; all subsequent
+    // algorithms operate on a compact internal numbering.
+    std::vector<int> states;
+    states.push_back(start);
     int n_trans  = 0;
     for (Transition* t = &t_spec[0]; t->i_state >= 0; t++) {
-      n_states = std::max(n_states,t->i_state);
-      n_states = std::max(n_states,t->o_state);
+      states.push_back(t->i_state);
+      states.push_back(t->o_state);
       n_trans++;
     }
     for (int* f = &f_spec[0]; *f >= 0; f++)
-      n_states = std::max(n_states,*f);
-    n_states++;
+      states.push_back(*f);
+    std::sort(states.begin(),states.end());
+    states.erase(std::unique(states.begin(),states.end()),states.end());
+    const auto compact = [&states](int state) {
+      return static_cast<int>(
+        std::lower_bound(states.begin(),states.end(),state)-states.begin());
+    };
+    int n_states = static_cast<int>(states.size());
+    start = compact(start);
 
     // Temporary structure for transitions
     Transition* trans = region.alloc<Transition>(n_trans);
-    for (int i=0; i<n_trans; i++)
+    for (int i=0; i<n_trans; i++) {
       trans[i] = t_spec[i];
+      trans[i].i_state = compact(trans[i].i_state);
+      trans[i].o_state = compact(trans[i].o_state);
+    }
     // Temporary structures for finals
     int* final = region.alloc<int>(n_states+1);
     bool* is_final = region.alloc<bool>(n_states+1);
@@ -177,8 +193,11 @@ namespace Gecode {
     for (int i=0; i<n_states+1; i++)
       is_final[i] = false;
     for (int* f = &f_spec[0]; *f != -1; f++) {
-      is_final[*f]      = true;
-      final[n_finals++] = *f;
+      const int state = compact(*f);
+      if (!is_final[state]) {
+        is_final[state] = true;
+        final[n_finals++] = state;
+      }
     }
 
     if (minimize) {
@@ -533,4 +552,3 @@ namespace Gecode {
 }
 
 // STATISTICS: int-prop
-
