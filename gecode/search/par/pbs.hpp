@@ -132,8 +132,8 @@ namespace Gecode { namespace Search { namespace Par {
 
 
   forceinline
-  PortfolioStop::PortfolioStop(Stop* so0)
-    : so(so0), tostop(nullptr) {}
+  PortfolioStop::PortfolioStop(Stop* so0, const WorkerControl& control)
+    : so(so0), worker_control(control), tostop(nullptr) {}
 
   forceinline void
   PortfolioStop::share(std::atomic<bool>* ts) {
@@ -164,6 +164,11 @@ namespace Gecode { namespace Search { namespace Par {
   forceinline void
   Slave<Collect>::wait(void) {
     completion.wait();
+  }
+  template<class Collect>
+  forceinline void
+  Slave<Collect>::wake(void) {
+    static_cast<PortfolioStop*>(stop)->wake();
   }
   template<class Collect>
   forceinline void
@@ -198,21 +203,28 @@ namespace Gecode { namespace Search { namespace Par {
   PBS<Collect>::report(Slave<Collect>* slave, Space* s) {
     // If b is false the report should be repeated (solution was worse)
     bool b = true;
+    bool wake = false;
     m.acquire();
     if (s != nullptr) {
       try {
         b = solutions.add(s,slave);
-        if (b)
+        if (b) {
           tostop.store(true, std::memory_order_release);
+          wake = true;
+        }
       } catch (...) {
         delete s;
         if (failure == nullptr)
           failure = std::current_exception();
         tostop.store(true, std::memory_order_release);
+        wake = true;
       }
     } else if (slave->stopped()) {
-      if (!tostop.load(std::memory_order_acquire))
+      if (!tostop.load(std::memory_order_acquire)) {
         slave_stop.store(true, std::memory_order_release);
+        tostop.store(true, std::memory_order_release);
+        wake = true;
+      }
     } else {
       // Move slave to inactive, as it has exhausted its engine
       unsigned int i=0;
@@ -222,7 +234,11 @@ namespace Gecode { namespace Search { namespace Par {
       assert(n_active > 0);
       std::swap(slaves[i],slaves[--n_active]);
       tostop.store(true, std::memory_order_release);
+      wake = true;
     }
+    if (wake)
+      for (unsigned int i=0U; i<n_active; i++)
+        slaves[i]->wake();
     if (b) {
       if (--n_busy == 0)
         idle.signal();
@@ -238,6 +254,8 @@ namespace Gecode { namespace Search { namespace Par {
     if (failure == nullptr)
       failure = std::current_exception();
     tostop.store(true, std::memory_order_release);
+    for (unsigned int i=0U; i<n_active; i++)
+      slaves[i]->wake();
     if (--n_busy == 0)
       idle.signal();
     m.release();
@@ -265,10 +283,13 @@ namespace Gecode { namespace Search { namespace Par {
       m.release();
       std::rethrow_exception(f);
     }
-    if (solutions.empty()) {
-      // Clear all
-      tostop.store(false, std::memory_order_release);
+    if (solutions.empty())
       slave_stop.store(false, std::memory_order_release);
+    while (solutions.empty() && (n_active > 0) &&
+           !slave_stop.load(std::memory_order_acquire) &&
+           (failure == nullptr)) {
+      // Clear the internal stop used to interrupt sibling slaves
+      tostop.store(false, std::memory_order_release);
 
       // Invariant: all slaves are idle!
       assert(n_busy == 0);
