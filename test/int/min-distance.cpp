@@ -55,7 +55,7 @@ namespace Test { namespace Int { namespace MinDistance {
   public:
     Minimum(int n, bool f, bool r, int a,
             Gecode::MinDistancePropKind k, Gecode::IntPropLevel level)
-      : Test(TestTags(TestTag::normal,TestTag::check),
+      : Test(TestTags::check(),
              "MinDistance::"+str(n)+"::"+str(f)+"::"+str(r)+"::"+
              str(a)+"::"+str(k == Gecode::MDP_SINGLE)+"::"+str(level),
              n+1,0,4,false,level),
@@ -131,7 +131,7 @@ namespace Test { namespace Int { namespace MinDistance {
   class Propagation : public Base {
   public:
     Propagation(void) : Base("Int::MinDistance::Propagation",
-                            TestTags(TestTag::normal,TestTag::check)) {}
+                            TestTags::check()) {}
     virtual bool run(void) {
       using namespace Gecode;
       const MinDistancePropKind kinds[] = {MDP_DECOMPOSED,MDP_SINGLE};
@@ -218,7 +218,7 @@ namespace Test { namespace Int { namespace MinDistance {
   class Arguments : public Base {
   public:
     Arguments(void) : Base("Int::MinDistance::Arguments",
-                            TestTags(TestTag::normal,TestTag::check)) {}
+                            TestTags::check()) {}
     virtual bool run(void) {
       using namespace Gecode;
       try {
