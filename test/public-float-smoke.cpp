@@ -1,13 +1,10 @@
 /* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
- *     Christian Schulte <schulte@gecode.org>
- *
- *  Contributing authors:
  *     Mikael Lagerkvist <lagerkvist@gecode.org>
  *
  *  Copyright:
- *     Christian Schulte, 2026
+ *     Mikael Lagerkvist, 2026
  *
  *  This file is part of Gecode, the generic constraint
  *  development environment:
