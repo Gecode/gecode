@@ -51,7 +51,7 @@ namespace Test { namespace Set {
      public:
        /// Create and register test
        Wait(int n, bool sf0)
-         : SetTest(TestTags(TestTag::normal,TestTag::check),
+         : SetTest(TestTags::check(),
                    "Wait::"+str(n)+"::"+
                    (sf0 ? "std::function" : "funptr"),n,
                    Gecode::IntSet(0,n),false), sf(sf0) {}

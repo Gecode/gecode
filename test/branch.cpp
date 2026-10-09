@@ -738,7 +738,7 @@ namespace Test { namespace Branch {
   }
 
   SetTest::SetTest(const std::string& s, int a, const Gecode::IntSet& d)
-    : SetTest(TestTag::normal,s,a,d) {
+    : SetTest(TestTags::standard(),s,a,d) {
   }
 
   bool

@@ -57,8 +57,8 @@ namespace Test { namespace Branch {
     const int v_sparse[6] = {-100,-10,0,10,100,1000};
     Gecode::IntSet d_sparse(v_sparse,6);
 
-    Set d_3(TestTag::normal,"Dense::3",d_dense,3);
-    Set s_3(TestTag::sweep,"Sparse::3",d_sparse,3);
+    Set d_3(TestTags::standard(),"Dense::3",d_dense,3);
+    Set s_3(TestTags::sweep(),"Sparse::3",d_sparse,3);
   }
 
 }}

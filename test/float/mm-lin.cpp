@@ -1874,7 +1874,7 @@ namespace Test { namespace Float {
            } else if (i < 100) {
              s = "0" + s;
            }
-           (void) new LinExpr(i == 0 ? TestTag::normal : TestTag::sweep,
+           (void) new LinExpr(i == 0 ? TestTags::standard() : TestTags::sweep(),
                               li[i],s);
          }
          FloatRelTypes frts;

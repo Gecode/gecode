@@ -567,7 +567,7 @@ namespace Test { namespace Int {
      public:
        /// Create and register test
        RegRandomNFADifferential(unsigned int seed)
-         : Test(TestTags(TestTag::normal,TestTag::check),
+         : Test(TestTags::check(),
                 "Extensional::Reg::Sparse::RandomNFADifferential::" +
                 Test::str(static_cast<int>(seed)),
                 5,0,n_symbols-1,false,Gecode::IPL_DOM) {
@@ -641,7 +641,7 @@ namespace Test { namespace Int {
      public:
        /// Create and register test
        RegNFAPrefix(bool b)
-         : Test(TestTags(TestTag::normal,TestTag::check),
+         : Test(TestTags::check(),
                 "Extensional::Reg::Sparse::NFAPrefix::" +
                 std::string(b ? "Bool" : "Int"),
                 5,0,1,false,Gecode::IPL_DOM), boolean(b) {}
@@ -829,7 +829,7 @@ namespace Test { namespace Int {
      public:
        /// Create and register test
        TupleSetBase(bool p, Gecode::ExtensionalPropKind epk0)
-         : Test(TestTag::sweep,
+         : Test(TestTags::sweep(),
                 "Extensional::TupleSet::" + extensional_kind_name(epk0) +
                 "::" + str(p) + "::Base",
                 4,1,5,true,Gecode::IPL_DOM),
@@ -889,7 +889,7 @@ namespace Test { namespace Int {
        TupleSetTest(const std::string& s, bool p,
                     Gecode::IntSet d0, Gecode::TupleSet ts0, bool td,
                     Gecode::ExtensionalPropKind epk0)
-         : Test(TestTag::sweep,
+         : Test(TestTags::sweep(),
                 "Extensional::TupleSet::" + extensional_kind_name(epk0) +
                 "::" + str(p) + "::" + s,
                 ts0.arity(),d0,true,Gecode::IPL_DOM),
@@ -1176,7 +1176,7 @@ namespace Test { namespace Int {
        SparseTupleSetIncrementalDelta(void)
          : ::Test::Base(
              "Int::Extensional::TupleSet::Sparse::IncrementalDelta",
-             TestTags(TestTag::normal,TestTag::check)) {}
+             TestTags::check()) {}
 
        virtual bool run(void) {
          using namespace Gecode;
@@ -1861,7 +1861,7 @@ namespace Test { namespace Int {
        TupleSetAutoDefaultDispatch(void)
          : ::Test::Base(
              "Int::Extensional::TupleSet::Auto::DefaultDispatch",
-             TestTags(TestTag::normal,TestTag::check)) {}
+             TestTags::check()) {}
 
        virtual bool run(void) {
          using namespace Gecode;
@@ -2236,7 +2236,7 @@ namespace Test { namespace Int {
      public:
        /// Create and register test
        TupleSetLarge(double prob, bool p, Gecode::ExtensionalPropKind epk0)
-         : Test(TestTag::sweep,
+         : Test(TestTags::sweep(),
                 "Extensional::TupleSet::" + extensional_kind_name(epk0) +
                 "::" + str(p) + "::Large",
                 5,1,5,true,Gecode::IPL_DOM),
@@ -2292,7 +2292,7 @@ namespace Test { namespace Int {
      public:
        /// Create and register test
        TupleSetBool(double prob, bool p, Gecode::ExtensionalPropKind epk0)
-         : Test(TestTag::sweep,
+         : Test(TestTags::sweep(),
                 "Extensional::TupleSet::" + extensional_kind_name(epk0) +
                 "::" + str(p) + "::Bool",
                 5,0,1,true), pos(p), epk(epk0), t(5) {

@@ -87,7 +87,7 @@ namespace Test { namespace Set {
       /// Create and register test
       RelSIS(Gecode::SetOpType sot0, Gecode::SetRelType srt0,
              int intSet, bool inverse0)
-       : SetTest(TestTag::sweep,"RelOp::ConstSIS::"+str(sot0)+"::"+str(srt0)+"::"+
+       : SetTest(TestTags::sweep(),"RelOp::ConstSIS::"+str(sot0)+"::"+str(srt0)+"::"+
                  str(intSet)+(inverse0 ? "i" :""),2,ds_22,false)
        , is(iss[intSet]), sot(sot0), srt(srt0), inverse(inverse0) {}
       /// %Test whether \a x is solution
@@ -185,8 +185,8 @@ namespace Test { namespace Set {
       RelSSI(Gecode::SetOpType sot0, Gecode::SetRelType srt0,
              int intSet)
        : SetTest(sot0 == Gecode::SOT_UNION
-                 ? TestTags(TestTag::normal,TestTag::check)
-                 : TestTags(TestTag::sweep),
+                 ? TestTags::check()
+                 : TestTags(TestTags::sweep()),
                  "RelOp::ConstSSI::"+str(sot0)+"::"+str(srt0)+"::"+
                  str(intSet),2,ds_22,false)
       , is(iss[intSet]), sot(sot0), srt(srt0) {}
@@ -279,7 +279,7 @@ namespace Test { namespace Set {
        : SetTest((sot0 == Gecode::SOT_DUNION) &&
                  (srt0 == Gecode::SRT_CMPL) &&
                  (intSet0 == 0) && (intSet1 == 0)
-                 ? TestTag::normal : TestTag::sweep,
+                 ? TestTags::standard() : TestTags::sweep(),
                  "RelOp::ConstISI::"+str(sot0)+"::"+str(srt0)+"::"+
                  str(intSet0)+"::"+str(intSet1)+
                  (inverse0 ? "i" : ""),1,ds_33,false)

@@ -97,7 +97,7 @@ namespace Test { namespace Set {
     public:
       /// Create and register test
       DomRange(SetRelType srt0, int n) :
-        SetTest(TestTag::sweep,"Dom::Range::"+str(srt0)+"::"+str(n),
+        SetTest(TestTags::sweep(),"Dom::Range::"+str(srt0)+"::"+str(n),
                 n,ds_33,(n == 1)),
         srt(srt0), is(srt == Gecode::SRT_CMPL ? ds_33c: ds_33) {}
       /// %Test whether \a x is solution
@@ -191,7 +191,7 @@ namespace Test { namespace Set {
     public:
       /// Create and register test
       DomIntRange(Gecode::SetRelType srt0, int n)
-        : SetTest(TestTag::sweep,"Dom::IntRange::"+str(srt0)+"::"+str(n),1,ds_33,n==1),
+        : SetTest(TestTags::sweep(),"Dom::IntRange::"+str(srt0)+"::"+str(n),1,ds_33,n==1),
           srt(srt0) {}
       /// %Test whether \a x is solution
       virtual bool solution(const SetAssignment& x) const {
@@ -285,7 +285,7 @@ namespace Test { namespace Set {
     public:
       /// Create and register test
       DomInt(Gecode::SetRelType srt0, int n) :
-        SetTest(TestTag::sweep,"Dom::Int::"+str(srt0)+"::"+str(n),
+        SetTest(TestTags::sweep(),"Dom::Int::"+str(srt0)+"::"+str(n),
                 n,ds_33,n==1),
         srt(srt0) {}
       /// %Test whether \a x is solution
@@ -384,8 +384,8 @@ namespace Test { namespace Set {
       /// Create and register test
       DomDom(Gecode::SetRelType srt0, int n) :
         SetTest(srt0 == Gecode::SRT_GR
-                ? TestTags(TestTag::normal,TestTag::check)
-                : TestTags(TestTag::sweep),
+                ? TestTags::check()
+                : TestTags(TestTags::sweep()),
                 "Dom::Dom::"+str(srt0)+"::"+str(n),n,d1,(n == 1)),
         srt(srt0), is(srt == Gecode::SRT_CMPL ? d1c: d1) {}
       /// %Test whether \a x is solution
@@ -465,7 +465,7 @@ namespace Test { namespace Set {
     public:
       /// Create and register test
       CardRange(int n)
-        : SetTest(TestTag::sweep,"Dom::CardRange::"+str(n),n,d1,false) {}
+        : SetTest(TestTags::sweep(),"Dom::CardRange::"+str(n),n,d1,false) {}
       /// %Test whether \a x is solution
       virtual bool solution(const SetAssignment& x) const {
         for (int i=x.size(); i--; ) {

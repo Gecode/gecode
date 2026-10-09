@@ -206,12 +206,12 @@ namespace Test { namespace Float {
 
            for (FloatRelTypes frts; frts(); ++frts) {
              TestTags tags = frts.frt() == Gecode::FRT_EQ
-               ? TestTag::normal : TestTag::sweep;
+               ? TestTags::standard() : TestTags::sweep();
              (void) new FloatFloat(tags,"11",f1,a1,frts.frt(),0.0,step);
              (void) new FloatVar(tags,"11",f1,a1,frts.frt(),step);
-             (void) new FloatFloat(TestTag::sweep,"21",f2,a1,frts.frt(),0.0,step);
-             (void) new FloatVar(TestTag::sweep,"21",f2,a1,frts.frt(),step);
-             (void) new FloatFloat(TestTag::sweep,"31",f3,a1,frts.frt(),1.0,step);
+             (void) new FloatFloat(TestTags::sweep(),"21",f2,a1,frts.frt(),0.0,step);
+             (void) new FloatVar(TestTags::sweep(),"21",f2,a1,frts.frt(),step);
+             (void) new FloatFloat(TestTags::sweep(),"31",f3,a1,frts.frt(),1.0,step);
            }
 
            const FloatVal av2[4] = {1.0,1.0,1.0,1.0};
@@ -225,24 +225,24 @@ namespace Test { namespace Float {
              FloatValArgs a4(i, av4);
              FloatValArgs a5(i, av5);
              for (FloatRelTypes frts; frts(); ++frts) {
-               (void) new FloatFloat(TestTag::sweep,"12",f1,a2,frts.frt(),0.0,step);
-               (void) new FloatFloat(TestTag::sweep,"13",f1,a3,frts.frt(),0.0,step);
-               (void) new FloatFloat(TestTag::sweep,"14",f1,a4,frts.frt(),0.0,step);
-               (void) new FloatFloat(TestTag::sweep,"15",f1,a5,frts.frt(),0.0,step);
-               (void) new FloatFloat(TestTag::sweep,"22",f2,a2,frts.frt(),0.0,step);
-               (void) new FloatFloat(TestTag::sweep,"23",f2,a3,frts.frt(),0.0,step);
-               (void) new FloatFloat(TestTag::sweep,"24",f2,a4,frts.frt(),0.0,step);
-               (void) new FloatFloat(TestTag::sweep,"25",f2,a5,frts.frt(),0.0,step);
-               (void) new FloatFloat(TestTag::sweep,"32",f3,a2,frts.frt(),1.0,step);
+               (void) new FloatFloat(TestTags::sweep(),"12",f1,a2,frts.frt(),0.0,step);
+               (void) new FloatFloat(TestTags::sweep(),"13",f1,a3,frts.frt(),0.0,step);
+               (void) new FloatFloat(TestTags::sweep(),"14",f1,a4,frts.frt(),0.0,step);
+               (void) new FloatFloat(TestTags::sweep(),"15",f1,a5,frts.frt(),0.0,step);
+               (void) new FloatFloat(TestTags::sweep(),"22",f2,a2,frts.frt(),0.0,step);
+               (void) new FloatFloat(TestTags::sweep(),"23",f2,a3,frts.frt(),0.0,step);
+               (void) new FloatFloat(TestTags::sweep(),"24",f2,a4,frts.frt(),0.0,step);
+               (void) new FloatFloat(TestTags::sweep(),"25",f2,a5,frts.frt(),0.0,step);
+               (void) new FloatFloat(TestTags::sweep(),"32",f3,a2,frts.frt(),1.0,step);
                if (i < 4) {
-                 (void) new FloatVar(TestTag::sweep,"12",f1,a2,frts.frt(),step);
-                 (void) new FloatVar(TestTag::sweep,"13",f1,a3,frts.frt(),step);
-                 (void) new FloatVar(TestTag::sweep,"14",f1,a4,frts.frt(),step);
-                 (void) new FloatVar(TestTag::sweep,"15",f1,a5,frts.frt(),step);
-                 (void) new FloatVar(TestTag::sweep,"22",f2,a2,frts.frt(),step);
-                 (void) new FloatVar(TestTag::sweep,"23",f2,a3,frts.frt(),step);
-                 (void) new FloatVar(TestTag::sweep,"24",f2,a4,frts.frt(),step);
-                 (void) new FloatVar(TestTag::sweep,"25",f2,a5,frts.frt(),step);
+                 (void) new FloatVar(TestTags::sweep(),"12",f1,a2,frts.frt(),step);
+                 (void) new FloatVar(TestTags::sweep(),"13",f1,a3,frts.frt(),step);
+                 (void) new FloatVar(TestTags::sweep(),"14",f1,a4,frts.frt(),step);
+                 (void) new FloatVar(TestTags::sweep(),"15",f1,a5,frts.frt(),step);
+                 (void) new FloatVar(TestTags::sweep(),"22",f2,a2,frts.frt(),step);
+                 (void) new FloatVar(TestTags::sweep(),"23",f2,a3,frts.frt(),step);
+                 (void) new FloatVar(TestTags::sweep(),"24",f2,a4,frts.frt(),step);
+                 (void) new FloatVar(TestTags::sweep(),"25",f2,a5,frts.frt(),step);
                }
              }
            }

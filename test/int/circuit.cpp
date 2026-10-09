@@ -52,7 +52,7 @@ namespace Test { namespace Int {
      public:
        /// Create and register test
        Circuit(int n, int min, int max, int off, Gecode::IntPropLevel ipl)
-         : Test(TestTag::sweep,"Circuit::" + str(ipl) + "::" + str(n) + "::" + str(off),
+         : Test(TestTags::sweep(),"Circuit::" + str(ipl) + "::" + str(n) + "::" + str(off),
                 n,min,max,false,ipl), offset(off) {
          contest = CTL_NONE;
          testfix = false;
@@ -95,7 +95,7 @@ namespace Test { namespace Int {
      public:
        /// Create and register test
        Path(int n, int min, int max, int off, Gecode::IntPropLevel ipl)
-         : Test(TestTag::sweep,"Path::" + str(ipl) + "::" + str(n) + "::" + str(off),
+         : Test(TestTags::sweep(),"Path::" + str(ipl) + "::" + str(n) + "::" + str(off),
                 n+2,min,max,false,ipl), offset(off) {
          contest = CTL_NONE;
          testfix = false;
@@ -149,7 +149,7 @@ namespace Test { namespace Int {
        /// Create and register test
        CircuitCost(int n, int min, int max, int off, Gecode::IntPropLevel ipl)
          : Test((ipl == Gecode::IPL_DOM) && (n == 4) && (off == 0)
-                ? TestTag::normal : TestTag::sweep,
+                ? TestTags::standard() : TestTags::sweep(),
                 "Circuit::Cost::"+str(ipl)+"::"+str(n)+"::"+str(off),
                 n+1,min,max,false,ipl), offset(off) {
          contest = CTL_NONE;
@@ -206,7 +206,7 @@ namespace Test { namespace Int {
        /// Create and register test
        PathCost(int n, int min, int max, int off, Gecode::IntPropLevel ipl)
          : Test((ipl == Gecode::IPL_DOM) && (n == 3) && (off == 0)
-                ? TestTag::normal : TestTag::sweep,
+                ? TestTags::standard() : TestTags::sweep(),
                 "Path::Cost::"+str(ipl)+"::"+str(n)+"::"+str(off),
                 n+3,min,max,false,ipl), offset(off) {
          contest = CTL_NONE;
@@ -270,7 +270,7 @@ namespace Test { namespace Int {
        /// Create and register test
        CircuitFullCost(int n, int min, int max, int off,
                        Gecode::IntPropLevel ipl)
-         : Test(TestTag::sweep,"Circuit::FullCost::" + str(ipl)+"::"+str(n)+"::"+str(off),
+         : Test(TestTags::sweep(),"Circuit::FullCost::" + str(ipl)+"::"+str(n)+"::"+str(off),
                 2*n+1,min,max,false,ipl), offset(off) {
          contest = CTL_NONE;
          testfix = false;

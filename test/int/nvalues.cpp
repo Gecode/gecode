@@ -223,13 +223,13 @@ namespace Test { namespace Int {
              for (int m=0; m<=i+1; m++) {
                TestTags tags = ((i == 3) && (m == 2) &&
                                 (irts.irt() == Gecode::IRT_EQ))
-                 ? TestTag::normal : TestTag::sweep;
+                 ? TestTags::standard() : TestTags::sweep();
                (void) new IntInt(tags,i,m,irts.irt());
              }
              if (i <= 5) {
                TestTags tags = ((i == 3) &&
                                 (irts.irt() == Gecode::IRT_EQ))
-                 ? TestTag::normal : TestTag::sweep;
+                 ? TestTags::standard() : TestTags::sweep();
                (void) new IntVar(tags,i,irts.irt());
              }
            }

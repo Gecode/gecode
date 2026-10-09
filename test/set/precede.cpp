@@ -64,7 +64,7 @@ namespace Test { namespace Set {
      public:
        /// Create and register test
        Single(int s0, int t0)
-         : SetTest(TestTag::sweep,"Precede::Single::"+str(s0)+"<"+str(t0),4,ds,false),
+         : SetTest(TestTags::sweep(),"Precede::Single::"+str(s0)+"<"+str(t0),4,ds,false),
            s(s0), t(t0) {}
        /// %Test whether \a x is solution
        virtual bool solution(const SetAssignment& x) const {
@@ -121,9 +121,9 @@ namespace Test { namespace Set {
      Single _a(2, 3);
      Single _b(0, 3);
 
-     Multi _c(TestTag::normal,Gecode::IntArgs({1,2,3}));
-     Multi _d(TestTag::sweep,Gecode::IntArgs({3,2,1}));
-     Multi _e(TestTag::sweep,Gecode::IntArgs({4,2,3,1}));
+     Multi _c(TestTags::standard(),Gecode::IntArgs({1,2,3}));
+     Multi _d(TestTags::sweep(),Gecode::IntArgs({3,2,1}));
+     Multi _e(TestTags::sweep(),Gecode::IntArgs({4,2,3,1}));
 
    }
 

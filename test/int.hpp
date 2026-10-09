@@ -175,7 +175,7 @@ namespace Test { namespace Int {
   Test::Test(const std::string& p, const std::string& s,
              int a, const Gecode::IntSet& d, bool r,
              Gecode::IntPropLevel i)
-    : Test(TestTag::normal,p,s,a,d,r,i) {}
+    : Test(TestTags::standard(),p,s,a,d,r,i) {}
 
   inline
   Test::Test(TestTags tags, const std::string& s,
@@ -192,7 +192,7 @@ namespace Test { namespace Int {
   Test::Test(const std::string& s,
              int a, const Gecode::IntSet& d, bool r,
              Gecode::IntPropLevel i)
-    : Test(TestTag::normal,s,a,d,r,i) {}
+    : Test(TestTags::standard(),s,a,d,r,i) {}
 
   inline
   Test::Test(TestTags tags, const std::string& p, const std::string& s,
@@ -209,7 +209,7 @@ namespace Test { namespace Int {
   Test::Test(const std::string& p, const std::string& s,
              int a, int min, int max, bool r,
              Gecode::IntPropLevel i)
-    : Test(TestTag::normal,p,s,a,min,max,r,i) {}
+    : Test(TestTags::standard(),p,s,a,min,max,r,i) {}
 
   inline
   Test::Test(TestTags tags, const std::string& s,
@@ -224,7 +224,7 @@ namespace Test { namespace Int {
   inline
   Test::Test(const std::string& s,
              int a, int min, int max, bool r, Gecode::IntPropLevel i)
-    : Test(TestTag::normal,s,a,min,max,r,i) {}
+    : Test(TestTags::standard(),s,a,min,max,r,i) {}
 
   inline
   std::string

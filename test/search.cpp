@@ -395,7 +395,7 @@ namespace Test {
       Test(const std::string& s,
            HowToBranch _htb1, HowToBranch _htb2, HowToBranch _htb3,
            HowToConstrain _htc=HTC_NONE)
-        : Test(TestTag::normal,s,_htb1,_htb2,_htb3,_htc) {}
+        : Test(TestTags::standard(),s,_htb1,_htb2,_htb3,_htc) {}
     };
 
     /// Randomly resize a live leaf engine from another thread
@@ -495,7 +495,7 @@ namespace Test {
         return caught && (live == (clone ? 1 : 0));
       }
     public:
-      PBSConstructionFailure(void) : Base("Search::PBS::ConstructionFailure", TestTags(TestTag::normal,TestTag::check)) {}
+      PBSConstructionFailure(void) : Base("Search::PBS::ConstructionFailure", TestTags::check()) {}
       bool run(void) override {
         for (unsigned int threads : {1U,4U})
           for (bool clone : {false,true})
@@ -586,7 +586,7 @@ namespace Test {
       }
     public:
       WorkerControlSequentialPause(void)
-        : Base("Search::WorkerControl::SequentialPause", TestTags(TestTag::normal,TestTag::check)) {}
+        : Base("Search::WorkerControl::SequentialPause", TestTags::check()) {}
       bool run(void) override {
 #ifdef GECODE_HAS_THREADS
         return check<Gecode::DFS>(0U) && check<Gecode::DFS>(1U) &&
@@ -613,7 +613,7 @@ namespace Test {
         return false;
       }
     public:
-      WorkerControlAPI(void) : Base("Search::WorkerControl::API", TestTags(TestTag::normal,TestTag::check)) {}
+      WorkerControlAPI(void) : Base("Search::WorkerControl::API", TestTags::check()) {}
       bool run(void) override {
         using Gecode::Search::WorkerControl;
         WorkerControl empty;
@@ -685,7 +685,7 @@ namespace Test {
     class WorkerControlPBSPause : public Base {
     public:
       WorkerControlPBSPause(void)
-        : Base("Search::WorkerControl::PBS::Pause", TestTags(TestTag::normal,TestTag::check)) {}
+        : Base("Search::WorkerControl::PBS::Pause", TestTags::check()) {}
       bool run(void) override {
         bool ok = true;
         // A sequential portfolio must reject assets that could block its round.
@@ -1165,16 +1165,16 @@ namespace Test {
                        (htb2.htb() == HTB_NARY) &&
                        (htb3.htb() == HTB_BINARY) &&
                        (c_d == 1) && (a_d == 1) && (t == 1)
-                       ? TestTags(TestTag::normal,TestTag::check)
-                       : TestTags(TestTag::sweep),
+                       ? TestTags::check()
+                       : TestTags(TestTags::sweep()),
                        htb1.htb(),htb2.htb(),htb3.htb(),c_d,a_d,t);
-              new DFS<FailImmediate>(TestTag::normal,
+              new DFS<FailImmediate>(TestTags::standard(),
                                      HTB_NONE, HTB_NONE, HTB_NONE,
                                      c_d, a_d, t);
-              new DFS<SolveImmediate>(TestTag::sweep,
+              new DFS<SolveImmediate>(TestTags::sweep(),
                                       HTB_NONE, HTB_NONE, HTB_NONE,
                                       c_d, a_d, t);
-              new DFS<HasSolutions>(TestTag::sweep,
+              new DFS<HasSolutions>(TestTags::sweep(),
                                     HTB_NONE, HTB_NONE, HTB_NONE,
                                     c_d, a_d, t);
             }
@@ -1204,19 +1204,19 @@ namespace Test {
                          (htb2.htb() == HTB_BINARY) &&
                          (htb3.htb() == HTB_BINARY) &&
                          (c_d == 1) && (a_d == 1) && (t == 1)
-                         ? TestTags(TestTag::normal)
-                         : TestTags(TestTag::sweep),
+                         ? TestTags(TestTags::standard())
+                         : TestTags(TestTags::sweep()),
                          htc.htc(),htb1.htb(),htb2.htb(),htb3.htb(),
                          c_d,a_d,t);
                   }
               (void) new BAB<FailImmediate>
-                (TestTag::normal,HTC_NONE,HTB_NONE,HTB_NONE,HTB_NONE,
+                (TestTags::standard(),HTC_NONE,HTB_NONE,HTB_NONE,HTB_NONE,
                  c_d,a_d,t);
               (void) new BAB<SolveImmediate>
-                (TestTag::sweep,HTC_NONE,HTB_NONE,HTB_NONE,HTB_NONE,
+                (TestTags::sweep(),HTC_NONE,HTB_NONE,HTB_NONE,HTB_NONE,
                  c_d,a_d,t);
               (void) new BAB<HasSolutions>
-                (TestTag::sweep,HTC_NONE,HTB_NONE,HTB_NONE,HTB_NONE,
+                (TestTags::sweep(),HTC_NONE,HTB_NONE,HTB_NONE,HTB_NONE,
                  c_d,a_d,t);
             }
         // Restart-based search

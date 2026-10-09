@@ -97,7 +97,7 @@ namespace Test {
   /// Tags for test selection
   enum class TestTag : unsigned int {
     check  = 1U << 0, ///< Basic integrity tests
-    normal = 1U << 1, ///< Normal test suite
+    standard = 1U << 1, ///< Standard test suite
     sweep  = 1U << 2  ///< Really heavy sweep tests
   };
 
@@ -113,6 +113,12 @@ namespace Test {
     TestTags(TestTag t);
     /// Initialize with tags \a t0 and \a t1
     TestTags(TestTag t0, TestTag t1);
+    /// Integrity tests, also part of the standard suite
+    static TestTags check(void);
+    /// Standard suite without expensive sweeps
+    static TestTags standard(void);
+    /// Expensive parameter sweeps
+    static TestTags sweep(void);
     /// Return set with all known tags
     static TestTags all(void);
     /// Whether no tags are set
@@ -190,7 +196,7 @@ namespace Test {
     /// How many tests
     static unsigned int _n_tests;
   public:
-    /// Create and register a normal test with name \a s
+    /// Create and register a standard test with name \a s
     Base(std::string  s);
     /** \brief Create and register test with name \a s and tags \a t
      *

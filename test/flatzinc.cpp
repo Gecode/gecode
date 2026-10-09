@@ -82,7 +82,7 @@ namespace Test { namespace FlatZinc {
     public:
       GistStatisticsMode(void)
         : Base("FlatZinc::Options::GistStatisticsMode",
-               TestTags(TestTag::normal,TestTag::check)) {}
+               TestTags::check()) {}
 
       virtual bool run(void) {
         return
@@ -97,7 +97,7 @@ namespace Test { namespace FlatZinc {
 #ifndef GECODE_HAS_GIST
     /// Verify that unavailable Gist mode is rejected instead of running search.
     FlatZincErrorTest gist_unavailable(
-      TestTags(TestTag::normal,TestTag::check),
+      TestTags::check(),
       "Options::GistUnavailable",
       "var 1..1: x :: output_var;\nsolve satisfy;\n",
       {"-mode", "gist", "-s"},
@@ -110,7 +110,7 @@ namespace Test { namespace FlatZinc {
                              const std::string& expected, bool allSolutions,
                              std::vector<std::string> cmdlineOpt,
                              OutputCheck check, BeforeRun before)
-    : FlatZincTest(TestTag::normal, name, source, expected, allSolutions,
+    : FlatZincTest(TestTags::standard(), name, source, expected, allSolutions,
                    cmdlineOpt, check, before) {}
 
   FlatZincTest::FlatZincTest(TestTags tags, const std::string& name,
@@ -127,7 +127,7 @@ namespace Test { namespace FlatZinc {
                                        const std::string& source,
                                        std::vector<std::string> cmdlineOpt,
                                        std::string expectedMessage)
-    : FlatZincErrorTest(TestTag::normal, name, source, cmdlineOpt,
+    : FlatZincErrorTest(TestTags::standard(), name, source, cmdlineOpt,
                         expectedMessage) {}
 
   FlatZincErrorTest::FlatZincErrorTest(TestTags tags, const std::string& name,

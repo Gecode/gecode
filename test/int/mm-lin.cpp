@@ -140,7 +140,7 @@ namespace Test { namespace Int {
      public:
        /// Create and register test
        LinExprInt(const LinInstr* lis0, const std::string& s)
-         : Test(TestTag::sweep,"MiniModel::LinExpr::Int::"+s,4,-3,3),
+         : Test(TestTags::sweep(),"MiniModel::LinExpr::Int::"+s,4,-3,3),
            lis(lis0) {
          testfix = false;
        }
@@ -195,7 +195,7 @@ namespace Test { namespace Int {
      public:
        /// Create and register test
        LinExprMixed(const LinInstr* lis0, const std::string& s)
-         : Test(TestTag::sweep,"MiniModel::LinExpr::Mixed::"+s,4,-3,3),
+         : Test(TestTags::sweep(),"MiniModel::LinExpr::Mixed::"+s,4,-3,3),
            lis(lis0) {
          testfix = false;
        }
@@ -2197,8 +2197,8 @@ namespace Test { namespace Int {
            }
            (void) new LinExprInt(li[i],s);
            TestTags bool_tags = (i == 352)
-             ? TestTags(TestTag::normal,TestTag::check)
-             : TestTags(TestTag::sweep);
+             ? TestTags::check()
+             : TestTags(TestTags::sweep());
            (void) new LinExprBool(bool_tags,li[i],s);
            (void) new LinExprMixed(li[i],s);
          }

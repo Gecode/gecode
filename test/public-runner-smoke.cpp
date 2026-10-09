@@ -59,7 +59,7 @@ namespace {
   class FailingSmokeTest : public Test::Base {
   public:
     FailingSmokeTest(void)
-      : Test::Base("Smoke::B-Fail", Test::TestTag::sweep) {}
+      : Test::Base("Smoke::B-Fail", Test::TestTags::sweep()) {}
 
     bool run(void) override {
       failing_runs++;
@@ -141,8 +141,8 @@ main(void) {
                "-list-with-tags should succeed")) {
     return EXIT_FAILURE;
   }
-  if (!require(tagged_list_output.find(pass_name + " [normal]") != std::string::npos,
-               "default test should have the normal tag")) {
+  if (!require(tagged_list_output.find(pass_name + " [standard]") != std::string::npos,
+               "default test should have the standard tag")) {
     return EXIT_FAILURE;
   }
   if (!require(tagged_list_output.find("Smoke::B-Fail [sweep]") != std::string::npos,
@@ -151,19 +151,19 @@ main(void) {
   }
 
   std::string normal_output;
-  if (!require(run_and_capture({"public-runner-smoke", "-tag", "normal",
+  if (!require(run_and_capture({"public-runner-smoke", "-tag", "standard",
                                 "-iter", "1", "-stop", "true"},
                                normal_output) == EXIT_SUCCESS,
-               "normal tag selection should succeed")) {
+               "standard tag selection should succeed")) {
     return EXIT_FAILURE;
   }
   if (!require(normal_output.find(pass_name) != std::string::npos &&
                normal_output.find(fail_name) == std::string::npos,
-               "normal tag selection chose the wrong tests")) {
+               "standard tag selection chose the wrong tests")) {
     return EXIT_FAILURE;
   }
   if (!require(passing_runs == 1 && failing_runs == 0,
-               "normal tag selection run counts are wrong")) {
+               "standard tag selection run counts are wrong")) {
     return EXIT_FAILURE;
   }
 
@@ -230,7 +230,7 @@ main(void) {
     return EXIT_FAILURE;
 
   std::string combined_output;
-  if (!require(run_and_capture({"public-runner-smoke", "-tag", "normal",
+  if (!require(run_and_capture({"public-runner-smoke", "-tag", "standard",
                                 "-tag", "sweep", "-iter", "1", "-stop", "true"},
                                combined_output) == EXIT_FAILURE,
                "multiple tags should select their union")) {

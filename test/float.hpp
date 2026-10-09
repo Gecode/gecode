@@ -183,7 +183,7 @@ namespace Test { namespace Float {
   Test::Test(const std::string& s, int a, const Gecode::FloatVal& d,
              Gecode::FloatNum st, AssignmentType at,
              bool r)
-    : Test(TestTag::normal,s,a,d,st,at,r) {}
+    : Test(TestTags::standard(),s,a,d,st,at,r) {}
 
   inline
   Test::Test(TestTags tags, const std::string& s, int a,
@@ -200,7 +200,7 @@ namespace Test { namespace Float {
   Test::Test(const std::string& s, int a, Gecode::FloatNum min,
              Gecode::FloatNum max, Gecode::FloatNum st, AssignmentType at,
              bool r)
-    : Test(TestTag::normal,s,a,min,max,st,at,r) {}
+    : Test(TestTags::standard(),s,a,min,max,st,at,r) {}
 
   inline
   std::string

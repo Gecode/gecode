@@ -134,8 +134,8 @@ Module: test
 What:   new
 Rank:   major
 [DESCRIPTION]
-Add self-declared check, normal, and sweep tags to the public test harness.
-The standard check targets use a focused integrity selection, while normal
+Add self-declared check, standard, and sweep tags to the public test harness.
+The standard check targets use a focused integrity selection, while standard
 testing retains broad coverage without the exhaustive multi-hour sweeps.
 
 [ENTRY]

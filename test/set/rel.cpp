@@ -60,7 +60,7 @@ namespace Test { namespace Set {
       /// Create and register test
       RelBin(Gecode::SetRelType srt0, bool shared0)
         : SetTest((srt0 == Gecode::SRT_CMPL) && !shared0
-                  ? TestTag::normal : TestTag::sweep,
+                  ? TestTags::standard() : TestTags::sweep(),
                   "Rel::Bin::"+str(srt0)+"::S"+(shared0 ? "1":"0"),
                   shared0 ? 1 : 2,ds_33,true)
         , srt(srt0), shared(shared0){}

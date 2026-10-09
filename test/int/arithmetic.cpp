@@ -2429,7 +2429,7 @@ namespace Test { namespace Int {
        /// Create and register test
        AbsXY(const std::string& s, const Gecode::IntSet& d,
              Gecode::IntPropLevel ipl)
-         : Test(TestTags(TestTag::normal,TestTag::check),
+         : Test(TestTags::check(),
                 "Arithmetic::Abs::XY::"+str(ipl)+"::"+s,2,d,false,ipl) {}
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
@@ -2449,7 +2449,7 @@ namespace Test { namespace Int {
        /// Create and register test
        AbsXX(const std::string& s, const Gecode::IntSet& d,
              Gecode::IntPropLevel ipl)
-         : Test(TestTags(TestTag::normal,TestTag::check),
+         : Test(TestTags::check(),
                 "Arithmetic::Abs::XX::"+str(ipl)+"::"+s,1,d,false,ipl) {}
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
@@ -2676,7 +2676,7 @@ namespace Test { namespace Int {
      public:
        /// Create and register test
        MaxNary(Gecode::IntPropLevel ipl)
-         : Test(TestTags(TestTag::normal,TestTag::check),
+         : Test(TestTags::check(),
                 "Arithmetic::Max::Nary::"+str(ipl),4,-4,4,false,ipl) {}
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
@@ -2695,7 +2695,7 @@ namespace Test { namespace Int {
      public:
        /// Create and register test
        MaxNaryShared(Gecode::IntPropLevel ipl)
-         : Test(TestTags(TestTag::normal,TestTag::check),
+         : Test(TestTags::check(),
                 "Arithmetic::Max::Nary::Shared::"+str(ipl),
                 3,-4,4,false,ipl) {}
        /// %Test whether \a x is solution
@@ -2720,7 +2720,7 @@ namespace Test { namespace Int {
      public:
        /// Create and register test
        ArgMax(int n, int o, bool tb)
-         : Test(TestTags(TestTag::normal,TestTag::check),
+         : Test(TestTags::check(),
                 "Arithmetic::ArgMax::"+str(o)+"::"+str(tb)+"::"+str(n),
                 n+1,0,n+1,
                 false,tb ? Gecode::IPL_DEF : Gecode::IPL_DOM),
@@ -2755,7 +2755,7 @@ namespace Test { namespace Int {
      public:
        /// Create and register test
        ArgMaxShared(int n, bool tb)
-         : Test(TestTags(TestTag::normal,TestTag::check),
+         : Test(TestTags::check(),
                 "Arithmetic::ArgMax::Shared::"+str(tb)+"::"+str(n),n+1,0,n+1,
                 false),
            tiebreak(tb)  {
@@ -2870,7 +2870,7 @@ namespace Test { namespace Int {
      public:
        /// Create and register test
        ArgMaxBool(int n, int o, bool tb)
-         : Test(TestTags(TestTag::normal,TestTag::check),
+         : Test(TestTags::check(),
                 "Arithmetic::ArgMaxBool::"+str(o)+"::"+str(tb)+"::"+str(n),
                 n+1,0,n+1,
                 false,tb ? Gecode::IPL_DEF : Gecode::IPL_DOM),
@@ -2910,7 +2910,7 @@ namespace Test { namespace Int {
      public:
        /// Create and register test
        ArgMaxBoolShared(int n, bool tb)
-         : Test(TestTags(TestTag::normal,TestTag::check),
+         : Test(TestTags::check(),
                 "Arithmetic::ArgMaxBool::Shared::"+str(tb)+"::"+str(n),n+1,0,n+1,
                 false),
            tiebreak(tb)  {
@@ -3163,42 +3163,42 @@ namespace Test { namespace Int {
              for (int n=0; n<=6; n++) {
                TestTags distinct_tags = (n == 3) &&
                  (ipls.ipl() == Gecode::IPL_BND)
-                 ? TestTag::normal : TestTag::sweep;
-               (void) new PowXY(TestTag::sweep,"A",n,a,ipls.ipl());
-               (void) new PowXY(TestTag::sweep,"B",n,b,ipls.ipl());
+                 ? TestTags::standard() : TestTags::sweep();
+               (void) new PowXY(TestTags::sweep(),"A",n,a,ipls.ipl());
+               (void) new PowXY(TestTags::sweep(),"B",n,b,ipls.ipl());
                (void) new PowXY(distinct_tags,"C",n,c,ipls.ipl());
-               (void) new PowXY(TestTag::sweep,"D",n,d,ipls.ipl());
+               (void) new PowXY(TestTags::sweep(),"D",n,d,ipls.ipl());
 
                TestTags tags = (n == 0) && (ipls.ipl() == Gecode::IPL_BND)
-                 ? TestTag::normal : TestTag::sweep;
+                 ? TestTags::standard() : TestTags::sweep();
                (void) new PowXX(tags,"A",n,a,ipls.ipl());
-               (void) new PowXX(TestTag::sweep,"B",n,b,ipls.ipl());
-               (void) new PowXX(TestTag::sweep,"C",n,c,ipls.ipl());
-               (void) new PowXX(TestTag::sweep,"D",n,d,ipls.ipl());
+               (void) new PowXX(TestTags::sweep(),"B",n,b,ipls.ipl());
+               (void) new PowXX(TestTags::sweep(),"C",n,c,ipls.ipl());
+               (void) new PowXX(TestTags::sweep(),"D",n,d,ipls.ipl());
              }
 
              for (int n=1; n<=6; n++) {
                TestTags distinct_tags = (n == 3) &&
                  (ipls.ipl() == Gecode::IPL_BND)
-                 ? TestTag::normal : TestTag::sweep;
-               (void) new NrootXY(TestTag::sweep,"A",n,a,ipls.ipl());
-               (void) new NrootXY(TestTag::sweep,"B",n,b,ipls.ipl());
+                 ? TestTags::standard() : TestTags::sweep();
+               (void) new NrootXY(TestTags::sweep(),"A",n,a,ipls.ipl());
+               (void) new NrootXY(TestTags::sweep(),"B",n,b,ipls.ipl());
                (void) new NrootXY(distinct_tags,"C",n,c,ipls.ipl());
-               (void) new NrootXY(TestTag::sweep,"D",n,d,ipls.ipl());
+               (void) new NrootXY(TestTags::sweep(),"D",n,d,ipls.ipl());
 
                TestTags tags = (n == 1) && (ipls.ipl() == Gecode::IPL_BND)
-                 ? TestTag::normal : TestTag::sweep;
+                 ? TestTags::standard() : TestTags::sweep();
                (void) new NrootXX(tags,"A",n,a,ipls.ipl());
-               (void) new NrootXX(TestTag::sweep,"B",n,b,ipls.ipl());
-               (void) new NrootXX(TestTag::sweep,"C",n,c,ipls.ipl());
-               (void) new NrootXX(TestTag::sweep,"D",n,d,ipls.ipl());
+               (void) new NrootXX(TestTags::sweep(),"B",n,b,ipls.ipl());
+               (void) new NrootXX(TestTags::sweep(),"C",n,c,ipls.ipl());
+               (void) new NrootXX(TestTags::sweep(),"D",n,d,ipls.ipl());
              }
 
              for (int n=30; n<=34; n++) {
-               (void) new PowXY(TestTag::sweep,"C",n,c,ipls.ipl());
-               (void) new PowXX(TestTag::sweep,"C",n,c,ipls.ipl());
-               (void) new NrootXY(TestTag::sweep,"C",n,c,ipls.ipl());
-               (void) new NrootXX(TestTag::sweep,"C",n,c,ipls.ipl());
+               (void) new PowXY(TestTags::sweep(),"C",n,c,ipls.ipl());
+               (void) new PowXX(TestTags::sweep(),"C",n,c,ipls.ipl());
+               (void) new NrootXY(TestTags::sweep(),"C",n,c,ipls.ipl());
+               (void) new NrootXX(TestTags::sweep(),"C",n,c,ipls.ipl());
              }
 
              (void) new SqrtXY("A",a,ipls.ipl());

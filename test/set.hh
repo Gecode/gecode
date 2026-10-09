@@ -311,7 +311,7 @@ namespace Test {
        */
       SetTest(const std::string& s,
               int a, const Gecode::IntSet& d, bool r=false, int w=0)
-        : SetTest(TestTag::normal,s,a,d,r,w) {}
+        : SetTest(TestTags::standard(),s,a,d,r,w) {}
       /// Construct and register a test with explicitly assigned tags
       SetTest(TestTags tags, const std::string& s,
               int a, const Gecode::IntSet& d, bool r=false, int w=0)

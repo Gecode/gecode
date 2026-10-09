@@ -4506,17 +4506,17 @@ namespace Test { namespace Int {
             s = "0" + s;
           }
           TestTags eq_zero_tags = i == 0
-            ? TestTags(TestTag::normal) : TestTags(TestTag::sweep);
+            ? TestTags(TestTags::standard()) : TestTags(TestTags::sweep());
           (void) new SetExprConst(eq_zero_tags,si[i],s,Gecode::SRT_EQ,0);
-          (void) new SetExprConst(TestTag::sweep,si[i],s,Gecode::SRT_EQ,1);
-          (void) new SetExprConst(TestTag::sweep,si[i],s,Gecode::SRT_NQ,0);
-          (void) new SetExprConst(TestTag::sweep,si[i],s,Gecode::SRT_NQ,1);
-          (void) new SetExprConst(TestTag::sweep,si[i],s,Gecode::SRT_SUB,0);
-          (void) new SetExprConst(TestTag::sweep,si[i],s,Gecode::SRT_SUB,1);
-          (void) new SetExprConst(TestTag::sweep,si[i],s,Gecode::SRT_SUP,0);
-          (void) new SetExprConst(TestTag::sweep,si[i],s,Gecode::SRT_SUP,1);
-          (void) new SetExprConst(TestTag::sweep,si[i],s,Gecode::SRT_DISJ,0);
-          (void) new SetExprConst(TestTag::sweep,si[i],s,Gecode::SRT_DISJ,1);
+          (void) new SetExprConst(TestTags::sweep(),si[i],s,Gecode::SRT_EQ,1);
+          (void) new SetExprConst(TestTags::sweep(),si[i],s,Gecode::SRT_NQ,0);
+          (void) new SetExprConst(TestTags::sweep(),si[i],s,Gecode::SRT_NQ,1);
+          (void) new SetExprConst(TestTags::sweep(),si[i],s,Gecode::SRT_SUB,0);
+          (void) new SetExprConst(TestTags::sweep(),si[i],s,Gecode::SRT_SUB,1);
+          (void) new SetExprConst(TestTags::sweep(),si[i],s,Gecode::SRT_SUP,0);
+          (void) new SetExprConst(TestTags::sweep(),si[i],s,Gecode::SRT_SUP,1);
+          (void) new SetExprConst(TestTags::sweep(),si[i],s,Gecode::SRT_DISJ,0);
+          (void) new SetExprConst(TestTags::sweep(),si[i],s,Gecode::SRT_DISJ,1);
 
           if ( (i % 31) == 0) {
 
@@ -4530,16 +4530,16 @@ namespace Test { namespace Int {
                 }
                 ss=s+"::"+ss;
                 TestTags eq_tags = (i == 0) && (j == 0)
-                  ? TestTags(TestTag::normal) : TestTags(TestTag::sweep);
+                  ? TestTags(TestTags::standard()) : TestTags(TestTags::sweep());
                 (void) new SetExprExpr(eq_tags,si[i],si[j],ss,
                                        Gecode::SRT_EQ);
-                (void) new SetExprExpr(TestTag::sweep,si[i],si[j],ss,
+                (void) new SetExprExpr(TestTags::sweep(),si[i],si[j],ss,
                                        Gecode::SRT_NQ);
-                (void) new SetExprExpr(TestTag::sweep,si[i],si[j],ss,
+                (void) new SetExprExpr(TestTags::sweep(),si[i],si[j],ss,
                                        Gecode::SRT_SUB);
-                (void) new SetExprExpr(TestTag::sweep,si[i],si[j],ss,
+                (void) new SetExprExpr(TestTags::sweep(),si[i],si[j],ss,
                                        Gecode::SRT_SUP);
-                (void) new SetExprExpr(TestTag::sweep,si[i],si[j],ss,
+                (void) new SetExprExpr(TestTags::sweep(),si[i],si[j],ss,
                                        Gecode::SRT_DISJ);
               }
             }

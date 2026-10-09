@@ -47,6 +47,18 @@ namespace Test {
   TestTags::TestTags(TestTag t0, TestTag t1)
     : _mask(static_cast<unsigned int>(t0) |
             static_cast<unsigned int>(t1)) {}
+  inline TestTags
+  TestTags::check(void) {
+    return TestTags(TestTag::standard,TestTag::check);
+  }
+  inline TestTags
+  TestTags::standard(void) {
+    return TestTags(TestTag::standard);
+  }
+  inline TestTags
+  TestTags::sweep(void) {
+    return TestTags(TestTag::sweep);
+  }
   inline bool
   TestTags::empty(void) const {
     return _mask == 0;

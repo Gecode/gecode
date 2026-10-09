@@ -1532,12 +1532,12 @@ if(BUILD_TESTING)
                 $<TARGET_FILE:gecode-test> ${GECODE_CHECK_ARGS}
         DEPENDS ${GECODE_CHECK_DEPENDS}
         USES_TERMINAL)
-      add_custom_target(check-normal
+      add_custom_target(check-standard
         COMMAND ${CMAKE_COMMAND} -E env
                 GECODE_TEST_BLACKBOX_EXEC=$<TARGET_FILE:gecode-test-blackbox-exec>
                 GECODE_TEST_BLACKBOX_DLL=$<TARGET_FILE:gecode-test-blackbox-dll>
                 GECODE_TEST_BLACKBOX_LOG=${GECODE_TEST_BLACKBOX_LOG}
-                $<TARGET_FILE:gecode-test> -tag normal
+                $<TARGET_FILE:gecode-test> -tag standard
         DEPENDS ${GECODE_CHECK_DEPENDS}
         USES_TERMINAL)
       add_custom_target(check-sweep
@@ -1553,8 +1553,8 @@ if(BUILD_TESTING)
         COMMAND $<TARGET_FILE:gecode-test> ${GECODE_CHECK_ARGS}
         DEPENDS ${GECODE_CHECK_DEPENDS}
         USES_TERMINAL)
-      add_custom_target(check-normal
-        COMMAND $<TARGET_FILE:gecode-test> -tag normal
+      add_custom_target(check-standard
+        COMMAND $<TARGET_FILE:gecode-test> -tag standard
         DEPENDS gecode-test
         USES_TERMINAL)
       add_custom_target(check-sweep
@@ -1578,16 +1578,16 @@ if(BUILD_TESTING)
     message(WARNING "Skipping gecode-test/check targets because required modules are disabled")
     add_custom_target(check
       COMMAND ${CMAKE_COMMAND} -E echo "Skipping check target because required modules are disabled")
-    add_custom_target(check-normal
-      COMMAND ${CMAKE_COMMAND} -E echo "Skipping check-normal target because required modules are disabled")
+    add_custom_target(check-standard
+      COMMAND ${CMAKE_COMMAND} -E echo "Skipping check-standard target because required modules are disabled")
     add_custom_target(check-sweep
       COMMAND ${CMAKE_COMMAND} -E echo "Skipping check-sweep target because required modules are disabled")
   endif()
 else()
   add_custom_target(check
     COMMAND ${CMAKE_COMMAND} -E echo "Skipping check target because BUILD_TESTING is OFF")
-  add_custom_target(check-normal
-    COMMAND ${CMAKE_COMMAND} -E echo "Skipping check-normal target because BUILD_TESTING is OFF")
+  add_custom_target(check-standard
+    COMMAND ${CMAKE_COMMAND} -E echo "Skipping check-standard target because BUILD_TESTING is OFF")
   add_custom_target(check-sweep
     COMMAND ${CMAKE_COMMAND} -E echo "Skipping check-sweep target because BUILD_TESTING is OFF")
 endif()

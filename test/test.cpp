@@ -62,7 +62,7 @@ namespace Test {
   /// Tags supported by the test runner
   static const TestTagDescription test_tag_descriptions[] = {
     {"check",  TestTag::check},
-    {"normal", TestTag::normal},
+    {"standard", TestTag::standard},
     {"sweep",  TestTag::sweep}
   };
 
@@ -123,7 +123,7 @@ namespace Test {
    *
    */
   Base::Base(std::string s)
-    : Base(s, TestTag::normal) {}
+    : Base(s, TestTags::standard()) {}
 
   Base::Base(std::string s, TestTags t)
     : _name(std::move(s)), _tags(t), _next(_tests), _rand(Gecode::Support::RandomGenerator()) {

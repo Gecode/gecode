@@ -53,7 +53,7 @@ namespace Test { namespace Int {
      public:
        /// Construct and register test
        ChannelFull(int xoff0, int yoff0, Gecode::IntPropLevel ipl)
-         : Test(TestTag::sweep,"Channel::Full::"+str(xoff0)+"::"+str(yoff0)+"::"+str(ipl),
+         : Test(TestTags::sweep(),"Channel::Full::"+str(xoff0)+"::"+str(yoff0)+"::"+str(ipl),
                 8,0,3,false,ipl),
            xoff(xoff0), yoff(yoff0) {
          contest = CTL_NONE;
@@ -94,7 +94,7 @@ namespace Test { namespace Int {
      public:
        /// Construct and register test
        ChannelHalf(Gecode::IntPropLevel ipl)
-         : Test(TestTag::sweep,"Channel::Half::"+str(ipl),6,0,5,false,ipl) {
+         : Test(TestTags::sweep(),"Channel::Half::"+str(ipl),6,0,5,false,ipl) {
          contest = CTL_NONE;
        }
        /// Check whether \a x is solution
@@ -124,7 +124,7 @@ namespace Test { namespace Int {
      public:
        /// Construct and register test
        ChannelShared(Gecode::IntPropLevel ipl)
-         : Test(TestTag::sweep,"Channel::Shared::"+str(ipl),6,0,5,false,ipl) {
+         : Test(TestTags::sweep(),"Channel::Shared::"+str(ipl),6,0,5,false,ipl) {
          contest = CTL_NONE;
        }
        /// Check whether \a x is solution
@@ -146,7 +146,7 @@ namespace Test { namespace Int {
      public:
        /// Construct and register test
        ChannelLinkSingle(void)
-         : Test(TestTag::sweep,"Channel::Bool::Single",2,-1,2) {
+         : Test(TestTags::sweep(),"Channel::Bool::Single",2,-1,2) {
          contest = CTL_NONE;
        }
        /// Check whether \a x is solution
@@ -219,9 +219,9 @@ namespace Test { namespace Int {
 
      ChannelLinkSingle cls;
 
-     ChannelLinkMulti clma(TestTag::normal,"A", 0, 5, 0);
-     ChannelLinkMulti clmb(TestTag::sweep,"B", 1, 6, 1);
-     ChannelLinkMulti clmc(TestTag::sweep,"C",-1, 4,-1);
+     ChannelLinkMulti clma(TestTags::standard(),"A", 0, 5, 0);
+     ChannelLinkMulti clmb(TestTags::sweep(),"B", 1, 6, 1);
+     ChannelLinkMulti clmc(TestTags::sweep(),"C",-1, 4,-1);
      //@}
 
    }

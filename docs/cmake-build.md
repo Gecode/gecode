@@ -84,11 +84,11 @@ cmake --build build --target check
 Two additional targets expose broader tag-based suites:
 
 ```bash
-cmake --build build --target check-normal
+cmake --build build --target check-standard
 cmake --build build --target check-sweep
 ```
 
-`check-normal` runs the normal test suite. `check-sweep` runs tests tagged as
+`check-standard` runs the standard test suite. `check-sweep` runs tests tagged as
 heavy sweep tests and is intended for deliberate, longer-running validation.
 
 Use `gecode-test -help` for runner options and `gecode-test -list-with-tags`
