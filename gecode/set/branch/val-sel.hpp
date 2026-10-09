@@ -110,7 +110,7 @@ namespace Gecode { namespace Set { namespace Branch {
   }
   forceinline bool
   ValSelRnd::notice(void) const {
-    return true;
+    return false;
   }
   forceinline void
   ValSelRnd::dispose(Space&) {
@@ -120,4 +120,3 @@ namespace Gecode { namespace Set { namespace Branch {
 }}}
 
 // STATISTICS: set-branch
-

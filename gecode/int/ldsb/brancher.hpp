@@ -146,15 +146,10 @@ namespace Gecode { namespace Int { namespace LDSB {
            class Filter, class Print>
   const Choice*
   LDSBBrancher<View,n,Val,a,Filter,Print>::choice(Space& home) {
-    // Making the PVC here is not so nice, I think.
-    const Choice* c = ViewValBrancher<View,n,Val,a,Filter,Print>::choice(home);
-    const PosValChoice<Val>* pvc = static_cast<const PosValChoice<Val>* >(c);
-
-    // Compute symmetries.
-
-    int choicePos = pvc->pos().pos;
-    int choiceVal = pvc->val();
-    delete c;
+    Pos p = ViewBrancher<View,Filter,n>::pos(home);
+    View v = ViewBrancher<View,Filter,n>::view(p);
+    int choicePos = p.pos;
+    Val choiceVal = this->vsc->val(home,v,choicePos);
 
     _prevPos = choicePos;
 
@@ -189,7 +184,14 @@ namespace Gecode { namespace Int { namespace LDSB {
       ++it;
     }
 
-    return new LDSBChoice<Val>(*this,a,choicePos,choiceVal, literals, nliterals);
+    unsigned int words = this->random_words()+this->vsc->random_words();
+    if (!words)
+      return new LDSBChoice<Val>(*this,a,choicePos,choiceVal,literals,nliterals);
+    std::unique_ptr<RndChoice<LDSBChoice<Val>>> result(
+      new (words) RndChoice<LDSBChoice<Val>>
+      (words,*this,a,choicePos,choiceVal,literals,nliterals));
+    this->vsc->random_save(this->random_save(result->data()));
+    return result.release();
   }
 
 
@@ -207,7 +209,13 @@ namespace Gecode { namespace Int { namespace LDSB {
       e >> literals[i]._variable;
       e >> literals[i]._value;
     }
-    return new LDSBChoice<Val>(*this,a,p,v, literals, nliterals);
+    unsigned int words = this->random_words()+this->vsc->random_words();
+    if (!words)
+      return new LDSBChoice<Val>(*this,a,p,v,literals,nliterals);
+    std::unique_ptr<RndChoice<LDSBChoice<Val>>> result(
+      new (words) RndChoice<LDSBChoice<Val>>(words,*this,a,p,v,literals,nliterals));
+    result->read(e);
+    return result.release();
   }
 
   template <>

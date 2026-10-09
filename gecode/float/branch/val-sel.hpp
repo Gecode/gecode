@@ -90,7 +90,7 @@ namespace Gecode { namespace Float { namespace Branch {
   }
   forceinline bool
   ValSelRnd::notice(void) const {
-    return true;
+    return false;
   }
   forceinline void
   ValSelRnd::dispose(Space&) {
@@ -100,4 +100,3 @@ namespace Gecode { namespace Float { namespace Branch {
 }}}
 
 // STATISTICS: float-branch
-

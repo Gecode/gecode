@@ -821,6 +821,7 @@ SHELL'
 ac_subst_files=''
 ac_user_opts='
 enable_option_checking
+with_random_engine
 with_host_os
 with_compiler_vendor
 enable_resource
@@ -1546,6 +1547,9 @@ Optional Features:
 Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
   --without-PACKAGE       do not use PACKAGE (same as --with-PACKAGE=no)
+  --with-random-engine=ENGINE
+                          default random engine: splitmix (default) or
+                          xorshift64star
   --with-host-os          Override operating system test. Valid values are
                           Linux, Darwin, FreeBSD, NetBSD, and Windows.
   --with-compiler-vendor  Override compiler test. Valid values are gnu, intel,
@@ -3279,6 +3283,27 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
 ac_config_headers="$ac_config_headers gecode/support/config.hpp"
 
 
+
+
+# Check whether --with-random-engine was given.
+if test ${with_random_engine+y}
+then :
+  withval=$with_random_engine;
+else case e in #(
+  e) with_random_engine=splitmix ;;
+esac
+fi
+
+case $with_random_engine in #(
+  splitmix) :
+     ;; #(
+  xorshift64star) :
+
+printf "%s\n" "#define GECODE_RANDOM_XORSHIFT64STAR 1" >>confdefs.h
+ ;; #(
+  *) :
+    as_fn_error $? "random engine must be splitmix or xorshift64star" "$LINENO" 5 ;;
+esac
 
 ac_gecode_soversion=51
 GECODE_SOVERSION=${ac_gecode_soversion}

@@ -35,6 +35,7 @@
 
 #define _CRT_RAND_S
 #include <stdlib.h>
+#include <stdexcept>
 
 #include <gecode/support.hh>
 
@@ -42,7 +43,8 @@ namespace Gecode { namespace Support {
 
   unsigned int hwrnd(void) {
     unsigned int r;
-    (void) rand_s(&r);
+    if (rand_s(&r) != 0)
+      throw std::runtime_error("Hardware random initialization failed");
     return r;
   }
 
@@ -53,14 +55,17 @@ namespace Gecode { namespace Support {
 #include <gecode/support.hh>
 
 #include <fstream>
+#include <stdexcept>
 
 namespace Gecode { namespace Support {
 
   unsigned int hwrnd(void) {
     std::fstream devrandom;
-    devrandom.open("/dev/random", std::fstream::in);
+    devrandom.open("/dev/random", std::fstream::in | std::fstream::binary);
     unsigned int rnd;
     devrandom.read(reinterpret_cast<char*>(&rnd),sizeof(unsigned int));
+    if (!devrandom)
+      throw std::runtime_error("Cannot read hardware random source /dev/random");
     devrandom.close();
     return rnd;
   }
@@ -70,4 +75,3 @@ namespace Gecode { namespace Support {
 #endif
 
 // STATISTICS: support-any
-

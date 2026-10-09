@@ -33,7 +33,7 @@ awk '
 ' gecode/int/var-imp/int.vis > custom-two.vis
 
 CFLAGS="-fPIC" \
-CXXFLAGS="-std=c++11 -fPIC -DGECODE_MEMORY_ALIGNMENT=16" \
+CXXFLAGS="-std=c++17 -fPIC -DGECODE_MEMORY_ALIGNMENT=16" \
   dash ./configure \
     --with-vis="$PWD/custom-one.vis,$PWD/custom-two.vis" \
     --disable-cpprofiler \

@@ -1,12 +1,10 @@
 /* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
- *     Christian Schulte <schulte@gecode.dev>
  *     Mikael Zayenz Lagerkvist <lagerkvist@gecode.dev>
  *
  *  Copyright:
- *     Christian Schulte, 2008
- *     Mikael Zayenz Lagerkvist, 2008
+ *     Mikael Zayenz Lagerkvist, 2026
  *
  *  This file is part of Gecode, the generic constraint
  *  development environment:
@@ -33,52 +31,34 @@
  *
  */
 
-#include <gecode/kernel.hh>
+#include <gecode/driver.hh>
+#ifdef TEST_RANDOM_FLATZINC
+#include <gecode/flatzinc.hh>
+#endif
+#include <iostream>
 
-namespace Gecode {
-
-  Support::Mutex Rnd::IMP::m;
-
-  forceinline
-  Rnd::IMP::IMP(unsigned int s)
-    : rg(s) {}
-
-  Rnd::IMP::~IMP(void) {}
-
-  forceinline void
-  Rnd::_seed(unsigned int s) {
-    if (object() == nullptr) {
-      object(new IMP(s));
-    } else {
-      static_cast<IMP*>(object())->seed(s);
-    }
+template<class Options>
+int check(int argc, char* argv[]) {
+  Options opt("random-options");
+  opt.parse(argc,argv);
+  if (argc != 1)
+    return 2;
+  auto first = opt.rnd();
+  auto second = opt.rnd();
+  std::cout << first.state() << '\n';
+  for (int i=0; i<8; ++i) {
+    const auto draw = first(UINT64_MAX);
+    if (draw != second(UINT64_MAX))
+      return 3;
+    std::cout << draw << '\n';
   }
-
-  Rnd::Rnd(void) {}
-  Rnd::Rnd(unsigned int s) {
-    object(new IMP(s));
-  }
-  Rnd::Rnd(const Rnd& r)
-    : SharedHandle(r) {}
-  Rnd&
-  Rnd::operator =(const Rnd& r) {
-    (void) SharedHandle::operator =(r);
-    return *this;
-  }
-  Rnd::~Rnd(void) {}
-
-  void
-  Rnd::seed(unsigned int s) {
-    _seed(s);
-  }
-  void
-  Rnd::time(void) {
-    _seed(static_cast<unsigned int>(::time(nullptr)));
-  }
-  void
-  Rnd::hw(void) {
-    _seed(Support::hwrnd());
-  }
+  return 0;
 }
 
-// STATISTICS: kernel-other
+int main(int argc, char* argv[]) {
+#ifdef TEST_RANDOM_FLATZINC
+  if (argc > 1 && std::string(argv[1]) == "flatzinc")
+    return check<Gecode::FlatZinc::FlatZincOptions>(argc-1,argv+1);
+#endif
+  return check<Gecode::Options>(argc,argv);
+}
