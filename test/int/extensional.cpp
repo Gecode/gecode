@@ -567,7 +567,8 @@ namespace Test { namespace Int {
      public:
        /// Create and register test
        RegRandomNFADifferential(unsigned int seed)
-         : Test("Extensional::Reg::Sparse::RandomNFADifferential::" +
+         : Test(TestTags(TestTag::normal,TestTag::check),
+                "Extensional::Reg::Sparse::RandomNFADifferential::" +
                 Test::str(static_cast<int>(seed)),
                 5,0,n_symbols-1,false,Gecode::IPL_DOM) {
          unsigned int random = seed;
@@ -640,7 +641,8 @@ namespace Test { namespace Int {
      public:
        /// Create and register test
        RegNFAPrefix(bool b)
-         : Test("Extensional::Reg::Sparse::NFAPrefix::" +
+         : Test(TestTags(TestTag::normal,TestTag::check),
+                "Extensional::Reg::Sparse::NFAPrefix::" +
                 std::string(b ? "Bool" : "Int"),
                 5,0,1,false,Gecode::IPL_DOM), boolean(b) {}
        /// %Test whether \a x is a solution
