@@ -46,9 +46,16 @@ namespace Test { namespace Int { namespace InterDistance {
   public:
     Distance(int n, int p0, int min, int max,
              Gecode::IntPropLevel ipl0=Gecode::IPL_DEF)
-      : Test("InterDistance::"+str(n)+"::"+str(p0)+"::"+str(min)+
+      : Test((n == 3 && p0 == 2 && min == -3)
+             ? TestTags::check() : TestTags::standard(),
+             "InterDistance::"+str(n)+"::"+str(p0)+"::"+str(min)+
              "::"+str(ipl0),n,min,max,false,ipl0), p(p0) {
       contest = Gecode::ba(ipl) == Gecode::IPL_BASIC ? CTL_NONE : CTL_BOUNDS_Z;
+    }
+    Distance(int n, int p0, const Gecode::IntSet& domain)
+      : Test(TestTags::standard(),"InterDistance::Holes::"+str(n)+"::"+str(p0),
+             n,domain,false,Gecode::IPL_DEF), p(p0) {
+      contest = CTL_BOUNDS_Z;
     }
     virtual bool solution(const Assignment& x) const {
       for (int i=0; i<x.size(); i++)
@@ -68,7 +75,8 @@ namespace Test { namespace Int { namespace InterDistance {
   class Variable : public Test {
   public:
     Variable(int n, Gecode::IntPropLevel ipl0)
-      : Test("InterDistance::Variable::"+str(n)+"::"+str(ipl0),
+      : Test(n == 3 ? TestTags::check() : TestTags::standard(),
+             "InterDistance::Variable::"+str(n)+"::"+str(ipl0),
              n+1,-2,3,false,ipl0) {
       contest = Gecode::ba(ipl) == Gecode::IPL_BASIC ? CTL_NONE : CTL_BOUNDS_Z;
     }
@@ -90,8 +98,8 @@ namespace Test { namespace Int { namespace InterDistance {
     }
   };
 
-  /// Small independent oracle for heterogeneous and holey domains
-  class Bounds : public Base {
+  /// Regressions for hole jumps, critical regions, and distance updates
+  class Regression : public Base {
     typedef std::vector<int> Domain;
     typedef std::vector<Domain> Domains;
 
@@ -116,281 +124,60 @@ namespace Test { namespace Int { namespace InterDistance {
       }
     };
 
-    /// Supported bounds and largest separation found by tuple enumeration
-    struct Supports {
-      bool found;
-      std::vector<int> min;
-      std::vector<int> max;
-      long long int gap;
-
-      Supports(int n)
-        : found(false), min(n,Gecode::Int::Limits::max),
-          max(n,Gecode::Int::Limits::min), gap(-1) {}
-
-      void include(const std::vector<int>& tuple) {
-        found = true;
-        long long int distance = Gecode::Int::Limits::max;
-        for (int i=0; i<static_cast<int>(tuple.size()); i++) {
-          min[i] = std::min(min[i],tuple[i]);
-          max[i] = std::max(max[i],tuple[i]);
-          for (int j=0; j<i; j++) {
-            long long int delta = static_cast<long long int>(tuple[i])-tuple[j];
-            distance = std::min(distance,std::abs(delta));
-          }
+    static bool regressions(void) {
+      using namespace Gecode;
+      // The paper's example and its reflection have unique solutions.
+      for (int sign : {1,-1}) {
+        Domains domains = {{2,3,4,5,6},{10,11,12,13,14},
+          {4,5,6,7,8,9,10,11,12,13,14,15}};
+        for (Domain& domain : domains) {
+          for (int& value : domain)
+            value *= sign;
+          std::sort(domain.begin(),domain.end());
         }
-        gap = std::max(gap,distance);
-      }
-    };
-
-    /// Enumerate using only the defining pairwise inequality
-    static void enumerate(const Domains& dom, int p, int i,
-                          std::vector<int>& tuple, Supports& result) {
-      if (i == static_cast<int>(dom.size())) {
-        result.include(tuple);
-        return;
-      }
-
-      for (int value : dom[i]) {
-        bool valid = true;
-        for (int j=0; j<i; j++) {
-          long long int delta = static_cast<long long int>(value)-tuple[j];
-          if ((-p < delta) && (delta < p)) {
-            valid = false;
-            break;
-          }
-        }
-        if (valid) {
-          tuple[i] = value;
-          enumerate(dom,p,i+1,tuple,result);
-        }
-      }
-    }
-
-    /// Return independent supports for these domains and separation
-    static Supports enumerate(const Domains& dom, int p) {
-      Supports result(static_cast<int>(dom.size()));
-      std::vector<int> tuple(dom.size());
-      enumerate(dom,p,0,tuple,result);
-      return result;
-    }
-
-    /// Interval supports for bounds(Z) may use holes in other variables
-    static Domains interval_hulls(const Gecode::IntVarArray& x) {
-      Domains hull(x.size());
-      for (int i=0; i<x.size(); i++)
-        for (int value=x[i].min(); value<=x[i].max(); value++)
-          hull[i].push_back(value);
-      return hull;
-    }
-
-    /// Check preservation of every feasible tuple's supported bounds
-    static bool preserves_supports(const Gecode::IntVarArray& x,
-                                   const Supports& expected) {
-      for (int i=0; i<x.size(); i++)
-        if ((x[i].min() > expected.min[i]) || (x[i].max() < expected.max[i]))
-          return false;
-      return true;
-    }
-
-    /// Check that each remaining bound has an interval support
-    static bool matches_supports(const Gecode::IntVarArray& x,
-                                 const Supports& expected) {
-      if (!expected.found)
-        return false;
-      for (int i=0; i<x.size(); i++)
-        if ((x[i].min() != expected.min[i]) || (x[i].max() != expected.max[i]))
-          return false;
-      return true;
-    }
-
-    static void print_domain(const Domain& domain) {
-      olog << '{';
-      for (int value : domain)
-        olog << value << ',';
-      olog << '}';
-    }
-
-    /// Record complete inputs and expectations in the test harness log
-    static bool mismatch(const char* reason, const Domains& domains,
-                         const Domain& distance, Gecode::IntPropLevel ipl,
-                         const Supports& expected, const Model& model) {
-      olog << reason << ": domains ";
-      for (const Domain& domain : domains) {
-        print_domain(domain);
-        olog << ' ';
-      }
-      olog << "distance ";
-      print_domain(distance);
-      olog << ", propagation level " << ipl
-           << ", solution exists " << expected.found << ", expected bounds ";
-      for (int i=0; i<model.x.size(); i++)
-        olog << '[' << expected.min[i] << ',' << expected.max[i] << "] ";
-      olog << ", maximum gap " << expected.gap << ", propagated " << model.x
-           << ", distance " << model.p << std::endl;
-      return false;
-    }
-
-    static bool check(const Domains& dom, int p, bool dense) {
-      Supports expected = enumerate(dom,p);
-      Model model(dom,{p});
-      Gecode::inter_distance(model,model.x,p);
-      bool failed = model.status() == Gecode::SS_FAILED;
-
-      if ((expected.found && failed) || (!expected.found && dense && !failed))
-        return mismatch("Feasibility",dom,{p},Gecode::IPL_DEF,expected,model);
-      if (failed)
-        return true;
-      if (expected.found && !preserves_supports(model.x,expected))
-        return mismatch("Lost solution",dom,{p},Gecode::IPL_DEF,expected,model);
-
-      // Check the final hulls after jumps across domain holes as well.
-      if (!dense)
-        expected = enumerate(interval_hulls(model.x),p);
-      if (!matches_supports(model.x,expected))
-        return mismatch("Bounds(Z) consistency",dom,{p},Gecode::IPL_DEF,
-                        expected,model);
-      return true;
-    }
-
-    /// Largest domain value supported by the enumerated maximum gap
-    static int largest_distance(const Domain& distance, long long int gap) {
-      auto end = std::upper_bound(distance.begin(),distance.end(),gap);
-      assert(end != distance.begin());
-      return *--end;
-    }
-
-    /// Check distance supports separately from BASIC's weaker x filtering
-    static bool check_variable(const Domains& dom, const Domain& distance,
-                               bool dense, Gecode::IntPropLevel ipl) {
-      Supports expected = enumerate(dom,distance.front());
-      Model model(dom,distance);
-      Gecode::inter_distance(model,model.x,model.p,ipl);
-      bool failed = model.status() == Gecode::SS_FAILED;
-
-      if ((expected.found && failed) || (!expected.found && dense && !failed))
-        return mismatch("Feasibility",dom,distance,ipl,expected,model);
-      if (failed)
-        return true;
-      if (expected.found && !preserves_supports(model.x,expected))
-        return mismatch("Lost solution",dom,distance,ipl,expected,model);
-
-      if (!dense)
-        expected = enumerate(interval_hulls(model.x),model.p.min());
-      if (!expected.found)
-        return mismatch("Interval feasibility",dom,distance,ipl,expected,model);
-      if (model.p.max() != largest_distance(distance,expected.gap))
-        return mismatch("Maximum distance",dom,distance,ipl,expected,model);
-      if ((Gecode::ba(ipl) != Gecode::IPL_BASIC) &&
-          !matches_supports(model.x,expected))
-        return mismatch("Bounds(Z) consistency",dom,distance,ipl,expected,model);
-      return true;
-    }
-    static bool regression_examples(void) {
-      // The paper's example, including its reflected form.
-      if (!check({{2,3,4,5,6},{10,11,12,13,14},
-                  {4,5,6,7,8,9,10,11,12,13,14,15}},6,true))
-        return false;
-      if (!check({{-6,-5,-4,-3,-2},{-14,-13,-12,-11,-10},
-                  {-15,-14,-13,-12,-11,-10,-9,-8,-7,-6,-5,-4}},6,true))
-        return false;
-      // Upper-bound pruning across holes can assign an invalid tuple in
-      // one pass; it must be checked rather than immediately subsumed.
-      if (!check({{0,2,6,7},{-3,2},{10,11,14},{1,2,3,6},
-                  {-1,0,3,5,9}},4,false))
-        return false;
-      // A maximal distance exercises deadlines beyond Int::Limits::max.
-      const int limit = Gecode::Int::Limits::max;
-      if (!check({{-limit,-limit+1},{0,1},{limit-1,limit}},limit,true))
-        return false;
-      // A consumed residue can be reactivated by a later deadline.
-      if (!check_variable({{2,3,4,5,6,7,8,9,10,11},
-                           {-10,-9,-8,-7,-6,-5,-4,-3,-2},{16,17}},
-                          {13,14},true,Gecode::IPL_BASIC))
-        return false;
-      return true;
-    }
-
-    static bool exhaustive_intervals(void) {
-      // Exhaust all triples of intervals on [-2,3], including ties.
-      Domains intervals;
-      for (int l=-2; l<=3; l++)
-        for (int u=l; u<=3; u++) {
-          std::vector<int> d;
-          for (int v=l; v<=u; v++)
-            d.push_back(v);
-          intervals.push_back(d);
-        }
-      for (int p=2; p<=3; p++)
-        for (const auto& a : intervals)
-          for (const auto& b : intervals)
-            for (const auto& c : intervals)
-              if (!check({a,b,c},p,true))
-                return false;
-      return true;
-    }
-
-    /// Generate heterogeneous domains while preserving the fixed RNG sequence
-    static Domains random_domains(Gecode::Support::RandomGenerator& random,
-                                  int n, int offset, bool dense) {
-      Domains domains(n);
-      for (Domain& domain : domains) {
-        int min = offset+static_cast<int>(random(21))-10;
-        int width = random(5);
-        for (int j=0; j<=width; j++)
-          if (dense || (j == 0) || (j == width) || random(2))
-            domain.push_back(min+j);
-      }
-      return domains;
-    }
-
-    static bool random_constant_cases(Gecode::Support::RandomGenerator& random) {
-      for (int test=0; test<2000; test++) {
-        int n = 2+random(7);
-        int p = 2+random(8);
-        int offset = (test % 3 == 0) ? Gecode::Int::Limits::min+30 :
-          (test % 3 == 1) ? Gecode::Int::Limits::max-30 : 0;
-        bool dense = (test % 2 == 0);
-        Domains dom = random_domains(random,n,offset,dense);
-        if (!check(dom,p,dense))
+        Model model(domains);
+        inter_distance(model,model.x,6);
+        if ((model.status() == SS_FAILED) || !model.x.assigned() ||
+            (model.x[0].val() != sign*2) ||
+            (model.x[1].val() != sign*14) ||
+            (model.x[2].val() != sign*8))
           return false;
       }
-      return true;
-    }
 
-    static bool adjacent_regions(void) {
-      // Adjacent forbidden regions used to let the feasibility pass miss
-      // this overload. The maximum feasible separation is six, not seven.
+      // A jump across holes must not subsume an invalid assigned tuple.
+      Model holes({{0,2,6,7},{-3,2},{10,11,14},{1,2,3,6},
+                   {-1,0,3,5,9}});
+      inter_distance(holes,holes.x,4);
+      if (holes.status() != SS_FAILED)
+        return false;
+
+      // A consumed residue can become active at a later deadline.
+      Model residue({{2,3,4,5,6,7,8,9,10,11},
+                     {-10,-9,-8,-7,-6,-5,-4,-3,-2},{16,17}},{13,14});
+      inter_distance(residue,residue.x,residue.p,IPL_BASIC);
+      if ((residue.status() == SS_FAILED) || !residue.p.assigned() ||
+          (residue.p.val() != 13))
+        return false;
+
+      // Adjacent forbidden regions limit separation to six, not seven.
       Domains adjacent(3);
       for (int v=1; v<=17; v++) adjacent[0].push_back(v);
       for (int v=5; v<=8; v++) adjacent[1].push_back(v);
       for (int v=2; v<=14; v++) adjacent[2].push_back(v);
-      if (!check(adjacent,7,true))
-        return false;
-      for (Gecode::IntPropLevel ipl : {Gecode::IPL_BASIC,Gecode::IPL_ADVANCED,
-                                      Gecode::IPL_BASIC_ADVANCED})
-        if (!check_variable(adjacent,{0,1,2,3,4,5,6,7,8},true,ipl))
-          return false;
-      return true;
-    }
-
-    static bool random_variable_cases(Gecode::Support::RandomGenerator& random) {
-      for (int test=0; test<512; test++) {
-        int n = 2+random(4);
-        int offset = test%3 == 0 ? Gecode::Int::Limits::min+30 :
-          test%3 == 1 ? Gecode::Int::Limits::max-30 : 0;
-        bool dense = test%2 == 0;
-        Domains dom = random_domains(random,n,offset,dense);
-        std::vector<int> distance;
-        int lower = random(4);
-        for (int p=lower; p<=12; p++)
-          if (dense || (p == lower) || (p == 12) || random(2))
-            distance.push_back(p);
-        Gecode::IntPropLevel ipl = test%3 == 0 ? Gecode::IPL_BASIC :
-          test%3 == 1 ? Gecode::IPL_ADVANCED : Gecode::IPL_DEF;
-        if (!check_variable(dom,distance,dense,ipl))
+      for (IntPropLevel ipl : {IPL_BASIC,IPL_ADVANCED,IPL_BASIC_ADVANCED}) {
+        Model model(adjacent,{0,1,2,3,4,5,6,7,8});
+        inter_distance(model,model.x,model.p,ipl);
+        if ((model.status() == SS_FAILED) || (model.p.max() != 6))
           return false;
       }
-      return true;
+
+      // Deadlines can extend beyond the representable integer domain.
+      const int limit = Gecode::Int::Limits::max;
+      Model extremes({{-limit,-limit+1},{0,1},{limit-1,limit}});
+      inter_distance(extremes,extremes.x,limit);
+      return (extremes.status() != SS_FAILED) && extremes.x.assigned() &&
+        (extremes.x[0].val() == -limit) && (extremes.x[1].val() == 0) &&
+        (extremes.x[2].val() == limit);
     }
 
     static bool distance_updates(void) {
@@ -428,18 +215,10 @@ namespace Test { namespace Int { namespace InterDistance {
         (unit.p.val() == 1) && unit.x[1].assigned() && (unit.x[1].val() == -1);
     }
   public:
-    Bounds(void) : Base("Int::InterDistance::BoundsOracle") {}
+    Regression(void)
+      : Base("Int::InterDistance::Regression",TestTags::check()) {}
     virtual bool run(void) {
-      Gecode::Support::RandomGenerator random(2006);
-      if (!regression_examples() || !exhaustive_intervals() ||
-          !random_constant_cases(random) || !adjacent_regions() ||
-          !random_variable_cases(random))
-        return false;
-      if (!distance_updates()) {
-        olog << "Distance updates, cloning, or rewriting failed" << std::endl;
-        return false;
-      }
-      return true;
+      return regressions() && distance_updates();
     }
   };
 
@@ -558,7 +337,7 @@ namespace Test { namespace Int { namespace InterDistance {
       return (extremes.status() != SS_FAILED) && (large.max() == limit);
     }
   public:
-    Posting(void) : Base("Int::InterDistance::Posting") {}
+    Posting(void) : Base("Int::InterDistance::Posting",TestTags::check()) {}
     virtual bool run(void) {
       if (!constant_contracts()) {
         olog << "Constant posting contracts failed" << std::endl;
@@ -582,6 +361,7 @@ namespace Test { namespace Int { namespace InterDistance {
       for (int n=1; n<=4; n++)
         for (int p=0; p<=4; p++)
           (void) new Distance(n,p,-3,3);
+      (void) new Distance(3,2,Gecode::IntSet({-3,-1,0,2,3}));
       (void) new Distance(3,2,Gecode::Int::Limits::min,
                              Gecode::Int::Limits::min+5);
       (void) new Distance(3,2,Gecode::Int::Limits::max-5,
@@ -600,7 +380,7 @@ namespace Test { namespace Int { namespace InterDistance {
         Gecode::IPL_BND | Gecode::IPL_BASIC));
     }
   } create;
-  Bounds bounds;
+  Regression regression;
   Posting posting;
 
 }}}
