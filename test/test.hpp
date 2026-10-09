@@ -59,10 +59,6 @@ namespace Test {
   TestTags::add(TestTags t) {
     _mask |= t._mask;
   }
-  inline void
-  TestTags::remove(TestTags t) {
-    _mask &= ~t._mask;
-  }
 
   /*
    * Commandline options
@@ -71,7 +67,7 @@ namespace Test {
   inline
   Options::Options(void)
     : threads(1), seed(0), replay(false), iter(defiter), fixprob(deffixprob),
-      stop(true), log(false), testpat(), testtags(), use_testtags(false),
+      stop(true), log(false), testpat(), testtags(),
       start_from(nullptr), list(false), list_tags(false), list_with_tags(false)
   {}
 

@@ -121,8 +121,6 @@ namespace Test {
     bool overlaps(TestTags t) const;
     /// Add tags \a t
     void add(TestTags t);
-    /// Remove tags \a t
-    void remove(TestTags t);
   };
 
   /// Commandline options
@@ -150,8 +148,6 @@ namespace Test {
     std::vector<std::pair<MatchType, const char*> > testpat;
     /// Tags to test against
     TestTags testtags;
-    /// Whether test tags have been requested
-    bool use_testtags;
     /// Name of first test to start with
     const char* start_from;
     /// Whether to list all tests

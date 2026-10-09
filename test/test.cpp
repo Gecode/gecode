@@ -267,7 +267,6 @@ namespace Test {
           exit(EXIT_FAILURE);
         }
         testtags.add(tag);
-        use_testtags = true;
       } else if (!strcmp(argv[i],"-start")) {
         if (++i == argc) goto missing;
         start_from = argv[i];
@@ -355,7 +354,7 @@ namespace Test {
   }
 
   bool Options::is_test_tags_matching(TestTags tags) const {
-    return !use_testtags || tags.overlaps(testtags);
+    return testtags.empty() || tags.overlaps(testtags);
   }
 
   /// Run a single test, returning true iff the test succeeded
