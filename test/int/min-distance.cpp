@@ -55,7 +55,8 @@ namespace Test { namespace Int { namespace MinDistance {
   public:
     Minimum(int n, bool f, bool r, int a,
             Gecode::MinDistancePropKind k, Gecode::IntPropLevel level)
-      : Test("MinDistance::"+str(n)+"::"+str(f)+"::"+str(r)+"::"+
+      : Test(TestTags(TestTag::normal,TestTag::check),
+             "MinDistance::"+str(n)+"::"+str(f)+"::"+str(r)+"::"+
              str(a)+"::"+str(k == Gecode::MDP_SINGLE)+"::"+str(level),
              n+1,0,4,false,level),
         positions(n), computed(f), requirements(r), alias(a), kind(k) {
@@ -129,7 +130,8 @@ namespace Test { namespace Int { namespace MinDistance {
   /// Matching certificates, zero witnesses, and callback lifetime
   class Propagation : public Base {
   public:
-    Propagation(void) : Base("Int::MinDistance::Propagation") {}
+    Propagation(void) : Base("Int::MinDistance::Propagation",
+                            TestTags(TestTag::normal,TestTag::check)) {}
     virtual bool run(void) {
       using namespace Gecode;
       const MinDistancePropKind kinds[] = {MDP_DECOMPOSED,MDP_SINGLE};
@@ -215,7 +217,8 @@ namespace Test { namespace Int { namespace MinDistance {
   /// Matrix and callback validation
   class Arguments : public Base {
   public:
-    Arguments(void) : Base("Int::MinDistance::Arguments") {}
+    Arguments(void) : Base("Int::MinDistance::Arguments",
+                            TestTags(TestTag::normal,TestTag::check)) {}
     virtual bool run(void) {
       using namespace Gecode;
       try {
