@@ -169,7 +169,7 @@ target_link_libraries(app PRIVATE Gecode::gecode)
 Canonical component names:
 
 - `support`, `kernel`, `search`, `int`, `set`, `float`, `minimodel`, `driver`,
-  `flatzinc`, `gist`
+  `flatzinc`, `gist`, `test`
 
 Example:
 
@@ -178,6 +178,49 @@ find_package(Gecode CONFIG REQUIRED COMPONENTS driver)
 add_executable(app main.cpp)
 target_link_libraries(app PRIVATE Gecode::gecodedriver)
 ```
+
+### Test component for custom propagators
+
+A Gecode installation configured with `BUILD_TESTING=ON` exports the `test`
+component. It lets downstream projects check custom integer, Boolean, set, and
+float propagators with Gecode's test runner.
+
+- Always available targets: `Gecode::gecodetest`, `Gecode::gecodetestint`
+- Set target when configured: `Gecode::gecodetestset`
+- Float target when configured: `Gecode::gecodetestfloat`
+- Installed headers follow the same configuration: `test/test.*`, `test/int.*`,
+  `test/set.*`, and `test/float.*`
+
+```cmake
+find_package(Gecode CONFIG REQUIRED COMPONENTS test)
+add_executable(custom-propagator-test custom-propagator-test.cpp)
+target_link_libraries(custom-propagator-test PRIVATE Gecode::gecodetestint)
+```
+
+Use `Gecode::gecodetestset` or `Gecode::gecodetestfloat` for those variable
+families. The targets supply the runner and their Gecode dependencies. With
+`add_subdirectory` or `FetchContent`, enable `BUILD_TESTING` before adding Gecode.
+When both library variants are installed, targets ending in `_shared` or
+`_static` select a variant explicitly. Use one variant throughout the test
+executable so registration and execution share the same registry.
+
+See the test API in [`test/int.hh`](../test/int.hh) and
+[`test/test.hh`](../test/test.hh) for an example, consistency controls, and
+`Test::run_registered_tests`. The runner's `-help` lists execution and replay
+options.
+
+Autoconf also installs the configured test helpers when search and integer
+variables are enabled. For direct linking, list the used helpers before their
+Gecode dependencies, for example:
+
+```bash
+c++ -std=c++17 -I<prefix>/include custom-propagator-test.cpp \
+  -L<prefix>/lib -lgecodetestint -lgecodetest -lgecodesearch \
+  -lgecodeint -lgecodekernel -lgecodesupport
+```
+
+Use the installation's configured library directory. Set and float helpers
+also require their corresponding Gecode libraries.
 
 Legacy component spellings are also accepted in `COMPONENTS`:
 
@@ -234,6 +277,7 @@ Deprecation horizon:
 - `find_package(Gecode COMPONENTS ...)` fails:
   - Verify requested component is enabled in the installed build.
   - For optional modules (`flatzinc`, `gist`, `float` with MPFR), ensure dependencies were available.
+  - The `test` component requires `BUILD_TESTING` to be true in the installed package's configuration.
 - Qt/Gist issues:
   - `GECODE_ENABLE_QT=ON` and `GECODE_ENABLE_GIST=ON` are requirement modes;
     use `AUTO` when dependency discovery should be best-effort.

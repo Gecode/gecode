@@ -1,10 +1,10 @@
 /* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
- *     Christian Schulte <schulte@gecode.dev>
+ *     Mikael Zayenz Lagerkvist <lagerkvist@gecode.dev>
  *
  *  Copyright:
- *     Christian Schulte, 2007
+ *     Mikael Zayenz Lagerkvist, 2026
  *
  *  This file is part of Gecode, the generic constraint
  *  development environment:
@@ -31,74 +31,43 @@
  *
  */
 
-namespace Test {
 
-  /*
-   * Commandline options
-   *
-   */
-  inline
-  Options::Options(void)
-    : threads(1), seed(0), replay(false), iter(defiter), fixprob(deffixprob),
-      stop(true), log(false), testpat(), start_from(nullptr), list(false)
-  {}
+#include "test/set.hh"
 
-  /*
-   * Base class for tests
-   *
-   */
-  inline const std::string&
-  Base::name(void) const {
-    return _name;
-  }
-  inline Base*
-  Base::tests(void) {
-    return _tests;
-  }
-  inline Base*
-  Base::next(void) const {
-    return _next;
-  }
-  inline void
-  Base::next(Base* n) {
-    _next=n;
-  }
-  inline bool
-  Base::fixpoint(void) {
-    return fixpoint(_rand);
-  }
+#include <cstdlib>
+#include <iostream>
+#include <string>
 
-  inline bool
-  Base::fixpoint(Gecode::Support::RandomGenerator& rand) {
-    return rand(opt.fixprob) == 0;
-  }
+namespace {
 
-  inline std::string
-  Base::str(bool b) {
-    std::stringstream s;
-    if (b)
-      s << "+";
-    else
-      s << "-";
-    return s.str();
-  }
+  int set_runs = 0;
 
-  inline std::string
-  Base::str(int i) {
-    std::stringstream s;
-    s << i;
-    return s.str();
-  }
+  class SetSmokeTest : public Test::Set::SetTest {
+  public:
+    SetSmokeTest(void)
+      : Test::Set::SetTest("Public::Smoke",1,Gecode::IntSet(0,1)) {}
 
-  inline std::string
-  Base::str(const Gecode::IntArgs& x) {
-    std::string s = "";
-    for (int i=0; i<x.size()-1; i++)
-      s += str(x[i]) + ",";
-    return "[" + s + str(x[x.size()-1]) + "]";
-  }
+    bool solution(const Test::Set::SetAssignment&) const override {
+      return true;
+    }
 
+    void post(Gecode::Space&, Gecode::SetVarArray&,
+              Gecode::IntVarArray&) override {
+      set_runs++;
+    }
+  } set_smoke_test;
 
 }
 
-// STATISTICS: test-core
+int
+main(int argc, char* argv[]) {
+  const int result = Test::run_registered_tests(argc,argv);
+  if ((result != EXIT_SUCCESS) || (set_runs == 0)) {
+    std::cerr << "public-set-smoke: helper-backed test did not run"
+              << std::endl;
+    return EXIT_FAILURE;
+  }
+  return EXIT_SUCCESS;
+}
+
+// STATISTICS: test-set

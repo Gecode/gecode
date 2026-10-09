@@ -337,3 +337,11 @@ fi
 "$prefix/bin/fzn-gecode" --help
 test -x "$prefix/bin/mzn-gecode"
 ! grep -q "/usr/local" "$prefix/bin/mzn-gecode"
+
+# Build and run a downstream test against the installed harness.
+source_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+cmake -S "$source_root/test/package/public-test-component" -B "$work/test" \
+  -DGecode_DIR="$prefix/lib/cmake/Gecode" \
+  -DCMAKE_PREFIX_PATH="$cmake_prefix_path"
+cmake --build "$work/test" -j4
+ctest --test-dir "$work/test" --output-on-failure

@@ -40,6 +40,33 @@ case "$examples_enabled" in
     ;;
 esac
 
+# Compile and run a downstream test using only installed headers and libraries.
+if [ -f "$install_prefix/include/test/int.hh" ]; then
+  source_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+  config="$install_prefix/include/gecode/support/config.hpp"
+  test_flags=()
+  test_libs=()
+  gecode_libs=()
+  for family in float set int; do
+    macro=$(printf '%s' "$family" | tr 'a-z' 'A-Z')
+    if grep -q "^#define GECODE_HAS_${macro}_VARS" "$config"; then
+      test_flags+=("-DGECODE_PACKAGE_HAS_${macro}")
+      test_libs+=("-lgecodetest$family")
+      if [ "$family" != int ]; then
+        gecode_libs+=("-lgecode$family")
+      fi
+    fi
+  done
+  "${CXX:-c++}" -std=c++17 "${test_flags[@]}" -I"$install_prefix/include" \
+    "$source_root/test/package/public-test-component/consumer-smoke.cpp" \
+    -L"$install_prefix/lib" "${test_libs[@]}" -lgecodetest \
+    "${gecode_libs[@]}" -lgecodesearch -lgecodeint -lgecodekernel -lgecodesupport \
+    -o "$destdir/test-consumer"
+  LD_LIBRARY_PATH="$install_prefix/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}" \
+  DYLD_LIBRARY_PATH="$install_prefix/lib${DYLD_LIBRARY_PATH:+:$DYLD_LIBRARY_PATH}" \
+    "$destdir/test-consumer" -test Package -iter 1 -stop true
+fi
+
 case "$flatzinc_enabled" in
   yes)
     test -x "$install_prefix/bin/fzn-gecode"

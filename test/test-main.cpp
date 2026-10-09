@@ -2,9 +2,11 @@
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
+ *     Mikael Zayenz Lagerkvist <lagerkvist@gecode.dev>
  *
  *  Copyright:
- *     Christian Schulte, 2007
+ *     Christian Schulte, 2004
+ *     Mikael Zayenz Lagerkvist, 2005, 2026
  *
  *  This file is part of Gecode, the generic constraint
  *  development environment:
@@ -31,74 +33,18 @@
  *
  */
 
-namespace Test {
+#include "test/test.hh"
 
-  /*
-   * Commandline options
-   *
-   */
-  inline
-  Options::Options(void)
-    : threads(1), seed(0), replay(false), iter(defiter), fixprob(deffixprob),
-      stop(true), log(false), testpat(), start_from(nullptr), list(false)
-  {}
+#ifdef GECODE_HAS_MTRACE
+#include <mcheck.h>
+#endif
 
-  /*
-   * Base class for tests
-   *
-   */
-  inline const std::string&
-  Base::name(void) const {
-    return _name;
-  }
-  inline Base*
-  Base::tests(void) {
-    return _tests;
-  }
-  inline Base*
-  Base::next(void) const {
-    return _next;
-  }
-  inline void
-  Base::next(Base* n) {
-    _next=n;
-  }
-  inline bool
-  Base::fixpoint(void) {
-    return fixpoint(_rand);
-  }
-
-  inline bool
-  Base::fixpoint(Gecode::Support::RandomGenerator& rand) {
-    return rand(opt.fixprob) == 0;
-  }
-
-  inline std::string
-  Base::str(bool b) {
-    std::stringstream s;
-    if (b)
-      s << "+";
-    else
-      s << "-";
-    return s.str();
-  }
-
-  inline std::string
-  Base::str(int i) {
-    std::stringstream s;
-    s << i;
-    return s.str();
-  }
-
-  inline std::string
-  Base::str(const Gecode::IntArgs& x) {
-    std::string s = "";
-    for (int i=0; i<x.size()-1; i++)
-      s += str(x[i]) + ",";
-    return "[" + s + str(x[x.size()-1]) + "]";
-  }
-
-
+int
+main(int argc, char* argv[]) {
+#ifdef GECODE_HAS_MTRACE
+  mtrace();
+#endif
+  return Test::run_registered_tests(argc, argv);
 }
 
 // STATISTICS: test-core

@@ -1,10 +1,10 @@
 /* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
- *     Christian Schulte <schulte@gecode.dev>
+ *     Mikael Zayenz Lagerkvist <lagerkvist@gecode.dev>
  *
  *  Copyright:
- *     Christian Schulte, 2007
+ *     Mikael Zayenz Lagerkvist, 2026
  *
  *  This file is part of Gecode, the generic constraint
  *  development environment:
@@ -31,74 +31,43 @@
  *
  */
 
-namespace Test {
 
-  /*
-   * Commandline options
-   *
-   */
-  inline
-  Options::Options(void)
-    : threads(1), seed(0), replay(false), iter(defiter), fixprob(deffixprob),
-      stop(true), log(false), testpat(), start_from(nullptr), list(false)
-  {}
+#include "test/float.hh"
 
-  /*
-   * Base class for tests
-   *
-   */
-  inline const std::string&
-  Base::name(void) const {
-    return _name;
-  }
-  inline Base*
-  Base::tests(void) {
-    return _tests;
-  }
-  inline Base*
-  Base::next(void) const {
-    return _next;
-  }
-  inline void
-  Base::next(Base* n) {
-    _next=n;
-  }
-  inline bool
-  Base::fixpoint(void) {
-    return fixpoint(_rand);
-  }
+#include <cstdlib>
+#include <iostream>
 
-  inline bool
-  Base::fixpoint(Gecode::Support::RandomGenerator& rand) {
-    return rand(opt.fixprob) == 0;
-  }
+namespace {
 
-  inline std::string
-  Base::str(bool b) {
-    std::stringstream s;
-    if (b)
-      s << "+";
-    else
-      s << "-";
-    return s.str();
-  }
+  int float_runs = 0;
 
-  inline std::string
-  Base::str(int i) {
-    std::stringstream s;
-    s << i;
-    return s.str();
-  }
+  class FloatSmokeTest : public Test::Float::Test {
+  public:
+    FloatSmokeTest(void)
+      : ::Test::Float::Test("Public::Smoke",1,0.0,1.0,1.0,
+                            ::Test::Float::CPLT_ASSIGNMENT,false) {}
 
-  inline std::string
-  Base::str(const Gecode::IntArgs& x) {
-    std::string s = "";
-    for (int i=0; i<x.size()-1; i++)
-      s += str(x[i]) + ",";
-    return "[" + s + str(x[x.size()-1]) + "]";
-  }
+    ::Test::Float::MaybeType
+    solution(const ::Test::Float::Assignment&) const override {
+      return ::Test::Float::MT_TRUE;
+    }
 
+    void post(Gecode::Space&, Gecode::FloatVarArray&) override {
+      float_runs++;
+    }
+  } float_smoke_test;
 
 }
 
-// STATISTICS: test-core
+int
+main(int argc, char* argv[]) {
+  const int result = Test::run_registered_tests(argc,argv);
+  if ((result != EXIT_SUCCESS) || (float_runs == 0)) {
+    std::cerr << "public-float-smoke: helper-backed test did not run"
+              << std::endl;
+    return EXIT_FAILURE;
+  }
+  return EXIT_SUCCESS;
+}
+
+// STATISTICS: test-float
