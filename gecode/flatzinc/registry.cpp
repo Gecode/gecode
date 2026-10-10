@@ -1154,7 +1154,8 @@ namespace Gecode { namespace FlatZinc {
       argmax(s, bv, offset, s.arg2IntVar(ce[2]), true, s.ann2ipl(ann));
     }
 
-    void p_regular(FlatZincSpace& s, IntVarArgs iv, int q, int symbols_min,
+    template<class VarArgs>
+    void p_regular(FlatZincSpace& s, VarArgs iv, int q, int symbols_min,
                    int symbols_max,  IntArgs d, int q0, AST::SetLit* finals,
                    AST::Node* ann) {
       int symbols = symbols_max - symbols_min + 1;
@@ -1211,6 +1212,60 @@ namespace Gecode { namespace FlatZinc {
       p_regular(s, s.arg2intvarargs(ce[0]), ce[1]->getInt(), ce[2]->getInt(),
                 ce[3]->getInt(), s.arg2intargs(ce[4]), ce[5]->getInt(),
                 ce[6]->getSet(), ann);
+    }
+
+    void p_regular_bool(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
+      int q = ce[1]->getInt();
+      IntArgs transitions = s.arg2intargs(ce[2]);
+      IntSet final = s.arg2intset(ce[4]);
+      if ((q <= 0) || (static_cast<long long>(q)*2 != transitions.size()) ||
+          (ce[3]->getInt() < 1) || (ce[3]->getInt() > q) ||
+          ((final.size() != 0) && ((final.min() < 1) || (final.max() > q))))
+        throw FlatZinc::Error("Registry", "invalid Boolean DFA dimensions or states");
+      for (int i=0; i<transitions.size(); i++)
+        if ((transitions[i] < 0) || (transitions[i] > q))
+          throw FlatZinc::Error("Registry", "invalid Boolean DFA transition");
+      p_regular(s, s.arg2boolvarargs(ce[0]), q, 0, 1, transitions,
+                ce[3]->getInt(), ce[4]->getSet(), ann);
+    }
+
+    template<class VarArgs>
+    void p_regular_nfa(FlatZincSpace& s, VarArgs x, const ConExpr& ce,
+                       AST::Node* ann) {
+      int q = ce[1]->getInt(), first_symbol = ce[2]->getInt();
+      int symbols = ce[3]->getInt(), initial = ce[5]->getInt();
+      IntSetArgs table = s.arg2intsetargs(ce[4]);
+      IntSet finals = s.arg2intset(ce[6]);
+      if ((q <= 0) || (symbols <= 0) ||
+          (static_cast<long long>(q)*symbols != table.size()) ||
+          (initial < 1) || (initial > q) ||
+          ((finals.size() != 0) && ((finals.min() < 1) || (finals.max() > q))) ||
+          (first_symbol < Int::Limits::min) ||
+          (static_cast<long long>(first_symbol)+symbols-1 > Int::Limits::max))
+        throw FlatZinc::Error("Registry", "invalid NFA dimensions or states");
+      std::vector<DFA::Transition> transitions;
+      for (int state=0; state<q; state++)
+        for (int symbol=0; symbol<symbols; symbol++) {
+          const IntSet& targets = table[state*symbols+symbol];
+          if ((targets.size() != 0) && ((targets.min() < 1) || (targets.max() > q)))
+            throw FlatZinc::Error("Registry", "invalid NFA transition");
+          for (IntSetValues target(targets); target(); ++target)
+            transitions.push_back(DFA::Transition(state+1,first_symbol+symbol,target.val()));
+        }
+      transitions.push_back(DFA::Transition(-1,0,0));
+      std::vector<int> accepting;
+      for (IntSetValues final(finals); final(); ++final)
+        accepting.push_back(final.val());
+      accepting.push_back(-1);
+      DFA automaton = DFA::nfa(initial,transitions.data(),accepting.data());
+      unshare(s,x);
+      extensional(s,x,s.getSharedDFA(automaton),s.ann2ipl(ann));
+    }
+    void p_regular_nfa_int(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
+      p_regular_nfa(s,s.arg2intvarargs(ce[0]),ce,ann);
+    }
+    void p_regular_nfa_bool(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
+      p_regular_nfa(s,s.arg2boolvarargs(ce[0]),ce,ann);
     }
 
     void
@@ -1325,7 +1380,7 @@ namespace Gecode { namespace FlatZinc {
       IntArgs duration = s.arg2intargs(ce[1]);
       IntArgs height = s.arg2intargs(ce[2]);
       BoolVarArgs opt = s.arg2boolvarargs(ce[3]);
-      int bound = ce[4]->getInt();
+      IntVar bound = s.arg2IntVar(ce[4]);
       unshare(s,start);
       cumulative(s,bound,start,duration,height,opt,s.ann2ipl(ann));
     }
@@ -1769,6 +1824,353 @@ fvar,
       mode, target, args, reason);
     }
 
+
+    // The codes follow the declaration order of GecodeIntRelation in gecode.mzn.
+    IntRelType int_relation(AST::Node* arg) {
+      switch (arg->getInt()) {
+      case 1: return IRT_EQ;
+      case 2: return IRT_NQ;
+      case 3: return IRT_LQ;
+      case 4: return IRT_LE;
+      case 5: return IRT_GQ;
+      case 6: return IRT_GR;
+      default: throw FlatZinc::Error("Registry", "invalid integer relation");
+      }
+    }
+
+    void p_inter_distance(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
+      IntVarArgs x = s.arg2intvarargs(ce[0]);
+      if (ce[1]->isIntVar()) {
+        // The native propagator rejects aliases between x and the distance.
+        x << s.arg2IntVar(ce[1]);
+        unshare(s, x);
+        inter_distance(s, x.slice(0,1,x.size()-1), x[x.size()-1],
+                       s.ann2ipl(ann));
+      } else {
+        unshare(s, x);
+        inter_distance(s, x, ce[1]->getInt(), s.ann2ipl(ann));
+      }
+    }
+
+    void p_distinct_optional(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
+      IntVarArgs x = s.arg2intvarargs(ce[0]);
+      BoolVarArgs present = s.arg2boolvarargs(ce[1]);
+      if (x.size() != present.size())
+        throw FlatZinc::Error("Registry", "optional distinct arrays must have equal lengths");
+      int lo = Int::Limits::max, hi = Int::Limits::min, n = 0;
+      bool mandatory = true;
+      for (int i=0; i<x.size(); i++)
+        if (!present[i].zero()) {
+          lo = std::min(lo,x[i].min());
+          hi = std::max(hi,x[i].max());
+          n++;
+          mandatory = mandatory && present[i].one();
+        }
+      if (n < 2)
+        return;
+      // Native optional distinct needs unused values outside the active domains.
+      if ((hi < Int::Limits::max-n) || (lo > Int::Limits::min+n)) {
+        unshare(s, x);
+        distinct(s, present, x, s.ann2ipl(ann));
+      } else if (mandatory) {
+        IntVarArgs active;
+        for (int i=0; i<x.size(); i++)
+          if (present[i].one()) active << x[i];
+        unshare(s, active);
+        distinct(s, active, s.ann2ipl(ann));
+      } else {
+        for (int i=0; i<x.size(); i++)
+          for (int j=i+1; j<x.size(); j++)
+            rel(s, x[i], IRT_NQ, x[j],
+                Reify(expr(s, present[i] && present[j]), RM_IMP), s.ann2ipl(ann));
+      }
+    }
+    void p_distinct_except(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
+      IntVarArgs x = s.arg2intvarargs(ce[0]);
+      int c = ce[1]->getInt();
+      // An excluded value outside the variable limits cannot occur in x.
+      if ((c < Int::Limits::min) || (c > Int::Limits::max)) {
+        unshare(s, x);
+        distinct(s, x, s.ann2ipl(ann));
+        return;
+      }
+      int lo = Int::Limits::max, hi = Int::Limits::min, n = 0;
+      for (int i=0; i<x.size(); i++)
+        if (!(x[i].assigned() && (x[i].val() == c))) {
+          lo = std::min(lo,x[i].min());
+          hi = std::max(hi,x[i].max());
+          n++;
+        }
+      if (n < 2)
+        return;
+      // The native propagator needs unused values outside the active domains.
+      if ((hi < Int::Limits::max-n) || (lo > Int::Limits::min+n)) {
+        unshare(s, x);
+        distinct(s, x, c, s.ann2ipl(ann));
+      } else {
+        for (int i=0; i<x.size(); i++)
+          for (int j=i+1; j<x.size(); j++)
+            rel(s, x[i], IRT_NQ, x[j],
+                Reify(expr(s, (x[i] != c) && (x[j] != c)), RM_IMP), s.ann2ipl(ann));
+      }
+    }
+    void p_bool_int_channel(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
+      BoolVarArgs x = s.arg2boolvarargs(ce[0]);
+      unshare(s, x);
+      channel(s, x, s.arg2IntVar(ce[1]), ce[2]->getInt(), s.ann2ipl(ann));
+    }
+    void p_sort_permutation(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
+      IntVarArgs x = s.arg2intvarargs(ce[0]);
+      IntVarArgs y = s.arg2intvarargs(ce[1]);
+      IntVarArgs z = s.arg2intvarargs(ce[2]);
+      if ((x.size() != y.size()) || (x.size() != z.size()))
+        throw FlatZinc::Error("Registry", "sort arrays must have equal lengths");
+      int offset = ce[3]->getInt();
+      for (int i=0; i<z.size(); i++)
+        z[i] = expr(s, z[i]-offset);
+      IntVarArgs xyz;
+      xyz << x << y << z;
+      unshare(s, xyz);
+      sorted(s, xyz.slice(0,1,x.size()), xyz.slice(x.size(),1,y.size()),
+             xyz.slice(x.size()+y.size()), s.ann2ipl(ann));
+    }
+
+    void p_count_int(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
+      count(s, s.arg2intvarargs(ce[0]), s.arg2IntVar(ce[1]),
+            int_relation(ce[2]), s.arg2IntVar(ce[3]), s.ann2ipl(ann));
+    }
+    void p_count_in(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
+      count(s, s.arg2intvarargs(ce[0]), s.arg2intset(ce[1]),
+            int_relation(ce[2]), s.arg2IntVar(ce[3]), s.ann2ipl(ann));
+    }
+    void p_count_matches(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
+      count(s, s.arg2intvarargs(ce[0]), s.arg2intargs(ce[1]),
+            int_relation(ce[2]), s.arg2IntVar(ce[3]), s.ann2ipl(ann));
+    }
+    void p_global_cardinality_sets(FlatZincSpace& s, const ConExpr& ce,
+                                   AST::Node* ann) {
+      IntVarArgs x = s.arg2intvarargs(ce[0]);
+      unshare(s, x);
+      count(s, x, s.arg2intsetargs(ce[2]), s.arg2intargs(ce[1]), s.ann2ipl(ann));
+    }
+    void p_nvalues_int(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
+      nvalues(s, s.arg2intvarargs(ce[0]), int_relation(ce[1]),
+              s.arg2IntVar(ce[2]), s.ann2ipl(ann));
+    }
+    void p_nvalues_bool(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
+      nvalues(s, s.arg2boolvarargs(ce[0]), int_relation(ce[1]),
+              s.arg2IntVar(ce[2]), s.ann2ipl(ann));
+    }
+    void p_array_int_ne(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
+      rel(s, s.arg2intvarargs(ce[0]), IRT_NQ,
+          s.arg2intvarargs(ce[1]), s.ann2ipl(ann));
+    }
+    void p_array_bool_ne(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
+      rel(s, s.arg2boolvarargs(ce[0]), IRT_NQ,
+          s.arg2boolvarargs(ce[1]), s.ann2ipl(ann));
+    }
+    void p_not_all_equal_int(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
+      rel(s, s.arg2intvarargs(ce[0]), IRT_NQ, s.ann2ipl(ann));
+    }
+    void p_not_all_equal_bool(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
+      rel(s, s.arg2boolvarargs(ce[0]), IRT_NQ, s.ann2ipl(ann));
+    }
+    void p_int_ite(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
+      ite(s, s.arg2BoolVar(ce[0]), s.arg2IntVar(ce[1]), s.arg2IntVar(ce[2]),
+          s.arg2IntVar(ce[3]), s.ann2ipl(ann));
+    }
+    void p_bool_ite(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
+      ite(s, s.arg2BoolVar(ce[0]), s.arg2BoolVar(ce[1]), s.arg2BoolVar(ce[2]),
+          s.arg2BoolVar(ce[3]), s.ann2ipl(ann));
+    }
+    void p_gcd(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
+      gcd(s, s.arg2IntVar(ce[0]), s.arg2IntVar(ce[1]), s.arg2IntVar(ce[2]),
+          s.ann2ipl(ann));
+    }
+    template<ReifyMode mode>
+    void p_gcd_reif(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
+      gcd(s, s.arg2IntVar(ce[0]), s.arg2IntVar(ce[1]), s.arg2IntVar(ce[2]),
+          Reify(s.arg2BoolVar(ce[3]), mode), s.ann2ipl(ann));
+    }
+    void p_divides(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
+      divides(s, s.arg2IntVar(ce[0]), s.arg2IntVar(ce[1]),
+              Reify(BoolVar(s,1,1),RM_EQV), s.ann2ipl(ann));
+    }
+    template<ReifyMode mode>
+    void p_divides_reif(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
+      divides(s, s.arg2IntVar(ce[0]), s.arg2IntVar(ce[1]),
+              Reify(s.arg2BoolVar(ce[2]),mode), s.ann2ipl(ann));
+    }
+    void p_product(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
+      product(s, s.arg2intvarargs(ce[0]), s.arg2IntVar(ce[1]), s.ann2ipl(ann));
+    }
+    template<ReifyMode mode>
+    void p_product_reif(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
+      product(s, s.arg2intvarargs(ce[0]), s.arg2IntVar(ce[1]),
+              Reify(s.arg2BoolVar(ce[2]),mode), s.ann2ipl(ann));
+    }
+    template<bool fixed>
+    void p_product_mod(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
+      IntVarArgs x = s.arg2intvarargs(ce[0]);
+      IntVar y = s.arg2IntVar(ce[2]);
+      if (fixed)
+        product_mod(s,x,ce[1]->getInt(),y,s.ann2ipl(ann));
+      else
+        product_mod(s,x,s.arg2IntVar(ce[1]),y,s.ann2ipl(ann));
+    }
+    template<bool fixed, ReifyMode mode>
+    void p_product_mod_reif(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
+      IntVarArgs x = s.arg2intvarargs(ce[0]);
+      IntVar y = s.arg2IntVar(ce[2]);
+      Reify r(s.arg2BoolVar(ce[3]),mode);
+      if (fixed)
+        product_mod(s,x,ce[1]->getInt(),y,r,s.ann2ipl(ann));
+      else
+        product_mod(s,x,s.arg2IntVar(ce[1]),y,r,s.ann2ipl(ann));
+    }
+    void p_minimum_distance(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
+      IntVarArgs x = s.arg2intvarargs(ce[0]);
+      IntDistance d(ce[1]->getInt(),s.arg2intargs(ce[2]));
+      MinDistancePropKind kind = ann && ann->hasAtom("gecode_decomposed_propagation")
+        ? MDP_DECOMPOSED : MDP_SINGLE;
+      if (ce.size() == 5)
+        minimum_distance(s,x,s.arg2IntVar(ce[3]),d,
+                         s.arg2intargs(ce[4]),s.ann2ipl(ann),kind);
+      else
+        minimum_distance(s,x,s.arg2IntVar(ce[3]),d,s.ann2ipl(ann),kind);
+    }
+
+    void p_int_divmod(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
+      IntVar x = s.arg2IntVar(ce[0]), y = s.arg2IntVar(ce[1]);
+      IntVar q = s.arg2IntVar(ce[2]), r = s.arg2IntVar(ce[3]);
+      // Bound the results before the linear decomposition estimates its ranges.
+      // For nonzero y, truncating division gives |q| <= |x| and r between 0 and x.
+      int magnitude = std::max(-x.min(),x.max());
+      dom(s,q,-magnitude,magnitude);
+      dom(s,r,std::min(0,x.min()),std::max(0,x.max()));
+      if (!s.failed())
+        divmod(s,x,y,q,r,s.ann2ipl(ann));
+    }
+    void p_int_nroot(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
+      nroot(s, s.arg2IntVar(ce[0]), ce[1]->getInt(), s.arg2IntVar(ce[2]),
+            s.ann2ipl(ann));
+    }
+
+    void p_path(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
+      IntVarArgs x = s.arg2intvarargs(ce[1]);
+      unshare(s, x);
+      path(s, ce[0]->getInt(), x, s.arg2IntVar(ce[2]), s.arg2IntVar(ce[3]),
+           s.ann2ipl(ann));
+    }
+    void p_path_cost(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
+      IntVarArgs x = s.arg2intvarargs(ce[2]);
+      unshare(s, x);
+      path(s, s.arg2intargs(ce[0]), ce[1]->getInt(), x,
+           s.arg2IntVar(ce[3]), s.arg2IntVar(ce[4]), s.arg2IntVar(ce[5]),
+           s.ann2ipl(ann));
+    }
+    void p_path_cost_array(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
+      IntVarArgs x = s.arg2intvarargs(ce[2]);
+      unshare(s, x);
+      path(s, s.arg2intargs(ce[0]), ce[1]->getInt(), x,
+           s.arg2IntVar(ce[3]), s.arg2IntVar(ce[4]), s.arg2intvarargs(ce[5]),
+           s.arg2IntVar(ce[6]), s.ann2ipl(ann));
+    }
+    void p_order(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
+      order(s, s.arg2IntVar(ce[0]), ce[1]->getInt(), s.arg2IntVar(ce[2]),
+            ce[3]->getInt(), s.arg2BoolVar(ce[4]), s.ann2ipl(ann));
+    }
+    TaskTypeArgs task_types(FlatZincSpace& s, AST::Node* arg) {
+      IntArgs codes = s.arg2intargs(arg);
+      TaskTypeArgs types(codes.size());
+      for (int i=0; i<codes.size(); i++) {
+        switch (codes[i]) {
+        case 1: types[i] = TT_FIXP; break;
+        case 2: types[i] = TT_FIXS; break;
+        case 3: types[i] = TT_FIXE; break;
+        default: throw FlatZinc::Error("Registry", "invalid task type");
+        }
+      }
+      return types;
+    }
+    void p_unary_typed(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
+      IntVarArgs flex = s.arg2intvarargs(ce[1]);
+      unshare(s, flex);
+      if (ce.args->a.size() == 4)
+        unary(s, task_types(s, ce[0]), flex, s.arg2intargs(ce[2]),
+              s.arg2boolvarargs(ce[3]), s.ann2ipl(ann));
+      else
+        unary(s, task_types(s, ce[0]), flex, s.arg2intargs(ce[2]), s.ann2ipl(ann));
+    }
+    void p_cumulative_typed(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
+      IntVarArgs flex = s.arg2intvarargs(ce[1]);
+      unshare(s, flex);
+      if (ce.args->a.size() == 6)
+        cumulative(s, s.arg2IntVar(ce[4]), task_types(s, ce[0]), flex,
+                   s.arg2intargs(ce[2]), s.arg2intargs(ce[3]),
+                   s.arg2boolvarargs(ce[5]), s.ann2ipl(ann));
+      else
+        cumulative(s, s.arg2IntVar(ce[4]), task_types(s, ce[0]), flex,
+                   s.arg2intargs(ce[2]), s.arg2intargs(ce[3]), s.ann2ipl(ann));
+    }
+    void p_nooverlap_optional(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
+      nooverlap(s, s.arg2intvarargs(ce[0]), s.arg2intargs(ce[1]),
+                s.arg2intvarargs(ce[2]), s.arg2intargs(ce[3]),
+                s.arg2boolvarargs(ce[4]), s.ann2ipl(ann));
+    }
+    void p_nooverlap_flex(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
+      nooverlap(s, s.arg2intvarargs(ce[0]), s.arg2intvarargs(ce[1]),
+                s.arg2intvarargs(ce[2]), s.arg2intvarargs(ce[3]),
+                s.arg2intvarargs(ce[4]), s.arg2intvarargs(ce[5]),
+                s.arg2boolvarargs(ce[6]), s.ann2ipl(ann));
+    }
+
+    void p_arg_min_int(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
+      IntVarArgs xy = s.arg2intvarargs(ce[0]);
+      xy << s.arg2IntVar(ce[2]);
+      unshare(s, xy);
+      argmin(s, xy.slice(0,1,xy.size()-1), ce[1]->getInt(),
+                xy[xy.size()-1], ce[3]->getBool(), s.ann2ipl(ann));
+    }
+
+    void p_arg_max_int(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
+      IntVarArgs xy = s.arg2intvarargs(ce[0]);
+      xy << s.arg2IntVar(ce[2]);
+      unshare(s, xy);
+      argmax(s, xy.slice(0,1,xy.size()-1), ce[1]->getInt(),
+                xy[xy.size()-1], ce[3]->getBool(), s.ann2ipl(ann));
+    }
+
+    void p_arg_min_bool(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
+      BoolVarArgs x = s.arg2boolvarargs(ce[0]);
+      unshare(s, x);
+      argmin(s, x, ce[1]->getInt(), s.arg2IntVar(ce[2]),
+                ce[3]->getBool(), s.ann2ipl(ann));
+    }
+
+    void p_arg_max_bool(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
+      BoolVarArgs x = s.arg2boolvarargs(ce[0]);
+      unshare(s, x);
+      argmax(s, x, ce[1]->getInt(), s.arg2IntVar(ce[2]),
+                ce[3]->getBool(), s.ann2ipl(ann));
+    }
+
+    void p_unary_flex_optional(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
+      IntVarArgs start = s.arg2intvarargs(ce[0]);
+      unshare(s, start);
+      unary(s, start, s.arg2intvarargs(ce[1]), s.arg2intvarargs(ce[2]),
+            s.arg2boolvarargs(ce[3]), s.ann2ipl(ann));
+    }
+
+
+    void p_cumulative_flex_optional(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
+      IntVarArgs start = s.arg2intvarargs(ce[0]);
+      unshare(s, start);
+      cumulative(s, s.arg2IntVar(ce[4]), start, s.arg2intvarargs(ce[1]),
+                 s.arg2intvarargs(ce[2]), s.arg2intargs(ce[3]),
+                 s.arg2boolvarargs(ce[5]), s.ann2ipl(ann));
+    }
+
     class IntPoster {
     public:
       IntPoster(void) {
@@ -1957,6 +2359,62 @@ fvar,
         registry().add("gecode_member_int_reif",&p_member_int_reif);
         registry().add("member_bool",&p_member_bool);
         registry().add("gecode_member_bool_reif",&p_member_bool_reif);
+
+        registry().add("gecode_unary_flex_optional", &p_unary_flex_optional);
+        registry().add("gecode_cumulative_flex_optional", &p_cumulative_flex_optional);
+        registry().add("gecode_array_int_ne", &p_array_int_ne);
+        registry().add("gecode_not_all_equal_int", &p_not_all_equal_int);
+        registry().add("gecode_array_bool_ne", &p_array_bool_ne);
+        registry().add("gecode_not_all_equal_bool", &p_not_all_equal_bool);
+        registry().add("gecode_inter_distance", &p_inter_distance);
+        registry().add("gecode_bool_int_channel", &p_bool_int_channel);
+        registry().add("gecode_sort_permutation", &p_sort_permutation);
+        registry().add("gecode_count_int_fzn", &p_count_int);
+        registry().add("gecode_count_in_fzn", &p_count_in);
+        registry().add("gecode_count_matches_fzn", &p_count_matches);
+        registry().add("gecode_global_cardinality_sets", &p_global_cardinality_sets);
+        registry().add("gecode_nvalues_int_fzn", &p_nvalues_int);
+        registry().add("gecode_nvalues_bool_fzn", &p_nvalues_bool);
+        registry().add("gecode_int_ite", &p_int_ite);
+        registry().add("gecode_bool_ite", &p_bool_ite);
+        registry().add("gecode_gcd_int", &p_gcd);
+        registry().add("gecode_gcd_int_reif", &p_gcd_reif<RM_EQV>);
+        registry().add("gecode_gcd_int_imp", &p_gcd_reif<RM_IMP>);
+        registry().add("gecode_divides_int", &p_divides);
+        registry().add("gecode_divides_int_reif", &p_divides_reif<RM_EQV>);
+        registry().add("gecode_divides_int_imp", &p_divides_reif<RM_IMP>);
+        registry().add("gecode_product_int", &p_product);
+        registry().add("gecode_product_int_reif", &p_product_reif<RM_EQV>);
+        registry().add("gecode_product_int_imp", &p_product_reif<RM_IMP>);
+        registry().add("gecode_product_mod_fixed_fzn", &p_product_mod<true>);
+        registry().add("gecode_product_mod_fixed_fzn_reif", &p_product_mod_reif<true,RM_EQV>);
+        registry().add("gecode_product_mod_fixed_fzn_imp", &p_product_mod_reif<true,RM_IMP>);
+        registry().add("gecode_product_mod_var_fzn", &p_product_mod<false>);
+        registry().add("gecode_product_mod_var_fzn_reif", &p_product_mod_reif<false,RM_EQV>);
+        registry().add("gecode_product_mod_var_fzn_imp", &p_product_mod_reif<false,RM_IMP>);
+        registry().add("gecode_minimum_distance_fzn", &p_minimum_distance);
+        registry().add("gecode_minimum_distance_required_fzn", &p_minimum_distance);
+        registry().add("gecode_int_divmod", &p_int_divmod);
+        registry().add("gecode_int_nroot", &p_int_nroot);
+        registry().add("gecode_path", &p_path);
+        registry().add("gecode_path_cost", &p_path_cost);
+        registry().add("gecode_path_cost_array", &p_path_cost_array);
+        registry().add("gecode_order", &p_order);
+        registry().add("gecode_nooverlap_optional", &p_nooverlap_optional);
+        registry().add("gecode_all_different_optional", &p_distinct_optional);
+        registry().add("gecode_all_different_except", &p_distinct_except);
+        registry().add("gecode_regular_bool", &p_regular_bool);
+        registry().add("gecode_regular_nfa_int_fzn", &p_regular_nfa_int);
+        registry().add("gecode_regular_nfa_bool_fzn", &p_regular_nfa_bool);
+        registry().add("gecode_unary_typed_fzn", &p_unary_typed);
+        registry().add("gecode_unary_typed_optional_fzn", &p_unary_typed);
+        registry().add("gecode_cumulative_typed_fzn", &p_cumulative_typed);
+        registry().add("gecode_cumulative_typed_optional_fzn", &p_cumulative_typed);
+        registry().add("gecode_nooverlap_flex_optional", &p_nooverlap_flex);
+        registry().add("gecode_arg_min_int", &p_arg_min_int);
+        registry().add("gecode_arg_max_int", &p_arg_max_int);
+        registry().add("gecode_arg_min_bool", &p_arg_min_bool);
+        registry().add("gecode_arg_max_bool", &p_arg_max_bool);
 
         registry().add("gecode_blackbox", &p_blackbox);
         registry().add("gecode_blackbox_bounds", &p_blackbox_bounds);
@@ -2259,6 +2717,113 @@ fvar,
       precede(s,x,p_s,p_t);
     }
 
+
+    SetRelType set_relation(AST::Node* arg) {
+      switch (arg->getInt()) {
+      case 1: return SRT_EQ;
+      case 2: return SRT_NQ;
+      case 3: return SRT_SUB;
+      case 4: return SRT_SUP;
+      case 5: return SRT_DISJ;
+      case 6: return SRT_CMPL;
+      case 7: return SRT_LQ;
+      case 8: return SRT_LE;
+      case 9: return SRT_GQ;
+      case 10: return SRT_GR;
+      default: throw FlatZinc::Error("Registry", "invalid set relation");
+      }
+    }
+    SetOpType set_operation(AST::Node* arg) {
+      switch (arg->getInt()) {
+      case 1: return SOT_UNION;
+      case 2: return SOT_DUNION;
+      case 3: return SOT_INTER;
+      case 4: return SOT_MINUS;
+      default: throw FlatZinc::Error("Registry", "invalid set operation");
+      }
+    }
+    void p_set_ite(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
+      ite(s, s.arg2BoolVar(ce[0]), s.arg2SetVar(ce[1]), s.arg2SetVar(ce[2]),
+          s.arg2SetVar(ce[3]));
+    }
+    void p_set_convex_hull(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
+      convex(s, s.arg2SetVar(ce[0]), s.arg2SetVar(ce[1]));
+    }
+    void p_set_atmost_one(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
+      int cardinality = ce[1]->getInt();
+      if (cardinality < 0)
+        throw FlatZinc::Error("Registry", "set cardinality must be nonnegative");
+      SetVarArgs x = s.arg2setvarargs(ce[0]);
+      if ((x.size() < 2) || (cardinality <= 1)) {
+        // The intersection bound is trivial here. atmostOne skips cardinality
+        // for fewer than two sets, and its filter divides by cardinality - 1.
+        for (int i=0; i<x.size(); i++)
+          Gecode::cardinality(s, x[i], cardinality, cardinality);
+      } else {
+        atmostOne(s, x, static_cast<unsigned int>(cardinality));
+      }
+    }
+    void p_set_channel_sorted(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
+      channelSorted(s, s.arg2intvarargs(ce[0]), s.arg2SetVar(ce[1]));
+    }
+    void p_set_operation(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
+      rel(s, s.arg2SetVar(ce[0]), set_operation(ce[1]), s.arg2SetVar(ce[2]),
+          set_relation(ce[3]), s.arg2SetVar(ce[4]));
+    }
+    void p_array_set_intersect(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
+      rel(s, SOT_INTER, s.arg2setvarargs(ce[0]), s.arg2SetVar(ce[1]));
+    }
+    void p_array_int_set_operation(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
+      rel(s, set_operation(ce[1]), s.arg2intvarargs(ce[0]),
+          s.arg2intset(ce[2]), s.arg2SetVar(ce[3]));
+    }
+    void p_set_element2d(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
+      SetVarArgs x = s.arg2setvarargs(ce[0]);
+      int width = ce[2]->getInt(), height = ce[4]->getInt();
+      if ((width <= 0) || (height <= 0) ||
+          (static_cast<long long>(width)*height != x.size()))
+        throw FlatZinc::Error("Registry", "invalid set matrix dimensions");
+      element(s, x, s.arg2IntVar(ce[1]), width,
+              s.arg2IntVar(ce[3]), height, s.arg2SetVar(ce[5]));
+    }
+    void p_array_int_set_element(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
+      element(s, set_operation(ce[1]), s.arg2intvarargs(ce[0]),
+              s.arg2SetVar(ce[2]), s.arg2SetVar(ce[3]), s.arg2intset(ce[4]));
+    }
+
+    void p_set_min(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
+      min(s, s.arg2SetVar(ce[0]), s.arg2IntVar(ce[1]));
+    }
+    template<ReifyMode mode>
+    void p_set_min_reif(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
+      min(s, s.arg2SetVar(ce[0]), s.arg2IntVar(ce[1]),
+             Reify(s.arg2BoolVar(ce[2]), mode));
+    }
+
+    void p_set_max(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
+      max(s, s.arg2SetVar(ce[0]), s.arg2IntVar(ce[1]));
+    }
+    template<ReifyMode mode>
+    void p_set_max_reif(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
+      max(s, s.arg2SetVar(ce[0]), s.arg2IntVar(ce[1]),
+             Reify(s.arg2BoolVar(ce[2]), mode));
+    }
+
+
+    void p_set_singleton_rel(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
+      rel(s, s.arg2SetVar(ce[0]), set_relation(ce[1]), s.arg2IntVar(ce[2]));
+    }
+    template<ReifyMode mode>
+    void p_set_singleton_rel_reif(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
+      rel(s, s.arg2SetVar(ce[0]), set_relation(ce[1]), s.arg2IntVar(ce[2]),
+          Reify(s.arg2BoolVar(ce[3]), mode));
+    }
+
+    void p_set_rel_imp(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
+      rel(s, s.arg2SetVar(ce[0]), set_relation(ce[1]), s.arg2SetVar(ce[2]),
+          Reify(s.arg2BoolVar(ce[3]), RM_IMP));
+    }
+
     class SetPoster {
     public:
       SetPoster(void) {
@@ -2311,6 +2876,26 @@ fvar,
                        &p_weights);
         registry().add("gecode_inverse_set", &p_inverse_set);
         registry().add("gecode_precede_set", &p_precede_set);
+        registry().add("gecode_set_rel_imp_fzn", &p_set_rel_imp);
+        registry().add("gecode_set_ite", &p_set_ite);
+        registry().add("gecode_set_convex_hull", &p_set_convex_hull);
+        registry().add("gecode_set_atmost_one", &p_set_atmost_one);
+        registry().add("gecode_set_channel_sorted", &p_set_channel_sorted);
+        registry().add("gecode_set_operation_fzn", &p_set_operation);
+        registry().add("gecode_array_set_intersect", &p_array_set_intersect);
+        registry().add("gecode_array_int_set_operation_fzn", &p_array_int_set_operation);
+        registry().add("gecode_set_element2d", &p_set_element2d);
+        registry().add("gecode_array_int_set_element_fzn", &p_array_int_set_element);
+        registry().add("gecode_set_min", &p_set_min);
+        registry().add("gecode_set_min_reif", &p_set_min_reif<RM_EQV>);
+        registry().add("gecode_set_min_imp", &p_set_min_reif<RM_IMP>);
+        registry().add("gecode_set_max", &p_set_max);
+        registry().add("gecode_set_max_reif", &p_set_max_reif<RM_EQV>);
+        registry().add("gecode_set_max_imp", &p_set_max_reif<RM_IMP>);
+        registry().add("gecode_set_singleton_rel_fzn", &p_set_singleton_rel);
+        registry().add("gecode_set_singleton_rel_fzn_reif", &p_set_singleton_rel_reif<RM_EQV>);
+        registry().add("gecode_set_singleton_rel_fzn_imp", &p_set_singleton_rel_reif<RM_IMP>);
+
       }
     };
     SetPoster __set_poster;
@@ -2486,10 +3071,65 @@ fvar,
 
 #endif
 
+
+    void p_float_ite(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
+      ite(s, s.arg2BoolVar(ce[0]), s.arg2FloatVar(ce[1]), s.arg2FloatVar(ce[2]),
+          s.arg2FloatVar(ce[3]));
+    }
+    void p_float_pow(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
+      pow(s, s.arg2FloatVar(ce[0]), ce[1]->getInt(), s.arg2FloatVar(ce[2]));
+    }
+    void p_float_nroot(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
+      if (ce[1]->getInt() <= 0)
+        throw FlatZinc::Error("Registry", "float root degree must be positive");
+      nroot(s, s.arg2FloatVar(ce[0]), ce[1]->getInt(), s.arg2FloatVar(ce[2]));
+    }
+    void p_float_array_min(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
+      min(s, s.arg2floatvarargs(ce[0]), s.arg2FloatVar(ce[1]));
+    }
+    void p_float_array_max(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
+      max(s, s.arg2floatvarargs(ce[0]), s.arg2FloatVar(ce[1]));
+    }
+    void p_bool_float_channel(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
+      channel(s, s.arg2BoolVar(ce[0]), s.arg2FloatVar(ce[1]));
+    }
+#ifdef GECODE_HAS_MPFR
+    void p_float_pow_base(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
+      pow(s, ce[0]->getFloat(), s.arg2FloatVar(ce[1]), s.arg2FloatVar(ce[2]));
+    }
+    void p_float_log_base(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
+      log(s, ce[0]->getFloat(), s.arg2FloatVar(ce[1]), s.arg2FloatVar(ce[2]));
+    }
+#endif
+
+    void p_float_rel_imp(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
+      FloatRelType r;
+      switch (ce[1]->getInt()) {
+      case 1: r = FRT_EQ; break;
+      case 2: r = FRT_NQ; break;
+      case 3: r = FRT_LQ; break;
+      case 4: r = FRT_LE; break;
+      case 5: r = FRT_GQ; break;
+      case 6: r = FRT_GR; break;
+      default: throw FlatZinc::Error("Registry", "invalid float relation");
+      }
+      rel(s, s.arg2FloatVar(ce[0]), r, s.arg2FloatVar(ce[2]),
+          Reify(s.arg2BoolVar(ce[3]), RM_IMP));
+    }
+
     class FloatPoster {
     public:
       FloatPoster(void) {
         registry().add("int2float",&p_int2float);
+
+        registry().add("gecode_float_rel_imp_fzn", &p_float_rel_imp);
+        registry().add("gecode_float_ite", &p_float_ite);
+        registry().add("gecode_float_pow", &p_float_pow);
+        registry().add("gecode_float_nroot", &p_float_nroot);
+        registry().add("gecode_float_array_min", &p_float_array_min);
+        registry().add("gecode_float_array_max", &p_float_array_max);
+        registry().add("gecode_bool_float_channel", &p_bool_float_channel);
+
         registry().add("float_abs",&p_float_abs);
         registry().add("float_sqrt",&p_float_sqrt);
         registry().add("float_eq",&p_float_eq);
@@ -2513,6 +3153,8 @@ fvar,
         registry().add("float_lin_lt_reif",&p_float_lin_lt_reif);
 
 #ifdef GECODE_HAS_MPFR
+        registry().add("gecode_float_pow_base", &p_float_pow_base);
+        registry().add("gecode_float_log_base", &p_float_log_base);
         registry().add("float_acos",&p_float_acos);
         registry().add("float_asin",&p_float_asin);
         registry().add("float_atan",&p_float_atan);

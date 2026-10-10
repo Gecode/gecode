@@ -1156,6 +1156,7 @@ FLATZINCTESTSRC0 = \
   test/flatzinc/bugfix_r7854.cpp \
   test/flatzinc/empty_domain_1.cpp \
   test/flatzinc/empty_domain_2.cpp \
+  test/flatzinc/native-registry.cpp \
   test/flatzinc/int_set_as_type1.cpp \
   test/flatzinc/int_set_as_type2.cpp \
   test/flatzinc/issue166.cpp \

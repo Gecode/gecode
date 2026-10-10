@@ -30,6 +30,8 @@
 %
 %
 
+include "solver-native-overloads.mzn";
+
 % Sums over Boolean variables
 predicate bool_lin_eq(array[int] of int: a, array[int] of var bool: x,
                       var int: c);
@@ -136,3 +138,95 @@ predicate int_lin_ne_imp(array [int] of int: as, array [int] of var int: bs,
                          int: c, var bool: r);
 
 predicate set_in_imp(var int: x, set of int: S, var bool: r);
+
+% b implies the scalar float relation; a false b leaves x and y unconstrained.
+predicate gecode_float_rel_imp_fzn(
+  var float: x,
+  int: relation,
+  var float: y,
+  var bool: b
+);
+predicate float_eq_imp(var float: x, var float: y, var bool: b) =
+  gecode_float_rel_imp_fzn(x, 1, y, b);
+predicate float_ne_imp(var float: x, var float: y, var bool: b) =
+  gecode_float_rel_imp_fzn(x, 2, y, b);
+predicate float_le_imp(var float: x, var float: y, var bool: b) =
+  gecode_float_rel_imp_fzn(x, 3, y, b);
+predicate float_lt_imp(var float: x, var float: y, var bool: b) =
+  gecode_float_rel_imp_fzn(x, 4, y, b);
+
+% MiniZinc represents scalar comparisons as one- or two-term linear forms.
+% Other linear expressions use full reification followed by implication.
+predicate gecode_float_lin_scalar_imp(
+  array[int] of float: a,
+  array[int] of var float: x,
+  float: y,
+  int: relation,
+  var bool: b
+) =
+  let {
+    array[int] of float: aa = array1d(a);
+    array[int] of var float: xx = array1d(x);
+  } in
+    if length(aa) = 1 /\ length(xx) = 1 /\ aa[1] = 1.0 then
+      gecode_float_rel_imp_fzn(xx[1], relation, y, b)
+    elseif length(aa) = 2 /\ length(xx) = 2 /\ y = 0.0 /\ aa[1] = 1.0 /\ aa[2] = -1.0 then
+      gecode_float_rel_imp_fzn(xx[1], relation, xx[2], b)
+    elseif length(aa) = 2 /\ length(xx) = 2 /\ y = 0.0 /\ aa[1] = -1.0 /\ aa[2] = 1.0 then
+      gecode_float_rel_imp_fzn(xx[2], relation, xx[1], b)
+    else
+      let { var bool: r; } in
+        (if relation = 1 then
+          float_lin_eq_reif(a, x, y, r)
+        elseif relation = 2 then
+          float_lin_eq_reif(a, x, y, not r)
+        elseif relation = 3 then
+          float_lin_le_reif(a, x, y, r)
+        else
+          float_lin_lt_reif(a, x, y, r)
+        endif) /\ bool_clause([r], [b])
+    endif;
+
+predicate float_lin_eq_imp(
+  array[int] of float: a,
+  array[int] of var float: x,
+  float: y,
+  var bool: b
+) =
+  gecode_float_lin_scalar_imp(a, x, y, 1, b);
+predicate float_lin_ne_imp(
+  array[int] of float: a,
+  array[int] of var float: x,
+  float: y,
+  var bool: b
+) =
+  gecode_float_lin_scalar_imp(a, x, y, 2, b);
+predicate float_lin_le_imp(
+  array[int] of float: a,
+  array[int] of var float: x,
+  float: y,
+  var bool: b
+) =
+  gecode_float_lin_scalar_imp(a, x, y, 3, b);
+predicate float_lin_lt_imp(
+  array[int] of float: a,
+  array[int] of var float: x,
+  float: y,
+  var bool: b
+) =
+  gecode_float_lin_scalar_imp(a, x, y, 4, b);
+
+predicate gecode_set_rel_imp_fzn(
+  var set of int: x,
+  int: relation,
+  var set of int: y,
+  var bool: b
+);
+predicate set_eq_imp(var set of int: x, var set of int: y, var bool: b) =
+  gecode_set_rel_imp_fzn(x, 1, y, b);
+predicate set_ne_imp(var set of int: x, var set of int: y, var bool: b) =
+  gecode_set_rel_imp_fzn(x, 2, y, b);
+predicate set_subset_imp(var set of int: x, var set of int: y, var bool: b) =
+  gecode_set_rel_imp_fzn(x, 3, y, b);
+predicate set_superset_imp(var set of int: x, var set of int: y, var bool: b) =
+  gecode_set_rel_imp_fzn(x, 4, y, b);

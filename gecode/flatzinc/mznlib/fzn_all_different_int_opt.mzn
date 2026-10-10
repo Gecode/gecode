@@ -1,11 +1,9 @@
 %
 %  Main authors:
-%     Guido Tack <tack@gecode.dev>
 %     Mikael Zayenz Lagerkvist <lagerkvist@gecode.dev>
 %
 %  Copyright:
-%     Guido Tack, 2007
-%     Mikael Zayenz Lagerkvist, 2009
+%     Mikael Zayenz Lagerkvist, 2026
 %
 %  This file is part of Gecode, the generic constraint
 %  development environment:
@@ -32,40 +30,33 @@
 %
 %
 
-predicate gecode_schedule_unary_optional(
+predicate gecode_all_different_optional(
   array[int] of var int: x,
-  array[int] of int: p,
-  array[int] of var bool: m,
-);
-
-predicate gecode_unary_flex_optional(
-  array[int] of var int: start,
-  array[int] of var int: duration,
-  array[int] of var int: end,
   array[int] of var bool: present,
 );
 
-predicate fzn_disjunctive_strict_opt(
-  array[int] of var opt int: s,
-  array[int] of var int: d,
-) =
-  forall (i in index_set(d)) (
-    d[i] >= 0
-  ) /\
-  if forall (i in index_set(d)) (
-    is_fixed(d[i])
-  ) then
-    gecode_schedule_unary_optional(
-      [if is_fixed(si) /\ absent(fix(si)) then 0 else deopt(si) endif | si in s],
-      [fix(di) | di in d],
-      [occurs(si) | si in s],
-    )
+predicate fzn_all_different_int_opt(array[int] of var opt int: xs) =
+  if length(xs) = 0 then
+    true
   else
-    let {
-      array[int] of var int: start = [if is_fixed(si) /\ absent(fix(si)) then 0 else deopt(si) endif | si in s];
-      array[int] of var bool: present = [occurs(si) | si in s];
-      array[int] of var int: duration = array1d(d);
-      array[int] of var int: end = [if present[i] then start[i] + duration[i] else 0 endif | i in index_set(start)];
-    } in
-      gecode_unary_flex_optional(start, duration, end, present)
+    % Fixed absent values have no deopt value; their integer is ignored.
+    gecode_all_different_optional(
+      [if is_fixed(x) /\ absent(fix(x)) then 0 else deopt(x) endif | x in xs],
+      [occurs(x) | x in xs],
+    )
   endif;
+
+% Reification has no native optional-distinct propagator.
+predicate fzn_all_different_int_opt_reif(
+  array[int] of var opt int: xs,
+  var bool: b,
+) =
+  let {
+    array[index_set(xs)] of var int: values = array1d(
+      index_set(xs),
+      [if is_fixed(x) /\ absent(fix(x)) then 0 else deopt(x) endif | x in xs],
+    );
+  } in
+    b <-> forall (i, j in index_set(xs) where i < j) (
+      (occurs(xs[i]) /\ occurs(xs[j])) -> values[i] != values[j]
+    );

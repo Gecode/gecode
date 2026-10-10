@@ -1,11 +1,9 @@
 %
 %  Main authors:
-%     Guido Tack <tack@gecode.dev>
 %     Mikael Zayenz Lagerkvist <lagerkvist@gecode.dev>
 %
 %  Copyright:
-%     Guido Tack, 2007
-%     Mikael Zayenz Lagerkvist, 2009
+%     Mikael Zayenz Lagerkvist, 2026
 %
 %  This file is part of Gecode, the generic constraint
 %  development environment:
@@ -32,40 +30,26 @@
 %
 %
 
-predicate gecode_schedule_unary_optional(
+predicate gecode_regular_nfa_int_fzn(
   array[int] of var int: x,
-  array[int] of int: p,
-  array[int] of var bool: m,
+  int: q,
+  int: first_symbol,
+  int: symbols,
+  array[int] of set of int: transitions,
+  int: initial,
+  set of int: final,
 );
 
-predicate gecode_unary_flex_optional(
-  array[int] of var int: start,
-  array[int] of var int: duration,
-  array[int] of var int: end,
-  array[int] of var bool: present,
-);
-
-predicate fzn_disjunctive_strict_opt(
-  array[int] of var opt int: s,
-  array[int] of var int: d,
+predicate fzn_regular_nfa(
+  array[int] of var int: xs,
+  int: Q,
+  int: S,
+  array[int, int] of set of int: d,
+  int: q0,
+  set of int: F,
 ) =
-  forall (i in index_set(d)) (
-    d[i] >= 0
-  ) /\
-  if forall (i in index_set(d)) (
-    is_fixed(d[i])
-  ) then
-    gecode_schedule_unary_optional(
-      [if is_fixed(si) /\ absent(fix(si)) then 0 else deopt(si) endif | si in s],
-      [fix(di) | di in d],
-      [occurs(si) | si in s],
-    )
+  if length(xs) = 0 then
+    q0 in F
   else
-    let {
-      array[int] of var int: start = [if is_fixed(si) /\ absent(fix(si)) then 0 else deopt(si) endif | si in s];
-      array[int] of var bool: present = [occurs(si) | si in s];
-      array[int] of var int: duration = array1d(d);
-      array[int] of var int: end = [if present[i] then start[i] + duration[i] else 0 endif | i in index_set(start)];
-    } in
-      gecode_unary_flex_optional(start, duration, end, present)
+    gecode_regular_nfa_int_fzn(xs, Q, 1, S, array1d(d), q0, F)
   endif;
