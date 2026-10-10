@@ -4,7 +4,7 @@ The audit asks whether a standard MiniZinc expression already reaches a native G
 
 Verification uses MiniZinc 2.10.1 (build 33348285743) and this checkout's FlatZinc solver. Standard-library filenames below refer to that installation. A local MiniZinc 2.9.3 compiler checkout supplied additional source evidence; the installed compiler's generated FlatZinc was checked independently. Native declarations and posting code are in [int.hh](../gecode/int.hh), [set.hh](../gecode/set.hh), [float.hh](../gecode/float.hh), and their implementation directories.
 
-[gecode.mzn](../gecode/flatzinc/mznlib/gecode.mzn) supplies the public overloads and semantic relation/task enums. [gecode_fzn.mzn](../gecode/flatzinc/mznlib/gecode_fzn.mzn) contains typed primitive declarations, including internal leaves used by standard translations. [registry.cpp](../gecode/flatzinc/registry.cpp) posts those primitives. Existing registry aliases are reused rather than registered twice. Both build systems install the entire solver-library directory.
+[gecode.mzn](../gecode/flatzinc/mznlib/gecode.mzn) supplies the public overloads and semantic relation/task enums. [gecode_fzn.mzn](../gecode/flatzinc/mznlib/gecode_fzn.mzn) contains typed primitive declarations, including internal leaves used by standard translations. Public predicates that already have a single typed signature are documented at their declaration there, without a redundant forwarding wrapper. [registry.cpp](../gecode/flatzinc/registry.cpp) posts those primitives. Existing registry aliases are reused rather than registered twice. Both build systems install the entire solver-library directory.
 
 ## Automatic standard routes
 
@@ -94,3 +94,23 @@ constraint gecode_inter_distance(y, distance)
   :: bounds_propagation :: gecode_advanced_propagation;
 constraint gecode_count(x, targets, GecodeLe, limit) :: domain_propagation;
 ```
+
+To run the retained native regressions from an existing CMake build:
+
+```sh
+cmake --build build/minizinc-registry --target fzn-gecode gecode-test -j6
+build/minizinc-registry/bin/gecode-test -test '^FlatZinc::' -iter 1 -threads 6
+build/minizinc-registry/bin/gecode-test -test '^Float::Transcendental::' -iter 1 -threads 6
+```
+
+For a MiniZinc routing check, select this checkout as the solver library with
+`-G`; an include directory alone does not replace the installed solver overrides:
+
+```sh
+minizinc --compile --solver gecode -G "$PWD/gecode/flatzinc/mznlib" \
+  --output-fzn-to-file /tmp/native-check.fzn model.mzn
+build/minizinc-registry/bin/fzn-gecode -p 6 /tmp/native-check.fzn
+```
+
+The compiler and solution-comparison checks described above were run during the
+audit; they are not an additional checked-in test suite.

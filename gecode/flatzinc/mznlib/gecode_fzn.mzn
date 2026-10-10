@@ -34,6 +34,11 @@
 % Model code should include gecode.mzn for overloaded predicates.
 % Relation and task codes follow the enums declared there.
 
+/** @group gecode.constraints Pairwise absolute differences are at least the
+  nonnegative distance. Empty and singleton arrays only constrain distance.
+  Native bounds propagation offers basic and advanced algorithms, selected
+  with gecode_basic_propagation, gecode_advanced_propagation, or
+  gecode_full_propagation. */
 predicate gecode_inter_distance(array[int] of var int: x, var int: distance);
 
 predicate gecode_all_different_optional(array[int] of var int: x,
@@ -59,6 +64,9 @@ predicate gecode_count_in_fzn(array[int] of var int: x, set of int: values,
 predicate gecode_count_matches_fzn(array[int] of var int: x, array[int] of int: values,
     int: relation, var int: count);
 
+/** @group gecode.constraints Closed cardinality with arbitrary allowed count
+  sets. Every x[i] belongs to cover, cover values are distinct, and cover and
+  counts have equal lengths. Arrays correspond by position. */
 predicate gecode_global_cardinality_sets(array[int] of var int: x,
     array[int] of int: cover, array[int] of set of int: counts);
 
@@ -103,6 +111,9 @@ predicate gecode_path_cost_array(array[int] of int: costs, int: offset,
     array[int] of var int: x, var int: start, var int: end,
     array[int] of var int: edge_costs, var int: cost);
 
+/** @group gecode.constraints Order two tasks without overlap. When order is
+  false, start0+duration0 <= start1; when true, start1+duration1 <= start0.
+  Durations are nonnegative. */
 predicate gecode_order(var int: start0, int: duration0,
     var int: start1, int: duration1, var bool: order);
 
@@ -142,8 +153,11 @@ predicate gecode_set_convex_hull(var set of int: x, var set of int: hull);
 
 predicate gecode_set_convex(var set of int: x);
 
+/** @group gecode.constraints Every set has the given nonnegative cardinality,
+  and every pair of sets intersects in at most one element. */
 predicate gecode_set_atmost_one(array[int] of var set of int: x, int: cardinality);
 
+/** @group gecode.constraints x is a strictly increasing enumeration of y. */
 predicate gecode_set_channel_sorted(array[int] of var int: x, var set of int: y);
 
 predicate gecode_set_operation_fzn(var set of int: x, int: operation,
