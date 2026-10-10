@@ -30,13 +30,34 @@
 %
 %
 
-predicate gecode_regular_nfa_int_fzn(array[int] of var int: x, int: q,
-    int: first_symbol, int: symbols, array[int] of set of int: transitions,
-    int: initial, set of int: final);
+predicate gecode_regular_nfa_int_fzn(
+  array[int] of var int: x,
+  int: q,
+  int: first_symbol,
+  int: symbols,
+  array[int] of set of int: transitions,
+  int: initial,
+  set of int: final,
+);
 
-predicate fzn_regular_nfa(array[int] of var int: xs, int: Q, set of int: S,
-    array[int,int] of set of int: d, int: q0, set of int: F) =
-  if length(xs) = 0 then q0 in F else
-    gecode_regular_nfa_int_fzn(xs,Q,min(S),card(S),
-      array1d(d),q0,F)
+predicate fzn_regular_nfa(
+  array[int] of var int: xs,
+  int: Q,
+  set of int: S,
+  array[int, int] of set of int: d,
+  int: q0,
+  set of int: F,
+) =
+  if length(xs) = 0 then
+    q0 in F
+  else
+    gecode_regular_nfa_int_fzn(
+      xs,
+      Q,
+      min(S),
+      card(S),
+      array1d(d),
+      q0,
+      F,
+    )
   endif;

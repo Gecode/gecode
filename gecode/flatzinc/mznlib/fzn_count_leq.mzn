@@ -30,8 +30,12 @@
 %
 %
 
-predicate gecode_count_int_fzn(array[int] of var int: x, var int: value,
-    int: relation, var int: n);
+predicate gecode_count_int_fzn(
+  array[int] of var int: x,
+  var int: value,
+  int: relation,
+  var int: n,
+);
 
 % Requires n <= the number of occurrences of value in xs.
 predicate fzn_count_leq(array[int] of var int: xs, var int: value, var int: n) =

@@ -30,10 +30,18 @@
 %
 %
 
-predicate gecode_array_set_intersect(array[int] of var set of int: x,
-                                      var set of int: y);
+predicate gecode_array_set_intersect(
+  array[int] of var set of int: x,
+  var set of int: y,
+);
 
 % The intersection of an empty array is undefined in the standard library.
-predicate fzn_array_set_intersect(array[int] of var set of int: x,
-                                  var set of int: y) =
-  if length(x) = 0 then false else gecode_array_set_intersect(x, y) endif;
+predicate fzn_array_set_intersect(
+  array[int] of var set of int: x,
+  var set of int: y,
+) =
+  if length(x) = 0 then
+    false
+  else
+    gecode_array_set_intersect(x, y)
+  endif;

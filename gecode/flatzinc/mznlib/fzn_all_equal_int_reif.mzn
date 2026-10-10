@@ -33,6 +33,14 @@
 predicate gecode_not_all_equal_int(array[int] of var int: xs);
 
 predicate fzn_all_equal_int_reif(array[int] of var int: xs, var bool: b) =
-  if is_fixed(b) /\ not fix(b) then gecode_not_all_equal_int(xs)
-  else b <-> (if length(xs) = 0 then true else
-    forall(i in index_set(xs))(xs[i] = xs[min(index_set(xs))]) endif) endif;
+  if is_fixed(b) /\ not fix(b) then
+    gecode_not_all_equal_int(xs)
+  else
+    b <-> (if length(xs) = 0 then
+      true
+    else
+      forall (i in index_set(xs)) (
+        xs[i] = xs[min(index_set(xs))]
+      )
+    endif)
+  endif;

@@ -30,8 +30,10 @@
 %
 %
 
-predicate gecode_all_different_optional(array[int] of var int: x,
-                                        array[int] of var bool: present);
+predicate gecode_all_different_optional(
+  array[int] of var int: x,
+  array[int] of var bool: present,
+);
 
 predicate fzn_all_different_int_opt(array[int] of var opt int: xs) =
   if length(xs) = 0 then
@@ -40,15 +42,21 @@ predicate fzn_all_different_int_opt(array[int] of var opt int: xs) =
     % Fixed absent values have no deopt value; their integer is ignored.
     gecode_all_different_optional(
       [if is_fixed(x) /\ absent(fix(x)) then 0 else deopt(x) endif | x in xs],
-      [occurs(x) | x in xs])
+      [occurs(x) | x in xs],
+    )
   endif;
 
 % Reification has no native optional-distinct propagator.
-predicate fzn_all_different_int_opt_reif(array[int] of var opt int: xs,
-                                        var bool: b) =
+predicate fzn_all_different_int_opt_reif(
+  array[int] of var opt int: xs,
+  var bool: b,
+) =
   let {
-    array[index_set(xs)] of var int: values =
-      array1d(index_set(xs),
-        [if is_fixed(x) /\ absent(fix(x)) then 0 else deopt(x) endif | x in xs]);
-  } in b <-> forall (i, j in index_set(xs) where i < j) (
-    (occurs(xs[i]) /\ occurs(xs[j])) -> values[i] != values[j]);
+    array[index_set(xs)] of var int: values = array1d(
+      index_set(xs),
+      [if is_fixed(x) /\ absent(fix(x)) then 0 else deopt(x) endif | x in xs],
+    );
+  } in
+    b <-> forall (i, j in index_set(xs) where i < j) (
+      (occurs(xs[i]) /\ occurs(xs[j])) -> values[i] != values[j]
+    );
