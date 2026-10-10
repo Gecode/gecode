@@ -94,6 +94,41 @@ namespace Test {
     MT_FIRST //< Positive match at beginning
   };
 
+  /// Tags for test selection
+  enum class TestTag : unsigned int {
+    check  = 1U << 0, ///< Basic integrity tests
+    standard = 1U << 1, ///< Standard test suite
+    sweep  = 1U << 2  ///< Really heavy sweep tests
+  };
+
+  /// Set of test tags
+  class GECODE_TEST_EXPORT TestTags {
+  private:
+    /// Bit mask for tags
+    unsigned int _mask;
+  public:
+    /// Initialize with no tags
+    TestTags(void);
+    /// Initialize with tag \a t
+    TestTags(TestTag t);
+    /// Initialize with tags \a t0 and \a t1
+    TestTags(TestTag t0, TestTag t1);
+    /// Integrity tests, also part of the standard suite
+    static TestTags check(void);
+    /// Standard suite without expensive sweeps
+    static TestTags standard(void);
+    /// Expensive parameter sweeps
+    static TestTags sweep(void);
+    /// Return set with all known tags
+    static TestTags all(void);
+    /// Whether no tags are set
+    bool empty(void) const;
+    /// Whether this set contains any tag from \a t
+    bool overlaps(TestTags t) const;
+    /// Add tags \a t
+    void add(TestTags t);
+  };
+
   /// Commandline options
   class GECODE_TEST_EXPORT Options {
   public:
@@ -117,10 +152,16 @@ namespace Test {
     bool log;
     /// Patterns to test against
     std::vector<std::pair<MatchType, const char*> > testpat;
+    /// Tags to test against
+    TestTags testtags;
     /// Name of first test to start with
     const char* start_from;
     /// Whether to list all tests
     bool list;
+    /// Whether to list known tags
+    bool list_tags;
+    /// Whether to include tags when listing tests
+    bool list_with_tags;
 
     /// Initialize options with defaults
     Options(void);
@@ -134,6 +175,8 @@ namespace Test {
      * patterns; with no patterns, every test name matches.
      */
     bool is_test_name_matching(const std::string& test_name) const;
+    /// True iff test tags should be executed according to the requested tags. With no tag request, always true.
+    bool is_test_tags_matching(TestTags tags) const;
   };
 
   /// The options
@@ -144,6 +187,8 @@ namespace Test {
   private:
     /// Name of the test
     std::string _name;
+    /// Tags assigned to the test
+    TestTags _tags;
     /// Next test
     Base* _next;
     /// All tests
@@ -151,12 +196,19 @@ namespace Test {
     /// How many tests
     static unsigned int _n_tests;
   public:
-    /// Create and register test with name \a s
+    /// Create and register a standard test with name \a s
     Base(std::string  s);
+    /** \brief Create and register test with name \a s and tags \a t
+     *
+     * The supplied tags determine membership independently of the name.
+     */
+    Base(std::string s, TestTags t);
     /// Sort tests alphabetically
     static void sort(void);
     /// Return name of test
     const std::string& name(void) const;
+    /// Return tags for test
+    TestTags tags(void) const;
     /// Return all tests
     static Base* tests(void);
     /// Return next test
@@ -198,6 +250,12 @@ namespace Test {
    * reports provide a -replay state and exact -test name. Replay runs that
    * test once on one thread, starting from the failing iteration's state.
    * -log prints the buffered log on failure and requires one thread.
+   *
+   * Repeated -tag options select the union of their tags. With no -tag,
+   * all tests are eligible, including tests without tags; -tag all selects
+   * tests with at least one known tag. Name and tag filters must both match.
+   * -list and -list-with-tags list every registered test, ignoring -test,
+   * -tag, and -start.
    * \relates Test::Base
    */
   GECODE_TEST_EXPORT int run_registered_tests(int argc, char* argv[]);

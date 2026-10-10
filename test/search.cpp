@@ -386,11 +386,16 @@ namespace Test {
         return "";
       }
       /// Initialize test
+      Test(TestTags tags, const std::string& s,
+           HowToBranch _htb1, HowToBranch _htb2, HowToBranch _htb3,
+           HowToConstrain _htc=HTC_NONE)
+        : Base("Search::"+s,tags),
+          htb1(_htb1), htb2(_htb2), htb3(_htb3), htc(_htc) {}
+      /// Initialize a normal test
       Test(const std::string& s,
            HowToBranch _htb1, HowToBranch _htb2, HowToBranch _htb3,
            HowToConstrain _htc=HTC_NONE)
-        : Base("Search::"+s),
-          htb1(_htb1), htb2(_htb2), htb3(_htb3), htc(_htc) {}
+        : Test(TestTags::standard(),s,_htb1,_htb2,_htb3,_htc) {}
     };
 
     /// Randomly resize a live leaf engine from another thread
@@ -490,7 +495,7 @@ namespace Test {
         return caught && (live == (clone ? 1 : 0));
       }
     public:
-      PBSConstructionFailure(void) : Base("Search::PBS::ConstructionFailure") {}
+      PBSConstructionFailure(void) : Base("Search::PBS::ConstructionFailure", TestTags::check()) {}
       bool run(void) override {
         for (unsigned int threads : {1U,4U})
           for (bool clone : {false,true})
@@ -581,7 +586,7 @@ namespace Test {
       }
     public:
       WorkerControlSequentialPause(void)
-        : Base("Search::WorkerControl::SequentialPause") {}
+        : Base("Search::WorkerControl::SequentialPause", TestTags::check()) {}
       bool run(void) override {
 #ifdef GECODE_HAS_THREADS
         return check<Gecode::DFS>(0U) && check<Gecode::DFS>(1U) &&
@@ -608,7 +613,7 @@ namespace Test {
         return false;
       }
     public:
-      WorkerControlAPI(void) : Base("Search::WorkerControl::API") {}
+      WorkerControlAPI(void) : Base("Search::WorkerControl::API", TestTags::check()) {}
       bool run(void) override {
         using Gecode::Search::WorkerControl;
         WorkerControl empty;
@@ -680,7 +685,7 @@ namespace Test {
     class WorkerControlPBSPause : public Base {
     public:
       WorkerControlPBSPause(void)
-        : Base("Search::WorkerControl::PBS::Pause") {}
+        : Base("Search::WorkerControl::PBS::Pause", TestTags::check()) {}
       bool run(void) override {
         bool ok = true;
         // A sequential portfolio must reject assets that could block its round.
@@ -754,9 +759,10 @@ namespace Test {
       unsigned int t;
     public:
       /// Initialize test
-      DFS(HowToBranch htb1, HowToBranch htb2, HowToBranch htb3,
+      DFS(TestTags tags,
+          HowToBranch htb1, HowToBranch htb2, HowToBranch htb3,
           unsigned int c_d0, unsigned int a_d0, unsigned int t0)
-        : Test("DFS::"+Model::name()+"::"+
+        : Test(tags,"DFS::"+Model::name()+"::"+
                str(htb1)+"::"+str(htb2)+"::"+str(htb3)+"::"+
                str(c_d0)+"::"+str(a_d0)+"::"+str(t0),
                htb1,htb2,htb3), c_d(c_d0), a_d(a_d0), t(t0) {}
@@ -844,10 +850,10 @@ namespace Test {
       unsigned int t;
     public:
       /// Initialize test
-      BAB(HowToConstrain htc,
+      BAB(TestTags tags, HowToConstrain htc,
           HowToBranch htb1, HowToBranch htb2, HowToBranch htb3,
           unsigned int c_d0, unsigned int a_d0, unsigned int t0)
-        : Test("BAB::"+Model::name()+"::"+str(htc)+"::"+
+        : Test(tags,"BAB::"+Model::name()+"::"+str(htc)+"::"+
                str(htb1)+"::"+str(htb2)+"::"+str(htb3)+"::"+
                str(c_d0)+"::"+str(a_d0)+"::"+str(t0),
                htb1,htb2,htb3,htc), c_d(c_d0), a_d(a_d0), t(t0) {}
@@ -1155,12 +1161,21 @@ namespace Test {
                 for (BranchTypes htb2; htb2(); ++htb2)
                   for (BranchTypes htb3; htb3(); ++htb3)
                     (void) new DFS<HasSolutions>
-                      (htb1.htb(),htb2.htb(),htb3.htb(),c_d, a_d, t);
-              new DFS<FailImmediate>(HTB_NONE, HTB_NONE, HTB_NONE,
+                      ((htb1.htb() == HTB_BINARY) &&
+                       (htb2.htb() == HTB_NARY) &&
+                       (htb3.htb() == HTB_BINARY) &&
+                       (c_d == 1) && (a_d == 1) && (t == 1)
+                       ? TestTags::check()
+                       : TestTags(TestTags::sweep()),
+                       htb1.htb(),htb2.htb(),htb3.htb(),c_d,a_d,t);
+              new DFS<FailImmediate>(TestTags::standard(),
+                                     HTB_NONE, HTB_NONE, HTB_NONE,
                                      c_d, a_d, t);
-              new DFS<SolveImmediate>(HTB_NONE, HTB_NONE, HTB_NONE,
+              new DFS<SolveImmediate>(TestTags::sweep(),
+                                      HTB_NONE, HTB_NONE, HTB_NONE,
                                       c_d, a_d, t);
-              new DFS<HasSolutions>(HTB_NONE, HTB_NONE, HTB_NONE,
+              new DFS<HasSolutions>(TestTags::sweep(),
+                                    HTB_NONE, HTB_NONE, HTB_NONE,
                                     c_d, a_d, t);
             }
 
@@ -1184,15 +1199,25 @@ namespace Test {
                   for (BranchTypes htb2; htb2(); ++htb2)
                     for (BranchTypes htb3; htb3(); ++htb3) {
                       (void) new BAB<HasSolutions>
-                        (htc.htc(),htb1.htb(),htb2.htb(),htb3.htb(),
+                        ((htc.htc() == HTC_BAL_GR) &&
+                         (htb1.htb() == HTB_BINARY) &&
+                         (htb2.htb() == HTB_BINARY) &&
+                         (htb3.htb() == HTB_BINARY) &&
+                         (c_d == 1) && (a_d == 1) && (t == 1)
+                         ? TestTags(TestTags::standard())
+                         : TestTags(TestTags::sweep()),
+                         htc.htc(),htb1.htb(),htb2.htb(),htb3.htb(),
                          c_d,a_d,t);
                   }
               (void) new BAB<FailImmediate>
-                (HTC_NONE,HTB_NONE,HTB_NONE,HTB_NONE,c_d,a_d,t);
+                (TestTags::standard(),HTC_NONE,HTB_NONE,HTB_NONE,HTB_NONE,
+                 c_d,a_d,t);
               (void) new BAB<SolveImmediate>
-                (HTC_NONE,HTB_NONE,HTB_NONE,HTB_NONE,c_d,a_d,t);
+                (TestTags::sweep(),HTC_NONE,HTB_NONE,HTB_NONE,HTB_NONE,
+                 c_d,a_d,t);
               (void) new BAB<HasSolutions>
-                (HTC_NONE,HTB_NONE,HTB_NONE,HTB_NONE,c_d,a_d,t);
+                (TestTags::sweep(),HTC_NONE,HTB_NONE,HTB_NONE,HTB_NONE,
+                 c_d,a_d,t);
             }
         // Restart-based search
         for (unsigned int t=1; t<=4; t++) {

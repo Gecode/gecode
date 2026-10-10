@@ -306,6 +306,10 @@ namespace Test {
       Test(const std::string& p, const std::string& s,
            int a, const Gecode::IntSet& d, bool r=false,
            Gecode::IntPropLevel i=Gecode::IPL_DEF);
+      /// Construct and register a test with explicitly assigned tags
+      Test(TestTags tags, const std::string& p, const std::string& s,
+           int a, const Gecode::IntSet& d, bool r=false,
+           Gecode::IntPropLevel i=Gecode::IPL_DEF);
       /**
        * \brief Constructor
        *
@@ -315,6 +319,10 @@ namespace Test {
        * also selects the initial consistency check (see class documentation).
        */
       Test(const std::string& s,
+           int a, const Gecode::IntSet& d, bool r=false,
+           Gecode::IntPropLevel i=Gecode::IPL_DEF);
+      /// Construct and register a test with explicitly assigned tags
+      Test(TestTags tags, const std::string& s,
            int a, const Gecode::IntSet& d, bool r=false,
            Gecode::IntPropLevel i=Gecode::IPL_DEF);
       /**
@@ -328,6 +336,10 @@ namespace Test {
       Test(const std::string& p, const std::string& s,
            int a, int min, int max, bool r=false,
            Gecode::IntPropLevel i=Gecode::IPL_DEF);
+      /// Construct and register a test with explicitly assigned tags
+      Test(TestTags tags, const std::string& p, const std::string& s,
+           int a, int min, int max, bool r=false,
+           Gecode::IntPropLevel i=Gecode::IPL_DEF);
       /**
        * \brief Constructor
        *
@@ -337,6 +349,10 @@ namespace Test {
        * also selects the initial consistency check (see class documentation).
        */
       Test(const std::string& s,
+           int a, int min, int max, bool r=false,
+           Gecode::IntPropLevel i=Gecode::IPL_DEF);
+      /// Construct and register a test with explicitly assigned tags
+      Test(TestTags tags, const std::string& s,
            int a, int min, int max, bool r=false,
            Gecode::IntPropLevel i=Gecode::IPL_DEF);
       /** \brief Create the assignment generator (complete by default)

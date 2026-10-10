@@ -72,6 +72,28 @@ cmake --install build/vs2022-vcpkg --config Release --prefix C:/path/to/install
 Visual Studio is a multi-config generator, so use `--config Release` (or
 `Debug`) for build/install/check commands rather than `CMAKE_BUILD_TYPE`.
 
+## Test Targets
+
+When `BUILD_TESTING=ON`, CMake builds the `gecode-test` test runner on demand.
+The standard `check` target runs the basic integrity suite:
+
+```bash
+cmake --build build --target check
+```
+
+Two additional targets expose broader tag-based suites:
+
+```bash
+cmake --build build --target check-standard
+cmake --build build --target check-sweep
+```
+
+`check-standard` runs the standard test suite. `check-sweep` runs tests tagged as
+heavy sweep tests and is intended for deliberate, longer-running validation.
+
+Use `gecode-test -help` for runner options and `gecode-test -list-with-tags`
+to inspect test assignments.
+
 ## Build Conventions and Key Options
 
 ### Common CMake options
