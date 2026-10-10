@@ -97,16 +97,18 @@ namespace Gecode { namespace Float { namespace Transcendental {
   ExecStatus
   Pow<A,B>::post(Home home, FloatNum base, A x0, B x1) {
     if (base <= 0) return ES_FAILED;
-    if (x0 == x1) {
-      GECODE_ME_CHECK(x0.eq(home,0.0));
-    } else {
-      GECODE_ME_CHECK(x1.gq(home,0.0));
-      if (x1.max() == 0.0)
-        return ES_FAILED;
-      GECODE_ME_CHECK(x0.eq(home,log(x1.domain())/log(base)));
-      GECODE_ME_CHECK(x1.eq(home,exp(x0.domain()*log(base))));
-      (void) new (home) Pow<A,B>(home,base,x0,x1);
+    if (base == 1.0) {
+      GECODE_ME_CHECK(x1.eq(home,1.0));
+      return ES_OK;
     }
+    GECODE_ME_CHECK(x1.gq(home,0.0));
+    if (x1.max() == 0.0)
+      return ES_FAILED;
+    // Enclose log(base) in both directions to retain exact power solutions.
+    FloatVal lb = log(FloatVal(base));
+    GECODE_ME_CHECK(x0.eq(home,log(x1.domain())/lb));
+    GECODE_ME_CHECK(x1.eq(home,exp(x0.domain()*lb)));
+    (void) new (home) Pow<A,B>(home,base,x0,x1);
     return ES_OK;
   }
 
@@ -127,9 +129,10 @@ namespace Gecode { namespace Float { namespace Transcendental {
   Pow<A,B>::propagate(Space& home, const ModEventDelta&) {
     if (x1.max() == 0.0)
       return ES_FAILED;
-    GECODE_ME_CHECK(x0.eq(home,log(x1.domain())/log(base)));
-    GECODE_ME_CHECK(x1.eq(home,exp(x0.domain()*log(base))));
-    return x0.assigned() ? home.ES_SUBSUMED(*this) : ES_FIX;
+    FloatVal lb = log(FloatVal(base));
+    GECODE_ME_CHECK(x0.eq(home,log(x1.domain())/lb));
+    GECODE_ME_CHECK(x1.eq(home,exp(x0.domain()*lb)));
+    return x0.assigned() ? home.ES_SUBSUMED(*this) : ES_NOFIX;
   }
 
 }}}
