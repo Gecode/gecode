@@ -337,7 +337,7 @@ INTSRC0 = \
 	bin-packing/conflict-graph.cpp \
 	order.cpp order/propagate.cpp \
 	unary.cpp cumulative.cpp cumulatives.cpp \
-	circuit.cpp no-overlap.cpp nvalues.cpp \
+	circuit.cpp no-overlap.cpp inter-distance.cpp nvalues.cpp \
 	member.cpp min-distance.cpp branch/action.cpp branch/chb.cpp \
 	arithmetic/mult.cpp  \
 	branch/view-sel.cpp branch/val-sel-commit.cpp \
@@ -427,7 +427,7 @@ INTHDR0 = \
 	circuit.hh circuit/base.hpp circuit/val.hpp circuit/dom.hpp \
 	no-overlap.hh no-overlap/dim.hpp no-overlap/box.hpp \
 	no-overlap/base.hpp no-overlap/man.hpp no-overlap/opt.hpp \
-	nvalues.hh nvalues/range-event.hpp \
+	inter-distance.hh nvalues.hh nvalues/range-event.hpp \
 	nvalues/sym-bit-matrix.hpp nvalues/graph.hpp \
 	nvalues/bool-base.hpp nvalues/bool-eq.hpp \
 	nvalues/bool-lq.hpp nvalues/bool-gq.hpp \
@@ -1121,7 +1121,7 @@ INTTESTSRC00 = \
 	rel linear gcc sorted unshare exec sequence \
 	mm-arithmetic mm-bool mm-lin mm-count mm-rel \
 	bin-packing order unary cumulative cumulatives circuit \
-	no-overlap precede nvalues member min-distance
+	no-overlap precede inter-distance nvalues member min-distance
 INTTESTSRC0 = test/int.cpp $(INTTESTSRC00:%=test/int/%.cpp)
 INTTESTOBJ = $(INTTESTSRC0:%.cpp=%$(OBJSUFFIX))
 

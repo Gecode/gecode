@@ -1749,6 +1749,75 @@ namespace Gecode {
 
 
   /**
+   * \defgroup TaskModelIntInterDistance Inter-distance constraint
+   * \ingroup TaskModelInt
+   */
+  //@{
+  /** \brief Post bounds-consistent propagator for \f$|x_i-x_j|\geq p\f$ for all \f$0\leq i\neq j<|x|\f$
+   *
+   * Domains with holes are treated as intervals between their bounds.
+   *
+   * - \a IPL_BASIC checks interval feasibility in \f$O(n\log n)\f$ time
+   *   and linear temporary space, where \f$n=|x|\f$.
+   * - \a IPL_ADVANCED and \a IPL_BASIC_ADVANCED first perform
+   *   the basic check, then schedule quadratic bounds(Z) filtering at
+   *   a higher cost. This filtering uses quadratic temporary space.
+   *
+   * The default, \a IPL_DEF, uses both stages. The value/bounds/domain part
+   * of \a ipl does not affect these algorithms.
+   *
+   * A zero distance, or fewer than two variables, imposes no restriction.
+   * A distance of one is propagated as a bounds-consistent distinct constraint.
+   *
+   * The propagator uses algorithms taken from:
+   *
+   * Claude-Guy Quimper, Alejandro Lopez-Ortiz, and Gilles Pesant,
+   * A Quadratic Propagator for the Inter-Distance Constraint,
+   * AAAI, pages 123-128, 2006.
+   *
+   * and
+   *
+   * M. R. Garey, D. S. Johnson, B. B. Simons, and R. E. Tarjan,
+   * Scheduling Unit-Time Tasks with Arbitrary Release Times and Deadlines,
+   * SIAM Journal on Computing 10(2), pages 256-269, 1981.
+   *
+   * Throws Int::OutOfLimits if \a p is negative or exceeds Int::Limits::max.
+   * Throws Int::ArgumentSame if \a p is positive and \a x contains the same
+   * unassigned variable multiply.
+   */
+  GECODE_INT_EXPORT void
+  inter_distance(Home home, const IntVarArgs& x, int p,
+                 IntPropLevel ipl=IPL_DEF);
+  /** \brief Post inter-distance constraint with variable separation
+   *
+   * Constrains \f$p\geq0\f$ and \f$|x_i-x_j|\geq p\f$ for all
+   * \f$0\leq i\neq j<|x|\f$.
+   *
+   * Uses the same algorithm options as the fixed-distance overload.
+   * The basic stage additionally tightens \a p's upper bound by binary
+   * search using the linear-space feasibility checker. Its time bound
+   * is \f$O(n\log n\log(1+\max(p)))\f$. The advanced stage provides
+   * bounds(Z) consistency for \a x using the minimum of \a p, giving
+   * bounds(Z) consistency for the whole constraint.
+   *
+   * The variable-distance algorithm is taken from:
+   *
+   * Claude-Guy Quimper, Alejandro Lopez-Ortiz, and Gilles Pesant,
+   * A Quadratic Propagator for the Inter-Distance Constraint,
+   * Constraint Programming Letters 3, pages 21-35, 2008, Section 5.
+   *
+   * Fewer than two variables only constrain \a p to be nonnegative.
+   * With at least two variables, throws Int::ArgumentSame if \a p is the
+   * same unassigned variable as a member of \a x, or if \a p can be positive
+   * and \a x contains the same unassigned variable multiply.
+   */
+  GECODE_INT_EXPORT void
+  inter_distance(Home home, const IntVarArgs& x, IntVar p,
+                 IntPropLevel ipl=IPL_DEF);
+  //@}
+
+
+  /**
    * \defgroup TaskModelIntDistinct Distinct constraints
    * \ingroup TaskModelInt
    */
