@@ -92,7 +92,6 @@ Rank:   minor
 [DESCRIPTION]
 Keep exact fixed-base power and logarithm solutions using interval logarithms,
 handle base-one powers, and remove an invalid shared-variable shortcut.
-Enable rounding-aware float compilation in both build systems.
 
 [ENTRY]
 
