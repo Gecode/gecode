@@ -203,13 +203,6 @@ enum GecodeTaskType = {
   GecodeFixedDuration, GecodeFixedStart, GecodeFixedEnd
 };
 
-/* @group gecode.constraints Pairwise absolute differences are at least the
-  nonnegative distance. Empty and singleton arrays only constrain distance.
-  Native bounds propagation offers basic and advanced algorithms, selected
-  with gecode_basic_propagation, gecode_advanced_propagation, or
-  gecode_full_propagation. */
-% gecode_inter_distance(x, distance) is declared in gecode_fzn.mzn.
-
 /** @group gecode.constraints All x[i]+offset[i] values are distinct.
   Arrays must have equal lengths. Uses the existing native offset route. */
 predicate gecode_all_different(array[int] of int: offset, array[int] of var int: x) =
@@ -238,11 +231,6 @@ predicate gecode_count(array[int] of var int: x, array[int] of int: values,
     GecodeIntRelation: relation, var int: n) =
   assert(length(x) = length(values), "gecode_count: unequal array lengths",
     gecode_count_matches_fzn(x, values, enum2int(relation), n));
-
-/* @group gecode.constraints Closed cardinality with arbitrary allowed count
-  sets. Every x[i] belongs to cover, cover values are distinct, and cover and
-  counts have equal lengths. See gecode_global_cardinality_sets in the typed
-  declarations for its signature. */
 
 /** @group gecode.constraints Compare the number of distinct values with n.
   The empty array has zero values. Equality and disequality on integers reuse
@@ -318,7 +306,10 @@ predicate gecode_cumulative_typed(array[int] of GecodeTaskType: types,
   when present. All arrays share their index sets. */
 predicate gecode_nooverlap(array[int] of var int: x, array[int] of int: width,
     array[int] of var int: y, array[int] of int: height, array[int] of var bool: present) =
-  gecode_nooverlap_optional(x,width,y,height,present);
+  assert(index_set(x) = index_set(width) /\ index_set(x) = index_set(y) /\
+      index_set(x) = index_set(height) /\ index_set(x) = index_set(present),
+    "gecode_nooverlap: incompatible indexes",
+    gecode_nooverlap_optional(x,width,y,height,present));
 predicate gecode_nooverlap(array[int] of var int: x, array[int] of var int: width,
     array[int] of var int: right, array[int] of var int: y,
     array[int] of var int: height, array[int] of var int: top,
@@ -340,11 +331,6 @@ predicate gecode_convex(var set of int: x, var set of int: hull) = gecode_set_co
 predicate gecode_set_sequence(array[int] of var set of int: x) = gecode_array_set_seq(x);
 predicate gecode_set_sequence(array[int] of var set of int: x, var set of int: y) =
   gecode_array_set_seq_union(x,y);
-/* @group gecode.constraints gecode_set_atmost_one(x, cardinality) constrains
-  every set to that cardinality and pairwise intersections to at most one.
-  gecode_set_channel_sorted(x,s) makes x a strictly increasing enumeration of
-  s. Both native primitive signatures are in gecode_fzn.mzn. */
-
 /** @group gecode.constraints Native combined (x operation y) relation z.
   Equality for ordinary union, intersection, and difference reuses existing
   MiniZinc operations. Complement is relative to Gecode's full set universe. */
@@ -415,16 +401,20 @@ predicate gecode_log(float: base, var float: x, var float: y) =
   reuses standard arg_min/arg_max and selects the smallest qualifying index.
   Otherwise any qualifying index is permitted. Arrays must be nonempty. */
 predicate gecode_arg_min(array[int] of var int: x, var int: index, bool: break_ties) =
-  assert(length(x)>0, "gecode_arg_min: empty array", if break_ties then arg_min(array1d(x))+min(index_set(x))-1=index
+  assert(length(x) > 0, "gecode_arg_min: empty array",
+    if break_ties then arg_min(array1d(x)) + min(index_set(x)) - 1 = index
     else gecode_arg_min_int(x,0,index-min(index_set(x)),false) endif);
 predicate gecode_arg_min(array[int] of var bool: x, var int: index, bool: break_ties) =
-  assert(length(x)>0, "gecode_arg_min: empty array", if break_ties then arg_min(array1d(x))+min(index_set(x))-1=index
+  assert(length(x) > 0, "gecode_arg_min: empty array",
+    if break_ties then arg_min(array1d(x)) + min(index_set(x)) - 1 = index
     else gecode_arg_min_bool(x,0,index-min(index_set(x)),false) endif);
 predicate gecode_arg_max(array[int] of var int: x, var int: index, bool: break_ties) =
-  assert(length(x)>0, "gecode_arg_max: empty array", if break_ties then arg_max(array1d(x))+min(index_set(x))-1=index
+  assert(length(x) > 0, "gecode_arg_max: empty array",
+    if break_ties then arg_max(array1d(x)) + min(index_set(x)) - 1 = index
     else gecode_arg_max_int(x,0,index-min(index_set(x)),false) endif);
 predicate gecode_arg_max(array[int] of var bool: x, var int: index, bool: break_ties) =
-  assert(length(x)>0, "gecode_arg_max: empty array", if break_ties then arg_max(array1d(x))+min(index_set(x))-1=index
+  assert(length(x) > 0, "gecode_arg_max: empty array",
+    if break_ties then arg_max(array1d(x)) + min(index_set(x)) - 1 = index
     else gecode_arg_max_bool(x,0,index-min(index_set(x)),false) endif);
 
 /** @group gecode.constraints Exactly one Boolean array entry is true and its
