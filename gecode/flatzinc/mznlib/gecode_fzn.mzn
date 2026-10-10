@@ -93,6 +93,26 @@ predicate gecode_set_ite(var bool: b, var set of int: x,
 
 predicate gecode_float_ite(var bool: b, var float: x, var float: y, var float: z);
 
+predicate gecode_gcd_int(var int: x, var int: y, var int: result);
+predicate gecode_gcd_int_reif(var int: x, var int: y, var int: result, var bool: b);
+predicate gecode_gcd_int_imp(var int: x, var int: y, var int: result, var bool: b);
+predicate gecode_divides_int(var int: divisor, var int: dividend);
+predicate gecode_divides_int_reif(var int: divisor, var int: dividend, var bool: b);
+predicate gecode_divides_int_imp(var int: divisor, var int: dividend, var bool: b);
+predicate gecode_product_int(array[int] of var int: x, var int: result);
+predicate gecode_product_int_reif(array[int] of var int: x, var int: result, var bool: b);
+predicate gecode_product_int_imp(array[int] of var int: x, var int: result, var bool: b);
+predicate gecode_product_mod_fixed_fzn(array[int] of var int: x, int: modulus, var int: result);
+predicate gecode_product_mod_fixed_fzn_reif(array[int] of var int: x, int: modulus, var int: result, var bool: b);
+predicate gecode_product_mod_fixed_fzn_imp(array[int] of var int: x, int: modulus, var int: result, var bool: b);
+predicate gecode_product_mod_var_fzn(array[int] of var int: x, var int: modulus, var int: result);
+predicate gecode_product_mod_var_fzn_reif(array[int] of var int: x, var int: modulus, var int: result, var bool: b);
+predicate gecode_product_mod_var_fzn_imp(array[int] of var int: x, var int: modulus, var int: result, var bool: b);
+predicate gecode_minimum_distance_fzn(array[int] of var int: sites,
+    int: size, array[int] of int: distances, var int: result);
+predicate gecode_minimum_distance_required_fzn(array[int] of var int: sites,
+    int: size, array[int] of int: distances, var int: result, array[int] of int: requirements);
+
 predicate gecode_int_divmod(var int: x, var int: y,
     var int: quotient, var int: remainder);
 
@@ -100,6 +120,13 @@ predicate gecode_int_nroot(var int: x, int: n, var int: y);
 
 predicate gecode_regular_bool(array[int] of var bool: x, int: q,
     array[int] of int: transitions, int: initial, set of int: final);
+
+predicate gecode_regular_nfa_int_fzn(array[int] of var int: x, int: q,
+    int: first_symbol, int: symbols, array[int] of set of int: transitions,
+    int: initial, set of int: final);
+predicate gecode_regular_nfa_bool_fzn(array[int] of var bool: x, int: q,
+    int: first_symbol, int: symbols, array[int] of set of int: transitions,
+    int: initial, set of int: final);
 
 predicate gecode_path(int: offset, array[int] of var int: x,
     var int: start, var int: end);

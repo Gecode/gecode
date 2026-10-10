@@ -83,6 +83,12 @@ namespace Test { namespace FlatZinc {
           "constraint gecode_sort_permutation([3,1,2],[1,2,3],[2,3,1],1); solve satisfy;", unsat);
         (void) new FlatZincTest("NativeRegistry::ArgMinShared",
           "var 1..2:x; constraint gecode_arg_min_int([x,x],1,x,false); solve satisfy;", sat);
+        (void) new FlatZincTest("NativeRegistry::InvalidModulusReification",
+          "constraint gecode_product_mod_var_fzn_reif([3],0,3,false); solve satisfy;", sat);
+        (void) new FlatZincTest("NativeRegistry::MinimumDistanceRepeatedSite",
+          "constraint gecode_minimum_distance_fzn([0,0,2],3,[0,2,4,2,0,3,4,3,0],1); solve satisfy;", unsat);
+        (void) new FlatZincTest("NativeRegistry::NondeterministicBooleanPrefix",
+          "constraint gecode_regular_nfa_bool_fzn([false,true],3,0,2,[{1,2},{},{},{3},{},{}],1,{3}); solve satisfy;", sat);
         (void) new FlatZincTest("NativeRegistry::DivmodNegative",
           "constraint gecode_int_divmod(-7,4,-1,-3); solve satisfy;", sat);
         (void) new FlatZincTest("NativeRegistry::PathCostSentinel",

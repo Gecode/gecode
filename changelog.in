@@ -74,6 +74,27 @@ Date: unreleased
 This is the development changelog for the next Gecode release.
 
 [ENTRY]
+Module: flatzinc
+What:   new
+Rank:   major
+[DESCRIPTION]
+Expose missing native integer, set, float, and scheduling propagators through
+an overloaded Gecode MiniZinc library and typed FlatZinc registry bindings.
+Upgrade standard solver-library translations where available, including
+conditionals, count inequalities, n-ary products, nondeterministic regular,
+optional scheduling, and extrema. Add annotations for basic, advanced, and
+combined propagation algorithms, and minimum-distance actor organization.
+
+[ENTRY]
+Module: float
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Keep exact fixed-base power and logarithm solutions using interval logarithms,
+handle base-one powers, and remove an invalid shared-variable shortcut.
+Enable rounding-aware float compilation in both build systems.
+
+[ENTRY]
 
 Module: int
 What:   performance
