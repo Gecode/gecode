@@ -90,8 +90,9 @@ Module: float
 What:   bug
 Rank:   minor
 [DESCRIPTION]
-Keep exact fixed-base power and logarithm solutions using interval logarithms,
-handle base-one powers, and remove an invalid shared-variable shortcut.
+Keep exact fixed-base power and logarithm solutions using explicitly rounded
+MPFR bounds, handle base-one powers, and remove an invalid shared-variable
+shortcut.
 
 [ENTRY]
 
