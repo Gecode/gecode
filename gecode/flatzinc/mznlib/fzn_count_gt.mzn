@@ -33,6 +33,6 @@
 predicate gecode_count_int_fzn(array[int] of var int: x, var int: value,
     int: relation, var int: n);
 
-% Standard count_gt compares n against the count, not vice versa.
+% Requires n > the number of occurrences of value in xs.
 predicate fzn_count_gt(array[int] of var int: xs, var int: value, var int: n) =
   gecode_count_int_fzn(xs, value, 4, n);

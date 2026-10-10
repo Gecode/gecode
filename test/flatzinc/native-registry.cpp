@@ -36,7 +36,7 @@
 
 namespace Test { namespace FlatZinc {
   namespace {
-    // The algorithm annotation must select the native filtering stage.
+    // Basic and advanced annotations must select different filtering stages.
     class AlgorithmAnnotations : public Base {
     public:
       AlgorithmAnnotations(void) : Base("FlatZinc::NativeRegistry::AlgorithmAnnotations") {}

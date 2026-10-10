@@ -1841,7 +1841,7 @@ fvar,
     void p_inter_distance(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
       IntVarArgs x = s.arg2intvarargs(ce[0]);
       if (ce[1]->isIntVar()) {
-        // Copy shared occurrences, including the separation variable.
+        // The native propagator rejects aliases between x and the distance.
         x << s.arg2IntVar(ce[1]);
         unshare(s, x);
         inter_distance(s, x.slice(0,1,x.size()-1), x[x.size()-1],
@@ -1868,6 +1868,7 @@ fvar,
         }
       if (n < 2)
         return;
+      // Native optional distinct needs unused values outside the active domains.
       if ((hi < Int::Limits::max-n) || (lo > Int::Limits::min+n)) {
         unshare(s, x);
         distinct(s, present, x, s.ann2ipl(ann));
@@ -1887,7 +1888,7 @@ fvar,
     void p_distinct_except(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
       IntVarArgs x = s.arg2intvarargs(ce[0]);
       int c = ce[1]->getInt();
-      // FlatZinc constants can exceed Gecode's variable bounds.
+      // An excluded value outside the variable limits cannot occur in x.
       if ((c < Int::Limits::min) || (c > Int::Limits::max)) {
         unshare(s, x);
         distinct(s, x, s.ann2ipl(ann));
@@ -1902,6 +1903,7 @@ fvar,
         }
       if (n < 2)
         return;
+      // The native propagator needs unused values outside the active domains.
       if ((hi < Int::Limits::max-n) || (lo > Int::Limits::min+n)) {
         unshare(s, x);
         distinct(s, x, c, s.ann2ipl(ann));
@@ -2041,9 +2043,8 @@ fvar,
     void p_int_divmod(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
       IntVar x = s.arg2IntVar(ce[0]), y = s.arg2IntVar(ce[1]);
       IntVar q = s.arg2IntVar(ce[2]), r = s.arg2IntVar(ce[3]);
-      // Bound unrestricted results before the native linear decomposition
-      // estimates its intermediate domains. Truncating division gives
-      // |q| <= |x|, and r lies between zero and x, for every nonzero y.
+      // Bound the results before the linear decomposition estimates its ranges.
+      // For nonzero y, truncating division gives |q| <= |x| and r between 0 and x.
       int magnitude = std::max(-x.min(),x.max());
       dom(s,q,-magnitude,magnitude);
       dom(s,r,std::min(0,x.min()),std::max(0,x.max()));
@@ -2754,8 +2755,8 @@ fvar,
         throw FlatZinc::Error("Registry", "set cardinality must be nonnegative");
       SetVarArgs x = s.arg2setvarargs(ce[0]);
       if ((x.size() < 2) || (cardinality <= 1)) {
-        // Pairwise intersections are automatically at most one in this case.
-        // The native atmostOne implementation assumes at least two elements.
+        // The intersection bound is trivial here. atmostOne skips cardinality
+        // for fewer than two sets, and its filter divides by cardinality - 1.
         for (int i=0; i<x.size(); i++)
           Gecode::cardinality(s, x[i], cardinality, cardinality);
       } else {

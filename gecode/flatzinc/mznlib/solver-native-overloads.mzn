@@ -36,8 +36,8 @@ include "regular_nfa.mzn";
 include "nvalue_fn.mzn";
 include "gecode_fzn.mzn";
 
-% A more specific index type overrides the standard recursive product for
-% decision variables while leaving parameter products on the builtin route.
+% This index-type overload leaves parameter arrays on the builtin product.
+% Root constraints use a result variable for the native product.
 function var int: product(array[$$X] of var int: x) :: promise_commutative =
   if mzn_in_root_context() then
     let {
@@ -45,12 +45,10 @@ function var int: product(array[$$X] of var int: x) :: promise_commutative =
       constraint gecode_product_int(array1d(x),result) :: defines_var(result);
     } in result
   else
-    % Retain the standard translation where a free result cannot be introduced.
     product_rec(array1d(x))
   endif;
 
-% Typed standard operators preserve MiniZinc's index-set checks and use the
-% non-reified native actor only in a positive root context.
+% The array disequality propagator supports unreified constraints only.
 function var bool: '!='(array[$U] of var $$E: x,
     array[$U] of var $$E: y) :: promise_commutative =
   matching_index_sets(x,y) /\
@@ -94,9 +92,8 @@ function var int: nvalue(array[$X] of var bool: xs) :: promise_total =
     constraint gecode_nvalues_bool_fzn(array1d(xs),1,n) :: defines_var(n);
   } in n;
 
-% Boolean regular uses symbols 0 and 1. Symbols missing from the standard
-% alphabet have dead transitions. The normalized alphabet also lets the
-% standard reified translation represent an out-of-alphabet Boolean as false.
+% Boolean symbols are 0 and 1. Missing symbols lead to state 0, so they
+% reject the word in both unreified and reified constraints.
 predicate regular(array[int] of var bool: xs, int: Q, set of int: S,
     array[int,int] of int: d, int: q0, set of int: F) =
   assert(Q > 0, "regular: 'Q' must be greater than zero") /\
@@ -120,8 +117,7 @@ predicate regular(array[int] of var bool: xs, int: Q, int: S,
   assert(S > 0, "regular: 'S' must be greater than zero") /\
     regular(xs,Q,1..S,d,q0,F);
 
-% Boolean NFA symbols missing from the standard alphabet have no transitions.
-% Standard regular_nfa does not support reification; retain that restriction.
+% Missing Boolean symbols have no transitions. Reification is unsupported.
 predicate regular_nfa(array[int] of var bool: x, int: q, set of int: symbols,
     array[int,int] of set of int: transitions, int: initial, set of int: final) =
   assert(q > 0 /\ card(symbols) > 0 /\ symbols = min(symbols)..max(symbols),

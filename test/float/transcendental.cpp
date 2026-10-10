@@ -88,7 +88,7 @@ namespace Test { namespace Float {
        virtual bool run(void) {
          for (int delayed=0; delayed<2; delayed++) {
            for (int logarithm=0; logarithm<2; logarithm++) {
-             // Exact binary values, independent of exp/log test oracles.
+             // Exact powers avoid checking exp/log against itself.
              if (!check(2.0,3.0,8.0,logarithm,false,delayed,true) ||
                  !check(2.0,3.0,7.0,logarithm,false,delayed,false) ||
                  !check(0.5,3.0,0.125,logarithm,false,delayed,true) ||

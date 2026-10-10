@@ -139,7 +139,7 @@ predicate int_lin_ne_imp(array [int] of int: as, array [int] of var int: bs,
 
 predicate set_in_imp(var int: x, set of int: S, var bool: r);
 
-% Half-reified scalar relations use the native implication propagators.
+% b implies the scalar float relation; a false b leaves x and y unconstrained.
 predicate gecode_float_rel_imp_fzn(var float: x, int: relation,
                                   var float: y, var bool: b);
 predicate float_eq_imp(var float: x, var float: y, var bool: b) =
@@ -151,8 +151,8 @@ predicate float_le_imp(var float: x, var float: y, var bool: b) =
 predicate float_lt_imp(var float: x, var float: y, var bool: b) =
   gecode_float_rel_imp_fzn(x, 4, y, b);
 
-% MiniZinc normalizes scalar inequalities to one- or two-term linear forms.
-% Recover those scalar forms; other linear expressions keep full reification.
+% MiniZinc represents scalar comparisons as one- or two-term linear forms.
+% Other linear expressions use full reification followed by implication.
 predicate gecode_float_lin_scalar_imp(array[int] of float: a,
     array[int] of var float: x, float: y, int: relation, var bool: b) =
   let {
