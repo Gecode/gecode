@@ -33,8 +33,7 @@
 predicate gecode_set_ite(var bool: b, var set of int: x,
     var set of int: y, var set of int: z);
 
-% The compiler appends a true condition for the else branch. Use the native
-% binary conditional for that shape, keeping the standard general translation.
+% A two-branch conditional ends with a fixed true condition for else.
 predicate fzn_if_then_else_var_set(array[int] of var bool: c,
     array[int] of var set of int: x, var set of int: y) =
   if length(c) = 2 /\ index_sets_agree(c,x) /\

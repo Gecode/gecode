@@ -35,8 +35,8 @@
 
 namespace Gecode { namespace Float { namespace Transcendental {
 
-  // Use explicit MPFR rounding here: compiler assumptions about the hardware
-  // rounding mode must not collapse the bounds of a fixed-base power.
+  // Round endpoints explicitly; compiler optimizations can ignore changes to
+  // the hardware rounding mode.
   forceinline FloatVal
   fixed_base_pow(FloatNum base, const FloatVal& exponent) {
     mpfr_t b, x, y;
@@ -68,9 +68,8 @@ namespace Gecode { namespace Float { namespace Transcendental {
     mpfr_init2(x, std::numeric_limits<FloatNum>::digits);
     mpfr_init2(y, std::numeric_limits<FloatNum>::digits);
     mpfr_init2(q, std::numeric_limits<FloatNum>::digits);
-    // The base is positive and different from one, so log(base) has a fixed
-    // nonzero sign. All endpoint quotients enclose either increasing or
-    // decreasing logarithms without hardware-rounded interval division.
+    // log(base) does not contain zero. Divide all four endpoint pairs with
+    // outward rounding, including when 0 < base < 1.
     for (int i=0; i<2; i++) {
       mpfr_set_d(x, n[i], GMP_RNDN);
       for (int j=0; j<2; j++) {

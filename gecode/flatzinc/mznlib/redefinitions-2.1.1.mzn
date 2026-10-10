@@ -30,9 +30,8 @@
 %
 %
 
-% Solver overrides for variable-set extrema, following the standard
-% redefinitions-2.1.1.mzn template. Partial contexts permit empty sets when
-% the enclosing expression is inactive.
+% Set extrema are undefined for empty sets. The partial functions guard the
+% extremum constraint with set nonemptiness, for use in inactive expressions.
 predicate gecode_set_min(var set of int: s, var int: m);
 predicate gecode_set_min_reif(var set of int: s, var int: m, var bool: b);
 predicate gecode_set_min_imp(var set of int: s, var int: m, var bool: b);
@@ -42,7 +41,7 @@ predicate gecode_set_max_imp(var set of int: s, var int: m, var bool: b);
 
 function var $$E: min(var set of $$E: s) =
   if card(ub(enum2int(s))) = 0 then
-    % Preserve the standard error for a statically empty set bound.
+    % An empty upper bound makes the extremum undefined at compilation.
     let {
       var set of int: si = enum2int(s);
       var min(ub(si))..max(ub(si)): m =
@@ -73,7 +72,7 @@ function var int: gecode_set_min_partial(var set of int: s) :: promise_total =
 
 function var $$E: max(var set of $$E: s) =
   if card(ub(enum2int(s))) = 0 then
-    % Preserve the standard error for a statically empty set bound.
+    % An empty upper bound makes the extremum undefined at compilation.
     let {
       var set of int: si = enum2int(s);
       var min(ub(si))..max(ub(si)): m =

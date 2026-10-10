@@ -22,7 +22,7 @@ predicate array_float_minimum(var float: m, array[int] of var float: x) =
 predicate gecode_float_pow(var float: x, int: n, var float: y);
 predicate gecode_float_pow_base(float: base, var float: x, var float: y);
 
-% Integer powers work for negative and zero bases as well as positive bases.
+% Nonnegative integer exponents permit zero or negative bases.
 predicate float_pow(var float: x, var float: exponent, var float: y) =
     let {
         float: n = if is_fixed(exponent) then fix(exponent) else -1.0 endif;
