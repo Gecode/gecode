@@ -14,13 +14,30 @@ predicate array_var_float_element2d_nonshifted(var int: idx1, var int: idx2, arr
     int: min_flat = min(index_set_1of2(x))*dim+min(index_set_2of2(x))-1;
   } in array_var_float_element_nonshifted((idx1*dim+idx2-min_flat)::domain, array1d(x), c);
 
-predicate gecode_set_element2d(array[int] of var set of int: x,
-    var int: column, int: width, var int: row, int: height, var set of int: value);
+predicate gecode_set_element2d(
+  array[int] of var set of int: x,
+  var int: column,
+  int: width,
+  var int: row,
+  int: height,
+  var set of int: value
+);
 
-predicate array_var_set_element2d_nonshifted(var int: idx1, var int: idx2,
-    array[int,int] of var set of int: x, var set of int: c) =
-  if length(x) = 0 then false else
-    gecode_set_element2d(array1d(x), idx2-min(index_set_2of2(x)),
-      card(index_set_2of2(x)), idx1-min(index_set_1of2(x)),
-      card(index_set_1of2(x)), c)
+predicate array_var_set_element2d_nonshifted(
+  var int: idx1,
+  var int: idx2,
+  array[int, int] of var set of int: x,
+  var set of int: c
+) =
+  if length(x) = 0 then
+    false
+  else
+    gecode_set_element2d(
+      array1d(x),
+      idx2 - min(index_set_2of2(x)),
+      card(index_set_2of2(x)),
+      idx1 - min(index_set_1of2(x)),
+      card(index_set_1of2(x)),
+      c
+    )
   endif;

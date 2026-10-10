@@ -44,28 +44,34 @@ function var $$E: min(var set of $$E: s) =
     % An empty upper bound makes the extremum undefined at compilation.
     let {
       var set of int: si = enum2int(s);
-      var min(ub(si))..max(ub(si)): m =
+      var min(ub(si)) .. max(ub(si)): m =
         min([e + (max(ub(si)) + 1 - e) * (1 - (e in si)) | e in ub(si)]);
-    } in to_enum_internal(enum_of(s), m)
+    } in
+      to_enum_internal(enum_of(s), m)
   else
-    to_enum_internal(enum_of(s),
-      if mzn_in_root_context() then gecode_set_min_value(enum2int(s)) else
+    to_enum_internal(
+      enum_of(s),
+      if mzn_in_root_context() then
+        gecode_set_min_value(enum2int(s))
+      else
         let {
           constraint card(s) > 0;
-        } in gecode_set_min_partial(enum2int(s))
-      endif)
+        } in
+          gecode_set_min_partial(enum2int(s))
+      endif
+    )
   endif;
 
 function var int: gecode_set_min_value(var set of int: s) :: promise_total =
   let {
-    var min(ub(s) union {1})..max(ub(s) union {1}): m :: is_defined_var;
+    var min(ub(s) union {1}) .. max(ub(s) union {1}): m :: is_defined_var;
     constraint card(s) > 0;
     constraint gecode_set_min(s, m) :: defines_var(m);
   } in m;
 
 function var int: gecode_set_min_partial(var set of int: s) :: promise_total =
   let {
-    var min(ub(s) union {1})..max(ub(s) union {1}): m :: is_defined_var;
+    var min(ub(s) union {1}) .. max(ub(s) union {1}): m :: is_defined_var;
     var bool: present = card(s) > 0;
     constraint gecode_set_min_imp(s, m, present) :: defines_var(m);
   } in m;
@@ -75,28 +81,34 @@ function var $$E: max(var set of $$E: s) =
     % An empty upper bound makes the extremum undefined at compilation.
     let {
       var set of int: si = enum2int(s);
-      var min(ub(si))..max(ub(si)): m =
+      var min(ub(si)) .. max(ub(si)): m =
         max([e + (min(ub(si)) - 1 - e) * (1 - (e in si)) | e in ub(si)]);
-    } in to_enum_internal(enum_of(s), m)
+    } in
+      to_enum_internal(enum_of(s), m)
   else
-    to_enum_internal(enum_of(s),
-      if mzn_in_root_context() then gecode_set_max_value(enum2int(s)) else
+    to_enum_internal(
+      enum_of(s),
+      if mzn_in_root_context() then
+        gecode_set_max_value(enum2int(s))
+      else
         let {
           constraint card(s) > 0;
-        } in gecode_set_max_partial(enum2int(s))
-      endif)
+        } in
+          gecode_set_max_partial(enum2int(s))
+      endif
+    )
   endif;
 
 function var int: gecode_set_max_value(var set of int: s) :: promise_total =
   let {
-    var min(ub(s) union {1})..max(ub(s) union {1}): m :: is_defined_var;
+    var min(ub(s) union {1}) .. max(ub(s) union {1}): m :: is_defined_var;
     constraint card(s) > 0;
     constraint gecode_set_max(s, m) :: defines_var(m);
   } in m;
 
 function var int: gecode_set_max_partial(var set of int: s) :: promise_total =
   let {
-    var min(ub(s) union {1})..max(ub(s) union {1}): m :: is_defined_var;
+    var min(ub(s) union {1}) .. max(ub(s) union {1}): m :: is_defined_var;
     var bool: present = card(s) > 0;
     constraint gecode_set_max_imp(s, m, present) :: defines_var(m);
   } in m;

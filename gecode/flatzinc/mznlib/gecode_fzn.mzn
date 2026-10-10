@@ -45,8 +45,10 @@ predicate gecode_inter_distance(array[int] of var int: x, var int: distance);
   Constrain values in \a x whose corresponding \a present entry is true to
   be pairwise distinct. The arrays have equal lengths.
 */
-predicate gecode_all_different_optional(array[int] of var int: x,
-    array[int] of var bool: present);
+predicate gecode_all_different_optional(
+  array[int] of var int: x,
+  array[int] of var bool: present,
+);
 
 /** @group gecode.constraints
   Constrain the values in \a x to be pairwise distinct, except that
@@ -58,43 +60,73 @@ predicate gecode_all_different_except(array[int] of var int: x, int: except_valu
   Constrain the sums of corresponding entries in \a x and \a offset to be
   pairwise distinct. The arrays must have equal lengths.
 */
-predicate gecode_all_different_offset(array[int] of int: offset,
-    array[int] of var int: x);
+predicate gecode_all_different_offset(
+  array[int] of int: offset,
+  array[int] of var int: x,
+);
 
 % Exactly one entry is true; its zero-based position plus offset equals value.
-predicate gecode_bool_int_channel(array[int] of var bool: x,
-    var int: value, int: offset);
+predicate gecode_bool_int_channel(
+  array[int] of var bool: x,
+  var int: value,
+  int: offset,
+);
 
 % Sort x into y; permutation[i]-offset is the zero-based position of x[i] in y.
-predicate gecode_sort_permutation(array[int] of var int: x,
-    array[int] of var int: y, array[int] of var int: permutation, int: offset);
+predicate gecode_sort_permutation(
+  array[int] of var int: x,
+  array[int] of var int: y,
+  array[int] of var int: permutation,
+  int: offset,
+);
 
 % Compare the number of occurrences of value in x with count.
-predicate gecode_count_int_fzn(array[int] of var int: x, var int: value,
-    int: relation, var int: count);
+predicate gecode_count_int_fzn(
+  array[int] of var int: x,
+  var int: value,
+  int: relation,
+  var int: count,
+);
 
 % Compare the number of entries of x that belong to values with count.
-predicate gecode_count_in_fzn(array[int] of var int: x, set of int: values,
-    int: relation, var int: count);
+predicate gecode_count_in_fzn(
+  array[int] of var int: x,
+  set of int: values,
+  int: relation,
+  var int: count,
+);
 
 % Compare the number of position-wise matches between x and values with count.
-predicate gecode_count_matches_fzn(array[int] of var int: x, array[int] of int: values,
-    int: relation, var int: count);
+predicate gecode_count_matches_fzn(
+  array[int] of var int: x,
+  array[int] of int: values,
+  int: relation,
+  var int: count,
+);
 
 /** @group gecode.constraints
   Constrain the number of occurrences of each value in \a cover to belong to
   the corresponding set in \a counts. Every value in \a x must occur in
   \a cover. Cover values are distinct; \a cover and \a counts have equal lengths.
 */
-predicate gecode_global_cardinality_sets(array[int] of var int: x,
-    array[int] of int: cover, array[int] of set of int: counts);
+predicate gecode_global_cardinality_sets(
+  array[int] of var int: x,
+  array[int] of int: cover,
+  array[int] of set of int: counts,
+);
 
 % Compare the number of distinct values in x with count; an empty array has none.
-predicate gecode_nvalues_int_fzn(array[int] of var int: x,
-    int: relation, var int: count);
+predicate gecode_nvalues_int_fzn(
+  array[int] of var int: x,
+  int: relation,
+  var int: count,
+);
 
-predicate gecode_nvalues_bool_fzn(array[int] of var bool: x,
-    int: relation, var int: count);
+predicate gecode_nvalues_bool_fzn(
+  array[int] of var bool: x,
+  int: relation,
+  var int: count,
+);
 
 % Arrays have unequal lengths or at least one pair of corresponding entries differs.
 predicate gecode_array_int_ne(array[int] of var int: x, array[int] of var int: y);
@@ -111,8 +143,12 @@ predicate gecode_int_ite(var bool: b, var int: x, var int: y, var int: z);
 
 predicate gecode_bool_ite(var bool: b, var bool: x, var bool: y, var bool: z);
 
-predicate gecode_set_ite(var bool: b, var set of int: x,
-    var set of int: y, var set of int: z);
+predicate gecode_set_ite(
+  var bool: b,
+  var set of int: x,
+  var set of int: y,
+  var set of int: z,
+);
 
 predicate gecode_float_ite(var bool: b, var float: x, var float: y, var float: z);
 
@@ -140,17 +176,30 @@ predicate gecode_product_mod_var_fzn_reif(array[int] of var int: x, var int: mod
 predicate gecode_product_mod_var_fzn_imp(array[int] of var int: x, var int: modulus, var int: result, var bool: b);
 
 % sites use zero-based labels; distances is a row-major size-by-size matrix.
-predicate gecode_minimum_distance_fzn(array[int] of var int: sites,
-    int: size, array[int] of int: distances, var int: result);
+predicate gecode_minimum_distance_fzn(
+  array[int] of var int: sites,
+  int: size,
+  array[int] of int: distances,
+  var int: result,
+);
 
 % requirements is a row-major square matrix of pairwise lower bounds,
 % with one row per entry in sites.
-predicate gecode_minimum_distance_required_fzn(array[int] of var int: sites,
-    int: size, array[int] of int: distances, var int: result, array[int] of int: requirements);
+predicate gecode_minimum_distance_required_fzn(
+  array[int] of var int: sites,
+  int: size,
+  array[int] of int: distances,
+  var int: result,
+  array[int] of int: requirements,
+);
 
 % x = y*quotient+remainder, with quotient truncated toward zero and y != 0.
-predicate gecode_int_divmod(var int: x, var int: y,
-    var int: quotient, var int: remainder);
+predicate gecode_int_divmod(
+  var int: x,
+  var int: y,
+  var int: quotient,
+  var int: remainder,
+);
 
 % y is floor(root(x,n)); n is positive, and negative x requires odd n.
 predicate gecode_int_nroot(var int: x, int: n, var int: y);
@@ -161,29 +210,62 @@ predicate gecode_int_nroot(var int: x, int: n, var int: y);
   and true. A zero transition rejects; \a initial and \a final specify the
   initial state and accepting states.
 */
-predicate gecode_regular_bool(array[int] of var bool: x, int: q,
-    array[int] of int: transitions, int: initial, set of int: final);
+predicate gecode_regular_bool(
+  array[int] of var bool: x,
+  int: q,
+  array[int] of int: transitions,
+  int: initial,
+  set of int: final,
+);
 
 % NFA rows are states 1..q, columns are first_symbol..first_symbol+symbols-1.
 % Each entry gives the set of target states; an empty set rejects.
-predicate gecode_regular_nfa_int_fzn(array[int] of var int: x, int: q,
-    int: first_symbol, int: symbols, array[int] of set of int: transitions,
-    int: initial, set of int: final);
-predicate gecode_regular_nfa_bool_fzn(array[int] of var bool: x, int: q,
-    int: first_symbol, int: symbols, array[int] of set of int: transitions,
-    int: initial, set of int: final);
+predicate gecode_regular_nfa_int_fzn(
+  array[int] of var int: x,
+  int: q,
+  int: first_symbol,
+  int: symbols,
+  array[int] of set of int: transitions,
+  int: initial,
+  set of int: final,
+);
+predicate gecode_regular_nfa_bool_fzn(
+  array[int] of var bool: x,
+  int: q,
+  int: first_symbol,
+  int: symbols,
+  array[int] of set of int: transitions,
+  int: initial,
+  set of int: final,
+);
 
 % Node labels start at offset; the final successor is offset+length(x).
-predicate gecode_path(int: offset, array[int] of var int: x,
-    var int: start, var int: end);
+predicate gecode_path(
+  int: offset,
+  array[int] of var int: x,
+  var int: start,
+  var int: end,
+);
 
 % costs is a row-major square matrix; the final successor edge costs zero.
-predicate gecode_path_cost(array[int] of int: costs, int: offset,
-    array[int] of var int: x, var int: start, var int: end, var int: cost);
+predicate gecode_path_cost(
+  array[int] of int: costs,
+  int: offset,
+  array[int] of var int: x,
+  var int: start,
+  var int: end,
+  var int: cost,
+);
 
-predicate gecode_path_cost_array(array[int] of int: costs, int: offset,
-    array[int] of var int: x, var int: start, var int: end,
-    array[int] of var int: edge_costs, var int: cost);
+predicate gecode_path_cost_array(
+  array[int] of int: costs,
+  int: offset,
+  array[int] of var int: x,
+  var int: start,
+  var int: end,
+  array[int] of var int: edge_costs,
+  var int: cost,
+);
 
 /** @group gecode.constraints
   Constrain two tasks not to overlap. If \a order is false,
@@ -191,17 +273,25 @@ predicate gecode_path_cost_array(array[int] of int: costs, int: offset,
   \a start1 + \a duration1 <= \a start0.
   Durations are nonnegative.
 */
-predicate gecode_order(var int: start0, int: duration0,
-    var int: start1, int: duration1, var bool: order);
+predicate gecode_order(
+  var int: start0,
+  int: duration0,
+  var int: start1,
+  int: duration1,
+  var bool: order,
+);
 
 /** @group gecode.constraints
   Constrain tasks whose \a present entry is true not to overlap. Durations are
   nonnegative. The arrays have equal lengths. The caller must also constrain
   \a start[i] + \a duration[i] = \a end[i] for each present task.
 */
-predicate gecode_unary_flex_optional(array[int] of var int: start,
-    array[int] of var int: duration, array[int] of var int: end,
-    array[int] of var bool: present);
+predicate gecode_unary_flex_optional(
+  array[int] of var int: start,
+  array[int] of var int: duration,
+  array[int] of var int: end,
+  array[int] of var bool: present,
+);
 
 /** @group gecode.constraints
   Constrain the total \a usage of tasks whose \a present entry is true not to
@@ -209,38 +299,67 @@ predicate gecode_unary_flex_optional(array[int] of var int: start,
   The arrays have equal lengths. The caller must also constrain
   \a start[i] + \a duration[i] = \a end[i] for each present task.
 */
-predicate gecode_cumulative_flex_optional(array[int] of var int: start,
-    array[int] of var int: duration, array[int] of var int: end,
-    array[int] of int: usage, var int: capacity, array[int] of var bool: present);
+predicate gecode_cumulative_flex_optional(
+  array[int] of var int: start,
+  array[int] of var int: duration,
+  array[int] of var int: end,
+  array[int] of int: usage,
+  var int: capacity,
+  array[int] of var bool: present,
+);
 
 % Task codes: 1 has fixed duration, 2 fixed start, 3 fixed end.
 % flex/fix mean start/duration, end/start, and start/end, respectively.
-predicate gecode_unary_typed_fzn(array[int] of int: task_type,
-    array[int] of var int: flex, array[int] of int: fix);
+predicate gecode_unary_typed_fzn(
+  array[int] of int: task_type,
+  array[int] of var int: flex,
+  array[int] of int: fix,
+);
 
-predicate gecode_unary_typed_optional_fzn(array[int] of int: task_type,
-    array[int] of var int: flex, array[int] of int: fix,
-    array[int] of var bool: present);
+predicate gecode_unary_typed_optional_fzn(
+  array[int] of int: task_type,
+  array[int] of var int: flex,
+  array[int] of int: fix,
+  array[int] of var bool: present,
+);
 
-predicate gecode_cumulative_typed_fzn(array[int] of int: task_type,
-    array[int] of var int: flex, array[int] of int: fix,
-    array[int] of int: usage, var int: capacity);
+predicate gecode_cumulative_typed_fzn(
+  array[int] of int: task_type,
+  array[int] of var int: flex,
+  array[int] of int: fix,
+  array[int] of int: usage,
+  var int: capacity,
+);
 
-predicate gecode_cumulative_typed_optional_fzn(array[int] of int: task_type,
-    array[int] of var int: flex, array[int] of int: fix,
-    array[int] of int: usage, var int: capacity, array[int] of var bool: present);
+predicate gecode_cumulative_typed_optional_fzn(
+  array[int] of int: task_type,
+  array[int] of var int: flex,
+  array[int] of int: fix,
+  array[int] of int: usage,
+  var int: capacity,
+  array[int] of var bool: present,
+);
 
 % Present rectangles have nonnegative fixed widths and heights and cannot overlap.
-predicate gecode_nooverlap_optional(array[int] of var int: x,
-    array[int] of int: width, array[int] of var int: y,
-    array[int] of int: height, array[int] of var bool: present);
+predicate gecode_nooverlap_optional(
+  array[int] of var int: x,
+  array[int] of int: width,
+  array[int] of var int: y,
+  array[int] of int: height,
+  array[int] of var bool: present,
+);
 
 % Present rectangles cannot overlap. The caller must also constrain
 % x[i]+width[i]=right[i] and y[i]+height[i]=top[i] for present rectangles.
-predicate gecode_nooverlap_flex_optional(array[int] of var int: x,
-    array[int] of var int: width, array[int] of var int: right,
-    array[int] of var int: y, array[int] of var int: height,
-    array[int] of var int: top, array[int] of var bool: present);
+predicate gecode_nooverlap_flex_optional(
+  array[int] of var int: x,
+  array[int] of var int: width,
+  array[int] of var int: right,
+  array[int] of var int: y,
+  array[int] of var int: height,
+  array[int] of var int: top,
+  array[int] of var bool: present,
+);
 
 % hull is empty when x is empty, and min(x)..max(x) otherwise.
 predicate gecode_set_convex_hull(var set of int: x, var set of int: hull);
@@ -259,32 +378,53 @@ predicate gecode_set_atmost_one(array[int] of var set of int: x, int: cardinalit
 */
 predicate gecode_set_channel_sorted(array[int] of var int: x, var set of int: y);
 
-predicate gecode_set_operation_fzn(var set of int: x, int: operation,
-    var set of int: y, int: relation, var set of int: z);
+predicate gecode_set_operation_fzn(
+  var set of int: x,
+  int: operation,
+  var set of int: y,
+  int: relation,
+  var set of int: z,
+);
 
 /** @group gecode.constraints
   Constrain \a y to be the intersection of all sets in \a x.
   The intersection of an empty array is the full Gecode set universe.
 */
-predicate gecode_array_set_intersect(array[int] of var set of int: x,
-    var set of int: y);
+predicate gecode_array_set_intersect(
+  array[int] of var set of int: x,
+  var set of int: y,
+);
 
-predicate gecode_array_int_set_operation_fzn(array[int] of var int: x,
-    int: operation, set of int: initial, var set of int: y);
+predicate gecode_array_int_set_operation_fzn(
+  array[int] of var int: x,
+  int: operation,
+  set of int: initial,
+  var set of int: y,
+);
 
 /** @group gecode.constraints
   Constrain \a value to be the set at (\a column, \a row) in the row-major
   \a x matrix. Coordinates are zero-based; \a width and \a height are positive
   and their product equals the length of \a x.
 */
-predicate gecode_set_element2d(array[int] of var set of int: x,
-    var int: column, int: width, var int: row, int: height, var set of int: value);
+predicate gecode_set_element2d(
+  array[int] of var set of int: x,
+  var int: column,
+  int: width,
+  var int: row,
+  int: height,
+  var set of int: value,
+);
 
 % selected contains zero-based positions; combine the singleton sets {x[i]}.
 % An empty intersection equals universe; an empty union is empty.
-predicate gecode_array_int_set_element_fzn(array[int] of var int: x,
-    int: operation, var set of int: selected,
-    var set of int: value, set of int: universe);
+predicate gecode_array_int_set_element_fzn(
+  array[int] of var int: x,
+  int: operation,
+  var set of int: selected,
+  var set of int: value,
+  set of int: universe,
+);
 
 /** @group gecode.constraints
   Constrain \a y to be \a x raised to the nonnegative integer \a n.
@@ -320,17 +460,33 @@ predicate gecode_float_log_base(float: base, var float: x, var float: y);
 
 % index is the zero-based position plus offset of an extremum.
 % If break_ties is true, choose the first such position. Arrays are nonempty.
-predicate gecode_arg_min_int(array[int] of var int: x, int: offset,
-    var int: index, bool: break_ties);
+predicate gecode_arg_min_int(
+  array[int] of var int: x,
+  int: offset,
+  var int: index,
+  bool: break_ties,
+);
 
-predicate gecode_arg_max_int(array[int] of var int: x, int: offset,
-    var int: index, bool: break_ties);
+predicate gecode_arg_max_int(
+  array[int] of var int: x,
+  int: offset,
+  var int: index,
+  bool: break_ties,
+);
 
-predicate gecode_arg_min_bool(array[int] of var bool: x, int: offset,
-    var int: index, bool: break_ties);
+predicate gecode_arg_min_bool(
+  array[int] of var bool: x,
+  int: offset,
+  var int: index,
+  bool: break_ties,
+);
 
-predicate gecode_arg_max_bool(array[int] of var bool: x, int: offset,
-    var int: index, bool: break_ties);
+predicate gecode_arg_max_bool(
+  array[int] of var bool: x,
+  int: offset,
+  var int: index,
+  bool: break_ties,
+);
 
 % x is the minimum of the nonempty set s; reified forms are false for empty s.
 predicate gecode_set_min(var set of int: s, var int: x);
@@ -347,14 +503,25 @@ predicate gecode_set_max_reif(var set of int: s, var int: x, var bool: b);
 predicate gecode_set_max_imp(var set of int: s, var int: x, var bool: b);
 
 % Compare s with the singleton set {x}.
-predicate gecode_set_singleton_rel_fzn(var set of int: s, int: relation,
-    var int: x);
+predicate gecode_set_singleton_rel_fzn(
+  var set of int: s,
+  int: relation,
+  var int: x,
+);
 
-predicate gecode_set_singleton_rel_fzn_reif(var set of int: s, int: relation,
-    var int: x, var bool: b);
+predicate gecode_set_singleton_rel_fzn_reif(
+  var set of int: s,
+  int: relation,
+  var int: x,
+  var bool: b,
+);
 
-predicate gecode_set_singleton_rel_fzn_imp(var set of int: s, int: relation,
-    var int: x, var bool: b);
+predicate gecode_set_singleton_rel_fzn_imp(
+  var set of int: s,
+  int: relation,
+  var int: x,
+  var bool: b,
+);
 
 % Every element precedes all elements in later nonempty sets; sets are disjoint.
 predicate gecode_array_set_seq(array[int] of var set of int: x);
