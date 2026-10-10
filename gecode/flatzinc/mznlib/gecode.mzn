@@ -310,7 +310,11 @@ predicate gecode_minimum_distance(array[int] of var int: sites,
 /** @group gecode.constraints Joint truncating division and remainder; y is
   nonzero. */
 predicate gecode_divmod(var int: x, var int: y, var int: quotient, var int: remainder) =
-  gecode_int_divmod(x,y,quotient,remainder);
+  % Infer result domains before FlatZinc posts dependent linear constraints.
+  let {
+    var compute_div_bounds(x,y): q = quotient;
+    var compute_mod_bounds(x,y): r = remainder;
+  } in gecode_int_divmod(x,y,q,r);
 /** @group gecode.constraints Integer root rounds down; negative x is allowed
   for odd degrees. Float roots use interval propagation. Degree is positive. */
 predicate gecode_nroot(var int: x, int: degree, var int: y) =
