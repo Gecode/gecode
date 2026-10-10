@@ -9532,9 +9532,9 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
    fi
 
    if test "${ac_cv_cxx_compiler_vendor}" = "microsoft"; then
-     { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking whether ${CXX} accepts -fno-rounding-math" >&5
-printf %s "checking whether ${CXX} accepts -fno-rounding-math... " >&6; }
-   if ${CXX} -fno-rounding-math 2>&1 | grep "ignoring unknown option" -q; then
+     { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking whether ${CXX} accepts -frounding-math" >&5
+printf %s "checking whether ${CXX} accepts -frounding-math... " >&6; }
+   if ${CXX} -frounding-math 2>&1 | grep "ignoring unknown option" -q; then
      { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
 printf "%s\n" "no" >&6; }
      :
@@ -9542,14 +9542,14 @@ printf "%s\n" "no" >&6; }
      { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: yes" >&5
 printf "%s\n" "yes" >&6; }
 
-       CXXFLAGS="-fno-rounding-math${CXXFLAGS:+ }${CXXFLAGS}"
-       CFLAGS="-fno-rounding-math${CFLAGS:+ }${CFLAGS}"
+       CXXFLAGS="-frounding-math${CXXFLAGS:+ }${CXXFLAGS}"
+       CFLAGS="-frounding-math${CFLAGS:+ }${CFLAGS}"
    fi
    else
-     { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking whether ${CXX} accepts -fno-rounding-math" >&5
-printf %s "checking whether ${CXX} accepts -fno-rounding-math... " >&6; }
+     { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking whether ${CXX} accepts -frounding-math" >&5
+printf %s "checking whether ${CXX} accepts -frounding-math... " >&6; }
    ac_gecode_save_CXXFLAGS="${CXXFLAGS}"
-   CXXFLAGS="-fno-rounding-math${CXXFLAGS:+ }${CXXFLAGS} -Werror"
+   CXXFLAGS="-frounding-math${CXXFLAGS:+ }${CXXFLAGS} -Werror"
    ac_ext=cpp
 ac_cpp='$CXXCPP $CPPFLAGS'
 ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
@@ -9579,7 +9579,7 @@ printf "%s\n" "no" >&6; }
         { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: yes" >&5
 printf "%s\n" "yes" >&6; }
 
-        CXXFLAGS="-fno-rounding-math${CXXFLAGS:+ }${CXXFLAGS}"
+        CXXFLAGS="-frounding-math${CXXFLAGS:+ }${CXXFLAGS}"
       fi
 
 else case e in #(
@@ -9597,10 +9597,10 @@ ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ex
 ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 
 
-   { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking whether ${CC} accepts -fno-rounding-math" >&5
-printf %s "checking whether ${CC} accepts -fno-rounding-math... " >&6; }
+   { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking whether ${CC} accepts -frounding-math" >&5
+printf %s "checking whether ${CC} accepts -frounding-math... " >&6; }
    ac_gecode_save_CFLAGS="${CFLAGS}"
-   CFLAGS="-fno-rounding-math${CFLAGS:+ }${CFLAGS} -Werror"
+   CFLAGS="-frounding-math${CFLAGS:+ }${CFLAGS} -Werror"
    ac_ext=c
 ac_cpp='$CPP $CPPFLAGS'
 ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
@@ -9630,7 +9630,7 @@ printf "%s\n" "no" >&6; }
         { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: yes" >&5
 printf "%s\n" "yes" >&6; }
 
-        CFLAGS="-fno-rounding-math${CFLAGS:+ }${CFLAGS}"
+        CFLAGS="-frounding-math${CFLAGS:+ }${CFLAGS}"
       fi
 
 else case e in #(
