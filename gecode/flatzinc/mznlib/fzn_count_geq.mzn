@@ -30,11 +30,9 @@
 %
 %
 
-include "fzn_alldifferent_except.mzn";
+predicate gecode_count_int_fzn(array[int] of var int: x, var int: value,
+    int: relation, var int: n);
 
-/** @group globals.alldifferent
-  Constrain the array of integers \a vs to be all different except those
-  elements that are assigned the value 0.
-*/
-predicate fzn_alldifferent_except_0(array[int] of var int: vs) =
-  fzn_alldifferent_except(vs, {0});
+% Standard count_geq compares n against the count, not vice versa.
+predicate fzn_count_geq(array[int] of var int: xs, var int: value, var int: n) =
+  gecode_count_int_fzn(xs, value, 3, n);

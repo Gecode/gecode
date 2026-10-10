@@ -30,11 +30,20 @@
 %
 %
 
-include "fzn_alldifferent_except.mzn";
+predicate gecode_int_ite(var bool: b, var int: x,
+    var int: y, var int: z);
 
-/** @group globals.alldifferent
-  Constrain the array of integers \a vs to be all different except those
-  elements that are assigned the value 0.
-*/
-predicate fzn_alldifferent_except_0(array[int] of var int: vs) =
-  fzn_alldifferent_except(vs, {0});
+% The compiler appends a true condition for the else branch. Use the native
+% binary conditional for that shape, keeping the standard general translation.
+predicate fzn_if_then_else_int(array[int] of var bool: c,
+    array[int] of int: x, var int: y) =
+  if length(c) = 2 /\ index_sets_agree(c,x) /\
+      (if is_fixed(c[max(index_set(c))]) then fix(c[max(index_set(c))]) else false endif)
+  then
+    gecode_int_ite(c[min(index_set(c))],x[min(index_set(c))],x[max(index_set(c))],y)
+  else
+    let {array[index_set(c)] of var bool: d;} in
+      forall(i in index_set(c))(
+        if i > min(index_set(c)) then d[i] = (not c[i-1] /\ d[i-1]) else d[i] = true endif) /\
+      forall(i in index_set(c))(c[i] /\ d[i] -> y = x[i])
+  endif;

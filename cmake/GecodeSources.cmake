@@ -316,6 +316,7 @@ set(GECODE_TEST_SOURCES
   test/flatzinc/eq20.cpp
   test/flatzinc/factory_planning_instance.cpp
   test/flatzinc/golomb.cpp
+  test/flatzinc/native-registry.cpp
   test/flatzinc/int_set_as_type1.cpp
   test/flatzinc/int_set_as_type2.cpp
   test/flatzinc/issue166.cpp

@@ -177,7 +177,7 @@ gnu)
     dnl but -funsafe-math-optimizations break IEEE float compatibility, so we have to avoid it
     AC_GECODE_CHECK_COMPILERFLAG([-fno-math-errno])
     AC_GECODE_CHECK_COMPILERFLAG([-ffinite-math-only])
-    AC_GECODE_CHECK_COMPILERFLAG([-fno-rounding-math])
+    AC_GECODE_CHECK_COMPILERFLAG([-frounding-math])
     AC_GECODE_CHECK_COMPILERFLAG([-fno-signaling-nans])
     AC_GECODE_CHECK_COMPILERFLAG([-fcx-limited-range])
     AC_GECODE_CHECK_COMPILERFLAG([-mthreads])

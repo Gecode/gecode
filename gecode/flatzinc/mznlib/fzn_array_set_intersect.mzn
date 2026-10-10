@@ -30,11 +30,10 @@
 %
 %
 
-include "fzn_alldifferent_except.mzn";
+predicate gecode_array_set_intersect(array[int] of var set of int: x,
+                                      var set of int: y);
 
-/** @group globals.alldifferent
-  Constrain the array of integers \a vs to be all different except those
-  elements that are assigned the value 0.
-*/
-predicate fzn_alldifferent_except_0(array[int] of var int: vs) =
-  fzn_alldifferent_except(vs, {0});
+% An empty array has no bounded intersection, matching the standard library.
+predicate fzn_array_set_intersect(array[int] of var set of int: x,
+                                  var set of int: y) =
+  if length(x) = 0 then false else gecode_array_set_intersect(x, y) endif;

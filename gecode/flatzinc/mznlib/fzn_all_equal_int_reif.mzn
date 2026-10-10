@@ -30,11 +30,9 @@
 %
 %
 
-include "fzn_alldifferent_except.mzn";
+predicate gecode_not_all_equal_int(array[int] of var int: xs);
 
-/** @group globals.alldifferent
-  Constrain the array of integers \a vs to be all different except those
-  elements that are assigned the value 0.
-*/
-predicate fzn_alldifferent_except_0(array[int] of var int: vs) =
-  fzn_alldifferent_except(vs, {0});
+predicate fzn_all_equal_int_reif(array[int] of var int: xs, var bool: b) =
+  if is_fixed(b) /\ not fix(b) then gecode_not_all_equal_int(xs)
+  else b <-> (if length(xs) = 0 then true else
+    forall(i in index_set(xs))(xs[i] = xs[min(index_set(xs))]) endif) endif;

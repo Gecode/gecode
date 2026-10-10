@@ -36,23 +36,41 @@ include "fzn_cumulative_opt_decomp.mzn";
 
 predicate gecode_schedule_cumulative_optional(array[int] of var int: start,
   array[int] of int: duration, array[int] of int: usage,
-  array[int] of var bool: m, int: capacity);
+  array[int] of var bool: m, var int: capacity);
+
+predicate gecode_cumulative_flex_optional(array[int] of var int: start,
+  array[int] of var int: duration, array[int] of var int: end,
+  array[int] of int: usage, var int: capacity, array[int] of var bool: present);
 
 predicate fzn_cumulative_opt(array[int] of var opt int: s,
                      array[int] of var int: d,
                      array[int] of var int: r, var int: b) =
-    if
+    if ub(b) < 0 then
+        false
+    elseif
         forall (i in index_set(d)) (is_fixed(d[i])) /\
-        forall (i in index_set(r)) (is_fixed(r[i])) /\
-        is_fixed(b)
+        forall (i in index_set(r)) (is_fixed(r[i]))
     then
+        % Zero-duration tasks consume no capacity in MiniZinc.
         gecode_schedule_cumulative_optional(
             [ if is_fixed(si) /\ absent(fix(si)) then 0 else deopt(si) endif | si in s ],
             [ fix(di) | di in d ],
             [ fix(ri) | ri in r ],
-            [ occurs(si) | si in s ],
-            fix(b)
+            [ occurs(s[i]) /\ fix(d[i]) > 0 | i in index_set(s) ],
+            b
         )
+    elseif forall (i in index_set(r)) (is_fixed(r[i])) then
+        let {
+            array[int] of var int: start =
+                [if is_fixed(si) /\ absent(fix(si)) then 0 else deopt(si) endif | si in s];
+            array[int] of var int: duration = array1d(d);
+            % Zero-duration tasks consume no capacity in MiniZinc.
+            array[int] of var bool: present =
+                [occurs(array1d(s)[i]) /\ duration[i] > 0 | i in index_set(duration)];
+            array[int] of var int: end =
+                [if present[i] then start[i] + duration[i] else 0 endif | i in index_set(start)];
+        } in gecode_cumulative_flex_optional(start, duration, end,
+            [fix(ri) | ri in r], b, present)
     else
         fzn_cumulative_opt_decomp(s,d,r,b)
     endif;

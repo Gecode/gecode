@@ -38,7 +38,7 @@
 */
 
 /***
- @groupdef gecode.annotations Additional Gecode search annotations
+ @groupdef gecode.annotations Additional Gecode annotations
 */
 
 /** @group gecode.annotations Select variable with smallest accumulated failure count */
@@ -59,6 +59,15 @@ annotation action_max;
 annotation action_size_max;
 /** @group gecode.annotations Select random variable */
 annotation random;
+
+/** @group gecode.annotations Use the basic algorithm where supported. */
+annotation gecode_basic_propagation;
+/** @group gecode.annotations Use the advanced algorithm where supported. */
+annotation gecode_advanced_propagation;
+/** @group gecode.annotations Use both basic and advanced algorithms where supported.
+  These may be combined with domain_propagation or bounds_propagation;
+  constraints without algorithm choices ignore them. */
+annotation gecode_full_propagation;
 
 annotation int_assign(array[int] of var int: x, ann:a);
 
@@ -163,4 +172,264 @@ predicate gecode_schedule_unary_optional(array[int] of var int: x,
 
 predicate gecode_schedule_cumulative_optional(array[int] of var int: start,
   array[int] of int: duration, array[int] of int: usage,
-  array[int] of var bool: m, int: capacity);
+  array[int] of var bool: m, var int: capacity);
+
+
+include "gecode_fzn.mzn";
+include "among.mzn";
+include "nvalue.mzn";
+include "range.mzn";
+include "arg_min.mzn";
+include "arg_max.mzn";
+
+% Arrays correspond by position unless an index agreement is stated.
+% Enum order is part of the typed FlatZinc interface.
+enum GecodeIntRelation = {
+  GecodeEq, GecodeNe, GecodeLe, GecodeLt, GecodeGe, GecodeGt
+};
+/** @group gecode.constraints Set comparison. Complement uses the full Gecode
+  set universe. Ordering compares characteristic functions from the smallest
+  element, rather than the lexicographic order of sorted element lists. */
+enum GecodeSetRelation = {
+  GecodeSetEq, GecodeSetNe, GecodeSubset, GecodeSuperset, GecodeDisjoint,
+  GecodeComplement, GecodeSetLe, GecodeSetLt, GecodeSetGe, GecodeSetGt
+};
+enum GecodeSetOperation = {
+  GecodeUnion, GecodeDisjointUnion, GecodeIntersection, GecodeDifference
+};
+/** @group gecode.constraints FixedDuration: flex is start, fix is duration.
+  FixedStart: flex is end, fix is start. FixedEnd: flex is start, fix is end. */
+enum GecodeTaskType = {
+  GecodeFixedDuration, GecodeFixedStart, GecodeFixedEnd
+};
+
+/* @group gecode.constraints Pairwise absolute differences are at least the
+  nonnegative distance. Empty and singleton arrays only constrain distance.
+  Native bounds propagation offers basic and advanced algorithms, selected
+  with gecode_basic_propagation, gecode_advanced_propagation, or
+  gecode_full_propagation. */
+% gecode_inter_distance(x, distance) is declared in gecode_fzn.mzn.
+
+/** @group gecode.constraints All x[i]+offset[i] values are distinct.
+  Arrays must have equal lengths. Uses the existing native offset route. */
+predicate gecode_all_different(array[int] of int: offset, array[int] of var int: x) =
+  gecode_all_different_offset(offset, x);
+
+/** @group gecode.constraints Sort x into y with x[i]=y[permutation[i]]. Ties
+  may be permuted; standard arg_sort instead returns a stable inverse mapping.
+  The explicit-offset typed form labels output positions starting at offset. */
+predicate gecode_sort_permutation(array[int] of var int: x,
+    array[int] of var int: y, array[int] of var int: permutation) =
+  assert(index_set(x) = index_set(permutation) /\ length(x) = length(y),
+    "gecode_sort_permutation: incompatible array indexes or lengths",
+    if length(y) = 0 then true else
+      gecode_sort_permutation(x, y, permutation, min(index_set(y))) endif);
+
+/** @group gecode.constraints Compare an occurrence count with n. The second
+  argument selects a value set, or one target per array position.
+  Existing equality/disequality translations are reused where available. */
+predicate gecode_count(array[int] of var int: x, set of int: values,
+    GecodeIntRelation: relation, var int: n) =
+  if relation = GecodeEq then among(n, x, values)
+  elseif relation = GecodeNe then
+    let {var 0..length(x): c; constraint among(c, x, values);} in c != n
+  else gecode_count_in_fzn(x, values, enum2int(relation), n) endif;
+predicate gecode_count(array[int] of var int: x, array[int] of int: values,
+    GecodeIntRelation: relation, var int: n) =
+  assert(length(x) = length(values), "gecode_count: unequal array lengths",
+    gecode_count_matches_fzn(x, values, enum2int(relation), n));
+
+/* @group gecode.constraints Closed cardinality with arbitrary allowed count
+  sets. Every x[i] belongs to cover, cover values are distinct, and cover and
+  counts have equal lengths. See gecode_global_cardinality_sets in the typed
+  declarations for its signature. */
+
+/** @group gecode.constraints Compare the number of distinct values with n.
+  The empty array has zero values. Equality and disequality on integers reuse
+  nvalue; Boolean arrays use the native Boolean propagator. */
+predicate gecode_nvalues(array[int] of var int: x,
+    GecodeIntRelation: relation, var int: n) =
+  if relation = GecodeEq then nvalue(n, x)
+  elseif relation = GecodeNe then
+    let {var 0..length(x): c; constraint nvalue(c, x);} in c != n
+  else gecode_nvalues_int_fzn(x, enum2int(relation), n) endif;
+predicate gecode_nvalues(array[int] of var bool: x,
+    GecodeIntRelation: relation, var int: n) =
+  if relation = GecodeNe then
+    let {var 0..2: c;
+      constraint gecode_nvalues_bool_fzn(x, enum2int(GecodeEq), c);} in c != n
+  else gecode_nvalues_bool_fzn(x, enum2int(relation), n) endif;
+
+/** @group gecode.constraints Joint truncating division and remainder; y is
+  nonzero. */
+predicate gecode_divmod(var int: x, var int: y, var int: quotient, var int: remainder) =
+  gecode_int_divmod(x,y,quotient,remainder);
+/** @group gecode.constraints Integer root rounds down; negative x is allowed
+  for odd degrees. Float roots use interval propagation. Degree is positive. */
+predicate gecode_nroot(var int: x, int: degree, var int: y) =
+  assert(degree > 0, "gecode_nroot: degree must be positive", gecode_int_nroot(x,degree,y));
+predicate gecode_nroot(var float: x, int: degree, var float: y) =
+  assert(degree > 0, "gecode_nroot: degree must be positive",
+    if degree = 2 then float_sqrt(x,y) else gecode_float_nroot(x,degree,y) endif);
+
+/** @group gecode.constraints Hamiltonian successor path visits every node.
+  x[end]=max(index_set(x))+1 is the terminal sentinel; x is nonempty. This
+  differs from standard graph path. Costs are a row-major square matrix;
+  the final sentinel edge costs zero. Typed forms accept an explicit
+  nonnegative node offset and flat costs. */
+predicate gecode_path(array[int] of var int: x, var int: start, var int: end) =
+  assert(length(x) > 0, "gecode_path: empty node array",
+    gecode_path(0, [v-min(index_set(x)) | v in x],
+      start-min(index_set(x)), end-min(index_set(x))));
+predicate gecode_path(array[int,int] of int: costs, array[int] of var int: x,
+    var int: start, var int: end, var int: cost) =
+  assert(length(x) > 0 /\ index_set_1of2(costs) = index_set(x) /\
+      index_set_2of2(costs) = index_set(x), "gecode_path: incompatible cost matrix",
+    gecode_path_cost(array1d(costs), 0, [v-min(index_set(x)) | v in x],
+      start-min(index_set(x)), end-min(index_set(x)), cost));
+predicate gecode_path(array[int,int] of int: costs, array[int] of var int: x,
+    var int: start, var int: end, array[int] of var int: edge_costs, var int: cost) =
+  assert(length(x) > 0 /\ index_set_1of2(costs) = index_set(x) /\
+      index_set_2of2(costs) = index_set(x) /\ index_set(edge_costs) = index_set(x),
+    "gecode_path: incompatible cost matrix or edge costs",
+    gecode_path_cost_array(array1d(costs), 0, [v-min(index_set(x)) | v in x],
+      start-min(index_set(x)), end-min(index_set(x)), edge_costs, cost));
+
+/** @group gecode.constraints Native typed tasks may fix duration, start,
+  or end. These task types are not part of standard disjunctive/cumulative. */
+predicate gecode_unary_typed(array[int] of GecodeTaskType: types,
+    array[int] of var int: flex, array[int] of int: fix) =
+  gecode_unary_typed_fzn(enum2int(types),flex,fix);
+predicate gecode_unary_typed(array[int] of GecodeTaskType: types,
+    array[int] of var int: flex, array[int] of int: fix, array[int] of var bool: present) =
+  gecode_unary_typed_optional_fzn(enum2int(types),flex,fix,present);
+
+predicate gecode_cumulative_typed(array[int] of GecodeTaskType: types,
+    array[int] of var int: flex, array[int] of int: fix,
+    array[int] of int: usage, var int: capacity) =
+  gecode_cumulative_typed_fzn(enum2int(types),flex,fix,usage,capacity);
+predicate gecode_cumulative_typed(array[int] of GecodeTaskType: types,
+    array[int] of var int: flex, array[int] of int: fix,
+    array[int] of int: usage, var int: capacity, array[int] of var bool: present) =
+  gecode_cumulative_typed_optional_fzn(enum2int(types),flex,fix,usage,capacity,present);
+
+/** @group gecode.constraints Optional nonoverlapping rectangles. Fixed sizes
+  are nonnegative. Variable-size forms enforce x+width=right and y+height=top
+  when present. All arrays share their index sets. */
+predicate gecode_nooverlap(array[int] of var int: x, array[int] of int: width,
+    array[int] of var int: y, array[int] of int: height, array[int] of var bool: present) =
+  gecode_nooverlap_optional(x,width,y,height,present);
+predicate gecode_nooverlap(array[int] of var int: x, array[int] of var int: width,
+    array[int] of var int: right, array[int] of var int: y,
+    array[int] of var int: height, array[int] of var int: top,
+    array[int] of var bool: present) =
+  assert(index_set(x) = index_set(width) /\ index_set(x) = index_set(right) /\
+      index_set(x) = index_set(y) /\ index_set(x) = index_set(height) /\
+      index_set(x) = index_set(top) /\ index_set(x) = index_set(present),
+    "gecode_nooverlap: incompatible indexes",
+    forall(i in index_set(x))(present[i] ->
+      (x[i]+width[i]=right[i] /\ y[i]+height[i]=top[i])) /\
+      gecode_nooverlap_flex_optional(x,width,right,y,height,top,present));
+
+/** @group gecode.constraints The set is empty or an interval; the two-argument
+  form returns its convex hull (empty for an empty input). */
+predicate gecode_convex(var set of int: x) = gecode_set_convex(x);
+predicate gecode_convex(var set of int: x, var set of int: hull) = gecode_set_convex_hull(x,hull);
+/** @group gecode.constraints Ordered disjoint sets: every element precedes
+  every element of subsequent nonempty sets. Optional second result is union. */
+predicate gecode_set_sequence(array[int] of var set of int: x) = gecode_array_set_seq(x);
+predicate gecode_set_sequence(array[int] of var set of int: x, var set of int: y) =
+  gecode_array_set_seq_union(x,y);
+/* @group gecode.constraints gecode_set_atmost_one(x, cardinality) constrains
+  every set to that cardinality and pairwise intersections to at most one.
+  gecode_set_channel_sorted(x,s) makes x a strictly increasing enumeration of
+  s. Both native primitive signatures are in gecode_fzn.mzn. */
+
+/** @group gecode.constraints Native combined (x operation y) relation z.
+  Equality for ordinary union, intersection, and difference reuses existing
+  MiniZinc operations. Complement is relative to Gecode's full set universe. */
+predicate gecode_set_operation(var set of int: x, GecodeSetOperation: operation,
+    var set of int: y, GecodeSetRelation: relation, var set of int: z) =
+  if relation = GecodeSetEq /\ operation = GecodeUnion then z = x union y
+  elseif relation = GecodeSetEq /\ operation = GecodeIntersection then z = x intersect y
+  elseif relation = GecodeSetEq /\ operation = GecodeDifference then z = x diff y
+  else gecode_set_operation_fzn(x,enum2int(operation),y,enum2int(relation),z) endif;
+/** @group gecode.constraints Intersect singleton sets {x[i]} and initial, or
+  form their union/disjoint union. Difference is unsupported. */
+predicate gecode_array_int_set_operation(array[int] of var int: x,
+    GecodeSetOperation: operation, set of int: initial, var set of int: y) =
+  assert(operation != GecodeDifference, "gecode_array_int_set_operation: difference is unsupported",
+    gecode_array_int_set_operation_fzn(x,enum2int(operation),initial,y));
+/** @group gecode.constraints Selected zero-based positions of x are combined
+  as singleton sets. Empty intersection is universe; empty union is empty.
+  Union already has a standard range route; intersection and disjoint union
+  select additional native variants. */
+predicate gecode_array_int_set_element(array[int] of var int: x,
+    GecodeSetOperation: operation, var set of int: selected,
+    var set of int: value, set of int: universe) =
+  assert(operation != GecodeDifference, "gecode_array_int_set_element: difference is unsupported",
+    if operation = GecodeUnion then gecode_range(x,0,selected,value)
+    else gecode_array_int_set_element_fzn(x,enum2int(operation),selected,value,universe) endif);
+/** @group gecode.constraints Reified set extrema. False for an empty set.
+  Unlike standard min/max expressions, these post the specialized native
+  equivalence propagators. Negate by passing false as the final argument. */
+predicate gecode_min_reif(var set of int: s, var int: x, var bool: b) =
+  gecode_set_min_reif(s,x,b);
+predicate gecode_max_reif(var set of int: s, var int: x, var bool: b) =
+  gecode_set_max_reif(s,x,b);
+
+/** @group gecode.constraints Compare s with singleton {x}. Superset is
+  membership and reuses the existing membership translation. Other comparisons
+  use native singleton views instead of introducing a set variable. */
+predicate gecode_set_singleton_rel(var set of int: s, GecodeSetRelation: relation, var int: x) =
+  if relation = GecodeSuperset then x in s else
+    gecode_set_singleton_rel_fzn(s,enum2int(relation),x) endif;
+predicate gecode_set_singleton_rel_reif(var set of int: s, GecodeSetRelation: relation,
+    var int: x, var bool: b) =
+  if relation = GecodeSuperset then b <-> x in s else
+    gecode_set_singleton_rel_fzn_reif(s,enum2int(relation),x,b) endif;
+predicate gecode_set_singleton_rel_imp(var set of int: s, GecodeSetRelation: relation,
+    var int: x, var bool: b) =
+  if relation = GecodeSuperset then b -> x in s else
+    gecode_set_singleton_rel_fzn_imp(s,enum2int(relation),x,b) endif;
+/** @group gecode.constraints Native set implication. Equality, disequality,
+  subset, and superset use standard implication routes. Disjointness,
+  complement, and characteristic-function ordering use native relations. */
+predicate gecode_rel_imp(var set of int: x, GecodeSetRelation: relation,
+    var set of int: y, var bool: b) =
+  if relation = GecodeSetEq then b -> x = y
+  elseif relation = GecodeSetNe then b -> x != y
+  elseif relation = GecodeSubset then b -> x subset y
+  elseif relation = GecodeSuperset then b -> x superset y
+  else gecode_set_rel_imp_fzn(x,enum2int(relation),y,b) endif;
+
+/** @group gecode.constraints Fixed-base logarithm requires MPFR; base must
+  be positive and differ from one. Bases 2 and 10 reuse standard routes. */
+predicate gecode_log(float: base, var float: x, var float: y) =
+  assert(base > 0.0 /\ base != 1.0, "gecode_log: base must be positive and different from one",
+    if base = 2.0 then float_log2(x,y)
+    elseif base = 10.0 then float_log10(x,y)
+    else gecode_float_log_base(base,x,y) endif);
+
+/** @group gecode.constraints Index of a minimum/maximum. break_ties=true
+  reuses standard arg_min/arg_max and selects the smallest qualifying index.
+  Otherwise any qualifying index is permitted. Arrays must be nonempty. */
+predicate gecode_arg_min(array[int] of var int: x, var int: index, bool: break_ties) =
+  assert(length(x)>0, "gecode_arg_min: empty array", if break_ties then arg_min(array1d(x))+min(index_set(x))-1=index
+    else gecode_arg_min_int(x,0,index-min(index_set(x)),false) endif);
+predicate gecode_arg_min(array[int] of var bool: x, var int: index, bool: break_ties) =
+  assert(length(x)>0, "gecode_arg_min: empty array", if break_ties then arg_min(array1d(x))+min(index_set(x))-1=index
+    else gecode_arg_min_bool(x,0,index-min(index_set(x)),false) endif);
+predicate gecode_arg_max(array[int] of var int: x, var int: index, bool: break_ties) =
+  assert(length(x)>0, "gecode_arg_max: empty array", if break_ties then arg_max(array1d(x))+min(index_set(x))-1=index
+    else gecode_arg_max_int(x,0,index-min(index_set(x)),false) endif);
+predicate gecode_arg_max(array[int] of var bool: x, var int: index, bool: break_ties) =
+  assert(length(x)>0, "gecode_arg_max: empty array", if break_ties then arg_max(array1d(x))+min(index_set(x))-1=index
+    else gecode_arg_max_bool(x,0,index-min(index_set(x)),false) endif);
+
+/** @group gecode.constraints Exactly one Boolean array entry is true and its
+  position plus offset is value, or a float equals 1.0/0.0 for true/false.
+  The Boolean/float overload uses the native channel directly. */
+predicate gecode_channel(array[int] of var bool: x, var int: value, int: offset) =
+  gecode_bool_int_channel(x,value,offset);
+predicate gecode_channel(var bool: b, var float: x) = gecode_bool_float_channel(b,x);
