@@ -39,10 +39,15 @@ include "gecode_fzn.mzn";
 % A more specific index type overrides the standard recursive product for
 % decision variables while leaving parameter products on the builtin route.
 function var int: product(array[$$X] of var int: x) :: promise_commutative =
-  let {
-    var int: result :: is_defined_var;
-    constraint gecode_product_int(array1d(x),result) :: defines_var(result);
-  } in result;
+  if mzn_in_root_context() then
+    let {
+      var int: result :: is_defined_var;
+      constraint gecode_product_int(array1d(x),result) :: defines_var(result);
+    } in result
+  else
+    % Retain the standard translation where a free result cannot be introduced.
+    product_rec(array1d(x))
+  endif;
 
 % Typed standard operators preserve MiniZinc's index-set checks and use the
 % non-reified native actor only in a positive root context.
