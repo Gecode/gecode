@@ -30,8 +30,8 @@
 %
 %
 
-include "fzn_all_different_int.mzn";
 include "global_cardinality_low_up.mzn";
+include "fzn_all_different_int.mzn";
 
 predicate gecode_all_different_except(array[int] of var int: x, int: except_value);
 
