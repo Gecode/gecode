@@ -272,7 +272,8 @@ predicate gecode_product_imp(array[int] of var int: x, var int: result, var bool
   gecode_product_int_imp(x,result,b);
 
 /** @group gecode.constraints Nary product with canonical Euclidean residue
-  0 <= result < modulus, including for negative products. Empty product is one.
+  0 <= result < modulus, including for negative products. The empty array
+  produces 1 modulo modulus (zero when modulus is one).
   Modulus positivity/range is part of the reified proposition. An inactive
   implication imposes no restriction on modulus or result. Known positive
   moduli select the fixed-modulus native actor. */
@@ -285,9 +286,9 @@ predicate gecode_product_mod(array[int] of var int: x, var int: modulus, var int
 /** @group gecode.constraints Minimum table distance among selected sites,
   with at least two positions. Matrix axes are equal site indexes; entries
   are symmetric/nonnegative with zero diagonal. Repeated sites are allowed.
-  Optional requirements matrix uses the positions' index set and imposes
-  inclusive pairwise lower bounds. Select native algorithm/organization
-  through propagation annotations. */
+  Optional requirements matrix uses the positions' index set, is symmetric
+  and nonnegative with zero diagonal, and imposes inclusive pairwise lower
+  bounds. Select native algorithm/organization through propagation annotations. */
 predicate gecode_minimum_distance(array[int] of var int: sites,
     array[int,int] of int: distances, var int: result) =
   assert(length(sites) >= 2 /\ length(distances) > 0 /\
