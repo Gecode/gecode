@@ -68,6 +68,10 @@ annotation gecode_advanced_propagation;
   These may be combined with domain_propagation or bounds_propagation;
   constraints without algorithm choices ignore them. */
 annotation gecode_full_propagation;
+/** @group gecode.annotations Use separate pair propagators for minimum
+  distance. The default uses one propagator; both implement the same filtering.
+  Combine with basic/advanced/full annotations to select matching propagation. */
+annotation gecode_decomposed_propagation;
 
 annotation int_assign(array[int] of var int: x, ann:a);
 
@@ -247,6 +251,60 @@ predicate gecode_nvalues(array[int] of var bool: x,
     let {var 0..2: c;
       constraint gecode_nvalues_bool_fzn(x, enum2int(GecodeEq), c);} in c != n
   else gecode_nvalues_bool_fzn(x, enum2int(relation), n) endif;
+
+/** @group gecode.constraints Nonnegative greatest common divisor of x and y.
+  Negative operands use their absolute value; gcd(0,0)=0. Reification and
+  implication of this predicate select the corresponding native actors. */
+predicate gecode_gcd(var int: x, var int: y, var int: result) =
+  gecode_gcd_int(x,y,result);
+
+/** @group gecode.constraints Divisor divides dividend, including 0 divides 0.
+  Zero does not divide nonzero values. Supports reification and implication. */
+predicate gecode_divides(var int: divisor, var int: dividend) =
+  gecode_divides_int(divisor,dividend);
+
+/** @group gecode.constraints Reify or imply the exact nary integer product.
+  Empty product is one. These specialized actors differ from reifying an
+  equality against a separately computed standard product. */
+predicate gecode_product_reif(array[int] of var int: x, var int: result, var bool: b) =
+  gecode_product_int_reif(x,result,b);
+predicate gecode_product_imp(array[int] of var int: x, var int: result, var bool: b) =
+  gecode_product_int_imp(x,result,b);
+
+/** @group gecode.constraints Nary product with canonical Euclidean residue
+  0 <= result < modulus, including for negative products. Empty product is one.
+  Modulus positivity/range is part of the reified proposition. An inactive
+  implication imposes no restriction on modulus or result. Known positive
+  moduli select the fixed-modulus native actor. */
+predicate gecode_product_mod(array[int] of var int: x, var int: modulus, var int: result) =
+  if is_fixed(modulus) then
+    if fix(modulus) > 0 then gecode_product_mod_fixed_fzn(x,fix(modulus),result)
+    else gecode_product_mod_var_fzn(x,modulus,result) endif
+  else gecode_product_mod_var_fzn(x,modulus,result) endif;
+
+/** @group gecode.constraints Minimum table distance among selected sites,
+  with at least two positions. Matrix axes are equal site indexes; entries
+  are symmetric/nonnegative with zero diagonal. Repeated sites are allowed.
+  Optional requirements matrix uses the positions' index set and imposes
+  inclusive pairwise lower bounds. Select native algorithm/organization
+  through propagation annotations. */
+predicate gecode_minimum_distance(array[int] of var int: sites,
+    array[int,int] of int: distances, var int: result) =
+  assert(length(sites) >= 2 /\ length(distances) > 0 /\
+      index_set_1of2(distances) = index_set_2of2(distances),
+    "gecode_minimum_distance: need at least two positions and a square nonempty distance matrix",
+    gecode_minimum_distance_fzn([v-min(index_set_1of2(distances)) | v in sites],
+      card(index_set_1of2(distances)),array1d(distances),result));
+predicate gecode_minimum_distance(array[int] of var int: sites,
+    array[int,int] of int: distances, var int: result,
+    array[int,int] of int: requirements) =
+  assert(length(sites) >= 2 /\ length(distances) > 0 /\
+      index_set_1of2(distances) = index_set_2of2(distances) /\
+      index_set_1of2(requirements) = index_set(sites) /\
+      index_set_2of2(requirements) = index_set(sites),
+    "gecode_minimum_distance: incompatible distance/requirements matrix or too few positions",
+    gecode_minimum_distance_required_fzn([v-min(index_set_1of2(distances)) | v in sites],
+      card(index_set_1of2(distances)),array1d(distances),result,array1d(requirements)));
 
 /** @group gecode.constraints Joint truncating division and remainder; y is
   nonzero. */

@@ -19,6 +19,8 @@ These capabilities receive no additional public modeling names. The solver libra
 | `not all_equal(x)` | The integer reification hook and Boolean overload select native not-all-equal when the result is fixed false. General reification keeps the standard linear-size comparison translation. |
 | Boolean `nvalue` equality | A typed Boolean overload selects native Boolean nvalues. Integer equality already had a native route. |
 | Boolean `regular` | Typed standard overloads normalize Boolean transitions and select the native Boolean DFA. Guarded/reified expressions retain the standard integer translation. |
+| `regular_nfa`, integer and Boolean words | Existing `fzn_regular_nfa` hooks select native `DFA::nfa` construction without determinization. Integer-size and range alphabets retain their standard validation, and empty words test initial-state acceptance. Reification remains unsupported as in the standard library. |
+| Integer `product` | A more specific enum/integer index overload replaces the recursive binary-multiplication translation with native nary product. Parameter products retain the builtin route. Specialized native equivalence/implication actors are exposed separately. |
 | Optional cumulative, optional strict disjunctive | Native flexible optional tasks support variable durations, and optional cumulative now accepts variable capacity. Standard cumulative filters zero-duration tasks; strict disjunctive retains zero-duration ordering. |
 | Array intersection of sets | `fzn_array_set_intersect.mzn` selects native nary intersection for nonempty arrays. Empty standard intersection remains false. |
 | Two-dimensional set lookup | `redefinitions-2.5.2.mzn` selects native row/column set element, shifting standard indexes. Empty lookup remains undefined. |
@@ -44,6 +46,10 @@ The following names cover capabilities without a matching standard automatic rou
 | `gecode_count` | Set-target inequalities and position-dependent target arrays have no compiler comparison rewrite. Scalar count is automatic; set equality/disequality reuse among. |
 | `gecode_global_cardinality_sets` | Closed cardinality with arbitrary allowed count sets, including holes; standard GCC exposes variable counts or interval bounds instead. |
 | `gecode_nvalues` | Native inequality propagation has no standard nvalue comparison rewrite. Equality/disequality reuse the existing route or the native Boolean equality actor. |
+| `gecode_gcd`, `gecode_divides` | Native signed-operand GCD and zero-aware divisibility have no standard variable hooks. Their typed equivalence/implication leaves support inferred reification of the public predicates. |
+| `gecode_product_reif`, `gecode_product_imp` | Specialized native nary product equivalence/implication differs from an equality against a separately computed standard product. Ordinary product already has an automatic route. |
+| `gecode_product_mod` | Native canonical Euclidean residue of a nary product, including a variable modulus. There is no matching standard global; truncating mod of a recursively computed product differs for negative products. Known positive moduli select the fixed actor. Modulus positivity is part of the reified proposition, so constant folding never turns a false relation into a precondition error. |
+| `gecode_minimum_distance` | Native table-distance global, optional pair requirements, and single/decomposed actors lack a standard route. Site values use the matrix's indexes; repeated sites are allowed. |
 | `gecode_divmod` | Joint truncating division and remainder. Standard `int_div` and `int_mod` are separate hooks. |
 | `gecode_nroot` | Native integer roots and float roots of general positive degree. Float square roots reuse the standard route. |
 | `gecode_path` | Hamiltonian successor representation, terminal sentinel, and total/per-edge costs. Standard graph path uses selected graph nodes and edges. |
@@ -71,6 +77,7 @@ Gecode set ordering compares characteristic functions starting at the smallest e
 | Variable-right-hand-side float linear constraints | Native posting appends the right-hand-side variable with coefficient -1, matching existing arithmetic normalization. |
 | Scalar relations and scalar loops over arrays | Existing primitive posters already reach the native relations; the array helpers merely repeat them. |
 | Mandatory flexible scheduling and mandatory rectangles | Existing cumulative/disjunctive and diffn routes already reach their actors. |
+| Knapsack-augmented cumulative overload checking | The native advanced algorithm is selected through the existing cumulative routes and new algorithm annotations. No additional constraint name is needed. |
 | Integer/set precedence chains | Native posting repeats the existing adjacent-pair precedence propagators. |
 | Reified set cardinality | Native posting combines cardinality and an existing reified integer relation. |
 | Set-wide integer relations | Native posting uses extrema plus scalar relations, nonempty cardinality plus nonmembership, or the singleton relation. Those component routes are reachable. |
@@ -85,7 +92,9 @@ Compiler checks cover every remaining typed leaf and public overloads, inferred 
 
 Fixed-base float testing exposed a rounded scalar logarithm and an invalid shared-variable shortcut in [exp-log.hpp](../gecode/float/transcendental/exp-log.hpp). The implementation uses interval logarithms, handles base-one power, and retains propagation after its own updates. Both build systems enable rounding-aware float compilation. [Float regressions](../test/float/transcendental.cpp) cover exact powers, decreasing bases, base one, and shared variables.
 
-Propagation algorithms are selected with annotations, never predicate arguments. `gecode_basic_propagation`, `gecode_advanced_propagation`, and `gecode_full_propagation` map to `IPL_BASIC`, `IPL_ADVANCED`, and their combination. They combine with existing domain/bounds/value propagation annotations. Unsupported algorithm choices retain the native constraint's normal behavior. [Registry regressions](../test/flatzinc/native-registry.cpp) check semantic boundaries and demonstrate different native inter-distance filtering under basic and advanced algorithms.
+The branch was rebased onto the current inter-distance parent before publication. Additional arithmetic, minimum-distance, and NFA bindings were checked with 35 exhaustive/routing cases, including signed and zero inputs, false guards, invalid variable moduli, shifted matrices, nondeterministic words, and parameter/enum products.
+
+Propagation algorithms are selected with annotations, never predicate arguments. `gecode_basic_propagation`, `gecode_advanced_propagation`, and `gecode_full_propagation` map to `IPL_BASIC`, `IPL_ADVANCED`, and their combination. They combine with existing domain/bounds/value propagation annotations. `gecode_decomposed_propagation` selects separate pair actors for minimum distance; the default is a single actor with the same filtering. Unsupported algorithm choices retain the native constraint's normal behavior. [Registry regressions](../test/flatzinc/native-registry.cpp) check semantic boundaries and demonstrate different native inter-distance filtering under basic and advanced algorithms.
 
 ```minizinc
 include "gecode.mzn";

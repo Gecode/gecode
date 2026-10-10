@@ -1229,6 +1229,45 @@ namespace Gecode { namespace FlatZinc {
                 ce[3]->getInt(), ce[4]->getSet(), ann);
     }
 
+    template<class VarArgs>
+    void p_regular_nfa(FlatZincSpace& s, VarArgs x, const ConExpr& ce,
+                       AST::Node* ann) {
+      int q = ce[1]->getInt(), first_symbol = ce[2]->getInt();
+      int symbols = ce[3]->getInt(), initial = ce[5]->getInt();
+      IntSetArgs table = s.arg2intsetargs(ce[4]);
+      IntSet finals = s.arg2intset(ce[6]);
+      if ((q <= 0) || (symbols <= 0) ||
+          (static_cast<long long>(q)*symbols != table.size()) ||
+          (initial < 1) || (initial > q) ||
+          ((finals.size() != 0) && ((finals.min() < 1) || (finals.max() > q))) ||
+          (first_symbol < Int::Limits::min) ||
+          (static_cast<long long>(first_symbol)+symbols-1 > Int::Limits::max))
+        throw FlatZinc::Error("Registry", "invalid NFA dimensions or states");
+      std::vector<DFA::Transition> transitions;
+      for (int state=0; state<q; state++)
+        for (int symbol=0; symbol<symbols; symbol++) {
+          const IntSet& targets = table[state*symbols+symbol];
+          if ((targets.size() != 0) && ((targets.min() < 1) || (targets.max() > q)))
+            throw FlatZinc::Error("Registry", "invalid NFA transition");
+          for (IntSetValues target(targets); target(); ++target)
+            transitions.push_back(DFA::Transition(state+1,first_symbol+symbol,target.val()));
+        }
+      transitions.push_back(DFA::Transition(-1,0,0));
+      std::vector<int> accepting;
+      for (IntSetValues final(finals); final(); ++final)
+        accepting.push_back(final.val());
+      accepting.push_back(-1);
+      DFA automaton = DFA::nfa(initial,transitions.data(),accepting.data());
+      unshare(s,x);
+      extensional(s,x,s.getSharedDFA(automaton),s.ann2ipl(ann));
+    }
+    void p_regular_nfa_int(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
+      p_regular_nfa(s,s.arg2intvarargs(ce[0]),ce,ann);
+    }
+    void p_regular_nfa_bool(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
+      p_regular_nfa(s,s.arg2boolvarargs(ce[0]),ce,ann);
+    }
+
     void
     p_sort(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
       IntVarArgs x = s.arg2intvarargs(ce[0]);
@@ -1942,6 +1981,63 @@ fvar,
       ite(s, s.arg2BoolVar(ce[0]), s.arg2BoolVar(ce[1]), s.arg2BoolVar(ce[2]),
           s.arg2BoolVar(ce[3]), s.ann2ipl(ann));
     }
+    void p_gcd(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
+      gcd(s, s.arg2IntVar(ce[0]), s.arg2IntVar(ce[1]), s.arg2IntVar(ce[2]),
+          s.ann2ipl(ann));
+    }
+    template<ReifyMode mode>
+    void p_gcd_reif(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
+      gcd(s, s.arg2IntVar(ce[0]), s.arg2IntVar(ce[1]), s.arg2IntVar(ce[2]),
+          Reify(s.arg2BoolVar(ce[3]), mode), s.ann2ipl(ann));
+    }
+    void p_divides(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
+      divides(s, s.arg2IntVar(ce[0]), s.arg2IntVar(ce[1]),
+              Reify(BoolVar(s,1,1),RM_EQV), s.ann2ipl(ann));
+    }
+    template<ReifyMode mode>
+    void p_divides_reif(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
+      divides(s, s.arg2IntVar(ce[0]), s.arg2IntVar(ce[1]),
+              Reify(s.arg2BoolVar(ce[2]),mode), s.ann2ipl(ann));
+    }
+    void p_product(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
+      product(s, s.arg2intvarargs(ce[0]), s.arg2IntVar(ce[1]), s.ann2ipl(ann));
+    }
+    template<ReifyMode mode>
+    void p_product_reif(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
+      product(s, s.arg2intvarargs(ce[0]), s.arg2IntVar(ce[1]),
+              Reify(s.arg2BoolVar(ce[2]),mode), s.ann2ipl(ann));
+    }
+    template<bool fixed>
+    void p_product_mod(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
+      IntVarArgs x = s.arg2intvarargs(ce[0]);
+      IntVar y = s.arg2IntVar(ce[2]);
+      if (fixed)
+        product_mod(s,x,ce[1]->getInt(),y,s.ann2ipl(ann));
+      else
+        product_mod(s,x,s.arg2IntVar(ce[1]),y,s.ann2ipl(ann));
+    }
+    template<bool fixed, ReifyMode mode>
+    void p_product_mod_reif(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
+      IntVarArgs x = s.arg2intvarargs(ce[0]);
+      IntVar y = s.arg2IntVar(ce[2]);
+      Reify r(s.arg2BoolVar(ce[3]),mode);
+      if (fixed)
+        product_mod(s,x,ce[1]->getInt(),y,r,s.ann2ipl(ann));
+      else
+        product_mod(s,x,s.arg2IntVar(ce[1]),y,r,s.ann2ipl(ann));
+    }
+    void p_minimum_distance(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
+      IntVarArgs x = s.arg2intvarargs(ce[0]);
+      IntDistance d(ce[1]->getInt(),s.arg2intargs(ce[2]));
+      MinDistancePropKind kind = ann && ann->hasAtom("gecode_decomposed_propagation")
+        ? MDP_DECOMPOSED : MDP_SINGLE;
+      if (ce.size() == 5)
+        minimum_distance(s,x,s.arg2IntVar(ce[3]),d,
+                         s.arg2intargs(ce[4]),s.ann2ipl(ann),kind);
+      else
+        minimum_distance(s,x,s.arg2IntVar(ce[3]),d,s.ann2ipl(ann),kind);
+    }
+
     void p_int_divmod(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
       divmod(s, s.arg2IntVar(ce[0]), s.arg2IntVar(ce[1]), s.arg2IntVar(ce[2]),
              s.arg2IntVar(ce[3]), s.ann2ipl(ann));
@@ -2272,6 +2368,23 @@ fvar,
         registry().add("gecode_nvalues_bool_fzn", &p_nvalues_bool);
         registry().add("gecode_int_ite", &p_int_ite);
         registry().add("gecode_bool_ite", &p_bool_ite);
+        registry().add("gecode_gcd_int", &p_gcd);
+        registry().add("gecode_gcd_int_reif", &p_gcd_reif<RM_EQV>);
+        registry().add("gecode_gcd_int_imp", &p_gcd_reif<RM_IMP>);
+        registry().add("gecode_divides_int", &p_divides);
+        registry().add("gecode_divides_int_reif", &p_divides_reif<RM_EQV>);
+        registry().add("gecode_divides_int_imp", &p_divides_reif<RM_IMP>);
+        registry().add("gecode_product_int", &p_product);
+        registry().add("gecode_product_int_reif", &p_product_reif<RM_EQV>);
+        registry().add("gecode_product_int_imp", &p_product_reif<RM_IMP>);
+        registry().add("gecode_product_mod_fixed_fzn", &p_product_mod<true>);
+        registry().add("gecode_product_mod_fixed_fzn_reif", &p_product_mod_reif<true,RM_EQV>);
+        registry().add("gecode_product_mod_fixed_fzn_imp", &p_product_mod_reif<true,RM_IMP>);
+        registry().add("gecode_product_mod_var_fzn", &p_product_mod<false>);
+        registry().add("gecode_product_mod_var_fzn_reif", &p_product_mod_reif<false,RM_EQV>);
+        registry().add("gecode_product_mod_var_fzn_imp", &p_product_mod_reif<false,RM_IMP>);
+        registry().add("gecode_minimum_distance_fzn", &p_minimum_distance);
+        registry().add("gecode_minimum_distance_required_fzn", &p_minimum_distance);
         registry().add("gecode_int_divmod", &p_int_divmod);
         registry().add("gecode_int_nroot", &p_int_nroot);
         registry().add("gecode_path", &p_path);
@@ -2282,6 +2395,8 @@ fvar,
         registry().add("gecode_all_different_optional", &p_distinct_optional);
         registry().add("gecode_all_different_except", &p_distinct_except);
         registry().add("gecode_regular_bool", &p_regular_bool);
+        registry().add("gecode_regular_nfa_int_fzn", &p_regular_nfa_int);
+        registry().add("gecode_regular_nfa_bool_fzn", &p_regular_nfa_bool);
         registry().add("gecode_unary_typed_fzn", &p_unary_typed);
         registry().add("gecode_unary_typed_optional_fzn", &p_unary_typed);
         registry().add("gecode_cumulative_typed_fzn", &p_cumulative_typed);

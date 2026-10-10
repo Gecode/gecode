@@ -32,8 +32,17 @@
 
 include "all_equal.mzn";
 include "regular.mzn";
+include "regular_nfa.mzn";
 include "nvalue_fn.mzn";
 include "gecode_fzn.mzn";
+
+% A more specific index type overrides the standard recursive product for
+% decision variables while leaving parameter products on the builtin route.
+function var int: product(array[$$X] of var int: x) :: promise_commutative =
+  let {
+    var int: result :: is_defined_var;
+    constraint gecode_product_int(array1d(x),result) :: defines_var(result);
+  } in result;
 
 % Typed standard operators preserve MiniZinc's index-set checks and use the
 % non-reified native actor only in a positive root context.
@@ -105,3 +114,29 @@ predicate regular(array[int] of var bool: xs, int: Q, int: S,
     array[int,int] of int: d, int: q0, set of int: F) =
   assert(S > 0, "regular: 'S' must be greater than zero") /\
     regular(xs,Q,1..S,d,q0,F);
+
+% Boolean NFA symbols missing from the standard alphabet have no transitions.
+% Standard regular_nfa does not support reification; retain that restriction.
+predicate regular_nfa(array[int] of var bool: x, int: q, set of int: symbols,
+    array[int,int] of set of int: transitions, int: initial, set of int: final) =
+  assert(q > 0 /\ card(symbols) > 0 /\ symbols = min(symbols)..max(symbols),
+    "regular_nfa: states must be positive and alphabet a nonempty range") /\
+  assert(index_set_1of2(transitions) = 1..q /\ index_set_2of2(transitions) = symbols,
+    "regular_nfa: transition indexes must be [1..q,alphabet]") /\
+  assert(forall(targets in transitions)(targets subset 1..q) /\
+      initial in 1..q /\ final subset 1..q, "regular_nfa: invalid transition or initial/final state") /\
+  if length(x) = 0 then initial in final else
+    let {
+      array[1..q,0..1] of set of int: normalized = array2d(1..q,0..1,
+        [if symbol in symbols then transitions[state,symbol] else {} endif
+         | state in 1..q, symbol in 0..1]);
+    } in
+      if mzn_in_root_context() then
+        gecode_regular_nfa_bool_fzn(x,q,0,2,array1d(normalized),initial,final)
+      else regular_nfa(bool2int(x),q,0..1,normalized,initial,final) endif
+  endif;
+
+predicate regular_nfa(array[int] of var bool: x, int: q, int: symbols,
+    array[int,int] of set of int: transitions, int: initial, set of int: final) =
+  assert(symbols > 0, "regular_nfa: alphabet size must be positive") /\
+    regular_nfa(x,q,1..symbols,transitions,initial,final);
