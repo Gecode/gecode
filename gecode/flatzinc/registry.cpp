@@ -2039,8 +2039,16 @@ fvar,
     }
 
     void p_int_divmod(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
-      divmod(s, s.arg2IntVar(ce[0]), s.arg2IntVar(ce[1]), s.arg2IntVar(ce[2]),
-             s.arg2IntVar(ce[3]), s.ann2ipl(ann));
+      IntVar x = s.arg2IntVar(ce[0]), y = s.arg2IntVar(ce[1]);
+      IntVar q = s.arg2IntVar(ce[2]), r = s.arg2IntVar(ce[3]);
+      // Bound unrestricted results before the native linear decomposition
+      // estimates its intermediate domains. Truncating division gives
+      // |q| <= |x|, and r lies between zero and x, for every nonzero y.
+      int magnitude = std::max(-x.min(),x.max());
+      dom(s,q,-magnitude,magnitude);
+      dom(s,r,std::min(0,x.min()),std::max(0,x.max()));
+      if (!s.failed())
+        divmod(s,x,y,q,r,s.ann2ipl(ann));
     }
     void p_int_nroot(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
       nroot(s, s.arg2IntVar(ce[0]), ce[1]->getInt(), s.arg2IntVar(ce[2]),
