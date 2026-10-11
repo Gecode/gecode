@@ -33,21 +33,24 @@ predicate gecode_float_pow_base(float: base, var float: x, var float: y);
 % Nonnegative integer exponents permit zero or negative bases.
 predicate float_pow(var float: x, var float: exponent, var float: y) =
   let {
-    float: n = if is_fixed(exponent) then fix(exponent) else -1.0 endif;
-    bool: integer_exponent =
-      if n >= 0.0 /\ n <= 2147483646.0 then
-        n = int2float(floor(n))
-      else
-        false
-      endif;
-  } in
-    if integer_exponent then
-      gecode_float_pow(x, floor(n), y)
-    elseif is_fixed(x) /\ fix(x) > 0.0 then
-      gecode_float_pow_base(fix(x), exponent, y)
+    float: n = if is_fixed(exponent) then
+      fix(exponent)
     else
-      assert(
-        false,
-        "Gecode float_pow requires a nonnegative integer exponent or a fixed positive base"
-      )
+      -1.0
     endif;
+    bool: integer_exponent = if n >= 0.0 /\ n <= 2147483646.0 then
+      n = int2float(floor(n))
+    else
+      false
+    endif;
+  } in
+  if integer_exponent then
+    gecode_float_pow(x, floor(n), y)
+  elseif is_fixed(x) /\ fix(x) > 0.0 then
+    gecode_float_pow_base(fix(x), exponent, y)
+  else
+    assert(
+      false,
+      "Gecode float_pow requires a nonnegative integer exponent or a fixed positive base",
+    )
+  endif;

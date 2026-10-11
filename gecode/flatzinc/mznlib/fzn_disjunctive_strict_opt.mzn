@@ -52,9 +52,7 @@ predicate fzn_disjunctive_strict_opt(
   forall (i in index_set(d)) (
     d[i] >= 0
   ) /\
-  if forall (i in index_set(d)) (
-    is_fixed(d[i])
-  ) then
+  if forall (i in index_set(d)) (is_fixed(d[i])) then
     gecode_schedule_unary_optional(
       [if is_fixed(si) /\ absent(fix(si)) then 0 else deopt(si) endif | si in s],
       [fix(di) | di in d],
@@ -67,5 +65,5 @@ predicate fzn_disjunctive_strict_opt(
       array[int] of var int: duration = array1d(d);
       array[int] of var int: end = [if present[i] then start[i] + duration[i] else 0 endif | i in index_set(start)];
     } in
-      gecode_unary_flex_optional(start, duration, end, present)
+    gecode_unary_flex_optional(start, duration, end, present)
   endif;

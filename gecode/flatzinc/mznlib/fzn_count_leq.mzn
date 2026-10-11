@@ -38,5 +38,4 @@ predicate gecode_count_int_fzn(
 );
 
 % Requires n <= the number of occurrences of value in xs.
-predicate fzn_count_leq(array[int] of var int: xs, var int: value, var int: n) =
-  gecode_count_int_fzn(xs, value, 5, n);
+predicate fzn_count_leq(array[int] of var int: xs, var int: value, var int: n) = gecode_count_int_fzn(xs, value, 5, n);

@@ -75,10 +75,14 @@ namespace Test { namespace FlatZinc {
         const std::string unsat = "=====UNSATISFIABLE=====\n";
         (void) new FlatZincTest("NativeRegistry::DistanceShared",
           "var 0..2:x; constraint gecode_inter_distance([x,x],1); solve satisfy;", unsat);
+        (void) new FlatZincTest("NativeRegistry::DistanceNegativeEmpty",
+          "constraint gecode_inter_distance_fzn([],-1); solve satisfy;", unsat);
+        (void) new FlatZincTest("NativeRegistry::DistanceNegativeSingleton",
+          "constraint gecode_inter_distance_fzn([0],-1); solve satisfy;", unsat);
         (void) new FlatZincTest("NativeRegistry::NotAllEqual",
           "constraint gecode_not_all_equal_int([1,1,2]); solve satisfy;", sat);
         (void) new FlatZincTest("NativeRegistry::CardinalityHoles",
-          "constraint gecode_global_cardinality_sets([1,1],[1],[{0,3}]); solve satisfy;", unsat);
+          "var {0,3}: count; constraint gecode_global_cardinality_closed([1,1],[1],[count]); solve satisfy;", unsat);
         (void) new FlatZincTest("NativeRegistry::SortOrientation",
           "constraint gecode_sort_permutation([3,1,2],[1,2,3],[2,3,1],1); solve satisfy;", unsat);
         (void) new FlatZincTest("NativeRegistry::ArgMinShared",
@@ -87,8 +91,8 @@ namespace Test { namespace FlatZinc {
           "constraint gecode_product_mod_var_fzn_reif([3],0,3,false); solve satisfy;", sat);
         (void) new FlatZincTest("NativeRegistry::MinimumDistanceRepeatedSite",
           "constraint gecode_minimum_distance_fzn([0,0,2],3,[0,2,4,2,0,3,4,3,0],1); solve satisfy;", unsat);
-        (void) new FlatZincTest("NativeRegistry::NondeterministicBooleanPrefix",
-          "constraint gecode_regular_nfa_bool_fzn([false,true],3,0,2,[{1,2},{},{},{3},{},{}],1,{3}); solve satisfy;", sat);
+        (void) new FlatZincTest("NativeRegistry::NondeterministicPrefix",
+          "constraint gecode_regular_nfa_int_fzn([0,1],3,0,2,[{1,2},{},{},{3},{},{}],1,{3}); solve satisfy;", sat);
         (void) new FlatZincTest("NativeRegistry::DivmodNegative",
           "constraint gecode_int_divmod(-7,4,-1,-3); solve satisfy;", sat);
         (void) new FlatZincTest("NativeRegistry::DivmodUnboundedResults",

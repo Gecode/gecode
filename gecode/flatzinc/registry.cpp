@@ -1214,20 +1214,6 @@ namespace Gecode { namespace FlatZinc {
                 ce[6]->getSet(), ann);
     }
 
-    void p_regular_bool(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
-      int q = ce[1]->getInt();
-      IntArgs transitions = s.arg2intargs(ce[2]);
-      IntSet final = s.arg2intset(ce[4]);
-      if ((q <= 0) || (static_cast<long long>(q)*2 != transitions.size()) ||
-          (ce[3]->getInt() < 1) || (ce[3]->getInt() > q) ||
-          ((final.size() != 0) && ((final.min() < 1) || (final.max() > q))))
-        throw FlatZinc::Error("Registry", "invalid Boolean DFA dimensions or states");
-      for (int i=0; i<transitions.size(); i++)
-        if ((transitions[i] < 0) || (transitions[i] > q))
-          throw FlatZinc::Error("Registry", "invalid Boolean DFA transition");
-      p_regular(s, s.arg2boolvarargs(ce[0]), q, 0, 1, transitions,
-                ce[3]->getInt(), ce[4]->getSet(), ann);
-    }
 
     template<class VarArgs>
     void p_regular_nfa(FlatZincSpace& s, VarArgs x, const ConExpr& ce,
@@ -1263,9 +1249,6 @@ namespace Gecode { namespace FlatZinc {
     }
     void p_regular_nfa_int(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
       p_regular_nfa(s,s.arg2intvarargs(ce[0]),ce,ann);
-    }
-    void p_regular_nfa_bool(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
-      p_regular_nfa(s,s.arg2boolvarargs(ce[0]),ce,ann);
     }
 
     void
@@ -1847,6 +1830,10 @@ fvar,
         inter_distance(s, x.slice(0,1,x.size()-1), x[x.size()-1],
                        s.ann2ipl(ann));
       } else {
+        if (ce[1]->getInt() < 0) {
+          s.fail();
+          return;
+        }
         unshare(s, x);
         inter_distance(s, x, ce[1]->getInt(), s.ann2ipl(ann));
       }
@@ -1947,12 +1934,6 @@ fvar,
       count(s, s.arg2intvarargs(ce[0]), s.arg2intargs(ce[1]),
             int_relation(ce[2]), s.arg2IntVar(ce[3]), s.ann2ipl(ann));
     }
-    void p_global_cardinality_sets(FlatZincSpace& s, const ConExpr& ce,
-                                   AST::Node* ann) {
-      IntVarArgs x = s.arg2intvarargs(ce[0]);
-      unshare(s, x);
-      count(s, x, s.arg2intsetargs(ce[2]), s.arg2intargs(ce[1]), s.ann2ipl(ann));
-    }
     void p_nvalues_int(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
       nvalues(s, s.arg2intvarargs(ce[0]), int_relation(ce[1]),
               s.arg2IntVar(ce[2]), s.ann2ipl(ann));
@@ -1971,9 +1952,6 @@ fvar,
     }
     void p_not_all_equal_int(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
       rel(s, s.arg2intvarargs(ce[0]), IRT_NQ, s.ann2ipl(ann));
-    }
-    void p_not_all_equal_bool(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
-      rel(s, s.arg2boolvarargs(ce[0]), IRT_NQ, s.ann2ipl(ann));
     }
     void p_int_ite(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
       ite(s, s.arg2BoolVar(ce[0]), s.arg2IntVar(ce[1]), s.arg2IntVar(ce[2]),
@@ -2076,43 +2054,6 @@ fvar,
            s.arg2IntVar(ce[3]), s.arg2IntVar(ce[4]), s.arg2intvarargs(ce[5]),
            s.arg2IntVar(ce[6]), s.ann2ipl(ann));
     }
-    void p_order(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
-      order(s, s.arg2IntVar(ce[0]), ce[1]->getInt(), s.arg2IntVar(ce[2]),
-            ce[3]->getInt(), s.arg2BoolVar(ce[4]), s.ann2ipl(ann));
-    }
-    TaskTypeArgs task_types(FlatZincSpace& s, AST::Node* arg) {
-      IntArgs codes = s.arg2intargs(arg);
-      TaskTypeArgs types(codes.size());
-      for (int i=0; i<codes.size(); i++) {
-        switch (codes[i]) {
-        case 1: types[i] = TT_FIXP; break;
-        case 2: types[i] = TT_FIXS; break;
-        case 3: types[i] = TT_FIXE; break;
-        default: throw FlatZinc::Error("Registry", "invalid task type");
-        }
-      }
-      return types;
-    }
-    void p_unary_typed(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
-      IntVarArgs flex = s.arg2intvarargs(ce[1]);
-      unshare(s, flex);
-      if (ce.args->a.size() == 4)
-        unary(s, task_types(s, ce[0]), flex, s.arg2intargs(ce[2]),
-              s.arg2boolvarargs(ce[3]), s.ann2ipl(ann));
-      else
-        unary(s, task_types(s, ce[0]), flex, s.arg2intargs(ce[2]), s.ann2ipl(ann));
-    }
-    void p_cumulative_typed(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
-      IntVarArgs flex = s.arg2intvarargs(ce[1]);
-      unshare(s, flex);
-      if (ce.args->a.size() == 6)
-        cumulative(s, s.arg2IntVar(ce[4]), task_types(s, ce[0]), flex,
-                   s.arg2intargs(ce[2]), s.arg2intargs(ce[3]),
-                   s.arg2boolvarargs(ce[5]), s.ann2ipl(ann));
-      else
-        cumulative(s, s.arg2IntVar(ce[4]), task_types(s, ce[0]), flex,
-                   s.arg2intargs(ce[2]), s.arg2intargs(ce[3]), s.ann2ipl(ann));
-    }
     void p_nooverlap_optional(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
       nooverlap(s, s.arg2intvarargs(ce[0]), s.arg2intargs(ce[1]),
                 s.arg2intvarargs(ce[2]), s.arg2intargs(ce[3]),
@@ -2176,6 +2117,7 @@ fvar,
       IntPoster(void) {
         registry().add("all_different_int", &p_distinct);
         registry().add("all_different_offset", &p_distinctOffset);
+        registry().add("gecode_all_different_offset_fzn", &p_distinctOffset);
         registry().add("all_equal_int", &p_all_equal);
         registry().add("int_eq", &p_int_eq);
         registry().add("int_ne", &p_int_ne);
@@ -2352,6 +2294,7 @@ fvar,
         registry().add("gecode_circuit_cost_array", &p_circuit_cost_array);
         registry().add("gecode_circuit_cost", &p_circuit_cost);
         registry().add("gecode_nooverlap", &p_nooverlap);
+        registry().add("gecode_nooverlap_fzn", &p_nooverlap);
         registry().add("gecode_precede", &p_precede);
         registry().add("nvalue",&p_nvalue);
         registry().add("among",&p_among);
@@ -2365,14 +2308,13 @@ fvar,
         registry().add("gecode_array_int_ne", &p_array_int_ne);
         registry().add("gecode_not_all_equal_int", &p_not_all_equal_int);
         registry().add("gecode_array_bool_ne", &p_array_bool_ne);
-        registry().add("gecode_not_all_equal_bool", &p_not_all_equal_bool);
         registry().add("gecode_inter_distance", &p_inter_distance);
+        registry().add("gecode_inter_distance_fzn", &p_inter_distance);
         registry().add("gecode_bool_int_channel", &p_bool_int_channel);
         registry().add("gecode_sort_permutation", &p_sort_permutation);
         registry().add("gecode_count_int_fzn", &p_count_int);
         registry().add("gecode_count_in_fzn", &p_count_in);
         registry().add("gecode_count_matches_fzn", &p_count_matches);
-        registry().add("gecode_global_cardinality_sets", &p_global_cardinality_sets);
         registry().add("gecode_nvalues_int_fzn", &p_nvalues_int);
         registry().add("gecode_nvalues_bool_fzn", &p_nvalues_bool);
         registry().add("gecode_int_ite", &p_int_ite);
@@ -2399,17 +2341,10 @@ fvar,
         registry().add("gecode_path", &p_path);
         registry().add("gecode_path_cost", &p_path_cost);
         registry().add("gecode_path_cost_array", &p_path_cost_array);
-        registry().add("gecode_order", &p_order);
         registry().add("gecode_nooverlap_optional", &p_nooverlap_optional);
         registry().add("gecode_all_different_optional", &p_distinct_optional);
         registry().add("gecode_all_different_except", &p_distinct_except);
-        registry().add("gecode_regular_bool", &p_regular_bool);
         registry().add("gecode_regular_nfa_int_fzn", &p_regular_nfa_int);
-        registry().add("gecode_regular_nfa_bool_fzn", &p_regular_nfa_bool);
-        registry().add("gecode_unary_typed_fzn", &p_unary_typed);
-        registry().add("gecode_unary_typed_optional_fzn", &p_unary_typed);
-        registry().add("gecode_cumulative_typed_fzn", &p_cumulative_typed);
-        registry().add("gecode_cumulative_typed_optional_fzn", &p_cumulative_typed);
         registry().add("gecode_nooverlap_flex_optional", &p_nooverlap_flex);
         registry().add("gecode_arg_min_int", &p_arg_min_int);
         registry().add("gecode_arg_max_int", &p_arg_max_int);
@@ -2733,15 +2668,6 @@ fvar,
       default: throw FlatZinc::Error("Registry", "invalid set relation");
       }
     }
-    SetOpType set_operation(AST::Node* arg) {
-      switch (arg->getInt()) {
-      case 1: return SOT_UNION;
-      case 2: return SOT_DUNION;
-      case 3: return SOT_INTER;
-      case 4: return SOT_MINUS;
-      default: throw FlatZinc::Error("Registry", "invalid set operation");
-      }
-    }
     void p_set_ite(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
       ite(s, s.arg2BoolVar(ce[0]), s.arg2SetVar(ce[1]), s.arg2SetVar(ce[2]),
           s.arg2SetVar(ce[3]));
@@ -2766,16 +2692,8 @@ fvar,
     void p_set_channel_sorted(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
       channelSorted(s, s.arg2intvarargs(ce[0]), s.arg2SetVar(ce[1]));
     }
-    void p_set_operation(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
-      rel(s, s.arg2SetVar(ce[0]), set_operation(ce[1]), s.arg2SetVar(ce[2]),
-          set_relation(ce[3]), s.arg2SetVar(ce[4]));
-    }
     void p_array_set_intersect(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
       rel(s, SOT_INTER, s.arg2setvarargs(ce[0]), s.arg2SetVar(ce[1]));
-    }
-    void p_array_int_set_operation(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
-      rel(s, set_operation(ce[1]), s.arg2intvarargs(ce[0]),
-          s.arg2intset(ce[2]), s.arg2SetVar(ce[3]));
     }
     void p_set_element2d(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
       SetVarArgs x = s.arg2setvarargs(ce[0]);
@@ -2785,10 +2703,6 @@ fvar,
         throw FlatZinc::Error("Registry", "invalid set matrix dimensions");
       element(s, x, s.arg2IntVar(ce[1]), width,
               s.arg2IntVar(ce[3]), height, s.arg2SetVar(ce[5]));
-    }
-    void p_array_int_set_element(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
-      element(s, set_operation(ce[1]), s.arg2intvarargs(ce[0]),
-              s.arg2SetVar(ce[2]), s.arg2SetVar(ce[3]), s.arg2intset(ce[4]));
     }
 
     void p_set_min(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
@@ -2810,14 +2724,6 @@ fvar,
     }
 
 
-    void p_set_singleton_rel(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
-      rel(s, s.arg2SetVar(ce[0]), set_relation(ce[1]), s.arg2IntVar(ce[2]));
-    }
-    template<ReifyMode mode>
-    void p_set_singleton_rel_reif(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
-      rel(s, s.arg2SetVar(ce[0]), set_relation(ce[1]), s.arg2IntVar(ce[2]),
-          Reify(s.arg2BoolVar(ce[3]), mode));
-    }
 
     void p_set_rel_imp(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
       rel(s, s.arg2SetVar(ce[0]), set_relation(ce[1]), s.arg2SetVar(ce[2]),
@@ -2881,20 +2787,14 @@ fvar,
         registry().add("gecode_set_convex_hull", &p_set_convex_hull);
         registry().add("gecode_set_atmost_one", &p_set_atmost_one);
         registry().add("gecode_set_channel_sorted", &p_set_channel_sorted);
-        registry().add("gecode_set_operation_fzn", &p_set_operation);
         registry().add("gecode_array_set_intersect", &p_array_set_intersect);
-        registry().add("gecode_array_int_set_operation_fzn", &p_array_int_set_operation);
         registry().add("gecode_set_element2d", &p_set_element2d);
-        registry().add("gecode_array_int_set_element_fzn", &p_array_int_set_element);
         registry().add("gecode_set_min", &p_set_min);
         registry().add("gecode_set_min_reif", &p_set_min_reif<RM_EQV>);
         registry().add("gecode_set_min_imp", &p_set_min_reif<RM_IMP>);
         registry().add("gecode_set_max", &p_set_max);
         registry().add("gecode_set_max_reif", &p_set_max_reif<RM_EQV>);
         registry().add("gecode_set_max_imp", &p_set_max_reif<RM_IMP>);
-        registry().add("gecode_set_singleton_rel_fzn", &p_set_singleton_rel);
-        registry().add("gecode_set_singleton_rel_fzn_reif", &p_set_singleton_rel_reif<RM_EQV>);
-        registry().add("gecode_set_singleton_rel_fzn_imp", &p_set_singleton_rel_reif<RM_IMP>);
 
       }
     };
@@ -3090,9 +2990,6 @@ fvar,
     void p_float_array_max(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
       max(s, s.arg2floatvarargs(ce[0]), s.arg2FloatVar(ce[1]));
     }
-    void p_bool_float_channel(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
-      channel(s, s.arg2BoolVar(ce[0]), s.arg2FloatVar(ce[1]));
-    }
 #ifdef GECODE_HAS_MPFR
     void p_float_pow_base(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
       pow(s, ce[0]->getFloat(), s.arg2FloatVar(ce[1]), s.arg2FloatVar(ce[2]));
@@ -3128,7 +3025,6 @@ fvar,
         registry().add("gecode_float_nroot", &p_float_nroot);
         registry().add("gecode_float_array_min", &p_float_array_min);
         registry().add("gecode_float_array_max", &p_float_array_max);
-        registry().add("gecode_bool_float_channel", &p_bool_float_channel);
 
         registry().add("float_abs",&p_float_abs);
         registry().add("float_sqrt",&p_float_sqrt);

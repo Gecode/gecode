@@ -181,85 +181,54 @@ predicate gecode_schedule_cumulative_optional(array[int] of var int: start,
   array[int] of var bool: m, var int: capacity);
 
 
+include "all_different.mzn";
+include "among_fn.mzn";
 include "gecode_fzn.mzn";
-include "among.mzn";
-include "nvalue.mzn";
-include "range.mzn";
-include "arg_min.mzn";
-include "arg_max.mzn";
+include "nvalue_fn.mzn";
 
 /** @group gecode.constraints
-  Comparison operators for integer values and counts.
+  Requires every pair of values in \a x to differ by at least \a distance.
+  The distance must be nonnegative, including for empty and singleton arrays.
 */
-enum GecodeIntRelation = {
-  GecodeEq,
-  GecodeNe,
-  GecodeLe,
-  GecodeLt,
-  GecodeGe,
-  GecodeGt,
-};
+predicate gecode_inter_distance(array[$$X] of var int: x, var int: distance) =
+  if mzn_in_root_context() then
+    gecode_inter_distance_fzn(array1d(x), distance)
+  else
+    distance >= 0 /\
+    forall (i, j in index_set(x) where i < j) (
+      abs(x[i] - x[j]) >= distance
+    )
+  endif;
 
 /** @group gecode.constraints
-  Comparison operators for sets. Complement uses Gecode's full set
-  universe. Ordering compares membership from the smallest element, rather
-  than comparing sorted lists of elements.
+  Requires the sums \a x[i] + \a offset[i] to be pairwise distinct.
+  The arrays must have identical index sets.
 */
-enum GecodeSetRelation = {
-  GecodeSetEq,
-  GecodeSetNe,
-  GecodeSubset,
-  GecodeSuperset,
-  GecodeDisjoint,
-  GecodeComplement,
-  GecodeSetLe,
-  GecodeSetLt,
-  GecodeSetGe,
-  GecodeSetGt,
-};
-/** @group gecode.constraints
-  Union, disjoint union, intersection, and difference of sets.
-*/
-enum GecodeSetOperation = {
-  GecodeUnion,
-  GecodeDisjointUnion,
-  GecodeIntersection,
-  GecodeDifference,
-};
-
-/** @group gecode.constraints
-  Describes the fixed part of a task.
-  GecodeFixedDuration uses flex as start and fix as duration.
-  GecodeFixedStart uses flex as end and fix as start.
-  GecodeFixedEnd uses flex as start and fix as end.
-  Fixed durations must be nonnegative.
-*/
-enum GecodeTaskType = {
-  GecodeFixedDuration,
-  GecodeFixedStart,
-  GecodeFixedEnd,
-};
-
-/** @group gecode.constraints
-  Requires all values \a x[i] + \a offset[i] to be distinct.
-  The arrays must have equal lengths and correspond by position.
-*/
-predicate gecode_all_different(
-  array[int] of int: offset,
-  array[int] of var int: x,
+predicate gecode_all_different_offset(
+  array[$$X] of int: offset,
+  array[$$X] of var int: x,
 ) =
-  gecode_all_different_offset(offset, x);
+  assert(
+    index_set(offset) = index_set(x),
+    "gecode_all_different_offset: index set mismatch",
+    if mzn_in_root_context() then
+      gecode_all_different_offset_fzn(array1d(offset), array1d(x))
+    else
+      all_different([x[i] + offset[i] | i in index_set(x)])
+    endif,
+  );
 
 /** @group gecode.constraints
   Constrains \a y to be the sorted values of \a x, with
   \a x[i] = \a y[\a permutation[i]]. Equal values may appear in either order.
-  The index sets of \a x and \a permutation must agree, and all arrays must
-  have equal lengths.
+  The index sets of \a x and \a permutation must agree, and all arrays
+  must have equal lengths.
+  Reification is not supported.
 */
 predicate gecode_sort_permutation(
-  array[int] of var int: x,
-  array[int] of var int: y,
-  array[int] of var int: permutation,
+  array[$$X] of var $$V: x,
+  array[$$Y] of var $$V: y,
+  array[$$X] of var $$Y: permutation,
 ) =
   assert(
     index_set(x) = index_set(permutation) /\ length(x) = length(y),
@@ -267,122 +236,176 @@ predicate gecode_sort_permutation(
     if length(y) = 0 then
       true
     else
-      gecode_sort_permutation(x, y, permutation, min(index_set(y)))
+      gecode_sort_permutation(
+        enum2int(array1d(x)),
+        enum2int(array1d(y)),
+        enum2int(array1d(permutation)),
+        min(enum2int(index_set(y))),
+      )
     endif,
   );
 
 /** @group gecode.constraints
-  Compares the number of elements of \a x that belong to \a values
-  with \a n, using \a relation.
+  Requires at least one corresponding pair of elements in \a x and \a y
+  to differ. The arrays must have identical index sets.
 */
-predicate gecode_count(
-  array[int] of var int: x,
-  set of int: values,
-  GecodeIntRelation: relation,
-  var int: n,
-) =
-  if relation = GecodeEq then
-    among(n, x, values)
-  elseif relation = GecodeNe then
-    let {
-      var 0 .. length(x): c;
-      constraint among(c, x, values);
-    } in
-      c != n
-  else
-    gecode_count_in_fzn(x, values, enum2int(relation), n)
-  endif;
-/** @group gecode.constraints
-  Compares the number of positions where \a x matches \a values
-  with \a n, using \a relation. The arrays must have equal lengths and
-  correspond by position.
-*/
-predicate gecode_count(
-  array[int] of var int: x,
-  array[int] of int: values,
-  GecodeIntRelation: relation,
-  var int: n,
-) =
+predicate gecode_array_ne(array[$$X] of var $$E: x, array[$$X] of var $$E: y) =
   assert(
-    length(x) = length(values),
-    "gecode_count: unequal array lengths",
-    gecode_count_matches_fzn(x, values, enum2int(relation), n),
+    index_set(x) = index_set(y),
+    "gecode_array_ne: index set mismatch",
+    if mzn_in_root_context() then
+      gecode_array_int_ne(enum2int(array1d(x)), enum2int(array1d(y)))
+    else
+      exists (i in index_set(x)) (x[i] != y[i])
+    endif,
   );
 
 /** @group gecode.constraints
-  Compares the number of distinct values in \a x with \a n, using
-  \a relation. An empty array has zero distinct values.
+  Requires at least one corresponding pair of Boolean elements in \a x
+  and \a y to differ. The arrays must have identical index sets.
 */
-predicate gecode_nvalues(
-  array[int] of var int: x,
-  GecodeIntRelation: relation,
-  var int: n,
-) =
-  if relation = GecodeEq then
-    nvalue(n, x)
-  elseif relation = GecodeNe then
-    let {
-      var 0 .. length(x): c;
-      constraint nvalue(c, x);
-    } in
-      c != n
-  else
-    gecode_nvalues_int_fzn(x, enum2int(relation), n)
-  endif;
+predicate gecode_array_ne(array[$$X] of var bool: x, array[$$X] of var bool: y) =
+  assert(
+    index_set(x) = index_set(y),
+    "gecode_array_ne: index set mismatch",
+    if mzn_in_root_context() then
+      gecode_array_bool_ne(array1d(x), array1d(y))
+    else
+      exists (i in index_set(x)) (x[i] != y[i])
+    endif,
+  );
+
 /** @group gecode.constraints
-  Compares the number of distinct values in \a x with \a n, using
-  \a relation. An empty array has zero distinct values.
+  Requires the number of distinct values in \a x to be at most \a n.
+  An empty array has zero distinct values.
 */
-predicate gecode_nvalues(
-  array[int] of var bool: x,
-  GecodeIntRelation: relation,
-  var int: n,
-) =
-  if relation = GecodeNe then
-    let {
-      var 0 .. 2: c;
-      constraint gecode_nvalues_bool_fzn(x, enum2int(GecodeEq), c);
-    } in
-      c != n
+predicate gecode_nvalue_at_most(var int: n, array[$$X] of var $$E: x) =
+  if mzn_in_root_context() then
+    gecode_nvalues_int_fzn(enum2int(array1d(x)), 3, n)
   else
-    gecode_nvalues_bool_fzn(x, enum2int(relation), n)
+    nvalue(x) <= n
   endif;
+
+/** @group gecode.constraints
+  Requires the number of distinct values in \a x to be at most \a n.
+  An empty array has zero distinct values.
+*/
+predicate gecode_nvalue_at_most(var int: n, array[$$X] of var bool: x) =
+  if mzn_in_root_context() then
+    gecode_nvalues_bool_fzn(array1d(x), 3, n)
+  else
+    nvalue(x) <= n
+  endif;
+
+/** @group gecode.constraints
+  Requires the number of distinct values in \a x to be at least \a n.
+  An empty array has zero distinct values.
+*/
+predicate gecode_nvalue_at_least(var int: n, array[$$X] of var $$E: x) =
+  if mzn_in_root_context() then
+    gecode_nvalues_int_fzn(enum2int(array1d(x)), 5, n)
+  else
+    nvalue(x) >= n
+  endif;
+
+/** @group gecode.constraints
+  Requires the number of distinct values in \a x to be at least \a n.
+  An empty array has zero distinct values.
+*/
+predicate gecode_nvalue_at_least(var int: n, array[$$X] of var bool: x) =
+  if mzn_in_root_context() then
+    gecode_nvalues_bool_fzn(array1d(x), 5, n)
+  else
+    nvalue(x) >= n
+  endif;
+
+/** @group gecode.constraints
+  Requires at most \a n elements of \a x to belong to \a values.
+*/
+predicate gecode_among_at_most(var int: n, array[$$X] of var $$E: x, set of $$E: values) =
+  if mzn_in_root_context() then
+    gecode_count_in_fzn(enum2int(array1d(x)), enum2int(values), 3, n)
+  else
+    among(x, values) <= n
+  endif;
+
+/** @group gecode.constraints
+  Requires at least \a n elements of \a x to belong to \a values.
+*/
+predicate gecode_among_at_least(var int: n, array[$$X] of var $$E: x, set of $$E: values) =
+  if mzn_in_root_context() then
+    gecode_count_in_fzn(enum2int(array1d(x)), enum2int(values), 5, n)
+  else
+    among(x, values) >= n
+  endif;
+
+/** @group gecode.constraints
+  Requires at most \a n positions where \a x matches \a values.
+  The arrays must have identical index sets.
+*/
+predicate gecode_count_matches_at_most(var int: n, array[$$X] of var $$E: x, array[$$X] of $$E: values) =
+  assert(
+    index_set(x) = index_set(values),
+    "gecode_count_matches_at_most: index set mismatch",
+    if mzn_in_root_context() then
+      gecode_count_matches_fzn(enum2int(array1d(x)), enum2int(array1d(values)), 3, n)
+    else
+      sum (i in index_set(x)) (bool2int(x[i] = values[i])) <= n
+    endif,
+  );
+
+/** @group gecode.constraints
+  Requires at least \a n positions where \a x matches \a values.
+  The arrays must have identical index sets.
+*/
+predicate gecode_count_matches_at_least(var int: n, array[$$X] of var $$E: x, array[$$X] of $$E: values) =
+  assert(
+    index_set(x) = index_set(values),
+    "gecode_count_matches_at_least: index set mismatch",
+    if mzn_in_root_context() then
+      gecode_count_matches_fzn(enum2int(array1d(x)), enum2int(array1d(values)), 5, n)
+    else
+      sum (i in index_set(x)) (bool2int(x[i] = values[i])) >= n
+    endif,
+  );
+
+/** @group gecode.constraints
+  Constrains \a n to be the number of positions where \a x matches
+  \a values. The arrays must have identical index sets.
+*/
+predicate gecode_count_matches(
+  var int: n,
+  array[$$X] of var $$E: x,
+  array[$$X] of $$E: values,
+) =
+  assert(
+    index_set(x) = index_set(values),
+    "gecode_count_matches: index set mismatch",
+    if mzn_in_root_context() then
+      gecode_count_matches_fzn(enum2int(array1d(x)), enum2int(array1d(values)), 1, n)
+    else
+      sum (i in index_set(x)) (bool2int(x[i] = values[i])) = n
+    endif,
+  );
 
 /** @group gecode.constraints
   Constrains \a result to be the nonnegative greatest common divisor
   of \a x and \a y. Negative operands use their absolute values, and
   gcd(0, 0) = 0.
 */
-predicate gecode_gcd(var int: x, var int: y, var int: result) =
-  gecode_gcd_int(x, y, result);
+predicate gecode_gcd(var int: x, var int: y, var int: result) = gecode_gcd_int(x, y, result);
 
 /** @group gecode.constraints
   Requires \a dividend to be an integer multiple of \a divisor.
   A zero divisor is permitted only when \a dividend is zero.
 */
-predicate gecode_divides(var int: divisor, var int: dividend) =
-  gecode_divides_int(divisor, dividend);
+predicate gecode_divides(var int: divisor, var int: dividend) = gecode_divides_int(divisor, dividend);
 
 /** @group gecode.constraints
-  Constrains \a b to be true if and only if the product of \a x
-  equals \a result. The product of an empty array is one.
-*/
-predicate gecode_product_reif(
-  array[int] of var int: x,
-  var int: result,
-  var bool: b,
-) =
-  gecode_product_int_reif(x, result, b);
-/** @group gecode.constraints
-  Requires the product of \a x to equal \a result when \a b is true.
+  Constrains \a result to be the product of \a x.
   The product of an empty array is one.
 */
-predicate gecode_product_imp(
-  array[int] of var int: x,
-  var int: result,
-  var bool: b,
-) =
-  gecode_product_int_imp(x, result, b);
+predicate gecode_product(array[$$X] of var int: x, var int: result) = gecode_product_int(array1d(x), result);
 
 /** @group gecode.constraints
   Constrains \a result to be the Euclidean remainder of the product
@@ -391,18 +414,18 @@ predicate gecode_product_imp(
   The product of an empty array is one.
 */
 predicate gecode_product_mod(
-  array[int] of var int: x,
+  array[$$X] of var int: x,
   var int: modulus,
   var int: result,
 ) =
   if is_fixed(modulus) then
     if fix(modulus) > 0 then
-      gecode_product_mod_fixed_fzn(x, fix(modulus), result)
+      gecode_product_mod_fixed_fzn(array1d(x), fix(modulus), result)
     else
-      gecode_product_mod_var_fzn(x, modulus, result)
+      gecode_product_mod_var_fzn(array1d(x), modulus, result)
     endif
   else
-    gecode_product_mod_var_fzn(x, modulus, result)
+    gecode_product_mod_var_fzn(array1d(x), modulus, result)
   endif;
 
 /** @group gecode.constraints
@@ -411,10 +434,11 @@ predicate gecode_product_mod(
   There must be at least two positions. Both matrix axes use the same site
   indexes, and the matrix must be symmetric and nonnegative with a zero
   diagonal. Repeated sites are permitted.
+  Reification is not supported.
 */
 predicate gecode_minimum_distance(
-  array[int] of var int: sites,
-  array[int, int] of int: distances,
+  array[$$Position] of var $$Site: sites,
+  array[$$Site, $$Site] of int: distances,
   var int: result,
 ) =
   assert(
@@ -423,12 +447,13 @@ predicate gecode_minimum_distance(
     index_set_1of2(distances) = index_set_2of2(distances),
     "gecode_minimum_distance: need at least two positions and a square nonempty distance matrix",
     gecode_minimum_distance_fzn(
-      [v - min(index_set_1of2(distances)) | v in sites],
+      [enum2int(v) - min(enum2int(index_set_1of2(distances))) | v in sites],
       card(index_set_1of2(distances)),
       array1d(distances),
       result,
     ),
   );
+
 /** @group gecode.constraints
   Constrains \a result to be the smallest distance between any two
   positions in \a sites. Each pair must also meet the lower bound in
@@ -436,12 +461,13 @@ predicate gecode_minimum_distance(
   Both axes of \a distances use the same site indexes, and both axes of
   \a requirements use the index set of \a sites. Both matrices must be
   symmetric and nonnegative with a zero diagonal. Repeated sites are permitted.
+  Reification is not supported.
 */
 predicate gecode_minimum_distance(
-  array[int] of var int: sites,
-  array[int, int] of int: distances,
+  array[$$Position] of var $$Site: sites,
+  array[$$Site, $$Site] of int: distances,
   var int: result,
-  array[int, int] of int: requirements,
+  array[$$Position, $$Position] of int: requirements,
 ) =
   assert(
     length(sites) >= 2 /\
@@ -451,7 +477,7 @@ predicate gecode_minimum_distance(
     index_set_2of2(requirements) = index_set(sites),
     "gecode_minimum_distance: incompatible distance/requirements matrix or too few positions",
     gecode_minimum_distance_required_fzn(
-      [v - min(index_set_1of2(distances)) | v in sites],
+      [enum2int(v) - min(enum2int(index_set_1of2(distances))) | v in sites],
       card(index_set_1of2(distances)),
       array1d(distances),
       result,
@@ -463,6 +489,7 @@ predicate gecode_minimum_distance(
   Constrains \a quotient = \a x div \a y and
   \a remainder = \a x mod \a y. The divisor \a y must be nonzero.
   Division truncates towards zero; a nonzero remainder has the sign of \a x.
+  Reification is not supported.
 */
 predicate gecode_divmod(
   var int: x,
@@ -475,18 +502,21 @@ predicate gecode_divmod(
     var compute_div_bounds(x, y): q = quotient;
     var compute_mod_bounds(x, y): r = remainder;
   } in
-    gecode_int_divmod(x, y, q, r);
+  gecode_int_divmod(x, y, q, r);
 
 /** @group gecode.constraints
   Constrains \a y to be the integer root of degree \a degree of \a x,
   rounded down. The degree must be positive, and negative \a x is permitted
   only for odd degrees.
+  Reification is not supported.
 */
 predicate gecode_nroot(var int: x, int: degree, var int: y) =
   assert(degree > 0, "gecode_nroot: degree must be positive", gecode_int_nroot(x, degree, y));
+
 /** @group gecode.constraints
   Constrains \a y to be the nonnegative root of degree \a degree of \a x.
   The degree must be positive, and \a x must be nonnegative.
+  Reification is not supported.
 */
 predicate gecode_nroot(var float: x, int: degree, var float: y) =
   assert(
@@ -500,363 +530,206 @@ predicate gecode_nroot(var float: x, int: degree, var float: y) =
   );
 
 /** @group gecode.constraints
-  Requires \a x to describe a path from \a start to \a end that
-  visits every node once, where \a x[i] is the successor of node i.
-  The node array must be nonempty. Its indexes identify the nodes, and
-  \a x[\a end] = max(index_set(\a x)) + 1 marks the end of the path.
+  Requires \a successor to describe a path from \a start to \a end
+  that visits every node once. The array indexes identify the nodes.
+  Only \a successor[\a end] is absent. The node array must be nonempty.
+  Reification is not supported.
 */
-predicate gecode_path(array[int] of var int: x, var int: start, var int: end) =
+predicate gecode_path(
+  array[$$Node] of var opt $$Node: successor,
+  var $$Node: start,
+  var $$Node: end,
+) =
   assert(
-    length(x) > 0,
+    length(successor) > 0,
     "gecode_path: empty node array",
     gecode_path(
       0,
-      [v - min(index_set(x)) | v in x],
-      start - min(index_set(x)),
-      end - min(index_set(x)),
+      gecode_path_successors(successor),
+      enum2int(start) - min(enum2int(index_set(successor))),
+      enum2int(end) - min(enum2int(index_set(successor))),
     ),
   );
+
 /** @group gecode.constraints
-  Requires \a x to describe a path from \a start to \a end that
-  visits every node once, with total edge cost \a cost given by \a costs.
+  Requires \a successor to describe a path from \a start to \a end
+  that visits every node once, with total edge cost \a cost.
+  Only \a successor[\a end] is absent, and its edge costs zero.
+  The edge from i to j has cost \a costs[i,j].
   Both matrix axes must use the index set of the nonempty node array.
-  The successor \a x[\a end] = max(index_set(\a x)) + 1 marks the end,
-  and its edge costs zero.
+  Reification is not supported.
 */
 predicate gecode_path(
-  array[int, int] of int: costs,
-  array[int] of var int: x,
-  var int: start,
-  var int: end,
+  array[$$Node, $$Node] of int: costs,
+  array[$$Node] of var opt $$Node: successor,
+  var $$Node: start,
+  var $$Node: end,
   var int: cost,
 ) =
   assert(
-    length(x) > 0 /\
-    index_set_1of2(costs) = index_set(x) /\
-    index_set_2of2(costs) = index_set(x),
+    length(successor) > 0 /\
+    index_set_1of2(costs) = index_set(successor) /\
+    index_set_2of2(costs) = index_set(successor),
     "gecode_path: incompatible cost matrix",
     gecode_path_cost(
       array1d(costs),
       0,
-      [v - min(index_set(x)) | v in x],
-      start - min(index_set(x)),
-      end - min(index_set(x)),
+      gecode_path_successors(successor),
+      enum2int(start) - min(enum2int(index_set(successor))),
+      enum2int(end) - min(enum2int(index_set(successor))),
       cost,
     ),
   );
+
 /** @group gecode.constraints
-  Requires \a x to describe a path from \a start to \a end that
-  visits every node once, with total cost \a cost. Each \a edge_costs[i]
-  is the cost of the edge from i to \a x[i], as given by \a costs.
-  Both matrix axes and \a edge_costs must use the index set of the nonempty
-  node array. The successor \a x[\a end] = max(index_set(\a x)) + 1 marks
-  the end, and its edge costs zero.
+  Requires \a successor to describe a path from \a start to \a end
+  that visits every node once. Each \a edge_costs[i] is the cost of
+  the edge from i to \a successor[i], and their sum is \a cost.
+  Only \a successor[\a end] is absent, and its edge costs zero.
+  The edge from i to j has cost \a costs[i,j].
+  All array axes must use the index set of the nonempty node array.
+  Reification is not supported.
 */
 predicate gecode_path(
-  array[int, int] of int: costs,
-  array[int] of var int: x,
-  var int: start,
-  var int: end,
-  array[int] of var int: edge_costs,
+  array[$$Node, $$Node] of int: costs,
+  array[$$Node] of var opt $$Node: successor,
+  var $$Node: start,
+  var $$Node: end,
+  array[$$Node] of var int: edge_costs,
   var int: cost,
 ) =
   assert(
-    length(x) > 0 /\
-    index_set_1of2(costs) = index_set(x) /\
-    index_set_2of2(costs) = index_set(x) /\
-    index_set(edge_costs) = index_set(x),
+    length(successor) > 0 /\
+    index_set_1of2(costs) = index_set(successor) /\
+    index_set_2of2(costs) = index_set(successor) /\
+    index_set(edge_costs) = index_set(successor),
     "gecode_path: incompatible cost matrix or edge costs",
     gecode_path_cost_array(
       array1d(costs),
       0,
-      [v - min(index_set(x)) | v in x],
-      start - min(index_set(x)),
-      end - min(index_set(x)),
-      edge_costs,
+      gecode_path_successors(successor),
+      enum2int(start) - min(enum2int(index_set(successor))),
+      enum2int(end) - min(enum2int(index_set(successor))),
+      array1d(edge_costs),
       cost,
     ),
   );
 
-/** @group gecode.constraints
-  Requires the tasks described by \a types, \a flex, and \a fix
-  not to overlap. GecodeTaskType specifies which start, end, or duration is
-  fixed. The arrays must have equal lengths and correspond by position.
-*/
-predicate gecode_unary_typed(
-  array[int] of GecodeTaskType: types,
-  array[int] of var int: flex,
-  array[int] of int: fix,
+% The native successor representation uses an extra node to mark the end.
+function array[int] of var int: gecode_path_successors(
+  array[$$Node] of var opt $$Node: successor,
 ) =
-  gecode_unary_typed_fzn(enum2int(types), flex, fix);
-/** @group gecode.constraints
-  Requires the present tasks described by \a types, \a flex, and
-  \a fix not to overlap. A task is present when its entry in \a present
-  is true. GecodeTaskType specifies which start, end, or duration is fixed.
-  The arrays must have equal lengths and correspond by position.
-*/
-predicate gecode_unary_typed(
-  array[int] of GecodeTaskType: types,
-  array[int] of var int: flex,
-  array[int] of int: fix,
-  array[int] of var bool: present,
-) =
-  gecode_unary_typed_optional_fzn(enum2int(types), flex, fix, present);
-
-/** @group gecode.constraints
-  Requires the total \a usage of tasks executing at any time not
-  to exceed \a capacity. GecodeTaskType specifies how \a types, \a flex,
-  and \a fix describe each task. Usage and capacity must be nonnegative.
-  The arrays must have equal lengths and correspond by position.
-*/
-predicate gecode_cumulative_typed(
-  array[int] of GecodeTaskType: types,
-  array[int] of var int: flex,
-  array[int] of int: fix,
-  array[int] of int: usage,
-  var int: capacity,
-) =
-  gecode_cumulative_typed_fzn(enum2int(types), flex, fix, usage, capacity);
-/** @group gecode.constraints
-  Requires the total \a usage of present tasks executing at any
-  time not to exceed \a capacity. A task is present when its entry in
-  \a present is true. GecodeTaskType specifies how \a types, \a flex,
-  and \a fix describe each task. Usage and capacity must be nonnegative.
-  The arrays must have equal lengths and correspond by position.
-*/
-predicate gecode_cumulative_typed(
-  array[int] of GecodeTaskType: types,
-  array[int] of var int: flex,
-  array[int] of int: fix,
-  array[int] of int: usage,
-  var int: capacity,
-  array[int] of var bool: present,
-) =
-  gecode_cumulative_typed_optional_fzn(enum2int(types), flex, fix, usage, capacity, present);
+  let {
+    constraint forall (next in successor) (
+      occurs(next) -> deopt(next) in index_set(successor)
+    );
+  } in
+  [if occurs(next) then
+    enum2int(deopt(next)) - min(enum2int(index_set(successor)))
+  else
+    length(successor)
+  endif | next in successor];
 
 /** @group gecode.constraints
   Requires the present rectangles with origins (\a x[i], \a y[i])
-  and fixed sizes (\a width[i], \a height[i]) not to overlap.
-  A rectangle is present when \a present[i] is true.
-  Sizes must be nonnegative. All arrays must have identical index sets.
+  and sizes (\a width[i], \a height[i]) not to overlap.
+  The two origins of a rectangle must be absent together.
+  Zero-sized rectangles still participate in non-overlap.
+  Sizes must be nonnegative, and all arrays must have identical index sets.
+  Reification is not supported.
 */
 predicate gecode_nooverlap(
-  array[int] of var int: x,
-  array[int] of int: width,
-  array[int] of var int: y,
-  array[int] of int: height,
-  array[int] of var bool: present,
+  array[$$X] of var opt int: x,
+  array[$$X] of var int: width,
+  array[$$X] of var opt int: y,
+  array[$$X] of var int: height,
 ) =
   assert(
     index_set(x) = index_set(width) /\
     index_set(x) = index_set(y) /\
-    index_set(x) = index_set(height) /\
-    index_set(x) = index_set(present),
-    "gecode_nooverlap: incompatible indexes",
-    gecode_nooverlap_optional(x, width, y, height, present),
-  );
-/** @group gecode.constraints
-  Requires the present rectangles not to overlap, with horizontal
-  bounds \a x and \a right and vertical bounds \a y and \a top.
-  A rectangle is present when \a present[i] is true.
-  For each present rectangle, \a x + \a width = \a right and
-  \a y + \a height = \a top. Sizes must be nonnegative.
-  All arrays must have identical index sets.
-*/
-predicate gecode_nooverlap(
-  array[int] of var int: x,
-  array[int] of var int: width,
-  array[int] of var int: right,
-  array[int] of var int: y,
-  array[int] of var int: height,
-  array[int] of var int: top,
-  array[int] of var bool: present,
-) =
-  assert(
-    index_set(x) = index_set(width) /\
-    index_set(x) = index_set(right) /\
-    index_set(x) = index_set(y) /\
-    index_set(x) = index_set(height) /\
-    index_set(x) = index_set(top) /\
-    index_set(x) = index_set(present),
-    "gecode_nooverlap: incompatible indexes",
+    index_set(x) = index_set(height),
+    "gecode_nooverlap: index set mismatch",
     forall (i in index_set(x)) (
-      present[i] -> (x[i] + width[i] = right[i] /\ y[i] + height[i] = top[i])
+      occurs(x[i]) = occurs(y[i]) /\ width[i] >= 0 /\ height[i] >= 0
     ) /\
-    gecode_nooverlap_flex_optional(x, width, right, y, height, top, present),
-  );
-
-/** @group gecode.constraints
-  Requires \a x to be empty or a consecutive interval of integers.
-*/
-predicate gecode_convex(var set of int: x) =
-  gecode_set_convex(x);
-/** @group gecode.constraints
-  Constrains \a hull to be the smallest consecutive interval
-  containing \a x. The hull of an empty set is empty.
-*/
-predicate gecode_convex(var set of int: x, var set of int: hull) =
-  gecode_set_convex_hull(x, hull);
-
-/** @group gecode.constraints
-  Requires every element of each set in \a x to be smaller than
-  every element of each later set. Empty sets are permitted.
-*/
-predicate gecode_set_sequence(array[int] of var set of int: x) =
-  gecode_array_set_seq(x);
-/** @group gecode.constraints
-  Requires every element of each set in \a x to be smaller than
-  every element of each later set, and constrains \a y to their union.
-  Empty sets are permitted.
-*/
-predicate gecode_set_sequence(array[int] of var set of int: x, var set of int: y) =
-  gecode_array_set_seq_union(x, y);
-
-/** @group gecode.constraints
-  Compares the result of applying \a operation to \a x and \a y
-  with \a z, using \a relation. Complement and set ordering follow
-  GecodeSetRelation.
-*/
-predicate gecode_set_operation(
-  var set of int: x,
-  GecodeSetOperation: operation,
-  var set of int: y,
-  GecodeSetRelation: relation,
-  var set of int: z,
-) =
-  if relation = GecodeSetEq /\ operation = GecodeUnion then
-    z = x union y
-  elseif relation = GecodeSetEq /\ operation = GecodeIntersection then
-    z = x intersect y
-  elseif relation = GecodeSetEq /\ operation = GecodeDifference then
-    z = x diff y
-  else
-    gecode_set_operation_fzn(x, enum2int(operation), y, enum2int(relation), z)
-  endif;
-
-/** @group gecode.constraints
-  Combines \a initial and the singleton sets {\a x[i]} using
-  \a operation, and constrains \a y to the result. Union, disjoint union,
-  and intersection are supported.
-*/
-predicate gecode_array_int_set_operation(
-  array[int] of var int: x,
-  GecodeSetOperation: operation,
-  set of int: initial,
-  var set of int: y,
-) =
-  assert(
-    operation != GecodeDifference,
-    "gecode_array_int_set_operation: difference is unsupported",
-    gecode_array_int_set_operation_fzn(x, enum2int(operation), initial, y),
-  );
-
-/** @group gecode.constraints
-  Combines the singleton sets {\a x[i]} at the zero-based positions
-  in \a selected, using \a operation, and constrains \a value to the result.
-  Union, disjoint union, and intersection are supported. An empty selection
-  gives \a universe for intersection and the empty set for either union.
-*/
-predicate gecode_array_int_set_element(
-  array[int] of var int: x,
-  GecodeSetOperation: operation,
-  var set of int: selected,
-  var set of int: value,
-  set of int: universe,
-) =
-  assert(
-    operation != GecodeDifference,
-    "gecode_array_int_set_element: difference is unsupported",
-    if operation = GecodeUnion then
-      gecode_range(x, 0, selected, value)
+    let {
+      array[int] of var bool: present = [occurs(xi) | xi in x];
+      array[int] of var int: xx = [xi default 0 | xi in x];
+      array[int] of var int: yy = [yi default 0 | yi in y];
+    } in
+    if forall (w in width) (is_fixed(w)) /\ forall (h in height) (is_fixed(h)) then
+      gecode_nooverlap_optional(
+        xx,
+        [fix(w) | w in width],
+        yy,
+        [fix(h) | h in height],
+        present,
+      )
     else
-      gecode_array_int_set_element_fzn(x, enum2int(operation), selected, value, universe)
+      let {
+        array[int] of var int: w = array1d(width);
+        array[int] of var int: h = array1d(height);
+        array[int] of var int: right = [if present[i] then xx[i] + w[i] else 0 endif | i in index_set(xx)];
+        array[int] of var int: top = [if present[i] then yy[i] + h[i] else 0 endif | i in index_set(yy)];
+      } in
+      gecode_nooverlap_flex_optional(xx, w, right, yy, h, top, present)
     endif,
   );
 
 /** @group gecode.constraints
-  Constrains \a b to be true if and only if \a s is nonempty and
-  \a x is its smallest element.
+  Requires \a x to be empty or a consecutive interval of values.
+  Enum values follow their declaration order.
+  Reification is not supported.
 */
-predicate gecode_min_reif(var set of int: s, var int: x, var bool: b) =
-  gecode_set_min_reif(s, x, b);
-/** @group gecode.constraints
-  Constrains \a b to be true if and only if \a s is nonempty and
-  \a x is its largest element.
-*/
-predicate gecode_max_reif(var set of int: s, var int: x, var bool: b) =
-  gecode_set_max_reif(s, x, b);
+predicate gecode_convex(var set of $$E: x) = gecode_set_convex(enum2int(x));
 
 /** @group gecode.constraints
-  Compares \a s with the singleton set {\a x}, using \a relation.
-  Complement and set ordering follow GecodeSetRelation.
+  Constrains \a hull to be the smallest consecutive interval
+  containing \a x. The hull of an empty set is empty.
+  Enum values follow their declaration order.
+  Reification is not supported.
 */
-predicate gecode_set_singleton_rel(
-  var set of int: s,
-  GecodeSetRelation: relation,
-  var int: x,
-) =
-  if relation = GecodeSuperset then
-    x in s
-  else
-    gecode_set_singleton_rel_fzn(s, enum2int(relation), x)
-  endif;
-/** @group gecode.constraints
-  Constrains \a b to be true if and only if \a s has \a relation
-  to the singleton set {\a x}. Complement and set ordering follow
-  GecodeSetRelation.
-*/
-predicate gecode_set_singleton_rel_reif(
-  var set of int: s,
-  GecodeSetRelation: relation,
-  var int: x,
-  var bool: b,
-) =
-  if relation = GecodeSuperset then
-    b <-> x in s
-  else
-    gecode_set_singleton_rel_fzn_reif(s, enum2int(relation), x, b)
-  endif;
-/** @group gecode.constraints
-  Requires \a s to have \a relation to the singleton set {\a x}
-  when \a b is true. Complement and set ordering follow GecodeSetRelation.
-*/
-predicate gecode_set_singleton_rel_imp(
-  var set of int: s,
-  GecodeSetRelation: relation,
-  var int: x,
-  var bool: b,
-) =
-  if relation = GecodeSuperset then
-    b -> x in s
-  else
-    gecode_set_singleton_rel_fzn_imp(s, enum2int(relation), x, b)
-  endif;
+predicate gecode_convex(var set of $$E: x, var set of $$E: hull) = gecode_set_convex_hull(enum2int(x), enum2int(hull));
 
 /** @group gecode.constraints
-  Requires \a x to have \a relation to \a y when \a b is true.
-  Complement and set ordering follow GecodeSetRelation.
+  Requires every element of each set in \a x to be smaller than
+  every element of each later set. Empty sets are permitted.
+  Reification is not supported.
 */
-predicate gecode_rel_imp(
-  var set of int: x,
-  GecodeSetRelation: relation,
-  var set of int: y,
-  var bool: b,
-) =
-  if relation = GecodeSetEq then
-    b -> x = y
-  elseif relation = GecodeSetNe then
-    b -> x != y
-  elseif relation = GecodeSubset then
-    b -> x subset y
-  elseif relation = GecodeSuperset then
-    b -> x superset y
-  else
-    gecode_set_rel_imp_fzn(x, enum2int(relation), y, b)
-  endif;
+predicate gecode_set_sequence(array[$$X] of var set of $$E: x) = gecode_array_set_seq(enum2int(array1d(x)));
+
+/** @group gecode.constraints
+  Requires every element of each set in \a x to be smaller than
+  every element of each later set, and constrains \a y to their union.
+  Empty sets are permitted.
+  Reification is not supported.
+*/
+predicate gecode_set_sequence(array[$$X] of var set of $$E: x, var set of $$E: y) =
+  gecode_array_set_seq_union(enum2int(array1d(x)), enum2int(y));
+
+/** @group gecode.constraints
+  Requires each pair of sets in \a x to share at most one element,
+  and every set to have cardinality \a size.
+  Reification is not supported.
+*/
+predicate gecode_at_most_one_intersection(array[$$X] of var set of $$E: x, int: size) =
+  assert(
+    size >= 0,
+    "gecode_at_most_one_intersection: negative cardinality",
+    gecode_set_atmost_one(enum2int(array1d(x)), size),
+  );
+
+/** @group gecode.constraints
+  Constrains \a x to be the elements of \a values in strictly increasing order.
+  Reification is not supported.
+*/
+predicate gecode_sorted_set(array[$$X] of var $$E: x, var set of $$E: values) =
+  gecode_set_channel_sorted(enum2int(array1d(x)), enum2int(values));
 
 /** @group gecode.constraints
   Constrains \a y to be the logarithm of \a x to base \a base.
   The base must be positive and different from one. Requires MPFR support.
+  Reification is not supported.
 */
 predicate gecode_log(float: base, var float: x, var float: y) =
   assert(
@@ -873,89 +746,80 @@ predicate gecode_log(float: base, var float: x, var float: y) =
 
 /** @group gecode.constraints
   Constrains \a index to be the index of a smallest value in \a x.
-  If \a break_ties is true, the smallest qualifying index is required;
-  otherwise any qualifying index is permitted. The array must be nonempty.
+  Any qualifying index is permitted. The array must be nonempty.
+  Reification is not supported.
 */
-predicate gecode_arg_min(
-  array[int] of var int: x,
-  var int: index,
-  bool: break_ties,
-) =
+predicate gecode_arg_min_any(array[$$X] of var $$E: x, var $$X: index) =
   assert(
     length(x) > 0,
-    "gecode_arg_min: empty array",
-    if break_ties then
-      arg_min(array1d(x)) + min(index_set(x)) - 1 = index
-    else
-      gecode_arg_min_int(x, 0, index - min(index_set(x)), false)
-    endif,
-  );
-/** @group gecode.constraints
-  Constrains \a index to be the index of a smallest value in \a x.
-  If \a break_ties is true, the smallest qualifying index is required;
-  otherwise any qualifying index is permitted. The array must be nonempty.
-*/
-predicate gecode_arg_min(
-  array[int] of var bool: x,
-  var int: index,
-  bool: break_ties,
-) =
-  assert(
-    length(x) > 0,
-    "gecode_arg_min: empty array",
-    if break_ties then
-      arg_min(array1d(x)) + min(index_set(x)) - 1 = index
-    else
-      gecode_arg_min_bool(x, 0, index - min(index_set(x)), false)
-    endif,
-  );
-/** @group gecode.constraints
-  Constrains \a index to be the index of a largest value in \a x.
-  If \a break_ties is true, the smallest qualifying index is required;
-  otherwise any qualifying index is permitted. The array must be nonempty.
-*/
-predicate gecode_arg_max(
-  array[int] of var int: x,
-  var int: index,
-  bool: break_ties,
-) =
-  assert(
-    length(x) > 0,
-    "gecode_arg_max: empty array",
-    if break_ties then
-      arg_max(array1d(x)) + min(index_set(x)) - 1 = index
-    else
-      gecode_arg_max_int(x, 0, index - min(index_set(x)), false)
-    endif,
-  );
-/** @group gecode.constraints
-  Constrains \a index to be the index of a largest value in \a x.
-  If \a break_ties is true, the smallest qualifying index is required;
-  otherwise any qualifying index is permitted. The array must be nonempty.
-*/
-predicate gecode_arg_max(
-  array[int] of var bool: x,
-  var int: index,
-  bool: break_ties,
-) =
-  assert(
-    length(x) > 0,
-    "gecode_arg_max: empty array",
-    if break_ties then
-      arg_max(array1d(x)) + min(index_set(x)) - 1 = index
-    else
-      gecode_arg_max_bool(x, 0, index - min(index_set(x)), false)
-    endif,
+    "gecode_arg_min_any: empty array",
+    gecode_arg_min_int(
+      enum2int(array1d(x)),
+      0,
+      enum2int(index) - min(enum2int(index_set(x))),
+      false,
+    ),
   );
 
 /** @group gecode.constraints
-  Requires exactly one element of \a x to be true, at zero-based
-  position \a value - \a offset.
+  Constrains \a index to be the index of a smallest value in \a x.
+  Any qualifying index is permitted. The array must be nonempty.
+  Reification is not supported.
 */
-predicate gecode_channel(array[int] of var bool: x, var int: value, int: offset) =
-  gecode_bool_int_channel(x, value, offset);
+predicate gecode_arg_min_any(array[$$X] of var bool: x, var $$X: index) =
+  assert(
+    length(x) > 0,
+    "gecode_arg_min_any: empty array",
+    gecode_arg_min_bool(
+      array1d(x),
+      0,
+      enum2int(index) - min(enum2int(index_set(x))),
+      false,
+    ),
+  );
+
 /** @group gecode.constraints
-  Constrains \a x to be 1.0 when \a b is true and 0.0 otherwise.
+  Constrains \a index to be the index of a largest value in \a x.
+  Any qualifying index is permitted. The array must be nonempty.
+  Reification is not supported.
 */
-predicate gecode_channel(var bool: b, var float: x) =
-  gecode_bool_float_channel(b, x);
+predicate gecode_arg_max_any(array[$$X] of var $$E: x, var $$X: index) =
+  assert(
+    length(x) > 0,
+    "gecode_arg_max_any: empty array",
+    gecode_arg_max_int(
+      enum2int(array1d(x)),
+      0,
+      enum2int(index) - min(enum2int(index_set(x))),
+      false,
+    ),
+  );
+
+/** @group gecode.constraints
+  Constrains \a index to be the index of a largest value in \a x.
+  Any qualifying index is permitted. The array must be nonempty.
+  Reification is not supported.
+*/
+predicate gecode_arg_max_any(array[$$X] of var bool: x, var $$X: index) =
+  assert(
+    length(x) > 0,
+    "gecode_arg_max_any: empty array",
+    gecode_arg_max_bool(
+      array1d(x),
+      0,
+      enum2int(index) - min(enum2int(index_set(x))),
+      false,
+    ),
+  );
+
+/** @group gecode.constraints
+  Requires exactly one element of \a x to be true, with \a value
+  equal to its array index. The array must be nonempty.
+  Reification is not supported.
+*/
+predicate gecode_one_hot(array[$$X] of var bool: x, var $$X: value) =
+  assert(
+    length(x) > 0,
+    "gecode_one_hot: empty array",
+    gecode_bool_int_channel(array1d(x), enum2int(value), min(enum2int(index_set(x)))),
+  );

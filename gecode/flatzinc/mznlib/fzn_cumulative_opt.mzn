@@ -59,14 +59,7 @@ predicate fzn_cumulative_opt(
 ) =
   if ub(b) < 0 then
     false
-  elseif
-    forall (i in index_set(d)) (
-      is_fixed(d[i])
-    ) /\
-    forall (i in index_set(r)) (
-      is_fixed(r[i])
-    )
-  then
+  elseif forall (i in index_set(d)) (is_fixed(d[i])) /\ forall (i in index_set(r)) (is_fixed(r[i])) then
     % Zero-duration tasks consume no capacity in MiniZinc.
     gecode_schedule_cumulative_optional(
       [if is_fixed(si) /\ absent(fix(si)) then 0 else deopt(si) endif | si in s],
@@ -75,9 +68,7 @@ predicate fzn_cumulative_opt(
       [occurs(s[i]) /\ fix(d[i]) > 0 | i in index_set(s)],
       b,
     )
-  elseif forall (i in index_set(r)) (
-    is_fixed(r[i])
-  ) then
+  elseif forall (i in index_set(r)) (is_fixed(r[i])) then
     let {
       array[int] of var int: start = [if is_fixed(si) /\ absent(fix(si)) then 0 else deopt(si) endif | si in s];
       array[int] of var int: duration = array1d(d);
@@ -85,14 +76,14 @@ predicate fzn_cumulative_opt(
       array[int] of var bool: present = [occurs(array1d(s)[i]) /\ duration[i] > 0 | i in index_set(duration)];
       array[int] of var int: end = [if present[i] then start[i] + duration[i] else 0 endif | i in index_set(start)];
     } in
-      gecode_cumulative_flex_optional(
-        start,
-        duration,
-        end,
-        [fix(ri) | ri in r],
-        b,
-        present,
-      )
+    gecode_cumulative_flex_optional(
+      start,
+      duration,
+      end,
+      [fix(ri) | ri in r],
+      b,
+      present,
+    )
   else
     fzn_cumulative_opt_decomp(s, d, r, b)
   endif;

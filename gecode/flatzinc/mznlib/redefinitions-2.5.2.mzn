@@ -20,14 +20,14 @@ predicate gecode_set_element2d(
   int: width,
   var int: row,
   int: height,
-  var set of int: value
+  var set of int: value,
 );
 
 predicate array_var_set_element2d_nonshifted(
   var int: idx1,
   var int: idx2,
   array[int, int] of var set of int: x,
-  var set of int: c
+  var set of int: c,
 ) =
   if length(x) = 0 then
     false
@@ -38,6 +38,6 @@ predicate array_var_set_element2d_nonshifted(
       card(index_set_2of2(x)),
       idx1 - min(index_set_1of2(x)),
       card(index_set_1of2(x)),
-      c
+      c,
     )
   endif;

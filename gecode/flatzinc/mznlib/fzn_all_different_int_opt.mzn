@@ -57,6 +57,6 @@ predicate fzn_all_different_int_opt_reif(
       [if is_fixed(x) /\ absent(fix(x)) then 0 else deopt(x) endif | x in xs],
     );
   } in
-    b <-> forall (i, j in index_set(xs) where i < j) (
-      (occurs(xs[i]) /\ occurs(xs[j])) -> values[i] != values[j]
-    );
+  b <-> forall (i, j in index_set(xs) where i < j) (
+    (occurs(xs[i]) /\ occurs(xs[j])) -> values[i] != values[j]
+  );

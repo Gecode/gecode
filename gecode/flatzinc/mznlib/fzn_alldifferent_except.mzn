@@ -45,15 +45,13 @@ predicate fzn_alldifferent_except(array[int] of var int: xs, set of int: except)
     else
       gecode_all_different_except(xs, min(except))
     endif
-  elseif forall (i in index_set(xs)) (
-    has_bounds(xs[i])
-  ) then
+  elseif forall (i in index_set(xs)) (has_bounds(xs[i])) then
     % Native distinct supports one exception; retain the standard translation
     % for larger exception sets.
     let {
       set of int: values = dom_array(xs) diff except;
     } in
-      global_cardinality(xs, set2array(values), [0 | i in values], [1 | i in values])
+    global_cardinality(xs, set2array(values), [0 | i in values], [1 | i in values])
   else
     forall (i, j in index_set(xs) where i < j) (
       (xs[i] in except /\ xs[j] in except) \/ xs[i] != xs[j]
