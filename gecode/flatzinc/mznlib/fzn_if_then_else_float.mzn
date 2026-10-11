@@ -43,15 +43,13 @@ predicate fzn_if_then_else_float(
   array[int] of float: x,
   var float: y,
 ) =
-  if
-    length(c) = 2 /\
-    index_sets_agree(c, x) /\
-    (if is_fixed(c[max(index_set(c))]) then
-      fix(c[max(index_set(c))])
-    else
-      false
-    endif)
-  then
+  if length(c) = 2 /\
+     index_sets_agree(c, x) /\
+     (if is_fixed(c[max(index_set(c))]) then
+       fix(c[max(index_set(c))])
+     else
+       false
+     endif) then
     gecode_float_ite(c[min(index_set(c))], x[min(index_set(c))], x[max(index_set(c))], y)
   else
     let {
