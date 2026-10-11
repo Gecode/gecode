@@ -30,8 +30,6 @@
 %
 %
 
-include "solver-native-overloads.mzn";
-
 % Sums over Boolean variables
 predicate bool_lin_eq(array[int] of int: a, array[int] of var bool: x,
                       var int: c);
