@@ -601,217 +601,106 @@ namespace Test { namespace Int {
     };
 
 
-    class ConstraintSpace : public Gecode::Space {
+    /// Test the relations on a closed open list with the integer harness
+    class Constraint : public Test {
     public:
-      enum Kind {
-        DISTINCT,
-        REL,
-        SLIDING,
-        SLIDING_SUM,
-        MIN_MAX,
-        PRECEDE
-      };
+      enum Kind { DISTINCT, REL, SLIDING, SLIDING_SUM, MIN_MAX, PRECEDE };
+    protected:
+      Kind kind;
+    public:
+      Constraint(const std::string& name, Kind k, int size)
+        : Test("OpenList::"+name,size,0,2), kind(k) {}
 
-      Gecode::OpenIntVarList list;
-      Gecode::IntVar minimum;
-      Gecode::IntVar maximum;
-
-      ConstraintSpace(Kind kind, int size)
-        : list(*this,Gecode::IntSet(0,2),size),
-          minimum(*this,0,2), maximum(*this,0,2) {
-        using namespace Gecode;
+      virtual bool
+      solution(const Assignment& x) const {
         switch (kind) {
         case DISTINCT:
-          distinct(*this,list);
+          for (int i=0; i<x.size(); i++)
+            for (int j=0; j<i; j++)
+              if (x[i] == x[j])
+                return false;
+          return true;
+        case REL:
+          for (int i=1; i<x.size(); i++)
+            if (x[i-1] >= x[i])
+              return false;
+          return true;
+        case SLIDING:
+          for (int i=1; i<x.size(); i++)
+            if ((x[i-1] == 1) + (x[i] == 1) != 1)
+              return false;
+          return true;
+        case SLIDING_SUM:
+          for (int i=1; i<x.size(); i++)
+            if (x[i-1] + x[i] != 2)
+              return false;
+          return true;
+        case MIN_MAX: {
+          int lower = x[0];
+          int upper = x[0];
+          for (int i=1; i<x.size(); i++) {
+            lower = std::min(lower,x[i]);
+            upper = std::max(upper,x[i]);
+          }
+          return (lower == 0) && (upper == 2);
+        }
+        case PRECEDE: {
+          bool seen = false;
+          for (int i=0; i<x.size(); i++) {
+            if ((x[i] == 1) && !seen)
+              return false;
+            seen |= x[i] == 0;
+          }
+          return true;
+        }
+        }
+        GECODE_NEVER;
+        return false;
+      }
+
+      virtual void
+      post(Gecode::Space& home, Gecode::IntVarArray& x) {
+        using namespace Gecode;
+        OpenIntVarList list(home,x.size());
+        switch (kind) {
+        case DISTINCT:
+          distinct(home,list);
           break;
         case REL:
-          rel(*this,list,IRT_LE);
+          rel(home,list,IRT_LE);
           break;
         case SLIDING:
-          Gecode::sequence(*this,list,IntSet(1,1),2,1,1);
+          Gecode::sequence(home,list,IntSet(1,1),2,1,1);
           break;
         case SLIDING_SUM:
-          slidingsum(*this,list,2,2,2);
+          slidingsum(home,list,2,2,2);
           break;
-        case MIN_MAX:
-          min(*this,list,minimum);
-          max(*this,list,maximum);
-          rel(*this,minimum,IRT_EQ,0);
-          rel(*this,maximum,IRT_EQ,2);
-          break;
-        case PRECEDE:
-          precede(*this,list,0,1);
+        case MIN_MAX: {
+          IntVar minimum(home,0,0);
+          IntVar maximum(home,2,2);
+          min(home,list,minimum);
+          max(home,list,maximum);
           break;
         }
-        rel(*this,list.length(),IRT_EQ,size);
-        branch(*this,list);
-      }
-
-      ConstraintSpace(ConstraintSpace& s)
-        : Gecode::Space(s) {
-        list.update(*this,s.list);
-        minimum.update(*this,s.minimum);
-        maximum.update(*this,s.maximum);
-      }
-
-      virtual Gecode::Space*
-      copy(void) {
-        return new ConstraintSpace(*this);
+        case PRECEDE:
+          precede(home,list,0,1);
+          break;
+        }
+        for (int i=0; i<x.size(); i++)
+          list.append(home,x[i]);
+        list.close(home);
       }
     };
 
-    int
-    solutions(ConstraintSpace::Kind kind, int size,
-              bool (*valid)(const ConstraintSpace&)) {
-      using namespace Gecode;
-      ConstraintSpace* root = new ConstraintSpace(kind,size);
-      DFS<ConstraintSpace> engine(root);
-      delete root;
-      int n = 0;
-      while (ConstraintSpace* solution = engine.next()) {
-        const bool ok = valid(*solution);
-        delete solution;
-        if (!ok)
-          return -1;
-        n++;
-      }
-      return n;
-    }
-
-    bool
-    distinct_solution(const ConstraintSpace& s) {
-      for (int i=0; i<s.list.prefix_size(); i++)
-        for (int j=0; j<i; j++)
-          if (s.list[i].val() == s.list[j].val())
-            return false;
-      return true;
-    }
-
-    bool
-    rel_solution(const ConstraintSpace& s) {
-      for (int i=1; i<s.list.prefix_size(); i++)
-        if (s.list[i-1].val() >= s.list[i].val())
-          return false;
-      return true;
-    }
-
-    bool
-    sliding_solution(const ConstraintSpace& s) {
-      for (int i=1; i<s.list.prefix_size(); i++) {
-        const int count =
-          (s.list[i-1].val() == 1) + (s.list[i].val() == 1);
-        if (count != 1)
-          return false;
-      }
-      return true;
-    }
-
-    bool
-    min_max_solution(const ConstraintSpace& s) {
-      int lower = s.list[0].val();
-      int upper = lower;
-      for (int i=1; i<s.list.prefix_size(); i++) {
-        lower = std::min(lower,s.list[i].val());
-        upper = std::max(upper,s.list[i].val());
-      }
-      return (lower == s.minimum.val()) && (upper == s.maximum.val());
-    }
-
-    bool
-    sliding_sum_solution(const ConstraintSpace& s) {
-      for (int i=1; i<s.list.prefix_size(); i++)
-        if (s.list[i-1].val() + s.list[i].val() != 2)
-          return false;
-      return true;
-    }
-
-    bool
-    precede_solution(const ConstraintSpace& s) {
-      bool seen = false;
-      for (int i=0; i<s.list.prefix_size(); i++) {
-        if ((s.list[i].val() == 1) && !seen)
-          return false;
-        seen |= s.list[i].val() == 0;
-      }
-      return true;
-    }
-
-    class Constraint : public ::Test::Base {
-    protected:
-      ConstraintSpace::Kind kind;
-      int size;
-      int expected;
-      bool (*valid)(const ConstraintSpace&);
+    /// An empty list has no minimum
+    class EmptyMinimum : public Test {
     public:
-      Constraint(const std::string& name, ConstraintSpace::Kind kind0,
-                 int size0, int expected0,
-                 bool (*valid0)(const ConstraintSpace&))
-        : ::Test::Base("Int::OpenList::"+name),
-          kind(kind0), size(size0), expected(expected0), valid(valid0) {}
-
-      virtual bool
-      run(void) {
-        return solutions(kind,size,valid) == expected;
-      }
-    };
-
-    class Precede : public ::Test::Base {
-    public:
-      Precede(void)
-        : ::Test::Base("Int::OpenList::Precede") {}
-
-      virtual bool
-      run(void) {
-        int expected = 0;
-        for (int x0=0; x0<=2; x0++)
-          for (int x1=0; x1<=2; x1++)
-            for (int x2=0; x2<=2; x2++) {
-              bool seen = false;
-              bool valid = true;
-              const int values[3] = {x0,x1,x2};
-              for (int i=0; i<3; i++) {
-                if ((values[i] == 1) && !seen)
-                  valid = false;
-                seen |= values[i] == 0;
-              }
-              expected += valid;
-            }
-        return solutions(ConstraintSpace::PRECEDE,3,
-                         precede_solution) == expected;
-      }
-    };
-
-    class EmptyMinimum : public ::Test::Base {
-    public:
-      EmptyMinimum(void)
-        : ::Test::Base("Int::OpenList::EmptyMinimum") {}
-
-      virtual bool
-      run(void) {
-        using namespace Gecode;
-        class MinimumSpace : public Space {
-        public:
-          OpenIntVarList list;
-          IntVar result;
-
-          MinimumSpace(void)
-            : list(*this,0), result(*this,0,1) {
-            min(*this,list,result);
-            list.close(*this);
-          }
-
-          MinimumSpace(MinimumSpace& s)
-            : Space(s) {
-            list.update(*this,s.list);
-            result.update(*this,s.result);
-          }
-
-          virtual Space*
-          copy(void) {
-            return new MinimumSpace(*this);
-          }
-        } space;
-        return space.status() == SS_FAILED;
+      EmptyMinimum(void) : Test("OpenList::EmptyMinimum",1,0,1) {}
+      virtual bool solution(const Assignment&) const { return false; }
+      virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
+        Gecode::OpenIntVarList list(home,0);
+        Gecode::min(home,list,x[0]);
+        list.close(home);
       }
     };
 
@@ -1116,16 +1005,12 @@ namespace Test { namespace Int {
     Branch branch;
     BranchOrder branch_order;
     Transition transition;
-    Constraint distinct("Distinct",ConstraintSpace::DISTINCT,3,6,
-                        distinct_solution);
-    Constraint relation("Rel",ConstraintSpace::REL,3,1,rel_solution);
-    Constraint sliding("Sliding",ConstraintSpace::SLIDING,4,8,
-                       sliding_solution);
-    Constraint sliding_sum("SlidingSum",ConstraintSpace::SLIDING_SUM,4,3,
-                           sliding_sum_solution);
-    Constraint min_max("MinMax",ConstraintSpace::MIN_MAX,3,12,
-                       min_max_solution);
-    Precede precedence;
+    Constraint distinct("Distinct",Constraint::DISTINCT,3);
+    Constraint relation("Rel",Constraint::REL,3);
+    Constraint sliding("Sliding",Constraint::SLIDING,4);
+    Constraint sliding_sum("SlidingSum",Constraint::SLIDING_SUM,4);
+    Constraint min_max("MinMax",Constraint::MIN_MAX,3);
+    Constraint precedence("Precede",Constraint::PRECEDE,3);
     EmptyMinimum empty_minimum;
     IncrementalConstraints incremental_constraints;
 

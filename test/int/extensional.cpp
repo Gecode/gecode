@@ -1077,109 +1077,52 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test closing an empty list
-     class OpenRegularEmpty : public ::Test::Base {
+     /// Test empty words and automata without accepting states
+     class OpenRegularEmpty : public Test {
+     protected:
+       int kind;
      public:
-       OpenRegularEmpty(void)
-         : ::Test::Base("Int::Extensional::OpenReg::Empty") {}
-
-       virtual bool
-       run(void) {
+       OpenRegularEmpty(int k)
+         : Test("Extensional::OpenReg::Empty::"+str(k),1,0,0), kind(k) {}
+       virtual bool solution(const Assignment&) const { return kind == 0; }
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray&) {
          using namespace Gecode;
-         OpenRegularSpace accepts{DFA()};
-         accepts.list.close(accepts);
-         if (accepts.status() == SS_FAILED)
-           return false;
-
-         DFA d(0,{{0,0,1}},{1},false);
-         OpenRegularSpace rejects(d);
-         rejects.list.close(rejects);
-         if (rejects.status() != SS_FAILED)
-           return false;
-
-         DFA empty(0,{{0,0,0}},std::initializer_list<int>{},false);
-         OpenRegularSpace no_continuation(empty);
-         return no_continuation.status() == SS_FAILED;
-       }
-     };
-
-     /// Space used to compare closed open regular with regular
-     class OpenRegularComparisonSpace : public Gecode::Space {
-     public:
-       Gecode::IntVarArray x;
-       Gecode::OpenIntVarList list;
-
-       OpenRegularComparisonSpace(Gecode::DFA d, bool open,
-                                  int m0, int m1, int m2)
-         : x(*this,3,0,2), list(*this,3) {
-         using namespace Gecode;
-         if (open) {
-           for (int i=0; i<x.size(); i++)
-             list.append(*this,x[i]);
-           list.close(*this);
-           extensional(*this,list,d);
+         OpenIntVarList list(home,8);
+         if (kind == 0) {
+           extensional(home,list,DFA());
+         } else if (kind == 1) {
+           extensional(home,list,DFA(0,{{0,0,1}},{1},false));
          } else {
-           extensional(*this,x,d);
+           extensional(home,list,
+                       DFA(0,{{0,0,0}},std::initializer_list<int>{},false));
          }
-         const int mask[3] = {m0,m1,m2};
-         for (int i=0; i<x.size(); i++)
-           for (int value=0; value<=2; value++)
-             if ((mask[i] & (1 << value)) == 0)
-               rel(*this,x[i],IRT_NQ,value);
-       }
-
-       OpenRegularComparisonSpace(OpenRegularComparisonSpace& s)
-         : Gecode::Space(s) {
-         x.update(*this,s.x);
-         list.update(*this,s.list);
-       }
-
-       virtual Gecode::Space*
-       copy(void) {
-         return new OpenRegularComparisonSpace(*this);
+         if (kind != 2)
+           list.close(home);
        }
      };
 
-     /// Compare closing open regular with the ordinary constraint
-     class OpenRegularClosed : public ::Test::Base {
+     /// Test closed open regular with the standard domain-consistency checks
+     class OpenRegularClosed : public Test {
      public:
        OpenRegularClosed(void)
-         : ::Test::Base("Int::Extensional::OpenReg::Closed") {}
-
-       virtual bool
-       run(void) {
+         : Test("Extensional::OpenReg::Closed",3,0,2,false,Gecode::IPL_DOM) {}
+       virtual bool solution(const Assignment& x) const {
+         int parity = 0;
+         for (int i=0; i<x.size(); i++) {
+           if (x[i] == 2)
+             return false;
+           parity ^= x[i];
+         }
+         return parity == 0;
+       }
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          using namespace Gecode;
-         DFA d(0,
-               {
-                 {0,0,0}, {0,1,1},
-                 {1,0,1}, {1,1,0}
-               },
-               {0},false);
-         for (int m0=1; m0<8; m0++)
-           for (int m1=1; m1<8; m1++)
-             for (int m2=1; m2<8; m2++) {
-               OpenRegularComparisonSpace regular(d,false,m0,m1,m2);
-               OpenRegularComparisonSpace open(d,true,m0,m1,m2);
-               const SpaceStatus regular_status = regular.status();
-               const SpaceStatus open_status = open.status();
-               if ((regular_status == SS_FAILED) !=
-                   (open_status == SS_FAILED))
-                 return false;
-               if (regular_status == SS_FAILED)
-                 continue;
-               for (int i=0; i<regular.x.size(); i++) {
-                 IntVarValues rv(regular.x[i]);
-                 IntVarValues ov(open.x[i]);
-                 while (rv() && ov()) {
-                   if (rv.val() != ov.val())
-                     return false;
-                   ++rv; ++ov;
-                 }
-                 if (rv() || ov())
-                   return false;
-               }
-             }
-         return true;
+         OpenIntVarList list(home,x.size());
+         for (int i=0; i<x.size(); i++)
+           list.append(home,x[i]);
+         list.close(home);
+         DFA d(0,{{0,0,0},{0,1,1},{1,0,1},{1,1,0}},{0},false);
+         extensional(home,list,d);
        }
      };
 
@@ -2562,7 +2505,9 @@ namespace Test { namespace Int {
      OpenRegularBackward open_regular_backward;
      OpenRegularDomainWake open_regular_domain_wake;
      OpenRegularClone open_regular_clone;
-     OpenRegularEmpty open_regular_empty;
+     OpenRegularEmpty open_regular_empty_accept(0);
+     OpenRegularEmpty open_regular_empty_reject(1);
+     OpenRegularEmpty open_regular_no_finals(2);
      OpenRegularClosed open_regular_closed;
 
      /// Exhaustive positive, negative, and reified sparse-table semantics.
