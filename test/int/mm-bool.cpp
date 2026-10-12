@@ -254,7 +254,8 @@ namespace Test { namespace Int {
            home.fail();
            return;
          }
-         home.fail();
+         throw Exception("Test::BoolExprInvalid",
+                         "Expected MiniModel::TooFewArguments");
        }
      };
 

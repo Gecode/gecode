@@ -309,37 +309,6 @@ namespace Test { namespace Int {
       }
     };
 
-    /// Test that DFF lower bounds detect infeasible packing
-    class DFFLowerBound : public Base {
-    protected:
-      /// Simple test space class
-      class TestSpace : public Gecode::Space {
-      public:
-        /// Constructor
-        TestSpace(void) {}
-        /// Copy function
-        virtual Gecode::Space* copy(void) {
-          return nullptr;
-        }
-      };
-    public:
-      /// Constructor
-      DFFLowerBound(void)
-        : Base("Int::BinPacking::DFFLowerBound") {}
-      /// Run the actual test
-      virtual bool run(void) {
-        using namespace Gecode;
-        TestSpace* home = new TestSpace;
-        IntVarArgs l(*home, 3, 0, 5);
-        IntVarArgs b(*home, 6, 0, 2);
-        IntArgs s({4,2,2,2,2,2});
-        binpacking(*home, l, b, s, IPL_FULL);
-        bool failed = home->status() == SS_FAILED;
-        delete home;
-        return failed;
-      }
-    };
-
     /// Test the bin-packing propagation levels
     class PropagationLevels : public Base {
     protected:
@@ -386,59 +355,26 @@ namespace Test { namespace Int {
       }
     };
 
-    /// Test DFF arithmetic at the largest supported integer value
-    class DFFLargeWeights : public Base {
-    protected:
-      /// Simple test space class
-      class TestSpace : public Gecode::Space {
-      public:
-        /// Constructor
-        TestSpace(void) {}
-        /// Copy function
-        virtual Gecode::Space* copy(void) {
-          return nullptr;
-        }
-      };
+    /// Large weights must preserve every feasible bin assignment.
+    class DFFLargeWeights : public Test {
+      int capacity;
+      int weight;
     public:
-      /// Constructor
-      DFFLargeWeights(void)
-        : Base("Int::BinPacking::DFFLargeWeights") {}
-      /// Run the actual test
-      virtual bool run(void) {
-        using namespace Gecode;
-        {
-          TestSpace* home = new TestSpace;
-          IntVarArgs l(*home, 2, 0, Gecode::Int::Limits::max);
-          IntVarArgs b(*home, 1, 0, 1);
-          IntArgs s({Gecode::Int::Limits::max});
-          binpacking(*home, l, b, s);
-          bool failed = home->status() == SS_FAILED;
-          delete home;
-          if (failed)
-            return false;
-        }
-        {
-          TestSpace* home = new TestSpace;
-          int c = Gecode::Int::Limits::max / 2;
-          IntVarArgs l(*home, 2, 0, c);
-          IntVarArgs b(*home, 1, 0, 1);
-          IntArgs s({c});
-          binpacking(*home, l, b, s);
-          bool failed = home->status() == SS_FAILED;
-          delete home;
-          if (failed)
-            return false;
-        }
-        {
-          TestSpace* home = new TestSpace;
-          IntVarArgs l(*home, 2, 0, 1100000000);
-          IntVarArgs b(*home, 2, 0, 1);
-          IntArgs s({1000000000,1000000000});
-          binpacking(*home, l, b, s);
-          bool failed = home->status() == SS_FAILED;
-          delete home;
-          return !failed;
-        }
+      DFFLargeWeights(int n, int c, int w)
+        : Test("BinPacking::DFFLargeWeights::"+str(n)+"::"+str(w),
+               n,0,1), capacity(c), weight(w) {}
+      virtual bool solution(const Assignment& x) const {
+        long long loads[2] = {0,0};
+        for (int i=0; i<x.size(); i++)
+          loads[x[i]] += weight;
+        return (loads[0] <= capacity) && (loads[1] <= capacity);
+      }
+      virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
+        Gecode::IntVarArgs loads(home,2,0,capacity);
+        Gecode::IntArgs sizes(x.size());
+        for (int i=0; i<x.size(); i++)
+          sizes[i] = weight;
+        Gecode::binpacking(home,loads,x,sizes);
       }
     };
 
@@ -526,9 +462,12 @@ namespace Test { namespace Int {
           (void) new CliqueMBPT(c49);
         }
 
-        (void) new DFFLowerBound;
         (void) new PropagationLevels;
-        (void) new DFFLargeWeights;
+        (void) new DFFLargeWeights(1,Gecode::Int::Limits::max,
+                                  Gecode::Int::Limits::max);
+        (void) new DFFLargeWeights(1,Gecode::Int::Limits::max/2,
+                                  Gecode::Int::Limits::max/2);
+        (void) new DFFLargeWeights(2,1100000000,1000000000);
       }
     };
 

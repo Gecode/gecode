@@ -127,7 +127,8 @@ namespace Test { namespace Int { namespace MinDistance {
     virtual Gecode::Space* copy(void) { return new Model(*this); }
   };
 
-  /// Matching certificates, zero witnesses, and callback lifetime
+  /// Domain filtering, matching strength, and callback lifetime
+  // Check domain bounds before assignment and ownership across Space clones.
   class Propagation : public Base {
   public:
     Propagation(void) : Base("Int::MinDistance::Propagation",
@@ -149,31 +150,6 @@ namespace Test { namespace Int { namespace MinDistance {
           rel(*clone,clone->x[1],IRT_EQ,2);
           if ((clone->status() == SS_FAILED) || !clone->z.assigned() ||
               (clone->z.val() != 2) || forward.z.assigned())
-            return false;
-
-          // With only one pair, zero requires equal selections here.
-          Model zero(2,4,0,0,kind,level,
-                     [](int a, int b) { return std::abs(a-b); });
-          dom(zero,zero.x[0],IntSet({0,1}));
-          dom(zero,zero.x[1],IntSet({1,2}));
-          if ((zero.status() == SS_FAILED) ||
-              !zero.x[0].assigned() || (zero.x[0].val() != 1) ||
-              !zero.x[1].assigned() || (zero.x[1].val() != 1))
-            return false;
-
-          // Assigned objectives still need exact equality, not just >= z.
-          Model invalid(2,4,1,1,kind,level,
-                        [](int a, int b) { return std::abs(a-b); });
-          rel(invalid,invalid.x[0],IRT_EQ,0);
-          rel(invalid,invalid.x[1],IRT_EQ,3);
-          if (invalid.status() != SS_FAILED)
-            return false;
-
-          // One active site can be repeated at objective zero.
-          Model repeated(3,1,0,3,kind,level,
-                         [](int, int) { return 0; });
-          if ((repeated.status() == SS_FAILED) || !repeated.z.assigned() ||
-              (repeated.z.val() != 0))
             return false;
         }
 

@@ -494,6 +494,7 @@ namespace Test { namespace Int {
      };
 
      /// Known identities at the integer limits, independent of the oracles.
+     // Observe rewriting after the modulus changes at an initial fixpoint.
      class NumberTheoryLimits : public ::Test::Base {
        class TestSpace : public Gecode::Space {
        public:
@@ -505,33 +506,6 @@ namespace Test { namespace Int {
        virtual bool run(void) {
          using namespace Gecode;
          const int hi=Gecode::Int::Limits::max;
-         const int lo=Gecode::Int::Limits::min;
-         const int cases[][4] = {
-           {lo,hi,hi,1}, {hi,lo,hi,1}, {lo,0,hi,1},
-           {0,lo,hi,0}, {0,0,0,1}, {lo,1,1,0}
-         };
-         for (const auto& c : cases) {
-           TestSpace home;
-           IntVar x(home,c[0],c[0]);
-           IntVar y(home,c[1],c[1]);
-           IntVar g(home,0,hi);
-           BoolVar b(home,0,1);
-           BoolVar correct(home,0,1);
-           BoolVar wrong(home,0,1);
-           gcd(home,x,y,g);
-           divides(home,x,y,Reify(b));
-           IntVar expected(home,c[2],c[2]);
-           IntVar other(home,c[2] == 0 ? 1 : 0,c[2] == 0 ? 1 : 0);
-           gcd(home,x,y,expected,Reify(correct));
-           gcd(home,x,y,other,Reify(wrong));
-           if ((home.status() == SS_FAILED) || !g.assigned() ||
-               (g.val() != c[2]) || !b.assigned() || (b.val() != c[3]) ||
-               !correct.assigned() || (correct.val() != 1) ||
-               !wrong.assigned() || (wrong.val() != 0))
-             return arithmetic_failed
-               ("signed GCD and divisibility: x, y, g, expected, other",
-                Gecode::IntVarArgs() << x << y << g << expected << other);
-         }
          // hi-1 is -1 modulo hi. Its square is 1 and its cube is -1;
          // negating one factor reverses these residues. The cube exceeds
          // signed 64-bit range, but its residue remains exactly known.
@@ -559,26 +533,55 @@ namespace Test { namespace Int {
                      ("large product residue: x, m, y",
                       Gecode::IntVarArgs() << x << m << y);
                }
-               for (ReifyMode rm : {RM_EQV,RM_IMP,RM_PMI})
-                 for (int truth=0; truth<=1; truth++)
-                   for (int control=0; control<=1; control++) {
-                     TestSpace home;
-                     IntVarArgs x(home,n,hi-1,hi-1);
-                     if (negative) x[0]=IntVar(home,1-hi,1-hi);
-                     IntVar m(home,hi,hi);
-                     IntVar y(home,truth ? expected : 0,truth ? expected : 0);
-                     BoolVar b(home,control,control);
-                     if (variable) product_mod(home,x,m,y,Reify(b,rm));
-                     else product_mod(home,x,hi,y,Reify(b,rm));
-                     const bool holds=(rm == RM_EQV) ? (control == truth) :
-                       ((rm == RM_IMP) ? (!control || truth) : (!truth || control));
-                     if ((home.status() != SS_FAILED) != holds)
-                       return arithmetic_failed
-                         ("large product reification: x, m, y",
-                          Gecode::IntVarArgs() << x << m << y);
-                   }
              }
          return true;
+       }
+     };
+
+     /// Known modular residues whose unreduced product exceeds 64 bits.
+     class ProductModLimits : public Test {
+       int n;
+       bool negative;
+       bool variable;
+     public:
+       ProductModLimits(int n0, bool neg, bool var)
+         : Test("Arithmetic::ProductMod::Limits::"+str(n0)+"::"+
+                str(neg)+"::"+str(var),1,
+                Gecode::IntSet({0,1,Gecode::Int::Limits::max-1}),true),
+           n(n0), negative(neg), variable(var) {
+         // Reified modular products do not promise a propagation fixpoint.
+         testfix = false;
+       }
+       virtual bool solution(const Assignment& x) const {
+         return x[0] == (((n+negative)%2 == 0) ?
+                         1 : Gecode::Int::Limits::max-1);
+       }
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
+         using namespace Gecode;
+         const int hi = Gecode::Int::Limits::max;
+         IntVarArgs factors(home,n,hi-1,hi-1);
+         if (negative)
+           factors[0] = IntVar(home,1-hi,1-hi);
+         if (variable) {
+           IntVar modulus(home,hi,hi);
+           product_mod(home,factors,modulus,x[0]);
+         } else {
+           product_mod(home,factors,hi,x[0]);
+         }
+       }
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x,
+                         Gecode::Reify r) {
+         using namespace Gecode;
+         const int hi = Gecode::Int::Limits::max;
+         IntVarArgs factors(home,n,hi-1,hi-1);
+         if (negative)
+           factors[0] = IntVar(home,1-hi,1-hi);
+         if (variable) {
+           IntVar modulus(home,hi,hi);
+           product_mod(home,factors,modulus,x[0],r);
+         } else {
+           product_mod(home,factors,hi,x[0],r);
+         }
        }
      };
 
@@ -1932,48 +1935,31 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Verify that inactive implication modes leave all integer views alone
-     class ProductModVarInactive : public ::Test::Base {
-     protected:
-       class TestSpace : public Gecode::Space {
-       public:
-         virtual Gecode::Space* copy(void) { return nullptr; }
-       };
-       static bool unchanged(const Gecode::IntVar& x, const int* v, int n) {
-         if (x.size() != static_cast<unsigned int>(n))
-           return false;
-         for (int i=0; i<n; i++)
-           if (!x.in(v[i]))
-             return false;
-         return true;
-       }
+     /// Inactive implications preserve every assignment in the input domains.
+     class ProductModVarInactive : public Test {
+       int mode;
      public:
-       ProductModVarInactive(void)
-         : ::Test::Base("Int::Arithmetic::ProductModVar::Inactive") {}
-       virtual bool run(void) {
+       ProductModVarInactive(int m)
+         : Test("Arithmetic::ProductModVar::Inactive::"+str(m),3,-4,7),
+           mode(m) {}
+       virtual bool solution(const Assignment& x) const {
+         return ((x[0] == -3) || (x[0] == -1) || (x[0] == 0) ||
+                 (x[0] == 2) || (x[0] == 5)) &&
+                ((x[1] == -2) || (x[1] == 0) || (x[1] == 1) ||
+                 (x[1] == 4)) &&
+                ((x[2] == -4) || (x[2] == 0) || (x[2] == 3) ||
+                 (x[2] == 7));
+       }
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          using namespace Gecode;
-         const int xv[5] = {-3,-1,0,2,5};
-         const int mv[4] = {-2,0,1,4};
-         const int yv[4] = {-4,0,3,7};
-         for (int mode=0; mode<2; mode++) {
-           TestSpace home;
-           IntVar x(home,IntSet(xv,5));
-           IntVar m(home,IntSet(mv,4));
-           IntVar y(home,IntSet(yv,4));
-           BoolVar b(home,mode,mode);
-           Reify r(b,mode == 0 ? RM_IMP : RM_PMI);
-           product_mod(home,IntVarArgs({x,x}),m,y,r);
-           if ((home.status() == SS_FAILED) ||
-               !unchanged(x,xv,5) || !unchanged(m,mv,4) ||
-               !unchanged(y,yv,4))
-             return arithmetic_failed
-               ("inactive implication: x, m, y",
-                Gecode::IntVarArgs() << x << m << y);
-         }
-         return true;
+         Gecode::dom(home,x[0],IntSet({-3,-1,0,2,5}));
+         Gecode::dom(home,x[1],IntSet({-2,0,1,4}));
+         Gecode::dom(home,x[2],IntSet({-4,0,3,7}));
+         BoolVar b(home,mode,mode);
+         product_mod(home,IntVarArgs({x[0],x[0]}),x[1],x[2],
+                     Reify(b,mode == 0 ? RM_IMP : RM_PMI));
        }
      };
-
 
      /// %Test that a nonpositive modular-product modulus is rejected
      class ProductModInvalidModulus : public ::Test::Base {
@@ -3288,6 +3274,11 @@ namespace Test { namespace Int {
            (void) new NumberTheoryAlgebraic(k);
          (void) new NumberTheoryLifecycle;
          (void) new NumberTheoryLimits;
+         (void) new DividesXY("Limits",p,Gecode::IPL_BND);
+         for (int n=2; n<=3; n++)
+           for (bool negative : {false,true})
+             for (bool variable : {false,true})
+               (void) new ProductModLimits(n,negative,variable);
          (void) new NumberTheoryIdentities;
          (void) new ProductModInvalidModulus;
          (void) new ProductModAlgebraic;
@@ -3308,7 +3299,8 @@ namespace Test { namespace Int {
          (void) new ProductModVarSparseModulus(false);
          (void) new ProductModVarSparseModulus(true);
          (void) new ProductModVarAlgebraic;
-         (void) new ProductModVarInactive;
+         (void) new ProductModVarInactive(0);
+         (void) new ProductModVarInactive(1);
          (void) new ProductBoundsLarge;
          (void) new ProductSimplifySign;
          (void) new ProductPowerAlias;
