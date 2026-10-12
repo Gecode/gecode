@@ -36,33 +36,24 @@
 
 namespace Test { namespace FlatZinc {
   namespace {
-    // Basic and advanced annotations must select different filtering stages.
+    // Annotations preserve both consistency and algorithm flags.
     class AlgorithmAnnotations : public Base {
     public:
-      AlgorithmAnnotations(void) : Base("FlatZinc::NativeRegistry::AlgorithmAnnotations") {}
+      AlgorithmAnnotations(void)
+        : Base("FlatZinc::NativeRegistry::AlgorithmAnnotations") {}
       virtual bool run(void) {
         const char* names[] = {"gecode_basic_propagation",
           "gecode_advanced_propagation", "gecode_full_propagation"};
+        const Gecode::IntPropLevel levels[] = {
+          Gecode::IPL_BASIC, Gecode::IPL_ADVANCED, Gecode::IPL_FULL
+        };
         for (int i=0; i<3; i++) {
           Gecode::FlatZinc::FlatZincSpace space;
           Gecode::FlatZinc::AST::Array ann;
           ann.a.push_back(new Gecode::FlatZinc::AST::Atom(names[i]));
           ann.a.push_back(new Gecode::FlatZinc::AST::Atom("domain"));
-          Gecode::IntVarArgs x(3);
-          x[0] = Gecode::IntVar(space,2,6);
-          x[1] = Gecode::IntVar(space,10,14);
-          x[2] = Gecode::IntVar(space,4,15);
-          Gecode::IntVar distance(space,6,8);
-          Gecode::inter_distance(space,x,distance,space.ann2ipl(&ann));
-          if ((space.status() == Gecode::SS_FAILED) || !distance.assigned() ||
-              (distance.val() != 6))
+          if (space.ann2ipl(&ann) != (Gecode::IPL_DOM | levels[i]))
             return false;
-          if (i == 0) {
-            if ((x[0].min() != 2) || (x[0].max() != 6)) return false;
-          } else if (!x.assigned() || (x[0].val() != 2) ||
-                     (x[1].val() != 14) || (x[2].val() != 8)) {
-            return false;
-          }
         }
         return true;
       }

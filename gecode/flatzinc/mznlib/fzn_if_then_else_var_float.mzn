@@ -39,8 +39,8 @@ predicate gecode_float_ite(
 
 % A two-branch conditional ends with a fixed true condition for else.
 predicate fzn_if_then_else_var_float(
-  array[int] of var bool: c,
-  array[int] of var float: x,
+  array [int] of var bool: c,
+  array [int] of var float: x,
   var float: y,
 ) =
   if length(c) = 2 /\
@@ -53,7 +53,7 @@ predicate fzn_if_then_else_var_float(
     gecode_float_ite(c[min(index_set(c))], x[min(index_set(c))], x[max(index_set(c))], y)
   else
     let {
-      array[index_set(c)] of var bool: d;
+      array [index_set(c)] of var bool: d;
     } in
     forall (i in index_set(c)) (
       if i > min(index_set(c)) then

@@ -1154,8 +1154,7 @@ namespace Gecode { namespace FlatZinc {
       argmax(s, bv, offset, s.arg2IntVar(ce[2]), true, s.ann2ipl(ann));
     }
 
-    template<class VarArgs>
-    void p_regular(FlatZincSpace& s, VarArgs iv, int q, int symbols_min,
+    void p_regular(FlatZincSpace& s, IntVarArgs iv, int q, int symbols_min,
                    int symbols_max,  IntArgs d, int q0, AST::SetLit* finals,
                    AST::Node* ann) {
       int symbols = symbols_max - symbols_min + 1;
@@ -1215,9 +1214,9 @@ namespace Gecode { namespace FlatZinc {
     }
 
 
-    template<class VarArgs>
-    void p_regular_nfa(FlatZincSpace& s, VarArgs x, const ConExpr& ce,
-                       AST::Node* ann) {
+    void p_regular_nfa_int(FlatZincSpace& s, const ConExpr& ce,
+                           AST::Node* ann) {
+      IntVarArgs x = s.arg2intvarargs(ce[0]);
       int q = ce[1]->getInt(), first_symbol = ce[2]->getInt();
       int symbols = ce[3]->getInt(), initial = ce[5]->getInt();
       IntSetArgs table = s.arg2intsetargs(ce[4]);
@@ -1246,9 +1245,6 @@ namespace Gecode { namespace FlatZinc {
       DFA automaton = DFA::nfa(initial,transitions.data(),accepting.data());
       unshare(s,x);
       extensional(s,x,s.getSharedDFA(automaton),s.ann2ipl(ann));
-    }
-    void p_regular_nfa_int(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
-      p_regular_nfa(s,s.arg2intvarargs(ce[0]),ce,ann);
     }
 
     void
@@ -2041,14 +2037,12 @@ fvar,
 
     void p_arg_min_bool(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
       BoolVarArgs x = s.arg2boolvarargs(ce[0]);
-      unshare(s, x);
       argmin(s, x, ce[1]->getInt(), s.arg2IntVar(ce[2]),
                 ce[3]->getBool(), s.ann2ipl(ann));
     }
 
     void p_arg_max_bool(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
       BoolVarArgs x = s.arg2boolvarargs(ce[0]);
-      unshare(s, x);
       argmax(s, x, ce[1]->getInt(), s.arg2IntVar(ce[2]),
                 ce[3]->getBool(), s.ann2ipl(ann));
     }
