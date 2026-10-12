@@ -1926,21 +1926,9 @@ fvar,
       count(s, s.arg2intvarargs(ce[0]), s.arg2IntVar(ce[1]),
             int_relation(ce[2]), s.arg2IntVar(ce[3]), s.ann2ipl(ann));
     }
-    void p_count_in(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
-      count(s, s.arg2intvarargs(ce[0]), s.arg2intset(ce[1]),
-            int_relation(ce[2]), s.arg2IntVar(ce[3]), s.ann2ipl(ann));
-    }
     void p_count_matches(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
       count(s, s.arg2intvarargs(ce[0]), s.arg2intargs(ce[1]),
             int_relation(ce[2]), s.arg2IntVar(ce[3]), s.ann2ipl(ann));
-    }
-    void p_nvalues_int(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
-      nvalues(s, s.arg2intvarargs(ce[0]), int_relation(ce[1]),
-              s.arg2IntVar(ce[2]), s.ann2ipl(ann));
-    }
-    void p_nvalues_bool(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
-      nvalues(s, s.arg2boolvarargs(ce[0]), int_relation(ce[1]),
-              s.arg2IntVar(ce[2]), s.ann2ipl(ann));
     }
     void p_array_int_ne(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
       rel(s, s.arg2intvarargs(ce[0]), IRT_NQ,
@@ -2018,42 +2006,11 @@ fvar,
         minimum_distance(s,x,s.arg2IntVar(ce[3]),d,s.ann2ipl(ann),kind);
     }
 
-    void p_int_divmod(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
-      IntVar x = s.arg2IntVar(ce[0]), y = s.arg2IntVar(ce[1]);
-      IntVar q = s.arg2IntVar(ce[2]), r = s.arg2IntVar(ce[3]);
-      // Bound the results before the linear decomposition estimates its ranges.
-      // For nonzero y, truncating division gives |q| <= |x| and r between 0 and x.
-      int magnitude = std::max(-x.min(),x.max());
-      dom(s,q,-magnitude,magnitude);
-      dom(s,r,std::min(0,x.min()),std::max(0,x.max()));
-      if (!s.failed())
-        divmod(s,x,y,q,r,s.ann2ipl(ann));
-    }
     void p_int_nroot(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
       nroot(s, s.arg2IntVar(ce[0]), ce[1]->getInt(), s.arg2IntVar(ce[2]),
             s.ann2ipl(ann));
     }
 
-    void p_path(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
-      IntVarArgs x = s.arg2intvarargs(ce[1]);
-      unshare(s, x);
-      path(s, ce[0]->getInt(), x, s.arg2IntVar(ce[2]), s.arg2IntVar(ce[3]),
-           s.ann2ipl(ann));
-    }
-    void p_path_cost(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
-      IntVarArgs x = s.arg2intvarargs(ce[2]);
-      unshare(s, x);
-      path(s, s.arg2intargs(ce[0]), ce[1]->getInt(), x,
-           s.arg2IntVar(ce[3]), s.arg2IntVar(ce[4]), s.arg2IntVar(ce[5]),
-           s.ann2ipl(ann));
-    }
-    void p_path_cost_array(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
-      IntVarArgs x = s.arg2intvarargs(ce[2]);
-      unshare(s, x);
-      path(s, s.arg2intargs(ce[0]), ce[1]->getInt(), x,
-           s.arg2IntVar(ce[3]), s.arg2IntVar(ce[4]), s.arg2intvarargs(ce[5]),
-           s.arg2IntVar(ce[6]), s.ann2ipl(ann));
-    }
     void p_nooverlap_optional(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
       nooverlap(s, s.arg2intvarargs(ce[0]), s.arg2intargs(ce[1]),
                 s.arg2intvarargs(ce[2]), s.arg2intargs(ce[3]),
@@ -2313,10 +2270,7 @@ fvar,
         registry().add("gecode_bool_int_channel", &p_bool_int_channel);
         registry().add("gecode_sort_permutation", &p_sort_permutation);
         registry().add("gecode_count_int_fzn", &p_count_int);
-        registry().add("gecode_count_in_fzn", &p_count_in);
         registry().add("gecode_count_matches_fzn", &p_count_matches);
-        registry().add("gecode_nvalues_int_fzn", &p_nvalues_int);
-        registry().add("gecode_nvalues_bool_fzn", &p_nvalues_bool);
         registry().add("gecode_int_ite", &p_int_ite);
         registry().add("gecode_bool_ite", &p_bool_ite);
         registry().add("gecode_gcd_int", &p_gcd);
@@ -2336,11 +2290,7 @@ fvar,
         registry().add("gecode_product_mod_var_fzn_imp", &p_product_mod_reif<false,RM_IMP>);
         registry().add("gecode_minimum_distance_fzn", &p_minimum_distance);
         registry().add("gecode_minimum_distance_required_fzn", &p_minimum_distance);
-        registry().add("gecode_int_divmod", &p_int_divmod);
         registry().add("gecode_int_nroot", &p_int_nroot);
-        registry().add("gecode_path", &p_path);
-        registry().add("gecode_path_cost", &p_path_cost);
-        registry().add("gecode_path_cost_array", &p_path_cost_array);
         registry().add("gecode_nooverlap_optional", &p_nooverlap_optional);
         registry().add("gecode_all_different_optional", &p_distinct_optional);
         registry().add("gecode_all_different_except", &p_distinct_except);
@@ -2594,7 +2544,8 @@ fvar,
 
     void p_array_set_seq(FlatZincSpace& s, const ConExpr& ce, AST::Node *) {
       SetVarArgs sv = s.arg2setvarargs(ce[0]);
-      sequence(s, sv);
+      if (sv.size() > 0)
+        sequence(s, sv);
     }
 
     void p_array_set_seq_union(FlatZincSpace& s, const ConExpr& ce,
@@ -2979,11 +2930,6 @@ fvar,
     void p_float_pow(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
       pow(s, s.arg2FloatVar(ce[0]), ce[1]->getInt(), s.arg2FloatVar(ce[2]));
     }
-    void p_float_nroot(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
-      if (ce[1]->getInt() <= 0)
-        throw FlatZinc::Error("Registry", "float root degree must be positive");
-      nroot(s, s.arg2FloatVar(ce[0]), ce[1]->getInt(), s.arg2FloatVar(ce[2]));
-    }
     void p_float_array_min(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
       min(s, s.arg2floatvarargs(ce[0]), s.arg2FloatVar(ce[1]));
     }
@@ -2993,9 +2939,6 @@ fvar,
 #ifdef GECODE_HAS_MPFR
     void p_float_pow_base(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
       pow(s, ce[0]->getFloat(), s.arg2FloatVar(ce[1]), s.arg2FloatVar(ce[2]));
-    }
-    void p_float_log_base(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
-      log(s, ce[0]->getFloat(), s.arg2FloatVar(ce[1]), s.arg2FloatVar(ce[2]));
     }
 #endif
 
@@ -3022,7 +2965,6 @@ fvar,
         registry().add("gecode_float_rel_imp_fzn", &p_float_rel_imp);
         registry().add("gecode_float_ite", &p_float_ite);
         registry().add("gecode_float_pow", &p_float_pow);
-        registry().add("gecode_float_nroot", &p_float_nroot);
         registry().add("gecode_float_array_min", &p_float_array_min);
         registry().add("gecode_float_array_max", &p_float_array_max);
 
@@ -3050,7 +2992,6 @@ fvar,
 
 #ifdef GECODE_HAS_MPFR
         registry().add("gecode_float_pow_base", &p_float_pow_base);
-        registry().add("gecode_float_log_base", &p_float_log_base);
         registry().add("float_acos",&p_float_acos);
         registry().add("float_asin",&p_float_asin);
         registry().add("float_atan",&p_float_atan);

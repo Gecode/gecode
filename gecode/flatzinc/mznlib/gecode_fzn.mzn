@@ -80,31 +80,10 @@ predicate gecode_count_int_fzn(
   var int: count,
 );
 
-% Compare the number of entries of x that belong to values with count.
-predicate gecode_count_in_fzn(
-  array[int] of var int: x,
-  set of int: values,
-  int: relation,
-  var int: count,
-);
-
 % Compare the number of position-wise matches between x and values with count.
 predicate gecode_count_matches_fzn(
   array[int] of var int: x,
   array[int] of int: values,
-  int: relation,
-  var int: count,
-);
-
-% Compare the number of distinct values in x with count; an empty array has none.
-predicate gecode_nvalues_int_fzn(
-  array[int] of var int: x,
-  int: relation,
-  var int: count,
-);
-
-predicate gecode_nvalues_bool_fzn(
-  array[int] of var bool: x,
   int: relation,
   var int: count,
 );
@@ -172,14 +151,6 @@ predicate gecode_minimum_distance_required_fzn(
   array[int] of int: requirements,
 );
 
-% x = y*quotient+remainder, with quotient truncated toward zero and y != 0.
-predicate gecode_int_divmod(
-  var int: x,
-  var int: y,
-  var int: quotient,
-  var int: remainder,
-);
-
 % y is floor(root(x,n)); n is positive, and negative x requires odd n.
 predicate gecode_int_nroot(var int: x, int: n, var int: y);
 
@@ -193,34 +164,6 @@ predicate gecode_regular_nfa_int_fzn(
   array[int] of set of int: transitions,
   int: initial,
   set of int: final,
-);
-
-% Node labels start at offset; the final successor is offset+length(x).
-predicate gecode_path(
-  int: offset,
-  array[int] of var int: x,
-  var int: start,
-  var int: end,
-);
-
-% costs is a row-major square matrix; the final successor edge costs zero.
-predicate gecode_path_cost(
-  array[int] of int: costs,
-  int: offset,
-  array[int] of var int: x,
-  var int: start,
-  var int: end,
-  var int: cost,
-);
-
-predicate gecode_path_cost_array(
-  array[int] of int: costs,
-  int: offset,
-  array[int] of var int: x,
-  var int: start,
-  var int: end,
-  array[int] of var int: edge_costs,
-  var int: cost,
 );
 
 % Constrain tasks whose present entry is true not to overlap. Durations are
@@ -302,10 +245,6 @@ predicate gecode_set_element2d(
 % Constrain y to be x raised to the nonnegative integer n.
 predicate gecode_float_pow(var float: x, int: n, var float: y);
 
-% Constrain y to be the n-th root of x. The degree n is positive.
-% Both x and y are nonnegative, including for odd degrees.
-predicate gecode_float_nroot(var float: x, int: n, var float: y);
-
 % Constrain y to be the minimum of the nonempty array x.
 predicate gecode_float_array_min(array[int] of var float: x, var float: y);
 
@@ -314,10 +253,6 @@ predicate gecode_float_array_max(array[int] of var float: x, var float: y);
 
 % Constrain y to be the positive fixed base raised to x. Requires MPFR.
 predicate gecode_float_pow_base(float: base, var float: x, var float: y);
-
-% Constrain y to be the logarithm of x to the fixed base.
-% The base is positive and differs from one; x is positive. Requires MPFR.
-predicate gecode_float_log_base(float: base, var float: x, var float: y);
 
 % index is the zero-based position plus offset of an extremum.
 % If break_ties is true, choose the first such position. Arrays are nonempty.

@@ -93,22 +93,14 @@ namespace Test { namespace FlatZinc {
           "constraint gecode_minimum_distance_fzn([0,0,2],3,[0,2,4,2,0,3,4,3,0],1); solve satisfy;", unsat);
         (void) new FlatZincTest("NativeRegistry::NondeterministicPrefix",
           "constraint gecode_regular_nfa_int_fzn([0,1],3,0,2,[{1,2},{},{},{3},{},{}],1,{3}); solve satisfy;", sat);
-        (void) new FlatZincTest("NativeRegistry::DivmodNegative",
-          "constraint gecode_int_divmod(-7,4,-1,-3); solve satisfy;", sat);
-        (void) new FlatZincTest("NativeRegistry::DivmodUnboundedResults",
-          "var 0..17:x; var int:q; var int:r; "
-          "constraint gecode_int_divmod(x,5,q,r); "
-          "constraint int_eq(x,17); constraint int_ne(q,3); solve satisfy;", unsat);
-        (void) new FlatZincTest("NativeRegistry::DivmodUnboundedNegativeResults",
-          "var -17..0:x; var int:q; var int:r; "
-          "constraint gecode_int_divmod(x,-5,q,r); "
-          "constraint int_eq(x,-17); constraint int_ne(r,-2); solve satisfy;", unsat);
-        (void) new FlatZincTest("NativeRegistry::PathCostSentinel",
-          "constraint gecode_path_cost_array([0,4,9,1,0,5,7,2,0],0,[1,2,3],0,2,[4,5,0],9); solve satisfy;", sat);
         (void) new FlatZincErrorTest("NativeRegistry::SortSize",
           "constraint gecode_sort_permutation([1,2],[1],[1,2],1); solve satisfy;",
           {}, "sort arrays must have equal lengths");
 #ifdef GECODE_HAS_SET_VARS
+        (void) new FlatZincTest("NativeRegistry::SetSequenceEmpty",
+          "constraint gecode_array_set_seq([]); solve satisfy;", sat);
+        (void) new FlatZincTest("NativeRegistry::SetSequenceEmptyUnion",
+          "constraint gecode_array_set_seq_union([],{1}); solve satisfy;", unsat);
         (void) new FlatZincTest("NativeRegistry::AtmostOneSingletonCardinality",
           "constraint gecode_set_atmost_one([{1}],2); solve satisfy;", unsat);
         (void) new FlatZincTest("NativeRegistry::AtmostOneUnitCardinality",
