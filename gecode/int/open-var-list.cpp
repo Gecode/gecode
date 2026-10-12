@@ -507,16 +507,19 @@ namespace Gecode { namespace Int {
     SharedData<VarValPrint<Var,int>> printer;
     OpenVarBranch order;
     IntValBranch::Select values;
+    bool select_first;
     mutable int start;
 
     OpenListBrancher(Home home, OpenVarList<Var> list0,
                      ViewSel<View>* vs0[n],
                      ValSelCommitBase<View,int>* vsc0,
                      OpenVarBranch order0, IntValBranch::Select values0,
+                     bool select_first0,
                      BranchFilter<Var> bf, VarValPrint<Var,int> vvp)
       : Brancher(home), list(list0), vsc(vsc0),
         filter(bf ? bf : [](const Space&, Var, int) { return true; }),
-        printer(vvp), order(order0), values(values0), start(0) {
+        printer(vvp), order(order0), values(values0),
+        select_first(select_first0), start(0) {
       for (int i=0; i<n; i++)
         vs[i] = vs0[i];
       home.notice(*this,AP_DISPOSE,true);
@@ -525,7 +528,7 @@ namespace Gecode { namespace Int {
     OpenListBrancher(Space& home, OpenListBrancher& b)
       : Brancher(home,b), vsc(nullptr),
         filter(b.filter), printer(b.printer), order(b.order),
-        values(b.values), start(b.start) {
+        values(b.values), select_first(b.select_first), start(b.start) {
       list.update(home,b.list);
       int copied = 0;
       try {
@@ -545,6 +548,8 @@ namespace Gecode { namespace Int {
     /// Select from a temporary array, keeping positions stable across growth
     int
     position(Space& home) {
+      if (select_first)
+        return start;
       Region r;
       ViewArray<View> x(r,list.prefix_size());
       for (int i=0; i<x.size(); i++)
@@ -581,7 +586,7 @@ namespace Gecode { namespace Int {
   public:
     virtual bool
     status(const Space& home) const {
-      if ((order == OVB_HORIZON_FIRST) &&
+      if ((order == OVB_LENGTH_FIRST) &&
           (list.length().max() > list.prefix_size()))
         return true;
       for (int i=start; i<list.prefix_size(); i++)
@@ -594,7 +599,7 @@ namespace Gecode { namespace Int {
 
     virtual const Choice*
     choice(Space& home) {
-      if ((order == OVB_HORIZON_FIRST) &&
+      if ((order == OVB_LENGTH_FIRST) &&
           (list.length().max() > list.prefix_size()))
         return new PosValChoice<int>(*this,2,Pos(-1),list.prefix_size());
       for (int i=start; i<list.prefix_size(); i++)
@@ -626,6 +631,12 @@ namespace Gecode { namespace Int {
     commit(Space& home, const Choice& c, unsigned int a) {
       const int p = static_cast<const PosChoice&>(c).pos().pos;
       if (p >= 0) {
+        // Recomputation can replay choices before propagation grows the prefix.
+        if (p >= list.prefix_size()) {
+          list.materialize(home,p+1);
+          if (home.failed())
+            return ES_FAILED;
+        }
         View x(list[p]);
         const ModEvent me = vsc
           ? vsc->commit(home,a,x,p,static_cast<const PosValChoice<int>&>(c).val())
@@ -705,7 +716,8 @@ namespace Gecode { namespace Int {
       for (int i=0; i<n; i++)
         vs[i] = Branch::viewsel(home,vars[i]);
       (void) new (home)
-        OpenListBrancher(home,list,vs,vsc,order,values,bf,vvp);
+        OpenListBrancher(home,list,vs,vsc,order,values,
+                         vars[0].select() == VarBranch::SEL_NONE,bf,vvp);
     }
   };
 
@@ -755,7 +767,7 @@ namespace Gecode { namespace Int {
                      OpenVarBranch order,
                      BranchFilter<typename View::VarType> bf,
                      VarValPrint<typename View::VarType,int> vvp) {
-    if ((order != OVB_HORIZON_FIRST) && (order != OVB_VALUE_FIRST))
+    if ((order != OVB_LENGTH_FIRST) && (order != OVB_VALUE_FIRST))
       throw UnknownBranching("Int::branch");
     VarBranch selectors[4] = {vars.a,vars.b,vars.c,vars.d};
     int n = 1;
@@ -825,13 +837,13 @@ namespace Gecode {
   void
   sequence(Home home, OpenIntVarList x, const IntSet& values,
            int width, int lower, int upper, IntPropLevel ipl) {
-    Int::Limits::check(values.min(),"Int::list");
-    Int::Limits::check(values.max(),"Int::list");
-    Int::Limits::check(width,"Int::list");
-    Int::Limits::check(lower,"Int::list");
-    Int::Limits::check(upper,"Int::list");
+    Int::Limits::check(values.min(),"Int::sequence");
+    Int::Limits::check(values.max(),"Int::sequence");
+    Int::Limits::check(width,"Int::sequence");
+    Int::Limits::check(lower,"Int::sequence");
+    Int::Limits::check(upper,"Int::sequence");
     if (width < 1)
-      throw Int::OutOfLimits("Int::list");
+      throw Int::OutOfLimits("Int::sequence");
     GECODE_POST;
     lower = std::max(0,lower);
     upper = std::min(width,upper);

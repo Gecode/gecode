@@ -2441,7 +2441,12 @@ namespace Gecode {
    * Other variable types use a factory passed to OpenVarList<Var>, for
    * example a function returning SetVar or FloatVar. Storage, cloning, and
    * materialization are shared; constraint and branching overloads remain
-   * specific to the variable type.
+   * specific to the variable type. Var must provide the usual Gecode variable
+   * handle operations: default and copy construction, assignment, assigned(),
+   * varimp(), and update().
+   *
+   * Operations require an initialized list belonging to the supplied space.
+   * Appended variables must also be initialized and belong to that space.
    *
    * A list can be used in an ordinary Space:
    * \code
@@ -2449,7 +2454,7 @@ namespace Gecode {
    * public:
    *   OpenIntVarList x;
    *   Model(void) : x(*this,IntSet(0,1),3) {
-   *     rel(*this,x.length(),IRT_EQ,2);
+   *     rel(*this,x.length(),IRT_GQ,1);
    *     distinct(*this,x);
    *     branch(*this,x);
    *   }
@@ -2474,16 +2479,18 @@ namespace Gecode {
      * \brief Function creating the variable at position \a i in \a home
      *
      * The function object is shared between clones. It must be deterministic
-     * and must not capture space-local data. Returned variables must belong
-     * to \a home and be initialized.
+     * and safe for concurrent calls. Captured data must be owned or shared
+     * and must not be space-local. Returned variables must belong to \a home
+     * and be initialized.
      */
     typedef std::function<Var(Space& home, int i)> Factory;
     /**
      * \brief Function called after materializing position \a i
      *
      * The function object is shared between clones. It must be
-     * deterministic and must not capture space-local data; \a home and
-     * \a x refer to the current space.
+     * deterministic and safe for concurrent calls. Captured data must be
+     * owned or shared and must not be space-local; \a home and \a x refer
+     * to the current space.
      */
     typedef std::function<void(Space& home, OpenVarList<Var> x, int i)>
       Transition;
@@ -2528,7 +2535,9 @@ namespace Gecode {
      * positions through \a i.
      *
      * Returns an uninitialized variable if \a home is failed or
-     * materialization fails.
+     * materialization fails. Throws Int::OutOfLimits for a negative index,
+     * an index outside Int::Limits, or (in a nonfailed space) an index at
+     * least length().max().
      */
     Var get(Space& home, int i);
     /**
@@ -2557,8 +2566,9 @@ namespace Gecode {
     /**
      * \brief Function returning the domain for position \a i
      *
-     * Like Factory, it must be deterministic and must not capture space-local
-     * data. The function object is shared between clones.
+     * Like Factory, it must be deterministic, safe for concurrent calls, and
+     * must not capture space-local data. Captured data must be owned or shared.
+     * The function object is shared between clones.
      */
     typedef std::function<IntSet(int i)> Domain;
     using OpenVarList<IntVar>::OpenVarList;
@@ -2664,7 +2674,8 @@ namespace Gecode {
   /**
    * \brief Constrain \a y to the minimum of the eventual sequence \a x
    *
-   * The eventual sequence must be nonempty.
+   * The eventual sequence must be nonempty. Bounds are enforced as positions
+   * appear; attainment of the extremum is enforced when the list closes.
    *
    * \ingroup TaskModelIntArith
    */
@@ -2675,7 +2686,8 @@ namespace Gecode {
   /**
    * \brief Constrain \a y to the maximum of the eventual sequence \a x
    *
-   * The eventual sequence must be nonempty.
+   * The eventual sequence must be nonempty. Bounds are enforced as positions
+   * appear; attainment of the extremum is enforced when the list closes.
    *
    * \ingroup TaskModelIntArith
    */
@@ -5181,8 +5193,8 @@ namespace Gecode {
    * \ingroup TaskModelIntBranch
    */
   enum OpenVarBranch {
-    OVB_HORIZON_FIRST, ///< Select the horizon before list values
-    OVB_VALUE_FIRST    ///< Select materialized values before the horizon
+    OVB_LENGTH_FIRST, ///< Select the length before list values
+    OVB_VALUE_FIRST    ///< Select materialized values before the length
   };
 
   /**
@@ -6126,27 +6138,38 @@ namespace Gecode {
   /**
    * \brief Branch over the eventual integer list \a x
    *
-   * The default selects the horizon first, then the first unassigned
+   * The default selects the length first, then the first unassigned
    * variable and its minimum value.
    * \ingroup TaskModelIntBranch
    */
   GECODE_INT_EXPORT void
   branch(Home home, OpenIntVarList x,
-         OpenVarBranch o=OVB_HORIZON_FIRST);
+         OpenVarBranch o=OVB_LENGTH_FIRST);
   /**
    * \brief Branch over the eventual Boolean list \a x
    * \ingroup TaskModelIntBranch
    */
   GECODE_INT_EXPORT void
   branch(Home home, OpenBoolVarList x,
-         OpenVarBranch o=OVB_HORIZON_FIRST);
+         OpenVarBranch o=OVB_LENGTH_FIRST);
   /**
    * \brief Branch over an open integer list with standard selectors
    *
-   * Selectors consider all materialized positions. \a OVB_HORIZON_FIRST
+   * Selectors consider all materialized positions. \a OVB_LENGTH_FIRST
    * decides the length before values; \a OVB_VALUE_FIRST selects values
    * before closing or extending the list. Filters and callbacks receive
-   * the position in the list.
+   * the position in the list. The length decision first tries to close at
+   * prefix_size(), then requires at least one more position. With no finite
+   * application bound, exploring these lengths can be very expensive.
+   *
+   * To choose the length with another value selector, post an ordinary
+   * brancher on x.length() before the list brancher, for example:
+   * \code
+   * branch(home,x.length(),INT_VAL_SPLIT_MIN());
+   * branch(home,x,INT_VAR_SIZE_MIN(),INT_VAL_MIN());
+   * \endcode
+   * Branchers run in posting order. Once the length is assigned, propagation
+   * materializes that many positions before the list brancher selects values.
    *
    * Action and CHB selection require the complete list to be materialized
    * when posting; otherwise Int::UnknownBranching is thrown.
@@ -6155,13 +6178,13 @@ namespace Gecode {
   GECODE_INT_EXPORT void
   branch(Home home, OpenIntVarList x,
          IntVarBranch vars, IntValBranch vals,
-         OpenVarBranch o=OVB_HORIZON_FIRST,
+         OpenVarBranch o=OVB_LENGTH_FIRST,
          IntBranchFilter bf=nullptr, IntVarValPrint vvp=nullptr);
   /// Branch over an open integer list with tie-breaking selectors
   GECODE_INT_EXPORT void
   branch(Home home, OpenIntVarList x,
          TieBreak<IntVarBranch> vars, IntValBranch vals,
-         OpenVarBranch o=OVB_HORIZON_FIRST,
+         OpenVarBranch o=OVB_LENGTH_FIRST,
          IntBranchFilter bf=nullptr, IntVarValPrint vvp=nullptr);
   /**
    * \brief Branch over an open Boolean list with standard selectors
@@ -6172,13 +6195,13 @@ namespace Gecode {
   GECODE_INT_EXPORT void
   branch(Home home, OpenBoolVarList x,
          BoolVarBranch vars, BoolValBranch vals,
-         OpenVarBranch o=OVB_HORIZON_FIRST,
+         OpenVarBranch o=OVB_LENGTH_FIRST,
          BoolBranchFilter bf=nullptr, BoolVarValPrint vvp=nullptr);
   /// Branch over an open Boolean list with tie-breaking selectors
   GECODE_INT_EXPORT void
   branch(Home home, OpenBoolVarList x,
          TieBreak<BoolVarBranch> vars, BoolValBranch vals,
-         OpenVarBranch o=OVB_HORIZON_FIRST,
+         OpenVarBranch o=OVB_LENGTH_FIRST,
          BoolBranchFilter bf=nullptr, BoolVarValPrint vvp=nullptr);
   /**
    * \brief Branch over \a x with variable selection \a vars and value selection \a vals

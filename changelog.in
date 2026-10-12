@@ -74,6 +74,17 @@ Date: unreleased
 This is the development changelog for the next Gecode release.
 
 [ENTRY]
+Module: int
+What:   new
+Rank:   major
+[DESCRIPTION]
+Add OpenIntVarList and OpenBoolVarList for lists whose length is decided
+during propagation and search. OpenVarList supports other variable types
+through a factory. Constraints follow the growing prefix, including regular
+language constraints, and branching supports length-first and value-first
+search with standard variable and value selectors.
+
+[ENTRY]
 Module: kernel
 What:   new
 Rank:   minor
@@ -87,6 +98,7 @@ What:   bug
 Rank:   minor
 [DESCRIPTION]
 Fix iterator invalidation during counting-based search cache cleanup.
+
 
 [ENTRY]
 

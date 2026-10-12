@@ -74,7 +74,7 @@ namespace Test { namespace Int {
     class Branch : public ::Test::Base {
     public:
       Branch(void)
-        : ::Test::Base("Int::OpenList::Branch") {}
+        : ::Test::Base("Int::OpenList::Branch",TestTags::check()) {}
 
       virtual bool
       run(void) {
@@ -116,6 +116,8 @@ namespace Test { namespace Int {
             {1,0,1}, {1,1,1}
           },{1});
         extensional(*this,list,accepts_one);
+        if (order == -2)
+          branch(*this,list.length(),INT_VAL_MAX());
         if (order < 0)
           branch(*this,list);
         else
@@ -164,8 +166,8 @@ namespace Test { namespace Int {
       virtual bool
       run(void) {
         using namespace Gecode;
-        return check(-1,1) &&
-          check(OVB_HORIZON_FIRST,1) &&
+        return check(-2,3) && check(-1,1) &&
+          check(OVB_LENGTH_FIRST,1) &&
           check(OVB_VALUE_FIRST,3);
       }
     };
@@ -380,7 +382,7 @@ namespace Test { namespace Int {
 
     class BoolList : public ::Test::Base {
     public:
-      BoolList(void) : ::Test::Base("Int::OpenList::Bool") {}
+      BoolList(void) : ::Test::Base("Int::OpenList::Bool",TestTags::check()) {}
 
       virtual bool
       run(void) {
@@ -456,7 +458,7 @@ namespace Test { namespace Int {
 
     class Factory : public ::Test::Base {
     public:
-      Factory(void) : ::Test::Base("Int::OpenList::Factory") {}
+      Factory(void) : ::Test::Base("Int::OpenList::Factory",TestTags::check()) {}
 
       virtual bool
       run(void) {
@@ -707,7 +709,8 @@ namespace Test { namespace Int {
     class IncrementalConstraints : public ::Test::Base {
     public:
       IncrementalConstraints(void)
-        : ::Test::Base("Int::OpenList::IncrementalConstraints") {}
+        : ::Test::Base("Int::OpenList::IncrementalConstraints",
+                       TestTags::check()) {}
 
       virtual bool
       run(void) {
@@ -866,7 +869,7 @@ namespace Test { namespace Int {
     class Dispose : public ::Test::Base {
     public:
       Dispose(void)
-        : ::Test::Base("Int::OpenList::Dispose") {}
+        : ::Test::Base("Int::OpenList::Dispose",TestTags::check()) {}
 
       virtual bool
       run(void) {
@@ -896,7 +899,7 @@ namespace Test { namespace Int {
     class CallbackLength : public ::Test::Base {
     public:
       CallbackLength(void)
-        : ::Test::Base("Int::OpenList::CallbackLength") {}
+        : ::Test::Base("Int::OpenList::CallbackLength",TestTags::check()) {}
 
       virtual bool
       run(void) {
@@ -968,6 +971,45 @@ namespace Test { namespace Int {
       }
     };
 
+    /// Replay value choices after propagation has extended the original list
+    class ValueReplay : public ::Test::Base {
+    public:
+      ValueReplay(void)
+        : ::Test::Base("Int::OpenList::ValueReplay",TestTags::check()) {}
+
+      virtual bool
+      run(void) {
+        using namespace Gecode;
+        CallbackSpace source([](int) { return IntSet(0,1); },
+          [](Space& home, OpenIntVarList list, int i) {
+            if (i == 0) {
+              BoolVar zero(home,0,1);
+              rel(home,list[0],IRT_EQ,0,Reify(zero));
+              rel(home,list.length(),IRT_GQ,2,Reify(zero,RM_IMP));
+            }
+          });
+        source.list.materialize(source,1);
+        branch(source,source.list,OVB_VALUE_FIRST);
+        if (source.status() != SS_BRANCH)
+          return false;
+        std::unique_ptr<const Choice> first(source.choice());
+        std::unique_ptr<CallbackSpace> replay
+          (static_cast<CallbackSpace*>(source.clone()));
+        source.commit(*first,0);
+        if ((source.status() != SS_BRANCH) ||
+            (source.list.prefix_size() != 2))
+          return false;
+        std::unique_ptr<const Choice> second(source.choice());
+        // Recomputation commits the path without propagating between choices.
+        replay->commit(*first,0);
+        replay->commit(*second,0);
+        return (replay->status() != SS_FAILED) &&
+          (replay->list.prefix_size() == 2) &&
+          replay->list[0].assigned() && (replay->list[0].val() == 0) &&
+          replay->list[1].assigned() && (replay->list[1].val() == 0);
+      }
+    };
+
     class ImpossibleWindow : public ::Test::Base {
     public:
       ImpossibleWindow(void)
@@ -996,6 +1038,7 @@ namespace Test { namespace Int {
     };
 
     ValueCommit value_commit;
+    ValueReplay value_replay;
     ImpossibleWindow impossible_window;
 
     Dispose disposal;
