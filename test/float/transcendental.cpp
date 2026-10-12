@@ -47,60 +47,62 @@ namespace Test { namespace Float {
    namespace Transcendental {
 
      /// Exact fixed-base powers, inverse logarithms, and shared variables
-     class PowBaseConsistency : public Base {
-       class TestSpace : public Gecode::Space {
-       public:
-         Gecode::FloatVar x, y;
-         TestSpace(Gecode::FloatNum base, Gecode::FloatNum a,
-                   Gecode::FloatNum b, bool logarithm, bool shared,
-                   bool delayed)
-           : x(*this,delayed ? -4.0 : a,delayed ? 8.0 : a),
-             y(*this,delayed ? 0.0 : b,delayed ? 8.0 : b) {
-           if (shared)
-             y = x;
-           if (logarithm)
-             Gecode::log(*this,base,y,x);
-           else
-             Gecode::pow(*this,base,x,y);
-         }
-         TestSpace(TestSpace& s) : Gecode::Space(s) {
-           x.update(*this,s.x);
-           y.update(*this,s.y);
-         }
-         virtual Gecode::Space* copy(void) {
-           return new TestSpace(*this);
-         }
-       };
-
-       bool check(Gecode::FloatNum base, Gecode::FloatNum a,
-                  Gecode::FloatNum b, bool logarithm, bool shared,
-                  bool delayed, bool expected) {
-         TestSpace s(base,a,b,logarithm,shared,delayed);
-         if (delayed && (s.status() != Gecode::SS_FAILED)) {
-           Gecode::rel(s,s.x,Gecode::FRT_EQ,a);
-           Gecode::rel(s,s.y,Gecode::FRT_EQ,b);
-         }
-         return (s.status() != Gecode::SS_FAILED) == expected;
-       }
+     class PowBaseConsistency : public Test {
+     protected:
+       Gecode::FloatNum base;
+       Gecode::FloatNum input;
+       Gecode::FloatNum output;
+       bool logarithm;
+       bool shared;
+       bool expected;
      public:
-       PowBaseConsistency(void)
-         : Base("Float::Transcendental::PowBaseConsistency") {}
-       virtual bool run(void) {
-         for (int delayed=0; delayed<2; delayed++) {
-           for (int logarithm=0; logarithm<2; logarithm++) {
-             // Exact powers avoid checking exp/log against itself.
-             if (!check(2.0,3.0,8.0,logarithm,false,delayed,true) ||
-                 !check(2.0,3.0,7.0,logarithm,false,delayed,false) ||
-                 !check(0.5,3.0,0.125,logarithm,false,delayed,true) ||
-                 !check(1.0,3.0,1.0,logarithm,false,delayed,true) ||
-                 !check(2.0,0.0,0.0,logarithm,true,delayed,false) ||
-                 !check(0.25,0.5,0.5,logarithm,true,delayed,true))
-               return false;
-           }
-         }
-         return true;
+       PowBaseConsistency(Gecode::FloatNum b, Gecode::FloatNum x,
+                          Gecode::FloatNum y, bool log, bool share, bool valid)
+         : Test("Transcendental::PowBaseConsistency::"+str(b)+"::"+
+                str(x)+"::"+str(y)+(log ? "::Log" : "::Pow")+
+                (share ? "::Shared" : "::Separate"),
+                share ? 1 : 2,-4.0,8.0,1.0,CPLT_ASSIGNMENT,false),
+           base(b), input(x), output(y), logarithm(log), shared(share),
+           expected(valid) {
+         testsearch = false;
        }
-     } pow_base_consistency;
+       /// Check one exact example through the standard posting/assignment tests
+       virtual Assignment* assignment(void) const {
+         Assignment* a = new RandomAssignment(arity,dom,1,_rand);
+         a->set(0,input);
+         if (!shared)
+           a->set(1,output);
+         return a;
+       }
+       /// Exact expected results avoid checking exp/log against itself
+       virtual MaybeType solution(const Assignment&) const {
+         return expected ? MT_TRUE : MT_FALSE;
+       }
+       virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x) {
+         Gecode::FloatVar y = shared ? x[0] : x[1];
+         if (!shared)
+           Gecode::rel(home,y,Gecode::FRT_GQ,0.0);
+         if (logarithm)
+           Gecode::log(home,base,y,x[0]);
+         else
+           Gecode::pow(home,base,x[0],y);
+       }
+     };
+
+     /// Register the exact powers and their logarithmic forms
+     class PowBaseExamples {
+     public:
+       PowBaseExamples(void) {
+         for (int logarithm=0; logarithm<2; logarithm++) {
+           (void) new PowBaseConsistency(2.0,3.0,8.0,logarithm,false,true);
+           (void) new PowBaseConsistency(2.0,3.0,7.0,logarithm,false,false);
+           (void) new PowBaseConsistency(0.5,3.0,0.125,logarithm,false,true);
+           (void) new PowBaseConsistency(1.0,3.0,1.0,logarithm,false,true);
+           (void) new PowBaseConsistency(2.0,0.0,0.0,logarithm,true,false);
+           (void) new PowBaseConsistency(0.25,0.5,0.5,logarithm,true,true);
+         }
+       }
+     } pow_base_examples;
 
      /// %Test for exponent constraint
      class ExpXY : public Test {
