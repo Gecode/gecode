@@ -904,7 +904,7 @@ namespace Test { namespace Int {
      class OpenListMaterialize : public ::Test::Base {
      public:
        OpenListMaterialize(void)
-         : ::Test::Base("Int::OpenList::Materialize") {}
+         : ::Test::Base("Int::OpenList::Materialize",TestTags::check()) {}
 
        virtual bool
        run(void) {
@@ -944,7 +944,8 @@ namespace Test { namespace Int {
      class OpenRegularIncremental : public ::Test::Base {
      public:
        OpenRegularIncremental(void)
-         : ::Test::Base("Int::Extensional::OpenReg::Incremental") {}
+         : ::Test::Base("Int::Extensional::OpenReg::Incremental",
+                        TestTags::check()) {}
 
        virtual bool
        run(void) {
@@ -1050,7 +1051,7 @@ namespace Test { namespace Int {
      class OpenRegularClone : public ::Test::Base {
      public:
        OpenRegularClone(void)
-         : ::Test::Base("Int::Extensional::OpenReg::Clone") {}
+         : ::Test::Base("Int::Extensional::OpenReg::Clone",TestTags::check()) {}
 
        virtual bool
        run(void) {

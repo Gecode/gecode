@@ -35321,7 +35321,7 @@ test/int/open-var-list$(OBJSUFFIX) test/int/open-var-list$(SBJSUFFIX): \
 	./gecode/support/timer.hpp ./test/int.hh ./test/int.hpp \
 	./test/test.hh ./test/test.hpp
 gecode/int/min-distance$(OBJSUFFIX) gecode/int/min-distance$(SBJSUFFIX): \
-	./gecode/int.hh ./gecode/int/array-traits.hpp ./gecode/int/array.hpp \
+	./gecode/int.hh ./gecode/int/open-var-list.hpp ./gecode/int/array-traits.hpp ./gecode/int/array.hpp \
 	./gecode/int/branch.hpp ./gecode/int/branch/action.hpp ./gecode/int/branch/afc.hpp \
 	./gecode/int/branch/assign.hpp ./gecode/int/branch/chb.hpp ./gecode/int/branch/traits.hpp \
 	./gecode/int/branch/val.hpp ./gecode/int/branch/var.hpp ./gecode/int/channel.hpp \
@@ -35386,7 +35386,7 @@ gecode/int/min-distance$(OBJSUFFIX) gecode/int/min-distance$(SBJSUFFIX): \
 	./gecode/support/static-stack.hpp ./gecode/support/thread.hpp ./gecode/support/thread/thread.hpp \
 	./gecode/support/timer.hpp
 test/int/min-distance$(OBJSUFFIX) test/int/min-distance$(SBJSUFFIX): \
-	./gecode/int.hh ./gecode/int/array-traits.hpp ./gecode/int/array.hpp \
+	./gecode/int.hh ./gecode/int/open-var-list.hpp ./gecode/int/array-traits.hpp ./gecode/int/array.hpp \
 	./gecode/int/branch.hpp ./gecode/int/branch/action.hpp ./gecode/int/branch/afc.hpp \
 	./gecode/int/branch/assign.hpp ./gecode/int/branch/chb.hpp ./gecode/int/branch/traits.hpp \
 	./gecode/int/branch/val.hpp ./gecode/int/branch/var.hpp ./gecode/int/channel.hpp \
