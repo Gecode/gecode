@@ -34,7 +34,6 @@
 #include "test/int.hh"
 
 #include <algorithm>
-#include <vector>
 #include <limits>
 
 namespace Test { namespace Int { namespace InterDistance {
@@ -98,143 +97,150 @@ namespace Test { namespace Int { namespace InterDistance {
     }
   };
 
-  /// Regressions for hole jumps, critical regions, and distance updates
-  class Regression : public Base {
-    typedef std::vector<int> Domain;
-    typedef std::vector<Domain> Domains;
-
-    class Model : public Gecode::Space {
-    public:
-      Gecode::IntVarArray x;
-      Gecode::IntVar p;
-      Model(const Domains& domains, const Domain& distance={0})
-        : x(*this,static_cast<int>(domains.size())),
-          p(*this,Gecode::IntSet(distance.data(),
-                                static_cast<int>(distance.size()))) {
-        for (int i=0; i<x.size(); i++)
-          x[i] = Gecode::IntVar(*this,Gecode::IntSet(
-            domains[i].data(),static_cast<int>(domains[i].size())));
-      }
-      Model(Model& s) : Gecode::Space(s) {
-        x.update(*this,s.x);
-        p.update(*this,s.p);
-      }
-      virtual Gecode::Space* copy(void) {
-        return new Model(*this);
-      }
-    };
-
-    static bool regressions(void) {
-      using namespace Gecode;
-      // The paper's example and its reflection have unique solutions.
-      for (int sign : {1,-1}) {
-        Domains domains = {{2,3,4,5,6},{10,11,12,13,14},
-          {4,5,6,7,8,9,10,11,12,13,14,15}};
-        for (Domain& domain : domains) {
-          for (int& value : domain)
-            value *= sign;
-          std::sort(domain.begin(),domain.end());
-        }
-        Model model(domains);
-        inter_distance(model,model.x,6);
-        if ((model.status() == SS_FAILED) || !model.x.assigned() ||
-            (model.x[0].val() != sign*2) ||
-            (model.x[1].val() != sign*14) ||
-            (model.x[2].val() != sign*8))
-          return false;
-      }
-
-      // A jump across holes must not subsume an invalid assigned tuple.
-      Model holes({{0,2,6,7},{-3,2},{10,11,14},{1,2,3,6},
-                   {-1,0,3,5,9}});
-      inter_distance(holes,holes.x,4);
-      if (holes.status() != SS_FAILED)
-        return false;
-
-      // A consumed residue can become active at a later deadline.
-      Model residue({{2,3,4,5,6,7,8,9,10,11},
-                     {-10,-9,-8,-7,-6,-5,-4,-3,-2},{16,17}},{13,14});
-      inter_distance(residue,residue.x,residue.p,IPL_BASIC);
-      if ((residue.status() == SS_FAILED) || !residue.p.assigned() ||
-          (residue.p.val() != 13))
-        return false;
-
-      // Adjacent forbidden regions limit separation to six, not seven.
-      Domains adjacent(3);
-      for (int v=1; v<=17; v++) adjacent[0].push_back(v);
-      for (int v=5; v<=8; v++) adjacent[1].push_back(v);
-      for (int v=2; v<=14; v++) adjacent[2].push_back(v);
-      for (IntPropLevel ipl : {IPL_BASIC,IPL_ADVANCED,IPL_BASIC_ADVANCED}) {
-        Model model(adjacent,{0,1,2,3,4,5,6,7,8});
-        inter_distance(model,model.x,model.p,ipl);
-        if ((model.status() == SS_FAILED) || (model.p.max() != 6))
-          return false;
-      }
-
-      // Deadlines can extend beyond the representable integer domain.
-      const int limit = Gecode::Int::Limits::max;
-      Model extremes({{-limit,-limit+1},{0,1},{limit-1,limit}});
-      inter_distance(extremes,extremes.x,limit);
-      return (extremes.status() != SS_FAILED) && extremes.x.assigned() &&
-        (extremes.x[0].val() == -limit) && (extremes.x[1].val() == 0) &&
-        (extremes.x[2].val() == limit);
-    }
-
-    static bool distance_updates(void) {
-      // Raise the minimum distance in a clone after an initial fixpoint.
-      // Both p's subscription and staging must survive cloning.
-      Domains paper = {{2,3,4,5,6},
-        {10,11,12,13,14},{4,5,6,7,8,9,10,11,12,13,14,15}};
-      Model m(paper,{0,1,2,3,4,5,6,7,8});
-      Gecode::inter_distance(m,m.x,m.p);
-      if ((m.status() == Gecode::SS_FAILED) || (m.p.max() != 6))
-        return false;
-      Model* clone = static_cast<Model*>(m.clone());
-      Gecode::rel(*clone,clone->p,Gecode::IRT_GQ,6);
-      bool correct = clone->status() != Gecode::SS_FAILED;
-      correct &= clone->p.assigned() && (clone->p.val() == 6);
-      correct &= clone->x.assigned() && (clone->x[0].val() == 2) &&
-        (clone->x[1].val() == 14) && (clone->x[2].val() == 8);
-      correct &= (m.p.min() == 0) && !m.x.assigned();
-      delete clone;
-      if (!correct)
-        return false;
-
-      Model basic(paper,{6,7,8});
-      Gecode::inter_distance(basic,basic.x,basic.p,Gecode::IPL_BASIC);
-      if ((basic.status() == Gecode::SS_FAILED) || !basic.p.assigned() ||
-          (basic.p.val() != 6) ||
-          (basic.x[0].min() != 2) || (basic.x[0].max() != 6))
-        return false;
-
-      // Assigning p to one must immediately rewrite to distinct, so a
-      // newly posted constraint cannot prune further at the same fixpoint.
-      Model unit({{-2},{-2,-1}},{1,3});
-      Gecode::inter_distance(unit,unit.x,unit.p,Gecode::IPL_BASIC);
-      return (unit.status() != Gecode::SS_FAILED) && unit.p.assigned() &&
-        (unit.p.val() == 1) && unit.x[1].assigned() && (unit.x[1].val() == -1);
-    }
+  /// Mix arbitrary assignments with sorted, separated values and shuffle them
+  class DistanceAssignment : public RandomAssignment {
+  protected:
+    int p;
+    bool variable;
   public:
-    Regression(void)
-      : Base("Int::InterDistance::Regression",TestTags::check()) {}
-    virtual bool run(void) {
-      return regressions() && distance_updates();
+    DistanceAssignment(int n, const Gecode::IntSet& d, int p0, bool v,
+                       Gecode::Support::RandomGenerator& rand)
+      : RandomAssignment(n,d,100,rand), p(p0), variable(v) {}
+    virtual void next(Gecode::Support::RandomGenerator& rand) {
+      RandomAssignment::next(rand);
+      if (a % 2 == 0) {
+        int m = n - static_cast<int>(variable);
+        int distance = variable ? static_cast<int>(rand(p+1)) : p;
+        int slack = d.max()-d.min()-(m-1)*distance;
+        int value = d.min();
+        for (int i=0; i<m; i++) {
+          int extra = static_cast<int>(rand(slack+1));
+          slack -= extra;
+          value += extra;
+          vals[i] = value;
+          if (i+1 < m)
+            value += distance;
+        }
+        for (int i=m-1; i>0; i--) {
+          int j = static_cast<int>(rand(i+1));
+          std::swap(vals[i],vals[j]);
+        }
+        if (variable)
+          vals[m] = distance;
+      }
+    }
+  };
+
+  /// Larger instances with a bounded total slack
+  class Random : public Test {
+  protected:
+    int p;
+    bool variable;
+  public:
+    Random(int n, int p0, int slack, bool v, Gecode::IntPropLevel level)
+      : Test("InterDistance::Random::"+str(n)+"::"+str(p0)+"::"+
+             str(slack)+"::"+str(v)+"::"+str(level),
+             n+static_cast<int>(v),0,(n-1)*p0+slack,false,level),
+        p(p0), variable(v) {
+      testsearch = false;
+    }
+    virtual Assignment* assignment(void) const {
+      return new DistanceAssignment(arity,dom,p,variable,_rand);
+    }
+    virtual bool solution(const Assignment& x) const {
+      int n = x.size()-static_cast<int>(variable);
+      int distance = variable ? x[n] : p;
+      for (int i=0; i<n; i++)
+        for (int j=0; j<i; j++)
+          if (std::abs(x[i]-x[j]) < distance)
+            return false;
+      return true;
+    }
+    virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
+      Gecode::IntVarArgs y(x.size()-static_cast<int>(variable));
+      for (int i=0; i<y.size(); i++)
+        y[i] = x[i];
+      if (variable)
+        Gecode::inter_distance(home,y,x[y.size()],ipl);
+      else
+        Gecode::inter_distance(home,y,p,ipl);
+    }
+  };
+
+  /// Enumerate assignments within each example's individual variable domains
+  class ExampleAssignment : public Assignment {
+    Gecode::IntSet domains[6];
+    Gecode::IntSetValues values[6];
+  public:
+    ExampleAssignment(int n, const Gecode::IntSet* d)
+      : Assignment(n,Gecode::IntSet()) {
+      for (int i=0; i<n; i++) {
+        domains[i] = d[i];
+        values[i].init(domains[i]);
+      }
+    }
+    virtual bool has_more(void) const {
+      return values[0]();
+    }
+    virtual void next(Gecode::Support::RandomGenerator&) {
+      int i = n-1;
+      while (true) {
+        ++values[i];
+        if (values[i]() || (i == 0))
+          return;
+        values[i--].init(domains[i]);
+      }
+    }
+    virtual int operator[](int i) const {
+      return values[i].val();
+    }
+  };
+
+  /// Hole-jump and residue examples use the same assignment checks
+  class Examples : public Test {
+  protected:
+    Gecode::IntSet domains[6];
+  public:
+    Examples(const std::string& name, int n, const Gecode::IntSet& domain,
+             const Gecode::IntSet* d, Gecode::IntPropLevel level)
+      : Test(TestTags::check(),"InterDistance::"+name+"::"+str(level),
+             n,domain,false,level) {
+      for (int i=0; i<n; i++)
+        domains[i] = d[i];
+      testsearch = false;
+    }
+    virtual Assignment* assignment(void) const {
+      return new ExampleAssignment(arity,domains);
+    }
+    virtual bool solution(const Assignment& x) const {
+      for (int i=0; i<x.size(); i++)
+        if (!domains[i].in(x[i]))
+          return false;
+      int p = x[x.size()-1];
+      for (int i=0; i<x.size()-1; i++)
+        for (int j=0; j<i; j++) {
+          long long int d = static_cast<long long int>(x[i])-x[j];
+          if ((-p < d) && (d < p))
+            return false;
+        }
+      return true;
+    }
+    virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
+      for (int i=0; i<x.size(); i++)
+        Gecode::dom(home,x[i],domains[i]);
+      Gecode::IntVarArgs y(x.size()-1);
+      for (int i=0; i<y.size(); i++)
+        y[i] = x[i];
+      Gecode::inter_distance(home,y,x[x.size()-1],ipl);
     }
   };
 
   /// Posting contracts, vacuous constraints, and shared variables
   class Posting : public Base {
-    class Model : public Gecode::Space {
-    public:
-      Model(void) {}
-      Model(Model& s) : Gecode::Space(s) {}
-      virtual Gecode::Space* copy(void) {
-        return new Model(*this);
-      }
-    };
     static bool constant_contracts(void) {
       using namespace Gecode;
-      Model s;
+      IntSet domain(-2,2);
+      TestSpace s(0,domain,nullptr);
       IntVar v(s,-2,2);
       IntVarArgs duplicate(2);
       duplicate[0] = duplicate[1] = v;
@@ -265,7 +271,7 @@ namespace Test { namespace Int { namespace InterDistance {
       if (!same || !negative || !tooLarge || (s.status() == SS_FAILED))
         return false;
 
-      Model t;
+      TestSpace t(0,domain,nullptr);
       IntVar assigned(t,3,3);
       duplicate[0] = duplicate[1] = assigned;
       inter_distance(t,duplicate,2);
@@ -276,19 +282,20 @@ namespace Test { namespace Int { namespace InterDistance {
 
     static bool variable_contracts(void) {
       using namespace Gecode;
-      Model empty;
+      IntSet domain(-3,9);
+      TestSpace empty(0,domain,nullptr);
       IntVar distance(empty,-3,9);
       inter_distance(empty,IntVarArgs(),distance);
       if ((empty.status() == SS_FAILED) || (distance.min() != 0))
         return false;
 
-      Model negativeDistance;
+      TestSpace negativeDistance(0,domain,nullptr);
       IntVar negativeVar(negativeDistance,-3,-1);
       inter_distance(negativeDistance,IntVarArgs(),negativeVar);
       if (negativeDistance.status() != SS_FAILED)
         return false;
 
-      Model shared;
+      TestSpace shared(0,domain,nullptr);
       IntVar a(shared,0,9);
       IntVar b(shared,0,9);
       IntVar p(shared,0,9);
@@ -313,29 +320,6 @@ namespace Test { namespace Int { namespace InterDistance {
       return true;
     }
 
-    static bool large_distances(void) {
-      using namespace Gecode;
-      // A wide search interval exercises binary search and integer limits.
-      Model wide;
-      const int limit = Gecode::Int::Limits::max;
-      IntVarArgs x(3);
-      x[0] = IntVar(wide,0,limit/4);
-      x[1] = IntVar(wide,0,limit/4);
-      x[2] = IntVar(wide,limit-1,limit);
-      IntVar separation(wide,0,limit);
-      inter_distance(wide,x,separation,IPL_BASIC);
-      if ((wide.status() == SS_FAILED) || (separation.max() != limit/4))
-        return false;
-
-      // The assigned gap can exceed the representable distance domain.
-      Model extremes;
-      IntVarArgs pair(2);
-      pair[0] = IntVar(extremes,-limit,-limit);
-      pair[1] = IntVar(extremes,limit,limit);
-      IntVar large(extremes,0,limit);
-      inter_distance(extremes,pair,large);
-      return (extremes.status() != SS_FAILED) && (large.max() == limit);
-    }
   public:
     Posting(void) : Base("Int::InterDistance::Posting",TestTags::check()) {}
     virtual bool run(void) {
@@ -347,10 +331,6 @@ namespace Test { namespace Int { namespace InterDistance {
         olog << "Variable posting contracts failed" << std::endl;
         return false;
       }
-      if (!large_distances()) {
-        olog << "Large-distance arithmetic failed" << std::endl;
-        return false;
-      }
       return true;
     }
   };
@@ -358,6 +338,34 @@ namespace Test { namespace Int { namespace InterDistance {
   class Create {
   public:
     Create(void) {
+      using namespace Gecode;
+      for (IntPropLevel level : {IPL_BASIC,IPL_ADVANCED,IPL_BASIC_ADVANCED}) {
+        for (int n : {8,24})
+          for (int slack : {0,8})
+            for (bool variable : {false,true})
+              (void) new Random(n,3,slack,variable,level);
+        const IntSet paper[] = {IntSet(2,6),IntSet(10,14),
+                                IntSet(4,15),IntSet(0,8)};
+        (void) new Examples("Paper",4,IntSet(0,15),paper,level);
+        const IntSet adjacent[] = {IntSet(1,17),IntSet(5,8),
+                                   IntSet(2,14),IntSet(0,8)};
+        (void) new Examples("Adjacent",4,IntSet(0,17),adjacent,level);
+        const IntSet holes[] = {IntSet({0,2,6,7}),IntSet({-3,2}),
+          IntSet({10,11,14}),IntSet({1,2,3,6}),IntSet({-1,0,3,5,9}),
+          IntSet(4,4)};
+        (void) new Examples("HoleJump",6,IntSet(-3,14),holes,level);
+        const IntSet residue[] = {IntSet(2,11),IntSet(-10,-2),
+                                  IntSet(16,17),IntSet(13,14)};
+        (void) new Examples("Residue",4,IntSet(-10,17),residue,level);
+      }
+      const int limit = Gecode::Int::Limits::max;
+      const IntSet extremes[] = {IntSet(-limit,-limit+1),IntSet(0,1),
+                                 IntSet(limit-1,limit),IntSet(limit-1,limit)};
+      (void) new Examples("Limits",4,
+                         IntSet({-limit,-limit+1,0,1,limit-1,limit}),
+                         extremes,IPL_BASIC);
+      (void) new Distance(3,limit,IntSet({-limit,-limit+1,0,1,
+                                        limit-1,limit}));
       for (int n=1; n<=4; n++)
         for (int p=0; p<=4; p++)
           (void) new Distance(n,p,-3,3);
@@ -380,7 +388,6 @@ namespace Test { namespace Int { namespace InterDistance {
         Gecode::IPL_BND | Gecode::IPL_BASIC));
     }
   } create;
-  Regression regression;
   Posting posting;
 
 }}}
