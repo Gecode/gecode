@@ -56,6 +56,8 @@
 #     driver|iter|support|example|test|gist|flatzinc|other
 #   What:   bug|documentation|performance|new|removed|change
 #   Rank:   minor|major
+#   Experimental: true|false <optional, defaults to false>
+#     True entries appear under Experimental changes within each release.
 #   Bug:    <optional, for number from bugzilla>
 #   Issue:  <optional, for number from github>
 #   Thanks: <optional, who reported etc>
@@ -115,6 +117,19 @@ Rank:   minor
 [DESCRIPTION]
 Honor propagation annotations in cumulative and unary scheduling bindings,
 including the unary specializations of cumulative constraints.
+
+[ENTRY]
+Module: search
+What:   new
+Rank:   major
+Experimental: true
+[DESCRIPTION]
+Add the experimental 6.5.0 native search preview: AStar, configurable
+best-first, CABS and Column, including fixed-quota CBFS mode, with bound/rank
+guidance, optional state pruning and ordinary engine builders. Enable it with
+--enable-experimental or GECODE_ENABLE_EXPERIMENTAL=ON; it is disabled by
+default. Preview APIs may change or be removed in future feature releases;
+their documented search correctness contracts still apply.
 
 [ENTRY]
 Module: int

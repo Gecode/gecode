@@ -31,6 +31,7 @@
  *
  */
 
+#ifdef GECODE_HAS_EXPERIMENTAL
 namespace Gecode { namespace Search {
 
   /// Create a native sequential A* engine
@@ -99,5 +100,7 @@ namespace Gecode {
   }
 
 }
+
+#endif
 
 // STATISTICS: search-other

@@ -40,6 +40,7 @@
 #include <utility>
 #include <vector>
 
+#ifdef GECODE_HAS_EXPERIMENTAL
 namespace Gecode { namespace Search { namespace Seq {
 
   /// Persistent descriptor metadata, independent of pending search work
@@ -99,6 +100,8 @@ namespace Gecode { namespace Search { namespace Seq {
   };
 
 }}}
+
+#endif
 
 #endif
 

@@ -233,6 +233,7 @@ jobs:
       shell: bash
       run: >
         cmake -S "$GITHUB_WORKSPACE" -B "$GITHUB_WORKSPACE/build-ninja"
+        -DGECODE_ENABLE_EXPERIMENTAL=ON
         -G Ninja
         -DCMAKE_BUILD_TYPE=$BUILD_TYPE
         -DGECODE_ENABLE_QT=OFF

@@ -42,7 +42,9 @@
 #include <gecode/search/branch-feedback.hh>
 
 #include "test/test.hh"
+#ifdef GECODE_HAS_EXPERIMENTAL
 #include "examples/tsptw-transition.hh"
+#endif
 
 #include <atomic>
 #include <chrono>
@@ -221,6 +223,7 @@ namespace Test {
           }
         }
       };
+#ifdef GECODE_HAS_EXPERIMENTAL
       template<int Kind>
       static bool heuristic(void) {
         using Guidance=Gecode::Search::HeuristicGuidance;
@@ -280,6 +283,8 @@ namespace Test {
         }
         return false;
       }
+#endif
+
       static bool replay(void) {
         CompletionSpace root(true,false);
         Gecode::Search::Options o;
@@ -324,10 +329,15 @@ namespace Test {
     public:
       CompletionNative(void) : Base("Search::Completion::Native", TestTags::check()) {}
       bool run(void) override {
-        return replay() && heuristic<0>() && heuristic<1>() && heuristic<2>();
+        return replay()
+#ifdef GECODE_HAS_EXPERIMENTAL
+          && heuristic<0>() && heuristic<1>() && heuristic<2>()
+#endif
+          ;
       }
     } completionNative;
 
+#ifdef GECODE_HAS_EXPERIMENTAL
     /// The example's real n-ary transitions survive cloning and continuation.
     class TSPTWTransitionTest : public Base {
       using Transition=TSPTW::Transition;
@@ -1551,6 +1561,8 @@ namespace Test {
       }
     } columnTest;
 
+#endif
+
     /// Scalar integer objective used for comparison tests
     class MinObjective : public IntMinimizeSpace {
     public:
@@ -1823,6 +1835,7 @@ namespace Test {
         }
       };
 
+#ifdef GECODE_HAS_EXPERIMENTAL
       // Exercise the final alternative after publication, including a commit
       // exception after the selected parent has transferred to that child.
       static bool native(unsigned int kind, bool throwing) {
@@ -1869,6 +1882,8 @@ namespace Test {
         return destroyed;
       }
 
+#endif
+
       static bool archive_compatible(void) {
         Recorder* recorder = new Recorder;
         Gecode::Search::BranchFeedback feedback(recorder);
@@ -1891,10 +1906,13 @@ namespace Test {
     public:
       BranchFeedback(void) : Base("Search::BranchFeedback", TestTags::check()) {}
       bool run(void) override {
-        return archive_compatible() &&
-          native(0U,false) && native(0U,true) &&
+        return archive_compatible()
+#ifdef GECODE_HAS_EXPERIMENTAL
+          && native(0U,false) && native(0U,true) &&
           native(1U,false) && native(1U,true) &&
-          native(2U,false) && native(2U,true);
+          native(2U,false) && native(2U,true)
+#endif
+          ;
       }
     };
 
@@ -2401,6 +2419,7 @@ namespace Test {
         }
         return ok && !engine.stopped() && (solutions == root.solutions());
       }
+#ifdef GECODE_HAS_EXPERIMENTAL
       bool native(unsigned int kind, unsigned int node, bool stopping) {
         Gecode::Search::WorkerControl control(node == 0U ? 0U : 1U);
         Pause pause(control,node);
@@ -2442,15 +2461,19 @@ namespace Test {
         }
         return paused && found && optimum==root.score(2) && !engine->stopped();
       }
+#endif
+
     public:
       WorkerControlSequentialPause(void)
         : Base("Search::WorkerControl::SequentialPause", TestTags::check()) {}
       bool run(void) override {
 #ifdef GECODE_HAS_THREADS
+#ifdef GECODE_HAS_EXPERIMENTAL
         std::lock_guard<std::mutex> lock(heuristic_ownership_mutex);
         for (unsigned int kind : {0U,1U,2U})
           if (!native(kind,0U,false) || !native(kind,1U,false) ||
               !native(kind,0U,true)) return false;
+#endif
         return check<Gecode::DFS>(0U) && check<Gecode::DFS>(1U) &&
           check<Gecode::BAB>(0U) && check<Gecode::BAB>(1U);
 #else
