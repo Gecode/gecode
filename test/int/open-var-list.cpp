@@ -1047,16 +1047,18 @@ namespace Test { namespace Int {
     class PatternSpace : public Gecode::Space {
     public:
       Gecode::OpenIntVarList list;
+      Gecode::IntVar frequency;
 
       PatternSpace(const PatternMining::Database& data, int support)
         : list(*this,data.domain(),data.max_length()) {
         Gecode::rel(*this,list.length(),Gecode::IRT_GQ,1);
-        PatternMining::frequent(*this,list,data,support);
+        frequency = PatternMining::frequent(*this,list,data,support);
         Gecode::branch(*this,list);
       }
 
       PatternSpace(PatternSpace& s) : Gecode::Space(s) {
         list.update(*this,s.list);
+        frequency.update(*this,s.frequency);
       }
 
       virtual Gecode::Space* copy(void) {
@@ -1127,7 +1129,9 @@ namespace Test { namespace Int {
                   return false;
                 pattern.push_back(solution->list[i].val());
               }
-              if (!found.insert(pattern).second)
+              if (!solution->frequency.assigned() ||
+                  (solution->frequency.val() != data.support(pattern)) ||
+                  !found.insert(pattern).second)
                 return false;
             }
             if (found != expected)

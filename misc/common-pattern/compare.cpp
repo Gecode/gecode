@@ -54,9 +54,9 @@ namespace {
   /**
    * \brief CP2015 Algorithm 2, with an optional extension-length bound
    *
-   * The paper baseline filters after contiguous prefix assignments. The
-   * padded-projection variant also filters initially and caps remaining
-   * nonzero positions, matching the shared open projection's extra pruning.
+   * The paper baseline filters after contiguous prefix assignments.
+   * All variants filter initially. The padded-projection variant also caps
+   * remaining nonzero positions, matching the open projection's length bound.
    * Both retain the paper's fixed positions and zero termination.
    */
   class PaperProjection : public NaryPropagator<Int::IntView,Int::PC_INT_VAL> {
@@ -64,7 +64,7 @@ namespace {
     Projection projection;
     /// Number of consumed contiguous pattern positions
     int consumed;
-    /// Match the open projection's initial filtering and suffix-length cap
+    /// Match the open projection's suffix-length cap
     bool bounded;
   public:
     PaperProjection(Space& home, ViewArray<Int::IntView>& x,
@@ -72,8 +72,8 @@ namespace {
       : NaryPropagator<Int::IntView,Int::PC_INT_VAL>(home,x),
         projection(home,database,support), consumed(0), bounded(cap) {
       home.notice(*this,AP_DISPOSE);
-      if (bounded)
-        Int::IntView::schedule(home,*this,Int::ME_INT_VAL);
+      // Filter infrequent items at the root in every projection baseline.
+      Int::IntView::schedule(home,*this,Int::ME_INT_VAL);
     }
 
     PaperProjection(Space& home, PaperProjection& p)
@@ -176,13 +176,15 @@ namespace {
         else
           extensional(*this,padded,expression + *REG(0));
       }
-      REG alphabet(IntArgs(database.alphabet.size(),database.alphabet.begin()));
-      for (int item : required) {
-        REG contains = *alphabet + REG(item) + *alphabet;
-        if (growing)
-          extensional(*this,open,contains);
-        else
-          extensional(*this,padded,contains + *REG(0));
+      if (!required.empty()) {
+        REG alphabet(IntArgs(database.alphabet.size(),database.alphabet.begin()));
+        for (int item : required) {
+          REG contains = *alphabet + REG(item) + *alphabet;
+          if (growing)
+            extensional(*this,open,contains);
+          else
+            extensional(*this,padded,contains + *REG(0));
+        }
       }
       if (growing)
         branch(*this,open,INT_VAR_NONE(),INT_VAL_MIN());
