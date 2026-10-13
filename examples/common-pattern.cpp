@@ -172,6 +172,7 @@ public:
 class CommonPattern : public IntMaximizeScript {
 protected:
   OpenIntVarList pattern;
+  IntVar frequency;
   PatternMining::Database database;
   bool letters;
 public:
@@ -181,12 +182,14 @@ public:
     : IntMaximizeScript(opt), database(opt.database()), letters(opt.letters()) {
     pattern = OpenIntVarList(*this,database.domain(),database.max_length());
     rel(*this,pattern.length(),IRT_GQ,opt.min_length());
-    PatternMining::frequent(*this,pattern,database,opt.support());
+    frequency = PatternMining::frequent(*this,pattern,database,opt.support());
     if (opt.language() != PatternMining::NONE)
       extensional(*this,pattern,PatternMining::language(opt.language(),database));
-    REG alphabet(IntArgs(database.alphabet));
-    for (int item : opt.required())
-      extensional(*this,pattern,*alphabet + REG(item) + *alphabet);
+    if (!opt.required().empty()) {
+      REG alphabet(IntArgs(database.alphabet));
+      for (int item : opt.required())
+        extensional(*this,pattern,*alphabet + REG(item) + *alphabet);
+    }
     branch(*this,pattern,INT_VAR_NONE(),INT_VAL_MIN());
   }
 
@@ -195,19 +198,18 @@ public:
   CommonPattern(CommonPattern& s)
     : IntMaximizeScript(s), database(s.database), letters(s.letters) {
     pattern.update(*this,s.pattern);
+    frequency.update(*this,s.frequency);
   }
 
   virtual Space* copy(void) { return new CommonPattern(*this); }
 
   virtual void print(std::ostream& os) const {
-    std::vector<int> items;
     os << "\t";
     for (int i=0; i<pattern.prefix_size(); i++) {
       if (i && !letters)
         os << ' ';
       if (pattern[i].assigned()) {
         const int item = pattern[i].val();
-        items.push_back(item);
         if (letters)
           os << static_cast<char>('A'+item-1);
         else
@@ -216,10 +218,9 @@ public:
         os << pattern[i];
       }
     }
-    os << " (length " << pattern.length();
-    if (static_cast<int>(items.size()) == pattern.prefix_size())
-      os << ", support " << database.support(items) << '/' << database.ends.size();
-    os << ")" << std::endl;
+    os << " (length " << pattern.length()
+       << ", support " << frequency << '/' << database.ends.size()
+       << ")" << std::endl;
   }
 };
 

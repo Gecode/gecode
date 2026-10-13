@@ -120,6 +120,8 @@ namespace PatternMining {
   class Database {
   public:
     IntSharedArray items, ends, alphabet;
+    /// Last occurrence of each distinct item per record, in decreasing order
+    IntSharedArray last_positions, last_ends;
 
     explicit Database(const Sequences& input) {
       if (input.empty())
@@ -141,13 +143,27 @@ namespace PatternMining {
       alphabet.init(static_cast<int>(symbols.size()));
       std::copy(symbols.begin(),symbols.end(),alphabet.begin());
       ends.init(static_cast<int>(input.size()));
+      last_ends.init(static_cast<int>(input.size()));
+      Region region;
+      int* seen = region.alloc<int>(alphabet.size());
+      std::fill(seen,seen+alphabet.size(),-1);
+      std::vector<int> last;
       int k = 0, i = 0;
       for (const std::vector<int>& sequence : input) {
+        const int start = k;
         for (int item : sequence)
           items[k++] = static_cast<int>(std::lower_bound(
             symbols.begin(),symbols.end(),item)-symbols.begin());
-        ends[i++] = k;
+        ends[i] = k;
+        for (int j=k; j-- > start; )
+          if (seen[items[j]] != i) {
+            seen[items[j]] = i;
+            last.push_back(j);
+          }
+        last_ends[i++] = static_cast<int>(last.size());
       }
+      last_positions.init(static_cast<int>(last.size()));
+      std::copy(last.begin(),last.end(),last_positions.begin());
     }
 
     IntSet domain(void) const { return IntSet(alphabet.begin(),alphabet.size()); }
@@ -176,64 +192,66 @@ namespace PatternMining {
     }
   };
 
-  /// Current pseudo-projection, shared by the open and padded implementations
+  /// Supporting suffixes, shared by the open and padded implementations
   class Projection {
+  protected:
+    struct Suffix {
+      int sequence, begin;
+    };
+    Suffix* suffixes;
+    int size;
   public:
     Database data;
     int threshold;
-    int* cursor;
 
     Projection(Space& home, const Database& database, int support)
-      : data(database), threshold(support),
-        cursor(home.alloc<int>(data.ends.size())) {
-      for (int i=0; i<data.ends.size(); i++)
-        cursor[i] = (i == 0) ? 0 : data.ends[i-1];
+      : suffixes(home.alloc<Suffix>(database.ends.size())),
+        size(database.ends.size()), data(database), threshold(support) {
+      for (int i=0; i<size; i++)
+        suffixes[i] = {i,(i == 0) ? 0 : data.ends[i-1]};
     }
 
     Projection(Space& home, const Projection& p)
-      : data(p.data), threshold(p.threshold),
-        cursor(home.alloc<int>(data.ends.size())) {
-      std::copy(p.cursor,p.cursor+data.ends.size(),cursor);
+      : suffixes(home.alloc<Suffix>(p.size)), size(p.size),
+        data(p.data), threshold(p.threshold) {
+      std::copy(p.suffixes,p.suffixes+size,suffixes);
     }
 
-    /// Advance supporting records past the earliest occurrence of an item
+    /// Keep only records supporting the extended prefix, at their earliest match
     bool advance(int item) {
       const int rank = static_cast<int>(std::lower_bound(
         data.alphabet.begin(),data.alphabet.end(),item)-data.alphabet.begin());
       if ((rank == data.alphabet.size()) || (data.alphabet[rank] != item))
         return false;
-      int count = 0;
-      for (int i=0; i<data.ends.size(); i++) {
-        if (cursor[i] < 0)
-          continue;
-        while ((cursor[i] < data.ends[i]) && (data.items[cursor[i]] != rank))
-          cursor[i]++;
-        if (cursor[i] == data.ends[i])
-          cursor[i] = -1;
-        else {
-          cursor[i]++;
-          count++;
-        }
+      int n = 0;
+      for (int i=0; i<size; i++) {
+        const int sequence = suffixes[i].sequence;
+        int pos = suffixes[i].begin;
+        const int end = data.ends[sequence];
+        while ((pos < end) && (data.items[pos] != rank))
+          pos++;
+        if (pos < end)
+          suffixes[n++] = {sequence,pos+1};
       }
-      return count >= threshold;
+      size = n;
+      return size >= threshold;
     }
 
-    /// Locally frequent items, counting each item once per supporting record
+    int support(void) const { return size; }
+
+    /// Each item's last occurrence suffices to establish its suffix support
     IntSet frequent(Region& region, bool termination) const {
       const int d = data.alphabet.size();
       int* count = region.alloc<int>(d);
-      int* seen = region.alloc<int>(d);
       std::fill(count,count+d,0);
-      std::fill(seen,seen+d,-1);
-      for (int i=0; i<data.ends.size(); i++) {
-        if (cursor[i] < 0)
-          continue;
-        for (int j=cursor[i]; j<data.ends[i]; j++) {
-          const int rank = data.items[j];
-          if (seen[rank] != i) {
-            seen[rank] = i;
-            count[rank]++;
-          }
+      for (int i=0; i<size; i++) {
+        const int sequence = suffixes[i].sequence;
+        const int start = (sequence == 0) ? 0 : data.last_ends[sequence-1];
+        for (int j=start; j<data.last_ends[sequence]; j++) {
+          const int pos = data.last_positions[j];
+          if (pos < suffixes[i].begin)
+            break;
+          count[data.items[pos]]++;
         }
       }
       int* values = region.alloc<int>(d+1);
@@ -248,12 +266,10 @@ namespace PatternMining {
 
     /// The threshold-th largest suffix length bounds every frequent extension
     int remaining(Region& region) const {
-      int* sizes = region.alloc<int>(data.ends.size());
-      int n = 0;
-      for (int i=0; i<data.ends.size(); i++)
-        if (cursor[i] >= 0)
-          sizes[n++] = data.ends[i]-cursor[i];
-      std::nth_element(sizes,sizes+threshold-1,sizes+n,std::greater<int>());
+      int* sizes = region.alloc<int>(size);
+      for (int i=0; i<size; i++)
+        sizes[i] = data.ends[suffixes[i].sequence]-suffixes[i].begin;
+      std::nth_element(sizes,sizes+threshold-1,sizes+size,std::greater<int>());
       return sizes[threshold-1];
     }
   };
@@ -268,15 +284,18 @@ namespace PatternMining {
   class OpenProjection : public Propagator {
   protected:
     OpenIntVarList list;
-    Int::IntView length;
+    Int::IntView length, frequency;
     Projection projection;
+    IntSet available;
     int consumed, subscribed;
+    /// Filtering depends on the assigned prefix, not on constructed positions
+    int cached_prefix, extension_bound;
 
     OpenProjection(Space& home, OpenIntVarList pattern,
-                   const Database& database, int support)
-      : Propagator(home), list(pattern), length(pattern.length()),
+                   const Database& database, int support, IntVar count)
+      : Propagator(home), list(pattern), length(pattern.length()), frequency(count),
         projection(home,database,support), consumed(0),
-        subscribed(pattern.prefix_size()) {
+        subscribed(pattern.prefix_size()), cached_prefix(-1), extension_bound(0) {
       home.notice(*this,AP_DISPOSE);
       list.subscribe(home,*this);
       length.subscribe(home,*this,Int::PC_INT_BND);
@@ -286,10 +305,12 @@ namespace PatternMining {
     }
 
     OpenProjection(Space& home, OpenProjection& p)
-      : Propagator(home,p), projection(home,p.projection),
-        consumed(p.consumed), subscribed(p.subscribed) {
+      : Propagator(home,p), projection(home,p.projection), available(p.available),
+        consumed(p.consumed), subscribed(p.subscribed),
+        cached_prefix(p.cached_prefix), extension_bound(p.extension_bound) {
       list.update(home,p.list);
       length.update(home,p.length);
+      frequency.update(home,p.frequency);
     }
 
   public:
@@ -319,14 +340,30 @@ namespace PatternMining {
             return ES_FAILED;
           consumed++;
         }
-        Region region;
-        GECODE_ME_CHECK(length.lq(home,consumed+projection.remaining(region)));
-        if ((consumed == size) && (length.max() == size))
+        GECODE_ME_CHECK(frequency.lq(home,projection.support()));
+        if ((consumed == size) && (length.max() == size)) {
+          GECODE_ME_CHECK(frequency.eq(home,projection.support()));
           return home.ES_SUBSUMED(*this);
-        const IntSet available = projection.frequent(region,false);
+        }
+        if (cached_prefix != consumed) {
+          Region region;
+          extension_bound = projection.remaining(region);
+          GECODE_ME_CHECK(length.lq(home,consumed+extension_bound));
+          if ((consumed == size) && (length.max() == size)) {
+            GECODE_ME_CHECK(frequency.eq(home,projection.support()));
+            return home.ES_SUBSUMED(*this);
+          }
+          available = projection.frequent(region,false);
+          cached_prefix = consumed;
+        } else {
+          GECODE_ME_CHECK(length.lq(home,consumed+extension_bound));
+        }
         if (available.size() == 0) {
           GECODE_ME_CHECK(length.lq(home,consumed));
-          return (consumed == size) ? home.ES_SUBSUMED(*this) : ES_FAILED;
+          if (consumed != size)
+            return ES_FAILED;
+          GECODE_ME_CHECK(frequency.eq(home,projection.support()));
+          return home.ES_SUBSUMED(*this);
         }
         for (int i=consumed; i<size; i++) {
           IntSetValues values(available);
@@ -347,35 +384,35 @@ namespace PatternMining {
             Int::IntView(list[i]).cancel(home,*this,Int::PC_INT_VAL);
       list.~OpenIntVarList();
       projection.~Projection();
+      available.~IntSet();
       (void) Propagator::dispose(home);
       return sizeof(*this);
     }
 
     static void post(Home home, OpenIntVarList pattern,
-                     const Database& database, int support) {
-      if (home.failed())
-        return;
-      if ((support < 1) || (support > database.ends.size())) {
-        home.fail();
-        return;
-      }
-      (void) new (home) OpenProjection(home,pattern,database,support);
+                     const Database& database, int support, IntVar count) {
+      (void) new (home) OpenProjection(home,pattern,database,support,count);
     }
   };
 
-  /// Require at least support records to contain the pattern as a subsequence
-  inline void
+  /// Enforce minimum support and return its exact count when the pattern is complete
+  inline IntVar
   frequent(Home home, OpenIntVarList pattern,
            const Database& database, int support) {
-    OpenProjection::post(home,pattern,database,support);
+    if (home.failed())
+      return IntVar();
+    if ((support < 1) || (support > database.ends.size())) {
+      home.fail();
+      return IntVar();
+    }
+    IntVar count(home,support,database.ends.size());
+    OpenProjection::post(home,pattern,database,support,count);
+    return count;
   }
 
   /// Pattern languages from the example and CP2015 Section 5(d)
   inline REG
   language(Language name, const Database& database) {
-    REG alphabet(IntArgs(database.alphabet.size(),database.alphabet.begin()));
-    if (name == MOTIF)
-      return REG(1) + *alphabet + REG(3);
     if (name == RE10)
       return *REG(1) + REG(2) + (REG(2) | REG(3)) + *REG(4) +
         REG(5) + *REG(6) + (REG(7) | REG(8)) + *REG(9);
@@ -383,6 +420,9 @@ namespace PatternMining {
       return *REG(1) + (REG(17) | (REG(2) + *REG(19) +
         (REG(2) | REG(3)))) + *REG(4) + REG(5) + *(REG(9) | REG(19)) +
         (REG(6) | REG(8)) + *REG(7) + REG(18);
+    REG alphabet(IntArgs(database.alphabet.size(),database.alphabet.begin()));
+    if (name == MOTIF)
+      return REG(1) + *alphabet + REG(3);
     return (REG(19) | REG(20)) + alphabet + (REG(18) | REG(11));
   }
 

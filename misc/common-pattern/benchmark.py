@@ -167,6 +167,15 @@ def frequent_patterns(case: dict) -> set[tuple[int, ...]] | None:
             and sum(is_subsequence(pattern, s) for s in sequences) >= case["min_support"]}
 
 
+def read_patterns(path: Path) -> set[tuple[int, ...]]:
+    """Read an independent miner's output normalized to one integer pattern per line."""
+    patterns = [tuple(map(int, line.split())) for line in path.read_text().splitlines()]
+    if (len(set(patterns)) != len(patterns) or any(not p or
+            any(item < 1 or item > 2147483646 for item in p) for p in patterns)):
+        raise ValueError("expected distinct nonempty positive integer patterns")
+    return set(patterns)
+
+
 def is_subsequence(pattern: tuple[int, ...], sequence: list[int]) -> bool:
     items = iter(sequence)
     return all(item in items for item in pattern)
@@ -218,7 +227,8 @@ def kill_process_group(process: subprocess.Popen) -> None:
 
 
 def check_patterns(result: dict, output: Path, case: dict,
-                   expected: set[tuple[int, ...]] | None) -> dict:
+                   expected: set[tuple[int, ...]] | None,
+                   oracle: str = "exhaustive") -> dict:
     if result["status"] != "ok":
         return result
     try:
@@ -228,13 +238,14 @@ def check_patterns(result: dict, output: Path, case: dict,
     actual = set(patterns)
     if (len(patterns) != result["metrics"]["solutions"] or
             len(actual) != len(patterns) or
-            any(not accepts(p, case) or
-                sum(is_subsequence(p, s) for s in case["sequences"]) < case["min_support"]
-                for p in patterns) or (expected is not None and actual != expected)):
+            any(not accepts(p, case) for p in patterns) or
+            (actual != expected if expected is not None else
+             any(sum(is_subsequence(p, s) for s in case["sequences"]) < case["min_support"]
+                 for p in patterns))):
         return {**result, "status": "invalid", "detail": "incorrect pattern enumeration"}
     fingerprint = hashlib.sha256(json.dumps(sorted(actual)).encode()).hexdigest()
     return {**result, "patterns_sha256": fingerprint,
-            "oracle": "exhaustive" if expected is not None else "feasibility"}
+            "oracle": oracle if expected is not None else "feasibility"}
 
 
 def valid_record(path: Path, identity: dict, validation: bool = False) -> dict | None:
@@ -261,7 +272,7 @@ def valid_record(path: Path, identity: dict, validation: bool = False) -> dict |
                     raise ValueError("invalid saved metrics")
             if validation and (not re.fullmatch("[0-9a-f]{64}",
                                                record.get("patterns_sha256", "")) or
-                               record.get("oracle") not in ("exhaustive", "feasibility")):
+                               record.get("oracle") not in ("exhaustive", "reference", "feasibility")):
                 raise ValueError("missing correctness evidence")
         return record
     except (ValueError, TypeError, KeyError) as error:
@@ -281,6 +292,9 @@ def collect(args: argparse.Namespace, directory: Path) -> None:
     workloads = cases(args.seed, args.suite, args.database, args.language, args.format,
                       args.support, args.min_length, args.required)
     variants = args.variants
+    if args.reference and (not args.database or len(workloads) != 1):
+        raise ValueError("reference output requires one custom database query")
+    reference = read_patterns(args.reference) if args.reference else None
     if len(set(variants)) != len(variants):
         raise ValueError("duplicate variants")
     if any(case["min_support"] < len(case["sequences"]) for case in workloads) and (
@@ -302,6 +316,9 @@ def collect(args: argparse.Namespace, directory: Path) -> None:
               "cases": workloads, "repetitions": args.repetitions,
               "seed": args.seed, "timeout_seconds": args.timeout,
               "bound": args.bound, "variants": variants}
+    if args.reference:
+        config["reference"] = {"path": str(args.reference.resolve()),
+                               "sha256": digest(args.reference)}
     print(f"{len(workloads)} cases; {len(workloads)*len(variants)} correctness runs; "
           f"{len(workloads)*len(variants)*args.repetitions} measured runs; "
           f"{args.timeout}s timeout per invocation; bound={args.bound}")
@@ -324,7 +341,7 @@ def collect(args: argparse.Namespace, directory: Path) -> None:
     for case in workloads:
         database = directory / "inputs" / (case["id"] + ".txt")
         database.write_text("\n".join(" ".join(map(str, s)) for s in case["sequences"]) + "\n")
-        oracle = frequent_patterns(case)
+        oracle = reference if reference is not None else frequent_patterns(case)
         checks = []
         for variant in variants:
             identity = {"case": case["id"], "variant": variant}
@@ -334,7 +351,8 @@ def collect(args: argparse.Namespace, directory: Path) -> None:
                 cmd = command(str(binary), case, variant, database, "print", args.bound)
                 record = execute(cmd, path.with_suffix(".stdout"),
                                  path.with_suffix(".stderr"), args.timeout)
-                record = check_patterns(record, path.with_suffix(".stdout"), case, oracle)
+                record = check_patterns(record, path.with_suffix(".stdout"), case, oracle,
+                                        "reference" if reference is not None else "exhaustive")
                 record.update(identity)
                 save_json(path, record)
             checks.append(record)
@@ -435,6 +453,8 @@ def main() -> None:
     run.add_argument("--build-label", required=True, help="compiler, flags and build configuration")
     run.add_argument("--suite", choices=("smoke", "scaling"), default="smoke")
     run.add_argument("--database", type=Path, help="custom database, one sequence per line")
+    run.add_argument("--reference", type=Path,
+                     help="exact independent output for one custom query; integer patterns, one per line")
     run.add_argument("--language", choices=tuple(LANGUAGES), default="none",
                      help="restriction for a custom database")
     run.add_argument("--format", choices=("letters", "integers", "spmf"), default="letters")

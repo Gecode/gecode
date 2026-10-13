@@ -24,16 +24,20 @@ The constructor expresses those constraints directly:
 ```cpp
 pattern = OpenIntVarList(*this,database.domain(),database.max_length());
 rel(*this,pattern.length(),IRT_GQ,opt.min_length());
-PatternMining::frequent(*this,pattern,database,opt.support());
+frequency = PatternMining::frequent(*this,pattern,database,opt.support());
 if (opt.language() != PatternMining::NONE)
   extensional(*this,pattern,PatternMining::language(opt.language(),database));
-REG alphabet(IntArgs(database.alphabet));
-for (int item : opt.required())
-  extensional(*this,pattern,*alphabet + REG(item) + *alphabet);
+if (!opt.required().empty()) {
+  REG alphabet(IntArgs(database.alphabet));
+  for (int item : opt.required())
+    extensional(*this,pattern,*alphabet + REG(item) + *alphabet);
+}
 branch(*this,pattern,INT_VAR_NONE(),INT_VAL_MIN());
 ```
 
-`frequent` is private example support, not a new Gecode library constraint.
+`frequent` is private example support, not a new Gecode library constraint. Its
+returned `IntVar` gives the exact record count when the pattern is complete; the
+example prints that count without searching the database again for every solution.
 Length, membership and regular constraints apply to the **pattern**. They do not
 constrain which input positions match it. This follows the distinction between
 pattern, cover, embedding and output constraints in Negrevergne and Guns,
@@ -56,8 +60,11 @@ it retains the input suffixes that can extend the current pattern. One earliest
 matching cursor per supporting record suffices for ordinary subsequences. It
 filters locally infrequent items from constructed positions and bounds further
 growth by the remaining supporting suffix lengths. Immutable, rank-compressed
-data are shared between spaces; each space owns its cursors. Sparse integer IDs
-are preserved in output.
+data are shared between spaces; each space owns a compact array of its supporting
+suffixes. Cloning copies only live entries. A last-occurrence index counts each
+item once per suffix without scanning repeated occurrences. The open propagator
+reuses its frequent-item set and length bound when growth has not changed the
+assigned prefix. Sparse integer IDs are preserved in output.
 
 This adapts Kemmar et al.,
 [PREFIX-PROJECTION Global Constraint for Sequential Pattern Mining](https://loudni.users.greyc.fr/Papers/cp15final.pdf),
@@ -67,8 +74,9 @@ also addresses a cost identified in Aoga, Guns and Schaus,
 [An Efficient Algorithm for Mining Frequent Sequence with Constraint Programming](https://arxiv.org/abs/1604.01166),
 ECML PKDD 2016, §4.2: filtering and restoring future array positions that the search
 may never use. Their implementation filters only the next position and optimizes
-suffix scans and state restoration. The example does not reproduce those
-optimizations or establish a speedup; the comparisons below distinguish variable
+suffix scans and state restoration. The shared helper uses their last-occurrence idea for frequency counting, while
+restoration uses Gecode cloning. It does not implement their incremental counting
+or reversible-vector algorithm. The comparisons below distinguish variable
 representation from filtering strength.
 
 The input scope is sequences of **individual items**, not sequences of itemsets.
@@ -161,10 +169,14 @@ compiler and flags but does not verify them automatically.
 | --- | --- | --- |
 | `open-projection` | `OpenIntVarList` | Local item support and remaining-suffix length bound, including initial filtering |
 | `padded-projection` | Fixed array, zero termination | Same extra pruning, applied to all preallocated positions |
-| `paper-projection` | Fixed array, zero termination | Algorithms 1–2 reimplementation, without added initial scheduling or suffix-length pruning |
+| `paper-projection` | Fixed array, zero termination | Algorithm 2 filtering rules with initial pruning, without suffix-length pruning |
 | `open-dfa`, `padded-dfa` | Open list or padded array | Per-input subsequence DFAs; require all-input support |
 
-The first two variants help assess the representation using the same extra pruning.
+All three projection variants use the same compact suffixes and last-occurrence
+index. All filter initially: omitting that step caused thousands of avoidable
+failures on globally infrequent first items and made the old paper baseline
+misleadingly slow. The first two variants help assess the representation using the
+same extra pruning.
 Their regular constraints still propagate differently because the open constraint
 sees constructed positions and the ordinary constraint sees the entire array.
 The paper variant distinguishes the effect of additional pruning. Nodes and
@@ -206,14 +218,20 @@ Select DFAs explicitly with `--support 100 --variants open-dfa padded-dfa
 open-projection padded-projection paper-projection`. The default companion
 invocation from the previous comparison remains valid.
 
-Before timing, the runner checks duplicate output, item/length/language constraints,
-and actual record support. All variants must enumerate exactly the same set.
+Before timing, the runner checks duplicate output and item/length/language constraints.
+It compares exact output with an independent oracle when available; otherwise it
+checks actual record support. All variants must enumerate exactly the same set.
 An independent oracle enumerates subsequences of the `n-k+1` shortest records:
 every pattern supported by `k` out of `n` records occurs in at least one of those
 records. The oracle runs when each chosen record has at most 16 items and their
 combined subset budget is at most 200,000. Otherwise feasibility and agreement are
 checked, with independent completeness explicitly unavailable. The smoke matrix
-meets the oracle budget at every threshold.
+meets the oracle budget at every threshold. For a larger custom query, `--reference`
+accepts the exact output of an independent miner normalized to one positive-integer
+pattern per line. It requires one database and one support threshold. Reference
+validation compares the entire set and is labelled separately from exhaustive
+subset enumeration. The caller must match the database, support rounding, length
+and other constraints; the runner checks the reference file's content on resume.
 
 Measured runs count solutions without printing. The target timer includes rank
 compression, model construction, complete DFS and solution disposal; it excludes
@@ -235,9 +253,105 @@ reports failures/unfinished work beside successful medians and ranges in seconds
 
 The authors' project link <https://sites.google.com/site/prefixprojection4cp/>
 required Google sign-in when checked on 2026-10-13. These baselines are
-reimplementations, not their executable. Real dataset versions and label mappings
-still need checking before comparison with published pattern counts. Historical
-CPU seconds on the paper's Xeon X5670 are not a runtime baseline for this machine.
+reimplementations, not their executable. Public SPMF datasets now provide the real-data comparison below. Their bytes and
+label mappings are not verified against the authors' copies. Historical CPU seconds
+on the paper's Xeon X5670 are not a runtime baseline for this machine.
+
+## Real-data performance and independent comparison
+
+The [SPMF dataset collection](https://www.philippe-fournier-viger.com/spmf/index.php?link=datasets.php)
+provides Bible and Leviathan copies whose record counts, alphabets and length
+statistics match Table 2. The current public FIFA file has a different mean length,
+so it is excluded from comparison with the paper. No dataset or external executable
+is bundled with Gecode.
+
+On 2026-10-13, full Bible mining at 1% support produced the paper's 23,340 patterns.
+An independent [SPMF PrefixSpan](https://www.philippe-fournier-viger.com/spmf/PrefixSpan.php)
+run agreed on the complete pattern set, not only its size. Filtering that output by
+its exact support counts also supplies the references at 5% (774 patterns) and 10%
+(174 patterns). This provides an independent completeness check beyond the small
+subset oracle's budget.
+
+The before/after runs use AppleClang 21, `-O3 -DNDEBUG`, macOS 26.6.2 / arm64,
+serial single-threaded searches, three shuffled repetitions, and the maximum-input
+length bound. Times below are median model construction plus complete enumeration
+in seconds, counting solutions without printing. Input parsing is excluded.
+
+| Bible query | Patterns | Open before | Open now | Padded now | Paper-style now |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Support 10% | 174 | 0.313 | 0.199 | 0.197 | 0.178 |
+| Support 5% | 774 | 0.814 | 0.495 | 0.497 | 0.462 |
+| Support 1% | 23,340 | 8.359 | 4.120 | 4.411 | 4.314 |
+| Support 1%, length ≥3, contains IDs 10 and 356 | 8,449 | — | 17.132 | 7.153 | — |
+
+The padded model before these changes took 8.268 seconds at 1% support, so shared
+projection changes improve both representations. The actual example also printed
+all 23,340 patterns with exact PrefixSpan support counts in 4.391 seconds
+end-to-end in one correctness run, timed through process completion before
+reference validation. Its output no longer triggers one full database scan per
+pattern. These frequent patterns have lengths 1–11 although the safe input-length
+bound is 100; the open model creates actual positions as the pattern grows.
+
+Required-item constraints favour the padded model here: its future positions let
+regular constraints detect impossible completions earlier. The open regular
+constraint checks an extendable prefix, so it explores more prefixes before
+proving that a required item cannot occur. These are the same output query, not
+different mining semantics. That propagation tradeoff remains.
+
+A controlled repetitive workload makes the representation cost visible: 64 records
+contain 600–1,230 copies of one item. At 100% support, exactly 600 patterns exist.
+The reference is the independently derived set of lengths 1 through 600. Median
+model-plus-search times in **milliseconds** were:
+
+| Length bound | Open projection | Padded projection | Paper-style projection |
+| --- | ---: | ---: | ---: |
+| Longest input, 1,230 | 2.747 | 15.492 | 17.291 |
+| Shortest input, 600 | 2.790 | 6.796 | 6.679 |
+
+Even with the tighter valid bound, the open model avoids handling unused suffix
+positions for shorter patterns. This is a controlled case, not evidence that open
+lists win on every database. Before the shared optimizations, the longest-bound
+open and padded variants took 14.070 and 26.202 milliseconds respectively.
+
+The open and improved fixed-array models are close on unrestricted Bible mining.
+These results do not establish a general open-list speed advantage. The example's
+strength is representing actual pattern positions and composing ordinary CP
+constraints without a termination convention. The original DFA timings answer a
+different algorithm question and should not be used to judge projection-based
+open lists.
+
+A repeatable independent-reference comparison is:
+
+```sh
+curl -L -A 'Mozilla/5.0' \
+  https://www.philippe-fournier-viger.com/spmf/publicdatasets/BIBLE.txt -o BIBLE.txt
+# Download spmf.jar from the SPMF release page.
+java -jar spmf.jar run PrefixSpan BIBLE.txt bible-patterns.spmf 1% 1 100 false
+python3 - <<'PYTHON' > bible-patterns.txt
+from pathlib import Path
+for line in Path('bible-patterns.spmf').read_text().splitlines():
+    if line.startswith('@'):
+        continue
+    tokens = line.split('#SUP:')[0].split()
+    assert len(tokens) % 2 == 0 and all(t == '-1' for t in tokens[1::2])
+    print(' '.join(tokens[::2]))
+PYTHON
+uv run --script misc/common-pattern/benchmark.py run \
+  --name bible --binary build/common-pattern-benchmark/bin/common-pattern-compare \
+  --build-label 'your compiler; Release; -O3 -DNDEBUG' \
+  --database BIBLE.txt --format spmf --support 1 --reference bible-patterns.txt
+uv run --script misc/common-pattern/benchmark.py analyze --name bible
+```
+
+Reference generation is outside the target timer. SPMF's reported algorithm time
+and the native model-plus-search time have different boundaries, so these runs
+establish query agreement rather than an equal-cost timing comparison with Java.
+Raw configurations, outputs and samples remain in `bible-before`,
+`bible-original-1`, `bible-final-1`, `bible-final-5`, `bible-final-10`,
+`bible-final-required`, `repetitive-original`, `repetitive-final`, and
+`repetitive-final-shortest` under `build/common-pattern-results/`. The
+shared last-occurrence index uses additional immutable storage; both open and
+padded models share it across clones.
 
 ## Literature and comparison scope
 
