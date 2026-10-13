@@ -75,7 +75,7 @@
     "node": "Native search statistics.node records expanded/visited search nodes, not arc evaluations.",
     "rss": "ps -o rss= -p PID reports process RSS in KiB, sampled serially at nominal 50ms plus ps/loop overhead; peaks between samples can be missed. Includes native process only. Kill above 1GiB is a sampled watchdog, not a hard allocation limit.",
     "storage": "Sampled process RSS includes frontier and model storage; state_bytes reports descriptor objects/key/label capacities only, excluding containers/allocator overhead. No native frontier-byte counter exists; field is null.",
-    "guard": "7 seconds from launch, polled with the RSS loop. On guard/watchdog, kill the owned process group, reap it and retain partial output; no proof is assigned without a native complete summary.",
+    "guard": "7 seconds from launch, polled with the RSS loop. On guard/watchdog, kill the owned process group, reap it and save partial output; no proof is assigned without a native complete summary.",
     "timing_precision": "Example times have 0.001ms precision; sampled RSS has 1024-byte units. Probe overhead is common across configurations.",
     "reported_native_elapsed_sum_ms": "Sum of eight available native summary times; excludes ten RSS-killed processes whose elapsed/counter summaries are unavailable."
   },

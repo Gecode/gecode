@@ -83,7 +83,7 @@ def budget_header(path):
                 header['total_seconds'] <= header['verification_reserve_seconds']+header['cleanup_reserve_seconds']):
             raise ValueError('invalid task budget header')
     elif header.get('event') != 'budget' or header.get('total_seconds') != 7200:
-        raise ValueError('expected the retained 7200-second evaluation ledger')
+        raise ValueError('expected the saved 7200-second evaluation ledger')
     return header
 
 

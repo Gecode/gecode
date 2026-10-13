@@ -94,7 +94,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
                                static_cast<long long int>(g))*g;
     // Use the interval hull: interior holes must not affect a BND actor's
     // fixpoint. The candidates are isolated arithmetic supports, not a
-    // domain enumeration. On exhaustion retain the original endpoint.
+    // domain enumeration. On exhaustion use the original endpoint.
     for (int budget=64; (budget > 0) && (v <= x.max()); --budget, v+=g)
       if (gcd_value(a,static_cast<int>(v)) == g) {
         bound=static_cast<int>(v);
@@ -113,7 +113,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     if (!gcd_support_min(x,a,g,l) ||
         !gcd_support_min(MinusView(x),a,g,negative_u))
       return ES_FAILED;
-    // On budget exhaustion retain the original endpoint: never advance a
+    // On budget exhaustion use the original endpoint: never advance a
     // partially checked bound, which could cause an unbounded closure walk.
     GECODE_ME_CHECK(x.gq(home,l));
     GECODE_ME_CHECK(x.lq(home,-negative_u));

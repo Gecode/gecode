@@ -18,7 +18,7 @@ Search::HeuristicGuidance guidance(Search::HeuristicGuidance::MINIMIZE,
   });
 CABS<MySpace> search(root, guidance);
 while (std::unique_ptr<MySpace> solution{search.next()}) {
-  // Read or retain this improvement; the caller owns it.
+  // Inspect or save this improvement; the caller owns it.
 }
 if (search.stopped()) {
   // Search has no proof. Ordinary stop limits can be raised to resume.
@@ -41,16 +41,16 @@ bound in the objective direction. Equal priorities use generation order. Rank
 never justifies sound pruning.
 
 Each native `Choice` commit advances one layer. The engine starts at width one,
-considers every generated terminal node, and retains at most that many unresolved
+considers every generated terminal node, and queues at most that many unresolved
 next-layer candidates. A shallow goal can be returned before deeper improvements;
 publication preserves the remaining parents, alternatives, and preparation.
-After all retained nodes and original alternatives in a pass finish, CABS can
+After all admitted nodes and original alternatives in a pass finish, CABS can
 prove optimality when every width-discarded bound excludes strict improvement
 of the accepted incumbent. It keeps the minimum discarded bound for minimization
 or maximum for maximization across every layer, independently of rank. This
 also applies when a discarded bound equals the incumbent objective. If a bound
 still permits improvement, or no incumbent exists after width loss, CABS doubles
-the width and restarts from an unchanged stable root, retaining the incumbent.
+the width and restarts from an unchanged stable root, keeping the incumbent.
 A pass with no width loss can prove optimality or infeasibility. Finite search
 trees are required for the widening completeness claim.
 Natural exhaustion proves optimality of the best accepted incumbent, including
@@ -81,7 +81,7 @@ also reports a stop. These intrinsic stops remain stopped on repeated `next()`
 calls. `Search::Engine::reset(new_root)` starts fresh, clearing the stop,
 incumbent, pending work, and statistics; it takes ownership of the new root.
 
-The frontier quota counts retained pending search spaces: unexpanded entries
+The frontier quota counts pending search spaces: unexpanded entries
 in the current layer, next-layer candidates, and a selected parent with remaining
 alternatives. Moving a parent between these owners does not consume an extra
 slot, and replacing a candidate uses its existing slot. The quota excludes the
@@ -89,19 +89,19 @@ immutable restart root, owned incumbent, caller-owned returned solutions, a
 temporary successor, and hidden brancher trial spaces. It is a **node quota**,
 without a byte or process-memory guarantee.
 
-Ordinary stop objects retain continuation. Raise or reset their limits and call
+Search can resume after an ordinary stop. Raise or reset the stop limits and call
 `next()` again to continue the same pass. Capacity-one `WorkerControl` supports
 parking and resuming without reporting exhaustion. CABS rejects expanded thread
 counts other than one and rejects tracers before taking root ownership.
 
 The default `Options::clone=true` keeps the supplied root with the caller;
 `clone=false` transfers it after successful construction. Returned solutions and
-the retained incumbent have independent ownership. The exact scalar guidance
+the engine's incumbent have independent ownership. The exact scalar guidance
 value decides acceptance in the declared objective direction; equal or worse
 external incumbents are ignored.
 Cuts affect committed children, leaving saved source choices and the restart root
-unchanged. Already inherited cuts are not repeated, so retained completion
-branchers can finish. If a callback or model operation throws,
+unchanged. Already inherited cuts are not repeated, so completion
+branchers can finish their pending checks. If a callback or model operation throws,
 destroy the engine before using it again.
 
 The engine stores cloned states and reuses each selected parent for its final
@@ -121,24 +121,24 @@ std::unique_ptr<Search::Builder> builder(
   cabs<TSPTW::Transition>(TSPTW::Transition::guidance(), options, limits, pruning));
 ```
 
-Descriptors belong only to retained **next-layer candidates**. CABS compares
+Descriptors belong only to admitted **next-layer candidates**. CABS compares
 neither selected/current-layer nodes nor previously expanded nodes. A live
 equivalent or dominating candidate can reject an arrival. A new dominator takes
-one victim's retained slot before removing any other victims, even if its beam
+one victim's existing slot before removing any other victims, even if its beam
 rank is worse. Sound replacement does not lose coverage. An arrival discarded
 by ranking registers nothing; an evicted candidate loses its descriptor.
 Descriptors are cleared as candidates become the current layer, between passes
 and on reset. A beam-discarded representative therefore cannot suppress a later
 surviving route. Earlier width-discarded bounds remain in the pass aggregate;
 sound label pruning does not erase them. Completion still requires processing
-all retained work and bounding out every width-discarded alternative.
+all admitted work and bounding out every width-discarded alternative.
 
 `descriptor_limit` forgets all candidate descriptors if their count exceeds the
 ceiling, preserving the candidates themselves. It is independent of width and
 frontier limits and never reports a stop. Empty policy performs no extraction,
 descriptor allocation or registry work. `state_pruned` counts rejected arrivals
 and removed dominated live candidates, separately from failures and beam loss.
-`state_descriptors`/`state_bytes` report retained descriptor peaks using the
+`state_descriptors`/`state_bytes` report peak descriptor storage using the
 [A* storage estimate](astar.md); all three are zero when pruning is disabled.
 The existing stop, proof and independently owned solution contracts still apply.
 

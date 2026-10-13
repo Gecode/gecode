@@ -74,7 +74,7 @@ and brancher trials are excluded. If an otherwise admissible child cannot fit,
 search stops incompletely and stays stopped until `Search::Engine::reset`.
 An ordinary stop can resume.
 
-This is a Space count, without a byte or process-RSS guarantee. Each retained
+This is a Space count, without a byte or process-RSS guarantee. Each queued
 node owns a stable Space; the engine reuses each selected parent for its final
 alternative. Descriptor vectors and queue/container capacity add storage.
 `c_d` and `a_d` do not enable recomputation. No-good extraction is empty.

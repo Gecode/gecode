@@ -74,7 +74,7 @@ namespace PatternMining {
     return sequence;
   }
 
-  /// Read one sequence per line, retaining duplicate rows as distinct records
+  /// Read one sequence per line, counting duplicate rows as distinct records
   inline Sequences
   read_database(std::istream& stream, Format format) {
     Sequences input;

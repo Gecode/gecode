@@ -167,7 +167,7 @@ namespace Gecode { namespace Search {
     unsigned long int nogood;
     /// Number of arrivals or live candidates removed by sound state pruning
     unsigned long long int state_pruned;
-    /// Peak number of retained state descriptors
+    /// Peak number of stored state descriptors
     unsigned long int state_descriptors;
     /// Peak owned descriptor bytes, excluding container/allocator overhead
     std::size_t state_bytes;
@@ -1001,7 +1001,7 @@ namespace Gecode { namespace Search {
    */
   class GECODE_SEARCH_EXPORT Engine : public HeapAllocated {
   protected:
-    /// Control retained for the lifetime of a leaf engine
+    /// Control shared for the lifetime of a leaf engine
     WorkerControl worker_control;
     /// Construct a meta engine without worker control
     Engine(void);
@@ -1211,14 +1211,14 @@ namespace Gecode { namespace Search {
    * at-least-as-good completion, including prefix objective cost, and a route
    * to a solution under repeated pruning. A sufficient argument preserves such
    * a completion with no more remaining search transitions. Identical domains
-   * and costs at successive brancher stages alone are insufficient: a retained
+   * and costs at successive brancher stages alone are insufficient: a stored
    * ancestor descriptor could suppress its only route to a goal. Include
    * sufficient stage state in the key or decline extraction; no stage field
    * is required or inferred. Relations are directional, consistent and
    * transitive. An arbitrary heuristic bound does not establish a sound label
    * relation.
    * Callbacks read stable Spaces and follow HeuristicGuidance's lifetime rules.
-   * Both callbacks empty disable all extraction and retained descriptor work;
+   * Both callbacks empty disable all descriptor extraction and storage;
    * supplying only one is invalid. Extraction may decline individual nodes.
    * \ingroup TaskModelSearch
    */
@@ -1331,7 +1331,7 @@ namespace Gecode { namespace Search {
   public:
     /// Maximum permitted width (passes use widths 1, 2, 4, ...)
     unsigned long int max_width;
-    /// Quota of retained pending search Spaces, including the selected parent
+    /// Quota of pending search Spaces, including the selected parent
     unsigned long int frontier_limit;
     /// Initialize width and frontier-node limits
     CABSOptions(unsigned long int maximum_width=0,
@@ -1358,7 +1358,7 @@ namespace Gecode {
    * selects it. Equal priorities use generation order. Only admissible bounds
    * justify pruning and completion.
    *
-   * Returned solutions belong to the caller and strictly improve the retained
+   * Returned solutions belong to the caller and strictly improve the engine's
    * incumbent. Continue next() until nullptr with stopped()==false to prove
    * optimality of the best accepted incumbent, including external adoption,
    * or infeasibility if none was accepted. Publication preserves unfinished
@@ -1405,14 +1405,14 @@ namespace Gecode {
 
 namespace Gecode { namespace Search {
 
-  /// Expansion quotas and retained-frontier limit for sequential column search
+  /// Expansion quotas and pending-frontier limit for sequential column search
   class ColumnOptions {
   public:
     /// Positive quota of selected parents per depth in the first cycle
     unsigned long int initial_quota;
     /// Added after each full depth cycle; zero selects fixed-quota CBFS
     unsigned long int quota_growth;
-    /// Retained pending Spaces including the unfinished parent; zero is unlimited
+    /// Pending Spaces including the unfinished parent; zero is unlimited
     unsigned long int frontier_limit;
     ColumnOptions(unsigned long int initial=1, unsigned long int growth=1,
                   unsigned long int frontier_nodes=0);
@@ -1445,7 +1445,7 @@ namespace Gecode {
    *
    * The cap counts queued Spaces and the unfinished parent, excluding incumbent,
    * returned solutions and temporary successors/trials. It is a node limit,
-   * without a byte or process-memory guarantee. Clones retain search work;
+   * without a byte or process-memory guarantee. Clones store search work;
    * c_d/a_d do not enable replay and no-good extraction is empty. One expanded
    * thread and no tracer are supported. Guidance and comparison obey AStar's
    * scalar integer contract. Destroy the engine if a callback throws.

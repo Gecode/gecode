@@ -243,7 +243,7 @@ def validate_solver(solver, manifest):
                 "--formulation", formulation, "--state-pruning", "pareto"],
                 capture_output=True, text=True)
             assert result.returncode == 1 and not result.stdout, result
-        # Equal-cost routes still retain decisions after cost branching.
+        # Equal-cost routes still need decisions after cost branching.
         branching = directory/"branching.txt"
         branching.write_text("5\n" + "\n".join(
             " ".join("0" if i == j else "1" for j in range(5)) for i in range(5)) +
@@ -259,7 +259,7 @@ def validate_solver(solver, manifest):
             for limit in ("--max-width", "--frontier-limit"):
                 summary, _ = run_solver(solver, branching, "cabs", (limit, "1"),
                                         formulation=formulation)
-                # A ceiling stops only when further retained work or widening
+                # A ceiling stops only when further pending work or widening
                 # is needed. Tight total bounds can prove this equal-cost tree
                 # complete before hitting the ceiling.
                 assert summary["termination"] in ("stopped", "optimal"), summary

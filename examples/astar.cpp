@@ -41,7 +41,7 @@
 using namespace Gecode;
 
 // A bounded closed model: option zero is a shallow goal, while the other
-// options retain a second decision. Rank deliberately disfavors the optimum.
+// options leave a second decision. Rank deliberately disfavors the optimum.
 class Alternative : public Space {
 public:
   IntVar option, detail, objective;

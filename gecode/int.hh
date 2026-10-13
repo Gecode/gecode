@@ -2264,7 +2264,7 @@ namespace Gecode {
    * \brief Finite automaton with deterministic construction by default
    *
    * The constructors and init() require deterministic transitions.
-   * Use nfa() to retain nondeterministic transitions without determinization
+   * Use nfa() to support nondeterministic transitions without determinization
    * or minimization. Every transition consumes one symbol; epsilon
    * transitions are not supported.
    *
@@ -2392,7 +2392,7 @@ namespace Gecode {
      *
      * Start state is \a s, transitions are \a t, and final states are
      * \a f. No sentinel elements are needed. As for the array overload,
-     * nondeterminism is retained and epsilon transitions are not supported.
+     * nondeterministic transitions are supported and epsilon transitions are not supported.
      */
     GECODE_INT_EXPORT
     static DFA nfa(int s, std::initializer_list<Transition> t,
@@ -3409,7 +3409,7 @@ namespace Gecode {
    * The default organization is MDP_SINGLE.
    * Uses forward pruning from assigned endpoints and pairwise upper bounds
    * on \a z. Both organizations implement the same filtering. MDP_DECOMPOSED
-   * retains separate actors and failure counts; MDP_SINGLE retains one
+   * uses separate actors and failure counts; MDP_SINGLE uses one
    * actor, linear advisor state, and a quadratic array of pair witnesses.
    * This is incomplete propagation, not full bounds or domain consistency.
    *
