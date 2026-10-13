@@ -1,0 +1,7 @@
+schema_version = 1
+tag = "open-cp"
+title = "Native open constraint programming"
+objective = "Provide the native open-list runtime used by standalone heuristic search."
+branch = "feature/open-cp"
+lifecycle = "open"
+base_commit = "6b7de57b0414fe2f8af3513743c9835840a3c019"
