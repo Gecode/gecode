@@ -3,7 +3,7 @@ schema_version = 1
 id = "open-search-036"
 key = "check-all-witnesses-against-optimum"
 area = "open-search"
-status = "open"
+status = "done"
 complexity = "standard"
 afk = true
 priority = "high"
@@ -26,12 +26,21 @@ The independent review and coordinator checked real feasible tours of costs 5 an
 
 ## Done when
 
-- [ ] A focused regression fails before the fix and passes after it when an independently checked cheaper tour comes from an invalid-output or other failed run.
-- [ ] Every independently checked incumbent cost is considered before status-based performance filtering; valid costs equal to or above the proved optimum are accepted.
-- [ ] Failed-run quality filtering and existing infeasibility contradiction checks keep their behavior.
+- [x] A focused regression fails before the fix and passes after it when an independently checked cheaper tour comes from an invalid-output or other failed run.
+- [x] Every independently checked incumbent cost is considered before status-based performance filtering; valid costs equal to or above the proved optimum are accepted.
+- [x] Failed-run quality filtering and existing infeasibility contradiction checks keep their behavior.
 
 ## Validation
 
 - Run the existing benchmark record test suite and exercise the checked 5-versus-10 counterexample.
 - Confirm failed-run performance samples remain excluded and report structures and historical measurement files are unchanged.
 - Check Python syntax and diff whitespace; no solver runs are needed for this report-analysis fix.
+
+## Result
+
+Check all independently validated incumbents against optimality claims before performance filtering.
+
+Validation:
+
+- The existing Records regression failed against baseline for invalid-output and execution-error; independently checked cost-5 and cost-10 tours pass after the fix. Equal/higher costs accepted and failed-run quality excluded.
+- All 13 record tests, Python syntax checks and diff whitespace passed. Independent Astra review passed; no solver runs, report-schema changes or historical measurement edits.

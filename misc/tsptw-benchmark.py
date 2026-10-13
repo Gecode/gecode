@@ -743,12 +743,13 @@ def comparison_report(config, records):
         if len(proven) > 1:
             raise ValueError('conflicting optimality proofs for '+case['id'])
         reference = next(iter(proven), None)
+        if reference is not None and any(incumbent['scaled_cost'] < reference
+                for record in selected for incumbent in record['incumbents']):
+            raise ValueError('checked candidate contradicts an optimality proof')
         measured = []
         for record in selected:
             sample = paired_sample(record, checkpoints)
             objective = sample['final_objective']
-            if reference is not None and objective is not None and objective < reference:
-                raise ValueError('checked candidate contradicts an optimality proof')
             sample.update(config=record['row']['config'], repetition=record['row']['repetition'],
                 gap_to_proved_optimum=float(Fraction(objective-reference, reference))
                     if objective is not None and reference else 0 if objective == reference == 0 else None,
