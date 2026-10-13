@@ -292,7 +292,7 @@ namespace Test {
         o.c_d=5; o.a_d=2;
         Gecode::Search::Statistics stat;
         Slice stop; o.stop=&stop;
-        if (root.status()!=SS_BRANCH || root.prepare(stat,o)) return false;
+        if (root.status()!=SS_BRANCH || Gecode::Search::prepare(root,stat,o)) return false;
         std::unique_ptr<CompletionSpace> clone(
           static_cast<CompletionSpace*>(root.clone()));
         // Restricting a pending source must discard its obsolete trial.
@@ -300,7 +300,7 @@ namespace Test {
         root.constrain(root);
         if (root.status()!=SS_BRANCH) return false;
         stop.limit.store(10000,std::memory_order_relaxed);
-        if (!clone->prepare(stat,o)) return false;
+        if (!Gecode::Search::prepare(*clone,stat,o)) return false;
         std::unique_ptr<const Choice> ch(clone->choice());
         Archive archive; ch->archive(archive);
         std::unique_ptr<const Choice> archived(clone->choice(archive));
@@ -309,7 +309,7 @@ namespace Test {
         replayed->commit(*archived,0);
         if (replayed->status()!=SS_SOLVED) return false;
         (void) replayed->choice();
-        // Retention through solved cleanup and strengthening without failure.
+        // Completion branchers survive solved cleanup and later restrictions.
         replayed->invalidate_branchers();
         replayed->constrain(root);
         if (replayed->status()!=SS_BRANCH) return false;
@@ -317,9 +317,9 @@ namespace Test {
         if (replayed->status()!=SS_BRANCH) return false;
         Slice small; o.stop=&small;
         Gecode::Search::Statistics revalidation;
-        if (replayed->prepare(revalidation,o)) return false;
+        if (Gecode::Search::prepare(*replayed,revalidation,o)) return false;
         small.limit.store(10000,std::memory_order_relaxed);
-        if (!replayed->prepare(revalidation,o)) return false;
+        if (!Gecode::Search::prepare(*replayed,revalidation,o)) return false;
         std::unique_ptr<const Choice> failed(replayed->choice());
         replayed->commit(*failed,0);
         if (replayed->status()!=SS_FAILED) return false;
@@ -507,8 +507,7 @@ namespace Test {
           PreparedBrancher(Space& home, PreparedBrancher& b)
             : Brancher(home,b), prepared(b.prepared), failure(b.failure), choices(b.choices) {}
           bool status(const Space&) const override { return !prepared; }
-          bool prepare(Space& home, Gecode::Search::Statistics&,
-                       const Gecode::Search::Options&) override {
+          bool prepare(Space& home, StatusStatistics&) override {
             prepared=true;
             if (failure) home.fail();
             return true;
@@ -588,7 +587,7 @@ namespace Test {
       static bool visit(Transition& s, int node) {
         Gecode::Search::Options options;
         Gecode::Search::Statistics stat;
-        if (s.status()!=SS_BRANCH || !s.prepare(stat,options)) return false;
+        if (s.status()!=SS_BRANCH || !Gecode::Search::prepare(s,stat,options)) return false;
         const auto actions=s.actions();
         const auto action=std::find(actions.begin(),actions.end(),node);
         if (action==actions.end()) return false;
@@ -606,7 +605,7 @@ namespace Test {
         if (root.status()!=SS_BRANCH || root.allocated_positions()!=(lazy ? 0 : 4))
           return false;
         std::unique_ptr<Transition> absent(static_cast<Transition*>(root.clone()));
-        if (!root.prepare(stat,options) || root.allocated_positions()!=(lazy ? 1 : 4) ||
+        if (!Gecode::Search::prepare(root,stat,options) || root.allocated_positions()!=(lazy ? 1 : 4) ||
             root.position(0).assigned() || root.depth || root.location ||
             root.time || root.cost() || root.unvisited!=std::vector<int>({1,2,3}))
           return false;
@@ -621,7 +620,7 @@ namespace Test {
             absent->position(0).val()!=1 || root.position(0).assigned())
           return false;
         std::unique_ptr<Transition> next(static_cast<Transition*>(absent->clone()));
-        if (!absent->prepare(stat,options) || absent->depth!=1 || absent->cost()!=1 ||
+        if (!Gecode::Search::prepare(*absent,stat,options) || absent->depth!=1 || absent->cost()!=1 ||
             absent->allocated_positions()!=(lazy ? 2 : 4) || absent->position(1).assigned())
           return false;
         original.reset(absent->choice());
@@ -758,7 +757,7 @@ namespace Test {
         if (state.status()!=SS_BRANCH) return true;
         Gecode::Search::Statistics stat;
         Gecode::Search::Options options;
-        if (!state.prepare(stat,options)) return false;
+        if (!Gecode::Search::prepare(state,stat,options)) return false;
         const auto actions=state.actions();
         std::unique_ptr<const Choice> choice(state.choice());
         for (std::size_t a=0; a<actions.size(); a++) {
