@@ -40,6 +40,7 @@
 #include <memory>
 #include <vector>
 
+#ifdef GECODE_HAS_EXPERIMENTAL
 namespace Gecode { namespace Search { namespace Seq {
 
   /// Sequential tree search with owned stable frontier clones
@@ -98,6 +99,8 @@ namespace Gecode { namespace Search { namespace Seq {
   };
 
 }}}
+
+#endif
 
 #endif
 

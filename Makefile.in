@@ -263,7 +263,7 @@ endif
 
 SEARCHSRC0 = \
 	stop options cutoff engine \
-	dfs bab astar cabs column lds \
+	dfs bab lds \
 	seq/rbs seq/dead seq/pbs par/pbs \
 	rbs pbs nogoods exception tracer \
 	cpprofiler/tracer worker-control
@@ -281,6 +281,10 @@ SEARCHHDR0 = \
 	dfs.hpp bab.hpp astar.hpp cabs.hpp column.hpp lds.hpp rbs.hpp pbs.hpp \
 	relax.hh tracer.hpp trace-recorder.hpp \
 	cpprofiler/message.hpp cpprofiler/connector.hpp
+
+ifeq "@enable_experimental@" "yes"
+SEARCHSRC0 += astar cabs column
+endif
 
 SEARCHSRC	= $(SEARCHSRC0:%=gecode/search/%.cpp)
 SEARCHHDR	= gecode/search.hh $(SEARCHHDR0:%=gecode/search/%)
@@ -900,7 +904,7 @@ endif
 INTEXAMPLEHDR0 =						\
 	scowl job-shop-instances
 INTEXAMPLESRC0 =						\
-	alpha astar best-first tsptw bacp bibd donald efpa eq20 golomb-ruler		\
+	alpha bacp bibd donald efpa eq20 golomb-ruler		\
 	graph-color grocery ind-set magic-sequence magic-square	\
 	money ortho-latin partition photo queens sudoku sudoku-advanced kakuro  \
 	nonogram pentominoes crowded-chess black-hole		\
@@ -911,6 +915,10 @@ INTEXAMPLESRC0 =						\
 	dominating-queens colored-matrix multi-bin-packing	\
 	qcp job-shop open-route common-pattern fifteen-puzzle
 
+
+ifeq "@enable_experimental@" "yes"
+INTEXAMPLESRC0 += astar best-first tsptw
+endif
 
 INTEXAMPLEHDR  = $(INTEXAMPLEHDR0:%=examples/%.hpp) \
 	examples/tsptw-data.hh examples/tsptw-transition.hh

@@ -1,5 +1,11 @@
 # Native A* and best-first search
 
+This API is part of the experimental 6.5.0 preview, disabled by default.
+Build the library with `-DGECODE_ENABLE_EXPERIMENTAL=ON` (CMake) or
+`--enable-experimental` (Autoconf). `GECODE_HAS_EXPERIMENTAL` in the generated
+configuration header reports availability. Preview APIs may change or be
+removed in future feature releases; the correctness contracts below still apply.
+
 `AStar<T>` searches an ordinary `Space` subclass with its existing branching,
 `compare`, and `constrain` methods. It returns caller-owned, strictly improving
 solutions. The native API needs only the search and integer libraries.

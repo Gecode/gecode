@@ -1163,6 +1163,7 @@ namespace Gecode {
 
 #include <gecode/search/dfs.hpp>
 
+#ifdef GECODE_HAS_EXPERIMENTAL
 namespace Gecode { namespace Search {
 
   /**
@@ -1255,6 +1256,11 @@ namespace Gecode {
   /**
    * \brief Sequential bound-ordered A* with improving solution publication
    *
+   * Experimental 6.5.0 preview: build with GECODE_ENABLE_EXPERIMENTAL=ON
+   * or --enable-experimental; GECODE_HAS_EXPERIMENTAL reports availability.
+   * APIs may change or be removed in future feature releases. The documented
+   * correctness contracts still apply.
+   *
    * Spaces must implement compatible scalar integer comparison and strict
    * improvement constraints. A generated solution can precede a better one;
    * continue next() until nullptr with stopped()==false to prove optimality of
@@ -1290,6 +1296,11 @@ namespace Gecode {
 
   /**
    * \brief Return a native best-first builder with copied guidance and fixed order
+   *
+   * Experimental 6.5.0 preview: build with GECODE_ENABLE_EXPERIMENTAL=ON
+   * or --enable-experimental; GECODE_HAS_EXPERIMENTAL reports availability.
+   * APIs may change or be removed in future feature releases. The documented
+   * correctness contracts still apply.
    *
    * Uses the same engine and contracts as AStar. BOUND_FIRST preserves AStar
    * ordering; RANK_FIRST permits arbitrary, inadmissible lower-first ranking.
@@ -1331,6 +1342,11 @@ namespace Gecode {
 
   /**
    * \brief Sequential complete anytime beam search with widening restarts
+   *
+   * Experimental 6.5.0 preview: build with GECODE_ENABLE_EXPERIMENTAL=ON
+   * or --enable-experimental; GECODE_HAS_EXPERIMENTAL reports availability.
+   * APIs may change or be removed in future feature releases. The documented
+   * correctness contracts still apply.
    *
    * Each native Choice commit advances one layer. Width starts at one and
    * doubles after a completed pass if discarded bounds still permit improvement
@@ -1406,6 +1422,11 @@ namespace Gecode {
   /**
    * \brief Sequential progressive column search with fixed-quota CBFS mode
    *
+   * Experimental 6.5.0 preview: build with GECODE_ENABLE_EXPERIMENTAL=ON
+   * or --enable-experimental; GECODE_HAS_EXPERIMENTAL reports availability.
+   * APIs may change or be removed in future feature releases. The documented
+   * correctness contracts still apply.
+   *
    * Each cycle expands up to the quota from successive depth queues, including
    * deeper successors generated in that cycle. Quota growth saturates safely.
    * Deferred work remains queued. Lower-first rank orders each queue when
@@ -1449,6 +1470,8 @@ namespace Gecode {
 }
 
 #include <gecode/search/column.hpp>
+
+#endif
 
 namespace Gecode {
 

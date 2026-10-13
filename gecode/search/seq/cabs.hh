@@ -39,6 +39,7 @@
 #include <memory>
 #include <vector>
 
+#ifdef GECODE_HAS_EXPERIMENTAL
 namespace Gecode { namespace Search { namespace Seq {
 
   /// Sequential layered beams, widening while discarded work can improve
@@ -108,6 +109,8 @@ namespace Gecode { namespace Search { namespace Seq {
   };
 
 }}}
+
+#endif
 
 #endif
 

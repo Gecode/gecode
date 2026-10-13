@@ -1,5 +1,11 @@
 # Native progressive column search
 
+This API is part of the experimental 6.5.0 preview, disabled by default.
+Build the library with `-DGECODE_ENABLE_EXPERIMENTAL=ON` (CMake) or
+`--enable-experimental` (Autoconf). `GECODE_HAS_EXPERIMENTAL` in the generated
+configuration header reports availability. Preview APIs may change or be
+removed in future feature releases; the correctness contracts below still apply.
+
 `Column<T>` searches ordinary Spaces with sequential depth queues. It requires
 no Model declaration or compilation. The Space supplies `compare` and strict
 `constrain`, and `Search::HeuristicGuidance` supplies an optimistic total bound:
