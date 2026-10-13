@@ -33,7 +33,6 @@ namespace TSPTW {
                         std::shared_ptr<Measurements> measurements=nullptr);
     Transition(Transition& s);
     Gecode::Space* copy(void) override { return new Transition(*this); }
-    Gecode::SpaceComparison compare(const Gecode::Space& s) const override;
     void constrain(const Gecode::Space& s) override;
     std::vector<int> tour(void) const;
     int cost(void) const { return prefix_cost; }
@@ -334,12 +333,6 @@ namespace TSPTW {
     return feasible;
   }
 
-  inline Gecode::SpaceComparison
-  Transition::compare(const Gecode::Space& s0) const {
-    const auto& s=static_cast<const Transition&>(s0);
-    if (cost()==s.cost()) return Gecode::SC_EQUIVALENT;
-    return cost()<s.cost() ? Gecode::SC_BETTER : Gecode::SC_WORSE;
-  }
 
   inline void Transition::constrain(const Gecode::Space& s0) {
     ceiling=std::min(ceiling,static_cast<const Transition&>(s0).cost());

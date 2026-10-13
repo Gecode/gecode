@@ -120,10 +120,13 @@ namespace Test {
       std::shared_ptr<std::atomic<unsigned int>> constraints;
     public:
       IntVarArray x;
+      std::shared_ptr<std::atomic<unsigned int>> decisions;
       CompletionSpace(bool sat, bool nested, bool outer=false,
                       std::shared_ptr<std::atomic<unsigned int>> constraints0={},
-                      bool completion=true)
-        : constraints(std::move(constraints0)), x(*this,sat ? 4 : 5,1,4) {
+                      bool completion=true,
+                      std::shared_ptr<std::atomic<unsigned int>> decisions0={})
+        : constraints(std::move(constraints0)), x(*this,sat ? 4 : 5,1,4),
+          decisions(std::move(decisions0)) {
         for (int i=0;i<x.size();i++)
           for (int j=0;j<i;j++) rel(*this,x[i],IRT_NQ,x[j]);
         if (outer) {
@@ -140,7 +143,9 @@ namespace Test {
         }
       }
       CompletionSpace(CompletionSpace& s)
-        : Space(s), constraints(s.constraints) { x.update(*this,s.x); }
+        : Space(s), constraints(s.constraints), decisions(s.decisions) {
+        x.update(*this,s.x);
+      }
       Space* copy(void) override { return new CompletionSpace(*this); }
       void constrain(const Space&) override {
         if (constraints)
@@ -158,7 +163,11 @@ namespace Test {
         static_cast<CompletionSpace*>(home.clone()));
       IntVarArgs args(count);
       for (int i=0;i<count;i++) args[i]=s->x[first+i];
-      branch(*s,args,INT_VAR_NONE(),INT_VAL_MIN());
+      branch(*s,args,INT_VAR_NONE(),INT_VAL(
+        [decisions=s->decisions](const Space&, IntVar v, int) {
+          if (decisions) decisions->fetch_add(1,std::memory_order_relaxed);
+          return v.min();
+        }));
       return s.release();
     }
 
@@ -199,14 +208,6 @@ namespace Test {
           cost.update(*this,s.cost);
         }
         Space* copy(void) override { return new ObjectiveSpace(*this); }
-        SpaceComparison compare(const Space& s0) const override {
-          const ObjectiveSpace& s=dynamic_cast<const ObjectiveSpace&>(s0);
-          if (cost.val() < s.cost.val())
-            return SC_BETTER;
-          if (cost.val() > s.cost.val())
-            return SC_WORSE;
-          return SC_EQUIVALENT;
-        }
         void constrain(const Space& s0) override {
           if (constraints)
             constraints->fetch_add(1,std::memory_order_relaxed);
@@ -336,6 +337,243 @@ namespace Test {
           ;
       }
     } completionNative;
+
+    /// Later decisions must revalidate an existential completion witness.
+    class CompletionDependent : public Base {
+      class DependentSpace : public CompletionSpace {
+      public:
+        IntVar cost;
+        DependentSpace(bool maximum)
+          : CompletionSpace(true,false,true), cost(*this,0,3) {
+          for (int i=0; i<x.size(); i++)
+            linear(*this,IntArgs({1,-1}),IntVarArgs({x[i],cost}),IRT_LQ,1);
+          branch(*this,cost,maximum ? INT_VAL_MAX() : INT_VAL_MIN());
+        }
+        DependentSpace(DependentSpace& s) : CompletionSpace(s) {
+          cost.update(*this,s.cost);
+        }
+        Space* copy(void) override { return new DependentSpace(*this); }
+        void constrain(const Space& s) override {
+          int value=static_cast<const DependentSpace&>(s).cost.val();
+          if (me_failed(IntView(cost).lq(*this,value-1))) fail();
+        }
+      };
+      static bool search(unsigned int kind, bool maximum) {
+        Gecode::Search::Options options;
+        options.clone=false; options.c_d=3; options.a_d=1;
+        std::unique_ptr<Gecode::Search::Engine> engine;
+        switch (kind) {
+        case 0: engine.reset(Gecode::Search::dfsengine(new DependentSpace(maximum),options)); break;
+        case 1: engine.reset(Gecode::Search::babengine(new DependentSpace(maximum),options)); break;
+        case 2:
+          options.threads=2;
+          engine.reset(Gecode::Search::babengine(new DependentSpace(maximum),options)); break;
+#ifdef GECODE_HAS_EXPERIMENTAL
+        default:
+          {
+            using Guidance=Gecode::Search::HeuristicGuidance;
+            Guidance guidance(Guidance::MINIMIZE,[](const Space& s) -> std::int64_t {
+              return static_cast<const DependentSpace&>(s).cost.min();
+            });
+            if (kind==3)
+              engine.reset(Gecode::Search::astarengine(new DependentSpace(maximum),guidance,options));
+            else if (kind==4)
+              engine.reset(Gecode::Search::cabsengine(new DependentSpace(maximum),guidance,options));
+            else
+              engine.reset(Gecode::Search::columnengine(new DependentSpace(maximum),guidance,options));
+          }
+          break;
+#else
+        default: GECODE_NEVER;
+#endif
+        }
+        unsigned int solutions=0;
+        while (std::unique_ptr<DependentSpace> s{
+                 static_cast<DependentSpace*>(engine->next())}) {
+          if (s->cost.val()!=3) return false;
+          // Verify the reported objective with ordinary hidden-variable search.
+          std::unique_ptr<DependentSpace> check(static_cast<DependentSpace*>(s->clone()));
+          check->invalidate_branchers();
+          branch(*check,check->x,INT_VAR_NONE(),INT_VAL_MIN());
+          Gecode::Search::Options witness_options; witness_options.clone=false;
+          Gecode::DFS<DependentSpace> witness(check.release(),witness_options);
+          std::unique_ptr<DependentSpace> valid(witness.next());
+          if (!valid) return false;
+          solutions++;
+        }
+        return solutions && !engine->stopped();
+      }
+    public:
+      CompletionDependent(void) : Base("Search::Completion::Dependent",TestTags::check()) {}
+      bool run(void) override {
+        for (bool maximum : {false,true})
+          for (unsigned int kind=0; kind<
+#ifdef GECODE_HAS_EXPERIMENTAL
+               6
+#else
+               3
+#endif
+               ; kind++)
+            if (!search(kind,maximum)) return false;
+        return true;
+      }
+    } completionDependent;
+
+    /// Nested trials retain their work and publish their counters across stops.
+    class CompletionNested : public Base {
+      static bool same(const Gecode::Search::Statistics& a,
+                       const Gecode::Search::Statistics& b) {
+        return a.node==b.node && a.fail==b.fail && a.propagate==b.propagate &&
+          a.depth==b.depth && a.restart==b.restart && a.nogood==b.nogood;
+      }
+      static Gecode::Search::Engine* engine(unsigned int kind, CompletionSpace* root,
+                                            const Gecode::Search::Options& options) {
+        switch (kind) {
+        case 0: return Gecode::Search::dfsengine(root,options);
+        case 1: return Gecode::Search::ldsengine(root,options);
+        case 2:
+          {
+            Gecode::Search::Options parallel=options; parallel.threads=2;
+            return Gecode::Search::dfsengine(root,parallel);
+          }
+#ifdef GECODE_HAS_EXPERIMENTAL
+        default:
+          {
+            using Guidance=Gecode::Search::HeuristicGuidance;
+            Guidance guidance(Guidance::MINIMIZE,[](const Space&) -> std::int64_t { return 0; });
+            if (kind==3) return Gecode::Search::astarengine(root,guidance,options);
+            if (kind==4) return Gecode::Search::cabsengine(root,guidance,options);
+            return Gecode::Search::columnengine(root,guidance,options);
+          }
+#else
+        default: GECODE_NEVER;
+#endif
+        }
+        return nullptr;
+      }
+      static bool search(unsigned int kind, bool sat) {
+        Gecode::Search::Options options;
+        options.clone=false; options.c_d=5; options.a_d=2;
+        std::unique_ptr<Gecode::Search::Engine> full(engine(kind,new CompletionSpace(sat,true),options));
+        std::unique_ptr<Space> solution(full->next());
+        if (static_cast<bool>(solution)!=sat || full->stopped()) return false;
+        auto decisions=std::make_shared<std::atomic<unsigned int>>(0);
+        Gecode::Search::NodeStop stop(3); options.stop=&stop;
+        std::unique_ptr<Gecode::Search::Engine> sliced(
+          engine(kind,new CompletionSpace(sat,true,false,{},true,decisions),options));
+        if (sliced->next() || !sliced->stopped()) return false;
+        const auto before=sliced->statistics();
+        const auto observed=decisions->load();
+        if (observed>=23) return false;
+        if (sliced->next() || !sliced->stopped() ||
+            !same(before,sliced->statistics()) || decisions->load()!=observed) return false;
+        stop.limit(100000);
+        std::unique_ptr<Space> resumed(sliced->next());
+        return static_cast<bool>(resumed)==sat && !sliced->stopped() &&
+          same(full->statistics(),sliced->statistics()) &&
+          sliced->statistics().node>before.node;
+      }
+    public:
+      CompletionNested(void) : Base("Search::Completion::Nested",TestTags::check()) {}
+      bool run(void) override {
+        for (bool sat : {false,true})
+          for (unsigned int kind=0; kind<
+#ifdef GECODE_HAS_EXPERIMENTAL
+               6
+#else
+               3
+#endif
+               ; kind++)
+            if (!search(kind,sat)) return false;
+        return true;
+      }
+    } completionNested;
+
+    /// Successful preparation can end in failure or skip to a solved brancher.
+    class PreparedTerminal : public Base {
+      class PreparedSpace : public Space {
+        class PreparedBrancher : public Brancher {
+          bool prepared, failure;
+          std::shared_ptr<std::atomic<unsigned int>> choices;
+          class PreparedChoice : public Choice {
+          public:
+            PreparedChoice(const Brancher& b) : Choice(b,1) {}
+          };
+        public:
+          PreparedBrancher(Home home, bool f, std::shared_ptr<std::atomic<unsigned int>> c)
+            : Brancher(home), prepared(false), failure(f), choices(std::move(c)) {
+            home.notice(*this,AP_DISPOSE,false);
+          }
+          PreparedBrancher(Space& home, PreparedBrancher& b)
+            : Brancher(home,b), prepared(b.prepared), failure(b.failure), choices(b.choices) {}
+          bool status(const Space&) const override { return !prepared; }
+          bool prepare(Space& home, Gecode::Search::Statistics&,
+                       const Gecode::Search::Options&) override {
+            prepared=true;
+            if (failure) home.fail();
+            return true;
+          }
+          const Choice* choice(Space&) override {
+            (*choices)++;
+            return new PreparedChoice(*this);
+          }
+          const Choice* choice(const Space&, Archive&) override { return new PreparedChoice(*this); }
+          ExecStatus commit(Space&, const Choice&, unsigned int) override { return ES_OK; }
+          Actor* copy(Space& home) override { return new (home) PreparedBrancher(home,*this); }
+          size_t dispose(Space& home) override {
+            home.ignore(*this,AP_DISPOSE,false);
+            choices.~shared_ptr();
+            (void) Brancher::dispose(home);
+            return sizeof(*this);
+          }
+        };
+      public:
+        PreparedSpace(bool failure, std::shared_ptr<std::atomic<unsigned int>> choices) {
+          (void) new (*this) PreparedBrancher(*this,false,choices);
+          (void) new (*this) PreparedBrancher(*this,failure,choices);
+        }
+        PreparedSpace(PreparedSpace& s) : Space(s) {}
+        Space* copy(void) override { return new PreparedSpace(*this); }
+      };
+    public:
+      PreparedTerminal(void) : Base("Search::Completion::PreparedTerminal",TestTags::check()) {}
+      bool run(void) override {
+        for (bool failure : {false,true})
+          for (unsigned int kind=0; kind<
+#ifdef GECODE_HAS_EXPERIMENTAL
+               6
+#else
+               3
+#endif
+               ; kind++) {
+            auto choices=std::make_shared<std::atomic<unsigned int>>(0);
+            Gecode::Search::NodeStop stop(100);
+            Gecode::Search::Options options; options.clone=false; options.stop=&stop;
+            std::unique_ptr<Gecode::Search::Engine> engine;
+            if (kind==0) engine.reset(Gecode::Search::dfsengine(new PreparedSpace(failure,choices),options));
+            else if (kind==1) engine.reset(Gecode::Search::ldsengine(new PreparedSpace(failure,choices),options));
+            else if (kind==2) {
+              options.threads=2;
+              engine.reset(Gecode::Search::babengine(new PreparedSpace(failure,choices),options));
+            }
+#ifdef GECODE_HAS_EXPERIMENTAL
+            else {
+              using Guidance=Gecode::Search::HeuristicGuidance;
+              Guidance guidance(Guidance::MINIMIZE,[](const Space&) -> std::int64_t { return 0; });
+              if (kind==3) engine.reset(Gecode::Search::astarengine(new PreparedSpace(failure,choices),guidance,options));
+              else if (kind==4) engine.reset(Gecode::Search::cabsengine(new PreparedSpace(failure,choices),guidance,options));
+              else engine.reset(Gecode::Search::columnengine(new PreparedSpace(failure,choices),guidance,options));
+            }
+#endif
+            std::unique_ptr<Space> result(engine->next());
+            auto stat=engine->statistics();
+            if (static_cast<bool>(result)==failure || choices->load() || engine->stopped() ||
+                stat.node!=1 || stat.fail!=(failure ? 1U : 0U) || stat.depth) return false;
+          }
+        return true;
+      }
+    } preparedTerminal;
+
 
 #ifdef GECODE_HAS_EXPERIMENTAL
     /// The example's real n-ary transitions survive cloning and continuation.
@@ -576,9 +814,9 @@ namespace Test {
     public:
       static std::atomic<int> live;
       IntVar x, y;
-      bool maximize, incomparable;
+      bool maximize;
       AStarSpace(bool max=false, int fixed=-1, bool failed=false)
-        : x(*this,0,3), y(*this,0,1), maximize(max), incomparable(false) {
+        : x(*this,0,3), y(*this,0,1), maximize(max) {
         live++;
         TupleSet tuples(2);
         for (int i=0;i<4;i++) {
@@ -596,7 +834,7 @@ namespace Test {
         Gecode::branch(*this,y,INT_VALUES_MIN());
       }
       AStarSpace(AStarSpace& s)
-        : Space(s), maximize(s.maximize), incomparable(s.incomparable) {
+        : Space(s), maximize(s.maximize) {
         live++;
         x.update(*this,s.x); y.update(*this,s.y);
       }
@@ -613,12 +851,6 @@ namespace Test {
       std::int64_t objective(void) const { return score(x.val()); }
       bool improves(std::int64_t a, std::int64_t b) const {
         return maximize ? a>b : a<b;
-      }
-      SpaceComparison compare(const Space& s0) const override {
-        const auto& s=dynamic_cast<const AStarSpace&>(s0);
-        if (incomparable || maximize!=s.maximize) return SC_INCOMPARABLE;
-        if (objective()==s.objective()) return SC_EQUIVALENT;
-        return improves(objective(),s.objective()) ? SC_BETTER : SC_WORSE;
       }
       void constrain(const Space& s0) override {
         const auto& s=static_cast<const AStarSpace&>(s0);
@@ -709,11 +941,6 @@ namespace Test {
           ceiling(s.ceiling) {}
       Space* copy(void) override { return new PruningSpace(*this); }
       const Node& value(void) const { return (*graph)[vertex]; }
-      SpaceComparison compare(const Space& s0) const override {
-        const int other=static_cast<const PruningSpace&>(s0).value().cost;
-        return value().cost==other ? SC_EQUIVALENT :
-          value().cost<other ? SC_BETTER : SC_WORSE;
-      }
       void constrain(const Space& s0) override {
         ceiling=static_cast<const PruningSpace&>(s0).value().cost;
         if (value().cost>=ceiling) fail();
@@ -970,11 +1197,6 @@ namespace Test {
           found++;
         }
         if (engine->stopped() || found!=(queued ? 0U : 1U)) return false;
-        worse.incomparable=true;
-        try {
-          engine->constrain(worse);
-          return false;
-        } catch (const Gecode::Search::Incomparable&) {}
         return true;
       }
       static bool ownership(void) {
@@ -1065,11 +1287,6 @@ namespace Test {
         x.update(*this,s.x); y.update(*this,s.y);
       }
       Space* copy(void) override { return new CABSFeasibility(*this); }
-      SpaceComparison compare(const Space& s0) const override {
-        const auto& s=dynamic_cast<const CABSFeasibility&>(s0);
-        if (x.val()==s.x.val()) return SC_EQUIVALENT;
-        return x.val()<s.x.val() ? SC_BETTER : SC_WORSE;
-      }
       void constrain(const Space& s0) override {
         rel(*this,x,IRT_LE,static_cast<const CABSFeasibility&>(s0).x.val());
       }
@@ -1247,9 +1464,6 @@ namespace Test {
           engine->constrain(incumbent);
           engine->constrain(incumbent);
           engine->constrain(worse);
-          worse.incomparable=true;
-          try { engine->constrain(worse); return false; }
-          catch (const Gecode::Search::Incomparable&) {}
         }
         // The accepted external copy survives the caller's destruction. Its
         // exact INT64_MIN objective also bounds out every discarded candidate;
@@ -1457,9 +1671,6 @@ namespace Test {
           incumbent.status(); worse.status();
           engine->constrain(incumbent); engine->constrain(incumbent);
           engine->constrain(worse);
-          worse.incomparable=true;
-          try { engine->constrain(worse); return false; }
-          catch (const Gecode::Search::Incomparable&) {}
         }
         std::unique_ptr<AStarSpace> optimum(static_cast<AStarSpace*>(engine->next()));
         return optimum && optimum->x.val()==2 && !engine->next() && !engine->stopped();
@@ -1563,71 +1774,6 @@ namespace Test {
 
 #endif
 
-    /// Scalar integer objective used for comparison tests
-    class MinObjective : public IntMinimizeSpace {
-    public:
-      IntVar x;
-      MinObjective(int l, int u) : x(*this,l,u) {}
-      MinObjective(MinObjective& s) : IntMinimizeSpace(s) {
-        x.update(*this,s.x);
-      }
-      virtual Space* copy(void) { return new MinObjective(*this); }
-      virtual IntVar cost(void) const { return x; }
-    };
-
-    /// Scalar maximization objective used to check objective families
-    class MaxObjective : public IntMaximizeSpace {
-    public:
-      IntVar x;
-      MaxObjective(int v) : x(*this,v,v) {}
-      MaxObjective(MaxObjective& s) : IntMaximizeSpace(s) {
-        x.update(*this,s.x);
-      }
-      virtual Space* copy(void) { return new MaxObjective(*this); }
-      virtual IntVar cost(void) const { return x; }
-    };
-
-    /// Space without objective comparison support
-    class PlainSpace : public Space {
-    public:
-      PlainSpace(void) {}
-      PlainSpace(PlainSpace& s) : Space(s) {}
-      virtual Space* copy(void) { return new PlainSpace(*this); }
-    };
-
-    /// Test objective comparison independently of search arbitration
-    class Comparison : public Base {
-    public:
-      Comparison(void) : Base("Search::Comparison", TestTags::check()) {}
-      virtual bool run(void) {
-        MinObjective one(1,1), two(2,2), one_again(1,1), open(0,2);
-        if ((one.compare(two) != SC_BETTER) ||
-            (two.compare(one) != SC_WORSE) ||
-            (one.compare(one_again) != SC_EQUIVALENT))
-          return false;
-        MaxObjective high(2), low(1);
-        if ((high.compare(low) != SC_BETTER) ||
-            (low.compare(high) != SC_WORSE))
-          return false;
-        try {
-          (void) open.compare(one);
-          return false;
-        } catch (const Int::ValOfUnassignedVar&) {}
-        try {
-          (void) one.compare(high);
-          return false;
-        } catch (const DynamicCastFailed&) {}
-        PlainSpace plain;
-        try {
-          (void) plain.compare(plain);
-          return false;
-        } catch (const SpaceNoComparison&) {}
-        return true;
-      }
-    };
-
-    Comparison comparison;
-
     /// Brancher used to exercise internal post-propagation feedback
     class FeedbackBrancher : public Brancher {
     private:
@@ -1723,10 +1869,6 @@ namespace Test {
         return new FeedbackSpace(*this);
       }
       void constrain(const Space&) override {}
-      // This fixture enumerates a complete tree without objective pruning.
-      SpaceComparison compare(const Space&) const override {
-        return SC_BETTER;
-      }
       bool master(const MetaInfo& info) override {
         if ((info.type() == MetaInfo::RESTART) && (info.last() != nullptr)) {
           const FeedbackSpace& last =

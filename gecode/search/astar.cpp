@@ -140,9 +140,8 @@ namespace Gecode { namespace Search { namespace Seq {
   AStar::publish(std::unique_ptr<Space> s) {
     // Clean exhausted branchers, retaining completion branchers as usual.
     (void) s->choice();
-    if (best && !Search::better(*s,*best,"AStar::next"))
-      return nullptr;
     const std::int64_t bound = guidance.bound(*s);
+    if (!improves(bound)) return nullptr;
     std::unique_ptr<Space> result(s->clone());
     best = std::move(s);
     best_bound = bound;
@@ -212,8 +211,8 @@ namespace Gecode { namespace Search { namespace Seq {
 
   void
   AStar::constrain(const Space& b) {
-    if (best && !Search::better(b,*best,"AStar::constrain")) return;
     const std::int64_t bound = guidance.bound(b);
+    if (!improves(bound)) return;
     std::unique_ptr<Space> incumbent(b.clone());
     best = std::move(incumbent);
     best_bound = bound;

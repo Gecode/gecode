@@ -7,7 +7,7 @@ configuration header reports availability. Preview APIs may change or be
 removed in future feature releases; the correctness contracts below still apply.
 
 `Column<T>` searches ordinary Spaces with sequential depth queues. It requires
-no Model declaration or compilation. The Space supplies `compare` and strict
+no Model declaration or compilation. The Space supplies strict-improvement
 `constrain`, and `Search::HeuristicGuidance` supplies an optimistic total bound:
 a lower bound for minimization or upper bound for maximization, exact on a
 solution. The engine adds no prefix cost. Guidance follows the [A* callback
@@ -33,7 +33,8 @@ configuration. Builders copy callbacks and quotas. Root ownership follows
 `options.clone`: the default preserves the caller's root; false transfers it
 after configuration validation. Returned solutions and external incumbents
 are independently owned clones. `constrain(incumbent)` adopts a compatible,
-strictly improving incumbent and ignores equivalent or worse values.
+strictly improving incumbent using the exact scalar guidance value; it ignores
+equal or worse values.
 
 A cycle visits successive committed depths from zero. At each depth it selects
 up to the positive quota of parents, finishes every original n-ary Choice, and
@@ -78,8 +79,8 @@ node owns a stable Space; the engine reuses each selected parent for its final
 alternative. Descriptor vectors and queue/container capacity add storage.
 `c_d` and `a_d` do not enable recomputation. No-good extraction is empty.
 Only one expanded thread and no tracer are supported, with explicit exceptions
-for unsupported settings and zero initial quota. If a callback, comparison or
-model operation throws, destroy the engine before using it again.
+for unsupported settings and zero initial quota. If a callback or model
+operation throws, destroy the engine before using it again.
 
 Build `astar` to run progressive and fixed quotas against the same misleading
 rank model used by A*/BAB/CABS. The [TSPTW example](../examples/data/tsptw/README.md)

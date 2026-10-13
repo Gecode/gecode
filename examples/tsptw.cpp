@@ -114,11 +114,6 @@ public:
         return static_cast<const TSPTWClosed&>(s).total.min();
       }};
   }
-  SpaceComparison compare(const Space& s0) const override {
-    const auto& s=static_cast<const TSPTWClosed&>(s0);
-    if (total.val()==s.total.val()) return SC_EQUIVALENT;
-    return total.val()<s.total.val() ? SC_BETTER : SC_WORSE;
-  }
   void constrain(const Space& s0) override {
     const auto& s=static_cast<const TSPTWClosed&>(s0);
     rel(*this,total,IRT_LE,s.total.val());

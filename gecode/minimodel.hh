@@ -2442,9 +2442,6 @@ namespace Gecode {
     /// Member function constraining according to decreasing cost
     GECODE_MINIMODEL_EXPORT
     virtual void constrain(const Space& best);
-    /// Compare integer costs (both costs must be assigned)
-    GECODE_MINIMODEL_EXPORT
-    virtual SpaceComparison compare(const Space& other) const;
     /// Return variable with current cost
     virtual IntVar cost(void) const = 0;
   };
@@ -2462,9 +2459,6 @@ namespace Gecode {
     /// Member function constraining according to increasing cost
     GECODE_MINIMODEL_EXPORT
     virtual void constrain(const Space& best);
-    /// Compare integer costs (both costs must be assigned)
-    GECODE_MINIMODEL_EXPORT
-    virtual SpaceComparison compare(const Space& other) const;
     /// Return variable with current cost
     virtual IntVar cost(void) const = 0;
   };
