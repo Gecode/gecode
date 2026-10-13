@@ -148,9 +148,8 @@ namespace Gecode { namespace Search { namespace Seq {
   Column::publish(std::unique_ptr<Space> s) {
     // Clean exhausted branchers, retaining completion branchers as usual.
     (void) s->choice();
-    if (best && !Search::better(*s,*best,"Column::next"))
-      return nullptr;
     const std::int64_t bound = guidance.bound(*s);
+    if (!improves(bound)) return nullptr;
     std::unique_ptr<Space> result(s->clone());
     best = std::move(s);
     best_bound = bound;
@@ -248,8 +247,8 @@ namespace Gecode { namespace Search { namespace Seq {
 
   void
   Column::constrain(const Space& b) {
-    if (best && !Search::better(b,*best,"Column::constrain")) return;
     const std::int64_t bound = guidance.bound(b);
+    if (!improves(bound)) return;
     std::unique_ptr<Space> incumbent(b.clone());
     best = std::move(incumbent);
     best_bound = bound;

@@ -73,9 +73,10 @@ class Study {
   }
   Owned publish(Owned s) {
     if (optimize) {
-      if (incumbent && s->compare(*incumbent)!=SC_BETTER) return {};
+      const auto value=guidance.bound(*s);
+      if (incumbent && value>=incumbent_bound) return {};
       incumbent.reset(s->clone());
-      incumbent_bound=guidance.bound(*s);
+      incumbent_bound=value;
       revision++;
     }
     return s;
@@ -181,7 +182,9 @@ public:
         suspensions++; return {Step::SUSPENDED,{}};
       }
       if (child.state==Search::Seq::ExpansionStep::EXHAUSTED) continue;
-      commits++; work++;
+      if (child.state==Search::Seq::ExpansionStep::CHILD) {
+        commits++; work++;
+      }
       if (child.status==SS_FAILED) { worker.fail++; continue; }
       const auto bound=guidance.bound(*child.space);
       if (optimize && incumbent && bound>=incumbent_bound) {
@@ -266,10 +269,6 @@ public:
   explicit Witness(int state=0) : node(state) { (void)new(*this)Branch(*this); }
   Witness(Witness& s) : Space(s),node(s.node),ceiling(s.ceiling),cost(s.cost),path(s.path) {}
   Space* copy() override { return new Witness(*this); }
-  SpaceComparison compare(const Space& s) const override {
-    const int other=static_cast<const Witness&>(s).cost;
-    return cost<other ? SC_BETTER : (cost==other ? SC_EQUIVALENT : SC_WORSE);
-  }
   void constrain(const Space& s) override {
     ceiling=static_cast<const Witness&>(s).cost;
     if (node>=10 && cost>=ceiling) fail();

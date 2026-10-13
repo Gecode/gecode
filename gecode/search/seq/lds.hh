@@ -79,6 +79,8 @@ namespace Gecode { namespace Search { namespace Seq {
     Support::DynamicStack<Node,Heap> ds;
     /// Current space
     Space* cur;
+    /// Whether the discrepancy node was counted before preparation suspended
+    bool counted;
     /// Current discrepancy
     unsigned int d;
     /// Whether entire search space has been exhausted

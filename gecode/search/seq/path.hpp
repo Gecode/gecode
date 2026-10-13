@@ -306,6 +306,7 @@ namespace Gecode { namespace Search { namespace Seq {
       assert(ds.entries()-1 == lc());
       if ((best != nullptr) && (mark > ds.entries()-1)) {
         mark = ds.entries()-1;
+        s->invalidate_branchers();
         s->constrain(*best);
       }
       ds.top().space(nullptr);
@@ -325,6 +326,7 @@ namespace Gecode { namespace Search { namespace Seq {
 
     if ((best != nullptr) && (l < mark)) {
       mark = l;
+      s->invalidate_branchers();
       s->constrain(*best);
       // The space on the stack could be failed now as an additional
       // constraint might have been added.

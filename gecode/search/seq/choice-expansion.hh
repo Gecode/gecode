@@ -44,7 +44,7 @@ namespace Gecode { namespace Search { namespace Seq {
 
   /// One propagated child, interrupted preparation, or exhausted choice
   struct ExpansionStep {
-    enum State { CHILD, SUSPENDED, EXHAUSTED };
+    enum State { CHILD, PREPARED_TERMINAL, SUSPENDED, EXHAUSTED };
     State state;
     std::unique_ptr<Space> space;
     SpaceStatus status;
@@ -93,6 +93,9 @@ namespace Gecode { namespace Search { namespace Seq {
       if (!choice) {
         if (!worker.prepare(*parent,opt))
           return {ExpansionStep::SUSPENDED,nullptr,SS_FAILED};
+        const SpaceStatus status = parent->status(worker);
+        if (status != SS_BRANCH)
+          return {ExpansionStep::PREPARED_TERMINAL,std::move(parent),status};
         choice.reset(parent->choice());
         alternative = 0;
       }

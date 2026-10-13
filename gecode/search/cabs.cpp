@@ -141,8 +141,17 @@ namespace Gecode { namespace Search { namespace Seq {
         remove_descriptor(candidates[victim]);
       candidates[victims.front()] = std::move(entry);
       add_descriptor(candidates[victims.front()]);
-      for (std::size_t j=victims.size(); j>1; j--)
-        candidates.erase(candidates.begin()+victims[j-1]);
+      std::size_t write = victims.front()+1;
+      std::size_t victim = 1;
+      for (std::size_t read=write; read<candidates.size(); read++) {
+        if (victim<victims.size() && read==victims[victim]) {
+          victim++;
+        } else {
+          if (write!=read) candidates[write] = std::move(candidates[read]);
+          write++;
+        }
+      }
+      candidates.erase(candidates.begin()+write,candidates.end());
       std::make_heap(candidates.begin(),candidates.end(),earlier);
       state_pruned += victims.size();
       record_descriptors();
@@ -210,8 +219,8 @@ namespace Gecode { namespace Search { namespace Seq {
   Space*
   CABS::publish(std::unique_ptr<Space> s) {
     (void) s->choice();
-    if (best && !Search::better(*s,*best,"CABS::next")) return nullptr;
     const std::int64_t bound = guidance.bound(*s);
+    if (!improves(bound)) return nullptr;
     std::unique_ptr<Space> result(s->clone());
     best = std::move(s);
     best_bound = bound;
@@ -319,8 +328,8 @@ namespace Gecode { namespace Search { namespace Seq {
 
   void
   CABS::constrain(const Space& b) {
-    if (best && !Search::better(b,*best,"CABS::constrain")) return;
     const std::int64_t bound = guidance.bound(b);
+    if (!improves(bound)) return;
     std::unique_ptr<Space> incumbent(b.clone());
     best = std::move(incumbent);
     best_bound = bound;

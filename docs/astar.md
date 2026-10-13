@@ -6,8 +6,8 @@ Build the library with `-DGECODE_ENABLE_EXPERIMENTAL=ON` (CMake) or
 configuration header reports availability. Preview APIs may change or be
 removed in future feature releases; the correctness contracts below still apply.
 
-`AStar<T>` searches an ordinary `Space` subclass with its existing branching,
-`compare`, and `constrain` methods. It returns caller-owned, strictly improving
+`AStar<T>` searches an ordinary `Space` subclass with its existing branching
+and `constrain` methods. It returns caller-owned, strictly improving
 solutions. The native API needs only the search and integer libraries.
 [The closed example](../examples/astar.cpp) compares A*, CABS, and BAB on the same bounded model with objectives
 4, -2, -7, and 1. Continuing A* proves -7 optimal.
@@ -33,9 +33,16 @@ The bound must be optimistic **total** objective value on a propagated stable
 space: a lower bound for `MINIMIZE`, an upper bound for `MAXIMIZE`, and the exact
 objective on every solution. A transition model supplies its own prefix plus
 remaining-cost bound. The engine adds no cost and compares signed 64-bit values
-directly. The bound, `compare`, and strict-improvement `constrain` must describe
+directly. The bound and strict-improvement `constrain` must describe
 the same compatible scalar integer objective. The caller must justify the bound
-and keep callback arithmetic in range.
+and keep callback arithmetic in range. Solution acceptance uses this exact
+scalar value, independently of rank; no Space comparison API is required.
+
+Ordinary Gecode 6.x BAB, restart and portfolio engines retain their existing
+incumbent admission test: they apply `constrain` to a temporary clone and check
+propagation-visible failure. An external incumbent whose improvement can only
+be established by exhausting hidden completion search is not guaranteed
+admission by that test. Native scalar adoption uses the exact objective value.
 
 A* selects the best total bound first. An optional third guidance argument
 supplies a signed 64-bit rank; lower ranks break equal-bound ties, followed by
@@ -72,8 +79,8 @@ Space, while sound total bounds and the compatible incumbent restriction prune.
 Generated solutions are still published immediately. Neither ordering guarantees
 that the first goal is optimal or has the best rank. Natural finite-tree
 exhaustion with `stopped()==false` proves the best accepted incumbent optimal,
-or infeasibility when none exists, provided the bound, comparison and optional
-state-pruning contracts preserve coverage. Best-first uses the callback lifetime,
+or infeasibility when none exists, provided the bound, strict improvement and
+optional state-pruning contracts preserve coverage. Best-first uses the callback lifetime,
 numeric, ownership, stop, exception and descriptor contracts below. The native
 factory is `Search::bestfirstengine(root, guidance, ordering, options, pruning)`;
 `Search::astarengine` retains its signature and selects bound-first.
@@ -96,7 +103,7 @@ and weighted-search repair are outside this API.
 Guidance is copied into engines and builders. Callbacks read the space passed to
 them without posting constraints. Captured dependencies must outlive every
 engine and builder using them; do not capture another space's local variables.
-If guidance, comparison, or a model operation throws during search, destroy the
+If guidance or a model operation throws during search, destroy the
 engine before using it again. Constructor failure leaves the supplied root with
 the caller. After successful construction, `Options::clone=false` transfers the
 root to the engine; the default clones it and leaves the supplied root with the
@@ -113,9 +120,9 @@ while (std::unique_ptr<Space> solution{engine->next()}) {
 }
 ```
 
-Equivalent or worse external solutions do not replace the incumbent;
-incomparable ones raise `Search::Incomparable`. Each accepted incumbent has an
-independent owned copy. Queued parents
+The exact scalar guidance value decides incumbent acceptance in the declared
+objective direction. Equal or worse external solutions do not replace the
+incumbent. Each accepted incumbent has an independent owned copy. Queued parents
 and saved choices stay unchanged while alternatives remain. The engine commits
 each original alternative on an owned child, cloning the selected parent for
 earlier alternatives and transferring it for the final one. It then applies a

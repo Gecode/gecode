@@ -68,13 +68,6 @@ namespace Gecode {
     SpaceNoBrancher(const char* l);
   };
 
-  /// %Exception: Comparison not implemented by space
-  class GECODE_KERNEL_EXPORT SpaceNoComparison : public Exception {
-  public:
-    /// Initialize with location \a l
-    SpaceNoComparison(const char* l);
-  };
-
   /// %Exception: Commit with illegal alternative
   class GECODE_KERNEL_EXPORT SpaceIllegalAlternative : public Exception {
   public:

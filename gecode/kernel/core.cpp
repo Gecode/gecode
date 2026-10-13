@@ -42,6 +42,7 @@
  */
 
 #include <gecode/kernel.hh>
+#include <gecode/search.hh>
 
 namespace Gecode {
 
@@ -572,6 +573,9 @@ namespace Gecode {
   }
 
   bool
+  Brancher::commit_restricts(void) const { return true; }
+
+  bool
   Brancher::retained(void) const { return false; }
 
   void
@@ -579,8 +583,14 @@ namespace Gecode {
 
   bool
   Space::prepare(Search::Statistics& stat, const Search::Options& options) {
-    return b_status == Brancher::cast(&bl) ||
-      b_status->prepare(*this,stat,options);
+    while (!failed() && b_status != Brancher::cast(&bl)) {
+      Brancher* active = b_status;
+      if (!active->prepare(*this,stat,options))
+        return false;
+      if (status(stat) != SS_BRANCH || b_status == active)
+        return true;
+    }
+    return true;
   }
 
   void
@@ -650,6 +660,9 @@ namespace Gecode {
     if (failed())
       return;
     if (Brancher* b = brancher(c.bid)) {
+      // Resolve the archived choice before resetting the brancher cursors.
+      if (retained_branchers && b->commit_restricts())
+        invalidate_branchers();
       // There is a matching brancher
       if (pc.p.bid_sc & sc_trace) {
         TraceRecorder* tr = findtracerecorder();
@@ -681,6 +694,9 @@ namespace Gecode {
     if (failed())
       return;
     if (Brancher* b = brancher(c.bid)) {
+      // Resolve the archived choice before resetting the brancher cursors.
+      if (retained_branchers && b->commit_restricts())
+        invalidate_branchers();
       // There is a matching brancher
       if (pc.p.bid_sc & sc_trace) {
         TraceRecorder* tr = findtracerecorder();
@@ -931,17 +947,14 @@ namespace Gecode {
   Space::constrain(const Space&) {
   }
 
-  SpaceComparison
-  Space::compare(const Space&) const {
-    throw SpaceNoComparison("Space::compare");
-  }
-
   bool
   Space::master(const MetaInfo& mi) {
     switch (mi.type()) {
     case MetaInfo::RESTART:
-      if (mi.last() != nullptr)
+      if (mi.last() != nullptr) {
+        invalidate_branchers();
         constrain(*mi.last());
+      }
       mi.nogoods().post(*this);
       // Perform a restart even if a solution has been found
       return true;

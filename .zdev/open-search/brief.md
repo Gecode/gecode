@@ -1,3 +1,15 @@
+## Gecode 6.5 comparison boundary (2026-10-13)
+
+The user clarified that `feature/comparison` targets Gecode 7. The 6.5
+experimental preview must avoid that dependency. Native heuristic guidance
+already provides an exact scalar objective on solutions, so use that value
+and its objective direction for incumbent acceptance if sufficient. Remove
+extracted Gecode 7 comparison APIs rather than making ordinary Gecode 6.x
+models implement them. Ranking remains independent of sound bounds and
+solution acceptance. A full ordinary-engine comparison migration is deferred
+to Gecode 7. If a required search capability truly depends on it, identify
+that dependency before including it in the 6.5 preview.
+
 ## Experimental preview for 6.5.0 (2026-10-13)
 
 The user approved a default-off experimental build switch and experimental

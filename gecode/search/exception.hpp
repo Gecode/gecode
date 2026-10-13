@@ -138,11 +138,6 @@ namespace Gecode { namespace Search {
   };
 #endif
 
-  /// %Exception: Incumbent objectives are incomparable
-  class GECODE_SEARCH_EXPORT Incomparable : public Exception {
-  public:
-    Incomparable(const char* l);
-  };
   //@}
 }}
 

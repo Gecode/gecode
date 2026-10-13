@@ -3,9 +3,9 @@
 # Tasks: open-search
 
 - Total: 33
-- Ready: 1
+- Ready: 0
 - Blocked: 0
-- Done: 32
+- Done: 33
 
 | ID | Task | State | Blocked by |
 | --- | --- | --- | --- |
@@ -41,4 +41,4 @@
 | [open-search-030](tasks/030-evaluate-sequential-cadds-retained-fragment-search.md) | Evaluate sequential CADDS retained-fragment search | done | open-search-018, open-search-025 |
 | [open-search-031](tasks/031-reconstruct-standalone-native-search-on-open-cp.md) | Reconstruct standalone native search on open-cp | done | — |
 | [open-search-032](tasks/032-gate-heuristic-search-as-an-experimental-preview-and-separat.md) | Gate heuristic search as an experimental preview and separate experimental changelog entries | done | — |
-| [open-search-033](tasks/033-repair-reviewed-preparation-and-completion-contracts-and-com.md) | Repair reviewed preparation and completion contracts and compact CABS victims | ready | — |
+| [open-search-033](tasks/033-repair-reviewed-preparation-and-completion-contracts-and-com.md) | Repair reviewed preparation and completion contracts and compact CABS victims | done | — |

@@ -69,6 +69,7 @@ namespace Gecode { namespace Search { namespace Par {
       using Engine<Tracer>::Worker::m;
       using Engine<Tracer>::Worker::path;
       using Engine<Tracer>::Worker::cur;
+      using Engine<Tracer>::Worker::counted;
       using Engine<Tracer>::Worker::d;
       using Engine<Tracer>::Worker::idle;
       using Engine<Tracer>::Worker::node;

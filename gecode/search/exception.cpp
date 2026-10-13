@@ -34,9 +34,6 @@
 #include <gecode/search.hh>
 
 namespace Gecode { namespace Search {
-  Incomparable::Incomparable(const char* l)
-    : Exception(l,"Incumbent objectives are incomparable") {}
-
 #ifdef GECODE_HAS_EXPERIMENTAL
   UninitializedStatePruning::UninitializedStatePruning(const char* l)
     : Exception(l,"State pruning requires extraction and label comparison") {}
