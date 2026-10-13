@@ -256,6 +256,34 @@ class Records(unittest.TestCase):
                 with self.assertRaisesRegex(ValueError, 'infeasibility proof for waiting.txt'):
                     benchmark.comparison_report(config, [infeasible, feasible])
 
+    def test_optimality_proof_checks_failed_run_tours_before_quality_filtering(self):
+        case = dict(id='checked-tours')
+        config = dict(cases=[case], seconds=1, configs={})
+        data = ([[0, 2, 4], [3, 0, 1], [2, 3, 0]], [(0, 20)]*3, 1)
+        traces = [dict(benchmark.checker.check_tour(data, tour),
+            tour=tour, checked=True, elapsed_ms=1) for tour in ([1, 2], [2, 1])]
+        self.assertEqual([trace['scaled_cost'] for trace in traces], [5, 10])
+        record = dict(row=dict(case=case, config='sample', repetition=0), status='ok',
+            incumbents=[traces[1]], final_objective=10, proof='optimal',
+            summary=dict(elapsed_ms=2), stop_reason='optimal', wall_seconds=0.003,
+            peak_rss_bytes=None, metrics={})
+        for status in ('invalid-output', 'execution-error'):
+            failed = dict(record, status=status, incumbents=[traces[0]], final_objective=5,
+                proof=None, summary=None, stop_reason=status)
+            with self.subTest(status=status), self.assertRaisesRegex(ValueError, 'optimality proof'):
+                benchmark.comparison_report(config, [record, failed])
+            optimum = dict(record, incumbents=[traces[0]], final_objective=5)
+            for trace in traces:
+                with self.subTest(status=status, cost=trace['scaled_cost']):
+                    failed = dict(failed, incumbents=[trace], final_objective=trace['scaled_cost'])
+                    report = benchmark.comparison_report(config, [optimum, failed])
+                    sample = report['cases'][0]['measurements'][1]
+                    self.assertFalse(sample['quality_usable'])
+                    self.assertIsNone(sample['final_objective'])
+                    self.assertIsNone(sample['gap_to_proved_optimum'])
+                    self.assertTrue(all(cost is None for cost in sample['quality_at_reported_ms'].values()))
+                    self.assertIsNone(sample['proof'])
+
     def test_checker_keeps_valid_trace_before_rejecting_false_proof(self):
         data = benchmark.checker.read_instance(benchmark.DATA/'tiny/waiting.txt')
         solution = dict(type='solution', elapsed_ms=1, tour=[1, 2], **{k: v for k, v in
