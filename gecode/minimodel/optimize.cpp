@@ -35,6 +35,14 @@
 
 namespace Gecode {
 
+  static SpaceComparison
+  compare_int(int x, int y, bool minimize) {
+    if (x == y)
+      return SC_EQUIVALENT;
+    return ((x < y) == minimize) ? SC_BETTER : SC_WORSE;
+  }
+
+
   void
   IntMinimizeSpace::constrain(const Space& _best) {
     const IntMinimizeSpace* best =
@@ -45,6 +53,15 @@ namespace Gecode {
   }
 
 
+  SpaceComparison
+  IntMinimizeSpace::compare(const Space& other) const {
+    const IntMinimizeSpace* s = dynamic_cast<const IntMinimizeSpace*>(&other);
+    if (s == nullptr)
+      throw DynamicCastFailed("IntMinimizeSpace::compare");
+    return compare_int(cost().val(),s->cost().val(),true);
+  }
+
+
   void
   IntMaximizeSpace::constrain(const Space& _best) {
     const IntMaximizeSpace* best =
@@ -52,6 +69,15 @@ namespace Gecode {
     if (best == nullptr)
       throw DynamicCastFailed("IntMaximizeSpace::constrain");
     rel(*this, cost(), IRT_GR, best->cost().val());
+  }
+
+
+  SpaceComparison
+  IntMaximizeSpace::compare(const Space& other) const {
+    const IntMaximizeSpace* s = dynamic_cast<const IntMaximizeSpace*>(&other);
+    if (s == nullptr)
+      throw DynamicCastFailed("IntMaximizeSpace::compare");
+    return compare_int(cost().val(),s->cost().val(),false);
   }
 
 
