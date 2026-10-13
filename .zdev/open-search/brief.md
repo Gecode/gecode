@@ -1,3 +1,28 @@
+## Experimental preview for 6.5.0 (2026-10-13)
+
+The user approved a default-off experimental build switch and experimental
+changelog metadata. On this native branch, AStar, configurable best-first,
+CABS and Column (including fixed-quota CBFS mode) are experimental APIs.
+Use GECODE_ENABLE_EXPERIMENTAL / --enable-experimental and the generated
+GECODE_HAS_EXPERIMENTAL availability macro. Keep intended namespaces and
+native independence from Model/portfolio. Gate these engines and their
+engine-specific declarations, examples and tests; preserve shared kernel,
+OpenCP and ordinary search contracts independently of this flag. This task
+does not modify the separate Model integration branch.
+
+Changelog entries accept Experimental: true or false; omission means false.
+Each output format separates experimental entries under Experimental changes
+within each release, retaining module/type ordering. Releases without marked
+entries retain their existing presentation. Document preview API stability
+without weakening search correctness contracts.
+
+Testing for this increment uses the existing tidy/generator fixture checks,
+with focused coverage of true, false, omission, invalid values and separation
+in all three generators. Validate CMake OFF/ON builds and existing search
+checks; validate Autoconf/Make flag propagation and build registration, and
+compile ordinary search with the default-off configuration. Regenerate tracked
+outputs. No new test harness or benchmark campaign is required.
+
 ## Approved branch split (2026-10-13)
 
 This section supersedes the earlier combined-branch topology and validation scope.
