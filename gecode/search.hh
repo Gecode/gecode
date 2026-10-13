@@ -1171,9 +1171,9 @@ namespace Gecode { namespace Search {
    *
    * The bound is an optimistic total objective value on a stable Space:
    * a lower bound for minimization, an upper bound for maximization, and
-   * the exact objective on a solution. It must agree with Space::compare
-   * and Space::constrain. The engine adds no prefix cost. Engines define how
-   * they use the optional lower-first ranking; rank never justifies pruning.
+   * the exact objective on a solution. It must agree with the strict
+   * improvement restriction in Space::constrain. The engine adds no prefix cost.
+   * Engines define how they use the optional lower-first ranking; rank never justifies pruning.
    * Callbacks and their captured
    * dependencies must remain valid for all engine clones and must not post
    * constraints or refer to another Space's local state.
@@ -1261,8 +1261,9 @@ namespace Gecode {
    * APIs may change or be removed in future feature releases. The documented
    * correctness contracts still apply.
    *
-   * Spaces must implement compatible scalar integer comparison and strict
-   * improvement constraints. A generated solution can precede a better one;
+   * Spaces must implement strict improvement constraints compatible with the
+   * guidance's exact scalar integer objective on solutions. A generated solution
+   * can precede a better one;
    * continue next() until nullptr with stopped()==false to prove optimality of
    * the best accepted incumbent, including external adoption, or infeasibility
    * if no incumbent was accepted. Returned solutions belong to the caller.
@@ -1272,7 +1273,8 @@ namespace Gecode {
    * There is no hard memory guarantee and no-good extraction is empty.
    * Only one expanded thread and no tracer are supported. Capacity-one
    * worker control and ordinary resumable stops are supported.
-   * If guidance, state pruning, or comparison throws, destroy the engine before further use.
+   * If guidance, state pruning, or a model operation throws, destroy the engine
+   * before further use.
    * \ingroup TaskModelSearch
    */
   template<class T>
@@ -1309,7 +1311,7 @@ namespace Gecode {
    * Rank selects pending branching Spaces only and never prunes. Generated
    * solutions are published immediately, so the first need not be optimal.
    * Natural finite-tree exhaustion with stopped()==false proves closure under
-   * the bound, comparison, and optional sound StatePruning contracts.
+   * the bound, strict improvement, and optional sound StatePruning contracts.
    * \ingroup TaskModelSearch
    */
   template<class T>
@@ -1370,9 +1372,10 @@ namespace Gecode {
    * solutions, temporary successor, and brancher trial Spaces. It is a node
    * quota, without a byte or process-memory guarantee. Clones store the search;
    * c_d/a_d do not enable replay and no-good extraction is empty.
-   * One expanded thread and no tracer are supported. Guidance, comparison,
-   * and constraints obey the same scalar integer contract as AStar.
-   * If guidance, state pruning, or comparison throws, destroy the engine before further use.
+   * One expanded thread and no tracer are supported. Guidance and strict
+   * improvement constraints obey the same scalar integer contract as AStar.
+   * If guidance, state pruning, or a model operation throws, destroy the engine
+   * before further use.
    * \ingroup TaskModelSearch
    */
   template<class T>

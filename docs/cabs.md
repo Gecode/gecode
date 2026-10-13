@@ -6,8 +6,8 @@ Build the library with `-DGECODE_ENABLE_EXPERIMENTAL=ON` (CMake) or
 configuration header reports availability. Preview APIs may change or be
 removed in future feature releases; the correctness contracts below still apply.
 
-`CABS<T>` searches an ordinary `Space` subclass with its existing branching,
-`compare`, and strict-improvement `constrain` methods. It needs no Model,
+`CABS<T>` searches an ordinary `Space` subclass with its existing branching
+and strict-improvement `constrain` methods. It needs no Model,
 portfolio, or open list. Like [A*](astar.md), it returns caller-owned, strictly
 improving scalar integer solutions through `next()`.
 
@@ -29,8 +29,8 @@ if (search.stopped()) {
 
 The bound is an optimistic **total** objective value on a stable propagated
 space: lower for minimization, upper for maximization, and exact on solutions.
-The engine adds no prefix cost. Bounds, comparison, and constraints must agree
-on the same scalar integer objective. Values are signed 64-bit integers and
+The engine adds no prefix cost. Bounds and strict-improvement constraints must
+agree on the same scalar integer objective. Values are signed 64-bit integers and
 compared directly; callback arithmetic must stay in range. Callbacks read only
 the supplied space, must not post constraints, and must not capture another
 space's local variables. Captured dependencies must outlive engines and builders.
@@ -96,11 +96,12 @@ counts other than one and rejects tracers before taking root ownership.
 
 The default `Options::clone=true` keeps the supplied root with the caller;
 `clone=false` transfers it after successful construction. Returned solutions and
-the retained incumbent have independent ownership. Equivalent or worse external
-incumbents are ignored, and incomparable ones raise `Search::Incomparable`.
+the retained incumbent have independent ownership. The exact scalar guidance
+value decides acceptance in the declared objective direction; equal or worse
+external incumbents are ignored.
 Cuts affect committed children, leaving saved source choices and the restart root
 unchanged. Already inherited cuts are not repeated, so retained completion
-branchers can finish. If a callback, comparison, or model operation throws,
+branchers can finish. If a callback or model operation throws,
 destroy the engine before using it again.
 
 The engine stores cloned states and reuses each selected parent for its final

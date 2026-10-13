@@ -64,11 +64,6 @@ public:
     objective.update(*this,s.objective);
   }
   Space* copy(void) override { return new Alternative(*this); }
-  SpaceComparison compare(const Space& s0) const override {
-    const auto& s = dynamic_cast<const Alternative&>(s0);
-    if (objective.val() == s.objective.val()) return SC_EQUIVALENT;
-    return objective.val() < s.objective.val() ? SC_BETTER : SC_WORSE;
-  }
   void constrain(const Space& s0) override {
     const auto& s = static_cast<const Alternative&>(s0);
     rel(*this,objective,IRT_LE,s.objective.val());

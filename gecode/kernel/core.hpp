@@ -53,19 +53,6 @@
 
 namespace Gecode {
 
-  /**
-   * \brief Result of comparing two spaces according to their objectives
-   *
-   * Adding Space::compare changes the ordinary C++ ABI of Space by extending
-   * its virtual function table.
-   */
-  enum SpaceComparison {
-    SC_BETTER,     ///< The receiver has a better objective
-    SC_EQUIVALENT, ///< Both objectives are equivalent
-    SC_WORSE,      ///< The receiver has a worse objective
-    SC_INCOMPARABLE ///< Neither objective dominates the other
-  };
-
   class Space;
 
   /**
@@ -1501,10 +1488,17 @@ namespace Gecode {
      *
      */
     virtual bool status(const Space& home) const = 0;
-    /// Prepare a choice; false suspends search without changing its path.
+    /**
+     * Prepare a choice; false suspends search without changing its path.
+     * True completes preparation and may leave the space failed, solved, or
+     * branching. Space::prepare propagates and prepares a newly active brancher.
+     */
     GECODE_KERNEL_EXPORT
     virtual bool prepare(Space& home, Search::Statistics& stat,
                          const Search::Options& options);
+    /// Whether committing a choice can change feasibility (default: true).
+    GECODE_KERNEL_EXPORT
+    virtual bool commit_restricts(void) const;
     /// Whether an exhausted brancher must survive subsequent restrictions.
     GECODE_KERNEL_EXPORT
     virtual bool retained(void) const;
@@ -2174,24 +2168,6 @@ namespace Gecode {
      * \ingroup TaskModelScript
      */
     GECODE_KERNEL_EXPORT virtual void constrain(const Space& best);
-    /**
-     * \brief Compare this space's objective with \a other
-     *
-     * Comparison is read-only and receiver-relative. The model determines
-     * what objective information suffices for a sound result. The default
-     * implementation throws SpaceNoComparison; SC_INCOMPARABLE is an ordering
-     * result rather than missing information.
-     *
-     * Optimization models overriding constrain with a different objective
-     * must also override compare. SC_BETTER must be irreflexive and transitive,
-     * SC_WORSE its reverse, and SC_EQUIVALENT transitive and interchangeable
-     * when comparing a third solution. On objective-complete solutions,
-     * SC_BETTER must agree with the strict improvement restriction posted by
-     * constrain. A better incumbent's restriction must admit a subset of the
-     * solutions admitted by the old restriction.
-     */
-    GECODE_KERNEL_EXPORT virtual SpaceComparison
-    compare(const Space& other) const;
     /**
      * \brief Master configuration function for meta search engines
      *

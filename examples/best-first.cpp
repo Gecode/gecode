@@ -80,11 +80,6 @@ public:
     objective.update(*this,s.objective);
   }
   Space* copy(void) override { return new Additive(*this); }
-  SpaceComparison compare(const Space& s0) const override {
-    const auto& s=static_cast<const Additive&>(s0);
-    if (objective.val()==s.objective.val()) return SC_EQUIVALENT;
-    return objective.val()<s.objective.val() ? SC_BETTER : SC_WORSE;
-  }
   void constrain(const Space& s0) override {
     rel(*this,objective,IRT_LE,static_cast<const Additive&>(s0).objective.val());
   }
