@@ -53,6 +53,19 @@
 
 namespace Gecode {
 
+  /**
+   * \brief Result of comparing two spaces according to their objectives
+   *
+   * Adding Space::compare changes the ordinary C++ ABI of Space by extending
+   * its virtual function table.
+   */
+  enum SpaceComparison {
+    SC_BETTER,     ///< The receiver has a better objective
+    SC_EQUIVALENT, ///< Both objectives are equivalent
+    SC_WORSE,      ///< The receiver has a worse objective
+    SC_INCOMPARABLE ///< Neither objective dominates the other
+  };
+
   class Space;
 
   /**
@@ -145,6 +158,7 @@ namespace Gecode {
   class AFC;
   class Choice;
   class Brancher;
+  namespace Search { class Statistics; class Options; }
   class Group;
   class PropagatorGroup;
   class BrancherGroup;
@@ -1487,6 +1501,16 @@ namespace Gecode {
      *
      */
     virtual bool status(const Space& home) const = 0;
+    /// Prepare a choice; false suspends search without changing its path.
+    GECODE_KERNEL_EXPORT
+    virtual bool prepare(Space& home, Search::Statistics& stat,
+                         const Search::Options& options);
+    /// Whether an exhausted brancher must survive subsequent restrictions.
+    GECODE_KERNEL_EXPORT
+    virtual bool retained(void) const;
+    /// Invalidate previously established choices after strengthening.
+    GECODE_KERNEL_EXPORT
+    virtual void invalidate(Space& home);
     /**
      * \brief Return choice
      *
@@ -1820,6 +1844,8 @@ namespace Gecode {
      * If equal to &bl, no brancher does exist.
      */
     Brancher* b_status;
+    /// Whether any brancher requires notification on restriction posting.
+    bool retained_branchers;
     /**
      * \brief Points to the first brancher to be used for commit
      *
@@ -2149,6 +2175,24 @@ namespace Gecode {
      */
     GECODE_KERNEL_EXPORT virtual void constrain(const Space& best);
     /**
+     * \brief Compare this space's objective with \a other
+     *
+     * Comparison is read-only and receiver-relative. The model determines
+     * what objective information suffices for a sound result. The default
+     * implementation throws SpaceNoComparison; SC_INCOMPARABLE is an ordering
+     * result rather than missing information.
+     *
+     * Optimization models overriding constrain with a different objective
+     * must also override compare. SC_BETTER must be irreflexive and transitive,
+     * SC_WORSE its reverse, and SC_EQUIVALENT transitive and interchangeable
+     * when comparing a third solution. On objective-complete solutions,
+     * SC_BETTER must agree with the strict improvement restriction posted by
+     * constrain. A better incumbent's restriction must admit a subset of the
+     * solutions admitted by the old restriction.
+     */
+    GECODE_KERNEL_EXPORT virtual SpaceComparison
+    compare(const Space& other) const;
+    /**
      * \brief Master configuration function for meta search engines
      *
      * This configuration function is used by both restart and
@@ -2219,6 +2263,14 @@ namespace Gecode {
      */
     GECODE_KERNEL_EXPORT
     SpaceStatus status(StatusStatistics& stat);
+    /// Prepare the current brancher before a search engine changes its path.
+    GECODE_KERNEL_EXPORT
+    bool prepare(Search::Statistics& stat, const Search::Options& options);
+    /// Enable restriction notifications for a retained brancher.
+    void retain_branchers(void) { retained_branchers = true; }
+    /// Notify retained branchers before posting a restriction or constraining.
+    GECODE_KERNEL_EXPORT
+    void invalidate_branchers(void);
     /// Query space status without collecting statistics
     SpaceStatus status(void);
 
@@ -3429,7 +3481,9 @@ namespace Gecode {
   forceinline
   Home::Home(Space& s0, Propagator* p0,
              PropagatorGroup pg0, BrancherGroup bg0)
-    : s(s0), p(p0), pg(pg0), bg(bg0) {}
+    : s(s0), p(p0), pg(pg0), bg(bg0) {
+    s.invalidate_branchers();
+  }
   forceinline
   Home::Home(const Home& h)
     : s(h.s), p(h.p), pg(h.pg), bg(h.bg) {}

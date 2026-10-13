@@ -31,7 +31,10 @@ set(GECODE_KERNEL_SOURCES
 )
 
 set(GECODE_SEARCH_SOURCES
+  gecode/search/astar.cpp
   gecode/search/bab.cpp
+  gecode/search/cabs.cpp
+  gecode/search/column.cpp
   gecode/search/cpprofiler/tracer.cpp
   gecode/search/cutoff.cpp
   gecode/search/dfs.cpp
