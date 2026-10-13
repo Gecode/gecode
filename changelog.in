@@ -84,8 +84,9 @@ through a factory. Constraints follow the growing prefix, including regular
 language constraints. Branching assigns prefix values before closing or
 extending the list, using standard variable and value selectors. Posting a
 brancher on the length first selects the length before list values. The
-common-pattern example demonstrates constrained subsequence mining without
-padding; open-route provides a smaller introduction.
+common-pattern example demonstrates constrained frequent subsequence mining
+without padding, with support thresholds and integer database input;
+open-route provides a smaller introduction.
 
 [ENTRY]
 Module: kernel

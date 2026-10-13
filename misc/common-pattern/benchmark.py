@@ -3,13 +3,14 @@
 # requires-python = ">=3.11"
 # dependencies = []
 # ///
-"""Compare open/padded DFA models with CP2015 prefix projection at 100% support.
+"""Compare open and padded prefix projection for constrained frequent subsequences.
 
 One writer per named run. See README.md for the build and comparison limits.
 """
 
 import argparse
 from collections import Counter
+from decimal import Decimal, ROUND_CEILING
 import hashlib
 import json
 import math
@@ -25,7 +26,8 @@ import sys
 import time
 
 
-VARIANTS = ("open-dfa", "padded-dfa", "paper-projection")
+VARIANTS = ("open-projection", "padded-projection", "paper-projection")
+ALL_VARIANTS = VARIANTS + ("open-dfa", "padded-dfa")
 LANGUAGES = {
     "none": r"[A-Z]+",
     "motif": r"A[A-Z]*C",
@@ -59,58 +61,113 @@ def planted(rng: random.Random, pattern: str, count: int,
     return sequences
 
 
+def read_database(path: Path, format: str) -> list[list[int]]:
+    sequences = []
+    for line in path.read_text().splitlines():
+        if not line or (format == "spmf" and line[0] in "#%@"):
+            continue
+        if format == "letters":
+            if not re.fullmatch("[A-Z]+", line):
+                raise ValueError("expected nonempty A..Z sequences")
+            sequence = [ord(a) - ord("A") + 1 for a in line]
+        else:
+            tokens = [int(token) for token in line.split()]
+            if format == "spmf":
+                if (not tokens or tokens[-1] != -2 or len(tokens) % 2 != 1 or
+                        any(tokens[i] != -1 for i in range(1, len(tokens) - 1, 2))):
+                    raise ValueError("SPMF sequences require singleton itemsets and -2 termination")
+                sequence = tokens[:-1:2]
+            else:
+                sequence = tokens
+            if not sequence or any(item < 1 or item > 2147483646 for item in sequence):
+                raise ValueError("expected positive Gecode integer items")
+        sequences.append(sequence)
+    if not sequences:
+        raise ValueError("empty database")
+    return sequences
+
+
+def support_count(percent: str, records: int) -> int:
+    if not re.fullmatch(r"(?:[0-9]+(?:\.[0-9]{1,6})?|\.[0-9]{1,6})", percent):
+        raise ValueError("support needs a percentage with at most six decimals")
+    value = Decimal(percent)
+    if not 0 < value <= 100:
+        raise ValueError("support must be in (0,100]")
+    return int((records * value / 100).to_integral_value(rounding=ROUND_CEILING))
+
+
 def cases(seed: int, suite: str, database: Path | None,
-          restriction: str) -> list[dict]:
+          restriction: str, format: str, supports: list[str],
+          min_length: int, required: list[int]) -> list[dict]:
     if database:
-        sequences = database.read_text().splitlines()
-        if not sequences or any(not re.fullmatch("[A-Z]+", s) for s in sequences):
-            raise ValueError("database must contain one nonempty A..Z sequence per line")
-        return [{"id": "input", "sequences": sequences, "language": restriction}]
-    rng = random.Random(seed)
-    workloads = [
-        ("paper-table1", ["ABCBC", "BABC", "AB", "BCD"], ["none"]),
-        ("example", ["ABCBC", "BABC", "ABDC"], ["none", "motif"]),
-        ("repeated", ["AAAAAA", "AAAAAAAA", "AAAAAAAAAA"], ["none", "motif"]),
-        ("no-common", ["ABC", "DEF"], ["none"]),
-    ]
-    if suite == "scaling":
-        for count in (8, 32, 128):
-            workloads.append((f"database-{count}",
-                              planted(rng, "ABCABC", count, 10), ["none", "motif"]))
-        for length in (8, 32, 128):
-            workloads.append((f"suffix-{length}",
-                              ["ABCBC"] + planted(rng, "ABCBC", 7, length),
-                              ["none", "motif"]))
-        for length in (4, 8, 12):
-            pattern = ("ABC" * 4)[:length]
-            workloads.append((f"pattern-{length}",
-                              [pattern] + planted(rng, pattern, 7, 12), ["none"]))
-        workloads.extend([
-            ("paper-re10", ["AABCDDEFFGII"] +
-             planted(rng, "AABCDDEFFGII", 7, 8), ["re10"]),
-            ("paper-re14", ["AABCDDEISHGGR"] +
-             planted(rng, "AABCDDEISHGGR", 7, 8), ["re14"]),
-            ("paper-re2", ["SAR"] + planted(rng, "SAR", 7, 16), ["re2"]),
-        ])
-    return [{"id": f"{name}-{language}", "sequences": sequences,
-             "language": language}
-            for name, sequences, languages in workloads for language in languages]
+        base = [{"id": "input", "sequences": read_database(database, format),
+                 "language": restriction}]
+    else:
+        rng = random.Random(seed)
+        workloads = [
+            ("paper-table1", ["ABCBC", "BABC", "AB", "BCD"], ["none"]),
+            ("example", ["ABCBC", "BABC", "ABDC"], ["none", "motif"]),
+            ("repeated", ["AAAAAA", "AAAAAAAA", "AAAAAAAAAA"], ["none", "motif"]),
+            ("no-common", ["ABC", "DEF"], ["none"]),
+        ]
+        if suite == "scaling":
+            for count in (8, 32, 128):
+                workloads.append((f"database-{count}", planted(rng, "ABCABC", count, 10),
+                                  ["none", "motif"]))
+            for noise in (8, 32, 128):
+                workloads.append((f"input-noise-{noise}",
+                                  ["ABCBC"] + planted(rng, "ABCBC", 7, noise), ["none", "motif"]))
+            for length in (4, 8, 12):
+                pattern = ("ABC" * 4)[:length]
+                workloads.append((f"pattern-{length}", [pattern] + planted(rng, pattern, 7, 12), ["none"]))
+            workloads.extend([
+                ("paper-re10", ["AABCDDEFFGII"] + planted(rng, "AABCDDEFFGII", 7, 8), ["re10"]),
+                ("paper-re14", ["AABCDDEISHGGR"] + planted(rng, "AABCDDEISHGGR", 7, 8), ["re14"]),
+                ("paper-re2", ["SAR"] + planted(rng, "SAR", 7, 16), ["re2"]),
+            ])
+        base = [{"id": f"{name}-{language}", "language": language,
+                 "sequences": [[ord(a) - ord("A") + 1 for a in s] for s in sequences]}
+                for name, sequences, languages in workloads for language in languages]
+    result = [{**case, "id": f"{case['id']}-support-{percent}", "support_percent": percent,
+               "min_support": support_count(percent, len(case["sequences"])),
+               "min_length": min_length, "required": required}
+              for case in base for percent in supports]
+    if len({case["id"] for case in result}) != len(result):
+        raise ValueError("duplicate support thresholds")
+    return result
 
 
-def common_patterns(sequences: list[str], restriction: str) -> set[str] | None:
-    """Independent exhaustive oracle when the shortest input is small enough."""
-    shortest = min(sequences, key=len)
-    if len(shortest) > 16:
+def accepts(pattern: tuple[int, ...], case: dict) -> bool:
+    if len(pattern) < case["min_length"] or not set(case["required"]).issubset(pattern):
+        return False
+    language = case["language"]
+    if language == "none":
+        return True
+    if language == "motif":
+        return len(pattern) >= 2 and pattern[0] == 1 and pattern[-1] == 3
+    if language == "re2":
+        return len(pattern) == 3 and pattern[0] in (19, 20) and pattern[-1] in (18, 11)
+    text = "".join(chr(64 + a) if 1 <= a <= 26 else "?" for a in pattern)
+    return re.fullmatch(LANGUAGES[language], text) is not None
+
+
+def frequent_patterns(case: dict) -> set[tuple[int, ...]] | None:
+    """Every k-supported pattern occurs in at least one of the n-k+1 shortest records."""
+    sequences = case["sequences"]
+    cover = sorted(sequences, key=len)[:len(sequences) - case["min_support"] + 1]
+    if any(len(s) > 16 for s in cover) or sum(2**len(s) for s in cover) > 200000:
         return None
-    candidates = {""}
-    for item in shortest:
-        candidates |= {prefix + item for prefix in candidates}
-    expression = re.compile(LANGUAGES[restriction])
-    return {pattern for pattern in candidates if expression.fullmatch(pattern)
-            and all(is_subsequence(pattern, sequence) for sequence in sequences)}
+    candidates = set()
+    for sequence in cover:
+        local = {()}
+        for item in sequence:
+            local |= {prefix + (item,) for prefix in local}
+        candidates |= local
+    return {pattern for pattern in candidates if accepts(pattern, case)
+            and sum(is_subsequence(pattern, s) for s in sequences) >= case["min_support"]}
 
 
-def is_subsequence(pattern: str, sequence: str) -> bool:
+def is_subsequence(pattern: tuple[int, ...], sequence: list[int]) -> bool:
     items = iter(sequence)
     return all(item in items for item in pattern)
 
@@ -161,19 +218,21 @@ def kill_process_group(process: subprocess.Popen) -> None:
 
 
 def check_patterns(result: dict, output: Path, case: dict,
-                   expected: set[str] | None) -> dict:
+                   expected: set[tuple[int, ...]] | None) -> dict:
     if result["status"] != "ok":
         return result
-    patterns = output.read_text().splitlines()
+    try:
+        patterns = [tuple(map(int, line.split())) for line in output.read_text().splitlines()]
+    except ValueError:
+        return {**result, "status": "invalid", "detail": "non-integer pattern output"}
     actual = set(patterns)
-    expression = re.compile(LANGUAGES[case["language"]])
     if (len(patterns) != result["metrics"]["solutions"] or
             len(actual) != len(patterns) or
-            any(not expression.fullmatch(p) or
-                not all(is_subsequence(p, s) for s in case["sequences"])
+            any(not accepts(p, case) or
+                sum(is_subsequence(p, s) for s in case["sequences"]) < case["min_support"]
                 for p in patterns) or (expected is not None and actual != expected)):
         return {**result, "status": "invalid", "detail": "incorrect pattern enumeration"}
-    fingerprint = hashlib.sha256("\n".join(sorted(actual)).encode()).hexdigest()
+    fingerprint = hashlib.sha256(json.dumps(sorted(actual)).encode()).hexdigest()
     return {**result, "patterns_sha256": fingerprint,
             "oracle": "exhaustive" if expected is not None else "feasibility"}
 
@@ -212,34 +271,44 @@ def valid_record(path: Path, identity: dict, validation: bool = False) -> dict |
 
 def command(binary: str, case: dict, variant: str, database: Path,
             output: str, bound: str) -> list[str]:
-    return [binary, variant, case["language"], str(database), output, bound]
+    required = ",".join(map(str, case["required"])) or "-"
+    return [binary, variant, case["language"], str(database), output, bound,
+            case["support_percent"], str(case["min_length"]), required, "integers"]
 
 
 def collect(args: argparse.Namespace, directory: Path) -> None:
     binary = args.binary.resolve(strict=True)
-    workloads = cases(args.seed, args.suite, args.database, args.language)
+    workloads = cases(args.seed, args.suite, args.database, args.language, args.format,
+                      args.support, args.min_length, args.required)
+    variants = args.variants
+    if len(set(variants)) != len(variants):
+        raise ValueError("duplicate variants")
+    if any(case["min_support"] < len(case["sequences"]) for case in workloads) and (
+            args.bound == "shortest" or any(v.endswith("dfa") for v in variants)):
+        raise ValueError("DFA models and shortest bound require all-input support")
     # Mutable shared libraries count as part of the target, not just the executable.
     libraries = sorted({p.resolve() for p in binary.parent.parent.glob("libgecode*")
                         if p.suffix in (".so", ".dylib", ".a")})
     if not libraries:
         raise ValueError("expected binary in BUILD/bin and Gecode libraries in BUILD")
-    config = {"format": 1, "binary": str(binary), "binary_sha256": digest(binary),
+    config = {"format": 2, "binary": str(binary), "binary_sha256": digest(binary),
               "libraries": {str(p): digest(p) for p in libraries},
               "build_label": args.build_label,
               "runner_sha256": digest(Path(__file__)),
               "source_sha256": digest(Path(__file__).with_name("compare.cpp")),
+              "helper_sha256": digest(Path(__file__).resolve().parents[2] / "examples/common-pattern.hh"),
               "machine": {"system": platform.platform(), "node": platform.node(),
                           "processor": platform.processor()},
               "cases": workloads, "repetitions": args.repetitions,
               "seed": args.seed, "timeout_seconds": args.timeout,
-              "bound": args.bound, "variants": list(VARIANTS)}
-    print(f"{len(workloads)} cases; {len(workloads)*3} correctness runs; "
-          f"{len(workloads)*3*args.repetitions} measured runs; "
+              "bound": args.bound, "variants": variants}
+    print(f"{len(workloads)} cases; {len(workloads)*len(variants)} correctness runs; "
+          f"{len(workloads)*len(variants)*args.repetitions} measured runs; "
           f"{args.timeout}s timeout per invocation; bound={args.bound}")
     print("Serial, shuffled repetitions; model construction + exhaustive DFS; "
           "measured runs count solutions without printing them.")
     if args.dry_run:
-        print(" ".join(command(str(binary), workloads[0], VARIANTS[0],
+        print(" ".join(command(str(binary), workloads[0], variants[0],
                                directory / "inputs" / (workloads[0]["id"] + ".txt"),
                                "count", args.bound)))
         return
@@ -254,10 +323,10 @@ def collect(args: argparse.Namespace, directory: Path) -> None:
     passed = set()
     for case in workloads:
         database = directory / "inputs" / (case["id"] + ".txt")
-        database.write_text("\n".join(case["sequences"]) + "\n")
-        oracle = common_patterns(case["sequences"], case["language"])
+        database.write_text("\n".join(" ".join(map(str, s)) for s in case["sequences"]) + "\n")
+        oracle = frequent_patterns(case)
         checks = []
-        for variant in VARIANTS:
+        for variant in variants:
             identity = {"case": case["id"], "variant": variant}
             path = directory / "validation" / f"{case['id']}-{variant}.json"
             record = valid_record(path, identity, validation=True)
@@ -275,7 +344,7 @@ def collect(args: argparse.Namespace, directory: Path) -> None:
         else:
             print(f"{case['id']}: correctness failed or incomplete; timings skipped")
     schedule = [(case, variant, repeat) for repeat in range(args.repetitions)
-                for case in workloads for variant in VARIANTS]
+                for case in workloads for variant in variants]
     random.Random(args.seed).shuffle(schedule)
     executed = 0
     failures = 0
@@ -313,7 +382,7 @@ def collect(args: argparse.Namespace, directory: Path) -> None:
 def analyze(directory: Path) -> None:
     config = json.loads((directory / "config.json").read_text())
     print(f"Build: {config['build_label']}; bound: {config['bound']}; "
-          "support: 100%; all-pattern enumeration")
+          "per-case sequence support; all-pattern enumeration")
     print("Model+search seconds: median [min, max]; only validated successful samples.")
     print("End-to-end wall seconds include process startup and teardown.")
     print("case | variant | ok/expected | other | patterns | model+search s | wall s | nodes | propagations")
@@ -352,7 +421,7 @@ def analyze(directory: Path) -> None:
     print(f"Measured sample status: {dict(totals)}")
     print(f"Correctness status: {dict(validation_counts)}; "
           f"cases with disagreeing pattern sets: {mismatched_cases}")
-    print("Paper-projection is an Algorithm 2 reimplementation at 100% support, "
+    print("Paper-projection is an Algorithm 2 reimplementation, "
           "not the authors' executable or a replication of their dataset timings.")
 
 
@@ -364,10 +433,16 @@ def main() -> None:
     run.add_argument("--name", required=True)
     run.add_argument("--binary", type=Path, required=True)
     run.add_argument("--build-label", required=True, help="compiler, flags and build configuration")
-    run.add_argument("--suite", choices=("smoke", "scaling"), default="scaling")
-    run.add_argument("--database", type=Path, help="custom A..Z database, one sequence per line")
+    run.add_argument("--suite", choices=("smoke", "scaling"), default="smoke")
+    run.add_argument("--database", type=Path, help="custom database, one sequence per line")
     run.add_argument("--language", choices=tuple(LANGUAGES), default="none",
                      help="restriction for a custom database")
+    run.add_argument("--format", choices=("letters", "integers", "spmf"), default="letters")
+    run.add_argument("--support", nargs="+", default=["100", "50", "25"],
+                     help="minimum-support percentages (up to six decimals)")
+    run.add_argument("--min-length", type=int, default=1)
+    run.add_argument("--required", type=int, nargs="*", default=[], help="required positive item IDs")
+    run.add_argument("--variants", choices=ALL_VARIANTS, nargs="+", default=list(VARIANTS))
     run.add_argument("--bound", choices=("max", "shortest"), default="max")
     run.add_argument("--repetitions", type=int, default=5)
     run.add_argument("--timeout", type=float, default=30)
@@ -385,6 +460,9 @@ def main() -> None:
             if (args.repetitions < 1 or not math.isfinite(args.timeout) or args.timeout <= 0 or
                     (args.limit is not None and args.limit < 0)):
                 parser.error("repetitions and timeout must be positive; limit must be nonnegative")
+            if (args.min_length < 1 or args.min_length > 2147483646 or
+                    any(item < 1 or item > 2147483646 for item in args.required)):
+                parser.error("length and required item IDs must be positive Gecode integers")
             collect(args, directory)
         else:
             analyze(directory)

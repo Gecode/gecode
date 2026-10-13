@@ -2468,10 +2468,10 @@ namespace Gecode {
    * \endcode
    *
    * The \ref CommonPattern "common-pattern example" finds constrained
-   * subsequences shared by several inputs. The pattern length is a decision;
+   * frequent subsequences across several inputs. The pattern length is a decision;
    * the open list avoids allocating an array up to the input-length bound
-   * and encoding an unused suffix with a termination symbol. Regular
-   * constraints on both the inputs and the pattern language follow growth.
+   * and encoding an unused suffix with a termination symbol. Shared prefix
+   * projection and regular constraints on the pattern language follow growth.
    * The \ref OpenRoute "open-route example" is a smaller introduction,
    * including search and printing solutions.
    *
