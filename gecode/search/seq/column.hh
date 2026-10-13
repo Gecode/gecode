@@ -40,6 +40,7 @@
 #include <memory>
 #include <vector>
 
+#ifdef GECODE_HAS_EXPERIMENTAL
 namespace Gecode { namespace Search { namespace Seq {
 
   /// Sequential depth queues with retained alternatives and progressive quotas
@@ -104,6 +105,8 @@ namespace Gecode { namespace Search { namespace Seq {
   };
 
 }}}
+
+#endif
 
 #endif
 

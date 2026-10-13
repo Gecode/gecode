@@ -61,6 +61,7 @@ class Entry:
     module: str
     what: str
     rank: str
+    experimental: str
     bug: str
     issue: str
     thanks: str
@@ -144,6 +145,7 @@ def parse_changelog() -> tuple[list[Release], list[Entry]]:
                 "module": "",
                 "what": "",
                 "rank": "",
+                "experimental": "false",
                 "bug": "",
                 "issue": "",
                 "thanks": "",
@@ -153,6 +155,7 @@ def parse_changelog() -> tuple[list[Release], list[Entry]]:
                 "module": "Module",
                 "what": "What",
                 "rank": "Rank",
+                "experimental": "Experimental",
                 "bug": "Bug",
                 "issue": "Issue",
                 "thanks": "Thanks",
@@ -233,6 +236,8 @@ def validate_changelog_entries(generated: str) -> list[str]:
             errors.append(f"line {entry.line}: unknown module {entry.module!r}")
         if entry.what not in WHATS:
             errors.append(f"line {entry.line}: unknown change type {entry.what!r}")
+        if entry.experimental not in {"true", "false"}:
+            errors.append(f"line {entry.line}: invalid Experimental value {entry.experimental!r}")
         if entry.rank not in RANKS:
             errors.append(f"line {entry.line}: unknown rank {entry.rank!r}")
 
@@ -470,10 +475,48 @@ Previous release.
     return errors
 
 
+def validate_experimental_changelog() -> list[str]:
+    errors = []
+    release = "[RELEASE]\nVersion: 1.0.0\nDate: 2000-01-01\n[DESCRIPTION]\nFixture.\n"
+
+    def entry(description: str, experimental: str = "", module: str = "search", what: str = "new") -> str:
+        field = f"Experimental: {experimental}\n" if experimental else ""
+        return (f"[ENTRY]\nModule: {module}\nWhat: {what}\nRank: minor\n"
+                + field + f"[DESCRIPTION]\n{description}\n")
+
+    # Mixed input order checks separation while preserving module/type order.
+    source = release + entry("Preview search change.", "true", what="change")
+    source += entry("Ordinary omitted.") + entry("Preview kernel.", "true", "kernel")
+    source += entry("Ordinary false.", "false") + entry("Preview search addition.", "true")
+    older = release.replace("1.0.0", "0.9.0") + entry("Older ordinary.")
+    for generator in (GEN_CHANGELOG, ROOT / "misc" / "gentxtchangelog.py", GEN_CURRENT_CHANGELOG):
+        for suffix in ("", older):
+            result = run(["uv", "run", str(generator)], stdin=source + suffix)
+            output = result.stdout
+            markers = ["Ordinary omitted.", "Ordinary false.", "Experimental changes",
+                       "Preview kernel.", "Preview search addition.", "Preview search change."]
+            positions = [output.find(marker) for marker in markers]
+            if result.returncode or min(positions) < 0 or positions != sorted(positions):
+                errors.append(f"{generator.name}: experimental separation/order regression")
+            if output.count("Experimental changes") != 1:
+                errors.append(f"{generator.name}: experimental heading leaked across releases")
+        omitted = run(["uv", "run", str(generator)], stdin=release + entry("Ordinary."))
+        explicit = run(["uv", "run", str(generator)], stdin=release + entry("Ordinary.", "false"))
+        if omitted.returncode or explicit.returncode or omitted.stdout != explicit.stdout or "Experimental changes" in omitted.stdout:
+            errors.append(f"{generator.name}: false/omitted historical rendering differs")
+        for value in ("TRUE", "False", "yes", "1", "", "true "):
+            invalid = entry("Invalid.", "true").replace("Experimental: true", f"Experimental: {value}")
+            result = run(["uv", "run", str(generator)], stdin=release + invalid)
+            if result.returncode == 0 or "invalid Experimental value" not in result.stderr:
+                errors.append(f"{generator.name}: accepted invalid Experimental {value!r}")
+    return errors
+
+
 def check_changelog(*, fix: bool) -> int:
     generated = generate_changelog()
     errors = validate_changelog_entries(generated)
     errors.extend(validate_current_changelog())
+    errors.extend(validate_experimental_changelog())
 
     if is_tracked(CHANGELOG_HH):
         if CHANGELOG_HH.exists() and CHANGELOG_HH.read_text() == generated:

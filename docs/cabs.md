@@ -1,5 +1,11 @@
 # Native complete anytime beam search
 
+This API is part of the experimental 6.5.0 preview, disabled by default.
+Build the library with `-DGECODE_ENABLE_EXPERIMENTAL=ON` (CMake) or
+`--enable-experimental` (Autoconf). `GECODE_HAS_EXPERIMENTAL` in the generated
+configuration header reports availability. Preview APIs may change or be
+removed in future feature releases; the correctness contracts below still apply.
+
 `CABS<T>` searches an ordinary `Space` subclass with its existing branching,
 `compare`, and strict-improvement `constrain` methods. It needs no Model,
 portfolio, or open list. Like [A*](astar.md), it returns caller-owned, strictly

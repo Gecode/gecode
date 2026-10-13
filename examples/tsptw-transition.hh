@@ -55,6 +55,7 @@ namespace TSPTW {
       return result;
     }
     std::int64_t bound(BoundMode mode) const;
+#ifdef GECODE_HAS_EXPERIMENTAL
     static Gecode::Search::HeuristicGuidance
     guidance(BoundMode mode=PREFIX,
              std::shared_ptr<Measurements> measurements=nullptr) {
@@ -93,6 +94,8 @@ namespace TSPTW {
         return Pruning::INCOMPARABLE;
       },descriptor_limit};
     }
+
+#endif
 
   private:
     class VisitBrancher;

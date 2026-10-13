@@ -39,6 +39,7 @@
 #include <memory>
 #include <utility>
 
+#ifdef GECODE_HAS_EXPERIMENTAL
 namespace Gecode { namespace Search { namespace Seq {
 
   /// One propagated child, interrupted preparation, or exhausted choice
@@ -127,6 +128,8 @@ namespace Gecode { namespace Search { namespace Seq {
   };
 
 }}}
+
+#endif
 
 #endif
 

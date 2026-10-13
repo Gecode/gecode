@@ -3,7 +3,7 @@ schema_version = 1
 id = "open-search-032"
 key = "experimental-preview"
 area = "open-search"
-status = "open"
+status = "done"
 complexity = "standard"
 afk = true
 blocked_by = []
@@ -26,13 +26,21 @@ Read the Experimental preview section of brief.md. CBS supplies the existing def
 
 ## Done when
 
-- [ ] CMake GECODE_ENABLE_EXPERIMENTAL and Autoconf --enable-experimental default off and generate matching GECODE_HAS_EXPERIMENTAL availability. All AStar, best-first, CABS and Column APIs/implementations are available only when enabled; default ordinary search still builds and runs.
-- [ ] Public documentation, build instructions and engine release entries clearly identify the experimental 6.5.0 preview and its API stability policy.
-- [ ] Experimental metadata accepts exactly true/false and defaults false; all three generated changelog formats separate true entries per release while preserving module/type ordering and unchanged historical presentation when none are marked. Invalid values fail validation.
-- [ ] Applicable tracked generated configuration/changelog outputs are regenerated and existing builds/tests remain usable in both configurations.
+- [x] CMake GECODE_ENABLE_EXPERIMENTAL and Autoconf --enable-experimental default off and generate matching GECODE_HAS_EXPERIMENTAL availability. All AStar, best-first, CABS and Column APIs/implementations are available only when enabled; default ordinary search still builds and runs.
+- [x] Public documentation, build instructions and engine release entries clearly identify the experimental 6.5.0 preview and its API stability policy.
+- [x] Experimental metadata accepts exactly true/false and defaults false; all three generated changelog formats separate true entries per release while preserving module/type ordering and unchanged historical presentation when none are marked. Invalid values fail validation.
+- [x] Applicable tracked generated configuration/changelog outputs are regenerated and existing builds/tests remain usable in both configurations.
 
 ## Validation
 
 - Extend existing tidy/generator fixtures for true, false, omitted, invalid and separate rendering across all three generators; run tidy checks and inspect generated current-release sections.
 - Run CMake Release default-OFF and explicit-ON builds with existing check targets; focused native engine tests/examples enabled, ordinary DFS/BAB disabled-mode smoke and compile-failure check for preview API when disabled.
 - Verify Autoconf/Make OFF/ON configuration, generated macro, source/example registration and relevant build smoke; no broad TSPTW performance rerun.
+
+## Result
+
+Added a default-off experimental search preview in CMake and Autoconf, with generated availability, gated native APIs/implementations/examples/tests, public documentation and an enabled CI configuration. Added strict optional Experimental changelog metadata and separated experimental sections in all three generators. Shared native contracts remain independent of the flag. Independently verified.
+
+Validation:
+
+- CMake OFF check 470/470; ON check 474/474; focused preview tests 4/4. Autoconf OFF/ON search-library builds, ordinary OFF consumers, enabled native consumers and disabled-API negative compiles passed. Native examples and tiny TSPTW checker passed. Tidy true/false/omitted/invalid and rendering fixtures passed; all historical unmarked generator output is byte-identical. Tracked configure regenerated. Independent verification passed at unchanged snapshot W25adf51e7f0f1991. Remote CI was not run.

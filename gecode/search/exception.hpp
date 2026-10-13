@@ -80,6 +80,7 @@ namespace Gecode { namespace Search {
     /// Initialize with location \a l
     WorkerControlInUse(const char* l);
   };
+#ifdef GECODE_HAS_EXPERIMENTAL
   /// %Exception: Column requires exactly one expanded thread
   class GECODE_SEARCH_EXPORT UnsupportedColumnThreads : public Exception {
   public:
@@ -135,6 +136,8 @@ namespace Gecode { namespace Search {
   public:
     UninitializedStatePruning(const char* l);
   };
+#endif
+
   /// %Exception: Incumbent objectives are incomparable
   class GECODE_SEARCH_EXPORT Incomparable : public Exception {
   public:

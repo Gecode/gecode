@@ -31,6 +31,7 @@
  *
  */
 
+#ifdef GECODE_HAS_EXPERIMENTAL
 namespace Gecode { namespace Search {
 
   /// Create a native sequential column search engine
@@ -86,5 +87,7 @@ namespace Gecode {
   }
 
 }
+
+#endif
 
 // STATISTICS: search-other
