@@ -295,7 +295,7 @@ namespace PatternMining {
                    const Database& database, int support, IntVar count)
       : Propagator(home), list(pattern), length(pattern.length()), frequency(count),
         projection(home,database,support), consumed(0),
-        subscribed(pattern.prefix_size()), cached_prefix(-1), extension_bound(0) {
+        subscribed(pattern.known_length()), cached_prefix(-1), extension_bound(0) {
       home.notice(*this,AP_DISPOSE);
       list.subscribe(home,*this);
       length.subscribe(home,*this,Int::PC_INT_BND);
@@ -329,7 +329,7 @@ namespace PatternMining {
     }
 
     virtual ExecStatus propagate(Space& home, const ModEventDelta&) {
-      const int size = list.prefix_size();
+      const int size = list.known_length();
       for (int i=subscribed; i<size; i++)
         if (!list[i].assigned())
           Int::IntView(list[i]).subscribe(home,*this,Int::PC_INT_VAL,false);

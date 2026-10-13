@@ -169,7 +169,7 @@ namespace Gecode { namespace Int {
 
     virtual PropCost
     cost(const Space&, const ModEventDelta&) const {
-      const int n = length.min()-list.prefix_size();
+      const int n = length.min()-list.known_length();
       return (n <= 1) ? PropCost::unary(PropCost::LO) :
                         PropCost::linear(PropCost::LO,n);
     }
@@ -240,7 +240,7 @@ namespace Gecode {
 
   template<class Var>
   int
-  OpenVarList<Var>::prefix_size(void) const {
+  OpenVarList<Var>::known_length(void) const {
     return static_cast<Object*>(object())->n;
   }
 

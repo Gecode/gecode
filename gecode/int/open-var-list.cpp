@@ -100,7 +100,7 @@ namespace Gecode { namespace Int {
 
     bool
     closed(void) const {
-      return length.max() == list.prefix_size();
+      return length.max() == list.known_length();
     }
 
     void
@@ -114,7 +114,7 @@ namespace Gecode { namespace Int {
   public:
     virtual PropCost
     cost(const Space&, const ModEventDelta&) const {
-      return PropCost::linear(PropCost::LO,list.prefix_size()-posted);
+      return PropCost::linear(PropCost::LO,list.known_length()-posted);
     }
 
     virtual void
@@ -136,7 +136,7 @@ namespace Gecode { namespace Int {
   public:
     virtual PropCost
     cost(const Space&, const ModEventDelta&) const {
-      return PropCost::linear(PropCost::LO,list.prefix_size());
+      return PropCost::linear(PropCost::LO,list.known_length());
     }
 
     virtual Actor*
@@ -146,7 +146,7 @@ namespace Gecode { namespace Int {
 
     virtual ExecStatus
     propagate(Space& home, const ModEventDelta&) {
-      const int size = list.prefix_size();
+      const int size = list.known_length();
       for (int i=posted; i<size; i++)
         if (!list[i].assigned())
           IntView(list[i]).subscribe(home,*this,PC_INT_VAL,false);
@@ -226,7 +226,7 @@ namespace Gecode { namespace Int {
 
     virtual ExecStatus
     propagate(Space& home, const ModEventDelta&) {
-      const int size = list.prefix_size();
+      const int size = list.known_length();
       const int first = std::max(1,posted);
       for (int i=first; i<size; i++)
         Gecode::rel(home(*this),list[i-1],irt,list[i],ipl);
@@ -278,7 +278,7 @@ namespace Gecode { namespace Int {
 
     virtual ExecStatus
     propagate(Space& home, const ModEventDelta&) {
-      const int size = list.prefix_size();
+      const int size = list.known_length();
       for (int end=std::max(width,posted+1); end<=size; end++) {
         IntVarArgs window(width);
         for (int i=0; i<width; i++)
@@ -332,7 +332,7 @@ namespace Gecode { namespace Int {
 
     virtual ExecStatus
     propagate(Space& home, const ModEventDelta&) {
-      const int size = list.prefix_size();
+      const int size = list.known_length();
       for (int end=std::max(width,posted+1); end<=size; end++) {
         IntVarArgs window(width);
         for (int i=0; i<width; i++)
@@ -389,7 +389,7 @@ namespace Gecode { namespace Int {
 
     virtual ExecStatus
     propagate(Space& home, const ModEventDelta&) {
-      const int size = list.prefix_size();
+      const int size = list.known_length();
       for (int i=posted; i<size; i++)
         if (min)
           Gecode::rel(home(*this),list[i],IRT_GQ,
@@ -458,7 +458,7 @@ namespace Gecode { namespace Int {
     propagate(Space& home, const ModEventDelta&) {
       if ((posted > 0) && seen.one())
         return home.ES_SUBSUMED(*this);
-      const int size = list.prefix_size();
+      const int size = list.known_length();
       for (int i=posted; i<size; i++) {
         BoolVar is_before(home,0,1);
         Gecode::rel(home(*this),list[i],IRT_EQ,before,
@@ -550,7 +550,7 @@ namespace Gecode { namespace Int {
       if (select_first)
         return start;
       Region r;
-      ViewArray<View> x(r,list.prefix_size());
+      ViewArray<View> x(r,list.known_length());
       for (int i=0; i<x.size(); i++)
         x[i] = View(list[i]);
       if (n == 1)
@@ -585,17 +585,17 @@ namespace Gecode { namespace Int {
   public:
     virtual bool
     status(const Space& home) const {
-      for (int i=start; i<list.prefix_size(); i++)
+      for (int i=start; i<list.known_length(); i++)
         if (!list[i].assigned() && filter(home,View(list[i]),i)) {
           start = i;
           return true;
         }
-      return list.length().max() > list.prefix_size();
+      return list.length().max() > list.known_length();
     }
 
     virtual const Choice*
     choice(Space& home) {
-      for (int i=start; i<list.prefix_size(); i++)
+      for (int i=start; i<list.known_length(); i++)
         if (!list[i].assigned() && filter(home,View(list[i]),i)) {
           start = i;
           const int p = position(home);
@@ -603,7 +603,7 @@ namespace Gecode { namespace Int {
           return vsc ? new PosValChoice<int>(*this,2,Pos(p),vsc->val(home,x,p))
                      : value_choice(*this,p,x);
         }
-      return new PosValChoice<int>(*this,2,Pos(-1),list.prefix_size());
+      return new PosValChoice<int>(*this,2,Pos(-1),list.known_length());
     }
 
     virtual const Choice*
@@ -625,7 +625,7 @@ namespace Gecode { namespace Int {
       const int p = static_cast<const PosChoice&>(c).pos().pos;
       if (p >= 0) {
         // Recomputation can replay choices before propagation grows the prefix.
-        if (p >= list.prefix_size()) {
+        if (p >= list.known_length()) {
           list.materialize(home,p+1);
           if (home.failed())
             return ES_FAILED;
@@ -652,7 +652,7 @@ namespace Gecode { namespace Int {
           (home,IntView(list.length()),
            static_cast<const PosValChoice<int>&>(c).val()) : nullptr;
       // No-good extraction can run in an ancestor with a shorter prefix.
-      if (p >= list.prefix_size())
+      if (p >= list.known_length())
         return nullptr;
       View x(list[p]);
       return vsc
@@ -766,11 +766,11 @@ namespace Gecode { namespace Int {
            (selectors[n].select() != VarBranch::SEL_NONE))
       n++;
     typedef typename View::VarType Var;
-    typename ArrayTraits<VarArgArray<Var>>::ArgsType x(list.prefix_size());
+    typename ArrayTraits<VarArgArray<Var>>::ArgsType x(list.known_length());
     for (int i=0; i<x.size(); i++)
       x[i] = list[i];
     for (int i=0; i<n; i++) {
-      check_open_selector(selectors[i],list.length().max() > list.prefix_size());
+      check_open_selector(selectors[i],list.length().max() > list.known_length());
       selectors[i].expand(home,x);
     }
     const IntValBranch::Select values =

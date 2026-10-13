@@ -205,7 +205,7 @@ public:
 
   virtual void print(std::ostream& os) const {
     os << "\t";
-    for (int i=0; i<pattern.prefix_size(); i++) {
+    for (int i=0; i<pattern.known_length(); i++) {
       if (i && !letters)
         os << ' ';
       if (pattern[i].assigned()) {

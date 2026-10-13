@@ -2429,7 +2429,7 @@ namespace Gecode {
    *
    * Variables can be appended until the list is closed. The length
    * variable denotes the eventual list length. Propagation materializes
-   * positions required by its minimum. The prefix_size() query counts the
+   * positions required by its minimum. The known_length() query counts the
    * positions already constructed. Indexed access is limited to this prefix;
    * get() creates positions and requires enough eventual length to include
    * the requested position.
@@ -2512,8 +2512,8 @@ namespace Gecode {
                 int max=Int::Limits::max);
     /// Update during cloning
     void update(Space& home, OpenVarList<Var>& s);
-    /// Return the number of materialized positions
-    int prefix_size(void) const;
+    /// Return the number of constructed positions (their values may be unassigned)
+    int known_length(void) const;
     /// Return variable at position \a i (\a i must be a valid position)
     Var operator [](int i) const;
     /// Return the eventual-length variable
@@ -6162,7 +6162,7 @@ namespace Gecode {
    *
    * Selectors consider all materialized positions accepted by the filter.
    * Once these variables are assigned, the brancher first tries to close at
-   * prefix_size(), then requires at least one more position and resumes
+   * known_length(), then requires at least one more position and resumes
    * value selection. Filters and callbacks receive the position in the list.
    * With no finite application bound, exploring these lengths can be very
    * expensive.

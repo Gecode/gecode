@@ -907,7 +907,7 @@ namespace Test { namespace Int {
          OpenListSpace source;
          rel(source,source.list.length(),IRT_GQ,3);
          if ((source.status() == SS_FAILED) ||
-             (source.list.prefix_size() != 3))
+             (source.list.known_length() != 3))
            return false;
          for (int i=0; i<3; i++)
            if (!source.list[i].assigned() ||
@@ -919,16 +919,16 @@ namespace Test { namespace Int {
          rel(*clone,clone->list.length(),IRT_GQ,5);
          const bool clone_ok =
            (clone->status() != SS_FAILED) &&
-           (clone->list.prefix_size() == 5) &&
+           (clone->list.known_length() == 5) &&
            clone->list[4].assigned() &&
            (clone->list[4].val() == 4);
          delete clone;
-         if (!clone_ok || (source.list.prefix_size() != 3))
+         if (!clone_ok || (source.list.known_length() != 3))
            return false;
 
          OpenListSpace direct;
          IntVar x = direct.list.get(direct,3);
-         return (direct.list.prefix_size() == 4) &&
+         return (direct.list.known_length() == 4) &&
                 (direct.list.length().min() == 4) &&
                 x.assigned() && (x.val() == 3) &&
                 (direct.status() != SS_FAILED);
@@ -979,7 +979,7 @@ namespace Test { namespace Int {
          rel(s,s.list.length(),IRT_GQ,2);
          if (s.status() == SS_FAILED)
            return false;
-         return (s.list.prefix_size() == 2) &&
+         return (s.list.known_length() == 2) &&
                 s.list[0].assigned() &&
                 (s.list[0].val() == 0) &&
                 s.list[1].assigned() &&
@@ -1063,13 +1063,13 @@ namespace Test { namespace Int {
          clone->list.close(*clone);
          const bool clone_ok =
            (clone->status() != SS_FAILED) &&
-           (clone->list.prefix_size() == 2);
+           (clone->list.known_length() == 2);
          delete clone;
 
          source.list.close(source);
          const bool source_failed = source.status() == SS_FAILED;
          return clone_ok && source_failed &&
-                (source.list.prefix_size() == 1);
+                (source.list.known_length() == 1);
        }
      };
 

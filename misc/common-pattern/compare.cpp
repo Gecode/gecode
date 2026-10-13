@@ -205,7 +205,7 @@ namespace {
     void print(Format format) const {
       const bool growing = (model == Model::OpenDFA) ||
         (model == Model::OpenProjection);
-      const int n = growing ? open.prefix_size() : padded.size();
+      const int n = growing ? open.known_length() : padded.size();
       for (int i=0; i<n; i++) {
         const int item = growing ? open[i].val() : padded[i].val();
         if (item == 0)
