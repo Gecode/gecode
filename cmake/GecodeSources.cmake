@@ -42,6 +42,7 @@ set(GECODE_SEARCH_SOURCES
   gecode/search/options.cpp
   gecode/search/par/pbs.cpp
   gecode/search/pbs.cpp
+  gecode/search/prepare.cpp
   gecode/search/rbs.cpp
   gecode/search/seq/dead.cpp
   gecode/search/seq/pbs.cpp

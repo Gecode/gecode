@@ -101,7 +101,7 @@ namespace Gecode { namespace Search {
 
   forceinline bool
   Worker::prepare(Space& s, const Options& o) {
-    bool prepared = s.prepare(*this,o);
+    bool prepared = Search::prepare(s,*this,o);
     _stopped |= !prepared;
     return prepared;
   }

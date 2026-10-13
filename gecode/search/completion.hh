@@ -8,7 +8,7 @@
 namespace Gecode { namespace Search {
 
   /// Brancher-owned existential DFS, advanced before engine choice construction.
-  class Completion : public Brancher {
+  class GECODE_VTABLE_EXPORT Completion : public Brancher {
     struct Pending : Stop {
       std::unique_ptr<DFS<Space>> engine;
       Statistics published;
@@ -52,7 +52,7 @@ namespace Gecode { namespace Search {
     Completion(Home home)
       : Brancher(home), pending(nullptr), result(UNSET), revision(0),
         done(false), suppressed(false) {
-      static_cast<Space&>(home).retain_branchers();
+      static_cast<Space&>(home).notice_brancher_restrictions();
     }
     Completion(Space& home, Completion& b)
       : Brancher(home,b), pending(nullptr), result(b.result),
@@ -80,7 +80,7 @@ namespace Gecode { namespace Search {
     // source. Any later feasibility-changing commit, posting, or incumbent cut
     // invalidates that witness, including changes to non-variable model state.
     bool commit_restricts(void) const override { return false; }
-    bool retained(void) const override { return !suppressed; }
+    bool persistent(void) const override { return !suppressed; }
     void invalidate(Space&) override {
       delete pending;
       pending=nullptr;
@@ -88,8 +88,8 @@ namespace Gecode { namespace Search {
       done=false;
       revision++;
     }
-    bool prepare(Space& home, Statistics& stat,
-                 const Options& options) override {
+    virtual bool prepare(Space& home, Statistics& stat,
+                 const Options& options) {
       if (result != UNSET)
         return true;
       if (options.stop && options.stop->stop(stat,options))

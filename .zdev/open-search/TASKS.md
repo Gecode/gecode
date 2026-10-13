@@ -2,10 +2,10 @@
 
 # Tasks: open-search
 
-- Total: 33
+- Total: 34
 - Ready: 0
 - Blocked: 0
-- Done: 33
+- Done: 34
 
 | ID | Task | State | Blocked by |
 | --- | --- | --- | --- |
@@ -42,3 +42,4 @@
 | [open-search-031](tasks/031-reconstruct-standalone-native-search-on-open-cp.md) | Reconstruct standalone native search on open-cp | done | — |
 | [open-search-032](tasks/032-gate-heuristic-search-as-an-experimental-preview-and-separat.md) | Gate heuristic search as an experimental preview and separate experimental changelog entries | done | — |
 | [open-search-033](tasks/033-repair-reviewed-preparation-and-completion-contracts-and-com.md) | Repair reviewed preparation and completion contracts and compact CABS victims | done | — |
+| [open-search-034](tasks/034-remove-kernel-search-coupling-and-simplify-heuristic-search.md) | Remove kernel search coupling and simplify heuristic search examples | done | open-search-033 |

@@ -42,7 +42,6 @@
  */
 
 #include <gecode/kernel.hh>
-#include <gecode/search.hh>
 
 namespace Gecode {
 
@@ -119,8 +118,7 @@ namespace Gecode {
   VarImpDisposerBase* Space::vd[AllVarConf::idx_d];
 #endif
 
-  Space::Space(void) : mm(ssd.data().sm), no_gpi(false),
-      retained_branchers(false) {
+  Space::Space(void) : mm(ssd.data().sm), no_gpi(false) {
 #ifdef GECODE_HAS_CBS
     var_id_counter = 0;
 #endif
@@ -290,7 +288,7 @@ namespace Gecode {
     // Check whether space is stable but not failed
     if (pc.p.active >= &pc.p.queue[0]) {
       ModEventDelta med_o;
-      if ((pc.p.bid_sc & ((1 << sc_bits) - 1)) == 0) {
+      if ((pc.p.bid_sc & (sc_disabled | sc_trace)) == 0) {
         // No support for disabled propagators and tracing
         // Check whether space is stable but not failed
         goto f_unstable;
@@ -351,7 +349,7 @@ namespace Gecode {
           GECODE_NEVER;
         }
       f_stable: ;
-      } else if ((pc.p.bid_sc & ((1 << sc_bits) - 1)) == sc_disabled) {
+      } else if ((pc.p.bid_sc & (sc_disabled | sc_trace)) == sc_disabled) {
         // Support for disabled propagators
         goto d_unstable;
       d_execute:
@@ -567,8 +565,10 @@ namespace Gecode {
   }
 
 
+  BrancherPreparation::~BrancherPreparation(void) {}
+
   bool
-  Brancher::prepare(Space&, Search::Statistics&, const Search::Options&) {
+  Brancher::prepare(Space&, StatusStatistics&) {
     return true;
   }
 
@@ -576,18 +576,18 @@ namespace Gecode {
   Brancher::commit_restricts(void) const { return true; }
 
   bool
-  Brancher::retained(void) const { return false; }
+  Brancher::persistent(void) const { return false; }
 
   void
   Brancher::invalidate(Space&) {}
 
   bool
-  Space::prepare(Search::Statistics& stat, const Search::Options& options) {
+  Space::prepare(BrancherPreparation& preparation) {
     while (!failed() && b_status != Brancher::cast(&bl)) {
       Brancher* active = b_status;
-      if (!active->prepare(*this,stat,options))
+      if (!preparation.prepare(*this,*active))
         return false;
-      if (status(stat) != SS_BRANCH || b_status == active)
+      if (status(preparation.statistics()) != SS_BRANCH || b_status == active)
         return true;
     }
     return true;
@@ -595,11 +595,11 @@ namespace Gecode {
 
   void
   Space::invalidate_branchers(void) {
-    if (!retained_branchers || failed())
+    if (!(pc.p.bid_sc & sc_restrictions) || failed())
       return;
     for (Brancher* b=Brancher::cast(bl.next());
          b != Brancher::cast(&bl); b=Brancher::cast(b->next()))
-      if (b->retained())
+      if (b->persistent())
         b->invalidate(*this);
     b_status = b_commit = Brancher::cast(bl.next());
   }
@@ -615,7 +615,7 @@ namespace Gecode {
       while (b != Brancher::cast(&bl)) {
         Brancher* d = b;
         b = Brancher::cast(b->next());
-        if (failed() || !d->retained()) {
+        if (failed() || !d->persistent()) {
           d->unlink();
           rfree(d,d->dispose(*this));
         }
@@ -631,7 +631,7 @@ namespace Gecode {
     while (b != b_status) {
       Brancher* d = b;
       b = Brancher::cast(b->next());
-      if (!d->retained()) {
+      if (!d->persistent()) {
         d->unlink();
         rfree(d,d->dispose(*this));
       }
@@ -661,7 +661,7 @@ namespace Gecode {
       return;
     if (Brancher* b = brancher(c.bid)) {
       // Resolve the archived choice before resetting the brancher cursors.
-      if (retained_branchers && b->commit_restricts())
+      if ((pc.p.bid_sc & sc_restrictions) && b->commit_restricts())
         invalidate_branchers();
       // There is a matching brancher
       if (pc.p.bid_sc & sc_trace) {
@@ -695,7 +695,7 @@ namespace Gecode {
       return;
     if (Brancher* b = brancher(c.bid)) {
       // Resolve the archived choice before resetting the brancher cursors.
-      if (retained_branchers && b->commit_restricts())
+      if ((pc.p.bid_sc & sc_restrictions) && b->commit_restricts())
         invalidate_branchers();
       // There is a matching brancher
       if (pc.p.bid_sc & sc_trace) {
@@ -774,7 +774,6 @@ namespace Gecode {
   Space::Space(Space& s)
     : ssd(s.ssd),
       mm(ssd.data().sm,s.mm,s.pc.p.n_sub*sizeof(Propagator**)),
-      retained_branchers(s.retained_branchers),
 #ifdef GECODE_HAS_CBS
       var_id_counter(s.var_id_counter),
 #endif

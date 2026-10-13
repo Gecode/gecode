@@ -145,7 +145,8 @@ namespace Gecode {
   class AFC;
   class Choice;
   class Brancher;
-  namespace Search { class Statistics; class Options; }
+  class StatusStatistics;
+  class BrancherPreparation;
   class Group;
   class PropagatorGroup;
   class BrancherGroup;
@@ -1494,14 +1495,13 @@ namespace Gecode {
      * branching. Space::prepare propagates and prepares a newly active brancher.
      */
     GECODE_KERNEL_EXPORT
-    virtual bool prepare(Space& home, Search::Statistics& stat,
-                         const Search::Options& options);
+    virtual bool prepare(Space& home, StatusStatistics& stat);
     /// Whether committing a choice can change feasibility (default: true).
     GECODE_KERNEL_EXPORT
     virtual bool commit_restricts(void) const;
     /// Whether an exhausted brancher must survive subsequent restrictions.
     GECODE_KERNEL_EXPORT
-    virtual bool retained(void) const;
+    virtual bool persistent(void) const;
     /// Invalidate previously established choices after strengthening.
     GECODE_KERNEL_EXPORT
     virtual void invalidate(Space& home);
@@ -1761,6 +1761,28 @@ namespace Gecode {
   };
 
   /**
+   * \brief Driver for brancher preparation before choice construction
+   *
+   * The driver borrows propagation statistics for the duration of preparation.
+   * Its callback completes the current brancher's preparation or suspends it
+   * without advancing the search path. The space propagates after a completed
+   * callback and repeats when a different brancher becomes active.
+   */
+  class GECODE_VTABLE_EXPORT BrancherPreparation {
+  private:
+    StatusStatistics& stat;
+  public:
+    /// Borrow the propagation counter used by preparation
+    explicit BrancherPreparation(StatusStatistics& s) : stat(s) {}
+    /// Return the borrowed propagation counter
+    StatusStatistics& statistics(void) { return stat; }
+    /// Prepare the selected brancher; false suspends choice construction
+    virtual bool prepare(Space& home, Brancher& brancher) = 0;
+    /// Destructor
+    GECODE_KERNEL_EXPORT virtual ~BrancherPreparation(void);
+  };
+
+  /**
    * \brief %Statistics for execution of clone
    *
    */
@@ -1838,8 +1860,6 @@ namespace Gecode {
      * If equal to &bl, no brancher does exist.
      */
     Brancher* b_status;
-    /// Whether any brancher requires notification on restriction posting.
-    bool retained_branchers;
     /**
      * \brief Points to the first brancher to be used for commit
      *
@@ -1868,13 +1888,15 @@ namespace Gecode {
     static const unsigned reserved_bid = 0U;
 
     /// Number of bits for status control
-    static const unsigned int sc_bits = 2;
+    static const unsigned int sc_bits = 3;
     /// No special features activated
     static const unsigned int sc_fast = 0;
     /// Disabled propagators are supported
     static const unsigned int sc_disabled = 1;
     /// Tracing is supported
     static const unsigned int sc_trace = 2;
+    /// Persistent branchers need notification before restrictions
+    static const unsigned int sc_restrictions = 4;
 
     union {
       /// Data only available during propagation or branching
@@ -2241,9 +2263,11 @@ namespace Gecode {
     SpaceStatus status(StatusStatistics& stat);
     /// Prepare the current brancher before a search engine changes its path.
     GECODE_KERNEL_EXPORT
-    bool prepare(Search::Statistics& stat, const Search::Options& options);
-    /// Enable restriction notifications for branchers that survive exhaustion.
-    void retain_branchers(void) { retained_branchers = true; }
+    bool prepare(BrancherPreparation& preparation);
+    /// Enable notification before restrictions for persistent branchers.
+    void notice_brancher_restrictions(void) {
+      pc.p.bid_sc |= sc_restrictions;
+    }
     /// Notify branchers that survive exhaustion before strengthening the space.
     GECODE_KERNEL_EXPORT
     void invalidate_branchers(void);

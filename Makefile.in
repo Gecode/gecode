@@ -262,7 +262,7 @@ endif
 #
 
 SEARCHSRC0 = \
-	stop options cutoff engine \
+	stop options cutoff engine prepare \
 	dfs bab lds \
 	seq/rbs seq/dead seq/pbs par/pbs \
 	rbs pbs nogoods exception tracer \
