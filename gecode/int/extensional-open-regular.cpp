@@ -53,7 +53,7 @@ namespace Gecode { namespace Int { namespace Extensional {
         length(list0.length()),
         dfa(dfa0),
         start(static_cast<Space&>(home).alloc<unsigned char>(dfa.n_states())),
-        offset(0), subscribed(list0.prefix_size()) {
+        offset(0), subscribed(list0.known_length()) {
       home.notice(*this,AP_DISPOSE);
       for (int i=0; i<dfa.n_states(); i++)
         start[i] = 0;
@@ -108,7 +108,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     /// Compute backward state support in region-owned storage
     const unsigned char*
     compute_backward_support(Region& r, bool closed) const {
-      const int n = list.prefix_size()-offset;
+      const int n = list.known_length()-offset;
       const int k = dfa.n_states();
       const unsigned long long cells =
         static_cast<unsigned long long>(n+1) *
@@ -167,7 +167,7 @@ namespace Gecode { namespace Int { namespace Extensional {
 
     virtual ExecStatus
     propagate(Space& home, const ModEventDelta&) {
-      const int size = list.prefix_size();
+      const int size = list.known_length();
       assert(size <= length.max());
 
       for (int i=subscribed; i<size; i++) {
@@ -273,7 +273,7 @@ namespace Gecode { namespace Int { namespace Extensional {
 
     static ExecStatus
     post(Home home, OpenVarList<typename View::VarType> list, DFA dfa) {
-      for (int i=0; i<list.prefix_size(); i++) {
+      for (int i=0; i<list.known_length(); i++) {
         DFA::Symbols symbols(dfa);
         View x(list[i]);
         GECODE_ME_CHECK(x.inter_v(home,symbols,false));

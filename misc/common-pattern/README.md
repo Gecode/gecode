@@ -55,6 +55,10 @@ transitions in additional pattern languages. Constraints follow growth; when no
 frequent extension remains, the list closes. `open-route` is the smaller
 introduction to construction, cloning and search.
 
+`known_length()` counts the positions already constructed, including positions
+whose values are still unassigned. `length()` is the variable for the eventual
+list length.
+
 The private frequency propagator uses prefix projection: after assigning an item,
 it retains the input suffixes that can extend the current pattern. One earliest
 matching cursor per supporting record suffices for ordinary subsequences. It

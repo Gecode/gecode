@@ -100,7 +100,7 @@ public:
   virtual void
   print(std::ostream& os) const {
     os << "\t";
-    for (int i=0; i<route.prefix_size(); i++) {
+    for (int i=0; i<route.known_length(); i++) {
       if (i > 0)
         os << " -> ";
       os << route[i];

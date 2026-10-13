@@ -91,7 +91,7 @@ namespace Test { namespace Int {
 
         int solutions = 0;
         while (BranchSpace* solution = engine.next()) {
-          const int size = solution->list.prefix_size();
+          const int size = solution->list.known_length();
           bool valid =
             solution->list.length().assigned() &&
             (solution->list.length().val() == size);
@@ -155,7 +155,7 @@ namespace Test { namespace Int {
         int first = -1;
         while (BranchOrderSpace* solution = engine.next()) {
           if (solutions == 0)
-            first = solution->list.prefix_size();
+            first = solution->list.known_length();
           solutions++;
           delete solution;
         }
@@ -222,8 +222,8 @@ namespace Test { namespace Int {
             int solutions = 0;
             while (SelectorSpace* solution = engine.next()) {
               bool valid = solution->list.length().assigned() &&
-                (solution->list.length().val() == solution->list.prefix_size());
-              for (int i=0; i<solution->list.prefix_size(); i++)
+                (solution->list.length().val() == solution->list.known_length());
+              for (int i=0; i<solution->list.known_length(); i++)
                 valid &= solution->list[i].assigned() &&
                   (solution->list[i].val() >= i) &&
                   (solution->list[i].val() <= i+1);
@@ -258,7 +258,7 @@ namespace Test { namespace Int {
         bool found[16] = {};
         const auto record = [&found](SelectorSpace* solution) {
           int code = 1;
-          for (int i=0; i<solution->list.prefix_size(); i++)
+          for (int i=0; i<solution->list.known_length(); i++)
             code = 2*code + solution->list[i].val()-i;
           found[code] = true;
           delete solution;
@@ -404,9 +404,9 @@ namespace Test { namespace Int {
             int solutions = 0;
             while (BoolSpace* solution = engine.next()) {
               bool valid = solution->list.length().assigned() &&
-                (solution->list.length().val() == solution->list.prefix_size());
+                (solution->list.length().val() == solution->list.known_length());
               int ones = 0;
-              for (int i=0; i<solution->list.prefix_size(); i++) {
+              for (int i=0; i<solution->list.known_length(); i++) {
                 valid &= solution->list[i].assigned();
                 ones += solution->list[i].val();
               }
@@ -486,14 +486,14 @@ namespace Test { namespace Int {
         bool valid = (clone->status() != SS_FAILED) &&
                      (source.status() != SS_FAILED);
 #ifdef GECODE_HAS_SET_VARS
-        valid &= (source.sets.prefix_size() == 1) &&
-          (clone->sets.prefix_size() == 3) &&
+        valid &= (source.sets.known_length() == 1) &&
+          (clone->sets.known_length() == 3) &&
           (clone->sets.length().val() == 3) &&
           clone->sets[2].assigned() && (clone->sets[2].glbMin() == 2);
 #endif
 #ifdef GECODE_HAS_FLOAT_VARS
-        valid &= (source.floats.prefix_size() == 1) &&
-          (clone->floats.prefix_size() == 3) &&
+        valid &= (source.floats.known_length() == 1) &&
+          (clone->floats.known_length() == 3) &&
           (clone->floats.length().val() == 3) &&
           clone->floats[2].assigned() && (clone->floats[2].min() == 2);
 #endif
@@ -595,8 +595,8 @@ namespace Test { namespace Int {
           bool valid =
             solution->list.length().assigned() &&
             (solution->list.length().val() ==
-             solution->list.prefix_size());
-          for (int i=0; i<solution->list.prefix_size(); i++)
+             solution->list.known_length());
+          for (int i=0; i<solution->list.known_length(); i++)
             valid &= solution->list[i].assigned() &&
               (solution->list[i].val() == i);
           delete solution;
@@ -769,7 +769,7 @@ namespace Test { namespace Int {
           clone->minimum.assigned() && (clone->minimum.val() == 0) &&
           clone->maximum.assigned() && (clone->maximum.val() == 2);
         delete clone;
-        return valid && (source.list.prefix_size() == 1);
+        return valid && (source.list.known_length() == 1);
       }
     };
 
@@ -921,7 +921,7 @@ namespace Test { namespace Int {
             if (close)
               source.list.close(source);
             if ((source.status() == SS_FAILED) ||
-                (source.list.prefix_size() != 3))
+                (source.list.known_length() != 3))
               return false;
           }
         return true;
@@ -966,7 +966,7 @@ namespace Test { namespace Int {
           CallbackSpace* clone = static_cast<CallbackSpace*>(source.clone());
           rel(*clone,clone->list.length(),IRT_GQ,2);
           clone->commit(*choice,alternative);
-          valid &= !clone->failed() && (clone->list.prefix_size() == 1) &&
+          valid &= !clone->failed() && (clone->list.known_length() == 1) &&
             clone->list[0].assigned() &&
             (clone->list[0].val() == static_cast<int>(alternative));
           valid &= clone->status() == SS_FAILED;
@@ -1003,14 +1003,14 @@ namespace Test { namespace Int {
           (static_cast<CallbackSpace*>(source.clone()));
         source.commit(*first,0);
         if ((source.status() != SS_BRANCH) ||
-            (source.list.prefix_size() != 2))
+            (source.list.known_length() != 2))
           return false;
         std::unique_ptr<const Choice> second(source.choice());
         // Recomputation commits the path without propagating between choices.
         replay->commit(*first,0);
         replay->commit(*second,0);
         return (replay->status() != SS_FAILED) &&
-          (replay->list.prefix_size() == 2) &&
+          (replay->list.known_length() == 2) &&
           replay->list[0].assigned() && (replay->list[0].val() == 0) &&
           replay->list[1].assigned() && (replay->list[1].val() == 0);
       }
@@ -1036,7 +1036,7 @@ namespace Test { namespace Int {
             const bool failed = source.status() == SS_FAILED;
             if (failed != (size == 2))
               return false;
-            if (!failed && (source.list.prefix_size() != size))
+            if (!failed && (source.list.known_length() != size))
               return false;
           }
         return true;
@@ -1121,10 +1121,10 @@ namespace Test { namespace Int {
               std::unique_ptr<PatternSpace> owned(solution);
               if (!solution->list.length().assigned() ||
                   (solution->list.length().val() !=
-                   solution->list.prefix_size()))
+                   solution->list.known_length()))
                 return false;
               std::vector<int> pattern;
-              for (int i=0; i<solution->list.prefix_size(); i++) {
+              for (int i=0; i<solution->list.known_length(); i++) {
                 if (!solution->list[i].assigned())
                   return false;
                 pattern.push_back(solution->list[i].val());
@@ -1163,7 +1163,7 @@ namespace Test { namespace Int {
         if ((clone->status() == SS_FAILED) ||
             !clone->list.length().assigned() ||
             (clone->list.length().val() != 2) ||
-            (source.list.prefix_size() != 1) ||
+            (source.list.known_length() != 1) ||
             (source.list.length().min() != 1))
           return false;
         source.list.materialize(source,2);
