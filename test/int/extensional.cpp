@@ -888,8 +888,9 @@ namespace Test { namespace Int {
        /// Create and register test
        TupleSetTest(const std::string& s, bool p,
                     Gecode::IntSet d0, Gecode::TupleSet ts0, bool td,
-                    Gecode::ExtensionalPropKind epk0)
-         : Test(TestTags::sweep(),
+                    Gecode::ExtensionalPropKind epk0,
+                    TestTags tags=TestTags::sweep())
+         : Test(tags,
                 "Extensional::TupleSet::" + extensional_kind_name(epk0) +
                 "::" + str(p) + "::" + s,
                 ts0.arity(),d0,true,Gecode::IPL_DOM),
@@ -943,383 +944,126 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Sparse smoke test for very low-density unary tuple sets
-     class SparseTupleSetUnary : public ::Test::Base {
-     public:
-       SparseTupleSetUnary(void)
-         : ::Test::Base("Int::Extensional::TupleSet::Sparse::Unary") {}
-
-       virtual bool run(void) {
-         using namespace Gecode;
-
-         const int n = 2000;
-         TupleSet ts(1);
-         for (int i=0; i<n; i++)
-           ts.add(IntArgs({i}));
-         ts.finalize(EPK_SPARSE);
-
-         if (ts.representation() != EPK_SPARSE) {
-           std::cerr << "ERROR: TupleSet did not select sparse support"
-                     << std::endl;
-           return false;
+     /// Sample both table tuples and arbitrary assignments in large domains.
+     class SparseAssignment : public RandomAssignment {
+       Gecode::TupleSet t;
+       void tuple(Gecode::Support::RandomGenerator& rand) {
+         if ((a % 2) == 0) {
+           int row = rand(t.tuples());
+           for (int i=0; i<n; i++)
+             vals[i] = t[row][i];
          }
-
-         class SparseUnarySpace : public Space {
-         public:
-           IntVarArray x;
-           SparseUnarySpace(const TupleSet& t, int n0)
-             : x(*this,1,0,n0-1) {
-             extensional(*this, x, t, true, IPL_DOM);
-             branch(*this, x, INT_VAR_NONE(), INT_VAL_MIN());
-           }
-           SparseUnarySpace(SparseUnarySpace& s)
-             : Space(s) {
-             x.update(*this,s.x);
-           }
-           virtual Space*
-           copy(void) {
-             return new SparseUnarySpace(*this);
-           }
-         };
-
-         SparseUnarySpace* root = new SparseUnarySpace(ts,n);
-         DFS<SparseUnarySpace> e(root);
-         delete root;
-
-         SparseUnarySpace* sol = e.next();
-         if (sol == nullptr)
-           return false;
-         const bool ok = sol->x[0].assigned() && (sol->x[0].val() == 0);
-         delete sol;
-         return ok;
+       }
+     public:
+       SparseAssignment(const Gecode::TupleSet& t0, const Gecode::IntSet& d,
+                        Gecode::Support::RandomGenerator& rand)
+         : RandomAssignment(t0.arity(),d,32,rand), t(t0) {
+         tuple(rand);
+       }
+       virtual void next(Gecode::Support::RandomGenerator& rand) {
+         RandomAssignment::next(rand);
+         tuple(rand);
        }
      };
 
-     /// Sparse smoke test for low-density ternary tuple sets
-     class SparseTupleSetTernary : public ::Test::Base {
+     /// Sparse tables with the original large support counts and arities.
+     class SparseTupleSet : public Test {
+       Gecode::TupleSet t;
      public:
-       SparseTupleSetTernary(void)
-         : ::Test::Base("Int::Extensional::TupleSet::Sparse::Ternary") {}
-
-       virtual bool run(void) {
-         using namespace Gecode;
-
-         const int n = 1500;
-         TupleSet ts(3);
-         for (int i=0; i<n; i++)
-           ts.add(IntArgs({i, (i*7) % n, (i*11) % n}));
-         ts.finalize(EPK_SPARSE);
-
-         if (ts.representation() != EPK_SPARSE) {
-           std::cerr << "ERROR: Ternary TupleSet did not select sparse support"
-                     << std::endl;
-           return false;
+       SparseTupleSet(const std::string& name, int arity, int size)
+         : Test("Extensional::TupleSet::Sparse::"+name,
+                arity,0,size-1,false,Gecode::IPL_DOM), t(arity) {
+         const int factors[] = {1,arity == 3 ? 7 : 3,
+                                arity == 3 ? 11 : 5,7,11,13};
+         for (int i=0; i<size; i++) {
+           Gecode::IntArgs row(arity);
+           for (int j=0; j<arity; j++)
+             row[j] = (i*factors[j]) % size;
+           t.add(row);
          }
-
-         class SparseTernarySpace : public Space {
-         public:
-           IntVarArray x;
-           SparseTernarySpace(const TupleSet& t, int n0)
-             : x(*this,3,0,n0-1) {
-             extensional(*this, x, t, true, IPL_DOM);
-             branch(*this, x, INT_VAR_NONE(), INT_VAL_MIN());
-           }
-           SparseTernarySpace(SparseTernarySpace& s)
-             : Space(s) {
-             x.update(*this,s.x);
-           }
-           virtual Space*
-           copy(void) {
-             return new SparseTernarySpace(*this);
-           }
-         };
-
-         SparseTernarySpace* root = new SparseTernarySpace(ts,n);
-         DFS<SparseTernarySpace> e(root);
-         delete root;
-
-         SparseTernarySpace* sol = e.next();
-         if (sol == nullptr)
-           return false;
-         const int a = sol->x[0].val();
-         const int b = sol->x[1].val();
-         const int c = sol->x[2].val();
-         delete sol;
-         return (b == ((a*7) % n)) && (c == ((a*11) % n));
+         t.finalize(Gecode::EPK_SPARSE);
+         testsearch = false;
+         contest = CTL_NONE;
+       }
+       virtual Assignment* assignment(void) const {
+         return new SparseAssignment(t,dom,_rand);
+       }
+       virtual bool solution(const Assignment& x) const {
+         const int size = dom.max()+1;
+         const int factors[] = {1,arity == 3 ? 7 : 3,
+                                arity == 3 ? 11 : 5,7,11,13};
+         for (int i=1; i<arity; i++)
+           if (x[i] != (x[0]*factors[i]) % size)
+             return false;
+         return true;
+       }
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
+         Gecode::extensional(home,x,t,true,ipl);
        }
      };
 
-     /// Sparse smoke test for low-density higher-arity tuple sets
-     class SparseTupleSetHighArity : public ::Test::Base {
+     /// The assignment harness needs one variable even for a nullary table.
+     class SparseTupleSetNullary : public Test {
+       bool nonempty;
+       Gecode::TupleSet t;
      public:
-       SparseTupleSetHighArity(void)
-         : ::Test::Base("Int::Extensional::TupleSet::Sparse::HighArity") {}
+       SparseTupleSetNullary(bool n)
+         : Test("Extensional::TupleSet::Sparse::Nullary::"+str(n),
+                1,0,0), nonempty(n), t(0) {
+         if (nonempty)
+           t.add(Gecode::IntArgs(0));
+         t.finalize(Gecode::EPK_SPARSE);
+       }
+       virtual bool solution(const Assignment&) const {
+         return nonempty;
+       }
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray&) {
+         Gecode::extensional(home,Gecode::IntVarArgs(),t,true,Gecode::IPL_DOM);
+       }
+     };
 
-       virtual bool run(void) {
+     /// Tells issued after posting exercise sparse advisor updates.
+     class SparseTupleSetIncremental : public Test {
+       int kind;
+       Gecode::TupleSet t;
+     public:
+       SparseTupleSetIncremental(const std::string& name, int k)
+         : Test("Extensional::TupleSet::Sparse::Incremental"+name,
+                2,0,k == 2 ? 1 : 3,false,Gecode::IPL_DOM), kind(k), t(2) {
          using namespace Gecode;
-
-         const int n = 1000;
-         TupleSet ts(6);
-         for (int i=0; i<n; i++)
-           ts.add(IntArgs({i, (i*3) % n, (i*5) % n,
-                           (i*7) % n, (i*11) % n, (i*13) % n}));
-         ts.finalize(EPK_SPARSE);
-
-         if (ts.representation() != EPK_SPARSE) {
-           std::cerr << "ERROR: High-arity TupleSet did not select sparse support"
-                     << std::endl;
+         if (kind == 2)
+           t.add(IntArgs({0,1})).add(IntArgs({1,0}));
+         else
+           t.add(IntArgs({0,0})).add(IntArgs({1,1}))
+             .add(IntArgs({2,kind == 1 ? 1 : 2})).add(IntArgs({3,3}));
+         t.finalize(EPK_SPARSE);
+       }
+       virtual bool solution(const Assignment& x) const {
+         if (kind == 0)
+           return (x[0] == 2) && (x[1] == 2);
+         if (kind == 1)
            return false;
+         return (x[0] == 1) && (x[1] == 0);
+       }
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
+         using namespace Gecode;
+         if (kind == 2) {
+           BoolVarArgs b(2);
+           for (int i=0; i<2; i++)
+             b[i] = channel(home,x[i]);
+           extensional(home,b,t,true,ipl);
+           rel(home,b[0],IRT_NQ,0);
+         } else {
+           extensional(home,x,t,true,ipl);
+           if (kind == 0) {
+             rel(home,x[0],IRT_NQ,0);
+             rel(home,x[0],IRT_NQ,1);
+             rel(home,x[1],IRT_NQ,3);
+           } else {
+             rel(home,x[0],IRT_EQ,2);
+             rel(home,x[1],IRT_NQ,1);
+           }
          }
-
-         class SparseHighAritySpace : public Space {
-         public:
-           IntVarArray x;
-           SparseHighAritySpace(const TupleSet& t, int n0)
-             : x(*this,6,0,n0-1) {
-             extensional(*this, x, t, true, IPL_DOM);
-             branch(*this, x, INT_VAR_NONE(), INT_VAL_MIN());
-           }
-           SparseHighAritySpace(SparseHighAritySpace& s)
-             : Space(s) {
-             x.update(*this,s.x);
-           }
-           virtual Space*
-           copy(void) {
-             return new SparseHighAritySpace(*this);
-           }
-         };
-
-         SparseHighAritySpace* root = new SparseHighAritySpace(ts,n);
-         DFS<SparseHighAritySpace> e(root);
-         delete root;
-
-         SparseHighAritySpace* sol = e.next();
-         if (sol == nullptr)
-           return false;
-         const int a = sol->x[0].val();
-         const int b = sol->x[1].val();
-         const int c = sol->x[2].val();
-         const int d = sol->x[3].val();
-         const int e0 = sol->x[4].val();
-         const int f = sol->x[5].val();
-         delete sol;
-         return (b == ((a*3) % n)) &&
-                (c == ((a*5) % n)) &&
-                (d == ((a*7) % n)) &&
-                (e0 == ((a*11) % n)) &&
-                (f == ((a*13) % n));
-       }
-     };
-
-     /// Sparse smoke test for nullary tuple sets
-     class SparseTupleSetNullary : public ::Test::Base {
-     public:
-       SparseTupleSetNullary(void)
-         : ::Test::Base("Int::Extensional::TupleSet::Sparse::Nullary") {}
-
-       virtual bool run(void) {
-         using namespace Gecode;
-
-         class SparseNullarySpace : public Space {
-         public:
-           IntVarArray x;
-           SparseNullarySpace(const TupleSet& t)
-             : x(*this,0,0,0) {
-             extensional(*this, x, t, true, IPL_DOM);
-           }
-           SparseNullarySpace(SparseNullarySpace& s)
-             : Space(s) {
-             x.update(*this,s.x);
-           }
-           virtual Space*
-           copy(void) {
-             return new SparseNullarySpace(*this);
-           }
-         };
-
-         TupleSet sat(0);
-         sat.add(IntArgs(0));
-         sat.finalize(EPK_SPARSE);
-         if (sat.representation() != EPK_SPARSE) {
-           std::cerr << "ERROR: Nullary sat table not sparse" << std::endl;
-           return false;
-         }
-         SparseNullarySpace* sat_root = new SparseNullarySpace(sat);
-         DFS<SparseNullarySpace> sat_engine(sat_root);
-         delete sat_root;
-         SparseNullarySpace* sat_sol = sat_engine.next();
-         if (sat_sol == nullptr) {
-           std::cerr << "ERROR: Nullary sat table produced no solution"
-                     << std::endl;
-           return false;
-         }
-         delete sat_sol;
-
-         TupleSet unsat(0);
-         unsat.finalize(EPK_SPARSE);
-         SparseNullarySpace* unsat_root = new SparseNullarySpace(unsat);
-         DFS<SparseNullarySpace> unsat_engine(unsat_root);
-         delete unsat_root;
-         SparseNullarySpace* unsat_sol = unsat_engine.next();
-         const bool ok = (unsat_sol == nullptr);
-         if (!ok)
-           std::cerr << "ERROR: Nullary empty table unexpectedly satisfiable"
-                     << std::endl;
-         delete unsat_sol;
-         return ok;
-       }
-     };
-
-     /// Sparse incremental smoke test for repeated and mixed delta updates
-     class SparseTupleSetIncrementalDelta : public ::Test::Base {
-     public:
-       SparseTupleSetIncrementalDelta(void)
-         : ::Test::Base(
-             "Int::Extensional::TupleSet::Sparse::IncrementalDelta",
-             TestTags::check()) {}
-
-       virtual bool run(void) {
-         using namespace Gecode;
-
-         class SparseDeltaSpace : public Space {
-         public:
-           IntVarArray x;
-           SparseDeltaSpace(const TupleSet& t)
-             : x(*this,2,0,3) {
-             extensional(*this, x, t, true, IPL_DOM);
-             rel(*this, x[0], IRT_NQ, 0);
-             rel(*this, x[0], IRT_NQ, 1);
-             rel(*this, x[1], IRT_NQ, 3);
-             branch(*this, x, INT_VAR_NONE(), INT_VAL_MIN());
-           }
-           SparseDeltaSpace(SparseDeltaSpace& s)
-             : Space(s) {
-             x.update(*this,s.x);
-           }
-           virtual Space*
-           copy(void) {
-             return new SparseDeltaSpace(*this);
-           }
-         };
-
-         TupleSet ts(2);
-         ts.add(IntArgs({0,0})).add(IntArgs({1,1}))
-           .add(IntArgs({2,2})).add(IntArgs({3,3}));
-         ts.finalize(EPK_SPARSE);
-         if (ts.representation() != EPK_SPARSE)
-           return false;
-
-         SparseDeltaSpace* root = new SparseDeltaSpace(ts);
-         DFS<SparseDeltaSpace> e(root);
-         delete root;
-
-         SparseDeltaSpace* sol = e.next();
-         if (sol == nullptr)
-           return false;
-         SparseDeltaSpace* extra = e.next();
-         const bool ok = sol->x[0].assigned() && sol->x[1].assigned() &&
-                         (sol->x[0].val() == 2) && (sol->x[1].val() == 2) &&
-                         (extra == nullptr);
-         delete sol;
-         delete extra;
-         return ok;
-       }
-     };
-
-     /// Sparse incremental test for assigned-variable advisor updates
-     class SparseTupleSetIncrementalAssign : public ::Test::Base {
-     public:
-       SparseTupleSetIncrementalAssign(void)
-         : ::Test::Base("Int::Extensional::TupleSet::Sparse::IncrementalAssign") {}
-
-       virtual bool run(void) {
-         using namespace Gecode;
-
-         class SparseAssignSpace : public Space {
-         public:
-           IntVarArray x;
-           SparseAssignSpace(const TupleSet& t)
-             : x(*this,2,0,3) {
-             extensional(*this, x, t, true, IPL_DOM);
-             rel(*this, x[0], IRT_EQ, 2);
-             rel(*this, x[1], IRT_NQ, 1);
-             branch(*this, x, INT_VAR_NONE(), INT_VAL_MIN());
-           }
-           SparseAssignSpace(SparseAssignSpace& s)
-             : Space(s) {
-             x.update(*this,s.x);
-           }
-           virtual Space*
-           copy(void) {
-             return new SparseAssignSpace(*this);
-           }
-         };
-
-         TupleSet ts(2);
-         ts.add(IntArgs({0,0})).add(IntArgs({1,1}))
-           .add(IntArgs({2,1})).add(IntArgs({3,3}));
-         ts.finalize(EPK_SPARSE);
-         if (ts.representation() != EPK_SPARSE)
-           return false;
-
-         SparseAssignSpace* root = new SparseAssignSpace(ts);
-         DFS<SparseAssignSpace> e(root);
-         delete root;
-         SparseAssignSpace* sol = e.next();
-         const bool ok = (sol == nullptr);
-         delete sol;
-         return ok;
-       }
-     };
-
-     /// Sparse incremental test for BoolView specialization
-     class SparseTupleSetIncrementalBool : public ::Test::Base {
-     public:
-       SparseTupleSetIncrementalBool(void)
-         : ::Test::Base("Int::Extensional::TupleSet::Sparse::IncrementalBool") {}
-
-       virtual bool run(void) {
-         using namespace Gecode;
-
-         class SparseBoolSpace : public Space {
-         public:
-           BoolVarArray x;
-           SparseBoolSpace(const TupleSet& t)
-             : x(*this,2,0,1) {
-             extensional(*this, x, t, true, IPL_DOM);
-             rel(*this, x[0], IRT_NQ, 0);
-             branch(*this, x, BOOL_VAR_NONE(), BOOL_VAL_MIN());
-           }
-           SparseBoolSpace(SparseBoolSpace& s)
-             : Space(s) {
-             x.update(*this,s.x);
-           }
-           virtual Space*
-           copy(void) {
-             return new SparseBoolSpace(*this);
-           }
-         };
-
-         TupleSet ts(2);
-         ts.add(IntArgs({0,1})).add(IntArgs({1,0}));
-         ts.finalize(EPK_SPARSE);
-         if (ts.representation() != EPK_SPARSE)
-           return false;
-
-         SparseBoolSpace* root = new SparseBoolSpace(ts);
-         DFS<SparseBoolSpace> e(root);
-         delete root;
-
-         SparseBoolSpace* sol = e.next();
-         if (sol == nullptr)
-           return false;
-         SparseBoolSpace* extra = e.next();
-         const bool ok = sol->x[0].assigned() && sol->x[1].assigned() &&
-                         (sol->x[0].val() == 1) && (sol->x[1].val() == 0) &&
-                         (extra == nullptr);
-         delete sol;
-         delete extra;
-         return ok;
        }
      };
 
@@ -1438,105 +1182,6 @@ namespace Test { namespace Int {
            !r->b.assigned();
          delete r;
          return ok;
-       }
-     };
-
-     /// Sparse smoke test for negative tuple-set posting
-     class SparseTupleSetNegative : public ::Test::Base {
-     public:
-       SparseTupleSetNegative(void)
-         : ::Test::Base("Int::Extensional::TupleSet::Sparse::Negative") {}
-
-       virtual bool run(void) {
-         using namespace Gecode;
-
-         class SparseNegativeSpace : public Space {
-         public:
-           IntVarArray x;
-           SparseNegativeSpace(const TupleSet& t)
-             : x(*this,2,0,1) {
-             extensional(*this, x, t, false, IPL_DOM);
-             branch(*this, x, INT_VAR_NONE(), INT_VAL_MIN());
-           }
-           SparseNegativeSpace(SparseNegativeSpace& s)
-             : Space(s) {
-             x.update(*this,s.x);
-           }
-           virtual Space*
-           copy(void) {
-             return new SparseNegativeSpace(*this);
-           }
-         };
-
-         TupleSet ts(2);
-         ts.add(IntArgs({0,0})).add(IntArgs({1,1}));
-         ts.finalize(EPK_SPARSE);
-
-         SparseNegativeSpace* root = new SparseNegativeSpace(ts);
-         DFS<SparseNegativeSpace> e(root);
-         delete root;
-
-         int n = 0;
-         while (SparseNegativeSpace* sol = e.next()) {
-           if (sol->x[0].val() == sol->x[1].val()) {
-             delete sol;
-             return false;
-           }
-           n++;
-           delete sol;
-         }
-         return n == 2;
-       }
-     };
-
-     /// Sparse smoke test for reified tuple-set posting
-     class SparseTupleSetReified : public ::Test::Base {
-     public:
-       SparseTupleSetReified(void)
-         : ::Test::Base("Int::Extensional::TupleSet::Sparse::Reified") {}
-
-       virtual bool run(void) {
-         using namespace Gecode;
-
-         class SparseReifiedSpace : public Space {
-         public:
-           IntVarArray x;
-           BoolVar b;
-           SparseReifiedSpace(const TupleSet& t)
-             : x(*this,2,0,1), b(*this,0,1) {
-             extensional(*this, x, t, true, Reify(b,RM_EQV), IPL_DOM);
-             rel(*this, b, IRT_EQ, 1);
-             branch(*this, x, INT_VAR_NONE(), INT_VAL_MIN());
-           }
-           SparseReifiedSpace(SparseReifiedSpace& s)
-             : Space(s) {
-             x.update(*this,s.x);
-             b.update(*this,s.b);
-           }
-           virtual Space*
-           copy(void) {
-             return new SparseReifiedSpace(*this);
-           }
-         };
-
-         TupleSet ts(2);
-         ts.add(IntArgs({0,0})).add(IntArgs({1,1}));
-         ts.finalize(EPK_SPARSE);
-
-         SparseReifiedSpace* root = new SparseReifiedSpace(ts);
-         DFS<SparseReifiedSpace> e(root);
-         delete root;
-
-         int n = 0;
-         while (SparseReifiedSpace* sol = e.next()) {
-           if (sol->x[0].val() != sol->x[1].val()) {
-             delete sol;
-             return false;
-           }
-           n++;
-           delete sol;
-         }
-         return n == 2;
        }
      };
 
@@ -2154,76 +1799,6 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Sparse reified posting should support all reify modes for positive/negative
-     class SparseTupleSetReifiedModes : public ::Test::Base {
-     public:
-       SparseTupleSetReifiedModes(void)
-         : ::Test::Base(
-             "Int::Extensional::TupleSet::Sparse::ReifiedModes") {}
-
-       virtual bool run(void) {
-         using namespace Gecode;
-         class ReifModeSpace : public Space {
-         public:
-           IntVarArray x;
-           BoolVar b;
-           ReifModeSpace(const TupleSet& t, bool pos, ReifyMode rm, int bv)
-             : x(*this,2,0,1), b(*this,0,1) {
-             extensional(*this, x, t, pos, Reify(b,rm), IPL_DOM);
-             rel(*this, b, IRT_EQ, bv);
-             branch(*this, x, INT_VAR_NONE(), INT_VAL_MIN());
-           }
-           ReifModeSpace(ReifModeSpace& s)
-             : Space(s) {
-             x.update(*this,s.x);
-             b.update(*this,s.b);
-           }
-           virtual Space* copy(void) {
-             return new ReifModeSpace(*this);
-           }
-         };
-
-         TupleSet ts(2);
-         ts.add(IntArgs({0,0}));
-         ts.finalize(EPK_SPARSE);
-         if (ts.representation() != EPK_SPARSE)
-           return false;
-
-         auto count = [&ts](bool pos, ReifyMode rm, int bv,
-                            bool must_equal) {
-           ReifModeSpace* root = new ReifModeSpace(ts,pos,rm,bv);
-           DFS<ReifModeSpace> e(root);
-           delete root;
-           int n = 0;
-           while (ReifModeSpace* sol = e.next()) {
-             const bool eq = (sol->x[0].val() == 0) && (sol->x[1].val() == 0);
-             if (must_equal != eq) {
-               delete sol;
-               return -1;
-             }
-             n++;
-             delete sol;
-           }
-           return n;
-         };
-
-         if (count(true,RM_EQV,1,true) != 1)
-           return false;
-         if (count(true,RM_EQV,0,false) != 3)
-           return false;
-         if (count(true,RM_IMP,1,true) != 1)
-           return false;
-         if (count(true,RM_PMI,0,false) != 3)
-           return false;
-         if (count(false,RM_EQV,0,true) != 1)
-           return false;
-         if (count(false,RM_EQV,1,false) != 3)
-           return false;
-
-         return true;
-       }
-     };
-
      /// %Test with large tuple set
      class TupleSetLarge : public Test {
      protected:
@@ -2596,17 +2171,33 @@ namespace Test { namespace Int {
      RegTerminalMerged reg_sparse_terminal_merged;
      RegTerminalUnmerged reg_sparse_terminal_unmerged;
 
-     SparseTupleSetUnary sparse_tuple_set_unary;
-     SparseTupleSetTernary sparse_tuple_set_ternary;
-     SparseTupleSetHighArity sparse_tuple_set_high_arity;
-     SparseTupleSetNullary sparse_tuple_set_nullary;
-     SparseTupleSetIncrementalDelta sparse_tuple_set_incremental_delta;
-     SparseTupleSetIncrementalAssign sparse_tuple_set_incremental_assign;
-     SparseTupleSetIncrementalBool sparse_tuple_set_incremental_bool;
+     /// Exhaustive positive, negative, and reified sparse-table semantics.
+     class CreateSparse {
+     public:
+       CreateSparse(void) {
+         using namespace Gecode;
+         TupleSet equal(2), zero(2);
+         equal.add(IntArgs({0,0})).add(IntArgs({1,1})).finalize(EPK_SPARSE);
+         zero.add(IntArgs({0,0})).finalize(EPK_SPARSE);
+         for (bool positive : {false,true}) {
+           (void) new TupleSetTest("Equal",positive,IntSet(0,1),equal,
+                                  false,EPK_SPARSE,TestTags::standard());
+           (void) new TupleSetTest("Zero",positive,IntSet(0,1),zero,
+                                  false,EPK_SPARSE,TestTags::standard());
+         }
+       }
+     } create_sparse;
+
+     SparseTupleSet sparse_tuple_set_unary("Unary",1,2000);
+     SparseTupleSet sparse_tuple_set_ternary("Ternary",3,1500);
+     SparseTupleSet sparse_tuple_set_high_arity("HighArity",6,1000);
+     SparseTupleSetNullary sparse_tuple_set_nullary(true);
+     SparseTupleSetNullary sparse_tuple_set_empty(false);
+     SparseTupleSetIncremental sparse_tuple_set_incremental_delta("Delta",0);
+     SparseTupleSetIncremental sparse_tuple_set_incremental_assign("Assign",1);
+     SparseTupleSetIncremental sparse_tuple_set_incremental_bool("Bool",2);
      SparseTupleSetDisabledFailure sparse_tuple_set_disabled_failure;
      SparseTupleSetWideDelta sparse_tuple_set_wide_delta;
-     SparseTupleSetNegative sparse_tuple_set_negative;
-     SparseTupleSetReified sparse_tuple_set_reified;
      TupleSetSingleRepresentation tuple_set_single_representation;
      TupleSetSupportOffsetBoundary tuple_set_support_offset_boundary;
      TupleSetTerminalFinalizationFailure tuple_set_terminal_failure;
@@ -2616,7 +2207,6 @@ namespace Test { namespace Int {
      DenseCompressedTupleSetWideGap dense_compressed_tuple_set_wide_gap;
      SparseTupleSetNegativeFail sparse_tuple_set_negative_fail;
      SparseTupleSetNegativePrune sparse_tuple_set_negative_prune;
-     SparseTupleSetReifiedModes sparse_tuple_set_reified_modes;
      //@}
 
    }
