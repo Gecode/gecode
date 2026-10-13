@@ -2242,9 +2242,9 @@ namespace Gecode {
     /// Prepare the current brancher before a search engine changes its path.
     GECODE_KERNEL_EXPORT
     bool prepare(Search::Statistics& stat, const Search::Options& options);
-    /// Enable restriction notifications for a retained brancher.
+    /// Enable restriction notifications for branchers that survive exhaustion.
     void retain_branchers(void) { retained_branchers = true; }
-    /// Notify retained branchers before posting a restriction or constraining.
+    /// Notify branchers that survive exhaustion before strengthening the space.
     GECODE_KERNEL_EXPORT
     void invalidate_branchers(void);
     /// Query space status without collecting statistics

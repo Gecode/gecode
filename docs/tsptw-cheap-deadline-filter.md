@@ -3,7 +3,7 @@
 The native transition example accepts `--residual-propagation off|cheap|unary`.
 `off` remains the default. `cheap` checks necessary customer and depot deadlines
 after each committed visit, without constructing a residual unary Space.
-`unary` retains its existing scheduling relaxation and Gecode fixpoint policy.
+`unary` uses its scheduling relaxation and Gecode fixpoint policy.
 
 For current location `i`, time `t`, and each unvisited customer `u`, let
 `d[i,u]` be the shortest path length in the supplied matrix. The cheap check uses
@@ -66,7 +66,7 @@ The runner does not measure frontier or clone buffer bytes.
 ## Observed results and decision
 
 All 72 rows completed. The checker accepted 476 terminal-row publications and
-three more publications in retained interrupted streams. There were 23 outer
+three more publications in saved interrupted streams. There were 23 outer
 timeouts, no RSS stops and no terminal execution, measurement or invalid-output
 failures. Forty-nine rows have summaries; the other 23 have unavailable phase
 times and node counts. Each configuration has 12 observations, including four
@@ -102,7 +102,7 @@ Both repetitions agree on these useful differences:
   without proof. BAB OFF finds no tour. CHEAP BAB inference costs 34.910–35.054 ms;
   UNARY's stopped summaries record 1,545.946–1,548.630 ms.
 
-Retain CHEAP as an explicit option. It removes enough deadline dead ends to
+Keep CHEAP as an explicit option. It removes enough deadline dead ends to
 improve this small comparison while avoiding full unary inference. These four
 development cases and two easy controls do not establish a universal speedup
 or settle defaults. The variant and Gendreau cases remain unproved.
@@ -113,13 +113,13 @@ whether reusable residual state can preserve its stronger pruning at lower
 cost. This comparison adds no RSS-stop evidence for a fixed-width continuation
 study: its largest sampled CABS peaks are about 283 MiB OFF, 97 MiB CHEAP and
 77 MiB UNARY, and frontier bytes are unmeasured. Any continuation study should
-retain its separate justification and budget. No such study is implemented here.
+have its own justification and budget. No such study is implemented here.
 
 The 72 terminal rows use 77.537 s of launch-through-reap wall time. Two capture
 cleanup calls failed with a permission error; inspection found both children
 absent. The ledger charges 39.635 s and 20.234 s conservatively through absence
 confirmation, including their observed 2.008 s and 2.006 s attempts. Their partial
-streams remain available. Validation includes two retained short-cap timeouts
+streams remain available. Validation includes two recorded short-cap timeouts
 before successful retries of the required integration checks.
 
 At implementation handoff, shared usage is **170.957548 s**: correctness
@@ -184,4 +184,4 @@ The frozen report records checks from the earlier combined branch. Its tiny
 CLI checks with BAB and CABS proved waiting cost 5 and both late fixtures
 infeasible with `residual_propagation=cheap` and `propagation_ms=0`. The report's
 build paths and timings describe that run, rather than current native branch
-validation. The standalone branch retains the same suffix tests and CLI checker.
+validation. The standalone branch uses the same suffix tests and CLI checker.

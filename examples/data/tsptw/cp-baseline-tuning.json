@@ -1243,7 +1243,7 @@
   "measurements": "Pair costs only within a case and its integer scale. Native reported milliseconds start at main entry and include preprocessing; end-to-end wall seconds cover launch through reap. Checked timeout/RSS incumbents count as feasible quality, never proof. Lower outer wall time can reflect earlier resource termination. Timing counts and medians across distinct cases do not establish a universal speedup.",
   "observed_tradeoffs": [
     "VAL/regret BAB loses the AFG/rbg038a tour in both repetitions and adds no quality or proof wins against DOM/regret.",
-    "DOM/size BAB finds no tour on AFG/rbg038a; DOM/regret BAB and regret RBS retain checked cost 2493 without proof.",
+    "DOM/size BAB finds no tour on AFG/rbg038a; DOM/regret BAB and regret RBS find checked cost 2493 without proof.",
     "No candidate finds a tour on Dumas/n60w100 within the allowance.",
     "Size BAB and size RBS prove 249 on the Dumas window variant and 267 on canonical Gendreau n20, find cost 527 on Gendreau n60 without proof, and prove 202 rather than the regret candidates final 208 on the Gendreau window variant."
   ],

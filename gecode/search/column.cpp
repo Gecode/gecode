@@ -108,8 +108,8 @@ namespace Gecode { namespace Search { namespace Seq {
   }
 
   bool
-  Column::retain(std::unique_ptr<Space> s, unsigned long int depth,
-                 unsigned long long int revision) {
+  Column::admit(std::unique_ptr<Space> s, unsigned long int depth,
+                unsigned long long int revision) {
     const std::int64_t bound = guidance.bound(*s);
     if (!improves(bound)) {
       fail++;
@@ -137,8 +137,8 @@ namespace Gecode { namespace Search { namespace Seq {
     queued++;
     if (!descriptor) return true;
     // Admit fresh work before replacing labels, even after earlier expansion.
-    // Old pending Spaces retain their original Choice cursors and coverage.
-    registry->retain(std::move(*descriptor));
+    // Pending Spaces keep their original Choice cursors and coverage.
+    registry->store(std::move(*descriptor));
     state_descriptors = std::max(state_descriptors,registry->size());
     state_bytes = std::max(state_bytes,registry->storage());
     return true;
@@ -146,7 +146,7 @@ namespace Gecode { namespace Search { namespace Seq {
 
   Space*
   Column::publish(std::unique_ptr<Space> s) {
-    // Clean exhausted branchers, retaining completion branchers as usual.
+    // Delete exhausted branchers; completion branchers must survive restrictions.
     (void) s->choice();
     const std::int64_t bound = guidance.bound(*s);
     if (!improves(bound)) return nullptr;
@@ -231,7 +231,7 @@ namespace Gecode { namespace Search { namespace Seq {
         if (Space* solution = publish(std::move(step.space))) return solution;
         break;
       case SS_BRANCH:
-        if (!retain(std::move(step.space),child_depth,incumbent_revision))
+        if (!admit(std::move(step.space),child_depth,incumbent_revision))
           return nullptr;
         break;
       default:
