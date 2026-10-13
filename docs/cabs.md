@@ -149,11 +149,9 @@ cmake --build build/open-search --target astar
 build/open-search/bin/astar
 ```
 
-The example runs A*, BAB, and CABS on one bounded formulation. A misleading rank
-makes capped width one return 4 and -2, then stop without a proof. Width two, width four, and
-unrestricted widening recover -7 and prove it optimal. A frontier quota of one
-stops after 4. The example prints elapsed milliseconds, nodes, and restarts for
-fixed width/frontier settings. Its tiny timings illustrate the reporting and do
-not establish performance gains or justify default tuning. It links only the
-search and integer libraries; installed consumers can link `Gecode::gecodesearch`
+The example runs A*, BAB, CABS, column search, and CBFS on one bounded
+formulation. A misleading rank makes capped width one return 4 and -2, then
+stop without a proof. Unrestricted CABS widens to recover -7 and prove it
+optimal. Each run prints its improvements and whether search completed. It
+links only the search and integer libraries; installed consumers can link `Gecode::gecodesearch`
 and `Gecode::gecodeint`.
