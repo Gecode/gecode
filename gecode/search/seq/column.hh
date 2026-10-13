@@ -43,7 +43,7 @@
 #ifdef GECODE_HAS_EXPERIMENTAL
 namespace Gecode { namespace Search { namespace Seq {
 
-  /// Sequential depth queues with retained alternatives and progressive quotas
+  /// Sequential depth queues with deferred alternatives and progressive quotas
   class Column : public Worker {
   public:
     struct Configuration {
@@ -79,7 +79,7 @@ namespace Gecode { namespace Search { namespace Seq {
     unsigned long long int order;
     /// Revision of the currently accepted incumbent
     unsigned long long int incumbent_revision;
-    /// Selected parent, also retained across interrupted preparation
+    /// Selected parent, also saved across interrupted preparation
     ChoiceExpansion expansion;
     SpaceStatus current_status;
     unsigned long int current_depth;
@@ -90,8 +90,8 @@ namespace Gecode { namespace Search { namespace Seq {
     std::int64_t best_bound;
 
     bool improves(std::int64_t bound) const;
-    bool retain(std::unique_ptr<Space> s, unsigned long int depth,
-                unsigned long long int revision);
+    bool admit(std::unique_ptr<Space> s, unsigned long int depth,
+               unsigned long long int revision);
     bool select(void);
     Space* publish(std::unique_ptr<Space> s);
     void initialize(Space* s, bool clone);

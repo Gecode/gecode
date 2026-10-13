@@ -130,15 +130,15 @@ namespace Gecode { namespace Search { namespace Seq {
     std::push_heap(frontier.begin(),frontier.end(),Later{guidance.sense,ordering});
     if (!descriptor) return;
     // Admit fresh work before replacing labels, even after earlier expansion.
-    // Old pending Spaces retain their original Choice cursors and coverage.
-    registry->retain(std::move(*descriptor));
+    // Pending Spaces keep their original Choice cursors and coverage.
+    registry->store(std::move(*descriptor));
     state_descriptors = std::max(state_descriptors,registry->size());
     state_bytes = std::max(state_bytes,registry->storage());
   }
 
   Space*
   AStar::publish(std::unique_ptr<Space> s) {
-    // Clean exhausted branchers, retaining completion branchers as usual.
+    // Delete exhausted branchers; completion branchers must survive restrictions.
     (void) s->choice();
     const std::int64_t bound = guidance.bound(*s);
     if (!improves(bound)) return nullptr;

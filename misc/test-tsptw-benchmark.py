@@ -238,7 +238,7 @@ class Records(unittest.TestCase):
             self.assertIn('exit time unobserved', recovery['timing'])
             self.assertFalse(pending)
             benchmark.require_reaped(samples)
-            # Historical reaps retain their original accounting interpretation.
+            # Historical reaps use their original accounting interpretation.
             ledger.write_text('\n'.join(json.dumps(row) for row in (
                 dict(event='budget', total_seconds=7200),
                 dict(event='launch', id='old', phase='correctness'),

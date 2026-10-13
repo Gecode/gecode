@@ -74,7 +74,7 @@ namespace Gecode { namespace Search { namespace Seq {
     unsigned long long int order;
     /// Revision of the currently accepted incumbent
     unsigned long long int incumbent_revision;
-    /// Selected parent, also retained across interrupted preparation
+    /// Selected parent, also saved across interrupted preparation
     ChoiceExpansion expansion;
     SpaceStatus current_status;
     unsigned long int current_depth;

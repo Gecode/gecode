@@ -701,7 +701,7 @@ namespace Test { namespace Int {
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          using namespace Gecode;
          // The first assigned layer has one edge and can be discarded on
-         // cloning. The second has two edges and must be retained. Two
+         // cloning. The second has two edges and must be copied. Two
          // paths read the prefix 0,0,0,0, while only one reads 0,0,1,1.
          DFA d = DFA::nfa(0,
                          {
@@ -799,7 +799,7 @@ namespace Test { namespace Int {
        }
      };
 
-     /// %Test retaining separate terminal states when merging would overflow
+     /// %Test keeping separate terminal states when merging would overflow
      class RegTerminalUnmerged : public Test {
      public:
        /// Create and register test

@@ -20,7 +20,7 @@ Search::HeuristicGuidance guidance(Search::HeuristicGuidance::MINIMIZE,
   });
 AStar<MySpace> search(root, guidance);
 while (std::unique_ptr<MySpace> solution{search.next()}) {
-  // Read or retain the improvement; the caller owns it.
+  // Inspect or save the improvement; the caller owns it.
 }
 if (search.stopped()) {
   // Raise or reset the stop limit and call next() again to resume.
@@ -38,9 +38,9 @@ the same compatible scalar integer objective. The caller must justify the bound
 and keep callback arithmetic in range. Solution acceptance uses this exact
 scalar value, independently of rank; no Space comparison API is required.
 
-Ordinary Gecode 6.x BAB, restart and portfolio engines retain their existing
-incumbent admission test: they apply `constrain` to a temporary clone and check
-propagation-visible failure. An external incumbent whose improvement can only
+Ordinary Gecode 6.x BAB, restart and portfolio engines test incumbent admission
+by applying `constrain` to a temporary clone and checking propagation-visible
+failure. An external incumbent whose improvement can only
 be established by exhausting hidden completion search is not guaranteed
 admission by that test. Native scalar adoption uses the exact objective value.
 
@@ -83,7 +83,7 @@ or infeasibility when none exists, provided the bound, strict improvement and
 optional state-pruning contracts preserve coverage. Best-first uses the callback lifetime,
 numeric, ownership, stop, exception and descriptor contracts below. The native
 factory is `Search::bestfirstengine(root, guidance, ordering, options, pruning)`;
-`Search::astarengine` retains its signature and selects bound-first.
+`Search::astarengine` selects bound-first.
 
 The [additive example](../examples/best-first.cpp) minimizes two explicit stages.
 The first-stage costs are 0 and 9, with final-arc costs `[5,6]` and `[1,2]`.
@@ -163,7 +163,7 @@ the guidance lifetime rules. Providing just one callback raises
 For example, consider the finite chain `root -> A -> B -> goal`, where `A` and
 `B` have identical variable domains and prefix costs but different brancher
 stages. A domain-only key with equal labels is unsafe: A* and column search
-retain `A`'s descriptor after expanding it, reject `B` as equivalent, and lose
+store `A`'s descriptor after expanding it, reject `B` as equivalent, and lose
 the only route to the goal. `A` needs two remaining commits; `B` needs one.
 For this chain, adding the exact brancher stage to the key distinguishes the
 residual problems and preserves progress. More generally, include enough stage
@@ -184,7 +184,7 @@ std::unique_ptr<Search::Builder> builder(
 // The native factory also accepts pruning as its final argument.
 ```
 
-A* retains nondominated descriptor values after expansion, without extra Space
+A* stores nondominated descriptor values after expansion, without extra Space
 clones. A better label enters the frontier before replacing dominated metadata,
 even when an older representative already expanded. Admissible inconsistent
 bounds therefore remain supported. Older pending Spaces and saved Choice
@@ -214,6 +214,7 @@ Build and run the additive example with
 `build/open-search/bin/best-first`; it links the same native libraries.
 
 [Native column search](column.md) uses the same ownership, guidance and state
-pruning declarations with retained depth queues. Its optional rank orders each
-queue independently of bound, and full cycles increase the expansion quota.
+pruning declarations with queues of deferred work at each depth. Its optional
+rank orders each queue independently of bound, and full cycles increase the
+expansion quota.
 Quota growth zero selects fixed-quota CBFS.

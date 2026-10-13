@@ -56,13 +56,13 @@ namespace Gecode { namespace Search { namespace Seq {
     StateRegistry(const StatePruning::Compare& c, unsigned long int l)
       : compare(c), limit(l), descriptors(0), descriptor_bytes(0) {}
 
-    /// Whether an equivalent or better retained label subsumes this descriptor
+    /// Whether an equivalent or better stored label subsumes this descriptor
     bool subsumes(const StatePruning::Descriptor& descriptor) const {
       const auto bucket = buckets.find(descriptor.hash);
       if (bucket != buckets.end())
-        for (const auto& retained : bucket->second) {
-          if (descriptor.key != retained.key) continue;
-          const auto relation = compare(descriptor,retained);
+        for (const auto& existing : bucket->second) {
+          if (descriptor.key != existing.key) continue;
+          const auto relation = compare(descriptor,existing);
           if (relation == StatePruning::EQUIVALENT ||
               relation == StatePruning::DOMINATED)
             return true;
@@ -70,16 +70,16 @@ namespace Gecode { namespace Search { namespace Seq {
       return false;
     }
 
-    /// Retain admitted metadata, replacing dominated labels and forgetting at limit
-    void retain(StatePruning::Descriptor descriptor) {
+    /// Store admitted metadata, replacing dominated labels and forgetting at limit
+    void store(StatePruning::Descriptor descriptor) {
       auto& bucket = buckets[descriptor.hash];
       bucket.erase(std::remove_if(bucket.begin(),bucket.end(),
-        [&](const StatePruning::Descriptor& retained) {
-          if (descriptor.key != retained.key ||
-              compare(descriptor,retained) != StatePruning::DOMINATES)
+        [&](const StatePruning::Descriptor& existing) {
+          if (descriptor.key != existing.key ||
+              compare(descriptor,existing) != StatePruning::DOMINATES)
             return false;
           descriptors--;
-          descriptor_bytes -= retained.storage();
+          descriptor_bytes -= existing.storage();
           return true;
         }),bucket.end());
       if (limit && descriptors >= limit) clear();

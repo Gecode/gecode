@@ -91,8 +91,8 @@ namespace Gecode { namespace Search { namespace Seq {
     bool limited;
 
     bool improves(std::int64_t bound) const;
-    bool retain(std::unique_ptr<Space> s, unsigned long int depth,
-                unsigned long long int revision);
+    bool admit(std::unique_ptr<Space> s, unsigned long int depth,
+               unsigned long long int revision);
     void add_descriptor(const Entry& entry);
     void remove_descriptor(const Entry& entry);
     void record_descriptors(void);

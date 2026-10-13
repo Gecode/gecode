@@ -48,7 +48,7 @@ The five generated `tiny/` instances are separate from canonical benchmarks:
 The transition example also offers `--residual-propagation cheap` between OFF
 and the existing unary relaxation. [The deadline-filter note](../../../docs/tsptw-cheap-deadline-filter.md)
 explains its shortest-path checks and bounded development comparison;
-[the saved report](cheap-deadline-comparison.json) retains each case and repetition.
+[the saved report](cheap-deadline-comparison.json) records each case and repetition.
 The default remains OFF.
 
 `published/` contains one unchanged canonical input and one published
@@ -130,7 +130,7 @@ nonnegative integers; omitting an ordinary limit disables it. Time is measured
 from the start of instance reading and preprocessing. Stops are checked at
 engine boundaries and do not interrupt propagation. CABS also accepts
 `--max-width N` and `--frontier-limit N`; zero disables either cap. The frontier
-cap counts retained nodes and does not limit process memory. Runs use one
+cap counts pending nodes and does not limit process memory. Runs use one
 search thread.
 
 The executable emits JSON lines. Each `solution` record contains a customer
@@ -171,7 +171,7 @@ unsound for nonmetric matrices.
 The visit list has at most n positions: n-1 customer visits and one explicit
 depot return. Brancher preparation materializes the next position without
 changing the concrete state. One n-ary choice commit assigns one action and
-updates that state once. Archived choices retain both position and customer
+updates that state once. Archived choices store both position and customer
 IDs; historical BAB replay can materialize an absent position before assigning
 it. An unfinished state with no applicable action fails. The final return
 checks the depot due time, adds the return arc exactly once and closes the list.
@@ -186,7 +186,7 @@ prepare/choice/commit journey before native incumbent adoption.
 `--formulation eager` reserves all n path variables upfront. It uses the same
 Space, brancher, applicability, ordering, incumbent cuts and search engines.
 Only path allocation changes. The two transition representations emit identical
-improving tours under the same engine; the closed model retains its own
+improving tours under the same engine; the closed model uses its own
 cost-regret and successor branching.
 
 ```sh
@@ -249,7 +249,7 @@ return `std::nullopt` from extraction where sufficient state is unavailable.
 The declaration does not justify pruning ordinary partial successor CP stores.
 Returned tours remain independently owned and use the same checker.
 
-A* and column retain descriptor metadata after expansion and admit improved labels
+A* and column store descriptor metadata after expansion and admit improved labels
 again, including with inconsistent admissible bounds. CABS compares only live
 next-layer candidates; beam-discarded states never become representatives.
 See [A*](../../../docs/astar.md) and [CABS](../../../docs/cabs.md) for callback
@@ -257,7 +257,7 @@ contracts, optional metadata forgetting and candidate lifetimes. Forgetting
 removes metadata alone and never removes search work or causes a stop.
 
 Summary records identify `state_pruning`. `state_pruned` counts sound state
-removals; `state_descriptors` and `state_bytes` record retained peaks. The byte
+removals; `state_descriptors` and `state_bytes` record peak descriptor storage. The byte
 estimate includes descriptor objects and owned key/label vector capacities,
 excluding container capacity and allocator overhead. It does not include
 Space/frontier storage or measure process RSS. These counters stay zero with
@@ -327,7 +327,7 @@ configurations on the frozen development cases `Dumas/n20w20.001.txt`,
 `variants/Dumas/customer-due-plus-100/n20w100.003.txt`. Each ran twice under
 transition A*, Pareto off, one thread, no seed, a five-second native limit and
 a seven-second external guard. Runs were sequential, interleaved by case, with
-configuration order reversed for repetition two. The record retains exact
+configuration order reversed for repetition two. The record includes exact
 commands, input and binary hashes, every independently checked incumbent,
 individual timings, node counts, stops and sampled storage. Compilation was
 completed before capture and was not timed. No held-out outcomes were used.
@@ -370,7 +370,7 @@ the stronger options explicit and the prefix/off defaults unchanged.
 Both ordinary Space formulations support `--engine column`. Its default quota
 starts at one and grows by one after every complete depth cycle. Set
 `--quota-growth 0` for fixed-quota CBFS, or `--initial-quota N` for another
-positive initial quota. Quotas schedule expansion and retain deferred work.
+positive initial quota. Quotas schedule expansion; deferred work stays queued.
 `--frontier-limit N` caps pending Space count, including an unfinished parent;
 zero is unlimited. Cap termination reports `stopped` and supplies no proof.
 `--max-width` remains specific to CABS. Column summaries record `initial_quota`,
@@ -438,7 +438,7 @@ launch a campaign or enforce a budget shared across named runs.
 Both solver routes receive one thread, the same launch-to-reap wall deadline
 and a 1 GiB sampled RSS watchdog. `ps` reports the summed RSS of the owned process
 group, including uv and its Python child. Sampling happens every nominal 50 ms
-plus probe overhead; records retain sample count, maximum gap and total probe
+plus probe overhead; records include sample count, maximum gap and total probe
 time. Termination between samples can miss the peak; no observed live RSS is
 `null`. The watchdog can overshoot and is not a hard memory limit. Probe failure
 terminates the sample as a measurement failure. Stops kill and reap the process
@@ -460,7 +460,7 @@ Build before capture. `--compilation-seconds S` records a separately measured
 build duration; omission explicitly leaves it unavailable. Compilation is never
 silently attributed to search.
 
-Each row retains checked incumbent times and costs, the summary, final objective,
+Each row records checked incumbent times and costs, the summary, final objective,
 proof or stop reason, expansions and sampled peak RSS. Native descriptor peaks,
 bound/inference timings and basic allocation sizes remain available in the
 summary. Frontier bytes and actual clone footprint are unavailable. The native
@@ -469,7 +469,7 @@ storage. DIDPPy does not expose equivalent descriptor/clone counters here.
 `analyze` reads only saved config and rows, writes `analysis.json`, and reports
 expected/completed/unfinished/failed counts and valid-run wall-time medians by
 configuration. With `closed-bab` present, it also pairs every other configuration
-with that baseline on the same case and repetition. Pairs retain status, checked
+with that baseline on the same case and repetition. Pairs record status, checked
 final objective, first-incumbent time, quality at 100/1,000/5,000/15,000 reported
 milliseconds when within the allowance, proof/time, termination, outer wall time
 and sampled peak RSS. Counts distinguish wins, ties, losses, missing/failed pairs
@@ -545,7 +545,7 @@ canonical Gendreau n20, where regret branching finds no tour. On Gendreau n60 it
 finds cost 527 without proof; regret branching finds no tour. On the marked
 Gendreau window variant it proves 202, while regret candidates end at 208 without
 proof. The counterexample is canonical `AFG/rbg038a.tw`: DOM/regret BAB and regret
-RBS retain checked cost 2493 in both repetitions, while size candidates and
+RBS find checked cost 2493 in both repetitions, while size candidates and
 VAL/regret find no tour. No candidate finds a tour on `Dumas/n60w100.001.txt`.
 Canonical cases and four deterministic window variants remain separately marked
 in the report; scaled costs are compared only within each case.
@@ -589,7 +589,7 @@ remains separate; no held-out outcomes were inspected.
 
 All 806 emitted campaign incumbents passed the independent Fraction checker.
 There were three outer timeouts, zero RSS terminations and no invalid output,
-execution or measurement failures. The timeout rows retain checked feasible
+execution or measurement failures. The timeout rows include checked feasible
 quality where available and never proof. Eighteen short samples finished without
 a live RSS observation. The largest observed sampling gap was 465 ms and the
 longest sample took 15.101 wall seconds: the nominal 50 ms watchdog can miss
@@ -618,7 +618,7 @@ canonical instances and one variant per family. Source instances remain disjoint
 from development. Each case/configuration has one observation, a 30-second outer
 cap, one search thread and the same sampled 1 GiB process-group RSS watchdog.
 The watchdog requests samples every 50 ms; process-list probes and termination
-can extend that interval and overshoot either limit. Captures retain the observed
+can extend that interval and overshoot either limit. Captures record the observed
 gaps, sampled RSS overshoot and termination/reap time. Short processes can
 finish during a probe, so a sampled peak can miss brief allocations and is not
 a kernel peak-RSS measurement.
@@ -650,7 +650,7 @@ The actual shared ledger is `/tmp/open-search-016-budget.jsonl`. It includes
 builds, validation, development, failed attempts and held-out launch-through-reap
 time, enforces a 7,200-second total, and reserves 300 seconds for verification
 and 600 seconds for termination overhead and contingency. Pre-freeze work stays
-below 400 seconds. Resume retains this ledger and skips validated terminal rows,
+below 400 seconds. Resume reuses this ledger and skips validated terminal rows,
 including failures; partial attempts remain beside their replacements. The RSS
 probe requires process-list and owned-process termination permission on sandboxed
 hosts. Two held-out termination attempts failed after normal stopped summaries;
@@ -675,17 +675,17 @@ uv run --script misc/tsptw-benchmark.py analyze --name heldout-comparison-016 \
   --output examples/data/tsptw/heldout-comparison.json
 ```
 
-Analysis launches no solver. It reads the expected frozen rows, retains all
+Analysis launches no solver. It reads the expected frozen rows, includes all
 terminal outcomes, and groups families and canonical/variant cases. Publication
 checkpoints at 100 ms, 1 s, 5 s, 15 s and 30 s use solver-reported clocks; outer
 wall time includes launch and reap. Launch-inclusive publication timestamps are
 unavailable. A final gap is reported only against a matching campaign optimality
 proof; an observed best cost is not an established optimum. Killed processes
-can retain checked incumbents but supply no proof or post-kill phase summaries.
+can include checked incumbents but supply no proof or post-kill phase summaries.
 Frontier/clone buffer bytes remain unavailable, and `sizeof` allocation fields
 exclude dynamic storage. Supported counts, inference/setup times, descriptor
 storage and sampled RSS remain in the individual records and compact comparison.
-Runtime pairs retain terminal status and proof-reported time separately. A lower
+Runtime pairs record terminal status and proof-reported time separately. A lower
 launch-wall time from an RSS-stopped run records earlier termination; it does
 not establish a speedup or completed search. Aggregate wall-time wins are not
 algorithm runtime gains when observations have different completion and stop
@@ -693,7 +693,7 @@ conditions.
 
 The [saved comparison](heldout-comparison.json) summarizes all 192 terminal rows
 and per-case costs/checkpoints from 569 independently checked publications. Raw
-captures retain the full traces. Offline replay also checked three publications
+captures include the full traces. Offline replay also checked three publications
 in the two archived interrupted attempts;
 those attempts do not contribute a better cost to a replacement row. The final
 matrix has 81 normal exits (44 proofs and 37 ordinary stops), 61 outer time stops
@@ -718,7 +718,7 @@ quality than BAB on 11 cases, worse quality on two and equal cost on five; six
 cases have no tour from either. Column has 10 better, three worse and five equal
 outcomes. At one second, CABS has nine better and three worse outcomes than BAB,
 and column has ten better and three worse. All four engines prove the same four
-optimal and two infeasible cases. A* retains no additional tour over BAB in the
+optimal and two infeasible cases. A* finds no additional tour over BAB in the
 final observations. The closed engines each prove six optimal cases and one
 infeasible case; CABS adds one feasible case. DIDPPy CABS adds four feasible cases
 to A*'s three, with the same three optimality proofs. Runtime tallies remain
@@ -762,7 +762,7 @@ work comprises 3,548.328856 measured group seconds and separate conservative
 cleanup allowances of 128.747037 and 57.084679 s. The measured total across phases
 is 3,703.902846 s. Development includes its first process-list failure
 (0.005793 s); held-out includes both interrupted attempts (30.007945 and
-30.008852 s). No process remains pending. Verification has used 0 s and retains
+30.008852 s). No process remains pending. Verification has used 0 s and has
 its 300 s reserve; 3,310.265438 s of the total remains. The ledger and raw captures
 are external artifacts, and these figures describe this handoff.
 
@@ -771,7 +771,7 @@ bounded fixed-width continuation experiment for deterministic TSPTW transitions.
 The fixed-width study found that an original-Choice cursor matched border
 regeneration's Space reduction with fewer keys and commitments on its worked
 trees. Compare that restricted cursor
-with CABS, recording inference work as well as retained Spaces: current normal
+with CABS, recording inference work as well as stored Spaces: current normal
 summaries spend much of search inside unary inference. Generic Space border
 replay still lacks its required contract. The suffix-repair study found no
 improvement on its two development neighborhoods and supports no LNBS

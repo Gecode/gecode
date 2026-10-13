@@ -108,7 +108,7 @@ namespace Gecode { namespace Search {
     }
   };
 
-  /// Retained feedback for a stolen alternative whose choice can be deleted
+  /// Saved feedback for a stolen alternative whose choice can be deleted
   class PendingBranchFeedback {
   private:
     BranchFeedback _feedback;
@@ -121,7 +121,7 @@ namespace Gecode { namespace Search {
     explicit operator bool(void) const {
       return static_cast<bool>(_feedback);
     }
-    /// Retain feedback from \a choice for \a alternative, if opted in
+    /// Copy feedback from \a choice for \a alternative, if opted in
     void set(const Choice& choice, unsigned int alternative) {
       if (const BranchFeedbackChoice* feedback_choice =
             dynamic_cast<const BranchFeedbackChoice*>(&choice)) {

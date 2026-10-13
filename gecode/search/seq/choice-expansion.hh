@@ -125,7 +125,7 @@ namespace Gecode { namespace Search { namespace Seq {
       const SpaceStatus status = child->status(worker);
       branch_feedback(*decision,alternative,*child,branch_outcome(status));
       alternative++;
-      // The final source is already retired before retained-node admission.
+      // The final source is already retired before successor admission.
       return {ExpansionStep::CHILD,std::move(child),status};
     }
   };

@@ -105,8 +105,8 @@ namespace Gecode { namespace Search { namespace Seq {
   }
 
   bool
-  CABS::retain(std::unique_ptr<Space> s, unsigned long int depth,
-               unsigned long long int revision) {
+  CABS::admit(std::unique_ptr<Space> s, unsigned long int depth,
+              unsigned long long int revision) {
     const std::int64_t bound = guidance.bound(*s);
     if (!improves(bound)) {
       fail++;
@@ -118,10 +118,10 @@ namespace Gecode { namespace Search { namespace Seq {
       descriptor = pruning.extract(*s);
       if (descriptor)
         for (std::size_t i=0; i<candidates.size(); i++) {
-          const auto& retained = candidates[i].descriptor;
-          if (!retained || descriptor->hash != retained->hash ||
-              descriptor->key != retained->key) continue;
-          const auto relation = pruning.compare(*descriptor,*retained);
+          const auto& existing = candidates[i].descriptor;
+          if (!existing || descriptor->hash != existing->hash ||
+              descriptor->key != existing->key) continue;
+          const auto relation = pruning.compare(*descriptor,*existing);
           if (relation == StatePruning::EQUIVALENT ||
               relation == StatePruning::DOMINATED) {
             state_pruned++;
@@ -135,7 +135,7 @@ namespace Gecode { namespace Search { namespace Seq {
                 std::move(descriptor)};
     Earlier earlier{guidance.sense,static_cast<bool>(guidance.rank)};
     if (!victims.empty()) {
-      // A dominator takes a victim's retained slot regardless of rank. Only
+      // A dominator takes a victim's existing slot regardless of rank. Only
       // after it survives may the other dominated live candidates disappear.
       for (std::size_t victim : victims)
         remove_descriptor(candidates[victim]);
@@ -165,7 +165,7 @@ namespace Gecode { namespace Search { namespace Seq {
                               discarded > *discarded_bound))
         discarded_bound = discarded;
       if (!replace) return true;
-      // Replacement uses the discarded entry's retained slot.
+      // Replacement uses the discarded entry's existing slot.
       std::pop_heap(candidates.begin(),candidates.end(),earlier);
       remove_descriptor(candidates.back());
       candidates.back() = std::move(entry);
@@ -206,7 +206,7 @@ namespace Gecode { namespace Search { namespace Seq {
   CABS::record_descriptors(void) {
     if (pruning.descriptor_limit &&
         candidate_descriptors > pruning.descriptor_limit) {
-      // Forget metadata only; every retained candidate still gets expanded.
+      // Forget metadata only; every admitted candidate still gets expanded.
       for (auto& candidate : candidates) candidate.descriptor.reset();
       candidate_descriptors = 0;
       candidate_bytes = 0;
@@ -312,7 +312,7 @@ namespace Gecode { namespace Search { namespace Seq {
         if (Space* solution = publish(std::move(step.space))) return solution;
         break;
       case SS_BRANCH:
-        if (!retain(std::move(step.space),child_depth,incumbent_revision))
+        if (!admit(std::move(step.space),child_depth,incumbent_revision))
           return nullptr;
         break;
       default:

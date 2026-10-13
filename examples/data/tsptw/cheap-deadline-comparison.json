@@ -4335,7 +4335,7 @@
     "raw_results": "build/tsptw-results/cheap-deadline-028",
     "recommendation": {
       "change_defaults": false,
-      "fixed_width_continuation_study": "This comparison adds no memory-stop evidence. Retain separate justification and budget for any continuation study.",
+      "fixed_width_continuation_study": "This comparison adds no memory-stop evidence. Require separate justification and budget for any continuation study.",
       "incremental_unary_study": "A separately scoped bounded study is justified by available unary inference time; distinguish rebuilding and propagation before choosing an implementation.",
       "keep_cheap_option": true
     },

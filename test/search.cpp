@@ -256,7 +256,7 @@ namespace Test {
           if (!sliced->stopped()) {
             if (optimum!=0 || !interruptions || !same(total,sliced->statistics()))
               return false;
-            // Adoption during retained preparation cuts committed clones,
+            // Adoption during suspended preparation cuts committed clones,
             // including hidden completion state that must be revalidated.
             stop.limit.store(2,std::memory_order_relaxed);
             std::unique_ptr<Gecode::Search::Engine> adopted(
@@ -419,7 +419,7 @@ namespace Test {
       }
     } completionDependent;
 
-    /// Nested trials retain their work and publish their counters across stops.
+    /// Nested trials resume their work and publish their counters across stops.
     class CompletionNested : public Base {
       static bool same(const Gecode::Search::Statistics& a,
                        const Gecode::Search::Statistics& b) {
@@ -994,7 +994,7 @@ namespace Test {
                         int optimum, bool stopped, Statistics& statistics,
                         unsigned long int width=0, std::vector<int>* costs=nullptr) {
         Gecode::Search::Options options; options.clone=false;
-        std::vector<std::unique_ptr<PruningSpace>> retained;
+        std::vector<std::unique_ptr<PruningSpace>> solutions;
         {
           // Builders copy the policy, including its forgetting ceiling.
           std::unique_ptr<Gecode::Search::Builder> builder(kind==2 ?
@@ -1006,10 +1006,10 @@ namespace Test {
           while (std::unique_ptr<PruningSpace> s{
                    static_cast<PruningSpace*>(engine->next())}) {
             if (costs) costs->push_back(s->value().cost);
-            retained.push_back(std::move(s));
+            solutions.push_back(std::move(s));
           }
           statistics=engine->statistics();
-          if (retained.empty() || retained.back()->value().cost!=optimum ||
+          if (solutions.empty() || solutions.back()->value().cost!=optimum ||
               engine->stopped()!=stopped) return false;
           engine->reset(nullptr);
           const auto reset=engine->statistics();
@@ -1017,7 +1017,7 @@ namespace Test {
               engine->next() || engine->stopped()) return false;
         }
         // Each publication still owns its graph and Space after engine cleanup.
-        for (const auto& solution : retained)
+        for (const auto& solution : solutions)
           if (solution->status()!=SS_SOLVED) return false;
         return true;
       }
@@ -1099,7 +1099,7 @@ namespace Test {
         if (!solve(replacement,true,PruningSpace::pruning(),reference(replacement),
                    false,complete,1) || complete.state_pruned!=1 || complete.restart ||
             complete.state_descriptors!=1 || complete.state_bytes!=bytes) return false;
-        // Widening retains two, then three incomparable labels. One dominator
+        // Widening admits two, then three incomparable labels. One dominator
         // removes them together; accounting must release every victim's bytes.
         const Graph multiple={
           {0,0,0,0,0,{1,2,3,4}}, {1,5,5,0,0,{5}}, {1,10,1,0,0,{6}},
@@ -1325,7 +1325,7 @@ namespace Test {
             {3,10,10,10,0,{}}, {4,bound,bound,bound,0,{}}};
           if (!solve(bounded,1,StatePruningChecks::reference(bounded),false,0))
             return false;
-          // Ranking keeps bound 5 over bound 0; the retained bound then falls
+          // Ranking keeps bound 5 over bound 0; the selected bound then falls
           // to 1. A later discard at bound 20 must not erase the earlier 0.
           const PruningSpace::Graph improving={
             {0,0,0,0,0,evict ? std::vector<int>{2,1} : std::vector<int>{1,2}},
@@ -1340,7 +1340,7 @@ namespace Test {
       }
       static bool interrupted_discard(bool external) {
         // Width loss precedes a shallow goal. The original fourth alternative
-        // and the retained parent both improve it and survive publication.
+        // and the pending parent both improve it and survive publication.
         const PruningSpace::Graph graph={
           {0,0,0,0,0,{1,2,3,4}}, {1,0,0,0,0,{5}}, {2,0,0,7,1,{6}},
           {3,10,10,10,0,{}}, {4,8,8,8,0,{}},
