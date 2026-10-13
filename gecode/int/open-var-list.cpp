@@ -505,7 +505,6 @@ namespace Gecode { namespace Int {
     ValSelCommitBase<View,int>* vsc;
     BrancherFilter<View> filter;
     SharedData<VarValPrint<Var,int>> printer;
-    OpenVarBranch order;
     IntValBranch::Select values;
     bool select_first;
     mutable int start;
@@ -513,12 +512,12 @@ namespace Gecode { namespace Int {
     OpenListBrancher(Home home, OpenVarList<Var> list0,
                      ViewSel<View>* vs0[n],
                      ValSelCommitBase<View,int>* vsc0,
-                     OpenVarBranch order0, IntValBranch::Select values0,
+                     IntValBranch::Select values0,
                      bool select_first0,
                      BranchFilter<Var> bf, VarValPrint<Var,int> vvp)
       : Brancher(home), list(list0), vsc(vsc0),
         filter(bf ? bf : [](const Space&, Var, int) { return true; }),
-        printer(vvp), order(order0), values(values0),
+        printer(vvp), values(values0),
         select_first(select_first0), start(0) {
       for (int i=0; i<n; i++)
         vs[i] = vs0[i];
@@ -527,7 +526,7 @@ namespace Gecode { namespace Int {
 
     OpenListBrancher(Space& home, OpenListBrancher& b)
       : Brancher(home,b), vsc(nullptr),
-        filter(b.filter), printer(b.printer), order(b.order),
+        filter(b.filter), printer(b.printer),
         values(b.values), select_first(b.select_first), start(b.start) {
       list.update(home,b.list);
       int copied = 0;
@@ -586,9 +585,6 @@ namespace Gecode { namespace Int {
   public:
     virtual bool
     status(const Space& home) const {
-      if ((order == OVB_LENGTH_FIRST) &&
-          (list.length().max() > list.prefix_size()))
-        return true;
       for (int i=start; i<list.prefix_size(); i++)
         if (!list[i].assigned() && filter(home,View(list[i]),i)) {
           start = i;
@@ -599,9 +595,6 @@ namespace Gecode { namespace Int {
 
     virtual const Choice*
     choice(Space& home) {
-      if ((order == OVB_LENGTH_FIRST) &&
-          (list.length().max() > list.prefix_size()))
-        return new PosValChoice<int>(*this,2,Pos(-1),list.prefix_size());
       for (int i=start; i<list.prefix_size(); i++)
         if (!list[i].assigned() && filter(home,View(list[i]),i)) {
           start = i;
@@ -710,13 +703,13 @@ namespace Gecode { namespace Int {
     static void
     post(Home home, OpenVarList<Var> list, VarBranch vars[n],
          ValSelCommitBase<View,int>* vsc,
-         OpenVarBranch order, IntValBranch::Select values,
+         IntValBranch::Select values,
          BranchFilter<Var> bf, VarValPrint<Var,int> vvp) {
       ViewSel<View>* vs[n];
       for (int i=0; i<n; i++)
         vs[i] = Branch::viewsel(home,vars[i]);
       (void) new (home)
-        OpenListBrancher(home,list,vs,vsc,order,values,
+        OpenListBrancher(home,list,vs,vsc,values,
                          vars[0].select() == VarBranch::SEL_NONE,bf,vvp);
     }
   };
@@ -764,11 +757,8 @@ namespace Gecode { namespace Int {
   void
   post_open_brancher(Home home, OpenVarList<typename View::VarType> list,
                      TieBreak<VarBranch> vars, ValBranch vals,
-                     OpenVarBranch order,
                      BranchFilter<typename View::VarType> bf,
                      VarValPrint<typename View::VarType,int> vvp) {
-    if ((order != OVB_LENGTH_FIRST) && (order != OVB_VALUE_FIRST))
-      throw UnknownBranching("Int::branch");
     VarBranch selectors[4] = {vars.a,vars.b,vars.c,vars.d};
     int n = 1;
     while ((n < 4) && (selectors[n-1].select() != VarBranch::SEL_NONE) &&
@@ -789,19 +779,19 @@ namespace Gecode { namespace Int {
     switch (n) {
     case 1:
       OpenListBrancher<View,1>::post
-        (home,list,selectors,vsc,order,values,bf,vvp);
+        (home,list,selectors,vsc,values,bf,vvp);
       break;
     case 2:
       OpenListBrancher<View,2>::post
-        (home,list,selectors,vsc,order,values,bf,vvp);
+        (home,list,selectors,vsc,values,bf,vvp);
       break;
     case 3:
       OpenListBrancher<View,3>::post
-        (home,list,selectors,vsc,order,values,bf,vvp);
+        (home,list,selectors,vsc,values,bf,vvp);
       break;
     case 4:
       OpenListBrancher<View,4>::post
-        (home,list,selectors,vsc,order,values,bf,vvp);
+        (home,list,selectors,vsc,values,bf,vvp);
       break;
     }
   }
@@ -909,43 +899,43 @@ namespace Gecode {
   }
 
   void
-  branch(Home home, OpenIntVarList list, OpenVarBranch order) {
-    branch(home,list,INT_VAR_NONE(),INT_VAL_MIN(),order);
+  branch(Home home, OpenIntVarList list) {
+    branch(home,list,INT_VAR_NONE(),INT_VAL_MIN());
   }
 
   void
-  branch(Home home, OpenBoolVarList list, OpenVarBranch order) {
-    branch(home,list,BOOL_VAR_NONE(),BOOL_VAL_MIN(),order);
-  }
-
-  void
-  branch(Home home, OpenIntVarList list,
-         IntVarBranch vars, IntValBranch vals, OpenVarBranch order,
-         IntBranchFilter bf, IntVarValPrint vvp) {
-    branch(home,list,TieBreak<IntVarBranch>(vars),vals,order,bf,vvp);
+  branch(Home home, OpenBoolVarList list) {
+    branch(home,list,BOOL_VAR_NONE(),BOOL_VAL_MIN());
   }
 
   void
   branch(Home home, OpenIntVarList list,
-         TieBreak<IntVarBranch> vars, IntValBranch vals, OpenVarBranch order,
+         IntVarBranch vars, IntValBranch vals,
+         IntBranchFilter bf, IntVarValPrint vvp) {
+    branch(home,list,TieBreak<IntVarBranch>(vars),vals,bf,vvp);
+  }
+
+  void
+  branch(Home home, OpenIntVarList list,
+         TieBreak<IntVarBranch> vars, IntValBranch vals,
          IntBranchFilter bf, IntVarValPrint vvp) {
     GECODE_POST;
-    Int::post_open_brancher<Int::IntView>(home,list,vars,vals,order,bf,vvp);
+    Int::post_open_brancher<Int::IntView>(home,list,vars,vals,bf,vvp);
   }
 
   void
   branch(Home home, OpenBoolVarList list,
-         BoolVarBranch vars, BoolValBranch vals, OpenVarBranch order,
+         BoolVarBranch vars, BoolValBranch vals,
          BoolBranchFilter bf, BoolVarValPrint vvp) {
-    branch(home,list,TieBreak<BoolVarBranch>(vars),vals,order,bf,vvp);
+    branch(home,list,TieBreak<BoolVarBranch>(vars),vals,bf,vvp);
   }
 
   void
   branch(Home home, OpenBoolVarList list,
-         TieBreak<BoolVarBranch> vars, BoolValBranch vals, OpenVarBranch order,
+         TieBreak<BoolVarBranch> vars, BoolValBranch vals,
          BoolBranchFilter bf, BoolVarValPrint vvp) {
     GECODE_POST;
-    Int::post_open_brancher<Int::BoolView>(home,list,vars,vals,order,bf,vvp);
+    Int::post_open_brancher<Int::BoolView>(home,list,vars,vals,bf,vvp);
   }
 
 }

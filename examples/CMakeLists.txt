@@ -40,6 +40,7 @@ set(GECODE_EXAMPLE_SOURCES
   money.cpp
   multi-bin-packing.cpp
   nonogram.cpp
+  open-route.cpp
   open-shop.cpp
   ortho-latin.cpp
   partition.cpp

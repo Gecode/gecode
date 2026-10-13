@@ -124,8 +124,10 @@ Rank:   major
 Add OpenIntVarList and OpenBoolVarList for lists whose length is decided
 during propagation and search. OpenVarList supports other variable types
 through a factory. Constraints follow the growing prefix, including regular
-language constraints, and branching supports length-first and value-first
-search with standard variable and value selectors.
+language constraints. Branching assigns prefix values before closing or
+extending the list, using standard variable and value selectors. Posting a
+brancher on the length first selects the length before list values. The
+open-route example demonstrates routes of varying lengths.
 
 [ENTRY]
 Module: kernel

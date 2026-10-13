@@ -2453,7 +2453,7 @@ namespace Gecode {
    * class Model : public Space {
    * public:
    *   OpenIntVarList x;
-   *   Model(void) : x(*this,IntSet(0,1),3) {
+   *   Model(void) : x(*this,IntSet(0,2),3) {
    *     rel(*this,x.length(),IRT_GQ,1);
    *     distinct(*this,x);
    *     branch(*this,x);
@@ -2466,6 +2466,9 @@ namespace Gecode {
    *   }
    * };
    * \endcode
+   *
+   * The \ref OpenRoute "open-route example" gives a complete model of routes
+   * with varying lengths, including search and printing solutions.
    *
    * \ingroup TaskModelInt
    */
@@ -2537,7 +2540,14 @@ namespace Gecode {
      * Returns an uninitialized variable if \a home is failed or
      * materialization fails. Throws Int::OutOfLimits for a negative index,
      * an index outside Int::Limits, or (in a nonfailed space) an index at
-     * least length().max().
+     * least length().max(). Check for failure before using the result,
+     * for example with an integer list:
+     * \code
+     * IntVar y = x.get(home,i);
+     * if (home.failed())
+     *   return;
+     * rel(home,y,IRT_NQ,0);
+     * \endcode
      */
     Var get(Space& home, int i);
     /**
@@ -2628,7 +2638,7 @@ namespace Gecode {
    * \brief Constrain all materialized variables in \a x to be distinct
    *
    * The constraint is value consistent and applies to variables added
-   * after posting.
+   * after posting. The propagation level \a ipl is ignored.
    *
    * \ingroup TaskModelIntDistinct
    */
@@ -5189,15 +5199,6 @@ namespace Gecode {
    */
 
   /**
-   * \brief Branching order for an open list
-   * \ingroup TaskModelIntBranch
-   */
-  enum OpenVarBranch {
-    OVB_LENGTH_FIRST, ///< Select the length before list values
-    OVB_VALUE_FIRST    ///< Select materialized values before the length
-  };
-
-  /**
    * \brief Branch filter function type for integer variables
    *
    * The variable \a x is considered for selection and \a i refers to the
@@ -6138,34 +6139,33 @@ namespace Gecode {
   /**
    * \brief Branch over the eventual integer list \a x
    *
-   * The default selects the length first, then the first unassigned
-   * variable and its minimum value.
+   * Selects the first unassigned materialized variable and its minimum
+   * value. Once all materialized variables are assigned, tries closing the
+   * list before extending it by one position.
    * \ingroup TaskModelIntBranch
    */
   GECODE_INT_EXPORT void
-  branch(Home home, OpenIntVarList x,
-         OpenVarBranch o=OVB_LENGTH_FIRST);
+  branch(Home home, OpenIntVarList x);
   /**
    * \brief Branch over the eventual Boolean list \a x
    * \ingroup TaskModelIntBranch
    */
   GECODE_INT_EXPORT void
-  branch(Home home, OpenBoolVarList x,
-         OpenVarBranch o=OVB_LENGTH_FIRST);
+  branch(Home home, OpenBoolVarList x);
   /**
    * \brief Branch over an open integer list with standard selectors
    *
-   * Selectors consider all materialized positions. \a OVB_LENGTH_FIRST
-   * decides the length before values; \a OVB_VALUE_FIRST selects values
-   * before closing or extending the list. Filters and callbacks receive
-   * the position in the list. The length decision first tries to close at
-   * prefix_size(), then requires at least one more position. With no finite
-   * application bound, exploring these lengths can be very expensive.
+   * Selectors consider all materialized positions accepted by the filter.
+   * Once these variables are assigned, the brancher first tries to close at
+   * prefix_size(), then requires at least one more position and resumes
+   * value selection. Filters and callbacks receive the position in the list.
+   * With no finite application bound, exploring these lengths can be very
+   * expensive.
    *
-   * To choose the length with another value selector, post an ordinary
-   * brancher on x.length() before the list brancher, for example:
+   * To decide the length before list values, post an ordinary brancher on
+   * x.length() before the list brancher, for example:
    * \code
-   * branch(home,x.length(),INT_VAL_SPLIT_MIN());
+   * branch(home,x.length(),INT_VAL_MIN());
    * branch(home,x,INT_VAR_SIZE_MIN(),INT_VAL_MIN());
    * \endcode
    * Branchers run in posting order. Once the length is assigned, propagation
@@ -6178,30 +6178,27 @@ namespace Gecode {
   GECODE_INT_EXPORT void
   branch(Home home, OpenIntVarList x,
          IntVarBranch vars, IntValBranch vals,
-         OpenVarBranch o=OVB_LENGTH_FIRST,
          IntBranchFilter bf=nullptr, IntVarValPrint vvp=nullptr);
   /// Branch over an open integer list with tie-breaking selectors
   GECODE_INT_EXPORT void
   branch(Home home, OpenIntVarList x,
          TieBreak<IntVarBranch> vars, IntValBranch vals,
-         OpenVarBranch o=OVB_LENGTH_FIRST,
          IntBranchFilter bf=nullptr, IntVarValPrint vvp=nullptr);
   /**
    * \brief Branch over an open Boolean list with standard selectors
    *
-   * The order, filter, and Action/CHB restrictions are as for integers.
+   * The incremental branching, filter, and Action/CHB restrictions are as
+   * for integers.
    * \ingroup TaskModelIntBranch
    */
   GECODE_INT_EXPORT void
   branch(Home home, OpenBoolVarList x,
          BoolVarBranch vars, BoolValBranch vals,
-         OpenVarBranch o=OVB_LENGTH_FIRST,
          BoolBranchFilter bf=nullptr, BoolVarValPrint vvp=nullptr);
   /// Branch over an open Boolean list with tie-breaking selectors
   GECODE_INT_EXPORT void
   branch(Home home, OpenBoolVarList x,
          TieBreak<BoolVarBranch> vars, BoolValBranch vals,
-         OpenVarBranch o=OVB_LENGTH_FIRST,
          BoolBranchFilter bf=nullptr, BoolVarValPrint vvp=nullptr);
   /**
    * \brief Branch over \a x with variable selection \a vars and value selection \a vals

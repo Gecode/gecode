@@ -108,7 +108,9 @@ namespace Test { namespace Int {
     public:
       Gecode::OpenIntVarList list;
 
-      BranchOrderSpace(int order)
+      enum Order { INCREMENTAL, LENGTH_MIN, LENGTH_MAX };
+
+      BranchOrderSpace(Order order)
         : list(*this,Gecode::IntSet(0,1),3) {
         using namespace Gecode;
         DFA accepts_one(0,{
@@ -116,12 +118,11 @@ namespace Test { namespace Int {
             {1,0,1}, {1,1,1}
           },{1});
         extensional(*this,list,accepts_one);
-        if (order == -2)
+        if (order == LENGTH_MIN)
+          branch(*this,list.length(),INT_VAL_MIN());
+        else if (order == LENGTH_MAX)
           branch(*this,list.length(),INT_VAL_MAX());
-        if (order < 0)
-          branch(*this,list);
-        else
-          branch(*this,list,static_cast<OpenVarBranch>(order));
+        branch(*this,list);
       }
 
       BranchOrderSpace(BranchOrderSpace& s)
@@ -138,7 +139,7 @@ namespace Test { namespace Int {
     class BranchOrder : public ::Test::Base {
     protected:
       static bool
-      check(int order, int first_length) {
+      check(BranchOrderSpace::Order order, int first_length) {
         using namespace Gecode;
         Search::Options options;
         options.threads = 1;
@@ -166,9 +167,9 @@ namespace Test { namespace Int {
       virtual bool
       run(void) {
         using namespace Gecode;
-        return check(-2,3) && check(-1,1) &&
-          check(OVB_LENGTH_FIRST,1) &&
-          check(OVB_VALUE_FIRST,3);
+        return check(BranchOrderSpace::INCREMENTAL,3) &&
+          check(BranchOrderSpace::LENGTH_MIN,1) &&
+          check(BranchOrderSpace::LENGTH_MAX,3);
       }
     };
 
@@ -176,11 +177,12 @@ namespace Test { namespace Int {
     public:
       Gecode::OpenIntVarList list;
 
-      SelectorSpace(Gecode::IntValBranch vals, Gecode::OpenVarBranch order)
+      SelectorSpace(Gecode::IntValBranch vals, bool length_first=false)
         : list(*this,[](int i) { return Gecode::IntSet(i,i+1); },3) {
         using namespace Gecode;
-        branch(*this,list,tiebreak(INT_VAR_SIZE_MIN(),INT_VAR_MAX_MAX()),
-               vals,order);
+        if (length_first)
+          branch(*this,list.length(),INT_VAL_MIN());
+        branch(*this,list,tiebreak(INT_VAR_SIZE_MIN(),INT_VAR_MAX_MAX()),vals);
       }
 
       SelectorSpace(SelectorSpace& s) : Gecode::Space(s) {
@@ -208,8 +210,8 @@ namespace Test { namespace Int {
           INT_VAL([](const Space&, IntVar x, int) { return x.max(); })
         };
         for (const IntValBranch& vals : values)
-          for (int order=0; order<2; order++) {
-            SelectorSpace root(vals,static_cast<OpenVarBranch>(order));
+          for (bool length_first : {false,true}) {
+            SelectorSpace root(vals,length_first);
             Search::Options options;
             options.threads = 1;
             options.c_d = 1000;
@@ -242,7 +244,7 @@ namespace Test { namespace Int {
       virtual bool
       run(void) {
         using namespace Gecode;
-        SelectorSpace root(INT_VAL_MIN(),OVB_VALUE_FIRST);
+        SelectorSpace root(INT_VAL_MIN());
         root.list.materialize(root,1);
         Search::NodeStop stop(6);
         Search::Options options;
@@ -288,7 +290,7 @@ namespace Test { namespace Int {
                tiebreak(INT_VAR_SIZE_MIN(),
                         INT_VAR_MERIT_MAX([](const Space&, IntVar, int i) {
                           return i;
-                        })),vals,OVB_VALUE_FIRST,
+                        })),vals,
                [](const Space&, IntVar, int i) { return i != 1; },
                [](const Space&, const Brancher&, unsigned int, IntVar,
                   int i, const int& value, std::ostream& out) {
@@ -360,14 +362,16 @@ namespace Test { namespace Int {
     public:
       Gecode::OpenBoolVarList list;
 
-      BoolSpace(Gecode::OpenVarBranch order)
+      BoolSpace(bool length_first)
         : list(*this,3) {
         using namespace Gecode;
         DFA accepts_one(0,{{0,0,0},{0,1,1},{1,0,1},{1,1,1}},{1});
         extensional(*this,list,accepts_one);
+        if (length_first)
+          branch(*this,list.length(),INT_VAL_MIN());
         branch(*this,list,
                BOOL_VAR_MERIT_MAX([](const Space&, BoolVar, int i) { return i; }),
-               BOOL_VAL_MAX(),order);
+               BOOL_VAL_MAX());
       }
 
       BoolSpace(BoolSpace& s) : Gecode::Space(s) {
@@ -387,9 +391,9 @@ namespace Test { namespace Int {
       virtual bool
       run(void) {
         using namespace Gecode;
-        for (int order=0; order<2; order++)
+        for (bool length_first : {false,true})
           for (int recompute=0; recompute<2; recompute++) {
-            BoolSpace root(static_cast<OpenVarBranch>(order));
+            BoolSpace root(length_first);
             Search::Options options;
             options.threads = 1;
             options.c_d = recompute ? 1000 : 1;
@@ -504,7 +508,7 @@ namespace Test { namespace Int {
       run(void) {
         using namespace Gecode;
         for (int chb=0; chb<2; chb++) {
-          SelectorSpace open(INT_VAL_MIN(),OVB_VALUE_FIRST);
+          SelectorSpace open(INT_VAL_MIN());
           bool rejected = false;
           try {
             branch(open,open.list,
@@ -951,7 +955,7 @@ namespace Test { namespace Int {
               home.fail();
           });
         source.list.materialize(source,1);
-        branch(source,source.list,OVB_VALUE_FIRST);
+        branch(source,source.list);
         if (source.status() != SS_BRANCH)
           return false;
         const Choice* choice = source.choice();
@@ -989,7 +993,7 @@ namespace Test { namespace Int {
             }
           });
         source.list.materialize(source,1);
-        branch(source,source.list,OVB_VALUE_FIRST);
+        branch(source,source.list);
         if (source.status() != SS_BRANCH)
           return false;
         std::unique_ptr<const Choice> first(source.choice());
