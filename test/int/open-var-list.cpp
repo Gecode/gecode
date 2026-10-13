@@ -32,6 +32,7 @@
  */
 
 #include "test/int.hh"
+#include "examples/common-pattern.hh"
 
 #include <gecode/search.hh>
 
@@ -43,6 +44,7 @@
 #endif
 
 #include <memory>
+#include <set>
 
 namespace Test { namespace Int {
 
@@ -1040,6 +1042,212 @@ namespace Test { namespace Int {
         return true;
       }
     };
+
+    /// Search model for the private common-pattern projection
+    class PatternSpace : public Gecode::Space {
+    public:
+      Gecode::OpenIntVarList list;
+
+      PatternSpace(const PatternMining::Database& data, int support)
+        : list(*this,data.domain(),data.max_length()) {
+        Gecode::rel(*this,list.length(),Gecode::IRT_GQ,1);
+        PatternMining::frequent(*this,list,data,support);
+        Gecode::branch(*this,list);
+      }
+
+      PatternSpace(PatternSpace& s) : Gecode::Space(s) {
+        list.update(*this,s.list);
+      }
+
+      virtual Gecode::Space* copy(void) {
+        return new PatternSpace(*this);
+      }
+    };
+
+    /// Compare complete solution sets with independently enumerated subsequences
+    class PatternEnumeration : public ::Test::Base {
+    public:
+      PatternEnumeration(void)
+        : ::Test::Base("Int::OpenList::Pattern::Enumeration",
+                       TestTags::check()) {}
+
+      virtual bool run(void) {
+        using namespace Gecode;
+        const PatternMining::Sequences inputs[] = {
+          {{17,1000000,17},{17,1000000,17},{1000000,17,42},{17,42}},
+          {{1,1},{1,2},{2,1}}
+        };
+        for (const PatternMining::Sequences& input : inputs) {
+          std::set<std::vector<int>> candidates;
+          for (const std::vector<int>& row : input)
+            for (unsigned int mask=1; mask<(1U<<row.size()); mask++) {
+              std::vector<int> pattern;
+              for (unsigned int i=0; i<row.size(); i++)
+                if (mask & (1U<<i))
+                  pattern.push_back(row[i]);
+              candidates.insert(pattern);
+            }
+          const PatternMining::Database data(input);
+          const int thresholds[] = {1,2,static_cast<int>(input.size())};
+          for (int threshold : thresholds) {
+            std::set<std::vector<int>> expected, found;
+            for (const std::vector<int>& pattern : candidates) {
+              int support = 0;
+              for (const std::vector<int>& row : input) {
+                auto next = row.begin();
+                bool matches = true;
+                for (int item : pattern) {
+                  next = std::find(next,row.end(),item);
+                  if (next == row.end()) {
+                    matches = false;
+                    break;
+                  }
+                  ++next;
+                }
+                support += matches;
+              }
+              if (support >= threshold)
+                expected.insert(pattern);
+            }
+            PatternSpace root(data,threshold);
+            Search::Options options;
+            options.threads = 1;
+            options.c_d = 1000;
+            options.a_d = 1000;
+            DFS<PatternSpace> search(&root,options);
+            while (PatternSpace* solution = search.next()) {
+              std::unique_ptr<PatternSpace> owned(solution);
+              if (!solution->list.length().assigned() ||
+                  (solution->list.length().val() !=
+                   solution->list.prefix_size()))
+                return false;
+              std::vector<int> pattern;
+              for (int i=0; i<solution->list.prefix_size(); i++) {
+                if (!solution->list[i].assigned())
+                  return false;
+                pattern.push_back(solution->list[i].val());
+              }
+              if (!found.insert(pattern).second)
+                return false;
+            }
+            if (found != expected)
+              return false;
+          }
+        }
+        return true;
+      }
+    };
+
+    /// Exercise projection state through growth, cloning, and late assignments
+    class PatternGrowth : public ::Test::Base {
+    public:
+      PatternGrowth(void)
+        : ::Test::Base("Int::OpenList::Pattern::Growth",TestTags::check()) {}
+
+      virtual bool run(void) {
+        using namespace Gecode;
+        const PatternMining::Database data({{1,2,1},{1,2,2},{1,1,2}});
+        PatternSpace source(data,2);
+        source.list.materialize(source,1);
+        rel(source,source.list[0],IRT_EQ,1);
+        if (source.status() == SS_FAILED)
+          return false;
+        std::unique_ptr<PatternSpace> clone
+          (static_cast<PatternSpace*>(source.clone()));
+        clone->list.materialize(*clone,2);
+        rel(*clone,clone->list[1],IRT_EQ,1);
+        if ((clone->status() == SS_FAILED) ||
+            !clone->list.length().assigned() ||
+            (clone->list.length().val() != 2) ||
+            (source.list.prefix_size() != 1) ||
+            (source.list.length().min() != 1))
+          return false;
+        source.list.materialize(source,2);
+        rel(source,source.list[1],IRT_EQ,2);
+        if ((source.status() == SS_FAILED) ||
+            !source.list.length().assigned() ||
+            (source.list.length().val() != 2) ||
+            (clone->list[1].val() != 1))
+          return false;
+
+        // Assigning a later position must not advance the projected prefix.
+        PatternSpace later(data,2);
+        later.list.materialize(later,2);
+        rel(later,later.list[1],IRT_EQ,2);
+        if ((later.status() == SS_FAILED) || later.list[0].assigned())
+          return false;
+        std::unique_ptr<PatternSpace> invalid
+          (static_cast<PatternSpace*>(later.clone()));
+        rel(*invalid,invalid->list[0],IRT_EQ,2);
+        if (invalid->status() != SS_FAILED)
+          return false;
+        rel(later,later.list[0],IRT_EQ,1);
+        if (later.status() == SS_FAILED)
+          return false;
+
+        // Both singleton prefixes are frequent, but no extension is frequent.
+        const PatternMining::Database terminal({{1,1},{1,2},{2,1}});
+        for (int item=1; item<=2; item++) {
+          PatternSpace leaf(terminal,2);
+          leaf.list.materialize(leaf,1);
+          rel(leaf,leaf.list[0],IRT_EQ,item);
+          if ((leaf.status() == SS_FAILED) ||
+              !leaf.list.length().assigned() ||
+              (leaf.list.length().val() != 1))
+            return false;
+        }
+        return true;
+      }
+    };
+
+    /// Input validation and exact rounding of percentage support
+    class PatternInput : public ::Test::Base {
+    public:
+      PatternInput(void)
+        : ::Test::Base("Int::OpenList::Pattern::Input",TestTags::check()) {}
+
+      virtual bool run(void) {
+        using namespace PatternMining;
+        std::istringstream rows("# comment\n17 -1 1000000 -1 -2\r\n"
+                                "17 -1 1000000 -1 -2\n");
+        if (read_database(rows,SPMF) != Sequences({{17,1000000},{17,1000000}}) ||
+            read_sequence("ABA",LETTERS) != std::vector<int>({1,2,1}) ||
+            read_sequence("17 1000000",INTEGERS) !=
+              std::vector<int>({17,1000000}) ||
+            (minimum_support("33.333333",3) != 1) ||
+            (minimum_support("33.333334",3) != 2) ||
+            (minimum_support("100",2000000000) != 2000000000) ||
+            (minimum_support("0.000001",2000000000) != 20))
+          return false;
+        for (const char* text : {"1 2 -1 -2", "1 -2", "1 -1",
+                                 "1 -1 -2 2", "2147483648 -1 -2"}) {
+          bool rejected = false;
+          try {
+            (void) read_sequence(text,SPMF);
+          } catch (const std::invalid_argument&) {
+            rejected = true;
+          }
+          if (!rejected)
+            return false;
+        }
+        for (const char* text : {"0", "101", "0.0000001",
+                                 "184467440737095516160"}) {
+          bool rejected = false;
+          try {
+            (void) minimum_support(text,3);
+          } catch (const std::invalid_argument&) {
+            rejected = true;
+          }
+          if (!rejected)
+            return false;
+        }
+        return true;
+      }
+    };
+
+    PatternEnumeration pattern_enumeration;
+    PatternGrowth pattern_growth;
+    PatternInput pattern_input;
 
     ValueCommit value_commit;
     ValueReplay value_replay;
