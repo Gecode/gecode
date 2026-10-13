@@ -38,6 +38,23 @@
 
 namespace Gecode { namespace Search {
 
+  /// Whether incoming solution \a s should replace incumbent \a b
+  forceinline bool
+  better(const Space& s, const Space& b, const char* l) {
+    switch (s.compare(b)) {
+    case SC_BETTER:
+      return true;
+    case SC_EQUIVALENT:
+    case SC_WORSE:
+      return false;
+    case SC_INCOMPARABLE:
+      throw Incomparable(l);
+    default:
+      GECODE_NEVER;
+    }
+    return false;
+  }
+
   /// Clone space \a s depending on options \a o
   forceinline Space*
   snapshot(Space* s, const Options& o);
@@ -51,6 +68,9 @@ namespace Gecode { namespace Search {
   public:
     /// Initialization
     WorkerToEngine(Space* s, const Options& o);
+    /// Initialization with additional worker configuration
+    template<class Configuration>
+    WorkerToEngine(Space* s, const Options& o, const Configuration& configuration);
     /// Return next solution (nullptr, if none exists or search has been stopped)
     virtual Space* next(void);
     /// Return statistics
@@ -76,6 +96,11 @@ namespace Gecode { namespace Search {
   template<class Worker>
   WorkerToEngine<Worker>::WorkerToEngine(Space* s, const Options& o)
     : Engine(o,1U), w(s,o) {}
+  template<class Worker>
+  template<class Configuration>
+  WorkerToEngine<Worker>::WorkerToEngine(Space* s, const Options& o,
+                                        const Configuration& configuration)
+    : Engine(o,1U), w(s,o,configuration) {}
   template<class Worker>
   Space*
   WorkerToEngine<Worker>::next(void) {

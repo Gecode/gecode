@@ -118,7 +118,8 @@ namespace Gecode {
   VarImpDisposerBase* Space::vd[AllVarConf::idx_d];
 #endif
 
-  Space::Space(void) : mm(ssd.data().sm), no_gpi(false) {
+  Space::Space(void) : mm(ssd.data().sm), no_gpi(false),
+      retained_branchers(false) {
 #ifdef GECODE_HAS_CBS
     var_id_counter = 0;
 #endif
@@ -565,6 +566,34 @@ namespace Gecode {
   }
 
 
+  bool
+  Brancher::prepare(Space&, Search::Statistics&, const Search::Options&) {
+    return true;
+  }
+
+  bool
+  Brancher::retained(void) const { return false; }
+
+  void
+  Brancher::invalidate(Space&) {}
+
+  bool
+  Space::prepare(Search::Statistics& stat, const Search::Options& options) {
+    return b_status == Brancher::cast(&bl) ||
+      b_status->prepare(*this,stat,options);
+  }
+
+  void
+  Space::invalidate_branchers(void) {
+    if (!retained_branchers || failed())
+      return;
+    for (Brancher* b=Brancher::cast(bl.next());
+         b != Brancher::cast(&bl); b=Brancher::cast(b->next()))
+      if (b->retained())
+        b->invalidate(*this);
+    b_status = b_commit = Brancher::cast(bl.next());
+  }
+
   const Choice*
   Space::choice(void) {
     if (!stable())
@@ -576,9 +605,11 @@ namespace Gecode {
       while (b != Brancher::cast(&bl)) {
         Brancher* d = b;
         b = Brancher::cast(b->next());
-        rfree(d,d->dispose(*this));
+        if (failed() || !d->retained()) {
+          d->unlink();
+          rfree(d,d->dispose(*this));
+        }
       }
-      bl.init();
       b_status = b_commit = Brancher::cast(&bl);
       return nullptr;
     }
@@ -590,8 +621,10 @@ namespace Gecode {
     while (b != b_status) {
       Brancher* d = b;
       b = Brancher::cast(b->next());
-      d->unlink();
-      rfree(d,d->dispose(*this));
+      if (!d->retained()) {
+        d->unlink();
+        rfree(d,d->dispose(*this));
+      }
     }
     // Make sure that b_commit does not point to a deleted brancher!
     b_commit = b_status;
@@ -725,6 +758,7 @@ namespace Gecode {
   Space::Space(Space& s)
     : ssd(s.ssd),
       mm(ssd.data().sm,s.mm,s.pc.p.n_sub*sizeof(Propagator**)),
+      retained_branchers(s.retained_branchers),
 #ifdef GECODE_HAS_CBS
       var_id_counter(s.var_id_counter),
 #endif
@@ -895,6 +929,11 @@ namespace Gecode {
 
   void
   Space::constrain(const Space&) {
+  }
+
+  SpaceComparison
+  Space::compare(const Space&) const {
+    throw SpaceNoComparison("Space::compare");
   }
 
   bool

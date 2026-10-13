@@ -3,7 +3,7 @@ schema_version = 1
 id = "open-search-031"
 key = "split-native-branch"
 area = "open-search"
-status = "open"
+status = "done"
 complexity = "advanced"
 afk = true
 priority = "normal"
@@ -27,12 +27,21 @@ Read the approved branch split section of brief.md. The backup branch preserves 
 
 ## Done when
 
-- [ ] Native AStar, configurable best-first ordering, CABS and Column engines, plus native examples/benchmarks, build and run on the open-cp base.
-- [ ] Model and portfolio source, build targets and dependencies are absent from native search additions.
-- [ ] Minimal generic prerequisite contracts preserve ordinary Space use and newer base behavior.
+- [x] Native AStar, configurable best-first ordering, CABS and Column engines, plus native examples/benchmarks, build and run on the open-cp base.
+- [x] Model and portfolio source, build targets and dependencies are absent from native search additions.
+- [x] Minimal generic prerequisite contracts preserve ordinary Space use and newer base behavior.
 
 ## Validation
 
 - Fresh Release build and full existing check suite.
 - Focused search, open-list, regular, comparison/continuation/worker-control checks as applicable; native examples and tiny TSPTW correctness.
 - Inspect extracted diff against the backup and open-cp base for omitted behavior or unrelated dependencies.
+
+## Result
+
+Reconstructed standalone AStar/best-first, CABS and Column on open-cp with native guidance, pruning, examples and TSPTW tooling; extracted only required generic contracts and preserved sequential worker control.
+
+Validation:
+
+- Independent Release build, full check 474/474 and focused search/open-list/regular/comparison/completion/feedback/worker-control checks82/82 passed. Native examples, tiny TSPTW exhaustive/tour/stop checks,12 benchmark tests and CADDS witness passed; implementation additionally validated36 bundled published smokes (22 proven,14 stopped). Canonical data/frozen reports remain byte-identical. No Model or newer portfolio dependency remains.
+- Independent review found and verified correction of the Make .hh header installation list. Actual Make expansion/prerequisite dry-run passes. Final snapshot Wc076ed98042cd853 compared equal before completion. Native base remains the approved55dc729c; parent later advanced independently. Canonical input whitespace intentionally preserved; source formatting passes.

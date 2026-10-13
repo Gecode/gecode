@@ -1,0 +1,8 @@
+3
+0 2 9
+4 0 1
+2 8 0
+0 20
+5 10
+0 12
+# Asymmetric and nonmetric: 0->2 is more costly than 0->1->2.
