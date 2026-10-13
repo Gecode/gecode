@@ -2467,8 +2467,13 @@ namespace Gecode {
    * };
    * \endcode
    *
-   * The \ref OpenRoute "open-route example" gives a complete model of routes
-   * with varying lengths, including search and printing solutions.
+   * The \ref CommonPattern "common-pattern example" finds constrained
+   * subsequences shared by several inputs. The pattern length is a decision;
+   * the open list avoids allocating an array up to the input-length bound
+   * and encoding an unused suffix with a termination symbol. Regular
+   * constraints on both the inputs and the pattern language follow growth.
+   * The \ref OpenRoute "open-route example" is a smaller introduction,
+   * including search and printing solutions.
    *
    * \ingroup TaskModelInt
    */
