@@ -13,6 +13,7 @@ set(GECODE_EXAMPLE_SOURCES
   car-sequencing.cpp
   cartesian-heart.cpp
   colored-matrix.cpp
+  common-pattern.cpp
   crew.cpp
   crossword.cpp
   crowded-chess.cpp
