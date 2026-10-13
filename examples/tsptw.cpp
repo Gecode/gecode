@@ -194,7 +194,7 @@ make_seed(TSPTWClosed& root, const std::vector<int>& tour, TourValue value) {
 
 static std::unique_ptr<TSPTW::Transition>
 make_seed(TSPTW::Transition& root, const std::vector<int>& tour, TourValue value) {
-  if (root.status()==SS_FAILED)
+  if (root.status() == SS_FAILED)
     throw std::runtime_error("checked seed rejected by transition root");
   std::unique_ptr<TSPTW::Transition> seed(
     static_cast<TSPTW::Transition*>(root.clone()));
@@ -203,17 +203,18 @@ make_seed(TSPTW::Transition& root, const std::vector<int>& tour, TourValue value
   // Replay checked customer IDs and then the explicit return using the same
   // decisions as search, without directly installing residual state.
   for (std::size_t p=0; p<=tour.size(); p++) {
-    const int node=p==tour.size() ? 0 : tour[p];
-    if (seed->status()!=SS_BRANCH || !seed->prepare(stat,options))
+    const int node = p == tour.size() ? 0 : tour[p];
+    if (seed->status() != SS_BRANCH || !Search::prepare(*seed,stat,options) ||
+        seed->status() != SS_BRANCH)
       throw std::runtime_error("checked seed rejected by transition model");
-    const auto actions=seed->actions();
-    const auto action=std::find(actions.begin(),actions.end(),node);
-    if (action==actions.end())
+    const auto actions = seed->actions();
+    const auto action = std::find(actions.begin(),actions.end(),node);
+    if (action == actions.end())
       throw std::runtime_error("checked seed has no applicable transition");
     std::unique_ptr<const Choice> choice(seed->choice());
     seed->commit(*choice,static_cast<unsigned int>(action-actions.begin()));
   }
-  if (seed->status()!=SS_SOLVED || seed->cost()!=value.cost)
+  if (seed->status() != SS_SOLVED || seed->cost() != value.cost)
     throw std::runtime_error("checked seed rejected by transition model");
   return seed;
 }
@@ -366,16 +367,17 @@ static int run_search(const RunOptions& options, Model& root,
   }
   std::unique_ptr<Model> seed;
   if (incumbent) seed=make_seed(root,best_tour,*incumbent);
-  int root_positions=0, prepared_positions=0, solution_positions=0;
+  int root_positions = 0, prepared_positions = 0, solution_positions = 0;
   if constexpr (std::is_same<Model,TSPTW::Transition>::value) {
-    if (seed) solution_positions=seed->allocated_positions();
-    root_positions=root.allocated_positions();
-    if (root.status()==SS_BRANCH) {
+    if (seed)
+      solution_positions = seed->allocated_positions();
+    root_positions = root.allocated_positions();
+    if (root.status() == SS_BRANCH) {
       Search::Statistics stat;
       // Record the first prepared prefix without committing a visit.
-      (void) root.prepare(stat,search);
+      (void) Search::prepare(root,stat,search);
     }
-    prepared_positions=root.allocated_positions();
+    prepared_positions = root.allocated_positions();
   }
   const auto guidance=[&]() {
     if constexpr (std::is_same<Model,TSPTW::Transition>::value)

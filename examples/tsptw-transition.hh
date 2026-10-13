@@ -140,9 +140,8 @@ namespace TSPTW {
     bool status(const Gecode::Space& home) const override {
       return !static_cast<const Transition&>(home).returned;
     }
-    bool prepare(Gecode::Space& home, Gecode::Search::Statistics& stat,
-                 const Gecode::Search::Options&) override {
-      auto& s=static_cast<Transition&>(home);
+    bool prepare(Gecode::Space& home, Gecode::StatusStatistics& stat) override {
+      auto& s = static_cast<Transition&>(home);
       (void) s.materialize(s.depth);
       (void) s.status(stat);
       return true;

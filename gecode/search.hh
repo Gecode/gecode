@@ -838,6 +838,15 @@ namespace Gecode { namespace Search {
       expand(void) const;
     };
 
+    /**
+     * Prepare the active brancher using the caller's search statistics/options.
+     * Completion trials observe the enclosing stop and publish their work here.
+     * False suspends choice construction; true may leave a failed, solved, or
+     * branching space. The caller must classify status before making a choice.
+     */
+    GECODE_SEARCH_EXPORT bool
+    prepare(Space& home, Statistics& stat, const Options& options);
+
 }}
 
 #include <gecode/search/worker-control.hh>

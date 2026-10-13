@@ -235,7 +235,7 @@ public:
     bool status(const Space& h) const override {
       return static_cast<const Witness&>(h).node<10;
     }
-    bool prepare(Space&,Search::Statistics&,const Search::Options&) override {
+    bool prepare(Space&,StatusStatistics&) override {
       if (!prepared) { prepared=true; return false; }
       return true;
     }
@@ -343,7 +343,7 @@ static void witnesses() {
   // Directly establish the fresh-choice index shift, using clone-related Spaces.
   Search::Statistics stat; Search::Options opt;
   auto source=std::make_unique<Witness>(); (void)source->status();
-  require(!source->prepare(stat,opt) && source->prepare(stat,opt),"prepare");
+  require(!Gecode::Search::prepare(*source,stat,opt) && Gecode::Search::prepare(*source,stat,opt),"prepare");
   std::unique_ptr<const Choice> original(source->choice());
   auto cut=std::unique_ptr<Witness>(static_cast<Witness*>(source->clone()));
   cut->ceiling=6; (void)cut->status();
