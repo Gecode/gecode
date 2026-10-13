@@ -286,6 +286,24 @@ namespace Test {
       }
 #endif
 
+      static bool posting(void) {
+        CompletionSpace root(true,false);
+        Home home(root);
+        Gecode::Search::Statistics stat;
+        Gecode::Search::Options o;
+        if (root.status()!=SS_BRANCH ||
+            !Gecode::Search::prepare(root,stat,o)) return false;
+        std::unique_ptr<const Choice> ch(root.choice());
+        root.commit(*ch,0);
+        if (root.status()!=SS_SOLVED) return false;
+        // Posting copies a Home cached before the witness was established.
+        rel(home,root.x,IRT_LQ,3);
+        if (root.status()!=SS_BRANCH) return false;
+        Gecode::DFS<CompletionSpace> dfs(&root);
+        std::unique_ptr<CompletionSpace> solution(dfs.next());
+        return !solution && !dfs.stopped();
+      }
+
       static bool replay(void) {
         CompletionSpace root(true,false);
         Gecode::Search::Options o;
@@ -330,7 +348,7 @@ namespace Test {
     public:
       CompletionNative(void) : Base("Search::Completion::Native", TestTags::check()) {}
       bool run(void) override {
-        return replay()
+        return posting() && replay()
 #ifdef GECODE_HAS_EXPERIMENTAL
           && heuristic<0>() && heuristic<1>() && heuristic<2>()
 #endif
