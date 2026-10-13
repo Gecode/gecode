@@ -3583,6 +3583,7 @@ namespace Gecode {
     : h(home), pg(home.propagatorgroup()),
       pid(h.ssd.data().gpi.pid()),
       nested(h.pc.p.vti.what() != ViewTraceInfo::OTHER) {
+    h.invalidate_branchers();
     h.pc.p.vti.post(pg);
   }
 

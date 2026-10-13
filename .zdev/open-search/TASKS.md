@@ -2,10 +2,10 @@
 
 # Tasks: open-search
 
-- Total: 34
-- Ready: 0
+- Total: 36
+- Ready: 1
 - Blocked: 0
-- Done: 34
+- Done: 35
 
 | ID | Task | State | Blocked by |
 | --- | --- | --- | --- |
@@ -43,3 +43,5 @@
 | [open-search-032](tasks/032-gate-heuristic-search-as-an-experimental-preview-and-separat.md) | Gate heuristic search as an experimental preview and separate experimental changelog entries | done | — |
 | [open-search-033](tasks/033-repair-reviewed-preparation-and-completion-contracts-and-com.md) | Repair reviewed preparation and completion contracts and compact CABS victims | done | — |
 | [open-search-034](tasks/034-remove-kernel-search-coupling-and-simplify-heuristic-search.md) | Remove kernel search coupling and simplify heuristic search examples | done | open-search-033 |
+| [open-search-035](tasks/035-invalidate-completion-witnesses-when-posting-through-an-exis.md) | Invalidate completion witnesses when posting through an existing Home | done | open-search-034 |
+| [open-search-036](tasks/036-check-all-validated-benchmark-tours-against-optimality-claim.md) | Check all validated benchmark tours against optimality claims | ready | open-search-034 |
