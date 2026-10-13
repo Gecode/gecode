@@ -93,8 +93,7 @@ The admissible total bound is `g+h` throughout.
 
 Greedy rank `h` prefers the second route and publishes 10, then 5. Fixed weight
 2 with rank `g+2*h` prefers the first route and publishes 5. Both runs continue
-to prove the independently enumerated optimum 5. The example checks addition
-and multiplication before evaluating them and rejects signed 64-bit overflow.
+to prove the independently enumerated optimum 5. The example uses small fixed integer costs.
 These ranks use actual remaining costs; a CP total objective bound is not a
 remaining-cost estimate. The fixed weight supplies exploration order only,
 with no first-goal optimality or approximation-ratio guarantee. Dynamic weights
