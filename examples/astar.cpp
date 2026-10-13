@@ -33,25 +33,24 @@
 
 #include <gecode/int.hh>
 #include <gecode/search.hh>
-#include <chrono>
-#include <iomanip>
 #include <iostream>
 #include <memory>
 
 using namespace Gecode;
 
-// A bounded closed model: option zero is a shallow goal, while the other
-// options leave a second decision. Rank deliberately disfavors the optimum.
+// Option zero is a shallow goal; the other options leave a second decision.
 class Alternative : public Space {
 public:
   IntVar option, detail, objective;
+
   Alternative(void)
     : option(*this,0,3), detail(*this,0,1), objective(*this,-7,4) {
     element(*this,IntArgs({4,-2,-7,1}),option,objective);
     TupleSet tuples(2);
-    for (int i=0;i<4;i++) {
+    for (int i=0; i<4; i++) {
       tuples.add(IntArgs({i,0}));
-      if (i) tuples.add(IntArgs({i,1}));
+      if (i != 0)
+        tuples.add(IntArgs({i,1}));
     }
     tuples.finalize();
     extensional(*this,IntVarArgs({option,detail}),tuples);
@@ -63,63 +62,59 @@ public:
     detail.update(*this,s.detail);
     objective.update(*this,s.objective);
   }
-  Space* copy(void) override { return new Alternative(*this); }
-  void constrain(const Space& s0) override {
-    const auto& s = static_cast<const Alternative&>(s0);
-    rel(*this,objective,IRT_LE,s.objective.val());
+  Space* copy(void) override {
+    return new Alternative(*this);
+  }
+  void constrain(const Space& incumbent) override {
+    const Alternative& best = static_cast<const Alternative&>(incumbent);
+    rel(*this,objective,IRT_LE,best.objective.val());
   }
 };
 
-// Use one model and one ordinary options value for all engines. The tiny
-// elapsed times illustrate measurement output; they do not establish speedups.
-static bool run(const char* name, Search::Engine* raw,
-                unsigned long int width=0, unsigned long int frontier=0) {
-  std::unique_ptr<Search::Engine> engine(raw);
-  const auto start=std::chrono::steady_clock::now();
-  int last=0;
-  bool found=false;
+static void
+run(const char* name, Search::Base<Alternative>& search) {
   std::cout << name << " improvements:";
-  while (std::unique_ptr<Alternative> s{
-           static_cast<Alternative*>(engine->next())}) {
-    last=s->objective.val();
-    found=true;
-    std::cout << ' ' << last;
-  }
-  const double milliseconds=std::chrono::duration<double,std::milli>(
-    std::chrono::steady_clock::now()-start).count();
-  const auto statistics=engine->statistics();
-  std::cout << "\n" << name << " width=" << width << " frontier=" << frontier
-            << " objective=";
-  if (found) std::cout << last; else std::cout << "none";
-  std::cout << " status=" << (engine->stopped() ? "stopped" : "proven")
-            << " ms=" << std::fixed << std::setprecision(3) << milliseconds
-            << " nodes=" << statistics.node << " restarts=" << statistics.restart
-            << '\n';
-  if (width==1) return found && last==-2 && engine->stopped();
-  if (frontier==1) return found && last==4 && engine->stopped();
-  return found && last==-7 && !engine->stopped();
+  while (std::unique_ptr<Alternative> solution{search.next()})
+    std::cout << ' ' << solution->objective.val();
+  std::cout << (search.stopped() ? " (stopped)" : " (complete)") << '\n';
 }
 
-int main(void) {
+int
+main(void) {
+  Alternative root;
   Search::HeuristicGuidance guidance(Search::HeuristicGuidance::MINIMIZE,
-    [](const Space& s) -> std::int64_t {
-      return static_cast<const Alternative&>(s).objective.min();
+    [](const Space& space) -> std::int64_t {
+      const Alternative& s = static_cast<const Alternative&>(space);
+      return s.objective.min();
     },
-    [](const Space& s) -> std::int64_t {
-      const auto& a=static_cast<const Alternative&>(s);
-      return a.option.assigned() && a.option.val()==2 ? 1000 : 0;
+    [](const Space& space) -> std::int64_t {
+      const Alternative& s = static_cast<const Alternative&>(space);
+      // Deliberately rank the optimal option last to show beam widening.
+      return s.option.assigned() && s.option.val() == 2 ? 1000 : 0;
     });
-  Search::Options options;
-  options.clone=false;
-  bool valid=run("A*",Search::astarengine(new Alternative,guidance,options));
-  for (const auto limits : {Search::ColumnOptions(), Search::ColumnOptions(1,0)})
-    valid=run(limits.quota_growth ? "Column" : "CBFS",
-              Search::columnengine(new Alternative,guidance,options,limits)) && valid;
-  valid=run("BAB",Search::babengine(new Alternative,options)) && valid;
-  for (const auto limits : {Search::CABSOptions(1,0), Search::CABSOptions(2,0),
-                            Search::CABSOptions(4,0), Search::CABSOptions(),
-                            Search::CABSOptions(0,1), Search::CABSOptions(0,4)})
-    valid=run("CABS",Search::cabsengine(new Alternative,guidance,options,limits),
-              limits.max_width,limits.frontier_limit) && valid;
-  return valid ? 0 : 1;
+
+  AStar<Alternative> astar(&root,guidance);
+  run("A*",astar);
+
+  BAB<Alternative> bab(&root);
+  run("BAB",bab);
+
+  CABS<Alternative> cabs(&root,guidance);
+  run("CABS",cabs);
+
+  // Width one finds improvements but cannot prove the best one optimal.
+  CABS<Alternative> beam(&root,guidance,Search::Options::def,
+                         Search::CABSOptions(1));
+  run("CABS (maximum width 1)",beam);
+
+  Column<Alternative> column(&root,guidance);
+  run("Column",column);
+
+  // A fixed expansion quota of one selects cyclic best-first search.
+  Column<Alternative> cbfs(&root,guidance,Search::Options::def,
+                           Search::ColumnOptions(1,0));
+  run("CBFS",cbfs);
+  return 0;
 }
+
+// STATISTICS: example-any
