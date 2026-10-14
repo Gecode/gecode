@@ -23,6 +23,7 @@ set(GECODE_EXAMPLE_SOURCES
   donald.cpp
   efpa.cpp
   eq20.cpp
+  fifteen-puzzle.cpp
   golden-spiral.cpp
   golf.cpp
   golomb-ruler.cpp
