@@ -34,9 +34,11 @@
 #include <gecode/driver.hh>
 #include <gecode/int.hh>
 #include <gecode/minimodel.hh>
+#include <gecode/search.hh>
 
 #include <algorithm>
 #include <array>
+#include <cstdint>
 #include <cstdlib>
 #include <iomanip>
 #include <iostream>
@@ -52,6 +54,7 @@ class PuzzleOptions : public Options {
 public:
   enum { MODEL_OPEN, MODEL_FIXED };
   enum { BRANCH_MIN, BRANCH_MANHATTAN };
+  enum { SEARCH_BAB, SEARCH_ASTAR, SEARCH_CABS };
   PuzzleOptions(void)
     : Options("FifteenPuzzle"),
       _scramble("scramble","number of random slides from the goal",12),
@@ -65,6 +68,12 @@ public:
     branching(BRANCH_MIN,"min","try the lowest blank position first");
     branching(BRANCH_MANHATTAN,"manhattan",
               "try the slide with least Manhattan distance first");
+    search(SEARCH_BAB);
+    search(SEARCH_BAB,"bab","depth-first branch and bound");
+#ifdef GECODE_HAS_EXPERIMENTAL
+    search(SEARCH_ASTAR,"astar","A* with Manhattan distance");
+    search(SEARCH_CABS,"cabs","complete anytime beam search");
+#endif
     solutions(0);
     seed(1);
   }
@@ -285,6 +294,19 @@ public:
       result[j] = tiles[16*i+j];
     return result;
   }
+  int
+  depth(void) const {
+    int i = 0;
+    while (i+1 < path.known_length() && path[i+1].assigned())
+      i++;
+    return i;
+  }
+  int
+  bound(void) const {
+    const int g = depth();
+    const int h = manhattan(values(state(g)));
+    return std::max(g+h,path.length().min()-1);
+  }
   void
   constrain(const Space& solution) override {
     const OpenPuzzle& best = static_cast<const OpenPuzzle&>(solution);
@@ -357,6 +379,12 @@ public:
     return result;
   }
   int
+  bound(void) const {
+    const int g = depth();
+    const int h = manhattan(values(state(g)));
+    return std::max(g+h,length.min()-1);
+  }
+  int
   depth(void) const {
     int i = 0;
     while (i+1 < path.size() && path[i+1].assigned())
@@ -377,6 +405,51 @@ public:
   }
 };
 
+#ifdef GECODE_HAS_EXPERIMENTAL
+// Both heuristic engines use the same total objective bound.
+template<class Model>
+static Search::HeuristicGuidance
+guidance(void) {
+  return Search::HeuristicGuidance(Search::HeuristicGuidance::MINIMIZE,
+    [](const Space& home) -> std::int64_t {
+      return static_cast<const Model&>(home).bound();
+    });
+}
+
+template<class Model>
+// Adapt the guidance argument to the constructor expected by Script::run.
+class PuzzleAStar : public AStar<Model> {
+public:
+  PuzzleAStar(Model* root, const Search::Options& opt)
+    : AStar<Model>(root,guidance<Model>(),opt) {}
+};
+
+template<class Model>
+class PuzzleCABS : public CABS<Model> {
+public:
+  PuzzleCABS(Model* root, const Search::Options& opt)
+    : CABS<Model>(root,guidance<Model>(),opt) {}
+};
+#endif
+
+template<class Model>
+static void
+run_model(const PuzzleOptions& opt) {
+  switch (opt.search()) {
+  case PuzzleOptions::SEARCH_BAB:
+    Script::run<Model,BAB,PuzzleOptions>(opt);
+    break;
+#ifdef GECODE_HAS_EXPERIMENTAL
+  case PuzzleOptions::SEARCH_ASTAR:
+    Script::run<Model,PuzzleAStar,PuzzleOptions>(opt);
+    break;
+  case PuzzleOptions::SEARCH_CABS:
+    Script::run<Model,PuzzleCABS,PuzzleOptions>(opt);
+    break;
+#endif
+  }
+}
+
 /** \brief Main-function
  *  \relates OpenPuzzle
  */
@@ -389,9 +462,9 @@ main(int argc, char* argv[]) {
     print_board(std::cout,initial_board(opt));
   }
   if (opt.model() == PuzzleOptions::MODEL_OPEN)
-    Script::run<OpenPuzzle,BAB,PuzzleOptions>(opt);
+    run_model<OpenPuzzle>(opt);
   else
-    Script::run<FixedPuzzle,BAB,PuzzleOptions>(opt);
+    run_model<FixedPuzzle>(opt);
   return 0;
 }
 

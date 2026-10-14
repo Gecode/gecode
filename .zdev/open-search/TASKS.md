@@ -3,9 +3,9 @@
 # Tasks: open-search
 
 - Total: 37
-- Ready: 1
+- Ready: 0
 - Blocked: 0
-- Done: 36
+- Done: 37
 
 | ID | Task | State | Blocked by |
 | --- | --- | --- | --- |
@@ -45,4 +45,4 @@
 | [open-search-034](tasks/034-remove-kernel-search-coupling-and-simplify-heuristic-search.md) | Remove kernel search coupling and simplify heuristic search examples | done | open-search-033 |
 | [open-search-035](tasks/035-invalidate-completion-witnesses-when-posting-through-an-exis.md) | Invalidate completion witnesses when posting through an existing Home | done | open-search-034 |
 | [open-search-036](tasks/036-check-all-validated-benchmark-tours-against-optimality-claim.md) | Check all validated benchmark tours against optimality claims | done | open-search-034 |
-| [open-search-037](tasks/037-add-heuristic-search-to-the-shared-fifteen-puzzle-example.md) | Add heuristic search to the shared fifteen-puzzle example | ready | — |
+| [open-search-037](tasks/037-add-heuristic-search-to-the-shared-fifteen-puzzle-example.md) | Add heuristic search to the shared fifteen-puzzle example | done | — |
