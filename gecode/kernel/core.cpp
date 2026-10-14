@@ -118,7 +118,7 @@ namespace Gecode {
   VarImpDisposerBase* Space::vd[AllVarConf::idx_d];
 #endif
 
-  Space::Space(void) : mm(ssd.data().sm) {
+  Space::Space(void) : no_gpi(false), mm(ssd.data().sm) {
 #ifdef GECODE_HAS_CBS
     var_id_counter = 0;
 #endif
@@ -540,7 +540,8 @@ namespace Gecode {
     // Process failure
   failed:
     // Count failure
-    ssd.data().gpi.fail(p->gpi());
+    if (!p->local_info())
+      ssd.data().gpi.fail(p->gpi());
     // Mark as failed
     fail();
     // Propagate top priority propagators
@@ -722,7 +723,7 @@ namespace Gecode {
    *
    */
   Space::Space(Space& s)
-    : ssd(s.ssd),
+    : no_gpi(false), ssd(s.ssd),
       mm(ssd.data().sm,s.mm,s.pc.p.n_sub*sizeof(Propagator**)),
 #ifdef GECODE_HAS_CBS
       var_id_counter(s.var_id_counter),
@@ -920,11 +921,23 @@ namespace Gecode {
   }
 
 
+  void*
+  Space::local_info(unsigned int gid) {
+    static_assert(alignof(Kernel::GPI::Info) >= 4,
+                  "Propagator information needs two tag bits");
+    Kernel::GPI::Info* i = alloc<Kernel::GPI::Info>(1);
+    i->init(ssd.data().gpi.next_pid(),gid);
+    i->afc = 0.0;
+    return Support::ptrjoin(i,2);
+  }
+
   void
   Space::afc_unshare(void) {
     if (ssd.data().gpi.unshare()) {
       for (Propagators ps(*this); ps(); ++ps) {
         Propagator& p = ps.propagator();
+        if (p.local_info())
+          continue;
         Kernel::GPI::Info* gpi
           = ssd.data().gpi.allocate(p.gpi().pid,p.gpi().gid);
         if (p.disabled())

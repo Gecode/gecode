@@ -74,6 +74,16 @@ Date: unreleased
 This is the development changelog for the next Gecode release.
 
 [ENTRY]
+Module: kernel
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Add Space::NoGPI for scoped posting without globally retained propagator
+information. Scoped propagators keep their identifiers and groups in the
+space, have zero AFC, and copy their information when cloned. Rewriting
+preserves the original propagator information.
+
+[ENTRY]
 
 Module: int
 What:   performance
