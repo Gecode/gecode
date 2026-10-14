@@ -2,8 +2,8 @@
 
 # Tasks: open-search
 
-- Total: 37
-- Ready: 0
+- Total: 38
+- Ready: 1
 - Blocked: 0
 - Done: 37
 
@@ -46,3 +46,4 @@
 | [open-search-035](tasks/035-invalidate-completion-witnesses-when-posting-through-an-exis.md) | Invalidate completion witnesses when posting through an existing Home | done | open-search-034 |
 | [open-search-036](tasks/036-check-all-validated-benchmark-tours-against-optimality-claim.md) | Check all validated benchmark tours against optimality claims | done | open-search-034 |
 | [open-search-037](tasks/037-add-heuristic-search-to-the-shared-fifteen-puzzle-example.md) | Add heuristic search to the shared fifteen-puzzle example | done | — |
+| [open-search-038](tasks/038-carry-deferred-goal-checks-into-the-heuristic-puzzle-example.md) | Carry deferred goal checks into the heuristic puzzle example | ready | — |
