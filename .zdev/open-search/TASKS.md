@@ -3,9 +3,9 @@
 # Tasks: open-search
 
 - Total: 41
-- Ready: 1
+- Ready: 0
 - Blocked: 0
-- Done: 40
+- Done: 41
 
 | ID | Task | State | Blocked by |
 | --- | --- | --- | --- |
@@ -49,4 +49,4 @@
 | [open-search-038](tasks/038-carry-deferred-goal-checks-into-the-heuristic-puzzle-example.md) | Carry deferred goal checks into the heuristic puzzle example | done | — |
 | [open-search-039](tasks/039-restore-pruning-in-the-deferred-open-puzzle-model.md) | Restore pruning in the deferred open puzzle model | done | — |
 | [open-search-040](tasks/040-use-scoped-nogpi-for-open-list-construction-across-the-stack.md) | Use scoped NoGPI for open-list construction across the stack | done | — |
-| [open-search-041](tasks/041-document-nogpi-on-open-list-materialization-methods.md) | Document NoGPI on open-list materialization methods | ready | — |
+| [open-search-041](tasks/041-document-nogpi-on-open-list-materialization-methods.md) | Document NoGPI on open-list materialization methods | done | — |
