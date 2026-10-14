@@ -183,6 +183,33 @@ namespace Test {
         } catch (int) {}
         if (s.post().afc() != 0.0)
           return false;
+        {
+          Space::UseGPI use(s);
+          if (s.post().afc() != 1.0)
+            return false;
+          {
+            Space::UseGPI nested(s);
+            if (s.post().afc() != 1.0)
+              return false;
+          }
+          {
+            Space::NoGPI suppress(s);
+            if (s.post().afc() != 0.0)
+              return false;
+          }
+          if (s.post().afc() != 1.0)
+            return false;
+        }
+        if (s.post().afc() != 0.0)
+          return false;
+        try {
+          Space::UseGPI use(s);
+          if (s.post().afc() != 1.0)
+            return false;
+          throw 1;
+        } catch (int) {}
+        if (s.post().afc() != 0.0)
+          return false;
         (void) s.status();
         std::unique_ptr<TestSpace> c(static_cast<TestSpace*>(s.clone()));
         if (c->post().afc() != 1.0)
@@ -271,6 +298,7 @@ namespace Test {
       unsigned int id = ps.propagator().id();
       rel(s,s.b,IRT_EQ,1);
       if (local) {
+        Space::UseGPI context(s);
         (void) s.status();
       } else {
         Space::NoGPI context(s);

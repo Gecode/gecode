@@ -2065,7 +2065,8 @@ namespace Gecode {
      * of this context. Existing propagators are unaffected. Clones retain
      * local information but start with ordinary posting enabled.
      *
-     * Contexts can be nested and restore the previous setting on destruction,
+     * A nested UseGPI context enables global information for selected
+     * posting calls. Both contexts restore the previous setting on destruction,
      * including exception unwinding. The space must outlive the context,
      * and contexts for the same space must be destroyed in reverse order.
      */
@@ -2082,6 +2083,31 @@ namespace Gecode {
       explicit NoGPI(Space& home);
       /// Restore the previous setting
       ~NoGPI(void);
+    };
+
+    /**
+     * \brief Enable global propagator information during scoped posting
+     * \ingroup TaskModelScript
+     *
+     * Overrides an enclosing NoGPI context for new propagators posted into
+     * this space. Rewriting still inherits the original information.
+     * Destruction restores the previous setting, including exception
+     * unwinding. The space must outlive the context, and NoGPI and UseGPI
+     * contexts for the same space must be destroyed in reverse order.
+     */
+    class UseGPI {
+    private:
+      /// Space in which to enable global information
+      Space& home;
+      /// Previous setting
+      bool previous;
+      UseGPI(const UseGPI&) = delete;
+      UseGPI& operator =(const UseGPI&) = delete;
+    public:
+      /// Enable global information for new propagators in \a home
+      explicit UseGPI(Space& home);
+      /// Restore the previous setting
+      ~UseGPI(void);
     };
 
     /**
@@ -3610,6 +3636,17 @@ namespace Gecode {
 
   forceinline
   Space::NoGPI::~NoGPI(void) {
+    home.no_gpi = previous;
+  }
+
+
+  forceinline
+  Space::UseGPI::UseGPI(Space& h) : home(h), previous(h.no_gpi) {
+    home.no_gpi = false;
+  }
+
+  forceinline
+  Space::UseGPI::~UseGPI(void) {
     home.no_gpi = previous;
   }
 
