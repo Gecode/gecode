@@ -191,6 +191,8 @@ post_goal(Home home, const IntVarArgs& tiles, IntVar length,
  * Each path position is the blank position in one board; the tile list holds
  * sixteen variables per board. The transition on the path constructs and
  * constrains the next board when that position is materialized.
+ * Goal detection waits until that board is assigned, so it does not require
+ * constructing future boards to decide whether the path should continue.
  *
  * The goal closes the path. Length counts states including the start, so
  * branch and bound minimizes moves by minimizing length minus one.
@@ -217,9 +219,19 @@ public:
     tiles.materialize(*this,16);
     IntVar start = path.get(*this,0);
     post_start(*this,state(0),start,initial);
-    post_goal(*this,state(0),path.length(),1);
-    rel(*this,path.length() >= manhattan(initial)+1);
+    wait_goal(0);
     branch(*this,path,INT_VAR_NONE(),INT_VAL_MIN());
+  }
+
+  void
+  wait_goal(int i) {
+    wait(*this,state(i),[i](Space& home) {
+      OpenPuzzle& s = static_cast<OpenPuzzle&>(home);
+      if (values(s.state(i)) == goal())
+        rel(home,s.path.length(),IRT_EQ,i+1);
+      else
+        rel(home,s.path.length(),IRT_GR,i+1);
+    });
   }
 
   void
@@ -231,7 +243,7 @@ public:
     if (failed())
       return;
     post_slide(*this,state(i-1),x[i-1],state(i),x[i]);
-    post_goal(*this,state(i),x.length(),i+1);
+    wait_goal(i);
   }
 
   OpenPuzzle(OpenPuzzle& s) : Script(s) {
