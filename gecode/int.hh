@@ -2550,13 +2550,18 @@ namespace Gecode {
      * The eventual length is constrained to be at least \a n. Positions
      * required by its minimum are materialized, including any increase
      * imposed by the transition function.
+     *
+     * Factory and transition calls run inside Space::NoGPI scopes by
+     * default. A callback-local Space::UseGPI scope enables global
+     * information for selected postings (see Factory).
      */
     void materialize(Space& home, int n);
     /**
      * \brief Require and return the variable at position \a i
      *
      * Constrains the eventual length to be at least \a i+1 and materializes
-     * positions through \a i.
+     * positions through \a i, using the Space::NoGPI scopes documented
+     * for materialize().
      *
      * Returns an uninitialized variable if \a home is failed or
      * materialization fails. Throws Int::OutOfLimits for a negative index,
@@ -2575,7 +2580,8 @@ namespace Gecode {
      * \brief Close the list at its materialized length
      *
      * First materializes any positions required by the minimum eventual
-     * length, then assigns the eventual length to the number of positions.
+     * length, using the Space::NoGPI scopes documented for materialize(),
+     * then assigns the eventual length to the number of positions.
      * The contained variables can remain unassigned.
      */
     void close(Space& home);
