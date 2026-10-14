@@ -10,7 +10,15 @@ commit `81fff38e8e843e29c0d26a65e004fca1e926ee87`. The open model waits for boar
 assignment before closing the path or requiring a successor; Manhattan distance
 stays in heuristic guidance. Upstream validation found that open BAB's default
 exceeds a 30-second Debug cutoff after losing early backward goal propagation.
-Default usability needs follow-up; this correction adds no extra pruning rule.
+The default slowdown was addressed in task `open-search-039`.
+
+Task `open-search-039` carried that follow-up from CP commit
+`fc26a2a8fcb78d5b1c617e341a1ef13224f40019`. Assigned boards fail when their
+depth plus Manhattan distance exceeds the current move cap. A materialized
+board at the final cap is constrained to the goal, including after incumbent
+cuts. These rules preserve deferred construction and the heuristic extension.
+Focused Release validation completed the open defaults in 9–10 ms, with the
+two-board root, clone independence and pending-cap behavior checked separately.
 
 ## Prepared extension
 
