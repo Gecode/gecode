@@ -284,6 +284,7 @@ namespace Gecode {
     const Transition& transition = s->functions().transition;
     if (transition) {
       GECODE_VALID_FUNCTION(transition);
+      Space::NoGPI no_gpi(home);
       transition(home,*this,next-1);
     }
   }
@@ -291,6 +292,7 @@ namespace Gecode {
   template<class Var>
   void
   OpenVarList<Var>::materialize(Space& home, int n) {
+    Space::NoGPI no_gpi(home);
     if (home.failed())
       return;
     Int::Limits::nonnegative(n,"OpenVarList::materialize");

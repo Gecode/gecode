@@ -130,6 +130,10 @@ brancher on the length first selects the length before list values. The
 common-pattern example demonstrates constrained frequent subsequence mining
 without padding, with support thresholds and integer database input;
 open-route provides a smaller introduction.
+Open-list factories and transitions run inside Space::NoGPI scopes by
+default, including transitions called by direct append. Callback-local
+Space::UseGPI scopes enable global information for selected postings;
+nested list construction starts its own NoGPI scope.
 
 [ENTRY]
 Module: kernel

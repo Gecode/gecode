@@ -928,6 +928,92 @@ namespace Test { namespace Int {
       }
     };
 
+    /// Callback posting scopes, selected AFC, and nested list growth
+    class NoGPI : public ::Test::Base {
+    protected:
+      static void
+      post(Gecode::Space& home, Gecode::PropagatorGroup group) {
+        Gecode::IntVar x(home,0,10), y(home,0,10);
+        Gecode::rel(home(group),x,Gecode::IRT_LE,y);
+      }
+
+      static int
+      count(const Gecode::Space& home, Gecode::PropagatorGroup group,
+            double afc) {
+        int n = 0;
+        for (Gecode::Propagators ps(home,group); ps(); ++ps) {
+          if (ps.propagator().afc() != afc)
+            return -1;
+          n++;
+        }
+        return n;
+      }
+
+    public:
+      NoGPI(void)
+        : ::Test::Base("Int::OpenList::NoGPI",TestTags::check()) {}
+
+      virtual bool
+      run(void) {
+        using namespace Gecode;
+        CallbackSpace home([](int) { return IntSet(0,1); },
+                           [](Space&, OpenIntVarList, int) {});
+        PropagatorGroup factory, transition, selected, ordinary, suppressed;
+        OpenVarList<IntVar> list(home,
+          [factory,selected](Space& home, int) {
+            post(home,factory);
+            {
+              Space::UseGPI use_gpi(home);
+              post(home,selected);
+            }
+            return IntVar(home,0,10);
+          },
+          [transition,selected](Space& home, OpenVarList<IntVar> list, int i) {
+            post(home,transition);
+            if (i == 3)
+              throw 1;
+            {
+              Space::UseGPI use_gpi(home);
+              post(home,selected);
+              if (i == 0)
+                list.materialize(home,2);
+              post(home,selected);
+            }
+            post(home,transition);
+          },4);
+
+        list.materialize(home,1);
+        post(home,ordinary);
+        if ((list.known_length() != 2) ||
+            (count(home,factory,0.0) != 2) ||
+            (count(home,transition,0.0) != 4) ||
+            (count(home,selected,1.0) != 6))
+          return false;
+        {
+          Space::NoGPI no_gpi(home);
+          {
+            Space::UseGPI use_gpi(home);
+            list.append(home,IntVar(home,0,10));
+            post(home,ordinary);
+          }
+          post(home,suppressed);
+        }
+        bool threw = false;
+        try {
+          list.append(home,IntVar(home,0,10));
+        } catch (int) {
+          threw = true;
+        }
+        post(home,ordinary);
+        return threw && (count(home,factory,0.0) == 2) &&
+          (count(home,transition,0.0) == 7) &&
+          (count(home,selected,1.0) == 8) &&
+          (count(home,ordinary,1.0) == 3) &&
+          (count(home,suppressed,0.0) == 1) &&
+          (home.status() != SS_FAILED);
+      }
+    };
+
     class FailedGet : public ::Test::Base {
     public:
       FailedGet(void)
@@ -1259,6 +1345,7 @@ namespace Test { namespace Int {
 
     Dispose disposal;
     CallbackLength callback_length;
+    NoGPI no_gpi;
     FailedGet failed_get;
 
     Branch branch;
