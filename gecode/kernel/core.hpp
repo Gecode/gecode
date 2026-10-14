@@ -1798,8 +1798,6 @@ namespace Gecode {
     friend GECODE_KERNEL_EXPORT
     void trace(Home home, TraceFilter tf, int te, Tracer& t);
   private:
-    /// Whether new propagator information is local to this space
-    bool no_gpi;
     /// Allocate tagged space-local propagator information
     GECODE_KERNEL_EXPORT void* local_info(unsigned int gid);
     /// Shared data for space
@@ -1810,6 +1808,8 @@ namespace Gecode {
     /// Global counter for variable ids
     unsigned int var_id_counter;
 #endif
+    /// Whether new propagator information is local to this space
+    bool no_gpi;
     /// Doubly linked list of all propagators
     ActorLink pl;
     /// Doubly linked list of all branchers
