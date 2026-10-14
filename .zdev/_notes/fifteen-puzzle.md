@@ -2,8 +2,15 @@
 
 The BAB-only example from `feature/open-cp` was integrated at parent commit
 `60325e4801d092ffad42b014bbca7708039b5826`. The MPG measurement matrix is
-finished. Task `open-search-037` owns the extension and focused validation.
+finished. Task `open-search-037` delivered the extension and focused validation.
 Do not change MPG's source, results, or frozen measurement library.
+
+Task `open-search-038` carries forward the deferred goal correction from CP
+commit `81fff38e8e843e29c0d26a65e004fca1e926ee87`. The open model waits for board
+assignment before closing the path or requiring a successor; Manhattan distance
+stays in heuristic guidance. Upstream validation found that open BAB's default
+exceeds a 30-second Debug cutoff after losing early backward goal propagation.
+Default usability needs follow-up; this correction adds no extra pruning rule.
 
 ## Prepared extension
 
