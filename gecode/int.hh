@@ -2490,6 +2490,16 @@ namespace Gecode {
      * and safe for concurrent calls. Captured data must be owned or shared
      * and must not be space-local. Returned variables must belong to \a home
      * and be initialized.
+     *
+     * Materialization calls the factory inside a Space::NoGPI scope.
+     * New propagators keep their information in the space and have zero
+     * AFC, so AFC-based branching does not count them. Identifiers and
+     * groups remain available. Group changes are local to the space; clones
+     * copy the current group. A callback-local
+     * Space::UseGPI scope enables global information and ordinary AFC for
+     * selected postings. Nested materialization starts a new NoGPI scope.
+     * Each scope restores the previous setting when it ends, including
+     * exception unwinding.
      */
     typedef std::function<Var(Space& home, int i)> Factory;
     /**
@@ -2499,6 +2509,12 @@ namespace Gecode {
      * deterministic and safe for concurrent calls. Captured data must be
      * owned or shared and must not be space-local; \a home and \a x refer
      * to the current space.
+     *
+     * Calls from materialize() and direct append() run inside a
+     * Space::NoGPI scope with the same AFC and group behavior as Factory.
+     * A callback-local Space::UseGPI scope enables global information for
+     * selected postings. Nested materialize() or append() calls enter their
+     * own NoGPI scope and restore the callback's setting when they return.
      */
     typedef std::function<void(Space& home, OpenVarList<Var> x, int i)>
       Transition;
@@ -2522,7 +2538,7 @@ namespace Gecode {
      * \brief Append variable \a x
      *
      * Constrains the eventual length to include the new position and calls
-     * the transition function, if supplied.
+     * the transition function, if supplied, inside a Space::NoGPI scope.
      *
      * Throws an exception of type Int::ArgumentSame if \a x is an
      * unassigned variable already in the list.
