@@ -193,6 +193,8 @@ post_goal(Home home, const IntVarArgs& tiles, IntVar length,
  * constrains the next board when that position is materialized.
  * Goal detection waits until that board is assigned, so it does not require
  * constructing future boards to decide whether the path should continue.
+ * Manhattan distance rejects assigned boards that cannot reach the goal
+ * within the remaining move bound, without increasing the list's minimum.
  *
  * The goal closes the path. Length counts states including the start, so
  * branch and bound minimizes moves by minimizing length minus one.
@@ -223,11 +225,35 @@ public:
     branch(*this,path,INT_VAR_NONE(),INT_VAL_MIN());
   }
 
+  bool
+  check_bound(int i, const Board& board) {
+    if (i+manhattan(board) <= path.length().max()-1)
+      return true;
+    fail();
+    return false;
+  }
+
+  void
+  force_goal(int i) {
+    const Board target = goal();
+    const IntVarArgs board = state(i);
+    for (int j=0; j<16; j++)
+      rel(*this,board[j],IRT_EQ,target[j]);
+  }
+
   void
   wait_goal(int i) {
+    if (path.length().max() == i+1) {
+      force_goal(i);
+      if (failed())
+        return;
+    }
     wait(*this,state(i),[i](Space& home) {
       OpenPuzzle& s = static_cast<OpenPuzzle&>(home);
-      if (values(s.state(i)) == goal())
+      const Board board = values(s.state(i));
+      if (!s.check_bound(i,board))
+        return;
+      if (board == goal())
         rel(home,s.path.length(),IRT_EQ,i+1);
       else
         rel(home,s.path.length(),IRT_GR,i+1);
@@ -261,10 +287,28 @@ public:
       result[j] = tiles[16*i+j];
     return result;
   }
+  int
+  depth(void) const {
+    int i = 0;
+    while (i+1 < path.known_length() && path[i+1].assigned())
+      i++;
+    return i;
+  }
   void
   constrain(const Space& solution) override {
     const OpenPuzzle& best = static_cast<const OpenPuzzle&>(solution);
     rel(*this,path.length() < best.path.length().val());
+    if (failed())
+      return;
+    // BAB can constrain after a commit, before the board becomes assigned.
+    int current = depth();
+    while (current > 0 && !state(current).assigned())
+      current--;
+    if (!check_bound(current,values(state(current))))
+      return;
+    const int last = path.length().max()-1;
+    if (16*(last+1) <= tiles.known_length())
+      force_goal(last);
   }
   void
   print(std::ostream& os) const override {
