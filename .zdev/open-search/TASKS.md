@@ -2,8 +2,8 @@
 
 # Tasks: open-search
 
-- Total: 38
-- Ready: 0
+- Total: 39
+- Ready: 1
 - Blocked: 0
 - Done: 38
 
@@ -47,3 +47,4 @@
 | [open-search-036](tasks/036-check-all-validated-benchmark-tours-against-optimality-claim.md) | Check all validated benchmark tours against optimality claims | done | open-search-034 |
 | [open-search-037](tasks/037-add-heuristic-search-to-the-shared-fifteen-puzzle-example.md) | Add heuristic search to the shared fifteen-puzzle example | done | — |
 | [open-search-038](tasks/038-carry-deferred-goal-checks-into-the-heuristic-puzzle-example.md) | Carry deferred goal checks into the heuristic puzzle example | done | — |
+| [open-search-039](tasks/039-restore-pruning-in-the-deferred-open-puzzle-model.md) | Restore pruning in the deferred open puzzle model | ready | — |
