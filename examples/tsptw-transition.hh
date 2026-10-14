@@ -37,7 +37,7 @@ namespace TSPTW {
     std::vector<int> tour(void) const;
     int cost(void) const { return prefix_cost; }
     int allocated_positions(void) const {
-      return representation==LAZY ? lazy.prefix_size() : eager.size();
+      return representation==LAZY ? lazy.known_length() : eager.size();
     }
     Gecode::IntVar position(int p) const {
       return representation==LAZY ? lazy[p] : eager[p];

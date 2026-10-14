@@ -1,8 +1,9 @@
 # 15-puzzle search integration
 
-Await the BAB-only example commit from `feature/open-cp` before changing source.
-Keep CPU-heavy builds and benchmarks deferred until the MPG measurement matrix
-finishes. Do not change MPG's source, results, or frozen measurement library.
+The BAB-only example from `feature/open-cp` was integrated at parent commit
+`60325e4801d092ffad42b014bbca7708039b5826`. The MPG measurement matrix is
+finished. Task `open-search-037` owns the extension and focused validation.
+Do not change MPG's source, results, or frozen measurement library.
 
 ## Prepared extension
 
@@ -30,8 +31,8 @@ example without an embedded oracle, optimum assertions, or benchmark machinery.
 Reference implementation:
 `/Users/zayenz/.codex/worktrees/bba6/MPG/rst/examples/src/fifteen-puzzle.cpp`.
 
-Once the measurement restriction lifts, build the example with experimental
-search enabled and disabled, and run small representative open/fixed cases
+Build the example with experimental search enabled and disabled, and run
+small representative open/fixed cases
 through BAB, A*, and CABS. Use the existing example validation conventions;
 the extension does not need a new permanent test harness.
 
