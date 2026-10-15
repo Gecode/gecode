@@ -178,10 +178,12 @@ static void
 post_goal(Home home, const IntVarArgs& tiles, IntVar length,
           int states) {
   const Board target = goal();
-  BoolExpr solved(tiles[0] == target[0]);
+  BoolExpr matches(tiles[0] == target[0]);
   for (int i=1; i<16; i++)
-    solved = solved && (tiles[i] == target[i]);
-  rel(home,(length >= states) >> ((length == states) == solved));
+    matches = matches && (tiles[i] == target[i]);
+  BoolVar solved = expr(home,matches);
+  rel(home,(length == states) >> solved);
+  rel(home,solved >> (length <= states));
 }
 
 /**
