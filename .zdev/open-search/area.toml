@@ -5,4 +5,4 @@ objective = "Add A* and complete anytime beam search to Gecode for ordinary and 
 branch = "feature/open-search"
 lifecycle = "open"
 parent = "open-cp"
-base_commit = "413db902a487c75910640f531cdc06fa51767c81"
+base_commit = "0d80c51e0b72ddda7241866e2535fbefc7ea9a78"
