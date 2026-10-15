@@ -32,10 +32,17 @@
  */
 
 #include <cstddef>
-#include <climits>
 #include <cstdint>
+#include <limits>
 
 namespace Gecode { namespace Support {
+
+  /// Integer type for tagged pointers
+#ifdef UINTPTR_MAX
+  using ptrint_t = std::uintptr_t;
+#else
+  using ptrint_t = ptrdiff_t;
+#endif
 
   /// Check whether \a p is marked
   bool marked(void* p);
@@ -74,10 +81,10 @@ namespace Gecode { namespace Support {
   template<unsigned int bits>
   forceinline void*
   funmark(void* p) {
-    static_assert(bits < sizeof(std::uintptr_t)*CHAR_BIT,
+    static_assert(bits < std::numeric_limits<ptrint_t>::digits,
                   "Too many pointer tag bits");
-    return reinterpret_cast<void*>(reinterpret_cast<std::uintptr_t>(p)&
-                                   ~((static_cast<std::uintptr_t>(1) << bits)-1));
+    return reinterpret_cast<void*>(reinterpret_cast<ptrint_t>(p)&
+                                   ~((static_cast<ptrint_t>(1) << bits)-1));
   }
   forceinline void*
   ptrsplit(void* p, ptrdiff_t& m) {
