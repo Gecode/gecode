@@ -36,36 +36,40 @@ namespace Gecode { namespace Int { namespace ViewValGraph {
   template<class T>
   forceinline
   CombPtrFlag<T>::CombPtrFlag(T* p1, T* p2)
-    : cpf(reinterpret_cast<ptrdiff_t>(p1) ^ reinterpret_cast<ptrdiff_t>(p2)) {}
+    : cpf(reinterpret_cast<Support::uptrint_t>(p1) ^
+          reinterpret_cast<Support::uptrint_t>(p2)) {}
 
   template<class T>
   forceinline T*
   CombPtrFlag<T>::ptr(T* p) const {
-    return reinterpret_cast<T*>((cpf&~1) ^ reinterpret_cast<ptrdiff_t>(p));
+    return reinterpret_cast<T*>
+      ((cpf & ~static_cast<Support::uptrint_t>(0b1)) ^
+       reinterpret_cast<Support::uptrint_t>(p));
   }
 
   template<class T>
   forceinline int
   CombPtrFlag<T>::is_set(void) const {
-    return static_cast<int>(cpf&1);
+    return static_cast<int>(cpf & 0b1);
   }
 
   template<class T>
   forceinline void
   CombPtrFlag<T>::set(void) {
-    cpf |= 1;
+    cpf |= 0b1;
   }
 
   template<class T>
   forceinline void
   CombPtrFlag<T>::unset(void) {
-    cpf &= ~1;
+    cpf &= ~static_cast<Support::uptrint_t>(0b1);
   }
 
   template<class T>
   forceinline void
   CombPtrFlag<T>::init(T* p1, T* p2) {
-    cpf = reinterpret_cast<ptrdiff_t>(p1) ^ reinterpret_cast<ptrdiff_t>(p2);
+    cpf = reinterpret_cast<Support::uptrint_t>(p1) ^
+      reinterpret_cast<Support::uptrint_t>(p2);
   }
 
 }}}

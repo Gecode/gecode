@@ -931,7 +931,7 @@ namespace Gecode {
     };
   protected:
     /// Encoding a tagged pointer or a tagged group id
-    ptrdiff_t who;
+    Support::uptrint_t who;
     /// Record that propagator \a p is executing
     void propagator(Propagator& p);
     /// Record that brancher \a b is executing
@@ -3485,15 +3485,15 @@ namespace Gecode {
    */
   forceinline void
   ViewTraceInfo::propagator(Propagator& p) {
-    who = reinterpret_cast<ptrdiff_t>(&p) | PROPAGATOR;
+    who = reinterpret_cast<Support::uptrint_t>(&p) | PROPAGATOR;
   }
   forceinline void
   ViewTraceInfo::brancher(Brancher& b) {
-    who = reinterpret_cast<ptrdiff_t>(&b) | BRANCHER;
+    who = reinterpret_cast<Support::uptrint_t>(&b) | BRANCHER;
   }
   forceinline void
   ViewTraceInfo::post(PropagatorGroup g) {
-    who = (g.id() << 2) | POST;
+    who = (static_cast<Support::uptrint_t>(g.id()) << 2) | POST;
   }
   forceinline void
   ViewTraceInfo::other(void) {
@@ -3501,7 +3501,7 @@ namespace Gecode {
   }
   forceinline ViewTraceInfo::What
   ViewTraceInfo::what(void) const {
-    return static_cast<What>(who & 3);
+    return static_cast<What>(who & 0b11);
   }
   forceinline const Propagator&
   ViewTraceInfo::propagator(void) const {
@@ -3512,7 +3512,8 @@ namespace Gecode {
   forceinline const Brancher&
   ViewTraceInfo::brancher(void) const {
     assert(what() == BRANCHER);
-    return *reinterpret_cast<Brancher*>(who & ~3);
+    return *reinterpret_cast<Brancher*>
+      (who & ~static_cast<Support::uptrint_t>(0b11));
   }
   forceinline PropagatorGroup
   ViewTraceInfo::post(void) const {
@@ -3667,7 +3668,7 @@ namespace Gecode {
 
   forceinline bool
   Propagator::local_info(void) const {
-    return (reinterpret_cast<ptrdiff_t>(gpi_disabled) & 0b10) != 0;
+    return (reinterpret_cast<Support::uptrint_t>(gpi_disabled) & 0b10) != 0;
   }
 
   forceinline bool

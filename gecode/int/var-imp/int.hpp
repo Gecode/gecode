@@ -44,8 +44,8 @@ namespace Gecode { namespace Int {
    *
    */
 
-#define GECODE_INT_RL2PD(r) reinterpret_cast<ptrdiff_t>(r)
-#define GECODE_INT_PD2RL(p) reinterpret_cast<RangeList*>(p)
+#define GECODE_INT_RL2PI(r) reinterpret_cast<Support::uptrint_t>(r)
+#define GECODE_INT_PI2RL(p) reinterpret_cast<RangeList*>(p)
 
   forceinline unsigned int
   range_width(int min, int max) {
@@ -63,30 +63,30 @@ namespace Gecode { namespace Int {
   forceinline
   IntVarImp::RangeList::RangeList(int min, int max, RangeList* p, RangeList* n)
     : _min(min), _max(max) {
-    _next = GECODE_INT_PD2RL(GECODE_INT_RL2PD(p)^GECODE_INT_RL2PD(n));
+    _next = GECODE_INT_PI2RL(GECODE_INT_RL2PI(p)^GECODE_INT_RL2PI(n));
   }
 
   forceinline IntVarImp::RangeList*
   IntVarImp::RangeList::next(const RangeList* p) const {
-    return GECODE_INT_PD2RL(GECODE_INT_RL2PD(_next)^GECODE_INT_RL2PD(p));
+    return GECODE_INT_PI2RL(GECODE_INT_RL2PI(_next)^GECODE_INT_RL2PI(p));
   }
   forceinline IntVarImp::RangeList*
   IntVarImp::RangeList::prev(const RangeList* n) const {
-    return GECODE_INT_PD2RL(GECODE_INT_RL2PD(_next)^GECODE_INT_RL2PD(n));
+    return GECODE_INT_PI2RL(GECODE_INT_RL2PI(_next)^GECODE_INT_RL2PI(n));
   }
   forceinline void
   IntVarImp::RangeList::prevnext(RangeList* p, RangeList* n) {
-    _next = GECODE_INT_PD2RL(GECODE_INT_RL2PD(p)^GECODE_INT_RL2PD(n));
+    _next = GECODE_INT_PI2RL(GECODE_INT_RL2PI(p)^GECODE_INT_RL2PI(n));
   }
   forceinline void
   IntVarImp::RangeList::next(RangeList* o, RangeList* n) {
-    _next = GECODE_INT_PD2RL(GECODE_INT_RL2PD(_next)^
-                             (GECODE_INT_RL2PD(o)^GECODE_INT_RL2PD(n)));
+    _next = GECODE_INT_PI2RL(GECODE_INT_RL2PI(_next)^
+                             (GECODE_INT_RL2PI(o)^GECODE_INT_RL2PI(n)));
   }
   forceinline void
   IntVarImp::RangeList::prev(RangeList* o, RangeList* n) {
-    _next = GECODE_INT_PD2RL(GECODE_INT_RL2PD(_next)^
-                             (GECODE_INT_RL2PD(o)^GECODE_INT_RL2PD(n)));
+    _next = GECODE_INT_PI2RL(GECODE_INT_RL2PI(_next)^
+                             (GECODE_INT_RL2PI(o)^GECODE_INT_RL2PI(n)));
   }
   forceinline void
   IntVarImp::RangeList::fix(RangeList* n) {
@@ -159,8 +159,8 @@ namespace Gecode { namespace Int {
     home.fl_dispose<sizeof(RangeList)>(this,this);
   }
 
-#undef GECODE_INT_RL2PD
-#undef GECODE_INT_PD2RL
+#undef GECODE_INT_RL2PI
+#undef GECODE_INT_PI2RL
 
   /*
    * Mainitaining range lists for variable domain

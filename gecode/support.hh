@@ -99,8 +99,8 @@
 #include <gecode/support/thread.hpp>
 #include <gecode/support/allocator.hpp>
 #include <gecode/support/heap.hpp>
-#include <gecode/support/marked-pointer.hpp>
 #include <gecode/support/int-type.hpp>
+#include <gecode/support/marked-pointer.hpp>
 
 /*
  * Common datastructures and algorithms

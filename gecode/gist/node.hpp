@@ -148,27 +148,27 @@ namespace Gecode { namespace Gist {
   forceinline unsigned int
   Node::getTag(void) const {
     return static_cast<unsigned int>
-      (reinterpret_cast<ptrdiff_t>(childrenOrFirstChild) & 3);
+      (reinterpret_cast<Support::uptrint_t>(childrenOrFirstChild) & 0b11);
   }
 
   forceinline void
   Node::setTag(unsigned int tag) {
-    assert(tag <= 3);
+    assert(tag <= 0b11);
     assert(getTag() == UNDET);
-    childrenOrFirstChild = reinterpret_cast<void*>
-      ( (reinterpret_cast<ptrdiff_t>(childrenOrFirstChild) & ~(3)) | tag);
+    childrenOrFirstChild =
+      Support::ptrjoin(Support::funmark<2>(childrenOrFirstChild),tag);
   }
 
   forceinline void*
   Node::getPtr(void) const {
-    return reinterpret_cast<void*>
-      (reinterpret_cast<ptrdiff_t>(childrenOrFirstChild) & ~(3));
+    return Support::funmark<2>(childrenOrFirstChild);
   }
 
   forceinline int
   Node::getFirstChild(void) const {
     return static_cast<int>
-      ((reinterpret_cast<ptrdiff_t>(childrenOrFirstChild) & ~(3)) >> 2);
+      ((reinterpret_cast<Support::uptrint_t>(childrenOrFirstChild) &
+        ~static_cast<Support::uptrint_t>(0b11)) >> 2);
   }
 
   forceinline

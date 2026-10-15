@@ -32,17 +32,9 @@
  */
 
 #include <cstddef>
-#include <cstdint>
 #include <limits>
 
 namespace Gecode { namespace Support {
-
-  /// Integer type for tagged pointers
-#ifdef UINTPTR_MAX
-  using ptrint_t = std::uintptr_t;
-#else
-  using ptrint_t = ptrdiff_t;
-#endif
 
   /// Check whether \a p is marked
   bool marked(void* p);
@@ -62,39 +54,41 @@ namespace Gecode { namespace Support {
 
   forceinline bool
   marked(void* p) {
-    return (reinterpret_cast<ptrdiff_t>(p) & 1) != 0;
+    return (reinterpret_cast<uptrint_t>(p) & 0b1) != 0;
   }
   forceinline void*
   mark(void* p) {
     assert(!marked(p));
-    return reinterpret_cast<void*>(reinterpret_cast<ptrdiff_t>(p)+1);
+    return reinterpret_cast<void*>(reinterpret_cast<uptrint_t>(p) | 0b1);
   }
   forceinline void*
   unmark(void* p) {
     assert(marked(p));
-    return reinterpret_cast<void*>(reinterpret_cast<ptrdiff_t>(p)-1);
+    return funmark(p);
   }
   forceinline void*
   fmark(void* p) {
-    return reinterpret_cast<void*>(reinterpret_cast<ptrdiff_t>(p)|1);
+    return reinterpret_cast<void*>(reinterpret_cast<uptrint_t>(p) | 0b1);
   }
   template<unsigned int bits>
   forceinline void*
   funmark(void* p) {
-    static_assert(bits < std::numeric_limits<ptrint_t>::digits,
+    static_assert(bits < std::numeric_limits<uptrint_t>::digits,
                   "Too many pointer tag bits");
-    return reinterpret_cast<void*>(reinterpret_cast<ptrint_t>(p)&
-                                   ~((static_cast<ptrint_t>(1) << bits)-1));
+    return reinterpret_cast<void*>(reinterpret_cast<uptrint_t>(p)&
+                                   ~((static_cast<uptrint_t>(1) << bits)-1));
   }
   forceinline void*
   ptrsplit(void* p, ptrdiff_t& m) {
-    ptrdiff_t mp = reinterpret_cast<ptrdiff_t>(p);
-    m = mp & 1;
-    return reinterpret_cast<void*>(mp & ~static_cast<ptrdiff_t>(1));
+    uptrint_t mp = reinterpret_cast<uptrint_t>(p);
+    m = static_cast<ptrdiff_t>(mp & 0b1);
+    return funmark(p);
   }
   forceinline void*
   ptrjoin(void* p, ptrdiff_t m) {
-    return reinterpret_cast<void*>(reinterpret_cast<ptrdiff_t>(p) | m);
+    assert((reinterpret_cast<uptrint_t>(p) & static_cast<uptrint_t>(m)) == 0);
+    return reinterpret_cast<void*>(reinterpret_cast<uptrint_t>(p) |
+                                   static_cast<uptrint_t>(m));
   }
 
 }}
