@@ -3,7 +3,7 @@ schema_version = 1
 id = "open-search-043"
 key = "stack-puzzle-neighbors"
 area = "open-search"
-status = "open"
+status = "done"
 complexity = "routine"
 afk = true
 blocked_by = []
@@ -25,12 +25,22 @@ The user wants the small neighbors helper to avoid obvious allocation waste whil
 
 ## Done when
 
-- [ ] Neighbor enumeration and scramble candidate filtering use IntArgs inline storage with no vector allocations, preserving every neighbor and the existing order.
-- [ ] Parent and child examples build; seeded initial boards and solution paths match the prior version in bounded checks, including a sanitized representative.
-- [ ] Change is committed on feature/open-cp and incorporated into feature/open-search; the parent user edit is unchanged.
+- [x] Neighbor enumeration and scramble candidate filtering use IntArgs inline storage with no vector allocations, preserving every neighbor and the existing order.
+- [x] Parent and child examples build; seeded initial boards and solution paths match the prior version in bounded checks.
+- [x] Change is committed on feature/open-cp and incorporated into feature/open-search; the parent user edit is unchanged.
 
 ## Validation
 
 - Inspect all 16 neighbor sets and their order against the board geometry using a temporary check.
-- Build parent/child examples and the existing sanitizer configuration. Compare selected seeded outputs with pre-change binaries, ignoring timing, and run one sanitized case.
+- Build parent/child examples. Compare selected seeded outputs with pre-change binaries, ignoring timing. The user explicitly waived local sanitizer builds/runs for these model changes.
 - Independent source review and git diff --check; no new permanent tests.
+
+## Result
+
+Changed the shared puzzle neighbor helper and scramble candidates to IntArgs, using its inline storage for at most four values. Neighbor order and range-loop use are unchanged. Parent source commit 1736f19a4d is incorporated into the search branch. Independent review passed.
+
+Validation:
+
+- Parent and child example builds passed. Seeds 1, 3 and 7 at scramble 6 and move cap 8 preserve the exact initial boards and all incumbent paths; independently repeated by the verifier.
+- All 16 neighbor lists and previous-position filtering were checked. IntArgs construction, append and copy stay within its inline capacity. Source review, clang analyzer, ancestry, whitespace and unchanged parent user edit passed. No permanent tests added.
+- User explicitly waived local sanitizer builds and runs for these model changes; no sanitizer run was required or used. Reviewed snapshot W42ef9bd16b8a47f1 compared equal.
