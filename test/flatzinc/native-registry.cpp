@@ -1,0 +1,111 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
+/*
+ *  Main authors:
+ *     Mikael Zayenz Lagerkvist <lagerkvist@gecode.dev>
+ *
+ *  Copyright:
+ *     Mikael Zayenz Lagerkvist, 2026
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.dev
+ *
+ *  Permission is hereby granted, free of charge, to any person obtaining
+ *  a copy of this software and associated documentation files (the
+ *  "Software"), to deal in the Software without restriction, including
+ *  without limitation the rights to use, copy, modify, merge, publish,
+ *  distribute, sublicense, and/or sell copies of the Software, and to
+ *  permit persons to whom the Software is furnished to do so, subject to
+ *  the following conditions:
+ *
+ *  The above copyright notice and this permission notice shall be
+ *  included in all copies or substantial portions of the Software.
+ *
+ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ *  EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ *  MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ *  NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ *  LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ *  OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ */
+
+#include "test/flatzinc.hh"
+#include <gecode/flatzinc/ast.hh>
+
+namespace Test { namespace FlatZinc {
+  namespace {
+    // Annotations preserve both consistency and algorithm flags.
+    class AlgorithmAnnotations : public Base {
+    public:
+      AlgorithmAnnotations(void)
+        : Base("FlatZinc::NativeRegistry::AlgorithmAnnotations") {}
+      virtual bool run(void) {
+        const char* names[] = {"gecode_basic_propagation",
+          "gecode_advanced_propagation", "gecode_full_propagation"};
+        const Gecode::IntPropLevel levels[] = {
+          Gecode::IPL_BASIC, Gecode::IPL_ADVANCED, Gecode::IPL_FULL
+        };
+        for (int i=0; i<3; i++) {
+          Gecode::FlatZinc::FlatZincSpace space;
+          Gecode::FlatZinc::AST::Array ann;
+          ann.a.push_back(new Gecode::FlatZinc::AST::Atom(names[i]));
+          ann.a.push_back(new Gecode::FlatZinc::AST::Atom("domain"));
+          if (space.ann2ipl(&ann) != (Gecode::IPL_DOM | levels[i]))
+            return false;
+        }
+        return true;
+      }
+    } algorithm_annotations;
+
+    class Create {
+    public:
+      Create(void) {
+        const std::string sat = "----------\n";
+        const std::string unsat = "=====UNSATISFIABLE=====\n";
+        (void) new FlatZincTest("NativeRegistry::DistanceShared",
+          "var 0..2:x; constraint gecode_inter_distance([x,x],1); solve satisfy;", unsat);
+        (void) new FlatZincTest("NativeRegistry::DistanceNegativeEmpty",
+          "constraint gecode_inter_distance_fzn([],-1); solve satisfy;", unsat);
+        (void) new FlatZincTest("NativeRegistry::DistanceNegativeSingleton",
+          "constraint gecode_inter_distance_fzn([0],-1); solve satisfy;", unsat);
+        (void) new FlatZincTest("NativeRegistry::NotAllEqual",
+          "constraint gecode_not_all_equal_int([1,1,2]); solve satisfy;", sat);
+        (void) new FlatZincTest("NativeRegistry::CardinalityHoles",
+          "var {0,3}: count; constraint gecode_global_cardinality_closed([1,1],[1],[count]); solve satisfy;", unsat);
+        (void) new FlatZincTest("NativeRegistry::SortOrientation",
+          "constraint gecode_sort_permutation([3,1,2],[1,2,3],[2,3,1],1); solve satisfy;", unsat);
+        (void) new FlatZincTest("NativeRegistry::ArgMinShared",
+          "var 1..2:x; constraint gecode_arg_min_int([x,x],1,x,false); solve satisfy;", sat);
+        (void) new FlatZincTest("NativeRegistry::InvalidModulusReification",
+          "constraint gecode_product_mod_var_fzn_reif([3],0,3,false); solve satisfy;", sat);
+        (void) new FlatZincTest("NativeRegistry::MinimumDistanceRepeatedSite",
+          "constraint gecode_minimum_distance_fzn([0,0,2],3,[0,2,4,2,0,3,4,3,0],1); solve satisfy;", unsat);
+        (void) new FlatZincTest("NativeRegistry::NondeterministicPrefix",
+          "constraint gecode_regular_nfa_int_fzn([0,1],3,0,2,[{1,2},{},{},{3},{},{}],1,{3}); solve satisfy;", sat);
+        (void) new FlatZincErrorTest("NativeRegistry::SortSize",
+          "constraint gecode_sort_permutation([1,2],[1],[1,2],1); solve satisfy;",
+          {}, "sort arrays must have equal lengths");
+#ifdef GECODE_HAS_SET_VARS
+        (void) new FlatZincTest("NativeRegistry::SetSequenceEmpty",
+          "constraint gecode_array_set_seq([]); solve satisfy;", sat);
+        (void) new FlatZincTest("NativeRegistry::SetSequenceEmptyUnion",
+          "constraint gecode_array_set_seq_union([],{1}); solve satisfy;", unsat);
+        (void) new FlatZincTest("NativeRegistry::AtmostOneSingletonCardinality",
+          "constraint gecode_set_atmost_one([{1}],2); solve satisfy;", unsat);
+        (void) new FlatZincTest("NativeRegistry::AtmostOneUnitCardinality",
+          "constraint gecode_set_atmost_one([{1},{1}],1); solve satisfy;", sat);
+        (void) new FlatZincErrorTest("NativeRegistry::SetMatrixSize",
+          "constraint gecode_set_element2d([{1}],0,0,0,1,{1}); solve satisfy;",
+          {}, "invalid set matrix dimensions");
+        (void) new FlatZincTest("NativeRegistry::EmptySetMinReification",
+          "constraint gecode_set_min_reif({},1,false); solve satisfy;", sat);
+#endif
+      }
+    };
+    Create c;
+  }
+}}
+
+// STATISTICS: test-flatzinc

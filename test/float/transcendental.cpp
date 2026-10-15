@@ -46,6 +46,64 @@ namespace Test { namespace Float {
    /// %Tests for transcendental constraints
    namespace Transcendental {
 
+     /// Exact fixed-base powers, inverse logarithms, and shared variables
+     class PowBaseConsistency : public Test {
+     protected:
+       Gecode::FloatNum base;
+       Gecode::FloatNum input;
+       Gecode::FloatNum output;
+       bool logarithm;
+       bool shared;
+       bool expected;
+     public:
+       PowBaseConsistency(Gecode::FloatNum b, Gecode::FloatNum x,
+                          Gecode::FloatNum y, bool log, bool share, bool valid)
+         : Test("Transcendental::PowBaseConsistency::"+str(b)+"::"+
+                str(x)+"::"+str(y)+(log ? "::Log" : "::Pow")+
+                (share ? "::Shared" : "::Separate"),
+                share ? 1 : 2,-4.0,8.0,1.0,CPLT_ASSIGNMENT,false),
+           base(b), input(x), output(y), logarithm(log), shared(share),
+           expected(valid) {
+         testsearch = false;
+       }
+       /// Check one exact example through the standard posting/assignment tests
+       virtual Assignment* assignment(void) const {
+         Assignment* a = new RandomAssignment(arity,dom,1,_rand);
+         a->set(0,input);
+         if (!shared)
+           a->set(1,output);
+         return a;
+       }
+       /// Exact expected results avoid checking exp/log against itself
+       virtual MaybeType solution(const Assignment&) const {
+         return expected ? MT_TRUE : MT_FALSE;
+       }
+       virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x) {
+         Gecode::FloatVar y = shared ? x[0] : x[1];
+         if (!shared)
+           Gecode::rel(home,y,Gecode::FRT_GQ,0.0);
+         if (logarithm)
+           Gecode::log(home,base,y,x[0]);
+         else
+           Gecode::pow(home,base,x[0],y);
+       }
+     };
+
+     /// Register the exact powers and their logarithmic forms
+     class PowBaseExamples {
+     public:
+       PowBaseExamples(void) {
+         for (int logarithm=0; logarithm<2; logarithm++) {
+           (void) new PowBaseConsistency(2.0,3.0,8.0,logarithm,false,true);
+           (void) new PowBaseConsistency(2.0,3.0,7.0,logarithm,false,false);
+           (void) new PowBaseConsistency(0.5,3.0,0.125,logarithm,false,true);
+           (void) new PowBaseConsistency(1.0,3.0,1.0,logarithm,false,true);
+           (void) new PowBaseConsistency(2.0,0.0,0.0,logarithm,true,false);
+           (void) new PowBaseConsistency(0.25,0.5,0.5,logarithm,true,true);
+         }
+       }
+     } pow_base_examples;
+
      /// %Test for exponent constraint
      class ExpXY : public Test {
      public:
@@ -190,7 +248,7 @@ namespace Test { namespace Float {
        virtual MaybeType solution(const Assignment& x) const {
          if ((x[0].max() <= 0.0) || (base <= 0.0))
            return MT_FALSE;
-         return eq(log(x[0]) / log(base), x[1]);
+         return eq(log(x[0]) / log(Gecode::FloatVal(base)), x[1]);
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x) {
@@ -209,13 +267,13 @@ namespace Test { namespace Float {
        virtual MaybeType solution(const Assignment& x) const {
          if ((x[0].max() <= 0.0) || (base <= 0.0))
            return MT_FALSE;
-         return eq(log(x[0]) / log(base), x[1]);
+         return eq(log(x[0]) / log(Gecode::FloatVal(base)), x[1]);
        }
        /// Extend assignment \a x
        virtual bool extendAssignment(Assignment& x) const {
          if ((x[0].max() <= 0.0) || (base <= 0.0))
            return false;
-         Gecode::FloatVal d = log(x[0])/log(base);
+         Gecode::FloatVal d = log(x[0])/log(Gecode::FloatVal(base));
          if (Gecode::Float::subset(d, dom)) {
            x.set(1, d);
            return true;
@@ -240,7 +298,7 @@ namespace Test { namespace Float {
        virtual MaybeType solution(const Assignment& x) const {
          if ((x[0].max() <= 0.0) || (base <= 0.0))
            return MT_FALSE;
-         return eq(log(x[0]) / log(base), x[0]);
+         return eq(log(x[0]) / log(Gecode::FloatVal(base)), x[0]);
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x) {
@@ -259,7 +317,7 @@ namespace Test { namespace Float {
        virtual MaybeType solution(const Assignment& x) const {
          if (base <= 0.0)
            return MT_FALSE;
-         return eq(exp(x[0] * log(base)), x[1]);
+         return eq(exp(x[0] * log(Gecode::FloatVal(base))), x[1]);
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x) {
@@ -278,12 +336,12 @@ namespace Test { namespace Float {
        virtual MaybeType solution(const Assignment& x) const {
          if (base <= 0.0)
            return MT_FALSE;
-         return eq(exp(x[0] * log(base)), x[1]);
+         return eq(exp(x[0] * log(Gecode::FloatVal(base))), x[1]);
        }
        /// Extend assignment \a x
        virtual bool extendAssignment(Assignment& x) const {
          if (base <= 0.0) return false;
-         Gecode::FloatVal d = exp(x[0]*log(base));
+         Gecode::FloatVal d = exp(x[0]*log(Gecode::FloatVal(base)));
          if (Gecode::Float::subset(d, dom)) {
            x.set(1, d);
            return true;
@@ -312,7 +370,7 @@ namespace Test { namespace Float {
        virtual MaybeType solution(const Assignment& x) const {
          if ((x[0].max() <= 0.0) || (base <= 0.0))
            return MT_FALSE;
-         return eq(exp(x[0] * log(base)), x[0]);
+         return eq(exp(x[0] * log(Gecode::FloatVal(base))), x[0]);
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x) {
