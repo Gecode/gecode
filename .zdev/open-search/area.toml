@@ -1,0 +1,8 @@
+schema_version = 1
+tag = "open-search"
+title = "Heuristic search and open transition models"
+objective = "Add A* and complete anytime beam search to Gecode for ordinary and open models, demonstrate open TSPTW transitions, and validate correctness and practical search/memory trade-offs."
+branch = "feature/open-search"
+lifecycle = "open"
+parent = "open-cp"
+base_commit = "0d80c51e0b72ddda7241866e2535fbefc7ea9a78"

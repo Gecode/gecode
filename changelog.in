@@ -56,6 +56,8 @@
 #     driver|iter|support|example|test|gist|flatzinc|other
 #   What:   bug|documentation|performance|new|removed|change
 #   Rank:   minor|major
+#   Experimental: true|false <optional, defaults to false>
+#     True entries appear under Experimental changes within each release.
 #   Bug:    <optional, for number from bugzilla>
 #   Issue:  <optional, for number from github>
 #   Thanks: <optional, who reported etc>
@@ -72,6 +74,19 @@ Version: 6.5.0
 Date: unreleased
 [DESCRIPTION]
 This is the development changelog for the next Gecode release.
+
+[ENTRY]
+Module: search
+What:   new
+Rank:   major
+Experimental: true
+[DESCRIPTION]
+Add the experimental 6.5.0 native search preview: AStar, configurable
+best-first, CABS and Column, including fixed-quota CBFS mode, with bound/rank
+guidance, optional state pruning and ordinary engine builders. Enable it with
+--enable-experimental or GECODE_ENABLE_EXPERIMENTAL=ON; it is disabled by
+default. Preview APIs may change or be removed in future feature releases;
+their documented search correctness contracts still apply.
 
 [ENTRY]
 Module: int
@@ -150,7 +165,7 @@ What:   performance
 Rank:   major
 [DESCRIPTION]
 Reduce construction memory for regular constraints by building the layered
-graph from sparse forward frontiers and retaining only backward co-reachable
+graph from sparse forward frontiers and including only backward co-reachable
 states. This avoids allocating one temporary state for every automaton state
 at every sequence position while preserving the persistent graph.
 
@@ -160,7 +175,7 @@ What:   new
 Rank:   major
 [DESCRIPTION]
 Add DFA::nfa factories for finite automata with nondeterministic transitions.
-The factories retain nondeterminism without determinization or minimization;
+The factories support nondeterminism without determinization or minimization;
 epsilon transitions are not supported. Regular propagation now preserves
 branching assigned prefixes when cloning such automata.
 
@@ -171,7 +186,7 @@ Rank:   major
 [DESCRIPTION]
 Add self-declared check, standard, and sweep tags to the public test harness.
 The standard check targets use a focused integrity selection, while standard
-testing retains broad coverage without the exhaustive multi-hour sweeps.
+testing provides broad coverage without the exhaustive multi-hour sweeps.
 
 [ENTRY]
 Module: test
@@ -228,7 +243,7 @@ Issue:  166
 Thanks: Mats Carlsson
 [DESCRIPTION]
 Fix domain-level global cardinality propagation losing solutions by counting
-assigned variables twice and retaining stale conflict marks when cardinality
+assigned variables twice and leaving stale conflict marks when cardinality
 bounds shrink.
 
 [ENTRY]

@@ -288,7 +288,7 @@ namespace Gecode {
     // Check whether space is stable but not failed
     if (pc.p.active >= &pc.p.queue[0]) {
       ModEventDelta med_o;
-      if ((pc.p.bid_sc & ((1 << sc_bits) - 1)) == 0) {
+      if ((pc.p.bid_sc & (sc_disabled | sc_trace)) == 0) {
         // No support for disabled propagators and tracing
         // Check whether space is stable but not failed
         goto f_unstable;
@@ -349,7 +349,7 @@ namespace Gecode {
           GECODE_NEVER;
         }
       f_stable: ;
-      } else if ((pc.p.bid_sc & ((1 << sc_bits) - 1)) == sc_disabled) {
+      } else if ((pc.p.bid_sc & (sc_disabled | sc_trace)) == sc_disabled) {
         // Support for disabled propagators
         goto d_unstable;
       d_execute:
@@ -565,6 +565,45 @@ namespace Gecode {
   }
 
 
+  BrancherPreparation::~BrancherPreparation(void) {}
+
+  bool
+  Brancher::prepare(Space&, StatusStatistics&) {
+    return true;
+  }
+
+  bool
+  Brancher::commit_restricts(void) const { return true; }
+
+  bool
+  Brancher::persistent(void) const { return false; }
+
+  void
+  Brancher::invalidate(Space&) {}
+
+  bool
+  Space::prepare(BrancherPreparation& preparation) {
+    while (!failed() && b_status != Brancher::cast(&bl)) {
+      Brancher* active = b_status;
+      if (!preparation.prepare(*this,*active))
+        return false;
+      if (status(preparation.statistics()) != SS_BRANCH || b_status == active)
+        return true;
+    }
+    return true;
+  }
+
+  void
+  Space::invalidate_branchers(void) {
+    if (!(pc.p.bid_sc & sc_restrictions) || failed())
+      return;
+    for (Brancher* b=Brancher::cast(bl.next());
+         b != Brancher::cast(&bl); b=Brancher::cast(b->next()))
+      if (b->persistent())
+        b->invalidate(*this);
+    b_status = b_commit = Brancher::cast(bl.next());
+  }
+
   const Choice*
   Space::choice(void) {
     if (!stable())
@@ -576,9 +615,11 @@ namespace Gecode {
       while (b != Brancher::cast(&bl)) {
         Brancher* d = b;
         b = Brancher::cast(b->next());
-        rfree(d,d->dispose(*this));
+        if (failed() || !d->persistent()) {
+          d->unlink();
+          rfree(d,d->dispose(*this));
+        }
       }
-      bl.init();
       b_status = b_commit = Brancher::cast(&bl);
       return nullptr;
     }
@@ -590,8 +631,10 @@ namespace Gecode {
     while (b != b_status) {
       Brancher* d = b;
       b = Brancher::cast(b->next());
-      d->unlink();
-      rfree(d,d->dispose(*this));
+      if (!d->persistent()) {
+        d->unlink();
+        rfree(d,d->dispose(*this));
+      }
     }
     // Make sure that b_commit does not point to a deleted brancher!
     b_commit = b_status;
@@ -617,6 +660,9 @@ namespace Gecode {
     if (failed())
       return;
     if (Brancher* b = brancher(c.bid)) {
+      // Resolve the archived choice before resetting the brancher cursors.
+      if ((pc.p.bid_sc & sc_restrictions) && b->commit_restricts())
+        invalidate_branchers();
       // There is a matching brancher
       if (pc.p.bid_sc & sc_trace) {
         TraceRecorder* tr = findtracerecorder();
@@ -648,6 +694,9 @@ namespace Gecode {
     if (failed())
       return;
     if (Brancher* b = brancher(c.bid)) {
+      // Resolve the archived choice before resetting the brancher cursors.
+      if ((pc.p.bid_sc & sc_restrictions) && b->commit_restricts())
+        invalidate_branchers();
       // There is a matching brancher
       if (pc.p.bid_sc & sc_trace) {
         TraceRecorder* tr = findtracerecorder();
@@ -901,8 +950,10 @@ namespace Gecode {
   Space::master(const MetaInfo& mi) {
     switch (mi.type()) {
     case MetaInfo::RESTART:
-      if (mi.last() != nullptr)
+      if (mi.last() != nullptr) {
+        invalidate_branchers();
         constrain(*mi.last());
+      }
       mi.nogoods().post(*this);
       // Perform a restart even if a solution has been found
       return true;

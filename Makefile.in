@@ -262,25 +262,29 @@ endif
 #
 
 SEARCHSRC0 = \
-	stop options cutoff engine \
+	stop options cutoff engine prepare \
 	dfs bab lds \
 	seq/rbs seq/dead seq/pbs par/pbs \
 	rbs pbs nogoods exception tracer \
 	cpprofiler/tracer worker-control
 SEARCHHDR0 = \
 	statistics.hpp stop.hpp options.hpp cutoff.hpp \
-	support.hh worker.hh worker-control.hh exception.hpp engine.hpp base.hpp \
+	support.hh branch-feedback.hh completion.hh worker.hh worker-control.hh exception.hpp engine.hpp base.hpp \
 	nogoods.hh nogoods.hpp build.hpp traits.hpp sebs.hpp \
 	seq/path.hh seq/path.hpp seq/dfs.hh seq/dfs.hpp \
-	seq/bab.hh seq/bab.hpp seq/lds.hh seq/lds.hpp \
-	seq/rbs.hh seq/rbs.hpp seq/dead.hh \
+	seq/bab.hh seq/bab.hpp seq/astar.hh seq/cabs.hh seq/column.hh seq/lds.hh seq/lds.hpp \
+	seq/rbs.hh seq/rbs.hpp seq/dead.hh seq/state-registry.hh seq/choice-expansion.hh \
 	seq/pbs.hh seq/pbs.hpp \
 	par/path.hh par/path.hpp par/engine.hh par/engine.hpp \
 	par/dfs.hh par/dfs.hpp par/bab.hh par/bab.hpp \
 	par/pbs.hh par/pbs.hpp \
-	dfs.hpp bab.hpp lds.hpp rbs.hpp pbs.hpp \
+	dfs.hpp bab.hpp astar.hpp cabs.hpp column.hpp lds.hpp rbs.hpp pbs.hpp \
 	relax.hh tracer.hpp trace-recorder.hpp \
 	cpprofiler/message.hpp cpprofiler/connector.hpp
+
+ifeq "@enable_experimental@" "yes"
+SEARCHSRC0 += astar cabs column
+endif
 
 SEARCHSRC	= $(SEARCHSRC0:%=gecode/search/%.cpp)
 SEARCHHDR	= gecode/search.hh $(SEARCHHDR0:%=gecode/search/%)
@@ -912,7 +916,12 @@ INTEXAMPLESRC0 =						\
 	qcp job-shop open-route common-pattern fifteen-puzzle
 
 
-INTEXAMPLEHDR  = $(INTEXAMPLEHDR0:%=examples/%.hpp)
+ifeq "@enable_experimental@" "yes"
+INTEXAMPLESRC0 += astar best-first tsptw
+endif
+
+INTEXAMPLEHDR  = $(INTEXAMPLEHDR0:%=examples/%.hpp) \
+	examples/tsptw-data.hh examples/tsptw-transition.hh
 INTEXAMPLESRC  = $(INTEXAMPLESRC0:%=examples/%.cpp)
 ifeq "@enable_examples@" "yes"
 INSTALLEXAMPLEHDR = $(INTEXAMPLEHDR)

@@ -60,7 +60,7 @@ whose values are still unassigned. `length()` is the variable for the eventual
 list length.
 
 The private frequency propagator uses prefix projection: after assigning an item,
-it retains the input suffixes that can extend the current pattern. One earliest
+it stores the input suffixes that can extend the current pattern. One earliest
 matching cursor per supporting record suffices for ordinary subsequences. It
 filters locally infrequent items from constructed positions and bounds further
 growth by the remaining supporting suffix lengths. Immutable, rank-compressed
@@ -105,7 +105,7 @@ to require both items. Support is a percentage in `(0,100]` with up to six decim
 places; the threshold is the exact ceiling of that fraction of the record count.
 
 `-language` accepts `none`, `motif`, `re10`, `re14`, or `re2`. The last three are
-Section 5(d)'s expressions, retained as comparison presets. Explicit `-language`
+Section 5(d)'s expressions, provided as comparison presets. Explicit `-language`
 overrides `-motif`; the default language uses `-motif` (enabled by default). Letters mean item IDs `A=1` through
 `Z=26`. Named expressions on integer data require that same mapping; the parser
 does not infer or remap dataset labels. The motif's interior and RE2's middle
@@ -131,7 +131,7 @@ For larger databases use `-file` and select a format:
   beginning with `@`, `#`, or `%` are skipped. Multi-item itemsets are rejected;
   silently flattening them would change the mining problem.
 
-Empty lines are skipped. Every retained row has its own support identity. Required
+Empty lines are skipped. Every nonempty row has its own support identity. Required
 items use comma-separated letters in letter mode and integer IDs otherwise:
 
 ```sh
@@ -252,7 +252,7 @@ bounds new timed invocations, while correctness runs still precede measurement.
 Changed inputs, queries, build, helper, runner, timeout or repetition plan require
 another name. Missing/malformed records are rerun and their partial logs replaced.
 Errors, invalid output and timeouts remain terminal evidence and cause a nonzero
-collection exit. Analysis invokes no targets, retains older format-1 results, and
+collection exit. Analysis invokes no targets, reads older format-1 results, and
 reports failures/unfinished work beside successful medians and ranges in seconds.
 
 The authors' project link <https://sites.google.com/site/prefixprojection4cp/>

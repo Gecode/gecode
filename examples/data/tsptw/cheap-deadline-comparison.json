@@ -1,0 +1,4662 @@
+{
+  "campaign": "cheap-deadline-028",
+  "comparisons": {
+    "cases": [
+      {
+        "case": {
+          "family": "Dumas",
+          "id": "Dumas/n20w20.001.txt",
+          "path": "/private/tmp/open-search-tsptw-selected-network/Dumas/n20w20.001.txt",
+          "sha256": "83c354a30228db900577252a845fe2671175cb5e621a9a1061a01f9b56aaa748",
+          "variant": null
+        },
+        "measurements": [
+          {
+            "config": "transition-bab",
+            "end_to_end_wall_seconds": 1.4632397500099614,
+            "final_objective": 378,
+            "first_incumbent_reported_ms": 521.045,
+            "gap_to_proved_optimum": 0.0,
+            "maximum_sample_gap_seconds": 0.0976108749746345,
+            "measurements": {
+              "bound_calls": 0,
+              "bound_ms": 0.0,
+              "inference_calls": 0,
+              "inference_ms": 0.0,
+              "propagation_ms": 0.0
+            },
+            "metrics": {
+              "allocation": {
+                "intvar_handle_bytes": 8,
+                "prepared_root_positions": 1,
+                "root_positions": 0,
+                "solution_positions": 21,
+                "space_bytes": 488
+              },
+              "clone_bytes": null,
+              "descriptor_bytes": 0,
+              "descriptor_count": 0,
+              "expansions": 2785283,
+              "frontier_bytes": null,
+              "preprocessing_ms": 0.105,
+              "search_ms": 1394.738,
+              "startup_and_teardown_ms": 68.37875000996132
+            },
+            "proof": "optimal",
+            "proof_reported_ms": 1394.861,
+            "quality_at_reported_ms": {
+              "100": null,
+              "1000": 378
+            },
+            "quality_usable": true,
+            "repetition": 0,
+            "rss_overshoot_bytes": 0,
+            "rss_probe_seconds": 0.5715047909179702,
+            "rss_samples": 16,
+            "sampled_peak_rss_bytes": 2555904,
+            "scale": 1,
+            "status": "ok",
+            "termination": "optimal",
+            "termination_reap_seconds": 4.959001671522856e-06,
+            "wall_cap_overshoot_seconds": 0
+          },
+          {
+            "config": "transition-bab-lazy-cheap",
+            "end_to_end_wall_seconds": 0.09271266602445394,
+            "final_objective": 378,
+            "first_incumbent_reported_ms": 0.28,
+            "gap_to_proved_optimum": 0.0,
+            "maximum_sample_gap_seconds": 0.003323499986436218,
+            "measurements": {
+              "bound_calls": 0,
+              "bound_ms": 0.0,
+              "inference_calls": 1733,
+              "inference_ms": 0.055,
+              "propagation_ms": 0.0
+            },
+            "metrics": {
+              "allocation": {
+                "intvar_handle_bytes": 8,
+                "prepared_root_positions": 1,
+                "root_positions": 0,
+                "solution_positions": 21,
+                "space_bytes": 488
+              },
+              "clone_bytes": null,
+              "descriptor_bytes": 0,
+              "descriptor_count": 0,
+              "expansions": 1079,
+              "frontier_bytes": null,
+              "preprocessing_ms": 0.124,
+              "search_ms": 0.882,
+              "startup_and_teardown_ms": 91.69766602445394
+            },
+            "proof": "optimal",
+            "proof_reported_ms": 1.015,
+            "quality_at_reported_ms": {
+              "100": 378,
+              "1000": 378
+            },
+            "quality_usable": true,
+            "repetition": 0,
+            "rss_overshoot_bytes": null,
+            "rss_probe_seconds": 0.03331775002880022,
+            "rss_samples": 1,
+            "sampled_peak_rss_bytes": null,
+            "scale": 1,
+            "status": "ok",
+            "termination": "optimal",
+            "termination_reap_seconds": 5.749985575675964e-06,
+            "wall_cap_overshoot_seconds": 0
+          },
+          {
+            "config": "transition-bab-lazy-unary",
+            "end_to_end_wall_seconds": 0.09727745898999274,
+            "final_objective": 378,
+            "first_incumbent_reported_ms": 1.976,
+            "gap_to_proved_optimum": 0.0,
+            "maximum_sample_gap_seconds": 0.0034472919651307166,
+            "measurements": {
+              "bound_calls": 0,
+              "bound_ms": 0.0,
+              "inference_calls": 1626,
+              "inference_ms": 6.924,
+              "propagation_ms": 5.794
+            },
+            "metrics": {
+              "allocation": {
+                "intvar_handle_bytes": 8,
+                "prepared_root_positions": 1,
+                "root_positions": 0,
+                "solution_positions": 21,
+                "space_bytes": 488
+              },
+              "clone_bytes": null,
+              "descriptor_bytes": 0,
+              "descriptor_count": 0,
+              "expansions": 1014,
+              "frontier_bytes": null,
+              "preprocessing_ms": 0.381,
+              "search_ms": 7.626,
+              "startup_and_teardown_ms": 89.26045898999274
+            },
+            "proof": "optimal",
+            "proof_reported_ms": 8.017,
+            "quality_at_reported_ms": {
+              "100": 378,
+              "1000": 378
+            },
+            "quality_usable": true,
+            "repetition": 0,
+            "rss_overshoot_bytes": 0,
+            "rss_probe_seconds": 0.03639666602248326,
+            "rss_samples": 1,
+            "sampled_peak_rss_bytes": 2621440,
+            "scale": 1,
+            "status": "ok",
+            "termination": "optimal",
+            "termination_reap_seconds": 1.5420373529195786e-06,
+            "wall_cap_overshoot_seconds": 0
+          },
+          {
+            "config": "transition-cabs",
+            "end_to_end_wall_seconds": 2.005315500020515,
+            "final_objective": 378,
+            "first_incumbent_reported_ms": 13.981,
+            "gap_to_proved_optimum": 0.0,
+            "maximum_sample_gap_seconds": 0.0980317079811357,
+            "measurements": null,
+            "metrics": {
+              "allocation": null,
+              "clone_bytes": null,
+              "descriptor_bytes": null,
+              "descriptor_count": null,
+              "expansions": null,
+              "frontier_bytes": null,
+              "preprocessing_ms": null,
+              "search_ms": null,
+              "startup_and_teardown_ms": null
+            },
+            "proof": null,
+            "proof_reported_ms": null,
+            "quality_at_reported_ms": {
+              "100": 378,
+              "1000": 378
+            },
+            "quality_usable": true,
+            "repetition": 0,
+            "rss_overshoot_bytes": 0,
+            "rss_probe_seconds": 0.797973666805774,
+            "rss_samples": 22,
+            "sampled_peak_rss_bytes": 297041920,
+            "scale": 1,
+            "status": "timeout",
+            "termination": "timeout",
+            "termination_reap_seconds": 0.0043039589654654264,
+            "wall_cap_overshoot_seconds": 0.005315500020515174
+          },
+          {
+            "config": "transition-cabs-lazy-cheap",
+            "end_to_end_wall_seconds": 0.09337545797461644,
+            "final_objective": 378,
+            "first_incumbent_reported_ms": 0.269,
+            "gap_to_proved_optimum": 0.0,
+            "maximum_sample_gap_seconds": 0.0031189160072244704,
+            "measurements": {
+              "bound_calls": 382,
+              "bound_ms": 0.01,
+              "inference_calls": 3381,
+              "inference_ms": 0.087,
+              "propagation_ms": 0.0
+            },
+            "metrics": {
+              "allocation": {
+                "intvar_handle_bytes": 8,
+                "prepared_root_positions": 1,
+                "root_positions": 0,
+                "solution_positions": 21,
+                "space_bytes": 488
+              },
+              "clone_bytes": null,
+              "descriptor_bytes": 0,
+              "descriptor_count": 0,
+              "expansions": 3385,
+              "frontier_bytes": null,
+              "preprocessing_ms": 0.121,
+              "search_ms": 1.595,
+              "startup_and_teardown_ms": 91.65045797461644
+            },
+            "proof": "optimal",
+            "proof_reported_ms": 1.725,
+            "quality_at_reported_ms": {
+              "100": 378,
+              "1000": 378
+            },
+            "quality_usable": true,
+            "repetition": 0,
+            "rss_overshoot_bytes": 0,
+            "rss_probe_seconds": 0.03411850001430139,
+            "rss_samples": 1,
+            "sampled_peak_rss_bytes": 2408448,
+            "scale": 1,
+            "status": "ok",
+            "termination": "optimal",
+            "termination_reap_seconds": 1.625041477382183e-06,
+            "wall_cap_overshoot_seconds": 0
+          },
+          {
+            "config": "transition-cabs-lazy-unary",
+            "end_to_end_wall_seconds": 0.09521762502845377,
+            "final_objective": 378,
+            "first_incumbent_reported_ms": 0.685,
+            "gap_to_proved_optimum": 0.0,
+            "maximum_sample_gap_seconds": 0.003049749997444451,
+            "measurements": {
+              "bound_calls": 382,
+              "bound_ms": 0.011,
+              "inference_calls": 3183,
+              "inference_ms": 3.687,
+              "propagation_ms": 2.487
+            },
+            "metrics": {
+              "allocation": {
+                "intvar_handle_bytes": 8,
+                "prepared_root_positions": 1,
+                "root_positions": 0,
+                "solution_positions": 21,
+                "space_bytes": 488
+              },
+              "clone_bytes": null,
+              "descriptor_bytes": 0,
+              "descriptor_count": 0,
+              "expansions": 3187,
+              "frontier_bytes": null,
+              "preprocessing_ms": 0.202,
+              "search_ms": 5.266,
+              "startup_and_teardown_ms": 89.73962502845377
+            },
+            "proof": "optimal",
+            "proof_reported_ms": 5.478,
+            "quality_at_reported_ms": {
+              "100": 378,
+              "1000": 378
+            },
+            "quality_usable": true,
+            "repetition": 0,
+            "rss_overshoot_bytes": 0,
+            "rss_probe_seconds": 0.03376966604264453,
+            "rss_samples": 1,
+            "sampled_peak_rss_bytes": 2736128,
+            "scale": 1,
+            "status": "ok",
+            "termination": "optimal",
+            "termination_reap_seconds": 1.5830155462026596e-06,
+            "wall_cap_overshoot_seconds": 0
+          },
+          {
+            "config": "transition-cabs-lazy-unary",
+            "end_to_end_wall_seconds": 0.09371170902159065,
+            "final_objective": 378,
+            "first_incumbent_reported_ms": 0.691,
+            "gap_to_proved_optimum": 0.0,
+            "maximum_sample_gap_seconds": 0.00316829199437052,
+            "measurements": {
+              "bound_calls": 382,
+              "bound_ms": 0.01,
+              "inference_calls": 3183,
+              "inference_ms": 3.738,
+              "propagation_ms": 2.549
+            },
+            "metrics": {
+              "allocation": {
+                "intvar_handle_bytes": 8,
+                "prepared_root_positions": 1,
+                "root_positions": 0,
+                "solution_positions": 21,
+                "space_bytes": 488
+              },
+              "clone_bytes": null,
+              "descriptor_bytes": 0,
+              "descriptor_count": 0,
+              "expansions": 3187,
+              "frontier_bytes": null,
+              "preprocessing_ms": 0.208,
+              "search_ms": 5.359,
+              "startup_and_teardown_ms": 88.13270902159066
+            },
+            "proof": "optimal",
+            "proof_reported_ms": 5.579,
+            "quality_at_reported_ms": {
+              "100": 378,
+              "1000": 378
+            },
+            "quality_usable": true,
+            "repetition": 1,
+            "rss_overshoot_bytes": 0,
+            "rss_probe_seconds": 0.03446637495653704,
+            "rss_samples": 1,
+            "sampled_peak_rss_bytes": 2818048,
+            "scale": 1,
+            "status": "ok",
+            "termination": "optimal",
+            "termination_reap_seconds": 1.834006980061531e-06,
+            "wall_cap_overshoot_seconds": 0
+          },
+          {
+            "config": "transition-cabs-lazy-cheap",
+            "end_to_end_wall_seconds": 0.09993295796448365,
+            "final_objective": 378,
+            "first_incumbent_reported_ms": 0.289,
+            "gap_to_proved_optimum": 0.0,
+            "maximum_sample_gap_seconds": 0.0033584159682504833,
+            "measurements": {
+              "bound_calls": 382,
+              "bound_ms": 0.009,
+              "inference_calls": 3381,
+              "inference_ms": 0.09,
+              "propagation_ms": 0.0
+            },
+            "metrics": {
+              "allocation": {
+                "intvar_handle_bytes": 8,
+                "prepared_root_positions": 1,
+                "root_positions": 0,
+                "solution_positions": 21,
+                "space_bytes": 488
+              },
+              "clone_bytes": null,
+              "descriptor_bytes": 0,
+              "descriptor_count": 0,
+              "expansions": 3385,
+              "frontier_bytes": null,
+              "preprocessing_ms": 0.138,
+              "search_ms": 1.658,
+              "startup_and_teardown_ms": 98.12395796448365
+            },
+            "proof": "optimal",
+            "proof_reported_ms": 1.809,
+            "quality_at_reported_ms": {
+              "100": 378,
+              "1000": 378
+            },
+            "quality_usable": true,
+            "repetition": 1,
+            "rss_overshoot_bytes": null,
+            "rss_probe_seconds": 0.035995832993648946,
+            "rss_samples": 1,
+            "sampled_peak_rss_bytes": null,
+            "scale": 1,
+            "status": "ok",
+            "termination": "optimal",
+            "termination_reap_seconds": 1.6249832697212696e-06,
+            "wall_cap_overshoot_seconds": 0
+          },
+          {
+            "config": "transition-cabs",
+            "end_to_end_wall_seconds": 2.006879208027385,
+            "final_objective": 378,
+            "first_incumbent_reported_ms": 13.997,
+            "gap_to_proved_optimum": 0.0,
+            "maximum_sample_gap_seconds": 0.09889633301645517,
+            "measurements": null,
+            "metrics": {
+              "allocation": null,
+              "clone_bytes": null,
+              "descriptor_bytes": null,
+              "descriptor_count": null,
+              "expansions": null,
+              "frontier_bytes": null,
+              "preprocessing_ms": null,
+              "search_ms": null,
+              "startup_and_teardown_ms": null
+            },
+            "proof": null,
+            "proof_reported_ms": null,
+            "quality_at_reported_ms": {
+              "100": 378,
+              "1000": 378
+            },
+            "quality_usable": true,
+            "repetition": 1,
+            "rss_overshoot_bytes": 0,
+            "rss_probe_seconds": 0.7890545040136203,
+            "rss_samples": 22,
+            "sampled_peak_rss_bytes": 263913472,
+            "scale": 1,
+            "status": "timeout",
+            "termination": "timeout",
+            "termination_reap_seconds": 0.003542541991919279,
+            "wall_cap_overshoot_seconds": 0.006879208027385175
+          },
+          {
+            "config": "transition-bab-lazy-unary",
+            "end_to_end_wall_seconds": 0.09961150004528463,
+            "final_objective": 378,
+            "first_incumbent_reported_ms": 1.83,
+            "gap_to_proved_optimum": 0.0,
+            "maximum_sample_gap_seconds": 0.0032036250340752304,
+            "measurements": {
+              "bound_calls": 0,
+              "bound_ms": 0.0,
+              "inference_calls": 1626,
+              "inference_ms": 6.873,
+              "propagation_ms": 5.802
+            },
+            "metrics": {
+              "allocation": {
+                "intvar_handle_bytes": 8,
+                "prepared_root_positions": 1,
+                "root_positions": 0,
+                "solution_positions": 21,
+                "space_bytes": 488
+              },
+              "clone_bytes": null,
+              "descriptor_bytes": 0,
+              "descriptor_count": 0,
+              "expansions": 1014,
+              "frontier_bytes": null,
+              "preprocessing_ms": 0.214,
+              "search_ms": 7.797,
+              "startup_and_teardown_ms": 91.58550004528463
+            },
+            "proof": "optimal",
+            "proof_reported_ms": 8.026,
+            "quality_at_reported_ms": {
+              "100": 378,
+              "1000": 378
+            },
+            "quality_usable": true,
+            "repetition": 1,
+            "rss_overshoot_bytes": 0,
+            "rss_probe_seconds": 0.03591304202564061,
+            "rss_samples": 1,
+            "sampled_peak_rss_bytes": 2719744,
+            "scale": 1,
+            "status": "ok",
+            "termination": "optimal",
+            "termination_reap_seconds": 1.541979145258665e-06,
+            "wall_cap_overshoot_seconds": 0
+          },
+          {
+            "config": "transition-bab-lazy-cheap",
+            "end_to_end_wall_seconds": 0.09679945901734754,
+            "final_objective": 378,
+            "first_incumbent_reported_ms": 0.293,
+            "gap_to_proved_optimum": 0.0,
+            "maximum_sample_gap_seconds": 0.0034765839809551835,
+            "measurements": {
+              "bound_calls": 0,
+              "bound_ms": 0.0,
+              "inference_calls": 1733,
+              "inference_ms": 0.055,
+              "propagation_ms": 0.0
+            },
+            "metrics": {
+              "allocation": {
+                "intvar_handle_bytes": 8,
+                "prepared_root_positions": 1,
+                "root_positions": 0,
+                "solution_positions": 21,
+                "space_bytes": 488
+              },
+              "clone_bytes": null,
+              "descriptor_bytes": 0,
+              "descriptor_count": 0,
+              "expansions": 1079,
+              "frontier_bytes": null,
+              "preprocessing_ms": 0.132,
+              "search_ms": 0.886,
+              "startup_and_teardown_ms": 95.77245901734754
+            },
+            "proof": "optimal",
+            "proof_reported_ms": 1.027,
+            "quality_at_reported_ms": {
+              "100": 378,
+              "1000": 378
+            },
+            "quality_usable": true,
+            "repetition": 1,
+            "rss_overshoot_bytes": null,
+            "rss_probe_seconds": 0.035490790964104235,
+            "rss_samples": 1,
+            "sampled_peak_rss_bytes": null,
+            "scale": 1,
+            "status": "ok",
+            "termination": "optimal",
+            "termination_reap_seconds": 3.625056706368923e-06,
+            "wall_cap_overshoot_seconds": 0
+          },
+          {
+            "config": "transition-bab",
+            "end_to_end_wall_seconds": 1.4186669579939917,
+            "final_objective": 378,
+            "first_incumbent_reported_ms": 518.469,
+            "gap_to_proved_optimum": 0.0,
+            "maximum_sample_gap_seconds": 0.09896416601259261,
+            "measurements": {
+              "bound_calls": 0,
+              "bound_ms": 0.0,
+              "inference_calls": 0,
+              "inference_ms": 0.0,
+              "propagation_ms": 0.0
+            },
+            "metrics": {
+              "allocation": {
+                "intvar_handle_bytes": 8,
+                "prepared_root_positions": 1,
+                "root_positions": 0,
+                "solution_positions": 21,
+                "space_bytes": 488
+              },
+              "clone_bytes": null,
+              "descriptor_bytes": 0,
+              "descriptor_count": 0,
+              "expansions": 2785283,
+              "frontier_bytes": null,
+              "preprocessing_ms": 0.117,
+              "search_ms": 1389.127,
+              "startup_and_teardown_ms": 29.406957993991682
+            },
+            "proof": "optimal",
+            "proof_reported_ms": 1389.26,
+            "quality_at_reported_ms": {
+              "100": null,
+              "1000": 378
+            },
+            "quality_usable": true,
+            "repetition": 1,
+            "rss_overshoot_bytes": 0,
+            "rss_probe_seconds": 0.5514855431392789,
+            "rss_samples": 15,
+            "sampled_peak_rss_bytes": 2441216,
+            "scale": 1,
+            "status": "ok",
+            "termination": "optimal",
+            "termination_reap_seconds": 1.6660196706652641e-06,
+            "wall_cap_overshoot_seconds": 0
+          }
+        ],
+        "reference_kind": "matching campaign optimality proof",
+        "reference_scaled_cost": 378
+      },
+      {
+        "case": {
+          "family": "Dumas",
+          "id": "variants/Dumas/customer-due-plus-100/n20w100.003.txt",
+          "path": "/private/tmp/open-search-tsptw-selected-network/variants/Dumas/customer-due-plus-100/n20w100.003.txt",
+          "sha256": "2aed1af8ef2756d0ecf902a6c0a9f9916893bb2a65ef9a284e3ff85848c1962d",
+          "variant": "customer-due-plus-100"
+        },
+        "measurements": [
+          {
+            "config": "transition-bab",
+            "end_to_end_wall_seconds": 2.0054478329839185,
+            "final_objective": null,
+            "first_incumbent_reported_ms": null,
+            "gap_to_proved_optimum": null,
+            "maximum_sample_gap_seconds": 0.0975102920201607,
+            "measurements": null,
+            "metrics": {
+              "allocation": null,
+              "clone_bytes": null,
+              "descriptor_bytes": null,
+              "descriptor_count": null,
+              "expansions": null,
+              "frontier_bytes": null,
+              "preprocessing_ms": null,
+              "search_ms": null,
+              "startup_and_teardown_ms": null
+            },
+            "proof": null,
+            "proof_reported_ms": null,
+            "quality_at_reported_ms": {
+              "100": null,
+              "1000": null
+            },
+            "quality_usable": true,
+            "repetition": 0,
+            "rss_overshoot_bytes": 0,
+            "rss_probe_seconds": 0.7884615830262192,
+            "rss_samples": 22,
+            "sampled_peak_rss_bytes": 2408448,
+            "scale": null,
+            "status": "timeout",
+            "termination": "timeout",
+            "termination_reap_seconds": 0.0005177080165594816,
+            "wall_cap_overshoot_seconds": 0.005447832983918488
+          },
+          {
+            "config": "transition-bab-lazy-cheap",
+            "end_to_end_wall_seconds": 2.002301874978002,
+            "final_objective": 310,
+            "first_incumbent_reported_ms": 0.25,
+            "gap_to_proved_optimum": null,
+            "maximum_sample_gap_seconds": 0.09736250003334135,
+            "measurements": null,
+            "metrics": {
+              "allocation": null,
+              "clone_bytes": null,
+              "descriptor_bytes": null,
+              "descriptor_count": null,
+              "expansions": null,
+              "frontier_bytes": null,
+              "preprocessing_ms": null,
+              "search_ms": null,
+              "startup_and_teardown_ms": null
+            },
+            "proof": null,
+            "proof_reported_ms": null,
+            "quality_at_reported_ms": {
+              "100": 347,
+              "1000": 310
+            },
+            "quality_usable": true,
+            "repetition": 0,
+            "rss_overshoot_bytes": 0,
+            "rss_probe_seconds": 0.7948144970578142,
+            "rss_samples": 22,
+            "sampled_peak_rss_bytes": 2523136,
+            "scale": 1,
+            "status": "timeout",
+            "termination": "timeout",
+            "termination_reap_seconds": 0.0005540830316022038,
+            "wall_cap_overshoot_seconds": 0.002301874978002161
+          },
+          {
+            "config": "transition-bab-lazy-unary",
+            "end_to_end_wall_seconds": 2.0038898329949006,
+            "final_objective": 337,
+            "first_incumbent_reported_ms": 1.093,
+            "gap_to_proved_optimum": null,
+            "maximum_sample_gap_seconds": 0.09701829199912027,
+            "measurements": null,
+            "metrics": {
+              "allocation": null,
+              "clone_bytes": null,
+              "descriptor_bytes": null,
+              "descriptor_count": null,
+              "expansions": null,
+              "frontier_bytes": null,
+              "preprocessing_ms": null,
+              "search_ms": null,
+              "startup_and_teardown_ms": null
+            },
+            "proof": null,
+            "proof_reported_ms": null,
+            "quality_at_reported_ms": {
+              "100": 354,
+              "1000": 347
+            },
+            "quality_usable": true,
+            "repetition": 0,
+            "rss_overshoot_bytes": 0,
+            "rss_probe_seconds": 0.7872996618971229,
+            "rss_samples": 22,
+            "sampled_peak_rss_bytes": 2883584,
+            "scale": 1,
+            "status": "timeout",
+            "termination": "timeout",
+            "termination_reap_seconds": 0.0005757089820690453,
+            "wall_cap_overshoot_seconds": 0.003889832994900644
+          },
+          {
+            "config": "transition-cabs",
+            "end_to_end_wall_seconds": 2.0117814589757472,
+            "final_objective": 249,
+            "first_incumbent_reported_ms": 11.3,
+            "gap_to_proved_optimum": null,
+            "maximum_sample_gap_seconds": 0.11928904097294435,
+            "measurements": null,
+            "metrics": {
+              "allocation": null,
+              "clone_bytes": null,
+              "descriptor_bytes": null,
+              "descriptor_count": null,
+              "expansions": null,
+              "frontier_bytes": null,
+              "preprocessing_ms": null,
+              "search_ms": null,
+              "startup_and_teardown_ms": null
+            },
+            "proof": null,
+            "proof_reported_ms": null,
+            "quality_at_reported_ms": {
+              "100": 270,
+              "1000": 249
+            },
+            "quality_usable": true,
+            "repetition": 0,
+            "rss_overshoot_bytes": 0,
+            "rss_probe_seconds": 0.8075690021505579,
+            "rss_samples": 22,
+            "sampled_peak_rss_bytes": 103694336,
+            "scale": 1,
+            "status": "timeout",
+            "termination": "timeout",
+            "termination_reap_seconds": 0.0018419999978505075,
+            "wall_cap_overshoot_seconds": 0.011781458975747228
+          },
+          {
+            "config": "transition-cabs-lazy-cheap",
+            "end_to_end_wall_seconds": 2.0024744169786572,
+            "final_objective": 249,
+            "first_incumbent_reported_ms": 0.297,
+            "gap_to_proved_optimum": null,
+            "maximum_sample_gap_seconds": 0.09684337495127693,
+            "measurements": null,
+            "metrics": {
+              "allocation": null,
+              "clone_bytes": null,
+              "descriptor_bytes": null,
+              "descriptor_count": null,
+              "expansions": null,
+              "frontier_bytes": null,
+              "preprocessing_ms": null,
+              "search_ms": null,
+              "startup_and_teardown_ms": null
+            },
+            "proof": null,
+            "proof_reported_ms": null,
+            "quality_at_reported_ms": {
+              "100": 249,
+              "1000": 249
+            },
+            "quality_usable": true,
+            "repetition": 0,
+            "rss_overshoot_bytes": 0,
+            "rss_probe_seconds": 0.7901035439572297,
+            "rss_samples": 22,
+            "sampled_peak_rss_bytes": 99287040,
+            "scale": 1,
+            "status": "timeout",
+            "termination": "timeout",
+            "termination_reap_seconds": 0.0017702499753795564,
+            "wall_cap_overshoot_seconds": 0.0024744169786572456
+          },
+          {
+            "config": "transition-cabs-lazy-unary",
+            "end_to_end_wall_seconds": 2.016916208958719,
+            "final_objective": 249,
+            "first_incumbent_reported_ms": 1.178,
+            "gap_to_proved_optimum": null,
+            "maximum_sample_gap_seconds": 0.09736304101534188,
+            "measurements": {
+              "bound_calls": 264383,
+              "bound_ms": 6.769,
+              "inference_calls": 624693,
+              "inference_ms": 1553.886,
+              "propagation_ms": 1194.938
+            },
+            "metrics": {
+              "allocation": {
+                "intvar_handle_bytes": 8,
+                "prepared_root_positions": 1,
+                "root_positions": 0,
+                "solution_positions": 21,
+                "space_bytes": 488
+              },
+              "clone_bytes": null,
+              "descriptor_bytes": 0,
+              "descriptor_count": 0,
+              "expansions": 624705,
+              "frontier_bytes": null,
+              "preprocessing_ms": 0.192,
+              "search_ms": 1999.814,
+              "startup_and_teardown_ms": 16.89420895871899
+            },
+            "proof": null,
+            "proof_reported_ms": null,
+            "quality_at_reported_ms": {
+              "100": 271,
+              "1000": 249
+            },
+            "quality_usable": true,
+            "repetition": 0,
+            "rss_overshoot_bytes": 0,
+            "rss_probe_seconds": 0.7852172928978689,
+            "rss_samples": 22,
+            "sampled_peak_rss_bytes": 17088512,
+            "scale": 1,
+            "status": "ok",
+            "termination": "stopped",
+            "termination_reap_seconds": 1.7919810488820076e-06,
+            "wall_cap_overshoot_seconds": 0.016916208958718926
+          },
+          {
+            "config": "transition-cabs-lazy-unary",
+            "end_to_end_wall_seconds": 2.0174620000179857,
+            "final_objective": 249,
+            "first_incumbent_reported_ms": 1.179,
+            "gap_to_proved_optimum": null,
+            "maximum_sample_gap_seconds": 0.10384566697757691,
+            "measurements": {
+              "bound_calls": 263435,
+              "bound_ms": 6.584,
+              "inference_calls": 623039,
+              "inference_ms": 1567.259,
+              "propagation_ms": 1200.572
+            },
+            "metrics": {
+              "allocation": {
+                "intvar_handle_bytes": 8,
+                "prepared_root_positions": 1,
+                "root_positions": 0,
+                "solution_positions": 21,
+                "space_bytes": 488
+              },
+              "clone_bytes": null,
+              "descriptor_bytes": 0,
+              "descriptor_count": 0,
+              "expansions": 623051,
+              "frontier_bytes": null,
+              "preprocessing_ms": 0.189,
+              "search_ms": 1999.811,
+              "startup_and_teardown_ms": 17.44200001798572
+            },
+            "proof": null,
+            "proof_reported_ms": null,
+            "quality_at_reported_ms": {
+              "100": 271,
+              "1000": 249
+            },
+            "quality_usable": true,
+            "repetition": 1,
+            "rss_overshoot_bytes": 0,
+            "rss_probe_seconds": 0.7918920810334384,
+            "rss_samples": 22,
+            "sampled_peak_rss_bytes": 17235968,
+            "scale": 1,
+            "status": "ok",
+            "termination": "stopped",
+            "termination_reap_seconds": 4.169996827840805e-07,
+            "wall_cap_overshoot_seconds": 0.0174620000179857
+          },
+          {
+            "config": "transition-cabs-lazy-cheap",
+            "end_to_end_wall_seconds": 2.0108514170278795,
+            "final_objective": 249,
+            "first_incumbent_reported_ms": 0.303,
+            "gap_to_proved_optimum": null,
+            "maximum_sample_gap_seconds": 0.09725966700352728,
+            "measurements": null,
+            "metrics": {
+              "allocation": null,
+              "clone_bytes": null,
+              "descriptor_bytes": null,
+              "descriptor_count": null,
+              "expansions": null,
+              "frontier_bytes": null,
+              "preprocessing_ms": null,
+              "search_ms": null,
+              "startup_and_teardown_ms": null
+            },
+            "proof": null,
+            "proof_reported_ms": null,
+            "quality_at_reported_ms": {
+              "100": 249,
+              "1000": 249
+            },
+            "quality_usable": true,
+            "repetition": 1,
+            "rss_overshoot_bytes": 0,
+            "rss_probe_seconds": 0.7894864999689162,
+            "rss_samples": 22,
+            "sampled_peak_rss_bytes": 102187008,
+            "scale": 1,
+            "status": "timeout",
+            "termination": "timeout",
+            "termination_reap_seconds": 0.001792416034732014,
+            "wall_cap_overshoot_seconds": 0.010851417027879506
+          },
+          {
+            "config": "transition-cabs",
+            "end_to_end_wall_seconds": 2.002904250053689,
+            "final_objective": 249,
+            "first_incumbent_reported_ms": 11.274,
+            "gap_to_proved_optimum": null,
+            "maximum_sample_gap_seconds": 0.09698958398075774,
+            "measurements": null,
+            "metrics": {
+              "allocation": null,
+              "clone_bytes": null,
+              "descriptor_bytes": null,
+              "descriptor_count": null,
+              "expansions": null,
+              "frontier_bytes": null,
+              "preprocessing_ms": null,
+              "search_ms": null,
+              "startup_and_teardown_ms": null
+            },
+            "proof": null,
+            "proof_reported_ms": null,
+            "quality_at_reported_ms": {
+              "100": 270,
+              "1000": 249
+            },
+            "quality_usable": true,
+            "repetition": 1,
+            "rss_overshoot_bytes": 0,
+            "rss_probe_seconds": 0.7863858331693336,
+            "rss_samples": 22,
+            "sampled_peak_rss_bytes": 104759296,
+            "scale": 1,
+            "status": "timeout",
+            "termination": "timeout",
+            "termination_reap_seconds": 0.0018245000392198563,
+            "wall_cap_overshoot_seconds": 0.0029042500536888838
+          },
+          {
+            "config": "transition-bab-lazy-unary",
+            "end_to_end_wall_seconds": 2.0277936249622144,
+            "final_objective": 337,
+            "first_incumbent_reported_ms": 0.964,
+            "gap_to_proved_optimum": null,
+            "maximum_sample_gap_seconds": 0.10939658398274332,
+            "measurements": {
+              "bound_calls": 0,
+              "bound_ms": 0.0,
+              "inference_calls": 984909,
+              "inference_ms": 1560.062,
+              "propagation_ms": 1126.777
+            },
+            "metrics": {
+              "allocation": {
+                "intvar_handle_bytes": 8,
+                "prepared_root_positions": 1,
+                "root_positions": 0,
+                "solution_positions": 21,
+                "space_bytes": 488
+              },
+              "clone_bytes": null,
+              "descriptor_bytes": 0,
+              "descriptor_count": 0,
+              "expansions": 670183,
+              "frontier_bytes": null,
+              "preprocessing_ms": 0.201,
+              "search_ms": 1999.803,
+              "startup_and_teardown_ms": 27.772624962214422
+            },
+            "proof": null,
+            "proof_reported_ms": null,
+            "quality_at_reported_ms": {
+              "100": 354,
+              "1000": 347
+            },
+            "quality_usable": true,
+            "repetition": 1,
+            "rss_overshoot_bytes": 0,
+            "rss_probe_seconds": 0.8213110409560613,
+            "rss_samples": 22,
+            "sampled_peak_rss_bytes": 2916352,
+            "scale": 1,
+            "status": "ok",
+            "termination": "stopped",
+            "termination_reap_seconds": 4.1601015254855156e-07,
+            "wall_cap_overshoot_seconds": 0.02779362496221438
+          },
+          {
+            "config": "transition-bab-lazy-cheap",
+            "end_to_end_wall_seconds": 2.003565915976651,
+            "final_objective": 310,
+            "first_incumbent_reported_ms": 0.25,
+            "gap_to_proved_optimum": null,
+            "maximum_sample_gap_seconds": 0.0985256660496816,
+            "measurements": null,
+            "metrics": {
+              "allocation": null,
+              "clone_bytes": null,
+              "descriptor_bytes": null,
+              "descriptor_count": null,
+              "expansions": null,
+              "frontier_bytes": null,
+              "preprocessing_ms": null,
+              "search_ms": null,
+              "startup_and_teardown_ms": null
+            },
+            "proof": null,
+            "proof_reported_ms": null,
+            "quality_at_reported_ms": {
+              "100": 347,
+              "1000": 310
+            },
+            "quality_usable": true,
+            "repetition": 1,
+            "rss_overshoot_bytes": 0,
+            "rss_probe_seconds": 0.79386220802553,
+            "rss_samples": 22,
+            "sampled_peak_rss_bytes": 2490368,
+            "scale": 1,
+            "status": "timeout",
+            "termination": "timeout",
+            "termination_reap_seconds": 0.000703624973539263,
+            "wall_cap_overshoot_seconds": 0.003565915976651013
+          },
+          {
+            "config": "transition-bab",
+            "end_to_end_wall_seconds": 2.013342707999982,
+            "final_objective": null,
+            "first_incumbent_reported_ms": null,
+            "gap_to_proved_optimum": null,
+            "maximum_sample_gap_seconds": 0.11450308299390599,
+            "measurements": {
+              "bound_calls": 0,
+              "bound_ms": 0.0,
+              "inference_calls": 0,
+              "inference_ms": 0.0,
+              "propagation_ms": 0.0
+            },
+            "metrics": {
+              "allocation": {
+                "intvar_handle_bytes": 8,
+                "prepared_root_positions": 1,
+                "root_positions": 0,
+                "solution_positions": 0,
+                "space_bytes": 488
+              },
+              "clone_bytes": null,
+              "descriptor_bytes": 0,
+              "descriptor_count": 0,
+              "expansions": 4078207,
+              "frontier_bytes": null,
+              "preprocessing_ms": 0.122,
+              "search_ms": 1999.879,
+              "startup_and_teardown_ms": 13.295707999981914
+            },
+            "proof": null,
+            "proof_reported_ms": null,
+            "quality_at_reported_ms": {
+              "100": null,
+              "1000": null
+            },
+            "quality_usable": true,
+            "repetition": 1,
+            "rss_overshoot_bytes": 0,
+            "rss_probe_seconds": 0.8094270828878507,
+            "rss_samples": 22,
+            "sampled_peak_rss_bytes": 2457600,
+            "scale": null,
+            "status": "ok",
+            "termination": "stopped",
+            "termination_reap_seconds": 4.169996827840805e-07,
+            "wall_cap_overshoot_seconds": 0.01334270799998194
+          }
+        ],
+        "reference_kind": "unavailable; campaign best is not an optimum",
+        "reference_scaled_cost": null
+      },
+      {
+        "case": {
+          "family": "GendreauDumasExtended",
+          "id": "GendreauDumasExtended/n20w120.001.txt",
+          "path": "/private/tmp/open-search-tsptw-selected-network/GendreauDumasExtended/n20w120.001.txt",
+          "sha256": "633d3be7abef529e7faf8bd6094a40f548d8310f41cb2f3014d21b550ebf5fba",
+          "variant": null
+        },
+        "measurements": [
+          {
+            "config": "transition-bab",
+            "end_to_end_wall_seconds": 2.002970458008349,
+            "final_objective": 305,
+            "first_incumbent_reported_ms": 1482.156,
+            "gap_to_proved_optimum": null,
+            "maximum_sample_gap_seconds": 0.0973331659915857,
+            "measurements": null,
+            "metrics": {
+              "allocation": null,
+              "clone_bytes": null,
+              "descriptor_bytes": null,
+              "descriptor_count": null,
+              "expansions": null,
+              "frontier_bytes": null,
+              "preprocessing_ms": null,
+              "search_ms": null,
+              "startup_and_teardown_ms": null
+            },
+            "proof": null,
+            "proof_reported_ms": null,
+            "quality_at_reported_ms": {
+              "100": null,
+              "1000": null
+            },
+            "quality_usable": true,
+            "repetition": 0,
+            "rss_overshoot_bytes": 0,
+            "rss_probe_seconds": 0.7817426642868668,
+            "rss_samples": 22,
+            "sampled_peak_rss_bytes": 2523136,
+            "scale": 1,
+            "status": "timeout",
+            "termination": "timeout",
+            "termination_reap_seconds": 0.0005692500271834433,
+            "wall_cap_overshoot_seconds": 0.002970458008348942
+          },
+          {
+            "config": "transition-bab-lazy-cheap",
+            "end_to_end_wall_seconds": 2.0011469590244815,
+            "final_objective": 302,
+            "first_incumbent_reported_ms": 0.263,
+            "gap_to_proved_optimum": null,
+            "maximum_sample_gap_seconds": 0.0972864159848541,
+            "measurements": null,
+            "metrics": {
+              "allocation": null,
+              "clone_bytes": null,
+              "descriptor_bytes": null,
+              "descriptor_count": null,
+              "expansions": null,
+              "frontier_bytes": null,
+              "preprocessing_ms": null,
+              "search_ms": null,
+              "startup_and_teardown_ms": null
+            },
+            "proof": null,
+            "proof_reported_ms": null,
+            "quality_at_reported_ms": {
+              "100": 305,
+              "1000": 302
+            },
+            "quality_usable": true,
+            "repetition": 0,
+            "rss_overshoot_bytes": 0,
+            "rss_probe_seconds": 0.7898561688489281,
+            "rss_samples": 22,
+            "sampled_peak_rss_bytes": 2539520,
+            "scale": 1,
+            "status": "timeout",
+            "termination": "timeout",
+            "termination_reap_seconds": 0.0005701250047422945,
+            "wall_cap_overshoot_seconds": 0.0011469590244814754
+          },
+          {
+            "config": "transition-bab-lazy-unary",
+            "end_to_end_wall_seconds": 2.0061135409632698,
+            "final_objective": 305,
+            "first_incumbent_reported_ms": 1.417,
+            "gap_to_proved_optimum": null,
+            "maximum_sample_gap_seconds": 0.09730625001247972,
+            "measurements": null,
+            "metrics": {
+              "allocation": null,
+              "clone_bytes": null,
+              "descriptor_bytes": null,
+              "descriptor_count": null,
+              "expansions": null,
+              "frontier_bytes": null,
+              "preprocessing_ms": null,
+              "search_ms": null,
+              "startup_and_teardown_ms": null
+            },
+            "proof": null,
+            "proof_reported_ms": null,
+            "quality_at_reported_ms": {
+              "100": 305,
+              "1000": 305
+            },
+            "quality_usable": true,
+            "repetition": 0,
+            "rss_overshoot_bytes": 0,
+            "rss_probe_seconds": 0.7954300410347059,
+            "rss_samples": 22,
+            "sampled_peak_rss_bytes": 2916352,
+            "scale": 1,
+            "status": "timeout",
+            "termination": "timeout",
+            "termination_reap_seconds": 0.0005694999708794057,
+            "wall_cap_overshoot_seconds": 0.00611354096326977
+          },
+          {
+            "config": "transition-cabs",
+            "end_to_end_wall_seconds": 2.0040974589646794,
+            "final_objective": 267,
+            "first_incumbent_reported_ms": 2.952,
+            "gap_to_proved_optimum": null,
+            "maximum_sample_gap_seconds": 0.09770833398215473,
+            "measurements": null,
+            "metrics": {
+              "allocation": null,
+              "clone_bytes": null,
+              "descriptor_bytes": null,
+              "descriptor_count": null,
+              "expansions": null,
+              "frontier_bytes": null,
+              "preprocessing_ms": null,
+              "search_ms": null,
+              "startup_and_teardown_ms": null
+            },
+            "proof": null,
+            "proof_reported_ms": null,
+            "quality_at_reported_ms": {
+              "100": 267,
+              "1000": 267
+            },
+            "quality_usable": true,
+            "repetition": 0,
+            "rss_overshoot_bytes": 0,
+            "rss_probe_seconds": 0.7918685449985787,
+            "rss_samples": 22,
+            "sampled_peak_rss_bytes": 103120896,
+            "scale": 1,
+            "status": "timeout",
+            "termination": "timeout",
+            "termination_reap_seconds": 0.001826042018365115,
+            "wall_cap_overshoot_seconds": 0.00409745896467939
+          },
+          {
+            "config": "transition-cabs-lazy-cheap",
+            "end_to_end_wall_seconds": 2.0054432079778053,
+            "final_objective": 267,
+            "first_incumbent_reported_ms": 0.288,
+            "gap_to_proved_optimum": null,
+            "maximum_sample_gap_seconds": 0.09819170797709376,
+            "measurements": null,
+            "metrics": {
+              "allocation": null,
+              "clone_bytes": null,
+              "descriptor_bytes": null,
+              "descriptor_count": null,
+              "expansions": null,
+              "frontier_bytes": null,
+              "preprocessing_ms": null,
+              "search_ms": null,
+              "startup_and_teardown_ms": null
+            },
+            "proof": null,
+            "proof_reported_ms": null,
+            "quality_at_reported_ms": {
+              "100": 267,
+              "1000": 267
+            },
+            "quality_usable": true,
+            "repetition": 0,
+            "rss_overshoot_bytes": 0,
+            "rss_probe_seconds": 0.7919986671186052,
+            "rss_samples": 22,
+            "sampled_peak_rss_bytes": 98566144,
+            "scale": 1,
+            "status": "timeout",
+            "termination": "timeout",
+            "termination_reap_seconds": 0.0017455409979447722,
+            "wall_cap_overshoot_seconds": 0.005443207977805287
+          },
+          {
+            "config": "transition-cabs-lazy-unary",
+            "end_to_end_wall_seconds": 2.005281209014356,
+            "final_objective": 267,
+            "first_incumbent_reported_ms": 0.941,
+            "gap_to_proved_optimum": null,
+            "maximum_sample_gap_seconds": 0.0966270409990102,
+            "measurements": null,
+            "metrics": {
+              "allocation": null,
+              "clone_bytes": null,
+              "descriptor_bytes": null,
+              "descriptor_count": null,
+              "expansions": null,
+              "frontier_bytes": null,
+              "preprocessing_ms": null,
+              "search_ms": null,
+              "startup_and_teardown_ms": null
+            },
+            "proof": null,
+            "proof_reported_ms": null,
+            "quality_at_reported_ms": {
+              "100": 267,
+              "1000": 267
+            },
+            "quality_usable": true,
+            "repetition": 0,
+            "rss_overshoot_bytes": 0,
+            "rss_probe_seconds": 0.7817516227951273,
+            "rss_samples": 22,
+            "sampled_peak_rss_bytes": 26935296,
+            "scale": 1,
+            "status": "timeout",
+            "termination": "timeout",
+            "termination_reap_seconds": 0.0009819999686442316,
+            "wall_cap_overshoot_seconds": 0.005281209014356136
+          },
+          {
+            "config": "transition-cabs-lazy-unary",
+            "end_to_end_wall_seconds": 2.0062661669799127,
+            "final_objective": 267,
+            "first_incumbent_reported_ms": 0.947,
+            "gap_to_proved_optimum": null,
+            "maximum_sample_gap_seconds": 0.09827104100259021,
+            "measurements": null,
+            "metrics": {
+              "allocation": null,
+              "clone_bytes": null,
+              "descriptor_bytes": null,
+              "descriptor_count": null,
+              "expansions": null,
+              "frontier_bytes": null,
+              "preprocessing_ms": null,
+              "search_ms": null,
+              "startup_and_teardown_ms": null
+            },
+            "proof": null,
+            "proof_reported_ms": null,
+            "quality_at_reported_ms": {
+              "100": 267,
+              "1000": 267
+            },
+            "quality_usable": true,
+            "repetition": 1,
+            "rss_overshoot_bytes": 0,
+            "rss_probe_seconds": 0.7882397499633953,
+            "rss_samples": 22,
+            "sampled_peak_rss_bytes": 27131904,
+            "scale": 1,
+            "status": "timeout",
+            "termination": "timeout",
+            "termination_reap_seconds": 0.0008657500147819519,
+            "wall_cap_overshoot_seconds": 0.0062661669799126685
+          },
+          {
+            "config": "transition-cabs-lazy-cheap",
+            "end_to_end_wall_seconds": 2.0021997920121066,
+            "final_objective": 267,
+            "first_incumbent_reported_ms": 0.3,
+            "gap_to_proved_optimum": null,
+            "maximum_sample_gap_seconds": 0.09676095901522785,
+            "measurements": null,
+            "metrics": {
+              "allocation": null,
+              "clone_bytes": null,
+              "descriptor_bytes": null,
+              "descriptor_count": null,
+              "expansions": null,
+              "frontier_bytes": null,
+              "preprocessing_ms": null,
+              "search_ms": null,
+              "startup_and_teardown_ms": null
+            },
+            "proof": null,
+            "proof_reported_ms": null,
+            "quality_at_reported_ms": {
+              "100": 267,
+              "1000": 267
+            },
+            "quality_usable": true,
+            "repetition": 1,
+            "rss_overshoot_bytes": 0,
+            "rss_probe_seconds": 0.7863480009837076,
+            "rss_samples": 22,
+            "sampled_peak_rss_bytes": 100335616,
+            "scale": 1,
+            "status": "timeout",
+            "termination": "timeout",
+            "termination_reap_seconds": 0.0016844579949975014,
+            "wall_cap_overshoot_seconds": 0.0021997920121066272
+          },
+          {
+            "config": "transition-cabs",
+            "end_to_end_wall_seconds": 2.0269907920155674,
+            "final_objective": 267,
+            "first_incumbent_reported_ms": 2.887,
+            "gap_to_proved_optimum": null,
+            "maximum_sample_gap_seconds": 0.17855420900741592,
+            "measurements": {
+              "bound_calls": 2426888,
+              "bound_ms": 65.371,
+              "inference_calls": 0,
+              "inference_ms": 0.0,
+              "propagation_ms": 0.0
+            },
+            "metrics": {
+              "allocation": {
+                "intvar_handle_bytes": 8,
+                "prepared_root_positions": 1,
+                "root_positions": 0,
+                "solution_positions": 21,
+                "space_bytes": 488
+              },
+              "clone_bytes": null,
+              "descriptor_bytes": 0,
+              "descriptor_count": 0,
+              "expansions": 2498875,
+              "frontier_bytes": null,
+              "preprocessing_ms": 0.126,
+              "search_ms": 1999.875,
+              "startup_and_teardown_ms": 26.974792015567346
+            },
+            "proof": null,
+            "proof_reported_ms": null,
+            "quality_at_reported_ms": {
+              "100": 267,
+              "1000": 267
+            },
+            "quality_usable": true,
+            "repetition": 1,
+            "rss_overshoot_bytes": 0,
+            "rss_probe_seconds": 0.8717493339790963,
+            "rss_samples": 21,
+            "sampled_peak_rss_bytes": 103825408,
+            "scale": 1,
+            "status": "ok",
+            "termination": "stopped",
+            "termination_reap_seconds": 5.00003807246685e-07,
+            "wall_cap_overshoot_seconds": 0.026990792015567422
+          },
+          {
+            "config": "transition-bab-lazy-unary",
+            "end_to_end_wall_seconds": 2.0076152499532327,
+            "final_objective": 305,
+            "first_incumbent_reported_ms": 1.395,
+            "gap_to_proved_optimum": null,
+            "maximum_sample_gap_seconds": 0.09733200003392994,
+            "measurements": {
+              "bound_calls": 0,
+              "bound_ms": 0.0,
+              "inference_calls": 926851,
+              "inference_ms": 1576.976,
+              "propagation_ms": 1179.711
+            },
+            "metrics": {
+              "allocation": {
+                "intvar_handle_bytes": 8,
+                "prepared_root_positions": 1,
+                "root_positions": 0,
+                "solution_positions": 21,
+                "space_bytes": 488
+              },
+              "clone_bytes": null,
+              "descriptor_bytes": 0,
+              "descriptor_count": 0,
+              "expansions": 627236,
+              "frontier_bytes": null,
+              "preprocessing_ms": 0.189,
+              "search_ms": 1999.813,
+              "startup_and_teardown_ms": 7.5962499532327
+            },
+            "proof": null,
+            "proof_reported_ms": null,
+            "quality_at_reported_ms": {
+              "100": 305,
+              "1000": 305
+            },
+            "quality_usable": true,
+            "repetition": 1,
+            "rss_overshoot_bytes": 0,
+            "rss_probe_seconds": 0.7860742941265926,
+            "rss_samples": 22,
+            "sampled_peak_rss_bytes": 2899968,
+            "scale": 1,
+            "status": "ok",
+            "termination": "stopped",
+            "termination_reap_seconds": 9.170034900307655e-07,
+            "wall_cap_overshoot_seconds": 0.007615249953232706
+          },
+          {
+            "config": "transition-bab-lazy-cheap",
+            "end_to_end_wall_seconds": 2.0096187089802697,
+            "final_objective": 302,
+            "first_incumbent_reported_ms": 0.263,
+            "gap_to_proved_optimum": null,
+            "maximum_sample_gap_seconds": 0.09740033303387463,
+            "measurements": {
+              "bound_calls": 0,
+              "bound_ms": 0.0,
+              "inference_calls": 4874099,
+              "inference_ms": 125.113,
+              "propagation_ms": 0.0
+            },
+            "metrics": {
+              "allocation": {
+                "intvar_handle_bytes": 8,
+                "prepared_root_positions": 1,
+                "root_positions": 0,
+                "solution_positions": 21,
+                "space_bytes": 488
+              },
+              "clone_bytes": null,
+              "descriptor_bytes": 0,
+              "descriptor_count": 0,
+              "expansions": 3268871,
+              "frontier_bytes": null,
+              "preprocessing_ms": 0.123,
+              "search_ms": 1999.879,
+              "startup_and_teardown_ms": 9.598708980269748
+            },
+            "proof": null,
+            "proof_reported_ms": null,
+            "quality_at_reported_ms": {
+              "100": 305,
+              "1000": 302
+            },
+            "quality_usable": true,
+            "repetition": 1,
+            "rss_overshoot_bytes": 0,
+            "rss_probe_seconds": 0.7799009179580025,
+            "rss_samples": 22,
+            "sampled_peak_rss_bytes": 2490368,
+            "scale": 1,
+            "status": "ok",
+            "termination": "stopped",
+            "termination_reap_seconds": 8.750357665121555e-07,
+            "wall_cap_overshoot_seconds": 0.00961870898026973
+          },
+          {
+            "config": "transition-bab",
+            "end_to_end_wall_seconds": 2.0109924590215087,
+            "final_objective": 305,
+            "first_incumbent_reported_ms": 1483.03,
+            "gap_to_proved_optimum": null,
+            "maximum_sample_gap_seconds": 0.09867791703436524,
+            "measurements": {
+              "bound_calls": 0,
+              "bound_ms": 0.0,
+              "inference_calls": 0,
+              "inference_ms": 0.0,
+              "propagation_ms": 0.0
+            },
+            "metrics": {
+              "allocation": {
+                "intvar_handle_bytes": 8,
+                "prepared_root_positions": 1,
+                "root_positions": 0,
+                "solution_positions": 21,
+                "space_bytes": 488
+              },
+              "clone_bytes": null,
+              "descriptor_bytes": 0,
+              "descriptor_count": 0,
+              "expansions": 4020208,
+              "frontier_bytes": null,
+              "preprocessing_ms": 0.107,
+              "search_ms": 1999.894,
+              "startup_and_teardown_ms": 10.976459021508617
+            },
+            "proof": null,
+            "proof_reported_ms": null,
+            "quality_at_reported_ms": {
+              "100": null,
+              "1000": null
+            },
+            "quality_usable": true,
+            "repetition": 1,
+            "rss_overshoot_bytes": 0,
+            "rss_probe_seconds": 0.7908349960343912,
+            "rss_samples": 22,
+            "sampled_peak_rss_bytes": 2490368,
+            "scale": 1,
+            "status": "ok",
+            "termination": "stopped",
+            "termination_reap_seconds": 4.5797787606716156e-07,
+            "wall_cap_overshoot_seconds": 0.010992459021508694
+          }
+        ],
+        "reference_kind": "unavailable; campaign best is not an optimum",
+        "reference_scaled_cost": null
+      },
+      {
+        "case": {
+          "family": "SolomonPotvinBengio",
+          "id": "SolomonPotvinBengio/rc_201.1.txt",
+          "path": "/private/tmp/open-search-tsptw-selected-network/SolomonPotvinBengio/rc_201.1.txt",
+          "sha256": "e0c1dfb4fb08559c01c3ab3193316269fa8a3a215d529e0cc893ef300659766f",
+          "variant": null
+        },
+        "measurements": [
+          {
+            "config": "transition-bab",
+            "end_to_end_wall_seconds": 2.004688457993325,
+            "final_objective": null,
+            "first_incumbent_reported_ms": null,
+            "gap_to_proved_optimum": null,
+            "maximum_sample_gap_seconds": 0.0973043330013752,
+            "measurements": null,
+            "metrics": {
+              "allocation": null,
+              "clone_bytes": null,
+              "descriptor_bytes": null,
+              "descriptor_count": null,
+              "expansions": null,
+              "frontier_bytes": null,
+              "preprocessing_ms": null,
+              "search_ms": null,
+              "startup_and_teardown_ms": null
+            },
+            "proof": null,
+            "proof_reported_ms": null,
+            "quality_at_reported_ms": {
+              "100": null,
+              "1000": null
+            },
+            "quality_usable": true,
+            "repetition": 0,
+            "rss_overshoot_bytes": 0,
+            "rss_probe_seconds": 0.7957067069364712,
+            "rss_samples": 22,
+            "sampled_peak_rss_bytes": 2473984,
+            "scale": null,
+            "status": "timeout",
+            "termination": "timeout",
+            "termination_reap_seconds": 0.0005507089663296938,
+            "wall_cap_overshoot_seconds": 0.004688457993324846
+          },
+          {
+            "config": "transition-bab-lazy-cheap",
+            "end_to_end_wall_seconds": 0.580493709014263,
+            "final_objective": 4445425,
+            "first_incumbent_reported_ms": 0.325,
+            "gap_to_proved_optimum": 0.0,
+            "maximum_sample_gap_seconds": 0.09730991598917171,
+            "measurements": {
+              "bound_calls": 0,
+              "bound_ms": 0.0,
+              "inference_calls": 1386948,
+              "inference_ms": 35.054,
+              "propagation_ms": 0.0
+            },
+            "metrics": {
+              "allocation": {
+                "intvar_handle_bytes": 8,
+                "prepared_root_positions": 1,
+                "root_positions": 0,
+                "solution_positions": 20,
+                "space_bytes": 488
+              },
+              "clone_bytes": null,
+              "descriptor_bytes": 0,
+              "descriptor_count": 0,
+              "expansions": 923985,
+              "frontier_bytes": null,
+              "preprocessing_ms": 0.148,
+              "search_ms": 550.791,
+              "startup_and_teardown_ms": 29.539709014263053
+            },
+            "proof": "optimal",
+            "proof_reported_ms": 550.954,
+            "quality_at_reported_ms": {
+              "100": 5061437,
+              "1000": 4445425
+            },
+            "quality_usable": true,
+            "repetition": 0,
+            "rss_overshoot_bytes": 0,
+            "rss_probe_seconds": 0.2158567070728168,
+            "rss_samples": 6,
+            "sampled_peak_rss_bytes": 2506752,
+            "scale": 10000,
+            "status": "ok",
+            "termination": "optimal",
+            "termination_reap_seconds": 5.790963768959045e-06,
+            "wall_cap_overshoot_seconds": 0
+          },
+          {
+            "config": "transition-bab-lazy-unary",
+            "end_to_end_wall_seconds": 2.018044083029963,
+            "final_objective": 4476347,
+            "first_incumbent_reported_ms": 1.542,
+            "gap_to_proved_optimum": 0.006955915351175647,
+            "maximum_sample_gap_seconds": 0.09760733298026025,
+            "measurements": {
+              "bound_calls": 0,
+              "bound_ms": 0.0,
+              "inference_calls": 1054588,
+              "inference_ms": 1548.63,
+              "propagation_ms": 1110.744
+            },
+            "metrics": {
+              "allocation": {
+                "intvar_handle_bytes": 8,
+                "prepared_root_positions": 1,
+                "root_positions": 0,
+                "solution_positions": 20,
+                "space_bytes": 488
+              },
+              "clone_bytes": null,
+              "descriptor_bytes": 0,
+              "descriptor_count": 0,
+              "expansions": 704400,
+              "frontier_bytes": null,
+              "preprocessing_ms": 0.212,
+              "search_ms": 1999.789,
+              "startup_and_teardown_ms": 18.027083029963023
+            },
+            "proof": null,
+            "proof_reported_ms": null,
+            "quality_at_reported_ms": {
+              "100": 5217715,
+              "1000": 5039994
+            },
+            "quality_usable": true,
+            "repetition": 0,
+            "rss_overshoot_bytes": 0,
+            "rss_probe_seconds": 0.795345499063842,
+            "rss_samples": 22,
+            "sampled_peak_rss_bytes": 2981888,
+            "scale": 10000,
+            "status": "ok",
+            "termination": "stopped",
+            "termination_reap_seconds": 5.830079317092896e-07,
+            "wall_cap_overshoot_seconds": 0.018044083029963076
+          },
+          {
+            "config": "transition-cabs",
+            "end_to_end_wall_seconds": 2.0090842499630526,
+            "final_objective": 4445425,
+            "first_incumbent_reported_ms": 64.087,
+            "gap_to_proved_optimum": 0.0,
+            "maximum_sample_gap_seconds": 0.09639766701729968,
+            "measurements": null,
+            "metrics": {
+              "allocation": null,
+              "clone_bytes": null,
+              "descriptor_bytes": null,
+              "descriptor_count": null,
+              "expansions": null,
+              "frontier_bytes": null,
+              "preprocessing_ms": null,
+              "search_ms": null,
+              "startup_and_teardown_ms": null
+            },
+            "proof": null,
+            "proof_reported_ms": null,
+            "quality_at_reported_ms": {
+              "100": 4445425,
+              "1000": 4445425
+            },
+            "quality_usable": true,
+            "repetition": 0,
+            "rss_overshoot_bytes": 0,
+            "rss_probe_seconds": 0.7905464179348201,
+            "rss_samples": 22,
+            "sampled_peak_rss_bytes": 187039744,
+            "scale": 10000,
+            "status": "timeout",
+            "termination": "timeout",
+            "termination_reap_seconds": 0.0026144160074181855,
+            "wall_cap_overshoot_seconds": 0.00908424996305257
+          },
+          {
+            "config": "transition-cabs-lazy-cheap",
+            "end_to_end_wall_seconds": 1.123474583029747,
+            "final_objective": 4445425,
+            "first_incumbent_reported_ms": 0.413,
+            "gap_to_proved_optimum": 0.0,
+            "maximum_sample_gap_seconds": 0.09643045801203698,
+            "measurements": {
+              "bound_calls": 450544,
+              "bound_ms": 11.157,
+              "inference_calls": 1708453,
+              "inference_ms": 44.767,
+              "propagation_ms": 0.0
+            },
+            "metrics": {
+              "allocation": {
+                "intvar_handle_bytes": 8,
+                "prepared_root_positions": 1,
+                "root_positions": 0,
+                "solution_positions": 20,
+                "space_bytes": 488
+              },
+              "clone_bytes": null,
+              "descriptor_bytes": 0,
+              "descriptor_count": 0,
+              "expansions": 1708468,
+              "frontier_bytes": null,
+              "preprocessing_ms": 0.142,
+              "search_ms": 1102.409,
+              "startup_and_teardown_ms": 20.90258302974712
+            },
+            "proof": "optimal",
+            "proof_reported_ms": 1102.572,
+            "quality_at_reported_ms": {
+              "100": 4445425,
+              "1000": 4445425
+            },
+            "quality_usable": true,
+            "repetition": 0,
+            "rss_overshoot_bytes": 0,
+            "rss_probe_seconds": 0.42876570898806676,
+            "rss_samples": 12,
+            "sampled_peak_rss_bytes": 98435072,
+            "scale": 10000,
+            "status": "ok",
+            "termination": "optimal",
+            "termination_reap_seconds": 1.8749851733446121e-06,
+            "wall_cap_overshoot_seconds": 0
+          },
+          {
+            "config": "transition-cabs-lazy-unary",
+            "end_to_end_wall_seconds": 2.002119834010955,
+            "final_objective": 4445425,
+            "first_incumbent_reported_ms": 0.699,
+            "gap_to_proved_optimum": 0.0,
+            "maximum_sample_gap_seconds": 0.09751545795006678,
+            "measurements": null,
+            "metrics": {
+              "allocation": null,
+              "clone_bytes": null,
+              "descriptor_bytes": null,
+              "descriptor_count": null,
+              "expansions": null,
+              "frontier_bytes": null,
+              "preprocessing_ms": null,
+              "search_ms": null,
+              "startup_and_teardown_ms": null
+            },
+            "proof": null,
+            "proof_reported_ms": null,
+            "quality_at_reported_ms": {
+              "100": 4445425,
+              "1000": 4445425
+            },
+            "quality_usable": true,
+            "repetition": 0,
+            "rss_overshoot_bytes": 0,
+            "rss_probe_seconds": 0.7903453342150897,
+            "rss_samples": 22,
+            "sampled_peak_rss_bytes": 80576512,
+            "scale": 10000,
+            "status": "timeout",
+            "termination": "timeout",
+            "termination_reap_seconds": 0.0014950829790905118,
+            "wall_cap_overshoot_seconds": 0.0021198340109549463
+          },
+          {
+            "config": "transition-cabs-lazy-unary",
+            "end_to_end_wall_seconds": 2.001805958978366,
+            "final_objective": 4445425,
+            "first_incumbent_reported_ms": 0.706,
+            "gap_to_proved_optimum": 0.0,
+            "maximum_sample_gap_seconds": 0.09694908297387883,
+            "measurements": null,
+            "metrics": {
+              "allocation": null,
+              "clone_bytes": null,
+              "descriptor_bytes": null,
+              "descriptor_count": null,
+              "expansions": null,
+              "frontier_bytes": null,
+              "preprocessing_ms": null,
+              "search_ms": null,
+              "startup_and_teardown_ms": null
+            },
+            "proof": null,
+            "proof_reported_ms": null,
+            "quality_at_reported_ms": {
+              "100": 4445425,
+              "1000": 4445425
+            },
+            "quality_usable": true,
+            "repetition": 1,
+            "rss_overshoot_bytes": 0,
+            "rss_probe_seconds": 0.783147252863273,
+            "rss_samples": 22,
+            "sampled_peak_rss_bytes": 80936960,
+            "scale": 10000,
+            "status": "timeout",
+            "termination": "timeout",
+            "termination_reap_seconds": 0.00156879099085927,
+            "wall_cap_overshoot_seconds": 0.0018059589783661067
+          },
+          {
+            "config": "transition-cabs-lazy-cheap",
+            "end_to_end_wall_seconds": 1.1208939159987494,
+            "final_objective": 4445425,
+            "first_incumbent_reported_ms": 0.435,
+            "gap_to_proved_optimum": 0.0,
+            "maximum_sample_gap_seconds": 0.0979892080067657,
+            "measurements": {
+              "bound_calls": 450544,
+              "bound_ms": 11.205,
+              "inference_calls": 1708453,
+              "inference_ms": 45.164,
+              "propagation_ms": 0.0
+            },
+            "metrics": {
+              "allocation": {
+                "intvar_handle_bytes": 8,
+                "prepared_root_positions": 1,
+                "root_positions": 0,
+                "solution_positions": 20,
+                "space_bytes": 488
+              },
+              "clone_bytes": null,
+              "descriptor_bytes": 0,
+              "descriptor_count": 0,
+              "expansions": 1708468,
+              "frontier_bytes": null,
+              "preprocessing_ms": 0.147,
+              "search_ms": 1104.706,
+              "startup_and_teardown_ms": 16.021915998749364
+            },
+            "proof": "optimal",
+            "proof_reported_ms": 1104.872,
+            "quality_at_reported_ms": {
+              "100": 4445425,
+              "1000": 4445425
+            },
+            "quality_usable": true,
+            "repetition": 1,
+            "rss_overshoot_bytes": 0,
+            "rss_probe_seconds": 0.43729366798652336,
+            "rss_samples": 12,
+            "sampled_peak_rss_bytes": 99811328,
+            "scale": 10000,
+            "status": "ok",
+            "termination": "optimal",
+            "termination_reap_seconds": 1.915963366627693e-06,
+            "wall_cap_overshoot_seconds": 0
+          },
+          {
+            "config": "transition-cabs",
+            "end_to_end_wall_seconds": 2.0034055830328725,
+            "final_objective": 4445425,
+            "first_incumbent_reported_ms": 61.275,
+            "gap_to_proved_optimum": 0.0,
+            "maximum_sample_gap_seconds": 0.09736083401367068,
+            "measurements": null,
+            "metrics": {
+              "allocation": null,
+              "clone_bytes": null,
+              "descriptor_bytes": null,
+              "descriptor_count": null,
+              "expansions": null,
+              "frontier_bytes": null,
+              "preprocessing_ms": null,
+              "search_ms": null,
+              "startup_and_teardown_ms": null
+            },
+            "proof": null,
+            "proof_reported_ms": null,
+            "quality_at_reported_ms": {
+              "100": 4445425,
+              "1000": 4445425
+            },
+            "quality_usable": true,
+            "repetition": 1,
+            "rss_overshoot_bytes": 0,
+            "rss_probe_seconds": 0.7956708751153201,
+            "rss_samples": 22,
+            "sampled_peak_rss_bytes": 188268544,
+            "scale": 10000,
+            "status": "timeout",
+            "termination": "timeout",
+            "termination_reap_seconds": 0.002590416988823563,
+            "wall_cap_overshoot_seconds": 0.003405583032872528
+          },
+          {
+            "config": "transition-bab-lazy-unary",
+            "end_to_end_wall_seconds": 2.012138749996666,
+            "final_objective": 4445425,
+            "first_incumbent_reported_ms": 1.542,
+            "gap_to_proved_optimum": 0.0,
+            "maximum_sample_gap_seconds": 0.09774045797530562,
+            "measurements": {
+              "bound_calls": 0,
+              "bound_ms": 0.0,
+              "inference_calls": 1066306,
+              "inference_ms": 1545.946,
+              "propagation_ms": 1116.778
+            },
+            "metrics": {
+              "allocation": {
+                "intvar_handle_bytes": 8,
+                "prepared_root_positions": 1,
+                "root_positions": 0,
+                "solution_positions": 20,
+                "space_bytes": 488
+              },
+              "clone_bytes": null,
+              "descriptor_bytes": 0,
+              "descriptor_count": 0,
+              "expansions": 712302,
+              "frontier_bytes": null,
+              "preprocessing_ms": 0.209,
+              "search_ms": 1999.796,
+              "startup_and_teardown_ms": 12.120749996665836
+            },
+            "proof": null,
+            "proof_reported_ms": null,
+            "quality_at_reported_ms": {
+              "100": 5217715,
+              "1000": 5039994
+            },
+            "quality_usable": true,
+            "repetition": 1,
+            "rss_overshoot_bytes": 0,
+            "rss_probe_seconds": 0.7827272509457543,
+            "rss_samples": 22,
+            "sampled_peak_rss_bytes": 2932736,
+            "scale": 10000,
+            "status": "ok",
+            "termination": "stopped",
+            "termination_reap_seconds": 5.00003807246685e-07,
+            "wall_cap_overshoot_seconds": 0.012138749996665865
+          },
+          {
+            "config": "transition-bab-lazy-cheap",
+            "end_to_end_wall_seconds": 0.5618067919858731,
+            "final_objective": 4445425,
+            "first_incumbent_reported_ms": 0.325,
+            "gap_to_proved_optimum": 0.0,
+            "maximum_sample_gap_seconds": 0.09644045896129683,
+            "measurements": {
+              "bound_calls": 0,
+              "bound_ms": 0.0,
+              "inference_calls": 1386948,
+              "inference_ms": 34.91,
+              "propagation_ms": 0.0
+            },
+            "metrics": {
+              "allocation": {
+                "intvar_handle_bytes": 8,
+                "prepared_root_positions": 1,
+                "root_positions": 0,
+                "solution_positions": 20,
+                "space_bytes": 488
+              },
+              "clone_bytes": null,
+              "descriptor_bytes": 0,
+              "descriptor_count": 0,
+              "expansions": 923985,
+              "frontier_bytes": null,
+              "preprocessing_ms": 0.15,
+              "search_ms": 551.898,
+              "startup_and_teardown_ms": 9.739791985873126
+            },
+            "proof": "optimal",
+            "proof_reported_ms": 552.067,
+            "quality_at_reported_ms": {
+              "100": 5061437,
+              "1000": 4445425
+            },
+            "quality_usable": true,
+            "repetition": 1,
+            "rss_overshoot_bytes": 0,
+            "rss_probe_seconds": 0.2128655829001218,
+            "rss_samples": 6,
+            "sampled_peak_rss_bytes": 2490368,
+            "scale": 10000,
+            "status": "ok",
+            "termination": "optimal",
+            "termination_reap_seconds": 1.667009200900793e-06,
+            "wall_cap_overshoot_seconds": 0
+          },
+          {
+            "config": "transition-bab",
+            "end_to_end_wall_seconds": 2.0191828329698183,
+            "final_objective": null,
+            "first_incumbent_reported_ms": null,
+            "gap_to_proved_optimum": null,
+            "maximum_sample_gap_seconds": 0.09724608296528459,
+            "measurements": {
+              "bound_calls": 0,
+              "bound_ms": 0.0,
+              "inference_calls": 0,
+              "inference_ms": 0.0,
+              "propagation_ms": 0.0
+            },
+            "metrics": {
+              "allocation": {
+                "intvar_handle_bytes": 8,
+                "prepared_root_positions": 1,
+                "root_positions": 0,
+                "solution_positions": 0,
+                "space_bytes": 488
+              },
+              "clone_bytes": null,
+              "descriptor_bytes": 0,
+              "descriptor_count": 0,
+              "expansions": 3974257,
+              "frontier_bytes": null,
+              "preprocessing_ms": 0.131,
+              "search_ms": 1999.87,
+              "startup_and_teardown_ms": 19.134832969818262
+            },
+            "proof": null,
+            "proof_reported_ms": null,
+            "quality_at_reported_ms": {
+              "100": null,
+              "1000": null
+            },
+            "quality_usable": true,
+            "repetition": 1,
+            "rss_overshoot_bytes": 0,
+            "rss_probe_seconds": 0.7854762091301382,
+            "rss_samples": 22,
+            "sampled_peak_rss_bytes": 2473984,
+            "scale": null,
+            "status": "ok",
+            "termination": "stopped",
+            "termination_reap_seconds": 7.079797796905041e-07,
+            "wall_cap_overshoot_seconds": 0.019182832969818264
+          }
+        ],
+        "reference_kind": "matching campaign optimality proof",
+        "reference_scaled_cost": 4445425
+      },
+      {
+        "case": {
+          "family": "tiny",
+          "id": "tiny/late-customer.txt",
+          "path": "/Users/zayenz/.codex/worktrees/2d06/gecode/examples/data/tsptw/tiny/late-customer.txt",
+          "sha256": "c1438cc1fa564c8b22011684aab37ae461e5f598d5d714a758c885ba14713ef6",
+          "variant": "tiny control"
+        },
+        "measurements": [
+          {
+            "config": "transition-bab",
+            "end_to_end_wall_seconds": 0.09465883299708366,
+            "final_objective": null,
+            "first_incumbent_reported_ms": null,
+            "gap_to_proved_optimum": null,
+            "maximum_sample_gap_seconds": 0.0032903330284170806,
+            "measurements": {
+              "bound_calls": 0,
+              "bound_ms": 0.0,
+              "inference_calls": 0,
+              "inference_ms": 0.0,
+              "propagation_ms": 0.0
+            },
+            "metrics": {
+              "allocation": {
+                "intvar_handle_bytes": 8,
+                "prepared_root_positions": 1,
+                "root_positions": 0,
+                "solution_positions": 0,
+                "space_bytes": 488
+              },
+              "clone_bytes": null,
+              "descriptor_bytes": 0,
+              "descriptor_count": 0,
+              "expansions": 2,
+              "frontier_bytes": null,
+              "preprocessing_ms": 0.07,
+              "search_ms": 0.011,
+              "startup_and_teardown_ms": 94.53183299708367
+            },
+            "proof": "infeasible",
+            "proof_reported_ms": 0.127,
+            "quality_at_reported_ms": {
+              "100": null,
+              "1000": null
+            },
+            "quality_usable": true,
+            "repetition": 0,
+            "rss_overshoot_bytes": null,
+            "rss_probe_seconds": 0.03625816700514406,
+            "rss_samples": 1,
+            "sampled_peak_rss_bytes": null,
+            "scale": null,
+            "status": "ok",
+            "termination": "infeasible",
+            "termination_reap_seconds": 2.1669548004865646e-06,
+            "wall_cap_overshoot_seconds": 0
+          },
+          {
+            "config": "transition-bab-lazy-cheap",
+            "end_to_end_wall_seconds": 0.09331695799482986,
+            "final_objective": null,
+            "first_incumbent_reported_ms": null,
+            "gap_to_proved_optimum": null,
+            "maximum_sample_gap_seconds": 0.0032767080119811,
+            "measurements": {
+              "bound_calls": 0,
+              "bound_ms": 0.0,
+              "inference_calls": 1,
+              "inference_ms": 0.0,
+              "propagation_ms": 0.0
+            },
+            "metrics": {
+              "allocation": {
+                "intvar_handle_bytes": 8,
+                "prepared_root_positions": 0,
+                "root_positions": 0,
+                "solution_positions": 0,
+                "space_bytes": 488
+              },
+              "clone_bytes": null,
+              "descriptor_bytes": 0,
+              "descriptor_count": 0,
+              "expansions": 0,
+              "frontier_bytes": null,
+              "preprocessing_ms": 0.061,
+              "search_ms": 0.005,
+              "startup_and_teardown_ms": 93.23395799482986
+            },
+            "proof": "infeasible",
+            "proof_reported_ms": 0.083,
+            "quality_at_reported_ms": {
+              "100": null,
+              "1000": null
+            },
+            "quality_usable": true,
+            "repetition": 0,
+            "rss_overshoot_bytes": null,
+            "rss_probe_seconds": 0.03407254203921184,
+            "rss_samples": 1,
+            "sampled_peak_rss_bytes": null,
+            "scale": null,
+            "status": "ok",
+            "termination": "infeasible",
+            "termination_reap_seconds": 1.792039256542921e-06,
+            "wall_cap_overshoot_seconds": 0
+          },
+          {
+            "config": "transition-bab-lazy-unary",
+            "end_to_end_wall_seconds": 0.09690866700839251,
+            "final_objective": null,
+            "first_incumbent_reported_ms": null,
+            "gap_to_proved_optimum": null,
+            "maximum_sample_gap_seconds": 0.0030991670209914446,
+            "measurements": {
+              "bound_calls": 0,
+              "bound_ms": 0.0,
+              "inference_calls": 1,
+              "inference_ms": 0.005,
+              "propagation_ms": 0.0
+            },
+            "metrics": {
+              "allocation": {
+                "intvar_handle_bytes": 8,
+                "prepared_root_positions": 0,
+                "root_positions": 0,
+                "solution_positions": 0,
+                "space_bytes": 488
+              },
+              "clone_bytes": null,
+              "descriptor_bytes": 0,
+              "descriptor_count": 0,
+              "expansions": 0,
+              "frontier_bytes": null,
+              "preprocessing_ms": 0.078,
+              "search_ms": 0.005,
+              "startup_and_teardown_ms": 96.80966700839251
+            },
+            "proof": "infeasible",
+            "proof_reported_ms": 0.099,
+            "quality_at_reported_ms": {
+              "100": null,
+              "1000": null
+            },
+            "quality_usable": true,
+            "repetition": 0,
+            "rss_overshoot_bytes": null,
+            "rss_probe_seconds": 0.034621624974533916,
+            "rss_samples": 1,
+            "sampled_peak_rss_bytes": null,
+            "scale": null,
+            "status": "ok",
+            "termination": "infeasible",
+            "termination_reap_seconds": 1.5409896150231361e-06,
+            "wall_cap_overshoot_seconds": 0
+          },
+          {
+            "config": "transition-cabs",
+            "end_to_end_wall_seconds": 0.09471370803657919,
+            "final_objective": null,
+            "first_incumbent_reported_ms": null,
+            "gap_to_proved_optimum": null,
+            "maximum_sample_gap_seconds": 0.0034355000243522227,
+            "measurements": {
+              "bound_calls": 1,
+              "bound_ms": 0.0,
+              "inference_calls": 0,
+              "inference_ms": 0.0,
+              "propagation_ms": 0.0
+            },
+            "metrics": {
+              "allocation": {
+                "intvar_handle_bytes": 8,
+                "prepared_root_positions": 1,
+                "root_positions": 0,
+                "solution_positions": 0,
+                "space_bytes": 488
+              },
+              "clone_bytes": null,
+              "descriptor_bytes": 0,
+              "descriptor_count": 0,
+              "expansions": 2,
+              "frontier_bytes": null,
+              "preprocessing_ms": 0.074,
+              "search_ms": 0.013,
+              "startup_and_teardown_ms": 94.60970803657919
+            },
+            "proof": "infeasible",
+            "proof_reported_ms": 0.104,
+            "quality_at_reported_ms": {
+              "100": null,
+              "1000": null
+            },
+            "quality_usable": true,
+            "repetition": 0,
+            "rss_overshoot_bytes": null,
+            "rss_probe_seconds": 0.03438887500669807,
+            "rss_samples": 1,
+            "sampled_peak_rss_bytes": null,
+            "scale": null,
+            "status": "ok",
+            "termination": "infeasible",
+            "termination_reap_seconds": 1.834006980061531e-06,
+            "wall_cap_overshoot_seconds": 0
+          },
+          {
+            "config": "transition-cabs-lazy-cheap",
+            "end_to_end_wall_seconds": 0.10157287499168888,
+            "final_objective": null,
+            "first_incumbent_reported_ms": null,
+            "gap_to_proved_optimum": null,
+            "maximum_sample_gap_seconds": 0.0032310420065186918,
+            "measurements": {
+              "bound_calls": 0,
+              "bound_ms": 0.0,
+              "inference_calls": 1,
+              "inference_ms": 0.0,
+              "propagation_ms": 0.0
+            },
+            "metrics": {
+              "allocation": {
+                "intvar_handle_bytes": 8,
+                "prepared_root_positions": 0,
+                "root_positions": 0,
+                "solution_positions": 0,
+                "space_bytes": 488
+              },
+              "clone_bytes": null,
+              "descriptor_bytes": 0,
+              "descriptor_count": 0,
+              "expansions": 0,
+              "frontier_bytes": null,
+              "preprocessing_ms": 0.069,
+              "search_ms": 0.005,
+              "startup_and_teardown_ms": 101.48287499168887
+            },
+            "proof": "infeasible",
+            "proof_reported_ms": 0.09,
+            "quality_at_reported_ms": {
+              "100": null,
+              "1000": null
+            },
+            "quality_usable": true,
+            "repetition": 0,
+            "rss_overshoot_bytes": null,
+            "rss_probe_seconds": 0.03779974998906255,
+            "rss_samples": 1,
+            "sampled_peak_rss_bytes": null,
+            "scale": null,
+            "status": "ok",
+            "termination": "infeasible",
+            "termination_reap_seconds": 1.667009200900793e-06,
+            "wall_cap_overshoot_seconds": 0
+          },
+          {
+            "config": "transition-cabs-lazy-unary",
+            "end_to_end_wall_seconds": 0.0912854999769479,
+            "final_objective": null,
+            "first_incumbent_reported_ms": null,
+            "gap_to_proved_optimum": null,
+            "maximum_sample_gap_seconds": 0.0034790830104611814,
+            "measurements": {
+              "bound_calls": 0,
+              "bound_ms": 0.0,
+              "inference_calls": 1,
+              "inference_ms": 0.005,
+              "propagation_ms": 0.0
+            },
+            "metrics": {
+              "allocation": {
+                "intvar_handle_bytes": 8,
+                "prepared_root_positions": 0,
+                "root_positions": 0,
+                "solution_positions": 0,
+                "space_bytes": 488
+              },
+              "clone_bytes": null,
+              "descriptor_bytes": 0,
+              "descriptor_count": 0,
+              "expansions": 0,
+              "frontier_bytes": null,
+              "preprocessing_ms": 0.067,
+              "search_ms": 0.005,
+              "startup_and_teardown_ms": 91.19749997694791
+            },
+            "proof": "infeasible",
+            "proof_reported_ms": 0.088,
+            "quality_at_reported_ms": {
+              "100": null,
+              "1000": null
+            },
+            "quality_usable": true,
+            "repetition": 0,
+            "rss_overshoot_bytes": null,
+            "rss_probe_seconds": 0.03602200001478195,
+            "rss_samples": 1,
+            "sampled_peak_rss_bytes": null,
+            "scale": null,
+            "status": "ok",
+            "termination": "infeasible",
+            "termination_reap_seconds": 1.7909915186464787e-06,
+            "wall_cap_overshoot_seconds": 0
+          },
+          {
+            "config": "transition-cabs-lazy-unary",
+            "end_to_end_wall_seconds": 0.09988795901881531,
+            "final_objective": null,
+            "first_incumbent_reported_ms": null,
+            "gap_to_proved_optimum": null,
+            "maximum_sample_gap_seconds": 0.003738333994988352,
+            "measurements": {
+              "bound_calls": 0,
+              "bound_ms": 0.0,
+              "inference_calls": 1,
+              "inference_ms": 0.005,
+              "propagation_ms": 0.0
+            },
+            "metrics": {
+              "allocation": {
+                "intvar_handle_bytes": 8,
+                "prepared_root_positions": 0,
+                "root_positions": 0,
+                "solution_positions": 0,
+                "space_bytes": 488
+              },
+              "clone_bytes": null,
+              "descriptor_bytes": 0,
+              "descriptor_count": 0,
+              "expansions": 0,
+              "frontier_bytes": null,
+              "preprocessing_ms": 0.072,
+              "search_ms": 0.005,
+              "startup_and_teardown_ms": 99.7949590188153
+            },
+            "proof": "infeasible",
+            "proof_reported_ms": 0.093,
+            "quality_at_reported_ms": {
+              "100": null,
+              "1000": null
+            },
+            "quality_usable": true,
+            "repetition": 1,
+            "rss_overshoot_bytes": null,
+            "rss_probe_seconds": 0.03560508298687637,
+            "rss_samples": 1,
+            "sampled_peak_rss_bytes": null,
+            "scale": null,
+            "status": "ok",
+            "termination": "infeasible",
+            "termination_reap_seconds": 1.5409896150231361e-06,
+            "wall_cap_overshoot_seconds": 0
+          },
+          {
+            "config": "transition-cabs-lazy-cheap",
+            "end_to_end_wall_seconds": 0.10009908402571455,
+            "final_objective": null,
+            "first_incumbent_reported_ms": null,
+            "gap_to_proved_optimum": null,
+            "maximum_sample_gap_seconds": 0.003074042033404112,
+            "measurements": {
+              "bound_calls": 0,
+              "bound_ms": 0.0,
+              "inference_calls": 1,
+              "inference_ms": 0.0,
+              "propagation_ms": 0.0
+            },
+            "metrics": {
+              "allocation": {
+                "intvar_handle_bytes": 8,
+                "prepared_root_positions": 0,
+                "root_positions": 0,
+                "solution_positions": 0,
+                "space_bytes": 488
+              },
+              "clone_bytes": null,
+              "descriptor_bytes": 0,
+              "descriptor_count": 0,
+              "expansions": 0,
+              "frontier_bytes": null,
+              "preprocessing_ms": 0.066,
+              "search_ms": 0.005,
+              "startup_and_teardown_ms": 100.01208402571454
+            },
+            "proof": "infeasible",
+            "proof_reported_ms": 0.087,
+            "quality_at_reported_ms": {
+              "100": null,
+              "1000": null
+            },
+            "quality_usable": true,
+            "repetition": 1,
+            "rss_overshoot_bytes": null,
+            "rss_probe_seconds": 0.0364920410211198,
+            "rss_samples": 1,
+            "sampled_peak_rss_bytes": null,
+            "scale": null,
+            "status": "ok",
+            "termination": "infeasible",
+            "termination_reap_seconds": 1.7499551177024841e-06,
+            "wall_cap_overshoot_seconds": 0
+          },
+          {
+            "config": "transition-cabs",
+            "end_to_end_wall_seconds": 0.09836495801573619,
+            "final_objective": null,
+            "first_incumbent_reported_ms": null,
+            "gap_to_proved_optimum": null,
+            "maximum_sample_gap_seconds": 0.0030049580382183194,
+            "measurements": {
+              "bound_calls": 1,
+              "bound_ms": 0.0,
+              "inference_calls": 0,
+              "inference_ms": 0.0,
+              "propagation_ms": 0.0
+            },
+            "metrics": {
+              "allocation": {
+                "intvar_handle_bytes": 8,
+                "prepared_root_positions": 1,
+                "root_positions": 0,
+                "solution_positions": 0,
+                "space_bytes": 488
+              },
+              "clone_bytes": null,
+              "descriptor_bytes": 0,
+              "descriptor_count": 0,
+              "expansions": 2,
+              "frontier_bytes": null,
+              "preprocessing_ms": 0.063,
+              "search_ms": 0.011,
+              "startup_and_teardown_ms": 98.2729580157362
+            },
+            "proof": "infeasible",
+            "proof_reported_ms": 0.092,
+            "quality_at_reported_ms": {
+              "100": null,
+              "1000": null
+            },
+            "quality_usable": true,
+            "repetition": 1,
+            "rss_overshoot_bytes": null,
+            "rss_probe_seconds": 0.03485437500057742,
+            "rss_samples": 1,
+            "sampled_peak_rss_bytes": null,
+            "scale": null,
+            "status": "ok",
+            "termination": "infeasible",
+            "termination_reap_seconds": 1.3329554349184036e-06,
+            "wall_cap_overshoot_seconds": 0
+          },
+          {
+            "config": "transition-bab-lazy-unary",
+            "end_to_end_wall_seconds": 0.09304279199568555,
+            "final_objective": null,
+            "first_incumbent_reported_ms": null,
+            "gap_to_proved_optimum": null,
+            "maximum_sample_gap_seconds": 0.0030366249848157167,
+            "measurements": {
+              "bound_calls": 0,
+              "bound_ms": 0.0,
+              "inference_calls": 1,
+              "inference_ms": 0.006,
+              "propagation_ms": 0.0
+            },
+            "metrics": {
+              "allocation": {
+                "intvar_handle_bytes": 8,
+                "prepared_root_positions": 0,
+                "root_positions": 0,
+                "solution_positions": 0,
+                "space_bytes": 488
+              },
+              "clone_bytes": null,
+              "descriptor_bytes": 0,
+              "descriptor_count": 0,
+              "expansions": 0,
+              "frontier_bytes": null,
+              "preprocessing_ms": 0.114,
+              "search_ms": 0.006,
+              "startup_and_teardown_ms": 92.90379199568555
+            },
+            "proof": "infeasible",
+            "proof_reported_ms": 0.139,
+            "quality_at_reported_ms": {
+              "100": null,
+              "1000": null
+            },
+            "quality_usable": true,
+            "repetition": 1,
+            "rss_overshoot_bytes": null,
+            "rss_probe_seconds": 0.03415150003274903,
+            "rss_samples": 1,
+            "sampled_peak_rss_bytes": null,
+            "scale": null,
+            "status": "ok",
+            "termination": "infeasible",
+            "termination_reap_seconds": 1.9579892978072166e-06,
+            "wall_cap_overshoot_seconds": 0
+          },
+          {
+            "config": "transition-bab-lazy-cheap",
+            "end_to_end_wall_seconds": 0.09579391602892429,
+            "final_objective": null,
+            "first_incumbent_reported_ms": null,
+            "gap_to_proved_optimum": null,
+            "maximum_sample_gap_seconds": 0.003144791000522673,
+            "measurements": {
+              "bound_calls": 0,
+              "bound_ms": 0.0,
+              "inference_calls": 1,
+              "inference_ms": 0.0,
+              "propagation_ms": 0.0
+            },
+            "metrics": {
+              "allocation": {
+                "intvar_handle_bytes": 8,
+                "prepared_root_positions": 0,
+                "root_positions": 0,
+                "solution_positions": 0,
+                "space_bytes": 488
+              },
+              "clone_bytes": null,
+              "descriptor_bytes": 0,
+              "descriptor_count": 0,
+              "expansions": 0,
+              "frontier_bytes": null,
+              "preprocessing_ms": 0.068,
+              "search_ms": 0.005,
+              "startup_and_teardown_ms": 95.70591602892429
+            },
+            "proof": "infeasible",
+            "proof_reported_ms": 0.088,
+            "quality_at_reported_ms": {
+              "100": null,
+              "1000": null
+            },
+            "quality_usable": true,
+            "repetition": 1,
+            "rss_overshoot_bytes": null,
+            "rss_probe_seconds": 0.034024499997030944,
+            "rss_samples": 1,
+            "sampled_peak_rss_bytes": null,
+            "scale": null,
+            "status": "ok",
+            "termination": "infeasible",
+            "termination_reap_seconds": 1.8749851733446121e-06,
+            "wall_cap_overshoot_seconds": 0
+          },
+          {
+            "config": "transition-bab",
+            "end_to_end_wall_seconds": 0.08848679199581966,
+            "final_objective": null,
+            "first_incumbent_reported_ms": null,
+            "gap_to_proved_optimum": null,
+            "maximum_sample_gap_seconds": 0.0030104999896138906,
+            "measurements": {
+              "bound_calls": 0,
+              "bound_ms": 0.0,
+              "inference_calls": 0,
+              "inference_ms": 0.0,
+              "propagation_ms": 0.0
+            },
+            "metrics": {
+              "allocation": {
+                "intvar_handle_bytes": 8,
+                "prepared_root_positions": 1,
+                "root_positions": 0,
+                "solution_positions": 0,
+                "space_bytes": 488
+              },
+              "clone_bytes": null,
+              "descriptor_bytes": 0,
+              "descriptor_count": 0,
+              "expansions": 2,
+              "frontier_bytes": null,
+              "preprocessing_ms": 0.056,
+              "search_ms": 0.01,
+              "startup_and_teardown_ms": 88.40879199581966
+            },
+            "proof": "infeasible",
+            "proof_reported_ms": 0.078,
+            "quality_at_reported_ms": {
+              "100": null,
+              "1000": null
+            },
+            "quality_usable": true,
+            "repetition": 1,
+            "rss_overshoot_bytes": null,
+            "rss_probe_seconds": 0.03392083296785131,
+            "rss_samples": 1,
+            "sampled_peak_rss_bytes": null,
+            "scale": null,
+            "status": "ok",
+            "termination": "infeasible",
+            "termination_reap_seconds": 1.500011421740055e-06,
+            "wall_cap_overshoot_seconds": 0
+          }
+        ],
+        "reference_kind": "unavailable; campaign best is not an optimum",
+        "reference_scaled_cost": null
+      },
+      {
+        "case": {
+          "family": "tiny",
+          "id": "tiny/late-return.txt",
+          "path": "/Users/zayenz/.codex/worktrees/2d06/gecode/examples/data/tsptw/tiny/late-return.txt",
+          "sha256": "f44a2168bc9638d0c657235b2eb9df1bc08fcc0dca06e6729782ed20235dae62",
+          "variant": "tiny control"
+        },
+        "measurements": [
+          {
+            "config": "transition-bab",
+            "end_to_end_wall_seconds": 0.09904079203261063,
+            "final_objective": null,
+            "first_incumbent_reported_ms": null,
+            "gap_to_proved_optimum": null,
+            "maximum_sample_gap_seconds": 0.00330700003542006,
+            "measurements": {
+              "bound_calls": 0,
+              "bound_ms": 0.0,
+              "inference_calls": 0,
+              "inference_ms": 0.0,
+              "propagation_ms": 0.0
+            },
+            "metrics": {
+              "allocation": {
+                "intvar_handle_bytes": 8,
+                "prepared_root_positions": 1,
+                "root_positions": 0,
+                "solution_positions": 0,
+                "space_bytes": 488
+              },
+              "clone_bytes": null,
+              "descriptor_bytes": 0,
+              "descriptor_count": 0,
+              "expansions": 4,
+              "frontier_bytes": null,
+              "preprocessing_ms": 0.072,
+              "search_ms": 0.012,
+              "startup_and_teardown_ms": 98.94079203261063
+            },
+            "proof": "infeasible",
+            "proof_reported_ms": 0.1,
+            "quality_at_reported_ms": {
+              "100": null,
+              "1000": null
+            },
+            "quality_usable": true,
+            "repetition": 0,
+            "rss_overshoot_bytes": null,
+            "rss_probe_seconds": 0.03519562497967854,
+            "rss_samples": 1,
+            "sampled_peak_rss_bytes": null,
+            "scale": null,
+            "status": "ok",
+            "termination": "infeasible",
+            "termination_reap_seconds": 1.500011421740055e-06,
+            "wall_cap_overshoot_seconds": 0
+          },
+          {
+            "config": "transition-bab-lazy-cheap",
+            "end_to_end_wall_seconds": 0.09717241604812443,
+            "final_objective": null,
+            "first_incumbent_reported_ms": null,
+            "gap_to_proved_optimum": null,
+            "maximum_sample_gap_seconds": 0.0036432500346563756,
+            "measurements": {
+              "bound_calls": 0,
+              "bound_ms": 0.0,
+              "inference_calls": 1,
+              "inference_ms": 0.0,
+              "propagation_ms": 0.0
+            },
+            "metrics": {
+              "allocation": {
+                "intvar_handle_bytes": 8,
+                "prepared_root_positions": 0,
+                "root_positions": 0,
+                "solution_positions": 0,
+                "space_bytes": 488
+              },
+              "clone_bytes": null,
+              "descriptor_bytes": 0,
+              "descriptor_count": 0,
+              "expansions": 0,
+              "frontier_bytes": null,
+              "preprocessing_ms": 0.08,
+              "search_ms": 0.005,
+              "startup_and_teardown_ms": 97.06941604812444
+            },
+            "proof": "infeasible",
+            "proof_reported_ms": 0.103,
+            "quality_at_reported_ms": {
+              "100": null,
+              "1000": null
+            },
+            "quality_usable": true,
+            "repetition": 0,
+            "rss_overshoot_bytes": null,
+            "rss_probe_seconds": 0.03411274997051805,
+            "rss_samples": 1,
+            "sampled_peak_rss_bytes": null,
+            "scale": null,
+            "status": "ok",
+            "termination": "infeasible",
+            "termination_reap_seconds": 1.5840050764381886e-06,
+            "wall_cap_overshoot_seconds": 0
+          },
+          {
+            "config": "transition-bab-lazy-unary",
+            "end_to_end_wall_seconds": 0.09899920894531533,
+            "final_objective": null,
+            "first_incumbent_reported_ms": null,
+            "gap_to_proved_optimum": null,
+            "maximum_sample_gap_seconds": 0.0036922089639119804,
+            "measurements": {
+              "bound_calls": 0,
+              "bound_ms": 0.0,
+              "inference_calls": 1,
+              "inference_ms": 0.005,
+              "propagation_ms": 0.0
+            },
+            "metrics": {
+              "allocation": {
+                "intvar_handle_bytes": 8,
+                "prepared_root_positions": 0,
+                "root_positions": 0,
+                "solution_positions": 0,
+                "space_bytes": 488
+              },
+              "clone_bytes": null,
+              "descriptor_bytes": 0,
+              "descriptor_count": 0,
+              "expansions": 0,
+              "frontier_bytes": null,
+              "preprocessing_ms": 0.069,
+              "search_ms": 0.006,
+              "startup_and_teardown_ms": 98.90720894531533
+            },
+            "proof": "infeasible",
+            "proof_reported_ms": 0.092,
+            "quality_at_reported_ms": {
+              "100": null,
+              "1000": null
+            },
+            "quality_usable": true,
+            "repetition": 0,
+            "rss_overshoot_bytes": null,
+            "rss_probe_seconds": 0.03480012499494478,
+            "rss_samples": 1,
+            "sampled_peak_rss_bytes": null,
+            "scale": null,
+            "status": "ok",
+            "termination": "infeasible",
+            "termination_reap_seconds": 1.6659614630043507e-06,
+            "wall_cap_overshoot_seconds": 0
+          },
+          {
+            "config": "transition-cabs",
+            "end_to_end_wall_seconds": 0.09123620798345655,
+            "final_objective": null,
+            "first_incumbent_reported_ms": null,
+            "gap_to_proved_optimum": null,
+            "maximum_sample_gap_seconds": 0.0031092919525690377,
+            "measurements": {
+              "bound_calls": 2,
+              "bound_ms": 0.0,
+              "inference_calls": 0,
+              "inference_ms": 0.0,
+              "propagation_ms": 0.0
+            },
+            "metrics": {
+              "allocation": {
+                "intvar_handle_bytes": 8,
+                "prepared_root_positions": 1,
+                "root_positions": 0,
+                "solution_positions": 0,
+                "space_bytes": 488
+              },
+              "clone_bytes": null,
+              "descriptor_bytes": 0,
+              "descriptor_count": 0,
+              "expansions": 4,
+              "frontier_bytes": null,
+              "preprocessing_ms": 0.065,
+              "search_ms": 0.022,
+              "startup_and_teardown_ms": 91.13420798345655
+            },
+            "proof": "infeasible",
+            "proof_reported_ms": 0.102,
+            "quality_at_reported_ms": {
+              "100": null,
+              "1000": null
+            },
+            "quality_usable": true,
+            "repetition": 0,
+            "rss_overshoot_bytes": null,
+            "rss_probe_seconds": 0.03374658396933228,
+            "rss_samples": 1,
+            "sampled_peak_rss_bytes": null,
+            "scale": null,
+            "status": "ok",
+            "termination": "infeasible",
+            "termination_reap_seconds": 1.5830155462026596e-06,
+            "wall_cap_overshoot_seconds": 0
+          },
+          {
+            "config": "transition-cabs-lazy-cheap",
+            "end_to_end_wall_seconds": 0.09599795896792784,
+            "final_objective": null,
+            "first_incumbent_reported_ms": null,
+            "gap_to_proved_optimum": null,
+            "maximum_sample_gap_seconds": 0.0030746249831281602,
+            "measurements": {
+              "bound_calls": 0,
+              "bound_ms": 0.0,
+              "inference_calls": 1,
+              "inference_ms": 0.0,
+              "propagation_ms": 0.0
+            },
+            "metrics": {
+              "allocation": {
+                "intvar_handle_bytes": 8,
+                "prepared_root_positions": 0,
+                "root_positions": 0,
+                "solution_positions": 0,
+                "space_bytes": 488
+              },
+              "clone_bytes": null,
+              "descriptor_bytes": 0,
+              "descriptor_count": 0,
+              "expansions": 0,
+              "frontier_bytes": null,
+              "preprocessing_ms": 0.079,
+              "search_ms": 0.005,
+              "startup_and_teardown_ms": 95.89695896792784
+            },
+            "proof": "infeasible",
+            "proof_reported_ms": 0.101,
+            "quality_at_reported_ms": {
+              "100": null,
+              "1000": null
+            },
+            "quality_usable": true,
+            "repetition": 0,
+            "rss_overshoot_bytes": null,
+            "rss_probe_seconds": 0.03517516702413559,
+            "rss_samples": 1,
+            "sampled_peak_rss_bytes": null,
+            "scale": null,
+            "status": "ok",
+            "termination": "infeasible",
+            "termination_reap_seconds": 1.7079873941838741e-06,
+            "wall_cap_overshoot_seconds": 0
+          },
+          {
+            "config": "transition-cabs-lazy-unary",
+            "end_to_end_wall_seconds": 0.09762837499147281,
+            "final_objective": null,
+            "first_incumbent_reported_ms": null,
+            "gap_to_proved_optimum": null,
+            "maximum_sample_gap_seconds": 0.0032805409864522517,
+            "measurements": {
+              "bound_calls": 0,
+              "bound_ms": 0.0,
+              "inference_calls": 1,
+              "inference_ms": 0.005,
+              "propagation_ms": 0.0
+            },
+            "metrics": {
+              "allocation": {
+                "intvar_handle_bytes": 8,
+                "prepared_root_positions": 0,
+                "root_positions": 0,
+                "solution_positions": 0,
+                "space_bytes": 488
+              },
+              "clone_bytes": null,
+              "descriptor_bytes": 0,
+              "descriptor_count": 0,
+              "expansions": 0,
+              "frontier_bytes": null,
+              "preprocessing_ms": 0.068,
+              "search_ms": 0.005,
+              "startup_and_teardown_ms": 97.53637499147281
+            },
+            "proof": "infeasible",
+            "proof_reported_ms": 0.092,
+            "quality_at_reported_ms": {
+              "100": null,
+              "1000": null
+            },
+            "quality_usable": true,
+            "repetition": 0,
+            "rss_overshoot_bytes": null,
+            "rss_probe_seconds": 0.0338662089779973,
+            "rss_samples": 1,
+            "sampled_peak_rss_bytes": null,
+            "scale": null,
+            "status": "ok",
+            "termination": "infeasible",
+            "termination_reap_seconds": 1.5420373529195786e-06,
+            "wall_cap_overshoot_seconds": 0
+          },
+          {
+            "config": "transition-cabs-lazy-unary",
+            "end_to_end_wall_seconds": 0.09508512500906363,
+            "final_objective": null,
+            "first_incumbent_reported_ms": null,
+            "gap_to_proved_optimum": null,
+            "maximum_sample_gap_seconds": 0.002998292038682848,
+            "measurements": {
+              "bound_calls": 0,
+              "bound_ms": 0.0,
+              "inference_calls": 1,
+              "inference_ms": 0.005,
+              "propagation_ms": 0.0
+            },
+            "metrics": {
+              "allocation": {
+                "intvar_handle_bytes": 8,
+                "prepared_root_positions": 0,
+                "root_positions": 0,
+                "solution_positions": 0,
+                "space_bytes": 488
+              },
+              "clone_bytes": null,
+              "descriptor_bytes": 0,
+              "descriptor_count": 0,
+              "expansions": 0,
+              "frontier_bytes": null,
+              "preprocessing_ms": 0.113,
+              "search_ms": 0.005,
+              "startup_and_teardown_ms": 94.95112500906363
+            },
+            "proof": "infeasible",
+            "proof_reported_ms": 0.134,
+            "quality_at_reported_ms": {
+              "100": null,
+              "1000": null
+            },
+            "quality_usable": true,
+            "repetition": 1,
+            "rss_overshoot_bytes": null,
+            "rss_probe_seconds": 0.03481949999695644,
+            "rss_samples": 1,
+            "sampled_peak_rss_bytes": null,
+            "scale": null,
+            "status": "ok",
+            "termination": "infeasible",
+            "termination_reap_seconds": 1.5409896150231361e-06,
+            "wall_cap_overshoot_seconds": 0
+          },
+          {
+            "config": "transition-cabs-lazy-cheap",
+            "end_to_end_wall_seconds": 0.09567183302715421,
+            "final_objective": null,
+            "first_incumbent_reported_ms": null,
+            "gap_to_proved_optimum": null,
+            "maximum_sample_gap_seconds": 0.0032833750010468066,
+            "measurements": {
+              "bound_calls": 0,
+              "bound_ms": 0.0,
+              "inference_calls": 1,
+              "inference_ms": 0.0,
+              "propagation_ms": 0.0
+            },
+            "metrics": {
+              "allocation": {
+                "intvar_handle_bytes": 8,
+                "prepared_root_positions": 0,
+                "root_positions": 0,
+                "solution_positions": 0,
+                "space_bytes": 488
+              },
+              "clone_bytes": null,
+              "descriptor_bytes": 0,
+              "descriptor_count": 0,
+              "expansions": 0,
+              "frontier_bytes": null,
+              "preprocessing_ms": 0.073,
+              "search_ms": 0.005,
+              "startup_and_teardown_ms": 95.57483302715421
+            },
+            "proof": "infeasible",
+            "proof_reported_ms": 0.097,
+            "quality_at_reported_ms": {
+              "100": null,
+              "1000": null
+            },
+            "quality_usable": true,
+            "repetition": 1,
+            "rss_overshoot_bytes": null,
+            "rss_probe_seconds": 0.034789874975103885,
+            "rss_samples": 1,
+            "sampled_peak_rss_bytes": null,
+            "scale": null,
+            "status": "ok",
+            "termination": "infeasible",
+            "termination_reap_seconds": 1.8330174498260021e-06,
+            "wall_cap_overshoot_seconds": 0
+          },
+          {
+            "config": "transition-cabs",
+            "end_to_end_wall_seconds": 0.09585812501609325,
+            "final_objective": null,
+            "first_incumbent_reported_ms": null,
+            "gap_to_proved_optimum": null,
+            "maximum_sample_gap_seconds": 0.0031281670089811087,
+            "measurements": {
+              "bound_calls": 2,
+              "bound_ms": 0.0,
+              "inference_calls": 0,
+              "inference_ms": 0.0,
+              "propagation_ms": 0.0
+            },
+            "metrics": {
+              "allocation": {
+                "intvar_handle_bytes": 8,
+                "prepared_root_positions": 1,
+                "root_positions": 0,
+                "solution_positions": 0,
+                "space_bytes": 488
+              },
+              "clone_bytes": null,
+              "descriptor_bytes": 0,
+              "descriptor_count": 0,
+              "expansions": 4,
+              "frontier_bytes": null,
+              "preprocessing_ms": 0.065,
+              "search_ms": 0.023,
+              "startup_and_teardown_ms": 95.74912501609326
+            },
+            "proof": "infeasible",
+            "proof_reported_ms": 0.109,
+            "quality_at_reported_ms": {
+              "100": null,
+              "1000": null
+            },
+            "quality_usable": true,
+            "repetition": 1,
+            "rss_overshoot_bytes": null,
+            "rss_probe_seconds": 0.03392204100964591,
+            "rss_samples": 1,
+            "sampled_peak_rss_bytes": null,
+            "scale": null,
+            "status": "ok",
+            "termination": "infeasible",
+            "termination_reap_seconds": 1.374981366097927e-06,
+            "wall_cap_overshoot_seconds": 0
+          },
+          {
+            "config": "transition-bab-lazy-unary",
+            "end_to_end_wall_seconds": 0.009286458021961153,
+            "final_objective": null,
+            "first_incumbent_reported_ms": null,
+            "gap_to_proved_optimum": null,
+            "maximum_sample_gap_seconds": null,
+            "measurements": {
+              "bound_calls": 0,
+              "bound_ms": 0.0,
+              "inference_calls": 1,
+              "inference_ms": 0.006,
+              "propagation_ms": 0.0
+            },
+            "metrics": {
+              "allocation": {
+                "intvar_handle_bytes": 8,
+                "prepared_root_positions": 0,
+                "root_positions": 0,
+                "solution_positions": 0,
+                "space_bytes": 488
+              },
+              "clone_bytes": null,
+              "descriptor_bytes": 0,
+              "descriptor_count": 0,
+              "expansions": 0,
+              "frontier_bytes": null,
+              "preprocessing_ms": 0.07,
+              "search_ms": 0.005,
+              "startup_and_teardown_ms": 9.194458021961152
+            },
+            "proof": "infeasible",
+            "proof_reported_ms": 0.092,
+            "quality_at_reported_ms": {
+              "100": null,
+              "1000": null
+            },
+            "quality_usable": true,
+            "repetition": 1,
+            "rss_overshoot_bytes": null,
+            "rss_probe_seconds": 0.0,
+            "rss_samples": 0,
+            "sampled_peak_rss_bytes": null,
+            "scale": null,
+            "status": "ok",
+            "termination": "infeasible",
+            "termination_reap_seconds": 5.292007699608803e-06,
+            "wall_cap_overshoot_seconds": 0
+          },
+          {
+            "config": "transition-bab-lazy-cheap",
+            "end_to_end_wall_seconds": 0.08831537503283471,
+            "final_objective": null,
+            "first_incumbent_reported_ms": null,
+            "gap_to_proved_optimum": null,
+            "maximum_sample_gap_seconds": 0.0027779160300269723,
+            "measurements": {
+              "bound_calls": 0,
+              "bound_ms": 0.0,
+              "inference_calls": 1,
+              "inference_ms": 0.0,
+              "propagation_ms": 0.0
+            },
+            "metrics": {
+              "allocation": {
+                "intvar_handle_bytes": 8,
+                "prepared_root_positions": 0,
+                "root_positions": 0,
+                "solution_positions": 0,
+                "space_bytes": 488
+              },
+              "clone_bytes": null,
+              "descriptor_bytes": 0,
+              "descriptor_count": 0,
+              "expansions": 0,
+              "frontier_bytes": null,
+              "preprocessing_ms": 0.061,
+              "search_ms": 0.004,
+              "startup_and_teardown_ms": 88.23537503283471
+            },
+            "proof": "infeasible",
+            "proof_reported_ms": 0.08,
+            "quality_at_reported_ms": {
+              "100": null,
+              "1000": null
+            },
+            "quality_usable": true,
+            "repetition": 1,
+            "rss_overshoot_bytes": null,
+            "rss_probe_seconds": 0.033989917021244764,
+            "rss_samples": 1,
+            "sampled_peak_rss_bytes": null,
+            "scale": null,
+            "status": "ok",
+            "termination": "infeasible",
+            "termination_reap_seconds": 1.5830155462026596e-06,
+            "wall_cap_overshoot_seconds": 0
+          },
+          {
+            "config": "transition-bab",
+            "end_to_end_wall_seconds": 0.09689770801924169,
+            "final_objective": null,
+            "first_incumbent_reported_ms": null,
+            "gap_to_proved_optimum": null,
+            "maximum_sample_gap_seconds": 0.0037172919837757945,
+            "measurements": {
+              "bound_calls": 0,
+              "bound_ms": 0.0,
+              "inference_calls": 0,
+              "inference_ms": 0.0,
+              "propagation_ms": 0.0
+            },
+            "metrics": {
+              "allocation": {
+                "intvar_handle_bytes": 8,
+                "prepared_root_positions": 1,
+                "root_positions": 0,
+                "solution_positions": 0,
+                "space_bytes": 488
+              },
+              "clone_bytes": null,
+              "descriptor_bytes": 0,
+              "descriptor_count": 0,
+              "expansions": 4,
+              "frontier_bytes": null,
+              "preprocessing_ms": 0.072,
+              "search_ms": 0.013,
+              "startup_and_teardown_ms": 96.79570801924169
+            },
+            "proof": "infeasible",
+            "proof_reported_ms": 0.102,
+            "quality_at_reported_ms": {
+              "100": null,
+              "1000": null
+            },
+            "quality_usable": true,
+            "repetition": 1,
+            "rss_overshoot_bytes": null,
+            "rss_probe_seconds": 0.03588604199467227,
+            "rss_samples": 1,
+            "sampled_peak_rss_bytes": null,
+            "scale": null,
+            "status": "ok",
+            "termination": "infeasible",
+            "termination_reap_seconds": 2.040993422269821e-06,
+            "wall_cap_overshoot_seconds": 0
+          }
+        ],
+        "reference_kind": "unavailable; campaign best is not an optimum",
+        "reference_scaled_cost": null
+      }
+    ],
+    "clocks": "publication checkpoints use solver-reported milliseconds; launch-inclusive publication timestamps are unavailable",
+    "family_groups": {
+      "Dumas/canonical": {
+        "transition-bab": {
+          "failures": 0,
+          "feasible": 2,
+          "infeasible": 0,
+          "optimal": 2,
+          "resource_stops": 0,
+          "samples": 2
+        },
+        "transition-bab-lazy-cheap": {
+          "failures": 0,
+          "feasible": 2,
+          "infeasible": 0,
+          "optimal": 2,
+          "resource_stops": 0,
+          "samples": 2
+        },
+        "transition-bab-lazy-unary": {
+          "failures": 0,
+          "feasible": 2,
+          "infeasible": 0,
+          "optimal": 2,
+          "resource_stops": 0,
+          "samples": 2
+        },
+        "transition-cabs": {
+          "failures": 0,
+          "feasible": 2,
+          "infeasible": 0,
+          "optimal": 0,
+          "resource_stops": 2,
+          "samples": 2
+        },
+        "transition-cabs-lazy-cheap": {
+          "failures": 0,
+          "feasible": 2,
+          "infeasible": 0,
+          "optimal": 2,
+          "resource_stops": 0,
+          "samples": 2
+        },
+        "transition-cabs-lazy-unary": {
+          "failures": 0,
+          "feasible": 2,
+          "infeasible": 0,
+          "optimal": 2,
+          "resource_stops": 0,
+          "samples": 2
+        }
+      },
+      "Dumas/variant": {
+        "transition-bab": {
+          "failures": 0,
+          "feasible": 0,
+          "infeasible": 0,
+          "optimal": 0,
+          "resource_stops": 1,
+          "samples": 2
+        },
+        "transition-bab-lazy-cheap": {
+          "failures": 0,
+          "feasible": 2,
+          "infeasible": 0,
+          "optimal": 0,
+          "resource_stops": 2,
+          "samples": 2
+        },
+        "transition-bab-lazy-unary": {
+          "failures": 0,
+          "feasible": 2,
+          "infeasible": 0,
+          "optimal": 0,
+          "resource_stops": 1,
+          "samples": 2
+        },
+        "transition-cabs": {
+          "failures": 0,
+          "feasible": 2,
+          "infeasible": 0,
+          "optimal": 0,
+          "resource_stops": 2,
+          "samples": 2
+        },
+        "transition-cabs-lazy-cheap": {
+          "failures": 0,
+          "feasible": 2,
+          "infeasible": 0,
+          "optimal": 0,
+          "resource_stops": 2,
+          "samples": 2
+        },
+        "transition-cabs-lazy-unary": {
+          "failures": 0,
+          "feasible": 2,
+          "infeasible": 0,
+          "optimal": 0,
+          "resource_stops": 0,
+          "samples": 2
+        }
+      },
+      "GendreauDumasExtended/canonical": {
+        "transition-bab": {
+          "failures": 0,
+          "feasible": 2,
+          "infeasible": 0,
+          "optimal": 0,
+          "resource_stops": 1,
+          "samples": 2
+        },
+        "transition-bab-lazy-cheap": {
+          "failures": 0,
+          "feasible": 2,
+          "infeasible": 0,
+          "optimal": 0,
+          "resource_stops": 1,
+          "samples": 2
+        },
+        "transition-bab-lazy-unary": {
+          "failures": 0,
+          "feasible": 2,
+          "infeasible": 0,
+          "optimal": 0,
+          "resource_stops": 1,
+          "samples": 2
+        },
+        "transition-cabs": {
+          "failures": 0,
+          "feasible": 2,
+          "infeasible": 0,
+          "optimal": 0,
+          "resource_stops": 1,
+          "samples": 2
+        },
+        "transition-cabs-lazy-cheap": {
+          "failures": 0,
+          "feasible": 2,
+          "infeasible": 0,
+          "optimal": 0,
+          "resource_stops": 2,
+          "samples": 2
+        },
+        "transition-cabs-lazy-unary": {
+          "failures": 0,
+          "feasible": 2,
+          "infeasible": 0,
+          "optimal": 0,
+          "resource_stops": 2,
+          "samples": 2
+        }
+      },
+      "SolomonPotvinBengio/canonical": {
+        "transition-bab": {
+          "failures": 0,
+          "feasible": 0,
+          "infeasible": 0,
+          "optimal": 0,
+          "resource_stops": 1,
+          "samples": 2
+        },
+        "transition-bab-lazy-cheap": {
+          "failures": 0,
+          "feasible": 2,
+          "infeasible": 0,
+          "optimal": 2,
+          "resource_stops": 0,
+          "samples": 2
+        },
+        "transition-bab-lazy-unary": {
+          "failures": 0,
+          "feasible": 2,
+          "infeasible": 0,
+          "optimal": 0,
+          "resource_stops": 0,
+          "samples": 2
+        },
+        "transition-cabs": {
+          "failures": 0,
+          "feasible": 2,
+          "infeasible": 0,
+          "optimal": 0,
+          "resource_stops": 2,
+          "samples": 2
+        },
+        "transition-cabs-lazy-cheap": {
+          "failures": 0,
+          "feasible": 2,
+          "infeasible": 0,
+          "optimal": 2,
+          "resource_stops": 0,
+          "samples": 2
+        },
+        "transition-cabs-lazy-unary": {
+          "failures": 0,
+          "feasible": 2,
+          "infeasible": 0,
+          "optimal": 0,
+          "resource_stops": 2,
+          "samples": 2
+        }
+      },
+      "tiny/variant": {
+        "transition-bab": {
+          "failures": 0,
+          "feasible": 0,
+          "infeasible": 4,
+          "optimal": 0,
+          "resource_stops": 0,
+          "samples": 4
+        },
+        "transition-bab-lazy-cheap": {
+          "failures": 0,
+          "feasible": 0,
+          "infeasible": 4,
+          "optimal": 0,
+          "resource_stops": 0,
+          "samples": 4
+        },
+        "transition-bab-lazy-unary": {
+          "failures": 0,
+          "feasible": 0,
+          "infeasible": 4,
+          "optimal": 0,
+          "resource_stops": 0,
+          "samples": 4
+        },
+        "transition-cabs": {
+          "failures": 0,
+          "feasible": 0,
+          "infeasible": 4,
+          "optimal": 0,
+          "resource_stops": 0,
+          "samples": 4
+        },
+        "transition-cabs-lazy-cheap": {
+          "failures": 0,
+          "feasible": 0,
+          "infeasible": 4,
+          "optimal": 0,
+          "resource_stops": 0,
+          "samples": 4
+        },
+        "transition-cabs-lazy-unary": {
+          "failures": 0,
+          "feasible": 0,
+          "infeasible": 4,
+          "optimal": 0,
+          "resource_stops": 0,
+          "samples": 4
+        }
+      }
+    },
+    "formulation_contrasts": {},
+    "missing_metrics": "frontier/clone buffers and phases after kill are unavailable; allocation sizeof excludes dynamic storage",
+    "same_model": {
+      "transition": {
+        "baseline": "transition-bab",
+        "counts": {
+          "transition-bab-lazy-cheap": {
+            "end_to_end_wall_seconds": {
+              "failed": 0,
+              "loss": 1,
+              "missing": 0,
+              "tie": 0,
+              "unavailable": 0,
+              "win": 11
+            },
+            "final_objective": {
+              "failed": 0,
+              "loss": 0,
+              "missing": 0,
+              "tie": 2,
+              "unavailable": 4,
+              "win": 6
+            },
+            "first_incumbent_reported_ms": {
+              "failed": 0,
+              "loss": 0,
+              "missing": 0,
+              "tie": 0,
+              "unavailable": 8,
+              "win": 4
+            },
+            "proof_reported_ms": {
+              "failed": 0,
+              "loss": 2,
+              "missing": 0,
+              "tie": 0,
+              "unavailable": 6,
+              "win": 4
+            },
+            "quality_at_1000_reported_ms": {
+              "failed": 0,
+              "loss": 0,
+              "missing": 0,
+              "tie": 2,
+              "unavailable": 4,
+              "win": 6
+            },
+            "quality_at_100_reported_ms": {
+              "failed": 0,
+              "loss": 0,
+              "missing": 0,
+              "tie": 0,
+              "unavailable": 4,
+              "win": 8
+            },
+            "sampled_peak_rss_bytes": {
+              "failed": 0,
+              "loss": 5,
+              "missing": 0,
+              "tie": 1,
+              "unavailable": 6,
+              "win": 0
+            }
+          },
+          "transition-bab-lazy-unary": {
+            "end_to_end_wall_seconds": {
+              "failed": 0,
+              "loss": 5,
+              "missing": 0,
+              "tie": 0,
+              "unavailable": 0,
+              "win": 7
+            },
+            "final_objective": {
+              "failed": 0,
+              "loss": 0,
+              "missing": 0,
+              "tie": 4,
+              "unavailable": 4,
+              "win": 4
+            },
+            "first_incumbent_reported_ms": {
+              "failed": 0,
+              "loss": 0,
+              "missing": 0,
+              "tie": 0,
+              "unavailable": 8,
+              "win": 4
+            },
+            "proof_reported_ms": {
+              "failed": 0,
+              "loss": 1,
+              "missing": 0,
+              "tie": 0,
+              "unavailable": 6,
+              "win": 5
+            },
+            "quality_at_1000_reported_ms": {
+              "failed": 0,
+              "loss": 0,
+              "missing": 0,
+              "tie": 2,
+              "unavailable": 4,
+              "win": 6
+            },
+            "quality_at_100_reported_ms": {
+              "failed": 0,
+              "loss": 0,
+              "missing": 0,
+              "tie": 0,
+              "unavailable": 4,
+              "win": 8
+            },
+            "sampled_peak_rss_bytes": {
+              "failed": 0,
+              "loss": 8,
+              "missing": 0,
+              "tie": 0,
+              "unavailable": 4,
+              "win": 0
+            }
+          },
+          "transition-cabs": {
+            "end_to_end_wall_seconds": {
+              "failed": 0,
+              "loss": 8,
+              "missing": 0,
+              "tie": 0,
+              "unavailable": 0,
+              "win": 4
+            },
+            "final_objective": {
+              "failed": 0,
+              "loss": 0,
+              "missing": 0,
+              "tie": 2,
+              "unavailable": 4,
+              "win": 6
+            },
+            "first_incumbent_reported_ms": {
+              "failed": 0,
+              "loss": 0,
+              "missing": 0,
+              "tie": 0,
+              "unavailable": 8,
+              "win": 4
+            },
+            "proof_reported_ms": {
+              "failed": 0,
+              "loss": 3,
+              "missing": 0,
+              "tie": 0,
+              "unavailable": 8,
+              "win": 1
+            },
+            "quality_at_1000_reported_ms": {
+              "failed": 0,
+              "loss": 0,
+              "missing": 0,
+              "tie": 2,
+              "unavailable": 4,
+              "win": 6
+            },
+            "quality_at_100_reported_ms": {
+              "failed": 0,
+              "loss": 0,
+              "missing": 0,
+              "tie": 0,
+              "unavailable": 4,
+              "win": 8
+            },
+            "sampled_peak_rss_bytes": {
+              "failed": 0,
+              "loss": 8,
+              "missing": 0,
+              "tie": 0,
+              "unavailable": 4,
+              "win": 0
+            }
+          },
+          "transition-cabs-lazy-cheap": {
+            "end_to_end_wall_seconds": {
+              "failed": 0,
+              "loss": 3,
+              "missing": 0,
+              "tie": 0,
+              "unavailable": 0,
+              "win": 9
+            },
+            "final_objective": {
+              "failed": 0,
+              "loss": 0,
+              "missing": 0,
+              "tie": 2,
+              "unavailable": 4,
+              "win": 6
+            },
+            "first_incumbent_reported_ms": {
+              "failed": 0,
+              "loss": 0,
+              "missing": 0,
+              "tie": 0,
+              "unavailable": 8,
+              "win": 4
+            },
+            "proof_reported_ms": {
+              "failed": 0,
+              "loss": 2,
+              "missing": 0,
+              "tie": 0,
+              "unavailable": 6,
+              "win": 4
+            },
+            "quality_at_1000_reported_ms": {
+              "failed": 0,
+              "loss": 0,
+              "missing": 0,
+              "tie": 2,
+              "unavailable": 4,
+              "win": 6
+            },
+            "quality_at_100_reported_ms": {
+              "failed": 0,
+              "loss": 0,
+              "missing": 0,
+              "tie": 0,
+              "unavailable": 4,
+              "win": 8
+            },
+            "sampled_peak_rss_bytes": {
+              "failed": 0,
+              "loss": 6,
+              "missing": 0,
+              "tie": 0,
+              "unavailable": 5,
+              "win": 1
+            }
+          },
+          "transition-cabs-lazy-unary": {
+            "end_to_end_wall_seconds": {
+              "failed": 0,
+              "loss": 4,
+              "missing": 0,
+              "tie": 0,
+              "unavailable": 0,
+              "win": 8
+            },
+            "final_objective": {
+              "failed": 0,
+              "loss": 0,
+              "missing": 0,
+              "tie": 2,
+              "unavailable": 4,
+              "win": 6
+            },
+            "first_incumbent_reported_ms": {
+              "failed": 0,
+              "loss": 0,
+              "missing": 0,
+              "tie": 0,
+              "unavailable": 8,
+              "win": 4
+            },
+            "proof_reported_ms": {
+              "failed": 0,
+              "loss": 2,
+              "missing": 0,
+              "tie": 0,
+              "unavailable": 6,
+              "win": 4
+            },
+            "quality_at_1000_reported_ms": {
+              "failed": 0,
+              "loss": 0,
+              "missing": 0,
+              "tie": 2,
+              "unavailable": 4,
+              "win": 6
+            },
+            "quality_at_100_reported_ms": {
+              "failed": 0,
+              "loss": 0,
+              "missing": 0,
+              "tie": 0,
+              "unavailable": 4,
+              "win": 8
+            },
+            "sampled_peak_rss_bytes": {
+              "failed": 0,
+              "loss": 8,
+              "missing": 0,
+              "tie": 0,
+              "unavailable": 4,
+              "win": 0
+            }
+          }
+        },
+        "note": "Costs are paired only within the same case and scale. Checked timeout/RSS incumbents count as feasible quality, never proof. Native reported clocks start at main entry and include preprocessing; outer wall clocks measure launch through reap. Missing metrics are unavailable; lower values win. Cases mark canonical data and deterministic window variants separately.",
+        "reported_time_checkpoints_ms": [
+          100,
+          1000
+        ]
+      }
+    }
+  },
+  "completed": 72,
+  "configurations": {
+    "transition-bab": [
+      "--formulation",
+      "transition",
+      "--engine",
+      "bab"
+    ],
+    "transition-bab-lazy-cheap": [
+      "--formulation",
+      "transition",
+      "--engine",
+      "bab",
+      "--bound",
+      "prefix",
+      "--residual-propagation",
+      "cheap",
+      "--state-pruning",
+      "off"
+    ],
+    "transition-bab-lazy-unary": [
+      "--formulation",
+      "transition",
+      "--engine",
+      "bab",
+      "--bound",
+      "prefix",
+      "--residual-propagation",
+      "unary",
+      "--state-pruning",
+      "off"
+    ],
+    "transition-cabs": [
+      "--formulation",
+      "transition",
+      "--engine",
+      "cabs"
+    ],
+    "transition-cabs-lazy-cheap": [
+      "--formulation",
+      "transition",
+      "--engine",
+      "cabs",
+      "--bound",
+      "prefix",
+      "--residual-propagation",
+      "cheap",
+      "--state-pruning",
+      "off"
+    ],
+    "transition-cabs-lazy-unary": [
+      "--formulation",
+      "transition",
+      "--engine",
+      "cabs",
+      "--bound",
+      "prefix",
+      "--residual-propagation",
+      "unary",
+      "--state-pruning",
+      "off"
+    ]
+  },
+  "expected": 72,
+  "freeze_sha256": "933f28186618bd1c5eecc3174d3c3b25f70b8aacc23b7927bb644a0ff921c6d7",
+  "groups": {
+    "transition-bab": {
+      "actual_launch_wall_seconds": 15.31761558202561,
+      "completed": 12,
+      "failed": 3,
+      "feasible": 4,
+      "infeasible": 4,
+      "median_wall_seconds": 1.4186669579939917,
+      "optimal": 2,
+      "ordinary_stopped": 3,
+      "proved": 6,
+      "resource_terminated": 3,
+      "sampled_peak_rss_bytes": 2555904,
+      "status_counts": {
+        "execution-error": 0,
+        "invalid-output": 0,
+        "measurement-error": 0,
+        "ok": 9,
+        "rss-limit": 0,
+        "timeout": 3
+      }
+    },
+    "transition-bab-lazy-cheap": {
+      "actual_launch_wall_seconds": 9.723044750106055,
+      "completed": 12,
+      "failed": 3,
+      "feasible": 8,
+      "infeasible": 4,
+      "median_wall_seconds": 0.09679945901734754,
+      "optimal": 4,
+      "ordinary_stopped": 1,
+      "proved": 8,
+      "resource_terminated": 3,
+      "sampled_peak_rss_bytes": 2539520,
+      "status_counts": {
+        "execution-error": 0,
+        "invalid-output": 0,
+        "measurement-error": 0,
+        "ok": 9,
+        "rss-limit": 0,
+        "timeout": 3
+      }
+    },
+    "transition-bab-lazy-unary": {
+      "actual_launch_wall_seconds": 12.570721166906878,
+      "completed": 12,
+      "failed": 2,
+      "feasible": 8,
+      "infeasible": 4,
+      "median_wall_seconds": 0.09930535449529998,
+      "optimal": 2,
+      "ordinary_stopped": 4,
+      "proved": 6,
+      "resource_terminated": 2,
+      "sampled_peak_rss_bytes": 2981888,
+      "status_counts": {
+        "execution-error": 0,
+        "invalid-output": 0,
+        "measurement-error": 0,
+        "ok": 10,
+        "rss-limit": 0,
+        "timeout": 2
+      }
+    },
+    "transition-cabs": {
+      "actual_launch_wall_seconds": 16.450631500105374,
+      "completed": 12,
+      "failed": 7,
+      "feasible": 8,
+      "infeasible": 4,
+      "median_wall_seconds": 0.09585812501609325,
+      "optimal": 0,
+      "ordinary_stopped": 1,
+      "proved": 4,
+      "resource_terminated": 7,
+      "sampled_peak_rss_bytes": 297041920,
+      "status_counts": {
+        "execution-error": 0,
+        "invalid-output": 0,
+        "measurement-error": 0,
+        "ok": 5,
+        "rss-limit": 0,
+        "timeout": 7
+      }
+    },
+    "transition-cabs-lazy-cheap": {
+      "actual_launch_wall_seconds": 10.85198749997653,
+      "completed": 12,
+      "failed": 4,
+      "feasible": 8,
+      "infeasible": 4,
+      "median_wall_seconds": 0.1000160209950991,
+      "optimal": 4,
+      "ordinary_stopped": 0,
+      "proved": 8,
+      "resource_terminated": 4,
+      "sampled_peak_rss_bytes": 102187008,
+      "status_counts": {
+        "execution-error": 0,
+        "invalid-output": 0,
+        "measurement-error": 0,
+        "ok": 8,
+        "rss-limit": 0,
+        "timeout": 4
+      }
+    },
+    "transition-cabs-lazy-unary": {
+      "actual_launch_wall_seconds": 12.622667671006639,
+      "completed": 12,
+      "failed": 4,
+      "feasible": 8,
+      "infeasible": 4,
+      "median_wall_seconds": 0.09642300000996329,
+      "optimal": 2,
+      "ordinary_stopped": 2,
+      "proved": 6,
+      "resource_terminated": 4,
+      "sampled_peak_rss_bytes": 80936960,
+      "status_counts": {
+        "execution-error": 0,
+        "invalid-output": 0,
+        "measurement-error": 0,
+        "ok": 8,
+        "rss-limit": 0,
+        "timeout": 4
+      }
+    }
+  },
+  "identities": {
+    "checker_sha256": "91bff4e5c1630f187eb816dbc2094507e362b6e349197e6680c2cbcee2338778",
+    "didppy": {
+      "adapter_sha256": "8361a24a494a698be1650f4d1560030abf707fea114da381f1e317deeb36c3d8",
+      "launcher": "uv",
+      "version": "0.11.1"
+    },
+    "manifest_sha256": "946fb8cccbe4b580cdf1c4f29a0d85bd7524a84bd1431a6b3408a5736d8a7e87",
+    "native": {
+      "libraries": {
+        "/Users/zayenz/.codex/worktrees/2d06/gecode/build/open-search/libgecodedriver.6.4.0.dylib": "d4332d9873d657cf1d58e825842dea0026a51a302894210745f5c5260077aaa4",
+        "/Users/zayenz/.codex/worktrees/2d06/gecode/build/open-search/libgecodeflatzinc.6.4.0.dylib": "bc878a20194cec96379975ea3d1fe3b88681d340bfba65bea3d7c2d14cc60110",
+        "/Users/zayenz/.codex/worktrees/2d06/gecode/build/open-search/libgecodefloat.6.4.0.dylib": "68b1aec0512dded3b80599cfbee34d8f301f50d60560ba5e8b2c06752efb20e7",
+        "/Users/zayenz/.codex/worktrees/2d06/gecode/build/open-search/libgecodeint.6.4.0.dylib": "635412b4c0cde700e0ec4dffa12b59b44e70b9f4252657ea42b4106ad078ccff",
+        "/Users/zayenz/.codex/worktrees/2d06/gecode/build/open-search/libgecodekernel.6.4.0.dylib": "2a7aced55c554a1449b007c127afb1e869ee7f58cdc22c634065b074f2597301",
+        "/Users/zayenz/.codex/worktrees/2d06/gecode/build/open-search/libgecodeminimodel.6.4.0.dylib": "48e26109dbbb45f8fef29262f3c3299d0486d2737de85f43fc65c66511c91f23",
+        "/Users/zayenz/.codex/worktrees/2d06/gecode/build/open-search/libgecodemodel.6.4.0.dylib": "75b6d62a8a227075998bc3341c7c0af7aab84f4eba1a746ea4e1cc317e1b996a",
+        "/Users/zayenz/.codex/worktrees/2d06/gecode/build/open-search/libgecodesearch.6.4.0.dylib": "62f26d809c80034ad3a4d54c2a7209ca195cbdca6c0a010e4db966123ceddc9c",
+        "/Users/zayenz/.codex/worktrees/2d06/gecode/build/open-search/libgecodeset.6.4.0.dylib": "f07b55be6931f62c1c9821f1578bec89bb08568e6a4bf03c1f6981f0c9b7ae8e",
+        "/Users/zayenz/.codex/worktrees/2d06/gecode/build/open-search/libgecodesupport.6.4.0.dylib": "6cfefbf1ceb061ee0eb42917e8e5eb3203019e133dbfb50a78ee2d4cdefcc2a9"
+      },
+      "path": "/Users/zayenz/.codex/worktrees/2d06/gecode/build/open-search/bin/tsptw",
+      "sha256": "7e7e477d8ab0ac61fbde6db5b996d8262742ad043e8da48da57da7e1d87e5687"
+    },
+    "runner_sha256": "6a71a42798901cfd120ef3813120864406f8046bcdb3cd47729546ff2ff591be",
+    "sources": {
+      "examples/tsptw-data.hh": "5737e87ec75569c333088b66e59d15c42b0b12c873a4f35d9ca39105093f8d66",
+      "examples/tsptw-transition.hh": "9247a4f1a0c322a052c93afd0d6d2c2268ce06750adddcf332b0dc7d3e1f7be2",
+      "examples/tsptw.cpp": "4a04b3634c9b2a6fabb83db32707a4adabae5df56ca43eafecc0f20332f48a91",
+      "gecode/search.hh": "8ef2a1bc865dcf34582bb3926b2ef09b2738a8ab6b28da55126d71992de04bf8",
+      "gecode/search/astar.cpp": "4680fe1e47ecea67d79ce093ab457be89e5e073dec0233d6bb7354c62904c69e",
+      "gecode/search/astar.hpp": "af350c1108b66712f67ad7bd19844c9362f4606e3623c36f4566ededbe522d15",
+      "gecode/search/bab.cpp": "00b4762f2401ea1f3c1e4ca761181f7771290252a94ec20c8cccc5bb39b348de",
+      "gecode/search/bab.hpp": "726f1e57ca1a18baf5c6d5645cb5dbffa0e6f76a03f26cdd797e5baf25abce6e",
+      "gecode/search/base.hpp": "fd1a98449e27876b48ee115185194416612e743e35a00a07a971450ff471daf7",
+      "gecode/search/build.hpp": "cfaf01a48a711de6a814a51cf4e514e44e4f98378a6dbca73a2ee172ad508bc6",
+      "gecode/search/cabs.cpp": "586a5105d40565a197f4a9a5672f578d97a36f9beb84d4f43f270c837d59c1a6",
+      "gecode/search/cabs.hpp": "6b6fcaa4e2d4388e3496629eb06b3e35532f93722a2a704d82fe17f40ec6c396",
+      "gecode/search/column.cpp": "a8511c038a7441eb672bb24fcb22ceb9160f02ef92c95ef23746ae6953681533",
+      "gecode/search/column.hpp": "4447bbf1a16b19d5cb32190d5c383019560fa4eb94c41ce74e48a6edeebc4954",
+      "gecode/search/cpprofiler/connector.hpp": "a2883f1711a6be340602019a62ce284dfa9b40dc6ba0bc0aec0c0d66f1effe69",
+      "gecode/search/cpprofiler/message.hpp": "91ef4240babfcc6a818d28257d0060863eeab0db4f18d8fa66458cab37c39210",
+      "gecode/search/cpprofiler/tracer.cpp": "eacb488b6ee27bcfd360ee411ec582c4321f4f014dfd3590df928c174f575875",
+      "gecode/search/cutoff.cpp": "c61236c2b09a4d7b4d628b08a7db62cb2552864437d8b7b178dde0f5a81a558f",
+      "gecode/search/cutoff.hpp": "726743ce80885e63892fd6b3814ca79f0fa73195a7e2770a2b97a4e4c74a64fc",
+      "gecode/search/dfs.cpp": "6fa3f7879f89e1650c2c144af8d4e5489a938efcbfa32532b8ab9bbfd88d185e",
+      "gecode/search/dfs.hpp": "63336435572ca66b23301003ada2a10917de200366e633bcbde9409a7c3bcd5a",
+      "gecode/search/engine.cpp": "ba44ee580ef5a7217e391a80c41e2e68ee8b9785de8fbb9694503b7dd79fccb5",
+      "gecode/search/engine.hpp": "46599fe8f8957080687aa18f938f71c97e587990202101aa6fdc4cb8cc240b79",
+      "gecode/search/exception.cpp": "b80d71aa47a856233e1de383fa84a14ec6eecf7738abdcf8e22384e49b89d612",
+      "gecode/search/exception.hpp": "35a76f421d21e2a8a5b319f08ec887972df68d686569fe6d30034e7673676cf0",
+      "gecode/search/lds.cpp": "90484573667912bd8e2eab75c483013447f9286773a2f5161aa65d260a970f06",
+      "gecode/search/lds.hpp": "b383af2b362e9c7a777e9ab9221835c2a5c11ad715be915c7d25095cdcb7f002",
+      "gecode/search/nogoods.cpp": "5ce5baedeb544c74b51f864f06669fa7dc723dc56ce2fda7a5a4973d7e27ec05",
+      "gecode/search/nogoods.hpp": "1cb7b897ab7cfc08bb4f033b59875cbe4a70f74a8998e398dc9148093b280393",
+      "gecode/search/options.cpp": "aa61ca08b1100b59737aed5492720c0d11be0a23b80d40f3f9efb75616d93921",
+      "gecode/search/options.hpp": "993a8154ba05bb2f47caa1e8145f5542703d762ffdfad52b79114a95393cb6db",
+      "gecode/search/par/bab.hpp": "6cafb3e779d117f59fba625829cf52f28e049e098f9b3649cd5491e6d8731ca7",
+      "gecode/search/par/dfs.hpp": "e742a3b4d83e843659f78fd76f8e4a02a68e62f5e9108890737699ee2dcc4774",
+      "gecode/search/par/engine.hpp": "48d4bf00fe4f417b48ece3aeffc680cc17950679a685b98b2e1c3383e351494a",
+      "gecode/search/par/path.hpp": "ff9908e5967b96ca4ce5b947b8c4f21e64a0251a02bb4a7045eb10820f936edb",
+      "gecode/search/par/pbs.cpp": "aaa024723d45065aaeb8fdbd3b87c0ae31ca32a1eecfca9ab21b77cd8fe754a2",
+      "gecode/search/par/pbs.hpp": "4bd4bae09a74aee478151e9fe63ac0b484470e28198020c5293a569a4dc4a985",
+      "gecode/search/pbs.cpp": "cf953d42395e1d096df0d991271dde4ae836dee35af60b87e297953272093206",
+      "gecode/search/pbs.hpp": "2fa9855e31bb690f6765f057544a0f0e451425df45125121f9bc625442cc748c",
+      "gecode/search/portfolio-cost.hpp": "cb63a32144a15433e5ef8da072914f8af8089cd6589663d40c692d3ac1334904",
+      "gecode/search/portfolio.cpp": "299993af771946f6d8ce4bd2561eabf100484169b56b465f68973845260d8516",
+      "gecode/search/portfolio.hpp": "75e25d112bd3419d8481ec3e503eb7ff03942180fbbdd347fee3048ac540b44c",
+      "gecode/search/rbs.cpp": "196abc8674d19fff5ea8211cd010391cf4f9662a2cff549cb7deeae5ed14a2ea",
+      "gecode/search/rbs.hpp": "3f5f38d243241eb395e0af0b77a3a8acae9aebd74d76f86be72a92ab9d1f5413",
+      "gecode/search/sebs.hpp": "893ba3bf4a1a9c8cf3d776582035bfb3ee3111b80fe5a9fa58ed653ca4870f08",
+      "gecode/search/seq/bab.hpp": "0854fd52139352d4b9a33ba9870ca8bd1d9bad9f1534ee140a491f412df783b7",
+      "gecode/search/seq/dead.cpp": "3baad801a8a24833905c45225cbfad74a8146cd16fe248763b28edff986d57cd",
+      "gecode/search/seq/dfs.hpp": "1c4d152fdb3b2adb0eddd6b1b7055e4e6c2ddf7190d415b4b8973343ce1169b5",
+      "gecode/search/seq/lds.hpp": "dde6c5560518de0833f92d60fea56c05adcdd9700fd9fb163c12607f8c87842e",
+      "gecode/search/seq/path.hpp": "ca92e28836620497a953117f1ce03ebb8e5482f03e303a14ed498c96fc9c693f",
+      "gecode/search/seq/pbs.cpp": "3f17ed9e52371ceec419e1fcfd9dc744ac1c5c8e177a2e95ee037a9b1376b6d3",
+      "gecode/search/seq/pbs.hpp": "b8438a8219aaf2173cc9e8c546b117bde893a241032b9ad5831ca46c807784e8",
+      "gecode/search/seq/rbs.cpp": "21f9b927a71bde6ea9c1dba6ac653c20f37bcf89214a588d2ba94167ae5bfb5d",
+      "gecode/search/seq/rbs.hpp": "04e9204bbd602f8fe49eb772d20c0676099e2bfb054db69683eec83b5f1ac2b0",
+      "gecode/search/statistics.hpp": "df01cbe88dd100946f00b5a747abf32550e2f8c3639b4274d5914168c91acea7",
+      "gecode/search/stop.cpp": "184572f90f6f9a3d754d3701d862bff607c0d09bf39d3353fd4321a0e12fd3ac",
+      "gecode/search/stop.hpp": "2a30137766f158679a7dde8ac45453000f44f29a3ec81cabfe5a34d04953eea5",
+      "gecode/search/trace-recorder.hpp": "ab495236abcf3819d2bfca47be90326e5fff9efdcb623de3f492675077ca00cd",
+      "gecode/search/tracer.cpp": "27266acb328d5f799a9639cefa8c2dd04333635847a7399e9ba1712115e07880",
+      "gecode/search/tracer.hpp": "af3481c6d85c7cc9b12b19a5fd1dd04d878a6c5a2bd6dc8f54af8120c1ebe09a",
+      "gecode/search/traits.hpp": "63d51e78557be9f5b241f8ea6db7afe73b554a9eac7e848f5b9ad00a64144c5f",
+      "gecode/search/worker-control.cpp": "57e9a4e6c497fbd67e030a65adca1d658f5458fd0984bafe1956f466b2cf09f2"
+    }
+  },
+  "implementation": {
+    "analysis_argv": [
+      "python3",
+      "misc/tsptw-benchmark.py",
+      "analyze",
+      "--name",
+      "cheap-deadline-028",
+      "--output",
+      "examples/data/tsptw/cheap-deadline-comparison.json"
+    ],
+    "budget": {
+      "charged_seconds_by_phase": {
+        "correctness": 33.5511747081182,
+        "development": 137.40637328813318
+      },
+      "charged_total_seconds": 170.95754799625138,
+      "cleanup_reserve_seconds": 20,
+      "conservative_absence_confirmation_extra_seconds": 55.85405086999526,
+      "header": {
+        "cleanup_reserve_seconds": 20,
+        "event": "budget",
+        "scope": "task",
+        "task_id": "open-search-028",
+        "total_seconds": 300,
+        "verification_reserve_seconds": 60
+      },
+      "label": "implementation snapshot; verification appends to the external ledger",
+      "launches": 90,
+      "ledger": "/private/tmp/open-search-028-budget.jsonl",
+      "ledger_sha256": "f904a0a328528d4dad902b5d76e09169c416802c3d71dd01e73fccec452d3032",
+      "measured_launch_through_reap_seconds": 115.10349712625612,
+      "pending_launches": 0,
+      "recoveries": [
+        {
+          "event": "reap",
+          "id": "1791566025840977000",
+          "observed_wall_seconds": 2.008083750028163,
+          "returncode": null,
+          "status": "recovered-absent",
+          "timing": "launch-through-absence upper bound; exit time unobserved",
+          "wall_seconds": 39.63462686538696
+        },
+        {
+          "event": "reap",
+          "id": "1791566146160648000",
+          "observed_wall_seconds": 2.006190375017468,
+          "returncode": null,
+          "status": "recovered-absent",
+          "timing": "launch-through-absence upper bound; exit time unobserved",
+          "wall_seconds": 20.23369812965393
+        }
+      ],
+      "total_remaining_seconds": 129.04245200374862,
+      "verification_remaining_seconds": 60,
+      "verification_used_seconds": 0
+    },
+    "build_total_seconds": 12.273696000047494,
+    "builds": [
+      {
+        "argv": [
+          "cmake",
+          "--build",
+          "build/open-search",
+          "--target",
+          "tsptw",
+          "gecode-test",
+          "-j",
+          "8"
+        ],
+        "returncode": 0,
+        "wall_seconds": 2.1112976250005886
+      },
+      {
+        "argv": [
+          "cmake",
+          "--build",
+          "build/open-search",
+          "--target",
+          "tsptw",
+          "gecode-test",
+          "model-open-maintenance",
+          "model-open-miconic",
+          "model-open-valves",
+          "model-open-puzzle",
+          "gecode-test-blackbox-exec",
+          "gecode-test-blackbox-dll",
+          "-j",
+          "8"
+        ],
+        "returncode": 0,
+        "wall_seconds": 10.162398375046905
+      }
+    ],
+    "collection_argv": [
+      "python3",
+      "misc/tsptw-benchmark.py",
+      "run",
+      "--name",
+      "cheap-deadline-028",
+      "--split",
+      "development",
+      "--selected-root",
+      "/private/tmp/open-search-tsptw-selected-network",
+      "--case-ids",
+      "Dumas/n20w20.001.txt,variants/Dumas/customer-due-plus-100/n20w100.003.txt,GendreauDumasExtended/n20w120.001.txt,SolomonPotvinBengio/rc_201.1.txt,tiny/late-customer.txt,tiny/late-return.txt",
+      "--configs",
+      "transition-bab,transition-bab-lazy-cheap,transition-bab-lazy-unary,transition-cabs,transition-cabs-lazy-cheap,transition-cabs-lazy-unary",
+      "--repetitions",
+      "2",
+      "--seconds",
+      "2",
+      "--budget-ledger",
+      "/private/tmp/open-search-028-budget.jsonl",
+      "--budget-phase",
+      "development",
+      "--compilation-seconds",
+      "12.273696000047494"
+    ],
+    "limitations": "Four development cases, two tiny infeasible controls and two repetitions at two seconds do not establish a universal speedup. Missing summaries leave phase metrics and nodes unavailable. Conservative recovery charges are budget upper bounds, not measured search duration.",
+    "preview_argv": [
+      "python3",
+      "misc/tsptw-benchmark.py",
+      "preview",
+      "--split",
+      "development",
+      "--selected-root",
+      "/private/tmp/open-search-tsptw-selected-network",
+      "--case-ids",
+      "Dumas/n20w20.001.txt,variants/Dumas/customer-due-plus-100/n20w100.003.txt,GendreauDumasExtended/n20w120.001.txt,SolomonPotvinBengio/rc_201.1.txt,tiny/late-customer.txt,tiny/late-return.txt",
+      "--configs",
+      "transition-bab,transition-bab-lazy-cheap,transition-bab-lazy-unary,transition-cabs,transition-cabs-lazy-cheap,transition-cabs-lazy-unary",
+      "--repetitions",
+      "2",
+      "--seconds",
+      "2",
+      "--budget-ledger",
+      "/private/tmp/open-search-028-budget.jsonl",
+      "--budget-phase",
+      "development",
+      "--compilation-seconds",
+      "12.273696000047494"
+    ],
+    "publication_checks": {
+      "checked_partial_publications": 3,
+      "checked_publications": 476,
+      "partial_attempts": [
+        {
+          "checked_publications": 3,
+          "path": "build/tsptw-results/cheap-deadline-028/samples/00-001-transition-cabs-lazy-unary.stdout.partial-1791566085290259000",
+          "summary": "stopped"
+        },
+        {
+          "checked_publications": 0,
+          "path": "build/tsptw-results/cheap-deadline-028/samples/01-003-transition-bab.stdout.partial-1791566179641238000",
+          "summary": "stopped"
+        }
+      ]
+    },
+    "raw_results": "build/tsptw-results/cheap-deadline-028",
+    "recommendation": {
+      "change_defaults": false,
+      "fixed_width_continuation_study": "This comparison adds no memory-stop evidence. Require separate justification and budget for any continuation study.",
+      "incremental_unary_study": "A separately scoped bounded study is justified by available unary inference time; distinguish rebuilding and propagation before choosing an implementation.",
+      "keep_cheap_option": true
+    },
+    "resume": {
+      "changed_cap_rejected": true,
+      "ledger_unchanged": true,
+      "sample_files_unchanged": 220
+    },
+    "validation": [
+      {
+        "argv": [
+          "build/open-search/bin/gecode-test",
+          "-iter",
+          "1",
+          "-threads",
+          "1",
+          "-test",
+          "Search::TSPTW::Transition"
+        ],
+        "cap_seconds": 15,
+        "charged_seconds": 0.9274215000332333,
+        "phase": "correctness",
+        "status": "ok"
+      },
+      {
+        "argv": [
+          "build/open-search/bin/gecode-test",
+          "-iter",
+          "1",
+          "-threads",
+          "1",
+          "-test",
+          "Search::TSPTW::Transition"
+        ],
+        "cap_seconds": 15,
+        "charged_seconds": 0.9237225420074537,
+        "phase": "correctness",
+        "status": "ok"
+      },
+      {
+        "argv": [
+          "cmake",
+          "--build",
+          "build/open-search",
+          "--target",
+          "check",
+          "-j",
+          "8"
+        ],
+        "cap_seconds": 4,
+        "charged_seconds": 4.01117549999617,
+        "phase": "correctness",
+        "status": "timeout"
+      },
+      {
+        "argv": [
+          "cmake",
+          "--build",
+          "build/open-search",
+          "--target",
+          "check",
+          "-j",
+          "8"
+        ],
+        "cap_seconds": 40,
+        "charged_seconds": 16.89951016701525,
+        "phase": "correctness",
+        "status": "ok"
+      },
+      {
+        "argv": [
+          "build/open-search/bin/gecode-test",
+          "-iter",
+          "1",
+          "-threads",
+          "1",
+          "-test",
+          "Int::OpenList",
+          "-test",
+          "Model::OpenLists",
+          "-test",
+          "Int::Extensional::Reg",
+          "-test",
+          "Model::Portfolio::Restrictions",
+          "-test",
+          "Model::Portfolio::Sequential",
+          "-test",
+          "Model::Portfolio::ActivationRoots",
+          "-test",
+          "Search::Portfolio::PublicContract",
+          "-test",
+          "Search::CABS",
+          "-test",
+          "Search::AStar",
+          "-test",
+          "Search::Completion::Native",
+          "-test",
+          "Search::WorkerControl::Pause"
+        ],
+        "cap_seconds": 2,
+        "charged_seconds": 2.009822374966461,
+        "phase": "correctness",
+        "status": "timeout"
+      },
+      {
+        "argv": [
+          "build/open-search/bin/gecode-test",
+          "-iter",
+          "1",
+          "-threads",
+          "1",
+          "-test",
+          "Int::OpenList",
+          "-test",
+          "Model::OpenLists",
+          "-test",
+          "Int::Extensional::Reg",
+          "-test",
+          "Model::Portfolio::Restrictions",
+          "-test",
+          "Model::Portfolio::Sequential",
+          "-test",
+          "Model::Portfolio::ActivationRoots",
+          "-test",
+          "Search::Portfolio::PublicContract",
+          "-test",
+          "Search::CABS",
+          "-test",
+          "Search::AStar",
+          "-test",
+          "Search::Completion::Native",
+          "-test",
+          "Search::WorkerControl::Pause"
+        ],
+        "cap_seconds": 25,
+        "charged_seconds": 7.824548291042447,
+        "phase": "correctness",
+        "status": "ok"
+      },
+      {
+        "argv": [
+          "build/open-search/bin/model-open-maintenance"
+        ],
+        "cap_seconds": 1,
+        "charged_seconds": 0.0992180000175722,
+        "phase": "correctness",
+        "status": "ok"
+      },
+      {
+        "argv": [
+          "build/open-search/bin/model-open-miconic"
+        ],
+        "cap_seconds": 1,
+        "charged_seconds": 0.09944016602821648,
+        "phase": "correctness",
+        "status": "ok"
+      },
+      {
+        "argv": [
+          "build/open-search/bin/model-open-valves"
+        ],
+        "cap_seconds": 1,
+        "charged_seconds": 0.09520629199687392,
+        "phase": "correctness",
+        "status": "ok"
+      },
+      {
+        "argv": [
+          "build/open-search/bin/model-open-puzzle"
+        ],
+        "cap_seconds": 1,
+        "charged_seconds": 0.10322191601153463,
+        "phase": "correctness",
+        "status": "ok"
+      },
+      {
+        "argv": [
+          "/Users/zayenz/.codex/worktrees/2d06/gecode/build/open-search/bin/tsptw",
+          "/Users/zayenz/.codex/worktrees/2d06/gecode/examples/data/tsptw/tiny/waiting.txt",
+          "--formulation",
+          "transition",
+          "--engine",
+          "bab",
+          "--bound",
+          "prefix",
+          "--residual-propagation",
+          "cheap",
+          "--state-pruning",
+          "off",
+          "--time-ms",
+          "2000"
+        ],
+        "cap_seconds": 2,
+        "charged_seconds": 0.08798262500204146,
+        "phase": "correctness",
+        "status": "ok"
+      },
+      {
+        "argv": [
+          "/Users/zayenz/.codex/worktrees/2d06/gecode/build/open-search/bin/tsptw",
+          "/Users/zayenz/.codex/worktrees/2d06/gecode/examples/data/tsptw/tiny/waiting.txt",
+          "--formulation",
+          "transition",
+          "--engine",
+          "cabs",
+          "--bound",
+          "prefix",
+          "--residual-propagation",
+          "cheap",
+          "--state-pruning",
+          "off",
+          "--time-ms",
+          "2000"
+        ],
+        "cap_seconds": 2,
+        "charged_seconds": 0.08891379099804908,
+        "phase": "correctness",
+        "status": "ok"
+      },
+      {
+        "argv": [
+          "/Users/zayenz/.codex/worktrees/2d06/gecode/build/open-search/bin/tsptw",
+          "/Users/zayenz/.codex/worktrees/2d06/gecode/examples/data/tsptw/tiny/late-customer.txt",
+          "--formulation",
+          "transition",
+          "--engine",
+          "bab",
+          "--bound",
+          "prefix",
+          "--residual-propagation",
+          "cheap",
+          "--state-pruning",
+          "off",
+          "--time-ms",
+          "2000"
+        ],
+        "cap_seconds": 2,
+        "charged_seconds": 0.09859704098198563,
+        "phase": "correctness",
+        "status": "ok"
+      },
+      {
+        "argv": [
+          "/Users/zayenz/.codex/worktrees/2d06/gecode/build/open-search/bin/tsptw",
+          "/Users/zayenz/.codex/worktrees/2d06/gecode/examples/data/tsptw/tiny/late-customer.txt",
+          "--formulation",
+          "transition",
+          "--engine",
+          "cabs",
+          "--bound",
+          "prefix",
+          "--residual-propagation",
+          "cheap",
+          "--state-pruning",
+          "off",
+          "--time-ms",
+          "2000"
+        ],
+        "cap_seconds": 2,
+        "charged_seconds": 0.09600445901742205,
+        "phase": "correctness",
+        "status": "ok"
+      },
+      {
+        "argv": [
+          "/Users/zayenz/.codex/worktrees/2d06/gecode/build/open-search/bin/tsptw",
+          "/Users/zayenz/.codex/worktrees/2d06/gecode/examples/data/tsptw/tiny/late-return.txt",
+          "--formulation",
+          "transition",
+          "--engine",
+          "bab",
+          "--bound",
+          "prefix",
+          "--residual-propagation",
+          "cheap",
+          "--state-pruning",
+          "off",
+          "--time-ms",
+          "2000"
+        ],
+        "cap_seconds": 2,
+        "charged_seconds": 0.09224170900415629,
+        "phase": "correctness",
+        "status": "ok"
+      },
+      {
+        "argv": [
+          "/Users/zayenz/.codex/worktrees/2d06/gecode/build/open-search/bin/tsptw",
+          "/Users/zayenz/.codex/worktrees/2d06/gecode/examples/data/tsptw/tiny/late-return.txt",
+          "--formulation",
+          "transition",
+          "--engine",
+          "cabs",
+          "--bound",
+          "prefix",
+          "--residual-propagation",
+          "cheap",
+          "--state-pruning",
+          "off",
+          "--time-ms",
+          "2000"
+        ],
+        "cap_seconds": 2,
+        "charged_seconds": 0.09414833399932832,
+        "phase": "correctness",
+        "status": "ok"
+      }
+    ],
+    "validation_results": "build/cheap-deadline-028-validation"
+  },
+  "limits": {
+    "rss_bytes": 1073741824,
+    "sample_interval_seconds": 0.05,
+    "seconds": 2.0,
+    "threads": 1
+  },
+  "machine": {
+    "machine": "arm64",
+    "processor": "arm",
+    "system": "macOS-26.6.2-arm64-arm-64bit-Mach-O"
+  },
+  "schema_version": 1,
+  "unfinished": 0
+}

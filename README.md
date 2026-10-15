@@ -45,6 +45,7 @@ state.
 | `--enable-qt` | `GECODE_ENABLE_QT` | Supported directly | `AUTO` by default; Qt 6 preferred; Qt 5.15+ supported |
 | `--enable-gist` | `GECODE_ENABLE_GIST` | Supported directly | `AUTO` by default except macOS; disabled automatically if Qt GUI support is unavailable |
 | `--enable-cpprofiler` | `GECODE_ENABLE_CPPROFILER` | Supported directly | Default `ON` |
+| `--enable-experimental` | `GECODE_ENABLE_EXPERIMENTAL` | Supported directly | Default `OFF`; experimental 6.5.0 preview APIs |
 | `--enable-cbs` | `GECODE_ENABLE_CBS` | Supported directly | Default `OFF` |
 | `--enable-examples` | `GECODE_ENABLE_EXAMPLES` | Supported directly | Default `ON` for top-level builds, `OFF` for subprojects |
 | `--enable-search` | `GECODE_ENABLE_SEARCH` | Supported directly | Default `ON` |
@@ -116,6 +117,25 @@ supported for legacy environments, but older Qt releases are ignored unless
 build that supports the active macOS SDK; recent Qt 6 releases are the safest
 choice. Gist is opt-in for CMake builds on macOS. Use `-DGECODE_ENABLE_GIST=ON`
 when Qt is installed and its framework link interface is usable.
+
+## Experimental search preview
+
+Gecode 6.5.0 includes an opt-in preview of `AStar`, configurable best-first,
+`CABS`, and `Column` (including fixed-quota CBFS), with their guidance,
+state-pruning and builder APIs in the normal Gecode namespaces.
+Enable it when building the library with `-DGECODE_ENABLE_EXPERIMENTAL=ON`
+for CMake or `--enable-experimental` for Autoconf. Both builds disable the
+preview by default. The installed configuration defines
+`GECODE_HAS_EXPERIMENTAL` only when the library includes these APIs.
+Applications can use this macro to check availability; defining it in an
+application does not enable the library feature.
+
+Experimental APIs may change or be removed in future feature releases.
+Their documented search correctness contracts still apply. Native preview
+engines work directly with ordinary `Space` subclasses and do not require
+Model or portfolio setup. Enabled builds include the `astar`, `best-first`
+and `tsptw` examples. Ordinary DFS/BAB and shared kernel/OpenCP APIs remain
+available independently of the preview option.
 
 ## CMake Package Consumption
 

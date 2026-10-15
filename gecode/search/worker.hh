@@ -56,6 +56,8 @@ namespace Gecode { namespace Search {
     bool stop(const Options& o);
     /// Check stop and wait for admission of a sequential worker
     bool stop_seq(Options& o);
+    /// Prepare a brancher before changing the search path.
+    bool prepare(Space& s, const Options& o);
     /// Check whether engine has been stopped
     bool stopped(void) const;
     /// Reset statistics with root depth \a d
@@ -95,6 +97,13 @@ namespace Gecode { namespace Search {
       WorkerControlAccess::wait(o.worker_control,0U);
     }
     return true;
+  }
+
+  forceinline bool
+  Worker::prepare(Space& s, const Options& o) {
+    bool prepared = Search::prepare(s,*this,o);
+    _stopped |= !prepared;
+    return prepared;
   }
 
   forceinline bool

@@ -374,7 +374,7 @@ namespace Gecode { namespace Int { namespace MinDistance {
         for (int j=i+1; j<x.size(); j++,k++) {
           PairCache& c = cache[k];
           if (all_dirty || changed || dirty.get(i) || dirty.get(j)) {
-            // Unchanged pairs retain their witnesses. For a changed pair,
+            // Unchanged pairs use their cached witnesses. For a changed pair,
             // a surviving witness still attains the maximum; shrinking
             // domains cannot expose a larger distance.
             if ((c.upper < 0) || !x[i].in(c.a) || !x[j].in(c.b))

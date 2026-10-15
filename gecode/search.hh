@@ -47,6 +47,11 @@
 #include <chrono>
 #include <initializer_list>
 #include <atomic>
+#include <cstdint>
+#include <functional>
+#include <optional>
+#include <vector>
+#include <utility>
 
 #include <gecode/kernel.hh>
 
@@ -160,6 +165,12 @@ namespace Gecode { namespace Search {
     unsigned long int restart;
     /// Number of no-goods posted
     unsigned long int nogood;
+    /// Number of arrivals or live candidates removed by sound state pruning
+    unsigned long long int state_pruned;
+    /// Peak number of stored state descriptors
+    unsigned long int state_descriptors;
+    /// Peak owned descriptor bytes, excluding container/allocator overhead
+    std::size_t state_bytes;
     /// Initialize
     Statistics(void);
     /// Reset
@@ -827,6 +838,15 @@ namespace Gecode { namespace Search {
       expand(void) const;
     };
 
+    /**
+     * Prepare the active brancher using the caller's search statistics/options.
+     * Completion trials observe the enclosing stop and publish their work here.
+     * False suspends choice construction; true may leave a failed, solved, or
+     * branching space. The caller must classify status before making a choice.
+     */
+    GECODE_SEARCH_EXPORT bool
+    prepare(Space& home, Statistics& stat, const Options& options);
+
 }}
 
 #include <gecode/search/worker-control.hh>
@@ -990,7 +1010,7 @@ namespace Gecode { namespace Search {
    */
   class GECODE_SEARCH_EXPORT Engine : public HeapAllocated {
   protected:
-    /// Control retained for the lifetime of a leaf engine
+    /// Control shared for the lifetime of a leaf engine
     WorkerControl worker_control;
     /// Construct a meta engine without worker control
     Engine(void);
@@ -1151,6 +1171,319 @@ namespace Gecode {
 }
 
 #include <gecode/search/dfs.hpp>
+
+#ifdef GECODE_HAS_EXPERIMENTAL
+namespace Gecode { namespace Search {
+
+  /**
+   * \brief Read-only guidance for scalar integer heuristic search
+   *
+   * The bound is an optimistic total objective value on a stable Space:
+   * a lower bound for minimization, an upper bound for maximization, and
+   * the exact objective on a solution. It must agree with the strict
+   * improvement restriction in Space::constrain. The engine adds no prefix cost.
+   * Engines define how they use the optional lower-first ranking; rank never justifies pruning.
+   * Callbacks and their captured
+   * dependencies must remain valid for all engine clones and must not post
+   * constraints or refer to another Space's local state.
+   * \ingroup TaskModelSearch
+   */
+  class HeuristicGuidance {
+  public:
+    /// Objective direction
+    enum Sense { MINIMIZE, MAXIMIZE };
+    /// Evaluate a propagated stable space
+    typedef std::function<std::int64_t(const Space&)> Evaluate;
+    /// Objective direction
+    Sense sense;
+    /// Optimistic total objective bound (required)
+    Evaluate bound;
+    /// Optional ranking (lower first)
+    Evaluate rank;
+    /// Initialize guidance
+    HeuristicGuidance(Sense sense, Evaluate bound, Evaluate rank=Evaluate());
+  };
+
+  /// Fixed exploration order for native best-first search
+  enum BestFirstOrder {
+    BOUND_FIRST, ///< Optimistic bound, lower rank, then insertion order
+    RANK_FIRST   ///< Lower rank, optimistic bound, then insertion order
+  };
+
+  /**
+   * \brief Optional model-justified exact-state and label pruning
+   *
+   * Descriptors own values only, never native handles or Spaces. Equal hashes
+   * select comparisons, but exact keys must also match. The author guarantees
+   * that a key includes every fact affecting residual feasibility and
+   * brancher/search progress. Equivalence/dominance must preserve an
+   * at-least-as-good completion, including prefix objective cost, and a route
+   * to a solution under repeated pruning. A sufficient argument preserves such
+   * a completion with no more remaining search transitions. Identical domains
+   * and costs at successive brancher stages alone are insufficient: a stored
+   * ancestor descriptor could suppress its only route to a goal. Include
+   * sufficient stage state in the key or decline extraction; no stage field
+   * is required or inferred. Relations are directional, consistent and
+   * transitive. An arbitrary heuristic bound does not establish a sound label
+   * relation.
+   * Callbacks read stable Spaces and follow HeuristicGuidance's lifetime rules.
+   * Both callbacks empty disable all descriptor extraction and storage;
+   * supplying only one is invalid. Extraction may decline individual nodes.
+   * \ingroup TaskModelSearch
+   */
+  class StatePruning {
+  public:
+    /// Owned exact grouping key and cost/resource label
+    struct Descriptor {
+      std::size_t hash;
+      std::vector<std::int64_t> key, label;
+      /// Object and vector capacity bytes, excluding container/allocator overhead
+      std::size_t storage(void) const {
+        return sizeof(Descriptor) +
+          (key.capacity()+label.capacity())*sizeof(std::int64_t);
+      }
+    };
+    /// Relation of the first descriptor to the second, with identical keys
+    enum Relation { EQUIVALENT, DOMINATES, DOMINATED, INCOMPARABLE };
+    /// Extract owned state, or decline when sufficient state is unavailable
+    typedef std::function<std::optional<Descriptor>(const Space&)> Extract;
+    /// Compare labels of descriptors with exactly equal grouping keys
+    typedef std::function<Relation(const Descriptor&,const Descriptor&)> Compare;
+    Extract extract;
+    Compare compare;
+    /// Metadata ceiling; zero is unlimited. Forgetting never removes search work.
+    unsigned long int descriptor_limit;
+    /// Initialize optional extraction, relation and metadata ceiling
+    StatePruning(Extract extract=Extract(), Compare compare=Compare(),
+                 unsigned long int descriptor_limit=0);
+  };
+
+}}
+
+namespace Gecode {
+
+  /**
+   * \brief Sequential bound-ordered A* with improving solution publication
+   *
+   * Experimental 6.5.0 preview: build with GECODE_ENABLE_EXPERIMENTAL=ON
+   * or --enable-experimental; GECODE_HAS_EXPERIMENTAL reports availability.
+   * APIs may change or be removed in future feature releases. The documented
+   * correctness contracts still apply.
+   *
+   * Spaces must implement strict improvement constraints compatible with the
+   * guidance's exact scalar integer objective on solutions. A generated solution
+   * can precede a better one;
+   * continue next() until nullptr with stopped()==false to prove optimality of
+   * the best accepted incumbent, including external adoption, or infeasibility
+   * if no incumbent was accepted. Returned solutions belong to the caller.
+   *
+   * Equal bounds use lower rank, then insertion order.
+   * The frontier stores clones; c_d and a_d do not control recomputation.
+   * There is no hard memory guarantee and no-good extraction is empty.
+   * Only one expanded thread and no tracer are supported. Capacity-one
+   * worker control and ordinary resumable stops are supported.
+   * If guidance, state pruning, or a model operation throws, destroy the engine
+   * before further use.
+   * \ingroup TaskModelSearch
+   */
+  template<class T>
+  class AStar : public Search::Base<T> {
+  public:
+    /// Initialize from space, guidance, and ordinary search options
+    AStar(T* s, const Search::HeuristicGuidance& guidance,
+          const Search::Options& o=Search::Options::def,
+          const Search::StatePruning& pruning=Search::StatePruning());
+    /// Adopt a strictly improving compatible external incumbent
+    void constrain(const Space& incumbent);
+    /// Whether engine does best solution search
+    static const bool best = true;
+  };
+
+  /// Return an A* engine builder with copied guidance
+  template<class T>
+  SEB astar(const Search::HeuristicGuidance& guidance,
+            const Search::Options& o=Search::Options::def,
+            const Search::StatePruning& pruning=Search::StatePruning());
+
+  /**
+   * \brief Return a native best-first builder with copied guidance and fixed order
+   *
+   * Experimental 6.5.0 preview: build with GECODE_ENABLE_EXPERIMENTAL=ON
+   * or --enable-experimental; GECODE_HAS_EXPERIMENTAL reports availability.
+   * APIs may change or be removed in future feature releases. The documented
+   * correctness contracts still apply.
+   *
+   * Uses the same engine and contracts as AStar. BOUND_FIRST preserves AStar
+   * ordering; RANK_FIRST permits arbitrary, inadmissible lower-first ranking.
+   * Missing rank falls back to bound order. Ties use insertion order. Values
+   * are cached for each admitted stable node; reset preserves the order.
+   * Rank selects pending branching Spaces only and never prunes. Generated
+   * solutions are published immediately, so the first need not be optimal.
+   * Natural finite-tree exhaustion with stopped()==false proves closure under
+   * the bound, strict improvement, and optional sound StatePruning contracts.
+   * \ingroup TaskModelSearch
+   */
+  template<class T>
+  SEB bestfirst(const Search::HeuristicGuidance& guidance,
+                Search::BestFirstOrder ordering,
+                const Search::Options& o=Search::Options::def,
+                const Search::StatePruning& pruning=Search::StatePruning());
+
+}
+
+#include <gecode/search/astar.hpp>
+
+namespace Gecode { namespace Search {
+
+  /// Intrinsic CABS resource limits; zero means unlimited
+  class CABSOptions {
+  public:
+    /// Maximum permitted width (passes use widths 1, 2, 4, ...)
+    unsigned long int max_width;
+    /// Quota of pending search Spaces, including the selected parent
+    unsigned long int frontier_limit;
+    /// Initialize width and frontier-node limits
+    CABSOptions(unsigned long int maximum_width=0,
+                unsigned long int frontier_nodes=0);
+  };
+
+}}
+
+namespace Gecode {
+
+  /**
+   * \brief Sequential complete anytime beam search with widening restarts
+   *
+   * Experimental 6.5.0 preview: build with GECODE_ENABLE_EXPERIMENTAL=ON
+   * or --enable-experimental; GECODE_HAS_EXPERIMENTAL reports availability.
+   * APIs may change or be removed in future feature releases. The documented
+   * correctness contracts still apply.
+   *
+   * Each native Choice commit advances one layer. Width starts at one and
+   * doubles after a completed pass if discarded bounds still permit improvement
+   * or no incumbent exists. A pass can finish without widening when every
+   * discarded bound excludes strict improvement of the accepted incumbent.
+   * Lower rank selects the beam; without rank, the optimistic total bound
+   * selects it. Equal priorities use generation order. Only admissible bounds
+   * justify pruning and completion.
+   *
+   * Returned solutions belong to the caller and strictly improve the engine's
+   * incumbent. Continue next() until nullptr with stopped()==false to prove
+   * optimality of the best accepted incumbent, including external adoption,
+   * or infeasibility if none was accepted. Publication preserves unfinished
+   * passes.
+   * Ordinary stops and capacity-one worker control preserve continuation.
+   * Width/frontier limits and width overflow are incomplete stops latched
+   * until reset through the native Engine interface.
+   *
+   * The frontier quota includes current-layer entries, next-layer candidates,
+   * and the selected parent. It excludes the restart root, incumbent, returned
+   * solutions, temporary successor, and brancher trial Spaces. It is a node
+   * quota, without a byte or process-memory guarantee. Clones store the search;
+   * c_d/a_d do not enable replay and no-good extraction is empty.
+   * One expanded thread and no tracer are supported. Guidance and strict
+   * improvement constraints obey the same scalar integer contract as AStar.
+   * If guidance, state pruning, or a model operation throws, destroy the engine
+   * before further use.
+   * \ingroup TaskModelSearch
+   */
+  template<class T>
+  class CABS : public Search::Base<T> {
+  public:
+    /// Initialize from space, guidance, ordinary options, and beam limits
+    CABS(T* s, const Search::HeuristicGuidance& guidance,
+         const Search::Options& o=Search::Options::def,
+         const Search::CABSOptions& limits=Search::CABSOptions(),
+         const Search::StatePruning& pruning=Search::StatePruning());
+    /// Adopt a strictly improving compatible external incumbent
+    void constrain(const Space& incumbent);
+    /// Whether engine does best solution search
+    static const bool best = true;
+  };
+
+  /// Return a CABS engine builder with copied guidance and beam limits
+  template<class T>
+  SEB cabs(const Search::HeuristicGuidance& guidance,
+           const Search::Options& o=Search::Options::def,
+           const Search::CABSOptions& limits=Search::CABSOptions(),
+           const Search::StatePruning& pruning=Search::StatePruning());
+
+}
+
+#include <gecode/search/cabs.hpp>
+
+namespace Gecode { namespace Search {
+
+  /// Expansion quotas and pending-frontier limit for sequential column search
+  class ColumnOptions {
+  public:
+    /// Positive quota of selected parents per depth in the first cycle
+    unsigned long int initial_quota;
+    /// Added after each full depth cycle; zero selects fixed-quota CBFS
+    unsigned long int quota_growth;
+    /// Pending Spaces including the unfinished parent; zero is unlimited
+    unsigned long int frontier_limit;
+    ColumnOptions(unsigned long int initial=1, unsigned long int growth=1,
+                  unsigned long int frontier_nodes=0);
+  };
+
+}}
+
+namespace Gecode {
+
+  /**
+   * \brief Sequential progressive column search with fixed-quota CBFS mode
+   *
+   * Experimental 6.5.0 preview: build with GECODE_ENABLE_EXPERIMENTAL=ON
+   * or --enable-experimental; GECODE_HAS_EXPERIMENTAL reports availability.
+   * APIs may change or be removed in future feature releases. The documented
+   * correctness contracts still apply.
+   *
+   * Each cycle expands up to the quota from successive depth queues, including
+   * deeper successors generated in that cycle. Quota growth saturates safely.
+   * Deferred work remains queued. Lower-first rank orders each queue when
+   * supplied; otherwise the optimistic objective bound orders it. Only sound
+   * bounds and optional state dominance prune work.
+   *
+   * Publication, ordinary stops and capacity-one worker control preserve the
+   * full cycle and original Choice cursor. Returned solutions belong to the
+   * caller and strictly improve the incumbent. Continue next() to nullptr with
+   * stopped()==false to prove optimality of the best accepted incumbent,
+   * including external adoption, or infeasibility if none was accepted.
+   * A frontier-cap loss is incomplete and stays stopped until Engine::reset.
+   *
+   * The cap counts queued Spaces and the unfinished parent, excluding incumbent,
+   * returned solutions and temporary successors/trials. It is a node limit,
+   * without a byte or process-memory guarantee. Clones store search work;
+   * c_d/a_d do not enable replay and no-good extraction is empty. One expanded
+   * thread and no tracer are supported. Guidance and comparison obey AStar's
+   * scalar integer contract. Destroy the engine if a callback throws.
+   * \ingroup TaskModelSearch
+   */
+  template<class T>
+  class Column : public Search::Base<T> {
+  public:
+    Column(T* s, const Search::HeuristicGuidance& guidance,
+           const Search::Options& o=Search::Options::def,
+           const Search::ColumnOptions& limits=Search::ColumnOptions(),
+           const Search::StatePruning& pruning=Search::StatePruning());
+    /// Adopt a strictly improving compatible external incumbent
+    void constrain(const Space& incumbent);
+    static const bool best = true;
+  };
+
+  /// Return a column-search builder with copied guidance, quotas and pruning
+  template<class T>
+  SEB column(const Search::HeuristicGuidance& guidance,
+             const Search::Options& o=Search::Options::def,
+             const Search::ColumnOptions& limits=Search::ColumnOptions(),
+             const Search::StatePruning& pruning=Search::StatePruning());
+
+}
+
+#include <gecode/search/column.hpp>
+
+#endif
 
 namespace Gecode {
 

@@ -1,0 +1,443 @@
+{
+  "schema_version": 1,
+  "selection": "Frozen before solver tuning: two canonical development and five canonical held-out cases per family, plus one separately marked window variant per family per split. Sizes and named window classes vary; selection does not use measured solver outcomes. Source instances do not cross splits, including variant bases.",
+  "sources": {
+    "Dumas": {
+      "archive_url": "https://lopez-ibanez.eu/files/TSPTW/Dumas.tar.gz",
+      "archive_sha256": "a58fc8a764f8b9be2ee9c31bc0120da952508cb6cda6d1442bae79636421b811",
+      "tour_url": "https://lopez-ibanez.eu/files/TSPTW/Dumas-best-known-traveltime.txt",
+      "tour_table_sha256": "0e4bd30b9105ab41852c5d89a9472910c65e918d03b05fd0317b47727fe3c41d"
+    },
+    "GendreauDumasExtended": {
+      "archive_url": "https://lopez-ibanez.eu/files/TSPTW/GendreauDumasExtended.tar.gz",
+      "archive_sha256": "449e853bc4236b30f73a6ad8dcf10e96cb5fadaef4d31c5948703fa90fdeae7d",
+      "tour_url": "https://lopez-ibanez.eu/files/TSPTW/GendreauDumasExtended-best-known-traveltime.txt",
+      "tour_table_sha256": "2223d460bee9d39987a975196c698c6de7238a924dfc617b8ccf9ad4be4175ce"
+    },
+    "SolomonPotvinBengio": {
+      "archive_url": "https://lopez-ibanez.eu/files/TSPTW/SolomonPotvinBengio.tar.gz",
+      "archive_sha256": "a8048561b55dfd824cb48c266c5dfc855f0e878aec1a176d0b62900dde7af892",
+      "tour_url": "https://lopez-ibanez.eu/files/TSPTW/SolomonPotvinBengio-best-known-traveltime.txt",
+      "tour_table_sha256": "4f39631176ddf9ffab1d3b75d8eea0e8cd8a4d4c5ac0cd094fc02c098d3bd043"
+    },
+    "AFG": {
+      "archive_url": "https://lopez-ibanez.eu/files/TSPTW/AFG.tar.gz",
+      "archive_sha256": "98797c37e6d16234db2eb41941e600082ca9b274c3f938646ce89a3b9e08e860",
+      "tour_url": "https://lopez-ibanez.eu/files/TSPTW/AFG-best-known-traveltime.txt",
+      "tour_table_sha256": "62783054e6fb1cff020646cecbe3be469d0d9ccd03ed61809ea6cd98a80f1f8a"
+    }
+  },
+  "tiny": [
+    {
+      "path": "tiny/decimal.txt",
+      "sha256": "add8c302d37fc661ca9f8667b6b530f7e3be2b519d30b3df9b31a2e3c8094169",
+      "optimum": "1.5",
+      "feasible_tours": 1,
+      "proof": "exhaustive enumeration"
+    },
+    {
+      "path": "tiny/folded-service.txt",
+      "sha256": "61f45ff0e7bd9453e61d02d00dc0680db3fc5e5fb7a0710c8465ac483cf806bb",
+      "optimum": "9",
+      "feasible_tours": 2,
+      "proof": "exhaustive enumeration"
+    },
+    {
+      "path": "tiny/late-customer.txt",
+      "sha256": "c1438cc1fa564c8b22011684aab37ae461e5f598d5d714a758c885ba14713ef6",
+      "optimum": null,
+      "feasible_tours": 0,
+      "proof": "exhaustive enumeration"
+    },
+    {
+      "path": "tiny/late-return.txt",
+      "sha256": "f44a2168bc9638d0c657235b2eb9df1bc08fcc0dca06e6729782ed20235dae62",
+      "optimum": null,
+      "feasible_tours": 0,
+      "proof": "exhaustive enumeration"
+    },
+    {
+      "path": "tiny/waiting.txt",
+      "sha256": "9bf9bf7ff8a243500d75d09436a75a92bef276c1ea596d7d8af5bc272952220e",
+      "optimum": "5",
+      "feasible_tours": 1,
+      "proof": "exhaustive enumeration"
+    }
+  ],
+  "published": [
+    {
+      "family": "Dumas",
+      "path": "published/Dumas/n20w20.001.txt",
+      "sha256": "83c354a30228db900577252a845fe2671175cb5e621a9a1061a01f9b56aaa748",
+      "tour_path": "published/Dumas/n20w20.001.txt.tour",
+      "tour_sha256": "bb65acd7d979b3225c9f0869cc15ed77222b23faa489a7a00b0199f37221fe74",
+      "published_cost": "378",
+      "exact_cost": "378",
+      "status": "published best-known tour; no optimality proof inferred"
+    },
+    {
+      "family": "GendreauDumasExtended",
+      "path": "published/GendreauDumasExtended/n20w120.001.txt",
+      "sha256": "633d3be7abef529e7faf8bd6094a40f548d8310f41cb2f3014d21b550ebf5fba",
+      "tour_path": "published/GendreauDumasExtended/n20w120.001.txt.tour",
+      "tour_sha256": "4b49c9807ac9a66ceb3f6d3857c66ee9e8929e0c37b69234d905426bad20dbb2",
+      "published_cost": "267",
+      "exact_cost": "267",
+      "status": "published best-known tour; no optimality proof inferred"
+    },
+    {
+      "family": "SolomonPotvinBengio",
+      "path": "published/SolomonPotvinBengio/rc_201.1.txt",
+      "sha256": "e0c1dfb4fb08559c01c3ab3193316269fa8a3a215d529e0cc893ef300659766f",
+      "tour_path": "published/SolomonPotvinBengio/rc_201.1.txt.tour",
+      "tour_sha256": "5b1695a48e6eefb47b79bbebcaf45558740e4229d02df8281911d1820c177e55",
+      "published_cost": "444.54",
+      "exact_cost": "444.5425",
+      "status": "published best-known tour; no optimality proof inferred"
+    },
+    {
+      "family": "AFG",
+      "path": "published/AFG/rbg010a.tw",
+      "sha256": "4a8e0c37052047063b19d698487bae0ed5256bb22de4f675fca3868975f40ef3",
+      "tour_path": "published/AFG/rbg010a.tw.tour",
+      "tour_sha256": "70d011b502f29dd14297cc341cccdb80ad3b736c666b9bd88c209ad52cc5673d",
+      "published_cost": "671",
+      "exact_cost": "671",
+      "status": "published best-known tour; no optimality proof inferred"
+    }
+  ],
+  "cases": [
+    {
+      "id": "Dumas/n20w20.001.txt",
+      "split": "development",
+      "family": "Dumas",
+      "member": "Dumas/n20w20.001.txt",
+      "path": "Dumas/n20w20.001.txt",
+      "source_sha256": "83c354a30228db900577252a845fe2671175cb5e621a9a1061a01f9b56aaa748",
+      "sha256": "83c354a30228db900577252a845fe2671175cb5e621a9a1061a01f9b56aaa748"
+    },
+    {
+      "id": "Dumas/n60w100.001.txt",
+      "split": "development",
+      "family": "Dumas",
+      "member": "Dumas/n60w100.001.txt",
+      "path": "Dumas/n60w100.001.txt",
+      "source_sha256": "35d3690fbb7c4eb31775e6d8e32c5a36068498ca69c6097aed3d7eeb2976c6bb",
+      "sha256": "35d3690fbb7c4eb31775e6d8e32c5a36068498ca69c6097aed3d7eeb2976c6bb"
+    },
+    {
+      "id": "Dumas/n40w20.002.txt",
+      "split": "held-out",
+      "family": "Dumas",
+      "member": "Dumas/n40w20.002.txt",
+      "path": "Dumas/n40w20.002.txt",
+      "source_sha256": "460887b23bae03441567010f3b1524b68121ca74a739d66ef705d0852879e8c5",
+      "sha256": "460887b23bae03441567010f3b1524b68121ca74a739d66ef705d0852879e8c5"
+    },
+    {
+      "id": "Dumas/n80w40.002.txt",
+      "split": "held-out",
+      "family": "Dumas",
+      "member": "Dumas/n80w40.002.txt",
+      "path": "Dumas/n80w40.002.txt",
+      "source_sha256": "b5d6dc6c794fd2daa6e362604ac31f2562f4d829af3110226fbc4496ab8f471a",
+      "sha256": "b5d6dc6c794fd2daa6e362604ac31f2562f4d829af3110226fbc4496ab8f471a"
+    },
+    {
+      "id": "Dumas/n100w60.002.txt",
+      "split": "held-out",
+      "family": "Dumas",
+      "member": "Dumas/n100w60.002.txt",
+      "path": "Dumas/n100w60.002.txt",
+      "source_sha256": "0b00a2eac6bf37c0bc94120e072cea9bf4a7891e4b2edf17a6497d0ea3c74b8b",
+      "sha256": "0b00a2eac6bf37c0bc94120e072cea9bf4a7891e4b2edf17a6497d0ea3c74b8b"
+    },
+    {
+      "id": "Dumas/n150w60.002.txt",
+      "split": "held-out",
+      "family": "Dumas",
+      "member": "Dumas/n150w60.002.txt",
+      "path": "Dumas/n150w60.002.txt",
+      "source_sha256": "6c9f4cb2f5a5fab2688ce7e4e745b2f275ac497d390219da4a32bc5a4145f37a",
+      "sha256": "6c9f4cb2f5a5fab2688ce7e4e745b2f275ac497d390219da4a32bc5a4145f37a"
+    },
+    {
+      "id": "Dumas/n200w40.002.txt",
+      "split": "held-out",
+      "family": "Dumas",
+      "member": "Dumas/n200w40.002.txt",
+      "path": "Dumas/n200w40.002.txt",
+      "source_sha256": "caef8dbbcdec934ed7fd2a49586633902aa40e445fde527f99de7a527ea90970",
+      "sha256": "caef8dbbcdec934ed7fd2a49586633902aa40e445fde527f99de7a527ea90970"
+    },
+    {
+      "id": "variants/Dumas/customer-due-plus-100/n20w100.003.txt",
+      "split": "development",
+      "family": "Dumas",
+      "member": "Dumas/n20w100.003.txt",
+      "path": "variants/Dumas/customer-due-plus-100/n20w100.003.txt",
+      "variant": "customer-due-plus-100",
+      "source_sha256": "254226989b1e19547a9a312ec1ff4c0f7d84b98126316f55f0c9e892401c7704",
+      "sha256": "2aed1af8ef2756d0ecf902a6c0a9f9916893bb2a65ef9a284e3ff85848c1962d"
+    },
+    {
+      "id": "variants/Dumas/customer-width-half/n40w100.004.txt",
+      "split": "held-out",
+      "family": "Dumas",
+      "member": "Dumas/n40w100.004.txt",
+      "path": "variants/Dumas/customer-width-half/n40w100.004.txt",
+      "variant": "customer-width-half",
+      "source_sha256": "1416dcdf07241cf49e5bc58eaf18df05ea0f4820015af4b6b70fd7db22ab1b3f",
+      "sha256": "4b2621859ded3a5eaa885ece60b028459d36f7645945a8854c2d33fe8da9b99b"
+    },
+    {
+      "id": "GendreauDumasExtended/n20w120.001.txt",
+      "split": "development",
+      "family": "GendreauDumasExtended",
+      "member": "GendreauDumasExtended/n20w120.001.txt",
+      "path": "GendreauDumasExtended/n20w120.001.txt",
+      "source_sha256": "633d3be7abef529e7faf8bd6094a40f548d8310f41cb2f3014d21b550ebf5fba",
+      "sha256": "633d3be7abef529e7faf8bd6094a40f548d8310f41cb2f3014d21b550ebf5fba"
+    },
+    {
+      "id": "GendreauDumasExtended/n60w200.001.txt",
+      "split": "development",
+      "family": "GendreauDumasExtended",
+      "member": "GendreauDumasExtended/n60w200.001.txt",
+      "path": "GendreauDumasExtended/n60w200.001.txt",
+      "source_sha256": "d8dd1073870ba85b8bf82085df4056c97234889c57baf03dc459ff0aa61256c5",
+      "sha256": "d8dd1073870ba85b8bf82085df4056c97234889c57baf03dc459ff0aa61256c5"
+    },
+    {
+      "id": "GendreauDumasExtended/n40w120.002.txt",
+      "split": "held-out",
+      "family": "GendreauDumasExtended",
+      "member": "GendreauDumasExtended/n40w120.002.txt",
+      "path": "GendreauDumasExtended/n40w120.002.txt",
+      "source_sha256": "58657c1af619f05b0f5b0cc7d8a7acfb07d80f202b10a5b0ff49c6e6fd54494d",
+      "sha256": "58657c1af619f05b0f5b0cc7d8a7acfb07d80f202b10a5b0ff49c6e6fd54494d"
+    },
+    {
+      "id": "GendreauDumasExtended/n80w140.002.txt",
+      "split": "held-out",
+      "family": "GendreauDumasExtended",
+      "member": "GendreauDumasExtended/n80w140.002.txt",
+      "path": "GendreauDumasExtended/n80w140.002.txt",
+      "source_sha256": "5164c8948942b184550b9ac0e3fa342eb7a2a322c422cf7487e99aae06a05a4e",
+      "sha256": "5164c8948942b184550b9ac0e3fa342eb7a2a322c422cf7487e99aae06a05a4e"
+    },
+    {
+      "id": "GendreauDumasExtended/n100w160.002.txt",
+      "split": "held-out",
+      "family": "GendreauDumasExtended",
+      "member": "GendreauDumasExtended/n100w160.002.txt",
+      "path": "GendreauDumasExtended/n100w160.002.txt",
+      "source_sha256": "283b26d40c702183a4aa873a500ae04d695b424d628c34945a61ecdee8d263bf",
+      "sha256": "283b26d40c702183a4aa873a500ae04d695b424d628c34945a61ecdee8d263bf"
+    },
+    {
+      "id": "GendreauDumasExtended/n60w180.002.txt",
+      "split": "held-out",
+      "family": "GendreauDumasExtended",
+      "member": "GendreauDumasExtended/n60w180.002.txt",
+      "path": "GendreauDumasExtended/n60w180.002.txt",
+      "source_sha256": "9df672deec8baf12725a256a7023303d650d86c599db9539f3179a8b80cc454d",
+      "sha256": "9df672deec8baf12725a256a7023303d650d86c599db9539f3179a8b80cc454d"
+    },
+    {
+      "id": "GendreauDumasExtended/n20w200.002.txt",
+      "split": "held-out",
+      "family": "GendreauDumasExtended",
+      "member": "GendreauDumasExtended/n20w200.002.txt",
+      "path": "GendreauDumasExtended/n20w200.002.txt",
+      "source_sha256": "d835d26fdc88ae53e9a58735ed9572981c477546ee1d5ea37c6d9eaf21b6db46",
+      "sha256": "d835d26fdc88ae53e9a58735ed9572981c477546ee1d5ea37c6d9eaf21b6db46"
+    },
+    {
+      "id": "variants/GendreauDumasExtended/customer-due-plus-100/n20w200.003.txt",
+      "split": "development",
+      "family": "GendreauDumasExtended",
+      "member": "GendreauDumasExtended/n20w200.003.txt",
+      "path": "variants/GendreauDumasExtended/customer-due-plus-100/n20w200.003.txt",
+      "variant": "customer-due-plus-100",
+      "source_sha256": "df1740f52be6e936fa914148c00b512093f0b3e154be8683149020dc1a90a9e8",
+      "sha256": "8c7655127d49bc58a9198198138894dd3fe6180d1036cc6f0adbe2a768b62824"
+    },
+    {
+      "id": "variants/GendreauDumasExtended/customer-width-half/n40w200.004.txt",
+      "split": "held-out",
+      "family": "GendreauDumasExtended",
+      "member": "GendreauDumasExtended/n40w200.004.txt",
+      "path": "variants/GendreauDumasExtended/customer-width-half/n40w200.004.txt",
+      "variant": "customer-width-half",
+      "source_sha256": "247b7ebc59958f5f6880c4dddd6f88d51b122712200d9733ceaf957e4804a706",
+      "sha256": "06b46d0300b0a32c004227f24e3fbc47692e56216a134695e0d7f9f2a81c1a6a"
+    },
+    {
+      "id": "SolomonPotvinBengio/rc_201.1.txt",
+      "split": "development",
+      "family": "SolomonPotvinBengio",
+      "member": "SolomonPotvinBengio/rc_201.1.txt",
+      "path": "SolomonPotvinBengio/rc_201.1.txt",
+      "source_sha256": "e0c1dfb4fb08559c01c3ab3193316269fa8a3a215d529e0cc893ef300659766f",
+      "sha256": "e0c1dfb4fb08559c01c3ab3193316269fa8a3a215d529e0cc893ef300659766f"
+    },
+    {
+      "id": "SolomonPotvinBengio/rc_202.2.txt",
+      "split": "development",
+      "family": "SolomonPotvinBengio",
+      "member": "SolomonPotvinBengio/rc_202.2.txt",
+      "path": "SolomonPotvinBengio/rc_202.2.txt",
+      "source_sha256": "28f5bbe945a1d11efd7a0be418a6bc647a565a6a3189d702ed085a7e3309567d",
+      "sha256": "28f5bbe945a1d11efd7a0be418a6bc647a565a6a3189d702ed085a7e3309567d"
+    },
+    {
+      "id": "SolomonPotvinBengio/rc_201.2.txt",
+      "split": "held-out",
+      "family": "SolomonPotvinBengio",
+      "member": "SolomonPotvinBengio/rc_201.2.txt",
+      "path": "SolomonPotvinBengio/rc_201.2.txt",
+      "source_sha256": "295faab3002d7c8e94d0fe136875801ee23c22c66532e8042322ff981e511948",
+      "sha256": "295faab3002d7c8e94d0fe136875801ee23c22c66532e8042322ff981e511948"
+    },
+    {
+      "id": "SolomonPotvinBengio/rc_203.3.txt",
+      "split": "held-out",
+      "family": "SolomonPotvinBengio",
+      "member": "SolomonPotvinBengio/rc_203.3.txt",
+      "path": "SolomonPotvinBengio/rc_203.3.txt",
+      "source_sha256": "bb9e4dd0b4408e1ddf9f721952c1dfc4d0cdafc062f8ab1f888d120f1f9c8b11",
+      "sha256": "bb9e4dd0b4408e1ddf9f721952c1dfc4d0cdafc062f8ab1f888d120f1f9c8b11"
+    },
+    {
+      "id": "SolomonPotvinBengio/rc_204.1.txt",
+      "split": "held-out",
+      "family": "SolomonPotvinBengio",
+      "member": "SolomonPotvinBengio/rc_204.1.txt",
+      "path": "SolomonPotvinBengio/rc_204.1.txt",
+      "source_sha256": "c6f38edd2b570bb8e350fef72290c82fdfa83455f4a5a8fa0119c6c58fbba704",
+      "sha256": "c6f38edd2b570bb8e350fef72290c82fdfa83455f4a5a8fa0119c6c58fbba704"
+    },
+    {
+      "id": "SolomonPotvinBengio/rc_206.1.txt",
+      "split": "held-out",
+      "family": "SolomonPotvinBengio",
+      "member": "SolomonPotvinBengio/rc_206.1.txt",
+      "path": "SolomonPotvinBengio/rc_206.1.txt",
+      "source_sha256": "83b9a4e3178a907c27c37f16856b11a312a4322983b1c503d1f0bfda03ea9cce",
+      "sha256": "83b9a4e3178a907c27c37f16856b11a312a4322983b1c503d1f0bfda03ea9cce"
+    },
+    {
+      "id": "SolomonPotvinBengio/rc_208.1.txt",
+      "split": "held-out",
+      "family": "SolomonPotvinBengio",
+      "member": "SolomonPotvinBengio/rc_208.1.txt",
+      "path": "SolomonPotvinBengio/rc_208.1.txt",
+      "source_sha256": "c698430e387cd23da8c27611b769e8c72e7497e74c6e4e35bf5cda241cee82f4",
+      "sha256": "c698430e387cd23da8c27611b769e8c72e7497e74c6e4e35bf5cda241cee82f4"
+    },
+    {
+      "id": "variants/SolomonPotvinBengio/customer-due-plus-100/rc_205.1.txt",
+      "split": "development",
+      "family": "SolomonPotvinBengio",
+      "member": "SolomonPotvinBengio/rc_205.1.txt",
+      "path": "variants/SolomonPotvinBengio/customer-due-plus-100/rc_205.1.txt",
+      "variant": "customer-due-plus-100",
+      "source_sha256": "926f8fca348023eb526a9737151f0cfb18e80a8afa59caa022463777a890a9c6",
+      "sha256": "a9d2e771ada12cce6d1b43ee722596479ba3fa0bbb7d173ff662145587b7641f"
+    },
+    {
+      "id": "variants/SolomonPotvinBengio/customer-width-half/rc_207.4.txt",
+      "split": "held-out",
+      "family": "SolomonPotvinBengio",
+      "member": "SolomonPotvinBengio/rc_207.4.txt",
+      "path": "variants/SolomonPotvinBengio/customer-width-half/rc_207.4.txt",
+      "variant": "customer-width-half",
+      "source_sha256": "12ea91a274a4ab6882bb015c53661205c64163b4ac608896648ca52a7dc78987",
+      "sha256": "a2caea8e25d9073122648ef14cd71922089b3c9f9af847350663487f806548ba"
+    },
+    {
+      "id": "AFG/rbg010a.tw",
+      "split": "development",
+      "family": "AFG",
+      "member": "AFG/rbg010a.tw",
+      "path": "AFG/rbg010a.tw",
+      "source_sha256": "4a8e0c37052047063b19d698487bae0ed5256bb22de4f675fca3868975f40ef3",
+      "sha256": "4a8e0c37052047063b19d698487bae0ed5256bb22de4f675fca3868975f40ef3"
+    },
+    {
+      "id": "AFG/rbg038a.tw",
+      "split": "development",
+      "family": "AFG",
+      "member": "AFG/rbg038a.tw",
+      "path": "AFG/rbg038a.tw",
+      "source_sha256": "1279df2651b9937f944e25a6c33182dd93f18ac849ebca663b7e069abceb46af",
+      "sha256": "1279df2651b9937f944e25a6c33182dd93f18ac849ebca663b7e069abceb46af"
+    },
+    {
+      "id": "AFG/rbg019d.tw",
+      "split": "held-out",
+      "family": "AFG",
+      "member": "AFG/rbg019d.tw",
+      "path": "AFG/rbg019d.tw",
+      "source_sha256": "b0e917e603b43d49243db0d82390977ffa963a97e50dad6c67d6dbde88dbc017",
+      "sha256": "b0e917e603b43d49243db0d82390977ffa963a97e50dad6c67d6dbde88dbc017"
+    },
+    {
+      "id": "AFG/rbg050a.tw",
+      "split": "held-out",
+      "family": "AFG",
+      "member": "AFG/rbg050a.tw",
+      "path": "AFG/rbg050a.tw",
+      "source_sha256": "afe0b9925a08ced51ec460620ef84425960b23208f55004eb20aa86b8a748117",
+      "sha256": "afe0b9925a08ced51ec460620ef84425960b23208f55004eb20aa86b8a748117"
+    },
+    {
+      "id": "AFG/rbg067a.tw",
+      "split": "held-out",
+      "family": "AFG",
+      "member": "AFG/rbg067a.tw",
+      "path": "AFG/rbg067a.tw",
+      "source_sha256": "bbdf79985a587fd25ba8cb371830ffca424f4f315f0a93397ffd21dbd5786586",
+      "sha256": "bbdf79985a587fd25ba8cb371830ffca424f4f315f0a93397ffd21dbd5786586"
+    },
+    {
+      "id": "AFG/rbg125a.tw",
+      "split": "held-out",
+      "family": "AFG",
+      "member": "AFG/rbg125a.tw",
+      "path": "AFG/rbg125a.tw",
+      "source_sha256": "067b6739985430c2924247f14e0ccce8024d43f751803cb585f29b32f70d6092",
+      "sha256": "067b6739985430c2924247f14e0ccce8024d43f751803cb585f29b32f70d6092"
+    },
+    {
+      "id": "AFG/rbg233.tw",
+      "split": "held-out",
+      "family": "AFG",
+      "member": "AFG/rbg233.tw",
+      "path": "AFG/rbg233.tw",
+      "source_sha256": "6883e6a2c33d94a3a233d21a26c5732d5838c2cac7679fbb3fd19fea6f55321f",
+      "sha256": "6883e6a2c33d94a3a233d21a26c5732d5838c2cac7679fbb3fd19fea6f55321f"
+    },
+    {
+      "id": "variants/AFG/customer-due-plus-100/rbg016a.tw",
+      "split": "development",
+      "family": "AFG",
+      "member": "AFG/rbg016a.tw",
+      "path": "variants/AFG/customer-due-plus-100/rbg016a.tw",
+      "variant": "customer-due-plus-100",
+      "source_sha256": "89c48dcf6ee48ca5fe3e2a2d66dce00e2242910374e43a6d7daee79a3860bd80",
+      "sha256": "eace798b57d686dd5d0406178060daa9aeb1777b7eab0e87de33bec696cb5384"
+    },
+    {
+      "id": "variants/AFG/customer-width-half/rbg193.tw",
+      "split": "held-out",
+      "family": "AFG",
+      "member": "AFG/rbg193.tw",
+      "path": "variants/AFG/customer-width-half/rbg193.tw",
+      "variant": "customer-width-half",
+      "source_sha256": "e6a1e3f9c5c9ec87481e153454c76489257f4b61428c85bed81518f2780dae9c",
+      "sha256": "9daa682fcbbdabb66c57e36267d08185ab54996face3f19c4a140721c261af50"
+    }
+  ]
+}

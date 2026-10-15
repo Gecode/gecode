@@ -57,7 +57,7 @@ namespace {
    * The paper baseline filters after contiguous prefix assignments.
    * All variants filter initially. The padded-projection variant also caps
    * remaining nonzero positions, matching the open projection's length bound.
-   * Both retain the paper's fixed positions and zero termination.
+   * Both use the paper's fixed positions and zero termination.
    */
   class PaperProjection : public NaryPropagator<Int::IntView,Int::PC_INT_VAL> {
   protected:
