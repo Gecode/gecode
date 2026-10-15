@@ -32,6 +32,7 @@
  */
 
 #include <cstddef>
+#include <limits>
 
 namespace Gecode { namespace Support {
 
@@ -43,7 +44,8 @@ namespace Gecode { namespace Support {
   void* unmark(void* p);
   /// Return marked pointer for \a p (possibly already marked)
   void* fmark(void* p);
-  /// Return unmarked pointer for a possibly marked pointer \a p
+  /// Clear the lowest \a bits bits of a possibly marked pointer \a p
+  template<unsigned int bits = 1>
   void* funmark(void* p);
   /// Split possibly marked pointer \a p into mark \a m and unmarked pointer
   void* ptrsplit(void* p, ptrdiff_t& m);
@@ -52,36 +54,41 @@ namespace Gecode { namespace Support {
 
   forceinline bool
   marked(void* p) {
-    return (reinterpret_cast<ptrdiff_t>(p) & 1) != 0;
+    return (reinterpret_cast<uptrint_t>(p) & 0b1) != 0;
   }
   forceinline void*
   mark(void* p) {
     assert(!marked(p));
-    return reinterpret_cast<void*>(reinterpret_cast<ptrdiff_t>(p)+1);
+    return reinterpret_cast<void*>(reinterpret_cast<uptrint_t>(p) | 0b1);
   }
   forceinline void*
   unmark(void* p) {
     assert(marked(p));
-    return reinterpret_cast<void*>(reinterpret_cast<ptrdiff_t>(p)-1);
+    return funmark(p);
   }
   forceinline void*
   fmark(void* p) {
-    return reinterpret_cast<void*>(reinterpret_cast<ptrdiff_t>(p)|1);
+    return reinterpret_cast<void*>(reinterpret_cast<uptrint_t>(p) | 0b1);
   }
+  template<unsigned int bits>
   forceinline void*
   funmark(void* p) {
-    return reinterpret_cast<void*>(reinterpret_cast<ptrdiff_t>(p)&
-                                   ~static_cast<ptrdiff_t>(1));
+    static_assert(bits < std::numeric_limits<uptrint_t>::digits,
+                  "Too many pointer tag bits");
+    return reinterpret_cast<void*>(reinterpret_cast<uptrint_t>(p)&
+                                   ~((static_cast<uptrint_t>(1) << bits)-1));
   }
   forceinline void*
   ptrsplit(void* p, ptrdiff_t& m) {
-    ptrdiff_t mp = reinterpret_cast<ptrdiff_t>(p);
-    m = mp & 1;
-    return reinterpret_cast<void*>(mp & ~static_cast<ptrdiff_t>(1));
+    uptrint_t mp = reinterpret_cast<uptrint_t>(p);
+    m = static_cast<ptrdiff_t>(mp & 0b1);
+    return funmark(p);
   }
   forceinline void*
   ptrjoin(void* p, ptrdiff_t m) {
-    return reinterpret_cast<void*>(reinterpret_cast<ptrdiff_t>(p) | m);
+    assert((reinterpret_cast<uptrint_t>(p) & static_cast<uptrint_t>(m)) == 0);
+    return reinterpret_cast<void*>(reinterpret_cast<uptrint_t>(p) |
+                                   static_cast<uptrint_t>(m));
   }
 
 }}

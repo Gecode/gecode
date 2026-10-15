@@ -92,6 +92,8 @@ namespace Gecode { namespace Kernel {
     Info* allocate(unsigned int p, unsigned int gid);
     /// Allocate new actor info
     Info* allocate(unsigned int gid);
+    /// Allocate a new propagator id without allocating information
+    unsigned int next_pid(void);
     /// Return next free propagator id
     unsigned int pid(void) const;
     /// Provide access to unshare info and set to true
@@ -142,6 +144,11 @@ namespace Gecode { namespace Kernel {
   }
 
   forceinline unsigned int
+  GPI::next_pid(void) {
+    return npid.fetch_add(1, std::memory_order_seq_cst);
+  }
+
+  forceinline unsigned int
   GPI::pid(void) const {
     return npid.load(std::memory_order_acquire);
   }
@@ -186,7 +193,7 @@ namespace Gecode { namespace Kernel {
     }
     c = &b->info[--b->free];
     m.release();
-    c->init(npid.fetch_add(1, std::memory_order_seq_cst),gid);
+    c->init(next_pid(),gid);
     return c;
   }
 

@@ -32,8 +32,28 @@
  */
 
 #include <climits>
+#include <cstddef>
+#include <cstdint>
+#include <limits>
+#include <type_traits>
 
 namespace Gecode { namespace Support {
+
+  /**
+   * \brief Unsigned integer for pointer encodings
+   *
+   * Prefer uintptr_t for pointer round trips. If unavailable, use the
+   * unsigned counterpart of ptrdiff_t and require room for every pointer
+   * bit. Unsigned arithmetic keeps tag masks and shifts well-defined.
+   * Tagging assumes alignment leaves the low pointer bits unused.
+   */
+#ifdef UINTPTR_MAX
+  using uptrint_t = std::uintptr_t;
+#else
+  using uptrint_t = std::make_unsigned_t<ptrdiff_t>;
+  static_assert(std::numeric_limits<uptrint_t>::digits >= sizeof(void*)*CHAR_BIT,
+                "Pointer encoding requires a pointer-wide integer");
+#endif
 
   /// Description of integer types
   enum IntType {

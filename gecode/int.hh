@@ -2424,7 +2424,339 @@ namespace Gecode {
     std::size_t hash(void) const;
   };
 
+  /**
+   * \brief Space-local list of variables with an open length
+   *
+   * Variables can be appended until the list is closed. The length
+   * variable denotes the eventual list length. Propagation materializes
+   * positions required by its minimum. The known_length() query counts the
+   * positions already constructed. Indexed access is limited to this prefix;
+   * get() creates positions and requires enough eventual length to include
+   * the requested position.
+   *
+   * Handles in one Space share the same list. Updating during cloning
+   * preserves that sharing in the clone with separate mutable state.
+   *
+   * OpenIntVarList and OpenBoolVarList provide standard factories.
+   * Other variable types use a factory passed to OpenVarList<Var>, for
+   * example a function returning SetVar or FloatVar. Storage, cloning, and
+   * materialization are shared; constraint and branching overloads remain
+   * specific to the variable type. Var must provide the usual Gecode variable
+   * handle operations: default and copy construction, assignment, assigned(),
+   * varimp(), and update().
+   *
+   * Operations require an initialized list belonging to the supplied space.
+   * Appended variables must also be initialized and belong to that space.
+   *
+   * A list can be used in an ordinary Space:
+   * \code
+   * class Model : public Space {
+   * public:
+   *   OpenIntVarList x;
+   *   Model(void) : x(*this,IntSet(0,2),3) {
+   *     rel(*this,x.length(),IRT_GQ,1);
+   *     distinct(*this,x);
+   *     branch(*this,x);
+   *   }
+   *   Model(Model& s) : Space(s) {
+   *     x.update(*this,s.x);
+   *   }
+   *   virtual Space* copy(void) {
+   *     return new Model(*this);
+   *   }
+   * };
+   * \endcode
+   *
+   * The \ref CommonPattern "common-pattern example" finds constrained
+   * frequent subsequences across several inputs. The pattern length is a decision;
+   * the open list avoids allocating an array up to the input-length bound
+   * and encoding an unused suffix with a termination symbol. Shared prefix
+   * projection and regular constraints on the pattern language follow growth.
+   * The \ref OpenRoute "open-route example" is a smaller introduction,
+   * including search and printing solutions.
+   *
+   * \ingroup TaskModelInt
+   */
+  template<class Var>
+  class OpenVarList : public LocalHandle {
+  private:
+    /// Space-local list implementation
+    class Object;
+  public:
+    /**
+     * \brief Function creating the variable at position \a i in \a home
+     *
+     * The function object is shared between clones. It must be deterministic
+     * and safe for concurrent calls. Captured data must be owned or shared
+     * and must not be space-local. Returned variables must belong to \a home
+     * and be initialized.
+     *
+     * Materialization calls the factory inside a Space::NoGPI scope.
+     * New propagators keep their information in the space and have zero
+     * AFC, so AFC-based branching does not count them. Identifiers and
+     * groups remain available. Group changes are local to the space; clones
+     * copy the current group. A callback-local
+     * Space::UseGPI scope enables global information and ordinary AFC for
+     * selected postings. Nested materialization starts a new NoGPI scope.
+     * Each scope restores the previous setting when it ends, including
+     * exception unwinding.
+     */
+    typedef std::function<Var(Space& home, int i)> Factory;
+    /**
+     * \brief Function called after materializing position \a i
+     *
+     * The function object is shared between clones. It must be
+     * deterministic and safe for concurrent calls. Captured data must be
+     * owned or shared and must not be space-local; \a home and \a x refer
+     * to the current space.
+     *
+     * Calls from materialize() and direct append() run inside a
+     * Space::NoGPI scope with the same AFC and group behavior as Factory.
+     * A callback-local Space::UseGPI scope enables global information for
+     * selected postings. Nested materialize() or append() calls enter their
+     * own NoGPI scope and restore the callback's setting when they return.
+     */
+    typedef std::function<void(Space& home, OpenVarList<Var> x, int i)>
+      Transition;
+    /// Construct an uninitialized list
+    OpenVarList(void);
+    /// Construct a list using \a create for each position
+    OpenVarList(Space& home, Factory create,
+                int max=Int::Limits::max);
+    /// Construct a list using \a create and transition function \a t
+    OpenVarList(Space& home, Factory create, Transition t,
+                int max=Int::Limits::max);
+    /// Update during cloning
+    void update(Space& home, OpenVarList<Var>& s);
+    /// Return the number of constructed positions (their values may be unassigned)
+    int known_length(void) const;
+    /// Return variable at position \a i (\a i must be a valid position)
+    Var operator [](int i) const;
+    /// Return the eventual-length variable
+    IntVar length(void) const;
+    /**
+     * \brief Append variable \a x
+     *
+     * Constrains the eventual length to include the new position and calls
+     * the transition function, if supplied, inside a Space::NoGPI scope.
+     *
+     * Throws an exception of type Int::ArgumentSame if \a x is an
+     * unassigned variable already in the list.
+     */
+    void append(Space& home, Var x);
+    /**
+     * \brief Materialize the first \a n variables
+     *
+     * The eventual length is constrained to be at least \a n. Positions
+     * required by its minimum are materialized, including any increase
+     * imposed by the transition function.
+     *
+     * Factory and transition calls run inside Space::NoGPI scopes by
+     * default. A callback-local Space::UseGPI scope enables global
+     * information for selected postings (see Factory).
+     */
+    void materialize(Space& home, int n);
+    /**
+     * \brief Require and return the variable at position \a i
+     *
+     * Constrains the eventual length to be at least \a i+1 and materializes
+     * positions through \a i, using the Space::NoGPI scopes documented
+     * for materialize().
+     *
+     * Returns an uninitialized variable if \a home is failed or
+     * materialization fails. Throws Int::OutOfLimits for a negative index,
+     * an index outside Int::Limits, or (in a nonfailed space) an index at
+     * least length().max(). Check for failure before using the result,
+     * for example with an integer list:
+     * \code
+     * IntVar y = x.get(home,i);
+     * if (home.failed())
+     *   return;
+     * rel(home,y,IRT_NQ,0);
+     * \endcode
+     */
+    Var get(Space& home, int i);
+    /**
+     * \brief Close the list at its materialized length
+     *
+     * First materializes any positions required by the minimum eventual
+     * length, using the Space::NoGPI scopes documented for materialize(),
+     * then assigns the eventual length to the number of positions.
+     * The contained variables can remain unassigned.
+     */
+    void close(Space& home);
+    /// Subscribe \a p to the addition of positions
+    void subscribe(Space& home, Propagator& p);
+    /// Cancel the subscription of \a p to the addition of positions
+    void cancel(Space& home, Propagator& p);
+    /// Reschedule \a p for the addition of positions
+    void reschedule(Space& home, Propagator& p);
+  };
+
+
+  /**
+   * \brief Open list of integer variables
+   * \ingroup TaskModelInt
+   */
+  class OpenIntVarList : public OpenVarList<IntVar> {
+  public:
+    /**
+     * \brief Function returning the domain for position \a i
+     *
+     * Like Factory, it must be deterministic, safe for concurrent calls, and
+     * must not capture space-local data. Captured data must be owned or shared.
+     * The function object is shared between clones.
+     */
+    typedef std::function<IntSet(int i)> Domain;
+    using OpenVarList<IntVar>::OpenVarList;
+    /// Construct an uninitialized list
+    GECODE_INT_EXPORT OpenIntVarList(void);
+    /// Share an integer list constructed through a variable factory
+    OpenIntVarList(const OpenVarList<IntVar>& x);
+    /// Construct a list with maximal length \a max and full domains
+    GECODE_INT_EXPORT
+    OpenIntVarList(Space& home, int max=Int::Limits::max);
+    /// Construct a list using domain \a d for every position
+    GECODE_INT_EXPORT
+    OpenIntVarList(Space& home, const IntSet& d,
+                   int max=Int::Limits::max);
+    /// Construct a list using domain \a d and transition function \a t
+    GECODE_INT_EXPORT
+    OpenIntVarList(Space& home, const IntSet& d, Transition t,
+                   int max=Int::Limits::max);
+    /// Construct a list using \a d to create each position
+    GECODE_INT_EXPORT
+    OpenIntVarList(Space& home, Domain d,
+                   int max=Int::Limits::max);
+    /// Construct a list using \a d and transition function \a t
+    GECODE_INT_EXPORT
+    OpenIntVarList(Space& home, Domain d, Transition t,
+                   int max=Int::Limits::max);
+  private:
+    /// Convert a position-dependent domain to a variable factory
+    static Factory factory(Domain d);
+  };
+
+  /**
+   * \brief Open list of Boolean variables
+   * \ingroup TaskModelInt
+   */
+  class OpenBoolVarList : public OpenVarList<BoolVar> {
+  public:
+    using OpenVarList<BoolVar>::OpenVarList;
+    /// Construct an uninitialized list
+    GECODE_INT_EXPORT OpenBoolVarList(void);
+    /// Share a Boolean list constructed through a variable factory
+    OpenBoolVarList(const OpenVarList<BoolVar>& x);
+    /// Construct a list with maximal length \a max and domains 0..1
+    GECODE_INT_EXPORT
+    OpenBoolVarList(Space& home, int max=Int::Limits::max);
+    /// Construct a list with domains 0..1 and transition function \a t
+    GECODE_INT_EXPORT
+    OpenBoolVarList(Space& home, Transition t,
+                    int max=Int::Limits::max);
+  };
+
 }
+
+namespace Gecode {
+
+  /**
+   * \brief Constrain all materialized variables in \a x to be distinct
+   *
+   * The constraint is value consistent and applies to variables added
+   * after posting. The propagation level \a ipl is ignored.
+   *
+   * \ingroup TaskModelIntDistinct
+   */
+  GECODE_INT_EXPORT void
+  distinct(Home home, OpenIntVarList x,
+           IntPropLevel ipl=IPL_DEF);
+
+  /**
+   * \brief Constrain consecutive materialized variables in \a x by \a irt
+   *
+   * The constraint applies to variables added after posting.
+   *
+   * \ingroup TaskModelIntRel
+   */
+  GECODE_INT_EXPORT void
+  rel(Home home, OpenIntVarList x, IntRelType irt,
+      IntPropLevel ipl=IPL_DEF);
+
+  /**
+   * \brief Post a sliding sequence constraint on \a x
+   *
+   * Each complete window of size \a q, including windows completed after
+   * posting, contains between \a l and \a u values from \a s.
+   *
+   * \ingroup TaskModelIntSequence
+   */
+  GECODE_INT_EXPORT void
+  sequence(Home home, OpenIntVarList x, const IntSet& s,
+           int q, int l, int u, IntPropLevel ipl=IPL_DEF);
+
+  /**
+   * \brief Constrain the sum of every complete window in \a x
+   *
+   * Each complete window of size \a q, including windows completed after
+   * posting, has a sum between \a l and \a u.
+   *
+   * \ingroup TaskModelIntSequence
+   */
+  GECODE_INT_EXPORT void
+  slidingsum(Home home, OpenIntVarList x,
+             int q, int l, int u, IntPropLevel ipl=IPL_DEF);
+
+  /**
+   * \brief Constrain \a y to the minimum of the eventual sequence \a x
+   *
+   * The eventual sequence must be nonempty. Bounds are enforced as positions
+   * appear; attainment of the extremum is enforced when the list closes.
+   *
+   * \ingroup TaskModelIntArith
+   */
+  GECODE_INT_EXPORT void
+  min(Home home, OpenIntVarList x, IntVar y,
+      IntPropLevel ipl=IPL_DEF);
+
+  /**
+   * \brief Constrain \a y to the maximum of the eventual sequence \a x
+   *
+   * The eventual sequence must be nonempty. Bounds are enforced as positions
+   * appear; attainment of the extremum is enforced when the list closes.
+   *
+   * \ingroup TaskModelIntArith
+   */
+  GECODE_INT_EXPORT void
+  max(Home home, OpenIntVarList x, IntVar y,
+      IntPropLevel ipl=IPL_DEF);
+
+  /**
+   * \brief Constrain \a s to precede \a t in the eventual sequence \a x
+   *
+   * The constraint applies to variables added after posting.
+   *
+   * \ingroup TaskModelIntPrecede
+   */
+  GECODE_INT_EXPORT void
+  precede(Home home, OpenIntVarList x, int s, int t,
+          IntPropLevel ipl=IPL_DEF);
+
+  /**
+   * \brief Constrain successive values in \a c to precede each other in \a x
+   *
+   * The constraint applies to variables added after posting.
+   *
+   * \ingroup TaskModelIntPrecede
+   */
+  GECODE_INT_EXPORT void
+  precede(Home home, OpenIntVarList x, const IntArgs& c,
+          IntPropLevel ipl=IPL_DEF);
+
+}
+
+#include <gecode/int/open-var-list.hpp>
 
 #include <gecode/int/extensional/dfa.hpp>
 
@@ -2839,6 +3171,27 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   extensional(Home home, const BoolVarArgs& x, DFA d,
+              IntPropLevel ipl=IPL_DEF);
+
+  /**
+   * \brief Post an open regular-language constraint
+   *
+   * While \a x is open, its materialized prefix must have a continuation
+   * accepted by \a d. Once its length equals its materialized size, the
+   * complete list must be accepted by \a d.
+   *
+   * \ingroup TaskModelIntExt
+   */
+  GECODE_INT_EXPORT void
+  extensional(Home home, OpenIntVarList x, DFA d,
+              IntPropLevel ipl=IPL_DEF);
+
+  /**
+   * \brief Post an open regular-language constraint on Boolean variables
+   * \ingroup TaskModelIntExt
+   */
+  GECODE_INT_EXPORT void
+  extensional(Home home, OpenBoolVarList x, DFA d,
               IntPropLevel ipl=IPL_DEF);
 
   /** \brief Post propagator for \f$x\in t\f$.
@@ -5810,6 +6163,70 @@ namespace Gecode {
   GECODE_INT_EXPORT void
   branch(Home home, IntVar x, IntValBranch vals,
          IntVarValPrint vvp=nullptr);
+  /**
+   * \brief Branch over the eventual integer list \a x
+   *
+   * Selects the first unassigned materialized variable and its minimum
+   * value. Once all materialized variables are assigned, tries closing the
+   * list before extending it by one position.
+   * \ingroup TaskModelIntBranch
+   */
+  GECODE_INT_EXPORT void
+  branch(Home home, OpenIntVarList x);
+  /**
+   * \brief Branch over the eventual Boolean list \a x
+   * \ingroup TaskModelIntBranch
+   */
+  GECODE_INT_EXPORT void
+  branch(Home home, OpenBoolVarList x);
+  /**
+   * \brief Branch over an open integer list with standard selectors
+   *
+   * Selectors consider all materialized positions accepted by the filter.
+   * Once these variables are assigned, the brancher first tries to close at
+   * known_length(), then requires at least one more position and resumes
+   * value selection. Filters and callbacks receive the position in the list.
+   * With no finite application bound, exploring these lengths can be very
+   * expensive.
+   *
+   * To decide the length before list values, post an ordinary brancher on
+   * x.length() before the list brancher, for example:
+   * \code
+   * branch(home,x.length(),INT_VAL_MIN());
+   * branch(home,x,INT_VAR_SIZE_MIN(),INT_VAL_MIN());
+   * \endcode
+   * Branchers run in posting order. Once the length is assigned, propagation
+   * materializes that many positions before the list brancher selects values.
+   *
+   * Action and CHB selection require the complete list to be materialized
+   * when posting; otherwise Int::UnknownBranching is thrown.
+   * \ingroup TaskModelIntBranch
+   */
+  GECODE_INT_EXPORT void
+  branch(Home home, OpenIntVarList x,
+         IntVarBranch vars, IntValBranch vals,
+         IntBranchFilter bf=nullptr, IntVarValPrint vvp=nullptr);
+  /// Branch over an open integer list with tie-breaking selectors
+  GECODE_INT_EXPORT void
+  branch(Home home, OpenIntVarList x,
+         TieBreak<IntVarBranch> vars, IntValBranch vals,
+         IntBranchFilter bf=nullptr, IntVarValPrint vvp=nullptr);
+  /**
+   * \brief Branch over an open Boolean list with standard selectors
+   *
+   * The incremental branching, filter, and Action/CHB restrictions are as
+   * for integers.
+   * \ingroup TaskModelIntBranch
+   */
+  GECODE_INT_EXPORT void
+  branch(Home home, OpenBoolVarList x,
+         BoolVarBranch vars, BoolValBranch vals,
+         BoolBranchFilter bf=nullptr, BoolVarValPrint vvp=nullptr);
+  /// Branch over an open Boolean list with tie-breaking selectors
+  GECODE_INT_EXPORT void
+  branch(Home home, OpenBoolVarList x,
+         TieBreak<BoolVarBranch> vars, BoolValBranch vals,
+         BoolBranchFilter bf=nullptr, BoolVarValPrint vvp=nullptr);
   /**
    * \brief Branch over \a x with variable selection \a vars and value selection \a vals
    *

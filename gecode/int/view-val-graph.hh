@@ -54,7 +54,7 @@ namespace Gecode { namespace Int { namespace ViewValGraph {
   class CombPtrFlag {
   private:
     /// Store pointer and flag
-    ptrdiff_t cpf;
+    Support::uptrint_t cpf;
   public:
     /// Initialize with pointer \a p1 and \a p2
     CombPtrFlag(T* p1, T* p2);

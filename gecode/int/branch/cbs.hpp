@@ -191,13 +191,15 @@ namespace Gecode { namespace Int { namespace Branch {
 
     // We delete unvisited propagators from the log and look for the highest
     // solution density across all propagators.
-    for (const auto& kv : logProp) {
-      unsigned int prop_id = kv.first;
-      const PropInfo& info = kv.second;
-      if (!info.visited)
-        logProp.erase(prop_id);
-      else if (info.dens > maxSD.dens)
-        maxSD = {info.var_id, info.val, info.dens};
+    for (auto i = logProp.begin(); i != logProp.end(); ) {
+      if (!i->second.visited) {
+        i = logProp.erase(i);
+      } else {
+        const PropInfo& info = i->second;
+        if (info.dens > maxSD.dens)
+          maxSD = {info.var_id, info.val, info.dens};
+        ++i;
+      }
     }
 
     assert(maxSD.dens != -1);

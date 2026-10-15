@@ -13,6 +13,7 @@ set(GECODE_EXAMPLE_SOURCES
   car-sequencing.cpp
   cartesian-heart.cpp
   colored-matrix.cpp
+  common-pattern.cpp
   crew.cpp
   crossword.cpp
   crowded-chess.cpp
@@ -22,6 +23,7 @@ set(GECODE_EXAMPLE_SOURCES
   donald.cpp
   efpa.cpp
   eq20.cpp
+  fifteen-puzzle.cpp
   golden-spiral.cpp
   golf.cpp
   golomb-ruler.cpp
@@ -40,6 +42,7 @@ set(GECODE_EXAMPLE_SOURCES
   money.cpp
   multi-bin-packing.cpp
   nonogram.cpp
+  open-route.cpp
   open-shop.cpp
   ortho-latin.cpp
   partition.cpp

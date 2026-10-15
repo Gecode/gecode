@@ -74,6 +74,41 @@ Date: unreleased
 This is the development changelog for the next Gecode release.
 
 [ENTRY]
+Module: int
+What:   new
+Rank:   major
+[DESCRIPTION]
+Add OpenIntVarList and OpenBoolVarList for lists whose length is decided
+during propagation and search. OpenVarList supports other variable types
+through a factory. Constraints follow the growing prefix, including regular
+language constraints. Branching assigns prefix values before closing or
+extending the list, using standard variable and value selectors. Posting a
+brancher on the length first selects the length before list values. The
+common-pattern example demonstrates constrained frequent subsequence mining
+without padding, with support thresholds and integer database input;
+open-route provides a smaller introduction.
+Open-list factories and transitions run inside Space::NoGPI scopes by
+default, including transitions called by direct append. Callback-local
+Space::UseGPI scopes enable global information for selected postings;
+nested list construction starts its own NoGPI scope.
+
+[ENTRY]
+Module: kernel
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Add Space::NoGPI and Space::UseGPI to control global propagator information
+for scoped posting. NoGPI keeps information in the space with zero AFC.
+
+[ENTRY]
+Module: int
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Fix iterator invalidation during counting-based search cache cleanup.
+
+
+[ENTRY]
 
 Module: int
 What:   performance

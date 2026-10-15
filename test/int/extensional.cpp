@@ -450,6 +450,54 @@ namespace Test { namespace Int {
        }
      };
 
+     /// %Test compacting sparse external DFA state identifiers
+     class RegSparseStateNumbering : public Test {
+     public:
+       /// Create and register test
+       RegSparseStateNumbering(void)
+         : Test("Extensional::Reg::Sparse::StateNumbering",
+                2,0,1,false,Gecode::IPL_DOM) {}
+       /// %Test whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         return (x[0] == 0) && (x[1] == 1);
+       }
+       /// Post constraint on \a x
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
+         using namespace Gecode;
+         DFA d(1000000,
+               {
+                 {1000000,0,2000000},
+                 {2000000,1,3000000}
+               },
+               {3000000},false);
+         extensional(home,x,d);
+       }
+     };
+
+     /// %Test repeated final states in a sparse DFA specification
+     class RegDuplicateFinals : public Test {
+     protected:
+       bool minimize;
+     public:
+       RegDuplicateFinals(bool minimize0)
+         : Test(std::string("Extensional::Reg::DuplicateFinals::")+
+                (minimize0 ? "Minimize" : "Keep"),
+                1,0,1,false,Gecode::IPL_DOM), minimize(minimize0) {}
+
+       virtual bool
+       solution(const Assignment& x) const {
+         return x[0] == 0;
+       }
+
+       virtual void
+       post(Gecode::Space& home, Gecode::IntVarArray& x) {
+         using namespace Gecode;
+         DFA d(100,{{100,0,200}},
+               {200,200,200,200,200,200,200,200},minimize);
+         extensional(home,x,d);
+       }
+     };
+
      /// %Test the Boolean-view regular posting route
      class RegBoolCyclicFrontier : public Test {
      public:
@@ -799,6 +847,278 @@ namespace Test { namespace Int {
          delete [] t;
          delete [] f;
          extensional(home,x,d);
+       }
+     };
+
+     /// Space used by open regular tests
+     class OpenRegularSpace : public Gecode::Space {
+     public:
+       Gecode::IntVarArray x;
+       Gecode::OpenIntVarList list;
+
+       OpenRegularSpace(Gecode::DFA d, int max=8)
+         : x(*this,3,0,2), list(*this,max) {
+         Gecode::extensional(*this,list,d);
+       }
+
+       OpenRegularSpace(OpenRegularSpace& s)
+         : Gecode::Space(s) {
+         x.update(*this,s.x);
+         list.update(*this,s.list);
+       }
+
+       virtual Gecode::Space*
+       copy(void) {
+         return new OpenRegularSpace(*this);
+       }
+     };
+
+     /// Space used by open list materialization tests
+     class OpenListSpace : public Gecode::Space {
+     public:
+       Gecode::OpenIntVarList list;
+
+       OpenListSpace(void)
+         : list(*this,
+             [](int i) {
+               return Gecode::IntSet(i,i);
+             },6) {}
+
+       OpenListSpace(OpenListSpace& s)
+         : Gecode::Space(s) {
+         list.update(*this,s.list);
+       }
+
+       virtual Gecode::Space*
+       copy(void) {
+         return new OpenListSpace(*this);
+       }
+     };
+
+     /// Test automatic and explicit list materialization
+     class OpenListMaterialize : public ::Test::Base {
+     public:
+       OpenListMaterialize(void)
+         : ::Test::Base("Int::OpenList::Materialize",TestTags::check()) {}
+
+       virtual bool
+       run(void) {
+         using namespace Gecode;
+         OpenListSpace source;
+         rel(source,source.list.length(),IRT_GQ,3);
+         if ((source.status() == SS_FAILED) ||
+             (source.list.known_length() != 3))
+           return false;
+         for (int i=0; i<3; i++)
+           if (!source.list[i].assigned() ||
+               (source.list[i].val() != i))
+             return false;
+
+         OpenListSpace* clone =
+           static_cast<OpenListSpace*>(source.clone());
+         rel(*clone,clone->list.length(),IRT_GQ,5);
+         const bool clone_ok =
+           (clone->status() != SS_FAILED) &&
+           (clone->list.known_length() == 5) &&
+           clone->list[4].assigned() &&
+           (clone->list[4].val() == 4);
+         delete clone;
+         if (!clone_ok || (source.list.known_length() != 3))
+           return false;
+
+         OpenListSpace direct;
+         IntVar x = direct.list.get(direct,3);
+         return (direct.list.known_length() == 4) &&
+                (direct.list.length().min() == 4) &&
+                x.assigned() && (x.val() == 3) &&
+                (direct.status() != SS_FAILED);
+       }
+     };
+
+     /// Test appending and closing an open regular list
+     class OpenRegularIncremental : public ::Test::Base {
+     public:
+       OpenRegularIncremental(void)
+         : ::Test::Base("Int::Extensional::OpenReg::Incremental",
+                        TestTags::check()) {}
+
+       virtual bool
+       run(void) {
+         using namespace Gecode;
+         DFA d(0,{{0,0,1},{1,1,2}},{2},false);
+         OpenRegularSpace s(d);
+
+         if (s.status() == SS_FAILED)
+           return false;
+         s.list.append(s,s.x[0]);
+         if ((s.status() == SS_FAILED) ||
+             !s.x[0].assigned() || (s.x[0].val() != 0))
+           return false;
+         s.list.append(s,s.x[1]);
+         if ((s.status() == SS_FAILED) ||
+             !s.x[1].assigned() || (s.x[1].val() != 1))
+           return false;
+         s.list.close(s);
+         return (s.status() != SS_FAILED) &&
+                s.list.length().assigned() &&
+                (s.list.length().val() == 2);
+       }
+     };
+
+     /// Test notification when the eventual length is already ahead
+     class OpenRegularLengthWake : public ::Test::Base {
+     public:
+       OpenRegularLengthWake(void)
+         : ::Test::Base("Int::Extensional::OpenReg::LengthWake") {}
+
+       virtual bool
+       run(void) {
+         using namespace Gecode;
+         DFA d(0,{{0,0,1},{1,1,2}},{2},false);
+         OpenRegularSpace s(d,3);
+         rel(s,s.list.length(),IRT_GQ,2);
+         if (s.status() == SS_FAILED)
+           return false;
+         return (s.list.known_length() == 2) &&
+                s.list[0].assigned() &&
+                (s.list[0].val() == 0) &&
+                s.list[1].assigned() &&
+                (s.list[1].val() == 1);
+       }
+     };
+
+     /// Test backward pruning after appending a restricted variable
+     class OpenRegularBackward : public ::Test::Base {
+     public:
+       OpenRegularBackward(void)
+         : ::Test::Base("Int::Extensional::OpenReg::Backward") {}
+
+       virtual bool
+       run(void) {
+         using namespace Gecode;
+         DFA d(0,
+               {
+                 {0,0,1}, {0,1,2},
+                 {1,0,3}, {2,1,4},
+                 {3,2,5}, {4,2,5}
+               },
+               {5},false);
+         OpenRegularSpace s(d);
+         rel(s,s.x[1],IRT_EQ,0);
+         s.list.append(s,s.x[0]);
+         if ((s.status() == SS_FAILED) ||
+             (s.x[0].min() != 0) || (s.x[0].max() != 1))
+           return false;
+         s.list.append(s,s.x[1]);
+         return (s.status() != SS_FAILED) &&
+                s.x[0].assigned() && (s.x[0].val() == 0);
+       }
+     };
+
+     /// Test domain notification on an appended variable
+     class OpenRegularDomainWake : public ::Test::Base {
+     public:
+       OpenRegularDomainWake(void)
+         : ::Test::Base("Int::Extensional::OpenReg::DomainWake") {}
+
+       virtual bool
+       run(void) {
+         using namespace Gecode;
+         DFA d(0,
+               {
+                 {0,0,1}, {0,1,2},
+                 {1,0,3}, {2,1,4},
+                 {3,2,5}, {4,2,5}
+               },
+               {5},false);
+         OpenRegularSpace s(d);
+         s.list.append(s,s.x[0]);
+         s.list.append(s,s.x[1]);
+         if ((s.status() == SS_FAILED) || s.x[0].assigned())
+           return false;
+         rel(s,s.x[1],IRT_EQ,0);
+         return (s.status() != SS_FAILED) &&
+                s.x[0].assigned() && (s.x[0].val() == 0);
+       }
+     };
+
+     /// Test independent extension after cloning
+     class OpenRegularClone : public ::Test::Base {
+     public:
+       OpenRegularClone(void)
+         : ::Test::Base("Int::Extensional::OpenReg::Clone",TestTags::check()) {}
+
+       virtual bool
+       run(void) {
+         using namespace Gecode;
+         DFA d(0,{{0,0,1},{1,1,2}},{2},false);
+         OpenRegularSpace source(d);
+         source.list.append(source,source.x[0]);
+         if (source.status() == SS_FAILED)
+           return false;
+
+         OpenRegularSpace* clone =
+           static_cast<OpenRegularSpace*>(source.clone());
+         clone->list.append(*clone,clone->x[1]);
+         clone->list.close(*clone);
+         const bool clone_ok =
+           (clone->status() != SS_FAILED) &&
+           (clone->list.known_length() == 2);
+         delete clone;
+
+         source.list.close(source);
+         const bool source_failed = source.status() == SS_FAILED;
+         return clone_ok && source_failed &&
+                (source.list.known_length() == 1);
+       }
+     };
+
+     /// Test empty words and automata without accepting states
+     class OpenRegularEmpty : public Test {
+     protected:
+       int kind;
+     public:
+       OpenRegularEmpty(int k)
+         : Test("Extensional::OpenReg::Empty::"+str(k),1,0,0), kind(k) {}
+       virtual bool solution(const Assignment&) const { return kind == 0; }
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray&) {
+         using namespace Gecode;
+         OpenIntVarList list(home,8);
+         if (kind == 0) {
+           extensional(home,list,DFA());
+         } else if (kind == 1) {
+           extensional(home,list,DFA(0,{{0,0,1}},{1},false));
+         } else {
+           extensional(home,list,
+                       DFA(0,{{0,0,0}},std::initializer_list<int>{},false));
+         }
+         if (kind != 2)
+           list.close(home);
+       }
+     };
+
+     /// Test closed open regular with the standard domain-consistency checks
+     class OpenRegularClosed : public Test {
+     public:
+       OpenRegularClosed(void)
+         : Test("Extensional::OpenReg::Closed",3,0,2,false,Gecode::IPL_DOM) {}
+       virtual bool solution(const Assignment& x) const {
+         int parity = 0;
+         for (int i=0; i<x.size(); i++) {
+           if (x[i] == 2)
+             return false;
+           parity ^= x[i];
+         }
+         return parity == 0;
+       }
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
+         using namespace Gecode;
+         OpenIntVarList list(home,x.size());
+         for (int i=0; i<x.size(); i++)
+           list.append(home,x[i]);
+         list.close(home);
+         DFA d(0,{{0,0,0},{0,1,1},{1,0,1},{1,1,0}},{0},false);
+         extensional(home,list,d);
        }
      };
 
@@ -2155,6 +2475,9 @@ namespace Test { namespace Int {
 
      RegAcyclicReconvergence reg_sparse_acyclic_reconvergence;
      RegCyclicFrontier reg_sparse_cyclic_frontier;
+     RegSparseStateNumbering reg_sparse_state_numbering;
+     RegDuplicateFinals reg_duplicate_finals_minimize(true);
+     RegDuplicateFinals reg_duplicate_finals_keep(false);
      RegBoolCyclicFrontier reg_sparse_bool_cyclic_frontier;
      RegRandomDifferential reg_sparse_random_differential_1(1);
      RegRandomDifferential reg_sparse_random_differential_2(2);
@@ -2170,6 +2493,16 @@ namespace Test { namespace Int {
      RegNoAcceptingPath reg_sparse_no_accepting_path;
      RegTerminalMerged reg_sparse_terminal_merged;
      RegTerminalUnmerged reg_sparse_terminal_unmerged;
+     OpenListMaterialize open_list_materialize;
+     OpenRegularIncremental open_regular_incremental;
+     OpenRegularLengthWake open_regular_length_wake;
+     OpenRegularBackward open_regular_backward;
+     OpenRegularDomainWake open_regular_domain_wake;
+     OpenRegularClone open_regular_clone;
+     OpenRegularEmpty open_regular_empty_accept(0);
+     OpenRegularEmpty open_regular_empty_reject(1);
+     OpenRegularEmpty open_regular_no_finals(2);
+     OpenRegularClosed open_regular_closed;
 
      /// Exhaustive positive, negative, and reified sparse-table semantics.
      class CreateSparse {
