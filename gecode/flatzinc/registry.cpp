@@ -1804,7 +1804,7 @@ fvar,
     }
 
 
-    // The codes follow the declaration order of GecodeIntRelation in gecode.mzn.
+    // Relation codes are documented in gecode_fzn.mzn.
     IntRelType int_relation(AST::Node* arg) {
       switch (arg->getInt()) {
       case 1: return IRT_EQ;
