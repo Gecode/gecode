@@ -2,8 +2,8 @@
 
 # Tasks: open-search
 
-- Total: 44
-- Ready: 0
+- Total: 45
+- Ready: 1
 - Blocked: 0
 - Done: 44
 
@@ -53,3 +53,4 @@
 | [open-search-042](tasks/042-simplify-goal-handling-in-the-parent-15-puzzle-example.md) | Simplify goal handling in the parent 15-puzzle example | done | — |
 | [open-search-043](tasks/043-use-a-fixed-buffer-for-puzzle-neighbors.md) | Use IntArgs for puzzle neighbors | done | — |
 | [open-search-044](tasks/044-split-puzzle-goal-implications-with-a-shared-boolvar.md) | Split puzzle goal implications with a shared BoolVar | done | — |
+| [open-search-045](tasks/045-offer-manhattan-value-selection-for-the-puzzle.md) | Offer Manhattan value selection for the puzzle | ready | — |
