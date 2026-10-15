@@ -33,6 +33,7 @@
 
 #include <cstddef>
 #include <climits>
+#include <cstdint>
 
 namespace Gecode { namespace Support {
 
@@ -73,9 +74,10 @@ namespace Gecode { namespace Support {
   template<unsigned int bits>
   forceinline void*
   funmark(void* p) {
-    static_assert(bits < sizeof(size_t)*CHAR_BIT, "Too many pointer tag bits");
-    return reinterpret_cast<void*>(reinterpret_cast<size_t>(p)&
-                                   ~((static_cast<size_t>(1) << bits)-1));
+    static_assert(bits < sizeof(std::uintptr_t)*CHAR_BIT,
+                  "Too many pointer tag bits");
+    return reinterpret_cast<void*>(reinterpret_cast<std::uintptr_t>(p)&
+                                   ~((static_cast<std::uintptr_t>(1) << bits)-1));
   }
   forceinline void*
   ptrsplit(void* p, ptrdiff_t& m) {
