@@ -3,9 +3,9 @@
 # Tasks: open-search
 
 - Total: 44
-- Ready: 1
+- Ready: 0
 - Blocked: 0
-- Done: 43
+- Done: 44
 
 | ID | Task | State | Blocked by |
 | --- | --- | --- | --- |
@@ -52,4 +52,4 @@
 | [open-search-041](tasks/041-document-nogpi-on-open-list-materialization-methods.md) | Document NoGPI on open-list materialization methods | done | — |
 | [open-search-042](tasks/042-simplify-goal-handling-in-the-parent-15-puzzle-example.md) | Simplify goal handling in the parent 15-puzzle example | done | — |
 | [open-search-043](tasks/043-use-a-fixed-buffer-for-puzzle-neighbors.md) | Use IntArgs for puzzle neighbors | done | — |
-| [open-search-044](tasks/044-split-puzzle-goal-implications-with-a-shared-boolvar.md) | Split puzzle goal implications with a shared BoolVar | ready | — |
+| [open-search-044](tasks/044-split-puzzle-goal-implications-with-a-shared-boolvar.md) | Split puzzle goal implications with a shared BoolVar | done | — |

@@ -3,7 +3,7 @@ schema_version = 1
 id = "open-search-044"
 key = "split-puzzle-goal-implications"
 area = "open-search"
-status = "open"
+status = "done"
 complexity = "routine"
 afk = true
 blocked_by = []
@@ -26,11 +26,20 @@ User explicitly approved the globally equivalent split: (length == states) impli
 
 ## Done when
 
-- [ ] post_goal computes one BoolVar named solved and posts the two approved implications, preserving optional suffix semantics.
-- [ ] Both example versions build and bounded checks confirm valid optimal solutions, solved starts and infeasible caps; parent user edits stay unchanged.
-- [ ] Parent source commit is incorporated into the child; the verified stack is ready for the requested lease-protected publication.
+- [x] post_goal computes one BoolVar named solved and posts the two approved implications, preserving optional suffix semantics.
+- [x] Both example versions build and bounded checks confirm valid optimal solutions, solved starts and infeasible caps; parent user edits stay unchanged.
+- [x] Parent source commit is incorporated into the child; the verified stack is ready for the requested lease-protected publication.
 
 ## Validation
 
 - Build parent and child puzzle examples normally. Use existing temporary BFS/path replay checks or representative existing cases across open/fixed and BAB/A*/CABS; no sanitizer work.
 - Review the exact goal-helper change, BoolExpr sharing, optional suffix behavior, ancestry, whitespace and byte-identical parent user edits.
+
+## Result
+
+Use one BoolVar for the puzzle goal and post separate implications; incorporate the parent commit into the search branch.
+
+Validation:
+
+- Normal parent and child example builds passed; independent BFS and path replay checks passed 12 parent and 36 child cases.
+- Independent verification passed; parent edits were preserved, whitespace checks passed, and the reviewed stack is ready for lease-protected publication.
