@@ -40,6 +40,7 @@
 #include <cstdlib>
 #include <iomanip>
 #include <iostream>
+#include <limits>
 
 using namespace Gecode;
 using Board = std::array<int,16>;
@@ -50,6 +51,7 @@ class PuzzleOptions : public Options {
   Driver::UnsignedIntOption _limit;
 public:
   enum { MODEL_OPEN, MODEL_FIXED };
+  enum { BRANCH_MIN, BRANCH_MANHATTAN };
   PuzzleOptions(void)
     : Options("FifteenPuzzle"),
       _scramble("scramble","number of random slides from the goal",12),
@@ -59,6 +61,10 @@ public:
     model(MODEL_OPEN);
     model(MODEL_OPEN,"open","construct states as the path grows");
     model(MODEL_FIXED,"fixed","construct all bounded states initially");
+    branching(BRANCH_MIN);
+    branching(BRANCH_MIN,"min","try the lowest blank position first");
+    branching(BRANCH_MANHATTAN,"manhattan",
+              "try the slide with least Manhattan distance first");
     solutions(0);
     seed(1);
   }
@@ -132,6 +138,25 @@ values(const IntVarArgs& tiles) {
   return result;
 }
 
+// The assigned preceding board changes only at the blank and the moved tile.
+static int
+manhattan_value(const IntVarArgs& before, int blank, IntVar next) {
+  int best = next.min();
+  int best_change = std::numeric_limits<int>::max();
+  for (IntVarValues candidates(next); candidates(); ++candidates) {
+    const int position = candidates.val();
+    const int target = before[position].val()-1;
+    const int change =
+      std::abs(blank/4-target/4) + std::abs(blank%4-target%4) -
+      std::abs(position/4-target/4) - std::abs(position%4-target%4);
+    if (change < best_change) {
+      best = position;
+      best_change = change;
+    }
+  }
+  return best;
+}
+
 static void
 print_board(std::ostream& os, const Board& board) {
   for (int i=0; i<16; i++) {
@@ -203,6 +228,9 @@ post_goal(Home home, const IntVarArgs& tiles, IntVar length,
  * Defaults use twelve slides, seed one, and a twelve-move limit. Select
  * -model fixed to compare with an array representation; -scramble, -seed,
  * and -limit control the instance and search bound independently.
+ * -branching min (default) tries blank positions in numerical order;
+ * -branching manhattan tries the slide with the lowest resulting Manhattan
+ * distance, breaking ties by the lowest position.
  *
  * \ingroup Example
  */
@@ -222,7 +250,13 @@ public:
     IntVar start = path.get(*this,0);
     post_start(*this,state(0),start,initial);
     rel(*this,path.length() >= manhattan(initial)+1);
-    branch(*this,path,INT_VAR_NONE(),INT_VAL_MIN());
+    IntValBranch vals = INT_VAL_MIN();
+    if (opt.branching() == PuzzleOptions::BRANCH_MANHATTAN)
+      vals = INT_VAL([](const Space& home, IntVar next, int i) {
+        const OpenPuzzle& s = static_cast<const OpenPuzzle&>(home);
+        return manhattan_value(s.state(i-1),s.path[i-1].val(),next);
+      });
+    branch(*this,path,INT_VAR_NONE(),vals);
   }
 
   void
@@ -291,7 +325,13 @@ public:
       post_goal(*this,state(i),length,i+1);
     }
     rel(*this,length >= manhattan(initial)+1);
-    branch(*this,path,INT_VAR_NONE(),INT_VAL_MIN(),
+    IntValBranch vals = INT_VAL_MIN();
+    if (opt.branching() == PuzzleOptions::BRANCH_MANHATTAN)
+      vals = INT_VAL([](const Space& home, IntVar next, int i) {
+        const FixedPuzzle& s = static_cast<const FixedPuzzle&>(home);
+        return manhattan_value(s.state(i-1),s.path[i-1].val(),next);
+      });
+    branch(*this,path,INT_VAR_NONE(),vals,
       [](const Space& home, IntVar, int i) {
         const FixedPuzzle& s = static_cast<const FixedPuzzle&>(home);
         const int g = s.depth();
