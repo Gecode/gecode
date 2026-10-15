@@ -36,6 +36,8 @@
 #include <gecode/int/branch.hh>
 #include <gecode/search.hh>
 
+#include <memory>
+
 namespace Test { namespace Branch {
 
   /// Space for testing filtered random tie selection
@@ -130,6 +132,62 @@ namespace Test { namespace Branch {
   };
 
   FilteredRndTies filtered_rnd_ties;
+
+#ifdef GECODE_HAS_CBS
+  /// Independent permutations leave one CBS cache entry after another expires
+  class CBSSpace : public Gecode::Space {
+  public:
+    Gecode::IntVarArray x;
+    CBSSpace(bool local) : x(*this,8,0,3) {
+      if (local) {
+        NoGPI suppress(*this);
+        post();
+      } else {
+        post();
+      }
+      Gecode::cbsbranch(*this,x);
+    }
+    void post(void) {
+      using namespace Gecode;
+      distinct(*this,IntVarArgs() << x[0] << x[1] << x[2] << x[3],IPL_VAL);
+      distinct(*this,IntVarArgs() << x[4] << x[5] << x[6] << x[7],IPL_VAL);
+    }
+    CBSSpace(CBSSpace& s) : Space(s) {
+      x.update(*this,s.x);
+    }
+    virtual Space* copy(void) {
+      return new CBSSpace(*this);
+    }
+  };
+
+  /// Cache removal must preserve choices from surviving propagators
+  class CBS : public Base {
+  public:
+    CBS(void) : Base("Int::Branch::CBS",TestTags::check()) {}
+    virtual bool run(void) {
+      using namespace Gecode;
+      for (bool local : {false,true}) {
+        CBSSpace root(local);
+        Search::Options o;
+        o.c_d = 2;
+        o.a_d = 1;
+        DFS<CBSSpace> engine(&root,o);
+        int n = 0;
+        while (std::unique_ptr<CBSSpace> s{engine.next()}) {
+          for (int i=0; i<s->x.size(); i++)
+            if (!s->x[i].assigned())
+              return false;
+          n++;
+        }
+        if (n != 24*24)
+          return false;
+      }
+      return true;
+    }
+  };
+
+  CBS cbs;
+#endif
 
   /// %Test brancher with distinct propagator
   class Int : public IntTest {

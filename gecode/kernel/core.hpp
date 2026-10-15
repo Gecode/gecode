@@ -931,7 +931,7 @@ namespace Gecode {
     };
   protected:
     /// Encoding a tagged pointer or a tagged group id
-    ptrdiff_t who;
+    Support::uptrint_t who;
     /// Record that propagator \a p is executing
     void propagator(Propagator& p);
     /// Record that brancher \a b is executing
@@ -1087,12 +1087,19 @@ namespace Gecode {
       /// A list of advisors (used during cloning)
       Gecode::ActorLink* advisors;
     } u;
-    /// A tagged pointer combining a pointer to global propagator information and whether the propagator is disabled
+    /**
+     * \brief Tagged pointer to propagator information
+     *
+     * Bit zero marks disabled propagators; bit one marks space-local
+     * information, which has no accumulated failure count.
+     */
     void* gpi_disabled;
     /// Static cast for a non-null pointer (to give a hint to optimizer)
     static Propagator* cast(ActorLink* al);
     /// Static cast for a non-null pointer (to give a hint to optimizer)
     static const Propagator* cast(const ActorLink* al);
+    /// Whether propagator information is local to the space
+    bool local_info(void) const;
     /// Disable propagator
     void disable(Space& home);
     /// Enable propagator
@@ -1104,7 +1111,7 @@ namespace Gecode {
     Propagator(Space& home, Propagator& p);
     /// Return forwarding pointer during copying
     Propagator* fwd(void) const;
-    /// Provide access to global propagator information
+    /// Provide access to propagator information
     Kernel::GPI::Info& gpi(void);
 
   public:
@@ -1791,6 +1798,8 @@ namespace Gecode {
     friend GECODE_KERNEL_EXPORT
     void trace(Home home, TraceFilter tf, int te, Tracer& t);
   private:
+    /// Allocate tagged space-local propagator information
+    GECODE_KERNEL_EXPORT void* local_info(unsigned int gid);
     /// Shared data for space
     Kernel::SharedSpaceData ssd;
     /// Performs memory management for space
@@ -1799,6 +1808,8 @@ namespace Gecode {
     /// Global counter for variable ids
     unsigned int var_id_counter;
 #endif
+    /// Whether new propagator information is local to this space
+    bool no_gpi;
     /// Doubly linked list of all propagators
     ActorLink pl;
     /// Doubly linked list of all branchers
@@ -2037,6 +2048,57 @@ namespace Gecode {
     GECODE_KERNEL_EXPORT
     void ap_ignore_dispose(Actor* a, bool d);
   public:
+    /**
+     * \brief Suppress global propagator information during scoped posting
+     * \ingroup TaskModelScript
+     *
+     * New propagators keep their information in the space, with normal
+     * identifiers and groups but zero AFC. Group changes stay local to the
+     * space. Clones copy this information and start with ordinary posting
+     * enabled. Rewriting preserves the original propagator's information.
+     *
+     * UseGPI enables global information within this scope. Both contexts
+     * restore the previous setting on destruction, including unwinding.
+     * The space must outlive them; contexts for the same space must be
+     * destroyed in reverse order.
+     */
+    class NoGPI {
+    private:
+      /// Space in which to suppress global information
+      Space& home;
+      /// Previous setting
+      bool previous;
+      NoGPI(const NoGPI&) = delete;
+      NoGPI& operator =(const NoGPI&) = delete;
+    public:
+      /// Suppress global information for new propagators in \a home
+      explicit NoGPI(Space& home);
+      /// Restore the previous setting
+      ~NoGPI(void);
+    };
+
+    /**
+     * \brief Enable global propagator information during scoped posting
+     * \ingroup TaskModelScript
+     *
+     * Overrides NoGPI for new postings and restores the previous setting
+     * on destruction. The lifetime and nesting rules of NoGPI also apply.
+     */
+    class UseGPI {
+    private:
+      /// Space in which to enable global information
+      Space& home;
+      /// Previous setting
+      bool previous;
+      UseGPI(const UseGPI&) = delete;
+      UseGPI& operator =(const UseGPI&) = delete;
+    public:
+      /// Enable global information for new propagators in \a home
+      explicit UseGPI(Space& home);
+      /// Restore the previous setting
+      ~UseGPI(void);
+    };
+
     /**
      * \brief Default constructor
      * \ingroup TaskModelScript
@@ -3423,15 +3485,15 @@ namespace Gecode {
    */
   forceinline void
   ViewTraceInfo::propagator(Propagator& p) {
-    who = reinterpret_cast<ptrdiff_t>(&p) | PROPAGATOR;
+    who = reinterpret_cast<Support::uptrint_t>(&p) | PROPAGATOR;
   }
   forceinline void
   ViewTraceInfo::brancher(Brancher& b) {
-    who = reinterpret_cast<ptrdiff_t>(&b) | BRANCHER;
+    who = reinterpret_cast<Support::uptrint_t>(&b) | BRANCHER;
   }
   forceinline void
   ViewTraceInfo::post(PropagatorGroup g) {
-    who = (g.id() << 2) | POST;
+    who = (static_cast<Support::uptrint_t>(g.id()) << 2) | POST;
   }
   forceinline void
   ViewTraceInfo::other(void) {
@@ -3439,7 +3501,7 @@ namespace Gecode {
   }
   forceinline ViewTraceInfo::What
   ViewTraceInfo::what(void) const {
-    return static_cast<What>(who & 3);
+    return static_cast<What>(who & 0b11);
   }
   forceinline const Propagator&
   ViewTraceInfo::propagator(void) const {
@@ -3450,7 +3512,8 @@ namespace Gecode {
   forceinline const Brancher&
   ViewTraceInfo::brancher(void) const {
     assert(what() == BRANCHER);
-    return *reinterpret_cast<Brancher*>(who & ~3);
+    return *reinterpret_cast<Brancher*>
+      (who & ~static_cast<Support::uptrint_t>(0b11));
   }
   forceinline PropagatorGroup
   ViewTraceInfo::post(void) const {
@@ -3556,6 +3619,28 @@ namespace Gecode {
   }
 
 
+  forceinline
+  Space::NoGPI::NoGPI(Space& h) : home(h), previous(h.no_gpi) {
+    home.no_gpi = true;
+  }
+
+  forceinline
+  Space::NoGPI::~NoGPI(void) {
+    home.no_gpi = previous;
+  }
+
+
+  forceinline
+  Space::UseGPI::UseGPI(Space& h) : home(h), previous(h.no_gpi) {
+    home.no_gpi = false;
+  }
+
+  forceinline
+  Space::UseGPI::~UseGPI(void) {
+    home.no_gpi = previous;
+  }
+
+
   /*
    * Propagator
    *
@@ -3582,6 +3667,11 @@ namespace Gecode {
   }
 
   forceinline bool
+  Propagator::local_info(void) const {
+    return (reinterpret_cast<Support::uptrint_t>(gpi_disabled) & 0b10) != 0;
+  }
+
+  forceinline bool
   Propagator::disabled(void) const {
     return Support::marked(gpi_disabled);
   }
@@ -3600,7 +3690,7 @@ namespace Gecode {
 
   forceinline Kernel::GPI::Info&
   Propagator::gpi(void) {
-    return *static_cast<Kernel::GPI::Info*>(Support::funmark(gpi_disabled));
+    return *static_cast<Kernel::GPI::Info*>(Support::funmark<2>(gpi_disabled));
   }
 
   forceinline
@@ -3608,6 +3698,9 @@ namespace Gecode {
     : gpi_disabled((home.propagator() != nullptr) ?
                    // Inherit propagator information
                    home.propagator()->gpi_disabled :
+                   static_cast<Space&>(home).no_gpi ?
+                   static_cast<Space&>(home).local_info
+                   (home.propagatorgroup().gid) :
                    // New propagator information
                    static_cast<Space&>(home).ssd.data().gpi.allocate
                    (home.propagatorgroup().gid)) {
@@ -3617,8 +3710,13 @@ namespace Gecode {
   }
 
   forceinline
-  Propagator::Propagator(Space&, Propagator& p)
+  Propagator::Propagator(Space& home, Propagator& p)
     : gpi_disabled(p.gpi_disabled) {
+    if (p.local_info()) {
+      Kernel::GPI::Info* i = home.alloc<Kernel::GPI::Info>(1);
+      *i = p.gpi();
+      gpi_disabled = Support::ptrjoin(i, p.disabled() ? 0b11 : 0b10);
+    }
     u.advisors = nullptr;
     assert((u.med == 0) && (u.size == 0));
     // Set forwarding pointer

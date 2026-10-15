@@ -36,6 +36,8 @@
 
 #include "test/test.hh"
 
+#include <memory>
+
 namespace Test {
 
   /// %Test for %AFC infrastructure
@@ -131,6 +133,189 @@ namespace Test {
       return true;
     }
   };
+
+  /// Scoped suppression of global propagator information
+  class NoGPI : public Test::Base {
+    /// Space with variables for posting and rewriting relations
+    class TestSpace : public Gecode::Space {
+    public:
+      Gecode::IntVar x, y;
+      Gecode::BoolVar b;
+      TestSpace(void) : x(*this,0,10), y(*this,0,10), b(*this,0,1) {}
+      TestSpace(TestSpace& s) : Space(s) {
+        x.update(*this,s.x); y.update(*this,s.y); b.update(*this,s.b);
+      }
+      virtual Space* copy(void) { return new TestSpace(*this); }
+      /// Find a surviving propagator by its identifier
+      Gecode::Propagator* find(unsigned int id) {
+        for (Propagators ps(*this); ps(); ++ps)
+          if (ps.propagator().id() == id)
+            return &ps.propagator();
+        return nullptr;
+      }
+      /// Post a non-subsumed relation and return its propagator
+      Gecode::Propagator& post(Gecode::PropagatorGroup g =
+                              Gecode::PropagatorGroup::def) {
+        Gecode::rel((*this)(g), x, Gecode::IRT_LE, y);
+        Gecode::Propagator* p = nullptr;
+        for (Propagators ps(*this); ps(); ++ps)
+          if ((p == nullptr) || (ps.propagator().id() > p->id()))
+            p = &ps.propagator();
+        return *p;
+      }
+    };
+
+    /// Check nesting, unwinding, isolation, and posting in a clone
+    bool scopes(void) {
+      using namespace Gecode;
+      TestSpace s, other;
+      if (s.post().afc() != 1.0)
+        return false;
+      {
+        Space::NoGPI outer(s);
+        if ((s.post().afc() != 0.0) || (other.post().afc() != 1.0))
+          return false;
+        try {
+          Space::NoGPI inner(s);
+          if (s.post().afc() != 0.0)
+            return false;
+          throw 1;
+        } catch (int) {}
+        if (s.post().afc() != 0.0)
+          return false;
+        {
+          Space::UseGPI use(s);
+          if (s.post().afc() != 1.0)
+            return false;
+          {
+            Space::NoGPI suppress(s);
+            if (s.post().afc() != 0.0)
+              return false;
+          }
+          if (s.post().afc() != 1.0)
+            return false;
+        }
+        if (s.post().afc() != 0.0)
+          return false;
+        try {
+          Space::UseGPI use(s);
+          if (s.post().afc() != 1.0)
+            return false;
+          throw 1;
+        } catch (int) {}
+        if (s.post().afc() != 0.0)
+          return false;
+        (void) s.status();
+        std::unique_ptr<TestSpace> c(static_cast<TestSpace*>(s.clone()));
+        if (c->post().afc() != 1.0)
+          return false;
+      }
+      try {
+        Space::NoGPI context(s);
+        throw 1;
+      } catch (int) {}
+      return s.post().afc() == 1.0;
+    }
+
+    /// Check local groups, disabled pointer tags, and lifetime after cloning
+    bool lifetime(void) {
+      using namespace Gecode;
+      std::unique_ptr<TestSpace> s(new TestSpace);
+      PropagatorGroup a, b;
+      unsigned int id;
+      {
+        Space::NoGPI context(*s);
+        Propagator& p = s->post(a);
+        id = p.id();
+        if ((p.group() != a) || (s->post().id() == id))
+          return false;
+      }
+      a.disable(*s);
+      (void) s->status();
+      std::unique_ptr<TestSpace> c(static_cast<TestSpace*>(s->clone()));
+      // The first call marks the shared pool; the second really unshares.
+      s->afc_unshare();
+      c->afc_unshare();
+      Propagator* p = c->find(id);
+      if (!p || !p->disabled() || (p->afc() != 0.0))
+        return false;
+      b.move(*c,id);
+      if ((p->group() != b) || (s->find(id)->group() != a))
+        return false;
+      s.reset();
+      b.enable(*c);
+      if (p->disabled() || (c->status() == SS_FAILED))
+        return false;
+      b.kill(*c);
+      return (c->find(id) == nullptr) && (b.size(*c) == 0);
+    }
+
+    /// Check AFC failure accounting, initialization, and rescaling
+    bool failure(bool local) {
+      using namespace Gecode;
+      TestSpace s;
+      Propagator* p;
+      if (local) {
+        Space::NoGPI context(s);
+        p = &s.post();
+      } else {
+        p = &s.post();
+      }
+      (void) s.status();
+      std::unique_ptr<TestSpace> c(static_cast<TestSpace*>(s.clone()));
+      // Force rescaling on failure for the ordinary propagator.
+      IntAFC afc(*c,IntVarArgs() << c->x << c->y,1.0e-300,false);
+      c->afc_unshare();
+      Propagator* q = c->find(p->id());
+      if (!q || (q->afc() != (local ? 0.0 : 1.0)))
+        return false;
+      rel(*c,c->x,IRT_EQ,5);
+      rel(*c,c->y,IRT_EQ,4);
+      if (c->status() != SS_FAILED)
+        return false;
+      return local ? ((q->afc() == 0.0) && (p->afc() == 0.0)) :
+        ((q->afc() > 1.0) && (p->afc() < 1.0));
+    }
+
+    /// A real reified propagator must retain its information when rewritten
+    bool rewrite(bool local) {
+      using namespace Gecode;
+      TestSpace s;
+      PropagatorGroup g;
+      if (local) {
+        Space::NoGPI context(s);
+        rel(s(g),s.x,IRT_EQ,s.y,Reify(s.b));
+      } else {
+        rel(s(g),s.x,IRT_EQ,s.y,Reify(s.b));
+      }
+      (void) s.status();
+      Gecode::Propagators ps(s,PropagatorGroup::all);
+      unsigned int id = ps.propagator().id();
+      rel(s,s.b,IRT_EQ,1);
+      if (local) {
+        Space::UseGPI context(s);
+        (void) s.status();
+      } else {
+        Space::NoGPI context(s);
+        (void) s.status();
+      }
+      Propagator* p = s.find(id);
+      if (!p || (p->group() != g) ||
+          (p->afc() != (local ? 0.0 : 1.0)))
+        return false;
+      rel(s,s.x,IRT_EQ,3);
+      return (s.status() == SS_SOLVED) && s.y.assigned() && (s.y.val() == 3);
+    }
+
+  public:
+    NoGPI(void) : Test::Base("AFC::NoGPI") {}
+    virtual bool run(void) {
+      return scopes() && lifetime() && failure(false) && failure(true) &&
+        rewrite(false) && rewrite(true);
+    }
+  };
+
+  NoGPI no_gpi;
 
   AFC afc;
 

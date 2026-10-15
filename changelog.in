@@ -74,6 +74,21 @@ Date: unreleased
 This is the development changelog for the next Gecode release.
 
 [ENTRY]
+Module: kernel
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Add Space::NoGPI and Space::UseGPI to control global propagator information
+for scoped posting. NoGPI keeps information in the space with zero AFC.
+
+[ENTRY]
+Module: int
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Fix iterator invalidation during counting-based search cache cleanup.
+
+[ENTRY]
 
 Module: int
 What:   performance

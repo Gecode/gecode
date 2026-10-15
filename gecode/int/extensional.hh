@@ -470,7 +470,7 @@ namespace Gecode { namespace Int { namespace Extensional {
   class CompactStatus {
   protected:
     /// A tagged advisor pointer or a status value
-    ptrdiff_t s;
+    Support::uptrint_t s;
   public:
     /// Type of status
     enum StatusType {
