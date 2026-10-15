@@ -32,6 +32,7 @@
  */
 
 #include <cstddef>
+#include <climits>
 
 namespace Gecode { namespace Support {
 
@@ -43,7 +44,8 @@ namespace Gecode { namespace Support {
   void* unmark(void* p);
   /// Return marked pointer for \a p (possibly already marked)
   void* fmark(void* p);
-  /// Return unmarked pointer for a possibly marked pointer \a p
+  /// Clear the lowest \a bits bits of a possibly marked pointer \a p
+  template<unsigned int bits = 1>
   void* funmark(void* p);
   /// Split possibly marked pointer \a p into mark \a m and unmarked pointer
   void* ptrsplit(void* p, ptrdiff_t& m);
@@ -68,10 +70,12 @@ namespace Gecode { namespace Support {
   fmark(void* p) {
     return reinterpret_cast<void*>(reinterpret_cast<ptrdiff_t>(p)|1);
   }
+  template<unsigned int bits>
   forceinline void*
   funmark(void* p) {
-    return reinterpret_cast<void*>(reinterpret_cast<ptrdiff_t>(p)&
-                                   ~static_cast<ptrdiff_t>(1));
+    static_assert(bits < sizeof(size_t)*CHAR_BIT, "Too many pointer tag bits");
+    return reinterpret_cast<void*>(reinterpret_cast<size_t>(p)&
+                                   ~((static_cast<size_t>(1) << bits)-1));
   }
   forceinline void*
   ptrsplit(void* p, ptrdiff_t& m) {

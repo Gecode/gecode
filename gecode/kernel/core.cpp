@@ -928,7 +928,7 @@ namespace Gecode {
     Kernel::GPI::Info* i = alloc<Kernel::GPI::Info>(1);
     i->init(ssd.data().gpi.next_pid(),gid);
     i->afc = 0.0;
-    return Support::ptrjoin(i,2);
+    return Support::ptrjoin(i,0b10);
   }
 
   void

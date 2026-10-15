@@ -78,21 +78,15 @@ Module: kernel
 What:   new
 Rank:   minor
 [DESCRIPTION]
-Add Space::NoGPI for scoped posting without globally retained propagator
-information. Scoped propagators keep their identifiers and groups in the
-space, have zero AFC, and copy their information when cloned. Rewriting
-preserves the original propagator information. Space::UseGPI enables global
-information for selected posting calls inside a NoGPI scope. Both contexts
-restore the previous setting when they leave scope.
+Add Space::NoGPI and Space::UseGPI to control global propagator information
+for scoped posting. NoGPI keeps information in the space with zero AFC.
 
 [ENTRY]
 Module: int
 What:   bug
 Rank:   minor
 [DESCRIPTION]
-Fix iterator invalidation when counting-based search removes expired
-propagator cache entries. The invalid iterator could skip remaining entries
-and leave the brancher without a choice.
+Fix iterator invalidation during counting-based search cache cleanup.
 
 [ENTRY]
 

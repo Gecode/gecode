@@ -2052,23 +2052,15 @@ namespace Gecode {
      * \brief Suppress global propagator information during scoped posting
      * \ingroup TaskModelScript
      *
-     * New propagators posted into this space use space-local information
-     * instead of records retained by all spaces in a search. Their AFC is
-     * always zero, including after AFC initialization or unsharing. They
-     * retain normal identifiers and groups, so tracing and counting-based
-     * search remain supported. Group changes for these propagators are
-     * local to the space; clones copy the current group. Local records are
-     * reclaimed with the space, even if their propagators subsume earlier.
-     * AFC-based branching therefore only counts ordinary propagators.
+     * New propagators keep their information in the space, with normal
+     * identifiers and groups but zero AFC. Group changes stay local to the
+     * space. Clones copy this information and start with ordinary posting
+     * enabled. Rewriting preserves the original propagator's information.
      *
-     * Rewriting inherits the original propagator's information, regardless
-     * of this context. Existing propagators are unaffected. Clones retain
-     * local information but start with ordinary posting enabled.
-     *
-     * A nested UseGPI context enables global information for selected
-     * posting calls. Both contexts restore the previous setting on destruction,
-     * including exception unwinding. The space must outlive the context,
-     * and contexts for the same space must be destroyed in reverse order.
+     * UseGPI enables global information within this scope. Both contexts
+     * restore the previous setting on destruction, including unwinding.
+     * The space must outlive them; contexts for the same space must be
+     * destroyed in reverse order.
      */
     class NoGPI {
     private:
@@ -2089,11 +2081,8 @@ namespace Gecode {
      * \brief Enable global propagator information during scoped posting
      * \ingroup TaskModelScript
      *
-     * Overrides an enclosing NoGPI context for new propagators posted into
-     * this space. Rewriting still inherits the original information.
-     * Destruction restores the previous setting, including exception
-     * unwinding. The space must outlive the context, and NoGPI and UseGPI
-     * contexts for the same space must be destroyed in reverse order.
+     * Overrides NoGPI for new postings and restores the previous setting
+     * on destruction. The lifetime and nesting rules of NoGPI also apply.
      */
     class UseGPI {
     private:
@@ -3678,7 +3667,7 @@ namespace Gecode {
 
   forceinline bool
   Propagator::local_info(void) const {
-    return (reinterpret_cast<ptrdiff_t>(gpi_disabled) & 2) != 0;
+    return (reinterpret_cast<ptrdiff_t>(gpi_disabled) & 0b10) != 0;
   }
 
   forceinline bool
@@ -3700,8 +3689,7 @@ namespace Gecode {
 
   forceinline Kernel::GPI::Info&
   Propagator::gpi(void) {
-    return *reinterpret_cast<Kernel::GPI::Info*>
-      (reinterpret_cast<ptrdiff_t>(gpi_disabled) & ~static_cast<ptrdiff_t>(3));
+    return *static_cast<Kernel::GPI::Info*>(Support::funmark<2>(gpi_disabled));
   }
 
   forceinline
@@ -3726,7 +3714,7 @@ namespace Gecode {
     if (p.local_info()) {
       Kernel::GPI::Info* i = home.alloc<Kernel::GPI::Info>(1);
       *i = p.gpi();
-      gpi_disabled = Support::ptrjoin(i, p.disabled() ? 3 : 2);
+      gpi_disabled = Support::ptrjoin(i, p.disabled() ? 0b11 : 0b10);
     }
     u.advisors = nullptr;
     assert((u.med == 0) && (u.size == 0));

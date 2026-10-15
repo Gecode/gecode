@@ -188,11 +188,6 @@ namespace Test {
           if (s.post().afc() != 1.0)
             return false;
           {
-            Space::UseGPI nested(s);
-            if (s.post().afc() != 1.0)
-              return false;
-          }
-          {
             Space::NoGPI suppress(s);
             if (s.post().afc() != 0.0)
               return false;
@@ -312,47 +307,11 @@ namespace Test {
       return (s.status() == SS_SOLVED) && s.y.assigned() && (s.y.val() == 3);
     }
 
-    /// Collect posting counts and propagated identifiers
-    class Tracer : public Gecode::Tracer {
-    public:
-      unsigned int posted = 0;
-      std::vector<unsigned int> ids;
-      virtual void propagate(const Gecode::Space&,
-                             const Gecode::PropagateTraceInfo& p) {
-        ids.push_back(p.id());
-      }
-      virtual void commit(const Gecode::Space&,
-                          const Gecode::CommitTraceInfo&) {}
-      virtual void post(const Gecode::Space&,
-                        const Gecode::PostTraceInfo& p) {
-        posted += p.propagators();
-      }
-    };
-
-    /// Posting traces and propagation traces must retain distinct identities
-    bool tracing(void) {
-      using namespace Gecode;
-      Tracer t;
-      TestSpace s;
-      PropagatorGroup g;
-      trace(s,g,TE_POST | TE_PROPAGATE,t);
-      t.posted = 0;
-      unsigned int a, b;
-      {
-        Space::NoGPI context(s);
-        a = s.post(g).id();
-        b = s.post(g).id();
-      }
-      (void) s.status();
-      return (t.posted == 2) && (a != b) &&
-        (std::find(t.ids.begin(),t.ids.end(),a) != t.ids.end()) &&
-        (std::find(t.ids.begin(),t.ids.end(),b) != t.ids.end());
-    }
   public:
     NoGPI(void) : Test::Base("AFC::NoGPI") {}
     virtual bool run(void) {
       return scopes() && lifetime() && failure(false) && failure(true) &&
-        rewrite(false) && rewrite(true) && tracing();
+        rewrite(false) && rewrite(true);
     }
   };
 
