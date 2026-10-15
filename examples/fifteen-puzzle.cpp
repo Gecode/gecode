@@ -40,7 +40,6 @@
 #include <cstdlib>
 #include <iomanip>
 #include <iostream>
-#include <vector>
 
 using namespace Gecode;
 using Board = std::array<int,16>;
@@ -80,17 +79,17 @@ goal(void) {
   return {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,0};
 }
 
-static std::vector<int>
+static IntArgs
 neighbors(int blank) {
-  std::vector<int> result;
+  IntArgs result;
   if (blank >= 4)
-    result.push_back(blank-4);
+    result << blank-4;
   if (blank % 4 != 0)
-    result.push_back(blank-1);
+    result << blank-1;
   if (blank % 4 != 3)
-    result.push_back(blank+1);
+    result << blank+1;
   if (blank < 12)
-    result.push_back(blank+4);
+    result << blank+4;
   return result;
 }
 
@@ -101,9 +100,10 @@ initial_board(const PuzzleOptions& opt) {
   int blank = 15;
   int previous = -1;
   for (unsigned int i=0; i<opt.scramble(); i++) {
-    std::vector<int> choices = neighbors(blank);
-    choices.erase(std::remove(choices.begin(),choices.end(),previous),
-                  choices.end());
+    IntArgs choices;
+    for (int neighbor : neighbors(blank))
+      if (neighbor != previous)
+        choices << neighbor;
     int next = choices[random(static_cast<unsigned int>(choices.size()))];
     std::swap(board[blank],board[next]);
     previous = blank;
