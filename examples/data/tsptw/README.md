@@ -1,9 +1,5 @@
 # TSPTW inputs and checking
 
-The frozen comparison reports below describe runs from the earlier combined
-branch. Their validation results are historical; native branch validation is
-reported separately.
-
 The native reader in `examples/tsptw-data.hh` and the independent checker in
 `misc/tsptw-check.py` use the canonical matrix format from the
 [López-Ibáñez/Blum collection](https://lopez-ibanez.eu/tsptw-instances): a node
@@ -47,8 +43,7 @@ The five generated `tiny/` instances are separate from canonical benchmarks:
 
 The transition example also offers `--residual-propagation cheap` between OFF
 and the existing unary relaxation. [The deadline-filter note](../../../docs/tsptw-cheap-deadline-filter.md)
-explains its shortest-path checks and bounded development comparison;
-[the saved report](cheap-deadline-comparison.json) records each case and repetition.
+explains its shortest-path checks and how to compare the inference modes.
 The default remains OFF.
 
 `published/` contains one unchanged canonical input and one published
@@ -321,50 +316,6 @@ zero durations, pending return and completed tours. The offline validator checks
 all tiny optima with minimum-arc guidance with/without inference, one
 prefix/unary independence case, and strengthened A*/CABS Pareto off/on cases.
 
-The initial [development comparison](bounds-comparison.json) ran three
-configurations on the frozen development cases `Dumas/n20w20.001.txt`,
-`GendreauDumasExtended/n20w120.001.txt` and
-`variants/Dumas/customer-due-plus-100/n20w100.003.txt`. Each ran twice under
-transition A*, Pareto off, one thread, no seed, a five-second native limit and
-a seven-second external guard. Runs were sequential, interleaved by case, with
-configuration order reversed for repetition two. The record includes exact
-commands, input and binary hashes, every independently checked incumbent,
-individual timings, node counts, stops and sampled storage. Compilation was
-completed before capture and was not timed. No held-out outcomes were used.
-
-All six tight-Dumas runs proved cost 378 and emitted one checked incumbent each:
-
-| Configuration | Native elapsed ms (two runs) | Nodes per run | Bound ms (two runs) | Inference / propagation ms (two runs) |
-| --- | --- | ---: | --- | --- |
-| prefix/off | 2819.553 / 2685.122 | 2785287 | 34.640 / 34.164 | 0 / 0 |
-| min-arcs/off | 3055.557 / 3434.020 | 2782969 | 169.566 / 169.037 | 0 / 0 |
-| min-arcs/unary | 2.005 / 2.171 | 1006 | 0.019 / 0.019 | 1.215 / 0.791; 1.232 / 0.793 |
-
-The minimum-arc bound alone removed few nodes on this case and added evaluation
-time. Unary inference sharply reduced the explored tree. These two observations
-describe this input and build; they do not select a new default.
-
-On the extended-Gendreau case, both prefix/off and min-arcs/off runs hit the
-RSS watchdog without an incumbent. Unary runs reached the native five-second
-limit without an incumbent, visiting 2516046 and 2461061 nodes and spending
-3346.832 and 3287.880 ms in inference, including 2194.261 and 2083.187 ms in
-propagation. Their sampled RSS peaks were 663.1 and 655.5 MiB. All six runs on
-the relaxed Dumas variant hit the RSS watchdog without an incumbent. A killed
-process has no final native summary, so its node/evaluation/propagation metrics
-remain unavailable rather than zero. Resource termination supplies no proof.
-
-The watchdog sampled `ps` RSS every nominal 50 ms plus probe overhead; observed
-maximum gaps reached 123.563 ms. It killed the process group above 1 GiB,
-with overshoot between samples. Tight-Dumas prefix/off and min-arcs/off sampled
-peaks were about 951–975 MiB. Each fast unary run had only one early sample,
-which cannot establish its true peak. The record uses sampled process RSS,
-not a hard memory limit or native frontier-byte measurement. Descriptor peaks
-were zero because Pareto pruning was off. The 18 runs consumed 33855.089 ms
-of external capture wall time, below both the 90-second nominal solver budget
-and the 15-minute ceiling. Six runs proved an optimum, two stopped at the
-native time limit and ten were killed by the RSS watchdog. The evidence leaves
-the stronger options explicit and the prefix/off defaults unchanged.
-
 ## Progressive and fixed-quota column search
 
 Both ordinary Space formulations support `--engine column`. Its default quota
@@ -496,14 +447,14 @@ registry compares labels for the same unvisited set and location. The exact
 scaled arcs, waiting, fixed start zero, folded service, travel-cost objective
 and return window match the native model and Fraction checker.
 
-## Conventional CP tuning
+## Conventional CP options
 
-The development campaign `cp-baseline-tuning` compares five fixed candidates.
-The costed circuit, shortest-path timing bounds, reified arc timing, objective,
-successor completion branch and independent checker are identical. Circuit
-propagation compares `IPL_DOM` with `IPL_VAL`. Cost-variable branching compares
-`INT_VAR_REGRET_MAX_MAX()` from the initial TSP recipe with `INT_VAR_SIZE_MIN()`;
-both use `INT_VAL_MIN()`. The successor branch remains size/min.
+The following closed CP configurations use the same costed
+circuit, shortest-path timing bounds, reified arc timing, objective, successor
+completion branch and independent checker. Circuit propagation accepts
+`IPL_DOM` or `IPL_VAL`. Cost-variable branching accepts
+`INT_VAR_REGRET_MAX_MAX()` or `INT_VAR_SIZE_MIN()`; both use `INT_VAL_MIN()`.
+The successor branch uses size/min.
 
 | Runner name | Circuit propagation | Cost branching | Search |
 | --- | --- | --- | --- |
@@ -515,264 +466,30 @@ both use `INT_VAL_MIN()`. The successor branch remains size/min.
 
 Native `--circuit-propagation dom|val` and `--cost-branching regret|size` apply
 only to `--formulation closed`; other formulations reject explicit settings.
-The defaults remain DOM/regret. `--engine rbs` is also closed-only and uses the
-existing `RBS<TSPTWClosed,BAB>` builder, one thread, Luby cutoff scale 1,000 and
+The defaults remain DOM/regret. The runner names `closed-dom-size-bab` and
+`closed-dom-size-cabs` explicitly select DOM/size with BAB and CABS.
+`--engine rbs` is also closed-only and uses the existing `RBS<TSPTWClosed,BAB>`
+builder, one thread, Luby cutoff scale 1,000 and
 no-good depth 128. These restart parameters are fixed. Summary records report
 the chosen model and restart settings. The default `Space::master` posts
 incumbent cuts and no-goods; the default `Space::slave` marks each BAB search
 complete. Only natural exhaustion reports optimality or infeasibility. A
-resource stop supplies no proof. Existing LNS was considered, but restart search
-provided this comparison without adding neighborhood wiring or an LNS framework.
+resource stop supplies no proof.
 
-The frozen standalone baseline is **DOM/size BAB**, named `closed-size-bab`.
-Across 12 development cases and two repetitions, it improves final checked
-quality in eight pairs, ties in twelve, and loses in two against the initial
-DOM/regret BAB. Neither candidate finds a tour in the other two pairs. Both
-repetitions give the same final objectives and proof decisions. The 100 ms
-quality checkpoint gives size BAB twelve wins and no losses; at 1/5/15 seconds,
-its counts match final quality. These checkpoints use native reported time.
-
-| Candidate | Feasible samples / 24 | Proven samples / 24 | Final quality wins / ties / losses / neither vs initial | Largest sampled RSS (MiB) |
-| --- | --- | --- | --- | --- |
-| `closed-bab` | 16 | 12 | baseline | 10.06 |
-| `closed-val-bab` | 14 | 12 | 0 / 14 / 2 / 8 | 10.34 |
-| `closed-size-bab` | 20 | 18 | 8 / 12 / 2 / 2 | 11.14 |
-| `closed-rbs-regret` | 16 | 12 | 0 / 16 / 0 / 8 | 14.36 |
-| `closed-rbs-size` | 20 | 18 | 8 / 12 / 2 / 2 | 13.11 |
-
-Size branching proves cost 249 on the marked Dumas window variant and 267 on
-canonical Gendreau n20, where regret branching finds no tour. On Gendreau n60 it
-finds cost 527 without proof; regret branching finds no tour. On the marked
-Gendreau window variant it proves 202, while regret candidates end at 208 without
-proof. The counterexample is canonical `AFG/rbg038a.tw`: DOM/regret BAB and regret
-RBS find checked cost 2493 in both repetitions, while size candidates and
-VAL/regret find no tour. No candidate finds a tour on `Dumas/n60w100.001.txt`.
-Canonical cases and four deterministic window variants remain separately marked
-in the report; scaled costs are compared only within each case.
-
-VAL/regret offers no quality or proof wins and loses the AFG tour. Size RBS
-matches size BAB final quality and proof counts. Among their eighteen paired
-proofs, RBS finishes earlier in six and later in twelve; it has higher sampled
-RSS in eighteen comparable pairs. Its first-incumbent timing splits ten earlier
-and ten later. Regret RBS adds no final-quality or proof improvement over regret
-BAB. These results select size BAB and do not justify recommending an anytime
-restart recipe. Both restart commands remain available as explicit alternatives.
-
-Use the frozen model settings explicitly in later engine/formulation comparisons:
+Select model settings explicitly when comparing engines or formulations:
 
 ```sh
 build/open-search/bin/tsptw INSTANCE --formulation closed --engine bab --circuit-propagation dom --cost-branching size --time-ms 15000
-# Evaluated restart recipes; fixed Luby 1000 and no-good depth 128:
+# Restart recipes use fixed Luby 1000 and no-good depth 128:
 build/open-search/bin/tsptw INSTANCE --formulation closed --engine rbs --circuit-propagation dom --cost-branching regret --time-ms 15000
 build/open-search/bin/tsptw INSTANCE --formulation closed --engine rbs --circuit-propagation dom --cost-branching size --time-ms 15000
 ```
 
-Those native commands use one thread and a native time stop. The campaign adds
-the outer launch-to-reap deadline and sampled 1 GiB RSS watchdog through this
-exact command; repeating it resumes the same collection:
+These commands use one thread and a native time stop. To compare the five
+configurations with the runner's outer deadline and sampled RSS watchdog:
 
 ```sh
-uv run --script misc/tsptw-benchmark.py preview --split development --configs closed-bab,closed-val-bab,closed-size-bab,closed-rbs-regret,closed-rbs-size --selected-root /tmp/open-search-tsptw-selected-network --solver build/open-search/bin/tsptw --repetitions 2 --seconds 15 --compilation-seconds 4.1385885410127235
-uv run --script misc/tsptw-benchmark.py run --name cp-baseline-tuning --split development --configs closed-bab,closed-val-bab,closed-size-bab,closed-rbs-regret,closed-rbs-size --selected-root /tmp/open-search-tsptw-selected-network --solver build/open-search/bin/tsptw --repetitions 2 --seconds 15 --compilation-seconds 4.1385885410127235
-uv run --script misc/tsptw-benchmark.py analyze --name cp-baseline-tuning
+uv run --script misc/tsptw-benchmark.py preview --split development --configs closed-bab,closed-val-bab,closed-size-bab,closed-rbs-regret,closed-rbs-size --selected-root /tmp/tsptw-selected --solver build/open-search/bin/tsptw --repetitions 2 --seconds 15
+uv run --script misc/tsptw-benchmark.py run --name cp-options --split development --configs closed-bab,closed-val-bab,closed-size-bab,closed-rbs-regret,closed-rbs-size --selected-root /tmp/tsptw-selected --solver build/open-search/bin/tsptw --repetitions 2 --seconds 15
+uv run --script misc/tsptw-benchmark.py analyze --name cp-options --output build/tsptw-results/cp-options/comparison.json
 ```
-
-The 120-sample campaign had a nominal 1,800-second allowance and used 792.229
-seconds of actual process wall time. Native correctness checks, restart/portfolio
-checks, tiny/resume smokes, one bounded capture interruption and option/resource
-checks bring tuning process wall time to 892.282 seconds. The two Release
-rebuilds used 4.139 seconds separately; including those builds gives a conservative
-896.421-second total within the 2,700-second tuning ceiling, leaving 1,803.579
-seconds for bounded verification. No campaign attempts were interrupted. Two
-cache-blocked uv launches started no native process. The later evaluation budget
-remains separate; no held-out outcomes were inspected.
-
-All 806 emitted campaign incumbents passed the independent Fraction checker.
-There were three outer timeouts, zero RSS terminations and no invalid output,
-execution or measurement failures. The timeout rows include checked feasible
-quality where available and never proof. Eighteen short samples finished without
-a live RSS observation. The largest observed sampling gap was 465 ms and the
-longest sample took 15.101 wall seconds: the nominal 50 ms watchdog can miss
-peaks and overshoot. Native reported timing and outer wall timing remain separate.
-The runner does not measure frontier/clone footprint or isolate closed-model
-propagation/clone time.
-
-[The compact report](cp-baseline-tuning.json) freezes exact candidate arguments,
-input/build/runner hashes, paired counts, per-case scaled objectives/proofs,
-resource limits, commands and budget use. Raw configuration, 120 sample records,
-stdout/stderr and paired `analysis.json` remain under
-`build/tsptw-results/cp-baseline-tuning`. The measured runner, native source/binary,
-libraries, inputs and configuration stayed unchanged after collection began.
-Final freeze edits affect only this README and the compact report. Offline
-analysis rechecked every incumbent and reproduced the same report; completed
-resume launched no samples and preserved all 360 sample files and their mtimes.
-Verification should replay these records and the completed command instead of
-launching another development matrix. The existing eight defaults still use
-DOM/regret; later evaluation must apply the frozen settings explicitly.
-
-## Frozen held-out comparison
-
-Task 016 freezes eight configurations before measuring the 24 held-out cases:
-20 canonical instances and four separately marked window variants, with five
-canonical instances and one variant per family. Source instances remain disjoint
-from development. Each case/configuration has one observation, a 30-second outer
-cap, one search thread and the same sampled 1 GiB process-group RSS watchdog.
-The watchdog requests samples every 50 ms; process-list probes and termination
-can extend that interval and overshoot either limit. Captures record the observed
-gaps, sampled RSS overshoot and termination/reap time. Short processes can
-finish during a probe, so a sampled peak can miss brief allocations and is not
-a kernel peak-RSS measurement.
-
-`closed-dom-size-bab` and `closed-dom-size-cabs` explicitly select the frozen
-DOM circuit propagation and size cost branching. The historical names and
-arguments remain available. The four `transition-*-lazy-unary` configurations
-use lazy paths, PREFIX guidance, unary residual propagation and Pareto OFF.
-The development study fixed three case IDs before measurement, then compared
-lazy PREFIX/OFF/Pareto-OFF A* with eager-only, Pareto-only, min-arcs-only and
-unary-only changes, twice at two seconds each. Unary propagation solved the
-tight Dumas case in both repetitions and avoided RSS termination on the other
-two cases; min-arcs alone supplied no checked solution within those caps. These
-development observations selected PREFIX/unary before held-out collection.
-
-Native BAB does not consume `HeuristicGuidance`: it reports zero bound calls,
-and selecting min-arcs would not add a BAB prune. Unary propagation applies to
-all four native transition engines. DIDPPy remains pinned to 0.11.1; its model
-uses set/element/resource state, two global-minimum arc bounds and resource
-dominance. It also imports the backend before reporting preprocessing. These
-representation, inference and clock differences prevent an overall Gecode/DIDP
-ranking. Compare native transition engines first, closed engines first, and
-DIDPPy engines first; assess closed/transition formulation contrasts separately.
-
-The captured run is `build/tsptw-results/heldout-comparison-016`; its immutable
-`config.json` records all 192 exact commands, input/source/binary/library hashes,
-adapter/checker/runner identities, pin, host and limits before the first launch.
-The actual shared ledger is `/tmp/open-search-016-budget.jsonl`. It includes
-builds, validation, development, failed attempts and held-out launch-through-reap
-time, enforces a 7,200-second total, and reserves 300 seconds for verification
-and 600 seconds for termination overhead and contingency. Pre-freeze work stays
-below 400 seconds. Resume reuses this ledger and skips validated terminal rows,
-including failures; partial attempts remain beside their replacements. The RSS
-probe requires process-list and owned-process termination permission on sandboxed
-hosts. Two held-out termination attempts failed after normal stopped summaries;
-the runner recorded null return codes before confirming reap. Both outer
-commands used escalation; it did not eliminate this seam. Escalated process
-inspection found no owned child. The original interruptions and separate conservative
-external cleanup intervals remain charged in the ledger, and the partial streams
-remain archived beside the resumed capture. Those intervals are absence
-confirmations, not measured runner reap times.
-
-Use the exact frozen command to resume; `--max-samples 0` saves and inspects the
-configuration without launching a solver. A material change requires a new run
-name. Keep one writer, and initialize a fresh shared budget ledger before any
-measured build or validation when starting a separately budgeted campaign.
-
-```sh
-uv run --script misc/tsptw-benchmark.py run --name heldout-comparison-016 \
-  --split held-out --selected-root /tmp/open-search-tsptw-selected-network \
-  --configs closed-dom-size-bab,closed-dom-size-cabs,transition-bab-lazy-unary,transition-astar-lazy-unary,transition-cabs-lazy-unary,transition-column-lazy-unary,didppy-astar,didppy-cabs \
-  --repetitions 1 --seconds 30 --budget-ledger /tmp/open-search-016-budget.jsonl
-uv run --script misc/tsptw-benchmark.py analyze --name heldout-comparison-016 \
-  --output examples/data/tsptw/heldout-comparison.json
-```
-
-Analysis launches no solver. It reads the expected frozen rows, includes all
-terminal outcomes, and groups families and canonical/variant cases. Publication
-checkpoints at 100 ms, 1 s, 5 s, 15 s and 30 s use solver-reported clocks; outer
-wall time includes launch and reap. Launch-inclusive publication timestamps are
-unavailable. A final gap is reported only against a matching campaign optimality
-proof; an observed best cost is not an established optimum. Killed processes
-can include checked incumbents but supply no proof or post-kill phase summaries.
-Frontier/clone buffer bytes remain unavailable, and `sizeof` allocation fields
-exclude dynamic storage. Supported counts, inference/setup times, descriptor
-storage and sampled RSS remain in the individual records and compact comparison.
-Runtime pairs record terminal status and proof-reported time separately. A lower
-launch-wall time from an RSS-stopped run records earlier termination; it does
-not establish a speedup or completed search. Aggregate wall-time wins are not
-algorithm runtime gains when observations have different completion and stop
-conditions.
-
-The [saved comparison](heldout-comparison.json) summarizes all 192 terminal rows
-and per-case costs/checkpoints from 569 independently checked publications. Raw
-captures include the full traces. Offline replay also checked three publications
-in the two archived interrupted attempts;
-those attempts do not contribute a better cost to a replacement row. The final
-matrix has 81 normal exits (44 proofs and 37 ordinary stops), 61 outer time stops
-and 50 RSS stops. It has no terminal execution or invalid-output error; the two
-termination interruptions above remain separate failed attempts.
-
-| Frozen configuration | Tour by 1 s | Tour by 30 s | Optimal | Infeasible | Outer time | RSS |
-|---|---:|---:|---:|---:|---:|---:|
-| closed DOM/size BAB | 6 | 6 | 6 | 1 | 5 | 0 |
-| closed DOM/size CABS | 6 | 7 | 6 | 1 | 10 | 3 |
-| transition BAB | 13 | 16 | 4 | 2 | 4 | 0 |
-| transition A* | 3 | 4 | 4 | 2 | 7 | 11 |
-| transition CABS | 13 | 16 | 4 | 2 | 10 | 1 |
-| transition column | 14 | 15 | 4 | 2 | 4 | 14 |
-| DIDPPy A* | 2 | 3 | 3 | 0 | 0 | 21 |
-| DIDPPy CABS | 5 | 7 | 3 | 0 | 21 | 0 |
-
-Tour columns use each solver's reported clock and include checked incumbents
-from resource-stopped runs. A checked tour outranks no tour in paired
-quality counts. Within the frozen transition model, CABS has better 30-second
-quality than BAB on 11 cases, worse quality on two and equal cost on five; six
-cases have no tour from either. Column has 10 better, three worse and five equal
-outcomes. At one second, CABS has nine better and three worse outcomes than BAB,
-and column has ten better and three worse. All four engines prove the same four
-optimal and two infeasible cases. A* finds no additional tour over BAB in the
-final observations. The closed engines each prove six optimal cases and one
-infeasible case; CABS adds one feasible case. DIDPPy CABS adds four feasible cases
-to A*'s three, with the same three optimality proofs. Runtime tallies remain
-censored as described above; earlier RSS exits do not show faster search.
-
-Formulation contrasts change representation, branching and inference together.
-Transition BAB has better final quality than closed BAB on ten cases and worse
-quality on one; transition CABS has better quality than closed CABS on ten and
-worse quality on none. Each closed engine proves five canonical optima, distributed Dumas/Gendreau–
-Dumas/Solomon/AFG as 1/1/2/1; each transition engine proves three, distributed
-1/0/2/0. All native engines prove the Dumas variant infeasible and the Solomon
-variant optimal; transition engines also prove the Gendreau–Dumas variant
-infeasible. The AFG variant remains unresolved. Variants use different source
-cases from the canonical selection, so these groups do not measure a matched
-window change. Only six cases have a matching proved optimum for final gaps.
-
-Available native setup medians range from 0.288 to 0.864 ms; DIDPPy medians are
-9.327–9.604 ms after backend import. Native node counters range from 0 to
-13,369,316, and DIDPPy counters from 10 to 4,711,127; they describe work in their
-own models. Normal transition summaries report median unary-inference/search
-ratios of 81.1% for BAB and 80.0% for CABS. Propagation timing lies inside inference
-timing and must not be added to it. These subsets omit killed runs. BAB reports
-zero bound calls. Available lazy allocation records have zero root positions,
-at most one prepared root position and n positions for a completed tour,
-including return. Space/IntVar handle sizes are 488/8 bytes; available Pareto
-storage counts are zero with Pareto OFF. Dynamic buffers and frontier/clone
-storage remain unmeasured.
-
-The terminal captures contain 33,321 RSS samples. Their largest observed sample
-gap is 0.409194 s, time-cap overshoot 0.074148 s, RSS overshoot 70,402,048 bytes,
-and termination/reap duration 0.042376 s. Process-list probes occupy 1,534.892 s
-inside the captures while targets continue concurrently; this is not additive
-solver CPU time or a correction to subtract. Terminal-row launch wall totals
-3,488.308 s. The watchdog's cost and sampling gaps limit finer timing and peak
-memory interpretations.
-
-At implementation handoff, the shared ledger charges **3,889.734562 s** of its
-7,200 s allowance: prebuilt-target checking 0.207014 s, correctness groups
-120.118458 s, development 35.248518 s and held-out work 3,734.160572 s. Held-out
-work comprises 3,548.328856 measured group seconds and separate conservative
-cleanup allowances of 128.747037 and 57.084679 s. The measured total across phases
-is 3,703.902846 s. Development includes its first process-list failure
-(0.005793 s); held-out includes both interrupted attempts (30.007945 and
-30.008852 s). No process remains pending. Verification has used 0 s and has
-its 300 s reserve; 3,310.265438 s of the total remains. The ledger and raw captures
-are external artifacts, and these figures describe this handoff.
-
-The observed 11 A* and 14 column RSS stops support one separately reviewed,
-bounded fixed-width continuation experiment for deterministic TSPTW transitions.
-The fixed-width study found that an original-Choice cursor matched border
-regeneration's Space reduction with fewer keys and commitments on its worked
-trees. Compare that restricted cursor
-with CABS, recording inference work as well as stored Spaces: current normal
-summaries spend much of search inside unary inference. Generic Space border
-replay still lacks its required contract. The suffix-repair study found no
-improvement on its two development neighborhoods and supports no LNBS
-adoption. The held-out outcomes do not change frozen settings or solver defaults.
