@@ -445,7 +445,7 @@ def require_reaped(samples):
 
 
 def recover(samples):
-    """Confirm child absence and charge through inspection, without claiming its exit time."""
+    """Confirm the child is gone and count time until inspection; its exit time is unknown."""
     for path in sorted(samples.glob('*.launch.json')):
         launch = json.loads(path.read_text())
         pid = launch.get('pid')

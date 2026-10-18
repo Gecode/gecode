@@ -197,7 +197,7 @@ def run(args):
             break
         remaining = sum(other['cap_seconds'] for other in config['rows'][index+1:]
                         if (not selected or other['id'] in selected) and not load_sample(samples, other))
-        # Correctness must admit the entire not-yet-launched frozen development matrix.
+        # The budget must cover every unlaunched frozen development run.
         if args.phase == 'correctness':
             remaining += 60
         attempt = 1
