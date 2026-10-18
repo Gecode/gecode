@@ -1923,8 +1923,36 @@ fvar,
             int_relation(ce[2]), s.arg2IntVar(ce[3]), s.ann2ipl(ann));
     }
     void p_count_matches(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
-      count(s, s.arg2intvarargs(ce[0]), s.arg2intargs(ce[1]),
-            int_relation(ce[2]), s.arg2IntVar(ce[3]), s.ann2ipl(ann));
+      IntVarArgs x = s.arg2intvarargs(ce[0]);
+      IntArgs y = s.arg2intargs(ce[1]);
+      IntRelType irt = int_relation(ce[2]);
+      IntVar n = s.arg2IntVar(ce[3]);
+      IntPropLevel ipl = s.ann2ipl(ann);
+      if (x.size() != y.size())
+        throw Int::ArgumentSizeMismatch("Int::count");
+      // Native matching counts use offset views for x[i]-y[i].
+      bool safe = true;
+      for (int i=0; i<x.size(); i++)
+        if ((y[i] < Int::Limits::min) || (y[i] > Int::Limits::max) ||
+            (static_cast<long long>(x[i].min())-y[i] < Int::Limits::min) ||
+            (static_cast<long long>(x[i].max())-y[i] > Int::Limits::max)) {
+          safe = false;
+          break;
+        }
+      if (safe) {
+        count(s, x, y, irt, n, ipl);
+      } else {
+        BoolVarArgs matches(x.size());
+        for (int i=0; i<x.size(); i++) {
+          if (x[i].in(y[i])) {
+            matches[i] = BoolVar(s,0,1);
+            rel(s, x[i], IRT_EQ, y[i], Reify(matches[i]), ipl);
+          } else {
+            matches[i] = BoolVar(s,0,0);
+          }
+        }
+        linear(s, matches, irt, n, ipl);
+      }
     }
     void p_array_int_ne(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
       rel(s, s.arg2intvarargs(ce[0]), IRT_NQ,

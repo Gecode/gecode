@@ -76,6 +76,22 @@ namespace Test { namespace FlatZinc {
           "var {0,3}: count; constraint gecode_global_cardinality_closed([1,1],[1],[count]); solve satisfy;", unsat);
         (void) new FlatZincTest("NativeRegistry::SortOrientation",
           "constraint gecode_sort_permutation([3,1,2],[1,2,3],[2,3,1],1); solve satisfy;", unsat);
+        (void) new FlatZincTest("NativeRegistry::CountMatchesUnbounded",
+          "var int:x; var int:y; "
+          "constraint gecode_count_matches_fzn([x],[3],1,1); "
+          "constraint gecode_count_matches_fzn([y],[-3],1,1); solve satisfy;", sat);
+        (void) new FlatZincTest("NativeRegistry::CountMatchesRelations",
+          "var int:a; var int:b; var int:c; var int:d; var int:e; "
+          "constraint gecode_count_matches_fzn([a],[3],2,0); "
+          "constraint gecode_count_matches_fzn([b],[3],3,2); "
+          "constraint gecode_count_matches_fzn([c],[3],4,2); "
+          "constraint gecode_count_matches_fzn([d],[3],5,1); "
+          "constraint gecode_count_matches_fzn([e],[3],6,0); solve satisfy;", sat);
+        (void) new FlatZincTest("NativeRegistry::CountMatchesLimits",
+          "var -10..2147483646:x; var -2147483646..10:y; var -10..10:z; "
+          "constraint gecode_count_matches_fzn([x],[2147483646],1,1); "
+          "constraint gecode_count_matches_fzn([y],[-2147483646],1,1); "
+          "constraint gecode_count_matches_fzn([z,z],[-2147483646,2147483646],1,0); solve satisfy;", sat);
         (void) new FlatZincTest("NativeRegistry::ArgMinShared",
           "var 1..2:x; constraint gecode_arg_min_int([x,x],1,x,false); solve satisfy;", sat);
         (void) new FlatZincTest("NativeRegistry::InvalidModulusReification",
