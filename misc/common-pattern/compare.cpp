@@ -54,7 +54,7 @@ namespace {
   /**
    * \brief CP2015 Algorithm 2, with an optional extension-length bound
    *
-   * The paper baseline filters after contiguous prefix assignments.
+   * The paper baseline filters after assignments extend the contiguous prefix.
    * All variants filter initially. The padded-projection variant also caps
    * remaining nonzero positions, matching the open projection's length bound.
    * Both retain the paper's fixed positions and zero termination.
@@ -122,7 +122,7 @@ namespace {
           IntSetValues values(allowed);
           GECODE_ME_CHECK(x[j].inter_v(home,values,false));
         }
-        // Filtering can assign the next position: consume it before fixing.
+        // Consume a position assigned by filtering before reporting a fixpoint.
         if (!x[consumed].assigned())
           return ES_FIX;
       }

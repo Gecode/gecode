@@ -2428,10 +2428,10 @@ namespace Gecode {
    * \brief Space-local list of variables with an open length
    *
    * Variables can be appended until the list is closed. The length
-   * variable denotes the eventual list length. Propagation materializes
-   * positions required by its minimum. The known_length() query counts the
-   * positions already constructed. Indexed access is limited to this prefix;
-   * get() creates positions and requires enough eventual length to include
+   * variable denotes the eventual list length. Propagation constructs the
+   * positions required by the minimum length. The known_length() query counts
+   * the constructed positions. Indexed access is limited to this prefix;
+   * get() constructs positions and constrains the eventual length to include
    * the requested position.
    *
    * Handles in one Space share the same list. Updating during cloning
@@ -2468,10 +2468,11 @@ namespace Gecode {
    * \endcode
    *
    * The \ref CommonPattern "common-pattern example" finds constrained
-   * frequent subsequences across several inputs. The pattern length is a decision;
-   * the open list avoids allocating an array up to the input-length bound
-   * and encoding an unused suffix with a termination symbol. Shared prefix
-   * projection and regular constraints on the pattern language follow growth.
+   * frequent subsequences across several inputs. The pattern length is a
+   * decision variable. The open list avoids allocating an array up to the
+   * input-length bound and encoding an unused suffix with a termination
+   * symbol. Shared prefix projection and regular constraints on the pattern
+   * language follow growth.
    * The \ref OpenRoute "open-route example" is a smaller introduction,
    * including search and printing solutions.
    *
@@ -2498,7 +2499,7 @@ namespace Gecode {
      * copy the current group. A callback-local
      * Space::UseGPI scope enables global information and ordinary AFC for
      * selected postings. Nested materialization starts a new NoGPI scope.
-     * Each scope restores the previous setting when it ends, including
+     * Each scope restores the previous setting on exit, including
      * exception unwinding.
      */
     typedef std::function<Var(Space& home, int i)> Factory;
@@ -2712,7 +2713,7 @@ namespace Gecode {
    * \brief Constrain \a y to the minimum of the eventual sequence \a x
    *
    * The eventual sequence must be nonempty. Bounds are enforced as positions
-   * appear; attainment of the extremum is enforced when the list closes.
+   * appear; at least one variable must equal \a y when the list closes.
    *
    * \ingroup TaskModelIntArith
    */
@@ -2724,7 +2725,7 @@ namespace Gecode {
    * \brief Constrain \a y to the maximum of the eventual sequence \a x
    *
    * The eventual sequence must be nonempty. Bounds are enforced as positions
-   * appear; attainment of the extremum is enforced when the list closes.
+   * appear; at least one variable must equal \a y when the list closes.
    *
    * \ingroup TaskModelIntArith
    */

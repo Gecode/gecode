@@ -135,7 +135,7 @@ public:
  * By default the inputs ABCBC, BABC, ABDC must all support the pattern, which
  * must start with A and end with C. AC and ABC are feasible; ABC is longest.
  *
- * The decision is an ordered list of items with unknown length. The frequency
+ * The pattern is an ordered list of items of unknown length. The frequency
  * constraint requires sufficiently many records to contain that list as a
  * subsequence. Ordinary length and regular constraints restrict the pattern:
  * they do not restrict the matching positions in the input records. Default

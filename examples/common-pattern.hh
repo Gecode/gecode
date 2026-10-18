@@ -277,9 +277,10 @@ namespace PatternMining {
   /**
    * \brief Private prefix projection for a growing list
    *
-   * Adapts CP2015 Algorithms 1--2: no termination item, future variables or
-   * per-input DFA. Unconstructed positions are filtered when they appear.
-   * Earliest matching is sound for ordinary subsequences, not gap constraints.
+   * Adapts CP2015 Algorithms 1--2 without a termination item, preallocated
+   * future variables, or per-input DFA. Positions are filtered as they appear.
+   * Earliest matching is sound for ordinary subsequences. It does not support
+   * gap constraints.
    */
   class OpenProjection : public Propagator {
   protected:
