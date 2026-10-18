@@ -630,9 +630,10 @@ namespace Gecode { namespace FlatZinc {
      * \brief Compare compatible optimization objectives
      *
      * Integer objectives compare assigned values. Float objectives require
-     * the same direction and step, and assigned (possibly adjacent-endpoint)
-     * intervals. Float minimization ranks lower endpoints and maximization
-     * ranks upper endpoints, independently of the step used by constrain().
+     * the same direction and step, and assigned intervals, which may span
+     * adjacent float values. Float minimization ranks lower endpoints and
+     * maximization ranks upper endpoints, independently of the step used by
+     * constrain().
      */
     virtual SpaceComparison compare(const Space& s) const;
     /// Compare this space with space \a s and print the differences on

@@ -1157,11 +1157,10 @@ namespace Gecode {
   /**
    * \brief Depth-first branch-and-bound search engine
    *
-   * Additionally, \a s must implement Space::constrain and Space::compare.
-   * Whenever exploration requires to add a constraint
-   * to the space \a c currently being explored, the engine
-   * executes \c c.constrain(t) where \a t is the so-far
-   * best solution.
+   * Space \a s must implement Space::constrain and Space::compare.
+   * When exploration needs an improvement constraint, the engine calls
+   * \c c.constrain(t) on the current space \a c, where \a t is the best
+   * solution found so far.
    * See Space::compare for the ordering and pruning requirements. If objective
    * comparison throws, destroy the engine; only an internal engine interface
    * that explicitly supports reset can establish a new search after failure.
@@ -1179,13 +1178,12 @@ namespace Gecode {
   /**
    * \brief Perform depth-first branch-and-bound search for subclass \a T of space \a s and options \a o
    *
-   * Additionally, \a s must implement Space::constrain and Space::compare.
-   * Whenever exploration requires to add a constraint
-   * to the space \a c currently being explored, the engine
-   * executes \c c.constrain(t) where \a t is the so-far
-   * best solution.
+   * Space \a s must implement Space::constrain and Space::compare.
+   * When exploration needs an improvement constraint, the engine calls
+   * \c c.constrain(t) on the current space \a c, where \a t is the best
+   * solution found so far.
    * See Space::compare for the ordering and pruning requirements. If objective
-   * comparison throws, destroy the engine rather than continuing to use it.
+   * comparison throws, destroy and recreate the engine.
    *
    * \ingroup TaskModelSearch
    */
