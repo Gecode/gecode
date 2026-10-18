@@ -57,8 +57,6 @@ namespace Gecode { namespace Search { namespace Seq {
     Path<Tracer> path;
     /// Current space being explored
     Space* cur;
-    /// Whether the current node has already been counted before suspension
-    bool counted;
     /// Distance until next clone
     unsigned int d;
     /// Number of entries not yet constrained to be better

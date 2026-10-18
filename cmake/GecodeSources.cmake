@@ -42,7 +42,6 @@ set(GECODE_SEARCH_SOURCES
   gecode/search/options.cpp
   gecode/search/par/pbs.cpp
   gecode/search/pbs.cpp
-  gecode/search/prepare.cpp
   gecode/search/rbs.cpp
   gecode/search/seq/dead.cpp
   gecode/search/seq/pbs.cpp
@@ -56,7 +55,6 @@ if(GECODE_ENABLE_EXPERIMENTAL)
   list(APPEND GECODE_SEARCH_SOURCES
     gecode/search/astar.cpp
     gecode/search/cabs.cpp
-    gecode/search/column.cpp
   )
 endif()
 

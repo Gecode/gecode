@@ -35,21 +35,6 @@
 
 namespace Gecode { namespace Search {
 #ifdef GECODE_HAS_EXPERIMENTAL
-  UninitializedStatePruning::UninitializedStatePruning(const char* l)
-    : Exception(l,"State pruning requires extraction and label comparison") {}
-
-  UnsupportedColumnThreads::UnsupportedColumnThreads(const char* l)
-    : Exception(l,"Column requires exactly one expanded search thread") {}
-
-  UnsupportedColumnTracer::UnsupportedColumnTracer(const char* l)
-    : Exception(l,"Column does not support search tracers") {}
-
-  UninitializedColumnBound::UninitializedColumnBound(const char* l)
-    : Exception(l,"Column total-bound guidance is missing") {}
-
-  InvalidColumnQuota::InvalidColumnQuota(const char* l)
-    : Exception(l,"Column initial quota must be positive") {}
-
   UnsupportedCABSThreads::UnsupportedCABSThreads(const char* l)
     : Exception(l,"CABS requires exactly one expanded search thread") {}
 

@@ -36,7 +36,6 @@
 
 #include <gecode/search.hh>
 #include <gecode/search/seq/choice-expansion.hh>
-#include <gecode/search/seq/state-registry.hh>
 #include <memory>
 #include <vector>
 
@@ -48,7 +47,6 @@ namespace Gecode { namespace Search { namespace Seq {
   public:
     struct Configuration {
       HeuristicGuidance guidance;
-      StatePruning pruning;
       BestFirstOrder ordering;
     };
   private:
@@ -66,15 +64,12 @@ namespace Gecode { namespace Search { namespace Seq {
     };
     Options opt;
     HeuristicGuidance guidance;
-    StatePruning pruning;
     BestFirstOrder ordering;
-    /// Metadata survives expansion; pending Spaces and Choices stay untouched
-    std::unique_ptr<StateRegistry> registry;
     std::vector<Entry> frontier;
     unsigned long long int order;
     /// Revision of the currently accepted incumbent
     unsigned long long int incumbent_revision;
-    /// Selected parent, also saved across interrupted preparation
+    /// Selected parent with its original alternative cursor
     ChoiceExpansion expansion;
     SpaceStatus current_status;
     unsigned long int current_depth;

@@ -98,7 +98,7 @@ namespace Gecode { namespace Search { namespace Seq {
   template<class Tracer>
   forceinline void
   Probe<Tracer>::init(Space* s) {
-    cur = s; d = 0U; exhausted = true; counted = false;
+    cur = s; d = 0U; exhausted = true;
     if (tracer)
       tracer.ei()->invalidate();
   }
@@ -110,7 +110,7 @@ namespace Gecode { namespace Search { namespace Seq {
     delete cur;
     while (!ds.empty())
       delete ds.pop().space();
-    cur = s; d = d0; exhausted = true; counted = false;
+    cur = s; d = d0; exhausted = true;
     if (tracer)
       tracer.ei()->invalidate();
     Worker::reset(0);
@@ -165,7 +165,6 @@ namespace Gecode { namespace Search { namespace Seq {
           cur->commit(*ch,a);
         }
         node++;
-        counted = false;
         d++;
       }
     check_discrepancy:
@@ -176,10 +175,7 @@ namespace Gecode { namespace Search { namespace Seq {
             cur = s;
             return nullptr;
           }
-          if (!prepare(*s,opt)) {
-            cur = s;
-            return nullptr;
-          }
+          s->prepare(*this);
           if (s->status(*this) != SS_BRANCH)
             break;
           const Choice* ch = s->choice();
@@ -218,18 +214,10 @@ namespace Gecode { namespace Search { namespace Seq {
           return s;
         }
       } else {
-        if (!counted) {
-          node++;
-          counted = true;
-        }
-        SpaceStatus status = cur->status(*this);
-        if (status == SS_BRANCH) {
-          if (!prepare(*cur,opt))
-            return nullptr;
-          status = cur->status(*this);
-        }
-        counted = false;
-        switch (status) {
+        node++;
+        if (cur->status(*this) == SS_BRANCH)
+          cur->prepare(*this);
+        switch (cur->status(*this)) {
         case SS_FAILED:
           if (tracer) {
             SearchTracer::NodeInfo ni(SearchTracer::NodeType::FAILED,

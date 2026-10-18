@@ -133,8 +133,7 @@ The executable emits JSON lines. Each `solution` record contains a customer
 strings, and `elapsed_ms`. Costs strictly improve after the initial seed or
 solution. The final `summary` record contains `engine`, `termination`, the last
 `formulation`, `incumbent` (the same tour/cost/time fields, or `null`), `elapsed_ms`, and native
-`statistics` (`node`, `fail`, `depth`, `propagate`, `restart`, `nogood`, `state_pruned`,
-`state_descriptors`, `state_bytes`). Every
+`statistics` (`node`, `fail`, `depth`, `propagate`, `restart`, `nogood`). Every
 published route is checked without using the model's timing variables.
 
 Natural exhaustion reports `optimal` when an incumbent exists, including an
@@ -202,68 +201,6 @@ storage, list capacity, residual buffers and search frontier storage. They do
 not measure process memory or imply a compact dynamic-programming state.
 
 
-## Optional transition Pareto pruning
-
-`--state-pruning off|pareto` defaults to `off`. Pareto pruning is explicitly
-supported for native A*/CABS/column with `--formulation transition` or `eager`; closed
-CP and BAB runs reject it. Both transition representations use the same
-`Transition::pareto_pruning()` declaration:
-
-```sh
-build/open-search/bin/tsptw examples/data/tsptw/tiny/waiting.txt --formulation transition --engine astar --state-pruning pareto
-build/open-search/bin/tsptw examples/data/tsptw/tiny/waiting.txt --formulation eager --engine cabs --state-pruning pareto
-```
-
-The exact key is current vertex i followed by the sorted unvisited customers U.
-The label is `(t,g)`: time after waiting and prefix travel cost. Equal labels
-are equivalent. At an equal key, one label dominates another only if both its
-time and cost are no greater; earlier arrival at greater cost is incomparable.
-Hashes select comparisons and never substitute for exact key equality.
-
-This key is sufficient for the example's authored transition rules. The same
-remaining arcs and customer/depot windows apply after equal `(U,i)`. Waiting
-lets an earlier arrival follow every suffix feasible for a later arrival, and
-a no-greater prefix cost preserves a no-greater final objective. Nonnegative
-arcs preserve strict incumbent cuts. The ceiling is a monotone global cut, so
-only globally improving completions matter. Committed depth follows from U;
-the assigned path prefix serves output and adds no future restrictions. Lazy
-and eager path variables use the same unrestricted position domains.
-
-Optional residual inference rebuilds its schedule from immutable input and
-`(U,i,t)` after each committed visit, including BAB replay. Clones copy only
-the resulting allowed first actions. It carries no propagated domains from a
-previous path. Every feasible suffix induces a feasible schedule, including
-its earliest first visit, so the relaxation cannot remove that suffix. Earlier
-arrival still preserves every feasible later suffix under the same windows.
-The `(U,i)` key and `(t,g)` relation therefore remain sufficient with inference
-enabled.
-
-Arbitrary extra constraints on path history or prefix variables invalidate
-that argument. Include their residual effects in a stronger exact key, or
-return `std::nullopt` from extraction where sufficient state is unavailable.
-The declaration does not justify pruning ordinary partial successor CP stores.
-Returned tours remain independently owned and use the same checker.
-
-A* and column store descriptor metadata after expansion and admit improved labels
-again, including with inconsistent admissible bounds. CABS compares only live
-next-layer candidates; beam-discarded states never become representatives.
-See [A*](../../../docs/astar.md) and [CABS](../../../docs/cabs.md) for callback
-contracts, optional metadata forgetting and candidate lifetimes. Forgetting
-removes metadata alone and never removes search work or causes a stop.
-
-Summary records identify `state_pruning`. `state_pruned` counts sound state
-removals; `state_descriptors` and `state_bytes` record peak descriptor storage. The byte
-estimate includes descriptor objects and owned key/label vector capacities,
-excluding container capacity and allocator overhead. It does not include
-Space/frontier storage or measure process RSS. These counters stay zero with
-pruning off. Sound pruning is independent of beam loss and resource termination;
-only natural complete exhaustion reports a proof.
-
-The existing offline validator compares pruning off/on with exhaustive tiny
-enumeration, includes duplicate and cost/time Pareto cases, and independently
-checks every published solution. Its canonical runs remain capped at five
-seconds each and do not form a development or held-out tuning campaign.
-
 ## Minimum-arc bounds and residual scheduling
 
 `--bound prefix|min-arcs` and `--residual-propagation off|unary` are independent
@@ -314,38 +251,13 @@ and checks each bound, failure and removed first action. It includes waiting,
 nonmetric arcs, unequal time/cost labels, tight scheduling failure/filtering,
 zero durations, pending return and completed tours. The offline validator checks
 all tiny optima with minimum-arc guidance with/without inference, one
-prefix/unary independence case, and strengthened A*/CABS Pareto off/on cases.
-
-## Progressive and fixed-quota column search
-
-Both ordinary Space formulations support `--engine column`. Its default quota
-starts at one and grows by one after every complete depth cycle. Set
-`--quota-growth 0` for fixed-quota CBFS, or `--initial-quota N` for another
-positive initial quota. Quotas schedule expansion; deferred work stays queued.
-`--frontier-limit N` caps pending Space count, including an unfinished parent;
-zero is unlimited. Cap termination reports `stopped` and supplies no proof.
-`--max-width` remains specific to CABS. Column summaries record `initial_quota`,
-`quota_growth`, and `frontier_limit`.
-
-```sh
-build/open-search/bin/tsptw examples/data/tsptw/tiny/waiting.txt --engine column
-build/open-search/bin/tsptw examples/data/tsptw/tiny/waiting.txt --formulation transition --engine column --quota-growth 0 --state-pruning pareto
-```
-
-The formulations, exact tour checker, seed adoption and prefix/off defaults
-remain the same. Transition/eager Pareto pruning supports column's fresh-label
-registry; closed CP continues without that declaration. The offline validator
-checks both quota modes against exhaustive tiny optima, independently checks
-each published tour, and covers selected seed/Pareto/stop cases. Its canonical
-loops and five-second limits remain unchanged. See [the native engine
-contract](../../../docs/column.md) for full-cycle continuation, ownership,
-frontier accounting and storage costs.
+prefix/unary independence case, and checked seeds and resource stops.
 
 ## Named comparison runs
 
-`misc/tsptw-benchmark.py` collects one solver process at a time. Its eight default
-configurations are closed BAB/CABS, transition BAB/A*/CABS/column and DIDPPy
-A*/CABS. Development defaults to the six native configurations; `--configs`
+`misc/tsptw-benchmark.py` collects one solver process at a time. Its seven default
+configurations are closed BAB/CABS, transition BAB/A*/CABS and DIDPPy
+A*/CABS. Development defaults to the five native configurations; `--configs`
 selects a comma-separated subset, including reference solvers when needed.
 The transition configurations use the existing prefix/off defaults. Four extra
 closed CP tuning names require an explicit `--configs` selection and do not
@@ -376,13 +288,14 @@ experiment. Each row becomes complete by atomic JSON replacement after checking.
 For acquired development or held-out inputs, pass the directory produced by
 `misc/tsptw-acquire.py` with `--selected-root`. Preview reads the frozen
 manifest without inspecting held-out outcomes or requiring acquired files.
-The development ceiling is six configurations, 12 cases, two repeats and
-15 seconds: 2,160 seconds (36 minutes). The full held-out comparison is eight
-configurations, 24 cases, one repeat and 30 seconds: 5,760 seconds (96 minutes).
+The development defaults use five configurations, 12 cases, two repeats and
+15 seconds: 1,800 seconds (30 minutes). Explicit development selections allow
+at most six configurations. The full held-out comparison uses seven
+configurations, 24 cases, one repeat and 30 seconds: 5,040 seconds (84 minutes).
 Development tuning has its own 45-minute allowance. The separate 120-minute
 evaluation allowance includes its bounded development ablations and compilation,
-so the held-out matrix leaves at most 24 minutes for that work. Full tuning plus
-held-out takes 132 minutes before compilation across the two separate budgets;
+so the held-out matrix leaves at most 36 minutes for that work. Full tuning plus
+held-out takes 129 minutes before compilation across the two separate budgets;
 that total is allowed. Preview prints both budgets and their scopes; it does not
 launch a campaign or enforce a budget shared across named runs.
 
@@ -412,11 +325,10 @@ build duration; omission explicitly leaves it unavailable. Compilation is never
 silently attributed to search.
 
 Each row records checked incumbent times and costs, the summary, final objective,
-proof or stop reason, expansions and sampled peak RSS. Native descriptor peaks,
-bound/inference timings and basic allocation sizes remain available in the
-summary. Frontier bytes and actual clone footprint are unavailable. The native
+proof or stop reason, expansions and sampled peak RSS. Native bound/inference
+timings and basic allocation sizes remain available in the summary. Frontier bytes and actual clone footprint are unavailable. The native
 `sizeof`/position counters exclude buffers, allocator overhead and frontier
-storage. DIDPPy does not expose equivalent descriptor/clone counters here.
+storage. DIDPPy does not expose equivalent clone counters here.
 `analyze` reads only saved config and rows, writes `analysis.json`, and reports
 expected/completed/unfinished/failed counts and valid-run wall-time medians by
 configuration. With `closed-bab` present, it also pairs every other configuration
@@ -451,7 +363,7 @@ and return window match the native model and Fraction checker.
 
 The following closed CP configurations use the same costed
 circuit, shortest-path timing bounds, reified arc timing, objective, successor
-completion branch and independent checker. Circuit propagation accepts
+branching and independent checker. Circuit propagation accepts
 `IPL_DOM` or `IPL_VAL`. Cost-variable branching accepts
 `INT_VAR_REGRET_MAX_MAX()` or `INT_VAR_SIZE_MIN()`; both use `INT_VAL_MIN()`.
 The successor branch uses size/min.

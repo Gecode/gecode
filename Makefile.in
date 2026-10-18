@@ -262,28 +262,28 @@ endif
 #
 
 SEARCHSRC0 = \
-	stop options cutoff engine prepare \
+	stop options cutoff engine \
 	dfs bab lds \
 	seq/rbs seq/dead seq/pbs par/pbs \
 	rbs pbs nogoods exception tracer \
 	cpprofiler/tracer worker-control
 SEARCHHDR0 = \
 	statistics.hpp stop.hpp options.hpp cutoff.hpp \
-	support.hh branch-feedback.hh completion.hh worker.hh worker-control.hh exception.hpp engine.hpp base.hpp \
+	support.hh worker.hh worker-control.hh exception.hpp engine.hpp base.hpp \
 	nogoods.hh nogoods.hpp build.hpp traits.hpp sebs.hpp \
 	seq/path.hh seq/path.hpp seq/dfs.hh seq/dfs.hpp \
-	seq/bab.hh seq/bab.hpp seq/astar.hh seq/cabs.hh seq/column.hh seq/lds.hh seq/lds.hpp \
-	seq/rbs.hh seq/rbs.hpp seq/dead.hh seq/state-registry.hh seq/choice-expansion.hh \
+	seq/bab.hh seq/bab.hpp seq/astar.hh seq/cabs.hh seq/lds.hh seq/lds.hpp \
+	seq/rbs.hh seq/rbs.hpp seq/dead.hh seq/choice-expansion.hh \
 	seq/pbs.hh seq/pbs.hpp \
 	par/path.hh par/path.hpp par/engine.hh par/engine.hpp \
 	par/dfs.hh par/dfs.hpp par/bab.hh par/bab.hpp \
 	par/pbs.hh par/pbs.hpp \
-	dfs.hpp bab.hpp astar.hpp cabs.hpp column.hpp lds.hpp rbs.hpp pbs.hpp \
+	dfs.hpp bab.hpp astar.hpp cabs.hpp lds.hpp rbs.hpp pbs.hpp \
 	relax.hh tracer.hpp trace-recorder.hpp \
 	cpprofiler/message.hpp cpprofiler/connector.hpp
 
 ifeq "@enable_experimental@" "yes"
-SEARCHSRC0 += astar cabs column
+SEARCHSRC0 += astar cabs
 endif
 
 SEARCHSRC	= $(SEARCHSRC0:%=gecode/search/%.cpp)

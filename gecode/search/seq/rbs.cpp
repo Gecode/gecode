@@ -36,7 +36,6 @@
  */
 
 
-#include <memory>
 #include <gecode/search/seq/rbs.hh>
 
 namespace Gecode { namespace Search { namespace Seq {
@@ -68,7 +67,6 @@ namespace Gecode { namespace Search { namespace Seq {
       // Reset number of no-goods found
       ng.ng(0);
       MetaInfo mi(stop->restarts(),MetaInfo::RR_SOL,sslr,e->statistics().fail,last,ng);
-      master->invalidate_branchers();
       bool r = master->master(mi);
       stop->nogood(ng.ng());
       if (stop->status(master) == SS_FAILED) {
@@ -105,7 +103,6 @@ namespace Gecode { namespace Search { namespace Seq {
         NoGoods& ng = e->nogoods();
         ng.ng(0);
         MetaInfo mi(stop->restarts(),e->stopped() ? MetaInfo::RR_LIM : MetaInfo::RR_CMPL,sslr,e->statistics().fail,last,ng);
-        master->invalidate_branchers();
         (void) master->master(mi);
         stop->nogood(ng.ng());
         unsigned long long int nl = ++(*co);
@@ -134,17 +131,14 @@ namespace Gecode { namespace Search { namespace Seq {
     if (!best)
       throw NoBest("RBS::constrain");
     if (last != nullptr) {
-      std::unique_ptr<Space> probe(last->clone());
-      probe->invalidate_branchers();
-      probe->constrain(b);
-      if (probe->status() == SS_FAILED) {
+      last->constrain(b);
+      if (last->status() == SS_FAILED) {
         delete last;
       } else {
         return;
       }
     }
     last = b.clone();
-    master->invalidate_branchers();
     master->constrain(b);
     e->constrain(b);
   }

@@ -146,7 +146,6 @@ namespace Gecode {
   class Choice;
   class Brancher;
   class StatusStatistics;
-  class BrancherPreparation;
   class Group;
   class PropagatorGroup;
   class BrancherGroup;
@@ -1490,21 +1489,12 @@ namespace Gecode {
      */
     virtual bool status(const Space& home) const = 0;
     /**
-     * Prepare a choice; false suspends search without changing its path.
-     * True completes preparation and may leave the space failed, solved, or
-     * branching. Space::prepare propagates and prepares a newly active brancher.
+     * Prepare a choice before the search path changes. Preparation may leave
+     * the space failed, solved, or branching. Space::prepare propagates and
+     * prepares a newly active brancher.
      */
     GECODE_KERNEL_EXPORT
-    virtual bool prepare(Space& home, StatusStatistics& stat);
-    /// Whether committing a choice can change feasibility (default: true).
-    GECODE_KERNEL_EXPORT
-    virtual bool commit_restricts(void) const;
-    /// Whether an exhausted brancher must survive subsequent restrictions.
-    GECODE_KERNEL_EXPORT
-    virtual bool persistent(void) const;
-    /// Invalidate previously established choices after strengthening.
-    GECODE_KERNEL_EXPORT
-    virtual void invalidate(Space& home);
+    virtual void prepare(Space& home, StatusStatistics& stat);
     /**
      * \brief Return choice
      *
@@ -1761,28 +1751,6 @@ namespace Gecode {
   };
 
   /**
-   * \brief Driver for brancher preparation before choice construction
-   *
-   * The driver borrows propagation statistics for the duration of preparation.
-   * Its callback completes the current brancher's preparation or suspends it
-   * without advancing the search path. The space propagates after a completed
-   * callback and repeats when a different brancher becomes active.
-   */
-  class GECODE_VTABLE_EXPORT BrancherPreparation {
-  private:
-    StatusStatistics& stat;
-  public:
-    /// Borrow the propagation counter used by preparation
-    explicit BrancherPreparation(StatusStatistics& s) : stat(s) {}
-    /// Return the borrowed propagation counter
-    StatusStatistics& statistics(void) { return stat; }
-    /// Prepare the selected brancher; false suspends choice construction
-    virtual bool prepare(Space& home, Brancher& brancher) = 0;
-    /// Destructor
-    GECODE_KERNEL_EXPORT virtual ~BrancherPreparation(void);
-  };
-
-  /**
    * \brief %Statistics for execution of clone
    *
    */
@@ -1888,15 +1856,13 @@ namespace Gecode {
     static const unsigned reserved_bid = 0U;
 
     /// Number of bits for status control
-    static const unsigned int sc_bits = 3;
+    static const unsigned int sc_bits = 2;
     /// No special features activated
     static const unsigned int sc_fast = 0;
     /// Disabled propagators are supported
     static const unsigned int sc_disabled = 1;
     /// Tracing is supported
     static const unsigned int sc_trace = 2;
-    /// Persistent branchers need notification before restrictions
-    static const unsigned int sc_restrictions = 4;
 
     union {
       /// Data only available during propagation or branching
@@ -2263,14 +2229,7 @@ namespace Gecode {
     SpaceStatus status(StatusStatistics& stat);
     /// Prepare the current brancher before a search engine changes its path.
     GECODE_KERNEL_EXPORT
-    bool prepare(BrancherPreparation& preparation);
-    /// Enable notification before restrictions for persistent branchers.
-    void notice_brancher_restrictions(void) {
-      pc.p.bid_sc |= sc_restrictions;
-    }
-    /// Notify branchers that survive exhaustion before strengthening the space.
-    GECODE_KERNEL_EXPORT
-    void invalidate_branchers(void);
+    void prepare(StatusStatistics& stat);
     /// Query space status without collecting statistics
     SpaceStatus status(void);
 
@@ -3481,9 +3440,7 @@ namespace Gecode {
   forceinline
   Home::Home(Space& s0, Propagator* p0,
              PropagatorGroup pg0, BrancherGroup bg0)
-    : s(s0), p(p0), pg(pg0), bg(bg0) {
-    s.invalidate_branchers();
-  }
+    : s(s0), p(p0), pg(pg0), bg(bg0) {}
   forceinline
   Home::Home(const Home& h)
     : s(h.s), p(h.p), pg(h.pg), bg(h.bg) {}
@@ -3583,7 +3540,6 @@ namespace Gecode {
     : h(home), pg(home.propagatorgroup()),
       pid(h.ssd.data().gpi.pid()),
       nested(h.pc.p.vti.what() != ViewTraceInfo::OTHER) {
-    h.invalidate_branchers();
     h.pc.p.vti.post(pg);
   }
 

@@ -60,16 +60,13 @@ namespace Gecode { namespace Search { namespace Par {
     best = nullptr;
     path.reset((s == nullptr) ? 0 : ngdl);
     d = 0;
-    counted = false;
     mark = 0;
     idle = false;
     if ((s == nullptr) || (s->status(*this) == SS_FAILED)) {
       delete s;
       cur = nullptr;
-      counted = false;
     } else {
       cur = s;
-      counted = false;
     }
     Search::Worker::reset();
   }
@@ -122,10 +119,8 @@ namespace Gecode { namespace Search { namespace Par {
     delete best;
     best = b->clone();
     mark = path.entries();
-    if (cur != nullptr) {
-      cur->invalidate_branchers();
+    if (cur != nullptr)
       cur->constrain(*best);
-    }
     m.release();
   }
   template<class Tracer>
@@ -133,10 +128,8 @@ namespace Gecode { namespace Search { namespace Par {
   BAB<Tracer>::solution(Space* s) {
     m_search.acquire();
     if (best != nullptr) {
-      std::unique_ptr<Space> probe(s->clone());
-      probe->invalidate_branchers();
-      probe->constrain(*best);
-      if (probe->status() == SS_FAILED) {
+      s->constrain(*best);
+      if (s->status() == SS_FAILED) {
         delete s;
         m_search.release();
         return;
@@ -176,12 +169,9 @@ namespace Gecode { namespace Search { namespace Par {
         path.ngdl(0);
         d = 0;
         cur = s;
-        counted = false;
         mark = 0;
-        if (best != nullptr) {
-          cur->invalidate_branchers();
+        if (best != nullptr)
           cur->constrain(*best);
-        }
         Statistics t = *this;
         Search::Worker::reset(r_d);
         (*this) += t;
@@ -210,10 +200,8 @@ namespace Gecode { namespace Search { namespace Par {
   BAB<Tracer>::constrain(const Space& b) {
     m_search.acquire();
     if (best != nullptr) {
-      std::unique_ptr<Space> probe(best->clone());
-      probe->invalidate_branchers();
-      probe->constrain(b);
-      if (probe->status() != SS_FAILED) {
+      best->constrain(b);
+      if (best->status() != SS_FAILED) {
         m_search.release();
         return;
       }
@@ -299,19 +287,9 @@ namespace Gecode { namespace Search { namespace Par {
               m.release();
               engine().stop();
             } else {
-              if (!counted) {
-                node++;
-                counted = true;
-              }
-              SpaceStatus status = cur->status(*this);
-              if (status == SS_BRANCH) {
-                if (!this->prepare(*cur,engine().opt())) {
-                  m.release();
-                  engine().stop();
-                  break;
-                }
-                status = cur->status(*this);
-              }
+              node++;
+              if (cur->status(*this) == SS_BRANCH)
+                cur->prepare(*this);
               SearchTracer::EdgeInfo ei;
               if (tracer) {
                 if (path.entries() > 0) {
@@ -324,7 +302,7 @@ namespace Gecode { namespace Search { namespace Par {
                 }
               }
               unsigned int nid = tracer.nid();
-              switch (status) {
+              switch (cur->status(*this)) {
               case SS_FAILED:
                 if (tracer) {
                   SearchTracer::NodeInfo ni(SearchTracer::NodeType::FAILED,
@@ -334,7 +312,6 @@ namespace Gecode { namespace Search { namespace Par {
                 fail++;
                 delete cur;
                 cur = nullptr;
-                counted = false;
                 path.next();
                 m.release();
                 break;
@@ -350,7 +327,6 @@ namespace Gecode { namespace Search { namespace Par {
                   Space* s = cur->clone();
                   delete cur;
                   cur = nullptr;
-                  counted = false;
                   path.next();
                   m.release();
                   engine().solution(s);
@@ -373,7 +349,6 @@ namespace Gecode { namespace Search { namespace Par {
                     tracer.node(ei,ni);
                   }
                   cur->commit(*ch,0);
-                  counted = false;
                   m.release();
                 }
                 break;

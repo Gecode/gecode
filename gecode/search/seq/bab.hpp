@@ -42,7 +42,7 @@ namespace Gecode { namespace Search { namespace Seq {
   template<class Tracer>
   forceinline
   BAB<Tracer>::BAB(Space* s, const Options& o)
-    : tracer(o.tracer), opt(o), path(opt.nogoods_limit), counted(false), d(0), mark(0),
+    : tracer(o.tracer), opt(o), path(opt.nogoods_limit), d(0), mark(0),
       best(nullptr) {
     if (tracer) {
       tracer.engine(SearchTracer::EngineType::BAB, 1U);
@@ -51,7 +51,6 @@ namespace Gecode { namespace Search { namespace Seq {
     if ((s == nullptr) || (s->status(*this) == SS_FAILED)) {
       fail++;
       cur = nullptr;
-      counted = false;
       if (!o.clone)
         delete s;
     } else {
@@ -91,23 +90,16 @@ namespace Gecode { namespace Search { namespace Seq {
           break;
         path.next();
       }
-      if (!counted) {
-        node++;
-        counted = true;
-      }
-      SpaceStatus status = cur->status(*this);
-      if (status == SS_BRANCH) {
-        if (!prepare(*cur,opt))
-          return nullptr;
-        status = cur->status(*this);
-      }
+      node++;
+      if (cur->status(*this) == SS_BRANCH)
+        cur->prepare(*this);
       SearchTracer::EdgeInfo ei;
       if (tracer && (path.entries() > 0)) {
         typename Path<Tracer>::Edge& top = path.top();
         ei.init(tracer.wid(), top.nid(), top.truealt(), *cur, *top.choice());
       }
       unsigned int nid = tracer.nid();
-      switch (status) {
+      switch (cur->status(*this)) {
       case SS_FAILED:
         if (tracer) {
           SearchTracer::NodeInfo ni(SearchTracer::NodeType::FAILED,
@@ -117,7 +109,6 @@ namespace Gecode { namespace Search { namespace Seq {
         fail++;
         delete cur;
         cur = nullptr;
-        counted = false;
         path.next();
         break;
       case SS_SOLVED:
@@ -132,7 +123,6 @@ namespace Gecode { namespace Search { namespace Seq {
           delete best;
           best = cur;
           cur = nullptr;
-          counted = false;
           path.next();
           mark = path.entries();
         }
@@ -154,7 +144,6 @@ namespace Gecode { namespace Search { namespace Seq {
             tracer.node(ei,ni);
           }
           cur->commit(*ch,0);
-          counted = false;
           break;
         }
       default:
@@ -176,18 +165,15 @@ namespace Gecode { namespace Search { namespace Seq {
   BAB<Tracer>::constrain(const Space& b) {
     if (best != nullptr) {
       // Check whether b is in fact better than best
-      std::unique_ptr<Space> probe(best->clone());
-      probe->invalidate_branchers();
-      probe->constrain(b);
-      if (probe->status(*this) != SS_FAILED)
+      best->constrain(b);
+      if (best->status(*this) != SS_FAILED)
         return;
-      delete best;
+      else
+        delete best;
     }
     best = b.clone();
-    if (cur != nullptr) {
-      cur->invalidate_branchers();
+    if (cur != nullptr)
       cur->constrain(b);
-    }
     mark = path.entries();
   }
 
@@ -199,13 +185,11 @@ namespace Gecode { namespace Search { namespace Seq {
     best = nullptr;
     path.reset();
     d = 0;
-    counted = false;
     mark = 0;
     delete cur;
     if ((s == nullptr) || (s->status(*this) == SS_FAILED)) {
       delete s;
       cur = nullptr;
-      counted = false;
     } else {
       cur = s;
     }

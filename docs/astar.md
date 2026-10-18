@@ -38,12 +38,6 @@ the same compatible scalar integer objective. The caller must justify the bound
 and keep callback arithmetic in range. Solution acceptance uses this exact
 scalar value, independently of rank; no Space comparison API is required.
 
-Ordinary Gecode 6.x BAB, restart and portfolio engines test incumbent admission
-by applying `constrain` to a temporary clone and checking propagation-visible
-failure. An external incumbent whose improvement can only
-be established by exhausting hidden completion search is not guaranteed
-admission by that test. Native scalar adoption uses the exact objective value.
-
 A* selects the best total bound first. An optional third guidance argument
 supplies a signed 64-bit rank; lower ranks break equal-bound ties, followed by
 insertion order. Rank never prunes. A generated goal can be returned before a
@@ -58,7 +52,7 @@ engine and ordinary `Search::Builder`:
 
 ```cpp
 std::unique_ptr<Search::Builder> builder(
-  bestfirst<MySpace>(guidance, Search::RANK_FIRST, options, pruning));
+  bestfirst<MySpace>(guidance, Search::RANK_FIRST, options));
 std::unique_ptr<Search::Engine> engine((*builder)(root));
 while (std::unique_ptr<MySpace> solution{
          static_cast<MySpace*>(engine->next())}) {
@@ -79,10 +73,9 @@ Space, while sound total bounds and the compatible incumbent restriction prune.
 Generated solutions are still published immediately. Neither ordering guarantees
 that the first goal is optimal or has the best rank. Natural finite-tree
 exhaustion with `stopped()==false` proves the best accepted incumbent optimal,
-or infeasibility when none exists, provided the bound, strict improvement and
-optional state-pruning contracts preserve coverage. Best-first uses the callback lifetime,
-numeric, ownership, stop, exception and descriptor contracts below. The native
-factory is `Search::bestfirstengine(root, guidance, ordering, options, pruning)`;
+or infeasibility when none exists, provided the bound and strict-improvement
+constraint preserve coverage. Best-first uses the callback lifetime, numeric,
+ownership, stop and exception contracts below. The native factory is `Search::bestfirstengine(root, guidance, ordering, options)`;
 `Search::astarengine` selects bound-first.
 
 The [additive example](../examples/best-first.cpp) minimizes two explicit stages.
@@ -126,8 +119,10 @@ and saved choices stay unchanged while alternatives remain. The engine commits
 each original alternative on an owned child, cloning the selected parent for
 earlier alternatives and transferring it for the final one. It then applies a
 newer improvement restriction if the child has not inherited it.
-Publication and interruption preserve all remaining n-ary alternatives and
-interrupted brancher preparation.
+Publication and interruption preserve all remaining n-ary alternatives.
+Before choosing, search calls `Brancher::prepare(Space&, StatusStatistics&)`.
+The default does nothing; the TSPTW transition brancher uses it to materialize
+the next lazy path position. Preparation finishes before a choice is generated.
 
 The engine stores a cloned frontier and a selected parent, with no hard memory
 guarantee. `c_d` and `a_d` do not enable replay or recomputation. No-good extraction
@@ -135,73 +130,6 @@ returns the existing empty result. Ordinary stop objects preserve continuation;
 capacity-one `WorkerControl` supports pause/resume. A* rejects expanded thread
 counts other than one and rejects tracers explicitly. Statistics depth counts
 committed search edges, independently of objective value.
-
-Optional state pruning is a separate, copied `Search::StatePruning` value.
-Tree search is the default. An extractor returns `std::optional<Descriptor>`:
-`std::nullopt` leaves a node unregistered, while a descriptor owns a cached
-`std::size_t hash`, a `std::vector<std::int64_t> key`, and a vector `label`.
-Hashes select buckets; exact key equality is required before comparing labels.
-The relation reports `EQUIVALENT`, `DOMINATES`, `DOMINATED`, or `INCOMPARABLE`
-relative to its first argument. Equal labels keep one representative.
-
-The model author must justify every omitted historical fact and guarantee a
-consistent, transitive relation preserving at-least-as-good feasible completions.
-It must also preserve progress toward a solution under repeated pruning,
-including residual brancher/search stages. A sufficient argument shows that
-every completion of a suppressed node has an at-least-as-good completion from
-its representative with no more remaining search transitions. This follows the
-progress condition in Kuroiwa and Beck's
-[Definition 14](https://doi.org/10.1016/j.artint.2026.104506).
-Prefix objective cost belongs in this comparison; it cannot be inferred from
-the optimistic total bound. Earlier time at greater cost may be incomparable.
-Partially assigned CP stores need a sufficient key or declined extraction.
-Callbacks read only the supplied stable Space, and captured dependencies follow
-the guidance lifetime rules. Providing just one callback raises
-`Search::UninitializedStatePruning` before root ownership transfers.
-
-For example, consider the finite chain `root -> A -> B -> goal`, where `A` and
-`B` have identical variable domains and prefix costs but different brancher
-stages. A domain-only key with equal labels is unsafe: A* and column search
-store `A`'s descriptor after expanding it, reject `B` as equivalent, and lose
-the only route to the goal. `A` needs two remaining commits; `B` needs one.
-For this chain, adding the exact brancher stage to the key distinguishes the
-residual problems and preserves progress. More generally, include enough stage
-and residual state to justify the relation, or return `std::nullopt` wherever
-that information is unavailable. Search depth alone need not be sufficient.
-The TSPTW example's remaining-visit set already distinguishes successive visit
-stages.
-
-The [native TSPTW transition model](../examples/tsptw-transition.hh) supplies
-a worked declaration for its own residual rules:
-
-```cpp
-Search::StatePruning pruning = TSPTW::Transition::pareto_pruning();
-AStar<TSPTW::Transition> search(root, TSPTW::Transition::guidance(),
-                                options, pruning);
-std::unique_ptr<Search::Builder> builder(
-  astar<TSPTW::Transition>(TSPTW::Transition::guidance(), options, pruning));
-// The native factory also accepts pruning as its final argument.
-```
-
-A* stores nondominated descriptor values after expansion, without extra Space
-clones. A better label enters the frontier before replacing dominated metadata,
-even when an older representative already expanded. Admissible inconsistent
-bounds therefore remain supported. Older pending Spaces and saved Choice
-cursors remain intact and can do redundant work. Reset clears the metadata.
-An optional `descriptor_limit` (the declaration's final argument, zero for
-unlimited) clears registry metadata when admitting another label would exceed
-it. Forgetting never deletes pending work or reports a stop; it only reduces
-pruning. An empty declaration performs no extraction, descriptor allocation,
-or registry construction.
-
-`Search::Statistics::state_pruned` counts rejected equivalent/dominated arrivals.
-`state_descriptors` and `state_bytes` are peaks, aggregated by maximum when
-statistics are combined. Bytes estimate descriptor objects and their owned
-key/label vector capacities; bucket/container capacity, optional wrappers and
-allocator overhead are excluded. They measure neither frontier Spaces nor
-process memory, and a descriptor-count ceiling is not a byte limit. Disabled
-pruning leaves all three fields zero. Pruning and forgetting preserve the
-existing solution ownership, stop and proof rules.
 
 With the repository CMake build, run
 `cmake --build build/open-search --target astar` and
@@ -211,9 +139,3 @@ With the repository CMake build, run
 Build and run the additive example with
 `cmake --build build/open-search --target best-first` and
 `build/open-search/bin/best-first`; it links the same native libraries.
-
-[Native column search](column.md) uses the same ownership, guidance and state
-pruning declarations with queues of deferred work at each depth. Its optional
-rank orders each queue independently of bound, and full cycles increase the
-expansion quota.
-Quota growth zero selects fixed-quota CBFS.

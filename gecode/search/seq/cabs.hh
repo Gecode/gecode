@@ -49,7 +49,6 @@ namespace Gecode { namespace Search { namespace Seq {
     struct Configuration {
       HeuristicGuidance guidance;
       CABSOptions limits;
-      StatePruning pruning;
     };
   private:
     struct Entry {
@@ -57,7 +56,6 @@ namespace Gecode { namespace Search { namespace Seq {
       std::int64_t bound, rank;
       unsigned long int depth;
       unsigned long long int order, incumbent_revision;
-      std::optional<StatePruning::Descriptor> descriptor;
     };
     /// Better priority first; a candidate heap therefore exposes its worst node
     struct Earlier {
@@ -68,16 +66,12 @@ namespace Gecode { namespace Search { namespace Seq {
     Options opt;
     HeuristicGuidance guidance;
     CABSOptions limits;
-    StatePruning pruning;
-    /// Descriptors owned by the live next-layer candidates
-    unsigned long int candidate_descriptors;
-    std::size_t candidate_bytes;
     unsigned long int width;
     unsigned long long int order, incumbent_revision;
     /// Never restricted; every wider pass regenerates omitted alternatives
     std::unique_ptr<Space> root;
     std::vector<Entry> layer, candidates;
-    /// Source, preparation, and original alternative cursor survive next()
+    /// Source and original alternative cursor survive next()
     ChoiceExpansion expansion;
     SpaceStatus current_status;
     unsigned long int current_depth;
@@ -93,9 +87,6 @@ namespace Gecode { namespace Search { namespace Seq {
     bool improves(std::int64_t bound) const;
     bool admit(std::unique_ptr<Space> s, unsigned long int depth,
                unsigned long long int revision);
-    void add_descriptor(const Entry& entry);
-    void remove_descriptor(const Entry& entry);
-    void record_descriptors(void);
     Space* publish(std::unique_ptr<Space> s);
     bool advance(void);
     void initialize(Space* s, bool clone);
