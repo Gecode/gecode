@@ -40,9 +40,9 @@ namespace Gecode {
   /**
    * \brief Small value-type random generator owned by its consumer
    *
-   * Copying copies complete state independently. Branching descriptions
-   * and selectors own their copies; cloning preserves selector state
-   * without drawing or splitting. Split explicitly to start different streams:
+   * Copying preserves complete state in independent storage. Branching
+   * descriptions and selectors own their copies; cloning preserves selector
+   * state without drawing or splitting. Split explicitly to start different streams:
    * \code
    * Rnd parent(42);
    * Rnd same = parent;
@@ -58,7 +58,7 @@ namespace Gecode {
    * Model-owned or callback-owned generators are not recorded automatically.
    * A custom brancher must preserve their state in its choices when replay
    * needs it. Space cloning does not copy mutable state in shared callback
-   * captures. Engine supplies the Support::Random contract, including splitting.
+   * captures. Engine must meet the Support::Random contract, including splitting.
    * See examples/random-engine.cpp for a user-defined engine and selectors.
    * \ingroup TaskModel
    */
