@@ -173,23 +173,27 @@ namespace Gecode { namespace Search { namespace Par {
     GECODE_NEVER;
   }
 
-  void
+  std::unique_ptr<Space>
   Frontier::admit(Entry entry, bool parent) {
-    if (!improves(entry.bound)) { stat.fail++; return; }
+    if (!improves(entry.bound)) {
+      stat.fail++;
+      return std::move(entry.space);
+    }
     entry.order=order++;
     const Earlier cmp=earlier();
     if (!beam) {
       frontier.push_back(std::move(entry));
       std::push_heap(frontier.begin(),frontier.end(),
                      [&](const Entry& a, const Entry& b) { return cmp(b,a); });
-      return;
+      return nullptr;
     }
     if (limits.dominates) {
       std::vector<std::size_t> victims;
       if (limits.dominance_key) {
         const auto range=candidate_index.equal_range(entry.key);
         for (auto i=range.first; i!=range.second; ++i)
-          if (limits.dominates(*i->second,*entry.space)) return;
+          if (limits.dominates(*i->second,*entry.space))
+            return std::move(entry.space);
         std::vector<const Space*> dominated;
         for (auto i=range.first; i!=range.second; ++i)
           if (limits.dominates(*entry.space,*i->second)) dominated.push_back(i->second);
@@ -200,7 +204,8 @@ namespace Gecode { namespace Search { namespace Par {
                 != dominated.end()) victims.push_back(i);
       } else {
         for (const auto& candidate : candidates)
-          if (limits.dominates(*candidate.space,*entry.space)) return;
+          if (limits.dominates(*candidate.space,*entry.space))
+            return std::move(entry.space);
         for (std::size_t i=0; i<candidates.size(); i++)
           if (limits.dominates(*entry.space,*candidates[i].space)) victims.push_back(i);
       }
@@ -208,11 +213,11 @@ namespace Gecode { namespace Search { namespace Par {
         if (limits.dominance_key)
           candidate_index.emplace(entry.key,entry.space.get());
         for (auto i : victims) unindex(candidates[i]);
-        candidates[victims.front()]=std::move(entry);
+        std::swap(candidates[victims.front()],entry);
         for (std::size_t i=victims.size(); i>1; i--)
           candidates.erase(candidates.begin()+victims[i-1]);
         std::make_heap(candidates.begin(),candidates.end(),cmp);
-        return;
+        return std::move(entry.space);
       }
     }
     if (candidates.size() == width) {
@@ -221,14 +226,14 @@ namespace Gecode { namespace Search { namespace Par {
       if (!discarded_bound || (guidance.sense == HeuristicGuidance::MINIMIZE ?
                               discarded < *discarded_bound :
                               discarded > *discarded_bound)) discarded_bound=discarded;
-      if (!replace) return;
+      if (!replace) return std::move(entry.space);
       if (limits.dominates && limits.dominance_key)
         candidate_index.emplace(entry.key,entry.space.get());
       unindex(candidates.front());
       std::pop_heap(candidates.begin(),candidates.end(),cmp);
-      candidates.back()=std::move(entry);
+      std::swap(candidates.back(),entry);
       std::push_heap(candidates.begin(),candidates.end(),cmp);
-      return;
+      return std::move(entry.space);
     }
     // Other leases reserve a parent and an unsubmitted successor.
     assert(active > 0);
@@ -237,7 +242,7 @@ namespace Gecode { namespace Search { namespace Par {
     if (limits.frontier_limit && retained >= limits.frontier_limit) {
       limited=stopped_=true;
       running=false;
-      return;
+      return std::move(entry.space);
     }
     candidates.push_back(std::move(entry));
     try {
@@ -248,6 +253,7 @@ namespace Gecode { namespace Search { namespace Par {
       throw;
     }
     std::push_heap(candidates.begin(),candidates.end(),cmp);
+    return nullptr;
   }
 
   void
@@ -274,7 +280,7 @@ namespace Gecode { namespace Search { namespace Par {
     std::optional<std::int64_t> cutoff;
     while (true) {
       try {
-        bool notify=false;
+        bool notify=false, retiring=false;
         {
           Support::Lock lock(mutex);
           const bool empty=pending.empty() && frontier.empty();
@@ -286,14 +292,13 @@ namespace Gecode { namespace Search { namespace Par {
               case SS_FAILED: stat.fail++; break;
               case SS_SOLVED: publish(std::move(step.space),bound); break;
               case SS_BRANCH:
-                admit({std::move(step.space),bound,rank,key,
-                       task->depth+1,0,current_revision},
-                      static_cast<bool>(task->expansion));
+                step.space=admit({std::move(step.space),bound,rank,key,
+                                 task->depth+1,0,current_revision},
+                                static_cast<bool>(task->expansion));
                 break;
               default: GECODE_NEVER;
               }
             }
-            step.space.reset();
             step.state=Seq::ExpansionStep::EXHAUSTED;
           }
           if (running && opt.stop && opt.stop->stop(stat,opt)) {
@@ -303,12 +308,16 @@ namespace Gecode { namespace Search { namespace Par {
           const bool enabled=!worker_control.engaged() ||
             id < WorkerControlAccess::requested(worker_control);
           if (task && (!task->expansion || !running || !enabled || shutdown)) {
-            if (task->expansion) pending.push_back(std::move(task));
-            task.reset();
-            active--;
-            leased=false;
+            // Keep the lease until the rejected or replaced space is gone.
+            retiring=static_cast<bool>(step.space);
+            if (!retiring) {
+              if (task->expansion) pending.push_back(std::move(task));
+              task.reset();
+              active--;
+              leased=false;
+            }
           }
-          if (shutdown) {
+          if (shutdown && !retiring) {
             incumbent.reset();
             return;
           }
@@ -364,6 +373,8 @@ namespace Gecode { namespace Search { namespace Par {
           if (!running && active == 0) changed.signal();
         }
         if (notify) wake();
+        step.space.reset();
+        if (retiring) continue;
         if (!task) {
           if (worker_control.engaged()) WorkerControlAccess::wait(worker_control,id);
           else runners[id]->wake.wait();
