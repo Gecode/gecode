@@ -44,7 +44,7 @@ namespace Gecode { namespace Search {
   }
 
   Engine*
-  bestfirstengine(Space* s, const HeuristicGuidance& g, BestFirstOrder ordering,
+  bestfirstengine(Space* s, const HeuristicGuidance& g, AStarOrder ordering,
                   const Options& o) {
     Options expanded = o.expand();
     if (expanded.threads != 1.0)

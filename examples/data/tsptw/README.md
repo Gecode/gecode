@@ -41,10 +41,9 @@ The five generated `tiny/` instances are separate from canonical benchmarks:
 | late-customer | every tour misses a customer due time | infeasible |
 | late-return | customer visits can succeed but every return is late | infeasible |
 
-The transition example also offers `--residual-propagation cheap` between OFF
-and the existing unary relaxation. [The deadline-filter note](../../../docs/tsptw-cheap-deadline-filter.md)
-explains its shortest-path checks and how to compare the inference modes.
-The default remains OFF.
+The transition example accepts `--residual-propagation off|cheap|unary`.
+`off` is the default. `cheap` rejects visits that cannot meet customer or depot
+deadlines using shortest-path bounds. `unary` uses the scheduling relaxation.
 
 `published/` contains one unchanged canonical input and one published
 travel-cost tour per selected family. The manifest records their exact costs,

@@ -41,16 +41,16 @@ namespace Gecode { namespace Search {
   /// Create a native sequential best-first engine with fixed exploration order
   GECODE_SEARCH_EXPORT Engine*
   bestfirstengine(Space* s, const HeuristicGuidance& guidance,
-                  BestFirstOrder ordering, const Options& o);
+                  AStarOrder ordering, const Options& o);
 
-  /// A* and best-first engine builder
+  /// A* engine builder for PBS portfolios
   template<class T>
   class AStarBuilder : public Builder {
     HeuristicGuidance guidance;
-    BestFirstOrder ordering;
+    AStarOrder ordering;
   public:
     AStarBuilder(const HeuristicGuidance& g, const Options& o,
-                 BestFirstOrder order=BOUND_FIRST)
+                 AStarOrder order=BOUND_FIRST)
       : Builder(o,true), guidance(g), ordering(order) {}
     Engine* operator()(Space* s) const override {
       return bestfirstengine(dynamic_cast<T*>(s),guidance,ordering,opt);
@@ -78,6 +78,33 @@ namespace Gecode {
   }
 
   template<class T>
+  inline T*
+  astar(T* s, const Search::HeuristicGuidance& g, const Search::Options& o) {
+    AStar<T> engine(s,g,o);
+    std::unique_ptr<T> best;
+    while (T* solution = engine.next())
+      best.reset(solution);
+    return best.release();
+  }
+
+  template<class T>
+  inline
+  AStar<T>::AStar(T* s, const Search::HeuristicGuidance& g,
+                  Search::AStarOrder ordering, const Search::Options& o)
+    : Search::Base<T>(Search::bestfirstengine(s,g,ordering,o)) {}
+
+  template<class T>
+  inline T*
+  astar(T* s, const Search::HeuristicGuidance& g,
+        Search::AStarOrder ordering, const Search::Options& o) {
+    AStar<T> engine(s,g,ordering,o);
+    std::unique_ptr<T> best;
+    while (T* solution = engine.next())
+      best.reset(solution);
+    return best.release();
+  }
+
+  template<class T>
   inline SEB
   astar(const Search::HeuristicGuidance& g, const Search::Options& o) {
     return new Search::AStarBuilder<T>(g,o);
@@ -85,8 +112,8 @@ namespace Gecode {
 
   template<class T>
   inline SEB
-  bestfirst(const Search::HeuristicGuidance& g, Search::BestFirstOrder ordering,
-            const Search::Options& o) {
+  astar(const Search::HeuristicGuidance& g, Search::AStarOrder ordering,
+        const Search::Options& o) {
     return new Search::AStarBuilder<T>(g,o,ordering);
   }
 

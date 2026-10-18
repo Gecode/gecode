@@ -572,21 +572,20 @@ namespace Test {
           {0,0,0,{1,2,3}}, {0,8,-100,{4}},
           {0,4,100,{5}}, {0,4,100,{5}},
           {10,10,0,{}}, {5,5,0,{}}};
-        auto solve=[&](bool max, BestFirstOrder order, bool ranked) {
+        auto solve=[&](bool max, AStarOrder order, bool ranked) {
           Gecode::Search::Options options; options.clone=false;
           auto guidance=TreeSpace::guidance(max);
           if (!ranked) guidance.rank={};
-          std::unique_ptr<Builder> builder(Gecode::bestfirst<TreeSpace>(
-            guidance,order,options));
-          if (!builder->best()) return false;
-          std::unique_ptr<Engine> engine((*builder)(new TreeSpace(graph,max)));
+          Gecode::AStar<TreeSpace> engine(new TreeSpace(graph,max),
+                                         guidance,order,options);
+          if (!engine.best) return false;
           std::vector<int> costs;
           while (std::unique_ptr<TreeSpace> solution{
-                   static_cast<TreeSpace*>(engine->next())})
+                   engine.next()})
             costs.push_back(solution->value().cost);
           const std::vector<int> expected=order==RANK_FIRST && ranked ?
             std::vector<int>{10,5} : std::vector<int>{5};
-          return costs==expected && !engine->stopped() &&
+          return costs==expected && !engine.stopped() &&
             costs.back()==TreeSpace::optimum(graph);
         };
         for (bool max : {false,true})
@@ -619,32 +618,45 @@ namespace Test {
       }
       static bool adoption(bool max, bool queued) {
         Gecode::Search::Options o; o.clone=false;
-        std::unique_ptr<Gecode::Search::Builder> builder(
-          Gecode::astar<AStarSpace>(AStarSpace::guidance(max,true),o));
-        if (!builder->best()) return false;
-        std::unique_ptr<Gecode::Search::Engine> engine(
-          (*builder)(new AStarSpace(max)));
-        std::unique_ptr<Space> first(engine->next());
+        Gecode::AStar<AStarSpace> engine(new AStarSpace(max),
+                                        AStarSpace::guidance(max,true),o);
+        std::unique_ptr<Space> first(engine.next());
         if (!first) return false;
         if (queued) {
           std::unique_ptr<AStarSpace> second(
-            static_cast<AStarSpace*>(engine->next()));
+            engine.next());
           if (!second || second->x.val()!=1) return false;
         }
         AStarSpace incumbent(max,queued ? 2 : 1), worse(max,0);
         incumbent.status(); worse.status();
-        engine->constrain(incumbent);
-        engine->constrain(incumbent);
-        engine->constrain(worse);
+        engine.constrain(incumbent);
+        engine.constrain(incumbent);
+        engine.constrain(worse);
         unsigned int found=0;
         while (std::unique_ptr<AStarSpace> solution{
-                 static_cast<AStarSpace*>(engine->next())}) {
+                 engine.next()}) {
           if (!solution->improves(solution->objective(),incumbent.objective()) ||
               solution->x.val()!=2) return false;
           found++;
         }
-        if (engine->stopped() || found!=(queued ? 0U : 1U)) return false;
+        if (engine.stopped() || found!=(queued ? 0U : 1U)) return false;
         return true;
+      }
+      static bool helpers(bool max) {
+        Gecode::Search::Options o; o.clone=false;
+        const auto guidance=AStarSpace::guidance(max,true);
+        // These searches first publish x=0; the helpers must keep improving.
+        std::unique_ptr<AStarSpace> astar(
+          Gecode::astar(new AStarSpace(max),guidance,o));
+        std::unique_ptr<AStarSpace> ordered(Gecode::astar(
+          new AStarSpace(max),guidance,Gecode::Search::RANK_FIRST,o));
+        if (!astar || astar->x.val()!=2 || !ordered || ordered->x.val()!=2)
+          return false;
+        std::unique_ptr<AStarSpace> failed_astar(
+          Gecode::astar(new AStarSpace(max,-1,true),guidance,o));
+        std::unique_ptr<AStarSpace> failed_ordered(Gecode::astar(
+          new AStarSpace(max,-1,true),guidance,Gecode::Search::RANK_FIRST,o));
+        return !failed_astar && !failed_ordered;
       }
       static bool ownership(void) {
         Gecode::Search::Options o;
@@ -695,7 +707,8 @@ namespace Test {
         std::lock_guard<std::mutex> lock(heuristic_ownership_mutex);
         for (bool max : {false,true})
           if (!solutions(max,false,false) || !solutions(max,true,true) ||
-              !adoption(max,false) || !adoption(max,true)) return false;
+              !adoption(max,false) || !adoption(max,true) || !helpers(max))
+            return false;
         if (!ordering() || !ownership() || AStarSpace::live.load()!=0)
           return false;
         Gecode::Search::Options o; o.clone=false;
@@ -856,6 +869,10 @@ namespace Test {
           if (found && !s->improves(s->objective(),previous)) return false;
           previous=s->objective(); found++;
         }
+        // The helper returns the last improvement even when the width cap stops it.
+        std::unique_ptr<AStarSpace> best(Gecode::cabs(new AStarSpace(max),
+          AStarSpace::guidance(max,true),o,{width,0}));
+        if (!best || best->x.val()!=(width==1 ? 1 : 2)) return false;
         AStarSpace reference(max,2);
         if (width==1) {
           // A shallow goal and a deeper improvement survive publication, but
@@ -881,6 +898,9 @@ namespace Test {
                 !engine.statistics().restart) return false;
           }
         }
+        std::unique_ptr<CABSFeasibility> failed_helper(Gecode::cabs(
+          new CABSFeasibility(true),CABSFeasibility::guidance(),o));
+        if (failed_helper) return false;
         Gecode::CABS<CABSFeasibility> failed(new CABSFeasibility(true),
           CABSFeasibility::guidance(),o);
         Gecode::BAB<CABSFeasibility> reference(new CABSFeasibility(true),o);
@@ -893,32 +913,30 @@ namespace Test {
       }
       static bool adoption(bool queued) {
         Gecode::Search::Options o; o.clone=false;
-        std::unique_ptr<Gecode::Search::Builder> builder(
-          Gecode::cabs<AStarSpace>(AStarSpace::guidance(false,true),o));
-        if (!builder->best()) return false;
-        std::unique_ptr<Gecode::Search::Engine> engine((*builder)(new AStarSpace));
-        std::unique_ptr<Space> first(engine->next());
+        Gecode::CABS<AStarSpace> engine(new AStarSpace,
+          AStarSpace::guidance(false,true),o);
+        std::unique_ptr<Space> first(engine.next());
         if (!first) return false;
         if (queued) {
           std::unique_ptr<AStarSpace> second(
-            static_cast<AStarSpace*>(engine->next()));
+            engine.next());
           if (!second || second->x.val()!=1) return false;
         }
         {
           AStarSpace incumbent(false,queued ? 2 : 1), worse(false,0);
           incumbent.status(); worse.status();
-          engine->constrain(incumbent);
-          engine->constrain(incumbent);
-          engine->constrain(worse);
+          engine.constrain(incumbent);
+          engine.constrain(incumbent);
+          engine.constrain(worse);
         }
         // The accepted external copy survives the caller's destruction. Its
         // exact INT64_MIN objective also bounds out every discarded candidate;
         // a weaker adoption still lets the original alternatives recover x=2.
         std::unique_ptr<AStarSpace> optimum(
-          static_cast<AStarSpace*>(engine->next()));
+          engine.next());
         return (queued ? !optimum : optimum && optimum->x.val()==2) &&
-          !engine->next() && !engine->stopped() &&
-          (!queued || engine->statistics().restart==0);
+          !engine.next() && !engine.stopped() &&
+          (!queued || engine.statistics().restart==0);
       }
       static bool ownership_and_limits(void) {
         Gecode::Search::Options o;

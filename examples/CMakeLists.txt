@@ -117,15 +117,6 @@ foreach(example_source IN LISTS GECODE_EXAMPLE_SOURCES)
 endforeach()
 
 if(GECODE_ENABLE_EXPERIMENTAL)
-  # Standalone native search: no Model, driver, or portfolio setup.
-  add_executable(astar astar.cpp)
-  target_link_libraries(astar PRIVATE gecodesearch gecodeint)
-  set_property(TARGET astar PROPERTY FOLDER "Examples")
-
-  add_executable(best-first best-first.cpp)
-  target_link_libraries(best-first PRIVATE gecodesearch gecodeint)
-  set_property(TARGET best-first PROPERTY FOLDER "Examples")
-
   add_executable(tsptw tsptw.cpp)
   target_link_libraries(tsptw PRIVATE gecodesearch gecodeint)
   set_property(TARGET tsptw PROPERTY FOLDER "Examples")

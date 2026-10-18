@@ -120,9 +120,8 @@ when Qt is installed and its framework link interface is usable.
 
 ## Experimental search preview
 
-Gecode 6.5.0 includes an opt-in preview of `AStar`, configurable best-first,
-and `CABS`, with bound/rank guidance and ordinary engine builders in the
-normal Gecode namespaces.
+Gecode 6.5.0 includes an opt-in preview of `AStar` and `CABS`, with bound/rank
+guidance. `AStar` offers bound-first and rank-first queue ordering.
 Enable it when building the library with `-DGECODE_ENABLE_EXPERIMENTAL=ON`
 for CMake or `--enable-experimental` for Autoconf. Both builds disable the
 preview by default. The installed configuration defines
@@ -133,8 +132,8 @@ application does not enable the library feature.
 Experimental APIs may change or be removed in future feature releases.
 Their documented search correctness contracts still apply. Native preview
 engines work directly with ordinary `Space` subclasses and do not require
-Model or portfolio setup. Enabled builds include the `astar`, `best-first`
-and `tsptw` examples. Ordinary DFS/BAB and shared kernel/OpenCP APIs remain
+Model or portfolio setup. The `fifteen-puzzle` and `tsptw` examples demonstrate
+the engines. Ordinary DFS/BAB and shared kernel/OpenCP APIs remain
 available independently of the preview option.
 
 ## CMake Package Consumption

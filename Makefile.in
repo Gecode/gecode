@@ -917,7 +917,7 @@ INTEXAMPLESRC0 =						\
 
 
 ifeq "@enable_experimental@" "yes"
-INTEXAMPLESRC0 += astar best-first tsptw
+INTEXAMPLESRC0 += tsptw
 endif
 
 INTEXAMPLEHDR  = $(INTEXAMPLEHDR0:%=examples/%.hpp) \

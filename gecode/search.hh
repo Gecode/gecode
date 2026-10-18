@@ -49,6 +49,7 @@
 #include <atomic>
 #include <cstdint>
 #include <functional>
+#include <memory>
 #include <optional>
 #include <vector>
 #include <utility>
@@ -1167,10 +1168,13 @@ namespace Gecode { namespace Search {
    * a lower bound for minimization, an upper bound for maximization, and
    * the exact objective on a solution. It must agree with the strict
    * improvement restriction in Space::constrain. The engine adds no prefix cost.
-   * Engines define how they use the optional ranking (lower first); rank never
-   * justifies pruning. Callbacks and their captured dependencies must remain
-   * valid for all engine clones and must not post constraints or refer to
-   * another Space's local state.
+   * Values are signed 64-bit integers compared directly; callback arithmetic
+   * must stay in range. Engines define how they use the optional ranking
+   * (lower first); rank can be arbitrary and never justifies pruning.
+   * Guidance is copied into engines and portfolio builders. Callbacks read
+   * only the supplied Space and must not post constraints or capture another
+   * Space's local state. Captured dependencies must outlive every engine and
+   * builder using them.
    * \ingroup TaskModelSearch
    */
   class HeuristicGuidance {
@@ -1189,8 +1193,8 @@ namespace Gecode { namespace Search {
     HeuristicGuidance(Sense sense, Evaluate bound, Evaluate rank=Evaluate());
   };
 
-  /// Fixed exploration order for native best-first search
-  enum BestFirstOrder {
+  /// Fixed exploration order for A* search
+  enum AStarOrder {
     BOUND_FIRST, ///< Optimistic bound, lower rank, then insertion order
     RANK_FIRST   ///< Lower rank, optimistic bound, then insertion order
   };
@@ -1200,7 +1204,7 @@ namespace Gecode { namespace Search {
 namespace Gecode {
 
   /**
-   * \brief Sequential bound-ordered A* with improving solution publication
+   * \brief Sequential A* with improving solutions and a fixed exploration order
    *
    * Experimental 6.5.0 preview: build with GECODE_ENABLE_EXPERIMENTAL=ON
    * or --enable-experimental; GECODE_HAS_EXPERIMENTAL reports availability.
@@ -1209,16 +1213,35 @@ namespace Gecode {
    *
    * Spaces must implement strict improvement constraints compatible with the
    * guidance's exact scalar integer objective on solutions. A generated solution
-   * can precede a better one. Continue next() until nullptr with stopped()==false
+   * can precede a better one, so the first result need not be optimal.
+   * Continue next() until nullptr with stopped()==false
    * to prove optimality of the best accepted incumbent, including external
-   * adoption, or infeasibility if no incumbent was accepted. Returned solutions
-   * belong to the caller.
+   * adoption, or infeasibility if no incumbent was accepted. After external
+   * adoption, no new solution does not imply infeasibility. Completeness
+   * requires a finite search tree and sound bounds and improvement constraints.
+   * Returned solutions belong to the caller, independently of the engine's
+   * incumbent copy.
    *
-   * Equal bounds use lower rank, then insertion order.
+   * The default BOUND_FIRST order compares optimistic bound, lower rank,
+   * then insertion order. RANK_FIRST compares lower rank, optimistic bound,
+   * then insertion order. Bounds follow the objective direction; ranks are
+   * lower-first for either direction. Missing rank falls back to bound order.
+   * Both values are cached when a stable branching node enters the frontier.
+   * Ordering is fixed for the engine, including native reset; values are not
+   * rekeyed. Rank selects pending branching Spaces and never prunes. Generated
+   * solutions are published immediately, so neither order guarantees the first
+   * result is optimal or has the best rank.
+   *
    * The frontier stores clones; c_d and a_d do not control recomputation.
    * There is no hard memory guarantee and no-good extraction is empty.
    * Only one expanded thread and no tracer are supported. Capacity-one
-   * worker control and ordinary resumable stops are supported.
+   * worker control is supported. After an ordinary stop, raise or reset its
+   * limit and call next() to resume. Statistics depth counts committed edges.
+   * Before generating a choice, Brancher::prepare finishes any lazy model
+   * preparation on the stable Space.
+   * The native Search::Engine::reset interface takes ownership of its root
+   * regardless of Options::clone, clearing pending work, incumbent, and
+   * statistics while retaining guidance and ordering.
    * If guidance or a model operation throws, destroy the engine
    * before further use.
    * \ingroup TaskModelSearch
@@ -1226,42 +1249,54 @@ namespace Gecode {
   template<class T>
   class AStar : public Search::Base<T> {
   public:
-    /// Initialize from space, guidance, and ordinary search options
+    /**
+     * \brief Initialize from space, guidance, and ordinary search options
+     *
+     * Options::clone=true (the default) leaves the supplied root with the
+     * caller. With clone=false, successful construction transfers ownership
+     * to the engine. Constructor failure leaves it with the caller.
+     */
     AStar(T* s, const Search::HeuristicGuidance& guidance,
           const Search::Options& o=Search::Options::def);
-    /// Adopt a strictly improving compatible external incumbent
+    /// Initialize with an explicit fixed order; ownership follows the constructor above
+    AStar(T* s, const Search::HeuristicGuidance& guidance,
+          Search::AStarOrder ordering,
+          const Search::Options& o=Search::Options::def);
+    /// Copy a compatible external solution if its exact bound strictly improves
     void constrain(const Space& incumbent);
     /// Whether engine does best solution search
     static const bool best = true;
   };
 
-  /// Return an A* engine builder with copied guidance
+  /**
+   * \brief Search to completion or a stop and return the best solution found
+   *
+   * The caller owns the result; nullptr means no solution was found. A stop
+   * can leave the result unproven. The helper cannot report whether search
+   * stopped; use AStar to inspect completion or resume search.
+   * Root ownership follows AStar and Options::clone.
+   * \ingroup TaskModelSearch
+   */
+  template<class T>
+  T* astar(T* s, const Search::HeuristicGuidance& guidance,
+           const Search::Options& o=Search::Options::def);
+
+  /// Return an A* builder for PBS portfolios, with copied guidance and options
   template<class T>
   SEB astar(const Search::HeuristicGuidance& guidance,
             const Search::Options& o=Search::Options::def);
 
-  /**
-   * \brief Return a native best-first builder with copied guidance and fixed order
-   *
-   * Experimental 6.5.0 preview: build with GECODE_ENABLE_EXPERIMENTAL=ON
-   * or --enable-experimental; GECODE_HAS_EXPERIMENTAL reports availability.
-   * APIs may change or be removed in future feature releases. The documented
-   * correctness contracts still apply.
-   *
-   * Uses the same engine and contracts as AStar. BOUND_FIRST preserves AStar
-   * ordering; RANK_FIRST permits arbitrary, inadmissible lower-first ranking.
-   * Missing rank falls back to bound order. Ties use insertion order. Values
-   * are cached for each admitted stable node; reset preserves the order.
-   * Rank selects pending branching Spaces only and never prunes. Generated
-   * solutions are published immediately, so the first need not be optimal.
-   * Natural finite-tree exhaustion with stopped()==false proves closure under
-   * the bound and strict improvement contracts.
-   * \ingroup TaskModelSearch
-   */
+  /// Search with a fixed order; result, stop, and ownership contracts follow astar above
   template<class T>
-  SEB bestfirst(const Search::HeuristicGuidance& guidance,
-                Search::BestFirstOrder ordering,
-                const Search::Options& o=Search::Options::def);
+  T* astar(T* s, const Search::HeuristicGuidance& guidance,
+           Search::AStarOrder ordering,
+           const Search::Options& o=Search::Options::def);
+
+  /// Return an A* builder for PBS portfolios, with copied guidance, order, and options
+  template<class T>
+  SEB astar(const Search::HeuristicGuidance& guidance,
+            Search::AStarOrder ordering,
+            const Search::Options& o=Search::Options::def);
 
 }
 
@@ -1297,18 +1332,26 @@ namespace Gecode {
    * doubles after a completed pass if discarded bounds still permit improvement
    * or no incumbent exists. A pass can finish without widening when every
    * discarded bound excludes strict improvement of the accepted incumbent.
+   * Finite search trees are required for widening completeness.
    * Lower rank selects the beam; without rank, the optimistic total bound
    * selects it. Equal priorities use generation order. Only admissible bounds
    * justify pruning and completion.
    *
-   * Returned solutions belong to the caller and strictly improve the engine's
-   * incumbent. Continue next() until nullptr with stopped()==false to prove
+   * Returned solutions belong to the caller, independently of the engine's
+   * incumbent copy, and strictly improve it. Continue next() until nullptr with
+   * stopped()==false to prove
    * optimality of the best accepted incumbent, including external adoption,
-   * or infeasibility if none was accepted. Publishing a solution preserves
-   * unfinished passes.
-   * Ordinary stops and capacity-one worker control preserve continuation.
-   * Width/frontier limits and width overflow are incomplete stops latched
-   * until reset through the native Engine interface.
+   * or infeasibility if none was accepted. A shallow goal can precede a deeper
+   * improvement; the first result need not be optimal. No new solution after
+   * external adoption does not imply infeasibility. Publishing a solution
+   * preserves unfinished passes.
+   * After an ordinary stop, raise or reset its limit and call next() to resume.
+   * Capacity-one worker control also preserves continuation. Width/frontier
+   * limits and width overflow report stopped() until native Engine::reset.
+   * A complete pass can prove its result at the maximum width; a maximum of
+   * three allows passes at widths one and two. Native reset takes ownership
+   * of its root regardless of Options::clone and clears the incumbent, pending
+   * work, intrinsic stops, and statistics while retaining guidance and limits.
    *
    * The frontier quota includes current-layer entries, next-layer candidates,
    * and the selected parent. It excludes the restart root, incumbent, returned
@@ -1316,7 +1359,9 @@ namespace Gecode {
    * quota, without a byte or process-memory guarantee. Clones store the search;
    * c_d/a_d do not enable replay and no-good extraction is empty.
    * One expanded thread and no tracer are supported. Guidance and strict
-   * improvement constraints obey the same scalar integer contract as AStar.
+   * improvement constraints obey HeuristicGuidance's scalar integer contract.
+   * Brancher preparation follows AStar. Statistics depth counts committed
+   * edges; restarts count widening passes.
    * If guidance or a model operation throws, destroy the engine
    * before further use.
    * \ingroup TaskModelSearch
@@ -1324,17 +1369,37 @@ namespace Gecode {
   template<class T>
   class CABS : public Search::Base<T> {
   public:
-    /// Initialize from space, guidance, ordinary options, and beam limits
+    /**
+     * \brief Initialize from space, guidance, ordinary options, and beam limits
+     *
+     * Options::clone=true (the default) leaves the supplied root with the
+     * caller. With clone=false, successful construction transfers ownership
+     * to the engine. Constructor failure leaves it with the caller.
+     */
     CABS(T* s, const Search::HeuristicGuidance& guidance,
          const Search::Options& o=Search::Options::def,
          const Search::CABSOptions& limits=Search::CABSOptions());
-    /// Adopt a strictly improving compatible external incumbent
+    /// Copy a compatible external solution if its exact bound strictly improves
     void constrain(const Space& incumbent);
     /// Whether engine does best solution search
     static const bool best = true;
   };
 
-  /// Return a CABS engine builder with copied guidance and beam limits
+  /**
+   * \brief Search to completion or a stop and return the best solution found
+   *
+   * The caller owns the result; nullptr means no solution was found. Ordinary
+   * stops or beam limits can leave the result unproven. The helper cannot
+   * report whether search stopped; use CABS to inspect completion or resume
+   * search. Root ownership follows CABS and Options::clone.
+   * \ingroup TaskModelSearch
+   */
+  template<class T>
+  T* cabs(T* s, const Search::HeuristicGuidance& guidance,
+          const Search::Options& o=Search::Options::def,
+          const Search::CABSOptions& limits=Search::CABSOptions());
+
+  /// Return a CABS builder for PBS portfolios, with copied guidance and beam limits
   template<class T>
   SEB cabs(const Search::HeuristicGuidance& guidance,
            const Search::Options& o=Search::Options::def,
