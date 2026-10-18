@@ -155,9 +155,13 @@ namespace Gecode { namespace Search { namespace Seq {
         for (auto i : victims) unindex(candidates[i]);
         // Preserve a live representative even when its rank is worse.
         candidates[victims.front()] = std::move(entry);
-        for (std::size_t i=victims.size(); i>1; i--)
-          candidates.erase(candidates.begin()+victims[i-1]);
-        std::make_heap(candidates.begin(),candidates.end(),earlier);
+        if (victims.size()==1) {
+          repair_heap(candidates,victims.front(),earlier);
+        } else {
+          for (std::size_t i=victims.size(); i>1; i--)
+            candidates.erase(candidates.begin()+victims[i-1]);
+          std::make_heap(candidates.begin(),candidates.end(),earlier);
+        }
         return true;
       }
     }

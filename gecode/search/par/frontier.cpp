@@ -32,6 +32,7 @@
  */
 
 #include <gecode/search/par/frontier.hh>
+#include <gecode/search/support.hh>
 #include <algorithm>
 #include <limits>
 
@@ -214,9 +215,13 @@ namespace Gecode { namespace Search { namespace Par {
           candidate_index.emplace(entry.key,entry.space.get());
         for (auto i : victims) unindex(candidates[i]);
         std::swap(candidates[victims.front()],entry);
-        for (std::size_t i=victims.size(); i>1; i--)
-          candidates.erase(candidates.begin()+victims[i-1]);
-        std::make_heap(candidates.begin(),candidates.end(),cmp);
+        if (victims.size()==1) {
+          repair_heap(candidates,victims.front(),cmp);
+        } else {
+          for (std::size_t i=victims.size(); i>1; i--)
+            candidates.erase(candidates.begin()+victims[i-1]);
+          std::make_heap(candidates.begin(),candidates.end(),cmp);
+        }
         return std::move(entry.space);
       }
     }

@@ -34,7 +34,10 @@
 #ifndef GECODE_SEARCH_SUPPORT_HH
 #define GECODE_SEARCH_SUPPORT_HH
 
+#include <algorithm>
 #include <memory>
+#include <utility>
+#include <vector>
 #include <gecode/search.hh>
 
 namespace Gecode { namespace Search {
@@ -74,6 +77,24 @@ namespace Gecode { namespace Search {
   forceinline Space*
   snapshot(Space* s, const Options& o) {
     return o.clone ? s->clone() : s;
+  }
+
+
+  /// Repair one replaced heap entry without rebuilding unchanged subtrees.
+  template<class Entry, class Compare>
+  inline void
+  repair_heap(std::vector<Entry>& entries, std::size_t i, Compare cmp) {
+    if (i && cmp(entries[(i-1)/2],entries[i])) {
+      std::push_heap(entries.begin(),entries.begin()+i+1,cmp);
+    } else {
+      while (i<entries.size()/2) {
+        std::size_t child=2*i+1;
+        if (child+1<entries.size() && cmp(entries[child],entries[child+1])) child++;
+        if (!cmp(entries[i],entries[child])) break;
+        std::swap(entries[i],entries[child]);
+        i=child;
+      }
+    }
   }
 
 
