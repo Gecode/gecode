@@ -131,6 +131,9 @@ by default. Preview APIs may change or be removed in future feature releases;
 their documented search correctness contracts still apply.
 CABS accepts an optional model-defined dominance predicate for live candidates
 in the next layer. The TSPTW transition example enables it by default for CABS.
+Both engines support native parallel search through Options::threads and dynamic
+worker control. Parallel CABS shares one beam across workers; parallel AStar
+selects from one shared priority queue. The TSPTW example accepts --threads N.
 
 [ENTRY]
 Module: int

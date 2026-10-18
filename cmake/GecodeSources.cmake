@@ -55,6 +55,7 @@ if(GECODE_ENABLE_EXPERIMENTAL)
   list(APPEND GECODE_SEARCH_SOURCES
     gecode/search/astar.cpp
     gecode/search/cabs.cpp
+    gecode/search/par/frontier.cpp
   )
 endif()
 

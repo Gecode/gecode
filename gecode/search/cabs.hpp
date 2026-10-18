@@ -34,7 +34,7 @@
 #ifdef GECODE_HAS_EXPERIMENTAL
 namespace Gecode { namespace Search {
 
-  /// Create a native sequential CABS engine
+  /// Create a native CABS engine
   GECODE_SEARCH_EXPORT Engine*
   cabsengine(Space* s, const HeuristicGuidance& guidance, const Options& o,
              const CABSOptions& limits=CABSOptions());

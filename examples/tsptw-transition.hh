@@ -12,7 +12,16 @@ namespace TSPTW {
 
   /// One run owns these aggregates; clones and callbacks count repeated work.
   struct Measurements {
+    const bool parallel;
+    Gecode::Support::Mutex mutex;
+    explicit Measurements(bool p=false) : parallel(p) {}
     std::uint64_t bound_calls=0, inference_calls=0;
+    void add(double& total, double elapsed, std::uint64_t* calls=nullptr) {
+      if (parallel) mutex.acquire();
+      total+=elapsed;
+      if (calls) (*calls)++;
+      if (parallel) mutex.release();
+    }
     double bound_ms=0, inference_ms=0, propagation_ms=0;
   };
 
@@ -71,9 +80,10 @@ namespace TSPTW {
           const auto start=std::chrono::steady_clock::now();
           const auto result=static_cast<const Transition&>(s).bound(mode);
           if (measurements) {
-            measurements->bound_calls++;
-            measurements->bound_ms+=std::chrono::duration<double,std::milli>(
-              std::chrono::steady_clock::now()-start).count();
+            measurements->add(measurements->bound_ms,
+              std::chrono::duration<double,std::milli>(
+                std::chrono::steady_clock::now()-start).count(),
+              &measurements->bound_calls);
           }
           return result;
         }};
@@ -298,8 +308,9 @@ namespace TSPTW {
       const auto propagation_start=std::chrono::steady_clock::now();
       feasible=schedule.status()!=Gecode::SS_FAILED;
       if (measurements)
-        measurements->propagation_ms+=std::chrono::duration<double,std::milli>(
-          std::chrono::steady_clock::now()-propagation_start).count();
+        measurements->add(measurements->propagation_ms,
+          std::chrono::duration<double,std::milli>(
+            std::chrono::steady_clock::now()-propagation_start).count());
       if (feasible)
         for (std::size_t k=0; k<unvisited.size(); k++) {
           const int u=unvisited[k];
@@ -309,9 +320,10 @@ namespace TSPTW {
         }
     }
     if (measurements) {
-      measurements->inference_calls++;
-      measurements->inference_ms+=std::chrono::duration<double,std::milli>(
-        std::chrono::steady_clock::now()-start).count();
+      measurements->add(measurements->inference_ms,
+        std::chrono::duration<double,std::milli>(
+          std::chrono::steady_clock::now()-start).count(),
+        &measurements->inference_calls);
     }
     return feasible;
   }

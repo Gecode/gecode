@@ -245,6 +245,7 @@ struct RunOptions {
   std::string circuit_propagation="dom", cost_branching="regret";
   std::optional<unsigned long long> time_ms, node_limit;
   Search::CABSOptions cabs;
+  unsigned int threads=1;
   bool dominance=true, dominance_set=false;
   bool width_set=false, frontier_set=false;
   bool closed_settings_set=false;
@@ -262,7 +263,7 @@ static RunOptions read_options(int argc, char* argv[]) {
       "[--formulation closed|transition|eager] "
       "[--bound prefix|min-arcs] [--residual-propagation off|cheap|unary] "
       "[--circuit-propagation dom|val] [--cost-branching regret|size] "
-      "[--seed TOUR] [--time-ms N] [--node-limit N] "
+      "[--threads N] [--seed TOUR] [--time-ms N] [--node-limit N] "
       "[--max-width N] [--frontier-limit N] [--dominance off|on]");
   RunOptions options;
   options.instance=argv[1];
@@ -286,6 +287,12 @@ static RunOptions read_options(int argc, char* argv[]) {
       options.closed_settings_set=true;
     } else if (option=="--time-ms") options.time_ms=read_limit(value);
     else if (option=="--node-limit") options.node_limit=read_limit(value);
+    else if (option=="--threads") {
+      const auto n=read_limit(value);
+      if (n==0 || n>std::numeric_limits<unsigned int>::max())
+        throw std::runtime_error("threads must be a positive integer");
+      options.threads=static_cast<unsigned int>(n);
+    }
     else if (option=="--max-width" || option=="--frontier-limit") {
       const auto limit=read_limit(value);
       if (limit>std::numeric_limits<unsigned long>::max())
@@ -422,6 +429,7 @@ static int run_search(const RunOptions& options, Model& root,
             << "\",\"bound\":\"" << (options.formulation=="closed" ? "cp-total" : options.bound)
             << "\",\"residual_propagation\":\"" << options.residual_propagation
             << "\",\"termination\":\"" << termination << '"';
+  std::cout << ",\"threads\":" << options.threads;
   if (options.formulation=="closed")
     std::cout << ",\"circuit_propagation\":\"" << options.circuit_propagation
               << "\",\"cost_branching\":\"" << options.cost_branching << '"';
@@ -464,7 +472,7 @@ static int run(const RunOptions& options) {
   auto data=std::make_shared<const TSPTW::Instance>(TSPTW::read(options.instance));
   Search::Options search;
   search.clone=true;
-  search.threads=1;
+  search.threads=options.threads;
   search.stop=&stop;
   if (options.engine=="rbs") {
     search.cutoff=Search::Cutoff::luby(1000);
@@ -475,7 +483,7 @@ static int run(const RunOptions& options) {
                      options.cost_branching=="size");
     return run_search(options,root,search,start);
   }
-  auto measurements=std::make_shared<TSPTW::Measurements>();
+  auto measurements=std::make_shared<TSPTW::Measurements>(options.threads>1);
   TSPTW::Transition root(data,options.formulation=="transition" ?
                          TSPTW::Transition::LAZY : TSPTW::Transition::EAGER,
                          options.residual_propagation=="off" ?

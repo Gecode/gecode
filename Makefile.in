@@ -277,13 +277,13 @@ SEARCHHDR0 = \
 	seq/pbs.hh seq/pbs.hpp \
 	par/path.hh par/path.hpp par/engine.hh par/engine.hpp \
 	par/dfs.hh par/dfs.hpp par/bab.hh par/bab.hpp \
-	par/pbs.hh par/pbs.hpp \
+	par/pbs.hh par/pbs.hpp par/frontier.hh \
 	dfs.hpp bab.hpp astar.hpp cabs.hpp lds.hpp rbs.hpp pbs.hpp \
 	relax.hh tracer.hpp trace-recorder.hpp \
 	cpprofiler/message.hpp cpprofiler/connector.hpp
 
 ifeq "@enable_experimental@" "yes"
-SEARCHSRC0 += astar cabs
+SEARCHSRC0 += astar cabs par/frontier
 endif
 
 SEARCHSRC	= $(SEARCHSRC0:%=gecode/search/%.cpp)

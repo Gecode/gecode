@@ -34,6 +34,7 @@
 #include <gecode/search.hh>
 #include <gecode/search/support.hh>
 #include <gecode/search/seq/astar.hh>
+#include <gecode/search/par/frontier.hh>
 #include <algorithm>
 
 namespace Gecode { namespace Search {
@@ -47,12 +48,14 @@ namespace Gecode { namespace Search {
   bestfirstengine(Space* s, const HeuristicGuidance& g, AStarOrder ordering,
                   const Options& o) {
     Options expanded = o.expand();
-    if (expanded.threads != 1.0)
-      throw UnsupportedAStarThreads("AStar");
     if (expanded.tracer != nullptr)
       throw UnsupportedAStarTracer("AStar");
     if (!g.bound)
       throw UninitializedAStarBound("AStar");
+#ifdef GECODE_HAS_THREADS
+    if (expanded.threads != 1.0)
+      return new Par::Frontier(s,g,ordering,expanded,false);
+#endif
     return new WorkerToEngine<Seq::AStar>(s,expanded,
                                         Seq::AStar::Configuration{g,ordering});
   }
