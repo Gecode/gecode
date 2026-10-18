@@ -252,6 +252,7 @@ namespace Gecode { namespace Search { namespace Seq {
 
   void
   CABS::reset(Space* s) {
+    std::unique_ptr<Space> replacement(s);
     expansion.reset();
     layer.clear();
     candidates.clear();
@@ -266,6 +267,8 @@ namespace Gecode { namespace Search { namespace Seq {
     Worker::reset();
     start();
     initialize(s,false);
+    // initialize consumes the root on normal return, including failure.
+    replacement.release();
   }
 
   NoGoods&

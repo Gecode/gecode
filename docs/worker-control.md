@@ -58,7 +58,7 @@ request becomes visible remain nondeterministic.
 Shrinking parks resident operating-system threads. It does not destroy their
 thread objects or discard their engine-local search state. Growing wakes those
 threads again. Set the capacity to the largest allocation the engine may
-receive. Parked workers keep their stacks and other per-worker state.
+receive. Parked workers retain their stacks and other per-worker state.
 
 ## Handle lifetime and ownership
 
@@ -92,7 +92,7 @@ requests are harmless and cannot access destroyed scheduler state.
 An internal engine owner that constructs successive leaf engines can call
 `WorkerControlAccess::prepare_reuse` after destroying the previous engine and
 joining its workers. The replacement must have the same resolved capacity.
-The control keeps its shared identity, latest request (including pause),
+The control retains its shared identity, latest request (including pause),
 request generation, and event storage. Preparing an attached control raises
 `Search::WorkerControlInUse`; attaching with a different capacity raises
 `Search::InvalidWorkerRequest`. No public reuse operation is provided.

@@ -216,7 +216,7 @@ namespace Test { namespace Int {
         DFS<SelectorSpace> restarted(&root);
         while (SelectorSpace* solution = restarted.next())
           record(solution);
-        // Extraction may omit literals, but must include every unvisited word.
+        // Extraction may omit literals, but must retain every unvisited word.
         for (int code=2; code<16; code++)
           if (!found[code])
             return false;
@@ -840,11 +840,11 @@ namespace Test { namespace Int {
         }
         CallbackSpace* clone = static_cast<CallbackSpace*>(source->clone());
         delete source;
-        const bool shared_storage = (domain.use_count() > 1) &&
-                                    (transition.use_count() > 1);
+        const bool retained = (domain.use_count() > 1) &&
+                              (transition.use_count() > 1);
         delete clone;
-        return shared_storage && (domain.use_count() == 1) &&
-                                 (transition.use_count() == 1);
+        return retained && (domain.use_count() == 1) &&
+                           (transition.use_count() == 1);
       }
     };
 

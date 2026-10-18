@@ -88,7 +88,7 @@ namespace Gecode {
     Search::Statistics stat;
     std::unique_ptr<Search::Stop> stop(Search::Seq::rbsstop(m_opt.stop));
     e_opt.stop = stop.get();
-    // Keep ownership of the seed while a potentially nested builder owns its clone.
+    // Retain the seed while a potentially nested builder owns its clone.
     e_opt.clone = true;
     Search::WrapTraceRecorder::engine(e_opt.tracer,
                                       SearchTracer::EngineType::RBS, 1U);

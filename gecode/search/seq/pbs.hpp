@@ -98,6 +98,7 @@ namespace Gecode { namespace Search { namespace Seq {
     slave_stop = false;
     unsigned int n_exhausted = 0;
     while (n_slaves > 0) {
+      ssi.done = false;
       if (Space* s = slaves[cur].next()) {
         // Constrain other slaves
         if (best) {

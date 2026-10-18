@@ -478,6 +478,54 @@ namespace Test {
     };
 
     std::atomic<int> AStarSpace::live(0);
+
+    /// Throw before a replacement root can be adopted by an engine.
+    class ThrowingRoot : public AStarSpace {
+    public:
+      ThrowingRoot(bool propagation) {
+        if (propagation) {
+          Gecode::wait(*this,x,[](Space&) {
+            throw std::runtime_error("propagation failure");
+          });
+          rel(*this,x,IRT_EQ,0);
+        }
+      }
+      Space* copy(void) override {
+        throw std::runtime_error("copy failure");
+      }
+    };
+
+    static bool root_exceptions(bool cabs) {
+      Gecode::Search::Options options; options.clone=false;
+      const auto guidance=AStarSpace::guidance(false);
+      auto engine=[&](Space* root) {
+        return std::unique_ptr<Gecode::Search::Engine>(cabs ?
+          Gecode::Search::cabsengine(root,guidance,options) :
+          Gecode::Search::astarengine(root,guidance,options));
+      };
+      for (bool propagation : {false,true}) {
+        // AStar with clone=false does not copy a root during construction.
+        if (!cabs && !propagation) options.clone=true;
+        std::unique_ptr<ThrowingRoot> root(new ThrowingRoot(propagation));
+        try { auto invalid=engine(root.get()); return false; }
+        catch (const std::runtime_error&) {}
+        if (AStarSpace::live.load()!=1) return false;
+        root.reset();
+        options.clone=false;
+        // Reset transfers ownership even when propagation or cloning throws.
+        if (cabs || propagation) {
+          auto reset=engine(nullptr);
+          try { reset->reset(new ThrowingRoot(propagation)); return false; }
+          catch (const std::runtime_error&) {}
+          reset.reset();
+          if (AStarSpace::live.load()!=0) return false;
+        }
+      }
+      auto reset=engine(nullptr);
+      reset->reset(new AStarSpace(false,-1,true));
+      return !reset->next() && !reset->stopped() &&
+        AStarSpace::live.load()==0;
+    }
     // The parallel test runner shares this fixture's ownership counter.
     static std::mutex heuristic_ownership_mutex;
 
@@ -709,7 +757,8 @@ namespace Test {
           if (!solutions(max,false,false) || !solutions(max,true,true) ||
               !adoption(max,false) || !adoption(max,true) || !helpers(max))
             return false;
-        if (!ordering() || !ownership() || AStarSpace::live.load()!=0)
+        if (!ordering() || !root_exceptions(false) || !ownership() ||
+            AStarSpace::live.load()!=0)
           return false;
         Gecode::Search::Options o; o.clone=false;
         std::unique_ptr<Gecode::Search::Engine> engine(
@@ -1015,7 +1064,8 @@ namespace Test {
             return false;
         return interrupted_discard(false) && interrupted_discard(true) &&
           reset_discard() && feasibility() && adoption(false) && adoption(true) &&
-          ownership_and_limits() && AStarSpace::live.load()==0;
+          root_exceptions(true) && ownership_and_limits() &&
+          AStarSpace::live.load()==0;
       }
     } cabsTest;
 

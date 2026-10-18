@@ -159,7 +159,7 @@ namespace Gecode { namespace Search {
   Engine*
   pbsseq(T* master, const Search::Statistics& stat, Options& opt) {
     Stop* stop = opt.stop;
-    // Keep ownership of each seed: a throwing nested builder may consume its own clone.
+    // Retain each seed: a throwing nested builder may consume its own clone.
     opt.clone = true;
     Region r;
 
@@ -249,7 +249,7 @@ namespace Gecode { namespace Search {
   Engine*
   pbspar(T* master, const Search::Statistics& stat, Options& opt) {
     Stop* stop = opt.stop;
-    // Keep ownership of each seed: a throwing nested builder may consume its own clone.
+    // Retain each seed: a throwing nested builder may consume its own clone.
     opt.clone = true;
     Region r;
 
@@ -373,7 +373,7 @@ namespace Gecode {
     if (o.assets == 1) {
       std::unique_ptr<T> seed(master);
       (void) master->slave(0);
-      // Keep ownership of the seed if a nested builder rejects its worker control.
+      // Retain the seed if a nested builder rejects its worker control.
       opt.clone = true;
       e = Search::build<T,E>(seed.get(),opt);
       return;

@@ -42,7 +42,7 @@ namespace Gecode { namespace FlatZinc { namespace Internal {
   uniform_int_offset(Random& random, unsigned long long int width) {
     const unsigned long long int chunk_width = 1ULL << 31;
 
-    // Use the established seeded sequence for ordinary integer ranges.
+    // Retain the established seeded sequence for ordinary integer ranges.
     if ((width <= chunk_width) || (width > (1ULL << 32)))
       return random(width);
 

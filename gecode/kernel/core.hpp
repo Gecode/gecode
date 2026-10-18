@@ -1492,6 +1492,10 @@ namespace Gecode {
      * Prepare a choice before the search path changes. Preparation may leave
      * the space failed, solved, or branching. Space::prepare propagates and
      * prepares a newly active brancher.
+     *
+     * The space must be stable, and its most recent status query must have
+     * selected this brancher. Path recomputation can replay commits without
+     * calling prepare; commit must reconstruct any required preparation effects.
      */
     GECODE_KERNEL_EXPORT
     virtual void prepare(Space& home, StatusStatistics& stat);
@@ -1510,6 +1514,8 @@ namespace Gecode {
      *
      * The current brancher in the space \a home performs a commit from
      * the information provided by the choice \a c and the alternative \a a.
+     * Path recomputation can call this method without calling prepare first.
+     * The commit must reconstruct any preparation effects needed by the choice.
      */
     virtual ExecStatus commit(Space& home, const Choice& c,
                               unsigned int a) = 0;
@@ -2227,7 +2233,16 @@ namespace Gecode {
      */
     GECODE_KERNEL_EXPORT
     SpaceStatus status(StatusStatistics& stat);
-    /// Prepare the current brancher before a search engine changes its path.
+    /**
+     * \brief Prepare the current brancher before a search engine changes its path
+     *
+     * The space must be stable with a current status from Space::status.
+     * Preparation propagates any changes and prepares a newly active brancher.
+     * Built-in search engines invoke preparation automatically when experimental
+     * search is enabled. Callers can also invoke this method explicitly.
+     * Path recomputation can replay commits without calling this method;
+     * brancher commits must reconstruct any required preparation effects.
+     */
     GECODE_KERNEL_EXPORT
     void prepare(StatusStatistics& stat);
     /// Query space status without collecting statistics
@@ -2310,6 +2325,8 @@ namespace Gecode {
      * Note that no propagation is performed (to support path
      * recomputation), in order to perform propagation the member
      * function status must be used.
+     * Recomputation can replay commits without calling Space::prepare;
+     * brancher commits must reconstruct any preparation effects they require.
      *
      * Committing with choices must be carried
      * out in the same order as the choices have been
@@ -2349,6 +2366,8 @@ namespace Gecode {
      * Note that no propagation is performed (to support path
      * recomputation), in order to perform propagation the member
      * function status must be used.
+     * Recomputation can replay commits without calling Space::prepare;
+     * brancher commits must reconstruct any preparation effects they require.
      *
      * Committing with choices must be carried
      * out in the same order as the choices have been

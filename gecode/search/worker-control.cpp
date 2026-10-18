@@ -140,14 +140,14 @@ namespace Gecode { namespace Search {
     Support::Lock lock(state->mutex);
     if (state->lifecycle != WorkerControl::State::Lifecycle::READY_TO_BIND)
       throw WorkerControlInUse("WorkerControlAccess::attach");
-    const unsigned int configured_capacity =
+    const unsigned int retained_capacity =
       state->capacity.load(std::memory_order_relaxed);
 #ifndef GECODE_HAS_THREADS
     if (state->requested.load(std::memory_order_relaxed) == 0U)
       throw InvalidWorkerRequest("WorkerControlAccess::attach");
 #endif
     if ((capacity == 0U) ||
-        ((configured_capacity != 0U) && (configured_capacity != capacity)) ||
+        ((retained_capacity != 0U) && (retained_capacity != capacity)) ||
         (state->requested.load(std::memory_order_relaxed) > capacity))
       throw InvalidWorkerRequest("WorkerControlAccess::attach");
     if (state->events == nullptr)
