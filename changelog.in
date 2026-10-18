@@ -79,7 +79,7 @@ Module: kernel
 What:   new
 Rank:   major
 [DESCRIPTION]
-Added modern, user-extensible random number generators with reproducible
+Added user-extensible random number generators with reproducible
 stream splitting. Splittable SplitMix replaces the old default generator;
 xorshift64* is available as a smaller-state alternative. The default is
 configurable at build time, and users can supply their own engines.
