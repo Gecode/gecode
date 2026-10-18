@@ -37,6 +37,7 @@
 #include <gecode/search.hh>
 #include <gecode/search/seq/choice-expansion.hh>
 #include <memory>
+#include <unordered_map>
 #include <vector>
 
 #ifdef GECODE_HAS_EXPERIMENTAL
@@ -54,6 +55,7 @@ namespace Gecode { namespace Search { namespace Seq {
     struct Entry {
       std::unique_ptr<Space> space;
       std::int64_t bound, rank;
+      std::size_t key;
       unsigned long int depth;
       unsigned long long int order, incumbent_revision;
     };
@@ -71,6 +73,7 @@ namespace Gecode { namespace Search { namespace Seq {
     /// Never restricted; every wider pass regenerates omitted alternatives
     std::unique_ptr<Space> root;
     std::vector<Entry> layer, candidates;
+    std::unordered_multimap<std::size_t,const Space*> candidate_index;
     /// Source and original alternative cursor survive next()
     ChoiceExpansion expansion;
     SpaceStatus current_status;
@@ -85,6 +88,7 @@ namespace Gecode { namespace Search { namespace Seq {
     bool limited;
 
     bool improves(std::int64_t bound) const;
+    void unindex(const Entry& entry);
     bool admit(std::unique_ptr<Space> s, unsigned long int depth,
                unsigned long long int revision);
     Space* publish(std::unique_ptr<Space> s);

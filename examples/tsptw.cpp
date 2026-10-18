@@ -393,7 +393,10 @@ static int run_search(const RunOptions& options, Model& root,
   else {
     auto cabs=options.cabs;
     if constexpr (std::is_same<Model,TSPTW::Transition>::value)
-      if (options.dominance) cabs.dominates=Model::dominates;
+      if (options.dominance) {
+        cabs.dominates=Model::dominates;
+        cabs.dominance_key=Model::dominance_key;
+      }
     engine.reset(Search::cabsengine(&root,guidance,search,cabs));
   }
   // Default clone ownership keeps root and seed independently owned here.

@@ -139,6 +139,7 @@ namespace Gecode { namespace Search { namespace Par {
     assert(active == 0 && pending.empty() && frontier.empty());
     if (!beam) return false;
     if (!candidates.empty()) {
+      candidate_index.clear();
       frontier.swap(candidates);
       const Earlier cmp=earlier();
       std::sort(frontier.begin(),frontier.end(),
@@ -161,6 +162,18 @@ namespace Gecode { namespace Search { namespace Par {
   }
 
   void
+  Frontier::unindex(const Entry& entry) {
+    if (!limits.dominates || !limits.dominance_key) return;
+    const auto range=candidate_index.equal_range(entry.key);
+    for (auto i=range.first; i!=range.second; ++i)
+      if (i->second == entry.space.get()) {
+        candidate_index.erase(i);
+        return;
+      }
+    GECODE_NEVER;
+  }
+
+  void
   Frontier::admit(Entry entry) {
     if (!improves(entry.bound)) { stat.fail++; return; }
     entry.order=order++;
@@ -172,12 +185,29 @@ namespace Gecode { namespace Search { namespace Par {
       return;
     }
     if (limits.dominates) {
-      for (const auto& candidate : candidates)
-        if (limits.dominates(*candidate.space,*entry.space)) return;
       std::vector<std::size_t> victims;
-      for (std::size_t i=0; i<candidates.size(); i++)
-        if (limits.dominates(*entry.space,*candidates[i].space)) victims.push_back(i);
+      if (limits.dominance_key) {
+        const auto range=candidate_index.equal_range(entry.key);
+        for (auto i=range.first; i!=range.second; ++i)
+          if (limits.dominates(*i->second,*entry.space)) return;
+        std::vector<const Space*> dominated;
+        for (auto i=range.first; i!=range.second; ++i)
+          if (limits.dominates(*entry.space,*i->second)) dominated.push_back(i->second);
+        // Heap entries move; recover victim slots only after finding dominance.
+        if (!dominated.empty())
+          for (std::size_t i=0; i<candidates.size(); i++)
+            if (std::find(dominated.begin(),dominated.end(),candidates[i].space.get())
+                != dominated.end()) victims.push_back(i);
+      } else {
+        for (const auto& candidate : candidates)
+          if (limits.dominates(*candidate.space,*entry.space)) return;
+        for (std::size_t i=0; i<candidates.size(); i++)
+          if (limits.dominates(*entry.space,*candidates[i].space)) victims.push_back(i);
+      }
       if (!victims.empty()) {
+        if (limits.dominance_key)
+          candidate_index.emplace(entry.key,entry.space.get());
+        for (auto i : victims) unindex(candidates[i]);
         candidates[victims.front()]=std::move(entry);
         for (std::size_t i=victims.size(); i>1; i--)
           candidates.erase(candidates.begin()+victims[i-1]);
@@ -192,19 +222,30 @@ namespace Gecode { namespace Search { namespace Par {
                               discarded < *discarded_bound :
                               discarded > *discarded_bound)) discarded_bound=discarded;
       if (!replace) return;
+      if (limits.dominates && limits.dominance_key)
+        candidate_index.emplace(entry.key,entry.space.get());
+      unindex(candidates.front());
       std::pop_heap(candidates.begin(),candidates.end(),cmp);
       candidates.back()=std::move(entry);
       std::push_heap(candidates.begin(),candidates.end(),cmp);
       return;
     }
-    // Each active expansion reserves one parent and one unsubmitted successor.
-    const auto retained=frontier.size()+candidates.size()+pending.size()+2*active;
+    // The submitting parent, if any, is pending; other leases reserve two spaces.
+    assert(active > 0);
+    const auto retained=frontier.size()+candidates.size()+pending.size()+2*(active-1);
     if (limits.frontier_limit && retained >= limits.frontier_limit) {
       limited=stopped_=true;
       running=false;
       return;
     }
     candidates.push_back(std::move(entry));
+    try {
+      if (limits.dominates && limits.dominance_key)
+        candidate_index.emplace(candidates.back().key,candidates.back().space.get());
+    } catch (...) {
+      candidates.pop_back();
+      throw;
+    }
     std::push_heap(candidates.begin(),candidates.end(),cmp);
   }
 
@@ -279,25 +320,27 @@ namespace Gecode { namespace Search { namespace Par {
         Seq::ExpansionStep step=task->expansion.next(local,task->depth+1,
           task->revision,incumbent.get(),current_revision);
         std::int64_t bound=0, rank=0;
+        std::size_t key=0;
         if (step.space && step.status != SS_FAILED) {
           if (step.status == SS_SOLVED) (void) step.space->choice();
           bound=guidance.bound(*step.space);
           if (step.status == SS_BRANCH && guidance.rank) rank=guidance.rank(*step.space);
+          if (step.status == SS_BRANCH && beam && limits.dominates && limits.dominance_key)
+            key=limits.dominance_key(*step.space);
         }
         const auto child_depth=task->depth+1;
         {
           Support::Lock lock(mutex);
           incumbent.reset();
-          active--;
-          leased=false;
           stat+=local;
+          local.reset();
           if (task->expansion) pending.push_back(std::move(task));
           if (step.state != Seq::ExpansionStep::EXHAUSTED) {
             switch (step.status) {
             case SS_FAILED: stat.fail++; break;
             case SS_SOLVED: publish(std::move(step.space),bound); break;
             case SS_BRANCH:
-              admit({std::move(step.space),bound,rank,
+              admit({std::move(step.space),bound,rank,key,
                      child_depth,0,current_revision});
               break;
             default: GECODE_NEVER;
@@ -305,6 +348,8 @@ namespace Gecode { namespace Search { namespace Par {
           }
           step.space.reset();
           task.reset();
+          active--;
+          leased=false;
           if (!running && active == 0) changed.signal();
         }
         wake();
@@ -372,6 +417,7 @@ namespace Gecode { namespace Search { namespace Par {
     std::unique_ptr<Space> replacement(s);
     Support::Lock lock(mutex);
     assert(!running && active == 0);
+    candidate_index.clear();
     pending.clear(); frontier.clear(); candidates.clear();
     root.reset(); best.reset(); solution.reset();
     width=1; order=revision=0;
