@@ -668,9 +668,14 @@ namespace Gecode { namespace Int {
         o << "list length " << ((a == 0) ? "=" : ">") << " "
           << static_cast<const PosValChoice<int>&>(c).val();
       } else {
-        View x(list[p]);
         const int v = vsc ? static_cast<const PosValChoice<int>&>(c).val()
                           : value(c,a);
+        // Tracing can print replayed choices before commit grows the prefix.
+        if (p >= list.known_length()) {
+          o << "list[" << p << "] alternative " << a << " (value " << v << ")";
+          return;
+        }
+        View x(list[p]);
         if (printer())
           printer()(home,*this,a,list[p],p,v,o);
         else if (vsc)

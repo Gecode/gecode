@@ -1094,6 +1094,12 @@ namespace Test { namespace Int {
         std::unique_ptr<const Choice> second(source.choice());
         // Recomputation commits the path without propagating between choices.
         replay->commit(*first,0);
+        for (unsigned int a=0; a<second->alternatives(); a++) {
+          std::ostringstream printed;
+          replay->print(*second,a,printed);
+          if (printed.str().empty() || (replay->list.known_length() != 1))
+            return false;
+        }
         replay->commit(*second,0);
         return (replay->status() != SS_FAILED) &&
           (replay->list.known_length() == 2) &&
