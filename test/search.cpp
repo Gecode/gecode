@@ -487,6 +487,10 @@ namespace Test {
             !same(before,sliced->statistics()) || decisions->load()!=observed) return false;
         stop.limit(100000);
         std::unique_ptr<Space> resumed(sliced->next());
+        // Parallel workers can still publish stops decided before the limit changed.
+        for (unsigned int retry=0;
+             kind==2 && !resumed && sliced->stopped() && retry<100; retry++)
+          resumed.reset(sliced->next());
         return static_cast<bool>(resumed)==sat && !sliced->stopped() &&
           same(full->statistics(),sliced->statistics()) &&
           sliced->statistics().node>before.node;
