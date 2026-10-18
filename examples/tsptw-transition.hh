@@ -63,6 +63,13 @@ namespace TSPTW {
       return result;
     }
     std::int64_t bound(BoundMode mode) const;
+    /// Equal residual tours share a key; the predicate checks resource dominance.
+    static std::size_t dominance_key(const Gecode::Space& s0) {
+      const auto& s=static_cast<const Transition&>(s0);
+      std::size_t key=static_cast<std::size_t>(s.location);
+      for (int node : s.unvisited) Gecode::cmb_hash(key,node);
+      return key;
+    }
     /// Same residual tour, no later arrival, and no greater travel cost.
     static bool dominates(const Gecode::Space& a0, const Gecode::Space& b0) {
       const auto& a=static_cast<const Transition&>(a0);

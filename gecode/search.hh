@@ -1332,11 +1332,26 @@ namespace Gecode { namespace Search {
      * dominator inherits a removed candidate's beam slot, regardless of rank.
      * The engine copies the callable; captured references must outlive it.
      * The predicate must not mutate either space. Parallel admission serializes
-     * calls to this predicate, but guidance may run concurrently with it. Shared
-     * captured state must support that use. If it throws, destroy the
-     * engine before further use.
+     * calls to this predicate, but guidance and key callbacks may run concurrently
+     * with it. Shared captured state must support that use. If it throws, destroy
+     * the engine before further use.
      */
     std::function<bool(const Space&,const Space&)> dominates;
+    /**
+     * \brief Optional key grouping candidates for dominance comparisons
+     *
+     * Used only when dominates is set. Different keys skip comparison; equal
+     * keys still require the dominance predicate, so collisions are safe.
+     * Potential dominators must have equal keys. The engine caches the key
+     * when a stable branching candidate is generated. An empty callable puts
+     * all candidates in one group.
+     *
+     * The callable reads only its supplied Space and is copied with the options.
+     * Captured dependencies must outlive the engine. Parallel workers can call
+     * it concurrently with guidance and dominance; shared captured state must
+     * support that use. If it throws, destroy the engine before further use.
+     */
+    std::function<std::size_t(const Space&)> dominance_key;
     /// Initialize limits, with dominance disabled
     CABSOptions(unsigned long int maximum_width=0,
                 unsigned long int frontier_nodes=0);
@@ -1396,8 +1411,8 @@ namespace Gecode {
    * improvement constraints obey HeuristicGuidance's scalar integer contract.
    * Brancher preparation follows AStar. Statistics depth counts committed
    * edges; restarts count widening passes.
-   * If guidance, dominance, or a model operation throws, destroy the engine
-   * before further use.
+   * If guidance, dominance, a key callback, or a model operation throws,
+   * destroy the engine before further use.
    * \ingroup TaskModelSearch
    */
   template<class T>

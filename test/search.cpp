@@ -382,13 +382,18 @@ namespace Test {
               a=label({1,3,2}); b=label({3,1,2});
               if (!a || !b || !Transition::dominates(*a,*a) ||
                   !Transition::dominates(*a,*b) || Transition::dominates(*b,*a) ||
-                  Transition::dominates(*a,reference)) return false;
+                  Transition::dominates(*a,reference) ||
+                  Transition::dominance_key(*a)!=Transition::dominance_key(*b))
+                return false;
             }
             for (auto bound : {Transition::PREFIX,Transition::MIN_ARCS})
               for (bool enabled : {false,true}) {
                 Transition root(data,representation,propagation);
                 Gecode::Search::CABSOptions options;
-                if (enabled) options.dominates=Transition::dominates;
+                if (enabled) {
+                  options.dominates=Transition::dominates;
+                  options.dominance_key=Transition::dominance_key;
+                }
                 Gecode::CABS<Transition> engine(&root,Transition::guidance(bound),
                   Gecode::Search::Options::def,options);
                 std::int64_t best=std::numeric_limits<std::int64_t>::max();
@@ -834,25 +839,34 @@ namespace Test {
     };
 
     class CABSTest : public Base {
-      static bool dominance(unsigned int threads=1) {
+      static bool dominance(unsigned int threads=1, bool keyed=false) {
         using Relation=std::vector<std::pair<int,int>>;
-        auto solve=[threads](const TreeSpace::Graph& graph, const Relation& relation,
+        auto solve=[threads,keyed](const TreeSpace::Graph& graph, const Relation& relation,
                       unsigned long int width, int cost, bool stopped,
-                      unsigned long int restarts, bool reset=false) {
+                      unsigned long int restarts, bool reset=false,
+                      std::vector<std::size_t> keys={}) {
           Gecode::Search::Options options; options.clone=false;
           options.threads=threads;
           Gecode::Search::CABSOptions beam(width,0);
           unsigned int calls=0;
-          beam.dominates=[relation,&calls](const Space& a, const Space& b) {
+          bool grouped=true;
+          beam.dominates=[relation,keys,&calls,&grouped](const Space& a, const Space& b) {
             calls++;
-            return std::find(relation.begin(),relation.end(),std::make_pair(
-              static_cast<const TreeSpace&>(a).vertex,
-              static_cast<const TreeSpace&>(b).vertex))!=relation.end();
+            const auto x=static_cast<const TreeSpace&>(a).vertex;
+            const auto y=static_cast<const TreeSpace&>(b).vertex;
+            if (!keys.empty() && keys[x]!=keys[y]) grouped=false;
+            return std::find(relation.begin(),relation.end(),std::make_pair(x,y))
+              !=relation.end();
+          };
+          if (keyed || !keys.empty()) beam.dominance_key=[keys](const Space& s) {
+            return keys.empty() ? std::size_t{0} :
+              keys[static_cast<const TreeSpace&>(s).vertex];
           };
           std::unique_ptr<Gecode::Search::Engine> engine(
             Gecode::Search::cabsengine(new TreeSpace(graph),
               TreeSpace::guidance(),options,beam));
           beam.dominates={};
+          beam.dominance_key={};
           for (int run=0; run<(reset ? 2 : 1); run++) {
             const auto before=calls;
             if (run) engine->reset(new TreeSpace(graph));
@@ -860,7 +874,7 @@ namespace Test {
             while (std::unique_ptr<TreeSpace> solution{
                      static_cast<TreeSpace*>(engine->next())})
               best=solution->value().cost;
-            if (best!=cost || engine->stopped()!=stopped || calls==before ||
+            if (best!=cost || engine->stopped()!=stopped || calls==before || !grouped ||
                 engine->statistics().restart!=restarts) return false;
           }
           return true;
@@ -883,7 +897,9 @@ namespace Test {
           {10,10,0,{}}, {11,11,0,{}}, {5,5,0,{}}, {4,4,0,{}}};
         // Removing both victims frees a slot for the worse-ranked optimum.
         // Reset repeats widening and must retain the copied callback.
-        if (!solve(multiple,{{3,1},{3,2}},2,4,false,1,true)) return false;
+        if (!solve(multiple,{{3,1},{3,2}},2,4,false,1,true) ||
+            !solve(multiple,{{3,1},{3,2}},2,4,false,1,true,{0,7,7,7,9,0,0,0,0}))
+          return false;
 
         TreeSpace::Graph lifetime={
           {0,0,0,{1,2,3}}, {0,0,1,{4}}, {0,0,0,{5}}, {0,0,-1,{6}},
@@ -1144,7 +1160,8 @@ namespace Test {
           if (!solutions(max,1) || !solutions(max,0) || !discarded_bounds(max))
             return false;
         return interrupted_discard(false) && interrupted_discard(true) &&
-          dominance() && dominance(4) && reset_discard() && feasibility() && adoption(false) && adoption(true) &&
+          dominance() && dominance(4) && dominance(1,true) && dominance(4,true) &&
+          reset_discard() && feasibility() && adoption(false) && adoption(true) &&
           root_exceptions(true) && ownership_and_limits() &&
           AStarSpace::live.load()==0;
       }
@@ -1208,9 +1225,9 @@ namespace Test {
         }
         return true;
       }
-      static bool exceptions(bool beam) {
+      static bool exceptions(bool beam, unsigned int threads=4) {
         using namespace Gecode::Search;
-        Gecode::Search::Options options; options.threads=4;
+        Gecode::Search::Options options; options.threads=threads;
         AStarSpace root;
         for (bool rank : {false,true}) {
           auto guidance=AStarSpace::guidance(false);
@@ -1225,10 +1242,14 @@ namespace Test {
           catch (const std::runtime_error&) { caught=true; }
           if (!caught) return false;
         }
-        if (beam) {
+        if (beam) for (bool key : {false,true}) {
           CABSOptions limits;
-          limits.dominates=[](const Space&,const Space&)->bool {
-            throw std::runtime_error("parallel dominance failure");
+          limits.dominates=[key](const Space&,const Space&)->bool {
+            if (!key) throw std::runtime_error("dominance failure");
+            return false;
+          };
+          if (key) limits.dominance_key=[](const Space&)->std::size_t {
+            throw std::runtime_error("dominance key failure");
           };
           std::unique_ptr<Engine> engine(cabsengine(&root,
             AStarSpace::guidance(false,true),options,limits));
@@ -1236,6 +1257,13 @@ namespace Test {
           try { while (std::unique_ptr<Space> s{engine->next()}) {} }
           catch (const std::runtime_error&) { caught=true; }
           if (!caught) return false;
+          // A key alone does not enable comparisons or evaluate the callback.
+          if (key) {
+            limits.dominates={};
+            engine.reset(cabsengine(&root,AStarSpace::guidance(false,true),options,limits));
+            while (std::unique_ptr<Space> s{engine->next()}) {}
+            if (engine->stopped()) return false;
+          }
         }
         return AStarSpace::live.load()==1;
       }
@@ -1280,7 +1308,8 @@ namespace Test {
           for (bool max : {false,true})
             for (unsigned int threads : {2U,4U})
               if (!check(beam,max,threads)) return false;
-          if (!root_exceptions(beam,4) || !exceptions(beam) || !overlap(beam)) return false;
+          if (!root_exceptions(beam,4) || !exceptions(beam) ||
+              (beam && !exceptions(beam,1)) || !overlap(beam)) return false;
           if (AStarSpace::live.load()!=0) return false;
         }
         return true;

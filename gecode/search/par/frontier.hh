@@ -39,6 +39,7 @@
 #include <deque>
 #include <exception>
 #include <memory>
+#include <unordered_map>
 #include <vector>
 
 #if defined(GECODE_HAS_EXPERIMENTAL) && defined(GECODE_HAS_THREADS)
@@ -49,6 +50,7 @@ namespace Gecode { namespace Search { namespace Par {
     struct Entry {
       std::unique_ptr<Space> space;
       std::int64_t bound, rank;
+      std::size_t key;
       unsigned long int depth;
       unsigned long long int order, revision;
     };
@@ -85,6 +87,7 @@ namespace Gecode { namespace Search { namespace Par {
     std::int64_t best_bound=0;
     std::optional<std::int64_t> discarded_bound;
     std::vector<Entry> frontier, candidates;
+    std::unordered_multimap<std::size_t,const Space*> candidate_index;
     std::deque<std::unique_ptr<Pending>> pending;
     std::vector<std::unique_ptr<Runner>> runners;
     mutable Support::Mutex mutex;
@@ -99,6 +102,7 @@ namespace Gecode { namespace Search { namespace Par {
     void wake(void);
     void work(unsigned int id);
     bool improves(std::int64_t bound) const;
+    void unindex(const Entry& entry);
     bool advance(void);
     void admit(Entry entry);
     void publish(std::unique_ptr<Space> s, std::int64_t bound);
