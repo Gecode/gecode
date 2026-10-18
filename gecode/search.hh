@@ -1240,8 +1240,10 @@ namespace Gecode {
    * generation and solution order. Exhaustion waits for all expansions.
    * Worker control can pause, grow, or shrink the active worker count while
    * preserving pending work. Tracing is unsupported. After an ordinary stop,
-   * raise or reset its limit and call next() to resume. Statistics depth counts
-   * committed edges. Parallel next() waits for active model operations before
+   * raise or reset its limit and call next() to resume. Parallel workers check
+   * stops after at most 32 consecutive failed or incumbent-pruned alternatives;
+   * worker-count requests are checked after each alternative. Statistics depth
+   * counts committed edges. Parallel next() waits for active model operations before
    * returning; failures in workers are rethrown on the caller.
    * Before generating a choice, Brancher::prepare finishes any lazy model
    * preparation on the stable Space.
@@ -1406,8 +1408,9 @@ namespace Gecode {
    * All workers share one next-layer beam and dominance admission. A layer or
    * pass advances only after all current work has been submitted. Parallel
    * generation order and returned improvements can differ from sequential search.
-   * next() waits for active model operations before returning and rethrows worker
-   * failures on the caller. Tracing is unsupported. Guidance and strict
+   * Stop and worker-count checks follow AStar. next() waits for active model
+   * operations before returning and rethrows worker failures on the caller.
+   * Tracing is unsupported. Guidance and strict
    * improvement constraints obey HeuristicGuidance's scalar integer contract.
    * Brancher preparation follows AStar. Statistics depth counts committed
    * edges; restarts count widening passes.

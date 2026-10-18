@@ -1267,6 +1267,70 @@ namespace Test {
         }
         return AStarSpace::live.load()==1;
       }
+      static bool failed_alternatives(bool beam, bool bounded) {
+        using namespace Gecode::Search;
+        TreeSpace::Graph graph(131,{2,2,0,{}});
+        graph[0]={0,0,0,{}};
+        for (int i=1; i<=129; i++) graph[0].children.push_back(i);
+        if (bounded)
+          for (int i=1; i<=128; i++) graph[i]={0,2,0,{130}};
+        graph[129]={0,0,0,{}};
+        TreeSpace incumbent(graph);
+        incumbent.vertex=130;
+        incumbent.status();
+        NodeStop stop(7);
+        Gecode::Search::Options options;
+        options.clone=false; options.threads=4; options.stop=&stop;
+        std::unique_ptr<Engine> engine(beam ?
+          cabsengine(new TreeSpace(graph),TreeSpace::guidance(),options) :
+          astarengine(new TreeSpace(graph),TreeSpace::guidance(),options));
+        engine->constrain(incumbent);
+        // Interrupt a long original choice, then reach its final improving goal.
+        std::unique_ptr<Space> early(engine->next());
+        if (early || !engine->stopped() || engine->statistics().node>=130)
+          return false;
+        stop.limit(1000);
+        std::unique_ptr<TreeSpace> solution(static_cast<TreeSpace*>(engine->next()));
+        if (!solution || solution->value().cost!=0) return false;
+        std::unique_ptr<Space> extra(engine->next());
+        return !extra && !engine->stopped() &&
+          engine->statistics().node==130 && engine->statistics().fail==128;
+      }
+      static bool queued_failures(bool beam) {
+        using namespace Gecode::Search;
+        class Boundary : public Stop {
+        public:
+          bool queued=false, resumed=false;
+          bool stop(const Statistics& s, const Gecode::Search::Options&) override {
+            return !resumed && (queued ? s.fail>0 : s.node>=129);
+          }
+        } stop;
+        TreeSpace::Graph graph(130,{0,2,0,{129}});
+        graph[0]={0,0,0,{}};
+        for (int i=1; i<=128; i++) graph[0].children.push_back(i);
+        graph[129]={2,2,0,{}};
+        Gecode::Search::Options options;
+        options.clone=false; options.threads=2; options.stop=&stop;
+        options.worker_control=WorkerControl(1);
+        std::unique_ptr<Engine> engine(beam ?
+          cabsengine(new TreeSpace(graph),TreeSpace::guidance(),options) :
+          astarengine(new TreeSpace(graph),TreeSpace::guidance(),options));
+        std::unique_ptr<Space> early(engine->next());
+        if (early || !engine->stopped() || engine->statistics().fail) return false;
+        TreeSpace incumbent(graph);
+        incumbent.vertex=129;
+        incumbent.status();
+        engine->constrain(incumbent);
+        stop.queued=true;
+        // Rejecting queued nodes must still observe the first failure boundary.
+        early.reset(engine->next());
+        if (early || !engine->stopped() || engine->statistics().fail!=1) return false;
+        stop.resumed=true;
+        early.reset(engine->next());
+        return !early && !engine->stopped() &&
+          engine->statistics().node==129 &&
+          engine->statistics().fail==(beam ? 1U : 128U);
+      }
       static bool overlap(bool beam) {
         using namespace Gecode::Search;
         // All shallow leaves are costly; widening must reach both parents
@@ -1309,7 +1373,9 @@ namespace Test {
             for (unsigned int threads : {2U,4U})
               if (!check(beam,max,threads)) return false;
           if (!root_exceptions(beam,4) || !exceptions(beam) ||
-              (beam && !exceptions(beam,1)) || !overlap(beam)) return false;
+              (beam && !exceptions(beam,1)) || !overlap(beam) ||
+              !failed_alternatives(beam,false) ||
+              !failed_alternatives(beam,true) || !queued_failures(beam)) return false;
           if (AStarSpace::live.load()!=0) return false;
         }
         return true;
