@@ -1304,14 +1304,32 @@ namespace Gecode {
 
 namespace Gecode { namespace Search {
 
-  /// Intrinsic CABS resource limits; zero means unlimited
+  /// CABS resource limits and optional candidate dominance
   class CABSOptions {
   public:
-    /// Maximum permitted width (passes use widths 1, 2, 4, ...)
+    /// Maximum permitted width (passes use widths 1, 2, 4, ...); zero is unlimited
     unsigned long int max_width;
-    /// Quota of pending search Spaces, including the selected parent
+    /// Pending-Space quota, including the selected parent; zero is unlimited
     unsigned long int frontier_limit;
-    /// Initialize width and frontier-node limits
+    /**
+     * \brief Whether the first space subsumes the second; empty disables pruning
+     *
+     * Inputs are stable, read-only next-layer candidates. Returning true must
+     * preserve every improving completion of the second space at no worse total
+     * objective, including prefix cost, residual feasibility, and branching
+     * progress. A completion using no more transitions is sufficient. The model
+     * must establish that repeated replacement is safe, with a consistent,
+     * transitive no-worse relation; equality may use the same predicate.
+     * CABS does not infer these properties from bounds or ranks.
+     *
+     * Only live candidates in the same layer and pass justify pruning. A new
+     * dominator inherits a removed candidate's beam slot, regardless of rank.
+     * The engine copies the callable; captured references must outlive it.
+     * The predicate must not mutate either space. If it throws, destroy the
+     * engine before further use.
+     */
+    std::function<bool(const Space&,const Space&)> dominates;
+    /// Initialize limits, with dominance disabled
     CABSOptions(unsigned long int maximum_width=0,
                 unsigned long int frontier_nodes=0);
   };
@@ -1334,8 +1352,8 @@ namespace Gecode {
    * discarded bound excludes strict improvement of the accepted incumbent.
    * Finite search trees are required for widening completeness.
    * Lower rank selects the beam; without rank, the optimistic total bound
-   * selects it. Equal priorities use generation order. Only admissible bounds
-   * justify pruning and completion.
+   * selects it. Equal priorities use generation order. Admissible bounds and
+   * the optional CABSOptions::dominates predicate justify pruning and completion.
    *
    * Returned solutions belong to the caller, independently of the engine's
    * incumbent copy, and strictly improve it. Continue next() until nullptr with
@@ -1351,7 +1369,7 @@ namespace Gecode {
    * A complete pass can prove its result at the maximum width; a maximum of
    * three allows passes at widths one and two. Native reset takes ownership
    * of its root regardless of Options::clone and clears the incumbent, pending
-   * work, intrinsic stops, and statistics while retaining guidance and limits.
+   * work, intrinsic stops, and statistics while retaining guidance and CABS options.
    *
    * The frontier quota includes current-layer entries, next-layer candidates,
    * and the selected parent. It excludes the restart root, incumbent, returned
@@ -1362,7 +1380,7 @@ namespace Gecode {
    * improvement constraints obey HeuristicGuidance's scalar integer contract.
    * Brancher preparation follows AStar. Statistics depth counts committed
    * edges; restarts count widening passes.
-   * If guidance or a model operation throws, destroy the engine
+   * If guidance, dominance, or a model operation throws, destroy the engine
    * before further use.
    * \ingroup TaskModelSearch
    */
@@ -1370,7 +1388,7 @@ namespace Gecode {
   class CABS : public Search::Base<T> {
   public:
     /**
-     * \brief Initialize from space, guidance, ordinary options, and beam limits
+     * \brief Initialize from space, guidance, ordinary options, and CABS options
      *
      * Options::clone=true (the default) leaves the supplied root with the
      * caller. With clone=false, successful construction transfers ownership
@@ -1399,7 +1417,7 @@ namespace Gecode {
           const Search::Options& o=Search::Options::def,
           const Search::CABSOptions& limits=Search::CABSOptions());
 
-  /// Return a CABS builder for PBS portfolios, with copied guidance and beam limits
+  /// Return a CABS builder for PBS portfolios, with copied guidance and CABS options
   template<class T>
   SEB cabs(const Search::HeuristicGuidance& guidance,
            const Search::Options& o=Search::Options::def,

@@ -54,6 +54,14 @@ namespace TSPTW {
       return result;
     }
     std::int64_t bound(BoundMode mode) const;
+    /// Same residual tour, no later arrival, and no greater travel cost.
+    static bool dominates(const Gecode::Space& a0, const Gecode::Space& b0) {
+      const auto& a=static_cast<const Transition&>(a0);
+      const auto& b=static_cast<const Transition&>(b0);
+      return a.data==b.data && a.location==b.location &&
+        a.unvisited==b.unvisited && a.returned==b.returned &&
+        a.time<=b.time && a.prefix_cost<=b.prefix_cost;
+    }
 #ifdef GECODE_HAS_EXPERIMENTAL
     static Gecode::Search::HeuristicGuidance
     guidance(BoundMode mode=PREFIX,

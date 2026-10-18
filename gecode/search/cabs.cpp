@@ -112,6 +112,22 @@ namespace Gecode { namespace Search { namespace Seq {
     const std::int64_t rank = guidance.rank ? guidance.rank(*s) : 0;
     Entry entry{std::move(s),bound,rank,depth,order++,revision};
     Earlier earlier{guidance.sense,static_cast<bool>(guidance.rank)};
+    if (limits.dominates) {
+      for (const auto& candidate : candidates)
+        if (limits.dominates(*candidate.space,*entry.space)) return true;
+      std::vector<std::size_t> victims;
+      for (std::size_t i=0; i<candidates.size(); i++)
+        if (limits.dominates(*entry.space,*candidates[i].space))
+          victims.push_back(i);
+      if (!victims.empty()) {
+        // Preserve a live representative even when its rank is worse.
+        candidates[victims.front()] = std::move(entry);
+        for (std::size_t i=victims.size(); i>1; i--)
+          candidates.erase(candidates.begin()+victims[i-1]);
+        std::make_heap(candidates.begin(),candidates.end(),earlier);
+        return true;
+      }
+    }
     if (candidates.size() == width) {
       const bool replace = earlier(entry,candidates.front());
       const std::int64_t discarded = replace ? candidates.front().bound : entry.bound;

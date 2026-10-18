@@ -245,6 +245,7 @@ struct RunOptions {
   std::string circuit_propagation="dom", cost_branching="regret";
   std::optional<unsigned long long> time_ms, node_limit;
   Search::CABSOptions cabs;
+  bool dominance=true, dominance_set=false;
   bool width_set=false, frontier_set=false;
   bool closed_settings_set=false;
 };
@@ -262,7 +263,7 @@ static RunOptions read_options(int argc, char* argv[]) {
       "[--bound prefix|min-arcs] [--residual-propagation off|cheap|unary] "
       "[--circuit-propagation dom|val] [--cost-branching regret|size] "
       "[--seed TOUR] [--time-ms N] [--node-limit N] "
-      "[--max-width N] [--frontier-limit N]");
+      "[--max-width N] [--frontier-limit N] [--dominance off|on]");
   RunOptions options;
   options.instance=argv[1];
   for (int i=2; i<argc; i+=2) {
@@ -274,6 +275,11 @@ static RunOptions read_options(int argc, char* argv[]) {
     else if (option=="--seed") options.seed=value;
     else if (option=="--bound") options.bound=value;
     else if (option=="--residual-propagation") options.residual_propagation=value;
+    else if (option=="--dominance") {
+      if (value!="off" && value!="on")
+        throw std::runtime_error("dominance must be off or on");
+      options.dominance=value=="on"; options.dominance_set=true;
+    }
     else if (option=="--circuit-propagation" || option=="--cost-branching") {
       if (option=="--circuit-propagation") options.circuit_propagation=value;
       else options.cost_branching=value;
@@ -314,6 +320,9 @@ static RunOptions read_options(int argc, char* argv[]) {
     throw std::runtime_error("bound and residual propagation switches require transition/eager");
   if ((options.width_set || options.frontier_set) && options.engine!="cabs")
     throw std::runtime_error("width and frontier limits require cabs");
+  if (options.dominance_set &&
+      (options.engine!="cabs" || options.formulation=="closed"))
+    throw std::runtime_error("dominance requires transition/eager cabs");
   return options;
 }
 
@@ -374,7 +383,12 @@ static int run_search(const RunOptions& options, Model& root,
     engine.reset((*builder)(&root));
   } else if (options.engine=="astar")
     engine.reset(Search::astarengine(&root,guidance,search));
-  else engine.reset(Search::cabsengine(&root,guidance,search,options.cabs));
+  else {
+    auto cabs=options.cabs;
+    if constexpr (std::is_same<Model,TSPTW::Transition>::value)
+      if (options.dominance) cabs.dominates=Model::dominates;
+    engine.reset(Search::cabsengine(&root,guidance,search,cabs));
+  }
   // Default clone ownership keeps root and seed independently owned here.
   // The stop object was declared first and outlives every engine.
   if (seed) engine->constrain(*seed);
@@ -414,6 +428,8 @@ static int run_search(const RunOptions& options, Model& root,
   if (options.engine=="rbs")
     std::cout << ",\"restart_cutoff\":\"luby\",\"restart_scale\":1000"
               << ",\"nogoods_limit\":128";
+  if (options.engine=="cabs" && options.formulation!="closed")
+    std::cout << ",\"dominance\":\"" << (options.dominance ? "on" : "off") << '"';
   std::cout << ",\"incumbent\":";
   if (incumbent) {
     std::cout << '{';
