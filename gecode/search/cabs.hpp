@@ -75,6 +75,17 @@ namespace Gecode {
   }
 
   template<class T>
+  inline T*
+  cabs(T* s, const Search::HeuristicGuidance& g, const Search::Options& o,
+       const Search::CABSOptions& limits) {
+    CABS<T> engine(s,g,o,limits);
+    std::unique_ptr<T> best;
+    while (T* solution = engine.next())
+      best.reset(solution);
+    return best.release();
+  }
+
+  template<class T>
   inline SEB
   cabs(const Search::HeuristicGuidance& g, const Search::Options& o,
        const Search::CABSOptions& limits) {

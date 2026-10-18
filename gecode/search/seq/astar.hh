@@ -47,7 +47,7 @@ namespace Gecode { namespace Search { namespace Seq {
   public:
     struct Configuration {
       HeuristicGuidance guidance;
-      BestFirstOrder ordering;
+      AStarOrder ordering;
     };
   private:
     struct Entry {
@@ -59,12 +59,12 @@ namespace Gecode { namespace Search { namespace Seq {
     /// Heap comparison with fixed exploration order
     struct Later {
       HeuristicGuidance::Sense sense;
-      BestFirstOrder ordering;
+      AStarOrder ordering;
       bool operator()(const Entry& a, const Entry& b) const;
     };
     Options opt;
     HeuristicGuidance guidance;
-    BestFirstOrder ordering;
+    AStarOrder ordering;
     std::vector<Entry> frontier;
     unsigned long long int order;
     /// Revision of the currently accepted incumbent
