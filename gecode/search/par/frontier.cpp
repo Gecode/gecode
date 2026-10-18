@@ -174,7 +174,7 @@ namespace Gecode { namespace Search { namespace Par {
   }
 
   void
-  Frontier::admit(Entry entry) {
+  Frontier::admit(Entry entry, bool parent) {
     if (!improves(entry.bound)) { stat.fail++; return; }
     entry.order=order++;
     const Earlier cmp=earlier();
@@ -230,9 +230,10 @@ namespace Gecode { namespace Search { namespace Par {
       std::push_heap(candidates.begin(),candidates.end(),cmp);
       return;
     }
-    // The submitting parent, if any, is pending; other leases reserve two spaces.
+    // Other leases reserve a parent and an unsubmitted successor.
     assert(active > 0);
-    const auto retained=frontier.size()+candidates.size()+pending.size()+2*(active-1);
+    const auto retained=frontier.size()+candidates.size()+pending.size()+
+      2*(active-1)+parent;
     if (limits.frontier_limit && retained >= limits.frontier_limit) {
       limited=stopped_=true;
       running=false;
@@ -262,25 +263,60 @@ namespace Gecode { namespace Search { namespace Par {
 
   void
   Frontier::work(unsigned int id) {
+    std::unique_ptr<Pending> task;
+    std::unique_ptr<Space> incumbent;
+    unsigned long long int current_revision=0;
+    Worker local;
+    bool leased=false;
+    Seq::ExpansionStep step{Seq::ExpansionStep::EXHAUSTED,nullptr,SS_FAILED};
+    std::int64_t bound=0, rank=0;
+    std::size_t key=0;
+    std::optional<std::int64_t> cutoff;
     while (true) {
-      std::unique_ptr<Pending> task;
-      std::unique_ptr<Space> incumbent;
-      unsigned long long int current_revision=0;
-      Worker local;
-      bool leased=false;
       try {
+        bool notify=false;
         {
           Support::Lock lock(mutex);
-          if (shutdown) return;
+          const bool empty=pending.empty() && frontier.empty();
+          if (leased) {
+            stat+=local;
+            local.reset();
+            if (step.state != Seq::ExpansionStep::EXHAUSTED) {
+              switch (step.status) {
+              case SS_FAILED: stat.fail++; break;
+              case SS_SOLVED: publish(std::move(step.space),bound); break;
+              case SS_BRANCH:
+                admit({std::move(step.space),bound,rank,key,
+                       task->depth+1,0,current_revision},
+                      static_cast<bool>(task->expansion));
+                break;
+              default: GECODE_NEVER;
+              }
+            }
+            step.space.reset();
+            step.state=Seq::ExpansionStep::EXHAUSTED;
+          }
           if (running && opt.stop && opt.stop->stop(stat,opt)) {
             stopped_=true;
             running=false;
           }
-          if (running && (!worker_control.engaged() ||
-                          id < WorkerControlAccess::requested(worker_control))) {
-            if (pending.empty() && frontier.empty() && active == 0 && !advance())
-              running=false;
-            if (running && (!pending.empty() || !frontier.empty())) {
+          const bool enabled=!worker_control.engaged() ||
+            id < WorkerControlAccess::requested(worker_control);
+          if (task && (!task->expansion || !running || !enabled || shutdown)) {
+            if (task->expansion) pending.push_back(std::move(task));
+            task.reset();
+            active--;
+            leased=false;
+          }
+          if (shutdown) {
+            incumbent.reset();
+            return;
+          }
+          if (running && enabled && !task) {
+            while (running && !task) {
+              if (pending.empty() && frontier.empty() && active == 0 && !advance())
+                running=false;
+              if (!running || (pending.empty() && frontier.empty())) break;
               if (!pending.empty()) {
                 task=std::move(pending.front());
                 pending.pop_front();
@@ -292,7 +328,16 @@ namespace Gecode { namespace Search { namespace Par {
                 }
                 Entry entry=std::move(frontier.back());
                 frontier.pop_back();
-                if (!improves(entry.bound)) { stat.fail++; continue; }
+                if (!improves(entry.bound)) {
+                  stat.fail++;
+                  if (opt.stop && opt.stop->stop(stat,opt)) {
+                    stopped_=true;
+                    running=false;
+                  }
+                  if (worker_control.engaged() &&
+                      id >= WorkerControlAccess::requested(worker_control)) break;
+                  continue;
+                }
                 task=std::make_unique<Pending>();
                 task->expansion.select(std::move(entry.space));
                 task->depth=entry.depth;
@@ -301,12 +346,24 @@ namespace Gecode { namespace Search { namespace Par {
               }
               active++;
               leased=true;
-              current_revision=revision;
-              if (best && task->revision != revision) incumbent.reset(best->clone());
+              break;
             }
           }
+          if (task) {
+            if (current_revision != revision) incumbent.reset();
+            if (best && task->revision != revision && !incumbent)
+              incumbent.reset(best->clone());
+            current_revision=revision;
+            cutoff=best ? std::optional<std::int64_t>(best_bound) : std::nullopt;
+          } else {
+            // Retire cached model state before the caller observes quiescence.
+            incumbent.reset();
+            current_revision=0;
+          }
+          notify=empty && (!pending.empty() || !frontier.empty());
           if (!running && active == 0) changed.signal();
         }
+        if (notify) wake();
         if (!task) {
           if (worker_control.engaged()) WorkerControlAccess::wait(worker_control,id);
           else runners[id]->wake.wait();
@@ -317,48 +374,42 @@ namespace Gecode { namespace Search { namespace Par {
           local.stack_depth(task->depth);
           task->counted=true;
         }
-        Seq::ExpansionStep step=task->expansion.next(local,task->depth+1,
-          task->revision,incumbent.get(),current_revision);
-        std::int64_t bound=0, rank=0;
-        std::size_t key=0;
-        if (step.space && step.status != SS_FAILED) {
-          if (step.status == SS_SOLVED) (void) step.space->choice();
-          bound=guidance.bound(*step.space);
-          if (step.status == SS_BRANCH && guidance.rank) rank=guidance.rank(*step.space);
-          if (step.status == SS_BRANCH && beam && limits.dominates && limits.dominance_key)
-            key=limits.dominance_key(*step.space);
-        }
-        const auto child_depth=task->depth+1;
-        {
-          Support::Lock lock(mutex);
-          incumbent.reset();
-          stat+=local;
-          local.reset();
-          if (task->expansion) pending.push_back(std::move(task));
-          if (step.state != Seq::ExpansionStep::EXHAUSTED) {
-            switch (step.status) {
-            case SS_FAILED: stat.fail++; break;
-            case SS_SOLVED: publish(std::move(step.space),bound); break;
-            case SS_BRANCH:
-              admit({std::move(step.space),bound,rank,key,
-                     child_depth,0,current_revision});
+        // Failed alternatives need no shared admission. Keep stop and worker
+        // control checks bounded even for choices with many failing children.
+        for (unsigned int i=0; i<32 && task->expansion; i++) {
+          step=task->expansion.next(local,task->depth+1,
+            task->revision,incumbent.get(),current_revision);
+          bound=rank=0;
+          key=0;
+          if (step.space && step.status != SS_FAILED) {
+            if (step.status == SS_SOLVED) (void) step.space->choice();
+            bound=guidance.bound(*step.space);
+            if (step.status == SS_BRANCH && cutoff &&
+                (guidance.sense == HeuristicGuidance::MINIMIZE ?
+                 bound >= *cutoff : bound <= *cutoff)) {
+              step.status=SS_FAILED;
+            } else {
+              if (step.status == SS_BRANCH && guidance.rank) rank=guidance.rank(*step.space);
+              if (step.status == SS_BRANCH && beam && limits.dominates && limits.dominance_key)
+                key=limits.dominance_key(*step.space);
               break;
-            default: GECODE_NEVER;
             }
           }
+          if (step.state != Seq::ExpansionStep::EXHAUSTED) local.fail++;
           step.space.reset();
-          task.reset();
-          active--;
-          leased=false;
-          if (!running && active == 0) changed.signal();
+          step.state=Seq::ExpansionStep::EXHAUSTED;
+          if (worker_control.engaged() &&
+              id >= WorkerControlAccess::requested(worker_control)) break;
         }
-        wake();
       } catch (...) {
         {
           Support::Lock lock(mutex);
+          step.space.reset();
+          step.state=Seq::ExpansionStep::EXHAUSTED;
           task.reset();
           incumbent.reset();
-          if (leased) { active--; stat+=local; }
+          current_revision=0;
+          if (leased) { active--; stat+=local; local.reset(); leased=false; }
           if (!error) error=std::current_exception();
           running=false;
           if (active == 0) changed.signal();
