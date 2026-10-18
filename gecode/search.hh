@@ -1174,7 +1174,8 @@ namespace Gecode { namespace Search {
    * Guidance is copied into engines and portfolio builders. Callbacks read
    * only the supplied Space and must not post constraints or capture another
    * Space's local state. Captured dependencies must outlive every engine and
-   * builder using them.
+   * builder using them. With multiple threads, callbacks can run concurrently;
+   * captured shared state and model copy/prepare operations must be thread-safe.
    * \ingroup TaskModelSearch
    */
   class HeuristicGuidance {
@@ -1204,7 +1205,7 @@ namespace Gecode { namespace Search {
 namespace Gecode {
 
   /**
-   * \brief Sequential A* with improving solutions and a fixed exploration order
+   * \brief A* with improving solutions and a fixed exploration order
    *
    * Experimental 6.5.0 preview: build with GECODE_ENABLE_EXPERIMENTAL=ON
    * or --enable-experimental; GECODE_HAS_EXPERIMENTAL reports availability.
@@ -1234,9 +1235,14 @@ namespace Gecode {
    *
    * The frontier stores clones; c_d and a_d do not control recomputation.
    * There is no hard memory guarantee and no-good extraction is empty.
-   * Only one expanded thread and no tracer are supported. Capacity-one
-   * worker control is supported. After an ordinary stop, raise or reset its
-   * limit and call next() to resume. Statistics depth counts committed edges.
+   * Options::threads selects sequential or parallel search. Parallel workers
+   * select the best currently queued node; concurrent expansions can change
+   * generation and solution order. Exhaustion waits for all expansions.
+   * Worker control can pause, grow, or shrink the active worker count while
+   * preserving pending work. Tracing is unsupported. After an ordinary stop,
+   * raise or reset its limit and call next() to resume. Statistics depth counts
+   * committed edges. Parallel next() waits for active model operations before
+   * returning; failures in workers are rethrown on the caller.
    * Before generating a choice, Brancher::prepare finishes any lazy model
    * preparation on the stable Space.
    * The native Search::Engine::reset interface takes ownership of its root
@@ -1325,7 +1331,9 @@ namespace Gecode { namespace Search {
      * Only live candidates in the same layer and pass justify pruning. A new
      * dominator inherits a removed candidate's beam slot, regardless of rank.
      * The engine copies the callable; captured references must outlive it.
-     * The predicate must not mutate either space. If it throws, destroy the
+     * The predicate must not mutate either space. Parallel admission serializes
+     * calls to this predicate, but guidance may run concurrently with it. Shared
+     * captured state must support that use. If it throws, destroy the
      * engine before further use.
      */
     std::function<bool(const Space&,const Space&)> dominates;
@@ -1339,7 +1347,7 @@ namespace Gecode { namespace Search {
 namespace Gecode {
 
   /**
-   * \brief Sequential complete anytime beam search with widening restarts
+   * \brief Complete anytime beam search with widening restarts
    *
    * Experimental 6.5.0 preview: build with GECODE_ENABLE_EXPERIMENTAL=ON
    * or --enable-experimental; GECODE_HAS_EXPERIMENTAL reports availability.
@@ -1364,7 +1372,8 @@ namespace Gecode {
    * external adoption does not imply infeasibility. Publishing a solution
    * preserves unfinished passes.
    * After an ordinary stop, raise or reset its limit and call next() to resume.
-   * Capacity-one worker control also preserves continuation. Width/frontier
+   * Worker control also preserves continuation, including a zero-worker pause.
+   * Width/frontier
    * limits and width overflow report stopped() until native Engine::reset.
    * A complete pass can prove its result at the maximum width; a maximum of
    * three allows passes at widths one and two. Native reset takes ownership
@@ -1372,11 +1381,18 @@ namespace Gecode {
    * work, intrinsic stops, and statistics while retaining guidance and CABS options.
    *
    * The frontier quota includes current-layer entries, next-layer candidates,
-   * and the selected parent. It excludes the restart root, incumbent, returned
-   * solutions, and temporary successors. It is a node
-   * quota, without a byte or process-memory guarantee. Clones store the search;
+   * and selected parents. In parallel search, each unfinished expansion reserves
+   * a parent and an unsubmitted successor at admission; there is at most one
+   * temporary successor per worker. The quota excludes the restart root,
+   * incumbent copies, and returned solutions. It is checked when adding a beam
+   * slot, without a byte or process-memory guarantee. Clones store the search;
    * c_d/a_d do not enable replay and no-good extraction is empty.
-   * One expanded thread and no tracer are supported. Guidance and strict
+   * Options::threads selects sequential or parallel expansion of layer parents.
+   * All workers share one next-layer beam and dominance admission. A layer or
+   * pass advances only after all current work has been submitted. Parallel
+   * generation order and returned improvements can differ from sequential search.
+   * next() waits for active model operations before returning and rethrows worker
+   * failures on the caller. Tracing is unsupported. Guidance and strict
    * improvement constraints obey HeuristicGuidance's scalar integer contract.
    * Brancher preparation follows AStar. Statistics depth counts committed
    * edges; restarts count widening passes.

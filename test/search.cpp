@@ -526,8 +526,9 @@ namespace Test {
       }
     };
 
-    static bool root_exceptions(bool cabs) {
+    static bool root_exceptions(bool cabs, unsigned int threads=1) {
       Gecode::Search::Options options; options.clone=false;
+      options.threads=threads;
       const auto guidance=AStarSpace::guidance(false);
       auto engine=[&](Space* root) {
         return std::unique_ptr<Gecode::Search::Engine>(cabs ?
@@ -758,12 +759,7 @@ namespace Test {
           }
         }
         AStarSpace root;
-        o.clone=false; o.threads=2;
-        try {
-          Gecode::AStar<AStarSpace> invalid(&root,AStarSpace::guidance(false),o);
-          return false;
-        } catch (const Gecode::Search::UnsupportedAStarThreads&) {}
-        o.threads=1;
+        o.clone=false;
         using Guidance=Gecode::Search::HeuristicGuidance;
         try {
           Gecode::AStar<AStarSpace> invalid(&root,Guidance(Guidance::MINIMIZE,{}),o);
@@ -838,12 +834,13 @@ namespace Test {
     };
 
     class CABSTest : public Base {
-      static bool dominance(void) {
+      static bool dominance(unsigned int threads=1) {
         using Relation=std::vector<std::pair<int,int>>;
-        auto solve=[](const TreeSpace::Graph& graph, const Relation& relation,
+        auto solve=[threads](const TreeSpace::Graph& graph, const Relation& relation,
                       unsigned long int width, int cost, bool stopped,
                       unsigned long int restarts, bool reset=false) {
           Gecode::Search::Options options; options.clone=false;
+          options.threads=threads;
           Gecode::Search::CABSOptions beam(width,0);
           unsigned int calls=0;
           beam.dominates=[relation,&calls](const Space& a, const Space& b) {
@@ -1117,12 +1114,6 @@ namespace Test {
             return false;
         }
         AStarSpace root;
-        o.threads=2;
-        try {
-          Gecode::CABS<AStarSpace> invalid(&root,AStarSpace::guidance(false),o);
-          return false;
-        } catch (const Gecode::Search::UnsupportedCABSThreads&) {}
-        o.threads=1;
         o.tracer=&Gecode::StdSearchTracer::def;
         try {
           Gecode::CABS<AStarSpace> invalid(&root,AStarSpace::guidance(false),o);
@@ -1153,11 +1144,149 @@ namespace Test {
           if (!solutions(max,1) || !solutions(max,0) || !discarded_bounds(max))
             return false;
         return interrupted_discard(false) && interrupted_discard(true) &&
-          dominance() && reset_discard() && feasibility() && adoption(false) && adoption(true) &&
+          dominance() && dominance(4) && reset_discard() && feasibility() && adoption(false) && adoption(true) &&
           root_exceptions(true) && ownership_and_limits() &&
           AStarSpace::live.load()==0;
       }
     } cabsTest;
+
+#ifdef GECODE_HAS_THREADS
+    class ParallelHeuristic : public Base {
+      static bool check(bool beam, bool max, unsigned int threads) {
+        using namespace Gecode::Search;
+        NodeStop stop(1);
+        Gecode::Search::Options options; options.clone=false; options.threads=threads; options.stop=&stop;
+        const auto guidance=AStarSpace::guidance(max,true);
+        auto make=[&](Space* root, CABSOptions limits=CABSOptions()) {
+          return std::unique_ptr<Engine>(beam ? cabsengine(root,guidance,options,limits) :
+            bestfirstengine(root,guidance,RANK_FIRST,options));
+        };
+        auto engine=make(new AStarSpace(max));
+        std::optional<std::int64_t> previous;
+        auto consume=[&]() {
+          while (std::unique_ptr<AStarSpace> s{
+                   static_cast<AStarSpace*>(engine->next())}) {
+            if (previous && !s->improves(s->objective(),*previous)) return false;
+            previous=s->objective();
+          }
+          return true;
+        };
+        if (!consume() || !engine->stopped()) return false;
+        const auto before=engine->statistics().node;
+        if (engine->next() || !engine->stopped() || engine->statistics().node!=before)
+          return false;
+        stop.limit(100000);
+        if (!consume() || engine->stopped()) return false;
+        AStarSpace optimum(max,2);
+        optimum.status();
+        if (!previous || *previous!=optimum.objective()) return false;
+        for (int repeat=0; repeat<3; repeat++) {
+          engine->reset(new AStarSpace(max));
+          if (engine->statistics().node || engine->statistics().restart) return false;
+          AStarSpace incumbent(max,1); incumbent.status();
+          engine->constrain(incumbent);
+          previous=incumbent.objective();
+          if (!consume() || engine->stopped() || *previous!=optimum.objective()) return false;
+          engine->reset(new AStarSpace(max));
+          engine->constrain(optimum);
+          if (engine->next() || engine->stopped()) return false;
+          engine->reset(new AStarSpace(max,-1,true));
+          if (engine->next() || engine->stopped()) return false;
+        }
+        engine.reset();
+        if (beam) for (const auto limits : {CABSOptions(1,0),CABSOptions(0,1)}) {
+          engine=make(new AStarSpace(max),limits);
+          previous.reset();
+          if (!consume() || !engine->stopped()) return false;
+          const auto nodes=engine->statistics().node;
+          if (engine->next() || !engine->stopped() || engine->statistics().node!=nodes)
+            return false;
+          engine->reset(new AStarSpace(max,2));
+          std::unique_ptr<Space> s(engine->next());
+          if (!s || engine->stopped() || engine->statistics().node!=1 || engine->next())
+            return false;
+        }
+        return true;
+      }
+      static bool exceptions(bool beam) {
+        using namespace Gecode::Search;
+        Gecode::Search::Options options; options.threads=4;
+        AStarSpace root;
+        for (bool rank : {false,true}) {
+          auto guidance=AStarSpace::guidance(false);
+          auto fail=[](const Space&)->std::int64_t {
+            throw std::runtime_error("parallel guidance failure");
+          };
+          if (rank) guidance.rank=fail; else guidance.bound=fail;
+          std::unique_ptr<Engine> engine(beam ? cabsengine(&root,guidance,options) :
+            astarengine(&root,guidance,options));
+          bool caught=false;
+          try { while (std::unique_ptr<Space> s{engine->next()}) {} }
+          catch (const std::runtime_error&) { caught=true; }
+          if (!caught) return false;
+        }
+        if (beam) {
+          CABSOptions limits;
+          limits.dominates=[](const Space&,const Space&)->bool {
+            throw std::runtime_error("parallel dominance failure");
+          };
+          std::unique_ptr<Engine> engine(cabsengine(&root,
+            AStarSpace::guidance(false,true),options,limits));
+          bool caught=false;
+          try { while (std::unique_ptr<Space> s{engine->next()}) {} }
+          catch (const std::runtime_error&) { caught=true; }
+          if (!caught) return false;
+        }
+        return AStarSpace::live.load()==1;
+      }
+      static bool overlap(bool beam) {
+        using namespace Gecode::Search;
+        // All shallow leaves are costly; widening must reach both parents
+        // before the better goal at the final original alternative.
+        const TreeSpace::Graph graph={
+          {0,0,0,{1,2,3,4}}, {0,0,0,{5,6}}, {0,0,1,{7,8}},
+          {0,0,2,{9,10}}, {0,0,3,{11,12}},
+          {20,20,0,{}}, {19,19,0,{}}, {18,18,0,{}}, {17,17,0,{}},
+          {16,16,0,{}}, {15,15,0,{}}, {14,14,0,{}}, {1,1,0,{}}};
+        Gecode::Search::Options options; options.clone=false; options.threads=4;
+        auto guidance=TreeSpace::guidance();
+        auto bound=guidance.bound;
+        std::atomic<int> inside{0}, peak{0};
+        guidance.bound=[&](const Space& s) {
+          const int count=++inside;
+          int old=peak.load();
+          while (old<count && !peak.compare_exchange_weak(old,count)) {}
+          std::this_thread::sleep_for(std::chrono::milliseconds(1));
+          const auto value=bound(s);
+          --inside;
+          return value;
+        };
+        std::unique_ptr<Engine> engine(beam ?
+          cabsengine(new TreeSpace(graph),guidance,options) :
+          astarengine(new TreeSpace(graph),guidance,options));
+        int best=100;
+        while (std::unique_ptr<TreeSpace> s{static_cast<TreeSpace*>(engine->next())}) {
+          if (s->value().cost>=best) return false;
+          best=s->value().cost;
+          if (inside.load()) return false;
+        }
+        return best==1 && !engine->stopped() && peak.load()>1;
+      }
+    public:
+      ParallelHeuristic(void) : Base("Search::ParallelHeuristic",TestTags::check()) {}
+      bool run(void) override {
+        std::lock_guard<std::mutex> lock(heuristic_ownership_mutex);
+        for (bool beam : {false,true}) {
+          for (bool max : {false,true})
+            for (unsigned int threads : {2U,4U})
+              if (!check(beam,max,threads)) return false;
+          if (!root_exceptions(beam,4) || !exceptions(beam) || !overlap(beam)) return false;
+          if (AStarSpace::live.load()!=0) return false;
+        }
+        return true;
+      }
+    } parallelHeuristic;
+#endif
 
 
 #endif
@@ -1665,11 +1794,12 @@ namespace Test {
         return ok && !engine.stopped() && (solutions == root.solutions());
       }
 #ifdef GECODE_HAS_EXPERIMENTAL
-      bool native(unsigned int kind, unsigned int node, bool stopping) {
+      bool native(unsigned int kind, unsigned int node, bool stopping,
+                  unsigned int threads=1) {
         Gecode::Search::WorkerControl control(node == 0U ? 0U : 1U);
         Pause pause(control,node);
         Gecode::Search::Options options;
-        options.threads=1; options.worker_control=control; options.stop=&pause;
+        options.threads=threads; options.worker_control=control; options.stop=&pause;
         AStarSpace root;
         const auto guidance=AStarSpace::guidance(false);
         std::unique_ptr<Gecode::Search::Engine> engine(kind==0U ?
@@ -1697,13 +1827,17 @@ namespace Test {
           if (!engine->stopped() || engine->statistics().node!=before)
             return false;
           pause.terminate.store(false,std::memory_order_release);
-          control.request(1U);
+          control.request(threads);
           consume();
         } else {
-          control.request(1U);
+          control.request(threads);
           result.get();
         }
-        return paused && found && optimum==root.score(2) && !engine->stopped();
+        const bool complete=paused && found && optimum==root.score(2) && !engine->stopped();
+        // Destruction must wake parked workers before waiting for completion.
+        control.request(0U);
+        engine.reset();
+        return complete;
       }
 #endif
 
@@ -1716,7 +1850,8 @@ namespace Test {
         std::lock_guard<std::mutex> lock(heuristic_ownership_mutex);
         for (unsigned int kind : {0U,1U})
           if (!native(kind,0U,false) || !native(kind,1U,false) ||
-              !native(kind,0U,true)) return false;
+              !native(kind,0U,true) || !native(kind,0U,false,4) ||
+              !native(kind,1U,false,4) || !native(kind,0U,true,4)) return false;
 #endif
         return check<Gecode::DFS>(0U) && check<Gecode::DFS>(1U) &&
           check<Gecode::BAB>(0U) && check<Gecode::BAB>(1U);

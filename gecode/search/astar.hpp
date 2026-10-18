@@ -34,11 +34,11 @@
 #ifdef GECODE_HAS_EXPERIMENTAL
 namespace Gecode { namespace Search {
 
-  /// Create a native sequential A* engine
+  /// Create a native A* engine
   GECODE_SEARCH_EXPORT Engine*
   astarengine(Space* s, const HeuristicGuidance& guidance, const Options& o);
 
-  /// Create a native sequential best-first engine with fixed exploration order
+  /// Create a native best-first engine with fixed exploration order
   GECODE_SEARCH_EXPORT Engine*
   bestfirstengine(Space* s, const HeuristicGuidance& guidance,
                   AStarOrder ordering, const Options& o);

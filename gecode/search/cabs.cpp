@@ -34,6 +34,7 @@
 #include <gecode/search.hh>
 #include <gecode/search/support.hh>
 #include <gecode/search/seq/cabs.hh>
+#include <gecode/search/par/frontier.hh>
 #include <algorithm>
 #include <limits>
 
@@ -43,12 +44,14 @@ namespace Gecode { namespace Search {
   cabsengine(Space* s, const HeuristicGuidance& g, const Options& o,
              const CABSOptions& limits) {
     Options expanded = o.expand();
-    if (expanded.threads != 1.0)
-      throw UnsupportedCABSThreads("CABS");
     if (expanded.tracer != nullptr)
       throw UnsupportedCABSTracer("CABS");
     if (!g.bound)
       throw UninitializedCABSBound("CABS");
+#ifdef GECODE_HAS_THREADS
+    if (expanded.threads != 1.0)
+      return new Par::Frontier(s,g,BOUND_FIRST,expanded,true,limits);
+#endif
     return new WorkerToEngine<Seq::CABS>(s,expanded,
                                        Seq::CABS::Configuration{g,limits});
   }
