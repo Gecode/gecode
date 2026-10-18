@@ -123,6 +123,7 @@ option(GECODE_ENABLE_FLATZINC "Build FlatZinc module" ON)
 
 option(GECODE_ENABLE_MPFR "Enable MPFR support" ON)
 option(GECODE_ENABLE_ALLOCATOR "Enable default allocator" ON)
+option(GECODE_ENABLE_MIMALLOC "Use a private mimalloc backend for the default allocator" OFF)
 option(GECODE_ENABLE_AUDIT "Enable audit code" OFF)
 # Test-only; FailPoint state is process-global and is supported only by the
 # dedicated isolated single-threaded fault-test executable below.
@@ -774,6 +775,17 @@ if(HAVE_BUILTIN_POPCOUNTLL)
   set(GECODE_HAS_BUILTIN_POPCOUNTLL "/**/")
 endif()
 
+if(GECODE_ENABLE_MIMALLOC)
+  if(NOT GECODE_ENABLE_ALLOCATOR)
+    message(FATAL_ERROR "GECODE_ENABLE_MIMALLOC requires GECODE_ENABLE_ALLOCATOR=ON")
+  endif()
+  if(GECODE_SANITIZER_NORMALIZED)
+    message(FATAL_ERROR "GECODE_ENABLE_MIMALLOC does not support GECODE_SANITIZER; use the system allocator for sanitizer builds")
+  endif()
+  include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/GecodeMimalloc.cmake)
+  gecode_configure_mimalloc()
+endif()
+
 # Process config.hpp using autoconf-like undef handling.
 list(LENGTH CONFIG length)
 math(EXPR length "${length} - 1")
@@ -801,6 +813,10 @@ foreach(i RANGE ${length})
   string(REPLACE "<semi>" ";" line "${line}")
   set(CONFIG_OUT "${CONFIG_OUT}${line}")
 endforeach()
+
+if(GECODE_ENABLE_MIMALLOC)
+  string(APPEND CONFIG_OUT "\n/* Use the private mimalloc backend (CMake only). */\n#define GECODE_MIMALLOC 1\n")
+endif()
 
 file(CONFIGURE OUTPUT "${GECODE_BINARY_DIR}/gecode/support/config.hpp" CONTENT
 "/* gecode/support/config.hpp.  Generated from config.hpp.in by configure.  */
@@ -1235,6 +1251,16 @@ foreach(component ${GECODE_LIBRARY_COMPONENTS})
   add_gecode_component_library(${component})
 endforeach()
 
+if(GECODE_ENABLE_MIMALLOC)
+  foreach(kind shared static)
+    if(TARGET gecodesupport_${kind})
+      target_sources(gecodesupport_${kind} PRIVATE $<TARGET_OBJECTS:mimalloc-obj>)
+      target_include_directories(gecodesupport_${kind} PRIVATE "${GECODE_MIMALLOC_SOURCE_DIR}/include")
+      target_link_libraries(gecodesupport_${kind} PRIVATE ${GECODE_MIMALLOC_LIBRARIES})
+    endif()
+  endforeach()
+endif()
+
 if(GECODE_ENABLE_THREAD)
   find_package(Threads REQUIRED)
   gecode_link_component(support Threads::Threads)
@@ -1649,6 +1675,11 @@ endif()
 # ---------------------------------------------------------------------------
 if(GECODE_INSTALL)
   include(CMakePackageConfigHelpers)
+  if(GECODE_ENABLE_MIMALLOC)
+    install(FILES "${GECODE_MIMALLOC_SOURCE_DIR}/LICENSE"
+      DESTINATION ${CMAKE_INSTALL_DATADIR}/licenses/gecode
+      RENAME mimalloc-LICENSE)
+  endif()
 
   install(TARGETS ${GECODE_INSTALL_TARGETS}
     EXPORT GecodeTargets
@@ -1787,7 +1818,7 @@ foreach(gecode_option IN ITEMS
     GECODE_ENABLE_EXAMPLES GECODE_INSTALL
     GECODE_ENABLE_SEARCH GECODE_ENABLE_INT_VARS GECODE_ENABLE_SET_VARS
     GECODE_ENABLE_FLOAT_VARS GECODE_ENABLE_MINIMODEL GECODE_ENABLE_DRIVER
-    GECODE_ENABLE_FLATZINC GECODE_ENABLE_ALLOCATOR GECODE_ENABLE_AUDIT
+    GECODE_ENABLE_FLATZINC GECODE_ENABLE_ALLOCATOR GECODE_ENABLE_MIMALLOC GECODE_ENABLE_AUDIT
     GECODE_ENABLE_FAULT_INJECTION GECODE_REGENERATE_VARIMP
     GECODE_DOC_SEARCH GECODE_DOC_TAGFILE)
   get_property(gecode_option_description CACHE ${gecode_option} PROPERTY HELPSTRING)

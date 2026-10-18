@@ -264,6 +264,91 @@ jobs:
         cmake --install "$GITHUB_WORKSPACE/build-ninja" --prefix "$GITHUB_WORKSPACE/install-ninja"
         bash .github/ci/flatzinc-tools-smoke.sh "$GITHUB_WORKSPACE/install-ninja"
 
+  build-cmake-allocator:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-15, windows-2022]
+        variant: [shared, static]
+        mimalloc: ["ON"]
+        include:
+          - os: ubuntu-latest
+            variant: shared
+            mimalloc: "OFF"
+
+    steps:
+    - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+
+    - name: Build and install allocator package
+      shell: bash
+      run: |
+        set -euxo pipefail
+        shared=OFF
+        static=OFF
+        if [ "${{ matrix.variant }}" = shared ]; then shared=ON; else static=ON; fi
+        cmake -S . -B build-allocator \
+          -DCMAKE_BUILD_TYPE="$BUILD_TYPE" \
+          -DGECODE_BUILD_SHARED="$shared" -DGECODE_BUILD_STATIC="$static" \
+          -DGECODE_ENABLE_MIMALLOC=${{ matrix.mimalloc }} \
+          -DGECODE_ENABLE_GCC_VISIBILITY=OFF \
+          -DBUILD_TESTING=OFF -DGECODE_ENABLE_EXAMPLES=OFF \
+          -DGECODE_ENABLE_SEARCH=OFF -DGECODE_ENABLE_INT_VARS=OFF \
+          -DGECODE_ENABLE_SET_VARS=OFF -DGECODE_ENABLE_FLOAT_VARS=OFF \
+          -DGECODE_ENABLE_MINIMODEL=OFF -DGECODE_ENABLE_DRIVER=OFF \
+          -DGECODE_ENABLE_FLATZINC=OFF -DGECODE_ENABLE_QT=OFF -DGECODE_ENABLE_GIST=OFF
+        cmake --build build-allocator --config "$BUILD_TYPE" --parallel 2
+        cmake --install build-allocator --config "$BUILD_TYPE" --prefix "$GITHUB_WORKSPACE/install-allocator"
+
+    - name: Check private allocator exports
+      if: matrix.variant == 'shared' && runner.os != 'Windows'
+      shell: bash
+      run: |
+        set -euxo pipefail
+        if [ "$RUNNER_OS" = Linux ]; then
+          nm -D --defined-only install-allocator/lib/libgecodesupport.so > build-allocator/exports.txt
+        else
+          nm -gU install-allocator/lib/libgecodesupport.dylib > build-allocator/exports.txt
+        fi
+        if grep -E '[[:space:]]_?(mi_[[:alnum:]_]+|malloc|calloc|realloc|free|aligned_alloc|posix_memalign)$' build-allocator/exports.txt; then
+          echo "Allocator implementation or malloc replacement exported by gecodesupport"
+          exit 1
+        fi
+
+    - name: Reject unsupported allocator combinations
+      if: matrix.os == 'ubuntu-latest' && matrix.variant == 'shared' && matrix.mimalloc == 'ON'
+      shell: bash
+      run: |
+        set -euxo pipefail
+        if cmake -S . -B "$RUNNER_TEMP/mimalloc-custom" \
+          -DGECODE_ENABLE_MIMALLOC=ON -DGECODE_ENABLE_ALLOCATOR=OFF > "$RUNNER_TEMP/mimalloc-custom.log" 2>&1; then
+          exit 1
+        fi
+        grep -q 'requires GECODE_ENABLE_ALLOCATOR=ON' "$RUNNER_TEMP/mimalloc-custom.log"
+        if cmake -S . -B "$RUNNER_TEMP/mimalloc-sanitizer" \
+          -DGECODE_ENABLE_MIMALLOC=ON -DGECODE_SANITIZER=address > "$RUNNER_TEMP/mimalloc-sanitizer.log" 2>&1; then
+          exit 1
+        fi
+        grep -q 'does not support GECODE_SANITIZER' "$RUNNER_TEMP/mimalloc-sanitizer.log"
+
+    - name: Installed allocator ownership and thread transfer
+      shell: bash
+      run: |
+        set -euxo pipefail
+        cmake -S test/package/allocator -B build-allocator-consumer \
+          -DCMAKE_BUILD_TYPE="$BUILD_TYPE" \
+          -DCMAKE_PREFIX_PATH="$GITHUB_WORKSPACE/install-allocator" \
+          -DGECODE_LINK_VARIANT=${{ matrix.variant }} \
+          -DGECODE_EXPECT_MIMALLOC=${{ matrix.mimalloc }} \
+          -DMIMALLOC_INCLUDE_DIR="$GITHUB_WORKSPACE/build-allocator/_deps/gecode_mimalloc-src/include"
+        cmake --build build-allocator-consumer --config "$BUILD_TYPE" --parallel 2
+        export PATH="$GITHUB_WORKSPACE/install-allocator/bin:$PATH"
+        ctest --test-dir build-allocator-consumer --build-config "$BUILD_TYPE" --output-on-failure
+        if [ "${{ matrix.mimalloc }}" = ON ]; then
+          test -f install-allocator/share/licenses/gecode/mimalloc-LICENSE
+          test ! -f install-allocator/include/mimalloc.h
+        fi
+
   build-32-bit-linkage:
     runs-on: ubuntu-latest
 

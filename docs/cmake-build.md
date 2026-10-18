@@ -126,6 +126,8 @@ to inspect test assignments.
   usable Qt GUI stack is available. `ON` requires Gist dependencies and fails
   configuration if they are unavailable. Gist requires Qt Gui, Widgets, and
   PrintSupport in addition to Qt Core.
+- `GECODE_ENABLE_MIMALLOC`: selects a private mimalloc backend for Gecode's
+  default allocator. Disabled by default; see [Allocator backend](#allocator-backend).
 - `GECODE_ENABLE_FAULT_INJECTION`: builds deterministic allocation and copy
   failpoints together with the `Fault::*` regression suite. This facility is
   test-only, process-global, isolated to the dedicated single-threaded fault
@@ -148,6 +150,36 @@ Subproject defaults (`add_subdirectory`):
 - `GECODE_ENABLE_EXAMPLES=OFF`
 - `BUILD_TESTING=OFF` (unless enabled by parent project)
 - `GECODE_INSTALL=OFF`
+
+### Allocator backend
+
+The default backend uses the system allocator. To build with mimalloc:
+
+```bash
+cmake -S . -B build-mimalloc -DGECODE_ENABLE_MIMALLOC=ON
+cmake --build build-mimalloc -j
+```
+
+This CMake-only option downloads the pinned mimalloc 3.5.3 source and embeds it
+in `gecodesupport`. It covers allocations through `Support::Allocator`, including
+Gecode's heap and space storage. Application `malloc`, `new`, and standard
+containers keep their normal allocator. No preload library or redirect DLL is
+needed, and installed consumers need no mimalloc package or headers.
+
+For an offline build, provide an unpacked copy of that version with CMake's
+standard source override:
+
+```bash
+cmake -S . -B build-mimalloc -DGECODE_ENABLE_MIMALLOC=ON \
+  -DFETCHCONTENT_SOURCE_DIR_GECODE_MIMALLOC=/path/to/mimalloc-3.5.3
+```
+
+Use matching configured headers and libraries, and rebuild consumers when
+changing the backend. Mimalloc requires `GECODE_ENABLE_ALLOCATOR=ON`; custom
+allocators and `GECODE_PEAKHEAP` are unsupported with this backend. Gecode's
+sanitizer configurations also require the system backend, so heap diagnostics
+continue to use the sanitizer's allocator interception. Autoconf builds retain
+the system backend.
 
 ### Fault injection and sanitizers
 

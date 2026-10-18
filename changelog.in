@@ -74,6 +74,14 @@ Date: unreleased
 This is the development changelog for the next Gecode release.
 
 [ENTRY]
+Module: support
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Add an optional CMake mimalloc backend for Gecode heap and space allocations.
+The system allocator is the default.
+
+[ENTRY]
 Module: kernel
 What:   new
 Rank:   minor
