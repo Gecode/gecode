@@ -84,6 +84,11 @@ residual filtering, shortest-path deadline checks, or a temporary unary
 scheduling relaxation. Defaults are `prefix` and `off`. Shortest-path bounds
 preserve soundness for nonmetric arcs.
 
+CABS enables dominance by default for `transition` and `eager`. Among live
+next-layer candidates with the same location and unvisited customers, an earlier
+arrival with no greater prefix cost subsumes a later, no cheaper arrival.
+Use `--dominance off` to compare runs without this pruning.
+
 `--seed TOUR` checks the seed before adopting it and emits it before any
 improvements. `--time-ms N` and `--node-limit N` use ordinary search stops;
 time includes reading and preprocessing. CABS also accepts `--max-width N` and

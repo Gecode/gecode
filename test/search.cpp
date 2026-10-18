@@ -90,6 +90,7 @@ namespace Test {
     using namespace Gecode;
     using namespace Gecode::Int;
 
+#ifdef GECODE_HAS_EXPERIMENTAL
     /// Successful preparation can end in failure or skip to a solved brancher.
     class PreparedTerminal : public Base {
       class PreparedSpace : public Space {
@@ -138,13 +139,7 @@ namespace Test {
       PreparedTerminal(void) : Base("Search::PreparedTerminal",TestTags::check()) {}
       bool run(void) override {
         for (bool failure : {false,true})
-          for (unsigned int kind=0; kind<
-#ifdef GECODE_HAS_EXPERIMENTAL
-               5
-#else
-               3
-#endif
-               ; kind++) {
+          for (unsigned int kind=0; kind<5; kind++) {
             auto choices=std::make_shared<std::atomic<unsigned int>>(0);
             Gecode::Search::NodeStop stop(100);
             Gecode::Search::Options options; options.clone=false; options.stop=&stop;
@@ -155,14 +150,12 @@ namespace Test {
               options.threads=2;
               engine.reset(Gecode::Search::babengine(new PreparedSpace(failure,choices),options));
             }
-#ifdef GECODE_HAS_EXPERIMENTAL
             else {
               using Guidance=Gecode::Search::HeuristicGuidance;
               Guidance guidance(Guidance::MINIMIZE,[](const Space&) -> std::int64_t { return 0; });
               if (kind==3) engine.reset(Gecode::Search::astarengine(new PreparedSpace(failure,choices),guidance,options));
               else engine.reset(Gecode::Search::cabsengine(new PreparedSpace(failure,choices),guidance,options));
             }
-#endif
             std::unique_ptr<Space> result(engine->next());
             auto stat=engine->statistics();
             if (static_cast<bool>(result)==failure || choices->load() || engine->stopped() ||
@@ -173,7 +166,6 @@ namespace Test {
     } preparedTerminal;
 
 
-#ifdef GECODE_HAS_EXPERIMENTAL
     /// The example's real n-ary transitions survive cloning and continuation.
     class TSPTWTransitionTest : public Base {
       using Transition=TSPTW::Transition;
@@ -368,6 +360,45 @@ namespace Test {
         }
         return true;
       }
+      static bool dominance(std::shared_ptr<const TSPTW::Instance> data) {
+        Transition reference(data);
+        const auto suffixes=completions(reference);
+        std::int64_t optimum=std::numeric_limits<std::int64_t>::max();
+        for (const auto& suffix : suffixes) optimum=std::min(optimum,suffix.cost);
+        for (auto representation : {Transition::LAZY,Transition::EAGER})
+          for (auto propagation : {Transition::OFF,Transition::CHEAP,Transition::UNARY}) {
+            if (data->n==5) {
+              auto label=[&](std::initializer_list<int> prefix) {
+                auto state=std::make_unique<Transition>(data,representation,propagation);
+                for (int node : prefix)
+                  if (!visit(*state,node)) return std::unique_ptr<Transition>{};
+                return state;
+              };
+              auto a=label({1,4,2}), b=label({4,1,2});
+              // The earlier arrival costs more: neither label subsumes the other.
+              if (!a || !b || a->time!=21 || a->cost()!=9 ||
+                  b->time!=20 || b->cost()!=11 || Transition::dominates(*a,*b) ||
+                  Transition::dominates(*b,*a)) return false;
+              a=label({1,3,2}); b=label({3,1,2});
+              if (!a || !b || !Transition::dominates(*a,*a) ||
+                  !Transition::dominates(*a,*b) || Transition::dominates(*b,*a) ||
+                  Transition::dominates(*a,reference)) return false;
+            }
+            for (auto bound : {Transition::PREFIX,Transition::MIN_ARCS})
+              for (bool enabled : {false,true}) {
+                Transition root(data,representation,propagation);
+                Gecode::Search::CABSOptions options;
+                if (enabled) options.dominates=Transition::dominates;
+                Gecode::CABS<Transition> engine(&root,Transition::guidance(bound),
+                  Gecode::Search::Options::def,options);
+                std::int64_t best=std::numeric_limits<std::int64_t>::max();
+                while (std::unique_ptr<Transition> solution{engine.next()})
+                  best=solution->cost();
+                if (engine.stopped() || best!=optimum) return false;
+              }
+          }
+        return true;
+      }
       static bool bounds_and_inference(void) {
         bool filtered=false, rejected=false;
         // Waiting/nonmetric and unequal/incomparable (t,g) labels; tight unary
@@ -388,7 +419,7 @@ namespace Test {
           std::istringstream input(text);
           auto data=std::make_shared<const TSPTW::Instance>(TSPTW::read(input));
           Transition root(data);
-          if (!residuals(root,{},filtered,rejected)) return false;
+          if (!residuals(root,{},filtered,rejected) || !dominance(data)) return false;
         }
         return filtered && rejected;
       }
@@ -807,6 +838,65 @@ namespace Test {
     };
 
     class CABSTest : public Base {
+      static bool dominance(void) {
+        using Relation=std::vector<std::pair<int,int>>;
+        auto solve=[](const TreeSpace::Graph& graph, const Relation& relation,
+                      unsigned long int width, int cost, bool stopped,
+                      unsigned long int restarts, bool reset=false) {
+          Gecode::Search::Options options; options.clone=false;
+          Gecode::Search::CABSOptions beam(width,0);
+          unsigned int calls=0;
+          beam.dominates=[relation,&calls](const Space& a, const Space& b) {
+            calls++;
+            return std::find(relation.begin(),relation.end(),std::make_pair(
+              static_cast<const TreeSpace&>(a).vertex,
+              static_cast<const TreeSpace&>(b).vertex))!=relation.end();
+          };
+          std::unique_ptr<Gecode::Search::Engine> engine(
+            Gecode::Search::cabsengine(new TreeSpace(graph),
+              TreeSpace::guidance(),options,beam));
+          beam.dominates={};
+          for (int run=0; run<(reset ? 2 : 1); run++) {
+            const auto before=calls;
+            if (run) engine->reset(new TreeSpace(graph));
+            int best=std::numeric_limits<int>::max();
+            while (std::unique_ptr<TreeSpace> solution{
+                     static_cast<TreeSpace*>(engine->next())})
+              best=solution->value().cost;
+            if (best!=cost || engine->stopped()!=stopped || calls==before ||
+                engine->statistics().restart!=restarts) return false;
+          }
+          return true;
+        };
+        const TreeSpace::Graph pair={
+          {0,0,0,{1,2}}, {0,0,0,{3}}, {0,0,9,{4}},
+          {10,10,0,{}}, {5,5,0,{}}};
+        // The worse-ranked dominator takes the only slot without width loss.
+        if (!solve(pair,{{2,1}},1,5,false,0)) return false;
+        auto equivalent=pair;
+        equivalent[3].cost=equivalent[3].bound=5;
+        // Equal labels retain the first representative, even with a better rank.
+        equivalent[2].rank=-1;
+        if (!solve(equivalent,{{1,2},{2,1}},1,5,false,0) ||
+            !solve(pair,{},0,5,false,1)) return false;
+
+        const TreeSpace::Graph multiple={
+          {0,0,0,{1,2,3,4}}, {0,0,0,{5}}, {0,0,1,{6}},
+          {0,0,9,{7}}, {0,0,10,{8}},
+          {10,10,0,{}}, {11,11,0,{}}, {5,5,0,{}}, {4,4,0,{}}};
+        // Removing both victims frees a slot for the worse-ranked optimum.
+        // Reset repeats widening and must retain the copied callback.
+        if (!solve(multiple,{{3,1},{3,2}},2,4,false,1,true)) return false;
+
+        TreeSpace::Graph lifetime={
+          {0,0,0,{1,2,3}}, {0,0,1,{4}}, {0,0,0,{5}}, {0,0,-1,{6}},
+          {4,4,0,{}}, {10,10,0,{}}, {5,5,0,{}}};
+        // Candidate 1 can subsume 3, but cannot do so after beam eviction.
+        if (!solve(lifetime,{{1,3}},1,5,true,0)) return false;
+        lifetime[0].children={2,1,3};
+        // Nor may candidate 1 justify pruning after admission discards it.
+        return solve(lifetime,{{1,3}},1,5,true,0);
+      }
       static bool discarded_bounds(bool max) {
         Gecode::Search::Options options; options.clone=false;
         auto solve=[&](const TreeSpace::Graph& graph, unsigned long int width,
@@ -1063,7 +1153,7 @@ namespace Test {
           if (!solutions(max,1) || !solutions(max,0) || !discarded_bounds(max))
             return false;
         return interrupted_discard(false) && interrupted_discard(true) &&
-          reset_discard() && feasibility() && adoption(false) && adoption(true) &&
+          dominance() && reset_discard() && feasibility() && adoption(false) && adoption(true) &&
           root_exceptions(true) && ownership_and_limits() &&
           AStarSpace::live.load()==0;
       }
