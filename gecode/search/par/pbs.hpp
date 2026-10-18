@@ -95,10 +95,8 @@ namespace Gecode { namespace Search { namespace Par {
   forceinline bool
   CollectBest::add(Space* s, Slave<CollectBest>* r) {
     if (b != nullptr) {
-      std::unique_ptr<Space> probe(b->clone());
-      probe->invalidate_branchers();
-      probe->constrain(*s);
-      if (probe->status() == SS_FAILED) {
+      b->constrain(*s);
+      if (b->status() == SS_FAILED) {
         delete b;
       } else {
         delete s;
@@ -112,10 +110,8 @@ namespace Gecode { namespace Search { namespace Par {
   forceinline bool
   CollectBest::constrain(const Space& s) {
     if (b != nullptr) {
-      std::unique_ptr<Space> probe(b->clone());
-      probe->invalidate_branchers();
-      probe->constrain(s);
-      if (probe->status() == SS_FAILED) {
+      b->constrain(s);
+      if (b->status() == SS_FAILED) {
         delete b;
       } else {
         return false;

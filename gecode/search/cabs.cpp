@@ -41,7 +41,7 @@ namespace Gecode { namespace Search {
 
   Engine*
   cabsengine(Space* s, const HeuristicGuidance& g, const Options& o,
-             const CABSOptions& limits, const StatePruning& p) {
+             const CABSOptions& limits) {
     Options expanded = o.expand();
     if (expanded.threads != 1.0)
       throw UnsupportedCABSThreads("CABS");
@@ -49,10 +49,8 @@ namespace Gecode { namespace Search {
       throw UnsupportedCABSTracer("CABS");
     if (!g.bound)
       throw UninitializedCABSBound("CABS");
-    if (static_cast<bool>(p.extract) != static_cast<bool>(p.compare))
-      throw UninitializedStatePruning("CABS");
     return new WorkerToEngine<Seq::CABS>(s,expanded,
-                                       Seq::CABS::Configuration{g,limits,p});
+                                       Seq::CABS::Configuration{g,limits});
   }
 
 }}
@@ -71,8 +69,7 @@ namespace Gecode { namespace Search { namespace Seq {
   }
 
   CABS::CABS(Space* s, const Options& o, const Configuration& c)
-    : opt(o), guidance(c.guidance), limits(c.limits), pruning(c.pruning),
-      candidate_descriptors(0), candidate_bytes(0), width(1), order(0),
+    : opt(o), guidance(c.guidance), limits(c.limits), width(1), order(0),
       incumbent_revision(0), current_status(SS_FAILED), current_depth(0),
       current_revision(0), counted(false), best_bound(0),
       limited(false) {
@@ -112,51 +109,9 @@ namespace Gecode { namespace Search { namespace Seq {
       fail++;
       return true;
     }
-    std::optional<StatePruning::Descriptor> descriptor;
-    std::vector<std::size_t> victims;
-    if (pruning.extract) {
-      descriptor = pruning.extract(*s);
-      if (descriptor)
-        for (std::size_t i=0; i<candidates.size(); i++) {
-          const auto& existing = candidates[i].descriptor;
-          if (!existing || descriptor->hash != existing->hash ||
-              descriptor->key != existing->key) continue;
-          const auto relation = pruning.compare(*descriptor,*existing);
-          if (relation == StatePruning::EQUIVALENT ||
-              relation == StatePruning::DOMINATED) {
-            state_pruned++;
-            return true;
-          }
-          if (relation == StatePruning::DOMINATES) victims.push_back(i);
-        }
-    }
     const std::int64_t rank = guidance.rank ? guidance.rank(*s) : 0;
-    Entry entry{std::move(s),bound,rank,depth,order++,revision,
-                std::move(descriptor)};
+    Entry entry{std::move(s),bound,rank,depth,order++,revision};
     Earlier earlier{guidance.sense,static_cast<bool>(guidance.rank)};
-    if (!victims.empty()) {
-      // A dominator takes a victim's existing slot regardless of rank. Only
-      // after it survives may the other dominated live candidates disappear.
-      for (std::size_t victim : victims)
-        remove_descriptor(candidates[victim]);
-      candidates[victims.front()] = std::move(entry);
-      add_descriptor(candidates[victims.front()]);
-      std::size_t write = victims.front()+1;
-      std::size_t victim = 1;
-      for (std::size_t read=write; read<candidates.size(); read++) {
-        if (victim<victims.size() && read==victims[victim]) {
-          victim++;
-        } else {
-          if (write!=read) candidates[write] = std::move(candidates[read]);
-          write++;
-        }
-      }
-      candidates.erase(candidates.begin()+write,candidates.end());
-      std::make_heap(candidates.begin(),candidates.end(),earlier);
-      state_pruned += victims.size();
-      record_descriptors();
-      return true;
-    }
     if (candidates.size() == width) {
       const bool replace = earlier(entry,candidates.front());
       const std::int64_t discarded = replace ? candidates.front().bound : entry.bound;
@@ -167,11 +122,8 @@ namespace Gecode { namespace Search { namespace Seq {
       if (!replace) return true;
       // Replacement uses the discarded entry's existing slot.
       std::pop_heap(candidates.begin(),candidates.end(),earlier);
-      remove_descriptor(candidates.back());
       candidates.back() = std::move(entry);
-      add_descriptor(candidates.back());
       std::push_heap(candidates.begin(),candidates.end(),earlier);
-      record_descriptors();
       return true;
     }
     const auto pending = layer.size() + candidates.size() + (expansion ? 1U : 0U);
@@ -180,40 +132,8 @@ namespace Gecode { namespace Search { namespace Seq {
       return false;
     }
     candidates.push_back(std::move(entry));
-    add_descriptor(candidates.back());
     std::push_heap(candidates.begin(),candidates.end(),earlier);
-    record_descriptors();
     return true;
-  }
-
-  void
-  CABS::add_descriptor(const Entry& entry) {
-    if (entry.descriptor) {
-      candidate_descriptors++;
-      candidate_bytes += entry.descriptor->storage();
-    }
-  }
-
-  void
-  CABS::remove_descriptor(const Entry& entry) {
-    if (entry.descriptor) {
-      candidate_descriptors--;
-      candidate_bytes -= entry.descriptor->storage();
-    }
-  }
-
-  void
-  CABS::record_descriptors(void) {
-    if (pruning.descriptor_limit &&
-        candidate_descriptors > pruning.descriptor_limit) {
-      // Forget metadata only; every admitted candidate still gets expanded.
-      for (auto& candidate : candidates) candidate.descriptor.reset();
-      candidate_descriptors = 0;
-      candidate_bytes = 0;
-      return;
-    }
-    state_descriptors = std::max(state_descriptors,candidate_descriptors);
-    state_bytes = std::max(state_bytes,candidate_bytes);
   }
 
   Space*
@@ -232,11 +152,6 @@ namespace Gecode { namespace Search { namespace Seq {
   CABS::advance(void) {
     if (!candidates.empty()) {
       layer.swap(candidates);
-      // Only live next-layer candidates can justify state pruning.
-      if (pruning.extract)
-        for (auto& entry : layer) entry.descriptor.reset();
-      candidate_descriptors = 0;
-      candidate_bytes = 0;
       Earlier earlier{guidance.sense,static_cast<bool>(guidance.rank)};
       // Keep the preferred node at the back for constant-time selection.
       std::sort(layer.begin(),layer.end(),
@@ -300,9 +215,8 @@ namespace Gecode { namespace Search { namespace Seq {
         }
       }
       const auto child_depth = current_depth+1;
-      ExpansionStep step = expansion.next(*this,opt,child_depth,current_revision,
+      ExpansionStep step = expansion.next(*this,child_depth,current_revision,
                                            best.get(),incumbent_revision);
-      if (step.state == ExpansionStep::SUSPENDED) return nullptr;
       if (step.state == ExpansionStep::EXHAUSTED) continue;
       switch (step.status) {
       case SS_FAILED:
@@ -341,8 +255,6 @@ namespace Gecode { namespace Search { namespace Seq {
     expansion.reset();
     layer.clear();
     candidates.clear();
-    candidate_descriptors = 0;
-    candidate_bytes = 0;
     root.reset();
     best.reset();
     width = 1;

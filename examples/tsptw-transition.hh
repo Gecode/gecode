@@ -71,29 +71,6 @@ namespace TSPTW {
         }};
     }
 
-    /// Cost-aware Pareto labels for this model's history-independent rules.
-    static Gecode::Search::StatePruning
-    pareto_pruning(unsigned long int descriptor_limit=0) {
-      using Pruning=Gecode::Search::StatePruning;
-      return {[](const Gecode::Space& s)->std::optional<Pruning::Descriptor> {
-        const auto& state=static_cast<const Transition&>(s);
-        Pruning::Descriptor descriptor{0,{state.location},
-                                       {state.time,state.prefix_cost}};
-        descriptor.key.insert(descriptor.key.end(),
-                              state.unvisited.begin(),state.unvisited.end());
-        for (std::int64_t value : descriptor.key)
-          descriptor.hash=descriptor.hash*31+std::hash<std::int64_t>{}(value);
-        return descriptor;
-      },[](const Pruning::Descriptor& a, const Pruning::Descriptor& b) {
-        if (a.label==b.label) return Pruning::EQUIVALENT;
-        if (a.label[0]<=b.label[0] && a.label[1]<=b.label[1])
-          return Pruning::DOMINATES;
-        if (a.label[0]>=b.label[0] && a.label[1]>=b.label[1])
-          return Pruning::DOMINATED;
-        return Pruning::INCOMPARABLE;
-      },descriptor_limit};
-    }
-
 #endif
 
   private:
@@ -140,11 +117,10 @@ namespace TSPTW {
     bool status(const Gecode::Space& home) const override {
       return !static_cast<const Transition&>(home).returned;
     }
-    bool prepare(Gecode::Space& home, Gecode::StatusStatistics& stat) override {
+    void prepare(Gecode::Space& home, Gecode::StatusStatistics& stat) override {
       auto& s = static_cast<Transition&>(home);
       (void) s.materialize(s.depth);
       (void) s.status(stat);
-      return true;
     }
     const Gecode::Choice* choice(Gecode::Space& home) override {
       const auto& s=static_cast<const Transition&>(home);

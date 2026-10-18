@@ -25,7 +25,7 @@ The customer test follows equation 28 of [Marijnissen et al., *Domain-Independen
 Dynamic Programming with Constraint Propagation*](https://doi.org/10.1609/icaps.v36i1.42826).
 The depot test adds the corresponding necessary condition for this example's
 explicit return window. Waiting affects arrival time and contributes no cost.
-Bounds, ranking, Pareto pruning and representation remain separate choices.
+Bounds, ranking and representation remain separate choices.
 
 The shortest-path matrix is computed once per root and shared by clones.
 Each cheap refresh scans the remaining customers. Its work contributes to
@@ -37,7 +37,7 @@ the separate heuristic bound callback.
 
 Compare OFF, CHEAP and UNARY with native BAB and CABS on selected development
 cases and tiny infeasible controls. The configurations use the same lazy
-transition formulation, prefix bound, default ranking, Pareto OFF, no seed and
+transition formulation, prefix bound, default ranking, no seed and
 one thread. Preview the schedule before collecting results:
 
 ```sh

@@ -38,8 +38,6 @@
 #include <gecode/minimodel.hh>
 #include <gecode/search.hh>
 #include <gecode/search/worker-control.hh>
-#include <gecode/search/completion.hh>
-#include <gecode/search/branch-feedback.hh>
 
 #include "test/test.hh"
 #ifdef GECODE_HAS_EXPERIMENTAL
@@ -92,425 +90,6 @@ namespace Test {
     using namespace Gecode;
     using namespace Gecode::Int;
 
-    /// A real nested existential search using the production completion owner.
-    class CompletionSpace;
-    class TestCompletion : public Gecode::Search::Completion {
-      int first, count;
-    public:
-      TestCompletion(Home home, int f, int n)
-        : Completion(home), first(f), count(n) {
-        home.notice(*this,AP_DISPOSE,false);
-      }
-      TestCompletion(Space& home, TestCompletion& b)
-        : Completion(home,b), first(b.first), count(b.count) {}
-      bool status(const Space&) const override { return !done && !suppressed; }
-      Space* trial(Space& home) override;
-      Actor* copy(Space& home) override {
-        return new (home) TestCompletion(home,*this);
-      }
-      size_t dispose(Space& home) override {
-        home.ignore(*this,AP_DISPOSE,false);
-        (void) Completion::dispose(home);
-        return sizeof(*this);
-      }
-    };
-
-    class CompletionSpace : public Space {
-    protected:
-      std::shared_ptr<std::atomic<unsigned int>> constraints;
-    public:
-      IntVarArray x;
-      std::shared_ptr<std::atomic<unsigned int>> decisions;
-      CompletionSpace(bool sat, bool nested, bool outer=false,
-                      std::shared_ptr<std::atomic<unsigned int>> constraints0={},
-                      bool completion=true,
-                      std::shared_ptr<std::atomic<unsigned int>> decisions0={})
-        : constraints(std::move(constraints0)), x(*this,sat ? 4 : 5,1,4),
-          decisions(std::move(decisions0)) {
-        for (int i=0;i<x.size();i++)
-          for (int j=0;j<i;j++) rel(*this,x[i],IRT_NQ,x[j]);
-        if (outer) {
-          IntVar y(*this,0,2);
-          branch(*this,y,INT_VAL_MIN());
-        }
-        if (!completion) {
-          branch(*this,x,INT_VAR_NONE(),INT_VAL_MIN());
-        } else if (nested) {
-          (void) new (*this) TestCompletion(*this,0,1);
-          (void) new (*this) TestCompletion(*this,1,x.size()-1);
-        } else {
-          (void) new (*this) TestCompletion(*this,0,x.size());
-        }
-      }
-      CompletionSpace(CompletionSpace& s)
-        : Space(s), constraints(s.constraints), decisions(s.decisions) {
-        x.update(*this,s.x);
-      }
-      Space* copy(void) override { return new CompletionSpace(*this); }
-      void constrain(const Space&) override {
-        if (constraints)
-          constraints->fetch_add(1,std::memory_order_relaxed);
-        // Direct view restriction deliberately bypasses posting Home.
-        for (int i=0;i<x.size();i++)
-          if (me_failed(IntView(x[i]).lq(*this,3))) {
-            fail(); return;
-          }
-      }
-    };
-
-    Space* TestCompletion::trial(Space& home) {
-      std::unique_ptr<CompletionSpace> s(
-        static_cast<CompletionSpace*>(home.clone()));
-      IntVarArgs args(count);
-      for (int i=0;i<count;i++) args[i]=s->x[first+i];
-      branch(*s,args,INT_VAR_NONE(),INT_VAL(
-        [decisions=s->decisions](const Space&, IntVar v, int) {
-          if (decisions) decisions->fetch_add(1,std::memory_order_relaxed);
-          return v.min();
-        }));
-      return s.release();
-    }
-
-    class CompletionNative : public Base {
-      static bool same(const Gecode::Search::Statistics& a,
-                       const Gecode::Search::Statistics& b) {
-        return a.node==b.node && a.fail==b.fail && a.propagate==b.propagate &&
-          a.depth==b.depth && a.restart==b.restart && a.nogood==b.nogood;
-      }
-      class Slice : public Gecode::Search::Stop {
-      public:
-        std::atomic<unsigned long long> limit{2};
-        bool failures=false;
-        std::atomic<bool> valid{true};
-        std::atomic<unsigned int> calls{0};
-        bool stop(const Gecode::Search::Statistics& s,
-                  const Gecode::Search::Options& o) override {
-          calls.fetch_add(1,std::memory_order_relaxed);
-          if (o.c_d!=5 || o.a_d!=2 || o.stop!=this)
-            valid.store(false,std::memory_order_relaxed);
-          return (failures ? s.fail : s.node)>=
-            limit.load(std::memory_order_relaxed);
-        }
-      };
-      class ObjectiveSpace : public CompletionSpace {
-      public:
-        IntVar cost;
-        ObjectiveSpace(bool completion, int fixed=-1,
-                       std::shared_ptr<std::atomic<unsigned int>> constraints={})
-          : CompletionSpace(true,false,false,std::move(constraints),completion),
-            cost(*this,0,2) {
-          if (fixed >= 0)
-            rel(*this,cost,IRT_EQ,fixed);
-          else
-            branch(*this,cost,INT_VAL_MAX());
-        }
-        ObjectiveSpace(ObjectiveSpace& s) : CompletionSpace(s) {
-          cost.update(*this,s.cost);
-        }
-        Space* copy(void) override { return new ObjectiveSpace(*this); }
-        void constrain(const Space& s0) override {
-          if (constraints)
-            constraints->fetch_add(1,std::memory_order_relaxed);
-          const ObjectiveSpace& s=static_cast<const ObjectiveSpace&>(s0);
-          if (s.cost.val() > 0) {
-            rel(*this,cost,IRT_LE,s.cost.val()-1);
-          } else {
-            // The strict-better alternative is deliberately infeasible, but
-            // direct restriction leaves that hidden completion unresolved.
-            for (int i=0;i<x.size();i++)
-              if (me_failed(IntView(x[i]).lq(*this,3))) {
-                fail(); return;
-              }
-          }
-        }
-      };
-#ifdef GECODE_HAS_EXPERIMENTAL
-      template<int Kind>
-      static bool heuristic(void) {
-        using Guidance=Gecode::Search::HeuristicGuidance;
-        Guidance guidance(Guidance::MINIMIZE,[](const Space& s) -> std::int64_t {
-          return static_cast<const ObjectiveSpace&>(s).cost.min();
-        });
-        Gecode::Search::Options o; o.clone=false; o.c_d=5; o.a_d=2;
-        std::unique_ptr<Gecode::Search::Engine> full(Kind==2 ?
-          Gecode::Search::columnengine(new ObjectiveSpace(true),guidance,o) : Kind==1 ?
-          Gecode::Search::cabsengine(new ObjectiveSpace(true),guidance,o) :
-          Gecode::Search::astarengine(new ObjectiveSpace(true),guidance,o));
-        int optimum=3;
-        while (std::unique_ptr<ObjectiveSpace> s{
-                 static_cast<ObjectiveSpace*>(full->next())}) optimum=s->cost.val();
-        if (optimum!=0 || full->stopped()) return false;
-        const auto total=full->statistics();
-        optimum=3;
-        Slice stop; o.stop=&stop;
-        std::unique_ptr<Gecode::Search::Engine> sliced(Kind==2 ?
-          Gecode::Search::columnengine(new ObjectiveSpace(true),guidance,o) : Kind==1 ?
-          Gecode::Search::cabsengine(new ObjectiveSpace(true),guidance,o) :
-          Gecode::Search::astarengine(new ObjectiveSpace(true),guidance,o));
-        unsigned int interruptions=0;
-        for (unsigned int i=0;i<400;i++) {
-          if (std::unique_ptr<ObjectiveSpace> s{
-                   static_cast<ObjectiveSpace*>(sliced->next())}) {
-            optimum=s->cost.val(); continue;
-          }
-          if (!sliced->stopped()) {
-            if (optimum!=0 || !interruptions || !same(total,sliced->statistics()))
-              return false;
-            // Adoption during suspended preparation cuts committed clones,
-            // including hidden completion state that must be revalidated.
-            stop.limit.store(2,std::memory_order_relaxed);
-            std::unique_ptr<Gecode::Search::Engine> adopted(
-              Kind==2 ? Gecode::Search::columnengine(new ObjectiveSpace(true),guidance,o) :
-              Kind==1 ? Gecode::Search::cabsengine(new ObjectiveSpace(true),guidance,o) :
-              Gecode::Search::astarengine(new ObjectiveSpace(true),guidance,o));
-            if (adopted->next() || !adopted->stopped()) return false;
-            Gecode::Search::Options witness_options; witness_options.clone=false;
-            Gecode::DFS<ObjectiveSpace> dfs(new ObjectiveSpace(true,0),witness_options);
-            std::unique_ptr<ObjectiveSpace> witness(dfs.next());
-            if (!witness) return false;
-            adopted->constrain(*witness);
-            const auto before=adopted->statistics();
-            if (adopted->next() || !adopted->stopped() ||
-                !same(before,adopted->statistics())) return false;
-            stop.limit.store(10000,std::memory_order_relaxed);
-            return !adopted->next() && !adopted->stopped() &&
-              adopted->statistics().fail>before.fail;
-          }
-          interruptions++;
-          const auto before=sliced->statistics();
-          if (sliced->next() || !sliced->stopped() ||
-              !same(before,sliced->statistics())) return false;
-          stop.limit.fetch_add(2,std::memory_order_relaxed);
-        }
-        return false;
-      }
-#endif
-
-      static bool posting(void) {
-        CompletionSpace root(true,false);
-        Home home(root);
-        Gecode::Search::Statistics stat;
-        Gecode::Search::Options o;
-        if (root.status()!=SS_BRANCH ||
-            !Gecode::Search::prepare(root,stat,o)) return false;
-        std::unique_ptr<const Choice> ch(root.choice());
-        root.commit(*ch,0);
-        if (root.status()!=SS_SOLVED) return false;
-        // Posting copies a Home cached before the witness was established.
-        rel(home,root.x,IRT_LQ,3);
-        if (root.status()!=SS_BRANCH) return false;
-        Gecode::DFS<CompletionSpace> dfs(&root);
-        std::unique_ptr<CompletionSpace> solution(dfs.next());
-        return !solution && !dfs.stopped();
-      }
-
-      static bool replay(void) {
-        CompletionSpace root(true,false);
-        Gecode::Search::Options o;
-        o.c_d=5; o.a_d=2;
-        Gecode::Search::Statistics stat;
-        Slice stop; o.stop=&stop;
-        if (root.status()!=SS_BRANCH || Gecode::Search::prepare(root,stat,o)) return false;
-        std::unique_ptr<CompletionSpace> clone(
-          static_cast<CompletionSpace*>(root.clone()));
-        // Restricting a pending source must discard its obsolete trial.
-        root.invalidate_branchers();
-        root.constrain(root);
-        if (root.status()!=SS_BRANCH) return false;
-        stop.limit.store(10000,std::memory_order_relaxed);
-        if (!Gecode::Search::prepare(*clone,stat,o)) return false;
-        std::unique_ptr<const Choice> ch(clone->choice());
-        Archive archive; ch->archive(archive);
-        std::unique_ptr<const Choice> archived(clone->choice(archive));
-        std::unique_ptr<CompletionSpace> replayed(
-          static_cast<CompletionSpace*>(clone->clone()));
-        replayed->commit(*archived,0);
-        if (replayed->status()!=SS_SOLVED) return false;
-        (void) replayed->choice();
-        // Completion branchers survive solved cleanup and later restrictions.
-        replayed->invalidate_branchers();
-        replayed->constrain(root);
-        if (replayed->status()!=SS_BRANCH) return false;
-        replayed->commit(*ch,0);
-        if (replayed->status()!=SS_BRANCH) return false;
-        Slice small; o.stop=&small;
-        Gecode::Search::Statistics revalidation;
-        if (Gecode::Search::prepare(*replayed,revalidation,o)) return false;
-        small.limit.store(10000,std::memory_order_relaxed);
-        if (!Gecode::Search::prepare(*replayed,revalidation,o)) return false;
-        std::unique_ptr<const Choice> failed(replayed->choice());
-        replayed->commit(*failed,0);
-        if (replayed->status()!=SS_FAILED) return false;
-        // The independent clone's unchanged established choice needs no DFS.
-        clone->commit(*ch,0);
-        return clone->status()==SS_SOLVED;
-      }
-    public:
-      CompletionNative(void) : Base("Search::Completion::Native", TestTags::check()) {}
-      bool run(void) override {
-        return posting() && replay()
-#ifdef GECODE_HAS_EXPERIMENTAL
-          && heuristic<0>() && heuristic<1>() && heuristic<2>()
-#endif
-          ;
-      }
-    } completionNative;
-
-    /// Later decisions must revalidate an existential completion witness.
-    class CompletionDependent : public Base {
-      class DependentSpace : public CompletionSpace {
-      public:
-        IntVar cost;
-        DependentSpace(bool maximum)
-          : CompletionSpace(true,false,true), cost(*this,0,3) {
-          for (int i=0; i<x.size(); i++)
-            linear(*this,IntArgs({1,-1}),IntVarArgs({x[i],cost}),IRT_LQ,1);
-          branch(*this,cost,maximum ? INT_VAL_MAX() : INT_VAL_MIN());
-        }
-        DependentSpace(DependentSpace& s) : CompletionSpace(s) {
-          cost.update(*this,s.cost);
-        }
-        Space* copy(void) override { return new DependentSpace(*this); }
-        void constrain(const Space& s) override {
-          int value=static_cast<const DependentSpace&>(s).cost.val();
-          if (me_failed(IntView(cost).lq(*this,value-1))) fail();
-        }
-      };
-      static bool search(unsigned int kind, bool maximum) {
-        Gecode::Search::Options options;
-        options.clone=false; options.c_d=3; options.a_d=1;
-        std::unique_ptr<Gecode::Search::Engine> engine;
-        switch (kind) {
-        case 0: engine.reset(Gecode::Search::dfsengine(new DependentSpace(maximum),options)); break;
-        case 1: engine.reset(Gecode::Search::babengine(new DependentSpace(maximum),options)); break;
-        case 2:
-          options.threads=2;
-          engine.reset(Gecode::Search::babengine(new DependentSpace(maximum),options)); break;
-#ifdef GECODE_HAS_EXPERIMENTAL
-        default:
-          {
-            using Guidance=Gecode::Search::HeuristicGuidance;
-            Guidance guidance(Guidance::MINIMIZE,[](const Space& s) -> std::int64_t {
-              return static_cast<const DependentSpace&>(s).cost.min();
-            });
-            if (kind==3)
-              engine.reset(Gecode::Search::astarengine(new DependentSpace(maximum),guidance,options));
-            else if (kind==4)
-              engine.reset(Gecode::Search::cabsengine(new DependentSpace(maximum),guidance,options));
-            else
-              engine.reset(Gecode::Search::columnengine(new DependentSpace(maximum),guidance,options));
-          }
-          break;
-#else
-        default: GECODE_NEVER;
-#endif
-        }
-        unsigned int solutions=0;
-        while (std::unique_ptr<DependentSpace> s{
-                 static_cast<DependentSpace*>(engine->next())}) {
-          if (s->cost.val()!=3) return false;
-          // Verify the reported objective with ordinary hidden-variable search.
-          std::unique_ptr<DependentSpace> check(static_cast<DependentSpace*>(s->clone()));
-          check->invalidate_branchers();
-          branch(*check,check->x,INT_VAR_NONE(),INT_VAL_MIN());
-          Gecode::Search::Options witness_options; witness_options.clone=false;
-          Gecode::DFS<DependentSpace> witness(check.release(),witness_options);
-          std::unique_ptr<DependentSpace> valid(witness.next());
-          if (!valid) return false;
-          solutions++;
-        }
-        return solutions && !engine->stopped();
-      }
-    public:
-      CompletionDependent(void) : Base("Search::Completion::Dependent",TestTags::check()) {}
-      bool run(void) override {
-        for (bool maximum : {false,true})
-          for (unsigned int kind=0; kind<
-#ifdef GECODE_HAS_EXPERIMENTAL
-               6
-#else
-               3
-#endif
-               ; kind++)
-            if (!search(kind,maximum)) return false;
-        return true;
-      }
-    } completionDependent;
-
-    /// Nested trials resume their work and publish their counters across stops.
-    class CompletionNested : public Base {
-      static bool same(const Gecode::Search::Statistics& a,
-                       const Gecode::Search::Statistics& b) {
-        return a.node==b.node && a.fail==b.fail && a.propagate==b.propagate &&
-          a.depth==b.depth && a.restart==b.restart && a.nogood==b.nogood;
-      }
-      static Gecode::Search::Engine* engine(unsigned int kind, CompletionSpace* root,
-                                            const Gecode::Search::Options& options) {
-        switch (kind) {
-        case 0: return Gecode::Search::dfsengine(root,options);
-        case 1: return Gecode::Search::ldsengine(root,options);
-        case 2:
-          {
-            Gecode::Search::Options parallel=options; parallel.threads=2;
-            return Gecode::Search::dfsengine(root,parallel);
-          }
-#ifdef GECODE_HAS_EXPERIMENTAL
-        default:
-          {
-            using Guidance=Gecode::Search::HeuristicGuidance;
-            Guidance guidance(Guidance::MINIMIZE,[](const Space&) -> std::int64_t { return 0; });
-            if (kind==3) return Gecode::Search::astarengine(root,guidance,options);
-            if (kind==4) return Gecode::Search::cabsengine(root,guidance,options);
-            return Gecode::Search::columnengine(root,guidance,options);
-          }
-#else
-        default: GECODE_NEVER;
-#endif
-        }
-        return nullptr;
-      }
-      static bool search(unsigned int kind, bool sat) {
-        Gecode::Search::Options options;
-        options.clone=false; options.c_d=5; options.a_d=2;
-        std::unique_ptr<Gecode::Search::Engine> full(engine(kind,new CompletionSpace(sat,true),options));
-        std::unique_ptr<Space> solution(full->next());
-        if (static_cast<bool>(solution)!=sat || full->stopped()) return false;
-        auto decisions=std::make_shared<std::atomic<unsigned int>>(0);
-        Gecode::Search::NodeStop stop(3); options.stop=&stop;
-        std::unique_ptr<Gecode::Search::Engine> sliced(
-          engine(kind,new CompletionSpace(sat,true,false,{},true,decisions),options));
-        if (sliced->next() || !sliced->stopped()) return false;
-        const auto before=sliced->statistics();
-        const auto observed=decisions->load();
-        if (observed>=23) return false;
-        if (sliced->next() || !sliced->stopped() ||
-            !same(before,sliced->statistics()) || decisions->load()!=observed) return false;
-        stop.limit(100000);
-        std::unique_ptr<Space> resumed(sliced->next());
-        // Parallel workers can still publish stops decided before the limit changed.
-        for (unsigned int retry=0;
-             kind==2 && !resumed && sliced->stopped() && retry<100; retry++)
-          resumed.reset(sliced->next());
-        return static_cast<bool>(resumed)==sat && !sliced->stopped() &&
-          same(full->statistics(),sliced->statistics()) &&
-          sliced->statistics().node>before.node;
-      }
-    public:
-      CompletionNested(void) : Base("Search::Completion::Nested",TestTags::check()) {}
-      bool run(void) override {
-        for (bool sat : {false,true})
-          for (unsigned int kind=0; kind<
-#ifdef GECODE_HAS_EXPERIMENTAL
-               6
-#else
-               3
-#endif
-               ; kind++)
-            if (!search(kind,sat)) return false;
-        return true;
-      }
-    } completionNested;
-
     /// Successful preparation can end in failure or skip to a solved brancher.
     class PreparedTerminal : public Base {
       class PreparedSpace : public Space {
@@ -529,10 +108,9 @@ namespace Test {
           PreparedBrancher(Space& home, PreparedBrancher& b)
             : Brancher(home,b), prepared(b.prepared), failure(b.failure), choices(b.choices) {}
           bool status(const Space&) const override { return !prepared; }
-          bool prepare(Space& home, StatusStatistics&) override {
+          void prepare(Space& home, StatusStatistics&) override {
             prepared=true;
             if (failure) home.fail();
-            return true;
           }
           const Choice* choice(Space&) override {
             (*choices)++;
@@ -557,12 +135,12 @@ namespace Test {
         Space* copy(void) override { return new PreparedSpace(*this); }
       };
     public:
-      PreparedTerminal(void) : Base("Search::Completion::PreparedTerminal",TestTags::check()) {}
+      PreparedTerminal(void) : Base("Search::PreparedTerminal",TestTags::check()) {}
       bool run(void) override {
         for (bool failure : {false,true})
           for (unsigned int kind=0; kind<
 #ifdef GECODE_HAS_EXPERIMENTAL
-               6
+               5
 #else
                3
 #endif
@@ -582,8 +160,7 @@ namespace Test {
               using Guidance=Gecode::Search::HeuristicGuidance;
               Guidance guidance(Guidance::MINIMIZE,[](const Space&) -> std::int64_t { return 0; });
               if (kind==3) engine.reset(Gecode::Search::astarengine(new PreparedSpace(failure,choices),guidance,options));
-              else if (kind==4) engine.reset(Gecode::Search::cabsengine(new PreparedSpace(failure,choices),guidance,options));
-              else engine.reset(Gecode::Search::columnengine(new PreparedSpace(failure,choices),guidance,options));
+              else engine.reset(Gecode::Search::cabsengine(new PreparedSpace(failure,choices),guidance,options));
             }
 #endif
             std::unique_ptr<Space> result(engine->next());
@@ -607,9 +184,9 @@ namespace Test {
         return std::make_shared<const TSPTW::Instance>(TSPTW::read(input));
       }
       static bool visit(Transition& s, int node) {
-        Gecode::Search::Options options;
         Gecode::Search::Statistics stat;
-        if (s.status()!=SS_BRANCH || !Gecode::Search::prepare(s,stat,options)) return false;
+        if (s.status()!=SS_BRANCH) return false;
+        s.prepare(stat);
         const auto actions=s.actions();
         const auto action=std::find(actions.begin(),actions.end(),node);
         if (action==actions.end()) return false;
@@ -621,13 +198,13 @@ namespace Test {
                          Transition::ResidualPropagation propagation=Transition::OFF) {
         const auto data=instance();
         Transition root(data,representation,propagation);
-        Gecode::Search::Options options;
         Gecode::Search::Statistics stat;
         const bool lazy=representation==Transition::LAZY;
         if (root.status()!=SS_BRANCH || root.allocated_positions()!=(lazy ? 0 : 4))
           return false;
         std::unique_ptr<Transition> absent(static_cast<Transition*>(root.clone()));
-        if (!Gecode::Search::prepare(root,stat,options) || root.allocated_positions()!=(lazy ? 1 : 4) ||
+        root.prepare(stat);
+        if (root.allocated_positions()!=(lazy ? 1 : 4) ||
             root.position(0).assigned() || root.depth || root.location ||
             root.time || root.cost() || root.unvisited!=std::vector<int>({1,2,3}))
           return false;
@@ -642,7 +219,8 @@ namespace Test {
             absent->position(0).val()!=1 || root.position(0).assigned())
           return false;
         std::unique_ptr<Transition> next(static_cast<Transition*>(absent->clone()));
-        if (!Gecode::Search::prepare(*absent,stat,options) || absent->depth!=1 || absent->cost()!=1 ||
+        absent->prepare(stat);
+        if (absent->depth!=1 || absent->cost()!=1 ||
             absent->allocated_positions()!=(lazy ? 2 : 4) || absent->position(1).assigned())
           return false;
         original.reset(absent->choice());
@@ -686,8 +264,7 @@ namespace Test {
 #endif
         std::unique_ptr<Gecode::Search::Engine> engine(kind==0 ?
           Gecode::Search::babengine(&root,options) : kind==1 ?
-          Gecode::Search::astarengine(&root,Transition::guidance(),options) : kind==3 ?
-          Gecode::Search::columnengine(&root,Transition::guidance(),options) :
+          Gecode::Search::astarengine(&root,Transition::guidance(),options) :
           Gecode::Search::cabsengine(&root,Transition::guidance(),options));
         std::unique_ptr<Transition> first(static_cast<Transition*>(engine->next()));
         if (!first || first->cost()!=23 || first->tour()!=std::vector<int>({1,2,3}))
@@ -778,8 +355,7 @@ namespace Test {
         }
         if (state.status()!=SS_BRANCH) return true;
         Gecode::Search::Statistics stat;
-        Gecode::Search::Options options;
-        if (!Gecode::Search::prepare(state,stat,options)) return false;
+        state.prepare(stat);
         const auto actions=state.actions();
         std::unique_ptr<const Choice> choice(state.choice());
         for (std::size_t a=0; a<actions.size(); a++) {
@@ -823,7 +399,7 @@ namespace Test {
           if (!replay(representation) || !replay(representation,Transition::CHEAP) ||
               !replay(representation,Transition::UNARY))
             return false;
-          for (int kind : {1,2,3})
+          for (int kind : {0,1,2})
             if (!continuation(representation,kind)) return false;
         }
         return bounds_and_inference();
@@ -905,13 +481,12 @@ namespace Test {
     // The parallel test runner shares this fixture's ownership counter.
     static std::mutex heuristic_ownership_mutex;
 
-    /// Explicit finite paths with model-authored residual keys and labels.
-    class PruningSpace : public Space {
+    /// An explicit finite tree with bounds and ranks independent of its costs.
+    class TreeSpace : public Space {
     public:
       struct Node {
-        int key, time, cost, bound, rank;
+        int cost, bound, rank;
         std::vector<int> children;
-        bool history=false;
       };
       using Graph=std::vector<Node>;
       std::shared_ptr<const Graph> graph;
@@ -931,10 +506,10 @@ namespace Test {
         Decisions(Home home) : Brancher(home) {}
         Decisions(Space& home, Decisions& b) : Brancher(home,b) {}
         bool status(const Space& s) const override {
-          return !static_cast<const PruningSpace&>(s).value().children.empty();
+          return !static_cast<const TreeSpace&>(s).value().children.empty();
         }
         const Choice* choice(Space& s) override {
-          const auto& state=static_cast<const PruningSpace&>(s);
+          const auto& state=static_cast<const TreeSpace&>(s);
           return new Decision(*this,state.vertex,
             static_cast<unsigned int>(state.value().children.size()));
         }
@@ -943,7 +518,7 @@ namespace Test {
           return new Decision(*this,vertex,n);
         }
         ExecStatus commit(Space& s0, const Choice& c, unsigned int a) override {
-          auto& s=static_cast<PruningSpace&>(s0);
+          auto& s=static_cast<TreeSpace&>(s0);
           const auto& decision=static_cast<const Decision&>(c);
           s.vertex=(*s.graph)[decision.vertex].children[a];
           return s.value().cost>=s.ceiling ? ES_FAILED : ES_OK;
@@ -953,17 +528,17 @@ namespace Test {
           (void) Brancher::dispose(home); return sizeof(*this);
         }
       };
-      explicit PruningSpace(Graph nodes, bool max=false)
+      explicit TreeSpace(Graph nodes, bool max=false)
         : graph(std::make_shared<const Graph>(std::move(nodes))), maximize(max) {
         (void) new (*this) Decisions(*this);
       }
-      PruningSpace(PruningSpace& s)
+      TreeSpace(TreeSpace& s)
         : Space(s), graph(s.graph), maximize(s.maximize), vertex(s.vertex),
           ceiling(s.ceiling) {}
-      Space* copy(void) override { return new PruningSpace(*this); }
+      Space* copy(void) override { return new TreeSpace(*this); }
       const Node& value(void) const { return (*graph)[vertex]; }
       void constrain(const Space& s0) override {
-        ceiling=static_cast<const PruningSpace&>(s0).value().cost;
+        ceiling=static_cast<const TreeSpace&>(s0).value().cost;
         if (value().cost>=ceiling) fail();
       }
       static Gecode::Search::HeuristicGuidance guidance(bool max=false) {
@@ -971,165 +546,19 @@ namespace Test {
         // Maximizing the negated cost mirrors the same finite paths and cuts.
         return {max ? Guidance::MAXIMIZE : Guidance::MINIMIZE,
           [](const Space& s)->std::int64_t {
-            const auto& state=static_cast<const PruningSpace&>(s);
+            const auto& state=static_cast<const TreeSpace&>(s);
             const std::int64_t bound=state.value().bound;
             return state.maximize ? -bound : bound;
           },[](const Space& s)->std::int64_t {
-            return static_cast<const PruningSpace&>(s).value().rank;
+            return static_cast<const TreeSpace&>(s).value().rank;
           }};
       }
-      static Gecode::Search::StatePruning pruning(unsigned long int limit=0) {
-        using Pruning=Gecode::Search::StatePruning;
-        return {[](const Space& s)->std::optional<Pruning::Descriptor> {
-          const auto& node=static_cast<const PruningSpace&>(s).value();
-          // The proposed key omits a path restriction in these nodes. Decline
-          // instead of asserting that equal resource labels imply equal futures.
-          if (node.history) return std::nullopt;
-          return Pruning::Descriptor{0,{node.key},{node.time,node.cost}};
-        },[](const Pruning::Descriptor& a, const Pruning::Descriptor& b) {
-          if (a.key!=b.key) throw std::runtime_error("hash collision compared");
-          if (a.label==b.label) return Pruning::EQUIVALENT;
-          if (a.label[0]<=b.label[0] && a.label[1]<=b.label[1])
-            return Pruning::DOMINATES;
-          if (a.label[0]>=b.label[0] && a.label[1]>=b.label[1])
-            return Pruning::DOMINATED;
-          return Pruning::INCOMPARABLE;
-        },limit};
-      }
-    };
-
-    class StatePruningChecks {
-      using Graph=PruningSpace::Graph;
-      using Pruning=Gecode::Search::StatePruning;
-      using Statistics=Gecode::Search::Statistics;
-    public:
-      static int reference(const Graph& graph, int vertex=0) {
+      static int optimum(const Graph& graph, int vertex=0) {
         const auto& node=graph[vertex];
         if (node.children.empty()) return node.cost;
         int best=std::numeric_limits<int>::max();
-        for (int child : node.children) best=std::min(best,reference(graph,child));
+        for (int child : node.children) best=std::min(best,optimum(graph,child));
         return best;
-      }
-    private:
-      static bool solve(const Graph& graph, int kind, Pruning pruning,
-                        int optimum, bool stopped, Statistics& statistics,
-                        unsigned long int width=0, std::vector<int>* costs=nullptr) {
-        Gecode::Search::Options options; options.clone=false;
-        std::vector<std::unique_ptr<PruningSpace>> solutions;
-        {
-          // Builders copy the policy, including its forgetting ceiling.
-          std::unique_ptr<Gecode::Search::Builder> builder(kind==2 ?
-            Gecode::column<PruningSpace>(PruningSpace::guidance(),options,{},pruning) : kind==1 ?
-            Gecode::cabs<PruningSpace>(PruningSpace::guidance(),options,{width,0},pruning) :
-            Gecode::astar<PruningSpace>(PruningSpace::guidance(),options,pruning));
-          std::unique_ptr<Gecode::Search::Engine> engine(
-            (*builder)(new PruningSpace(graph)));
-          while (std::unique_ptr<PruningSpace> s{
-                   static_cast<PruningSpace*>(engine->next())}) {
-            if (costs) costs->push_back(s->value().cost);
-            solutions.push_back(std::move(s));
-          }
-          statistics=engine->statistics();
-          if (solutions.empty() || solutions.back()->value().cost!=optimum ||
-              engine->stopped()!=stopped) return false;
-          engine->reset(nullptr);
-          const auto reset=engine->statistics();
-          if (reset.state_pruned || reset.state_descriptors || reset.state_bytes ||
-              engine->next() || engine->stopped()) return false;
-        }
-        // Each publication still owns its graph and Space after engine cleanup.
-        for (const auto& solution : solutions)
-          if (solution->status()!=SS_SOLVED) return false;
-        return true;
-      }
-    public:
-      static bool semantics(int kind) {
-        const Graph collision={
-          {0,0,0,0,0,{1,2}}, {1,5,5,5,0,{3}}, {2,1,1,1,0,{4}},
-          {3,15,15,15,0,{}}, {4,3,3,3,0,{}}};
-        const Graph pareto={
-          {0,0,0,0,0,{1,2,3,4}}, {1,5,5,5,0,{5}}, {1,5,5,5,0,{5}},
-          {1,10,1,1,0,{6}}, {1,1,10,10,0,{7}},
-          {2,15,15,15,0,{}}, {2,20,11,11,0,{}}, {2,11,20,20,0,{}}};
-        const Graph history={
-          {0,0,0,0,0,{1,2}}, {1,1,1,1,0,{3},true},
-          {1,1,1,1,0,{4},true}, {2,50,50,50,0,{}}, {2,10,10,10,0,{}}};
-        for (const auto& graph : {collision,pareto,history}) {
-          Statistics off, on, forgotten;
-          if (!solve(graph,kind,{},reference(graph),false,off) ||
-              off.state_pruned || off.state_descriptors || off.state_bytes ||
-              !solve(graph,kind,PruningSpace::pruning(),reference(graph),false,on) ||
-              !solve(graph,kind,PruningSpace::pruning(1),reference(graph),false,forgotten) ||
-              forgotten.state_descriptors>1) return false;
-          if (graph.size()==pareto.size() && !on.state_pruned) return false;
-          if (graph[1].history && on.state_descriptors) return false;
-          if (kind==1) {
-            const auto bytes=Pruning::Descriptor{0,{1},{0,0}}.storage();
-            const unsigned long int peak=graph[1].history ? 0 :
-              graph.size()==pareto.size() ? 3 : 2;
-            if (on.state_descriptors!=peak || on.state_bytes!=peak*bytes ||
-                forgotten.state_descriptors!=(peak ? 1UL : 0UL) ||
-                forgotten.state_bytes!=(peak ? bytes : 0)) return false;
-          }
-        }
-        // Misconfigured declarations fail before clone=false transfers a root.
-        PruningSpace root(collision);
-        Gecode::Search::Options options; options.clone=false;
-        auto missing=PruningSpace::pruning(); missing.compare={};
-        try {
-          std::unique_ptr<Gecode::Search::Engine> invalid(kind==2 ?
-            Gecode::Search::columnengine(&root,PruningSpace::guidance(),options,{},missing) : kind==1 ?
-            Gecode::Search::cabsengine(&root,PruningSpace::guidance(),options,{},missing) :
-            Gecode::Search::astarengine(&root,PruningSpace::guidance(),options,missing));
-          return false;
-        } catch (const Gecode::Search::UninitializedStatePruning&) {}
-        return root.status()==SS_BRANCH;
-      }
-      static bool reopen(int kind=0) {
-        // f falls from 5 to 2 along the detour: admissible but inconsistent.
-        // The first label has already expanded and published 20 before 12.
-        const Graph graph={
-          {0,0,0,0,0,{1,2}}, {7,10,10,0,0,{3}}, {8,0,0,5,0,{4}},
-          {9,20,20,20,0,{}}, {7,2,2,2,0,{5}}, {9,12,12,12,0,{}}};
-        for (unsigned long int limit : {0UL,1UL}) {
-          Statistics statistics; std::vector<int> costs;
-          if (!solve(graph,kind,PruningSpace::pruning(limit),reference(graph),
-                     false,statistics,0,&costs) || costs!=std::vector<int>({20,12}))
-            return false;
-        }
-        return true;
-      }
-      static bool candidate_lifetime(void) {
-        // Arrival 1 is evicted by 2; arrival 3 is beam-discarded. Neither may
-        // suppress later arrival 4 with the same exact key and a worse label.
-        const Graph discarded={
-          {0,0,0,0,0,{1,2,3,4}}, {1,1,1,1,0,{5}}, {2,0,0,0,-1,{6}},
-          {1,0,0,0,10,{7}}, {1,2,2,2,-2,{8}},
-          {3,11,11,11,0,{}}, {4,100,100,100,0,{}},
-          {3,10,10,10,0,{}}, {3,12,12,12,0,{}}};
-        Statistics capped, complete;
-        if (!solve(discarded,true,PruningSpace::pruning(),12,true,capped,1) ||
-            !solve(discarded,true,PruningSpace::pruning(),reference(discarded),
-                   false,complete) || !complete.restart) return false;
-        // A worse-ranked dominator must take the dominated live candidate's
-        // slot. Sound removal causes no beam loss, so width one proves 10.
-        const Graph replacement={
-          {0,0,0,0,0,{1,2}}, {1,1,1,1,0,{3}}, {1,0,0,0,10,{4}},
-          {2,11,11,11,0,{}}, {2,10,10,10,0,{}}};
-        const auto bytes=Pruning::Descriptor{0,{1},{0,0}}.storage();
-        if (!solve(replacement,true,PruningSpace::pruning(),reference(replacement),
-                   false,complete,1) || complete.state_pruned!=1 || complete.restart ||
-            complete.state_descriptors!=1 || complete.state_bytes!=bytes) return false;
-        // Widening admits two, then three incomparable labels. One dominator
-        // removes them together; accounting must release every victim's bytes.
-        const Graph multiple={
-          {0,0,0,0,0,{1,2,3,4}}, {1,5,5,0,0,{5}}, {1,10,1,0,0,{6}},
-          {1,1,9,0,0,{7}}, {1,0,0,0,10,{8}},
-          {2,15,15,15,0,{}}, {2,20,11,11,0,{}},
-          {2,11,20,20,0,{}}, {2,10,10,10,0,{}}};
-        return solve(multiple,true,PruningSpace::pruning(),reference(multiple),
-                     false,complete) && complete.state_pruned==6 && complete.restart==2 &&
-          complete.state_descriptors==3 && complete.state_bytes==3*bytes;
       }
     };
 
@@ -1137,35 +566,32 @@ namespace Test {
       static bool ordering(void) {
         using namespace Gecode::Search;
         // Every root alternative needs another commit. The first arrival has
-        // the preferred rank but the worse bound; arrivals 2 and 3 have the
-        // same residual problem, label, and remaining transition count.
-        const PruningSpace::Graph graph={
-          {0,0,0,0,0,{1,2,3}}, {1,0,0,8,-100,{4}},
-          {2,0,0,4,100,{5}}, {2,0,0,4,100,{5}},
-          {3,0,10,10,0,{}}, {3,0,5,5,0,{}}};
-        auto solve=[&](bool max, BestFirstOrder order, bool ranked, bool prune) {
+        // the preferred rank but the worse bound; arrivals 2 and 3 lead to
+        // the same goal.
+        const TreeSpace::Graph graph={
+          {0,0,0,{1,2,3}}, {0,8,-100,{4}},
+          {0,4,100,{5}}, {0,4,100,{5}},
+          {10,10,0,{}}, {5,5,0,{}}};
+        auto solve=[&](bool max, BestFirstOrder order, bool ranked) {
           Gecode::Search::Options options; options.clone=false;
-          auto guidance=PruningSpace::guidance(max);
+          auto guidance=TreeSpace::guidance(max);
           if (!ranked) guidance.rank={};
-          std::unique_ptr<Builder> builder(Gecode::bestfirst<PruningSpace>(
-            guidance,order,options,prune ? PruningSpace::pruning() : StatePruning()));
+          std::unique_ptr<Builder> builder(Gecode::bestfirst<TreeSpace>(
+            guidance,order,options));
           if (!builder->best()) return false;
-          std::unique_ptr<Engine> engine((*builder)(new PruningSpace(graph,max)));
+          std::unique_ptr<Engine> engine((*builder)(new TreeSpace(graph,max)));
           std::vector<int> costs;
-          while (std::unique_ptr<PruningSpace> solution{
-                   static_cast<PruningSpace*>(engine->next())})
+          while (std::unique_ptr<TreeSpace> solution{
+                   static_cast<TreeSpace*>(engine->next())})
             costs.push_back(solution->value().cost);
           const std::vector<int> expected=order==RANK_FIRST && ranked ?
             std::vector<int>{10,5} : std::vector<int>{5};
           return costs==expected && !engine->stopped() &&
-            costs.back()==StatePruningChecks::reference(graph) &&
-            engine->statistics().state_pruned==(prune ? 1UL : 0UL);
+            costs.back()==TreeSpace::optimum(graph);
         };
         for (bool max : {false,true})
-          if (!solve(max,BOUND_FIRST,true,false) ||
-              !solve(max,RANK_FIRST,true,false) ||
-              !solve(max,RANK_FIRST,true,true)) return false;
-        return solve(false,RANK_FIRST,false,false);
+          if (!solve(max,BOUND_FIRST,true) || !solve(max,RANK_FIRST,true)) return false;
+        return solve(false,RANK_FIRST,false);
       }
       static bool solutions(bool max, bool loose, bool interrupt) {
         Gecode::Search::NodeStop stop(1);
@@ -1270,8 +696,7 @@ namespace Test {
         for (bool max : {false,true})
           if (!solutions(max,false,false) || !solutions(max,true,true) ||
               !adoption(max,false) || !adoption(max,true)) return false;
-        if (!ordering() || !ownership() || AStarSpace::live.load()!=0 ||
-            !StatePruningChecks::semantics(false) || !StatePruningChecks::reopen())
+        if (!ordering() || !ownership() || AStarSpace::live.load()!=0)
           return false;
         Gecode::Search::Options o; o.clone=false;
         std::unique_ptr<Gecode::Search::Engine> engine(
@@ -1322,13 +747,13 @@ namespace Test {
     class CABSTest : public Base {
       static bool discarded_bounds(bool max) {
         Gecode::Search::Options options; options.clone=false;
-        auto solve=[&](const PruningSpace::Graph& graph, unsigned long int width,
+        auto solve=[&](const TreeSpace::Graph& graph, unsigned long int width,
                       int cost, bool stopped, unsigned long int restarts) {
-          Gecode::CABS<PruningSpace> engine(new PruningSpace(graph,max),
-            PruningSpace::guidance(max),options,{width,0});
+          Gecode::CABS<TreeSpace> engine(new TreeSpace(graph,max),
+            TreeSpace::guidance(max),options,{width,0});
           int previous=std::numeric_limits<int>::max();
           bool found=false;
-          while (std::unique_ptr<PruningSpace> solution{engine.next()}) {
+          while (std::unique_ptr<TreeSpace> solution{engine.next()}) {
             if (solution->value().cost>=previous) return false;
             previous=solution->value().cost;
             found=true;
@@ -1340,21 +765,21 @@ namespace Test {
           // Reject a worse-ranked candidate, or evict one arriving first.
           // Equality also excludes strict improvement of the incumbent.
           const int bound=evict ? 10 : 20;
-          const PruningSpace::Graph bounded={
-            {0,0,0,0,0,evict ? std::vector<int>{2,1} : std::vector<int>{1,2}},
-            {1,0,0,0,0,{3}}, {2,0,0,bound,1,{4}},
-            {3,10,10,10,0,{}}, {4,bound,bound,bound,0,{}}};
-          if (!solve(bounded,1,StatePruningChecks::reference(bounded),false,0))
+          const TreeSpace::Graph bounded={
+            {0,0,0,evict ? std::vector<int>{2,1} : std::vector<int>{1,2}},
+            {0,0,0,{3}}, {0,bound,1,{4}},
+            {10,10,0,{}}, {bound,bound,0,{}}};
+          if (!solve(bounded,1,TreeSpace::optimum(bounded),false,0))
             return false;
           // Ranking keeps bound 5 over bound 0; the selected bound then falls
           // to 1. A later discard at bound 20 must not erase the earlier 0.
-          const PruningSpace::Graph improving={
-            {0,0,0,0,0,evict ? std::vector<int>{2,1} : std::vector<int>{1,2}},
-            {1,0,0,5,0,{3,4}}, {2,0,0,0,1,{5}},
-            {3,0,0,1,0,{6}}, {4,0,0,20,1,{7}},
-            {5,4,4,4,0,{}}, {6,10,10,10,0,{}}, {7,20,20,20,0,{}}};
+          const TreeSpace::Graph improving={
+            {0,0,0,evict ? std::vector<int>{2,1} : std::vector<int>{1,2}},
+            {0,5,0,{3,4}}, {0,0,1,{5}},
+            {0,1,0,{6}}, {0,20,1,{7}},
+            {4,4,0,{}}, {10,10,0,{}}, {20,20,0,{}}};
           if (!solve(improving,1,10,true,0) ||
-              !solve(improving,0,StatePruningChecks::reference(improving),false,1))
+              !solve(improving,0,TreeSpace::optimum(improving),false,1))
             return false;
         }
         return true;
@@ -1362,15 +787,15 @@ namespace Test {
       static bool interrupted_discard(bool external) {
         // Width loss precedes a shallow goal. The original fourth alternative
         // and the pending parent both improve it and survive publication.
-        const PruningSpace::Graph graph={
-          {0,0,0,0,0,{1,2,3,4}}, {1,0,0,0,0,{5}}, {2,0,0,7,1,{6}},
-          {3,10,10,10,0,{}}, {4,8,8,8,0,{}},
-          {5,6,6,6,0,{}}, {6,7,7,7,0,{}}};
+        const TreeSpace::Graph graph={
+          {0,0,0,{1,2,3,4}}, {0,0,0,{5}}, {0,7,1,{6}},
+          {10,10,0,{}}, {8,8,0,{}},
+          {6,6,0,{}}, {7,7,0,{}}};
         Gecode::Search::NodeStop stop(10000);
         Gecode::Search::Options options; options.clone=false; options.stop=&stop;
-        Gecode::CABS<PruningSpace> engine(new PruningSpace(graph),
-          PruningSpace::guidance(),options,{1,0});
-        std::unique_ptr<PruningSpace> first(engine.next());
+        Gecode::CABS<TreeSpace> engine(new TreeSpace(graph),
+          TreeSpace::guidance(),options,{1,0});
+        std::unique_ptr<TreeSpace> first(engine.next());
         if (!first || first->value().cost!=10) return false;
         const auto before=engine.statistics().node;
         stop.limit(before-1);
@@ -1378,40 +803,40 @@ namespace Test {
           if (engine.next() || !engine.stopped() ||
               engine.statistics().node!=before) return false;
         if (external) {
-          PruningSpace incumbent(graph);
+          TreeSpace incumbent(graph);
           incumbent.vertex=5;
           if (incumbent.status()!=SS_SOLVED) return false;
           engine.constrain(incumbent);
         }
         stop.limit(10000);
         std::vector<int> costs;
-        while (std::unique_ptr<PruningSpace> solution{engine.next()})
+        while (std::unique_ptr<TreeSpace> solution{engine.next()})
           costs.push_back(solution->value().cost);
         return costs==(external ? std::vector<int>{} : std::vector<int>{8,6}) &&
           !engine.stopped() && !engine.statistics().restart &&
           engine.statistics().node==before+2;
       }
       static bool reset_discard(void) {
-        const PruningSpace::Graph bounded={
-          {0,0,0,0,0,{1,2}}, {1,0,0,0,0,{3}}, {2,0,0,20,1,{4}},
-          {3,10,10,10,0,{}}, {4,20,20,20,0,{}}};
+        const TreeSpace::Graph bounded={
+          {0,0,0,{1,2}}, {0,0,0,{3}}, {0,20,1,{4}},
+          {10,10,0,{}}, {20,20,0,{}}};
         auto improving=bounded;
         improving[2].bound=0;
         improving[4].cost=improving[4].bound=4;
         Gecode::Search::Options options; options.clone=false;
         for (unsigned long int width : {1UL,2UL}) {
           std::unique_ptr<Gecode::Search::Engine> engine(
-            Gecode::Search::cabsengine(new PruningSpace(bounded),
-              PruningSpace::guidance(),options,{width,0}));
+            Gecode::Search::cabsengine(new TreeSpace(bounded),
+              TreeSpace::guidance(),options,{width,0}));
           for (int run=0;run<3;run++) {
             // Repeat widening after reset to check that width starts at one.
             const bool unresolved=run==1 || (run==2 && width==2);
-            if (run) engine->reset(new PruningSpace(unresolved ? improving : bounded));
+            if (run) engine->reset(new TreeSpace(unresolved ? improving : bounded));
             if (engine->stopped() || engine->statistics().node ||
                 engine->statistics().restart) return false;
             std::vector<int> costs;
-            while (std::unique_ptr<PruningSpace> solution{
-                     static_cast<PruningSpace*>(engine->next())})
+            while (std::unique_ptr<TreeSpace> solution{
+                     static_cast<TreeSpace*>(engine->next())})
               costs.push_back(solution->value().cost);
             const bool widen=unresolved && width==2;
             if (costs!=(widen ? std::vector<int>{10,4} : std::vector<int>{10}) ||
@@ -1572,514 +997,13 @@ namespace Test {
             return false;
         return interrupted_discard(false) && interrupted_discard(true) &&
           reset_discard() && feasibility() && adoption(false) && adoption(true) &&
-          ownership_and_limits() && AStarSpace::live.load()==0 &&
-          StatePruningChecks::semantics(true) && StatePruningChecks::candidate_lifetime();
+          ownership_and_limits() && AStarSpace::live.load()==0;
       }
     } cabsTest;
 
-    class ColumnTest : public Base {
-      static bool solutions(bool max, bool ranked, bool interrupt) {
-        Gecode::Search::NodeStop stop(10000);
-        Gecode::Search::Options options; options.clone=false; options.stop=&stop;
-        auto guidance=AStarSpace::guidance(max,false);
-        if (!ranked) guidance.rank={};
-        Gecode::Column<AStarSpace> engine(new AStarSpace(max),guidance,options);
-        std::vector<int> values;
-        std::int64_t previous=0;
-        while (std::unique_ptr<AStarSpace> s{engine.next()}) {
-          if (!values.empty() && !s->improves(s->objective(),previous)) return false;
-          previous=s->objective(); values.push_back(s->x.val());
-          if (interrupt) {
-            const auto before=engine.statistics().node;
-            stop.limit(before-1);
-            if (engine.next() || !engine.stopped() ||
-                engine.statistics().node!=before) return false;
-            stop.limit(10000);
-          }
-        }
-        const std::vector<int> expected=ranked ? std::vector<int>{0,1,2} :
-          std::vector<int>{0,2};
-        return values==expected && !engine.stopped() &&
-          engine.statistics().depth==2;
-      }
-      static bool cycles(unsigned long int growth, bool interrupt) {
-        // Each depth-one parent publishes then creates a depth-two parent.
-        // A full cycle must visit that new depth before revisiting depth one.
-        const PruningSpace::Graph graph={
-          {0,0,0,0,0,{1,2,3,4}},
-          {1,0,0,0,0,{5,9}}, {2,0,0,0,0,{6,10}},
-          {3,0,0,0,0,{7,11}}, {4,0,0,0,0,{8,12}},
-          {5,100,100,100,0,{}}, {6,80,80,80,0,{}},
-          {7,70,70,70,0,{}}, {8,40,40,40,0,{}},
-          {9,0,0,0,0,{13}}, {10,0,0,0,0,{14}},
-          {11,0,0,0,0,{15}}, {12,0,0,0,0,{16}},
-          {13,90,90,90,0,{}}, {14,60,60,60,0,{}},
-          {15,50,50,50,0,{}}, {16,30,30,30,0,{}}};
-        Gecode::Search::NodeStop stop(10000);
-        Gecode::Search::Options options; options.clone=false; options.stop=&stop;
-        Gecode::Column<PruningSpace> engine(new PruningSpace(graph),
-          PruningSpace::guidance(),options,{1,growth,0});
-        std::vector<int> costs;
-        while (std::unique_ptr<PruningSpace> s{engine.next()}) {
-          costs.push_back(s->value().cost);
-          if (interrupt) {
-            const auto before=engine.statistics().node;
-            stop.limit(before-1);
-            if (engine.next() || !engine.stopped() ||
-                engine.statistics().node!=before) return false;
-            stop.limit(10000);
-          }
-        }
-        const std::vector<int> expected=growth==0 ?
-          std::vector<int>{100,90,80,60,50,40,30} : growth==1 ?
-          std::vector<int>{100,90,80,70,60,50,40,30} :
-          std::vector<int>{100,90,80,70,40,30};
-        return costs==expected && !engine.stopped() && !engine.statistics().restart;
-      }
-      static bool stale_frontier(void) {
-        // The root queues four obsolete parents and one improving parent
-        // before publishing. Ranking puts the obsolete entries first.
-        const PruningSpace::Graph graph={
-          {0,0,0,0,0,{1,2,3,4,5,6}},
-          {1,10,10,10,0,{8}}, {2,10,10,10,0,{8}},
-          {3,10,10,10,0,{8}}, {4,10,10,10,0,{8}},
-          {5,0,0,0,1,{9}}, {6,20,20,20,0,{}},
-          {7,7,7,7,0,{}}, {8,10,10,10,0,{}}, {9,5,5,5,0,{}}};
-        Gecode::Search::Statistics uninterrupted;
-        for (bool interrupt : {false,true}) {
-          Gecode::Search::FailStop stop(10000);
-          Gecode::Search::Options options; options.clone=false; options.stop=&stop;
-          Gecode::Column<PruningSpace> engine(new PruningSpace(graph),
-            PruningSpace::guidance(),options);
-          std::unique_ptr<PruningSpace> first(engine.next());
-          if (!first || first->value().cost!=20) return false;
-          PruningSpace incumbent(graph);
-          incumbent.vertex=7;
-          if (incumbent.status()!=SS_SOLVED) return false;
-          engine.constrain(incumbent);
-          if (interrupt) {
-            const auto before=engine.statistics();
-            stop.limit(before.fail+1);
-            if (engine.next() || !engine.stopped() ||
-                engine.statistics().fail!=before.fail+2 ||
-                engine.statistics().node!=before.node) return false;
-            stop.limit(10000);
-          }
-          std::unique_ptr<PruningSpace> optimum(engine.next());
-          if (!optimum || optimum->value().cost!=5 || engine.next() ||
-              engine.stopped()) return false;
-          const auto after=engine.statistics();
-          if (interrupt) {
-            if (after.fail!=uninterrupted.fail ||
-                after.node!=uninterrupted.node ||
-                after.depth!=uninterrupted.depth) return false;
-          } else {
-            uninterrupted=after;
-          }
-        }
-        return true;
-      }
-      static bool adoption(bool max) {
-        Gecode::Search::Options options; options.clone=false;
-        std::unique_ptr<Gecode::Search::Builder> builder(
-          Gecode::column<AStarSpace>(AStarSpace::guidance(max,true),options));
-        if (!builder->best()) return false;
-        std::unique_ptr<Gecode::Search::Engine> engine((*builder)(new AStarSpace(max)));
-        std::unique_ptr<Space> first(engine->next());
-        if (!first) return false;
-        {
-          AStarSpace incumbent(max,1), worse(max,0);
-          incumbent.status(); worse.status();
-          engine->constrain(incumbent); engine->constrain(incumbent);
-          engine->constrain(worse);
-        }
-        std::unique_ptr<AStarSpace> optimum(static_cast<AStarSpace*>(engine->next()));
-        return optimum && optimum->x.val()==2 && !engine->next() && !engine->stopped();
-      }
-      static bool ownership_and_limits(void) {
-        using namespace Gecode::Search;
-        Gecode::Search::Options options;
-        for (bool clone : {false,true}) {
-          options.clone=clone;
-          for (int state : {-2,-1,0}) {
-            std::unique_ptr<AStarSpace> root(new AStarSpace(false,state,state==-2));
-            std::unique_ptr<Space> result;
-            {
-              Gecode::Column<AStarSpace> engine(root.get(),
-                AStarSpace::guidance(false,true),options);
-              if (!clone) root.release();
-              result.reset(engine.next());
-              if ((state!=-2)!=static_cast<bool>(result)) return false;
-              if (state==0 && (engine.next() || engine.stopped())) return false;
-            }
-            if (result && result->status()!=SS_SOLVED) return false;
-            result.reset(); root.reset();
-            if (AStarSpace::live.load()) return false;
-          }
-        }
-        options.clone=false;
-        std::unique_ptr<Gecode::Search::Engine> capped(columnengine(new AStarSpace,
-          AStarSpace::guidance(false,true),options,{1,1,1}));
-        std::unique_ptr<Space> first(capped->next());
-        if (!first || capped->next() || !capped->stopped()) return false;
-        const auto before=capped->statistics().node;
-        if (capped->next() || !capped->stopped() ||
-            capped->statistics().node!=before) return false;
-        capped->reset(new AStarSpace(false,2));
-        std::unique_ptr<Space> optimum(capped->next());
-        if (!optimum || capped->stopped() || capped->statistics().node!=1 ||
-            capped->next()) return false;
-        capped->reset(nullptr);
-        if (capped->next() || capped->stopped() || capped->nogoods().ng()) return false;
-        // The last child replaces its fully expanded parent in the cap count.
-        const PruningSpace::Graph chain={
-          {0,0,0,0,0,{1}}, {1,0,0,0,0,{2}}, {2,0,0,0,0,{3}},
-          {3,3,3,3,0,{}}};
-        Gecode::Column<PruningSpace> unary(new PruningSpace(chain),
-          PruningSpace::guidance(),options,{1,1,1});
-        std::unique_ptr<PruningSpace> solution(unary.next());
-        if (!solution || solution->value().cost!=3 || unary.next() || unary.stopped())
-          return false;
-        Gecode::Column<CABSFeasibility> failed(new CABSFeasibility(true),
-          CABSFeasibility::guidance(),options);
-        if (failed.next() || failed.stopped()) return false;
-        Gecode::Column<CABSFeasibility> feasible(new CABSFeasibility,
-          CABSFeasibility::guidance(),options);
-        std::unique_ptr<CABSFeasibility> witness(feasible.next());
-        return witness && witness->x.val()==1 && !feasible.next() && !feasible.stopped();
-      }
-      static bool diagnostics(void) {
-        using namespace Gecode::Search;
-        AStarSpace root;
-        Gecode::Search::Options options; options.clone=false; options.threads=2;
-        auto guidance=AStarSpace::guidance(false);
-        try { Gecode::Column<AStarSpace> invalid(&root,guidance,options); return false; }
-        catch (const UnsupportedColumnThreads&) {}
-        options.threads=1; options.tracer=&Gecode::StdSearchTracer::def;
-        try { Gecode::Column<AStarSpace> invalid(&root,guidance,options); return false; }
-        catch (const UnsupportedColumnTracer&) {}
-        options.tracer=nullptr;
-        try { Gecode::Column<AStarSpace> invalid(&root,guidance,options,{0,1,0}); return false; }
-        catch (const InvalidColumnQuota&) {}
-        guidance.bound={};
-        try { Gecode::Column<AStarSpace> invalid(&root,guidance,options); return false; }
-        catch (const UninitializedColumnBound&) {}
-        options.clone=true;
-        guidance.bound=[](const Space&)->std::int64_t {
-          throw std::runtime_error("guidance failure");
-        };
-        {
-          Gecode::Column<AStarSpace> engine(&root,guidance,options);
-          try { delete engine.next(); return false; }
-          catch (const std::runtime_error&) {}
-        }
-        return AStarSpace::live.load()==1 && root.status()==SS_BRANCH;
-      }
-    public:
-      ColumnTest(void) : Base("Search::Column", TestTags::check()) {}
-      bool run(void) override {
-        std::lock_guard<std::mutex> lock(heuristic_ownership_mutex);
-        for (bool max : {false,true})
-          if (!solutions(max,true,true) || !solutions(max,false,false) ||
-              !adoption(max)) return false;
-        for (bool interrupt : {false,true})
-          for (unsigned long int growth : {0UL,1UL,
-                 std::numeric_limits<unsigned long int>::max()})
-            if (!cycles(growth,interrupt)) return false;
-        return stale_frontier() && ownership_and_limits() &&
-          AStarSpace::live.load()==0 &&
-          diagnostics() && AStarSpace::live.load()==0 &&
-          StatePruningChecks::semantics(2) && StatePruningChecks::reopen(2);
-      }
-    } columnTest;
 
 #endif
 
-    /// Brancher used to exercise internal post-propagation feedback
-    class FeedbackBrancher : public Brancher {
-    private:
-      class FeedbackChoice : public Gecode::Search::BranchFeedbackChoice {
-      public:
-        int pos;
-        FeedbackChoice(const Brancher& brancher,
-                       const Gecode::Search::BranchFeedback& feedback,
-                       int pos0)
-          : BranchFeedbackChoice(brancher,2U,feedback,
-                                 static_cast<unsigned int>(pos0)),
-            pos(pos0) {}
-        void archive(Archive& archive) const override {
-          Choice::archive(archive);
-          archive << pos;
-        }
-      };
-      ViewArray<IntView> x;
-      Gecode::Search::BranchFeedback feedback;
-      mutable int start;
-      int throwing_alternative;
-
-      FeedbackBrancher(Home home, ViewArray<IntView>& x0,
-                       const Gecode::Search::BranchFeedback& feedback0,
-                       int throwing_alternative0)
-        : Brancher(home), x(x0), feedback(feedback0), start(0),
-          throwing_alternative(throwing_alternative0) {
-        home.notice(*this,AP_DISPOSE,true);
-      }
-      FeedbackBrancher(Space& home, FeedbackBrancher& brancher)
-        : Brancher(home,brancher), feedback(brancher.feedback),
-          start(brancher.start),
-          throwing_alternative(brancher.throwing_alternative) {
-        x.update(home,brancher.x);
-      }
-    public:
-      static void post(Home home, const IntVarArgs& x,
-                       const Gecode::Search::BranchFeedback& feedback,
-                       int throwing_alternative) {
-        ViewArray<IntView> views(home,x);
-        (void) new (home)
-          FeedbackBrancher(home,views,feedback,throwing_alternative);
-      }
-      bool status(const Space&) const override {
-        while ((start < x.size()) && x[start].assigned())
-          start++;
-        return start < x.size();
-      }
-      const Choice* choice(Space&) override {
-        return new FeedbackChoice(*this,feedback,start);
-      }
-      const Choice* choice(const Space&, Archive& archive) override {
-        int pos;
-        archive >> pos;
-        return new FeedbackChoice(*this,feedback,pos);
-      }
-      ExecStatus commit(Space& home, const Choice& choice0,
-                        unsigned int alternative) override {
-        const FeedbackChoice& choice =
-          static_cast<const FeedbackChoice&>(choice0);
-        if (throwing_alternative == static_cast<int>(alternative))
-          throw std::runtime_error("branch feedback fixture commit");
-        if ((choice.pos == x.size()-1) && (alternative == 1U))
-          return ES_FAILED;
-        return me_failed(x[choice.pos].eq(home,static_cast<int>(alternative)))
-          ? ES_FAILED : ES_OK;
-      }
-      Actor* copy(Space& home) override {
-        return new (home) FeedbackBrancher(home,*this);
-      }
-      size_t dispose(Space& home) override {
-        home.ignore(*this,AP_DISPOSE,true);
-        feedback.~BranchFeedback();
-        (void) Brancher::dispose(home);
-        return sizeof(*this);
-      }
-    };
-
-    /// Small complete tree for branch-feedback fixtures
-    class FeedbackSpace : public Space {
-    public:
-      IntVarArray x;
-      FeedbackSpace(unsigned int size,
-                    const Gecode::Search::BranchFeedback& feedback,
-                    int throwing_alternative=-1)
-        : x(*this,static_cast<int>(size),0,1) {
-        FeedbackBrancher::post(*this,x,feedback,throwing_alternative);
-      }
-      FeedbackSpace(FeedbackSpace& space) : Space(space) {
-        x.update(*this,space.x);
-      }
-      Space* copy(void) override {
-        return new FeedbackSpace(*this);
-      }
-      void constrain(const Space&) override {}
-      bool master(const MetaInfo& info) override {
-        if ((info.type() == MetaInfo::RESTART) && (info.last() != nullptr)) {
-          const FeedbackSpace& last =
-            static_cast<const FeedbackSpace&>(*info.last());
-          BoolVarArgs same;
-          for (int i=0; i<x.size(); i++)
-            same << expr(*this,x[i] == last.x[i].val());
-          rel(*this,BOT_AND,same,0);
-        }
-        return false;
-      }
-      unsigned int assigned(void) const {
-        unsigned int count = 0U;
-        for (int i=0; i<x.size(); i++)
-          if (x[i].assigned())
-            count++;
-        return count;
-      }
-    };
-
-    /// Native publication, final-alternative, archive and ownership feedback checks
-    class BranchFeedback : public Base {
-    private:
-      class Recorder : public Gecode::Search::BranchFeedback::Receiver {
-      private:
-        std::mutex mutex;
-        unsigned int count[8][2][3];
-        bool invalid;
-        bool* destroyed;
-      public:
-        explicit Recorder(bool* destroyed0=nullptr)
-          : invalid(false), destroyed(destroyed0) {
-          for (unsigned int i=0U; i<8U; i++)
-            for (unsigned int j=0U; j<2U; j++)
-              for (unsigned int k=0U; k<3U; k++)
-                count[i][j][k] = 0U;
-        }
-        ~Recorder(void) override {
-          if (destroyed != nullptr)
-            *destroyed = true;
-        }
-        void observe(unsigned int id, unsigned int alternative,
-                     const Space& space,
-                     Gecode::Search::BranchOutcome outcome) noexcept override {
-          const FeedbackSpace* feedback_space =
-            dynamic_cast<const FeedbackSpace*>(&space);
-          std::lock_guard<std::mutex> lock(mutex);
-          const unsigned int expected_assigned =
-            (outcome == Gecode::Search::BranchOutcome::FAILED) ? id : id+1U;
-          if ((feedback_space == nullptr) || (id >= 8U) ||
-              (alternative >= 2U) ||
-              (feedback_space->assigned() < expected_assigned)) {
-            invalid = true;
-            return;
-          }
-          unsigned int outcome_index;
-          switch (outcome) {
-          case Gecode::Search::BranchOutcome::FAILED:
-            outcome_index = 0U; break;
-          case Gecode::Search::BranchOutcome::SOLVED:
-            outcome_index = 1U; break;
-          case Gecode::Search::BranchOutcome::BRANCH:
-            outcome_index = 2U; break;
-          default:
-            invalid = true; return;
-          }
-          count[id][alternative][outcome_index]++;
-        }
-        bool expected(unsigned int size, unsigned int repetitions=1U) {
-          std::lock_guard<std::mutex> lock(mutex);
-          if (invalid)
-            return false;
-          for (unsigned int id=0U; id<size; id++) {
-            const unsigned int branches = repetitions * (1U << id);
-            if (id+1U == size) {
-              if ((count[id][0][0] != 0U) ||
-                  (count[id][0][1] != branches) ||
-                  (count[id][0][2] != 0U) ||
-                  (count[id][1][0] != branches) ||
-                  (count[id][1][1] != 0U) ||
-                  (count[id][1][2] != 0U))
-                return false;
-            } else {
-              for (unsigned int alternative=0U; alternative<2U;
-                   alternative++)
-                if ((count[id][alternative][0] != 0U) ||
-                    (count[id][alternative][1] != 0U) ||
-                    (count[id][alternative][2] != branches))
-                  return false;
-            }
-          }
-          return true;
-        }
-        unsigned int observations(void) {
-          std::lock_guard<std::mutex> lock(mutex);
-          unsigned int total = 0U;
-          for (unsigned int i=0U; i<8U; i++)
-            for (unsigned int j=0U; j<2U; j++)
-              for (unsigned int k=0U; k<3U; k++)
-                total += count[i][j][k];
-          return total;
-        }
-        bool valid(void) {
-          std::lock_guard<std::mutex> lock(mutex);
-          return !invalid;
-        }
-      };
-
-#ifdef GECODE_HAS_EXPERIMENTAL
-      // Exercise the final alternative after publication, including a commit
-      // exception after the selected parent has transferred to that child.
-      static bool native(unsigned int kind, bool throwing) {
-        bool destroyed = false;
-        Recorder* recorder = new Recorder(&destroyed);
-        Gecode::Search::BranchFeedback feedback(recorder);
-        bool threw = false;
-        unsigned int solutions = 0U;
-        {
-          FeedbackSpace root(1U,feedback,throwing ? 1 : -1);
-          Gecode::Search::Options options;
-          options.threads = 1.0;
-          Gecode::Search::HeuristicGuidance guidance(
-            Gecode::Search::HeuristicGuidance::MINIMIZE,
-            [](const Space& space) -> std::int64_t {
-              return static_cast<const FeedbackSpace&>(space).assigned() ? 0 : -1;
-            });
-          std::unique_ptr<Gecode::Search::Engine> search;
-          switch (kind) {
-          case 0U:
-            search.reset(Gecode::Search::astarengine(&root,guidance,options));
-            break;
-          case 1U:
-            search.reset(Gecode::Search::cabsengine(&root,guidance,options));
-            break;
-          case 2U:
-            search.reset(Gecode::Search::columnengine(&root,guidance,options));
-            break;
-          default:
-            GECODE_NEVER;
-          }
-          try {
-            while (std::unique_ptr<Space> solution{search->next()})
-              solutions++;
-          } catch (const std::runtime_error&) {
-            threw = true;
-          }
-          if ((solutions != 1U) || (threw != throwing) ||
-              (throwing ? recorder->observations() != 1U :
-               !recorder->expected(1U)) || search->stopped())
-            return false;
-        }
-        feedback = Gecode::Search::BranchFeedback();
-        return destroyed;
-      }
-
-#endif
-
-      static bool archive_compatible(void) {
-        Recorder* recorder = new Recorder;
-        Gecode::Search::BranchFeedback feedback(recorder);
-        FeedbackSpace root(1U,feedback);
-        if (root.status() != SS_BRANCH)
-          return false;
-        FeedbackSpace* clone = static_cast<FeedbackSpace*>(root.clone());
-        const Choice* choice = root.choice();
-        Archive archive;
-        choice->archive(archive);
-        const Choice* restored = clone->choice(archive);
-        clone->commit(*restored,0U);
-        delete restored;
-        delete choice;
-        const bool compatible = (clone->status() == SS_SOLVED) &&
-          (recorder->observations() == 0U);
-        delete clone;
-        return compatible;
-      }
-    public:
-      BranchFeedback(void) : Base("Search::BranchFeedback", TestTags::check()) {}
-      bool run(void) override {
-        return archive_compatible()
-#ifdef GECODE_HAS_EXPERIMENTAL
-          && native(0U,false) && native(0U,true) &&
-          native(1U,false) && native(1U,true) &&
-          native(2U,false) && native(2U,true)
-#endif
-          ;
-      }
-    };
-
-    BranchFeedback branch_feedback;
     /// Values for selecting branchers
     enum HowToBranch {
       HTB_NONE,   ///< Do not branch
@@ -2591,9 +1515,8 @@ namespace Test {
         AStarSpace root;
         const auto guidance=AStarSpace::guidance(false);
         std::unique_ptr<Gecode::Search::Engine> engine(kind==0U ?
-          Gecode::Search::astarengine(&root,guidance,options) : kind==1U ?
-          Gecode::Search::cabsengine(&root,guidance,options) :
-          Gecode::Search::columnengine(&root,guidance,options));
+          Gecode::Search::astarengine(&root,guidance,options) :
+          Gecode::Search::cabsengine(&root,guidance,options));
         std::int64_t optimum=0;
         bool found=false;
         auto consume=[&] {
@@ -2633,7 +1556,7 @@ namespace Test {
 #ifdef GECODE_HAS_THREADS
 #ifdef GECODE_HAS_EXPERIMENTAL
         std::lock_guard<std::mutex> lock(heuristic_ownership_mutex);
-        for (unsigned int kind : {0U,1U,2U})
+        for (unsigned int kind : {0U,1U})
           if (!native(kind,0U,false) || !native(kind,1U,false) ||
               !native(kind,0U,true)) return false;
 #endif

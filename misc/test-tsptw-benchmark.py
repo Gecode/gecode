@@ -57,15 +57,12 @@ class Records(unittest.TestCase):
         # The historical display name deliberately differs from the frozen arguments.
         row = dict(config='transition-astar', arguments=benchmark.CONFIGS['transition-astar-lazy-min-arcs'])
         summary = dict(type='summary', engine='astar', formulation='transition', bound='min-arcs',
-            residual_propagation='off', state_pruning='off', termination='infeasible', incumbent=None,
+            residual_propagation='off', termination='infeasible', incumbent=None,
             elapsed_ms=2, preprocessing_ms=1, search_ms=1, statistics=dict(node=1))
         benchmark.validate_summary(summary, [], row)
-        for field, wrong in (('bound', 'prefix'), ('residual_propagation', 'unary'), ('state_pruning', 'pareto')):
+        for field, wrong in (('bound', 'prefix'), ('residual_propagation', 'unary')):
             with self.subTest(field=field), self.assertRaisesRegex(ValueError, field):
                 benchmark.validate_summary(dict(summary, **{field:wrong}), [], row)
-        column = dict(summary, engine='column', bound='prefix', initial_quota=1, quota_growth=1, frontier_limit=0)
-        with self.assertRaisesRegex(ValueError, 'initial_quota'):
-            benchmark.validate_summary(dict(column, initial_quota=2), [], dict(config='transition-column'))
 
     def test_malformed_terminal_record_is_unfinished(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -83,7 +80,7 @@ class Records(unittest.TestCase):
         summary = dict(type='summary', engine='bab', formulation='closed', termination='optimal',
             incumbent=incumbent, elapsed_ms=2, preprocessing_ms=0.5, search_ms=1.5, statistics=dict(node=3))
         metrics = dict(preprocessing_ms=0.5, search_ms=1.5, startup_and_teardown_ms=1,
-            expansions=3, descriptor_count=None, descriptor_bytes=None, allocation=None,
+            expansions=3, allocation=None,
             frontier_bytes=None, clone_bytes=None)
         row = dict(config='closed-bab', argv=['solver', 'waiting.txt'])
         valid = dict(row=row, status='ok', wall_seconds=0.003, diagnostic='', incumbents=[trace],
@@ -114,14 +111,14 @@ class Records(unittest.TestCase):
         solution = dict(incumbent, type='solution', elapsed_ms=1)
         summary = dict(type='summary', engine='astar', formulation='transition', termination='optimal',
             incumbent=incumbent, elapsed_ms=2, preprocessing_ms=0.5, search_ms=1.5,
-            statistics=dict(node=3, state_descriptors=0, state_bytes=0),
+            statistics=dict(node=3),
             allocation=dict(space_bytes=1, intvar_handle_bytes=1, root_positions=0,
                 prepared_root_positions=1, solution_positions=3),
             measurements=dict(bound_calls=1, bound_ms=0.1, inference_calls=0, inference_ms=0, propagation_ms=0))
         row = dict(id='sample', config='transition-astar', case=dict(path=str(instance), sha256=benchmark.digest(instance)))
         config = dict(configs=benchmark.CONFIGS, native=dict(path='unused'), seconds=1,
             rss_bytes=1024**3, sample_interval_seconds=0.05)
-        for section, field in (('statistics', 'node'), ('statistics', 'state_bytes'),
+        for section, field in (('statistics', 'node'),
                 ('allocation', 'space_bytes'), ('measurements', 'bound_ms')):
             with self.subTest(section=section, field=field), tempfile.TemporaryDirectory() as directory:
                 malformed = copy.deepcopy(summary)

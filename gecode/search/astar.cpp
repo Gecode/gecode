@@ -39,14 +39,13 @@
 namespace Gecode { namespace Search {
 
   Engine*
-  astarengine(Space* s, const HeuristicGuidance& g, const Options& o,
-              const StatePruning& p) {
-    return bestfirstengine(s,g,BOUND_FIRST,o,p);
+  astarengine(Space* s, const HeuristicGuidance& g, const Options& o) {
+    return bestfirstengine(s,g,BOUND_FIRST,o);
   }
 
   Engine*
   bestfirstengine(Space* s, const HeuristicGuidance& g, BestFirstOrder ordering,
-                  const Options& o, const StatePruning& p) {
+                  const Options& o) {
     Options expanded = o.expand();
     if (expanded.threads != 1.0)
       throw UnsupportedAStarThreads("AStar");
@@ -54,10 +53,8 @@ namespace Gecode { namespace Search {
       throw UnsupportedAStarTracer("AStar");
     if (!g.bound)
       throw UninitializedAStarBound("AStar");
-    if (static_cast<bool>(p.extract) != static_cast<bool>(p.compare))
-      throw UninitializedStatePruning("AStar");
     return new WorkerToEngine<Seq::AStar>(s,expanded,
-                                        Seq::AStar::Configuration{g,p,ordering});
+                                        Seq::AStar::Configuration{g,ordering});
   }
 
 }}
@@ -77,10 +74,7 @@ namespace Gecode { namespace Search { namespace Seq {
   }
 
   AStar::AStar(Space* s, const Options& o, const Configuration& c)
-    : opt(o), guidance(c.guidance), pruning(c.pruning), ordering(c.ordering),
-      registry(pruning.extract ?
-               new StateRegistry(pruning.compare,pruning.descriptor_limit) :
-               nullptr),
+    : opt(o), guidance(c.guidance), ordering(c.ordering),
       order(0), incumbent_revision(0),
       current_status(SS_FAILED), current_depth(0), current_revision(0),
       counted(false), best_bound(0) {
@@ -117,28 +111,14 @@ namespace Gecode { namespace Search { namespace Seq {
       fail++;
       return;
     }
-    std::optional<StatePruning::Descriptor> descriptor;
-    if (registry) {
-      descriptor = pruning.extract(*s);
-      if (descriptor && registry->subsumes(*descriptor)) {
-        state_pruned++;
-        return;
-      }
-    }
     const std::int64_t rank = guidance.rank ? guidance.rank(*s) : 0;
     frontier.push_back({std::move(s),bound,rank,depth,order++,revision});
     std::push_heap(frontier.begin(),frontier.end(),Later{guidance.sense,ordering});
-    if (!descriptor) return;
-    // Admit fresh work before replacing labels, even after earlier expansion.
-    // Pending Spaces keep their original Choice cursors and coverage.
-    registry->store(std::move(*descriptor));
-    state_descriptors = std::max(state_descriptors,registry->size());
-    state_bytes = std::max(state_bytes,registry->storage());
   }
 
   Space*
   AStar::publish(std::unique_ptr<Space> s) {
-    // Delete exhausted branchers; completion branchers must survive restrictions.
+    // Delete exhausted branchers before cloning the solution.
     (void) s->choice();
     const std::int64_t bound = guidance.bound(*s);
     if (!improves(bound)) return nullptr;
@@ -184,9 +164,8 @@ namespace Gecode { namespace Search { namespace Seq {
         }
       }
       const auto child_depth = current_depth+1;
-      ExpansionStep step = expansion.next(*this,opt,child_depth,current_revision,
+      ExpansionStep step = expansion.next(*this,child_depth,current_revision,
                                            best.get(),incumbent_revision);
-      if (step.state == ExpansionStep::SUSPENDED) return nullptr;
       if (step.state == ExpansionStep::EXHAUSTED) continue;
       switch (step.status) {
       case SS_FAILED:
@@ -223,7 +202,6 @@ namespace Gecode { namespace Search { namespace Seq {
   AStar::reset(Space* s) {
     expansion.reset();
     frontier.clear();
-    if (registry) registry->clear();
     best.reset();
     order = 0;
     incumbent_revision = current_revision = 0;

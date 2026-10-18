@@ -101,7 +101,7 @@ namespace Gecode { namespace Search { namespace Par {
   forceinline
   Engine<Tracer>::Worker::Worker(Space* s, Engine& e)
     : tracer(e.opt().tracer), _engine(e),
-      path(s == nullptr ? 0 : e.opt().nogoods_limit), counted(false), d(0),
+      path(s == nullptr ? 0 : e.opt().nogoods_limit), d(0),
       idle(false) {
     tracer.worker();
     if (s != nullptr) {

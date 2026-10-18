@@ -43,7 +43,7 @@ never justifies sound pruning.
 Each native `Choice` commit advances one layer. The engine starts at width one,
 considers every generated terminal node, and queues at most that many unresolved
 next-layer candidates. A shallow goal can be returned before deeper improvements;
-publication preserves the remaining parents, alternatives, and preparation.
+publication preserves the remaining parents and alternatives.
 After all admitted nodes and original alternatives in a pass finish, CABS can
 prove optimality when every width-discarded bound excludes strict improvement
 of the accepted incumbent. It keeps the minimum discarded bound for minimization
@@ -85,9 +85,9 @@ The frontier quota counts pending search spaces: unexpanded entries
 in the current layer, next-layer candidates, and a selected parent with remaining
 alternatives. Moving a parent between these owners does not consume an extra
 slot, and replacing a candidate uses its existing slot. The quota excludes the
-immutable restart root, owned incumbent, caller-owned returned solutions, a
-temporary successor, and hidden brancher trial spaces. It is a **node quota**,
-without a byte or process-memory guarantee.
+immutable restart root, owned incumbent, caller-owned returned solutions, and a
+temporary successor. It is a **node quota**, without a byte or process-memory
+guarantee.
 
 Search can resume after an ordinary stop. Raise or reset the stop limits and call
 `next()` again to continue the same pass. Capacity-one `WorkerControl` supports
@@ -100,47 +100,13 @@ the engine's incumbent have independent ownership. The exact scalar guidance
 value decides acceptance in the declared objective direction; equal or worse
 external incumbents are ignored.
 Cuts affect committed children, leaving saved source choices and the restart root
-unchanged. Already inherited cuts are not repeated, so completion
-branchers can finish their pending checks. If a callback or model operation throws,
-destroy the engine before using it again.
+unchanged. Already inherited cuts are not repeated.
+If a callback or model operation throws, destroy the engine before using it again.
 
 The engine stores cloned states and reuses each selected parent for its final
 alternative. `c_d` and `a_d` do not enable replay or recomputation. No-good
 extraction returns the existing empty result. Statistics
 count depth as committed search edges and restarts as widening passes.
-
-CABS accepts the same optional [state-pruning declaration](astar.md) as A*,
-with the same expert obligation to preserve feasibility, cost and residual
-brancher/search progress, owned keys/labels and exact collision checks:
-
-```cpp
-auto pruning = TSPTW::Transition::pareto_pruning();
-CABS<TSPTW::Transition> search(root, TSPTW::Transition::guidance(),
-                              options, limits, pruning);
-std::unique_ptr<Search::Builder> builder(
-  cabs<TSPTW::Transition>(TSPTW::Transition::guidance(), options, limits, pruning));
-```
-
-Descriptors belong only to admitted **next-layer candidates**. CABS compares
-neither selected/current-layer nodes nor previously expanded nodes. A live
-equivalent or dominating candidate can reject an arrival. A new dominator takes
-one victim's existing slot before removing any other victims, even if its beam
-rank is worse. Sound replacement does not lose coverage. An arrival discarded
-by ranking registers nothing; an evicted candidate loses its descriptor.
-Descriptors are cleared as candidates become the current layer, between passes
-and on reset. A beam-discarded representative therefore cannot suppress a later
-surviving route. Earlier width-discarded bounds remain in the pass aggregate;
-sound label pruning does not erase them. Completion still requires processing
-all admitted work and bounding out every width-discarded alternative.
-
-`descriptor_limit` forgets all candidate descriptors if their count exceeds the
-ceiling, preserving the candidates themselves. It is independent of width and
-frontier limits and never reports a stop. Empty policy performs no extraction,
-descriptor allocation or registry work. `state_pruned` counts rejected arrivals
-and removed dominated live candidates, separately from failures and beam loss.
-`state_descriptors`/`state_bytes` report peak descriptor storage using the
-[A* storage estimate](astar.md); all three are zero when pruning is disabled.
-The existing stop, proof and independently owned solution contracts still apply.
 
 Build and run the [closed example](../examples/astar.cpp):
 
@@ -149,7 +115,7 @@ cmake --build build/open-search --target astar
 build/open-search/bin/astar
 ```
 
-The example runs A*, BAB, CABS, column search, and CBFS on one bounded
+The example runs A*, BAB, and CABS on one bounded
 formulation. A misleading rank makes capped width one return 4 and -2, then
 stop without a proof. Unrestricted CABS widens to recover -7 and prove it
 optimal. Each run prints its improvements and whether search completed. It

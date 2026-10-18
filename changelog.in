@@ -125,8 +125,7 @@ Rank:   major
 Experimental: true
 [DESCRIPTION]
 Add experimental heuristic search for 6.5.0: AStar, configurable best-first,
-CABS and Column with fixed-quota CBFS mode, bound and rank guidance, optional
-state pruning, and ordinary engine builders. Enable with
+and CABS with bound and rank guidance and ordinary engine builders. Enable with
 --enable-experimental or GECODE_ENABLE_EXPERIMENTAL=ON; the preview is disabled
 by default. Preview APIs may change or be removed in future feature releases;
 their documented search correctness contracts still apply.

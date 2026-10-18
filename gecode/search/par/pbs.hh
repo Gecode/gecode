@@ -38,7 +38,6 @@
 #ifndef GECODE_SEARCH_PAR_PBS_HH
 #define GECODE_SEARCH_PAR_PBS_HH
 
-#include <memory>
 #include <gecode/search.hh>
 #include <atomic>
 

@@ -88,15 +88,12 @@ namespace Gecode { namespace Search { namespace Par {
     tracer.round();
     path.reset((s != nullptr) ? ngdl : 0);
     d = 0;
-    counted = false;
     idle = false;
     if ((s == nullptr) || (s->status(*this) == SS_FAILED)) {
       delete s;
       cur = nullptr;
-      counted = false;
     } else {
       cur = s;
-      counted = false;
     }
     Search::Worker::reset();
   }
@@ -142,7 +139,6 @@ namespace Gecode { namespace Search { namespace Par {
         path.ngdl(0);
         d = 0;
         cur = s;
-        counted = false;
         Statistics t = *this;
         Search::Worker::reset(r_d);
         (*this) += t;
@@ -235,19 +231,9 @@ namespace Gecode { namespace Search { namespace Par {
               m.release();
               engine().stop();
             } else {
-              if (!counted) {
-                node++;
-                counted = true;
-              }
-              SpaceStatus status = cur->status(*this);
-              if (status == SS_BRANCH) {
-                if (!this->prepare(*cur,engine().opt())) {
-                  m.release();
-                  engine().stop();
-                  break;
-                }
-                status = cur->status(*this);
-              }
+              node++;
+              if (cur->status(*this) == SS_BRANCH)
+                cur->prepare(*this);
               SearchTracer::EdgeInfo ei;
               if (tracer) {
                 if (path.entries() > 0) {
@@ -260,7 +246,7 @@ namespace Gecode { namespace Search { namespace Par {
                 }
               }
               unsigned int nid = tracer.nid();
-              switch (status) {
+              switch (cur->status(*this)) {
               case SS_FAILED:
                 if (tracer) {
                   SearchTracer::NodeInfo ni(SearchTracer::NodeType::FAILED,
@@ -270,7 +256,6 @@ namespace Gecode { namespace Search { namespace Par {
                 fail++;
                 delete cur;
                 cur = nullptr;
-                counted = false;
                 path.next();
                 m.release();
                 break;
@@ -286,7 +271,6 @@ namespace Gecode { namespace Search { namespace Par {
                   Space* s = cur->clone();
                   delete cur;
                   cur = nullptr;
-                  counted = false;
                   path.next();
                   m.release();
                   engine().solution(s);
@@ -309,7 +293,6 @@ namespace Gecode { namespace Search { namespace Par {
                     tracer.node(ei,ni);
                   }
                   cur->commit(*ch,0);
-                  counted = false;
                   m.release();
                 }
                 break;

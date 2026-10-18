@@ -53,15 +53,10 @@ def run_solver(solver, path, engine, options=(), seed=None, formulation="closed"
     summary = records[-1]
     assert summary["engine"] == engine
     assert summary["formulation"] == formulation
-    pruning = options[options.index("--state-pruning")+1] if "--state-pruning" in options else "off"
-    assert summary["state_pruning"] == pruning
     bound = options[options.index("--bound")+1] if "--bound" in options else "prefix"
     propagation = options[options.index("--residual-propagation")+1] if "--residual-propagation" in options else "off"
     assert summary["bound"] == ("cp-total" if formulation == "closed" else bound)
     assert summary["residual_propagation"] == propagation
-    if pruning == "off":
-        assert all(summary["statistics"][field] == 0 for field in
-                   ("state_pruned", "state_descriptors", "state_bytes"))
     if formulation != "closed":
         allocation = summary["allocation"]
         n = len(data[0])
@@ -102,30 +97,6 @@ def run_solver(solver, path, engine, options=(), seed=None, formulation="closed"
     return summary, records[:-1]
 
 
-def validate_pruning(solver, path, require_pruning=False, options=(),
-                     formulations=("transition", "eager")):
-    optimum = CHECKER["enumerate_tours"](CHECKER["read_instance"](path))["optimum"]
-    for engine in ("astar", "cabs"):
-        lazy_tours = None
-        for formulation in formulations:
-            for pruning in ("off", "pareto"):
-                summary, solutions = run_solver(solver, path, engine,
-                    (*options, "--state-pruning", pruning), formulation=formulation)
-                assert summary["termination"] == ("optimal" if optimum else "infeasible")
-                if optimum:
-                    assert summary["incumbent"]["scaled_cost"] == optimum["scaled_cost"]
-                if require_pruning and pruning == "pareto":
-                    assert summary["statistics"]["state_pruned"] > 0, summary
-                    assert summary["statistics"]["state_descriptors"] > 0, summary
-                    assert summary["statistics"]["state_bytes"] > 0, summary
-                if pruning == "pareto":
-                    tours = [record["tour"] for record in solutions]
-                    if formulation == "transition":
-                        lazy_tours = tours
-                    else:
-                        assert tours == lazy_tours, (path, engine, lazy_tours, tours)
-
-
 def validate_strengthening(solver, path, configurations):
     optimum = CHECKER["enumerate_tours"](CHECKER["read_instance"](path))["optimum"]
     for bound, propagation in configurations:
@@ -138,27 +109,12 @@ def validate_strengthening(solver, path, configurations):
                 assert summary["incumbent"]["scaled_cost"] == optimum["scaled_cost"]
 
 
-def validate_column(solver, path, options=(), seed=None, formulations=("closed", "transition")):
-    optimum = CHECKER["enumerate_tours"](CHECKER["read_instance"](path))["optimum"]
-    for growth in ("0", "1"):
-        for formulation in formulations:
-            summary, _ = run_solver(solver, path, "column",
-                (*options, "--initial-quota", "1", "--quota-growth", growth),
-                seed=seed, formulation=formulation)
-            assert summary["initial_quota"] == 1 and summary["quota_growth"] == int(growth)
-            assert summary["termination"] == ("optimal" if optimum else "infeasible")
-            if optimum:
-                assert summary["incumbent"]["scaled_cost"] == optimum["scaled_cost"]
-
-
 def validate_solver(solver, manifest):
     engines = ("bab", "astar", "cabs")
     formulations = ("closed", "transition", "eager")
     for case in manifest["tiny"]:
         path = DATA/case["path"]
         optimum = CHECKER["enumerate_tours"](CHECKER["read_instance"](path))["optimum"]
-        validate_pruning(solver, path)
-        validate_column(solver, path)
         validate_strengthening(solver, path, (("min-arcs", "off"), ("min-arcs", "unary")))
         for engine in engines:
             lazy_tours = None
@@ -216,33 +172,6 @@ def validate_solver(solver, manifest):
                     lazy_tours = tours
                 else:
                     assert tours == lazy_tours, (engine, lazy_tours, tours)
-        validate_pruning(solver, improving)
-        validate_column(solver, improving, formulations=("transition",))
-        seed.write_text("2 1\n")
-        validate_column(solver, folded, seed=seed)
-        # Many paths reach equal residual states before any complete tour.
-        duplicates = directory/"duplicates.txt"
-        duplicates.write_text("6\n" + "\n".join(
-            " ".join("0" if i == j else "1" for j in range(6)) for i in range(6)) +
-            "\n" + "0 100\n"*6)
-        validate_pruning(solver, duplicates, require_pruning=True)
-        # Waiting makes arrival time differ from prefix cost. Different visit
-        # orders give incomparable labels; enumerate every tour independently.
-        pareto = directory/"pareto.txt"
-        pareto.write_text("5\n0 3 1 7 4\n4 0 5 1 3\n2 1 0 4 6\n"
-                          "3 4 2 0 1\n1 2 3 5 0\n"
-                          "0 100\n15 100\n0 100\n0 100\n5 100\n")
-        validate_pruning(solver, pareto)
-        validate_column(solver, pareto, ("--state-pruning", "pareto",
-            "--bound", "min-arcs", "--residual-propagation", "unary"),
-            formulations=("transition",))
-        validate_pruning(solver, pareto, options=("--bound", "min-arcs",
-            "--residual-propagation", "unary"), formulations=("transition",))
-        for formulation, engine in (("closed", "astar"), ("transition", "bab")):
-            result = subprocess.run([str(solver), str(duplicates), "--engine", engine,
-                "--formulation", formulation, "--state-pruning", "pareto"],
-                capture_output=True, text=True)
-            assert result.returncode == 1 and not result.stdout, result
         # Equal-cost routes still need decisions after cost branching.
         branching = directory/"branching.txt"
         branching.write_text("5\n" + "\n".join(
@@ -265,16 +194,6 @@ def validate_solver(solver, manifest):
                 assert summary["termination"] in ("stopped", "optimal"), summary
                 if summary["termination"] == "optimal":
                     assert summary["incumbent"]["scaled_cost"] == branching_optimum
-        for formulation, growth, limit in (("closed", "1", "--node-limit"),
-                                           ("transition", "0", "--frontier-limit")):
-            summary, _ = run_solver(solver, branching, "column",
-                ("--quota-growth", growth, limit, "0" if limit == "--node-limit" else "1"),
-                formulation=formulation)
-            assert summary["termination"] == "stopped", summary
-        for options in (("--initial-quota", "0"), ("--max-width", "1")):
-            result = subprocess.run([str(solver), str(branching), "--engine", "column", *options],
-                                    capture_output=True, text=True)
-            assert result.returncode == 1 and not result.stdout, result
     complete = stopped = 0
     for case in manifest["published"]:
         proven_cost = None
@@ -292,8 +211,7 @@ def validate_solver(solver, manifest):
                 else:
                     stopped += 1
     print(f"passed closed/lazy/eager BAB/A*/CABS: tiny optima/infeasibility, "
-          f"matching transition tours, focused progressive/fixed column checks, "
-          f"Pareto off/on enumeration, nonmetric filtering, "
+          f"matching transition tours, nonmetric filtering, "
           f"minimum-arc bounds and residual unary propagation, "
           f"checked seeds and stops; "
           f"canonical runs: {complete} proven, {stopped} stopped (5 seconds per run)")

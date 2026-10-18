@@ -81,26 +81,6 @@ namespace Gecode { namespace Search {
     WorkerControlInUse(const char* l);
   };
 #ifdef GECODE_HAS_EXPERIMENTAL
-  /// %Exception: Column requires exactly one expanded thread
-  class GECODE_SEARCH_EXPORT UnsupportedColumnThreads : public Exception {
-  public:
-    UnsupportedColumnThreads(const char* l);
-  };
-  /// %Exception: Column does not support search tracers
-  class GECODE_SEARCH_EXPORT UnsupportedColumnTracer : public Exception {
-  public:
-    UnsupportedColumnTracer(const char* l);
-  };
-  /// %Exception: Column requires total-bound guidance
-  class GECODE_SEARCH_EXPORT UninitializedColumnBound : public Exception {
-  public:
-    UninitializedColumnBound(const char* l);
-  };
-  /// %Exception: Column requires a positive initial quota
-  class GECODE_SEARCH_EXPORT InvalidColumnQuota : public Exception {
-  public:
-    InvalidColumnQuota(const char* l);
-  };
   /// %Exception: CABS requires exactly one expanded thread
   class GECODE_SEARCH_EXPORT UnsupportedCABSThreads : public Exception {
   public:
@@ -130,11 +110,6 @@ namespace Gecode { namespace Search {
   class GECODE_SEARCH_EXPORT UninitializedAStarBound : public Exception {
   public:
     UninitializedAStarBound(const char* l);
-  };
-  /// %Exception: State pruning requires both extraction and label comparison
-  class GECODE_SEARCH_EXPORT UninitializedStatePruning : public Exception {
-  public:
-    UninitializedStatePruning(const char* l);
   };
 #endif
 

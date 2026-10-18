@@ -121,8 +121,8 @@ when Qt is installed and its framework link interface is usable.
 ## Experimental search preview
 
 Gecode 6.5.0 includes an opt-in preview of `AStar`, configurable best-first,
-`CABS`, and `Column` (including fixed-quota CBFS), with their guidance,
-state-pruning and builder APIs in the normal Gecode namespaces.
+and `CABS`, with bound/rank guidance and ordinary engine builders in the
+normal Gecode namespaces.
 Enable it when building the library with `-DGECODE_ENABLE_EXPERIMENTAL=ON`
 for CMake or `--enable-experimental` for Autoconf. Both builds disable the
 preview by default. The installed configuration defines

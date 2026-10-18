@@ -165,12 +165,6 @@ namespace Gecode { namespace Search {
     unsigned long int restart;
     /// Number of no-goods posted
     unsigned long int nogood;
-    /// Number of arrivals or live candidates removed by sound state pruning
-    unsigned long long int state_pruned;
-    /// Peak number of stored state descriptors
-    unsigned long int state_descriptors;
-    /// Peak owned descriptor bytes, excluding container/allocator overhead
-    std::size_t state_bytes;
     /// Initialize
     Statistics(void);
     /// Reset
@@ -838,15 +832,6 @@ namespace Gecode { namespace Search {
       expand(void) const;
     };
 
-    /**
-     * Prepare the active brancher with the caller's search statistics and options.
-     * Completion trials use the caller's stop and update its statistics.
-     * False suspends choice construction; true may leave a failed, solved, or
-     * branching space. The caller must classify status before making a choice.
-     */
-    GECODE_SEARCH_EXPORT bool
-    prepare(Space& home, Statistics& stat, const Options& options);
-
 }}
 
 #include <gecode/search/worker-control.hh>
@@ -1210,54 +1195,6 @@ namespace Gecode { namespace Search {
     RANK_FIRST   ///< Lower rank, optimistic bound, then insertion order
   };
 
-  /**
-   * \brief Optional model-justified exact-state and label pruning
-   *
-   * Descriptors own values only, never native handles or Spaces. Equal hashes
-   * select comparisons, but exact keys must also match. Keys must include every
-   * fact affecting residual feasibility and brancher/search progress.
-   * Equivalence/dominance must preserve an at-least-as-good completion,
-   * including prefix objective cost, and a route to a solution under repeated
-   * pruning. A sufficient argument preserves such a completion with no more
-   * remaining search transitions. Identical domains
-   * and costs at successive brancher stages alone are insufficient: a stored
-   * ancestor descriptor could suppress its only route to a goal. Include
-   * sufficient stage state in the key or decline extraction; no stage field
-   * is required or inferred. Relations are directional, consistent and
-   * transitive. An arbitrary heuristic bound does not establish a sound label
-   * relation.
-   * Callbacks read stable Spaces and follow HeuristicGuidance's lifetime rules.
-   * Leave both callbacks empty to disable descriptor extraction and storage.
-   * Supplying only one is invalid. Extraction may decline individual nodes.
-   * \ingroup TaskModelSearch
-   */
-  class StatePruning {
-  public:
-    /// Owned exact grouping key and cost/resource label
-    struct Descriptor {
-      std::size_t hash;
-      std::vector<std::int64_t> key, label;
-      /// Object and vector capacity bytes, excluding container/allocator overhead
-      std::size_t storage(void) const {
-        return sizeof(Descriptor) +
-          (key.capacity()+label.capacity())*sizeof(std::int64_t);
-      }
-    };
-    /// Relation of the first descriptor to the second, with identical keys
-    enum Relation { EQUIVALENT, DOMINATES, DOMINATED, INCOMPARABLE };
-    /// Extract owned state, or decline when sufficient state is unavailable
-    typedef std::function<std::optional<Descriptor>(const Space&)> Extract;
-    /// Compare labels of descriptors with exactly equal grouping keys
-    typedef std::function<Relation(const Descriptor&,const Descriptor&)> Compare;
-    Extract extract;
-    Compare compare;
-    /// Metadata ceiling; zero is unlimited. Forgetting never removes search work.
-    unsigned long int descriptor_limit;
-    /// Initialize optional extraction, relation and metadata ceiling
-    StatePruning(Extract extract=Extract(), Compare compare=Compare(),
-                 unsigned long int descriptor_limit=0);
-  };
-
 }}
 
 namespace Gecode {
@@ -1282,7 +1219,7 @@ namespace Gecode {
    * There is no hard memory guarantee and no-good extraction is empty.
    * Only one expanded thread and no tracer are supported. Capacity-one
    * worker control and ordinary resumable stops are supported.
-   * If guidance, state pruning, or a model operation throws, destroy the engine
+   * If guidance or a model operation throws, destroy the engine
    * before further use.
    * \ingroup TaskModelSearch
    */
@@ -1291,8 +1228,7 @@ namespace Gecode {
   public:
     /// Initialize from space, guidance, and ordinary search options
     AStar(T* s, const Search::HeuristicGuidance& guidance,
-          const Search::Options& o=Search::Options::def,
-          const Search::StatePruning& pruning=Search::StatePruning());
+          const Search::Options& o=Search::Options::def);
     /// Adopt a strictly improving compatible external incumbent
     void constrain(const Space& incumbent);
     /// Whether engine does best solution search
@@ -1302,8 +1238,7 @@ namespace Gecode {
   /// Return an A* engine builder with copied guidance
   template<class T>
   SEB astar(const Search::HeuristicGuidance& guidance,
-            const Search::Options& o=Search::Options::def,
-            const Search::StatePruning& pruning=Search::StatePruning());
+            const Search::Options& o=Search::Options::def);
 
   /**
    * \brief Return a native best-first builder with copied guidance and fixed order
@@ -1320,14 +1255,13 @@ namespace Gecode {
    * Rank selects pending branching Spaces only and never prunes. Generated
    * solutions are published immediately, so the first need not be optimal.
    * Natural finite-tree exhaustion with stopped()==false proves closure under
-   * the bound, strict improvement, and optional sound StatePruning contracts.
+   * the bound and strict improvement contracts.
    * \ingroup TaskModelSearch
    */
   template<class T>
   SEB bestfirst(const Search::HeuristicGuidance& guidance,
                 Search::BestFirstOrder ordering,
-                const Search::Options& o=Search::Options::def,
-                const Search::StatePruning& pruning=Search::StatePruning());
+                const Search::Options& o=Search::Options::def);
 
 }
 
@@ -1378,12 +1312,12 @@ namespace Gecode {
    *
    * The frontier quota includes current-layer entries, next-layer candidates,
    * and the selected parent. It excludes the restart root, incumbent, returned
-   * solutions, temporary successor, and brancher trial Spaces. It is a node
+   * solutions, and temporary successors. It is a node
    * quota, without a byte or process-memory guarantee. Clones store the search;
    * c_d/a_d do not enable replay and no-good extraction is empty.
    * One expanded thread and no tracer are supported. Guidance and strict
    * improvement constraints obey the same scalar integer contract as AStar.
-   * If guidance, state pruning, or a model operation throws, destroy the engine
+   * If guidance or a model operation throws, destroy the engine
    * before further use.
    * \ingroup TaskModelSearch
    */
@@ -1393,8 +1327,7 @@ namespace Gecode {
     /// Initialize from space, guidance, ordinary options, and beam limits
     CABS(T* s, const Search::HeuristicGuidance& guidance,
          const Search::Options& o=Search::Options::def,
-         const Search::CABSOptions& limits=Search::CABSOptions(),
-         const Search::StatePruning& pruning=Search::StatePruning());
+         const Search::CABSOptions& limits=Search::CABSOptions());
     /// Adopt a strictly improving compatible external incumbent
     void constrain(const Space& incumbent);
     /// Whether engine does best solution search
@@ -1405,83 +1338,11 @@ namespace Gecode {
   template<class T>
   SEB cabs(const Search::HeuristicGuidance& guidance,
            const Search::Options& o=Search::Options::def,
-           const Search::CABSOptions& limits=Search::CABSOptions(),
-           const Search::StatePruning& pruning=Search::StatePruning());
+           const Search::CABSOptions& limits=Search::CABSOptions());
 
 }
 
 #include <gecode/search/cabs.hpp>
-
-namespace Gecode { namespace Search {
-
-  /// Expansion quotas and pending-frontier limit for sequential column search
-  class ColumnOptions {
-  public:
-    /// Positive quota of selected parents per depth in the first cycle
-    unsigned long int initial_quota;
-    /// Added after each full depth cycle; zero selects fixed-quota CBFS
-    unsigned long int quota_growth;
-    /// Pending Spaces including the unfinished parent; zero is unlimited
-    unsigned long int frontier_limit;
-    ColumnOptions(unsigned long int initial=1, unsigned long int growth=1,
-                  unsigned long int frontier_nodes=0);
-  };
-
-}}
-
-namespace Gecode {
-
-  /**
-   * \brief Sequential progressive column search with fixed-quota CBFS mode
-   *
-   * Experimental 6.5.0 preview: build with GECODE_ENABLE_EXPERIMENTAL=ON
-   * or --enable-experimental; GECODE_HAS_EXPERIMENTAL reports availability.
-   * APIs may change or be removed in future feature releases. The documented
-   * correctness contracts still apply.
-   *
-   * Each cycle expands up to the quota from successive depth queues, including
-   * deeper successors generated in that cycle. Quota growth saturates safely.
-   * Deferred work remains queued. Lower-first rank orders each queue when
-   * supplied; otherwise the optimistic objective bound orders it. Only sound
-   * bounds and optional state dominance prune work.
-   *
-   * Publication, ordinary stops and capacity-one worker control preserve the
-   * full cycle and original Choice cursor. Returned solutions belong to the
-   * caller and strictly improve the incumbent. Continue next() to nullptr with
-   * stopped()==false to prove optimality of the best accepted incumbent,
-   * including external adoption, or infeasibility if none was accepted.
-   * A frontier-cap stop is incomplete and persists until Engine::reset.
-   *
-   * The cap counts queued Spaces and the unfinished parent, excluding incumbent,
-   * returned solutions and temporary successors/trials. It is a node limit,
-   * without a byte or process-memory guarantee. Clones store search work;
-   * c_d/a_d do not enable replay and no-good extraction is empty. One expanded
-   * thread and no tracer are supported. Guidance and comparison obey AStar's
-   * scalar integer contract. Destroy the engine if a callback throws.
-   * \ingroup TaskModelSearch
-   */
-  template<class T>
-  class Column : public Search::Base<T> {
-  public:
-    Column(T* s, const Search::HeuristicGuidance& guidance,
-           const Search::Options& o=Search::Options::def,
-           const Search::ColumnOptions& limits=Search::ColumnOptions(),
-           const Search::StatePruning& pruning=Search::StatePruning());
-    /// Adopt a strictly improving compatible external incumbent
-    void constrain(const Space& incumbent);
-    static const bool best = true;
-  };
-
-  /// Return a column-search builder with copied guidance, quotas and pruning
-  template<class T>
-  SEB column(const Search::HeuristicGuidance& guidance,
-             const Search::Options& o=Search::Options::def,
-             const Search::ColumnOptions& limits=Search::ColumnOptions(),
-             const Search::StatePruning& pruning=Search::StatePruning());
-
-}
-
-#include <gecode/search/column.hpp>
 
 #endif
 

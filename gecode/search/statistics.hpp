@@ -39,14 +39,12 @@ namespace Gecode { namespace Search {
   Statistics::reset(void) {
     StatusStatistics::reset();
     fail=0ULL; node=0ULL; depth=0UL; restart=0UL; nogood=0UL;
-    state_pruned=0ULL; state_descriptors=0UL; state_bytes=0;
   }
 
   forceinline
   Statistics::Statistics(void)
     : fail(0ULL), node(0ULL),
-      depth(0UL), restart(0UL), nogood(0UL),
-      state_pruned(0ULL), state_descriptors(0UL), state_bytes(0) {}
+      depth(0UL), restart(0UL), nogood(0UL) {}
 
   forceinline Statistics&
   Statistics::operator +=(const Statistics& s) {
@@ -56,9 +54,6 @@ namespace Gecode { namespace Search {
     depth = std::max(depth,s.depth);
     restart += s.restart;
     nogood += s.nogood;
-    state_pruned += s.state_pruned;
-    state_descriptors = std::max(state_descriptors,s.state_descriptors);
-    state_bytes = std::max(state_bytes,s.state_bytes);
     return *this;
   }
 

@@ -37,21 +37,19 @@ namespace Gecode { namespace Search {
   /// Create a native sequential CABS engine
   GECODE_SEARCH_EXPORT Engine*
   cabsengine(Space* s, const HeuristicGuidance& guidance, const Options& o,
-             const CABSOptions& limits=CABSOptions(),
-             const StatePruning& pruning=StatePruning());
+             const CABSOptions& limits=CABSOptions());
 
   /// CABS engine builder
   template<class T>
   class CABSBuilder : public Builder {
     HeuristicGuidance guidance;
     CABSOptions limits;
-    StatePruning pruning;
   public:
     CABSBuilder(const HeuristicGuidance& g, const Options& o,
-                const CABSOptions& l, const StatePruning& p=StatePruning())
-      : Builder(o,true), guidance(g), limits(l), pruning(p) {}
+                const CABSOptions& l)
+      : Builder(o,true), guidance(g), limits(l) {}
     Engine* operator()(Space* s) const override {
-      return cabsengine(dynamic_cast<T*>(s),guidance,opt,limits,pruning);
+      return cabsengine(dynamic_cast<T*>(s),guidance,opt,limits);
     }
   };
 
@@ -67,9 +65,8 @@ namespace Gecode {
   template<class T>
   inline
   CABS<T>::CABS(T* s, const Search::HeuristicGuidance& g,
-                const Search::Options& o, const Search::CABSOptions& limits,
-                const Search::StatePruning& p)
-    : Search::Base<T>(Search::cabsengine(s,g,o,limits,p)) {}
+                const Search::Options& o, const Search::CABSOptions& limits)
+    : Search::Base<T>(Search::cabsengine(s,g,o,limits)) {}
 
   template<class T>
   inline void
@@ -80,8 +77,8 @@ namespace Gecode {
   template<class T>
   inline SEB
   cabs(const Search::HeuristicGuidance& g, const Search::Options& o,
-       const Search::CABSOptions& limits, const Search::StatePruning& p) {
-    return new Search::CABSBuilder<T>(g,o,limits,p);
+       const Search::CABSOptions& limits) {
+    return new Search::CABSBuilder<T>(g,o,limits);
   }
 
 }

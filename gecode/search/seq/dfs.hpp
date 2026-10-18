@@ -36,7 +36,7 @@ namespace Gecode { namespace Search { namespace Seq {
   template<class Tracer>
   forceinline
   DFS<Tracer>::DFS(Space* s, const Options& o)
-    : tracer(o.tracer), opt(o), path(opt.nogoods_limit), counted(false), d(0) {
+    : tracer(o.tracer), opt(o), path(opt.nogoods_limit), d(0) {
     if (tracer) {
       tracer.engine(SearchTracer::EngineType::DFS, 1U);
       tracer.worker();
@@ -44,7 +44,6 @@ namespace Gecode { namespace Search { namespace Seq {
     if ((s == nullptr) || (s->status(*this) == SS_FAILED)) {
       fail++;
       cur = nullptr;
-      counted = false;
       if (!opt.clone)
         delete s;
     } else {
@@ -59,11 +58,9 @@ namespace Gecode { namespace Search { namespace Seq {
     delete cur;
     path.reset();
     d = 0;
-    counted = false;
     if ((s == nullptr) || (s->status(*this) == SS_FAILED)) {
       delete s;
       cur = nullptr;
-      counted = false;
     } else {
       cur = s;
     }
@@ -102,23 +99,16 @@ namespace Gecode { namespace Search { namespace Seq {
           break;
         path.next();
       }
-      if (!counted) {
-        node++;
-        counted = true;
-      }
-      SpaceStatus status = cur->status(*this);
-      if (status == SS_BRANCH) {
-        if (!prepare(*cur,opt))
-          return nullptr;
-        status = cur->status(*this);
-      }
+      node++;
+      if (cur->status(*this) == SS_BRANCH)
+        cur->prepare(*this);
       SearchTracer::EdgeInfo ei;
       if (tracer && (path.entries() > 0)) {
         typename Path<Tracer>::Edge& top = path.top();
         ei.init(tracer.wid(), top.nid(), top.truealt(), *cur, *top.choice());
       }
       unsigned int nid = tracer.nid();
-      switch (status) {
+      switch (cur->status(*this)) {
       case SS_FAILED:
         if (tracer) {
           SearchTracer::NodeInfo ni(SearchTracer::NodeType::FAILED,
@@ -128,7 +118,6 @@ namespace Gecode { namespace Search { namespace Seq {
         fail++;
         delete cur;
         cur = nullptr;
-        counted = false;
         path.next();
         break;
       case SS_SOLVED:
@@ -142,7 +131,6 @@ namespace Gecode { namespace Search { namespace Seq {
           (void) cur->choice();
           Space* s = cur;
           cur = nullptr;
-          counted = false;
           path.next();
           return s;
         }
@@ -163,7 +151,6 @@ namespace Gecode { namespace Search { namespace Seq {
             tracer.node(ei,ni);
           }
           cur->commit(*ch,0);
-          counted = false;
           break;
         }
       default:

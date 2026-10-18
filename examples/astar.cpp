@@ -107,13 +107,6 @@ main(void) {
                          Search::CABSOptions(1));
   run("CABS (maximum width 1)",beam);
 
-  Column<Alternative> column(&root,guidance);
-  run("Column",column);
-
-  // A fixed expansion quota of one selects cyclic best-first search.
-  Column<Alternative> cbfs(&root,guidance,Search::Options::def,
-                           Search::ColumnOptions(1,0));
-  run("CBFS",cbfs);
   return 0;
 }
 

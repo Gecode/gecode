@@ -32,7 +32,6 @@ CONFIGS = {
     'transition-bab': ['--formulation', 'transition', '--engine', 'bab'],
     'transition-astar': ['--formulation', 'transition', '--engine', 'astar'],
     'transition-cabs': ['--formulation', 'transition', '--engine', 'cabs'],
-    'transition-column': ['--formulation', 'transition', '--engine', 'column'],
     'didppy-astar': ['--engine', 'astar'],
     'didppy-cabs': ['--engine', 'cabs'],
 }
@@ -45,20 +44,19 @@ CONFIGS.update({
     'closed-dom-size-bab': ['--formulation', 'closed', '--engine', 'bab', '--circuit-propagation', 'dom', '--cost-branching', 'size'],
     'closed-dom-size-cabs': ['--formulation', 'closed', '--engine', 'cabs', '--circuit-propagation', 'dom', '--cost-branching', 'size'],
 })
-for name, formulation, bound, residual, pruning in (
-        ('lazy-prefix', 'transition', 'prefix', 'off', 'off'),
-        ('eager-prefix', 'eager', 'prefix', 'off', 'off'),
-        ('lazy-pareto', 'transition', 'prefix', 'off', 'pareto'),
-        ('lazy-min-arcs', 'transition', 'min-arcs', 'off', 'off'),
-        ('lazy-unary', 'transition', 'prefix', 'unary', 'off')):
+for name, formulation, bound, residual in (
+        ('lazy-prefix', 'transition', 'prefix', 'off'),
+        ('eager-prefix', 'eager', 'prefix', 'off'),
+        ('lazy-min-arcs', 'transition', 'min-arcs', 'off'),
+        ('lazy-unary', 'transition', 'prefix', 'unary')):
     CONFIGS['transition-astar-'+name] = ['--formulation', formulation, '--engine', 'astar',
-        '--bound', bound, '--residual-propagation', residual, '--state-pruning', pruning]
-for engine in ('bab', 'cabs', 'column'):
+        '--bound', bound, '--residual-propagation', residual]
+for engine in ('bab', 'cabs'):
     CONFIGS['transition-'+engine+'-lazy-unary'] = ['--formulation', 'transition', '--engine', engine,
-        '--bound', 'prefix', '--residual-propagation', 'unary', '--state-pruning', 'off']
+        '--bound', 'prefix', '--residual-propagation', 'unary']
 for engine in ('bab', 'cabs'):
     CONFIGS['transition-'+engine+'-lazy-cheap'] = ['--formulation', 'transition', '--engine', engine,
-        '--bound', 'prefix', '--residual-propagation', 'cheap', '--state-pruning', 'off']
+        '--bound', 'prefix', '--residual-propagation', 'cheap']
 TERMINAL = {'ok', 'timeout', 'rss-limit', 'execution-error', 'invalid-output', 'measurement-error'}
 QUALITY_STATUSES = {'ok', 'timeout', 'rss-limit'}
 CHECKPOINTS_MS = (100, 1000, 5000, 15000, 30000)
@@ -166,7 +164,7 @@ def select_cases(split, selected_root, case_ids=None):
 
 
 def experiment(args):
-    names = args.configs.split(',') if args.configs else list(DEFAULT_CONFIGS[:6] if args.split == 'development' else DEFAULT_CONFIGS)
+    names = args.configs.split(',') if args.configs else list(DEFAULT_CONFIGS[:5] if args.split == 'development' else DEFAULT_CONFIGS)
     if len(set(names)) != len(names) or any(n not in CONFIGS for n in names):
         raise ValueError('configs must be distinct names from: ' + ', '.join(CONFIGS))
     repetitions = args.repetitions if args.repetitions is not None else (2 if args.split == 'development' else 1)
@@ -222,11 +220,11 @@ def preview(config):
     value = dict(samples=len(config['rows']), solver_budget_seconds=seconds,
         compilation_seconds=config['compilation']['seconds'],
         development_ceiling_seconds=2700, held_out_ceiling_seconds=7200,
-        full_campaign=dict(development_samples=6*12*2, development_solver_seconds=2160,
-            held_out_samples=8*24, held_out_solver_seconds=5760,
-            held_out_remaining_for_ablations_seconds=1440,
-            full_development_plus_held_out_seconds=7920,
-            budget_scope='development tuning has its own 45-minute ceiling; evaluation has a separate 120-minute ceiling including its development ablations and compilation; held-out leaves 24 minutes inside evaluation'),
+        full_campaign=dict(development_samples=5*12*2, development_solver_seconds=1800,
+            held_out_samples=7*24, held_out_solver_seconds=5040,
+            held_out_remaining_for_ablations_seconds=2160,
+            full_development_plus_held_out_seconds=6840,
+            budget_scope='development tuning has its own 45-minute ceiling; evaluation has a separate 120-minute ceiling including its development ablations and compilation; held-out leaves 36 minutes inside evaluation'),
         configurations=list(config['configs']), cases=[c['id'] for c in config['cases']],
         timing=config['timing'])
     if config.get('budget'):
@@ -298,15 +296,8 @@ def validate_summary(summary, trace, row):
         raise ValueError('summary engine/formulation differs')
     if formulation != 'didppy':
         for option, field, default in (('--bound', 'bound', 'cp-total' if formulation == 'closed' else 'prefix'),
-                ('--residual-propagation', 'residual_propagation', 'off'),
-                ('--state-pruning', 'state_pruning', 'off')):
+                ('--residual-propagation', 'residual_propagation', 'off')):
             requested = options[options.index(option)+1] if option in options else default
-            if summary.get(field, default if row['config'] in DEFAULT_CONFIGS else None) != requested:
-                raise ValueError('summary differs from requested ' + field)
-    if engine == 'column':
-        for option, field, default in (('--initial-quota', 'initial_quota', 1),
-                ('--quota-growth', 'quota_growth', 1), ('--frontier-limit', 'frontier_limit', 0)):
-            requested = int(options[options.index(option)+1]) if option in options else default
             if summary.get(field, default if row['config'] in DEFAULT_CONFIGS else None) != requested:
                 raise ValueError('summary differs from requested ' + field)
     if formulation == 'closed':
@@ -379,7 +370,7 @@ def completed(path, row):
         if not isinstance(metrics, dict):
             raise ValueError('invalid metrics')
         for key in ('preprocessing_ms', 'search_ms', 'startup_and_teardown_ms', 'expansions',
-                    'descriptor_count', 'descriptor_bytes', 'frontier_bytes', 'clone_bytes'):
+                    'frontier_bytes', 'clone_bytes'):
             metric = metrics[key]
             integer = key not in ('preprocessing_ms', 'search_ms', 'startup_and_teardown_ms')
             if metric is not None and not nonnegative_number(metric, integer=integer):
@@ -396,9 +387,8 @@ def completed(path, row):
             for metric, field in (('preprocessing_ms', 'preprocessing_ms'), ('search_ms', 'search_ms')):
                 if metrics[metric] != summary[field]:
                     raise ValueError('metric differs from saved summary ' + metric)
-            for metric, source in (('expansions', 'node'), ('descriptor_count', 'state_descriptors'), ('descriptor_bytes', 'state_bytes')):
-                if metrics[metric] != summary['statistics'].get(source):
-                    raise ValueError('metric differs from summary statistic ' + source)
+            if metrics['expansions'] != summary['statistics'].get('node'):
+                raise ValueError('metric differs from summary statistic node')
             if metrics['allocation'] != summary.get('allocation'):
                 raise ValueError('allocation differs from summary')
         if value['status'] == 'ok':
@@ -469,7 +459,7 @@ def recover(samples):
 
 
 def capture(argv, destination, seconds, rss_limit, interval, *, budget=None,
-            remaining_nominal_seconds=5760):
+            remaining_nominal_seconds=5040):
     require_reaped(destination.parent)
     identity = None
     if budget:
@@ -615,7 +605,7 @@ def checked_output(path, data):
     return trace, summary, errors
 
 
-def collect(config, row, samples, remaining_nominal_seconds=5760):
+def collect(config, row, samples, remaining_nominal_seconds=5040):
     require_reaped(samples)
     case_path = Path(row['case']['path'])
     if digest(case_path) != row['case']['sha256']:
@@ -654,8 +644,6 @@ def collect(config, row, samples, remaining_nominal_seconds=5760):
             search_ms=summary.get('search_ms') if summary else None,
             startup_and_teardown_ms=max(0, result['wall_seconds']*1000-summary['elapsed_ms']) if summary else None,
             expansions=summary.get('statistics', {}).get('node') if summary else None,
-            descriptor_count=summary.get('statistics', {}).get('state_descriptors') if summary else None,
-            descriptor_bytes=summary.get('statistics', {}).get('state_bytes') if summary else None,
             allocation=summary.get('allocation') if summary else None,
             frontier_bytes=None, clone_bytes=None),
         unavailable='frontier and clone footprint are not instrumented; allocation sizeof excludes buffers; phases unavailable after kill; RSS is sampled process-group sum with overshoot')
@@ -891,7 +879,7 @@ def main():
                 break
             budget = config.get('budget') or {}
             task_budget = budget and budget_header(budget['ledger']).get('scope') == 'task'
-            nominal = max(0, (remaining-1)*config['seconds']) if task_budget or budget.get('phase') == 'held-out' else (0 if budget.get('phase') == 'verification' else 5760)
+            nominal = max(0, (remaining-1)*config['seconds']) if task_budget or budget.get('phase') == 'held-out' else (0 if budget.get('phase') == 'verification' else 5040)
             collect(config, row, samples, nominal)
             count += 1
             remaining -= 1

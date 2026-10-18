@@ -199,13 +199,12 @@ make_seed(TSPTW::Transition& root, const std::vector<int>& tour, TourValue value
   std::unique_ptr<TSPTW::Transition> seed(
     static_cast<TSPTW::Transition*>(root.clone()));
   Search::Statistics stat;
-  Search::Options options;
   // Replay checked customer IDs and then the explicit return using the same
   // decisions as search, without directly installing residual state.
   for (std::size_t p=0; p<=tour.size(); p++) {
     const int node = p == tour.size() ? 0 : tour[p];
-    if (seed->status() != SS_BRANCH || !Search::prepare(*seed,stat,options) ||
-        seed->status() != SS_BRANCH)
+    if (seed->status() == SS_BRANCH) seed->prepare(stat);
+    if (seed->status() != SS_BRANCH)
       throw std::runtime_error("checked seed rejected by transition model");
     const auto actions = seed->actions();
     const auto action = std::find(actions.begin(),actions.end(),node);
@@ -241,13 +240,12 @@ static void write_tour(const std::vector<int>& tour, TourValue value, int scale)
 }
 
 struct RunOptions {
-  std::string instance, engine="bab", formulation="closed", seed, state_pruning="off";
+  std::string instance, engine="bab", formulation="closed", seed;
   std::string bound="prefix", residual_propagation="off";
   std::string circuit_propagation="dom", cost_branching="regret";
   std::optional<unsigned long long> time_ms, node_limit;
   Search::CABSOptions cabs;
-  Search::ColumnOptions column;
-  bool quota_set=false, width_set=false, frontier_set=false;
+  bool width_set=false, frontier_set=false;
   bool closed_settings_set=false;
 };
 
@@ -259,12 +257,12 @@ static unsigned long long read_limit(const std::string& text) {
 
 static RunOptions read_options(int argc, char* argv[]) {
   if (argc<2)
-    throw std::runtime_error("usage: tsptw INSTANCE [--engine bab|rbs|astar|cabs|column] "
-      "[--formulation closed|transition|eager] [--state-pruning off|pareto] "
-      "[--bound prefix|min-arcs] [--residual-propagation off|unary] "
+    throw std::runtime_error("usage: tsptw INSTANCE [--engine bab|rbs|astar|cabs] "
+      "[--formulation closed|transition|eager] "
+      "[--bound prefix|min-arcs] [--residual-propagation off|cheap|unary] "
       "[--circuit-propagation dom|val] [--cost-branching regret|size] "
       "[--seed TOUR] [--time-ms N] [--node-limit N] "
-      "[--max-width N] [--frontier-limit N] [--initial-quota N] [--quota-growth N]");
+      "[--max-width N] [--frontier-limit N]");
   RunOptions options;
   options.instance=argv[1];
   for (int i=2; i<argc; i+=2) {
@@ -274,7 +272,6 @@ static RunOptions read_options(int argc, char* argv[]) {
     if (option=="--engine") options.engine=value;
     else if (option=="--formulation") options.formulation=value;
     else if (option=="--seed") options.seed=value;
-    else if (option=="--state-pruning") options.state_pruning=value;
     else if (option=="--bound") options.bound=value;
     else if (option=="--residual-propagation") options.residual_propagation=value;
     else if (option=="--circuit-propagation" || option=="--cost-branching") {
@@ -283,26 +280,20 @@ static RunOptions read_options(int argc, char* argv[]) {
       options.closed_settings_set=true;
     } else if (option=="--time-ms") options.time_ms=read_limit(value);
     else if (option=="--node-limit") options.node_limit=read_limit(value);
-    else if (option=="--max-width" || option=="--frontier-limit" ||
-             option=="--initial-quota" || option=="--quota-growth") {
+    else if (option=="--max-width" || option=="--frontier-limit") {
       const auto limit=read_limit(value);
       if (limit>std::numeric_limits<unsigned long>::max())
         throw std::runtime_error("search limit is too large");
       if (option=="--max-width") {
         options.cabs.max_width=limit; options.width_set=true;
-      } else if (option=="--frontier-limit") {
-        options.cabs.frontier_limit=options.column.frontier_limit=limit;
-        options.frontier_set=true;
       } else {
-        if (option=="--initial-quota") options.column.initial_quota=limit;
-        else options.column.quota_growth=limit;
-        options.quota_set=true;
+        options.cabs.frontier_limit=limit; options.frontier_set=true;
       }
     } else throw std::runtime_error("unknown option: "+option);
   }
   if (options.engine!="bab" && options.engine!="astar" &&
-      options.engine!="cabs" && options.engine!="column" && options.engine!="rbs")
-    throw std::runtime_error("engine must be bab, rbs, astar, cabs, or column");
+      options.engine!="cabs" && options.engine!="rbs")
+    throw std::runtime_error("engine must be bab, rbs, astar, or cabs");
   if (options.formulation!="closed" && options.formulation!="transition" &&
       options.formulation!="eager")
     throw std::runtime_error("formulation must be closed, transition, or eager");
@@ -313,8 +304,6 @@ static RunOptions read_options(int argc, char* argv[]) {
   if (options.formulation!="closed" &&
       (options.closed_settings_set || options.engine=="rbs"))
     throw std::runtime_error("circuit/branching settings and rbs require closed");
-  if (options.state_pruning!="off" && options.state_pruning!="pareto")
-    throw std::runtime_error("state pruning must be off or pareto");
   if (options.bound!="prefix" && options.bound!="min-arcs")
     throw std::runtime_error("bound must be prefix or min-arcs");
   if (options.residual_propagation!="off" && options.residual_propagation!="cheap" &&
@@ -323,17 +312,8 @@ static RunOptions read_options(int argc, char* argv[]) {
   if (options.formulation=="closed" &&
       (options.bound!="prefix" || options.residual_propagation!="off"))
     throw std::runtime_error("bound and residual propagation switches require transition/eager");
-  if (options.state_pruning=="pareto" &&
-      (options.formulation=="closed" || options.engine=="bab"))
-    throw std::runtime_error("Pareto pruning requires transition/eager A*, CABS, or column");
-  if (options.width_set && options.engine!="cabs")
-    throw std::runtime_error("width limits require cabs");
-  if (options.frontier_set && options.engine!="cabs" && options.engine!="column")
-    throw std::runtime_error("frontier limits require cabs or column");
-  if (options.quota_set && options.engine!="column")
-    throw std::runtime_error("quota settings require column");
-  if (!options.column.initial_quota)
-    throw std::runtime_error("initial quota must be positive");
+  if ((options.width_set || options.frontier_set) && options.engine!="cabs")
+    throw std::runtime_error("width and frontier limits require cabs");
   return options;
 }
 
@@ -375,7 +355,7 @@ static int run_search(const RunOptions& options, Model& root,
     if (root.status() == SS_BRANCH) {
       Search::Statistics stat;
       // Record the first prepared prefix without committing a visit.
-      (void) Search::prepare(root,stat,search);
+      (void) root.prepare(stat);
     }
     prepared_positions = root.allocated_positions();
   }
@@ -385,9 +365,6 @@ static int run_search(const RunOptions& options, Model& root,
                              measurements);
     else return Model::guidance();
   }();
-  Search::StatePruning pruning;
-  if constexpr (std::is_same<Model,TSPTW::Transition>::value)
-    if (options.state_pruning=="pareto") pruning=Model::pareto_pruning();
   const double preprocessing_ms=elapsed();
   const auto search_start=std::chrono::steady_clock::now();
   std::unique_ptr<Search::Engine> engine;
@@ -396,10 +373,8 @@ static int run_search(const RunOptions& options, Model& root,
     std::unique_ptr<Search::Builder> builder(rbs<Model,BAB>(search));
     engine.reset((*builder)(&root));
   } else if (options.engine=="astar")
-    engine.reset(Search::astarengine(&root,guidance,search,pruning));
-  else if (options.engine=="column")
-    engine.reset(Search::columnengine(&root,guidance,search,options.column,pruning));
-  else engine.reset(Search::cabsengine(&root,guidance,search,options.cabs,pruning));
+    engine.reset(Search::astarengine(&root,guidance,search));
+  else engine.reset(Search::cabsengine(&root,guidance,search,options.cabs));
   // Default clone ownership keeps root and seed independently owned here.
   // The stop object was declared first and outlives every engine.
   if (seed) engine->constrain(*seed);
@@ -430,7 +405,6 @@ static int run_search(const RunOptions& options, Model& root,
                           incumbent ? "optimal" : "infeasible";
   std::cout << "{\"type\":\"summary\",\"engine\":\"" << options.engine
             << "\",\"formulation\":\"" << options.formulation
-            << "\",\"state_pruning\":\"" << options.state_pruning
             << "\",\"bound\":\"" << (options.formulation=="closed" ? "cp-total" : options.bound)
             << "\",\"residual_propagation\":\"" << options.residual_propagation
             << "\",\"termination\":\"" << termination << '"';
@@ -440,11 +414,6 @@ static int run_search(const RunOptions& options, Model& root,
   if (options.engine=="rbs")
     std::cout << ",\"restart_cutoff\":\"luby\",\"restart_scale\":1000"
               << ",\"nogoods_limit\":128";
-  if (options.engine=="column") {
-    std::cout << ",\"initial_quota\":" << options.column.initial_quota
-              << ",\"quota_growth\":" << options.column.quota_growth
-              << ",\"frontier_limit\":" << options.column.frontier_limit;
-  }
   std::cout << ",\"incumbent\":";
   if (incumbent) {
     std::cout << '{';
@@ -469,10 +438,7 @@ static int run_search(const RunOptions& options, Model& root,
             << statistics.node << ",\"fail\":" << statistics.fail
             << ",\"depth\":" << statistics.depth << ",\"propagate\":"
             << statistics.propagate << ",\"restart\":" << statistics.restart
-            << ",\"nogood\":" << statistics.nogood
-            << ",\"state_pruned\":" << statistics.state_pruned
-            << ",\"state_descriptors\":" << statistics.state_descriptors
-            << ",\"state_bytes\":" << statistics.state_bytes << "}}\n";
+            << ",\"nogood\":" << statistics.nogood << "}}\n";
   return 0;
 }
 

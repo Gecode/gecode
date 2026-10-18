@@ -35,16 +35,15 @@
 #define GECODE_SEARCH_SEQ_CHOICE_EXPANSION_HH
 
 #include <gecode/search/worker.hh>
-#include <gecode/search/branch-feedback.hh>
 #include <memory>
 #include <utility>
 
 #ifdef GECODE_HAS_EXPERIMENTAL
 namespace Gecode { namespace Search { namespace Seq {
 
-  /// One propagated child, interrupted preparation, or exhausted choice
+  /// One propagated child, prepared terminal, or exhausted choice
   struct ExpansionStep {
-    enum State { CHILD, PREPARED_TERMINAL, SUSPENDED, EXHAUSTED };
+    enum State { CHILD, PREPARED_TERMINAL, EXHAUSTED };
     State state;
     std::unique_ptr<Space> space;
     SpaceStatus status;
@@ -84,15 +83,14 @@ namespace Gecode { namespace Search { namespace Seq {
     }
 
     /// Commit and propagate one original alternative without changing siblings
-    ExpansionStep next(Worker& worker, const Options& opt,
+    ExpansionStep next(Worker& worker,
                        unsigned long int child_depth,
                        unsigned long long int source_revision,
                        const Space* incumbent,
                        unsigned long long int incumbent_revision) {
       assert(parent);
       if (!choice) {
-        if (!worker.prepare(*parent,opt))
-          return {ExpansionStep::SUSPENDED,nullptr,SS_FAILED};
+        parent->prepare(worker);
         const SpaceStatus status = parent->status(worker);
         if (status != SS_BRANCH)
           return {ExpansionStep::PREPARED_TERMINAL,std::move(parent),status};
@@ -104,7 +102,7 @@ namespace Gecode { namespace Search { namespace Seq {
         return {ExpansionStep::EXHAUSTED,nullptr,SS_FAILED};
       }
       std::unique_ptr<Space> child;
-      // Keep the final choice alive through commit, cut, status and feedback,
+      // Keep the final choice alive through commit, cut, and status,
       // including exceptional cleanup, after its source becomes the child.
       std::unique_ptr<const Choice> final_choice;
       const Choice* decision = choice.get();
@@ -116,14 +114,11 @@ namespace Gecode { namespace Search { namespace Seq {
       }
       child->commit(*decision,alternative);
       if (incumbent && source_revision != incumbent_revision) {
-        // Repeating an inherited cut would restart completion branchers.
-        child->invalidate_branchers();
         child->constrain(*incumbent);
       }
       worker.node++;
       worker.stack_depth(child_depth);
       const SpaceStatus status = child->status(worker);
-      branch_feedback(*decision,alternative,*child,branch_outcome(status));
       alternative++;
       // The final source is already retired before successor admission.
       return {ExpansionStep::CHILD,std::move(child),status};
