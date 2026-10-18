@@ -839,8 +839,8 @@ namespace Gecode { namespace Search {
     };
 
     /**
-     * Prepare the active brancher using the caller's search statistics/options.
-     * Completion trials observe the enclosing stop and publish their work here.
+     * Prepare the active brancher with the caller's search statistics and options.
+     * Completion trials use the caller's stop and update its statistics.
      * False suspends choice construction; true may leave a failed, solved, or
      * branching space. The caller must classify status before making a choice.
      */
@@ -1182,10 +1182,10 @@ namespace Gecode { namespace Search {
    * a lower bound for minimization, an upper bound for maximization, and
    * the exact objective on a solution. It must agree with the strict
    * improvement restriction in Space::constrain. The engine adds no prefix cost.
-   * Engines define how they use the optional lower-first ranking; rank never justifies pruning.
-   * Callbacks and their captured
-   * dependencies must remain valid for all engine clones and must not post
-   * constraints or refer to another Space's local state.
+   * Engines define how they use the optional ranking (lower first); rank never
+   * justifies pruning. Callbacks and their captured dependencies must remain
+   * valid for all engine clones and must not post constraints or refer to
+   * another Space's local state.
    * \ingroup TaskModelSearch
    */
   class HeuristicGuidance {
@@ -1214,12 +1214,12 @@ namespace Gecode { namespace Search {
    * \brief Optional model-justified exact-state and label pruning
    *
    * Descriptors own values only, never native handles or Spaces. Equal hashes
-   * select comparisons, but exact keys must also match. The author guarantees
-   * that a key includes every fact affecting residual feasibility and
-   * brancher/search progress. Equivalence/dominance must preserve an
-   * at-least-as-good completion, including prefix objective cost, and a route
-   * to a solution under repeated pruning. A sufficient argument preserves such
-   * a completion with no more remaining search transitions. Identical domains
+   * select comparisons, but exact keys must also match. Keys must include every
+   * fact affecting residual feasibility and brancher/search progress.
+   * Equivalence/dominance must preserve an at-least-as-good completion,
+   * including prefix objective cost, and a route to a solution under repeated
+   * pruning. A sufficient argument preserves such a completion with no more
+   * remaining search transitions. Identical domains
    * and costs at successive brancher stages alone are insufficient: a stored
    * ancestor descriptor could suppress its only route to a goal. Include
    * sufficient stage state in the key or decline extraction; no stage field
@@ -1227,8 +1227,8 @@ namespace Gecode { namespace Search {
    * transitive. An arbitrary heuristic bound does not establish a sound label
    * relation.
    * Callbacks read stable Spaces and follow HeuristicGuidance's lifetime rules.
-   * Both callbacks empty disable all descriptor extraction and storage;
-   * supplying only one is invalid. Extraction may decline individual nodes.
+   * Leave both callbacks empty to disable descriptor extraction and storage.
+   * Supplying only one is invalid. Extraction may decline individual nodes.
    * \ingroup TaskModelSearch
    */
   class StatePruning {
@@ -1272,10 +1272,10 @@ namespace Gecode {
    *
    * Spaces must implement strict improvement constraints compatible with the
    * guidance's exact scalar integer objective on solutions. A generated solution
-   * can precede a better one;
-   * continue next() until nullptr with stopped()==false to prove optimality of
-   * the best accepted incumbent, including external adoption, or infeasibility
-   * if no incumbent was accepted. Returned solutions belong to the caller.
+   * can precede a better one. Continue next() until nullptr with stopped()==false
+   * to prove optimality of the best accepted incumbent, including external
+   * adoption, or infeasibility if no incumbent was accepted. Returned solutions
+   * belong to the caller.
    *
    * Equal bounds use lower rank, then insertion order.
    * The frontier stores clones; c_d and a_d do not control recomputation.
@@ -1370,8 +1370,8 @@ namespace Gecode {
    * Returned solutions belong to the caller and strictly improve the engine's
    * incumbent. Continue next() until nullptr with stopped()==false to prove
    * optimality of the best accepted incumbent, including external adoption,
-   * or infeasibility if none was accepted. Publication preserves unfinished
-   * passes.
+   * or infeasibility if none was accepted. Publishing a solution preserves
+   * unfinished passes.
    * Ordinary stops and capacity-one worker control preserve continuation.
    * Width/frontier limits and width overflow are incomplete stops latched
    * until reset through the native Engine interface.
@@ -1450,7 +1450,7 @@ namespace Gecode {
    * caller and strictly improve the incumbent. Continue next() to nullptr with
    * stopped()==false to prove optimality of the best accepted incumbent,
    * including external adoption, or infeasibility if none was accepted.
-   * A frontier-cap loss is incomplete and stays stopped until Engine::reset.
+   * A frontier-cap stop is incomplete and persists until Engine::reset.
    *
    * The cap counts queued Spaces and the unfinished parent, excluding incumbent,
    * returned solutions and temporary successors/trials. It is a node limit,

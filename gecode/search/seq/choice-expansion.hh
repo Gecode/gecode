@@ -53,7 +53,7 @@ namespace Gecode { namespace Search { namespace Seq {
   /// Own a selected parent and its original-choice continuation
   class ChoiceExpansion {
   private:
-    // Declaration order also destroys the choice before its source.
+    // Member declaration order destroys the choice before its source.
     std::unique_ptr<Space> parent;
     std::unique_ptr<const Choice> choice;
     unsigned int alternative;
