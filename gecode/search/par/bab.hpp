@@ -288,8 +288,10 @@ namespace Gecode { namespace Search { namespace Par {
               engine().stop();
             } else {
               node++;
+#ifdef GECODE_HAS_EXPERIMENTAL
               if (cur->status(*this) == SS_BRANCH)
                 cur->prepare(*this);
+#endif
               SearchTracer::EdgeInfo ei;
               if (tracer) {
                 if (path.entries() > 0) {

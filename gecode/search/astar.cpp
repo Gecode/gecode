@@ -200,6 +200,7 @@ namespace Gecode { namespace Search { namespace Seq {
 
   void
   AStar::reset(Space* s) {
+    std::unique_ptr<Space> replacement(s);
     expansion.reset();
     frontier.clear();
     best.reset();
@@ -209,6 +210,8 @@ namespace Gecode { namespace Search { namespace Seq {
     counted = false;
     Worker::reset();
     initialize(s,false);
+    // initialize consumes the root on normal return, including failure.
+    replacement.release();
   }
 
   NoGoods&

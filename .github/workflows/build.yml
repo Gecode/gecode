@@ -69,7 +69,7 @@ jobs:
 
     - name: Configure
       shell: bash
-      run: ./configure
+      run: ./configure --enable-experimental
 
     - name: Build
       shell: bash
@@ -497,6 +497,7 @@ jobs:
         -DGECODE_ENABLE_MPFR=OFF
         -DGECODE_BUILD_SHARED=${{ matrix.build_shared }}
         -DGECODE_BUILD_STATIC=${{ matrix.build_static }}
+        -DGECODE_ENABLE_EXPERIMENTAL=${{ matrix.build_shared }}
 
     - name: Build
       shell: pwsh
@@ -608,6 +609,7 @@ jobs:
           -DGECODE_ENABLE_MPFR=OFF \
           -DGECODE_BUILD_SHARED=OFF \
           -DGECODE_BUILD_STATIC=ON \
+          -DGECODE_ENABLE_EXPERIMENTAL=ON \
           -DGECODE_ENABLE_EXAMPLES=OFF \
           -DGECODE_ENABLE_FLATZINC=OFF
 
@@ -676,7 +678,7 @@ jobs:
       shell: msys2 {0}
       run: |
         export PATH="$UV_DIR:$PATH"
-        CC=gcc CXX=g++ ./configure --with-host-os=Windows --disable-qt --disable-gist --disable-mpfr
+        CC=gcc CXX=g++ ./configure --with-host-os=Windows --disable-qt --disable-gist --disable-mpfr --enable-experimental
 
     - name: Build
       shell: msys2 {0}

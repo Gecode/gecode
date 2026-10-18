@@ -1015,7 +1015,7 @@ namespace Test { namespace Int {
                 Gecode::IntVarArgs() << x << y);
          }
          {
-           // Direct n-ary evaluation returns zero after an overflowing prefix.
+           // Direct n-ary evaluation retains zero after an overflowing prefix.
            TestSpace home;
            const int hi=Gecode::Int::Limits::max;
            IntVar a(home,hi,hi);
