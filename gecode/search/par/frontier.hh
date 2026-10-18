@@ -104,7 +104,8 @@ namespace Gecode { namespace Search { namespace Par {
     bool improves(std::int64_t bound) const;
     void unindex(const Entry& entry);
     bool advance(void);
-    void admit(Entry entry, bool parent);
+    /// Return a rejected or replaced space for disposal by its worker.
+    std::unique_ptr<Space> admit(Entry entry, bool parent);
     void publish(std::unique_ptr<Space> s, std::int64_t bound);
     Earlier earlier(void) const;
   public:
