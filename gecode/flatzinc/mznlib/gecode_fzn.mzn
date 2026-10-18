@@ -216,8 +216,8 @@ predicate gecode_set_convex_hull(var set of int: x, var set of int: hull);
 % x is empty or contains every integer between its minimum and maximum.
 predicate gecode_set_convex(var set of int: x);
 
-% Constrain each set in x to have cardinality elements and each pair of
-% sets to intersect in at most one element. The cardinality is nonnegative.
+% Constrain each set in x to contain cardinality elements and each pair of
+% sets to share at most one element. The cardinality is nonnegative.
 predicate gecode_set_atmost_one(array[int] of var set of int: x, int: cardinality);
 
 % Constrain x to list the elements of y in strictly increasing order.

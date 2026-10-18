@@ -65,8 +65,9 @@ annotation gecode_basic_propagation;
 /** @group gecode.annotations Use the advanced algorithm where supported. */
 annotation gecode_advanced_propagation;
 /** @group gecode.annotations Use both basic and advanced algorithms where supported.
-  These may be combined with domain_propagation or bounds_propagation;
-  constraints without algorithm choices ignore them. */
+  The basic, advanced, and full annotations may be combined with
+  domain_propagation or bounds_propagation. Constraints without algorithm
+  choices ignore these annotations. */
 annotation gecode_full_propagation;
 /** @group gecode.annotations
   Use a separate propagator for each pair in minimum-distance constraints.
@@ -424,7 +425,7 @@ predicate gecode_minimum_distance(
   );
 
 /** @group gecode.constraints
-  Constrains \a y to be the integer root of degree \a degree of \a x,
+  Constrains \a y to be the integer root of \a x with degree \a degree,
   rounded down. The degree must be positive, and negative \a x is permitted
   only for odd degrees.
   Reification is not supported.
@@ -435,7 +436,7 @@ predicate gecode_nroot(var int: x, int: degree, var int: y) =
 /** @group gecode.constraints
   Requires the present rectangles with origins (\a x[i], \a y[i])
   and sizes (\a width[i], \a height[i]) not to overlap.
-  The two origins of a rectangle must be absent together.
+  Both coordinates of a rectangle must be present or absent together.
   Zero-sized rectangles still participate in non-overlap.
   Sizes must be nonnegative, and all arrays must have identical index sets.
   Reification is not supported.

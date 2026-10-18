@@ -37,7 +37,7 @@ predicate gecode_set_ite(
   var set of int: z,
 );
 
-% A two-branch conditional ends with a fixed true condition for else.
+% A two-branch conditional uses a fixed true condition for its else branch.
 predicate fzn_if_then_else_var_set(
   array [int] of var bool: c,
   array [int] of var set of int: x,

@@ -74,7 +74,7 @@ namespace Test { namespace Float {
            a->set(1,output);
          return a;
        }
-       /// Exact expected results avoid checking exp/log against itself
+       /// Use exact expected results instead of computing them with exp/log
        virtual MaybeType solution(const Assignment&) const {
          return expected ? MT_TRUE : MT_FALSE;
        }
