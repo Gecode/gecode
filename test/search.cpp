@@ -473,6 +473,8 @@ namespace Test {
       }
       ~AStarSpace(void) override { live--; }
       Space* copy(void) override { return new AStarSpace(*this); }
+      // Preserve this model's branching in each portfolio asset.
+      bool master(const Gecode::MetaInfo&) override { return true; }
       std::int64_t score(int value) const {
         const std::int64_t minimum[] = {
           9,-2,std::numeric_limits<std::int64_t>::min(),5};
@@ -1166,6 +1168,45 @@ namespace Test {
           AStarSpace::live.load()==0;
       }
     } cabsTest;
+
+    /// Mixed optimization builders share incumbents and resume after a stop.
+    class HeuristicPortfolioTest : public Base {
+    public:
+      HeuristicPortfolioTest(void)
+        : Base("Search::Heuristic::Portfolio", TestTags::check()) {}
+      bool run(void) override {
+        std::lock_guard<std::mutex> lock(heuristic_ownership_mutex);
+        for (bool max : {false,true})
+          for (unsigned int threads : {1U,3U}) {
+            Gecode::Search::NodeStop stop(0);
+            Gecode::Search::Options asset;
+            asset.threads=1; asset.stop=&stop;
+            const auto guidance=AStarSpace::guidance(max,true);
+            Gecode::SEBs assets{Gecode::bab<AStarSpace>(asset),
+              Gecode::astar<AStarSpace>(guidance,asset),
+              Gecode::cabs<AStarSpace>(guidance,asset)};
+            Gecode::Search::Options options;
+            options.threads=threads;
+            AStarSpace root(max), incumbent(max,1);
+            incumbent.status();
+            Gecode::PBS<AStarSpace,Gecode::BAB> engine(&root,assets,options);
+            while (std::unique_ptr<AStarSpace> solution{engine.next()}) {}
+            if (!engine.stopped()) return false;
+            engine.constrain(incumbent);
+            stop.limit(10000);
+            auto previous=incumbent.objective();
+            bool found=false;
+            while (std::unique_ptr<AStarSpace> solution{engine.next()}) {
+              if (!solution->improves(solution->objective(),previous))
+                return false;
+              previous=solution->objective(); found=true;
+            }
+            if (!found || previous!=incumbent.score(2) || engine.stopped())
+              return false;
+          }
+        return AStarSpace::live.load()==0;
+      }
+    } heuristicPortfolioTest;
 
 #ifdef GECODE_HAS_THREADS
     class ParallelHeuristic : public Base {

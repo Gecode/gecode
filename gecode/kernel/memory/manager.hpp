@@ -198,8 +198,18 @@ namespace Gecode { namespace Kernel {
 
   forceinline HeapChunk*
   SharedMemory::alloc(size_t s, size_t l) {
+    // The cache is optional: use the heap directly when its mutex is busy.
+    Support::Mutex& mutex = m();
+    if (!mutex.tryacquire()) {
+      HeapChunk* hc = static_cast<HeapChunk*>(Gecode::heap.ralloc(s));
+      hc->size = s;
+      return hc;
+    }
     // To protect from exceptions from heap.ralloc()
-    Support::Lock guard(m());
+    struct Unlock {
+      Support::Mutex& mutex;
+      ~Unlock(void) { mutex.release(); }
+    } guard{mutex};
     while ((heap.hc != nullptr) && (heap.hc->size < l)) {
       heap.n_hc--;
       HeapChunk* hc = heap.hc;
@@ -220,13 +230,18 @@ namespace Gecode { namespace Kernel {
   }
   forceinline void
   SharedMemory::free(HeapChunk* hc) {
-    Support::Lock guard(m());
+    Support::Mutex& mutex = m();
+    if (!mutex.tryacquire()) {
+      Gecode::heap.rfree(hc);
+      return;
+    }
     if (heap.n_hc == MemoryConfig::n_hc_cache) {
       Gecode::heap.rfree(hc);
     } else {
       heap.n_hc++;
       hc->next = heap.hc; heap.hc = hc;
     }
+    mutex.release();
   }
 
 

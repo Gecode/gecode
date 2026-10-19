@@ -93,7 +93,8 @@ Use `--dominance off` to compare runs without this pruning.
 improvements. `--time-ms N` and `--node-limit N` use ordinary search stops;
 time includes reading and preprocessing. CABS also accepts `--max-width N` and
 `--frontier-limit N`, where zero disables the cap. Limits are checked at engine
-boundaries and cannot interrupt propagation. Runs use one search thread.
+boundaries and cannot interrupt propagation. Runs default to one search thread;
+use `--threads N` to change the thread count.
 
 The closed model also accepts `--circuit-propagation dom|val` and
 `--cost-branching regret|size`, defaulting to `dom` and `regret`. Its `rbs`
