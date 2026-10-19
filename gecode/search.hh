@@ -1235,6 +1235,14 @@ namespace Gecode {
    *
    * The frontier stores clones; c_d and a_d do not control recomputation.
    * There is no hard memory guarantee and no-good extraction is empty.
+   * Use BAB as an optimization baseline. Retaining frontier clones can cost
+   * much more memory and cloning work than depth-first search. Start with one
+   * thread and measure a few thread counts on representative instances.
+   * Expensive propagation can benefit from parallel expansion, but frontier
+   * coordination, memory traffic, and changes in search order can outweigh it.
+   * More threads do not necessarily run faster. Neither AStar nor CABS
+   * guarantees a speedup over BAB.
+   *
    * Options::threads selects sequential or parallel search. Parallel workers
    * select the best currently queued node; concurrent expansions can change
    * generation and solution order. Exhaustion waits for all expansions.
@@ -1404,6 +1412,7 @@ namespace Gecode {
    * incumbent copies, and returned solutions. It is checked when adding a beam
    * slot, without a byte or process-memory guarantee. Clones store the search;
    * c_d/a_d do not enable replay and no-good extraction is empty.
+   * The threading tradeoffs described for AStar also apply here.
    * Options::threads selects sequential or parallel expansion of layer parents.
    * All workers share one next-layer beam and dominance admission. A layer or
    * pass advances only after all current work has been submitted. Parallel
@@ -1660,6 +1669,24 @@ namespace Gecode {
      *
      * The outer options must not contain a worker control. Each builder can
      * instead supply a distinct control for its underlying engine.
+     * In parallel PBS, the outer thread count limits how many builders run,
+     * in array order; each builder's options set its own engine's thread count.
+     *
+     * With experimental search enabled, BAB, AStar, and CABS builders can share
+     * improving solutions in one portfolio. The model must install branching
+     * in slave() or override master() to retain it: Space::master removes
+     * branchers for portfolios by default. For compatible model and guidance:
+     * \code
+     * Search::Options asset;
+     * asset.threads = 1;
+     * SEBs assets{bab<Model>(asset), astar<Model>(guidance,asset),
+     *             cabs<Model>(guidance,asset)};
+     * Search::Options portfolio;
+     * portfolio.threads = 3;
+     * PBS<Model,BAB> engine(model,assets,portfolio);
+     * \endcode
+     * These settings admit all three assets with one thread each. Asset
+     * selection and any policy for changing worker counts belong to the caller.
      */
     PBS(T* s, SEBs& sebs, const Search::Options& o=Search::Options::def);
     /// Constrain future portfolio solutions to be better than \a b

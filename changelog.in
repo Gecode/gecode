@@ -134,7 +134,18 @@ in the next layer. An optional cached key indexes live candidates for dominance
 comparisons. The TSPTW transition example enables keyed dominance by default.
 Both engines support native parallel search through Options::threads and dynamic
 worker control. Parallel CABS shares one beam across workers; parallel AStar
-selects from one shared priority queue. The TSPTW example accepts --threads N.
+selects from one shared priority queue. More threads can increase coordination,
+memory use, and search work; measure against sequential search and BAB.
+The astar and cabs builders support mixed PBS portfolios.
+The TSPTW example accepts --threads N.
+
+[ENTRY]
+Module: kernel
+What:   performance
+Rank:   minor
+[DESCRIPTION]
+Space chunk allocation and disposal bypass a busy chunk cache through the
+configured heap allocator. Workers do not wait for this optional cache.
 
 [ENTRY]
 Module: int
