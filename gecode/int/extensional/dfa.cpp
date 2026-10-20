@@ -33,6 +33,9 @@
 
 #include <gecode/int.hh>
 
+#include <algorithm>
+#include <vector>
+
 namespace Gecode { namespace Int { namespace Extensional {
 
   /**
@@ -136,6 +139,13 @@ namespace Gecode { namespace Int { namespace Extensional {
     StateGroup* lst;
   };
 
+  /// Return the compact index for an external state identifier
+  forceinline int
+  state_index(const std::vector<int>& states, int state) {
+    return static_cast<int>(
+      std::lower_bound(states.begin(),states.end(),state)-states.begin());
+  }
+
   /// Information about states
   enum StateInfo {
     SI_NONE       = 0, ///< State is not reachable
@@ -154,22 +164,53 @@ namespace Gecode {
     using namespace Extensional;
     Region region;
 
-    // Compute number of states and transitions
-    int n_states = start;
-    int n_trans  = 0;
+    int n_trans = 0;
+    int max_state = start;
     for (Transition* t = &t_spec[0]; t->i_state >= 0; t++) {
-      n_states = std::max(n_states,t->i_state);
-      n_states = std::max(n_states,t->o_state);
+      max_state = std::max(max_state,t->i_state);
+      max_state = std::max(max_state,t->o_state);
       n_trans++;
     }
-    for (int* f = &f_spec[0]; *f >= 0; f++)
-      n_states = std::max(n_states,*f);
-    n_states++;
+    std::size_t n_final_spec = 0;
+    for (int* f = &f_spec[0]; *f >= 0; f++) {
+      max_state = std::max(max_state,*f);
+      n_final_spec++;
+    }
+    // Use identifiers directly when the state range is bounded by the input
+    // size: transitions, final entries, and the start state.
+    const bool compact = static_cast<std::size_t>(max_state) >=
+      static_cast<std::size_t>(n_trans)+n_final_spec+1;
+    std::vector<int> states;
+    int n_states;
+    if (compact) {
+      states.reserve(2*static_cast<std::size_t>(n_trans)+n_final_spec+1);
+      states.push_back(start);
+      for (Transition* t = &t_spec[0]; t->i_state >= 0; t++) {
+        states.push_back(t->i_state);
+        states.push_back(t->o_state);
+      }
+      for (int* f = &f_spec[0]; *f >= 0; f++)
+        states.push_back(*f);
+      std::sort(states.begin(),states.end());
+      states.erase(std::unique(states.begin(),states.end()),states.end());
+      n_states = static_cast<int>(states.size());
+      start = state_index(states,start);
+    } else {
+      n_states = max_state+1;
+    }
 
     // Temporary structure for transitions
     Transition* trans = region.alloc<Transition>(n_trans);
-    for (int i=0; i<n_trans; i++)
-      trans[i] = t_spec[i];
+    if (compact) {
+      for (int i=0; i<n_trans; i++) {
+        trans[i] = t_spec[i];
+        trans[i].i_state = state_index(states,trans[i].i_state);
+        trans[i].o_state = state_index(states,trans[i].o_state);
+      }
+    } else {
+      for (int i=0; i<n_trans; i++)
+        trans[i] = t_spec[i];
+    }
     // Temporary structures for finals
     int* final = region.alloc<int>(n_states+1);
     bool* is_final = region.alloc<bool>(n_states+1);
@@ -177,8 +218,11 @@ namespace Gecode {
     for (int i=0; i<n_states+1; i++)
       is_final[i] = false;
     for (int* f = &f_spec[0]; *f != -1; f++) {
-      is_final[*f]      = true;
-      final[n_finals++] = *f;
+      const int state = compact ? state_index(states,*f) : *f;
+      if (!is_final[state]) {
+        is_final[state] = true;
+        final[n_finals++] = state;
+      }
     }
 
     if (minimize) {

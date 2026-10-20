@@ -74,6 +74,15 @@ Date: unreleased
 This is the development changelog for the next Gecode release.
 
 [ENTRY]
+Module: int
+What:   performance
+Rank:   minor
+[DESCRIPTION]
+Added compaction of sparse state identifiers before allocating DFA 
+construction arrays. Temporary storage is bounded by the specification 
+size. Repeated final-state identifiers are handled once.
+
+[ENTRY]
 Module: support
 What:   new
 Rank:   minor

@@ -450,6 +450,59 @@ namespace Test { namespace Int {
        }
      };
 
+     /// %Test compacting sparse external DFA state identifiers
+     class RegSparseStateNumbering : public Test {
+     public:
+       /// Create and register test
+       RegSparseStateNumbering(void)
+         : Test("Extensional::Reg::Sparse::StateNumbering",
+                2,0,1,false,Gecode::IPL_DOM) {}
+       /// %Test whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         return (x[0] == 0) && (x[1] == 1);
+       }
+       /// Post constraint on \a x
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
+         using namespace Gecode;
+         DFA d(1000000,
+               {
+                 {1000000,0,2000000},
+                 {2000000,1,3000000}
+               },
+               {3000000},false);
+         extensional(home,x,d);
+       }
+     };
+
+     /// %Test repeated final states in dense and sparse DFA specifications
+     class RegDuplicateFinals : public Test {
+     protected:
+       bool minimize;
+       bool sparse;
+     public:
+       RegDuplicateFinals(bool minimize0, bool sparse0)
+         : Test(std::string("Extensional::Reg::DuplicateFinals::")+
+                (sparse0 ? "Sparse::" : "Dense::")+
+                (minimize0 ? "Minimize" : "Keep"),
+                1,0,1,false,Gecode::IPL_DOM),
+           minimize(minimize0), sparse(sparse0) {}
+
+       virtual bool
+       solution(const Assignment& x) const {
+         return x[0] == 0;
+       }
+
+       virtual void
+       post(Gecode::Space& home, Gecode::IntVarArray& x) {
+         using namespace Gecode;
+         const int start = sparse ? 100 : 0;
+         const int final = sparse ? 200 : 1;
+         DFA d(start,{{start,0,final}},
+               {final,final,final,final,final,final,final,final},minimize);
+         extensional(home,x,d);
+       }
+     };
+
      /// %Test the Boolean-view regular posting route
      class RegBoolCyclicFrontier : public Test {
      public:
@@ -2155,6 +2208,11 @@ namespace Test { namespace Int {
 
      RegAcyclicReconvergence reg_sparse_acyclic_reconvergence;
      RegCyclicFrontier reg_sparse_cyclic_frontier;
+     RegSparseStateNumbering reg_sparse_state_numbering;
+     RegDuplicateFinals reg_duplicate_finals_dense_minimize(true,false);
+     RegDuplicateFinals reg_duplicate_finals_dense_keep(false,false);
+     RegDuplicateFinals reg_duplicate_finals_sparse_minimize(true,true);
+     RegDuplicateFinals reg_duplicate_finals_sparse_keep(false,true);
      RegBoolCyclicFrontier reg_sparse_bool_cyclic_frontier;
      RegRandomDifferential reg_sparse_random_differential_1(1);
      RegRandomDifferential reg_sparse_random_differential_2(2);
