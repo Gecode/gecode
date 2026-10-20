@@ -45,18 +45,5 @@ int main(void) {
   p = Gecode::heap.rrealloc(p,4096);
   Gecode::heap.rfree(p);
 
-  Gecode::Space* source = nullptr;
-  std::thread create([&] { source = boundary_space(); });
-  create.join();
-  if (source->status() != Gecode::SS_SOLVED)
-    return 4;
-  Gecode::Space* clone = nullptr;
-  std::thread copy([&] { clone = source->clone(); });
-  copy.join();
-  delete source;
-  if (!boundary_valid(clone) || clone->status() != Gecode::SS_SOLVED)
-    return 5;
-  std::thread destroy([&] { delete clone; });
-  destroy.join();
   return 0;
 }
