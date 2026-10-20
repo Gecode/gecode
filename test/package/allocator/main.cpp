@@ -2,7 +2,7 @@
 #include <cstdlib>
 #include <cstring>
 #include <thread>
-#ifdef CHECK_MIMALLOC_OWNERSHIP
+#ifdef CHECK_HOST_MIMALLOC
 #include <mimalloc.h>
 #endif
 
@@ -14,13 +14,17 @@
 
 int main(void) {
   void* p = Gecode::heap.ralloc(256);
-#ifdef CHECK_MIMALLOC_OWNERSHIP
+#ifdef CHECK_HOST_MIMALLOC
+  void* host = mi_malloc(256);
   void* system = std::malloc(256);
-  int* ordinary = new int[64];
-  bool isolated = mi_is_in_heap_region(p) &&
-    !mi_is_in_heap_region(system) && !mi_is_in_heap_region(ordinary);
+  bool isolated = !mi_is_in_heap_region(p) && mi_is_in_heap_region(host);
+#if GECODE_HOST_MIMALLOC_OVERRIDE
+  isolated = isolated && mi_is_in_heap_region(system);
+#else
+  isolated = isolated && !mi_is_in_heap_region(system);
+#endif
+  mi_free(host);
   std::free(system);
-  delete[] ordinary;
   if (!isolated)
     return 1;
 #endif
@@ -30,8 +34,8 @@ int main(void) {
   for (int i=0; i<256; i++)
     if (static_cast<unsigned char*>(p)[i] != 0x5a)
       return 2;
-#ifdef CHECK_MIMALLOC_OWNERSHIP
-  if (!mi_is_in_heap_region(p))
+#ifdef CHECK_HOST_MIMALLOC
+  if (mi_is_in_heap_region(p))
     return 3;
 #endif
   std::thread release([&] { boundary_free(p); });

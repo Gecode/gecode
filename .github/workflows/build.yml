@@ -270,9 +270,18 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-15, windows-2022]
-        variant: [shared, static]
+        variant: [shared]
         mimalloc: ["ON"]
         include:
+          - os: ubuntu-latest
+            variant: static
+            mimalloc: "OFF"
+          - os: macos-15
+            variant: static
+            mimalloc: "OFF"
+          - os: windows-2022
+            variant: static
+            mimalloc: "OFF"
           - os: ubuntu-latest
             variant: shared
             mimalloc: "OFF"
@@ -325,25 +334,38 @@ jobs:
           exit 1
         fi
         grep -q 'requires GECODE_ENABLE_ALLOCATOR=ON' "$RUNNER_TEMP/mimalloc-custom.log"
+        if cmake -S . -B "$RUNNER_TEMP/mimalloc-static" \
+          -DGECODE_ENABLE_MIMALLOC=ON -DGECODE_BUILD_STATIC=ON > "$RUNNER_TEMP/mimalloc-static.log" 2>&1; then
+          exit 1
+        fi
+        grep -q 'requires GECODE_BUILD_STATIC=OFF' "$RUNNER_TEMP/mimalloc-static.log"
         if cmake -S . -B "$RUNNER_TEMP/mimalloc-sanitizer" \
           -DGECODE_ENABLE_MIMALLOC=ON -DGECODE_SANITIZER=address > "$RUNNER_TEMP/mimalloc-sanitizer.log" 2>&1; then
           exit 1
         fi
         grep -q 'does not support GECODE_SANITIZER' "$RUNNER_TEMP/mimalloc-sanitizer.log"
 
-    - name: Installed allocator ownership and thread transfer
+    - name: Installed allocator coexistence and thread transfer
       shell: bash
       run: |
         set -euxo pipefail
-        cmake -S test/package/allocator -B build-allocator-consumer \
-          -DCMAKE_BUILD_TYPE="$BUILD_TYPE" \
-          -DCMAKE_PREFIX_PATH="$GITHUB_WORKSPACE/install-allocator" \
-          -DGECODE_LINK_VARIANT=${{ matrix.variant }} \
-          -DGECODE_EXPECT_MIMALLOC=${{ matrix.mimalloc }} \
-          -DMIMALLOC_INCLUDE_DIR="$GITHUB_WORKSPACE/build-allocator/_deps/gecode_mimalloc-src/include"
-        cmake --build build-allocator-consumer --config "$BUILD_TYPE" --parallel 2
         export PATH="$GITHUB_WORKSPACE/install-allocator/bin:$PATH"
-        ctest --test-dir build-allocator-consumer --build-config "$BUILD_TYPE" --output-on-failure
+        host_modes=OFF
+        if [ "$RUNNER_OS" != Windows ] && [ "${{ matrix.mimalloc }}" = ON ]; then
+          host_modes="OFF ON"
+        fi
+        for host_override in $host_modes; do
+          consumer="build-allocator-consumer-$host_override"
+          cmake -S test/package/allocator -B "$consumer" \
+            -DCMAKE_BUILD_TYPE="$BUILD_TYPE" \
+            -DCMAKE_PREFIX_PATH="$GITHUB_WORKSPACE/install-allocator" \
+            -DGECODE_LINK_VARIANT=${{ matrix.variant }} \
+            -DGECODE_EXPECT_MIMALLOC=${{ matrix.mimalloc }} \
+            -DGECODE_HOST_MIMALLOC_OVERRIDE="$host_override" \
+            -DMIMALLOC_SOURCE_DIR="$GITHUB_WORKSPACE/build-allocator/_deps/gecode_mimalloc-src"
+          cmake --build "$consumer" --config "$BUILD_TYPE" --parallel 2
+          ctest --test-dir "$consumer" --build-config "$BUILD_TYPE" --output-on-failure
+        done
         if [ "${{ matrix.mimalloc }}" = ON ]; then
           test -f install-allocator/share/licenses/gecode/mimalloc-LICENSE
           test ! -f install-allocator/include/mimalloc.h

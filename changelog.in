@@ -78,7 +78,9 @@ Module: support
 What:   new
 Rank:   minor
 [DESCRIPTION]
-Add an optional CMake mimalloc backend for Gecode heap and space allocations.
+Add an optional CMake mimalloc backend for heap and space allocations in shared
+Gecode libraries. Static builds retain the system backend to avoid conflicts
+with an application's mimalloc.
 The system allocator is the default.
 
 [ENTRY]
