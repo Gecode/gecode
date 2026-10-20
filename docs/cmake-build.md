@@ -153,7 +153,7 @@ Subproject defaults (`add_subdirectory`):
 
 ### Allocator backend
 
-The default backend uses the system allocator. To build with mimalloc:
+The system allocator is the default. To enable the CMake-only mimalloc backend:
 
 ```bash
 cmake -S . -B build-mimalloc -DGECODE_ENABLE_MIMALLOC=ON \
@@ -161,45 +161,21 @@ cmake -S . -B build-mimalloc -DGECODE_ENABLE_MIMALLOC=ON \
 cmake --build build-mimalloc -j
 ```
 
-This CMake-only option downloads the pinned mimalloc 3.5.3 source and embeds it
-in the shared `gecodesupport` library. It covers allocations through
-`Support::Allocator`, including Gecode's heap and space storage. Gecode does not
-replace application `malloc` or `new`. No preload library or redirect DLL is
-needed, and installed consumers need no mimalloc package or headers.
+This downloads mimalloc 3.5.3 and embeds it in shared `gecodesupport` for Gecode
+heap and space storage. Application `malloc` and `new` are unaffected, and
+installed consumers need no mimalloc package.
 
-The private backend requires `GECODE_BUILD_STATIC=OFF`. Static archives cannot
-hide mimalloc's symbols from another statically linked copy, which can select
-the wrong allocator version or cause duplicate-symbol errors. This also applies
-when building shared and static Gecode libraries together.
+Static builds are unsupported because they cannot isolate mimalloc's symbols.
+The backend requires `GECODE_ENABLE_ALLOCATOR=ON` and does not support
+`GECODE_SANITIZER` or `GECODE_PEAKHEAP`. Rebuild consumers when changing backends.
 
-Current libminizinc builds embed their own mimalloc. Shared Gecode with this
-backend keeps a separate allocator and can coexist with MiniZinc's copy, whether
-MiniZinc enables process-wide replacement or uses only the explicit `mi_*` API.
-For static Gecode, leave `GECODE_ENABLE_MIMALLOC=OFF`. With MiniZinc's
-`MZN_MIMALLOC_OVERRIDE=ON`, Gecode's system allocation calls already use the
-application's mimalloc; with replacement disabled, they use the system allocator.
-MiniZinc currently defaults to replacement on Unix and disables it on Windows.
-See [libminizinc's allocator options](https://github.com/MiniZinc/libminizinc/blob/216b0971b322f5f5960e96dbb97ace2ed8b69763/CMakeLists.txt#L20-L35).
+Shared Gecode can coexist with libminizinc's mimalloc. For static Gecode, keep
+this option off; MiniZinc's process-wide replacement, when enabled, already
+covers Gecode's system allocation calls.
 
-These combinations use an installed Gecode package. Building both projects in
-one CMake source tree with their separate mimalloc builds is unsupported: the
-upstream mimalloc targets have the same names. Gecode rejects pre-existing
-mimalloc targets rather than changing the application's allocator settings.
-
-For an offline build, provide an unpacked copy of that version with CMake's
-standard source override:
-
-```bash
-cmake -S . -B build-mimalloc -DGECODE_ENABLE_MIMALLOC=ON \
-  -DFETCHCONTENT_SOURCE_DIR_GECODE_MIMALLOC=/path/to/mimalloc-3.5.3
-```
-
-Use matching configured headers and libraries, and rebuild consumers when
-changing the backend. Mimalloc requires `GECODE_ENABLE_ALLOCATOR=ON`; custom
-allocators and `GECODE_PEAKHEAP` are unsupported with this backend. Gecode's
-sanitizer configurations also require the system backend, so heap diagnostics
-continue to use the sanitizer's allocator interception. Autoconf builds retain
-the system backend.
+For offline builds, set `FETCHCONTENT_SOURCE_DIR_GECODE_MIMALLOC` to an unpacked
+mimalloc 3.5.3 source directory. Separate mimalloc source builds in one CMake
+tree are unsupported because their target names conflict.
 
 ### Fault injection and sanitizers
 

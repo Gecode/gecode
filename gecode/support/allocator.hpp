@@ -54,8 +54,6 @@ namespace Gecode { namespace Support {
    * \brief Default memory allocator
    *
    * Acts as a wrapper around memory allocation functionality.
-   * The CMake mimalloc backend owns its allocations in gecodesupport.
-   * Rebuild consumers when changing the configured allocator backend.
    *
    * Can be disabled by giving a "-disable-allocator" option to
    * configure and the be re-implemented before including any other
