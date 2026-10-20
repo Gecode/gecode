@@ -126,6 +126,11 @@ to inspect test assignments.
   usable Qt GUI stack is available. `ON` requires Gist dependencies and fails
   configuration if they are unavailable. Gist requires Qt Gui, Widgets, and
   PrintSupport in addition to Qt Core.
+- `GECODE_ENABLE_MIMALLOC`: downloads and embeds mimalloc 3.5.3 for Gecode heap
+  and space storage. Default `OFF`. Requires `GECODE_BUILD_STATIC=OFF` and
+  `GECODE_ENABLE_ALLOCATOR=ON`; incompatible with `GECODE_SANITIZER` and
+  `GECODE_PEAKHEAP`. Application `malloc` and `new` are unaffected.
+  Rebuild consumers when changing backends.
 - `GECODE_ENABLE_FAULT_INJECTION`: builds deterministic allocation and copy
   failpoints together with the `Fault::*` regression suite. This facility is
   test-only, process-global, isolated to the dedicated single-threaded fault

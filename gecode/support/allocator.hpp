@@ -42,6 +42,10 @@
 #include <malloc/malloc.h>
 #endif
 
+#if defined(GECODE_MIMALLOC) && defined(GECODE_PEAKHEAP)
+#error "The mimalloc backend does not support GECODE_PEAKHEAP"
+#endif
+
 #ifdef GECODE_ALLOCATOR
 
 namespace Gecode { namespace Support {
@@ -62,10 +66,19 @@ namespace Gecode { namespace Support {
     /// Default constructor
     Allocator(void);
     /// Allocate memory block of size \a n
+#ifdef GECODE_MIMALLOC
+    GECODE_SUPPORT_EXPORT
+#endif
     void* alloc(size_t n);
     /// Return address of reallocated memory block \a p of size \a n
+#ifdef GECODE_MIMALLOC
+    GECODE_SUPPORT_EXPORT
+#endif
     void* realloc(void* p, size_t n);
     /// Free memory block \a p
+#ifdef GECODE_MIMALLOC
+    GECODE_SUPPORT_EXPORT
+#endif
     void free(void* p);
     /// Copy \a n bytes from source \a s directly to \a d and returns \a d
     void* memcpy(void *d, const void *s, size_t n);
@@ -75,6 +88,7 @@ namespace Gecode { namespace Support {
   forceinline
   Allocator::Allocator(void) {
   }
+#ifndef GECODE_MIMALLOC
   forceinline void*
   Allocator::alloc(size_t n) {
     return ::malloc(n);
@@ -87,6 +101,7 @@ namespace Gecode { namespace Support {
   Allocator::free(void* p) {
     ::free(p);
   }
+#endif
   forceinline void*
   Allocator::memcpy(void *d, const void *s, size_t n) {
     return ::memcpy(d,s,n);

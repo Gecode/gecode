@@ -33,9 +33,28 @@
 
 #include <gecode/support.hh>
 
+#ifdef GECODE_MIMALLOC
+#include <mimalloc.h>
+#endif
+
 namespace Gecode { namespace Support {
 
   Allocator allocator;
+
+#ifdef GECODE_MIMALLOC
+  void*
+  Allocator::alloc(size_t n) {
+    return mi_malloc(n);
+  }
+  void*
+  Allocator::realloc(void* p, size_t n) {
+    return mi_realloc(p,n);
+  }
+  void
+  Allocator::free(void* p) {
+    mi_free(p);
+  }
+#endif
 
 }}
 

@@ -74,6 +74,15 @@ Date: unreleased
 This is the development changelog for the next Gecode release.
 
 [ENTRY]
+Module: support
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Add an optional CMake mimalloc backend for shared Gecode libraries.
+Mimalloc can substantially improve parallel search performance on some workloads.
+The system allocator is the default.
+
+[ENTRY]
 Module: kernel
 What:   new
 Rank:   minor
