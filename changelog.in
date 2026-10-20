@@ -89,6 +89,27 @@ Rank:   minor
 Fix iterator invalidation during counting-based search cache cleanup.
 
 [ENTRY]
+Module: flatzinc
+What:   new
+Rank:   major
+[DESCRIPTION]
+Use standard MiniZinc FlatZinc hooks for native conditionals, count inequalities,
+nondeterministic regular, and optional distinctness and scheduling. Expose
+additional arithmetic, distance, rectangle, and set constraints through
+documented modelling predicates with typed FlatZinc bindings. Add annotations
+for basic, advanced, and combined propagation algorithms, and single or
+per-pair minimum-distance propagators.
+
+[ENTRY]
+Module: float
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Preserve exact fixed-base power and logarithm solutions with explicitly rounded
+MPFR bounds. Handle base-one powers and remove an invalid shortcut for shared
+variables.
+
+[ENTRY]
 
 Module: int
 What:   performance

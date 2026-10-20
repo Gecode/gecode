@@ -2647,19 +2647,28 @@ namespace Gecode { namespace FlatZinc {
 #endif
   IntPropLevel
   FlatZincSpace::ann2ipl(AST::Node* ann) {
+    int ipl = IPL_DEF;
     if (ann) {
       if (ann->hasAtom("val") || ann->hasAtom("value_propagation"))
-        return IPL_VAL;
-      if (ann->hasAtom("domain") || ann->hasAtom("domain_propagation"))
-        return IPL_DOM;
-      if (ann->hasAtom("bounds") ||
-          ann->hasAtom("bounds_propagation") ||
-          ann->hasAtom("boundsR") ||
-          ann->hasAtom("boundsD") ||
-          ann->hasAtom("boundsZ"))
-        return IPL_BND;
+        ipl = IPL_VAL;
+      else if (ann->hasAtom("domain") || ann->hasAtom("domain_propagation"))
+        ipl = IPL_DOM;
+      else if (ann->hasAtom("bounds") ||
+               ann->hasAtom("bounds_propagation") ||
+               ann->hasAtom("boundsR") ||
+               ann->hasAtom("boundsD") ||
+               ann->hasAtom("boundsZ"))
+        ipl = IPL_BND;
+      if (ann->hasAtom("gecode_full_propagation"))
+        ipl |= IPL_FULL;
+      else {
+        if (ann->hasAtom("gecode_basic_propagation"))
+          ipl |= IPL_BASIC;
+        if (ann->hasAtom("gecode_advanced_propagation"))
+          ipl |= IPL_ADVANCED;
+      }
     }
-    return IPL_DEF;
+    return static_cast<IntPropLevel>(ipl);
   }
 
   DFA
