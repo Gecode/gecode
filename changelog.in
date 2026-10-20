@@ -78,9 +78,9 @@ Module: int
 What:   performance
 Rank:   minor
 [DESCRIPTION]
-Compact sparse state identifiers before allocating DFA construction arrays.
-Temporary storage depends on the supplied states rather than the largest
-state identifier. Repeated final-state identifiers are handled once.
+Retain dense state ranges and compact sparse state identifiers before
+allocating DFA construction arrays. Temporary storage is bounded by the
+specification size. Repeated final-state identifiers are handled once.
 
 [ENTRY]
 Module: support
