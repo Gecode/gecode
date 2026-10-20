@@ -25,8 +25,7 @@ if(GECODE_EXPECT_MIMALLOC)
   if(NOT EXISTS "${MIMALLOC_SOURCE_DIR}/include/mimalloc.h")
     message(FATAL_ERROR "The host allocator check requires MIMALLOC_SOURCE_DIR")
   endif()
-  # Like libminizinc, the consumer embeds a separate mimalloc object. On macOS,
-  # an archive can omit the malloc-zone registration needed for replacement.
+  # Embed the complete object so macOS includes malloc-zone registration.
   set(CMAKE_POLICY_DEFAULT_CMP0126 NEW)
   set(MI_OVERRIDE ${GECODE_HOST_MIMALLOC_OVERRIDE})
   set(MI_BUILD_SHARED OFF)

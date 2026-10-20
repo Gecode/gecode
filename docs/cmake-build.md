@@ -126,8 +126,11 @@ to inspect test assignments.
   usable Qt GUI stack is available. `ON` requires Gist dependencies and fails
   configuration if they are unavailable. Gist requires Qt Gui, Widgets, and
   PrintSupport in addition to Qt Core.
-- `GECODE_ENABLE_MIMALLOC`: selects a private mimalloc backend for Gecode's
-  default allocator. Disabled by default; see [Allocator backend](#allocator-backend).
+- `GECODE_ENABLE_MIMALLOC`: downloads and embeds mimalloc 3.5.3 for Gecode heap
+  and space storage. Default `OFF`. Requires `GECODE_BUILD_STATIC=OFF` and
+  `GECODE_ENABLE_ALLOCATOR=ON`; incompatible with `GECODE_SANITIZER` and
+  `GECODE_PEAKHEAP`. Application `malloc` and `new` are unaffected.
+  Rebuild consumers when changing backends.
 - `GECODE_ENABLE_FAULT_INJECTION`: builds deterministic allocation and copy
   failpoints together with the `Fault::*` regression suite. This facility is
   test-only, process-global, isolated to the dedicated single-threaded fault
@@ -150,32 +153,6 @@ Subproject defaults (`add_subdirectory`):
 - `GECODE_ENABLE_EXAMPLES=OFF`
 - `BUILD_TESTING=OFF` (unless enabled by parent project)
 - `GECODE_INSTALL=OFF`
-
-### Allocator backend
-
-The system allocator is the default. To enable the CMake-only mimalloc backend:
-
-```bash
-cmake -S . -B build-mimalloc -DGECODE_ENABLE_MIMALLOC=ON \
-  -DGECODE_BUILD_SHARED=ON -DGECODE_BUILD_STATIC=OFF
-cmake --build build-mimalloc -j
-```
-
-The option downloads mimalloc 3.5.3 and embeds it in shared `gecodesupport`
-for Gecode heap and space storage. Application `malloc` and `new` are
-unaffected, and installed consumers need no mimalloc package.
-
-Static builds are unsupported because they cannot isolate mimalloc's symbols.
-The backend requires `GECODE_ENABLE_ALLOCATOR=ON` and does not support
-`GECODE_SANITIZER` or `GECODE_PEAKHEAP`. Rebuild consumers when changing backends.
-
-Shared Gecode can coexist with libminizinc's mimalloc. For static Gecode, use
-the system backend. MiniZinc's process-wide replacement also covers these
-allocations when enabled.
-
-For offline builds, set `FETCHCONTENT_SOURCE_DIR_GECODE_MIMALLOC` to an unpacked
-mimalloc 3.5.3 source directory. Separate mimalloc source builds in one CMake
-tree are unsupported because their target names conflict.
 
 ### Fault injection and sanitizers
 
