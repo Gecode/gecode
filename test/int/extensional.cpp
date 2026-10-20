@@ -964,9 +964,16 @@ namespace Test { namespace Int {
              !s.x[1].assigned() || (s.x[1].val() != 1))
            return false;
          s.list.close(s);
-         return (s.status() != SS_FAILED) &&
-                s.list.length().assigned() &&
-                (s.list.length().val() == 2);
+         if ((s.status() == SS_FAILED) ||
+             !s.list.length().assigned() ||
+             (s.list.length().val() != 2))
+           return false;
+
+         // Pruning the first item to 1 also closes its aliased length.
+         DFA alias_dfa(0,{{0,1,1},{1,2,2}},{2},false);
+         OpenRegularSpace alias(alias_dfa,2);
+         alias.list.append(alias,alias.list.length());
+         return alias.status() == SS_FAILED;
        }
      };
 

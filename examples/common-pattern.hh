@@ -1,6 +1,6 @@
 /* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
- * Private modelling support for the common-pattern example and its comparison.
+ * Private modelling support for the common-pattern example.
  * Copyright Mikael Zayenz Lagerkvist, 2026.
  * Distributed under the MIT license; see LICENSE.
  */

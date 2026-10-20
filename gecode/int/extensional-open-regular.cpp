@@ -232,6 +232,11 @@ namespace Gecode { namespace Int { namespace Extensional {
         next = swap;
       }
 
+      // A list item can alias the length and close the list during pruning.
+      // Recompute support with final states before consuming the prefix.
+      if (!closed && (length.max() == size))
+        return ES_NOFIX;
+
       int consumed = 0;
       while ((consumed < n) && list[offset+consumed].assigned()) {
         const unsigned char* live =

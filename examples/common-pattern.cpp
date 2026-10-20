@@ -156,7 +156,7 @@ public:
  * The paper's Table 1 can be mined with:
  * -sequences ABCBC,BABC,AB,BCD -support 50 -language none.
  * -min-length and -required constrain length and item membership. -language
- * also accepts motif (A, any items, C), re10, re14, re2 (comparison presets
+ * also accepts motif (A, any items, C), re10, re14, re2 (expressions
  * from the paper). Their letters mean item IDs A=1 through Z=26; integer data
  * must use the corresponding mapping for these named expressions.
  *
@@ -164,8 +164,7 @@ public:
  * Integer IDs are positive and preserved in output. SPMF records must have
  * singleton itemsets: "1 -1 2 -1 3 -1 -2" is the sequence ABC. Multi-item
  * itemsets are rejected because they define a different mining problem.
- * No gap or time restrictions are supported. The comparison runner in
- * misc/common-pattern/README.md uses identical mining queries across models.
+ * No gap or time restrictions are supported.
  *
  * \ingroup Example
  */
