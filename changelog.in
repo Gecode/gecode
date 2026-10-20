@@ -79,7 +79,7 @@ What:   new
 Rank:   minor
 [DESCRIPTION]
 Add an optional CMake mimalloc backend for shared Gecode libraries.
-The system allocator remains the default.
+The system allocator is the default.
 
 [ENTRY]
 Module: kernel

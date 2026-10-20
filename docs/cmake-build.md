@@ -161,17 +161,17 @@ cmake -S . -B build-mimalloc -DGECODE_ENABLE_MIMALLOC=ON \
 cmake --build build-mimalloc -j
 ```
 
-This downloads mimalloc 3.5.3 and embeds it in shared `gecodesupport` for Gecode
-heap and space storage. Application `malloc` and `new` are unaffected, and
-installed consumers need no mimalloc package.
+The option downloads mimalloc 3.5.3 and embeds it in shared `gecodesupport`
+for Gecode heap and space storage. Application `malloc` and `new` are
+unaffected, and installed consumers need no mimalloc package.
 
 Static builds are unsupported because they cannot isolate mimalloc's symbols.
 The backend requires `GECODE_ENABLE_ALLOCATOR=ON` and does not support
 `GECODE_SANITIZER` or `GECODE_PEAKHEAP`. Rebuild consumers when changing backends.
 
-Shared Gecode can coexist with libminizinc's mimalloc. For static Gecode, keep
-this option off; MiniZinc's process-wide replacement, when enabled, already
-covers Gecode's system allocation calls.
+Shared Gecode can coexist with libminizinc's mimalloc. For static Gecode, use
+the system backend. MiniZinc's process-wide replacement also covers these
+allocations when enabled.
 
 For offline builds, set `FETCHCONTENT_SOURCE_DIR_GECODE_MIMALLOC` to an unpacked
 mimalloc 3.5.3 source directory. Separate mimalloc source builds in one CMake
