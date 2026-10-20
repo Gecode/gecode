@@ -34,8 +34,6 @@
 #include "tsptw-data.hh"
 #include "tsptw-transition.hh"
 #include <gecode/search.hh>
-#include <chrono>
-#include <iomanip>
 #include <iostream>
 #include <limits>
 #include <memory>
@@ -347,13 +345,7 @@ public:
 
 template<class Model>
 static int run_search(const RunOptions& options, Model& root,
-                      const Search::Options& search,
-                      std::chrono::steady_clock::time_point start,
-                      std::shared_ptr<TSPTW::Measurements> measurements=nullptr) {
-  auto elapsed=[start]() {
-    return std::chrono::duration<double,std::milli>(
-      std::chrono::steady_clock::now()-start).count();
-  };
+                      const Search::Options& search) {
   const auto& data=root.data;
   std::optional<TourValue> incumbent;
   std::vector<int> best_tour;
@@ -363,26 +355,11 @@ static int run_search(const RunOptions& options, Model& root,
   }
   std::unique_ptr<Model> seed;
   if (incumbent) seed=make_seed(root,best_tour,*incumbent);
-  int root_positions = 0, prepared_positions = 0, solution_positions = 0;
-  if constexpr (std::is_same<Model,TSPTW::Transition>::value) {
-    if (seed)
-      solution_positions = seed->allocated_positions();
-    root_positions = root.allocated_positions();
-    if (root.status() == SS_BRANCH) {
-      Search::Statistics stat;
-      // Record the first prepared prefix without committing a visit.
-      (void) root.prepare(stat);
-    }
-    prepared_positions = root.allocated_positions();
-  }
   const auto guidance=[&]() {
     if constexpr (std::is_same<Model,TSPTW::Transition>::value)
-      return Model::guidance(options.bound=="prefix" ? Model::PREFIX : Model::MIN_ARCS,
-                             measurements);
+      return Model::guidance(options.bound=="prefix" ? Model::PREFIX : Model::MIN_ARCS);
     else return Model::guidance();
   }();
-  const double preprocessing_ms=elapsed();
-  const auto search_start=std::chrono::steady_clock::now();
   std::unique_ptr<Search::Engine> engine;
   if (options.engine=="bab") engine.reset(Search::babengine(&root,search));
   else if (options.engine=="rbs") {
@@ -402,11 +379,10 @@ static int run_search(const RunOptions& options, Model& root,
   // Default clone ownership keeps root and seed independently owned here.
   // The stop object was declared first and outlives every engine.
   if (seed) engine->constrain(*seed);
-  std::cout << std::fixed << std::setprecision(3);
   if (incumbent) {
     std::cout << "{\"type\":\"solution\",";
     write_tour(best_tour,*incumbent,data->scale);
-    std::cout << ",\"elapsed_ms\":" << elapsed() << '}' << std::endl;
+    std::cout << '}' << std::endl;
   }
   while (std::unique_ptr<Model> solution{
            static_cast<Model*>(engine->next())}) {
@@ -416,14 +392,10 @@ static int run_search(const RunOptions& options, Model& root,
       throw std::runtime_error("invalid or nonimproving model solution");
     incumbent=value;
     best_tour=std::move(tour);
-    if constexpr (std::is_same<Model,TSPTW::Transition>::value)
-      solution_positions=solution->allocated_positions();
     std::cout << "{\"type\":\"solution\",";
     write_tour(best_tour,value,data->scale);
-    std::cout << ",\"elapsed_ms\":" << elapsed() << '}' << std::endl;
+    std::cout << '}' << std::endl;
   }
-  const double search_ms=std::chrono::duration<double,std::milli>(
-    std::chrono::steady_clock::now()-search_start).count();
   const auto statistics=engine->statistics();
   const char* termination=engine->stopped() ? "stopped" :
                           incumbent ? "optimal" : "infeasible";
@@ -447,21 +419,7 @@ static int run_search(const RunOptions& options, Model& root,
     write_tour(best_tour,*incumbent,data->scale);
     std::cout << '}';
   } else std::cout << "null";
-  if constexpr (std::is_same<Model,TSPTW::Transition>::value) {
-    std::cout << ",\"allocation\":{\"space_bytes\":" << sizeof(Model)
-              << ",\"intvar_handle_bytes\":" << sizeof(IntVar)
-              << ",\"root_positions\":" << root_positions
-              << ",\"prepared_root_positions\":" << prepared_positions
-              << ",\"solution_positions\":" << solution_positions << '}';
-    std::cout << ",\"measurements\":{\"bound_calls\":" << measurements->bound_calls
-              << ",\"bound_ms\":" << measurements->bound_ms
-              << ",\"inference_calls\":" << measurements->inference_calls
-              << ",\"inference_ms\":" << measurements->inference_ms
-              << ",\"propagation_ms\":" << measurements->propagation_ms << '}';
-  }
-  std::cout << ",\"preprocessing_ms\":" << preprocessing_ms
-            << ",\"search_ms\":" << search_ms
-            << ",\"elapsed_ms\":" << elapsed() << ",\"statistics\":{\"node\":"
+  std::cout << ",\"statistics\":{\"node\":"
             << statistics.node << ",\"fail\":" << statistics.fail
             << ",\"depth\":" << statistics.depth << ",\"propagate\":"
             << statistics.propagate << ",\"restart\":" << statistics.restart
@@ -470,7 +428,6 @@ static int run_search(const RunOptions& options, Model& root,
 }
 
 static int run(const RunOptions& options) {
-  const auto start=std::chrono::steady_clock::now();
   LimitsStop stop(options);
   auto data=std::make_shared<const TSPTW::Instance>(TSPTW::read(options.instance));
   Search::Options search;
@@ -484,16 +441,14 @@ static int run(const RunOptions& options) {
   if (options.formulation=="closed") {
     TSPTWClosed root(data,options.circuit_propagation=="dom" ? IPL_DOM : IPL_VAL,
                      options.cost_branching=="size");
-    return run_search(options,root,search,start);
+    return run_search(options,root,search);
   }
-  auto measurements=std::make_shared<TSPTW::Measurements>(options.threads>1);
   TSPTW::Transition root(data,options.formulation=="transition" ?
                          TSPTW::Transition::LAZY : TSPTW::Transition::EAGER,
                          options.residual_propagation=="off" ?
                          TSPTW::Transition::OFF : options.residual_propagation=="cheap" ?
-                         TSPTW::Transition::CHEAP : TSPTW::Transition::UNARY,
-                         measurements);
-  return run_search(options,root,search,start,measurements);
+                         TSPTW::Transition::CHEAP : TSPTW::Transition::UNARY);
+  return run_search(options,root,search);
 }
 
 int main(int argc, char* argv[]) {

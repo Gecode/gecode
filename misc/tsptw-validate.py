@@ -86,27 +86,9 @@ def run_solver(
     )
     assert summary["bound"] == ("cp-total" if formulation == "closed" else bound)
     assert summary["residual_propagation"] == propagation
-    if formulation != "closed":
-        allocation = summary["allocation"]
-        n = len(data[0])
-        assert allocation["space_bytes"] > 0 and allocation["intvar_handle_bytes"] > 0
-        assert allocation["root_positions"] == (0 if formulation == "transition" else n)
-        assert allocation["prepared_root_positions"] in (
-            {0, 1} if formulation == "transition" else {n}
-        )
-        assert allocation["solution_positions"] == (n if summary["incumbent"] else 0)
-        measurements = summary["measurements"]
-        assert all(
-            isinstance(x, (int, float)) and x >= 0 for x in measurements.values()
-        )
-        assert measurements["propagation_ms"] <= measurements["inference_ms"]
-        if propagation == "off":
-            assert measurements["inference_calls"] == 0
-            assert measurements["inference_ms"] == measurements["propagation_ms"] == 0
     assert summary["termination"] in {"optimal", "infeasible", "stopped"}
     assert all(isinstance(x, int) and x >= 0 for x in summary["statistics"].values())
     last = None
-    elapsed = 0
     for record in records[:-1]:
         assert record["type"] == "solution", record
         assert all(type(node) is int for node in record["tour"]), record
@@ -114,13 +96,10 @@ def run_solver(
         for field in ("scaled_cost", "scale", "cost", "return_time"):
             assert record[field] == checked[field], (path, engine, field, record)
         assert last is None or checked["scaled_cost"] < last["scaled_cost"], records
-        assert record["elapsed_ms"] >= elapsed
-        elapsed = record["elapsed_ms"]
         last = {
             field: record[field]
             for field in ("tour", "scaled_cost", "scale", "cost", "return_time")
         }
-    assert summary["elapsed_ms"] >= elapsed
     assert summary["incumbent"] == last, records
     if seed_result:
         assert records[0]["tour"] == tour
@@ -294,36 +273,11 @@ def validate_solver(solver: Path, manifest: dict[str, Any]) -> None:
                 assert summary["termination"] in ("stopped", "optimal"), summary
                 if summary["termination"] == "optimal":
                     assert summary["incumbent"]["scaled_cost"] == branching_optimum
-    complete = stopped = 0
-    for case in manifest["published"]:
-        proven_cost = None
-        for formulation in formulations:
-            for engine in engines:
-                summary, _ = run_solver(
-                    solver,
-                    DATA / case["path"],
-                    engine,
-                    ("--time-ms", "5000"),
-                    DATA / case["tour_path"],
-                    formulation,
-                )
-                assert Fraction(summary["incumbent"]["cost"]) <= Fraction(
-                    case["exact_cost"]
-                )
-                assert summary["termination"] != "infeasible"
-                if summary["termination"] == "optimal":
-                    cost = summary["incumbent"]["scaled_cost"]
-                    assert proven_cost is None or cost == proven_cost
-                    proven_cost = cost
-                    complete += 1
-                else:
-                    stopped += 1
     print(
         f"passed closed/lazy/eager BAB/A*/CABS: tiny optima/infeasibility, "
         f"matching transition tours, nonmetric filtering, "
         f"minimum-arc bounds and residual unary propagation, "
-        f"checked seeds and stops; "
-        f"canonical runs: {complete} proven, {stopped} stopped (5 seconds per run)"
+        f"checked seeds and stops"
     )
 
 

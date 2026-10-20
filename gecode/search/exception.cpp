@@ -35,17 +35,11 @@
 
 namespace Gecode { namespace Search {
 #ifdef GECODE_HAS_EXPERIMENTAL
-  UnsupportedCABSThreads::UnsupportedCABSThreads(const char* l)
-    : Exception(l,"CABS requires exactly one expanded search thread") {}
-
   UnsupportedCABSTracer::UnsupportedCABSTracer(const char* l)
     : Exception(l,"CABS does not support search tracers") {}
 
   UninitializedCABSBound::UninitializedCABSBound(const char* l)
     : Exception(l,"CABS total-bound guidance is missing") {}
-
-  UnsupportedAStarThreads::UnsupportedAStarThreads(const char* l)
-    : Exception(l,"A* requires exactly one expanded search thread") {}
 
   UnsupportedAStarTracer::UnsupportedAStarTracer(const char* l)
     : Exception(l,"A* does not support search tracers") {}
