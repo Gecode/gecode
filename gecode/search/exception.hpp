@@ -81,11 +81,6 @@ namespace Gecode { namespace Search {
     WorkerControlInUse(const char* l);
   };
 #ifdef GECODE_HAS_EXPERIMENTAL
-  /// %Exception: CABS requires exactly one expanded thread
-  class GECODE_SEARCH_EXPORT UnsupportedCABSThreads : public Exception {
-  public:
-    UnsupportedCABSThreads(const char* l);
-  };
   /// %Exception: CABS does not support search tracers
   class GECODE_SEARCH_EXPORT UnsupportedCABSTracer : public Exception {
   public:
@@ -95,11 +90,6 @@ namespace Gecode { namespace Search {
   class GECODE_SEARCH_EXPORT UninitializedCABSBound : public Exception {
   public:
     UninitializedCABSBound(const char* l);
-  };
-  /// %Exception: A* requires exactly one expanded thread
-  class GECODE_SEARCH_EXPORT UnsupportedAStarThreads : public Exception {
-  public:
-    UnsupportedAStarThreads(const char* l);
   };
   /// %Exception: A* does not support search tracers
   class GECODE_SEARCH_EXPORT UnsupportedAStarTracer : public Exception {

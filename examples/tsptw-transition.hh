@@ -4,26 +4,10 @@
 
 #include "tsptw-data.hh"
 #include <gecode/search.hh>
-#include <chrono>
 #include <memory>
 #include <numeric>
 
 namespace TSPTW {
-
-  /// One run owns these aggregates; clones and callbacks count repeated work.
-  struct Measurements {
-    const bool parallel;
-    Gecode::Support::Mutex mutex;
-    explicit Measurements(bool p=false) : parallel(p) {}
-    std::uint64_t bound_calls=0, inference_calls=0;
-    void add(double& total, double elapsed, std::uint64_t* calls=nullptr) {
-      if (parallel) mutex.acquire();
-      total+=elapsed;
-      if (calls) (*calls)++;
-      if (parallel) mutex.release();
-    }
-    double bound_ms=0, inference_ms=0, propagation_ms=0;
-  };
 
   /// One concrete visit per search edge, with an explicit depot return.
   class Transition : public Gecode::Space {
@@ -38,8 +22,7 @@ namespace TSPTW {
 
     explicit Transition(std::shared_ptr<const Instance> instance,
                         Representation representation=LAZY,
-                        ResidualPropagation propagation=OFF,
-                        std::shared_ptr<Measurements> measurements=nullptr);
+                        ResidualPropagation propagation=OFF);
     Transition(Transition& s);
     Gecode::Space* copy(void) override { return new Transition(*this); }
     void constrain(const Gecode::Space& s) override;
@@ -80,19 +63,10 @@ namespace TSPTW {
     }
 #ifdef GECODE_HAS_EXPERIMENTAL
     static Gecode::Search::HeuristicGuidance
-    guidance(BoundMode mode=PREFIX,
-             std::shared_ptr<Measurements> measurements=nullptr) {
+    guidance(BoundMode mode=PREFIX) {
       return {Gecode::Search::HeuristicGuidance::MINIMIZE,
-        [mode,measurements](const Gecode::Space& s)->std::int64_t {
-          const auto start=std::chrono::steady_clock::now();
-          const auto result=static_cast<const Transition&>(s).bound(mode);
-          if (measurements) {
-            measurements->add(measurements->bound_ms,
-              std::chrono::duration<double,std::milli>(
-                std::chrono::steady_clock::now()-start).count(),
-              &measurements->bound_calls);
-          }
-          return result;
+        [mode](const Gecode::Space& s)->std::int64_t {
+          return static_cast<const Transition&>(s).bound(mode);
         }};
     }
 
@@ -103,7 +77,6 @@ namespace TSPTW {
     Representation representation;
     ResidualPropagation propagation;
     std::shared_ptr<const std::vector<std::int64_t>> distance;
-    std::shared_ptr<Measurements> measurements;
     std::vector<int> residual_actions;
     Gecode::OpenIntVarList lazy;
     Gecode::IntVarArray eager;
@@ -206,11 +179,10 @@ namespace TSPTW {
 
   inline Transition::Transition(std::shared_ptr<const Instance> instance,
                                 Representation representation0,
-                                ResidualPropagation propagation0,
-                                std::shared_ptr<Measurements> measurements0)
+                                ResidualPropagation propagation0)
     : data(std::move(instance)), unvisited(data->n-1),
       representation(representation0), propagation(propagation0),
-      measurements(std::move(measurements0)), ceiling(data->cost_limit+1) {
+      ceiling(data->cost_limit+1) {
     std::iota(unvisited.begin(),unvisited.end(),1);
     if (propagation!=OFF)
       distance=std::make_shared<const std::vector<std::int64_t>>(
@@ -231,7 +203,7 @@ namespace TSPTW {
     : Space(s), data(s.data), unvisited(s.unvisited), location(s.location),
       time(s.time), prefix_cost(s.prefix_cost), depth(s.depth),
       returned(s.returned), representation(s.representation),
-      propagation(s.propagation), distance(s.distance), measurements(s.measurements),
+      propagation(s.propagation), distance(s.distance),
       residual_actions(s.residual_actions), ceiling(s.ceiling) {
     if (representation==LAZY) lazy.update(*this,s.lazy);
     else eager.update(*this,s.eager);
@@ -292,7 +264,6 @@ namespace TSPTW {
 
   inline bool Transition::refresh_inference(void) {
     if (propagation==OFF) return true;
-    const auto start=std::chrono::steady_clock::now();
     residual_actions.clear();
     bool feasible=true;
     if (!returned && unvisited.empty()) {
@@ -312,12 +283,7 @@ namespace TSPTW {
       }
     } else if (!returned) {
       ResidualSchedule schedule(*data,unvisited,location,time,*distance);
-      const auto propagation_start=std::chrono::steady_clock::now();
       feasible=schedule.status()!=Gecode::SS_FAILED;
-      if (measurements)
-        measurements->add(measurements->propagation_ms,
-          std::chrono::duration<double,std::milli>(
-            std::chrono::steady_clock::now()-propagation_start).count());
       if (feasible)
         for (std::size_t k=0; k<unvisited.size(); k++) {
           const int u=unvisited[k];
@@ -325,12 +291,6 @@ namespace TSPTW {
           if (schedule.starts[static_cast<int>(k)].in(earliest))
             residual_actions.push_back(u);
         }
-    }
-    if (measurements) {
-      measurements->add(measurements->inference_ms,
-        std::chrono::duration<double,std::milli>(
-          std::chrono::steady_clock::now()-start).count(),
-        &measurements->inference_calls);
     }
     return feasible;
   }

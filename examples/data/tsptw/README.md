@@ -71,8 +71,7 @@ Validation runs offline. It compares native scaled values against the independen
 reader, enumerates tiny optima, checks published tours, and rejects malformed
 inputs and invalid tours. With `--solver`, it checks the native formulations
 and engines against tiny optima, nonmetric cases, bounds, seeds and resource
-stops, then runs each published case with its checked seed and a five-second
-limit. Omit `--solver` to check data and readers alone. The checker exits with
+stops. Omit `--solver` to check data and readers alone. The checker exits with
 status 1 for invalid data or tours. Enumeration is limited to nine customers.
 
 The default `--formulation closed` uses a costed circuit and reified timing
@@ -101,9 +100,6 @@ The closed model also accepts `--circuit-propagation dom|val` and
 engine uses RBS of BAB with Luby scale 1,000 and no-good depth 128.
 
 The executable emits JSON lines: improving `solution` records followed by a
-`summary`. Each tour has exact cost and return time, scaled cost, scale and
-elapsed milliseconds. Natural exhaustion reports `optimal` with an incumbent
-or `infeasible` without one. Any resource stop reports `stopped` and supplies
-no proof. Summaries also include native search statistics and model settings.
-Transition allocation counts and bound/inference timings describe the example's
-work; they do not measure process memory or search frontier storage.
+`summary`. Each tour has exact cost and return time, scaled cost and scale.
+Natural exhaustion reports `optimal` with an incumbent or `infeasible` without
+one. Any resource stop reports `stopped` and supplies no proof. Summaries also include native search statistics and model settings.
