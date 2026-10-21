@@ -139,14 +139,6 @@ The astar and cabs builders support mixed PBS portfolios.
 The TSPTW example accepts --threads N.
 
 [ENTRY]
-Module: kernel
-What:   performance
-Rank:   minor
-[DESCRIPTION]
-Space chunk allocation and disposal bypass a busy chunk cache through the
-configured heap allocator. Workers do not wait for this optional cache.
-
-[ENTRY]
 Module: int
 What:   new
 Rank:   major
