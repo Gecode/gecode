@@ -124,6 +124,7 @@ Rank:   major
 Add OpenIntVarList and OpenBoolVarList for lists whose length is decided
 during propagation and search. OpenVarList supports other variable types
 through a factory. Regular-language and other constraints follow list growth.
+[MORE]
 Branching uses standard variable and value selectors and assigns prefix
 values before closing or extending the list. A length brancher posted first
 decides length before list values. The common-pattern example demonstrates
