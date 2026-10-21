@@ -248,6 +248,9 @@ namespace Gecode { namespace Search { namespace Par {
     Worker local;
     bool leased=false;
     Seq::ExpansionStep step{Seq::ExpansionStep::EXHAUSTED,nullptr,SS_FAILED};
+    Entry batch[8];
+    unsigned int batch_size=0;
+    const unsigned int batch_capacity=beam && !limits.frontier_limit ? 8 : 1;
     std::int64_t bound=0, rank=0;
     std::size_t key=0;
     std::optional<std::int64_t> cutoff;
@@ -260,17 +263,12 @@ namespace Gecode { namespace Search { namespace Par {
           if (leased) {
             stat+=local;
             local.reset();
+            for (unsigned int i=0; i<batch_size; i++)
+              batch[i].space=admit(std::move(batch[i]),
+                                   static_cast<bool>(task->expansion));
             if (step.state != Seq::ExpansionStep::EXHAUSTED) {
-              switch (step.status) {
-              case SS_FAILED: stat.fail++; break;
-              case SS_SOLVED: publish(std::move(step.space),bound); break;
-              case SS_BRANCH:
-                step.space=admit({std::move(step.space),bound,rank,key,
-                                 task->depth+1,0,current_revision},
-                                static_cast<bool>(task->expansion));
-                break;
-              default: GECODE_NEVER;
-              }
+              assert(step.status == SS_SOLVED);
+              publish(std::move(step.space),bound);
             }
             step.state=Seq::ExpansionStep::EXHAUSTED;
           }
@@ -281,8 +279,10 @@ namespace Gecode { namespace Search { namespace Par {
           const bool enabled=!worker_control.engaged() ||
             id < WorkerControlAccess::requested(worker_control);
           if (task && (!task->expansion || !running || !enabled || shutdown)) {
-            // Keep the lease until the rejected or replaced space is gone.
+            // Keep the lease until all rejected or replaced spaces are gone.
             retiring=static_cast<bool>(step.space);
+            for (unsigned int i=0; i<batch_size; i++)
+              retiring=retiring || static_cast<bool>(batch[i].space);
             if (!retiring) {
               if (task->expansion) pending.push_back(std::move(task));
               task.reset();
@@ -347,6 +347,8 @@ namespace Gecode { namespace Search { namespace Par {
         }
         if (notify) wake();
         step.space.reset();
+        for (unsigned int i=0; i<batch_size; i++) batch[i].space.reset();
+        batch_size=0;
         if (retiring) continue;
         if (!task) {
           if (worker_control.engaged()) WorkerControlAccess::wait(worker_control,id);
@@ -358,8 +360,8 @@ namespace Gecode { namespace Search { namespace Par {
           local.stack_depth(task->depth);
           task->counted=true;
         }
-        // Failed alternatives need no shared admission. Keep stop and worker
-        // control checks bounded even for choices with many failing children.
+        // Bound both sibling batches and the work between stop checks, even
+        // for choices with many failing children.
         for (unsigned int i=0; i<32 && task->expansion; i++) {
           step=task->expansion.next(local,task->depth+1,
             task->revision,incumbent.get(),current_revision);
@@ -376,7 +378,11 @@ namespace Gecode { namespace Search { namespace Par {
               if (step.status == SS_BRANCH && guidance.rank) rank=guidance.rank(*step.space);
               if (step.status == SS_BRANCH && beam && limits.dominates && limits.dominance_key)
                 key=limits.dominance_key(*step.space);
-              break;
+              if (step.status == SS_SOLVED) break;
+              batch[batch_size++]={std::move(step.space),bound,rank,key,
+                                   task->depth+1,0,current_revision};
+              step.state=Seq::ExpansionStep::EXHAUSTED;
+              if (batch_size == batch_capacity) break;
             }
           }
           if (step.state != Seq::ExpansionStep::EXHAUSTED) local.fail++;
@@ -390,6 +396,8 @@ namespace Gecode { namespace Search { namespace Par {
           Support::Lock lock(mutex);
           step.space.reset();
           step.state=Seq::ExpansionStep::EXHAUSTED;
+          for (unsigned int i=0; i<batch_size; i++) batch[i].space.reset();
+          batch_size=0;
           task.reset();
           incumbent.reset();
           current_revision=0;

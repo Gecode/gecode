@@ -1395,11 +1395,12 @@ namespace Gecode {
    * work, intrinsic stops, and statistics while preserving guidance and CABS options.
    *
    * The frontier quota includes current-layer entries, next-layer candidates,
-   * and selected parents. In parallel search, each unfinished expansion reserves
-   * a parent and an unsubmitted successor at admission; there is at most one
-   * temporary successor per worker. The quota excludes the restart root,
-   * incumbent copies, and returned solutions. It is checked when adding a beam
-   * slot, without a byte or process-memory guarantee. Clones store the search;
+   * and selected parents. In parallel search with a quota, each unfinished
+   * expansion reserves a parent and an unsubmitted successor at admission;
+   * there is at most one temporary successor per worker. The quota excludes
+   * the restart root, incumbent copies, and returned solutions. It is checked
+   * when adding a beam slot, without a byte or process-memory guarantee.
+   * Clones store the search;
    * c_d/a_d do not enable replay and no-good extraction is empty.
    * The threading tradeoffs described for AStar also apply here.
    * Options::threads selects sequential or parallel expansion of layer parents.
