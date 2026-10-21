@@ -3,7 +3,8 @@
 ## Purpose
 
 `Search::WorkerControl` lets an external scheduler change how many workers a
-running DFS or BAB engine may use. A portfolio with a fixed thread budget can
+running DFS or BAB engine may use. Experimental AStar and CABS engines also
+support worker control. A portfolio with a fixed thread budget can
 move workers among its engines at runtime.
 
 The engine still starts with a fixed maximum:
@@ -26,8 +27,8 @@ control.request(1); // Resume
 Gecode resolves the `threads` option when it constructs the engine. The result
 is the fixed worker capacity. A request must be between zero and that capacity,
 inclusive. Zero pauses the engine without discarding its search state.
-This also applies when the resolved capacity is one: sequential DFS and BAB
-wait at search boundaries until the control resumes them.
+This also applies when the resolved capacity is one: sequential DFS, BAB,
+AStar, and CABS wait at search boundaries until the control resumes them.
 Pausing requires a build with thread support. Without thread support, attaching
 an initially paused control or calling `request(0)` raises
 `Search::InvalidWorkerRequest`; controls must be used from one thread.
@@ -58,7 +59,7 @@ request becomes visible remain nondeterministic.
 Shrinking parks resident operating-system threads. It does not destroy their
 thread objects or discard their engine-local search state. Growing wakes those
 threads again. Set the capacity to the largest allocation the engine may
-receive. Parked workers retain their stacks and other per-worker state.
+receive. Parked workers keep their stacks and other per-worker state.
 
 ## Handle lifetime and ownership
 
