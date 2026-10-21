@@ -185,11 +185,11 @@ post_start(Home home, const IntVarArgs& tiles, IntVar blank,
   rel(home,blank == zero);
 }
 
-// Swap the blank with an adjacent tile and preserve every other position.
+// A step slides a tile while moving, and leaves the board unchanged otherwise.
 static void
-post_slide(Home home,
-           const IntVarArgs& before, IntVar old_blank,
-           const IntVarArgs& after, IntVar new_blank) {
+post_step(Home home, BoolVar moving,
+          const IntVarArgs& before, IntVar old_blank,
+          const IntVarArgs& after, IntVar new_blank) {
   static const TupleSet adjacent = [] {
     TupleSet table(2);
     for (int i=0; i<16; i++) {
@@ -199,7 +199,8 @@ post_slide(Home home,
     table.finalize();
     return table;
   }();
-  extensional(home,IntVarArgs({old_blank,new_blank}),adjacent);
+  extensional(home,IntVarArgs({old_blank,new_blank}),adjacent,moving);
+  rel(home,(!moving) >> (old_blank == new_blank));
   rel(home,element(after,old_blank) == element(before,new_blank));
   rel(home,element(after,new_blank) == 0);
   for (int i=0; i<16; i++) {
@@ -275,7 +276,7 @@ public:
     if (failed())
       return;
     if (i > 0)
-      post_slide(*this,state(i-1),x[i-1],state(i),x[i]);
+      post_step(*this,BoolVar(*this,1,1),state(i-1),x[i-1],state(i),x[i]);
     post_goal(*this,state(i),path.length(),i+1);
   }
 
@@ -324,9 +325,8 @@ public:
 /**
  * \brief Bounded representation using the same slide and goal rules
  *
- * All boards are constructed initially, including the unused suffix after
- * the goal. The branch filter considers only the next blank position and
- * stops when the assigned prefix reaches the goal.
+ * All boards are constructed initially. Steps before the path length are
+ * moves; the remaining steps leave the goal board unchanged.
  *
  * \ingroup Example
  */
@@ -344,7 +344,8 @@ public:
     post_start(*this,state(0),path[0],initial);
     post_goal(*this,state(0),length,1);
     for (int i=1; i<=opt.limit(); i++) {
-      post_slide(*this,state(i-1),path[i-1],state(i),path[i]);
+      BoolVar moving = expr(*this,length > i);
+      post_step(*this,moving,state(i-1),path[i-1],state(i),path[i]);
       post_goal(*this,state(i),length,i+1);
     }
     rel(*this,length >= manhattan(initial)+1);
@@ -354,12 +355,7 @@ public:
         const FixedPuzzle& s = static_cast<const FixedPuzzle&>(home);
         return manhattan_value(s.state(i-1),s.path[i-1].val(),next);
       });
-    branch(*this,path,INT_VAR_NONE(),value_branch,
-      [](const Space& home, IntVar, int i) {
-        const FixedPuzzle& s = static_cast<const FixedPuzzle&>(home);
-        const int depth = s.depth();
-        return values(s.state(depth)) != goal() && i == depth+1;
-      });
+    branch(*this,path,INT_VAR_NONE(),value_branch);
   }
 
   FixedPuzzle(FixedPuzzle& s) : Script(s) {
@@ -387,7 +383,7 @@ public:
   int
   depth(void) const {
     int i = 0;
-    while (i+1 < path.size() && path[i+1].assigned())
+    while (i+1 < length.min() && path[i+1].assigned())
       i++;
     return i;
   }
