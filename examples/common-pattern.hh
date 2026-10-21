@@ -290,14 +290,19 @@ namespace PatternMining {
   /**
    * \brief Private prefix projection for a growing list
    *
-   * The projection advances only through the leading assigned positions.
-   * Its frequent items filter every remaining materialized position. Adding
-   * positions reuses the cached items and suffix-length bound until the
-   * assigned prefix grows.
+   * Adapts ProjectSDB (Algorithm 1) and Filter-Prefix-Projection (Algorithm 2)
+   * from "PREFIX-PROJECTION Global Constraint for Sequential Pattern Mining",
+   * Amina Kemmar, Samir Loudni, Yahia Lebbah, Patrice Boizumault, and
+   * Thierry Charnois, CP 2015, https://doi.org/10.1007/978-3-319-23219-5_17
+   *
+   * The open list replaces the termination marker. Suffix lengths bound how
+   * many more items can follow the assigned prefix. The projection advances
+   * only through the leading assigned positions. Its frequent items filter
+   * every remaining materialized position. Adding positions reuses the cached
+   * items and suffix-length bound until the assigned prefix grows.
    *
    * The support variable is bounded by the prefix's supporting-record count
-   * and becomes exact once the list is closed and fully assigned. See
-   * CommonPattern for the source of the prefix-projection method.
+   * and becomes exact once the list is closed and fully assigned.
    */
   class OpenProjection : public Propagator {
   protected:
@@ -352,7 +357,7 @@ namespace PatternMining {
         if (!list[i].assigned())
           Int::IntView(list[i]).subscribe(home,*this,Int::PC_INT_VAL,false);
       subscribed = size;
-      for (;;) {
+      while (true) {
         while ((consumed < size) && list[consumed].assigned()) {
           if (!projection.advance(list[consumed].val()))
             return ES_FAILED;
