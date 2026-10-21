@@ -124,7 +124,8 @@ What:   new
 Rank:   major
 Experimental: true
 [DESCRIPTION]
-Add experimental A* (AStar) and complete anytime beam search (CABS) for 6.5.0.
+Add experimental A* (AStar) and complete anytime beam search (CABS).
+[MORE]
 Both use objective bounds for pruning and optional ranks to guide exploration;
 AStar can give priority to either bound or rank. Enable with
 --enable-experimental or GECODE_ENABLE_EXPERIMENTAL=ON; the preview is disabled

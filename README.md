@@ -45,7 +45,6 @@ state.
 | `--enable-qt` | `GECODE_ENABLE_QT` | Supported directly | `AUTO` by default; Qt 6 preferred; Qt 5.15+ supported |
 | `--enable-gist` | `GECODE_ENABLE_GIST` | Supported directly | `AUTO` by default except macOS; disabled automatically if Qt GUI support is unavailable |
 | `--enable-cpprofiler` | `GECODE_ENABLE_CPPROFILER` | Supported directly | Default `ON` |
-| `--enable-experimental` | `GECODE_ENABLE_EXPERIMENTAL` | Supported directly | Default `OFF`; experimental 6.5.0 preview APIs |
 | `--enable-cbs` | `GECODE_ENABLE_CBS` | Supported directly | Default `OFF` |
 | `--enable-examples` | `GECODE_ENABLE_EXAMPLES` | Supported directly | Default `ON` for top-level builds, `OFF` for subprojects |
 | `--enable-search` | `GECODE_ENABLE_SEARCH` | Supported directly | Default `ON` |
@@ -117,28 +116,6 @@ supported for legacy environments, but older Qt releases are ignored unless
 build that supports the active macOS SDK; recent Qt 6 releases are the safest
 choice. Gist is opt-in for CMake builds on macOS. Use `-DGECODE_ENABLE_GIST=ON`
 when Qt is installed and its framework link interface is usable.
-
-## Experimental search preview
-
-Gecode 6.5.0 includes an opt-in preview of A* (`AStar`) and complete anytime
-beam search (`CABS`). A* selects from a priority queue of pending spaces;
-CABS limits each search layer to a beam of candidates and repeats with wider
-beams when discarded candidates could still improve the best solution.
-Enable it when building the library with `-DGECODE_ENABLE_EXPERIMENTAL=ON`
-for CMake or `--enable-experimental` for Autoconf. Both builds disable the
-preview by default. The installed configuration defines
-`GECODE_HAS_EXPERIMENTAL` only when the library includes these APIs.
-Applications can use this macro to check availability; defining it in an
-application does not enable the library feature.
-
-Experimental APIs may change or be removed in future feature releases.
-Both engines work with ordinary `Space` subclasses. Supply a bound on the
-total objective: a lower bound for minimization or an upper bound for
-maximization, equal to the objective at solutions. An optional ranking
-function can guide exploration but cannot justify pruning. A* can give
-priority to either the bound or the rank. As with BAB, both engines return
-improving solutions through `next()`. `Options::threads` selects the worker
-count. The `fifteen-puzzle` and `tsptw` examples demonstrate their use.
 
 ## CMake Package Consumption
 
