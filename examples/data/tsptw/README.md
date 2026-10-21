@@ -19,7 +19,7 @@ build/open-search/bin/tsptw examples/data/tsptw/waiting.txt --formulation transi
 
 Both formulations support depth-first branch and bound (`bab`), A*, and complete
 anytime beam search (`cabs`). The executable emits JSON lines: improving
-`solution` records followed by a `summary`. Tours list each customer once,
+`solution` records followed by a `summary`. Each tour lists every customer once,
 omitting the depot at both ends. Costs and return times are exact decimals;
 records also include the integer cost and scale used by the model.
 
@@ -40,11 +40,12 @@ If the input includes service time, it must already be included in outgoing
 matrix entries. Travel times may differ by direction, and travelling through
 another node may be cheaper than going directly.
 
-Departure is fixed at time zero. Each visit waits until its ready time and must
-start by its due time. Return to depot 0 must meet its window too; the depot
-ready time must be zero. Values are nonnegative decimals without signs or
-exponents. The reader scales them exactly to integers and rejects inputs whose
-dimensions, scaled values, or tour arithmetic exceed Gecode's integer limits.
+Departure is fixed at time zero. Each visit starts no earlier than its ready
+time and no later than its due time; early arrivals wait. Return to depot 0
+must meet its window too; the depot ready time must be zero. Values are
+nonnegative decimals without signs or exponents. The reader scales them exactly
+to integers and rejects inputs whose dimensions, scaled values, or tour
+arithmetic exceed Gecode's integer limits.
 
 ## Model and search choices
 
@@ -57,8 +58,9 @@ as the route grows, with explicit waiting and depot return checks.
 The transition formulation accepts `--bound prefix|min-arcs` and
 `--residual-propagation off|cheap|unary`, defaulting to `prefix` and `off`.
 The prefix bound uses travel cost so far. `min-arcs` also estimates remaining
-cost using the larger of cheapest-incoming and cheapest-outgoing trip totals.
-These trips need not form a tour, so the estimate can be too low.
+cost by summing the cheapest incoming trips and the cheapest outgoing trips,
+then taking the larger total. These trips need not form a tour, so the estimate
+can be too low.
 
 `cheap` checks whether each remaining customer can still be reached and followed
 by a return within the deadlines, using shortest travel times. `unary` adds a
@@ -68,7 +70,7 @@ out its next customer. Shortest paths may use visited customers, keeping the
 checks valid when indirect travel is cheaper than direct travel.
 
 CABS with `transition` discards a candidate when another live candidate for the
-same location and unvisited customers arrives no later at no greater cost.
+same location and unvisited customers arrives no later and at no greater cost.
 Use `--dominance off` to disable this pruning.
 
 `--time-ms N` and `--node-limit N` stop search at engine boundaries; time

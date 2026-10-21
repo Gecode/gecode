@@ -1208,7 +1208,7 @@ namespace Gecode {
   /**
    * \brief A* with improving solutions and a fixed exploration order
    *
-   * Experimental 6.5.0 preview: build with GECODE_ENABLE_EXPERIMENTAL=ON
+   * Experimental preview: build with GECODE_ENABLE_EXPERIMENTAL=ON
    * or --enable-experimental; GECODE_HAS_EXPERIMENTAL reports availability.
    * APIs may change or be removed in future feature releases.
    *
@@ -1218,8 +1218,8 @@ namespace Gecode {
    * Exhaustion with stopped()==false establishes optimality of the best
    * solution found or supplied through constrain(), or infeasibility when
    * there is no solution. Completeness requires a finite search tree.
-   * Returned solutions belong to the caller, independently of the engine's
-   * incumbent copy.
+   * Returned solutions belong to the caller and are independent of the
+   * engine's incumbent copy.
    *
    * The default BOUND_FIRST order compares optimistic bound, lower rank,
    * then insertion order. RANK_FIRST compares lower rank, optimistic bound,
@@ -1242,7 +1242,7 @@ namespace Gecode {
    * raise or reset its limit and call next() to resume. Parallel workers check
    * stops after at most 32 consecutive alternatives that fail or cannot improve
    * the incumbent; worker-count requests are checked after each alternative.
-   * Statistics depth counts committed edges. Parallel next() waits for active
+   * The depth statistic counts committed edges. Parallel next() waits for active
    * model operations before returning and rethrows worker exceptions on the
    * calling thread.
    * Before generating a choice, Space::prepare calls Brancher::prepare and
@@ -1280,7 +1280,7 @@ namespace Gecode {
    * \brief Search to completion or a stop and return the best solution found
    *
    * The caller owns the result; nullptr means no solution was found. A stop
-   * can leave the result unproven. The helper cannot report whether search
+   * can leave optimality unproven. The helper cannot report whether search
    * stopped; use AStar to inspect completion or resume search.
    * Root ownership follows AStar and Options::clone.
    * \ingroup TaskModelSearch
@@ -1368,7 +1368,7 @@ namespace Gecode {
   /**
    * \brief Complete anytime beam search with widening restarts
    *
-   * Experimental 6.5.0 preview: build with GECODE_ENABLE_EXPERIMENTAL=ON
+   * Experimental preview: build with GECODE_ENABLE_EXPERIMENTAL=ON
    * or --enable-experimental; GECODE_HAS_EXPERIMENTAL reports availability.
    * APIs may change or be removed in future feature releases.
    *
@@ -1376,7 +1376,7 @@ namespace Gecode {
    * doubles after a completed pass if discarded bounds still permit improvement
    * or no incumbent exists. A pass can finish without widening when every
    * discarded bound excludes strict improvement of the accepted incumbent.
-   * Finite search trees are required for widening completeness.
+   * Completeness requires a finite search tree.
    * Lower rank selects the beam; without rank, the optimistic total bound
    * selects it. Equal priorities use generation order. Admissible bounds and
    * the optional CABSOptions::dominates predicate justify pruning and completion.
@@ -1384,8 +1384,8 @@ namespace Gecode {
    * As with BAB, next() returns improving solutions until search finishes or
    * stops. Exhaustion with stopped()==false establishes optimality of the best
    * solution found or supplied through constrain(), or infeasibility when
-   * there is no solution. Returned solutions belong to the caller,
-   * independently of the engine's incumbent copy. Returning a solution
+   * there is no solution. Returned solutions belong to the caller and are
+   * independent of the engine's incumbent copy. Returning a solution
    * preserves the unfinished pass.
    * After an ordinary stop, raise or reset its limit and call next() to resume.
    * Worker control also preserves continuation, including a zero-worker pause.
@@ -1402,21 +1402,21 @@ namespace Gecode {
    * expansion reserves room for its parent and one unsubmitted successor when
    * a worker adds a candidate to the beam. There is at most one temporary
    * successor per worker. The quota excludes the restart root, incumbent
-   * copies, and returned solutions. It is checked
-   * when adding a beam slot, without a byte or process-memory guarantee.
+   * copies, and returned solutions. It is checked when adding a beam slot
+   * and does not bound memory use in bytes or total process memory.
    * The frontier stores clones; c_d and a_d do not control recomputation,
    * and no-good extraction is empty.
-   * The threading tradeoffs described for AStar also apply here.
    * Options::threads selects sequential or parallel expansion of layer parents.
    * All workers share one next-layer beam and compare dominance against its
    * retained candidates. A layer or pass advances only after all current work
    * has been submitted. Parallel generation order and returned improvements
    * can differ from sequential search.
    * Stop and worker-count checks follow AStar. next() waits for active model
-   * operations before returning and rethrows worker failures on the caller.
+   * operations before returning and rethrows worker exceptions on the
+   * calling thread.
    * Tracing is unsupported. Guidance and strict improvement constraints obey
    * HeuristicGuidance's scalar integer contract.
-   * Brancher preparation follows AStar. Statistics depth counts committed
+   * Brancher preparation follows AStar. The depth statistic counts committed
    * edges; restarts count widening passes.
    * If guidance, dominance, a key callback, or a model operation throws,
    * destroy the engine before further use.
@@ -1445,7 +1445,7 @@ namespace Gecode {
    * \brief Search to completion or a stop and return the best solution found
    *
    * The caller owns the result; nullptr means no solution was found. Ordinary
-   * stops or beam limits can leave the result unproven. The helper cannot
+   * stops or beam limits can leave optimality unproven. The helper cannot
    * report whether search stopped; use CABS to inspect completion or resume
    * search. Root ownership follows CABS and Options::clone.
    * \ingroup TaskModelSearch

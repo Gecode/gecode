@@ -403,8 +403,8 @@ public:
 
 #ifdef GECODE_HAS_EXPERIMENTAL
 // A* and complete anytime beam search use a lower bound on total moves.
-// Each model combines moves so far plus Manhattan distance with the path
-// length bound established by propagation.
+// Each model adds moves so far to Manhattan distance and combines this with
+// the path length bound established by propagation.
 template<class Model>
 static Search::HeuristicGuidance
 guidance(void) {
