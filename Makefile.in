@@ -912,7 +912,8 @@ INTEXAMPLESRC0 =						\
 	qcp job-shop open-route common-pattern fifteen-puzzle
 
 
-INTEXAMPLEHDR  = $(INTEXAMPLEHDR0:%=examples/%.hpp)
+INTEXAMPLEHDR  = $(INTEXAMPLEHDR0:%=examples/%.hpp) \
+	examples/common-pattern.hh
 INTEXAMPLESRC  = $(INTEXAMPLESRC0:%=examples/%.cpp)
 ifeq "@enable_examples@" "yes"
 INSTALLEXAMPLEHDR = $(INTEXAMPLEHDR)
