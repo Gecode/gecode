@@ -1489,9 +1489,11 @@ namespace Gecode {
      */
     virtual bool status(const Space& home) const = 0;
     /**
-     * Prepare a choice before the search path changes. Preparation may leave
-     * the space failed, solved, or branching. Space::prepare propagates and
-     * prepares a newly active brancher.
+     * Prepare the current brancher before choice generation. The default
+     * implementation does nothing. Overrides can post constraints or allocate
+     * model state lazily. Space::prepare propagates these changes and prepares
+     * each brancher that becomes active in turn, until the space fails, is
+     * solved, or the active brancher remains unchanged.
      *
      * The space must be stable, and its most recent status query must have
      * selected this brancher. Path recomputation can replay commits without
@@ -2236,8 +2238,10 @@ namespace Gecode {
     /**
      * \brief Prepare the current brancher before a search engine changes its path
      *
-     * The space must be stable with a current status from Space::status.
-     * Preparation propagates any changes and prepares a newly active brancher.
+     * The space must be stable, and its most recent Space::status call must
+     * have returned SS_BRANCH. Preparation propagates any changes and prepares
+     * each brancher that becomes active in turn. The space is stable on return,
+     * but may have failed or become solved; query status before taking a choice.
      * Built-in search engines invoke preparation automatically when experimental
      * search is enabled. Callers can also invoke this method explicitly.
      * Path recomputation can replay commits without calling this method;

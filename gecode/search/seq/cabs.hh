@@ -64,11 +64,11 @@ namespace Gecode { namespace Search { namespace Seq {
     CABSOptions limits;
     unsigned long int width;
     unsigned long long int order, incumbent_revision;
-    /// Never restricted; every wider pass regenerates omitted alternatives
+    /// Root without incumbent constraints, used to regenerate each wider pass
     std::unique_ptr<Space> root;
     std::vector<Entry> layer;
     BeamHeap candidates;
-    /// Source and original alternative cursor survive next()
+    /// Parent and next alternative, retained across returned solutions and stops
     ChoiceExpansion expansion;
     SpaceStatus current_status;
     unsigned long int current_depth;
@@ -76,9 +76,9 @@ namespace Gecode { namespace Search { namespace Seq {
     bool counted;
     std::unique_ptr<Space> best;
     std::int64_t best_bound;
-    /// Optimistic bound over all width-discarded candidates in this pass
+    /// Best optimistic bound among candidates discarded for width in this pass
     std::optional<std::int64_t> discarded_bound;
-    /// Intrinsic resource stops persist until reset
+    /// Width and frontier-limit stops persist until reset
     bool limited;
 
     bool improves(std::int64_t bound) const;

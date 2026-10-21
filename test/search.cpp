@@ -91,7 +91,7 @@ namespace Test {
     using namespace Gecode::Int;
 
 #ifdef GECODE_HAS_EXPERIMENTAL
-    /// Successful preparation can end in failure or skip to a solved brancher.
+    /// Preparation can fail a space or exhaust its remaining branchers.
     class PreparedTerminal : public Base {
       class PreparedSpace : public Space {
         class PreparedBrancher : public Brancher {
@@ -291,7 +291,8 @@ namespace Test {
         std::int64_t cost;
         int first;
       };
-      // Numeric permutations use no bound, transition applicability or CP model.
+      // Enumerate feasible suffixes independently of the model's bounds and
+      // transition filtering, using only travel times and time windows.
       static std::vector<Suffix> completions(const Transition& state) {
         if (state.returned) return {{state.prefix_cost,-1}};
         std::vector<Suffix> result;
@@ -403,8 +404,8 @@ namespace Test {
       }
       static bool bounds_and_inference(void) {
         bool filtered=false, rejected=false;
-        // Waiting/nonmetric and unequal/incomparable (t,g) labels; tight unary
-        // filtering and failure; zero-duration intervals; pending/finished return.
+        // Cover waiting, nonmetric travel, and arrival-time/cost tradeoffs,
+        // plus tight windows, zero travel times, and the final depot return.
         for (const std::string& text : {
           std::string("4\n0 1 2 3\n1 0 1 4\n1 3 0 1\n20 1 3 0\n"
                       "0 100\n5 100\n0 100\n0 100\n"),
@@ -412,8 +413,9 @@ namespace Test {
                       "3 4 2 0 1\n1 2 3 5 0\n"
                       "0 100\n15 100\n0 100\n0 100\n5 100\n"),
           std::string("3\n0 2 9\n9 0 2\n1 9 0\n0 6\n5 5\n0 7\n"),
-          // Direct 0->2 misses due 6 and, after waiting, direct 1->0
-          // misses depot due 8; visiting 1,2 still returns at 8, cost 5.
+          // Direct 0->2 misses customer 2's deadline of 6. After waiting at
+          // customer 1, direct 1->0 misses the depot deadline of 8. Visiting
+          // 1,2 returns by 8 at cost 5, so direct-arc failure cannot prune it.
           std::string("3\n0 2 9\n4 0 1\n2 8 0\n0 8\n5 10\n0 6\n"),
           std::string("3\n0 0 0\n3 0 3\n3 3 0\n0 10\n0 0\n0 4\n"),
           std::string("3\n0 0 0\n3 0 3\n3 3 0\n0 20\n0 2\n0 2\n"),
@@ -436,7 +438,7 @@ namespace Test {
       }
     } tsptwTransitionTest;
 
-    /// A tiny closed tree with a generated goal and deeper alternatives.
+    /// A finite tree with a shallow solution and better solutions deeper down.
     class AStarSpace : public Space {
     public:
       static std::atomic<int> live;
@@ -1368,8 +1370,9 @@ namespace Test {
       }
       static bool overlap(bool beam) {
         using namespace Gecode::Search;
-        // All shallow leaves are costly; widening must reach both parents
-        // before the better goal at the final original alternative.
+        // Multiple layer parents allow bound callbacks to overlap. The best
+        // solution is the final child of the last parent, so a narrow beam
+        // must widen to reach it.
         const TreeSpace::Graph graph={
           {0,0,0,{1,2,3,4}}, {0,0,0,{5,6}}, {0,0,1,{7,8}},
           {0,0,2,{9,10}}, {0,0,3,{11,12}},
@@ -1944,7 +1947,7 @@ namespace Test {
           }
         };
         // A shallow generated goal may return before the pause threshold.
-        // Keep consuming publications until the engine reaches that boundary.
+        // Keep requesting solutions until the engine reaches that boundary.
         auto result=std::async(std::launch::async,consume);
         pause.reached.get_future().wait();
         bool paused=result.wait_for(std::chrono::milliseconds(20))==

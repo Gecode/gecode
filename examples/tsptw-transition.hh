@@ -9,13 +9,16 @@
 
 namespace TSPTW {
 
-  /// One concrete visit per search edge, with an explicit depot return.
+  /// A search edge visits one customer, or returns to the depot after all visits.
+  /// Position variables are created as the route grows; remaining customers
+  /// are stored as IDs.
   class Transition : public Gecode::Space {
   public:
     enum BoundMode { PREFIX, MIN_ARCS };
     enum ResidualPropagation { OFF, CHEAP, UNARY };
     std::shared_ptr<const Instance> data;
     std::vector<int> unvisited;
+    // time includes waiting; prefix_cost counts travel only.
     int location=0, time=0, prefix_cost=0, depth=0;
     bool returned=false;
 
@@ -44,14 +47,16 @@ namespace TSPTW {
       return result;
     }
     std::int64_t bound(BoundMode mode) const;
-    /// Equal residual tours share a key; the predicate checks resource dominance.
+    /// Group prefixes with the same location and remaining customers.
+    /// The dominance predicate checks equality and resource bounds after hashing.
     static std::size_t dominance_key(const Gecode::Space& s0) {
       const auto& s=static_cast<const Transition&>(s0);
       std::size_t key=static_cast<std::size_t>(s.location);
       for (int node : s.unvisited) Gecode::cmb_hash(key,node);
       return key;
     }
-    /// Same residual tour, no later arrival, and no greater travel cost.
+    /// A prefix dominates another if it can follow every remaining route
+    /// with no later visit times and no greater total travel cost.
     static bool dominates(const Gecode::Space& a0, const Gecode::Space& b0) {
       const auto& a=static_cast<const Transition&>(a0);
       const auto& b=static_cast<const Transition&>(b0);
@@ -78,6 +83,8 @@ namespace TSPTW {
     Gecode::OpenIntVarList positions;
     int ceiling;
 
+    // Waiting is allowed, so arrival before ready time remains feasible.
+    // The ceiling is an exclusive upper bound on travel cost.
     bool applicable(int node) const {
       return time+data->arc(location,node)<=data->due[node] &&
         prefix_cost+data->arc(location,node)<ceiling &&
@@ -138,8 +145,8 @@ namespace TSPTW {
       if (s.returned || choice.position!=s.depth || !s.applicable(node) ||
           (node==0 ? !s.unvisited.empty() : customer==s.unvisited.end()))
         return Gecode::ES_FAILED;
-      // BAB replay can skip prepare for historical choices. Allocating the
-      // recorded position has no visit effects, just as in prepare.
+      // Branch-and-bound recomputation can replay a choice without prepare.
+      // Materialize its recorded variable here too; only commit advances the tour.
       Gecode::IntVar next=s.materialize(choice.position);
       if (home.failed() || Gecode::me_failed(Gecode::Int::IntView(next).eq(home,node)))
         return Gecode::ES_FAILED;
@@ -154,7 +161,8 @@ namespace TSPTW {
       } else {
         s.unvisited.erase(customer);
       }
-      // Rebuild from the new residual state, including historical BAB replay.
+      // Recompute deadline checks and allowed next visits from the updated
+      // prefix, whether this choice is fresh or replayed during recomputation.
       if (!s.refresh_inference() || (!s.returned && s.actions().empty()))
         return Gecode::ES_FAILED;
       return home.failed() ? Gecode::ES_FAILED : Gecode::ES_OK;
@@ -203,6 +211,10 @@ namespace TSPTW {
   inline std::int64_t Transition::bound(BoundMode mode) const {
     if (returned || mode==PREFIX) return prefix_cost;
     if (unvisited.empty()) return add_cost(prefix_cost,data->arc(location,0));
+    // Every completion enters each remaining customer and the depot once,
+    // and leaves the current location and each remaining customer once.
+    // Independent cheapest incoming/outgoing arcs can underestimate these
+    // costs; the larger of their totals is still a lower bound.
     std::int64_t incoming=0, outgoing=0;
     int enter=std::numeric_limits<int>::max();
     int returning=std::numeric_limits<int>::max();
@@ -222,7 +234,10 @@ namespace TSPTW {
     return add_cost(prefix_cost,std::max(incoming,outgoing));
   }
 
-  /// Every residual tour induces nonoverlapping minimum-outgoing intervals.
+  /// Relax remaining visits to tasks that cannot overlap.
+  /// Each task starts at a customer visit and lasts as long as the cheapest
+  /// outgoing arc from that customer. A feasible tour gives a feasible schedule,
+  /// so schedule failure rules out the prefix.
   class ResidualSchedule : public Gecode::Space {
   public:
     Gecode::IntVarArray starts;
@@ -237,6 +252,8 @@ namespace TSPTW {
         for (int v : unvisited) if (u!=v)
           duration=std::min(duration,data.arc(u,v));
         durations[k]=duration;
+        // Shortest travel times bound arrival from the current location and
+        // leave enough time to return to the depot by its deadline.
         const auto lower=std::max<std::int64_t>(data.ready[u],
           add_cost(time,distance[location*data.n+u]));
         const auto upper=std::min<std::int64_t>(data.due[u],
@@ -261,8 +278,9 @@ namespace TSPTW {
       if (time+data->arc(location,0)<=data->due[0]) residual_actions.push_back(0);
       else feasible=false;
     } else if (!returned && propagation==CHEAP) {
-      // Shortest paths may use unavailable vertices: this weakens the check
-      // but keeps it necessary for asymmetric and nonmetric travel matrices.
+      // Allowing paths through already visited customers can only shorten
+      // travel. A failed deadline check therefore rules out every completion,
+      // even when arcs are asymmetric or indirect travel is cheaper.
       for (int u : unvisited) {
         const auto earliest=std::max<std::int64_t>(data->ready[u],
           add_cost(time,(*distance)[location*data->n+u]));
@@ -279,6 +297,8 @@ namespace TSPTW {
         for (std::size_t k=0; k<unvisited.size(); k++) {
           const int u=unvisited[k];
           const int earliest=std::max(time+data->arc(location,u),data->ready[u]);
+          // The next customer is visited at its earliest possible time.
+          // Reject it if the scheduling relaxation has removed that time.
           if (schedule.starts[static_cast<int>(k)].in(earliest))
             residual_actions.push_back(u);
         }

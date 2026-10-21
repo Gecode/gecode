@@ -216,7 +216,7 @@ namespace Gecode { namespace Search { namespace Par {
         limits.dominates && limits.dominance_key,cmp);
       return std::move(removed.space);
     }
-    // Other leases reserve a parent and an unsubmitted successor.
+    // Reserve room for each other active worker's parent and unsubmitted child.
     assert(active > 0);
     const auto retained=frontier.size()+candidates.size()+pending.size()+
       2*(active-1)+parent;
@@ -279,7 +279,8 @@ namespace Gecode { namespace Search { namespace Par {
           const bool enabled=!worker_control.engaged() ||
             id < WorkerControlAccess::requested(worker_control);
           if (task && (!task->expansion || !running || !enabled || shutdown)) {
-            // Keep the lease until all rejected or replaced spaces are gone.
+            // Count this worker as active until it has disposed of all rejected
+            // or replaced spaces, so next() cannot return during model cleanup.
             retiring=static_cast<bool>(step.space);
             for (unsigned int i=0; i<batch_size; i++)
               retiring=retiring || static_cast<bool>(batch[i].space);
@@ -338,7 +339,7 @@ namespace Gecode { namespace Search { namespace Par {
             current_revision=revision;
             cutoff=best ? std::optional<std::int64_t>(best_bound) : std::nullopt;
           } else {
-            // Retire cached model state before the caller observes quiescence.
+            // Dispose of the cached incumbent before next() can return.
             incumbent.reset();
             current_revision=0;
           }

@@ -41,7 +41,7 @@
 #ifdef GECODE_HAS_EXPERIMENTAL
 namespace Gecode { namespace Search { namespace Seq {
 
-  /// One propagated child, prepared terminal, or exhausted choice
+  /// Child, parent solved or failed by preparation, or exhausted choice
   struct ExpansionStep {
     enum State { CHILD, PREPARED_TERMINAL, EXHAUSTED };
     State state;
@@ -49,7 +49,7 @@ namespace Gecode { namespace Search { namespace Seq {
     SpaceStatus status;
   };
 
-  /// Own a selected parent and its original-choice continuation
+  /// Own a parent and resume its saved choice after a solution or stop
   class ChoiceExpansion {
   private:
     // Member declaration order destroys the choice before its source.
@@ -62,7 +62,7 @@ namespace Gecode { namespace Search { namespace Seq {
     explicit operator bool(void) const { return static_cast<bool>(parent); }
     Space& space(void) const { return *parent; }
 
-    /// Take ownership of a stable selected source
+    /// Take ownership of a stable parent before generating its choice
     void select(std::unique_ptr<Space> s) {
       assert(!parent && !choice);
       parent = std::move(s);
@@ -75,7 +75,7 @@ namespace Gecode { namespace Search { namespace Seq {
       return std::move(parent);
     }
 
-    /// Clear continuation before deleting its source
+    /// Discard the saved choice before deleting its parent
     void reset(void) {
       choice.reset();
       parent.reset();
@@ -102,8 +102,9 @@ namespace Gecode { namespace Search { namespace Seq {
         return {ExpansionStep::EXHAUSTED,nullptr,SS_FAILED};
       }
       std::unique_ptr<Space> child;
-      // Keep the final choice alive through commit, cut, and status,
-      // including exceptional cleanup, after its source becomes the child.
+      // Reuse the parent for its last alternative. Keep the choice alive
+      // through commit, incumbent restriction, and propagation, including
+      // cleanup if any of those operations throws.
       std::unique_ptr<const Choice> final_choice;
       const Choice* decision = choice.get();
       if (alternative+1 == choice->alternatives()) {
@@ -120,7 +121,7 @@ namespace Gecode { namespace Search { namespace Seq {
       worker.stack_depth(child_depth);
       const SpaceStatus status = child->status(worker);
       alternative++;
-      // The final source is already retired before successor admission.
+      // Reusing the parent leaves no extra parent to count against the quota.
       return {ExpansionStep::CHILD,std::move(child),status};
     }
   };

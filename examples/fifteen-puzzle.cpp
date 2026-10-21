@@ -402,7 +402,9 @@ public:
 };
 
 #ifdef GECODE_HAS_EXPERIMENTAL
-// Both heuristic engines use the same total objective bound.
+// A* and complete anytime beam search use a lower bound on total moves.
+// Each model combines moves so far plus Manhattan distance with the path
+// length bound established by propagation.
 template<class Model>
 static Search::HeuristicGuidance
 guidance(void) {
@@ -413,7 +415,8 @@ guidance(void) {
 }
 
 template<class Model>
-// Adapt the guidance argument to the constructor expected by Script::run.
+// Script::run expects a constructor taking only the model and search options;
+// this wrapper supplies the model's lower-bound callback to A*.
 class PuzzleAStar : public AStar<Model> {
 public:
   PuzzleAStar(Model* root, const Search::Options& opt)

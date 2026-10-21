@@ -120,8 +120,10 @@ when Qt is installed and its framework link interface is usable.
 
 ## Experimental search preview
 
-Gecode 6.5.0 includes an opt-in preview of `AStar` and `CABS`, with bound/rank
-guidance. `AStar` offers bound-first and rank-first queue ordering.
+Gecode 6.5.0 includes an opt-in preview of A* (`AStar`) and complete anytime
+beam search (`CABS`). A* selects from a priority queue of pending spaces;
+CABS limits each search layer to a beam of candidates and repeats with wider
+beams when discarded candidates could still improve the best solution.
 Enable it when building the library with `-DGECODE_ENABLE_EXPERIMENTAL=ON`
 for CMake or `--enable-experimental` for Autoconf. Both builds disable the
 preview by default. The installed configuration defines
@@ -130,8 +132,11 @@ Applications can use this macro to check availability; defining it in an
 application does not enable the library feature.
 
 Experimental APIs may change or be removed in future feature releases.
-Both engines work with ordinary `Space` subclasses. Supply an objective bound
-and, optionally, a separate ranking function. As with BAB, the engines return
+Both engines work with ordinary `Space` subclasses. Supply a bound on the
+total objective: a lower bound for minimization or an upper bound for
+maximization, equal to the objective at solutions. An optional ranking
+function can guide exploration but cannot justify pruning. A* can give
+priority to either the bound or the rank. As with BAB, both engines return
 improving solutions through `next()`. `Options::threads` selects the worker
 count. The `fifteen-puzzle` and `tsptw` examples demonstrate their use.
 

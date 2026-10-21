@@ -1167,7 +1167,8 @@ namespace Gecode { namespace Search {
    * The bound is an optimistic total objective value on a stable Space:
    * a lower bound for minimization, an upper bound for maximization, and
    * the exact objective on a solution. It must agree with the strict
-   * improvement restriction in Space::constrain. The engine adds no prefix cost.
+   * improvement restriction in Space::constrain. Include the cost of decisions
+   * already made; the engine uses the bound directly without adding any cost.
    * Values are signed 64-bit integers compared directly; callback arithmetic
    * must stay in range. Engines define how they use the optional ranking
    * (lower first); rank can be arbitrary and never justifies pruning.
@@ -1225,8 +1226,9 @@ namespace Gecode {
    * then insertion order. Bounds follow the objective direction; ranks are
    * lower-first for either direction. Missing rank falls back to bound order.
    * Both values are cached when a stable branching node enters the frontier.
-   * Ordering is fixed for the engine, including native reset; values are not
-   * rekeyed. Rank selects pending branching Spaces and never prunes.
+   * Ordering is fixed for the engine, including Search::Engine::reset. Cached
+   * bounds and ranks are not reevaluated while a node is queued. Rank selects
+   * pending branching Spaces and never prunes.
    * Solutions are returned as they are generated.
    *
    * The frontier stores clones; c_d and a_d do not control recomputation.
@@ -1241,14 +1243,15 @@ namespace Gecode {
    * Worker control can pause, grow, or shrink the active worker count while
    * preserving pending work. Tracing is unsupported. After an ordinary stop,
    * raise or reset its limit and call next() to resume. Parallel workers check
-   * stops after at most 32 consecutive failed or incumbent-pruned alternatives;
-   * worker-count requests are checked after each alternative. Statistics depth
-   * counts committed edges. Parallel next() waits for active model operations before
-   * returning; failures in workers are rethrown on the caller.
-   * Before generating a choice, Brancher::prepare finishes any lazy model
-   * preparation on the stable Space.
-   * The native Search::Engine::reset interface takes ownership of its root
-   * regardless of Options::clone, clearing pending work, incumbent, and
+   * stops after at most 32 consecutive alternatives that fail or cannot improve
+   * the incumbent; worker-count requests are checked after each alternative.
+   * Statistics depth counts committed edges. Parallel next() waits for active
+   * model operations before returning and rethrows worker exceptions on the
+   * calling thread.
+   * Before generating a choice, Space::prepare calls Brancher::prepare and
+   * propagates any constraints posted during lazy model preparation.
+   * Search::Engine::reset takes ownership of its root regardless of
+   * Options::clone, clearing pending work, incumbent, and
    * statistics while preserving guidance and ordering.
    * If guidance or a model operation throws, destroy the engine
    * before further use.
@@ -1322,20 +1325,22 @@ namespace Gecode { namespace Search {
     /**
      * \brief Whether the first space subsumes the second; empty disables pruning
      *
-     * Inputs are stable, read-only next-layer candidates. Returning true must
-     * preserve every improving completion of the second space at no worse total
-     * objective, including prefix cost, residual feasibility, and branching
-     * progress. A completion using no more transitions is sufficient. The model
-     * must establish that repeated replacement is safe, with a consistent,
-     * transitive no-worse relation; equality may use the same predicate.
+     * Inputs are stable, read-only candidates for the next layer. Return true
+     * only if every improving completion of the second space has a feasible
+     * completion of the first with no worse total objective, including costs
+     * already incurred. The replacement must also preserve progress through
+     * the search tree; using no more Choice commits per completion is sufficient.
+     * The model must establish that repeated replacement is safe and that the
+     * relation is transitive. Equivalent candidates may dominate each other.
      * CABS does not infer these properties from bounds or ranks.
      *
      * Only live candidates in the same layer and pass justify pruning. A new
      * dominator inherits a removed candidate's beam slot, regardless of rank.
      * The engine copies the callable; captured references must outlive it.
-     * The predicate must not mutate either space. Parallel admission serializes
-     * calls to this predicate, but guidance and key callbacks may run concurrently
-     * with it. Shared captured state must support that use. If it throws, destroy
+     * The predicate must not mutate either space. Parallel workers compare and
+     * select beam candidates under a lock, so calls to this predicate are
+     * serialized. Guidance and key callbacks may run concurrently with it.
+     * Shared captured state must support that use. If it throws, destroy
      * the engine before further use.
      */
     std::function<bool(const Space&,const Space&)> dominates;
@@ -1387,26 +1392,29 @@ namespace Gecode {
    * preserves the unfinished pass.
    * After an ordinary stop, raise or reset its limit and call next() to resume.
    * Worker control also preserves continuation, including a zero-worker pause.
-   * Width/frontier limits and width overflow report stopped() until native
-   * Engine::reset.
+   * If continuing search would exceed a width or frontier limit, or overflow
+   * the width, stopped() remains true until Search::Engine::reset.
    * A complete pass can prove its result at the maximum width; a maximum of
-   * three allows passes at widths one and two. Native reset takes ownership
-   * of its root regardless of Options::clone and clears the incumbent, pending
-   * work, intrinsic stops, and statistics while preserving guidance and CABS options.
+   * three allows passes at widths one and two. Search::Engine::reset takes
+   * ownership of its root regardless of Options::clone and clears the
+   * incumbent, pending work, resource-limit stops, and statistics while
+   * preserving guidance and CABS options.
    *
    * The frontier quota includes current-layer entries, next-layer candidates,
    * and selected parents. In parallel search with a quota, each unfinished
-   * expansion reserves a parent and an unsubmitted successor at admission;
-   * there is at most one temporary successor per worker. The quota excludes
-   * the restart root, incumbent copies, and returned solutions. It is checked
+   * expansion reserves room for its parent and one unsubmitted successor when
+   * a worker adds a candidate to the beam. There is at most one temporary
+   * successor per worker. The quota excludes the restart root, incumbent
+   * copies, and returned solutions. It is checked
    * when adding a beam slot, without a byte or process-memory guarantee.
-   * Clones store the search;
-   * c_d/a_d do not enable replay and no-good extraction is empty.
+   * The frontier stores clones; c_d and a_d do not control recomputation,
+   * and no-good extraction is empty.
    * The threading tradeoffs described for AStar also apply here.
    * Options::threads selects sequential or parallel expansion of layer parents.
-   * All workers share one next-layer beam and dominance admission. A layer or
-   * pass advances only after all current work has been submitted. Parallel
-   * generation order and returned improvements can differ from sequential search.
+   * All workers share one next-layer beam and compare dominance against its
+   * retained candidates. A layer or pass advances only after all current work
+   * has been submitted. Parallel generation order and returned improvements
+   * can differ from sequential search.
    * Stop and worker-count checks follow AStar. next() waits for active model
    * operations before returning and rethrows worker failures on the caller.
    * Tracing is unsupported. Guidance and strict improvement constraints obey

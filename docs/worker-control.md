@@ -81,8 +81,9 @@ An empty default-constructed handle means that worker adjustment is disabled.
 Calling `request` on an empty handle raises
 `Search::UninitializedWorkerControl`.
 
-A shared identity can be bound to only one leaf engine at a time. It cannot be
-shared by two DFS/BAB engines or attached directly to an enclosing meta-engine.
+A shared identity can be bound to only one leaf engine at a time (DFS, BAB,
+AStar, or CABS). It cannot be shared by two engines or attached directly to an
+enclosing meta-engine.
 Ordinary reuse for a replacement engine after destruction is also rejected.
 These uses raise `Search::WorkerControlInUse`.
 

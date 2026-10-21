@@ -42,8 +42,10 @@
 
 using namespace Gecode;
 
-// A costed circuit with a departure-to-return timing chain. Time slack
-// remains unbranched: a fixed route has an earliest feasible schedule.
+// Construct every successor and visit-time variable before search. A circuit
+// visits each customer once; timing constraints link departure to depot return.
+// Times need no branching: if any schedule fits a fixed route, its earliest
+// schedule also fits, because arriving early permits waiting.
 class TSPTWClosed : public Space {
 public:
   std::shared_ptr<const TSPTW::Instance> data;
@@ -58,8 +60,9 @@ public:
       departure(*this,0,0), returning(*this,0,data->due[0]),
       total(*this,0,data->cost_limit) {
     const int n=data->n;
-    // Direct arcs need not bound paths in nonmetric data. Shortest paths
-    // relax the tour and give sound elapsed-time bounds in both directions.
+    // Indirect travel can be cheaper than a direct arc. Shortest paths give
+    // lower bounds on arrival from the depot and on travel back to it, even
+    // when those paths use customers that the tour has already visited.
     const auto shortest=TSPTW::shortest_paths(*data);
     std::vector<int> lower(n,0), upper(n,data->due[0]);
     for (int i=1; i<n; i++) {
@@ -132,7 +135,8 @@ struct TourValue {
   int cost, return_time;
 };
 
-// Check concrete routes independently of the CP timing and cost variables.
+// Reconstruct the earliest schedule and travel cost from customer IDs alone.
+// This validates both formulations independently of their variable assignments.
 static TourValue evaluate_tour(const TSPTW::Instance& data,
                                const std::vector<int>& tour) {
   if (tour.size()!=static_cast<std::size_t>(data.n-1))
@@ -154,7 +158,8 @@ static TourValue evaluate_tour(const TSPTW::Instance& data,
       throw std::runtime_error(node==0 ? "late return" : "late customer");
     previous=node;
   }
-  // The reader bounds all n-arc tours and waiting-plus-travel arithmetic.
+  // The input reader checks upper bounds on tour cost and time, so both
+  // totals fit the model's integer type.
   return {static_cast<int>(cost),static_cast<int>(time)};
 }
 
@@ -195,8 +200,8 @@ make_seed(TSPTW::Transition& root, const std::vector<int>& tour, TourValue value
   std::unique_ptr<TSPTW::Transition> seed(
     static_cast<TSPTW::Transition*>(root.clone()));
   Search::Statistics stat;
-  // Replay checked customer IDs and then the explicit return using the same
-  // decisions as search, without directly installing residual state.
+  // Build a solved seed by committing each checked visit and the depot return.
+  // This runs the same feasibility checks and inference as ordinary search.
   for (std::size_t p=0; p<=tour.size(); p++) {
     const int node = p == tour.size() ? 0 : tour[p];
     if (seed->status() == SS_BRANCH) seed->prepare(stat);
@@ -356,8 +361,9 @@ static int run_search(const RunOptions& options, Model& root,
       }
     engine.reset(Search::cabsengine(&root,guidance,search,cabs));
   }
-  // Default clone ownership keeps root and seed independently owned here.
-  // The stop object was declared first and outlives every engine.
+  // Search clones root (search.clone is true), so the caller retains it.
+  // constrain reads the seed; its unique_ptr retains ownership. The caller
+  // also owns the stop object and keeps it alive until this engine is destroyed.
   if (seed) engine->constrain(*seed);
   if (incumbent) {
     std::cout << "{\"type\":\"solution\",";
