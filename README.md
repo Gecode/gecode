@@ -130,11 +130,10 @@ Applications can use this macro to check availability; defining it in an
 application does not enable the library feature.
 
 Experimental APIs may change or be removed in future feature releases.
-Their documented search correctness contracts still apply. Native preview
-engines work directly with ordinary `Space` subclasses and do not require
-Model or portfolio setup. The `fifteen-puzzle` and `tsptw` examples demonstrate
-the engines. Ordinary DFS/BAB and shared kernel/OpenCP APIs remain
-available independently of the preview option.
+Both engines work with ordinary `Space` subclasses. Supply an objective bound
+and, optionally, a separate ranking function. As with BAB, the engines return
+improving solutions through `next()`. `Options::threads` selects the worker
+count. The `fifteen-puzzle` and `tsptw` examples demonstrate their use.
 
 ## CMake Package Consumption
 
