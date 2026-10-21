@@ -2471,7 +2471,7 @@ namespace Gecode {
    * frequent subsequences across several inputs. The pattern length is a
    * decision variable. The open list avoids allocating an array up to the
    * input-length bound and encoding an unused suffix with a termination
-   * symbol. Shared prefix projection and regular constraints on the pattern
+   * symbol. Prefix projection and regular constraints on the pattern
    * language follow growth.
    * The \ref OpenRoute "open-route example" is a smaller introduction,
    * including search and printing solutions.
@@ -2531,7 +2531,7 @@ namespace Gecode {
     void update(Space& home, OpenVarList<Var>& s);
     /// Return the number of constructed positions (their values may be unassigned)
     int known_length(void) const;
-    /// Return variable at position \a i (\a i must be a valid position)
+    /// Return variable at position \a i, where 0 <= \a i < known_length()
     Var operator [](int i) const;
     /// Return the eventual-length variable
     IntVar length(void) const;
@@ -2540,6 +2540,8 @@ namespace Gecode {
      *
      * Constrains the eventual length to include the new position and calls
      * the transition function, if supplied, inside a Space::NoGPI scope.
+     * The appended position is available to the transition through indexed
+     * access. Appending beyond the maximum eventual length fails the space.
      *
      * Throws an exception of type Int::ArgumentSame if \a x is an
      * unassigned variable already in the list.
@@ -2586,7 +2588,12 @@ namespace Gecode {
      * The contained variables can remain unassigned.
      */
     void close(Space& home);
-    /// Subscribe \a p to the addition of positions
+    /**
+     * \brief Subscribe \a p to the addition of positions
+     *
+     * This reports construction of positions. Subscribe separately to the
+     * length variable or contained variables for length or value changes.
+     */
     void subscribe(Space& home, Propagator& p);
     /// Cancel the subscription of \a p to the addition of positions
     void cancel(Space& home, Propagator& p);
@@ -2689,7 +2696,8 @@ namespace Gecode {
    * \brief Post a sliding sequence constraint on \a x
    *
    * Each complete window of size \a q, including windows completed after
-   * posting, contains between \a l and \a u values from \a s.
+   * posting, contains between \a l and \a u values from \a s. A list shorter
+   * than \a q has no complete windows and satisfies the constraint.
    *
    * \ingroup TaskModelIntSequence
    */
@@ -2701,7 +2709,8 @@ namespace Gecode {
    * \brief Constrain the sum of every complete window in \a x
    *
    * Each complete window of size \a q, including windows completed after
-   * posting, has a sum between \a l and \a u.
+   * posting, has a sum between \a l and \a u. A list shorter than \a q has no
+   * complete windows and satisfies the constraint.
    *
    * \ingroup TaskModelIntSequence
    */
@@ -2736,7 +2745,9 @@ namespace Gecode {
   /**
    * \brief Constrain \a s to precede \a t in the eventual sequence \a x
    *
-   * The constraint applies to variables added after posting.
+   * Every occurrence of \a t requires an earlier occurrence of \a s;
+   * neither value is required to occur. The constraint applies to variables
+   * added after posting. The propagation level \a ipl is ignored.
    *
    * \ingroup TaskModelIntPrecede
    */
@@ -3189,6 +3200,11 @@ namespace Gecode {
 
   /**
    * \brief Post an open regular-language constraint on Boolean variables
+   *
+   * As for integer lists, the materialized prefix must have an accepted
+   * continuation while open, and the complete list must be accepted when
+   * closed.
+   *
    * \ingroup TaskModelIntExt
    */
   GECODE_INT_EXPORT void
@@ -6184,9 +6200,10 @@ namespace Gecode {
    * \brief Branch over an open integer list with standard selectors
    *
    * Selectors consider all materialized positions accepted by the filter.
-   * Once these variables are assigned, the brancher first tries to close at
-   * known_length(), then requires at least one more position and resumes
+   * Once no unassigned variable is accepted, the brancher tries closing at
+   * known_length() before requiring another position and resuming
    * value selection. Filters and callbacks receive the position in the list.
+   * Variables rejected by the filter may remain unassigned in a solution.
    * With no finite application bound, exploring these lengths can be very
    * expensive.
    *

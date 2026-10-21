@@ -37,6 +37,16 @@
 
 namespace Gecode { namespace Int { namespace Extensional {
 
+  /**
+   * \brief Regular-language filtering over an open list's materialized prefix
+   *
+   * start contains the states reachable after the assigned positions before
+   * offset. Forward and backward support are recomputed for the remaining
+   * positions. While the list is open, its last layer can end in any automaton
+   * state; closing the list restricts that layer to accepting states.
+   * Assigned leading positions are then folded into start, preserving every
+   * supported state when the automaton has nondeterministic transitions.
+   */
   template<class View, PropCond pc>
   class OpenRegular : public Propagator {
   protected:
@@ -105,7 +115,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     }
 
   private:
-    /// Compute backward state support in region-owned storage
+    /// Mark states supporting the remaining domains through the last layer
     const unsigned char*
     compute_backward_support(Region& r, bool closed) const {
       const int n = list.known_length()-offset;
@@ -241,7 +251,6 @@ namespace Gecode { namespace Int { namespace Extensional {
       while ((consumed < n) && list[offset+consumed].assigned()) {
         const unsigned char* live =
           backward + static_cast<size_t>(consumed+1)*k;
-        unsigned char* next = r.alloc<unsigned char>(k);
         for (int s=0; s<k; s++)
           next[s] = 0;
         const int value = list[offset+consumed].val();

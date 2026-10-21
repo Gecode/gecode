@@ -91,7 +91,7 @@ namespace PatternMining {
     return input;
   }
 
-  /// Convert a percentage with at most six decimals to an exact sequence count
+  /// Round the support percentage (at most six decimals) up to a record count
   inline int
   minimum_support(const std::string& percent, int sequences) {
     unsigned long long numerator = 0, scale = 1;
@@ -119,8 +119,9 @@ namespace PatternMining {
   /// Immutable input, with dense ranks internally and original IDs externally
   class Database {
   public:
+    /// Concatenated item ranks, exclusive record ends, and rank-to-ID mapping
     IntSharedArray items, ends, alphabet;
-    /// Last occurrence of each distinct item per record, in decreasing order
+    /// Each item's last position per record, in decreasing position order
     IntSharedArray last_positions, last_ends;
 
     explicit Database(const Sequences& input) {
@@ -192,7 +193,15 @@ namespace PatternMining {
     }
   };
 
-  /// Supporting suffixes, shared by the open and padded implementations
+  /**
+   * \brief Suffixes of records supporting the assigned pattern prefix
+   *
+   * Each supporting record contributes one suffix beginning immediately after
+   * its earliest match of the prefix. This leaves every possible extension
+   * available for ordinary subsequences, where matching may skip any items.
+   * Suffix positions refer to the shared immutable database; the suffix array
+   * itself is copied with the space.
+   */
   class Projection {
   protected:
     struct Suffix {
@@ -217,7 +226,7 @@ namespace PatternMining {
       std::copy(p.suffixes,p.suffixes+size,suffixes);
     }
 
-    /// Keep only records supporting the extended prefix, at their earliest match
+    /// Extend the prefix by one item and report whether enough records support it
     bool advance(int item) {
       const int rank = static_cast<int>(std::lower_bound(
         data.alphabet.begin(),data.alphabet.end(),item)-data.alphabet.begin());
@@ -239,8 +248,14 @@ namespace PatternMining {
 
     int support(void) const { return size; }
 
-    /// Each item's last occurrence suffices to establish its suffix support
-    IntSet frequent(Region& region, bool termination) const {
+    /**
+     * \brief Items occurring in at least threshold supporting suffixes
+     *
+     * Last occurrences count each item at most once per record. They are
+     * scanned in decreasing position order, so the scan stops at the suffix
+     * boundary.
+     */
+    IntSet frequent(Region& region) const {
       const int d = data.alphabet.size();
       int* count = region.alloc<int>(d);
       std::fill(count,count+d,0);
@@ -254,10 +269,8 @@ namespace PatternMining {
           count[data.items[pos]]++;
         }
       }
-      int* values = region.alloc<int>(d+1);
+      int* values = region.alloc<int>(d);
       int n = 0;
-      if (termination)
-        values[n++] = 0;
       for (int a=0; a<d; a++)
         if (count[a] >= threshold)
           values[n++] = data.alphabet[a];
@@ -277,10 +290,14 @@ namespace PatternMining {
   /**
    * \brief Private prefix projection for a growing list
    *
-   * Adapts CP2015 Algorithms 1--2 without a termination item, preallocated
-   * future variables, or per-input DFA. Positions are filtered as they appear.
-   * Earliest matching is sound for ordinary subsequences. It does not support
-   * gap constraints.
+   * The projection advances only through the leading assigned positions.
+   * Its frequent items filter every remaining materialized position. Adding
+   * positions reuses the cached items and suffix-length bound until the
+   * assigned prefix grows.
+   *
+   * The support variable is bounded by the prefix's supporting-record count
+   * and becomes exact once the list is closed and fully assigned. See
+   * CommonPattern for the source of the prefix-projection method.
    */
   class OpenProjection : public Propagator {
   protected:
@@ -354,7 +371,7 @@ namespace PatternMining {
             GECODE_ME_CHECK(frequency.eq(home,projection.support()));
             return home.ES_SUBSUMED(*this);
           }
-          available = projection.frequent(region,false);
+          available = projection.frequent(region);
           cached_prefix = consumed;
         } else {
           GECODE_ME_CHECK(length.lq(home,consumed+extension_bound));
@@ -411,7 +428,7 @@ namespace PatternMining {
     return count;
   }
 
-  /// Pattern languages from the example and CP2015 Section 5(d)
+  /// Built-in motif and benchmark languages described in CommonPattern
   inline REG
   language(Language name, const Database& database) {
     if (name == RE10)

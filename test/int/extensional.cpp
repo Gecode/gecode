@@ -977,7 +977,7 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test notification when the eventual length is already ahead
+     /// Required positions wake regular filtering when materialization catches up
      class OpenRegularLengthWake : public ::Test::Base {
      public:
        OpenRegularLengthWake(void)

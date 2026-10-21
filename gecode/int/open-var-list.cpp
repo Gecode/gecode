@@ -78,6 +78,7 @@ namespace Gecode {
 
 namespace Gecode { namespace Int {
 
+  /// Follow list growth and remember which positions have been incorporated
   class OpenListPropagator : public Propagator {
   protected:
     OpenIntVarList list;
@@ -400,6 +401,8 @@ namespace Gecode { namespace Int {
       posted = size;
       if (home.failed())
         return ES_FAILED;
+      // Future positions can supply the extremum. Enforce an equality witness
+      // only once the list is closed, using the ordinary min/max propagator.
       if (!closed())
         return ES_FIX;
       if (size == 0)
@@ -434,6 +437,7 @@ namespace Gecode { namespace Int {
   protected:
     int before;
     int after;
+    /// Whether before occurs among the first posted positions
     BoolView seen;
 
     OpenPrecede(Home home, OpenIntVarList list,
@@ -603,6 +607,7 @@ namespace Gecode { namespace Int {
           return vsc ? new PosValChoice<int>(*this,2,Pos(p),vsc->val(home,x,p))
                      : value_choice(*this,p,x);
         }
+      // Position -1 marks a length choice: close here or require another item.
       return new PosValChoice<int>(*this,2,Pos(-1),list.known_length());
     }
 

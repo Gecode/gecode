@@ -928,7 +928,7 @@ namespace Test { namespace Int {
       }
     };
 
-    /// Callback posting scopes, selected AFC, and nested list growth
+    /// Callbacks suppress AFC unless opted in; nested growth restores each scope
     class NoGPI : public ::Test::Base {
     protected:
       static void
@@ -1029,6 +1029,7 @@ namespace Test { namespace Int {
       }
     };
 
+    /// A value commit must not construct positions required by pending propagation
     class ValueCommit : public ::Test::Base {
     public:
       ValueCommit(void)
@@ -1108,6 +1109,7 @@ namespace Test { namespace Int {
       }
     };
 
+    /// Impossible window bounds still permit lists too short to contain a window
     class ImpossibleWindow : public ::Test::Base {
     public:
       ImpossibleWindow(void)
@@ -1234,7 +1236,7 @@ namespace Test { namespace Int {
       }
     };
 
-    /// Exercise projection state through growth, cloning, and late assignments
+    /// Clones keep separate projections; later assignments wait for their prefix
     class PatternGrowth : public ::Test::Base {
     public:
       PatternGrowth(void)

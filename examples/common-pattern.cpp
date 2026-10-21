@@ -146,12 +146,14 @@ public:
  * marker or unused suffix variables. Pattern languages therefore describe
  * just the pattern, without padding transitions. The private frequency
  * constraint maintains supporting suffixes after the assigned prefix and
- * removes items with insufficient support. This prefix projection follows
- * Kemmar et al., "PREFIX-PROJECTION Global Constraint for Sequential Pattern
- * Mining", CP 2015, doi:10.1007/978-3-319-23219-5_17, with an additional
- * remaining-suffix length bound. Projection is a filtering method, independent
- * of the pattern's length, item and language restrictions. OpenRoute is the
- * simpler introduction to open lists.
+ * removes items with insufficient support. The method follows Amina Kemmar,
+ * Samir Loudni, Yahia Lebbah, Patrice Boizumault, and Thierry Charnois,
+ * "PREFIX-PROJECTION Global Constraint for Sequential Pattern Mining",
+ * CP 2015, pp. 226-243, https://doi.org/10.1007/978-3-319-23219-5_17.
+ * This implementation also bounds the remaining pattern length by the lengths
+ * of the supporting suffixes. Projection can be combined with the pattern's
+ * length, item, and language restrictions. OpenRoute is the simpler
+ * introduction to open lists.
  *
  * The paper's Table 1 can be mined with:
  * -sequences ABCBC,BABC,AB,BCD -support 50 -language none.

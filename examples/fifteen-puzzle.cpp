@@ -176,7 +176,7 @@ post_start(Home home, const IntVarArgs& tiles, IntVar blank,
   rel(home,blank == zero);
 }
 
-// Both representations use these rules between successive states.
+// Swap the blank with an adjacent tile and preserve every other position.
 static void
 post_slide(Home home,
            const IntVarArgs& before, IntVar old_blank,
@@ -199,6 +199,7 @@ post_slide(Home home,
   }
 }
 
+// The last board must be solved; reaching the goal forbids a longer path.
 static void
 post_goal(Home home, const IntVarArgs& tiles, IntVar length,
           int states) {

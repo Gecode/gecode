@@ -46,6 +46,8 @@ namespace Gecode {
     };
 
     IntVar length;
+    // A separate event source reports appended positions even when length.min()
+    // already requires them and therefore does not change during construction.
     IntVar materialized;
     Var* x;
     int n;
