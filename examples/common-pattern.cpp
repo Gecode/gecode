@@ -135,12 +135,9 @@ public:
  * By default the inputs ABCBC, BABC, ABDC must all support the pattern, which
  * must start with A and end with C. AC and ABC are feasible; ABC is longest.
  *
- * The pattern is an ordered list of items of unknown length. The frequency
- * constraint requires sufficiently many records to contain that list as a
- * subsequence. Ordinary length and regular constraints restrict the pattern:
+ * Ordinary length and regular constraints restrict the pattern:
  * they do not restrict the matching positions in the input records. Default
  * DFS enumerates every qualifying pattern; -search bab finds a longest one.
- * These are different queries from closed, maximal, or top-k frequent mining.
  *
  * An OpenIntVarList constructs pattern positions as needed, without an end
  * marker or unused suffix variables. Pattern languages therefore describe

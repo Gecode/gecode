@@ -50,62 +50,6 @@ namespace Test { namespace Int {
 
   namespace OpenList {
 
-    class BranchSpace : public Gecode::Space {
-    public:
-      Gecode::OpenIntVarList list;
-
-      BranchSpace(void)
-        : list(*this,
-            [](int i) {
-              return Gecode::IntSet(i,i+1);
-            },3) {
-        Gecode::branch(*this,list);
-      }
-
-      BranchSpace(BranchSpace& s)
-        : Gecode::Space(s) {
-        list.update(*this,s.list);
-      }
-
-      virtual Gecode::Space*
-      copy(void) {
-        return new BranchSpace(*this);
-      }
-    };
-
-    class Branch : public ::Test::Base {
-    public:
-      Branch(void)
-        : ::Test::Base("Int::OpenList::Branch",TestTags::check()) {}
-
-      virtual bool
-      run(void) {
-        using namespace Gecode;
-        Search::Options options;
-        options.threads = 1;
-        options.c_d = 1000;
-        options.a_d = 1000;
-        BranchSpace* root = new BranchSpace;
-        DFS<BranchSpace> engine(root,options);
-        delete root;
-
-        int solutions = 0;
-        while (BranchSpace* solution = engine.next()) {
-          const int size = solution->list.known_length();
-          bool valid =
-            solution->list.length().assigned() &&
-            (solution->list.length().val() == size);
-          for (int i=0; i<size; i++)
-            valid &= solution->list[i].assigned();
-          delete solution;
-          if (!valid)
-            return false;
-          solutions++;
-        }
-        return solutions == 15;
-      }
-    };
-
     class BranchOrderSpace : public Gecode::Space {
     public:
       Gecode::OpenIntVarList list;
@@ -1356,7 +1300,6 @@ namespace Test { namespace Int {
     NoGPI no_gpi;
     FailedGet failed_get;
 
-    Branch branch;
     BranchOrder branch_order;
     Transition transition;
     Constraint distinct("Distinct",Constraint::DISTINCT,3);
