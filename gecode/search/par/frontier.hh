@@ -36,10 +36,10 @@
 
 #include <gecode/search.hh>
 #include <gecode/search/seq/choice-expansion.hh>
+#include <gecode/search/beam-heap.hh>
 #include <deque>
 #include <exception>
 #include <memory>
-#include <unordered_map>
 #include <vector>
 
 #if defined(GECODE_HAS_EXPERIMENTAL) && defined(GECODE_HAS_THREADS)
@@ -47,13 +47,7 @@ namespace Gecode { namespace Search { namespace Par {
 
   /// Shared frontier and worker lifecycle for native A* and CABS
   class Frontier : public Search::Engine {
-    struct Entry {
-      std::unique_ptr<Space> space;
-      std::int64_t bound, rank;
-      std::size_t key;
-      unsigned long int depth;
-      unsigned long long int order, revision;
-    };
+    using Entry=BeamHeap::Entry;
     struct Earlier {
       HeuristicGuidance::Sense sense;
       AStarOrder ordering;
@@ -86,8 +80,8 @@ namespace Gecode { namespace Search { namespace Par {
     std::unique_ptr<Space> root, best, solution;
     std::int64_t best_bound=0;
     std::optional<std::int64_t> discarded_bound;
-    std::vector<Entry> frontier, candidates;
-    std::unordered_multimap<std::size_t,const Space*> candidate_index;
+    std::vector<Entry> frontier;
+    BeamHeap candidates;
     std::deque<std::unique_ptr<Pending>> pending;
     std::vector<std::unique_ptr<Runner>> runners;
     mutable Support::Mutex mutex;
@@ -102,7 +96,6 @@ namespace Gecode { namespace Search { namespace Par {
     void wake(void);
     void work(unsigned int id);
     bool improves(std::int64_t bound) const;
-    void unindex(const Entry& entry);
     bool advance(void);
     /// Return a rejected or replaced space for disposal by its worker.
     std::unique_ptr<Space> admit(Entry entry, bool parent);

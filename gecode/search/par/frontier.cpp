@@ -140,8 +140,7 @@ namespace Gecode { namespace Search { namespace Par {
     assert(active == 0 && pending.empty() && frontier.empty());
     if (!beam) return false;
     if (!candidates.empty()) {
-      candidate_index.clear();
-      frontier.swap(candidates);
+      candidates.release(frontier);
       const Earlier cmp=earlier();
       std::sort(frontier.begin(),frontier.end(),
                 [&](const Entry& a, const Entry& b) { return cmp(b,a); });
@@ -162,18 +161,6 @@ namespace Gecode { namespace Search { namespace Par {
     return true;
   }
 
-  void
-  Frontier::unindex(const Entry& entry) {
-    if (!limits.dominates || !limits.dominance_key) return;
-    const auto range=candidate_index.equal_range(entry.key);
-    for (auto i=range.first; i!=range.second; ++i)
-      if (i->second == entry.space.get()) {
-        candidate_index.erase(i);
-        return;
-      }
-    GECODE_NEVER;
-  }
-
   std::unique_ptr<Space>
   Frontier::admit(Entry entry, bool parent) {
     if (!improves(entry.bound)) {
@@ -189,40 +176,33 @@ namespace Gecode { namespace Search { namespace Par {
       return nullptr;
     }
     if (limits.dominates) {
-      std::vector<std::size_t> victims;
       if (limits.dominance_key) {
-        const auto range=candidate_index.equal_range(entry.key);
+        const auto range=candidates.equal_range(entry.key);
         for (auto i=range.first; i!=range.second; ++i)
-          if (limits.dominates(*i->second,*entry.space))
+          if (limits.dominates(*candidates[i->second].space,*entry.space))
             return std::move(entry.space);
-        std::vector<const Space*> dominated;
+        std::vector<const std::size_t*> victims;
         for (auto i=range.first; i!=range.second; ++i)
-          if (limits.dominates(*entry.space,*i->second)) dominated.push_back(i->second);
-        // Heap entries move; recover victim slots only after finding dominance.
-        if (!dominated.empty())
-          for (std::size_t i=0; i<candidates.size(); i++)
-            if (std::find(dominated.begin(),dominated.end(),candidates[i].space.get())
-                != dominated.end()) victims.push_back(i);
+          if (limits.dominates(*entry.space,*candidates[i->second].space))
+            victims.push_back(&i->second);
+        if (!victims.empty()) {
+          // Slot addresses survive heap moves and index rehashes. Erase each
+          // victim through its current slot, without scanning the beam.
+          Entry removed=candidates.replace(*victims.front(),std::move(entry),true,cmp);
+          for (std::size_t i=1; i<victims.size(); i++)
+            candidates.erase(*victims[i],cmp);
+          return std::move(removed.space);
+        }
       } else {
-        for (const auto& candidate : candidates)
-          if (limits.dominates(*candidate.space,*entry.space))
-            return std::move(entry.space);
+        for (const auto& candidate : candidates.all())
+          if (limits.dominates(*candidate.space,*entry.space)) return std::move(entry.space);
+        std::vector<std::size_t> victims;
         for (std::size_t i=0; i<candidates.size(); i++)
           if (limits.dominates(*entry.space,*candidates[i].space)) victims.push_back(i);
-      }
-      if (!victims.empty()) {
-        if (limits.dominance_key)
-          candidate_index.emplace(entry.key,entry.space.get());
-        for (auto i : victims) unindex(candidates[i]);
-        std::swap(candidates[victims.front()],entry);
-        if (victims.size()==1) {
-          repair_heap(candidates,victims.front(),cmp);
-        } else {
-          for (std::size_t i=victims.size(); i>1; i--)
-            candidates.erase(candidates.begin()+victims[i-1]);
-          std::make_heap(candidates.begin(),candidates.end(),cmp);
+        if (!victims.empty()) {
+          Entry removed=candidates.replace(victims,std::move(entry),cmp);
+          return std::move(removed.space);
         }
-        return std::move(entry.space);
       }
     }
     if (candidates.size() == width) {
@@ -232,13 +212,9 @@ namespace Gecode { namespace Search { namespace Par {
                               discarded < *discarded_bound :
                               discarded > *discarded_bound)) discarded_bound=discarded;
       if (!replace) return std::move(entry.space);
-      if (limits.dominates && limits.dominance_key)
-        candidate_index.emplace(entry.key,entry.space.get());
-      unindex(candidates.front());
-      std::pop_heap(candidates.begin(),candidates.end(),cmp);
-      std::swap(candidates.back(),entry);
-      std::push_heap(candidates.begin(),candidates.end(),cmp);
-      return std::move(entry.space);
+      Entry removed=candidates.replace(0,std::move(entry),
+        limits.dominates && limits.dominance_key,cmp);
+      return std::move(removed.space);
     }
     // Other leases reserve a parent and an unsubmitted successor.
     assert(active > 0);
@@ -249,15 +225,7 @@ namespace Gecode { namespace Search { namespace Par {
       running=false;
       return std::move(entry.space);
     }
-    candidates.push_back(std::move(entry));
-    try {
-      if (limits.dominates && limits.dominance_key)
-        candidate_index.emplace(candidates.back().key,candidates.back().space.get());
-    } catch (...) {
-      candidates.pop_back();
-      throw;
-    }
-    std::push_heap(candidates.begin(),candidates.end(),cmp);
+    candidates.push(std::move(entry),limits.dominates && limits.dominance_key,cmp);
     return nullptr;
   }
 
@@ -484,7 +452,6 @@ namespace Gecode { namespace Search { namespace Par {
     std::unique_ptr<Space> replacement(s);
     Support::Lock lock(mutex);
     assert(!running && active == 0);
-    candidate_index.clear();
     pending.clear(); frontier.clear(); candidates.clear();
     root.reset(); best.reset(); solution.reset();
     width=1; order=revision=0;
