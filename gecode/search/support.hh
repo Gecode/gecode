@@ -34,10 +34,6 @@
 #ifndef GECODE_SEARCH_SUPPORT_HH
 #define GECODE_SEARCH_SUPPORT_HH
 
-#include <algorithm>
-#include <memory>
-#include <utility>
-#include <vector>
 #include <gecode/search.hh>
 
 namespace Gecode { namespace Search {

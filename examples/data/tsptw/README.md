@@ -71,9 +71,7 @@ CABS with `transition` discards a candidate when another live candidate for the
 same location and unvisited customers arrives no later at no greater cost.
 Use `--dominance off` to disable this pruning.
 
-`--seed TOUR` reads a whitespace-separated list of customer IDs, checks the
-route, and emits it before searching for improvements. `--time-ms N` and
-`--node-limit N` stop search at engine boundaries; time includes reading and
-preprocessing. They cannot interrupt propagation. CABS also accepts
-`--max-width N` and `--frontier-limit N`, where zero disables the cap.
+`--time-ms N` and `--node-limit N` stop search at engine boundaries; time
+includes reading and preprocessing. They cannot interrupt propagation. CABS
+also accepts `--max-width N` and `--frontier-limit N`, where zero disables the cap.
 Runs default to one search thread; use `--threads N` to change the thread count.

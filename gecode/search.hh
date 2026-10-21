@@ -1233,9 +1233,6 @@ namespace Gecode {
    *
    * The frontier stores clones; c_d and a_d do not control recomputation.
    * Memory grows with the queued spaces, and no-good extraction is empty.
-   * Compare with BAB using representative instances. Parallel expansion can
-   * reduce propagation time; its cost includes frontier coordination, cloning,
-   * and memory traffic. Choose the worker count by measurement.
    *
    * Options::threads selects sequential or parallel search. Parallel workers
    * select the best currently queued node; concurrent expansions can change
