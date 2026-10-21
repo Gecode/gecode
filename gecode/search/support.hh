@@ -80,24 +80,6 @@ namespace Gecode { namespace Search {
   }
 
 
-  /// Repair one replaced heap entry without rebuilding unchanged subtrees.
-  template<class Entry, class Compare>
-  inline void
-  repair_heap(std::vector<Entry>& entries, std::size_t i, Compare cmp) {
-    if (i && cmp(entries[(i-1)/2],entries[i])) {
-      std::push_heap(entries.begin(),entries.begin()+i+1,cmp);
-    } else {
-      while (i<entries.size()/2) {
-        std::size_t child=2*i+1;
-        if (child+1<entries.size() && cmp(entries[child],entries[child+1])) child++;
-        if (!cmp(entries[i],entries[child])) break;
-        std::swap(entries[i],entries[child]);
-        i=child;
-      }
-    }
-  }
-
-
   template<class Worker>
   WorkerToEngine<Worker>::WorkerToEngine(Space* s, const Options& o)
     : Engine(o,1U), w(s,o) {}

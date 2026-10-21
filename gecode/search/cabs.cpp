@@ -104,18 +104,6 @@ namespace Gecode { namespace Search { namespace Seq {
                     bound < best_bound : bound > best_bound);
   }
 
-  void
-  CABS::unindex(const Entry& entry) {
-    if (!limits.dominates || !limits.dominance_key) return;
-    const auto range=candidate_index.equal_range(entry.key);
-    for (auto i=range.first; i!=range.second; ++i)
-      if (i->second == entry.space.get()) {
-        candidate_index.erase(i);
-        return;
-      }
-    GECODE_NEVER;
-  }
-
   bool
   CABS::admit(std::unique_ptr<Space> s, unsigned long int depth,
               unsigned long long int revision) {
@@ -130,39 +118,33 @@ namespace Gecode { namespace Search { namespace Seq {
     Entry entry{std::move(s),bound,rank,key,depth,order++,revision};
     Earlier earlier{guidance.sense,static_cast<bool>(guidance.rank)};
     if (limits.dominates) {
-      std::vector<std::size_t> victims;
       if (limits.dominance_key) {
-        const auto range=candidate_index.equal_range(entry.key);
+        const auto range=candidates.equal_range(entry.key);
         for (auto i=range.first; i!=range.second; ++i)
-          if (limits.dominates(*i->second,*entry.space)) return true;
-        std::vector<const Space*> dominated;
+          if (limits.dominates(*candidates[i->second].space,*entry.space))
+            return true;
+        std::vector<const std::size_t*> victims;
         for (auto i=range.first; i!=range.second; ++i)
-          if (limits.dominates(*entry.space,*i->second)) dominated.push_back(i->second);
-        // Heap entries move; recover victim slots only after finding dominance.
-        if (!dominated.empty())
-          for (std::size_t i=0; i<candidates.size(); i++)
-            if (std::find(dominated.begin(),dominated.end(),candidates[i].space.get())
-                != dominated.end()) victims.push_back(i);
+          if (limits.dominates(*entry.space,*candidates[i->second].space))
+            victims.push_back(&i->second);
+        if (!victims.empty()) {
+          // Slot addresses survive heap moves and index rehashes. Erase each
+          // victim through its current slot, without scanning the beam.
+          Entry removed=candidates.replace(*victims.front(),std::move(entry),true,earlier);
+          for (std::size_t i=1; i<victims.size(); i++)
+            candidates.erase(*victims[i],earlier);
+          return true;
+        }
       } else {
-        for (const auto& candidate : candidates)
+        for (const auto& candidate : candidates.all())
           if (limits.dominates(*candidate.space,*entry.space)) return true;
+        std::vector<std::size_t> victims;
         for (std::size_t i=0; i<candidates.size(); i++)
           if (limits.dominates(*entry.space,*candidates[i].space)) victims.push_back(i);
-      }
-      if (!victims.empty()) {
-        if (limits.dominance_key)
-          candidate_index.emplace(entry.key,entry.space.get());
-        for (auto i : victims) unindex(candidates[i]);
-        // Preserve a live representative even when its rank is worse.
-        candidates[victims.front()] = std::move(entry);
-        if (victims.size()==1) {
-          repair_heap(candidates,victims.front(),earlier);
-        } else {
-          for (std::size_t i=victims.size(); i>1; i--)
-            candidates.erase(candidates.begin()+victims[i-1]);
-          std::make_heap(candidates.begin(),candidates.end(),earlier);
+        if (!victims.empty()) {
+          Entry removed=candidates.replace(victims,std::move(entry),earlier);
+          return true;
         }
-        return true;
       }
     }
     if (candidates.size() == width) {
@@ -173,13 +155,8 @@ namespace Gecode { namespace Search { namespace Seq {
                               discarded > *discarded_bound))
         discarded_bound = discarded;
       if (!replace) return true;
-      // Replacement uses the discarded entry's existing slot.
-      if (limits.dominates && limits.dominance_key)
-        candidate_index.emplace(entry.key,entry.space.get());
-      unindex(candidates.front());
-      std::pop_heap(candidates.begin(),candidates.end(),earlier);
-      candidates.back() = std::move(entry);
-      std::push_heap(candidates.begin(),candidates.end(),earlier);
+      Entry removed=candidates.replace(0,std::move(entry),
+        limits.dominates && limits.dominance_key,earlier);
       return true;
     }
     const auto pending = layer.size() + candidates.size() + (expansion ? 1U : 0U);
@@ -187,15 +164,7 @@ namespace Gecode { namespace Search { namespace Seq {
       limited = _stopped = true;
       return false;
     }
-    candidates.push_back(std::move(entry));
-    try {
-      if (limits.dominates && limits.dominance_key)
-        candidate_index.emplace(candidates.back().key,candidates.back().space.get());
-    } catch (...) {
-      candidates.pop_back();
-      throw;
-    }
-    std::push_heap(candidates.begin(),candidates.end(),earlier);
+    candidates.push(std::move(entry),limits.dominates && limits.dominance_key,earlier);
     return true;
   }
 
@@ -214,8 +183,7 @@ namespace Gecode { namespace Search { namespace Seq {
   bool
   CABS::advance(void) {
     if (!candidates.empty()) {
-      candidate_index.clear();
-      layer.swap(candidates);
+      candidates.release(layer);
       Earlier earlier{guidance.sense,static_cast<bool>(guidance.rank)};
       // Keep the preferred node at the back for constant-time selection.
       std::sort(layer.begin(),layer.end(),
@@ -259,7 +227,7 @@ namespace Gecode { namespace Search { namespace Seq {
           }
           expansion.select(std::move(entry.space));
           current_depth = entry.depth;
-          current_revision = entry.incumbent_revision;
+          current_revision = entry.revision;
           current_status = SS_BRANCH;
           counted = true;
         }
@@ -319,7 +287,6 @@ namespace Gecode { namespace Search { namespace Seq {
     std::unique_ptr<Space> replacement(s);
     expansion.reset();
     layer.clear();
-    candidate_index.clear();
     candidates.clear();
     root.reset();
     best.reset();

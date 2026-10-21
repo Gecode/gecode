@@ -269,7 +269,7 @@ SEARCHSRC0 = \
 	cpprofiler/tracer worker-control
 SEARCHHDR0 = \
 	statistics.hpp stop.hpp options.hpp cutoff.hpp \
-	support.hh worker.hh worker-control.hh exception.hpp engine.hpp base.hpp \
+	support.hh beam-heap.hh worker.hh worker-control.hh exception.hpp engine.hpp base.hpp \
 	nogoods.hh nogoods.hpp build.hpp traits.hpp sebs.hpp \
 	seq/path.hh seq/path.hpp seq/dfs.hh seq/dfs.hpp \
 	seq/bab.hh seq/bab.hpp seq/astar.hh seq/cabs.hh seq/lds.hh seq/lds.hpp \
