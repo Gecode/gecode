@@ -131,13 +131,13 @@ public:
  *
  * A pattern must occur in at least -support percent of the input sequences.
  * Matching preserves order and may skip items; repeated items match distinct
- * positions. Support counts records, including duplicate records, once each.
+ * positions. Each supporting record counts once, including duplicate records.
  * By default the inputs ABCBC, BABC, ABDC must all support the pattern, which
  * must start with A and end with C. AC and ABC are feasible; ABC is longest.
  *
- * Ordinary length and regular constraints restrict the pattern:
- * they do not restrict the matching positions in the input records. Default
- * DFS enumerates every qualifying pattern; -search bab finds a longest one.
+ * Ordinary length and regular constraints restrict the pattern, not the
+ * matching positions in the input records. By default, DFS enumerates every
+ * qualifying pattern; -search bab finds a longest one.
  *
  * An OpenIntVarList constructs pattern positions as needed, without an end
  * marker or unused suffix variables. Pattern languages therefore describe

@@ -37,7 +37,7 @@
 
 namespace Gecode { namespace Int { namespace Extensional {
 
-  /// Shortest accepting suffix from each state, or -1 if none exists
+  /// Shortest accepting suffix length from each state, or -1 if none exists
   static SharedArray<int>
   accepting_distances(const DFA& dfa) {
     const int k = dfa.n_states();

@@ -216,12 +216,12 @@ post_goal(Home home, const IntVarArgs& tiles, IntVar length,
  * \brief %Example: solve the 15-puzzle with an open list of states
  *
  * Start from a solvable board obtained by randomly sliding from the goal.
- * Each path position is the blank position in one board; the tile list holds
- * sixteen variables per board. The transition on the path constructs and
+ * Each path variable records the blank position in one board. The tile list
+ * holds sixteen variables per board. The transition on the path constructs and
  * constrains the next board when that position is materialized.
  * Each new board uses the same slide and goal constraints as the fixed
  * representation. Propagation determines how much of the path is constructed;
- * the initial Manhattan distance gives a lower bound on its length.
+ * the initial Manhattan distance bounds the number of moves from below.
  *
  * The goal closes the path. Length counts states including the start, so
  * branch and bound minimizes moves by minimizing length minus one.

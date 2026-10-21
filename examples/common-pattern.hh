@@ -297,9 +297,10 @@ namespace PatternMining {
    *
    * The open list replaces the termination marker. Suffix lengths bound how
    * many more items can follow the assigned prefix. The projection advances
-   * only through the leading assigned positions. Its frequent items filter
-   * every remaining materialized position. Adding positions reuses the cached
-   * items and suffix-length bound until the assigned prefix grows.
+   * only through the leading assigned positions. Items frequent in the
+   * supporting suffixes filter every remaining materialized position.
+   * Adding positions reuses the cached items and suffix-length bound until
+   * the assigned prefix grows.
    *
    * The support variable is bounded by the prefix's supporting-record count
    * and becomes exact once the list is closed and fully assigned.

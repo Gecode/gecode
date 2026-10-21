@@ -2472,7 +2472,7 @@ namespace Gecode {
    * decision variable. The open list avoids allocating an array up to the
    * input-length bound and encoding an unused suffix with a termination
    * symbol. Prefix projection and regular constraints on the pattern
-   * language follow growth.
+   * language follow list growth.
    * The \ref OpenRoute "open-route example" is a smaller introduction,
    * including search and printing solutions.
    *
@@ -3189,8 +3189,8 @@ namespace Gecode {
    * \brief Post an open regular-language constraint
    *
    * While \a x is open, its materialized prefix must have a continuation
-   * accepted by \a d within its maximum length. Future variable domains and
-   * holes in the length domain are not used to filter these continuations.
+   * accepted by \a d within the maximum length of \a x. Future variable domains
+   * and holes in the length domain are not used to filter these continuations.
    * Once its length equals its materialized size, the complete list must be
    * accepted by \a d.
    *
@@ -6206,8 +6206,7 @@ namespace Gecode {
    * known_length() before requiring another position and resuming
    * value selection. Filters and callbacks receive the position in the list.
    * Variables rejected by the filter may remain unassigned in a solution.
-   * With no finite application bound, exploring these lengths can be very
-   * expensive.
+   * Without a practical bound on list length, search can be very expensive.
    *
    * To decide the length before list values, post an ordinary brancher on
    * x.length() before the list brancher, for example:
