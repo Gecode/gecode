@@ -3189,8 +3189,10 @@ namespace Gecode {
    * \brief Post an open regular-language constraint
    *
    * While \a x is open, its materialized prefix must have a continuation
-   * accepted by \a d. Once its length equals its materialized size, the
-   * complete list must be accepted by \a d.
+   * accepted by \a d within its maximum length. Future variable domains and
+   * holes in the length domain are not used to filter these continuations.
+   * Once its length equals its materialized size, the complete list must be
+   * accepted by \a d.
    *
    * \ingroup TaskModelIntExt
    */
@@ -3202,8 +3204,8 @@ namespace Gecode {
    * \brief Post an open regular-language constraint on Boolean variables
    *
    * As for integer lists, the materialized prefix must have an accepted
-   * continuation while open, and the complete list must be accepted when
-   * closed.
+   * continuation within its maximum length while open, and the complete
+   * list must be accepted when closed.
    *
    * \ingroup TaskModelIntExt
    */

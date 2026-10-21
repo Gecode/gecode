@@ -999,6 +999,76 @@ namespace Test { namespace Int {
        }
      };
 
+     /// Filter prefixes whose accepting continuations exceed the length bound
+     class OpenRegularMaxLength : public ::Test::Base {
+     public:
+       OpenRegularMaxLength(void)
+         : ::Test::Base("Int::Extensional::OpenReg::MaxLength",
+                        TestTags::check()) {}
+
+       virtual bool
+       run(void) {
+         using namespace Gecode;
+         // Accept 00 or 1000: only the first word fits a maximum of three.
+         DFA d(0,{{0,0,1},{1,0,5},{0,1,2},{2,0,3},{3,0,4},{4,0,5}},
+               {5},false);
+         OpenRegularSpace short_list(d,1);
+         if (short_list.status() != SS_FAILED)
+           return false;
+         OpenRegularSpace initial(d,3);
+         initial.list.append(initial,initial.x[0]);
+         if ((initial.status() == SS_FAILED) ||
+             !initial.x[0].assigned() || (initial.x[0].val() != 0))
+           return false;
+
+         OpenRegularSpace source(d,4);
+         source.list.append(source,source.x[0]);
+         if ((source.status() == SS_FAILED) || (source.x[0].size() != 2))
+           return false;
+         OpenRegularSpace* clone =
+           static_cast<OpenRegularSpace*>(source.clone());
+         rel(*clone,clone->list.length(),IRT_LQ,3);
+         const bool clone_ok = (clone->status() != SS_FAILED) &&
+           clone->x[0].assigned() && (clone->x[0].val() == 0);
+         delete clone;
+         if (!clone_ok || (source.x[0].size() != 2))
+           return false;
+
+         // A bound reduction also checks an already consumed prefix.
+         rel(source,source.x[0],IRT_EQ,1);
+         if (source.status() == SS_FAILED)
+           return false;
+         rel(source,source.list.length(),IRT_LQ,3);
+         if (source.status() != SS_FAILED)
+           return false;
+
+         // Keep the shorter nondeterministic path, even with a cycle.
+         DFA nfa = DFA::nfa(0,
+           {{0,0,1},{0,0,2},{1,0,3},{3,0,4},{4,0,5},{2,1,2},{2,0,5}},
+           {5});
+         OpenRegularSpace nondeterministic(nfa,2);
+         nondeterministic.list.append(nondeterministic,nondeterministic.x[0]);
+         if (nondeterministic.status() == SS_FAILED)
+           return false;
+         nondeterministic.list.append(nondeterministic,nondeterministic.x[1]);
+         if ((nondeterministic.status() == SS_FAILED) ||
+             !nondeterministic.x[1].assigned() ||
+             (nondeterministic.x[1].val() != 0))
+           return false;
+
+         // Pruning an item aliased with length lowers the maximum while open.
+         DFA alias_dfa(0,
+           {{0,2,1},{1,0,2},{2,0,3},{3,0,4},{0,3,5},{5,0,6},{6,0,4}},
+           {4},false);
+         OpenRegularSpace alias(alias_dfa,5);
+         alias.list.append(alias,alias.list.length());
+         alias.list.append(alias,alias.x[0]);
+         return (alias.status() != SS_FAILED) &&
+                alias.list.length().assigned() &&
+                (alias.list.length().val() == 3);
+       }
+     };
+
      /// Test backward pruning after appending a restricted variable
      class OpenRegularBackward : public ::Test::Base {
      public:
@@ -2510,6 +2580,7 @@ namespace Test { namespace Int {
      OpenListMaterialize open_list_materialize;
      OpenRegularIncremental open_regular_incremental;
      OpenRegularLengthWake open_regular_length_wake;
+     OpenRegularMaxLength open_regular_max_length;
      OpenRegularBackward open_regular_backward;
      OpenRegularDomainWake open_regular_domain_wake;
      OpenRegularClone open_regular_clone;

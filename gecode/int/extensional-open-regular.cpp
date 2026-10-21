@@ -37,13 +37,58 @@
 
 namespace Gecode { namespace Int { namespace Extensional {
 
+  /// Shortest accepting suffix from each state, or -1 if none exists
+  static SharedArray<int>
+  accepting_distances(const DFA& dfa) {
+    const int k = dfa.n_states();
+    SharedArray<int> distance(k);
+    Region r;
+    int* first = r.alloc<int>(k);
+    int* source = r.alloc<int>(dfa.n_transitions());
+    int* next = r.alloc<int>(dfa.n_transitions());
+    int* queue = r.alloc<int>(k);
+    for (int s=0; s<k; s++) {
+      distance[s] = -1;
+      first[s] = -1;
+    }
+
+    // Index incoming transitions for breadth-first traversal from final states.
+    int e = 0;
+    for (DFA::Transitions t(dfa); t(); ++t, e++) {
+      source[e] = t.i_state();
+      next[e] = first[t.o_state()];
+      first[t.o_state()] = e;
+    }
+    int end = 0;
+    for (int s=dfa.final_fst(); s<dfa.final_lst(); s++) {
+      distance[s] = 0;
+      queue[end++] = s;
+    }
+    // The default DFA accepts only the empty word.
+    if ((dfa.final_fst() == 0) && (dfa.final_lst() == 0)) {
+      distance[0] = 0;
+      queue[end++] = 0;
+    }
+    for (int i=0; i<end; i++) {
+      const int s = queue[i];
+      for (int e=first[s]; e != -1; e=next[e]) {
+        const int p = source[e];
+        if (distance[p] == -1) {
+          distance[p] = distance[s]+1;
+          queue[end++] = p;
+        }
+      }
+    }
+    return distance;
+  }
+
   /**
    * \brief Regular-language filtering over an open list's materialized prefix
    *
    * start contains the states reachable after the assigned positions before
    * offset. Forward and backward support are recomputed for the remaining
-   * positions. While the list is open, its last layer can end in any automaton
-   * state; closing the list restricts that layer to accepting states.
+   * positions. The last layer must have an accepting continuation within the
+   * remaining maximum length; closing the list allows only accepting states.
    * Assigned leading positions are then folded into start, preserving every
    * supported state when the automaton has nondeterministic transitions.
    */
@@ -53,6 +98,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     OpenVarList<typename View::VarType> list;
     IntView length;
     DFA dfa;
+    SharedArray<int> distance;
     unsigned char* start;
     int offset;
     int subscribed;
@@ -61,14 +107,14 @@ namespace Gecode { namespace Int { namespace Extensional {
                 OpenVarList<typename View::VarType> list0, DFA dfa0)
       : Propagator(home), list(list0),
         length(list0.length()),
-        dfa(dfa0),
+        dfa(dfa0), distance(accepting_distances(dfa0)),
         start(static_cast<Space&>(home).alloc<unsigned char>(dfa.n_states())),
         offset(0), subscribed(list0.known_length()) {
       home.notice(*this,AP_DISPOSE);
       for (int i=0; i<dfa.n_states(); i++)
         start[i] = 0;
       start[0] = 1;
-      length.subscribe(home,*this,PC_INT_VAL);
+      length.subscribe(home,*this,PC_INT_BND);
       list.subscribe(home,*this);
       for (int i=0; i<subscribed; i++)
         if (!list[i].assigned())
@@ -76,7 +122,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     }
 
     OpenRegular(Space& home, OpenRegular& p)
-      : Propagator(home,p), dfa(p.dfa),
+      : Propagator(home,p), dfa(p.dfa), distance(p.distance),
         start(home.alloc<unsigned char>(p.dfa.n_states())),
         offset(p.offset), subscribed(p.subscribed) {
       list.update(home,p.list);
@@ -86,38 +132,18 @@ namespace Gecode { namespace Int { namespace Extensional {
     }
 
     bool
-    final(int state) const {
-      if ((dfa.final_fst() == 0) && (dfa.final_lst() == 0))
-        return state == 0;
-      return (state >= dfa.final_fst()) && (state < dfa.final_lst());
-    }
-
-    bool
-    viable(void) const {
-      return (dfa.final_fst() < dfa.final_lst()) ||
-             ((dfa.final_fst() == 0) && (dfa.final_lst() == 0));
-    }
-
-    bool
-    tail(const unsigned char* reachable, bool closed) const {
-      if (closed) {
-        for (int i=0; i<dfa.n_states(); i++)
-          if ((reachable[i] != 0) && final(i))
-            return true;
-      } else {
-        if (!viable())
-          return false;
-        for (int i=0; i<dfa.n_states(); i++)
-          if (reachable[i] != 0)
-            return true;
-      }
+    tail(const unsigned char* reachable, int remaining) const {
+      for (int s=0; s<dfa.n_states(); s++)
+        if ((reachable[s] != 0) &&
+            (distance[s] >= 0) && (distance[s] <= remaining))
+          return true;
       return false;
     }
 
   private:
     /// Mark states supporting the remaining domains through the last layer
     const unsigned char*
-    compute_backward_support(Region& r, bool closed) const {
+    compute_backward_support(Region& r, int remaining) const {
       const int n = list.known_length()-offset;
       const int k = dfa.n_states();
       const unsigned long long cells =
@@ -134,14 +160,9 @@ namespace Gecode { namespace Int { namespace Extensional {
         backward[i] = 0;
 
       unsigned char* last = backward + static_cast<size_t>(n)*k;
-      if (closed) {
-        for (int s=0; s<k; s++)
-          if (final(s))
-            last[s] = 1;
-      } else if (viable()) {
-        for (int s=0; s<k; s++)
+      for (int s=0; s<k; s++)
+        if ((distance[s] >= 0) && (distance[s] <= remaining))
           last[s] = 1;
-      }
 
       for (int i=n; i--; ) {
         unsigned char* in = backward + static_cast<size_t>(i)*k;
@@ -168,7 +189,7 @@ namespace Gecode { namespace Int { namespace Extensional {
 
     virtual void
     reschedule(Space& home) {
-      length.reschedule(home,*this,PC_INT_VAL);
+      length.reschedule(home,*this,PC_INT_BND);
       list.reschedule(home,*this);
       for (int i=offset; i<subscribed; i++)
         if (!list[i].assigned())
@@ -191,15 +212,16 @@ namespace Gecode { namespace Int { namespace Extensional {
 
       const int n = size-offset;
       const int k = dfa.n_states();
-      const bool closed = length.max() == size;
+      const int remaining = length.max()-size;
+      const bool closed = remaining == 0;
       if (n == 0) {
-        if (!tail(start,closed))
+        if (!tail(start,remaining))
           return ES_FAILED;
         return closed ? home.ES_SUBSUMED(*this) : ES_FIX;
       }
 
       Region r;
-      const unsigned char* backward = compute_backward_support(r,closed);
+      const unsigned char* backward = compute_backward_support(r,remaining);
 
       bool any = false;
       for (int s=0; s<k; s++)
@@ -242,9 +264,9 @@ namespace Gecode { namespace Int { namespace Extensional {
         next = swap;
       }
 
-      // A list item can alias the length and close the list during pruning.
-      // Recompute support with final states before consuming the prefix.
-      if (!closed && (length.max() == size))
+      // Pruning an item that aliases length can reduce the suffix budget.
+      // Recompute support before consuming the prefix.
+      if (length.max()-size < remaining)
         return ES_NOFIX;
 
       int consumed = 0;
@@ -272,7 +294,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     virtual size_t
     dispose(Space& home) {
       home.ignore(*this,AP_DISPOSE);
-      length.cancel(home,*this,PC_INT_VAL);
+      length.cancel(home,*this,PC_INT_BND);
       list.cancel(home,*this);
       // On space deletion, the list buffer can already be disposed.
       if (!home.failed())
@@ -280,6 +302,7 @@ namespace Gecode { namespace Int { namespace Extensional {
           if (!list[i].assigned())
             View(list[i]).cancel(home,*this,pc);
       dfa.~DFA();
+      distance.~SharedArray();
       list.~OpenVarList();
       (void) Propagator::dispose(home);
       return sizeof(*this);
