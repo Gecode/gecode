@@ -59,7 +59,7 @@ request becomes visible remain nondeterministic.
 Shrinking parks resident operating-system threads. It does not destroy their
 thread objects or discard their engine-local search state. Growing wakes those
 threads again. Set the capacity to the largest allocation the engine may
-receive. Parked workers keep their stacks and other per-worker state.
+receive. Parked workers retain their stacks and other per-worker state.
 
 ## Handle lifetime and ownership
 

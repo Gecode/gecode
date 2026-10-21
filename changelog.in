@@ -56,8 +56,6 @@
 #     driver|iter|support|example|test|gist|flatzinc|other
 #   What:   bug|documentation|performance|new|removed|change
 #   Rank:   minor|major
-#   Experimental: true|false <optional, defaults to false>
-#     True entries appear under Experimental changes within each release.
 #   Bug:    <optional, for number from bugzilla>
 #   Issue:  <optional, for number from github>
 #   Thanks: <optional, who reported etc>
@@ -122,25 +120,17 @@ including the unary specializations of cumulative constraints.
 Module: search
 What:   new
 Rank:   major
-Experimental: true
 [DESCRIPTION]
 Add experimental A* (AStar) and complete anytime beam search (CABS).
 [MORE]
-Both use objective bounds for pruning and optional ranks to guide exploration;
-AStar can give priority to either bound or rank. Enable with
---enable-experimental or GECODE_ENABLE_EXPERIMENTAL=ON; the preview is disabled
-by default. Preview APIs may change or be removed in future feature releases.
-CABS can use a model-defined dominance predicate to discard a candidate when
-another in the next layer can achieve solutions at least as good. An optional
-key restricts comparisons to candidates with equal keys. The TSPTW transition
-example uses this to compare routes with the same visited cities and endpoint.
-Both engines support native parallel search through Options::threads and dynamic
-worker control. Parallel CABS shares one beam across workers; parallel AStar
-selects from one shared priority queue. More threads can increase coordination,
-memory use, and search work; measure against sequential search and BAB.
-The astar and cabs builders support portfolios that combine these engines
-with BAB. The TSPTW example compares a closed CP model with a transition model
-that extends the route one city at a time.
+Both engines use objective bounds for pruning and optional ranks to guide
+exploration. They support parallel search, dynamic worker control, and
+portfolios with BAB. CABS also supports model-defined dominance.
+Enable with --enable-experimental or GECODE_ENABLE_EXPERIMENTAL=ON;
+the preview is disabled by default. APIs may change or be removed in future
+feature releases. The fifteen-puzzle and TSPTW examples demonstrate both
+engines. TSPTW compares a closed CP model with a transition model that
+constructs the route one city at a time.
 
 [ENTRY]
 Module: int

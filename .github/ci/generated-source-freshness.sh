@@ -225,7 +225,7 @@ normalize_generated_whitespace() {
   # Ignore any autom4te cache so output matches a clean source release.
   autoconf --force
   # Autoconf 2.72 appends blank lines after the generated script body; source
-  # releases have exactly one final newline.
+  # releases retain exactly one final newline.
   normalize_generated_whitespace configure
   uv run --script ./misc/genvarimp.py -typehpp "${vis_files[@]}" \
     > gecode/kernel/var-type.hpp

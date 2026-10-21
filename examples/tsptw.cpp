@@ -163,62 +163,6 @@ static TourValue evaluate_tour(const TSPTW::Instance& data,
   return {static_cast<int>(cost),static_cast<int>(time)};
 }
 
-static std::vector<int> read_tour(const std::string& path) {
-  std::ifstream input(path);
-  if (!input) throw std::runtime_error("cannot open seed tour: "+path);
-  std::vector<int> tour;
-  std::string token;
-  while (input>>token) {
-    if (token.find_first_not_of("0123456789")!=std::string::npos)
-      throw std::runtime_error("invalid seed tour IDs");
-    tour.push_back(std::stoi(token));
-  }
-  if (input.bad()) throw std::runtime_error("cannot read seed tour");
-  return tour;
-}
-
-static std::unique_ptr<TSPTWClosed>
-make_seed(TSPTWClosed& root, const std::vector<int>& tour, TourValue value) {
-  if (root.status()==SS_FAILED)
-    throw std::runtime_error("checked seed rejected by CP root");
-  std::unique_ptr<TSPTWClosed> seed(static_cast<TSPTWClosed*>(root.clone()));
-  int previous=0;
-  for (int node : tour) {
-    rel(*seed,seed->successor[previous],IRT_EQ,node);
-    previous=node;
-  }
-  rel(*seed,seed->successor[previous],IRT_EQ,0);
-  if (seed->status()!=SS_SOLVED || seed->total.val()!=value.cost)
-    throw std::runtime_error("checked seed rejected by CP model");
-  return seed;
-}
-
-static std::unique_ptr<TSPTW::Transition>
-make_seed(TSPTW::Transition& root, const std::vector<int>& tour, TourValue value) {
-  if (root.status() == SS_FAILED)
-    throw std::runtime_error("checked seed rejected by transition root");
-  std::unique_ptr<TSPTW::Transition> seed(
-    static_cast<TSPTW::Transition*>(root.clone()));
-  Search::Statistics stat;
-  // Build a solved seed by committing each checked visit and the depot return.
-  // This runs the same feasibility checks and inference as ordinary search.
-  for (std::size_t p=0; p<=tour.size(); p++) {
-    const int node = p == tour.size() ? 0 : tour[p];
-    if (seed->status() == SS_BRANCH) seed->prepare(stat);
-    if (seed->status() != SS_BRANCH)
-      throw std::runtime_error("checked seed rejected by transition model");
-    const auto actions = seed->actions();
-    const auto action = std::find(actions.begin(),actions.end(),node);
-    if (action == actions.end())
-      throw std::runtime_error("checked seed has no applicable transition");
-    std::unique_ptr<const Choice> choice(seed->choice());
-    seed->commit(*choice,static_cast<unsigned int>(action-actions.begin()));
-  }
-  if (seed->status() != SS_SOLVED || seed->cost() != value.cost)
-    throw std::runtime_error("checked seed rejected by transition model");
-  return seed;
-}
-
 static std::string exact_text(int value, int scale) {
   std::string text=std::to_string(value/scale);
   if (value%scale) {
@@ -241,7 +185,7 @@ static void write_tour(const std::vector<int>& tour, TourValue value, int scale)
 }
 
 struct RunOptions {
-  std::string instance, engine="bab", formulation="closed", seed;
+  std::string instance, engine="bab", formulation="closed";
   std::string bound="prefix", residual_propagation="off";
   std::optional<unsigned long long> time_ms, node_limit;
   Search::CABSOptions cabs;
@@ -261,7 +205,7 @@ static RunOptions read_options(int argc, char* argv[]) {
     throw std::runtime_error("usage: tsptw INSTANCE [--engine bab|astar|cabs] "
       "[--formulation closed|transition] "
       "[--bound prefix|min-arcs] [--residual-propagation off|cheap|unary] "
-      "[--threads N] [--seed TOUR] [--time-ms N] [--node-limit N] "
+      "[--threads N] [--time-ms N] [--node-limit N] "
       "[--max-width N] [--frontier-limit N] [--dominance off|on]");
   RunOptions options;
   options.instance=argv[1];
@@ -271,7 +215,6 @@ static RunOptions read_options(int argc, char* argv[]) {
     const std::string value=argv[i+1];
     if (option=="--engine") options.engine=value;
     else if (option=="--formulation") options.formulation=value;
-    else if (option=="--seed") options.seed=value;
     else if (option=="--bound") options.bound=value;
     else if (option=="--residual-propagation") options.residual_propagation=value;
     else if (option=="--dominance") {
@@ -337,12 +280,6 @@ static int run_search(const RunOptions& options, Model& root,
   const auto& data=root.data;
   std::optional<TourValue> incumbent;
   std::vector<int> best_tour;
-  if (!options.seed.empty()) {
-    best_tour=read_tour(options.seed);
-    incumbent=evaluate_tour(*data,best_tour);
-  }
-  std::unique_ptr<Model> seed;
-  if (incumbent) seed=make_seed(root,best_tour,*incumbent);
   const auto guidance=[&]() {
     if constexpr (std::is_same<Model,TSPTW::Transition>::value)
       return Model::guidance(options.bound=="prefix" ? Model::PREFIX : Model::MIN_ARCS);
@@ -362,14 +299,7 @@ static int run_search(const RunOptions& options, Model& root,
     engine.reset(Search::cabsengine(&root,guidance,search,cabs));
   }
   // Search clones root (search.clone is true), so the caller retains it.
-  // constrain reads the seed; its unique_ptr retains ownership. The caller
-  // also owns the stop object and keeps it alive until this engine is destroyed.
-  if (seed) engine->constrain(*seed);
-  if (incumbent) {
-    std::cout << "{\"type\":\"solution\",";
-    write_tour(best_tour,*incumbent,data->scale);
-    std::cout << '}' << std::endl;
-  }
+  // The caller owns the stop object and keeps it alive until engine destruction.
   while (std::unique_ptr<Model> solution{
            static_cast<Model*>(engine->next())}) {
     auto tour=solution->tour();
