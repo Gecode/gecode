@@ -87,7 +87,8 @@ Module: support
 What:   new
 Rank:   minor
 [DESCRIPTION]
-Add an optional CMake mimalloc backend for shared Gecode libraries.
+Add an optional CMake mimalloc backend for shared and static Gecode libraries.
+Prefix embedded mimalloc symbols with gecode_ to avoid allocator conflicts.
 Mimalloc can substantially improve parallel search performance on some workloads.
 The system allocator is the default.
 

@@ -266,6 +266,9 @@ jobs:
 
   build-cmake-allocator:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        variant: [static, both]
 
     steps:
     - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
@@ -276,7 +279,8 @@ jobs:
         set -euxo pipefail
         cmake -S . -B build-allocator \
           -DCMAKE_BUILD_TYPE="$BUILD_TYPE" \
-          -DGECODE_BUILD_SHARED=ON -DGECODE_BUILD_STATIC=OFF \
+          -DGECODE_BUILD_SHARED=${{ matrix.variant == 'both' }} \
+          -DGECODE_BUILD_STATIC=ON \
           -DGECODE_ENABLE_MIMALLOC=ON \
           -DGECODE_ENABLE_GCC_VISIBILITY=OFF \
           -DBUILD_TESTING=OFF -DGECODE_ENABLE_EXAMPLES=OFF \
@@ -291,10 +295,20 @@ jobs:
       shell: bash
       run: |
         set -euxo pipefail
-        nm -D --defined-only install-allocator/lib/libgecodesupport.so > build-allocator/exports.txt
-        if grep -E '[[:space:]]_?(mi_[[:alnum:]_]+|malloc|calloc|realloc|free|aligned_alloc|posix_memalign)$' build-allocator/exports.txt; then
-          echo "Allocator implementation or malloc replacement exported by gecodesupport"
-          exit 1
+        if test -f install-allocator/lib/libgecodesupport.so; then
+          nm -D --defined-only install-allocator/lib/libgecodesupport.so > build-allocator/exports.txt
+          if grep -E '[[:space:]](_*mi_[[:alnum:]_]+|gecode_+mi_[[:alnum:]_]+|malloc|calloc|realloc|free|aligned_alloc|posix_memalign)$' build-allocator/exports.txt; then
+            echo "Allocator implementation or malloc replacement exported by gecodesupport"
+            exit 1
+          fi
+        fi
+        if test -f install-allocator/lib/libgecodesupport.a; then
+          nm -g --defined-only install-allocator/lib/libgecodesupport.a > build-allocator/symbols.txt
+          if grep -E '[[:space:]](_*mi_[[:alnum:]_]+|malloc|calloc|realloc|free|aligned_alloc|posix_memalign)$' build-allocator/symbols.txt; then
+            echo "Unprefixed allocator symbol in static gecodesupport"
+            exit 1
+          fi
+          grep -q '[[:space:]]gecode_mi_malloc$' build-allocator/symbols.txt
         fi
 
     - name: Reject unsupported allocator combinations
@@ -306,11 +320,6 @@ jobs:
           exit 1
         fi
         grep -q 'requires GECODE_ENABLE_ALLOCATOR=ON' "$RUNNER_TEMP/mimalloc-custom.log"
-        if cmake -S . -B "$RUNNER_TEMP/mimalloc-static" \
-          -DGECODE_ENABLE_MIMALLOC=ON -DGECODE_BUILD_STATIC=ON > "$RUNNER_TEMP/mimalloc-static.log" 2>&1; then
-          exit 1
-        fi
-        grep -q 'requires GECODE_BUILD_STATIC=OFF' "$RUNNER_TEMP/mimalloc-static.log"
         if cmake -S . -B "$RUNNER_TEMP/mimalloc-sanitizer" \
           -DGECODE_ENABLE_MIMALLOC=ON -DGECODE_SANITIZER=address > "$RUNNER_TEMP/mimalloc-sanitizer.log" 2>&1; then
           exit 1
@@ -321,14 +330,18 @@ jobs:
       shell: bash
       run: |
         set -euxo pipefail
-        cmake -S test/package/allocator -B build-allocator-consumer \
-          -DCMAKE_BUILD_TYPE="$BUILD_TYPE" \
-          -DCMAKE_PREFIX_PATH="$GITHUB_WORKSPACE/install-allocator" \
-          -DGECODE_LINK_VARIANT=shared -DGECODE_EXPECT_MIMALLOC=ON \
-          -DGECODE_HOST_MIMALLOC_OVERRIDE=ON \
-          -DMIMALLOC_SOURCE_DIR="$GITHUB_WORKSPACE/build-allocator/_deps/gecode_mimalloc-src"
-        cmake --build build-allocator-consumer --config "$BUILD_TYPE" --parallel 2
-        ctest --test-dir build-allocator-consumer --build-config "$BUILD_TYPE" --output-on-failure
+        for variant in shared static; do
+          if test "$variant" = "shared" && ! test -f install-allocator/lib/libgecodesupport.so; then continue; fi
+          if test "$variant" = "static" && ! test -f install-allocator/lib/libgecodesupport.a; then continue; fi
+          cmake -S test/package/allocator -B "build-allocator-consumer-$variant" \
+            -DCMAKE_BUILD_TYPE="$BUILD_TYPE" \
+            -DCMAKE_PREFIX_PATH="$GITHUB_WORKSPACE/install-allocator" \
+            -DGECODE_LINK_VARIANT="$variant" -DGECODE_EXPECT_MIMALLOC=ON \
+            -DGECODE_HOST_MIMALLOC_OVERRIDE=ON \
+            -DMIMALLOC_SOURCE_DIR="$GITHUB_WORKSPACE/build-allocator/_deps/gecode_mimalloc-src"
+          cmake --build "build-allocator-consumer-$variant" --config "$BUILD_TYPE" --parallel 2
+          ctest --test-dir "build-allocator-consumer-$variant" --build-config "$BUILD_TYPE" --output-on-failure
+        done
         test -f install-allocator/share/licenses/gecode/mimalloc-LICENSE
         test ! -f install-allocator/include/mimalloc.h
 

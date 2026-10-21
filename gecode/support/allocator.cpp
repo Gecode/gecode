@@ -34,6 +34,7 @@
 #include <gecode/support.hh>
 
 #ifdef GECODE_MIMALLOC
+#include "gecode-mimalloc-rename.h"
 #include <mimalloc.h>
 #endif
 
