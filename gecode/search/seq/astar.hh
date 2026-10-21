@@ -69,11 +69,11 @@ namespace Gecode { namespace Search { namespace Seq {
     unsigned long long int order;
     /// Revision of the currently accepted incumbent
     unsigned long long int incumbent_revision;
-    /// Selected parent with its original alternative cursor
+    /// Parent and next alternative, retained across returned solutions and stops
     ChoiceExpansion expansion;
     SpaceStatus current_status;
     unsigned long int current_depth;
-    /// Incumbent restriction already inherited by the selected source
+    /// Incumbent revision whose constraints are already present in the parent
     unsigned long long int current_revision;
     bool counted;
     std::unique_ptr<Space> best;

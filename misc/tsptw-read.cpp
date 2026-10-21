@@ -1,4 +1,6 @@
-// Small CLI for exercising the native example input reader.
+// Print the native reader's scaled integers for comparison with the Python reader.
+// The first line is node count, scale, cost bound, and time bound. The second
+// contains the row-major arc matrix followed by each node's ready/due pair.
 #include "examples/tsptw-data.hh"
 #include <iostream>
 int main(int argc, char* argv[]) {

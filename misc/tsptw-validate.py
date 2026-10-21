@@ -67,7 +67,8 @@ def run_solver(
     seed_result = None
     if seed:
         tour = [int(x) for x in seed.read_text().split()]
-        # Approve the seed independently before the native engine can cut.
+        # Check the seed with the Python evaluator before allowing the native
+        # engine to use its cost to prune search.
         seed_result = CHECKER["check_tour"](data, tour)
         command += ["--seed", str(seed)]
     output = subprocess.run(
@@ -211,7 +212,8 @@ def validate_solver(solver: Path, manifest: dict[str, Any]) -> None:
                         check=False,
                     )
                     assert result.returncode == 1 and not result.stdout, result
-        # A cheap prefix can publish an expensive return before better tours.
+        # Prefix-cost guidance ignores the return arc. The first complete tour
+        # can therefore cost more than a later tour, even with A* search.
         improving = directory / "improving.txt"
         improving.write_text(
             "4\n0 1 2 3\n1 0 1 4\n1 3 0 1\n20 1 3 0\n0 100\n5 100\n0 100\n0 100\n"
@@ -226,7 +228,8 @@ def validate_solver(solver: Path, manifest: dict[str, Any]) -> None:
             assert summary["termination"] == "optimal"
             assert summary["incumbent"]["scaled_cost"] == optimum["scaled_cost"]
             assert len(solutions) >= 2
-        # Equal-cost routes still need decisions after cost branching.
+        # Every arc between distinct nodes costs one, so assigning arc costs
+        # leaves route choices. Exercise successor branching and resource stops.
         branching = directory / "branching.txt"
         branching.write_text(
             "5\n"
@@ -254,9 +257,9 @@ def validate_solver(solver: Path, manifest: dict[str, Any]) -> None:
                 summary, _ = run_solver(
                     solver, branching, "cabs", (limit, "1"), formulation=formulation
                 )
-                # A ceiling stops only when further pending work or widening
-                # is needed. Tight total bounds can prove this equal-cost tree
-                # complete before hitting the ceiling.
+                # A CABS cap stops a run only if pending work or a wider beam
+                # would exceed it. Equal tour costs can let objective bounds
+                # prove optimality before either cap stops search.
                 assert summary["termination"] in ("stopped", "optimal"), summary
                 if summary["termination"] == "optimal":
                     assert summary["incumbent"]["scaled_cost"] == branching_optimum

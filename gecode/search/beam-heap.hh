@@ -44,7 +44,12 @@
 #ifdef GECODE_HAS_EXPERIMENTAL
 namespace Gecode { namespace Search {
 
-  /// Candidate storage shared by layered beams; comparisons must not throw.
+  /**
+   * \brief Beam candidates in a heap, with an optional index for dominance keys
+   *
+   * Comparisons order better candidates first and must not throw. The heap's
+   * front entry is therefore the worst candidate, ready for replacement.
+   */
   class BeamHeap {
   public:
     struct Entry {
@@ -105,6 +110,7 @@ namespace Gecode { namespace Search {
     const std::vector<Entry>& all(void) const { return entries; }
     auto equal_range(std::size_t key) const { return index.equal_range(key); }
 
+    /// Insert a candidate and optionally index its dominance key
     template<class Compare>
     void push(Entry entry, bool keyed, Compare cmp) {
       // Map nodes, and therefore slot addresses, survive map rehashes.
@@ -145,7 +151,8 @@ namespace Gecode { namespace Search {
       if (i<entries.size()) repair(i,cmp);
       return removed;
     }
-    /// Replace sorted, unindexed victims and compact the remaining entries.
+    /// Replace the first victim and remove the rest; the heap must be unindexed
+    // Victim indices must be nonempty and sorted in ascending order.
     template<class Compare>
     Entry replace(const std::vector<std::size_t>& victims, Entry entry, Compare cmp) {
       assert(index.empty());

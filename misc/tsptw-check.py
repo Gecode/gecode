@@ -23,8 +23,9 @@ def read_instance(path):
            for x in tokens[1:]):
         raise ValueError("invalid nonnegative decimal")
     values = [Fraction(x) for x in tokens[1:]]
-    # The common power of ten is deliberately computed from text, independently
-    # of the native reader's mantissa conversion. Trailing zeroes need no scale.
+    # Derive the scale from decimal text and keep values as exact fractions.
+    # This checks the native reader without repeating its digit accumulation.
+    # Trailing fractional zeroes do not require a larger scale.
     places = max(len(x.rstrip("0").split(".")[1]) if "." in x else 0
                  for x in tokens[1:])
     scale = 10**places
@@ -57,6 +58,8 @@ def exact_text(value):
 
 
 def check_tour(data, tour, claimed_cost=None):
+    # Starting at zero, each visit takes the earliest time allowed by travel
+    # and its ready time. Waiting adds time but no cost; include the depot return.
     matrix, windows, scale = data
     n = len(matrix)
     if len(tour) != n-1:

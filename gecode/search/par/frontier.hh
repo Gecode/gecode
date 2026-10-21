@@ -87,6 +87,7 @@ namespace Gecode { namespace Search { namespace Par {
     mutable Support::Mutex mutex;
     Support::Event changed;
     Search::Statistics stat;
+    /// Workers with selected parents or model state still awaiting disposal
     unsigned int active=0;
     bool running=false, shutdown=false, stopped_=false, limited=false;
     std::exception_ptr error;

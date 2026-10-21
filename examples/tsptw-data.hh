@@ -12,23 +12,27 @@
 #include <string>
 #include <vector>
 
-/// Canonical matrix data shared by the native TSPTW examples.
+/// Travel times, costs, and visit windows for the TSPTW examples.
+/// All values use the same integer scale; node 0 is the depot.
 namespace TSPTW {
   struct Instance {
     int n, scale;
+    // Upper bounds for a complete tour cost and for time including waiting.
     int cost_limit, time_limit;
     std::vector<int> cost, ready, due;
     int arc(int from, int to) const { return cost[from*n+to]; }
   };
 
-  /// Checked arithmetic for total bounds, without rounding or saturation.
+  /// Add nonnegative costs exactly, rejecting signed 64-bit overflow.
   inline std::int64_t add_cost(std::int64_t a, std::int64_t b) {
     if (b<0 || a<0 || a>std::numeric_limits<std::int64_t>::max()-b)
       throw std::overflow_error("TSPTW bound arithmetic overflow");
     return a+b;
   }
 
-  /// Paths may use any vertex, relaxing residual reachability on nonmetric data.
+  /// Lower bounds on travel time between every pair of nodes.
+  /// Paths may use already visited nodes, so they also bound remaining tours
+  /// when indirect travel is cheaper than a direct arc.
   inline std::vector<std::int64_t> shortest_paths(const Instance& data) {
     const int n=data.n;
     std::vector<std::int64_t> distance(data.cost.begin(),data.cost.end());
@@ -74,7 +78,9 @@ namespace TSPTW {
     }
   }
 
-  /// Read decimal text exactly; comments begin with #. No service is added.
+  /// Read a node count, row-major arc matrix, and one ready/due pair per node.
+  /// Decimal values are scaled exactly to integers; comments begin with #.
+  /// Arcs supply both travel time and cost, including any service time.
   inline Instance read(std::istream& input) {
     std::vector<std::string> tokens;
     std::string line, token;
@@ -123,8 +129,10 @@ namespace TSPTW {
     }
     if (data.ready[0] != 0)
       throw std::runtime_error("nonzero start-depot ready time is unsupported");
-    // Bound every n-arc tour and waiting-plus-travel arithmetic, including
-    // infeasible prefixes. Models can safely use these as IntVar domains.
+    // A tour has n arcs. Waiting can raise the clock to at most the largest
+    // due time; all subsequent travel adds at most n times the largest arc.
+    // These bounds keep model arithmetic within Gecode integer limits, even
+    // for prefixes that will later fail a time-window constraint.
     const long long cost_limit = n * *std::max_element(data.cost.begin(),data.cost.end());
     const long long time_limit = cost_limit + *std::max_element(data.due.begin(),data.due.end());
     if (time_limit > Gecode::Int::Limits::max)
