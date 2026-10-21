@@ -131,7 +131,7 @@ def validate_strengthening(
 
 def validate_solver(solver: Path, manifest: dict[str, Any]) -> None:
     engines = ("bab", "astar", "cabs")
-    formulations = ("closed", "transition", "eager")
+    formulations = ("closed", "transition")
     for case in manifest["tiny"]:
         path = DATA / case["path"]
         optimum = CHECKER["enumerate_tours"](CHECKER["read_instance"](path))["optimum"]
@@ -139,9 +139,8 @@ def validate_solver(solver: Path, manifest: dict[str, Any]) -> None:
             solver, path, (("min-arcs", "off"), ("min-arcs", "unary"))
         )
         for engine in engines:
-            lazy_tours = None
             for formulation in formulations:
-                summary, solutions = run_solver(
+                summary, _ = run_solver(
                     solver, path, engine, formulation=formulation
                 )
                 assert summary["termination"] == (
@@ -149,11 +148,6 @@ def validate_solver(solver: Path, manifest: dict[str, Any]) -> None:
                 )
                 if optimum:
                     assert summary["incumbent"]["scaled_cost"] == optimum["scaled_cost"]
-                tours = [record["tour"] for record in solutions]
-                if formulation == "transition":
-                    lazy_tours = tours
-                elif formulation == "eager":
-                    assert tours == lazy_tours, (case, engine, lazy_tours, tours)
     with tempfile.TemporaryDirectory(prefix="tsptw-solver-") as directory:
         directory = Path(directory)
         nonmetric = directory / "nonmetric.txt"
@@ -226,19 +220,12 @@ def validate_solver(solver: Path, manifest: dict[str, Any]) -> None:
             "optimum"
         ]
         for engine in engines:
-            lazy_tours = None
-            for formulation in ("transition", "eager"):
-                summary, solutions = run_solver(
-                    solver, improving, engine, formulation=formulation
-                )
-                assert summary["termination"] == "optimal"
-                assert summary["incumbent"]["scaled_cost"] == optimum["scaled_cost"]
-                assert len(solutions) >= 2
-                tours = [record["tour"] for record in solutions]
-                if lazy_tours is None:
-                    lazy_tours = tours
-                else:
-                    assert tours == lazy_tours, (engine, lazy_tours, tours)
+            summary, solutions = run_solver(
+                solver, improving, engine, formulation="transition"
+            )
+            assert summary["termination"] == "optimal"
+            assert summary["incumbent"]["scaled_cost"] == optimum["scaled_cost"]
+            assert len(solutions) >= 2
         # Equal-cost routes still need decisions after cost branching.
         branching = directory / "branching.txt"
         branching.write_text(
@@ -274,8 +261,8 @@ def validate_solver(solver: Path, manifest: dict[str, Any]) -> None:
                 if summary["termination"] == "optimal":
                     assert summary["incumbent"]["scaled_cost"] == branching_optimum
     print(
-        f"passed closed/lazy/eager BAB/A*/CABS: tiny optima/infeasibility, "
-        f"matching transition tours, nonmetric filtering, "
+        f"passed closed/transition BAB/A*/CABS: tiny optima/infeasibility, "
+        f"nonmetric filtering, "
         f"minimum-arc bounds and residual unary propagation, "
         f"checked seeds and stops"
     )

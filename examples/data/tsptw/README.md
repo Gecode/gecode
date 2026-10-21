@@ -1,7 +1,7 @@
 # TSPTW inputs and checking
 
 `examples/tsptw.cpp` solves the travelling salesperson problem with time windows.
-It has a conventional closed CP model and two transition models, with BAB, A*
+It has a conventional closed CP model and a lazy transition model, with BAB, A*
 and CABS search. The bundled data and independent Python checker exercise their
 cost and feasibility rules.
 
@@ -60,7 +60,7 @@ Replace `build/open-search` below with that build directory.
 cmake --build build/open-search --target tsptw -j 8
 build/open-search/bin/tsptw examples/data/tsptw/tiny/waiting.txt --engine bab
 build/open-search/bin/tsptw examples/data/tsptw/tiny/waiting.txt --formulation transition --engine astar
-build/open-search/bin/tsptw examples/data/tsptw/tiny/waiting.txt --formulation eager --engine cabs
+build/open-search/bin/tsptw examples/data/tsptw/tiny/waiting.txt --formulation transition --engine cabs
 uv run --script misc/tsptw-check.py enumerate examples/data/tsptw/tiny/decimal.txt
 uv run --script misc/tsptw-check.py check examples/data/tsptw/published/SolomonPotvinBengio/rc_201.1.txt examples/data/tsptw/published/SolomonPotvinBengio/rc_201.1.txt.tour --cost 444.5425
 c++ -std=c++17 -Ibuild/open-search -I. misc/tsptw-read.cpp -o /tmp/tsptw-read
@@ -74,16 +74,17 @@ and engines against tiny optima, nonmetric cases, bounds, seeds and resource
 stops. Omit `--solver` to check data and readers alone. The checker exits with
 status 1 for invalid data or tours. Enumeration is limited to nine customers.
 
-The default `--formulation closed` uses a costed circuit and reified timing
-constraints. `transition` materializes visit variables as the route grows;
-`eager` allocates the same visit list at the root. Both transition models use
-explicit waiting and depot return checks. `--bound prefix|min-arcs` selects the
-transition lower bound, and `--residual-propagation off|cheap|unary` selects no
+The default `--formulation closed` uses a costed circuit with domain propagation,
+reified timing constraints and maximum-regret branching on arc costs, followed
+by successor branching. `--formulation transition` materializes visit variables
+as the route grows and uses explicit waiting and depot return checks.
+`--bound prefix|min-arcs` selects the transition lower bound, and
+`--residual-propagation off|cheap|unary` selects no
 residual filtering, shortest-path deadline checks, or a temporary unary
 scheduling relaxation. Defaults are `prefix` and `off`. Shortest-path bounds
 preserve soundness for nonmetric arcs.
 
-CABS enables dominance by default for `transition` and `eager`. Among live
+CABS enables dominance by default for `transition`. Among live
 next-layer candidates with the same location and unvisited customers, an earlier
 arrival with no greater prefix cost subsumes a later, no cheaper arrival.
 Use `--dominance off` to compare runs without this pruning.
@@ -94,10 +95,6 @@ time includes reading and preprocessing. CABS also accepts `--max-width N` and
 `--frontier-limit N`, where zero disables the cap. Limits are checked at engine
 boundaries and cannot interrupt propagation. Runs default to one search thread;
 use `--threads N` to change the thread count.
-
-The closed model also accepts `--circuit-propagation dom|val` and
-`--cost-branching regret|size`, defaulting to `dom` and `regret`. Its `rbs`
-engine uses RBS of BAB with Luby scale 1,000 and no-good depth 128.
 
 The executable emits JSON lines: improving `solution` records followed by a
 `summary`. Each tour has exact cost and return time, scaled cost and scale.
