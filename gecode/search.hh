@@ -1209,17 +1209,14 @@ namespace Gecode {
    *
    * Experimental 6.5.0 preview: build with GECODE_ENABLE_EXPERIMENTAL=ON
    * or --enable-experimental; GECODE_HAS_EXPERIMENTAL reports availability.
-   * APIs may change or be removed in future feature releases. The documented
-   * correctness contracts still apply.
+   * APIs may change or be removed in future feature releases.
    *
    * Spaces must implement strict improvement constraints compatible with the
-   * guidance's exact scalar integer objective on solutions. A generated solution
-   * can precede a better one, so the first result need not be optimal.
-   * Continue next() until nullptr with stopped()==false
-   * to prove optimality of the best accepted incumbent, including external
-   * adoption, or infeasibility if no incumbent was accepted. After external
-   * adoption, no new solution does not imply infeasibility. Completeness
-   * requires a finite search tree and sound bounds and improvement constraints.
+   * guidance's exact scalar integer objective on solutions. As with BAB,
+   * next() returns improving solutions until search finishes or stops.
+   * Exhaustion with stopped()==false establishes optimality of the best
+   * solution found or supplied through constrain(), or infeasibility when
+   * there is no solution. Completeness requires a finite search tree.
    * Returned solutions belong to the caller, independently of the engine's
    * incumbent copy.
    *
@@ -1229,19 +1226,14 @@ namespace Gecode {
    * lower-first for either direction. Missing rank falls back to bound order.
    * Both values are cached when a stable branching node enters the frontier.
    * Ordering is fixed for the engine, including native reset; values are not
-   * rekeyed. Rank selects pending branching Spaces and never prunes. Generated
-   * solutions are published immediately, so neither order guarantees the first
-   * result is optimal or has the best rank.
+   * rekeyed. Rank selects pending branching Spaces and never prunes.
+   * Solutions are returned as they are generated.
    *
    * The frontier stores clones; c_d and a_d do not control recomputation.
-   * There is no hard memory guarantee and no-good extraction is empty.
-   * Use BAB as an optimization baseline. Retaining frontier clones can cost
-   * much more memory and cloning work than depth-first search. Start with one
-   * thread and measure a few thread counts on representative instances.
-   * Expensive propagation can benefit from parallel expansion, but frontier
-   * coordination, memory traffic, and changes in search order can outweigh it.
-   * More threads do not necessarily run faster. Neither AStar nor CABS
-   * guarantees a speedup over BAB.
+   * Memory grows with the queued spaces, and no-good extraction is empty.
+   * Compare with BAB using representative instances. Parallel expansion can
+   * reduce propagation time; its cost includes frontier coordination, cloning,
+   * and memory traffic. Choose the worker count by measurement.
    *
    * Options::threads selects sequential or parallel search. Parallel workers
    * select the best currently queued node; concurrent expansions can change
@@ -1257,7 +1249,7 @@ namespace Gecode {
    * preparation on the stable Space.
    * The native Search::Engine::reset interface takes ownership of its root
    * regardless of Options::clone, clearing pending work, incumbent, and
-   * statistics while retaining guidance and ordering.
+   * statistics while preserving guidance and ordering.
    * If guidance or a model operation throws, destroy the engine
    * before further use.
    * \ingroup TaskModelSearch
@@ -1376,8 +1368,7 @@ namespace Gecode {
    *
    * Experimental 6.5.0 preview: build with GECODE_ENABLE_EXPERIMENTAL=ON
    * or --enable-experimental; GECODE_HAS_EXPERIMENTAL reports availability.
-   * APIs may change or be removed in future feature releases. The documented
-   * correctness contracts still apply.
+   * APIs may change or be removed in future feature releases.
    *
    * Each native Choice commit advances one layer. Width starts at one and
    * doubles after a completed pass if discarded bounds still permit improvement
@@ -1388,22 +1379,20 @@ namespace Gecode {
    * selects it. Equal priorities use generation order. Admissible bounds and
    * the optional CABSOptions::dominates predicate justify pruning and completion.
    *
-   * Returned solutions belong to the caller, independently of the engine's
-   * incumbent copy, and strictly improve it. Continue next() until nullptr with
-   * stopped()==false to prove
-   * optimality of the best accepted incumbent, including external adoption,
-   * or infeasibility if none was accepted. A shallow goal can precede a deeper
-   * improvement; the first result need not be optimal. No new solution after
-   * external adoption does not imply infeasibility. Publishing a solution
-   * preserves unfinished passes.
+   * As with BAB, next() returns improving solutions until search finishes or
+   * stops. Exhaustion with stopped()==false establishes optimality of the best
+   * solution found or supplied through constrain(), or infeasibility when
+   * there is no solution. Returned solutions belong to the caller,
+   * independently of the engine's incumbent copy. Returning a solution
+   * preserves the unfinished pass.
    * After an ordinary stop, raise or reset its limit and call next() to resume.
    * Worker control also preserves continuation, including a zero-worker pause.
-   * Width/frontier
-   * limits and width overflow report stopped() until native Engine::reset.
+   * Width/frontier limits and width overflow report stopped() until native
+   * Engine::reset.
    * A complete pass can prove its result at the maximum width; a maximum of
    * three allows passes at widths one and two. Native reset takes ownership
    * of its root regardless of Options::clone and clears the incumbent, pending
-   * work, intrinsic stops, and statistics while retaining guidance and CABS options.
+   * work, intrinsic stops, and statistics while preserving guidance and CABS options.
    *
    * The frontier quota includes current-layer entries, next-layer candidates,
    * and selected parents. In parallel search, each unfinished expansion reserves
@@ -1419,8 +1408,8 @@ namespace Gecode {
    * generation order and returned improvements can differ from sequential search.
    * Stop and worker-count checks follow AStar. next() waits for active model
    * operations before returning and rethrows worker failures on the caller.
-   * Tracing is unsupported. Guidance and strict
-   * improvement constraints obey HeuristicGuidance's scalar integer contract.
+   * Tracing is unsupported. Guidance and strict improvement constraints obey
+   * HeuristicGuidance's scalar integer contract.
    * Brancher preparation follows AStar. Statistics depth counts committed
    * edges; restarts count widening passes.
    * If guidance, dominance, a key callback, or a model operation throws,

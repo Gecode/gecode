@@ -127,8 +127,7 @@ Experimental: true
 Add experimental AStar and CABS search for 6.5.0, with bound and rank guidance
 and optional rank-first ordering for AStar. Enable with
 --enable-experimental or GECODE_ENABLE_EXPERIMENTAL=ON; the preview is disabled
-by default. Preview APIs may change or be removed in future feature releases;
-their documented search correctness contracts still apply.
+by default. Preview APIs may change or be removed in future feature releases.
 CABS accepts an optional model-defined dominance predicate for live candidates
 in the next layer. An optional cached key indexes live candidates for dominance
 comparisons. The TSPTW transition example enables keyed dominance by default.
