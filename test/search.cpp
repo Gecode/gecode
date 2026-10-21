@@ -186,17 +186,15 @@ namespace Test {
         s.commit(*choice,static_cast<unsigned int>(action-actions.begin()));
         return !s.failed();
       }
-      static bool replay(Transition::Representation representation,
-                         Transition::ResidualPropagation propagation=Transition::OFF) {
+      static bool replay(Transition::ResidualPropagation propagation=Transition::OFF) {
         const auto data=instance();
-        Transition root(data,representation,propagation);
+        Transition root(data,propagation);
         Gecode::Search::Statistics stat;
-        const bool lazy=representation==Transition::LAZY;
-        if (root.status()!=SS_BRANCH || root.allocated_positions()!=(lazy ? 0 : 4))
+        if (root.status()!=SS_BRANCH || root.allocated_positions()!=0)
           return false;
         std::unique_ptr<Transition> absent(static_cast<Transition*>(root.clone()));
         root.prepare(stat);
-        if (root.allocated_positions()!=(lazy ? 1 : 4) ||
+        if (root.allocated_positions()!=1 ||
             root.position(0).assigned() || root.depth || root.location ||
             root.time || root.cost() || root.unvisited!=std::vector<int>({1,2,3}))
           return false;
@@ -213,7 +211,7 @@ namespace Test {
         std::unique_ptr<Transition> next(static_cast<Transition*>(absent->clone()));
         absent->prepare(stat);
         if (absent->depth!=1 || absent->cost()!=1 ||
-            absent->allocated_positions()!=(lazy ? 2 : 4) || absent->position(1).assigned())
+            absent->allocated_positions()!=2 || absent->position(1).assigned())
           return false;
         original.reset(absent->choice());
         Archive prefix_archive; original->archive(prefix_archive);
@@ -223,7 +221,7 @@ namespace Test {
             next->time!=6 || next->position(1).val()!=2 || absent->position(1).assigned())
           return false;
 
-        Transition optimum(data,representation,propagation);
+        Transition optimum(data,propagation);
         for (int node : {2,3,1,0}) if (!visit(optimum,node)) return false;
         if (optimum.status()!=SS_SOLVED || optimum.cost()!=5) return false;
         std::unique_ptr<Transition> cut(static_cast<Transition*>(absent->clone()));
@@ -240,9 +238,9 @@ namespace Test {
           next->cost()==23 && next->time==27 && next->allocated_positions()==4 &&
           next->tour()==std::vector<int>({1,2,3}) && root.depth==0 && absent->depth==1;
       }
-      static bool continuation(Transition::Representation representation, int kind) {
+      static bool continuation(int kind) {
         const auto data=instance();
-        Transition root(data,representation), incumbent(data,representation);
+        Transition root(data), incumbent(data);
         for (int node : {3,1,2,0}) if (!visit(incumbent,node)) return false;
         if (incumbent.status()!=SS_SOLVED || incumbent.cost()!=6) return false;
         Gecode::Search::NodeStop stop(10000);
@@ -325,7 +323,7 @@ namespace Test {
         for (const auto& suffix : suffixes) if (bound>suffix.cost) return false;
 
         for (auto propagation : {Transition::CHEAP,Transition::UNARY}) {
-          Transition inferred(state.data,Transition::LAZY,propagation);
+          Transition inferred(state.data,propagation);
           bool survived=inferred.status()!=SS_FAILED;
           for (int node : prefix) {
             if (!survived) break;
@@ -365,43 +363,42 @@ namespace Test {
         const auto suffixes=completions(reference);
         std::int64_t optimum=std::numeric_limits<std::int64_t>::max();
         for (const auto& suffix : suffixes) optimum=std::min(optimum,suffix.cost);
-        for (auto representation : {Transition::LAZY,Transition::EAGER})
-          for (auto propagation : {Transition::OFF,Transition::CHEAP,Transition::UNARY}) {
-            if (data->n==5) {
-              auto label=[&](std::initializer_list<int> prefix) {
-                auto state=std::make_unique<Transition>(data,representation,propagation);
-                for (int node : prefix)
-                  if (!visit(*state,node)) return std::unique_ptr<Transition>{};
-                return state;
-              };
-              auto a=label({1,4,2}), b=label({4,1,2});
-              // The earlier arrival costs more: neither label subsumes the other.
-              if (!a || !b || a->time!=21 || a->cost()!=9 ||
-                  b->time!=20 || b->cost()!=11 || Transition::dominates(*a,*b) ||
-                  Transition::dominates(*b,*a)) return false;
-              a=label({1,3,2}); b=label({3,1,2});
-              if (!a || !b || !Transition::dominates(*a,*a) ||
-                  !Transition::dominates(*a,*b) || Transition::dominates(*b,*a) ||
-                  Transition::dominates(*a,reference) ||
-                  Transition::dominance_key(*a)!=Transition::dominance_key(*b))
-                return false;
-            }
-            for (auto bound : {Transition::PREFIX,Transition::MIN_ARCS})
-              for (bool enabled : {false,true}) {
-                Transition root(data,representation,propagation);
-                Gecode::Search::CABSOptions options;
-                if (enabled) {
-                  options.dominates=Transition::dominates;
-                  options.dominance_key=Transition::dominance_key;
-                }
-                Gecode::CABS<Transition> engine(&root,Transition::guidance(bound),
-                  Gecode::Search::Options::def,options);
-                std::int64_t best=std::numeric_limits<std::int64_t>::max();
-                while (std::unique_ptr<Transition> solution{engine.next()})
-                  best=solution->cost();
-                if (engine.stopped() || best!=optimum) return false;
-              }
+        for (auto propagation : {Transition::OFF,Transition::CHEAP,Transition::UNARY}) {
+          if (data->n==5) {
+            auto label=[&](std::initializer_list<int> prefix) {
+              auto state=std::make_unique<Transition>(data,propagation);
+              for (int node : prefix)
+                if (!visit(*state,node)) return std::unique_ptr<Transition>{};
+              return state;
+            };
+            auto a=label({1,4,2}), b=label({4,1,2});
+            // The earlier arrival costs more: neither label subsumes the other.
+            if (!a || !b || a->time!=21 || a->cost()!=9 ||
+                b->time!=20 || b->cost()!=11 || Transition::dominates(*a,*b) ||
+                Transition::dominates(*b,*a)) return false;
+            a=label({1,3,2}); b=label({3,1,2});
+            if (!a || !b || !Transition::dominates(*a,*a) ||
+                !Transition::dominates(*a,*b) || Transition::dominates(*b,*a) ||
+                Transition::dominates(*a,reference) ||
+                Transition::dominance_key(*a)!=Transition::dominance_key(*b))
+              return false;
           }
+          for (auto bound : {Transition::PREFIX,Transition::MIN_ARCS})
+            for (bool enabled : {false,true}) {
+              Transition root(data,propagation);
+              Gecode::Search::CABSOptions options;
+              if (enabled) {
+                options.dominates=Transition::dominates;
+                options.dominance_key=Transition::dominance_key;
+              }
+              Gecode::CABS<Transition> engine(&root,Transition::guidance(bound),
+                Gecode::Search::Options::def,options);
+              std::int64_t best=std::numeric_limits<std::int64_t>::max();
+              while (std::unique_ptr<Transition> solution{engine.next()})
+                best=solution->cost();
+              if (engine.stopped() || best!=optimum) return false;
+            }
+        }
         return true;
       }
       static bool bounds_and_inference(void) {
@@ -431,13 +428,10 @@ namespace Test {
     public:
       TSPTWTransitionTest(void) : Base("Search::TSPTW::Transition", TestTags::check()) {}
       bool run(void) override {
-        for (auto representation : {Transition::LAZY,Transition::EAGER}) {
-          if (!replay(representation) || !replay(representation,Transition::CHEAP) ||
-              !replay(representation,Transition::UNARY))
-            return false;
-          for (int kind : {0,1,2})
-            if (!continuation(representation,kind)) return false;
-        }
+        if (!replay() || !replay(Transition::CHEAP) || !replay(Transition::UNARY))
+          return false;
+        for (int kind : {0,1,2})
+          if (!continuation(kind)) return false;
         return bounds_and_inference();
       }
     } tsptwTransitionTest;

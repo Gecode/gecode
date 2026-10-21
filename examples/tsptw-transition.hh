@@ -12,7 +12,6 @@ namespace TSPTW {
   /// One concrete visit per search edge, with an explicit depot return.
   class Transition : public Gecode::Space {
   public:
-    enum Representation { LAZY, EAGER };
     enum BoundMode { PREFIX, MIN_ARCS };
     enum ResidualPropagation { OFF, CHEAP, UNARY };
     std::shared_ptr<const Instance> data;
@@ -21,7 +20,6 @@ namespace TSPTW {
     bool returned=false;
 
     explicit Transition(std::shared_ptr<const Instance> instance,
-                        Representation representation=LAZY,
                         ResidualPropagation propagation=OFF);
     Transition(Transition& s);
     Gecode::Space* copy(void) override { return new Transition(*this); }
@@ -29,10 +27,10 @@ namespace TSPTW {
     std::vector<int> tour(void) const;
     int cost(void) const { return prefix_cost; }
     int allocated_positions(void) const {
-      return representation==LAZY ? lazy.known_length() : eager.size();
+      return positions.known_length();
     }
     Gecode::IntVar position(int p) const {
-      return representation==LAZY ? lazy[p] : eager[p];
+      return positions[p];
     }
     std::vector<int> actions(void) const {
       std::vector<int> result;
@@ -74,12 +72,10 @@ namespace TSPTW {
 
   private:
     class VisitBrancher;
-    Representation representation;
     ResidualPropagation propagation;
     std::shared_ptr<const std::vector<std::int64_t>> distance;
     std::vector<int> residual_actions;
-    Gecode::OpenIntVarList lazy;
-    Gecode::IntVarArray eager;
+    Gecode::OpenIntVarList positions;
     int ceiling;
 
     bool applicable(int node) const {
@@ -91,7 +87,7 @@ namespace TSPTW {
     }
     bool refresh_inference(void);
     Gecode::IntVar materialize(int p) {
-      return representation==LAZY ? lazy.get(*this,p) : eager[p];
+      return positions.get(*this,p);
     }
   };
 
@@ -154,7 +150,7 @@ namespace TSPTW {
       s.depth++;
       if (node==0) {
         s.returned=true;
-        if (s.representation==LAZY) s.lazy.close(home);
+        s.positions.close(home);
       } else {
         s.unvisited.erase(customer);
       }
@@ -178,23 +174,19 @@ namespace TSPTW {
   };
 
   inline Transition::Transition(std::shared_ptr<const Instance> instance,
-                                Representation representation0,
                                 ResidualPropagation propagation0)
     : data(std::move(instance)), unvisited(data->n-1),
-      representation(representation0), propagation(propagation0),
+      propagation(propagation0),
       ceiling(data->cost_limit+1) {
     std::iota(unvisited.begin(),unvisited.end(),1);
     if (propagation!=OFF)
       distance=std::make_shared<const std::vector<std::int64_t>>(
         shortest_paths(*data));
-    if (representation==LAZY)
-      lazy=Gecode::OpenIntVarList(*this,
-        [](Gecode::Space& home, int) {
-          const auto& s=static_cast<const Transition&>(home);
-          return Gecode::IntVar(home,0,s.data->n-1);
-        },data->n);
-    else
-      eager=Gecode::IntVarArray(*this,data->n,0,data->n-1);
+    positions=Gecode::OpenIntVarList(*this,
+      [](Gecode::Space& home, int) {
+        const auto& s=static_cast<const Transition&>(home);
+        return Gecode::IntVar(home,0,s.data->n-1);
+      },data->n);
     (void) new (*this) VisitBrancher(*this);
     if (!refresh_inference() || actions().empty()) fail();
   }
@@ -202,11 +194,10 @@ namespace TSPTW {
   inline Transition::Transition(Transition& s)
     : Space(s), data(s.data), unvisited(s.unvisited), location(s.location),
       time(s.time), prefix_cost(s.prefix_cost), depth(s.depth),
-      returned(s.returned), representation(s.representation),
+      returned(s.returned),
       propagation(s.propagation), distance(s.distance),
       residual_actions(s.residual_actions), ceiling(s.ceiling) {
-    if (representation==LAZY) lazy.update(*this,s.lazy);
-    else eager.update(*this,s.eager);
+    positions.update(*this,s.positions);
   }
 
   inline std::int64_t Transition::bound(BoundMode mode) const {
