@@ -9,7 +9,9 @@ predicate fzn_cumulatives(array[int] of var int: s,
                           int: min_m) =
   if is_fixed(b) then
     % Propagator only supports fixed bounds
-    gecode_cumulatives(s, d, r, [m_i - min_m | m_i in m], fix(b), upper)
+    gecode_cumulatives_flex(s, d,
+      [s[i] + d[i] | i in index_set(s)], r,
+      [m_i - min_m | m_i in m], fix(b), upper)
   else
     fzn_cumulatives_decomp(s, d, r, m, b, upper)
   endif;
@@ -20,3 +22,9 @@ predicate gecode_cumulatives(array[int] of var int: s,
                       array[int] of var int: m,
                       array[int] of int: b,
                       bool: upper);
+
+
+predicate gecode_cumulatives_flex(array[int] of var int: s,
+  array[int] of var int: d, array[int] of var int: e,
+  array[int] of var int: r, array[int] of var int: m,
+  array[int] of int: b, bool: upper);
