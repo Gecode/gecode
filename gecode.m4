@@ -288,6 +288,43 @@ AC_DEFUN([AC_CXX_COMPILER_VENDOR],
      $1="$ac_cv_cxx_compiler_vendor"])dnl
 
 
+dnl Select a working C++17 mode while preserving a newer user-selected mode.
+AC_DEFUN([AC_GECODE_CXX17],
+  [AC_LANG_PUSH([C++])
+   AC_MSG_CHECKING([for C++17 support])
+   ac_gecode_cxx17_flags="-std=c++17"
+   case $ac_gecode_compiler_vendor:$gecode_host_os in
+     microsoft:*|intel:windows*)
+       CXXFLAGS="$CXXFLAGS -TP"
+       ac_gecode_cxx17_flags="-std:c++17"
+       ;;
+   esac
+   ac_gecode_cxx17_save_CXXFLAGS=$CXXFLAGS
+   ac_gecode_cxx17_supported=no
+   for ac_gecode_cxx17_mode in default cxx17; do
+     if test "$ac_gecode_cxx17_mode" = cxx17; then
+       CXXFLAGS="$ac_gecode_cxx17_save_CXXFLAGS $ac_gecode_cxx17_flags"
+     fi
+     AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
+#include <optional>
+#include <type_traits>
+#if defined(_MSVC_LANG)
+static_assert(_MSVC_LANG >= 201703L, "C++17 is required");
+#else
+static_assert(__cplusplus >= 201703L, "C++17 is required");
+#endif
+]], [[
+std::optional<int> value(17);
+if constexpr (std::is_same_v<decltype(value), std::optional<int>>)
+  return *value == 17 ? 0 : 1;
+]])], [ac_gecode_cxx17_supported=yes; break])
+   done
+   AC_MSG_RESULT([$ac_gecode_cxx17_supported])
+   if test "$ac_gecode_cxx17_supported" != yes; then
+     AC_MSG_ERROR([Gecode requires a C++17-capable compiler and standard library.])
+   fi
+   AC_LANG_POP([C++])])
+
 AC_DEFUN([AC_CHECK_GCC_VERSION],
     [
     AC_LANG_PUSH(C)
@@ -675,7 +712,6 @@ AC_DEFUN([AC_GECODE_GCC_GENERAL_SWITCHES],
   AC_GECODE_CHECK_COMPILERFLAG([-Wall])
   AC_GECODE_CHECK_COMPILERFLAG([-Wno-unknown-pragmas])
   AC_GECODE_CHECK_COMPILERFLAG([-pipe])
-  AC_GECODE_CHECK_COMPILERFLAG([-std=c++17])
 
   AC_GECODE_CHECK_CXXFLAG(-ggdb,
      AC_GECODE_ADD_TO_COMPILERFLAGS(-ggdb),

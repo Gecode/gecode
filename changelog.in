@@ -74,6 +74,14 @@ Date: unreleased
 This is the development changelog for the next Gecode release.
 
 [ENTRY]
+Module: other
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Require a C++17-capable compiler and standard library in Autoconf builds.
+Select a working language mode when needed and preserve supported newer modes.
+
+[ENTRY]
 Module: int
 What:   performance
 Rank:   minor

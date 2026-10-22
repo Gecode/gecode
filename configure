@@ -3348,6 +3348,8 @@ GECODE_SOVERSION=${ac_gecode_soversion}
 
 
 
+
+
 # Test for platform specific behaviour of arithmetic
 
 
@@ -5599,61 +5601,45 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
        ac_cv_cxx_compiler_vendor=${with_compiler_vendor}
      fi
      ac_gecode_compiler_vendor="$ac_cv_cxx_compiler_vendor"
-case $ac_gecode_compiler_vendor in
-gnu)
-
-    ac_ext=c
-ac_cpp='$CPP $CPPFLAGS'
-ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
-ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
-ac_compiler_gnu=$ac_cv_c_compiler_gnu
-
-    cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-
-     #if __GNUC__ < 4 || (__GNUC__ == 4 && __GNUC_MINOR__ < 2)
-     #error Version too old
-     really, the version is too old
-     #endif
-int
-main (void)
-{
-
-  ;
-  return 0;
-}
-_ACEOF
-if ac_fn_c_try_compile "$LINENO"
-then :
-
-else case e in #(
-  e) as_fn_error $? "Your version of gcc is too old. You need at least version 4.2." "$LINENO" 5
-     ;;
-esac
-fi
-rm -f core conftest.err conftest.$ac_objext conftest.beam conftest.$ac_ext
-    ac_ext=cpp
+ac_ext=cpp
 ac_cpp='$CXXCPP $CPPFLAGS'
 ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
 ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
 ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 
-    ac_ext=cpp
-ac_cpp='$CXXCPP $CPPFLAGS'
-ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
-ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
-ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
-
-    cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+   { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for C++17 support" >&5
+printf %s "checking for C++17 support... " >&6; }
+   ac_gecode_cxx17_flags="-std=c++17"
+   case $ac_gecode_compiler_vendor:$gecode_host_os in
+     microsoft:*|intel:windows*)
+       CXXFLAGS="$CXXFLAGS -TP"
+       ac_gecode_cxx17_flags="-std:c++17"
+       ;;
+   esac
+   ac_gecode_cxx17_save_CXXFLAGS=$CXXFLAGS
+   ac_gecode_cxx17_supported=no
+   for ac_gecode_cxx17_mode in default cxx17; do
+     if test "$ac_gecode_cxx17_mode" = cxx17; then
+       CXXFLAGS="$ac_gecode_cxx17_save_CXXFLAGS $ac_gecode_cxx17_flags"
+     fi
+     cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 
-     #if __GNUC__ < 4 || (__GNUC__ == 4 && __GNUC_MINOR__ < 2)
-     #error Version too old
-     really, the version is too old
-     #endif
+#include <optional>
+#include <type_traits>
+#if defined(_MSVC_LANG)
+static_assert(_MSVC_LANG >= 201703L, "C++17 is required");
+#else
+static_assert(__cplusplus >= 201703L, "C++17 is required");
+#endif
+
 int
 main (void)
 {
+
+std::optional<int> value(17);
+if constexpr (std::is_same_v<decltype(value), std::optional<int>>)
+  return *value == 17 ? 0 : 1;
 
   ;
   return 0;
@@ -5661,66 +5647,21 @@ main (void)
 _ACEOF
 if ac_fn_cxx_try_compile "$LINENO"
 then :
-
-else case e in #(
-  e) as_fn_error $? "Your version of g++ is too old. You need at least version 4.2." "$LINENO" 5
-     ;;
-esac
+  ac_gecode_cxx17_supported=yes; break
 fi
 rm -f core conftest.err conftest.$ac_objext conftest.beam conftest.$ac_ext
-    ac_ext=cpp
+   done
+   { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $ac_gecode_cxx17_supported" >&5
+printf "%s\n" "$ac_gecode_cxx17_supported" >&6; }
+   if test "$ac_gecode_cxx17_supported" != yes; then
+     as_fn_error $? "Gecode requires a C++17-capable compiler and standard library." "$LINENO" 5
+   fi
+   ac_ext=cpp
 ac_cpp='$CXXCPP $CPPFLAGS'
 ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
 ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
 ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 
-
-  ;;
-intel)
-  ;;
-microsoft)
-
-    ac_ext=c
-ac_cpp='$CPP $CPPFLAGS'
-ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
-ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
-ac_compiler_gnu=$ac_cv_c_compiler_gnu
-
-    cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-
-     #if _MSC_VER < 1800
-     #error Version too old
-     really, the version is too old
-     #endif
-int
-main (void)
-{
-
-  ;
-  return 0;
-}
-_ACEOF
-if ac_fn_cxx_try_compile "$LINENO"
-then :
-
-else case e in #(
-  e) as_fn_error $? "Your version of cl is too old. You need at least Microsoft Visual C++ 2013." "$LINENO" 5
-    ac_ext=cpp
-ac_cpp='$CXXCPP $CPPFLAGS'
-ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
-ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
-ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
-
-     ;;
-esac
-fi
-rm -f core conftest.err conftest.$ac_objext conftest.beam conftest.$ac_ext
-
-  ;;
-*)
-  ;;
-esac
 
 
   # Check whether --enable-resource was given.
@@ -8255,124 +8196,6 @@ printf "%s\n" "no" >&6; }
 printf "%s\n" "yes" >&6; }
 
         CFLAGS="-pipe${CFLAGS:+ }${CFLAGS}"
-      fi
-
-else case e in #(
-  e) CFLAGS="${ac_gecode_save_CFLAGS}"
-      { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
-printf "%s\n" "no" >&6; }
-      : ;;
-esac
-fi
-rm -f core conftest.err conftest.$ac_objext conftest.beam conftest.$ac_ext
-   ac_ext=cpp
-ac_cpp='$CXXCPP $CPPFLAGS'
-ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
-ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
-ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
-
-   fi
-
-   if test "${ac_cv_cxx_compiler_vendor}" = "microsoft"; then
-     { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking whether ${CXX} accepts -std=c++17" >&5
-printf %s "checking whether ${CXX} accepts -std=c++17... " >&6; }
-   if ${CXX} -std=c++17 2>&1 | grep "ignoring unknown option" -q; then
-     { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
-printf "%s\n" "no" >&6; }
-     :
-   else
-     { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: yes" >&5
-printf "%s\n" "yes" >&6; }
-
-       CXXFLAGS="-std=c++17${CXXFLAGS:+ }${CXXFLAGS}"
-       CFLAGS="-std=c++17${CFLAGS:+ }${CFLAGS}"
-   fi
-   else
-     { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking whether ${CXX} accepts -std=c++17" >&5
-printf %s "checking whether ${CXX} accepts -std=c++17... " >&6; }
-   ac_gecode_save_CXXFLAGS="${CXXFLAGS}"
-   CXXFLAGS="-std=c++17${CXXFLAGS:+ }${CXXFLAGS} -Werror"
-   ac_ext=cpp
-ac_cpp='$CXXCPP $CPPFLAGS'
-ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
-ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
-ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
-
-   cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-
-int
-main (void)
-{
-
-  ;
-  return 0;
-}
-_ACEOF
-if ac_fn_cxx_try_compile "$LINENO"
-then :
-  if grep -q "unrecognized\|argument unused" conftest.err; then
-        CXXFLAGS="${ac_gecode_save_CXXFLAGS}"
-        { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
-printf "%s\n" "no" >&6; }
-        :
-      else
-        CXXFLAGS="${ac_gecode_save_CXXFLAGS}"
-        { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: yes" >&5
-printf "%s\n" "yes" >&6; }
-
-        CXXFLAGS="-std=c++17${CXXFLAGS:+ }${CXXFLAGS}"
-      fi
-
-else case e in #(
-  e) CXXFLAGS="${ac_gecode_save_CXXFLAGS}"
-      { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
-printf "%s\n" "no" >&6; }
-      : ;;
-esac
-fi
-rm -f core conftest.err conftest.$ac_objext conftest.beam conftest.$ac_ext
-   ac_ext=cpp
-ac_cpp='$CXXCPP $CPPFLAGS'
-ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
-ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
-ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
-
-
-   { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking whether ${CC} accepts -std=c++17" >&5
-printf %s "checking whether ${CC} accepts -std=c++17... " >&6; }
-   ac_gecode_save_CFLAGS="${CFLAGS}"
-   CFLAGS="-std=c++17${CFLAGS:+ }${CFLAGS} -Werror"
-   ac_ext=c
-ac_cpp='$CPP $CPPFLAGS'
-ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
-ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
-ac_compiler_gnu=$ac_cv_c_compiler_gnu
-
-   cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-
-int
-main (void)
-{
-
-  ;
-  return 0;
-}
-_ACEOF
-if ac_fn_c_try_compile "$LINENO"
-then :
-  if grep -q "unrecognized\|argument unused" conftest.err; then
-        CFLAGS="${ac_gecode_save_CFLAGS}"
-        { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
-printf "%s\n" "no" >&6; }
-        :
-      else
-        CFLAGS="${ac_gecode_save_CFLAGS}"
-        { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: yes" >&5
-printf "%s\n" "yes" >&6; }
-
-        CFLAGS="-std=c++17${CFLAGS:+ }${CFLAGS}"
       fi
 
 else case e in #(
@@ -11436,124 +11259,6 @@ printf "%s\n" "no" >&6; }
 printf "%s\n" "yes" >&6; }
 
         CFLAGS="-pipe${CFLAGS:+ }${CFLAGS}"
-      fi
-
-else case e in #(
-  e) CFLAGS="${ac_gecode_save_CFLAGS}"
-      { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
-printf "%s\n" "no" >&6; }
-      : ;;
-esac
-fi
-rm -f core conftest.err conftest.$ac_objext conftest.beam conftest.$ac_ext
-   ac_ext=cpp
-ac_cpp='$CXXCPP $CPPFLAGS'
-ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
-ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
-ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
-
-   fi
-
-   if test "${ac_cv_cxx_compiler_vendor}" = "microsoft"; then
-     { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking whether ${CXX} accepts -std=c++17" >&5
-printf %s "checking whether ${CXX} accepts -std=c++17... " >&6; }
-   if ${CXX} -std=c++17 2>&1 | grep "ignoring unknown option" -q; then
-     { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
-printf "%s\n" "no" >&6; }
-     :
-   else
-     { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: yes" >&5
-printf "%s\n" "yes" >&6; }
-
-       CXXFLAGS="-std=c++17${CXXFLAGS:+ }${CXXFLAGS}"
-       CFLAGS="-std=c++17${CFLAGS:+ }${CFLAGS}"
-   fi
-   else
-     { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking whether ${CXX} accepts -std=c++17" >&5
-printf %s "checking whether ${CXX} accepts -std=c++17... " >&6; }
-   ac_gecode_save_CXXFLAGS="${CXXFLAGS}"
-   CXXFLAGS="-std=c++17${CXXFLAGS:+ }${CXXFLAGS} -Werror"
-   ac_ext=cpp
-ac_cpp='$CXXCPP $CPPFLAGS'
-ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
-ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
-ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
-
-   cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-
-int
-main (void)
-{
-
-  ;
-  return 0;
-}
-_ACEOF
-if ac_fn_cxx_try_compile "$LINENO"
-then :
-  if grep -q "unrecognized\|argument unused" conftest.err; then
-        CXXFLAGS="${ac_gecode_save_CXXFLAGS}"
-        { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
-printf "%s\n" "no" >&6; }
-        :
-      else
-        CXXFLAGS="${ac_gecode_save_CXXFLAGS}"
-        { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: yes" >&5
-printf "%s\n" "yes" >&6; }
-
-        CXXFLAGS="-std=c++17${CXXFLAGS:+ }${CXXFLAGS}"
-      fi
-
-else case e in #(
-  e) CXXFLAGS="${ac_gecode_save_CXXFLAGS}"
-      { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
-printf "%s\n" "no" >&6; }
-      : ;;
-esac
-fi
-rm -f core conftest.err conftest.$ac_objext conftest.beam conftest.$ac_ext
-   ac_ext=cpp
-ac_cpp='$CXXCPP $CPPFLAGS'
-ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
-ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
-ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
-
-
-   { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking whether ${CC} accepts -std=c++17" >&5
-printf %s "checking whether ${CC} accepts -std=c++17... " >&6; }
-   ac_gecode_save_CFLAGS="${CFLAGS}"
-   CFLAGS="-std=c++17${CFLAGS:+ }${CFLAGS} -Werror"
-   ac_ext=c
-ac_cpp='$CPP $CPPFLAGS'
-ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
-ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
-ac_compiler_gnu=$ac_cv_c_compiler_gnu
-
-   cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-
-int
-main (void)
-{
-
-  ;
-  return 0;
-}
-_ACEOF
-if ac_fn_c_try_compile "$LINENO"
-then :
-  if grep -q "unrecognized\|argument unused" conftest.err; then
-        CFLAGS="${ac_gecode_save_CFLAGS}"
-        { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
-printf "%s\n" "no" >&6; }
-        :
-      else
-        CFLAGS="${ac_gecode_save_CFLAGS}"
-        { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: yes" >&5
-printf "%s\n" "yes" >&6; }
-
-        CFLAGS="-std=c++17${CFLAGS:+ }${CFLAGS}"
       fi
 
 else case e in #(
