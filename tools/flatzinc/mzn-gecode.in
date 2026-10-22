@@ -38,8 +38,7 @@ case "$datadir_spec" in
     *)  datadir=$(CDPATH= cd -- "$script_dir/$datadir_spec" && pwd) ;;
 esac
 if command -v minizinc >/dev/null 2>&1; then
-    MZN_CMD=minizinc
+    exec minizinc --solver "$datadir/minizinc/solvers/gecode.msc" "$@"
 else
-    MZN_CMD=mzn-fzn
+    FLATZINC_CMD="$script_dir/fzn-gecode" exec mzn-fzn -I "$datadir/minizinc/gecode" "$@"
 fi
-FLATZINC_CMD="$script_dir/fzn-gecode" "$MZN_CMD" -I "$datadir/minizinc/gecode" "$@"

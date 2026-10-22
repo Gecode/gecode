@@ -34,7 +34,6 @@ rem
 
 setlocal
 set "SCRIPT_DIR=%~dp0"
-set "FLATZINC_CMD=%SCRIPT_DIR%fzn-gecode.exe"
 set "DATADIR=@GECODE_MZN_DATADIR_FROM_BINDIR_WIN@"
 if not "%DATADIR:~1,1%"==":" if not "%DATADIR:~0,1%"=="\" if not "%DATADIR:~0,1%"=="/" set "DATADIR=%SCRIPT_DIR%%DATADIR%"
-minizinc -I "%DATADIR%\minizinc\gecode" %*
+minizinc --solver "%DATADIR%\minizinc\solvers\gecode.msc" %*
