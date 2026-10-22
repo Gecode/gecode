@@ -1483,13 +1483,13 @@ namespace Gecode { namespace FlatZinc {
           for (int i=n; i--;)
             durationI[i] = duration[i].val();
           unshare(s,start);
-          unary(s,start,durationI);
+          unary(s,start,durationI,s.ann2ipl(ann));
         } else {
           IntVarArgs end(n);
           for (int i=n; i--;)
             end[i] = expr(s,start[i]+duration[i]);
           unshare(s,start);
-          unary(s,start,duration,end);
+          unary(s,start,duration,end,s.ann2ipl(ann));
         }
       } else if (nonzeroDuration && height.assigned()) {
         IntArgs heightI(n);
@@ -1499,12 +1499,12 @@ namespace Gecode { namespace FlatZinc {
           IntArgs durationI(n);
           for (int i=n; i--;)
             durationI[i] = duration[i].val();
-          cumulative(s, bound, start, durationI, heightI);
+          cumulative(s, bound, start, durationI, heightI, s.ann2ipl(ann));
         } else {
           IntVarArgs end(n);
           for (int i = n; i--; )
             end[i] = expr(s,start[i]+duration[i]);
-          cumulative(s, bound, start, duration, end, heightI);
+          cumulative(s, bound, start, duration, end, heightI, s.ann2ipl(ann));
         }
       } else if (nonzeroDuration && bound.assigned()) {
         IntArgs machine = IntArgs::create(n,0,0);
@@ -1558,20 +1558,20 @@ namespace Gecode { namespace FlatZinc {
       sequence(s, x, S, q, l, u, s.ann2ipl(ann));
     }
 
-    void p_schedule_unary(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
+    void p_schedule_unary(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
       IntVarArgs x = s.arg2intvarargs(ce[0]);
       IntArgs p = s.arg2intargs(ce[1]);
       unshare(s,x);
-      unary(s, x, p);
+      unary(s, x, p, s.ann2ipl(ann));
     }
 
     void p_schedule_unary_optional(FlatZincSpace& s, const ConExpr& ce,
-                                   AST::Node*) {
+                                   AST::Node* ann) {
       IntVarArgs x = s.arg2intvarargs(ce[0]);
       IntArgs p = s.arg2intargs(ce[1]);
       BoolVarArgs m = s.arg2boolvarargs(ce[2]);
       unshare(s,x);
-      unary(s, x, p, m);
+      unary(s, x, p, m, s.ann2ipl(ann));
     }
 
     void p_circuit(FlatZincSpace& s, const ConExpr& ce, AST::Node *ann) {

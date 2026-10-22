@@ -34,6 +34,8 @@
 #include "test/flatzinc.hh"
 #include <gecode/flatzinc/ast.hh>
 
+#include <memory>
+
 namespace Test { namespace FlatZinc {
   namespace {
     // Annotations preserve both consistency and algorithm flags.
@@ -58,6 +60,37 @@ namespace Test { namespace FlatZinc {
         return true;
       }
     } algorithm_annotations;
+
+    /// Advanced cumulative propagation detects an overload before search
+    class CumulativeAlgorithmAnnotations : public Base {
+    public:
+      CumulativeAlgorithmAnnotations(void)
+        : Base("FlatZinc::NativeRegistry::CumulativeAlgorithmAnnotations",
+               TestTags::check()) {}
+      virtual bool run(void) {
+        const char* levels[] = {"gecode_basic_propagation",
+          "gecode_advanced_propagation", "gecode_full_propagation"};
+        for (int i=0; i<3; i++) {
+          std::stringstream source;
+          source << "var 1..4:a; var 0..6:b; var 2..6:c; var 0..1:e; "
+                    "constraint gecode_cumulatives([a,b,c,0,e],"
+                    "[3,1,1,2,4],[3,3,1,2,1],3) :: " << levels[i]
+                 << "; solve satisfy;";
+          Gecode::FlatZinc::Printer printer;
+          std::unique_ptr<Gecode::FlatZinc::FlatZincSpace> space(
+            Gecode::FlatZinc::parse(source, printer, olog));
+          if (!space)
+            return false;
+          const bool failed = space->status() == Gecode::SS_FAILED;
+          if (failed != (i != 0)) {
+            olog << "Unexpected root propagation for " << levels[i]
+                 << std::endl;
+            return false;
+          }
+        }
+        return true;
+      }
+    } cumulative_algorithm_annotations;
 
     class Create {
     public:
