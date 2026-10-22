@@ -38,6 +38,19 @@ namespace Gecode {
    *
    */
 
+  template<class Bool,
+           std::enable_if_t<std::is_same<Bool,bool>::value,int>>
+  forceinline
+  BoolExpr::BoolExpr(Bool value)
+    : BoolExpr(LinIntRel(LinIntExpr(static_cast<int>(value)),IRT_EQ,1)) {}
+
+  template<class Bool,
+           std::enable_if_t<std::is_same<Bool,bool>::value,int>>
+  forceinline IntVar
+  expr(Home home, Bool value, const IntPropLevels& ipls) {
+    return expr(home,LinIntExpr(static_cast<int>(value)),ipls);
+  }
+
   forceinline
   BoolExpr::Misc::Misc(void) {}
 

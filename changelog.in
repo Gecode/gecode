@@ -74,6 +74,14 @@ Date: unreleased
 This is the development changelog for the next Gecode release.
 
 [ENTRY]
+Module: minimodel
+What:   new
+Rank:   minor
+Issue:  145
+[DESCRIPTION]
+Allow Boolean expressions to be initialized from C++ Boolean constants.
+
+[ENTRY]
 Module: other
 What:   bug
 Rank:   minor

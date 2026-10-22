@@ -165,6 +165,59 @@ namespace Test { namespace Int {
        }
      };
 
+     static_assert(std::is_convertible<bool,Gecode::BoolExpr>::value,
+                   "Boolean constants must convert to Boolean expressions");
+     static_assert(!std::is_convertible<int,Gecode::BoolExpr>::value,
+                   "Integer constants must remain integer expressions");
+     static_assert(!std::is_convertible<void*,Gecode::BoolExpr>::value,
+                   "Pointers must not convert to Boolean expressions");
+
+     static_assert(std::is_same<decltype(Gecode::expr(
+                     std::declval<Gecode::Home>(),true)),Gecode::IntVar>::value &&
+                   std::is_same<decltype(Gecode::expr(
+                     std::declval<Gecode::Home>(),0)),Gecode::IntVar>::value,
+                   "Numeric posting overloads must keep their return type");
+
+     /// %Test Boolean constants and their composition with variables
+     class BoolExprConstant : public Test {
+     protected:
+       /// Value of constant
+       bool value;
+       /// Expression to test: constant, negation, conjunction, disjunction, or assertion
+       int mode;
+     public:
+       /// Create and register test
+       BoolExprConstant(bool value0, int mode0)
+         : Test(TestTags::check(),"MiniModel::BoolExpr::Constant::"+
+                str(value0)+"::"+str(mode0),2,0,1),
+           value(value0), mode(mode0) {}
+       /// %Test whether an assignment is a solution
+       virtual bool solution(const Assignment& x) const {
+         switch (mode) {
+         case 0: return x[1] == value;
+         case 1: return x[1] == !value;
+         case 2: return x[1] == (value && (x[0] != 0));
+         case 3: return x[1] == ((x[0] != 0) || value);
+         case 4: return value;
+         default: GECODE_NEVER;
+         }
+       }
+       /// Post constraint on \a x
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
+         using namespace Gecode;
+         BoolExpr e = value;
+         switch (mode) {
+         case 0: break;
+         case 1: e = !e; break;
+         case 2: e = e && channel(home,x[0]); break;
+         case 3: e = channel(home,x[0]) || e; break;
+         case 4: rel(home,e); return;
+         default: GECODE_NEVER;
+         }
+         rel(home, expr(home,e), IRT_EQ, channel(home,x[1]));
+       }
+     };
+
      /// %Test Boolean expressions with default-constructed accumulators
      class BoolExprDefaultAccumulator : public Test {
      protected:
@@ -4476,6 +4529,10 @@ namespace Test { namespace Int {
         (void) new BoolElement("Expr::A",0);
         (void) new BoolElement("Expr::B",1);
         (void) new BoolElement("Rel",2);
+        for (int mode=0; mode<5; mode++) {
+          (void) new BoolExprConstant(false,mode);
+          (void) new BoolExprConstant(true,mode);
+        }
         (void) new BoolExprDefaultAccumulator(BO_AND,false);
         (void) new BoolExprDefaultAccumulator(BO_AND,true);
         (void) new BoolExprDefaultAccumulator(BO_OR,false);
