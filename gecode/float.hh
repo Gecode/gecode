@@ -134,33 +134,25 @@ namespace Gecode { namespace Float {
    * This is used for the MSVC compiler for x64 or x86 with SSE enabled.
    *
    */
-  /// Rounding Base class (safe version)
-  typedef gecode_boost::numeric::interval_lib::save_state< gecode_boost::numeric::interval_lib::rounded_arith_std<FloatNum> >
-	RoundingBase;
+  /// Rounding operations with explicit direction changes (MSVC/SSE)
+  typedef gecode_boost::numeric::interval_lib::rounded_arith_std<FloatNum>
+    RoundingControl;
 
 #else
 
-  /// Rounding Base class (optimized version)
+  /// Rounding operations that keep upward mode between calls
   typedef gecode_boost::numeric::interval_lib::rounded_arith_opp<FloatNum>
-    RoundingBase;
+    RoundingControl;
 
 #endif
 
   /**
-   * \brief Floating point rounding policy
+   * \brief Floating point rounding operations without state saving
    *
    * \ingroup TaskModelFloatVars
    */
-  class Rounding : public RoundingBase {
+  class RoundingBase : public RoundingControl {
   public:
-    /// \name Constructor and destructor
-    //@{
-    /// Default constructor (configures full rounding mode)
-    Rounding(void);
-    /// Destructor (restores previous rounding mode)
-    ~Rounding(void);
-    //@}
-
     /// \name Arithmetic operations
     //@{
     /// Return lower bound of \a x plus \a y (domain: \f$ [-\infty;+\infty][-\infty;+\infty]\f$)
@@ -187,7 +179,7 @@ namespace Gecode { namespace Float {
 
     /// \name Miscellaneous operations
     //@{
-    /// Return median of \a x and \a y (domain: \f$ [-\infty;+\infty][-\infty;+\infty]\f$)
+    /// Return an overflow-safe median of \a x and \a y, where \a x <= \a y
     FloatNum median(FloatNum x, FloatNum y);
     /// Return next downward-rounded integer of \a x (domain: \f$ [-\infty;+\infty]\f$)
     FloatNum int_down(FloatNum x);
@@ -273,6 +265,17 @@ namespace Gecode { namespace Float {
     //@}
 #endif
   };
+
+  /**
+   * \brief Floating point rounding policy that restores the caller's mode
+   *
+   * Saves the mode before initializing rounding operations and restores it
+   * on destruction. Nested policies restore the enclosing policy's mode.
+   * \ingroup TaskModelFloatVars
+   */
+  class Rounding : public
+    gecode_boost::numeric::interval_lib::save_state<RoundingBase> {};
+
 
 }}
 
@@ -413,7 +416,7 @@ namespace Gecode {
     friend FloatVal Float::hull(const FloatNum& x, const FloatNum& y);
   protected:
     /// Used rounding policies
-    typedef gecode_boost::numeric::interval_lib::save_state<Float::Rounding> R;
+    typedef Float::Rounding R;
     /// Used checking policy
     typedef gecode_boost::numeric::interval_lib::checking_strict<FloatNum> P;
     /// Implementation type for float value

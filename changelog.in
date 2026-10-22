@@ -148,8 +148,9 @@ Module: float
 What:   bug
 Rank:   minor
 [DESCRIPTION]
-Preserve the calling thread's rounding mode when computing FloatVal medians,
-while retaining the overflow-safe calculation.
+Preserve the calling thread's rounding mode in Float::Rounding scopes and
+FloatVal operations, including median queries. Save the mode before rounding
+initialization and retain Boost's unprotected policy for nested operations.
 
 [ENTRY]
 Module: float
