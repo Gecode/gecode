@@ -42,7 +42,7 @@ namespace Gecode {
            std::enable_if_t<std::is_same<Bool,bool>::value,int>>
   forceinline
   BoolExpr::BoolExpr(Bool value)
-    : BoolExpr(LinIntRel(LinIntExpr(static_cast<int>(value)),IRT_EQ,1)) {}
+    : n(constant(value)) {}
 
   template<class Bool,
            std::enable_if_t<std::is_same<Bool,bool>::value,int>>

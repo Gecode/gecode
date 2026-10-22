@@ -1362,7 +1362,8 @@ namespace Gecode {
       NT_RLIN,      ///< Reified linear relation
       NT_RLINFLOAT, ///< Reified linear relation
       NT_RSET,      ///< Reified set relation
-      NT_MISC       ///< Other Boolean expression
+      NT_MISC,      ///< Other Boolean expression
+      NT_CONST      ///< Boolean constant
     };
     /// Miscealloneous Boolean expressions
     class GECODE_VTABLE_EXPORT Misc : public HeapAllocated {
@@ -1383,6 +1384,9 @@ namespace Gecode {
   private:
     /// Pointer to node for expression
     Node* n;
+    /// Create a node storing a Boolean constant
+    GECODE_MINIMODEL_EXPORT
+    static Node* constant(bool value);
     /// Construct an expression, optionally treating an empty operand as an accumulator
     BoolExpr(const BoolExpr& l, NodeType t, const BoolExpr& r,
              bool accumulator);

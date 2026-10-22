@@ -54,6 +54,8 @@ namespace Gecode {
     int same;
     /// Type of expression
     NodeType t;
+    /// Possibly a Boolean constant
+    bool value;
     /// Subexpressions
     Node *l, *r;
     /// Possibly a variable
@@ -118,6 +120,15 @@ namespace Gecode {
       return true;
     }
     return false;
+  }
+
+  BoolExpr::Node*
+  BoolExpr::constant(bool value) {
+    Node* n = new Node;
+    n->same = 1;
+    n->t = NT_CONST;
+    n->value = value;
+    return n;
   }
 
   BoolExpr::BoolExpr(void) : n(new Node) {}
@@ -321,6 +332,10 @@ namespace Gecode {
     NNF::expr(Home home, const IntPropLevels& ipls) const {
       if ((t == BoolExpr::NT_VAR) && !u.a.neg)
         return u.a.x->x;
+      if (t == BoolExpr::NT_CONST) {
+        bool value = u.a.x->value != u.a.neg;
+        return BoolVar(home,value,value);
+      }
       BoolVar b(home,0,1);
       switch (t) {
       case BoolExpr::NT_VAR:
@@ -444,6 +459,10 @@ namespace Gecode {
     void
     NNF::rel(Home home, const IntPropLevels& ipls) const {
       switch (t) {
+      case BoolExpr::NT_CONST:
+        if (u.a.x->value == u.a.neg)
+          home.fail();
+        break;
       case BoolExpr::NT_VAR:
         Gecode::rel(home, u.a.x->x, IRT_EQ, u.a.neg ? 0 : 1);
         break;
@@ -539,6 +558,7 @@ namespace Gecode {
       if (n->same == 0)
         throw MiniModel::TooFewArguments("BoolExpr");
       switch (n->t) {
+      case BoolExpr::NT_CONST:
       case BoolExpr::NT_VAR:
       case BoolExpr::NT_RLIN:
       case BoolExpr::NT_MISC:
