@@ -209,10 +209,7 @@ namespace Gecode { namespace Search { namespace Seq {
 
   Space*
   CABS::next(void) {
-    if (limited) {
-      _stopped = true;
-      return nullptr;
-    }
+    if (limited) return nullptr;
     start();
     while (true) {
       if (stop_seq(opt)) return nullptr;

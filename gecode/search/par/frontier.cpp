@@ -85,7 +85,7 @@ namespace Gecode { namespace Search { namespace Par {
       if (!clone) delete s;
       return;
     }
-    auto first=std::make_unique<Pending>();
+    auto first=std::make_unique<ExpansionTask>();
     std::unique_ptr<Space> restart_root;
     if (beam) restart_root.reset(s->clone());
     std::unique_ptr<Space> initial(clone ? s->clone() : nullptr);
@@ -155,7 +155,7 @@ namespace Gecode { namespace Search { namespace Par {
     width*=2;
     stat.restart++;
     discarded_bound.reset();
-    auto first=std::make_unique<Pending>();
+    auto first=std::make_unique<ExpansionTask>();
     first->expansion.select(std::unique_ptr<Space>(root->clone()));
     pending.push_back(std::move(first));
     return true;
@@ -240,19 +240,56 @@ namespace Gecode { namespace Search { namespace Par {
     running=false;
   }
 
+  std::unique_ptr<Frontier::ExpansionTask>
+  Frontier::select_task(unsigned int id) {
+    while (running) {
+      if (pending.empty() && frontier.empty() && active == 0 && !advance())
+        running=false;
+      if (!running || (pending.empty() && frontier.empty())) return nullptr;
+      if (!pending.empty()) {
+        auto task=std::move(pending.front());
+        pending.pop_front();
+        return task;
+      }
+      if (!beam) {
+        const Earlier cmp=earlier();
+        std::pop_heap(frontier.begin(),frontier.end(),
+          [&](const Entry& a, const Entry& b) { return cmp(b,a); });
+      }
+      Entry entry=std::move(frontier.back());
+      frontier.pop_back();
+      if (!improves(entry.bound)) {
+        stat.fail++;
+        if (opt.stop && opt.stop->stop(stat,opt)) {
+          stopped_=true;
+          running=false;
+        }
+        if (worker_control.engaged() &&
+            id >= WorkerControlAccess::requested(worker_control)) return nullptr;
+        continue;
+      }
+      auto task=std::make_unique<ExpansionTask>();
+      task->expansion.select(std::move(entry.space));
+      task->depth=entry.depth;
+      task->revision=entry.revision;
+      task->counted=true;
+      return task;
+    }
+    return nullptr;
+  }
+
   void
   Frontier::work(unsigned int id) {
-    std::unique_ptr<Pending> task;
+    std::unique_ptr<ExpansionTask> task;
     std::unique_ptr<Space> incumbent;
     unsigned long long int current_revision=0;
     Worker local;
-    bool leased=false;
-    Seq::ExpansionStep step{Seq::ExpansionStep::EXHAUSTED,nullptr,SS_FAILED};
+    bool counted_active=false;
+    std::unique_ptr<Space> found_solution;
+    std::int64_t solution_bound=0;
     Entry batch[8];
     unsigned int batch_size=0;
     const unsigned int batch_capacity=beam && !limits.frontier_limit ? 8 : 1;
-    std::int64_t bound=0, rank=0;
-    std::size_t key=0;
     std::optional<std::int64_t> cutoff;
     while (true) {
       try {
@@ -260,17 +297,14 @@ namespace Gecode { namespace Search { namespace Par {
         {
           Support::Lock lock(mutex);
           const bool empty=pending.empty() && frontier.empty();
-          if (leased) {
+          if (counted_active) {
             stat+=local;
             local.reset();
             for (unsigned int i=0; i<batch_size; i++)
               batch[i].space=admit(std::move(batch[i]),
                                    static_cast<bool>(task->expansion));
-            if (step.state != Seq::ExpansionStep::EXHAUSTED) {
-              assert(step.status == SS_SOLVED);
-              publish(std::move(step.space),bound);
-            }
-            step.state=Seq::ExpansionStep::EXHAUSTED;
+            if (found_solution)
+              publish(std::move(found_solution),solution_bound);
           }
           if (running && opt.stop && opt.stop->stop(stat,opt)) {
             stopped_=true;
@@ -281,14 +315,13 @@ namespace Gecode { namespace Search { namespace Par {
           if (task && (!task->expansion || !running || !enabled || shutdown)) {
             // Count this worker as active until it has disposed of all rejected
             // or replaced spaces, so next() cannot return during model cleanup.
-            retiring=static_cast<bool>(step.space);
             for (unsigned int i=0; i<batch_size; i++)
               retiring=retiring || static_cast<bool>(batch[i].space);
             if (!retiring) {
               if (task->expansion) pending.push_back(std::move(task));
               task.reset();
               active--;
-              leased=false;
+              counted_active=false;
             }
           }
           if (shutdown && !retiring) {
@@ -296,40 +329,10 @@ namespace Gecode { namespace Search { namespace Par {
             return;
           }
           if (running && enabled && !task) {
-            while (running && !task) {
-              if (pending.empty() && frontier.empty() && active == 0 && !advance())
-                running=false;
-              if (!running || (pending.empty() && frontier.empty())) break;
-              if (!pending.empty()) {
-                task=std::move(pending.front());
-                pending.pop_front();
-              } else {
-                if (!beam) {
-                  const Earlier cmp=earlier();
-                  std::pop_heap(frontier.begin(),frontier.end(),
-                    [&](const Entry& a, const Entry& b) { return cmp(b,a); });
-                }
-                Entry entry=std::move(frontier.back());
-                frontier.pop_back();
-                if (!improves(entry.bound)) {
-                  stat.fail++;
-                  if (opt.stop && opt.stop->stop(stat,opt)) {
-                    stopped_=true;
-                    running=false;
-                  }
-                  if (worker_control.engaged() &&
-                      id >= WorkerControlAccess::requested(worker_control)) break;
-                  continue;
-                }
-                task=std::make_unique<Pending>();
-                task->expansion.select(std::move(entry.space));
-                task->depth=entry.depth;
-                task->revision=entry.revision;
-                task->counted=true;
-              }
+            task=select_task(id);
+            if (task) {
               active++;
-              leased=true;
-              break;
+              counted_active=true;
             }
           }
           if (task) {
@@ -347,7 +350,6 @@ namespace Gecode { namespace Search { namespace Par {
           if (!running && active == 0) changed.signal();
         }
         if (notify) wake();
-        step.space.reset();
         for (unsigned int i=0; i<batch_size; i++) batch[i].space.reset();
         batch_size=0;
         if (retiring) continue;
@@ -364,45 +366,46 @@ namespace Gecode { namespace Search { namespace Par {
         // Bound both sibling batches and the work between stop checks, even
         // for choices with many failing children.
         for (unsigned int i=0; i<32 && task->expansion; i++) {
-          step=task->expansion.next(local,task->depth+1,
+          Seq::ExpansionStep step=task->expansion.next(local,task->depth+1,
             task->revision,incumbent.get(),current_revision);
-          bound=rank=0;
-          key=0;
-          if (step.space && step.status != SS_FAILED) {
+          if (step.state == Seq::ExpansionStep::EXHAUSTED) break;
+          if (step.status == SS_FAILED) {
+            local.fail++;
+          } else {
             if (step.status == SS_SOLVED) (void) step.space->choice();
-            bound=guidance.bound(*step.space);
-            if (step.status == SS_BRANCH && cutoff &&
+            const std::int64_t bound=guidance.bound(*step.space);
+            if (step.status == SS_SOLVED) {
+              found_solution=std::move(step.space);
+              solution_bound=bound;
+              break;
+            }
+            if (cutoff &&
                 (guidance.sense == HeuristicGuidance::MINIMIZE ?
                  bound >= *cutoff : bound <= *cutoff)) {
-              step.status=SS_FAILED;
+              local.fail++;
             } else {
-              if (step.status == SS_BRANCH && guidance.rank) rank=guidance.rank(*step.space);
-              if (step.status == SS_BRANCH && beam && limits.dominates && limits.dominance_key)
-                key=limits.dominance_key(*step.space);
-              if (step.status == SS_SOLVED) break;
+              const std::int64_t rank=guidance.rank ? guidance.rank(*step.space) : 0;
+              const std::size_t key=beam && limits.dominates && limits.dominance_key ?
+                limits.dominance_key(*step.space) : 0;
               batch[batch_size++]={std::move(step.space),bound,rank,key,
                                    task->depth+1,0,current_revision};
-              step.state=Seq::ExpansionStep::EXHAUSTED;
               if (batch_size == batch_capacity) break;
             }
           }
-          if (step.state != Seq::ExpansionStep::EXHAUSTED) local.fail++;
           step.space.reset();
-          step.state=Seq::ExpansionStep::EXHAUSTED;
           if (worker_control.engaged() &&
               id >= WorkerControlAccess::requested(worker_control)) break;
         }
       } catch (...) {
         {
           Support::Lock lock(mutex);
-          step.space.reset();
-          step.state=Seq::ExpansionStep::EXHAUSTED;
+          found_solution.reset();
           for (unsigned int i=0; i<batch_size; i++) batch[i].space.reset();
           batch_size=0;
           task.reset();
           incumbent.reset();
           current_revision=0;
-          if (leased) { active--; stat+=local; local.reset(); leased=false; }
+          if (counted_active) { active--; stat+=local; local.reset(); counted_active=false; }
           if (!error) error=std::current_exception();
           running=false;
           if (active == 0) changed.signal();
@@ -418,7 +421,7 @@ namespace Gecode { namespace Search { namespace Par {
     {
       Support::Lock lock(mutex);
       if (error) std::rethrow_exception(error);
-      if (limited) { stopped_=true; return nullptr; }
+      if (limited) return nullptr;
       stopped_=false;
       running=true;
     }

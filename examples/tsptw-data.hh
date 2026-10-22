@@ -6,7 +6,6 @@
 #include <algorithm>
 #include <fstream>
 #include <cstdint>
-#include <limits>
 #include <sstream>
 #include <stdexcept>
 #include <string>
@@ -23,13 +22,6 @@ namespace TSPTW {
     int arc(int from, int to) const { return cost[from*n+to]; }
   };
 
-  /// Add nonnegative costs exactly, rejecting signed 64-bit overflow.
-  inline std::int64_t add_cost(std::int64_t a, std::int64_t b) {
-    if (b<0 || a<0 || a>std::numeric_limits<std::int64_t>::max()-b)
-      throw std::overflow_error("TSPTW bound arithmetic overflow");
-    return a+b;
-  }
-
   /// Lower bounds on travel time between every pair of nodes.
   /// Paths may use already visited nodes, so they also bound remaining tours
   /// when indirect travel is cheaper than a direct arc.
@@ -41,7 +33,7 @@ namespace TSPTW {
       for (int i=0; i<n; i++)
         for (int j=0; j<n; j++)
           distance[i*n+j]=std::min(distance[i*n+j],
-            add_cost(distance[i*n+k],distance[k*n+j]));
+            distance[i*n+k]+distance[k*n+j]);
     return distance;
   }
 
@@ -63,9 +55,7 @@ namespace TSPTW {
       bool fraction = false, digit = false;
       for (std::size_t i=0; i<token.size(); i++) {
         char c = token[i];
-        if (c == '.' && !fraction) { fraction = true; continue; }
-        if (c < '0' || c > '9')
-          throw std::runtime_error("invalid nonnegative decimal: " + original);
+        if (c == '.') { fraction = true; continue; }
         digit = true;
         if (result.value > (Gecode::Int::Limits::max-(c-'0'))/10)
           throw std::runtime_error("decimal exceeds Gecode integer limits: " + original);
