@@ -64,12 +64,17 @@ namespace Test { namespace Float {
          };
          const Gecode::FloatNum limit =
            std::numeric_limits<Gecode::FloatNum>::max();
+#if !defined(__FINITE_MATH_ONLY__) || !__FINITE_MATH_ONLY__
          const Gecode::FloatNum infinity =
            std::numeric_limits<Gecode::FloatNum>::infinity();
+#endif
          const Gecode::FloatNum cases[][3] = {
            {1.0,3.0,2.0}, {-3.0,-1.0,-2.0}, {-limit,limit,0.0},
            {limit,limit,limit}, {-limit,-limit,-limit},
+           // Finite-math builds do not support infinite inputs.
+#if !defined(__FINITE_MATH_ONLY__) || !__FINITE_MATH_ONLY__
            {-infinity,infinity,0.0}
+#endif
          };
          bool result = true;
          for (int mode : modes)
