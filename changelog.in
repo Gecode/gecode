@@ -125,6 +125,14 @@ Fix iterator invalidation during counting-based search cache cleanup.
 
 [ENTRY]
 Module: flatzinc
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Select the matching installed MiniZinc solver configuration in mzn-gecode
+launchers so that the executable and constraint library use the same installation.
+
+[ENTRY]
+Module: flatzinc
 What:   new
 Rank:   major
 [DESCRIPTION]

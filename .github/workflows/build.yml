@@ -216,6 +216,19 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y flex bison libgmp-dev libmpfr-dev ninja-build
 
+    - name: Install MiniZinc 2.10.1
+      shell: bash
+      run: |
+        archive="$RUNNER_TEMP/minizinc-2.10.1.tgz"
+        minizinc_dir="$RUNNER_TEMP/minizinc-2.10.1"
+        curl --fail --location --retry 3 --output "$archive" \
+          https://github.com/MiniZinc/MiniZincIDE/releases/download/2.10.1/MiniZincIDE-2.10.1-x86_64-linux-gnu.tgz
+        printf '%s  %s\n' b63dd88491d47b05d0eb0ff4aa1112d1e6f77292c023800b20b98851458ce01c "$archive" | sha256sum --check
+        mkdir -p "$minizinc_dir"
+        tar -xzf "$archive" -C "$minizinc_dir" --strip-components=1
+        echo "$minizinc_dir/bin" >> "$GITHUB_PATH"
+        "$minizinc_dir/bin/minizinc" --version
+
     - name: Configure CMake with Ninja
       shell: bash
       run: >
