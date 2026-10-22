@@ -93,6 +93,14 @@ Mimalloc can substantially improve parallel search performance on some workloads
 The system allocator is the default.
 
 [ENTRY]
+Module: flatzinc
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Honor propagation annotations in cumulative and unary scheduling bindings,
+including the unary specializations of cumulative constraints.
+
+[ENTRY]
 Module: kernel
 What:   new
 Rank:   minor
