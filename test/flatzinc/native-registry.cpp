@@ -105,6 +105,12 @@ namespace Test { namespace FlatZinc {
           "constraint int_plus(s,1,e); "
           "constraint gecode_unary_flex([s,s],[1,1],[e,e]); solve satisfy;", unsat);
         (void) new FlatZincTest(TestTags::check(),
+          "NativeRegistry::CumulativeFlexSharedStart",
+          "var 0..1:s; var 1..2:e; "
+          "constraint int_plus(s,1,e); "
+          "constraint gecode_cumulative_flex([s,s],[1,1],[e,e],[1,1],1); "
+          "solve satisfy;", unsat);
+        (void) new FlatZincTest(TestTags::check(),
           "NativeRegistry::CumulativeFlexZeroDuration",
           "constraint gecode_cumulative_flex([0,1],[2,0],[2,1],[1,1],1); "
           "solve satisfy;", unsat);

@@ -2085,7 +2085,9 @@ fvar,
     }
 
     void p_cumulative_flex(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
-      cumulative(s, s.arg2IntVar(ce[4]), s.arg2intvarargs(ce[0]),
+      IntVarArgs start = s.arg2intvarargs(ce[0]);
+      unshare(s, start);
+      cumulative(s, s.arg2IntVar(ce[4]), start,
                  s.arg2intvarargs(ce[1]), s.arg2intvarargs(ce[2]),
                  s.arg2intargs(ce[3]), s.ann2ipl(ann));
     }
