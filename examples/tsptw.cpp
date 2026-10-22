@@ -194,9 +194,9 @@ struct RunOptions {
   bool width_set=false, frontier_set=false;
 };
 
-static unsigned long long read_limit(const std::string& text) {
+static unsigned long long read_unsigned(const std::string& text) {
   if (text.empty() || text.find_first_not_of("0123456789")!=std::string::npos)
-    throw std::runtime_error("limits must be nonnegative integers");
+    throw std::runtime_error("expected a nonnegative integer");
   return std::stoull(text);
 }
 
@@ -222,16 +222,16 @@ static RunOptions read_options(int argc, char* argv[]) {
         throw std::runtime_error("dominance must be off or on");
       options.dominance=value=="on"; options.dominance_set=true;
     }
-    else if (option=="--time-ms") options.time_ms=read_limit(value);
-    else if (option=="--node-limit") options.node_limit=read_limit(value);
+    else if (option=="--time-ms") options.time_ms=read_unsigned(value);
+    else if (option=="--node-limit") options.node_limit=read_unsigned(value);
     else if (option=="--threads") {
-      const auto n=read_limit(value);
+      const auto n=read_unsigned(value);
       if (n==0 || n>std::numeric_limits<unsigned int>::max())
         throw std::runtime_error("threads must be a positive integer");
       options.threads=static_cast<unsigned int>(n);
     }
     else if (option=="--max-width" || option=="--frontier-limit") {
-      const auto limit=read_limit(value);
+      const auto limit=read_unsigned(value);
       if (limit>std::numeric_limits<unsigned long>::max())
         throw std::runtime_error("search limit is too large");
       if (option=="--max-width") {

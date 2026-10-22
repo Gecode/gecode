@@ -54,7 +54,7 @@ namespace Gecode { namespace Search { namespace Par {
       bool beam, ranked;
       bool operator()(const Entry& a, const Entry& b) const;
     };
-    struct Pending {
+    struct ExpansionTask {
       Seq::ChoiceExpansion expansion;
       unsigned long int depth=0;
       unsigned long long int revision=0;
@@ -82,7 +82,7 @@ namespace Gecode { namespace Search { namespace Par {
     std::optional<std::int64_t> discarded_bound;
     std::vector<Entry> frontier;
     BeamHeap candidates;
-    std::deque<std::unique_ptr<Pending>> pending;
+    std::deque<std::unique_ptr<ExpansionTask>> pending;
     std::vector<std::unique_ptr<Runner>> runners;
     mutable Support::Mutex mutex;
     Support::Event changed;
@@ -96,6 +96,8 @@ namespace Gecode { namespace Search { namespace Par {
     void launch(void);
     void wake(void);
     void work(unsigned int id);
+    /// Select work or advance a beam layer/pass while holding mutex
+    std::unique_ptr<ExpansionTask> select_task(unsigned int id);
     bool improves(std::int64_t bound) const;
     bool advance(void);
     /// Return a rejected or replaced space for disposal by its worker.

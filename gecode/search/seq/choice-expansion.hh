@@ -95,7 +95,6 @@ namespace Gecode { namespace Search { namespace Seq {
         if (status != SS_BRANCH)
           return {ExpansionStep::PREPARED_TERMINAL,std::move(parent),status};
         choice.reset(parent->choice());
-        alternative = 0;
       }
       if (alternative == choice->alternatives()) {
         reset();

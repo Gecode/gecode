@@ -4,6 +4,7 @@
 
 #include "tsptw-data.hh"
 #include <gecode/search.hh>
+#include <limits>
 #include <memory>
 #include <numeric>
 
@@ -39,10 +40,10 @@ namespace TSPTW {
       std::vector<int> result;
       if (returned) return result;
       if (unvisited.empty()) {
-        if (applicable(0)) result.push_back(0);
+        if (can_visit(0)) result.push_back(0);
       } else {
         for (int node : unvisited)
-          if (applicable(node)) result.push_back(node);
+          if (can_visit(node)) result.push_back(node);
       }
       return result;
     }
@@ -85,14 +86,14 @@ namespace TSPTW {
 
     // Waiting is allowed, so arrival before ready time remains feasible.
     // The ceiling is an exclusive upper bound on travel cost.
-    bool applicable(int node) const {
+    bool can_visit(int node) const {
       return time+data->arc(location,node)<=data->due[node] &&
         prefix_cost+data->arc(location,node)<ceiling &&
         (propagation!=UNARY ||
          std::find(residual_actions.begin(),residual_actions.end(),node)!=
            residual_actions.end());
     }
-    bool refresh_inference(void);
+    bool filter_remaining_visits(void);
     Gecode::IntVar materialize(int p) {
       return positions.get(*this,p);
     }
@@ -142,7 +143,7 @@ namespace TSPTW {
       const auto& choice=static_cast<const VisitChoice&>(c);
       const int node=choice.actions[alternative];
       const auto customer=std::find(s.unvisited.begin(),s.unvisited.end(),node);
-      if (s.returned || choice.position!=s.depth || !s.applicable(node) ||
+      if (s.returned || choice.position!=s.depth || !s.can_visit(node) ||
           (node==0 ? !s.unvisited.empty() : customer==s.unvisited.end()))
         return Gecode::ES_FAILED;
       // Branch-and-bound recomputation can replay a choice without prepare.
@@ -163,7 +164,7 @@ namespace TSPTW {
       }
       // Recompute deadline checks and allowed next visits from the updated
       // prefix, whether this choice is fresh or replayed during recomputation.
-      if (!s.refresh_inference() || (!s.returned && s.actions().empty()))
+      if (!s.filter_remaining_visits() || (!s.returned && s.actions().empty()))
         return Gecode::ES_FAILED;
       return home.failed() ? Gecode::ES_FAILED : Gecode::ES_OK;
     }
@@ -196,7 +197,7 @@ namespace TSPTW {
         return Gecode::IntVar(home,0,s.data->n-1);
       },data->n);
     (void) new (*this) VisitBrancher(*this);
-    if (!refresh_inference() || actions().empty()) fail();
+    if (!filter_remaining_visits() || actions().empty()) fail();
   }
 
   inline Transition::Transition(Transition& s)
@@ -210,7 +211,7 @@ namespace TSPTW {
 
   inline std::int64_t Transition::bound(BoundMode mode) const {
     if (returned || mode==PREFIX) return prefix_cost;
-    if (unvisited.empty()) return add_cost(prefix_cost,data->arc(location,0));
+    if (unvisited.empty()) return prefix_cost+data->arc(location,0);
     // Every completion enters each remaining customer and the depot once,
     // and leaves the current location and each remaining customer once.
     // Independent cheapest incoming/outgoing arcs can underestimate these
@@ -226,12 +227,12 @@ namespace TSPTW {
         leave=std::min(leave,data->arc(u,v));
         arrive=std::min(arrive,data->arc(v,u));
       }
-      outgoing=add_cost(outgoing,leave);
-      incoming=add_cost(incoming,arrive);
+      outgoing+=leave;
+      incoming+=arrive;
     }
-    outgoing=add_cost(outgoing,enter);
-    incoming=add_cost(incoming,returning);
-    return add_cost(prefix_cost,std::max(incoming,outgoing));
+    outgoing+=enter;
+    incoming+=returning;
+    return prefix_cost+std::max(incoming,outgoing);
   }
 
   /// Relax remaining visits to tasks that cannot overlap.
@@ -255,7 +256,7 @@ namespace TSPTW {
         // Shortest travel times bound arrival from the current location and
         // leave enough time to return to the depot by its deadline.
         const auto lower=std::max<std::int64_t>(data.ready[u],
-          add_cost(time,distance[location*data.n+u]));
+          time+distance[location*data.n+u]);
         const auto upper=std::min<std::int64_t>(data.due[u],
           std::min<std::int64_t>(data.due[0]-distance[u*data.n],
                                 data.due[0]-duration));
@@ -270,40 +271,39 @@ namespace TSPTW {
     Gecode::Space* copy(void) override { return new ResidualSchedule(*this); }
   };
 
-  inline bool Transition::refresh_inference(void) {
+  inline bool Transition::filter_remaining_visits(void) {
     if (propagation==OFF) return true;
     residual_actions.clear();
-    bool feasible=true;
-    if (!returned && unvisited.empty()) {
-      if (time+data->arc(location,0)<=data->due[0]) residual_actions.push_back(0);
-      else feasible=false;
-    } else if (!returned && propagation==CHEAP) {
+    if (returned) return true;
+    if (unvisited.empty()) {
+      if (time+data->arc(location,0)>data->due[0]) return false;
+      residual_actions.push_back(0);
+      return true;
+    }
+    if (propagation==CHEAP) {
       // Allowing paths through already visited customers can only shorten
       // travel. A failed deadline check therefore rules out every completion,
       // even when arcs are asymmetric or indirect travel is cheaper.
       for (int u : unvisited) {
         const auto earliest=std::max<std::int64_t>(data->ready[u],
-          add_cost(time,(*distance)[location*data->n+u]));
+          time+(*distance)[location*data->n+u]);
         if (earliest>data->due[u] ||
-            add_cost(earliest,(*distance)[u*data->n])>data->due[0]) {
-          feasible=false;
-          break;
-        }
+            earliest+(*distance)[u*data->n]>data->due[0])
+          return false;
       }
-    } else if (!returned) {
-      ResidualSchedule schedule(*data,unvisited,location,time,*distance);
-      feasible=schedule.status()!=Gecode::SS_FAILED;
-      if (feasible)
-        for (std::size_t k=0; k<unvisited.size(); k++) {
-          const int u=unvisited[k];
-          const int earliest=std::max(time+data->arc(location,u),data->ready[u]);
-          // The next customer is visited at its earliest possible time.
-          // Reject it if the scheduling relaxation has removed that time.
-          if (schedule.starts[static_cast<int>(k)].in(earliest))
-            residual_actions.push_back(u);
-        }
+      return true;
     }
-    return feasible;
+    ResidualSchedule schedule(*data,unvisited,location,time,*distance);
+    if (schedule.status()==Gecode::SS_FAILED) return false;
+    for (std::size_t k=0; k<unvisited.size(); k++) {
+      const int u=unvisited[k];
+      const int earliest=std::max(time+data->arc(location,u),data->ready[u]);
+      // The next customer is visited at its earliest possible time.
+      // Reject it if the scheduling relaxation has removed that time.
+      if (schedule.starts[static_cast<int>(k)].in(earliest))
+        residual_actions.push_back(u);
+    }
+    return true;
   }
 
 
