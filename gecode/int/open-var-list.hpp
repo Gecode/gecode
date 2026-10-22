@@ -55,7 +55,7 @@ namespace Gecode {
     SharedData<Functions> functions;
 
     static int
-    maximum(int max) {
+    checked_maximum(int max) {
       Int::Limits::check(max,"OpenVarList");
       if (max < 0)
         throw Int::VariableEmptyDomain("OpenVarList");
@@ -63,14 +63,14 @@ namespace Gecode {
     }
 
     static Factory
-    valid(Factory create) {
+    checked(Factory create) {
       if (!create)
         throw InvalidFunction("OpenVarList");
       return create;
     }
 
     static Transition
-    valid(Transition t) {
+    checked(Transition t) {
       if (!t)
         throw InvalidFunction("OpenVarList");
       return t;
@@ -78,19 +78,19 @@ namespace Gecode {
 
     Object(Home home, Factory create, int max)
       : LocalObject(home),
-        length(home,0,maximum(max)),
+        length(home,0,checked_maximum(max)),
         materialized(home,0,max),
         x(nullptr), n(0), capacity(0),
-        functions(Functions(valid(create),Transition())) {
+        functions(Functions(checked(create),Transition())) {
       home.notice(*this,AP_DISPOSE);
     }
 
     Object(Home home, Factory create, Transition t, int max)
       : LocalObject(home),
-        length(home,0,maximum(max)),
+        length(home,0,checked_maximum(max)),
         materialized(home,0,max),
         x(nullptr), n(0), capacity(0),
-        functions(Functions(valid(create),valid(t))) {
+        functions(Functions(checked(create),checked(t))) {
       home.notice(*this,AP_DISPOSE);
     }
 

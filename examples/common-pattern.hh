@@ -95,12 +95,11 @@ namespace PatternMining {
   inline int
   minimum_support(const std::string& percent, int sequences) {
     unsigned long long numerator = 0, scale = 1;
-    bool decimal = false, digit = false;
+    bool decimal = false;
     for (char c : percent) {
       if ((c == '.') && !decimal) {
         decimal = true;
       } else if ((c >= '0') && (c <= '9')) {
-        digit = true;
         numerator = numerator*10 + (c-'0');
         if (decimal)
           scale *= 10;
@@ -110,7 +109,7 @@ namespace PatternMining {
         throw std::invalid_argument("Support must be a percentage in (0,100]");
       }
     }
-    if (!digit || (numerator == 0) || (numerator > 100*scale))
+    if ((numerator == 0) || (numerator > 100*scale))
       throw std::invalid_argument("Support must be a percentage in (0,100]");
     const unsigned long long denominator = 100*scale;
     return static_cast<int>((sequences*numerator+denominator-1)/denominator);
@@ -310,16 +309,16 @@ namespace PatternMining {
     OpenIntVarList list;
     Int::IntView length, frequency;
     Projection projection;
-    IntSet available;
+    IntSet frequent_items;
     int consumed, subscribed;
     /// Filtering depends on the assigned prefix, not on constructed positions
-    int cached_prefix, extension_bound;
+    int cached_prefix;
 
     OpenProjection(Space& home, OpenIntVarList pattern,
                    const Database& database, int support, IntVar count)
       : Propagator(home), list(pattern), length(pattern.length()), frequency(count),
         projection(home,database,support), consumed(0),
-        subscribed(pattern.known_length()), cached_prefix(-1), extension_bound(0) {
+        subscribed(pattern.known_length()), cached_prefix(-1) {
       home.notice(*this,AP_DISPOSE);
       list.subscribe(home,*this);
       length.subscribe(home,*this,Int::PC_INT_BND);
@@ -329,9 +328,10 @@ namespace PatternMining {
     }
 
     OpenProjection(Space& home, OpenProjection& p)
-      : Propagator(home,p), projection(home,p.projection), available(p.available),
+      : Propagator(home,p), projection(home,p.projection),
+        frequent_items(p.frequent_items),
         consumed(p.consumed), subscribed(p.subscribed),
-        cached_prefix(p.cached_prefix), extension_bound(p.extension_bound) {
+        cached_prefix(p.cached_prefix) {
       list.update(home,p.list);
       length.update(home,p.length);
       frequency.update(home,p.frequency);
@@ -371,26 +371,22 @@ namespace PatternMining {
         }
         if (cached_prefix != consumed) {
           Region region;
-          extension_bound = projection.remaining(region);
+          const int extension_bound = projection.remaining(region);
           GECODE_ME_CHECK(length.lq(home,consumed+extension_bound));
           if ((consumed == size) && (length.max() == size)) {
             GECODE_ME_CHECK(frequency.eq(home,projection.support()));
             return home.ES_SUBSUMED(*this);
           }
-          available = projection.frequent(region);
+          frequent_items = projection.frequent(region);
           cached_prefix = consumed;
-        } else {
-          GECODE_ME_CHECK(length.lq(home,consumed+extension_bound));
         }
-        if (available.size() == 0) {
+        if (frequent_items.size() == 0) {
           GECODE_ME_CHECK(length.lq(home,consumed));
-          if (consumed != size)
-            return ES_FAILED;
           GECODE_ME_CHECK(frequency.eq(home,projection.support()));
           return home.ES_SUBSUMED(*this);
         }
         for (int i=consumed; i<size; i++) {
-          IntSetValues values(available);
+          IntSetValues values(frequent_items);
           GECODE_ME_CHECK(Int::IntView(list[i]).inter_v(home,values,false));
         }
         if ((consumed == size) || !list[consumed].assigned())
@@ -408,7 +404,7 @@ namespace PatternMining {
             Int::IntView(list[i]).cancel(home,*this,Int::PC_INT_VAL);
       list.~OpenIntVarList();
       projection.~Projection();
-      available.~IntSet();
+      frequent_items.~IntSet();
       (void) Propagator::dispose(home);
       return sizeof(*this);
     }

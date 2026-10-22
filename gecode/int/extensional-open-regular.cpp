@@ -132,7 +132,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     }
 
     bool
-    tail(const unsigned char* reachable, int remaining) const {
+    has_accepting_suffix(const unsigned char* reachable, int remaining) const {
       for (int s=0; s<dfa.n_states(); s++)
         if ((reachable[s] != 0) &&
             (distance[s] >= 0) && (distance[s] <= remaining))
@@ -215,7 +215,7 @@ namespace Gecode { namespace Int { namespace Extensional {
       const int remaining = length.max()-size;
       const bool closed = remaining == 0;
       if (n == 0) {
-        if (!tail(start,remaining))
+        if (!has_accepting_suffix(start,remaining))
           return ES_FAILED;
         return closed ? home.ES_SUBSUMED(*this) : ES_FIX;
       }
