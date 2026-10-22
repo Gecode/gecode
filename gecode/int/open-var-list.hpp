@@ -285,7 +285,6 @@ namespace Gecode {
     s->append(y);
     const Transition& transition = s->functions().transition;
     if (transition) {
-      GECODE_VALID_FUNCTION(transition);
       Space::NoGPI no_gpi(home);
       transition(home,*this,next-1);
     }
