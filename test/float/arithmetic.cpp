@@ -52,6 +52,44 @@ namespace Test { namespace Float {
       * \ingroup TaskTestFloat
       */
      //@{
+     /// Median queries preserve the caller's floating-point rounding mode
+     class MedianRoundingMode : public Base {
+     public:
+       MedianRoundingMode(void)
+         : Base("Float::Arithmetic::MedianRoundingMode", TestTags::check()) {}
+       virtual bool run(void) {
+         const int previous = std::fegetround();
+         const int modes[] = {
+           FE_TONEAREST, FE_DOWNWARD, FE_UPWARD, FE_TOWARDZERO
+         };
+         const Gecode::FloatNum limit =
+           std::numeric_limits<Gecode::FloatNum>::max();
+         const Gecode::FloatNum infinity =
+           std::numeric_limits<Gecode::FloatNum>::infinity();
+         const Gecode::FloatNum cases[][3] = {
+           {1.0,3.0,2.0}, {-3.0,-1.0,-2.0}, {-limit,limit,0.0},
+           {limit,limit,limit}, {-limit,-limit,-limit},
+           {-infinity,infinity,0.0}
+         };
+         bool result = true;
+         for (int mode : modes)
+           for (const auto& c : cases) {
+             const Gecode::FloatVal value(c[0],c[1]);
+             if (std::fesetround(mode) != 0)
+               continue;
+             const volatile Gecode::FloatNum median = value.med();
+             if ((std::fegetround() != mode) || (median != c[2])) {
+               olog << "Median query changed its result or rounding mode "
+                    << mode << std::endl;
+               result = false;
+             }
+           }
+         if (previous != -1)
+           std::fesetround(previous);
+         return result;
+       }
+     } median_rounding_mode;
+
      /// Regression test for outward positive even-root bounds
      class PositiveNRootBounds : public Base {
      protected:

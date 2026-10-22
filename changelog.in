@@ -148,6 +148,14 @@ Module: float
 What:   bug
 Rank:   minor
 [DESCRIPTION]
+Preserve the calling thread's rounding mode when computing FloatVal medians,
+while retaining the overflow-safe calculation.
+
+[ENTRY]
+Module: float
+What:   bug
+Rank:   minor
+[DESCRIPTION]
 Preserve exact fixed-base power and logarithm solutions with explicitly rounded
 MPFR bounds. Handle base-one powers and remove an invalid shortcut for shared
 variables.

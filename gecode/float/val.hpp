@@ -93,7 +93,7 @@ namespace Gecode {
     if (u == inf)
       return u;
 
-    Float::Rounding r;
+    gecode_boost::numeric::interval_lib::save_state<Float::RoundingBase> r;
     const FloatNum h = max / 2.0;
     if ((u > h) || (l < -h))
       return std::ldexp(r.median(l / 2.0,u / 2.0),1);
