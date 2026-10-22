@@ -97,6 +97,25 @@ namespace Test { namespace FlatZinc {
       Create(void) {
         const std::string sat = "----------\n";
         const std::string unsat = "=====UNSATISFIABLE=====\n";
+        // Explicit ends retain native scheduling semantics, including shared
+        // starts, empty tasks, and negative resource usage.
+        (void) new FlatZincTest(TestTags::check(),
+          "NativeRegistry::UnaryFlexSharedStart",
+          "var 0..1:s; var 1..2:e; "
+          "constraint int_plus(s,1,e); "
+          "constraint gecode_unary_flex([s,s],[1,1],[e,e]); solve satisfy;", unsat);
+        (void) new FlatZincTest(TestTags::check(),
+          "NativeRegistry::CumulativeFlexZeroDuration",
+          "constraint gecode_cumulative_flex([0,1],[2,0],[2,1],[1,1],1); "
+          "solve satisfy;", unsat);
+        (void) new FlatZincTest(TestTags::check(),
+          "NativeRegistry::CumulativesFlexNegativeUsage",
+          "constraint gecode_cumulatives_flex([0,0],[2,2],[2,2],"
+          "[3,-2],[0,0],[1],true); solve satisfy;", sat);
+        (void) new FlatZincTest(TestTags::check(),
+          "NativeRegistry::CumulativesFlexLowerBound",
+          "constraint gecode_cumulatives_flex([0,0],[2,2],[2,2],"
+          "[3,-2],[0,0],[2],false); solve satisfy;", unsat);
         (void) new FlatZincTest(TestTags::check(),
           "NativeRegistry::CumulativeSingletonZeroDuration",
           "var 0..1:s; var 2..3:r; "

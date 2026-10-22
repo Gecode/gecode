@@ -1366,24 +1366,30 @@ namespace Gecode { namespace FlatZinc {
 
     void p_cumulatives(FlatZincSpace& s, const ConExpr& ce,
                       AST::Node* ann) {
-      if (ce.size() == 6) {
-        // Full cumulatives call
+      if (ce.size() == 6 || ce.size() == 7) {
+        // The seven-argument interface supplies end variables explicitly.
+        int offset = ce.size() == 7 ? 1 : 0;
         IntVarArgs start = s.arg2intvarargs(ce[0]);
         IntVarArgs duration = s.arg2intvarargs(ce[1]);
-        IntVarArgs resources = s.arg2intvarargs(ce[2]);
-        IntVarArgs machine = s.arg2intvarargs(ce[3]);
-        IntArgs bound = s.arg2intargs(ce[4]);
-        bool upper = ce[5]->getBool();
+        IntVarArgs resources = s.arg2intvarargs(ce[2+offset]);
+        IntVarArgs machine = s.arg2intvarargs(ce[3+offset]);
+        IntArgs bound = s.arg2intargs(ce[4+offset]);
+        bool upper = ce[5+offset]->getBool();
         int n = start.size();
+
+        IntVarArgs end;
+        if (offset) {
+          end = s.arg2intvarargs(ce[2]);
+        } else {
+          end = IntVarArgs(n);
+          for (int i=n; i--;)
+            end[i] = expr(s, start[i] + duration[i]);
+        }
 
         if (duration.assigned()) {
           IntArgs durationI(n);
           for (int i = n; (i--) != 0;) {
             durationI[i] = duration[i].val();
-          }
-          IntVarArgs end(n);
-          for (int i = n; (i--) != 0;) {
-            end[i] = expr(s, start[i] + durationI[i]);
           }
           if (machine.assigned()) {
             IntArgs machineI(n);
@@ -1409,10 +1415,6 @@ namespace Gecode { namespace FlatZinc {
             cumulatives(s, machine, start, durationI, end, resources, bound, upper, s.ann2ipl(ann));
           }
         } else {
-          IntVarArgs end(n);
-          for (int i = n; (i--) != 0;) {
-            end[i] = expr(s, start[i] + duration[i]);
-          }
           if (machine.assigned()) {
             IntArgs machineI(n);
             for (int i = n; (i--) != 0;) {
@@ -2075,6 +2077,19 @@ fvar,
                 ce[3]->getBool(), s.ann2ipl(ann));
     }
 
+    void p_unary_flex(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
+      IntVarArgs start = s.arg2intvarargs(ce[0]);
+      unshare(s, start);
+      unary(s, start, s.arg2intvarargs(ce[1]), s.arg2intvarargs(ce[2]),
+            s.ann2ipl(ann));
+    }
+
+    void p_cumulative_flex(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
+      cumulative(s, s.arg2IntVar(ce[4]), s.arg2intvarargs(ce[0]),
+                 s.arg2intvarargs(ce[1]), s.arg2intvarargs(ce[2]),
+                 s.arg2intargs(ce[3]), s.ann2ipl(ann));
+    }
+
     void p_unary_flex_optional(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
       IntVarArgs start = s.arg2intvarargs(ce[0]);
       unshare(s, start);
@@ -2282,6 +2297,9 @@ fvar,
         registry().add("member_bool",&p_member_bool);
         registry().add("gecode_member_bool_reif",&p_member_bool_reif);
 
+        registry().add("gecode_unary_flex", &p_unary_flex);
+        registry().add("gecode_cumulative_flex", &p_cumulative_flex);
+        registry().add("gecode_cumulatives_flex", &p_cumulatives);
         registry().add("gecode_unary_flex_optional", &p_unary_flex_optional);
         registry().add("gecode_cumulative_flex_optional", &p_cumulative_flex_optional);
         registry().add("gecode_array_int_ne", &p_array_int_ne);
