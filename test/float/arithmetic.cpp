@@ -52,6 +52,126 @@ namespace Test { namespace Float {
       * \ingroup TaskTestFloat
       */
      //@{
+     /// Rounding scopes and Boost wrappers restore the enclosing mode
+     class RoundingScope : public Base {
+     private:
+       template<class Policy>
+       static bool boost_operations(void) {
+         typedef gecode_boost::numeric::interval<Gecode::FloatNum,
+           gecode_boost::numeric::interval_lib::policies<Policy,
+             gecode_boost::numeric::interval_lib::checking_strict<
+               Gecode::FloatNum>>> Interval;
+         const int mode = std::fegetround();
+         // Boost fmod uses its unprotected policy for nested arithmetic.
+         const Interval remainder = gecode_boost::numeric::fmod(
+           Interval(5.0,5.0),Interval(3.0,3.0));
+         bool result = (remainder.lower() == 2.0) &&
+           (remainder.upper() == 2.0) && (std::fegetround() == mode);
+#ifdef GECODE_HAS_MPFR
+         // Unprotected policies must retain Gecode's MPFR operations.
+         const Interval sine = gecode_boost::numeric::sin(Interval(0.5));
+         result &= (sine.lower() <= 0.479425538604203) &&
+           (sine.upper() >= 0.479425538604203) &&
+           (std::fegetround() == mode);
+#endif
+         return result;
+       }
+     public:
+       RoundingScope(void)
+         : Base("Float::Arithmetic::RoundingScope", TestTags::check()) {}
+       virtual bool run(void) {
+         const int previous = std::fegetround();
+         const int modes[] = {
+           FE_TONEAREST, FE_DOWNWARD, FE_UPWARD, FE_TOWARDZERO
+         };
+         bool result = true;
+         for (int mode : modes) {
+           if (std::fesetround(mode) != 0)
+             continue;
+           {
+             Gecode::Float::Rounding outer;
+             const volatile Gecode::FloatNum one = 1.0;
+             const volatile Gecode::FloatNum half_ulp = std::ldexp(1.0,-53);
+             const Gecode::FloatNum lower = outer.add_down(one,half_ulp);
+             const Gecode::FloatNum upper = outer.add_up(one,half_ulp);
+             result &= (lower == 1.0) &&
+               (upper == std::nextafter(1.0,2.0));
+             const int enclosing = std::fegetround();
+             {
+               Gecode::Float::Rounding inner;
+               result &= inner.median(1.0,3.0) == 2.0;
+             }
+             result &= std::fegetround() == enclosing;
+             result &= boost_operations<Gecode::Float::Rounding>();
+             result &= boost_operations<
+               gecode_boost::numeric::interval_lib::save_state<
+                 Gecode::Float::Rounding>>();
+           }
+           if (std::fegetround() != mode) {
+             olog << "Rounding scope changed caller mode " << mode
+                  << std::endl;
+             result = false;
+           }
+         }
+         if (previous != -1)
+           std::fesetround(previous);
+         return result;
+       }
+     } rounding_scope;
+
+     /// Median queries preserve the caller's floating-point rounding mode
+     class MedianRoundingMode : public Base {
+     public:
+       MedianRoundingMode(void)
+         : Base("Float::Arithmetic::MedianRoundingMode", TestTags::check()) {}
+       virtual bool run(void) {
+         const int previous = std::fegetround();
+         const int modes[] = {
+           FE_TONEAREST, FE_DOWNWARD, FE_UPWARD, FE_TOWARDZERO
+         };
+         const Gecode::FloatNum limit =
+           std::numeric_limits<Gecode::FloatNum>::max();
+#if !defined(__FINITE_MATH_ONLY__) || !__FINITE_MATH_ONLY__
+         const Gecode::FloatNum infinity =
+           std::numeric_limits<Gecode::FloatNum>::infinity();
+#endif
+         const Gecode::FloatNum cases[][3] = {
+           {1.0,3.0,2.0}, {-3.0,-1.0,-2.0}, {-limit,limit,0.0},
+           {limit,limit,limit}, {-limit,-limit,-limit},
+           // Finite-math builds do not support infinite inputs.
+#if !defined(__FINITE_MATH_ONLY__) || !__FINITE_MATH_ONLY__
+           {-infinity,infinity,0.0}
+#endif
+         };
+         bool result = true;
+         for (int mode : modes)
+           for (const auto& c : cases) {
+             const Gecode::FloatVal value(c[0],c[1]);
+             if (std::fesetround(mode) != 0)
+               continue;
+             volatile Gecode::FloatNum direct;
+             {
+               Gecode::Float::Rounding r;
+               direct = r.median(c[0],c[1]);
+             }
+             if ((std::fegetround() != mode) || (direct != c[2])) {
+               olog << "Direct median changed its result or rounding mode "
+                    << mode << std::endl;
+               result = false;
+             }
+             const volatile Gecode::FloatNum median = value.med();
+             if ((std::fegetround() != mode) || (median != c[2])) {
+               olog << "Median query changed its result or rounding mode "
+                    << mode << std::endl;
+               result = false;
+             }
+           }
+         if (previous != -1)
+           std::fesetround(previous);
+         return result;
+       }
+     } median_rounding_mode;
+
      /// Regression test for outward positive even-root bounds
      class PositiveNRootBounds : public Base {
      protected:

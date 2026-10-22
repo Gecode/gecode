@@ -148,6 +148,15 @@ Module: float
 What:   bug
 Rank:   minor
 [DESCRIPTION]
+Preserve the calling thread's rounding mode in Float::Rounding scopes and
+FloatVal operations, including median queries. Save the mode before rounding
+initialization and retain Boost's unprotected policy for nested operations.
+
+[ENTRY]
+Module: float
+What:   bug
+Rank:   minor
+[DESCRIPTION]
 Preserve exact fixed-base power and logarithm solutions with explicitly rounded
 MPFR bounds. Handle base-one powers and remove an invalid shortcut for shared
 variables.
