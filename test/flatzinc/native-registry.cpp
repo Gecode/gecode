@@ -64,6 +64,19 @@ namespace Test { namespace FlatZinc {
       Create(void) {
         const std::string sat = "----------\n";
         const std::string unsat = "=====UNSATISFIABLE=====\n";
+        (void) new FlatZincTest(TestTags::check(),
+          "NativeRegistry::CumulativeSingletonZeroDuration",
+          "var 0..1:s; var 2..3:r; "
+          "constraint gecode_cumulatives([s],[0],[r],1); solve satisfy;", sat);
+        (void) new FlatZincTest(TestTags::check(),
+          "NativeRegistry::CumulativeSingletonPositiveDuration",
+          "var 0..1:s; var 2..3:r; "
+          "constraint gecode_cumulatives([s],[1],[r],1); solve satisfy;", unsat);
+        (void) new FlatZincTest(TestTags::check(),
+          "NativeRegistry::CumulativeSingletonVariableDuration",
+          "var 0..1:s; var 0..1:d :: output_var; var 2..3:r; "
+          "constraint gecode_cumulatives([s],[d],[r],1); solve satisfy;",
+          "d = 0;\n----------\n");
         (void) new FlatZincTest("NativeRegistry::DistanceShared",
           "var 0..2:x; constraint gecode_inter_distance([x,x],1); solve satisfy;", unsat);
         (void) new FlatZincTest("NativeRegistry::DistanceNegativeEmpty",
