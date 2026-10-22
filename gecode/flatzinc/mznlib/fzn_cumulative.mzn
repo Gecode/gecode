@@ -62,6 +62,8 @@ predicate fzn_cumulative(array[int] of var int: s,
       array[int] of var int: usage = array1d(r);
       array[int] of var int: end = [start[i] + duration[i] | i in index_set(start)];
       bool: positive = forall(di in d)(lb(di) > 0);
+      int: early = min([lb(si) | si in start]);
+      int: late = max([ub(start[i]) + ub(duration[i]) | i in index_set(start)]);
       array[int] of int: heights = sort([lb(ri) | ri in r]);
       bool: disjunctive = positive /\
         (heights[1] > ub(b) div 2 \/
@@ -90,8 +92,17 @@ predicate fzn_cumulative(array[int] of var int: s,
     elseif positive /\ is_fixed(b) then
       gecode_cumulatives_flex(start, duration, end, usage,
         [0 | i in index_set(start)], [fix(b)], true)
+    elseif late - early <= 2147483646 then
+      % Put zero-duration tasks on a separate machine. A task spanning the
+      % horizon with usage -b turns the variable bound into a fixed zero bound.
+      % The second bound is immaterial: only empty tasks use that machine.
+      gecode_cumulatives_flex(start ++ [early],
+        duration ++ [late - early], end ++ [late], usage ++ [-b],
+        [bool2int(duration[i] = 0) | i in index_set(start)] ++ [0],
+        [0, max([ub(ri) | ri in usage])], true)
     else
-      % With nonnegative usage the maximum load occurs at a task start.
+      % Avoid an unrepresentable spanning duration. With nonnegative usage
+      % the maximum load occurs at a task start.
       % Unlike a time-point decomposition, size does not depend on the horizon.
       forall(j in index_set(start)) (
         sum(i in index_set(start)) (
