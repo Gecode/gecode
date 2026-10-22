@@ -129,6 +129,14 @@ MPFR bounds. Handle base-one powers and remove an invalid shortcut for shared
 variables.
 
 [ENTRY]
+Module: flatzinc
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Handle zero-duration tasks in the single-task cumulative posting path without
+requiring their resource usage to fit the capacity.
+
+[ENTRY]
 
 Module: int
 What:   performance

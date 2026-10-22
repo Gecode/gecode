@@ -1450,7 +1450,7 @@ namespace Gecode { namespace FlatZinc {
         return;
 
       if (n == 1) {
-        rel(s, height[0] <= bound);
+        rel(s, (duration[0] > 0) >> (height[0] <= bound));
         return;
       }
 
