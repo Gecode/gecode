@@ -221,7 +221,7 @@ namespace Gecode {
 
   template<class Var>
   OpenVarList<Var>::OpenVarList(Space& home, Factory create,
-                                  Transition t, int max)
+                               Transition t, int max)
     : LocalHandle(new (home) Object(home,create,t,max)) {
     Int::OpenMaterialize<Var>::post(home,*this);
   }

@@ -54,7 +54,7 @@ namespace Test { namespace Int {
     public:
       Gecode::OpenIntVarList list;
 
-      enum Order { INCREMENTAL, LENGTH_MIN, LENGTH_MAX };
+      enum class Order { INCREMENTAL, LENGTH_MIN, LENGTH_MAX };
 
       BranchOrderSpace(Order order)
         : list(*this,Gecode::IntSet(0,1),3) {
@@ -64,9 +64,9 @@ namespace Test { namespace Int {
             {1,0,1}, {1,1,1}
           },{1});
         extensional(*this,list,accepts_one);
-        if (order == LENGTH_MIN)
+        if (order == Order::LENGTH_MIN)
           branch(*this,list.length(),INT_VAL_MIN());
-        else if (order == LENGTH_MAX)
+        else if (order == Order::LENGTH_MAX)
           branch(*this,list.length(),INT_VAL_MAX());
         branch(*this,list);
       }
@@ -113,9 +113,9 @@ namespace Test { namespace Int {
       virtual bool
       run(void) {
         using namespace Gecode;
-        return check(BranchOrderSpace::INCREMENTAL,3) &&
-          check(BranchOrderSpace::LENGTH_MIN,1) &&
-          check(BranchOrderSpace::LENGTH_MAX,3);
+        return check(BranchOrderSpace::Order::INCREMENTAL,3) &&
+          check(BranchOrderSpace::Order::LENGTH_MIN,1) &&
+          check(BranchOrderSpace::Order::LENGTH_MAX,3);
       }
     };
 
@@ -556,7 +556,9 @@ namespace Test { namespace Int {
     /// Test the relations on a closed open list with the integer harness
     class Constraint : public Test {
     public:
-      enum Kind { DISTINCT, REL, SLIDING, SLIDING_SUM, MIN_MAX, PRECEDE };
+      enum class Kind {
+        DISTINCT, REL, SLIDING, SLIDING_SUM, MIN_MAX, PRECEDE
+      };
     protected:
       Kind kind;
     public:
@@ -566,28 +568,28 @@ namespace Test { namespace Int {
       virtual bool
       solution(const Assignment& x) const {
         switch (kind) {
-        case DISTINCT:
+        case Kind::DISTINCT:
           for (int i=0; i<x.size(); i++)
             for (int j=0; j<i; j++)
               if (x[i] == x[j])
                 return false;
           return true;
-        case REL:
+        case Kind::REL:
           for (int i=1; i<x.size(); i++)
             if (x[i-1] >= x[i])
               return false;
           return true;
-        case SLIDING:
+        case Kind::SLIDING:
           for (int i=1; i<x.size(); i++)
             if ((x[i-1] == 1) + (x[i] == 1) != 1)
               return false;
           return true;
-        case SLIDING_SUM:
+        case Kind::SLIDING_SUM:
           for (int i=1; i<x.size(); i++)
             if (x[i-1] + x[i] != 2)
               return false;
           return true;
-        case MIN_MAX: {
+        case Kind::MIN_MAX: {
           int lower = x[0];
           int upper = x[0];
           for (int i=1; i<x.size(); i++) {
@@ -596,7 +598,7 @@ namespace Test { namespace Int {
           }
           return (lower == 0) && (upper == 2);
         }
-        case PRECEDE: {
+        case Kind::PRECEDE: {
           bool seen = false;
           for (int i=0; i<x.size(); i++) {
             if ((x[i] == 1) && !seen)
@@ -615,26 +617,26 @@ namespace Test { namespace Int {
         using namespace Gecode;
         OpenIntVarList list(home,x.size());
         switch (kind) {
-        case DISTINCT:
+        case Kind::DISTINCT:
           distinct(home,list);
           break;
-        case REL:
+        case Kind::REL:
           rel(home,list,IRT_LE);
           break;
-        case SLIDING:
+        case Kind::SLIDING:
           Gecode::sequence(home,list,IntSet(1,1),2,1,1);
           break;
-        case SLIDING_SUM:
+        case Kind::SLIDING_SUM:
           slidingsum(home,list,2,2,2);
           break;
-        case MIN_MAX: {
+        case Kind::MIN_MAX: {
           IntVar minimum(home,0,0);
           IntVar maximum(home,2,2);
           min(home,list,minimum);
           max(home,list,maximum);
           break;
         }
-        case PRECEDE:
+        case Kind::PRECEDE:
           precede(home,list,0,1);
           break;
         }
@@ -737,7 +739,7 @@ namespace Test { namespace Int {
 
     class GroupSpace : public Gecode::Space {
     public:
-      enum Kind { REL, SUM, PRECEDE };
+      enum class Kind { REL, SUM, PRECEDE };
       Gecode::OpenIntVarList list;
       Gecode::PropagatorGroup group;
 
@@ -745,13 +747,13 @@ namespace Test { namespace Int {
         : list(*this,Gecode::IntSet(0,2),3) {
         using namespace Gecode;
         switch (kind) {
-        case REL:
+        case Kind::REL:
           rel((*this)(group),list,IRT_NQ);
           break;
-        case SUM:
+        case Kind::SUM:
           slidingsum((*this)(group),list,2,2,2);
           break;
-        case PRECEDE:
+        case Kind::PRECEDE:
           precede((*this)(group),list,0,1);
           break;
         }
@@ -794,9 +796,9 @@ namespace Test { namespace Int {
             source.group.disable(source);
           // These values remain in the domains but violate each constraint.
           rel(source,source.list[0],IRT_EQ,
-              kind == GroupSpace::PRECEDE ? 2 : 0);
+              kind == GroupSpace::Kind::PRECEDE ? 2 : 0);
           rel(source,source.list[1],IRT_EQ,
-              kind == GroupSpace::PRECEDE ? 1 : 0);
+              kind == GroupSpace::Kind::PRECEDE ? 1 : 0);
           if (source.status() == SS_FAILED)
             return false;
           if (!kill) {
@@ -809,12 +811,12 @@ namespace Test { namespace Int {
       }
     };
 
-    Group group_rel_kill("Rel",GroupSpace::REL,true);
-    Group group_rel_disable("Rel",GroupSpace::REL,false);
-    Group group_sum_kill("Sum",GroupSpace::SUM,true);
-    Group group_sum_disable("Sum",GroupSpace::SUM,false);
-    Group group_precede_kill("Precede",GroupSpace::PRECEDE,true);
-    Group group_precede_disable("Precede",GroupSpace::PRECEDE,false);
+    Group group_rel_kill("Rel",GroupSpace::Kind::REL,true);
+    Group group_rel_disable("Rel",GroupSpace::Kind::REL,false);
+    Group group_sum_kill("Sum",GroupSpace::Kind::SUM,true);
+    Group group_sum_disable("Sum",GroupSpace::Kind::SUM,false);
+    Group group_precede_kill("Precede",GroupSpace::Kind::PRECEDE,true);
+    Group group_precede_disable("Precede",GroupSpace::Kind::PRECEDE,false);
 
     class Dispose : public ::Test::Base {
     public:
@@ -877,7 +879,8 @@ namespace Test { namespace Int {
     protected:
       static void
       post(Gecode::Space& home, Gecode::PropagatorGroup group) {
-        Gecode::IntVar x(home,0,10), y(home,0,10);
+        Gecode::IntVar x(home,0,10);
+        Gecode::IntVar y(home,0,10);
         Gecode::rel(home(group),x,Gecode::IRT_LE,y);
       }
 
@@ -902,7 +905,11 @@ namespace Test { namespace Int {
         using namespace Gecode;
         CallbackSpace home([](int) { return IntSet(0,1); },
                            [](Space&, OpenIntVarList, int) {});
-        PropagatorGroup factory, transition, selected, ordinary, suppressed;
+        PropagatorGroup factory;
+        PropagatorGroup transition;
+        PropagatorGroup selected;
+        PropagatorGroup ordinary;
+        PropagatorGroup suppressed;
         OpenVarList<IntVar> list(home,
           [factory,selected](Space& home, int) {
             post(home,factory);
@@ -1130,7 +1137,8 @@ namespace Test { namespace Int {
           const PatternMining::Database data(input);
           const int thresholds[] = {1,2,static_cast<int>(input.size())};
           for (int threshold : thresholds) {
-            std::set<std::vector<int>> expected, found;
+            std::set<std::vector<int>> expected;
+            std::set<std::vector<int>> found;
             for (const std::vector<int>& pattern : candidates) {
               int support = 0;
               for (const std::vector<int>& row : input) {
@@ -1252,9 +1260,10 @@ namespace Test { namespace Int {
         using namespace PatternMining;
         std::istringstream rows("# comment\n17 -1 1000000 -1 -2\r\n"
                                 "17 -1 1000000 -1 -2\n");
-        if (read_database(rows,SPMF) != Sequences({{17,1000000},{17,1000000}}) ||
-            read_sequence("ABA",LETTERS) != std::vector<int>({1,2,1}) ||
-            read_sequence("17 1000000",INTEGERS) !=
+        if (read_database(rows,Format::SPMF) !=
+              Sequences({{17,1000000},{17,1000000}}) ||
+            read_sequence("ABA",Format::LETTERS) != std::vector<int>({1,2,1}) ||
+            read_sequence("17 1000000",Format::INTEGERS) !=
               std::vector<int>({17,1000000}) ||
             (minimum_support("33.333333",3) != 1) ||
             (minimum_support("33.333334",3) != 2) ||
@@ -1265,7 +1274,7 @@ namespace Test { namespace Int {
                                  "1 -1 -2 2", "2147483648 -1 -2"}) {
           bool rejected = false;
           try {
-            (void) read_sequence(text,SPMF);
+            (void) read_sequence(text,Format::SPMF);
           } catch (const std::invalid_argument&) {
             rejected = true;
           }
@@ -1302,12 +1311,12 @@ namespace Test { namespace Int {
 
     BranchOrder branch_order;
     Transition transition;
-    Constraint distinct("Distinct",Constraint::DISTINCT,3);
-    Constraint relation("Rel",Constraint::REL,3);
-    Constraint sliding("Sliding",Constraint::SLIDING,4);
-    Constraint sliding_sum("SlidingSum",Constraint::SLIDING_SUM,4);
-    Constraint min_max("MinMax",Constraint::MIN_MAX,3);
-    Constraint precedence("Precede",Constraint::PRECEDE,3);
+    Constraint distinct("Distinct",Constraint::Kind::DISTINCT,3);
+    Constraint relation("Rel",Constraint::Kind::REL,3);
+    Constraint sliding("Sliding",Constraint::Kind::SLIDING,4);
+    Constraint sliding_sum("SlidingSum",Constraint::Kind::SLIDING_SUM,4);
+    Constraint min_max("MinMax",Constraint::Kind::MIN_MAX,3);
+    Constraint precedence("Precede",Constraint::Kind::PRECEDE,3);
     EmptyMinimum empty_minimum;
     IncrementalConstraints incremental_constraints;
 

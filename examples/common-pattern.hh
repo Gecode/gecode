@@ -25,14 +25,14 @@ namespace PatternMining {
   using namespace Gecode;
   typedef std::vector<std::vector<int>> Sequences;
 
-  enum Format { LETTERS, INTEGERS, SPMF };
-  enum Language { DEFAULT, NONE, MOTIF, RE10, RE14, RE2 };
+  enum class Format { LETTERS, INTEGERS, SPMF };
+  enum class Language { DEFAULT, NONE, MOTIF, RE10, RE14, RE2 };
 
   /// Read positive integer items or A..Z (represented by item IDs 1..26)
   inline std::vector<int>
   read_sequence(const std::string& line, Format format) {
     std::vector<int> sequence;
-    if (format == LETTERS) {
+    if (format == Format::LETTERS) {
       for (char a : line) {
         if ((a < 'A') || (a > 'Z'))
           throw std::invalid_argument("Letter sequences must contain A..Z only");
@@ -41,7 +41,8 @@ namespace PatternMining {
     } else {
       std::istringstream stream(line);
       std::string token;
-      bool open_itemset = false, ended = false;
+      bool open_itemset = false;
+      bool ended = false;
       while (stream >> token) {
         int item;
         const auto parsed = std::from_chars(token.data(),token.data()+token.size(),item);
@@ -49,23 +50,23 @@ namespace PatternMining {
           throw std::invalid_argument("Invalid integer item");
         if (ended)
           throw std::invalid_argument("Items after SPMF sequence end");
-        if ((format == SPMF) && (item == -1)) {
+        if ((format == Format::SPMF) && (item == -1)) {
           if (!open_itemset)
             throw std::invalid_argument("Empty SPMF itemset");
           open_itemset = false;
-        } else if ((format == SPMF) && (item == -2)) {
+        } else if ((format == Format::SPMF) && (item == -2)) {
           if (open_itemset)
             throw std::invalid_argument("Missing SPMF itemset end");
           ended = true;
         } else {
           if ((item <= 0) || (item > Int::Limits::max) ||
-              ((format == SPMF) && open_itemset))
+              ((format == Format::SPMF) && open_itemset))
             throw std::invalid_argument("Expected positive items; SPMF itemsets must be singletons");
           sequence.push_back(item);
           open_itemset = true;
         }
       }
-      if (!stream.eof() || ((format == SPMF) && !ended))
+      if (!stream.eof() || ((format == Format::SPMF) && !ended))
         throw std::invalid_argument("Invalid sequence or missing SPMF sequence end");
     }
     if (sequence.empty())
@@ -81,7 +82,7 @@ namespace PatternMining {
     while (std::getline(stream,line)) {
       if (!line.empty() && (line.back() == '\r'))
         line.pop_back();
-      if (line.empty() || ((format == SPMF) &&
+      if (line.empty() || ((format == Format::SPMF) &&
           ((line[0] == '#') || (line[0] == '%') || (line[0] == '@'))))
         continue;
       input.push_back(read_sequence(line,format));
@@ -94,7 +95,8 @@ namespace PatternMining {
   /// Round the support percentage (at most six decimals) up to a record count
   inline int
   minimum_support(const std::string& percent, int sequences) {
-    unsigned long long numerator = 0, scale = 1;
+    unsigned long long numerator = 0;
+    unsigned long long scale = 1;
     bool decimal = false;
     for (char c : percent) {
       if ((c == '.') && !decimal) {
@@ -118,10 +120,16 @@ namespace PatternMining {
   /// Immutable input, with dense ranks internally and original IDs externally
   class Database {
   public:
-    /// Concatenated item ranks, exclusive record ends, and rank-to-ID mapping
-    IntSharedArray items, ends, alphabet;
+    /// Concatenated item ranks
+    IntSharedArray items;
+    /// Exclusive record ends in items
+    IntSharedArray ends;
+    /// Rank-to-ID mapping
+    IntSharedArray alphabet;
     /// Each item's last position per record, in decreasing position order
-    IntSharedArray last_positions, last_ends;
+    IntSharedArray last_positions;
+    /// Exclusive record ends in last_positions
+    IntSharedArray last_ends;
 
     explicit Database(const Sequences& input) {
       if (input.empty())
@@ -148,19 +156,20 @@ namespace PatternMining {
       int* seen = region.alloc<int>(alphabet.size());
       std::fill(seen,seen+alphabet.size(),-1);
       std::vector<int> last;
-      int k = 0, i = 0;
+      int position = 0;
+      int record = 0;
       for (const std::vector<int>& sequence : input) {
-        const int start = k;
+        const int start = position;
         for (int item : sequence)
-          items[k++] = static_cast<int>(std::lower_bound(
+          items[position++] = static_cast<int>(std::lower_bound(
             symbols.begin(),symbols.end(),item)-symbols.begin());
-        ends[i] = k;
-        for (int j=k; j-- > start; )
-          if (seen[items[j]] != i) {
-            seen[items[j]] = i;
+        ends[record] = position;
+        for (int j=position; j-- > start; )
+          if (seen[items[j]] != record) {
+            seen[items[j]] = record;
             last.push_back(j);
           }
-        last_ends[i++] = static_cast<int>(last.size());
+        last_ends[record++] = static_cast<int>(last.size());
       }
       last_positions.init(static_cast<int>(last.size()));
       std::copy(last.begin(),last.end(),last_positions.begin());
@@ -169,7 +178,8 @@ namespace PatternMining {
     IntSet domain(void) const { return IntSet(alphabet.begin(),alphabet.size()); }
 
     int max_length(void) const {
-      int bound = 0, start = 0;
+      int bound = 0;
+      int start = 0;
       for (int end : ends) {
         bound = std::max(bound,end-start);
         start = end;
@@ -179,7 +189,8 @@ namespace PatternMining {
 
     /// Count supporting records, rather than embeddings within a record
     int support(const std::vector<int>& pattern) const {
-      int count = 0, start = 0;
+      int count = 0;
+      int start = 0;
       for (int end : ends) {
         size_t matched = 0;
         for (int i=start; (i<end) && (matched<pattern.size()); i++)
@@ -204,7 +215,8 @@ namespace PatternMining {
   class Projection {
   protected:
     struct Suffix {
-      int sequence, begin;
+      int sequence;
+      int begin;
     };
     Suffix* suffixes;
     int size;
@@ -307,10 +319,12 @@ namespace PatternMining {
   class OpenProjection : public Propagator {
   protected:
     OpenIntVarList list;
-    Int::IntView length, frequency;
+    Int::IntView length;
+    Int::IntView frequency;
     Projection projection;
     IntSet frequent_items;
-    int consumed, subscribed;
+    int consumed;
+    int subscribed;
     /// Filtering depends on the assigned prefix, not on constructed positions
     int cached_prefix;
 
@@ -338,13 +352,15 @@ namespace PatternMining {
     }
 
   public:
-    virtual Actor* copy(Space& home) { return new (home) OpenProjection(home,*this); }
+    Actor* copy(Space& home) override {
+      return new (home) OpenProjection(home,*this);
+    }
 
-    virtual PropCost cost(const Space&, const ModEventDelta&) const {
+    PropCost cost(const Space&, const ModEventDelta&) const override {
       return PropCost::linear(PropCost::HI,projection.data.items.size());
     }
 
-    virtual void reschedule(Space& home) {
+    void reschedule(Space& home) override {
       list.reschedule(home,*this);
       length.reschedule(home,*this,Int::PC_INT_BND);
       for (int i=consumed; i<subscribed; i++)
@@ -352,7 +368,7 @@ namespace PatternMining {
           Int::IntView(list[i]).reschedule(home,*this,Int::PC_INT_VAL);
     }
 
-    virtual ExecStatus propagate(Space& home, const ModEventDelta&) {
+    ExecStatus propagate(Space& home, const ModEventDelta&) override {
       const int size = list.known_length();
       for (int i=subscribed; i<size; i++)
         if (!list[i].assigned())
@@ -394,7 +410,7 @@ namespace PatternMining {
       }
     }
 
-    virtual size_t dispose(Space& home) {
+    size_t dispose(Space& home) override {
       home.ignore(*this,AP_DISPOSE);
       list.cancel(home,*this);
       length.cancel(home,*this,Int::PC_INT_BND);
@@ -433,15 +449,15 @@ namespace PatternMining {
   /// Built-in motif and benchmark languages described in CommonPattern
   inline REG
   language(Language name, const Database& database) {
-    if (name == RE10)
+    if (name == Language::RE10)
       return *REG(1) + REG(2) + (REG(2) | REG(3)) + *REG(4) +
         REG(5) + *REG(6) + (REG(7) | REG(8)) + *REG(9);
-    if (name == RE14)
+    if (name == Language::RE14)
       return *REG(1) + (REG(17) | (REG(2) + *REG(19) +
         (REG(2) | REG(3)))) + *REG(4) + REG(5) + *(REG(9) | REG(19)) +
         (REG(6) | REG(8)) + *REG(7) + REG(18);
     REG alphabet(IntArgs(database.alphabet.size(),database.alphabet.begin()));
-    if (name == MOTIF)
+    if (name == Language::MOTIF)
       return REG(1) + *alphabet + REG(3);
     return (REG(19) | REG(20)) + alphabet + (REG(18) | REG(11));
   }

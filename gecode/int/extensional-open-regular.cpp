@@ -34,6 +34,7 @@
 #include <gecode/int/extensional.hh>
 
 #include <limits>
+#include <utility>
 
 namespace Gecode { namespace Int { namespace Extensional {
 
@@ -259,9 +260,7 @@ namespace Gecode { namespace Int { namespace Extensional {
             if ((reachable[t.i_state()] != 0) &&
                 (out[t.o_state()] != 0))
               next[t.o_state()] = 1;
-        unsigned char* swap = reachable;
-        reachable = next;
-        next = swap;
+        std::swap(reachable,next);
       }
 
       // Pruning an item that aliases length can reduce the suffix budget.

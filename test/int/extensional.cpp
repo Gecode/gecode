@@ -1157,24 +1157,29 @@ namespace Test { namespace Int {
 
      /// Test empty words and automata without accepting states
      class OpenRegularEmpty : public Test {
-     protected:
-       int kind;
      public:
-       OpenRegularEmpty(int k)
-         : Test("Extensional::OpenReg::Empty::"+str(k),1,0,0), kind(k) {}
-       virtual bool solution(const Assignment&) const { return kind == 0; }
+       enum class Kind { ACCEPT, REJECT, NO_FINALS };
+     protected:
+       Kind kind;
+     public:
+       OpenRegularEmpty(Kind k)
+         : Test("Extensional::OpenReg::Empty::"+str(static_cast<int>(k)),1,0,0),
+           kind(k) {}
+       virtual bool solution(const Assignment&) const {
+         return kind == Kind::ACCEPT;
+       }
        virtual void post(Gecode::Space& home, Gecode::IntVarArray&) {
          using namespace Gecode;
          OpenIntVarList list(home,8);
-         if (kind == 0) {
+         if (kind == Kind::ACCEPT) {
            extensional(home,list,DFA());
-         } else if (kind == 1) {
+         } else if (kind == Kind::REJECT) {
            extensional(home,list,DFA(0,{{0,0,1}},{1},false));
          } else {
            extensional(home,list,
                        DFA(0,{{0,0,0}},std::initializer_list<int>{},false));
          }
-         if (kind != 2)
+         if (kind != Kind::NO_FINALS)
            list.close(home);
        }
      };
@@ -2584,9 +2589,9 @@ namespace Test { namespace Int {
      OpenRegularBackward open_regular_backward;
      OpenRegularDomainWake open_regular_domain_wake;
      OpenRegularClone open_regular_clone;
-     OpenRegularEmpty open_regular_empty_accept(0);
-     OpenRegularEmpty open_regular_empty_reject(1);
-     OpenRegularEmpty open_regular_no_finals(2);
+     OpenRegularEmpty open_regular_empty_accept(OpenRegularEmpty::Kind::ACCEPT);
+     OpenRegularEmpty open_regular_empty_reject(OpenRegularEmpty::Kind::REJECT);
+     OpenRegularEmpty open_regular_no_finals(OpenRegularEmpty::Kind::NO_FINALS);
      OpenRegularClosed open_regular_closed;
 
      /// Exhaustive positive, negative, and reified sparse-table semantics.

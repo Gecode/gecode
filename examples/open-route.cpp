@@ -54,7 +54,7 @@ using namespace Gecode;
 class OpenRoute : public Script {
 protected:
   /// Number of graph nodes and maximal route length
-  static const int n = 5;
+  static const int node_count = 5;
   /// Node IDs in route order, including source and destination
   OpenIntVarList route;
 public:
@@ -66,7 +66,7 @@ public:
 
   /// Construct the model
   OpenRoute(const Options& opt)
-    : Script(opt), route(*this,IntSet(0,n-1),n) {
+    : Script(opt), route(*this,IntSet(0,node_count-1),node_count) {
     // State 5 consumes the source node. Each remaining transition consumes
     // the destination of a graph arc; only node 4 is an accepting state.
     DFA paths(5,{
@@ -91,14 +91,14 @@ public:
   }
 
   /// Perform copying during cloning
-  virtual Space*
-  copy(void) {
+  Space*
+  copy(void) override {
     return new OpenRoute(*this);
   }
 
   /// Print the materialized route (complete in a solution)
-  virtual void
-  print(std::ostream& os) const {
+  void
+  print(std::ostream& os) const override {
     os << "\t";
     for (int i=0; i<route.known_length(); i++) {
       if (i > 0)

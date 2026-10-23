@@ -251,13 +251,13 @@ public:
     IntVar start = path.get(*this,0);
     post_start(*this,state(0),start,initial);
     rel(*this,path.length() >= manhattan(initial)+1);
-    IntValBranch vals = INT_VAL_MIN();
+    IntValBranch value_branch = INT_VAL_MIN();
     if (opt.branching() == PuzzleOptions::BRANCH_MANHATTAN)
-      vals = INT_VAL([](const Space& home, IntVar next, int i) {
+      value_branch = INT_VAL([](const Space& home, IntVar next, int i) {
         const OpenPuzzle& s = static_cast<const OpenPuzzle&>(home);
         return manhattan_value(s.state(i-1),s.path[i-1].val(),next);
       });
-    branch(*this,path,INT_VAR_NONE(),vals);
+    branch(*this,path,INT_VAR_NONE(),value_branch);
   }
 
   void
@@ -326,17 +326,17 @@ public:
       post_goal(*this,state(i),length,i+1);
     }
     rel(*this,length >= manhattan(initial)+1);
-    IntValBranch vals = INT_VAL_MIN();
+    IntValBranch value_branch = INT_VAL_MIN();
     if (opt.branching() == PuzzleOptions::BRANCH_MANHATTAN)
-      vals = INT_VAL([](const Space& home, IntVar next, int i) {
+      value_branch = INT_VAL([](const Space& home, IntVar next, int i) {
         const FixedPuzzle& s = static_cast<const FixedPuzzle&>(home);
         return manhattan_value(s.state(i-1),s.path[i-1].val(),next);
       });
-    branch(*this,path,INT_VAR_NONE(),vals,
+    branch(*this,path,INT_VAR_NONE(),value_branch,
       [](const Space& home, IntVar, int i) {
         const FixedPuzzle& s = static_cast<const FixedPuzzle&>(home);
-        const int g = s.depth();
-        return values(s.state(g)) != goal() && i == g+1;
+        const int depth = s.depth();
+        return values(s.state(depth)) != goal() && i == depth+1;
       });
   }
 

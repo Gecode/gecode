@@ -43,8 +43,12 @@ using namespace Gecode;
 /// Sequence database and restrictions on the patterns to mine
 class CommonPatternOptions : public Options {
 protected:
-  Driver::StringValueOption _sequences, _file, _support, _required;
-  Driver::StringOption _format, _language;
+  Driver::StringValueOption _sequences;
+  Driver::StringValueOption _file;
+  Driver::StringValueOption _support;
+  Driver::StringValueOption _required;
+  Driver::StringOption _format;
+  Driver::StringOption _language;
   Driver::UnsignedIntOption _min_length;
   Driver::BoolOption _motif;
   std::unique_ptr<PatternMining::Database> input;
@@ -57,22 +61,31 @@ public:
       _file("file","sequence database; one sequence per line",""),
       _support("support","minimum supporting sequences, as a percentage","100"),
       _required("required","items that must occur, comma-separated letters or IDs",""),
-      _format("format","database format",PatternMining::LETTERS),
-      _language("language","pattern language",PatternMining::DEFAULT),
+      _format("format","database format",
+              static_cast<int>(PatternMining::Format::LETTERS)),
+      _language("language","pattern language",
+                static_cast<int>(PatternMining::Language::DEFAULT)),
       _min_length("min-length","minimum pattern length",1),
       _motif("motif","default language starts with A and ends with C",true),
       threshold(0) {
-    _format.add(PatternMining::LETTERS,"letters");
-    _format.add(PatternMining::INTEGERS,"integers");
-    _format.add(PatternMining::SPMF,"spmf");
-    _language.add(PatternMining::DEFAULT,"default","use -motif");
-    _language.add(PatternMining::NONE,"none");
-    _language.add(PatternMining::MOTIF,"motif");
-    _language.add(PatternMining::RE10,"re10");
-    _language.add(PatternMining::RE14,"re14");
-    _language.add(PatternMining::RE2,"re2");
-    add(_sequences); add(_file); add(_format); add(_support);
-    add(_min_length); add(_required); add(_language); add(_motif);
+    _format.add(static_cast<int>(PatternMining::Format::LETTERS),"letters");
+    _format.add(static_cast<int>(PatternMining::Format::INTEGERS),"integers");
+    _format.add(static_cast<int>(PatternMining::Format::SPMF),"spmf");
+    _language.add(static_cast<int>(PatternMining::Language::DEFAULT),
+                  "default","use -motif");
+    _language.add(static_cast<int>(PatternMining::Language::NONE),"none");
+    _language.add(static_cast<int>(PatternMining::Language::MOTIF),"motif");
+    _language.add(static_cast<int>(PatternMining::Language::RE10),"re10");
+    _language.add(static_cast<int>(PatternMining::Language::RE14),"re14");
+    _language.add(static_cast<int>(PatternMining::Language::RE2),"re2");
+    add(_sequences);
+    add(_file);
+    add(_format);
+    add(_support);
+    add(_min_length);
+    add(_required);
+    add(_language);
+    add(_motif);
   }
 
   /// Validate external input before constructing a space
@@ -82,7 +95,7 @@ public:
     PatternMining::Sequences sequences;
     const std::string filename(_file.value());
     if (filename.empty()) {
-      if (_format.value() != PatternMining::LETTERS)
+      if (format() != PatternMining::Format::LETTERS)
         throw std::invalid_argument("Integer and SPMF formats require -file");
       const std::string text(_sequences.value());
       if (text.empty() || text.back() == ',')
@@ -90,11 +103,11 @@ public:
       std::istringstream stream(text);
       std::string sequence;
       while (std::getline(stream,sequence,','))
-        sequences.push_back(PatternMining::read_sequence(sequence,PatternMining::LETTERS));
+        sequences.push_back(PatternMining::read_sequence(
+          sequence,PatternMining::Format::LETTERS));
     } else {
       std::ifstream stream(filename);
-      sequences = PatternMining::read_database(stream,
-        static_cast<PatternMining::Format>(_format.value()));
+      sequences = PatternMining::read_database(stream,format());
     }
     input.reset(new PatternMining::Database(sequences));
     threshold = PatternMining::minimum_support(_support.value(),input->ends.size());
@@ -106,7 +119,8 @@ public:
       std::string item;
       while (std::getline(stream,item,',')) {
         const std::vector<int> parsed = PatternMining::read_sequence(item,
-          letters() ? PatternMining::LETTERS : PatternMining::INTEGERS);
+          letters() ? PatternMining::Format::LETTERS
+                    : PatternMining::Format::INTEGERS);
         if (parsed.size() != 1)
           throw std::invalid_argument("Required items must be single letters or IDs");
         required_items.push_back(parsed[0]);
@@ -118,11 +132,16 @@ public:
   const std::vector<int>& required(void) const { return required_items; }
   int support(void) const { return threshold; }
   int min_length(void) const { return static_cast<int>(_min_length.value()); }
-  bool letters(void) const { return _format.value() == PatternMining::LETTERS; }
+  PatternMining::Format format(void) const {
+    return static_cast<PatternMining::Format>(_format.value());
+  }
+  bool letters(void) const { return format() == PatternMining::Format::LETTERS; }
   PatternMining::Language language(void) const {
-    if (_language.value() == PatternMining::DEFAULT)
-      return _motif.value() ? PatternMining::MOTIF : PatternMining::NONE;
-    return static_cast<PatternMining::Language>(_language.value());
+    const auto selected = static_cast<PatternMining::Language>(_language.value());
+    if (selected == PatternMining::Language::DEFAULT)
+      return _motif.value() ? PatternMining::Language::MOTIF
+                            : PatternMining::Language::NONE;
+    return selected;
   }
 };
 
@@ -181,7 +200,7 @@ public:
     pattern = OpenIntVarList(*this,database.domain(),database.max_length());
     rel(*this,pattern.length(),IRT_GQ,opt.min_length());
     frequency = PatternMining::frequent(*this,pattern,database,opt.support());
-    if (opt.language() != PatternMining::NONE)
+    if (opt.language() != PatternMining::Language::NONE)
       extensional(*this,pattern,PatternMining::language(opt.language(),database));
     if (!opt.required().empty()) {
       REG alphabet(IntArgs(database.alphabet));
@@ -191,7 +210,7 @@ public:
     branch(*this,pattern,INT_VAR_NONE(),INT_VAL_MIN());
   }
 
-  virtual IntVar cost(void) const { return pattern.length(); }
+  IntVar cost(void) const override { return pattern.length(); }
 
   CommonPattern(CommonPattern& s)
     : IntMaximizeScript(s), database(s.database), letters(s.letters) {
@@ -199,9 +218,9 @@ public:
     frequency.update(*this,s.frequency);
   }
 
-  virtual Space* copy(void) { return new CommonPattern(*this); }
+  Space* copy(void) override { return new CommonPattern(*this); }
 
-  virtual void print(std::ostream& os) const {
+  void print(std::ostream& os) const override {
     os << "\t";
     for (int i=0; i<pattern.known_length(); i++) {
       if (i && !letters)

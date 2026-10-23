@@ -49,18 +49,18 @@ namespace Gecode {
         IntSet(Int::Limits::min,Int::Limits::max),max) {}
 
   OpenIntVarList::OpenIntVarList(Space& home, const IntSet& d,
-                                 int max)
+                               int max)
     : OpenIntVarList(home,[d](int) { return d; },max) {}
 
   OpenIntVarList::OpenIntVarList(Space& home, const IntSet& d,
-                                 Transition t, int max)
+                               Transition t, int max)
     : OpenIntVarList(home,[d](int) { return d; },t,max) {}
 
   OpenIntVarList::OpenIntVarList(Space& home, Domain d, int max)
     : OpenVarList<IntVar>(home,factory(d),max) {}
 
   OpenIntVarList::OpenIntVarList(Space& home, Domain d,
-                                 Transition t, int max)
+                               Transition t, int max)
     : OpenVarList<IntVar>(home,factory(d),t,max) {}
 
   OpenBoolVarList::OpenBoolVarList(void) {}
@@ -70,7 +70,7 @@ namespace Gecode {
         [](Space& home, int) { return BoolVar(home,0,1); },max) {}
 
   OpenBoolVarList::OpenBoolVarList(Space& home, Transition t,
-                                   int max)
+                                 int max)
     : OpenVarList<BoolVar>(home,
         [](Space& home, int) { return BoolVar(home,0,1); },t,max) {}
 
@@ -153,9 +153,9 @@ namespace Gecode { namespace Int {
           IntView(list[i]).subscribe(home,*this,PC_INT_VAL,false);
       posted = size;
 
-      bool assigned;
+      bool new_assignment;
       do {
-        assigned = false;
+        new_assignment = false;
         Region region;
         int* values = region.alloc<int>(size);
         int n = 0;
@@ -173,9 +173,9 @@ namespace Gecode { namespace Int {
             IntView x(list[i]);
             for (int j=0; j<n; j++)
               GECODE_ME_CHECK(x.nq(home,values[j]));
-            assigned |= x.assigned();
+            new_assignment |= x.assigned();
           }
-      } while (assigned);
+      } while (new_assignment);
 
       bool complete = closed();
       for (int i=0; complete && (i<size); i++)
