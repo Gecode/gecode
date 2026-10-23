@@ -166,9 +166,62 @@ predicate gecode_regular_nfa_int_fzn(
   set of int: final,
 );
 
-% Constrain tasks whose present entry is true not to overlap. Durations are
-% nonnegative. The arrays have equal lengths. The caller must also constrain
-% start[i] + duration[i] = end[i] for each present task.
+/** @group gecode.constraints
+  Schedule tasks with explicit start, duration, and end variables on a unary
+  resource. Durations are nonnegative. A zero-duration task cannot occur
+  strictly inside another task. The arrays must have equal lengths.
+  The caller must also constrain start[i] + duration[i] = end[i].
+  Reification is not supported.
+*/
+predicate gecode_unary_flex(
+  array[int] of var int: start,
+  array[int] of var int: duration,
+  array[int] of var int: end,
+);
+
+/** @group gecode.constraints
+  Schedule tasks with explicit start, duration, and end variables on a
+  cumulative resource. Durations, usage, and capacity are nonnegative.
+  The arrays must have equal lengths. The caller must also constrain
+  start[i] + duration[i] = end[i]. At each task start, its usage plus the usage
+  of tasks strictly spanning that start must fit capacity, even for a
+  zero-duration task. Use cumulative for MiniZinc's empty-task semantics.
+  Reification is not supported.
+*/
+predicate gecode_cumulative_flex(
+  array[int] of var int: start,
+  array[int] of var int: duration,
+  array[int] of var int: end,
+  array[int] of int: usage,
+  var int: capacity,
+);
+
+/** @group gecode.constraints
+  Schedule tasks on machines numbered 0..length(capacity)-1 with explicit
+  start, duration, and end variables. Usage may be negative. If upper is true,
+  capacity bounds usage from above, otherwise from below. The bound applies
+  at times when at least one task executes on the machine.
+  Task arrays must have equal lengths. The caller must constrain
+  start[i] + duration[i] = end[i], nonnegative durations, and machine domains.
+  Reification is not supported. Only value propagation is available.
+*/
+predicate gecode_cumulatives_flex(
+  array[int] of var int: start,
+  array[int] of var int: duration,
+  array[int] of var int: end,
+  array[int] of var int: usage,
+  array[int] of var int: machine,
+  array[int] of int: capacity,
+  bool: upper,
+);
+
+/** @group gecode.constraints
+  Schedule the tasks whose present entry is true on a unary resource.
+  Durations are nonnegative. Zero-duration tasks have the same semantics as
+  gecode_unary_flex. The arrays must have equal lengths. The caller must
+  constrain start[i] + duration[i] = end[i] for each present task.
+  Reification is not supported.
+*/
 predicate gecode_unary_flex_optional(
   array[int] of var int: start,
   array[int] of var int: duration,
@@ -176,10 +229,13 @@ predicate gecode_unary_flex_optional(
   array[int] of var bool: present,
 );
 
-% Constrain the total usage of tasks whose present entry is true not to
-% exceed capacity. Durations, usage, and capacity are nonnegative.
-% The arrays have equal lengths. The caller must also constrain
-% start[i] + duration[i] = end[i] for each present task.
+/** @group gecode.constraints
+  Schedule the tasks whose present entry is true on a cumulative resource.
+  Durations, usage, and capacity are nonnegative. Zero-duration tasks have
+  the same semantics as gecode_cumulative_flex. The arrays must have equal
+  lengths. The caller must constrain start[i] + duration[i] = end[i] for each
+  present task. Reification is not supported.
+*/
 predicate gecode_cumulative_flex_optional(
   array[int] of var int: start,
   array[int] of var int: duration,
