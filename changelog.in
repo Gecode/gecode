@@ -117,6 +117,26 @@ Honor propagation annotations in cumulative and unary scheduling bindings,
 including the unary specializations of cumulative constraints.
 
 [ENTRY]
+Module: int
+What:   new
+Rank:   major
+[DESCRIPTION]
+Add OpenIntVarList and OpenBoolVarList for lists whose length is decided
+during propagation and search.
+[MORE]
+OpenVarList supports other variable types through a factory.
+Regular-language and other constraints follow list growth.
+Regular-language filtering excludes prefixes whose shortest accepting
+continuation exceeds the maximum list length.
+Branching uses standard variable and value selectors, with either incremental
+list construction or a length decision before assigning values.
+Factories and transitions run inside Space::NoGPI scopes by default;
+callbacks can opt into global information with Space::UseGPI.
+The open-route example introduces list construction and branching.
+Common-pattern demonstrates constrained frequent subsequence mining,
+and fifteen-puzzle compares open lists with fixed arrays.
+
+[ENTRY]
 Module: kernel
 What:   new
 Rank:   minor
