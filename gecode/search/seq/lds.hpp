@@ -175,6 +175,11 @@ namespace Gecode { namespace Search { namespace Seq {
             cur = s;
             return nullptr;
           }
+#ifdef GECODE_HAS_EXPERIMENTAL
+          s->prepare(*this);
+          if (s->status(*this) != SS_BRANCH)
+            break;
+#endif
           const Choice* ch = s->choice();
           if (ch->alternatives() > 1)
             exhausted = false;
@@ -212,6 +217,10 @@ namespace Gecode { namespace Search { namespace Seq {
         }
       } else {
         node++;
+#ifdef GECODE_HAS_EXPERIMENTAL
+        if (cur->status(*this) == SS_BRANCH)
+          cur->prepare(*this);
+#endif
         switch (cur->status(*this)) {
         case SS_FAILED:
           if (tracer) {

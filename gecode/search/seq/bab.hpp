@@ -42,7 +42,7 @@ namespace Gecode { namespace Search { namespace Seq {
   template<class Tracer>
   forceinline
   BAB<Tracer>::BAB(Space* s, const Options& o)
-    : tracer(o.tracer), opt(o), path(opt.nogoods_limit), d(0), mark(0), 
+    : tracer(o.tracer), opt(o), path(opt.nogoods_limit), d(0), mark(0),
       best(nullptr) {
     if (tracer) {
       tracer.engine(SearchTracer::EngineType::BAB, 1U);
@@ -91,6 +91,10 @@ namespace Gecode { namespace Search { namespace Seq {
         path.next();
       }
       node++;
+#ifdef GECODE_HAS_EXPERIMENTAL
+      if (cur->status(*this) == SS_BRANCH)
+        cur->prepare(*this);
+#endif
       SearchTracer::EdgeInfo ei;
       if (tracer && (path.entries() > 0)) {
         typename Path<Tracer>::Edge& top = path.top();

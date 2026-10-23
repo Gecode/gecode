@@ -565,6 +565,19 @@ namespace Gecode {
   }
 
 
+  void
+  Brancher::prepare(Space&, StatusStatistics&) {}
+
+  void
+  Space::prepare(StatusStatistics& stat) {
+    while (!failed() && b_status != Brancher::cast(&bl)) {
+      Brancher* active = b_status;
+      active->prepare(*this,stat);
+      if (status(stat) != SS_BRANCH || b_status == active)
+        return;
+    }
+  }
+
   const Choice*
   Space::choice(void) {
     if (!stable())

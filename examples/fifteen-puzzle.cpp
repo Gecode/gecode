@@ -34,9 +34,11 @@
 #include <gecode/driver.hh>
 #include <gecode/int.hh>
 #include <gecode/minimodel.hh>
+#include <gecode/search.hh>
 
 #include <algorithm>
 #include <array>
+#include <cstdint>
 #include <cstdlib>
 #include <iomanip>
 #include <iostream>
@@ -52,6 +54,7 @@ class PuzzleOptions : public Options {
 public:
   enum { MODEL_OPEN, MODEL_FIXED };
   enum { BRANCH_MIN, BRANCH_MANHATTAN };
+  enum { SEARCH_BAB, SEARCH_ASTAR, SEARCH_CABS };
   PuzzleOptions(void)
     : Options("FifteenPuzzle"),
       _scramble("scramble","number of random slides from the goal",12),
@@ -65,6 +68,12 @@ public:
     branching(BRANCH_MIN,"min","try the lowest blank position first");
     branching(BRANCH_MANHATTAN,"manhattan",
               "try the slide with least Manhattan distance first");
+    search(SEARCH_BAB);
+    search(SEARCH_BAB,"bab","depth-first branch and bound");
+#ifdef GECODE_HAS_EXPERIMENTAL
+    search(SEARCH_ASTAR,"astar","A* with Manhattan distance");
+    search(SEARCH_CABS,"cabs","complete anytime beam search");
+#endif
     solutions(0);
     seed(1);
   }
@@ -176,11 +185,11 @@ post_start(Home home, const IntVarArgs& tiles, IntVar blank,
   rel(home,blank == zero);
 }
 
-// Swap the blank with an adjacent tile and preserve every other position.
+// A step slides a tile while moving, and leaves the board unchanged otherwise.
 static void
-post_slide(Home home,
-           const IntVarArgs& before, IntVar old_blank,
-           const IntVarArgs& after, IntVar new_blank) {
+post_step(Home home, BoolVar moving,
+          const IntVarArgs& before, IntVar old_blank,
+          const IntVarArgs& after, IntVar new_blank) {
   static const TupleSet adjacent = [] {
     TupleSet table(2);
     for (int i=0; i<16; i++) {
@@ -190,7 +199,8 @@ post_slide(Home home,
     table.finalize();
     return table;
   }();
-  extensional(home,IntVarArgs({old_blank,new_blank}),adjacent);
+  extensional(home,IntVarArgs({old_blank,new_blank}),adjacent,moving);
+  rel(home,(!moving) >> (old_blank == new_blank));
   rel(home,element(after,old_blank) == element(before,new_blank));
   rel(home,element(after,new_blank) == 0);
   for (int i=0; i<16; i++) {
@@ -266,7 +276,7 @@ public:
     if (failed())
       return;
     if (i > 0)
-      post_slide(*this,state(i-1),x[i-1],state(i),x[i]);
+      post_step(*this,BoolVar(*this,1,1),state(i-1),x[i-1],state(i),x[i]);
     post_goal(*this,state(i),path.length(),i+1);
   }
 
@@ -285,6 +295,19 @@ public:
       result[j] = tiles[16*i+j];
     return result;
   }
+  int
+  depth(void) const {
+    int i = 0;
+    while (i+1 < path.known_length() && path[i+1].assigned())
+      i++;
+    return i;
+  }
+  int
+  bound(void) const {
+    const int moves = depth();
+    const int remaining = manhattan(values(state(moves)));
+    return std::max(moves+remaining,path.length().min()-1);
+  }
   void
   constrain(const Space& solution) override {
     const OpenPuzzle& best = static_cast<const OpenPuzzle&>(solution);
@@ -302,9 +325,8 @@ public:
 /**
  * \brief Bounded representation using the same slide and goal rules
  *
- * All boards are constructed initially, including the unused suffix after
- * the goal. The branch filter considers only the next blank position and
- * stops when the assigned prefix reaches the goal.
+ * All boards are constructed initially. Steps before the path length are
+ * moves; the remaining steps leave the goal board unchanged.
  *
  * \ingroup Example
  */
@@ -322,7 +344,8 @@ public:
     post_start(*this,state(0),path[0],initial);
     post_goal(*this,state(0),length,1);
     for (int i=1; i<=opt.limit(); i++) {
-      post_slide(*this,state(i-1),path[i-1],state(i),path[i]);
+      BoolVar moving = expr(*this,length > i);
+      post_step(*this,moving,state(i-1),path[i-1],state(i),path[i]);
       post_goal(*this,state(i),length,i+1);
     }
     rel(*this,length >= manhattan(initial)+1);
@@ -332,12 +355,7 @@ public:
         const FixedPuzzle& s = static_cast<const FixedPuzzle&>(home);
         return manhattan_value(s.state(i-1),s.path[i-1].val(),next);
       });
-    branch(*this,path,INT_VAR_NONE(),value_branch,
-      [](const Space& home, IntVar, int i) {
-        const FixedPuzzle& s = static_cast<const FixedPuzzle&>(home);
-        const int depth = s.depth();
-        return values(s.state(depth)) != goal() && i == depth+1;
-      });
+    branch(*this,path,INT_VAR_NONE(),value_branch);
   }
 
   FixedPuzzle(FixedPuzzle& s) : Script(s) {
@@ -357,9 +375,15 @@ public:
     return result;
   }
   int
+  bound(void) const {
+    const int moves = depth();
+    const int remaining = manhattan(values(state(moves)));
+    return std::max(moves+remaining,length.min()-1);
+  }
+  int
   depth(void) const {
     int i = 0;
-    while (i+1 < path.size() && path[i+1].assigned())
+    while (i+1 < length.min() && path[i+1].assigned())
       i++;
     return i;
   }
@@ -377,6 +401,54 @@ public:
   }
 };
 
+#ifdef GECODE_HAS_EXPERIMENTAL
+// A* and complete anytime beam search use a lower bound on total moves.
+// Each model adds moves so far to Manhattan distance and combines this with
+// the path length bound established by propagation.
+template<class Model>
+static Search::HeuristicGuidance
+guidance(void) {
+  return Search::HeuristicGuidance(Search::HeuristicGuidance::Sense::MINIMIZE,
+    [](const Space& home) -> std::int64_t {
+      return static_cast<const Model&>(home).bound();
+    });
+}
+
+// Script::run expects a constructor taking only the model and search options;
+// this wrapper supplies the model's lower-bound callback to A*.
+template<class Model>
+class PuzzleAStar : public AStar<Model> {
+public:
+  PuzzleAStar(Model* root, const Search::Options& opt)
+    : AStar<Model>(root,guidance<Model>(),opt) {}
+};
+
+template<class Model>
+class PuzzleCABS : public CABS<Model> {
+public:
+  PuzzleCABS(Model* root, const Search::Options& opt)
+    : CABS<Model>(root,guidance<Model>(),opt) {}
+};
+#endif
+
+template<class Model>
+static void
+run_model(const PuzzleOptions& opt) {
+  switch (opt.search()) {
+  case PuzzleOptions::SEARCH_BAB:
+    Script::run<Model,BAB,PuzzleOptions>(opt);
+    break;
+#ifdef GECODE_HAS_EXPERIMENTAL
+  case PuzzleOptions::SEARCH_ASTAR:
+    Script::run<Model,PuzzleAStar,PuzzleOptions>(opt);
+    break;
+  case PuzzleOptions::SEARCH_CABS:
+    Script::run<Model,PuzzleCABS,PuzzleOptions>(opt);
+    break;
+#endif
+  }
+}
+
 /** \brief Main-function
  *  \relates OpenPuzzle
  */
@@ -389,9 +461,9 @@ main(int argc, char* argv[]) {
     print_board(std::cout,initial_board(opt));
   }
   if (opt.model() == PuzzleOptions::MODEL_OPEN)
-    Script::run<OpenPuzzle,BAB,PuzzleOptions>(opt);
+    run_model<OpenPuzzle>(opt);
   else
-    Script::run<FixedPuzzle,BAB,PuzzleOptions>(opt);
+    run_model<FixedPuzzle>(opt);
   return 0;
 }
 

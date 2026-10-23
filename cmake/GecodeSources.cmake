@@ -51,6 +51,14 @@ set(GECODE_SEARCH_SOURCES
   gecode/search/worker-control.cpp
 )
 
+if(GECODE_ENABLE_EXPERIMENTAL)
+  list(APPEND GECODE_SEARCH_SOURCES
+    gecode/search/astar.cpp
+    gecode/search/cabs.cpp
+    gecode/search/par/frontier.cpp
+  )
+endif()
+
 set(GECODE_INT_SOURCES
   gecode/int/arithmetic.cpp
   gecode/int/arithmetic/mult.cpp

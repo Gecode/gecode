@@ -80,6 +80,29 @@ namespace Gecode { namespace Search {
     /// Initialize with location \a l
     WorkerControlInUse(const char* l);
   };
+#ifdef GECODE_HAS_EXPERIMENTAL
+  /// %Exception: CABS does not support search tracers
+  class GECODE_SEARCH_EXPORT UnsupportedCABSTracer : public Exception {
+  public:
+    UnsupportedCABSTracer(const char* l);
+  };
+  /// %Exception: CABS requires total-bound guidance
+  class GECODE_SEARCH_EXPORT UninitializedCABSBound : public Exception {
+  public:
+    UninitializedCABSBound(const char* l);
+  };
+  /// %Exception: A* does not support search tracers
+  class GECODE_SEARCH_EXPORT UnsupportedAStarTracer : public Exception {
+  public:
+    UnsupportedAStarTracer(const char* l);
+  };
+  /// %Exception: A* requires total-bound guidance
+  class GECODE_SEARCH_EXPORT UninitializedAStarBound : public Exception {
+  public:
+    UninitializedAStarBound(const char* l);
+  };
+#endif
+
   //@}
 }}
 
