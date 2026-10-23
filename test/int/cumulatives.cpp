@@ -240,6 +240,58 @@ namespace Test { namespace Int {
        }
      };
 
+     /// Signed profile contributions must tighten the producer's usage
+     class ProfileContribution : public Test::Base {
+     private:
+       class Fixture : public Gecode::Space {
+       public:
+         Gecode::IntVar producer;
+         Fixture(bool at_most)
+           : producer(*this,at_most ? -10 : 0,at_most ? 0 : 10) {
+           using namespace Gecode;
+           const int sign = at_most ? 1 : -1;
+           IntVarArgs usage({IntVar(*this,3*sign,3*sign),
+                             IntVar(*this,5*sign,5*sign),producer});
+           cumulatives(*this,IntArgs({0,0,0}),
+                       IntVarArgs(*this,3,0,0),IntVarArgs(*this,3,1,1),
+                       IntVarArgs(*this,3,1,1),usage,IntArgs({0}),at_most);
+         }
+         Fixture(Fixture& fixture) : Gecode::Space(fixture) {
+           producer.update(*this,fixture.producer);
+         }
+         virtual Gecode::Space* copy(void) {
+           return new Fixture(*this);
+         }
+       };
+     public:
+       ProfileContribution(void)
+         : Test::Base("Cumulatives::ProfileContribution",TestTags::check()) {}
+       virtual bool run(void) {
+         Fixture upper(true), lower(false);
+         return (upper.status() != Gecode::SS_FAILED) &&
+           (lower.status() != Gecode::SS_FAILED) &&
+           (upper.producer.min() == -10) && (upper.producer.max() == -8) &&
+           (lower.producer.min() == 8) && (lower.producer.max() == 10);
+       }
+     } profile_contribution;
+
+     /// An empty producer must cancel before it can affect another task
+     class EmptyProfile : public Test {
+     public:
+       EmptyProfile(void)
+         : Test(TestTags::check(),"Cumulatives::EmptyProfile",1,-2,-1) {}
+       virtual bool solution(const Assignment&) const {
+         return true;
+       }
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
+         using namespace Gecode;
+         cumulatives(home,IntArgs({0,0}),IntVarArgs(home,2,0,0),
+                     IntVarArgs({IntVar(home,1,1),IntVar(home,0,0)}),
+                     IntVarArgs({IntVar(home,1,1),IntVar(home,0,0)}),
+                     IntVarArgs({IntVar(home,1,1),x[0]}),IntArgs({1}),true);
+       }
+     } empty_profile;
+
      Cumulatives c1t1("1t1", 1,  true, 1);
      Cumulatives c1f1("1f1", 1, false, 1);
      Cumulatives c1t2("1t2", 1,  true, 2);

@@ -138,15 +138,9 @@ namespace Gecode { namespace Int { namespace Cumulatives {
     int date;
     /// The quantity changed by this event (if any)
     int inc;
-    /** If the type is EVENT_PROF and it is the first of the pair,
-     * this value is true. Added to handle contribution-values
-     * correctly for both at_most and at_least.
-     */
-    bool first_prof;
-
     /// Simple constructor
-    Event(ev_t _e, int _task, int _date, int _inc = 0, bool _first_prof = false)
-      : e(_e), task(_task), date(_date), inc(_inc), first_prof(_first_prof)
+    Event(ev_t _e, int _task, int _date, int _inc = 0)
+      : e(_e), task(_task), date(_date), inc(_inc)
     {}
 
     // Default constructor for region-allocated memory
@@ -305,7 +299,7 @@ namespace Gecode { namespace Int { namespace Cumulatives {
               ? u[t].min() > 0
               : u[t].max() < 0) {
             GECODE_PUSH_EVENTS(Event(EVENT_PROF, t, s[t].max(),
-                                     at_most ? u[t].min() : u[t].max(), true));
+                                     at_most ? u[t].min() : u[t].max()));
             GECODE_PUSH_EVENTS(Event(EVENT_PROF, t, e[t].min(),
                                      at_most ? -u[t].min() : -u[t].max()));
           }
@@ -316,7 +310,7 @@ namespace Gecode { namespace Int { namespace Cumulatives {
               ? u[t].min() < 0
               : u[t].max() > 0) {
             GECODE_PUSH_EVENTS(Event(EVENT_PROF, t, s[t].min(),
-                                     at_most ? u[t].min() : u[t].max(), true));
+                                     at_most ? u[t].min() : u[t].max()));
             GECODE_PUSH_EVENTS(Event(EVENT_PROF, t, e[t].max(),
                                      at_most ? -u[t].min() : -u[t].max()));
           }
@@ -361,10 +355,7 @@ namespace Gecode { namespace Int { namespace Cumulatives {
             ntask += events[ei].inc;
           } else /* if (events[ei].e == EVENT_PROF) */ {
             su += events[ei].inc;
-            if(events[ei].first_prof)
-              contribution[events[ei].task] = at_most
-                ? std::max(contribution[events[ei].task], events[ei].inc)
-                : std::min(contribution[events[ei].task], events[ei].inc);
+            contribution[events[ei].task] += events[ei].inc;
           }
         } else /* if (events[ei].e == EVENT_PRUN) */ {
           assert(prune_tasks_size<s.size());

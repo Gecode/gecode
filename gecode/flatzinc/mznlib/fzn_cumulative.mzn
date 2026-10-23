@@ -138,6 +138,9 @@ predicate fzn_cumulative(
         true,
       )
     elseif latest_end - earliest_start <= int_limit /\ sum (ri in usage) (ub(ri)) <= int_limit then
+      forall (i in index_set(start)) (
+        duration[i] > 0 -> usage[i] <= capacity
+      ) /\
       % Put zero-duration tasks on a separate machine. A task spanning the
       % horizon with usage -capacity turns the variable bound into a fixed zero bound.
       % The second bound is immaterial: only empty tasks use that machine.
