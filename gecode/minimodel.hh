@@ -60,6 +60,7 @@
 #endif
 
 #include <iostream>
+#include <type_traits>
 
 /*
  * Support for DLLs under Windows
@@ -1361,7 +1362,8 @@ namespace Gecode {
       NT_RLIN,      ///< Reified linear relation
       NT_RLINFLOAT, ///< Reified linear relation
       NT_RSET,      ///< Reified set relation
-      NT_MISC       ///< Other Boolean expression
+      NT_MISC,      ///< Other Boolean expression
+      NT_CONST      ///< Boolean constant
     };
     /// Miscealloneous Boolean expressions
     class GECODE_VTABLE_EXPORT Misc : public HeapAllocated {
@@ -1382,6 +1384,9 @@ namespace Gecode {
   private:
     /// Pointer to node for expression
     Node* n;
+    /// Create a node storing a Boolean constant
+    GECODE_MINIMODEL_EXPORT
+    static Node* constant(bool value);
     /// Construct an expression, optionally treating an empty operand as an accumulator
     BoolExpr(const BoolExpr& l, NodeType t, const BoolExpr& r,
              bool accumulator);
@@ -1404,6 +1409,14 @@ namespace Gecode {
     /// Construct expression for type and subexpresssions
     GECODE_MINIMODEL_EXPORT
     BoolExpr(const BoolExpr& l, NodeType t, const BoolExpr& r);
+    /** Construct expression for a Boolean constant
+     *
+     * Only bool arguments are accepted, so integer expressions do not
+     * become ambiguous through an implicit conversion to bool.
+     */
+    template<class Bool,
+             std::enable_if_t<std::is_same<Bool,bool>::value,int> = 0>
+    BoolExpr(Bool value);
     /// Construct expression for variable
     GECODE_MINIMODEL_EXPORT
     BoolExpr(const BoolVar& x);
@@ -1447,7 +1460,7 @@ namespace Gecode {
    * \defgroup TaskModelMiniModelBool Boolean expressions
    *
    * Boolean expressions can be freely composed of variables with
-   * the usual connectives and reified linear expressions.
+   * the usual connectives, Boolean constants, and reified linear expressions.
    *
    * \ingroup TaskModelMiniModel
    */
@@ -1644,6 +1657,11 @@ namespace Gecode {
   GECODE_MINIMODEL_EXPORT BoolVar
   expr(Home home, const BoolExpr& e,
        const IntPropLevels& ipls=IntPropLevels::def);
+  /// Preserve integer-expression posting for C++ Boolean values
+  template<class Bool,
+           std::enable_if_t<std::is_same<Bool,bool>::value,int> = 0>
+  IntVar expr(Home home, Bool value,
+              const IntPropLevels& ipls=IntPropLevels::def);
   /// Post Boolean relation
   GECODE_MINIMODEL_EXPORT void
   rel(Home home, const BoolExpr& e,

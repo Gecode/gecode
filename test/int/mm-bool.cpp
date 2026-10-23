@@ -165,6 +165,83 @@ namespace Test { namespace Int {
        }
      };
 
+     static_assert(std::is_convertible<bool,Gecode::BoolExpr>::value,
+                   "Boolean constants must convert to Boolean expressions");
+     static_assert(!std::is_convertible<int,Gecode::BoolExpr>::value,
+                   "Integer constants must remain integer expressions");
+     static_assert(!std::is_convertible<void*,Gecode::BoolExpr>::value,
+                   "Pointers must not convert to Boolean expressions");
+
+     static_assert(std::is_same<decltype(Gecode::expr(
+                     std::declval<Gecode::Home>(),true)),Gecode::IntVar>::value &&
+                   std::is_same<decltype(Gecode::expr(
+                     std::declval<Gecode::Home>(),0)),Gecode::IntVar>::value,
+                   "Numeric posting overloads must keep their return type");
+
+     /// %Test Boolean constants and their composition with variables
+     class BoolExprConstant : public Test {
+     protected:
+       /// Value of constant
+       bool value;
+       /// Expression to test
+       int mode;
+     public:
+       /// Create and register test
+       BoolExprConstant(bool value0, int mode0)
+         : Test(TestTags::check(),"MiniModel::BoolExpr::Constant::"+
+                str(value0)+"::"+str(mode0),3,0,1),
+           value(value0), mode(mode0) {}
+       /// %Test whether an assignment is a solution
+       virtual bool solution(const Assignment& x) const {
+         switch (mode) {
+         case 0: return x[2] == value;
+         case 1: return x[2] == !value;
+         case 2: return x[2] == (value && (x[0] != 0));
+         case 3: return x[2] == ((x[0] != 0) || value);
+         case 4: return value;
+         case 5: return x[2] == (!value && (x[0] != 0) && (x[1] != 0));
+         case 6: return x[2] == ((x[0] != 0) || !value || (x[1] != 0));
+         case 7: return x[2] == (value == (x[0] != 0));
+         case 8: return (x[0] != x[1]) == value;
+         case 9: return x[2] == (!value || (x[0] != 0));
+         case 10: return x[2] == ((x[0] == 0) || value);
+         case 11: return !value;
+         case 12: return x[2] == value;
+         default: GECODE_NEVER;
+         }
+       }
+       /// Post constraint on \a x
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
+         using namespace Gecode;
+         BoolExpr e = value;
+         switch (mode) {
+         case 0: break;
+         case 1: e = !e; break;
+         case 2: e = e && channel(home,x[0]); break;
+         case 3: e = channel(home,x[0]) || e; break;
+         case 4: rel(home,e); return;
+         case 5: e = (!e && channel(home,x[0])) && channel(home,x[1]); break;
+         case 6: e = (channel(home,x[0]) || !e) || channel(home,x[1]); break;
+         case 7: e = e == channel(home,x[0]); break;
+         case 8: rel(home,(x[0] != x[1]) == e); return;
+         case 9: e = e >> channel(home,x[0]); break;
+         case 10: e = channel(home,x[0]) >> e; break;
+         case 11: rel(home,!e); return;
+         case 12:
+           {
+             BoolExpr empty;
+             e = empty && e;
+             e = e && empty;
+             e = empty || e;
+             e = e || empty;
+           }
+           break;
+         default: GECODE_NEVER;
+         }
+         rel(home, expr(home,e), IRT_EQ, channel(home,x[2]));
+       }
+     };
+
      /// %Test Boolean expressions with default-constructed accumulators
      class BoolExprDefaultAccumulator : public Test {
      protected:
@@ -212,7 +289,9 @@ namespace Test { namespace Int {
        BE_NOT_OR,
        BE_XOR_EMPTY,
        BE_EQV_EMPTY,
-       BE_NEQ_EMPTY
+       BE_NEQ_EMPTY,
+       BE_CONST_IMP_EMPTY,
+       BE_EMPTY_EQV_CONST
      };
 
      /// %Test invalid Boolean expressions
@@ -246,6 +325,8 @@ namespace Test { namespace Int {
          case BE_XOR_EMPTY:      e = empty ^ v;   break;
          case BE_EQV_EMPTY:      e = empty == v;  break;
          case BE_NEQ_EMPTY:      e = empty != v;  break;
+         case BE_CONST_IMP_EMPTY: e = false >> empty; break;
+         case BE_EMPTY_EQV_CONST: e = empty == true; break;
          default: GECODE_NEVER;
          }
          try {
@@ -4476,6 +4557,10 @@ namespace Test { namespace Int {
         (void) new BoolElement("Expr::A",0);
         (void) new BoolElement("Expr::B",1);
         (void) new BoolElement("Rel",2);
+        for (int mode=0; mode<13; mode++) {
+          (void) new BoolExprConstant(false,mode);
+          (void) new BoolExprConstant(true,mode);
+        }
         (void) new BoolExprDefaultAccumulator(BO_AND,false);
         (void) new BoolExprDefaultAccumulator(BO_AND,true);
         (void) new BoolExprDefaultAccumulator(BO_OR,false);
@@ -4491,6 +4576,8 @@ namespace Test { namespace Int {
         (void) new BoolExprInvalid(BE_XOR_EMPTY,"Xor");
         (void) new BoolExprInvalid(BE_EQV_EMPTY,"Eqv");
         (void) new BoolExprInvalid(BE_NEQ_EMPTY,"Neq");
+        (void) new BoolExprInvalid(BE_CONST_IMP_EMPTY,"FalseImpEmpty");
+        (void) new BoolExprInvalid(BE_EMPTY_EQV_CONST,"EmptyEqvTrue");
       }
     };
 
