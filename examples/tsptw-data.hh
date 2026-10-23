@@ -15,10 +15,14 @@
 /// All values use the same integer scale; node 0 is the depot.
 namespace TSPTW {
   struct Instance {
-    int n, scale;
+    int n;
+    int scale;
     // Upper bounds for a complete tour cost and for time including waiting.
-    int cost_limit, time_limit;
-    std::vector<int> cost, ready, due;
+    int cost_limit;
+    int time_limit;
+    std::vector<int> cost;
+    std::vector<int> ready;
+    std::vector<int> due;
     int arc(int from, int to) const { return cost[from*n+to]; }
   };
 
@@ -28,7 +32,8 @@ namespace TSPTW {
   inline std::vector<std::int64_t> shortest_paths(const Instance& data) {
     const int n=data.n;
     std::vector<std::int64_t> distance(data.cost.begin(),data.cost.end());
-    for (int i=0; i<n; i++) distance[i*n+i]=0;
+    for (int i=0; i<n; i++)
+      distance[i*n+i]=0;
     for (int k=0; k<n; k++)
       for (int i=0; i<n; i++)
         for (int j=0; j<n; j++)
@@ -38,7 +43,10 @@ namespace TSPTW {
   }
 
   namespace Detail {
-    struct Decimal { long long value; int places; };
+    struct Decimal {
+      long long value;
+      int places;
+    };
 
     inline Decimal decimal(std::string token) {
       const std::string original = token;
@@ -46,21 +54,29 @@ namespace TSPTW {
       if (token.find_first_not_of("0123456789.") != std::string::npos ||
           (dot != std::string::npos && token.find('.',dot+1) != std::string::npos))
         throw std::runtime_error("invalid nonnegative decimal: " + original);
-      if (token.size() > 1 && token[0] == '.') token.insert(0,"0");
+      if (token.size() > 1 && token[0] == '.')
+        token.insert(0,"0");
       if (dot != std::string::npos) {
-        while (!token.empty() && token.back() == '0') token.pop_back();
-        if (!token.empty() && token.back() == '.') token.pop_back();
+        while (!token.empty() && token.back() == '0')
+          token.pop_back();
+        if (!token.empty() && token.back() == '.')
+          token.pop_back();
       }
       Decimal result = {0, 0};
-      bool fraction = false, digit = false;
+      bool fraction = false;
+      bool digit = false;
       for (std::size_t i=0; i<token.size(); i++) {
         char c = token[i];
-        if (c == '.') { fraction = true; continue; }
+        if (c == '.') {
+          fraction = true;
+          continue;
+        }
         digit = true;
         if (result.value > (Gecode::Int::Limits::max-(c-'0'))/10)
           throw std::runtime_error("decimal exceeds Gecode integer limits: " + original);
         result.value = result.value*10 + c-'0';
-        if (fraction) result.places++;
+        if (fraction)
+          result.places++;
       }
       if (!digit)
         throw std::runtime_error("invalid decimal: " + original);
@@ -73,10 +89,12 @@ namespace TSPTW {
   /// Arcs supply both travel time and cost, including any service time.
   inline Instance read(std::istream& input) {
     std::vector<std::string> tokens;
-    std::string line, token;
+    std::string line;
+    std::string token;
     while (std::getline(input,line)) {
       std::istringstream row(line.substr(0,line.find('#')));
-      while (row >> token) tokens.push_back(token);
+      while (row >> token)
+        tokens.push_back(token);
     }
     if (input.bad() || tokens.empty())
       throw std::runtime_error("cannot read TSPTW instance");
@@ -134,7 +152,8 @@ namespace TSPTW {
 
   inline Instance read(const std::string& path) {
     std::ifstream input(path.c_str());
-    if (!input) throw std::runtime_error("cannot open TSPTW instance: " + path);
+    if (!input)
+      throw std::runtime_error("cannot open TSPTW instance: " + path);
     return read(input);
   }
 }

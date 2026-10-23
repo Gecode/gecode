@@ -43,7 +43,7 @@ namespace Gecode { namespace Search { namespace Seq {
 
   /// Child, parent solved or failed by preparation, or exhausted choice
   struct ExpansionStep {
-    enum State { CHILD, PREPARED_TERMINAL, EXHAUSTED };
+    enum class State { CHILD, PREPARED_TERMINAL, EXHAUSTED };
     State state;
     std::unique_ptr<Space> space;
     SpaceStatus status;
@@ -93,12 +93,13 @@ namespace Gecode { namespace Search { namespace Seq {
         parent->prepare(worker);
         const SpaceStatus status = parent->status(worker);
         if (status != SS_BRANCH)
-          return {ExpansionStep::PREPARED_TERMINAL,std::move(parent),status};
+          return {ExpansionStep::State::PREPARED_TERMINAL,
+                  std::move(parent),status};
         choice.reset(parent->choice());
       }
       if (alternative == choice->alternatives()) {
         reset();
-        return {ExpansionStep::EXHAUSTED,nullptr,SS_FAILED};
+        return {ExpansionStep::State::EXHAUSTED,nullptr,SS_FAILED};
       }
       std::unique_ptr<Space> child;
       // Reuse the parent for its last alternative. Keep the choice alive
@@ -121,7 +122,7 @@ namespace Gecode { namespace Search { namespace Seq {
       const SpaceStatus status = child->status(worker);
       alternative++;
       // Reusing the parent leaves no extra parent to count against the quota.
-      return {ExpansionStep::CHILD,std::move(child),status};
+      return {ExpansionStep::State::CHILD,std::move(child),status};
     }
   };
 

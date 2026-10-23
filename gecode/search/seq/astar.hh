@@ -52,9 +52,11 @@ namespace Gecode { namespace Search { namespace Seq {
   private:
     struct Entry {
       std::unique_ptr<Space> space;
-      std::int64_t bound, rank;
+      std::int64_t bound;
+      std::int64_t rank;
       unsigned long int depth;
-      unsigned long long int order, incumbent_revision;
+      unsigned long long int order;
+      unsigned long long int incumbent_revision;
     };
     /// Heap comparison with fixed exploration order
     struct Later {

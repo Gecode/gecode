@@ -54,10 +54,12 @@ namespace Gecode { namespace Search {
   public:
     struct Entry {
       std::unique_ptr<Space> space;
-      std::int64_t bound, rank;
+      std::int64_t bound;
+      std::int64_t rank;
       std::size_t key;
       unsigned long int depth;
-      unsigned long long int order, revision;
+      unsigned long long int order;
+      unsigned long long int revision;
       /// Address of this entry's slot in the key index, or null if unindexed.
       std::size_t* slot=nullptr;
     };
@@ -68,34 +70,43 @@ namespace Gecode { namespace Search {
 
     void place(std::size_t i, Entry&& entry) {
       entries[i]=std::move(entry);
-      if (entries[i].slot) *entries[i].slot=i;
+      if (entries[i].slot) {
+        *entries[i].slot=i;
+      }
     }
     void unindex(const Entry& entry) {
-      if (!entry.slot) return;
+      if (!entry.slot) {
+        return;
+      }
       const auto range=index.equal_range(entry.key);
-      for (auto i=range.first; i!=range.second; ++i)
+      for (auto i=range.first; i!=range.second; ++i) {
         if (&i->second == entry.slot) {
           index.erase(i);
           return;
         }
+      }
       GECODE_NEVER;
     }
     template<class Compare>
-    void repair(std::size_t i, Compare cmp) {
-      if (i && cmp(entries[(i-1)/2],entries[i])) {
+    void repair(std::size_t i, Compare compare) {
+      if (i && compare(entries[(i-1)/2],entries[i])) {
         Entry entry=std::move(entries[i]);
         do {
           const std::size_t parent=(i-1)/2;
           place(i,std::move(entries[parent]));
           i=parent;
-        } while (i && cmp(entries[(i-1)/2],entry));
+        } while (i && compare(entries[(i-1)/2],entry));
         place(i,std::move(entry));
       } else if (i<entries.size()/2) {
         Entry entry=std::move(entries[i]);
         while (i<entries.size()/2) {
           std::size_t child=2*i+1;
-          if (child+1<entries.size() && cmp(entries[child],entries[child+1])) child++;
-          if (!cmp(entry,entries[child])) break;
+          if (child+1<entries.size() && compare(entries[child],entries[child+1])) {
+            child++;
+          }
+          if (!compare(entry,entries[child])) {
+            break;
+          }
           place(i,std::move(entries[child]));
           i=child;
         }
@@ -103,16 +114,28 @@ namespace Gecode { namespace Search {
       }
     }
   public:
-    bool empty(void) const { return entries.empty(); }
-    std::size_t size(void) const { return entries.size(); }
-    const Entry& front(void) const { return entries.front(); }
-    const Entry& operator[](std::size_t i) const { return entries[i]; }
-    const std::vector<Entry>& all(void) const { return entries; }
-    auto equal_range(std::size_t key) const { return index.equal_range(key); }
+    bool empty(void) const {
+      return entries.empty();
+    }
+    std::size_t size(void) const {
+      return entries.size();
+    }
+    const Entry& front(void) const {
+      return entries.front();
+    }
+    const Entry& operator[](std::size_t i) const {
+      return entries[i];
+    }
+    const std::vector<Entry>& all(void) const {
+      return entries;
+    }
+    auto equal_range(std::size_t key) const {
+      return index.equal_range(key);
+    }
 
     /// Insert a candidate and optionally index its dominance key
     template<class Compare>
-    void push(Entry entry, bool keyed, Compare cmp) {
+    void push(Entry entry, bool keyed, Compare compare) {
       // Map nodes, and therefore slot addresses, survive map rehashes.
       auto inserted=index.end();
       if (keyed) {
@@ -122,59 +145,73 @@ namespace Gecode { namespace Search {
       try {
         entries.push_back(std::move(entry));
       } catch (...) {
-        if (keyed) index.erase(inserted);
+        if (keyed) {
+          index.erase(inserted);
+        }
         throw;
       }
-      repair(entries.size()-1,cmp);
+      repair(entries.size()-1,compare);
     }
     template<class Compare>
-    Entry replace(std::size_t i, Entry entry, bool keyed, Compare cmp) {
+    Entry replace(std::size_t i, Entry entry, bool keyed, Compare compare) {
       // Complete the only allocation before removing the old representative.
-      if (keyed) entry.slot=&index.emplace(entry.key,i)->second;
+      if (keyed) {
+        entry.slot=&index.emplace(entry.key,i)->second;
+      }
       unindex(entries[i]);
       Entry removed=std::move(entries[i]);
       removed.slot=nullptr;
       entries[i]=std::move(entry);
-      repair(i,cmp);
+      repair(i,compare);
       return removed;
     }
     template<class Compare>
-    Entry erase(std::size_t i, Compare cmp) {
+    Entry erase(std::size_t i, Compare compare) {
       unindex(entries[i]);
       Entry removed=std::move(entries[i]);
       removed.slot=nullptr;
       if (i+1 != entries.size()) {
         entries[i]=std::move(entries.back());
-        if (entries[i].slot) *entries[i].slot=i;
+        if (entries[i].slot) {
+          *entries[i].slot=i;
+        }
       }
       entries.pop_back();
-      if (i<entries.size()) repair(i,cmp);
+      if (i<entries.size()) {
+        repair(i,compare);
+      }
       return removed;
     }
     /// Replace the first victim and remove the rest; the heap must be unindexed
     // Victim indices must be nonempty and sorted in ascending order.
     template<class Compare>
-    Entry replace(const std::vector<std::size_t>& victims, Entry entry, Compare cmp) {
+    Entry replace(const std::vector<std::size_t>& victims, Entry entry, Compare compare) {
       assert(index.empty());
       Entry removed=std::move(entries[victims.front()]);
       entries[victims.front()]=std::move(entry);
       if (victims.size()==1) {
-        repair(victims.front(),cmp);
+        repair(victims.front(),compare);
         return removed;
       }
-      std::size_t victim=1, next=victims[1];
+      std::size_t victim=1;
+      std::size_t next=victims[1];
       for (std::size_t i=next; i<entries.size(); i++) {
-        if (victim<victims.size() && i==victims[victim]) victim++;
-        else entries[next++]=std::move(entries[i]);
+        if (victim<victims.size() && i==victims[victim]) {
+          victim++;
+        } else {
+          entries[next++]=std::move(entries[i]);
+        }
       }
       entries.resize(next);
-      std::make_heap(entries.begin(),entries.end(),cmp);
+      std::make_heap(entries.begin(),entries.end(),compare);
       return removed;
     }
     /// Transfer a finished beam and clear its index references.
     void release(std::vector<Entry>& layer) {
       assert(layer.empty());
-      for (auto& entry : entries) entry.slot=nullptr;
+      for (auto& entry : entries) {
+        entry.slot=nullptr;
+      }
       index.clear();
       layer.swap(entries);
     }

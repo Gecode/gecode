@@ -304,9 +304,9 @@ public:
   }
   int
   bound(void) const {
-    const int g = depth();
-    const int h = manhattan(values(state(g)));
-    return std::max(g+h,path.length().min()-1);
+    const int moves = depth();
+    const int remaining = manhattan(values(state(moves)));
+    return std::max(moves+remaining,path.length().min()-1);
   }
   void
   constrain(const Space& solution) override {
@@ -376,9 +376,9 @@ public:
   }
   int
   bound(void) const {
-    const int g = depth();
-    const int h = manhattan(values(state(g)));
-    return std::max(g+h,length.min()-1);
+    const int moves = depth();
+    const int remaining = manhattan(values(state(moves)));
+    return std::max(moves+remaining,length.min()-1);
   }
   int
   depth(void) const {
@@ -408,15 +408,15 @@ public:
 template<class Model>
 static Search::HeuristicGuidance
 guidance(void) {
-  return Search::HeuristicGuidance(Search::HeuristicGuidance::MINIMIZE,
+  return Search::HeuristicGuidance(Search::HeuristicGuidance::Sense::MINIMIZE,
     [](const Space& home) -> std::int64_t {
       return static_cast<const Model&>(home).bound();
     });
 }
 
-template<class Model>
 // Script::run expects a constructor taking only the model and search options;
 // this wrapper supplies the model's lower-bound callback to A*.
+template<class Model>
 class PuzzleAStar : public AStar<Model> {
 public:
   PuzzleAStar(Model* root, const Search::Options& opt)

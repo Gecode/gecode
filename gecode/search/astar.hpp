@@ -50,7 +50,7 @@ namespace Gecode { namespace Search {
     AStarOrder ordering;
   public:
     AStarBuilder(const HeuristicGuidance& g, const Options& o,
-                 AStarOrder order=BOUND_FIRST)
+                 AStarOrder order=AStarOrder::BOUND_FIRST)
       : Builder(o,true), guidance(g), ordering(order) {}
     Engine* operator()(Space* s) const override {
       return bestfirstengine(dynamic_cast<T*>(s),guidance,ordering,opt);
