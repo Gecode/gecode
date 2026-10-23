@@ -49,8 +49,12 @@ using namespace Gecode;
 class TSPTWClosed : public Space {
 public:
   std::shared_ptr<const TSPTW::Instance> data;
-  IntVarArray successor, arc_cost, visit;
-  IntVar departure, returning, total;
+  IntVarArray successor;
+  IntVarArray arc_cost;
+  IntVarArray visit;
+  IntVar departure;
+  IntVar returning;
+  IntVar total;
 
   explicit TSPTWClosed(std::shared_ptr<const TSPTW::Instance> instance)
     : data(std::move(instance)),
@@ -64,14 +68,18 @@ public:
     // lower bounds on arrival from the depot and on travel back to it, even
     // when those paths use customers that the tour has already visited.
     const auto shortest=TSPTW::shortest_paths(*data);
-    std::vector<int> lower(n,0), upper(n,data->due[0]);
+    std::vector<int> lower(n,0);
+    std::vector<int> upper(n,data->due[0]);
     for (int i=1; i<n; i++) {
-      const long long lo=std::max<long long>(data->ready[i],shortest[i]);
-      const long long hi=std::min<long long>(data->due[i],
-                                            data->due[0]-shortest[i*n]);
-      if (lo>hi) { fail(); return; }
-      lower[i]=static_cast<int>(lo);
-      upper[i]=static_cast<int>(hi);
+      const long long earliest=std::max<long long>(data->ready[i],shortest[i]);
+      const long long latest=std::min<long long>(data->due[i],
+                                                data->due[0]-shortest[i*n]);
+      if (earliest>latest) {
+        fail();
+        return;
+      }
+      lower[i]=static_cast<int>(earliest);
+      upper[i]=static_cast<int>(latest);
       dom(*this,visit[i-1],lower[i],upper[i]);
     }
     circuit(*this,IntArgs(n*n,data->cost.data()),successor,arc_cost,total,
@@ -79,7 +87,8 @@ public:
     for (int i=0; i<n; i++) {
       rel(*this,successor[i],IRT_NQ,i);
       for (int j=0; j<n; j++) {
-        if (i==j) continue;
+        if (i==j)
+          continue;
         const int cost=data->arc(i,j);
         if (static_cast<long long>(lower[i])+cost>upper[j]) {
           rel(*this,successor[i],IRT_NQ,j);
@@ -108,13 +117,13 @@ public:
   Space* copy(void) override { return new TSPTWClosed(*this); }
   int cost(void) const { return total.val(); }
   static Search::HeuristicGuidance guidance(void) {
-    return {Search::HeuristicGuidance::MINIMIZE,
+    return {Search::HeuristicGuidance::Sense::MINIMIZE,
       [](const Space& s)->std::int64_t {
         return static_cast<const TSPTWClosed&>(s).total.min();
       }};
   }
-  void constrain(const Space& s0) override {
-    const auto& s=static_cast<const TSPTWClosed&>(s0);
+  void constrain(const Space& solution) override {
+    const auto& s=static_cast<const TSPTWClosed&>(solution);
     rel(*this,total,IRT_LE,s.total.val());
   }
   std::vector<int> tour(void) const {
@@ -122,7 +131,8 @@ public:
     int node=0;
     for (int i=1; i<data->n; i++) {
       node=successor[node].val();
-      if (node==0) throw std::runtime_error("incomplete circuit solution");
+      if (node==0)
+        throw std::runtime_error("incomplete circuit solution");
       result.push_back(node);
     }
     if (successor[node].val()!=0)
@@ -132,7 +142,8 @@ public:
 };
 
 struct TourValue {
-  int cost, return_time;
+  int cost;
+  int return_time;
 };
 
 // Reconstruct the earliest schedule and travel cost from customer IDs alone.
@@ -147,7 +158,8 @@ static TourValue evaluate_tour(const TSPTW::Instance& data,
       throw std::runtime_error("tour has a duplicate or invalid customer");
     seen[node]=true;
   }
-  long long time=0, cost=0;
+  long long time=0;
+  long long cost=0;
   int previous=0;
   for (std::size_t i=0; i<=tour.size(); i++) {
     const int node=i==tour.size() ? 0 : tour[i];
@@ -167,7 +179,8 @@ static std::string exact_text(int value, int scale) {
   std::string text=std::to_string(value/scale);
   if (value%scale) {
     std::string fraction=std::to_string(scale+value%scale).substr(1);
-    while (fraction.back()=='0') fraction.pop_back();
+    while (fraction.back()=='0')
+      fraction.pop_back();
     text+='.'+fraction;
   }
   return text;
@@ -176,7 +189,8 @@ static std::string exact_text(int value, int scale) {
 static void write_tour(const std::vector<int>& tour, TourValue value, int scale) {
   std::cout << "\"tour\":[";
   for (std::size_t i=0; i<tour.size(); i++) {
-    if (i) std::cout << ',';
+    if (i)
+      std::cout << ',';
     std::cout << tour[i];
   }
   std::cout << "],\"scaled_cost\":" << value.cost << ",\"scale\":" << scale
@@ -185,13 +199,19 @@ static void write_tour(const std::vector<int>& tour, TourValue value, int scale)
 }
 
 struct RunOptions {
-  std::string instance, engine="bab", formulation="closed";
-  std::string bound="prefix", residual_propagation="off";
-  std::optional<unsigned long long> time_ms, node_limit;
+  std::string instance;
+  std::string engine="bab";
+  std::string formulation="closed";
+  std::string bound="prefix";
+  std::string residual_propagation="off";
+  std::optional<unsigned long long> time_ms;
+  std::optional<unsigned long long> node_limit;
   Search::CABSOptions cabs;
   unsigned int threads=1;
-  bool dominance=true, dominance_set=false;
-  bool width_set=false, frontier_set=false;
+  bool dominance=true;
+  bool dominance_set=false;
+  bool width_set=false;
+  bool frontier_set=false;
 };
 
 static unsigned long long read_unsigned(const std::string& text) {
@@ -211,19 +231,27 @@ static RunOptions read_options(int argc, char* argv[]) {
   options.instance=argv[1];
   for (int i=2; i<argc; i+=2) {
     const std::string option=argv[i];
-    if (i+1==argc) throw std::runtime_error("missing value for "+option);
+    if (i+1==argc)
+      throw std::runtime_error("missing value for "+option);
     const std::string value=argv[i+1];
-    if (option=="--engine") options.engine=value;
-    else if (option=="--formulation") options.formulation=value;
-    else if (option=="--bound") options.bound=value;
-    else if (option=="--residual-propagation") options.residual_propagation=value;
+    if (option=="--engine")
+      options.engine=value;
+    else if (option=="--formulation")
+      options.formulation=value;
+    else if (option=="--bound")
+      options.bound=value;
+    else if (option=="--residual-propagation")
+      options.residual_propagation=value;
     else if (option=="--dominance") {
       if (value!="off" && value!="on")
         throw std::runtime_error("dominance must be off or on");
-      options.dominance=value=="on"; options.dominance_set=true;
+      options.dominance=value=="on";
+      options.dominance_set=true;
     }
-    else if (option=="--time-ms") options.time_ms=read_unsigned(value);
-    else if (option=="--node-limit") options.node_limit=read_unsigned(value);
+    else if (option=="--time-ms")
+      options.time_ms=read_unsigned(value);
+    else if (option=="--node-limit")
+      options.node_limit=read_unsigned(value);
     else if (option=="--threads") {
       const auto n=read_unsigned(value);
       if (n==0 || n>std::numeric_limits<unsigned int>::max())
@@ -235,11 +263,14 @@ static RunOptions read_options(int argc, char* argv[]) {
       if (limit>std::numeric_limits<unsigned long>::max())
         throw std::runtime_error("search limit is too large");
       if (option=="--max-width") {
-        options.cabs.max_width=limit; options.width_set=true;
+        options.cabs.max_width=limit;
+        options.width_set=true;
       } else {
-        options.cabs.frontier_limit=limit; options.frontier_set=true;
+        options.cabs.frontier_limit=limit;
+        options.frontier_set=true;
       }
-    } else throw std::runtime_error("unknown option: "+option);
+    } else
+      throw std::runtime_error("unknown option: "+option);
   }
   if (options.engine!="bab" && options.engine!="astar" &&
       options.engine!="cabs")
@@ -263,11 +294,14 @@ static RunOptions read_options(int argc, char* argv[]) {
 }
 
 class LimitsStop : public Search::Stop {
-  std::unique_ptr<Search::Stop> time, nodes;
+  std::unique_ptr<Search::Stop> time;
+  std::unique_ptr<Search::Stop> nodes;
 public:
   explicit LimitsStop(const RunOptions& options) {
-    if (options.time_ms) time.reset(Search::Stop::time(*options.time_ms));
-    if (options.node_limit) nodes.reset(Search::Stop::node(*options.node_limit));
+    if (options.time_ms)
+      time.reset(Search::Stop::time(*options.time_ms));
+    if (options.node_limit)
+      nodes.reset(Search::Stop::node(*options.node_limit));
   }
   bool stop(const Search::Statistics& s, const Search::Options& o) override {
     return (time && time->stop(s,o)) || (nodes && nodes->stop(s,o));
@@ -282,11 +316,14 @@ static int run_search(const RunOptions& options, Model& root,
   std::vector<int> best_tour;
   const auto guidance=[&]() {
     if constexpr (std::is_same<Model,TSPTW::Transition>::value)
-      return Model::guidance(options.bound=="prefix" ? Model::PREFIX : Model::MIN_ARCS);
-    else return Model::guidance();
+      return Model::guidance(options.bound=="prefix" ?
+                             Model::BoundMode::PREFIX : Model::BoundMode::MIN_ARCS);
+    else
+      return Model::guidance();
   }();
   std::unique_ptr<Search::Engine> engine;
-  if (options.engine=="bab") engine.reset(Search::babengine(&root,search));
+  if (options.engine=="bab")
+    engine.reset(Search::babengine(&root,search));
   else if (options.engine=="astar")
     engine.reset(Search::astarengine(&root,guidance,search));
   else {
@@ -328,7 +365,8 @@ static int run_search(const RunOptions& options, Model& root,
     std::cout << '{';
     write_tour(best_tour,*incumbent,data->scale);
     std::cout << '}';
-  } else std::cout << "null";
+  } else
+    std::cout << "null";
   std::cout << ",\"statistics\":{\"node\":"
             << statistics.node << ",\"fail\":" << statistics.fail
             << ",\"depth\":" << statistics.depth << ",\"propagate\":"
@@ -348,9 +386,11 @@ static int run(const RunOptions& options) {
     TSPTWClosed root(data);
     return run_search(options,root,search);
   }
-  TSPTW::Transition root(data,options.residual_propagation=="off" ?
-                         TSPTW::Transition::OFF : options.residual_propagation=="cheap" ?
-                         TSPTW::Transition::CHEAP : TSPTW::Transition::UNARY);
+  using ResidualPropagation = TSPTW::Transition::ResidualPropagation;
+  const auto propagation=options.residual_propagation=="off" ?
+    ResidualPropagation::OFF : options.residual_propagation=="cheap" ?
+    ResidualPropagation::CHEAP : ResidualPropagation::UNARY;
+  TSPTW::Transition root(data,propagation);
   return run_search(options,root,search);
 }
 

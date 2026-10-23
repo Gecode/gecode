@@ -95,7 +95,8 @@ namespace Test {
     class PreparedTerminal : public Base {
       class PreparedSpace : public Space {
         class PreparedBrancher : public Brancher {
-          bool prepared, failure;
+          bool prepared;
+          bool failure;
           std::shared_ptr<std::atomic<unsigned int>> choices;
           class PreparedChoice : public Choice {
           public:
@@ -142,7 +143,9 @@ namespace Test {
           for (unsigned int kind=0; kind<5; kind++) {
             auto choices=std::make_shared<std::atomic<unsigned int>>(0);
             Gecode::Search::NodeStop stop(100);
-            Gecode::Search::Options options; options.clone=false; options.stop=&stop;
+            Gecode::Search::Options options;
+            options.clone=false;
+            options.stop=&stop;
             std::unique_ptr<Gecode::Search::Engine> engine;
             if (kind==0) engine.reset(Gecode::Search::dfsengine(new PreparedSpace(failure,choices),options));
             else if (kind==1) engine.reset(Gecode::Search::ldsengine(new PreparedSpace(failure,choices),options));
@@ -152,7 +155,7 @@ namespace Test {
             }
             else {
               using Guidance=Gecode::Search::HeuristicGuidance;
-              Guidance guidance(Guidance::MINIMIZE,[](const Space&) -> std::int64_t { return 0; });
+              Guidance guidance(Guidance::Sense::MINIMIZE,[](const Space&) -> std::int64_t { return 0; });
               if (kind==3) engine.reset(Gecode::Search::astarengine(new PreparedSpace(failure,choices),guidance,options));
               else engine.reset(Gecode::Search::cabsengine(new PreparedSpace(failure,choices),guidance,options));
             }
@@ -169,6 +172,8 @@ namespace Test {
     /// The example's real n-ary transitions survive cloning and continuation.
     class TSPTWTransitionTest : public Base {
       using Transition=TSPTW::Transition;
+      using BoundMode=Transition::BoundMode;
+      using ResidualPropagation=Transition::ResidualPropagation;
       static std::shared_ptr<const TSPTW::Instance> instance(void) {
         std::istringstream input(
           "4\n0 1 2 3\n1 0 1 4\n1 3 0 1\n20 1 3 0\n"
@@ -186,45 +191,47 @@ namespace Test {
         s.commit(*choice,static_cast<unsigned int>(action-actions.begin()));
         return !s.failed();
       }
-      static bool replay(Transition::ResidualPropagation propagation=Transition::OFF) {
+      static bool replay(ResidualPropagation propagation=ResidualPropagation::OFF) {
         const auto data=instance();
         Transition root(data,propagation);
         Gecode::Search::Statistics stat;
         if (root.status()!=SS_BRANCH || root.allocated_positions()!=0)
           return false;
-        std::unique_ptr<Transition> absent(static_cast<Transition*>(root.clone()));
+        std::unique_ptr<Transition> unprepared(static_cast<Transition*>(root.clone()));
         root.prepare(stat);
         if (root.allocated_positions()!=1 ||
             root.position(0).assigned() || root.depth || root.location ||
             root.time || root.cost() || root.unvisited!=std::vector<int>({1,2,3}))
           return false;
         std::unique_ptr<const Choice> original(root.choice());
-        Archive archive; original->archive(archive);
+        Archive archive;
+        original->archive(archive);
         std::unique_ptr<const Choice> restored(root.choice(archive));
         if (restored->alternatives()!=3) return false;
-        absent->commit(*restored,0);
-        if (absent->status()!=SS_BRANCH || absent->depth!=1 || absent->location!=1 ||
-            absent->time!=5 || absent->cost()!=1 || absent->returned ||
-            absent->unvisited!=std::vector<int>({2,3}) ||
-            absent->position(0).val()!=1 || root.position(0).assigned())
+        unprepared->commit(*restored,0);
+        if (unprepared->status()!=SS_BRANCH || unprepared->depth!=1 || unprepared->location!=1 ||
+            unprepared->time!=5 || unprepared->cost()!=1 || unprepared->returned ||
+            unprepared->unvisited!=std::vector<int>({2,3}) ||
+            unprepared->position(0).val()!=1 || root.position(0).assigned())
           return false;
-        std::unique_ptr<Transition> next(static_cast<Transition*>(absent->clone()));
-        absent->prepare(stat);
-        if (absent->depth!=1 || absent->cost()!=1 ||
-            absent->allocated_positions()!=2 || absent->position(1).assigned())
+        std::unique_ptr<Transition> next(static_cast<Transition*>(unprepared->clone()));
+        unprepared->prepare(stat);
+        if (unprepared->depth!=1 || unprepared->cost()!=1 ||
+            unprepared->allocated_positions()!=2 || unprepared->position(1).assigned())
           return false;
-        original.reset(absent->choice());
-        Archive prefix_archive; original->archive(prefix_archive);
-        restored.reset(absent->choice(prefix_archive));
+        original.reset(unprepared->choice());
+        Archive prefix_archive;
+        original->archive(prefix_archive);
+        restored.reset(unprepared->choice(prefix_archive));
         next->commit(*restored,0);
         if (next->status()!=SS_BRANCH || next->depth!=2 || next->cost()!=2 ||
-            next->time!=6 || next->position(1).val()!=2 || absent->position(1).assigned())
+            next->time!=6 || next->position(1).val()!=2 || unprepared->position(1).assigned())
           return false;
 
         Transition optimum(data,propagation);
         for (int node : {2,3,1,0}) if (!visit(optimum,node)) return false;
         if (optimum.status()!=SS_SOLVED || optimum.cost()!=5) return false;
-        std::unique_ptr<Transition> cut(static_cast<Transition*>(absent->clone()));
+        std::unique_ptr<Transition> cut(static_cast<Transition*>(unprepared->clone()));
         cut->constrain(optimum);
         if (cut->status()!=SS_BRANCH || cut->actions()!=std::vector<int>({2})) return false;
         // The original second alternative still means customer 3 after a cut
@@ -236,18 +243,21 @@ namespace Test {
             !visit(*next,0)) return false;
         return next->status()==SS_SOLVED && next->returned && next->depth==4 &&
           next->cost()==23 && next->time==27 && next->allocated_positions()==4 &&
-          next->tour()==std::vector<int>({1,2,3}) && root.depth==0 && absent->depth==1;
+          next->tour()==std::vector<int>({1,2,3}) && root.depth==0 && unprepared->depth==1;
       }
       static bool continuation(int kind) {
         const auto data=instance();
-        Transition root(data), incumbent(data);
+        Transition root(data);
+        Transition incumbent(data);
         for (int node : {3,1,2,0}) if (!visit(incumbent,node)) return false;
         if (incumbent.status()!=SS_SOLVED || incumbent.cost()!=6) return false;
         Gecode::Search::NodeStop stop(10000);
         Gecode::Search::Options options;
-        options.threads=1; options.stop=&stop;
+        options.threads=1;
+        options.stop=&stop;
         // Force BAB to replay edges between stored prefix clones.
-        options.c_d=5; options.a_d=2;
+        options.c_d=5;
+        options.a_d=2;
         Gecode::Search::WorkerControl control(1U);
 #ifdef GECODE_HAS_THREADS
         options.worker_control=control;
@@ -268,7 +278,8 @@ namespace Test {
         std::unique_ptr<Transition> better;
 #ifdef GECODE_HAS_THREADS
         control.request(0U);
-        std::atomic<bool> entered(false), done(false);
+        std::atomic<bool> entered(false);
+        std::atomic<bool> done(false);
         std::thread caller([&] {
           entered.store(true,std::memory_order_release);
           better.reset(static_cast<Transition*>(engine->next()));
@@ -298,7 +309,8 @@ namespace Test {
         std::vector<Suffix> result;
         auto suffix=state.unvisited;
         do {
-          std::int64_t time=state.time, cost=state.prefix_cost;
+          std::int64_t time=state.time;
+          std::int64_t cost=state.prefix_cost;
           int location=state.location;
           bool feasible=true;
           for (std::size_t p=0; p<=suffix.size(); p++) {
@@ -316,14 +328,14 @@ namespace Test {
       static bool residuals(Transition& state, const std::vector<int>& prefix,
                             bool& filtered, bool& rejected) {
         const auto suffixes=completions(state);
-        const auto bound=state.bound(Transition::MIN_ARCS);
+        const auto bound=state.bound(BoundMode::MIN_ARCS);
         if (bound<state.prefix_cost) return false;
         if (state.returned && bound!=state.prefix_cost) return false;
         if (!state.returned && state.unvisited.empty() &&
             bound!=state.prefix_cost+state.data->arc(state.location,0)) return false;
         for (const auto& suffix : suffixes) if (bound>suffix.cost) return false;
 
-        for (auto propagation : {Transition::CHEAP,Transition::UNARY}) {
+        for (auto propagation : {ResidualPropagation::CHEAP,ResidualPropagation::UNARY}) {
           Transition inferred(state.data,propagation);
           bool survived=inferred.status()!=SS_FAILED;
           for (int node : prefix) {
@@ -331,7 +343,7 @@ namespace Test {
             survived=visit(inferred,node);
           }
           if (!survived) {
-            if (propagation==Transition::CHEAP) rejected=true;
+            if (propagation==ResidualPropagation::CHEAP) rejected=true;
             if (!suffixes.empty()) return false;
           } else {
             if (inferred.unvisited!=state.unvisited || inferred.location!=state.location ||
@@ -364,7 +376,9 @@ namespace Test {
         const auto suffixes=completions(reference);
         std::int64_t optimum=std::numeric_limits<std::int64_t>::max();
         for (const auto& suffix : suffixes) optimum=std::min(optimum,suffix.cost);
-        for (auto propagation : {Transition::OFF,Transition::CHEAP,Transition::UNARY}) {
+        for (auto propagation : {ResidualPropagation::OFF,
+                                 ResidualPropagation::CHEAP,
+                                 ResidualPropagation::UNARY}) {
           if (data->n==5) {
             auto label=[&](std::initializer_list<int> prefix) {
               auto state=std::make_unique<Transition>(data,propagation);
@@ -372,19 +386,21 @@ namespace Test {
                 if (!visit(*state,node)) return std::unique_ptr<Transition>{};
               return state;
             };
-            auto a=label({1,4,2}), b=label({4,1,2});
+            auto a=label({1,4,2});
+            auto b=label({4,1,2});
             // The earlier arrival costs more: neither label subsumes the other.
             if (!a || !b || a->time!=21 || a->cost()!=9 ||
                 b->time!=20 || b->cost()!=11 || Transition::dominates(*a,*b) ||
                 Transition::dominates(*b,*a)) return false;
-            a=label({1,3,2}); b=label({3,1,2});
+            a=label({1,3,2});
+            b=label({3,1,2});
             if (!a || !b || !Transition::dominates(*a,*a) ||
                 !Transition::dominates(*a,*b) || Transition::dominates(*b,*a) ||
                 Transition::dominates(*a,reference) ||
                 Transition::dominance_key(*a)!=Transition::dominance_key(*b))
               return false;
           }
-          for (auto bound : {Transition::PREFIX,Transition::MIN_ARCS})
+          for (auto bound : {BoundMode::PREFIX,BoundMode::MIN_ARCS})
             for (bool enabled : {false,true}) {
               Transition root(data,propagation);
               Gecode::Search::CABSOptions options;
@@ -403,7 +419,8 @@ namespace Test {
         return true;
       }
       static bool bounds_and_inference(void) {
-        bool filtered=false, rejected=false;
+        bool filtered=false;
+        bool rejected=false;
         // Cover waiting, nonmetric travel, and arrival-time/cost tradeoffs,
         // plus tight windows, zero travel times, and the final depot return.
         for (const std::string& text : {
@@ -430,7 +447,7 @@ namespace Test {
     public:
       TSPTWTransitionTest(void) : Base("Search::TSPTW::Transition", TestTags::check()) {}
       bool run(void) override {
-        if (!replay() || !replay(Transition::CHEAP) || !replay(Transition::UNARY))
+        if (!replay() || !replay(ResidualPropagation::CHEAP) || !replay(ResidualPropagation::UNARY))
           return false;
         for (int kind : {0,1,2})
           if (!continuation(kind)) return false;
@@ -442,7 +459,8 @@ namespace Test {
     class AStarSpace : public Space {
     public:
       static std::atomic<int> live;
-      IntVar x, y;
+      IntVar x;
+      IntVar y;
       bool maximize;
       AStarSpace(bool max=false, int fixed=-1, bool failed=false)
         : x(*this,0,3), y(*this,0,1), maximize(max) {
@@ -465,7 +483,8 @@ namespace Test {
       AStarSpace(AStarSpace& s)
         : Space(s), maximize(s.maximize) {
         live++;
-        x.update(*this,s.x); y.update(*this,s.y);
+        x.update(*this,s.x);
+        y.update(*this,s.y);
       }
       ~AStarSpace(void) override { live--; }
       Space* copy(void) override { return new AStarSpace(*this); }
@@ -491,7 +510,7 @@ namespace Test {
       static Gecode::Search::HeuristicGuidance guidance(bool max,
                                                        bool loose=false) {
         using Guidance=Gecode::Search::HeuristicGuidance;
-        return Guidance(max ? Guidance::MAXIMIZE : Guidance::MINIMIZE,
+        return Guidance(max ? Guidance::Sense::MAXIMIZE : Guidance::Sense::MINIMIZE,
           [loose](const Space& s0) -> std::int64_t {
             const auto& s=static_cast<const AStarSpace&>(s0);
             if (loose && (!s.x.assigned() || !s.y.assigned()))
@@ -530,7 +549,8 @@ namespace Test {
     };
 
     static bool root_exceptions(bool cabs, unsigned int threads=1) {
-      Gecode::Search::Options options; options.clone=false;
+      Gecode::Search::Options options;
+      options.clone=false;
       options.threads=threads;
       const auto guidance=AStarSpace::guidance(false);
       auto engine=[&](Space* root) {
@@ -568,13 +588,16 @@ namespace Test {
     class TreeSpace : public Space {
     public:
       struct Node {
-        int cost, bound, rank;
+        int cost;
+        int bound;
+        int rank;
         std::vector<int> children;
       };
       using Graph=std::vector<Node>;
       std::shared_ptr<const Graph> graph;
       bool maximize;
-      int vertex=0, ceiling=std::numeric_limits<int>::max();
+      int vertex=0;
+      int ceiling=std::numeric_limits<int>::max();
       class Decisions : public Brancher {
         class Decision : public Choice {
         public:
@@ -582,7 +605,8 @@ namespace Test {
           Decision(const Brancher& b, int v, unsigned int n)
             : Choice(b,n), vertex(v) {}
           void archive(Archive& e) const override {
-            Choice::archive(e); e << vertex << alternatives();
+            Choice::archive(e);
+            e << vertex << alternatives();
           }
         };
       public:
@@ -597,7 +621,9 @@ namespace Test {
             static_cast<unsigned int>(state.value().children.size()));
         }
         const Choice* choice(const Space&, Archive& e) override {
-          int vertex; unsigned int n; e >> vertex >> n;
+          int vertex;
+          unsigned int n;
+          e >> vertex >> n;
           return new Decision(*this,vertex,n);
         }
         ExecStatus commit(Space& s0, const Choice& c, unsigned int a) override {
@@ -608,7 +634,8 @@ namespace Test {
         }
         Actor* copy(Space& home) override { return new (home) Decisions(home,*this); }
         size_t dispose(Space& home) override {
-          (void) Brancher::dispose(home); return sizeof(*this);
+          (void) Brancher::dispose(home);
+          return sizeof(*this);
         }
       };
       explicit TreeSpace(Graph nodes, bool max=false)
@@ -627,7 +654,7 @@ namespace Test {
       static Gecode::Search::HeuristicGuidance guidance(bool max=false) {
         using Guidance=Gecode::Search::HeuristicGuidance;
         // Maximizing the negated cost mirrors the same finite paths and cuts.
-        return {max ? Guidance::MAXIMIZE : Guidance::MINIMIZE,
+        return {max ? Guidance::Sense::MAXIMIZE : Guidance::Sense::MINIMIZE,
           [](const Space& s)->std::int64_t {
             const auto& state=static_cast<const TreeSpace&>(s);
             const std::int64_t bound=state.value().bound;
@@ -656,7 +683,8 @@ namespace Test {
           {0,4,100,{5}}, {0,4,100,{5}},
           {10,10,0,{}}, {5,5,0,{}}};
         auto solve=[&](bool max, AStarOrder order, bool ranked) {
-          Gecode::Search::Options options; options.clone=false;
+          Gecode::Search::Options options;
+          options.clone=false;
           auto guidance=TreeSpace::guidance(max);
           if (!ranked) guidance.rank={};
           Gecode::AStar<TreeSpace> engine(new TreeSpace(graph,max),
@@ -666,18 +694,20 @@ namespace Test {
           while (std::unique_ptr<TreeSpace> solution{
                    engine.next()})
             costs.push_back(solution->value().cost);
-          const std::vector<int> expected=order==RANK_FIRST && ranked ?
+          const std::vector<int> expected=order==AStarOrder::RANK_FIRST && ranked ?
             std::vector<int>{10,5} : std::vector<int>{5};
           return costs==expected && !engine.stopped() &&
             costs.back()==TreeSpace::optimum(graph);
         };
         for (bool max : {false,true})
-          if (!solve(max,BOUND_FIRST,true) || !solve(max,RANK_FIRST,true)) return false;
-        return solve(false,RANK_FIRST,false);
+          if (!solve(max,AStarOrder::BOUND_FIRST,true) ||
+              !solve(max,AStarOrder::RANK_FIRST,true)) return false;
+        return solve(false,AStarOrder::RANK_FIRST,false);
       }
       static bool solutions(bool max, bool loose, bool interrupt) {
         Gecode::Search::NodeStop stop(1);
-        Gecode::Search::Options o; o.clone=false;
+        Gecode::Search::Options o;
+        o.clone=false;
         if (interrupt) o.stop=&stop;
         Gecode::AStar<AStarSpace> engine(new AStarSpace(max),
                                         AStarSpace::guidance(max,loose),o);
@@ -693,14 +723,16 @@ namespace Test {
         unsigned int found=1;
         while (std::unique_ptr<AStarSpace> solution{engine.next()}) {
           if (!solution->improves(solution->objective(),previous)) return false;
-          previous=solution->objective(); found++;
+          previous=solution->objective();
+          found++;
         }
         // Enumerating the four scores independently identifies alternative 2.
         return previous==first->score(2) && found==(loose ? 3U : 2U) &&
           !engine.stopped() && engine.statistics().depth==2;
       }
       static bool adoption(bool max, bool queued) {
-        Gecode::Search::Options o; o.clone=false;
+        Gecode::Search::Options o;
+        o.clone=false;
         Gecode::AStar<AStarSpace> engine(new AStarSpace(max),
                                         AStarSpace::guidance(max,true),o);
         std::unique_ptr<Space> first(engine.next());
@@ -710,8 +742,10 @@ namespace Test {
             engine.next());
           if (!second || second->x.val()!=1) return false;
         }
-        AStarSpace incumbent(max,queued ? 2 : 1), worse(max,0);
-        incumbent.status(); worse.status();
+        AStarSpace incumbent(max,queued ? 2 : 1);
+        AStarSpace worse(max,0);
+        incumbent.status();
+        worse.status();
         engine.constrain(incumbent);
         engine.constrain(incumbent);
         engine.constrain(worse);
@@ -726,19 +760,20 @@ namespace Test {
         return true;
       }
       static bool helpers(bool max) {
-        Gecode::Search::Options o; o.clone=false;
+        Gecode::Search::Options o;
+        o.clone=false;
         const auto guidance=AStarSpace::guidance(max,true);
         // These searches first publish x=0; the helpers must keep improving.
         std::unique_ptr<AStarSpace> astar(
           Gecode::astar(new AStarSpace(max),guidance,o));
         std::unique_ptr<AStarSpace> ordered(Gecode::astar(
-          new AStarSpace(max),guidance,Gecode::Search::RANK_FIRST,o));
+          new AStarSpace(max),guidance,Gecode::Search::AStarOrder::RANK_FIRST,o));
         if (!astar || astar->x.val()!=2 || !ordered || ordered->x.val()!=2)
           return false;
         std::unique_ptr<AStarSpace> failed_astar(
           Gecode::astar(new AStarSpace(max,-1,true),guidance,o));
         std::unique_ptr<AStarSpace> failed_ordered(Gecode::astar(
-          new AStarSpace(max,-1,true),guidance,Gecode::Search::RANK_FIRST,o));
+          new AStarSpace(max,-1,true),guidance,Gecode::Search::AStarOrder::RANK_FIRST,o));
         return !failed_astar && !failed_ordered;
       }
       static bool ownership(void) {
@@ -765,12 +800,12 @@ namespace Test {
         o.clone=false;
         using Guidance=Gecode::Search::HeuristicGuidance;
         try {
-          Gecode::AStar<AStarSpace> invalid(&root,Guidance(Guidance::MINIMIZE,{}),o);
+          Gecode::AStar<AStarSpace> invalid(&root,Guidance(Guidance::Sense::MINIMIZE,{}),o);
           return false;
         } catch (const Gecode::Search::UninitializedAStarBound&) {}
         o.clone=true;
         {
-          Guidance throws(Guidance::MINIMIZE,[](const Space&) -> std::int64_t {
+          Guidance throws(Guidance::Sense::MINIMIZE,[](const Space&) -> std::int64_t {
             throw std::runtime_error("guidance failure");
           });
           Gecode::AStar<AStarSpace> engine(&root,throws,o);
@@ -790,7 +825,8 @@ namespace Test {
         if (!ordering() || !root_exceptions(false) || !ownership() ||
             AStarSpace::live.load()!=0)
           return false;
-        Gecode::Search::Options o; o.clone=false;
+        Gecode::Search::Options o;
+        o.clone=false;
         std::unique_ptr<Gecode::Search::Engine> engine(
           Gecode::Search::astarengine(nullptr,AStarSpace::guidance(false),o));
         if (engine->next() || engine->stopped()) return false;
@@ -822,14 +858,15 @@ namespace Test {
         Gecode::branch(*this,y,INT_VAR_NONE(),INT_VALUES_MIN());
       }
       CABSFeasibility(CABSFeasibility& s) : Space(s) {
-        x.update(*this,s.x); y.update(*this,s.y);
+        x.update(*this,s.x);
+        y.update(*this,s.y);
       }
       Space* copy(void) override { return new CABSFeasibility(*this); }
       void constrain(const Space& s0) override {
         rel(*this,x,IRT_LE,static_cast<const CABSFeasibility&>(s0).x.val());
       }
       static Gecode::Search::HeuristicGuidance guidance(void) {
-        return {Gecode::Search::HeuristicGuidance::MINIMIZE,
+        return {Gecode::Search::HeuristicGuidance::Sense::MINIMIZE,
           [](const Space& s) -> std::int64_t {
             return static_cast<const CABSFeasibility&>(s).x.min();
           }};
@@ -843,7 +880,8 @@ namespace Test {
                       unsigned long int width, int cost, bool stopped,
                       unsigned long int restarts, bool reset=false,
                       std::vector<std::size_t> keys={}) {
-          Gecode::Search::Options options; options.clone=false;
+          Gecode::Search::Options options;
+          options.clone=false;
           options.threads=threads;
           Gecode::Search::CABSOptions beam(width,0);
           unsigned int calls=0;
@@ -909,7 +947,8 @@ namespace Test {
         return solve(lifetime,{{1,3}},1,5,true,0);
       }
       static bool discarded_bounds(bool max) {
-        Gecode::Search::Options options; options.clone=false;
+        Gecode::Search::Options options;
+        options.clone=false;
         auto solve=[&](const TreeSpace::Graph& graph, unsigned long int width,
                       int cost, bool stopped, unsigned long int restarts) {
           Gecode::CABS<TreeSpace> engine(new TreeSpace(graph,max),
@@ -955,7 +994,9 @@ namespace Test {
           {10,10,0,{}}, {8,8,0,{}},
           {6,6,0,{}}, {7,7,0,{}}};
         Gecode::Search::NodeStop stop(10000);
-        Gecode::Search::Options options; options.clone=false; options.stop=&stop;
+        Gecode::Search::Options options;
+        options.clone=false;
+        options.stop=&stop;
         Gecode::CABS<TreeSpace> engine(new TreeSpace(graph),
           TreeSpace::guidance(),options,{1,0});
         std::unique_ptr<TreeSpace> first(engine.next());
@@ -986,7 +1027,8 @@ namespace Test {
         auto improving=bounded;
         improving[2].bound=0;
         improving[4].cost=improving[4].bound=4;
-        Gecode::Search::Options options; options.clone=false;
+        Gecode::Search::Options options;
+        options.clone=false;
         for (unsigned long int width : {1UL,2UL}) {
           std::unique_ptr<Gecode::Search::Engine> engine(
             Gecode::Search::cabsengine(new TreeSpace(bounded),
@@ -1010,14 +1052,16 @@ namespace Test {
         return true;
       }
       static bool solutions(bool max, unsigned long int width) {
-        Gecode::Search::Options o; o.clone=false;
+        Gecode::Search::Options o;
+        o.clone=false;
         Gecode::CABS<AStarSpace> engine(new AStarSpace(max),
           AStarSpace::guidance(max,true),o,{width,0});
         std::int64_t previous=0;
         unsigned int found=0;
         while (std::unique_ptr<AStarSpace> s{engine.next()}) {
           if (found && !s->improves(s->objective(),previous)) return false;
-          previous=s->objective(); found++;
+          previous=s->objective();
+          found++;
         }
         // The helper returns the last improvement even when the width cap stops it.
         std::unique_ptr<AStarSpace> best(Gecode::cabs(new AStarSpace(max),
@@ -1035,7 +1079,8 @@ namespace Test {
           engine.statistics().restart>0;
       }
       static bool feasibility(void) {
-        Gecode::Search::Options o; o.clone=false;
+        Gecode::Search::Options o;
+        o.clone=false;
         for (unsigned long int width : {1UL,0UL}) {
           Gecode::CABS<CABSFeasibility> engine(new CABSFeasibility,
             CABSFeasibility::guidance(),o,{width,0});
@@ -1062,7 +1107,8 @@ namespace Test {
         return optimum==2 && !bab.stopped();
       }
       static bool adoption(bool queued) {
-        Gecode::Search::Options o; o.clone=false;
+        Gecode::Search::Options o;
+        o.clone=false;
         Gecode::CABS<AStarSpace> engine(new AStarSpace,
           AStarSpace::guidance(false,true),o);
         std::unique_ptr<Space> first(engine.next());
@@ -1073,8 +1119,10 @@ namespace Test {
           if (!second || second->x.val()!=1) return false;
         }
         {
-          AStarSpace incumbent(false,queued ? 2 : 1), worse(false,0);
-          incumbent.status(); worse.status();
+          AStarSpace incumbent(false,queued ? 2 : 1);
+          AStarSpace worse(false,0);
+          incumbent.status();
+          worse.status();
           engine.constrain(incumbent);
           engine.constrain(incumbent);
           engine.constrain(worse);
@@ -1105,7 +1153,8 @@ namespace Test {
             }
             // A returned solution remains independent of all engine storage.
             if (result && result->status()!=SS_SOLVED) return false;
-            result.reset(); root.reset();
+            result.reset();
+            root.reset();
             if (AStarSpace::live.load()!=0) return false;
           }
         }
@@ -1136,12 +1185,12 @@ namespace Test {
         o.tracer=nullptr;
         using Guidance=Gecode::Search::HeuristicGuidance;
         try {
-          Gecode::CABS<AStarSpace> invalid(&root,Guidance(Guidance::MINIMIZE,{}),o);
+          Gecode::CABS<AStarSpace> invalid(&root,Guidance(Guidance::Sense::MINIMIZE,{}),o);
           return false;
         } catch (const Gecode::Search::UninitializedCABSBound&) {}
         o.clone=true;
         {
-          Guidance throws(Guidance::MINIMIZE,[](const Space&) -> std::int64_t {
+          Guidance throws(Guidance::Sense::MINIMIZE,[](const Space&) -> std::int64_t {
             throw std::runtime_error("guidance failure");
           });
           Gecode::CABS<AStarSpace> engine(&root,throws,o);
@@ -1176,14 +1225,16 @@ namespace Test {
           for (unsigned int threads : {1U,3U}) {
             Gecode::Search::NodeStop stop(0);
             Gecode::Search::Options asset;
-            asset.threads=1; asset.stop=&stop;
+            asset.threads=1;
+            asset.stop=&stop;
             const auto guidance=AStarSpace::guidance(max,true);
             Gecode::SEBs assets{Gecode::bab<AStarSpace>(asset),
               Gecode::astar<AStarSpace>(guidance,asset),
               Gecode::cabs<AStarSpace>(guidance,asset)};
             Gecode::Search::Options options;
             options.threads=threads;
-            AStarSpace root(max), incumbent(max,1);
+            AStarSpace root(max);
+            AStarSpace incumbent(max,1);
             incumbent.status();
             Gecode::PBS<AStarSpace,Gecode::BAB> engine(&root,assets,options);
             while (std::unique_ptr<AStarSpace> solution{engine.next()}) {}
@@ -1195,7 +1246,8 @@ namespace Test {
             while (std::unique_ptr<AStarSpace> solution{engine.next()}) {
               if (!solution->improves(solution->objective(),previous))
                 return false;
-              previous=solution->objective(); found=true;
+              previous=solution->objective();
+              found=true;
             }
             if (!found || previous!=incumbent.score(2) || engine.stopped())
               return false;
@@ -1209,11 +1261,14 @@ namespace Test {
       static bool check(bool beam, bool max, unsigned int threads) {
         using namespace Gecode::Search;
         NodeStop stop(1);
-        Gecode::Search::Options options; options.clone=false; options.threads=threads; options.stop=&stop;
+        Gecode::Search::Options options;
+        options.clone=false;
+        options.threads=threads;
+        options.stop=&stop;
         const auto guidance=AStarSpace::guidance(max,true);
         auto make=[&](Space* root, CABSOptions limits=CABSOptions()) {
           return std::unique_ptr<Engine>(beam ? cabsengine(root,guidance,options,limits) :
-            bestfirstengine(root,guidance,RANK_FIRST,options));
+            bestfirstengine(root,guidance,AStarOrder::RANK_FIRST,options));
         };
         auto engine=make(new AStarSpace(max));
         std::optional<std::int64_t> previous;
@@ -1237,7 +1292,8 @@ namespace Test {
         for (int repeat=0; repeat<3; repeat++) {
           engine->reset(new AStarSpace(max));
           if (engine->statistics().node || engine->statistics().restart) return false;
-          AStarSpace incumbent(max,1); incumbent.status();
+          AStarSpace incumbent(max,1);
+          incumbent.status();
           engine->constrain(incumbent);
           previous=incumbent.objective();
           if (!consume() || engine->stopped() || *previous!=optimum.objective()) return false;
@@ -1264,7 +1320,8 @@ namespace Test {
       }
       static bool exceptions(bool beam, unsigned int threads=4) {
         using namespace Gecode::Search;
-        Gecode::Search::Options options; options.threads=threads;
+        Gecode::Search::Options options;
+        options.threads=threads;
         AStarSpace root;
         for (bool rank : {false,true}) {
           auto guidance=AStarSpace::guidance(false);
@@ -1317,7 +1374,9 @@ namespace Test {
         incumbent.status();
         NodeStop stop(7);
         Gecode::Search::Options options;
-        options.clone=false; options.threads=4; options.stop=&stop;
+        options.clone=false;
+        options.threads=4;
+        options.stop=&stop;
         std::unique_ptr<Engine> engine(beam ?
           cabsengine(new TreeSpace(graph),TreeSpace::guidance(),options) :
           astarengine(new TreeSpace(graph),TreeSpace::guidance(),options));
@@ -1337,7 +1396,8 @@ namespace Test {
         using namespace Gecode::Search;
         class Boundary : public Stop {
         public:
-          bool queued=false, resumed=false;
+          bool queued=false;
+          bool resumed=false;
           bool stop(const Statistics& s, const Gecode::Search::Options&) override {
             return !resumed && (queued ? s.fail>0 : s.node>=129);
           }
@@ -1347,7 +1407,9 @@ namespace Test {
         for (int i=1; i<=128; i++) graph[0].children.push_back(i);
         graph[129]={2,2,0,{}};
         Gecode::Search::Options options;
-        options.clone=false; options.threads=2; options.stop=&stop;
+        options.clone=false;
+        options.threads=2;
+        options.stop=&stop;
         options.worker_control=WorkerControl(1);
         std::unique_ptr<Engine> engine(beam ?
           cabsengine(new TreeSpace(graph),TreeSpace::guidance(),options) :
@@ -1378,10 +1440,13 @@ namespace Test {
           {0,0,2,{9,10}}, {0,0,3,{11,12}},
           {20,20,0,{}}, {19,19,0,{}}, {18,18,0,{}}, {17,17,0,{}},
           {16,16,0,{}}, {15,15,0,{}}, {14,14,0,{}}, {1,1,0,{}}};
-        Gecode::Search::Options options; options.clone=false; options.threads=4;
+        Gecode::Search::Options options;
+        options.clone=false;
+        options.threads=4;
         auto guidance=TreeSpace::guidance();
         auto bound=guidance.bound;
-        std::atomic<int> inside{0}, peak{0};
+        std::atomic<int> inside{0};
+        std::atomic<int> peak{0};
         guidance.bound=[&](const Space& s) {
           const int count=++inside;
           int old=peak.load();
@@ -1932,7 +1997,9 @@ namespace Test {
         Gecode::Search::WorkerControl control(node == 0U ? 0U : 1U);
         Pause pause(control,node);
         Gecode::Search::Options options;
-        options.threads=threads; options.worker_control=control; options.stop=&pause;
+        options.threads=threads;
+        options.worker_control=control;
+        options.stop=&pause;
         AStarSpace root;
         const auto guidance=AStarSpace::guidance(false);
         std::unique_ptr<Gecode::Search::Engine> engine(kind==0U ?
@@ -1943,7 +2010,8 @@ namespace Test {
         auto consume=[&] {
           while (std::unique_ptr<AStarSpace> solution{
                    static_cast<AStarSpace*>(engine->next())}) {
-            optimum=solution->objective(); found=true;
+            optimum=solution->objective();
+            found=true;
           }
         };
         // A shallow generated goal may return before the pause threshold.

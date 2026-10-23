@@ -51,7 +51,8 @@ namespace Gecode { namespace Search { namespace Par {
     struct Earlier {
       HeuristicGuidance::Sense sense;
       AStarOrder ordering;
-      bool beam, ranked;
+      bool beam;
+      bool ranked;
       bool operator()(const Entry& a, const Entry& b) const;
     };
     struct ExpansionTask {
@@ -64,7 +65,8 @@ namespace Gecode { namespace Search { namespace Par {
       Frontier& engine;
       unsigned int id;
     public:
-      Support::Event wake, done;
+      Support::Event wake;
+      Support::Event done;
       Runner(Frontier& e, unsigned int i);
       void run(void) override;
       Support::Terminator* terminator(void) const override;
@@ -76,8 +78,11 @@ namespace Gecode { namespace Search { namespace Par {
     bool beam;
     CABSOptions limits;
     unsigned long int width=1;
-    unsigned long long int order=0, revision=0;
-    std::unique_ptr<Space> root, best, solution;
+    unsigned long long int order=0;
+    unsigned long long int revision=0;
+    std::unique_ptr<Space> root;
+    std::unique_ptr<Space> best;
+    std::unique_ptr<Space> solution;
     std::int64_t best_bound=0;
     std::optional<std::int64_t> discarded_bound;
     std::vector<Entry> frontier;
@@ -89,7 +94,10 @@ namespace Gecode { namespace Search { namespace Par {
     Search::Statistics stat;
     /// Workers with selected parents or model state still awaiting disposal
     unsigned int active=0;
-    bool running=false, shutdown=false, stopped_=false, limited=false;
+    bool running=false;
+    bool shutdown=false;
+    bool stopped_=false;
+    bool limited=false;
     std::exception_ptr error;
 
     void initialize(Space* s, bool clone);

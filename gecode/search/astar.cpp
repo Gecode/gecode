@@ -41,7 +41,7 @@ namespace Gecode { namespace Search {
 
   Engine*
   astarengine(Space* s, const HeuristicGuidance& g, const Options& o) {
-    return bestfirstengine(s,g,BOUND_FIRST,o);
+    return bestfirstengine(s,g,AStarOrder::BOUND_FIRST,o);
   }
 
   Engine*
@@ -66,10 +66,10 @@ namespace Gecode { namespace Search { namespace Seq {
 
   bool
   AStar::Later::operator()(const Entry& a, const Entry& b) const {
-    if (ordering == RANK_FIRST && a.rank != b.rank)
+    if (ordering == AStarOrder::RANK_FIRST && a.rank != b.rank)
       return a.rank > b.rank;
     if (a.bound != b.bound)
-      return sense == HeuristicGuidance::MINIMIZE ?
+      return sense == HeuristicGuidance::Sense::MINIMIZE ?
         a.bound > b.bound : a.bound < b.bound;
     if (a.rank != b.rank)
       return a.rank > b.rank;
@@ -93,7 +93,8 @@ namespace Gecode { namespace Search { namespace Seq {
       current_status = s->status(*this);
       if (current_status == SS_FAILED) {
         fail++;
-        if (!clone) delete s;
+        if (!clone)
+          delete s;
       } else {
         expansion.select(std::unique_ptr<Space>(clone ? s->clone() : s));
       }
@@ -102,7 +103,7 @@ namespace Gecode { namespace Search { namespace Seq {
 
   bool
   AStar::improves(std::int64_t bound) const {
-    return !best || (guidance.sense == HeuristicGuidance::MINIMIZE ?
+    return !best || (guidance.sense == HeuristicGuidance::Sense::MINIMIZE ?
                     bound < best_bound : bound > best_bound);
   }
 
@@ -124,7 +125,8 @@ namespace Gecode { namespace Search { namespace Seq {
     // Delete exhausted branchers before cloning the solution.
     (void) s->choice();
     const std::int64_t bound = guidance.bound(*s);
-    if (!improves(bound)) return nullptr;
+    if (!improves(bound))
+      return nullptr;
     std::unique_ptr<Space> result(s->clone());
     best = std::move(s);
     best_bound = bound;
@@ -136,9 +138,11 @@ namespace Gecode { namespace Search { namespace Seq {
   AStar::next(void) {
     start();
     while (true) {
-      if (stop_seq(opt)) return nullptr;
+      if (stop_seq(opt))
+        return nullptr;
       if (!expansion) {
-        if (frontier.empty()) return nullptr;
+        if (frontier.empty())
+          return nullptr;
         std::pop_heap(frontier.begin(),frontier.end(),Later{guidance.sense,ordering});
         Entry entry = std::move(frontier.back());
         frontier.pop_back();
@@ -157,7 +161,8 @@ namespace Gecode { namespace Search { namespace Seq {
         stack_depth(current_depth);
         counted = true;
         if (current_status == SS_SOLVED) {
-          if (Space* solution = publish(expansion.take())) return solution;
+          if (Space* solution = publish(expansion.take()))
+            return solution;
           continue;
         }
         if (!improves(guidance.bound(expansion.space()))) {
@@ -168,14 +173,16 @@ namespace Gecode { namespace Search { namespace Seq {
       }
       const auto child_depth = current_depth+1;
       ExpansionStep step = expansion.next(*this,child_depth,current_revision,
-                                           best.get(),incumbent_revision);
-      if (step.state == ExpansionStep::EXHAUSTED) continue;
+                                          best.get(),incumbent_revision);
+      if (step.state == ExpansionStep::State::EXHAUSTED)
+        continue;
       switch (step.status) {
       case SS_FAILED:
         fail++;
         break;
       case SS_SOLVED:
-        if (Space* solution = publish(std::move(step.space))) return solution;
+        if (Space* solution = publish(std::move(step.space)))
+          return solution;
         break;
       case SS_BRANCH:
         enqueue(std::move(step.space),child_depth,incumbent_revision);
@@ -194,7 +201,8 @@ namespace Gecode { namespace Search { namespace Seq {
   void
   AStar::constrain(const Space& b) {
     const std::int64_t bound = guidance.bound(b);
-    if (!improves(bound)) return;
+    if (!improves(bound))
+      return;
     std::unique_ptr<Space> incumbent(b.clone());
     best = std::move(incumbent);
     best_bound = bound;
@@ -208,7 +216,8 @@ namespace Gecode { namespace Search { namespace Seq {
     frontier.clear();
     best.reset();
     order = 0;
-    incumbent_revision = current_revision = 0;
+    incumbent_revision = 0;
+    current_revision = 0;
     current_depth = 0;
     counted = false;
     Worker::reset();

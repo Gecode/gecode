@@ -15,16 +15,19 @@ namespace TSPTW {
   /// are stored as IDs.
   class Transition : public Gecode::Space {
   public:
-    enum BoundMode { PREFIX, MIN_ARCS };
-    enum ResidualPropagation { OFF, CHEAP, UNARY };
+    enum class BoundMode { PREFIX, MIN_ARCS };
+    enum class ResidualPropagation { OFF, CHEAP, UNARY };
     std::shared_ptr<const Instance> data;
     std::vector<int> unvisited;
     // time includes waiting; prefix_cost counts travel only.
-    int location=0, time=0, prefix_cost=0, depth=0;
+    int location=0;
+    int time=0;
+    int prefix_cost=0;
+    int depth=0;
     bool returned=false;
 
     explicit Transition(std::shared_ptr<const Instance> instance,
-                        ResidualPropagation propagation=OFF);
+                        ResidualPropagation propagation=ResidualPropagation::OFF);
     Transition(Transition& s);
     Gecode::Space* copy(void) override { return new Transition(*this); }
     void constrain(const Gecode::Space& s) override;
@@ -38,37 +41,45 @@ namespace TSPTW {
     }
     std::vector<int> actions(void) const {
       std::vector<int> result;
-      if (returned) return result;
+      if (returned)
+        return result;
       if (unvisited.empty()) {
-        if (can_visit(0)) result.push_back(0);
+        if (can_visit(0))
+          result.push_back(0);
       } else {
         for (int node : unvisited)
-          if (can_visit(node)) result.push_back(node);
+          if (can_visit(node))
+            result.push_back(node);
       }
       return result;
     }
     std::int64_t bound(BoundMode mode) const;
     /// Group prefixes with the same location and remaining customers.
     /// The dominance predicate checks equality and resource bounds after hashing.
-    static std::size_t dominance_key(const Gecode::Space& s0) {
-      const auto& s=static_cast<const Transition&>(s0);
+    static std::size_t dominance_key(const Gecode::Space& space) {
+      const auto& s=static_cast<const Transition&>(space);
       std::size_t key=static_cast<std::size_t>(s.location);
-      for (int node : s.unvisited) Gecode::cmb_hash(key,node);
+      for (int node : s.unvisited)
+        Gecode::cmb_hash(key,node);
       return key;
     }
     /// A prefix dominates another if it can follow every remaining route
     /// with no later visit times and no greater total travel cost.
-    static bool dominates(const Gecode::Space& a0, const Gecode::Space& b0) {
-      const auto& a=static_cast<const Transition&>(a0);
-      const auto& b=static_cast<const Transition&>(b0);
-      return a.data==b.data && a.location==b.location &&
-        a.unvisited==b.unvisited && a.returned==b.returned &&
-        a.time<=b.time && a.prefix_cost<=b.prefix_cost;
+    static bool dominates(const Gecode::Space& candidate,
+                          const Gecode::Space& other) {
+      const auto& prefix=static_cast<const Transition&>(candidate);
+      const auto& other_prefix=static_cast<const Transition&>(other);
+      return prefix.data==other_prefix.data &&
+        prefix.location==other_prefix.location &&
+        prefix.unvisited==other_prefix.unvisited &&
+        prefix.returned==other_prefix.returned &&
+        prefix.time<=other_prefix.time &&
+        prefix.prefix_cost<=other_prefix.prefix_cost;
     }
 #ifdef GECODE_HAS_EXPERIMENTAL
     static Gecode::Search::HeuristicGuidance
-    guidance(BoundMode mode=PREFIX) {
-      return {Gecode::Search::HeuristicGuidance::MINIMIZE,
+    guidance(BoundMode mode=BoundMode::PREFIX) {
+      return {Gecode::Search::HeuristicGuidance::Sense::MINIMIZE,
         [mode](const Gecode::Space& s)->std::int64_t {
           return static_cast<const Transition&>(s).bound(mode);
         }};
@@ -89,7 +100,7 @@ namespace TSPTW {
     bool can_visit(int node) const {
       return time+data->arc(location,node)<=data->due[node] &&
         prefix_cost+data->arc(location,node)<ceiling &&
-        (propagation!=UNARY ||
+        (propagation!=ResidualPropagation::UNARY ||
          std::find(residual_actions.begin(),residual_actions.end(),node)!=
            residual_actions.end());
     }
@@ -110,7 +121,8 @@ namespace TSPTW {
       void archive(Gecode::Archive& e) const override {
         Choice::archive(e);
         e << position << static_cast<unsigned int>(actions.size());
-        for (int node : actions) e << node;
+        for (int node : actions)
+          e << node;
       }
     };
   public:
@@ -134,7 +146,8 @@ namespace TSPTW {
       unsigned int count;
       e >> position >> count;
       std::vector<int> actions(count);
-      for (int& node : actions) e >> node;
+      for (int& node : actions)
+        e >> node;
       return new VisitChoice(*this,position,std::move(actions));
     }
     Gecode::ExecStatus commit(Gecode::Space& home, const Gecode::Choice& c,
@@ -183,12 +196,12 @@ namespace TSPTW {
   };
 
   inline Transition::Transition(std::shared_ptr<const Instance> instance,
-                                ResidualPropagation propagation0)
+                                ResidualPropagation residual_propagation)
     : data(std::move(instance)), unvisited(data->n-1),
-      propagation(propagation0),
+      propagation(residual_propagation),
       ceiling(data->cost_limit+1) {
     std::iota(unvisited.begin(),unvisited.end(),1);
-    if (propagation!=OFF)
+    if (propagation!=ResidualPropagation::OFF)
       distance=std::make_shared<const std::vector<std::int64_t>>(
         shortest_paths(*data));
     positions=Gecode::OpenIntVarList(*this,
@@ -197,7 +210,8 @@ namespace TSPTW {
         return Gecode::IntVar(home,0,s.data->n-1);
       },data->n);
     (void) new (*this) VisitBrancher(*this);
-    if (!filter_remaining_visits() || actions().empty()) fail();
+    if (!filter_remaining_visits() || actions().empty())
+      fail();
   }
 
   inline Transition::Transition(Transition& s)
@@ -210,23 +224,28 @@ namespace TSPTW {
   }
 
   inline std::int64_t Transition::bound(BoundMode mode) const {
-    if (returned || mode==PREFIX) return prefix_cost;
-    if (unvisited.empty()) return prefix_cost+data->arc(location,0);
+    if (returned || mode==BoundMode::PREFIX)
+      return prefix_cost;
+    if (unvisited.empty())
+      return prefix_cost+data->arc(location,0);
     // Every completion enters each remaining customer and the depot once,
     // and leaves the current location and each remaining customer once.
     // Independent cheapest incoming/outgoing arcs can underestimate these
     // costs; the larger of their totals is still a lower bound.
-    std::int64_t incoming=0, outgoing=0;
+    std::int64_t incoming=0;
+    std::int64_t outgoing=0;
     int enter=std::numeric_limits<int>::max();
     int returning=std::numeric_limits<int>::max();
     for (int u : unvisited) {
       enter=std::min(enter,data->arc(location,u));
       returning=std::min(returning,data->arc(u,0));
-      int leave=data->arc(u,0), arrive=data->arc(location,u);
-      for (int v : unvisited) if (u!=v) {
-        leave=std::min(leave,data->arc(u,v));
-        arrive=std::min(arrive,data->arc(v,u));
-      }
+      int leave=data->arc(u,0);
+      int arrive=data->arc(location,u);
+      for (int v : unvisited)
+        if (u!=v) {
+          leave=std::min(leave,data->arc(u,v));
+          arrive=std::min(arrive,data->arc(v,u));
+        }
       outgoing+=leave;
       incoming+=arrive;
     }
@@ -250,8 +269,9 @@ namespace TSPTW {
       for (int k=0; k<starts.size(); k++) {
         const int u=unvisited[k];
         int duration=data.arc(u,0);
-        for (int v : unvisited) if (u!=v)
-          duration=std::min(duration,data.arc(u,v));
+        for (int v : unvisited)
+          if (u!=v)
+            duration=std::min(duration,data.arc(u,v));
         durations[k]=duration;
         // Shortest travel times bound arrival from the current location and
         // leave enough time to return to the depot by its deadline.
@@ -260,7 +280,10 @@ namespace TSPTW {
         const auto upper=std::min<std::int64_t>(data.due[u],
           std::min<std::int64_t>(data.due[0]-distance[u*data.n],
                                 data.due[0]-duration));
-        if (lower>upper) { fail(); return; }
+        if (lower>upper) {
+          fail();
+          return;
+        }
         Gecode::dom(*this,starts[k],static_cast<int>(lower),static_cast<int>(upper));
       }
       Gecode::unary(*this,starts,durations,Gecode::IPL_DEF);
@@ -272,15 +295,18 @@ namespace TSPTW {
   };
 
   inline bool Transition::filter_remaining_visits(void) {
-    if (propagation==OFF) return true;
+    if (propagation==ResidualPropagation::OFF)
+      return true;
     residual_actions.clear();
-    if (returned) return true;
+    if (returned)
+      return true;
     if (unvisited.empty()) {
-      if (time+data->arc(location,0)>data->due[0]) return false;
+      if (time+data->arc(location,0)>data->due[0])
+        return false;
       residual_actions.push_back(0);
       return true;
     }
-    if (propagation==CHEAP) {
+    if (propagation==ResidualPropagation::CHEAP) {
       // Allowing paths through already visited customers can only shorten
       // travel. A failed deadline check therefore rules out every completion,
       // even when arcs are asymmetric or indirect travel is cheaper.
@@ -294,7 +320,8 @@ namespace TSPTW {
       return true;
     }
     ResidualSchedule schedule(*data,unvisited,location,time,*distance);
-    if (schedule.status()==Gecode::SS_FAILED) return false;
+    if (schedule.status()==Gecode::SS_FAILED)
+      return false;
     for (std::size_t k=0; k<unvisited.size(); k++) {
       const int u=unvisited[k];
       const int earliest=std::max(time+data->arc(location,u),data->ready[u]);
@@ -306,17 +333,18 @@ namespace TSPTW {
     return true;
   }
 
-
-  inline void Transition::constrain(const Gecode::Space& s0) {
-    ceiling=std::min(ceiling,static_cast<const Transition&>(s0).cost());
-    if (cost()>=ceiling || (!returned && actions().empty())) fail();
+  inline void Transition::constrain(const Gecode::Space& solution) {
+    ceiling=std::min(ceiling,static_cast<const Transition&>(solution).cost());
+    if (cost()>=ceiling || (!returned && actions().empty()))
+      fail();
   }
 
   inline std::vector<int> Transition::tour(void) const {
     if (!returned || depth!=data->n)
       throw std::runtime_error("incomplete transition solution");
     std::vector<int> result;
-    for (int p=0; p<depth-1; p++) result.push_back(position(p).val());
+    for (int p=0; p<depth-1; p++)
+      result.push_back(position(p).val());
     return result;
   }
 

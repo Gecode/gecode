@@ -1182,7 +1182,7 @@ namespace Gecode { namespace Search {
   class HeuristicGuidance {
   public:
     /// Objective direction
-    enum Sense { MINIMIZE, MAXIMIZE };
+    enum class Sense { MINIMIZE, MAXIMIZE };
     /// Evaluate a propagated stable space
     typedef std::function<std::int64_t(const Space&)> Evaluate;
     /// Objective direction
@@ -1196,7 +1196,7 @@ namespace Gecode { namespace Search {
   };
 
   /// Fixed exploration order for A* search
-  enum AStarOrder {
+  enum class AStarOrder {
     BOUND_FIRST, ///< Optimistic bound, lower rank, then insertion order
     RANK_FIRST   ///< Lower rank, optimistic bound, then insertion order
   };
@@ -1221,8 +1221,10 @@ namespace Gecode {
    * Returned solutions belong to the caller and are independent of the
    * engine's incumbent copy.
    *
-   * The default BOUND_FIRST order compares optimistic bound, lower rank,
-   * then insertion order. RANK_FIRST compares lower rank, optimistic bound,
+   * The default Search::AStarOrder::BOUND_FIRST order compares optimistic bound,
+   * lower rank,
+   * then insertion order. Search::AStarOrder::RANK_FIRST compares lower rank,
+   * optimistic bound,
    * then insertion order. Bounds follow the objective direction; ranks are
    * lower-first for either direction. Missing rank falls back to bound order.
    * Both values are cached when a stable branching node enters the frontier.

@@ -63,7 +63,8 @@ namespace Gecode { namespace Search { namespace Seq {
     HeuristicGuidance guidance;
     CABSOptions limits;
     unsigned long int width;
-    unsigned long long int order, incumbent_revision;
+    unsigned long long int order;
+    unsigned long long int incumbent_revision;
     /// Root without incumbent constraints, used to regenerate each wider pass
     std::unique_ptr<Space> root;
     std::vector<Entry> layer;
