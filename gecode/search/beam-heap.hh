@@ -38,6 +38,7 @@
 #include <algorithm>
 #include <cassert>
 #include <memory>
+#include <optional>
 #include <unordered_map>
 #include <vector>
 
@@ -45,10 +46,10 @@
 namespace Gecode { namespace Search {
 
   /**
-   * \brief Beam candidates in a heap, with an optional index for dominance keys
+   * \brief Beam admission, dominance, and bounds for work discarded by width
    *
-   * Comparisons order better candidates first and must not throw. The heap's
-   * front entry is therefore the worst candidate, ready for replacement.
+   * Better candidates precede worse ones in the ordering. The heap's front
+   * entry is therefore the worst candidate, ready for replacement.
    */
   class BeamHeap {
   public:
@@ -63,11 +64,130 @@ namespace Gecode { namespace Search {
       /// Address of this entry's slot in the key index, or null if unindexed.
       std::size_t* slot=nullptr;
     };
-    using Index=std::unordered_multimap<std::size_t,std::size_t>;
+    /// Better priority first, with generation order breaking ties
+    struct Earlier {
+      HeuristicGuidance::Sense sense;
+      bool ranked;
+      bool operator()(const Entry& a, const Entry& b) const noexcept {
+        if (ranked) {
+          if (a.rank != b.rank) {
+            return a.rank < b.rank;
+          }
+        } else if (a.bound != b.bound) {
+          return sense == HeuristicGuidance::Sense::MINIMIZE ?
+            a.bound < b.bound : a.bound > b.bound;
+        }
+        return a.order < b.order;
+      }
+    };
+    struct Admission {
+      /// Rejected candidate or first replaced candidate, for caller disposal
+      std::unique_ptr<Space> discarded;
+      /// Insertion would grow the beam without room in the engine's quota
+      bool limited;
+    };
   private:
+    using Index=std::unordered_multimap<std::size_t,std::size_t>;
     std::vector<Entry> entries;
     Index index;
+    /// Best optimistic bound discarded for width during the current pass
+    std::optional<std::int64_t> discarded_bound_;
 
+  public:
+    bool empty(void) const {
+      return entries.empty();
+    }
+    std::size_t size(void) const {
+      return entries.size();
+    }
+    /// Admit a candidate; quota room is required only when growing the beam.
+    Admission admit(Entry entry, unsigned long int width,
+                    const CABSOptions& limits, Earlier earlier, bool has_room) {
+      const bool keyed=limits.dominates && limits.dominance_key;
+      // A dominator inherits a victim's slot regardless of rank or quota.
+      if (limits.dominates) {
+        if (keyed) {
+          const auto range=index.equal_range(entry.key);
+          for (auto i=range.first; i!=range.second; ++i) {
+            if (limits.dominates(*entries[i->second].space,*entry.space)) {
+              return {std::move(entry.space),false};
+            }
+          }
+          std::vector<const std::size_t*> victims;
+          for (auto i=range.first; i!=range.second; ++i) {
+            if (limits.dominates(*entry.space,*entries[i->second].space)) {
+              victims.push_back(&i->second);
+            }
+          }
+          if (!victims.empty()) {
+            // Slot addresses survive heap moves and index rehashes.
+            Entry removed=replace(*victims.front(),std::move(entry),true,earlier);
+            for (std::size_t i=1; i<victims.size(); i++) {
+              erase(*victims[i],earlier);
+            }
+            return {std::move(removed.space),false};
+          }
+        } else {
+          for (const auto& candidate : entries) {
+            if (limits.dominates(*candidate.space,*entry.space)) {
+              return {std::move(entry.space),false};
+            }
+          }
+          std::vector<std::size_t> victims;
+          for (std::size_t i=0; i<entries.size(); i++) {
+            if (limits.dominates(*entry.space,*entries[i].space)) {
+              victims.push_back(i);
+            }
+          }
+          if (!victims.empty()) {
+            Entry removed=replace(victims,std::move(entry),earlier);
+            return {std::move(removed.space),false};
+          }
+        }
+      }
+      if (entries.size() == width) {
+        const bool preferred=earlier(entry,entries.front());
+        const std::int64_t bound=preferred ? entries.front().bound : entry.bound;
+        if (!discarded_bound_ ||
+            (earlier.sense == HeuristicGuidance::Sense::MINIMIZE ?
+             bound < *discarded_bound_ : bound > *discarded_bound_)) {
+          discarded_bound_=bound;
+        }
+        if (!preferred) {
+          return {std::move(entry.space),false};
+        }
+        Entry removed=replace(0,std::move(entry),keyed,earlier);
+        return {std::move(removed.space),false};
+      }
+      if (!has_room) {
+        return {std::move(entry.space),true};
+      }
+      push(std::move(entry),keyed,earlier);
+      return {nullptr,false};
+    }
+    const std::optional<std::int64_t>& discarded_bound(void) const {
+      return discarded_bound_;
+    }
+    void reset_discarded_bound(void) {
+      discarded_bound_.reset();
+    }
+
+    /// Transfer a finished beam and clear its index references.
+    void release(std::vector<Entry>& layer) {
+      assert(layer.empty());
+      for (auto& entry : entries) {
+        entry.slot=nullptr;
+      }
+      index.clear();
+      layer.swap(entries);
+    }
+    void clear(void) {
+      index.clear();
+      entries.clear();
+      discarded_bound_.reset();
+    }
+
+  private:
     void place(std::size_t i, Entry&& entry) {
       entries[i]=std::move(entry);
       if (entries[i].slot) {
@@ -87,8 +207,7 @@ namespace Gecode { namespace Search {
       }
       GECODE_NEVER;
     }
-    template<class Compare>
-    void repair(std::size_t i, Compare compare) {
+    void repair(std::size_t i, Earlier compare) {
       if (i && compare(entries[(i-1)/2],entries[i])) {
         Entry entry=std::move(entries[i]);
         do {
@@ -113,29 +232,8 @@ namespace Gecode { namespace Search {
         place(i,std::move(entry));
       }
     }
-  public:
-    bool empty(void) const {
-      return entries.empty();
-    }
-    std::size_t size(void) const {
-      return entries.size();
-    }
-    const Entry& front(void) const {
-      return entries.front();
-    }
-    const Entry& operator[](std::size_t i) const {
-      return entries[i];
-    }
-    const std::vector<Entry>& all(void) const {
-      return entries;
-    }
-    auto equal_range(std::size_t key) const {
-      return index.equal_range(key);
-    }
-
     /// Insert a candidate and optionally index its dominance key
-    template<class Compare>
-    void push(Entry entry, bool keyed, Compare compare) {
+    void push(Entry entry, bool keyed, Earlier compare) {
       // Map nodes, and therefore slot addresses, survive map rehashes.
       auto inserted=index.end();
       if (keyed) {
@@ -152,8 +250,7 @@ namespace Gecode { namespace Search {
       }
       repair(entries.size()-1,compare);
     }
-    template<class Compare>
-    Entry replace(std::size_t i, Entry entry, bool keyed, Compare compare) {
+    Entry replace(std::size_t i, Entry entry, bool keyed, Earlier compare) {
       // Complete the only allocation before removing the old representative.
       if (keyed) {
         entry.slot=&index.emplace(entry.key,i)->second;
@@ -165,8 +262,7 @@ namespace Gecode { namespace Search {
       repair(i,compare);
       return removed;
     }
-    template<class Compare>
-    Entry erase(std::size_t i, Compare compare) {
+    Entry erase(std::size_t i, Earlier compare) {
       unindex(entries[i]);
       Entry removed=std::move(entries[i]);
       removed.slot=nullptr;
@@ -184,8 +280,8 @@ namespace Gecode { namespace Search {
     }
     /// Replace the first victim and remove the rest; the heap must be unindexed
     // Victim indices must be nonempty and sorted in ascending order.
-    template<class Compare>
-    Entry replace(const std::vector<std::size_t>& victims, Entry entry, Compare compare) {
+    Entry replace(const std::vector<std::size_t>& victims, Entry entry,
+                  Earlier compare) {
       assert(index.empty());
       Entry removed=std::move(entries[victims.front()]);
       entries[victims.front()]=std::move(entry);
@@ -205,19 +301,6 @@ namespace Gecode { namespace Search {
       entries.resize(next);
       std::make_heap(entries.begin(),entries.end(),compare);
       return removed;
-    }
-    /// Transfer a finished beam and clear its index references.
-    void release(std::vector<Entry>& layer) {
-      assert(layer.empty());
-      for (auto& entry : entries) {
-        entry.slot=nullptr;
-      }
-      index.clear();
-      layer.swap(entries);
-    }
-    void clear(void) {
-      index.clear();
-      entries.clear();
     }
   };
 

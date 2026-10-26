@@ -35,11 +35,12 @@
 #define GECODE_SEARCH_PAR_FRONTIER_HH
 
 #include <gecode/search.hh>
-#include <gecode/search/seq/choice-expansion.hh>
+#include <gecode/search/choice-expansion.hh>
 #include <gecode/search/beam-heap.hh>
 #include <deque>
 #include <exception>
 #include <memory>
+#include <optional>
 #include <vector>
 
 #if defined(GECODE_HAS_EXPERIMENTAL) && defined(GECODE_HAS_THREADS)
@@ -56,14 +57,34 @@ namespace Gecode { namespace Search { namespace Par {
       bool operator()(const Entry& a, const Entry& b) const;
     };
     struct ExpansionTask {
-      Seq::ChoiceExpansion expansion;
+      ChoiceExpansion expansion;
       unsigned long int depth=0;
       unsigned long long int revision=0;
       bool counted=false;
     };
     class Runner : public Support::Runnable, public Support::Terminator {
+      friend class Frontier;
       Frontier& engine;
       unsigned int id;
+      std::unique_ptr<ExpansionTask> task;
+      std::unique_ptr<Space> incumbent;
+      unsigned long long int current_revision=0;
+      Worker local;
+      bool counted_active=false;
+      bool retiring=false;
+      std::unique_ptr<Space> found_solution;
+      std::int64_t solution_bound=0;
+      Entry batch[8];
+      unsigned int batch_size=0;
+      const unsigned int batch_capacity;
+      std::optional<std::int64_t> cutoff;
+
+      /// Expand a bounded number of siblings outside the frontier lock
+      void expand(void);
+      /// Refresh the worker's bound while holding the frontier lock
+      void refresh_incumbent(void);
+      /// Dispose of rejected or replaced children on their worker
+      void clear_batch(void);
     public:
       Support::Event wake;
       Support::Event done;
@@ -84,7 +105,6 @@ namespace Gecode { namespace Search { namespace Par {
     std::unique_ptr<Space> best;
     std::unique_ptr<Space> solution;
     std::int64_t best_bound=0;
-    std::optional<std::int64_t> discarded_bound;
     std::vector<Entry> frontier;
     BeamHeap candidates;
     std::deque<std::unique_ptr<ExpansionTask>> pending;
@@ -103,7 +123,12 @@ namespace Gecode { namespace Search { namespace Par {
     void initialize(Space* s, bool clone);
     void launch(void);
     void wake(void);
-    void work(unsigned int id);
+    /// Report results and select work under the frontier lock
+    bool coordinate(Runner& runner);
+    void report(Runner& runner);
+    /// Return false until rejected children have been disposed of
+    bool retire(Runner& runner);
+    void failed(Runner& runner, std::exception_ptr exception);
     /// Select work or advance a beam layer/pass while holding mutex
     std::unique_ptr<ExpansionTask> select_task(unsigned int id);
     bool improves(std::int64_t bound) const;

@@ -31,15 +31,15 @@
  *
  */
 
-#ifndef GECODE_SEARCH_SEQ_CHOICE_EXPANSION_HH
-#define GECODE_SEARCH_SEQ_CHOICE_EXPANSION_HH
+#ifndef GECODE_SEARCH_CHOICE_EXPANSION_HH
+#define GECODE_SEARCH_CHOICE_EXPANSION_HH
 
 #include <gecode/search/worker.hh>
 #include <memory>
 #include <utility>
 
 #ifdef GECODE_HAS_EXPERIMENTAL
-namespace Gecode { namespace Search { namespace Seq {
+namespace Gecode { namespace Search {
 
   /// Child, parent solved or failed by preparation, or exhausted choice
   struct ExpansionStep {
@@ -126,10 +126,10 @@ namespace Gecode { namespace Search { namespace Seq {
     }
   };
 
-}}}
+}}
 
 #endif
 
 #endif
 
-// STATISTICS: search-seq
+// STATISTICS: search-other

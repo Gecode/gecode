@@ -60,18 +60,6 @@ namespace Gecode { namespace Search {
 
 namespace Gecode { namespace Search { namespace Seq {
 
-  bool
-  CABS::Earlier::operator()(const Entry& a, const Entry& b) const {
-    if (ranked) {
-      if (a.rank != b.rank)
-        return a.rank < b.rank;
-    } else if (a.bound != b.bound) {
-      return sense == HeuristicGuidance::Sense::MINIMIZE ?
-        a.bound < b.bound : a.bound > b.bound;
-    }
-    return a.order < b.order;
-  }
-
   CABS::CABS(Space* s, const Options& o, const Configuration& c)
     : opt(o), guidance(c.guidance), limits(c.limits), width(1), order(0),
       incumbent_revision(0), current_status(SS_FAILED), current_depth(0),
@@ -118,59 +106,15 @@ namespace Gecode { namespace Search { namespace Seq {
     const std::size_t key = limits.dominates && limits.dominance_key ?
       limits.dominance_key(*s) : 0;
     Entry entry{std::move(s),bound,rank,key,depth,order++,revision};
-    Earlier earlier{guidance.sense,static_cast<bool>(guidance.rank)};
-    if (limits.dominates) {
-      if (limits.dominance_key) {
-        const auto range = candidates.equal_range(entry.key);
-        for (auto i=range.first; i!=range.second; ++i)
-          if (limits.dominates(*candidates[i->second].space,*entry.space))
-            return true;
-        std::vector<const std::size_t*> victims;
-        for (auto i=range.first; i!=range.second; ++i)
-          if (limits.dominates(*entry.space,*candidates[i->second].space))
-            victims.push_back(&i->second);
-        if (!victims.empty()) {
-          // Slot addresses survive heap moves and index rehashes. Erase each
-          // victim through its current slot, without scanning the beam.
-          Entry removed = candidates.replace(*victims.front(),std::move(entry),true,earlier);
-          for (std::size_t i=1; i<victims.size(); i++)
-            candidates.erase(*victims[i],earlier);
-          return true;
-        }
-      } else {
-        for (const auto& candidate : candidates.all())
-          if (limits.dominates(*candidate.space,*entry.space))
-            return true;
-        std::vector<std::size_t> victims;
-        for (std::size_t i=0; i<candidates.size(); i++)
-          if (limits.dominates(*entry.space,*candidates[i].space))
-            victims.push_back(i);
-        if (!victims.empty()) {
-          Entry removed = candidates.replace(victims,std::move(entry),earlier);
-          return true;
-        }
-      }
-    }
-    if (candidates.size() == width) {
-      const bool replace = earlier(entry,candidates.front());
-      const std::int64_t discarded = replace ? candidates.front().bound : entry.bound;
-      if (!discarded_bound || (guidance.sense == HeuristicGuidance::Sense::MINIMIZE ?
-                              discarded < *discarded_bound :
-                              discarded > *discarded_bound))
-        discarded_bound = discarded;
-      if (!replace)
-        return true;
-      Entry removed = candidates.replace(0,std::move(entry),
-        limits.dominates && limits.dominance_key,earlier);
-      return true;
-    }
     const auto pending = layer.size() + candidates.size() + (expansion ? 1U : 0U);
-    if (limits.frontier_limit && pending >= limits.frontier_limit) {
+    const bool has_room = !limits.frontier_limit || pending < limits.frontier_limit;
+    const Earlier earlier{guidance.sense,static_cast<bool>(guidance.rank)};
+    auto admission = candidates.admit(std::move(entry),width,limits,earlier,has_room);
+    if (admission.limited) {
       limited = true;
       _stopped = true;
       return false;
     }
-    candidates.push(std::move(entry),limits.dominates && limits.dominance_key,earlier);
     return true;
   }
 
@@ -197,6 +141,7 @@ namespace Gecode { namespace Search { namespace Seq {
                 [&](const Entry& a, const Entry& b) { return earlier(b,a); });
       return true;
     }
+    const auto& discarded_bound = candidates.discarded_bound();
     if (!discarded_bound || !improves(*discarded_bound))
       return false;
     if (width > std::numeric_limits<unsigned long int>::max()/2 ||
@@ -207,7 +152,7 @@ namespace Gecode { namespace Search { namespace Seq {
     }
     width *= 2;
     restart++;
-    discarded_bound.reset();
+    candidates.reset_discarded_bound();
     expansion.select(std::unique_ptr<Space>(root->clone()));
     current_status = SS_BRANCH;
     current_depth = 0;
@@ -308,7 +253,6 @@ namespace Gecode { namespace Search { namespace Seq {
     incumbent_revision = 0;
     current_revision = 0;
     current_depth = 0;
-    discarded_bound.reset();
     counted = false;
     limited = false;
     Worker::reset();

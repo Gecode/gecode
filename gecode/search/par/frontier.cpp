@@ -60,11 +60,31 @@ namespace Gecode { namespace Search { namespace Par {
   }
 
   Frontier::Runner::Runner(Frontier& e, unsigned int i)
-    : Support::Runnable(false), engine(e), id(i) {}
+    : Support::Runnable(false), engine(e), id(i),
+      batch_capacity(e.beam && !e.limits.frontier_limit ? 8 : 1) {}
 
   void
   Frontier::Runner::run(void) {
-    engine.work(id);
+    while (true) {
+      try {
+        if (!engine.coordinate(*this)) {
+          return;
+        }
+        clear_batch();
+        if (retiring) {
+          continue;
+        }
+        if (task) {
+          expand();
+        } else if (engine.worker_control.engaged()) {
+          WorkerControlAccess::wait(engine.worker_control,id);
+        } else {
+          wake.wait();
+        }
+      } catch (...) {
+        engine.failed(*this,std::current_exception());
+      }
+    }
   }
 
   Support::Terminator*
@@ -186,7 +206,8 @@ namespace Gecode { namespace Search { namespace Par {
                 });
       return true;
     }
-    if (!discarded_bound || !improves(*discarded_bound)) {
+    if (!candidates.discarded_bound() ||
+        !improves(*candidates.discarded_bound())) {
       return false;
     }
     if (width > std::numeric_limits<unsigned long int>::max()/2 ||
@@ -197,7 +218,7 @@ namespace Gecode { namespace Search { namespace Par {
     }
     width*=2;
     stat.restart++;
-    discarded_bound.reset();
+    candidates.reset_discarded_bound();
     auto first=std::make_unique<ExpansionTask>();
     first->expansion.select(std::unique_ptr<Space>(root->clone()));
     pending.push_back(std::move(first));
@@ -220,74 +241,19 @@ namespace Gecode { namespace Search { namespace Par {
                      });
       return nullptr;
     }
-    if (limits.dominates) {
-      if (limits.dominance_key) {
-        const auto range=candidates.equal_range(entry.key);
-        for (auto i=range.first; i!=range.second; ++i) {
-          if (limits.dominates(*candidates[i->second].space,*entry.space)) {
-            return std::move(entry.space);
-          }
-        }
-        std::vector<const std::size_t*> victims;
-        for (auto i=range.first; i!=range.second; ++i) {
-          if (limits.dominates(*entry.space,*candidates[i->second].space)) {
-            victims.push_back(&i->second);
-          }
-        }
-        if (!victims.empty()) {
-          // Slot addresses survive heap moves and index rehashes. Erase each
-          // victim through its current slot, without scanning the beam.
-          Entry removed=candidates.replace(*victims.front(),std::move(entry),true,compare);
-          for (std::size_t i=1; i<victims.size(); i++) {
-            candidates.erase(*victims[i],compare);
-          }
-          return std::move(removed.space);
-        }
-      } else {
-        for (const auto& candidate : candidates.all()) {
-          if (limits.dominates(*candidate.space,*entry.space)) {
-            return std::move(entry.space);
-          }
-        }
-        std::vector<std::size_t> victims;
-        for (std::size_t i=0; i<candidates.size(); i++) {
-          if (limits.dominates(*entry.space,*candidates[i].space)) {
-            victims.push_back(i);
-          }
-        }
-        if (!victims.empty()) {
-          Entry removed=candidates.replace(victims,std::move(entry),compare);
-          return std::move(removed.space);
-        }
-      }
-    }
-    if (candidates.size() == width) {
-      const bool replace=compare(entry,candidates.front());
-      const std::int64_t discarded=replace ? candidates.front().bound : entry.bound;
-      if (!discarded_bound || (guidance.sense == HeuristicGuidance::Sense::MINIMIZE ?
-                              discarded < *discarded_bound :
-                              discarded > *discarded_bound)) {
-        discarded_bound=discarded;
-      }
-      if (!replace) {
-        return std::move(entry.space);
-      }
-      Entry removed=candidates.replace(0,std::move(entry),
-        limits.dominates && limits.dominance_key,compare);
-      return std::move(removed.space);
-    }
     // Reserve room for each other active worker's parent and unsubmitted child.
     assert(active > 0);
     const auto retained=frontier.size()+candidates.size()+pending.size()+
       2*(active-1)+parent;
-    if (limits.frontier_limit && retained >= limits.frontier_limit) {
+    const bool has_room=!limits.frontier_limit || retained < limits.frontier_limit;
+    BeamHeap::Admission admission=candidates.admit(std::move(entry),width,limits,
+      {guidance.sense,static_cast<bool>(guidance.rank)},has_room);
+    if (admission.limited) {
       limited=true;
       stopped_=true;
       running=false;
-      return std::move(entry.space);
     }
-    candidates.push(std::move(entry),limits.dominates && limits.dominance_key,compare);
-    return nullptr;
+    return std::move(admission.discarded);
   }
 
   void
@@ -348,178 +314,183 @@ namespace Gecode { namespace Search { namespace Par {
     return nullptr;
   }
 
+  bool
+  Frontier::coordinate(Runner& runner) {
+    bool notify=false;
+    {
+      Support::Lock lock(mutex);
+      const bool empty=pending.empty() && frontier.empty();
+      report(runner);
+      if (running && opt.stop && opt.stop->stop(stat,opt)) {
+        stopped_=true;
+        running=false;
+      }
+      const bool enabled=!worker_control.engaged() ||
+        runner.id < WorkerControlAccess::requested(worker_control);
+      runner.retiring=false;
+      if (runner.task &&
+          (!runner.task->expansion || !running || !enabled || shutdown)) {
+        runner.retiring=!retire(runner);
+      }
+      if (shutdown && !runner.retiring) {
+        runner.incumbent.reset();
+        runner.current_revision=0;
+        return false;
+      }
+      if (running && enabled && !runner.task) {
+        runner.task=select_task(runner.id);
+        if (runner.task) {
+          active++;
+          runner.counted_active=true;
+        }
+      }
+      if (runner.task && !runner.retiring) {
+        runner.refresh_incumbent();
+      } else if (!runner.task) {
+        // Keep the cache across immediate task switches, but dispose of it
+        // before releasing the lock or signaling that all workers are idle.
+        runner.incumbent.reset();
+        runner.current_revision=0;
+      }
+      notify=empty && (!pending.empty() || !frontier.empty());
+      if (!running && active == 0) {
+        changed.signal();
+      }
+    }
+    if (notify) {
+      wake();
+    }
+    return true;
+  }
+
   void
-  Frontier::work(unsigned int id) {
-    std::unique_ptr<ExpansionTask> task;
-    std::unique_ptr<Space> incumbent;
-    unsigned long long int current_revision=0;
-    Worker local;
-    bool counted_active=false;
-    std::unique_ptr<Space> found_solution;
-    std::int64_t solution_bound=0;
-    Entry batch[8];
-    unsigned int batch_size=0;
-    const unsigned int batch_capacity=beam && !limits.frontier_limit ? 8 : 1;
-    std::optional<std::int64_t> cutoff;
-    while (true) {
-      try {
-        bool notify=false;
-        bool retiring=false;
-        {
-          Support::Lock lock(mutex);
-          const bool empty=pending.empty() && frontier.empty();
-          if (counted_active) {
-            stat+=local;
-            local.reset();
-            for (unsigned int i=0; i<batch_size; i++) {
-              batch[i].space=admit(std::move(batch[i]),
-                                   static_cast<bool>(task->expansion));
-            }
-            if (found_solution) {
-              publish(std::move(found_solution),solution_bound);
-            }
-          }
-          if (running && opt.stop && opt.stop->stop(stat,opt)) {
-            stopped_=true;
-            running=false;
-          }
-          const bool enabled=!worker_control.engaged() ||
-            id < WorkerControlAccess::requested(worker_control);
-          if (task && (!task->expansion || !running || !enabled || shutdown)) {
-            // Count this worker as active until it has disposed of all rejected
-            // or replaced spaces, so next() cannot return during model cleanup.
-            for (unsigned int i=0; i<batch_size; i++) {
-              retiring=retiring || static_cast<bool>(batch[i].space);
-            }
-            if (!retiring) {
-              if (task->expansion) {
-                pending.push_back(std::move(task));
-              }
-              task.reset();
-              active--;
-              counted_active=false;
-            }
-          }
-          if (shutdown && !retiring) {
-            incumbent.reset();
-            return;
-          }
-          if (running && enabled && !task) {
-            task=select_task(id);
-            if (task) {
-              active++;
-              counted_active=true;
-            }
-          }
-          if (task) {
-            if (current_revision != revision) {
-              incumbent.reset();
-            }
-            if (best && task->revision != revision && !incumbent) {
-              incumbent.reset(best->clone());
-            }
-            current_revision=revision;
-            cutoff=best ? std::optional<std::int64_t>(best_bound) : std::nullopt;
-          } else {
-            // Dispose of the cached incumbent before next() can return.
-            incumbent.reset();
-            current_revision=0;
-          }
-          notify=empty && (!pending.empty() || !frontier.empty());
-          if (!running && active == 0) {
-            changed.signal();
-          }
+  Frontier::report(Runner& runner) {
+    if (!runner.counted_active) {
+      return;
+    }
+    stat+=runner.local;
+    runner.local.reset();
+    for (unsigned int i=0; i<runner.batch_size; i++) {
+      runner.batch[i].space=admit(std::move(runner.batch[i]),
+        static_cast<bool>(runner.task->expansion));
+    }
+    if (runner.found_solution) {
+      publish(std::move(runner.found_solution),runner.solution_bound);
+    }
+  }
+
+  bool
+  Frontier::retire(Runner& runner) {
+    for (unsigned int i=0; i<runner.batch_size; i++) {
+      if (runner.batch[i].space) {
+        // The runner clears rejected children outside the lock before retrying.
+        return false;
+      }
+    }
+    if (runner.task->expansion) {
+      pending.push_back(std::move(runner.task));
+    }
+    runner.task.reset();
+    // coordinate() selects replacement work or clears the cached incumbent
+    // under the same lock, before next() can observe the reduced active count.
+    active--;
+    runner.counted_active=false;
+    return true;
+  }
+
+  void
+  Frontier::failed(Runner& runner, std::exception_ptr exception) {
+    {
+      Support::Lock lock(mutex);
+      runner.found_solution.reset();
+      runner.clear_batch();
+      runner.task.reset();
+      runner.incumbent.reset();
+      runner.current_revision=0;
+      if (runner.counted_active) {
+        active--;
+        stat+=runner.local;
+        runner.local.reset();
+        runner.counted_active=false;
+      }
+      if (!error) {
+        error=exception;
+      }
+      running=false;
+      if (active == 0) {
+        changed.signal();
+      }
+    }
+    wake();
+  }
+
+  void
+  Frontier::Runner::refresh_incumbent(void) {
+    if (current_revision != engine.revision) {
+      incumbent.reset();
+    }
+    if (engine.best && task->revision != engine.revision && !incumbent) {
+      incumbent.reset(engine.best->clone());
+    }
+    current_revision=engine.revision;
+    cutoff=engine.best ? std::optional<std::int64_t>(engine.best_bound) : std::nullopt;
+  }
+
+  void
+  Frontier::Runner::clear_batch(void) {
+    for (unsigned int i=0; i<batch_size; i++) {
+      batch[i].space.reset();
+    }
+    batch_size=0;
+  }
+
+  void
+  Frontier::Runner::expand(void) {
+    if (!task->counted) {
+      local.node++;
+      local.stack_depth(task->depth);
+      task->counted=true;
+    }
+    // Bound both sibling batches and the work between stop checks, even
+    // for choices with many failing children.
+    for (unsigned int i=0; i<32 && task->expansion; i++) {
+      ExpansionStep step=task->expansion.next(local,task->depth+1,
+        task->revision,incumbent.get(),current_revision);
+      if (step.state == ExpansionStep::State::EXHAUSTED) {
+        break;
+      }
+      if (step.status == SS_FAILED) {
+        local.fail++;
+      } else {
+        if (step.status == SS_SOLVED) {
+          (void) step.space->choice();
         }
-        if (notify) {
-          wake();
+        const std::int64_t bound=engine.guidance.bound(*step.space);
+        if (step.status == SS_SOLVED) {
+          found_solution=std::move(step.space);
+          solution_bound=bound;
+          break;
         }
-        for (unsigned int i=0; i<batch_size; i++) {
-          batch[i].space.reset();
-        }
-        batch_size=0;
-        if (retiring) {
-          continue;
-        }
-        if (!task) {
-          if (worker_control.engaged()) {
-            WorkerControlAccess::wait(worker_control,id);
-          } else {
-            runners[id]->wake.wait();
-          }
-          continue;
-        }
-        if (!task->counted) {
-          local.node++;
-          local.stack_depth(task->depth);
-          task->counted=true;
-        }
-        // Bound both sibling batches and the work between stop checks, even
-        // for choices with many failing children.
-        for (unsigned int i=0; i<32 && task->expansion; i++) {
-          Seq::ExpansionStep step=task->expansion.next(local,task->depth+1,
-            task->revision,incumbent.get(),current_revision);
-          if (step.state == Seq::ExpansionStep::State::EXHAUSTED) {
-            break;
-          }
-          if (step.status == SS_FAILED) {
-            local.fail++;
-          } else {
-            if (step.status == SS_SOLVED) {
-              (void) step.space->choice();
-            }
-            const std::int64_t bound=guidance.bound(*step.space);
-            if (step.status == SS_SOLVED) {
-              found_solution=std::move(step.space);
-              solution_bound=bound;
-              break;
-            }
-            if (cutoff &&
-                (guidance.sense == HeuristicGuidance::Sense::MINIMIZE ?
-                 bound >= *cutoff : bound <= *cutoff)) {
-              local.fail++;
-            } else {
-              const std::int64_t rank=guidance.rank ? guidance.rank(*step.space) : 0;
-              const std::size_t key=beam && limits.dominates && limits.dominance_key ?
-                limits.dominance_key(*step.space) : 0;
-              batch[batch_size++]={std::move(step.space),bound,rank,key,
-                                   task->depth+1,0,current_revision};
-              if (batch_size == batch_capacity) {
-                break;
-              }
-            }
-          }
-          step.space.reset();
-          if (worker_control.engaged() &&
-              id >= WorkerControlAccess::requested(worker_control)) {
+        if (cutoff &&
+            (engine.guidance.sense == HeuristicGuidance::Sense::MINIMIZE ?
+             bound >= *cutoff : bound <= *cutoff)) {
+          local.fail++;
+        } else {
+          const std::int64_t rank=engine.guidance.rank ?
+            engine.guidance.rank(*step.space) : 0;
+          const std::size_t key=engine.beam && engine.limits.dominates &&
+            engine.limits.dominance_key ? engine.limits.dominance_key(*step.space) : 0;
+          batch[batch_size++]={std::move(step.space),bound,rank,key,
+                              task->depth+1,0,current_revision};
+          if (batch_size == batch_capacity) {
             break;
           }
         }
-      } catch (...) {
-        {
-          Support::Lock lock(mutex);
-          found_solution.reset();
-          for (unsigned int i=0; i<batch_size; i++) {
-            batch[i].space.reset();
-          }
-          batch_size=0;
-          task.reset();
-          incumbent.reset();
-          current_revision=0;
-          if (counted_active) {
-            active--;
-            stat+=local;
-            local.reset();
-            counted_active=false;
-          }
-          if (!error) {
-            error=std::current_exception();
-          }
-          running=false;
-          if (active == 0) {
-            changed.signal();
-          }
-        }
-        wake();
+      }
+      step.space.reset();
+      if (engine.worker_control.engaged() &&
+          id >= WorkerControlAccess::requested(engine.worker_control)) {
+        break;
       }
     }
   }
@@ -592,7 +563,6 @@ namespace Gecode { namespace Search { namespace Par {
     width=1;
     order=0;
     revision=0;
-    discarded_bound.reset();
     stopped_=false;
     limited=false;
     stat.reset();

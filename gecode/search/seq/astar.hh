@@ -35,7 +35,7 @@
 #define GECODE_SEARCH_SEQ_ASTAR_HH
 
 #include <gecode/search.hh>
-#include <gecode/search/seq/choice-expansion.hh>
+#include <gecode/search/choice-expansion.hh>
 #include <memory>
 #include <vector>
 

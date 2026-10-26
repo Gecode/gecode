@@ -35,7 +35,7 @@
 #define GECODE_SEARCH_SEQ_CABS_HH
 
 #include <gecode/search.hh>
-#include <gecode/search/seq/choice-expansion.hh>
+#include <gecode/search/choice-expansion.hh>
 #include <gecode/search/beam-heap.hh>
 #include <memory>
 #include <vector>
@@ -53,12 +53,7 @@ namespace Gecode { namespace Search { namespace Seq {
     };
   private:
     using Entry=BeamHeap::Entry;
-    /// Better priority first; a candidate heap therefore exposes its worst node
-    struct Earlier {
-      HeuristicGuidance::Sense sense;
-      bool ranked;
-      bool operator()(const Entry& a, const Entry& b) const;
-    };
+    using Earlier=BeamHeap::Earlier;
     Options opt;
     HeuristicGuidance guidance;
     CABSOptions limits;
@@ -77,8 +72,6 @@ namespace Gecode { namespace Search { namespace Seq {
     bool counted;
     std::unique_ptr<Space> best;
     std::int64_t best_bound;
-    /// Best optimistic bound among candidates discarded for width in this pass
-    std::optional<std::int64_t> discarded_bound;
     /// Width and frontier-limit stops persist until reset
     bool limited;
 
