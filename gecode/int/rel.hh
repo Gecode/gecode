@@ -697,6 +697,8 @@ namespace Gecode { namespace Int { namespace Rel {
 #include <gecode/int/rel/lq-le.hpp>
 #include <gecode/int/rel/lex.hpp>
 
+#include <gecode/int/rel/open.hpp>
+
 #endif
 
 

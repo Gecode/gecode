@@ -65,6 +65,30 @@ namespace Gecode {
     }
   }
 
+  void
+  precede(Home home, OpenIntVarList list,
+          int before, int after, IntPropLevel) {
+    Int::Limits::check(before,"Int::precede");
+    Int::Limits::check(after,"Int::precede");
+    GECODE_POST;
+    Int::Precede::Open<Int::IntView>::post
+      (home,OpenViewList<Int::IntView>(list),before,after);
+  }
+
+  void
+  precede(Home home, OpenIntVarList list,
+          const IntArgs& values, IntPropLevel ipl) {
+    if (values.size() < 2)
+      return;
+    for (int i=values.size(); i--; )
+      Int::Limits::check(values[i],"Int::precede");
+    GECODE_POST;
+    for (int i=values.size()-1; i--; )
+      Int::Precede::Open<Int::IntView>::post
+        (home,OpenViewList<Int::IntView>(list),values[i],values[i+1]);
+    (void) ipl;
+  }
+
 }
 
 // STATISTICS: int-post

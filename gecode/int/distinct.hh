@@ -381,6 +381,8 @@ namespace Gecode { namespace Int { namespace Distinct {
 #include <gecode/int/distinct/dom.hpp>
 #include <gecode/int/distinct/eqite.hpp>
 
+#include <gecode/int/distinct/open.hpp>
+
 #endif
 
 // STATISTICS: int-prop

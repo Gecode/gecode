@@ -323,7 +323,7 @@ INTSRC0 = \
 	int-set.cpp var-imp/int.cpp var-imp/bool.cpp var/int.cpp \
 	var/bool.cpp array.cpp bool.cpp bool/eqv.cpp \
 	extensional/dfa.cpp extensional/tuple-set.cpp \
-	extensional-regular.cpp extensional-open-regular.cpp \
+	extensional-regular.cpp \
 	extensional-tuple-set.cpp \
 	open-var-list.cpp \
 	dom.cpp rel.cpp precede.cpp element.cpp count.cpp \
@@ -350,7 +350,9 @@ INTSRC0 = \
 	exception.cpp
 
 INTHDR0 = \
-	open-var-list.hpp \
+	open-var-list.hpp open-propagator.hpp \
+	distinct/open.hpp rel/open.hpp sequence/open.hpp \
+	arithmetic/open.hpp precede/open.hpp extensional/open.hpp branch/open.hpp \
 	growable-int-set.hh growable-int-set.hpp \
 	limits.hpp support-values.hh support-values.hpp \
 	idx-view.hh idx-view.hpp div.hh div.hpp \

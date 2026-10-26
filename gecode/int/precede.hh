@@ -106,6 +106,8 @@ namespace Gecode { namespace Int { namespace Precede {
 
 #include <gecode/int/precede/single.hpp>
 
+#include <gecode/int/precede/open.hpp>
+
 #endif
 
 // STATISTICS: int-prop

@@ -149,6 +149,8 @@ namespace Gecode { namespace Int { namespace Sequence {
 #include <gecode/int/sequence/int.hpp>
 #include <gecode/int/sequence/view.hpp>
 
+#include <gecode/int/sequence/open.hpp>
+
 #endif
 
 // STATISTICS: int-prop

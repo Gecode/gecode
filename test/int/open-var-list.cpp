@@ -51,6 +51,70 @@ namespace Test { namespace Int {
 
   namespace OpenList {
 
+    /// Space used by open list materialization tests
+    class OpenListSpace : public Gecode::Space {
+    public:
+      Gecode::OpenIntVarList list;
+
+      OpenListSpace(void)
+        : list(*this,
+            [](int i) {
+              return Gecode::IntSet(i,i);
+            },6) {}
+
+      OpenListSpace(OpenListSpace& s)
+        : Gecode::Space(s) {
+        list.update(*this,s.list);
+      }
+
+      virtual Gecode::Space*
+      copy(void) {
+        return new OpenListSpace(*this);
+      }
+    };
+
+    /// Test automatic and explicit list materialization
+    class OpenListMaterialize : public ::Test::Base {
+    public:
+      OpenListMaterialize(void)
+        : ::Test::Base("Int::OpenList::Materialize",TestTags::check()) {}
+
+      virtual bool
+      run(void) {
+        using namespace Gecode;
+        OpenListSpace source;
+        rel(source,source.list.length(),IRT_GQ,3);
+        if ((source.status() == SS_FAILED) ||
+            (source.list.known_length() != 3))
+          return false;
+        for (int i=0; i<3; i++)
+          if (!source.list[i].assigned() ||
+              (source.list[i].val() != i))
+            return false;
+
+        OpenListSpace* clone =
+          static_cast<OpenListSpace*>(source.clone());
+        rel(*clone,clone->list.length(),IRT_GQ,5);
+        const bool clone_ok =
+          (clone->status() != SS_FAILED) &&
+          (clone->list.known_length() == 5) &&
+          clone->list[4].assigned() &&
+          (clone->list[4].val() == 4);
+        delete clone;
+        if (!clone_ok || (source.list.known_length() != 3))
+          return false;
+
+        OpenListSpace direct;
+        IntVar x = direct.list.get(direct,3);
+        return (direct.list.known_length() == 4) &&
+               (direct.list.length().min() == 4) &&
+               x.assigned() && (x.val() == 3) &&
+               (direct.status() != SS_FAILED);
+      }
+    };
+
+    OpenListMaterialize open_list_materialize;
+
     class BranchOrderSpace : public Gecode::Space {
     public:
       Gecode::OpenIntVarList list;

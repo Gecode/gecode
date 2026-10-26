@@ -1,6 +1,6 @@
 /* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
- *  Main authors:
+ *  Main author:
  *     Mikael Zayenz Lagerkvist <lagerkvist@gecode.dev>
  *
  *  Copyright:
@@ -31,15 +31,17 @@
  *
  */
 
-#include <gecode/int/extensional.hh>
+#ifndef GECODE_INT_EXTENSIONAL_OPEN_HPP
+#define GECODE_INT_EXTENSIONAL_OPEN_HPP
 
+#include <gecode/int/extensional.hh>
 #include <limits>
 #include <utility>
 
 namespace Gecode { namespace Int { namespace Extensional {
 
   /// Shortest accepting suffix length from each state, or -1 if none exists
-  static SharedArray<int>
+  inline SharedArray<int>
   accepting_distances(const DFA& dfa) {
     const int k = dfa.n_states();
     SharedArray<int> distance(k);
@@ -317,24 +319,6 @@ namespace Gecode { namespace Int { namespace Extensional {
 
 }}}
 
-namespace Gecode {
-
-  void
-  extensional(Home home, OpenIntVarList list, DFA dfa,
-              IntPropLevel) {
-    GECODE_POST;
-    GECODE_ES_FAIL((Int::Extensional::OpenRegular<Int::IntView,Int::PC_INT_DOM>
-                    ::post(home,OpenViewList<Int::IntView>(list),dfa)));
-  }
-
-  void
-  extensional(Home home, OpenBoolVarList list, DFA dfa,
-              IntPropLevel) {
-    GECODE_POST;
-    GECODE_ES_FAIL((Int::Extensional::OpenRegular<Int::BoolView,Int::PC_BOOL_VAL>
-                    ::post(home,OpenViewList<Int::BoolView>(list),dfa)));
-  }
-
-}
+#endif
 
 // STATISTICS: int-prop

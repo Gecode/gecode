@@ -83,7 +83,6 @@ set(GECODE_INT_SOURCES
   gecode/int/exec.cpp
   gecode/int/exec/when.cpp
   gecode/int/extensional-regular.cpp
-  gecode/int/extensional-open-regular.cpp
   gecode/int/extensional-tuple-set.cpp
   gecode/int/open-var-list.cpp
   gecode/int/extensional/dfa.cpp

@@ -186,6 +186,51 @@ namespace Gecode {
                     (home,xv,s.min(),q,l,u)));
   }
 
+  void
+  sequence(Home home, OpenIntVarList x, const IntSet& values,
+           int width, int lower, int upper, IntPropLevel ipl) {
+    Int::Limits::check(values.min(),"Int::sequence");
+    Int::Limits::check(values.max(),"Int::sequence");
+    Int::Limits::check(width,"Int::sequence");
+    Int::Limits::check(lower,"Int::sequence");
+    Int::Limits::check(upper,"Int::sequence");
+    if (width < 1)
+      throw Int::OutOfLimits("Int::sequence");
+    GECODE_POST;
+    lower = std::max(0,lower);
+    upper = std::min(width,upper);
+    if (upper < lower) {
+      rel(home,x.length(),IRT_LE,width);
+      return;
+    }
+    if ((lower == 0) && (upper == width))
+      return;
+    Int::Sequence::Open<Int::IntView>::post
+      (home,OpenViewList<Int::IntView>(x),values,width,lower,upper,ipl);
+  }
+
+  void
+  slidingsum(Home home, OpenIntVarList list,
+             int width, int lower, int upper, IntPropLevel ipl) {
+    Int::Limits::check(width,"Int::slidingsum");
+    Int::Limits::check(lower,"Int::slidingsum");
+    Int::Limits::check(upper,"Int::slidingsum");
+    if (width < 1)
+      throw Int::OutOfLimits("Int::slidingsum");
+    GECODE_POST;
+    OpenViewList<Int::IntView> views(list);
+    if (upper < lower) {
+      GECODE_ME_FAIL(views.length().lq(home,width-1));
+      return;
+    }
+    if (lower == upper)
+      Int::Sequence::OpenSlidingSumEq<Int::IntView>::post
+        (home,views,width,lower,ipl);
+    else
+      Int::Sequence::OpenSlidingSumBnd<Int::IntView>::post
+        (home,views,width,lower,upper);
+  }
+
 }
 
 // STATISTICS: int-post

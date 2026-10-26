@@ -350,6 +350,48 @@ namespace Gecode {
     assign(home, xv, BOOL_VAR_NONE(), ba, nullptr, vvp);
   }
 
+  void
+  branch(Home home, OpenIntVarList list) {
+    branch(home,list,INT_VAR_NONE(),INT_VAL_MIN());
+  }
+
+  void
+  branch(Home home, OpenBoolVarList list) {
+    branch(home,list,BOOL_VAR_NONE(),BOOL_VAL_MIN());
+  }
+
+  void
+  branch(Home home, OpenIntVarList list,
+         IntVarBranch vars, IntValBranch vals,
+         IntBranchFilter bf, IntVarValPrint vvp) {
+    branch(home,list,TieBreak<IntVarBranch>(vars),vals,bf,vvp);
+  }
+
+  void
+  branch(Home home, OpenIntVarList list,
+         TieBreak<IntVarBranch> vars, IntValBranch vals,
+         IntBranchFilter bf, IntVarValPrint vvp) {
+    GECODE_POST;
+    Int::Branch::post_open_brancher<Int::IntView>
+      (home,OpenViewList<Int::IntView>(list),vars,vals,bf,vvp);
+  }
+
+  void
+  branch(Home home, OpenBoolVarList list,
+         BoolVarBranch vars, BoolValBranch vals,
+         BoolBranchFilter bf, BoolVarValPrint vvp) {
+    branch(home,list,TieBreak<BoolVarBranch>(vars),vals,bf,vvp);
+  }
+
+  void
+  branch(Home home, OpenBoolVarList list,
+         TieBreak<BoolVarBranch> vars, BoolValBranch vals,
+         BoolBranchFilter bf, BoolVarValPrint vvp) {
+    GECODE_POST;
+    Int::Branch::post_open_brancher<Int::BoolView>
+      (home,OpenViewList<Int::BoolView>(list),vars,vals,bf,vvp);
+  }
+
 #ifdef GECODE_HAS_CBS
 
   void

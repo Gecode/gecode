@@ -584,6 +584,23 @@ namespace Gecode {
     }
   }
 
+  void
+  min(Home home, OpenIntVarList list,
+      IntVar result, IntPropLevel ipl) {
+    GECODE_POST;
+    Int::Arithmetic::OpenMax<Int::MinusView>::post
+      (home,OpenViewList<Int::MinusView>(list),
+      Int::MinusView(Int::IntView(result)),ipl);
+  }
+
+  void
+  max(Home home, OpenIntVarList list,
+      IntVar result, IntPropLevel ipl) {
+    GECODE_POST;
+    Int::Arithmetic::OpenMax<Int::IntView>::post
+      (home,OpenViewList<Int::IntView>(list),Int::IntView(result),ipl);
+  }
+
 }
 
 // STATISTICS: int-post

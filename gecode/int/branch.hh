@@ -792,6 +792,8 @@ namespace Gecode { namespace Int { namespace Branch {
 
 #endif
 
+#include <gecode/int/branch/open.hpp>
+
 #endif
 
 // STATISTICS: int-branch
