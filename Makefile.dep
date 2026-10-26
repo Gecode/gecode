@@ -36054,7 +36054,29 @@ gecode/int/open-var-list$(OBJSUFFIX) gecode/int/open-var-list$(SBJSUFFIX): \
 	./gecode/support/random.hpp ./gecode/support/ref-count.hpp ./gecode/support/run-jobs.hpp \
 	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp ./gecode/support/thread.hpp \
 	./gecode/support/thread/thread.hpp ./gecode/support/timer.hpp \
-	./gecode/search/astar.hpp ./gecode/search/cabs.hpp
+	./gecode/search/astar.hpp ./gecode/search/cabs.hpp \
+	./gecode/int/arithmetic.hh ./gecode/int/arithmetic/abs.hpp ./gecode/int/arithmetic/argmax.hpp \
+	./gecode/int/arithmetic/divides.hpp ./gecode/int/arithmetic/divmod.hpp ./gecode/int/arithmetic/gcd.hpp \
+	./gecode/int/arithmetic/max.hpp ./gecode/int/arithmetic/mult.hpp ./gecode/int/arithmetic/nroot.hpp \
+	./gecode/int/arithmetic/pow-ops.hpp ./gecode/int/arithmetic/pow.hpp ./gecode/int/arithmetic/product-mod.hpp \
+	./gecode/int/arithmetic/product.hpp ./gecode/int/bool.hh ./gecode/int/bool/base.hpp \
+	./gecode/int/bool/clause.hpp ./gecode/int/bool/eq.hpp ./gecode/int/bool/eqv.hpp \
+	./gecode/int/bool/ite.hpp ./gecode/int/bool/lq.hpp ./gecode/int/bool/or.hpp \
+	./gecode/int/distinct.hh ./gecode/int/distinct/bnd.hpp ./gecode/int/distinct/cbs.hpp \
+	./gecode/int/distinct/dom-ctrl.hpp ./gecode/int/distinct/dom.hpp ./gecode/int/distinct/eqite.hpp \
+	./gecode/int/distinct/graph.hpp ./gecode/int/distinct/ter-dom.hpp ./gecode/int/distinct/val.hpp \
+	./gecode/int/growable-int-set.hh ./gecode/int/growable-int-set.hpp ./gecode/int/idx-view.hh \
+	./gecode/int/idx-view.hpp ./gecode/int/linear.hh ./gecode/int/linear/bool-int.hpp \
+	./gecode/int/linear/bool-scale.hpp ./gecode/int/linear/bool-view.hpp ./gecode/int/linear/int-bin.hpp \
+	./gecode/int/linear/int-dom.hpp ./gecode/int/linear/int-nary.hpp ./gecode/int/linear/int-noview.hpp \
+	./gecode/int/linear/int-ter.hpp ./gecode/int/linear/post.hpp ./gecode/int/min-distance.hpp \
+	./gecode/int/rel.hh ./gecode/int/rel/eq.hpp ./gecode/int/rel/lex.hpp \
+	./gecode/int/rel/lq-le.hpp ./gecode/int/rel/nq.hpp ./gecode/int/sequence.hh \
+	./gecode/int/sequence/int.hpp ./gecode/int/sequence/set-op.hpp ./gecode/int/sequence/view.hpp \
+	./gecode/int/sequence/violations.hpp ./gecode/int/support-values.hh ./gecode/int/support-values.hpp \
+	./gecode/int/view-val-graph.hh ./gecode/int/view-val-graph/bi-link.hpp ./gecode/int/view-val-graph/comb-ptr-flag.hpp \
+	./gecode/int/view-val-graph/edge.hpp ./gecode/int/view-val-graph/graph.hpp ./gecode/int/view-val-graph/iter-prune-val.hpp \
+	./gecode/int/view-val-graph/node.hpp ./gecode/search/worker-control.hh
 gecode/int/extensional-open-regular$(OBJSUFFIX) gecode/int/extensional-open-regular$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array-traits.hpp ./gecode/int/array.hpp \
 	./gecode/int/branch.hpp ./gecode/int/branch/action.hpp ./gecode/int/branch/afc.hpp \
@@ -36217,7 +36239,8 @@ test/int/open-var-list$(OBJSUFFIX) test/int/open-var-list$(SBJSUFFIX): \
 	./gecode/minimodel/ldsb.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/minimodel/reg.hpp ./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp \
 	./gecode/search/worker-control.hh \
-	./gecode/search/astar.hpp ./gecode/search/cabs.hpp
+	./gecode/search/astar.hpp ./gecode/search/cabs.hpp \
+	./gecode/int/growable-int-set.hh ./gecode/int/growable-int-set.hpp
 gecode/int/min-distance$(OBJSUFFIX) gecode/int/min-distance$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/open-var-list.hpp ./gecode/int/array-traits.hpp ./gecode/int/array.hpp \
 	./gecode/int/branch.hpp ./gecode/int/branch/action.hpp ./gecode/int/branch/afc.hpp \
