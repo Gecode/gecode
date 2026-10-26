@@ -181,7 +181,7 @@ namespace Gecode { namespace Int {
       posted = size;
 
       Region region;
-      int* values = region.alloc<int>(active.size());
+      int* values = region.alloc<int>(static_cast<int>(active.size()));
       while (true) {
         int n = 0;
         for (int i=static_cast<int>(active.size()); i--; )
