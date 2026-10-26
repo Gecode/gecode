@@ -96,7 +96,7 @@ namespace Gecode { namespace Int { namespace Extensional {
   template<class View, PropCond pc>
   class OpenRegular : public Propagator {
   protected:
-    OpenVarList<typename View::VarType> list;
+    OpenViewList<View> list;
     IntView length;
     DFA dfa;
     SharedArray<int> distance;
@@ -105,7 +105,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     int subscribed;
 
     OpenRegular(Home home,
-                OpenVarList<typename View::VarType> list0, DFA dfa0)
+                OpenViewList<View> list0, DFA dfa0)
       : Propagator(home), list(list0),
         length(list0.length()),
         dfa(dfa0), distance(accepting_distances(dfa0)),
@@ -119,7 +119,7 @@ namespace Gecode { namespace Int { namespace Extensional {
       list.subscribe(home,*this);
       for (int i=0; i<subscribed; i++)
         if (!list[i].assigned())
-          View(list[i]).subscribe(home,*this,pc);
+          list[i].subscribe(home,*this,pc);
     }
 
     OpenRegular(Space& home, OpenRegular& p)
@@ -194,7 +194,7 @@ namespace Gecode { namespace Int { namespace Extensional {
       list.reschedule(home,*this);
       for (int i=offset; i<subscribed; i++)
         if (!list[i].assigned())
-          View(list[i]).reschedule(home,*this,pc);
+          list[i].reschedule(home,*this,pc);
     }
 
     virtual ExecStatus
@@ -295,16 +295,16 @@ namespace Gecode { namespace Int { namespace Extensional {
       if (!home.failed())
         for (int i=offset; i<subscribed; i++)
           if (!list[i].assigned())
-            View(list[i]).cancel(home,*this,pc);
+            list[i].cancel(home,*this,pc);
       dfa.~DFA();
       distance.~SharedArray();
-      list.~OpenVarList();
+      list.~OpenViewList();
       (void) Propagator::dispose(home);
       return sizeof(*this);
     }
 
     static ExecStatus
-    post(Home home, OpenVarList<typename View::VarType> list, DFA dfa) {
+    post(Home home, OpenViewList<View> list, DFA dfa) {
       for (int i=0; i<list.known_length(); i++) {
         DFA::Symbols symbols(dfa);
         View x(list[i]);
@@ -324,7 +324,7 @@ namespace Gecode {
               IntPropLevel) {
     GECODE_POST;
     GECODE_ES_FAIL((Int::Extensional::OpenRegular<Int::IntView,Int::PC_INT_DOM>
-                    ::post(home,list,dfa)));
+                    ::post(home,OpenViewList<Int::IntView>(list),dfa)));
   }
 
   void
@@ -332,7 +332,7 @@ namespace Gecode {
               IntPropLevel) {
     GECODE_POST;
     GECODE_ES_FAIL((Int::Extensional::OpenRegular<Int::BoolView,Int::PC_BOOL_VAL>
-                    ::post(home,list,dfa)));
+                    ::post(home,OpenViewList<Int::BoolView>(list),dfa)));
   }
 
 }

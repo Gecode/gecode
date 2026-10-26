@@ -628,6 +628,72 @@ namespace Test { namespace Int {
     };
 
 
+    /// View handles share growth while cloned spaces keep independent domains
+    class Views : public ::Test::Base {
+      class ViewSpace : public Gecode::Space {
+      public:
+        Gecode::OpenIntVarList list;
+        Gecode::OpenViewList<Gecode::Int::IntView> direct;
+        Gecode::OpenViewList<Gecode::Int::MinusView> negative;
+
+        ViewSpace(void)
+          : list(*this,Gecode::IntSet(0,10),5),
+            direct(list), negative(list) {}
+
+        ViewSpace(ViewSpace& s) : Gecode::Space(s) {
+          list.update(*this,s.list);
+          direct.update(*this,s.direct);
+          negative.update(*this,s.negative);
+        }
+
+        Gecode::Space* copy(void) override {
+          return new ViewSpace(*this);
+        }
+      };
+    public:
+      Views(void)
+        : ::Test::Base("Int::OpenList::Views",TestTags::check()) {}
+
+      bool run(void) override {
+        using namespace Gecode;
+        ViewSpace source;
+        Gecode::Int::IntView length = source.negative.length();
+        if (me_failed(length.gq(source,2)) ||
+            (source.status() == SS_FAILED) ||
+            (source.direct.known_length() != 2) ||
+            (source.negative.known_length() != 2))
+          return false;
+        if (me_failed(source.negative[0].gq(source,-7)) ||
+            me_failed(source.direct[0].gq(source,2)) ||
+            (source.status() == SS_FAILED) ||
+            (source.list[0].min() != 2) || (source.list[0].max() != 7) ||
+            (source.negative[0].min() != -7) ||
+            (source.negative[0].max() != -2))
+          return false;
+
+        std::unique_ptr<ViewSpace> clone
+          (static_cast<ViewSpace*>(source.clone()));
+        clone->negative.materialize(*clone,3);
+        if (me_failed(clone->negative[0].eq(*clone,-5)) ||
+            me_failed(clone->direct.length().eq(*clone,3)) ||
+            (clone->status() == SS_FAILED) ||
+            (clone->list.known_length() != 3) ||
+            (clone->direct.known_length() != 3) ||
+            (clone->direct[0].val() != 5) ||
+            (clone->negative[2].min() != -10))
+          return false;
+        source.direct.materialize(source,4);
+        return (source.status() != SS_FAILED) &&
+          (source.list.known_length() == 4) &&
+          (source.negative.known_length() == 4) &&
+          (source.negative[3].max() == 0) &&
+          (source.list[0].min() == 2) && (source.list[0].max() == 7) &&
+          (clone->negative.known_length() == 3) &&
+          (clone->list.length().val() == 3);
+      }
+    };
+
+
     /// Test constraint semantics both while growing and after closure
     class Constraint : public OpenTest {
     public:
@@ -825,6 +891,12 @@ namespace Test { namespace Int {
         rel(*clone,clone->list[2],IRT_EQ,5);
         if ((clone->status() == SS_FAILED) || (clone->minimum.max() != 5) ||
             (source.minimum.max() != 7))
+          return false;
+        clone->list.close(*clone);
+        rel(*clone,clone->list[0],IRT_EQ,7);
+        if ((clone->status() == SS_FAILED) ||
+            !clone->minimum.assigned() || (clone->minimum.val() != 5) ||
+            !clone->maximum.assigned() || (clone->maximum.val() != 7))
           return false;
         rel(source,source.maximum,IRT_LQ,5);
         return source.status() == SS_FAILED;
@@ -1496,6 +1568,7 @@ namespace Test { namespace Int {
 
     BranchOrder branch_order;
     Transition transition;
+    Views views;
     Constraint distinct("Distinct",Constraint::Kind::DISTINCT,3);
     Constraint relation("Rel",Constraint::Kind::REL,3);
     Constraint sliding("Sliding",Constraint::Kind::SLIDING,4);

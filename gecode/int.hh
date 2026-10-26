@@ -2425,6 +2425,12 @@ namespace Gecode {
     std::size_t hash(void) const;
   };
 
+  namespace Int {
+    template<class Var> class OpenMaterialize;
+  }
+
+  template<class View> class OpenViewList;
+
   /**
    * \brief Space-local list of variables with an open length
    *
@@ -2481,9 +2487,13 @@ namespace Gecode {
    */
   template<class Var>
   class OpenVarList : public LocalHandle {
+    template<class View> friend class OpenViewList;
+    friend class Int::OpenMaterialize<Var>;
   private:
     /// Space-local list implementation
     class Object;
+    /// Construct a model handle for a source callback
+    explicit OpenVarList(Object* source);
   public:
     /**
      * \brief Function creating the variable at position \a i in \a home
@@ -2599,6 +2609,48 @@ namespace Gecode {
     /// Cancel the subscription of \a p to the addition of positions
     void cancel(Space& home, Propagator& p);
     /// Reschedule \a p for the addition of positions
+    void reschedule(Space& home, Propagator& p);
+  };
+
+
+  /**
+   * \brief View interface to a space-local list with an open length
+   *
+   * All handles share the source list, including positions appended later.
+   * Indexed access returns views by value, so growing the list does not
+   * invalidate a previously returned view. Updating during cloning preserves
+   * sharing inside the clone, with separate source state.
+   *
+   * View must be constructible from its VarType. Int::MinusView is also
+   * supported, with each position negated through an Int::IntView. The length
+   * remains an ordinary Int::IntView regardless of the element view type.
+   * \ingroup TaskActor
+   */
+  template<class View>
+  class OpenViewList : public LocalHandle {
+  private:
+    typedef typename View::VarType Var;
+    typedef typename OpenVarList<Var>::Object Object;
+  public:
+    /// Construct an uninitialized list
+    OpenViewList(void);
+    /// Share the source of the model list \a list
+    explicit OpenViewList(const OpenVarList<Var>& list);
+    /// Update during cloning
+    void update(Space& home, OpenViewList<View>& s);
+    /// Return the number of constructed positions
+    int known_length(void) const;
+    /// Return the view at constructed position \a i
+    View operator [](int i) const;
+    /// Return the eventual-length view
+    Int::IntView length(void) const;
+    /// Require and construct at least the first \a n positions
+    void materialize(Space& home, int n);
+    /// Subscribe \a p to construction of positions
+    void subscribe(Space& home, Propagator& p);
+    /// Cancel the subscription of \a p to construction of positions
+    void cancel(Space& home, Propagator& p);
+    /// Reschedule \a p for construction of positions
     void reschedule(Space& home, Propagator& p);
   };
 

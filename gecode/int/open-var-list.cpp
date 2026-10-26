@@ -86,13 +86,14 @@ namespace Gecode {
 namespace Gecode { namespace Int {
 
   /// Follow list growth and remember which positions have been incorporated
+  template<class View>
   class OpenListPropagator : public Propagator {
   protected:
-    OpenIntVarList list;
+    OpenViewList<View> list;
     IntView length;
     int posted;
 
-    OpenListPropagator(Home home, OpenIntVarList list0)
+    OpenListPropagator(Home home, OpenViewList<View> list0)
       : Propagator(home), list(list0),
         length(list0.length()),
         posted(0) {
@@ -115,7 +116,7 @@ namespace Gecode { namespace Int {
     dispose_base(Space& home) {
       length.cancel(home,*this,PC_INT_BND);
       list.cancel(home,*this);
-      list.~OpenIntVarList();
+      list.~OpenViewList();
       (void) Propagator::dispose(home);
     }
 
@@ -133,23 +134,29 @@ namespace Gecode { namespace Int {
   };
 
 
-  class OpenDistinct : public OpenListPropagator {
+  template<class View>
+  class OpenDistinct : public OpenListPropagator<View> {
   protected:
+    using OpenListPropagator<View>::list;
+    using OpenListPropagator<View>::length;
+    using OpenListPropagator<View>::posted;
+    using OpenListPropagator<View>::closed;
+
     /// Variables whose assigned values have not yet been propagated
-    std::vector<IntView> active;
+    std::vector<View> active;
     /// Values already excluded from active variables, retained for growth
     IntSet assigned;
 
-    OpenDistinct(Home home, OpenIntVarList list)
-      : OpenListPropagator(home,list) {
+    OpenDistinct(Home home, OpenViewList<View> list)
+      : OpenListPropagator<View>(home,list) {
       home.notice(*this,AP_DISPOSE);
     }
 
     OpenDistinct(Space& home, OpenDistinct& p)
-      : OpenListPropagator(home,p), assigned(p.assigned) {
+      : OpenListPropagator<View>(home,p), assigned(p.assigned) {
       active.reserve(p.active.size());
-      for (IntView x : p.active) {
-        IntView y;
+      for (View x : p.active) {
+        View y;
         y.update(home,x);
         active.push_back(y);
       }
@@ -171,7 +178,7 @@ namespace Gecode { namespace Int {
     propagate(Space& home, const ModEventDelta&) {
       const int size = list.known_length();
       for (int i=posted; i<size; i++) {
-        IntView x(list[i]);
+        View x(list[i]);
         IntSetRanges old(assigned);
         GECODE_ME_CHECK(x.minus_r(home,old,false));
         active.push_back(x);
@@ -200,25 +207,25 @@ namespace Gecode { namespace Int {
         IntSetRanges added(delta);
         Iter::Ranges::Union<IntSetRanges,IntSetRanges> both(old,added);
         assigned = IntSet(both);
-        for (IntView x : active) {
+        for (View x : active) {
           IntSetRanges removed(delta);
           GECODE_ME_CHECK(x.minus_r(home,removed,false));
         }
       }
 
       if (closed()) {
-        ViewArray<IntView> x(home,static_cast<int>(active.size()));
+        ViewArray<View> x(home,static_cast<int>(active.size()));
         for (int i=0; i<x.size(); i++)
           x[i] = active[i];
-        GECODE_REWRITE(*this,Distinct::Val<IntView>::post(home(*this),x));
+        GECODE_REWRITE(*this,Distinct::Val<View>::post(home(*this),x));
       }
       return ES_FIX;
     }
 
     virtual void
     reschedule(Space& home) {
-      OpenListPropagator::reschedule(home);
-      for (IntView x : active)
+      OpenListPropagator<View>::reschedule(home);
+      for (View x : active)
         if (!x.assigned())
           x.reschedule(home,*this,PC_INT_VAL);
     }
@@ -226,33 +233,38 @@ namespace Gecode { namespace Int {
     virtual size_t
     dispose(Space& home) {
       home.ignore(*this,AP_DISPOSE);
-      for (IntView x : active)
+      for (View x : active)
         if (!x.assigned())
           x.cancel(home,*this,PC_INT_VAL);
       active.~vector();
       assigned.~IntSet();
-      OpenListPropagator::dispose_base(home);
+      OpenListPropagator<View>::dispose_base(home);
       return sizeof(*this);
     }
 
     static void
-    post(Home home, OpenIntVarList list) {
+    post(Home home, OpenViewList<View> list) {
       (void) new (home) OpenDistinct(home,list);
     }
   };
 
 
-  class OpenRel : public OpenListPropagator {
+  template<class View>
+  class OpenRel : public OpenListPropagator<View> {
   protected:
+    using OpenListPropagator<View>::list;
+    using OpenListPropagator<View>::posted;
+    using OpenListPropagator<View>::closed;
+
     IntRelType irt;
     IntPropLevel ipl;
 
-    OpenRel(Home home, OpenIntVarList list,
+    OpenRel(Home home, OpenViewList<View> list,
             IntRelType irt0, IntPropLevel ipl0)
-      : OpenListPropagator(home,list), irt(irt0), ipl(ipl0) {}
+      : OpenListPropagator<View>(home,list), irt(irt0), ipl(ipl0) {}
 
     OpenRel(Space& home, OpenRel& p)
-      : OpenListPropagator(home,p), irt(p.irt), ipl(p.ipl) {}
+      : OpenListPropagator<View>(home,p), irt(p.irt), ipl(p.ipl) {}
 
   public:
     virtual Actor*
@@ -265,32 +277,32 @@ namespace Gecode { namespace Int {
       const int size = list.known_length();
       const int first = std::max(1,posted);
       for (int i=first; i<size; i++) {
-        IntView x0(list[i-1]);
-        IntView x1(list[i]);
+        View x0(list[i-1]);
+        View x1(list[i]);
         switch (irt) {
         case IRT_EQ:
           if ((vbd(ipl) == IPL_DOM) || (vbd(ipl) == IPL_DEF)) {
-            GECODE_ES_CHECK((Rel::EqDom<IntView,IntView>
+            GECODE_ES_CHECK((Rel::EqDom<View,View>
                             ::post(home(*this),x0,x1)));
           } else {
-            GECODE_ES_CHECK((Rel::EqBnd<IntView,IntView>
+            GECODE_ES_CHECK((Rel::EqBnd<View,View>
                             ::post(home(*this),x0,x1)));
           }
           break;
         case IRT_NQ:
-          GECODE_ES_CHECK((Rel::Nq<IntView,IntView>
+          GECODE_ES_CHECK((Rel::Nq<View,View>
                           ::post(home(*this),x0,x1)));
           break;
         case IRT_GQ:
           std::swap(x0,x1); // Fall through
         case IRT_LQ:
-          GECODE_ES_CHECK((Rel::Lq<IntView,IntView>
+          GECODE_ES_CHECK((Rel::Lq<View,View>
                           ::post(home(*this),x0,x1)));
           break;
         case IRT_GR:
           std::swap(x0,x1); // Fall through
         case IRT_LE:
-          GECODE_ES_CHECK((Rel::Le<IntView,IntView>
+          GECODE_ES_CHECK((Rel::Le<View,View>
                           ::post(home(*this),x0,x1)));
           break;
         default:
@@ -303,12 +315,12 @@ namespace Gecode { namespace Int {
 
     virtual size_t
     dispose(Space& home) {
-      OpenListPropagator::dispose_base(home);
+      OpenListPropagator<View>::dispose_base(home);
       return sizeof(*this);
     }
 
     static void
-    post(Home home, OpenIntVarList list,
+    post(Home home, OpenViewList<View> list,
          IntRelType irt, IntPropLevel ipl) {
       (void) new (home) OpenRel(home,list,irt,ipl);
     }
@@ -334,20 +346,26 @@ namespace Gecode { namespace Int {
   };
 
   /// Subscribe once per position and revisit only affected complete windows
-  class OpenWindowPropagator : public OpenListPropagator {
+  template<class View>
+  class OpenWindowPropagator : public OpenListPropagator<View> {
   protected:
+    using OpenListPropagator<View>::list;
+    using OpenListPropagator<View>::length;
+    using OpenListPropagator<View>::posted;
+    using OpenListPropagator<View>::closed;
+
     int width;
     /// Inclusive range of window starts needing propagation
     int first;
     int last;
     Council<OpenWindowAdvisor> council;
 
-    OpenWindowPropagator(Home home, OpenIntVarList list, int width0)
-      : OpenListPropagator(home,list), width(width0),
+    OpenWindowPropagator(Home home, OpenViewList<View> list, int width0)
+      : OpenListPropagator<View>(home,list), width(width0),
         first(Int::Limits::max), last(-1), council(home) {}
 
     OpenWindowPropagator(Space& home, OpenWindowPropagator& p)
-      : OpenListPropagator(home,p), width(p.width),
+      : OpenListPropagator<View>(home,p), width(p.width),
         first(p.first), last(p.last), council(home) {
       council.update(home,p.council);
     }
@@ -369,7 +387,7 @@ namespace Gecode { namespace Int {
 
     void
     subscribe(Space& home, int index) {
-      IntView x(list[index]);
+      View x(list[index]);
       x.subscribe(home,*new (home)
                   OpenWindowAdvisor(home,*this,council,index));
     }
@@ -378,12 +396,12 @@ namespace Gecode { namespace Int {
     dispose_windows(Space& home) {
       if (!home.failed())
         for (Advisors<OpenWindowAdvisor> a(council); a(); ++a) {
-          IntView x(list[a.advisor().index]);
+          View x(list[a.advisor().index]);
           if (!x.assigned())
             x.cancel(home,a.advisor());
         }
       council.dispose(home);
-      OpenListPropagator::dispose_base(home);
+      OpenListPropagator<View>::dispose_base(home);
     }
 
   public:
@@ -394,30 +412,44 @@ namespace Gecode { namespace Int {
 
     virtual void
     reschedule(Space& home) {
-      OpenListPropagator::reschedule(home);
+      OpenListPropagator<View>::reschedule(home);
       first = 0;
       last = list.known_length()-width;
-      IntView::schedule(home,*this,ME_INT_DOM);
+      View::schedule(home,*this,ME_INT_DOM);
     }
   };
 
 
-  class OpenSliding : public OpenWindowPropagator {
+  template<class View>
+  class OpenSliding : public OpenWindowPropagator<View> {
   protected:
+    using OpenWindowPropagator<View>::list;
+    using OpenWindowPropagator<View>::length;
+    using OpenWindowPropagator<View>::posted;
+    using OpenWindowPropagator<View>::closed;
+    using OpenWindowPropagator<View>::width;
+    using OpenWindowPropagator<View>::first;
+    using OpenWindowPropagator<View>::last;
+    using OpenWindowPropagator<View>::council;
+    using OpenWindowPropagator<View>::appended;
+    using OpenWindowPropagator<View>::changed;
+    using OpenWindowPropagator<View>::subscribe;
+    using OpenWindowPropagator<View>::dispose_windows;
+
     IntSet values;
     int lower;
     int upper;
 
-    OpenSliding(Home home, OpenIntVarList list,
+    OpenSliding(Home home, OpenViewList<View> list,
                 const IntSet& values0, int width0,
                 int lower0, int upper0)
-      : OpenWindowPropagator(home,list,width0), values(values0),
+      : OpenWindowPropagator<View>(home,list,width0), values(values0),
         lower(lower0), upper(upper0) {
       home.notice(*this,AP_DISPOSE);
     }
 
     OpenSliding(Space& home, OpenSliding& p)
-      : OpenWindowPropagator(home,p), values(p.values),
+      : OpenWindowPropagator<View>(home,p), values(p.values),
         lower(p.lower), upper(p.upper) {}
 
   public:
@@ -429,7 +461,7 @@ namespace Gecode { namespace Int {
     virtual ExecStatus
     advise(Space& home, Advisor& advisor, const Delta&) {
       OpenWindowAdvisor& a = static_cast<OpenWindowAdvisor&>(advisor);
-      IntView x(list[a.index]);
+      View x(list[a.index]);
       if (Sequence::undecided(x,values))
         return ES_FIX;
       changed(a.index);
@@ -442,7 +474,7 @@ namespace Gecode { namespace Int {
     propagate(Space& home, const ModEventDelta&) {
       const int size = list.known_length();
       for (int i=posted; i<size; i++)
-        if (Sequence::undecided(IntView(list[i]),values))
+        if (Sequence::undecided(list[i],values))
           subscribe(home,i);
       appended(size);
 
@@ -456,7 +488,7 @@ namespace Gecode { namespace Int {
         Sequence::TakesStatus* status =
           region.alloc<Sequence::TakesStatus>(n);
         for (int i=0; i<n; i++)
-          status[i] = Sequence::takes(IntView(list[begin+i]),values);
+          status[i] = Sequence::takes(list[begin+i],values);
         int must = 0;
         int may = 0;
         for (int i=0; i<width; i++) {
@@ -485,7 +517,7 @@ namespace Gecode { namespace Int {
           if (status[i] == Sequence::TS_MAYBE) {
             if ((i < include_end) && (i < exclude_end))
               return ES_FAILED;
-            IntView x(list[begin+i]);
+            View x(list[begin+i]);
             if (i < exclude_end)
               GECODE_ME_CHECK(Sequence::exclude(home,x,values));
             else if (i < include_end)
@@ -508,7 +540,7 @@ namespace Gecode { namespace Int {
     }
 
     static void
-    post(Home home, OpenIntVarList list, const IntSet& values,
+    post(Home home, OpenViewList<View> list, const IntSet& values,
          int width, int lower, int upper, IntPropLevel) {
       (void) new (home)
         OpenSliding(home,list,values,width,lower,upper);
@@ -516,15 +548,28 @@ namespace Gecode { namespace Int {
   };
 
 
-  class OpenSlidingSum : public OpenWindowPropagator {
+  template<class View>
+  class OpenSlidingSum : public OpenWindowPropagator<View> {
   protected:
+    using OpenWindowPropagator<View>::list;
+    using OpenWindowPropagator<View>::posted;
+    using OpenWindowPropagator<View>::closed;
+    using OpenWindowPropagator<View>::width;
+    using OpenWindowPropagator<View>::first;
+    using OpenWindowPropagator<View>::last;
+    using OpenWindowPropagator<View>::council;
+    using OpenWindowPropagator<View>::changed;
+    using OpenWindowPropagator<View>::appended;
+    using OpenWindowPropagator<View>::subscribe;
+    using OpenWindowPropagator<View>::dispose_windows;
+
     int lower;
     int upper;
     IntPropLevel ipl;
 
-    OpenSlidingSum(Home home, OpenIntVarList list,
+    OpenSlidingSum(Home home, OpenViewList<View> list,
                    int width0, int lower0, int upper0, IntPropLevel ipl0)
-      : OpenWindowPropagator(home,list,width0),
+      : OpenWindowPropagator<View>(home,list,width0),
         lower(lower0), upper(upper0), ipl(ipl0) {
       // Choose the default from the full window, before linear posting
       // eliminates assigned terms. Delayed posting then has the same
@@ -535,17 +580,40 @@ namespace Gecode { namespace Int {
     }
 
     OpenSlidingSum(Space& home, OpenSlidingSum& p)
-      : OpenWindowPropagator(home,p),
+      : OpenWindowPropagator<View>(home,p),
         lower(p.lower), upper(p.upper), ipl(p.ipl) {}
+
+    static void
+    linear_term(Linear::Term<IntView>& term, IntView x) {
+      term.a = 1;
+      term.x = x;
+    }
+
+    static void
+    linear_term(Linear::Term<IntView>& term, MinusView x) {
+      term.a = -1;
+      term.x = x.base();
+    }
+
+    static ExecStatus
+    binary_sum(Home home, IntView x, IntView y, int sum) {
+      return Rel::EqDom<MinusView,OffsetView>::post
+        (home,MinusView(x),OffsetView(y,-sum));
+    }
+
+    static ExecStatus
+    binary_sum(Home home, MinusView x, MinusView y, int sum) {
+      return binary_sum(home,x.base(),y.base(),-sum);
+    }
 
     ExecStatus
     equal_windows(Space& home, int size) {
       if ((posted < width) && (size >= width)) {
         if (width == 1) {
-          GECODE_ME_CHECK(IntView(list[0]).eq(home,lower));
+          GECODE_ME_CHECK(list[0].eq(home,lower));
         } else if ((width == 2) && (vbd(ipl) == IPL_DOM)) {
-          IntView x(list[0]);
-          IntView y(list[1]);
+          View x(list[0]);
+          View y(list[1]);
           // Clip with wide residuals before constructing y-lower: its
           // range must fit integer limits. Binary domain filtering then
           // uses range intersections, even for very large domains.
@@ -554,16 +622,13 @@ namespace Gecode { namespace Int {
           GECODE_ME_CHECK(x.lq(home,sum-y.min()));
           GECODE_ME_CHECK(y.gq(home,sum-x.max()));
           GECODE_ME_CHECK(y.lq(home,sum-x.min()));
-          GECODE_ES_CHECK((Rel::EqDom<MinusView,OffsetView>::post
-                          (home(*this),MinusView(x),OffsetView(y,-lower))));
+          GECODE_ES_CHECK(binary_sum(home(*this),x,y,lower));
         } else {
           Region region;
           Linear::Term<IntView>* terms =
             region.alloc<Linear::Term<IntView>>(width);
-          for (int i=0; i<width; i++) {
-            terms[i].a = 1;
-            terms[i].x = IntView(list[i]);
-          }
+          for (int i=0; i<width; i++)
+            linear_term(terms[i],list[i]);
           Linear::post(home(*this),terms,width,IRT_EQ,lower,ipl);
           if (home.failed())
             return ES_FAILED;
@@ -573,13 +638,13 @@ namespace Gecode { namespace Int {
       // sum and these equalities retain the selected propagation level without
       // copying every window into a separate linear propagator.
       for (int i=std::max(width,posted); i<size; i++) {
-        IntView x(list[i]);
-        IntView representative(list[i%width]);
+        View x(list[i]);
+        View representative(list[i%width]);
         if (vbd(ipl) == IPL_DOM) {
-          GECODE_ES_CHECK((Rel::EqDom<IntView,IntView>::post
+          GECODE_ES_CHECK((Rel::EqDom<View,View>::post
                           (home(*this),x,representative)));
         } else {
-          GECODE_ES_CHECK((Rel::EqBnd<IntView,IntView>::post
+          GECODE_ES_CHECK((Rel::EqBnd<View,View>::post
                           (home(*this),x,representative)));
         }
       }
@@ -595,7 +660,7 @@ namespace Gecode { namespace Int {
 
     virtual ExecStatus
     advise(Space& home, Advisor& advisor, const Delta& delta) {
-      if (IntView::modevent(delta) == ME_INT_DOM)
+      if (View::modevent(delta) == ME_INT_DOM)
         return ES_FIX;
       OpenWindowAdvisor& a = static_cast<OpenWindowAdvisor&>(advisor);
       changed(a.index);
@@ -680,7 +745,7 @@ namespace Gecode { namespace Int {
               upper_tail--;
             upper_queue[upper_tail++] = i;
           }
-          IntView x(list[begin+i]);
+          View x(list[begin+i]);
           GECODE_ME_CHECK(x.gq(home,
             residual[lower_queue[lower_head]].lower+maximum[i]));
           GECODE_ME_CHECK(x.lq(home,
@@ -700,7 +765,7 @@ namespace Gecode { namespace Int {
     }
 
     static void
-    post(Home home, OpenIntVarList list,
+    post(Home home, OpenViewList<View> list,
          int width, int lower, int upper, IntPropLevel ipl) {
       (void) new (home)
         OpenSlidingSum(home,list,width,lower,upper,ipl);
@@ -710,8 +775,13 @@ namespace Gecode { namespace Int {
 
   /// Track maxima; negated views implement min(x) = -max(-x)
   template<class View>
-  class OpenMinMax : public OpenListPropagator {
+  class OpenMinMax : public OpenListPropagator<View> {
   protected:
+    using OpenListPropagator<View>::list;
+    using OpenListPropagator<View>::length;
+    using OpenListPropagator<View>::posted;
+    using OpenListPropagator<View>::closed;
+
     class Index : public Advisor {
     public:
       int i;
@@ -733,16 +803,16 @@ namespace Gecode { namespace Int {
     /// The result occurs in the list and supplies its own equality witness
     bool witness;
 
-    OpenMinMax(Home home, OpenIntVarList list,
+    OpenMinMax(Home home, OpenViewList<View> list,
                View result0, IntPropLevel ipl0)
-      : OpenListPropagator(home,list),
+      : OpenListPropagator<View>(home,list),
         result(result0), ipl(ipl0), c(home),
         lower(Limits::min), upper(result0.max()), witness(false) {
       result.subscribe(home,*this,PC_INT_BND);
     }
 
     OpenMinMax(Space& home, OpenMinMax& p)
-      : OpenListPropagator(home,p), ipl(p.ipl), c(home),
+      : OpenListPropagator<View>(home,p), ipl(p.ipl), c(home),
         lower(p.lower), upper(p.upper), witness(p.witness) {
       result.update(home,p.result);
       c.update(home,p.c);
@@ -767,7 +837,7 @@ namespace Gecode { namespace Int {
       if (View::modevent(d) == ME_INT_DOM)
         return ES_FIX;
       Index& a = static_cast<Index&>(advisor);
-      View x = View(IntView(list[a.i]));
+      View x = list[a.i];
       lower = std::max(lower,x.min());
       if (x.assigned())
         a.dispose(home,c);
@@ -780,13 +850,13 @@ namespace Gecode { namespace Int {
       const int size = list.known_length();
       if (result.max() < upper) {
         for (int i=0; i<posted; i++) {
-          View x = View(IntView(list[i]));
+          View x = list[i];
           GECODE_ME_CHECK(x.lq(home,result.max()));
         }
         upper = result.max();
       }
       for (int i=posted; i<size; i++) {
-        View x = View(IntView(list[i]));
+        View x = list[i];
         if (x == result) {
           witness = true;
           continue;
@@ -809,7 +879,7 @@ namespace Gecode { namespace Int {
           home.ES_SUBSUMED(*this) : ES_FIX;
       ViewArray<View> variables(home,size);
       for (int i=0; i<size; i++)
-        variables[i] = View(IntView(list[i]));
+        variables[i] = list[i];
       View y = result;
       if (vbd(ipl) == IPL_DOM)
         GECODE_REWRITE(*this,(Arithmetic::NaryMaxDom<View>
@@ -820,7 +890,7 @@ namespace Gecode { namespace Int {
 
     virtual void
     reschedule(Space& home) {
-      OpenListPropagator::reschedule(home);
+      OpenListPropagator<View>::reschedule(home);
       result.reschedule(home,*this,PC_INT_BND);
     }
 
@@ -828,33 +898,39 @@ namespace Gecode { namespace Int {
     dispose(Space& home) {
       if (!home.failed())
         for (Advisors<Index> as(c); as(); ++as) {
-          View x = View(IntView(list[as.advisor().i]));
+          View x = list[as.advisor().i];
           x.cancel(home,as.advisor());
         }
       c.dispose(home);
       result.cancel(home,*this,PC_INT_BND);
-      OpenListPropagator::dispose_base(home);
+      OpenListPropagator<View>::dispose_base(home);
       return sizeof(*this);
     }
 
     static void
-    post(Home home, OpenIntVarList list,
+    post(Home home, OpenViewList<View> list,
          View result, IntPropLevel ipl) {
       (void) new (home) OpenMinMax(home,list,result,ipl);
     }
   };
 
 
-  class OpenPrecede : public OpenListPropagator {
+  template<class View>
+  class OpenPrecede : public OpenListPropagator<View> {
   protected:
+    using OpenListPropagator<View>::list;
+    using OpenListPropagator<View>::length;
+    using OpenListPropagator<View>::posted;
+    using OpenListPropagator<View>::closed;
+
     /// Keep the view as well as its position for independent disposal
     class Index : public Advisor {
     public:
-      IntView x;
+      View x;
       int i;
 
       Index(Space& home, Propagator& p, Council<Index>& c,
-            IntView x0, int i0)
+            View x0, int i0)
         : Advisor(home,p,c), x(x0), i(i0) {}
 
       Index(Space& home, Index& a)
@@ -872,14 +948,14 @@ namespace Gecode { namespace Int {
     /// First position assigned after, or infinity while none is known
     int gamma;
 
-    OpenPrecede(Home home, OpenIntVarList list,
+    OpenPrecede(Home home, OpenViewList<View> list,
                 int before0, int after0)
-      : OpenListPropagator(home,list), council(home),
+      : OpenListPropagator<View>(home,list), council(home),
         before(before0), after(after0), alpha(0), beta(0),
         gamma(Limits::max) {}
 
     OpenPrecede(Space& home, OpenPrecede& p)
-      : OpenListPropagator(home,p), council(home),
+      : OpenListPropagator<View>(home,p), council(home),
         before(p.before), after(p.after),
         alpha(p.alpha), beta(p.beta), gamma(p.gamma) {
       council.update(home,p.council);
@@ -922,13 +998,13 @@ namespace Gecode { namespace Int {
       const int size = list.known_length();
       if (before == after) {
         for (int i=posted; i<size; i++)
-          GECODE_ME_CHECK(IntView(list[i]).nq(home,before));
+          GECODE_ME_CHECK(list[i].nq(home,before));
         posted = size;
         return closed() ? home.ES_SUBSUMED(*this) : ES_FIX;
       }
 
       for (int i=posted; i<size; i++) {
-        IntView x(list[i]);
+        View x(list[i]);
         if (x.assigned()) {
           if (x.val() == after)
             gamma = std::min(gamma,i);
@@ -938,22 +1014,22 @@ namespace Gecode { namespace Int {
       }
       posted = size;
 
-      while ((alpha < size) && !IntView(list[alpha]).in(before)) {
-        GECODE_ME_CHECK(IntView(list[alpha]).nq(home,after));
+      while ((alpha < size) && !list[alpha].in(before)) {
+        GECODE_ME_CHECK(list[alpha].nq(home,after));
         alpha++;
       }
       if (alpha == size) {
         beta = size;
         return closed() ? home.ES_SUBSUMED(*this) : ES_FIX;
       }
-      IntView first(list[alpha]);
+      View first(list[alpha]);
       GECODE_ME_CHECK(first.nq(home,after));
       if (first.assigned())
         return home.ES_SUBSUMED(*this);
 
       // An exhausted cursor resumes at the previous end after growth.
       beta = std::max(beta,alpha+1);
-      while ((beta < size) && !IntView(list[beta]).in(before))
+      while ((beta < size) && !list[beta].in(before))
         beta++;
       if (beta > gamma) {
         GECODE_ME_CHECK(first.eq(home,before));
@@ -964,8 +1040,8 @@ namespace Gecode { namespace Int {
 
     virtual void
     reschedule(Space& home) {
-      OpenListPropagator::reschedule(home);
-      IntView::schedule(home,*this,ME_INT_DOM);
+      OpenListPropagator<View>::reschedule(home);
+      View::schedule(home,*this,ME_INT_DOM);
     }
 
     virtual size_t
@@ -973,12 +1049,12 @@ namespace Gecode { namespace Int {
       for (Advisors<Index> as(council); as(); ++as)
         as.advisor().x.cancel(home,as.advisor());
       council.dispose(home);
-      OpenListPropagator::dispose_base(home);
+      OpenListPropagator<View>::dispose_base(home);
       return sizeof(*this);
     }
 
     static void
-    post(Home home, OpenIntVarList list, int before, int after) {
+    post(Home home, OpenViewList<View> list, int before, int after) {
       (void) new (home) OpenPrecede(home,list,before,after);
     }
   };
@@ -989,7 +1065,7 @@ namespace Gecode { namespace Int {
   class OpenListBrancher : public Brancher {
   protected:
     typedef typename View::VarType Var;
-    OpenVarList<Var> list;
+    OpenViewList<View> list;
     ViewSel<View>* vs[n];
     ValSelCommitBase<View,int>* vsc;
     BrancherFilter<View> filter;
@@ -998,7 +1074,7 @@ namespace Gecode { namespace Int {
     bool select_first;
     mutable int start;
 
-    OpenListBrancher(Home home, OpenVarList<Var> list0,
+    OpenListBrancher(Home home, OpenViewList<View> list0,
                      ViewSel<View>* vs0[n],
                      ValSelCommitBase<View,int>* vsc0,
                      IntValBranch::Select values0,
@@ -1041,7 +1117,7 @@ namespace Gecode { namespace Int {
       Region r;
       ViewArray<View> x(r,list.known_length());
       for (int i=0; i<x.size(); i++)
-        x[i] = View(list[i]);
+        x[i] = list[i];
       if (n == 1)
         return vs[0]->select(home,x,start,filter);
       int* ties = r.alloc<int>(x.size()-start);
@@ -1075,7 +1151,7 @@ namespace Gecode { namespace Int {
     virtual bool
     status(const Space& home) const {
       for (int i=start; i<list.known_length(); i++)
-        if (!list[i].assigned() && filter(home,View(list[i]),i)) {
+        if (!list[i].assigned() && filter(home,list[i],i)) {
           start = i;
           return true;
         }
@@ -1085,7 +1161,7 @@ namespace Gecode { namespace Int {
     virtual const Choice*
     choice(Space& home) {
       for (int i=start; i<list.known_length(); i++)
-        if (!list[i].assigned() && filter(home,View(list[i]),i)) {
+        if (!list[i].assigned() && filter(home,list[i],i)) {
           start = i;
           const int p = position(home);
           View x(list[p]);
@@ -1128,7 +1204,7 @@ namespace Gecode { namespace Int {
       }
       const int size = static_cast<const PosValChoice<int>&>(c).val();
       if (a == 0)
-        return me_failed(IntView(list.length()).eq(home,size))
+        return me_failed(list.length().eq(home,size))
           ? ES_FAILED : ES_OK;
       list.materialize(home,size+1);
       return home.failed() ? ES_FAILED : ES_OK;
@@ -1139,7 +1215,7 @@ namespace Gecode { namespace Int {
       const int p = static_cast<const PosChoice&>(c).pos().pos;
       if (p < 0)
         return (a == 0) ? new (home) Branch::EqNGL<IntView>
-          (home,IntView(list.length()),
+          (home,list.length(),
            static_cast<const PosValChoice<int>&>(c).val()) : nullptr;
       // No-good extraction can run in an ancestor with a shorter prefix.
       if (p >= list.known_length())
@@ -1167,7 +1243,7 @@ namespace Gecode { namespace Int {
         }
         View x(list[p]);
         if (printer())
-          printer()(home,*this,a,list[p],p,v,o);
+          printer()(home,*this,a,Var(x),p,v,o);
         else if (vsc)
           vsc->print(home,a,x,p,v,o);
         else
@@ -1189,14 +1265,14 @@ namespace Gecode { namespace Int {
         vsc->dispose(home);
       filter.dispose(home);
       printer.~SharedData<VarValPrint<Var,int>>();
-      list.~OpenVarList();
+      list.~OpenViewList();
       (void) Brancher::dispose(home);
       return sizeof(*this);
     }
 
     template<class VarBranch>
     static void
-    post(Home home, OpenVarList<Var> list, VarBranch vars[n],
+    post(Home home, OpenViewList<View> list, VarBranch vars[n],
          ValSelCommitBase<View,int>* vsc,
          IntValBranch::Select values,
          BranchFilter<Var> bf, VarValPrint<Var,int> vvp) {
@@ -1250,7 +1326,7 @@ namespace Gecode { namespace Int {
 
   template<class View, class VarBranch, class ValBranch>
   void
-  post_open_brancher(Home home, OpenVarList<typename View::VarType> list,
+  post_open_brancher(Home home, OpenViewList<View> list,
                      TieBreak<VarBranch> vars, ValBranch vals,
                      BranchFilter<typename View::VarType> bf,
                      VarValPrint<typename View::VarType,int> vvp) {
@@ -1298,7 +1374,7 @@ namespace Gecode {
   void
   distinct(Home home, OpenIntVarList list, IntPropLevel) {
     GECODE_POST;
-    Int::OpenDistinct::post(home,list);
+    Int::OpenDistinct<Int::IntView>::post(home,OpenViewList<Int::IntView>(list));
   }
 
   void
@@ -1316,7 +1392,8 @@ namespace Gecode {
       throw Int::UnknownRelation("Int::rel");
     }
     GECODE_POST;
-    Int::OpenRel::post(home,list,irt,ipl);
+    Int::OpenRel<Int::IntView>::post
+      (home,OpenViewList<Int::IntView>(list),irt,ipl);
   }
 
   void
@@ -1338,7 +1415,8 @@ namespace Gecode {
     }
     if ((lower == 0) && (upper == width))
       return;
-    Int::OpenSliding::post(home,x,values,width,lower,upper,ipl);
+    Int::OpenSliding<Int::IntView>::post
+      (home,OpenViewList<Int::IntView>(x),values,width,lower,upper,ipl);
   }
 
   void
@@ -1350,18 +1428,21 @@ namespace Gecode {
     if (width < 1)
       throw Int::OutOfLimits("Int::slidingsum");
     GECODE_POST;
+    OpenViewList<Int::IntView> views(list);
     if (upper < lower) {
-      rel(home,list.length(),IRT_LE,width);
+      GECODE_ME_FAIL(views.length().lq(home,width-1));
       return;
     }
-    Int::OpenSlidingSum::post(home,list,width,lower,upper,ipl);
+    Int::OpenSlidingSum<Int::IntView>::post
+      (home,views,width,lower,upper,ipl);
   }
 
   void
   min(Home home, OpenIntVarList list,
       IntVar result, IntPropLevel ipl) {
     GECODE_POST;
-    Int::OpenMinMax<Int::MinusView>::post(home,list,
+    Int::OpenMinMax<Int::MinusView>::post
+      (home,OpenViewList<Int::MinusView>(list),
       Int::MinusView(Int::IntView(result)),ipl);
   }
 
@@ -1369,7 +1450,8 @@ namespace Gecode {
   max(Home home, OpenIntVarList list,
       IntVar result, IntPropLevel ipl) {
     GECODE_POST;
-    Int::OpenMinMax<Int::IntView>::post(home,list,Int::IntView(result),ipl);
+    Int::OpenMinMax<Int::IntView>::post
+      (home,OpenViewList<Int::IntView>(list),Int::IntView(result),ipl);
   }
 
   void
@@ -1378,7 +1460,8 @@ namespace Gecode {
     Int::Limits::check(before,"Int::precede");
     Int::Limits::check(after,"Int::precede");
     GECODE_POST;
-    Int::OpenPrecede::post(home,list,before,after);
+    Int::OpenPrecede<Int::IntView>::post
+      (home,OpenViewList<Int::IntView>(list),before,after);
   }
 
   void
@@ -1390,7 +1473,8 @@ namespace Gecode {
       Int::Limits::check(values[i],"Int::precede");
     GECODE_POST;
     for (int i=values.size()-1; i--; )
-      Int::OpenPrecede::post(home,list,values[i],values[i+1]);
+      Int::OpenPrecede<Int::IntView>::post
+        (home,OpenViewList<Int::IntView>(list),values[i],values[i+1]);
     (void) ipl;
   }
 
@@ -1416,7 +1500,8 @@ namespace Gecode {
          TieBreak<IntVarBranch> vars, IntValBranch vals,
          IntBranchFilter bf, IntVarValPrint vvp) {
     GECODE_POST;
-    Int::post_open_brancher<Int::IntView>(home,list,vars,vals,bf,vvp);
+    Int::post_open_brancher<Int::IntView>
+      (home,OpenViewList<Int::IntView>(list),vars,vals,bf,vvp);
   }
 
   void
@@ -1431,7 +1516,8 @@ namespace Gecode {
          TieBreak<BoolVarBranch> vars, BoolValBranch vals,
          BoolBranchFilter bf, BoolVarValPrint vvp) {
     GECODE_POST;
-    Int::post_open_brancher<Int::BoolView>(home,list,vars,vals,bf,vvp);
+    Int::post_open_brancher<Int::BoolView>
+      (home,OpenViewList<Int::BoolView>(list),vars,vals,bf,vvp);
   }
 
 }

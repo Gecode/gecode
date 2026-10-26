@@ -156,8 +156,62 @@ namespace Gecode {
     }
 
     void
-    append(Var y) {
+    append(Space& home, Var y) {
+      if (home.failed())
+        return;
+      if (n == Int::Limits::max) {
+        home.fail();
+        return;
+      }
+      check_alias(y);
+      reserve();
+      const int next = n + 1;
+      Int::IntView l(length);
+      Int::IntView m(materialized);
+      if (me_failed(l.gq(home,next)) || me_failed(m.gq(home,next))) {
+        home.fail();
+        return;
+      }
       x[n++] = y;
+      const Transition& transition = functions().transition;
+      if (transition) {
+        Space::NoGPI no_gpi(home);
+        transition(home,OpenVarList<Var>(this),next-1);
+      }
+    }
+
+    void
+    materialize(Space& home, int size) {
+      Space::NoGPI no_gpi(home);
+      Int::Limits::nonnegative(size,"OpenVarList::materialize");
+      Int::IntView l(length);
+      if (me_failed(l.gq(home,size))) {
+        home.fail();
+        return;
+      }
+      while (n < l.min()) {
+        const int i = n;
+        GECODE_VALID_FUNCTION(functions().create);
+        Var y = functions().create(home,i);
+        append(home,y);
+        if (home.failed())
+          return;
+      }
+    }
+
+    void
+    subscribe(Space& home, Propagator& p) {
+      Int::IntView(materialized).subscribe(home,p,Int::PC_INT_BND);
+    }
+
+    void
+    cancel(Space& home, Propagator& p) {
+      Int::IntView(materialized).cancel(home,p,Int::PC_INT_BND);
+    }
+
+    void
+    reschedule(Space& home, Propagator& p) {
+      Int::IntView(materialized).reschedule(home,p,Int::PC_INT_BND);
     }
   };
 
@@ -167,19 +221,19 @@ namespace Gecode { namespace Int {
 
   /// Materialize positions required by the minimum eventual length
   template<class Var>
-  class OpenMaterialize : public Propagator {
+  class OpenMaterialize : public Propagator, private LocalHandle {
   protected:
-    OpenVarList<Var> list;
+    typedef typename OpenVarList<Var>::Object Object;
     IntView length;
 
-    OpenMaterialize(Home home, OpenVarList<Var> list0)
-      : Propagator(home), list(list0), length(list0.length()) {
+    OpenMaterialize(Home home, Object* source)
+      : Propagator(home), LocalHandle(source), length(source->length) {
       length.subscribe(home,*this,PC_INT_BND);
     }
 
     OpenMaterialize(Space& home, OpenMaterialize& p)
       : Propagator(home,p) {
-      list.update(home,p.list);
+      LocalHandle::update(home,p);
       length.update(home,p.length);
     }
 
@@ -191,7 +245,7 @@ namespace Gecode { namespace Int {
 
     virtual PropCost
     cost(const Space&, const ModEventDelta&) const {
-      const int n = length.min()-list.known_length();
+      const int n = length.min()-static_cast<Object*>(object())->n;
       return (n <= 1) ? PropCost::unary(PropCost::LO) :
                         PropCost::linear(PropCost::LO,n);
     }
@@ -203,7 +257,7 @@ namespace Gecode { namespace Int {
 
     virtual ExecStatus
     propagate(Space& home, const ModEventDelta&) {
-      list.materialize(home,length.min());
+      static_cast<Object*>(object())->materialize(home,length.min());
       if (home.failed())
         return ES_FAILED;
       if (length.assigned())
@@ -214,15 +268,15 @@ namespace Gecode { namespace Int {
     virtual size_t
     dispose(Space& home) {
       length.cancel(home,*this,PC_INT_BND);
-      list.~OpenVarList();
+      LocalHandle::~LocalHandle();
       (void) Propagator::dispose(home);
       return sizeof(*this);
     }
 
     static void
-    post(Home home, OpenVarList<Var> list) {
-      if (!list.length().assigned())
-        (void) new (home) OpenMaterialize(home,list);
+    post(Home home, Object* source) {
+      if (!source->length.assigned())
+        (void) new (home) OpenMaterialize(home,source);
     }
   };
 
@@ -234,16 +288,20 @@ namespace Gecode {
   OpenVarList<Var>::OpenVarList(void) {}
 
   template<class Var>
+  OpenVarList<Var>::OpenVarList(Object* source)
+    : LocalHandle(source) {}
+
+  template<class Var>
   OpenVarList<Var>::OpenVarList(Space& home, Factory create, int max)
     : LocalHandle(new (home) Object(home,create,max)) {
-    Int::OpenMaterialize<Var>::post(home,*this);
+    Int::OpenMaterialize<Var>::post(home,static_cast<Object*>(object()));
   }
 
   template<class Var>
   OpenVarList<Var>::OpenVarList(Space& home, Factory create,
                                Transition t, int max)
     : LocalHandle(new (home) Object(home,create,t,max)) {
-    Int::OpenMaterialize<Var>::post(home,*this);
+    Int::OpenMaterialize<Var>::post(home,static_cast<Object*>(object()));
   }
 
   forceinline
@@ -283,51 +341,15 @@ namespace Gecode {
   template<class Var>
   void
   OpenVarList<Var>::append(Space& home, Var y) {
-    if (home.failed())
-      return;
-    Object* s = static_cast<Object*>(object());
-    if (s->n == Int::Limits::max) {
-      home.fail();
-      return;
-    }
-    s->check_alias(y);
-    s->reserve();
-    const int next = s->n + 1;
-    Int::IntView l(s->length);
-    Int::IntView m(s->materialized);
-    if (me_failed(l.gq(home,next)) || me_failed(m.gq(home,next))) {
-      home.fail();
-      return;
-    }
-    s->append(y);
-    const Transition& transition = s->functions().transition;
-    if (transition) {
-      Space::NoGPI no_gpi(home);
-      transition(home,*this,next-1);
-    }
+    if (!home.failed())
+      static_cast<Object*>(object())->append(home,y);
   }
 
   template<class Var>
   void
   OpenVarList<Var>::materialize(Space& home, int n) {
-    Space::NoGPI no_gpi(home);
-    if (home.failed())
-      return;
-    Int::Limits::nonnegative(n,"OpenVarList::materialize");
-    Object* s = static_cast<Object*>(object());
-    Int::IntView l(s->length);
-    if (me_failed(l.gq(home,n))) {
-      home.fail();
-      return;
-    }
-    while (s->n < l.min()) {
-      const int i = s->n;
-      GECODE_VALID_FUNCTION(s->functions().create);
-      Var y = s->functions().create(home,i);
-      append(home,y);
-      if (home.failed())
-        return;
-    }
+    if (!home.failed())
+      static_cast<Object*>(object())->materialize(home,n);
   }
 
   template<class Var>
@@ -361,22 +383,98 @@ namespace Gecode {
   template<class Var>
   void
   OpenVarList<Var>::subscribe(Space& home, Propagator& p) {
-    Object* s = static_cast<Object*>(object());
-    Int::IntView(s->materialized).subscribe(home,p,Int::PC_INT_BND);
+    static_cast<Object*>(object())->subscribe(home,p);
   }
 
   template<class Var>
   void
   OpenVarList<Var>::cancel(Space& home, Propagator& p) {
-    Object* s = static_cast<Object*>(object());
-    Int::IntView(s->materialized).cancel(home,p,Int::PC_INT_BND);
+    static_cast<Object*>(object())->cancel(home,p);
   }
 
   template<class Var>
   void
   OpenVarList<Var>::reschedule(Space& home, Propagator& p) {
+    static_cast<Object*>(object())->reschedule(home,p);
+  }
+
+}
+
+namespace Gecode { namespace Int {
+
+  /// Construct an element view without changing the shared source list
+  template<class View>
+  forceinline View
+  open_list_view(typename View::VarType x) {
+    return View(x);
+  }
+
+  template<>
+  forceinline MinusView
+  open_list_view<MinusView>(IntVar x) {
+    return MinusView(IntView(x));
+  }
+
+}}
+
+namespace Gecode {
+
+  template<class View>
+  OpenViewList<View>::OpenViewList(void) {}
+
+  template<class View>
+  OpenViewList<View>::OpenViewList(const OpenVarList<Var>& list)
+    : LocalHandle(list) {}
+
+  template<class View>
+  void
+  OpenViewList<View>::update(Space& home, OpenViewList<View>& s) {
+    LocalHandle::update(home,s);
+  }
+
+  template<class View>
+  int
+  OpenViewList<View>::known_length(void) const {
+    return static_cast<Object*>(object())->n;
+  }
+
+  template<class View>
+  View
+  OpenViewList<View>::operator [](int i) const {
     Object* s = static_cast<Object*>(object());
-    Int::IntView(s->materialized).reschedule(home,p,Int::PC_INT_BND);
+    assert((i >= 0) && (i < s->n));
+    return Int::open_list_view<View>(s->x[i]);
+  }
+
+  template<class View>
+  Int::IntView
+  OpenViewList<View>::length(void) const {
+    return Int::IntView(static_cast<Object*>(object())->length);
+  }
+
+  template<class View>
+  void
+  OpenViewList<View>::materialize(Space& home, int n) {
+    if (!home.failed())
+      static_cast<Object*>(object())->materialize(home,n);
+  }
+
+  template<class View>
+  void
+  OpenViewList<View>::subscribe(Space& home, Propagator& p) {
+    static_cast<Object*>(object())->subscribe(home,p);
+  }
+
+  template<class View>
+  void
+  OpenViewList<View>::cancel(Space& home, Propagator& p) {
+    static_cast<Object*>(object())->cancel(home,p);
+  }
+
+  template<class View>
+  void
+  OpenViewList<View>::reschedule(Space& home, Propagator& p) {
+    static_cast<Object*>(object())->reschedule(home,p);
   }
 
 }

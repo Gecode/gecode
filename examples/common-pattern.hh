@@ -318,7 +318,7 @@ namespace PatternMining {
    */
   class OpenProjection : public Propagator {
   protected:
-    OpenIntVarList list;
+    OpenViewList<Int::IntView> list;
     Int::IntView length;
     Int::IntView frequency;
     Projection projection;
@@ -328,7 +328,7 @@ namespace PatternMining {
     /// Filtering depends on the assigned prefix, not on constructed positions
     int cached_prefix;
 
-    OpenProjection(Space& home, OpenIntVarList pattern,
+    OpenProjection(Home home, OpenViewList<Int::IntView> pattern,
                    const Database& database, int support, IntVar count)
       : Propagator(home), list(pattern), length(pattern.length()), frequency(count),
         projection(home,database,support), consumed(0),
@@ -338,7 +338,7 @@ namespace PatternMining {
       length.subscribe(home,*this,Int::PC_INT_BND);
       for (int i=0; i<subscribed; i++)
         if (!list[i].assigned())
-          Int::IntView(list[i]).subscribe(home,*this,Int::PC_INT_VAL);
+          list[i].subscribe(home,*this,Int::PC_INT_VAL);
     }
 
     OpenProjection(Space& home, OpenProjection& p)
@@ -365,7 +365,7 @@ namespace PatternMining {
       length.reschedule(home,*this,Int::PC_INT_BND);
       for (int i=consumed; i<subscribed; i++)
         if (!list[i].assigned())
-          Int::IntView(list[i]).reschedule(home,*this,Int::PC_INT_VAL);
+          list[i].reschedule(home,*this,Int::PC_INT_VAL);
     }
 
     ExecStatus propagate(Space& home, const ModEventDelta&) override {
@@ -374,7 +374,7 @@ namespace PatternMining {
       int first = subscribed;
       for (int i=subscribed; i<size; i++)
         if (!list[i].assigned())
-          Int::IntView(list[i]).subscribe(home,*this,Int::PC_INT_VAL,false);
+          list[i].subscribe(home,*this,Int::PC_INT_VAL,false);
       subscribed = size;
       while (true) {
         while ((consumed < size) && list[consumed].assigned()) {
@@ -406,7 +406,7 @@ namespace PatternMining {
         }
         for (int i=first; i<size; i++) {
           IntSetValues values(frequent_items);
-          GECODE_ME_CHECK(Int::IntView(list[i]).inter_v(home,values,false));
+          GECODE_ME_CHECK(list[i].inter_v(home,values,false));
         }
         first = size;
         if ((consumed == size) || !list[consumed].assigned())
@@ -421,15 +421,15 @@ namespace PatternMining {
       if (!home.failed())
         for (int i=consumed; i<subscribed; i++)
           if (!list[i].assigned())
-            Int::IntView(list[i]).cancel(home,*this,Int::PC_INT_VAL);
-      list.~OpenIntVarList();
+            list[i].cancel(home,*this,Int::PC_INT_VAL);
+      list.~OpenViewList();
       projection.~Projection();
       frequent_items.~IntSet();
       (void) Propagator::dispose(home);
       return sizeof(*this);
     }
 
-    static void post(Home home, OpenIntVarList pattern,
+    static void post(Home home, OpenViewList<Int::IntView> pattern,
                      const Database& database, int support, IntVar count) {
       (void) new (home) OpenProjection(home,pattern,database,support,count);
     }
@@ -446,7 +446,8 @@ namespace PatternMining {
       return IntVar();
     }
     IntVar count(home,support,database.ends.size());
-    OpenProjection::post(home,pattern,database,support,count);
+    OpenProjection::post(home,OpenViewList<Int::IntView>(pattern),
+                         database,support,count);
     return count;
   }
 
