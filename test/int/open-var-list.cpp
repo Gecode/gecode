@@ -1499,8 +1499,10 @@ namespace Test { namespace Int {
     Constraint distinct("Distinct",Constraint::Kind::DISTINCT,3);
     Constraint relation("Rel",Constraint::Kind::REL,3);
     Constraint sliding("Sliding",Constraint::Kind::SLIDING,4);
+    Constraint sliding_one("Sliding1",Constraint::Kind::SLIDING,3,1);
     Constraint sliding_sum("SlidingSum",Constraint::Kind::SLIDING_SUM,4);
     Constraint sliding_range("SlidingSumRange",Constraint::Kind::SLIDING_RANGE,4);
+    Constraint range_one("SlidingSumRange1",Constraint::Kind::SLIDING_RANGE,3,1);
     Constraint min_max("MinMax",Constraint::Kind::MIN_MAX,3);
     Constraint precedence("Precede",Constraint::Kind::PRECEDE,3);
     Constraint precedence_same("PrecedeSame",Constraint::Kind::PRECEDE_SAME,3);

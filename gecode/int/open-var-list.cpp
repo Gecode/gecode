@@ -463,23 +463,33 @@ namespace Gecode { namespace Int {
           must += status[i] == Sequence::TS_YES;
           may += status[i] != Sequence::TS_NO;
         }
-        for (int start=0; start<=end-begin; start++) {
-          if ((must > upper) || (may < lower))
-            return ES_FAILED;
-          if ((must == upper) || (may == lower))
-            for (int i=start; i<start+width; i++)
-              if (status[i] == Sequence::TS_MAYBE) {
-                IntView x(list[begin+i]);
-                if (must == upper)
-                  GECODE_ME_CHECK(Sequence::exclude(home,x,values));
-                else
-                  GECODE_ME_CHECK(Sequence::include(home,x,values));
-              }
-          if (start < end-begin) {
-            must -= status[start] == Sequence::TS_YES;
-            may -= status[start] != Sequence::TS_NO;
-            must += status[start+width] == Sequence::TS_YES;
-            may += status[start+width] != Sequence::TS_NO;
+        // Forcing windows form intervals. Their furthest ends suffice to
+        // apply each membership update once, including overlapping windows.
+        int include_end = 0;
+        int exclude_end = 0;
+        for (int i=0; i<n; i++) {
+          if (i <= end-begin) {
+            if ((must > upper) || (may < lower))
+              return ES_FAILED;
+            if (must == upper)
+              exclude_end = i+width;
+            if (may == lower)
+              include_end = i+width;
+            if (i < end-begin) {
+              must -= status[i] == Sequence::TS_YES;
+              may -= status[i] != Sequence::TS_NO;
+              must += status[i+width] == Sequence::TS_YES;
+              may += status[i+width] != Sequence::TS_NO;
+            }
+          }
+          if (status[i] == Sequence::TS_MAYBE) {
+            if ((i < include_end) && (i < exclude_end))
+              return ES_FAILED;
+            IntView x(list[begin+i]);
+            if (i < exclude_end)
+              GECODE_ME_CHECK(Sequence::exclude(home,x,values));
+            else if (i < include_end)
+              GECODE_ME_CHECK(Sequence::include(home,x,values));
           }
         }
       }
@@ -625,22 +635,56 @@ namespace Gecode { namespace Int {
           min_sum += minimum[i];
           max_sum += maximum[i];
         }
-        for (int start=0; start<=end-begin; start++) {
+        struct Residual {
+          long long int lower;
+          long long int upper;
+        };
+        const int windows = end-begin+1;
+        Residual* residual = region.alloc<Residual>(windows);
+        for (int start=0; start<windows; start++) {
           if ((min_sum > upper) || (max_sum < lower))
             return ES_FAILED;
-          for (int i=start; i<start+width; i++) {
-            IntView x(list[begin+i]);
-            GECODE_ME_CHECK(x.gq(home,
-              static_cast<long long int>(lower)-max_sum+maximum[i]));
-            GECODE_ME_CHECK(x.lq(home,
-              static_cast<long long int>(upper)-min_sum+minimum[i]));
-          }
-          if (start < end-begin) {
+          residual[start].lower = static_cast<long long int>(lower)-max_sum;
+          residual[start].upper = static_cast<long long int>(upper)-min_sum;
+          if (start+1 < windows) {
             min_sum -= minimum[start];
             max_sum -= maximum[start];
             min_sum += minimum[start+width];
             max_sum += maximum[start+width];
           }
+        }
+        // Monotone queues retain the strongest residuals among windows
+        // covering each position. Every window enters and leaves once.
+        int* lower_queue = region.alloc<int>(windows);
+        int* upper_queue = region.alloc<int>(windows);
+        int lower_head = 0;
+        int lower_tail = 0;
+        int upper_head = 0;
+        int upper_tail = 0;
+        for (int i=0; i<n; i++) {
+          if ((lower_head < lower_tail) &&
+              (lower_queue[lower_head] <= i-width))
+            lower_head++;
+          if ((upper_head < upper_tail) &&
+              (upper_queue[upper_head] <= i-width))
+            upper_head++;
+          if (i < windows) {
+            while ((lower_head < lower_tail) &&
+                   (residual[lower_queue[lower_tail-1]].lower <=
+                    residual[i].lower))
+              lower_tail--;
+            lower_queue[lower_tail++] = i;
+            while ((upper_head < upper_tail) &&
+                   (residual[upper_queue[upper_tail-1]].upper >=
+                    residual[i].upper))
+              upper_tail--;
+            upper_queue[upper_tail++] = i;
+          }
+          IntView x(list[begin+i]);
+          GECODE_ME_CHECK(x.gq(home,
+            residual[lower_queue[lower_head]].lower+maximum[i]));
+          GECODE_ME_CHECK(x.lq(home,
+            residual[upper_queue[upper_head]].upper+minimum[i]));
         }
       }
       if (first <= last)
