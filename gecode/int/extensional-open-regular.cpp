@@ -232,19 +232,23 @@ namespace Gecode { namespace Int { namespace Extensional {
 
       unsigned char* reachable = r.alloc<unsigned char>(k);
       unsigned char* next = r.alloc<unsigned char>(k);
+      int* supported = r.alloc<int>(dfa.n_symbols());
       for (int s=0; s<k; s++)
         reachable[s] = start[s];
       for (int i=0; i<n; i++) {
         View x(list[offset+i]);
-        Region values;
-        int* supported = values.alloc<int>(dfa.n_symbols());
         int n_supported = 0;
         const unsigned char* out = backward + static_cast<size_t>(i+1)*k;
+        for (int s=0; s<k; s++)
+          next[s] = 0;
         for (ViewValues<View> v(x); v(); ++v) {
           bool support = false;
-          for (DFA::Transitions t(dfa,v.val()); t() && !support; ++t)
-            support = (reachable[t.i_state()] != 0) &&
-                      (out[t.o_state()] != 0);
+          for (DFA::Transitions t(dfa,v.val()); t(); ++t)
+            if ((reachable[t.i_state()] != 0) &&
+                (out[t.o_state()] != 0)) {
+              support = true;
+              next[t.o_state()] = 1;
+            }
           if (support)
             supported[n_supported++] = v.val();
         }
@@ -252,14 +256,6 @@ namespace Gecode { namespace Int { namespace Extensional {
           return ES_FAILED;
         Iter::Values::Array v(supported,n_supported);
         GECODE_ME_CHECK(x.narrow_v(home,v,false));
-
-        for (int s=0; s<k; s++)
-          next[s] = 0;
-        for (ViewValues<View> value(x); value(); ++value)
-          for (DFA::Transitions t(dfa,value.val()); t(); ++t)
-            if ((reachable[t.i_state()] != 0) &&
-                (out[t.o_state()] != 0))
-              next[t.o_state()] = 1;
         std::swap(reachable,next);
       }
 

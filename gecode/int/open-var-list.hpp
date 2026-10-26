@@ -270,10 +270,10 @@ namespace Gecode {
       home.fail();
       return;
     }
-    for (int i=0; i<s->n; i++)
-      if (!y.assigned() && !s->x[i].assigned() &&
-          (y.varimp() == s->x[i].varimp()))
-        throw Int::ArgumentSame("OpenVarList::append");
+    if (!y.assigned())
+      for (int i=0; i<s->n; i++)
+        if (y.varimp() == s->x[i].varimp())
+          throw Int::ArgumentSame("OpenVarList::append");
     s->reserve();
     const int next = s->n + 1;
     Int::IntView l(s->length);

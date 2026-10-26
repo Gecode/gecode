@@ -553,17 +553,21 @@ namespace Test { namespace Int {
     };
 
 
-    /// Test the relations on a closed open list with the integer harness
-    class Constraint : public Test {
+    /// Test constraint semantics both while growing and after closure
+    class Constraint : public OpenTest {
     public:
       enum class Kind {
-        DISTINCT, REL, SLIDING, SLIDING_SUM, MIN_MAX, PRECEDE
+        DISTINCT, REL, SLIDING, SLIDING_SUM, SLIDING_RANGE, MIN_MAX,
+        PRECEDE, PRECEDE_SAME
       };
     protected:
       Kind kind;
+      int width;
     public:
-      Constraint(const std::string& name, Kind k, int size)
-        : Test("OpenList::"+name,size,0,2), kind(k) {}
+      Constraint(const std::string& name, Kind k, int size, int width0=2,
+                 Gecode::IntPropLevel level=Gecode::IPL_DEF)
+        : OpenTest("OpenList::"+name,size,0,Gecode::IntSet(0,2),level),
+          kind(k), width(width0) {}
 
       virtual bool
       solution(const Assignment& x) const {
@@ -580,14 +584,24 @@ namespace Test { namespace Int {
               return false;
           return true;
         case Kind::SLIDING:
-          for (int i=1; i<x.size(); i++)
-            if ((x[i-1] == 1) + (x[i] == 1) != 1)
+          for (int i=0; i+width<=x.size(); i++) {
+            int count = 0;
+            for (int j=i; j<i+width; j++)
+              count += x[j] == 1;
+            if (count != 1)
               return false;
+          }
           return true;
         case Kind::SLIDING_SUM:
-          for (int i=1; i<x.size(); i++)
-            if (x[i-1] + x[i] != 2)
+        case Kind::SLIDING_RANGE:
+          for (int i=0; i+width<=x.size(); i++) {
+            int sum = 0;
+            for (int j=i; j<i+width; j++)
+              sum += x[j];
+            if ((kind == Kind::SLIDING_SUM) ? sum != 2 :
+                (sum < 1) || (sum > 3))
               return false;
+          }
           return true;
         case Kind::MIN_MAX: {
           int lower = x[0];
@@ -607,15 +621,20 @@ namespace Test { namespace Int {
           }
           return true;
         }
+        case Kind::PRECEDE_SAME:
+          for (int i=0; i<x.size(); i++)
+            if (x[i] == 0)
+              return false;
+          return true;
         }
         GECODE_NEVER;
         return false;
       }
 
       virtual void
-      post(Gecode::Space& home, Gecode::IntVarArray& x) {
+      post(Gecode::Space& home, Gecode::OpenIntVarList list,
+           Gecode::IntVarArray&) {
         using namespace Gecode;
-        OpenIntVarList list(home,x.size());
         switch (kind) {
         case Kind::DISTINCT:
           distinct(home,list);
@@ -624,10 +643,13 @@ namespace Test { namespace Int {
           rel(home,list,IRT_LE);
           break;
         case Kind::SLIDING:
-          Gecode::sequence(home,list,IntSet(1,1),2,1,1);
+          Gecode::sequence(home,list,IntSet(1,1),width,1,1);
           break;
         case Kind::SLIDING_SUM:
-          slidingsum(home,list,2,2,2);
+          slidingsum(home,list,width,2,2,ipl);
+          break;
+        case Kind::SLIDING_RANGE:
+          slidingsum(home,list,width,1,3,ipl);
           break;
         case Kind::MIN_MAX: {
           IntVar minimum(home,0,0);
@@ -639,10 +661,98 @@ namespace Test { namespace Int {
         case Kind::PRECEDE:
           precede(home,list,0,1);
           break;
+        case Kind::PRECEDE_SAME:
+          precede(home,list,0,0);
+          break;
         }
-        for (int i=0; i<x.size(); i++)
-          list.append(home,x[i]);
-        list.close(home);
+      }
+    };
+
+    /// Extremum bounds must follow old items as well as newly appended items
+    class Extremum : public OpenTest {
+      bool minimum;
+      bool alias;
+    public:
+      Extremum(bool minimum0, bool alias0, Gecode::IntPropLevel level)
+        : OpenTest(std::string("OpenList::")+(minimum0 ? "Min" : "Max")+
+                   (alias0 ? "Alias::" : "Result::")+str(level),
+                   3,alias0 ? 0 : 1,Gecode::IntSet(0,2),level),
+          minimum(minimum0), alias(alias0) {}
+
+      bool solution(const Assignment& x) const override {
+        int value = x[0];
+        for (int i=1; i<3; i++)
+          value = minimum ? std::min(value,x[i]) : std::max(value,x[i]);
+        return value == x[alias ? 0 : 3];
+      }
+
+      void post(Gecode::Space& home, Gecode::OpenIntVarList list,
+                Gecode::IntVarArray& x) override {
+        if (minimum)
+          Gecode::min(home,list,x[alias ? 0 : 3],ipl);
+        else
+          Gecode::max(home,list,x[alias ? 0 : 3],ipl);
+      }
+    };
+
+    /// Bounds propagate through existing items before the list is closed
+    class ExtremumBounds : public ::Test::Base {
+      class BoundsSpace : public Gecode::Space {
+      public:
+        Gecode::OpenIntVarList list;
+        Gecode::IntVar minimum;
+        Gecode::IntVar maximum;
+
+        BoundsSpace(void)
+          : list(*this,Gecode::IntSet(0,10),5),
+            minimum(*this,0,10), maximum(*this,0,10) {
+          Gecode::min(*this,list,minimum);
+          Gecode::max(*this,list,maximum);
+        }
+        BoundsSpace(BoundsSpace& s) : Gecode::Space(s) {
+          list.update(*this,s.list);
+          minimum.update(*this,s.minimum);
+          maximum.update(*this,s.maximum);
+        }
+        Gecode::Space* copy(void) override { return new BoundsSpace(*this); }
+      };
+    public:
+      ExtremumBounds(void)
+        : ::Test::Base("Int::OpenList::ExtremumBounds",TestTags::check()) {}
+
+      bool run(void) override {
+        using namespace Gecode;
+        BoundsSpace source;
+        source.list.materialize(source,2);
+        if (source.status() == SS_FAILED)
+          return false;
+        rel(source,source.list[0],IRT_GQ,4);
+        rel(source,source.list[1],IRT_GQ,6);
+        rel(source,source.list[0],IRT_LQ,7);
+        rel(source,source.list[1],IRT_LQ,8);
+        if ((source.status() == SS_FAILED) ||
+            (source.maximum.min() != 6) || (source.minimum.max() != 7) ||
+            (source.minimum.min() != 0) || (source.maximum.max() != 10))
+          return false;
+        rel(source,source.minimum,IRT_GQ,5);
+        rel(source,source.maximum,IRT_LQ,7);
+        if ((source.status() == SS_FAILED) ||
+            (source.list[0].min() != 5) || (source.list[1].min() != 6) ||
+            (source.list[0].max() != 7) || (source.list[1].max() != 7))
+          return false;
+        std::unique_ptr<BoundsSpace> clone
+          (static_cast<BoundsSpace*>(source.clone()));
+        clone->list.materialize(*clone,3);
+        if ((clone->status() == SS_FAILED) ||
+            (clone->list[2].min() != 5) || (clone->list[2].max() != 7) ||
+            (source.list.known_length() != 2))
+          return false;
+        rel(*clone,clone->list[2],IRT_EQ,5);
+        if ((clone->status() == SS_FAILED) || (clone->minimum.max() != 5) ||
+            (source.minimum.max() != 7))
+          return false;
+        rel(source,source.maximum,IRT_LQ,5);
+        return source.status() == SS_FAILED;
       }
     };
 
@@ -1315,8 +1425,24 @@ namespace Test { namespace Int {
     Constraint relation("Rel",Constraint::Kind::REL,3);
     Constraint sliding("Sliding",Constraint::Kind::SLIDING,4);
     Constraint sliding_sum("SlidingSum",Constraint::Kind::SLIDING_SUM,4);
+    Constraint sliding_range("SlidingSumRange",Constraint::Kind::SLIDING_RANGE,4);
     Constraint min_max("MinMax",Constraint::Kind::MIN_MAX,3);
     Constraint precedence("Precede",Constraint::Kind::PRECEDE,3);
+    Constraint precedence_same("PrecedeSame",Constraint::Kind::PRECEDE_SAME,3);
+    Constraint sliding_three("Sliding3",Constraint::Kind::SLIDING,5,3);
+    Constraint sum_three("SlidingSum3",Constraint::Kind::SLIDING_SUM,5,3);
+    Constraint sum_three_dom("SlidingSum3Dom",Constraint::Kind::SLIDING_SUM,
+                             5,3,Gecode::IPL_DOM);
+    Constraint sum_two_bnd("SlidingSum2Bnd",Constraint::Kind::SLIDING_SUM,
+                           4,2,Gecode::IPL_BND);
+    Constraint range_three("SlidingSumRange3",Constraint::Kind::SLIDING_RANGE,5,3);
+    Extremum min_result(true,false,Gecode::IPL_BND);
+    Extremum max_result(false,false,Gecode::IPL_BND);
+    Extremum min_domain(true,false,Gecode::IPL_DOM);
+    Extremum max_domain(false,false,Gecode::IPL_DOM);
+    Extremum min_alias(true,true,Gecode::IPL_DOM);
+    Extremum max_alias(false,true,Gecode::IPL_DOM);
+    ExtremumBounds extremum_bounds;
     EmptyMinimum empty_minimum;
     IncrementalConstraints incremental_constraints;
 

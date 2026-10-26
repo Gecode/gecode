@@ -36,6 +36,7 @@
 #include "test/int.hh"
 
 #include <algorithm>
+#include <memory>
 
 namespace Test { namespace Int {
 
@@ -1153,6 +1154,179 @@ do {                                                            \
     delete ap;
 
     return false;
+  }
+
+  OpenTest::OpenTest(const std::string& name, int items0, int extra,
+                     const Gecode::IntSet& domain, Gecode::IntPropLevel level)
+    : Test(name,items0+extra,domain,false,level), items(items0) {}
+
+  void
+  OpenTest::post(Gecode::Space& home, Gecode::IntVarArray& x) {
+    Gecode::OpenIntVarList list(home,dom,items);
+    post(home,list,x);
+    for (int i=0; i<items; i++)
+      list.append(home,x[i]);
+    list.close(home);
+  }
+
+  /// Keep the item factory attached to the space being materialized or cloned
+  class OpenTestSpace : public TestSpace {
+  public:
+    int items;
+    Gecode::OpenIntVarList list;
+
+    OpenTestSpace(int arity, Gecode::IntSet& domain, OpenTest* test, int items0)
+      : TestSpace(arity,domain,test), items(items0),
+        list(Gecode::OpenVarList<Gecode::IntVar>(*this,
+          [](Gecode::Space& home, int i) {
+            OpenTestSpace& s = static_cast<OpenTestSpace&>(home);
+            return (i < s.items) ? s.x[i] : Gecode::IntVar(home,s.d);
+          },items+1)) {}
+
+    OpenTestSpace(OpenTestSpace& s)
+      : TestSpace(s), items(s.items) {
+      list.update(*this,s.list);
+    }
+
+    Gecode::Space* copy(void) override {
+      return new OpenTestSpace(*this);
+    }
+
+    void post_open(void) {
+      if (opt.log)
+        olog << ind(3) << "Posting with " << list.known_length()
+             << " open-list items" << std::endl;
+      static_cast<OpenTest*>(test)->post(*this,list,x);
+    }
+
+    /// Whether the complete target is still available after propagation
+    bool retains(const Assignment& a) {
+      if (failed() || !list.length().in(items))
+        return false;
+      for (int i=0; i<x.size(); i++)
+        if (!x[i].in(a[i]))
+          return false;
+      return true;
+    }
+  };
+
+  bool
+  OpenTest::run(void) {
+    using namespace Gecode;
+    if (!Test::run())
+      return false;
+
+    // Bound expensive histories, retaining both solutions and non-solutions.
+    int solutions = 0;
+    int nonsolutions = 0;
+    std::unique_ptr<Assignment> assignments(assignment());
+    Assignment& a = *assignments;
+    for (; a.has_more() && ((solutions < 16) || (nonsolutions < 16));
+         a.next(_rand)) {
+      const bool sol = solution(a);
+      int& checked = sol ? solutions : nonsolutions;
+      if (checked == 16)
+        continue;
+      checked++;
+      if (opt.log) {
+        olog.str("");
+        olog << ind(1) << "Open-list assignment: " << a
+             << (sol ? " (solution)" : " (no solution)") << std::endl;
+      }
+
+      const auto complete = [&](OpenTestSpace& s) {
+        s.list.materialize(s,items);
+        if (_rand(2) == 0)
+          s.list.close(s);
+        s.assign(a,false,_rand);
+        s.list.close(s);
+        Gecode::rel(s,s.list.length(),IRT_EQ,items);
+        return s.failed() == !sol;
+      };
+
+      const auto history = [&]() {
+        OpenTestSpace s(arity,dom,this,items);
+        const int post_at = (items == 0) ? 0 :
+          static_cast<int>(_rand(static_cast<unsigned int>(items)));
+        const int clone_at = (items == 0) ? 0 : post_at +
+          static_cast<int>(_rand(static_cast<unsigned int>(items-post_at)));
+        for (int n=0; n<=items; n++) {
+          if (n == post_at)
+            s.post_open();
+          if (!s.retains(a))
+            return complete(s);
+
+          // Restrict an old item or an auxiliary variable, keeping the target.
+          const int known = std::min(items,s.list.known_length());
+          const int available = known+arity-items;
+          if (available > 0) {
+            int i = static_cast<int>
+              (_rand(static_cast<unsigned int>(available)));
+            if (i >= known)
+              i += items-known;
+            if (!s.x[i].assigned()) {
+              if (_rand(4) == 0) {
+                s.rel(i,IRT_EQ,a[i]);
+              } else {
+                IntRelType relation;
+                int value;
+                s.rndrel(a,i,relation,value,_rand);
+                if (relation != IRT_EQ)
+                  s.rel(i,relation,value);
+              }
+            }
+          }
+          if (!s.retains(a))
+            return complete(s);
+
+          if (n == clone_at) {
+            if (opt.log)
+              olog << ind(3) << "Cloning open list" << std::endl;
+            const int before = s.list.known_length();
+            const int length_min = s.list.length().min();
+            const int length_max = s.list.length().max();
+            IntArgs sizes(arity);
+            for (int i=0; i<arity; i++)
+              sizes[i] = static_cast<int>(s.x[i].size());
+            std::unique_ptr<OpenTestSpace> c
+              (static_cast<OpenTestSpace*>(s.clone()));
+            if (!complete(*c))
+              return false;
+            if ((s.list.known_length() != before) ||
+                (s.list.length().min() != length_min) ||
+                (s.list.length().max() != length_max))
+              return false;
+            for (int i=0; i<arity; i++)
+              if (s.x[i].size() != static_cast<unsigned int>(sizes[i]))
+                return false;
+          }
+
+          if ((n < items) && (s.list.known_length() <= n)) {
+            const int end = std::min(items,n+1+static_cast<int>(_rand(2)));
+            if (_rand(2) == 0) {
+              if (opt.log)
+                olog << ind(3) << "Appending through item " << end-1
+                     << std::endl;
+              for (int i=s.list.known_length(); i<end; i++)
+                s.list.append(s,s.x[i]);
+            } else {
+              if (opt.log)
+                olog << ind(3) << "Requiring " << end << " items"
+                     << std::endl;
+              Gecode::rel(s,s.list.length(),IRT_GQ,end);
+            }
+          }
+        }
+        return complete(s);
+      };
+
+      if (!history()) {
+        if (opt.log)
+          olog << "FAILURE in incremental open-list history" << std::endl;
+        return false;
+      }
+    }
+    return true;
   }
 
 }}

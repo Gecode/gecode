@@ -393,6 +393,37 @@ namespace Test {
       template<class T> static bool cmp(T x, Gecode::IntRelType r, T y);
       //@}
     };
+
+    /**
+     * \brief Integer constraint tests with incremental open-list histories
+     *
+     * The first items assignment entries belong to the list; the remaining
+     * extra entries are auxiliary variables. Override solution() for that
+     * complete relation and the open-list post() overload. All variables use
+     * the supplied domain, including auxiliary variables; restrictions posted
+     * by the test must also be represented in solution().
+     *
+     * Runs the ordinary closed-list tests and bounded randomized histories
+     * that post, grow, prune, clone, and close the list. During these histories
+     * one additional position remains possible until the list is closed.
+     */
+    class GECODE_TESTINT_EXPORT OpenTest : public Test {
+    protected:
+      /// Number of items in the completed list
+      int items;
+    public:
+      /// Initialize item and auxiliary variables with the common domain
+      OpenTest(const std::string& name, int items, int extra,
+               const Gecode::IntSet& domain,
+               Gecode::IntPropLevel ipl=Gecode::IPL_DEF);
+      /// Post the tested relation on an open list and its variable array
+      virtual void post(Gecode::Space& home, Gecode::OpenIntVarList list,
+                        Gecode::IntVarArray& x) = 0;
+      /// Adapt the relation to the ordinary closed-list tests
+      void post(Gecode::Space& home, Gecode::IntVarArray& x) override;
+      /// Run closed-list tests and incremental histories
+      bool run(void) override;
+    };
     //@}
 
     /// Iterator for simple integer propagation levels

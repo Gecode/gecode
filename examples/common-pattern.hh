@@ -370,6 +370,8 @@ namespace PatternMining {
 
     ExecStatus propagate(Space& home, const ModEventDelta&) override {
       const int size = list.known_length();
+      // Earlier positions remain filtered until the assigned prefix changes.
+      int first = subscribed;
       for (int i=subscribed; i<size; i++)
         if (!list[i].assigned())
           Int::IntView(list[i]).subscribe(home,*this,Int::PC_INT_VAL,false);
@@ -395,16 +397,18 @@ namespace PatternMining {
           }
           frequent_items = projection.frequent(region);
           cached_prefix = consumed;
+          first = consumed;
         }
         if (frequent_items.size() == 0) {
           GECODE_ME_CHECK(length.lq(home,consumed));
           GECODE_ME_CHECK(frequency.eq(home,projection.support()));
           return home.ES_SUBSUMED(*this);
         }
-        for (int i=consumed; i<size; i++) {
+        for (int i=first; i<size; i++) {
           IntSetValues values(frequent_items);
           GECODE_ME_CHECK(Int::IntView(list[i]).inter_v(home,values,false));
         }
+        first = size;
         if ((consumed == size) || !list[consumed].assigned())
           return ES_FIX;
       }

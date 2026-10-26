@@ -2698,6 +2698,7 @@ namespace Gecode {
    * Each complete window of size \a q, including windows completed after
    * posting, contains between \a l and \a u values from \a s. A list shorter
    * than \a q has no complete windows and satisfies the constraint.
+   * Domain filtering is enforced for each window separately; \a ipl is ignored.
    *
    * \ingroup TaskModelIntSequence
    */
@@ -2711,6 +2712,9 @@ namespace Gecode {
    * Each complete window of size \a q, including windows completed after
    * posting, has a sum between \a l and \a u. A list shorter than \a q has no
    * complete windows and satisfies the constraint.
+   * Unequal bounds use bounds propagation. For equality, \a ipl selects
+   * bounds or domain propagation; the default is domain propagation for
+   * windows of size at most two and bounds propagation for larger windows.
    *
    * \ingroup TaskModelIntSequence
    */
