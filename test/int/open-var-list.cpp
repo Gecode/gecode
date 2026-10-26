@@ -704,11 +704,17 @@ namespace Test { namespace Int {
     protected:
       Kind kind;
       int width;
+      Gecode::IntRelType relation;
     public:
       Constraint(const std::string& name, Kind k, int size, int width0=2,
                  Gecode::IntPropLevel level=Gecode::IPL_DEF)
         : OpenTest("OpenList::"+name,size,0,Gecode::IntSet(0,2),level),
-          kind(k), width(width0) {}
+          kind(k), width(width0), relation(Gecode::IRT_LE) {}
+
+      Constraint(Gecode::IntRelType relation0, Gecode::IntPropLevel level)
+        : OpenTest("OpenList::Rel::"+str(relation0)+"::"+str(level),
+                   3,0,Gecode::IntSet({0,2,5}),level),
+          kind(Kind::REL), width(0), relation(relation0) {}
 
       virtual bool
       solution(const Assignment& x) const {
@@ -721,7 +727,7 @@ namespace Test { namespace Int {
           return true;
         case Kind::REL:
           for (int i=1; i<x.size(); i++)
-            if (x[i-1] >= x[i])
+            if (!cmp(x[i-1],relation,x[i]))
               return false;
           return true;
         case Kind::SLIDING:
@@ -781,7 +787,7 @@ namespace Test { namespace Int {
           distinct(home,list);
           break;
         case Kind::REL:
-          rel(home,list,IRT_LE);
+          rel(home,list,relation,ipl);
           break;
         case Kind::SLIDING:
           Gecode::sequence(home,list,IntSet(1,1),width,1,1);
@@ -1570,7 +1576,13 @@ namespace Test { namespace Int {
     Transition transition;
     Views views;
     Constraint distinct("Distinct",Constraint::Kind::DISTINCT,3);
-    Constraint relation("Rel",Constraint::Kind::REL,3);
+    Constraint rel_eq(Gecode::IRT_EQ,Gecode::IPL_BND);
+    Constraint rel_eq_dom(Gecode::IRT_EQ,Gecode::IPL_DOM);
+    Constraint rel_nq(Gecode::IRT_NQ,Gecode::IPL_DEF);
+    Constraint rel_lq(Gecode::IRT_LQ,Gecode::IPL_DEF);
+    Constraint rel_le(Gecode::IRT_LE,Gecode::IPL_DEF);
+    Constraint rel_gq(Gecode::IRT_GQ,Gecode::IPL_DEF);
+    Constraint rel_gr(Gecode::IRT_GR,Gecode::IPL_DEF);
     Constraint sliding("Sliding",Constraint::Kind::SLIDING,4);
     Constraint sliding_one("Sliding1",Constraint::Kind::SLIDING,3,1);
     Constraint sliding_sum("SlidingSum",Constraint::Kind::SLIDING_SUM,4);
