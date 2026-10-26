@@ -351,6 +351,7 @@ INTSRC0 = \
 
 INTHDR0 = \
 	open-var-list.hpp \
+	growable-int-set.hh growable-int-set.hpp \
 	limits.hpp support-values.hh support-values.hpp \
 	idx-view.hh idx-view.hpp div.hh div.hpp \
 	exec.hh exec/when.hpp \

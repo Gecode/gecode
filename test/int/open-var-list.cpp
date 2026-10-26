@@ -34,6 +34,7 @@
 #include "test/int.hh"
 #include "examples/common-pattern.hh"
 
+#include <gecode/int/growable-int-set.hh>
 #include <gecode/search.hh>
 
 #ifdef GECODE_HAS_SET_VARS
@@ -999,6 +1000,141 @@ namespace Test { namespace Int {
         return new CallbackSpace(*this);
       }
     };
+
+    /// Range unions and later clone growth preserve canonical sets
+    class GrowableIntSet : public ::Test::Base {
+      class SetSpace : public Gecode::Space {
+      public:
+        Gecode::Int::GrowableIntSet values;
+
+        SetSpace(void) {}
+
+        SetSpace(SetSpace& s) : Gecode::Space(s) {
+          values.update(*this,s.values);
+        }
+
+        ~SetSpace(void) {
+          values.dispose(*this);
+        }
+
+        Gecode::Space* copy(void) override {
+          return new SetSpace(*this);
+        }
+      };
+
+      static bool
+      check(const SetSpace& home, const Gecode::IntSet& expected) {
+        Gecode::Int::GrowableIntSetRanges actual(home.values);
+        Gecode::IntSetRanges ranges(expected);
+        for (; actual() && ranges(); ++actual, ++ranges) {
+          if ((actual.min() != ranges.min()) ||
+              (actual.max() != ranges.max()) ||
+              (actual.width() != ranges.width()))
+            return false;
+          for (int value : {ranges.min()-1,ranges.min(),
+                            ranges.max(),ranges.max()+1})
+            if (home.values.in(value) != expected.in(value))
+              return false;
+        }
+        if (actual() || ranges())
+          return false;
+        for (int value=-40; value<=40; value++)
+          if (home.values.in(value) != expected.in(value))
+            return false;
+        return true;
+      }
+
+      static bool
+      add(SetSpace& home, std::set<int>& expected,
+          const Gecode::IntSet& batch) {
+        Gecode::IntSetRanges ranges(batch);
+        home.values.add_r(home,ranges);
+        for (Gecode::IntSetValues values(batch); values(); ++values)
+          expected.insert(values.val());
+        const std::vector<int> values(expected.begin(),expected.end());
+        return check(home,Gecode::IntSet(values.data(),
+                                       static_cast<int>(values.size())));
+      }
+
+    public:
+      GrowableIntSet(void)
+        : ::Test::Base("Int::OpenList::GrowableIntSet",TestTags::check()) {}
+
+      bool run(void) override {
+        using namespace Gecode;
+        SetSpace source;
+        std::set<int> expected;
+        const IntSet batches[] = {
+          IntSet::empty, IntSet({10,12}), IntSet(10,12),
+          IntSet(-10,-8), IntSet(20,22), IntSet(0,2), IntSet(3,9),
+          IntSet(-9,-7), IntSet(18,20), IntSet(11,11),
+          IntSet({{-12,-9},{-6,1},{15,16},{19,24}}),
+          IntSet({Gecode::Int::Limits::min,Gecode::Int::Limits::max})
+        };
+        for (const IntSet& batch : batches)
+          if (!add(source,expected,batch))
+            return false;
+        if (source.status() == SS_FAILED)
+          return false;
+        std::unique_ptr<SetSpace> clone
+          (static_cast<SetSpace*>(source.clone()));
+        std::unique_ptr<SetSpace> sibling
+          (static_cast<SetSpace*>(source.clone()));
+        std::set<int> clone_expected(expected);
+        const IntSet growth({{-30,-29},{-20,-19},{14,14},{18,18},
+                             {26,26},{28,28},{30,30}});
+        if (!add(*clone,clone_expected,IntSet(26,26)) ||
+            !add(*clone,clone_expected,growth) ||
+            !add(source,expected,IntSet::empty) ||
+            !add(*sibling,expected,IntSet::empty))
+          return false;
+        // A single wide range exercises unsigned width and removes all holes.
+        const IntSet full(Gecode::Int::Limits::min,Gecode::Int::Limits::max);
+        IntSetRanges ranges(full);
+        source.values.add_r(source,ranges);
+        return check(source,full) &&
+          add(*clone,clone_expected,IntSet::empty) &&
+          add(*sibling,expected,IntSet::empty);
+      }
+    };
+
+    /// Historical values can trigger several waves of new assignments
+    class DistinctWaves : public ::Test::Base {
+    public:
+      DistinctWaves(void)
+        : ::Test::Base("Int::OpenList::DistinctWaves",TestTags::check()) {}
+
+      bool run(void) override {
+        using namespace Gecode;
+        CallbackSpace source([](int) { return IntSet(1,4); },
+                             [](Space&, OpenIntVarList, int) {});
+        distinct(source,source.list);
+        source.list.append(source,IntVar(source,1,1));
+        if (source.status() == SS_FAILED)
+          return false;
+        std::unique_ptr<CallbackSpace> duplicate
+          (static_cast<CallbackSpace*>(source.clone()));
+        // Reverse the chain so each assignment needs another pruning wave.
+        for (int lower=3; lower>=1; lower--)
+          source.list.append(source,IntVar(source,lower,lower+1));
+        if (source.status() == SS_FAILED)
+          return false;
+        for (int i=1; i<4; i++)
+          if (!source.list[i].assigned() || (source.list[i].val() != 5-i))
+            return false;
+        source.list.close(source);
+        if ((source.status() == SS_FAILED) ||
+            !source.list.length().assigned() ||
+            (source.list.length().val() != 4))
+          return false;
+        duplicate->list.append(*duplicate,IntVar(*duplicate,1,2));
+        duplicate->list.append(*duplicate,IntVar(*duplicate,1,2));
+        return duplicate->status() == SS_FAILED;
+      }
+    };
+
+    GrowableIntSet growable_int_set;
+    DistinctWaves distinct_waves;
 
     class GroupSpace : public Gecode::Space {
     public:

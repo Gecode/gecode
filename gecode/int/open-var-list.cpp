@@ -34,6 +34,7 @@
 #include <gecode/int/branch.hh>
 #include <gecode/int/arithmetic.hh>
 #include <gecode/int/distinct.hh>
+#include <gecode/int/growable-int-set.hh>
 #include <gecode/int/linear.hh>
 #include <gecode/int/rel.hh>
 #include <gecode/int/sequence.hh>
@@ -145,7 +146,7 @@ namespace Gecode { namespace Int {
     /// Variables whose assigned values have not yet been propagated
     std::vector<View> active;
     /// Values already excluded from active variables, retained for growth
-    IntSet assigned;
+    GrowableIntSet assigned;
 
     OpenDistinct(Home home, OpenViewList<View> list)
       : OpenListPropagator<View>(home,list) {
@@ -153,13 +154,14 @@ namespace Gecode { namespace Int {
     }
 
     OpenDistinct(Space& home, OpenDistinct& p)
-      : OpenListPropagator<View>(home,p), assigned(p.assigned) {
+      : OpenListPropagator<View>(home,p) {
       active.reserve(p.active.size());
       for (View x : p.active) {
         View y;
         y.update(home,x);
         active.push_back(y);
       }
+      assigned.update(home,p.assigned);
     }
 
   public:
@@ -179,8 +181,13 @@ namespace Gecode { namespace Int {
       const int size = list.known_length();
       for (int i=posted; i<size; i++) {
         View x(list[i]);
-        IntSetRanges old(assigned);
-        GECODE_ME_CHECK(x.minus_r(home,old,false));
+        if (x.assigned()) {
+          if (assigned.in(x.val()))
+            return ES_FAILED;
+        } else {
+          GrowableIntSetRanges old(assigned);
+          GECODE_ME_CHECK(x.minus_r(home,old,false));
+        }
         active.push_back(x);
         if (!x.assigned())
           x.subscribe(home,*this,PC_INT_VAL,false);
@@ -188,29 +195,42 @@ namespace Gecode { namespace Int {
       posted = size;
 
       Region region;
-      int* values = region.alloc<int>(static_cast<int>(active.size()));
+      const int capacity = static_cast<int>(active.size());
+      int* current = region.alloc<int>(capacity);
+      int* next = region.alloc<int>(capacity);
+      int count = 0;
+      for (int i=static_cast<int>(active.size()); i--; )
+        if (active[i].assigned()) {
+          current[count++] = active[i].val();
+          active[i] = active.back();
+          active.pop_back();
+        }
+
+      typedef Iter::Values::ToRanges<Iter::Values::Array> BatchRanges;
       while (true) {
-        int n = 0;
-        for (int i=static_cast<int>(active.size()); i--; )
+        if (count == 0)
+          break;
+
+        Support::quicksort(current,count);
+        for (int i=1; i<count; i++)
+          if (current[i-1] == current[i])
+            return ES_FAILED;
+
+        Iter::Values::Array values(current,count);
+        BatchRanges batch(values);
+        int next_count = 0;
+        for (int i=static_cast<int>(active.size()); i--; ) {
+          BatchRanges removed(batch);
+          GECODE_ME_CHECK(active[i].minus_r(home,removed,false));
           if (active[i].assigned()) {
-            values[n++] = active[i].val();
+            next[next_count++] = active[i].val();
             active[i] = active.back();
             active.pop_back();
           }
-        if (n == 0)
-          break;
-
-        IntSet delta(values,n);
-        if (delta.size() != static_cast<unsigned int>(n))
-          return ES_FAILED;
-        IntSetRanges old(assigned);
-        IntSetRanges added(delta);
-        Iter::Ranges::Union<IntSetRanges,IntSetRanges> both(old,added);
-        assigned = IntSet(both);
-        for (View x : active) {
-          IntSetRanges removed(delta);
-          GECODE_ME_CHECK(x.minus_r(home,removed,false));
         }
+        assigned.add_r(home,batch);
+        std::swap(current,next);
+        count = next_count;
       }
 
       if (closed()) {
@@ -237,7 +257,7 @@ namespace Gecode { namespace Int {
         if (!x.assigned())
           x.cancel(home,*this,PC_INT_VAL);
       active.~vector();
-      assigned.~IntSet();
+      assigned.dispose(home);
       OpenListPropagator<View>::dispose_base(home);
       return sizeof(*this);
     }
