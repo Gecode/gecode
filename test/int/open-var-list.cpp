@@ -366,6 +366,81 @@ namespace Test { namespace Int {
       }
     };
 
+    template<class Var>
+    class AliasSpace : public Gecode::Space {
+    public:
+      Gecode::OpenVarList<Var> list;
+
+      AliasSpace(void)
+        : list(*this,[](Gecode::Space& home, int) {
+            return Var(home,0,1);
+          },16) {}
+
+      AliasSpace(AliasSpace& s) : Gecode::Space(s) {
+        list.update(*this,s.list);
+      }
+
+      virtual Gecode::Space*
+      copy(void) {
+        return new AliasSpace(*this);
+      }
+
+      bool
+      rejects(int i) {
+        const int n = list.known_length();
+        try {
+          list.append(*this,list[i]);
+        } catch (const Gecode::Int::ArgumentSame&) {
+          return list.known_length() == n;
+        }
+        return false;
+      }
+    };
+
+    class Aliases : public ::Test::Base {
+    protected:
+      template<class Var>
+      static bool
+      check(void) {
+        using namespace Gecode;
+        AliasSpace<Var> source;
+        Var assigned(source,0,0);
+        source.list.append(source,assigned);
+        source.list.append(source,assigned);
+        Var first(source,0,1);
+        source.list.append(source,first);
+        source.list.append(source,Var(source,0,1));
+        if (!source.rejects(2))
+          return false;
+        rel(source,first,IRT_EQ,0);
+        source.list.append(source,first);
+        if ((source.list.known_length() != 5) ||
+            (source.status() == SS_FAILED))
+          return false;
+        std::unique_ptr<AliasSpace<Var>> clone
+          (static_cast<AliasSpace<Var>*>(source.clone()));
+        if (!clone->rejects(3))
+          return false;
+        clone->list.append(*clone,Var(*clone,0,1));
+        rel(*clone,clone->list[3],IRT_EQ,0);
+        clone->list.append(*clone,clone->list[3]);
+        return (clone->list.known_length() == 7) &&
+          (clone->status() != SS_FAILED) &&
+          (source.list.known_length() == 5) &&
+          !source.list[3].assigned() && source.rejects(3);
+      }
+
+    public:
+      Aliases(void) : ::Test::Base("Int::OpenList::Aliases",TestTags::check()) {}
+
+      virtual bool
+      run(void) {
+        return check<Gecode::IntVar>() && check<Gecode::BoolVar>();
+      }
+    };
+
+    Aliases aliases;
+
     class FactorySpace : public Gecode::Space {
     public:
 #ifdef GECODE_HAS_SET_VARS

@@ -52,6 +52,11 @@ namespace Gecode {
     Var* x;
     int n;
     int capacity;
+    typedef std::unordered_set<const void*> VarImpSet;
+    VarImpSet identities;
+    // Only committed positions are indexed. Entries can remain after assignment
+    // because assigned candidates do not need an alias check.
+    int indexed;
     SharedData<Functions> functions;
 
     static int
@@ -80,7 +85,7 @@ namespace Gecode {
       : LocalObject(home),
         length(home,0,checked_maximum(max)),
         materialized(home,0,max),
-        x(nullptr), n(0), capacity(0),
+        x(nullptr), n(0), capacity(0), indexed(0),
         functions(Functions(checked(create),Transition())) {
       home.notice(*this,AP_DISPOSE);
     }
@@ -89,13 +94,13 @@ namespace Gecode {
       : LocalObject(home),
         length(home,0,checked_maximum(max)),
         materialized(home,0,max),
-        x(nullptr), n(0), capacity(0),
+        x(nullptr), n(0), capacity(0), indexed(0),
         functions(Functions(checked(create),checked(t))) {
       home.notice(*this,AP_DISPOSE);
     }
 
     Object(Space& home, Object& s)
-      : LocalObject(home,s), x(nullptr), n(s.n), capacity(s.n),
+      : LocalObject(home,s), x(nullptr), n(s.n), capacity(s.n), indexed(0),
         functions(s.functions) {
       length.update(home,s.length);
       materialized.update(home,s.materialized);
@@ -121,8 +126,23 @@ namespace Gecode {
       home.ignore(*this,AP_DISPOSE);
       if (capacity > 0)
         heap.free<Var>(x,capacity);
+      identities.~VarImpSet();
       functions.~SharedData<Functions>();
       return sizeof(*this);
+    }
+
+    void
+    check_alias(Var y) {
+      if (y.assigned())
+        return;
+      // A clone rebuilds this index lazily with its own variable identities.
+      // Deferring the newest position also keeps allocation failures ahead of
+      // any changes to length or materialized during append.
+      for (; indexed<n; indexed++)
+        if (!x[indexed].assigned())
+          identities.insert(x[indexed].varimp());
+      if (identities.find(y.varimp()) != identities.end())
+        throw Int::ArgumentSame("OpenVarList::append");
     }
 
     void
@@ -270,10 +290,7 @@ namespace Gecode {
       home.fail();
       return;
     }
-    if (!y.assigned())
-      for (int i=0; i<s->n; i++)
-        if (y.varimp() == s->x[i].varimp())
-          throw Int::ArgumentSame("OpenVarList::append");
+    s->check_alias(y);
     s->reserve();
     const int next = s->n + 1;
     Int::IntView l(s->length);
