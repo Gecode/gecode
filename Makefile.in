@@ -323,7 +323,9 @@ INTSRC0 = \
 	int-set.cpp var-imp/int.cpp var-imp/bool.cpp var/int.cpp \
 	var/bool.cpp array.cpp bool.cpp bool/eqv.cpp \
 	extensional/dfa.cpp extensional/tuple-set.cpp \
-	extensional-regular.cpp extensional-tuple-set.cpp \
+	extensional-regular.cpp \
+	extensional-tuple-set.cpp \
+	open-var-list.cpp \
 	dom.cpp rel.cpp precede.cpp element.cpp count.cpp \
 	arithmetic.cpp exec.cpp \
 	exec/when.cpp element/pair.cpp \
@@ -348,6 +350,10 @@ INTSRC0 = \
 	exception.cpp
 
 INTHDR0 = \
+	open-var-list.hpp open-propagator.hpp \
+	distinct/open.hpp rel/open.hpp sequence/open.hpp \
+	arithmetic/open.hpp precede/open.hpp extensional/open.hpp branch/open.hpp \
+	growable-int-set.hh growable-int-set.hpp \
 	limits.hpp support-values.hh support-values.hpp \
 	idx-view.hh idx-view.hpp div.hh div.hpp \
 	exec.hh exec/when.hpp \
@@ -906,10 +912,11 @@ INTEXAMPLESRC0 =						\
 	word-square crossword open-shop car-sequencing sat      \
 	bin-packing knights tsp perfect-square schurs-lemma     \
 	dominating-queens colored-matrix multi-bin-packing	\
-	qcp job-shop
+	qcp job-shop open-route common-pattern fifteen-puzzle
 
 
-INTEXAMPLEHDR  = $(INTEXAMPLEHDR0:%=examples/%.hpp)
+INTEXAMPLEHDR  = $(INTEXAMPLEHDR0:%=examples/%.hpp) \
+	examples/common-pattern.hh
 INTEXAMPLESRC  = $(INTEXAMPLESRC0:%=examples/%.cpp)
 ifeq "@enable_examples@" "yes"
 INSTALLEXAMPLEHDR = $(INTEXAMPLEHDR)
@@ -1119,7 +1126,7 @@ EXETARGETS = $(FLATZINCEXE) $(FLATZINCLAUNCHER)
 
 INTTESTSRC00 = \
 	channel arithmetic basic bool count dom distinct element extensional \
-	rel linear gcc sorted unshare exec sequence \
+	rel linear gcc sorted unshare exec sequence open-var-list \
 	mm-arithmetic mm-bool mm-lin mm-count mm-rel \
 	bin-packing order unary cumulative cumulatives circuit \
 	no-overlap precede inter-distance nvalues member min-distance

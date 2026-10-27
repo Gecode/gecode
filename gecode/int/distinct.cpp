@@ -205,6 +205,12 @@ namespace Gecode {
     }
   }
 
+  void
+  distinct(Home home, OpenIntVarList list, IntPropLevel) {
+    GECODE_POST;
+    Int::Distinct::Open<Int::IntView>::post(home,OpenViewList<Int::IntView>(list));
+  }
+
 }
 
 // STATISTICS: int-post

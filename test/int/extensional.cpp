@@ -855,6 +855,298 @@ namespace Test { namespace Int {
        }
      };
 
+     /// Space used by open regular tests
+     class OpenRegularSpace : public Gecode::Space {
+     public:
+       Gecode::IntVarArray x;
+       Gecode::OpenIntVarList list;
+
+       OpenRegularSpace(Gecode::DFA d, int max=8)
+         : x(*this,3,0,2), list(*this,max) {
+         Gecode::extensional(*this,list,d);
+       }
+
+       OpenRegularSpace(OpenRegularSpace& s)
+         : Gecode::Space(s) {
+         x.update(*this,s.x);
+         list.update(*this,s.list);
+       }
+
+       virtual Gecode::Space*
+       copy(void) {
+         return new OpenRegularSpace(*this);
+       }
+     };
+
+     /// Test appending and closing an open regular list
+     class OpenRegularIncremental : public ::Test::Base {
+     public:
+       OpenRegularIncremental(void)
+         : ::Test::Base("Int::Extensional::OpenReg::Incremental",
+                        TestTags::check()) {}
+
+       virtual bool
+       run(void) {
+         using namespace Gecode;
+         DFA d(0,{{0,0,1},{1,1,2}},{2},false);
+         OpenRegularSpace s(d);
+
+         if (s.status() == SS_FAILED)
+           return false;
+         s.list.append(s,s.x[0]);
+         if ((s.status() == SS_FAILED) ||
+             !s.x[0].assigned() || (s.x[0].val() != 0))
+           return false;
+         s.list.append(s,s.x[1]);
+         if ((s.status() == SS_FAILED) ||
+             !s.x[1].assigned() || (s.x[1].val() != 1))
+           return false;
+         s.list.close(s);
+         if ((s.status() == SS_FAILED) ||
+             !s.list.length().assigned() ||
+             (s.list.length().val() != 2))
+           return false;
+
+         // Pruning the first item to 1 also closes its aliased length.
+         DFA alias_dfa(0,{{0,1,1},{1,2,2}},{2},false);
+         OpenRegularSpace alias(alias_dfa,2);
+         alias.list.append(alias,alias.list.length());
+         return alias.status() == SS_FAILED;
+       }
+     };
+
+     /// Materializing required positions wakes regular filtering
+     class OpenRegularLengthWake : public ::Test::Base {
+     public:
+       OpenRegularLengthWake(void)
+         : ::Test::Base("Int::Extensional::OpenReg::LengthWake") {}
+
+       virtual bool
+       run(void) {
+         using namespace Gecode;
+         DFA d(0,{{0,0,1},{1,1,2}},{2},false);
+         OpenRegularSpace s(d,3);
+         rel(s,s.list.length(),IRT_GQ,2);
+         if (s.status() == SS_FAILED)
+           return false;
+         return (s.list.known_length() == 2) &&
+                s.list[0].assigned() &&
+                (s.list[0].val() == 0) &&
+                s.list[1].assigned() &&
+                (s.list[1].val() == 1);
+       }
+     };
+
+     /// Filter prefixes whose accepting continuations exceed the length bound
+     class OpenRegularMaxLength : public ::Test::Base {
+     public:
+       OpenRegularMaxLength(void)
+         : ::Test::Base("Int::Extensional::OpenReg::MaxLength",
+                        TestTags::check()) {}
+
+       virtual bool
+       run(void) {
+         using namespace Gecode;
+         // Accept 00 or 1000: only the first word fits a maximum of three.
+         DFA d(0,{{0,0,1},{1,0,5},{0,1,2},{2,0,3},{3,0,4},{4,0,5}},
+               {5},false);
+         OpenRegularSpace short_list(d,1);
+         if (short_list.status() != SS_FAILED)
+           return false;
+         OpenRegularSpace initial(d,3);
+         initial.list.append(initial,initial.x[0]);
+         if ((initial.status() == SS_FAILED) ||
+             !initial.x[0].assigned() || (initial.x[0].val() != 0))
+           return false;
+
+         OpenRegularSpace source(d,4);
+         source.list.append(source,source.x[0]);
+         if ((source.status() == SS_FAILED) || (source.x[0].size() != 2))
+           return false;
+         OpenRegularSpace* clone =
+           static_cast<OpenRegularSpace*>(source.clone());
+         rel(*clone,clone->list.length(),IRT_LQ,3);
+         const bool clone_ok = (clone->status() != SS_FAILED) &&
+           clone->x[0].assigned() && (clone->x[0].val() == 0);
+         delete clone;
+         if (!clone_ok || (source.x[0].size() != 2))
+           return false;
+
+         // A bound reduction also checks an already consumed prefix.
+         rel(source,source.x[0],IRT_EQ,1);
+         if (source.status() == SS_FAILED)
+           return false;
+         rel(source,source.list.length(),IRT_LQ,3);
+         if (source.status() != SS_FAILED)
+           return false;
+
+         // Keep the shorter nondeterministic path, even with a cycle.
+         DFA nfa = DFA::nfa(0,
+           {{0,0,1},{0,0,2},{1,0,3},{3,0,4},{4,0,5},{2,1,2},{2,0,5}},
+           {5});
+         OpenRegularSpace nondeterministic(nfa,2);
+         nondeterministic.list.append(nondeterministic,nondeterministic.x[0]);
+         if (nondeterministic.status() == SS_FAILED)
+           return false;
+         nondeterministic.list.append(nondeterministic,nondeterministic.x[1]);
+         if ((nondeterministic.status() == SS_FAILED) ||
+             !nondeterministic.x[1].assigned() ||
+             (nondeterministic.x[1].val() != 0))
+           return false;
+
+         // Pruning an item aliased with length lowers the maximum while open.
+         DFA alias_dfa(0,
+           {{0,2,1},{1,0,2},{2,0,3},{3,0,4},{0,3,5},{5,0,6},{6,0,4}},
+           {4},false);
+         OpenRegularSpace alias(alias_dfa,5);
+         alias.list.append(alias,alias.list.length());
+         alias.list.append(alias,alias.x[0]);
+         return (alias.status() != SS_FAILED) &&
+                alias.list.length().assigned() &&
+                (alias.list.length().val() == 3);
+       }
+     };
+
+     /// Test backward pruning after appending a restricted variable
+     class OpenRegularBackward : public ::Test::Base {
+     public:
+       OpenRegularBackward(void)
+         : ::Test::Base("Int::Extensional::OpenReg::Backward") {}
+
+       virtual bool
+       run(void) {
+         using namespace Gecode;
+         DFA d(0,
+               {
+                 {0,0,1}, {0,1,2},
+                 {1,0,3}, {2,1,4},
+                 {3,2,5}, {4,2,5}
+               },
+               {5},false);
+         OpenRegularSpace s(d);
+         rel(s,s.x[1],IRT_EQ,0);
+         s.list.append(s,s.x[0]);
+         if ((s.status() == SS_FAILED) ||
+             (s.x[0].min() != 0) || (s.x[0].max() != 1))
+           return false;
+         s.list.append(s,s.x[1]);
+         return (s.status() != SS_FAILED) &&
+                s.x[0].assigned() && (s.x[0].val() == 0);
+       }
+     };
+
+     /// Test domain notification on an appended variable
+     class OpenRegularDomainWake : public ::Test::Base {
+     public:
+       OpenRegularDomainWake(void)
+         : ::Test::Base("Int::Extensional::OpenReg::DomainWake") {}
+
+       virtual bool
+       run(void) {
+         using namespace Gecode;
+         DFA d(0,
+               {
+                 {0,0,1}, {0,1,2},
+                 {1,0,3}, {2,1,4},
+                 {3,2,5}, {4,2,5}
+               },
+               {5},false);
+         OpenRegularSpace s(d);
+         s.list.append(s,s.x[0]);
+         s.list.append(s,s.x[1]);
+         if ((s.status() == SS_FAILED) || s.x[0].assigned())
+           return false;
+         rel(s,s.x[1],IRT_EQ,0);
+         return (s.status() != SS_FAILED) &&
+                s.x[0].assigned() && (s.x[0].val() == 0);
+       }
+     };
+
+     /// Test independent extension after cloning
+     class OpenRegularClone : public ::Test::Base {
+     public:
+       OpenRegularClone(void)
+         : ::Test::Base("Int::Extensional::OpenReg::Clone",TestTags::check()) {}
+
+       virtual bool
+       run(void) {
+         using namespace Gecode;
+         DFA d(0,{{0,0,1},{1,1,2}},{2},false);
+         OpenRegularSpace source(d);
+         source.list.append(source,source.x[0]);
+         if (source.status() == SS_FAILED)
+           return false;
+
+         OpenRegularSpace* clone =
+           static_cast<OpenRegularSpace*>(source.clone());
+         clone->list.append(*clone,clone->x[1]);
+         clone->list.close(*clone);
+         const bool clone_ok =
+           (clone->status() != SS_FAILED) &&
+           (clone->list.known_length() == 2);
+         delete clone;
+
+         source.list.close(source);
+         const bool source_failed = source.status() == SS_FAILED;
+         return clone_ok && source_failed &&
+                (source.list.known_length() == 1);
+       }
+     };
+
+     /// Test empty words and automata without accepting states
+     class OpenRegularEmpty : public Test {
+     public:
+       enum class Kind { ACCEPT, REJECT, NO_FINALS };
+     protected:
+       Kind kind;
+     public:
+       OpenRegularEmpty(Kind k)
+         : Test("Extensional::OpenReg::Empty::"+str(static_cast<int>(k)),1,0,0),
+           kind(k) {}
+       virtual bool solution(const Assignment&) const {
+         return kind == Kind::ACCEPT;
+       }
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray&) {
+         using namespace Gecode;
+         OpenIntVarList list(home,8);
+         if (kind == Kind::ACCEPT) {
+           extensional(home,list,DFA());
+         } else if (kind == Kind::REJECT) {
+           extensional(home,list,DFA(0,{{0,0,1}},{1},false));
+         } else {
+           extensional(home,list,
+                       DFA(0,{{0,0,0}},std::initializer_list<int>{},false));
+         }
+         if (kind != Kind::NO_FINALS)
+           list.close(home);
+       }
+     };
+
+     /// Check domain consistency of the regular constraint on a closed open list
+     class OpenRegularClosed : public Test {
+     public:
+       OpenRegularClosed(void)
+         : Test("Extensional::OpenReg::Closed",3,0,2,false,Gecode::IPL_DOM) {}
+       virtual bool solution(const Assignment& x) const {
+         int parity = 0;
+         for (int i=0; i<x.size(); i++) {
+           if (x[i] == 2)
+             return false;
+           parity ^= x[i];
+         }
+         return parity == 0;
+       }
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
+         using namespace Gecode;
+         OpenIntVarList list(home,x.size());
+         for (int i=0; i<x.size(); i++)
+           list.append(home,x[i]);
+         list.close(home);
+         DFA d(0,{{0,0,0},{0,1,1},{1,0,1},{1,1,0}},{0},false);
+         extensional(home,list,d);
+       }
+     };
+
      ///% Transform a TupleSet into a DFA
      Gecode::DFA tupleset2dfa(Gecode::TupleSet ts) {
        using namespace Gecode;
@@ -2228,6 +2520,16 @@ namespace Test { namespace Int {
      RegNoAcceptingPath reg_sparse_no_accepting_path;
      RegTerminalMerged reg_sparse_terminal_merged;
      RegTerminalUnmerged reg_sparse_terminal_unmerged;
+     OpenRegularIncremental open_regular_incremental;
+     OpenRegularLengthWake open_regular_length_wake;
+     OpenRegularMaxLength open_regular_max_length;
+     OpenRegularBackward open_regular_backward;
+     OpenRegularDomainWake open_regular_domain_wake;
+     OpenRegularClone open_regular_clone;
+     OpenRegularEmpty open_regular_empty_accept(OpenRegularEmpty::Kind::ACCEPT);
+     OpenRegularEmpty open_regular_empty_reject(OpenRegularEmpty::Kind::REJECT);
+     OpenRegularEmpty open_regular_no_finals(OpenRegularEmpty::Kind::NO_FINALS);
+     OpenRegularClosed open_regular_closed;
 
      /// Exhaustive positive, negative, and reified sparse-table semantics.
      class CreateSparse {

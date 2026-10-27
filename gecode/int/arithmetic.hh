@@ -1172,6 +1172,8 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
 #include <gecode/int/arithmetic/divmod.hpp>
 
+#include <gecode/int/arithmetic/open.hpp>
+
 #endif
 
 // STATISTICS: int-prop

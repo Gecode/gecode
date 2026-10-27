@@ -801,6 +801,8 @@ namespace Gecode { namespace Int { namespace Extensional {
 
 #include <gecode/int/extensional/compact.hpp>
 
+#include <gecode/int/extensional/open.hpp>
+
 #endif
 
 // STATISTICS: int-prop

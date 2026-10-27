@@ -623,6 +623,37 @@ namespace Gecode {
     rel(home,y,irt,x,ipl);
   }
 
+  void
+  rel(Home home, OpenIntVarList list,
+      IntRelType irt, IntPropLevel ipl) {
+    if ((irt < IRT_EQ) || (irt > IRT_GR))
+      throw Int::UnknownRelation("Int::rel");
+    GECODE_POST;
+    OpenViewList<Int::IntView> x(list);
+    switch (irt) {
+    case IRT_EQ:
+      Int::Rel::Open<Int::IntView,IRT_EQ>::post(home,x,ipl);
+      break;
+    case IRT_NQ:
+      Int::Rel::Open<Int::IntView,IRT_NQ>::post(home,x,ipl);
+      break;
+    case IRT_LQ:
+      Int::Rel::Open<Int::IntView,IRT_LQ>::post(home,x,ipl);
+      break;
+    case IRT_LE:
+      Int::Rel::Open<Int::IntView,IRT_LE>::post(home,x,ipl);
+      break;
+    case IRT_GQ:
+      Int::Rel::Open<Int::IntView,IRT_GQ>::post(home,x,ipl);
+      break;
+    case IRT_GR:
+      Int::Rel::Open<Int::IntView,IRT_GR>::post(home,x,ipl);
+      break;
+    default:
+      GECODE_NEVER;
+    }
+  }
+
 }
 
 // STATISTICS: int-post
