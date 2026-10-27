@@ -210,13 +210,13 @@ namespace Gecode {
   }
 
   void
-  slidingsum(Home home, OpenIntVarList list,
-             int width, int lower, int upper, IntPropLevel ipl) {
-    Int::Limits::check(width,"Int::slidingsum");
-    Int::Limits::check(lower,"Int::slidingsum");
-    Int::Limits::check(upper,"Int::slidingsum");
+  sliding_sum(Home home, OpenIntVarList list,
+              int width, int lower, int upper, IntPropLevel ipl) {
+    Int::Limits::check(width,"Int::sliding_sum");
+    Int::Limits::check(lower,"Int::sliding_sum");
+    Int::Limits::check(upper,"Int::sliding_sum");
     if (width < 1)
-      throw Int::OutOfLimits("Int::slidingsum");
+      throw Int::OutOfLimits("Int::sliding_sum");
     GECODE_POST;
     OpenViewList<Int::IntView> views(list);
     if (upper < lower) {

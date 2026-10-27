@@ -2586,8 +2586,8 @@ namespace Gecode {
    * \ingroup TaskModelIntSequence
    */
   GECODE_INT_EXPORT void
-  slidingsum(Home home, OpenIntVarList x,
-             int q, int l, int u, IntPropLevel ipl=IPL_DEF);
+  sliding_sum(Home home, OpenIntVarList x,
+              int q, int l, int u, IntPropLevel ipl=IPL_DEF);
 
   //@}
 

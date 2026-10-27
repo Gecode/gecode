@@ -858,10 +858,10 @@ namespace Test { namespace Int {
           Gecode::sequence(home,list,IntSet(1,1),width,1,1);
           break;
         case Kind::SLIDING_SUM:
-          slidingsum(home,list,width,2,2,ipl);
+          sliding_sum(home,list,width,2,2,ipl);
           break;
         case Kind::SLIDING_RANGE:
-          slidingsum(home,list,width,1,3,ipl);
+          sliding_sum(home,list,width,1,3,ipl);
           break;
         case Kind::MIN_MAX: {
           IntVar minimum(home,0,0);
@@ -1007,7 +1007,7 @@ namespace Test { namespace Int {
             distinct(*this,list);
             rel(*this,list,IRT_LE);
             Gecode::sequence(*this,list,IntSet(2,2),2,1,1);
-            slidingsum(*this,list,2,2,2);
+            sliding_sum(*this,list,2,2,2);
             min(*this,list,minimum);
             max(*this,list,maximum);
             precede(*this,list,0,2);
@@ -1214,7 +1214,7 @@ namespace Test { namespace Int {
           rel((*this)(group),list,IRT_NQ);
           break;
         case Kind::SUM:
-          slidingsum((*this)(group),list,2,2,2);
+          sliding_sum((*this)(group),list,2,2,2);
           break;
         case Kind::PRECEDE:
           precede((*this)(group),list,0,1);
@@ -1537,7 +1537,7 @@ namespace Test { namespace Int {
             CallbackSpace source([](int) { return IntSet(0,1); },
               [](Space&, OpenIntVarList, int) {});
             if (sum)
-              slidingsum(source,source.list,2,2,1);
+              sliding_sum(source,source.list,2,2,1);
             else
               Gecode::sequence(source,source.list,IntSet(0,1),2,3,3);
             rel(source,source.list.length(),IRT_EQ,size);
