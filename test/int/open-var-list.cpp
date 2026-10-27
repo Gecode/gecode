@@ -281,7 +281,7 @@ namespace Test { namespace Int {
         DFS<SelectorSpace> restarted(&root);
         while (SelectorSpace* solution = restarted.next())
           record(solution);
-        // Extraction may omit literals, but must retain every unvisited word.
+        // Extracted nogoods must allow every unvisited word.
         for (int code=2; code<16; code++)
           if (!found[code])
             return false;
@@ -1162,7 +1162,7 @@ namespace Test { namespace Int {
       }
     };
 
-    /// Historical values can trigger several waves of new assignments
+    /// Values assigned before list growth can trigger several pruning waves
     class DistinctWaves : public ::Test::Base {
     public:
       DistinctWaves(void)
@@ -1257,7 +1257,7 @@ namespace Test { namespace Int {
             source.group.kill(source);
           else
             source.group.disable(source);
-          // These values remain in the domains but violate each constraint.
+          // These values are in the domains but violate each constraint.
           rel(source,source.list[0],IRT_EQ,
               kind == GroupSpace::Kind::PRECEDE ? 2 : 0);
           rel(source,source.list[1],IRT_EQ,

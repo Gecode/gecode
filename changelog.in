@@ -122,10 +122,11 @@ What:   new
 Rank:   major
 [DESCRIPTION]
 Add OpenIntVarList and OpenBoolVarList for lists whose length is decided
-during propagation and search.
+during propagation and search. Variables are created as needed, and constraints
+and branching follow list growth. This can reduce memory use by avoiding
+variables and constraints for an unused suffix of a fixed-size array.
 [MORE]
 OpenVarList supports other variable types through a factory.
-Regular-language and other constraints follow list growth.
 Regular-language filtering excludes prefixes whose shortest accepting
 continuation exceeds the maximum list length.
 Branching uses standard variable and value selectors, with either incremental

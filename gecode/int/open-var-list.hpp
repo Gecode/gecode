@@ -54,8 +54,8 @@ namespace Gecode {
     int capacity;
     typedef std::unordered_set<const void*> VarImpSet;
     VarImpSet identities;
-    // Only committed positions are indexed. Entries can remain after assignment
-    // because assigned candidates do not need an alias check.
+    // Only committed positions are indexed. Assigned variables need no alias
+    // check, so their entries need not be removed.
     int indexed;
     SharedData<Functions> functions;
 
@@ -135,9 +135,9 @@ namespace Gecode {
     check_alias(Var y) {
       if (y.assigned())
         return;
-      // A clone rebuilds this index lazily with its own variable identities.
-      // Deferring the newest position also keeps allocation failures ahead of
-      // any changes to length or materialized during append.
+      // Each clone builds its own index on the first alias check. Indexing a
+      // position on the next append puts allocation failures before changes
+      // to length or materialized.
       for (; indexed<n; indexed++)
         if (!x[indexed].assigned())
           identities.insert(x[indexed].varimp());

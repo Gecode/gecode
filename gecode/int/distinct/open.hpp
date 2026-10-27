@@ -53,7 +53,7 @@ namespace Gecode { namespace Int { namespace Distinct {
     View* active;
     int active_count;
     int active_capacity;
-    /// Values already excluded from active variables, retained for growth
+    /// Assigned values to exclude from appended variables
     GrowableIntSet assigned;
 
     Open(Home home, OpenViewList<View> list)
@@ -72,7 +72,7 @@ namespace Gecode { namespace Int { namespace Distinct {
       assigned.update(home,p.assigned);
     }
 
-    /// Grow geometrically and copy only the views still awaiting assignment
+    /// Grow geometrically and copy only active views
     void
     reserve_active(Space& home, int required) {
       if (required <= active_capacity)

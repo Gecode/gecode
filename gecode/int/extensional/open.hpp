@@ -89,11 +89,11 @@ namespace Gecode { namespace Int { namespace Extensional {
    * \brief Regular-language filtering over an open list's materialized prefix
    *
    * start contains the states reachable after the assigned positions before
-   * offset. Forward and backward support are recomputed for the remaining
-   * positions. The last layer must have an accepting continuation within the
-   * remaining maximum length; closing the list allows only accepting states.
-   * Assigned leading positions are then folded into start, preserving every
-   * supported state when the automaton has nondeterministic transitions.
+   * offset. Forward and backward support are recomputed from offset to the
+   * end of the prefix. The last layer needs an accepting continuation of at
+   * most length.max()-list.known_length() symbols. A closed list must end in
+   * an accepting state. Assigned leading positions are then folded into start,
+   * keeping every supported state for nondeterministic transitions.
    */
   template<class View, PropCond pc>
   class OpenRegular : public Propagator {
@@ -144,7 +144,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     }
 
   private:
-    /// Mark states supporting the remaining domains through the last layer
+    /// Mark states supporting the domains from offset through the last layer
     const unsigned char*
     compute_backward_support(Region& r, int remaining) const {
       const int n = list.known_length()-offset;
@@ -293,7 +293,7 @@ namespace Gecode { namespace Int { namespace Extensional {
       home.ignore(*this,AP_DISPOSE);
       length.cancel(home,*this,PC_INT_BND);
       list.cancel(home,*this);
-      // On space deletion, the list buffer can already be disposed.
+      // During space deletion, the list buffer may already have been freed.
       if (!home.failed())
         for (int i=offset; i<subscribed; i++)
           if (!list[i].assigned())

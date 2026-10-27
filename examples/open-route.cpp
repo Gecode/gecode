@@ -46,8 +46,8 @@ using namespace Gecode;
  *   3 -> 2, 4
  *
  * The graph contains cycles, but distinct node variables exclude revisits.
- * A simple route uses at most the five nodes, so this finite bound preserves
- * every solution while ensuring that search terminates.
+ * A simple route uses at most five nodes, which bounds the list length
+ * without excluding any routes.
  *
  * \ingroup Example
  */
@@ -67,8 +67,8 @@ public:
   /// Construct the model
   OpenRoute(const Options& opt)
     : Script(opt), route(*this,IntSet(0,node_count-1),node_count) {
-    // State 5 consumes the source node. Each remaining transition consumes
-    // the destination of a graph arc; only node 4 is an accepting state.
+    // State 5 consumes the source node. Transitions along graph arcs consume
+    // their destination node; only node 4 is an accepting state.
     DFA paths(5,{
       {5,0,0},
       {0,1,1}, {0,2,2}, {0,4,4},
@@ -79,7 +79,7 @@ public:
     extensional(*this,route,paths);
     distinct(*this,route);
 
-    // Ordinary brancher posting order gives length-first search when wanted.
+    // Posting the length brancher first selects a length before assigning nodes.
     if (opt.branching() == BRANCH_LENGTH)
       branch(*this,route.length(),INT_VAL_MIN());
     branch(*this,route,INT_VAR_NONE(),INT_VAL_MIN());

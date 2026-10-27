@@ -1169,7 +1169,7 @@ do {                                                            \
     list.close(home);
   }
 
-  /// Keep the item factory attached to the space being materialized or cloned
+  /// The item factory uses variables from the space being materialized
   class OpenTestSpace : public TestSpace {
   public:
     int items;
@@ -1199,7 +1199,7 @@ do {                                                            \
       static_cast<OpenTest*>(test)->post(*this,list,x);
     }
 
-    /// Whether the complete target is still available after propagation
+    /// Whether the target assignment and length are possible after propagation
     bool retains(const Assignment& a) {
       if (failed() || !list.length().in(items))
         return false;
@@ -1216,7 +1216,7 @@ do {                                                            \
     if (!Test::run())
       return false;
 
-    // Bound expensive histories, retaining both solutions and non-solutions.
+    // Limit the randomized histories to 16 solutions and 16 non-solutions.
     int solutions = 0;
     int nonsolutions = 0;
     std::unique_ptr<Assignment> assignments(assignment());

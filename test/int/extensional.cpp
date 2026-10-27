@@ -915,7 +915,7 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Required positions wake regular filtering when materialization catches up
+     /// Materializing required positions wakes regular filtering
      class OpenRegularLengthWake : public ::Test::Base {
      public:
        OpenRegularLengthWake(void)
@@ -1122,7 +1122,7 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Test closed open regular with the standard domain-consistency checks
+     /// Check domain consistency of the regular constraint on a closed open list
      class OpenRegularClosed : public Test {
      public:
        OpenRegularClosed(void)

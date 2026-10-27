@@ -39,7 +39,7 @@
 
 namespace Gecode { namespace Int { namespace Rel {
 
-  /// Propagate a relation over an open chain without posting edge actors
+  /// Propagate a relation over an open chain in one actor
   template<class View, IntRelType irt>
   class Open : public OpenListPropagator<View> {
   protected:
@@ -96,7 +96,7 @@ namespace Gecode { namespace Int { namespace Rel {
                   ? size-1-index : index];
     }
 
-    /// Intersect equality domains using the first position as their common part
+    /// Accumulate the domain intersection in the first position
     ExecStatus
     propagate_equal(Space& home, int begin, int end, int size) {
       View common(list[0]);
@@ -113,7 +113,7 @@ namespace Gecode { namespace Int { namespace Rel {
           GECODE_ME_CHECK(common.lq(home,x.max()));
         }
       }
-      // An unchanged common domain only needs to reach the changed positions.
+      // If the common domain is unchanged, update only the changed positions.
       if ((begin == 0) || (common.size() != old_size)) {
         begin = 1;
         end = size-1;
@@ -219,7 +219,7 @@ namespace Gecode { namespace Int { namespace Rel {
       }
       processed = size;
 
-      // Advisors retain further changes caused by sparse bounds or aliases.
+      // Advisors record further changes caused by sparse bounds or aliases.
       while (first <= last) {
         const int begin = first;
         const int end = last;

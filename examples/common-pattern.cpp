@@ -166,10 +166,10 @@ public:
  * Samir Loudni, Yahia Lebbah, Patrice Boizumault, and Thierry Charnois,
  * "PREFIX-PROJECTION Global Constraint for Sequential Pattern Mining",
  * CP 2015, pp. 226-243, https://doi.org/10.1007/978-3-319-23219-5_17.
- * This implementation also bounds the remaining pattern length by the lengths
- * of the supporting suffixes. Projection can be combined with the pattern's
- * length, item, and language restrictions. OpenRoute is the simpler
- * introduction to open lists.
+ * The supporting suffix lengths also bound how many items can follow the
+ * assigned prefix. Projection can be combined with the pattern's length,
+ * item, and language restrictions. OpenRoute is the simpler introduction
+ * to open lists.
  *
  * The paper's Table 1 can be mined with:
  * -sequences ABCBC,BABC,AB,BCD -support 50 -language none.

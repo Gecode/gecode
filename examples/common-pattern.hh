@@ -74,7 +74,7 @@ namespace PatternMining {
     return sequence;
   }
 
-  /// Read one sequence per line, retaining duplicate rows as distinct records
+  /// Read one sequence per line, counting duplicate rows as distinct records
   inline Sequences
   read_database(std::istream& stream, Format format) {
     Sequences input;
@@ -309,7 +309,7 @@ namespace PatternMining {
    * The open list replaces the termination marker. Suffix lengths bound how
    * many more items can follow the assigned prefix. The projection advances
    * only through the leading assigned positions. Items frequent in the
-   * supporting suffixes filter every remaining materialized position.
+   * supporting suffixes filter every materialized position after that prefix.
    * Adding positions reuses the cached items and suffix-length bound until
    * the assigned prefix grows.
    *
@@ -325,7 +325,7 @@ namespace PatternMining {
     IntSet frequent_items;
     int consumed;
     int subscribed;
-    /// Filtering depends on the assigned prefix, not on constructed positions
+    /// Prefix length at which the item filter and length bound were computed
     int cached_prefix;
 
     OpenProjection(Home home, OpenViewList<Int::IntView> pattern,
@@ -370,7 +370,7 @@ namespace PatternMining {
 
     ExecStatus propagate(Space& home, const ModEventDelta&) override {
       const int size = list.known_length();
-      // Earlier positions remain filtered until the assigned prefix changes.
+      // Refilter earlier positions only when the assigned prefix changes.
       int first = subscribed;
       for (int i=subscribed; i<size; i++)
         if (!list[i].assigned())

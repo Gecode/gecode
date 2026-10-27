@@ -877,26 +877,20 @@ namespace Gecode {
   /**
    * \brief Space-local list of variables with an open length
    *
-   * Variables can be appended until the list is closed. The length
-   * variable denotes the eventual list length. Propagation constructs the
-   * positions required by the minimum length. The known_length() query counts
-   * the constructed positions. Indexed access is limited to this prefix;
-   * get() constructs positions and constrains the eventual length to include
-   * the requested position.
+   * Append variables until the list is closed. The length() variable gives
+   * the eventual length; propagation creates the positions required by its
+   * minimum. known_length() counts the created positions, and operator[]
+   * accesses them. get() creates positions through a requested
+   * index and raises the minimum length to include it.
    *
-   * Handles in one Space share the same list. Updating during cloning
-   * preserves that sharing in the clone with separate mutable state.
+   * Copies of a handle share the list. update() preserves this sharing
+   * within each clone, with independent mutable state. Lists and appended
+   * variables must be initialized and belong to the supplied space.
    *
-   * OpenIntVarList and OpenBoolVarList provide standard factories.
-   * Other variable types use a factory passed to OpenVarList<Var>, for
-   * example a function returning SetVar or FloatVar. Storage, cloning, and
-   * materialization are shared; constraint and branching overloads remain
-   * specific to the variable type. Var must provide the usual Gecode variable
-   * handle operations: default and copy construction, assignment, assigned(),
-   * varimp(), and update().
-   *
-   * Operations require an initialized list belonging to the supplied space.
-   * Appended variables must also be initialized and belong to that space.
+   * OpenIntVarList and OpenBoolVarList supply variable factories. For other
+   * types, pass a factory to OpenVarList<Var>. Constraint and branching
+   * overloads depend on the variable type. Var must support default and copy
+   * construction, assignment, assigned(), varimp(), and update().
    *
    * A list can be used in an ordinary Space:
    * \code
@@ -917,14 +911,11 @@ namespace Gecode {
    * };
    * \endcode
    *
-   * The \ref CommonPattern "common-pattern example" finds constrained
-   * frequent subsequences across several inputs. The pattern length is a
-   * decision variable. The open list avoids allocating an array up to the
-   * input-length bound and encoding an unused suffix with a termination
-   * symbol. Prefix projection and regular constraints on the pattern
-   * language follow list growth.
-   * The \ref OpenRoute "open-route example" is a smaller introduction,
-   * including search and printing solutions.
+   * The \ref OpenRoute "open-route example" introduces construction,
+   * search, and printing. The \ref CommonPattern "common-pattern example"
+   * uses an open list for a pattern of unknown length. It avoids allocating
+   * variables for the longest possible pattern and marking an unused suffix
+   * with a termination symbol.
    *
    * \ingroup TaskModelInt
    */
@@ -946,30 +937,23 @@ namespace Gecode {
      * and must not be space-local. Returned variables must belong to \a home
      * and be initialized.
      *
-     * Materialization calls the factory inside a Space::NoGPI scope.
-     * New propagators keep their information in the space and have zero
-     * AFC, so AFC-based branching does not count them. Identifiers and
-     * groups remain available. Group changes are local to the space; clones
-     * copy the current group. A callback-local
-     * Space::UseGPI scope enables global information and ordinary AFC for
-     * selected postings. Nested materialization starts a new NoGPI scope.
-     * Each scope restores the previous setting on exit, including
-     * exception unwinding.
+     * Calls run inside Space::NoGPI. Posted propagators have space-local
+     * information and zero AFC, so they do not affect AFC-based selection.
+     * Identifiers and groups are available; group changes are local to the
+     * space and copied on cloning. Use Space::UseGPI inside the callback for
+     * postings that need global information and ordinary AFC. Nested
+     * materialization enters its own NoGPI scope. Scopes restore the previous
+     * setting on exit, including exceptions.
      */
     typedef std::function<Var(Space& home, int i)> Factory;
     /**
      * \brief Function called after materializing position \a i
      *
-     * The function object is shared between clones. It must be
-     * deterministic and safe for concurrent calls. Captured data must be
-     * owned or shared and must not be space-local; \a home and \a x refer
-     * to the current space.
-     *
-     * Calls from materialize() and direct append() run inside a
-     * Space::NoGPI scope with the same AFC and group behavior as Factory.
-     * A callback-local Space::UseGPI scope enables global information for
-     * selected postings. Nested materialize() or append() calls enter their
-     * own NoGPI scope and restore the callback's setting when they return.
+     * Must be deterministic and safe for concurrent calls. Sharing, captured
+     * data, and NoGPI scopes follow the Factory contract.
+     * The arguments \a home and \a x refer to the current space. Both
+     * materialize() and direct append() call the transition after the new
+     * position is available through indexed access.
      */
     typedef std::function<void(Space& home, OpenVarList<Var> x, int i)>
       Transition;
@@ -992,33 +976,24 @@ namespace Gecode {
     /**
      * \brief Append variable \a x
      *
-     * Constrains the eventual length to include the new position and calls
-     * the transition function, if supplied, inside a Space::NoGPI scope.
-     * The appended position is available to the transition through indexed
-     * access. Appending beyond the maximum eventual length fails the space.
-     *
-     * Throws an exception of type Int::ArgumentSame if \a x is an
-     * unassigned variable already in the list.
+     * Raises the minimum length to include \a x, then calls the transition
+     * if supplied (see Transition). Exceeding the maximum length fails the
+     * space. Throws Int::ArgumentSame if \a x is an unassigned variable
+     * already in the list.
      */
     void append(Space& home, Var x);
     /**
      * \brief Materialize the first \a n variables
      *
-     * The eventual length is constrained to be at least \a n. Positions
-     * required by its minimum are materialized, including any increase
-     * imposed by the transition function.
-     *
-     * Factory and transition calls run inside Space::NoGPI scopes by
-     * default. A callback-local Space::UseGPI scope enables global
-     * information for selected postings (see Factory).
+     * Raises the minimum length to at least \a n and creates the required
+     * positions, including any further increase imposed by the transition.
+     * Callbacks use the NoGPI scopes described in Factory.
      */
     void materialize(Space& home, int n);
     /**
      * \brief Require and return the variable at position \a i
      *
-     * Constrains the eventual length to be at least \a i+1 and materializes
-     * positions through \a i, using the Space::NoGPI scopes documented
-     * for materialize().
+     * Calls materialize() with \a i+1.
      *
      * Returns an uninitialized variable if \a home is failed or
      * materialization fails. Throws Int::OutOfLimits for a negative index,
@@ -1036,10 +1011,8 @@ namespace Gecode {
     /**
      * \brief Close the list at its materialized length
      *
-     * First materializes any positions required by the minimum eventual
-     * length, using the Space::NoGPI scopes documented for materialize(),
-     * then assigns the eventual length to the number of positions.
-     * The contained variables can remain unassigned.
+     * Calls materialize() for the minimum length, then assigns length()
+     * to known_length(). The contained variables need not be assigned.
      */
     void close(Space& home);
     /**
@@ -1059,14 +1032,12 @@ namespace Gecode {
   /**
    * \brief View interface to a space-local list with an open length
    *
-   * All handles share the source list, including positions appended later.
-   * Indexed access returns views by value, so growing the list does not
-   * invalidate a previously returned view. Updating during cloning preserves
-   * sharing inside the clone, with separate source state.
+   * Shares the model list and its later additions. Indexed access returns
+   * views by value, which are valid across growth. Cloning preserves sharing
+   * within the clone with independent mutable state.
    *
-   * View must be constructible from its VarType. Int::MinusView is also
-   * supported, with each position negated through an Int::IntView. The length
-   * remains an ordinary Int::IntView regardless of the element view type.
+   * View must be constructible from its VarType. Int::MinusView is supported
+   * through Int::IntView. The length view is always Int::IntView.
    * \ingroup TaskActor
    */
   template<class View>
@@ -1107,9 +1078,8 @@ namespace Gecode {
     /**
      * \brief Function returning the domain for position \a i
      *
-     * Like Factory, it must be deterministic, safe for concurrent calls, and
-     * must not capture space-local data. Captured data must be owned or shared.
-     * The function object is shared between clones.
+     * Must be deterministic and safe for concurrent calls. Sharing and
+     * captured data follow the Factory contract.
      */
     typedef std::function<IntSet(int i)> Domain;
     using OpenVarList<IntVar>::OpenVarList;
@@ -6258,7 +6228,7 @@ namespace Gecode {
    * Once no unassigned variable is accepted, the brancher tries closing at
    * known_length() before requiring another position and resuming
    * value selection. Filters and callbacks receive the position in the list.
-   * Variables rejected by the filter may remain unassigned in a solution.
+   * Variables rejected by the filter may be unassigned in a solution.
    * Without a practical bound on list length, search can be very expensive.
    *
    * To decide the length before list values, post an ordinary brancher on

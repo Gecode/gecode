@@ -208,8 +208,8 @@ namespace Gecode { namespace Int { namespace Sequence {
           must += status[i] == TS_YES;
           may += status[i] != TS_NO;
         }
-        // Forcing windows form intervals. Their furthest ends suffice to
-        // apply each membership update once, including overlapping windows.
+        // Track the furthest end of each kind of forcing window so overlapping
+        // windows apply each membership update once.
         int include_end = 0;
         int exclude_end = 0;
         for (int i=0; i<n; i++) {
@@ -347,9 +347,8 @@ namespace Gecode { namespace Int { namespace Sequence {
             return ES_FAILED;
         }
       }
-      // Equal consecutive window sums imply periodic values. The first
-      // sum and these equalities retain the selected propagation level without
-      // copying every window into a separate linear propagator.
+      // Equal consecutive window sums imply periodic values. One window sum
+      // and these equalities provide the selected propagation level.
       for (int i=std::max(width,processed); i<size; i++) {
         View x(list[i]);
         View representative(list[i%width]);
@@ -471,7 +470,7 @@ namespace Gecode { namespace Int { namespace Sequence {
             max_sum += maximum[start+width];
           }
         }
-        // Monotone queues retain the strongest residuals among windows
+        // Monotone queues track the strongest residuals among windows
         // covering each position. Every window enters and leaves once.
         int* lower_queue = region.alloc<int>(windows);
         int* upper_queue = region.alloc<int>(windows);

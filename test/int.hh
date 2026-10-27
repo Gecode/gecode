@@ -397,15 +397,15 @@ namespace Test {
     /**
      * \brief Integer constraint tests with incremental open-list histories
      *
-     * The first items assignment entries belong to the list; the remaining
-     * extra entries are auxiliary variables. Override solution() for that
-     * complete relation and the open-list post() overload. All variables use
+     * The first items assignment entries belong to the list; the extra entries
+     * are auxiliary variables. Override solution() for the complete relation
+     * and the open-list post() overload. All variables use
      * the supplied domain, including auxiliary variables; restrictions posted
      * by the test must also be represented in solution().
      *
      * Runs the ordinary closed-list tests and bounded randomized histories
      * that post, grow, prune, clone, and close the list. During these histories
-     * one additional position remains possible until the list is closed.
+     * the list can grow one position beyond the target until it is closed.
      */
     class GECODE_TESTINT_EXPORT OpenTest : public Test {
     protected:
