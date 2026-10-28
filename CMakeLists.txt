@@ -6,6 +6,8 @@ cmake_minimum_required(VERSION 3.21)
 
 project(GECODE VERSION 6.5.0 LANGUAGES C CXX)
 
+set(CMAKE_CXX_EXTENSIONS OFF)
+
 # Shared-library ABI version, updated separately from the release version.
 set(GECODE_SOVERSION 52)
 
@@ -1160,7 +1162,7 @@ function(add_gecode_component_library lib)
   endif()
   set(component_output_name "${GECODE_LIB_PREFIX}gecode${lib}${GECODE_LIB_SUFFIX}")
   if(lib STREQUAL "float" AND NOT (GECODE_ENABLE_MPFR AND MPFR_FOUND))
-    # Keep in sync with Make behavior: skip empty MPFR-only source when MPFR is absent.
+    # Skip the MPFR-only source when MPFR is absent.
     list(REMOVE_ITEM sources "gecode/float/rounding.cpp")
   endif()
 
@@ -1173,7 +1175,7 @@ function(add_gecode_component_library lib)
     target_compile_definitions(gecode${lib}_shared
       PUBLIC GECODE_NO_AUTOLINK
       PRIVATE GECODE_BUILD_${libupper})
-    target_compile_features(gecode${lib}_shared PUBLIC cxx_std_17)
+    target_compile_features(gecode${lib}_shared PUBLIC cxx_std_23)
     target_include_directories(gecode${lib}_shared
       PUBLIC
         $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
@@ -1205,7 +1207,7 @@ function(add_gecode_component_library lib)
     target_compile_definitions(gecode${lib}_static
       PUBLIC GECODE_NO_AUTOLINK
       PRIVATE GECODE_BUILD_${libupper})
-    target_compile_features(gecode${lib}_static PUBLIC cxx_std_17)
+    target_compile_features(gecode${lib}_static PUBLIC cxx_std_23)
     target_include_directories(gecode${lib}_static
       PUBLIC
         $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
@@ -1487,11 +1489,11 @@ if(BUILD_TESTING)
   if(GECODE_ENABLE_FLATZINC)
     add_executable(gecode-test-blackbox-exec
       ${GECODE_TEST_BLACKBOX_EXEC_SOURCE})
-    target_compile_features(gecode-test-blackbox-exec PRIVATE cxx_std_17)
+    target_compile_features(gecode-test-blackbox-exec PRIVATE cxx_std_23)
 
     add_library(gecode-test-blackbox-dll SHARED
       ${GECODE_TEST_BLACKBOX_DLL_SOURCE})
-    target_compile_features(gecode-test-blackbox-dll PRIVATE cxx_std_17)
+    target_compile_features(gecode-test-blackbox-dll PRIVATE cxx_std_23)
   endif()
 
   set(GECODE_TEST_SOURCES_SELECTED ${GECODE_TEST_SOURCES})

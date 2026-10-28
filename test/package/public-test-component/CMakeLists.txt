@@ -7,7 +7,7 @@ enable_testing()
 find_package(Gecode CONFIG REQUIRED COMPONENTS test)
 
 add_executable(consumer-smoke consumer-smoke.cpp)
-target_compile_features(consumer-smoke PRIVATE cxx_std_17)
+target_compile_features(consumer-smoke PRIVATE cxx_std_23)
 target_link_libraries(consumer-smoke PRIVATE Gecode::gecodetestint)
 if(TARGET Gecode::gecodetestset)
   target_compile_definitions(consumer-smoke PRIVATE GECODE_PACKAGE_HAS_SET)
