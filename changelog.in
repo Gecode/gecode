@@ -298,6 +298,15 @@ Fix iterator invalidation during counting-based search cache cleanup.
 
 [ENTRY]
 Module: flatzinc
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Fix memory leaks in the FlatZinc parser. Temporary values are released after
+use, and variable domains are released when variables are aliased or declared
+in initialized arrays.
+
+[ENTRY]
+Module: flatzinc
 What:   new
 Rank:   major
 [DESCRIPTION]

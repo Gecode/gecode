@@ -43,6 +43,7 @@
 #include <gecode/flatzinc/complete.hh>
 #include <iostream>
 #include <fstream>
+#include <memory>
 
 #if defined __GNUC__
 #pragma GCC diagnostic ignored "-Wunused-but-set-variable"
@@ -931,7 +932,7 @@ vardecl_item:
         yyassert(pp,
           pp->symbols.put($3, se_i($6->getInt())),
           "Duplicate symbol");
-        delete $4; free($3);
+        delete $6; delete $4; free($3);
       }
     | FZ_FLOAT ':' var_par_id annotations '=' non_array_expr
       {
@@ -941,7 +942,7 @@ vardecl_item:
         yyassert(pp,
           pp->symbols.put($3, se_f(pp->floatvals.size()-1)),
           "Duplicate symbol");
-        delete $4; free($3);
+        delete $6; delete $4; free($3);
       }
     | FZ_BOOL ':' var_par_id annotations '=' non_array_expr
       {
@@ -950,7 +951,7 @@ vardecl_item:
         yyassert(pp,
           pp->symbols.put($3, se_b($6->getBool())),
           "Duplicate symbol");
-        delete $4; free($3);
+        delete $6; delete $4; free($3);
       }
     | FZ_SET FZ_OF FZ_INT ':' var_par_id annotations '=' non_array_expr
       {
@@ -984,6 +985,7 @@ vardecl_item:
                     if (print)
                       static_cast<IntVarSpec*>(pp->intvars[ivsv->i].second)->introduced = false;
                     vars[i] = ivsv->i;
+                    delete ivsv;
                   } else {
                     if (print)
                       ivsv->introduced = false;
@@ -1011,7 +1013,6 @@ vardecl_item:
                   pp->intvars.push_back(varspec($11, ispec));
                 }
               }
-              if ($9()) delete $9.some();
             }
           }
           if (print) {
@@ -1032,6 +1033,7 @@ vardecl_item:
             pp->symbols.put($11, se_iva(iva)),
             "Duplicate symbol");
         }
+        if ($9()) delete $9.some();
         delete $12; free($11);
       }
     | FZ_ARRAY '[' FZ_INT_LIT FZ_DOTDOT FZ_INT_LIT ']' FZ_OF FZ_VAR bool_ti_expr_tail ':'
@@ -1053,6 +1055,7 @@ vardecl_item:
                   if (print)
                     static_cast<BoolVarSpec*>(pp->boolvars[bvsv->i].second)->introduced = false;
                   vars[i] = bvsv->i;
+                  delete bvsv;
                 } else {
                   if (print)
                     bvsv->introduced = false;
@@ -1078,7 +1081,6 @@ vardecl_item:
               pp->boolvars.push_back(varspec($11,
                                        new BoolVarSpec(dom,!print,false)));
             }
-            if ($9()) delete $9.some();
           }
           if (print) {
             AST::Array* a = new AST::Array();
@@ -1098,6 +1100,7 @@ vardecl_item:
             pp->symbols.put($11, se_bva(bva)),
             "Duplicate symbol");
         }
+        if ($9()) delete $9.some();
         delete $12; free($11);
       }
     | FZ_ARRAY '[' FZ_INT_LIT FZ_DOTDOT FZ_INT_LIT ']' FZ_OF FZ_VAR
@@ -1121,6 +1124,7 @@ vardecl_item:
                     if (print)
                       static_cast<FloatVarSpec*>(pp->floatvars[ivsv->i].second)->introduced = false;
                     vars[i] = ivsv->i;
+                    delete ivsv;
                   } else {
                     if (print)
                       ivsv->introduced = false;
@@ -1190,6 +1194,7 @@ vardecl_item:
                   if (print)
                     static_cast<SetVarSpec*>(pp->setvars[svsv->i].second)->introduced = false;
                   vars[i] = svsv->i;
+                  delete svsv;
                 } else {
                   if (print)
                     svsv->introduced = false;
@@ -1216,7 +1221,6 @@ vardecl_item:
                 vars[i] = pp->setvars.size();
                 pp->setvars.push_back(varspec($13, ispec));
               }
-              if ($11()) delete $11.some();
             }
           }
           if (print) {
@@ -1237,6 +1241,7 @@ vardecl_item:
             pp->symbols.put($13, se_sva(sva)),
             "Duplicate symbol");
         }
+        if ($11()) delete $11.some();
         delete $14; free($13);
       }
     | FZ_ARRAY '[' FZ_INT_LIT FZ_DOTDOT FZ_INT_LIT ']' FZ_OF FZ_INT ':'
@@ -1571,8 +1576,10 @@ constraint_item :
       FZ_CONSTRAINT FZ_ID '(' flat_expr_list ')' annotations
       {
         ParserState *pp = static_cast<ParserState*>(parm);
+        std::unique_ptr<ConExpr> ce(new ConExpr($2, $4, $6));
+        free($2);
         if (!pp->hadError) {
-          std::string cid($2);
+          const std::string& cid = ce->id;
           if (cid=="gecode_on_restart_status" && $4->a[0]->isIntVar()) {
             pp->status_idx = getBaseIntVar(pp,$4->a[0]->getIntVar());
           } else if (cid=="gecode_on_restart_complete" && $4->a[0]->isBoolVar()) {
@@ -1648,6 +1655,8 @@ constraint_item :
                 Option<AST::SetLit*> newdom = Option<AST::SetLit*>::some(sl);
                 addDomainConstraint(pp, "int_in",
                                     new AST::IntVar(base0), newdom);
+                if (ivs1->domain())
+                  delete ivs1->domain.some();
                 ivs1->domain = Option<AST::SetLit*>::none();
               }
               ivs1->alias = true;
@@ -1673,6 +1682,8 @@ constraint_item :
                 Option<AST::SetLit*> newdom = Option<AST::SetLit*>::some(sl);
                 addDomainConstraint(pp, "int_in",
                                     new AST::BoolVar(base0), newdom);
+                if (ivs1->domain())
+                  delete ivs1->domain.some();
                 ivs1->domain = Option<AST::SetLit*>::none();
               }
               ivs1->alias = true;
@@ -1718,20 +1729,23 @@ constraint_item :
                   addDomainConstraint(pp, "set_subset",
                                       new AST::SetVar(base0), newdom);
                 }
+                delete ivs1->upperBound.some();
                 ivs1->upperBound = Option<AST::SetLit*>::none();
               }
             }
           } else if ( (cid=="int_le" || cid=="int_lt" || cid=="int_ge" || cid=="int_gt"  ||
                        cid=="int_eq" || cid=="int_ne") &&
                       ($4->a[0]->isInt() || $4->a[1]->isInt()) ) {
-            pp->domainConstraints.push_back(new ConExpr($2, $4, $6));
+            pp->domainConstraints.push_back(ce.get());
+            ce.release();
           } else if ( cid=="set_in" && ($4->a[0]->isSet() || $4->a[1]->isSet()) ) {
-            pp->domainConstraints.push_back(new ConExpr($2, $4, $6));
+            pp->domainConstraints.push_back(ce.get());
+            ce.release();
           } else {
-            pp->constraints.push_back(new ConExpr($2, $4, $6));
+            pp->constraints.push_back(ce.get());
+            ce.release();
           }
         }
-        free($2);
       }
 solve_item :
       FZ_SOLVE annotations FZ_SATISFY
@@ -1776,7 +1790,7 @@ int_ti_expr_tail :
       FZ_INT
       { $$ = Option<AST::SetLit* >::none(); }
     | '{' int_list '}'
-      { $$ = Option<AST::SetLit* >::some(new AST::SetLit(*$2)); }
+      { $$ = Option<AST::SetLit* >::some(new AST::SetLit(*$2)); delete $2; }
     | FZ_INT_LIT FZ_DOTDOT FZ_INT_LIT
       {
         $$ = Option<AST::SetLit* >::some(new AST::SetLit($1, $3));
@@ -1810,7 +1824,7 @@ float_ti_expr_tail :
 
 set_literal :
       '{' int_list '}'
-      { $$ = new AST::SetLit(*$2); }
+      { $$ = new AST::SetLit(*$2); delete $2; }
     | FZ_INT_LIT FZ_DOTDOT FZ_INT_LIT
       { $$ = new AST::SetLit($1, $3); }
 
