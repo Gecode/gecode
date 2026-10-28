@@ -301,9 +301,10 @@ Module: flatzinc
 What:   bug
 Rank:   minor
 [DESCRIPTION]
-Fix memory leaks in the FlatZinc parser. Temporary values are released after
-use, and variable domains are released when variables are aliased or declared
-in initialized arrays.
+Fix memory and file-descriptor leaks in the FlatZinc parser. Temporary values
+are released after use, variable domains are released when variables are
+aliased or declared in initialized arrays, and input files are closed and
+unmapped after parsing.
 
 [ENTRY]
 Module: flatzinc
