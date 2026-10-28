@@ -121,7 +121,7 @@ namespace Gecode { namespace Set { namespace RelOp {
         case SRT_LQ:
             GECODE_ES_FAIL((Rel::Lq<SetView, View, false>::post(home, x0, x1)));
             break;
-        case SRT_LE:
+        case SRT_LT:
             GECODE_ES_FAIL((Rel::Lq<SetView, View, true>::post(home, x0, x1)));
             break;
         case SRT_GQ:
@@ -145,7 +145,7 @@ namespace Gecode { namespace Set { namespace RelOp {
             rel_eq<View0, View1, View2>(home, x, op, y, z);
             break;
         case SRT_LQ:
-        case SRT_LE:
+        case SRT_LT:
         case SRT_GQ:
         case SRT_GR: {
             SetVar tmp(home, IntSet::empty, Set::Limits::min, Set::Limits::max);

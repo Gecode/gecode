@@ -56,7 +56,7 @@ namespace Gecode {
         case IRT_GR:
             GECODE_ES_FAIL(Bool::Le<BoolView>::post(home, x1, x0));
             break;
-        case IRT_LE:
+        case IRT_LT:
             GECODE_ES_FAIL(Bool::Le<BoolView>::post(home, x0, x1));
             break;
         default:
@@ -79,7 +79,7 @@ namespace Gecode {
             case IRT_GR:
                 GECODE_ME_FAIL(x.one(home));
                 break;
-            case IRT_LE:
+            case IRT_LT:
                 home.fail();
                 break;
             case IRT_GQ:
@@ -94,7 +94,7 @@ namespace Gecode {
                 GECODE_ME_FAIL(x.one(home));
                 break;
             case IRT_NQ:
-            case IRT_LE:
+            case IRT_LT:
                 GECODE_ME_FAIL(x.zero(home));
                 break;
             case IRT_GR:
@@ -164,7 +164,7 @@ namespace Gecode {
                 throw UnknownReifyMode("Int::rel");
             }
             break;
-        case IRT_LE:
+        case IRT_LT:
             std::swap(x0, x1); // Fall through
         case IRT_GR: {
             NegBoolView nr(r.var());
@@ -233,7 +233,7 @@ namespace Gecode {
                     throw UnknownReifyMode("Int::rel");
                 }
                 break;
-            case IRT_LE:
+            case IRT_LT:
                 switch (r.mode()) {
                 case RM_EQV:
                 case RM_IMP:
@@ -263,7 +263,7 @@ namespace Gecode {
         } else if (n == 1) {
             switch (irt) {
             case IRT_NQ:
-            case IRT_LE:
+            case IRT_LT:
                 switch (r.mode()) {
                 case RM_EQV: {
                     NegBoolView ny(y);
@@ -362,7 +362,7 @@ namespace Gecode {
                 GECODE_ES_FAIL(Bool::Le<BoolView>::post(home, y, x[i]));
             }
             break;
-        case IRT_LE:
+        case IRT_LT:
             for (int i = 0; i < x.size(); i++) {
                 GECODE_ES_FAIL(Bool::Le<BoolView>::post(home, x[i], y));
             }
@@ -392,7 +392,7 @@ namespace Gecode {
                     GECODE_ME_FAIL(xi.one(home));
                 }
                 break;
-            case IRT_LE:
+            case IRT_LT:
                 home.fail();
                 break;
             case IRT_GQ:
@@ -410,7 +410,7 @@ namespace Gecode {
                 }
                 break;
             case IRT_NQ:
-            case IRT_LE:
+            case IRT_LT:
                 for (int i = 0; i < x.size(); i++) {
                     BoolView xi(x[i]);
                     GECODE_ME_FAIL(xi.zero(home));
@@ -445,7 +445,7 @@ namespace Gecode {
             ViewArray<BoolView> y(home, x);
             GECODE_ES_FAIL((Rel::NaryNq<BoolView>::post(home, y)));
         } break;
-        case IRT_LE:
+        case IRT_LT:
             if (x.size() == 2) {
                 GECODE_ES_FAIL(Bool::Le<BoolView>::post(home, x[0], x[1]));
             } else {
@@ -484,7 +484,7 @@ namespace Gecode {
             ViewArray<BoolView> xv(home, x), yv(home, y);
             GECODE_ES_FAIL((Rel::LexLqLe<BoolView, BoolView>::post(home, yv, xv, true)));
         } break;
-        case IRT_LE: {
+        case IRT_LT: {
             ViewArray<BoolView> xv(home, x), yv(home, y);
             GECODE_ES_FAIL((Rel::LexLqLe<BoolView, BoolView>::post(home, xv, yv, true)));
         } break;
@@ -537,7 +537,7 @@ namespace Gecode {
             ViewArray<ConstIntView> yv(make_view_array(home, y));
             GECODE_ES_FAIL((Rel::LexLqLe<ConstIntView, BoolView>::post(home, yv, xv, true)));
         } break;
-        case IRT_LE: {
+        case IRT_LT: {
             ViewArray<BoolView> xv(home, x);
             ViewArray<ConstIntView> yv(make_view_array(home, y));
             GECODE_ES_FAIL((Rel::LexLqLe<BoolView, ConstIntView>::post(home, xv, yv, true)));

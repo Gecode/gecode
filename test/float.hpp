@@ -178,8 +178,8 @@ namespace Test { namespace Float {
             return "Nq";
         case FRT_LQ:
             return "Lq";
-        case FRT_LE:
-            return "Le";
+        case FRT_LT:
+            return "Lt";
         case FRT_GQ:
             return "Gq";
         case FRT_GR:
@@ -234,7 +234,7 @@ namespace Test { namespace Float {
             if (x > y)
                 return MT_FALSE;
             break;
-        case FRT_LE:
+        case FRT_LT:
             if (x < y)
                 return MT_TRUE;
             if (x >= y)

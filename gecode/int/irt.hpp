@@ -39,12 +39,12 @@ namespace Gecode {
             return IRT_EQ;
         case IRT_NQ:
             return IRT_NQ;
-        case IRT_LE:
+        case IRT_LT:
             return IRT_GR;
         case IRT_LQ:
             return IRT_GQ;
         case IRT_GR:
-            return IRT_LE;
+            return IRT_LT;
         case IRT_GQ:
             return IRT_LQ;
         default:
@@ -62,10 +62,10 @@ namespace Gecode {
         case IRT_NQ:
             return IRT_EQ;
         case IRT_GQ:
-            return IRT_LE;
+            return IRT_LT;
         case IRT_LQ:
             return IRT_GR;
-        case IRT_LE:
+        case IRT_LT:
             return IRT_GQ;
         case IRT_GR:
             return IRT_LQ;

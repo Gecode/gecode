@@ -183,7 +183,7 @@ public:
                 IntVarArgs m(g);
                 for (int i = 0; i < g; i++)
                     m[i] = expr(*this, min(schedule(i, j)));
-                rel(*this, m, IRT_LE);
+                rel(*this, m, IRT_LT);
             }
 
             // Symmetry breaking: order weeks
@@ -192,7 +192,7 @@ public:
                 IntVarArgs m(w);
                 for (int i = 0; i < w; i++)
                     m[i] = expr(*this, min(schedule(0, i) - IntSet(0, 0)));
-                rel(*this, m, IRT_LE);
+                rel(*this, m, IRT_LT);
             }
 
             // Symmetry breaking: value symmetry of player numbers

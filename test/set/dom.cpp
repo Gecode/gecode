@@ -109,7 +109,7 @@ namespace Test { namespace Set {
                         if (!((!xr()) || in(min_sym_diff(x, i, is), dr, true)))
                             return false;
                         break;
-                    case SRT_LE:
+                    case SRT_LT:
                         if (!(xr() ? in(min_sym_diff(x, i, is), dr) : dr()))
                             return false;
                         break;
@@ -207,7 +207,7 @@ namespace Test { namespace Set {
                         if (!((!xr()) || in(min_sym_diff(x, i, is), dr, true)))
                             return false;
                         break;
-                    case SRT_LE:
+                    case SRT_LT:
                         if (!(xr() ? in(min_sym_diff(x, i, is), dr) : dr()))
                             return false;
                         break;
@@ -304,7 +304,7 @@ namespace Test { namespace Set {
                         if (!((!xr()) || in(min_sym_diff(x, i, is), dr, true)))
                             return false;
                         break;
-                    case SRT_LE:
+                    case SRT_LT:
                         if (!(xr() ? in(min_sym_diff(x, i, is), dr) : dr()))
                             return false;
                         break;
@@ -407,7 +407,7 @@ namespace Test { namespace Set {
                         if (!((!xr()) || in(min_sym_diff(x, i, is), dr, true)))
                             return false;
                         break;
-                    case SRT_LE:
+                    case SRT_LT:
                         if (!(xr() ? in(min_sym_diff(x, i, is), dr) : dr()))
                             return false;
                         break;
@@ -491,7 +491,7 @@ namespace Test { namespace Set {
 
         DomRange _domrange_eq1(SRT_EQ, 1);
         DomRange _domrange_lq1(SRT_LQ, 1);
-        DomRange _domrange_le1(SRT_LE, 1);
+        DomRange _domrange_lt1(SRT_LT, 1);
         DomRange _domrange_gq1(SRT_GQ, 1);
         DomRange _domrange_gr1(SRT_GR, 1);
         DomRange _domrange_nq1(SRT_NQ, 1);
@@ -501,7 +501,7 @@ namespace Test { namespace Set {
         DomRange _domrange_cmpl1(SRT_CMPL, 1);
         DomRange _domrange_eq2(SRT_EQ, 2);
         DomRange _domrange_lq2(SRT_LQ, 2);
-        DomRange _domrange_le2(SRT_LE, 2);
+        DomRange _domrange_lt2(SRT_LT, 2);
         DomRange _domrange_gq2(SRT_GQ, 2);
         DomRange _domrange_gr2(SRT_GR, 2);
         DomRange _domrange_nq2(SRT_NQ, 2);
@@ -512,7 +512,7 @@ namespace Test { namespace Set {
 
         DomIntRange _domintrange_eq1(SRT_EQ, 1);
         DomIntRange _domintrange_lq1(SRT_LQ, 1);
-        DomIntRange _domintrange_le1(SRT_LE, 1);
+        DomIntRange _domintrange_lt1(SRT_LT, 1);
         DomIntRange _domintrange_gq1(SRT_GQ, 1);
         DomIntRange _domintrange_gr1(SRT_GR, 1);
         DomIntRange _domintrange_nq1(SRT_NQ, 1);
@@ -522,7 +522,7 @@ namespace Test { namespace Set {
         DomIntRange _domintrange_cmpl1(SRT_CMPL, 1);
         DomIntRange _domintrange_eq2(SRT_EQ, 2);
         DomIntRange _domintrange_lq2(SRT_LQ, 2);
-        DomIntRange _domintrange_le2(SRT_LE, 2);
+        DomIntRange _domintrange_lt2(SRT_LT, 2);
         DomIntRange _domintrange_gq2(SRT_GQ, 2);
         DomIntRange _domintrange_gr2(SRT_GR, 2);
         DomIntRange _domintrange_nq2(SRT_NQ, 2);
@@ -533,7 +533,7 @@ namespace Test { namespace Set {
 
         DomInt _domint_eq1(SRT_EQ, 1);
         DomInt _domint_lq1(SRT_LQ, 1);
-        DomInt _domint_le1(SRT_LE, 1);
+        DomInt _domint_lt1(SRT_LT, 1);
         DomInt _domint_gq1(SRT_GQ, 1);
         DomInt _domint_gr1(SRT_GR, 1);
         DomInt _domint_nq1(SRT_NQ, 1);
@@ -543,7 +543,7 @@ namespace Test { namespace Set {
         DomInt _domint_cmpl1(SRT_CMPL, 1);
         DomInt _domint_eq2(SRT_EQ, 2);
         DomInt _domint_lq2(SRT_LQ, 2);
-        DomInt _domint_le2(SRT_LE, 2);
+        DomInt _domint_lt2(SRT_LT, 2);
         DomInt _domint_gq2(SRT_GQ, 2);
         DomInt _domint_gr2(SRT_GR, 2);
         DomInt _domint_nq2(SRT_NQ, 2);
@@ -554,7 +554,7 @@ namespace Test { namespace Set {
 
         DomDom _domdom_eq1(SRT_EQ, 1);
         DomDom _domdom_lq1(SRT_LQ, 1);
-        DomDom _domdom_le1(SRT_LE, 1);
+        DomDom _domdom_lt1(SRT_LT, 1);
         DomDom _domdom_gq1(SRT_GQ, 1);
         DomDom _domdom_gr1(SRT_GR, 1);
         DomDom _domdom_nq1(SRT_NQ, 1);
@@ -564,7 +564,7 @@ namespace Test { namespace Set {
         DomDom _domdom_cmpl1(SRT_CMPL, 1);
         DomDom _domdom_eq2(SRT_EQ, 2);
         DomDom _domdom_lq2(SRT_LQ, 2);
-        DomDom _domdom_le2(SRT_LE, 2);
+        DomDom _domdom_lt2(SRT_LT, 2);
         DomDom _domdom_gq2(SRT_GQ, 2);
         DomDom _domdom_gr2(SRT_GR, 2);
         DomDom _domdom_nq2(SRT_NQ, 2);

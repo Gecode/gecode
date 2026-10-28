@@ -120,7 +120,7 @@ namespace Gecode { namespace FlatZinc {
         }
         void
         p_set_lt(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
-            p_set_rel(s, SRT_LE, ce);
+            p_set_rel(s, SRT_LT, ce);
         }
         void
         p_set_card(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
@@ -171,7 +171,7 @@ namespace Gecode { namespace FlatZinc {
         }
         void
         p_set_lt_reif(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
-            p_set_rel_reif(s, SRT_LE, ce);
+            p_set_rel_reif(s, SRT_LT, ce);
         }
         void
         p_set_ne_reif(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
@@ -380,7 +380,7 @@ namespace Gecode { namespace FlatZinc {
             case 7:
                 return SRT_LQ;
             case 8:
-                return SRT_LE;
+                return SRT_LT;
             case 9:
                 return SRT_GQ;
             case 10:

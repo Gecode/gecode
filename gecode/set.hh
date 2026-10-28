@@ -641,7 +641,7 @@ namespace Gecode {
         SRT_DISJ, ///< Disjoint (\f$\parallel\f$)
         SRT_CMPL, ///< Complement
         SRT_LQ,   ///< Less or equal (\f$\leq\f$)
-        SRT_LE,   ///< Less (\f$<\f$)
+        SRT_LT,   ///< Strictly less (\f$<\f$)
         SRT_GQ,   ///< Greater or equal (\f$\geq\f$)
         SRT_GR    ///< Greater (\f$>\f$)
     };

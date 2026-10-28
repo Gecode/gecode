@@ -221,8 +221,8 @@ namespace Test { namespace Int {
         switch (irt) {
         case IRT_LQ:
             return "Lq";
-        case IRT_LE:
-            return "Le";
+        case IRT_LT:
+            return "Lt";
         case IRT_GQ:
             return "Gq";
         case IRT_GR:
@@ -284,7 +284,7 @@ namespace Test { namespace Int {
             return x != y;
         case IRT_LQ:
             return x <= y;
-        case IRT_LE:
+        case IRT_LT:
             return x < y;
         case IRT_GR:
             return x > y;

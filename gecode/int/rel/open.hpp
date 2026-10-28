@@ -145,7 +145,7 @@ namespace Gecode { namespace Int { namespace Rel {
         /// Sweep lower bounds forward and upper bounds backward from changed positions
         ExecStatus
         propagate_order(Space& home, int begin, int end, int size) {
-            const int offset = ((irt == IRT_LE) || (irt == IRT_GR)) ? 1 : 0;
+            const int offset = ((irt == IRT_LT) || (irt == IRT_GR)) ? 1 : 0;
             if constexpr ((irt == IRT_GQ) || (irt == IRT_GR)) {
                 const int old_begin = begin;
                 begin = size - 1 - end;
@@ -204,7 +204,7 @@ namespace Gecode { namespace Int { namespace Rel {
             }
             for (int i = processed; i < size; i++) {
                 View x(list[i]);
-                if (((irt == IRT_NQ) || (irt == IRT_LE) || (irt == IRT_GR)) && (i > 0) && (x == list[i - 1]))
+                if (((irt == IRT_NQ) || (irt == IRT_LT) || (irt == IRT_GR)) && (i > 0) && (x == list[i - 1]))
                     return ES_FAILED;
                 if (!x.assigned())
                     x.subscribe(home, *new (home) Position(home, *this, council, i));

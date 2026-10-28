@@ -54,7 +54,7 @@ namespace Test { namespace Groups {
                 distinct((*this)(b), x, IPL_DOM);
                 // fall through
             case 1:
-                rel((*this)(a), x[0], Gecode::IRT_LE, x[1]);
+                rel((*this)(a), x[0], Gecode::IRT_LT, x[1]);
                 break;
             default:
                 break;

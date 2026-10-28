@@ -263,7 +263,7 @@ namespace Gecode { namespace MiniModel {
         void
         post(Home home, IntRelType irt, int c, const IntPropLevels& ipls) const override {
             if ((t == ANLE_MIN && (irt == IRT_GQ || irt == IRT_GR)) ||
-                (t == ANLE_MAX && (irt == IRT_LQ || irt == IRT_LE))) {
+                (t == ANLE_MAX && (irt == IRT_LQ || irt == IRT_LT))) {
                 IntVarArgs x(n);
                 for (int i = n; i--;)
                     x[i] = a[i].post(home, ipls);

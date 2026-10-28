@@ -371,7 +371,7 @@ public:
         {
             IntVar p0(*this, 0, n - 1);
             element(*this, succ, p0, 0);
-            rel(*this, p0, IRT_LE, succ[0]);
+            rel(*this, p0, IRT_LT, succ[0]);
         }
 
         // First enumerate cost values, prefer those that maximize cost reduction

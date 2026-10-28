@@ -201,7 +201,7 @@ namespace Test { namespace Set {
             case Gecode::SRT_LQ:
                 olog << "<=";
                 break;
-            case Gecode::SRT_LE:
+            case Gecode::SRT_LT:
                 olog << "<";
                 break;
             case Gecode::SRT_GQ:
@@ -253,7 +253,7 @@ namespace Test { namespace Set {
             case Gecode::IRT_LQ:
                 olog << "<=";
                 break;
-            case Gecode::IRT_LE:
+            case Gecode::IRT_LT:
                 olog << "<";
                 break;
             case Gecode::IRT_GQ:
@@ -459,7 +459,7 @@ namespace Test { namespace Set {
                 if (a.ints()[i] < y[i].max()) {
                     int v = a.ints()[i] + 1 + rand(static_cast<unsigned int>(y[i].max() - a.ints()[i]));
                     assert((v > a.ints()[i]) && (v <= y[i].max()));
-                    rel(i, Gecode::IRT_LE, v);
+                    rel(i, Gecode::IRT_LT, v);
                 }
                 break;
             case 1:
@@ -591,8 +591,8 @@ namespace Test { namespace Set {
                 if (a.ints()[i] < y[i].max()) {
                     int v = a.ints()[i] + 1 + rand(static_cast<unsigned int>(y[i].max() - a.ints()[i]));
                     assert((v > a.ints()[i]) && (v <= y[i].max()));
-                    rel(i, Gecode::IRT_LE, v);
-                    c.rel(i, Gecode::IRT_LE, v);
+                    rel(i, Gecode::IRT_LT, v);
+                    c.rel(i, Gecode::IRT_LT, v);
                 }
                 break;
             case 1:

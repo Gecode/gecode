@@ -198,7 +198,7 @@ namespace Gecode {
         lower = std::max(0, lower);
         upper = std::min(width, upper);
         if (upper < lower) {
-            rel(home, x.length(), IRT_LE, width);
+            rel(home, x.length(), IRT_LT, width);
             return;
         }
         if ((lower == 0) && (upper == width))

@@ -194,14 +194,14 @@ namespace Gecode {
                 case IRT_LQ:
                     irt = IRT_GQ;
                     break;
-                case IRT_LE:
+                case IRT_LT:
                     irt = IRT_GR;
                     break;
                 case IRT_GQ:
                     irt = IRT_LQ;
                     break;
                 case IRT_GR:
-                    irt = IRT_LE;
+                    irt = IRT_LT;
                     break;
                 default:
                     break;
@@ -262,14 +262,14 @@ namespace Gecode {
                 case IRT_LQ:
                     irt = IRT_GQ;
                     break;
-                case IRT_LE:
+                case IRT_LT:
                     irt = IRT_GR;
                     break;
                 case IRT_GQ:
                     irt = IRT_LQ;
                     break;
                 case IRT_GR:
-                    irt = IRT_LE;
+                    irt = IRT_LT;
                     break;
                 default:
                     break;

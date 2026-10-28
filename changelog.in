@@ -81,6 +81,16 @@ Module: other
 What:   change
 Rank:   major
 [DESCRIPTION]
+Rename the strict-less relation constants IRT_LE, FRT_LE, and SRT_LE to
+IRT_LT, FRT_LT, and SRT_LT. Remove the old spellings without compatibility
+aliases to avoid confusion with less-or-equal. Relation values and semantics
+are unchanged; the less-or-equal constants retain the _LQ suffix.
+
+[ENTRY]
+Module: other
+What:   change
+Rank:   major
+[DESCRIPTION]
 Require C++23 and adopt four-space indentation and a 120-column limit with
 clang-format 22.
 Functions, variables, and members use snake_case; types retain PascalCase.

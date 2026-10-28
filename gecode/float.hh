@@ -1071,7 +1071,7 @@ namespace Gecode {
         FRT_EQ, ///< Equality (\f$=\f$)
         FRT_NQ, ///< Disequality (\f$\neq\f$)
         FRT_LQ, ///< Less or equal (\f$\leq\f$)
-        FRT_LE, ///< Less (\f$<\f$)
+        FRT_LT, ///< Strictly less (\f$<\f$)
         FRT_GQ, ///< Greater or equal (\f$\geq\f$)
         FRT_GR  ///< Greater (\f$>\f$)
     };

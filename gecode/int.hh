@@ -1227,7 +1227,7 @@ namespace Gecode {
         IRT_EQ, ///< Equality (\f$=\f$)
         IRT_NQ, ///< Disequality (\f$\neq\f$)
         IRT_LQ, ///< Less or equal (\f$\leq\f$)
-        IRT_LE, ///< Less (\f$<\f$)
+        IRT_LT, ///< Strictly less (\f$<\f$)
         IRT_GQ, ///< Greater or equal (\f$\geq\f$)
         IRT_GR  ///< Greater (\f$>\f$)
     };
@@ -1407,7 +1407,7 @@ namespace Gecode {
     /** \brief Post propagator for relation among elements in \a x.
      *
      * States that the elements of \a x are in the following relation:
-     *  - if \a r = IRT_LE, \a r = IRT_LQ, \a r = IRT_GR, or \a r = IRT_GQ,
+     *  - if \a r = IRT_LT, \a r = IRT_LQ, \a r = IRT_GR, or \a r = IRT_GQ,
      *    then the elements of \a x are ordered with respect to \a r.
      *    Supports domain consistency (\a ipl = IPL_DOM, default).
      *  - if \a r = IRT_EQ, then all elements of \a x must be equal.
@@ -1560,7 +1560,7 @@ namespace Gecode {
     /** \brief Post domain consistent propagator for relation between elements in \a x.
      *
      * States that the elements of \a x are in the following relation:
-     *  - if \a r = IRT_LE, \a r = IRT_LQ, \a r = IRT_GR, or \a r = IRT_GQ,
+     *  - if \a r = IRT_LT, \a r = IRT_LQ, \a r = IRT_GR, or \a r = IRT_GQ,
      *    then the elements of \a x are ordered with respect to \a r.
      *  - if \a r = IRT_EQ, then all elements of \a x must be equal.
      *  - if \a r = IRT_NQ, then not all elements of \a x must be equal.

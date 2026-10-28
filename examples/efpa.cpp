@@ -177,7 +177,7 @@ public:
 
         // Symmetry breaking
         if (opt.symmetry()) {
-            IntRelType row_less = d == 0 ? IRT_EQ : IRT_LE;
+            IntRelType row_less = d == 0 ? IRT_EQ : IRT_LT;
             // order rows
             for (int r = 0; r < v - 1; ++r) {
                 rel(*this, cm.row(r), row_less, cm.row(r + 1));
@@ -267,9 +267,9 @@ public:
                     rel(*this, perm[1], IRT_NQ, perm[2], cformb);
                     rel(*this, perm[1], IRT_NQ, perm[3], cformb);
                     // Common ordering-constraints - symmetry breaking
-                    rel(*this, perm[0], IRT_LE, perm[1]);
-                    rel(*this, perm[0], IRT_LE, perm[2]);
-                    rel(*this, perm[0], IRT_LE, perm[3]);
+                    rel(*this, perm[0], IRT_LT, perm[1]);
+                    rel(*this, perm[0], IRT_LT, perm[2]);
+                    rel(*this, perm[0], IRT_LT, perm[3]);
                     // Conditional ordering constraint - symmetry breaking for cform 0
                     rel(*this, (!cformb) >> (perm[2] < perm[3]));
                 }

@@ -150,7 +150,7 @@ public:
         }
 
         // Symmetry breaking
-        rel(*this, y[0], IRT_LE, y[n * k - 1]);
+        rel(*this, y[0], IRT_LT, y[n * k - 1]);
 
         // Branching
         branch(*this, y, INT_VAR_SIZE_MIN(), INT_VAL_MAX());

@@ -59,7 +59,7 @@ namespace Test {
             /// Post arbitrary propagator
             void
             post(void) {
-                Gecode::rel(*this, x, Gecode::IRT_LE, y);
+                Gecode::rel(*this, x, Gecode::IRT_LT, y);
             }
             /// Copy during cloning
             Space*
@@ -172,7 +172,7 @@ namespace Test {
             /// Post a non-subsumed relation and return its propagator
             Gecode::Propagator&
             post(Gecode::PropagatorGroup g = Gecode::PropagatorGroup::def) {
-                Gecode::rel((*this)(g), x, Gecode::IRT_LE, y);
+                Gecode::rel((*this)(g), x, Gecode::IRT_LT, y);
                 Gecode::Propagator* p = nullptr;
                 for (Propagators ps(*this); ps(); ++ps)
                     if ((p == nullptr) || (ps.propagator().id() > p->id()))

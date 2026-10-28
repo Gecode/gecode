@@ -372,9 +372,9 @@ namespace Test {
         /// Values for selecting how to constrain
         enum HowToConstrain {
             HTC_NONE,   ///< Do not constrain
-            HTC_LEX_LE, ///< Constrain for lexically smallest
+            HTC_LEX_LT, ///< Constrain for lexically smallest
             HTC_LEX_GR, ///< Constrain for lexically biggest
-            HTC_BAL_LE, ///< Constrain for smallest balance
+            HTC_BAL_LT, ///< Constrain for smallest balance
             HTC_BAL_GR  ///< Constrain for largest balance
         };
 
@@ -548,15 +548,15 @@ namespace Test {
                 switch (htc) {
                 case HTC_NONE:
                     break;
-                case HTC_LEX_LE:
+                case HTC_LEX_LT:
                 case HTC_LEX_GR: {
                     IntVarArgs y(6);
                     for (int i = 0; i < 6; i++)
                         y[i] = IntVar(*this, s.x[i].val(), s.x[i].val());
-                    lex(*this, x, (htc == HTC_LEX_LE) ? IRT_LE : IRT_GR, y);
+                    lex(*this, x, (htc == HTC_LEX_LT) ? IRT_LT : IRT_GR, y);
                     break;
                 }
-                case HTC_BAL_LE:
+                case HTC_BAL_LT:
                 case HTC_BAL_GR: {
                     IntVarArgs y(6);
                     for (int i = 0; i < 6; i++)
@@ -565,7 +565,7 @@ namespace Test {
                     IntVar ys(*this, -18, 18);
                     rel(*this, x[0] + x[1] + x[2] - x[3] - x[4] - x[5] == xs);
                     rel(*this, y[0] + y[1] + y[2] - y[3] - y[4] - y[5] == ys);
-                    rel(*this, expr(*this, abs(xs)), (htc == HTC_BAL_LE) ? IRT_LE : IRT_GR, expr(*this, abs(ys)));
+                    rel(*this, expr(*this, abs(xs)), (htc == HTC_BAL_LT) ? IRT_LT : IRT_GR, expr(*this, abs(ys)));
                     break;
                 }
                 }
@@ -592,13 +592,13 @@ namespace Test {
                 switch (htc) {
                 case HTC_NONE:
                     return true;
-                case HTC_LEX_LE:
+                case HTC_LEX_LT:
                     return ((x[0].val() == 4) && (x[1].val() == 5) && (x[2].val() == 2) && (x[3].val() == 3) &&
                             (x[4].val() == 0) && (x[5].val() == 1));
                 case HTC_LEX_GR:
                     return ((x[0].val() == 5) && (x[1].val() == 4) && (x[2].val() == 3) && (x[3].val() == 2) &&
                             (x[4].val() == 1) && (x[5].val() == 0));
-                case HTC_BAL_LE:
+                case HTC_BAL_LT:
                     return ((x[0].val() == 4) && (x[1].val() == 5) && (x[2].val() == 2) && (x[3].val() == 3) &&
                             (x[4].val() == 0) && (x[5].val() == 1));
                 case HTC_BAL_GR:
@@ -675,12 +675,12 @@ namespace Test {
                 switch (htc) {
                 case HTC_NONE:
                     return "None";
-                case HTC_LEX_LE:
-                    return "LexLe";
+                case HTC_LEX_LT:
+                    return "LexLt";
                 case HTC_LEX_GR:
                     return "LexGr";
-                case HTC_BAL_LE:
-                    return "BalLe";
+                case HTC_BAL_LT:
+                    return "BalLt";
                 case HTC_BAL_GR:
                     return "BalGr";
                 default:
@@ -976,7 +976,7 @@ namespace Test {
                         return false;
                 }
                 {
-                    HasSolutions root(HTB_BINARY, HTB_BINARY, HTB_BINARY, HTC_LEX_LE);
+                    HasSolutions root(HTB_BINARY, HTB_BINARY, HTB_BINARY, HTC_LEX_LT);
                     WorkerControl control(threads);
                     Gecode::Search::Options o;
                     o.threads = threads;
@@ -987,7 +987,7 @@ namespace Test {
                 }
                 {
                     // Restarts rebuild the leaf engine under the same control.
-                    HasSolutions root(HTB_BINARY, HTB_BINARY, HTB_BINARY, HTC_LEX_LE);
+                    HasSolutions root(HTB_BINARY, HTB_BINARY, HTB_BINARY, HTC_LEX_LT);
                     WorkerControl control(threads);
                     Gecode::Search::Options o;
                     o.threads = threads;
@@ -998,7 +998,7 @@ namespace Test {
                         return false;
                 }
                 {
-                    HasSolutions root(HTB_BINARY, HTB_BINARY, HTB_BINARY, HTC_LEX_LE);
+                    HasSolutions root(HTB_BINARY, HTB_BINARY, HTB_BINARY, HTC_LEX_LT);
                     WorkerControl controls[2] = {WorkerControl(threads), WorkerControl(threads)};
                     Gecode::SEBs sebs(2);
                     for (int i = 0; i < 2; i++) {
@@ -1537,7 +1537,7 @@ namespace Test {
             }
         };
 
-        const HowToConstrain ConstrainTypes::htcs[4] = {HTC_LEX_LE, HTC_LEX_GR, HTC_BAL_LE, HTC_BAL_GR};
+        const HowToConstrain ConstrainTypes::htcs[4] = {HTC_LEX_LT, HTC_LEX_GR, HTC_BAL_LT, HTC_BAL_GR};
 
         /// Help class to create and register tests
         class Create {

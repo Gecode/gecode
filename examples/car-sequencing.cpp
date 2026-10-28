@@ -356,7 +356,7 @@ public:
     void
     constrain(const Space& _best) override {
         const CarSequencing& best = static_cast<const CarSequencing&>(_best);
-        rel(*this, stall_count, IRT_LE, best.stall_count.val());
+        rel(*this, stall_count, IRT_LT, best.stall_count.val());
     }
 
     /// Print solution

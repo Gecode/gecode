@@ -414,10 +414,10 @@ public:
             // Lexical order for all columns and rows (all are interchangeable)
             if (opt.symmetry() & SYMMETRY_MATRIX) {
                 for (int r = 0; r < height - 1; ++r) {
-                    rel(*this, m.row(r), IRT_LE, m.row(r + 1));
+                    rel(*this, m.row(r), IRT_LT, m.row(r + 1));
                 }
                 for (int c = 0; c < width - 1; ++c) {
-                    rel(*this, m.col(c), IRT_LE, m.col(c + 1));
+                    rel(*this, m.col(c), IRT_LT, m.col(c + 1));
                 }
             }
 

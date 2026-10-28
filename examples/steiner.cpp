@@ -119,7 +119,7 @@ public:
                 rel(*this, y1 < y3);
 
                 linear(*this, {(n + 1) * (n + 1), n + 1, 1, -(n + 1) * (n + 1), -(n + 1), -1}, {x1, x2, x3, y1, y2, y3},
-                       IRT_LE, 0);
+                       IRT_LT, 0);
             }
         }
 

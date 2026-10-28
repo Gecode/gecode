@@ -443,7 +443,7 @@ namespace Gecode {
         /**
          * \brief Order on position sets
          */
-        enum PosSetCmp { PSC_LE, PSC_EQ, PSC_GR };
+        enum PosSetCmp { PSC_LT, PSC_EQ, PSC_GR };
 
         /**
          * \brief Sets of positions
@@ -487,7 +487,7 @@ namespace Gecode {
                 if (ps1 == ps2)
                     return PSC_EQ;
                 if (ps1->pos < ps2->pos)
-                    return PSC_LE;
+                    return PSC_LT;
                 if (ps1->pos > ps2->pos)
                     return PSC_GR;
                 ps1 = ps1->next;
@@ -495,7 +495,7 @@ namespace Gecode {
             }
             if (ps1 == ps2)
                 return PSC_EQ;
-            return ps1 == nullptr ? PSC_LE : PSC_GR;
+            return ps1 == nullptr ? PSC_LT : PSC_GR;
         }
 
         PosSet*
@@ -722,7 +722,7 @@ namespace Gecode {
                 switch (PosSet::cmp(ps, n->pos)) {
                 case PSC_EQ:
                     return n->state;
-                case PSC_LE:
+                case PSC_LT:
                     p = &n->left;
                     n = *p;
                     break;

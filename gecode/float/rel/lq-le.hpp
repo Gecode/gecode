@@ -327,7 +327,7 @@ namespace Gecode { namespace Float { namespace Rel {
             if (rm != RM_IMP)
                 GECODE_ME_CHECK(x.gq(home, c.min()));
         } else {
-            switch (rtest_le(x, c)) {
+            switch (rtest_lt(x, c)) {
             case RT_TRUE:
                 if (rm != RM_IMP)
                     GECODE_ME_CHECK(b.one(home));
@@ -371,7 +371,7 @@ namespace Gecode { namespace Float { namespace Rel {
             if (rm != RM_IMP)
                 GECODE_ME_CHECK(x0.gq(home, c.min()));
         } else {
-            switch (rtest_le(x0, c)) {
+            switch (rtest_lt(x0, c)) {
             case RT_TRUE:
                 if (rm != RM_IMP)
                     GECODE_ME_CHECK(b.one(home));

@@ -131,7 +131,7 @@ namespace Gecode { namespace Int { namespace Rel {
 
             if (i == n) { // case: $
                 if (strict)
-                    goto rewrite_le;
+                    goto rewrite_lt;
                 else
                     goto rewrite_lq;
             }
@@ -140,7 +140,7 @@ namespace Gecode { namespace Int { namespace Rel {
                 goto rewrite_lq;
 
             if (x[i].min() > y[i].max()) // case: >
-                goto rewrite_le;
+                goto rewrite_lt;
 
             if (i > 1) {
                 // Remove equal elements [1...i-1], keep element [0]
@@ -204,13 +204,13 @@ namespace Gecode { namespace Int { namespace Rel {
 
             if (i == n) { // case: $
                 if (strict)
-                    goto rewrite_le;
+                    goto rewrite_lt;
                 else
                     return ES_FIX;
             }
 
             if (x[i].min() > y[i].max()) // case: >
-                goto rewrite_le;
+                goto rewrite_lt;
 
             if (x[i].max() < y[i].min()) { // case: <
                 // Eliminate [i]...[n-1]
@@ -228,7 +228,7 @@ namespace Gecode { namespace Int { namespace Rel {
 
         return ES_FIX;
 
-    rewrite_le:
+    rewrite_lt:
         GECODE_REWRITE(*this, (Le<VX, VY>::post(home(*this), x[0], y[0])));
     rewrite_lq:
         GECODE_REWRITE(*this, (Lq<VX, VY>::post(home(*this), x[0], y[0])));

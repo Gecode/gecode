@@ -73,7 +73,7 @@ public:
         rel(*this, m[0], IRT_EQ, 0);
 
         // Order marks
-        rel(*this, m, IRT_LE);
+        rel(*this, m, IRT_LT);
 
         // Number of marks and differences
         const int n = m.size();
@@ -92,7 +92,7 @@ public:
 
         // Symmetry breaking
         if (n > 2)
-            rel(*this, d[0], IRT_LE, d[n_d - 1]);
+            rel(*this, d[0], IRT_LT, d[n_d - 1]);
 
         branch(*this, m, INT_VAR_NONE(), INT_VAL_MIN());
     }

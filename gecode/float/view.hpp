@@ -549,10 +549,10 @@ namespace Gecode { namespace Float {
 
     /// Test whether view \a x is less than view \a y
     template <class View>
-    RelTest rtest_le(View x, View y);
+    RelTest rtest_lt(View x, View y);
     /// Test whether view \a x is less or equal than float \a n
     template <class View>
-    RelTest rtest_le(View x, FloatVal n);
+    RelTest rtest_lt(View x, FloatVal n);
 
     //@}
 

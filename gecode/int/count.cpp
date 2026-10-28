@@ -55,7 +55,7 @@ namespace Gecode {
             GECODE_ME_FAIL(IntView(z).nq(home, m));
             GECODE_ES_FAIL((Count::EqView<IntView, ConstIntView, IntView, true, false>::post(home, xv, y, z, 0)));
         } break;
-        case IRT_LE:
+        case IRT_LT:
             m--; // FALL THROUGH
         case IRT_LQ:
             GECODE_ES_FAIL((Count::LqInt<IntView, ConstIntView>::post(home, xv, y, m)));
@@ -90,7 +90,7 @@ namespace Gecode {
             GECODE_ME_FAIL(IntView(z).nq(home, m));
             GECODE_ES_FAIL((Count::EqView<IntView, IntView, IntView, true, false>::post(home, xv, y, z, 0)));
         } break;
-        case IRT_LE:
+        case IRT_LT:
             m--; // FALL THROUGH
         case IRT_LQ:
             GECODE_ES_FAIL((Count::LqInt<IntView, IntView>::post(home, xv, y, m)));
@@ -134,7 +134,7 @@ namespace Gecode {
             GECODE_ME_FAIL(IntView(z).nq(home, m));
             GECODE_ES_FAIL((Count::EqView<IntView, IntSet, IntView, true, false>::post(home, xv, y, z, 0)));
         } break;
-        case IRT_LE:
+        case IRT_LT:
             m--; // FALL THROUGH
         case IRT_LQ:
             GECODE_ES_FAIL((Count::LqInt<IntView, IntSet>::post(home, xv, y, m)));
@@ -171,7 +171,7 @@ namespace Gecode {
             GECODE_ME_FAIL(IntView(z).nq(home, m));
             GECODE_ES_FAIL((Count::EqView<OffsetView, ZeroIntView, IntView, true, false>::post(home, xy, zero, z, 0)));
         } break;
-        case IRT_LE:
+        case IRT_LT:
             m--; // FALL THROUGH
         case IRT_LQ:
             GECODE_ES_FAIL((Count::LqInt<OffsetView, ZeroIntView>::post(home, xy, zero, m)));
@@ -202,7 +202,7 @@ namespace Gecode {
             GECODE_ES_FAIL((Rel::Nq<IntView, IntView>::post(home, z, nz)));
             GECODE_ES_FAIL((Count::EqView<IntView, ConstIntView, IntView, true, false>::post(home, xv, yv, nz, 0)));
         } break;
-        case IRT_LE:
+        case IRT_LT:
             GECODE_ES_FAIL((Count::LqView<IntView, ConstIntView, IntView, true>::post(home, xv, yv, z, -1)));
             break;
         case IRT_LQ:
@@ -236,7 +236,7 @@ namespace Gecode {
             GECODE_ES_FAIL((Rel::Nq<IntView, IntView>::post(home, z, nz)));
             GECODE_ES_FAIL((Count::EqView<IntView, IntView, IntView, true, false>::post(home, xv, y, nz, 0)));
         } break;
-        case IRT_LE:
+        case IRT_LT:
             GECODE_ES_FAIL((Count::LqView<IntView, IntView, IntView, true>::post(home, xv, y, z, -1)));
             break;
         case IRT_LQ:
@@ -282,7 +282,7 @@ namespace Gecode {
             GECODE_ES_FAIL((Rel::Nq<IntView, IntView>::post(home, z, nz)));
             GECODE_ES_FAIL((Count::EqView<IntView, IntSet, IntView, true, false>::post(home, xv, y, nz, 0)));
         } break;
-        case IRT_LE:
+        case IRT_LT:
             GECODE_ES_FAIL((Count::LqView<IntView, IntSet, IntView, true>::post(home, xv, y, z, -1)));
             break;
         case IRT_LQ:
@@ -320,7 +320,7 @@ namespace Gecode {
             GECODE_ES_FAIL((Rel::Nq<IntView, IntView>::post(home, z, nz)));
             GECODE_ES_FAIL((Count::EqView<OffsetView, ZeroIntView, IntView, true, false>::post(home, xy, u, nz, 0)));
         } break;
-        case IRT_LE:
+        case IRT_LT:
             GECODE_ES_FAIL((Count::LqView<OffsetView, ZeroIntView, IntView, true>::post(home, xy, u, z, -1)));
             break;
         case IRT_LQ:

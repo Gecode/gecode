@@ -91,7 +91,7 @@ namespace Gecode {
             Set::ConstSetView cv(home, is);
             GECODE_ES_FAIL((Set::Rel::Lq<Set::SetView, Set::ConstSetView, false>::post(home, s, cv)));
         } break;
-        case SRT_LE: {
+        case SRT_LT: {
             Set::ConstSetView cv(home, is);
             GECODE_ES_FAIL((Set::Rel::Lq<Set::SetView, Set::ConstSetView, true>::post(home, s, cv)));
         } break;
@@ -180,7 +180,7 @@ namespace Gecode {
                 GECODE_ES_FAIL((Set::Rel::Lq<Set::SetView, Set::ConstSetView, false>::post(home, _s, cv)));
             }
         } break;
-        case SRT_LE: {
+        case SRT_LT: {
             Set::ConstSetView cv(home, is);
             for (int i = s.size(); i--;) {
                 Set::SetView _s(s[i]);
@@ -333,7 +333,7 @@ namespace Gecode {
                 throw Gecode::Int::UnknownReifyMode("Set::dom");
             }
         } break;
-        case SRT_LE: {
+        case SRT_LT: {
             Set::ConstSetView cv(home, is);
             switch (r.mode()) {
             case RM_EQV:

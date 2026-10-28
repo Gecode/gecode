@@ -97,7 +97,7 @@ namespace Test { namespace Int {
             IntVarXX(Gecode::IntRelType irt0, Gecode::IntPropLevel ipl)
                 : Test(TestTags::sweep(), "Rel::Int::Var::XX::" + str(irt0) + "::" + str(ipl), 1, -3, 3, true, ipl),
                   irt(irt0) {
-                consistency_test_level = ((irt != Gecode::IRT_LE) && (irt != Gecode::IRT_GR) && (irt != Gecode::IRT_NQ))
+                consistency_test_level = ((irt != Gecode::IRT_LT) && (irt != Gecode::IRT_GR) && (irt != Gecode::IRT_NQ))
                                              ? CTL_DOMAIN
                                              : CTL_NONE;
             }
@@ -168,7 +168,7 @@ namespace Test { namespace Int {
         public:
             /// Create and register test
             BoolVarXX(Gecode::IntRelType irt0) : Test("Rel::Bool::Var::XX::" + str(irt0), 1, 0, 1), irt(irt0) {
-                consistency_test_level = ((irt != Gecode::IRT_LE) && (irt != Gecode::IRT_GR) && (irt != Gecode::IRT_NQ))
+                consistency_test_level = ((irt != Gecode::IRT_LT) && (irt != Gecode::IRT_GR) && (irt != Gecode::IRT_NQ))
                                              ? CTL_DOMAIN
                                              : CTL_NONE;
             }

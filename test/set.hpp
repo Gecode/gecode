@@ -46,8 +46,8 @@ namespace Test { namespace Set {
             return "Eq";
         case Gecode::SRT_LQ:
             return "Lq";
-        case Gecode::SRT_LE:
-            return "Le";
+        case Gecode::SRT_LT:
+            return "Lt";
         case Gecode::SRT_GQ:
             return "Gq";
         case Gecode::SRT_GR:

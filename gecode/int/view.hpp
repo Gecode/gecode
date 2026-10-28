@@ -1765,10 +1765,10 @@ namespace Gecode { namespace Int {
 
     /// Test whether view \a x is less than view \a y
     template <class VX, class VY>
-    RelTest rtest_le(VX x, VY y);
+    RelTest rtest_lt(VX x, VY y);
     /// Test whether view \a x is less than integer \a n
     template <class VX>
-    RelTest rtest_le(VX x, int n);
+    RelTest rtest_lt(VX x, int n);
 
     /// Test whether view \a x is greater or equal than view \a y
     template <class VX, class VY>

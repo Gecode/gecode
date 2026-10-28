@@ -62,10 +62,10 @@ namespace Gecode {
             return FRT_EQ;
         case FRT_LQ:
             return FRT_GR;
-        case FRT_LE:
+        case FRT_LT:
             return FRT_GQ;
         case FRT_GQ:
-            return FRT_LE;
+            return FRT_LT;
         case FRT_GR:
             return FRT_LQ;
         default:

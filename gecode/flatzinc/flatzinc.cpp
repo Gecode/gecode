@@ -2033,13 +2033,13 @@ namespace Gecode { namespace FlatZinc {
     FlatZincSpace::constrain(const Space& s) {
         if (_opt_var_is_int) {
             if (_method == MIN)
-                rel(*this, iv[_opt_var], IRT_LE, static_cast<const FlatZincSpace*>(&s)->iv[_opt_var].val());
+                rel(*this, iv[_opt_var], IRT_LT, static_cast<const FlatZincSpace*>(&s)->iv[_opt_var].val());
             else if (_method == MAX)
                 rel(*this, iv[_opt_var], IRT_GR, static_cast<const FlatZincSpace*>(&s)->iv[_opt_var].val());
         } else {
 #ifdef GECODE_HAS_FLOAT_VARS
             if (_method == MIN)
-                rel(*this, fv[_opt_var], FRT_LE, static_cast<const FlatZincSpace*>(&s)->fv[_opt_var].val() - step);
+                rel(*this, fv[_opt_var], FRT_LT, static_cast<const FlatZincSpace*>(&s)->fv[_opt_var].val() - step);
             else if (_method == MAX)
                 rel(*this, fv[_opt_var], FRT_GR, static_cast<const FlatZincSpace*>(&s)->fv[_opt_var].val() + step);
 #endif

@@ -259,7 +259,7 @@ namespace Gecode { namespace Float { namespace Linear {
         case FRT_GQ:
             break;
         case FRT_NQ:
-        case FRT_LE:
+        case FRT_LT:
         case FRT_GR:
             rel(home, extend(home, re, t, n), frt, c);
             frt = FRT_EQ;

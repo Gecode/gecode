@@ -141,35 +141,35 @@ namespace Gecode {
 
     LinFloatRel
     operator<(const FloatVal& l, const FloatVar& r) {
-        return LinFloatRel(l, FRT_LE, (const LinFloatExpr&)r);
+        return LinFloatRel(l, FRT_LT, (const LinFloatExpr&)r);
     }
     LinFloatRel
     operator<(const FloatVal& l, const LinFloatExpr& r) {
-        return LinFloatRel(l, FRT_LE, r);
+        return LinFloatRel(l, FRT_LT, r);
     }
     LinFloatRel
     operator<(const FloatVar& l, const FloatVal& r) {
-        return LinFloatRel(l, FRT_LE, r);
+        return LinFloatRel(l, FRT_LT, r);
     }
     LinFloatRel
     operator<(const LinFloatExpr& l, const FloatVal& r) {
-        return LinFloatRel(l, FRT_LE, r);
+        return LinFloatRel(l, FRT_LT, r);
     }
     LinFloatRel
     operator<(const FloatVar& l, const FloatVar& r) {
-        return LinFloatRel((const LinFloatExpr&)l, FRT_LE, (const LinFloatExpr&)r);
+        return LinFloatRel((const LinFloatExpr&)l, FRT_LT, (const LinFloatExpr&)r);
     }
     LinFloatRel
     operator<(const FloatVar& l, const LinFloatExpr& r) {
-        return LinFloatRel((const LinFloatExpr&)l, FRT_LE, r);
+        return LinFloatRel((const LinFloatExpr&)l, FRT_LT, r);
     }
     LinFloatRel
     operator<(const LinFloatExpr& l, const FloatVar& r) {
-        return LinFloatRel(l, FRT_LE, (const LinFloatExpr&)r);
+        return LinFloatRel(l, FRT_LT, (const LinFloatExpr&)r);
     }
     LinFloatRel
     operator<(const LinFloatExpr& l, const LinFloatExpr& r) {
-        return LinFloatRel(l, FRT_LE, r);
+        return LinFloatRel(l, FRT_LT, r);
     }
 
     LinFloatRel

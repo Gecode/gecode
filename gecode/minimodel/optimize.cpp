@@ -39,7 +39,7 @@ namespace Gecode {
         const IntMinimizeSpace* best = dynamic_cast<const IntMinimizeSpace*>(&_best);
         if (best == nullptr)
             throw DynamicCastFailed("IntMinimizeSpace::constrain");
-        rel(*this, cost(), IRT_LE, best->cost().val());
+        rel(*this, cost(), IRT_LT, best->cost().val());
     }
 
     void
@@ -59,7 +59,7 @@ namespace Gecode {
         IntArgs bn(bx.size());
         for (int i = bn.size(); i--;)
             bn[i] = bx[i].val();
-        rel(*this, cx, IRT_LE, bn);
+        rel(*this, cx, IRT_LT, bn);
     }
 
     void
@@ -81,7 +81,7 @@ namespace Gecode {
         const FloatMinimizeSpace* best = dynamic_cast<const FloatMinimizeSpace*>(&_best);
         if (best == nullptr)
             throw DynamicCastFailed("FloatMinimizeSpace::constrain");
-        rel(*this, cost(), FRT_LE, best->cost().max() - step);
+        rel(*this, cost(), FRT_LT, best->cost().max() - step);
     }
 
     void

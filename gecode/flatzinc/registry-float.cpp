@@ -78,7 +78,7 @@ namespace Gecode { namespace FlatZinc {
         }
         void
         p_float_lin_lt(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
-            p_float_lin_cmp(s, FRT_LE, ce, ann);
+            p_float_lin_cmp(s, FRT_LT, ce, ann);
         }
         void
         p_float_lin_le_reif(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
@@ -86,7 +86,7 @@ namespace Gecode { namespace FlatZinc {
         }
         void
         p_float_lin_lt_reif(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
-            p_float_lin_cmp_reif(s, FRT_LE, ce, ann);
+            p_float_lin_cmp_reif(s, FRT_LT, ce, ann);
         }
 
         void
@@ -272,7 +272,7 @@ namespace Gecode { namespace FlatZinc {
                 r = FRT_LQ;
                 break;
             case 4:
-                r = FRT_LE;
+                r = FRT_LT;
                 break;
             case 5:
                 r = FRT_GQ;

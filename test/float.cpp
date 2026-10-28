@@ -232,7 +232,7 @@ namespace Test { namespace Float {
             case Gecode::FRT_LQ:
                 olog << "<=";
                 break;
-            case Gecode::FRT_LE:
+            case Gecode::FRT_LT:
                 olog << "<";
                 break;
             case Gecode::FRT_GQ:
@@ -406,7 +406,7 @@ namespace Test { namespace Float {
     }
 
     const Gecode::FloatRelType FloatRelTypes::frts[] = {Gecode::FRT_EQ, Gecode::FRT_NQ, Gecode::FRT_LQ,
-                                                        Gecode::FRT_LE, Gecode::FRT_GQ, Gecode::FRT_GR};
+                                                        Gecode::FRT_LT, Gecode::FRT_GQ, Gecode::FRT_GR};
 
     Assignment*
     Test::assignment(void) const {
