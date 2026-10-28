@@ -182,6 +182,7 @@ namespace Gecode { namespace Int { namespace Branch {
   ViewValuesBrancher<n,min,Filter,Print>::dispose(Space& home) {
     if (p.notice())
       home.ignore(*this,AP_DISPOSE,true);
+    p.dispose(home);
     (void) ViewBrancher<IntView,Filter,n>::dispose(home);
     return sizeof(ViewValuesBrancher<n,min,Filter,Print>);
   }

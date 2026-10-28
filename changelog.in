@@ -85,6 +85,13 @@ during scoped posting. NoGPI keeps new propagators' information local to the
 space, with zero AFC; UseGPI enables global information within such a scope.
 
 [ENTRY]
+Module: kernel
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Release branch filter and print callbacks when their branchers are disposed.
+
+[ENTRY]
 Module: search
 What:   new
 Rank:   major
