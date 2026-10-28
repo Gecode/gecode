@@ -1001,16 +1001,32 @@ namespace Test { namespace Int {
           IntVar minimum;
           IntVar maximum;
 
-          IncrementalSpace(void)
+          IncrementalSpace(Constraint::Kind kind)
             : list(*this,IntSet(0,2),2),
               minimum(*this,0,2), maximum(*this,0,2) {
-            distinct(*this,list);
-            rel(*this,list,IRT_LE);
-            Gecode::sequence(*this,list,IntSet(2,2),2,1,1);
-            sliding_sum(*this,list,2,2,2);
-            min(*this,list,minimum);
-            max(*this,list,maximum);
-            precede(*this,list,0,2);
+            switch (kind) {
+            case Constraint::Kind::DISTINCT:
+              distinct(*this,list);
+              break;
+            case Constraint::Kind::REL:
+              rel(*this,list,IRT_LE);
+              break;
+            case Constraint::Kind::SLIDING:
+              Gecode::sequence(*this,list,IntSet(1,1),2,1,1);
+              break;
+            case Constraint::Kind::SLIDING_SUM:
+              sliding_sum(*this,list,2,2,2);
+              break;
+            case Constraint::Kind::MIN_MAX:
+              min(*this,list,minimum);
+              max(*this,list,maximum);
+              break;
+            case Constraint::Kind::PRECEDE:
+              precede(*this,list,0,1);
+              break;
+            default:
+              GECODE_NEVER;
+            }
           }
 
           IncrementalSpace(IncrementalSpace& s)
@@ -1024,26 +1040,56 @@ namespace Test { namespace Int {
           copy(void) {
             return new IncrementalSpace(*this);
           }
-        } source;
+        };
 
-        source.list.materialize(source,1);
-        rel(source,source.list[0],IRT_EQ,0);
-        if ((source.status() == SS_FAILED) ||
-            !source.list[0].assigned())
-          return false;
+        for (Constraint::Kind kind : {
+            Constraint::Kind::DISTINCT, Constraint::Kind::REL, Constraint::Kind::SLIDING,
+            Constraint::Kind::SLIDING_SUM, Constraint::Kind::MIN_MAX, Constraint::Kind::PRECEDE}) {
+          IncrementalSpace source(kind);
+          const int first = kind == Constraint::Kind::PRECEDE ? 2 :
+            ((kind == Constraint::Kind::REL || kind == Constraint::Kind::MIN_MAX) ? 1 : 0);
+          source.list.materialize(source,1);
+          rel(source,source.list[0],IRT_EQ,first);
+          if ((source.status() == SS_FAILED) || !source.list[0].assigned())
+            return false;
 
-        IncrementalSpace* clone =
-          static_cast<IncrementalSpace*>(source.clone());
-        clone->list.materialize(*clone,2);
-        clone->list.close(*clone);
-        const bool valid =
-          (clone->status() != SS_FAILED) &&
-          clone->list[1].assigned() &&
-          (clone->list[1].val() == 2) &&
-          clone->minimum.assigned() && (clone->minimum.val() == 0) &&
-          clone->maximum.assigned() && (clone->maximum.val() == 2);
-        delete clone;
-        return valid && (source.list.known_length() == 1);
+          std::unique_ptr<IncrementalSpace> clone
+            (static_cast<IncrementalSpace*>(source.clone()));
+          clone->list.materialize(*clone,2);
+          clone->list.close(*clone);
+          if (kind == Constraint::Kind::MIN_MAX)
+            rel(*clone,clone->list[1],IRT_EQ,2);
+          if ((clone->status() == SS_FAILED) ||
+              (source.list.known_length() != 1))
+            return false;
+          switch (kind) {
+          case Constraint::Kind::DISTINCT:
+            if (clone->list[1].in(0))
+              return false;
+            break;
+          case Constraint::Kind::REL:
+          case Constraint::Kind::SLIDING_SUM:
+            if (!clone->list[1].assigned() || (clone->list[1].val() != 2))
+              return false;
+            break;
+          case Constraint::Kind::SLIDING:
+            if (!clone->list[1].assigned() || (clone->list[1].val() != 1))
+              return false;
+            break;
+          case Constraint::Kind::MIN_MAX:
+            if (!clone->minimum.assigned() || (clone->minimum.val() != 1) ||
+                !clone->maximum.assigned() || (clone->maximum.val() != 2))
+              return false;
+            break;
+          case Constraint::Kind::PRECEDE:
+            if (clone->list[1].in(1))
+              return false;
+            break;
+          default:
+            GECODE_NEVER;
+          }
+        }
+        return true;
       }
     };
 
