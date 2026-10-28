@@ -73,7 +73,7 @@ namespace Gecode { namespace Search { namespace Par {
       bool room = (opt.frontier_limit == 0UL) || (stored < opt.frontier_limit);
       if (candidates.offer(f,guidance,room) == Beam::FULL) {
         delete f.space;
-        limited = _stopped = true;
+        _limited = _stopped = true;
         running = false;
       }
     }
@@ -86,7 +86,7 @@ namespace Gecode { namespace Search { namespace Par {
       if (!candidates.improving(best))
         return false;
       if (!candidates.widen(opt.max_width)) {
-        limited = _stopped = true;
+        _limited = _stopped = true;
         return false;
       }
       stat.restart++;
@@ -121,6 +121,21 @@ namespace Gecode { namespace Search { namespace Par {
 }}}
 #endif
 
+namespace Gecode { namespace Search { namespace Seq {
+
+  /// Sequential CABS engine
+  class CABSEngine : public WorkerToEngine<CABS> {
+  public:
+    /// Initialize for space \a s with options \a o
+    CABSEngine(Space* s, const Options& o) : WorkerToEngine<CABS>(s,o) {}
+    /// Whether search stopped at the width or frontier limit
+    bool limited(void) const override {
+      return w.limited();
+    }
+  };
+
+}}}
+
 namespace Gecode { namespace Search {
 
   Engine*
@@ -134,7 +149,7 @@ namespace Gecode { namespace Search {
     if (e.threads > 1.0)
       return new Par::CABS(s,e);
 #endif
-    return new WorkerToEngine<Seq::CABS>(s,e);
+    return new Seq::CABSEngine(s,e);
   }
 
 }}
@@ -146,7 +161,7 @@ namespace Gecode { namespace Search { namespace Seq {
       priority{guidance.sense,static_cast<bool>(guidance.rank)},
       candidates(priority,guidance.dominates && guidance.dominance_key),
       order(0), status(SS_FAILED), depth(0), revision(0), counted(false),
-      best(guidance.sense), limited(false) {
+      best(guidance.sense), _limited(false) {
     initialize(s,o.clone);
   }
 
@@ -184,7 +199,7 @@ namespace Gecode { namespace Search { namespace Seq {
     bool room = (opt.frontier_limit == 0UL) || (stored < opt.frontier_limit);
     Entry e{s.get(),b,r,k,d,order++,best.revision};
     if (candidates.offer(e,guidance,room) == Beam::FULL) {
-      limited = _stopped = true;
+      _limited = _stopped = true;
       return false;
     }
     (void) s.release();
@@ -213,7 +228,7 @@ namespace Gecode { namespace Search { namespace Seq {
     if (!candidates.improving(best))
       return false;
     if (!candidates.widen(opt.max_width)) {
-      limited = _stopped = true;
+      _limited = _stopped = true;
       return false;
     }
     restart++;
@@ -227,7 +242,7 @@ namespace Gecode { namespace Search { namespace Seq {
 
   Space*
   CABS::next(void) {
-    if (limited) {
+    if (_limited) {
       _stopped = true;
       return nullptr;
     }
@@ -294,6 +309,11 @@ namespace Gecode { namespace Search { namespace Seq {
     return *this;
   }
 
+  bool
+  CABS::limited(void) const {
+    return _limited;
+  }
+
   void
   CABS::constrain(const Space& s) {
     std::int64_t b = guidance.bound(s);
@@ -312,7 +332,7 @@ namespace Gecode { namespace Search { namespace Seq {
     order = 0;
     revision = 0;
     depth = 0;
-    counted = limited = false;
+    counted = _limited = false;
     Worker::reset();
     initialize(s,false);
     // The root is owned by the engine after initialize returns

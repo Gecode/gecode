@@ -163,6 +163,15 @@ namespace Gecode { namespace Search { namespace Par {
     return slave->stopped();
   }
   template<class Collect>
+  forceinline bool
+  Slave<Collect>::limited(void) const {
+#ifdef GECODE_HAS_EXPERIMENTAL
+    return slave->limited();
+#else
+    return false;
+#endif
+  }
+  template<class Collect>
   forceinline Support::Terminator*
   Slave<Collect>::terminator(void) const {
     return const_cast<Completion*>(&completion);
@@ -196,7 +205,7 @@ namespace Gecode { namespace Search { namespace Par {
                     const Statistics& stat0)
     : stat(stat0), slaves(heap.alloc<Slave<Collect>*>(n)),
       n_slaves(n), n_active(n),
-      slave_stop(false), tostop(false), n_busy(0) {
+      slave_stop(false), incomplete(false), tostop(false), n_busy(0) {
     // Initialize slaves
     for (unsigned int i=0U; i<n_slaves; i++) {
       slaves[i] = new Slave<Collect>(this,engines[i],stops[i]);
@@ -218,14 +227,17 @@ namespace Gecode { namespace Search { namespace Par {
         tostop.store(true, std::memory_order_release);
         wake = true;
       }
-    } else if (slave->stopped()) {
+    } else if (slave->stopped() && !slave->limited()) {
       if (!tostop.load(std::memory_order_acquire)) {
         slave_stop.store(true, std::memory_order_release);
         tostop.store(true, std::memory_order_release);
         wake = true;
       }
     } else {
-      // Move slave to inactive, as it has exhausted its engine
+      // The slave is done or stopped at a local limit (then search is incomplete)
+      if (slave->limited())
+        incomplete = true;
+      // Move slave to inactive
       unsigned int i=0;
       while (slaves[i] != slave)
         i++;
@@ -286,6 +298,9 @@ namespace Gecode { namespace Search { namespace Par {
 
     // Invariant all slaves are idle!
     assert(n_busy == 0);
+
+    if (solutions.empty() && (n_active == 0) && incomplete)
+      slave_stop.store(true, std::memory_order_release);
 
     Space* s;
 

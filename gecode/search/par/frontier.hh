@@ -109,7 +109,7 @@ namespace Gecode { namespace Search { namespace Par {
     /// Number of workers holding a task
     unsigned int active;
     /// Whether search is running, being shut down, stopped, or limited
-    bool running, shutdown, _stopped, limited;
+    bool running, shutdown, _stopped, _limited;
     /// First exception thrown by a worker
     std::exception_ptr error;
 
@@ -162,6 +162,8 @@ namespace Gecode { namespace Search { namespace Par {
     Search::Statistics statistics(void) const override;
     /// Whether search has been stopped
     bool stopped(void) const override;
+    /// Whether search stopped at the width or frontier limit
+    bool limited(void) const override;
     /// Constrain future solutions to be better than \a s
     void constrain(const Space& s) override;
     /// Reset engine to restart at space \a s

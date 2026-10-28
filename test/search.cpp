@@ -290,6 +290,15 @@ namespace Test {
 
     /// Portfolio of BAB, A*, and CABS assets
     class HeuristicPortfolio : public Base {
+      /// Stop object that never stops but takes some time
+      class Slow : public Gecode::Search::Stop {
+      public:
+        bool stop(const Gecode::Search::Statistics&,
+                  const Gecode::Search::Options&) override {
+          std::this_thread::sleep_for(std::chrono::microseconds(200));
+          return false;
+        }
+      };
     public:
       HeuristicPortfolio(void)
         : Base("Search::Heuristic::Portfolio",TestTags::check()) {}
@@ -307,7 +316,44 @@ namespace Test {
         o.threads = 3;
 #endif
         PBS<TreeSpace,BAB> e(&root,assets,o);
-        return improving(e,root);
+        if (!improving(e,root))
+          return false;
+        // A CABS asset stopping at its width limit must not stop the others
+        return limited(1) && limited(2);
+      }
+      /// Run width-limited CABS and BAB on a tree where CABS stops early
+      static bool limited(unsigned int threads) {
+#ifndef GECODE_HAS_THREADS
+        if (threads > 1U)
+          return true;
+#endif
+        // CABS with width one follows the preferred branch to cost 5
+        TreeSpace::Graph g = {
+          {0,0,0,1,{1,2}}, {0,0,0,5,{3}}, {0,0,1,1,{4}},
+          {5,5,0,5,{}}, {1,1,0,1,{}}
+        };
+        TreeSpace root(std::make_shared<const TreeSpace::Graph>(g),false);
+        Gecode::Search::HeuristicGuidance h =
+          TreeSpace::guidance(false,true,false,false);
+        Gecode::Search::Options c;
+        c.threads = 1;
+        c.guidance = &h;
+        c.max_width = 1;
+        // Slow down BAB so that CABS stops first
+        Slow slow;
+        Gecode::Search::Options b;
+        b.threads = 1;
+        b.stop = &slow;
+        SEBs assets({cabs<TreeSpace>(c),bab<TreeSpace>(b)});
+        Gecode::Search::Options o;
+        o.threads = threads;
+        PBS<TreeSpace,BAB> e(&root,assets,o);
+        int last = std::numeric_limits<int>::max();
+        while (TreeSpace* s = e.next()) {
+          last = s->node().cost;
+          delete s;
+        }
+        return (last == 1) && e.stopped();
       }
     } heuristic_portfolio;
 #endif

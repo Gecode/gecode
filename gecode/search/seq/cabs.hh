@@ -72,7 +72,7 @@ namespace Gecode { namespace Search { namespace Seq {
     /// Best solution so far
     Incumbent best;
     /// Whether search stopped at the width or frontier limit
-    bool limited;
+    bool _limited;
     /// Offer node \a s at depth \a d to the next layer, false if no room
     bool admit(std::unique_ptr<Space> s, unsigned long int d);
     /// Make \a s the incumbent and return a copy, if it improves
@@ -88,6 +88,8 @@ namespace Gecode { namespace Search { namespace Seq {
     Space* next(void);
     /// Return statistics
     Statistics statistics(void) const;
+    /// Whether search stopped at the width or frontier limit
+    bool limited(void) const;
     /// Constrain future solutions to be better than \a b
     void constrain(const Space& b);
     /// Reset engine to restart at space \a s

@@ -64,6 +64,14 @@ namespace Gecode { namespace Search { namespace Seq {
   Slave::stopped(void) const {
     return slave->stopped();
   }
+  forceinline bool
+  Slave::limited(void) const {
+#ifdef GECODE_HAS_EXPERIMENTAL
+    return slave->limited();
+#else
+    return false;
+#endif
+  }
   forceinline void
   Slave::constrain(const Space& b) {
     slave->constrain(b);
@@ -82,7 +90,7 @@ namespace Gecode { namespace Search { namespace Seq {
                  const Search::Options& opt)
     : stat(stat0), slice(opt.slice),
       slaves(heap.alloc<Slave>(n)), n_slaves(n), cur(0),
-      slave_stop(false) {
+      slave_stop(false), incomplete(false) {
     ssi.done = false;
     ssi.l = opt.slice;
 
@@ -98,6 +106,7 @@ namespace Gecode { namespace Search { namespace Seq {
     slave_stop = false;
     unsigned int n_exhausted = 0;
     while (n_slaves > 0) {
+      ssi.done = false;
       if (Space* s = slaves[cur].next()) {
         // Constrain other slaves
         if (best) {
@@ -108,7 +117,7 @@ namespace Gecode { namespace Search { namespace Seq {
         }
         return s;
       }
-      if (slaves[cur].stopped()) {
+      if (slaves[cur].stopped() && !slaves[cur].limited()) {
         if (ssi.done) {
           cur++; n_exhausted++;
         } else {
@@ -116,7 +125,10 @@ namespace Gecode { namespace Search { namespace Seq {
           return nullptr;
         }
       } else {
-        // This slave is done, kill it after saving the statistics
+        // The slave is done or stopped at a local limit (then search is incomplete)
+        if (slaves[cur].limited())
+          incomplete = true;
+        // Kill the slave after saving the statistics
         stat += slaves[cur].statistics();
         slaves[cur].~Slave();
         slaves[cur] = slaves[--n_slaves];
@@ -132,6 +144,7 @@ namespace Gecode { namespace Search { namespace Seq {
       if (cur == n_slaves)
         cur = 0;
     }
+    slave_stop = incomplete;
     return nullptr;
   }
 

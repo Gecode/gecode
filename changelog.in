@@ -134,6 +134,16 @@ preview is disabled by default and its APIs may change in future releases.
 The fifteen-puzzle and tsptw examples demonstrate both engines.
 
 [ENTRY]
+Module: search
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Fix sequential portfolio search ignoring stop objects after a slice has
+ended. In sequential and parallel portfolios, an asset that stops at a local
+limit (the width or node limit of CABS) no longer stops the portfolio; it is
+removed and the portfolio reports that it has stopped once all assets are done.
+
+[ENTRY]
 Module: int
 What:   new
 Rank:   major

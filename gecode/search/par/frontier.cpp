@@ -59,7 +59,7 @@ namespace Gecode { namespace Search { namespace Par {
     : Search::Engine(o,static_cast<unsigned int>(o.threads)), opt(o),
       guidance(*o.guidance), best(guidance.sense), order(0),
       pending(heap), n_pending(0), runners(nullptr), active(0),
-      running(false), shutdown(false), _stopped(false), limited(false),
+      running(false), shutdown(false), _stopped(false), _limited(false),
       batch(1), keyed(false) {}
 
   void
@@ -333,7 +333,7 @@ namespace Gecode { namespace Search { namespace Par {
       Support::Lock lock(mutex);
       if (error)
         std::rethrow_exception(error);
-      if (limited) {
+      if (_limited) {
         _stopped = true;
         return nullptr;
       }
@@ -364,6 +364,12 @@ namespace Gecode { namespace Search { namespace Par {
     return _stopped;
   }
 
+  bool
+  Frontier::limited(void) const {
+    Support::Lock lock(mutex);
+    return _limited;
+  }
+
   void
   Frontier::constrain(const Space& s) {
     std::int64_t b = guidance.bound(s);
@@ -385,7 +391,7 @@ namespace Gecode { namespace Search { namespace Par {
     best.reset();
     solution.reset();
     order = 0;
-    _stopped = limited = false;
+    _stopped = _limited = false;
     error = nullptr;
     stat.reset();
     initialize(s,false);

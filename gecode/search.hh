@@ -1018,6 +1018,10 @@ namespace Gecode { namespace Search {
     virtual Statistics statistics(void) const = 0;
     /// Check whether engine has been stopped
     virtual bool stopped(void) const = 0;
+#ifdef GECODE_HAS_EXPERIMENTAL
+    /// Whether the engine stopped at a local limit (such as a CABS width limit) and cannot continue
+    virtual bool limited(void) const;
+#endif
     /// Constrain future solutions to be better than \a b (raises exception)
     virtual void constrain(const Space& b);
     /// Reset engine to restart at space \a s (does nothing)
