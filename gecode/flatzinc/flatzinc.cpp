@@ -1922,7 +1922,9 @@ namespace Gecode { namespace FlatZinc {
 #endif
     o.threads = opt.threads();
     o.nogoods_limit = opt.nogoods() ? opt.nogoods_limit() : 0;
-    o.cutoff  = new Search::CutoffAppend(new Search::CutoffConstant(0), 1, Driver::createCutoff(opt));
+    if (opt.restart() != RM_NONE)
+      o.cutoff = new Search::CutoffAppend(new Search::CutoffConstant(0), 1,
+                                         Driver::createCutoff(opt));
     int noOfSolutions = opt.solutions();
     if (noOfSolutions == -1) {
       noOfSolutions = (_method == SAT) ? 1 : 0;
