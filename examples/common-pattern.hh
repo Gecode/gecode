@@ -470,3 +470,5 @@ namespace PatternMining {
 }
 
 #endif
+
+// STATISTICS: example-any

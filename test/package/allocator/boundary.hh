@@ -18,3 +18,5 @@ ALLOCATOR_BOUNDARY_EXPORT void* boundary_realloc(void* p, size_t n);
 ALLOCATOR_BOUNDARY_EXPORT void boundary_free(void* p);
 
 #endif
+
+// STATISTICS: test-other
