@@ -189,7 +189,7 @@ def main() -> int:
                     issue = m.group(1)
                 m = re.search(r"Thanks:[\t ]*(.*)$", l)
                 if m:
-                    thanks = m.group(1)
+                    thanks = m.group(1).replace("@", r"\@")
                 m = re.search(r"Author:[\t ]*(.*)$", l)
                 if m:
                     author = m.group(1)
