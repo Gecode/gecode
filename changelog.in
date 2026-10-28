@@ -73,7 +73,17 @@
 Version: 7.0.0
 Date: unreleased
 [DESCRIPTION]
-This is the development changelog for the next Gecode release.
+This release contains breaking changes. See the entries below for the
+changes downstream code needs.
+
+[ENTRY]
+Module: other
+What:   removed
+Rank:   major
+[DESCRIPTION]
+Remove the Autoconf and maintained Makefile build systems. Build, install,
+and regenerate Gecode with CMake. Generated-source checks continue to cover
+variable headers and the FlatZinc parser and lexer.
 
 [RELEASE]
 Version: 6.5.0
