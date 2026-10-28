@@ -336,13 +336,13 @@ public:
     /// Print the solution
     void
     print(std::ostream& os) const override {
-        os << "\tm = " << m << std::endl << "\tv[] = {";
+        os << "\tm = " << m << '\n' << "\tv[] = {";
         for (int i = 0; i < v.size(); i++) {
             os << v[i] << ", ";
             if ((i + 1) % 15 == 0)
-                os << std::endl << "\t       ";
+                os << '\n' << "\t       ";
         }
-        os << "};" << std::endl;
+        os << "};" << '\n';
     }
 };
 

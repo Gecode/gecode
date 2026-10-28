@@ -374,9 +374,9 @@ public:
                     }
                 }
             }
-            os << std::endl;
+            os << '\n';
         }
-        os << std::endl;
+        os << '\n';
     }
 };
 
@@ -393,7 +393,7 @@ main(int argc, char* argv[]) {
     opt.size(8);
     opt.parse(argc, argv);
     if (opt.size() < 5) {
-        std::cerr << "Error: size must be at least 5" << std::endl;
+        std::cerr << "Error: size must be at least 5" << '\n';
         return 1;
     }
     init_bishops(opt.size());

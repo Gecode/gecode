@@ -111,7 +111,7 @@ public:
     /// Print solution coordinates
     void
     print(std::ostream& os) const override {
-        os << "XY " << f[0].med() << " " << f[1].med() << std::endl;
+        os << "XY " << f[0].med() << " " << f[1].med() << '\n';
     }
 };
 

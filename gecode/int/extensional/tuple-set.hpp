@@ -397,14 +397,14 @@ namespace Gecode {
         s.copyfmt(os);
         s.width(0);
         s << "Number of tuples: " << ts.tuples() << " (number of words: " << ts.words() << " with "
-          << Support::BitSetData::bpb << " bits)" << std::endl;
+          << Support::BitSetData::bpb << " bits)" << '\n';
         for (int a = 0; a < ts.arity(); a++) {
             unsigned int size = 0U;
             for (const TupleSet::Range* c = ts.fst(a); c <= ts.lst(a); c++)
                 size += c->width();
             s << "\t[" << a << "] size: " << size
               << ", width: " << static_cast<unsigned int>(ts.lst(a)->max - ts.fst(a)->min + 1)
-              << ", ranges: " << (ts.lst(a) - ts.fst(a) + 1U) << std::endl;
+              << ", ranges: " << (ts.lst(a) - ts.fst(a) + 1U) << '\n';
         }
         return os << s.str();
     }

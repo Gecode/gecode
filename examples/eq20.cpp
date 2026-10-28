@@ -96,7 +96,7 @@ public:
     /// Print solution
     void
     print(std::ostream& os) const override {
-        os << "\tx[] = " << x << std::endl;
+        os << "\tx[] = " << x << '\n';
     }
 };
 

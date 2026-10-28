@@ -139,7 +139,7 @@ namespace {
     void
     write_response(const std::string& value) {
         std::cout.write(value.data(), static_cast<std::streamsize>(value.size()));
-        std::cout << std::endl;
+        std::cout << '\n';
         std::cout.flush();
     }
 

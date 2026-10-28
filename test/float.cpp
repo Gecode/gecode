@@ -135,7 +135,7 @@ namespace Test { namespace Float {
         Gecode::BoolVar b(*this, 0, 1);
         r = Gecode::Reify(b, Gecode::RM_EQV);
         if (opt.log)
-            olog << ind(2) << "Initial: x[]=" << x << std::endl;
+            olog << ind(2) << "Initial: x[]=" << x << '\n';
     }
 
     TestSpace::TestSpace(int n, Gecode::FloatVal& d0, Gecode::FloatNum s, Test* t, Gecode::ReifyMode rm)
@@ -143,7 +143,7 @@ namespace Test { namespace Float {
         Gecode::BoolVar b(*this, 0, 1);
         r = Gecode::Reify(b, rm);
         if (opt.log)
-            olog << ind(2) << "Initial: x[]=" << x << " b=" << r.var() << std::endl;
+            olog << ind(2) << "Initial: x[]=" << x << " b=" << r.var() << '\n';
     }
 
     TestSpace::TestSpace(TestSpace& s) : Gecode::Space(s), d(s.d), step(s.step), test(s.test), reified(s.reified) {
@@ -198,11 +198,11 @@ namespace Test { namespace Float {
         if (reified) {
             test->post(*this, x, r);
             if (opt.log)
-                olog << ind(3) << "Posting reified propagator" << std::endl;
+                olog << ind(3) << "Posting reified propagator" << '\n';
         } else {
             test->post(*this, x);
             if (opt.log)
-                olog << ind(3) << "Posting propagator" << std::endl;
+                olog << ind(3) << "Posting propagator" << '\n';
         }
     }
 
@@ -211,7 +211,7 @@ namespace Test { namespace Float {
         if (opt.log) {
             olog << ind(3) << "Fixpoint: " << x;
             bool f = (status() == Gecode::SS_FAILED);
-            olog << std::endl << ind(3) << "     -->  " << x << std::endl;
+            olog << '\n' << ind(3) << "     -->  " << x << '\n';
             return f;
         } else {
             return status() == Gecode::SS_FAILED;
@@ -242,7 +242,7 @@ namespace Test { namespace Float {
                 olog << ">";
                 break;
             }
-            olog << " [" << n.min() << "," << n.max() << "]" << std::endl;
+            olog << " [" << n.min() << "," << n.max() << "]" << '\n';
         }
         Gecode::rel(*this, x[i], frt, n);
     }
@@ -252,7 +252,7 @@ namespace Test { namespace Float {
         int n = sol ? 1 : 0;
         assert(reified);
         if (opt.log)
-            olog << ind(4) << "b = " << n << std::endl;
+            olog << ind(4) << "b = " << n << '\n';
         Gecode::rel(*this, r.var(), Gecode::IRT_EQ, n);
     }
 
@@ -378,7 +378,7 @@ namespace Test { namespace Float {
                 return true;
             TestSpace* c = static_cast<TestSpace*>(clone());
             if (opt.log)
-                olog << ind(3) << "Testing fixpoint on copy" << std::endl;
+                olog << ind(3) << "Testing fixpoint on copy" << '\n';
             c->post();
             if (c->failed()) {
                 delete c;
@@ -394,7 +394,7 @@ namespace Test { namespace Float {
                 return false;
             }
             if (opt.log)
-                olog << ind(3) << "Finished testing fixpoint on copy" << std::endl;
+                olog << ind(3) << "Finished testing fixpoint on copy" << '\n';
             delete c;
         }
         return true;
@@ -444,7 +444,7 @@ namespace Test { namespace Float {
 #define CHECK_TEST(T, M)                                                                                               \
     do {                                                                                                               \
         if (opt.log)                                                                                                   \
-            olog << ind(3) << "Check: " << (M) << std::endl;                                                           \
+            olog << ind(3) << "Check: " << (M) << '\n';                                                                \
         if (!(T)) {                                                                                                    \
             problem = (M);                                                                                             \
             delete s;                                                                                                  \
@@ -457,7 +457,7 @@ namespace Test { namespace Float {
     do {                                                                                                               \
         if (opt.log) {                                                                                                 \
             olog.str("");                                                                                              \
-            olog << ind(2) << "Testing: " << (T) << std::endl;                                                         \
+            olog << ind(2) << "Testing: " << (T) << '\n';                                                              \
         }                                                                                                              \
         test = (T);                                                                                                    \
     } while (false)
@@ -502,7 +502,7 @@ namespace Test { namespace Float {
                     olog << " (maybe)";
                     break;
                 }
-                olog << std::endl;
+                olog << '\n';
             }
             START_TEST("Assignment (after posting)");
             {
@@ -512,13 +512,13 @@ namespace Test { namespace Float {
                 switch (_rand(2)) {
                 case 0:
                     if (opt.log)
-                        olog << ind(3) << "No copy" << std::endl;
+                        olog << ind(3) << "No copy" << '\n';
                     sc = s;
                     s = nullptr;
                     break;
                 case 1:
                     if (opt.log)
-                        olog << ind(3) << "Copy" << std::endl;
+                        olog << ind(3) << "Copy" << '\n';
                     if (s->status() != SS_FAILED) {
                         sc = static_cast<TestSpace*>(s->clone());
                     } else {
@@ -895,11 +895,11 @@ namespace Test { namespace Float {
 
     failed:
         if (opt.log)
-            olog << "FAILURE" << std::endl
-                 << ind(1) << "Test:       " << test << std::endl
-                 << ind(1) << "Problem:    " << problem << std::endl;
+            olog << "FAILURE" << '\n'
+                 << ind(1) << "Test:       " << test << '\n'
+                 << ind(1) << "Problem:    " << problem << '\n';
         if (a.has_more() && opt.log)
-            olog << ind(1) << "Assignment: " << a << std::endl;
+            olog << ind(1) << "Assignment: " << a << '\n';
         delete ap;
         delete search_s;
         delete e_s;

@@ -232,9 +232,9 @@ public:
                 os.width(3);
                 os << jump[f(i, j)] << " ";
             }
-            os << std::endl << "\t";
+            os << '\n' << "\t";
         }
-        os << std::endl;
+        os << '\n';
         delete[] jump;
     }
 };

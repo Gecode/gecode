@@ -41,7 +41,7 @@
 #define CHECK_TEST(T, M)                                                                                               \
     do {                                                                                                               \
         if (opt.log)                                                                                                   \
-            olog << ind(3) << "Check: " << (M) << std::endl;                                                           \
+            olog << ind(3) << "Check: " << (M) << '\n';                                                                \
         if (!(T)) {                                                                                                    \
             problem = (M);                                                                                             \
             goto failed;                                                                                               \
@@ -53,7 +53,7 @@
     do {                                                                                                               \
         if (opt.log) {                                                                                                 \
             olog.str("");                                                                                              \
-            olog << ind(2) << "Testing: " << (T) << std::endl;                                                         \
+            olog << ind(2) << "Testing: " << (T) << '\n';                                                              \
         }                                                                                                              \
         test = (T);                                                                                                    \
     } while (false)
@@ -179,9 +179,9 @@ namespace Test {
                 return true;
             failed:
                 if (opt.log)
-                    olog << "FAILURE" << std::endl
-                         << ind(1) << "Test:       " << test << std::endl
-                         << ind(1) << "Problem:    " << problem << std::endl;
+                    olog << "FAILURE" << '\n'
+                         << ind(1) << "Test:       " << test << '\n'
+                         << ind(1) << "Problem:    " << problem << '\n';
                 return false;
             }
         };

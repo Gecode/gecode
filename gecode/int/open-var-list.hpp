@@ -30,6 +30,8 @@
  *
  */
 
+#include <utility>
+
 namespace Gecode {
 
     template <class Var>
@@ -40,7 +42,8 @@ namespace Gecode {
             Factory create;
             Transition transition;
 
-            Functions(Factory create0, Transition transition0) : create(create0), transition(transition0) {}
+            Functions(Factory create0, Transition transition0)
+                : create(std::move(create0)), transition(std::move(transition0)) {}
         };
 
         IntVar length;
@@ -81,13 +84,13 @@ namespace Gecode {
 
         Object(Home home, Factory create, int max)
             : LocalObject(home), length(home, 0, checked_maximum(max)), materialized(home, 0, max), x(nullptr), n(0),
-              capacity(0), indexed(0), functions(Functions(checked(create), Transition())) {
+              capacity(0), indexed(0), functions(Functions(checked(std::move(create)), Transition())) {
             home.notice(*this, AP_DISPOSE);
         }
 
         Object(Home home, Factory create, Transition t, int max)
             : LocalObject(home), length(home, 0, checked_maximum(max)), materialized(home, 0, max), x(nullptr), n(0),
-              capacity(0), indexed(0), functions(Functions(checked(create), checked(t))) {
+              capacity(0), indexed(0), functions(Functions(checked(std::move(create)), checked(std::move(t)))) {
             home.notice(*this, AP_DISPOSE);
         }
 
@@ -279,13 +282,13 @@ namespace Gecode {
 
     template <class Var>
     OpenVarList<Var>::OpenVarList(Space& home, Factory create, int max)
-        : LocalHandle(new (home) Object(home, create, max)) {
+        : LocalHandle(new (home) Object(home, std::move(create), max)) {
         Int::OpenMaterialize<Var>::post(home, static_cast<Object*>(object()));
     }
 
     template <class Var>
     OpenVarList<Var>::OpenVarList(Space& home, Factory create, Transition t, int max)
-        : LocalHandle(new (home) Object(home, create, t, max)) {
+        : LocalHandle(new (home) Object(home, std::move(create), std::move(t), max)) {
         Int::OpenMaterialize<Var>::post(home, static_cast<Object*>(object()));
     }
 

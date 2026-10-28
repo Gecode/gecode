@@ -256,7 +256,7 @@ public:
                     os.width(2);
                 os << m(i, j) << " ";
             }
-            os << std::endl;
+            os << '\n';
         }
     }
 };
@@ -285,7 +285,7 @@ main(int argc, char* argv[]) {
 
     opt.parse(argc, argv);
     if (!Spec(opt.instance()).valid()) {
-        std::cerr << "Error: unknown instance" << std::endl;
+        std::cerr << "Error: unknown instance" << '\n';
         return 1;
     }
     Script::run<QCP, DFS, QCPOptions>(opt);

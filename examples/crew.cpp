@@ -138,13 +138,13 @@ public:
     void
     print(std::ostream& os) const override {
         for (int i = 0; i < no_of_flights; i++) {
-            os << "\tFlight " << i + 1 << ":" << std::endl;
-            os << "\t\tCrew\tStew.\tHost.\tFrench\tSpanish\tGerman" << std::endl << "\t";
+            os << "\tFlight " << i + 1 << ":" << '\n';
+            os << "\t\tCrew\tStew.\tHost.\tFrench\tSpanish\tGerman" << '\n' << "\t";
             os << "\t" << required_crew[i].staff << "\t" << required_crew[i].stewards << "\t"
                << required_crew[i].hostesses << "\t" << required_crew[i].spanish << "\t" << required_crew[i].french
-               << "\t" << required_crew[i].german << std::endl;
+               << "\t" << required_crew[i].german << '\n';
 
-            os << "\t\tSchedule:" << std::endl << "\t\t";
+            os << "\t\tSchedule:" << '\n' << "\t\t";
             if (flight[i].assigned()) {
                 for (SetVarGlbValues d(flight[i]); d(); ++d) {
                     os << employee_to_name(static_cast<Employee>(d.val())) << " ";
@@ -154,12 +154,12 @@ public:
                 for (SetVarGlbValues d(flight[i]); d(); ++d) {
                     os << employee_to_name(static_cast<Employee>(d.val())) << " ";
                 }
-                os << std::endl << "\t\t\tPossible: ";
+                os << '\n' << "\t\t\tPossible: ";
                 for (SetVarUnknownValues d(flight[i]); d(); ++d) {
                     os << employee_to_name(static_cast<Employee>(d.val())) << " ";
                 }
             }
-            os << std::endl << std::endl;
+            os << '\n' << '\n';
         }
     }
 

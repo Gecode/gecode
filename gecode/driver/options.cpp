@@ -94,7 +94,7 @@ namespace Gecode {
             if (strcmp(s, eopt))
                 return nullptr;
             if (argc == 2) {
-                std::cerr << "Missing argument for option \"" << iopt << "\"" << std::endl;
+                std::cerr << "Missing argument for option \"" << iopt << "\"" << '\n' << std::flush;
                 exit(EXIT_FAILURE);
             }
             return argv[2];
@@ -136,7 +136,7 @@ namespace Gecode {
             const char* arg;
             if (full) {
                 if (argc < 3) {
-                    std::cerr << "Missing argument for option " << siopt << std::endl;
+                    std::cerr << "Missing argument for option " << siopt << '\n' << std::flush;
                     exit(EXIT_FAILURE);
                 }
                 arg = argv[2];
@@ -159,14 +159,14 @@ namespace Gecode {
                             initial.time();
                         else
                             initial.hw();
-                        std::cerr << "% Random state: " << siopt << " " << initial.state() << std::endl;
+                        std::cerr << "% Random state: " << siopt << " " << initial.state() << '\n' << std::flush;
                     } else {
                         initial.seed(Support::random_seed(arg));
                     }
                     seed_given = true;
                 }
             } catch (const std::exception& e) {
-                std::cerr << "Invalid random option: " << e.what() << std::endl;
+                std::cerr << "Invalid random option: " << e.what() << '\n' << std::flush;
                 exit(EXIT_FAILURE);
             }
             return 2;
@@ -177,7 +177,8 @@ namespace Gecode {
                       << "\t\t" << exp << "\n"
                       << "\t" << siopt << " (complete " << Rnd::name() << " state; mutually exclusive with " << iopt
                       << ")\n"
-                      << "\t\tCurrent initial state: " << initial.state() << std::endl;
+                      << "\t\tCurrent initial state: " << initial.state() << '\n'
+                      << std::flush;
         }
 
         StringValueOption::StringValueOption(const char* o, const char* e, const char* v)
@@ -197,8 +198,9 @@ namespace Gecode {
         }
         void
         StringValueOption::help(void) {
-            std::cerr << '\t' << iopt << " (string) default: " << ((cur == nullptr) ? "NONE" : cur) << std::endl
-                      << "\t\t" << exp << std::endl;
+            std::cerr << '\t' << iopt << " (string) default: " << ((cur == nullptr) ? "NONE" : cur) << '\n'
+                      << "\t\t" << exp << '\n'
+                      << std::flush;
         }
         StringValueOption::~StringValueOption(void) {
             strdel(cur);
@@ -242,7 +244,7 @@ namespace Gecode {
                         cur = v->val;
                         return 2;
                     }
-                std::cerr << "Wrong argument \"" << a << "\" for option \"" << iopt << "\"" << std::endl;
+                std::cerr << "Wrong argument \"" << a << "\" for option \"" << iopt << "\"" << '\n' << std::flush;
                 exit(EXIT_FAILURE);
             }
             return 0;
@@ -261,10 +263,10 @@ namespace Gecode {
             std::cerr << ")";
             if (d != nullptr)
                 std::cerr << " default: " << d;
-            std::cerr << std::endl << "\t\t" << exp << std::endl;
+            std::cerr << '\n' << "\t\t" << exp << '\n' << std::flush;
             for (Value* v = fst; v != nullptr; v = v->next)
                 if (v->help != nullptr)
-                    std::cerr << "\t\t  " << v->opt << ": " << v->help << std::endl;
+                    std::cerr << "\t\t  " << v->opt << ": " << v->help << '\n' << std::flush;
         }
 
         StringOption::~StringOption(void) {
@@ -289,7 +291,7 @@ namespace Gecode {
 
         void
         IntOption::help(void) {
-            std::cerr << '\t' << iopt << " (int) default: " << cur << std::endl << "\t\t" << exp << std::endl;
+            std::cerr << '\t' << iopt << " (int) default: " << cur << '\n' << "\t\t" << exp << '\n' << std::flush;
         }
 
         int
@@ -303,7 +305,9 @@ namespace Gecode {
 
         void
         UnsignedIntOption::help(void) {
-            std::cerr << '\t' << iopt << " (unsigned int) default: " << cur << std::endl << "\t\t" << exp << std::endl;
+            std::cerr << '\t' << iopt << " (unsigned int) default: " << cur << '\n'
+                      << "\t\t" << exp << '\n'
+                      << std::flush;
         }
 
         int
@@ -317,8 +321,9 @@ namespace Gecode {
 
         void
         UnsignedLongLongIntOption::help(void) {
-            std::cerr << '\t' << iopt << " (unsigned long long int) default: " << cur << std::endl
-                      << "\t\t" << exp << std::endl;
+            std::cerr << '\t' << iopt << " (unsigned long long int) default: " << cur << '\n'
+                      << "\t\t" << exp << '\n'
+                      << std::flush;
         }
 
         int
@@ -333,7 +338,7 @@ namespace Gecode {
         void
         DoubleOption::help(void) {
             using namespace std;
-            cerr << '\t' << iopt << " (double) default: " << cur << endl << "\t\t" << exp << endl;
+            cerr << '\t' << iopt << " (double) default: " << cur << '\n' << "\t\t" << exp << '\n' << std::flush;
         }
 
         int
@@ -371,8 +376,9 @@ namespace Gecode {
         void
         BoolOption::help(void) {
             using namespace std;
-            cerr << '\t' << iopt << " (optional: false, 0, true, 1) default: " << (cur ? "true" : "false") << endl
-                 << "\t\t" << exp << endl;
+            cerr << '\t' << iopt << " (optional: false, 0, true, 1) default: " << (cur ? "true" : "false") << '\n'
+                 << "\t\t" << exp << '\n'
+                 << std::flush;
         }
 
         /*
@@ -408,7 +414,8 @@ namespace Gecode {
                     } else if (!strncmp("full", a, e)) {
                         m |= IPL_FULL;
                     } else {
-                        std::cerr << "Wrong argument \"" << a << "\" for option \"" << iopt << "\"" << std::endl;
+                        std::cerr << "Wrong argument \"" << a << "\" for option \"" << iopt << "\"" << '\n'
+                                  << std::flush;
                         exit(EXIT_FAILURE);
                     }
 
@@ -428,7 +435,7 @@ namespace Gecode {
         void
         IplOption::help(void) {
             using namespace std;
-            cerr << '\t' << iopt << " (def,val,bnd,dom,basic,advanced,full)" << endl << "\t\tdefault: ";
+            cerr << '\t' << iopt << " (def,val,bnd,dom,basic,advanced,full)" << '\n' << "\t\tdefault: ";
             switch (vbd(cur)) {
             case IPL_DEF:
                 cerr << "def";
@@ -453,7 +460,7 @@ namespace Gecode {
                 if (cur & IPL_ADVANCED)
                     cerr << ",advanced";
             }
-            cerr << endl << "\t\t" << exp << endl;
+            cerr << '\n' << "\t\t" << exp << '\n' << std::flush;
         }
 
         /*
@@ -497,7 +504,8 @@ namespace Gecode {
                     } else if (!strncmp("general", a, e)) {
                         cur = (TE_PROPAGATE | TE_COMMIT | TE_POST);
                     } else {
-                        std::cerr << "Wrong argument \"" << a << "\" for option \"" << iopt << "\"" << std::endl;
+                        std::cerr << "Wrong argument \"" << a << "\" for option \"" << iopt << "\"" << '\n'
+                                  << std::flush;
                         exit(EXIT_FAILURE);
                     }
 
@@ -574,7 +582,7 @@ namespace Gecode {
                     cerr << "post";
                 }
             }
-            cerr << endl << "\t\t" << exp << endl;
+            cerr << '\n' << "\t\t" << exp << '\n' << std::flush;
         }
 
         int
@@ -582,7 +590,7 @@ namespace Gecode {
             if (char* a = argument(argc, argv)) {
                 char* sep = strchr(a, ',');
                 if (!sep) {
-                    std::cerr << "Wrong argument \"" << a << "\" for option \"" << iopt << "\"" << std::endl;
+                    std::cerr << "Wrong argument \"" << a << "\" for option \"" << iopt << "\"" << '\n' << std::flush;
                     exit(EXIT_FAILURE);
                 }
                 cur_execution_id = static_cast<unsigned int>(atoi(a));
@@ -594,9 +602,9 @@ namespace Gecode {
 
         void
         ProfilerOption::help(void) {
-            std::cerr << '\t' << iopt << " (unsigned int,int) default: " << cur_port << "," << cur_execution_id
-                      << std::endl
-                      << "\t\t" << exp << std::endl;
+            std::cerr << '\t' << iopt << " (unsigned int,int) default: " << cur_port << "," << cur_execution_id << '\n'
+                      << "\t\t" << exp << '\n'
+                      << std::flush;
         }
 
     } // namespace Driver
@@ -621,8 +629,8 @@ namespace Gecode {
 
     void
     BaseOptions::help(void) {
-        std::cerr << "Gecode configuration information:" << std::endl
-                  << " - Version: " << GECODE_VERSION << std::endl
+        std::cerr << "Gecode configuration information:" << '\n'
+                  << " - Version: " << GECODE_VERSION << '\n'
                   << " - Variable types: ";
 #ifdef GECODE_HAS_INT_VARS
         std::cerr << "BoolVar IntVar ";
@@ -631,14 +639,14 @@ namespace Gecode {
         std::cerr << "SetVar ";
 #endif
 #ifdef GECODE_HAS_FLOAT_VARS
-        std::cerr << "FloatVar " << std::endl << " - Trigonometric and transcendental float constraints: ";
+        std::cerr << "FloatVar " << '\n' << " - Trigonometric and transcendental float constraints: ";
 #ifdef GECODE_HAS_MPFR
         std::cerr << "enabled";
 #else
         std::cerr << "disabled";
 #endif
 #endif
-        std::cerr << std::endl;
+        std::cerr << '\n' << std::flush;
         std::cerr << " - Thread support: ";
 #ifdef GECODE_HAS_THREADS
         if (Support::Thread::npu() == 1)
@@ -648,23 +656,24 @@ namespace Gecode {
 #else
         std::cerr << "disabled";
 #endif
-        std::cerr << std::endl << " - Gist support: ";
+        std::cerr << '\n' << " - Gist support: ";
 #ifdef GECODE_HAS_GIST
         std::cerr << "enabled";
 #else
         std::cerr << "disabled";
 #endif
-        std::cerr << std::endl << " - CPProfiler support: ";
+        std::cerr << '\n' << " - CPProfiler support: ";
 #ifdef GECODE_HAS_CPPROFILER
         std::cerr << "enabled";
 #else
         std::cerr << "disabled";
 #endif
-        std::cerr << std::endl
-                  << std::endl
-                  << "Options for " << name() << ":" << std::endl
-                  << "\t-help, --help, -?" << std::endl
-                  << "\t\tprint this help message" << std::endl;
+        std::cerr << '\n'
+                  << '\n'
+                  << "Options for " << name() << ":" << '\n'
+                  << "\t-help, --help, -?" << '\n'
+                  << "\t\tprint this help message" << '\n'
+                  << std::flush;
         for (Driver::BaseOption* o = fst; o != nullptr; o = o->next)
             o->help();
     }
@@ -697,7 +706,7 @@ namespace Gecode {
         /// Report unrecognised argument \a a, print help of \a o, and exit
         void
         unrecognised(BaseOptions& o, const char* a) {
-            std::cerr << "Unrecognised argument \"" << a << "\"" << std::endl;
+            std::cerr << "Unrecognised argument \"" << a << "\"" << '\n' << std::flush;
             o.help();
             exit(EXIT_FAILURE);
         }
@@ -818,8 +827,9 @@ namespace Gecode {
     void
     SizeOptions::help(void) {
         Options::help();
-        std::cerr << "\t(unsigned int) default: " << size() << std::endl
-                  << "\t\twhich version/size for script" << std::endl;
+        std::cerr << "\t(unsigned int) default: " << size() << '\n'
+                  << "\t\twhich version/size for script" << '\n'
+                  << std::flush;
     }
 
     void
@@ -897,8 +907,9 @@ namespace Gecode {
     void
     InstanceOptions::help(void) {
         Options::help();
-        std::cerr << "\t(string) default: " << ((instance() == nullptr) ? "NONE" : instance()) << std::endl
-                  << "\t\twhich instance for script (name or file)" << std::endl;
+        std::cerr << "\t(string) default: " << ((instance() == nullptr) ? "NONE" : instance()) << '\n'
+                  << "\t\twhich instance for script (name or file)" << '\n'
+                  << std::flush;
     }
 
     void

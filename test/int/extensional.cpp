@@ -1507,11 +1507,11 @@ namespace Test { namespace Int {
                     ts.add(IntArgs({i, (i * 3) % 100}));
                 ts.finalize(EPK_SPARSE);
                 if (ts.representation() != EPK_SPARSE) {
-                    std::cerr << "ERROR: Sparse support not available" << std::endl;
+                    std::cerr << "ERROR: Sparse support not available" << '\n' << std::flush;
                     return false;
                 }
                 if (ts.fst(0)->supports(ts.words(), ts.fst(0)->min) != nullptr) {
-                    std::cerr << "ERROR: Sparse range exposed dense support" << std::endl;
+                    std::cerr << "ERROR: Sparse range exposed dense support" << '\n' << std::flush;
                     return false;
                 }
 
@@ -1520,11 +1520,11 @@ namespace Test { namespace Int {
                     tc.add(IntArgs({i, (i * 7) % 100}));
                 tc.finalize(EPK_DENSE_COMPRESSED);
                 if (tc.representation() != EPK_DENSE_COMPRESSED) {
-                    std::cerr << "ERROR: Compressed support not available" << std::endl;
+                    std::cerr << "ERROR: Compressed support not available" << '\n' << std::flush;
                     return false;
                 }
                 if (tc.fst(0)->supports(tc.words(), tc.fst(0)->min) != nullptr) {
-                    std::cerr << "ERROR: Compressed range exposed dense support" << std::endl;
+                    std::cerr << "ERROR: Compressed range exposed dense support" << '\n' << std::flush;
                     return false;
                 }
 
@@ -1533,24 +1533,24 @@ namespace Test { namespace Int {
                     td.add(IntArgs({i, (i * 11) % 100}));
                 td.finalize();
                 if (td.representation() != EPK_DENSE) {
-                    std::cerr << "ERROR: Default finalize did not keep dense support" << std::endl;
+                    std::cerr << "ERROR: Default finalize did not keep dense support" << '\n' << std::flush;
                     return false;
                 }
                 if (td.fst(0)->supports(td.words(), td.fst(0)->min) == nullptr) {
-                    std::cerr << "ERROR: Dense range lost support data" << std::endl;
+                    std::cerr << "ERROR: Dense range lost support data" << '\n' << std::flush;
                     return false;
                 }
 
                 TupleSet empty_sparse(2);
                 empty_sparse.finalize(EPK_SPARSE);
                 if (empty_sparse.representation() != EPK_SPARSE) {
-                    std::cerr << "ERROR: Empty sparse table forgot representation" << std::endl;
+                    std::cerr << "ERROR: Empty sparse table forgot representation" << '\n' << std::flush;
                     return false;
                 }
                 TupleSet empty_compressed(2);
                 empty_compressed.finalize(EPK_DENSE_COMPRESSED);
                 if (empty_compressed.representation() != EPK_DENSE_COMPRESSED) {
-                    std::cerr << "ERROR: Empty compressed table forgot representation" << std::endl;
+                    std::cerr << "ERROR: Empty compressed table forgot representation" << '\n' << std::flush;
                     return false;
                 }
                 return true;
@@ -1802,7 +1802,7 @@ namespace Test { namespace Int {
                 dense.add(IntArgs({0, 0})).add(IntArgs({1, 1}));
                 dense.finalize(EPK_AUTO);
                 if (dense.representation() != EPK_DENSE) {
-                    std::cerr << "ERROR: Small AUTO table did not select dense" << std::endl;
+                    std::cerr << "ERROR: Small AUTO table did not select dense" << '\n' << std::flush;
                     return false;
                 }
 
@@ -1843,7 +1843,7 @@ namespace Test { namespace Int {
                     compressed.add(IntArgs({i, (i * 7) % n}));
                 compressed.finalize(EPK_AUTO);
                 if (compressed.representation() != EPK_DENSE_COMPRESSED) {
-                    std::cerr << "ERROR: Large AUTO table did not select compressed" << std::endl;
+                    std::cerr << "ERROR: Large AUTO table did not select compressed" << '\n' << std::flush;
                     return false;
                 }
 

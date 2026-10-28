@@ -78,7 +78,7 @@ namespace Test { namespace FlatZinc { namespace {
                     return false;
                 const bool failed = space->status() == Gecode::SS_FAILED;
                 if (failed != (i != 0)) {
-                    olog << "Unexpected root propagation for " << levels[i] << std::endl;
+                    olog << "Unexpected root propagation for " << levels[i] << '\n';
                     return false;
                 }
             }
