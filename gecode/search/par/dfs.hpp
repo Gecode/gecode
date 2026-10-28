@@ -208,10 +208,11 @@ namespace Gecode { namespace Search { namespace Par {
       case C_WORK:
         // Perform exploration work
         {
+          const unsigned long long int run = engine().run();
           if (engine().scheduler_paused()) {
             start();
             if (stop(engine().opt())) {
-              engine().stop();
+              engine().stop(run);
               break;
             }
           }
@@ -229,7 +230,7 @@ namespace Gecode { namespace Search { namespace Par {
             if (stop(engine().opt())) {
               // Report stop
               m.release();
-              engine().stop();
+              engine().stop(run);
             } else {
               node++;
               SearchTracer::EdgeInfo ei;
