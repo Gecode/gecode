@@ -321,7 +321,7 @@ if [ "$mode" = "mpfr" ]; then
 fi
 "$prefix/bin/fzn-gecode" --help
 test -x "$prefix/bin/mzn-gecode"
-! grep -q "/usr/local" "$prefix/bin/mzn-gecode"
+if grep -q "/usr/local" "$prefix/bin/mzn-gecode"; then exit 1; fi
 
 # Build and run a downstream test against the installed harness.
 source_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"

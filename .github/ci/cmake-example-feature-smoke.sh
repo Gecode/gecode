@@ -18,9 +18,9 @@ grep -q '^GECODE_ENABLE_SET_VARS:BOOL=OFF$' "$build_root/int/CMakeCache.txt"
 grep -q '^GECODE_ENABLE_FLOAT_VARS:BOOL=OFF$' "$build_root/int/CMakeCache.txt"
 cmake --build "$build_root/int" --target help > "$build_root/int-targets.txt"
 grep -q '^tsp:' "$build_root/int-targets.txt"
-! grep -q '^crew:' "$build_root/int-targets.txt"
-! grep -q '^cartesian-heart:' "$build_root/int-targets.txt"
-! grep -q '^archimedean-spiral:' "$build_root/int-targets.txt"
+if grep -q '^crew:' "$build_root/int-targets.txt"; then exit 1; fi
+if grep -q '^cartesian-heart:' "$build_root/int-targets.txt"; then exit 1; fi
+if grep -q '^archimedean-spiral:' "$build_root/int-targets.txt"; then exit 1; fi
 cmake --build "$build_root/int" --target tsp
 
 cmake -S "$source_dir" -B "$build_root/optional" -G Ninja \
@@ -35,4 +35,4 @@ cmake -S "$source_dir" -B "$build_root/optional" -G Ninja \
 cmake --build "$build_root/optional" --target help > "$build_root/optional-targets.txt"
 grep -q '^crew:' "$build_root/optional-targets.txt"
 grep -q '^cartesian-heart:' "$build_root/optional-targets.txt"
-! grep -q '^archimedean-spiral:' "$build_root/optional-targets.txt"
+if grep -q '^archimedean-spiral:' "$build_root/optional-targets.txt"; then exit 1; fi
