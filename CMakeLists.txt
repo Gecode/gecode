@@ -953,7 +953,7 @@ endif()
 # ---------------------------------------------------------------------------
 # Doxygen documentation
 # ---------------------------------------------------------------------------
-set(GECODE_DOXYGEN_MIN_VERSION 1.17.0)
+set(GECODE_DOXYGEN_MIN_VERSION 1.18.0)
 find_package(Doxygen ${GECODE_DOXYGEN_MIN_VERSION} QUIET)
 find_program(GECODE_DOT_EXECUTABLE NAMES dot)
 

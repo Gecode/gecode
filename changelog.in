@@ -442,6 +442,13 @@ Report enabled and disabled features at the end of CMake configuration.
 
 [ENTRY]
 Module: other
+What:   change
+Rank:   minor
+[DESCRIPTION]
+Require Doxygen 1.18.0 or newer to build the documentation.
+
+[ENTRY]
+Module: other
 What:   bug
 Rank:   minor
 [DESCRIPTION]
