@@ -355,6 +355,13 @@ Select the matching installed MiniZinc solver configuration in mzn-gecode
 launchers, so the executable and constraint library use the same installation.
 
 [ENTRY]
+Module: flatzinc
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Avoid allocating unused search cutoffs when restarts are disabled.
+
+[ENTRY]
 Module: float
 What:   bug
 Rank:   minor
