@@ -34,11 +34,17 @@ check_header() {
 
   legacy="$(dump_macros "$header" "$platform" -DGIST_STATIC_LIBS)"
   grep -Eq '^#define GECODE_GIST_EXPORT[[:space:]]*$' <<<"$legacy"
-  ! grep -Eq '^#define GECODE_STATIC_LIBS([[:space:]]|$)' <<<"$legacy"
+  if grep -Eq '^#define GECODE_STATIC_LIBS([[:space:]]|$)' <<<"$legacy"; then
+    echo "$header defines GECODE_STATIC_LIBS under GIST_STATIC_LIBS" >&2
+    exit 1
+  fi
 
   current="$(dump_macros "$header" "$platform" -DGECODE_STATIC_LIBS)"
   grep -Eq '^#define GECODE_GIST_EXPORT[[:space:]]*$' <<<"$current"
-  ! grep -Eq '^#define GIST_STATIC_LIBS([[:space:]]|$)' <<<"$current"
+  if grep -Eq '^#define GIST_STATIC_LIBS([[:space:]]|$)' <<<"$current"; then
+    echo "$header defines GIST_STATIC_LIBS under GECODE_STATIC_LIBS" >&2
+    exit 1
+  fi
 
   shared="$(dump_macros "$header" "$platform")"
   grep -Eq '^#define GECODE_GIST_EXPORT __declspec\([[:space:]]*dllimport[[:space:]]*\)$' \

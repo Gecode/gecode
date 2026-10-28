@@ -21,4 +21,4 @@ cmake -S "$GITHUB_WORKSPACE" -B "$RUNNER_TEMP/gecode-no-cpprofiler" \
   -DGECODE_ENABLE_CPPROFILER=OFF \
   -DGECODE_ENABLE_MPFR=OFF \
   -DGECODE_ENABLE_EXAMPLES=OFF
-! grep -q -- '--cp-profiler' "$RUNNER_TEMP/gecode-no-cpprofiler/tools/flatzinc/gecode.msc"
+if grep -q -- '--cp-profiler' "$RUNNER_TEMP/gecode-no-cpprofiler/tools/flatzinc/gecode.msc"; then exit 1; fi

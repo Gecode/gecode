@@ -43,7 +43,7 @@ CXXFLAGS="-std=c++11 -fPIC -DGECODE_MEMORY_ALIGNMENT=16" \
     --disable-gist \
     --disable-qt 2>&1 | tee configure.log
 
-! grep -Fq "unexpected operator" configure.log
+if grep -Fq "unexpected operator" configure.log; then exit 1; fi
 grep -Eq '^export DLLSUFFIX[[:space:]]*=[[:space:]]*\.' Makefile
 
 rm -f gecode/kernel/var-type.hpp gecode/kernel/var-imp.hpp

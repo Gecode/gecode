@@ -78,8 +78,8 @@ mv "$fixture_dir/custom vis/updated.vis" "$fixture_dir/custom vis/custom one.vis
 cmake --build "$build_dir" --target gecode-varimp-gen
 grep -q 'CustomUpdatedVarImpConf' "$type_header"
 grep -q 'CustomUpdatedVarImp' "$imp_header"
-! grep -q 'CustomOneVarImp' "$type_header"
-! grep -q 'CustomOneVarImp' "$imp_header"
+if grep -q 'CustomOneVarImp' "$type_header"; then exit 1; fi
+if grep -q 'CustomOneVarImp' "$imp_header"; then exit 1; fi
 
 # CMake list syntax is supported in addition to the command-line comma form.
 cmake -S "$repo_root" -B "$work_parent/list-build" -G Ninja \

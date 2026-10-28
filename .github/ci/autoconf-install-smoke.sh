@@ -71,7 +71,10 @@ case "$flatzinc_enabled" in
   yes)
     test -x "$install_prefix/bin/fzn-gecode"
     test -x "$install_prefix/bin/mzn-gecode"
-    ! grep -q "/usr/local" "$install_prefix/bin/mzn-gecode"
+    if grep -q "/usr/local" "$install_prefix/bin/mzn-gecode"; then
+      echo "mzn-gecode refers to /usr/local instead of the install prefix" >&2
+      exit 1
+    fi
     test -f "$solver_config"
     test -f "$mznlib_dir/experimental/on_restart/fzn_on_restart_complete.mzn"
     ;;

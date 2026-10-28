@@ -4,7 +4,7 @@ set -euxo pipefail
 prefix="${1:?usage: flatzinc-tools-smoke.sh <install-prefix>}"
 "$prefix/bin/fzn-gecode" --help
 test -x "$prefix/bin/mzn-gecode"
-! grep -q "/usr/local" "$prefix/bin/mzn-gecode"
+if grep -q "/usr/local" "$prefix/bin/mzn-gecode"; then exit 1; fi
 
 # Exercise the installed solver and its own library through the launcher.
 if command -v minizinc >/dev/null 2>&1; then
