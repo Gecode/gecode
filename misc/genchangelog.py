@@ -74,7 +74,6 @@ def main() -> int:
 
     whatorder = ["new", "removed", "change", "bug", "performance", "documentation"]
 
-    hastext = defaultdict(int)
     text = defaultdict(str)
 
     versions = ""
@@ -89,16 +88,17 @@ def main() -> int:
         body = body + f"\\section {sid} Changes in Version {version} ({date})\n\n"
         body = body + f"{info}\n\n"
 
-        for mod in modorder:
-            if hastext[mod]:
-                body = body + " - " + modclear[mod] + "\n"
-                hastext[mod] = 0
-                for what in whatorder:
-                    k = f"{mod}-{what}"
-                    if text[k] != "":
-                        body = body + "   - " + whatclear[what] + "\n"
-                        body = body + text[k]
-                        text[k] = ""
+        for experimental in (False, True):
+            if experimental and any(text[(True, mod, what)] for mod in modorder for what in whatorder):
+                body += f"\\subsection {sid}_experimental Experimental changes\n\n"
+            for mod in modorder:
+                if any(text[(experimental, mod, what)] for what in whatorder):
+                    body += " - " + modclear[mod] + "\n"
+                    for what in whatorder:
+                        k = (experimental, mod, what)
+                        if text[k]:
+                            body += "   - " + whatclear[what] + "\n" + text[k]
+                            text[k] = ""
         body = body + "\n\n"
 
     lines = sys.stdin.readlines()
@@ -156,12 +156,20 @@ def main() -> int:
             issue = ""
             thanks = ""
             author = ""
+            experimental = False
             desc = ""
             more = ""
 
             while idx < len(lines):
                 l = lines[idx]
                 idx += 1
+                m = re.fullmatch(r"Experimental:[\t ]*(.*)\n?", l)
+                if m:
+                    value = m.group(1).rstrip("\n")
+                    if value not in {"true", "false"}:
+                        print("genchangelog: invalid Experimental value " + repr(value), file=sys.stderr)
+                        return 1
+                    experimental = value == "true"
                 m = re.search(r"Module:[\t ]*(.*)$", l)
                 if m:
                     mod = m.group(1)
@@ -214,7 +222,6 @@ def main() -> int:
             more = more.replace("&", "\\&")
             more = re.sub(r"\n([ \t]*)\n", r"\n\1<br>\n", more)
 
-            hastext[mod] = 1
             rb = rankclear.get(rank, "")
             if bug != "":
                 rb = rb + f", bugzilla entry {bug}"
@@ -238,7 +245,7 @@ def main() -> int:
                 )
                 moreinfocnt += 1
 
-            k = f"{mod}-{what}"
+            k = (experimental, mod, what)
             text[k] = text[k] + f"      - {desc} ({rb})\n" + more
             current = l
             continue
