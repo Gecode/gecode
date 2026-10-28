@@ -57,6 +57,10 @@ def main() -> int:
                         if not Path(g).exists() and not (Path(root) / g).exists():
                             d = os.path.dirname(f) or "."
                             g = f"{d}/{g}"
+                        # Skip headers that only exist in some configurations,
+                        # such as the mimalloc rename header.
+                        if not Path(g).exists() and not (Path(root) / g).exists():
+                            continue
                         if g not in done:
                             todo.append(g)
                             if (Path(root) / g).exists():
@@ -65,14 +69,10 @@ def main() -> int:
                                 done[g] = ""
 
         target_out = re.sub(r"\.cpp?", "", target)
-        sys.stdout.write(f"{target_out}$(OBJSUFFIX) {target_out}$(SBJSUFFIX): ")
-        l = 3
-        for g in sorted(done.keys()):
-            if l == 3:
-                sys.stdout.write("\\\n\t")
-                l = 0
-            sys.stdout.write(f"{done[g]}{g} ")
-            l += 1
+        sys.stdout.write(f"{target_out}$(OBJSUFFIX) {target_out}$(SBJSUFFIX):")
+        deps = [f"{done[g]}{g}" for g in sorted(done.keys())]
+        for start in range(0, len(deps), 3):
+            sys.stdout.write(" \\\n\t" + " ".join(deps[start:start+3]))
         sys.stdout.write("\n")
 
     return 0
