@@ -76,7 +76,7 @@ namespace Gecode { namespace Int { namespace BinPacking {
     }
     forceinline void
     ConflictGraph::NodeSet::empty(int n) {
-        RawBitSetBase::clearall(static_cast<unsigned int>(n));
+        RawBitSetBase::fill_bits(static_cast<unsigned int>(n));
     }
     forceinline bool
     ConflictGraph::NodeSet::iwn(NodeSet& cwa, const NodeSet& a, NodeSet& cwb, const NodeSet& b, const NodeSet& c,
@@ -347,7 +347,7 @@ namespace Gecode { namespace Int { namespace BinPacking {
     }
 
     inline IntSet
-    ConflictGraph::maxclique(void) const {
+    ConflictGraph::maximum_clique(void) const {
         Region reg;
         int* n = reg.alloc<int>(max.c);
         int j = 0;

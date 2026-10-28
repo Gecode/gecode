@@ -67,16 +67,16 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
     public:
         /// Copy propagator during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /**
          * \brief Cost function
          *
          * If a view has been assigned, the cost is low unary.
          * Otherwise it is low binary.
          */
-        virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+        PropCost cost(const Space& home, const ModEventDelta& med) const override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post bounds consistent propagator \f$ |x_0|=x_1\f$
         static ExecStatus post(Home home, View x0, View x1);
     };
@@ -100,7 +100,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
     public:
         /// Copy propagator during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /**
          * \brief Cost function
          *
@@ -108,9 +108,9 @@ namespace Gecode { namespace Int { namespace Arithmetic {
          * If in stage for bounds propagation, the cost is
          * low binary. Otherwise it is high binary.
          */
-        virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+        PropCost cost(const Space& home, const ModEventDelta& med) const override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post domain consistent propagator \f$ |x_0|=x_1\f$
         static ExecStatus post(Home home, View x0, View x1);
     };
@@ -143,9 +143,9 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         /// Constructor for rewriting \a p during cloning
         MaxBnd(Space& home, Propagator& p, View x0, View x1, View x2);
         /// Copy propagator during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post propagator \f$ \max\{x_0,x_1\}=x_2\f$
         static ExecStatus post(Home home, View x0, View x1, View x2);
     };
@@ -169,9 +169,9 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
     public:
         /// Copy propagator during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post propagator \f$ \max x=y\f$
         static ExecStatus post(Home home, ViewArray<View>& x, View y);
     };
@@ -198,16 +198,16 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         /// Constructor for rewriting \a p during cloning
         MaxDom(Space& home, Propagator& p, View x0, View x1, View x2);
         /// Copy propagator during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /**
          * \brief Cost function
          *
          * If in stage for bounds propagation, the cost is
          * low ternary. Otherwise it is high ternary.
          */
-        virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+        PropCost cost(const Space& home, const ModEventDelta& med) const override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post propagator \f$ \max\{x_0,x_1\}=x_2\f$
         static ExecStatus post(Home home, View x0, View x1, View x2);
     };
@@ -231,16 +231,16 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
     public:
         /// Copy propagator during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /**
          * \brief Cost function
          *
          * If in stage for bounds propagation, the cost is
          * low linear. Otherwise it is high linear.
          */
-        virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+        PropCost cost(const Space& home, const ModEventDelta& med) const override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post propagator \f$ \max x=y\f$
         static ExecStatus post(Home home, ViewArray<View>& x, View y);
     };
@@ -254,13 +254,13 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     /**
      * \brief Argument maximum propagator
      *
-     * Tiebreaking is used if \a tiebreak is true and views can be shared
+     * Tiebreaking is used if \a tie_break is true and views can be shared
      * if \a shread is true.
      *
      * Requires \code #include <gecode/int/arithmetic.hh> \endcode
      * \ingroup FuncIntProp
      */
-    template <class VA, class VB, bool tiebreak>
+    template <class VA, class VB, bool tie_break>
     class ArgMax : public Propagator {
     protected:
         /// Map of index and views
@@ -274,15 +274,15 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
     public:
         /// Copy propagator during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         // Cost function (defined as low linear)
-        virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+        PropCost cost(const Space& home, const ModEventDelta& med) const override;
         /// Schedule function
-        virtual void reschedule(Space& home);
+        void reschedule(Space& home) override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Delete propagator and return its size
-        virtual size_t dispose(Space& home);
+        size_t dispose(Space& home) override;
         /**
          * \brief Post propagator \f$ \operatorname{argmax} x=y\f$
          *
@@ -318,9 +318,9 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         /// Return \f$x^2\f$ truncated to integer limits
         int tpow(int x) const;
         /// Return \f$\lfloor \sqrt{x}\rfloor\f$ where \a x must be non-negative and \f$n>0\f$
-        int fnroot(int x) const;
+        int floor_nth_root(int x) const;
         /// Return \f$\lceil \sqrt{x}\rceil\f$ where \a x must be non-negative and \f$n>0\f$
-        int cnroot(int x) const;
+        int ceil_nth_root(int x) const;
     };
 
     /**
@@ -355,9 +355,9 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         /// Return \f$x^n\f$ where \f$n>0\f$ truncated to integer limits
         int tpow(int x) const;
         /// Return \f$\lfloor \sqrt[n]{x}\rfloor\f$ where \a x must be non-negative and \f$n>0\f$
-        int fnroot(int x) const;
+        int floor_nth_root(int x) const;
         /// Return \f$\lceil \sqrt[n]{x}\rceil\f$ where \a x must be non-negative and \f$n>0\f$
-        int cnroot(int x) const;
+        int ceil_nth_root(int x) const;
     };
 
 }}} // namespace Gecode::Int::Arithmetic
@@ -385,9 +385,9 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
     public:
         /// Copy propagator during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post propagator
         static ExecStatus post(Home home, VA x0, VB x1, Ops ops);
     };
@@ -412,9 +412,9 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
     public:
         /// Copy propagator during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post propagator
         static ExecStatus post(Home home, IntView x0, IntView x1, Ops ops);
     };
@@ -438,7 +438,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
     public:
         /// Copy propagator during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /**
          * \brief Cost function
          *
@@ -446,9 +446,9 @@ namespace Gecode { namespace Int { namespace Arithmetic {
          * If in stage for bounds propagation, the cost is
          * low binary. Otherwise it is high binary.
          */
-        virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+        PropCost cost(const Space& home, const ModEventDelta& med) const override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post propagator
         static ExecStatus post(Home home, VA x0, VB x1, Ops ops);
     };
@@ -473,9 +473,9 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
     public:
         /// Copy propagator during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /**
          * \brief Cost function
          *
@@ -483,7 +483,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
          * If in stage for bounds propagation, the cost is
          * low binary. Otherwise it is high binary.
          */
-        virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+        PropCost cost(const Space& home, const ModEventDelta& med) const override;
         /// Post propagator
         static ExecStatus post(Home home, IntView x0, IntView x1, Ops ops);
     };
@@ -514,9 +514,9 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
     public:
         /// Copy propagator during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post propagator
         static ExecStatus post(Home home, IntView x0, IntView x1, Ops ops);
     };
@@ -541,9 +541,9 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
     public:
         /// Copy propagator during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post propagator
         static ExecStatus post(Home home, IntView x0, IntView x1, Ops ops);
     };
@@ -568,9 +568,9 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
     public:
         /// Copy propagator during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /**
          * \brief Cost function
          *
@@ -578,7 +578,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
          * If in stage for bounds propagation, the cost is
          * low binary. Otherwise it is high binary.
          */
-        virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+        PropCost cost(const Space& home, const ModEventDelta& med) const override;
         /// Post propagator
         static ExecStatus post(Home home, IntView x0, IntView x1, Ops ops);
     };
@@ -603,9 +603,9 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
     public:
         /// Copy propagator during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /**
          * \brief Cost function
          *
@@ -613,7 +613,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
          * If in stage for bounds propagation, the cost is
          * low binary. Otherwise it is high binary.
          */
-        virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+        PropCost cost(const Space& home, const ModEventDelta& med) const override;
         /// Post propagator
         static ExecStatus post(Home home, IntView x0, IntView x1, Ops ops);
     };
@@ -645,9 +645,9 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
     public:
         /// Copy propagator during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post propagator \f$x_0\cdot x_1=x_0\f$
         static ExecStatus post(Home home, View x0, View x1);
     };
@@ -672,9 +672,9 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         /// Post propagator \f$x_0\cdot x_1=x_2\f$
         static ExecStatus post(Home home, VA x0, VB x1, VC x2);
         /// Copy propagator during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
     };
 
     /**
@@ -700,10 +700,10 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         static ExecStatus post(Home home, IntView x0, IntView x1, IntView x2);
         /// Copy propagator during cloning
         GECODE_INT_EXPORT
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Perform propagation
         GECODE_INT_EXPORT
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
     };
 
     /**
@@ -726,16 +726,16 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         /// Post propagator \f$x_0\cdot x_1=x_2\f$
         static ExecStatus post(Home home, VA x0, VB x1, VC x2);
         /// Copy propagator during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /**
          * \brief Cost function
          *
          * If in stage for bounds propagation, the cost is
          * low ternary. Otherwise it is high ternary.
          */
-        virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+        PropCost cost(const Space& home, const ModEventDelta& med) const override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
     };
 
     /**
@@ -761,7 +761,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         static ExecStatus post(Home home, IntView x0, IntView x1, IntView x2);
         /// Copy propagator during cloning
         GECODE_INT_EXPORT
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /**
          * \brief Cost function
          *
@@ -769,10 +769,10 @@ namespace Gecode { namespace Int { namespace Arithmetic {
          * low ternary. Otherwise it is high ternary.
          */
         GECODE_INT_EXPORT
-        virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+        PropCost cost(const Space& home, const ModEventDelta& med) const override;
         /// Perform propagation
         GECODE_INT_EXPORT
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
     };
 
 }}} // namespace Gecode::Int::Arithmetic
@@ -801,11 +801,11 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         /// Post propagator
         static ExecStatus post(Home home, IntView x0, IntView x1, IntView x2);
         /// Copy propagator during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Cost function
-        virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+        PropCost cost(const Space& home, const ModEventDelta& med) const override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
     };
 
     /** \brief Reified bounds propagator for \f$\gcd(x_0,x_1)=x_2\f$
@@ -831,15 +831,15 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         /// Post propagator
         static ExecStatus post(Home home, IntView x0, IntView x1, IntView x2, BoolView b);
         /// Copy propagator during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Cost function
-        virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+        PropCost cost(const Space& home, const ModEventDelta& med) const override;
         /// Reschedule propagator
-        virtual void reschedule(Space& home);
+        void reschedule(Space& home) override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Delete propagator and return its size
-        virtual size_t dispose(Space& home);
+        size_t dispose(Space& home) override;
     };
 
 }}} // namespace Gecode::Int::Arithmetic
@@ -870,13 +870,13 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         /// Post propagator
         static ExecStatus post(Home home, IntView x0, IntView x1, BoolView b);
         /// Copy propagator during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Cost function
-        virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+        PropCost cost(const Space& home, const ModEventDelta& med) const override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Delete propagator and return its size
-        virtual size_t dispose(Space& home);
+        size_t dispose(Space& home) override;
     };
 
 }}} // namespace Gecode::Int::Arithmetic
@@ -905,13 +905,13 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         /// Post propagator
         static ExecStatus post(Home home, ViewArray<IntView>& x, IntView y, bool neg = false);
         /// Copy propagator during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Cost function
-        virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+        PropCost cost(const Space& home, const ModEventDelta& med) const override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Delete propagator and return its size
-        virtual size_t dispose(Space& home);
+        size_t dispose(Space& home) override;
     };
 
     /** \brief Reified bounds propagator for an exact n-ary product
@@ -937,15 +937,15 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         /// Post propagator
         static ExecStatus post(Home home, ViewArray<IntView>& x, IntView y, BoolView b);
         /// Copy propagator during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Cost function
-        virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+        PropCost cost(const Space& home, const ModEventDelta& med) const override;
         /// Reschedule propagator
-        virtual void reschedule(Space& home);
+        void reschedule(Space& home) override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Delete propagator and return its size
-        virtual size_t dispose(Space& home);
+        size_t dispose(Space& home) override;
     };
 
 }}} // namespace Gecode::Int::Arithmetic
@@ -978,13 +978,13 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         /// Post propagator
         static ExecStatus post(Home home, ViewArray<IntView>& x, int m, IntView y);
         /// Copy propagator during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Cost function
-        virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+        PropCost cost(const Space& home, const ModEventDelta& med) const override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Delete propagator and return its size
-        virtual size_t dispose(Space& home);
+        size_t dispose(Space& home) override;
     };
 
     /** \brief Bounds propagator for a variable-modulus n-ary product
@@ -1009,15 +1009,15 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         /// Post propagator
         static ExecStatus post(Home home, ViewArray<IntView>& x, IntView m, IntView y);
         /// Copy propagator during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Cost function
-        virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+        PropCost cost(const Space& home, const ModEventDelta& med) const override;
         /// Reschedule propagator
-        virtual void reschedule(Space& home);
+        void reschedule(Space& home) override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Delete propagator and return its size
-        virtual size_t dispose(Space& home);
+        size_t dispose(Space& home) override;
     };
 
     /** \brief Reified bounds propagator for a variable-modulus product
@@ -1045,15 +1045,15 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         /// Post propagator
         static ExecStatus post(Home home, ViewArray<IntView>& x, IntView m, IntView y, BoolView b);
         /// Copy propagator during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Cost function
-        virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+        PropCost cost(const Space& home, const ModEventDelta& med) const override;
         /// Reschedule propagator
-        virtual void reschedule(Space& home);
+        void reschedule(Space& home) override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Delete propagator and return its size
-        virtual size_t dispose(Space& home);
+        size_t dispose(Space& home) override;
     };
 
     /** \brief Reified bounds propagator for a fixed-modulus n-ary product
@@ -1081,15 +1081,15 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         /// Post propagator
         static ExecStatus post(Home home, ViewArray<IntView>& x, int m, IntView y, BoolView b);
         /// Copy propagator during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Cost function
-        virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+        PropCost cost(const Space& home, const ModEventDelta& med) const override;
         /// Reschedule propagator
-        virtual void reschedule(Space& home);
+        void reschedule(Space& home) override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Delete propagator and return its size
-        virtual size_t dispose(Space& home);
+        size_t dispose(Space& home) override;
     };
 
 }}} // namespace Gecode::Int::Arithmetic
@@ -1118,9 +1118,9 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         /// Post propagator \f$x_0\mathrm{div} x_1=x_2\f$ (rounding towards 0)
         static ExecStatus post(Home home, VA x0, VB x1, VC x2);
         /// Copy propagator during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
     };
 
     /**
@@ -1146,9 +1146,9 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         /// Post propagator \f$x_0\mathrm{div} x_1=x_2\f$ (rounding towards 0)
         static ExecStatus post(Home home, View x0, View x1, View x2);
         /// Copy propagator during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
     };
 
     /**
@@ -1177,9 +1177,9 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         /// Post propagator \f$x_1\neq 0 \land (x_2\neq 0\Rightarrow x_0\times x_2>0) \land \mathrm{abs}(x_2)<\mathrm{abs}(x_1)\f$
         static ExecStatus post(Home home, View x0, View x1, View x2);
         /// Copy propagator during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
     };
 
 }}} // namespace Gecode::Int::Arithmetic

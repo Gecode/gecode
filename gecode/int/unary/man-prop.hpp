@@ -66,8 +66,8 @@ namespace Gecode { namespace Int { namespace Unary {
 
         if (PL::advanced) {
             GECODE_ES_CHECK(detectable(home, t));
-            GECODE_ES_CHECK(notfirstnotlast(home, t));
-            GECODE_ES_CHECK(edgefinding(home, t));
+            GECODE_ES_CHECK(not_first_not_last(home, t));
+            GECODE_ES_CHECK(edge_finding(home, t));
         }
 
         if (!PL::basic)

@@ -42,8 +42,8 @@ namespace Gecode {
             return;
         vars.expand(home, x);
         ViewArray<SetView> xv(home, x);
-        ViewSel<SetView>* vs[1] = {Branch::viewsel(home, vars)};
-        postviewvalbrancher<SetView, 1, int, 2>(home, xv, vs, Branch::valselcommit(home, vals), bf, vvp);
+        ViewSel<SetView>* vs[1] = {Branch::view_selection(home, vars)};
+        post_view_value_brancher<SetView, 1, int, 2>(home, xv, vs, Branch::value_selection_commit(home, vals), bf, vvp);
     }
 
     void
@@ -66,18 +66,18 @@ namespace Gecode {
             branch(home, x, vars.a, vals, bf, vvp);
         } else {
             ViewArray<SetView> xv(home, x);
-            ValSelCommitBase<SetView, int>* vsc = Branch::valselcommit(home, vals);
+            ValSelCommitBase<SetView, int>* vsc = Branch::value_selection_commit(home, vals);
             if (vars.c.select() == SetVarBranch::SEL_NONE) {
-                ViewSel<SetView>* vs[2] = {Branch::viewsel(home, vars.a), Branch::viewsel(home, vars.b)};
-                postviewvalbrancher<SetView, 2, int, 2>(home, xv, vs, vsc, bf, vvp);
+                ViewSel<SetView>* vs[2] = {Branch::view_selection(home, vars.a), Branch::view_selection(home, vars.b)};
+                post_view_value_brancher<SetView, 2, int, 2>(home, xv, vs, vsc, bf, vvp);
             } else if (vars.d.select() == SetVarBranch::SEL_NONE) {
-                ViewSel<SetView>* vs[3] = {Branch::viewsel(home, vars.a), Branch::viewsel(home, vars.b),
-                                           Branch::viewsel(home, vars.c)};
-                postviewvalbrancher<SetView, 3, int, 2>(home, xv, vs, vsc, bf, vvp);
+                ViewSel<SetView>* vs[3] = {Branch::view_selection(home, vars.a), Branch::view_selection(home, vars.b),
+                                           Branch::view_selection(home, vars.c)};
+                post_view_value_brancher<SetView, 3, int, 2>(home, xv, vs, vsc, bf, vvp);
             } else {
-                ViewSel<SetView>* vs[4] = {Branch::viewsel(home, vars.a), Branch::viewsel(home, vars.b),
-                                           Branch::viewsel(home, vars.c), Branch::viewsel(home, vars.d)};
-                postviewvalbrancher<SetView, 4, int, 2>(home, xv, vs, vsc, bf, vvp);
+                ViewSel<SetView>* vs[4] = {Branch::view_selection(home, vars.a), Branch::view_selection(home, vars.b),
+                                           Branch::view_selection(home, vars.c), Branch::view_selection(home, vars.d)};
+                post_view_value_brancher<SetView, 4, int, 2>(home, xv, vs, vsc, bf, vvp);
             }
         }
     }
@@ -96,7 +96,7 @@ namespace Gecode {
             return;
         ViewArray<SetView> xv(home, x);
         ViewSel<SetView>* vs[1] = {new (home) ViewSelNone<SetView>(home, vars)};
-        postviewvalbrancher<SetView, 1, int, 1>(home, xv, vs, Branch::valselcommit(home, vals), bf, vvp);
+        post_view_value_brancher<SetView, 1, int, 1>(home, xv, vs, Branch::value_selection_commit(home, vals), bf, vvp);
     }
 
     void
@@ -119,18 +119,18 @@ namespace Gecode {
             assign(home, x, vars.a, vals, bf, vvp);
         } else {
             ViewArray<SetView> xv(home, x);
-            ValSelCommitBase<SetView, int>* vsc = Branch::valselcommit(home, vals);
+            ValSelCommitBase<SetView, int>* vsc = Branch::value_selection_commit(home, vals);
             if (vars.c.select() == SetVarBranch::SEL_NONE) {
-                ViewSel<SetView>* vs[2] = {Branch::viewsel(home, vars.a), Branch::viewsel(home, vars.b)};
-                postviewvalbrancher<SetView, 2, int, 1>(home, xv, vs, vsc, bf, vvp);
+                ViewSel<SetView>* vs[2] = {Branch::view_selection(home, vars.a), Branch::view_selection(home, vars.b)};
+                post_view_value_brancher<SetView, 2, int, 1>(home, xv, vs, vsc, bf, vvp);
             } else if (vars.d.select() == SetVarBranch::SEL_NONE) {
-                ViewSel<SetView>* vs[3] = {Branch::viewsel(home, vars.a), Branch::viewsel(home, vars.b),
-                                           Branch::viewsel(home, vars.c)};
-                postviewvalbrancher<SetView, 3, int, 1>(home, xv, vs, vsc, bf, vvp);
+                ViewSel<SetView>* vs[3] = {Branch::view_selection(home, vars.a), Branch::view_selection(home, vars.b),
+                                           Branch::view_selection(home, vars.c)};
+                post_view_value_brancher<SetView, 3, int, 1>(home, xv, vs, vsc, bf, vvp);
             } else {
-                ViewSel<SetView>* vs[4] = {Branch::viewsel(home, vars.a), Branch::viewsel(home, vars.b),
-                                           Branch::viewsel(home, vars.c), Branch::viewsel(home, vars.d)};
-                postviewvalbrancher<SetView, 4, int, 1>(home, xv, vs, vsc, bf, vvp);
+                ViewSel<SetView>* vs[4] = {Branch::view_selection(home, vars.a), Branch::view_selection(home, vars.b),
+                                           Branch::view_selection(home, vars.c), Branch::view_selection(home, vars.d)};
+                post_view_value_brancher<SetView, 4, int, 1>(home, xv, vs, vsc, bf, vvp);
             }
         }
     }

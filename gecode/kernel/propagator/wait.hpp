@@ -52,17 +52,17 @@ namespace Gecode {
 
     public:
         /// Perform copying during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Const function (defined as low unary)
-        virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+        PropCost cost(const Space& home, const ModEventDelta& med) const override;
         /// Schedule function
-        virtual void reschedule(Space& home);
+        void reschedule(Space& home) override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post propagator that waits until \a x becomes assigned and then executes \a c
         static ExecStatus post(Home home, View x, std::function<void(Space& home)> c);
         /// Delete propagator and return its size
-        virtual size_t dispose(Space& home);
+        size_t dispose(Space& home) override;
     };
 
     /**
@@ -85,17 +85,17 @@ namespace Gecode {
 
     public:
         /// Perform copying during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Const function (defined as high unary)
-        virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+        PropCost cost(const Space& home, const ModEventDelta& med) const override;
         /// Schedule function
-        virtual void reschedule(Space& home);
+        void reschedule(Space& home) override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post propagator that waits until \a x becomes assigned and then executes \a c
         static ExecStatus post(Home home, ViewArray<View>& x, std::function<void(Space& home)> c);
         /// Delete propagator and return its size
-        virtual size_t dispose(Space& home);
+        size_t dispose(Space& home) override;
     };
 
     /*

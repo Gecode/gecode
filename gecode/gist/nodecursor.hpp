@@ -34,8 +34,8 @@ namespace Gecode { namespace Gist {
 
     template <class Node>
     forceinline
-    NodeCursor<Node>::NodeCursor(Node* theNode, const typename Node::NodeAllocator& na0)
-        : _startNode(theNode), _node(theNode), _alternative(theNode->getAlternative(na0)), na(na0) {}
+    NodeCursor<Node>::NodeCursor(Node* current_node, const typename Node::NodeAllocator& na0)
+        : _start_node(current_node), _node(current_node), _alternative(current_node->get_alternative(na0)), na(na0) {}
 
     template <class Node>
     forceinline Node*
@@ -57,8 +57,8 @@ namespace Gecode { namespace Gist {
 
     template <class Node>
     forceinline Node*
-    NodeCursor<Node>::startNode(void) {
-        return _startNode;
+    NodeCursor<Node>::start_node(void) {
+        return _start_node;
     }
 
     template <class Node>
@@ -69,20 +69,20 @@ namespace Gecode { namespace Gist {
 
     template <class Node>
     forceinline bool
-    NodeCursor<Node>::mayMoveUpwards(void) {
-        return _node != _startNode && !_node->isRoot();
+    NodeCursor<Node>::may_move_upwards(void) {
+        return _node != _start_node && !_node->is_root();
     }
 
     template <class Node>
     forceinline void
-    NodeCursor<Node>::moveUpwards(void) {
-        _node = static_cast<Node*>(_node->getParent(na));
-        if (_node->isRoot()) {
+    NodeCursor<Node>::move_upwards(void) {
+        _node = static_cast<Node*>(_node->get_parent(na));
+        if (_node->is_root()) {
             _alternative = 0;
         } else {
-            Node* p = static_cast<Node*>(_node->getParent(na));
-            for (int i = p->getNumberOfChildren(); i--;) {
-                if (p->getChild(na, i) == _node) {
+            Node* p = static_cast<Node*>(_node->get_parent(na));
+            for (int i = p->get_number_of_children(); i--;) {
+                if (p->get_child(na, i) == _node) {
                     _alternative = i;
                     break;
                 }
@@ -92,48 +92,48 @@ namespace Gecode { namespace Gist {
 
     template <class Node>
     forceinline bool
-    NodeCursor<Node>::mayMoveDownwards(void) {
-        return _node->getNumberOfChildren() > 0;
+    NodeCursor<Node>::may_move_downwards(void) {
+        return _node->get_number_of_children() > 0;
     }
 
     template <class Node>
     forceinline void
-    NodeCursor<Node>::moveDownwards(void) {
+    NodeCursor<Node>::move_downwards(void) {
         _alternative = 0;
-        _node = _node->getChild(na, 0);
+        _node = _node->get_child(na, 0);
     }
 
     template <class Node>
     forceinline bool
-    NodeCursor<Node>::mayMoveSidewards(void) {
-        return (!_node->isRoot()) && (_node != _startNode) &&
-               (_alternative < _node->getParent(na)->getNumberOfChildren() - 1);
+    NodeCursor<Node>::may_move_sidewards(void) {
+        return (!_node->is_root()) && (_node != _start_node) &&
+               (_alternative < _node->get_parent(na)->get_number_of_children() - 1);
     }
 
     template <class Node>
     forceinline void
-    NodeCursor<Node>::moveSidewards(void) {
-        _node = static_cast<Node*>(_node->getParent(na)->getChild(na, ++_alternative));
+    NodeCursor<Node>::move_sidewards(void) {
+        _node = static_cast<Node*>(_node->get_parent(na)->get_child(na, ++_alternative));
     }
 
     forceinline bool
-    HideFailedCursor::mayMoveDownwards(void) {
+    HideFailedCursor::may_move_downwards(void) {
         VisualNode* n = node();
-        return (!onlyDirty || n->isDirty()) && NodeCursor<VisualNode>::mayMoveDownwards() &&
-               (n->hasSolvedChildren() || n->getNoOfOpenChildren(na) > 0) && (!n->isHidden());
+        return (!only_dirty || n->is_dirty()) && NodeCursor<VisualNode>::may_move_downwards() &&
+               (n->has_solved_children() || n->get_no_of_open_children(na) > 0) && (!n->is_hidden());
     }
 
     forceinline
-    HideFailedCursor::HideFailedCursor(VisualNode* root, const VisualNode::NodeAllocator& na, bool onlyDirtyNodes)
-        : NodeCursor<VisualNode>(root, na), onlyDirty(onlyDirtyNodes) {}
+    HideFailedCursor::HideFailedCursor(VisualNode* root, const VisualNode::NodeAllocator& na, bool only_dirty_nodes)
+        : NodeCursor<VisualNode>(root, na), only_dirty(only_dirty_nodes) {}
 
     forceinline void
-    HideFailedCursor::processCurrentNode(void) {
+    HideFailedCursor::process_current_node(void) {
         VisualNode* n = node();
-        if (n->getStatus() == BRANCH && !n->hasSolvedChildren() && n->getNoOfOpenChildren(na) == 0) {
-            n->setHidden(true);
-            n->setChildrenLayoutDone(false);
-            n->dirtyUp(na);
+        if (n->get_status() == BRANCH && !n->has_solved_children() && n->get_no_of_open_children(na) == 0) {
+            n->set_hidden(true);
+            n->set_children_layout_done(false);
+            n->dirty_up(na);
         }
     }
 
@@ -142,11 +142,11 @@ namespace Gecode { namespace Gist {
         : NodeCursor<VisualNode>(root, na) {}
 
     forceinline void
-    UnhideAllCursor::processCurrentNode(void) {
+    UnhideAllCursor::process_current_node(void) {
         VisualNode* n = node();
-        if (n->isHidden()) {
-            n->setHidden(false);
-            n->dirtyUp(na);
+        if (n->is_hidden()) {
+            n->set_hidden(false);
+            n->dirty_up(na);
         }
     }
 
@@ -155,74 +155,74 @@ namespace Gecode { namespace Gist {
         : NodeCursor<VisualNode>(root, na) {}
 
     forceinline void
-    UnstopAllCursor::processCurrentNode(void) {
+    UnstopAllCursor::process_current_node(void) {
         VisualNode* n = node();
-        if (n->getStatus() == STOP) {
-            n->setStop(false);
-            n->dirtyUp(na);
+        if (n->get_status() == STOP) {
+            n->set_stop(false);
+            n->dirty_up(na);
         }
     }
 
     forceinline
-    NextSolCursor::NextSolCursor(VisualNode* theNode, bool backwards, const VisualNode::NodeAllocator& na)
-        : NodeCursor<VisualNode>(theNode, na), back(backwards) {}
+    NextSolCursor::NextSolCursor(VisualNode* the_node, bool backwards, const VisualNode::NodeAllocator& na)
+        : NodeCursor<VisualNode>(the_node, na), back(backwards) {}
 
     forceinline void
-    NextSolCursor::processCurrentNode(void) {}
+    NextSolCursor::process_current_node(void) {}
 
     forceinline bool
-    NextSolCursor::notOnSol(void) {
-        return node() == startNode() || node()->getStatus() != SOLVED;
+    NextSolCursor::not_on_sol(void) {
+        return node() == start_node() || node()->get_status() != SOLVED;
     }
 
     forceinline bool
-    NextSolCursor::mayMoveUpwards(void) {
-        return notOnSol() && !node()->isRoot();
+    NextSolCursor::may_move_upwards(void) {
+        return not_on_sol() && !node()->is_root();
     }
 
     forceinline bool
-    NextSolCursor::mayMoveDownwards(void) {
-        return notOnSol() && !(back && node() == startNode()) && node()->hasSolvedChildren() &&
-               NodeCursor<VisualNode>::mayMoveDownwards();
+    NextSolCursor::may_move_downwards(void) {
+        return not_on_sol() && !(back && node() == start_node()) && node()->has_solved_children() &&
+               NodeCursor<VisualNode>::may_move_downwards();
     }
 
     forceinline void
-    NextSolCursor::moveDownwards(void) {
-        NodeCursor<VisualNode>::moveDownwards();
+    NextSolCursor::move_downwards(void) {
+        NodeCursor<VisualNode>::move_downwards();
         if (back) {
-            while (NodeCursor<VisualNode>::mayMoveSidewards())
-                NodeCursor<VisualNode>::moveSidewards();
+            while (NodeCursor<VisualNode>::may_move_sidewards())
+                NodeCursor<VisualNode>::move_sidewards();
         }
     }
 
     forceinline bool
-    NextSolCursor::mayMoveSidewards(void) {
+    NextSolCursor::may_move_sidewards(void) {
         if (back) {
-            return notOnSol() && !node()->isRoot() && alternative() > 0;
+            return not_on_sol() && !node()->is_root() && alternative() > 0;
         } else {
-            return notOnSol() && !node()->isRoot() &&
-                   (alternative() < node()->getParent(na)->getNumberOfChildren() - 1);
+            return not_on_sol() && !node()->is_root() &&
+                   (alternative() < node()->get_parent(na)->get_number_of_children() - 1);
         }
     }
 
     forceinline void
-    NextSolCursor::moveSidewards(void) {
+    NextSolCursor::move_sidewards(void) {
         if (back) {
             alternative(alternative() - 1);
-            node(node()->getParent(na)->getChild(na, alternative()));
+            node(node()->get_parent(na)->get_child(na, alternative()));
         } else {
-            NodeCursor<VisualNode>::moveSidewards();
+            NodeCursor<VisualNode>::move_sidewards();
         }
     }
 
     forceinline
     StatCursor::StatCursor(VisualNode* root, const VisualNode::NodeAllocator& na)
-        : NodeCursor<VisualNode>(root, na), curDepth(0), depth(0), failed(0), solved(0), choice(0), open(0) {}
+        : NodeCursor<VisualNode>(root, na), cur_depth(0), depth(0), failed(0), solved(0), choice(0), open(0) {}
 
     forceinline void
-    StatCursor::processCurrentNode(void) {
+    StatCursor::process_current_node(void) {
         VisualNode* n = node();
-        switch (n->getStatus()) {
+        switch (n->get_status()) {
         case SOLVED:
             solved++;
             break;
@@ -241,42 +241,42 @@ namespace Gecode { namespace Gist {
     }
 
     forceinline void
-    StatCursor::moveDownwards(void) {
-        curDepth++;
-        depth = std::max(depth, curDepth);
-        NodeCursor<VisualNode>::moveDownwards();
+    StatCursor::move_downwards(void) {
+        cur_depth++;
+        depth = std::max(depth, cur_depth);
+        NodeCursor<VisualNode>::move_downwards();
     }
 
     forceinline void
-    StatCursor::moveUpwards(void) {
-        curDepth--;
-        NodeCursor<VisualNode>::moveUpwards();
+    StatCursor::move_upwards(void) {
+        cur_depth--;
+        NodeCursor<VisualNode>::move_upwards();
     }
 
     forceinline
-    BranchLabelCursor::BranchLabelCursor(VisualNode* root, BestNode* curBest, int c_d, int a_d, bool clear,
+    BranchLabelCursor::BranchLabelCursor(VisualNode* root, BestNode* cur_best, int c_d, int a_d, bool clear,
                                          VisualNode::NodeAllocator& na)
-        : NodeCursor<VisualNode>(root, na), _na(na), _curBest(curBest), _c_d(c_d), _a_d(a_d), _clear(clear) {}
+        : NodeCursor<VisualNode>(root, na), _na(na), _cur_best(cur_best), _c_d(c_d), _a_d(a_d), _clear(clear) {}
 
     forceinline void
-    BranchLabelCursor::processCurrentNode(void) {
+    BranchLabelCursor::process_current_node(void) {
         VisualNode* n = node();
         if (!_clear) {
-            if (!na.hasLabel(n)) {
-                VisualNode* p = n->getParent(_na);
+            if (!na.has_label(n)) {
+                VisualNode* p = n->get_parent(_na);
                 if (p) {
-                    std::string l = n->getBranchLabel(_na, p, p->getChoice(), _curBest, _c_d, _a_d, alternative());
-                    _na.setLabel(n, QString(l.c_str()));
-                    if (n->getNumberOfChildren() < 1 && alternative() == p->getNumberOfChildren() - 1)
+                    std::string l = n->get_branch_label(_na, p, p->get_choice(), _cur_best, _c_d, _a_d, alternative());
+                    _na.set_label(n, QString(l.c_str()));
+                    if (n->get_number_of_children() < 1 && alternative() == p->get_number_of_children() - 1)
                         p->purge(_na);
                 } else {
-                    _na.setLabel(n, "");
+                    _na.set_label(n, "");
                 }
             }
         } else {
-            _na.clearLabel(n);
+            _na.clear_label(n);
         }
-        n->dirtyUp(na);
+        n->dirty_up(na);
     }
 
     forceinline
@@ -284,7 +284,7 @@ namespace Gecode { namespace Gist {
         : NodeCursor<VisualNode>(root, na) {}
 
     forceinline void
-    DisposeCursor::processCurrentNode(void) {
+    DisposeCursor::process_current_node(void) {
         node()->dispose();
     }
 

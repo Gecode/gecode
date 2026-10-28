@@ -40,22 +40,22 @@ namespace Gecode { namespace Int { namespace Linear {
      */
     template <class P, class N>
     forceinline bool
-    isunit(ViewArray<P>&, ViewArray<N>&) {
+    has_unit_coefficients(ViewArray<P>&, ViewArray<N>&) {
         return false;
     }
     template <>
     forceinline bool
-    isunit(ViewArray<IntView>&, ViewArray<IntView>&) {
+    has_unit_coefficients(ViewArray<IntView>&, ViewArray<IntView>&) {
         return true;
     }
     template <>
     forceinline bool
-    isunit(ViewArray<IntView>&, ViewArray<NoView>&) {
+    has_unit_coefficients(ViewArray<IntView>&, ViewArray<NoView>&) {
         return true;
     }
     template <>
     forceinline bool
-    isunit(ViewArray<NoView>&, ViewArray<IntView>&) {
+    has_unit_coefficients(ViewArray<NoView>&, ViewArray<IntView>&) {
         return true;
     }
 
@@ -309,24 +309,24 @@ namespace Gecode { namespace Int { namespace Linear {
      */
     template <class Val, class P, class N>
     forceinline Actor*
-    eqtobin(Space&, Propagator&, ViewArray<P>&, ViewArray<N>&, Val) {
+    eq_to_binary(Space&, Propagator&, ViewArray<P>&, ViewArray<N>&, Val) {
         return nullptr;
     }
     template <class Val>
     forceinline Actor*
-    eqtobin(Space& home, Propagator& p, ViewArray<IntView>& x, ViewArray<NoView>&, Val c) {
+    eq_to_binary(Space& home, Propagator& p, ViewArray<IntView>& x, ViewArray<NoView>&, Val c) {
         assert(x.size() == 2);
         return new (home) EqBin<Val, IntView, IntView>(home, p, x[0], x[1], c);
     }
     template <class Val>
     forceinline Actor*
-    eqtobin(Space& home, Propagator& p, ViewArray<NoView>&, ViewArray<IntView>& y, Val c) {
+    eq_to_binary(Space& home, Propagator& p, ViewArray<NoView>&, ViewArray<IntView>& y, Val c) {
         assert(y.size() == 2);
         return new (home) EqBin<Val, IntView, IntView>(home, p, y[0], y[1], -c);
     }
     template <class Val>
     forceinline Actor*
-    eqtobin(Space& home, Propagator& p, ViewArray<IntView>& x, ViewArray<IntView>& y, Val c) {
+    eq_to_binary(Space& home, Propagator& p, ViewArray<IntView>& x, ViewArray<IntView>& y, Val c) {
         if (x.size() == 2)
             return new (home) EqBin<Val, IntView, IntView>(home, p, x[0], x[1], c);
         if (x.size() == 1)
@@ -340,24 +340,24 @@ namespace Gecode { namespace Int { namespace Linear {
      */
     template <class Val, class P, class N>
     forceinline Actor*
-    eqtoter(Space&, Propagator&, ViewArray<P>&, ViewArray<N>&, Val) {
+    eq_to_ternary(Space&, Propagator&, ViewArray<P>&, ViewArray<N>&, Val) {
         return nullptr;
     }
     template <class Val>
     forceinline Actor*
-    eqtoter(Space& home, Propagator& p, ViewArray<IntView>& x, ViewArray<NoView>&, Val c) {
+    eq_to_ternary(Space& home, Propagator& p, ViewArray<IntView>& x, ViewArray<NoView>&, Val c) {
         assert(x.size() == 3);
         return new (home) EqTer<Val, IntView, IntView, IntView>(home, p, x[0], x[1], x[2], c);
     }
     template <class Val>
     forceinline Actor*
-    eqtoter(Space& home, Propagator& p, ViewArray<NoView>&, ViewArray<IntView>& y, Val c) {
+    eq_to_ternary(Space& home, Propagator& p, ViewArray<NoView>&, ViewArray<IntView>& y, Val c) {
         assert(y.size() == 3);
         return new (home) EqTer<Val, IntView, IntView, IntView>(home, p, y[0], y[1], y[2], -c);
     }
     template <class Val>
     forceinline Actor*
-    eqtoter(Space& home, Propagator& p, ViewArray<IntView>& x, ViewArray<IntView>& y, Val c) {
+    eq_to_ternary(Space& home, Propagator& p, ViewArray<IntView>& x, ViewArray<IntView>& y, Val c) {
         if (x.size() == 3)
             return new (home) EqTer<Val, IntView, IntView, IntView>(home, p, x[0], x[1], x[2], c);
         if (x.size() == 2)
@@ -370,12 +370,12 @@ namespace Gecode { namespace Int { namespace Linear {
     template <class Val, class P, class N>
     Actor*
     Eq<Val, P, N>::copy(Space& home) {
-        if (isunit(x, y)) {
+        if (has_unit_coefficients(x, y)) {
             // Check whether rewriting is possible
             if (x.size() + y.size() == 2)
-                return eqtobin(home, *this, x, y, c);
+                return eq_to_binary(home, *this, x, y, c);
             if (x.size() + y.size() == 3)
-                return eqtoter(home, *this, x, y, c);
+                return eq_to_ternary(home, *this, x, y, c);
         }
         return new (home) Eq<Val, P, N>(home, *this);
     }
@@ -489,24 +489,24 @@ namespace Gecode { namespace Int { namespace Linear {
      */
     template <class Val, class P, class N>
     forceinline Actor*
-    nqtobin(Space&, Propagator&, ViewArray<P>&, ViewArray<N>&, Val) {
+    nq_to_binary(Space&, Propagator&, ViewArray<P>&, ViewArray<N>&, Val) {
         return nullptr;
     }
     template <class Val>
     forceinline Actor*
-    nqtobin(Space& home, Propagator& p, ViewArray<IntView>& x, ViewArray<NoView>&, Val c) {
+    nq_to_binary(Space& home, Propagator& p, ViewArray<IntView>& x, ViewArray<NoView>&, Val c) {
         assert(x.size() == 2);
         return new (home) NqBin<Val, IntView, IntView>(home, p, x[0], x[1], c);
     }
     template <class Val>
     forceinline Actor*
-    nqtobin(Space& home, Propagator& p, ViewArray<NoView>&, ViewArray<IntView>& y, Val c) {
+    nq_to_binary(Space& home, Propagator& p, ViewArray<NoView>&, ViewArray<IntView>& y, Val c) {
         assert(y.size() == 2);
         return new (home) NqBin<Val, IntView, IntView>(home, p, y[0], y[1], -c);
     }
     template <class Val>
     forceinline Actor*
-    nqtobin(Space& home, Propagator& p, ViewArray<IntView>& x, ViewArray<IntView>& y, Val c) {
+    nq_to_binary(Space& home, Propagator& p, ViewArray<IntView>& x, ViewArray<IntView>& y, Val c) {
         if (x.size() == 2)
             return new (home) NqBin<Val, IntView, IntView>(home, p, x[0], x[1], c);
         if (x.size() == 1)
@@ -520,24 +520,24 @@ namespace Gecode { namespace Int { namespace Linear {
      */
     template <class Val, class P, class N>
     forceinline Actor*
-    nqtoter(Space&, Propagator&, ViewArray<P>&, ViewArray<N>&, Val) {
+    nq_to_ternary(Space&, Propagator&, ViewArray<P>&, ViewArray<N>&, Val) {
         return nullptr;
     }
     template <class Val>
     forceinline Actor*
-    nqtoter(Space& home, Propagator& p, ViewArray<IntView>& x, ViewArray<NoView>&, Val c) {
+    nq_to_ternary(Space& home, Propagator& p, ViewArray<IntView>& x, ViewArray<NoView>&, Val c) {
         assert(x.size() == 3);
         return new (home) NqTer<Val, IntView, IntView, IntView>(home, p, x[0], x[1], x[2], c);
     }
     template <class Val>
     forceinline Actor*
-    nqtoter(Space& home, Propagator& p, ViewArray<NoView>&, ViewArray<IntView>& y, Val c) {
+    nq_to_ternary(Space& home, Propagator& p, ViewArray<NoView>&, ViewArray<IntView>& y, Val c) {
         assert(y.size() == 3);
         return new (home) NqTer<Val, IntView, IntView, IntView>(home, p, y[0], y[1], y[2], -c);
     }
     template <class Val>
     forceinline Actor*
-    nqtoter(Space& home, Propagator& p, ViewArray<IntView>& x, ViewArray<IntView>& y, Val c) {
+    nq_to_ternary(Space& home, Propagator& p, ViewArray<IntView>& x, ViewArray<IntView>& y, Val c) {
         if (x.size() == 3)
             return new (home) NqTer<Val, IntView, IntView, IntView>(home, p, x[0], x[1], x[2], c);
         if (x.size() == 2)
@@ -550,12 +550,12 @@ namespace Gecode { namespace Int { namespace Linear {
     template <class Val, class P, class N>
     Actor*
     Nq<Val, P, N>::copy(Space& home) {
-        if (isunit(x, y)) {
+        if (has_unit_coefficients(x, y)) {
             // Check whether rewriting is possible
             if (x.size() + y.size() == 2)
-                return nqtobin(home, *this, x, y, c);
+                return nq_to_binary(home, *this, x, y, c);
             if (x.size() + y.size() == 3)
-                return nqtoter(home, *this, x, y, c);
+                return nq_to_ternary(home, *this, x, y, c);
         }
         return new (home) Nq<Val, P, N>(home, *this);
     }
@@ -622,24 +622,24 @@ namespace Gecode { namespace Int { namespace Linear {
      */
     template <class Val, class P, class N>
     forceinline Actor*
-    lqtobin(Space&, Propagator&, ViewArray<P>&, ViewArray<N>&, Val) {
+    lq_to_binary(Space&, Propagator&, ViewArray<P>&, ViewArray<N>&, Val) {
         return nullptr;
     }
     template <class Val>
     forceinline Actor*
-    lqtobin(Space& home, Propagator& p, ViewArray<IntView>& x, ViewArray<NoView>&, Val c) {
+    lq_to_binary(Space& home, Propagator& p, ViewArray<IntView>& x, ViewArray<NoView>&, Val c) {
         assert(x.size() == 2);
         return new (home) LqBin<Val, IntView, IntView>(home, p, x[0], x[1], c);
     }
     template <class Val>
     forceinline Actor*
-    lqtobin(Space& home, Propagator& p, ViewArray<NoView>&, ViewArray<IntView>& y, Val c) {
+    lq_to_binary(Space& home, Propagator& p, ViewArray<NoView>&, ViewArray<IntView>& y, Val c) {
         assert(y.size() == 2);
         return new (home) LqBin<Val, MinusView, MinusView>(home, p, MinusView(y[0]), MinusView(y[1]), c);
     }
     template <class Val>
     forceinline Actor*
-    lqtobin(Space& home, Propagator& p, ViewArray<IntView>& x, ViewArray<IntView>& y, Val c) {
+    lq_to_binary(Space& home, Propagator& p, ViewArray<IntView>& x, ViewArray<IntView>& y, Val c) {
         if (x.size() == 2)
             return new (home) LqBin<Val, IntView, IntView>(home, p, x[0], x[1], c);
         if (x.size() == 1)
@@ -653,25 +653,25 @@ namespace Gecode { namespace Int { namespace Linear {
      */
     template <class Val, class P, class N>
     forceinline Actor*
-    lqtoter(Space&, Propagator&, ViewArray<P>&, ViewArray<N>&, Val) {
+    lq_to_ternary(Space&, Propagator&, ViewArray<P>&, ViewArray<N>&, Val) {
         return nullptr;
     }
     template <class Val>
     forceinline Actor*
-    lqtoter(Space& home, Propagator& p, ViewArray<IntView>& x, ViewArray<NoView>&, Val c) {
+    lq_to_ternary(Space& home, Propagator& p, ViewArray<IntView>& x, ViewArray<NoView>&, Val c) {
         assert(x.size() == 3);
         return new (home) LqTer<Val, IntView, IntView, IntView>(home, p, x[0], x[1], x[2], c);
     }
     template <class Val>
     forceinline Actor*
-    lqtoter(Space& home, Propagator& p, ViewArray<NoView>&, ViewArray<IntView>& y, Val c) {
+    lq_to_ternary(Space& home, Propagator& p, ViewArray<NoView>&, ViewArray<IntView>& y, Val c) {
         assert(y.size() == 3);
         return new (home)
             LqTer<Val, MinusView, MinusView, MinusView>(home, p, MinusView(y[0]), MinusView(y[1]), MinusView(y[2]), c);
     }
     template <class Val>
     forceinline Actor*
-    lqtoter(Space& home, Propagator& p, ViewArray<IntView>& x, ViewArray<IntView>& y, Val c) {
+    lq_to_ternary(Space& home, Propagator& p, ViewArray<IntView>& x, ViewArray<IntView>& y, Val c) {
         if (x.size() == 3)
             return new (home) LqTer<Val, IntView, IntView, IntView>(home, p, x[0], x[1], x[2], c);
         if (x.size() == 2)
@@ -686,12 +686,12 @@ namespace Gecode { namespace Int { namespace Linear {
     template <class Val, class P, class N>
     Actor*
     Lq<Val, P, N>::copy(Space& home) {
-        if (isunit(x, y)) {
+        if (has_unit_coefficients(x, y)) {
             // Check whether rewriting is possible
             if (x.size() + y.size() == 2)
-                return lqtobin(home, *this, x, y, c);
+                return lq_to_binary(home, *this, x, y, c);
             if (x.size() + y.size() == 3)
-                return lqtoter(home, *this, x, y, c);
+                return lq_to_ternary(home, *this, x, y, c);
         }
         return new (home) Lq<Val, P, N>(home, *this);
     }

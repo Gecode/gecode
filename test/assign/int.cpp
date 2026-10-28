@@ -40,8 +40,8 @@ namespace Test { namespace Assign {
         /// Create and register test
         Int(const std::string& s, const Gecode::IntSet& d, int n) : IntTest(s, n, d) {}
         /// Post propagators on variables \a x
-        virtual void
-        post(Gecode::Space& home, Gecode::IntVarArray& x) {
+        void
+        post(Gecode::Space& home, Gecode::IntVarArray& x) override {
             Gecode::distinct(home, x);
         }
     };

@@ -96,18 +96,18 @@ public:
         k.update(*this, s.k);
     }
     /// Copy during cloning
-    virtual Space*
-    copy(void) {
+    Space*
+    copy(void) override {
         return new IndSet(*this);
     }
     /// Print solution
-    virtual void
-    print(std::ostream& os) const {
+    void
+    print(std::ostream& os) const override {
         os << "\tk = " << k << std::endl << "\tv[] = " << v << std::endl;
     }
     /// Return solution cost
-    virtual IntVar
-    cost(void) const {
+    IntVar
+    cost(void) const override {
         return k;
     }
 };

@@ -34,7 +34,8 @@ namespace Gecode { namespace FlatZinc {
             if (s.empty()) {
                 return std::wstring();
             }
-            int n = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, s.c_str(), static_cast<int>(s.size()), NULL, 0);
+            int n =
+                MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, s.c_str(), static_cast<int>(s.size()), nullptr, 0);
             if (n == 0) {
                 throw Error("Blackbox", "Invalid UTF-8 string in blackbox path or argument");
             }
@@ -56,7 +57,7 @@ namespace Gecode { namespace FlatZinc {
             HANDLE handle;
 
         public:
-            explicit WindowsHandle(HANDLE handle0 = NULL) : handle(handle0) {}
+            explicit WindowsHandle(HANDLE handle0 = nullptr) : handle(handle0) {}
             ~WindowsHandle(void) {
                 reset();
             }
@@ -76,15 +77,15 @@ namespace Gecode { namespace FlatZinc {
             HANDLE
             release(void) {
                 HANDLE handle0 = handle;
-                handle = NULL;
+                handle = nullptr;
                 return handle0;
             }
             bool
             valid(void) const {
-                return (handle != NULL) && (handle != INVALID_HANDLE_VALUE);
+                return (handle != nullptr) && (handle != INVALID_HANDLE_VALUE);
             }
             void
-            reset(HANDLE handle0 = NULL) {
+            reset(HANDLE handle0 = nullptr) {
                 if (valid()) {
                     CloseHandle(handle);
                 }
@@ -99,7 +100,7 @@ namespace Gecode { namespace FlatZinc {
             bool initialized;
 
         public:
-            WindowsAttributeList(void) : list(NULL), initialized(false) {}
+            WindowsAttributeList(void) : list(nullptr), initialized(false) {}
             ~WindowsAttributeList(void) {
                 if (initialized) {
                     DeleteProcThreadAttributeList(list);
@@ -109,7 +110,7 @@ namespace Gecode { namespace FlatZinc {
             void
             init(void) {
                 SIZE_T size = 0;
-                InitializeProcThreadAttributeList(NULL, 1, 0, &size);
+                InitializeProcThreadAttributeList(nullptr, 1, 0, &size);
                 if (size == 0) {
                     throw Error("BlackBoxExec",
                                 windows_error("ProcThreadAttributeList size query failed", GetLastError()));
@@ -126,7 +127,7 @@ namespace Gecode { namespace FlatZinc {
             void
             set_inherited_handles(HANDLE* handles, DWORD count) {
                 if (!UpdateProcThreadAttribute(list, 0, PROC_THREAD_ATTRIBUTE_HANDLE_LIST, handles,
-                                               sizeof(HANDLE) * count, NULL, NULL)) {
+                                               sizeof(HANDLE) * count, nullptr, nullptr)) {
                     throw Error("BlackBoxExec",
                                 windows_error("PROC_THREAD_ATTRIBUTE_HANDLE_LIST failed", GetLastError()));
                 }
@@ -157,9 +158,9 @@ namespace Gecode { namespace FlatZinc {
 
             static void
             close_handle(HANDLE& h) {
-                if (h != NULL) {
+                if (h != nullptr) {
                     CloseHandle(h);
-                    h = NULL;
+                    h = nullptr;
                 }
             }
 
@@ -190,16 +191,16 @@ namespace Gecode { namespace FlatZinc {
 
         public:
             WindowsProcessSession(const std::string& program, const std::vector<std::string>& args)
-                : job(NULL), process(NULL), pipe_send(NULL), pipe_receive(NULL) {
+                : job(nullptr), process(nullptr), pipe_send(nullptr), pipe_receive(nullptr) {
                 open_windows(program, args);
             }
 
-            ~WindowsProcessSession(void) {
+            ~WindowsProcessSession(void) override {
                 close();
             }
 
             std::string
-            exchange(const std::string& out_buf) {
+            exchange(const std::string& out_buf) override {
                 size_t written = 0;
                 while (written < out_buf.size()) {
                     DWORD count = 0;
@@ -216,7 +217,7 @@ namespace Gecode { namespace FlatZinc {
                 size_t response_size = 0;
                 while (c[0] != '\n') {
                     DWORD count = 0;
-                    BOOL success = ReadFile(pipe_receive, c, sizeof(c) - 1, &count, NULL);
+                    BOOL success = ReadFile(pipe_receive, c, sizeof(c) - 1, &count, nullptr);
                     if (!success) {
                         if (GetLastError() == ERROR_BROKEN_PIPE) {
                             throw Error("BlackBoxExec", "Blackbox process provided an incomplete response");
@@ -250,26 +251,26 @@ namespace Gecode { namespace FlatZinc {
                 prog += L" ";
                 prog += quote_argument(utf8_to_wide(a));
             }
-            std::vector<wchar_t> cmdline(prog.begin(), prog.end());
-            cmdline.push_back(L'\0');
+            std::vector<wchar_t> command_line(prog.begin(), prog.end());
+            command_line.push_back(L'\0');
 
-            SECURITY_ATTRIBUTES saAttr;
-            saAttr.nLength = sizeof(SECURITY_ATTRIBUTES);
-            saAttr.bInheritHandle = TRUE;
-            saAttr.lpSecurityDescriptor = NULL;
+            SECURITY_ATTRIBUTES security_attributes;
+            security_attributes.nLength = sizeof(SECURITY_ATTRIBUTES);
+            security_attributes.bInheritHandle = TRUE;
+            security_attributes.lpSecurityDescriptor = nullptr;
 
             WindowsHandle child_stdin_read;
             WindowsHandle child_stdin_write;
             WindowsHandle child_stdout_read;
             WindowsHandle child_stdout_write;
             WindowsHandle child_stderr_write;
-            if (!CreatePipe(child_stdout_read.put(), child_stdout_write.put(), &saAttr, 0)) {
+            if (!CreatePipe(child_stdout_read.put(), child_stdout_write.put(), &security_attributes, 0)) {
                 throw Error("BlackBoxExec", last_error("Stdout CreatePipe failed"));
             }
             if (!SetHandleInformation(child_stdout_read.get(), HANDLE_FLAG_INHERIT, 0)) {
                 throw Error("BlackBoxExec", last_error("Stdout SetHandleInformation failed"));
             }
-            if (!CreatePipe(child_stdin_read.put(), child_stdin_write.put(), &saAttr, 0)) {
+            if (!CreatePipe(child_stdin_read.put(), child_stdin_write.put(), &security_attributes, 0)) {
                 throw Error("BlackBoxExec", last_error("Stdin CreatePipe failed"));
             }
             if (!SetHandleInformation(child_stdin_write.get(), HANDLE_FLAG_INHERIT, 0)) {
@@ -277,14 +278,14 @@ namespace Gecode { namespace FlatZinc {
             }
 
             HANDLE parent_stderr = GetStdHandle(STD_ERROR_HANDLE);
-            if ((parent_stderr != NULL) && (parent_stderr != INVALID_HANDLE_VALUE)) {
+            if ((parent_stderr != nullptr) && (parent_stderr != INVALID_HANDLE_VALUE)) {
                 if (!DuplicateHandle(GetCurrentProcess(), parent_stderr, GetCurrentProcess(), child_stderr_write.put(),
                                      0, TRUE, DUPLICATE_SAME_ACCESS)) {
                     throw Error("BlackBoxExec", last_error("stderr DuplicateHandle failed"));
                 }
             } else {
-                HANDLE nul = CreateFileW(L"NUL", GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, &saAttr,
-                                         OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+                HANDLE nul = CreateFileW(L"NUL", GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE,
+                                         &security_attributes, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
                 if (nul == INVALID_HANDLE_VALUE) {
                     throw Error("BlackBoxExec", last_error("stderr NUL CreateFile failed"));
                 }
@@ -293,21 +294,21 @@ namespace Gecode { namespace FlatZinc {
 
             WindowsAttributeList attr_list;
             attr_list.init();
-            PROCESS_INFORMATION piProcInfo;
-            STARTUPINFOEXW siStartInfo;
-            ZeroMemory(&piProcInfo, sizeof(PROCESS_INFORMATION));
-            ZeroMemory(&siStartInfo, sizeof(STARTUPINFOEXW));
-            siStartInfo.StartupInfo.cb = sizeof(STARTUPINFOEXW);
-            siStartInfo.StartupInfo.hStdOutput = child_stdout_write.get();
-            siStartInfo.StartupInfo.hStdInput = child_stdin_read.get();
-            siStartInfo.StartupInfo.hStdError = child_stderr_write.get();
-            siStartInfo.StartupInfo.dwFlags |= STARTF_USESTDHANDLES;
+            PROCESS_INFORMATION process_info;
+            STARTUPINFOEXW startup_info;
+            ZeroMemory(&process_info, sizeof(PROCESS_INFORMATION));
+            ZeroMemory(&startup_info, sizeof(STARTUPINFOEXW));
+            startup_info.StartupInfo.cb = sizeof(STARTUPINFOEXW);
+            startup_info.StartupInfo.hStdOutput = child_stdout_write.get();
+            startup_info.StartupInfo.hStdInput = child_stdin_read.get();
+            startup_info.StartupInfo.hStdError = child_stderr_write.get();
+            startup_info.StartupInfo.dwFlags |= STARTF_USESTDHANDLES;
 
             HANDLE inherit_handles[3] = {child_stdin_read.get(), child_stdout_write.get(), child_stderr_write.get()};
             attr_list.set_inherited_handles(inherit_handles, 3);
-            siStartInfo.lpAttributeList = attr_list.get();
+            startup_info.lpAttributeList = attr_list.get();
 
-            WindowsHandle process_job(CreateJobObjectW(NULL, NULL));
+            WindowsHandle process_job(CreateJobObjectW(nullptr, nullptr));
             if (!process_job.valid()) {
                 throw Error("BlackBoxExec", last_error("CreateJobObject failed"));
             }
@@ -319,24 +320,24 @@ namespace Gecode { namespace FlatZinc {
                 throw Error("BlackBoxExec", last_error("SetInformationJobObject failed"));
             }
 
-            BOOL processStarted = CreateProcessW(qualified_path(program_w) ? program_w.c_str() : NULL,
-                                                 cmdline.data(), // command line
-                                                 nullptr,        // process security attributes
-                                                 nullptr,        // primary thread security attributes
-                                                 TRUE,           // handles from attribute list
-                                                 EXTENDED_STARTUPINFO_PRESENT | CREATE_SUSPENDED,
-                                                 nullptr, // use parent's environment
-                                                 nullptr, // use parent's current directory
-                                                 &siStartInfo.StartupInfo,
-                                                 &piProcInfo); // receives PROCESS_INFORMATION
+            BOOL process_started = CreateProcessW(qualified_path(program_w) ? program_w.c_str() : nullptr,
+                                                  command_line.data(), // command line
+                                                  nullptr,             // process security attributes
+                                                  nullptr,             // primary thread security attributes
+                                                  TRUE,                // handles from attribute list
+                                                  EXTENDED_STARTUPINFO_PRESENT | CREATE_SUSPENDED,
+                                                  nullptr, // use parent's environment
+                                                  nullptr, // use parent's current directory
+                                                  &startup_info.StartupInfo,
+                                                  &process_info); // receives PROCESS_INFORMATION
 
-            if (!processStarted) {
+            if (!process_started) {
                 throw Error(
                     "BlackBoxExec",
                     windows_error("starting blackbox process failed for program `" + program + "'", GetLastError()));
             }
-            WindowsHandle process_handle(piProcInfo.hProcess);
-            WindowsHandle thread_handle(piProcInfo.hThread);
+            WindowsHandle process_handle(process_info.hProcess);
+            WindowsHandle thread_handle(process_info.hThread);
             if (!AssignProcessToJobObject(process_job.get(), process_handle.get())) {
                 DWORD err = GetLastError();
                 DWORD terminate_err = ERROR_SUCCESS;
@@ -393,10 +394,10 @@ namespace Gecode { namespace FlatZinc {
         WindowsProcessSession::close_windows(void) {
             close_handle(pipe_send);
             close_handle(pipe_receive);
-            if (process != NULL) {
+            if (process != nullptr) {
                 DWORD wait = WaitForSingleObject(process, 1000);
                 if (wait == WAIT_TIMEOUT) {
-                    if (job != NULL) {
+                    if (job != nullptr) {
                         TerminateJobObject(job, 1);
                     } else {
                         TerminateProcess(process, 1);

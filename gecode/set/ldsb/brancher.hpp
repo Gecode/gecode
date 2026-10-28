@@ -37,8 +37,8 @@ namespace Gecode { namespace Set { namespace LDSB {
         Home home, ViewArray<View>& x, ViewSel<View>* vs[n], ValSelCommitBase<View, Val>* vsc, SymmetryImp<View>** syms,
         int nsyms, BranchFilter<typename LDSBSetBrancher<View, n, Val, a, Filter, Print>::Var> bf,
         VarValPrint<typename LDSBSetBrancher<View, n, Val, a, Filter, Print>::Var, Val> vvp)
-        : LDSBBrancher<View, n, Val, a, Filter, Print>(home, x, vs, vsc, syms, nsyms, bf, vvp), _prevPos(-1),
-          _copiedSyms(nullptr), _nCopiedSyms(0), _stable(false) {
+        : LDSBBrancher<View, n, Val, a, Filter, Print>(home, x, vs, vsc, syms, nsyms, bf, vvp), _prev_pos(-1),
+          _copied_syms(nullptr), _n_copied_syms(0), _stable(false) {
         // Put all the value symmetries at the end of the list.
         int seen = 0;
         int dest = this->_nsyms - 1;
@@ -51,22 +51,22 @@ namespace Gecode { namespace Set { namespace LDSB {
                 seen++;
             }
         }
-        _nValueSymmetries = seen;
-        _nNonValueSymmetries = this->_nsyms - seen;
+        _n_value_symmetries = seen;
+        _n_non_value_symmetries = this->_nsyms - seen;
     }
 
     template <class View, int n, class Val, unsigned int a, class Filter, class Print>
     LDSBSetBrancher<View, n, Val, a, Filter, Print>::LDSBSetBrancher(Space& home,
                                                                      LDSBSetBrancher<View, n, Val, a, Filter, Print>& b)
-        : LDSBBrancher<View, n, Val, a, Filter, Print>(home, b), _prevPos(b._prevPos),
-          _nNonValueSymmetries(b._nNonValueSymmetries), _nValueSymmetries(b._nValueSymmetries),
-          _nCopiedSyms(b._nCopiedSyms), _leftBranchValues(b._leftBranchValues), _stable(b._stable) {
-        if (_nCopiedSyms > 0) {
-            _copiedSyms = home.alloc<ValueSymmetryImp<View>*>(_nCopiedSyms);
-            for (int i = 0; i < _nCopiedSyms; i++)
-                _copiedSyms[i] = static_cast<ValueSymmetryImp<View>*>(b._copiedSyms[i]->copy(home));
+        : LDSBBrancher<View, n, Val, a, Filter, Print>(home, b), _prev_pos(b._prev_pos),
+          _n_non_value_symmetries(b._n_non_value_symmetries), _n_value_symmetries(b._n_value_symmetries),
+          _n_copied_syms(b._n_copied_syms), _left_branch_values(b._left_branch_values), _stable(b._stable) {
+        if (_n_copied_syms > 0) {
+            _copied_syms = home.alloc<ValueSymmetryImp<View>*>(_n_copied_syms);
+            for (int i = 0; i < _n_copied_syms; i++)
+                _copied_syms[i] = static_cast<ValueSymmetryImp<View>*>(b._copied_syms[i]->copy(home));
         } else {
-            _copiedSyms = nullptr;
+            _copied_syms = nullptr;
         }
     }
 
@@ -81,18 +81,18 @@ namespace Gecode { namespace Set { namespace LDSB {
      */
     template <class View>
     ValueSymmetryImp<View>*
-    specialUpdate(Space& home, ValueSymmetryImp<View>* s, IntSet usedValues) {
+    special_update(Space& home, ValueSymmetryImp<View>* s, IntSet used_values) {
         // Calculate intersection and difference.
         IntArgs intersection;
         IntArgs difference;
         for (int i = s->values.next(s->values.offset()); i <= s->values.max_bit(); i = s->values.next(i + 1)) {
-            if (usedValues.in(i))
+            if (used_values.in(i))
                 intersection << i;
             else
                 difference << i;
         }
 
-        for (IntSetValues v(usedValues); v(); ++v) {
+        for (IntSetValues v(used_values); v(); ++v) {
             s->update(Literal(0, v.val()));
         }
 
@@ -109,41 +109,41 @@ namespace Gecode { namespace Set { namespace LDSB {
 
     template <class View, int n, class Val, unsigned int a, class Filter, class Print>
     void
-    LDSBSetBrancher<View, n, Val, a, Filter, Print>::updatePart1(Space& home, int choicePos) {
-        if (_nValueSymmetries > 0) {
+    LDSBSetBrancher<View, n, Val, a, Filter, Print>::update_part1(Space& home, int choice_pos) {
+        if (_n_value_symmetries > 0) {
             // If this is a different variable from the last commit, restore
             // the old value symmetries and update the copy.
-            if (choicePos != _prevPos) {
-                if (_prevPos != -1) {
+            if (choice_pos != _prev_pos) {
+                if (_prev_pos != -1) {
                     int i = 0;
-                    for (int j = _nNonValueSymmetries; j < this->_nsyms; j++) {
-                        this->_syms[j] = _copiedSyms[i];
+                    for (int j = _n_non_value_symmetries; j < this->_nsyms; j++) {
+                        this->_syms[j] = _copied_syms[i];
                         i++;
                     }
 
-                    for (int i = 0; i < _nCopiedSyms; i++) {
-                        ValueSymmetryImp<View>* ns = specialUpdate(home, _copiedSyms[i], _leftBranchValues);
+                    for (int i = 0; i < _n_copied_syms; i++) {
+                        ValueSymmetryImp<View>* ns = special_update(home, _copied_syms[i], _left_branch_values);
                         if (ns) {
                             this->_syms = home.realloc<SymmetryImp<View>*>(this->_syms, this->_nsyms, this->_nsyms + 1);
                             this->_syms[this->_nsyms] = ns;
                             this->_nsyms++;
-                            this->_nValueSymmetries++;
+                            this->_n_value_symmetries++;
                         }
                     }
                 }
 
                 // Reset for current variable, make copy of value symmetries
-                _leftBranchValues = IntSet::empty;
-                _prevPos = choicePos;
-                if (_nCopiedSyms > 0)
-                    home.free(_copiedSyms, _nCopiedSyms);
-                _nCopiedSyms = _nValueSymmetries;
-                _copiedSyms = home.alloc<ValueSymmetryImp<View>*>(_nCopiedSyms);
+                _left_branch_values = IntSet::empty;
+                _prev_pos = choice_pos;
+                if (_n_copied_syms > 0)
+                    home.free(_copied_syms, _n_copied_syms);
+                _n_copied_syms = _n_value_symmetries;
+                _copied_syms = home.alloc<ValueSymmetryImp<View>*>(_n_copied_syms);
                 {
                     int i = 0;
-                    for (int j = _nNonValueSymmetries; j < this->_nsyms; j++) {
+                    for (int j = _n_non_value_symmetries; j < this->_nsyms; j++) {
                         ValueSymmetryImp<View>* vsi = static_cast<ValueSymmetryImp<View>*>(this->_syms[j]);
-                        _copiedSyms[i] = static_cast<ValueSymmetryImp<View>*>(vsi->copy(home));
+                        _copied_syms[i] = static_cast<ValueSymmetryImp<View>*>(vsi->copy(home));
                         i++;
                     }
                 }
@@ -161,11 +161,11 @@ namespace Gecode { namespace Set { namespace LDSB {
 
         // Compute symmetries.
 
-        int choicePos = pvc->pos().pos;
+        int choice_pos = pvc->pos().pos;
         delete c;
 
         assert(!_stable);
-        updatePart1(home, choicePos);
+        update_part1(home, choice_pos);
 
         return LDSBBrancher<View, n, Val, a, Filter, Print>::choice(home);
     }
@@ -174,29 +174,29 @@ namespace Gecode { namespace Set { namespace LDSB {
     ExecStatus
     LDSBSetBrancher<View, n, Val, a, Filter, Print>::commit(Space& home, const Choice& c, unsigned int b) {
         const LDSBChoice<Val>& pvc = static_cast<const LDSBChoice<Val>&>(c);
-        int choicePos = pvc.pos().pos;
-        int choiceVal = pvc.val();
+        int choice_pos = pvc.pos().pos;
+        int choice_val = pvc.val();
 
         if (!_stable)
-            updatePart1(home, choicePos);
+            update_part1(home, choice_pos);
 
         if (b == 0) {
             IntArgs ia;
-            for (IntSetValues v(_leftBranchValues); v(); ++v) {
+            for (IntSetValues v(_left_branch_values); v(); ++v) {
                 ia << v.val();
             }
-            ia << choiceVal;
-            _leftBranchValues = IntSet(ia);
+            ia << choice_val;
+            _left_branch_values = IntSet(ia);
 
             // Post the branching constraint.
-            ExecStatus fromBase = ViewValBrancher<View, n, Val, a, Filter, Print>::commit(home, c, b);
-            GECODE_ES_CHECK(fromBase);
+            ExecStatus from_base = ViewValBrancher<View, n, Val, a, Filter, Print>::commit(home, c, b);
+            GECODE_ES_CHECK(from_base);
             for (int i = 0; i < this->_nsyms; i++)
-                this->_syms[i]->update(Literal(choicePos, choiceVal));
+                this->_syms[i]->update(Literal(choice_pos, choice_val));
         } else if (b == 1) {
             // Post the branching constraint.
-            ExecStatus fromBase = ViewValBrancher<View, n, Val, a, Filter, Print>::commit(home, c, b);
-            GECODE_ES_CHECK(fromBase);
+            ExecStatus from_base = ViewValBrancher<View, n, Val, a, Filter, Print>::commit(home, c, b);
+            GECODE_ES_CHECK(from_base);
 
             // Post prunings.
             int nliterals = pvc.nliterals();
@@ -220,7 +220,7 @@ namespace Gecode { namespace Set { namespace LDSB {
     template <class View, int n, class Val, unsigned int a, class Filter, class Print>
     size_t
     LDSBSetBrancher<View, n, Val, a, Filter, Print>::dispose(Space& home) {
-        _leftBranchValues.~IntSet();
+        _left_branch_values.~IntSet();
         (void)LDSBBrancher<View, n, Val, a, Filter, Print>::dispose(home);
         return sizeof(LDSBSetBrancher<View, n, Val, a, Filter, Print>);
     }
@@ -236,9 +236,9 @@ namespace Gecode { namespace Set { namespace LDSB {
 
     template <class View, int n, class Val, unsigned int a>
     forceinline void
-    postldsbsetbrancher(Home home, ViewArray<View>& x, ViewSel<View>* vs[n], ValSelCommitBase<View, Val>* vsc,
-                        SymmetryImp<View>** syms, int nsyms, BranchFilter<typename View::VarType> bf,
-                        VarValPrint<typename View::VarType, Val> vvp) {
+    post_ldsb_set_brancher(Home home, ViewArray<View>& x, ViewSel<View>* vs[n], ValSelCommitBase<View, Val>* vsc,
+                           SymmetryImp<View>** syms, int nsyms, BranchFilter<typename View::VarType> bf,
+                           VarValPrint<typename View::VarType, Val> vvp) {
         if (bf) {
             if (vvp) {
                 LDSBSetBrancher<View, n, Val, a, BrancherFilter<View>, BrancherPrint<View, Val>>::post(

@@ -54,8 +54,8 @@ namespace Test { namespace Int {
             /// Create and register test
             IntLex(Gecode::IntRelType irt0) : Test("MiniModel::Lex::Int::" + str(irt0), 6, -2, 2), irt(irt0) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 int n = x.size() >> 1;
                 for (int i = 0; i < n; i++)
                     if (x[i] != x[n + i])
@@ -65,8 +65,8 @@ namespace Test { namespace Int {
                 return false;
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 using namespace Gecode;
                 int n = x.size() >> 1;
                 IntVarArgs y(n);
@@ -89,8 +89,8 @@ namespace Test { namespace Int {
             /// Create and register test
             BoolLex(Gecode::IntRelType irt0) : Test("MiniModel::Lex::Bool::" + str(irt0), 10, 0, 1), irt(irt0) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 int n = x.size() >> 1;
                 for (int i = 0; i < n; i++)
                     if (x[i] != x[n + i])
@@ -100,8 +100,8 @@ namespace Test { namespace Int {
                 return false;
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 using namespace Gecode;
                 int n = x.size() >> 1;
                 BoolVarArgs y(n);

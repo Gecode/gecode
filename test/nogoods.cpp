@@ -87,8 +87,8 @@ namespace Test {
                 q.update(*this, s.q);
             }
             /// Perform copying during cloning
-            virtual Space*
-            copy(void) {
+            Space*
+            copy(void) override {
                 return new Queens(*this);
             }
             /// Check whether two solutions are the same
@@ -101,7 +101,7 @@ namespace Test {
             }
             /// Return increment for node stop
             static unsigned int
-            nodeinc(void) {
+            node_increment(void) {
                 return 500;
             }
             /// Return name
@@ -181,8 +181,8 @@ namespace Test {
                 x.update(*this, s.x);
             }
             /// Copy during cloning
-            virtual Space*
-            copy(void) {
+            Space*
+            copy(void) override {
                 return new Hamming(*this);
             }
             /// Check whether two solutions are the same
@@ -197,7 +197,7 @@ namespace Test {
             }
             /// Return increment for node stop
             static unsigned int
-            nodeinc(void) {
+            node_increment(void) {
                 return 35;
             }
             /// Return name
@@ -253,19 +253,19 @@ namespace Test {
                        tags),
                   vb(vb0), t(t0), a(a0), n(n0) {}
             /// Run test
-            virtual bool
-            run(void) {
+            bool
+            run(void) override {
                 Model* m = new Model(vb, a, n);
                 // Solution without no-goods
                 Model* s_plain = dfs(m);
                 // Stop and re-start for a while to collect no-goods
                 {
-                    Search::NodeStop ns(Model::nodeinc());
+                    Search::NodeStop ns(Model::node_increment());
                     Search::Options o;
                     o.stop = &ns;
                     o.threads = t;
                     o.nogoods_limit = 256U;
-                    Search::Engine* e = Search::dfsengine(m, o);
+                    Search::Engine* e = Search::make_dfs_engine(m, o);
                     while (true) {
                         Model* s = static_cast<Model*>(e->next());
                         delete s;
@@ -273,7 +273,7 @@ namespace Test {
                             break;
                         // Add no-goods
                         e->nogoods().post(*m);
-                        ns.limit(ns.limit() + Model::nodeinc());
+                        ns.limit(ns.limit() + Model::node_increment());
                     }
                     delete e;
                 }

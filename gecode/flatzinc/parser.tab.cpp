@@ -84,8 +84,8 @@
 #endif
 
 #ifdef HAVE_MMAP
-#include <stdio.h>
-#include <stdlib.h>
+#include <cstdio>
+#include <cstdlib>
 #include <fcntl.h>
 #include <unistd.h>
 #include <sys/types.h>
@@ -112,7 +112,7 @@ void yyerror(void* parm, const char *str) {
   pp->err << "Error: " << str
           << " in line no. " << yyget_lineno(pp->yyscanner)
           << std::endl;
-  pp->hadError = true;
+  pp->had_error = true;
 }
 
 void yyassert(ParserState* pp, bool cond, const char* str)
@@ -121,7 +121,7 @@ void yyassert(ParserState* pp, bool cond, const char* str)
     pp->err << "Error: " << str
             << " in line no. " << yyget_lineno(pp->yyscanner)
             << std::endl;
-    pp->hadError = true;
+    pp->had_error = true;
   }
 }
 
@@ -130,7 +130,7 @@ void yyassert(ParserState* pp, bool cond, const char* str)
  *
  */
 
-AST::Node* getArrayElement(ParserState* pp, string id, int offset,
+AST::Node* get_array_element(ParserState* pp, string id, int offset,
                            bool annotation) {
   if (offset > 0) {
     SymbolEntry e;
@@ -191,11 +191,11 @@ AST::Node* getArrayElement(ParserState* pp, string id, int offset,
       case ST_SETVALARRAY:
         if (offset > pp->arrays[e.i])
           goto error;
-        return new AST::SetLit(pp->setvals[pp->arrays[e.i+1]+offset-1]);
+        return new AST::SetLit(pp->set_values[pp->arrays[e.i+1]+offset-1]);
       case ST_FLOATVALARRAY:
         if (offset > pp->arrays[e.i])
           goto error;
-        return new AST::FloatLit(pp->floatvals[pp->arrays[e.i+1]+offset-1]);
+        return new AST::FloatLit(pp->float_values[pp->arrays[e.i+1]+offset-1]);
       default:
         break;
       }
@@ -205,10 +205,10 @@ error:
   pp->err << "Error: array access to " << id << " invalid"
           << " in line no. "
           << yyget_lineno(pp->yyscanner) << std::endl;
-  pp->hadError = true;
+  pp->had_error = true;
   return new AST::IntVar(0); // keep things consistent
 }
-AST::Node* getVarRefArg(ParserState* pp, string id, bool annotation = false) {
+AST::Node* get_var_ref_arg(ParserState* pp, string id, bool annotation = false) {
   SymbolEntry e;
   string n;
   if (annotation)
@@ -228,21 +228,21 @@ AST::Node* getVarRefArg(ParserState* pp, string id, bool annotation = false) {
   pp->err << "Error: undefined variable " << id
           << " in line no. "
           << yyget_lineno(pp->yyscanner) << std::endl;
-  pp->hadError = true;
+  pp->had_error = true;
   return new AST::IntVar(0); // keep things consistent
 }
 
-void addDomainConstraint(ParserState* pp, std::string id, AST::Node* var,
+void add_domain_constraint(ParserState* pp, std::string id, AST::Node* var,
                          Option<AST::SetLit* >& dom) {
   if (!dom())
     return;
   AST::Array* args = new AST::Array(2);
   args->a[0] = var;
   args->a[1] = dom.some();
-  pp->domainConstraints.push_back(new ConExpr(id, args, NULL));
+  pp->domain_constraints.push_back(new ConExpr(id, args, nullptr));
 }
 
-void addDomainConstraint(ParserState* pp, AST::Node* var,
+void add_domain_constraint(ParserState* pp, AST::Node* var,
                          Option<std::pair<double,double>* > dom) {
   if (!dom())
     return;
@@ -250,51 +250,51 @@ void addDomainConstraint(ParserState* pp, AST::Node* var,
     AST::Array* args = new AST::Array(2);
     args->a[0] = new AST::FloatLit(dom.some()->first);
     args->a[1] = var;
-    pp->domainConstraints.push_back(new ConExpr("float_le", args, NULL));
+    pp->domain_constraints.push_back(new ConExpr("float_le", args, nullptr));
   }
   {
     AST::Array* args = new AST::Array(2);
     AST::FloatVar* fv = static_cast<AST::FloatVar*>(var);
     args->a[0] = new AST::FloatVar(fv->i,fv->n);
     args->a[1] = new AST::FloatLit(dom.some()->second);
-    pp->domainConstraints.push_back(new ConExpr("float_le", args, NULL));
+    pp->domain_constraints.push_back(new ConExpr("float_le", args, nullptr));
   }
   delete dom.some();
 }
 
-int getBaseIntVar(ParserState* pp, int i) {
+int get_base_int_var(ParserState* pp, int i) {
   int base = i;
-  IntVarSpec* ivs = static_cast<IntVarSpec*>(pp->intvars[base].second);
+  IntVarSpec* ivs = static_cast<IntVarSpec*>(pp->int_vars[base].second);
   while (ivs->alias) {
     base = ivs->i;
-    ivs = static_cast<IntVarSpec*>(pp->intvars[base].second);
+    ivs = static_cast<IntVarSpec*>(pp->int_vars[base].second);
   }
   return base;
 }
-int getBaseBoolVar(ParserState* pp, int i) {
+int get_base_bool_var(ParserState* pp, int i) {
   int base = i;
-  BoolVarSpec* ivs = static_cast<BoolVarSpec*>(pp->boolvars[base].second);
+  BoolVarSpec* ivs = static_cast<BoolVarSpec*>(pp->bool_vars[base].second);
   while (ivs->alias) {
     base = ivs->i;
-    ivs = static_cast<BoolVarSpec*>(pp->boolvars[base].second);
+    ivs = static_cast<BoolVarSpec*>(pp->bool_vars[base].second);
   }
   return base;
 }
-int getBaseFloatVar(ParserState* pp, int i) {
+int get_base_float_var(ParserState* pp, int i) {
   int base = i;
-  FloatVarSpec* ivs = static_cast<FloatVarSpec*>(pp->floatvars[base].second);
+  FloatVarSpec* ivs = static_cast<FloatVarSpec*>(pp->float_vars[base].second);
   while (ivs->alias) {
     base = ivs->i;
-    ivs = static_cast<FloatVarSpec*>(pp->floatvars[base].second);
+    ivs = static_cast<FloatVarSpec*>(pp->float_vars[base].second);
   }
   return base;
 }
-int getBaseSetVar(ParserState* pp, int i) {
+int get_base_set_var(ParserState* pp, int i) {
   int base = i;
-  SetVarSpec* ivs = static_cast<SetVarSpec*>(pp->setvars[base].second);
+  SetVarSpec* ivs = static_cast<SetVarSpec*>(pp->set_vars[base].second);
   while (ivs->alias) {
     base = ivs->i;
-    ivs = static_cast<SetVarSpec*>(pp->setvars[base].second);
+    ivs = static_cast<SetVarSpec*>(pp->set_vars[base].second);
   }
   return base;
 }
@@ -304,60 +304,60 @@ int getBaseSetVar(ParserState* pp, int i) {
  *
  */
 
-void initfg(ParserState* pp) {
-  if (!pp->hadError)
-    pp->fg->init(pp->intvars.size(),
-                 pp->boolvars.size(),
-                 pp->setvars.size(),
-                 pp->floatvars.size());
+void initialize_space(ParserState* pp) {
+  if (!pp->had_error)
+    pp->fg->init(pp->int_vars.size(),
+                 pp->bool_vars.size(),
+                 pp->set_vars.size(),
+                 pp->float_vars.size());
 
-  for (unsigned int i=0; i<pp->intvars.size(); i++) {
-    if (!pp->hadError) {
+  for (unsigned int i=0; i<pp->int_vars.size(); i++) {
+    if (!pp->had_error) {
       try {
-        pp->fg->newIntVar(static_cast<IntVarSpec*>(pp->intvars[i].second));
+        pp->fg->new_int_var(static_cast<IntVarSpec*>(pp->int_vars[i].second));
       } catch (Gecode::FlatZinc::Error& e) {
-        yyerror(pp, e.toString().c_str());
+        yyerror(pp, e.to_string().c_str());
       }
     }
-    delete pp->intvars[i].second;
-    pp->intvars[i].second = NULL;
+    delete pp->int_vars[i].second;
+    pp->int_vars[i].second = nullptr;
   }
-  for (unsigned int i=0; i<pp->boolvars.size(); i++) {
-    if (!pp->hadError) {
+  for (unsigned int i=0; i<pp->bool_vars.size(); i++) {
+    if (!pp->had_error) {
       try {
-        pp->fg->newBoolVar(
-          static_cast<BoolVarSpec*>(pp->boolvars[i].second));
+        pp->fg->new_bool_var(
+          static_cast<BoolVarSpec*>(pp->bool_vars[i].second));
       } catch (Gecode::FlatZinc::Error& e) {
-        yyerror(pp, e.toString().c_str());
+        yyerror(pp, e.to_string().c_str());
       }
     }
-    delete pp->boolvars[i].second;
-    pp->boolvars[i].second = NULL;
+    delete pp->bool_vars[i].second;
+    pp->bool_vars[i].second = nullptr;
   }
-  for (unsigned int i=0; i<pp->setvars.size(); i++) {
-    if (!pp->hadError) {
+  for (unsigned int i=0; i<pp->set_vars.size(); i++) {
+    if (!pp->had_error) {
       try {
-        pp->fg->newSetVar(static_cast<SetVarSpec*>(pp->setvars[i].second));
+        pp->fg->new_set_var(static_cast<SetVarSpec*>(pp->set_vars[i].second));
       } catch (Gecode::FlatZinc::Error& e) {
-        yyerror(pp, e.toString().c_str());
+        yyerror(pp, e.to_string().c_str());
       }
     }
-    delete pp->setvars[i].second;
-    pp->setvars[i].second = NULL;
+    delete pp->set_vars[i].second;
+    pp->set_vars[i].second = nullptr;
   }
-  for (unsigned int i=0; i<pp->floatvars.size(); i++) {
-    if (!pp->hadError) {
+  for (unsigned int i=0; i<pp->float_vars.size(); i++) {
+    if (!pp->had_error) {
       try {
-        pp->fg->newFloatVar(
-          static_cast<FloatVarSpec*>(pp->floatvars[i].second));
+        pp->fg->new_float_var(
+          static_cast<FloatVarSpec*>(pp->float_vars[i].second));
       } catch (Gecode::FlatZinc::Error& e) {
-        yyerror(pp, e.toString().c_str());
+        yyerror(pp, e.to_string().c_str());
       }
     }
-    delete pp->floatvars[i].second;
-    pp->floatvars[i].second = NULL;
+    delete pp->float_vars[i].second;
+    pp->float_vars[i].second = nullptr;
   }
-  if (!pp->hadError) {
+  if (!pp->had_error) {
     int iv_size = pp->sol_int.size() * 2;
     iv_size += pp->last_val_int.size();
     iv_size += pp->uniform_int.size();
@@ -399,7 +399,7 @@ void initfg(ParserState* pp) {
       assert(base == iv_size);
     }
   }
-  if (!pp->hadError) {
+  if (!pp->had_error) {
     int bv_size = pp->sol_bool.size() * 2;
     bv_size += pp->last_val_bool.size();
 
@@ -430,7 +430,7 @@ void initfg(ParserState* pp) {
     }
   }
 #ifdef GECODE_HAS_SET_VARS
-  if (!pp->hadError) {
+  if (!pp->had_error) {
     int sv_size = pp->sol_set.size() * 2;
     sv_size += pp->last_val_set.size();
 
@@ -459,7 +459,7 @@ void initfg(ParserState* pp) {
   }
 #endif
 #ifdef GECODE_HAS_FLOAT_VARS
-  if (!pp->hadError) {
+  if (!pp->had_error) {
     int fv_size = pp->sol_float.size() * 2;
     fv_size += pp->last_val_float.size();
     fv_size += pp->uniform_float.size();
@@ -495,45 +495,45 @@ void initfg(ParserState* pp) {
     }
   }
 #endif
-  if (!pp->hadError) {
-    pp->fg->postConstraints(pp->domainConstraints);
-    pp->fg->postConstraints(pp->constraints);
+  if (!pp->had_error) {
+    pp->fg->post_constraints(pp->domain_constraints);
+    pp->fg->post_constraints(pp->constraints);
   }
 }
 
-void fillPrinter(ParserState& pp, Gecode::FlatZinc::Printer& p) {
-  p.init(pp.getOutput());
-  for (unsigned int i=0; i<pp.intvars.size(); i++) {
-    if (!pp.hadError) {
-      p.addIntVarName(pp.intvars[i].first);
+void fill_printer(ParserState& pp, Gecode::FlatZinc::Printer& p) {
+  p.init(pp.get_output());
+  for (unsigned int i=0; i<pp.int_vars.size(); i++) {
+    if (!pp.had_error) {
+      p.add_int_var_name(pp.int_vars[i].first);
     }
   }
-  for (unsigned int i=0; i<pp.boolvars.size(); i++) {
-    if (!pp.hadError) {
-      p.addBoolVarName(pp.boolvars[i].first);
+  for (unsigned int i=0; i<pp.bool_vars.size(); i++) {
+    if (!pp.had_error) {
+      p.add_bool_var_name(pp.bool_vars[i].first);
     }
   }
 #ifdef GECODE_HAS_FLOAT_VARS
-  for (unsigned int i=0; i<pp.floatvars.size(); i++) {
-    if (!pp.hadError) {
-      p.addFloatVarName(pp.floatvars[i].first);
+  for (unsigned int i=0; i<pp.float_vars.size(); i++) {
+    if (!pp.had_error) {
+      p.add_float_var_name(pp.float_vars[i].first);
     }
   }
 #endif
 #ifdef GECODE_HAS_SET_VARS
-  for (unsigned int i=0; i<pp.setvars.size(); i++) {
-    if (!pp.hadError) {
-      p.addSetVarName(pp.setvars[i].first);
+  for (unsigned int i=0; i<pp.set_vars.size(); i++) {
+    if (!pp.had_error) {
+      p.add_set_var_name(pp.set_vars[i].first);
     }
   }
 #endif
 }
 
-AST::Node* arrayOutput(AST::Call* ann) {
-  AST::Array* a = NULL;
+AST::Node* array_output(AST::Call* ann) {
+  AST::Array* a = nullptr;
 
-  if (ann->args->isArray()) {
-    a = ann->args->getArray();
+  if (ann->args->is_array()) {
+    a = ann->args->get_array();
   } else {
     a = new AST::Array(ann->args);
   }
@@ -542,7 +542,7 @@ AST::Node* arrayOutput(AST::Call* ann) {
 
   oss << "array" << a->a.size() << "d(";
   for (unsigned int i=0; i<a->a.size(); i++) {
-    AST::SetLit* s = a->a[i]->getSet();
+    AST::SetLit* s = a->a[i]->get_set();
     if (s->empty())
       oss << "{}, ";
     else if (s->interval)
@@ -558,8 +558,8 @@ AST::Node* arrayOutput(AST::Call* ann) {
     }
   }
 
-  if (!ann->args->isArray()) {
-    a->a[0] = NULL;
+  if (!ann->args->is_array()) {
+    a->a[0] = nullptr;
     delete a;
   }
   return new AST::String(oss.str());
@@ -575,19 +575,19 @@ namespace Gecode { namespace FlatZinc {
   ParserState::~ParserState(void) {
     if (yyscanner)
       yylex_destroy(yyscanner);
-    for (auto& var : intvars)
+    for (auto& var : int_vars)
       delete var.second;
-    for (auto& var : boolvars)
+    for (auto& var : bool_vars)
       delete var.second;
-    for (auto& var : setvars)
+    for (auto& var : set_vars)
       delete var.second;
-    for (auto& var : floatvars)
+    for (auto& var : float_vars)
       delete var.second;
-    for (auto* constraint : domainConstraints)
+    for (auto* constraint : domain_constraints)
       delete constraint;
     for (auto* constraint : constraints)
       delete constraint;
-    for (auto& output : _output)
+    for (auto& output : output_items)
       delete output.second;
   }
 
@@ -601,23 +601,23 @@ namespace Gecode { namespace FlatZinc {
     fd = open(filename.c_str(), O_RDONLY);
     if (fd == -1) {
       err << "Cannot open file " << filename << endl;
-      return NULL;
+      return nullptr;
     }
     if (fstat(fd, &sbuf) == -1) {
       close(fd);
       err << "Cannot stat file " << filename << endl;
-      return NULL;
+      return nullptr;
     }
     data = static_cast<char*>(mmap(nullptr, sbuf.st_size, PROT_READ, MAP_SHARED, fd,0));
     close(fd);
     if (data == MAP_FAILED) {
       err << "Cannot mmap file " << filename << endl;
-      return NULL;
+      return nullptr;
     }
     auto unmap = [size=sbuf.st_size](char* p) { munmap(p,size); };
     std::unique_ptr<char,decltype(unmap)> mapping(data,unmap);
 
-    if (fzs == NULL) {
+    if (fzs == nullptr) {
       owned.reset(new FlatZincSpace(rnd));
       fzs = owned.get();
     }
@@ -627,11 +627,11 @@ namespace Gecode { namespace FlatZinc {
     file.open(filename.c_str());
     if (!file.is_open()) {
       err << "Cannot open file " << filename << endl;
-      return NULL;
+      return nullptr;
     }
     std::string s = string(istreambuf_iterator<char>(file),
                            istreambuf_iterator<char>());
-    if (fzs == NULL) {
+    if (fzs == nullptr) {
       owned.reset(new FlatZincSpace(rnd));
       fzs = owned.get();
     }
@@ -641,10 +641,10 @@ namespace Gecode { namespace FlatZinc {
     yyset_extra(&pp, pp.yyscanner);
     // yydebug = 1;
     yyparse(&pp);
-    fillPrinter(pp, p);
+    fill_printer(pp, p);
 
-    if (pp.hadError)
-      return NULL;
+    if (pp.had_error)
+      return nullptr;
     owned.release();
     return pp.fg;
   }
@@ -655,7 +655,7 @@ namespace Gecode { namespace FlatZinc {
                            istreambuf_iterator<char>());
     std::unique_ptr<FlatZincSpace> owned;
 
-    if (fzs == NULL) {
+    if (fzs == nullptr) {
       owned.reset(new FlatZincSpace(rnd));
       fzs = owned.get();
     }
@@ -664,10 +664,10 @@ namespace Gecode { namespace FlatZinc {
     yyset_extra(&pp, pp.yyscanner);
     // yydebug = 1;
     yyparse(&pp);
-    fillPrinter(pp, p);
+    fill_printer(pp, p);
 
-    if (pp.hadError)
-      return NULL;
+    if (pp.had_error)
+      return nullptr;
     owned.release();
     return pp.fg;
   }
@@ -2318,25 +2318,25 @@ yyreduce:
     {
   case 15: /* preddecl_item: FZ_PREDICATE FZ_ID '(' pred_arg_list ')'  */
 #line 778 "./gecode/flatzinc/parser.yxx"
-      { free((yyvsp[-3].sValue)); }
+      { free((yyvsp[-3].string_value)); }
 #line 2323 "gecode/flatzinc/parser.tab.cpp"
     break;
 
   case 20: /* pred_arg: pred_arg_type ':' FZ_ID  */
 #line 790 "./gecode/flatzinc/parser.yxx"
-      { free((yyvsp[0].sValue)); }
+      { free((yyvsp[0].string_value)); }
 #line 2329 "gecode/flatzinc/parser.tab.cpp"
     break;
 
   case 25: /* pred_arg_simple_type: int_ti_expr_tail  */
 #line 800 "./gecode/flatzinc/parser.yxx"
-      { if ((yyvsp[0].oSet)()) delete (yyvsp[0].oSet).some(); }
+      { if ((yyvsp[0].optional_set)()) delete (yyvsp[0].optional_set).some(); }
 #line 2335 "gecode/flatzinc/parser.tab.cpp"
     break;
 
   case 26: /* pred_arg_simple_type: FZ_SET FZ_OF int_ti_expr_tail  */
 #line 802 "./gecode/flatzinc/parser.yxx"
-      { if ((yyvsp[0].oSet)()) delete (yyvsp[0].oSet).some(); }
+      { if ((yyvsp[0].optional_set)()) delete (yyvsp[0].optional_set).some(); }
 #line 2341 "gecode/flatzinc/parser.tab.cpp"
     break;
 
@@ -2344,34 +2344,34 @@ yyreduce:
 #line 822 "./gecode/flatzinc/parser.yxx"
       {
         ParserState* pp = static_cast<ParserState*>(parm);
-        bool print = (yyvsp[-1].argVec) != NULL && (yyvsp[-1].argVec)->hasAtom("output_var");
-        bool funcDep = (yyvsp[-1].argVec) != NULL && (yyvsp[-1].argVec)->hasAtom("is_defined_var");
+        bool print = (yyvsp[-1].arg_nodes) != nullptr && (yyvsp[-1].arg_nodes)->has_atom("output_var");
+        bool func_dep = (yyvsp[-1].arg_nodes) != nullptr && (yyvsp[-1].arg_nodes)->has_atom("is_defined_var");
         yyassert(pp,
-          pp->symbols.put((yyvsp[-2].sValue), se_iv(pp->intvars.size())),
+          pp->symbols.put((yyvsp[-2].string_value), se_iv(pp->int_vars.size())),
           "Duplicate symbol");
         if (print) {
-          pp->output(std::string((yyvsp[-2].sValue)), new AST::IntVar(pp->intvars.size()));
+          pp->output(std::string((yyvsp[-2].string_value)), new AST::IntVar(pp->int_vars.size()));
         }
-        if ((yyvsp[0].oArg)()) {
-          AST::Node* arg = (yyvsp[0].oArg).some();
-          if (arg->isInt()) {
-            pp->intvars.push_back(varspec((yyvsp[-2].sValue),
-              new IntVarSpec(arg->getInt(),!print,funcDep)));
-          } else if (arg->isIntVar()) {
-            pp->intvars.push_back(varspec((yyvsp[-2].sValue),
-              new IntVarSpec(Alias(arg->getIntVar()),!print,funcDep)));
+        if ((yyvsp[0].optional_arg)()) {
+          AST::Node* arg = (yyvsp[0].optional_arg).some();
+          if (arg->is_int()) {
+            pp->int_vars.push_back(NamedVarSpec((yyvsp[-2].string_value),
+              new IntVarSpec(arg->get_int(),!print,func_dep)));
+          } else if (arg->is_int_var()) {
+            pp->int_vars.push_back(NamedVarSpec((yyvsp[-2].string_value),
+              new IntVarSpec(Alias(arg->get_int_var()),!print,func_dep)));
           } else {
             yyassert(pp, false, "Invalid var int initializer");
           }
-          if (!pp->hadError)
-            addDomainConstraint(pp, "int_in",
-                                new AST::IntVar(pp->intvars.size()-1), (yyvsp[-4].oSet));
+          if (!pp->had_error)
+            add_domain_constraint(pp, "int_in",
+                                new AST::IntVar(pp->int_vars.size()-1), (yyvsp[-4].optional_set));
           delete arg;
         } else {
-          pp->intvars.push_back(varspec((yyvsp[-2].sValue),
-            new IntVarSpec((yyvsp[-4].oSet),!print,funcDep)));
+          pp->int_vars.push_back(NamedVarSpec((yyvsp[-2].string_value),
+            new IntVarSpec((yyvsp[-4].optional_set),!print,func_dep)));
         }
-        delete (yyvsp[-1].argVec); free((yyvsp[-2].sValue));
+        delete (yyvsp[-1].arg_nodes); free((yyvsp[-2].string_value));
       }
 #line 2377 "gecode/flatzinc/parser.tab.cpp"
     break;
@@ -2380,34 +2380,34 @@ yyreduce:
 #line 854 "./gecode/flatzinc/parser.yxx"
       {
         ParserState* pp = static_cast<ParserState*>(parm);
-        bool print = (yyvsp[-1].argVec) != NULL && (yyvsp[-1].argVec)->hasAtom("output_var");
-        bool funcDep = (yyvsp[-1].argVec) != NULL && (yyvsp[-1].argVec)->hasAtom("is_defined_var");
+        bool print = (yyvsp[-1].arg_nodes) != nullptr && (yyvsp[-1].arg_nodes)->has_atom("output_var");
+        bool func_dep = (yyvsp[-1].arg_nodes) != nullptr && (yyvsp[-1].arg_nodes)->has_atom("is_defined_var");
         yyassert(pp,
-          pp->symbols.put((yyvsp[-2].sValue), se_bv(pp->boolvars.size())),
+          pp->symbols.put((yyvsp[-2].string_value), se_bv(pp->bool_vars.size())),
           "Duplicate symbol");
         if (print) {
-          pp->output(std::string((yyvsp[-2].sValue)), new AST::BoolVar(pp->boolvars.size()));
+          pp->output(std::string((yyvsp[-2].string_value)), new AST::BoolVar(pp->bool_vars.size()));
         }
-        if ((yyvsp[0].oArg)()) {
-          AST::Node* arg = (yyvsp[0].oArg).some();
-          if (arg->isBool()) {
-            pp->boolvars.push_back(varspec((yyvsp[-2].sValue),
-              new BoolVarSpec(arg->getBool(),!print,funcDep)));
-          } else if (arg->isBoolVar()) {
-            pp->boolvars.push_back(varspec((yyvsp[-2].sValue),
-              new BoolVarSpec(Alias(arg->getBoolVar()),!print,funcDep)));
+        if ((yyvsp[0].optional_arg)()) {
+          AST::Node* arg = (yyvsp[0].optional_arg).some();
+          if (arg->is_bool()) {
+            pp->bool_vars.push_back(NamedVarSpec((yyvsp[-2].string_value),
+              new BoolVarSpec(arg->get_bool(),!print,func_dep)));
+          } else if (arg->is_bool_var()) {
+            pp->bool_vars.push_back(NamedVarSpec((yyvsp[-2].string_value),
+              new BoolVarSpec(Alias(arg->get_bool_var()),!print,func_dep)));
           } else {
             yyassert(pp, false, "Invalid var bool initializer");
           }
-          if (!pp->hadError)
-            addDomainConstraint(pp, "int_in",
-                                new AST::BoolVar(pp->boolvars.size()-1), (yyvsp[-4].oSet));
+          if (!pp->had_error)
+            add_domain_constraint(pp, "int_in",
+                                new AST::BoolVar(pp->bool_vars.size()-1), (yyvsp[-4].optional_set));
           delete arg;
         } else {
-          pp->boolvars.push_back(varspec((yyvsp[-2].sValue),
-            new BoolVarSpec((yyvsp[-4].oSet),!print,funcDep)));
+          pp->bool_vars.push_back(NamedVarSpec((yyvsp[-2].string_value),
+            new BoolVarSpec((yyvsp[-4].optional_set),!print,func_dep)));
         }
-        delete (yyvsp[-1].argVec); free((yyvsp[-2].sValue));
+        delete (yyvsp[-1].arg_nodes); free((yyvsp[-2].string_value));
       }
 #line 2413 "gecode/flatzinc/parser.tab.cpp"
     break;
@@ -2416,41 +2416,41 @@ yyreduce:
 #line 886 "./gecode/flatzinc/parser.yxx"
       {
         ParserState* pp = static_cast<ParserState*>(parm);
-        bool print = (yyvsp[-1].argVec) != NULL && (yyvsp[-1].argVec)->hasAtom("output_var");
-        bool funcDep = (yyvsp[-1].argVec) != NULL && (yyvsp[-1].argVec)->hasAtom("is_defined_var");
+        bool print = (yyvsp[-1].arg_nodes) != nullptr && (yyvsp[-1].arg_nodes)->has_atom("output_var");
+        bool func_dep = (yyvsp[-1].arg_nodes) != nullptr && (yyvsp[-1].arg_nodes)->has_atom("is_defined_var");
         yyassert(pp,
-          pp->symbols.put((yyvsp[-2].sValue), se_fv(pp->floatvars.size())),
+          pp->symbols.put((yyvsp[-2].string_value), se_fv(pp->float_vars.size())),
           "Duplicate symbol");
         if (print) {
-          pp->output(std::string((yyvsp[-2].sValue)),
-                     new AST::FloatVar(pp->floatvars.size()));
+          pp->output(std::string((yyvsp[-2].string_value)),
+                     new AST::FloatVar(pp->float_vars.size()));
         }
-        if ((yyvsp[0].oArg)()) {
-          AST::Node* arg = (yyvsp[0].oArg).some();
-          if (arg->isFloat()) {
-            pp->floatvars.push_back(varspec((yyvsp[-2].sValue),
-              new FloatVarSpec(arg->getFloat(),!print,funcDep)));
-          } else if (arg->isFloatVar()) {
-            pp->floatvars.push_back(varspec((yyvsp[-2].sValue),
+        if ((yyvsp[0].optional_arg)()) {
+          AST::Node* arg = (yyvsp[0].optional_arg).some();
+          if (arg->is_float()) {
+            pp->float_vars.push_back(NamedVarSpec((yyvsp[-2].string_value),
+              new FloatVarSpec(arg->get_float(),!print,func_dep)));
+          } else if (arg->is_float_var()) {
+            pp->float_vars.push_back(NamedVarSpec((yyvsp[-2].string_value),
               new FloatVarSpec(
-                Alias(arg->getFloatVar()),!print,funcDep)));
+                Alias(arg->get_float_var()),!print,func_dep)));
           } else {
             yyassert(pp, false, "Invalid var float initializer");
           }
-          if (!pp->hadError && (yyvsp[-4].oPFloat)()) {
-            AST::FloatVar* fv = new AST::FloatVar(pp->floatvars.size()-1);
-            addDomainConstraint(pp, fv, (yyvsp[-4].oPFloat));
+          if (!pp->had_error && (yyvsp[-4].optional_float_bounds)()) {
+            AST::FloatVar* fv = new AST::FloatVar(pp->float_vars.size()-1);
+            add_domain_constraint(pp, fv, (yyvsp[-4].optional_float_bounds));
           }
           delete arg;
         } else {
           Option<std::pair<double,double> > dom =
-            (yyvsp[-4].oPFloat)() ? Option<std::pair<double,double> >::some(*(yyvsp[-4].oPFloat).some())
+            (yyvsp[-4].optional_float_bounds)() ? Option<std::pair<double,double> >::some(*(yyvsp[-4].optional_float_bounds).some())
                  : Option<std::pair<double,double> >::none();
-          if ((yyvsp[-4].oPFloat)()) delete (yyvsp[-4].oPFloat).some();
-          pp->floatvars.push_back(varspec((yyvsp[-2].sValue),
-            new FloatVarSpec(dom,!print,funcDep)));
+          if ((yyvsp[-4].optional_float_bounds)()) delete (yyvsp[-4].optional_float_bounds).some();
+          pp->float_vars.push_back(NamedVarSpec((yyvsp[-2].string_value),
+            new FloatVarSpec(dom,!print,func_dep)));
         }
-        delete (yyvsp[-1].argVec); free((yyvsp[-2].sValue));
+        delete (yyvsp[-1].arg_nodes); free((yyvsp[-2].string_value));
       }
 #line 2456 "gecode/flatzinc/parser.tab.cpp"
     break;
@@ -2459,35 +2459,35 @@ yyreduce:
 #line 925 "./gecode/flatzinc/parser.yxx"
       {
         ParserState* pp = static_cast<ParserState*>(parm);
-        bool print = (yyvsp[-1].argVec) != NULL && (yyvsp[-1].argVec)->hasAtom("output_var");
-        bool funcDep = (yyvsp[-1].argVec) != NULL && (yyvsp[-1].argVec)->hasAtom("is_defined_var");
+        bool print = (yyvsp[-1].arg_nodes) != nullptr && (yyvsp[-1].arg_nodes)->has_atom("output_var");
+        bool func_dep = (yyvsp[-1].arg_nodes) != nullptr && (yyvsp[-1].arg_nodes)->has_atom("is_defined_var");
         yyassert(pp,
-          pp->symbols.put((yyvsp[-2].sValue), se_sv(pp->setvars.size())),
+          pp->symbols.put((yyvsp[-2].string_value), se_sv(pp->set_vars.size())),
           "Duplicate symbol");
         if (print) {
-          pp->output(std::string((yyvsp[-2].sValue)), new AST::SetVar(pp->setvars.size()));
+          pp->output(std::string((yyvsp[-2].string_value)), new AST::SetVar(pp->set_vars.size()));
         }
-        if ((yyvsp[0].oArg)()) {
-          AST::Node* arg = (yyvsp[0].oArg).some();
-          if (arg->isSet()) {
-            pp->setvars.push_back(varspec((yyvsp[-2].sValue),
-              new SetVarSpec(arg->getSet(),!print,funcDep)));
-          } else if (arg->isSetVar()) {
-            pp->setvars.push_back(varspec((yyvsp[-2].sValue),
-              new SetVarSpec(Alias(arg->getSetVar()),!print,funcDep)));
+        if ((yyvsp[0].optional_arg)()) {
+          AST::Node* arg = (yyvsp[0].optional_arg).some();
+          if (arg->is_set()) {
+            pp->set_vars.push_back(NamedVarSpec((yyvsp[-2].string_value),
+              new SetVarSpec(arg->get_set(),!print,func_dep)));
+          } else if (arg->is_set_var()) {
+            pp->set_vars.push_back(NamedVarSpec((yyvsp[-2].string_value),
+              new SetVarSpec(Alias(arg->get_set_var()),!print,func_dep)));
             delete arg;
           } else {
             yyassert(pp, false, "Invalid var set initializer");
             delete arg;
           }
-          if (!pp->hadError)
-            addDomainConstraint(pp, "set_subset",
-                                new AST::SetVar(pp->setvars.size()-1), (yyvsp[-4].oSet));
+          if (!pp->had_error)
+            add_domain_constraint(pp, "set_subset",
+                                new AST::SetVar(pp->set_vars.size()-1), (yyvsp[-4].optional_set));
         } else {
-          pp->setvars.push_back(varspec((yyvsp[-2].sValue),
-            new SetVarSpec((yyvsp[-4].oSet),!print,funcDep)));
+          pp->set_vars.push_back(NamedVarSpec((yyvsp[-2].string_value),
+            new SetVarSpec((yyvsp[-4].optional_set),!print,func_dep)));
         }
-        delete (yyvsp[-1].argVec); free((yyvsp[-2].sValue));
+        delete (yyvsp[-1].arg_nodes); free((yyvsp[-2].string_value));
       }
 #line 2493 "gecode/flatzinc/parser.tab.cpp"
     break;
@@ -2496,11 +2496,11 @@ yyreduce:
 #line 958 "./gecode/flatzinc/parser.yxx"
       {
         ParserState* pp = static_cast<ParserState*>(parm);
-        yyassert(pp, (yyvsp[0].arg)->isInt(), "Invalid int initializer");
+        yyassert(pp, (yyvsp[0].arg)->is_int(), "Invalid int initializer");
         yyassert(pp,
-          pp->symbols.put((yyvsp[-3].sValue), se_i((yyvsp[0].arg)->getInt())),
+          pp->symbols.put((yyvsp[-3].string_value), se_i((yyvsp[0].arg)->get_int())),
           "Duplicate symbol");
-        delete (yyvsp[0].arg); delete (yyvsp[-2].argVec); free((yyvsp[-3].sValue));
+        delete (yyvsp[0].arg); delete (yyvsp[-2].arg_nodes); free((yyvsp[-3].string_value));
       }
 #line 2506 "gecode/flatzinc/parser.tab.cpp"
     break;
@@ -2509,12 +2509,12 @@ yyreduce:
 #line 967 "./gecode/flatzinc/parser.yxx"
       {
         ParserState* pp = static_cast<ParserState*>(parm);
-        yyassert(pp, (yyvsp[0].arg)->isFloat(), "Invalid float initializer");
-        pp->floatvals.push_back((yyvsp[0].arg)->getFloat());
+        yyassert(pp, (yyvsp[0].arg)->is_float(), "Invalid float initializer");
+        pp->float_values.push_back((yyvsp[0].arg)->get_float());
         yyassert(pp,
-          pp->symbols.put((yyvsp[-3].sValue), se_f(pp->floatvals.size()-1)),
+          pp->symbols.put((yyvsp[-3].string_value), se_f(pp->float_values.size()-1)),
           "Duplicate symbol");
-        delete (yyvsp[0].arg); delete (yyvsp[-2].argVec); free((yyvsp[-3].sValue));
+        delete (yyvsp[0].arg); delete (yyvsp[-2].arg_nodes); free((yyvsp[-3].string_value));
       }
 #line 2520 "gecode/flatzinc/parser.tab.cpp"
     break;
@@ -2523,11 +2523,11 @@ yyreduce:
 #line 977 "./gecode/flatzinc/parser.yxx"
       {
         ParserState* pp = static_cast<ParserState*>(parm);
-        yyassert(pp, (yyvsp[0].arg)->isBool(), "Invalid bool initializer");
+        yyassert(pp, (yyvsp[0].arg)->is_bool(), "Invalid bool initializer");
         yyassert(pp,
-          pp->symbols.put((yyvsp[-3].sValue), se_b((yyvsp[0].arg)->getBool())),
+          pp->symbols.put((yyvsp[-3].string_value), se_b((yyvsp[0].arg)->get_bool())),
           "Duplicate symbol");
-        delete (yyvsp[0].arg); delete (yyvsp[-2].argVec); free((yyvsp[-3].sValue));
+        delete (yyvsp[0].arg); delete (yyvsp[-2].arg_nodes); free((yyvsp[-3].string_value));
       }
 #line 2533 "gecode/flatzinc/parser.tab.cpp"
     break;
@@ -2536,14 +2536,14 @@ yyreduce:
 #line 986 "./gecode/flatzinc/parser.yxx"
       {
         ParserState* pp = static_cast<ParserState*>(parm);
-        yyassert(pp, (yyvsp[0].arg)->isSet(), "Invalid set initializer");
-        AST::SetLit* set = (yyvsp[0].arg)->getSet();
-        pp->setvals.push_back(*set);
+        yyassert(pp, (yyvsp[0].arg)->is_set(), "Invalid set initializer");
+        AST::SetLit* set = (yyvsp[0].arg)->get_set();
+        pp->set_values.push_back(*set);
         yyassert(pp,
-          pp->symbols.put((yyvsp[-3].sValue), se_s(pp->setvals.size()-1)),
+          pp->symbols.put((yyvsp[-3].string_value), se_s(pp->set_values.size()-1)),
           "Duplicate symbol");
         delete set;
-        delete (yyvsp[-2].argVec); free((yyvsp[-3].sValue));
+        delete (yyvsp[-2].arg_nodes); free((yyvsp[-3].string_value));
       }
 #line 2549 "gecode/flatzinc/parser.tab.cpp"
     break;
@@ -2552,33 +2552,33 @@ yyreduce:
 #line 999 "./gecode/flatzinc/parser.yxx"
       {
         ParserState* pp = static_cast<ParserState*>(parm);
-        yyassert(pp, (yyvsp[-10].iValue)==1, "Arrays must start at 1");
-        if (!pp->hadError) {
-          bool print = (yyvsp[-1].argVec) != NULL && (yyvsp[-1].argVec)->hasCall("output_array");
-          vector<int> vars((yyvsp[-8].iValue));
-          if (!pp->hadError) {
-            if ((yyvsp[0].oVarSpecVec)()) {
-              vector<VarSpec*>* vsv = (yyvsp[0].oVarSpecVec).some();
-              yyassert(pp, vsv->size() == static_cast<unsigned int>((yyvsp[-8].iValue)),
+        yyassert(pp, (yyvsp[-10].int_value)==1, "Arrays must start at 1");
+        if (!pp->had_error) {
+          bool print = (yyvsp[-1].arg_nodes) != nullptr && (yyvsp[-1].arg_nodes)->has_call("output_array");
+          vector<int> vars((yyvsp[-8].int_value));
+          if (!pp->had_error) {
+            if ((yyvsp[0].optional_var_specs)()) {
+              vector<VarSpec*>* vsv = (yyvsp[0].optional_var_specs).some();
+              yyassert(pp, vsv->size() == static_cast<unsigned int>((yyvsp[-8].int_value)),
                        "Initializer size does not match array dimension");
-              if (!pp->hadError) {
-                for (int i=0; i<(yyvsp[-8].iValue); i++) {
+              if (!pp->had_error) {
+                for (int i=0; i<(yyvsp[-8].int_value); i++) {
                   IntVarSpec* ivsv = static_cast<IntVarSpec*>((*vsv)[i]);
                   if (ivsv->alias) {
                     if (print)
-                      static_cast<IntVarSpec*>(pp->intvars[ivsv->i].second)->introduced = false;
+                      static_cast<IntVarSpec*>(pp->int_vars[ivsv->i].second)->introduced = false;
                     vars[i] = ivsv->i;
                     delete ivsv;
                   } else {
                     if (print)
                       ivsv->introduced = false;
-                    vars[i] = pp->intvars.size();
-                    pp->intvars.push_back(varspec((yyvsp[-2].sValue), ivsv));
+                    vars[i] = pp->int_vars.size();
+                    pp->int_vars.push_back(NamedVarSpec((yyvsp[-2].string_value), ivsv));
                   }
-                  if (!pp->hadError && (yyvsp[-4].oSet)()) {
+                  if (!pp->had_error && (yyvsp[-4].optional_set)()) {
                     Option<AST::SetLit*> opt =
-                      Option<AST::SetLit*>::some(new AST::SetLit(*(yyvsp[-4].oSet).some()));
-                    addDomainConstraint(pp, "int_in",
+                      Option<AST::SetLit*>::some(new AST::SetLit(*(yyvsp[-4].optional_set).some()));
+                    add_domain_constraint(pp, "int_in",
                                         new AST::IntVar(vars[i]),
                                         opt);
                   }
@@ -2586,38 +2586,38 @@ yyreduce:
               }
               delete vsv;
             } else {
-              if ((yyvsp[-8].iValue)>0) {
-                for (int i=0; i<(yyvsp[-8].iValue); i++) {
+              if ((yyvsp[-8].int_value)>0) {
+                for (int i=0; i<(yyvsp[-8].int_value); i++) {
                   Option<AST::SetLit*> dom =
-                    (yyvsp[-4].oSet)() ? Option<AST::SetLit*>::some(new AST::SetLit((yyvsp[-4].oSet).some()))
+                    (yyvsp[-4].optional_set)() ? Option<AST::SetLit*>::some(new AST::SetLit((yyvsp[-4].optional_set).some()))
                          : Option<AST::SetLit*>::none();
                   IntVarSpec* ispec = new IntVarSpec(dom,!print,false);
-                  vars[i] = pp->intvars.size();
-                  pp->intvars.push_back(varspec((yyvsp[-2].sValue), ispec));
+                  vars[i] = pp->int_vars.size();
+                  pp->int_vars.push_back(NamedVarSpec((yyvsp[-2].string_value), ispec));
                 }
               }
             }
           }
           if (print) {
             AST::Array* a = new AST::Array();
-            a->a.push_back(arrayOutput((yyvsp[-1].argVec)->getCall("output_array")));
+            a->a.push_back(array_output((yyvsp[-1].arg_nodes)->get_call("output_array")));
             AST::Array* output = new AST::Array();
-            for (int i=0; i<(yyvsp[-8].iValue); i++)
+            for (int i=0; i<(yyvsp[-8].int_value); i++)
               output->a.push_back(new AST::IntVar(vars[i]));
             a->a.push_back(output);
             a->a.push_back(new AST::String(")"));
-            pp->output(std::string((yyvsp[-2].sValue)), a);
+            pp->output(std::string((yyvsp[-2].string_value)), a);
           }
           int iva = pp->arrays.size();
           pp->arrays.push_back(vars.size());
           for (unsigned int i=0; i<vars.size(); i++)
             pp->arrays.push_back(vars[i]);
           yyassert(pp,
-            pp->symbols.put((yyvsp[-2].sValue), se_iva(iva)),
+            pp->symbols.put((yyvsp[-2].string_value), se_iva(iva)),
             "Duplicate symbol");
         }
-        if ((yyvsp[-4].oSet)()) delete (yyvsp[-4].oSet).some();
-        delete (yyvsp[-1].argVec); free((yyvsp[-2].sValue));
+        if ((yyvsp[-4].optional_set)()) delete (yyvsp[-4].optional_set).some();
+        delete (yyvsp[-1].arg_nodes); free((yyvsp[-2].string_value));
       }
 #line 2623 "gecode/flatzinc/parser.tab.cpp"
     break;
@@ -2626,32 +2626,32 @@ yyreduce:
 #line 1070 "./gecode/flatzinc/parser.yxx"
       {
         ParserState* pp = static_cast<ParserState*>(parm);
-        bool print = (yyvsp[-1].argVec) != NULL && (yyvsp[-1].argVec)->hasCall("output_array");
-        yyassert(pp, (yyvsp[-10].iValue)==1, "Arrays must start at 1");
-        if (!pp->hadError) {
-          vector<int> vars((yyvsp[-8].iValue));
-          if ((yyvsp[0].oVarSpecVec)()) {
-            vector<VarSpec*>* vsv = (yyvsp[0].oVarSpecVec).some();
-            yyassert(pp, vsv->size() == static_cast<unsigned int>((yyvsp[-8].iValue)),
+        bool print = (yyvsp[-1].arg_nodes) != nullptr && (yyvsp[-1].arg_nodes)->has_call("output_array");
+        yyassert(pp, (yyvsp[-10].int_value)==1, "Arrays must start at 1");
+        if (!pp->had_error) {
+          vector<int> vars((yyvsp[-8].int_value));
+          if ((yyvsp[0].optional_var_specs)()) {
+            vector<VarSpec*>* vsv = (yyvsp[0].optional_var_specs).some();
+            yyassert(pp, vsv->size() == static_cast<unsigned int>((yyvsp[-8].int_value)),
                      "Initializer size does not match array dimension");
-            if (!pp->hadError) {
-              for (int i=0; i<(yyvsp[-8].iValue); i++) {
+            if (!pp->had_error) {
+              for (int i=0; i<(yyvsp[-8].int_value); i++) {
                 BoolVarSpec* bvsv = static_cast<BoolVarSpec*>((*vsv)[i]);
                 if (bvsv->alias) {
                   if (print)
-                    static_cast<BoolVarSpec*>(pp->boolvars[bvsv->i].second)->introduced = false;
+                    static_cast<BoolVarSpec*>(pp->bool_vars[bvsv->i].second)->introduced = false;
                   vars[i] = bvsv->i;
                   delete bvsv;
                 } else {
                   if (print)
                     bvsv->introduced = false;
-                  vars[i] = pp->boolvars.size();
-                  pp->boolvars.push_back(varspec((yyvsp[-2].sValue), (*vsv)[i]));
+                  vars[i] = pp->bool_vars.size();
+                  pp->bool_vars.push_back(NamedVarSpec((yyvsp[-2].string_value), (*vsv)[i]));
                 }
-                if (!pp->hadError && (yyvsp[-4].oSet)()) {
+                if (!pp->had_error && (yyvsp[-4].optional_set)()) {
                   Option<AST::SetLit*> opt =
-                    Option<AST::SetLit*>::some(new AST::SetLit(*(yyvsp[-4].oSet).some()));
-                  addDomainConstraint(pp, "int_in",
+                    Option<AST::SetLit*>::some(new AST::SetLit(*(yyvsp[-4].optional_set).some()));
+                  add_domain_constraint(pp, "int_in",
                                       new AST::BoolVar(vars[i]),
                                       opt);
                 }
@@ -2659,35 +2659,35 @@ yyreduce:
             }
             delete vsv;
           } else {
-            for (int i=0; i<(yyvsp[-8].iValue); i++) {
+            for (int i=0; i<(yyvsp[-8].int_value); i++) {
               Option<AST::SetLit*> dom =
-                (yyvsp[-4].oSet)() ? Option<AST::SetLit*>::some(new AST::SetLit((yyvsp[-4].oSet).some()))
+                (yyvsp[-4].optional_set)() ? Option<AST::SetLit*>::some(new AST::SetLit((yyvsp[-4].optional_set).some()))
                      : Option<AST::SetLit*>::none();
-              vars[i] = pp->boolvars.size();
-              pp->boolvars.push_back(varspec((yyvsp[-2].sValue),
+              vars[i] = pp->bool_vars.size();
+              pp->bool_vars.push_back(NamedVarSpec((yyvsp[-2].string_value),
                                        new BoolVarSpec(dom,!print,false)));
             }
           }
           if (print) {
             AST::Array* a = new AST::Array();
-            a->a.push_back(arrayOutput((yyvsp[-1].argVec)->getCall("output_array")));
+            a->a.push_back(array_output((yyvsp[-1].arg_nodes)->get_call("output_array")));
             AST::Array* output = new AST::Array();
-            for (int i=0; i<(yyvsp[-8].iValue); i++)
+            for (int i=0; i<(yyvsp[-8].int_value); i++)
               output->a.push_back(new AST::BoolVar(vars[i]));
             a->a.push_back(output);
             a->a.push_back(new AST::String(")"));
-            pp->output(std::string((yyvsp[-2].sValue)), a);
+            pp->output(std::string((yyvsp[-2].string_value)), a);
           }
           int bva = pp->arrays.size();
           pp->arrays.push_back(vars.size());
           for (unsigned int i=0; i<vars.size(); i++)
             pp->arrays.push_back(vars[i]);
           yyassert(pp,
-            pp->symbols.put((yyvsp[-2].sValue), se_bva(bva)),
+            pp->symbols.put((yyvsp[-2].string_value), se_bva(bva)),
             "Duplicate symbol");
         }
-        if ((yyvsp[-4].oSet)()) delete (yyvsp[-4].oSet).some();
-        delete (yyvsp[-1].argVec); free((yyvsp[-2].sValue));
+        if ((yyvsp[-4].optional_set)()) delete (yyvsp[-4].optional_set).some();
+        delete (yyvsp[-1].arg_nodes); free((yyvsp[-2].string_value));
       }
 #line 2693 "gecode/flatzinc/parser.tab.cpp"
     break;
@@ -2696,72 +2696,72 @@ yyreduce:
 #line 1138 "./gecode/flatzinc/parser.yxx"
       {
         ParserState* pp = static_cast<ParserState*>(parm);
-        yyassert(pp, (yyvsp[-10].iValue)==1, "Arrays must start at 1");
-        if (!pp->hadError) {
-          bool print = (yyvsp[-1].argVec) != NULL && (yyvsp[-1].argVec)->hasCall("output_array");
-          vector<int> vars((yyvsp[-8].iValue));
-          if (!pp->hadError) {
-            if ((yyvsp[0].oVarSpecVec)()) {
-              vector<VarSpec*>* vsv = (yyvsp[0].oVarSpecVec).some();
-              yyassert(pp, vsv->size() == static_cast<unsigned int>((yyvsp[-8].iValue)),
+        yyassert(pp, (yyvsp[-10].int_value)==1, "Arrays must start at 1");
+        if (!pp->had_error) {
+          bool print = (yyvsp[-1].arg_nodes) != nullptr && (yyvsp[-1].arg_nodes)->has_call("output_array");
+          vector<int> vars((yyvsp[-8].int_value));
+          if (!pp->had_error) {
+            if ((yyvsp[0].optional_var_specs)()) {
+              vector<VarSpec*>* vsv = (yyvsp[0].optional_var_specs).some();
+              yyassert(pp, vsv->size() == static_cast<unsigned int>((yyvsp[-8].int_value)),
                        "Initializer size does not match array dimension");
-              if (!pp->hadError) {
-                for (int i=0; i<(yyvsp[-8].iValue); i++) {
+              if (!pp->had_error) {
+                for (int i=0; i<(yyvsp[-8].int_value); i++) {
                   FloatVarSpec* ivsv = static_cast<FloatVarSpec*>((*vsv)[i]);
                   if (ivsv->alias) {
                     if (print)
-                      static_cast<FloatVarSpec*>(pp->floatvars[ivsv->i].second)->introduced = false;
+                      static_cast<FloatVarSpec*>(pp->float_vars[ivsv->i].second)->introduced = false;
                     vars[i] = ivsv->i;
                     delete ivsv;
                   } else {
                     if (print)
                       ivsv->introduced = false;
-                    vars[i] = pp->floatvars.size();
-                    pp->floatvars.push_back(varspec((yyvsp[-2].sValue), ivsv));
+                    vars[i] = pp->float_vars.size();
+                    pp->float_vars.push_back(NamedVarSpec((yyvsp[-2].string_value), ivsv));
                   }
-                  if (!pp->hadError && (yyvsp[-4].oPFloat)()) {
+                  if (!pp->had_error && (yyvsp[-4].optional_float_bounds)()) {
                     Option<std::pair<double,double>*> opt =
                       Option<std::pair<double,double>*>::some(
-                        new std::pair<double,double>(*(yyvsp[-4].oPFloat).some()));
-                    addDomainConstraint(pp, new AST::FloatVar(vars[i]),
+                        new std::pair<double,double>(*(yyvsp[-4].optional_float_bounds).some()));
+                    add_domain_constraint(pp, new AST::FloatVar(vars[i]),
                                         opt);
                   }
                 }
               }
               delete vsv;
             } else {
-              if ((yyvsp[-8].iValue)>0) {
+              if ((yyvsp[-8].int_value)>0) {
                 Option<std::pair<double,double> > dom =
-                  (yyvsp[-4].oPFloat)() ? Option<std::pair<double,double> >::some(*(yyvsp[-4].oPFloat).some())
+                  (yyvsp[-4].optional_float_bounds)() ? Option<std::pair<double,double> >::some(*(yyvsp[-4].optional_float_bounds).some())
                        : Option<std::pair<double,double> >::none();
-                for (int i=0; i<(yyvsp[-8].iValue); i++) {
+                for (int i=0; i<(yyvsp[-8].int_value); i++) {
                   FloatVarSpec* ispec = new FloatVarSpec(dom,!print,false);
-                  vars[i] = pp->floatvars.size();
-                  pp->floatvars.push_back(varspec((yyvsp[-2].sValue), ispec));
+                  vars[i] = pp->float_vars.size();
+                  pp->float_vars.push_back(NamedVarSpec((yyvsp[-2].string_value), ispec));
                 }
               }
             }
           }
           if (print) {
             AST::Array* a = new AST::Array();
-            a->a.push_back(arrayOutput((yyvsp[-1].argVec)->getCall("output_array")));
+            a->a.push_back(array_output((yyvsp[-1].arg_nodes)->get_call("output_array")));
             AST::Array* output = new AST::Array();
-            for (int i=0; i<(yyvsp[-8].iValue); i++)
+            for (int i=0; i<(yyvsp[-8].int_value); i++)
               output->a.push_back(new AST::FloatVar(vars[i]));
             a->a.push_back(output);
             a->a.push_back(new AST::String(")"));
-            pp->output(std::string((yyvsp[-2].sValue)), a);
+            pp->output(std::string((yyvsp[-2].string_value)), a);
           }
           int fva = pp->arrays.size();
           pp->arrays.push_back(vars.size());
           for (unsigned int i=0; i<vars.size(); i++)
             pp->arrays.push_back(vars[i]);
           yyassert(pp,
-            pp->symbols.put((yyvsp[-2].sValue), se_fva(fva)),
+            pp->symbols.put((yyvsp[-2].string_value), se_fva(fva)),
             "Duplicate symbol");
         }
-        if ((yyvsp[-4].oPFloat)()) delete (yyvsp[-4].oPFloat).some();
-        delete (yyvsp[-1].argVec); free((yyvsp[-2].sValue));
+        if ((yyvsp[-4].optional_float_bounds)()) delete (yyvsp[-4].optional_float_bounds).some();
+        delete (yyvsp[-1].arg_nodes); free((yyvsp[-2].string_value));
       }
 #line 2767 "gecode/flatzinc/parser.tab.cpp"
     break;
@@ -2770,32 +2770,32 @@ yyreduce:
 #line 1209 "./gecode/flatzinc/parser.yxx"
       {
         ParserState* pp = static_cast<ParserState*>(parm);
-        bool print = (yyvsp[-1].argVec) != NULL && (yyvsp[-1].argVec)->hasCall("output_array");
-        yyassert(pp, (yyvsp[-12].iValue)==1, "Arrays must start at 1");
-        if (!pp->hadError) {
-          vector<int> vars((yyvsp[-10].iValue));
-          if ((yyvsp[0].oVarSpecVec)()) {
-            vector<VarSpec*>* vsv = (yyvsp[0].oVarSpecVec).some();
-            yyassert(pp, vsv->size() == static_cast<unsigned int>((yyvsp[-10].iValue)),
+        bool print = (yyvsp[-1].arg_nodes) != nullptr && (yyvsp[-1].arg_nodes)->has_call("output_array");
+        yyassert(pp, (yyvsp[-12].int_value)==1, "Arrays must start at 1");
+        if (!pp->had_error) {
+          vector<int> vars((yyvsp[-10].int_value));
+          if ((yyvsp[0].optional_var_specs)()) {
+            vector<VarSpec*>* vsv = (yyvsp[0].optional_var_specs).some();
+            yyassert(pp, vsv->size() == static_cast<unsigned int>((yyvsp[-10].int_value)),
                      "Initializer size does not match array dimension");
-            if (!pp->hadError) {
-              for (int i=0; i<(yyvsp[-10].iValue); i++) {
+            if (!pp->had_error) {
+              for (int i=0; i<(yyvsp[-10].int_value); i++) {
                 SetVarSpec* svsv = static_cast<SetVarSpec*>((*vsv)[i]);
                 if (svsv->alias) {
                   if (print)
-                    static_cast<SetVarSpec*>(pp->setvars[svsv->i].second)->introduced = false;
+                    static_cast<SetVarSpec*>(pp->set_vars[svsv->i].second)->introduced = false;
                   vars[i] = svsv->i;
                   delete svsv;
                 } else {
                   if (print)
                     svsv->introduced = false;
-                  vars[i] = pp->setvars.size();
-                  pp->setvars.push_back(varspec((yyvsp[-2].sValue), (*vsv)[i]));
+                  vars[i] = pp->set_vars.size();
+                  pp->set_vars.push_back(NamedVarSpec((yyvsp[-2].string_value), (*vsv)[i]));
                 }
-                if (!pp->hadError && (yyvsp[-4].oSet)()) {
+                if (!pp->had_error && (yyvsp[-4].optional_set)()) {
                   Option<AST::SetLit*> opt =
-                    Option<AST::SetLit*>::some(new AST::SetLit(*(yyvsp[-4].oSet).some()));
-                  addDomainConstraint(pp, "set_subset",
+                    Option<AST::SetLit*>::some(new AST::SetLit(*(yyvsp[-4].optional_set).some()));
+                  add_domain_constraint(pp, "set_subset",
                                       new AST::SetVar(vars[i]),
                                       opt);
                 }
@@ -2803,37 +2803,37 @@ yyreduce:
             }
             delete vsv;
           } else {
-            if ((yyvsp[-10].iValue)>0) {
-              for (int i=0; i<(yyvsp[-10].iValue); i++) {
+            if ((yyvsp[-10].int_value)>0) {
+              for (int i=0; i<(yyvsp[-10].int_value); i++) {
                 Option<AST::SetLit*> dom =
-                  (yyvsp[-4].oSet)() ? Option<AST::SetLit*>::some(new AST::SetLit((yyvsp[-4].oSet).some()))
+                  (yyvsp[-4].optional_set)() ? Option<AST::SetLit*>::some(new AST::SetLit((yyvsp[-4].optional_set).some()))
                         : Option<AST::SetLit*>::none();
                 SetVarSpec* ispec = new SetVarSpec(dom,!print,false);
-                vars[i] = pp->setvars.size();
-                pp->setvars.push_back(varspec((yyvsp[-2].sValue), ispec));
+                vars[i] = pp->set_vars.size();
+                pp->set_vars.push_back(NamedVarSpec((yyvsp[-2].string_value), ispec));
               }
             }
           }
           if (print) {
             AST::Array* a = new AST::Array();
-            a->a.push_back(arrayOutput((yyvsp[-1].argVec)->getCall("output_array")));
+            a->a.push_back(array_output((yyvsp[-1].arg_nodes)->get_call("output_array")));
             AST::Array* output = new AST::Array();
-            for (int i=0; i<(yyvsp[-10].iValue); i++)
+            for (int i=0; i<(yyvsp[-10].int_value); i++)
               output->a.push_back(new AST::SetVar(vars[i]));
             a->a.push_back(output);
             a->a.push_back(new AST::String(")"));
-            pp->output(std::string((yyvsp[-2].sValue)), a);
+            pp->output(std::string((yyvsp[-2].string_value)), a);
           }
           int sva = pp->arrays.size();
           pp->arrays.push_back(vars.size());
           for (unsigned int i=0; i<vars.size(); i++)
             pp->arrays.push_back(vars[i]);
           yyassert(pp,
-            pp->symbols.put((yyvsp[-2].sValue), se_sva(sva)),
+            pp->symbols.put((yyvsp[-2].string_value), se_sva(sva)),
             "Duplicate symbol");
         }
-        if ((yyvsp[-4].oSet)()) delete (yyvsp[-4].oSet).some();
-        delete (yyvsp[-1].argVec); free((yyvsp[-2].sValue));
+        if ((yyvsp[-4].optional_set)()) delete (yyvsp[-4].optional_set).some();
+        delete (yyvsp[-1].arg_nodes); free((yyvsp[-2].string_value));
       }
 #line 2839 "gecode/flatzinc/parser.tab.cpp"
     break;
@@ -2842,22 +2842,22 @@ yyreduce:
 #line 1278 "./gecode/flatzinc/parser.yxx"
       {
         ParserState* pp = static_cast<ParserState*>(parm);
-        yyassert(pp, (yyvsp[-12].iValue)==1, "Arrays must start at 1");
-        yyassert(pp, (yyvsp[-1].setValue)->size() == static_cast<unsigned int>((yyvsp[-10].iValue)),
+        yyassert(pp, (yyvsp[-12].int_value)==1, "Arrays must start at 1");
+        yyassert(pp, (yyvsp[-1].set_values)->size() == static_cast<unsigned int>((yyvsp[-10].int_value)),
                  "Initializer size does not match array dimension");
 
-        if (!pp->hadError) {
+        if (!pp->had_error) {
           int ia = pp->arrays.size();
-          pp->arrays.push_back((yyvsp[-1].setValue)->size());
-          for (unsigned int i=0; i<(yyvsp[-1].setValue)->size(); i++)
-            pp->arrays.push_back((*(yyvsp[-1].setValue))[i]);
+          pp->arrays.push_back((yyvsp[-1].set_values)->size());
+          for (unsigned int i=0; i<(yyvsp[-1].set_values)->size(); i++)
+            pp->arrays.push_back((*(yyvsp[-1].set_values))[i]);
           yyassert(pp,
-            pp->symbols.put((yyvsp[-5].sValue), se_ia(ia)),
+            pp->symbols.put((yyvsp[-5].string_value), se_ia(ia)),
             "Duplicate symbol");
         }
-        delete (yyvsp[-1].setValue);
-        free((yyvsp[-5].sValue));
-        delete (yyvsp[-4].argVec);
+        delete (yyvsp[-1].set_values);
+        free((yyvsp[-5].string_value));
+        delete (yyvsp[-4].arg_nodes);
       }
 #line 2863 "gecode/flatzinc/parser.tab.cpp"
     break;
@@ -2866,21 +2866,21 @@ yyreduce:
 #line 1299 "./gecode/flatzinc/parser.yxx"
       {
         ParserState* pp = static_cast<ParserState*>(parm);
-        yyassert(pp, (yyvsp[-12].iValue)==1, "Arrays must start at 1");
-        yyassert(pp, (yyvsp[-1].setValue)->size() == static_cast<unsigned int>((yyvsp[-10].iValue)),
+        yyassert(pp, (yyvsp[-12].int_value)==1, "Arrays must start at 1");
+        yyassert(pp, (yyvsp[-1].set_values)->size() == static_cast<unsigned int>((yyvsp[-10].int_value)),
                  "Initializer size does not match array dimension");
-        if (!pp->hadError) {
+        if (!pp->had_error) {
           int ia = pp->arrays.size();
-          pp->arrays.push_back((yyvsp[-1].setValue)->size());
-          for (unsigned int i=0; i<(yyvsp[-1].setValue)->size(); i++)
-            pp->arrays.push_back((*(yyvsp[-1].setValue))[i]);
+          pp->arrays.push_back((yyvsp[-1].set_values)->size());
+          for (unsigned int i=0; i<(yyvsp[-1].set_values)->size(); i++)
+            pp->arrays.push_back((*(yyvsp[-1].set_values))[i]);
           yyassert(pp,
-            pp->symbols.put((yyvsp[-5].sValue), se_ba(ia)),
+            pp->symbols.put((yyvsp[-5].string_value), se_ba(ia)),
             "Duplicate symbol");
         }
-        delete (yyvsp[-1].setValue);
-        free((yyvsp[-5].sValue));
-        delete (yyvsp[-4].argVec);
+        delete (yyvsp[-1].set_values);
+        free((yyvsp[-5].string_value));
+        delete (yyvsp[-4].arg_nodes);
       }
 #line 2886 "gecode/flatzinc/parser.tab.cpp"
     break;
@@ -2889,21 +2889,21 @@ yyreduce:
 #line 1319 "./gecode/flatzinc/parser.yxx"
       {
         ParserState* pp = static_cast<ParserState*>(parm);
-        yyassert(pp, (yyvsp[-12].iValue)==1, "Arrays must start at 1");
-        yyassert(pp, (yyvsp[-1].floatSetValue)->size() == static_cast<unsigned int>((yyvsp[-10].iValue)),
+        yyassert(pp, (yyvsp[-12].int_value)==1, "Arrays must start at 1");
+        yyassert(pp, (yyvsp[-1].float_values)->size() == static_cast<unsigned int>((yyvsp[-10].int_value)),
                  "Initializer size does not match array dimension");
-        if (!pp->hadError) {
+        if (!pp->had_error) {
           int fa = pp->arrays.size();
-          pp->arrays.push_back((yyvsp[-1].floatSetValue)->size());
-          pp->arrays.push_back(pp->floatvals.size());
-          for (unsigned int i=0; i<(yyvsp[-1].floatSetValue)->size(); i++)
-            pp->floatvals.push_back((*(yyvsp[-1].floatSetValue))[i]);
+          pp->arrays.push_back((yyvsp[-1].float_values)->size());
+          pp->arrays.push_back(pp->float_values.size());
+          for (unsigned int i=0; i<(yyvsp[-1].float_values)->size(); i++)
+            pp->float_values.push_back((*(yyvsp[-1].float_values))[i]);
           yyassert(pp,
-            pp->symbols.put((yyvsp[-5].sValue), se_fa(fa)),
+            pp->symbols.put((yyvsp[-5].string_value), se_fa(fa)),
             "Duplicate symbol");
         }
-        delete (yyvsp[-1].floatSetValue);
-        delete (yyvsp[-4].argVec); free((yyvsp[-5].sValue));
+        delete (yyvsp[-1].float_values);
+        delete (yyvsp[-4].arg_nodes); free((yyvsp[-5].string_value));
       }
 #line 2909 "gecode/flatzinc/parser.tab.cpp"
     break;
@@ -2912,22 +2912,22 @@ yyreduce:
 #line 1339 "./gecode/flatzinc/parser.yxx"
       {
         ParserState* pp = static_cast<ParserState*>(parm);
-        yyassert(pp, (yyvsp[-14].iValue)==1, "Arrays must start at 1");
-        yyassert(pp, (yyvsp[-1].setValueList)->size() == static_cast<unsigned int>((yyvsp[-12].iValue)),
+        yyassert(pp, (yyvsp[-14].int_value)==1, "Arrays must start at 1");
+        yyassert(pp, (yyvsp[-1].set_value_list)->size() == static_cast<unsigned int>((yyvsp[-12].int_value)),
                  "Initializer size does not match array dimension");
-        if (!pp->hadError) {
+        if (!pp->had_error) {
           int sa = pp->arrays.size();
-          pp->arrays.push_back((yyvsp[-1].setValueList)->size());
-          pp->arrays.push_back(pp->setvals.size());
-          for (unsigned int i=0; i<(yyvsp[-1].setValueList)->size(); i++)
-            pp->setvals.push_back((*(yyvsp[-1].setValueList))[i]);
+          pp->arrays.push_back((yyvsp[-1].set_value_list)->size());
+          pp->arrays.push_back(pp->set_values.size());
+          for (unsigned int i=0; i<(yyvsp[-1].set_value_list)->size(); i++)
+            pp->set_values.push_back((*(yyvsp[-1].set_value_list))[i]);
           yyassert(pp,
-            pp->symbols.put((yyvsp[-5].sValue), se_sa(sa)),
+            pp->symbols.put((yyvsp[-5].string_value), se_sa(sa)),
             "Duplicate symbol");
         }
 
-        delete (yyvsp[-1].setValueList);
-        delete (yyvsp[-4].argVec); free((yyvsp[-5].sValue));
+        delete (yyvsp[-1].set_value_list);
+        delete (yyvsp[-4].arg_nodes); free((yyvsp[-5].string_value));
       }
 #line 2933 "gecode/flatzinc/parser.tab.cpp"
     break;
@@ -2935,7 +2935,7 @@ yyreduce:
   case 51: /* int_init: FZ_INT_LIT  */
 #line 1361 "./gecode/flatzinc/parser.yxx"
       {
-        (yyval.varSpec) = new IntVarSpec((yyvsp[0].iValue),false,false);
+        (yyval.var_spec) = new IntVarSpec((yyvsp[0].int_value),false,false);
       }
 #line 2941 "gecode/flatzinc/parser.tab.cpp"
     break;
@@ -2945,16 +2945,16 @@ yyreduce:
       {
         SymbolEntry e;
         ParserState* pp = static_cast<ParserState*>(parm);
-        if (pp->symbols.get((yyvsp[0].sValue), e) && (e.t == ST_INTVAR || e.t == ST_INT))
-          (yyval.varSpec) = new IntVarSpec(Alias(e.i),false,false);
+        if (pp->symbols.get((yyvsp[0].string_value), e) && (e.t == ST_INTVAR || e.t == ST_INT))
+          (yyval.var_spec) = new IntVarSpec(Alias(e.i),false,false);
         else {
-          pp->err << "Error: undefined identifier for type int " << (yyvsp[0].sValue)
+          pp->err << "Error: undefined identifier for type int " << (yyvsp[0].string_value)
                   << " in line no. "
                   << yyget_lineno(pp->yyscanner) << std::endl;
-          pp->hadError = true;
-          (yyval.varSpec) = new IntVarSpec(0,false,false); // keep things consistent
+          pp->had_error = true;
+          (yyval.var_spec) = new IntVarSpec(0,false,false); // keep things consistent
         }
-        free((yyvsp[0].sValue));
+        free((yyvsp[0].string_value));
       }
 #line 2960 "gecode/flatzinc/parser.tab.cpp"
     break;
@@ -2965,58 +2965,58 @@ yyreduce:
         vector<int> v;
         SymbolEntry e;
         ParserState* pp = static_cast<ParserState*>(parm);
-        if (pp->symbols.get((yyvsp[-3].sValue), e) && e.t == ST_INTVARARRAY) {
-          yyassert(pp,(yyvsp[-1].iValue) > 0 && (yyvsp[-1].iValue) <= pp->arrays[e.i],
+        if (pp->symbols.get((yyvsp[-3].string_value), e) && e.t == ST_INTVARARRAY) {
+          yyassert(pp,(yyvsp[-1].int_value) > 0 && (yyvsp[-1].int_value) <= pp->arrays[e.i],
                    "array access out of bounds");
-          if (!pp->hadError)
-            (yyval.varSpec) = new IntVarSpec(Alias(pp->arrays[e.i+(yyvsp[-1].iValue)]),false,false);
+          if (!pp->had_error)
+            (yyval.var_spec) = new IntVarSpec(Alias(pp->arrays[e.i+(yyvsp[-1].int_value)]),false,false);
           else
-            (yyval.varSpec) = new IntVarSpec(0,false,false); // keep things consistent
+            (yyval.var_spec) = new IntVarSpec(0,false,false); // keep things consistent
         } else {
-          pp->err << "Error: undefined array identifier for type int " << (yyvsp[-3].sValue)
+          pp->err << "Error: undefined array identifier for type int " << (yyvsp[-3].string_value)
                   << " in line no. "
                   << yyget_lineno(pp->yyscanner) << std::endl;
-          pp->hadError = true;
-          (yyval.varSpec) = new IntVarSpec(0,false,false); // keep things consistent
+          pp->had_error = true;
+          (yyval.var_spec) = new IntVarSpec(0,false,false); // keep things consistent
         }
-        free((yyvsp[-3].sValue));
+        free((yyvsp[-3].string_value));
       }
 #line 2985 "gecode/flatzinc/parser.tab.cpp"
     break;
 
   case 54: /* int_init_list: %empty  */
 #line 1403 "./gecode/flatzinc/parser.yxx"
-      { (yyval.varSpecVec) = new vector<VarSpec*>(0); }
+      { (yyval.var_specs) = new vector<VarSpec*>(0); }
 #line 2991 "gecode/flatzinc/parser.tab.cpp"
     break;
 
   case 55: /* int_init_list: int_init_list_head list_tail  */
 #line 1405 "./gecode/flatzinc/parser.yxx"
-      { (yyval.varSpecVec) = (yyvsp[-1].varSpecVec); }
+      { (yyval.var_specs) = (yyvsp[-1].var_specs); }
 #line 2997 "gecode/flatzinc/parser.tab.cpp"
     break;
 
   case 56: /* int_init_list_head: int_init  */
 #line 1409 "./gecode/flatzinc/parser.yxx"
-      { (yyval.varSpecVec) = new vector<VarSpec*>(1); (*(yyval.varSpecVec))[0] = (yyvsp[0].varSpec); }
+      { (yyval.var_specs) = new vector<VarSpec*>(1); (*(yyval.var_specs))[0] = (yyvsp[0].var_spec); }
 #line 3003 "gecode/flatzinc/parser.tab.cpp"
     break;
 
   case 57: /* int_init_list_head: int_init_list_head ',' int_init  */
 #line 1411 "./gecode/flatzinc/parser.yxx"
-      { (yyval.varSpecVec) = (yyvsp[-2].varSpecVec); (yyval.varSpecVec)->push_back((yyvsp[0].varSpec)); }
+      { (yyval.var_specs) = (yyvsp[-2].var_specs); (yyval.var_specs)->push_back((yyvsp[0].var_spec)); }
 #line 3009 "gecode/flatzinc/parser.tab.cpp"
     break;
 
   case 60: /* int_var_array_literal: '[' int_init_list ']'  */
 #line 1416 "./gecode/flatzinc/parser.yxx"
-      { (yyval.varSpecVec) = (yyvsp[-1].varSpecVec); }
+      { (yyval.var_specs) = (yyvsp[-1].var_specs); }
 #line 3015 "gecode/flatzinc/parser.tab.cpp"
     break;
 
   case 61: /* float_init: FZ_FLOAT_LIT  */
 #line 1420 "./gecode/flatzinc/parser.yxx"
-      { (yyval.varSpec) = new FloatVarSpec((yyvsp[0].dValue),false,false); }
+      { (yyval.var_spec) = new FloatVarSpec((yyvsp[0].float_value),false,false); }
 #line 3021 "gecode/flatzinc/parser.tab.cpp"
     break;
 
@@ -3025,16 +3025,16 @@ yyreduce:
       {
         SymbolEntry e;
         ParserState* pp = static_cast<ParserState*>(parm);
-        if (pp->symbols.get((yyvsp[0].sValue), e) && (e.t == ST_FLOATVAR || e.t == ST_FLOAT))
-          (yyval.varSpec) = new FloatVarSpec(Alias(e.i),false,false);
+        if (pp->symbols.get((yyvsp[0].string_value), e) && (e.t == ST_FLOATVAR || e.t == ST_FLOAT))
+          (yyval.var_spec) = new FloatVarSpec(Alias(e.i),false,false);
         else {
-          pp->err << "Error: undefined identifier for type float " << (yyvsp[0].sValue)
+          pp->err << "Error: undefined identifier for type float " << (yyvsp[0].string_value)
                   << " in line no. "
                   << yyget_lineno(pp->yyscanner) << std::endl;
-          pp->hadError = true;
-          (yyval.varSpec) = new FloatVarSpec(0.0,false,false);
+          pp->had_error = true;
+          (yyval.var_spec) = new FloatVarSpec(0.0,false,false);
         }
-        free((yyvsp[0].sValue));
+        free((yyvsp[0].string_value));
       }
 #line 3040 "gecode/flatzinc/parser.tab.cpp"
     break;
@@ -3044,58 +3044,58 @@ yyreduce:
       {
         SymbolEntry e;
         ParserState* pp = static_cast<ParserState*>(parm);
-        if (pp->symbols.get((yyvsp[-3].sValue), e) && e.t == ST_FLOATVARARRAY) {
-          yyassert(pp,(yyvsp[-1].iValue) > 0 && (yyvsp[-1].iValue) <= pp->arrays[e.i],
+        if (pp->symbols.get((yyvsp[-3].string_value), e) && e.t == ST_FLOATVARARRAY) {
+          yyassert(pp,(yyvsp[-1].int_value) > 0 && (yyvsp[-1].int_value) <= pp->arrays[e.i],
                    "array access out of bounds");
-          if (!pp->hadError)
-            (yyval.varSpec) = new FloatVarSpec(Alias(pp->arrays[e.i+(yyvsp[-1].iValue)]),false,false);
+          if (!pp->had_error)
+            (yyval.var_spec) = new FloatVarSpec(Alias(pp->arrays[e.i+(yyvsp[-1].int_value)]),false,false);
           else
-            (yyval.varSpec) = new FloatVarSpec(0.0,false,false);
+            (yyval.var_spec) = new FloatVarSpec(0.0,false,false);
         } else {
-          pp->err << "Error: undefined array identifier for type float " << (yyvsp[-3].sValue)
+          pp->err << "Error: undefined array identifier for type float " << (yyvsp[-3].string_value)
                   << " in line no. "
                   << yyget_lineno(pp->yyscanner) << std::endl;
-          pp->hadError = true;
-          (yyval.varSpec) = new FloatVarSpec(0.0,false,false);
+          pp->had_error = true;
+          (yyval.var_spec) = new FloatVarSpec(0.0,false,false);
         }
-        free((yyvsp[-3].sValue));
+        free((yyvsp[-3].string_value));
       }
 #line 3064 "gecode/flatzinc/parser.tab.cpp"
     break;
 
   case 64: /* float_init_list: %empty  */
 #line 1459 "./gecode/flatzinc/parser.yxx"
-      { (yyval.varSpecVec) = new vector<VarSpec*>(0); }
+      { (yyval.var_specs) = new vector<VarSpec*>(0); }
 #line 3070 "gecode/flatzinc/parser.tab.cpp"
     break;
 
   case 65: /* float_init_list: float_init_list_head list_tail  */
 #line 1461 "./gecode/flatzinc/parser.yxx"
-      { (yyval.varSpecVec) = (yyvsp[-1].varSpecVec); }
+      { (yyval.var_specs) = (yyvsp[-1].var_specs); }
 #line 3076 "gecode/flatzinc/parser.tab.cpp"
     break;
 
   case 66: /* float_init_list_head: float_init  */
 #line 1465 "./gecode/flatzinc/parser.yxx"
-      { (yyval.varSpecVec) = new vector<VarSpec*>(1); (*(yyval.varSpecVec))[0] = (yyvsp[0].varSpec); }
+      { (yyval.var_specs) = new vector<VarSpec*>(1); (*(yyval.var_specs))[0] = (yyvsp[0].var_spec); }
 #line 3082 "gecode/flatzinc/parser.tab.cpp"
     break;
 
   case 67: /* float_init_list_head: float_init_list_head ',' float_init  */
 #line 1467 "./gecode/flatzinc/parser.yxx"
-      { (yyval.varSpecVec) = (yyvsp[-2].varSpecVec); (yyval.varSpecVec)->push_back((yyvsp[0].varSpec)); }
+      { (yyval.var_specs) = (yyvsp[-2].var_specs); (yyval.var_specs)->push_back((yyvsp[0].var_spec)); }
 #line 3088 "gecode/flatzinc/parser.tab.cpp"
     break;
 
   case 68: /* float_var_array_literal: '[' float_init_list ']'  */
 #line 1471 "./gecode/flatzinc/parser.yxx"
-      { (yyval.varSpecVec) = (yyvsp[-1].varSpecVec); }
+      { (yyval.var_specs) = (yyvsp[-1].var_specs); }
 #line 3094 "gecode/flatzinc/parser.tab.cpp"
     break;
 
   case 69: /* bool_init: FZ_BOOL_LIT  */
 #line 1475 "./gecode/flatzinc/parser.yxx"
-      { (yyval.varSpec) = new BoolVarSpec((yyvsp[0].iValue),false,false); }
+      { (yyval.var_spec) = new BoolVarSpec((yyvsp[0].int_value),false,false); }
 #line 3100 "gecode/flatzinc/parser.tab.cpp"
     break;
 
@@ -3104,16 +3104,16 @@ yyreduce:
       {
         SymbolEntry e;
         ParserState* pp = static_cast<ParserState*>(parm);
-        if (pp->symbols.get((yyvsp[0].sValue), e) && (e.t == ST_BOOLVAR || e.t == ST_BOOL))
-          (yyval.varSpec) = new BoolVarSpec(Alias(e.i),false,false);
+        if (pp->symbols.get((yyvsp[0].string_value), e) && (e.t == ST_BOOLVAR || e.t == ST_BOOL))
+          (yyval.var_spec) = new BoolVarSpec(Alias(e.i),false,false);
         else {
-          pp->err << "Error: undefined identifier for type bool " << (yyvsp[0].sValue)
+          pp->err << "Error: undefined identifier for type bool " << (yyvsp[0].string_value)
                   << " in line no. "
                   << yyget_lineno(pp->yyscanner) << std::endl;
-          pp->hadError = true;
-          (yyval.varSpec) = new BoolVarSpec(false,false,false);
+          pp->had_error = true;
+          (yyval.var_spec) = new BoolVarSpec(false,false,false);
         }
-        free((yyvsp[0].sValue));
+        free((yyvsp[0].string_value));
       }
 #line 3119 "gecode/flatzinc/parser.tab.cpp"
     break;
@@ -3123,58 +3123,58 @@ yyreduce:
       {
         SymbolEntry e;
         ParserState* pp = static_cast<ParserState*>(parm);
-        if (pp->symbols.get((yyvsp[-3].sValue), e) && e.t == ST_BOOLVARARRAY) {
-          yyassert(pp,(yyvsp[-1].iValue) > 0 && (yyvsp[-1].iValue) <= pp->arrays[e.i],
+        if (pp->symbols.get((yyvsp[-3].string_value), e) && e.t == ST_BOOLVARARRAY) {
+          yyassert(pp,(yyvsp[-1].int_value) > 0 && (yyvsp[-1].int_value) <= pp->arrays[e.i],
                    "array access out of bounds");
-          if (!pp->hadError)
-            (yyval.varSpec) = new BoolVarSpec(Alias(pp->arrays[e.i+(yyvsp[-1].iValue)]),false,false);
+          if (!pp->had_error)
+            (yyval.var_spec) = new BoolVarSpec(Alias(pp->arrays[e.i+(yyvsp[-1].int_value)]),false,false);
           else
-            (yyval.varSpec) = new BoolVarSpec(false,false,false);
+            (yyval.var_spec) = new BoolVarSpec(false,false,false);
         } else {
-          pp->err << "Error: undefined array identifier for type bool " << (yyvsp[-3].sValue)
+          pp->err << "Error: undefined array identifier for type bool " << (yyvsp[-3].string_value)
                   << " in line no. "
                   << yyget_lineno(pp->yyscanner) << std::endl;
-          pp->hadError = true;
-          (yyval.varSpec) = new BoolVarSpec(false,false,false);
+          pp->had_error = true;
+          (yyval.var_spec) = new BoolVarSpec(false,false,false);
         }
-        free((yyvsp[-3].sValue));
+        free((yyvsp[-3].string_value));
       }
 #line 3143 "gecode/flatzinc/parser.tab.cpp"
     break;
 
   case 72: /* bool_init_list: %empty  */
 #line 1514 "./gecode/flatzinc/parser.yxx"
-      { (yyval.varSpecVec) = new vector<VarSpec*>(0); }
+      { (yyval.var_specs) = new vector<VarSpec*>(0); }
 #line 3149 "gecode/flatzinc/parser.tab.cpp"
     break;
 
   case 73: /* bool_init_list: bool_init_list_head list_tail  */
 #line 1516 "./gecode/flatzinc/parser.yxx"
-      { (yyval.varSpecVec) = (yyvsp[-1].varSpecVec); }
+      { (yyval.var_specs) = (yyvsp[-1].var_specs); }
 #line 3155 "gecode/flatzinc/parser.tab.cpp"
     break;
 
   case 74: /* bool_init_list_head: bool_init  */
 #line 1520 "./gecode/flatzinc/parser.yxx"
-      { (yyval.varSpecVec) = new vector<VarSpec*>(1); (*(yyval.varSpecVec))[0] = (yyvsp[0].varSpec); }
+      { (yyval.var_specs) = new vector<VarSpec*>(1); (*(yyval.var_specs))[0] = (yyvsp[0].var_spec); }
 #line 3161 "gecode/flatzinc/parser.tab.cpp"
     break;
 
   case 75: /* bool_init_list_head: bool_init_list_head ',' bool_init  */
 #line 1522 "./gecode/flatzinc/parser.yxx"
-      { (yyval.varSpecVec) = (yyvsp[-2].varSpecVec); (yyval.varSpecVec)->push_back((yyvsp[0].varSpec)); }
+      { (yyval.var_specs) = (yyvsp[-2].var_specs); (yyval.var_specs)->push_back((yyvsp[0].var_spec)); }
 #line 3167 "gecode/flatzinc/parser.tab.cpp"
     break;
 
   case 76: /* bool_var_array_literal: '[' bool_init_list ']'  */
 #line 1524 "./gecode/flatzinc/parser.yxx"
-                                                { (yyval.varSpecVec) = (yyvsp[-1].varSpecVec); }
+                                                { (yyval.var_specs) = (yyvsp[-1].var_specs); }
 #line 3173 "gecode/flatzinc/parser.tab.cpp"
     break;
 
   case 77: /* set_init: set_literal  */
 #line 1528 "./gecode/flatzinc/parser.yxx"
-      { (yyval.varSpec) = new SetVarSpec((yyvsp[0].setLit),false,false); }
+      { (yyval.var_spec) = new SetVarSpec((yyvsp[0].set_literal),false,false); }
 #line 3179 "gecode/flatzinc/parser.tab.cpp"
     break;
 
@@ -3183,16 +3183,16 @@ yyreduce:
       {
         ParserState* pp = static_cast<ParserState*>(parm);
         SymbolEntry e;
-        if (pp->symbols.get((yyvsp[0].sValue), e) && (e.t == ST_SETVAR || e.t == ST_SET))
-          (yyval.varSpec) = new SetVarSpec(Alias(e.i),false,false);
+        if (pp->symbols.get((yyvsp[0].string_value), e) && (e.t == ST_SETVAR || e.t == ST_SET))
+          (yyval.var_spec) = new SetVarSpec(Alias(e.i),false,false);
         else {
-          pp->err << "Error: undefined identifier for type set " << (yyvsp[0].sValue)
+          pp->err << "Error: undefined identifier for type set " << (yyvsp[0].string_value)
                   << " in line no. "
                   << yyget_lineno(pp->yyscanner) << std::endl;
-          pp->hadError = true;
-          (yyval.varSpec) = new SetVarSpec(Alias(0),false,false);
+          pp->had_error = true;
+          (yyval.var_spec) = new SetVarSpec(Alias(0),false,false);
         }
-        free((yyvsp[0].sValue));
+        free((yyvsp[0].string_value));
       }
 #line 3198 "gecode/flatzinc/parser.tab.cpp"
     break;
@@ -3202,100 +3202,100 @@ yyreduce:
       {
         SymbolEntry e;
         ParserState* pp = static_cast<ParserState*>(parm);
-        if (pp->symbols.get((yyvsp[-3].sValue), e) && e.t == ST_SETVARARRAY) {
-          yyassert(pp,(yyvsp[-1].iValue) > 0 && (yyvsp[-1].iValue) <= pp->arrays[e.i],
+        if (pp->symbols.get((yyvsp[-3].string_value), e) && e.t == ST_SETVARARRAY) {
+          yyassert(pp,(yyvsp[-1].int_value) > 0 && (yyvsp[-1].int_value) <= pp->arrays[e.i],
                    "array access out of bounds");
-          if (!pp->hadError)
-            (yyval.varSpec) = new SetVarSpec(Alias(pp->arrays[e.i+(yyvsp[-1].iValue)]),false,false);
+          if (!pp->had_error)
+            (yyval.var_spec) = new SetVarSpec(Alias(pp->arrays[e.i+(yyvsp[-1].int_value)]),false,false);
           else
-            (yyval.varSpec) = new SetVarSpec(Alias(0),false,false);
+            (yyval.var_spec) = new SetVarSpec(Alias(0),false,false);
         } else {
-          pp->err << "Error: undefined array identifier for type set " << (yyvsp[-3].sValue)
+          pp->err << "Error: undefined array identifier for type set " << (yyvsp[-3].string_value)
                   << " in line no. "
                   << yyget_lineno(pp->yyscanner) << std::endl;
-          pp->hadError = true;
-          (yyval.varSpec) = new SetVarSpec(Alias(0),false,false);
+          pp->had_error = true;
+          (yyval.var_spec) = new SetVarSpec(Alias(0),false,false);
         }
-        free((yyvsp[-3].sValue));
+        free((yyvsp[-3].string_value));
       }
 #line 3222 "gecode/flatzinc/parser.tab.cpp"
     break;
 
   case 80: /* set_init_list: %empty  */
 #line 1567 "./gecode/flatzinc/parser.yxx"
-      { (yyval.varSpecVec) = new vector<VarSpec*>(0); }
+      { (yyval.var_specs) = new vector<VarSpec*>(0); }
 #line 3228 "gecode/flatzinc/parser.tab.cpp"
     break;
 
   case 81: /* set_init_list: set_init_list_head list_tail  */
 #line 1569 "./gecode/flatzinc/parser.yxx"
-      { (yyval.varSpecVec) = (yyvsp[-1].varSpecVec); }
+      { (yyval.var_specs) = (yyvsp[-1].var_specs); }
 #line 3234 "gecode/flatzinc/parser.tab.cpp"
     break;
 
   case 82: /* set_init_list_head: set_init  */
 #line 1573 "./gecode/flatzinc/parser.yxx"
-      { (yyval.varSpecVec) = new vector<VarSpec*>(1); (*(yyval.varSpecVec))[0] = (yyvsp[0].varSpec); }
+      { (yyval.var_specs) = new vector<VarSpec*>(1); (*(yyval.var_specs))[0] = (yyvsp[0].var_spec); }
 #line 3240 "gecode/flatzinc/parser.tab.cpp"
     break;
 
   case 83: /* set_init_list_head: set_init_list_head ',' set_init  */
 #line 1575 "./gecode/flatzinc/parser.yxx"
-      { (yyval.varSpecVec) = (yyvsp[-2].varSpecVec); (yyval.varSpecVec)->push_back((yyvsp[0].varSpec)); }
+      { (yyval.var_specs) = (yyvsp[-2].var_specs); (yyval.var_specs)->push_back((yyvsp[0].var_spec)); }
 #line 3246 "gecode/flatzinc/parser.tab.cpp"
     break;
 
   case 84: /* set_var_array_literal: '[' set_init_list ']'  */
 #line 1578 "./gecode/flatzinc/parser.yxx"
-      { (yyval.varSpecVec) = (yyvsp[-1].varSpecVec); }
+      { (yyval.var_specs) = (yyvsp[-1].var_specs); }
 #line 3252 "gecode/flatzinc/parser.tab.cpp"
     break;
 
   case 85: /* vardecl_int_var_array_init: %empty  */
 #line 1582 "./gecode/flatzinc/parser.yxx"
-      { (yyval.oVarSpecVec) = Option<vector<VarSpec*>* >::none(); }
+      { (yyval.optional_var_specs) = Option<vector<VarSpec*>* >::none(); }
 #line 3258 "gecode/flatzinc/parser.tab.cpp"
     break;
 
   case 86: /* vardecl_int_var_array_init: '=' int_var_array_literal  */
 #line 1584 "./gecode/flatzinc/parser.yxx"
-      { (yyval.oVarSpecVec) = Option<vector<VarSpec*>* >::some((yyvsp[0].varSpecVec)); }
+      { (yyval.optional_var_specs) = Option<vector<VarSpec*>* >::some((yyvsp[0].var_specs)); }
 #line 3264 "gecode/flatzinc/parser.tab.cpp"
     break;
 
   case 87: /* vardecl_bool_var_array_init: %empty  */
 #line 1588 "./gecode/flatzinc/parser.yxx"
-      { (yyval.oVarSpecVec) = Option<vector<VarSpec*>* >::none(); }
+      { (yyval.optional_var_specs) = Option<vector<VarSpec*>* >::none(); }
 #line 3270 "gecode/flatzinc/parser.tab.cpp"
     break;
 
   case 88: /* vardecl_bool_var_array_init: '=' bool_var_array_literal  */
 #line 1590 "./gecode/flatzinc/parser.yxx"
-      { (yyval.oVarSpecVec) = Option<vector<VarSpec*>* >::some((yyvsp[0].varSpecVec)); }
+      { (yyval.optional_var_specs) = Option<vector<VarSpec*>* >::some((yyvsp[0].var_specs)); }
 #line 3276 "gecode/flatzinc/parser.tab.cpp"
     break;
 
   case 89: /* vardecl_float_var_array_init: %empty  */
 #line 1594 "./gecode/flatzinc/parser.yxx"
-      { (yyval.oVarSpecVec) = Option<vector<VarSpec*>* >::none(); }
+      { (yyval.optional_var_specs) = Option<vector<VarSpec*>* >::none(); }
 #line 3282 "gecode/flatzinc/parser.tab.cpp"
     break;
 
   case 90: /* vardecl_float_var_array_init: '=' float_var_array_literal  */
 #line 1596 "./gecode/flatzinc/parser.yxx"
-      { (yyval.oVarSpecVec) = Option<vector<VarSpec*>* >::some((yyvsp[0].varSpecVec)); }
+      { (yyval.optional_var_specs) = Option<vector<VarSpec*>* >::some((yyvsp[0].var_specs)); }
 #line 3288 "gecode/flatzinc/parser.tab.cpp"
     break;
 
   case 91: /* vardecl_set_var_array_init: %empty  */
 #line 1600 "./gecode/flatzinc/parser.yxx"
-      { (yyval.oVarSpecVec) = Option<vector<VarSpec*>* >::none(); }
+      { (yyval.optional_var_specs) = Option<vector<VarSpec*>* >::none(); }
 #line 3294 "gecode/flatzinc/parser.tab.cpp"
     break;
 
   case 92: /* vardecl_set_var_array_init: '=' set_var_array_literal  */
 #line 1602 "./gecode/flatzinc/parser.yxx"
-      { (yyval.oVarSpecVec) = Option<vector<VarSpec*>* >::some((yyvsp[0].varSpecVec)); }
+      { (yyval.optional_var_specs) = Option<vector<VarSpec*>* >::some((yyvsp[0].var_specs)); }
 #line 3300 "gecode/flatzinc/parser.tab.cpp"
     break;
 
@@ -3303,85 +3303,85 @@ yyreduce:
 #line 1606 "./gecode/flatzinc/parser.yxx"
       {
         ParserState *pp = static_cast<ParserState*>(parm);
-        std::unique_ptr<ConExpr> ce(new ConExpr((yyvsp[-4].sValue), (yyvsp[-2].argVec), (yyvsp[0].argVec)));
-        free((yyvsp[-4].sValue));
-        if (!pp->hadError) {
+        std::unique_ptr<ConExpr> ce(new ConExpr((yyvsp[-4].string_value), (yyvsp[-2].arg_nodes), (yyvsp[0].arg_nodes)));
+        free((yyvsp[-4].string_value));
+        if (!pp->had_error) {
           const std::string& cid = ce->id;
-          if (cid=="gecode_on_restart_status" && (yyvsp[-2].argVec)->a[0]->isIntVar()) {
-            pp->status_idx = getBaseIntVar(pp,(yyvsp[-2].argVec)->a[0]->getIntVar());
-          } else if (cid=="gecode_on_restart_complete" && (yyvsp[-2].argVec)->a[0]->isBoolVar()) {
-            pp->complete_idx = getBaseBoolVar(pp,(yyvsp[-2].argVec)->a[0]->getBoolVar());
-          } else if (cid=="gecode_on_restart_last_val_int" && (yyvsp[-2].argVec)->a[0]->isIntVar() && (yyvsp[-2].argVec)->a[1]->isIntVar()) {
-            int base0 = getBaseIntVar(pp,(yyvsp[-2].argVec)->a[0]->getIntVar());
-            int base1 = getBaseIntVar(pp,(yyvsp[-2].argVec)->a[1]->getIntVar());
+          if (cid=="gecode_on_restart_status" && (yyvsp[-2].arg_nodes)->a[0]->is_int_var()) {
+            pp->status_idx = get_base_int_var(pp,(yyvsp[-2].arg_nodes)->a[0]->get_int_var());
+          } else if (cid=="gecode_on_restart_complete" && (yyvsp[-2].arg_nodes)->a[0]->is_bool_var()) {
+            pp->complete_idx = get_base_bool_var(pp,(yyvsp[-2].arg_nodes)->a[0]->get_bool_var());
+          } else if (cid=="gecode_on_restart_last_val_int" && (yyvsp[-2].arg_nodes)->a[0]->is_int_var() && (yyvsp[-2].arg_nodes)->a[1]->is_int_var()) {
+            int base0 = get_base_int_var(pp,(yyvsp[-2].arg_nodes)->a[0]->get_int_var());
+            int base1 = get_base_int_var(pp,(yyvsp[-2].arg_nodes)->a[1]->get_int_var());
             pp->last_val_int.emplace_back(std::array<int, 2>{ base0, base1 });
-          } else if (cid=="gecode_on_restart_sol_int" && (yyvsp[-2].argVec)->a[0]->isIntVar() && (yyvsp[-2].argVec)->a[1]->isIntVar()) {
-            int base0 = getBaseIntVar(pp,(yyvsp[-2].argVec)->a[0]->getIntVar());
-            int base1 = getBaseIntVar(pp,(yyvsp[-2].argVec)->a[1]->getIntVar());
+          } else if (cid=="gecode_on_restart_sol_int" && (yyvsp[-2].arg_nodes)->a[0]->is_int_var() && (yyvsp[-2].arg_nodes)->a[1]->is_int_var()) {
+            int base0 = get_base_int_var(pp,(yyvsp[-2].arg_nodes)->a[0]->get_int_var());
+            int base1 = get_base_int_var(pp,(yyvsp[-2].arg_nodes)->a[1]->get_int_var());
             pp->sol_int.emplace_back(std::array<int, 2>{ base0, base1 });
-          } else if (cid=="gecode_on_restart_uniform_int" && (yyvsp[-2].argVec)->a[0]->isInt() && (yyvsp[-2].argVec)->a[1]->isInt() && (yyvsp[-2].argVec)->a[2]->isIntVar()) {
-            const int low = (yyvsp[-2].argVec)->a[0]->getInt();
-            const int high = (yyvsp[-2].argVec)->a[1]->getInt();
+          } else if (cid=="gecode_on_restart_uniform_int" && (yyvsp[-2].arg_nodes)->a[0]->is_int() && (yyvsp[-2].arg_nodes)->a[1]->is_int() && (yyvsp[-2].arg_nodes)->a[2]->is_int_var()) {
+            const int low = (yyvsp[-2].arg_nodes)->a[0]->get_int();
+            const int high = (yyvsp[-2].arg_nodes)->a[1]->get_int();
             if (low > high) {
               std::ostringstream oss;
               oss << "gecode_on_restart_uniform_int requires low (" << low
                   << ") <= high (" << high << ")";
               yyerror(pp, oss.str().c_str());
             } else {
-              int base = getBaseIntVar(pp,(yyvsp[-2].argVec)->a[2]->getIntVar());
+              int base = get_base_int_var(pp,(yyvsp[-2].arg_nodes)->a[2]->get_int_var());
               pp->uniform_int.emplace_back(std::array<int, 3>{ low, high, base });
             }
-          } else if (cid=="gecode_on_restart_last_val_bool" && (yyvsp[-2].argVec)->a[0]->isBoolVar() && (yyvsp[-2].argVec)->a[1]->isBoolVar()) {
-            int base0 = getBaseBoolVar(pp,(yyvsp[-2].argVec)->a[0]->getBoolVar());
-            int base1 = getBaseBoolVar(pp,(yyvsp[-2].argVec)->a[1]->getBoolVar());
+          } else if (cid=="gecode_on_restart_last_val_bool" && (yyvsp[-2].arg_nodes)->a[0]->is_bool_var() && (yyvsp[-2].arg_nodes)->a[1]->is_bool_var()) {
+            int base0 = get_base_bool_var(pp,(yyvsp[-2].arg_nodes)->a[0]->get_bool_var());
+            int base1 = get_base_bool_var(pp,(yyvsp[-2].arg_nodes)->a[1]->get_bool_var());
             pp->last_val_bool.emplace_back(std::array<int, 2>{ base0, base1 });
-          } else if (cid=="gecode_on_restart_sol_bool" && (yyvsp[-2].argVec)->a[0]->isBoolVar() && (yyvsp[-2].argVec)->a[1]->isBoolVar()) {
-            int base0 = getBaseBoolVar(pp,(yyvsp[-2].argVec)->a[0]->getBoolVar());
-            int base1 = getBaseBoolVar(pp,(yyvsp[-2].argVec)->a[1]->getBoolVar());
+          } else if (cid=="gecode_on_restart_sol_bool" && (yyvsp[-2].arg_nodes)->a[0]->is_bool_var() && (yyvsp[-2].arg_nodes)->a[1]->is_bool_var()) {
+            int base0 = get_base_bool_var(pp,(yyvsp[-2].arg_nodes)->a[0]->get_bool_var());
+            int base1 = get_base_bool_var(pp,(yyvsp[-2].arg_nodes)->a[1]->get_bool_var());
             pp->sol_bool.emplace_back(std::array<int, 2>{ base0, base1 });
 #ifdef GECODE_HAS_SET_VARS
-          } else if (cid=="gecode_on_restart_last_val_set" && (yyvsp[-2].argVec)->a[0]->isSetVar() && (yyvsp[-2].argVec)->a[1]->isSetVar()) {
-            int base0 = getBaseSetVar(pp,(yyvsp[-2].argVec)->a[0]->getSetVar());
-            int base1 = getBaseSetVar(pp,(yyvsp[-2].argVec)->a[1]->getSetVar());
+          } else if (cid=="gecode_on_restart_last_val_set" && (yyvsp[-2].arg_nodes)->a[0]->is_set_var() && (yyvsp[-2].arg_nodes)->a[1]->is_set_var()) {
+            int base0 = get_base_set_var(pp,(yyvsp[-2].arg_nodes)->a[0]->get_set_var());
+            int base1 = get_base_set_var(pp,(yyvsp[-2].arg_nodes)->a[1]->get_set_var());
             pp->last_val_set.emplace_back(std::array<int, 2>{ base0, base1 });
-          } else if (cid=="gecode_on_restart_sol_set" && (yyvsp[-2].argVec)->a[0]->isSetVar() && (yyvsp[-2].argVec)->a[1]->isSetVar()) {
-            int base0 = getBaseSetVar(pp,(yyvsp[-2].argVec)->a[0]->getSetVar());
-            int base1 = getBaseSetVar(pp,(yyvsp[-2].argVec)->a[1]->getSetVar());
+          } else if (cid=="gecode_on_restart_sol_set" && (yyvsp[-2].arg_nodes)->a[0]->is_set_var() && (yyvsp[-2].arg_nodes)->a[1]->is_set_var()) {
+            int base0 = get_base_set_var(pp,(yyvsp[-2].arg_nodes)->a[0]->get_set_var());
+            int base1 = get_base_set_var(pp,(yyvsp[-2].arg_nodes)->a[1]->get_set_var());
             pp->sol_set.emplace_back(std::array<int, 2>{ base0, base1 });
 #endif
 #ifdef GECODE_HAS_FLOAT_VARS
-          } else if (cid=="gecode_on_restart_last_val_float" && (yyvsp[-2].argVec)->a[0]->isFloatVar() && (yyvsp[-2].argVec)->a[1]->isFloatVar()) {
-            int base0 = getBaseFloatVar(pp,(yyvsp[-2].argVec)->a[0]->getFloatVar());
-            int base1 = getBaseFloatVar(pp,(yyvsp[-2].argVec)->a[1]->getFloatVar());
+          } else if (cid=="gecode_on_restart_last_val_float" && (yyvsp[-2].arg_nodes)->a[0]->is_float_var() && (yyvsp[-2].arg_nodes)->a[1]->is_float_var()) {
+            int base0 = get_base_float_var(pp,(yyvsp[-2].arg_nodes)->a[0]->get_float_var());
+            int base1 = get_base_float_var(pp,(yyvsp[-2].arg_nodes)->a[1]->get_float_var());
             pp->last_val_float.emplace_back(std::array<int, 2>{ base0, base1 });
-          } else if (cid=="gecode_on_restart_sol_float" && (yyvsp[-2].argVec)->a[0]->isFloatVar() && (yyvsp[-2].argVec)->a[1]->isFloatVar()) {
-            int base0 = getBaseFloatVar(pp,(yyvsp[-2].argVec)->a[0]->getFloatVar());
-            int base1 = getBaseFloatVar(pp,(yyvsp[-2].argVec)->a[1]->getFloatVar());
+          } else if (cid=="gecode_on_restart_sol_float" && (yyvsp[-2].arg_nodes)->a[0]->is_float_var() && (yyvsp[-2].arg_nodes)->a[1]->is_float_var()) {
+            int base0 = get_base_float_var(pp,(yyvsp[-2].arg_nodes)->a[0]->get_float_var());
+            int base1 = get_base_float_var(pp,(yyvsp[-2].arg_nodes)->a[1]->get_float_var());
             pp->sol_float.emplace_back(std::array<int, 2>{ base0, base1 });
-          } else if (cid=="gecode_on_restart_uniform_float" && (yyvsp[-2].argVec)->a[0]->isFloat() && (yyvsp[-2].argVec)->a[1]->isFloat() && (yyvsp[-2].argVec)->a[2]->isFloatVar()) {
-            int base = getBaseFloatVar(pp,(yyvsp[-2].argVec)->a[2]->getFloatVar());
-            pp->uniform_float.emplace_back( (yyvsp[-2].argVec)->a[0]->getFloat(), (yyvsp[-2].argVec)->a[1]->getFloat(), base );
+          } else if (cid=="gecode_on_restart_uniform_float" && (yyvsp[-2].arg_nodes)->a[0]->is_float() && (yyvsp[-2].arg_nodes)->a[1]->is_float() && (yyvsp[-2].arg_nodes)->a[2]->is_float_var()) {
+            int base = get_base_float_var(pp,(yyvsp[-2].arg_nodes)->a[2]->get_float_var());
+            pp->uniform_float.emplace_back( (yyvsp[-2].arg_nodes)->a[0]->get_float(), (yyvsp[-2].arg_nodes)->a[1]->get_float(), base );
 #endif
-          } else if (cid=="int_eq" && (yyvsp[-2].argVec)->a[0]->isIntVar() && (yyvsp[-2].argVec)->a[1]->isIntVar()) {
-            int base0 = getBaseIntVar(pp,(yyvsp[-2].argVec)->a[0]->getIntVar());
-            int base1 = getBaseIntVar(pp,(yyvsp[-2].argVec)->a[1]->getIntVar());
+          } else if (cid=="int_eq" && (yyvsp[-2].arg_nodes)->a[0]->is_int_var() && (yyvsp[-2].arg_nodes)->a[1]->is_int_var()) {
+            int base0 = get_base_int_var(pp,(yyvsp[-2].arg_nodes)->a[0]->get_int_var());
+            int base1 = get_base_int_var(pp,(yyvsp[-2].arg_nodes)->a[1]->get_int_var());
             if (base0 > base1) {
               std::swap(base0, base1);
             }
             if (base0==base1) {
               // do nothing, already aliased
             } else {
-              IntVarSpec* ivs1 = static_cast<IntVarSpec*>(pp->intvars[base1].second);
-              AST::SetLit* sl = NULL;
+              IntVarSpec* ivs1 = static_cast<IntVarSpec*>(pp->int_vars[base1].second);
+              AST::SetLit* sl = nullptr;
               if (ivs1->assigned) {
                 sl = new AST::SetLit(ivs1->i,ivs1->i);
               } else if (ivs1->domain()) {
-                sl = new AST::SetLit(ivs1->domain.some()->getSet());
+                sl = new AST::SetLit(ivs1->domain.some()->get_set());
               }
               if (sl) {
-                Option<AST::SetLit*> newdom = Option<AST::SetLit*>::some(sl);
-                addDomainConstraint(pp, "int_in",
-                                    new AST::IntVar(base0), newdom);
+                Option<AST::SetLit*> new_domain = Option<AST::SetLit*>::some(sl);
+                add_domain_constraint(pp, "int_in",
+                                    new AST::IntVar(base0), new_domain);
                 if (ivs1->domain())
                   delete ivs1->domain.some();
                 ivs1->domain = Option<AST::SetLit*>::none();
@@ -3389,26 +3389,26 @@ yyreduce:
               ivs1->alias = true;
               ivs1->i = base0;
             }
-          } else if (cid=="bool_eq" && (yyvsp[-2].argVec)->a[0]->isBoolVar() && (yyvsp[-2].argVec)->a[1]->isBoolVar()) {
-            int base0 = getBaseBoolVar(pp,(yyvsp[-2].argVec)->a[0]->getBoolVar());
-            int base1 = getBaseBoolVar(pp,(yyvsp[-2].argVec)->a[1]->getBoolVar());
+          } else if (cid=="bool_eq" && (yyvsp[-2].arg_nodes)->a[0]->is_bool_var() && (yyvsp[-2].arg_nodes)->a[1]->is_bool_var()) {
+            int base0 = get_base_bool_var(pp,(yyvsp[-2].arg_nodes)->a[0]->get_bool_var());
+            int base1 = get_base_bool_var(pp,(yyvsp[-2].arg_nodes)->a[1]->get_bool_var());
             if (base0 > base1) {
               std::swap(base0, base1);
             }
             if (base0==base1) {
               // do nothing, already aliased
             } else {
-              BoolVarSpec* ivs1 = static_cast<BoolVarSpec*>(pp->boolvars[base1].second);
-              AST::SetLit* sl = NULL;
+              BoolVarSpec* ivs1 = static_cast<BoolVarSpec*>(pp->bool_vars[base1].second);
+              AST::SetLit* sl = nullptr;
               if (ivs1->assigned) {
                 sl = new AST::SetLit(ivs1->i,ivs1->i);
               } else if (ivs1->domain()) {
-                sl = new AST::SetLit(ivs1->domain.some()->getSet());
+                sl = new AST::SetLit(ivs1->domain.some()->get_set());
               }
               if (sl) {
-                Option<AST::SetLit*> newdom = Option<AST::SetLit*>::some(sl);
-                addDomainConstraint(pp, "int_in",
-                                    new AST::BoolVar(base0), newdom);
+                Option<AST::SetLit*> new_domain = Option<AST::SetLit*>::some(sl);
+                add_domain_constraint(pp, "int_in",
+                                    new AST::BoolVar(base0), new_domain);
                 if (ivs1->domain())
                   delete ivs1->domain.some();
                 ivs1->domain = Option<AST::SetLit*>::none();
@@ -3416,57 +3416,57 @@ yyreduce:
               ivs1->alias = true;
               ivs1->i = base0;
             }
-          } else if (cid=="float_eq" && (yyvsp[-2].argVec)->a[0]->isFloatVar() && (yyvsp[-2].argVec)->a[1]->isFloatVar()) {
-            int base0 = getBaseFloatVar(pp,(yyvsp[-2].argVec)->a[0]->getFloatVar());
-            int base1 = getBaseFloatVar(pp,(yyvsp[-2].argVec)->a[1]->getFloatVar());
+          } else if (cid=="float_eq" && (yyvsp[-2].arg_nodes)->a[0]->is_float_var() && (yyvsp[-2].arg_nodes)->a[1]->is_float_var()) {
+            int base0 = get_base_float_var(pp,(yyvsp[-2].arg_nodes)->a[0]->get_float_var());
+            int base1 = get_base_float_var(pp,(yyvsp[-2].arg_nodes)->a[1]->get_float_var());
             if (base0 > base1) {
               std::swap(base0, base1);
             }
             if (base0==base1) {
               // do nothing, already aliased
             } else {
-              FloatVarSpec* ivs1 = static_cast<FloatVarSpec*>(pp->floatvars[base1].second);
+              FloatVarSpec* ivs1 = static_cast<FloatVarSpec*>(pp->float_vars[base1].second);
               ivs1->alias = true;
               ivs1->i = base0;
               if (ivs1->domain()) {
                 std::pair<double,double>* dom = new std::pair<double,double>(ivs1->domain.some());
-                addDomainConstraint(pp, new AST::FloatVar(base0), Option<std::pair<double,double>* >::some(dom));
+                add_domain_constraint(pp, new AST::FloatVar(base0), Option<std::pair<double,double>* >::some(dom));
                 ivs1->domain = Option<std::pair<double,double> >::none();
               }
             }
-          } else if (cid=="set_eq" && (yyvsp[-2].argVec)->a[0]->isSetVar() && (yyvsp[-2].argVec)->a[1]->isSetVar()) {
-            int base0 = getBaseSetVar(pp,(yyvsp[-2].argVec)->a[0]->getSetVar());
-            int base1 = getBaseSetVar(pp,(yyvsp[-2].argVec)->a[1]->getSetVar());
+          } else if (cid=="set_eq" && (yyvsp[-2].arg_nodes)->a[0]->is_set_var() && (yyvsp[-2].arg_nodes)->a[1]->is_set_var()) {
+            int base0 = get_base_set_var(pp,(yyvsp[-2].arg_nodes)->a[0]->get_set_var());
+            int base1 = get_base_set_var(pp,(yyvsp[-2].arg_nodes)->a[1]->get_set_var());
             if (base0 > base1) {
               std::swap(base0, base1);
             }
             if (base0==base1) {
               // do nothing, already aliased
             } else {
-              SetVarSpec* ivs1 = static_cast<SetVarSpec*>(pp->setvars[base1].second);
+              SetVarSpec* ivs1 = static_cast<SetVarSpec*>(pp->set_vars[base1].second);
               ivs1->alias = true;
               ivs1->i = base0;
-              if (ivs1->upperBound()) {
-                AST::SetLit* sl = new AST::SetLit(ivs1->upperBound.some()->getSet());
-                Option<AST::SetLit*> newdom = Option<AST::SetLit*>::some(sl);
+              if (ivs1->upper_bound()) {
+                AST::SetLit* sl = new AST::SetLit(ivs1->upper_bound.some()->get_set());
+                Option<AST::SetLit*> new_domain = Option<AST::SetLit*>::some(sl);
                 if (ivs1->assigned) {
-                  addDomainConstraint(pp, "set_eq",
-                                      new AST::SetVar(base0), newdom);
+                  add_domain_constraint(pp, "set_eq",
+                                      new AST::SetVar(base0), new_domain);
                 } else {
-                  addDomainConstraint(pp, "set_subset",
-                                      new AST::SetVar(base0), newdom);
+                  add_domain_constraint(pp, "set_subset",
+                                      new AST::SetVar(base0), new_domain);
                 }
-                delete ivs1->upperBound.some();
-                ivs1->upperBound = Option<AST::SetLit*>::none();
+                delete ivs1->upper_bound.some();
+                ivs1->upper_bound = Option<AST::SetLit*>::none();
               }
             }
           } else if ( (cid=="int_le" || cid=="int_lt" || cid=="int_ge" || cid=="int_gt"  ||
                        cid=="int_eq" || cid=="int_ne") &&
-                      ((yyvsp[-2].argVec)->a[0]->isInt() || (yyvsp[-2].argVec)->a[1]->isInt()) ) {
-            pp->domainConstraints.push_back(ce.get());
+                      ((yyvsp[-2].arg_nodes)->a[0]->is_int() || (yyvsp[-2].arg_nodes)->a[1]->is_int()) ) {
+            pp->domain_constraints.push_back(ce.get());
             ce.release();
-          } else if ( cid=="set_in" && ((yyvsp[-2].argVec)->a[0]->isSet() || (yyvsp[-2].argVec)->a[1]->isSet()) ) {
-            pp->domainConstraints.push_back(ce.get());
+          } else if ( cid=="set_in" && ((yyvsp[-2].arg_nodes)->a[0]->is_set() || (yyvsp[-2].arg_nodes)->a[1]->is_set()) ) {
+            pp->domain_constraints.push_back(ce.get());
             ce.release();
           } else {
             pp->constraints.push_back(ce.get());
@@ -3481,14 +3481,14 @@ yyreduce:
 #line 1781 "./gecode/flatzinc/parser.yxx"
       {
         ParserState *pp = static_cast<ParserState*>(parm);
-        std::unique_ptr<AST::Array> ann((yyvsp[-1].argVec));
-        initfg(pp);
-        if (!pp->hadError) {
+        std::unique_ptr<AST::Array> ann((yyvsp[-1].arg_nodes));
+        initialize_space(pp);
+        if (!pp->had_error) {
           try {
             pp->fg->solve(ann.get());
             ann.release();
           } catch (Gecode::FlatZinc::Error& e) {
-            yyerror(pp, e.toString().c_str());
+            yyerror(pp, e.to_string().c_str());
           }
         }
       }
@@ -3499,19 +3499,19 @@ yyreduce:
 #line 1795 "./gecode/flatzinc/parser.yxx"
       {
         ParserState *pp = static_cast<ParserState*>(parm);
-        std::unique_ptr<AST::Array> ann((yyvsp[-2].argVec));
-        initfg(pp);
-        if (!pp->hadError) {
+        std::unique_ptr<AST::Array> ann((yyvsp[-2].arg_nodes));
+        initialize_space(pp);
+        if (!pp->had_error) {
           try {
-            int v = (yyvsp[0].iValue) < 0 ? (-(yyvsp[0].iValue)-1) : (yyvsp[0].iValue);
-            bool vi = (yyvsp[0].iValue) >= 0;
-            if ((yyvsp[-1].bValue))
+            int v = (yyvsp[0].int_value) < 0 ? (-(yyvsp[0].int_value)-1) : (yyvsp[0].int_value);
+            bool vi = (yyvsp[0].int_value) >= 0;
+            if ((yyvsp[-1].bool_value))
               pp->fg->minimize(v,vi,ann.get());
             else
               pp->fg->maximize(v,vi,ann.get());
             ann.release();
           } catch (Gecode::FlatZinc::Error& e) {
-            yyerror(pp, e.toString().c_str());
+            yyerror(pp, e.to_string().c_str());
           }
         }
       }
@@ -3520,175 +3520,175 @@ yyreduce:
 
   case 96: /* int_ti_expr_tail: FZ_INT  */
 #line 1820 "./gecode/flatzinc/parser.yxx"
-      { (yyval.oSet) = Option<AST::SetLit* >::none(); }
+      { (yyval.optional_set) = Option<AST::SetLit* >::none(); }
 #line 3525 "gecode/flatzinc/parser.tab.cpp"
     break;
 
   case 97: /* int_ti_expr_tail: '{' int_list '}'  */
 #line 1822 "./gecode/flatzinc/parser.yxx"
-      { (yyval.oSet) = Option<AST::SetLit* >::some(new AST::SetLit(*(yyvsp[-1].setValue))); delete (yyvsp[-1].setValue); }
+      { (yyval.optional_set) = Option<AST::SetLit* >::some(new AST::SetLit(*(yyvsp[-1].set_values))); delete (yyvsp[-1].set_values); }
 #line 3531 "gecode/flatzinc/parser.tab.cpp"
     break;
 
   case 98: /* int_ti_expr_tail: FZ_INT_LIT FZ_DOTDOT FZ_INT_LIT  */
 #line 1824 "./gecode/flatzinc/parser.yxx"
       {
-        (yyval.oSet) = Option<AST::SetLit* >::some(new AST::SetLit((yyvsp[-2].iValue), (yyvsp[0].iValue)));
+        (yyval.optional_set) = Option<AST::SetLit* >::some(new AST::SetLit((yyvsp[-2].int_value), (yyvsp[0].int_value)));
       }
 #line 3539 "gecode/flatzinc/parser.tab.cpp"
     break;
 
   case 99: /* bool_ti_expr_tail: FZ_BOOL  */
 #line 1830 "./gecode/flatzinc/parser.yxx"
-      { (yyval.oSet) = Option<AST::SetLit* >::none(); }
+      { (yyval.optional_set) = Option<AST::SetLit* >::none(); }
 #line 3545 "gecode/flatzinc/parser.tab.cpp"
     break;
 
   case 100: /* bool_ti_expr_tail: '{' bool_list_head list_tail '}'  */
 #line 1832 "./gecode/flatzinc/parser.yxx"
-      { bool haveTrue = false;
-        bool haveFalse = false;
-        for (int i=(yyvsp[-2].setValue)->size(); i--;) {
-          haveTrue |= ((*(yyvsp[-2].setValue))[i] == 1);
-          haveFalse |= ((*(yyvsp[-2].setValue))[i] == 0);
+      { bool have_true = false;
+        bool have_false = false;
+        for (int i=(yyvsp[-2].set_values)->size(); i--;) {
+          have_true |= ((*(yyvsp[-2].set_values))[i] == 1);
+          have_false |= ((*(yyvsp[-2].set_values))[i] == 0);
         }
-        delete (yyvsp[-2].setValue);
-        (yyval.oSet) = Option<AST::SetLit* >::some(
-          new AST::SetLit(!haveFalse,haveTrue));
+        delete (yyvsp[-2].set_values);
+        (yyval.optional_set) = Option<AST::SetLit* >::some(
+          new AST::SetLit(!have_false,have_true));
       }
 #line 3560 "gecode/flatzinc/parser.tab.cpp"
     break;
 
   case 101: /* float_ti_expr_tail: FZ_FLOAT  */
 #line 1845 "./gecode/flatzinc/parser.yxx"
-      { (yyval.oPFloat) = Option<std::pair<double,double>* >::none(); }
+      { (yyval.optional_float_bounds) = Option<std::pair<double,double>* >::none(); }
 #line 3566 "gecode/flatzinc/parser.tab.cpp"
     break;
 
   case 102: /* float_ti_expr_tail: FZ_FLOAT_LIT FZ_DOTDOT FZ_FLOAT_LIT  */
 #line 1847 "./gecode/flatzinc/parser.yxx"
-      { std::pair<double,double>* dom = new std::pair<double,double>((yyvsp[-2].dValue),(yyvsp[0].dValue));
-        (yyval.oPFloat) = Option<std::pair<double,double>* >::some(dom); }
+      { std::pair<double,double>* dom = new std::pair<double,double>((yyvsp[-2].float_value),(yyvsp[0].float_value));
+        (yyval.optional_float_bounds) = Option<std::pair<double,double>* >::some(dom); }
 #line 3573 "gecode/flatzinc/parser.tab.cpp"
     break;
 
   case 103: /* set_literal: '{' int_list '}'  */
 #line 1856 "./gecode/flatzinc/parser.yxx"
-      { (yyval.setLit) = new AST::SetLit(*(yyvsp[-1].setValue)); delete (yyvsp[-1].setValue); }
+      { (yyval.set_literal) = new AST::SetLit(*(yyvsp[-1].set_values)); delete (yyvsp[-1].set_values); }
 #line 3579 "gecode/flatzinc/parser.tab.cpp"
     break;
 
   case 104: /* set_literal: FZ_INT_LIT FZ_DOTDOT FZ_INT_LIT  */
 #line 1858 "./gecode/flatzinc/parser.yxx"
-      { (yyval.setLit) = new AST::SetLit((yyvsp[-2].iValue), (yyvsp[0].iValue)); }
+      { (yyval.set_literal) = new AST::SetLit((yyvsp[-2].int_value), (yyvsp[0].int_value)); }
 #line 3585 "gecode/flatzinc/parser.tab.cpp"
     break;
 
   case 105: /* int_list: %empty  */
 #line 1864 "./gecode/flatzinc/parser.yxx"
-      { (yyval.setValue) = new vector<int>(0); }
+      { (yyval.set_values) = new vector<int>(0); }
 #line 3591 "gecode/flatzinc/parser.tab.cpp"
     break;
 
   case 106: /* int_list: int_list_head list_tail  */
 #line 1866 "./gecode/flatzinc/parser.yxx"
-      { (yyval.setValue) = (yyvsp[-1].setValue); }
+      { (yyval.set_values) = (yyvsp[-1].set_values); }
 #line 3597 "gecode/flatzinc/parser.tab.cpp"
     break;
 
   case 107: /* int_list_head: FZ_INT_LIT  */
 #line 1870 "./gecode/flatzinc/parser.yxx"
-      { (yyval.setValue) = new vector<int>(1); (*(yyval.setValue))[0] = (yyvsp[0].iValue); }
+      { (yyval.set_values) = new vector<int>(1); (*(yyval.set_values))[0] = (yyvsp[0].int_value); }
 #line 3603 "gecode/flatzinc/parser.tab.cpp"
     break;
 
   case 108: /* int_list_head: int_list_head ',' FZ_INT_LIT  */
 #line 1872 "./gecode/flatzinc/parser.yxx"
-      { (yyval.setValue) = (yyvsp[-2].setValue); (yyval.setValue)->push_back((yyvsp[0].iValue)); }
+      { (yyval.set_values) = (yyvsp[-2].set_values); (yyval.set_values)->push_back((yyvsp[0].int_value)); }
 #line 3609 "gecode/flatzinc/parser.tab.cpp"
     break;
 
   case 109: /* bool_list: %empty  */
 #line 1876 "./gecode/flatzinc/parser.yxx"
-      { (yyval.setValue) = new vector<int>(0); }
+      { (yyval.set_values) = new vector<int>(0); }
 #line 3615 "gecode/flatzinc/parser.tab.cpp"
     break;
 
   case 110: /* bool_list: bool_list_head list_tail  */
 #line 1878 "./gecode/flatzinc/parser.yxx"
-      { (yyval.setValue) = (yyvsp[-1].setValue); }
+      { (yyval.set_values) = (yyvsp[-1].set_values); }
 #line 3621 "gecode/flatzinc/parser.tab.cpp"
     break;
 
   case 111: /* bool_list_head: FZ_BOOL_LIT  */
 #line 1882 "./gecode/flatzinc/parser.yxx"
-      { (yyval.setValue) = new vector<int>(1); (*(yyval.setValue))[0] = (yyvsp[0].iValue); }
+      { (yyval.set_values) = new vector<int>(1); (*(yyval.set_values))[0] = (yyvsp[0].int_value); }
 #line 3627 "gecode/flatzinc/parser.tab.cpp"
     break;
 
   case 112: /* bool_list_head: bool_list_head ',' FZ_BOOL_LIT  */
 #line 1884 "./gecode/flatzinc/parser.yxx"
-      { (yyval.setValue) = (yyvsp[-2].setValue); (yyval.setValue)->push_back((yyvsp[0].iValue)); }
+      { (yyval.set_values) = (yyvsp[-2].set_values); (yyval.set_values)->push_back((yyvsp[0].int_value)); }
 #line 3633 "gecode/flatzinc/parser.tab.cpp"
     break;
 
   case 113: /* float_list: %empty  */
 #line 1888 "./gecode/flatzinc/parser.yxx"
-      { (yyval.floatSetValue) = new vector<double>(0); }
+      { (yyval.float_values) = new vector<double>(0); }
 #line 3639 "gecode/flatzinc/parser.tab.cpp"
     break;
 
   case 114: /* float_list: float_list_head list_tail  */
 #line 1890 "./gecode/flatzinc/parser.yxx"
-      { (yyval.floatSetValue) = (yyvsp[-1].floatSetValue); }
+      { (yyval.float_values) = (yyvsp[-1].float_values); }
 #line 3645 "gecode/flatzinc/parser.tab.cpp"
     break;
 
   case 115: /* float_list_head: FZ_FLOAT_LIT  */
 #line 1894 "./gecode/flatzinc/parser.yxx"
-      { (yyval.floatSetValue) = new vector<double>(1); (*(yyval.floatSetValue))[0] = (yyvsp[0].dValue); }
+      { (yyval.float_values) = new vector<double>(1); (*(yyval.float_values))[0] = (yyvsp[0].float_value); }
 #line 3651 "gecode/flatzinc/parser.tab.cpp"
     break;
 
   case 116: /* float_list_head: float_list_head ',' FZ_FLOAT_LIT  */
 #line 1896 "./gecode/flatzinc/parser.yxx"
-      { (yyval.floatSetValue) = (yyvsp[-2].floatSetValue); (yyval.floatSetValue)->push_back((yyvsp[0].dValue)); }
+      { (yyval.float_values) = (yyvsp[-2].float_values); (yyval.float_values)->push_back((yyvsp[0].float_value)); }
 #line 3657 "gecode/flatzinc/parser.tab.cpp"
     break;
 
   case 117: /* set_literal_list: %empty  */
 #line 1900 "./gecode/flatzinc/parser.yxx"
-      { (yyval.setValueList) = new vector<AST::SetLit>(0); }
+      { (yyval.set_value_list) = new vector<AST::SetLit>(0); }
 #line 3663 "gecode/flatzinc/parser.tab.cpp"
     break;
 
   case 118: /* set_literal_list: set_literal_list_head list_tail  */
 #line 1902 "./gecode/flatzinc/parser.yxx"
-      { (yyval.setValueList) = (yyvsp[-1].setValueList); }
+      { (yyval.set_value_list) = (yyvsp[-1].set_value_list); }
 #line 3669 "gecode/flatzinc/parser.tab.cpp"
     break;
 
   case 119: /* set_literal_list_head: set_literal  */
 #line 1906 "./gecode/flatzinc/parser.yxx"
-      { (yyval.setValueList) = new vector<AST::SetLit>(1); (*(yyval.setValueList))[0] = *(yyvsp[0].setLit); delete (yyvsp[0].setLit); }
+      { (yyval.set_value_list) = new vector<AST::SetLit>(1); (*(yyval.set_value_list))[0] = *(yyvsp[0].set_literal); delete (yyvsp[0].set_literal); }
 #line 3675 "gecode/flatzinc/parser.tab.cpp"
     break;
 
   case 120: /* set_literal_list_head: set_literal_list_head ',' set_literal  */
 #line 1908 "./gecode/flatzinc/parser.yxx"
-      { (yyval.setValueList) = (yyvsp[-2].setValueList); (yyval.setValueList)->push_back(*(yyvsp[0].setLit)); delete (yyvsp[0].setLit); }
+      { (yyval.set_value_list) = (yyvsp[-2].set_value_list); (yyval.set_value_list)->push_back(*(yyvsp[0].set_literal)); delete (yyvsp[0].set_literal); }
 #line 3681 "gecode/flatzinc/parser.tab.cpp"
     break;
 
   case 121: /* flat_expr_list: flat_expr  */
 #line 1916 "./gecode/flatzinc/parser.yxx"
-      { (yyval.argVec) = new AST::Array((yyvsp[0].arg)); }
+      { (yyval.arg_nodes) = new AST::Array((yyvsp[0].arg)); }
 #line 3687 "gecode/flatzinc/parser.tab.cpp"
     break;
 
   case 122: /* flat_expr_list: flat_expr_list ',' flat_expr  */
 #line 1918 "./gecode/flatzinc/parser.yxx"
-      { (yyval.argVec) = (yyvsp[-2].argVec); (yyval.argVec)->append((yyvsp[0].arg)); }
+      { (yyval.arg_nodes) = (yyvsp[-2].arg_nodes); (yyval.arg_nodes)->append((yyvsp[0].arg)); }
 #line 3693 "gecode/flatzinc/parser.tab.cpp"
     break;
 
@@ -3700,43 +3700,43 @@ yyreduce:
 
   case 124: /* flat_expr: '[' non_array_expr_list ']'  */
 #line 1924 "./gecode/flatzinc/parser.yxx"
-      { (yyval.arg) = (yyvsp[-1].argVec); }
+      { (yyval.arg) = (yyvsp[-1].arg_nodes); }
 #line 3705 "gecode/flatzinc/parser.tab.cpp"
     break;
 
   case 125: /* non_array_expr_opt: %empty  */
 #line 1928 "./gecode/flatzinc/parser.yxx"
-      { (yyval.oArg) = Option<AST::Node*>::none(); }
+      { (yyval.optional_arg) = Option<AST::Node*>::none(); }
 #line 3711 "gecode/flatzinc/parser.tab.cpp"
     break;
 
   case 126: /* non_array_expr_opt: '=' non_array_expr  */
 #line 1930 "./gecode/flatzinc/parser.yxx"
-      { (yyval.oArg) = Option<AST::Node*>::some((yyvsp[0].arg)); }
+      { (yyval.optional_arg) = Option<AST::Node*>::some((yyvsp[0].arg)); }
 #line 3717 "gecode/flatzinc/parser.tab.cpp"
     break;
 
   case 127: /* non_array_expr: FZ_BOOL_LIT  */
 #line 1934 "./gecode/flatzinc/parser.yxx"
-      { (yyval.arg) = new AST::BoolLit((yyvsp[0].iValue)); }
+      { (yyval.arg) = new AST::BoolLit((yyvsp[0].int_value)); }
 #line 3723 "gecode/flatzinc/parser.tab.cpp"
     break;
 
   case 128: /* non_array_expr: FZ_INT_LIT  */
 #line 1936 "./gecode/flatzinc/parser.yxx"
-      { (yyval.arg) = new AST::IntLit((yyvsp[0].iValue)); }
+      { (yyval.arg) = new AST::IntLit((yyvsp[0].int_value)); }
 #line 3729 "gecode/flatzinc/parser.tab.cpp"
     break;
 
   case 129: /* non_array_expr: FZ_FLOAT_LIT  */
 #line 1938 "./gecode/flatzinc/parser.yxx"
-      { (yyval.arg) = new AST::FloatLit((yyvsp[0].dValue)); }
+      { (yyval.arg) = new AST::FloatLit((yyvsp[0].float_value)); }
 #line 3735 "gecode/flatzinc/parser.tab.cpp"
     break;
 
   case 130: /* non_array_expr: set_literal  */
 #line 1940 "./gecode/flatzinc/parser.yxx"
-      { (yyval.arg) = (yyvsp[0].setLit); }
+      { (yyval.arg) = (yyvsp[0].set_literal); }
 #line 3741 "gecode/flatzinc/parser.tab.cpp"
     break;
 
@@ -3745,7 +3745,7 @@ yyreduce:
       {
         ParserState* pp = static_cast<ParserState*>(parm);
         SymbolEntry e;
-        if (pp->symbols.get((yyvsp[0].sValue), e)) {
+        if (pp->symbols.get((yyvsp[0].string_value), e)) {
           switch (e.t) {
           case ST_INTVARARRAY:
             {
@@ -3800,7 +3800,7 @@ yyreduce:
               AST::Array *v = new AST::Array(pp->arrays[e.i]);
               int idx = pp->arrays[e.i+1];
               for (int i=pp->arrays[e.i]; i--;)
-                v->a[i] = new AST::SetLit(pp->setvals[idx+i]);
+                v->a[i] = new AST::SetLit(pp->set_values[idx+i]);
               (yyval.arg) = v;
             }
             break;
@@ -3809,7 +3809,7 @@ yyreduce:
               AST::Array *v = new AST::Array(pp->arrays[e.i]);
               int idx = pp->arrays[e.i+1];
               for (int i=pp->arrays[e.i]; i--;)
-                v->a[i] = new AST::FloatLit(pp->floatvals[idx+i]);
+                v->a[i] = new AST::FloatLit(pp->float_values[idx+i]);
               (yyval.arg) = v;
             }
             break;
@@ -3820,22 +3820,22 @@ yyreduce:
             (yyval.arg) = new AST::BoolLit(e.i);
             break;
           case ST_FLOAT:
-            (yyval.arg) = new AST::FloatLit(pp->floatvals[e.i]);
+            (yyval.arg) = new AST::FloatLit(pp->float_values[e.i]);
             break;
           case ST_SET:
-            (yyval.arg) = new AST::SetLit(pp->setvals[e.i]);
+            (yyval.arg) = new AST::SetLit(pp->set_values[e.i]);
             break;
           default:
-            (yyval.arg) = getVarRefArg(pp,(yyvsp[0].sValue));
+            (yyval.arg) = get_var_ref_arg(pp,(yyvsp[0].string_value));
           }
         } else {
-          pp->err << "Error: undefined identifier " << (yyvsp[0].sValue)
+          pp->err << "Error: undefined identifier " << (yyvsp[0].string_value)
                   << " in line no. "
                   << yyget_lineno(pp->yyscanner) << std::endl;
-          pp->hadError = true;
-          (yyval.arg) = NULL;
+          pp->had_error = true;
+          (yyval.arg) = nullptr;
         }
-        free((yyvsp[0].sValue));
+        free((yyvsp[0].string_value));
       }
 #line 3841 "gecode/flatzinc/parser.tab.cpp"
     break;
@@ -3845,38 +3845,38 @@ yyreduce:
       {
         ParserState* pp = static_cast<ParserState*>(parm);
         int i = -1;
-        yyassert(pp, (yyvsp[-1].arg)->isInt(i), "Non-integer array index");
-        if (!pp->hadError)
-          (yyval.arg) = getArrayElement(static_cast<ParserState*>(parm),(yyvsp[-3].sValue),i,false);
+        yyassert(pp, (yyvsp[-1].arg)->is_int(i), "Non-integer array index");
+        if (!pp->had_error)
+          (yyval.arg) = get_array_element(static_cast<ParserState*>(parm),(yyvsp[-3].string_value),i,false);
         else
           (yyval.arg) = new AST::IntLit(0); // keep things consistent
         delete (yyvsp[-1].arg);
-        free((yyvsp[-3].sValue));
+        free((yyvsp[-3].string_value));
       }
 #line 3857 "gecode/flatzinc/parser.tab.cpp"
     break;
 
   case 133: /* non_array_expr_list: %empty  */
 #line 2052 "./gecode/flatzinc/parser.yxx"
-      { (yyval.argVec) = new AST::Array(0); }
+      { (yyval.arg_nodes) = new AST::Array(0); }
 #line 3863 "gecode/flatzinc/parser.tab.cpp"
     break;
 
   case 134: /* non_array_expr_list: non_array_expr_list_head list_tail  */
 #line 2054 "./gecode/flatzinc/parser.yxx"
-      { (yyval.argVec) = (yyvsp[-1].argVec); }
+      { (yyval.arg_nodes) = (yyvsp[-1].arg_nodes); }
 #line 3869 "gecode/flatzinc/parser.tab.cpp"
     break;
 
   case 135: /* non_array_expr_list_head: non_array_expr  */
 #line 2058 "./gecode/flatzinc/parser.yxx"
-      { (yyval.argVec) = new AST::Array((yyvsp[0].arg)); }
+      { (yyval.arg_nodes) = new AST::Array((yyvsp[0].arg)); }
 #line 3875 "gecode/flatzinc/parser.tab.cpp"
     break;
 
   case 136: /* non_array_expr_list_head: non_array_expr_list_head ',' non_array_expr  */
 #line 2060 "./gecode/flatzinc/parser.yxx"
-      { (yyval.argVec) = (yyvsp[-2].argVec); (yyval.argVec)->append((yyvsp[0].arg)); }
+      { (yyval.arg_nodes) = (yyvsp[-2].arg_nodes); (yyval.arg_nodes)->append((yyvsp[0].arg)); }
 #line 3881 "gecode/flatzinc/parser.tab.cpp"
     break;
 
@@ -3885,35 +3885,35 @@ yyreduce:
       {
         ParserState *pp = static_cast<ParserState*>(parm);
         SymbolEntry e;
-        bool haveSym = pp->symbols.get((yyvsp[0].sValue),e);
-        if (haveSym) {
+        bool have_symbol = pp->symbols.get((yyvsp[0].string_value),e);
+        if (have_symbol) {
           switch (e.t) {
           case ST_INTVAR:
-            (yyval.iValue) = e.i;
+            (yyval.int_value) = e.i;
             break;
           case ST_FLOATVAR:
-            (yyval.iValue) = -e.i-1;
+            (yyval.int_value) = -e.i-1;
             break;
           case ST_INT:
           case ST_FLOAT:
-            pp->intvars.push_back(varspec("OBJ_CONST_INTRODUCED",
+            pp->int_vars.push_back(NamedVarSpec("OBJ_CONST_INTRODUCED",
               new IntVarSpec(0,true,false)));
-            (yyval.iValue) = pp->intvars.size()-1;
+            (yyval.int_value) = pp->int_vars.size()-1;
             break;
           default:
-            pp->err << "Error: unknown int or float variable " << (yyvsp[0].sValue)
+            pp->err << "Error: unknown int or float variable " << (yyvsp[0].string_value)
                     << " in line no. "
                     << yyget_lineno(pp->yyscanner) << std::endl;
-            pp->hadError = true;
+            pp->had_error = true;
             break;
           }
         } else {
-          pp->err << "Error: unknown int or float variable " << (yyvsp[0].sValue)
+          pp->err << "Error: unknown int or float variable " << (yyvsp[0].string_value)
                   << " in line no. "
                   << yyget_lineno(pp->yyscanner) << std::endl;
-          pp->hadError = true;
+          pp->had_error = true;
         }
-        free((yyvsp[0].sValue));
+        free((yyvsp[0].string_value));
       }
 #line 3919 "gecode/flatzinc/parser.tab.cpp"
     break;
@@ -3922,9 +3922,9 @@ yyreduce:
 #line 2102 "./gecode/flatzinc/parser.yxx"
       {
         ParserState *pp = static_cast<ParserState*>(parm);
-        pp->intvars.push_back(varspec("OBJ_CONST_INTRODUCED",
+        pp->int_vars.push_back(NamedVarSpec("OBJ_CONST_INTRODUCED",
           new IntVarSpec(0,true,false)));
-        (yyval.iValue) = pp->intvars.size()-1;
+        (yyval.int_value) = pp->int_vars.size()-1;
       }
 #line 3930 "gecode/flatzinc/parser.tab.cpp"
     break;
@@ -3933,9 +3933,9 @@ yyreduce:
 #line 2109 "./gecode/flatzinc/parser.yxx"
       {
         ParserState *pp = static_cast<ParserState*>(parm);
-        pp->intvars.push_back(varspec("OBJ_CONST_INTRODUCED",
+        pp->int_vars.push_back(NamedVarSpec("OBJ_CONST_INTRODUCED",
           new IntVarSpec(0,true,false)));
-        (yyval.iValue) = pp->intvars.size()-1;
+        (yyval.int_value) = pp->int_vars.size()-1;
       }
 #line 3941 "gecode/flatzinc/parser.tab.cpp"
     break;
@@ -3945,57 +3945,57 @@ yyreduce:
       {
         SymbolEntry e;
         ParserState *pp = static_cast<ParserState*>(parm);
-        if ( (!pp->symbols.get((yyvsp[-3].sValue), e)) ||
+        if ( (!pp->symbols.get((yyvsp[-3].string_value), e)) ||
              (e.t != ST_INTVARARRAY && e.t != ST_FLOATVARARRAY)) {
-          pp->err << "Error: unknown int or float variable array " << (yyvsp[-3].sValue)
+          pp->err << "Error: unknown int or float variable array " << (yyvsp[-3].string_value)
                   << " in line no. "
                   << yyget_lineno(pp->yyscanner) << std::endl;
-          pp->hadError = true;
+          pp->had_error = true;
         }
-        if ((yyvsp[-1].iValue) == 0 || (yyvsp[-1].iValue) > pp->arrays[e.i]) {
-          pp->err << "Error: array index out of bounds for array " << (yyvsp[-3].sValue)
+        if ((yyvsp[-1].int_value) == 0 || (yyvsp[-1].int_value) > pp->arrays[e.i]) {
+          pp->err << "Error: array index out of bounds for array " << (yyvsp[-3].string_value)
                   << " in line no. "
                   << yyget_lineno(pp->yyscanner) << std::endl;
-          pp->hadError = true;
+          pp->had_error = true;
         } else {
           if (e.t == ST_INTVARARRAY)
-            (yyval.iValue) = pp->arrays[e.i+(yyvsp[-1].iValue)];
+            (yyval.int_value) = pp->arrays[e.i+(yyvsp[-1].int_value)];
           else
-            (yyval.iValue) = -pp->arrays[e.i+(yyvsp[-1].iValue)]-1;
+            (yyval.int_value) = -pp->arrays[e.i+(yyvsp[-1].int_value)]-1;
         }
-        free((yyvsp[-3].sValue));
+        free((yyvsp[-3].string_value));
       }
 #line 3969 "gecode/flatzinc/parser.tab.cpp"
     break;
 
   case 143: /* annotations: %empty  */
 #line 2150 "./gecode/flatzinc/parser.yxx"
-      { (yyval.argVec) = NULL; }
+      { (yyval.arg_nodes) = nullptr; }
 #line 3975 "gecode/flatzinc/parser.tab.cpp"
     break;
 
   case 144: /* annotations: annotations_head  */
 #line 2152 "./gecode/flatzinc/parser.yxx"
-      { (yyval.argVec) = (yyvsp[0].argVec); }
+      { (yyval.arg_nodes) = (yyvsp[0].arg_nodes); }
 #line 3981 "gecode/flatzinc/parser.tab.cpp"
     break;
 
   case 145: /* annotations_head: FZ_COLONCOLON annotation  */
 #line 2156 "./gecode/flatzinc/parser.yxx"
-      { (yyval.argVec) = new AST::Array((yyvsp[0].arg)); }
+      { (yyval.arg_nodes) = new AST::Array((yyvsp[0].arg)); }
 #line 3987 "gecode/flatzinc/parser.tab.cpp"
     break;
 
   case 146: /* annotations_head: annotations_head FZ_COLONCOLON annotation  */
 #line 2158 "./gecode/flatzinc/parser.yxx"
-      { (yyval.argVec) = (yyvsp[-2].argVec); (yyval.argVec)->append((yyvsp[0].arg)); }
+      { (yyval.arg_nodes) = (yyvsp[-2].arg_nodes); (yyval.arg_nodes)->append((yyvsp[0].arg)); }
 #line 3993 "gecode/flatzinc/parser.tab.cpp"
     break;
 
   case 147: /* annotation: FZ_ID '(' annotation_list ')'  */
 #line 2162 "./gecode/flatzinc/parser.yxx"
       {
-        (yyval.arg) = new AST::Call((yyvsp[-3].sValue), AST::extractSingleton((yyvsp[-1].arg))); free((yyvsp[-3].sValue));
+        (yyval.arg) = new AST::Call((yyvsp[-3].string_value), AST::extract_singleton((yyvsp[-1].arg))); free((yyvsp[-3].string_value));
       }
 #line 4001 "gecode/flatzinc/parser.tab.cpp"
     break;
@@ -4038,25 +4038,25 @@ yyreduce:
 
   case 156: /* ann_non_array_expr: FZ_BOOL_LIT  */
 #line 2186 "./gecode/flatzinc/parser.yxx"
-      { (yyval.arg) = new AST::BoolLit((yyvsp[0].iValue)); }
+      { (yyval.arg) = new AST::BoolLit((yyvsp[0].int_value)); }
 #line 4043 "gecode/flatzinc/parser.tab.cpp"
     break;
 
   case 157: /* ann_non_array_expr: FZ_INT_LIT  */
 #line 2188 "./gecode/flatzinc/parser.yxx"
-      { (yyval.arg) = new AST::IntLit((yyvsp[0].iValue)); }
+      { (yyval.arg) = new AST::IntLit((yyvsp[0].int_value)); }
 #line 4049 "gecode/flatzinc/parser.tab.cpp"
     break;
 
   case 158: /* ann_non_array_expr: FZ_FLOAT_LIT  */
 #line 2190 "./gecode/flatzinc/parser.yxx"
-      { (yyval.arg) = new AST::FloatLit((yyvsp[0].dValue)); }
+      { (yyval.arg) = new AST::FloatLit((yyvsp[0].float_value)); }
 #line 4055 "gecode/flatzinc/parser.tab.cpp"
     break;
 
   case 159: /* ann_non_array_expr: set_literal  */
 #line 2192 "./gecode/flatzinc/parser.yxx"
-      { (yyval.arg) = (yyvsp[0].setLit); }
+      { (yyval.arg) = (yyvsp[0].set_literal); }
 #line 4061 "gecode/flatzinc/parser.tab.cpp"
     break;
 
@@ -4065,16 +4065,16 @@ yyreduce:
       {
         ParserState* pp = static_cast<ParserState*>(parm);
         SymbolEntry e;
-        bool gotSymbol = false;
-        if (pp->symbols.get((yyvsp[0].sValue), e)) {
-          gotSymbol = true;
+        bool got_symbol = false;
+        if (pp->symbols.get((yyvsp[0].string_value), e)) {
+          got_symbol = true;
           switch (e.t) {
           case ST_INTVARARRAY:
             {
               AST::Array *v = new AST::Array(pp->arrays[e.i]);
               for (int i=pp->arrays[e.i]; i--;) {
                 std::ostringstream oss;
-                oss << (yyvsp[0].sValue) << "["<<(i+1)<<"]";
+                oss << (yyvsp[0].string_value) << "["<<(i+1)<<"]";
                 v->a[i] = new AST::IntVar(pp->arrays[e.i+i+1], oss.str());
               }
               (yyval.arg) = v;
@@ -4085,7 +4085,7 @@ yyreduce:
               AST::Array *v = new AST::Array(pp->arrays[e.i]);
               for (int i=pp->arrays[e.i]; i--;) {
                 std::ostringstream oss;
-                oss << (yyvsp[0].sValue) << "["<<(i+1)<<"]";
+                oss << (yyvsp[0].string_value) << "["<<(i+1)<<"]";
                 v->a[i] = new AST::BoolVar(pp->arrays[e.i+i+1], oss.str());
               }
               (yyval.arg) = v;
@@ -4096,7 +4096,7 @@ yyreduce:
               AST::Array *v = new AST::Array(pp->arrays[e.i]);
               for (int i=pp->arrays[e.i]; i--;) {
                 std::ostringstream oss;
-                oss << (yyvsp[0].sValue) << "["<<(i+1)<<"]";
+                oss << (yyvsp[0].string_value) << "["<<(i+1)<<"]";
                 v->a[i] = new AST::FloatVar(pp->arrays[e.i+i+1], oss.str());
               }
               (yyval.arg) = v;
@@ -4107,7 +4107,7 @@ yyreduce:
               AST::Array *v = new AST::Array(pp->arrays[e.i]);
               for (int i=pp->arrays[e.i]; i--;) {
                 std::ostringstream oss;
-                oss << (yyvsp[0].sValue) << "["<<(i+1)<<"]";
+                oss << (yyvsp[0].string_value) << "["<<(i+1)<<"]";
                 v->a[i] = new AST::SetVar(pp->arrays[e.i+i+1], oss.str());
               }
               (yyval.arg) = v;
@@ -4134,7 +4134,7 @@ yyreduce:
               AST::Array *v = new AST::Array(pp->arrays[e.i]);
               int idx = pp->arrays[e.i+1];
               for (int i=pp->arrays[e.i]; i--;)
-                v->a[i] = new AST::SetLit(pp->setvals[idx+i]);
+                v->a[i] = new AST::SetLit(pp->set_values[idx+i]);
               (yyval.arg) = v;
             }
             break;
@@ -4143,7 +4143,7 @@ yyreduce:
               AST::Array *v = new AST::Array(pp->arrays[e.i]);
               int idx = pp->arrays[e.i+1];
               for (int i=pp->arrays[e.i]; i--;)
-                v->a[i] = new AST::FloatLit(pp->floatvals[idx+i]);
+                v->a[i] = new AST::FloatLit(pp->float_values[idx+i]);
               (yyval.arg) = v;
             }
             break;
@@ -4154,18 +4154,18 @@ yyreduce:
             (yyval.arg) = new AST::BoolLit(e.i);
             break;
           case ST_FLOAT:
-            (yyval.arg) = new AST::FloatLit(pp->floatvals[e.i]);
+            (yyval.arg) = new AST::FloatLit(pp->float_values[e.i]);
             break;
           case ST_SET:
-            (yyval.arg) = new AST::SetLit(pp->setvals[e.i]);
+            (yyval.arg) = new AST::SetLit(pp->set_values[e.i]);
             break;
           default:
-            gotSymbol = false;
+            got_symbol = false;
           }
         }
-        if (!gotSymbol)
-          (yyval.arg) = getVarRefArg(pp,(yyvsp[0].sValue),true);
-        free((yyvsp[0].sValue));
+        if (!got_symbol)
+          (yyval.arg) = get_var_ref_arg(pp,(yyvsp[0].string_value),true);
+        free((yyvsp[0].string_value));
       }
 #line 4171 "gecode/flatzinc/parser.tab.cpp"
     break;
@@ -4175,13 +4175,13 @@ yyreduce:
       {
         ParserState* pp = static_cast<ParserState*>(parm);
         int i = -1;
-        yyassert(pp, (yyvsp[-1].arg)->isInt(i), "Non-integer array index");
-        if (!pp->hadError)
-          (yyval.arg) = getArrayElement(static_cast<ParserState*>(parm),(yyvsp[-3].sValue),i,true);
+        yyassert(pp, (yyvsp[-1].arg)->is_int(i), "Non-integer array index");
+        if (!pp->had_error)
+          (yyval.arg) = get_array_element(static_cast<ParserState*>(parm),(yyvsp[-3].string_value),i,true);
         else
           (yyval.arg) = new AST::IntLit(0); // keep things consistent
         delete (yyvsp[-1].arg);
-        free((yyvsp[-3].sValue));
+        free((yyvsp[-3].string_value));
       }
 #line 4187 "gecode/flatzinc/parser.tab.cpp"
     break;
@@ -4189,8 +4189,8 @@ yyreduce:
   case 162: /* ann_non_array_expr: FZ_STRING_LIT  */
 #line 2312 "./gecode/flatzinc/parser.yxx"
       {
-        (yyval.arg) = new AST::String((yyvsp[0].sValue));
-        free((yyvsp[0].sValue));
+        (yyval.arg) = new AST::String((yyvsp[0].string_value));
+        free((yyvsp[0].string_value));
       }
 #line 4196 "gecode/flatzinc/parser.tab.cpp"
     break;

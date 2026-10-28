@@ -143,37 +143,37 @@ namespace Gecode { namespace CPProfiler {
 
     public:
         bool
-        isNode(void) const {
+        is_node(void) const {
             return _type == MsgType::NODE;
         }
         bool
-        isDone(void) const {
+        is_done(void) const {
             return _type == MsgType::DONE;
         }
         bool
-        isStart(void) const {
+        is_start(void) const {
             return _type == MsgType::START;
         }
         bool
-        isRestart(void) const {
+        is_restart(void) const {
             return _type == MsgType::RESTART;
         }
 
         NodeUID
-        nodeUID(void) const {
+        node_uid(void) const {
             return _node;
         }
         void
-        set_nodeUID(const NodeUID& n) {
+        set_node_uid(const NodeUID& n) {
             _node = n;
         }
 
         NodeUID
-        parentUID(void) const {
+        parent_uid(void) const {
             return _parent;
         }
         void
-        set_parentUID(const NodeUID& p) {
+        set_parent_uid(const NodeUID& p) {
             _parent = p;
         }
 
@@ -293,12 +293,12 @@ namespace Gecode { namespace CPProfiler {
         typedef char* iter;
 
         static void
-        serializeType(std::vector<char>& data, MsgType f) {
+        serialize_type(std::vector<char>& data, MsgType f) {
             data.push_back(static_cast<char>(f));
         }
 
         static void
-        serializeField(std::vector<char>& data, Field f) {
+        serialize_field(std::vector<char>& data, Field f) {
             data.push_back(static_cast<char>(f));
         }
 
@@ -324,21 +324,21 @@ namespace Gecode { namespace CPProfiler {
         }
 
         static MsgType
-        deserializeMsgType(iter& it) {
+        deserialize_msg_type(iter& it) {
             auto m = static_cast<MsgType>(*it);
             ++it;
             return m;
         }
 
         static Field
-        deserializeField(iter& it) {
+        deserialize_field(iter& it) {
             auto f = static_cast<Field>(*it);
             ++it;
             return f;
         }
 
         static int32_t
-        deserializeInt(iter& it) {
+        deserialize_int(iter& it) {
             auto b1 = static_cast<uint32_t>(reinterpret_cast<uint8_t&>(*it++));
             auto b2 = static_cast<uint32_t>(reinterpret_cast<uint8_t&>(*it++));
             auto b3 = static_cast<uint32_t>(reinterpret_cast<uint8_t&>(*it++));
@@ -348,16 +348,16 @@ namespace Gecode { namespace CPProfiler {
         }
 
         static NodeStatus
-        deserializeStatus(iter& it) {
+        deserialize_status(iter& it) {
             auto f = static_cast<NodeStatus>(*it);
             ++it;
             return f;
         }
 
         static std::string
-        deserializeString(iter& it) {
+        deserialize_string(iter& it) {
             std::string result;
-            int32_t size = deserializeInt(it);
+            int32_t size = deserialize_int(it);
             result.reserve(static_cast<size_t>(size));
             for (int32_t i = 0; i < size; i++) {
                 result += *it;
@@ -368,12 +368,12 @@ namespace Gecode { namespace CPProfiler {
 
     public:
         Message&
-        makeNode(NodeUID node, NodeUID parent, int32_t alt, int32_t kids, NodeStatus status) {
+        make_node(NodeUID node, NodeUID parent, int32_t alt, int32_t kids, NodeStatus status) {
             msg.reset();
             msg.set_type(MsgType::NODE);
 
-            msg.set_nodeUID(node);
-            msg.set_parentUID(parent);
+            msg.set_node_uid(node);
+            msg.set_parent_uid(parent);
 
             msg.set_alt(alt);
             msg.set_kids(kids);
@@ -383,7 +383,7 @@ namespace Gecode { namespace CPProfiler {
         }
 
         void
-        makeStart(const std::string& info) {
+        make_start(const std::string& info) {
             msg.reset();
             msg.set_type(MsgType::START);
             msg.set_version(PROFILER_PROTOCOL_VERSION);
@@ -391,14 +391,14 @@ namespace Gecode { namespace CPProfiler {
         }
 
         void
-        makeRestart(const std::string& info) {
+        make_restart(const std::string& info) {
             msg.reset();
             msg.set_type(MsgType::RESTART);
             msg.set_info(info); /// info contains restart_id (-1 default)
         }
 
         void
-        makeDone(void) {
+        make_done(void) {
             msg.reset();
             msg.set_type(MsgType::DONE);
         }
@@ -411,20 +411,20 @@ namespace Gecode { namespace CPProfiler {
         std::vector<char>
         serialize(void) const {
             std::vector<char> data;
-            size_t dataSize = 1 + (msg.isNode() ? 4 * 8 + 1 : 0) + (msg.has_label() ? 1 + 4 + msg.label().size() : 0) +
-                              (msg.has_nogood() ? 1 + 4 + msg.nogood().size() : 0) +
-                              (msg.has_info() ? 1 + 4 + msg.info().size() : 0);
-            data.reserve(dataSize);
+            size_t data_size =
+                1 + (msg.is_node() ? 4 * 8 + 1 : 0) + (msg.has_label() ? 1 + 4 + msg.label().size() : 0) +
+                (msg.has_nogood() ? 1 + 4 + msg.nogood().size() : 0) + (msg.has_info() ? 1 + 4 + msg.info().size() : 0);
+            data.reserve(data_size);
 
-            serializeType(data, msg.type());
-            if (msg.isNode()) {
+            serialize_type(data, msg.type());
+            if (msg.is_node()) {
                 // serialize NodeId node
-                auto n_uid = msg.nodeUID();
+                auto n_uid = msg.node_uid();
                 serialize(data, n_uid.nid);
                 serialize(data, n_uid.rid);
                 serialize(data, n_uid.tid);
                 // serialize NodeId parent
-                auto p_uid = msg.parentUID();
+                auto p_uid = msg.parent_uid();
                 serialize(data, p_uid.nid);
                 serialize(data, p_uid.rid);
                 serialize(data, p_uid.tid);
@@ -435,19 +435,19 @@ namespace Gecode { namespace CPProfiler {
             }
 
             if (msg.has_version()) {
-                serializeField(data, VERSION);
+                serialize_field(data, VERSION);
                 serialize(data, msg.version());
             }
             if (msg.has_label()) {
-                serializeField(data, LABEL);
+                serialize_field(data, LABEL);
                 serialize(data, msg.label());
             }
             if (msg.has_nogood()) {
-                serializeField(data, NOGOOD);
+                serialize_field(data, NOGOOD);
                 serialize(data, msg.nogood());
             }
             if (msg.has_info()) {
-                serializeField(data, INFO);
+                serialize_field(data, INFO);
                 serialize(data, msg.info());
             }
             return data;
@@ -456,41 +456,41 @@ namespace Gecode { namespace CPProfiler {
         void
         deserialize(char* data, size_t size) {
             char* end = data + size;
-            msg.set_type(deserializeMsgType(data));
-            if (msg.isNode()) {
-                int32_t nid = deserializeInt(data);
-                int32_t rid = deserializeInt(data);
-                int32_t tid = deserializeInt(data);
+            msg.set_type(deserialize_msg_type(data));
+            if (msg.is_node()) {
+                int32_t nid = deserialize_int(data);
+                int32_t rid = deserialize_int(data);
+                int32_t tid = deserialize_int(data);
 
-                msg.set_nodeUID({nid, rid, tid});
+                msg.set_node_uid({nid, rid, tid});
 
-                nid = deserializeInt(data);
-                rid = deserializeInt(data);
-                tid = deserializeInt(data);
+                nid = deserialize_int(data);
+                rid = deserialize_int(data);
+                tid = deserialize_int(data);
 
-                msg.set_parentUID({nid, rid, tid});
+                msg.set_parent_uid({nid, rid, tid});
 
-                msg.set_alt(deserializeInt(data));
-                msg.set_kids(deserializeInt(data));
-                msg.set_status(deserializeStatus(data));
+                msg.set_alt(deserialize_int(data));
+                msg.set_kids(deserialize_int(data));
+                msg.set_status(deserialize_status(data));
             }
 
             msg.reset();
 
             while (data != end) {
-                MessageMarshalling::Field f = deserializeField(data);
+                MessageMarshalling::Field f = deserialize_field(data);
                 switch (f) {
                 case VERSION:
-                    msg.set_version(deserializeInt(data));
+                    msg.set_version(deserialize_int(data));
                     break;
                 case LABEL:
-                    msg.set_label(deserializeString(data));
+                    msg.set_label(deserialize_string(data));
                     break;
                 case NOGOOD:
-                    msg.set_nogood(deserializeString(data));
+                    msg.set_nogood(deserialize_string(data));
                     break;
                 case INFO:
-                    msg.set_info(deserializeString(data));
+                    msg.set_info(deserialize_string(data));
                     break;
                 default:
                     break;

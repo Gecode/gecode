@@ -77,8 +77,8 @@ namespace Test { namespace Float {
 
         public:
             RoundingScope(void) : Base("Float::Arithmetic::RoundingScope", TestTags::check()) {}
-            virtual bool
-            run(void) {
+            bool
+            run(void) override {
                 const int previous = std::fegetround();
                 const int modes[] = {FE_TONEAREST, FE_DOWNWARD, FE_UPWARD, FE_TOWARDZERO};
                 bool result = true;
@@ -131,16 +131,16 @@ namespace Test { namespace Float {
                     root.update(*this, s.root);
                 }
                 /// Copy space during cloning
-                virtual Gecode::Space*
-                copy(void) {
+                Gecode::Space*
+                copy(void) override {
                     return new RootSpace(*this);
                 }
             };
 
         public:
             DirectedRounding(void) : Base("Float::Arithmetic::DirectedRounding", TestTags::check()) {}
-            virtual bool
-            run(void) {
+            bool
+            run(void) override {
                 bool result = true;
                 {
                     // Each exact result lies strictly between two adjacent doubles.
@@ -175,8 +175,8 @@ namespace Test { namespace Float {
         class MedianRoundingMode : public Base {
         public:
             MedianRoundingMode(void) : Base("Float::Arithmetic::MedianRoundingMode", TestTags::check()) {}
-            virtual bool
-            run(void) {
+            bool
+            run(void) override {
                 const int previous = std::fegetround();
                 const int modes[] = {FE_TONEAREST, FE_DOWNWARD, FE_UPWARD, FE_TOWARDZERO};
                 const Gecode::FloatNum limit = std::numeric_limits<Gecode::FloatNum>::max();
@@ -227,9 +227,10 @@ namespace Test { namespace Float {
                 /// Variables used by the propagator
                 Gecode::FloatVar x0, x1;
                 /// Post an extreme Pow or NthRoot instance
-                RootSpace(Gecode::FloatNum hi, Gecode::FloatNum witness, int n, bool usePow)
-                    : x0(*this, 0.0, usePow ? witness : hi), x1(*this, usePow ? 0.0 : witness, usePow ? hi : witness) {
-                    if (usePow) {
+                RootSpace(Gecode::FloatNum hi, Gecode::FloatNum witness, int n, bool use_pow)
+                    : x0(*this, 0.0, use_pow ? witness : hi),
+                      x1(*this, use_pow ? 0.0 : witness, use_pow ? hi : witness) {
+                    if (use_pow) {
                         Gecode::pow(*this, x0, n, x1);
                         Gecode::rel(*this, x0, Gecode::FRT_EQ, witness);
                     } else {
@@ -242,8 +243,8 @@ namespace Test { namespace Float {
                     x1.update(*this, s.x1);
                 }
                 /// Copy space during cloning
-                virtual Gecode::Space*
-                copy(void) {
+                Gecode::Space*
+                copy(void) override {
                     return new RootSpace(*this);
                 }
             };
@@ -264,27 +265,27 @@ namespace Test { namespace Float {
                     root.update(*this, s.root);
                 }
                 /// Copy space during cloning
-                virtual Gecode::Space*
-                copy(void) {
+                Gecode::Space*
+                copy(void) override {
                     return new NRootBoundSpace(*this);
                 }
             };
 
             /// Check that a known feasible boundary value is not removed
             bool
-            check(Gecode::FloatNum hi, Gecode::FloatNum witness, int n, int mode, bool usePow) const {
+            check(Gecode::FloatNum hi, Gecode::FloatNum witness, int n, int mode, bool use_pow) const {
                 if (std::fesetround(mode) != 0)
                     return true;
-                RootSpace s(hi, witness, n, usePow);
+                RootSpace s(hi, witness, n, use_pow);
                 if (s.status() != Gecode::SS_FAILED)
                     return true;
-                olog << "Root bound removed a solution for " << (usePow ? "pow" : "nroot") << ", n=" << n
+                olog << "Root bound removed a solution for " << (use_pow ? "pow" : "nroot") << ", n=" << n
                      << ", mode=" << mode << std::endl;
                 return false;
             }
             /// Check that propagation returns a genuinely outward upper bound
             bool
-            checkBound(Gecode::FloatNum hi, Gecode::FloatNum rejected, int n, int mode) const {
+            check_bound(Gecode::FloatNum hi, Gecode::FloatNum rejected, int n, int mode) const {
                 if (std::fesetround(mode) != 0)
                     return true;
                 NRootBoundSpace s(hi, n);
@@ -298,9 +299,9 @@ namespace Test { namespace Float {
             /// Create and register test
             PositiveNRootBounds(void) : Base("Float::Arithmetic::PositiveNRootBounds", TestTags::check()) {}
             /// Run test under every supported IEEE-754 rounding mode
-            virtual bool
-            run(void) {
-                const int oldMode = std::fegetround();
+            bool
+            run(void) override {
+                const int old_mode = std::fegetround();
                 const int modes[] = {FE_TONEAREST, FE_DOWNWARD, FE_UPWARD, FE_TOWARDZERO};
                 struct Case {
                     Gecode::FloatNum hi;
@@ -313,18 +314,19 @@ namespace Test { namespace Float {
                              {std::numeric_limits<Gecode::FloatNum>::max(),
                               std::ldexp(static_cast<Gecode::FloatNum>(0x1965fea53d6e0fULL), 118), 6}};
                 bool result = true;
-                const Gecode::FloatNum roundingHi = std::ldexp(static_cast<Gecode::FloatNum>(0x1751def03d6f38ULL), 458);
-                const Gecode::FloatNum rejectedUpper =
+                const Gecode::FloatNum rounding_hi =
+                    std::ldexp(static_cast<Gecode::FloatNum>(0x1751def03d6f38ULL), 458);
+                const Gecode::FloatNum rejected_upper =
                     std::ldexp(static_cast<Gecode::FloatNum>(0x1350f4c43079ceULL), 203);
                 for (unsigned int m = 0; m < sizeof(modes) / sizeof(modes[0]); m++) {
                     for (unsigned int c = 0; c < sizeof(cases) / sizeof(cases[0]); c++) {
                         result = check(cases[c].hi, cases[c].witness, cases[c].n, modes[m], false) && result;
                         result = check(cases[c].hi, cases[c].witness, cases[c].n, modes[m], true) && result;
                     }
-                    result = checkBound(roundingHi, rejectedUpper, 2, modes[m]) && result;
+                    result = check_bound(rounding_hi, rejected_upper, 2, modes[m]) && result;
                 }
-                if (oldMode != -1)
-                    std::fesetround(oldMode);
+                if (old_mode != -1)
+                    std::fesetround(old_mode);
                 return result;
             }
         } positive_nroot_bounds;
@@ -347,8 +349,8 @@ namespace Test { namespace Float {
                     y.update(*this, s.y);
                 }
                 /// Copy space during cloning
-                virtual Gecode::Space*
-                copy(void) {
+                Gecode::Space*
+                copy(void) override {
                     return new ZeroSpace(*this);
                 }
             };
@@ -371,8 +373,8 @@ namespace Test { namespace Float {
                     y.update(*this, s.y);
                 }
                 /// Copy space during cloning
-                virtual Gecode::Space*
-                copy(void) {
+                Gecode::Space*
+                copy(void) override {
                     return new AdjacentZeroSpace(*this);
                 }
             };
@@ -396,8 +398,8 @@ namespace Test { namespace Float {
                     y.update(*this, s.y);
                 }
                 /// Copy space during cloning
-                virtual Gecode::Space*
-                copy(void) {
+                Gecode::Space*
+                copy(void) override {
                     return new FixpointSpace(*this);
                 }
             };
@@ -418,15 +420,15 @@ namespace Test { namespace Float {
                     y.update(*this, s.y);
                 }
                 /// Copy space during cloning
-                virtual Gecode::Space*
-                copy(void) {
+                Gecode::Space*
+                copy(void) override {
                     return new ZeroResultSpace(*this);
                 }
             };
 
             /// Test one exponent with direct and delayed zero assignment
             bool
-            checkZero(int n) const {
+            check_zero(int n) const {
                 ZeroSpace direct(n, true);
                 ZeroSpace delayed(n, false);
                 if (delayed.status() == Gecode::SS_FAILED) {
@@ -436,17 +438,17 @@ namespace Test { namespace Float {
                 ZeroSpace* clone = static_cast<ZeroSpace*>(delayed.clone());
                 Gecode::rel(*clone, clone->x, Gecode::FRT_EQ, 0.0);
                 if (n == 0) {
-                    const bool zeroRejected =
+                    const bool zero_rejected =
                         (direct.status() == Gecode::SS_FAILED) && (clone->status() == Gecode::SS_FAILED);
                     delete clone;
-                    ZeroSpace* nonZero = static_cast<ZeroSpace*>(delayed.clone());
-                    Gecode::rel(*nonZero, nonZero->x, Gecode::FRT_EQ, 0.5);
-                    const bool nonZeroAccepted = (nonZero->status() != Gecode::SS_FAILED) &&
-                                                 (nonZero->y.min() == 1.0) && (nonZero->y.max() == 1.0);
-                    delete nonZero;
-                    if (!zeroRejected || !nonZeroAccepted)
+                    ZeroSpace* non_zero = static_cast<ZeroSpace*>(delayed.clone());
+                    Gecode::rel(*non_zero, non_zero->x, Gecode::FRT_EQ, 0.5);
+                    const bool non_zero_accepted = (non_zero->status() != Gecode::SS_FAILED) &&
+                                                   (non_zero->y.min() == 1.0) && (non_zero->y.max() == 1.0);
+                    delete non_zero;
+                    if (!zero_rejected || !non_zero_accepted)
                         olog << "Pow exponent-zero semantics failed" << std::endl;
-                    return zeroRejected && nonZeroAccepted;
+                    return zero_rejected && non_zero_accepted;
                 }
                 const bool result = (direct.status() != Gecode::SS_FAILED) && (direct.y.min() == 0.0) &&
                                     (direct.y.max() == 0.0) && (clone->status() != Gecode::SS_FAILED) &&
@@ -458,7 +460,7 @@ namespace Test { namespace Float {
             }
             /// Test that a zero result forces a zero base
             bool
-            checkZeroResult(int n, bool direct) const {
+            check_zero_result(int n, bool direct) const {
                 ZeroResultSpace initial(n, direct);
                 if (initial.status() == Gecode::SS_FAILED) {
                     olog << "Pow zero result failed for n=" << n << std::endl;
@@ -470,48 +472,49 @@ namespace Test { namespace Float {
                 const bool contracted =
                     (clone->status() != Gecode::SS_FAILED) && (clone->x.min() == 0.0) && (clone->x.max() == 0.0);
                 Gecode::rel(*clone, clone->x, Gecode::FRT_EQ, 1.0);
-                const bool inconsistentRejected = clone->status() == Gecode::SS_FAILED;
+                const bool inconsistent_rejected = clone->status() == Gecode::SS_FAILED;
                 delete clone;
-                if (!contracted || !inconsistentRejected)
+                if (!contracted || !inconsistent_rejected)
                     olog << "Pow zero result did not force zero base for n=" << n
                          << (direct ? " (direct)" : " (delayed)") << std::endl;
-                return contracted && inconsistentRejected;
+                return contracted && inconsistent_rejected;
             }
             /// Test exponent zero on an adjacent interval containing zero
             bool
-            checkAdjacentZero(bool positive) const {
+            check_adjacent_zero(bool positive) const {
                 AdjacentZeroSpace initial(positive);
                 // Adjacent intervals are assigned and cannot be narrowed further.
                 // Keep the unresolved nonzero constraint through propagation and cloning.
-                const bool actorRetained = (initial.status() != Gecode::SS_FAILED) && (initial.y.min() == 1.0) &&
-                                           (initial.y.max() == 1.0) && (Gecode::PropagatorGroup::all.size(initial) > 0);
+                const bool actor_retained = (initial.status() != Gecode::SS_FAILED) && (initial.y.min() == 1.0) &&
+                                            (initial.y.max() == 1.0) &&
+                                            (Gecode::PropagatorGroup::all.size(initial) > 0);
 
                 AdjacentZeroSpace* clone = static_cast<AdjacentZeroSpace*>(initial.clone());
-                const bool cloneRetained = (clone->status() != Gecode::SS_FAILED) && (clone->y.min() == 1.0) &&
-                                           (clone->y.max() == 1.0) && (Gecode::PropagatorGroup::all.size(*clone) > 0);
+                const bool clone_retained = (clone->status() != Gecode::SS_FAILED) && (clone->y.min() == 1.0) &&
+                                            (clone->y.max() == 1.0) && (Gecode::PropagatorGroup::all.size(*clone) > 0);
                 delete clone;
 
-                if (!actorRetained || !cloneRetained)
+                if (!actor_retained || !clone_retained)
                     olog << "Pow adjacent exponent-zero semantics failed" << (positive ? " (positive)" : " (negative)")
                          << std::endl;
-                return actorRetained && cloneRetained;
+                return actor_retained && clone_retained;
             }
 
         public:
             /// Create and register test
             PowConsistency(void) : Base("Float::Arithmetic::PowConsistency", TestTags::check()) {}
             /// Run zero and fixpoint regressions
-            virtual bool
-            run(void) {
+            bool
+            run(void) override {
                 bool result = true;
                 for (int n = 0; n <= 3; n++)
-                    result = checkZero(n) && result;
+                    result = check_zero(n) && result;
                 for (int n = 1; n <= 3; n++) {
-                    result = checkZeroResult(n, true) && result;
-                    result = checkZeroResult(n, false) && result;
+                    result = check_zero_result(n, true) && result;
+                    result = check_zero_result(n, false) && result;
                 }
-                result = checkAdjacentZero(true) && result;
-                result = checkAdjacentZero(false) && result;
+                result = check_adjacent_zero(true) && result;
+                result = check_adjacent_zero(false) && result;
 
                 FixpointSpace once;
                 if (once.status() == Gecode::SS_FAILED) {
@@ -551,8 +554,8 @@ namespace Test { namespace Float {
                     z.update(*this, s.z);
                 }
                 /// Copy space during cloning
-                virtual Gecode::Space*
-                copy(void) {
+                Gecode::Space*
+                copy(void) override {
                     return new MultSpace(*this);
                 }
             };
@@ -560,10 +563,10 @@ namespace Test { namespace Float {
             /// Check one endpoint-zero sign and magnitude contraction
             bool
             check(Gecode::FloatNum xl, Gecode::FloatNum xu, Gecode::FloatNum yl, Gecode::FloatNum yu,
-                  Gecode::FloatNum zl, Gecode::FloatNum zu, Gecode::FloatNum expectedMin,
-                  Gecode::FloatNum expectedMax) const {
+                  Gecode::FloatNum zl, Gecode::FloatNum zu, Gecode::FloatNum expected_min,
+                  Gecode::FloatNum expected_max) const {
                 MultSpace s(xl, xu, yl, yu, zl, zu);
-                if ((s.status() == Gecode::SS_FAILED) || (s.x.min() < expectedMin) || (s.x.max() > expectedMax)) {
+                if ((s.status() == Gecode::SS_FAILED) || (s.x.min() < expected_min) || (s.x.max() > expected_max)) {
                     olog << "Multiplication endpoint-zero contraction failed: x=" << s.x << ", y=" << s.y
                          << ", z=" << s.z << std::endl;
                     return false;
@@ -611,8 +614,8 @@ namespace Test { namespace Float {
             /// Create and register test
             MultZeroEndpoint(void) : Base("Float::Arithmetic::MultZeroEndpoint", TestTags::check()) {}
             /// Run sign, symmetry, signed-zero, and zero-product cases
-            virtual bool
-            run(void) {
+            bool
+            run(void) override {
                 bool result = true;
                 result = check(-1.0, 1.0, 0.0, 1.0, 0.5, 1.0, 0.5, 1.0) && result;
                 result = check(-1.0, 1.0, -1.0, -0.0, 0.5, 1.0, -1.0, -0.5) && result;
@@ -624,12 +627,12 @@ namespace Test { namespace Float {
                 result = (swapped.status() != Gecode::SS_FAILED) && (swapped.y.min() >= 0.5) && result;
 
                 // A zero product gives no sign information about the other factor.
-                MultSpace zeroProduct(-1.0, 1.0, 0.0, 1.0, 0.0, 0.0);
-                result = (zeroProduct.status() != Gecode::SS_FAILED) && (zeroProduct.x.min() == -1.0) &&
-                         (zeroProduct.x.max() == 1.0) && result;
-                MultSpace zeroFactor(0.0, 0.0, -1.0, 1.0, 0.0, 0.0);
-                result = (zeroFactor.status() != Gecode::SS_FAILED) && (zeroFactor.y.min() == -1.0) &&
-                         (zeroFactor.y.max() == 1.0) && result;
+                MultSpace zero_product(-1.0, 1.0, 0.0, 1.0, 0.0, 0.0);
+                result = (zero_product.status() != Gecode::SS_FAILED) && (zero_product.x.min() == -1.0) &&
+                         (zero_product.x.max() == 1.0) && result;
+                MultSpace zero_factor(0.0, 0.0, -1.0, 1.0, 0.0, 0.0);
+                result = (zero_factor.status() != Gecode::SS_FAILED) && (zero_factor.y.min() == -1.0) &&
+                         (zero_factor.y.max() == 1.0) && result;
                 if (!result)
                     olog << "Multiplication zero or swapped regression failed" << std::endl;
                 return fuzz() && result;
@@ -643,13 +646,13 @@ namespace Test { namespace Float {
             MultXYZ(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
                 : Test(TestTags::sweep(), "Arithmetic::Mult::XYZ::" + s, 3, d, st, CPLT_ASSIGNMENT, false) {}
             /// %Test whether \a x is solution
-            virtual MaybeType
-            solution(const Assignment& x) const {
+            MaybeType
+            solution(const Assignment& x) const override {
                 return eq(x[0] * x[1], x[2]);
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::FloatVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::FloatVarArray& x) override {
                 if (flip())
                     Gecode::mult(home, x[0], x[1], x[2]);
                 else
@@ -664,13 +667,13 @@ namespace Test { namespace Float {
             MultXYZSol(TestTags tags, const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
                 : Test(tags, "Arithmetic::Mult::XYZ::Sol::" + s, 3, d, st, EXTEND_ASSIGNMENT, false) {}
             /// %Test whether \a x is solution
-            virtual MaybeType
-            solution(const Assignment& x) const {
+            MaybeType
+            solution(const Assignment& x) const override {
                 return eq(x[0] * x[1], x[2]);
             }
             /// Extend assignment \a x
-            virtual bool
-            extendAssignment(Assignment& x) const {
+            bool
+            extend_assignment(Assignment& x) const override {
                 Gecode::FloatVal d = x[0] * x[1];
                 if (Gecode::Float::subset(d, dom)) {
                     x.set(2, d);
@@ -680,8 +683,8 @@ namespace Test { namespace Float {
                 }
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::FloatVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::FloatVarArray& x) override {
                 Gecode::mult(home, x[0], x[1], x[2]);
             }
         };
@@ -693,13 +696,13 @@ namespace Test { namespace Float {
             MultXXY(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
                 : Test(TestTags::sweep(), "Arithmetic::Mult::XXY::" + s, 2, d, st, CPLT_ASSIGNMENT, false) {}
             /// %Test whether \a x is solution
-            virtual MaybeType
-            solution(const Assignment& x) const {
+            MaybeType
+            solution(const Assignment& x) const override {
                 return eq(x[0] * x[0], x[1]);
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::FloatVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::FloatVarArray& x) override {
                 Gecode::mult(home, x[0], x[0], x[1]);
             }
         };
@@ -711,13 +714,13 @@ namespace Test { namespace Float {
             MultXXYSol(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
                 : Test(TestTags::sweep(), "Arithmetic::Mult::XXY::Sol::" + s, 2, d, st, EXTEND_ASSIGNMENT, false) {}
             /// %Test whether \a x is solution
-            virtual MaybeType
-            solution(const Assignment& x) const {
+            MaybeType
+            solution(const Assignment& x) const override {
                 return eq(x[0] * x[0], x[1]);
             }
             /// Extend assignment \a x
-            virtual bool
-            extendAssignment(Assignment& x) const {
+            bool
+            extend_assignment(Assignment& x) const override {
                 Gecode::FloatVal d = x[0] * x[0];
                 if (Gecode::Float::subset(d, dom)) {
                     x.set(1, d);
@@ -727,8 +730,8 @@ namespace Test { namespace Float {
                 }
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::FloatVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::FloatVarArray& x) override {
                 Gecode::mult(home, x[0], x[0], x[1]);
             }
         };
@@ -740,13 +743,13 @@ namespace Test { namespace Float {
             MultXYX(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
                 : Test(TestTags::sweep(), "Arithmetic::Mult::XYX::" + s, 2, d, st, CPLT_ASSIGNMENT, false) {}
             /// %Test whether \a x is solution
-            virtual MaybeType
-            solution(const Assignment& x) const {
+            MaybeType
+            solution(const Assignment& x) const override {
                 return eq(x[0] * x[1], x[0]);
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::FloatVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::FloatVarArray& x) override {
                 Gecode::mult(home, x[0], x[1], x[0]);
             }
         };
@@ -758,13 +761,13 @@ namespace Test { namespace Float {
             MultXYY(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
                 : Test(TestTags::sweep(), "Arithmetic::Mult::XYY::" + s, 2, d, st, CPLT_ASSIGNMENT, false) {}
             /// %Test whether \a x is solution
-            virtual MaybeType
-            solution(const Assignment& x) const {
+            MaybeType
+            solution(const Assignment& x) const override {
                 return eq(x[0] * x[1], x[1]);
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::FloatVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::FloatVarArray& x) override {
                 Gecode::mult(home, x[0], x[1], x[1]);
             }
         };
@@ -776,13 +779,13 @@ namespace Test { namespace Float {
             MultXXX(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
                 : Test(TestTags::sweep(), "Arithmetic::Mult::XXX::" + s, 1, d, st, CPLT_ASSIGNMENT, false) {}
             /// %Test whether \a x is solution
-            virtual MaybeType
-            solution(const Assignment& x) const {
+            MaybeType
+            solution(const Assignment& x) const override {
                 return eq(x[0] * x[0], x[0]);
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::FloatVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::FloatVarArray& x) override {
                 Gecode::mult(home, x[0], x[0], x[0]);
             }
         };
@@ -794,13 +797,13 @@ namespace Test { namespace Float {
             Div(TestTags tags, const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
                 : Test(tags, "Arithmetic::Div::" + s, 3, d, st, CPLT_ASSIGNMENT, false) {}
             /// %Test whether \a x is solution
-            virtual MaybeType
-            solution(const Assignment& x) const {
+            MaybeType
+            solution(const Assignment& x) const override {
                 return eq(x[0] / x[1], x[2]);
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::FloatVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::FloatVarArray& x) override {
                 if (flip())
                     Gecode::div(home, x[0], x[1], x[2]);
                 else
@@ -815,13 +818,13 @@ namespace Test { namespace Float {
             DivSol(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
                 : Test(TestTags::sweep(), "Arithmetic::Div::Sol::" + s, 3, d, st, EXTEND_ASSIGNMENT, false) {}
             /// %Test whether \a x is solution
-            virtual MaybeType
-            solution(const Assignment& x) const {
+            MaybeType
+            solution(const Assignment& x) const override {
                 return eq(x[0] / x[1], x[2]);
             }
             /// Extend assignment \a x
-            virtual bool
-            extendAssignment(Assignment& x) const {
+            bool
+            extend_assignment(Assignment& x) const override {
                 Gecode::FloatVal d = x[0] / x[1];
                 if (Gecode::Float::subset(d, dom)) {
                     x.set(2, d);
@@ -831,8 +834,8 @@ namespace Test { namespace Float {
                 }
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::FloatVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::FloatVarArray& x) override {
                 Gecode::div(home, x[0], x[1], x[2]);
             }
         };
@@ -844,13 +847,13 @@ namespace Test { namespace Float {
             SqrXY(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
                 : Test(TestTags::sweep(), "Arithmetic::Sqr::XY::" + s, 2, d, st, CPLT_ASSIGNMENT, false) {}
             /// %Test whether \a x is solution
-            virtual MaybeType
-            solution(const Assignment& x) const {
+            MaybeType
+            solution(const Assignment& x) const override {
                 return eq(x[0] * x[0], x[1]);
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::FloatVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::FloatVarArray& x) override {
                 if (flip())
                     Gecode::sqr(home, x[0], x[1]);
                 else
@@ -865,13 +868,13 @@ namespace Test { namespace Float {
             SqrXYSol(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
                 : Test(TestTags::sweep(), "Arithmetic::Sqr::XY::Sol::" + s, 2, d, st, EXTEND_ASSIGNMENT, false) {}
             /// %Test whether \a x is solution
-            virtual MaybeType
-            solution(const Assignment& x) const {
+            MaybeType
+            solution(const Assignment& x) const override {
                 return eq(x[0] * x[0], x[1]);
             }
             /// Extend assignment \a x
-            virtual bool
-            extendAssignment(Assignment& x) const {
+            bool
+            extend_assignment(Assignment& x) const override {
                 Gecode::FloatVal d = sqr(x[0]);
                 if (Gecode::Float::subset(d, dom)) {
                     x.set(1, d);
@@ -881,8 +884,8 @@ namespace Test { namespace Float {
                 }
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::FloatVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::FloatVarArray& x) override {
                 Gecode::sqr(home, x[0], x[1]);
             }
         };
@@ -894,13 +897,13 @@ namespace Test { namespace Float {
             SqrXX(TestTags tags, const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
                 : Test(tags, "Arithmetic::Sqr::XX::" + s, 1, d, st, CPLT_ASSIGNMENT, false) {}
             /// %Test whether \a x is solution
-            virtual MaybeType
-            solution(const Assignment& x) const {
+            MaybeType
+            solution(const Assignment& x) const override {
                 return eq(x[0] * x[0], x[0]);
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::FloatVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::FloatVarArray& x) override {
                 Gecode::sqr(home, x[0], x[0]);
             }
         };
@@ -912,8 +915,8 @@ namespace Test { namespace Float {
             SqrtXY(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
                 : Test(TestTags::sweep(), "Arithmetic::Sqrt::XY::" + s, 2, d, st, CPLT_ASSIGNMENT, false) {}
             /// %Test whether \a x is solution
-            virtual MaybeType
-            solution(const Assignment& x) const {
+            MaybeType
+            solution(const Assignment& x) const override {
                 switch (cmp(x[0], Gecode::FRT_GQ, 0.0)) {
                 case MT_FALSE:
                     return MT_FALSE;
@@ -924,8 +927,8 @@ namespace Test { namespace Float {
                 }
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::FloatVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::FloatVarArray& x) override {
                 if (flip())
                     Gecode::sqrt(home, x[0], x[1]);
                 else
@@ -940,8 +943,8 @@ namespace Test { namespace Float {
             SqrtXYSol(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
                 : Test(TestTags::sweep(), "Arithmetic::Sqrt::XY::Sol::" + s, 2, d, st, EXTEND_ASSIGNMENT, false) {}
             /// %Test whether \a x is solution
-            virtual MaybeType
-            solution(const Assignment& x) const {
+            MaybeType
+            solution(const Assignment& x) const override {
                 switch (cmp(x[0], Gecode::FRT_GQ, 0.0)) {
                 case MT_FALSE:
                     return MT_FALSE;
@@ -952,8 +955,8 @@ namespace Test { namespace Float {
                 }
             }
             /// Extend assignment \a x
-            virtual bool
-            extendAssignment(Assignment& x) const {
+            bool
+            extend_assignment(Assignment& x) const override {
                 Gecode::FloatVal d = sqrt(abs(x[0]));
                 if (Gecode::Float::subset(d, dom)) {
                     x.set(1, d);
@@ -963,8 +966,8 @@ namespace Test { namespace Float {
                 }
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::FloatVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::FloatVarArray& x) override {
                 Gecode::sqrt(home, x[0], x[1]);
             }
         };
@@ -976,8 +979,8 @@ namespace Test { namespace Float {
             SqrtXX(TestTags tags, const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
                 : Test(tags, "Arithmetic::Sqrt::XX::" + s, 1, d, st, CPLT_ASSIGNMENT, false) {}
             /// %Test whether \a x is solution
-            virtual MaybeType
-            solution(const Assignment& x) const {
+            MaybeType
+            solution(const Assignment& x) const override {
                 switch (cmp(x[0], Gecode::FRT_GQ, 0.0)) {
                 case MT_FALSE:
                     return MT_FALSE;
@@ -988,8 +991,8 @@ namespace Test { namespace Float {
                 }
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::FloatVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::FloatVarArray& x) override {
                 Gecode::sqrt(home, x[0], x[0]);
             }
         };
@@ -1005,13 +1008,13 @@ namespace Test { namespace Float {
                        false),
                   n(_n) {}
             /// %Test whether \a x is solution
-            virtual MaybeType
-            solution(const Assignment& x) const {
+            MaybeType
+            solution(const Assignment& x) const override {
                 return eq(pow(x[0], n), x[1]);
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::FloatVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::FloatVarArray& x) override {
                 if (flip())
                     Gecode::pow(home, x[0], n, x[1]);
                 else
@@ -1030,13 +1033,13 @@ namespace Test { namespace Float {
                 : Test(tags, "Arithmetic::Pow::N::" + str(_n) + "::XY::Sol::" + s, 2, d, st, EXTEND_ASSIGNMENT, false),
                   n(_n) {}
             /// %Test whether \a x is solution
-            virtual MaybeType
-            solution(const Assignment& x) const {
+            MaybeType
+            solution(const Assignment& x) const override {
                 return eq(pow(x[0], n), x[1]);
             }
             /// Extend assignment \a x
-            virtual bool
-            extendAssignment(Assignment& x) const {
+            bool
+            extend_assignment(Assignment& x) const override {
                 Gecode::FloatVal d = pow(x[0], n);
                 if (Gecode::Float::subset(d, dom)) {
                     x.set(1, d);
@@ -1046,8 +1049,8 @@ namespace Test { namespace Float {
                 }
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::FloatVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::FloatVarArray& x) override {
                 Gecode::pow(home, x[0], n, x[1]);
             }
         };
@@ -1063,13 +1066,13 @@ namespace Test { namespace Float {
                        false),
                   n(_n) {}
             /// %Test whether \a x is solution
-            virtual MaybeType
-            solution(const Assignment& x) const {
+            MaybeType
+            solution(const Assignment& x) const override {
                 return eq(pow(x[0], n), x[0]);
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::FloatVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::FloatVarArray& x) override {
                 Gecode::pow(home, x[0], n, x[0]);
             }
         };
@@ -1085,15 +1088,15 @@ namespace Test { namespace Float {
                        false),
                   n(_n) {}
             /// %Test whether \a x is solution
-            virtual MaybeType
-            solution(const Assignment& x) const {
+            MaybeType
+            solution(const Assignment& x) const override {
                 if ((n == 0) || (x[0].min() < 0.0))
                     return MT_FALSE;
                 return eq(nroot(x[0], n), x[1]);
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::FloatVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::FloatVarArray& x) override {
                 if (flip())
                     Gecode::nroot(home, x[0], n, x[1]);
                 else
@@ -1113,15 +1116,15 @@ namespace Test { namespace Float {
                        false),
                   n(_n) {}
             /// %Test whether \a x is solution
-            virtual MaybeType
-            solution(const Assignment& x) const {
+            MaybeType
+            solution(const Assignment& x) const override {
                 if ((n == 0) || (x[0].min() < 0.0))
                     return MT_FALSE;
                 return eq(nroot(x[0], n), x[1]);
             }
             /// Extend assignment \a x
-            virtual bool
-            extendAssignment(Assignment& x) const {
+            bool
+            extend_assignment(Assignment& x) const override {
                 if ((n == 0) || (x[0].min() < 0))
                     return false;
                 Gecode::FloatVal d = nroot(x[0], n);
@@ -1133,8 +1136,8 @@ namespace Test { namespace Float {
                 }
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::FloatVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::FloatVarArray& x) override {
                 Gecode::nroot(home, x[0], n, x[1]);
             }
         };
@@ -1150,15 +1153,15 @@ namespace Test { namespace Float {
                        false),
                   n(_n) {}
             /// %Test whether \a x is solution
-            virtual MaybeType
-            solution(const Assignment& x) const {
+            MaybeType
+            solution(const Assignment& x) const override {
                 if ((n == 0) || (x[0].min() < 0))
                     return MT_FALSE;
                 return eq(nroot(x[0], n), x[0]);
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::FloatVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::FloatVarArray& x) override {
                 Gecode::nroot(home, x[0], n, x[0]);
             }
         };
@@ -1170,13 +1173,13 @@ namespace Test { namespace Float {
             AbsXY(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
                 : Test(TestTags::sweep(), "Arithmetic::Abs::XY::" + s, 2, d, st, CPLT_ASSIGNMENT, false) {}
             /// %Test whether \a x is solution
-            virtual MaybeType
-            solution(const Assignment& x) const {
+            MaybeType
+            solution(const Assignment& x) const override {
                 return eq(abs(x[0]), x[1]);
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::FloatVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::FloatVarArray& x) override {
                 if (flip())
                     Gecode::abs(home, x[0], x[1]);
                 else
@@ -1191,13 +1194,13 @@ namespace Test { namespace Float {
             AbsXX(TestTags tags, const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
                 : Test(tags, "Arithmetic::Abs::XX::" + s, 1, d, st, CPLT_ASSIGNMENT, false) {}
             /// %Test whether \a x is solution
-            virtual MaybeType
-            solution(const Assignment& x) const {
+            MaybeType
+            solution(const Assignment& x) const override {
                 return eq(abs(x[0]), x[0]);
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::FloatVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::FloatVarArray& x) override {
                 Gecode::abs(home, x[0], x[0]);
             }
         };
@@ -1209,13 +1212,13 @@ namespace Test { namespace Float {
             MinXYZ(TestTags tags, const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
                 : Test(tags, "Arithmetic::Min::Bin::XYZ::" + s, 3, d, st, CPLT_ASSIGNMENT, false) {}
             /// %Test whether \a x is solution
-            virtual MaybeType
-            solution(const Assignment& x) const {
+            MaybeType
+            solution(const Assignment& x) const override {
                 return eq(min(x[0], x[1]), x[2]);
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::FloatVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::FloatVarArray& x) override {
                 if (flip())
                     Gecode::min(home, x[0], x[1], x[2]);
                 else
@@ -1230,13 +1233,13 @@ namespace Test { namespace Float {
             MinXXY(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
                 : Test(TestTags::sweep(), "Arithmetic::Min::Bin::XXY::" + s, 2, d, st, CPLT_ASSIGNMENT, false) {}
             /// %Test whether \a x is solution
-            virtual MaybeType
-            solution(const Assignment& x) const {
+            MaybeType
+            solution(const Assignment& x) const override {
                 return eq(min(x[0], x[0]), x[1]);
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::FloatVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::FloatVarArray& x) override {
                 Gecode::min(home, x[0], x[0], x[1]);
             }
         };
@@ -1248,13 +1251,13 @@ namespace Test { namespace Float {
             MinXYX(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
                 : Test(TestTags::sweep(), "Arithmetic::Min::Bin::XYX::" + s, 2, d, st, CPLT_ASSIGNMENT, false) {}
             /// %Test whether \a x is solution
-            virtual MaybeType
-            solution(const Assignment& x) const {
+            MaybeType
+            solution(const Assignment& x) const override {
                 return eq(min(x[0], x[1]), x[0]);
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::FloatVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::FloatVarArray& x) override {
                 Gecode::min(home, x[0], x[1], x[0]);
             }
         };
@@ -1266,13 +1269,13 @@ namespace Test { namespace Float {
             MinXYY(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
                 : Test(TestTags::sweep(), "Arithmetic::Min::Bin::XYY::" + s, 2, d, st, CPLT_ASSIGNMENT, false) {}
             /// %Test whether \a x is solution
-            virtual MaybeType
-            solution(const Assignment& x) const {
+            MaybeType
+            solution(const Assignment& x) const override {
                 return eq(min(x[0], x[1]), x[1]);
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::FloatVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::FloatVarArray& x) override {
                 Gecode::min(home, x[0], x[1], x[1]);
             }
         };
@@ -1284,13 +1287,13 @@ namespace Test { namespace Float {
             MinXXX(TestTags tags, const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
                 : Test(tags, "Arithmetic::Min::Bin::XXX::" + s, 1, d, st, CPLT_ASSIGNMENT, false) {}
             /// %Test whether \a x is solution
-            virtual MaybeType
-            solution(const Assignment& x) const {
+            MaybeType
+            solution(const Assignment& x) const override {
                 return eq(min(x[0], x[0]), x[0]);
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::FloatVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::FloatVarArray& x) override {
                 Gecode::min(home, x[0], x[0], x[0]);
             }
         };
@@ -1302,13 +1305,13 @@ namespace Test { namespace Float {
             MaxXYZ(TestTags tags, const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
                 : Test(tags, "Arithmetic::Max::Bin::XYZ::" + s, 3, d, st, CPLT_ASSIGNMENT, false) {}
             /// %Test whether \a x is solution
-            virtual MaybeType
-            solution(const Assignment& x) const {
+            MaybeType
+            solution(const Assignment& x) const override {
                 return eq(max(x[0], x[1]), x[2]);
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::FloatVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::FloatVarArray& x) override {
                 if (flip())
                     Gecode::max(home, x[0], x[1], x[2]);
                 else
@@ -1323,13 +1326,13 @@ namespace Test { namespace Float {
             MaxXXY(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
                 : Test(TestTags::sweep(), "Arithmetic::Max::Bin::XXY::" + s, 2, d, st, CPLT_ASSIGNMENT, false) {}
             /// %Test whether \a x is solution
-            virtual MaybeType
-            solution(const Assignment& x) const {
+            MaybeType
+            solution(const Assignment& x) const override {
                 return eq(max(x[0], x[0]), x[1]);
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::FloatVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::FloatVarArray& x) override {
                 Gecode::max(home, x[0], x[0], x[1]);
             }
         };
@@ -1341,13 +1344,13 @@ namespace Test { namespace Float {
             MaxXYX(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
                 : Test(TestTags::sweep(), "Arithmetic::Max::Bin::XYX::" + s, 2, d, st, CPLT_ASSIGNMENT, false) {}
             /// %Test whether \a x is solution
-            virtual MaybeType
-            solution(const Assignment& x) const {
+            MaybeType
+            solution(const Assignment& x) const override {
                 return eq(max(x[0], x[1]), x[0]);
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::FloatVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::FloatVarArray& x) override {
                 Gecode::max(home, x[0], x[1], x[0]);
             }
         };
@@ -1359,13 +1362,13 @@ namespace Test { namespace Float {
             MaxXYY(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
                 : Test(TestTags::sweep(), "Arithmetic::Max::Bin::XYY::" + s, 2, d, st, CPLT_ASSIGNMENT, false) {}
             /// %Test whether \a x is solution
-            virtual MaybeType
-            solution(const Assignment& x) const {
+            MaybeType
+            solution(const Assignment& x) const override {
                 return eq(max(x[0], x[1]), x[1]);
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::FloatVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::FloatVarArray& x) override {
                 Gecode::max(home, x[0], x[1], x[1]);
             }
         };
@@ -1377,13 +1380,13 @@ namespace Test { namespace Float {
             MaxXXX(TestTags tags, const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
                 : Test(tags, "Arithmetic::Max::Bin::XXX::" + s, 1, d, st, CPLT_ASSIGNMENT, false) {}
             /// %Test whether \a x is solution
-            virtual MaybeType
-            solution(const Assignment& x) const {
+            MaybeType
+            solution(const Assignment& x) const override {
                 return eq(max(x[0], x[0]), x[0]);
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::FloatVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::FloatVarArray& x) override {
                 Gecode::max(home, x[0], x[0], x[0]);
             }
         };
@@ -1394,13 +1397,13 @@ namespace Test { namespace Float {
             /// Create and register test
             MinNary(void) : Test(TestTags::sweep(), "Arithmetic::Min::Nary", 4, -4, 4, 0.5, CPLT_ASSIGNMENT, false) {}
             /// %Test whether \a x is solution
-            virtual MaybeType
-            solution(const Assignment& x) const {
+            MaybeType
+            solution(const Assignment& x) const override {
                 return eq(min(min(x[0], x[1]), x[2]), x[3]);
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::FloatVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::FloatVarArray& x) override {
                 Gecode::FloatVarArgs m(3);
                 m[0] = x[0];
                 m[1] = x[1];
@@ -1419,13 +1422,13 @@ namespace Test { namespace Float {
             MinNaryShared(void)
                 : Test(TestTags::sweep(), "Arithmetic::Min::Nary::Shared", 3, -4, 4, 0.5, CPLT_ASSIGNMENT, false) {}
             /// %Test whether \a x is solution
-            virtual MaybeType
-            solution(const Assignment& x) const {
+            MaybeType
+            solution(const Assignment& x) const override {
                 return eq(min(min(x[0], x[1]), x[2]), x[1]);
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::FloatVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::FloatVarArray& x) override {
                 Gecode::FloatVarArgs m(3);
                 m[0] = x[0];
                 m[1] = x[1];
@@ -1440,13 +1443,13 @@ namespace Test { namespace Float {
             /// Create and register test
             MaxNary(void) : Test(TestTags::sweep(), "Arithmetic::Max::Nary", 4, -4, 4, 0.5, CPLT_ASSIGNMENT, false) {}
             /// %Test whether \a x is solution
-            virtual MaybeType
-            solution(const Assignment& x) const {
+            MaybeType
+            solution(const Assignment& x) const override {
                 return eq(max(max(x[0], x[1]), x[2]), x[3]);
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::FloatVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::FloatVarArray& x) override {
                 Gecode::FloatVarArgs m(3);
                 m[0] = x[0];
                 m[1] = x[1];
@@ -1465,13 +1468,13 @@ namespace Test { namespace Float {
             MaxNaryShared(void)
                 : Test(TestTags::sweep(), "Arithmetic::Max::Nary::Shared", 3, -4, 4, 0.5, CPLT_ASSIGNMENT, false) {}
             /// %Test whether \a x is solution
-            virtual MaybeType
-            solution(const Assignment& x) const {
+            MaybeType
+            solution(const Assignment& x) const override {
                 return eq(max(max(x[0], x[1]), x[2]), x[1]);
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::FloatVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::FloatVarArray& x) override {
                 Gecode::FloatVarArgs m(3);
                 m[0] = x[0];
                 m[1] = x[1];

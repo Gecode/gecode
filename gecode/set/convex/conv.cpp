@@ -45,39 +45,39 @@ namespace Gecode { namespace Set { namespace Convex {
 
     ExecStatus
     Convex::propagate(Space& home, const ModEventDelta&) {
-        // I, drop ranges from UB that are shorter than cardMin
+        // I, drop ranges from UB that are shorter than card_min
         // II, add range LB.smallest to LB.largest to LB
         // III, Drop ranges from UB that do not contain all elements of LB
         // that is: range.min()>LB.smallest or range.max()<LB.largest
         // This leaves only one range.
         // II
-        if (x0.glbSize() > 0) {
-            GECODE_ME_CHECK(x0.include(home, x0.glbMin(), x0.glbMax()));
+        if (x0.glb_size() > 0) {
+            GECODE_ME_CHECK(x0.include(home, x0.glb_min(), x0.glb_max()));
         } else {
             // If lower bound is empty, we can still constrain the cardinality
             // maximum with the width of the longest range in UB.
             // No need to do this if there is anything in LB because UB
             // becomes a single range then.
-            LubRanges<SetView> ubRangeIt(x0);
-            unsigned int maxWidth = 0;
-            for (; ubRangeIt(); ++ubRangeIt) {
-                assert(ubRangeIt());
-                maxWidth = std::max(maxWidth, ubRangeIt.width());
+            LubRanges<SetView> ub_range_it(x0);
+            unsigned int max_width = 0;
+            for (; ub_range_it(); ++ub_range_it) {
+                assert(ub_range_it());
+                max_width = std::max(max_width, ub_range_it.width());
             }
-            GECODE_ME_CHECK(x0.cardMax(home, maxWidth));
+            GECODE_ME_CHECK(x0.card_max(home, max_width));
         }
 
         // I + III
 
         Region r;
-        LubRanges<SetView> ubRangeIt(x0);
-        Iter::Ranges::Cache ubRangeItC(r, ubRangeIt);
+        LubRanges<SetView> ub_range_it(x0);
+        Iter::Ranges::Cache ub_range_it_c(r, ub_range_it);
 
-        for (; ubRangeItC(); ++ubRangeItC) {
-            if (ubRangeItC.width() < (unsigned int)x0.cardMin() ||
-                ubRangeItC.min() > x0.glbMin() // No need to test for empty lb.
-                || ubRangeItC.max() < x0.glbMax()) {
-                GECODE_ME_CHECK(x0.exclude(home, ubRangeItC.min(), ubRangeItC.max()));
+        for (; ub_range_it_c(); ++ub_range_it_c) {
+            if (ub_range_it_c.width() < (unsigned int)x0.card_min() ||
+                ub_range_it_c.min() > x0.glb_min() // No need to test for empty lb.
+                || ub_range_it_c.max() < x0.glb_max()) {
+                GECODE_ME_CHECK(x0.exclude(home, ub_range_it_c.min(), ub_range_it_c.max()));
             }
         }
         if (x0.assigned())

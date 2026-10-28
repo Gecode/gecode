@@ -54,13 +54,13 @@ namespace Gecode { namespace Float { namespace Arithmetic {
             return ES_OK;
         }
         /// Copy propagator during cloning
-        virtual Actor*
-        copy(Space& home) {
+        Actor*
+        copy(Space& home) override {
             return new (home) NonZero<View>(home, *this);
         }
         /// Perform propagation
-        virtual ExecStatus
-        propagate(Space& home, const ModEventDelta&) {
+        ExecStatus
+        propagate(Space& home, const ModEventDelta&) override {
             if ((x0.max() < 0.0) || (x0.min() > 0.0))
                 return home.ES_SUBSUMED(*this);
             return ((x0.min() == 0.0) && (x0.max() == 0.0)) ? ES_FAILED : ES_FIX;

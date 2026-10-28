@@ -107,21 +107,21 @@ namespace Gecode { namespace Int { namespace Sequence {
 
     public:
         /// Perform copying during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Advise function
-        ExecStatus advise(Space& home, Advisor& _a, const Delta& d);
+        ExecStatus advise(Space& home, Advisor& _a, const Delta& d) override;
         /// Cost function
-        virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+        PropCost cost(const Space& home, const ModEventDelta& med) const override;
         /// Schedule function
-        virtual void reschedule(Space& home);
+        void reschedule(Space& home) override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post propagator for
         static ExecStatus post(Home home, ViewArray<View>& x, Val s, int q, int l, int u);
         /// Check for consistency
         static ExecStatus check(ViewArray<View>& x, Val s, int q, int l, int u);
         /// Delete propagator and return its size
-        virtual size_t dispose(Space& home);
+        size_t dispose(Space& home) override;
 
     private:
         /// Views to sequence

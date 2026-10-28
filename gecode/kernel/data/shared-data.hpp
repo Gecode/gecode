@@ -44,7 +44,7 @@ namespace Gecode {
             /// Initialization
             SDO(const Data& d0);
             /// Destructor
-            virtual ~SDO(void);
+            ~SDO(void) override;
         };
 
     public:

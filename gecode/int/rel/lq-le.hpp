@@ -323,7 +323,7 @@ namespace Gecode { namespace Int { namespace Rel {
     NaryLqLe<View, o>::advise(Space& home, Advisor& _a, const Delta& d) {
         Index& a = static_cast<Index&>(_a);
         const int i = a.i;
-        switch (View::modevent(d)) {
+        switch (View::modification_event(d)) {
         case ME_INT_VAL:
             a.dispose(home, c);
             n_subsumed++;

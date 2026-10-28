@@ -71,7 +71,7 @@ namespace Gecode { namespace Search { namespace Seq {
         /// Initialize shared stop information
         void share(SharedStopInfo* ssi);
         /// Return true if portfolio engine must be stopped
-        virtual bool stop(const Statistics& s, const Options& o);
+        bool stop(const Statistics& s, const Options& o) override;
     };
 
     /// Asset engine in a sequential portfolio
@@ -139,15 +139,15 @@ namespace Gecode { namespace Search { namespace Seq {
         PBS(Engine** assets, Stop** stops, const SpokeCoverage* coverage, unsigned int n, const Statistics& stat,
             const Search::Options& opt);
         /// Return next solution (nullptr, if none exists or search has been stopped)
-        virtual Space* next(void);
+        Space* next(void) override;
         /// Return statistics
-        virtual Statistics statistics(void) const;
+        Statistics statistics(void) const override;
         /// Return why the last call to next() returned no solution
-        virtual EndReason end_reason(void) const;
+        EndReason end_reason(void) const override;
         /// Constrain future solutions to be better than \a b
-        virtual void constrain(const Space& b);
+        void constrain(const Space& b) override;
         /// Destructor
-        virtual ~PBS(void);
+        ~PBS(void) override;
     };
 
 }}} // namespace Gecode::Search::Seq

@@ -19,11 +19,11 @@
 #include <spawn.h>
 #include <fcntl.h>
 #include <pthread.h>
-#include <signal.h>
+#include <csignal>
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <sys/wait.h>
-#include <time.h>
+#include <ctime>
 #include <unistd.h>
 
 extern char** environ;
@@ -297,7 +297,7 @@ namespace Gecode { namespace FlatZinc {
             static void
             check_sigchld(void) {
                 struct sigaction action;
-                if (sigaction(SIGCHLD, NULL, &action) != 0) {
+                if (sigaction(SIGCHLD, nullptr, &action) != 0) {
                     throw Error("BlackBoxExec", last_error("SIGCHLD query failed"));
                 }
                 if ((action.sa_handler != SIG_DFL)
@@ -315,16 +315,16 @@ namespace Gecode { namespace FlatZinc {
 
         public:
             PosixProcessSession(const std::string& program, const std::vector<std::string>& args)
-                : child(-1), pipe_send(-1), file_receive(NULL) {
+                : child(-1), pipe_send(-1), file_receive(nullptr) {
                 open_posix(program, args);
             }
 
-            ~PosixProcessSession(void) {
+            ~PosixProcessSession(void) override {
                 close();
             }
 
             std::string
-            exchange(const std::string& out_buf) {
+            exchange(const std::string& out_buf) override {
                 const char* p = out_buf.c_str();
                 size_t remaining = out_buf.size();
                 while (remaining > 0) {
@@ -379,8 +379,8 @@ namespace Gecode { namespace FlatZinc {
 
         void
         PosixProcessSession::open_posix(const std::string& program, const std::vector<std::string>& args) {
-            const int READ = 0;
-            const int WRITE = 1;
+            const int read = 0;
+            const int write = 1;
 
             std::vector<char*> argv;
             argv.reserve(args.size() + 2);
@@ -398,14 +398,14 @@ namespace Gecode { namespace FlatZinc {
             if (create_socketpair(fds) != 0) {
                 throw Error("BlackBoxExec", last_error("stdin socket creation failed"));
             }
-            child_in[READ].reset(fds[READ]);
-            child_in[WRITE].reset(fds[WRITE]);
+            child_in[read].reset(fds[read]);
+            child_in[write].reset(fds[write]);
             if (create_socketpair(fds) != 0) {
                 throw Error("BlackBoxExec", last_error("stdout socket creation failed"));
             }
-            child_out[READ].reset(fds[READ]);
-            child_out[WRITE].reset(fds[WRITE]);
-            FileDescriptor* session_fds[] = {&child_in[READ], &child_in[WRITE], &child_out[READ], &child_out[WRITE]};
+            child_out[read].reset(fds[read]);
+            child_out[write].reset(fds[write]);
+            FileDescriptor* session_fds[] = {&child_in[read], &child_in[write], &child_out[read], &child_out[write]};
             for (FileDescriptor* fd : session_fds) {
                 if (move_away_from_standard_fd(*fd) == -1) {
                     throw Error("BlackBoxExec", last_error("moving session descriptors away from stdio "
@@ -436,10 +436,10 @@ namespace Gecode { namespace FlatZinc {
                 err = posix_spawnattr_setflags(attr.get(), flags);
             }
             if (err == 0) {
-                err = posix_spawn_file_actions_adddup2(actions.get(), child_in[READ].get(), STDIN_FILENO);
+                err = posix_spawn_file_actions_adddup2(actions.get(), child_in[read].get(), STDIN_FILENO);
             }
             if (err == 0) {
-                err = posix_spawn_file_actions_adddup2(actions.get(), child_out[WRITE].get(), STDOUT_FILENO);
+                err = posix_spawn_file_actions_adddup2(actions.get(), child_out[write].get(), STDOUT_FILENO);
             }
 #if defined(GECODE_HAS_POSIX_SPAWN_CLOEXEC_DEFAULT) && defined(GECODE_HAS_POSIX_SPAWN_ADDINHERIT_NP)
             if (err == 0) {
@@ -459,12 +459,12 @@ namespace Gecode { namespace FlatZinc {
                 throw Error("BlackBoxExec", last_error("starting blackbox process failed"));
             }
 
-            child_in[READ].reset();
-            child_out[WRITE].reset();
+            child_in[read].reset();
+            child_out[write].reset();
 
 #ifdef SO_NOSIGPIPE
             int nosigpipe = 1;
-            if (setsockopt(child_in[WRITE].get(), SOL_SOCKET, SO_NOSIGPIPE, &nosigpipe, sizeof(nosigpipe)) != 0) {
+            if (setsockopt(child_in[write].get(), SOL_SOCKET, SO_NOSIGPIPE, &nosigpipe, sizeof(nosigpipe)) != 0) {
                 int e = errno;
                 terminate_child(child);
                 child = -1;
@@ -472,8 +472,8 @@ namespace Gecode { namespace FlatZinc {
                 throw Error("BlackBoxExec", last_error("SO_NOSIGPIPE setup failed"));
             }
 #endif
-            FILE* receive = fdopen(child_out[READ].get(), "r");
-            if (receive == NULL) {
+            FILE* receive = fdopen(child_out[read].get(), "r");
+            if (receive == nullptr) {
                 int e = errno;
                 terminate_child(child);
                 child = -1;
@@ -481,8 +481,8 @@ namespace Gecode { namespace FlatZinc {
                 throw Error("BlackBoxExec", last_error("fdopen failed"));
             }
             file_receive = receive;
-            child_out[READ].release();
-            pipe_send = child_in[WRITE].release();
+            child_out[read].release();
+            pipe_send = child_in[write].release();
         }
 
         void
@@ -491,9 +491,9 @@ namespace Gecode { namespace FlatZinc {
                 ::close(pipe_send);
                 pipe_send = -1;
             }
-            if (file_receive != NULL) {
+            if (file_receive != nullptr) {
                 fclose(file_receive);
-                file_receive = NULL;
+                file_receive = nullptr;
             }
             if (child > 0) {
                 terminate_child(child);

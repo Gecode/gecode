@@ -59,8 +59,8 @@ namespace Test { namespace Int { namespace OpenList {
             list.update(*this, s.list);
         }
 
-        virtual Gecode::Space*
-        copy(void) {
+        Gecode::Space*
+        copy(void) override {
             return new OpenListSpace(*this);
         }
     };
@@ -70,8 +70,8 @@ namespace Test { namespace Int { namespace OpenList {
     public:
         OpenListMaterialize(void) : ::Test::Base("Int::OpenList::Materialize", TestTags::check()) {}
 
-        virtual bool
-        run(void) {
+        bool
+        run(void) override {
             using namespace Gecode;
             OpenListSpace source;
             rel(source, source.list.length(), IRT_GQ, 3);
@@ -119,8 +119,8 @@ namespace Test { namespace Int { namespace OpenList {
             list.update(*this, s.list);
         }
 
-        virtual Gecode::Space*
-        copy(void) {
+        Gecode::Space*
+        copy(void) override {
             return new BranchOrderSpace(*this);
         }
     };
@@ -152,8 +152,8 @@ namespace Test { namespace Int { namespace OpenList {
     public:
         BranchOrder(void) : ::Test::Base("Int::OpenList::BranchOrder") {}
 
-        virtual bool
-        run(void) {
+        bool
+        run(void) override {
             using namespace Gecode;
             return check(BranchOrderSpace::Order::INCREMENTAL, 3) && check(BranchOrderSpace::Order::LENGTH_MIN, 1) &&
                    check(BranchOrderSpace::Order::LENGTH_MAX, 3);
@@ -169,15 +169,15 @@ namespace Test { namespace Int { namespace OpenList {
             using namespace Gecode;
             if (length_first)
                 branch(*this, list.length(), INT_VAL_MIN());
-            branch(*this, list, tiebreak(INT_VAR_SIZE_MIN(), INT_VAR_MAX_MAX()), vals);
+            branch(*this, list, tie_break(INT_VAR_SIZE_MIN(), INT_VAR_MAX_MAX()), vals);
         }
 
         SelectorSpace(SelectorSpace& s) : Gecode::Space(s) {
             list.update(*this, s.list);
         }
 
-        virtual Gecode::Space*
-        copy(void) {
+        Gecode::Space*
+        copy(void) override {
             return new SelectorSpace(*this);
         }
     };
@@ -186,8 +186,8 @@ namespace Test { namespace Int { namespace OpenList {
     public:
         Selectors(void) : ::Test::Base("Int::OpenList::Selectors") {}
 
-        virtual bool
-        run(void) {
+        bool
+        run(void) override {
             using namespace Gecode;
             const IntValBranch values[] = {INT_VAL_MIN(),
                                            INT_VAL_MAX(),
@@ -231,8 +231,8 @@ namespace Test { namespace Int { namespace OpenList {
     public:
         NoGoods(void) : ::Test::Base("Int::OpenList::NoGoods") {}
 
-        virtual bool
-        run(void) {
+        bool
+        run(void) override {
             using namespace Gecode;
             SelectorSpace root(INT_VAL_MIN());
             root.list.materialize(root, 1);
@@ -241,7 +241,7 @@ namespace Test { namespace Int { namespace OpenList {
             options.stop = &stop;
             options.threads = 1;
             options.nogoods_limit = 100;
-            std::unique_ptr<Search::Engine> engine(Search::dfsengine(&root, options));
+            std::unique_ptr<Search::Engine> engine(Search::make_dfs_engine(&root, options));
             bool found[16] = {};
             const auto record = [&found](SelectorSpace* solution) {
                 int code = 1;
@@ -276,7 +276,7 @@ namespace Test { namespace Int { namespace OpenList {
             list.materialize(*this, 3);
             branch(
                 *this, list,
-                tiebreak(INT_VAR_SIZE_MIN(), INT_VAR_MERIT_MAX([](const Space&, IntVar, int i) { return i; })), vals,
+                tie_break(INT_VAR_SIZE_MIN(), INT_VAR_MERIT_MAX([](const Space&, IntVar, int i) { return i; })), vals,
                 [](const Space&, IntVar, int i) { return i != 1; },
                 [](const Space&, const Brancher&, unsigned int, IntVar, int i, const int& value, std::ostream& out) {
                     out << i << ":" << value;
@@ -287,8 +287,8 @@ namespace Test { namespace Int { namespace OpenList {
             list.update(*this, s.list);
         }
 
-        virtual Gecode::Space*
-        copy(void) {
+        Gecode::Space*
+        copy(void) override {
             return new SelectorChoiceSpace(*this);
         }
     };
@@ -297,8 +297,8 @@ namespace Test { namespace Int { namespace OpenList {
     public:
         SelectorChoice(void) : ::Test::Base("Int::OpenList::SelectorChoice") {}
 
-        virtual bool
-        run(void) {
+        bool
+        run(void) override {
             using namespace Gecode;
             for (int multi = 0; multi < 2; multi++) {
                 SelectorChoiceSpace source(multi ? INT_VALUES_MAX() : INT_VAL_MAX());
@@ -355,8 +355,8 @@ namespace Test { namespace Int { namespace OpenList {
             list.update(*this, s.list);
         }
 
-        virtual Gecode::Space*
-        copy(void) {
+        Gecode::Space*
+        copy(void) override {
             return new BoolSpace(*this);
         }
     };
@@ -365,8 +365,8 @@ namespace Test { namespace Int { namespace OpenList {
     public:
         BoolList(void) : ::Test::Base("Int::OpenList::Bool", TestTags::check()) {}
 
-        virtual bool
-        run(void) {
+        bool
+        run(void) override {
             using namespace Gecode;
             for (bool length_first : {false, true})
                 for (int recompute = 0; recompute < 2; recompute++) {
@@ -408,8 +408,8 @@ namespace Test { namespace Int { namespace OpenList {
             list.update(*this, s.list);
         }
 
-        virtual Gecode::Space*
-        copy(void) {
+        Gecode::Space*
+        copy(void) override {
             return new AliasSpace(*this);
         }
 
@@ -457,8 +457,8 @@ namespace Test { namespace Int { namespace OpenList {
     public:
         Aliases(void) : ::Test::Base("Int::OpenList::Aliases", TestTags::check()) {}
 
-        virtual bool
-        run(void) {
+        bool
+        run(void) override {
             return check<Gecode::IntVar>() && check<Gecode::BoolVar>();
         }
     };
@@ -496,8 +496,8 @@ namespace Test { namespace Int { namespace OpenList {
 #endif
         }
 
-        virtual Gecode::Space*
-        copy(void) {
+        Gecode::Space*
+        copy(void) override {
             return new FactorySpace(*this);
         }
     };
@@ -506,8 +506,8 @@ namespace Test { namespace Int { namespace OpenList {
     public:
         Factory(void) : ::Test::Base("Int::OpenList::Factory", TestTags::check()) {}
 
-        virtual bool
-        run(void) {
+        bool
+        run(void) override {
             using namespace Gecode;
             FactorySpace source;
             if (source.status() == SS_FAILED)
@@ -526,7 +526,7 @@ namespace Test { namespace Int { namespace OpenList {
             bool valid = (clone->status() != SS_FAILED) && (source.status() != SS_FAILED);
 #ifdef GECODE_HAS_SET_VARS
             valid &= (source.sets.known_length() == 1) && (clone->sets.known_length() == 3) &&
-                     (clone->sets.length().val() == 3) && clone->sets[2].assigned() && (clone->sets[2].glbMin() == 2);
+                     (clone->sets.length().val() == 3) && clone->sets[2].assigned() && (clone->sets[2].glb_min() == 2);
 #endif
 #ifdef GECODE_HAS_FLOAT_VARS
             valid &= (source.floats.known_length() == 1) && (clone->floats.known_length() == 3) &&
@@ -542,8 +542,8 @@ namespace Test { namespace Int { namespace OpenList {
     public:
         FixedStatistics(void) : ::Test::Base("Int::OpenList::FixedStatistics") {}
 
-        virtual bool
-        run(void) {
+        bool
+        run(void) override {
             using namespace Gecode;
             for (int chb = 0; chb < 2; chb++) {
                 SelectorSpace open(INT_VAL_MIN());
@@ -600,8 +600,8 @@ namespace Test { namespace Int { namespace OpenList {
             list.update(*this, s.list);
         }
 
-        virtual Gecode::Space*
-        copy(void) {
+        Gecode::Space*
+        copy(void) override {
             return new TransitionSpace(*this);
         }
     };
@@ -610,8 +610,8 @@ namespace Test { namespace Int { namespace OpenList {
     public:
         Transition(void) : ::Test::Base("Int::OpenList::Transition") {}
 
-        virtual bool
-        run(void) {
+        bool
+        run(void) override {
             using namespace Gecode;
             Search::Options options;
             options.threads = 1;
@@ -709,8 +709,8 @@ namespace Test { namespace Int { namespace OpenList {
             : OpenTest("OpenList::Rel::" + str(relation0) + "::" + str(level), 3, 0, Gecode::IntSet({0, 2, 5}), level),
               kind(Kind::REL), width(0), relation(relation0) {}
 
-        virtual bool
-        solution(const Assignment& x) const {
+        bool
+        solution(const Assignment& x) const override {
             switch (kind) {
             case Kind::DISTINCT:
                 for (int i = 0; i < x.size(); i++)
@@ -770,8 +770,8 @@ namespace Test { namespace Int { namespace OpenList {
             return false;
         }
 
-        virtual void
-        post(Gecode::Space& home, Gecode::OpenIntVarList list, Gecode::IntVarArray&) {
+        void
+        post(Gecode::Space& home, Gecode::OpenIntVarList list, Gecode::IntVarArray&) override {
             using namespace Gecode;
             switch (kind) {
             case Kind::DISTINCT:
@@ -902,12 +902,12 @@ namespace Test { namespace Int { namespace OpenList {
     class EmptyMinimum : public Test {
     public:
         EmptyMinimum(void) : Test("OpenList::EmptyMinimum", 1, 0, 1) {}
-        virtual bool
-        solution(const Assignment&) const {
+        bool
+        solution(const Assignment&) const override {
             return false;
         }
-        virtual void
-        post(Gecode::Space& home, Gecode::IntVarArray& x) {
+        void
+        post(Gecode::Space& home, Gecode::IntVarArray& x) override {
             Gecode::OpenIntVarList list(home, 0);
             Gecode::min(home, list, x[0]);
             list.close(home);
@@ -918,8 +918,8 @@ namespace Test { namespace Int { namespace OpenList {
     public:
         IncrementalConstraints(void) : ::Test::Base("Int::OpenList::IncrementalConstraints", TestTags::check()) {}
 
-        virtual bool
-        run(void) {
+        bool
+        run(void) override {
             using namespace Gecode;
             class IncrementalSpace : public Space {
             public:
@@ -960,8 +960,8 @@ namespace Test { namespace Int { namespace OpenList {
                     maximum.update(*this, s.maximum);
                 }
 
-                virtual Space*
-                copy(void) {
+                Space*
+                copy(void) override {
                     return new IncrementalSpace(*this);
                 }
             };
@@ -1027,8 +1027,8 @@ namespace Test { namespace Int { namespace OpenList {
             list.update(*this, s.list);
         }
 
-        virtual Gecode::Space*
-        copy(void) {
+        Gecode::Space*
+        copy(void) override {
             return new CallbackSpace(*this);
         }
     };
@@ -1045,7 +1045,7 @@ namespace Test { namespace Int { namespace OpenList {
                 values.update(*this, s.values);
             }
 
-            ~SetSpace(void) {
+            ~SetSpace(void) override {
                 values.dispose(*this);
             }
 
@@ -1188,8 +1188,8 @@ namespace Test { namespace Int { namespace OpenList {
             list.update(*this, s.list);
         }
 
-        virtual Gecode::Space*
-        copy(void) {
+        Gecode::Space*
+        copy(void) override {
             return new GroupSpace(*this);
         }
     };
@@ -1205,8 +1205,8 @@ namespace Test { namespace Int { namespace OpenList {
             : ::Test::Base("Int::OpenList::Group::" + name + (kill0 ? "::Kill" : "::Disable")), kind(kind0),
               kill(kill0) {}
 
-        virtual bool
-        run(void) {
+        bool
+        run(void) override {
             using namespace Gecode;
             for (int close = 0; close < 2; close++) {
                 GroupSpace source(kind, close != 0);
@@ -1242,8 +1242,8 @@ namespace Test { namespace Int { namespace OpenList {
     public:
         Dispose(void) : ::Test::Base("Int::OpenList::Dispose", TestTags::check()) {}
 
-        virtual bool
-        run(void) {
+        bool
+        run(void) override {
             using namespace Gecode;
             std::shared_ptr<int> domain(new int(0));
             std::shared_ptr<int> transition(new int(0));
@@ -1268,8 +1268,8 @@ namespace Test { namespace Int { namespace OpenList {
     public:
         CallbackLength(void) : ::Test::Base("Int::OpenList::CallbackLength", TestTags::check()) {}
 
-        virtual bool
-        run(void) {
+        bool
+        run(void) override {
             using namespace Gecode;
             for (int assign = 0; assign < 2; assign++)
                 for (int close = 0; close < 2; close++) {
@@ -1312,8 +1312,8 @@ namespace Test { namespace Int { namespace OpenList {
     public:
         NoGPI(void) : ::Test::Base("Int::OpenList::NoGPI", TestTags::check()) {}
 
-        virtual bool
-        run(void) {
+        bool
+        run(void) override {
             using namespace Gecode;
             CallbackSpace home([](int) { return IntSet(0, 1); }, [](Space&, OpenIntVarList, int) {});
             PropagatorGroup factory;
@@ -1377,8 +1377,8 @@ namespace Test { namespace Int { namespace OpenList {
     public:
         FailedGet(void) : ::Test::Base("Int::OpenList::FailedGet") {}
 
-        virtual bool
-        run(void) {
+        bool
+        run(void) override {
             using namespace Gecode;
             CallbackSpace source([](int) { return IntSet(0, 1); },
                                  [](Space& home, OpenIntVarList, int) { home.fail(); });
@@ -1392,8 +1392,8 @@ namespace Test { namespace Int { namespace OpenList {
     public:
         ValueCommit(void) : ::Test::Base("Int::OpenList::ValueCommit") {}
 
-        virtual bool
-        run(void) {
+        bool
+        run(void) override {
             using namespace Gecode;
             CallbackSpace source([](int) { return IntSet(0, 1); },
                                  [](Space& home, OpenIntVarList, int i) {
@@ -1425,8 +1425,8 @@ namespace Test { namespace Int { namespace OpenList {
     public:
         ValueReplay(void) : ::Test::Base("Int::OpenList::ValueReplay", TestTags::check()) {}
 
-        virtual bool
-        run(void) {
+        bool
+        run(void) override {
             using namespace Gecode;
             CallbackSpace source([](int) { return IntSet(0, 1); },
                                  [](Space& home, OpenIntVarList list, int i) {
@@ -1466,8 +1466,8 @@ namespace Test { namespace Int { namespace OpenList {
     public:
         ImpossibleWindow(void) : ::Test::Base("Int::OpenList::ImpossibleWindow") {}
 
-        virtual bool
-        run(void) {
+        bool
+        run(void) override {
             using namespace Gecode;
             for (int sum = 0; sum < 2; sum++)
                 for (int size = 0; size < 3; size++) {
@@ -1504,8 +1504,8 @@ namespace Test { namespace Int { namespace OpenList {
             frequency.update(*this, s.frequency);
         }
 
-        virtual Gecode::Space*
-        copy(void) {
+        Gecode::Space*
+        copy(void) override {
             return new PatternSpace(*this);
         }
     };
@@ -1515,8 +1515,8 @@ namespace Test { namespace Int { namespace OpenList {
     public:
         PatternEnumeration(void) : ::Test::Base("Int::OpenList::Pattern::Enumeration", TestTags::check()) {}
 
-        virtual bool
-        run(void) {
+        bool
+        run(void) override {
             using namespace Gecode;
             const PatternMining::Sequences inputs[] = {
                 {{17, 1000000, 17}, {17, 1000000, 17}, {1000000, 17, 42}, {17, 42}}, {{1, 1}, {1, 2}, {2, 1}}};
@@ -1587,8 +1587,8 @@ namespace Test { namespace Int { namespace OpenList {
     public:
         PatternGrowth(void) : ::Test::Base("Int::OpenList::Pattern::Growth", TestTags::check()) {}
 
-        virtual bool
-        run(void) {
+        bool
+        run(void) override {
             using namespace Gecode;
             const PatternMining::Database data({{1, 2, 1}, {1, 2, 2}, {1, 1, 2}});
             PatternSpace source(data, 2);
@@ -1641,8 +1641,8 @@ namespace Test { namespace Int { namespace OpenList {
     public:
         PatternInput(void) : ::Test::Base("Int::OpenList::Pattern::Input", TestTags::check()) {}
 
-        virtual bool
-        run(void) {
+        bool
+        run(void) override {
             using namespace PatternMining;
             std::istringstream rows("# comment\n17 -1 1000000 -1 -2\r\n"
                                     "17 -1 1000000 -1 -2\n");

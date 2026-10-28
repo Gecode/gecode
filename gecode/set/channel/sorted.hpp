@@ -60,8 +60,8 @@ namespace Gecode { namespace Set { namespace Channel {
     forceinline ExecStatus
     ChannelSorted<View>::post(Home home, View x0, ViewArray<Gecode::Int::IntView>& xs) {
         unsigned int xs_size = static_cast<unsigned int>(xs.size());
-        GECODE_ME_CHECK(x0.cardMin(home, xs_size));
-        GECODE_ME_CHECK(x0.cardMax(home, xs_size));
+        GECODE_ME_CHECK(x0.card_min(home, xs_size));
+        GECODE_ME_CHECK(x0.card_max(home, xs_size));
         if (xs_size == 1) {
             SingletonView sv(xs[0]);
             GECODE_ES_CHECK((Rel::Eq<View, SingletonView>::post(home, x0, sv)));
@@ -107,49 +107,49 @@ namespace Gecode { namespace Set { namespace Channel {
 
         int xs_size = xs.size();
 
-        bool loopFlag;
+        bool loop_flag;
 
         do {
-            loopFlag = false;
+            loop_flag = false;
 
             // Order int vars in xs
-            GECODE_ME_CHECK(xs[0].gq(home, x0.lubMin()));
+            GECODE_ME_CHECK(xs[0].gq(home, x0.lub_min()));
             for (int i = xs_size - 1; i--;) {
-                GECODE_ME_CHECK_MODIFIED(loopFlag, xs[i + 1].gq(home, xs[i].min() + 1));
+                GECODE_ME_CHECK_MODIFIED(loop_flag, xs[i + 1].gq(home, xs[i].min() + 1));
             }
 
-            GECODE_ME_CHECK_MODIFIED(loopFlag, xs[xs_size - 1].lq(home, x0.lubMax()));
+            GECODE_ME_CHECK_MODIFIED(loop_flag, xs[xs_size - 1].lq(home, x0.lub_max()));
             for (int i = xs_size - 2; i--;) {
-                GECODE_ME_CHECK_MODIFIED(loopFlag, xs[i].lq(home, xs[i + 1].max() - 1));
+                GECODE_ME_CHECK_MODIFIED(loop_flag, xs[i].lq(home, xs[i + 1].max() - 1));
             }
 
             // if y from xs is assigned, add to glb(x0)
             for (int i = xs_size; i--;) {
                 if (xs[i].assigned()) {
-                    GECODE_ME_CHECK_MODIFIED(loopFlag, x0.include(home, xs[i].val()));
+                    GECODE_ME_CHECK_MODIFIED(loop_flag, x0.include(home, xs[i].val()));
                 }
             }
 
             // intersect every y in xs with lub(x0)
             for (int i = xs_size; i--;) {
                 LubRanges<View> ub(x0);
-                GECODE_ME_CHECK_MODIFIED(loopFlag, xs[i].inter_r(home, ub, false));
+                GECODE_ME_CHECK_MODIFIED(loop_flag, xs[i].inter_r(home, ub, false));
             }
 
             // remove gaps between vars in xs from lub(x0)
-            GECODE_ME_CHECK_MODIFIED(loopFlag, x0.exclude(home, Limits::min, xs[0].min() - 1));
-            GECODE_ME_CHECK_MODIFIED(loopFlag, x0.exclude(home, xs[xs_size - 1].max() + 1, Limits::max));
+            GECODE_ME_CHECK_MODIFIED(loop_flag, x0.exclude(home, Limits::min, xs[0].min() - 1));
+            GECODE_ME_CHECK_MODIFIED(loop_flag, x0.exclude(home, xs[xs_size - 1].max() + 1, Limits::max));
 
             for (int i = xs_size - 1; i--;) {
                 int start = xs[i].max() + 1;
                 int end = xs[i + 1].min() - 1;
                 if (start <= end) {
-                    GECODE_ME_CHECK_MODIFIED(loopFlag, x0.exclude(home, start, end));
+                    GECODE_ME_CHECK_MODIFIED(loop_flag, x0.exclude(home, start, end));
                 }
             }
 
             // try to assign vars in xs from glb(x0)
-            if (x0.glbSize() > 0) {
+            if (x0.glb_size() > 0) {
 
                 LubRanges<View> ub(x0);
                 Iter::Ranges::ToValues<LubRanges<View>> ubv(ub);
@@ -158,15 +158,15 @@ namespace Gecode { namespace Set { namespace Channel {
 
                 int i = 0;
                 for (; ubv() && lbv() && ubv.val() == lbv.val(); ++ubv, ++lbv, i++) {
-                    GECODE_ME_CHECK_MODIFIED(loopFlag, xs[i].eq(home, lbv.val()));
+                    GECODE_ME_CHECK_MODIFIED(loop_flag, xs[i].eq(home, lbv.val()));
                 }
 
-                if (i < xs_size - 1 && x0.lubMax() == x0.glbMax()) {
+                if (i < xs_size - 1 && x0.lub_max() == x0.glb_max()) {
                     LubRanges<View> lbx0(x0);
                     GlbRanges<View> ubx0(x0);
                     Iter::Ranges::Inter<LubRanges<View>, GlbRanges<View>> inter(lbx0, ubx0);
 
-                    int to = x0.glbMax();
+                    int to = x0.glb_max();
                     int from = to;
                     while (inter()) {
                         from = inter.min();
@@ -175,12 +175,12 @@ namespace Gecode { namespace Set { namespace Channel {
 
                     int k = xs_size - 1;
                     for (int j = to; j >= from; j--, k--) {
-                        GECODE_ME_CHECK_MODIFIED(loopFlag, xs[k].eq(home, j));
+                        GECODE_ME_CHECK_MODIFIED(loop_flag, xs[k].eq(home, j));
                     }
                 }
             }
 
-        } while (loopFlag);
+        } while (loop_flag);
 
         for (int i = xs_size; i--;)
             if (!xs[i].assigned())

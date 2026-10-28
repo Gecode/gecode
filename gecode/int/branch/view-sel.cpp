@@ -35,7 +35,7 @@
 namespace Gecode { namespace Int { namespace Branch {
 
     ViewSel<IntView>*
-    viewsel(Space& home, const IntVarBranch& ivb) {
+    view_selection(Space& home, const IntVarBranch& ivb) {
         switch (ivb.select()) {
         case IntVarBranch::SEL_NONE:
             return new (home) ViewSelNone<IntView>(home, ivb);
@@ -172,7 +172,7 @@ namespace Gecode { namespace Int { namespace Branch {
     }
 
     ViewSel<BoolView>*
-    viewsel(Space& home, const BoolVarBranch& bvb) {
+    view_selection(Space& home, const BoolVarBranch& bvb) {
         switch (bvb.select()) {
         case BoolVarBranch::SEL_NONE:
             return new (home) ViewSelNone<BoolView>(home, bvb);

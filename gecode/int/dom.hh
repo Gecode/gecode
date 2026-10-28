@@ -67,9 +67,9 @@ namespace Gecode { namespace Int { namespace Dom {
 
     public:
         /// Copy propagator during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post propagator for \f$ (l\leq x \leq m) \Leftrightarrow b\f$
         static ExecStatus post(Home home, View x, int min, int max, BoolView b);
     };
@@ -95,13 +95,13 @@ namespace Gecode { namespace Int { namespace Dom {
 
     public:
         /// Copy propagator during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post propagator for \f$ (x \in d) \Leftrightarrow b\f$
         static ExecStatus post(Home home, View x, const IntSet& s, BoolView b);
         /// Delete propagator and return its size
-        virtual size_t dispose(Space& home);
+        size_t dispose(Space& home) override;
     };
 
 }}} // namespace Gecode::Int::Dom

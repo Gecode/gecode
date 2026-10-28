@@ -44,8 +44,8 @@ namespace Test { namespace Assign {
         /// Create and register test
         Float(const std::string& s, const Gecode::FloatVal& d, int n) : FloatTest(s, n, d) {}
         /// Post propagators on variables \a x
-        virtual void
-        post(Gecode::Space& home, Gecode::FloatVarArray& x) {
+        void
+        post(Gecode::Space& home, Gecode::FloatVarArray& x) override {
             for (int i = 0; i < x.size() - 1; i++)
                 Gecode::rel(home, x[i], Gecode::FRT_LQ, x[i + 1]);
         }

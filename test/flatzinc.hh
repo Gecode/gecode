@@ -58,37 +58,37 @@ namespace Test {
             std::string _name;
             std::string _source;
             std::string _expected;
-            bool _allSolutions;
-            std::vector<std::string> _cmdlineOpt;
+            bool _all_solutions;
+            std::vector<std::string> _cmdline_opt;
             OutputCheck _check;
             BeforeRun _before;
 
         public:
             /// Construct and register test
             FlatZincTest(const std::string& name, const std::string& source, const std::string& expected,
-                         bool allSolutions = false, std::vector<std::string> cmdlineOpt = {},
+                         bool all_solutions = false, std::vector<std::string> cmdline_opt = {},
                          OutputCheck check = OutputCheck(), BeforeRun before = BeforeRun());
             /// Construct and register a test with explicitly assigned tags
             FlatZincTest(TestTags tags, const std::string& name, const std::string& source, const std::string& expected,
-                         bool allSolutions = false, std::vector<std::string> cmdlineOpt = {},
+                         bool all_solutions = false, std::vector<std::string> cmdline_opt = {},
                          OutputCheck check = OutputCheck(), BeforeRun before = BeforeRun());
             /// Perform test
-            virtual bool run(void);
+            bool run(void) override;
         };
 
         class FlatZincErrorTest : public FlatZincTest {
         private:
-            std::string _expectedMessage;
+            std::string _expected_message;
 
         public:
             /// Construct and register test
             FlatZincErrorTest(const std::string& name, const std::string& source,
-                              std::vector<std::string> cmdlineOpt = {}, std::string expectedMessage = "");
+                              std::vector<std::string> cmdline_opt = {}, std::string expected_message = "");
             /// Construct and register an error test with explicitly assigned tags
             FlatZincErrorTest(TestTags tags, const std::string& name, const std::string& source,
-                              std::vector<std::string> cmdlineOpt = {}, std::string expectedMessage = "");
+                              std::vector<std::string> cmdline_opt = {}, std::string expected_message = "");
             /// Perform test
-            virtual bool run(void);
+            bool run(void) override;
         };
 
     } // namespace FlatZinc

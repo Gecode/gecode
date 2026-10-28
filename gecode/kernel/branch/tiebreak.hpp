@@ -51,13 +51,13 @@ namespace Gecode {
     //@{
     /// Combine variable selection criteria \a a and \a b for tie-breaking
     template <class VarBranch>
-    TieBreak<VarBranch> tiebreak(VarBranch a, VarBranch b);
+    TieBreak<VarBranch> tie_break(VarBranch a, VarBranch b);
     /// Combine variable selection criteria \a a, \a b, and \a c for tie-breaking
     template <class VarBranch>
-    TieBreak<VarBranch> tiebreak(VarBranch a, VarBranch b, VarBranch c);
+    TieBreak<VarBranch> tie_break(VarBranch a, VarBranch b, VarBranch c);
     /// Combine variable selection criteria \a a, \a b, \a c, and \a d for tie-breaking
     template <class VarBranch>
-    TieBreak<VarBranch> tiebreak(VarBranch a, VarBranch b, VarBranch c, VarBranch d);
+    TieBreak<VarBranch> tie_break(VarBranch a, VarBranch b, VarBranch c, VarBranch d);
     //@}
 
     template <class VarBranch>
@@ -67,21 +67,21 @@ namespace Gecode {
 
     template <class VarBranch>
     TieBreak<VarBranch>
-    tiebreak(VarBranch a, VarBranch b) {
+    tie_break(VarBranch a, VarBranch b) {
         TieBreak<VarBranch> ab(a, b);
         return ab;
     }
 
     template <class VarBranch>
     TieBreak<VarBranch>
-    tiebreak(VarBranch a, VarBranch b, VarBranch c) {
+    tie_break(VarBranch a, VarBranch b, VarBranch c) {
         TieBreak<VarBranch> abc(a, b, c);
         return abc;
     }
 
     template <class VarBranch>
     TieBreak<VarBranch>
-    tiebreak(VarBranch a, VarBranch b, VarBranch c, VarBranch d) {
+    tie_break(VarBranch a, VarBranch b, VarBranch c, VarBranch d) {
         TieBreak<VarBranch> abcd(a, b, c, d);
         return abcd;
     }

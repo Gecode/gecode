@@ -50,13 +50,13 @@ namespace Gecode { namespace Int { namespace Arithmetic {
             do {
                 mod = false;
                 {
-                    ModEvent me = x1.gq(home, -ops.cnroot(-x0.min()));
+                    ModEvent me = x1.gq(home, -ops.ceil_nth_root(-x0.min()));
                     if (me_failed(me))
                         return ES_FAILED;
                     mod |= me_modified(me);
                 }
                 {
-                    ModEvent me = x1.lq(home, -ops.cnroot(-x0.max()));
+                    ModEvent me = x1.lq(home, -ops.ceil_nth_root(-x0.max()));
                     if (me_failed(me))
                         return ES_FAILED;
                     mod |= me_modified(me);
@@ -79,13 +79,13 @@ namespace Gecode { namespace Int { namespace Arithmetic {
             do {
                 mod = false;
                 {
-                    ModEvent me = x1.lq(home, ops.fnroot(x0.max()));
+                    ModEvent me = x1.lq(home, ops.floor_nth_root(x0.max()));
                     if (me_failed(me))
                         return ES_FAILED;
                     mod |= me_modified(me);
                 }
                 {
-                    ModEvent me = x1.gq(home, ops.fnroot(x0.min()));
+                    ModEvent me = x1.gq(home, ops.floor_nth_root(x0.min()));
                     if (me_failed(me))
                         return ES_FAILED;
                     mod |= me_modified(me);
@@ -155,8 +155,8 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         assert((x0.min() < 0) && (x0.max() > 0));
         assert((x1.min() < 0) && (x1.max() > 0));
 
-        GECODE_ME_CHECK(x1.lq(home, ops.fnroot(x0.max())));
-        GECODE_ME_CHECK(x1.gq(home, -ops.cnroot(-x0.min())));
+        GECODE_ME_CHECK(x1.lq(home, ops.floor_nth_root(x0.max())));
+        GECODE_ME_CHECK(x1.gq(home, -ops.ceil_nth_root(-x0.min())));
         GECODE_ME_CHECK(x0.le(home, ops.tpow(x1.max() + 1)));
         GECODE_ME_CHECK(x0.gq(home, ops.tpow(x1.min() - 1) + 1));
 
@@ -194,8 +194,8 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         }
 
         // Limits values such that no overflow can occur
-        GECODE_ME_CHECK(x1.lq(home, ops.fnroot(Limits::max)));
-        GECODE_ME_CHECK(x1.gq(home, -ops.cnroot(-Limits::min)));
+        GECODE_ME_CHECK(x1.lq(home, ops.floor_nth_root(Limits::max)));
+        GECODE_ME_CHECK(x1.gq(home, -ops.ceil_nth_root(-Limits::min)));
 
         if (ops.even()) {
             GECODE_ME_CHECK(x0.gq(home, 0));
@@ -284,12 +284,12 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         /// Perform mapping of minimum
         forceinline int
         min(int x) const {
-            return (x < 0) ? -ops.cnroot(-x) : ops.fnroot(x);
+            return (x < 0) ? -ops.ceil_nth_root(-x) : ops.floor_nth_root(x);
         }
         /// Perform mapping of maximum
         forceinline int
         max(int x) const {
-            return (x < 0) ? -ops.cnroot(-x) : ops.fnroot(x);
+            return (x < 0) ? -ops.ceil_nth_root(-x) : ops.floor_nth_root(x);
         }
     };
 
@@ -391,8 +391,8 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         }
 
         // Limits values such that no overflow can occur
-        GECODE_ME_CHECK(x1.lq(home, ops.fnroot(Limits::max)));
-        GECODE_ME_CHECK(x1.gq(home, -ops.cnroot(-Limits::min)));
+        GECODE_ME_CHECK(x1.lq(home, ops.floor_nth_root(Limits::max)));
+        GECODE_ME_CHECK(x1.gq(home, -ops.ceil_nth_root(-Limits::min)));
 
         if (ops.even()) {
             GECODE_ME_CHECK(x0.gq(home, 0));

@@ -142,7 +142,7 @@ namespace Gecode { namespace Int {
             void max(int n);
 
             /// Set previous element to \a p and next element to \a n
-            void prevnext(RangeList* p, RangeList* n);
+            void set_prev_next(RangeList* p, RangeList* n);
             /// Set next element from \a o to \a n
             void next(RangeList* o, RangeList* n);
             /// Set previous element from \a o to \a n
@@ -523,13 +523,13 @@ namespace Gecode { namespace Int {
         /// \name Domain status access
         //@{
         /// How many bits does the status have
-        static const int BITS = 2;
+        static const int status_bits = 2;
         /// Status of domain assigned to zero
-        static const BoolStatus ZERO = 0;
+        static const BoolStatus zero_status = 0;
         /// Status of domain assigned to one
-        static const BoolStatus ONE = 3;
+        static const BoolStatus one_status = 3;
         /// Status of domain not yet assigned
-        static const BoolStatus NONE = 2;
+        static const BoolStatus unassigned_status = 2;
         /// Return current domain status
         BoolStatus status(void) const;
         //@}
@@ -702,7 +702,7 @@ namespace Gecode { namespace Int {
         /// \name Support for delta information for advisors
         //@{
         /// Return modification event
-        static ModEvent modevent(const Delta& d);
+        static ModEvent modification_event(const Delta& d);
         /// Return minimum value just pruned
         static int min(const Delta& d);
         /// Return maximum value just pruned

@@ -67,15 +67,15 @@ namespace Gecode { namespace Set { namespace Channel {
 
     public:
         /// Copy propagator during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Cost function (defined as PC_LINEAR_LO)
-        virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+        PropCost cost(const Space& home, const ModEventDelta& med) const override;
         /// Schedule function
-        virtual void reschedule(Space& home);
+        void reschedule(Space& home) override;
         /// Delete Propagator
-        virtual size_t dispose(Space& home);
+        size_t dispose(Space& home) override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post propagator that propagates that \a s contains the \f$x_i\f$, which are sorted in non-descending order
         static ExecStatus post(Home home, View s, ViewArray<Gecode::Int::IntView>& x);
     };
@@ -112,15 +112,15 @@ namespace Gecode { namespace Set { namespace Channel {
 
     public:
         /// Copy propagator during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Cost function (defined as PC_QUADRATIC_LO)
-        virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+        PropCost cost(const Space& home, const ModEventDelta& med) const override;
         /// Schedule function
-        virtual void reschedule(Space& home);
+        void reschedule(Space& home) override;
         /// Delete propagator and return its size
-        virtual size_t dispose(Space& home);
+        size_t dispose(Space& home) override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post propagator for \f$x_i=j \Leftrightarrow i\in y_j\f$
         static ExecStatus post(Home home, ViewArray<Gecode::Int::CachedView<Gecode::Int::IntView>>& x,
                                ViewArray<CachedView<View>>& y);
@@ -182,17 +182,17 @@ namespace Gecode { namespace Set { namespace Channel {
 
     public:
         /// Copy propagator during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Cost function (defined as PC_QUADRATIC_LO)
-        virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+        PropCost cost(const Space& home, const ModEventDelta& med) const override;
         /// Schedule function
-        virtual void reschedule(Space& home);
+        void reschedule(Space& home) override;
         /// Delete propagator and return its size
-        virtual size_t dispose(Space& home);
+        size_t dispose(Space& home) override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Give advice to propagator
-        virtual ExecStatus advise(Space& home, Advisor& a, const Delta& d);
+        ExecStatus advise(Space& home, Advisor& a, const Delta& d) override;
         /// Post propagator for \f$x_i=j \Leftrightarrow i\in y_j\f$
         static ExecStatus post(Home home, ViewArray<Gecode::Int::BoolView>& x, View y);
     };
@@ -225,15 +225,15 @@ namespace Gecode { namespace Set { namespace Channel {
 
     public:
         /// Copy propagator during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Cost function (defined as PC_QUADRATIC_HI)
-        virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+        PropCost cost(const Space& home, const ModEventDelta& med) const override;
         /// Schedule function
-        virtual void reschedule(Space& home);
+        void reschedule(Space& home) override;
         /// Delete propagator and return its size
-        virtual size_t dispose(Space& home);
+        size_t dispose(Space& home) override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post propagator for \f$j\in x_i \Leftrightarrow i\in y_j\f$
         static ExecStatus post(Home home, ViewArray<CachedView<View>>& x, ViewArray<CachedView<View>>& y);
     };

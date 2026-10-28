@@ -149,7 +149,7 @@ namespace Gecode { namespace Int { namespace NValues {
 
         // Only if the propagator is at fixpoint here, continue with
         // propagating the lower bound
-        if (IntView::me(Propagator::modeventdelta()) != ME_INT_NONE)
+        if (IntView::me(Propagator::modification_event_delta()) != ME_INT_NONE)
             return ES_NOFIX;
 
         // Do lower bound-based pruning

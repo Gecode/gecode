@@ -36,63 +36,63 @@ namespace Gecode { namespace Gist {
 
     PreferencesDialog::PreferencesDialog(const Options& opt, QWidget* parent) : QDialog(parent) {
         QSettings settings("gecode.dev", "Gist");
-        hideFailed = settings.value("search/hideFailed", true).toBool();
+        hide_failed = settings.value("search/hideFailed", true).toBool();
         zoom = settings.value("search/zoom", false).toBool();
         copies = settings.value("search/copies", false).toBool();
         refresh = settings.value("search/refresh", 500).toInt();
-        refreshPause = settings.value("search/refreshPause", 0).toInt();
-        smoothScrollAndZoom = settings.value("smoothScrollAndZoom", true).toBool();
-        moveDuringSearch = false;
+        refresh_pause = settings.value("search/refreshPause", 0).toInt();
+        smooth_scroll_and_zoom = settings.value("smoothScrollAndZoom", true).toBool();
+        move_during_search = false;
 
         c_d = opt.c_d;
         a_d = opt.a_d;
 
-        hideCheck = new QCheckBox(tr("Hide failed subtrees automatically"));
-        hideCheck->setChecked(hideFailed);
-        zoomCheck = new QCheckBox(tr("Automatic zoom enabled on start-up"));
-        zoomCheck->setChecked(zoom);
-        smoothCheck = new QCheckBox(tr("Smooth scrolling and zooming"));
-        smoothCheck->setChecked(smoothScrollAndZoom);
+        hide_check = new QCheckBox(tr("Hide failed subtrees automatically"));
+        hide_check->setChecked(hide_failed);
+        zoom_check = new QCheckBox(tr("Automatic zoom enabled on start-up"));
+        zoom_check->setChecked(zoom);
+        smooth_check = new QCheckBox(tr("Smooth scrolling and zooming"));
+        smooth_check->setChecked(smooth_scroll_and_zoom);
 
-        QPushButton* defButton = new QPushButton(tr("Defaults"));
-        QPushButton* cancelButton = new QPushButton(tr("Cancel"));
-        QPushButton* okButton = new QPushButton(tr("Ok"));
-        okButton->setDefault(true);
-        QHBoxLayout* buttonLayout = new QHBoxLayout();
-        buttonLayout->addWidget(defButton);
-        buttonLayout->addWidget(cancelButton);
-        buttonLayout->addWidget(okButton);
+        QPushButton* def_button = new QPushButton(tr("Defaults"));
+        QPushButton* cancel_button = new QPushButton(tr("Cancel"));
+        QPushButton* ok_button = new QPushButton(tr("Ok"));
+        ok_button->setDefault(true);
+        QHBoxLayout* button_layout = new QHBoxLayout();
+        button_layout->addWidget(def_button);
+        button_layout->addWidget(cancel_button);
+        button_layout->addWidget(ok_button);
 
-        connect(cancelButton, SIGNAL(clicked()), this, SLOT(reject()));
-        connect(defButton, SIGNAL(clicked()), this, SLOT(defaults()));
-        connect(okButton, SIGNAL(clicked()), this, SLOT(writeBack()));
+        connect(cancel_button, SIGNAL(clicked()), this, SLOT(reject()));
+        connect(def_button, SIGNAL(clicked()), this, SLOT(defaults()));
+        connect(ok_button, SIGNAL(clicked()), this, SLOT(write_back()));
 
-        QLabel* refreshLabel = new QLabel(tr("Display refresh rate:"));
-        refreshBox = new QSpinBox();
-        refreshBox->setRange(0, 1000000);
-        refreshBox->setValue(refresh);
-        refreshBox->setSingleStep(100);
-        QHBoxLayout* refreshLayout = new QHBoxLayout();
-        refreshLayout->addWidget(refreshLabel);
-        refreshLayout->addWidget(refreshBox);
+        QLabel* refresh_label = new QLabel(tr("Display refresh rate:"));
+        refresh_box = new QSpinBox();
+        refresh_box->setRange(0, 1000000);
+        refresh_box->setValue(refresh);
+        refresh_box->setSingleStep(100);
+        QHBoxLayout* refresh_layout = new QHBoxLayout();
+        refresh_layout->addWidget(refresh_label);
+        refresh_layout->addWidget(refresh_box);
 
-        slowBox = new QCheckBox(tr("Slow down search"));
-        slowBox->setChecked(refreshPause > 0);
+        slow_box = new QCheckBox(tr("Slow down search"));
+        slow_box->setChecked(refresh_pause > 0);
 
-        refreshBox->setEnabled(refreshPause == 0);
+        refresh_box->setEnabled(refresh_pause == 0);
 
-        connect(slowBox, SIGNAL(stateChanged(int)), this, SLOT(toggleSlow(int)));
+        connect(slow_box, SIGNAL(stateChanged(int)), this, SLOT(toggle_slow(int)));
 
-        moveDuringSearchBox = new QCheckBox(tr("Move cursor during search"));
-        moveDuringSearchBox->setChecked(moveDuringSearch);
+        move_during_search_box = new QCheckBox(tr("Move cursor during search"));
+        move_during_search_box->setChecked(move_during_search);
 
         QVBoxLayout* layout = new QVBoxLayout();
-        layout->addWidget(hideCheck);
-        layout->addWidget(zoomCheck);
-        layout->addWidget(smoothCheck);
-        layout->addLayout(refreshLayout);
-        layout->addWidget(slowBox);
-        layout->addWidget(moveDuringSearchBox);
+        layout->addWidget(hide_check);
+        layout->addWidget(zoom_check);
+        layout->addWidget(smooth_check);
+        layout->addLayout(refresh_layout);
+        layout->addWidget(slow_box);
+        layout->addWidget(move_during_search_box);
 
         QTabWidget* tabs = new QTabWidget;
         QWidget* page1 = new QWidget;
@@ -100,84 +100,84 @@ namespace Gecode { namespace Gist {
         tabs->addTab(page1, "Drawing");
 
         QLabel* cdlabel = new QLabel(tr("Commit distance:"));
-        cdBox = new QSpinBox();
-        cdBox->setRange(0, 10000);
-        cdBox->setValue(c_d);
-        cdBox->setSingleStep(1);
-        QHBoxLayout* cdLayout = new QHBoxLayout();
-        cdLayout->addWidget(cdlabel);
-        cdLayout->addWidget(cdBox);
+        cd_box = new QSpinBox();
+        cd_box->setRange(0, 10000);
+        cd_box->setValue(c_d);
+        cd_box->setSingleStep(1);
+        QHBoxLayout* cd_layout = new QHBoxLayout();
+        cd_layout->addWidget(cdlabel);
+        cd_layout->addWidget(cd_box);
         QLabel* adlabel = new QLabel(tr("Adaptive distance:"));
-        adBox = new QSpinBox();
-        adBox->setRange(0, 10000);
-        adBox->setValue(a_d);
-        adBox->setSingleStep(1);
-        QHBoxLayout* adLayout = new QHBoxLayout();
-        adLayout->addWidget(adlabel);
-        adLayout->addWidget(adBox);
-        copiesCheck = new QCheckBox(tr("Show clones in the tree"));
-        copiesCheck->setChecked(copies);
+        ad_box = new QSpinBox();
+        ad_box->setRange(0, 10000);
+        ad_box->setValue(a_d);
+        ad_box->setSingleStep(1);
+        QHBoxLayout* ad_layout = new QHBoxLayout();
+        ad_layout->addWidget(adlabel);
+        ad_layout->addWidget(ad_box);
+        copies_check = new QCheckBox(tr("Show clones in the tree"));
+        copies_check->setChecked(copies);
         layout = new QVBoxLayout();
-        layout->addLayout(cdLayout);
-        layout->addLayout(adLayout);
-        layout->addWidget(copiesCheck);
+        layout->addLayout(cd_layout);
+        layout->addLayout(ad_layout);
+        layout->addWidget(copies_check);
         QWidget* page2 = new QWidget;
         page2->setLayout(layout);
         tabs->addTab(page2, "Search");
 
-        QVBoxLayout* mainLayout = new QVBoxLayout();
-        mainLayout->addWidget(tabs);
-        mainLayout->addLayout(buttonLayout);
-        setLayout(mainLayout);
+        QVBoxLayout* main_layout = new QVBoxLayout();
+        main_layout->addWidget(tabs);
+        main_layout->addLayout(button_layout);
+        setLayout(main_layout);
 
         setWindowTitle(tr("Preferences"));
     }
 
     void
-    PreferencesDialog::writeBack(void) {
-        hideFailed = hideCheck->isChecked();
-        zoom = zoomCheck->isChecked();
-        refresh = refreshBox->value();
-        refreshPause = slowBox->isChecked() ? 200 : 0;
-        moveDuringSearch = moveDuringSearchBox->isChecked();
-        smoothScrollAndZoom = smoothCheck->isChecked();
-        copies = copiesCheck->isChecked();
-        c_d = cdBox->value();
-        a_d = adBox->value();
+    PreferencesDialog::write_back(void) {
+        hide_failed = hide_check->isChecked();
+        zoom = zoom_check->isChecked();
+        refresh = refresh_box->value();
+        refresh_pause = slow_box->isChecked() ? 200 : 0;
+        move_during_search = move_during_search_box->isChecked();
+        smooth_scroll_and_zoom = smooth_check->isChecked();
+        copies = copies_check->isChecked();
+        c_d = cd_box->value();
+        a_d = ad_box->value();
         QSettings settings("gecode.dev", "Gist");
-        settings.setValue("search/hideFailed", hideFailed);
+        settings.setValue("search/hideFailed", hide_failed);
         settings.setValue("search/zoom", zoom);
         settings.setValue("search/copies", copies);
         settings.setValue("search/refresh", refresh);
-        settings.setValue("search/refreshPause", refreshPause);
-        settings.setValue("smoothScrollAndZoom", smoothScrollAndZoom);
+        settings.setValue("search/refreshPause", refresh_pause);
+        settings.setValue("smoothScrollAndZoom", smooth_scroll_and_zoom);
 
         accept();
     }
 
     void
     PreferencesDialog::defaults(void) {
-        hideFailed = true;
+        hide_failed = true;
         zoom = false;
         refresh = 500;
-        refreshPause = 0;
-        smoothScrollAndZoom = true;
-        moveDuringSearch = false;
+        refresh_pause = 0;
+        smooth_scroll_and_zoom = true;
+        move_during_search = false;
         copies = false;
         c_d = 8;
         a_d = 2;
-        hideCheck->setChecked(hideFailed);
-        zoomCheck->setChecked(zoom);
-        refreshBox->setValue(refresh);
-        slowBox->setChecked(refreshPause > 0);
-        smoothCheck->setChecked(smoothScrollAndZoom);
-        copiesCheck->setChecked(copies);
-        moveDuringSearchBox->setChecked(moveDuringSearch);
+        hide_check->setChecked(hide_failed);
+        zoom_check->setChecked(zoom);
+        refresh_box->setValue(refresh);
+        slow_box->setChecked(refresh_pause > 0);
+        smooth_check->setChecked(smooth_scroll_and_zoom);
+        copies_check->setChecked(copies);
+        move_during_search_box->setChecked(move_during_search);
     }
 
     void
-    PreferencesDialog::toggleSlow(int state) {
-        refreshBox->setEnabled(state != Qt::Checked);
+    PreferencesDialog::toggle_slow(int state) {
+        refresh_box->setEnabled(state != Qt::Checked);
     }
 
 }} // namespace Gecode::Gist

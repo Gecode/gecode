@@ -71,22 +71,22 @@ namespace Test { namespace Int {
             /// Create and register test
             GcdXYZ(const std::string& s, const Gecode::IntSet& d, Gecode::IntPropLevel ipl, bool r = true)
                 : Test("Arithmetic::Gcd::XYZ::" + str(ipl) + "::" + s + (r ? "" : "::Plain"), 3, d, r, ipl) {
-                contest = CTL_NONE;
-                testfix = !r;
+                consistency_test_level = CTL_NONE;
+                test_fixpoint = !r;
             }
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 return gcd_value(x[0], x[1]) == x[2];
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 Gecode::gcd(home, x[0], x[1], x[2], ipl);
             }
             /// Post reified constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x, Gecode::Reify r) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x, Gecode::Reify r) override {
                 Gecode::gcd(home, x[0], x[1], x[2], r, ipl);
             }
         };
@@ -97,22 +97,22 @@ namespace Test { namespace Int {
             /// Create and register test
             GcdXXY(const std::string& s, const Gecode::IntSet& d, Gecode::IntPropLevel ipl, bool r = true)
                 : Test("Arithmetic::Gcd::XXY::" + str(ipl) + "::" + s + (r ? "" : "::Plain"), 2, d, r, ipl) {
-                contest = CTL_NONE;
-                testfix = !r;
+                consistency_test_level = CTL_NONE;
+                test_fixpoint = !r;
             }
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 return gcd_value(x[0], x[0]) == x[1];
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 Gecode::gcd(home, x[0], x[0], x[1], ipl);
             }
             /// Post reified constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x, Gecode::Reify r) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x, Gecode::Reify r) override {
                 Gecode::gcd(home, x[0], x[0], x[1], r, ipl);
             }
         };
@@ -129,25 +129,25 @@ namespace Test { namespace Int {
                 : Test("Arithmetic::Gcd::XYX::" + str(ipl) + "::" + s + (r ? "" : "::Plain") + (sw ? "::Swap" : ""), 2,
                        d, r, ipl),
                   swap(sw) {
-                contest = CTL_NONE;
-                testfix = !r;
+                consistency_test_level = CTL_NONE;
+                test_fixpoint = !r;
             }
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 return gcd_value(x[0], x[1]) == x[0];
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 if (swap)
                     Gecode::gcd(home, x[1], x[0], x[0], ipl);
                 else
                     Gecode::gcd(home, x[0], x[1], x[0], ipl);
             }
             /// Post reified constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x, Gecode::Reify r) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x, Gecode::Reify r) override {
                 if (swap)
                     Gecode::gcd(home, x[1], x[0], x[0], r, ipl);
                 else
@@ -161,21 +161,21 @@ namespace Test { namespace Int {
             /// Create and register test
             GcdXXX(const std::string& s, const Gecode::IntSet& d, Gecode::IntPropLevel ipl)
                 : Test("Arithmetic::Gcd::XXX::" + str(ipl) + "::" + s, 1, d, true, ipl) {
-                contest = CTL_NONE;
+                consistency_test_level = CTL_NONE;
             }
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 return gcd_value(x[0], x[0]) == x[0];
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 Gecode::gcd(home, x[0], x[0], x[0], ipl);
             }
             /// Post reified constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x, Gecode::Reify r) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x, Gecode::Reify r) override {
                 Gecode::gcd(home, x[0], x[0], x[0], r, ipl);
             }
         };
@@ -188,23 +188,23 @@ namespace Test { namespace Int {
             /// Create and register test
             DividesXY(const std::string& s, const Gecode::IntSet& d, Gecode::IntPropLevel ipl)
                 : Test("Arithmetic::Divides::XY::" + str(ipl) + "::" + s, 2, d, true, ipl) {
-                contest = CTL_NONE;
-                testfix = false;
+                consistency_test_level = CTL_NONE;
+                test_fixpoint = false;
             }
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 return (x[0] == 0) ? (x[1] == 0) : (x[1] % x[0] == 0);
             }
             /// The constraint is deliberately exposed only as reified
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 Gecode::BoolVar b(home, 1, 1);
                 Gecode::divides(home, x[0], x[1], Gecode::Reify(b), ipl);
             }
             /// Post reified constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x, Gecode::Reify r) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x, Gecode::Reify r) override {
                 Gecode::divides(home, x[0], x[1], r, ipl);
             }
         };
@@ -215,22 +215,22 @@ namespace Test { namespace Int {
             /// Create and register test
             DividesXX(const std::string& s, const Gecode::IntSet& d, Gecode::IntPropLevel ipl)
                 : Test("Arithmetic::Divides::XX::" + str(ipl) + "::" + s, 1, d, true, ipl) {
-                contest = CTL_NONE;
+                consistency_test_level = CTL_NONE;
             }
             /// Every integer divides itself, including zero
-            virtual bool
-            solution(const Assignment&) const {
+            bool
+            solution(const Assignment&) const override {
                 return true;
             }
             /// The constraint is deliberately exposed only as reified
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 Gecode::BoolVar b(home, 1, 1);
                 Gecode::divides(home, x[0], x[0], Gecode::Reify(b), ipl);
             }
             /// Post reified constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x, Gecode::Reify r) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x, Gecode::Reify r) override {
                 Gecode::divides(home, x[0], x[0], r, ipl);
             }
         };
@@ -247,8 +247,8 @@ namespace Test { namespace Int {
         class NumberTheoryAlgebraic : public ::Test::Base {
             class TestSpace : public Gecode::Space {
             public:
-                virtual Gecode::Space*
-                copy(void) {
+                Gecode::Space*
+                copy(void) override {
                     return nullptr;
                 }
             };
@@ -256,8 +256,8 @@ namespace Test { namespace Int {
 
         public:
             NumberTheoryAlgebraic(int k) : ::Test::Base("Int::Arithmetic::NumberTheoryAlgebraic::" + str(k)), kind(k) {}
-            virtual bool
-            run(void) {
+            bool
+            run(void) override {
                 using namespace Gecode;
                 TestSpace home;
                 if (kind <= 2) {
@@ -349,16 +349,16 @@ namespace Test { namespace Int {
         class NumberTheorySparseBounds : public ::Test::Base {
             class TestSpace : public Gecode::Space {
             public:
-                virtual Gecode::Space*
-                copy(void) {
+                Gecode::Space*
+                copy(void) override {
                     return nullptr;
                 }
             };
 
         public:
             NumberTheorySparseBounds(void) : ::Test::Base("Int::Arithmetic::NumberTheorySparseBounds") {}
-            virtual bool
-            run(void) {
+            bool
+            run(void) override {
                 using namespace Gecode;
                 for (int division = 0; division < 2; division++) {
                     TestSpace home;
@@ -421,16 +421,16 @@ namespace Test { namespace Int {
                     m.update(*this, s.m);
                     b.update(*this, s.b);
                 }
-                virtual Gecode::Space*
-                copy(void) {
+                Gecode::Space*
+                copy(void) override {
                     return new TestSpace(*this);
                 }
             };
 
         public:
             NumberTheoryLifecycle(void) : ::Test::Base("Int::Arithmetic::NumberTheoryLifecycle") {}
-            virtual bool
-            run(void) {
+            bool
+            run(void) override {
                 using namespace Gecode;
                 for (int kind = 0; kind < 5; kind++) {
                     TestSpace home(kind);
@@ -463,16 +463,16 @@ namespace Test { namespace Int {
         class NumberTheoryIdentities : public ::Test::Base {
             class TestSpace : public Gecode::Space {
             public:
-                virtual Gecode::Space*
-                copy(void) {
+                Gecode::Space*
+                copy(void) override {
                     return nullptr;
                 }
             };
 
         public:
             NumberTheoryIdentities(void) : ::Test::Base("Int::Arithmetic::NumberTheoryIdentities") {}
-            virtual bool
-            run(void) {
+            bool
+            run(void) override {
                 using namespace Gecode;
                 for (ReifyMode rm : {RM_EQV, RM_IMP, RM_PMI})
                     for (int kind = 0; kind < 4; kind++) {
@@ -519,16 +519,16 @@ namespace Test { namespace Int {
         class NumberTheoryLimits : public ::Test::Base {
             class TestSpace : public Gecode::Space {
             public:
-                virtual Gecode::Space*
-                copy(void) {
+                Gecode::Space*
+                copy(void) override {
                     return nullptr;
                 }
             };
 
         public:
             NumberTheoryLimits(void) : ::Test::Base("Int::Arithmetic::NumberTheoryLimits") {}
-            virtual bool
-            run(void) {
+            bool
+            run(void) override {
                 using namespace Gecode;
                 const int hi = Gecode::Int::Limits::max;
                 // hi-1 is -1 modulo hi. Its square is 1 and its cube is -1;
@@ -575,14 +575,14 @@ namespace Test { namespace Int {
                        Gecode::IntSet({0, 1, Gecode::Int::Limits::max - 1}), true),
                   n(n0), negative(neg), variable(var) {
                 // Reified modular products do not promise a propagation fixpoint.
-                testfix = false;
+                test_fixpoint = false;
             }
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 return x[0] == (((n + negative) % 2 == 0) ? 1 : Gecode::Int::Limits::max - 1);
             }
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 using namespace Gecode;
                 const int hi = Gecode::Int::Limits::max;
                 IntVarArgs factors(home, n, hi - 1, hi - 1);
@@ -595,8 +595,8 @@ namespace Test { namespace Int {
                     product_mod(home, factors, hi, x[0]);
                 }
             }
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x, Gecode::Reify r) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x, Gecode::Reify r) override {
                 using namespace Gecode;
                 const int hi = Gecode::Int::Limits::max;
                 IntVarArgs factors(home, n, hi - 1, hi - 1);
@@ -638,21 +638,21 @@ namespace Test { namespace Int {
         public:
             ProductXYZR(const std::string& s, const Gecode::IntSet& d, Gecode::IntPropLevel ipl)
                 : Test("Arithmetic::Product::XYZR::" + str(ipl) + "::" + s, 4, d, true, ipl) {
-                contest = CTL_NONE;
-                testfix = false;
+                consistency_test_level = CTL_NONE;
+                test_fixpoint = false;
             }
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 int p;
                 return product_value(x, 3, p) && (p == x[3]);
             }
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 Gecode::IntVarArgs f({x[0], x[1], x[2]});
                 Gecode::product(home, f, x[3], ipl);
             }
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x, Gecode::Reify r) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x, Gecode::Reify r) override {
                 Gecode::IntVarArgs f({x[0], x[1], x[2]});
                 Gecode::product(home, f, x[3], r, ipl);
             }
@@ -663,18 +663,18 @@ namespace Test { namespace Int {
         public:
             ProductEmpty(const std::string& s, const Gecode::IntSet& d, Gecode::IntPropLevel ipl)
                 : Test("Arithmetic::Product::Empty::" + str(ipl) + "::" + s, 1, d, true, ipl) {
-                contest = CTL_NONE;
+                consistency_test_level = CTL_NONE;
             }
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 return x[0] == 1;
             }
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 Gecode::product(home, Gecode::IntVarArgs(), x[0], ipl);
             }
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x, Gecode::Reify r) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x, Gecode::Reify r) override {
                 Gecode::product(home, Gecode::IntVarArgs(), x[0], r, ipl);
             }
         };
@@ -684,18 +684,18 @@ namespace Test { namespace Int {
         public:
             ProductSingleton(const std::string& s, const Gecode::IntSet& d, Gecode::IntPropLevel ipl)
                 : Test("Arithmetic::Product::Singleton::" + str(ipl) + "::" + s, 2, d, true, ipl) {
-                contest = CTL_NONE;
+                consistency_test_level = CTL_NONE;
             }
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 return x[0] == x[1];
             }
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 Gecode::product(home, Gecode::IntVarArgs({x[0]}), x[1], ipl);
             }
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x, Gecode::Reify r) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x, Gecode::Reify r) override {
                 Gecode::product(home, Gecode::IntVarArgs({x[0]}), x[1], r, ipl);
             }
         };
@@ -705,20 +705,20 @@ namespace Test { namespace Int {
         public:
             ProductXXYAlias(const std::string& s, const Gecode::IntSet& d, Gecode::IntPropLevel ipl)
                 : Test("Arithmetic::Product::XXYAlias::" + str(ipl) + "::" + s, 2, d, true, ipl) {
-                contest = CTL_NONE;
-                testfix = false;
+                consistency_test_level = CTL_NONE;
+                test_fixpoint = false;
             }
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 long long int p = static_cast<long long int>(x[0]) * x[0] * x[1];
                 return (p >= Gecode::Int::Limits::min) && (p <= Gecode::Int::Limits::max) && (p == x[1]);
             }
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 Gecode::product(home, Gecode::IntVarArgs({x[0], x[0], x[1]}), x[1], ipl);
             }
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x, Gecode::Reify r) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x, Gecode::Reify r) override {
                 Gecode::product(home, Gecode::IntVarArgs({x[0], x[0], x[1]}), x[1], r, ipl);
             }
         };
@@ -736,19 +736,19 @@ namespace Test { namespace Int {
                 : Test("Arithmetic::Product::Interleaved::" + str(k), k == 2 ? 5 : 4, Gecode::IntSet(-2, 3), true,
                        Gecode::IPL_BND),
                   kind(k) {
-                contest = CTL_NONE;
-                testfix = false;
+                consistency_test_level = CTL_NONE;
+                test_fixpoint = false;
             }
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 const int p = x[0] * x[0] * x[0] * x[1] * x[1] * x[2];
                 if (kind == 0)
                     return p == x[3];
                 const int m = kind == 1 ? 7 : x[4];
                 return (m > 0) && (((p % m) + m) % m == x[3]);
             }
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 if (kind == 0)
                     Gecode::product(home, factors(x), x[3], ipl);
                 else if (kind == 1)
@@ -756,8 +756,8 @@ namespace Test { namespace Int {
                 else
                     Gecode::product_mod(home, factors(x), x[4], x[3], ipl);
             }
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x, Gecode::Reify r) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x, Gecode::Reify r) override {
                 if (kind == 0)
                     Gecode::product(home, factors(x), x[3], r, ipl);
                 else if (kind == 1)
@@ -772,16 +772,16 @@ namespace Test { namespace Int {
         protected:
             class TestSpace : public Gecode::Space {
             public:
-                virtual Gecode::Space*
-                copy(void) {
+                Gecode::Space*
+                copy(void) override {
                     return nullptr;
                 }
             };
 
         public:
             ProductBoundsLarge(void) : ::Test::Base("Int::Arithmetic::Product::BoundsLarge") {}
-            virtual bool
-            run(void) {
+            bool
+            run(void) override {
                 using namespace Gecode;
                 {
                     TestSpace home;
@@ -812,8 +812,8 @@ namespace Test { namespace Int {
         protected:
             class TestSpace : public Gecode::Space {
             public:
-                virtual Gecode::Space*
-                copy(void) {
+                Gecode::Space*
+                copy(void) override {
                     return nullptr;
                 }
             };
@@ -830,16 +830,16 @@ namespace Test { namespace Int {
                     q.update(*this, s.q);
                     y.update(*this, s.y);
                 }
-                virtual Gecode::Space*
-                copy(void) {
+                Gecode::Space*
+                copy(void) override {
                     return new CloneSpace(*this);
                 }
             };
 
         public:
             ProductSimplifySign(void) : ::Test::Base("Int::Arithmetic::Product::SimplifySign") {}
-            virtual bool
-            run(void) {
+            bool
+            run(void) override {
                 using namespace Gecode;
                 {
                     TestSpace home;
@@ -948,16 +948,16 @@ namespace Test { namespace Int {
         protected:
             class TestSpace : public Gecode::Space {
             public:
-                virtual Gecode::Space*
-                copy(void) {
+                Gecode::Space*
+                copy(void) override {
                     return nullptr;
                 }
             };
 
         public:
             ProductPowerAlias(void) : ::Test::Base("Int::Arithmetic::Product::PowerAlias") {}
-            virtual bool
-            run(void) {
+            bool
+            run(void) override {
                 using namespace Gecode;
                 {
                     TestSpace home;
@@ -1058,8 +1058,8 @@ namespace Test { namespace Int {
         protected:
             class TestSpace : public Gecode::Space {
             public:
-                virtual Gecode::Space*
-                copy(void) {
+                Gecode::Space*
+                copy(void) override {
                     return nullptr;
                 }
             };
@@ -1070,8 +1070,8 @@ namespace Test { namespace Int {
 
         public:
             ProductInverseBounds(void) : ::Test::Base("Int::Arithmetic::Product::InverseBounds") {}
-            virtual bool
-            run(void) {
+            bool
+            run(void) override {
                 using namespace Gecode;
                 struct Case {
                     int qmin;
@@ -1142,16 +1142,16 @@ namespace Test { namespace Int {
         class ProductCompactionZero : public ::Test::Base {
             class TestSpace : public Gecode::Space {
             public:
-                virtual Gecode::Space*
-                copy(void) {
+                Gecode::Space*
+                copy(void) override {
                     return nullptr;
                 }
             };
 
         public:
             ProductCompactionZero(void) : ::Test::Base("Int::Arithmetic::Product::CompactionZero") {}
-            virtual bool
-            run(void) {
+            bool
+            run(void) override {
                 using namespace Gecode;
                 TestSpace home;
                 IntVarArgs x(home, 5, 0, 2);
@@ -1193,19 +1193,19 @@ namespace Test { namespace Int {
                            bool r = true)
                 : Test("Arithmetic::ProductMod::XYZR::" + str(ipl) + "::" + s + (r ? "" : "::Plain"), 4, d, r, ipl),
                   m(m0) {
-                contest = CTL_NONE;
-                testfix = !r;
+                consistency_test_level = CTL_NONE;
+                test_fixpoint = !r;
             }
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 return product_mod_value(x, 3, m) == x[3];
             }
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 Gecode::product_mod(home, Gecode::IntVarArgs({x[0], x[1], x[2]}), m, x[3], ipl);
             }
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x, Gecode::Reify r) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x, Gecode::Reify r) override {
                 Gecode::product_mod(home, Gecode::IntVarArgs({x[0], x[1], x[2]}), m, x[3], r, ipl);
             }
         };
@@ -1219,16 +1219,16 @@ namespace Test { namespace Int {
                 : Test("Arithmetic::ProductMod::Coefficient::" + std::string(v ? "Variable" : "Fixed"), 3,
                        Gecode::IntSet(-3, 6), true, Gecode::IPL_BND),
                   variable(v) {
-                contest = CTL_NONE;
-                testfix = false;
+                consistency_test_level = CTL_NONE;
+                test_fixpoint = false;
             }
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 const int p = 6 * x[0] * x[1];
                 return ((p % 12) + 12) % 12 == x[2];
             }
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 Gecode::IntVar c(home, 6, 6);
                 const Gecode::IntVarArgs factors({x[0], c, x[1]});
                 if (variable) {
@@ -1238,8 +1238,8 @@ namespace Test { namespace Int {
                     Gecode::product_mod(home, factors, 12, x[2], ipl);
                 }
             }
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x, Gecode::Reify r) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x, Gecode::Reify r) override {
                 Gecode::IntVar c(home, 6, 6);
                 const Gecode::IntVarArgs factors({x[0], c, x[1]});
                 if (variable) {
@@ -1261,24 +1261,24 @@ namespace Test { namespace Int {
                 : Test("Arithmetic::ProductMod::Folded::" + str(c0) + "::" + str(m0) + (r ? "::Reified" : "::Plain"), 3,
                        Gecode::IntSet(-2, 6), r, Gecode::IPL_BND),
                   c(c0), m(m0) {
-                contest = CTL_NONE;
-                testfix = !r;
+                consistency_test_level = CTL_NONE;
+                test_fixpoint = !r;
             }
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 long long int p = 1;
                 const int v[] = {c, x[0], c, x[0], x[1], c};
                 for (int i = 0; i < 6; i++)
                     p = (p * ((v[i] % m + m) % m)) % m;
                 return p == x[2];
             }
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 Gecode::IntVar a(home, c, c);
                 Gecode::product_mod(home, Gecode::IntVarArgs({a, x[0], a, x[0], x[1], a}), m, x[2], ipl);
             }
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x, Gecode::Reify r) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x, Gecode::Reify r) override {
                 Gecode::IntVar a(home, c, c);
                 Gecode::product_mod(home, Gecode::IntVarArgs({a, x[0], a, x[0], x[1], a}), m, x[2], r, ipl);
             }
@@ -1288,16 +1288,16 @@ namespace Test { namespace Int {
         class ProductModNonzero : public ::Test::Base {
             class TestSpace : public Gecode::Space {
             public:
-                virtual Gecode::Space*
-                copy(void) {
+                Gecode::Space*
+                copy(void) override {
                     return nullptr;
                 }
             };
 
         public:
             ProductModNonzero(void) : ::Test::Base("Int::Arithmetic::ProductMod::Nonzero") {}
-            virtual bool
-            run(void) {
+            bool
+            run(void) override {
                 using namespace Gecode;
                 for (int negative = 0; negative < 2; negative++)
                     for (int variable = 0; variable < 2; variable++) {
@@ -1330,18 +1330,18 @@ namespace Test { namespace Int {
         public:
             ProductModEmpty(const std::string& s, const Gecode::IntSet& d, int m0, Gecode::IntPropLevel ipl)
                 : Test("Arithmetic::ProductMod::Empty::" + str(ipl) + "::" + s, 1, d, true, ipl), m(m0) {
-                contest = CTL_NONE;
+                consistency_test_level = CTL_NONE;
             }
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 return x[0] == (1 % m);
             }
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 Gecode::product_mod(home, Gecode::IntVarArgs(), m, x[0], ipl);
             }
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x, Gecode::Reify r) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x, Gecode::Reify r) override {
                 Gecode::product_mod(home, Gecode::IntVarArgs(), m, x[0], r, ipl);
             }
         };
@@ -1357,22 +1357,22 @@ namespace Test { namespace Int {
                 : Test("Arithmetic::ProductMod::Singleton::" + str(ipl) + "::" + s + (r ? "" : "::Plain"), 2, d, r,
                        ipl),
                   m(m0) {
-                contest = CTL_NONE;
-                testfix = !r;
+                consistency_test_level = CTL_NONE;
+                test_fixpoint = !r;
             }
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 int r = x[0] % m;
                 if (r < 0)
                     r += m;
                 return r == x[1];
             }
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 Gecode::product_mod(home, Gecode::IntVarArgs({x[0]}), m, x[1], ipl);
             }
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x, Gecode::Reify r) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x, Gecode::Reify r) override {
                 Gecode::product_mod(home, Gecode::IntVarArgs({x[0]}), m, x[1], r, ipl);
             }
         };
@@ -1387,11 +1387,11 @@ namespace Test { namespace Int {
                                bool r = true)
                 : Test("Arithmetic::ProductMod::XXYAlias::" + str(ipl) + "::" + s + (r ? "" : "::Plain"), 2, d, r, ipl),
                   m(m0) {
-                contest = CTL_NONE;
-                testfix = !r;
+                consistency_test_level = CTL_NONE;
+                test_fixpoint = !r;
             }
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 long long int a = x[0] % m;
                 long long int b = x[1] % m;
                 if (a < 0)
@@ -1400,12 +1400,12 @@ namespace Test { namespace Int {
                     b += m;
                 return (((a * a) % m) * b) % m == x[1];
             }
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 Gecode::product_mod(home, Gecode::IntVarArgs({x[0], x[0], x[1]}), m, x[1], ipl);
             }
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x, Gecode::Reify r) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x, Gecode::Reify r) override {
                 Gecode::product_mod(home, Gecode::IntVarArgs({x[0], x[0], x[1]}), m, x[1], r, ipl);
             }
         };
@@ -1415,16 +1415,16 @@ namespace Test { namespace Int {
         protected:
             class TestSpace : public Gecode::Space {
             public:
-                virtual Gecode::Space*
-                copy(void) {
+                Gecode::Space*
+                copy(void) override {
                     return nullptr;
                 }
             };
 
         public:
             ProductModAlgebraic(void) : ::Test::Base("Int::Arithmetic::ProductMod::Algebraic") {}
-            virtual bool
-            run(void) {
+            bool
+            run(void) override {
                 using namespace Gecode;
                 {
                     TestSpace home;
@@ -1511,19 +1511,19 @@ namespace Test { namespace Int {
         public:
             ProductModVarXYMR(const std::string& s, const Gecode::IntSet& d, Gecode::IntPropLevel ipl)
                 : Test("Arithmetic::ProductModVar::XYMR::" + str(ipl) + "::" + s, 4, d, true, ipl) {
-                contest = CTL_NONE;
-                testfix = false;
+                consistency_test_level = CTL_NONE;
+                test_fixpoint = false;
             }
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 return (x[2] > 0) && (product_mod_value(x, 2, x[2]) == x[3]);
             }
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 Gecode::product_mod(home, Gecode::IntVarArgs({x[0], x[1]}), x[2], x[3], ipl);
             }
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x, Gecode::Reify r) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x, Gecode::Reify r) override {
                 Gecode::product_mod(home, Gecode::IntVarArgs({x[0], x[1]}), x[2], x[3], r, ipl);
             }
         };
@@ -1533,19 +1533,19 @@ namespace Test { namespace Int {
         public:
             ProductModVarEmpty(const std::string& s, const Gecode::IntSet& d, Gecode::IntPropLevel ipl)
                 : Test("Arithmetic::ProductModVar::Empty::" + str(ipl) + "::" + s, 2, d, true, ipl) {
-                contest = CTL_NONE;
-                testfix = false;
+                consistency_test_level = CTL_NONE;
+                test_fixpoint = false;
             }
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 return (x[0] > 0) && (x[1] == (1 % x[0]));
             }
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 Gecode::product_mod(home, Gecode::IntVarArgs(), x[0], x[1], ipl);
             }
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x, Gecode::Reify r) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x, Gecode::Reify r) override {
                 Gecode::product_mod(home, Gecode::IntVarArgs(), x[0], x[1], r, ipl);
             }
         };
@@ -1555,11 +1555,11 @@ namespace Test { namespace Int {
         public:
             ProductModVarSingleton(const std::string& s, const Gecode::IntSet& d, Gecode::IntPropLevel ipl)
                 : Test("Arithmetic::ProductModVar::Singleton::" + str(ipl) + "::" + s, 3, d, true, ipl) {
-                contest = CTL_NONE;
-                testfix = false;
+                consistency_test_level = CTL_NONE;
+                test_fixpoint = false;
             }
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 if (x[1] <= 0)
                     return false;
                 int r = x[0] % x[1];
@@ -1567,12 +1567,12 @@ namespace Test { namespace Int {
                     r += x[1];
                 return r == x[2];
             }
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 Gecode::product_mod(home, Gecode::IntVarArgs({x[0]}), x[1], x[2], ipl);
             }
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x, Gecode::Reify r) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x, Gecode::Reify r) override {
                 Gecode::product_mod(home, Gecode::IntVarArgs({x[0]}), x[1], x[2], r, ipl);
             }
         };
@@ -1582,11 +1582,11 @@ namespace Test { namespace Int {
         public:
             ProductModVarRepeated(const std::string& s, const Gecode::IntSet& d, Gecode::IntPropLevel ipl)
                 : Test("Arithmetic::ProductModVar::Repeated::" + str(ipl) + "::" + s, 3, d, true, ipl) {
-                contest = CTL_NONE;
-                testfix = false;
+                consistency_test_level = CTL_NONE;
+                test_fixpoint = false;
             }
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 if (x[1] <= 0)
                     return false;
                 long long int a = x[0] % x[1];
@@ -1594,12 +1594,12 @@ namespace Test { namespace Int {
                     a += x[1];
                 return (a * a) % x[1] == x[2];
             }
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 Gecode::product_mod(home, Gecode::IntVarArgs({x[0], x[0]}), x[1], x[2], ipl);
             }
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x, Gecode::Reify r) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x, Gecode::Reify r) override {
                 Gecode::product_mod(home, Gecode::IntVarArgs({x[0], x[0]}), x[1], x[2], r, ipl);
             }
         };
@@ -1609,19 +1609,19 @@ namespace Test { namespace Int {
         public:
             ProductModVarModFactorAlias(const std::string& s, const Gecode::IntSet& d, Gecode::IntPropLevel ipl)
                 : Test("Arithmetic::ProductModVar::ModFactorAlias::" + str(ipl) + "::" + s, 2, d, true, ipl) {
-                contest = CTL_NONE;
-                testfix = false;
+                consistency_test_level = CTL_NONE;
+                test_fixpoint = false;
             }
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 return (x[0] > 0) && (x[1] == 0);
             }
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 Gecode::product_mod(home, Gecode::IntVarArgs({x[0]}), x[0], x[1], ipl);
             }
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x, Gecode::Reify r) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x, Gecode::Reify r) override {
                 Gecode::product_mod(home, Gecode::IntVarArgs({x[0]}), x[0], x[1], r, ipl);
             }
         };
@@ -1631,11 +1631,11 @@ namespace Test { namespace Int {
         public:
             ProductModVarFactorResultAlias(const std::string& s, const Gecode::IntSet& d, Gecode::IntPropLevel ipl)
                 : Test("Arithmetic::ProductModVar::FactorResultAlias::" + str(ipl) + "::" + s, 2, d, true, ipl) {
-                contest = CTL_NONE;
-                testfix = false;
+                consistency_test_level = CTL_NONE;
+                test_fixpoint = false;
             }
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 if (x[1] <= 0)
                     return false;
                 int r = x[0] % x[1];
@@ -1643,12 +1643,12 @@ namespace Test { namespace Int {
                     r += x[1];
                 return r == x[0];
             }
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 Gecode::product_mod(home, Gecode::IntVarArgs({x[0]}), x[1], x[0], ipl);
             }
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x, Gecode::Reify r) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x, Gecode::Reify r) override {
                 Gecode::product_mod(home, Gecode::IntVarArgs({x[0]}), x[1], x[0], r, ipl);
             }
         };
@@ -1658,18 +1658,18 @@ namespace Test { namespace Int {
         public:
             ProductModVarModResultAlias(const std::string& s, const Gecode::IntSet& d, Gecode::IntPropLevel ipl)
                 : Test("Arithmetic::ProductModVar::ModResultAlias::" + str(ipl) + "::" + s, 2, d, true, ipl) {
-                contest = CTL_NONE;
+                consistency_test_level = CTL_NONE;
             }
-            virtual bool
-            solution(const Assignment&) const {
+            bool
+            solution(const Assignment&) const override {
                 return false;
             }
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 Gecode::product_mod(home, Gecode::IntVarArgs({x[0]}), x[1], x[1], ipl);
             }
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x, Gecode::Reify r) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x, Gecode::Reify r) override {
                 Gecode::product_mod(home, Gecode::IntVarArgs({x[0]}), x[1], x[1], r, ipl);
             }
         };
@@ -1679,16 +1679,16 @@ namespace Test { namespace Int {
         protected:
             class TestSpace : public Gecode::Space {
             public:
-                virtual Gecode::Space*
-                copy(void) {
+                Gecode::Space*
+                copy(void) override {
                     return nullptr;
                 }
             };
 
         public:
             ProductModVarBounds(void) : ::Test::Base("Int::Arithmetic::ProductModVar::Bounds") {}
-            virtual bool
-            run(void) {
+            bool
+            run(void) override {
                 using namespace Gecode;
                 {
                     TestSpace home;
@@ -1741,8 +1741,8 @@ namespace Test { namespace Int {
         class ProductModVarSparseModulus : public ::Test::Base {
             class TestSpace : public Gecode::Space {
             public:
-                virtual Gecode::Space*
-                copy(void) {
+                Gecode::Space*
+                copy(void) override {
                     return nullptr;
                 }
             };
@@ -1754,8 +1754,8 @@ namespace Test { namespace Int {
                 : ::Test::Base("Int::Arithmetic::ProductModVar::SparseModulus::" +
                                std::string(s ? "Assignment" : "Failure")),
                   supported(s) {}
-            virtual bool
-            run(void) {
+            bool
+            run(void) override {
                 using namespace Gecode;
                 TestSpace home;
                 IntVar p(home, 60, 60);
@@ -1782,8 +1782,8 @@ namespace Test { namespace Int {
         protected:
             class TestSpace : public Gecode::Space {
             public:
-                virtual Gecode::Space*
-                copy(void) {
+                Gecode::Space*
+                copy(void) override {
                     return nullptr;
                 }
             };
@@ -1799,8 +1799,8 @@ namespace Test { namespace Int {
 
         public:
             ProductModVarAlgebraic(void) : ::Test::Base("Int::Arithmetic::ProductModVar::Algebraic") {}
-            virtual bool
-            run(void) {
+            bool
+            run(void) override {
                 using namespace Gecode;
                 {
                     TestSpace home;
@@ -1916,14 +1916,14 @@ namespace Test { namespace Int {
 
         public:
             ProductModVarInactive(int m) : Test("Arithmetic::ProductModVar::Inactive::" + str(m), 3, -4, 7), mode(m) {}
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 return ((x[0] == -3) || (x[0] == -1) || (x[0] == 0) || (x[0] == 2) || (x[0] == 5)) &&
                        ((x[1] == -2) || (x[1] == 0) || (x[1] == 1) || (x[1] == 4)) &&
                        ((x[2] == -4) || (x[2] == 0) || (x[2] == 3) || (x[2] == 7));
             }
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 using namespace Gecode;
                 Gecode::dom(home, x[0], IntSet({-3, -1, 0, 2, 5}));
                 Gecode::dom(home, x[1], IntSet({-2, 0, 1, 4}));
@@ -1938,16 +1938,16 @@ namespace Test { namespace Int {
         protected:
             class TestSpace : public Gecode::Space {
             public:
-                virtual Gecode::Space*
-                copy(void) {
+                Gecode::Space*
+                copy(void) override {
                     return nullptr;
                 }
             };
 
         public:
             ProductModInvalidModulus(void) : ::Test::Base("Int::Arithmetic::ProductMod::InvalidModulus") {}
-            virtual bool
-            run(void) {
+            bool
+            run(void) override {
                 TestSpace home;
                 Gecode::IntVar y(home, 0, 1);
                 for (int m = 0; m >= -1; m--) {
@@ -1968,16 +1968,16 @@ namespace Test { namespace Int {
             MultXYZ(const std::string& s, const Gecode::IntSet& d, Gecode::IntPropLevel ipl)
                 : Test("Arithmetic::Mult::XYZ::" + str(ipl) + "::" + s, 3, d, false, ipl) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 double d0 = static_cast<double>(x[0]);
                 double d1 = static_cast<double>(x[1]);
                 double d2 = static_cast<double>(x[2]);
                 return d0 * d1 == d2;
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 Gecode::mult(home, x[0], x[1], x[2], ipl);
             }
         };
@@ -1989,16 +1989,16 @@ namespace Test { namespace Int {
             MultXXY(const std::string& s, const Gecode::IntSet& d, Gecode::IntPropLevel ipl)
                 : Test("Arithmetic::Mult::XXY::" + str(ipl) + "::" + s, 2, d, false, ipl) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 double d0 = static_cast<double>(x[0]);
                 double d1 = static_cast<double>(x[0]);
                 double d2 = static_cast<double>(x[1]);
                 return d0 * d1 == d2;
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 Gecode::mult(home, x[0], x[0], x[1], ipl);
             }
         };
@@ -2010,16 +2010,16 @@ namespace Test { namespace Int {
             MultXYX(const std::string& s, const Gecode::IntSet& d, Gecode::IntPropLevel ipl)
                 : Test("Arithmetic::Mult::XYX::" + str(ipl) + "::" + s, 2, d, false, ipl) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 double d0 = static_cast<double>(x[0]);
                 double d1 = static_cast<double>(x[1]);
                 double d2 = static_cast<double>(x[0]);
                 return d0 * d1 == d2;
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 Gecode::mult(home, x[0], x[1], x[0], ipl);
             }
         };
@@ -2031,16 +2031,16 @@ namespace Test { namespace Int {
             MultXYY(const std::string& s, const Gecode::IntSet& d, Gecode::IntPropLevel ipl)
                 : Test("Arithmetic::Mult::XYY::" + str(ipl) + "::" + s, 2, d, false, ipl) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 double d0 = static_cast<double>(x[0]);
                 double d1 = static_cast<double>(x[1]);
                 double d2 = static_cast<double>(x[1]);
                 return d0 * d1 == d2;
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 Gecode::mult(home, x[0], x[1], x[1], ipl);
             }
         };
@@ -2052,16 +2052,16 @@ namespace Test { namespace Int {
             MultXXX(const std::string& s, const Gecode::IntSet& d, Gecode::IntPropLevel ipl)
                 : Test("Arithmetic::Mult::XXX::" + str(ipl) + "::" + s, 1, d, false, ipl) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 double d0 = static_cast<double>(x[0]);
                 double d1 = static_cast<double>(x[0]);
                 double d2 = static_cast<double>(x[0]);
                 return d0 * d1 == d2;
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 Gecode::mult(home, x[0], x[0], x[0], ipl);
             }
         };
@@ -2073,15 +2073,15 @@ namespace Test { namespace Int {
             SqrXY(const std::string& s, const Gecode::IntSet& d, Gecode::IntPropLevel ipl)
                 : Test("Arithmetic::Sqr::XY::" + str(ipl) + "::" + s, 2, d, false, ipl) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 double d0 = static_cast<double>(x[0]);
                 double d1 = static_cast<double>(x[1]);
                 return d0 * d0 == d1;
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 Gecode::sqr(home, x[0], x[1], ipl);
             }
         };
@@ -2093,14 +2093,14 @@ namespace Test { namespace Int {
             SqrXX(const std::string& s, const Gecode::IntSet& d, Gecode::IntPropLevel ipl)
                 : Test("Arithmetic::Sqr::XX::" + str(ipl) + "::" + s, 1, d, false, ipl) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 double d0 = static_cast<double>(x[0]);
                 return d0 * d0 == d0;
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 Gecode::sqr(home, x[0], x[0], ipl);
             }
         };
@@ -2112,15 +2112,15 @@ namespace Test { namespace Int {
             SqrtXY(const std::string& s, const Gecode::IntSet& d, Gecode::IntPropLevel ipl)
                 : Test("Arithmetic::Sqrt::XY::" + str(ipl) + "::" + s, 2, d, false, ipl) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 double d0 = static_cast<double>(x[0]);
                 double d1 = static_cast<double>(x[1]);
                 return (d0 >= 0) && (d0 >= d1 * d1) && (d0 < (d1 + 1) * (d1 + 1));
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 Gecode::sqrt(home, x[0], x[1], ipl);
             }
         };
@@ -2132,14 +2132,14 @@ namespace Test { namespace Int {
             SqrtXX(const std::string& s, const Gecode::IntSet& d, Gecode::IntPropLevel ipl)
                 : Test("Arithmetic::Sqrt::XX::" + str(ipl) + "::" + s, 1, d, false, ipl) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 double d0 = static_cast<double>(x[0]);
                 return (d0 >= 0) && (d0 >= d0 * d0) && (d0 < (d0 + 1) * (d0 + 1));
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 Gecode::sqrt(home, x[0], x[0], ipl);
             }
         };
@@ -2155,8 +2155,8 @@ namespace Test { namespace Int {
             PowXY(TestTags tags, const std::string& s, int n0, const Gecode::IntSet& d, Gecode::IntPropLevel ipl)
                 : Test(tags, "Arithmetic::Pow::XY::" + str(n0) + "::" + str(ipl) + "::" + s, 2, d, false, ipl), n(n0) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 long long int p = 1;
                 for (int i = 0; i < n; i++) {
                     p *= x[0];
@@ -2166,8 +2166,8 @@ namespace Test { namespace Int {
                 return p == x[1];
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 using namespace Gecode;
                 if (n > 4)
                     pow(home, x[0], n, x[1], ipl);
@@ -2187,8 +2187,8 @@ namespace Test { namespace Int {
             PowXX(TestTags tags, const std::string& s, int n0, const Gecode::IntSet& d, Gecode::IntPropLevel ipl)
                 : Test(tags, "Arithmetic::Pow::XX::" + str(n0) + "::" + str(ipl) + "::" + s, 1, d, false, ipl), n(n0) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 long long int p = 1;
                 for (int i = 0; i < n; i++) {
                     p *= x[0];
@@ -2198,8 +2198,8 @@ namespace Test { namespace Int {
                 return p == x[0];
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 Gecode::pow(home, x[0], n, x[0], ipl);
             }
         };
@@ -2219,7 +2219,7 @@ namespace Test { namespace Int {
         }
 
         int
-        fnroot(int n, int x) {
+        floor_nth_root(int n, int x) {
             if (x < 2)
                 return x;
             /*
@@ -2253,7 +2253,7 @@ namespace Test { namespace Int {
         }
 
         int
-        cnroot(int n, int x) {
+        ceil_nth_root(int n, int x) {
             if (x < 2)
                 return x;
             /*
@@ -2283,18 +2283,18 @@ namespace Test { namespace Int {
                 : Test(tags, "Arithmetic::Nroot::XY::" + str(n0) + "::" + str(ipl) + "::" + s, 2, d, false, ipl),
                   n(n0) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 if (n == 1)
                     return x[0] == x[1];
                 if ((n % 2 == 0) && ((x[0] < 0) || (x[1] < 0)))
                     return false;
-                int r = (x[0] < 0) ? -cnroot(n, -x[0]) : fnroot(n, x[0]);
+                int r = (x[0] < 0) ? -ceil_nth_root(n, -x[0]) : floor_nth_root(n, x[0]);
                 return r == x[1];
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 using namespace Gecode;
                 if (n > 4)
                     nroot(home, x[0], n, x[1], ipl);
@@ -2315,8 +2315,8 @@ namespace Test { namespace Int {
                 : Test(tags, "Arithmetic::Nroot::XX::" + str(n0) + "::" + str(ipl) + "::" + s, 1, d, false, ipl),
                   n(n0) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 if (n == 1)
                     return true;
                 if (n % 2 == 0) {
@@ -2326,8 +2326,8 @@ namespace Test { namespace Int {
                 }
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 Gecode::nroot(home, x[0], n, x[0], ipl);
             }
         };
@@ -2350,14 +2350,14 @@ namespace Test { namespace Int {
             /// Create and register test
             DivMod(const std::string& s, const Gecode::IntSet& d) : Test("Arithmetic::DivMod::" + s, 4, d) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 return x[0] == static_cast<long long int>(x[1]) * x[2] + x[3] && abs(x[3]) < abs(x[1]) &&
                        (x[3] == 0 || sgn(x[3]) == sgn(x[0]));
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 Gecode::divmod(home, x[0], x[1], x[2], x[3]);
             }
         };
@@ -2368,8 +2368,8 @@ namespace Test { namespace Int {
             /// Create and register test
             Div(const std::string& s, const Gecode::IntSet& d) : Test("Arithmetic::Div::" + s, 3, d) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 if (x[1] == 0)
                     return false;
                 int divsign = (x[0] / x[1] < 0) ? -1 : 1;
@@ -2379,8 +2379,8 @@ namespace Test { namespace Int {
                 return x[2] == divresult;
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 Gecode::div(home, x[0], x[1], x[2]);
             }
         };
@@ -2391,8 +2391,8 @@ namespace Test { namespace Int {
             /// Create and register test
             Mod(const std::string& s, const Gecode::IntSet& d) : Test("Arithmetic::Mod::" + s, 3, d) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 if (x[1] == 0)
                     return false;
                 int divsign = (x[0] / x[1] < 0) ? -1 : 1;
@@ -2402,8 +2402,8 @@ namespace Test { namespace Int {
                 return x[0] == static_cast<long long int>(x[1]) * divresult + x[2];
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 Gecode::mod(home, x[0], x[1], x[2]);
             }
         };
@@ -2415,15 +2415,15 @@ namespace Test { namespace Int {
             AbsXY(const std::string& s, const Gecode::IntSet& d, Gecode::IntPropLevel ipl)
                 : Test(TestTags::check(), "Arithmetic::Abs::XY::" + str(ipl) + "::" + s, 2, d, false, ipl) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 double d0 = static_cast<double>(x[0]);
                 double d1 = static_cast<double>(x[1]);
                 return (d0 < 0 ? -d0 : d0) == d1;
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 Gecode::abs(home, x[0], x[1], ipl);
             }
         };
@@ -2435,15 +2435,15 @@ namespace Test { namespace Int {
             AbsXX(const std::string& s, const Gecode::IntSet& d, Gecode::IntPropLevel ipl)
                 : Test(TestTags::check(), "Arithmetic::Abs::XX::" + str(ipl) + "::" + s, 1, d, false, ipl) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 double d0 = static_cast<double>(x[0]);
                 double d1 = static_cast<double>(x[0]);
                 return (d0 < 0 ? -d0 : d0) == d1;
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 Gecode::abs(home, x[0], x[0], ipl);
             }
         };
@@ -2455,13 +2455,13 @@ namespace Test { namespace Int {
             MinXYZ(const std::string& s, const Gecode::IntSet& d, Gecode::IntPropLevel ipl)
                 : Test("Arithmetic::Min::Bin::XYZ::" + str(ipl) + "::" + s, 3, d, false, ipl) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 return std::min(x[0], x[1]) == x[2];
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 Gecode::min(home, x[0], x[1], x[2], ipl);
             }
         };
@@ -2473,13 +2473,13 @@ namespace Test { namespace Int {
             MinXXY(const std::string& s, const Gecode::IntSet& d, Gecode::IntPropLevel ipl)
                 : Test("Arithmetic::Min::Bin::XYX::" + str(ipl) + "::" + s, 2, d) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 return std::min(x[0], x[0]) == x[1];
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 Gecode::min(home, x[0], x[0], x[1], ipl);
             }
         };
@@ -2491,13 +2491,13 @@ namespace Test { namespace Int {
             MinXYX(const std::string& s, const Gecode::IntSet& d, Gecode::IntPropLevel ipl)
                 : Test("Arithmetic::Min::Bin::XYX::" + str(ipl) + "::" + s, 2, d) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 return std::min(x[0], x[1]) == x[0];
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 Gecode::min(home, x[0], x[1], x[0], ipl);
             }
         };
@@ -2509,13 +2509,13 @@ namespace Test { namespace Int {
             MinXYY(const std::string& s, const Gecode::IntSet& d, Gecode::IntPropLevel ipl)
                 : Test("Arithmetic::Min::Bin::XYY::" + str(ipl) + "::" + s, 2, d) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 return std::min(x[0], x[1]) == x[1];
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 Gecode::min(home, x[0], x[1], x[1], ipl);
             }
         };
@@ -2527,13 +2527,13 @@ namespace Test { namespace Int {
             MinXXX(const std::string& s, const Gecode::IntSet& d, Gecode::IntPropLevel ipl)
                 : Test("Arithmetic::Min::Bin::XXX::" + str(ipl) + "::" + s, 1, d) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 return std::min(x[0], x[0]) == x[0];
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 Gecode::min(home, x[0], x[0], x[0], ipl);
             }
         };
@@ -2544,16 +2544,16 @@ namespace Test { namespace Int {
             /// Create and register test
             MaxXYZ(const std::string& s, const Gecode::IntSet& d, Gecode::IntPropLevel ipl)
                 : Test("Arithmetic::Max::Bin::XYZ::" + str(ipl) + "::" + s, 3, d) {
-                contest = CTL_BOUNDS_Z;
+                consistency_test_level = CTL_BOUNDS_Z;
             }
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 return std::max(x[0], x[1]) == x[2];
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 Gecode::max(home, x[0], x[1], x[2], ipl);
             }
         };
@@ -2565,13 +2565,13 @@ namespace Test { namespace Int {
             MaxXXY(const std::string& s, const Gecode::IntSet& d, Gecode::IntPropLevel ipl)
                 : Test("Arithmetic::Max::Bin::XXY::" + str(ipl) + "::" + s, 2, d) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 return std::max(x[0], x[0]) == x[1];
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 Gecode::max(home, x[0], x[0], x[1], ipl);
             }
         };
@@ -2583,13 +2583,13 @@ namespace Test { namespace Int {
             MaxXYX(const std::string& s, const Gecode::IntSet& d, Gecode::IntPropLevel ipl)
                 : Test("Arithmetic::Max::Bin::XYX::" + str(ipl) + "::" + s, 2, d) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 return std::max(x[0], x[1]) == x[0];
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 Gecode::max(home, x[0], x[1], x[0], ipl);
             }
         };
@@ -2601,13 +2601,13 @@ namespace Test { namespace Int {
             MaxXYY(const std::string& s, const Gecode::IntSet& d, Gecode::IntPropLevel ipl)
                 : Test("Arithmetic::Max::Bin::XYY::" + str(ipl) + "::" + s, 2, d) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 return std::max(x[0], x[1]) == x[1];
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 Gecode::max(home, x[0], x[1], x[1], ipl);
             }
         };
@@ -2619,13 +2619,13 @@ namespace Test { namespace Int {
             MaxXXX(const std::string& s, const Gecode::IntSet& d, Gecode::IntPropLevel ipl)
                 : Test("Arithmetic::Max::Bin::XXX::" + str(ipl) + "::" + s, 1, d) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 return std::max(x[0], x[0]) == x[0];
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 Gecode::max(home, x[0], x[0], x[0], ipl);
             }
         };
@@ -2636,13 +2636,13 @@ namespace Test { namespace Int {
             /// Create and register test
             MinNary(Gecode::IntPropLevel ipl) : Test("Arithmetic::Min::Nary::" + str(ipl), 4, -4, 4, false, ipl) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 return std::min(std::min(x[0], x[1]), x[2]) == x[3];
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 Gecode::IntVarArgs m(3);
                 m[0] = x[0];
                 m[1] = x[1];
@@ -2658,13 +2658,13 @@ namespace Test { namespace Int {
             MinNaryShared(Gecode::IntPropLevel ipl)
                 : Test("Arithmetic::Min::Nary::Shared::" + str(ipl), 3, -4, 4, false, ipl) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 return std::min(std::min(x[0], x[1]), x[2]) == x[1];
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 Gecode::IntVarArgs m(3);
                 m[0] = x[0];
                 m[1] = x[1];
@@ -2680,13 +2680,13 @@ namespace Test { namespace Int {
             MaxNary(Gecode::IntPropLevel ipl)
                 : Test(TestTags::check(), "Arithmetic::Max::Nary::" + str(ipl), 4, -4, 4, false, ipl) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 return std::max(std::max(x[0], x[1]), x[2]) == x[3];
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 Gecode::IntVarArgs m(3);
                 m[0] = x[0];
                 m[1] = x[1];
@@ -2702,13 +2702,13 @@ namespace Test { namespace Int {
             MaxNaryShared(Gecode::IntPropLevel ipl)
                 : Test(TestTags::check(), "Arithmetic::Max::Nary::Shared::" + str(ipl), 3, -4, 4, false, ipl) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 return std::max(std::max(x[0], x[1]), x[2]) == x[1];
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 Gecode::IntVarArgs m(3);
                 m[0] = x[0];
                 m[1] = x[1];
@@ -2723,17 +2723,17 @@ namespace Test { namespace Int {
             /// Offset to be used
             int offset;
             /// Whether to use tie-breaking
-            bool tiebreak;
+            bool tie_break;
 
         public:
             /// Create and register test
             ArgMax(int n, int o, bool tb)
                 : Test(TestTags::check(), "Arithmetic::ArgMax::" + str(o) + "::" + str(tb) + "::" + str(n), n + 1, 0,
                        n + 1, false, tb ? Gecode::IPL_DEF : Gecode::IPL_DOM),
-                  offset(o), tiebreak(tb) {}
+                  offset(o), tie_break(tb) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 int n = x.size() - 1;
                 if ((x[n] < offset) || (x[n] >= n + offset))
                     return false;
@@ -2744,16 +2744,16 @@ namespace Test { namespace Int {
                         p = i;
                         m = x[i];
                     }
-                return tiebreak ? (p + offset == x[n]) : (m == x[x[n] - offset]);
+                return tie_break ? (p + offset == x[n]) : (m == x[x[n] - offset]);
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 int n = x.size() - 1;
                 Gecode::IntVarArgs m(n);
                 for (int i = 0; i < n; i++)
                     m[i] = x[i];
-                Gecode::argmax(home, m, offset, x[n], tiebreak);
+                Gecode::argmax(home, m, offset, x[n], tie_break);
             }
         };
 
@@ -2761,19 +2761,19 @@ namespace Test { namespace Int {
         class ArgMaxShared : public Test {
         protected:
             /// Whether to use tie-breaking
-            bool tiebreak;
+            bool tie_break;
 
         public:
             /// Create and register test
             ArgMaxShared(int n, bool tb)
                 : Test(TestTags::check(), "Arithmetic::ArgMax::Shared::" + str(tb) + "::" + str(n), n + 1, 0, n + 1,
                        false),
-                  tiebreak(tb) {
-                testfix = false;
+                  tie_break(tb) {
+                test_fixpoint = false;
             }
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 int n = x.size() - 1;
                 if ((x[n] < 0) || (x[n] >= 2 * n))
                     return false;
@@ -2787,16 +2787,16 @@ namespace Test { namespace Int {
                         p = i;
                         m = y[i];
                     }
-                return tiebreak ? (p == x[n]) : (m == y[x[n]]);
+                return tie_break ? (p == x[n]) : (m == y[x[n]]);
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 int n = x.size() - 1;
                 Gecode::IntVarArgs m(2 * n);
                 for (int i = 0; i < n; i++)
                     m[2 * i + 0] = m[2 * i + 1] = x[i];
-                Gecode::argmax(home, m, x[n], tiebreak);
+                Gecode::argmax(home, m, x[n], tie_break);
             }
         };
 
@@ -2806,17 +2806,17 @@ namespace Test { namespace Int {
             /// Which offset to use
             int offset;
             /// Whether to use tie-breaking
-            bool tiebreak;
+            bool tie_break;
 
         public:
             /// Create and register test
             ArgMin(int n, int o, bool tb)
                 : Test("Arithmetic::ArgMin::" + str(o) + "::" + str(tb) + "::" + str(n), n + 1, 0, n + 1, false,
                        tb ? Gecode::IPL_DEF : Gecode::IPL_DOM),
-                  offset(o), tiebreak(tb) {}
+                  offset(o), tie_break(tb) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 int n = x.size() - 1;
                 if ((x[n] < offset) || (x[n] >= n + offset))
                     return false;
@@ -2827,16 +2827,16 @@ namespace Test { namespace Int {
                         p = i;
                         m = x[i];
                     }
-                return tiebreak ? (p + offset == x[n]) : (m == x[x[n] - offset]);
+                return tie_break ? (p + offset == x[n]) : (m == x[x[n] - offset]);
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 int n = x.size() - 1;
                 Gecode::IntVarArgs m(n);
                 for (int i = 0; i < n; i++)
                     m[i] = x[i];
-                Gecode::argmin(home, m, offset, x[n], tiebreak);
+                Gecode::argmin(home, m, offset, x[n], tie_break);
             }
         };
 
@@ -2844,17 +2844,18 @@ namespace Test { namespace Int {
         class ArgMinShared : public Test {
         protected:
             /// Whether to use tie-breaking
-            bool tiebreak;
+            bool tie_break;
 
         public:
             /// Create and register test
             ArgMinShared(int n, bool tb)
-                : Test("Arithmetic::ArgMin::Shared::" + str(tb) + "::" + str(n), n + 1, 0, n + 1, false), tiebreak(tb) {
-                testfix = false;
+                : Test("Arithmetic::ArgMin::Shared::" + str(tb) + "::" + str(n), n + 1, 0, n + 1, false),
+                  tie_break(tb) {
+                test_fixpoint = false;
             }
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 int n = x.size() - 1;
                 if ((x[n] < 0) || (x[n] >= 2 * n))
                     return false;
@@ -2868,16 +2869,16 @@ namespace Test { namespace Int {
                         p = i;
                         m = y[i];
                     }
-                return tiebreak ? (p == x[n]) : (m == y[x[n]]);
+                return tie_break ? (p == x[n]) : (m == y[x[n]]);
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 int n = x.size() - 1;
                 Gecode::IntVarArgs m(2 * n);
                 for (int i = 0; i < n; i++)
                     m[2 * i + 0] = m[2 * i + 1] = x[i];
-                Gecode::argmin(home, m, x[n], tiebreak);
+                Gecode::argmin(home, m, x[n], tie_break);
             }
         };
 
@@ -2887,17 +2888,17 @@ namespace Test { namespace Int {
             /// Offset to be used
             int offset;
             /// Whether to use tie-breaking
-            bool tiebreak;
+            bool tie_break;
 
         public:
             /// Create and register test
             ArgMaxBool(int n, int o, bool tb)
                 : Test(TestTags::check(), "Arithmetic::ArgMaxBool::" + str(o) + "::" + str(tb) + "::" + str(n), n + 1,
                        0, n + 1, false, tb ? Gecode::IPL_DEF : Gecode::IPL_DOM),
-                  offset(o), tiebreak(tb) {}
+                  offset(o), tie_break(tb) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 int n = x.size() - 1;
                 if ((x[n] < offset) || (x[n] >= n + offset))
                     return false;
@@ -2913,16 +2914,16 @@ namespace Test { namespace Int {
                         m = x[i];
                     }
                 }
-                return tiebreak ? (p + offset == x[n]) : (m == x[x[n] - offset]);
+                return tie_break ? (p + offset == x[n]) : (m == x[x[n] - offset]);
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 int n = x.size() - 1;
                 Gecode::BoolVarArgs m(n);
                 for (int i = 0; i < n; i++)
                     m[i] = channel(home, x[i]);
-                Gecode::argmax(home, m, offset, x[n], tiebreak);
+                Gecode::argmax(home, m, offset, x[n], tie_break);
             }
         };
 
@@ -2930,19 +2931,19 @@ namespace Test { namespace Int {
         class ArgMaxBoolShared : public Test {
         protected:
             /// Whether to use tie-breaking
-            bool tiebreak;
+            bool tie_break;
 
         public:
             /// Create and register test
             ArgMaxBoolShared(int n, bool tb)
                 : Test(TestTags::check(), "Arithmetic::ArgMaxBool::Shared::" + str(tb) + "::" + str(n), n + 1, 0, n + 1,
                        false),
-                  tiebreak(tb) {
-                testfix = false;
+                  tie_break(tb) {
+                test_fixpoint = false;
             }
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 int n = x.size() - 1;
                 if ((x[n] < 0) || (x[n] >= 2 * n))
                     return false;
@@ -2961,16 +2962,16 @@ namespace Test { namespace Int {
                         m = y[i];
                     }
                 }
-                return tiebreak ? (p == x[n]) : (m == y[x[n]]);
+                return tie_break ? (p == x[n]) : (m == y[x[n]]);
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 int n = x.size() - 1;
                 Gecode::BoolVarArgs m(2 * n);
                 for (int i = 0; i < n; i++)
                     m[2 * i + 0] = m[2 * i + 1] = channel(home, x[i]);
-                Gecode::argmax(home, m, x[n], tiebreak);
+                Gecode::argmax(home, m, x[n], tie_break);
             }
         };
 
@@ -2980,17 +2981,17 @@ namespace Test { namespace Int {
             /// Which offset to use
             int offset;
             /// Whether to use tie-breaking
-            bool tiebreak;
+            bool tie_break;
 
         public:
             /// Create and register test
             ArgMinBool(int n, int o, bool tb)
                 : Test("Arithmetic::ArgMinBool::" + str(o) + "::" + str(tb) + "::" + str(n), n + 1, 0, n + 1, false,
                        tb ? Gecode::IPL_DEF : Gecode::IPL_DOM),
-                  offset(o), tiebreak(tb) {}
+                  offset(o), tie_break(tb) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 int n = x.size() - 1;
                 if ((x[n] < offset) || (x[n] >= n + offset))
                     return false;
@@ -3006,16 +3007,16 @@ namespace Test { namespace Int {
                         m = x[i];
                     }
                 }
-                return tiebreak ? (p + offset == x[n]) : (m == x[x[n] - offset]);
+                return tie_break ? (p + offset == x[n]) : (m == x[x[n] - offset]);
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 int n = x.size() - 1;
                 Gecode::BoolVarArgs m(n);
                 for (int i = 0; i < n; i++)
                     m[i] = channel(home, x[i]);
-                Gecode::argmin(home, m, offset, x[n], tiebreak);
+                Gecode::argmin(home, m, offset, x[n], tie_break);
             }
         };
 
@@ -3023,18 +3024,18 @@ namespace Test { namespace Int {
         class ArgMinBoolShared : public Test {
         protected:
             /// Whether to use tie-breaking
-            bool tiebreak;
+            bool tie_break;
 
         public:
             /// Create and register test
             ArgMinBoolShared(int n, bool tb)
                 : Test("Arithmetic::ArgMinBool::Shared::" + str(tb) + "::" + str(n), n + 1, 0, n + 1, false),
-                  tiebreak(tb) {
-                testfix = false;
+                  tie_break(tb) {
+                test_fixpoint = false;
             }
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 int n = x.size() - 1;
                 if ((x[n] < 0) || (x[n] >= 2 * n))
                     return false;
@@ -3053,16 +3054,16 @@ namespace Test { namespace Int {
                         m = y[i];
                     }
                 }
-                return tiebreak ? (p == x[n]) : (m == y[x[n]]);
+                return tie_break ? (p == x[n]) : (m == y[x[n]]);
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 int n = x.size() - 1;
                 Gecode::BoolVarArgs m(2 * n);
                 for (int i = 0; i < n; i++)
                     m[2 * i + 0] = m[2 * i + 1] = channel(home, x[i]);
-                Gecode::argmin(home, m, x[n], tiebreak);
+                Gecode::argmin(home, m, x[n], tie_break);
             }
         };
 

@@ -385,7 +385,7 @@ namespace Gecode { namespace Int { namespace MinDistance {
                 last_min = -1;
                 continue;
             }
-            dirty.clearall();
+            dirty.fill_bits();
             last_min = z.min();
             return ES_FIX;
         }

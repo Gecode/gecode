@@ -64,9 +64,9 @@ namespace Gecode { namespace Set { namespace Sequence {
 
     public:
         /// Copy propagator during cloning
-        GECODE_SET_EXPORT virtual Actor* copy(Space& home);
+        GECODE_SET_EXPORT Actor* copy(Space& home) override;
         /// Perform propagation
-        GECODE_SET_EXPORT virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        GECODE_SET_EXPORT ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post propagator \f$\forall 0\leq i< |x|-1 : \max(x_i)<\min(x_{i+1})\f$
         static ExecStatus post(Home home, ViewArray<SetView>);
     };
@@ -80,18 +80,18 @@ namespace Gecode { namespace Set { namespace Sequence {
 
     class SeqU : public NaryOnePropagator<SetView, PC_SET_ANY> {
     protected:
-        GLBndSet unionOfDets; // Union of determined variables dropped form x.
+        GLBndSet union_of_dets; // Union of determined variables dropped form x.
         /// Constructor for cloning \a p
         SeqU(Space& home, SeqU& p);
         /// Constructor for posting
         SeqU(Home home, ViewArray<SetView>&, SetView);
-        ExecStatus propagateSeqUnion(Space& home, bool& modified, ViewArray<SetView>& x, SetView& y);
+        ExecStatus propagate_seq_union(Space& home, bool& modified, ViewArray<SetView>& x, SetView& y);
 
     public:
         /// Copy propagator during cloning
-        GECODE_SET_EXPORT virtual Actor* copy(Space& home);
+        GECODE_SET_EXPORT Actor* copy(Space& home) override;
         /// Perform propagation
-        GECODE_SET_EXPORT virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        GECODE_SET_EXPORT ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post propagator \f$\forall 0\leq i< |x|-1 : \max(x_i)<\min(x_{i+1})\f$ and \f$ x = \bigcup_{i\in\{0,\dots,n-1\}} y_i \f$
         static ExecStatus post(Home home, ViewArray<SetView>, SetView);
     };

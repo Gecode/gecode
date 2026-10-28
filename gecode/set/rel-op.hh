@@ -69,9 +69,9 @@ namespace Gecode { namespace Set { namespace RelOp {
 
     public:
         /// Copy propagator during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post propagator \f$ z \supseteq x \cap y\f$
         static ExecStatus post(Home home, View0 x, View1 y, View2 z);
     };
@@ -95,9 +95,9 @@ namespace Gecode { namespace Set { namespace RelOp {
 
     public:
         /// Copy propagator during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post propagator \f$ z \subseteq x \cap y\f$
         static ExecStatus post(Home home, View0 x, View1 y, View2 z);
     };
@@ -121,9 +121,9 @@ namespace Gecode { namespace Set { namespace RelOp {
 
     public:
         /// Copy propagator during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post propagator \f$ z=x\cap y\f$
         static ExecStatus post(Home home, View0 x, View1 y, View2 z);
     };
@@ -147,9 +147,9 @@ namespace Gecode { namespace Set { namespace RelOp {
 
     public:
         /// Copy propagator during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post propagator \f$ z=x\cup y\f$
         static ExecStatus post(Home home, View0 x, View1 y, View2 z);
     };
@@ -168,7 +168,7 @@ namespace Gecode { namespace Set { namespace RelOp {
         /// Whether the any views share a variable implementation
         bool shared;
         /// Intersection of the determined \f$x_i\f$ (which are dropped)
-        LUBndSet intOfDets;
+        LUBndSet int_of_dets;
         /// Constructor for cloning \a p
         IntersectionN(Space& home, IntersectionN& p);
         /// Constructor for posting
@@ -178,11 +178,11 @@ namespace Gecode { namespace Set { namespace RelOp {
 
     public:
         /// Cost function
-        virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+        PropCost cost(const Space& home, const ModEventDelta& med) const override;
         /// Copy propagator during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post propagator \f$ x = \bigcap_{i\in\{0,\dots,n-1\}} y_i \f$
         static ExecStatus post(Home home, ViewArray<View0>& y, View1 x);
         /// Post propagator \f$ x = z\cap\bigcap_{i\in\{0,\dots,n-1\}} y_i \f$
@@ -203,7 +203,7 @@ namespace Gecode { namespace Set { namespace RelOp {
         /// Whether the any views share a variable implementation
         bool shared;
         /// Union of the determined \f$x_i\f$ (which are dropped)
-        GLBndSet unionOfDets;
+        GLBndSet union_of_dets;
         /// Constructor for cloning \a p
         UnionN(Space& home, UnionN& p);
         /// Constructor for posting
@@ -213,11 +213,11 @@ namespace Gecode { namespace Set { namespace RelOp {
 
     public:
         /// Copy propagator during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Cost function
-        virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+        PropCost cost(const Space& home, const ModEventDelta& med) const override;
         /// Post propagator \f$ x = \bigcup_{i\in\{0,\dots,n-1\}} y_i \f$
         static ExecStatus post(Home home, ViewArray<View0>& y, View1 x);
         /// Post propagator \f$ x = z\cup\bigcup_{i\in\{0,\dots,n-1\}} y_i \f$
@@ -238,7 +238,7 @@ namespace Gecode { namespace Set { namespace RelOp {
         /// Whether the any views share a variable implementation
         bool shared;
         /// Union of the determined \f$x_i\f$ (which are dropped)
-        GLBndSet unionOfDets;
+        GLBndSet union_of_dets;
         /// Constructor for cloning \a p
         PartitionN(Space& home, PartitionN& p);
         /// Constructor for posting
@@ -248,11 +248,11 @@ namespace Gecode { namespace Set { namespace RelOp {
 
     public:
         /// Copy propagator during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Cost function
-        virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+        PropCost cost(const Space& home, const ModEventDelta& med) const override;
         /// Post propagator \f$ x = \biguplus_{i\in\{0,\dots,n-1\}} y_i \f$
         static ExecStatus post(Home home, ViewArray<View0>& y, View1 x);
         /// Post propagator \f$ x = z\uplus\biguplus_{i\in\{0,\dots,n-1\}} y_i \f$

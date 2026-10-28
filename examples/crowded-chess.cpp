@@ -87,8 +87,8 @@ namespace {
         Bishops(Bishops& s) : Space(s), n(s.n) {
             k.update(*this, s.k);
         }
-        virtual Space*
-        copy(void) {
+        Space*
+        copy(void) override {
             return new Bishops(*this);
         }
     };
@@ -331,14 +331,14 @@ public:
     }
 
     /// Copy during cloning
-    virtual Space*
-    copy(void) {
+    Space*
+    copy(void) override {
         return new CrowdedChess(*this);
     }
 
     /// Print solution
-    virtual void
-    print(std::ostream& os) const {
+    void
+    print(std::ostream& os) const override {
         Matrix<IntVarArray> m(s, n);
         char names[PMAX];
         names[E] = '.';

@@ -41,28 +41,28 @@ using namespace Gecode;
 namespace {
     /// The airline employees
     typedef enum {
-        Tom,
-        David,
-        Jeremy,
-        Ron,
-        Joe,
-        Bill,
-        Fred,
-        Bob,
-        Mario,
-        Ed,
-        Carol,
-        Janet,
-        Tracy,
-        Marilyn,
-        Carolyn,
-        Cathy,
-        Inez,
-        Jean,
-        Heather,
-        Juliet
+        TOM,
+        DAVID,
+        JEREMY,
+        RON,
+        JOE,
+        BILL,
+        FRED,
+        BOB,
+        MARIO,
+        ED,
+        CAROL,
+        JANET,
+        TRACY,
+        MARILYN,
+        CAROLYN,
+        CATHY,
+        INEZ,
+        JEAN,
+        HEATHER,
+        JULIET
     } Employee;
-    const int noOfEmployees = Juliet + 1;
+    const int no_of_employees = JULIET + 1;
 
     /// A flight to schedule
     struct Flight {
@@ -74,19 +74,19 @@ namespace {
         int german;    ///< How many German speaking employees are required
     };
 
-    const char* employeeToName(Employee e);
+    const char* employee_to_name(Employee e);
     extern const int stewards[];
-    extern const int noOfStewards;
+    extern const int no_of_stewards;
     extern const int hostesses[];
-    extern const int noOfHostesses;
-    extern const int spanishSpeaking[];
-    extern const int noOfSpanishSpeaking;
-    extern const int frenchSpeaking[];
-    extern const int noOfFrenchSpeaking;
-    extern const int germanSpeaking[];
-    extern const int noOfGermanSpeaking;
-    extern const Flight requiredCrew[];
-    extern const int noOfFlights;
+    extern const int no_of_hostesses;
+    extern const int spanish_speaking[];
+    extern const int no_of_spanish_speaking;
+    extern const int french_speaking[];
+    extern const int no_of_french_speaking;
+    extern const int german_speaking[];
+    extern const int no_of_german_speaking;
+    extern const Flight required_crew[];
+    extern const int no_of_flights;
 } // namespace
 
 /**
@@ -105,58 +105,58 @@ public:
     SetVarArray flight;
 
     /// The actual model
-    Crew(const Options& opt) : Script(opt), flight(*this, noOfFlights, IntSet::empty, 0, noOfEmployees - 1) {
-        IntSet stewardsDS(stewards, noOfStewards);
-        IntSet hostessesDS(hostesses, noOfHostesses);
-        IntSet spanishDS(spanishSpeaking, noOfSpanishSpeaking);
-        IntSet frenchDS(frenchSpeaking, noOfFrenchSpeaking);
-        IntSet germanDS(germanSpeaking, noOfGermanSpeaking);
+    Crew(const Options& opt) : Script(opt), flight(*this, no_of_flights, IntSet::empty, 0, no_of_employees - 1) {
+        IntSet stewards_ds(stewards, no_of_stewards);
+        IntSet hostesses_ds(hostesses, no_of_hostesses);
+        IntSet spanish_ds(spanish_speaking, no_of_spanish_speaking);
+        IntSet french_ds(french_speaking, no_of_french_speaking);
+        IntSet german_ds(german_speaking, no_of_german_speaking);
 
-        for (int i = 0; i < noOfFlights; i++) {
+        for (int i = 0; i < no_of_flights; i++) {
             // The flight has staff as required by the specification
-            rel(*this, cardinality(flight[i]) == requiredCrew[i].staff);
+            rel(*this, cardinality(flight[i]) == required_crew[i].staff);
 
             // Enough members of different categories are on board
-            rel(*this, cardinality(flight[i] & stewardsDS) >= requiredCrew[i].stewards);
-            rel(*this, cardinality(flight[i] & hostessesDS) >= requiredCrew[i].hostesses);
-            rel(*this, cardinality(flight[i] & spanishDS) >= requiredCrew[i].spanish);
-            rel(*this, cardinality(flight[i] & frenchDS) >= requiredCrew[i].french);
-            rel(*this, cardinality(flight[i] & germanDS) >= requiredCrew[i].german);
+            rel(*this, cardinality(flight[i] & stewards_ds) >= required_crew[i].stewards);
+            rel(*this, cardinality(flight[i] & hostesses_ds) >= required_crew[i].hostesses);
+            rel(*this, cardinality(flight[i] & spanish_ds) >= required_crew[i].spanish);
+            rel(*this, cardinality(flight[i] & french_ds) >= required_crew[i].french);
+            rel(*this, cardinality(flight[i] & german_ds) >= required_crew[i].german);
         }
 
         // No crew member of flight i works on flights i+1 and i+2
-        for (int i = 0; i < noOfFlights - 2; i++) {
+        for (int i = 0; i < no_of_flights - 2; i++) {
             rel(*this, flight[i] || flight[i + 1]);
             rel(*this, flight[i] || flight[i + 2]);
         }
-        rel(*this, flight[noOfFlights - 2] || flight[noOfFlights - 1]);
+        rel(*this, flight[no_of_flights - 2] || flight[no_of_flights - 1]);
 
         branch(*this, flight, SET_VAR_NONE(), SET_VAL_MIN_INC());
     }
 
     /// Print solution
-    virtual void
-    print(std::ostream& os) const {
-        for (int i = 0; i < noOfFlights; i++) {
+    void
+    print(std::ostream& os) const override {
+        for (int i = 0; i < no_of_flights; i++) {
             os << "\tFlight " << i + 1 << ":" << std::endl;
             os << "\t\tCrew\tStew.\tHost.\tFrench\tSpanish\tGerman" << std::endl << "\t";
-            os << "\t" << requiredCrew[i].staff << "\t" << requiredCrew[i].stewards << "\t" << requiredCrew[i].hostesses
-               << "\t" << requiredCrew[i].spanish << "\t" << requiredCrew[i].french << "\t" << requiredCrew[i].german
-               << std::endl;
+            os << "\t" << required_crew[i].staff << "\t" << required_crew[i].stewards << "\t"
+               << required_crew[i].hostesses << "\t" << required_crew[i].spanish << "\t" << required_crew[i].french
+               << "\t" << required_crew[i].german << std::endl;
 
             os << "\t\tSchedule:" << std::endl << "\t\t";
             if (flight[i].assigned()) {
                 for (SetVarGlbValues d(flight[i]); d(); ++d) {
-                    os << employeeToName(static_cast<Employee>(d.val())) << " ";
+                    os << employee_to_name(static_cast<Employee>(d.val())) << " ";
                 }
             } else {
                 os << "\tRequired: ";
                 for (SetVarGlbValues d(flight[i]); d(); ++d) {
-                    os << employeeToName(static_cast<Employee>(d.val())) << " ";
+                    os << employee_to_name(static_cast<Employee>(d.val())) << " ";
                 }
                 os << std::endl << "\t\t\tPossible: ";
                 for (SetVarUnknownValues d(flight[i]); d(); ++d) {
-                    os << employeeToName(static_cast<Employee>(d.val())) << " ";
+                    os << employee_to_name(static_cast<Employee>(d.val())) << " ";
                 }
             }
             os << std::endl << std::endl;
@@ -168,8 +168,8 @@ public:
         flight.update(*this, s.flight);
     }
     /// Copy during cloning
-    virtual Space*
-    copy(void) {
+    Space*
+    copy(void) override {
         return new Crew(*this);
     }
 };
@@ -190,47 +190,47 @@ namespace {
 
     /// Return name of employee \a e as a string
     const char*
-    employeeToName(Employee e) {
+    employee_to_name(Employee e) {
         switch (e) {
-        case Tom:
+        case TOM:
             return "Tom";
-        case David:
+        case DAVID:
             return "David";
-        case Jeremy:
+        case JEREMY:
             return "Jeremy";
-        case Ron:
+        case RON:
             return "Ron";
-        case Joe:
+        case JOE:
             return "Joe";
-        case Bill:
+        case BILL:
             return "Bill";
-        case Fred:
+        case FRED:
             return "Fred";
-        case Bob:
+        case BOB:
             return "Bob";
-        case Mario:
+        case MARIO:
             return "Mario";
-        case Ed:
+        case ED:
             return "Ed";
-        case Carol:
+        case CAROL:
             return "Carol";
-        case Janet:
+        case JANET:
             return "Janet";
-        case Tracy:
+        case TRACY:
             return "Tracy";
-        case Marilyn:
+        case MARILYN:
             return "Marilyn";
-        case Carolyn:
+        case CAROLYN:
             return "Carolyn";
-        case Cathy:
+        case CATHY:
             return "Cathy";
-        case Inez:
+        case INEZ:
             return "Inez";
-        case Jean:
+        case JEAN:
             return "Jean";
-        case Heather:
+        case HEATHER:
             return "Heather";
-        case Juliet:
+        case JULIET:
             return "Juliet";
         default:
             GECODE_NEVER;
@@ -240,33 +240,33 @@ namespace {
 
     // these have to be sorted!
     /// The stewards
-    const int stewards[] = {Tom, David, Jeremy, Ron, Joe, Bill, Fred, Bob, Mario, Ed};
+    const int stewards[] = {TOM, DAVID, JEREMY, RON, JOE, BILL, FRED, BOB, MARIO, ED};
     /// The number of stewards
-    const int noOfStewards = sizeof(stewards) / sizeof(int);
+    const int no_of_stewards = sizeof(stewards) / sizeof(int);
     /// The hostesses
-    const int hostesses[] = {Carol, Janet, Tracy, Marilyn, Carolyn, Cathy, Inez, Jean, Heather, Juliet};
+    const int hostesses[] = {CAROL, JANET, TRACY, MARILYN, CAROLYN, CATHY, INEZ, JEAN, HEATHER, JULIET};
     /// The number of hostesses
-    const int noOfHostesses = sizeof(hostesses) / sizeof(int);
+    const int no_of_hostesses = sizeof(hostesses) / sizeof(int);
     /// The French speaking employees
-    const int frenchSpeaking[] = {Bill, Inez, Jean, Juliet};
+    const int french_speaking[] = {BILL, INEZ, JEAN, JULIET};
     /// The number of French speaking employees
-    const int noOfFrenchSpeaking = sizeof(frenchSpeaking) / sizeof(int);
+    const int no_of_french_speaking = sizeof(french_speaking) / sizeof(int);
     /// The German speaking employees
-    const int germanSpeaking[] = {Tom, Jeremy, Mario, Cathy, Juliet};
+    const int german_speaking[] = {TOM, JEREMY, MARIO, CATHY, JULIET};
     /// The number of German speaking employees
-    const int noOfGermanSpeaking = sizeof(germanSpeaking) / sizeof(int);
+    const int no_of_german_speaking = sizeof(german_speaking) / sizeof(int);
     /// The Spanish speaking employees
-    const int spanishSpeaking[] = {Joe, Bill, Fred, Mario, Marilyn, Inez, Heather};
+    const int spanish_speaking[] = {JOE, BILL, FRED, MARIO, MARILYN, INEZ, HEATHER};
     /// The number of Spanish speaking employees
-    const int noOfSpanishSpeaking = sizeof(spanishSpeaking) / sizeof(int);
+    const int no_of_spanish_speaking = sizeof(spanish_speaking) / sizeof(int);
 
     /// The flights to schedule
-    const Flight requiredCrew[] = {{4, 1, 1, 1, 1, 1}, {5, 1, 1, 1, 1, 1}, {5, 1, 1, 1, 1, 1}, {6, 2, 2, 1, 1, 1},
-                                   {7, 3, 3, 1, 1, 1}, {4, 1, 1, 1, 1, 1}, {5, 1, 1, 1, 1, 1}, {6, 1, 1, 1, 1, 1},
-                                   {6, 2, 2, 1, 1, 1}, {7, 3, 3, 1, 1, 1}};
+    const Flight required_crew[] = {{4, 1, 1, 1, 1, 1}, {5, 1, 1, 1, 1, 1}, {5, 1, 1, 1, 1, 1}, {6, 2, 2, 1, 1, 1},
+                                    {7, 3, 3, 1, 1, 1}, {4, 1, 1, 1, 1, 1}, {5, 1, 1, 1, 1, 1}, {6, 1, 1, 1, 1, 1},
+                                    {6, 2, 2, 1, 1, 1}, {7, 3, 3, 1, 1, 1}};
 
     /// The number of flights to schedule
-    const int noOfFlights = sizeof(requiredCrew) / sizeof(Flight);
+    const int no_of_flights = sizeof(required_crew) / sizeof(Flight);
 } // namespace
 
 // STATISTICS: example-any

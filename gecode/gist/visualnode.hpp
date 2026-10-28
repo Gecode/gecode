@@ -41,15 +41,15 @@ namespace Gecode { namespace Gist {
         : l(l0), r(r0) {}
 
     inline Extent::Extent(int width) {
-        int halfWidth = width / 2;
-        l = 0 - halfWidth;
-        r = 0 + halfWidth;
+        int half_width = width / 2;
+        l = 0 - half_width;
+        r = 0 + half_width;
     }
 
     inline void
-    Extent::extend(int deltaL, int deltaR) {
-        l += deltaL;
-        r += deltaR;
+    Extent::extend(int delta_l, int delta_r) {
+        l += delta_l;
+        r += delta_r;
     }
 
     inline void
@@ -64,7 +64,7 @@ namespace Gecode { namespace Gist {
     }
 
     forceinline void
-    Shape::setDepth(int d) {
+    Shape::set_depth(int d) {
         assert(d <= _depth);
         _depth = d;
     }
@@ -97,123 +97,123 @@ namespace Gecode { namespace Gist {
     }
 
     forceinline bool
-    Shape::getExtentAtDepth(int d, Extent& extent) {
+    Shape::get_extent_at_depth(int d, Extent& extent) {
         if (d > depth())
             return false;
         extent = Extent(0, 0);
         for (int i = 0; i <= d; i++) {
-            Extent currentExtent = (*this)[i];
-            extent.l += currentExtent.l;
-            extent.r += currentExtent.r;
+            Extent current_extent = (*this)[i];
+            extent.l += current_extent.l;
+            extent.r += current_extent.r;
         }
         return true;
     }
 
     forceinline void
-    Shape::computeBoundingBox(void) {
-        int lastLeft = 0;
-        int lastRight = 0;
+    Shape::compute_bounding_box(void) {
+        int last_left = 0;
+        int last_right = 0;
         bb.left = 0;
         bb.right = 0;
         for (int i = 0; i < depth(); i++) {
-            lastLeft = lastLeft + (*this)[i].l;
-            lastRight = lastRight + (*this)[i].r;
-            bb.left = std::min(bb.left, lastLeft);
-            bb.right = std::max(bb.right, lastRight);
+            last_left = last_left + (*this)[i].l;
+            last_right = last_right + (*this)[i].r;
+            bb.left = std::min(bb.left, last_left);
+            bb.right = std::max(bb.right, last_right);
         }
     }
 
     forceinline const BoundingBox&
-    Shape::getBoundingBox(void) const {
+    Shape::get_bounding_box(void) const {
         return bb;
     }
 
     forceinline bool
-    VisualNode::isHidden(void) {
-        return getFlag(HIDDEN);
+    VisualNode::is_hidden(void) {
+        return get_flag(HIDDEN);
     }
 
     forceinline void
-    VisualNode::setHidden(bool h) {
-        setFlag(HIDDEN, h);
+    VisualNode::set_hidden(bool h) {
+        set_flag(HIDDEN, h);
     }
 
     forceinline void
-    VisualNode::setStop(bool h) {
-        if (getStatus() == BRANCH && h)
-            setStatus(STOP);
-        else if (getStatus() == STOP && !h)
-            setStatus(UNSTOP);
+    VisualNode::set_stop(bool h) {
+        if (get_status() == BRANCH && h)
+            set_status(STOP);
+        else if (get_status() == STOP && !h)
+            set_status(UNSTOP);
     }
 
     forceinline int
-    VisualNode::getOffset(void) {
+    VisualNode::get_offset(void) {
         return offset;
     }
 
     forceinline void
-    VisualNode::setOffset(int n) {
+    VisualNode::set_offset(int n) {
         offset = n;
     }
 
     forceinline bool
-    VisualNode::isDirty(void) {
-        return getFlag(DIRTY);
+    VisualNode::is_dirty(void) {
+        return get_flag(DIRTY);
     }
 
     forceinline void
-    VisualNode::setDirty(bool d) {
-        setFlag(DIRTY, d);
+    VisualNode::set_dirty(bool d) {
+        set_flag(DIRTY, d);
     }
 
     forceinline bool
-    VisualNode::childrenLayoutIsDone(void) {
-        return getFlag(CHILDRENLAYOUTDONE);
+    VisualNode::children_layout_is_done(void) {
+        return get_flag(CHILDREN_LAYOUT_DONE);
     }
 
     forceinline void
-    VisualNode::setChildrenLayoutDone(bool d) {
-        setFlag(CHILDRENLAYOUTDONE, d);
+    VisualNode::set_children_layout_done(bool d) {
+        set_flag(CHILDREN_LAYOUT_DONE, d);
     }
 
     forceinline bool
-    VisualNode::isMarked(void) {
-        return getFlag(MARKED);
+    VisualNode::is_marked(void) {
+        return get_flag(MARKED);
     }
 
     forceinline void
-    VisualNode::setMarked(bool m) {
-        setFlag(MARKED, m);
+    VisualNode::set_marked(bool m) {
+        set_flag(MARKED, m);
     }
 
     forceinline bool
-    VisualNode::isBookmarked(void) {
-        return getFlag(BOOKMARKED);
+    VisualNode::is_bookmarked(void) {
+        return get_flag(BOOKMARKED);
     }
 
     forceinline void
-    VisualNode::setBookmarked(bool m) {
-        setFlag(BOOKMARKED, m);
+    VisualNode::set_bookmarked(bool m) {
+        set_flag(BOOKMARKED, m);
     }
 
     forceinline bool
-    VisualNode::isOnPath(void) {
-        return getFlag(ONPATH);
+    VisualNode::is_on_path(void) {
+        return get_flag(ONPATH);
     }
 
     forceinline void
-    VisualNode::setOnPath(bool b) {
-        setFlag(ONPATH, b);
+    VisualNode::set_on_path(bool b) {
+        set_flag(ONPATH, b);
     }
 
     forceinline Shape*
-    VisualNode::getShape(void) {
-        return isHidden() ? Shape::hidden : shape;
+    VisualNode::get_shape(void) {
+        return is_hidden() ? Shape::hidden : shape;
     }
 
     forceinline BoundingBox
-    VisualNode::getBoundingBox(void) {
-        return getShape()->getBoundingBox();
+    VisualNode::get_bounding_box(void) {
+        return get_shape()->get_bounding_box();
     }
 
 }} // namespace Gecode::Gist

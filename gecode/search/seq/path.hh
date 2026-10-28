@@ -95,7 +95,7 @@ namespace Gecode { namespace Search { namespace Seq {
             /// Return number for alternatives
             unsigned int alt(void) const;
             /// Return true number for alternatives (excluding lao optimization)
-            unsigned int truealt(void) const;
+            unsigned int true_alternative(void) const;
             /// Test whether current alternative is leftmost
             bool leftmost(void) const;
             /// Test whether current alternative is rightmost
@@ -148,7 +148,7 @@ namespace Gecode { namespace Search { namespace Seq {
         /// Reset stack
         void reset(void);
         /// Post no-goods
-        virtual void post(Space& home) const;
+        void post(Space& home) const override;
     };
 
 }}} // namespace Gecode::Search::Seq

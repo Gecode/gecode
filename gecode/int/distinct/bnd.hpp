@@ -396,7 +396,7 @@ namespace Gecode { namespace Int { namespace Distinct {
         ExecStatus es = prop_bnd<View>(home, x, min_x, max_x);
 
         GECODE_ES_CHECK(es);
-        if (es == ES_NOFIX && View::me(modeventdelta()) == ME_INT_VAL)
+        if (es == ES_NOFIX && View::me(modification_event_delta()) == ME_INT_VAL)
             return es;
 
         const int n = x.size();
@@ -459,14 +459,14 @@ namespace Gecode { namespace Int { namespace Distinct {
 #ifdef GECODE_HAS_CBS
     template <class View>
     void
-    Bnd<View>::solndistrib(Space& home, Propagator::SendMarginal send) const {
-        cbsdistinct(home, this->id(), x, send);
+    Bnd<View>::solution_distribution(Space& home, Propagator::SendMarginal send) const {
+        cbs_distinct(home, this->id(), x, send);
     }
 
     template <class View>
     void
-    Bnd<View>::domainsizesum(Propagator::InDecision in, unsigned int& size, unsigned int& size_b) const {
-        cbssize(x, in, size, size_b);
+    Bnd<View>::domain_size_sum(Propagator::InDecision in, unsigned int& size, unsigned int& size_b) const {
+        cbs_size(x, in, size, size_b);
     }
 #endif
 

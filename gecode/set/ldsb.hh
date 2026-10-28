@@ -57,24 +57,24 @@ namespace Gecode { namespace Set { namespace LDSB {
     public:
         using typename LDSBBrancher<View, n, Val, a, Filter, Print>::Var;
         /// Position of previous variable that was branched on
-        int _prevPos;
+        int _prev_pos;
         /// Number of non-value symmetries
-        int _nNonValueSymmetries;
+        int _n_non_value_symmetries;
         /// Number of value symmetries
-        int _nValueSymmetries;
+        int _n_value_symmetries;
         /// Copy of value symmetries from the first node where the current
         /// variable was branched on.
-        ValueSymmetryImp<View>** _copiedSyms;
+        ValueSymmetryImp<View>** _copied_syms;
         /// Number of copied symmetries
-        int _nCopiedSyms;
+        int _n_copied_syms;
         /// Set of values used on left branches for the current variable
-        IntSet _leftBranchValues;
+        IntSet _left_branch_values;
         /**
          * \brief Is the state of the brancher "stable"?
          *
          * The brancher is unstable if we are about to run either "choice"
-         * or "commit", but "updatePart1" has not been run.  After
-         * "updatePart1" has been run the brancher is stable, until the
+         * or "commit", but "update_part1" has not been run.  After
+         * "update_part1" has been run the brancher is stable, until the
          * second part of the update is done (in commit).
          */
         bool _stable;
@@ -85,23 +85,23 @@ namespace Gecode { namespace Set { namespace LDSB {
         LDSBSetBrancher(Home home, ViewArray<View>& x, ViewSel<View>* vs[n], ValSelCommitBase<View, Val>* vsc,
                         SymmetryImp<View>** syms, int nsyms, BranchFilter<Var> bf, VarValPrint<Var, Val> vvp);
         /// Return choice
-        virtual const Choice* choice(Space& home);
+        const Choice* choice(Space& home) override;
         /// Perform commit for choice \a c and alternative \a b
-        virtual ExecStatus commit(Space& home, const Choice& c, unsigned int b);
+        ExecStatus commit(Space& home, const Choice& c, unsigned int b) override;
         /// Perform cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Delete brancher and return its size
-        virtual size_t dispose(Space& home);
+        size_t dispose(Space& home) override;
         /// Brancher post function
         static void post(Home home, ViewArray<View>& x, ViewSel<View>* vs[n], ValSelCommitBase<View, Val>* vsc,
                          SymmetryImp<View>** _syms, int _nsyms, BranchFilter<Var> bf, VarValPrint<Var, Val> vvp);
 
         /// Post LDSB brancher
         template <class View0, int n0, class Val0, unsigned int a0>
-        void postldsbsetbrancher(Home home, ViewArray<View0>& x, ViewSel<View0>* vs[n0],
-                                 ValSelCommitBase<View0, Val0>* vsc, SymmetryImp<View0>** syms, int nsyms,
-                                 BranchFilter<typename View0::VarType> bf,
-                                 VarValPrint<typename View0::VarType, Val0> vvp);
+        void post_ldsb_set_brancher(Home home, ViewArray<View0>& x, ViewSel<View0>* vs[n0],
+                                    ValSelCommitBase<View0, Val0>* vsc, SymmetryImp<View0>** syms, int nsyms,
+                                    BranchFilter<typename View0::VarType> bf,
+                                    VarValPrint<typename View0::VarType, Val0> vvp);
 
         /**
          * \brief Part one of the update phase
@@ -111,7 +111,7 @@ namespace Gecode { namespace Set { namespace LDSB {
          * branches for the previous variable, and make fresh copy of
          * resulting value symmetries.
          */
-        void updatePart1(Space& home, int choicePos);
+        void update_part1(Space& home, int choice_pos);
     };
 
 }}} // namespace Gecode::Set::LDSB

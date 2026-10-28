@@ -42,9 +42,9 @@ namespace Gecode { namespace Gist {
         dynamic_cast<const S&>(s0).compare(s1, result);
         if (result.str() != "") {
             init();
-            addHtml("<pre>\n");
-            getStream() << result.str() << std::endl;
-            addHtml("</pre><hr />");
+            add_html("<pre>\n");
+            get_stream() << result.str() << std::endl;
+            add_html("</pre><hr />");
         }
     }
 
@@ -84,8 +84,8 @@ namespace Gecode { namespace Gist {
     Comparator::compare(std::string x_n, SetVar x, SetVar y) {
         SetVarGlbRanges xglbr(x), yglbr(y);
         SetVarLubRanges xlubr(x), ylubr(y);
-        if (!(Iter::Ranges::equal(xglbr, yglbr) && Iter::Ranges::equal(xlubr, ylubr) && x.cardMin() == y.cardMin() &&
-              y.cardMax() == y.cardMax())) {
+        if (!(Iter::Ranges::equal(xglbr, yglbr) && Iter::Ranges::equal(xlubr, ylubr) && x.card_min() == y.card_min() &&
+              y.card_max() == y.card_max())) {
             std::ostringstream ret;
             ret << x_n << "=" << x << " -> " << y;
             return ret.str();
@@ -134,10 +134,10 @@ namespace Gecode { namespace Gist {
     void
     Print<S>::inspect(const Space& node) {
         init();
-        addHtml("<pre>\n");
-        dynamic_cast<const S&>(node).print(getStream());
+        add_html("<pre>\n");
+        dynamic_cast<const S&>(node).print(get_stream());
         flush();
-        addHtml("</pre><hr />");
+        add_html("</pre><hr />");
     }
 
     template <class S>

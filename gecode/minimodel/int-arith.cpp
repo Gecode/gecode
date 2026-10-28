@@ -63,7 +63,7 @@ namespace Gecode { namespace MiniModel {
         /// Size of variable array
         int n;
         /// Integer argument (used in nroot for example)
-        int aInt;
+        int a_int;
         /// Expressions
         LinIntExpr* a;
         /// Allocate internal expression slots without public default nodes
@@ -77,20 +77,20 @@ namespace Gecode { namespace MiniModel {
             return a;
         }
         /// Constructor
-        ArithNonLinIntExpr(ArithNonLinIntExprType t0, int n0) : t(t0), b(), n(n0), aInt(0), a(allocate(n0)) {}
+        ArithNonLinIntExpr(ArithNonLinIntExprType t0, int n0) : t(t0), b(), n(n0), a_int(0), a(allocate(n0)) {}
         /// Constructor
-        ArithNonLinIntExpr(ArithNonLinIntExprType t0, int n0, int a0) : t(t0), b(), n(n0), aInt(a0), a(allocate(n0)) {}
+        ArithNonLinIntExpr(ArithNonLinIntExprType t0, int n0, int a0) : t(t0), b(), n(n0), a_int(a0), a(allocate(n0)) {}
         /// Constructor
         ArithNonLinIntExpr(ArithNonLinIntExprType t0, int n0, const BoolExpr& b0)
-            : t(t0), b(b0), n(n0), aInt(0), a(allocate(n0)) {}
+            : t(t0), b(b0), n(n0), a_int(0), a(allocate(n0)) {}
         /// Destructor
-        ~ArithNonLinIntExpr(void) {
+        ~ArithNonLinIntExpr(void) override {
             if (a != nullptr)
                 heap.free<LinIntExpr>(a, n);
         }
         /// Post expression
-        virtual IntVar
-        post(Home home, IntVar* ret, const IntPropLevels& ipls) const {
+        IntVar
+        post(Home home, IntVar* ret, const IntPropLevels& ipls) const override {
             IntVar y;
             switch (t) {
             case ANLE_ABS: {
@@ -207,21 +207,21 @@ namespace Gecode { namespace MiniModel {
             case ANLE_POW: {
                 assert(n == 1);
                 IntVar x = a[0].post(home, ipls);
-                if (x.assigned() && (aInt > 0) && ((x.val() == 0) || (x.val() == 1)))
+                if (x.assigned() && (a_int > 0) && ((x.val() == 0) || (x.val() == 1)))
                     y = result(home, ret, x);
                 else {
                     y = result(home, ret);
-                    pow(home, x, aInt, y, ipls.pow());
+                    pow(home, x, a_int, y, ipls.pow());
                 }
             } break;
             case ANLE_NROOT: {
                 assert(n == 1);
                 IntVar x = a[0].post(home, ipls);
-                if (x.assigned() && (aInt > 0) && ((x.val() == 0) || (x.val() == 1)))
+                if (x.assigned() && (a_int > 0) && ((x.val() == 0) || (x.val() == 1)))
                     y = result(home, ret, x);
                 else {
                     y = result(home, ret);
-                    nroot(home, x, aInt, y, ipls.nroot());
+                    nroot(home, x, a_int, y, ipls.nroot());
                 }
             } break;
             case ANLE_ELMNT: {
@@ -260,8 +260,8 @@ namespace Gecode { namespace MiniModel {
             }
             return y;
         }
-        virtual void
-        post(Home home, IntRelType irt, int c, const IntPropLevels& ipls) const {
+        void
+        post(Home home, IntRelType irt, int c, const IntPropLevels& ipls) const override {
             if ((t == ANLE_MIN && (irt == IRT_GQ || irt == IRT_GR)) ||
                 (t == ANLE_MAX && (irt == IRT_LQ || irt == IRT_LE))) {
                 IntVarArgs x(n);
@@ -272,14 +272,14 @@ namespace Gecode { namespace MiniModel {
                 rel(home, post(home, nullptr, ipls), irt, c);
             }
         }
-        virtual void
-        post(Home home, IntRelType irt, int c, BoolVar b, const IntPropLevels& ipls) const {
+        void
+        post(Home home, IntRelType irt, int c, BoolVar b, const IntPropLevels& ipls) const override {
             rel(home, post(home, nullptr, ipls), irt, c, b);
         }
     };
     /// Check if \a e is of type \a t
     bool
-    hasType(const LinIntExpr& e, ArithNonLinIntExpr::ArithNonLinIntExprType t) {
+    has_type(const LinIntExpr& e, ArithNonLinIntExpr::ArithNonLinIntExprType t) {
         return e.nle() && dynamic_cast<ArithNonLinIntExpr*>(e.nle()) != nullptr &&
                dynamic_cast<ArithNonLinIntExpr*>(e.nle())->t == t;
     }
@@ -306,7 +306,7 @@ namespace Gecode {
     LinIntExpr
     abs(const LinIntExpr& e) {
         using namespace MiniModel;
-        if (hasType(e, ArithNonLinIntExpr::ANLE_ABS))
+        if (has_type(e, ArithNonLinIntExpr::ANLE_ABS))
             return e;
         ArithNonLinIntExpr* ae = new ArithNonLinIntExpr(ArithNonLinIntExpr::ANLE_ABS, 1);
         ArithNonLinIntExprGuard g(ae);
@@ -320,29 +320,29 @@ namespace Gecode {
     min(const LinIntExpr& e0, const LinIntExpr& e1) {
         using namespace MiniModel;
         int n = 0;
-        if (hasType(e0, ArithNonLinIntExpr::ANLE_MIN))
+        if (has_type(e0, ArithNonLinIntExpr::ANLE_MIN))
             n += static_cast<ArithNonLinIntExpr*>(e0.nle())->n;
         else
             n += 1;
-        if (hasType(e1, ArithNonLinIntExpr::ANLE_MIN))
+        if (has_type(e1, ArithNonLinIntExpr::ANLE_MIN))
             n += static_cast<ArithNonLinIntExpr*>(e1.nle())->n;
         else
             n += 1;
         ArithNonLinIntExpr* ae = new ArithNonLinIntExpr(ArithNonLinIntExpr::ANLE_MIN, n);
         ArithNonLinIntExprGuard g(ae);
         int i = 0;
-        if (hasType(e0, ArithNonLinIntExpr::ANLE_MIN)) {
+        if (has_type(e0, ArithNonLinIntExpr::ANLE_MIN)) {
             ArithNonLinIntExpr* e0e = static_cast<ArithNonLinIntExpr*>(e0.nle());
             for (; i < e0e->n; i++)
                 ae->a[i] = e0e->a[i];
         } else {
             ae->a[i++] = e0;
         }
-        if (hasType(e1, ArithNonLinIntExpr::ANLE_MIN)) {
+        if (has_type(e1, ArithNonLinIntExpr::ANLE_MIN)) {
             ArithNonLinIntExpr* e1e = static_cast<ArithNonLinIntExpr*>(e1.nle());
-            int curN = i;
-            for (; i < curN + e1e->n; i++)
-                ae->a[i] = e1e->a[i - curN];
+            int cur_n = i;
+            for (; i < cur_n + e1e->n; i++)
+                ae->a[i] = e1e->a[i - cur_n];
         } else {
             ae->a[i++] = e1;
         }
@@ -355,29 +355,29 @@ namespace Gecode {
     max(const LinIntExpr& e0, const LinIntExpr& e1) {
         using namespace MiniModel;
         int n = 0;
-        if (hasType(e0, ArithNonLinIntExpr::ANLE_MAX))
+        if (has_type(e0, ArithNonLinIntExpr::ANLE_MAX))
             n += static_cast<ArithNonLinIntExpr*>(e0.nle())->n;
         else
             n += 1;
-        if (hasType(e1, ArithNonLinIntExpr::ANLE_MAX))
+        if (has_type(e1, ArithNonLinIntExpr::ANLE_MAX))
             n += static_cast<ArithNonLinIntExpr*>(e1.nle())->n;
         else
             n += 1;
         ArithNonLinIntExpr* ae = new ArithNonLinIntExpr(ArithNonLinIntExpr::ANLE_MAX, n);
         ArithNonLinIntExprGuard g(ae);
         int i = 0;
-        if (hasType(e0, ArithNonLinIntExpr::ANLE_MAX)) {
+        if (has_type(e0, ArithNonLinIntExpr::ANLE_MAX)) {
             ArithNonLinIntExpr* e0e = static_cast<ArithNonLinIntExpr*>(e0.nle());
             for (; i < e0e->n; i++)
                 ae->a[i] = e0e->a[i];
         } else {
             ae->a[i++] = e0;
         }
-        if (hasType(e1, ArithNonLinIntExpr::ANLE_MAX)) {
+        if (has_type(e1, ArithNonLinIntExpr::ANLE_MAX)) {
             ArithNonLinIntExpr* e1e = static_cast<ArithNonLinIntExpr*>(e1.nle());
-            int curN = i;
-            for (; i < curN + e1e->n; i++)
-                ae->a[i] = e1e->a[i - curN];
+            int cur_n = i;
+            for (; i < cur_n + e1e->n; i++)
+                ae->a[i] = e1e->a[i - cur_n];
         } else {
             ae->a[i++] = e1;
         }

@@ -279,8 +279,8 @@ public:
     }
 
     /// Print instance and solution
-    virtual void
-    print(std::ostream& os) const {
+    void
+    print(std::ostream& os) const override {
         Matrix<IntVarArray> cm(c, n, v);
         for (int i = 0; i < v; ++i) {
             IntVarArgs r = cm.row(i);
@@ -295,8 +295,8 @@ public:
         diff.update(*this, s.diff);
     }
     /// Copy during cloning
-    virtual Space*
-    copy(void) {
+    Space*
+    copy(void) override {
         return new EFPA(*this);
     }
 };

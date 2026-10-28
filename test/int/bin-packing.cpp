@@ -72,13 +72,13 @@ namespace Test { namespace Int {
                     dsv[n_bins + i].init(d_bin);
             }
             /// Test whether all assignments have been iterated
-            virtual bool
-            has_more(void) const {
+            bool
+            has_more(void) const override {
                 return dsv[0]();
             }
             /// Move to next assignment
-            virtual void
-            next(Gecode::Support::RandomGenerator&) {
+            void
+            next(Gecode::Support::RandomGenerator&) override {
                 // Try to generate next bin assignment
                 {
                     int i = n_items - 1;
@@ -110,13 +110,13 @@ namespace Test { namespace Int {
                 }
             }
             /// Return value for variable \a i
-            virtual int
-            operator[](int i) const {
+            int
+            operator[](int i) const override {
                 assert((i >= 0) && (i < n_bins + n_items));
                 return dsv[i].val();
             }
             /// Destructor
-            virtual ~LoadBinAssignment(void) {
+            ~LoadBinAssignment(void) override {
                 delete[] dsv;
             }
         };
@@ -148,19 +148,19 @@ namespace Test { namespace Int {
             BPT(int m0, const Gecode::IntArgs& s0, bool v = true)
                 : Test("BinPacking::" + str(m0) + "::" + str(s0) + "::" + (v ? "+" : "-"), m0 + s0.size(), 0, 100),
                   m(m0), s(s0), valid(v), t(total(s)) {
-                testsearch = false;
+                test_search = false;
             }
             /// Create assignment
-            virtual Assignment*
-            assignment(void) const {
+            Assignment*
+            assignment(void) const override {
                 // Compute plausible bin sizes
                 int a = t / m;
                 return new LoadBinAssignment(m, Gecode::IntSet(a - 1, a + 2), s.size(), Gecode::IntSet(0, m - 1),
                                              valid ? t : -1);
             }
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 // Loads are from 0 to m-1, after that are items
                 // Check whether loads sum up to total size
                 int l = 0;
@@ -183,8 +183,8 @@ namespace Test { namespace Int {
                 return true;
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 using namespace Gecode;
                 IntVarArgs l(m);
                 IntVarArgs b(s.size());
@@ -192,7 +192,7 @@ namespace Test { namespace Int {
                     l[j] = x[j];
                 for (int i = s.size(); i--;)
                     b[i] = x[m + i];
-                binpacking(home, l, b, s);
+                bin_packing(home, l, b, s);
             }
         };
 
@@ -216,12 +216,12 @@ namespace Test { namespace Int {
                 : Test("MultiBinPacking::" + str(d0) + "::" + str(m0) + "::" + str(s0) + "::" + str(c0), s0.size() / d0,
                        0, m0 - 1),
                   d(d0), m(m0), s(s0), c(c0) {
-                testsearch = false;
-                testfix = false;
+                test_search = false;
+                test_fixpoint = false;
             }
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 // x are the bin variables
                 for (int k = d; k--;)
                     for (int j = m; j--;)
@@ -236,13 +236,13 @@ namespace Test { namespace Int {
                 return true;
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 using namespace Gecode;
                 IntVarArgs l(d * m);
                 for (int j = m * d; j--;)
                     l[j] = IntVar(home, 0, Gecode::Int::Limits::max);
-                binpacking(home, d, l, x, s, c);
+                bin_packing(home, d, l, x, s, c);
             }
         };
 
@@ -259,8 +259,8 @@ namespace Test { namespace Int {
                 // Constructor
                 TestSpace(void) {}
                 // Copy function
-                virtual Gecode::Space*
-                copy(void) {
+                Gecode::Space*
+                copy(void) override {
                     return nullptr;
                 }
             };
@@ -269,8 +269,8 @@ namespace Test { namespace Int {
             /// Test for number of items \a n expected clique \a c
             CliqueMBPT(const Gecode::IntArgs& c) : Base("Int::MultiBinPacking::Clique::" + Test::str(c)), clique(c) {}
             /// Run the actual test
-            virtual bool
-            run(void) {
+            bool
+            run(void) override {
                 using namespace Gecode;
                 TestSpace* home = new TestSpace;
                 /*
@@ -297,7 +297,7 @@ namespace Test { namespace Int {
                 // Load and bin variables
                 IntVarArgs b(*home, n_items, 0, n_items - 1);
                 IntVarArgs l(*home, 2 * n_items, 0, 3);
-                IntSet mc = binpacking(*home, 2, l, b, s, c);
+                IntSet mc = bin_packing(*home, 2, l, b, s, c);
                 if (home->status() == SS_FAILED) {
                     delete home;
                     return false;
@@ -323,8 +323,8 @@ namespace Test { namespace Int {
             class TestSpace : public Gecode::Space {
             public:
                 TestSpace(void) {}
-                virtual Gecode::Space*
-                copy(void) {
+                Gecode::Space*
+                copy(void) override {
                     return nullptr;
                 }
             };
@@ -337,7 +337,7 @@ namespace Test { namespace Int {
                     TestSpace* home = new TestSpace;
                     IntVarArgs l(*home, n_bins, 0, capacity);
                     IntVarArgs b(*home, sizes.size(), 0, n_bins - 1);
-                    binpacking(*home, l, b, sizes, levels[i]);
+                    bin_packing(*home, l, b, sizes, levels[i]);
                     bool failed = home->status() == SS_FAILED;
                     delete home;
                     if (failed != expected_failed[i])
@@ -350,8 +350,8 @@ namespace Test { namespace Int {
             /// Constructor
             PropagationLevels(void) : Base("Int::BinPacking::PropagationLevels") {}
             /// Run the actual test
-            virtual bool
-            run(void) {
+            bool
+            run(void) override {
                 using namespace Gecode;
                 bool const advanced_failed[] = {false, true, true, true};
                 bool const full_failed[] = {false, false, false, true};
@@ -368,20 +368,20 @@ namespace Test { namespace Int {
         public:
             DFFLargeWeights(int n, int c, int w)
                 : Test("BinPacking::DFFLargeWeights::" + str(n) + "::" + str(w), n, 0, 1), capacity(c), weight(w) {}
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 long long loads[2] = {0, 0};
                 for (int i = 0; i < x.size(); i++)
                     loads[x[i]] += weight;
                 return (loads[0] <= capacity) && (loads[1] <= capacity);
             }
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 Gecode::IntVarArgs loads(home, 2, 0, capacity);
                 Gecode::IntArgs sizes(x.size());
                 for (int i = 0; i < x.size(); i++)
                     sizes[i] = weight;
-                Gecode::binpacking(home, loads, x, sizes);
+                Gecode::bin_packing(home, loads, x, sizes);
             }
         };
 

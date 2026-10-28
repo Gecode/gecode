@@ -87,15 +87,15 @@ namespace Test { namespace Set {
 
         public:
             /// Create and register test
-            RelSIS(Gecode::SetOpType sot0, Gecode::SetRelType srt0, int intSet, bool inverse0)
+            RelSIS(Gecode::SetOpType sot0, Gecode::SetRelType srt0, int int_set, bool inverse0)
                 : SetTest(TestTags::sweep(),
-                          "RelOp::ConstSIS::" + str(sot0) + "::" + str(srt0) + "::" + str(intSet) +
+                          "RelOp::ConstSIS::" + str(sot0) + "::" + str(srt0) + "::" + str(int_set) +
                               (inverse0 ? "i" : ""),
                           2, ds_22, false),
-                  is(iss[intSet]), sot(sot0), srt(srt0), inverse(inverse0) {}
+                  is(iss[int_set]), sot(sot0), srt(srt0), inverse(inverse0) {}
             /// %Test whether \a x is solution
             bool
-            solution(const SetAssignment& x) const {
+            solution(const SetAssignment& x) const override {
                 IntSetRanges isr(is);
                 CountableSetRanges xr0(x.lub, x[0]);
                 CountableSetRanges xr1(x.lub, x[1]);
@@ -132,7 +132,7 @@ namespace Test { namespace Set {
             }
             /// Post constraint on \a x
             void
-            post(Space& home, SetVarArray& x, IntVarArray&) {
+            post(Space& home, SetVarArray& x, IntVarArray&) override {
                 if (!inverse)
                     Gecode::rel(home, is, sot, x[0], srt, x[1]);
                 else
@@ -176,13 +176,13 @@ namespace Test { namespace Set {
 
         public:
             /// Create and register test
-            RelSSI(Gecode::SetOpType sot0, Gecode::SetRelType srt0, int intSet)
+            RelSSI(Gecode::SetOpType sot0, Gecode::SetRelType srt0, int int_set)
                 : SetTest(sot0 == Gecode::SOT_UNION ? TestTags::check() : TestTags(TestTags::sweep()),
-                          "RelOp::ConstSSI::" + str(sot0) + "::" + str(srt0) + "::" + str(intSet), 2, ds_22, false),
-                  is(iss[intSet]), sot(sot0), srt(srt0) {}
+                          "RelOp::ConstSSI::" + str(sot0) + "::" + str(srt0) + "::" + str(int_set), 2, ds_22, false),
+                  is(iss[int_set]), sot(sot0), srt(srt0) {}
             /// %Test whether \a x is solution
             bool
-            solution(const SetAssignment& x) const {
+            solution(const SetAssignment& x) const override {
                 CountableSetRanges xr0(x.lub, x[0]);
                 CountableSetRanges xr1(x.lub, x[1]);
                 IntSetRanges isr(is);
@@ -214,7 +214,7 @@ namespace Test { namespace Set {
             }
             /// Post constraint on \a x
             void
-            post(Space& home, SetVarArray& x, IntVarArray&) {
+            post(Space& home, SetVarArray& x, IntVarArray&) override {
                 Gecode::rel(home, x[0], sot, x[1], srt, is);
             }
         };
@@ -257,17 +257,18 @@ namespace Test { namespace Set {
 
         public:
             /// Create and register test
-            RelISI(Gecode::SetOpType sot0, Gecode::SetRelType srt0, int intSet0, int intSet1, bool inverse0)
-                : SetTest((sot0 == Gecode::SOT_DUNION) && (srt0 == Gecode::SRT_CMPL) && (intSet0 == 0) && (intSet1 == 0)
+            RelISI(Gecode::SetOpType sot0, Gecode::SetRelType srt0, int int_set0, int int_set1, bool inverse0)
+                : SetTest((sot0 == Gecode::SOT_DUNION) && (srt0 == Gecode::SRT_CMPL) && (int_set0 == 0) &&
+                                  (int_set1 == 0)
                               ? TestTags::standard()
                               : TestTags::sweep(),
-                          "RelOp::ConstISI::" + str(sot0) + "::" + str(srt0) + "::" + str(intSet0) +
-                              "::" + str(intSet1) + (inverse0 ? "i" : ""),
+                          "RelOp::ConstISI::" + str(sot0) + "::" + str(srt0) + "::" + str(int_set0) +
+                              "::" + str(int_set1) + (inverse0 ? "i" : ""),
                           1, ds_33, false),
-                  is0(iss[intSet0]), is1(iss[intSet1]), sot(sot0), srt(srt0), inverse(inverse0) {}
+                  is0(iss[int_set0]), is1(iss[int_set1]), sot(sot0), srt(srt0), inverse(inverse0) {}
             /// %Test whether \a x is solution
             bool
-            solution(const SetAssignment& x) const {
+            solution(const SetAssignment& x) const override {
                 CountableSetRanges xr0(x.lub, x[0]);
                 IntSetRanges isr0(is0);
                 IntSetRanges isr1(is1);
@@ -304,7 +305,7 @@ namespace Test { namespace Set {
             }
             /// Post constraint on \a x
             void
-            post(Space& home, SetVarArray& x, IntVarArray&) {
+            post(Space& home, SetVarArray& x, IntVarArray&) override {
                 if (!inverse)
                     Gecode::rel(home, is0, sot, x[0], srt, is1);
                 else
