@@ -44,23 +44,14 @@ namespace Test { namespace FlatZinc {
       Create(void) {
         (void) new FlatZincTest("cumulatives_full::8",
 R"FZN(
-var 1..10: s1 :: output_var;
-var 1..10: s2 :: output_var;
-var 4..14: e1;
-var 2..15: e2;
-var 4..15: ms :: output_var;
-constraint gecode_cumulatives([s1, s2], [3, 5], [3, 2], [0, 1], [4, 6], true);
-constraint int_lin_eq([1, -1], [s1, e1], -3);
-constraint int_lin_eq([1, -1], [s2, e2], -5);
-constraint array_int_maximum(ms, [e1, e2]);
-solve minimize ms;
+% The two overlapping tasks exceed machine 0's capacity.
+constraint gecode_cumulatives([0, 0], [1, 1], [2, 2], [0, 0], [3, 1], true);
+solve satisfy;
 )FZN",
-R"OUT(ms = 6;
-s1 = 1;
-s2 = 1;
-----------
-==========
-)OUT");
+"=====UNSATISFIABLE=====\n");
+        (void) new FlatZincTest("cumulatives_full::8::feasible",
+          "constraint gecode_cumulatives([0,1],[1,1],[2,2],[0,0],[3,1],true); "
+          "solve satisfy;", "----------\n");
       }
     };
 

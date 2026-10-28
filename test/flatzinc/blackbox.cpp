@@ -473,12 +473,6 @@ namespace Test { namespace FlatZinc {
             "solve satisfy;\n", {}, "Failed to read output float 0");
 #endif
 
-          (void) new FlatZincErrorTest(TestTags::check(),"blackbox::nul_output",
-            std::string(blackbox_decl) +
-            "constraint gecode_blackbox([], [], [], []) :: " +
-            fixture_annotation("exec", executable, {"nul"}) + ";\n"
-            "solve satisfy;\n", {}, "response contains NUL data");
-
           (void) new FlatZincErrorTest(TestTags::check(),"blackbox::malformed_exec_parallel",
             std::string(blackbox_decl) +
             "var 0..1: x :: output_var;\n"

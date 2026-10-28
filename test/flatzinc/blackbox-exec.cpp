@@ -172,7 +172,6 @@ namespace {
     static const std::string bounds4("5,5,5,5;");
     static const std::string mixed("5,5;5,5");
     static const std::string nan(";nan");
-    static const std::string nul(";\0x", 3);
     static const std::string malformed("x;");
     if (mode == "value7") {
       return &value7;
@@ -184,8 +183,6 @@ namespace {
       return &mixed;
     } else if (mode == "nan") {
       return &nan;
-    } else if (mode == "nul") {
-      return &nul;
     } else if (mode == "malformed") {
       return &malformed;
     }

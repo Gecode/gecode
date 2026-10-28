@@ -44,34 +44,21 @@ namespace Test { namespace FlatZinc {
       Create(void) {
         (void) new FlatZincTest("cumulatives_full::1",
 R"FZN(
-var 1..10: s1 :: output_var;
-var 1..10: s2 :: output_var;
+var 1..2: d1;
+var 1..2: d2;
+var 3..4: r1 :: output_var;
+var 2..3: r2 :: output_var;
 var 0..1: m1 :: output_var;
-var 0..2: m2 :: output_var;
-var 3..4: d1;
-var 1..5: d2;
-var 2..3: r1;
-var 2..5: r2;
-var 4..14: e1;
-var 2..15: e2;
-var 4..15: ms :: output_var;
-constraint gecode_int_element(m1, 0, [3, 4], d1);
-constraint gecode_int_element(m2, 0, [1, 5], d2);
-constraint gecode_int_element(m1, 0, [3, 2], r1);
-constraint gecode_int_element(m2, 0, [5, 2], r2);
-constraint gecode_cumulatives([s1, s2], [d1, d2], [r1, r2], [m1, m2], [4, 6], true);
-constraint int_lin_eq([1, 1, -1], [s1, d1, e1], 0);
-constraint int_lin_eq([1, 1, -1], [s2, d2, e2], 0);
-constraint array_int_maximum(ms, [e1, e2]);
-solve minimize ms;
+var 0..1: m2 :: output_var;
+% Task 1 only fits machine 0, which then has no room for task 2.
+constraint gecode_cumulatives([0, 0], [d1, d2], [r1, r2], [m1, m2], [3, 2], true);
+solve satisfy;
 )FZN",
 R"OUT(m1 = 0;
 m2 = 1;
-ms = 6;
-s1 = 1;
-s2 = 1;
+r1 = 3;
+r2 = 2;
 ----------
-==========
 )OUT");
       }
     };
