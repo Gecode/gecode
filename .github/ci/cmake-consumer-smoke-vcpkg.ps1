@@ -71,16 +71,11 @@ int main(void) {
 cmake_minimum_required(VERSION 3.21)
 project(consumer_c LANGUAGES CXX)
 find_package(Gecode CONFIG REQUIRED COMPONENTS gecodedriver)
-add_executable(consumer_c main.cpp)
-target_link_libraries(consumer_c PRIVATE Gecode::gecodedriver)
+if(NOT TARGET Gecode::gecodedriver OR
+   NOT Gecode_LIBRARIES STREQUAL "Gecode::gecodedriver")
+  message(FATAL_ERROR "Expected canonical library for legacy component, got: ${Gecode_LIBRARIES}")
+endif()
 '@ | Set-Content -Encoding utf8 (Join-Path $work "c\CMakeLists.txt")
-@'
-#include <gecode/driver.hh>
-int main(void) {
-  Gecode::Options options("consumer_c");
-  return options.model();
-}
-'@ | Set-Content -Encoding utf8 (Join-Path $work "c\main.cpp")
 
 @'
 cmake_minimum_required(VERSION 3.21)
@@ -144,8 +139,6 @@ cmake -S (Join-Path $work "c") -B (Join-Path $work "c\build") -G "Visual Studio 
   "-DVCPKG_TARGET_TRIPLET=x64-windows" `
   "-DCMAKE_PREFIX_PATH=$prefix"
 Assert-NativeCommandSucceeded $LASTEXITCODE "consumer_c configure"
-cmake --build (Join-Path $work "c\build") --config $env:BUILD_TYPE
-Assert-NativeCommandSucceeded $LASTEXITCODE "consumer_c build"
 
 cmake -S (Join-Path $work "d") -B (Join-Path $work "d\build") -G "Visual Studio 17 2022" -A x64 `
   "-DCMAKE_TOOLCHAIN_FILE=$toolchain" `

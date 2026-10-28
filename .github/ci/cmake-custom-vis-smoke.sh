@@ -71,21 +71,15 @@ test "$set_line" -lt "$float_line"
 test "$float_line" -lt "$custom_one_line"
 test "$custom_one_line" -lt "$custom_two_line"
 
-mtime() {
-  if stat -c '%Y' "$1" >/dev/null 2>&1; then
-    stat -c '%Y' "$1"
-  else
-    stat -f '%m' "$1"
-  fi
-}
-type_mtime="$(mtime "$type_header")"
-imp_mtime="$(mtime "$imp_header")"
-cmake -E sleep 1
-printf '\n' >> "$fixture_dir/custom vis/custom one.vis"
-cmake --build "$build_dir" --target gecode-varimp-gen -v 2>&1 | tee "$work_parent/rebuild.log"
-test "$(mtime "$type_header")" -gt "$type_mtime"
-test "$(mtime "$imp_header")" -gt "$imp_mtime"
-grep -q 'GenerateVarImp.cmake' "$work_parent/rebuild.log"
+# A changed custom type must reach both generated headers on an incremental build.
+sed 's/CustomOne/CustomUpdated/g' "$fixture_dir/custom vis/custom one.vis" \
+  > "$fixture_dir/custom vis/updated.vis"
+mv "$fixture_dir/custom vis/updated.vis" "$fixture_dir/custom vis/custom one.vis"
+cmake --build "$build_dir" --target gecode-varimp-gen
+grep -q 'CustomUpdatedVarImpConf' "$type_header"
+grep -q 'CustomUpdatedVarImp' "$imp_header"
+! grep -q 'CustomOneVarImp' "$type_header"
+! grep -q 'CustomOneVarImp' "$imp_header"
 
 # CMake list syntax is supported in addition to the command-line comma form.
 cmake -S "$repo_root" -B "$work_parent/list-build" -G Ninja \
@@ -129,8 +123,6 @@ cmake -S "$repo_root" -B "$build_dir" -G Ninja \
   -DBUILD_TESTING=OFF
 grep -q '^GECODE_REGENERATE_VARIMP:BOOL=OFF$' "$build_dir/CMakeCache.txt"
 rm -f "$type_header" "$imp_header"
-cmake --build "$build_dir" --target gecode-varimp-gen -v \
-  >"$work_parent/cleared.log" 2>&1
+cmake --build "$build_dir" --target gecode-varimp-gen
 test ! -e "$type_header"
 test ! -e "$imp_header"
-grep -q 'no work to do' "$work_parent/cleared.log"

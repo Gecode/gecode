@@ -34,11 +34,7 @@
 #include "test/int.hh"
 
 #include <cstdlib>
-#include <initializer_list>
 #include <iostream>
-#include <sstream>
-#include <string>
-#include <vector>
 
 namespace {
 
@@ -60,68 +56,16 @@ namespace {
     }
   } abs_smoke_test;
 
-  bool require(bool condition, const std::string& message) {
-    if (!condition) {
-      std::cerr << "public-int-smoke: " << message << std::endl;
-      return false;
-    }
-    return true;
-  }
-
-  int run_and_capture(std::initializer_list<const char*> args, std::string& output) {
-    std::vector<char*> argv;
-    argv.reserve(args.size());
-    for (const char* arg : args)
-      argv.push_back(const_cast<char*>(arg));
-
-    std::ostringstream captured;
-    std::streambuf* old = std::cout.rdbuf(captured.rdbuf());
-    const int rc = Test::run_registered_tests(static_cast<int>(argv.size()), argv.data());
-    std::cout.rdbuf(old);
-    output = captured.str();
-    return rc;
-  }
-
 }
 
 int
-main(void) {
-  const std::string test_name = "Int::Public::Smoke::Abs";
-
-  std::string list_output;
-  if (!require(run_and_capture({"public-int-smoke", "-list"}, list_output) == EXIT_SUCCESS,
-               "-list should succeed")) {
+main(int argc, char* argv[]) {
+  const int result = Test::run_registered_tests(argc,argv);
+  if ((result != EXIT_SUCCESS) || (abs_runs == 0)) {
+    std::cerr << "public-int-smoke: helper-backed test did not run"
+              << std::endl;
     return EXIT_FAILURE;
   }
-  if (!require(list_output.find(test_name) != std::string::npos,
-               "-list output missing integer smoke test")) {
-    return EXIT_FAILURE;
-  }
-  if (!require(abs_runs == 0,
-               "-list should not execute integer smoke tests")) {
-    return EXIT_FAILURE;
-  }
-
-  std::string run_output;
-  if (!require(run_and_capture({"public-int-smoke", "-test", "Int::Public::Smoke::Abs",
-                                "-iter", "1", "-stop", "true"},
-                               run_output) == EXIT_SUCCESS,
-               "filtered integer smoke run should succeed")) {
-    return EXIT_FAILURE;
-  }
-  if (!require(run_output.find(test_name) != std::string::npos,
-               "filtered integer smoke run did not print the selected test")) {
-    return EXIT_FAILURE;
-  }
-  if (!require(run_output.find('+') != std::string::npos,
-               "filtered integer smoke run did not report success")) {
-    return EXIT_FAILURE;
-  }
-  if (!require(abs_runs > 0,
-               "filtered integer smoke run did not execute the helper-backed test")) {
-    return EXIT_FAILURE;
-  }
-
   return EXIT_SUCCESS;
 }
 

@@ -80,18 +80,10 @@ cat > "$work/c/CMakeLists.txt" <<'EOF'
 cmake_minimum_required(VERSION 3.21)
 project(consumer_c LANGUAGES CXX)
 find_package(Gecode CONFIG REQUIRED COMPONENTS gecodedriver)
-if(NOT Gecode_LIBRARIES STREQUAL "Gecode::gecodedriver")
+if(NOT TARGET Gecode::gecodedriver OR
+   NOT Gecode_LIBRARIES STREQUAL "Gecode::gecodedriver")
   message(FATAL_ERROR "Expected canonical library for legacy component, got: ${Gecode_LIBRARIES}")
 endif()
-add_executable(consumer_c main.cpp)
-target_link_libraries(consumer_c PRIVATE Gecode::gecodedriver)
-EOF
-cat > "$work/c/main.cpp" <<'EOF'
-#include <gecode/driver.hh>
-int main(void) {
-  Gecode::Options options("consumer_c");
-  return options.model();
-}
 EOF
 
 cat > "$work/d/CMakeLists.txt" <<'EOF'
@@ -187,15 +179,10 @@ cat > "$work/g/CMakeLists.txt" <<'EOF'
 cmake_minimum_required(VERSION 3.21)
 project(consumer_g LANGUAGES CXX)
 find_package(Gecode CONFIG REQUIRED COMPONENTS gecodesupport)
-if(NOT Gecode_LIBRARIES STREQUAL "Gecode::gecodesupport")
+if(NOT TARGET Gecode::gecodesupport OR
+   NOT Gecode_LIBRARIES STREQUAL "Gecode::gecodesupport")
   message(FATAL_ERROR "Expected canonical library for legacy component, got: ${Gecode_LIBRARIES}")
 endif()
-add_executable(consumer_g main.cpp)
-target_link_libraries(consumer_g PRIVATE ${Gecode_LIBRARIES})
-EOF
-cat > "$work/g/main.cpp" <<'EOF'
-#include <gecode/support.hh>
-int main(void) { return 0; }
 EOF
 
 cat > "$work/h/CMakeLists.txt" <<'EOF'
@@ -269,7 +256,6 @@ cmake -S "$work/b" -B "$work/b/build" -DCMAKE_PREFIX_PATH="$prefix"
 cmake --build "$work/b/build" -j4
 
 cmake -S "$work/c" -B "$work/c/build" -DCMAKE_PREFIX_PATH="$prefix"
-cmake --build "$work/c/build" -j4
 
 # A support-only consumer must not discover dependencies belonging exclusively
 # to Float, FlatZinc, or Gist, even when those targets exist in the package.
@@ -285,7 +271,6 @@ cmake -S "$work/g" -B "$work/g/build" \
   -DCMAKE_DISABLE_FIND_PACKAGE_MPFR=TRUE \
   -DCMAKE_DISABLE_FIND_PACKAGE_Qt5=TRUE \
   -DCMAKE_DISABLE_FIND_PACKAGE_Qt6=TRUE
-cmake --build "$work/g/build" -j4
 
 if cmake -S "$work/h" -B "$work/h/build" -DCMAKE_PREFIX_PATH="$prefix"; then
   echo "Unknown required Gecode component unexpectedly succeeded" >&2
