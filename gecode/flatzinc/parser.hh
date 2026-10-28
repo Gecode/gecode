@@ -186,13 +186,15 @@ namespace Gecode { namespace FlatZinc {
   public:
     ParserState(const std::string& b, std::ostream& err0,
                 Gecode::FlatZinc::FlatZincSpace* fg0)
-    : buf(b.c_str()), pos(0), length(b.size()), fg(fg0),
+    : yyscanner(nullptr), buf(b.c_str()), pos(0), length(b.size()), fg(fg0),
       hadError(false), err(err0) {}
 
     ParserState(char* buf0, int length0, std::ostream& err0,
                 Gecode::FlatZinc::FlatZincSpace* fg0)
-    : buf(buf0), pos(0), length(length0), fg(fg0),
+    : yyscanner(nullptr), buf(buf0), pos(0), length(length0), fg(fg0),
       hadError(false), err(err0) {}
+
+    ~ParserState(void);
 
     void* yyscanner;
     const char* buf;
@@ -262,6 +264,7 @@ namespace Gecode { namespace FlatZinc {
         } else {
           a->a.push_back(_output[i].second);
         }
+        _output[i].second = nullptr;
         a->a.push_back(new AST::String(";\n"));
       }
       return a;

@@ -538,8 +538,28 @@ AST::Node* arrayOutput(AST::Call* ann) {
 
 namespace Gecode { namespace FlatZinc {
 
+  ParserState::~ParserState(void) {
+    if (yyscanner)
+      yylex_destroy(yyscanner);
+    for (auto& var : intvars)
+      delete var.second;
+    for (auto& var : boolvars)
+      delete var.second;
+    for (auto& var : setvars)
+      delete var.second;
+    for (auto& var : floatvars)
+      delete var.second;
+    for (auto* constraint : domainConstraints)
+      delete constraint;
+    for (auto* constraint : constraints)
+      delete constraint;
+    for (auto& output : _output)
+      delete output.second;
+  }
+
   FlatZincSpace* parse(const std::string& filename, Printer& p, std::ostream& err,
                        FlatZincSpace* fzs, Rnd& rnd) {
+    std::unique_ptr<FlatZincSpace> owned;
 #ifdef HAVE_MMAP
     int fd;
     char* data;
@@ -564,7 +584,8 @@ namespace Gecode { namespace FlatZinc {
     std::unique_ptr<char,decltype(unmap)> mapping(data,unmap);
 
     if (fzs == NULL) {
-      fzs = new FlatZincSpace(rnd);
+      owned.reset(new FlatZincSpace(rnd));
+      fzs = owned.get();
     }
     ParserState pp(mapping.get(), sbuf.st_size, err, fzs);
 #else
@@ -577,7 +598,8 @@ namespace Gecode { namespace FlatZinc {
     std::string s = string(istreambuf_iterator<char>(file),
                            istreambuf_iterator<char>());
     if (fzs == NULL) {
-      fzs = new FlatZincSpace(rnd);
+      owned.reset(new FlatZincSpace(rnd));
+      fzs = owned.get();
     }
     ParserState pp(s, err, fzs);
 #endif
@@ -587,18 +609,21 @@ namespace Gecode { namespace FlatZinc {
     yyparse(&pp);
     fillPrinter(pp, p);
 
-    if (pp.yyscanner)
-      yylex_destroy(pp.yyscanner);
-    return pp.hadError ? NULL : pp.fg;
+    if (pp.hadError)
+      return NULL;
+    owned.release();
+    return pp.fg;
   }
 
   FlatZincSpace* parse(std::istream& is, Printer& p, std::ostream& err,
                        FlatZincSpace* fzs, Rnd& rnd) {
     std::string s = string(istreambuf_iterator<char>(is),
                            istreambuf_iterator<char>());
+    std::unique_ptr<FlatZincSpace> owned;
 
     if (fzs == NULL) {
-      fzs = new FlatZincSpace(rnd);
+      owned.reset(new FlatZincSpace(rnd));
+      fzs = owned.get();
     }
     ParserState pp(s, err, fzs);
     yylex_init(&pp.yyscanner);
@@ -607,9 +632,10 @@ namespace Gecode { namespace FlatZinc {
     yyparse(&pp);
     fillPrinter(pp, p);
 
-    if (pp.yyscanner)
-      yylex_destroy(pp.yyscanner);
-    return pp.hadError ? NULL : pp.fg;
+    if (pp.hadError)
+      return NULL;
+    owned.release();
+    return pp.fg;
   }
 
 }}
@@ -1755,34 +1781,34 @@ solve_item :
       FZ_SOLVE annotations FZ_SATISFY
       {
         ParserState *pp = static_cast<ParserState*>(parm);
+        std::unique_ptr<AST::Array> ann($2);
         initfg(pp);
         if (!pp->hadError) {
           try {
-            pp->fg->solve($2);
+            pp->fg->solve(ann.get());
+            ann.release();
           } catch (Gecode::FlatZinc::Error& e) {
             yyerror(pp, e.toString().c_str());
           }
-        } else {
-          delete $2;
         }
       }
     | FZ_SOLVE annotations minmax solve_expr
       {
         ParserState *pp = static_cast<ParserState*>(parm);
+        std::unique_ptr<AST::Array> ann($2);
         initfg(pp);
         if (!pp->hadError) {
           try {
             int v = $4 < 0 ? (-$4-1) : $4;
             bool vi = $4 >= 0;
             if ($3)
-              pp->fg->minimize(v,vi,$2);
+              pp->fg->minimize(v,vi,ann.get());
             else
-              pp->fg->maximize(v,vi,$2);
+              pp->fg->maximize(v,vi,ann.get());
+            ann.release();
           } catch (Gecode::FlatZinc::Error& e) {
             yyerror(pp, e.toString().c_str());
           }
-        } else {
-          delete $2;
         }
       }
 
