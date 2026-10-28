@@ -158,7 +158,7 @@ CMake exposes options aligned with the Autoconf switches:
 | `--enable-framework` | None | Not supported in CMake | No framework-bundle generator path is implemented |
 | `--enable-resource` | None | Not supported in CMake | No autoconf-style resource toggle in CMake |
 | `--enable-peakheap` | None | Not supported in CMake | No CMake option defines the peak-heap tracking macros |
-| `--enable-doc-dot`, `--enable-doc-search`, `--enable-doc-tagfile` | `GECODE_DOC_DOT`, `GECODE_DOC_SEARCH`, `GECODE_DOC_TAGFILE` | Supported by `doc` target | Requires Doxygen 1.17.0 or newer; helper pages require `uv` |
+| `--enable-doc-dot`, `--enable-doc-search`, `--enable-doc-tagfile` | `GECODE_DOC_DOT`, `GECODE_DOC_SEARCH`, `GECODE_DOC_TAGFILE` | Supported by `doc` target | Requires Doxygen 1.18.0 or newer; helper pages require `uv` |
 | None | `GECODE_ENABLE_MIMALLOC` | CMake-only | Default `OFF`; private allocator backend |
 
 Higher-level modules enable the lower-level modules they require. Examples
@@ -191,7 +191,7 @@ feature releases.
   `thread` instrumentation. These modes currently require a compiler that
   accepts GCC/Clang sanitizer flags.
 - `GECODE_DOC_DOT`, `GECODE_DOC_SEARCH`, `GECODE_DOC_TAGFILE`: configure the
-  Doxygen `doc` target. Building docs requires Doxygen 1.17.0 or newer and
+  Doxygen `doc` target. Building docs requires Doxygen 1.18.0 or newer and
   `uv`; Graphviz `dot` is used when available and `GECODE_DOC_DOT=ON`.
 
 A directly set `GECODE_BUILD_SHARED` or `GECODE_BUILD_STATIC` overrides the

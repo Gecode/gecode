@@ -162,8 +162,25 @@
 /**
  * \defgroup TaskTest Testing
  *
- * See Test::Int::Test for writing an integer or Boolean propagator test and
- * Test::run_registered_tests for registration, execution, and failure replay.
+ * Custom propagators can use Gecode's test harness to check propagation,
+ * cloning, pruning, and search against an independent solution predicate.
+ * Test::Int::Test has a complete integer or Boolean test example. Use
+ * Test::Set::SetTest for set constraints and Test::Float::Test for float
+ * constraints.
+ *
+ * A Gecode installation built with CMake and BUILD_TESTING=ON exports the
+ * test component. To build the integer example as custom-propagator-test.cpp:
+ * \code{.cmake}
+ * find_package(Gecode CONFIG REQUIRED COMPONENTS test)
+ * add_executable(custom-propagator-test custom-propagator-test.cpp)
+ * target_link_libraries(custom-propagator-test PRIVATE Gecode::gecodetestint)
+ * \endcode
+ * Use Gecode::gecodetestset or Gecode::gecodetestfloat for the corresponding
+ * variable types, when enabled in the Gecode installation. These targets
+ * supply the harness and its Gecode dependencies.
+ *
+ * Test::run_registered_tests describes registration, test tags, and failure
+ * replay. Run the test executable with -help for the available options.
  * \ingroup Task
  */
 

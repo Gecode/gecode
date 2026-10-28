@@ -1002,6 +1002,10 @@ PREDEFINED             = "GECODE_SET_EXPORT=" \
                          "GECODE_DRIVER_EXPORT=" \
                          "GECODE_GIST_EXPORT=" \
                          "GECODE_SUPPORT_EXPORT=" \
+                         "GECODE_TEST_EXPORT=" \
+                         "GECODE_TESTINT_EXPORT=" \
+                         "GECODE_TESTSET_EXPORT=" \
+                         "GECODE_TESTFLOAT_EXPORT=" \
                          "GECODE_MSC_VIRTUAL=" \
                          "GECODE_HAS_INT_VARS=1" \
                          "GECODE_HAS_SET_VARS=1" \
