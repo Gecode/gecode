@@ -133,6 +133,7 @@ namespace Gecode { namespace Search { namespace Par {
     // Initialize search information
     n_busy = workers();
     has_stopped.store(false, std::memory_order_release);
+    n_runs.store(0ULL, std::memory_order_release);
     // Initialize reset information
     _n_reset_not_ack = workers();
   }
@@ -373,9 +374,21 @@ namespace Gecode { namespace Search { namespace Par {
   }
 
   template<class Tracer>
+  forceinline unsigned long long int
+  Engine<Tracer>::run(void) const {
+    return n_runs.load(std::memory_order_acquire);
+  }
+
+  template<class Tracer>
   forceinline void
-  Engine<Tracer>::stop(void) {
+  Engine<Tracer>::stop(unsigned long long int r) {
     m_search.acquire();
+    // A worker can decide to stop during one call of next() and report it
+    // during a later one, for example after a portfolio cleared its stop.
+    if (r != n_runs.load(std::memory_order_relaxed)) {
+      m_search.release();
+      return;
+    }
     bool bs = signal();
     has_stopped.store(true, std::memory_order_release);
     if (bs)
@@ -523,6 +536,7 @@ namespace Gecode { namespace Search { namespace Par {
       m_search.release();
       return nullptr;
     }
+    n_runs.fetch_add(1ULL, std::memory_order_acq_rel);
     m_search.release();
     // Okay, now search has to continue, make the guys work
     release(C_WORK);

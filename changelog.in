@@ -135,6 +135,15 @@ limit (the width or node limit of CABS) no longer stops the portfolio; it is
 removed and the portfolio reports that it has stopped once all assets are done.
 
 [ENTRY]
+Module: search
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Fix parallel portfolio search occasionally reporting that it has stopped
+although no stop object requested it. A worker could act on the internal stop
+of the previous portfolio run; worker control made this more likely.
+
+[ENTRY]
 Module: int
 What:   new
 Rank:   major

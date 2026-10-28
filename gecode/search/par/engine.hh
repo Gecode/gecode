@@ -242,6 +242,8 @@ namespace Gecode { namespace Search { namespace Par {
     volatile unsigned int n_busy;
     /// Whether a worker had been stopped
     std::atomic<bool> has_stopped;
+    /// Number of calls to next() that have started search
+    std::atomic<unsigned long long int> n_runs;
     /// Whether search state changed such that signal is needed
     bool signal(void) const;
   public:
@@ -249,8 +251,10 @@ namespace Gecode { namespace Search { namespace Par {
     void idle(void);
     /// Report that worker is busy
     void busy(void);
-    /// Report that worker has been stopped
-    void stop(void);
+    /// Return the current call of next()
+    unsigned long long int run(void) const;
+    /// Report that a worker was stopped during call \a r of next()
+    void stop(unsigned long long int r);
     /// Whether logical search work remains
     bool work_remains(void);
     //@}
