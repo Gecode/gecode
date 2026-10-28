@@ -30,68 +30,6 @@ jobs:
       shell: bash
       run: uv run misc/tidy.py --check
 
-  build-autoconf:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        include:
-          - os: macos-15
-            configure_args: ""
-          - os: ubuntu-latest
-            configure_args: --enable-experimental
-
-    steps:
-    - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
-
-    - name: Install uv
-      uses: astral-sh/setup-uv@fac544c07dec837d0ccb6301d7b5580bf5edae39
-      with:
-        enable-cache: false
-
-    - name: Install Ubuntu build deps
-      if: runner.os == 'Linux'
-      shell: bash
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y flex bison libgmp-dev libmpfr-dev
-
-    - name: Install generated-source tools
-      if: runner.os == 'macOS'
-      shell: bash
-      run: |
-        # The freshness helper bootstraps the pinned Autoconf version itself.
-        brew install m4 bison flex
-
-    - name: Check generated source freshness
-      if: runner.os == 'macOS'
-      shell: bash
-      run: bash .github/ci/generated-source-freshness.sh
-
-    - name: Avoid redundant configure regeneration during build
-      shell: bash
-      run: touch configure
-
-    - name: Configure
-      shell: bash
-      run: ./configure ${{ matrix.configure_args }}
-
-    - name: Build
-      shell: bash
-      run: make test -j4
-
-    - name: Check
-      shell: bash
-      run: make check
-
-    - name: Autoconf install smoke
-      shell: bash
-      run: bash .github/ci/autoconf-install-smoke.sh "$RUNNER_TEMP/gecode-autoconf-install"
-
-    - name: Custom VIS dependency smoke
-      if: runner.os == 'Linux'
-      shell: bash
-      run: bash .github/ci/custom-vis-smoke.sh
-
   build-cmake-unix:
     runs-on: ${{ matrix.os }}
     strategy:
@@ -117,6 +55,16 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install -y flex bison libgmp-dev libmpfr-dev
+
+    - name: Install generated-source tools
+      if: runner.os == 'macOS'
+      shell: bash
+      run: brew install bison flex
+
+    - name: Check generated source freshness
+      if: runner.os == 'macOS'
+      shell: bash
+      run: bash .github/ci/generated-source-freshness.sh
 
     - name: Create Build Environment
       run: cmake -E make_directory ${{github.workspace}}/build
@@ -634,69 +582,3 @@ jobs:
       run: |
         workspace=$(cygpath -u "$GITHUB_WORKSPACE")
         bash "$workspace/.github/ci/cmake-consumer-smoke-msys2.sh" "$workspace/install-msys2"
-
-  build-autoconf-windows:
-    runs-on: windows-2022
-
-    steps:
-    - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
-
-    - name: Install uv
-      uses: astral-sh/setup-uv@fac544c07dec837d0ccb6301d7b5580bf5edae39
-      with:
-        enable-cache: false
-
-    - name: Resolve uv path on Windows host
-      shell: pwsh
-      run: |
-        $uvExe = (Get-Command uv -ErrorAction Stop).Source
-        $uvDir = Split-Path -Parent $uvExe
-        "UV_WIN_DIR=$uvDir" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
-
-    - name: Setup MSYS2
-      uses: msys2/setup-msys2@e9898307ac31d1a803454791be09ab9973336e1c
-      with:
-        msystem: UCRT64
-        update: true
-        install: >-
-          autoconf
-          automake
-          bison
-          flex
-          gcc
-          make
-          m4
-          libtool
-          mingw-w64-ucrt-x86_64-gcc
-          mingw-w64-ucrt-x86_64-gmp
-          mingw-w64-ucrt-x86_64-mpfr
-
-    - name: Verify uv in MSYS2 shell
-      shell: msys2 {0}
-      run: |
-        UV_DIR="$(cygpath "$UV_WIN_DIR")"
-        echo "UV_DIR=$UV_DIR" >> "$GITHUB_ENV"
-        export PATH="$UV_DIR:$PATH"
-        uv --version
-
-    - name: Avoid redundant configure regeneration during build
-      shell: msys2 {0}
-      run: touch configure
-
-    - name: Configure
-      shell: msys2 {0}
-      run: |
-        export PATH="$UV_DIR:$PATH"
-        CC=gcc CXX=g++ ./configure --with-host-os=Windows --disable-qt --disable-gist --disable-mpfr
-
-    - name: Build
-      shell: msys2 {0}
-      run: |
-        export PATH="$UV_DIR:$PATH"
-        make test -j4
-
-    - name: Check
-      shell: msys2 {0}
-      run: |
-        export PATH="$UV_DIR:$PATH"
-        make check
