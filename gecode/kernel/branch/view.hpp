@@ -224,6 +224,7 @@ namespace Gecode {
       }
     for (int i=0; i<n; i++)
       vs[i]->dispose(home);
+    f.dispose(home);
     (void) Brancher::dispose(home);
     return sizeof(ViewBrancher<View,Filter,n>);
   }

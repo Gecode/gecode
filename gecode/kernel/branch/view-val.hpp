@@ -331,6 +331,7 @@ namespace Gecode {
   ViewValBrancher<View,n,Val,a,Filter,Print>::dispose(Space& home) {
     if (vsc->notice() || f.notice() || p.notice())
       home.ignore(*this,AP_DISPOSE,true);
+    p.dispose(home);
     vsc->dispose(home);
     (void) ViewBrancher<View,Filter,n>::dispose(home);
     return sizeof(ViewValBrancher<View,n,Val,a,Filter,Print>);
