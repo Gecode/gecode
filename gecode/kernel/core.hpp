@@ -1819,7 +1819,7 @@ namespace Gecode {
      *
      * If equal to &bl, no brancher does exist.
      */
-    Brancher* b_status;
+    ActorLink* b_status;
     /**
      * \brief Points to the first brancher to be used for commit
      *
@@ -1831,7 +1831,7 @@ namespace Gecode {
      *
      * If equal to &bl, no brancher does exist.
      */
-    Brancher* b_commit;
+    ActorLink* b_commit;
     /// Find brancher with identity \a id
     Brancher* brancher(unsigned int id);
 
@@ -3853,9 +3853,9 @@ namespace Gecode {
     assert(!failed());
     // Make sure that neither b_status nor b_commit does not point to b!
     if (b_commit == &b)
-      b_commit = Brancher::cast(b.next());
+      b_commit = b.next();
     if (b_status == &b)
-      b_status = Brancher::cast(b.next());
+      b_status = b.next();
     b.unlink();
     rfree(&b,b.dispose(*this));
   }
@@ -3895,21 +3895,21 @@ namespace Gecode {
      * recomputation does not generate new choices during recomputation
      * and hence b_commit is moved from newer to older branchers.
      */
-    Brancher* b_old = b_commit;
+    ActorLink* b_old = b_commit;
     // Try whether we are lucky
-    while (b_commit != Brancher::cast(&bl))
-      if (id != b_commit->id())
-        b_commit = Brancher::cast(b_commit->next());
+    while (b_commit != &bl)
+      if (id != Brancher::cast(b_commit)->id())
+        b_commit = b_commit->next();
       else
-        return b_commit;
-    if (b_commit == Brancher::cast(&bl)) {
+        return Brancher::cast(b_commit);
+    if (b_commit == &bl) {
       // We did not find the brancher, start at the beginning
-      b_commit = Brancher::cast(bl.next());
+      b_commit = bl.next();
       while (b_commit != b_old)
-        if (id != b_commit->id())
-          b_commit = Brancher::cast(b_commit->next());
+        if (id != Brancher::cast(b_commit)->id())
+          b_commit = b_commit->next();
         else
-          return b_commit;
+          return Brancher::cast(b_commit);
     }
     return nullptr;
   }
@@ -5104,8 +5104,8 @@ namespace Gecode {
     }
     q = nullptr;
     if (!home.pl.empty()) {
-      c = Propagator::cast(home.pl.next());
-      e = Propagator::cast(&home.pl);
+      c = home.pl.next();
+      e = &home.pl;
     } else {
       c = e = nullptr;
     }
@@ -5130,8 +5130,8 @@ namespace Gecode {
         }
         q = nullptr;
         if (!home.pl.empty()) {
-          c = Propagator::cast(home.pl.next());
-          e = Propagator::cast(&home.pl);
+          c = home.pl.next();
+          e = &home.pl;
         } else {
           c = nullptr;
         }
@@ -5186,8 +5186,8 @@ namespace Gecode {
 
   forceinline
   Space::IdlePropagators::IdlePropagators(Space& home) {
-    c = Propagator::cast(home.pl.next());
-    e = Propagator::cast(&home.pl);
+    c = home.pl.next();
+    e = &home.pl;
   }
   forceinline bool
   Space::IdlePropagators::operator ()(void) const {
@@ -5205,7 +5205,7 @@ namespace Gecode {
 
   forceinline
   Space::Branchers::Branchers(Space& home)
-    : c(Brancher::cast(home.bl.next())), e(&home.bl) {}
+    : c(home.bl.next()), e(&home.bl) {}
   forceinline bool
   Space::Branchers::operator ()(void) const {
     return c != e;
