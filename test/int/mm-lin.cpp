@@ -268,7 +268,7 @@ namespace Test { namespace Int {
                 case IRT_LQ:
                     Gecode::rel(home, !(eval(l_lis, l_reg) > eval(r_lis, r_reg)));
                     break;
-                case IRT_LE:
+                case IRT_LT:
                     Gecode::rel(home, eval(l_lis, l_reg) < eval(r_lis, r_reg));
                     break;
                 case IRT_GQ:
@@ -298,7 +298,7 @@ namespace Test { namespace Int {
                 case IRT_LQ:
                     Gecode::rel(home, !((eval(l_lis, l_reg) <= eval(r_lis, r_reg)) ^ r.var()));
                     break;
-                case IRT_LE:
+                case IRT_LT:
                     rel(home, Gecode::expr(home, (eval(l_lis, l_reg) < eval(r_lis, r_reg))), IRT_EQ, r.var());
                     break;
                 case IRT_GQ:
@@ -364,7 +364,7 @@ namespace Test { namespace Int {
                 case IRT_LQ:
                     Gecode::rel(home, !(eval(l_lis, l_reg) > eval(r_lis, r_reg)));
                     break;
-                case IRT_LE:
+                case IRT_LT:
                     Gecode::rel(home, eval(l_lis, l_reg) < eval(r_lis, r_reg));
                     break;
                 case IRT_GQ:
@@ -398,7 +398,7 @@ namespace Test { namespace Int {
                 case IRT_LQ:
                     Gecode::rel(home, !((eval(l_lis, l_reg) <= eval(r_lis, r_reg)) ^ r.var()));
                     break;
-                case IRT_LE:
+                case IRT_LT:
                     rel(home, Gecode::expr(home, (eval(l_lis, l_reg) < eval(r_lis, r_reg))), IRT_EQ, r.var());
                     break;
                 case IRT_GQ:
@@ -454,7 +454,7 @@ namespace Test { namespace Int {
                 case IRT_LQ:
                     Gecode::rel(home, !(eval(l_lis, l_reg) > eval(r_lis, r_reg)));
                     break;
-                case IRT_LE:
+                case IRT_LT:
                     Gecode::rel(home, eval(l_lis, l_reg) < eval(r_lis, r_reg));
                     break;
                 case IRT_GQ:
@@ -484,7 +484,7 @@ namespace Test { namespace Int {
                 case IRT_LQ:
                     rel(home, Gecode::expr(home, (eval(l_lis, l_reg) <= eval(r_lis, r_reg))), IRT_EQ, r.var());
                     break;
-                case IRT_LE:
+                case IRT_LT:
                     rel(home, Gecode::expr(home, (eval(l_lis, l_reg) < eval(r_lis, r_reg))), IRT_EQ, r.var());
                     break;
                 case IRT_GQ:

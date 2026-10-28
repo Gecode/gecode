@@ -138,7 +138,7 @@ namespace Gecode {
 
     BoolExpr
     operator<(const SetExpr& x, const LinIntExpr& y) {
-        return BoolExpr(new SetIRTRel(x, IRT_LE, y));
+        return BoolExpr(new SetIRTRel(x, IRT_LT, y));
     }
 
     BoolExpr

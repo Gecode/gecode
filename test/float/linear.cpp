@@ -74,7 +74,7 @@ namespace Test { namespace Float {
                   a(a0), frt(frt0), c(c0) {
                 using namespace Gecode;
                 test_fixpoint = false;
-                if ((frt == FRT_NQ) || (frt == FRT_LE) || (frt == FRT_GR) || reified)
+                if ((frt == FRT_NQ) || (frt == FRT_LT) || (frt == FRT_GR) || reified)
                     test_subsumption = false;
             }
             /// %Test whether \a x is solution
@@ -136,7 +136,7 @@ namespace Test { namespace Float {
                   a(a0), frt(frt0) {
                 using namespace Gecode;
                 test_fixpoint = false;
-                if ((frt == FRT_NQ) || (frt == FRT_LE) || (frt == FRT_GR) || reified)
+                if ((frt == FRT_NQ) || (frt == FRT_LT) || (frt == FRT_GR) || reified)
                     test_subsumption = false;
             }
             /// %Test whether \a x is solution

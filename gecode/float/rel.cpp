@@ -54,7 +54,7 @@ namespace Gecode {
         case FRT_LQ:
             GECODE_ME_FAIL(x.lq(home, n));
             break;
-        case FRT_LE:
+        case FRT_LT:
             GECODE_ME_FAIL(x.lq(home, n));
             GECODE_ES_FAIL((Rel::NqFloat<FloatView>::post(home, x, n)));
             break;
@@ -88,7 +88,7 @@ namespace Gecode {
             break;
         case FRT_GR:
             std::swap(x0, x1); // Fall through
-        case FRT_LE:
+        case FRT_LT:
             GECODE_ES_FAIL((Rel::Le<FloatView>::post(home, x0, x1)));
             break;
         default:
@@ -150,7 +150,7 @@ namespace Gecode {
                 throw Int::UnknownReifyMode("Float::rel");
             }
             break;
-        case FRT_LE:
+        case FRT_LT:
             std::swap(x0, x1); // Fall through
         case FRT_GR: {
             Int::NegBoolView n(r.var());
@@ -227,7 +227,7 @@ namespace Gecode {
                 throw Int::UnknownReifyMode("Float::rel");
             }
             break;
-        case FRT_LE:
+        case FRT_LT:
             switch (r.mode()) {
             case RM_EQV:
                 GECODE_ES_FAIL((Rel::ReLeFloat<FloatView, Int::BoolView, RM_EQV>::post(home, x, n, r.var())));
@@ -305,7 +305,7 @@ namespace Gecode {
                 GECODE_ME_FAIL(xi.lq(home, c));
             }
             break;
-        case FRT_LE:
+        case FRT_LT:
             for (int i = x.size(); i--;) {
                 FloatView xi(x[i]);
                 GECODE_ME_FAIL(xi.lq(home, c));
@@ -360,7 +360,7 @@ namespace Gecode {
                 GECODE_ES_FAIL((Rel::Lq<FloatView>::post(home, x[i], y)));
             }
             break;
-        case FRT_LE:
+        case FRT_LT:
             for (int i = x.size(); i--;) {
                 GECODE_ES_FAIL((Rel::Le<FloatView>::post(home, x[i], y)));
             }

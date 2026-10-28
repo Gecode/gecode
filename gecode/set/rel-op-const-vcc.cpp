@@ -59,7 +59,7 @@ namespace Gecode {
                 GECODE_ES_FAIL((Intersection<ConstSetView, SetView, ConstSetView>::post(home, cy, x, zv)));
             } break;
             case SRT_LQ:
-            case SRT_LE:
+            case SRT_LT:
             case SRT_GQ:
             case SRT_GR: {
                 GlbRanges<ConstSetView> yr(yv);

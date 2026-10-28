@@ -96,7 +96,7 @@ namespace Test { namespace Set {
 
                 case SRT_LQ:
                     return (!xr0()) || in(min_sym_diff(x), xr1, true);
-                case SRT_LE:
+                case SRT_LT:
                     return xr0() ? in(min_sym_diff(x), xr1) : xr1();
                 case SRT_GQ:
                     return (!xr1()) || in(min_sym_diff(x), xr0, true);
@@ -168,7 +168,7 @@ namespace Test { namespace Set {
 
         RelBin _relbin_eq(Gecode::SRT_EQ, false);
         RelBin _relbin_lq(Gecode::SRT_LQ, false);
-        RelBin _relbin_le(Gecode::SRT_LE, false);
+        RelBin _relbin_lt(Gecode::SRT_LT, false);
         RelBin _relbin_gq(Gecode::SRT_GQ, false);
         RelBin _relbin_gr(Gecode::SRT_GR, false);
         RelBin _relbin_nq(Gecode::SRT_NQ, false);
@@ -178,7 +178,7 @@ namespace Test { namespace Set {
         RelBin _relbin_cmpl(Gecode::SRT_CMPL, false);
         RelBin _relbin_shared_eq(Gecode::SRT_EQ, true);
         RelBin _relbin_shared_lq(Gecode::SRT_LQ, true);
-        RelBin _relbin_shared_le(Gecode::SRT_LE, true);
+        RelBin _relbin_shared_lt(Gecode::SRT_LT, true);
         RelBin _relbin_shared_gq(Gecode::SRT_GQ, true);
         RelBin _relbin_shared_gr(Gecode::SRT_GR, true);
         RelBin _relbin_shared_nq(Gecode::SRT_NQ, true);

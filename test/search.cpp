@@ -481,9 +481,9 @@ namespace Test {
         /// Values for selecting how to constrain
         enum HowToConstrain {
             HTC_NONE,   ///< Do not constrain
-            HTC_LEX_LE, ///< Constrain for lexically smallest
+            HTC_LEX_LT, ///< Constrain for lexically smallest
             HTC_LEX_GR, ///< Constrain for lexically biggest
-            HTC_BAL_LE, ///< Constrain for smallest balance
+            HTC_BAL_LT, ///< Constrain for smallest balance
             HTC_BAL_GR  ///< Constrain for largest balance
         };
 
@@ -661,15 +661,15 @@ namespace Test {
                 switch (htc) {
                 case HTC_NONE:
                     break;
-                case HTC_LEX_LE:
+                case HTC_LEX_LT:
                 case HTC_LEX_GR: {
                     IntVarArgs y(6);
                     for (int i = 0; i < 6; i++)
                         y[i] = IntVar(*this, s.x[i].val(), s.x[i].val());
-                    lex(*this, x, (htc == HTC_LEX_LE) ? IRT_LE : IRT_GR, y);
+                    lex(*this, x, (htc == HTC_LEX_LT) ? IRT_LT : IRT_GR, y);
                     break;
                 }
-                case HTC_BAL_LE:
+                case HTC_BAL_LT:
                 case HTC_BAL_GR: {
                     IntVarArgs y(6);
                     for (int i = 0; i < 6; i++)
@@ -678,7 +678,7 @@ namespace Test {
                     IntVar ys(*this, -18, 18);
                     rel(*this, x[0] + x[1] + x[2] - x[3] - x[4] - x[5] == xs);
                     rel(*this, y[0] + y[1] + y[2] - y[3] - y[4] - y[5] == ys);
-                    rel(*this, expr(*this, abs(xs)), (htc == HTC_BAL_LE) ? IRT_LE : IRT_GR, expr(*this, abs(ys)));
+                    rel(*this, expr(*this, abs(xs)), (htc == HTC_BAL_LT) ? IRT_LT : IRT_GR, expr(*this, abs(ys)));
                     break;
                 }
                 }
@@ -692,23 +692,23 @@ namespace Test {
                 int c = 0;
                 int sc = 0;
                 switch (htc) {
-                case HTC_LEX_LE:
+                case HTC_LEX_LT:
                 case HTC_LEX_GR:
                     for (int i = 0; i < x.size(); i++) {
                         if (x[i].val() == s.x[i].val())
                             continue;
-                        bool better = (htc == HTC_LEX_LE) ? (x[i].val() < s.x[i].val()) : (x[i].val() > s.x[i].val());
+                        bool better = (htc == HTC_LEX_LT) ? (x[i].val() < s.x[i].val()) : (x[i].val() > s.x[i].val());
                         return better ? SpaceComparison::Better : SpaceComparison::Worse;
                     }
                     return SpaceComparison::Equivalent;
-                case HTC_BAL_LE:
+                case HTC_BAL_LT:
                 case HTC_BAL_GR:
                     c = std::abs(x[0].val() + x[1].val() + x[2].val() - x[3].val() - x[4].val() - x[5].val());
                     sc = std::abs(s.x[0].val() + s.x[1].val() + s.x[2].val() - s.x[3].val() - s.x[4].val() -
                                   s.x[5].val());
                     if (c == sc)
                         return SpaceComparison::Equivalent;
-                    return ((htc == HTC_BAL_LE) ? (c < sc) : (c > sc)) ? SpaceComparison::Better
+                    return ((htc == HTC_BAL_LT) ? (c < sc) : (c > sc)) ? SpaceComparison::Better
                                                                        : SpaceComparison::Worse;
                 case HTC_NONE:
                     return SpaceComparison::Equivalent;
@@ -739,13 +739,13 @@ namespace Test {
                 switch (htc) {
                 case HTC_NONE:
                     return true;
-                case HTC_LEX_LE:
+                case HTC_LEX_LT:
                     return ((x[0].val() == 4) && (x[1].val() == 5) && (x[2].val() == 2) && (x[3].val() == 3) &&
                             (x[4].val() == 0) && (x[5].val() == 1));
                 case HTC_LEX_GR:
                     return ((x[0].val() == 5) && (x[1].val() == 4) && (x[2].val() == 3) && (x[3].val() == 2) &&
                             (x[4].val() == 1) && (x[5].val() == 0));
-                case HTC_BAL_LE:
+                case HTC_BAL_LT:
                     return ((x[0].val() == 4) && (x[1].val() == 5) && (x[2].val() == 2) && (x[3].val() == 3) &&
                             (x[4].val() == 0) && (x[5].val() == 1));
                 case HTC_BAL_GR:
@@ -1445,12 +1445,12 @@ namespace Test {
                 switch (htc) {
                 case HTC_NONE:
                     return "None";
-                case HTC_LEX_LE:
-                    return "LexLe";
+                case HTC_LEX_LT:
+                    return "LexLt";
                 case HTC_LEX_GR:
                     return "LexGr";
-                case HTC_BAL_LE:
-                    return "BalLe";
+                case HTC_BAL_LT:
+                    return "BalLt";
                 case HTC_BAL_GR:
                     return "BalGr";
                 default:
@@ -1753,7 +1753,7 @@ namespace Test {
                         return false;
                 }
                 {
-                    HasSolutions root(HTB_BINARY, HTB_BINARY, HTB_BINARY, HTC_LEX_LE);
+                    HasSolutions root(HTB_BINARY, HTB_BINARY, HTB_BINARY, HTC_LEX_LT);
                     WorkerControl control(threads);
                     Gecode::Search::Options o;
                     o.threads = threads;
@@ -1764,7 +1764,7 @@ namespace Test {
                 }
                 {
                     // Restarts rebuild the leaf engine under the same control.
-                    HasSolutions root(HTB_BINARY, HTB_BINARY, HTB_BINARY, HTC_LEX_LE);
+                    HasSolutions root(HTB_BINARY, HTB_BINARY, HTB_BINARY, HTC_LEX_LT);
                     WorkerControl control(threads);
                     Gecode::Search::Options o;
                     o.threads = threads;
@@ -1775,7 +1775,7 @@ namespace Test {
                         return false;
                 }
                 {
-                    HasSolutions root(HTB_BINARY, HTB_BINARY, HTB_BINARY, HTC_LEX_LE);
+                    HasSolutions root(HTB_BINARY, HTB_BINARY, HTB_BINARY, HTC_LEX_LT);
                     WorkerControl controls[2] = {WorkerControl(threads), WorkerControl(threads)};
                     Gecode::SEBs sebs(2);
                     for (int i = 0; i < 2; i++) {
@@ -5051,7 +5051,7 @@ namespace Test {
             run(void) override {
                 // A failed root, also for a portfolio of portfolios
                 NoSolution failed;
-                Gecode::rel(failed, failed.x[0], Gecode::IRT_LE, 0);
+                Gecode::rel(failed, failed.x[0], Gecode::IRT_LT, 0);
                 // An asset of a portfolio of portfolios fails at its root
                 FailingAsset failing;
                 for (unsigned int t : {1U, 2U, 4U})
@@ -5123,7 +5123,7 @@ namespace Test {
             }
         };
 
-        const HowToConstrain ConstrainTypes::htcs[4] = {HTC_LEX_LE, HTC_LEX_GR, HTC_BAL_LE, HTC_BAL_GR};
+        const HowToConstrain ConstrainTypes::htcs[4] = {HTC_LEX_LT, HTC_LEX_GR, HTC_BAL_LT, HTC_BAL_GR};
 
         /// Help class to create and register tests
         class Create {
@@ -5197,7 +5197,7 @@ namespace Test {
                 for (unsigned int t = 1; t <= 4; t++) {
                     (void)new RBS<HasSolutions, Gecode::DFS>("DFS", t);
                     (void)new RBS<HasSolutions, Gecode::LDS>("LDS", t);
-                    (void)new RBS<HasSolutions, Gecode::BAB>("BAB", t, HTC_LEX_LE);
+                    (void)new RBS<HasSolutions, Gecode::BAB>("BAB", t, HTC_LEX_LT);
                     (void)new RBS<FailImmediate, Gecode::DFS>("DFS", t);
                     (void)new RBS<FailImmediate, Gecode::LDS>("LDS", t);
                     (void)new RBS<FailImmediate, Gecode::BAB>("BAB", t);

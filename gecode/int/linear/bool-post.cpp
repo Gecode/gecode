@@ -59,7 +59,7 @@ namespace Gecode { namespace Int { namespace Linear {
         case IRT_LQ:
         case IRT_GQ:
             break;
-        case IRT_LE:
+        case IRT_LT:
             d--;
             r = IRT_LQ;
             break;

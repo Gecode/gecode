@@ -703,7 +703,7 @@ namespace Test { namespace Int { namespace OpenList {
         Constraint(const std::string& name, Kind k, int size, int width0 = 2,
                    Gecode::IntPropLevel level = Gecode::IPL_DEF)
             : OpenTest("OpenList::" + name, size, 0, Gecode::IntSet(0, 2), level), kind(k), width(width0),
-              relation(Gecode::IRT_LE) {}
+              relation(Gecode::IRT_LT) {}
 
         Constraint(Gecode::IntRelType relation0, Gecode::IntPropLevel level)
             : OpenTest("OpenList::Rel::" + str(relation0) + "::" + str(level), 3, 0, Gecode::IntSet({0, 2, 5}), level),
@@ -934,7 +934,7 @@ namespace Test { namespace Int { namespace OpenList {
                         distinct(*this, list);
                         break;
                     case Constraint::Kind::REL:
-                        rel(*this, list, IRT_LE);
+                        rel(*this, list, IRT_LT);
                         break;
                     case Constraint::Kind::SLIDING:
                         Gecode::sequence(*this, list, IntSet(1, 1), 2, 1, 1);
@@ -1295,7 +1295,7 @@ namespace Test { namespace Int { namespace OpenList {
         post(Gecode::Space& home, Gecode::PropagatorGroup group) {
             Gecode::IntVar x(home, 0, 10);
             Gecode::IntVar y(home, 0, 10);
-            Gecode::rel(home(group), x, Gecode::IRT_LE, y);
+            Gecode::rel(home(group), x, Gecode::IRT_LT, y);
         }
 
         static int
@@ -1697,7 +1697,7 @@ namespace Test { namespace Int { namespace OpenList {
     Constraint rel_eq_dom(Gecode::IRT_EQ, Gecode::IPL_DOM);
     Constraint rel_nq(Gecode::IRT_NQ, Gecode::IPL_DEF);
     Constraint rel_lq(Gecode::IRT_LQ, Gecode::IPL_DEF);
-    Constraint rel_le(Gecode::IRT_LE, Gecode::IPL_DEF);
+    Constraint rel_lt(Gecode::IRT_LT, Gecode::IPL_DEF);
     Constraint rel_gq(Gecode::IRT_GQ, Gecode::IPL_DEF);
     Constraint rel_gr(Gecode::IRT_GR, Gecode::IPL_DEF);
     Constraint sliding("Sliding", Constraint::Kind::SLIDING, 4);

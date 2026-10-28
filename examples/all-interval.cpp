@@ -79,7 +79,7 @@ public:
         distinct(*this, d, opt.ipl());
 
         // Break mirror symmetry
-        rel(*this, x[0], IRT_LE, x[1]);
+        rel(*this, x[0], IRT_LT, x[1]);
         // Break symmetry of dual solution
         rel(*this, d[0], IRT_GR, d[n - 2]);
 
