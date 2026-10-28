@@ -47,15 +47,15 @@ namespace Test { namespace Float {
             /// Construct and register test
             Int(Gecode::FloatNum st) : Test("Channel::Int", 2, -1, 2, st, CPLT_ASSIGNMENT, false) {}
             /// Check whether \a x is solution
-            virtual MaybeType
-            solution(const Assignment& x) const {
+            MaybeType
+            solution(const Assignment& x) const override {
                 Gecode::FloatNum tmp;
                 return (((modf(x[0].min(), &tmp) == 0) || (modf(x[0].max(), &tmp) == 0)) && (x[0] == x[1])) ? MT_TRUE
                                                                                                             : MT_FALSE;
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::FloatVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::FloatVarArray& x) override {
                 using namespace Gecode;
                 IntVar iv(home, -1000, 1000);
                 channel(home, x[0], iv);
@@ -69,15 +69,15 @@ namespace Test { namespace Float {
             /// Construct and register test
             Bool(Gecode::FloatNum st) : Test("Channel::Bool", 2, 0, 1, st, CPLT_ASSIGNMENT, false) {}
             /// Check whether \a x is solution
-            virtual MaybeType
-            solution(const Assignment& x) const {
+            MaybeType
+            solution(const Assignment& x) const override {
                 Gecode::FloatNum tmp;
                 return (((modf(x[0].min(), &tmp) == 0) || (modf(x[0].max(), &tmp) == 0)) && (x[0] == x[1])) ? MT_TRUE
                                                                                                             : MT_FALSE;
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::FloatVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::FloatVarArray& x) override {
                 using namespace Gecode;
                 BoolVar bv(home, 0, 1);
                 channel(home, x[0], bv);

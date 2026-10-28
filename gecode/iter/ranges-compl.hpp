@@ -84,7 +84,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
     class ComplVal : public MinMax {
     protected:
         /// Values describing the universe set
-        int UMIN, UMAX;
+        int universe_min, universe_max;
         /// Iterator to compute complement for
         I i;
         /// Initialize
@@ -164,20 +164,20 @@ namespace Gecode { namespace Iter { namespace Ranges {
     forceinline void
     ComplVal<I>::start(void) {
         if (i()) {
-            assert((i.min() >= UMIN) && (i.max() <= UMAX));
-            if (i.min() > UMIN) {
-                mi = UMIN;
+            assert((i.min() >= universe_min) && (i.max() <= universe_max));
+            if (i.min() > universe_min) {
+                mi = universe_min;
                 ma = i.min() - 1;
-            } else if (i.max() < UMAX) {
+            } else if (i.max() < universe_max) {
                 mi = i.max() + 1;
                 ++i;
-                ma = i() ? (i.min() - 1) : UMAX;
+                ma = i() ? (i.min() - 1) : universe_max;
             } else {
                 finish();
             }
         } else {
-            mi = UMIN;
-            ma = UMAX;
+            mi = universe_min;
+            ma = universe_max;
         }
     }
 
@@ -188,15 +188,15 @@ namespace Gecode { namespace Iter { namespace Ranges {
     template <class I>
     forceinline
     ComplVal<I>::ComplVal(int umin, int umax, I& i0)
-        : UMIN(umin), UMAX(umax), i(i0) {
+        : universe_min(umin), universe_max(umax), i(i0) {
         start();
     }
 
     template <class I>
     forceinline void
     ComplVal<I>::init(int umin, int umax, I& i0) {
-        UMIN = umin;
-        UMAX = umax;
+        universe_min = umin;
+        universe_max = umax;
         i = i0;
         start();
     }
@@ -204,11 +204,11 @@ namespace Gecode { namespace Iter { namespace Ranges {
     template <class I>
     forceinline void
     ComplVal<I>::operator++(void) {
-        assert(!i() || (i.max() <= UMAX));
-        if (i() && (i.max() < UMAX)) {
+        assert(!i() || (i.max() <= universe_max));
+        if (i() && (i.max() < universe_max)) {
             mi = i.max() + 1;
             ++i;
-            ma = i() ? (i.min() - 1) : UMAX;
+            ma = i() ? (i.min() - 1) : universe_max;
         } else {
             finish();
         }

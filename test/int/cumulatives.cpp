@@ -80,8 +80,8 @@ namespace Test { namespace Int {
                 x.update(*this, s.x);
             }
             /// Create copy during cloning
-            virtual Gecode::Space*
-            copy(void) {
+            Gecode::Space*
+            copy(void) override {
                 return new Ass(*this);
             }
         };
@@ -106,26 +106,26 @@ namespace Test { namespace Int {
                     nxt = e->next();
             }
             /// %Test whether all assignments have been iterated
-            virtual bool
-            has_more(void) const {
+            bool
+            has_more(void) const override {
                 return nxt != nullptr;
             }
             /// Move to next assignment
-            virtual void
-            next(Gecode::Support::RandomGenerator&) {
+            void
+            next(Gecode::Support::RandomGenerator&) override {
                 delete cur;
                 cur = nxt;
                 if (cur != nullptr)
                     nxt = e->next();
             }
             /// Return value for variable \a i
-            virtual int
-            operator[](int i) const {
+            int
+            operator[](int i) const override {
                 assert((i >= 0) && (i < n) && (cur != nullptr));
                 return cur->x[i].val();
             }
             /// Destructor
-            virtual ~CumulativeAssignment(void) {
+            ~CumulativeAssignment(void) override {
                 delete cur;
                 delete nxt;
                 delete e;
@@ -197,23 +197,23 @@ namespace Test { namespace Int {
         class Cumulatives : public Test {
         protected:
             int ntasks;   ///< Number of tasks
-            bool at_most; ///< Whether to use atmost reasoning
+            bool at_most; ///< Whether to use at_most reasoning
             int limit;    ///< Limit
         public:
             /// Create and register test
             Cumulatives(const std::string& s, int nt, bool am, int l)
                 : Test("Cumulatives::" + s, nt * 4, -1, 2), ntasks(nt), at_most(am), limit(l) {
-                testsearch = false;
+                test_search = false;
             }
             /// Create first assignment
-            virtual Assignment*
-            assignment(void) const {
+            Assignment*
+            assignment(void) const override {
                 assert(arity == 4 * ntasks);
                 return new CumulativeAssignment(arity, dom);
             }
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 std::vector<Event> e;
                 for (int i = 0; i < ntasks; ++i) {
                     int p = i * 4;
@@ -238,8 +238,8 @@ namespace Test { namespace Int {
                 }
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 using namespace Gecode;
                 IntArgs m(ntasks), l({limit});
                 IntVarArgs s(ntasks), d(ntasks), e(ntasks), h(ntasks);
@@ -274,16 +274,16 @@ namespace Test { namespace Int {
                 Fixture(Fixture& fixture) : Gecode::Space(fixture) {
                     producer.update(*this, fixture.producer);
                 }
-                virtual Gecode::Space*
-                copy(void) {
+                Gecode::Space*
+                copy(void) override {
                     return new Fixture(*this);
                 }
             };
 
         public:
             ProfileContribution(void) : Test::Base("Cumulatives::ProfileContribution", TestTags::check()) {}
-            virtual bool
-            run(void) {
+            bool
+            run(void) override {
                 Fixture upper(true), lower(false);
                 return (upper.status() != Gecode::SS_FAILED) && (lower.status() != Gecode::SS_FAILED) &&
                        (upper.producer.min() == -10) && (upper.producer.max() == -8) && (lower.producer.min() == 8) &&
@@ -295,12 +295,12 @@ namespace Test { namespace Int {
         class EmptyProfile : public Test {
         public:
             EmptyProfile(void) : Test(TestTags::check(), "Cumulatives::EmptyProfile", 1, -2, -1) {}
-            virtual bool
-            solution(const Assignment&) const {
+            bool
+            solution(const Assignment&) const override {
                 return true;
             }
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 using namespace Gecode;
                 cumulatives(home, IntArgs({0, 0}), IntVarArgs(home, 2, 0, 0),
                             IntVarArgs({IntVar(home, 1, 1), IntVar(home, 0, 0)}),

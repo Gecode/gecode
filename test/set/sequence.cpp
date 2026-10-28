@@ -53,24 +53,24 @@ namespace Test { namespace Set {
             /// Create and register test
             Sequence(const char* t) : SetTest(t, 4, ds_33, false) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const SetAssignment& x) const {
+            bool
+            solution(const SetAssignment& x) const override {
                 int max = Gecode::Set::Limits::min - 1;
                 for (int i = 0; i < 4; i++) {
                     CountableSetRanges xir(x.lub, x[i]);
                     IntSet xi(xir);
                     if (xi.ranges() > 0) {
-                        int oldMax = max;
+                        int old_max = max;
                         max = xi.max();
-                        if (xi.min() <= oldMax)
+                        if (xi.min() <= old_max)
                             return false;
                     }
                 }
                 return true;
             }
             /// Post constraint on \a x
-            virtual void
-            post(Space& home, SetVarArray& x, IntVarArray&) {
+            void
+            post(Space& home, SetVarArray& x, IntVarArray&) override {
                 Gecode::sequence(home, x);
             }
         };
@@ -88,16 +88,16 @@ namespace Test { namespace Set {
                           n0 + 1, ds_33, false),
                   n(n0) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const SetAssignment& x) const {
+            bool
+            solution(const SetAssignment& x) const override {
                 int max = Gecode::Set::Limits::min - 1;
                 for (int i = 0; i < n; i++) {
                     CountableSetRanges xir(x.lub, x[i]);
                     IntSet xi(xir);
                     if (xi.ranges() > 0) {
-                        int oldMax = max;
+                        int old_max = max;
                         max = xi.max();
-                        if (xi.min() <= oldMax)
+                        if (xi.min() <= old_max)
                             return false;
                     }
                 }
@@ -115,8 +115,8 @@ namespace Test { namespace Set {
                 return ret;
             }
             /// Post constraint on \a x
-            virtual void
-            post(Space& home, SetVarArray& x, IntVarArray&) {
+            void
+            post(Space& home, SetVarArray& x, IntVarArray&) override {
                 SetVarArgs xs(x.size() - 1);
                 for (int i = x.size() - 1; i--;)
                     xs[i] = x[i];

@@ -67,8 +67,8 @@ namespace Test { namespace Int {
             /// Create and register test
             NoVar(void) : Test("Sorted::NoVar", 2 * n, 0, 3) {}
             /// %Test whether \a xy is solution
-            virtual bool
-            solution(const Assignment& xy) const {
+            bool
+            solution(const Assignment& xy) const override {
                 int x[n], y[n];
                 for (int i = 0; i < 3; i++) {
                     x[i] = xy[i];
@@ -88,8 +88,8 @@ namespace Test { namespace Int {
                 return true;
             }
             /// Post constraint on \a xy
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& xy) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& xy) override {
                 Gecode::IntVarArgs x(n), y(n);
                 for (int i = 0; i < n; i++) {
                     x[i] = xy[i];
@@ -109,8 +109,8 @@ namespace Test { namespace Int {
             /// Create and register test
             PermVar(void) : Test("Sorted::PermVar", 3 * n, 0, 2) {}
             /// %Test whether \a xyz is solution
-            virtual bool
-            solution(const Assignment& xyz) const {
+            bool
+            solution(const Assignment& xyz) const override {
                 int x[n], y[n], z[n];
                 for (int i = 0; i < n; i++) {
                     x[i] = xyz[i];
@@ -148,8 +148,8 @@ namespace Test { namespace Int {
                 return true;
             }
             /// Post constraint on \a xyz
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& xyz) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& xyz) override {
                 Gecode::IntVarArgs x(n), y(n), z(n);
                 for (int i = 0; i < n; i++) {
                     x[i] = xyz[i];

@@ -48,8 +48,8 @@ namespace Gecode { namespace Set { namespace Distinct {
     forceinline ExecStatus
     AtmostOne::post(Home home, ViewArray<SetView> x, unsigned int c) {
         for (int i = x.size(); i--;) {
-            GECODE_ME_CHECK(x[i].cardMin(home, c));
-            GECODE_ME_CHECK(x[i].cardMax(home, c));
+            GECODE_ME_CHECK(x[i].card_min(home, c));
+            GECODE_ME_CHECK(x[i].card_max(home, c));
         }
 
         (void)new (home) AtmostOne(home, x, c);

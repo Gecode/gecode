@@ -35,7 +35,7 @@
 namespace Gecode { namespace Float { namespace Branch {
 
     ViewSel<FloatView>*
-    viewsel(Space& home, const FloatVarBranch& fvb) {
+    view_selection(Space& home, const FloatVarBranch& fvb) {
         switch (fvb.select()) {
         case FloatVarBranch::SEL_NONE:
             return new (home) ViewSelNone<FloatView>(home, fvb);

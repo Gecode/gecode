@@ -596,8 +596,10 @@ namespace Gecode { namespace Instance {
             // Ragged or deeper: arrays of 1-tuples of arrays (MiniZinc 2.7 and later)
             std::string type = std::string("array[int] of ") +
                                (v.type == ValueType::INT ? "int" : (v.type == ValueType::FLOAT ? "float" : "string"));
-            for (int k = 1; k < v.depth; k++)
-                type = "array[int] of tuple(" + type + ")";
+            for (int k = 1; k < v.depth; k++) {
+                type.insert(0, "array[int] of tuple(");
+                type += ")";
+            }
             os << "% " << n << ": " << type << "\n";
             print_name(os, n);
             os << " = ";

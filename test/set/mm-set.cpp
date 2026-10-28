@@ -121,7 +121,7 @@ namespace Test { namespace Int {
         }
 
         bool
-        simpleReifiedSemantics(const SetInstr* pc) {
+        simple_reified_semantics(const SetInstr* pc) {
             while (pc->o != SO_HLT) {
                 if (pc->o == SO_DUNION)
                     return false;
@@ -149,11 +149,11 @@ namespace Test { namespace Int {
             /// Create and register test
             SetExprConst(TestTags tags, const SetInstr* bis0, const std::string& s, Gecode::SetRelType srt0, int c0)
                 : Test(tags, "MiniModel::SetExpr::Const::" + s + "::" + str(srt0) + "::" + str(c0), 4, 0, 1,
-                       simpleReifiedSemantics(bis0)),
+                       simple_reified_semantics(bis0)),
                   bis(bis0), c(c0), srt(srt0) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 int reg[4] = {(x[0] != x[2]), x[1], (x[2] > 0), x[3]};
                 bool failed;
                 int ret = eval(bis, reg, failed);
@@ -178,8 +178,8 @@ namespace Test { namespace Int {
                 return false;
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 using namespace Gecode;
                 SetVarArgs s(home, 4, IntSet::empty, 1, 1);
                 Gecode::rel(home, (singleton(1) == s[0]) == (x[0] != x[2]));
@@ -213,8 +213,8 @@ namespace Test { namespace Int {
                 }
             }
             /// Post reified constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x, Gecode::Reify r) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x, Gecode::Reify r) override {
                 using namespace Gecode;
                 SetVarArgs s(home, 4, IntSet::empty, 1, 1);
                 Gecode::rel(home, (singleton(1) == s[0]) == (x[0] != x[2]));
@@ -276,11 +276,11 @@ namespace Test { namespace Int {
             SetExprExpr(TestTags tags, const SetInstr* bis00, const SetInstr* bis10, const std::string& s,
                         Gecode::SetRelType srt0)
                 : Test(tags, "MiniModel::SetExpr::Expr::" + s + "::" + str(srt0), 8, 0, 1,
-                       simpleReifiedSemantics(bis00) && simpleReifiedSemantics(bis10)),
+                       simple_reified_semantics(bis00) && simple_reified_semantics(bis10)),
                   bis0(bis00), bis1(bis10), srt(srt0) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 int reg0[4] = {(x[0] != x[2]), x[1], (x[2] > 0), x[3]};
                 bool failed0;
                 int ret0 = eval(bis0, reg0, failed0);
@@ -314,8 +314,8 @@ namespace Test { namespace Int {
                 return false;
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 using namespace Gecode;
                 SetVarArgs s(home, 8, IntSet::empty, 1, 1);
                 Gecode::rel(home, (singleton(1) == s[0]) == (x[0] != x[2]));
@@ -358,8 +358,8 @@ namespace Test { namespace Int {
                 }
             }
             /// Post reified constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x, Gecode::Reify r) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x, Gecode::Reify r) override {
                 using namespace Gecode;
                 SetVarArgs s(home, 8, IntSet::empty, 1, 1);
                 Gecode::rel(home, (singleton(1) == s[0]) == (x[0] != x[2]));
@@ -1905,9 +1905,9 @@ namespace Test { namespace Int {
                 for (int i = 0; i < n; i++) {
                     std::string s = Test::str(i);
                     if (i < 10) {
-                        s = "00" + s;
+                        s.insert(0, "00");
                     } else if (i < 100) {
-                        s = "0" + s;
+                        s.insert(0, "0");
                     }
                     TestTags eq_zero_tags = i == 0 ? TestTags(TestTags::standard()) : TestTags(TestTags::sweep());
                     (void)new SetExprConst(eq_zero_tags, si[i], s, Gecode::SRT_EQ, 0);
@@ -1927,11 +1927,12 @@ namespace Test { namespace Int {
                             if ((j % 37) == 0) {
                                 std::string ss = Test::str(j);
                                 if (j < 10) {
-                                    ss = "00" + ss;
+                                    ss.insert(0, "00");
                                 } else if (j < 100) {
-                                    ss = "0" + ss;
+                                    ss.insert(0, "0");
                                 }
-                                ss = s + "::" + ss;
+                                ss.insert(0, "::");
+                                ss.insert(0, s);
                                 TestTags eq_tags =
                                     (i == 0) && (j == 0) ? TestTags(TestTags::standard()) : TestTags(TestTags::sweep());
                                 (void)new SetExprExpr(eq_tags, si[i], si[j], ss, Gecode::SRT_EQ);

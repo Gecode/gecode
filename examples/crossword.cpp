@@ -204,57 +204,57 @@ public:
         switch (opt.branching()) {
         case BRANCH_WORDS_AFC:
             // Branch by assigning words
-            branch(*this, allwords, INT_VAR_AFC_SIZE_MAX(opt.decay()), INT_VAL_SPLIT_MIN(), nullptr, &printwords);
+            branch(*this, allwords, INT_VAR_AFC_SIZE_MAX(opt.decay()), INT_VAL_SPLIT_MIN(), nullptr, &print_words);
             break;
         case BRANCH_LETTERS_AFC:
             // Branch by assigning letters
-            branch(*this, letters, INT_VAR_AFC_SIZE_MAX(opt.decay()), INT_VAL_MIN(), nullptr, &printletters);
+            branch(*this, letters, INT_VAR_AFC_SIZE_MAX(opt.decay()), INT_VAL_MIN(), nullptr, &print_letters);
             break;
         case BRANCH_LETTERS_AFC_ALL:
             // Branch by assigning letters (try all letters)
-            branch(*this, letters, INT_VAR_AFC_SIZE_MAX(opt.decay()), INT_VALUES_MIN(), nullptr, &printletters);
+            branch(*this, letters, INT_VAR_AFC_SIZE_MAX(opt.decay()), INT_VALUES_MIN(), nullptr, &print_letters);
             break;
         case BRANCH_WORDS_ACTION:
             // Branch by assigning words
-            branch(*this, allwords, INT_VAR_ACTION_SIZE_MAX(opt.decay()), INT_VAL_SPLIT_MIN(), nullptr, &printwords);
+            branch(*this, allwords, INT_VAR_ACTION_SIZE_MAX(opt.decay()), INT_VAL_SPLIT_MIN(), nullptr, &print_words);
             break;
         case BRANCH_LETTERS_ACTION:
             // Branch by assigning letters
-            branch(*this, letters, INT_VAR_ACTION_SIZE_MAX(opt.decay()), INT_VAL_MIN(), nullptr, &printletters);
+            branch(*this, letters, INT_VAR_ACTION_SIZE_MAX(opt.decay()), INT_VAL_MIN(), nullptr, &print_letters);
             break;
         case BRANCH_LETTERS_ACTION_ALL:
             // Branch by assigning letters (try all letters)
-            branch(*this, letters, INT_VAR_ACTION_SIZE_MAX(opt.decay()), INT_VALUES_MIN(), nullptr, &printletters);
+            branch(*this, letters, INT_VAR_ACTION_SIZE_MAX(opt.decay()), INT_VALUES_MIN(), nullptr, &print_letters);
             break;
         case BRANCH_WORDS_CHB:
             // Branch by assigning words
-            branch(*this, allwords, INT_VAR_CHB_SIZE_MAX(), INT_VAL_SPLIT_MIN(), nullptr, &printwords);
+            branch(*this, allwords, INT_VAR_CHB_SIZE_MAX(), INT_VAL_SPLIT_MIN(), nullptr, &print_words);
             break;
         case BRANCH_LETTERS_CHB:
             // Branch by assigning letters
-            branch(*this, letters, INT_VAR_CHB_SIZE_MAX(), INT_VAL_MIN(), nullptr, &printletters);
+            branch(*this, letters, INT_VAR_CHB_SIZE_MAX(), INT_VAL_MIN(), nullptr, &print_letters);
             break;
         case BRANCH_LETTERS_CHB_ALL:
             // Branch by assigning letters (try all letters)
-            branch(*this, letters, INT_VAR_CHB_SIZE_MAX(), INT_VALUES_MIN(), nullptr, &printletters);
+            branch(*this, letters, INT_VAR_CHB_SIZE_MAX(), INT_VALUES_MIN(), nullptr, &print_letters);
             break;
         }
     }
     /// Print brancher information when branching on letters
     static void
-    printletters(const Space& home, const Brancher&, unsigned int a, IntVar, int i, const int& n, std::ostream& os) {
+    print_letters(const Space& home, const Brancher&, unsigned int a, IntVar, int i, const int& n, std::ostream& os) {
         const Crossword& c = static_cast<const Crossword&>(home);
         int x = i % c.w, y = i / c.w;
         os << "letters[" << x << "," << y << "] " << ((a == 0) ? "=" : "!=") << " " << static_cast<char>(n);
     }
     /// Print brancher information when branching on words
     static void
-    printwords(const Space&, const Brancher&, unsigned int a, IntVar, int i, const int& n, std::ostream& os) {
+    print_words(const Space&, const Brancher&, unsigned int a, IntVar, int i, const int& n, std::ostream& os) {
         os << "allwords[" << i << "] " << ((a == 0) ? "<=" : ">") << " " << n;
     }
     /// Post no-goods, and do not perform a restart when a solution is found
     void
-    hub(HubContext& hc) {
+    hub(HubContext& hc) override {
         if (hc.engine() == MetaEngine::Restart) {
             hc.nogoods().post(*this);
             if (hc.event() == MetaEvent::Solution)
@@ -268,13 +268,13 @@ public:
         letters.update(*this, s.letters);
     }
     /// Copy during cloning
-    virtual Space*
-    copy(void) {
+    Space*
+    copy(void) override {
         return new Crossword(*this);
     }
     /// Print solution
-    virtual void
-    print(std::ostream& os) const {
+    void
+    print(std::ostream& os) const override {
         // Matrix for letters
         Matrix<IntVarArray> ml(letters, w, h);
         for (int i = 0; i < h; i++) {

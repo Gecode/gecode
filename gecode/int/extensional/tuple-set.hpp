@@ -129,7 +129,7 @@ namespace Gecode {
     }
 
     forceinline unsigned int
-    TupleSet::Data::tuple2idx(Tuple t) const {
+    TupleSet::Data::tuple_to_index(Tuple t) const {
         return static_cast<unsigned int>((t - td) / static_cast<unsigned int>(arity));
     }
 

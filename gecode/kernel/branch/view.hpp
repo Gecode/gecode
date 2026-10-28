@@ -66,7 +66,7 @@ namespace Gecode {
         /// Return position in array
         const Pos& pos(void) const;
         /// Archive into \a e
-        virtual void archive(Archive& e) const;
+        void archive(Archive& e) const override;
     };
 
     /**
@@ -101,11 +101,11 @@ namespace Gecode {
 
     public:
         /// Check status of brancher, return true if alternatives left
-        virtual bool status(const Space& home) const;
+        bool status(const Space& home) const override;
         /// Split the state of every view selector for \a a
-        virtual void random_split(unsigned int a);
+        void random_split(unsigned int a) override;
         /// Delete brancher and return its size
-        virtual size_t dispose(Space& home);
+        size_t dispose(Space& home) override;
     };
 
     //@}

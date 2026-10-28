@@ -94,12 +94,12 @@ namespace Gecode { namespace Set {
 
     forceinline
     ConstSetView::ConstSetView(void)
-        : ranges(nullptr), size(0), domSize(0) {}
+        : ranges(nullptr), size(0), dom_size(0) {}
 
     forceinline
     ConstSetView::ConstSetView(Space& home, const IntSet& dom) {
         size = dom.ranges();
-        domSize = 0;
+        dom_size = 0;
         if (size > 0) {
             ranges = home.alloc<int>(2 * size);
             IntSetRanges dr(dom);
@@ -108,7 +108,7 @@ namespace Gecode { namespace Set {
                 int max = dr.max();
                 ranges[i] = min;
                 ranges[i + 1] = max;
-                domSize += static_cast<unsigned int>(max - min + 1);
+                dom_size += static_cast<unsigned int>(max - min + 1);
             }
         } else {
             ranges = nullptr;
@@ -116,17 +116,17 @@ namespace Gecode { namespace Set {
     }
 
     forceinline unsigned int
-    ConstSetView::glbSize(void) const {
-        return domSize;
+    ConstSetView::glb_size(void) const {
+        return dom_size;
     }
 
     forceinline unsigned int
-    ConstSetView::lubSize(void) const {
-        return domSize;
+    ConstSetView::lub_size(void) const {
+        return dom_size;
     }
 
     forceinline unsigned int
-    ConstSetView::unknownSize(void) const {
+    ConstSetView::unknown_size(void) const {
         return 0;
     }
 
@@ -142,48 +142,48 @@ namespace Gecode { namespace Set {
     }
 
     forceinline bool
-    ConstSetView::notContains(int i) const {
+    ConstSetView::not_contains(int i) const {
         return !contains(i);
     }
 
     forceinline unsigned int
-    ConstSetView::cardMin(void) const {
-        return domSize;
+    ConstSetView::card_min(void) const {
+        return dom_size;
     }
 
     forceinline unsigned int
-    ConstSetView::cardMax(void) const {
-        return domSize;
+    ConstSetView::card_max(void) const {
+        return dom_size;
     }
 
     forceinline int
-    ConstSetView::lubMin(void) const {
+    ConstSetView::lub_min(void) const {
         return size == 0 ? BndSet::MIN_OF_EMPTY : ranges[0];
     }
 
     forceinline int
-    ConstSetView::lubMax(void) const {
+    ConstSetView::lub_max(void) const {
         return size == 0 ? BndSet::MAX_OF_EMPTY : ranges[size * 2 - 1];
     }
 
     forceinline int
-    ConstSetView::glbMin(void) const {
-        return lubMin();
+    ConstSetView::glb_min(void) const {
+        return lub_min();
     }
 
     forceinline int
-    ConstSetView::glbMax(void) const {
-        return lubMax();
+    ConstSetView::glb_max(void) const {
+        return lub_max();
     }
 
     forceinline ModEvent
-    ConstSetView::cardMin(Space&, unsigned int c) {
-        return c <= domSize ? ME_SET_NONE : ME_SET_FAILED;
+    ConstSetView::card_min(Space&, unsigned int c) {
+        return c <= dom_size ? ME_SET_NONE : ME_SET_FAILED;
     }
 
     forceinline ModEvent
-    ConstSetView::cardMax(Space&, unsigned int c) {
-        return c >= domSize ? ME_SET_NONE : ME_SET_FAILED;
+    ConstSetView::card_max(Space&, unsigned int c) {
+        return c >= dom_size ? ME_SET_NONE : ME_SET_FAILED;
     }
 
     forceinline ModEvent
@@ -203,7 +203,7 @@ namespace Gecode { namespace Set {
 
     forceinline ModEvent
     ConstSetView::intersect(Space&, int i, int j) {
-        return (glbMin() >= i && glbMax() <= j) ? ME_SET_NONE : ME_SET_FAILED;
+        return (glb_min() >= i && glb_max() <= j) ? ME_SET_NONE : ME_SET_FAILED;
     }
 
     forceinline ModEvent
@@ -222,21 +222,21 @@ namespace Gecode { namespace Set {
 
     template <class I>
     ModEvent
-    ConstSetView::excludeI(Space&, I& i) {
+    ConstSetView::exclude_i(Space&, I& i) {
         ArrayRanges ar(ranges, size);
         return (i() && Iter::Ranges::subset(i, ar)) ? ME_SET_FAILED : ME_SET_NONE;
     }
 
     template <class I>
     ModEvent
-    ConstSetView::includeI(Space&, I& i) {
+    ConstSetView::include_i(Space&, I& i) {
         ArrayRanges ar(ranges, size);
         return Iter::Ranges::subset(i, ar) ? ME_SET_NONE : ME_SET_FAILED;
     }
 
     template <class I>
     ModEvent
-    ConstSetView::intersectI(Space&, I& i) {
+    ConstSetView::intersect_i(Space&, I& i) {
         ArrayRanges ar(ranges, size);
         return Iter::Ranges::subset(ar, i) ? ME_SET_NONE : ME_SET_FAILED;
     }
@@ -248,7 +248,7 @@ namespace Gecode { namespace Set {
         if (size > 0)
             home.free<int>(ranges, 2);
 
-        domSize = p.domSize;
+        dom_size = p.dom_size;
         size = p.size;
         if (size == 0) {
             ranges = nullptr;
@@ -267,32 +267,32 @@ namespace Gecode { namespace Set {
      *
      */
     forceinline int
-    ConstSetView::glbMin(const Delta&) const {
+    ConstSetView::glb_min(const Delta&) const {
         GECODE_NEVER;
         return 0;
     }
     forceinline int
-    ConstSetView::glbMax(const Delta&) const {
+    ConstSetView::glb_max(const Delta&) const {
         GECODE_NEVER;
         return 0;
     }
     forceinline bool
-    ConstSetView::glbAny(const Delta&) const {
+    ConstSetView::glb_any(const Delta&) const {
         GECODE_NEVER;
         return false;
     }
     forceinline int
-    ConstSetView::lubMin(const Delta&) const {
+    ConstSetView::lub_min(const Delta&) const {
         GECODE_NEVER;
         return 0;
     }
     forceinline int
-    ConstSetView::lubMax(const Delta&) const {
+    ConstSetView::lub_max(const Delta&) const {
         GECODE_NEVER;
         return 0;
     }
     forceinline bool
-    ConstSetView::lubAny(const Delta&) const {
+    ConstSetView::lub_any(const Delta&) const {
         GECODE_NEVER;
         return false;
     }
@@ -301,17 +301,17 @@ namespace Gecode { namespace Set {
     EmptyView::EmptyView(void) {}
 
     forceinline unsigned int
-    EmptyView::glbSize(void) const {
+    EmptyView::glb_size(void) const {
         return 0;
     }
 
     forceinline unsigned int
-    EmptyView::lubSize(void) const {
+    EmptyView::lub_size(void) const {
         return 0;
     }
 
     forceinline unsigned int
-    EmptyView::unknownSize(void) const {
+    EmptyView::unknown_size(void) const {
         return 0;
     }
 
@@ -321,47 +321,47 @@ namespace Gecode { namespace Set {
     }
 
     forceinline bool
-    EmptyView::notContains(int) const {
+    EmptyView::not_contains(int) const {
         return true;
     }
 
     forceinline unsigned int
-    EmptyView::cardMin(void) const {
+    EmptyView::card_min(void) const {
         return 0;
     }
 
     forceinline unsigned int
-    EmptyView::cardMax(void) const {
+    EmptyView::card_max(void) const {
         return 0;
     }
 
     forceinline int
-    EmptyView::lubMin(void) const {
+    EmptyView::lub_min(void) const {
         return 0;
     }
 
     forceinline int
-    EmptyView::lubMax(void) const {
+    EmptyView::lub_max(void) const {
         return 0;
     }
 
     forceinline int
-    EmptyView::glbMin(void) const {
+    EmptyView::glb_min(void) const {
         return 0;
     }
 
     forceinline int
-    EmptyView::glbMax(void) const {
+    EmptyView::glb_max(void) const {
         return 0;
     }
 
     forceinline ModEvent
-    EmptyView::cardMin(Space&, unsigned int c) {
+    EmptyView::card_min(Space&, unsigned int c) {
         return c == 0 ? ME_SET_NONE : ME_SET_FAILED;
     }
 
     forceinline ModEvent
-    EmptyView::cardMax(Space&, unsigned int) {
+    EmptyView::card_max(Space&, unsigned int) {
         return ME_SET_NONE;
     }
 
@@ -397,19 +397,19 @@ namespace Gecode { namespace Set {
 
     template <class I>
     ModEvent
-    EmptyView::excludeI(Space&, I&) {
+    EmptyView::exclude_i(Space&, I&) {
         return ME_SET_NONE;
     }
 
     template <class I>
     ModEvent
-    EmptyView::includeI(Space&, I& i) {
+    EmptyView::include_i(Space&, I& i) {
         return i() ? ME_SET_FAILED : ME_SET_NONE;
     }
 
     template <class I>
     ModEvent
-    EmptyView::intersectI(Space&, I&) {
+    EmptyView::intersect_i(Space&, I&) {
         return ME_SET_NONE;
     }
 
@@ -418,37 +418,37 @@ namespace Gecode { namespace Set {
      *
      */
     forceinline int
-    EmptyView::glbMin(const Delta&) const {
+    EmptyView::glb_min(const Delta&) const {
         GECODE_NEVER;
         return 0;
     }
 
     forceinline int
-    EmptyView::glbMax(const Delta&) const {
+    EmptyView::glb_max(const Delta&) const {
         GECODE_NEVER;
         return 0;
     }
 
     forceinline bool
-    EmptyView::glbAny(const Delta&) const {
+    EmptyView::glb_any(const Delta&) const {
         GECODE_NEVER;
         return false;
     }
 
     forceinline int
-    EmptyView::lubMin(const Delta&) const {
+    EmptyView::lub_min(const Delta&) const {
         GECODE_NEVER;
         return 0;
     }
 
     forceinline int
-    EmptyView::lubMax(const Delta&) const {
+    EmptyView::lub_max(const Delta&) const {
         GECODE_NEVER;
         return 0;
     }
 
     forceinline bool
-    EmptyView::lubAny(const Delta&) const {
+    EmptyView::lub_any(const Delta&) const {
         GECODE_NEVER;
         return false;
     }
@@ -459,17 +459,17 @@ namespace Gecode { namespace Set {
     UniverseView::UniverseView(void) {}
 
     forceinline unsigned int
-    UniverseView::glbSize(void) const {
+    UniverseView::glb_size(void) const {
         return Set::Limits::card;
     }
 
     forceinline unsigned int
-    UniverseView::lubSize(void) const {
+    UniverseView::lub_size(void) const {
         return Set::Limits::card;
     }
 
     forceinline unsigned int
-    UniverseView::unknownSize(void) const {
+    UniverseView::unknown_size(void) const {
         return 0;
     }
 
@@ -479,47 +479,47 @@ namespace Gecode { namespace Set {
     }
 
     forceinline bool
-    UniverseView::notContains(int) const {
+    UniverseView::not_contains(int) const {
         return false;
     }
 
     forceinline unsigned int
-    UniverseView::cardMin(void) const {
+    UniverseView::card_min(void) const {
         return Set::Limits::card;
     }
 
     forceinline unsigned int
-    UniverseView::cardMax(void) const {
+    UniverseView::card_max(void) const {
         return Limits::card;
     }
 
     forceinline int
-    UniverseView::lubMin(void) const {
+    UniverseView::lub_min(void) const {
         return Limits::card;
     }
 
     forceinline int
-    UniverseView::lubMax(void) const {
+    UniverseView::lub_max(void) const {
         return Limits::card;
     }
 
     forceinline int
-    UniverseView::glbMin(void) const {
+    UniverseView::glb_min(void) const {
         return Limits::card;
     }
 
     forceinline int
-    UniverseView::glbMax(void) const {
+    UniverseView::glb_max(void) const {
         return Limits::card;
     }
 
     forceinline ModEvent
-    UniverseView::cardMin(Space&, unsigned int c) {
+    UniverseView::card_min(Space&, unsigned int c) {
         return c > Limits::card ? ME_SET_FAILED : ME_SET_NONE;
     }
 
     forceinline ModEvent
-    UniverseView::cardMax(Space&, unsigned int c) {
+    UniverseView::card_max(Space&, unsigned int c) {
         return c >= Limits::card ? ME_SET_NONE : ME_SET_FAILED;
     }
 
@@ -550,13 +550,13 @@ namespace Gecode { namespace Set {
 
     template <class I>
     ModEvent
-    UniverseView::excludeI(Space&, I& i) {
+    UniverseView::exclude_i(Space&, I& i) {
         return i() ? ME_SET_FAILED : ME_SET_NONE;
     }
 
     template <class I>
     forceinline ModEvent
-    UniverseView::includeI(Space&, I&) {
+    UniverseView::include_i(Space&, I&) {
         return ME_SET_NONE;
     }
 
@@ -567,7 +567,7 @@ namespace Gecode { namespace Set {
 
     template <class I>
     forceinline ModEvent
-    UniverseView::intersectI(Space&, I& i) {
+    UniverseView::intersect_i(Space&, I& i) {
         return (i() && (i.min() > Limits::min || i.max() < Limits::max)) ? ME_SET_FAILED : ME_SET_NONE;
     }
 
@@ -576,37 +576,37 @@ namespace Gecode { namespace Set {
      *
      */
     forceinline int
-    UniverseView::glbMin(const Delta&) const {
+    UniverseView::glb_min(const Delta&) const {
         GECODE_NEVER;
         return 0;
     }
 
     forceinline int
-    UniverseView::glbMax(const Delta&) const {
+    UniverseView::glb_max(const Delta&) const {
         GECODE_NEVER;
         return 0;
     }
 
     forceinline bool
-    UniverseView::glbAny(const Delta&) const {
+    UniverseView::glb_any(const Delta&) const {
         GECODE_NEVER;
         return false;
     }
 
     forceinline int
-    UniverseView::lubMin(const Delta&) const {
+    UniverseView::lub_min(const Delta&) const {
         GECODE_NEVER;
         return 0;
     }
 
     forceinline int
-    UniverseView::lubMax(const Delta&) const {
+    UniverseView::lub_max(const Delta&) const {
         GECODE_NEVER;
         return 0;
     }
 
     forceinline bool
-    UniverseView::lubAny(const Delta&) const {
+    UniverseView::lub_any(const Delta&) const {
         GECODE_NEVER;
         return false;
     }
@@ -792,9 +792,9 @@ namespace Gecode { namespace Set {
             return true;
         if (size > y.size)
             return false;
-        if (domSize < y.domSize)
+        if (dom_size < y.dom_size)
             return true;
-        if (domSize > y.domSize)
+        if (dom_size > y.dom_size)
             return false;
         for (int i = size; i--;) {
             if (ranges[2 * i] < y.ranges[2 * i])
@@ -815,7 +815,7 @@ namespace Gecode { namespace Set {
      */
     forceinline bool
     operator==(const ConstSetView& x, const ConstSetView& y) {
-        if ((x.size != y.size) || (x.domSize != y.domSize))
+        if ((x.size != y.size) || (x.dom_size != y.dom_size))
             return false;
         for (int i = x.size; i--;)
             if ((x.ranges[2 * i] != y.ranges[2 * i]) || (x.ranges[2 * i + 1] != y.ranges[2 * i + 1]))

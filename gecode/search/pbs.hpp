@@ -39,7 +39,7 @@ namespace Gecode { namespace Search {
 
     /// Dispose partially constructed portfolio assets
     forceinline void
-    pbscleanup(Engine** assets, Stop** stops, unsigned int n_assets, Space* hub) {
+    pbs_cleanup(Engine** assets, Stop** stops, unsigned int n_assets, Space* hub) {
         for (unsigned int i = 0U; i < n_assets; i++) {
             delete assets[i];
             delete stops[i];
@@ -49,21 +49,21 @@ namespace Gecode { namespace Search {
 
     /// Dispose builders consumed by an explicit portfolio
     forceinline void
-    pbscleanup(SEBs& sebs) {
+    pbs_cleanup(SEBs& sebs) {
         for (int i = 0; i < sebs.size(); i++)
             delete sebs[i];
     }
 
     /// Validate worker-control placement for a homogeneous portfolio
     forceinline void
-    pbscontrol(const Options& opt) {
+    validate_pbs_control(const Options& opt) {
         if ((opt.assets > 1U) && opt.worker_control.engaged())
             throw WorkerControlInUse("PBS::PBS");
     }
 
     /// Validate worker-control placement for an explicit portfolio
     forceinline void
-    pbscontrol(const SEBs& sebs, const Options& opt) {
+    validate_pbs_control(const SEBs& sebs, const Options& opt) {
         if (opt.worker_control.engaged())
             throw WorkerControlInUse("PBS::PBS");
 #ifdef GECODE_HAS_THREADS
@@ -198,7 +198,7 @@ namespace Gecode { namespace Search {
         /// The constructor
         PbsBuilder(const Options& opt);
         /// The actual build function
-        virtual Engine* operator()(Space* s) const;
+        Engine* operator()(Space* s) const override;
     };
 
     template <class T, template <class> class E>
@@ -217,29 +217,29 @@ namespace Gecode { namespace Search {
 namespace Gecode { namespace Search { namespace Seq {
 
     /// Create stop object
-    GECODE_SEARCH_EXPORT Stop* pbsstop(Stop* so);
+    GECODE_SEARCH_EXPORT Stop* pbs_stop(Stop* so);
 
     /// Create stop object for builder stop \a so and portfolio stop \a po
-    GECODE_SEARCH_EXPORT Stop* pbsstop(Stop* so, Stop* po);
+    GECODE_SEARCH_EXPORT Stop* pbs_stop(Stop* so, Stop* po);
 
     /// Create sequential portfolio engine
-    GECODE_SEARCH_EXPORT Engine* pbsengine(Engine** assets, Stop** stops, const SpokeCoverage* coverage,
-                                           unsigned int n_assets, const Statistics& stat, const Search::Options& opt,
-                                           bool best);
+    GECODE_SEARCH_EXPORT Engine* make_pbs_engine(Engine** assets, Stop** stops, const SpokeCoverage* coverage,
+                                                 unsigned int n_assets, const Statistics& stat,
+                                                 const Search::Options& opt, bool best);
 
 }}} // namespace Gecode::Search::Seq
 
 namespace Gecode { namespace Search { namespace Par {
 
     /// Create stop object
-    GECODE_SEARCH_EXPORT Stop* pbsstop(Stop* so, const WorkerControl& control);
+    GECODE_SEARCH_EXPORT Stop* pbs_stop(Stop* so, const WorkerControl& control);
 
     /// Create stop object for builder stop \a so and portfolio stop \a po
-    GECODE_SEARCH_EXPORT Stop* pbsstop(Stop* so, Stop* po, const WorkerControl& control);
+    GECODE_SEARCH_EXPORT Stop* pbs_stop(Stop* so, Stop* po, const WorkerControl& control);
 
     /// Create parallel portfolio engine
-    GECODE_SEARCH_EXPORT Engine* pbsengine(Engine** assets, Stop** stops, const SpokeCoverage* coverage,
-                                           unsigned int n_assets, const Statistics& stat, bool best);
+    GECODE_SEARCH_EXPORT Engine* make_pbs_engine(Engine** assets, Stop** stops, const SpokeCoverage* coverage,
+                                                 unsigned int n_assets, const Statistics& stat, bool best);
 
 }}} // namespace Gecode::Search::Par
 
@@ -271,7 +271,7 @@ namespace Gecode { namespace Search {
         Space* unowned_hub = hub;
         try {
             for (unsigned int i = 0U; i < n_assets; i++) {
-                opt.stop = stops[i] = Seq::pbsstop(nullptr, stop);
+                opt.stop = stops[i] = Seq::pbs_stop(nullptr, stop);
                 std::unique_ptr<Space> spoke((i == n_assets - 1) ? hub : hub->clone());
                 if (spoke.get() == hub)
                     unowned_hub = nullptr;
@@ -283,11 +283,11 @@ namespace Gecode { namespace Search {
                 // The asset owns its cutoff
                 (void)c.release();
             }
-            Engine* e = Seq::pbsengine(assets, stops, coverage, n_assets, stat, opt, E<T>::best);
+            Engine* e = Seq::make_pbs_engine(assets, stops, coverage, n_assets, stat, opt, E<T>::best);
             pbs_release_cutoff<E<T>>(cutoff);
             return e;
         } catch (...) {
-            pbscleanup(assets, stops, n_assets, unowned_hub);
+            pbs_cleanup(assets, stops, n_assets, unowned_hub);
             throw;
         }
     }
@@ -313,7 +313,7 @@ namespace Gecode { namespace Search {
         try {
             for (int i = 0; i < n_assets; i++) {
                 // Re-configure asset options, the portfolio stop applies as well
-                stops[i] = Seq::pbsstop(sebs[i]->options().stop, opt.stop);
+                stops[i] = Seq::pbs_stop(sebs[i]->options().stop, opt.stop);
                 sebs[i]->options().stop = stops[i];
                 sebs[i]->options().clone = true;
                 std::unique_ptr<Space> spoke((i == n_assets - 1) ? hub : hub->clone());
@@ -323,13 +323,13 @@ namespace Gecode { namespace Search {
                     pbs_spoke(*spoke, static_cast<unsigned int>(i), static_cast<unsigned int>(n_assets), hub_branchers);
                 assets[i] = (*sebs[i])(spoke.get());
             }
-            pbscleanup(sebs);
+            pbs_cleanup(sebs);
             builders_owned = false;
-            return Seq::pbsengine(assets, stops, coverage, static_cast<unsigned int>(n_assets), stat, opt, best);
+            return Seq::make_pbs_engine(assets, stops, coverage, static_cast<unsigned int>(n_assets), stat, opt, best);
         } catch (...) {
             if (builders_owned)
-                pbscleanup(sebs);
-            pbscleanup(assets, stops, static_cast<unsigned int>(n_assets), unowned_hub);
+                pbs_cleanup(sebs);
+            pbs_cleanup(assets, stops, static_cast<unsigned int>(n_assets), unowned_hub);
             throw;
         }
     }
@@ -363,7 +363,7 @@ namespace Gecode { namespace Search {
         Space* unowned_hub = hub;
         try {
             for (unsigned int i = 0U; i < n_assets; i++) {
-                opt.stop = stops[i] = Par::pbsstop(nullptr, stop, opt.worker_control);
+                opt.stop = stops[i] = Par::pbs_stop(nullptr, stop, opt.worker_control);
                 std::unique_ptr<Space> spoke((i == n_assets - 1) ? hub : hub->clone());
                 if (spoke.get() == hub)
                     unowned_hub = nullptr;
@@ -375,11 +375,11 @@ namespace Gecode { namespace Search {
                 // The asset owns its cutoff
                 (void)c.release();
             }
-            Engine* e = Par::pbsengine(assets, stops, coverage, n_assets, stat, E<T>::best);
+            Engine* e = Par::make_pbs_engine(assets, stops, coverage, n_assets, stat, E<T>::best);
             pbs_release_cutoff<E<T>>(cutoff);
             return e;
         } catch (...) {
-            pbscleanup(assets, stops, n_assets, unowned_hub);
+            pbs_cleanup(assets, stops, n_assets, unowned_hub);
             throw;
         }
     }
@@ -407,7 +407,7 @@ namespace Gecode { namespace Search {
         try {
             for (int i = 0; i < n_assets; i++) {
                 // Re-configure asset options, the portfolio stop applies as well
-                stops[i] = Par::pbsstop(sebs[i]->options().stop, opt.stop, sebs[i]->options().worker_control);
+                stops[i] = Par::pbs_stop(sebs[i]->options().stop, opt.stop, sebs[i]->options().worker_control);
                 sebs[i]->options().stop = stops[i];
                 sebs[i]->options().clone = true;
                 std::unique_ptr<Space> spoke((i == n_assets - 1) ? hub : hub->clone());
@@ -417,13 +417,13 @@ namespace Gecode { namespace Search {
                     pbs_spoke(*spoke, static_cast<unsigned int>(i), static_cast<unsigned int>(n_assets), hub_branchers);
                 assets[i] = (*sebs[i])(spoke.get());
             }
-            pbscleanup(sebs);
+            pbs_cleanup(sebs);
             builders_owned = false;
-            return Par::pbsengine(assets, stops, coverage, static_cast<unsigned int>(n_assets), stat, best);
+            return Par::make_pbs_engine(assets, stops, coverage, static_cast<unsigned int>(n_assets), stat, best);
         } catch (...) {
             if (builders_owned)
-                pbscleanup(sebs);
-            pbscleanup(assets, stops, static_cast<unsigned int>(n_assets), unowned_hub);
+                pbs_cleanup(sebs);
+            pbs_cleanup(assets, stops, static_cast<unsigned int>(n_assets), unowned_hub);
             throw;
         }
     }
@@ -440,7 +440,7 @@ namespace Gecode {
 
         if (opt.assets == 0)
             throw Search::NoAssets("PBS::PBS");
-        Search::pbscontrol(opt);
+        Search::validate_pbs_control(opt);
 
         Search::Statistics stat;
 
@@ -482,7 +482,7 @@ namespace Gecode {
                 return;
             }
             // Only a portfolio engine reports an exhausted partial spoke as incomplete
-            std::unique_ptr<Search::Stop> stop(Search::Seq::pbsstop(nullptr, opt.stop));
+            std::unique_ptr<Search::Stop> stop(Search::Seq::pbs_stop(nullptr, opt.stop));
             opt.stop = stop.get();
             // As for several assets, the asset owns a copy of the cutoff
             Search::Cutoff* cutoff = opt.cutoff;
@@ -493,7 +493,7 @@ namespace Gecode {
             (void)cc.release();
             Search::Engine* a = asset.get();
             Search::Stop* so = stop.get();
-            e = Search::Seq::pbsengine(&a, &so, &c, 1U, stat, opt, E<T>::best);
+            e = Search::Seq::make_pbs_engine(&a, &so, &c, 1U, stat, opt, E<T>::best);
             (void)asset.release();
             (void)stop.release();
             Search::pbs_release_cutoff<E<T>>(cutoff);
@@ -512,7 +512,7 @@ namespace Gecode {
     void
     PBS<T, E>::build(T* s, SEBs& sebs, const Search::Options& o) {
         Search::Options opt(o.expand());
-        Search::pbscontrol(sebs, opt);
+        Search::validate_pbs_control(sebs, opt);
 
         // Check whether all sebs do either best solution search or not
         bool best;
@@ -531,7 +531,7 @@ namespace Gecode {
             stat.fail++;
             if (!opt.clone)
                 delete s;
-            Search::pbscleanup(sebs);
+            Search::pbs_cleanup(sebs);
             e = Search::Seq::dead(opt, stat, Search::EndReason::Exhausted);
             return;
         }
@@ -545,11 +545,11 @@ namespace Gecode {
         try {
             r = Search::pbs_start(hub, static_cast<unsigned int>(sebs.size()), stat);
         } catch (...) {
-            Search::pbscleanup(sebs);
+            Search::pbs_cleanup(sebs);
             throw;
         }
         if (r != Search::EndReason::NotEnded) {
-            Search::pbscleanup(sebs);
+            Search::pbs_cleanup(sebs);
             e = Search::Seq::dead(opt, stat, r);
             return;
         }

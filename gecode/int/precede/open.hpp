@@ -79,18 +79,18 @@ namespace Gecode { namespace Int { namespace Precede {
         }
 
     public:
-        virtual PropCost
-        cost(const Space&, const ModEventDelta&) const {
+        PropCost
+        cost(const Space&, const ModEventDelta&) const override {
             return PropCost::linear(PropCost::LO, list.known_length() - alpha);
         }
 
-        virtual Actor*
-        copy(Space& home) {
+        Actor*
+        copy(Space& home) override {
             return new (home) Open(home, *this);
         }
 
-        virtual ExecStatus
-        advise(Space& home, Advisor& a0, const Delta&) {
+        ExecStatus
+        advise(Space& home, Advisor& a0, const Delta&) override {
             Index& a = static_cast<Index&>(a0);
             const int i = a.i;
             bool changed = false;
@@ -110,8 +110,8 @@ namespace Gecode { namespace Int { namespace Precede {
             return changed ? ES_NOFIX : ES_FIX;
         }
 
-        virtual ExecStatus
-        propagate(Space& home, const ModEventDelta&) {
+        ExecStatus
+        propagate(Space& home, const ModEventDelta&) override {
             const int size = list.known_length();
             if (before == after) {
                 for (int i = processed; i < size; i++)
@@ -155,14 +155,14 @@ namespace Gecode { namespace Int { namespace Precede {
             return ES_FIX;
         }
 
-        virtual void
-        reschedule(Space& home) {
+        void
+        reschedule(Space& home) override {
             OpenListPropagator<View>::reschedule(home);
             View::schedule(home, *this, ME_INT_DOM);
         }
 
-        virtual size_t
-        dispose(Space& home) {
+        size_t
+        dispose(Space& home) override {
             for (Advisors<Index> as(council); as(); ++as)
                 as.advisor().x.cancel(home, as.advisor());
             council.dispose(home);

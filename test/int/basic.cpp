@@ -51,16 +51,16 @@ namespace Test { namespace Int {
             /// Initialize test
             Basic(Gecode::IntArgs& i) : Test("Basic::B", 3, Gecode::IntSet(i), true) {}
             /// Check whether \a x is a solution
-            virtual bool
-            solution(const Assignment&) const {
+            bool
+            solution(const Assignment&) const override {
                 return true;
             }
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space&, Gecode::IntVarArray&) {}
+            void
+            post(Gecode::Space&, Gecode::IntVarArray&) override {}
             /// Post reified constraint on \a x for \a r
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray&, Gecode::Reify r) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray&, Gecode::Reify r) override {
                 if (r.mode() != Gecode::RM_IMP)
                     Gecode::rel(home, r.var(), Gecode::IRT_EQ, 1);
             }

@@ -91,13 +91,13 @@ public:
         d.update(*this, s.d);
     }
     /// Copy during cloning
-    virtual Space*
-    copy(void) {
+    Space*
+    copy(void) override {
         return new AllInterval(*this);
     }
     /// Print solution
-    virtual void
-    print(std::ostream& os) const {
+    void
+    print(std::ostream& os) const override {
         const int n = x.size();
         os << "\tx[" << n << "] = {";
         for (int i = 0; i < n - 1; i++)

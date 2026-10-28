@@ -144,8 +144,8 @@ public:
         c_total = expr(*this, c_fixed * sum(open) + sum(c_store));
     }
     /// Return solution cost
-    virtual IntVar
-    cost(void) const {
+    IntVar
+    cost(void) const override {
         return c_total;
     }
     /// Constructor for cloning \a s
@@ -153,13 +153,13 @@ public:
         c_total.update(*this, s.c_total);
     }
     /// Copy during cloning
-    virtual Space*
-    copy(void) {
+    Space*
+    copy(void) override {
         return new SumCostWarehouses(*this);
     }
     /// Print solution
-    virtual void
-    print(std::ostream& os) const {
+    void
+    print(std::ostream& os) const override {
         os << "\tSupplier:        " << supplier << std::endl
            << "\tOpen warehouses: " << open << std::endl
            << "\tStore cost:      " << c_store << std::endl
@@ -184,8 +184,8 @@ public:
         c_stores = expr(*this, sum(c_store));
     }
     /// Return solution cost
-    virtual IntVarArgs
-    cost(void) const {
+    IntVarArgs
+    cost(void) const override {
         return {c_open, c_stores};
     }
     /// Constructor for cloning \a s
@@ -194,13 +194,13 @@ public:
         c_stores.update(*this, s.c_stores);
     }
     /// Copy during cloning
-    virtual Space*
-    copy(void) {
+    Space*
+    copy(void) override {
         return new LexCostWarehouses(*this);
     }
     /// Print solution
-    virtual void
-    print(std::ostream& os) const {
+    void
+    print(std::ostream& os) const override {
         os << "\tSupplier:        " << supplier << std::endl
            << "\tOpen warehouses: " << open << std::endl
            << "\tOpen cost:       " << c_open << std::endl

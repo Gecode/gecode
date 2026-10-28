@@ -59,9 +59,9 @@ namespace Gecode { namespace Set { namespace Distinct {
 
     public:
         /// Copy propagator during cloning
-        GECODE_SET_EXPORT virtual Actor* copy(Space& home);
+        GECODE_SET_EXPORT Actor* copy(Space& home) override;
         /// Perform propagation
-        GECODE_SET_EXPORT virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        GECODE_SET_EXPORT ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post propagator for \f$\forall 0\leq i\leq |x| : |x_i|=c\f$ and \f$\forall 0\leq i<j\leq |x| : |x_i\cap x_j|\leq 1\f$
         static ExecStatus post(Home home, ViewArray<SetView> x, unsigned int c);
     };

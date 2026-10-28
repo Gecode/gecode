@@ -178,7 +178,7 @@ namespace Gecode {
             bool operator()(BrancherGroup bg) const;
             /// Destructor
             GECODE_KERNEL_EXPORT
-            virtual ~TFO(void);
+            ~TFO(void) override;
         };
 
     public:

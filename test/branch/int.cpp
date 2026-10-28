@@ -50,11 +50,11 @@ namespace Test { namespace Branch {
             Gecode::IntVarArgs xa(x);
             Gecode::ViewArray<Gecode::Int::IntView> xv(*this, xa);
             Gecode::ViewSel<Gecode::Int::IntView>* vs[2] = {
-                Gecode::Int::Branch::viewsel(*this, Gecode::INT_VAR_RND(r)),
-                Gecode::Int::Branch::viewsel(*this, Gecode::INT_VAR_SIZE_MIN())};
+                Gecode::Int::Branch::view_selection(*this, Gecode::INT_VAR_RND(r)),
+                Gecode::Int::Branch::view_selection(*this, Gecode::INT_VAR_SIZE_MIN())};
             // Post directly so the random selector remains first in the tie chain.
-            Gecode::postviewvalbrancher<Gecode::Int::IntView, 2, int, 2>(
-                *this, xv, vs, Gecode::Int::Branch::valselcommit(*this, Gecode::INT_VAL_MIN()),
+            Gecode::post_view_value_brancher<Gecode::Int::IntView, 2, int, 2>(
+                *this, xv, vs, Gecode::Int::Branch::value_selection_commit(*this, Gecode::INT_VAL_MIN()),
                 [](const Gecode::Space&, Gecode::IntVar, int i) { return (i == 0) || (i == 2); }, nullptr);
         }
 
@@ -64,8 +64,8 @@ namespace Test { namespace Branch {
         }
 
         /// Copy space during cloning
-        virtual Gecode::Space*
-        copy(void) {
+        Gecode::Space*
+        copy(void) override {
             return new FilteredRndTiesSpace(*this);
         }
     };
@@ -77,8 +77,8 @@ namespace Test { namespace Branch {
         FilteredRndTies(void) : Base("Int::Branch::FilteredRndTies") {}
 
         /// Run test
-        virtual bool
-        run(void) {
+        bool
+        run(void) override {
             bool selected[2] = {false, false};
 
             for (unsigned int seed = 1; seed <= 16; seed++) {
@@ -135,7 +135,7 @@ namespace Test { namespace Branch {
             } else {
                 post();
             }
-            Gecode::cbsbranch(*this, x);
+            Gecode::cbs_branch(*this, x);
         }
         void
         post(void) {
@@ -146,8 +146,8 @@ namespace Test { namespace Branch {
         CBSSpace(CBSSpace& s) : Space(s) {
             x.update(*this, s.x);
         }
-        virtual Space*
-        copy(void) {
+        Space*
+        copy(void) override {
             return new CBSSpace(*this);
         }
     };
@@ -156,8 +156,8 @@ namespace Test { namespace Branch {
     class CBS : public Base {
     public:
         CBS(void) : Base("Int::Branch::CBS", TestTags::check()) {}
-        virtual bool
-        run(void) {
+        bool
+        run(void) override {
             using namespace Gecode;
             for (bool local : {false, true}) {
                 CBSSpace root(local);
@@ -188,8 +188,8 @@ namespace Test { namespace Branch {
         /// Create and register test
         Int(const std::string& s, const Gecode::IntSet& d, int n) : IntTest(s, n, d) {}
         /// Post propagators on variables \a x
-        virtual void
-        post(Gecode::Space& home, Gecode::IntVarArray& x) {
+        void
+        post(Gecode::Space& home, Gecode::IntVarArray& x) override {
             Gecode::distinct(home, x);
         }
     };

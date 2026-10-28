@@ -56,8 +56,8 @@ namespace Test { namespace Set {
             /// Create and register test
             ElementUnion(const char* t) : SetTest(TestTags::sweep(), t, 5, ds_12, false) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const SetAssignment& x) const {
+            bool
+            solution(const SetAssignment& x) const override {
                 int selected = 0;
                 for (CountableSetValues sel2(x.lub, x[3]); sel2(); ++sel2, selected++) {
                 }
@@ -86,8 +86,8 @@ namespace Test { namespace Set {
                 return ret;
             }
             /// Post constraint on \a x
-            virtual void
-            post(Space& home, SetVarArray& x, IntVarArray&) {
+            void
+            post(Space& home, SetVarArray& x, IntVarArray&) override {
                 SetVarArgs xs(x.size() - 2);
                 for (int i = x.size() - 2; i--;)
                     xs[i] = x[i];
@@ -108,8 +108,8 @@ namespace Test { namespace Set {
             ElementUnionConst(const char* t)
                 : SetTest(TestTags::sweep(), t, 2, ds_13, false), i0(-3, -3), i1(-1, 1), i2(0, 2) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const SetAssignment& x) const {
+            bool
+            solution(const SetAssignment& x) const override {
                 int selected = 0;
                 for (CountableSetValues sel2(x.lub, x[0]); sel2(); ++sel2, selected++) {
                 }
@@ -139,8 +139,8 @@ namespace Test { namespace Set {
                 return ret;
             }
             /// Post constraint on \a x
-            virtual void
-            post(Space& home, SetVarArray& x, IntVarArray&) {
+            void
+            post(Space& home, SetVarArray& x, IntVarArray&) override {
                 IntSetArgs xs(3);
                 xs[0] = i0;
                 xs[1] = i1;
@@ -156,8 +156,8 @@ namespace Test { namespace Set {
             /// Create and register test
             ElementInter(const char* t) : SetTest(TestTags::sweep(), t, 5, ds_12, false) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const SetAssignment& x) const {
+            bool
+            solution(const SetAssignment& x) const override {
                 int selected = 0;
                 for (CountableSetValues sel2(x.lub, x[3]); sel2(); ++sel2, selected++) {
                 }
@@ -185,8 +185,8 @@ namespace Test { namespace Set {
                 return ret;
             }
             /// Post constraint on \a x
-            virtual void
-            post(Space& home, SetVarArray& x, IntVarArray&) {
+            void
+            post(Space& home, SetVarArray& x, IntVarArray&) override {
                 SetVarArgs xs(x.size() - 2);
                 for (int i = x.size() - 2; i--;)
                     xs[i] = x[i];
@@ -201,8 +201,8 @@ namespace Test { namespace Set {
             /// Create and register test
             ElementInterIn(const char* t) : SetTest(TestTags::sweep(), t, 5, ds_12, false) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const SetAssignment& x) const {
+            bool
+            solution(const SetAssignment& x) const override {
                 int selected = 0;
                 for (CountableSetValues sel2(x.lub, x[3]); sel2(); ++sel2, selected++) {
                 }
@@ -230,8 +230,8 @@ namespace Test { namespace Set {
                 return ret;
             }
             /// Post constraint on \a x
-            virtual void
-            post(Space& home, SetVarArray& x, IntVarArray&) {
+            void
+            post(Space& home, SetVarArray& x, IntVarArray&) override {
                 SetVarArgs xs(x.size() - 2);
                 for (int i = x.size() - 2; i--;)
                     xs[i] = x[i];
@@ -246,8 +246,8 @@ namespace Test { namespace Set {
             /// Create and register test
             ElementDisjoint(const char* t) : SetTest(TestTags::standard(), t, 5, ds_12, false) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const SetAssignment& x) const {
+            bool
+            solution(const SetAssignment& x) const override {
                 int selected = 0;
                 for (CountableSetValues sel2(x.lub, x[3]); sel2(); ++sel2, selected++) {
                     if (sel2.val() < 0)
@@ -282,8 +282,8 @@ namespace Test { namespace Set {
                 return ret;
             }
             /// Post constraint on \a x
-            virtual void
-            post(Space& home, SetVarArray& x, IntVarArray&) {
+            void
+            post(Space& home, SetVarArray& x, IntVarArray&) override {
                 SetVarArgs xs(x.size() - 2);
                 for (int i = x.size() - 2; i--;)
                     xs[i] = x[i];
@@ -298,17 +298,17 @@ namespace Test { namespace Set {
             /// Create and register test
             ElementSet(const char* t) : SetTest(TestTags::sweep(), t, 4, ds_12, false, true) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const SetAssignment& x) const {
-                if (x.intval() < 0 || x.intval() > 2)
+            bool
+            solution(const SetAssignment& x) const override {
+                if (x.int_value() < 0 || x.int_value() > 2)
                     return false;
                 CountableSetRanges z(x.lub, x[3]);
-                CountableSetRanges y(x.lub, x[x.intval()]);
+                CountableSetRanges y(x.lub, x[x.int_value()]);
                 return Iter::Ranges::equal(y, z);
             }
             /// Post constraint on \a x
-            virtual void
-            post(Space& home, SetVarArray& x, IntVarArray& y) {
+            void
+            post(Space& home, SetVarArray& x, IntVarArray& y) override {
                 SetVarArgs xs(x.size() - 1);
                 for (int i = x.size() - 1; i--;)
                     xs[i] = x[i];
@@ -329,18 +329,18 @@ namespace Test { namespace Set {
             ElementSetConst(const char* t)
                 : SetTest(TestTags::sweep(), t, 1, ds_13, false, true), i0(-3, -3), i1(-1, 1), i2(0, 2) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const SetAssignment& x) const {
-                if (x.intval() < 0 || x.intval() > 2)
+            bool
+            solution(const SetAssignment& x) const override {
+                if (x.int_value() < 0 || x.int_value() > 2)
                     return false;
                 CountableSetRanges xr(x.lub, x[0]);
                 IntSet iss[] = {i0, i1, i2};
-                IntSetRanges isr(iss[x.intval()]);
+                IntSetRanges isr(iss[x.int_value()]);
                 return Iter::Ranges::equal(xr, isr);
             }
             /// Post constraint on \a x
-            virtual void
-            post(Space& home, SetVarArray& x, IntVarArray& y) {
+            void
+            post(Space& home, SetVarArray& x, IntVarArray& y) override {
                 IntSetArgs xs(3);
                 xs[0] = i0;
                 xs[1] = i1;
@@ -366,8 +366,8 @@ namespace Test { namespace Set {
                 tm[3] = IntSet(3, 3);
             }
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const SetAssignment& x) const {
+            bool
+            solution(const SetAssignment& x) const override {
                 // Get integer assignment
                 const Int::Assignment& y = x.ints();
                 // x-coordinate: y[0], y-coordinate: y[1], result: x[0]
@@ -380,8 +380,8 @@ namespace Test { namespace Set {
                 return Iter::Ranges::equal(a, b);
             }
             /// Post constraint on \a x and \a y
-            virtual void
-            post(Gecode::Space& home, Gecode::SetVarArray& x, Gecode::IntVarArray& y) {
+            void
+            post(Gecode::Space& home, Gecode::SetVarArray& x, Gecode::IntVarArray& y) override {
                 // x-coordinate: x[0], y-coordinate: x[1], result: x[2]
                 using namespace Gecode;
                 Matrix<IntSetArgs> m(tm, 2, 2);

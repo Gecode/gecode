@@ -73,7 +73,7 @@ namespace Test { namespace Float {
 
     inline ExtAssignment::ExtAssignment(int n, const Gecode::FloatVal& d, Gecode::FloatNum s, const Test* pb,
                                         Gecode::Support::RandomGenerator& rand)
-        : Assignment(n, d), curPb(pb), dsv(new Gecode::FloatVal[static_cast<unsigned int>(n)]), step(s) {
+        : Assignment(n, d), cur_pb(pb), dsv(new Gecode::FloatVal[static_cast<unsigned int>(n)]), step(s) {
         using namespace Gecode;
         for (int i = n - 1; i--;)
             dsv[i] = FloatVal(d.min(), nextafter(d.min(), d.max()));
@@ -98,7 +98,7 @@ namespace Test { namespace Float {
     }
 
     forceinline Gecode::FloatNum
-    RandomAssignment::randval(Gecode::Support::RandomGenerator& rand) {
+    RandomAssignment::random_value(Gecode::Support::RandomGenerator& rand) {
         using namespace Gecode;
         using namespace Gecode::Float;
         Rounding r;
@@ -111,7 +111,7 @@ namespace Test { namespace Float {
                                               Gecode::Support::RandomGenerator& rand)
         : Assignment(n, d), vals(new Gecode::FloatVal[n]), a(a0) {
         for (int i = n; i--;)
-            vals[i] = randval(rand);
+            vals[i] = random_value(rand);
     }
 
     inline bool
@@ -150,9 +150,9 @@ namespace Test { namespace Float {
     }
     inline Test::Test(TestTags tags, const std::string& s, int a, const Gecode::FloatVal& d, Gecode::FloatNum st,
                       AssignmentType at, bool r)
-        : Base("Float::" + s, tags), arity(a), dom(d), step(st), assignmentType(at), reified(r),
-          rms((1 << Gecode::RM_EQV) | (1 << Gecode::RM_IMP) | (1 << Gecode::RM_PMI)), testsearch(true), testfix(true),
-          testsubsumed(true) {}
+        : Base("Float::" + s, tags), arity(a), dom(d), step(st), assignment_type(at), reified(r),
+          rms((1 << Gecode::RM_EQV) | (1 << Gecode::RM_IMP) | (1 << Gecode::RM_PMI)), test_search(true),
+          test_fixpoint(true), test_subsumption(true) {}
 
     inline Test::Test(const std::string& s, int a, const Gecode::FloatVal& d, Gecode::FloatNum st, AssignmentType at,
                       bool r)
@@ -160,9 +160,9 @@ namespace Test { namespace Float {
 
     inline Test::Test(TestTags tags, const std::string& s, int a, Gecode::FloatNum min, Gecode::FloatNum max,
                       Gecode::FloatNum st, AssignmentType at, bool r)
-        : Base("Float::" + s, tags), arity(a), dom(min, max), step(st), assignmentType(at), reified(r),
-          rms((1 << Gecode::RM_EQV) | (1 << Gecode::RM_IMP) | (1 << Gecode::RM_PMI)), testsearch(true), testfix(true),
-          testsubsumed(true) {}
+        : Base("Float::" + s, tags), arity(a), dom(min, max), step(st), assignment_type(at), reified(r),
+          rms((1 << Gecode::RM_EQV) | (1 << Gecode::RM_IMP) | (1 << Gecode::RM_PMI)), test_search(true),
+          test_fixpoint(true), test_subsumption(true) {}
 
     inline Test::Test(const std::string& s, int a, Gecode::FloatNum min, Gecode::FloatNum max, Gecode::FloatNum st,
                       AssignmentType at, bool r)

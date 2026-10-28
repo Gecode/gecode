@@ -54,27 +54,27 @@ namespace Gecode { namespace Set {
         friend class GLBndSet;
 
     private:
-        int _glbMin; ///< Minimum glb value just pruned
-        int _glbMax; ///< Largest glb value just pruned
-        int _lubMin; ///< Minimum lub value just pruned
-        int _lubMax; ///< Largest lub value just pruned
+        int _glb_min; ///< Minimum glb value just pruned
+        int _glb_max; ///< Largest glb value just pruned
+        int _lub_min; ///< Minimum lub value just pruned
+        int _lub_max; ///< Largest lub value just pruned
     public:
         /// Create set delta as providing no information (if \a any is true)
         SetDelta(void);
         /// Create set delta with \a min and \a max
-        SetDelta(int glbMin, int glbMax, int lubMin, int lubMax);
+        SetDelta(int glb_min, int glb_max, int lub_min, int lub_max);
         /// Return glb minimum
-        int glbMin(void) const;
+        int glb_min(void) const;
         /// Return glb maximum
-        int glbMax(void) const;
+        int glb_max(void) const;
         /// Return lub minimum
-        int lubMin(void) const;
+        int lub_min(void) const;
         /// Return lub maximum
-        int lubMax(void) const;
+        int lub_max(void) const;
         /// Test whether delta represents any domain change in glb
-        bool glbAny(void) const;
+        bool glb_any(void) const;
         /// Test whether delta represents any domain change in lub
-        bool lubAny(void) const;
+        bool lub_any(void) const;
     };
 
 }} // namespace Gecode::Set
@@ -135,7 +135,7 @@ namespace Gecode { namespace Set {
         /// Return greatest element
         int max(void) const;
         /// Return \a n -th smallest element
-        int minN(unsigned int n) const;
+        int min_n(unsigned int n) const;
         /// Return size
         unsigned int size(void) const;
         /// Return cardinality
@@ -177,7 +177,7 @@ namespace Gecode { namespace Set {
         //@}
 
         /// Check whether internal invariants hold
-        GECODE_SET_EXPORT bool isConsistent(void) const;
+        GECODE_SET_EXPORT bool is_consistent(void) const;
     };
 
     /**
@@ -230,7 +230,7 @@ namespace Gecode { namespace Set {
         bool include(Space& home, int i, int j, SetDelta& d);
         /// Include the set represented by \a i in this set
         template <class I>
-        bool includeI(Space& home, I& i);
+        bool include_i(Space& home, I& i);
         //@}
     private:
         GLBndSet(const GLBndSet&);
@@ -272,12 +272,12 @@ namespace Gecode { namespace Set {
         bool intersect(Space& home, int i, int j);
         /// Exclude all elements not in the set represented by \a i from this set
         template <class I>
-        bool intersectI(Space& home, I& i);
+        bool intersect_i(Space& home, I& i);
         /// Exclude all elements in the set represented by \a i from this set
         template <class I>
-        bool excludeI(Space& home, I& i);
+        bool exclude_i(Space& home, I& i);
         /// Exclude all elements from this set
-        void excludeAll(Space& home);
+        void exclude_all(Space& home);
         //@}
     private:
         LUBndSet(const LUBndSet&);
@@ -458,61 +458,63 @@ namespace Gecode { namespace Set {
          * \brief Initialize with given bounds and cardinality
          *
          * Creates a set variable \f$s\f$ with
-         * \f$\mathit{glb}(s)=\{\mathit{glbMin},\dots,\mathit{glbMax}\}\f$,
-         * \f$\mathit{lub}(s)=\{\mathit{lubMin},\dots,\mathit{lubMax}\}\f$, and
-         * \f$\mathit{cardMin}\leq |s|\leq\mathit{cardMax}\f$
+         * \f$\mathit{glb}(s)=\{\mathit{glb_min},\dots,\mathit{glb_max}\}\f$,
+         * \f$\mathit{lub}(s)=\{\mathit{lub_min},\dots,\mathit{lub_max}\}\f$, and
+         * \f$\mathit{card_min}\leq |s|\leq\mathit{card_max}\f$
          */
-        SetVarImp(Space& home, int glbMin, int glbMax, int lubMin, int lubMax, unsigned int cardMin = 0,
-                  unsigned int cardMax = Limits::card);
+        SetVarImp(Space& home, int glb_min, int glb_max, int lub_min, int lub_max, unsigned int card_min = 0,
+                  unsigned int card_max = Limits::card);
         /**
          * \brief Initialize with given bounds and cardinality
          *
          * Creates a set variable \f$s\f$ with
          * \f$\mathit{glb}(s)=\mathit{glbD}\f$,
-         * \f$\mathit{lub}(s)=\{\mathit{lubMin},\dots,\mathit{lubMax}\}\f$, and
-         * \f$\mathit{cardMin}\leq |s|\leq\mathit{cardMax}\f$
+         * \f$\mathit{lub}(s)=\{\mathit{lub_min},\dots,\mathit{lub_max}\}\f$, and
+         * \f$\mathit{card_min}\leq |s|\leq\mathit{card_max}\f$
          */
-        SetVarImp(Space& home, const IntSet& glbD, int lubMin, int lubMax, unsigned int cardMin, unsigned int cardMax);
+        SetVarImp(Space& home, const IntSet& glb_d, int lub_min, int lub_max, unsigned int card_min,
+                  unsigned int card_max);
         /**
          * \brief Initialize with given bounds and cardinality
          *
          * Creates a set variable \f$s\f$ with
-         * \f$\mathit{glb}(s)=\{\mathit{glbMin},\dots,\mathit{glbMax}\}\f$,
+         * \f$\mathit{glb}(s)=\{\mathit{glb_min},\dots,\mathit{glb_max}\}\f$,
          * \f$\mathit{lub}(s)=\mathit{lubD}\f$, and
-         * \f$\mathit{cardMin}\leq |s|\leq\mathit{cardMax}\f$
+         * \f$\mathit{card_min}\leq |s|\leq\mathit{card_max}\f$
          */
-        SetVarImp(Space& home, int glbMin, int glbMax, const IntSet& lubD, unsigned int cardMin, unsigned int cardMax);
+        SetVarImp(Space& home, int glb_min, int glb_max, const IntSet& lub_d, unsigned int card_min,
+                  unsigned int card_max);
         /**
          * \brief Initialize with given bounds and cardinality
          *
          * Creates a set variable \f$s\f$ with
          * \f$\mathit{glb}(s)=\mathit{glbD}\f$,
          * \f$\mathit{lub}(s)=\mathit{lubD}\f$, and
-         * \f$\mathit{cardMin}\leq |s|\leq\mathit{cardMax}\f$
+         * \f$\mathit{card_min}\leq |s|\leq\mathit{card_max}\f$
          */
-        SetVarImp(Space& home, const IntSet& glbD, const IntSet& lubD, unsigned int cardMin, unsigned int cardMax);
+        SetVarImp(Space& home, const IntSet& glb_d, const IntSet& lub_d, unsigned int card_min, unsigned int card_max);
         //@}
 
         /// \name Value access
         //@{
         /// Return current cardinality minimum
-        unsigned int cardMin(void) const;
+        unsigned int card_min(void) const;
         /// Return current cardinality maximum
-        unsigned int cardMax(void) const;
+        unsigned int card_max(void) const;
         /// Return minimum of the least upper bound
-        int lubMin(void) const;
+        int lub_min(void) const;
         /// Return maximum of the least upper bound
-        int lubMax(void) const;
+        int lub_max(void) const;
         /// Return \a n -th smallest element in the least upper bound
-        int lubMinN(unsigned int n) const;
+        int lub_min_n(unsigned int n) const;
         /// Return minimum of the greatest lower bound
-        int glbMin(void) const;
+        int glb_min(void) const;
         /// Return maximum of the greatest lower bound
-        int glbMax(void) const;
+        int glb_max(void) const;
         /// Return the size of the greatest lower bound
-        unsigned int glbSize(void) const;
+        unsigned int glb_size(void) const;
         /// Return the size of the least upper bound
-        unsigned int lubSize(void) const;
+        unsigned int lub_size(void) const;
         //@}
 
         /// \name Domain tests
@@ -520,9 +522,9 @@ namespace Gecode { namespace Set {
         /// Test whether variable is assigned
         bool assigned(void) const;
         /// Test whether \a n is contained in greatest lower bound
-        bool knownIn(int n) const;
+        bool known_in(int n) const;
         /// Test whether \a n is not contained in least upper bound
-        bool knownOut(int) const;
+        bool known_out(int) const;
         //@}
 
     private:
@@ -530,24 +532,24 @@ namespace Gecode { namespace Set {
         //@{
         /// Include set described by \a i in the greatest lower bound
         template <class I>
-        ModEvent includeI_full(Space& home, int mi, int ma, I& i);
+        ModEvent include_i_full(Space& home, int mi, int ma, I& i);
         /// Exclude set described by \a i from the least upper bound
         template <class I>
-        ModEvent excludeI_full(Space& home, int mi, int ma, I& i);
+        ModEvent exclude_i_full(Space& home, int mi, int ma, I& i);
         /// Exclude everything but set described by \a i from the least upper bound
         template <class I>
-        ModEvent intersectI_full(Space& home, int mi, int ma, I& i);
+        ModEvent intersect_i_full(Space& home, int mi, int ma, I& i);
         //@}
 
-        GECODE_SET_EXPORT ModEvent processLubChange(Space& home, SetDelta& d);
-        GECODE_SET_EXPORT ModEvent processGlbChange(Space& home, SetDelta& d);
+        GECODE_SET_EXPORT ModEvent process_lub_change(Space& home, SetDelta& d);
+        GECODE_SET_EXPORT ModEvent process_glb_change(Space& home, SetDelta& d);
 
         /// \name Cardinality update implementation
         //@{
         /// Restrict cardinality to be at least n
-        GECODE_SET_EXPORT ModEvent cardMin_full(Space& home);
+        GECODE_SET_EXPORT ModEvent card_min_full(Space& home);
         /// Restrict cardinality to be at most n
-        GECODE_SET_EXPORT ModEvent cardMax_full(Space& home);
+        GECODE_SET_EXPORT ModEvent card_max_full(Space& home);
         //@}
 
     public:
@@ -566,22 +568,22 @@ namespace Gecode { namespace Set {
         /// Exclude everything but the range \f$\{i,\dots,j\}\f$ from the least upper bound
         ModEvent intersect(Space& home, int i, int j);
         /// Restrict cardinality to be at least n
-        ModEvent cardMin(Space& home, unsigned int n);
+        ModEvent card_min(Space& home, unsigned int n);
         /// Restrict cardinality to be at most n
-        ModEvent cardMax(Space& home, unsigned int n);
+        ModEvent card_max(Space& home, unsigned int n);
         //@}
 
         /// \name Domain update by range iterator
         //@{
         /// Include set described by \a i in the greatest lower bound
         template <class I>
-        ModEvent includeI(Space& home, I& i);
+        ModEvent include_i(Space& home, I& i);
         /// Exclude set described by \a i from the least upper bound
         template <class I>
-        ModEvent excludeI(Space& home, I& i);
+        ModEvent exclude_i(Space& home, I& i);
         /// Exclude everything but set described by \a i from the least upper bound
         template <class I>
-        ModEvent intersectI(Space& home, I& i);
+        ModEvent intersect_i(Space& home, I& i);
         //@}
 
     public:
@@ -622,17 +624,17 @@ namespace Gecode { namespace Set {
         /// \name Delta information for advisors
         //@{
         /// Return minimum value just pruned from glb
-        static int glbMin(const Delta& d);
+        static int glb_min(const Delta& d);
         /// Return maximum value just pruned from glb
-        static int glbMax(const Delta& d);
+        static int glb_max(const Delta& d);
         /// Test whether arbitrary values got pruned from glb
-        static bool glbAny(const Delta& d);
+        static bool glb_any(const Delta& d);
         /// Return minimum value just pruned from lub
-        static int lubMin(const Delta& d);
+        static int lub_min(const Delta& d);
         /// Return maximum value just pruned from lub
-        static int lubMax(const Delta& d);
+        static int lub_max(const Delta& d);
         /// Test whether arbitrary values got pruned from lub
-        static bool lubAny(const Delta& d);
+        static bool lub_any(const Delta& d);
         //@}
     };
 

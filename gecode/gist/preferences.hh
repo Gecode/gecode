@@ -48,29 +48,29 @@ namespace Gecode { namespace Gist {
         Q_OBJECT
 
     protected:
-        QCheckBox* hideCheck;
-        QCheckBox* zoomCheck;
-        QCheckBox* smoothCheck;
-        QCheckBox* copiesCheck;
-        QSpinBox* refreshBox;
-        QCheckBox* slowBox;
-        QCheckBox* moveDuringSearchBox;
-        QSpinBox* cdBox;
-        QSpinBox* adBox;
+        QCheckBox* hide_check;
+        QCheckBox* zoom_check;
+        QCheckBox* smooth_check;
+        QCheckBox* copies_check;
+        QSpinBox* refresh_box;
+        QCheckBox* slow_box;
+        QCheckBox* move_during_search_box;
+        QSpinBox* cd_box;
+        QSpinBox* ad_box;
     protected Q_SLOTS:
         /// Write settings
-        void writeBack(void);
+        void write_back(void);
         /// Reset to defaults
         void defaults(void);
         /// Toggle slow down setting
-        void toggleSlow(int state);
+        void toggle_slow(int state);
 
     public:
         /// Constructor
-        PreferencesDialog(const Options& opt, QWidget* parent = 0);
+        PreferencesDialog(const Options& opt, QWidget* parent = nullptr);
 
         /// Whether to automatically hide failed subtrees during search
-        bool hideFailed;
+        bool hide_failed;
         /// Whether to automatically zoom during search
         bool zoom;
         /// Whether to show where copies are in the tree
@@ -78,11 +78,11 @@ namespace Gecode { namespace Gist {
         /// How often to refresh the display during search
         int refresh;
         /// Milliseconds to wait after each refresh (to slow down search)
-        int refreshPause;
+        int refresh_pause;
         /// Whether to use smooth scrolling and zooming
-        bool smoothScrollAndZoom;
+        bool smooth_scroll_and_zoom;
         /// Whether to move cursor during search
-        bool moveDuringSearch;
+        bool move_during_search;
 
         /// The copying distance
         int c_d;

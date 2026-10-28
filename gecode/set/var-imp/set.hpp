@@ -51,35 +51,35 @@ namespace Gecode { namespace Set {
     }
 
     forceinline
-    SetVarImp::SetVarImp(Space& home, int lbMin, int lbMax, int ubMin, int ubMax, unsigned int cardMin,
-                         unsigned int cardMax)
-        : SetVarImpBase(home), lub(home, ubMin, ubMax), glb(home, lbMin, lbMax) {
-        glb.card(std::max(cardMin, glb.size()));
-        lub.card(std::min(cardMax, lub.size()));
+    SetVarImp::SetVarImp(Space& home, int lb_min, int lb_max, int ub_min, int ub_max, unsigned int card_min,
+                         unsigned int card_max)
+        : SetVarImpBase(home), lub(home, ub_min, ub_max), glb(home, lb_min, lb_max) {
+        glb.card(std::max(card_min, glb.size()));
+        lub.card(std::min(card_max, lub.size()));
     }
 
     forceinline
-    SetVarImp::SetVarImp(Space& home, const IntSet& theGlb, int ubMin, int ubMax, unsigned int cardMin,
-                         unsigned int cardMax)
-        : SetVarImpBase(home), lub(home, ubMin, ubMax), glb(home, theGlb) {
-        glb.card(std::max(cardMin, glb.size()));
-        lub.card(std::min(cardMax, lub.size()));
+    SetVarImp::SetVarImp(Space& home, const IntSet& the_glb, int ub_min, int ub_max, unsigned int card_min,
+                         unsigned int card_max)
+        : SetVarImpBase(home), lub(home, ub_min, ub_max), glb(home, the_glb) {
+        glb.card(std::max(card_min, glb.size()));
+        lub.card(std::min(card_max, lub.size()));
     }
 
     forceinline
-    SetVarImp::SetVarImp(Space& home, int lbMin, int lbMax, const IntSet& theLub, unsigned int cardMin,
-                         unsigned int cardMax)
-        : SetVarImpBase(home), lub(home, theLub), glb(home, lbMin, lbMax) {
-        glb.card(std::max(cardMin, glb.size()));
-        lub.card(std::min(cardMax, lub.size()));
+    SetVarImp::SetVarImp(Space& home, int lb_min, int lb_max, const IntSet& the_lub, unsigned int card_min,
+                         unsigned int card_max)
+        : SetVarImpBase(home), lub(home, the_lub), glb(home, lb_min, lb_max) {
+        glb.card(std::max(card_min, glb.size()));
+        lub.card(std::min(card_max, lub.size()));
     }
 
     forceinline
-    SetVarImp::SetVarImp(Space& home, const IntSet& theGlb, const IntSet& theLub, unsigned int cardMin,
-                         unsigned int cardMax)
-        : SetVarImpBase(home), lub(home, theLub), glb(home, theGlb) {
-        glb.card(std::max(cardMin, glb.size()));
-        lub.card(std::min(cardMax, lub.size()));
+    SetVarImp::SetVarImp(Space& home, const IntSet& the_glb, const IntSet& the_lub, unsigned int card_min,
+                         unsigned int card_max)
+        : SetVarImpBase(home), lub(home, the_lub), glb(home, the_glb) {
+        glb.card(std::max(card_min, glb.size()));
+        lub.card(std::min(card_max, lub.size()));
     }
 
     forceinline bool
@@ -88,57 +88,57 @@ namespace Gecode { namespace Set {
     }
 
     forceinline unsigned int
-    SetVarImp::cardMin(void) const {
+    SetVarImp::card_min(void) const {
         return glb.card();
     }
 
     forceinline unsigned int
-    SetVarImp::cardMax(void) const {
+    SetVarImp::card_max(void) const {
         return lub.card();
     }
 
     forceinline bool
-    SetVarImp::knownIn(int i) const {
+    SetVarImp::known_in(int i) const {
         return (glb.in(i));
     }
 
     forceinline bool
-    SetVarImp::knownOut(int i) const {
+    SetVarImp::known_out(int i) const {
         return !(lub.in(i));
     }
 
     forceinline int
-    SetVarImp::lubMin(void) const {
+    SetVarImp::lub_min(void) const {
         return lub.min();
     }
 
     forceinline int
-    SetVarImp::lubMax(void) const {
+    SetVarImp::lub_max(void) const {
         return lub.max();
     }
 
     forceinline int
-    SetVarImp::lubMinN(unsigned int n) const {
-        return lub.minN(n);
+    SetVarImp::lub_min_n(unsigned int n) const {
+        return lub.min_n(n);
     }
 
     forceinline int
-    SetVarImp::glbMin(void) const {
+    SetVarImp::glb_min(void) const {
         return glb.min();
     }
 
     forceinline int
-    SetVarImp::glbMax(void) const {
+    SetVarImp::glb_max(void) const {
         return glb.max();
     }
 
     forceinline unsigned int
-    SetVarImp::glbSize() const {
+    SetVarImp::glb_size() const {
         return glb.size();
     }
 
     forceinline unsigned int
-    SetVarImp::lubSize() const {
+    SetVarImp::lub_size() const {
         return lub.size();
     }
 
@@ -147,48 +147,48 @@ namespace Gecode { namespace Set {
      *
      */
     forceinline int
-    SetVarImp::glbMin(const Delta& d) {
-        return static_cast<const SetDelta&>(d).glbMin();
+    SetVarImp::glb_min(const Delta& d) {
+        return static_cast<const SetDelta&>(d).glb_min();
     }
     forceinline int
-    SetVarImp::glbMax(const Delta& d) {
-        return static_cast<const SetDelta&>(d).glbMax();
+    SetVarImp::glb_max(const Delta& d) {
+        return static_cast<const SetDelta&>(d).glb_max();
     }
     forceinline bool
-    SetVarImp::glbAny(const Delta& d) {
-        return static_cast<const SetDelta&>(d).glbAny();
+    SetVarImp::glb_any(const Delta& d) {
+        return static_cast<const SetDelta&>(d).glb_any();
     }
     forceinline int
-    SetVarImp::lubMin(const Delta& d) {
-        return static_cast<const SetDelta&>(d).lubMin();
+    SetVarImp::lub_min(const Delta& d) {
+        return static_cast<const SetDelta&>(d).lub_min();
     }
     forceinline int
-    SetVarImp::lubMax(const Delta& d) {
-        return static_cast<const SetDelta&>(d).lubMax();
+    SetVarImp::lub_max(const Delta& d) {
+        return static_cast<const SetDelta&>(d).lub_max();
     }
     forceinline bool
-    SetVarImp::lubAny(const Delta& d) {
-        return static_cast<const SetDelta&>(d).lubAny();
+    SetVarImp::lub_any(const Delta& d) {
+        return static_cast<const SetDelta&>(d).lub_any();
     }
 
     forceinline ModEvent
-    SetVarImp::cardMin(Space& home, unsigned int newMin) {
-        if (cardMin() >= newMin)
+    SetVarImp::card_min(Space& home, unsigned int new_min) {
+        if (card_min() >= new_min)
             return ME_SET_NONE;
-        if (newMin > cardMax())
+        if (new_min > card_max())
             return fail(home);
-        glb.card(newMin);
-        return cardMin_full(home);
+        glb.card(new_min);
+        return card_min_full(home);
     }
 
     forceinline ModEvent
-    SetVarImp::cardMax(Space& home, unsigned int newMax) {
-        if (cardMax() <= newMax)
+    SetVarImp::card_max(Space& home, unsigned int new_max) {
+        if (card_max() <= new_max)
             return ME_SET_NONE;
-        if (cardMin() > newMax)
+        if (card_min() > new_max)
             return fail(home);
-        lub.card(newMax);
-        return cardMax_full(home);
+        lub.card(new_max);
+        return card_max_full(home);
     }
 
     forceinline ModEvent
@@ -200,18 +200,18 @@ namespace Gecode { namespace Set {
             return fail(home);
         if (assigned())
             return ME_SET_NONE;
-        int oldMin = lub.min();
-        int oldMax = lub.max();
+        int old_min = lub.min();
+        int old_max = lub.max();
         if (lub.intersect(home, i, j)) {
             SetDelta d;
-            if (i == oldMin) {
-                d._lubMin = lub.max() + 1;
-                d._lubMax = oldMax;
-            } else if (j == oldMax) {
-                d._lubMin = oldMin;
-                d._lubMax = lub.min() - 1;
+            if (i == old_min) {
+                d._lub_min = lub.max() + 1;
+                d._lub_max = old_max;
+            } else if (j == old_max) {
+                d._lub_min = old_min;
+                d._lub_max = lub.min() - 1;
             }
-            return processLubChange(home, d);
+            return process_lub_change(home, d);
         }
         return ME_SET_NONE;
     }
@@ -223,7 +223,7 @@ namespace Gecode { namespace Set {
 
     template <class I>
     inline ModEvent
-    SetVarImp::intersectI(Space& home, I& iterator) {
+    SetVarImp::intersect_i(Space& home, I& iterator) {
         if (assigned()) {
             BndSetRanges lbi(glb);
             Iter::Ranges::Diff<BndSetRanges, I> probe(lbi, iterator);
@@ -232,27 +232,27 @@ namespace Gecode { namespace Set {
             return ME_SET_NONE;
         }
         if (!iterator()) {
-            if (cardMin() > 0)
+            if (card_min() > 0)
                 return fail(home);
             lub.card(0);
             SetDelta d(1, 0, lub.min(), lub.max());
-            lub.excludeAll(home);
+            lub.exclude_all(home);
             return notify(home, ME_SET_VAL, d);
         }
         int mi = iterator.min();
         int ma = iterator.max();
         ++iterator;
         if (iterator())
-            return intersectI_full(home, mi, ma, iterator);
+            return intersect_i_full(home, mi, ma, iterator);
         else
             return intersect(home, mi, ma);
     }
 
     template <class I>
     ModEvent
-    SetVarImp::intersectI_full(Space& home, int mi, int ma, I& iterator) {
+    SetVarImp::intersect_i_full(Space& home, int mi, int ma, I& iterator) {
         Iter::Ranges::SingletonAppend<I> si(mi, ma, iterator);
-        if (lub.intersectI(home, si)) {
+        if (lub.intersect_i(home, si)) {
             BndSetRanges ub(lub);
             BndSetRanges lb(glb);
             if (!Iter::Ranges::subset(lb, ub)) {
@@ -262,9 +262,9 @@ namespace Gecode { namespace Set {
                 return fail(home);
             }
             ModEvent me = ME_SET_LUB;
-            if (cardMax() > lub.size()) {
+            if (card_max() > lub.size()) {
                 lub.card(lub.size());
-                if (cardMin() > cardMax()) {
+                if (card_min() > card_max()) {
                     glb.become(home, lub);
                     glb.card(glb.size());
                     lub.card(glb.size());
@@ -272,7 +272,7 @@ namespace Gecode { namespace Set {
                 }
                 me = ME_SET_CLUB;
             }
-            if (cardMax() == lub.size() && cardMin() == cardMax()) {
+            if (card_max() == lub.size() && card_min() == card_max()) {
                 glb.become(home, lub);
                 me = ME_SET_VAL;
             }
@@ -293,7 +293,7 @@ namespace Gecode { namespace Set {
         }
         SetDelta d;
         if (glb.include(home, i, j, d))
-            return processGlbChange(home, d);
+            return process_glb_change(home, d);
         return ME_SET_NONE;
     }
 
@@ -304,7 +304,7 @@ namespace Gecode { namespace Set {
 
     template <class I>
     forceinline ModEvent
-    SetVarImp::includeI(Space& home, I& iterator) {
+    SetVarImp::include_i(Space& home, I& iterator) {
         if (!iterator()) {
             return ME_SET_NONE;
         }
@@ -317,16 +317,16 @@ namespace Gecode { namespace Set {
         int ma = iterator.max();
         ++iterator;
         if (iterator())
-            return includeI_full(home, mi, ma, iterator);
+            return include_i_full(home, mi, ma, iterator);
         else
             return include(home, mi, ma);
     }
 
     template <class I>
     ModEvent
-    SetVarImp::includeI_full(Space& home, int mi, int ma, I& iterator) {
+    SetVarImp::include_i_full(Space& home, int mi, int ma, I& iterator) {
         Iter::Ranges::SingletonAppend<I> si(mi, ma, iterator);
-        if (glb.includeI(home, si)) {
+        if (glb.include_i(home, si)) {
             BndSetRanges ub(lub);
             BndSetRanges lb(glb);
             if (!Iter::Ranges::subset(lb, ub)) {
@@ -336,9 +336,9 @@ namespace Gecode { namespace Set {
                 return fail(home);
             }
             ModEvent me = ME_SET_GLB;
-            if (cardMin() < glb.size()) {
+            if (card_min() < glb.size()) {
                 glb.card(glb.size());
-                if (cardMin() > cardMax()) {
+                if (card_min() > card_max()) {
                     glb.become(home, lub);
                     glb.card(glb.size());
                     lub.card(glb.size());
@@ -346,7 +346,7 @@ namespace Gecode { namespace Set {
                 }
                 me = ME_SET_CGLB;
             }
-            if (cardMin() == glb.size() && cardMin() == cardMax()) {
+            if (card_min() == glb.size() && card_min() == card_max()) {
                 lub.become(home, glb);
                 me = ME_SET_VAL;
             }
@@ -367,7 +367,7 @@ namespace Gecode { namespace Set {
             return fail(home);
         SetDelta d;
         if (lub.exclude(home, i, j, d))
-            return processLubChange(home, d);
+            return process_lub_change(home, d);
         return ME_SET_NONE;
     }
 
@@ -378,7 +378,7 @@ namespace Gecode { namespace Set {
 
     template <class I>
     inline ModEvent
-    SetVarImp::excludeI(Space& home, I& iterator) {
+    SetVarImp::exclude_i(Space& home, I& iterator) {
         if (!iterator())
             return ME_SET_NONE;
         if (assigned()) {
@@ -390,16 +390,16 @@ namespace Gecode { namespace Set {
         int ma = iterator.max();
         ++iterator;
         if (iterator())
-            return excludeI_full(home, mi, ma, iterator);
+            return exclude_i_full(home, mi, ma, iterator);
         else
             return exclude(home, mi, ma);
     }
 
     template <class I>
     ModEvent
-    SetVarImp::excludeI_full(Space& home, int mi, int ma, I& iterator) {
+    SetVarImp::exclude_i_full(Space& home, int mi, int ma, I& iterator) {
         Iter::Ranges::SingletonAppend<I> si(mi, ma, iterator);
-        if (lub.excludeI(home, si)) {
+        if (lub.exclude_i(home, si)) {
             BndSetRanges ub(lub);
             BndSetRanges lb(glb);
             if (!Iter::Ranges::subset(lb, ub)) {
@@ -409,9 +409,9 @@ namespace Gecode { namespace Set {
                 return fail(home);
             }
             ModEvent me = ME_SET_LUB;
-            if (cardMax() > lub.size()) {
+            if (card_max() > lub.size()) {
                 lub.card(lub.size());
-                if (cardMin() > cardMax()) {
+                if (card_min() > card_max()) {
                     glb.become(home, lub);
                     glb.card(glb.size());
                     lub.card(glb.size());
@@ -419,7 +419,7 @@ namespace Gecode { namespace Set {
                 }
                 me = ME_SET_CLUB;
             }
-            if (cardMax() == lub.size() && cardMin() == cardMax()) {
+            if (card_max() == lub.size() && card_min() == card_max()) {
                 glb.become(home, lub);
                 me = ME_SET_VAL;
             }

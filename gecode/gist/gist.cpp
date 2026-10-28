@@ -86,8 +86,8 @@ namespace Gecode { namespace Gist {
     }
 
     std::ostream&
-    TextOutput::getStream(void) {
-        return t->getStream();
+    TextOutput::get_stream(void) {
+        return t->get_stream();
     }
 
     void
@@ -96,8 +96,8 @@ namespace Gecode { namespace Gist {
     }
 
     void
-    TextOutput::addHtml(const char* s) {
-        t->insertHtml(s);
+    TextOutput::add_html(const char* s) {
+        t->insert_html(s);
     }
 
     const Options Options::def;
@@ -128,7 +128,7 @@ namespace Gecode { namespace Gist {
     }
 
     void
-    stopBranch(Space& home) {
+    stop_branch(Space& home) {
         StopBrancher::post(home);
     }
 

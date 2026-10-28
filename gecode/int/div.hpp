@@ -35,7 +35,7 @@ namespace Gecode { namespace Int {
     template <class IntType>
     forceinline IntType
     ceil_div_pp(IntType x, IntType y) {
-        assert((x >= 0) && (y >= 0));
+        assert((x >= 0) && (y > 0));
         /*
          * This is smarter than it looks: for many cpus, % and / are
          * implemented by the same instruction and an optimizing compiler
@@ -46,7 +46,7 @@ namespace Gecode { namespace Int {
     template <class IntType>
     forceinline IntType
     floor_div_pp(IntType x, IntType y) {
-        assert((x >= 0) && (y >= 0));
+        assert((x >= 0) && (y > 0));
         return x / y;
     }
 
@@ -66,13 +66,13 @@ namespace Gecode { namespace Int {
     template <class IntType>
     forceinline IntType
     ceil_div_xp(IntType x, IntType y) {
-        assert(y >= 0);
+        assert(y > 0);
         return (x >= 0) ? ceil_div_pp(x, y) : -floor_div_pp(-x, y);
     }
     template <class IntType>
     forceinline IntType
     floor_div_xp(IntType x, IntType y) {
-        assert(y >= 0);
+        assert(y > 0);
         return (x >= 0) ? floor_div_pp(x, y) : -ceil_div_pp(-x, y);
     }
 

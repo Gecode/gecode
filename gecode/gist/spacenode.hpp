@@ -33,69 +33,69 @@
 namespace Gecode { namespace Gist {
 
     forceinline void
-    SpaceNode::setFlag(int flag, bool value) {
+    SpaceNode::set_flag(int flag, bool value) {
         if (value)
-            nstatus |= 1 << (flag - 1);
+            status_bits |= 1 << (flag - 1);
         else
-            nstatus &= ~(1 << (flag - 1));
+            status_bits &= ~(1 << (flag - 1));
     }
 
     forceinline bool
-    SpaceNode::getFlag(int flag) const {
-        return (nstatus & (1 << (flag - 1))) != 0;
+    SpaceNode::get_flag(int flag) const {
+        return (status_bits & (1 << (flag - 1))) != 0;
     }
 
     forceinline void
-    SpaceNode::setHasOpenChildren(bool b) {
-        setFlag(HASOPENCHILDREN, b);
+    SpaceNode::set_has_open_children(bool b) {
+        set_flag(HAS_OPEN_CHILDREN, b);
     }
 
     forceinline void
-    SpaceNode::setHasFailedChildren(bool b) {
-        setFlag(HASFAILEDCHILDREN, b);
+    SpaceNode::set_has_failed_children(bool b) {
+        set_flag(HAS_FAILED_CHILDREN, b);
     }
 
     forceinline void
-    SpaceNode::setHasSolvedChildren(bool b) {
-        setFlag(HASSOLVEDCHILDREN, b);
+    SpaceNode::set_has_solved_children(bool b) {
+        set_flag(HAS_SOLVED_CHILDREN, b);
     }
 
     forceinline void
-    SpaceNode::setStatus(NodeStatus s) {
-        nstatus &= ~(STATUSMASK);
-        nstatus |= s << 20;
+    SpaceNode::set_status(NodeStatus s) {
+        status_bits &= ~(status_mask);
+        status_bits |= s << 20;
     }
 
     forceinline NodeStatus
-    SpaceNode::getStatus(void) const {
-        return static_cast<NodeStatus>((nstatus & STATUSMASK) >> 20);
+    SpaceNode::get_status(void) const {
+        return static_cast<NodeStatus>((status_bits & status_mask) >> 20);
     }
 
     forceinline void
-    SpaceNode::setDistance(unsigned int d) {
-        if (d > MAXDISTANCE)
-            d = MAXDISTANCE;
-        nstatus &= ~(DISTANCEMASK);
-        nstatus |= d;
+    SpaceNode::set_distance(unsigned int d) {
+        if (d > max_distance)
+            d = max_distance;
+        status_bits &= ~(distance_mask);
+        status_bits |= d;
     }
 
     forceinline unsigned int
-    SpaceNode::getDistance(void) const {
-        return nstatus & DISTANCEMASK;
+    SpaceNode::get_distance(void) const {
+        return status_bits & distance_mask;
     }
 
     forceinline
     SpaceNode::SpaceNode(int p)
-        : Node(p), copy(nullptr), nstatus(0) {
+        : Node(p), copy(nullptr), status_bits(0) {
         choice = nullptr;
-        setStatus(UNDETERMINED);
-        setHasSolvedChildren(false);
-        setHasFailedChildren(false);
+        set_status(UNDETERMINED);
+        set_has_solved_children(false);
+        set_has_failed_children(false);
     }
 
     forceinline Space*
-    SpaceNode::getSpace(NodeAllocator& na, BestNode* curBest, int c_d, int a_d) {
-        acquireSpace(na, curBest, c_d, a_d);
+    SpaceNode::get_space(NodeAllocator& na, BestNode* cur_best, int c_d, int a_d) {
+        acquire_space(na, cur_best, c_d, a_d);
         Space* ret;
         if (Support::marked(copy)) {
             ret = static_cast<Space*>(Support::unmark(copy));
@@ -107,7 +107,7 @@ namespace Gecode { namespace Gist {
     }
 
     forceinline const Space*
-    SpaceNode::getWorkingSpace(void) const {
+    SpaceNode::get_working_space(void) const {
         assert(copy != nullptr);
         if (Support::marked(copy))
             return static_cast<Space*>(Support::unmark(copy));
@@ -116,7 +116,7 @@ namespace Gecode { namespace Gist {
 
     forceinline void
     SpaceNode::purge(const NodeAllocator& na) {
-        if (!isRoot() && (getStatus() != SOLVED || !na.bab())) {
+        if (!is_root() && (get_status() != SOLVED || !na.bab())) {
             // only delete copies from solutions if we are not in BAB
             if (Support::marked(copy))
                 delete static_cast<Space*>(Support::unmark(copy));
@@ -127,54 +127,54 @@ namespace Gecode { namespace Gist {
     }
 
     forceinline bool
-    SpaceNode::isCurrentBest(BestNode* curBest) {
-        return curBest != nullptr && curBest->s == this;
+    SpaceNode::is_current_best(BestNode* cur_best) {
+        return cur_best != nullptr && cur_best->s == this;
     }
 
     forceinline bool
-    SpaceNode::isOpen(void) {
-        return ((getStatus() == UNDETERMINED) || getFlag(HASOPENCHILDREN));
+    SpaceNode::is_open(void) {
+        return ((get_status() == UNDETERMINED) || get_flag(HAS_OPEN_CHILDREN));
     }
 
     forceinline bool
-    SpaceNode::hasFailedChildren(void) {
-        return getFlag(HASFAILEDCHILDREN);
+    SpaceNode::has_failed_children(void) {
+        return get_flag(HAS_FAILED_CHILDREN);
     }
 
     forceinline bool
-    SpaceNode::hasSolvedChildren(void) {
-        return getFlag(HASSOLVEDCHILDREN);
+    SpaceNode::has_solved_children(void) {
+        return get_flag(HAS_SOLVED_CHILDREN);
     }
 
     forceinline bool
-    SpaceNode::hasOpenChildren(void) {
-        return getFlag(HASOPENCHILDREN);
+    SpaceNode::has_open_children(void) {
+        return get_flag(HAS_OPEN_CHILDREN);
     }
 
     forceinline bool
-    SpaceNode::hasCopy(void) {
+    SpaceNode::has_copy(void) {
         return copy != nullptr;
     }
 
     forceinline bool
-    SpaceNode::hasWorkingSpace(void) {
+    SpaceNode::has_working_space(void) {
         return copy != nullptr && Support::marked(copy);
     }
 
     forceinline int
-    SpaceNode::getAlternative(const NodeAllocator& na) const {
-        SpaceNode* p = getParent(na);
+    SpaceNode::get_alternative(const NodeAllocator& na) const {
+        SpaceNode* p = get_parent(na);
         if (p == nullptr)
             return -1;
-        for (int i = static_cast<int>(p->getNumberOfChildren()); i--;)
-            if (p->getChild(na, i) == this)
+        for (int i = static_cast<int>(p->get_number_of_children()); i--;)
+            if (p->get_child(na, i) == this)
                 return i;
         GECODE_NEVER;
         return -1;
     }
 
     forceinline const Choice*
-    SpaceNode::getChoice(void) {
+    SpaceNode::get_choice(void) {
         return choice;
     }
 

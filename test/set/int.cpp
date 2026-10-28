@@ -63,23 +63,23 @@ namespace Test { namespace Set {
             /// Create and register test
             Card(const char* t) : SetTest(t, 1, ds_33, true, 1) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const SetAssignment& x) const {
+            bool
+            solution(const SetAssignment& x) const override {
                 unsigned int s = 0;
                 for (CountableSetRanges xr(x.lub, x[0]); xr(); ++xr)
                     s += xr.width();
-                if (x.intval() < 0)
+                if (x.int_value() < 0)
                     return false;
-                return s == (unsigned int)x.intval();
+                return s == (unsigned int)x.int_value();
             }
             /// Post constraint on \a x
-            virtual void
-            post(Space& home, SetVarArray& x, IntVarArray& y) {
+            void
+            post(Space& home, SetVarArray& x, IntVarArray& y) override {
                 Gecode::cardinality(home, x[0], y[0]);
             }
             /// Post reified constraint on \a x
-            virtual void
-            post(Space& home, SetVarArray& x, IntVarArray& y, Reify r) {
+            void
+            post(Space& home, SetVarArray& x, IntVarArray& y, Reify r) override {
                 Gecode::cardinality(home, x[0], y[0], r);
             }
         };
@@ -91,19 +91,19 @@ namespace Test { namespace Set {
             /// Create and register test
             Min(const char* t) : SetTest(t, 1, ds_33, true, 1) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const SetAssignment& x) const {
+            bool
+            solution(const SetAssignment& x) const override {
                 CountableSetRanges xr0(x.lub, x[0]);
-                return xr0() && xr0.min() == x.intval();
+                return xr0() && xr0.min() == x.int_value();
             }
             /// Post constraint on \a x
-            virtual void
-            post(Space& home, SetVarArray& x, IntVarArray& y) {
+            void
+            post(Space& home, SetVarArray& x, IntVarArray& y) override {
                 Gecode::min(home, x[0], y[0]);
             }
             /// Post reified constraint on \a x
-            virtual void
-            post(Space& home, SetVarArray& x, IntVarArray& y, Reify r) {
+            void
+            post(Space& home, SetVarArray& x, IntVarArray& y, Reify r) override {
                 Gecode::min(home, x[0], y[0], r);
             }
         };
@@ -115,15 +115,15 @@ namespace Test { namespace Set {
             /// Create and register test
             NotMin(const char* t) : SetTest(t, 1, ds_33, false, 1) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const SetAssignment& x) const {
+            bool
+            solution(const SetAssignment& x) const override {
                 CountableSetRanges xr0(x.lub, x[0]);
-                return !(xr0() && xr0.min() == x.intval());
+                return !(xr0() && xr0.min() == x.int_value());
             }
             /// Post constraint on \a x
-            virtual void
-            post(Space& home, SetVarArray& x, IntVarArray& y) {
-                Gecode::notMin(home, x[0], y[0]);
+            void
+            post(Space& home, SetVarArray& x, IntVarArray& y) override {
+                Gecode::not_min(home, x[0], y[0]);
             }
         };
         NotMin _notmin("Int::NotMin");
@@ -134,20 +134,20 @@ namespace Test { namespace Set {
             /// Create and register test
             Max(const char* t) : SetTest(t, 1, ds_33, true, 1) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const SetAssignment& x) const {
+            bool
+            solution(const SetAssignment& x) const override {
                 CountableSetRanges xr0(x.lub, x[0]);
                 IntSet x0(xr0);
-                return x0.ranges() > 0 && x0.max() == x.intval();
+                return x0.ranges() > 0 && x0.max() == x.int_value();
             }
             /// Post constraint on \a x
-            virtual void
-            post(Space& home, SetVarArray& x, IntVarArray& y) {
+            void
+            post(Space& home, SetVarArray& x, IntVarArray& y) override {
                 Gecode::max(home, x[0], y[0]);
             }
             /// Post reified constraint on \a x
-            virtual void
-            post(Space& home, SetVarArray& x, IntVarArray& y, Reify r) {
+            void
+            post(Space& home, SetVarArray& x, IntVarArray& y, Reify r) override {
                 Gecode::max(home, x[0], y[0], r);
             }
         };
@@ -159,16 +159,16 @@ namespace Test { namespace Set {
             /// Create and register test
             NotMax(const char* t) : SetTest(t, 1, ds_33, false, 1) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const SetAssignment& x) const {
+            bool
+            solution(const SetAssignment& x) const override {
                 CountableSetRanges xr0(x.lub, x[0]);
                 IntSet x0(xr0);
-                return !(x0.ranges() > 0 && x0.max() == x.intval());
+                return !(x0.ranges() > 0 && x0.max() == x.int_value());
             }
             /// Post constraint on \a x
-            virtual void
-            post(Space& home, SetVarArray& x, IntVarArray& y) {
-                Gecode::notMax(home, x[0], y[0]);
+            void
+            post(Space& home, SetVarArray& x, IntVarArray& y) override {
+                Gecode::not_max(home, x[0], y[0]);
             }
         };
         NotMax _notmax("Int::NotMax");
@@ -179,21 +179,21 @@ namespace Test { namespace Set {
             /// Create and register test
             Elem(const char* t) : SetTest(t, 1, ds_33, true, 1) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const SetAssignment& x) const {
+            bool
+            solution(const SetAssignment& x) const override {
                 for (CountableSetValues xr(x.lub, x[0]); xr(); ++xr)
-                    if (xr.val() == x.intval())
+                    if (xr.val() == x.int_value())
                         return true;
                 return false;
             }
             /// Post constraint on \a x
-            virtual void
-            post(Space& home, SetVarArray& x, IntVarArray& y) {
+            void
+            post(Space& home, SetVarArray& x, IntVarArray& y) override {
                 Gecode::rel(home, x[0], SRT_SUP, y[0]);
             }
             /// Post reified constraint on \a x for \a b
-            virtual void
-            post(Space& home, SetVarArray& x, IntVarArray& y, Reify r) {
+            void
+            post(Space& home, SetVarArray& x, IntVarArray& y, Reify r) override {
                 Gecode::rel(home, x[0], SRT_SUP, y[0], r);
             }
         };
@@ -205,16 +205,16 @@ namespace Test { namespace Set {
             /// Create and register test
             NoElem(const char* t) : SetTest(t, 1, ds_33, false, 1) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const SetAssignment& x) const {
+            bool
+            solution(const SetAssignment& x) const override {
                 for (CountableSetValues xr(x.lub, x[0]); xr(); ++xr)
-                    if (xr.val() == x.intval())
+                    if (xr.val() == x.int_value())
                         return false;
                 return true;
             }
             /// Post constraint on \a x
-            virtual void
-            post(Space& home, SetVarArray& x, IntVarArray& y) {
+            void
+            post(Space& home, SetVarArray& x, IntVarArray& y) override {
                 Gecode::rel(home, x[0], SRT_DISJ, y[0]);
             }
         };
@@ -233,10 +233,10 @@ namespace Test { namespace Set {
             Rel(Gecode::SetRelType srt0, bool s)
                 : SetTest("Int::Rel::" + str(srt0) + (s ? "::s" : ""), 1, ds_33, true, 1), srt(srt0), swapped(s) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const SetAssignment& x) const {
+            bool
+            solution(const SetAssignment& x) const override {
                 CountableSetRanges xr(x.lub, x[0]);
-                IntSet is(x.intval(), x.intval());
+                IntSet is(x.int_value(), x.int_value());
                 IntSetRanges dr(is);
                 Gecode::SetRelType rsrt = srt;
                 if (swapped) {
@@ -274,16 +274,16 @@ namespace Test { namespace Set {
                 return false;
             }
             /// Post constraint on \a x
-            virtual void
-            post(Space& home, SetVarArray& x, IntVarArray& y) {
+            void
+            post(Space& home, SetVarArray& x, IntVarArray& y) override {
                 if (!swapped)
                     Gecode::rel(home, x[0], srt, y[0]);
                 else
                     Gecode::rel(home, y[0], srt, x[0]);
             }
             /// Post reified constraint on \a x for \a r
-            virtual void
-            post(Space& home, SetVarArray& x, IntVarArray& y, Reify r) {
+            void
+            post(Space& home, SetVarArray& x, IntVarArray& y, Reify r) override {
                 if (!swapped)
                     Gecode::rel(home, x[0], srt, y[0], r);
                 else
@@ -316,46 +316,46 @@ namespace Test { namespace Set {
             IntRel(Gecode::IntRelType irt0, bool s)
                 : SetTest("Int::IntRel::" + Test::Int::Test::str(irt0) + (s ? "::s" : ""), 1, ds_33, true, 1),
                   irt(irt0), swapped(s) {
-                testsubsumed = false;
+                test_subsumption = false;
             }
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const SetAssignment& x) const {
+            bool
+            solution(const SetAssignment& x) const override {
                 CountableSetValues xr(x.lub, x[0]);
                 if (!xr())
                     return false;
                 for (; xr(); ++xr)
                     switch (irt) {
                     case Gecode::IRT_EQ:
-                        if (xr.val() != x.intval())
+                        if (xr.val() != x.int_value())
                             return false;
                         break;
                     case Gecode::IRT_NQ:
-                        if (xr.val() == x.intval())
+                        if (xr.val() == x.int_value())
                             return false;
                         break;
                     case Gecode::IRT_GR:
-                        if (!swapped && xr.val() <= x.intval())
+                        if (!swapped && xr.val() <= x.int_value())
                             return false;
-                        if (swapped && xr.val() >= x.intval())
+                        if (swapped && xr.val() >= x.int_value())
                             return false;
                         break;
                     case Gecode::IRT_GQ:
-                        if (!swapped && xr.val() < x.intval())
+                        if (!swapped && xr.val() < x.int_value())
                             return false;
-                        if (swapped && xr.val() > x.intval())
+                        if (swapped && xr.val() > x.int_value())
                             return false;
                         break;
                     case Gecode::IRT_LE:
-                        if (!swapped && xr.val() >= x.intval())
+                        if (!swapped && xr.val() >= x.int_value())
                             return false;
-                        if (swapped && xr.val() <= x.intval())
+                        if (swapped && xr.val() <= x.int_value())
                             return false;
                         break;
                     case Gecode::IRT_LQ:
-                        if (!swapped && xr.val() > x.intval())
+                        if (!swapped && xr.val() > x.int_value())
                             return false;
-                        if (swapped && xr.val() < x.intval())
+                        if (swapped && xr.val() < x.int_value())
                             return false;
                         break;
                     default:
@@ -365,16 +365,16 @@ namespace Test { namespace Set {
                 return true;
             }
             /// Post constraint on \a x
-            virtual void
-            post(Space& home, SetVarArray& x, IntVarArray& y) {
+            void
+            post(Space& home, SetVarArray& x, IntVarArray& y) override {
                 if (!swapped)
                     Gecode::rel(home, x[0], irt, y[0]);
                 else
                     Gecode::rel(home, y[0], irt, x[0]);
             }
             /// Post reified constraint on \a x for \a r
-            virtual void
-            post(Space& home, SetVarArray& x, IntVarArray& y, Reify r) {
+            void
+            post(Space& home, SetVarArray& x, IntVarArray& y, Reify r) override {
                 assert((x.size() == 1) && (y.size() == 1));
                 if ((r.mode() != Gecode::RM_EQV) || (_rand(2) != 0)) {
                     if (!swapped)
@@ -445,7 +445,7 @@ namespace Test { namespace Set {
 
         template <class I>
         int
-        weightI(const IntArgs& elements, const IntArgs& weights, I& iter) {
+        weight_i(const IntArgs& elements, const IntArgs& weights, I& iter) {
             int sum = 0;
             int i = 0;
             for (Iter::Ranges::ToValues<I> v(iter); v(); ++v) {
@@ -463,23 +463,23 @@ namespace Test { namespace Set {
         public:
             IntArgs elements;
             IntArgs weights;
-            int minWeight;
-            int maxWeight;
+            int min_weight;
+            int max_weight;
             /// Create and register test
             Weights(const char* t, IntArgs& el, IntArgs& w, int min = -10000, int max = 10000)
-                : SetTest(t, 1, ds_33, false, 1), elements(el), weights(w), minWeight(min), maxWeight(max) {}
+                : SetTest(t, 1, ds_33, false, 1), elements(el), weights(w), min_weight(min), max_weight(max) {}
             /// %Test whether \a x is solution
-            virtual bool
-            solution(const SetAssignment& x) const {
+            bool
+            solution(const SetAssignment& x) const override {
                 CountableSetRanges x0(x.lub, x[0]);
-                return x.intval() == weightI(elements, weights, x0) && x.intval() >= minWeight &&
-                       x.intval() <= maxWeight;
+                return x.int_value() == weight_i(elements, weights, x0) && x.int_value() >= min_weight &&
+                       x.int_value() <= max_weight;
             }
             /// Post constraint on \a x
-            virtual void
-            post(Space& home, SetVarArray& x, IntVarArray& y) {
-                Gecode::rel(home, minWeight <= y[0]);
-                Gecode::rel(home, maxWeight >= y[0]);
+            void
+            post(Space& home, SetVarArray& x, IntVarArray& y) override {
+                Gecode::rel(home, min_weight <= y[0]);
+                Gecode::rel(home, max_weight >= y[0]);
                 Gecode::weights(home, elements, weights, x[0], y[0]);
             }
         };

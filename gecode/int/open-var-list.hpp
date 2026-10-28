@@ -107,13 +107,13 @@ namespace Gecode {
             }
         }
 
-        virtual Actor*
-        copy(Space& home) {
+        Actor*
+        copy(Space& home) override {
             return new (home) Object(home, *this);
         }
 
-        virtual size_t
-        dispose(Space& home) {
+        size_t
+        dispose(Space& home) override {
             home.ignore(*this, AP_DISPOSE);
             if (capacity > 0)
                 heap.free<Var>(x, capacity);
@@ -226,24 +226,24 @@ namespace Gecode { namespace Int {
         }
 
     public:
-        virtual Actor*
-        copy(Space& home) {
+        Actor*
+        copy(Space& home) override {
             return new (home) OpenMaterialize(home, *this);
         }
 
-        virtual PropCost
-        cost(const Space&, const ModEventDelta&) const {
+        PropCost
+        cost(const Space&, const ModEventDelta&) const override {
             const int n = length.min() - static_cast<Object*>(object())->n;
             return (n <= 1) ? PropCost::unary(PropCost::LO) : PropCost::linear(PropCost::LO, n);
         }
 
-        virtual void
-        reschedule(Space& home) {
+        void
+        reschedule(Space& home) override {
             length.reschedule(home, *this, PC_INT_BND);
         }
 
-        virtual ExecStatus
-        propagate(Space& home, const ModEventDelta&) {
+        ExecStatus
+        propagate(Space& home, const ModEventDelta&) override {
             static_cast<Object*>(object())->materialize(home, length.min());
             if (home.failed())
                 return ES_FAILED;
@@ -252,8 +252,8 @@ namespace Gecode { namespace Int {
             return ES_FIX;
         }
 
-        virtual size_t
-        dispose(Space& home) {
+        size_t
+        dispose(Space& home) override {
             length.cancel(home, *this, PC_INT_BND);
             LocalHandle::~LocalHandle();
             (void)Propagator::dispose(home);

@@ -98,14 +98,14 @@ public:
     }
 
     /// Return cost
-    virtual IntVar
-    cost(void) const {
+    IntVar
+    cost(void) const override {
         return m[m.size() - 1];
     }
 
     /// Print solution
-    virtual void
-    print(std::ostream& os) const {
+    void
+    print(std::ostream& os) const override {
         os << "\tm[" << m.size() << "] = " << m << std::endl;
     }
 
@@ -114,8 +114,8 @@ public:
         m.update(*this, s.m);
     }
     /// Copy during cloning
-    virtual Space*
-    copy(void) {
+    Space*
+    copy(void) override {
         return new GolombRuler(*this);
     }
 };

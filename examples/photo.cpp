@@ -129,7 +129,7 @@ public:
     }
     /// Relax the last solution for large neighbourhood search
     void
-    spoke(SpokeContext& sc) {
+    spoke(SpokeContext& sc) override {
         if ((sc.engine() == MetaEngine::Restart) && (sc.last() != nullptr) && (p > 0.0)) {
             const Photo& l = static_cast<const Photo&>(*sc.last());
             relax(*this, pos, l.pos, rnd.split(sc), p);
@@ -142,18 +142,18 @@ public:
         violations.update(*this, s.violations);
     }
     /// Copy during cloning
-    virtual Space*
-    copy(void) {
+    Space*
+    copy(void) override {
         return new Photo(*this);
     }
     /// Print solution
-    virtual void
-    print(std::ostream& os) const {
+    void
+    print(std::ostream& os) const override {
         os << "\tpos[] = " << pos << std::endl << "\tviolations: " << violations << std::endl;
     }
     /// Return solution cost
-    virtual IntVar
-    cost(void) const {
+    IntVar
+    cost(void) const override {
         return violations;
     }
 };

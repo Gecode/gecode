@@ -109,18 +109,18 @@ namespace Gecode { namespace Int { namespace Distinct {
         }
 
     public:
-        virtual PropCost
-        cost(const Space&, const ModEventDelta&) const {
+        PropCost
+        cost(const Space&, const ModEventDelta&) const override {
             return PropCost::linear(PropCost::LO, active_count + (list.known_length() - processed));
         }
 
-        virtual Actor*
-        copy(Space& home) {
+        Actor*
+        copy(Space& home) override {
             return new (home) Open(home, *this);
         }
 
-        virtual ExecStatus
-        propagate(Space& home, const ModEventDelta&) {
+        ExecStatus
+        propagate(Space& home, const ModEventDelta&) override {
             const int size = list.known_length();
             reserve_active(home, active_count + (size - processed));
             const int first_new = active_count;
@@ -167,16 +167,16 @@ namespace Gecode { namespace Int { namespace Distinct {
             return ES_FIX;
         }
 
-        virtual void
-        reschedule(Space& home) {
+        void
+        reschedule(Space& home) override {
             OpenListPropagator<View>::reschedule(home);
             for (int i = 0; i < active_count; i++)
                 if (!active[i].assigned())
                     active[i].reschedule(home, *this, PC_INT_VAL);
         }
 
-        virtual size_t
-        dispose(Space& home) {
+        size_t
+        dispose(Space& home) override {
             home.ignore(*this, AP_DISPOSE);
             for (int i = 0; i < active_count; i++)
                 if (!active[i].assigned())

@@ -157,7 +157,7 @@ namespace Gecode {
     rel(Home home, SetVar s, SetRelType r, IntVar x) {
         using namespace Set;
         Gecode::Int::IntView xv(x);
-        SingletonView xsingle(xv);
+        SingletonView x_singleton(xv);
         rel_post<SetView, SingletonView>(home, s, r, xv);
     }
 
@@ -198,16 +198,16 @@ namespace Gecode {
     rel(Home home, SetVar s, SetRelType rt, IntVar x, Reify r) {
         using namespace Set;
         Gecode::Int::IntView xv(x);
-        SingletonView xsingle(xv);
+        SingletonView x_singleton(xv);
         switch (r.mode()) {
         case RM_EQV:
-            rel_re<SetView, SingletonView, RM_EQV>(home, s, rt, xsingle, r.var());
+            rel_re<SetView, SingletonView, RM_EQV>(home, s, rt, x_singleton, r.var());
             break;
         case RM_IMP:
-            rel_re<SetView, SingletonView, RM_IMP>(home, s, rt, xsingle, r.var());
+            rel_re<SetView, SingletonView, RM_IMP>(home, s, rt, x_singleton, r.var());
             break;
         case RM_PMI:
-            rel_re<SetView, SingletonView, RM_PMI>(home, s, rt, xsingle, r.var());
+            rel_re<SetView, SingletonView, RM_PMI>(home, s, rt, x_singleton, r.var());
             break;
         default:
             throw Gecode::Int::UnknownReifyMode("Set::rel");

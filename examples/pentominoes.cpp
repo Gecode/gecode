@@ -441,14 +441,14 @@ public:
     }
 
     /// Copy space during cloning
-    virtual Space*
-    copy(void) {
+    Space*
+    copy(void) override {
         return new Pentominoes(*this);
     }
 
     /// Print solution
-    virtual void
-    print(std::ostream& os) const {
+    void
+    print(std::ostream& os) const override {
         for (int h = 0; h < height; ++h) {
             os << "\t";
             for (int w = 0; w < width - 1; ++w) {

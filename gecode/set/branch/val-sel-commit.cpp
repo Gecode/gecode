@@ -35,7 +35,7 @@
 namespace Gecode { namespace Set { namespace Branch {
 
     ValSelCommitBase<SetView, int>*
-    valselcommit(Space& home, const SetValBranch& svb) {
+    value_selection_commit(Space& home, const SetValBranch& svb) {
         switch (svb.select()) {
         case SetValBranch::SEL_MIN_INC:
             return new (home) ValSelCommit<ValSelMin, ValCommitInc>(home, svb);
@@ -65,7 +65,7 @@ namespace Gecode { namespace Set { namespace Branch {
     }
 
     ValSelCommitBase<SetView, int>*
-    valselcommit(Space& home, const SetAssign& sa) {
+    value_selection_commit(Space& home, const SetAssign& sa) {
         switch (sa.select()) {
         case SetAssign::SEL_MIN_INC:
             return new (home) ValSelCommit<ValSelMin, ValCommitInc>(home, sa);

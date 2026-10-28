@@ -61,8 +61,8 @@ namespace Test { namespace Int {
                          int max)
                 : Test("Sequence::" + s, size, min, max), s(s0), q(q0), l(l0), u(u0) {}
             /// %Test whether \a x is solutionin
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 for (int i = 0; i < (x.size() - q + 1); i++) {
                     int total = 0;
                     for (int j = i; j < i + q; j++) {
@@ -86,8 +86,8 @@ namespace Test { namespace Int {
                 : SequenceTest("Bool::" + s, s0, q0, l0, u0, size, 0, 1) {}
 
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 Gecode::BoolVarArgs c(x.size());
 
                 for (int i = 0; i < x.size(); i++) {
@@ -107,8 +107,8 @@ namespace Test { namespace Int {
                 : SequenceTest("Int::" + s, s0, q0, l0, u0, size, min, max) {}
 
             /// Post constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 Gecode::sequence(home, x, s, q, l, u);
             }
         };

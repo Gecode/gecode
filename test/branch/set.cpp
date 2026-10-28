@@ -42,8 +42,8 @@ namespace Test { namespace Branch {
         /// Create and register test
         Set(TestTags tags, const std::string& s, const Gecode::IntSet& d, int n) : SetTest(tags, s, n, d) {}
         /// Post propagators on variables \a x
-        virtual void
-        post(Gecode::Space& home, Gecode::SetVarArray& x) {
+        void
+        post(Gecode::Space& home, Gecode::SetVarArray& x) override {
             Gecode::SetVarArgs xx(x.size() - 1);
             for (int i = x.size() - 1; i--;)
                 xx[i] = x[i];

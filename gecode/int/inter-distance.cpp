@@ -49,8 +49,8 @@ namespace Gecode { namespace Int { namespace InterDistance {
         struct Task {
             Time min;
             Time max;
-            int minRank;
-            int maxRank;
+            int min_rank;
+            int max_rank;
         };
 
         /// Forbidden starting times (inclusive)
@@ -78,17 +78,17 @@ namespace Gecode { namespace Int { namespace InterDistance {
             Time* keys;
             int* groups;
             int* counts;
-            int keyCount;
-            int activeCount;
-            int topBit;
+            int key_count;
+            int active_count;
+            int top_bit;
 
             /// Change the active-key count at rank i
             void
             update(int i, int delta) {
-                for (unsigned int j = static_cast<unsigned int>(i) + 1; j <= static_cast<unsigned int>(keyCount);
+                for (unsigned int j = static_cast<unsigned int>(i) + 1; j <= static_cast<unsigned int>(key_count);
                      j += j & -j)
                     counts[j] += delta;
-                activeCount += delta;
+                active_count += delta;
             }
 
             /// First active key at or after rank i, or keyCount
@@ -97,13 +97,13 @@ namespace Gecode { namespace Int { namespace InterDistance {
                 int before = 0;
                 for (unsigned int j = static_cast<unsigned int>(i); j; j -= j & -j)
                     before += counts[j];
-                if (before == activeCount)
-                    return keyCount;
+                if (before == active_count)
+                    return key_count;
 
                 int ordinal = before + 1;
                 int rank = 0;
-                for (int bit = topBit; bit; bit /= 2)
-                    if ((bit <= keyCount - rank) && (counts[rank + bit] < ordinal)) {
+                for (int bit = top_bit; bit; bit /= 2)
+                    if ((bit <= key_count - rank) && (counts[rank + bit] < ordinal)) {
                         rank += bit;
                         ordinal -= counts[rank];
                     }
@@ -114,7 +114,7 @@ namespace Gecode { namespace Int { namespace InterDistance {
             /// Allocate once; repeated distance checks reuse these arrays
             ResidueGroups(Region& r, int n)
                 : keys(r.alloc<Time>(n)), groups(r.alloc<int>(n)),
-                  counts(r.alloc<int>(static_cast<unsigned int>(n) + 1)), keyCount(0), activeCount(0), topBit(0) {}
+                  counts(r.alloc<int>(static_cast<unsigned int>(n) + 1)), key_count(0), active_count(0), top_bit(0) {}
 
             /// Prepare the key universe for distance p
             void
@@ -122,20 +122,20 @@ namespace Gecode { namespace Int { namespace InterDistance {
                 for (int i = 0; i < n; i++)
                     keys[i] = residue(deadlines[i], p);
                 std::sort(keys, keys + n);
-                keyCount = static_cast<int>(std::unique(keys, keys + n) - keys);
-                std::fill(groups, groups + keyCount, -1);
-                std::fill(counts, counts + keyCount + 1, 0);
-                activeCount = 0;
-                topBit = 1;
-                while (topBit <= keyCount / 2)
-                    topBit *= 2;
+                key_count = static_cast<int>(std::unique(keys, keys + n) - keys);
+                std::fill(groups, groups + key_count, -1);
+                std::fill(counts, counts + key_count + 1, 0);
+                active_count = 0;
+                top_bit = 1;
+                while (top_bit <= key_count / 2)
+                    top_bit *= 2;
             }
 
             /// Rank of a key in the fixed universe
             int
             rank(Time key) const {
-                int i = static_cast<int>(std::lower_bound(keys, keys + keyCount, key) - keys);
-                assert((i < keyCount) && (keys[i] == key));
+                int i = static_cast<int>(std::lower_bound(keys, keys + key_count, key) - keys);
+                assert((i < key_count) && (keys[i] == key));
                 return i;
             }
 
@@ -173,12 +173,12 @@ namespace Gecode { namespace Int { namespace InterDistance {
             /// First active key greater than key, or the end rank
             int
             active_after(Time key) const {
-                return next_active(static_cast<int>(std::upper_bound(keys, keys + keyCount, key) - keys));
+                return next_active(static_cast<int>(std::upper_bound(keys, keys + key_count, key) - keys));
             }
             /// Whether a successor query returned the end rank
             bool
             at_end(int i) const {
-                return i == keyCount;
+                return i == key_count;
             }
         };
 
@@ -305,7 +305,7 @@ namespace Gecode { namespace Int { namespace InterDistance {
                 for (int i = 0; i < n; i++) {
                     if ((i == 0) || (finish[i]->max != deadlines[dc - 1]))
                         deadlines[dc++] = finish[i]->max;
-                    finish[i]->maxRank = dc - 1;
+                    finish[i]->max_rank = dc - 1;
                 }
                 // Include the successor sentinel without overflowing signed int.
                 // Region::alloc has an unsigned-int overload on every platform.
@@ -335,7 +335,7 @@ namespace Gecode { namespace Int { namespace InterDistance {
                 int active = dc;
                 int pending = dc - 1;
                 for (int i = n; i--;) {
-                    int rank = release[i]->maxRank;
+                    int rank = release[i]->max_rank;
                     for (size_t j = static_cast<size_t>(rank) + 1; j <= static_cast<size_t>(dc); j += j & -j)
                         loads[j]++;
                     int d = find(rank);
@@ -399,17 +399,17 @@ namespace Gecode { namespace Int { namespace InterDistance {
         private:
             const int n;
             const Time p;
-            Task** minSorted;
-            Task** maxSorted;
+            Task** min_sorted;
+            Task** max_sorted;
             Forbidden* forbidden;
-            int forbiddenCount;
-            Time* ectTable;
-            Time* lstTable;
+            int forbidden_count;
+            Time* ect_table;
+            Time* lst_table;
             Adjustment* regions;
-            RegionIndex regionCount;
-            RegionIndex* firstRegion;
+            RegionIndex region_count;
+            RegionIndex* first_region;
             /// Adjustment-list cursor for each live bound-group representative
-            RegionIndex* nextRegion;
+            RegionIndex* next_region;
             Time* bounds;
             // links[i] > i forwards to a merged group's representative; otherwise
             // i is a live representative and links[i] < i is its predecessor (-1
@@ -422,7 +422,7 @@ namespace Gecode { namespace Int { namespace InterDistance {
             /// Bounds loaded by the propagator, then tightened by this sweep
             Task* tasks;
             /// Allocate scratch storage, with no persistent ownership
-            Filter(Region& r, int n0, int p0) : n(n0), p(p0), forbiddenCount(0), regionCount(0) {
+            Filter(Region& r, int n0, int p0) : n(n0), p(p0), forbidden_count(0), region_count(0) {
                 const size_t count = static_cast<size_t>(n);
                 const size_t limit = std::numeric_limits<size_t>::max();
                 // Region::alloc multiplies unchecked. Reject impossible byte sizes
@@ -431,16 +431,16 @@ namespace Gecode { namespace Int { namespace InterDistance {
                     (count > (limit / sizeof(Adjustment) - 3) / (count + 3)))
                     throw MemoryExhausted();
                 tasks = r.alloc<Task>(n);
-                minSorted = r.alloc<Task*>(n);
-                maxSorted = r.alloc<Task*>(n);
+                min_sorted = r.alloc<Task*>(n);
+                max_sorted = r.alloc<Task*>(n);
                 forbidden = r.alloc<Forbidden>(n);
                 const size_t entries = count * (count + 1);
-                ectTable = static_cast<Time*>(r.ralloc(entries * sizeof(Time)));
-                lstTable = r.alloc<Time>(n + 2);
+                ect_table = static_cast<Time*>(r.ralloc(entries * sizeof(Time)));
+                lst_table = r.alloc<Time>(n + 2);
                 const size_t capacity = count * (count + 3) / 2 + 3;
                 regions = static_cast<Adjustment*>(r.ralloc(capacity * sizeof(Adjustment)));
-                firstRegion = r.alloc<RegionIndex>(n);
-                nextRegion = r.alloc<RegionIndex>(n);
+                first_region = r.alloc<RegionIndex>(n);
+                next_region = r.alloc<RegionIndex>(n);
                 bounds = r.alloc<Time>(n);
                 links = r.alloc<int>(n);
                 processed = r.alloc<bool>(n);
@@ -449,12 +449,12 @@ namespace Gecode { namespace Int { namespace InterDistance {
             /// Earliest completion time for q tasks at release time i
             Time
             ect(int i, int q) const {
-                return ectTable[static_cast<size_t>(q) * n + i];
+                return ect_table[static_cast<size_t>(q) * n + i];
             }
             /// Latest start time for q tasks at the current deadline
             Time
             lst(int q) const {
-                return lstTable[q];
+                return lst_table[q];
             }
             /// Find the representative of a merged group of bounds
             int
@@ -477,7 +477,7 @@ namespace Gecode { namespace Int { namespace InterDistance {
                     vi = links[vi];
                 while (regions[r].min <= bounds[vi]) {
                     if (bounds[vi] <= regions[r].max) {
-                        while ((vi < n - 1) && (regions[r].max + 1 >= minSorted[vi + 1]->min)) {
+                        while ((vi < n - 1) && (regions[r].max + 1 >= min_sorted[vi + 1]->min)) {
                             int previous = links[vi];
                             links[vi] = vi + 1;
                             vi = find(vi);
@@ -486,10 +486,10 @@ namespace Gecode { namespace Int { namespace InterDistance {
                         if (regions[r].max >= bounds[vi])
                             bounds[vi] = regions[r].max + 1;
                     }
-                    if (regions[r].min < regions[nextRegion[vi]].min)
-                        r = nextRegion[vi];
+                    if (regions[r].min < regions[next_region[vi]].min)
+                        r = next_region[vi];
                     else
-                        nextRegion[vi] = r;
+                        next_region[vi] = r;
                     r = regions[r].next;
                 }
                 assert((vi >= 0) && (links[vi] < vi));
@@ -501,15 +501,15 @@ namespace Gecode { namespace Int { namespace InterDistance {
             void
             sort_tasks(void) {
                 for (int i = 0; i < n; i++)
-                    minSorted[i] = maxSorted[i] = tasks + i;
-                std::sort(minSorted, minSorted + n, [](const Task* a, const Task* b) {
+                    min_sorted[i] = max_sorted[i] = tasks + i;
+                std::sort(min_sorted, min_sorted + n, [](const Task* a, const Task* b) {
                     return std::tie(a->min, a->max) < std::tie(b->min, b->max);
                 });
-                std::sort(maxSorted, maxSorted + n, [](const Task* a, const Task* b) {
+                std::sort(max_sorted, max_sorted + n, [](const Task* a, const Task* b) {
                     return std::tie(a->max, a->min) < std::tie(b->max, b->min);
                 });
                 for (int i = 0; i < n; i++)
-                    minSorted[i]->minRank = i;
+                    min_sorted[i]->min_rank = i;
             }
 
             /// Construct forbidden start regions, detecting interval infeasibility
@@ -518,9 +518,9 @@ namespace Gecode { namespace Int { namespace InterDistance {
                 Time* deadlines = r.alloc<Time>(n);
                 int dc = 0;
                 for (int i = 0; i < n; i++) {
-                    if ((i == 0) || (maxSorted[i]->max > deadlines[dc - 1]))
-                        deadlines[dc++] = maxSorted[i]->max;
-                    maxSorted[i]->maxRank = dc - 1;
+                    if ((i == 0) || (max_sorted[i]->max > deadlines[dc - 1]))
+                        deadlines[dc++] = max_sorted[i]->max;
+                    max_sorted[i]->max_rank = dc - 1;
                 }
 
                 Time* times = r.alloc<Time>(dc);
@@ -535,34 +535,34 @@ namespace Gecode { namespace Int { namespace InterDistance {
                 }
 
                 Time min = std::numeric_limits<Time>::max();
-                Time newMin = min;
-                forbiddenCount = 0;
+                Time new_min = min;
+                forbidden_count = 0;
                 for (int i = n; i--;) {
-                    for (int j = minSorted[i]->maxRank; j < dc; j++) {
+                    for (int j = min_sorted[i]->max_rank; j < dc; j++) {
                         times[j] -= p;
                         while ((cursor[j] > last) && (times[j] < buffer[cursor[j]].min))
                             cursor[j]--;
                         if ((cursor[j] > last) && (times[j] <= buffer[cursor[j]].max))
                             times[j] = buffer[cursor[j]--].min - 1;
-                        newMin = std::min(newMin, times[j]);
+                        new_min = std::min(new_min, times[j]);
                     }
-                    if ((i == 0) || (minSorted[i - 1]->min < minSorted[i]->min))
-                        min = newMin;
-                    if (min < minSorted[i]->min)
+                    if ((i == 0) || (min_sorted[i - 1]->min < min_sorted[i]->min))
+                        min = new_min;
+                    if (min < min_sorted[i]->min)
                         return false;
-                    if (min - p + 1 < minSorted[i]->min) {
-                        if ((forbiddenCount > 0) && (minSorted[i]->min >= buffer[last + 1].min)) {
+                    if (min - p + 1 < min_sorted[i]->min) {
+                        if ((forbidden_count > 0) && (min_sorted[i]->min >= buffer[last + 1].min)) {
                             // Adjacent integer regions must also be merged: skipping one
                             // region must not land on a forbidden start in its neighbour.
                             buffer[last + 1].min = min - p + 1;
                         } else {
                             assert(last >= 0);
-                            buffer[last--] = {min - p + 1, minSorted[i]->min - 1};
-                            forbiddenCount++;
+                            buffer[last--] = {min - p + 1, min_sorted[i]->min - 1};
+                            forbidden_count++;
                         }
                     }
                 }
-                for (int i = 0; i < forbiddenCount; i++)
+                for (int i = 0; i < forbidden_count; i++)
                     forbidden[i] = buffer[last + 1 + i];
                 return true;
             }
@@ -571,33 +571,33 @@ namespace Gecode { namespace Int { namespace InterDistance {
             void
             compute_earliest_completions(void) {
                 for (int i = 0; i < n; i++) {
-                    ectTable[i] = minSorted[i]->min;
+                    ect_table[i] = min_sorted[i]->min;
                     int er = 0;
                     for (int q = 1; q <= n; q++) {
                         Time start = ect(i, q - 1);
-                        while ((er < forbiddenCount) && (forbidden[er].max < start))
+                        while ((er < forbidden_count) && (forbidden[er].max < start))
                             er++;
-                        if ((er < forbiddenCount) && (forbidden[er].min <= start))
+                        if ((er < forbidden_count) && (forbidden[er].min <= start))
                             start = forbidden[er].max + 1;
-                        ectTable[static_cast<size_t>(q) * n + i] = start + p;
+                        ect_table[static_cast<size_t>(q) * n + i] = start + p;
                     }
                 }
             }
 
             /// Latest starts for one deadline, including the external adjustment
             void
-            compute_latest_starts(Time deadline, int taskCount) {
+            compute_latest_starts(Time deadline, int task_count) {
                 // Keeping only the current deadline's vector avoids a second
                 // quadratic table without increasing the sweep's complexity.
-                lstTable[0] = deadline;
-                int region = forbiddenCount - 1;
-                for (int t = 1; t <= taskCount + 1; t++) {
+                lst_table[0] = deadline;
+                int region = forbidden_count - 1;
+                for (int t = 1; t <= task_count + 1; t++) {
                     Time start = lst(t - 1) - p;
                     while ((region >= 0) && (forbidden[region].min > start))
                         region--;
                     if ((region >= 0) && (forbidden[region].max >= start))
                         start = forbidden[region].min - 1;
-                    lstTable[t] = start;
+                    lst_table[t] = start;
                 }
             }
 
@@ -607,12 +607,12 @@ namespace Gecode { namespace Int { namespace InterDistance {
                 const Time infinity = std::numeric_limits<Time>::max();
                 regions[0] = {-infinity, -infinity, -1, 1};
                 regions[1] = {infinity, infinity, 0, -1};
-                regionCount = 2;
+                region_count = 2;
                 for (int i = 0; i < n; i++) {
                     links[i] = i - 1;
                     processed[i] = false;
-                    bounds[i] = minSorted[i]->min;
-                    nextRegion[i] = 0;
+                    bounds[i] = min_sorted[i]->min;
+                    next_region[i] = 0;
                 }
             }
 
@@ -621,7 +621,7 @@ namespace Gecode { namespace Int { namespace InterDistance {
             insertion_point(RegionIndex hint, Time min) const {
                 // Intervals are appended in decreasing-minimum runs. Follow previous
                 // links between runs, then next links within the ordered list.
-                while (((hint + 1 == regionCount) ? min : regions[hint + 1].min) >= regions[hint].min) {
+                while (((hint + 1 == region_count) ? min : regions[hint + 1].min) >= regions[hint].min) {
                     hint = regions[hint].previous;
                     if (hint < 0)
                         break;
@@ -641,7 +641,7 @@ namespace Gecode { namespace Int { namespace InterDistance {
             insert_adjustment(RegionIndex previous, Time min, Time max) {
                 RegionIndex next = regions[previous].next;
                 assert((regions[previous].min <= min) && (min <= regions[next].min));
-                RegionIndex inserted = regionCount++;
+                RegionIndex inserted = region_count++;
                 regions[inserted] = {min, max, previous, next};
                 regions[previous].next = inserted;
                 regions[next].previous = inserted;
@@ -652,25 +652,25 @@ namespace Gecode { namespace Int { namespace InterDistance {
             void
             apply_internal_adjustments(void) {
                 const Time infinity = std::numeric_limits<Time>::max();
-                RegionIndex lastRegion = 0;
-                int minP = n;
-                int maxP = 0;
+                RegionIndex last_region = 0;
+                int min_p = n;
+                int max_p = 0;
                 for (int it = 0; it < n; it++) {
-                    int i = maxSorted[it]->minRank;
+                    int i = max_sorted[it]->min_rank;
                     processed[i] = true;
-                    maxP = std::max(maxP, i);
-                    minP = std::min(minP, i);
+                    max_p = std::max(max_p, i);
+                    min_p = std::min(min_p, i);
 
                     // Maintain the dominating blocks before generating their intervals.
                     // These cursors share the sweep's task counts and stay together.
                     int l = leader[i] = i;
                     int kp = 1;
-                    while (++l <= maxP)
+                    while (++l <= max_p)
                         if (processed[l])
                             kp++;
                     l = i;
                     int k = kp;
-                    if (i > minP) {
+                    if (i > min_p) {
                         while (!processed[--l]) {
                         }
                         k++;
@@ -686,7 +686,7 @@ namespace Gecode { namespace Int { namespace InterDistance {
                     }
                     kp = k;
                     int j = l;
-                    while (j < maxP) {
+                    while (j < max_p) {
                         while (!processed[++j]) {
                         }
                         if (ect(j, 1) <= ect(l, k - --kp + 1))
@@ -694,10 +694,10 @@ namespace Gecode { namespace Int { namespace InterDistance {
                         else
                             break;
                     }
-                    if ((it < n - 1) && (maxSorted[it]->max == maxSorted[it + 1]->max))
+                    if ((it < n - 1) && (max_sorted[it]->max == max_sorted[it + 1]->max))
                         continue;
 
-                    compute_latest_starts(maxSorted[it]->max, it + 1);
+                    compute_latest_starts(max_sorted[it]->max, it + 1);
 
                     int q = 0;
                     RegionIndex insertion = 0;
@@ -711,15 +711,15 @@ namespace Gecode { namespace Int { namespace InterDistance {
                             if (t > 0) {
                                 insertion = insertion_point(insertion, min);
                             } else {
-                                insertion = lastRegion;
-                                firstRegion[i] = lastRegion = regionCount;
+                                insertion = last_region;
+                                first_region[i] = last_region = region_count;
                             }
                             vi = notify(insert_adjustment(insertion, min, max), vi);
                         }
                         if (l == -1)
                             break;
                         q = k++;
-                        if (l > minP) {
+                        if (l > min_p) {
                             while (!processed[--l]) {
                             }
                             j = leader[l];
@@ -741,16 +741,16 @@ namespace Gecode { namespace Int { namespace InterDistance {
                 // A variable is filtered before adding external intervals for its
                 // deadline, so it is never excluded by an interval it helped create.
                 for (int it = 0; it < n; it++) {
-                    int i = maxSorted[it]->minRank;
-                    maxSorted[it]->min = bounds[find(i)];
-                    if ((it == n - 1) || (maxSorted[it]->max != maxSorted[it + 1]->max)) {
+                    int i = max_sorted[it]->min_rank;
+                    max_sorted[it]->min = bounds[find(i)];
+                    if ((it == n - 1) || (max_sorted[it]->max != max_sorted[it + 1]->max)) {
                         int vi = n - 1;
-                        Time lastMax = regions[firstRegion[i]].max;
-                        for (RegionIndex r = firstRegion[i] + 1;
-                             (r < regionCount) && (regions[r].min < regions[r - 1].min); r++) {
-                            Time oldMax = regions[r].max;
-                            regions[r].max = lastMax;
-                            lastMax = oldMax;
+                        Time last_max = regions[first_region[i]].max;
+                        for (RegionIndex r = first_region[i] + 1;
+                             (r < region_count) && (regions[r].min < regions[r - 1].min); r++) {
+                            Time old_max = regions[r].max;
+                            regions[r].max = last_max;
+                            last_max = old_max;
                             vi = notify(r, vi);
                         }
                     }

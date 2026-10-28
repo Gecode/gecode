@@ -35,52 +35,52 @@
 namespace Gecode {
 
     inline void
-    atmost(Home home, const IntVarArgs& x, int n, int m, IntPropLevel ipl) {
+    at_most(Home home, const IntVarArgs& x, int n, int m, IntPropLevel ipl) {
         count(home, x, n, IRT_LQ, m, ipl);
     }
     inline void
-    atmost(Home home, const IntVarArgs& x, IntVar y, int m, IntPropLevel ipl) {
+    at_most(Home home, const IntVarArgs& x, IntVar y, int m, IntPropLevel ipl) {
         count(home, x, y, IRT_LQ, m, ipl);
     }
     inline void
-    atmost(Home home, const IntVarArgs& x, const IntArgs& y, int m, IntPropLevel ipl) {
+    at_most(Home home, const IntVarArgs& x, const IntArgs& y, int m, IntPropLevel ipl) {
         count(home, x, y, IRT_LQ, m, ipl);
     }
     inline void
-    atmost(Home home, const IntVarArgs& x, int n, IntVar z, IntPropLevel ipl) {
+    at_most(Home home, const IntVarArgs& x, int n, IntVar z, IntPropLevel ipl) {
         count(home, x, n, IRT_LQ, z, ipl);
     }
     inline void
-    atmost(Home home, const IntVarArgs& x, IntVar y, IntVar z, IntPropLevel ipl) {
+    at_most(Home home, const IntVarArgs& x, IntVar y, IntVar z, IntPropLevel ipl) {
         count(home, x, y, IRT_LQ, z, ipl);
     }
     inline void
-    atmost(Home home, const IntVarArgs& x, const IntArgs& y, IntVar z, IntPropLevel ipl) {
+    at_most(Home home, const IntVarArgs& x, const IntArgs& y, IntVar z, IntPropLevel ipl) {
         count(home, x, y, IRT_LQ, z, ipl);
     }
 
     inline void
-    atleast(Home home, const IntVarArgs& x, int n, int m, IntPropLevel ipl) {
+    at_least(Home home, const IntVarArgs& x, int n, int m, IntPropLevel ipl) {
         count(home, x, n, IRT_GQ, m, ipl);
     }
     inline void
-    atleast(Home home, const IntVarArgs& x, IntVar y, int m, IntPropLevel ipl) {
+    at_least(Home home, const IntVarArgs& x, IntVar y, int m, IntPropLevel ipl) {
         count(home, x, y, IRT_GQ, m, ipl);
     }
     inline void
-    atleast(Home home, const IntVarArgs& x, const IntArgs& y, int m, IntPropLevel ipl) {
+    at_least(Home home, const IntVarArgs& x, const IntArgs& y, int m, IntPropLevel ipl) {
         count(home, x, y, IRT_GQ, m, ipl);
     }
     inline void
-    atleast(Home home, const IntVarArgs& x, int n, IntVar z, IntPropLevel ipl) {
+    at_least(Home home, const IntVarArgs& x, int n, IntVar z, IntPropLevel ipl) {
         count(home, x, n, IRT_GQ, z, ipl);
     }
     inline void
-    atleast(Home home, const IntVarArgs& x, IntVar y, IntVar z, IntPropLevel ipl) {
+    at_least(Home home, const IntVarArgs& x, IntVar y, IntVar z, IntPropLevel ipl) {
         count(home, x, y, IRT_GQ, z, ipl);
     }
     inline void
-    atleast(Home home, const IntVarArgs& x, const IntArgs& y, IntVar z, IntPropLevel ipl) {
+    at_least(Home home, const IntVarArgs& x, const IntArgs& y, IntVar z, IntPropLevel ipl) {
         count(home, x, y, IRT_GQ, z, ipl);
     }
 
@@ -139,7 +139,7 @@ namespace Gecode {
 
     inline void
     roots(Home home, const IntVarArgs& x, SetVar y, SetVar z) {
-        SetVarArgs xiv(home, z.lubMax() + 1, IntSet::empty, 0, x.size() - 1);
+        SetVarArgs xiv(home, z.lub_max() + 1, IntSet::empty, 0, x.size() - 1);
         channel(home, x, xiv);
         element(home, SOT_UNION, xiv, z, y);
     }

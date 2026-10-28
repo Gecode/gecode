@@ -58,10 +58,10 @@ namespace Test { namespace Int { namespace MinDistance {
                        "::" + str(k == Gecode::MDP_SINGLE) + "::" + str(level),
                    n + 1, 0, 4, false, level),
               positions(n), computed(f), requirements(r), alias(a), kind(k) {
-            contest = CTL_NONE;
+            consistency_test_level = CTL_NONE;
         }
-        virtual bool
-        solution(const Assignment& a) const {
+        bool
+        solution(const Assignment& a) const override {
             int minimum = 4;
             Gecode::IntArgs m = matrix();
             for (int i = 0; i < positions; i++) {
@@ -80,8 +80,8 @@ namespace Test { namespace Int { namespace MinDistance {
             }
             return (a[positions] == minimum) && ((alias != 2) || (a[positions] == a[0]));
         }
-        virtual void
-        post(Gecode::Space& home, Gecode::IntVarArray& a) {
+        void
+        post(Gecode::Space& home, Gecode::IntVarArray& a) override {
             using namespace Gecode;
             IntArgs m = matrix();
             IntDistance d = computed ? IntDistance(4, [m](int i, int j) { return m[i * 4 + j]; }) : IntDistance(4, m);
@@ -92,7 +92,7 @@ namespace Test { namespace Int { namespace MinDistance {
             }
             if (alias == 2)
                 rel(home, a[positions], IRT_EQ, a[0]);
-            IntVar z = a[alias == 2 ? 0 : positions];
+            const IntVar& z = a[alias == 2 ? 0 : positions];
             if (requirements) {
                 IntArgs r(positions * positions);
                 for (int i = 0; i < r.size(); i++)
@@ -119,8 +119,8 @@ namespace Test { namespace Int { namespace MinDistance {
             x.update(*this, s.x);
             z.update(*this, s.z);
         }
-        virtual Gecode::Space*
-        copy(void) {
+        Gecode::Space*
+        copy(void) override {
             return new Model(*this);
         }
     };
@@ -130,8 +130,8 @@ namespace Test { namespace Int { namespace MinDistance {
     class Propagation : public Base {
     public:
         Propagation(void) : Base("Int::MinDistance::Propagation", TestTags::check()) {}
-        virtual bool
-        run(void) {
+        bool
+        run(void) override {
             using namespace Gecode;
             const MinDistancePropKind kinds[] = {MDP_DECOMPOSED, MDP_SINGLE};
             const IntPropLevel levels[] = {IPL_BASIC, IPL_ADVANCED};
@@ -188,8 +188,8 @@ namespace Test { namespace Int { namespace MinDistance {
     class Arguments : public Base {
     public:
         Arguments(void) : Base("Int::MinDistance::Arguments", TestTags::check()) {}
-        virtual bool
-        run(void) {
+        bool
+        run(void) override {
             using namespace Gecode;
             try {
                 IntDistance invalid(2, IntArgs({0, 1, 2, 0}));

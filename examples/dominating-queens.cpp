@@ -112,8 +112,8 @@ public:
     }
 
     /// Return cost
-    virtual IntVar
-    cost(void) const {
+    IntVar
+    cost(void) const override {
         return q;
     }
 
@@ -124,14 +124,14 @@ public:
     }
 
     /// Perform copying during cloning
-    virtual Space*
-    copy(void) {
+    Space*
+    copy(void) override {
         return new DominatingQueens(*this);
     }
 
     /// Print solution
-    virtual void
-    print(std::ostream& os) const {
+    void
+    print(std::ostream& os) const override {
         os << "\tNumber of Queens: " << q << std::endl;
         os << "\tBoard: " << b << std::endl;
         if (b.assigned()) {

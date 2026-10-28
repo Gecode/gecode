@@ -636,17 +636,13 @@ static const flex_int32_t yy_rule_can_match_eol[57] =
 void yyerror(void*, const char*);
 #define yyerror(s) yyerror(yyextra, s)
 
-#include <errno.h>
-#include <stdlib.h>
+#include <cerrno>
+#include <cstdlib>
 
 #include <gecode/flatzinc/parser.hh>
 
-const char* stringbuf;
-int stringbuflen;
-int stringbufpos;
-
-bool parseInt(const char* text, int& value) {
-  long int result = strtol(text,NULL,0);
+bool parse_int(const char* text, int& value) {
+  long int result = strtol(text,nullptr,0);
   if ( (result == LONG_MAX || result == LONG_MIN) && errno == ERANGE )
     return false;
   if (result < Gecode::Int::Limits::min || result > Gecode::Int::Limits::max)
@@ -1014,15 +1010,15 @@ YY_RULE_SETUP
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-{ yylval->iValue = 1; return FZ_BOOL_LIT; }
+{ yylval->int_value = 1; return FZ_BOOL_LIT; }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-{ yylval->iValue = 0; return FZ_BOOL_LIT; }
+{ yylval->int_value = 0; return FZ_BOOL_LIT; }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-{ if (parseInt(yytext,yylval->iValue))
+{ if (parse_int(yytext,yylval->int_value))
                       return FZ_INT_LIT;
                     else
                       yyerror(("The literal '" + std::string(yytext)
@@ -1034,7 +1030,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-{  if (parseInt(yytext,yylval->iValue))
+{  if (parse_int(yytext,yylval->int_value))
                       return FZ_INT_LIT;
                     else
                       yyerror(("The literal '" + std::string(yytext)
@@ -1046,7 +1042,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-{ if (parseInt(yytext,yylval->iValue))
+{ if (parse_int(yytext,yylval->int_value))
                       return FZ_INT_LIT;
                     else
                       yyerror(("The literal '" + std::string(yytext)
@@ -1058,17 +1054,17 @@ YY_RULE_SETUP
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-{ yylval->dValue = strtod(yytext,NULL);
+{ yylval->float_value = strtod(yytext,nullptr);
                     return FZ_FLOAT_LIT; }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-{ yylval->dValue = strtod(yytext,NULL);
+{ yylval->float_value = strtod(yytext,nullptr);
                                    return FZ_FLOAT_LIT; }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-{ yylval->dValue = strtod(yytext,NULL);
+{ yylval->float_value = strtod(yytext,nullptr);
                            return FZ_FLOAT_LIT; }
 	YY_BREAK
 case 12:
@@ -1153,11 +1149,11 @@ YY_RULE_SETUP
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-{ yylval->bValue = false; return FZ_MAXIMIZE; }
+{ yylval->bool_value = false; return FZ_MAXIMIZE; }
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-{ yylval->bValue = true; return FZ_MINIMIZE; }
+{ yylval->bool_value = true; return FZ_MINIMIZE; }
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
@@ -1173,7 +1169,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-{ yylval->bValue = false; return FZ_PAR; }
+{ yylval->bool_value = false; return FZ_PAR; }
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
@@ -1221,7 +1217,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
-{ yylval->bValue = true; return FZ_VAR; }
+{ yylval->bool_value = true; return FZ_VAR; }
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
@@ -1233,17 +1229,17 @@ YY_RULE_SETUP
 	YY_BREAK
 case 52:
 YY_RULE_SETUP
-{ yylval->sValue = strdup(yytext); return FZ_ID; }
+{ yylval->string_value = strdup(yytext); return FZ_ID; }
 	YY_BREAK
 case 53:
 YY_RULE_SETUP
-{ yylval->sValue = strdup(yytext); return FZ_U_ID; }
+{ yylval->string_value = strdup(yytext); return FZ_U_ID; }
 	YY_BREAK
 case 54:
 YY_RULE_SETUP
 {
-                    yylval->sValue = strdup(yytext+1);
-                    yylval->sValue[strlen(yytext)-2] = 0;
+                    yylval->string_value = strdup(yytext+1);
+                    yylval->string_value[strlen(yytext)-2] = 0;
                     return FZ_STRING_LIT; }
 	YY_BREAK
 case 55:
@@ -2448,7 +2444,7 @@ void yyfree (void * ptr , yyscan_t yyscanner)
 int yy_input_proc(char* buf, int size, yyscan_t yyscanner) {
   Gecode::FlatZinc::ParserState* parm =
     static_cast<Gecode::FlatZinc::ParserState*>(yyget_extra(yyscanner));
-  return parm->fillBuffer(buf, size);
+  return parm->fill_buffer(buf, size);
   // work around warning that yyunput is unused
   yyunput (0,buf,yyscanner);
 }

@@ -40,7 +40,7 @@ namespace Gecode { namespace Int {
     ModEvent
     BoolVarImp::one_none(Space& home) {
         assert(none());
-        bits() ^= (NONE ^ ONE);
+        bits() ^= (unassigned_status ^ one_status);
         assert(one());
         IntDelta d(0);
         return notify(home, ME_BOOL_VAL, d);
@@ -49,7 +49,7 @@ namespace Gecode { namespace Int {
     ModEvent
     BoolVarImp::zero_none(Space& home) {
         assert(none());
-        bits() ^= (NONE ^ ZERO);
+        bits() ^= (unassigned_status ^ zero_status);
         assert(zero());
         IntDelta d(1);
         return notify(home, ME_BOOL_VAL, d);

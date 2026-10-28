@@ -45,16 +45,16 @@ namespace Gecode { namespace Gist {
         /// The painter where the tree is drawn
         QPainter& painter;
         /// The clipping area
-        QRect clippingRect;
+        QRect clipping_rect;
         /// The best solution (for branch-and-bound)
-        BestNode* curBest;
+        BestNode* cur_best;
         /// The current coordinates
         double x, y;
 
         bool copies;
 
         /// Test if current node is clipped
-        bool isClipped(void);
+        bool is_clipped(void);
 
     public:
         /// The color for failed nodes
@@ -69,28 +69,28 @@ namespace Gecode { namespace Gist {
         static const QColor white;
 
         /// The color for expanded failed nodes
-        static const QColor lightRed;
+        static const QColor light_red;
         /// The color for expanded solved nodes
-        static const QColor lightGreen;
+        static const QColor light_green;
         /// The color for expanded choice nodes
-        static const QColor lightBlue;
+        static const QColor light_blue;
 
         /// Constructor
-        DrawingCursor(VisualNode* root, const VisualNode::NodeAllocator& na, BestNode* curBest0, QPainter& painter0,
-                      const QRect& clippingRect0, bool showCopies);
+        DrawingCursor(VisualNode* root, const VisualNode::NodeAllocator& na, BestNode* cur_best0, QPainter& painter0,
+                      const QRect& clipping_rect0, bool show_copies);
 
         ///\name Cursor interface
         //@{
         /// Move cursor to parent
-        void moveUpwards(void);
+        void move_upwards(void);
         /// Test if cursor may move to child
-        bool mayMoveDownwards(void);
+        bool may_move_downwards(void);
         /// Move cursor to child
-        void moveDownwards(void);
+        void move_downwards(void);
         /// Move cursor to sibling
-        void moveSidewards(void);
+        void move_sidewards(void);
         /// Draw the node
-        void processCurrentNode(void);
+        void process_current_node(void);
         //@}
     };
 

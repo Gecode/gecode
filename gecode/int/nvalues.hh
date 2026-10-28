@@ -171,9 +171,9 @@ namespace Gecode { namespace Int { namespace NValues {
 
     public:
         /// Cost function
-        virtual PropCost cost(const Space&, const ModEventDelta&) const;
+        PropCost cost(const Space&, const ModEventDelta&) const override;
         /// Delete propagator and return its size
-        virtual size_t dispose(Space& home);
+        size_t dispose(Space& home) override;
     };
 
     /**
@@ -202,13 +202,13 @@ namespace Gecode { namespace Int { namespace NValues {
 
     public:
         /// Copy propagator during cloning
-        virtual Propagator* copy(Space& home);
+        Propagator* copy(Space& home) override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post propagator for \f$\#\{x_0,\ldots,x_{|x|-1}\}=y\f$
         static ExecStatus post(Home home, ViewArray<IntView>& x, VY y);
         /// Delete propagator and return its size
-        virtual size_t dispose(Space& home);
+        size_t dispose(Space& home) override;
     };
 
     /**
@@ -235,13 +235,13 @@ namespace Gecode { namespace Int { namespace NValues {
 
     public:
         /// Copy propagator during cloning
-        virtual Propagator* copy(Space& home);
+        Propagator* copy(Space& home) override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post propagator for \f$\#\{x_0,\ldots,x_{|x|-1}\}\leq y\f$
         static ExecStatus post(Home home, ViewArray<IntView>& x, VY y);
         /// Delete propagator and return its size
-        virtual size_t dispose(Space& home);
+        size_t dispose(Space& home) override;
     };
 
     /**
@@ -271,9 +271,9 @@ namespace Gecode { namespace Int { namespace NValues {
 
     public:
         /// Copy propagator during cloning
-        virtual Propagator* copy(Space& home);
+        Propagator* copy(Space& home) override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post propagator for \f$\#\{x_0,\ldots,x_{|x|-1}\}\geq y\f$
         static ExecStatus post(Home home, ViewArray<IntView>& x, VY y);
     };
@@ -313,13 +313,13 @@ namespace Gecode { namespace Int { namespace NValues {
 
     public:
         /// Give advice to propagator
-        virtual ExecStatus advise(Space& home, Advisor& a, const Delta& d);
+        ExecStatus advise(Space& home, Advisor& a, const Delta& d) override;
         /// Cost function (defined as low unary)
-        virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+        PropCost cost(const Space& home, const ModEventDelta& med) const override;
         /// Schedule function
-        virtual void reschedule(Space& home);
+        void reschedule(Space& home) override;
         /// Delete propagator and return its size
-        virtual size_t dispose(Space& home);
+        size_t dispose(Space& home) override;
     };
 
     /**
@@ -343,9 +343,9 @@ namespace Gecode { namespace Int { namespace NValues {
 
     public:
         /// Copy propagator during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /**
          * \brief Post propagator for \f$\#\{x_0,\ldots,x_{|x|-1}\}=y\f$
          *
@@ -376,9 +376,9 @@ namespace Gecode { namespace Int { namespace NValues {
 
     public:
         /// Copy propagator during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /**
          * \brief Post propagator for \f$\#\{x_0,\ldots,x_{|x|-1}\}\leq y\f$
          *
@@ -409,9 +409,9 @@ namespace Gecode { namespace Int { namespace NValues {
 
     public:
         /// Copy propagator during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /**
          * \brief Post propagator for \f$\#\{x_0,\ldots,x_{|x|-1}\}\geq y\f$
          *

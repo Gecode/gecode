@@ -37,12 +37,12 @@ namespace Gecode { namespace Set { namespace LDSB {
 
     /// Do two set variables have equal least-upper-bounds?
     bool
-    equalLUB(const Set::SetView& x, const Set::SetView& y) {
-        unsigned int n = x.lubSize();
-        if (n != y.lubSize())
+    equal_lub(const Set::SetView& x, const Set::SetView& y) {
+        unsigned int n = x.lub_size();
+        if (n != y.lub_size())
             return false;
         for (unsigned int i = 0; i < n; i++)
-            if (x.lubMinN(i) != y.lubMinN(i))
+            if (x.lub_min_n(i) != y.lub_min_n(i))
                 return false;
         return true;
     }
@@ -95,27 +95,27 @@ namespace Gecode { namespace Int { namespace LDSB {
         Region region;
         Support::DynamicStack<Literal, Region> s(region);
         if (l._variable < (int)lookup_size) {
-            int posIt = lookup[l._variable];
-            if (posIt == -1) {
-                return dynamicStackToArgArray(s);
+            int pos_it = lookup[l._variable];
+            if (pos_it == -1) {
+                return dynamic_stack_to_arg_array(s);
             }
-            unsigned int seqNum = posIt / seq_size;
-            unsigned int seqPos = posIt % seq_size;
+            unsigned int seq_num = pos_it / seq_size;
+            unsigned int seq_pos = pos_it % seq_size;
             for (unsigned int seq = 0; seq < n_seqs; seq++) {
-                if (seq == seqNum) {
+                if (seq == seq_num) {
                     continue;
                 }
-                if (x[getVal(seq, seqPos)].assigned()) {
+                if (x[get_val(seq, seq_pos)].assigned()) {
                     continue;
                 }
                 bool active = true;
-                const unsigned int* firstSeq = &indices[seqNum * seq_size];
-                const unsigned int* secondSeq = &indices[seq * seq_size];
+                const unsigned int* first_seq = &indices[seq_num * seq_size];
+                const unsigned int* second_seq = &indices[seq * seq_size];
                 for (unsigned int i = 0; i < seq_size; i++) {
-                    const Set::SetView& xv = x[firstSeq[i]];
-                    const Set::SetView& yv = x[secondSeq[i]];
+                    const Set::SetView& xv = x[first_seq[i]];
+                    const Set::SetView& yv = x[second_seq[i]];
                     if ((!xv.assigned() && !yv.assigned()) ||
-                        (xv.assigned() && yv.assigned() && Set::LDSB::equalLUB(xv, yv))) {
+                        (xv.assigned() && yv.assigned() && Set::LDSB::equal_lub(xv, yv))) {
                         continue;
                     } else {
                         active = false;
@@ -124,11 +124,11 @@ namespace Gecode { namespace Int { namespace LDSB {
                 }
 
                 if (active) {
-                    s.push(Literal(secondSeq[seqPos], l._value));
+                    s.push(Literal(second_seq[seq_pos], l._value));
                 }
             }
         }
-        return dynamicStackToArgArray(s);
+        return dynamic_stack_to_arg_array(s);
     }
 
     template <>
@@ -137,19 +137,19 @@ namespace Gecode { namespace Int { namespace LDSB {
         (void)x;
         Region region;
         Support::DynamicStack<Literal, Region> s(region);
-        std::pair<int, int> location = findVar(values, n_values, seq_size, l._value);
+        std::pair<int, int> location = find_var(values, n_values, seq_size, l._value);
         if (location.first == -1)
-            return dynamicStackToArgArray(s);
-        unsigned int seqNum = location.first;
-        unsigned int seqPos = location.second;
+            return dynamic_stack_to_arg_array(s);
+        unsigned int seq_num = location.first;
+        unsigned int seq_pos = location.second;
         for (unsigned int seq = 0; seq < n_seqs; seq++) {
-            if (seq == seqNum)
+            if (seq == seq_num)
                 continue;
             if (dead_sequences.get(seq))
                 continue;
-            s.push(Literal(l._variable, getVal(seq, seqPos)));
+            s.push(Literal(l._variable, get_val(seq, seq_pos)));
         }
-        return dynamicStackToArgArray(s);
+        return dynamic_stack_to_arg_array(s);
     }
 }}} // namespace Gecode::Int::LDSB
 

@@ -36,35 +36,35 @@ namespace Gecode { namespace Set {
 
     forceinline
     SetDelta::SetDelta(void)
-        : _glbMin(1), _glbMax(0), _lubMin(1), _lubMax(0) {}
+        : _glb_min(1), _glb_max(0), _lub_min(1), _lub_max(0) {}
 
     forceinline
-    SetDelta::SetDelta(int glbMin, int glbMax, int lubMin, int lubMax)
-        : _glbMin(glbMin), _glbMax(glbMax), _lubMin(lubMin), _lubMax(lubMax) {}
+    SetDelta::SetDelta(int glb_min, int glb_max, int lub_min, int lub_max)
+        : _glb_min(glb_min), _glb_max(glb_max), _lub_min(lub_min), _lub_max(lub_max) {}
 
     forceinline int
-    SetDelta::glbMin(void) const {
-        return _glbMin;
+    SetDelta::glb_min(void) const {
+        return _glb_min;
     }
     forceinline int
-    SetDelta::glbMax(void) const {
-        return _glbMax;
+    SetDelta::glb_max(void) const {
+        return _glb_max;
     }
     forceinline int
-    SetDelta::lubMin(void) const {
-        return _lubMin;
+    SetDelta::lub_min(void) const {
+        return _lub_min;
     }
     forceinline int
-    SetDelta::lubMax(void) const {
-        return _lubMax;
+    SetDelta::lub_max(void) const {
+        return _lub_max;
     }
     forceinline bool
-    SetDelta::glbAny(void) const {
-        return _glbMin > _glbMax;
+    SetDelta::glb_any(void) const {
+        return _glb_min > _glb_max;
     }
     forceinline bool
-    SetDelta::lubAny(void) const {
-        return _lubMin > _lubMax;
+    SetDelta::lub_any(void) const {
+        return _lub_min > _lub_max;
     }
 
 }} // namespace Gecode::Set

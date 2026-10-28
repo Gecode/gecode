@@ -63,7 +63,7 @@ namespace Gecode {
             /// Allocate for \a n elements
             SAO(int n);
             /// Delete object
-            virtual ~SAO(void);
+            ~SAO(void) override;
 
             /// Access element at position \a i
             T& operator[](int i);

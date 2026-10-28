@@ -115,13 +115,13 @@ public:
         letters.update(*this, s.letters);
     }
     /// Copy during cloning
-    virtual Space*
-    copy(void) {
+    Space*
+    copy(void) override {
         return new WordSquare(*this);
     }
     /// Print solution
-    virtual void
-    print(std::ostream& os) const {
+    void
+    print(std::ostream& os) const override {
         Matrix<IntVarArray> ml(letters, w_l, w_l);
         for (int i = 0; i < w_l; i++) {
             os << "\t\t";

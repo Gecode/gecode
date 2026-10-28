@@ -35,18 +35,18 @@
 namespace Gecode { namespace Search { namespace Seq {
 
     Stop*
-    pbsstop(Stop* so) {
+    pbs_stop(Stop* so) {
         return new PortfolioStop(so);
     }
 
     Stop*
-    pbsstop(Stop* so, Stop* po) {
+    pbs_stop(Stop* so, Stop* po) {
         return new PortfolioStop(so, po);
     }
 
     Engine*
-    pbsengine(Engine** assets, Stop** stops, const SpokeCoverage* coverage, unsigned int n_assets,
-              const Statistics& stat, const Search::Options& opt, bool best) {
+    make_pbs_engine(Engine** assets, Stop** stops, const SpokeCoverage* coverage, unsigned int n_assets,
+                    const Statistics& stat, const Search::Options& opt, bool best) {
         if (best)
             return new PBS<true>(assets, stops, coverage, n_assets, stat, opt);
         else
@@ -62,18 +62,18 @@ namespace Gecode { namespace Search { namespace Seq {
 namespace Gecode { namespace Search { namespace Par {
 
     Stop*
-    pbsstop(Stop* so, const WorkerControl& control) {
+    pbs_stop(Stop* so, const WorkerControl& control) {
         return new PortfolioStop(so, nullptr, control);
     }
 
     Stop*
-    pbsstop(Stop* so, Stop* po, const WorkerControl& control) {
+    pbs_stop(Stop* so, Stop* po, const WorkerControl& control) {
         return new PortfolioStop(so, po, control);
     }
 
     Engine*
-    pbsengine(Engine** assets, Stop** stops, const SpokeCoverage* coverage, unsigned int n_assets,
-              const Statistics& stat, bool best) {
+    make_pbs_engine(Engine** assets, Stop** stops, const SpokeCoverage* coverage, unsigned int n_assets,
+                    const Statistics& stat, bool best) {
         if (best)
             return new PBS<CollectBest>(assets, stops, coverage, n_assets, stat);
         else

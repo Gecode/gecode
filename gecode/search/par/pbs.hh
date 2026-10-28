@@ -99,7 +99,7 @@ namespace Gecode { namespace Search { namespace Par {
         /// Share stop flag \a ts and statistics \a ps of the portfolio with asset \a i
         void share(std::atomic<bool>* ts, PortfolioStatistics* ps, unsigned int i);
         /// Return true if portfolio engine must be stopped
-        virtual bool stop(const Statistics& s, const Options& o);
+        bool stop(const Statistics& s, const Options& o) override;
         /// Record the final statistics \a s of the asset with the portfolio
         void record(const Statistics& s);
         /// Wake workers so that a paused asset can observe the portfolio stop
@@ -132,7 +132,7 @@ namespace Gecode { namespace Search { namespace Par {
             /// Initialize as completed
             Completion(void);
             /// Signal completion
-            virtual void terminated(void);
+            void terminated(void) override;
             /// Wait for completion and consume the signal
             void wait(void);
         } completion;
@@ -157,7 +157,7 @@ namespace Gecode { namespace Search { namespace Par {
         /// Return why the last call to next() of the asset returned no solution
         EndReason end_reason(void) const;
         /// Return the completion terminator
-        virtual Support::Terminator* terminator(void) const;
+        Support::Terminator* terminator(void) const override;
         /// Wait for the asset to complete its current run
         void wait(void);
         /// Restore the completion of a run that could not be started
@@ -175,9 +175,9 @@ namespace Gecode { namespace Search { namespace Par {
         /// Whether the asset is parked
         bool parked(void) const;
         /// Perform one run
-        virtual void run(void);
+        void run(void) override;
         /// Delete asset
-        virtual ~Asset(void);
+        ~Asset(void) override;
     };
 
     /// Collect all solutions
@@ -288,15 +288,15 @@ namespace Gecode { namespace Search { namespace Par {
         /// Initialize with \a n assets, their stop objects, and the coverage of their spokes
         PBS(Engine** s, Stop** so, const SpokeCoverage* c, unsigned int n, const Statistics& stat);
         /// Return next solution (nullptr, if none exists or search has been stopped)
-        virtual Space* next(void);
+        Space* next(void) override;
         /// Return statistics
-        virtual Statistics statistics(void) const;
+        Statistics statistics(void) const override;
         /// Return why the last call to next() returned no solution
-        virtual EndReason end_reason(void) const;
+        EndReason end_reason(void) const override;
         /// Constrain future solutions to be better than \a b
-        virtual void constrain(const Space& b);
+        void constrain(const Space& b) override;
         /// Destructor
-        virtual ~PBS(void);
+        ~PBS(void) override;
     };
 
 }}} // namespace Gecode::Search::Par

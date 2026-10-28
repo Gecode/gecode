@@ -41,7 +41,7 @@
 namespace Gecode {
 
     void
-    channelSorted(Home home, const IntVarArgs& x, SetVar y) {
+    channel_sorted(Home home, const IntVarArgs& x, SetVar y) {
         GECODE_POST;
         ViewArray<Int::IntView> xa(home, x);
         GECODE_ES_FAIL(Set::Channel::ChannelSorted<Set::SetView>::post(home, y, xa));

@@ -55,12 +55,12 @@ namespace Test { namespace Int {
                 : Test(TestTags::sweep(), "Circuit::" + str(ipl) + "::" + str(n) + "::" + str(off), n, min, max, false,
                        ipl),
                   offset(off) {
-                contest = CTL_NONE;
-                testfix = false;
+                consistency_test_level = CTL_NONE;
+                test_fixpoint = false;
             }
             /// Check whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 for (int i = x.size(); i--;)
                     if ((x[i] < 0) || (x[i] > x.size() - 1))
                         return false;
@@ -78,8 +78,8 @@ namespace Test { namespace Int {
                 return true;
             }
             /// Post circuit constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 if (offset > 0) {
                     Gecode::IntVarArgs xx(x.size());
                     for (int i = x.size(); i--;)
@@ -103,12 +103,12 @@ namespace Test { namespace Int {
                 : Test(TestTags::sweep(), "Path::" + str(ipl) + "::" + str(n) + "::" + str(off), n + 2, min, max, false,
                        ipl),
                   offset(off) {
-                contest = CTL_NONE;
-                testfix = false;
+                consistency_test_level = CTL_NONE;
+                test_fixpoint = false;
             }
             /// Check whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 int n = x.size() - 2;
                 int s = x[n];
                 int e = x[n + 1];
@@ -131,8 +131,8 @@ namespace Test { namespace Int {
                 return true;
             }
             /// Post path constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 int n = x.size() - 2;
                 Gecode::IntVarArgs xx(n);
                 if (offset > 0) {
@@ -160,12 +160,12 @@ namespace Test { namespace Int {
                 : Test((ipl == Gecode::IPL_DOM) && (n == 4) && (off == 0) ? TestTags::standard() : TestTags::sweep(),
                        "Circuit::Cost::" + str(ipl) + "::" + str(n) + "::" + str(off), n + 1, min, max, false, ipl),
                   offset(off) {
-                contest = CTL_NONE;
-                testfix = false;
+                consistency_test_level = CTL_NONE;
+                test_fixpoint = false;
             }
             /// Check whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 int n = x.size() - 1;
                 for (int i = n; i--;)
                     if ((x[i] < 0) || (x[i] > n - 1))
@@ -187,8 +187,8 @@ namespace Test { namespace Int {
                 return c == x[n];
             }
             /// Post circuit constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 using namespace Gecode;
                 int n = x.size() - 1;
                 IntArgs c(n * n);
@@ -220,12 +220,12 @@ namespace Test { namespace Int {
                 : Test((ipl == Gecode::IPL_DOM) && (n == 3) && (off == 0) ? TestTags::standard() : TestTags::sweep(),
                        "Path::Cost::" + str(ipl) + "::" + str(n) + "::" + str(off), n + 3, min, max, false, ipl),
                   offset(off) {
-                contest = CTL_NONE;
-                testfix = false;
+                consistency_test_level = CTL_NONE;
+                test_fixpoint = false;
             }
             /// Check whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 int n = x.size() - 3;
                 int s = x[n];
                 int e = x[n + 1];
@@ -251,8 +251,8 @@ namespace Test { namespace Int {
                 return c == 0;
             }
             /// Post circuit constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 using namespace Gecode;
                 int n = x.size() - 3;
                 IntArgs c(n * n);
@@ -284,12 +284,12 @@ namespace Test { namespace Int {
                 : Test(TestTags::sweep(), "Circuit::FullCost::" + str(ipl) + "::" + str(n) + "::" + str(off), 2 * n + 1,
                        min, max, false, ipl),
                   offset(off) {
-                contest = CTL_NONE;
-                testfix = false;
+                consistency_test_level = CTL_NONE;
+                test_fixpoint = false;
             }
             /// Check whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 int n = (x.size() - 1) / 2;
                 for (int i = n; i--;)
                     if ((x[i] < 0) || (x[i] > n - 1))
@@ -314,8 +314,8 @@ namespace Test { namespace Int {
                 return c == x[2 * n];
             }
             /// Post circuit constraint on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 using namespace Gecode;
                 int n = (x.size() - 1) / 2;
                 IntArgs c(n * n);

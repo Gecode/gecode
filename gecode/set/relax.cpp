@@ -47,9 +47,9 @@ namespace Gecode { namespace Set {
         SetView xv(x);
         SetView sxv(sx);
         SetVarGlbRanges l(sxv);
-        GECODE_ME_CHECK(xv.includeI(home, l));
+        GECODE_ME_CHECK(xv.include_i(home, l));
         SetVarLubRanges u(sxv);
-        GECODE_ME_CHECK(xv.intersectI(home, u));
+        GECODE_ME_CHECK(xv.intersect_i(home, u));
         return ES_OK;
     }
 
