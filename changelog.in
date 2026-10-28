@@ -99,6 +99,13 @@ Rank:   minor
 Avoid reading propagator state from branchers when enabling tracing.
 
 [ENTRY]
+Module: kernel
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Fix invalid downcasts of the end markers of propagator and brancher lists.
+
+[ENTRY]
 Module: search
 What:   new
 Rank:   major
