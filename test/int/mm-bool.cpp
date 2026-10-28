@@ -209,6 +209,7 @@ namespace Test { namespace Int {
          case 12: return x[2] == value;
          default: GECODE_NEVER;
          }
+         return false;
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
