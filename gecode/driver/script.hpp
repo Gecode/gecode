@@ -295,7 +295,7 @@ namespace Gecode { namespace Driver {
     void
     ScriptBase<BaseSpace>::run(const Options& o, Script* s) {
         if ((o.restart() != RM_NONE) && (o.assets() > 0)) {
-            std::cerr << "Cannot use restarts and portfolio..." << std::endl;
+            std::cerr << "Cannot use restarts and portfolio..." << '\n' << std::flush;
             exit(EXIT_FAILURE);
         }
         if (o.restart() != RM_NONE) {
@@ -362,7 +362,7 @@ namespace Gecode { namespace Driver {
                     so.tracer = new CPProfilerSearchTracer(o.profiler_id(), o.name(), o.profiler_port(), get_info);
                 }
 #endif
-                l_out << o.name() << endl;
+                l_out << o.name() << '\n' << std::flush;
                 Support::Timer t;
                 unsigned long long int s_l = (o.solutions() == 0) ? ULLONG_MAX : o.solutions();
                 unsigned long long int s_n = 0;
@@ -395,6 +395,7 @@ namespace Gecode { namespace Driver {
                             if (ex == nullptr) {
                                 if (px != nullptr) {
                                     px->print(s_out);
+                                    s_out.flush();
                                     delete px;
                                 }
                                 break;
@@ -410,6 +411,7 @@ namespace Gecode { namespace Driver {
                             if (ex == nullptr)
                                 break;
                             ex->print(s_out);
+                            s_out.flush();
                             delete ex;
                             s_n++;
                         } while (s_n < s_l);
@@ -417,12 +419,12 @@ namespace Gecode { namespace Driver {
                     if (o.interrupt())
                         CombinedStop::install_ctrl_handler(false);
                     Search::Statistics stat = e.statistics();
-                    s_out << endl;
+                    s_out << '\n' << std::flush;
                     if (e.stopped()) {
-                        l_out << "Search engine stopped..." << endl << "\treason: ";
+                        l_out << "Search engine stopped..." << '\n' << "\treason: ";
                         int r = static_cast<CombinedStop*>(so.stop)->reason(stat, so);
                         if (r & CombinedStop::SR_INT)
-                            l_out << "user interrupt " << endl;
+                            l_out << "user interrupt " << '\n';
                         else {
                             if (r & CombinedStop::SR_NODE)
                                 l_out << "node ";
@@ -432,34 +434,35 @@ namespace Gecode { namespace Driver {
                                 l_out << "time ";
                             if (r & CombinedStop::SR_RESTART)
                                 l_out << "restart ";
-                            l_out << "limit reached" << endl << endl;
+                            l_out << "limit reached" << '\n' << '\n';
                         }
                     }
-                    l_out << "Initial" << endl
-                          << "\tpropagators: " << n_p << endl
-                          << "\tbranchers:   " << n_b << endl
-                          << endl
-                          << "Summary" << endl
+                    l_out << "Initial" << '\n'
+                          << "\tpropagators: " << n_p << '\n'
+                          << "\tbranchers:   " << n_b << '\n'
+                          << '\n'
+                          << "Summary" << '\n'
                           << "\truntime:      ";
                     stop(t, l_out);
-                    l_out << endl
-                          << "\tsolutions:    " << s_n << endl
-                          << "\tpropagations: " << stat.propagate << endl
-                          << "\tnodes:        " << stat.node << endl
-                          << "\tfailures:     " << stat.fail << endl
-                          << "\trestarts:     " << stat.restart << endl
-                          << "\tno-goods:     " << stat.nogood << endl
-                          << "\tpeak depth:   " << stat.depth << endl
+                    l_out << '\n'
+                          << "\tsolutions:    " << s_n << '\n'
+                          << "\tpropagations: " << stat.propagate << '\n'
+                          << "\tnodes:        " << stat.node << '\n'
+                          << "\tfailures:     " << stat.fail << '\n'
+                          << "\trestarts:     " << stat.restart << '\n'
+                          << "\tno-goods:     " << stat.nogood << '\n'
+                          << "\tpeak depth:   " << stat.depth << '\n'
 #ifdef GECODE_PEAKHEAP
-                          << "\tpeak memory:  " << static_cast<int>((heap.peak() + 1023) / 1024) << " KB" << endl
+                          << "\tpeak memory:  " << static_cast<int>((heap.peak() + 1023) / 1024) << " KB" << '\n'
 #endif
-                          << endl;
+                          << '\n'
+                          << std::flush;
                 }
                 delete so.stop;
                 delete so.tracer;
             } break;
             case SM_STAT: {
-                l_out << o.name() << endl;
+                l_out << o.name() << '\n' << std::flush;
                 Support::Timer t;
                 unsigned long long int s_l = (o.solutions() == 0) ? ULLONG_MAX : o.solutions();
                 unsigned long long int s_n = 0;
@@ -496,28 +499,29 @@ namespace Gecode { namespace Driver {
                     if (o.interrupt())
                         CombinedStop::install_ctrl_handler(false);
                     Search::Statistics stat = e.statistics();
-                    l_out << endl
-                          << "\tpropagators:  " << n_p << endl
-                          << "\tbranchers:    " << n_b << endl
+                    l_out << '\n'
+                          << "\tpropagators:  " << n_p << '\n'
+                          << "\tbranchers:    " << n_b << '\n'
                           << "\truntime:      ";
                     stop(t, l_out);
-                    l_out << endl
-                          << "\tsolutions:    " << s_n << endl
-                          << "\tpropagations: " << stat.propagate << endl
-                          << "\tnodes:        " << stat.node << endl
-                          << "\tfailures:     " << stat.fail << endl
-                          << "\trestarts:     " << stat.restart << endl
-                          << "\tno-goods:     " << stat.nogood << endl
-                          << "\tpeak depth:   " << stat.depth << endl
+                    l_out << '\n'
+                          << "\tsolutions:    " << s_n << '\n'
+                          << "\tpropagations: " << stat.propagate << '\n'
+                          << "\tnodes:        " << stat.node << '\n'
+                          << "\tfailures:     " << stat.fail << '\n'
+                          << "\trestarts:     " << stat.restart << '\n'
+                          << "\tno-goods:     " << stat.nogood << '\n'
+                          << "\tpeak depth:   " << stat.depth << '\n'
 #ifdef GECODE_PEAKHEAP
-                          << "\tpeak memory:  " << static_cast<int>((heap.peak() + 1023) / 1024) << " KB" << endl
+                          << "\tpeak memory:  " << static_cast<int>((heap.peak() + 1023) / 1024) << " KB" << '\n'
 #endif
-                          << endl;
+                          << '\n'
+                          << std::flush;
                 }
                 delete so.stop;
             } break;
             case SM_TIME: {
-                l_out << o.name() << endl;
+                l_out << o.name() << '\n' << std::flush;
                 Support::Timer t;
                 double* ts = new double[o.samples()];
                 bool stopped = false;
@@ -558,18 +562,19 @@ namespace Gecode { namespace Driver {
                     ts[ns] = t.stop() / o.iterations();
                 }
                 if (stopped) {
-                    l_out << "\tSTOPPED" << endl;
+                    l_out << "\tSTOPPED" << '\n' << std::flush;
                 } else {
                     double m = am(ts, o.samples());
                     double d = dev(ts, o.samples()) * 100.0;
                     l_out << "\truntime: " << setw(20) << right << showpoint << fixed << setprecision(6) << m << "ms"
-                          << setprecision(2) << " (" << d << "% deviation)" << endl;
+                          << setprecision(2) << " (" << d << "% deviation)" << '\n'
+                          << std::flush;
                 }
                 delete[] ts;
             } break;
             }
         } catch (Exception& e) {
-            cerr << "Exception: " << e.what() << "." << endl << "Stopping..." << endl;
+            cerr << "Exception: " << e.what() << "." << '\n' << "Stopping..." << '\n' << std::flush;
             if (sol_file.is_open())
                 sol_file.close();
             if (log_file.is_open())

@@ -180,7 +180,7 @@ namespace {
     /** \brief Post PushToEnd propagator.
      */
     void
-    push_to_end(Space& home, IntVarArgs x, IntVar y, int val) {
+    push_to_end(Space& home, const IntVarArgs& x, IntVar y, int val) {
         ViewArray<Int::IntView> vx(home, x);
         Int::IntView vy(y);
         GECODE_ES_FAIL(PushToEnd<Int::IntView>::post(home, vx, vy, val));
@@ -364,7 +364,7 @@ public:
     print(std::ostream& os) const override {
         int width = class_count > 9 ? 2 : 1;
         const char* space = class_count > 9 ? " " : "";
-        os << "Stall slots=" << stall_count << ", End slots=" << end_count << std::endl;
+        os << "Stall slots=" << stall_count << ", End slots=" << end_count << '\n';
         int i = 0;
         for (; i < s.size(); ++i) {
             if (s[i].assigned()) {
@@ -379,11 +379,11 @@ public:
                 os << space << "? ";
             }
             if ((i + 1) % 20 == 0)
-                os << std::endl;
+                os << '\n';
         }
         if (i % 20)
-            os << std::endl;
-        os << std::endl;
+            os << '\n';
+        os << '\n';
     }
 
     /// Constructor for cloning \a s
@@ -417,7 +417,7 @@ main(int argc, char* argv[]) {
     opt.propagation(CarSequencing::PROP_CUSTOM, "custom");
     opt.parse(argc, argv);
     if (opt.size() >= n_problems) {
-        std::cerr << "Error: size must be between 0 and " << n_problems - 1 << std::endl;
+        std::cerr << "Error: size must be between 0 and " << n_problems - 1 << '\n';
         return 1;
     }
 

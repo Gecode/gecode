@@ -106,7 +106,7 @@ public:
     /// Print solution
     void
     print(std::ostream& os) const override {
-        os << "\tm[" << m.size() << "] = " << m << std::endl;
+        os << "\tm[" << m.size() << "] = " << m << '\n';
     }
 
     /// Constructor for cloning \a s

@@ -103,7 +103,7 @@ namespace Test { namespace Float {
                             gecode_boost::numeric::interval_lib::save_state<Gecode::Float::Rounding>>();
                     }
                     if (std::fegetround() != mode) {
-                        olog << "Rounding scope changed caller mode " << mode << std::endl;
+                        olog << "Rounding scope changed caller mode " << mode << '\n';
                         result = false;
                     }
                 }
@@ -145,12 +145,12 @@ namespace Test { namespace Float {
                             direct = r.median(c[0], c[1]);
                         }
                         if ((std::fegetround() != mode) || (direct != c[2])) {
-                            olog << "Direct median changed its result or rounding mode " << mode << std::endl;
+                            olog << "Direct median changed its result or rounding mode " << mode << '\n';
                             result = false;
                         }
                         const volatile Gecode::FloatNum median = value.med();
                         if ((std::fegetround() != mode) || (median != c[2])) {
-                            olog << "Median query changed its result or rounding mode " << mode << std::endl;
+                            olog << "Median query changed its result or rounding mode " << mode << '\n';
                             result = false;
                         }
                     }
@@ -222,7 +222,7 @@ namespace Test { namespace Float {
                 if (s.status() != Gecode::SS_FAILED)
                     return true;
                 olog << "Root bound removed a solution for " << (use_pow ? "pow" : "nroot") << ", n=" << n
-                     << ", mode=" << mode << std::endl;
+                     << ", mode=" << mode << '\n';
                 return false;
             }
             /// Check that propagation returns a genuinely outward upper bound
@@ -233,7 +233,7 @@ namespace Test { namespace Float {
                 NRootBoundSpace s(hi, n);
                 if ((s.status() != Gecode::SS_FAILED) && (s.root.max() > rejected))
                     return true;
-                olog << "NRoot upper bound was not outward for n=" << n << ", mode=" << mode << std::endl;
+                olog << "NRoot upper bound was not outward for n=" << n << ", mode=" << mode << '\n';
                 return false;
             }
 
@@ -374,7 +374,7 @@ namespace Test { namespace Float {
                 ZeroSpace direct(n, true);
                 ZeroSpace delayed(n, false);
                 if (delayed.status() == Gecode::SS_FAILED) {
-                    olog << "Pow wide base failed for n=" << n << std::endl;
+                    olog << "Pow wide base failed for n=" << n << '\n';
                     return false;
                 }
                 ZeroSpace* clone = static_cast<ZeroSpace*>(delayed.clone());
@@ -389,7 +389,7 @@ namespace Test { namespace Float {
                                                    (non_zero->y.min() == 1.0) && (non_zero->y.max() == 1.0);
                     delete non_zero;
                     if (!zero_rejected || !non_zero_accepted)
-                        olog << "Pow exponent-zero semantics failed" << std::endl;
+                        olog << "Pow exponent-zero semantics failed" << '\n';
                     return zero_rejected && non_zero_accepted;
                 }
                 const bool result = (direct.status() != Gecode::SS_FAILED) && (direct.y.min() == 0.0) &&
@@ -397,7 +397,7 @@ namespace Test { namespace Float {
                                     (clone->y.min() == 0.0) && (clone->y.max() == 0.0);
                 delete clone;
                 if (!result)
-                    olog << "Pow delayed zero failed for n=" << n << std::endl;
+                    olog << "Pow delayed zero failed for n=" << n << '\n';
                 return result;
             }
             /// Test that a zero result forces a zero base
@@ -405,7 +405,7 @@ namespace Test { namespace Float {
             check_zero_result(int n, bool direct) const {
                 ZeroResultSpace initial(n, direct);
                 if (initial.status() == Gecode::SS_FAILED) {
-                    olog << "Pow zero result failed for n=" << n << std::endl;
+                    olog << "Pow zero result failed for n=" << n << '\n';
                     return false;
                 }
                 ZeroResultSpace* clone = static_cast<ZeroResultSpace*>(initial.clone());
@@ -418,7 +418,7 @@ namespace Test { namespace Float {
                 delete clone;
                 if (!contracted || !inconsistent_rejected)
                     olog << "Pow zero result did not force zero base for n=" << n
-                         << (direct ? " (direct)" : " (delayed)") << std::endl;
+                         << (direct ? " (direct)" : " (delayed)") << '\n';
                 return contracted && inconsistent_rejected;
             }
             /// Test exponent zero on an adjacent interval containing zero
@@ -438,7 +438,7 @@ namespace Test { namespace Float {
 
                 if (!actor_retained || !clone_retained)
                     olog << "Pow adjacent exponent-zero semantics failed" << (positive ? " (positive)" : " (negative)")
-                         << std::endl;
+                         << '\n';
                 return actor_retained && clone_retained;
             }
 
@@ -460,7 +460,7 @@ namespace Test { namespace Float {
 
                 FixpointSpace once;
                 if (once.status() == Gecode::SS_FAILED) {
-                    olog << "Pow fixpoint instance failed" << std::endl;
+                    olog << "Pow fixpoint instance failed" << '\n';
                     return false;
                 }
                 FixpointSpace* twice = static_cast<FixpointSpace*>(once.clone());
@@ -470,7 +470,7 @@ namespace Test { namespace Float {
                                       (once.y.max() == twice->y.max());
                 delete twice;
                 if (!fixpoint)
-                    olog << "Pow posting did not reach a fixpoint" << std::endl;
+                    olog << "Pow posting did not reach a fixpoint" << '\n';
                 return fixpoint && result;
             }
         } pow_consistency;
@@ -510,7 +510,7 @@ namespace Test { namespace Float {
                 MultSpace s(xl, xu, yl, yu, zl, zu);
                 if ((s.status() == Gecode::SS_FAILED) || (s.x.min() < expected_min) || (s.x.max() > expected_max)) {
                     olog << "Multiplication endpoint-zero contraction failed: x=" << s.x << ", y=" << s.y
-                         << ", z=" << s.z << std::endl;
+                         << ", z=" << s.z << '\n';
                     return false;
                 }
                 MultSpace* clone = static_cast<MultSpace*>(s.clone());
@@ -521,7 +521,7 @@ namespace Test { namespace Float {
                                       (clone->z.max() == s.z.max());
                 delete clone;
                 if (!fixpoint)
-                    olog << "Multiplication endpoint-zero case was not at a fixpoint" << std::endl;
+                    olog << "Multiplication endpoint-zero case was not at a fixpoint" << '\n';
                 return fixpoint;
             }
             /// Exercise supported points across endpoint-zero sign combinations
@@ -545,7 +545,7 @@ namespace Test { namespace Float {
                     if ((s.status() == Gecode::SS_FAILED) || (s.x.min() > a) || (s.x.max() < a) || (s.y.min() > b) ||
                         (s.y.max() < b) || (s.z.min() > p) || (s.z.max() < p)) {
                         olog << "Multiplication removed supported fuzz point " << i << ": (" << a << ", " << b << ", "
-                             << p << ")" << std::endl;
+                             << p << ")" << '\n';
                         return false;
                     }
                 }
@@ -576,7 +576,7 @@ namespace Test { namespace Float {
                 result = (zero_factor.status() != Gecode::SS_FAILED) && (zero_factor.y.min() == -1.0) &&
                          (zero_factor.y.max() == 1.0) && result;
                 if (!result)
-                    olog << "Multiplication zero or swapped regression failed" << std::endl;
+                    olog << "Multiplication zero or swapped regression failed" << '\n';
                 return fuzz() && result;
             }
         } mult_zero_endpoint;

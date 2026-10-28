@@ -30,6 +30,8 @@
  *
  */
 
+#include <utility>
+
 namespace Gecode {
 
     forceinline
@@ -38,7 +40,7 @@ namespace Gecode {
 
     forceinline
     IntVarBranch::IntVarBranch(Select s0, BranchTbl t)
-        : VarBranch<IntVar>(t), s(s0) {}
+        : VarBranch<IntVar>(std::move(t)), s(s0) {}
 
     forceinline
     IntVarBranch::IntVarBranch(Rnd r)
@@ -46,23 +48,23 @@ namespace Gecode {
 
     forceinline
     IntVarBranch::IntVarBranch(Select s0, double d, BranchTbl t)
-        : VarBranch<IntVar>(d, t), s(s0) {}
+        : VarBranch<IntVar>(d, std::move(t)), s(s0) {}
 
     forceinline
     IntVarBranch::IntVarBranch(Select s0, IntAFC a, BranchTbl t)
-        : VarBranch<IntVar>(a, t), s(s0) {}
+        : VarBranch<IntVar>(a, std::move(t)), s(s0) {}
 
     forceinline
     IntVarBranch::IntVarBranch(Select s0, IntAction a, BranchTbl t)
-        : VarBranch<IntVar>(a, t), s(s0) {}
+        : VarBranch<IntVar>(a, std::move(t)), s(s0) {}
 
     forceinline
     IntVarBranch::IntVarBranch(Select s0, IntCHB c, BranchTbl t)
-        : VarBranch<IntVar>(c, t), s(s0) {}
+        : VarBranch<IntVar>(c, std::move(t)), s(s0) {}
 
     forceinline
     IntVarBranch::IntVarBranch(Select s0, IntBranchMerit mf, BranchTbl t)
-        : VarBranch<IntVar>(mf, t), s(s0) {}
+        : VarBranch<IntVar>(std::move(mf), std::move(t)), s(s0) {}
 
     forceinline IntVarBranch::Select
     IntVarBranch::select(void) const {
@@ -313,7 +315,7 @@ namespace Gecode {
 
     forceinline
     BoolVarBranch::BoolVarBranch(Select s0, BranchTbl t)
-        : VarBranch<BoolVar>(t), s(s0) {}
+        : VarBranch<BoolVar>(std::move(t)), s(s0) {}
 
     forceinline
     BoolVarBranch::BoolVarBranch(Rnd r)
@@ -321,23 +323,23 @@ namespace Gecode {
 
     forceinline
     BoolVarBranch::BoolVarBranch(Select s0, double d, BranchTbl t)
-        : VarBranch<BoolVar>(d, t), s(s0) {}
+        : VarBranch<BoolVar>(d, std::move(t)), s(s0) {}
 
     forceinline
     BoolVarBranch::BoolVarBranch(Select s0, BoolAFC a, BranchTbl t)
-        : VarBranch<BoolVar>(a, t), s(s0) {}
+        : VarBranch<BoolVar>(a, std::move(t)), s(s0) {}
 
     forceinline
     BoolVarBranch::BoolVarBranch(Select s0, BoolAction a, BranchTbl t)
-        : VarBranch<BoolVar>(a, t), s(s0) {}
+        : VarBranch<BoolVar>(a, std::move(t)), s(s0) {}
 
     forceinline
     BoolVarBranch::BoolVarBranch(Select s0, BoolCHB c, BranchTbl t)
-        : VarBranch<BoolVar>(c, t), s(s0) {}
+        : VarBranch<BoolVar>(c, std::move(t)), s(s0) {}
 
     forceinline
     BoolVarBranch::BoolVarBranch(Select s0, BoolBranchMerit mf, BranchTbl t)
-        : VarBranch<BoolVar>(mf, t), s(s0) {}
+        : VarBranch<BoolVar>(std::move(mf), std::move(t)), s(s0) {}
 
     forceinline BoolVarBranch::Select
     BoolVarBranch::select(void) const {

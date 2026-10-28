@@ -78,6 +78,19 @@ changes downstream code needs.
 
 [ENTRY]
 Module: other
+What:   performance
+Rank:   minor
+[DESCRIPTION]
+Move owned branching and open-variable-list callbacks through constructors
+instead of copying them repeatedly. Avoid copying read-only argument arrays
+in examples, reserve worker-control thread storage, and buffer multi-line
+output while flushing complete solutions, progress, and protocol messages.
+[MORE]
+Expand clang-tidy checks for hidden copies, container operations, missed moves,
+stream flushing, and correctness errors.
+
+[ENTRY]
+Module: other
 What:   change
 Rank:   major
 [DESCRIPTION]

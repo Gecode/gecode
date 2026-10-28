@@ -160,11 +160,11 @@ public:
     /// Print solution
     void
     print(std::ostream& os) const override {
-        os << "\tSupplier:        " << supplier << std::endl
-           << "\tOpen warehouses: " << open << std::endl
-           << "\tStore cost:      " << c_store << std::endl
-           << "\tTotal cost:      " << c_total << std::endl
-           << std::endl;
+        os << "\tSupplier:        " << supplier << '\n'
+           << "\tOpen warehouses: " << open << '\n'
+           << "\tStore cost:      " << c_store << '\n'
+           << "\tTotal cost:      " << c_total << '\n'
+           << '\n';
     }
 };
 
@@ -201,11 +201,11 @@ public:
     /// Print solution
     void
     print(std::ostream& os) const override {
-        os << "\tSupplier:        " << supplier << std::endl
-           << "\tOpen warehouses: " << open << std::endl
-           << "\tOpen cost:       " << c_open << std::endl
-           << "\tStores cost:     " << c_stores << std::endl
-           << std::endl;
+        os << "\tSupplier:        " << supplier << '\n'
+           << "\tOpen warehouses: " << open << '\n'
+           << "\tOpen cost:       " << c_open << '\n'
+           << "\tStores cost:     " << c_stores << '\n'
+           << '\n';
     }
 };
 

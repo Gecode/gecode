@@ -32,7 +32,8 @@ affect runtime behaviour. Platform-specific checks remain in CI.
 - Work stays local; pushing and opening pull requests require explicit approval.
 - Version and ABI metadata remain at the branch baseline. Assign the new
   release version and ABI before publishing this breaking release.
-- C++ uses four-space indentation and LLVM 22 formatting; see `code-style.md`.
+- C++ uses four-space indentation, a 120-column limit, and LLVM 22 formatting;
+  see `code-style.md`.
 - Functions, variables, and members use snake_case; types retain PascalCase,
   enum constants retain UPPER_CASE, and external API overrides keep their names.
 
@@ -43,8 +44,9 @@ affect runtime behaviour. Platform-specific checks remain in CI.
 - Audit shipped Boost compatibility headers against the new compiler baseline.
 - Consider scoped enums and descriptive constants after naming stabilizes.
 - Revisit the `forceinline` portability macro and obsolete `(void)` parameter lists.
-- Audit callback and argument-array copying with `performance-unnecessary-value-param`;
-  distinguish owned data from cheap variable/view handles.
+- Continue auditing callback, branch-configuration, and shared-handle copying
+  with `performance-unnecessary-value-param`; distinguish owned data and
+  atomic reference counts from shallow variable/view handles.
 - Compare custom bit helpers with C++20 bit operations before replacing them.
 - Audit empty-array posting paths, including `no_overlap`, for zero-byte
   allocations rejected by the Debug allocator.
@@ -69,3 +71,13 @@ affect runtime behaviour. Platform-specific checks remain in CI.
   checks, and Doxygen 1.18 documentation.
 - The full standard and sweep stress suites remain explicit long-running
   targets. Windows and Qt5 branches were reviewed but not executed locally.
+
+- 120-column formatting: commit `96277faa2c`; generated headers use the same
+  limit. Seven performance and five correctness checks were added after a
+  full-tree audit. All 479 translation units and owned grammar actions pass
+  the expanded lint profile; the integrity, fault, package, and documentation
+  checks pass as well.
+- Counted callback probes showed branch callback copies reduced from three to
+  one and open-variable-list callback copies from five to two. Six example
+  outputs stayed unchanged, apart from excluded runtime measurements. A pipe
+  probe confirmed solutions remain visible before delayed cleanup.

@@ -55,7 +55,7 @@ public:
     }
     void
     print(std::ostream& os) const {
-        os << variables << std::endl;
+        os << variables << '\n';
     }
 };
 

@@ -113,14 +113,14 @@ public:
             b += x[i].val() * x[i].val();
             os << x[i] << ", ";
         }
-        os << " = " << a << ", " << b << std::endl << "\t";
+        os << " = " << a << ", " << b << '\n' << "\t";
         a = b = 0;
         for (int i = 0; i < y.size(); i++) {
             a += y[i].val();
             b += y[i].val() * y[i].val();
             os << y[i] << ", ";
         }
-        os << " = " << a << ", " << b << std::endl;
+        os << " = " << a << ", " << b << '\n';
     }
 };
 

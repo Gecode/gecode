@@ -286,9 +286,9 @@ public:
                         os << static_cast<char>(ml(j, i).val());
                 else
                     os << '?';
-            os << std::endl;
+            os << '\n';
         }
-        os << std::endl << std::endl;
+        os << '\n' << '\n';
     }
 };
 
@@ -316,7 +316,7 @@ main(int argc, char* argv[]) {
     opt.parse(argc, argv);
     dict.init(opt.file());
     if (opt.size() >= n_grids) {
-        std::cerr << "Error: size must be between 0 and " << n_grids - 1 << std::endl;
+        std::cerr << "Error: size must be between 0 and " << n_grids - 1 << '\n';
         return 1;
     }
     Script::run<Crossword, DFS, SizeOptions>(opt);

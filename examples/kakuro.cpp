@@ -473,7 +473,7 @@ public:
                     os << ". ";
                 else
                     os << b(x, y) << ' ';
-            os << std::endl;
+            os << '\n';
         }
     }
 };
@@ -490,7 +490,7 @@ main(int argc, char* argv[]) {
     opt.ipl(IPL_DOM);
     opt.parse(argc, argv);
     if (opt.size() >= n_examples) {
-        std::cerr << "Error: size must be between 0 and " << n_examples - 1 << std::endl;
+        std::cerr << "Error: size must be between 0 and " << n_examples - 1 << '\n';
         return 1;
     }
     Script::run<Kakuro, DFS, SizeOptions>(opt);

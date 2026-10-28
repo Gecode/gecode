@@ -40,7 +40,7 @@ namespace Gecode {
 
     void
     StdSearchTracer::init(void) {
-        os << "trace<Search>::init()" << std::endl;
+        os << "trace<Search>::init()" << '\n' << std::flush;
         for (unsigned int e = 0U; e < engines(); e++) {
             os << "\t" << e << ": " << t2s[engine(e).type()];
             if (engine(e).meta()) {
@@ -58,19 +58,20 @@ namespace Gecode {
                         os << ",";
                 }
             }
-            os << "}" << std::endl;
+            os << "}" << '\n' << std::flush;
         }
     }
 
     void
     StdSearchTracer::round(unsigned int eid) {
-        os << "trace<Search>::round(e:" << eid << ")" << std::endl;
+        os << "trace<Search>::round(e:" << eid << ")" << '\n' << std::flush;
     }
 
     void
     StdSearchTracer::skip(const EdgeInfo& ei) {
         os << "trace<Search>Search::skip(w:" << ei.wid() << ",n:" << ei.nid() << ",a:" << ei.alternative() << ")"
-           << std::endl;
+           << '\n'
+           << std::flush;
     }
 
     void
@@ -96,15 +97,15 @@ namespace Gecode {
         if (ei) {
             if (ei.wid() != ni.wid())
                 os << " [stolen from w:" << ei.wid() << "]";
-            os << std::endl << '\t' << ei.string() << std::endl;
+            os << '\n' << std::flush << '\t' << ei.string() << '\n' << std::flush;
         } else {
-            os << std::endl;
+            os << '\n' << std::flush;
         }
     }
 
     void
     StdSearchTracer::done(void) {
-        os << "trace<Search>::done()" << std::endl;
+        os << "trace<Search>::done()" << '\n' << std::flush;
     }
 
     StdSearchTracer::~StdSearchTracer(void) {}

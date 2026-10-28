@@ -7888,9 +7888,9 @@ Dictionary::word(int l, int i) const {
 template <class Char, class Traits>
 std::basic_ostream<Char, Traits>&
 Dictionary::print(std::basic_ostream<Char, Traits>& os) const {
-    os << "Total number of words: " << n_all_words << std::endl << "Maximal length: " << max_len << std::endl;
+    os << "Total number of words: " << n_all_words << '\n' << "Maximal length: " << max_len << '\n';
     for (int i = 1; i <= max_len; i++)
-        os << "\t#words of length " << i << ": " << n_words[i] << std::endl;
+        os << "\t#words of length " << i << ": " << n_words[i] << '\n';
     return os;
 }
 template <class Char, class Traits>

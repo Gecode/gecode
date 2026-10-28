@@ -61,7 +61,7 @@ int
 main(int argc, char* argv[]) {
     const int result = Test::run_registered_tests(argc, argv);
     if ((result != EXIT_SUCCESS) || (float_runs == 0)) {
-        std::cerr << "public-float-smoke: helper-backed test did not run" << std::endl;
+        std::cerr << "public-float-smoke: helper-backed test did not run" << '\n' << std::flush;
         return EXIT_FAILURE;
     }
     return EXIT_SUCCESS;

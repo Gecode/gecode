@@ -335,9 +335,10 @@ namespace Gecode { namespace FlatZinc {
 
         void
         help(void) override {
-            std::cerr << "Gecode FlatZinc interpreter" << std::endl
-                      << " - FlatZinc text interface" << std::endl
-                      << std::endl;
+            std::cerr << "Gecode FlatZinc interpreter" << '\n'
+                      << " - FlatZinc text interface" << '\n'
+                      << '\n'
+                      << std::flush;
             Gecode::BaseOptions::help();
         }
 

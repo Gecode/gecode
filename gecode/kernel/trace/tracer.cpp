@@ -40,19 +40,19 @@ namespace Gecode {
 
     void
     StdTracer::propagate(const Space&, const PropagateTraceInfo& pti) {
-        os << "trace::" << pti << std::endl;
+        os << "trace::" << pti << '\n' << std::flush;
     }
 
     void
     StdTracer::commit(const Space& home, const CommitTraceInfo& cti) {
-        os << "trace::" << cti << std::endl << '\t';
+        os << "trace::" << cti << '\n' << std::flush << '\t';
         cti.brancher().print(home, cti.choice(), cti.alternative(), os);
-        os << std::endl;
+        os << '\n' << std::flush;
     }
 
     void
     StdTracer::post(const Space&, const PostTraceInfo& pti) {
-        os << "trace::" << pti << std::endl;
+        os << "trace::" << pti << '\n' << std::flush;
     }
 
     StdTracer StdTracer::def;

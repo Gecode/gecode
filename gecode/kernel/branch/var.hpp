@@ -31,6 +31,7 @@
  */
 
 #include <functional>
+#include <utility>
 
 namespace Gecode {
 
@@ -115,25 +116,25 @@ namespace Gecode {
     inline VarBranch<Var>::VarBranch(void) : _tbl(nullptr), _decay(1.0) {}
 
     template <class Var>
-    inline VarBranch<Var>::VarBranch(BranchTbl t) : _tbl(t), _decay(1.0) {}
+    inline VarBranch<Var>::VarBranch(BranchTbl t) : _tbl(std::move(t)), _decay(1.0) {}
 
     template <class Var>
-    inline VarBranch<Var>::VarBranch(double d, BranchTbl t) : _tbl(t), _decay(d) {}
+    inline VarBranch<Var>::VarBranch(double d, BranchTbl t) : _tbl(std::move(t)), _decay(d) {}
 
     template <class Var>
-    inline VarBranch<Var>::VarBranch(AFC a, BranchTbl t) : _tbl(t), _decay(1.0), _afc(a) {
+    inline VarBranch<Var>::VarBranch(AFC a, BranchTbl t) : _tbl(std::move(t)), _decay(1.0), _afc(a) {
         if (!_afc)
             throw UninitializedAFC("VarBranch<Var>::VarBranch");
     }
 
     template <class Var>
-    inline VarBranch<Var>::VarBranch(Action a, BranchTbl t) : _tbl(t), _decay(1.0), _act(a) {
+    inline VarBranch<Var>::VarBranch(Action a, BranchTbl t) : _tbl(std::move(t)), _decay(1.0), _act(a) {
         if (!_act)
             throw UninitializedAction("VarBranch<Var>::VarBranch");
     }
 
     template <class Var>
-    inline VarBranch<Var>::VarBranch(CHB c, BranchTbl t) : _tbl(t), _decay(1.0), _chb(c) {
+    inline VarBranch<Var>::VarBranch(CHB c, BranchTbl t) : _tbl(std::move(t)), _decay(1.0), _chb(c) {
         if (!_chb)
             throw UninitializedCHB("VarBranch<Var>::VarBranch");
     }
@@ -145,7 +146,8 @@ namespace Gecode {
     }
 
     template <class Var>
-    inline VarBranch<Var>::VarBranch(MeritFunction f, BranchTbl t) : _tbl(t), _decay(1.0), _mf(f) {}
+    inline VarBranch<Var>::VarBranch(MeritFunction f, BranchTbl t)
+        : _tbl(std::move(t)), _decay(1.0), _mf(std::move(f)) {}
 
     template <class Var>
     inline BranchTbl

@@ -108,17 +108,17 @@ namespace Test { namespace LDSB {
             T* s = e.next();
             if (s == nullptr) {
                 if (opt.log) {
-                    olog << "Expected a solution but there are no more solutions." << std::endl;
-                    olog << "(Expected " << expected_count << " but only found " << i << ")" << std::endl;
-                    olog << "Expected: " << expected[i] << std::endl;
+                    olog << "Expected a solution but there are no more solutions." << '\n';
+                    olog << "(Expected " << expected_count << " but only found " << i << ")" << '\n';
+                    olog << "Expected: " << expected[i] << '\n';
                 }
                 return false;
             }
             if (!equal(s->solution(), expected[i])) {
                 if (opt.log) {
-                    olog << "Solution does not match expected." << std::endl;
-                    olog << "Solution: " << s->solution() << std::endl;
-                    olog << "Expected: " << expected[i] << std::endl;
+                    olog << "Solution does not match expected." << '\n';
+                    olog << "Solution: " << s->solution() << '\n';
+                    olog << "Expected: " << expected[i] << '\n';
                 }
                 return false;
             }
@@ -127,9 +127,9 @@ namespace Test { namespace LDSB {
         T* s = e.next();
         if (s != nullptr) {
             if (opt.log) {
-                olog << "More solutions than expected:" << std::endl;
-                olog << "(Expected only " << expected_count << ")" << std::endl;
-                olog << s->solution() << std::endl;
+                olog << "More solutions than expected:" << '\n';
+                olog << "(Expected only " << expected_count << ")" << '\n';
+                olog << s->solution() << '\n';
             }
             return false;
         }

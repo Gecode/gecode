@@ -43,7 +43,7 @@ namespace Gecode { namespace Gist {
         if (result.str() != "") {
             init();
             add_html("<pre>\n");
-            get_stream() << result.str() << std::endl;
+            get_stream() << result.str() << '\n';
             add_html("</pre><hr />");
         }
     }

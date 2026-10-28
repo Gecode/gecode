@@ -99,9 +99,10 @@ namespace Gecode {
             slave->slave(mi);
             std::unique_ptr<Search::Engine> leaf(Search::build<T, E>(slave.get(), e_opt));
             e = Search::Seq::make_rbs_engine(master.get(), stop.get(), leaf.get(), stat, m_opt, E<T>::best);
-            master.release();
-            stop.release();
-            leaf.release();
+            // Transfer ownership only after engine construction succeeds.
+            (void)master.release();
+            (void)stop.release();
+            (void)leaf.release();
         }
     }
 

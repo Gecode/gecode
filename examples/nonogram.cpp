@@ -256,9 +256,9 @@ public:
             os << '\t';
             for (int w = 0; w < width(); ++w)
                 os << ((m(w, h).val() == 1) ? '#' : ' ');
-            os << std::endl;
+            os << '\n';
         }
-        os << std::endl;
+        os << '\n';
     }
 };
 
@@ -276,12 +276,11 @@ main(int argc, char* argv[]) {
     try {
         IntSharedArray file;
         if (specification(opt, file) == nullptr) {
-            std::cerr << "Error: instance must be a number between 0 and " << n_examples - 1 << " or a file"
-                      << std::endl;
+            std::cerr << "Error: instance must be a number between 0 and " << n_examples - 1 << " or a file" << '\n';
             return 1;
         }
     } catch (const Instance::Error& e) {
-        std::cerr << e.what() << std::endl;
+        std::cerr << e.what() << '\n';
         return 1;
     }
     Script::run<Nonogram, DFS, InstanceOptions>(opt);

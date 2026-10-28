@@ -102,7 +102,7 @@ public:
         os << "\tx[" << n << "] = {";
         for (int i = 0; i < n - 1; i++)
             os << x[i] << "(" << d[i] << "),";
-        os << x[n - 1] << "}" << std::endl;
+        os << x[n - 1] << "}" << '\n';
     }
 };
 
@@ -117,7 +117,7 @@ main(int argc, char* argv[]) {
     opt.ipl(IPL_BND);
     opt.parse(argc, argv);
     if (opt.size() < 2) {
-        std::cerr << "size must be at least 2!" << std::endl;
+        std::cerr << "size must be at least 2!" << '\n';
         return -1;
     }
     Script::run<AllInterval, DFS, SizeOptions>(opt);

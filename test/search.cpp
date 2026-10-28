@@ -747,9 +747,7 @@ namespace Test {
                 }
                 int live = 0;
                 std::unique_ptr<PortfolioSeed> root(new PortfolioSeed(live));
-                PortfolioSeed* seed = root.get();
-                if (!clone)
-                    root.release();
+                PortfolioSeed* seed = clone ? root.get() : root.release();
                 Gecode::Search::Options o;
                 o.assets = 1;
                 o.threads = threads;
@@ -761,7 +759,8 @@ namespace Test {
                 try {
                     if (restart) {
                         Gecode::RBS<PortfolioSeed> engine(seed, o);
-                        cutoff.release();
+                        // The completed RBS engine owns the cutoff.
+                        (void)cutoff.release();
                     } else {
                         Gecode::PBS<PortfolioSeed> engine(seed, o);
                     }
@@ -782,9 +781,7 @@ namespace Test {
                         for (int failing : {-1, 0, 1}) {
                             int live = 0;
                             std::unique_ptr<PortfolioSeed> root(new PortfolioSeed(live));
-                            PortfolioSeed* seed = root.get();
-                            if (!clone)
-                                root.release();
+                            PortfolioSeed* seed = clone ? root.get() : root.release();
                             Gecode::Search::Options o;
                             o.assets = 2;
                             o.threads = threads;
@@ -933,6 +930,7 @@ namespace Test {
                   int& solutions, bool& best) {
                 std::atomic<bool> done(false);
                 std::vector<std::thread> resizers;
+                resizers.reserve(controls.size());
                 for (Gecode::Search::WorkerControl& control : controls)
                     resizers.emplace_back([&done, &control, capacity, seed = _rand.next()] {
                         Gecode::Support::RandomGenerator rand(seed);

@@ -456,9 +456,9 @@ public:
                 char c = val < 10 ? '0' + val : 'A' + (val - 10);
                 os << c;
             }
-            os << std::endl;
+            os << '\n';
         }
-        os << std::endl;
+        os << '\n';
     }
 };
 
@@ -479,7 +479,7 @@ main(int argc, char* argv[]) {
 
     opt.parse(argc, argv);
     if (opt.size() >= n_examples) {
-        std::cerr << "Error: size must be between 0 and " << n_examples - 1 << std::endl;
+        std::cerr << "Error: size must be between 0 and " << n_examples - 1 << '\n';
         return 1;
     }
     Script::run<Pentominoes, DFS, SizeOptions>(opt);
@@ -838,7 +838,7 @@ namespace {
     int
     pos(int h, int w, int h1, int w1) {
         if (!(0 <= h && h < h1) || !(0 <= w && w < w1)) {
-            std::cerr << "Cannot place (" << h << "," << w << ") on board of size " << h1 << "x" << w1 << std::endl;
+            std::cerr << "Cannot place (" << h << "," << w << ") on board of size " << h1 << "x" << w1 << '\n';
         }
         return h * w1 + w;
     }

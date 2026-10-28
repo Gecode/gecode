@@ -205,11 +205,11 @@ public:
     /// Print solution
     void
     print(std::ostream& os) const override {
-        os << "Tournament plan" << std::endl;
+        os << "Tournament plan" << '\n';
         Matrix<SetVarArray> schedule(groups, g, w);
         for (int j = 0; j < w; j++) {
-            os << "Week " << j << ": " << std::endl << "    ";
-            os << schedule.row(j) << std::endl;
+            os << "Week " << j << ": " << '\n' << "    ";
+            os << schedule.row(j) << '\n';
         }
     }
 

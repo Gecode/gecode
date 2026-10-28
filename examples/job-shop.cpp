@@ -329,13 +329,13 @@ public:
     void
     help(void) override {
         InstanceOptions::help();
-        std::cerr << "\tAvailable instances:" << std::endl << "\t\t";
+        std::cerr << "\tAvailable instances:" << '\n' << "\t\t";
         for (int i = 1; ::name[i] != nullptr; i++) {
             std::cerr << ::name[i] << ", ";
             if (i % 4 == 0)
-                std::cerr << std::endl << "\t\t";
+                std::cerr << '\n' << "\t\t";
         }
-        std::cerr << std::endl;
+        std::cerr << '\n';
     }
 };
 
@@ -419,7 +419,7 @@ public:
     /// Print solution
     void
     print(std::ostream& os) const override {
-        os << "\t\t" << spec.name() << " [makespan: " << makespan << "]" << std::endl;
+        os << "\t\t" << spec.name() << " [makespan: " << makespan << "]" << '\n';
         if (opt.verbose()) {
             // Number of jobs
             int n = spec.jobs();
@@ -429,7 +429,7 @@ public:
                 os << "\t\t\t[" << i << "]: ";
                 for (int j = 0; j < m; j++)
                     os << start[i * m + j] << "  ";
-                os << std::endl;
+                os << '\n';
             }
         }
     }
@@ -686,10 +686,10 @@ public:
 void
 print(const Search::Statistics& stat, bool restart) {
     using namespace std;
-    cout << "\t\t\tnodes:      " << stat.node << endl << "\t\t\tfailures:   " << stat.fail << endl;
+    cout << "\t\t\tnodes:      " << stat.node << '\n' << "\t\t\tfailures:   " << stat.fail << '\n';
     if (restart)
-        cout << "\t\t\trestarts:   " << stat.restart << endl << "\t\t\tno-goods:   " << stat.nogood << endl;
-    cout << "\t\t\tpeak depth: " << stat.depth << endl;
+        cout << "\t\t\trestarts:   " << stat.restart << '\n' << "\t\t\tno-goods:   " << stat.nogood << '\n';
+    cout << "\t\t\tpeak depth: " << stat.depth << '\n';
 }
 
 /// Solver
@@ -713,7 +713,7 @@ solve(const JobShopOptions& opt) {
 
         if (master->status() != SS_SOLVED) {
             delete master;
-            std::cerr << "Error: has no solution..." << std::endl;
+            std::cerr << "Error: has no solution..." << '\n';
             return;
         }
 
@@ -725,9 +725,9 @@ solve(const JobShopOptions& opt) {
         so.stop = &fts;
         bool stopped = false;
 
-        std::cout << "\tProbing..." << std::endl;
+        std::cout << "\tProbing..." << '\n';
 
-        std::cout << "\t\tBounds: [" << l << "," << u << "]" << std::endl;
+        std::cout << "\t\tBounds: [" << l << "," << u << "]" << '\n' << std::flush;
 
         for (unsigned int p = 0; p < opt.probes(); p++) {
             JobShopProbe* jsp = static_cast<JobShopProbe*>(master->clone());
@@ -740,6 +740,7 @@ solve(const JobShopOptions& opt) {
                 if (u > s->cost().val()) {
                     u = s->cost().val();
                     s->print(std::cout);
+                    std::cout << std::flush;
                 }
                 delete s;
             } else if (fts.time(statj, so)) {
@@ -753,14 +754,14 @@ solve(const JobShopOptions& opt) {
         print(stat, false);
         std::cout << "\t\t\truntime:    ";
         Driver::stop(t, std::cout);
-        std::cout << std::endl;
+        std::cout << '\n' << std::flush;
 
         if (stopped) {
-            std::cout << "\t\t\t\tstopped due to time-out..." << std::endl;
+            std::cout << "\t\t\t\tstopped due to time-out..." << '\n' << std::flush;
         }
     }
 
-    std::cout << std::endl << "\tAdjusting..." << std::endl;
+    std::cout << '\n' << "\tAdjusting..." << '\n' << std::flush;
 
     // Dichotomic search
     {
@@ -768,7 +769,7 @@ solve(const JobShopOptions& opt) {
 
         if (master->status() == SS_FAILED) {
             delete master;
-            std::cerr << "Error: has no solution..." << std::endl;
+            std::cerr << "Error: has no solution..." << '\n';
             return;
         }
 
@@ -781,7 +782,7 @@ solve(const JobShopOptions& opt) {
                 so.stop = Search::Stop::time(opt.time_adjust());
             bool stopped = false;
             while (l < u) {
-                std::cout << "\t\tBounds: [" << l << "," << u << "]" << std::endl;
+                std::cout << "\t\tBounds: [" << l << "," << u << "]" << '\n' << std::flush;
                 JobShopSolve* jss = static_cast<JobShopSolve*>(master->clone());
                 int m = (l + u) / 2;
                 rel(*jss, jss->cost() >= l);
@@ -794,6 +795,7 @@ solve(const JobShopOptions& opt) {
 
                 if (s != nullptr) {
                     s->print(std::cout);
+                    std::cout << std::flush;
                     u = s->cost().val();
                     delete s;
                 } else if (rbs.stopped()) {
@@ -807,23 +809,23 @@ solve(const JobShopOptions& opt) {
             print(stat, true);
             std::cout << "\t\t\truntime:    ";
             Driver::stop(t, std::cout);
-            std::cout << std::endl;
+            std::cout << '\n' << std::flush;
 
             if (stopped) {
-                std::cout << "\t\t\t\tstopped due to time-out..." << std::endl;
+                std::cout << "\t\t\t\tstopped due to time-out..." << '\n' << std::flush;
             }
         }
 
         if (l == u) {
             delete master;
-            std::cout << std::endl << "\tFound best solution and proved optimality." << std::endl;
+            std::cout << '\n' << "\tFound best solution and proved optimality." << '\n' << std::flush;
             return;
         }
 
         {
             Support::Timer t;
             t.start();
-            std::cout << std::endl << "\tSolving..." << std::endl;
+            std::cout << '\n' << "\tSolving..." << '\n' << std::flush;
 
             rel(*master, master->cost() >= l);
             rel(*master, master->cost() < u);
@@ -835,6 +837,7 @@ solve(const JobShopOptions& opt) {
             RBS<JobShopSolve, BAB> rbs(master, so);
             while (JobShopSolve* s = rbs.next()) {
                 s->print(std::cout);
+                std::cout << std::flush;
                 u = s->cost().val();
                 delete s;
             }
@@ -842,16 +845,16 @@ solve(const JobShopOptions& opt) {
             print(rbs.statistics(), true);
             std::cout << "\t\t\truntime:    ";
             Driver::stop(t, std::cout);
-            std::cout << std::endl;
+            std::cout << '\n' << std::flush;
 
             if (rbs.stopped()) {
-                std::cout << "\t\t\t\tstopped due to time-out..." << std::endl;
-                std::cout << std::endl << "\tSolution at most ";
+                std::cout << "\t\t\t\tstopped due to time-out..." << '\n' << std::flush;
+                std::cout << '\n' << "\tSolution at most ";
                 double a = (static_cast<double>(u - l + 1) / u) * 100.0;
-                std::cout << std::setprecision(2) << a << "% away from optimum." << std::endl;
+                std::cout << std::setprecision(2) << a << "% away from optimum." << '\n' << std::flush;
 
             } else {
-                std::cout << std::endl << "\tFound best solution and proved optimality." << std::endl;
+                std::cout << '\n' << "\tFound best solution and proved optimality." << '\n' << std::flush;
             }
         }
     }
@@ -882,11 +885,11 @@ main(int argc, char* argv[]) {
     opt.parse(argc, argv);
     try {
         if (!Spec(opt).valid()) {
-            std::cerr << "Error: unknown instance" << std::endl;
+            std::cerr << "Error: unknown instance" << '\n';
             return 1;
         }
     } catch (const Instance::Error& e) {
-        std::cerr << e.what() << std::endl;
+        std::cerr << e.what() << '\n';
         return 1;
     }
     solve(opt);

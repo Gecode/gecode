@@ -164,7 +164,7 @@ namespace Test { namespace FlatZinc {
             }
         } catch (Gecode::FlatZinc::Error& e) {
             if (opt.log)
-                olog << ind(2) << "FlatZinc error : " << e.to_string() << std::endl;
+                olog << ind(2) << "FlatZinc error : " << e.to_string() << '\n';
             return false;
         }
         return true;
@@ -200,13 +200,13 @@ namespace Test { namespace FlatZinc {
         } catch (Gecode::FlatZinc::Error& e) {
             const std::string& message = e.to_string();
             if (opt.log)
-                olog << ind(2) << "Expected FlatZinc error : " << message << std::endl;
+                olog << ind(2) << "Expected FlatZinc error : " << message << '\n';
             return (os.str().find("----------") == std::string::npos) &&
                    (_expected_message.empty() || (message.find(_expected_message) != std::string::npos));
         } catch (Gecode::Exception& e) {
             const std::string message = e.what();
             if (opt.log)
-                olog << ind(2) << "Expected Gecode exception : " << message << std::endl;
+                olog << ind(2) << "Expected Gecode exception : " << message << '\n';
             return (os.str().find("----------") == std::string::npos) &&
                    (_expected_message.empty() || (message.find(_expected_message) != std::string::npos));
         }

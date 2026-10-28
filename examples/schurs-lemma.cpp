@@ -58,10 +58,10 @@ public:
     void
     help(void) override {
         Options::help();
-        std::cerr << "\t(unsigned int) default: " << c << std::endl
-                  << "\t\tparameter c (number of boxes)" << std::endl
-                  << "\t(unsigned int) default: " << n << std::endl
-                  << "\t\tparameter n (number of balls)" << std::endl;
+        std::cerr << "\t(unsigned int) default: " << c << '\n'
+                  << "\t\tparameter c (number of boxes)" << '\n'
+                  << "\t(unsigned int) default: " << n << '\n'
+                  << "\t\tparameter n (number of balls)" << '\n';
     }
 };
 
@@ -102,7 +102,7 @@ public:
     /// Print solution
     void
     print(std::ostream& os) const override {
-        os << "\t" << box << std::endl;
+        os << "\t" << box << '\n';
     }
 
     /// Constructor for cloning \a s

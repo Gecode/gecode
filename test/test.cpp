@@ -85,7 +85,8 @@ namespace Test {
     static void
     print_tags(std::ostream& os) {
         for (const TestTagDescription& description : test_tag_descriptions)
-            os << description.name << std::endl;
+            os << description.name << '\n';
+        os.flush();
     }
 
     /// Convert the known tag names to a command-line choice list
@@ -168,9 +169,10 @@ namespace Test {
         ostream << "Options: -replay " << seed;
         if (options.fixpoint_probability_denominator != Test::Options::default_fixpoint_probability_denominator)
             ostream << " -fixprob " << options.fixpoint_probability_denominator;
-        ostream << " -test " << name << std::endl;
+        ostream << " -test " << name << '\n';
         if (options.log)
             ostream << olog.str();
+        ostream.flush();
     }
 
     void
@@ -178,42 +180,43 @@ namespace Test {
         int i = 1;
         while (i < argc) {
             if (!strcmp(argv[i], "-help") || !strcmp(argv[i], "--help")) {
-                std::cerr << "Options for testing:" << std::endl
-                          << "\t-threads (unsigned int) default: " << threads << std::endl
+                std::cerr << "Options for testing:" << '\n'
+                          << "\t-threads (unsigned int) default: " << threads << '\n'
                           << "\t\tnumber of threads to use. If 0, as many threads as there are cores are used.\n"
-                          << "\t\tThreaded execution and logging can not be used at the same time." << std::endl
-                          << "\t-seed (unsigned int or \"time\") default: " << seed << std::endl
-                          << "\t\tseed for random number generator (unsigned int)," << std::endl
+                          << "\t\tThreaded execution and logging can not be used at the same time." << '\n'
+                          << "\t-seed (unsigned int or \"time\") default: " << seed << '\n'
+                          << "\t\tseed for random number generator (unsigned int)," << '\n'
                           << "\t\tor \"time\" for a random seed based on "
-                          << "current time" << std::endl
+                          << "current time" << '\n'
                           << "\t-replay (unsigned int)\n"
                           << "\t\treplay the exact -test name once, on one thread\n"
-                          << "\t-fixprob (unsigned int) default: " << fixpoint_probability_denominator << std::endl
-                          << "\t\t1/fixprob is the probability of computing a fixpoint" << std::endl
-                          << "\t-iter (unsigned int) default: " << iter << std::endl
-                          << "\t\tthe number of iterations" << std::endl
-                          << "\t-test (string) default: (none)" << std::endl
-                          << "\t\tsimple pattern for the tests to run" << std::endl
-                          << "\t\tprefixing with \"-\" negates the pattern" << std::endl
-                          << "\t\tprefixing with \"^\" requires a match at the beginning" << std::endl
-                          << "\t\tmultiple pattern-options may be given" << std::endl
-                          << "\t-tag (" << tag_choices() << ") default: (none)" << std::endl
-                          << "\t\ttag for the tests to run" << std::endl
-                          << "\t\tmultiple tag-options may be given" << std::endl
-                          << "\t-start (string) default: (none)" << std::endl
-                          << "\t\tsimple pattern for the first test to run" << std::endl
-                          << "\t-log" << std::endl
-                          << "\t\tlog execution of tests" << std::endl
-                          << "\t\tthe optional argument determines the style of the log" << std::endl
-                          << "\t\twith text as the default style" << std::endl
-                          << "\t-stop (boolean) default: " << (stop ? "true" : "false") << std::endl
-                          << "\t\tstop on first error or continue" << std::endl
-                          << "\t-list" << std::endl
-                          << "\t\toutput list of all test cases and exit" << std::endl
-                          << "\t-list-tags" << std::endl
-                          << "\t\toutput list of known test tags and exit" << std::endl
-                          << "\t-list-with-tags" << std::endl
-                          << "\t\toutput list of all test cases with tags and exit" << std::endl;
+                          << "\t-fixprob (unsigned int) default: " << fixpoint_probability_denominator << '\n'
+                          << "\t\t1/fixprob is the probability of computing a fixpoint" << '\n'
+                          << "\t-iter (unsigned int) default: " << iter << '\n'
+                          << "\t\tthe number of iterations" << '\n'
+                          << "\t-test (string) default: (none)" << '\n'
+                          << "\t\tsimple pattern for the tests to run" << '\n'
+                          << "\t\tprefixing with \"-\" negates the pattern" << '\n'
+                          << "\t\tprefixing with \"^\" requires a match at the beginning" << '\n'
+                          << "\t\tmultiple pattern-options may be given" << '\n'
+                          << "\t-tag (" << tag_choices() << ") default: (none)" << '\n'
+                          << "\t\ttag for the tests to run" << '\n'
+                          << "\t\tmultiple tag-options may be given" << '\n'
+                          << "\t-start (string) default: (none)" << '\n'
+                          << "\t\tsimple pattern for the first test to run" << '\n'
+                          << "\t-log" << '\n'
+                          << "\t\tlog execution of tests" << '\n'
+                          << "\t\tthe optional argument determines the style of the log" << '\n'
+                          << "\t\twith text as the default style" << '\n'
+                          << "\t-stop (boolean) default: " << (stop ? "true" : "false") << '\n'
+                          << "\t\tstop on first error or continue" << '\n'
+                          << "\t-list" << '\n'
+                          << "\t\toutput list of all test cases and exit" << '\n'
+                          << "\t-list-tags" << '\n'
+                          << "\t\toutput list of known test tags and exit" << '\n'
+                          << "\t-list-with-tags" << '\n'
+                          << "\t\toutput list of all test cases with tags and exit" << '\n'
+                          << std::flush;
                 exit(EXIT_SUCCESS);
             } else if (!strcmp(argv[i], "-threads")) {
                 if (++i == argc)
@@ -255,7 +258,9 @@ namespace Test {
                     goto missing;
                 TestTags tag = tag_set(argv[i]);
                 if (tag.empty()) {
-                    std::cerr << "Erroneous argument (-tag)" << std::endl << "  unknown tag: " << argv[i] << std::endl;
+                    std::cerr << "Erroneous argument (-tag)" << '\n'
+                              << "  unknown tag: " << argv[i] << '\n'
+                              << std::flush;
                     exit(EXIT_FAILURE);
                 }
                 test_tags.add(tag);
@@ -285,7 +290,7 @@ namespace Test {
 
         if (replay) {
             if (test_patterns.size() != 1 || test_patterns[0].first != MT_ANY || start_from != nullptr) {
-                std::cerr << "-replay requires one exact -test name." << std::endl;
+                std::cerr << "-replay requires one exact -test name." << '\n' << std::flush;
                 exit(EXIT_FAILURE);
             }
             threads = 1;
@@ -293,13 +298,15 @@ namespace Test {
         }
 
         if (threads > 1 && log) {
-            std::cerr << "Logging and multi threading can not be used jointly." << std::endl;
+            std::cerr << "Logging and multi threading can not be used jointly." << '\n' << std::flush;
             exit(EXIT_FAILURE);
         }
 
         return;
     missing:
-        std::cerr << "Erroneous argument (" << argv[i - 1] << ")" << std::endl << "  missing parameter" << std::endl;
+        std::cerr << "Erroneous argument (" << argv[i - 1] << ")" << '\n'
+                  << "  missing parameter" << '\n'
+                  << std::flush;
         exit(EXIT_FAILURE);
     }
 
@@ -367,15 +374,15 @@ namespace Test {
                     ostream << '+';
                     ostream.flush();
                 } else {
-                    ostream << "-" << std::endl;
+                    ostream << "-" << '\n';
                     report_error(test->name(), seed, options, ostream);
                     return false;
                 }
             }
-            ostream << std::endl;
+            ostream << '\n' << std::flush;
             return true;
         } catch (Gecode::Exception& e) {
-            ostream << "Exception in \"Gecode::" << e.what() << "." << std::endl << "Stopping..." << std::endl;
+            ostream << "Exception in \"Gecode::" << e.what() << "." << '\n' << "Stopping..." << '\n';
             report_error(test->name(), seed, options, ostream);
             return false;
         }
@@ -386,7 +393,8 @@ namespace Test {
     print_test_summary(size_t selected, size_t passed, size_t failed) {
         const size_t ran = passed + failed;
         std::cout << "\nTest summary: " << selected << " selected, " << ran << " ran, " << passed << " passed, "
-                  << failed << " failed, " << selected - ran << " not run." << std::endl;
+                  << failed << " failed, " << selected - ran << " not run." << '\n'
+                  << std::flush;
     }
 
     /// Run all the tests with the supplied options.
@@ -619,14 +627,15 @@ namespace Test {
                 std::cout << t->name();
                 if (opt.list_with_tags)
                     std::cout << " [" << tags_to_string(t->tags()) << "]";
-                std::cout << std::endl;
+                std::cout << '\n';
             }
+            std::cout.flush();
             return EXIT_SUCCESS;
         }
 
         const std::vector<Base*> tests = select_tests(opt);
         if (opt.replay && tests.size() != 1) {
-            std::cerr << "-replay requires exactly one registered test." << std::endl;
+            std::cerr << "-replay requires exactly one registered test." << '\n' << std::flush;
             return EXIT_FAILURE;
         }
         Gecode::Support::Timer timer;
@@ -634,7 +643,7 @@ namespace Test {
         const int result = opt.threads > 1 ? run_tests_parallel(tests, opt) : run_tests(tests, opt);
         std::ostringstream elapsed;
         elapsed << std::fixed << std::setprecision(3) << timer.stop() / 1000.0;
-        std::cout << "Elapsed time: " << elapsed.str() << " s." << std::endl;
+        std::cout << "Elapsed time: " << elapsed.str() << " s." << '\n' << std::flush;
         return result;
     }
 } // namespace Test

@@ -199,7 +199,7 @@ namespace Gecode {
             for (int j = 0; j < m.width(); j++) {
                 s << m(j, i) << "\t";
             }
-            s << std::endl;
+            s << '\n';
         }
         return os << s.str();
     }

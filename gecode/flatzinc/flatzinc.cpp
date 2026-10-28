@@ -445,7 +445,7 @@ namespace Gecode { namespace FlatZinc {
         }
         std::cerr << "Warning, ignored search annotation: ";
         ann->print(std::cerr);
-        std::cerr << std::endl;
+        std::cerr << '\n' << std::flush;
         return TieBreak<IntVarBranch>(INT_VAR_NONE());
     }
 
@@ -489,14 +489,14 @@ namespace Gecode { namespace FlatZinc {
             }
             if (s->id == "indomain_middle") {
                 std::cerr << "Warning, replacing unsupported annotation "
-                          << "indomain_middle with indomain_median" << std::endl;
+                          << "indomain_middle with indomain_median" << '\n';
                 r0 = "=";
                 r1 = "!=";
                 return INT_VAL_MED();
             }
             if (s->id == "indomain_interval") {
                 std::cerr << "Warning, replacing unsupported annotation "
-                          << "indomain_interval with indomain_split" << std::endl;
+                          << "indomain_interval with indomain_split" << '\n';
                 r0 = "<=";
                 r1 = ">";
                 return INT_VAL_SPLIT_MIN();
@@ -504,7 +504,7 @@ namespace Gecode { namespace FlatZinc {
         }
         std::cerr << "Warning, ignored search annotation: ";
         ann->print(std::cerr);
-        std::cerr << std::endl;
+        std::cerr << '\n' << std::flush;
         r0 = "=";
         r1 = "!=";
         return INT_VAL_MIN();
@@ -525,7 +525,7 @@ namespace Gecode { namespace FlatZinc {
         }
         std::cerr << "Warning, ignored search annotation: ";
         ann->print(std::cerr);
-        std::cerr << std::endl;
+        std::cerr << '\n' << std::flush;
         return INT_ASSIGN_MIN();
     }
 
@@ -550,7 +550,7 @@ namespace Gecode { namespace FlatZinc {
         }
         std::cerr << "Warning, ignored search annotation: ";
         ann->print(std::cerr);
-        std::cerr << std::endl;
+        std::cerr << '\n' << std::flush;
         return TieBreak<BoolVarBranch>(BOOL_VAR_NONE());
     }
 
@@ -594,14 +594,14 @@ namespace Gecode { namespace FlatZinc {
             }
             if (s->id == "indomain_middle") {
                 std::cerr << "Warning, replacing unsupported annotation "
-                          << "indomain_middle with indomain_median" << std::endl;
+                          << "indomain_middle with indomain_median" << '\n';
                 r0 = "=";
                 r1 = "!=";
                 return BOOL_VAL_MIN();
             }
             if (s->id == "indomain_interval") {
                 std::cerr << "Warning, replacing unsupported annotation "
-                          << "indomain_interval with indomain_split" << std::endl;
+                          << "indomain_interval with indomain_split" << '\n';
                 r0 = "<=";
                 r1 = ">";
                 return BOOL_VAL_MIN();
@@ -609,7 +609,7 @@ namespace Gecode { namespace FlatZinc {
         }
         std::cerr << "Warning, ignored search annotation: ";
         ann->print(std::cerr);
-        std::cerr << std::endl;
+        std::cerr << '\n' << std::flush;
         r0 = "=";
         r1 = "!=";
         return BOOL_VAL_MIN();
@@ -628,7 +628,7 @@ namespace Gecode { namespace FlatZinc {
         }
         std::cerr << "Warning, ignored search annotation: ";
         ann->print(std::cerr);
-        std::cerr << std::endl;
+        std::cerr << '\n' << std::flush;
         return BOOL_ASSIGN_MIN();
     }
 
@@ -668,7 +668,7 @@ namespace Gecode { namespace FlatZinc {
         }
         std::cerr << "Warning, ignored search annotation: ";
         ann->print(std::cerr);
-        std::cerr << std::endl;
+        std::cerr << '\n' << std::flush;
         return SET_VAR_NONE();
     }
 
@@ -699,7 +699,7 @@ namespace Gecode { namespace FlatZinc {
         }
         std::cerr << "Warning, ignored search annotation: ";
         ann->print(std::cerr);
-        std::cerr << std::endl;
+        std::cerr << '\n' << std::flush;
         r0 = "in";
         r1 = "not in";
         return SET_VAL_MIN_INC();
@@ -746,7 +746,7 @@ namespace Gecode { namespace FlatZinc {
         }
         std::cerr << "Warning, ignored search annotation: ";
         ann->print(std::cerr);
-        std::cerr << std::endl;
+        std::cerr << '\n' << std::flush;
         return TieBreak<FloatVarBranch>(FLOAT_VAR_NONE());
     }
 
@@ -766,7 +766,7 @@ namespace Gecode { namespace FlatZinc {
         }
         std::cerr << "Warning, ignored search annotation: ";
         ann->print(std::cerr);
-        std::cerr << std::endl;
+        std::cerr << '\n' << std::flush;
         r0 = "<=";
         r1 = ">";
         return FLOAT_VAL_SPLIT_MIN();
@@ -1284,10 +1284,10 @@ namespace Gecode { namespace FlatZinc {
                         branch_info.add(bg, r0, r1, names);
                     }
 #else
-                    if (!ignoreUnknown) {
+                    if (!ignore_unknown) {
                         err << "Warning, ignored search annotation: ";
-                        flatAnn[i]->print(err);
-                        err << std::endl;
+                        flat_ann[i]->print(err);
+                        err << '\n' << std::flush;
                     }
 #endif
                 } else if (flat_ann[i]->is_call("set_default_search")) {
@@ -1297,10 +1297,10 @@ namespace Gecode { namespace FlatZinc {
                     def_set_varsel = annotation_to_set_var_branch(args->a[0], rnd, decay);
                     def_set_valsel = annotation_to_set_val_branch(args->a[1], def_set_rel_left, def_set_rel_right, rnd);
 #else
-                    if (!ignoreUnknown) {
+                    if (!ignore_unknown) {
                         err << "Warning, ignored search annotation: ";
-                        flatAnn[i]->print(err);
-                        err << std::endl;
+                        flat_ann[i]->print(err);
+                        err << '\n' << std::flush;
                     }
 #endif
                 } else if (flat_ann[i]->is_call("float_default_search")) {
@@ -1311,10 +1311,10 @@ namespace Gecode { namespace FlatZinc {
                     def_float_valsel =
                         annotation_to_float_val_branch(args->a[1], def_float_rel_left, def_float_rel_right);
 #else
-                    if (!ignoreUnknown) {
+                    if (!ignore_unknown) {
                         err << "Warning, ignored search annotation: ";
-                        flatAnn[i]->print(err);
-                        err << std::endl;
+                        flat_ann[i]->print(err);
+                        err << '\n' << std::flush;
                     }
 #endif
                 } else if (flat_ann[i]->is_call("float_search")) {
@@ -1344,17 +1344,17 @@ namespace Gecode { namespace FlatZinc {
                         branch_info.add(bg, r0, r1, names);
                     }
 #else
-                    if (!ignoreUnknown) {
+                    if (!ignore_unknown) {
                         err << "Warning, ignored search annotation: ";
-                        flatAnn[i]->print(err);
-                        err << std::endl;
+                        flat_ann[i]->print(err);
+                        err << '\n' << std::flush;
                     }
 #endif
                 } else {
                     if (!ignore_unknown) {
                         err << "Warning, ignored search annotation: ";
                         flat_ann[i]->print(err);
-                        err << std::endl;
+                        err << '\n' << std::flush;
                     }
                 }
             }
@@ -1692,7 +1692,7 @@ namespace Gecode { namespace FlatZinc {
     FZPrintingInspector<S>::inspect(const Space& node) {
         init();
         dynamic_cast<const S&>(node).print(get_stream(), p);
-        get_stream() << std::endl;
+        get_stream() << '\n';
     }
 
     template <class S>
@@ -1727,7 +1727,7 @@ namespace Gecode { namespace FlatZinc {
         } catch (Exception& e) {
             this->get_stream() << "Exception: " << e.what();
         }
-        this->get_stream() << std::endl;
+        this->get_stream() << '\n';
     }
 
 #endif
@@ -1846,7 +1846,7 @@ namespace Gecode { namespace FlatZinc {
 #endif
 #ifdef GECODE_HAS_SET_VARS
         for (int i = 0; i < sv.size(); i++)
-            oss << "var " << sv[i] << ": " << p.set_var_name(i) << ";" << std::endl;
+            oss << "var " << sv[i] << ": " << p.set_var_name(i) << ";" << '\n';
 #endif
 
         return oss.str();
@@ -1928,7 +1928,7 @@ namespace Gecode { namespace FlatZinc {
                 sol = std::move(next_sol);
                 if (print_all) {
                     sol->print(out, p);
-                    out << "----------" << std::endl;
+                    out << "----------" << '\n' << std::flush;
                 }
                 if (--find_sol == 0) {
                     solution_limit_reached = true;
@@ -1946,35 +1946,36 @@ namespace Gecode { namespace FlatZinc {
         }
         if (sol && !print_all) {
             sol->print(out, p);
-            out << "----------" << std::endl;
+            out << "----------" << '\n' << std::flush;
         }
         if (!solution_limit_reached) {
             if (!engine_stopped) {
                 if (sol) {
-                    out << "==========" << std::endl;
+                    out << "==========" << '\n' << std::flush;
                 } else {
-                    out << "=====UNSATISFIABLE=====" << std::endl;
+                    out << "=====UNSATISFIABLE=====" << '\n' << std::flush;
                 }
             } else if (!sol) {
-                out << "=====UNKNOWN=====" << std::endl;
+                out << "=====UNKNOWN=====" << '\n' << std::flush;
             }
         }
         if (opt.mode() == SM_STAT) {
             double total_time = (t_total.stop() / 1000.0);
             double solve_time = (t_solve.stop() / 1000.0);
             double init_time = total_time - solve_time;
-            out << std::endl << "%%%mzn-stat: initTime=" << init_time << std::endl;
-            out << "%%%mzn-stat: solveTime=" << solve_time << std::endl;
-            out << "%%%mzn-stat: solutions=" << std::abs(no_of_solutions - find_sol) << std::endl
-                << "%%%mzn-stat: variables=" << (int_var_count + bool_var_count + set_var_count) << std::endl
-                << "%%%mzn-stat: propagators=" << n_p << std::endl
-                << "%%%mzn-stat: propagations=" << sstat.propagate + stat.propagate << std::endl
-                << "%%%mzn-stat: nodes=" << stat.node << std::endl
-                << "%%%mzn-stat: failures=" << stat.fail << std::endl
-                << "%%%mzn-stat: restarts=" << stat.restart << std::endl
-                << "%%%mzn-stat: peakDepth=" << stat.depth << std::endl
-                << "%%%mzn-stat-end" << std::endl
-                << std::endl;
+            out << '\n' << "%%%mzn-stat: initTime=" << init_time << '\n';
+            out << "%%%mzn-stat: solveTime=" << solve_time << '\n';
+            out << "%%%mzn-stat: solutions=" << std::abs(no_of_solutions - find_sol) << '\n'
+                << "%%%mzn-stat: variables=" << (int_var_count + bool_var_count + set_var_count) << '\n'
+                << "%%%mzn-stat: propagators=" << n_p << '\n'
+                << "%%%mzn-stat: propagations=" << sstat.propagate + stat.propagate << '\n'
+                << "%%%mzn-stat: nodes=" << stat.node << '\n'
+                << "%%%mzn-stat: failures=" << stat.fail << '\n'
+                << "%%%mzn-stat: restarts=" << stat.restart << '\n'
+                << "%%%mzn-stat: peakDepth=" << stat.depth << '\n'
+                << "%%%mzn-stat-end" << '\n'
+                << '\n'
+                << std::flush;
         }
     }
 
@@ -2297,14 +2298,14 @@ namespace Gecode { namespace FlatZinc {
             ss << "iv[" << i << "]";
             std::string result(Gecode::Gist::Comparator::compare(ss.str(), iv[i], fs.iv[i]));
             if (result.length() > 0)
-                out << result << std::endl;
+                out << result << '\n';
         }
         for (int i = 0; i < bv.size(); ++i) {
             std::stringstream ss;
             ss << "bv[" << i << "]";
             std::string result(Gecode::Gist::Comparator::compare(ss.str(), bv[i], fs.bv[i]));
             if (result.length() > 0)
-                out << result << std::endl;
+                out << result << '\n';
         }
 #ifdef GECODE_HAS_SET_VARS
         for (int i = 0; i < sv.size(); ++i) {
@@ -2312,7 +2313,7 @@ namespace Gecode { namespace FlatZinc {
             ss << "sv[" << i << "]";
             std::string result(Gecode::Gist::Comparator::compare(ss.str(), sv[i], fs.sv[i]));
             if (result.length() > 0)
-                out << result << std::endl;
+                out << result << '\n';
         }
 #endif
 #ifdef GECODE_HAS_FLOAT_VARS
@@ -2321,9 +2322,10 @@ namespace Gecode { namespace FlatZinc {
             ss << "fv[" << i << "]";
             std::string result(Gecode::Gist::Comparator::compare(ss.str(), fv[i], fs.fv[i]));
             if (result.length() > 0)
-                out << result << std::endl;
+                out << result << '\n';
         }
 #endif
+        out.flush();
 #endif
     }
 
@@ -2719,7 +2721,7 @@ namespace Gecode { namespace FlatZinc {
                 // oss << std::scientific;
                 oss << std::setprecision(std::numeric_limits<double>::digits10);
                 oss << v;
-                if (oss.str().find(".") == std::string::npos)
+                if (oss.str().find('.') == std::string::npos)
                     oss << ".0";
                 out << oss.str();
             } else {

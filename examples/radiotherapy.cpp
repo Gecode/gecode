@@ -195,7 +195,7 @@ public:
     /// Print solution
     void
     print(std::ostream& os) const override {
-        os << std::endl << "B / K = " << beamtime << " / " << k << ",\nN = " << n << std::endl;
+        os << '\n' << "B / K = " << beamtime << " / " << k << ",\nN = " << n << '\n';
     }
 
     /// Nested search on the q variables
@@ -357,7 +357,7 @@ main(int argc, char* argv[]) {
     opt.parse(argc, argv);
 
     if (opt.size() >= rds_n) {
-        std::cerr << "Error: size must be between 0 and " << rds_n - 1 << std::endl;
+        std::cerr << "Error: size must be between 0 and " << rds_n - 1 << '\n';
         return 1;
     }
 

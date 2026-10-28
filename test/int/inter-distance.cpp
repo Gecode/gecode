@@ -341,11 +341,11 @@ namespace Test { namespace Int { namespace InterDistance {
         bool
         run(void) override {
             if (!constant_contracts()) {
-                olog << "Constant posting contracts failed" << std::endl;
+                olog << "Constant posting contracts failed" << '\n';
                 return false;
             }
             if (!variable_contracts()) {
-                olog << "Variable posting contracts failed" << std::endl;
+                olog << "Variable posting contracts failed" << '\n';
                 return false;
             }
             return true;

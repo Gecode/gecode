@@ -285,9 +285,9 @@ public:
         Matrix<IntVarArray> cm(c, n, v);
         for (int i = 0; i < v; ++i) {
             IntVarArgs r = cm.row(i);
-            os << r << std::endl;
+            os << r << '\n';
         }
-        os << std::endl;
+        os << '\n';
     }
 
     /// Constructor for cloning \a s

@@ -224,7 +224,7 @@ public:
         os << "\t";
         for (int i = 0; i < x.size(); i++)
             os << "(" << x[i] << "," << y[i] << ") ";
-        os << std::endl;
+        os << '\n';
     }
 };
 
@@ -239,7 +239,7 @@ main(int argc, char* argv[]) {
     opt.c_d(20);
     opt.parse(argc, argv);
     if (opt.size() >= n_specs) {
-        std::cerr << "Error: size must be between 0 and " << n_specs - 1 << std::endl;
+        std::cerr << "Error: size must be between 0 and " << n_specs - 1 << '\n';
         return 1;
     }
     Script::run<PerfectSquare, DFS, SizeOptions>(opt);

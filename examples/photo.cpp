@@ -151,7 +151,7 @@ public:
     /// Print solution
     void
     print(std::ostream& os) const override {
-        os << "\tpos[] = " << pos << std::endl << "\tviolations: " << violations << std::endl;
+        os << "\tpos[] = " << pos << '\n' << "\tviolations: " << violations << '\n';
     }
     /// Return solution cost
     IntVar
@@ -178,7 +178,7 @@ main(int argc, char* argv[]) {
     opt.branching(Photo::BRANCH_AFC_SIZE, "afc");
     opt.parse(argc, argv);
     if (opt.size() >= n_pi) {
-        std::cerr << "Error: size must be between 0 and " << n_pi - 1 << std::endl;
+        std::cerr << "Error: size must be between 0 and " << n_pi - 1 << '\n';
         return 1;
     }
     IntMinimizeScript::run<Photo, BAB, SizeOptions>(opt);

@@ -63,10 +63,10 @@ public:
     void
     help(void) override {
         Options::help();
-        std::cerr << "\t(unsigned int) default: " << n << std::endl
-                  << "\t\tparameter n" << std::endl
-                  << "\t(unsigned int) default: " << k << std::endl
-                  << "\t\tparameter k" << std::endl;
+        std::cerr << "\t(unsigned int) default: " << n << '\n'
+                  << "\t\tparameter n" << '\n'
+                  << "\t(unsigned int) default: " << k << '\n'
+                  << "\t\tparameter k" << '\n';
     }
 };
 
@@ -159,7 +159,7 @@ public:
     /// Print solution
     void
     print(std::ostream& os) const override {
-        os << "\t" << y << std::endl;
+        os << "\t" << y << '\n';
     }
 
     /// Constructor for cloning \a l
@@ -186,11 +186,11 @@ main(int argc, char* argv[]) {
     opt.propagation(LangfordNumber::PROP_EXTENSIONAL_CHANNEL, "extensional-channel");
     opt.parse(argc, argv);
     if (opt.k < 1) {
-        std::cerr << "k must be at least 1!" << std::endl;
+        std::cerr << "k must be at least 1!" << '\n';
         return 1;
     }
     if (opt.k > opt.n) {
-        std::cerr << "n must be at least k!" << std::endl;
+        std::cerr << "n must be at least k!" << '\n';
         return 1;
     }
     Script::run<LangfordNumber, DFS, LangfordNumberOptions>(opt);

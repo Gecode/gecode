@@ -529,7 +529,7 @@ public:
     print(std::ostream& os) const override {
         int n = bin.size();
         int m = load.size();
-        os << "Bins used: " << bins << " (from " << m << " bins)." << std::endl;
+        os << "Bins used: " << bins << " (from " << m << " bins)." << '\n';
         for (int j = 0; j < m; j++) {
             bool fst = true;
             os << "\t[" << j << "]={";
@@ -542,13 +542,13 @@ public:
                     }
                     os << i;
                 }
-            os << "} #" << load[j] << std::endl;
+            os << "} #" << load[j] << '\n';
         }
         if (!bin.assigned()) {
-            os << std::endl << "Unpacked items:" << std::endl;
+            os << '\n' << "Unpacked items:" << '\n';
             for (int i = 0; i < n; i++)
                 if (!bin[i].assigned())
-                    os << "\t[" << i << "] = " << bin[i] << std::endl;
+                    os << "\t[" << i << "] = " << bin[i] << '\n';
         }
     }
 };
@@ -569,7 +569,7 @@ main(int argc, char* argv[]) {
     opt.solutions(0);
     opt.parse(argc, argv);
     if (!Spec(opt.instance()).valid()) {
-        std::cerr << "Error: unknown instance" << std::endl;
+        std::cerr << "Error: unknown instance" << '\n';
         return 1;
     }
     IntMinimizeScript::run<BinPacking, BAB, InstanceOptions>(opt);

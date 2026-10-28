@@ -37,6 +37,7 @@
 #include <string>
 #include <iostream>
 #include <cstdlib>
+#include <utility>
 
 /**
  * \namespace Gecode::FlatZinc::AST
@@ -57,7 +58,7 @@ namespace Gecode { namespace FlatZinc { namespace AST {
 
     public:
         TypeError() : _what("") {}
-        TypeError(std::string what) : _what(what) {}
+        TypeError(std::string what) : _what(std::move(what)) {}
         std::string
         what(void) const {
             return _what;

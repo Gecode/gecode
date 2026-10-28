@@ -92,7 +92,7 @@ public:
     /// Print solution
     void
     print(std::ostream& os) const override {
-        os << "\t" << abcd << std::endl;
+        os << "\t" << abcd << '\n';
     }
 };
 

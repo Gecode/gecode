@@ -108,7 +108,22 @@ Enable optional and experimental modules in the build when checking them;
 platform-specific code also needs its corresponding CI toolchain. Normal
 builds use checked-in generated sources and do not require LLVM tools.
 
+Performance checks cover hidden loop copies, associative-container lookup,
+vector growth, string operations, and missed moves as well as unnecessary
+copies. Use `'\n'` inside a formatted record. Flush explicitly when publishing
+a solution, progress update, protocol response, or complete diagnostic; a
+printer should not flush each row of a multi-line solution.
+The unused-return-value check accepts explicit `(void)` discards for reviewed
+operations such as ownership handoff after successful engine construction.
+
 `performance-unnecessary-value-param` is reserved for manual performance audits.
 Its suggestions mix Gecode's small, intentionally copied variable/view handles
 with ownership-sensitive callbacks and argument arrays. Review actual copy
 cost and lifetime requirements before changing those public signatures.
+
+Other performance checks need focused review: `performance-enum-size` changes
+layouts and ABI, and `performance-no-int-to-ptr` conflicts with deliberate
+pointer tagging. Review `noexcept` guarantees, destructor triviality, and math
+promotion against allocation-failure handling and interval-rounding semantics
+before adopting those checks. Never add `noexcept` to a potentially throwing
+operation just to satisfy a diagnostic.

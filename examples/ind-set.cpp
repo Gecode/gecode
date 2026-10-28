@@ -103,7 +103,7 @@ public:
     /// Print solution
     void
     print(std::ostream& os) const override {
-        os << "\tk = " << k << std::endl << "\tv[] = " << v << std::endl;
+        os << "\tk = " << k << '\n' << "\tv[] = " << v << '\n';
     }
     /// Return solution cost
     IntVar
