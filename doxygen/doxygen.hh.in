@@ -166,7 +166,8 @@
  * cloning, pruning, and search against an independent solution predicate.
  * Test::Int::Test has a complete integer or Boolean test example. Use
  * Test::Set::SetTest for set constraints and Test::Float::Test for float
- * constraints.
+ * constraints. For open-list constraints, Test::Int::OpenTest also exercises
+ * incremental growth and cloning before closing the list.
  *
  * A Gecode installation built with CMake and BUILD_TESTING=ON exports the
  * test component. To build the integer example as custom-propagator-test.cpp:
