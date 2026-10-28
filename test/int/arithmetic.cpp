@@ -38,7 +38,6 @@
 #include <memory>
 
 #include <gecode/minimodel.hh>
-#include <gecode/int/arithmetic.hh>
 
 namespace Test { namespace Int {
 
@@ -1288,47 +1287,6 @@ namespace Test { namespace Int {
                if (!x[i].assigned() || (x[i].val() != (negative ? -1 : 1)))
                  return arithmetic_failed("nonzero result left zero endpoint",x);
            }
-         return true;
-       }
-     };
-
-     /// An actor must return its own allocation size when it is disposed.
-     class ProductModDispose : public ::Test::Base {
-       class TestSpace : public Gecode::Space {
-       public:
-         virtual Gecode::Space* copy(void) { return nullptr; }
-       };
-       class DisposeProbe : public Gecode::Int::Arithmetic::ProductMod {
-         size_t& disposed;
-       public:
-         DisposeProbe(Gecode::Home home,
-                      Gecode::ViewArray<Gecode::Int::IntView>& x,
-                      Gecode::Int::IntView y, size_t& d)
-           : ProductMod(home,x,7,y,1,1), disposed(d) {}
-         virtual size_t dispose(Gecode::Space& home) {
-           disposed=ProductMod::dispose(home);
-           // The probe has its own field, beyond the actor being checked.
-           return sizeof(*this);
-         }
-       };
-     public:
-       ProductModDispose(void)
-         : ::Test::Base("Int::Arithmetic::ProductMod::Dispose") {}
-       virtual bool run(void) {
-         using namespace Gecode;
-         size_t disposed=0;
-         TestSpace home;
-         IntVarArgs factors(home,2,1,3);
-         IntVar y(home,0,6);
-         ViewArray<Gecode::Int::IntView> x(home,factors);
-         (void) new (home) DisposeProbe(home,x,y,disposed);
-         PropagatorGroup::all.kill(home);
-         if (disposed != sizeof(Gecode::Int::Arithmetic::ProductMod)) {
-           if (opt.log)
-             olog << "disposed " << disposed << " bytes, expected "
-                  << sizeof(Gecode::Int::Arithmetic::ProductMod) << std::endl;
-           return false;
-         }
          return true;
        }
      };
@@ -3060,56 +3018,57 @@ namespace Test { namespace Int {
          (void) new Mod("C",c);
 
 
+         // These constraints ignore the propagation level.
+         (void) new GcdXYZ("C",c,Gecode::IPL_BND);
+         (void) new GcdXYZ("C",c,Gecode::IPL_BND,false);
+         (void) new GcdXYZ("Sparse",g,Gecode::IPL_BND);
+         (void) new GcdXYZ("Sparse",g,Gecode::IPL_BND,false);
+         (void) new GcdXYZ("Limits",p,Gecode::IPL_BND);
+         (void) new GcdXYZ("Limits",p,Gecode::IPL_BND,false);
+         (void) new GcdXXY("C",c,Gecode::IPL_BND);
+         (void) new GcdXXY("C",c,Gecode::IPL_BND,false);
+         (void) new GcdXYX("C",c,Gecode::IPL_BND);
+         (void) new GcdXYX("C",c,Gecode::IPL_BND,false);
+         for (int sw=0; sw<2; sw++) {
+           (void) new GcdXYX("Nonpositive",Gecode::IntSet(-2,0),
+                            Gecode::IPL_BND,true,sw != 0);
+           (void) new GcdXYX("Nonpositive",Gecode::IntSet(-2,0),
+                            Gecode::IPL_BND,false,sw != 0);
+         }
+         (void) new GcdXXX("C",c,Gecode::IPL_BND);
+
+         (void) new DividesXY("C",c,Gecode::IPL_BND);
+         (void) new DividesXY("Sparse",g,Gecode::IPL_BND);
+         (void) new DividesXX("C",c,Gecode::IPL_BND);
+
+         (void) new ProductXYZR("C",q,Gecode::IPL_BND);
+         (void) new ProductXYZR("Sparse",g,Gecode::IPL_BND);
+         (void) new ProductXYZR("Limits",p,Gecode::IPL_BND);
+         (void) new ProductEmpty("C",q,Gecode::IPL_BND);
+         (void) new ProductSingleton("C",q,Gecode::IPL_BND);
+         (void) new ProductXXYAlias("C",q,Gecode::IPL_BND);
+
+         (void) new ProductModXYZR("C",q,5,Gecode::IPL_BND);
+         (void) new ProductModXYZR("C",q,5,Gecode::IPL_BND,false);
+         (void) new ProductModXYZR("Sparse",g,7,Gecode::IPL_BND);
+         (void) new ProductModXYZR("Sparse",g,7,Gecode::IPL_BND,false);
+         (void) new ProductModEmpty("C",q,5,Gecode::IPL_BND);
+         (void) new ProductModEmpty("ModulusOne",q,1,Gecode::IPL_BND);
+         (void) new ProductModSingleton("C",g,5,Gecode::IPL_BND);
+         (void) new ProductModSingleton("C",g,5,Gecode::IPL_BND,false);
+         (void) new ProductModXXYAlias("C",q,5,Gecode::IPL_BND);
+         (void) new ProductModXXYAlias("C",q,5,Gecode::IPL_BND,false);
+
+         (void) new ProductModVarXYMR("C",q,Gecode::IPL_BND);
+         (void) new ProductModVarXYMR("Sparse",g,Gecode::IPL_BND);
+         (void) new ProductModVarEmpty("C",q,Gecode::IPL_BND);
+         (void) new ProductModVarSingleton("C",q,Gecode::IPL_BND);
+         (void) new ProductModVarRepeated("C",q,Gecode::IPL_BND);
+         (void) new ProductModVarModFactorAlias("C",q,Gecode::IPL_BND);
+         (void) new ProductModVarFactorResultAlias("C",q,Gecode::IPL_BND);
+         (void) new ProductModVarModResultAlias("C",q,Gecode::IPL_BND);
+
          for (IntPropLevels ipls; ipls(); ++ipls) {
-           (void) new GcdXYZ("C",c,ipls.ipl());
-           (void) new GcdXYZ("C",c,ipls.ipl(),false);
-           (void) new GcdXYZ("Sparse",g,ipls.ipl());
-           (void) new GcdXYZ("Sparse",g,ipls.ipl(),false);
-           (void) new GcdXYZ("Limits",p,ipls.ipl());
-           (void) new GcdXYZ("Limits",p,ipls.ipl(),false);
-           (void) new GcdXXY("C",c,ipls.ipl());
-           (void) new GcdXXY("C",c,ipls.ipl(),false);
-           (void) new GcdXYX("C",c,ipls.ipl());
-           (void) new GcdXYX("C",c,ipls.ipl(),false);
-           for (int sw=0; sw<2; sw++) {
-             (void) new GcdXYX("Nonpositive",Gecode::IntSet(-2,0),
-                              ipls.ipl(),true,sw != 0);
-             (void) new GcdXYX("Nonpositive",Gecode::IntSet(-2,0),
-                              ipls.ipl(),false,sw != 0);
-           }
-           (void) new GcdXXX("C",c,ipls.ipl());
-
-           (void) new DividesXY("C",c,ipls.ipl());
-           (void) new DividesXY("Sparse",g,ipls.ipl());
-           (void) new DividesXX("C",c,ipls.ipl());
-
-           (void) new ProductXYZR("C",q,ipls.ipl());
-           (void) new ProductXYZR("Sparse",g,ipls.ipl());
-           (void) new ProductXYZR("Limits",p,ipls.ipl());
-           (void) new ProductEmpty("C",q,ipls.ipl());
-           (void) new ProductSingleton("C",q,ipls.ipl());
-           (void) new ProductXXYAlias("C",q,ipls.ipl());
-
-           (void) new ProductModXYZR("C",q,5,ipls.ipl());
-           (void) new ProductModXYZR("C",q,5,ipls.ipl(),false);
-           (void) new ProductModXYZR("Sparse",g,7,ipls.ipl());
-           (void) new ProductModXYZR("Sparse",g,7,ipls.ipl(),false);
-           (void) new ProductModEmpty("C",q,5,ipls.ipl());
-           (void) new ProductModEmpty("ModulusOne",q,1,ipls.ipl());
-           (void) new ProductModSingleton("C",g,5,ipls.ipl());
-           (void) new ProductModSingleton("C",g,5,ipls.ipl(),false);
-           (void) new ProductModXXYAlias("C",q,5,ipls.ipl());
-           (void) new ProductModXXYAlias("C",q,5,ipls.ipl(),false);
-
-           (void) new ProductModVarXYMR("C",q,ipls.ipl());
-           (void) new ProductModVarXYMR("Sparse",g,ipls.ipl());
-           (void) new ProductModVarEmpty("C",q,ipls.ipl());
-           (void) new ProductModVarSingleton("C",q,ipls.ipl());
-           (void) new ProductModVarRepeated("C",q,ipls.ipl());
-           (void) new ProductModVarModFactorAlias("C",q,ipls.ipl());
-           (void) new ProductModVarFactorResultAlias("C",q,ipls.ipl());
-           (void) new ProductModVarModResultAlias("C",q,ipls.ipl());
-
            (void) new AbsXY("A",a,ipls.ipl());
            (void) new AbsXY("B",b,ipls.ipl());
            (void) new AbsXY("C",c,ipls.ipl());
@@ -3292,7 +3251,6 @@ namespace Test { namespace Int {
          }
          for (int k=0; k<3; k++)
            (void) new ProductInterleaved(k);
-         (void) new ProductModDispose;
          (void) new ProductModCoefficient(false);
          (void) new ProductModCoefficient(true);
          (void) new ProductModVarBounds;

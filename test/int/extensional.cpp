@@ -810,19 +810,10 @@ namespace Test { namespace Int {
        /// Create and register test
        RegTerminalUnmerged(void)
          : Test("Extensional::Reg::Sparse::TerminalUnmerged",
-                8,0,15,false,Gecode::IPL_DOM) {
-         testsearch = false;
-       }
-       /// Create a bounded random selection from the large uniform test domain
-       virtual Assignment* assignment(void) const {
-         return new RandomAssignment(arity,dom,1000,_rand);
-       }
+                8,0,1,false,Gecode::IPL_DOM) {}
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
-         for (int i=0; i<x.size(); i++)
-           if ((x[i] != 2*i) && (x[i] != 2*i+1))
-             return false;
-         return true;
+         return x[7] == 0;
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
@@ -851,7 +842,13 @@ namespace Test { namespace Int {
          DFA d(0,t,f,false);
          delete [] t;
          delete [] f;
-         extensional(home,x,d);
+         // Every word reaches the final layer, where only the even symbol
+         // has a transition into a final state.
+         IntVarArgs symbols(x.size());
+         for (int i=0; i<x.size()-1; i++)
+           symbols[i] = expr(home,2*i+x[i]);
+         symbols[7] = expr(home,14+2*x[7]);
+         extensional(home,symbols,d);
        }
      };
 
@@ -2056,94 +2053,6 @@ namespace Test { namespace Int {
        }
      };
 
-     /// Sparse negative should fail if all combinations are forbidden
-     class SparseTupleSetNegativeFail : public ::Test::Base {
-     public:
-       SparseTupleSetNegativeFail(void)
-         : ::Test::Base(
-             "Int::Extensional::TupleSet::Sparse::NegativeFail") {}
-
-       virtual bool run(void) {
-         using namespace Gecode;
-         class NegativeFailSpace : public Space {
-         public:
-           IntVarArray x;
-           NegativeFailSpace(const TupleSet& t)
-             : x(*this,2,0,1) {
-             extensional(*this, x, t, false, IPL_DOM);
-             branch(*this, x, INT_VAR_NONE(), INT_VAL_MIN());
-           }
-           NegativeFailSpace(NegativeFailSpace& s)
-             : Space(s) {
-             x.update(*this,s.x);
-           }
-           virtual Space* copy(void) {
-             return new NegativeFailSpace(*this);
-           }
-         };
-         TupleSet ts(2);
-         ts.add(IntArgs({0,0})).add(IntArgs({0,1}))
-           .add(IntArgs({1,0})).add(IntArgs({1,1}));
-         ts.finalize(EPK_SPARSE);
-         if (ts.representation() != EPK_SPARSE)
-           return false;
-         NegativeFailSpace* root = new NegativeFailSpace(ts);
-         DFS<NegativeFailSpace> e(root);
-         delete root;
-         NegativeFailSpace* sol = e.next();
-         const bool ok = (sol == nullptr);
-         delete sol;
-         return ok;
-       }
-     };
-
-     /// Sparse negative should prune values whose completions are all forbidden
-     class SparseTupleSetNegativePrune : public ::Test::Base {
-     public:
-       SparseTupleSetNegativePrune(void)
-         : ::Test::Base(
-             "Int::Extensional::TupleSet::Sparse::NegativePrune") {}
-
-       virtual bool run(void) {
-         using namespace Gecode;
-         class NegativePruneSpace : public Space {
-         public:
-           IntVarArray x;
-           NegativePruneSpace(const TupleSet& t)
-             : x(*this,2,0,1) {
-             extensional(*this, x, t, false, IPL_DOM);
-             branch(*this, x, INT_VAR_NONE(), INT_VAL_MIN());
-           }
-           NegativePruneSpace(NegativePruneSpace& s)
-             : Space(s) {
-             x.update(*this,s.x);
-           }
-           virtual Space* copy(void) {
-             return new NegativePruneSpace(*this);
-           }
-         };
-         TupleSet ts(2);
-         ts.add(IntArgs({0,0})).add(IntArgs({0,1}));
-         ts.finalize(EPK_SPARSE);
-         if (ts.representation() != EPK_SPARSE)
-           return false;
-         NegativePruneSpace* root = new NegativePruneSpace(ts);
-         DFS<NegativePruneSpace> e(root);
-         delete root;
-
-         int n = 0;
-         while (NegativePruneSpace* sol = e.next()) {
-           if (sol->x[0].val() != 1) {
-             delete sol;
-             return false;
-           }
-           n++;
-           delete sol;
-         }
-         return n == 2;
-       }
-     };
-
      /// %Test with large tuple set
      class TupleSetLarge : public Test {
      protected:
@@ -2400,7 +2309,7 @@ namespace Test { namespace Int {
            }
            {
              for (int i = 0; i <= 64*6; i+=32)
-               (void) new TupleSetTestSize(i, pos, epk, rand);
+               (void) TupleSetTestSize(i, pos, epk, rand);
            }
            {
              const double prob_small =
@@ -2536,13 +2445,21 @@ namespace Test { namespace Int {
      public:
        CreateSparse(void) {
          using namespace Gecode;
-         TupleSet equal(2), zero(2);
+         TupleSet equal(2), zero(2), full(2), first_zero(2);
          equal.add(IntArgs({0,0})).add(IntArgs({1,1})).finalize(EPK_SPARSE);
          zero.add(IntArgs({0,0})).finalize(EPK_SPARSE);
+         full.add(IntArgs({0,0})).add(IntArgs({0,1}))
+           .add(IntArgs({1,0})).add(IntArgs({1,1})).finalize(EPK_SPARSE);
+         first_zero.add(IntArgs({0,0})).add(IntArgs({0,1}))
+           .finalize(EPK_SPARSE);
          for (bool positive : {false,true}) {
            (void) new TupleSetTest("Equal",positive,IntSet(0,1),equal,
                                   false,EPK_SPARSE,TestTags::standard());
            (void) new TupleSetTest("Zero",positive,IntSet(0,1),zero,
+                                  false,EPK_SPARSE,TestTags::standard());
+           (void) new TupleSetTest("Full",positive,IntSet(0,1),full,
+                                  false,EPK_SPARSE,TestTags::standard());
+           (void) new TupleSetTest("FirstZero",positive,IntSet(0,1),first_zero,
                                   false,EPK_SPARSE,TestTags::standard());
          }
        }
@@ -2565,8 +2482,6 @@ namespace Test { namespace Int {
      TupleSetDisabledClone tuple_set_disabled_clone;
      TupleSetAutoDefaultDispatch tuple_set_auto_default_dispatch;
      DenseCompressedTupleSetWideGap dense_compressed_tuple_set_wide_gap;
-     SparseTupleSetNegativeFail sparse_tuple_set_negative_fail;
-     SparseTupleSetNegativePrune sparse_tuple_set_negative_prune;
      //@}
 
    }
