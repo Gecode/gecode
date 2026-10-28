@@ -774,6 +774,10 @@ namespace Gecode { namespace FlatZinc {
    * \brief Parse FlatZinc file \a fileName into \a fzs and return it.
    *
    * Creates a new empty FlatZincSpace if \a fzs is nullptr.
+   * The caller owns the returned space. On failure or exception, only a space
+   * created by the parser is deleted; a supplied space remains caller-owned.
+   * A supplied space may then be partially initialized and should be
+   * deleted rather than reused.
    */
   GECODE_FLATZINC_EXPORT
   FlatZincSpace* parse(const std::string& fileName,
@@ -784,6 +788,10 @@ namespace Gecode { namespace FlatZinc {
    * \brief Parse FlatZinc from \a is into \a fzs and return it.
    *
    * Creates a new empty FlatZincSpace if \a fzs is nullptr.
+   * The caller owns the returned space. On failure or exception, only a space
+   * created by the parser is deleted; a supplied space remains caller-owned.
+   * A supplied space may then be partially initialized and should be
+   * deleted rather than reused.
    */
   GECODE_FLATZINC_EXPORT
   FlatZincSpace* parse(std::istream& is,
